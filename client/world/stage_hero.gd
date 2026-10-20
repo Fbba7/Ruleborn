@@ -26,10 +26,14 @@ const FOV := 24.0
 ## §21.3's three points: a warm key from above and in front, the night's
 ## violet as the fill (shade is never black), and a rim from behind.
 const KEY := Color("#FFE6C8")
-const KEY_ENERGY := 0.8
-const FILL := Color("#8E7FD8")
-const FILL_ENERGY := 0.42
+const KEY_ENERGY := 0.78
+const FILL := Color("#C4BCEE")
+const FILL_ENERGY := 0.62
 const RIM_ENERGY := 0.6
+## How much more a close view lifts a model's lit paint, and where its light
+## steps begin (creature_look.gdshaderinc's `lift` and `ramp_bias`).
+const CLOSE_LIFT := 1.7
+const CLOSE_RAMP_BIAS := 0.34
 
 static var _toon: Shader = load("res://world/toon.gdshader")
 static var _outline: Shader = load("res://world/outline.gdshader")
@@ -110,6 +114,7 @@ static func make_figure(kind: String, look := "", close := false) -> Node3D:
 		model.set_form(StringName(look))
 	elif look == "guard":
 		model.set_guard(true)
+	_close_look(model)
 	var root := Node3D.new()
 	root.add_child(model)
 	root.set_meta("kind", kind)
@@ -277,6 +282,17 @@ func at_time(seconds: float) -> void:
 	backdrop.time = seconds
 	_pose()
 	backdrop.queue_redraw()
+	# Each model's clip too, held there while the stage is still.
+	for f in figures:
+		var model: Variant = f.get_meta("model", null)
+		if not (model is CreatureModel):
+			continue
+		var p := (model as CreatureModel).player()
+		if p.current_animation == "" or p.current_animation_length <= 0.0:
+			continue
+		p.seek(fmod(seconds, p.current_animation_length), true)
+		if not moving:
+			p.pause()
 
 
 func _process(delta: float) -> void:
@@ -422,6 +438,19 @@ func _pose() -> void:
 		backdrop.flash = clampf(1.0 - _reveal / 1.2, 0.0, 1.0)
 	else:
 		backdrop.flash = 0.0
+
+
+## A close view's light on a model (the hero stage, portraits): the lit
+## paint lifted further toward warm white and the light steps started
+## earlier, so the model reads pale and soft as the design's portraits do,
+## where the world keeps T1's values for a model seen from far above.
+static func _close_look(model: CreatureModel) -> void:
+	var m := model.material()
+	if m == null:
+		return
+	var lift := float(m.get_shader_parameter("lift")) if m.get_shader_parameter("lift") != null else 0.5
+	m.set_shader_parameter("lift", minf(0.95, lift * CLOSE_LIFT))
+	m.set_shader_parameter("ramp_bias", CLOSE_RAMP_BIAS)
 
 
 ## The stand-in: StageHeroSculpt's figure for the kind, grown to its height.
