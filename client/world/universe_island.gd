@@ -397,19 +397,11 @@ func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) ->
 		glows.glow(mid + Vector3(0, 0.7, 0.9), 0.7 if lit else 0.45, Color("#FFC36A", 0.7 if lit else 0.4))
 
 
-## A building as seen from across the universe: its body and roof in its
-## level's look (§21.5), its height and shape by kind.
+## A building as seen from across the universe: the realm kit's own map
+## version (`BuildingKit.build_map`, the diorama's lighter `makeB`), its kind
+## and its level's look (§21.5) in a couple of hundred triangles.
 func _far_building(kind: String, mid: Vector3, side: int, lv: int) -> void:
-	var c := BuildingKit.look(lv, palette)
-	var w := side * 0.62
-	if kind in ["guardian_post", "beacon", "observatory", "resonance_lab", "keeper_s_spire"]:
-		var tall := w * (1.6 if kind in ["guardian_post", "beacon"] else 1.0)
-		far.prism(Geo.place(mid), 6, w * 0.42, w * 0.36, tall, c[0])
-		far.prism(Geo.place(mid + Vector3(0, tall, 0)), 6, w * 0.5, 0.0, w * 0.55, c[1])
-		return
-	far.box(Geo.place(mid + Vector3(0, w * 0.32, 0)), Vector3(w, w * 0.64, w * 0.8), c[0])
-	far.prism(Transform3D(Basis(Vector3.UP, PI / 4.0), mid + Vector3(0, w * 0.64, 0)), 4, w * 0.74, 0.0, w * 0.5,
-		c[1])
+	BuildingKit.build_map(far, kind, mid, side, lv, palette)
 
 
 ## Stepping stones from the plaza to a building's door.
