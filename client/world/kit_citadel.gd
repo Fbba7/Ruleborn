@@ -50,7 +50,7 @@ static func walls(g: Geo, fine: Geo, radius: float, palette: Dictionary) -> void
 	fine.box(Geo.place(gp + Vector3(0, 0.9, 0), gy), Vector3(1.0, 0.04, 0.32), stone2)
 	fine.moving(Geo.Anim.SWAY, gp + Vector3(0, 0.78, 0))
 	fine.box(Geo.place(gp + Vector3(0, 0.56, 0.15), gy), Vector3(0.24, 0.36, 0.012), style["accent"])
-	fine.still()
+	fine.moving(Geo.Anim.NONE, Vector3.ZERO)
 
 
 static func _tower(g: Geo, fine: Geo, p: Vector3, r: float, h: float, stone: Color, stone2: Color,

@@ -84,7 +84,7 @@ static func pylon(school := "matter") -> ArrayMesh:
 		g.box(Geo.place(Vector3(0, 0.45 + 0.25 * k, 0.13 - 0.016 * k)), Vector3(0.07, 0.07, 0.01), Color(colour, 0.4))
 	g.moving(Geo.Anim.SPIN_Y, Vector3(0, 1.62, 0))
 	_shape(g, school, Vector3(0, 1.62, 0), 0.13, Color(colour.lightened(0.15), 0.35))
-	g.still()
+	g.moving(Geo.Anim.NONE, Vector3.ZERO)
 	return g.mesh()
 
 
@@ -127,7 +127,7 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 			for k in 3:
 				var a := TAU * k / 3.0
 				g.gem(Geo.place(Vector3(cos(a) * 0.14, 0.12, sin(a) * 0.14)), 0.03, 0.03, lit, 4)
-			g.still()
+			g.moving(Geo.Anim.NONE, Vector3.ZERO)
 		"matter":
 			# A crystal wall: shards breaking from the ground.
 			for k in 4:
@@ -143,7 +143,7 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 				g.box(Geo.place(Vector3(cos(q) * 0.18, 0.075, sin(q) * 0.18), -q), Vector3(0.04, 0.01, 0.015), lit)
 			g.moving(Geo.Anim.SPIN_Y, Vector3(0, 0.08, 0))
 			g.box(Geo.place(Vector3(0.07, 0.085, 0)), Vector3(0.15, 0.015, 0.025), GOLD)
-			g.still()
+			g.moving(Geo.Anim.NONE, Vector3.ZERO)
 		"energy":
 			# A static coil: a copper coil on a post, sparking.
 			g.cyl(Geo.place(Vector3(0, 0.05, 0)), 0.06, 0.05, 0.5, IRON, 6)
@@ -151,7 +151,7 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 				g.torus(Geo.place(Vector3(0, 0.12 + 0.075 * k, 0)), 0.12 - 0.008 * k, 0.02, Color("#C87A4A"), 12, 4)
 			g.moving(Geo.Anim.BOB, Vector3(0, 0.62, 0))
 			g.ball(Geo.place(Vector3(0, 0.62, 0)), 0.07, Color(Color("#FFE7A8"), 0.2), 3, 6)
-			g.still()
+			g.moving(Geo.Anim.NONE, Vector3.ZERO)
 		"life":
 			# A thorn hedge: roots curling up from the ground, thorned.
 			for k in 5:
@@ -161,7 +161,7 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 				g.moving(Geo.Anim.SHIVER, p)
 				g.prism(Transform3D(tilt, p), 4, 0.04, 0.0, 0.3, Color("#5A3A2A").lerp(colour, 0.35))
 				g.prism(Transform3D(tilt, p + Vector3(0, 0.12, 0)), 3, 0.02, 0.0, 0.08, colour.lightened(0.2))
-			g.still()
+			g.moving(Geo.Anim.NONE, Vector3.ZERO)
 		_:
 			# A lantern glare: a lantern on a crook, its light breathing.
 			g.cyl(Geo.place(Vector3(0.14, 0.05, 0)), 0.035, 0.028, 0.62, KitStyle.WOOD_DARK, 5)
@@ -169,7 +169,7 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 			g.moving(Geo.Anim.SWING, Vector3(-0.06, 0.65, 0))
 			g.rbox(Geo.place(Vector3(-0.06, 0.53, 0)), Vector3(0.14, 0.17, 0.14), Color(Color("#FFE7A8"), 0.15), 0.02)
 			g.prism(Geo.place(Vector3(-0.06, 0.615, 0), PI / 4.0), 4, 0.11, 0.0, 0.06, KitStyle.WOOD_DARK)
-			g.still()
+			g.moving(Geo.Anim.NONE, Vector3.ZERO)
 			g.ring(Geo.place(Vector3(0, 0.058, 0)), 0.0, 0.26, Color(Color("#FFE7A8"), 0.5), 12)
 	if level >= 2:
 		# Gold inlay: a gold ring round the circle and studs on it.

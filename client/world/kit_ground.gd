@@ -333,7 +333,7 @@ func _side(t: Vector2i, d: Vector2i) -> void:
 			for b in 3:
 				scatter.blade(world(lip.x, lip.y, y0 + 0.05) + out * 0.02 + Vector3(along.x, 0, along.y) * (b - 1) * 0.05,
 					0.14, 0.025, grass.darkened(0.15), 2.2, atan2(out.z, out.x))
-			scatter.still()
+			scatter.moving(Geo.Anim.NONE, Vector3.ZERO)
 	if edge_out:
 		_skirt(t, d, minf(y1, y0 + 0.06))
 
@@ -427,13 +427,14 @@ func _lilies(t: Vector2i) -> void:
 			scatter.tri(p, p + Vector3(cos(a1), 0, sin(a1)) * r, p + Vector3(cos(a0), 0, sin(a0)) * r, Color("#3F9A4A"))
 		if k == 0:
 			scatter.ball(Geo.place(p + Vector3(0, 0.02, 0)), 0.03, Color("#F7A6DA"), 2, 5)
-		scatter.still()
+		scatter.moving(Geo.Anim.NONE, Vector3.ZERO)
 
 
 ## A couple of grass tufts on an open tile, which shiver in the wind: the
 ## ground's texture made solid (§21.10: ambient, never told apart).
 func _tufts(t: Vector2i) -> void:
 	var y := top_y(t)
+	scatter.standing(y)
 	var grass: Color = palette["grass"]
 	var plant: Color = palette["plant"]
 	var near_water := field("wet", t.x + 0.5, t.y + 0.5) > 0.12
@@ -467,4 +468,4 @@ func _tufts(t: Vector2i) -> void:
 				var col := grass.darkened(0.12).lerp(plant, 0.35).lightened(0.06 * b)
 				scatter.blade(base + Vector3(cos(a), 0, sin(a)) * 0.03, 0.16 + 0.08 * RealmKit.jitter(t, 80 + k * 3 + b),
 					0.03, col, 0.35, a)
-		scatter.still()
+		scatter.moving(Geo.Anim.NONE, Vector3.ZERO)
