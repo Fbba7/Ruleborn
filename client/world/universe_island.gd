@@ -503,9 +503,20 @@ func _lamp(hero: Geo, glows: UniversePaint, to: Vector3) -> void:
 
 ## The meadow's tufts and flowers, never on a path or under a building:
 ## each [transform, colour], for the map's two scatter layers.
-func scatter(tufts: Array, flowers: Array) -> void:
+func scatter(tufts: Array, flowers: Array, petals: Array) -> void:
 	if ghost:
 		return
+	# The Heart's meadow strewn with blossom petals, as the design draws it.
+	if key == "heart":
+		for i in 140:
+			var a := noise(i * 5 + 701) * TAU
+			var f := 0.4 + 0.55 * sqrt(noise(i * 5 + 702))
+			var p := point(a, f, dome(f) + 0.02)
+			if _crowded(p):
+				continue
+			var turn := Basis(Vector3.UP, noise(i * 5 + 703) * TAU).scaled(Vector3.ONE * (0.8 + 0.6 * noise(i * 5 + 704)))
+			var pink := Color("#F7B8D6").lerp(Color("#FFFFFF"), 0.4 * noise(i * 5 + 705))
+			petals.append([Transform3D(turn, p), pink])
 	var grass: Color = palette["grass"]
 	var plant: Color = palette["plant"]
 	var bloom: Array[Color] = [palette["accent"], Color("#FFFFFF"), Color("#F6D27A"), Color("#F2A6CF")]

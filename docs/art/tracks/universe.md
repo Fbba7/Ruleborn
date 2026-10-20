@@ -155,6 +155,10 @@ universe, inside §21.3's 40,000 and 150.
   Crystalline cool, Emberreach warm (Lantern Vale had come out teal).
   Stills: `round20_zoom2_lanternvale.png`, `round20_zoom2_emberreach.png`.
 
+- Round 21: the Heart's meadow strewn with pink blossom petals, as the design's Heart scout still draws
+  it (one more layer of instances, about 260 triangles).
+  Still: `round21_zoom2_heart_petals.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

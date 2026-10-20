@@ -400,8 +400,9 @@ func _show_lods() -> void:
 func _build_scatter() -> void:
 	var tufts: Array = []
 	var flowers: Array = []
+	var petals: Array = []
 	for id: String in islands:
-		(islands[id] as UniverseIsland).scatter(tufts, flowers)
+		(islands[id] as UniverseIsland).scatter(tufts, flowers, petals)
 	# Three blades a tuft, a stem and a head a flower: a few triangles each.
 	var tuft := Geo.new()
 	for b in 3:
@@ -417,7 +418,9 @@ func _build_scatter() -> void:
 		var a1 := TAU * (k + 1) / 3.0
 		bloom.tri(Vector3(0, 0.34, 0), Vector3(cos(a1) * 0.1, 0.24, sin(a1) * 0.1),
 			Vector3(cos(a0) * 0.1, 0.24, sin(a0) * 0.1), Color.WHITE)
-	for layer: Array in [[tufts, tuft.mesh()], [flowers, bloom.mesh()]]:
+	var petal := Geo.new()
+	petal.quad(Vector3(-0.12, 0, 0), Vector3(0, 0, -0.07), Vector3(0.12, 0, 0), Vector3(0, 0, 0.07), Color.WHITE)
+	for layer: Array in [[tufts, tuft.mesh()], [flowers, bloom.mesh()], [petals, petal.mesh()]]:
 		var items: Array = layer[0]
 		if items.is_empty():
 			continue
