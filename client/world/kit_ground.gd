@@ -221,14 +221,14 @@ func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 	var w := world(u, v, 0.0)
 	var c := meadow(w.x, w.z)
 	# Lush ground (moss, tall grass, thickets) is deeper and cooler.
-	var lush := field("lush", u, v)
+	var lush := maxf(blob("lush", u, v, 0.8), field("lush", u, v) * 0.5)
 	c = c.lerp(grass.darkened(0.2).lerp(Color("#3E8A5A"), 0.15), clampf(lush * 1.2, 0.0, 1.0) * 0.8)
 	var bloom := field("bloom", u, v)
 	c = c.lerp(grass.lightened(0.12).lerp(palette["accent"], 0.12), bloom * 0.6)
 	# Worn earth where a building stands, fading into the grass.
 	var apron := smoothstep(0.25, 0.7, field("apron", u, v) + (n2 - 0.5) * 0.35)
 	c = c.lerp(dirt.lerp(soil, 0.25), apron * 0.85)
-	var stone := smoothstep(0.3, 0.7, field("stone", u, v) + (n1 - 0.5) * 0.3)
+	var stone := smoothstep(0.2, 0.7, blob("stone", u, v, 0.7) + (n1 - 0.5) * 0.3)
 	c = c.lerp(palette["rock"].lightened(0.25), stone * 0.6)
 	var scorch := smoothstep(0.0, 0.7, blob("scorch", u, v, 0.75) + (n2 - 0.5) * 0.4) * 0.7
 	c = c.lerp(palette["rock"].darkened(0.35), scorch * 0.75)
