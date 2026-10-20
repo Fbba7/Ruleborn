@@ -176,9 +176,15 @@ func _badge(c: Dictionary) -> void:
 		if int(x["id"]) == id:
 			level = int(x["level"])
 	var school: Color = Palette.SCHOOL.get(str(c["school"]), Palette.MOTION)
-	level_badge = StageHeroSkin.badge(str(level), school.darkened(0.55), 28.0)
-	level_badge.position = Vector2(UI.px(10), UI.px(10))
+	level_badge = PanelContainer.new()
+	level_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	level_badge.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	level_badge.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	stage.add_child(level_badge)
+	StageHeroSkin.on_stage(level_badge, StageHeroSkin.badge(str(level), school.darkened(0.55), 28.0),
+		Control.PRESET_TOP_LEFT)
+	# §23.2's state on the stage, as the design's state pill puts it.
+	StageHeroSkin.on_stage(level_badge, StageHeroSkin.pill(str(c["line"])), Control.PRESET_TOP_RIGHT)
 
 
 ## A spend's button: the first tap shows the price to confirm; the second

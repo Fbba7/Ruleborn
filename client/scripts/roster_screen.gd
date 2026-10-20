@@ -56,7 +56,7 @@ func _build() -> void:
 	column.add_child(StageHeroSkin.plate(status_label))
 	body = UI.scroll(column)
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(0, UI.px(200))
+	stage.custom_minimum_size = Vector2(0, UI.px(250))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(stage)
 	cards = VBoxContainer.new()
@@ -105,6 +105,16 @@ func _refresh() -> void:
 		if str(stage.get_meta("showing", "")) != str(kinds.get(pick, "")):
 			stage.show_kinds([kinds.get(pick, "")])
 			stage.set_meta("showing", str(kinds.get(pick, "")))
+		# Who stands there, by name, with its state, on the stage itself.
+		for n in stage.get_children():
+			if n.has_meta("words"):
+				n.queue_free()
+		for row: Dictionary in rows:
+			if int(row["id"]) == pick:
+				StageHeroSkin.on_stage(stage, StageHeroSkin.pill(str(row["name"]), true, UI.TEXT_POINTS + 4),
+					Control.PRESET_TOP_LEFT).set_meta("words", true)
+				StageHeroSkin.on_stage(stage, StageHeroSkin.pill(str(row["line"])), Control.PRESET_BOTTOM_RIGHT) \
+					.set_meta("words", true)
 	var per := StageHeroSkin.columns(self)
 	var grid := GridContainer.new()
 	grid.columns = per

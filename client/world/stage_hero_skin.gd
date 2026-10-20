@@ -270,3 +270,40 @@ static func cap_buttons(node: Node, wide: float) -> void:
 		if b.custom_minimum_size.x > wide:
 			b.custom_minimum_size.x = wide
 			b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+
+## Words on a stage (§21.8's dark glass pill over the world): a rounded
+## dark card with light words, its name in Marcellus when `named`.
+static func pill(text: String, named_words := false, points := -1.0) -> PanelContainer:
+	var l := UI.label(text, points if points > 0.0 else UI.TEXT_POINTS)
+	if named_words:
+		l.add_theme_font_override("font", names_font())
+	var p := plate(l, true)
+	var b := p.get_theme_stylebox("panel") as StyleBoxFlat
+	b.set_corner_radius_all(UI.px(99))
+	b.content_margin_top = UI.px(3)
+	b.content_margin_bottom = UI.px(4)
+	b.content_margin_left = UI.px(12)
+	b.content_margin_right = UI.px(12)
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return p
+
+
+## Pins `what` to a stage's edge (`corner` as Control's presets: top-right,
+## bottom-centre …), above the 3D, clear of its edge by 8 points. Returns the
+## holder, which a refresh frees.
+static func on_stage(stage: Control, what: Control, corner: int) -> Control:
+	var m := MarginContainer.new()
+	m.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	m.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for side: String in ["margin_left", "margin_right", "margin_top", "margin_bottom"]:
+		m.add_theme_constant_override(side, UI.px(8))
+	var right := corner in [Control.PRESET_TOP_RIGHT, Control.PRESET_BOTTOM_RIGHT]
+	var centre := corner in [Control.PRESET_CENTER_TOP, Control.PRESET_CENTER_BOTTOM]
+	what.size_flags_horizontal = Control.SIZE_SHRINK_END if right else (Control.SIZE_SHRINK_CENTER if centre
+		else Control.SIZE_SHRINK_BEGIN)
+	what.size_flags_vertical = Control.SIZE_SHRINK_END if corner in [Control.PRESET_BOTTOM_LEFT,
+		Control.PRESET_BOTTOM_RIGHT, Control.PRESET_CENTER_BOTTOM] else Control.SIZE_SHRINK_BEGIN
+	m.add_child(what)
+	stage.add_child(m)
+	return m
