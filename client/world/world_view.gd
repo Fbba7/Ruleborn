@@ -167,7 +167,7 @@ func _build_statics() -> void:
 	look.island(statics, _size, seed_from, colours)
 	var kit := RealmKit.new(replay, colours)
 	kit.build()
-	for layer: Array in [[kit.ground.mesh(), material(_toon), true], [kit.hero.mesh(), material(_toon, true), true],
+	for layer: Array in [[kit.ground.mesh(), look.ground_material(), true], [kit.hero.mesh(), material(_toon, true), true],
 			[kit.clear.mesh(), material(_clear), false], [kit.water.mesh(), _water_material(false), false],
 			[kit.lava.mesh(), _water_material(true), false]]:
 		if layer[0] != null:

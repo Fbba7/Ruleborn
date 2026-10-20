@@ -51,7 +51,7 @@ static func _grass_image() -> Image:
 			var u := float(x) / n
 			var v := float(y) / n
 			var blot := _sample(coarse, 6, u, v) * 0.65 + _sample(fine, 14, u, v) * 0.35
-			px[y * n + x] = clampi(int(196.0 + (blot - 0.5) * 70.0), 0, 255)
+			px[y * n + x] = clampi(int(196.0 + (blot - 0.5) * 105.0), 0, 255)
 	# Upward brush strokes, light and dark.
 	for i in 2600:
 		var x0 := r.randf() * n

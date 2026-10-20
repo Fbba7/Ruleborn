@@ -18,7 +18,7 @@ const TYPES := {
 		"dirt": "#9A6B4F", "cliff": "#6A5C8C", "cliff_deep": "#4B3F6E", "trim": "#F2B43C", "plant": "#5CC46A",
 		"accent": "#E05CB4", "bloom": "#F7A6DA", "light": "#FFD8E8",
 		"sky_top": "#1B1250", "sky_mid": "#4A2A8E", "sky_low": "#C86FB0"},
-	"skyfield": {"ground": "#E9DB9A", "grass": "#B2DA6E", "stone": "#F4F0E6", "rock": "#B9AE9F", "soil": "#9A7F5C",
+	"skyfield": {"ground": "#E2D59E", "grass": "#C4DC84", "stone": "#F4F0E6", "rock": "#B9AE9F", "soil": "#9A7F5C",
 		"dirt": "#B9875C", "cliff": "#9C8FB4", "cliff_deep": "#746A92", "trim": "#F2B43C", "plant": "#E8D27A",
 		"accent": "#F2B43C", "bloom": "#FFFFFF", "light": "#FFF2D0",
 		"sky_top": "#3B6FD0", "sky_mid": "#7FB5EE", "sky_low": "#FFE3B0"},
@@ -26,19 +26,19 @@ const TYPES := {
 		"dirt": "#8C86B0", "cliff": "#4F4C86", "cliff_deep": "#37346A", "trim": "#8C6CF0", "plant": "#A9D8E8",
 		"accent": "#8C6CF0", "bloom": "#BFAEFF", "light": "#E0E8FF",
 		"sky_top": "#15123F", "sky_mid": "#34307D", "sky_low": "#8F7FE0"},
-	"tidehold": {"ground": "#E6D6AE", "grass": "#74C49C", "stone": "#9FB0B8", "rock": "#6E8290", "soil": "#7C6A55",
+	"tidehold": {"ground": "#E6D6AE", "grass": "#5EA98C", "stone": "#9FB0B8", "rock": "#6E8290", "soil": "#7C6A55",
 		"dirt": "#7C6A58", "cliff": "#4E6D86", "cliff_deep": "#375068", "trim": "#3CC6D8", "plant": "#5CB88A",
 		"accent": "#3CC6D8", "bloom": "#F3E6C0", "light": "#E8FFFF",
 		"sky_top": "#0E2F4F", "sky_mid": "#2A6D8E", "sky_low": "#A7E6EA"},
-	"emberreach": {"ground": "#B5674A", "grass": "#8C6552", "stone": "#5A4A4E", "rock": "#3A2E34", "soil": "#6A3A2A",
+	"emberreach": {"ground": "#9C5A44", "grass": "#8C6552", "stone": "#5A4A4E", "rock": "#3A2E34", "soil": "#6A3A2A",
 		"dirt": "#5A3B34", "cliff": "#3F2A30", "cliff_deep": "#2B1C22", "trim": "#F07A3C", "plant": "#E0A04A",
 		"accent": "#F07A3C", "bloom": "#FF8A3C", "light": "#FFB070",
 		"sky_top": "#22091A", "sky_mid": "#5E1F2E", "sky_low": "#F08A4C"},
-	"verdant": {"ground": "#8FCF6A", "grass": "#5FBB5C", "stone": "#C9C2A8", "rock": "#7F7462", "soil": "#7A5A3E",
+	"verdant": {"ground": "#86B866", "grass": "#4CA24C", "stone": "#C9C2A8", "rock": "#7F7462", "soil": "#7A5A3E",
 		"dirt": "#7A5A40", "cliff": "#6B5846", "cliff_deep": "#4F4034", "trim": "#5CC46A", "plant": "#3E9A48",
 		"accent": "#F2E07A", "bloom": "#F7A6DA", "light": "#FFF0B8",
 		"sky_top": "#17402F", "sky_mid": "#3B8657", "sky_low": "#DCF1A8"},
-	"lanternvale": {"ground": "#5A5A9A", "grass": "#3F6D5B", "stone": "#7A72A8", "rock": "#3E3868", "soil": "#2E2A4E",
+	"lanternvale": {"ground": "#4C4A80", "grass": "#3F6D5B", "stone": "#7A72A8", "rock": "#3E3868", "soil": "#2E2A4E",
 		"dirt": "#4E3F4A", "cliff": "#363160", "cliff_deep": "#26224A", "trim": "#E05CB4", "plant": "#7AD8C8",
 		"accent": "#F2B43C", "bloom": "#C8FF96", "light": "#8FA0FF",
 		"sky_top": "#08071F", "sky_mid": "#171447", "sky_low": "#3E2D6C"},
@@ -49,13 +49,13 @@ const TYPES := {
 ## sun's place (x, height, z) and how much of the hour's sky the realm takes
 ## (Lantern Vale keeps its twilight at noon, §21.4).
 const LIGHTS := {
-	"heart": {"sun": 0.53, "sky": "#FFC8F0", "under": "#4B2F6E", "at": Vector3(12, 20, 8), "hour": 0.5},
+	"heart": {"sun": 0.53, "sky": "#FFC8F0", "under": "#4B2F6E", "at": Vector3(12, 20, 8), "hour": 0.3},
 	"skyfield": {"sun": 0.57, "sky": "#CFE8FF", "under": "#6A5A40", "at": Vector3(14, 24, 6), "hour": 0.45},
-	"crystalline": {"sun": 0.51, "sky": "#C8C0FF", "under": "#2A2660", "at": Vector3(8, 22, 12), "hour": 0.35},
-	"tidehold": {"sun": 0.52, "sky": "#B8F0F0", "under": "#284860", "at": Vector3(10, 20, 14), "hour": 0.45},
-	"emberreach": {"sun": 0.53, "sky": "#FF9A70", "under": "#2A1018", "at": Vector3(16, 14, 4), "hour": 0.3},
-	"verdant": {"sun": 0.56, "sky": "#D8FFC0", "under": "#3A4A20", "at": Vector3(12, 22, 10), "hour": 0.45},
-	"lanternvale": {"sun": 0.33, "sky": "#6060B0", "under": "#100820", "at": Vector3(8, 20, 10), "hour": 0.18},
+	"crystalline": {"sun": 0.51, "sky": "#C8C0FF", "under": "#2A2660", "at": Vector3(8, 22, 12), "hour": 0.25},
+	"tidehold": {"sun": 0.52, "sky": "#B8F0F0", "under": "#284860", "at": Vector3(10, 20, 14), "hour": 0.3},
+	"emberreach": {"sun": 0.53, "sky": "#FF9A70", "under": "#2A1018", "at": Vector3(16, 14, 4), "hour": 0.2},
+	"verdant": {"sun": 0.56, "sky": "#D8FFC0", "under": "#3A4A20", "at": Vector3(12, 22, 10), "hour": 0.4},
+	"lanternvale": {"sun": 0.33, "sky": "#6060B0", "under": "#100820", "at": Vector3(8, 20, 10), "hour": 0.12},
 }
 
 ## §21.2's skies by the hour: day, dusk and night, top then horizon.
@@ -89,7 +89,7 @@ static func light_at(hour: int, type := "heart") -> Array:
 	# the ground's own colours read under it (§21.10).
 	var sun := Color(TYPES.get(type, TYPES["heart"])["light"]).lerp(Color.WHITE, 0.35) * tint
 	var ambient := Color(l["sky"]).lerp(Color(l["under"]), 0.45).lerp(Color("#B8B0E0"), 0.3) * Color(h[2])
-	return [sun, float(l["sun"]) * float(h[1]), ambient, 0.4 if hour_key(hour) != "night" else 0.5]
+	return [sun, float(l["sun"]) * float(h[1]), ambient, 0.24 if hour_key(hour) != "night" else 0.3]
 
 
 ## The realm's ambient as a hemisphere: what the sky gives a face turned up

@@ -13,6 +13,7 @@ static var _ground: Shader = load("res://world/look_ground.gdshader")
 static var _fall: Shader = load("res://world/look_fall.gdshader")
 static var _mist: Shader = load("res://world/look_mist.gdshader")
 static var _cloud: Shader = load("res://world/look_cloud.gdshader")
+static var _hemi: Shader = load("res://world/look_hemi.gdshader")
 static var _vignette: Shader = load("res://world/look_vignette.gdshader")
 
 var environment: Environment
@@ -23,6 +24,8 @@ var hour := 12
 var vignette: ColorRect
 ## The sky's gradient (sky.gdshader), drawn behind the world.
 var sky_material: ShaderMaterial
+## The ambient's hemisphere (look_hemi.gdshader).
+var hemi_material: ShaderMaterial
 var _mists: Array[ShaderMaterial] = []
 var _clouds: ShaderMaterial
 
@@ -41,7 +44,16 @@ func _init(world: Node3D) -> void:
 	sky_quad.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	sky_quad.custom_aabb = AABB(Vector3(-1e5, -1e5, -1e5), Vector3(2e5, 2e5, 2e5))
 	world.add_child(sky_quad)
-	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	# The ambient comes from a hemisphere: the realm's sky above, its ground
+	# below (look_hemi.gdshader), seen by the light but never drawn.
+	var hemi := Sky.new()
+	hemi_material = ShaderMaterial.new()
+	hemi_material.shader = _hemi
+	hemi.sky_material = hemi_material
+	hemi.radiance_size = Sky.RADIANCE_SIZE_32
+	environment.sky = hemi
+	environment.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+	environment.ambient_light_sky_contribution = 1.0
 	environment.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	# The rock sinks into the sky below the island (the diorama's `Fog`, :490).
 	environment.fog_enabled = true
@@ -97,6 +109,9 @@ func set_hour(new_hour: int) -> void:
 	sun.light_energy = light[1]
 	environment.ambient_light_color = light[2]
 	environment.ambient_light_energy = light[3]
+	var hemi := RealmPalette.hemisphere_at(hour, realm)
+	hemi_material.set_shader_parameter("above", hemi[0])
+	hemi_material.set_shader_parameter("below", hemi[1])
 	var at := RealmPalette.sun_from(hour, realm)
 	sun.basis = Basis.looking_at(-at, Vector3.UP if absf(at.y) < 0.99 else Vector3.FORWARD)
 	# The fog takes the sky's middle, lifted toward its horizon.
@@ -131,7 +146,10 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 	vines.set_shader_parameter("sway_by_uv", true)
 	statics.add_child(_piece(roots[1], vines, false))
 	for part: Array in builder.scatter():
-		statics.add_child(_scatter(part[0], part[1], part[2], part[3], part[4]))
+		var mi := _scatter(part[0], part[1], part[2], part[3], part[4])
+		if part.size() > 5:
+			(mi.material_override as ShaderMaterial).set_shader_parameter("rise", part[5])
+		statics.add_child(mi)
 	var falls := builder.waterfalls()
 	if falls[0] != null:
 		var fm := ShaderMaterial.new()
@@ -140,6 +158,11 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 		var pm := ShaderMaterial.new()
 		pm.shader = load("res://world/water.gdshader")
 		statics.add_child(_piece(falls[1], pm, false))
+		var stones: Array[Transform3D] = falls[3]
+		var grey: Array[Color] = []
+		for i in stones.size():
+			grey.append((colours["stone"] as Color).darkened(0.1 + 0.15 * (i % 2)))
+		statics.add_child(_scatter(IslandBuilder.ico_mesh(), stones, grey, 0.0, 0.0))
 		for foot: Vector3 in falls[2]:
 			for j in 3:
 				statics.add_child(_mist_at(foot + Vector3((j - 1) * 0.5, j * 0.3, 0), 2.4 + j, 0.35))
@@ -160,6 +183,13 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 		mist.scale.y *= 0.5
 		statics.add_child(mist)
 	set_hour(hour)
+
+
+## The material for the grid's ground (T3's flagstones): the toon ramp with
+## the meadow's painted texture laid lightly over it, so the grid and the
+## island read as one painted ground.
+func ground_material() -> ShaderMaterial:
+	return _painted(LookPaint.grass(), 4.2, 0.55)
 
 
 static func _piece(mesh: Mesh, mat: Material, shadows: bool) -> MeshInstance3D:

@@ -384,7 +384,7 @@ func scatter() -> Array:
 	var tufts := _meadow_spots(380 if kind != "emberreach" else 90, 0.15)
 	out.append([_tuft_mesh(), _spin_all(tufts, 0.8, 1.3), _pick(tufts.size(), tuft_cols), 0.25, 0.0])
 	var pebbles := _meadow_spots(70, 0.1)
-	out.append([_ico_mesh(), _spin_all(pebbles, 0.04, 0.09, 0.6), _pick(pebbles.size(), [stone, rock]), 0.0, 0.0])
+	out.append([ico_mesh(), _spin_all(pebbles, 0.04, 0.09, 0.6), _pick(pebbles.size(), [stone, rock]), 0.0, 0.0])
 	if kind != "emberreach" and kind != "crystalline":
 		var flowers := _meadow_spots(130, 0.1)
 		var fc: Array[Color] = [accent, Color.WHITE, Color("#FFE08F"), bloom]
@@ -442,7 +442,7 @@ func scatter() -> Array:
 			rocks.append(Transform3D(Basis(Vector3(_rng.randf(), 1, _rng.randf()).normalized(), _rng.randf() * TAU)
 				.scaled(Vector3(1.0, 0.75, 1.0) * sz), p))
 			rock_cols.append(rock if kk % 2 == 1 else mixed)
-	out.append([_ico_mesh(), rocks, rock_cols, 0.0, 0.0])
+	out.append([ico_mesh(), rocks, rock_cols, 0.0, 0.0])
 	out.append_array(signature())
 	return out
 
@@ -452,7 +452,8 @@ func scatter() -> Array:
 ## :891–899): Crystalline's crystal spires round the rim, Skyfield's fence
 ## of posts, Lantern Vale's fireflies and glowing caps, the Heart's golden
 ## motes, Emberreach's sparks, Verdant's pollen. Same form as `scatter`, with
-## a fifth value: how far each drifts on the wind.
+## a fifth value, how far each drifts on the wind, and an optional sixth,
+## how far each rises before it starts again.
 func signature() -> Array:
 	var out := []
 	var accent: Color = palette["accent"]
@@ -485,7 +486,7 @@ func signature() -> Array:
 					p + Vector3(0, 0.3 + _rng.randf() * 1.4, 0)))
 			var glow := Color("#C8FF96")
 			glow.a = 0.0
-			out.append([_ico_mesh(), at, _pick(at.size(), [glow, Color(1.0, 0.85, 0.45, 0.0)]), 0.0, 0.25])
+			out.append([ico_mesh(), at, _pick(at.size(), [glow, Color(1.0, 0.85, 0.45, 0.0)]), 0.0, 0.25])
 			var caps := _meadow_spots(40, 0.2)
 			var cap_cols: Array[Color] = []
 			for i in caps.size():
@@ -501,7 +502,8 @@ func signature() -> Array:
 					p + Vector3(0, 0.4 + _rng.randf() * 2.2, 0)))
 			var c := Color("#FFD27A") if kind == "heart" else (Color("#FFF6B0") if kind == "verdant" else Color("#FF8A3C"))
 			c.a = 0.0
-			out.append([_ico_mesh(), at, _pick(at.size(), [c, c.lerp(accent, 0.4)]), 0.0, 0.3])
+			out.append([ico_mesh(), at, _pick(at.size(), [c, c.lerp(accent, 0.4)]), 0.0, 0.3,
+				2.5 if kind == "emberreach" else 0.8])
 	return out
 
 
@@ -620,7 +622,8 @@ static func _puff_mesh() -> ArrayMesh:
 	return m.mesh()
 
 
-static func _ico_mesh() -> ArrayMesh:
+## A unit icosahedron, for pebbles, stones and specks of light.
+static func ico_mesh() -> ArrayMesh:
 	var m := LookMesh.new()
 	m.ico(Transform3D(), Color.WHITE)
 	return m.mesh()
@@ -692,11 +695,13 @@ func fall_angles() -> PackedFloat32Array:
 
 ## The waterfalls (`islandFX`, :1004): a pool on the meadow, a ribbon over
 ## the lip and down past the rock, widening as it falls. Returns [ribbons,
-## pools, feet], the feet being where the mist gathers.
+## pools, feet, stones]: the feet are where the mist gathers, the stones
+## ring the pools.
 func waterfalls() -> Array:
 	var ribbons := LookMesh.new()
 	var pools := LookMesh.new()
 	var feet := PackedVector3Array()
+	var stones: Array[Transform3D] = []
 	var s := scale_k()
 	for a in fall_angles():
 		var e := edge(a)
@@ -709,6 +714,11 @@ func waterfalls() -> Array:
 			var a1 := TAU * (i + 1) / 20.0
 			pools.tri(pool_c, pool_c + Vector3(cos(a0), 0, sin(a0)) * 0.8, pool_c + Vector3(cos(a1), 0, sin(a1)) * 0.8,
 				Color("#6FCDEB"), Vector3.UP)
+		for st in 9:
+			var sa2 := TAU * (st + _rng.randf() * 0.4) / 9.0
+			var sp := pool_c + Vector3(cos(sa2), -0.02, sin(sa2)) * (0.8 + _rng.randf() * 0.1)
+			var sz := 0.09 + _rng.randf() * 0.07
+			stones.append(Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(1.0, 0.6, 1.0) * sz), sp))
 		var lip_y := height(ca * (e - 0.3), sa * (e - 0.3)) + 0.03
 		var prof: Array[Vector2] = [Vector2(e - 1.2, pool_c.y), Vector2(e - 0.2, lip_y),
 			Vector2(e + 0.15, -0.25), Vector2(e + 0.35, -1.4), Vector2(e + 0.5, -3.2), Vector2(e + 0.5, -5.4 * s),
@@ -732,7 +742,7 @@ func waterfalls() -> Array:
 			prev_l = l
 			prev_r = r
 		feet.append(Vector3(ca * (e + 0.4), -7.2 * s, sa * (e + 0.4)))
-	return [ribbons.mesh(), pools.mesh(), feet]
+	return [ribbons.mesh(), pools.mesh(), feet, stones]
 
 
 ## A point `u` of the way along a Catmull-Rom curve through `pts`.
@@ -787,14 +797,14 @@ func sky_dressing() -> Array[ArrayMesh]:
 		for v in piece.verts.size() / 3:
 			m.tri(piece.verts[v * 3] + c, piece.verts[v * 3 + 2] + c, piece.verts[v * 3 + 1] + c, piece.colours[v * 3],
 				piece.normals[v * 3], piece.uvs[v * 3], piece.uvs[v * 3 + 2], piece.uvs[v * 3 + 1])
-	for i in 7:
-		var a := TAU * (i + _rng.randf() * 0.7) / 7.0
-		var d := r + 1.5 + _rng.randf() * 6.0
-		var base := Vector3(cos(a) * d, -1.2 - _rng.randf() * 6.0, sin(a) * d)
+	for i in 5:
+		var a := TAU * (i + _rng.randf() * 0.7) / 5.0
+		var d := r + 2.0 + _rng.randf() * 5.0
+		var base := Vector3(cos(a) * d, -1.5 - _rng.randf() * 6.0, sin(a) * d)
 		var puffs := 4 + _rng.randi() % 3
-		var scale := 0.8 + _rng.randf() * 0.8
+		var scale := 0.55 + _rng.randf() * 0.5
 		for p in puffs:
 			var o := Vector3((p - puffs / 2.0) * 0.55, (_rng.randf() - 0.5) * 0.3, (_rng.randf() - 0.5) * 0.5) * scale
 			var rad := (0.5 + _rng.randf() * 0.5) * scale
-			clouds.puff(Transform3D(Basis().scaled(Vector3(rad, rad * 0.75, rad)), base + o), Color.WHITE)
+			clouds.puff(Transform3D(Basis().scaled(Vector3(rad, rad * 0.75, rad)), base + o), Color.WHITE, 5, 9)
 	return [m.mesh(), clouds.mesh()]
