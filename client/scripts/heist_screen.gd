@@ -58,6 +58,8 @@ var actions_band: Control
 var crew_node: Control
 ## The realm's entry card while it is on screen.
 var card: PanelContainer
+## The gait menu a held press opens, while it is open.
+var gait_menu: PanelContainer
 ## Which realm the view is drawing, so a new one is drawn when the crew (or
 ## the picker) moves to another.
 var _shown_realm := ""
@@ -395,6 +397,51 @@ func entry_card(words: String) -> void:
 	tw.tween_callback(shown.queue_free)
 
 
+## §12.18 as the designs draw it: hold the ground and a Crouch / Walk / Run
+## menu opens at the finger; the gait chosen is the chosen crew member's, and
+## it walks there at it. A plain tap sends at the last gait. Nothing here is
+## only reachable by holding: the gait button does the same.
+func open_gait_menu(at: Vector2) -> void:
+	close_gait_menu()
+	var tile := view.tile_at(at)
+	if controller.choosing or tile.x < 0:
+		return
+	gait_menu = FxSkin.panel("parchment", 18.0, 8.0)
+	var row := HBoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", UI.px(6))
+	gait_menu.add_child(row)
+	# The designs' order, quietest first: Crouch, Walk, Run.
+	for i: int in [1, 0, 2]:
+		var g: String = HeistController.GAITS[i]
+		var b := _button(Strings.term("GAIT", g), func() -> void: _go_at(i, tile), "leather")
+		FxSkin.add_icon(b, g)
+		row.add_child(b)
+	add_child(gait_menu)
+	gait_menu.reset_size()
+	# Above the finger, kept on the screen.
+	var place := at - Vector2(gait_menu.size.x * 0.5, gait_menu.size.y + UI.px(28))
+	place.x = clampf(place.x, UI.px(8), size.x - gait_menu.size.x - UI.px(8))
+	place.y = maxf(place.y, UI.px(80))
+	gait_menu.position = place
+	Haptics.play("tap")
+
+
+func close_gait_menu() -> void:
+	if gait_menu != null and is_instance_valid(gait_menu):
+		gait_menu.queue_free()
+	gait_menu = null
+
+
+## The chosen gait, then the walk to the held tile: two commands the player
+## gave (§12.18).
+func _go_at(gait_index: int, tile: Vector2i) -> void:
+	close_gait_menu()
+	controller.world.give(controller.selected, Kind.GAIT, gait_index, 0)
+	controller.tap_tile(tile)
+	controller.changed.emit()
+
+
 ## The haptic form of what the screen shows: a warning as the alarm rises, a
 ## pulse as a ward goes down (§21.8).
 func _feel(r: RulebornReplay) -> void:
@@ -432,7 +479,10 @@ func _build() -> void:
 	# does not take fall through to the world.
 	view = WorldView.new()
 	view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	view.tapped.connect(func(at: Vector2) -> void: controller.tap_tile(view.tile_at(at)))
+	view.tapped.connect(func(at: Vector2) -> void:
+		close_gait_menu()
+		controller.tap_tile(view.tile_at(at)))
+	view.held.connect(open_gait_menu)
 	add_child(view)
 	var columns := FxSkin.frame(self)
 	var column := columns[0]

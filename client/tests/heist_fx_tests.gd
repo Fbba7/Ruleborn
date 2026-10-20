@@ -303,9 +303,24 @@ func _entry_card() -> void:
 	for l in screen.card.find_children("*", "Label", true, false):
 		words = (l as Label).text
 	var shown := screen.card.is_inside_tree() and words == Strings.t("HEIST_IN_HEART")
+	# A held press opens the gait menu at the finger; a gait from it is the
+	# chosen member's, sent to the held tile.
+	screen.controller.land_here()
+	screen.view.show_replay(screen.controller.world)
+	var at := screen.view.screen_at(Vector2i(6, 6))
+	screen.open_gait_menu(at)
+	var opened := screen.gait_menu != null and screen.gait_menu.find_children("*", "Button", true, false).size() == 3
+	screen._go_at(2, Vector2i(6, 6))
+	var orders: Array = screen.controller.world.commands()
+	var gave: Dictionary = orders[orders.size() - 1] if orders.size() > 0 else {}
+	var gait: Dictionary = orders[orders.size() - 2] if orders.size() > 1 else {}
+	var sent := screen.gait_menu == null and int(gait.get("kind", -1)) == HeistController.Kind.GAIT \
+		and int(gait.get("x", -1)) == 2 and int(gave.get("kind", -1)) == HeistController.Kind.MOVE_TO
 	screen.queue_free()
 	await tree.process_frame
 	WorldView.figure_maker = maker
+	check.call("holding the ground opens Crouch / Walk / Run at the finger, and the gait chosen is sent with the walk "
+			+ "to the held tile (12.18)", opened and sent, "%s %s %s %s" % [opened, sent, gait, gave])
 	check.call("landing in a realm, or crossing into the next, shows its name on a card for about two seconds, and a "
 			+ "heist of one island shows none (15.3, 5.4)", none and shown and HeistScreen.ENTRY_SECONDS <= 3.0,
 		"%s %s %s" % [none, shown, words])
