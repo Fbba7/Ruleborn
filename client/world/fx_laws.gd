@@ -24,7 +24,7 @@ const LOOK := {
 		"ground": "shadows", "hop": 2.6, "rate": 0.6, "float": 0.1},
 	"frictionless": {"shape": "glint", "motion": "glint", "count": 10, "colour": "#E6FCFF", "glow": true,
 		"ground": "ice", "hop": 0.2, "rate": 0.8, "lean": 0.12},
-	"inward_pull": {"shape": "streak", "motion": "spiral", "count": 22, "colour": "#F2B43C", "glow": true,
+	"inward_pull": {"shape": "dash", "motion": "spiral", "count": 16, "colour": "#F2B43C", "glow": false,
 		"ground": "spiral", "rate": 0.9},
 	"brittle_stone": {"shape": "crumb", "motion": "fall", "count": 18, "colour": "#8A7A6A", "glow": false,
 		"ground": "cracks", "hop": 0.4, "rate": 0.8},
@@ -42,8 +42,8 @@ const LOOK := {
 		"ground": "ripples"},
 	"haste": {"shape": "streak", "motion": "stream", "count": 26, "colour": "#FFFFFF", "glow": false,
 		"rate": 1.5, "hop": 1.2},
-	"glowing_dark": {"shape": "mote", "motion": "drift", "count": 30, "colour": "#9DF2B0", "glow": true,
-		"dark": 0.5, "rate": 0.85, "hop": 0.5},
+	"glowing_dark": {"shape": "mushroom", "motion": "pulse", "count": 34, "colour": "#9DF2B0", "glow": true,
+		"ground": "runes", "dark": 0.85, "rate": 0.85, "hop": 0.5},
 	"aurora": {"shape": "mote", "motion": "drift", "count": 14, "colour": "#9BF0D8", "glow": true,
 		"ground": "bands"},
 	"chain_lightning": {"shape": "spark", "motion": "spark", "count": 12, "colour": "#BFE8FF", "glow": true,
@@ -74,8 +74,6 @@ var _motes: Array[Dictionary] = []
 var _threads: MeshInstance3D
 var _clock := 0.0
 var _dark := 0.0
-var _sun_energy := -1.0
-var _ambient := -1.0
 
 
 ## Draw the laws `ids` over a realm of `grid` tiles. Laws with no look of
@@ -88,10 +86,6 @@ func build(ids: Array[String], grid: Vector2i, view: WorldView) -> void:
 	_threads = null
 	_grid = grid
 	_dark = 0.0
-	if _sun_energy >= 0.0 and view.sun != null:
-		view.sun.light_energy = _sun_energy
-		view.environment.ambient_light_energy = _ambient
-	_sun_energy = -1.0
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(grid) ^ ids.size()
 	for id in ids:
@@ -103,13 +97,14 @@ func build(ids: Array[String], grid: Vector2i, view: WorldView) -> void:
 		_add_motes(id, look, rng)
 		if look.has("ground"):
 			_add_ground(str(look["ground"]), Color(str(look["colour"])), rng)
-	if _dark > 0.0 and view.sun != null:
-		# Glowing dark: the sun and the sky's light dimmed, so what glows
-		# carries the realm (§21.7: "a black realm lit by glowing mushrooms").
-		_sun_energy = view.sun.light_energy
-		_ambient = view.environment.ambient_light_energy
-		view.sun.light_energy *= 1.0 - _dark * 0.7
-		view.environment.ambient_light_energy *= 1.0 - _dark * 0.5
+	# Glowing dark: the realm is lit as at night whatever the hour, so what
+	# glows carries it (§21.7: "a black realm lit by glowing mushrooms").
+	view.set_sky_hour(view.hour)
+
+
+## Whether a law woven here keeps the realm dark (Glowing dark).
+func dark() -> bool:
+	return _dark > 0.0
 
 
 ## How the laws running bend a figure's steps: `rate` of its steps, `hop`
@@ -144,6 +139,19 @@ func tick(delta: float, view: WorldView) -> void:
 		_move(m, _clock)
 	if _threads != null:
 		_link_crew(view)
+	# The ground's marks move as their laws do: aurora's bands sweep, the
+	# inward pull's spiral turns toward the Heart, rings and ripples breathe.
+	for c in get_children():
+		var n := c as Node3D
+		if n == null:
+			continue
+		match str(n.name):
+			"Ground_bands":
+				n.position = Vector3(sin(_clock * 0.17) * 1.5, 0, sin(_clock * 0.11) * 2.5)
+			"Ground_spiral":
+				n.rotation.y = -_clock * 0.12
+			"Ground_rings", "Ground_ripples":
+				n.scale = Vector3.ONE * (1.0 + 0.06 * sin(_clock * 1.3))
 
 
 func _add_motes(id: String, look: Dictionary, rng: RandomNumberGenerator) -> void:
@@ -158,17 +166,18 @@ func _add_motes(id: String, look: Dictionary, rng: RandomNumberGenerator) -> voi
 	var half := Vector2(_grid) * 0.5 + Vector2(1.5, 1.5)
 	var seeds: Array[Vector4] = []
 	for i in count:
+		# Each mote a little larger than life, to read at the heist's 12
+		# tiles across.
 		seeds.append(Vector4(rng.randf_range(-half.x, half.x), rng.randf_range(-half.y, half.y), rng.randf(),
-			rng.randf_range(0.6, 1.4)))
+			rng.randf_range(1.0, 2.0)))
 		mm.set_instance_color(i, Color(1, 1, 1, 1))
 	var mi := MultiMeshInstance3D.new()
 	mi.multimesh = mm
+	# Glowing motes light from within (the toon kit's glow from alpha), so
+	# they carry a dark realm; the rest are painted.
 	var mat := ShaderMaterial.new()
-	mat.shader = _toon if not glow else _clear
-	if glow:
-		mat.set_shader_parameter("opacity", 0.85)
-	else:
-		mat.set_shader_parameter("glow_from_alpha", 1.0)
+	mat.shader = _toon
+	mat.set_shader_parameter("glow_from_alpha", 1.0)
 	mi.material_override = mat
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mi.name = "Law_" + id
@@ -239,6 +248,9 @@ func _move(m: Dictionary, t: float) -> void:
 				pos.y = 0.15 + s.z * 0.4
 				spin = t * 9.0 + ph
 				sz *= 0.6 + on
+			"pulse":
+				pos.y = 0.0
+				sz *= 0.9 + 0.15 * sin(t * 1.4 + ph)
 			"sprout":
 				var g := 0.5 + 0.5 * sin(t * 0.5 + ph)
 				pos.y = 0.02
@@ -250,22 +262,24 @@ func _move(m: Dictionary, t: float) -> void:
 				alpha = 0.6 + 0.4 * sin(t * 2.0 + ph)
 		var turned := Basis(Vector3.UP, spin).scaled(Vector3.ONE * maxf(0.001, sz * (0.3 + 0.7 * alpha)))
 		mm.set_instance_transform(i, Transform3D(turned, pos))
-		mm.set_instance_color(i, Color(1, 1, 1, alpha if m["glow"] else 1.0))
+		mm.set_instance_color(i, Color(1, 1, 1, 1))
 
 
 ## The mote meshes: small, chunky, each a silhouette of its own.
 func _shape(shape: String, colour: Color, glow: bool) -> ArrayMesh:
 	var g := Geo.new()
-	var c := Color(colour, 0.6 if glow else 1.0)
+	var c := Color(colour, 0.5 if glow else 1.0)
 	match shape:
 		"rock":
-			g.prism(Geo.place(Vector3(0, -0.25, 0)), 6, 0.0, 0.28, 0.3, colour.darkened(0.15))
-			g.prism(Geo.place(Vector3(0, 0.05, 0)), 6, 0.3, 0.26, 0.07, Color("#7DBA5B"))
+			g.prism(Geo.place(Vector3(0, -0.18, 0)), 6, 0.0, 0.18, 0.22, colour.darkened(0.15))
+			g.prism(Geo.place(Vector3(0, 0.04, 0)), 6, 0.2, 0.17, 0.05, Color("#8FB86E"))
 		"glint":
 			for a: float in [0.0, PI / 2.0]:
 				g.box(Geo.place(Vector3.ZERO, a), Vector3(0.36, 0.05, 0.05), c)
 		"streak":
 			g.box(Geo.place(Vector3.ZERO), Vector3(1.2, 0.04, 0.06), c)
+		"dash":
+			g.box(Geo.place(Vector3.ZERO), Vector3(0.45, 0.03, 0.07), c)
 		"crumb", "spark":
 			g.box(Geo.place(Vector3.ZERO, 0.4), Vector3(0.1, 0.1, 0.1), c)
 		"hex":
@@ -273,20 +287,24 @@ func _shape(shape: String, colour: Color, glow: bool) -> ArrayMesh:
 		"drop":
 			g.ball(Geo.place(Vector3.ZERO, 0.0, Vector3(1.0, 1.4, 1.0)), 0.08, c, 3, 6)
 		"mote":
-			g.ball(Geo.place(Vector3.ZERO), 0.06, c, 2, 5)
+			g.ball(Geo.place(Vector3.ZERO), 0.08, c, 2, 5)
 		"flower":
 			for k in 5:
 				var a := TAU * k / 5.0
 				g.ball(Geo.place(Vector3(cos(a) * 0.08, 0.22, sin(a) * 0.08)), 0.06, c, 2, 5)
 			g.ball(Geo.place(Vector3(0, 0.22, 0)), 0.05, Color("#FFE27A"), 2, 5)
 			g.prism(Geo.place(Vector3.ZERO), 4, 0.02, 0.02, 0.2, Color("#4E9A44"))
+		"mushroom":
+			g.prism(Geo.place(Vector3.ZERO), 6, 0.035, 0.03, 0.14, Color("#EFE6D8"))
+			g.ball(Geo.place(Vector3(0, 0.15, 0), 0.0, Vector3(1.0, 0.55, 1.0)), 0.1, c, 3, 8)
 		"leaf":
 			g.box(Geo.place(Vector3.ZERO, 0.6), Vector3(0.16, 0.03, 0.08), c)
 		"thorn":
 			for k in 3:
 				var a := TAU * k / 3.0
-				g.prism(Transform3D(Basis(Vector3(cos(a), 0, sin(a)), 0.5), Vector3(cos(a) * 0.08, 0, sin(a) * 0.08)),
-					4, 0.05, 0.0, 0.32, colour)
+				g.prism(Transform3D(Basis(Vector3(cos(a), 0, sin(a)), 0.5), Vector3(cos(a) * 0.1, 0, sin(a) * 0.1)),
+					4, 0.07, 0.0, 0.42, colour)
+			g.ball(Geo.place(Vector3(0, 0.06, 0), 0.0, Vector3(1.4, 0.6, 1.4)), 0.12, colour.darkened(0.2), 3, 6)
 		"wisp":
 			g.ball(Geo.place(Vector3.ZERO, 0.0, Vector3(1.0, 1.6, 1.0)), 0.1, c, 3, 6)
 			g.ball(Geo.place(Vector3(0, -0.12, 0)), 0.05, c, 2, 5)
@@ -368,6 +386,13 @@ func _add_ground(kind: String, colour: Color, rng: RandomNumberGenerator) -> voi
 				for j in (1 if kind == "rings" else 3):
 					var r := r0 + j * 0.35
 					g.ring(Geo.place(c + Vector3(0, y, 0)), r, r + 0.05, colour, 40)
+		"runes":
+			for k in 5:
+				var c := Vector3(rng.randf_range(-half.x + 1, half.x - 1), y, rng.randf_range(-half.y + 1, half.y - 1))
+				g.ring(Geo.place(c), 0.5, 0.56, colour, 24)
+				for j in 6:
+					var a := TAU * j / 6.0 + k
+					_line(g, c + Vector3(cos(a), 0, sin(a)) * 0.2, c + Vector3(cos(a), 0, sin(a)) * 0.45, 0.025, colour)
 		"shadows":
 			for k in 10:
 				var c := Vector3(rng.randf_range(-half.x, half.x), y, rng.randf_range(-half.y, half.y))
@@ -381,7 +406,7 @@ func _add_ground(kind: String, colour: Color, rng: RandomNumberGenerator) -> voi
 			return
 	var mi := MeshInstance3D.new()
 	mi.mesh = g.mesh()
-	mi.material_override = WorldView.clear_material(0.45 if kind != "panes" else 0.16)
+	mi.material_override = WorldView.clear_material({"panes": 0.16, "bands": 0.3, "spiral": 0.35}.get(kind, 0.45))
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mi.name = "Ground_" + kind
 	add_child(mi)
