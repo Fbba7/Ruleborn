@@ -39,6 +39,7 @@ func run() -> void:
 	_sight_marks(view, replay)
 	view.queue_free()
 	await tree.process_frame
+	await _models(replay)
 
 
 func _hud(replay: RulebornReplay) -> void:
@@ -262,3 +263,35 @@ func _sight_marks(view: WorldView, replay: RulebornReplay) -> void:
 				want[i] = true
 	check.call("a crew member is marked as in sight exactly when it stands on a tile a guard on its feet sees, by the "
 			+ "simulation's own sight (21.12)", view.in_sight == want, "%s %s" % [view.in_sight, want])
+
+
+## A character model given by `figure_maker` takes each actor's figure and is
+## played the clip for what its actor is doing (the integrator's hook for T1).
+func _models(replay: RulebornReplay) -> void:
+	var model := GDScript.new()
+	model.source_code = "extends Node3D\nvar played: Array[String] = []\n\n\nfunc play(clip: String) -> void:\n" \
+		+ "\tplayed.append(clip)\n"
+	model.reload()
+	var made: Array[String] = []
+	WorldView.figure_maker = func(role: String, _height: float) -> Node3D:
+		made.append(role)
+		var n := Node3D.new()
+		n.set_script(model)
+		return n
+	var view := WorldView.new()
+	view.size = Vector2(540, 960)
+	tree.root.add_child(view)
+	view.show_replay(replay)
+	view.describe()
+	view._animate(float(replay.tick()))
+	var figure := view._crew[0].get_node("Rig/Figure")
+	var played: Array = figure.get("played")
+	var guard_figure := view._guards[0].get_node("Rig/Figure")
+	WorldView.figure_maker = Callable()
+	check.call("a character model, when the integrator gives one, takes each actor's figure and is played the clip "
+			+ "for what the simulation says it is doing (TD.9)",
+		made.size() == replay.crew().size() + replay.guards().size() and made.has("guard") and played.size() == 1
+			and str(played[0]) in ["idle", "walk", "run", "crouch", "ko"] and guard_figure.get_script() == model,
+		"%s %s" % [made, played])
+	view.queue_free()
+	await tree.process_frame

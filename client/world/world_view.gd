@@ -58,6 +58,12 @@ static var _clear: Shader = load("res://world/toon_clear.gdshader")
 static var _outline: Shader = load("res://world/outline.gdshader")
 static var _water: Shader = load("res://world/water.gdshader")
 static var _cache := {}
+## Makes an actor's figure, a character model, from its role ("guard" for a
+## guard) and its height: the integrator sets it to T1's `CreatureModel`. A
+## model with a `play(clip)` method is played "idle", "walk", "run", "crouch"
+## or "ko" by what the simulation says the actor is doing. Unset, the
+## stand-in figures of `ActorBuilder` are drawn.
+static var figure_maker: Callable = Callable()
 
 ## §21.4's realm type, which picks the palette; and whether this is a heist.
 var realm_type := "heart"
@@ -337,10 +343,17 @@ func _actor(role: String, height: float) -> Node3D:
 	var rig := Node3D.new()
 	rig.name = "Rig"
 	root.add_child(rig)
-	var figure := Node3D.new()
+	# A character model, when one is given (`figure_maker`), plays its own
+	# clips and stands on its own feet; else the stand-in figure.
+	var model: Node3D = figure_maker.call(role, height) if figure_maker.is_valid() else null
+	var figure := model if model != null else Node3D.new()
 	figure.name = "Figure"
-	figure.scale = Vector3.ONE * height
 	rig.add_child(figure)
+	if model != null:
+		root.set_meta("model", true)
+		feet.visible = false
+		return root
+	figure.scale = Vector3.ONE * height
 	var body := _instance(ActorBuilder.mesh(role), material(_toon, true))
 	body.name = "Body"
 	figure.add_child(body)
@@ -353,7 +366,6 @@ func _actor(role: String, height: float) -> Node3D:
 		foot.name = "FootL" if side < 0.0 else "FootR"
 		foot.position = Vector3(ActorBuilder.HIP.x * side, 0, ActorBuilder.HIP.z)
 		feet.add_child(foot)
-	root.set_meta("base", Vector3.ONE)
 	return root
 
 
@@ -719,6 +731,9 @@ func _bounce(node: Node3D, key: String, t: float) -> void:
 	if rig == null:
 		return
 	var feet := node.get_node_or_null("Feet") as Node3D
+	if node.get_meta("model", false):
+		_play_model(node, rig, key)
+		return
 	if node.get_meta("down", false):
 		rig.rotation = Vector3(-PI / 2.0, 0, 0)
 		rig.position = Vector3(0, 0.22, 0)
@@ -748,6 +763,21 @@ func _bounce(node: Node3D, key: String, t: float) -> void:
 		rig.scale = Vector3(1.0, 1.0 + 0.02 * sin(t * TAU * 0.4), 1.0)
 		rig.rotation = Vector3(0, 0, move["lean"] * 0.4)
 		_limbs(rig, feet, sin(t * TAU * 0.4) * 0.08, 0.0, move["float"])
+
+
+## A character model plays the clip for what its actor is doing; the rig
+## only lays it down when it is down.
+func _play_model(node: Node3D, rig: Node3D, key: String) -> void:
+	var down: bool = node.get_meta("down", false)
+	rig.rotation = Vector3.ZERO
+	rig.position = Vector3.ZERO
+	var moving := _from.has(key) and _to.has(key) and (_from[key] as Vector3).distance_to(_to[key]) > 0.001
+	var gait := str(node.get_meta("gait", "Walk"))
+	var clip: String = "ko" if down else ("idle" if not moving else {"Run": "run", "Crouch": "crouch"}.get(gait, "walk"))
+	var figure := rig.get_node_or_null("Figure")
+	if figure != null and figure.has_method("play") and node.get_meta("clip", "") != clip:
+		node.set_meta("clip", clip)
+		figure.call("play", clip)
 
 
 ## Arms swing against the steps and feet step out in turn: `phase` is the
