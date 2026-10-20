@@ -63,6 +63,7 @@ func _run() -> void:
 			_run()
 		return
 	_busy = true
+	await get_tree().process_frame
 	while not _jobs.is_empty():
 		var job: Array = _jobs.pop_front()
 		var kind: String = job[0]
@@ -73,9 +74,15 @@ func _run() -> void:
 		figure.rotation.y = -0.35
 		world.add_child(figure)
 		_frame(kind, figure)
-		render_target_update_mode = SubViewport.UPDATE_ONCE
-		await RenderingServer.frame_post_draw
-		var image := get_texture().get_image()
+		var image: Image = null
+		# The first draw after the viewport joins the tree can come back
+		# empty; one more try then.
+		for _attempt in 2:
+			render_target_update_mode = SubViewport.UPDATE_ONCE
+			await RenderingServer.frame_post_draw
+			image = get_texture().get_image()
+			if image != null and not image.is_empty() and image.get_used_rect().size.x > 0:
+				break
 		if image != null and not image.is_empty():
 			image.convert(Image.FORMAT_RGBA8)
 			(job[2] as ImageTexture).set_image(crop(image))

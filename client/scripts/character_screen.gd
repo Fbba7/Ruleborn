@@ -22,7 +22,9 @@ var body: VBoxContainer
 var status_label: Label
 ## The hero stage, its level badge, and the strip of forms beneath it.
 var stage: StageHero
-var forms: StageHero
+## The forms and guard form as portraits rendered from the model (§21.3):
+## four live models beside the hero would cost more than §21.3's budget.
+var forms: HBoxContainer
 var level_badge: PanelContainer
 var forms_names: PanelContainer
 var cards: VBoxContainer
@@ -60,8 +62,8 @@ func _build() -> void:
 	stage.custom_minimum_size = Vector2(0, UI.px(300))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(stage)
-	forms = StageHero.new()
-	forms.custom_minimum_size = Vector2(0, UI.px(120))
+	forms = HBoxContainer.new()
+	forms.add_theme_constant_override("separation", UI.px(6))
 	forms.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(forms)
 	var names := HBoxContainer.new()
@@ -162,7 +164,12 @@ func _stand(kind: String, c: Dictionary) -> void:
 		return
 	stage.set_meta("showing", kind)
 	stage.show_kinds([kind])
-	forms.show_kinds([kind, kind, kind, kind], LOOKS)
+	for n in forms.get_children():
+		n.queue_free()
+	for look: String in LOOKS:
+		var tile := StageHeroSkin.portrait_tile(kind, look, 96.0)
+		tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		forms.add_child(tile)
 	_badge(c)
 
 

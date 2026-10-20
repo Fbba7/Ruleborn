@@ -70,20 +70,28 @@ func _draw() -> void:
 	draw_texture_rect(_shade_texture, r, false)
 	var c := size * centre
 	var span := minf(size.x, size.y) * reach
-	# Rays: long thin wedges from the glow, turning once in two minutes.
+	# Rays: long thin wedges from the glow, turning once in two minutes; all
+	# of them one mesh, so one draw call (§21.3's budget).
 	var far := size.length()
+	var ray_pts := PackedVector2Array()
+	var ray_cols := PackedColorArray()
 	for k in RAYS:
 		var a := TAU * k / RAYS + time * TAU / 120.0
 		var w := 0.07 if k % 2 == 0 else 0.04
-		var pts := PackedVector2Array([c, c + Vector2.from_angle(a - w) * far, c + Vector2.from_angle(a + w) * far])
-		draw_colored_polygon(pts, Color(glow.lightened(0.4), 0.07 if k % 2 == 0 else 0.045))
+		var col := Color(glow.lightened(0.4), 0.07 if k % 2 == 0 else 0.045)
+		ray_pts.append_array([c, c + Vector2.from_angle(a - w) * far, c + Vector2.from_angle(a + w) * far])
+		ray_cols.append_array([col, col, col])
+	_draw_triangles(ray_pts, ray_cols)
 	draw_texture_rect(_glow_texture, Rect2(c - Vector2.ONE * span * 1.25, Vector2.ONE * span * 2.5), false)
 	if flash > 0.0:
 		var ring := span * (1.6 - flash)
 		draw_arc(c, ring, 0, TAU, 64, Color(Color.WHITE, 0.6 * flash), span * 0.08 * flash + 1.0)
 		draw_texture_rect(_glow_texture, Rect2(c - Vector2.ONE * span * 1.6, Vector2.ONE * span * 3.2), false,
 			Color(1, 1, 1, flash))
-	# Motes: small sparks rising slowly through the glow, each on its own beat.
+	# Motes: small sparks rising slowly through the glow, each on its own
+	# beat; all of them one mesh too.
+	var mote_pts := PackedVector2Array()
+	var mote_cols := PackedColorArray()
 	for k in MOTES:
 		var seed_x := fposmod(sin(k * 12.9898) * 43758.5453, 1.0)
 		var speed := 0.025 + 0.02 * fposmod(sin(k * 78.233) * 12345.678, 1.0)
@@ -92,5 +100,25 @@ func _draw() -> void:
 		var fade := sin(PI * (1.0 - y))
 		var p := Vector2(x * size.x, y * size.y)
 		var radius := (1.5 + 2.0 * fposmod(k * 0.618, 1.0)) * size.x / 360.0
-		draw_circle(p, radius * 2.2, Color(glow.lightened(0.5), 0.10 * fade))
-		draw_circle(p, radius, Color(Color.WHITE, 0.55 * fade))
+		_disc(mote_pts, mote_cols, p, radius * 2.2, Color(glow.lightened(0.5), 0.10 * fade))
+		_disc(mote_pts, mote_cols, p, radius, Color(Color.WHITE, 0.55 * fade))
+	_draw_triangles(mote_pts, mote_cols)
+
+
+## A small disc as a fan of triangles, added to a batch.
+static func _disc(pts: PackedVector2Array, cols: PackedColorArray, at: Vector2, radius: float, col: Color) -> void:
+	for k in 8:
+		pts.append_array([at, at + Vector2.from_angle(TAU * k / 8.0) * radius,
+			at + Vector2.from_angle(TAU * (k + 1) / 8.0) * radius])
+		cols.append_array([col, col, col])
+
+
+## Draws a batch of coloured triangles in one call.
+func _draw_triangles(pts: PackedVector2Array, cols: PackedColorArray) -> void:
+	if pts.is_empty():
+		return
+	var indices := PackedInt32Array()
+	indices.resize(pts.size())
+	for i in pts.size():
+		indices[i] = i
+	RenderingServer.canvas_item_add_triangle_array(get_canvas_item(), indices, pts, cols)

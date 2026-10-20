@@ -186,7 +186,15 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		var h := StageHeroFigure.height(kind)
 		var own_school := StageHeroFigure.school(kind)
 		if not shared:
-			table.add_child(StageHeroFigure.realm_ground(own_school, maxf(0.3, h * (0.55 if list.size() == 1 else 0.4))))
+			if list.size() == 1:
+				table.add_child(StageHeroFigure.realm_ground(own_school, maxf(0.3, h * 0.55)))
+			else:
+				# A row of figures shares §21.3's draw-call budget: each stands on
+				# the one-mesh patch, not the realm's three-piece island.
+				var patch := MeshInstance3D.new()
+				patch.mesh = StageHeroFigure.pedestal(own_school, maxf(0.3, h * 0.4))
+				patch.material_override = toon(rim, false, true)
+				table.add_child(patch)
 		var blob := StageHeroFigure.shadow_disc()
 		blob.scale = Vector3.ONE * h * 0.75
 		blob.position.y = 0.045
