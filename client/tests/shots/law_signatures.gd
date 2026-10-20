@@ -5,7 +5,7 @@ extends SceneTree
 ## woven, LawFx attached and moved to the heist's tick TICKS (default 150).
 ## LAWS (comma-separated) picks the laws, default the 24 at launch, and a
 ## cell may weave several, joined by "+" ("haste+static+aurora"); COLS the
-## sheet's columns; STEP ticks added cell by cell (a law repeated in LAWS
+## sheet's columns; HOUR the sky's hour (default noon); STEP ticks added cell by cell (a law repeated in LAWS
 ## then shows its motion over time); CELL the cell's width and height ("360x420"); ZOOM the view's zoom.
 
 func _initialize() -> void:
@@ -33,7 +33,7 @@ func _go() -> void:
 		var view := WorldView.new()
 		view.size = Vector2(cell)
 		root.add_child(view)
-		view.set_sky_hour(12)
+		view.set_sky_hour(int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 12)
 		view.show_replay(replay)
 		if OS.get_environment("ZOOM") != "":
 			view.set_zoom(int(OS.get_environment("ZOOM")))

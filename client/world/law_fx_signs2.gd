@@ -271,7 +271,7 @@ static func _thorns(fx: LawFx, sig: Node3D) -> void:
 ## Regrowth: "Moss creeps over everything." Moss spreads out over the ground
 ## and back, lumps of it swell on every wall, green motes of healing rise.
 static func _regrowth(fx: LawFx, sig: Node3D) -> void:
-	LawFxPaint.mark(fx, sig, LawFxPaint.ground(fx.site), 6, Color("#7CC456"), Color("#3E7A34"))
+	LawFxPaint.mark(fx, sig, LawFxPaint.ground(fx.site), 6, Color("#C8E85A"), Color("#2A5A26"))
 	var r := fx.site.rng("regrowth")
 	var moss := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	for t: Vector2i in fx.site.tiles(LawFxSite.WALLS):
