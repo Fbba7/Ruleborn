@@ -17,6 +17,8 @@ const SUB := 3
 ## How far a water bed lies below its tile, and the water under its banks.
 const BED := 0.24
 const WATER_DROP := 0.012
+## The most trail segments the ground shader draws (kit_ground.gdshader).
+const LANES := 48
 ## The island's own grass top, which the grid's edge meets.
 const ISLAND_Y := -0.02
 ## A tile's surfaces, as `surfaces()` gives them.
@@ -230,7 +232,9 @@ func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 	c = c.lightened(0.03 * lvl)
 	# A worn trail between doors: trodden earth through the grass.
 	var trail := trail_at(u, v)
-	c = c.lerp(dirt.lerp(soil, 0.35), smoothstep(0.35, 0.8, trail + (n2 - 0.5) * 0.3) * 0.8)
+	# (The shader draws the trail itself, crisp; the vertices only wear the
+	# grass round it a little.)
+	c = c.lerp(c.darkened(0.08).lerp(soil, 0.1), smoothstep(0.0, 0.6, trail))
 	var path := path_at(u, v)
 	# Worn earth round a path, before its cobbles start.
 	c = c.lerp(dirt.lerp(soil, 0.3), smoothstep(0.25, 0.5, path) * 0.5)
@@ -266,7 +270,7 @@ func trail_at(u: float, v: float) -> float:
 	var p := Vector2(u, v)
 	for seg: Array in trails:
 		best = minf(best, _segment(p, seg[0], seg[1]))
-	return clampf(1.0 - best / 0.36, 0.0, 1.0)
+	return clampf(1.0 - best / 0.6, 0.0, 1.0)
 
 
 ## Tile `t`'s flat top, SUB × SUB quads, its edge rounded where it falls away.

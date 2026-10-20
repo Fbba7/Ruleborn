@@ -65,6 +65,8 @@ var prop := Geo.new()
 var clear := Geo.new()
 var water := Geo.new()
 var lava := Geo.new()
+## The worn trails, kept for the ground shader (`instances`).
+var _lanes: Array = []
 
 
 func _init(r: RulebornReplay, colours: Dictionary) -> void:
@@ -151,6 +153,7 @@ func build() -> void:
 	if island_seed != 0:
 		kg.island = IslandBuilder.new(size, island_seed, palette)
 	kg.trails = _trails(footprints)
+	_lanes = kg.trails
 	for i in features.size():
 		if features[i] in WATER_TINT:
 			kg.tints[Vector2i(i % size.x, i / size.x)] = Color(WATER_TINT[features[i]])
@@ -309,6 +312,19 @@ func instances() -> Array[MeshInstance3D]:
 	ground_mat.set_shader_parameter("grid_offset", Vector2(0.5 * (size.x % 2), 0.5 * (size.y % 2)))
 	ground_mat.set_shader_parameter("cobble", KitGround.earth(palette).lightened(0.18))
 	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
+	# The trails, as world-space segments (xz of each end), for the shader to
+	# draw crisp.
+	var lanes := PackedVector4Array()
+	var half := Vector2(size) / 2.0
+	for seg: Array in _lanes.slice(0, KitGround.LANES):
+		var a: Vector2 = (seg[0] as Vector2) - half
+		var b: Vector2 = (seg[1] as Vector2) - half
+		lanes.append(Vector4(a.x, a.y, b.x, b.y))
+	ground_mat.set_shader_parameter("lane_count", lanes.size())
+	if lanes.size() > 0:
+		lanes.resize(KitGround.LANES)
+		ground_mat.set_shader_parameter("lanes", lanes)
+	ground_mat.set_shader_parameter("lane_earth", KitGround.earth(palette).lerp(palette["soil"], 0.2))
 	var water_mat := material("water")
 	water_mat.set_shader_parameter("bank", KitGround.earth(palette).lightened(0.2).lerp(palette["grass"], 0.2))
 	var lava_mat := material("water")
