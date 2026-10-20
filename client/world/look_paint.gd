@@ -87,11 +87,11 @@ static func _deco_image(kind: String) -> Image:
 				var rad := 2.0 + r.randf() * 2.0
 				_ellipse(img, Vector2(r.randf(), r.randf()) * n, Vector2(rad, rad), 0.0, cols[i % 3])
 		"lanternvale":
-			for i in 60:
+			for i in 36:
 				var c := Vector2(r.randf(), r.randf()) * n
-				for ring in 6:
-					var rad := 12.0 * (1.0 - ring / 6.0)
-					_ellipse(img, c, Vector2(rad, rad), 0.0, Color(0.78, 1.0, 0.6, 0.16))
+				for ring in 5:
+					var rad := 8.0 * (1.0 - ring / 5.0)
+					_ellipse(img, c, Vector2(rad, rad), 0.0, Color(0.78, 1.0, 0.6, 0.12))
 	img.generate_mipmaps()
 	return img
 

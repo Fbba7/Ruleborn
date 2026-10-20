@@ -234,6 +234,7 @@ func _scatter_part(part: Array) -> MultiMeshInstance3D:
 			"glow", "night glow":
 				var gm := ShaderMaterial.new()
 				gm.shader = _glow
+				gm.set_shader_parameter("strength", 0.42)
 				mi.material_override = gm
 				if tag == "night glow":
 					_night_glows.append(gm)

@@ -557,7 +557,7 @@ func signature() -> Array:
 				c.a = 0.45
 				cap_cols.append(c)
 			out.append([_mushroom_mesh(), _spin_all(caps, 0.8, 1.5), cap_cols, 0.0, 0.0])
-			out.append(_glows(56, [Color("#B4FF8C"), Color("#FFD27A"), Color("#7AD8C8")], 0.5, 1.2))
+			out.append(_glows(22, [Color("#B4FF8C"), Color("#FFD27A"), Color("#7AD8C8")], 0.45, 0.9))
 		"heart", "verdant", "emberreach":
 			if kind == "verdant":
 				var wings: Array[Transform3D] = []
@@ -567,7 +567,7 @@ func signature() -> Array:
 				var hues: Array[Color] = [Color("#FFE07A"), Color("#F7A6DA"), Color("#FFFFFF"), Color("#9ADFE8")]
 				out.append([_bird_mesh(), wings, _pick(wings.size(), hues), 0.0, 0.0, "butterfly"])
 			if kind == "emberreach":
-				out.append(_glows(26, [Color("#FF6A1C"), Color("#FF9A3C")], 0.6, 1.4))
+				out.append(_glows(12, [Color("#FF6A1C"), Color("#FF9A3C")], 0.5, 1.0))
 			var motes := _meadow_spots(60 if kind != "emberreach" else 50, -10.0)
 			var at: Array[Transform3D] = []
 			for p in motes:
