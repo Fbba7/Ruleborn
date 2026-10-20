@@ -1,16 +1,25 @@
 class_name MapScreen
 extends Control
-## The Universe map (§23.2, "Home. See every realm and link at once."), in
-## words until the world draws it (TD.19): each realm with its laws and the
-## crown's, the strain band and open faults, resources and what each
-## producer has ready, the alerts, and the way to a heist.
+## The Universe map (§23.2, "Home. See every realm and link at once."): the
+## universe in 3D — every realm and its buildings, the links between them,
+## the faults, what is ready and the alerts as pins (`UniverseView`) — and
+## under it the same in words, which a screen reader reads and the player can
+## scroll: each realm with its laws and the crown's, the strain band and open
+## faults, resources and what each producer has ready, the alerts, and the
+## way to a heist. A tap on a realm in the world brings its words into view.
 
-const SLICES := [WeavingState.WEAVING, RosterState.ROSTER, ShopState.WALLET, DefencesState.DEFENCES]
+const SLICES := [WeavingState.WEAVING, RosterState.ROSTER, ShopState.WALLET, DefencesState.DEFENCES,
+	UniverseState.UNIVERSE]
 
 var controller: MapController
 var body: VBoxContainer
 var header_label: Label
 var status_label: Label
+## The universe behind the words.
+var world: UniverseView
+
+var _top: Control
+var _sheet: Control
 
 
 func _ready() -> void:
@@ -20,6 +29,8 @@ func _ready() -> void:
 	App.services.store.changed.connect(_on_changed)
 	_refresh()
 	await controller.load_all()
+	if is_inside_tree():
+		await App.services.universe_flow.load_universe()
 
 
 func _on_changed(slice: StringName) -> void:
@@ -29,15 +40,30 @@ func _on_changed(slice: StringName) -> void:
 
 func _build() -> void:
 	var column := UI.frame(self)
-	column.add_child(UI.title(Strings.t("MAP_TITLE")))
+	world = UniverseView.behind(self, column)
+	world.realm_chosen.connect(_show_realm)
+	# The title, the header and the status on one plate at the top.
+	var words := VBoxContainer.new()
+	words.add_child(UI.title(Strings.t("MAP_TITLE")))
 	header_label = UI.label("", UI.TEXT_POINTS, true)
-	column.add_child(UI.plate(header_label))
+	words.add_child(header_label)
 	status_label = UI.status("info", "")
-	column.add_child(UI.plate(status_label))
+	words.add_child(status_label)
+	var top := UI.plate(words)
+	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(top)
+	_top = top
+	var room := UI.grow()
+	room.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(room)
 	body = UI.scroll(column)
+	# The words take the lower part of the screen; the world, the rest.
+	_sheet = body.get_parent() as Control
+	_sheet.size_flags_stretch_ratio = 1.0
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
 	column.add_child(UI.narrow(actions))
+	column.sort_children.connect(func() -> void: world.fit_between(_top, _sheet))
 
 
 func _refresh() -> void:
@@ -46,7 +72,9 @@ func _refresh() -> void:
 	var store := App.services.store
 	var m := MapPresenter.screen(store.get_slice(WeavingState.WEAVING), store.get_slice(RosterState.ROSTER),
 		store.get_slice(ShopState.WALLET), store.get_slice(DefencesState.DEFENCES))
+	_draw_world()
 	UI.set_status(status_label, "info", "" if m["ready"] else Strings.t("COMMON_LOADING"))
+	status_label.visible = status_label.text != ""
 	header_label.text = m.get("strain", "")
 	for child in body.get_children():
 		body.remove_child(child)
@@ -72,3 +100,20 @@ func _refresh() -> void:
 	body.add_child(UI.plate(held))
 	body.add_child(UI.plate(RosterScreen.offer(m["heist"], false, func() -> void:
 		App.services.router.go(&"observatory"))))
+
+
+## The universe in 3D, as the store holds it, and said in words.
+func _draw_world() -> void:
+	var store := App.services.store
+	var view := UniverseStore.view(store)
+	world.show_universe(view, UniverseStore.extras(store))
+	world.accessibility_name = Strings.t("MAP_TITLE")
+	world.accessibility_description = UniverseStore.spoken(view)
+
+
+## A realm tapped in the world: its words scrolled into view.
+func _show_realm(id: String) -> void:
+	for l: Label in body.find_children("*", "Label", true, false):
+		if str(l.get_meta("realm", "")) == id:
+			(_sheet as ScrollContainer).ensure_control_visible(l)
+			return
