@@ -9,6 +9,7 @@ shader_type spatial;
 render_mode diffuse_toon, specular_disabled;
 
 #include "res://world/toon_light.gdshaderinc"
+#include "res://world/look_brush.gdshaderinc"
 
 uniform sampler2D paint : source_color, filter_linear_mipmap, repeat_enable;
 uniform float paint_strength = 1.0;
@@ -21,6 +22,13 @@ uniform sampler2D deco : source_color, filter_linear_mipmap, repeat_enable;
 uniform float deco_scale = 0.0;
 uniform float deco_glow = 0.0;
 uniform float deco_strength = 1.0;
+// The meadow next to the grid: over `grid_blend` metres from the grid's edge
+// (UV.x is the distance) the painted texture and the marks fade, leaving the
+// colour and the brush the grid's ground has, so the two meet as one meadow.
+// 0 leaves the texture everywhere.
+uniform float grid_blend = 0.0;
+// The shared brush (look_brush.gdshaderinc), 0 to 1.
+uniform float brush = 0.0;
 uniform float sway = 0.0;
 // Sway by the distance along a vine (its UV.y) rather than by height.
 uniform bool sway_by_uv = false;
@@ -30,12 +38,15 @@ uniform float drift = 0.0;
 // again from the ground, shrinking away at the top (sparks, motes).
 uniform float rise = 0.0;
 uniform float rise_period = 6.0;
+// How much of a piece shows: 0 hides it (the night's fireflies by day).
+uniform float appear = 1.0;
 uniform float glow_from_alpha = 1.0;
 
 varying vec3 world_pos;
 varying vec3 world_normal;
 
 void vertex() {
+	VERTEX *= appear;
 	if (sway > 0.0) {
 		vec3 root = (MODEL_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
 		float phase = root.x * 1.7 + root.z * 1.3 + float(INSTANCE_ID) * 0.37 + (sway_by_uv ? (VERTEX.x + VERTEX.z) * 0.8 : 0.0);
@@ -67,14 +78,18 @@ void fragment() {
 	}
 	float p = texture(paint, uv).r;
 	// The grey texture averages about 0.8: lift it so the vertex colour reads true.
-	float m = mix(1.0, p * 1.25, paint_strength);
+	float near = grid_blend > 0.0 ? 1.0 - smoothstep(0.0, grid_blend, UV.x) : 0.0;
+	float m = mix(1.0, p * 1.25, paint_strength * (1.0 - near));
 	vec3 albedo = COLOR.rgb * tint.rgb * m;
 	vec3 lit = vec3(0.0);
 	if (deco_scale > 0.0 && world_normal.y > 0.6) {
 		vec4 d = texture(deco, world_pos.xz / deco_scale);
-		d.a *= deco_strength;
+		d.a *= deco_strength * (1.0 - near);
 		albedo = mix(albedo, d.rgb, d.a * (1.0 - deco_glow));
 		lit = d.rgb * d.a * deco_glow;
+	}
+	if (brush > 0.0) {
+		albedo = look_brush(albedo, world_pos.xz, brush * step(0.6, world_normal.y));
 	}
 	ALBEDO = saturated(albedo);
 	EMISSION = COLOR.rgb * (1.0 - COLOR.a) * glow_from_alpha + lit;

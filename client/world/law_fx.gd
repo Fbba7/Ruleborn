@@ -54,6 +54,9 @@ var links: Node3D
 var paradox := ""
 ## The heist's seconds at the last sync.
 var seconds := 0.0
+## The replay it follows by itself, frame by frame, once attached; null in a
+## preview, which its owner moves.
+var source: RulebornReplay
 
 var _clocked: Array[ShaderMaterial] = []
 var _hooks: Array[Callable] = []
@@ -61,6 +64,8 @@ var _watchers: Array[Callable] = []
 var _followers: Array[Dictionary] = []
 var _tint: MeshInstance3D
 var _light := {}
+var _tick := -1
+var _since := 0.0
 
 
 ## Every woven law of `replay`'s realm drawn over `v`'s world: under T5's
@@ -74,7 +79,9 @@ static func attach(v: WorldView, replay: RulebornReplay) -> LawFx:
 	var hook: Variant = v.get("effects")
 	var parent: Node3D = hook if hook is Node3D else v.world
 	parent.add_child(fx)
+	fx.source = replay
 	fx.build(LawFxSite.from_replay(replay))
+	fx.sync_world(replay)
 	return fx
 
 
@@ -99,7 +106,9 @@ func build(s: LawFxSite) -> void:
 	crowns = Node3D.new()
 	crowns.name = "Crowns"
 	add_child(crowns)
+	var pools: Array = []
 	for p: Dictionary in site.pylons:
+		pools.append(p)
 		var law: String = p["law"]
 		if not signatures.has(law):
 			var sig := Node3D.new()
@@ -108,12 +117,23 @@ func build(s: LawFxSite) -> void:
 			signatures[law] = sig
 			LawFxSigns.build(self, sig, law)
 		var mat := solid_material(4, 0.6)
-		mat.set_shader_parameter("pulse", 0.6)
+		mat.set_shader_parameter("glow", 0.8)
+		mat.set_shader_parameter("pulse", 0.4)
 		var cap := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 		var top: Vector3 = p["at"] + Vector3(0, LawFxCrown.HEIGHT, 0)
-		cap.solid(LawFxCrown.mesh(str(p["school"])), Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 1.5), top), top,
-			RealmKit.jitter(p["tile"], 9))
+		var grown := Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * 1.5), top)
+		cap.solid(LawFxCrown.mesh(str(p["school"])), grown, top, RealmKit.jitter(p["tile"], 9))
 		layer(crowns, cap, mat, true)
+	# A pool of its school's colour under each pylon, so a signature reads as
+	# its pylon's.
+	var under := LawFxBatch.new(LawFxBatch.Kind.DECALS)
+	for p: Dictionary in pools:
+		var c: Vector3 = p["at"]
+		under.decal(c + Vector3(0, 0.03, 0), Vector2(1.1, 1.1), 1.0, Vector4(c.x, c.z, 0.0, 1.1), 0.0,
+			LawFxCrown.colours(str(p["school"]))[0])
+	if under.triangles > 0:
+		layer(crowns, under, decal_material(8, Color.WHITE))
+	_share_ground()
 	links = Node3D.new()
 	links.name = "Links"
 	add_child(links)
@@ -121,6 +141,21 @@ func build(s: LawFxSite) -> void:
 	if paradox != "":
 		LawFxLinks.paradox(self, paradox)
 	sync(seconds * TPS)
+
+
+## Ground marks laid over the whole realm by several laws at once share
+## it: each is drawn fainter, so the ground under them still reads (§21.10's
+## grayscale test) and the guard's sight on it stays plain.
+func _share_ground() -> void:
+	var marks: Array[MeshInstance3D] = []
+	for sig: Node3D in signatures.values():
+		for mi: MeshInstance3D in sig.find_children("*", "MeshInstance3D", true, false):
+			if mi.get_meta("ground", false):
+				marks.append(mi)
+	var share := 1.0 if marks.size() < 2 else (0.72 if marks.size() == 2 else 0.55)
+	for mi: MeshInstance3D in marks:
+		mi.set_meta("strength", share)
+		(mi.material_override as ShaderMaterial).set_shader_parameter("strength", share)
 
 
 ## A law's signature on its own (the law card's and Weaving's preview).
@@ -160,7 +195,7 @@ func sync_world(replay: RulebornReplay) -> void:
 		for mi: MeshInstance3D in (signatures[law] as Node3D).find_children("*", "MeshInstance3D", true, false):
 			var m := mi.material_override as ShaderMaterial
 			while m != null:
-				m.set_shader_parameter("strength", 1.0 if on else 0.0)
+				m.set_shader_parameter("strength", float(mi.get_meta("strength", 1.0)) if on else 0.0)
 				m = m.next_pass as ShaderMaterial
 	var crew: Array = []
 	for c: Dictionary in replay.crew():
@@ -276,7 +311,7 @@ func glass_material(edge: Color, motion := 0, amount := 1.0, fill := 0.12) -> Sh
 ## A screen-space tint (§21.3): one quad just before the camera, darkening
 ## the screen's edges toward `colour` by `edge` and washing all of it by
 ## `wash`. Nothing of the world is re-rendered for it.
-func thread_material(width := 0.045) -> ShaderMaterial:
+func thread_material(width := 0.09) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = _shader("thread")
 	m.set_shader_parameter("width", width)
@@ -330,6 +365,22 @@ func _restore_light() -> void:
 
 func _exit_tree() -> void:
 	_restore_light()
+
+
+## Attached to a heist, it keeps itself in step with the replay: between
+## ticks it draws on from the last one, as the world view moves its actors,
+## and on each new tick it reads the pylons and the characters again.
+func _process(delta: float) -> void:
+	if source == null or site == null:
+		return
+	var tick := source.tick()
+	if tick != _tick:
+		_tick = tick
+		_since = 0.0
+		sync_world(source)
+	else:
+		_since += delta
+	sync(tick + clampf(_since * TPS, 0.0, 1.0))
 
 
 ## Haste quickens every signature's clock and Stillness all but stops it

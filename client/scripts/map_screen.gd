@@ -41,6 +41,7 @@ func _on_changed(slice: StringName) -> void:
 func _build() -> void:
 	var column := UI.frame(self)
 	world = UniverseView.behind(self, column)
+	world.next_chosen.connect(func() -> void: App.services.router.go(&"universe"))
 	world.realm_chosen.connect(_show_realm)
 	# The title, the header and the status on one plate at the top.
 	var words := VBoxContainer.new()
@@ -59,7 +60,7 @@ func _build() -> void:
 	body = UI.scroll(column)
 	# The words take the lower part of the screen; the world, the rest.
 	_sheet = body.get_parent() as Control
-	_sheet.size_flags_stretch_ratio = 1.0
+	_sheet.size_flags_stretch_ratio = 0.5
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
 	column.add_child(UI.narrow(actions))

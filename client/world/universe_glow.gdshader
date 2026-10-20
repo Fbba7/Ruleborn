@@ -46,4 +46,7 @@ void fragment() {
 	float spark = smoothstep(0.32, 0.0, d) * core;
 	float a = (halo * (1.0 - core * 0.5) + spark) * COLOR.a * pulse * strength;
 	ALBEDO = linear(COLOR.rgb) * a;
+	// Written, so the light is drawn after every solid and the galaxy, as
+	// light should be; added, so its own strength is in ALBEDO.
+	ALPHA = 1.0;
 }

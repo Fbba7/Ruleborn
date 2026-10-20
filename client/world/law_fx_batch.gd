@@ -40,15 +40,15 @@ func mote(at: Vector3, velocity: Vector3, period: float, phase: float, radius: f
 
 ## A flat mark of `extent` (half-width, half-depth) lying at `at`, turned by
 ## `yaw`; `weight` is how strongly it shows, `local` what its pattern reads
-## (a centre's x and z, a phase, a free value).
-func decal(at: Vector3, extent: Vector2, weight: float, local := Vector4.ZERO, yaw := 0.0) -> void:
+## (a centre's x and z, a phase, a free value); `tint` colours the pattern.
+func decal(at: Vector3, extent: Vector2, weight: float, local := Vector4.ZERO, yaw := 0.0, tint := Color.WHITE) -> void:
 	var b := Basis(Vector3.UP, yaw)
 	var pts: Array[Vector3] = []
 	for c: Vector2 in CORNERS:
 		pts.append(at + b * Vector3(c.x * extent.x, 0, c.y * extent.y))
 	for k in pts.size():
 		var p: Vector3 = pts[k]
-		st.set_color(Color(1, 1, 1, weight))
+		st.set_color(Color(tint, weight))
 		st.set_uv(Vector2(p.x, p.z))
 		st.set_normal(Vector3.UP)
 		st.set_custom(0, Color(local.x, local.y, local.z, local.w))

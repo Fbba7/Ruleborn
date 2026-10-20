@@ -1,7 +1,7 @@
 extends SceneTree
 ## Hatch (tools/render/shoot.sh): HatchTests' Nursery with its egg; with
 ## BORN set, the birth arrives and the still is taken T seconds into the
-## reveal (default 0.35). SCROLL scrolls.
+## reveal (default 0.6). SCROLL scrolls.
 func _initialize() -> void:
 	_go()
 
@@ -18,7 +18,7 @@ func _go() -> void:
 	for i in 10:
 		await process_frame
 	screen.stage.moving = false
-	var t := float(OS.get_environment("T")) if OS.get_environment("T") != "" else 0.35
+	var t := float(OS.get_environment("T")) if OS.get_environment("T") != "" else 0.6
 	if OS.get_environment("BORN") != "":
 		App.services.store.dispatch(&"roster_changed", {"home": HatchTests.born(),
 			"what": {"do": "birth", "born": 9, "first": true, "outfit": "hatch-outfit"}})

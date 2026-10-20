@@ -34,6 +34,12 @@ var _open := false
 var _vault_full := -1
 var _laws_key := ""
 var _red := false
+## Seconds left of the bells' shake after the alarm rose.
+var _ring := 0.0
+var _time := 0.0
+## Coins on their way to the loot panel: {from: Vector2 (global), t: float}.
+var _flights: Array[Dictionary] = []
+var _coins: FxDraw
 
 
 func _init() -> void:
@@ -137,6 +143,8 @@ func show_state(r: RulebornReplay) -> void:
 			# Paper on §21.8's alarm fill: the one red that carries words.
 			box.bg_color = FxSkin.ALARM_DEEP
 		clock_panel.add_theme_stylebox_override("panel", box)
+	if r.alarm() > _alarm and r.tick() > 0:
+		_ring = 1.0
 	_alarm = r.alarm()
 	alarm_label.text = Strings.t("HUD_ALARM", "%d / %d" % [_alarm, BELLS])
 	_wrap_by_words(alarm_label)
@@ -192,11 +200,60 @@ func _show_laws(r: RulebornReplay) -> void:
 	(laws_box.get_parent() as Control).visible = not laws.is_empty()
 
 
+## §21.8: "rewards fly into their counter": coins from a point on the screen
+## (where a crew member grabbed loot) into the loot panel.
+func fly_coins(from: Vector2, count: int) -> void:
+	if Settings.reduced_motion:
+		return
+	for k in clampi(count, 1, 6):
+		_flights.append({"from": from + Vector2(k * 9.0 - 20.0, -k * 6.0), "t": -k * 0.08})
+
+
+func _process(delta: float) -> void:
+	_time += delta
+	_ring = maxf(0.0, _ring - delta)
+	if _ring > 0.0:
+		meter.queue_redraw()
+	if _red and not Settings.reduced_motion:
+		# The last 30 seconds pulse once a second (within §20.8's three
+		# flashes a second).
+		clock_panel.pivot_offset = clock_panel.size / 2.0
+		clock_panel.scale = Vector2.ONE * (1.0 + 0.05 * maxf(0.0, sin(_time * TAU)))
+	elif clock_panel.scale != Vector2.ONE:
+		clock_panel.scale = Vector2.ONE
+	if not _flights.is_empty():
+		for f in _flights:
+			f["t"] = float(f["t"]) + delta * 1.6
+		_flights = _flights.filter(func(f: Dictionary) -> bool: return float(f["t"]) < 1.0)
+		if _coins == null:
+			_coins = FxDraw.new(_draw_flights)
+			_coins.top_level = true
+			_coins.z_index = 10
+			add_child(_coins)
+		_coins.position = Vector2.ZERO
+		_coins.size = get_viewport_rect().size
+		_coins.queue_redraw()
+
+
+func _draw_flights(ci: Control) -> void:
+	var to := loot_bars.get_global_rect().position + Vector2(UI.px(8), UI.px(4))
+	for f in _flights:
+		var t := float(f["t"])
+		if t < 0.0:
+			continue
+		var from: Vector2 = f["from"]
+		var e := 1.0 - pow(1.0 - t, 3.0)
+		var p := from.lerp(to, e) + Vector2(0, -sin(t * PI) * 120.0)
+		FxIcons.coin(ci, p, UI.px(6) * (1.0 - 0.3 * t))
+
+
 func _draw_meter(ci: Control) -> void:
 	var s := ci.size.y
 	var step := ci.size.x / BELLS
 	for i in BELLS:
 		var c := Vector2(step * (i + 0.5), s * 0.5)
+		if _ring > 0.0 and i < _alarm and not Settings.reduced_motion:
+			c.x += sin(_time * 40.0 + i) * s * 0.12 * _ring
 		var fill := FxSkin.ALARM if i >= 3 else FxSkin.GOLD
 		FxIcons.bell(ci, c, s * 0.9, fill, i < _alarm)
 

@@ -66,7 +66,7 @@ func _shoot() -> void:
 	var pitch := deg_to_rad(float(OS.get_environment("PITCH")) if OS.get_environment("PITCH") != "" else 35.0)
 	var aim := Vector3(0, 1.6, -0.8)
 	cam.look_at_from_position(Vector3(0, sin(pitch), cos(pitch)) * 40.0 + aim, aim)
-	for i in 4:
+	for i in (int(OS.get_environment("FRAMES")) if OS.get_environment("FRAMES") != "" else 4):
 		await process_frame
 	vp.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("saved")
