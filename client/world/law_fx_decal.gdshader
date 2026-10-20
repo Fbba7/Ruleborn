@@ -104,9 +104,11 @@ void fragment() {
 		// Brittle stone: hairline cracks everywhere.
 		float e = cells(p * 1.6 + local.z * 3.0);
 		float fine = cells(p * 4.1 + 5.0);
-		float crack = smoothstep(0.06, 0.0, e) + smoothstep(0.035, 0.0, fine) * 0.6;
-		c = colour_b.rgb;
-		a = crack * 0.85;
+		// A dark crack in a pale lip, so it reads on light and dark ground.
+		float core = smoothstep(0.035, 0.0, e) + smoothstep(0.02, 0.0, fine) * 0.6;
+		float lip = smoothstep(0.08, 0.04, e) + smoothstep(0.045, 0.025, fine) * 0.5;
+		c = mix(colour_a.rgb, colour_b.rgb, clamp(core, 0.0, 1.0));
+		a = clamp(max(core, lip * 0.7), 0.0, 1.0) * 0.9;
 	} else if (pattern == 3) {
 		// Inward pull: faint spiral streaks drawn in toward the Heart.
 		vec2 d = p - focus;
@@ -174,8 +176,13 @@ void fragment() {
 		float e = cells(p * 1.2 + vec2(hash(vec2(step_t, 1.0)), hash(vec2(step_t, 2.0))) * 7.0);
 		float on = step(0.6, hash(floor(p * 0.8) + step_t));
 		c = colour_a.rgb;
-		a = smoothstep(0.06, 0.0, e) * on;
-		c = mix(colour_a.rgb, vec3(1.0), smoothstep(0.02, 0.0, e));
+		// A white-hot line in its colour, edged in ink, so it reads on any
+		// ground.
+		float hot = smoothstep(0.03, 0.0, e);
+		float glow = smoothstep(0.06, 0.02, e);
+		float ink = smoothstep(0.09, 0.06, e) - glow;
+		c = mix(mix(vec3(0.1, 0.05, 0.08), colour_a.rgb, glow), vec3(1.0), hot);
+		a = clamp(glow + ink * 0.6, 0.0, 1.0) * on;
 	} else if (pattern == 11) {
 		// Glass: a clear floor of facets with coloured edges.
 		float e = cells(p * 0.9);

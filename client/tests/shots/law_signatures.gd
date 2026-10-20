@@ -4,9 +4,11 @@ extends SceneTree
 ## a stream, a lantern, a static stone, two guards and a ward — with one law
 ## woven, LawFx attached and moved to the heist's tick TICKS (default 150).
 ## LAWS (comma-separated) picks the laws, default the 24 at launch, and a
-## cell may weave several, joined by "+" ("haste+static+aurora"); COLS the
-## sheet's columns; HOUR the sky's hour (default noon); STEP ticks added cell by cell (a law repeated in LAWS
-## then shows its motion over time); CELL the cell's width and height ("360x420"); ZOOM the view's zoom.
+## cell may weave several, joined by "+" ("haste+static+aurora"). COLS is
+## the sheet's columns; CELL a cell's width and height ("360x420"); ZOOM the
+## view's zoom; HOUR the sky's hour (default noon); REALM the realm's type
+## (§21.4's palette); STEP ticks added cell by cell (a law repeated in LAWS
+## then shows its motion over time).
 
 func _initialize() -> void:
 	_go()
@@ -32,6 +34,8 @@ func _go() -> void:
 		replay.start("11", 4500, 3, island(law.split("+")))
 		var view := WorldView.new()
 		view.size = Vector2(cell)
+		if OS.get_environment("REALM") != "":
+			view.realm_type = OS.get_environment("REALM")
 		root.add_child(view)
 		view.set_sky_hour(int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 12)
 		view.show_replay(replay)

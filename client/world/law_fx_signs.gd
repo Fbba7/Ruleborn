@@ -176,7 +176,7 @@ static func _inward_pull(fx: LawFx, sig: Node3D) -> void:
 
 ## Brittle stone: "Hairline cracks everywhere; crumbs fall from walls."
 static func _brittle_stone(fx: LawFx, sig: Node3D) -> void:
-	LawFxPaint.mark(fx, sig, LawFxPaint.ground(fx.site), 2, Color("#FFFFFF"), Color("#3A2A3A"))
+	LawFxPaint.mark(fx, sig, LawFxPaint.ground(fx.site), 2, Color("#F4ECDC"), Color("#2A1A24"))
 	var r := fx.site.rng("brittle_stone")
 	var crumbs := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	for t: Vector2i in fx.site.tiles(LawFxSite.WALLS):
