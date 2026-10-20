@@ -186,11 +186,14 @@ func build(t: Vector2i, f: int) -> void:
 		RealmKit.F.WATERFALL:
 			_waterfall(t, c, rock)
 		RealmKit.F.RAPIDS:
-			for k in 3:
-				kit.water.uv = Vector2(0.0, 0.0)
-				kit.water.box(Geo.place(c + Vector3((k - 1) * 0.28, -KitGround.WATER_DROP + 0.012, (k - 1) * 0.2),
-					kit.yaw(t) + 0.3 * k), Vector3(0.34, 0.01, 0.05), Color.WHITE)
-				prop.rock(Geo.place(c + Vector3((RealmKit.jitter(t, k) - 0.5) * 0.7, -0.1, (k - 1) * 0.3)), 0.08, rock, k)
+			# White water breaking round rocks.
+			for k in 4:
+				var p := c + Vector3((RealmKit.jitter(t, k) - 0.5) * 0.7, -KitGround.WATER_DROP, (k - 1.5) * 0.22)
+				prop.rock(Geo.place(p + Vector3(0, 0.02, 0)), 0.07 + 0.03 * RealmKit.jitter(t, k + 5), rock, k)
+				prop.moving(Geo.Anim.BOB, p + Vector3(k, 0, 0))
+				prop.ball(Geo.place(p + Vector3(0.08, 0.0, 0.03), 0.0, Vector3(1.6, 0.25, 1.0)), 0.07, Color("#F4FBFF"),
+					2, 7)
+				prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 		RealmKit.F.POND:
 			for k in 5:
 				var a := TAU * k / 5.0 + 0.4
@@ -666,12 +669,24 @@ func _ramp(t: Vector2i, c: Vector3) -> void:
 ## from the foot to the lip.
 func _vines(t: Vector2i, c: Vector3, plant: Color) -> void:
 	var up := _toward(t, 1)
-	var back := Vector3(0, 0, -0.5).rotated(Vector3.UP, up)
+	var cliff := false
+	for d: Vector2i in [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]:
+		cliff = cliff or kit.height(t + d) > kit.height(t) + 0.1
+	if not cliff:
+		# No cliff beside it: a trellis for the vines to climb.
+		var side0 := Vector3.RIGHT.rotated(Vector3.UP, up)
+		for s2: float in [-1.0, 1.0]:
+			kit.hero.box(Geo.place(c + side0 * s2 * 0.38 + Vector3(0, 0.45, -0.3).rotated(Vector3.UP, up), up),
+				Vector3(0.06, 0.9, 0.06), KitStyle.WOOD.lightened(0.15))
+		for y: float in [0.3, 0.6, 0.88]:
+			kit.prop.box(Geo.place(c + Vector3(0, y, -0.3).rotated(Vector3.UP, up), up), Vector3(0.8, 0.03, 0.03),
+				KitStyle.WOOD.lightened(0.2))
+	var back := Vector3(0, 0, -0.5 if cliff else -0.36).rotated(Vector3.UP, up)
 	var side := back.cross(Vector3.UP).normalized()
-	var tall := maxf(IslandBuilder.LEVEL, 0.5)
+	var tall := maxf(IslandBuilder.LEVEL, 0.5) if cliff else 0.85
 	kit.prop.moving(Geo.Anim.SWAY, c)
 	for k in 5:
-		var p := c + back * 0.92 + side * (-0.36 + 0.18 * k)
+		var p := c + back * (0.92 if cliff else 1.0) + side * (-0.36 + 0.18 * k)
 		var reach := tall * (0.7 + 0.35 * RealmKit.jitter(t, k + 20))
 		kit.prop.prism(Geo.place(p), 4, 0.02, 0.014, reach, plant.darkened(0.35))
 		for m in 4:
