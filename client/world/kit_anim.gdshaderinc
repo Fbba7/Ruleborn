@@ -2,7 +2,9 @@
 // pivot in xyz and a kind in w. One merged mesh carries every piece's
 // motion, so a realm's trees, wheels and flags move with no node per piece.
 // Kinds are Geo.Anim's: 1 sway, 2 spin about Y, 3 about X, 4 about Z, 5 bob,
-// 6 flag, 7 swing (a bell), 8 shiver (grass and reeds).
+// 6 flag, 7 swing (a bell), 8 shiver (grass and reeds), 9 rise and 10 fall
+// (a loop of half a metre over two seconds, shrinking at its ends: sparks,
+// drops, falling stars).
 
 uniform float wind = 1.0;
 
@@ -39,6 +41,11 @@ void kit_move(inout vec3 v, inout vec3 n, vec4 custom, float t) {
 		float r = length(d.xz);
 		v.y += sin(r * 14.0 - t * 6.0 + ph) * 0.05 * r * 2.0;
 		v.xz += normalize(vec2(-d.z, d.x) + 0.0001) * sin(r * 10.0 - t * 5.0 + ph) * 0.04 * r * 2.0;
+	} else if (kind == 9 || kind == 10) {
+		float f = fract(t * 0.5 + ph * 0.37);
+		float shrink = smoothstep(0.0, 0.15, f) * (1.0 - smoothstep(0.8, 1.0, f));
+		v = pivot + d * shrink;
+		v.y += (kind == 9 ? f : -f) * 0.5;
 	} else if (kind == 7) {
 		float a = sin(t * 2.6 + ph) * 0.22;
 		v = pivot + kit_rot(d, vec3(1.0, 0.0, 0.0), a);

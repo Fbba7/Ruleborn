@@ -28,6 +28,7 @@ func run() -> void:
 	_realm()
 	_signatures()
 	_map()
+	_hours()
 
 
 static func _layers(kit: RealmKit) -> int:
@@ -188,8 +189,14 @@ func _signatures() -> void:
 		KitSignature.build(g, fine, realm, 10.0, RealmPalette.of(realm))
 		if g.triangles + fine.triangles == 0:
 			missing.append(realm)
+	# And it grows with the realm's level (21.4): more lanterns, a second windmill.
+	var small := Geo.new()
+	var big := Geo.new()
+	KitSignature.build(small, Geo.new(), "lanternvale", 10.0, RealmPalette.of("lanternvale"), 0.0)
+	KitSignature.build(big, Geo.new(), "lanternvale", 10.0, RealmPalette.of("lanternvale"), 1.0)
 	check.call("each realm's home carries its signature past the grid — the Heart's walls, Skyfield's windmills, "
-			+ "great crystals, a great tree, a lantern festival, smoking vents (21.4)", missing.is_empty(), str(missing))
+			+ "great crystals, a great tree, a lantern festival, smoking vents — grown with the realm's level (21.4)",
+		missing.is_empty() and big.triangles > small.triangles, "%s %d %d" % [missing, small.triangles, big.triangles])
 
 
 ## The universe map's versions (BuildingKit.build_map): 80–250 triangles
@@ -208,3 +215,30 @@ func _map() -> void:
 			prev = g.triangles
 	check.call("every building has a map version for the universe map of at most 250 triangles, each of §21.5's "
 			+ "looks apart (21.3, 21.5)", bad.is_empty(), str(bad))
+
+
+## RealmKit.by_hour: the kit's glows by the hour, none by day, full at night.
+func _hours() -> void:
+	var zeros := PackedByteArray()
+	zeros.resize(9)
+	var kit := RealmKit.of_grid(Vector2i(3, 3), zeros, zeros, zeros, RealmPalette.of("heart"))
+	kit.build()
+	var root := Node3D.new()
+	for mi: MeshInstance3D in kit.instances():
+		root.add_child(mi)
+	var lit := func() -> Array:
+		var out := []
+		for n in root.get_children():
+			var m := (n as MeshInstance3D).material_override as ShaderMaterial
+			var v: Variant = m.get_shader_parameter("night")
+			if v != null:
+				out.append(float(v))
+		return out
+	RealmKit.by_hour(root, 23)
+	var night: Array = lit.call()
+	RealmKit.by_hour(root, 12)
+	var day: Array = lit.call()
+	root.free()
+	check.call("the kit's windows, lanterns and crystals glow by the hour: brighter at night than by day (21.2)",
+		not night.is_empty() and night.all(func(v: float) -> bool: return v == 1.0)
+			and day.all(func(v: float) -> bool: return v == 0.0), "%s %s" % [night, day])

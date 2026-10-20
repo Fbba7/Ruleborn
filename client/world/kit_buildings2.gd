@@ -136,6 +136,18 @@ static func _vault(b: BuildingKit) -> void:
 	b.door(0, 0.1, 0.375, 0, 1.3)
 	b.g.cyl(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), b.at(0, 0.38, 0.38)), 0.12 * b.unit, 0.12 * b.unit,
 		0.03 * b.unit, KitStyle.lit(KitStyle.GOLD, 0.35), 14)
+	# A portico before the door, as the design's map vault (:847-866): four
+	# white columns, an entablature and a pediment, a broad step below.
+	var white := Color("#F4EEF8")
+	for x: float in [-0.36, -0.14, 0.14, 0.36]:
+		b.cyl(0.04, 0.045, 0.46, white, x, 0.1, 0.52, 6)
+	b.fine(0.92, 0.06, 0.2, b.stone2, 0, 0.6, 0.52)
+	b.g.gable(b.place(0, 0.63, 0.52), 0.94 * b.unit, 0.18 * b.unit, 0.2 * b.unit, b.stone)
+	b.fine(0.98, 0.05, 0.3, b.stone2, 0, 0.075, 0.55)
+	# Braziers at the corners of the step.
+	for x: float in [-0.52, 0.52]:
+		b.cyl(0.05, 0.07, 0.18, b.stone2, x, 0.1, 0.66, 5)
+		b.ball(0.04, KitStyle.lit(Color("#FFB040"), 0.2), x, 0.31, 0.66, 1.2, 2, 5)
 	b.top = 1.05
 	b.unit /= 0.85
 
@@ -162,7 +174,7 @@ static func _anchor(b: BuildingKit) -> void:
 		for k in 3:
 			b.d.gem(Geo.place(b.at(0.08 * (k - 1), 0.3 + 0.25 * k, 0.17)), 0.025 * b.unit, 0.06 * b.unit,
 				KitStyle.lit(Color("#C8B8FF"), 0.5), 4)
-	b.torus_at(0.17, 0.03, KitStyle.IRON, 0, 0.42, 0)
+	b._torus_at(0.17, 0.03, KitStyle.IRON, 0, 0.42, 0)
 	for k in 4:
 		var a := TAU * k / 4.0 + PI / 4.0
 		var top := Vector3(cos(a) * 0.17, 0.42, sin(a) * 0.17)
@@ -174,7 +186,7 @@ static func _anchor(b: BuildingKit) -> void:
 			b.d.torus(Transform3D(Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, PI / 2.0), b.at(p.x, p.y, p.z)),
 				0.028 * b.unit, 0.009 * b.unit, KitStyle.IRON, 8, 3)
 		b.box(0.12, 0.08, 0.12, b.stone2.darkened(0.1), foot.x, 0.04, foot.z, -a)
-		b.torus_at(0.035, 0.01, KitStyle.IRON, foot.x, 0.09, foot.z)
+		b._torus_at(0.035, 0.01, KitStyle.IRON, foot.x, 0.09, foot.z)
 	b.top = 1.3
 
 
@@ -211,6 +223,15 @@ static func _spring(b: BuildingKit) -> void:
 	b.move(Geo.Anim.BOB, b.at(0, 1.04, 0))
 	b.ball(0.07, ink, 0, 1.04, 0, 1.2, 3, 8)
 	b.stop()
+	# Ink droplets rising from the spout and bubbles from the basin.
+	for k in 4:
+		var a := TAU * k / 4.0
+		var p := b.at(cos(a) * 0.05, 1.05, sin(a) * 0.05)
+		b.move(Geo.Anim.RISE, p + Vector3(k * 0.9, 0, 0))
+		b.d.ball(Geo.place(p), 0.02 * b.unit, KitStyle.lit(Color("#9BF4FA"), 0.4), 2, 5)
+		var q := b.at(cos(a + 0.6) * 0.3, 0.18, sin(a + 0.6) * 0.3)
+		b.move(Geo.Anim.RISE, q + Vector3(k * 1.3, 0, 0))
+		b.d.ball(Geo.place(q), 0.015 * b.unit, Color("#E8FCFF"), 2, 4)
 	b.move(Geo.Anim.SPIN_Y, b.at(0, 1.1, 0))
 	for k in 3:
 		var a := TAU * k / 3.0
@@ -353,6 +374,13 @@ static func _beacon(b: BuildingKit) -> void:
 	b.move(Geo.Anim.SPIN_Y, b.at(0, h + 0.17, 0))
 	b.glass.prism(Transform3D(Basis(Vector3.BACK, PI / 2.0), b.at(0.14, h + 0.17, 0)), 8, 0.05 * b.unit,
 		0.18 * b.unit, 0.7 * b.unit, Color(col.lightened(0.5), 0.3))
+	b.stop()
+	# Constellation stars round the lantern room, turning slowly.
+	b.move(Geo.Anim.SPIN_Y, b.at(0, h + 0.2, 0))
+	for k in 5:
+		var a := TAU * k / 5.0
+		b.d.gem(Geo.place(b.at(cos(a) * 0.3, h + 0.1 + 0.08 * (k % 2), sin(a) * 0.3)), 0.03 * b.unit, 0.04 * b.unit,
+			KitStyle.lit(col.lightened(0.4), 0.3), 4)
 	b.stop()
 	b.top = h + 0.5
 

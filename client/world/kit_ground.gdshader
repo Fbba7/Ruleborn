@@ -17,6 +17,11 @@ uniform vec2 grid_offset = vec2(0.0);
 uniform float seam = 0.035;
 uniform vec4 cobble : source_color = vec4(0.91, 0.84, 0.74, 1.0);
 uniform vec4 mortar : source_color = vec4(0.62, 0.52, 0.45, 1.0);
+// The worn trails between doors, world xz of each end (RealmKit's), drawn
+// crisp: trodden earth with a ragged edge and a darker rim of worn grass.
+uniform vec4 lanes[48];
+uniform int lane_count = 0;
+uniform vec4 lane_earth : source_color = vec4(0.72, 0.6, 0.45, 1.0);
 uniform vec4 strata : source_color = vec4(0.42, 0.33, 0.30, 1.0);
 varying vec3 wpos;
 varying float up;
@@ -75,6 +80,37 @@ void fragment() {
 	// meadow wears beside the grid, so the two meet as one painted ground.
 	c = look_brush(c, p, grassy);
 	vec3 glow = vec3(0.0);
+	// Moss: soft cushions, each a little dome of light over a darker hollow.
+	if (lush > 0.05) {
+		vec3 mc = cells(p * 6.0);
+		float cushion = 1.0 - smoothstep(0.0, 0.42, mc.x);
+		float m = smoothstep(0.3, 0.8, lush) * (1.0 - cliff);
+		c *= mix(1.0, mix(0.8, 1.12, cushion) * (0.94 + 0.12 * mc.z), m);
+	}
+	// A worn trail: crisp trodden earth, wobbling, with stones in it.
+	if (lane_count > 0 && up > 0.6) {
+		float best = 9.0;
+		for (int i = 0; i < 48; i++) {
+			if (i >= lane_count) {
+				break;
+			}
+			vec2 a = lanes[i].xy;
+			vec2 b = lanes[i].zw;
+			vec2 ab = b - a;
+			float t = clamp(dot(p - a, ab) / max(dot(ab, ab), 0.0001), 0.0, 1.0);
+			best = min(best, length(p - (a + ab * t)));
+		}
+		float wob = (vnoise(p * 5.0) - 0.5) * 0.08 + (vnoise(p * 17.0) - 0.5) * 0.03;
+		float d = best + wob;
+		float rim = 1.0 - smoothstep(0.24, 0.34, d);
+		float earth = 1.0 - smoothstep(0.2, 0.23, d);
+		c = mix(c, c * 0.84, rim * (1.0 - earth) * grassy);
+		vec3 dirt = lane_earth.rgb * (0.9 + 0.18 * vnoise(p * 6.0));
+		vec3 pebbles = cells(p * 9.0);
+		dirt = mix(dirt, dirt * 1.18, (1.0 - smoothstep(0.08, 0.14, pebbles.x)) * step(0.7, pebbles.z));
+		c = mix(c, dirt, earth * (1.0 - smoothstep(0.4, 0.46, path)) * (1.0 - cliff));
+		grassy *= 1.0 - earth;
+	}
 	// A path: a ribbon of cobbles laid in worn earth (UV.x is how near the
 	// path's middle line this is), a darker kerb at its edge.
 	if (path > 0.3) {

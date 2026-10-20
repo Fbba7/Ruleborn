@@ -50,7 +50,7 @@ var top := 1.0
 
 
 ## The materials of a level's look: walls, roof, trim.
-static func _look(lvl: int, colours: Dictionary) -> Array[Color]:
+static func look(lvl: int, colours: Dictionary) -> Array[Color]:
 	var s := KitStyle.of(KitStyle.realm_of(colours))
 	if lvl >= 7:
 		return [Color("#ECE6FF"), (s["roof"] as Color).lerp(Color("#8C6CF0"), 0.35).lightened(0.1), KitStyle.GOLD]
@@ -87,7 +87,7 @@ static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, col
 	b.palette = colours
 	b.style = KitStyle.of(KitStyle.realm_of(colours))
 	b.unit = side * 0.92
-	var c := _look(b.level, colours)
+	var c := look(b.level, colours)
 	b.wall = c[0]
 	b.roof_col = c[1]
 	b.roof_dark = b.roof_col.darkened(0.22)
@@ -137,7 +137,7 @@ func stop() -> void:
 ## `makeB`, realm-diorama.js :756–880), 80–250 triangles, reading by kind
 ## and by §21.5's look from far away: KitMap's.
 static func build_map(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, colours: Dictionary) -> void:
-	var c := _look(clampi(lvl, 1, 10), colours)
+	var c := look(clampi(lvl, 1, 10), colours)
 	KitMap.build(geo, kind, mid, side * 0.92, clampi(lvl, 1, 10), colours, c)
 
 
@@ -182,7 +182,7 @@ func _pane(xf: Transform3D, w: float, h: float, col: Color) -> void:
 
 
 ## A ring lying flat at (x, y, z), un-inked: a collar, a mooring ring.
-func torus_at(r: float, t: float, col: Color, x: float, y: float, z: float) -> void:
+func _torus_at(r: float, t: float, col: Color, x: float, y: float, z: float) -> void:
 	d.torus(place(x, y, z), r * unit, t * unit, col, 12, 3)
 
 
@@ -231,7 +231,7 @@ func roof(w: float, depth: float, y0: float, rise: float, over := 0.08, rows := 
 	for s: float in [-1.0, 1.0]:
 		for i in rows:
 			var t := (i + 0.5) / rows
-			var col := roof_col if i % 2 == 1 else roof_dark
+			var col := roof_col if i % 2 == 1 else roof_col.darkened(0.07)
 			var p := at(0, 0, 0) + turn * Vector3(s * t * run, y0 + rise - t * run * tan(ang), 0) * unit
 			var basis := turn * Basis(Vector3.BACK, -s * ang)
 			var thick := 0.05 if tier == 0 else 0.035
@@ -319,17 +319,18 @@ func plinth(w: float, depth: float, h := 0.08) -> void:
 
 ## Smoke rising from a chimney's top at (x, y, z), three soft puffs.
 func _smoke(x: float, y: float, z: float) -> void:
+	# Puffs rising out of the chimney one after another, swelling as they go.
 	for k in 3:
-		var p := at(x + 0.03 * k, y + 0.12 + 0.16 * k, z)
-		move(Geo.Anim.BOB, p + Vector3(k * 2.0, 0, 0))
-		d.ball(Geo.place(p), (0.05 + 0.03 * k) * unit, Color("#EEE8F4"), 3, 6)
+		var p := at(x + 0.02 * k, y + 0.1, z)
+		move(Geo.Anim.RISE, p + Vector3(k * 1.9, 0, 0))
+		d.ball(Geo.place(p), (0.06 + 0.02 * k) * unit, Color("#EEE8F4"), 3, 6)
 	stop()
 
 
 ## A chimney standing from (x, y, z) to `h` units up, with smoke.
 func chimney(x: float, y: float, z: float, h: float) -> void:
-	box(0.13, h, 0.13, stone2 if tier > 0 else Color("#8A4A3A"), x, y + h / 2.0, z)
-	box(0.17, 0.045, 0.17, stone.darkened(0.2), x, y + h, z)
+	box(0.17, h, 0.17, stone2 if tier > 0 else Color("#8A4A3A"), x, y + h / 2.0, z)
+	box(0.21, 0.05, 0.21, stone.darkened(0.2), x, y + h, z)
 	_smoke(x, y + h, z)
 
 
@@ -364,6 +365,9 @@ func _dress(kind: String) -> void:
 	cyl(0.018, 0.014, 0.4, KitStyle.WOOD_DARK, lx, 0, lz, 5)
 	box(0.07, 0.08, 0.07, KitStyle.lit(Color("#FFD27A"), 0.75), lx, 0.44, lz)
 	cone(0.06, 0.05, KitStyle.WOOD_DARK, lx, 0.48, lz, 4)
+	# Warm light spilling onto the ground at the door and under the lamp.
+	glass.ring(place(0, 0.012, 0.5), 0.0, 0.2 * unit, Color(Color("#FFB860"), 0.35), 8)
+	glass.ring(place(lx, 0.014, lz), 0.0, 0.13 * unit, Color(Color("#FFB860"), 0.35), 6)
 	_topper()
 	if level >= 3:
 		flag(-0.32, top * 0.82, -0.22, 0.42)
@@ -447,11 +451,11 @@ func _topper() -> void:
 ## :981): an octagon of trodden earth and stone, wider than the house.
 func _pad() -> void:
 	var earth := KitGround.earth(palette).lerp(Color("#E8D8B8"), 0.35)
+	if KitStyle.realm_of(palette) == "lanternvale":
+		# Lantern Vale's pads are pale and faintly lit, so its town shows in the
+		# dark (the design's night realm).
+		earth = Color(Color("#D8CCE8"), 0.8)
 	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.6 * unit, 0.57 * unit, 0.03 * unit, earth.darkened(0.08), false, earth)
-	for k in 4:
-		var a := TAU * k / 4.0 + 0.5
-		d.rock(Geo.place(at(cos(a) * 0.6, 0.012, sin(a) * 0.6), a, Vector3(1, 0.5, 1)), 0.035 * unit,
-			(palette["rock"] as Color).lightened(0.2), k)
 
 
 ## The Hearth: "a cottage with a round door and chimney", warm window light.
@@ -473,7 +477,14 @@ func _hearth() -> void:
 		for x: float in [-0.22, 0.22]:
 			window(x, 0.62, -0.375, PI, 0.9)
 	var y := roof(0.9 if two else 0.86, 0.74 if two else 0.7, eave, 0.42, 0.1)
-	door(0, 0.08, 0.335, 0)
+	# §21.5: "a cottage with a round door" — a round wooden door in a stone ring.
+	var round_at := at(0, 0.215, 0.335)
+	d.cyl(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), round_at), 0.13 * unit, 0.13 * unit, 0.02 * unit, stone2, 10)
+	d.cyl(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), round_at + Vector3(0, 0, 0.012) * unit), 0.1 * unit,
+		0.1 * unit, 0.02 * unit, KitStyle.WOOD.lightened(0.1) if tier < 2 else KitStyle.WOOD.lerp(Color("#8C6CF0"), 0.3),
+		10)
+	d.ball(Geo.place(round_at + Vector3(0.05, 0, 0.035) * unit), 0.014 * unit, KitStyle.GOLD, 2, 4)
+	d.box(place(0, 0.017, 0.4), Vector3(0.26, 0.035, 0.1) * unit, stone)
 	window(-0.25, 0.27, 0.335, 0)
 	window(0.25, 0.27, 0.335, 0)
 	window(0.415, 0.27, 0, PI / 2.0, 0.9, false)
@@ -606,6 +617,13 @@ func _star_well() -> void:
 	var y := _hip_roof(0.62, 0.48, 1.25, 0.38)
 	move(Geo.Anim.SPIN_Y, at(0, y + 0.3, 0))
 	d.gem(Geo.place(at(0, y + 0.3, 0)), 0.15 * unit, 0.22 * unit, KitStyle.lit(Color("#FFE9A0"), 0.45), 4)
+	stop()
+	# Stars dropping from the crystal into the bucket (§21.5: "stars drop
+	# into the bucket").
+	for k in 3:
+		var drop := at(0.03 * (k - 1), 1.2, 0.02 * k)
+		move(Geo.Anim.FALL, drop + Vector3(k * 0.7, 0, 0))
+		d.gem(Geo.place(drop), 0.025 * unit, 0.03 * unit, KitStyle.lit(Color("#FFE7A8"), 0.3), 4)
 	stop()
 	# The star net: a ring of little stars above it from the second look.
 	if tier >= 1:

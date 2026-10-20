@@ -65,12 +65,12 @@ void fragment() {
 	vec2 p = wpos.xz;
 	float t = TIME * speed;
 	if (glowing > 0.0) {
-		vec2 cb = cells(p * 3.2 + vec2(t * 0.2, 0.0));
-		float crack = 1.0 - smoothstep(0.03, 0.12, cb.y - cb.x);
+		vec2 cb = cells(p * 7.0 + vec2(t * 0.2, 0.0));
+		float crack = 1.0 - smoothstep(0.06, 0.3, cb.y - cb.x);
 		float pulse = 0.75 + 0.25 * sin(TIME * 2.0 + vnoise(p * 2.0) * 6.0);
 		vec3 melt = mix(deep.rgb, foam.rgb, crack * pulse);
 		vec3 crust = vec3(0.17, 0.10, 0.11) * (0.8 + 0.4 * vnoise(p * 9.0));
-		float lit = max(crack, smoothstep(0.4, 0.0, cb.x) * 0.25);
+		float lit = max(crack, 0.35 + 0.25 * smoothstep(0.5, 0.0, cb.x));
 		ALBEDO = mix(crust, melt, lit);
 		EMISSION = melt * lit * glowing * 1.4;
 	} else {

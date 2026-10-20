@@ -44,11 +44,15 @@ func build(t: Vector2i, f: int) -> void:
 		RealmKit.F.FENCE:
 			_fence(t, c)
 		RealmKit.F.FOG_BANK:
-			for k in 4:
-				var o := Vector3(RealmKit.jitter(t, k) - 0.5, 0, RealmKit.jitter(t, k + 5) - 0.5) * 0.5
-				kit.clear.moving(Geo.Anim.BOB, c + o)
-				kit.clear.ball(Geo.place(c + o + Vector3(0, 0.32 + 0.12 * (k % 2), 0), 0.0, Vector3(1.3, 0.62, 1.3)),
-					0.32 + 0.1 * RealmKit.jitter(t, k + 9), Color("#F3EEFF"), 4, 9)
+			# A low, wide drift of flattened puffs spilling past the tile, each
+			# bobbing on its own.
+			for k in 7:
+				var a := TAU * k / 7.0 + RealmKit.jitter(t, k)
+				var r := 0.12 + 0.3 * RealmKit.jitter(t, k + 5)
+				var o := Vector3(cos(a) * r, 0.14 + 0.1 * RealmKit.jitter(t, k + 2), sin(a) * r)
+				kit.clear.moving(Geo.Anim.BOB, c + o + Vector3(k * 3.0, 0, 0))
+				kit.clear.ball(Geo.place(c + o, a, Vector3(1.5, 0.45, 1.2)), 0.2 + 0.08 * RealmKit.jitter(t, k + 9),
+					Color("#F6F2FF"), 3, 8)
 			kit.clear.moving(Geo.Anim.NONE, Vector3.ZERO)
 		RealmKit.F.TALL_GRASS:
 			_grass(t, c, plant)
@@ -98,10 +102,12 @@ func build(t: Vector2i, f: int) -> void:
 			prop.cyl(Geo.place(c), 0.32, 0.16, 0.22, rock.darkened(0.25), 8)
 			prop.rock(Geo.place(c + Vector3(0.22, 0.05, 0.1)), 0.1, rock.darkened(0.1), t.y)
 			prop.ring(Geo.place(c + Vector3(0, 0.225, 0)), 0.0, 0.14, Color(Palette.ENERGY.lightened(0.15), 0.1), 10)
-			kit.clear.moving(Geo.Anim.BOB, c)
-			kit.clear.ball(Geo.place(c + Vector3(0, 0.45, 0), 0.0, Vector3(1, 1.6, 1)), 0.1,
-				Color(Palette.ENERGY.lightened(0.3), 0.2), 3, 6)
-			kit.clear.moving(Geo.Anim.NONE, Vector3.ZERO)
+			# Sparks rising from the vent, each on its own beat.
+			for k in 4:
+				var sp := c + Vector3((RealmKit.jitter(t, k) - 0.5) * 0.12, 0.3, (RealmKit.jitter(t, k + 4) - 0.5) * 0.12)
+				prop.moving(Geo.Anim.RISE, sp + Vector3(k * 1.7, 0, 0))
+				prop.gem(Geo.place(sp), 0.025, 0.035, Color(Palette.ENERGY.lightened(0.3), 0.1), 4)
+			prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 		RealmKit.F.STATIC_STONE:
 			hero.rock(Geo.place(c + Vector3(0, 0.26, 0), j, Vector3(0.8, 1.3, 0.8)), 0.3, Color("#5A6A8A"), t.x + t.y)
 			hero.moving(Geo.Anim.SPIN_Y, c)
@@ -131,10 +137,26 @@ func build(t: Vector2i, f: int) -> void:
 				prop.ball(Geo.place(p + Vector3(0, stem, 0), 0.0, Vector3(1, 0.55, 1)), 0.05, petals[k % 4], 2, 6)
 			prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 		RealmKit.F.ICE_SHEET:
-			kit.clear.rbox(Geo.place(c + Vector3(0, 0.025, 0)), Vector3(0.98, 0.05, 0.98), Color("#DDF4FF"), 0.02)
-			for k in 3:
-				prop.box(Geo.place(c + Vector3((RealmKit.jitter(t, k) - 0.5) * 0.5, 0.052, (k - 1) * 0.25),
-					RealmKit.jitter(t, k + 3) * PI), Vector3(0.36, 0.006, 0.025), Color("#FFFFFF"))
+			# A frozen pool: an irregular sheet, pale at its rim, with a few
+			# white cracks and frost tufts round it.
+			var rim: Array[Vector3] = []
+			for k in 12:
+				var a := TAU * k / 12.0
+				var r := 0.44 + 0.06 * (RealmKit.jitter(t, k + 50) - 0.5)
+				rim.append(c + Vector3(cos(a) * r, 0.03, sin(a) * r))
+			var mid := c + Vector3(0, 0.035, 0)
+			for k in 12:
+				prop.tri(mid, rim[(k + 1) % 12], rim[k], Color(Color("#BDEBFF"), 0.75))
+			for k in 12:
+				var a0 := rim[k]
+				var a1 := rim[(k + 1) % 12]
+				var o0 := (a0 - c) * 1.12 + c + Vector3(0, -0.03, 0)
+				var o1 := (a1 - c) * 1.12 + c + Vector3(0, -0.03, 0)
+				prop.quad(a0, a1, o1, o0, Color(Color("#F4FBFF"), 0.7))
+			for k in 4:
+				var a := RealmKit.jitter(t, k + 3) * PI
+				prop.box(Geo.place(c + Vector3((RealmKit.jitter(t, k) - 0.5) * 0.4, 0.038, (k - 1.5) * 0.16), a),
+					Vector3(0.22 + 0.1 * RealmKit.jitter(t, k + 9), 0.004, 0.012), Color("#FFFFFF"))
 		RealmKit.F.BELL_POST:
 			_bell(c, j, wood)
 		RealmKit.F.STEPPING_STONES:
@@ -367,6 +389,14 @@ func _ruin(t: Vector2i, c: Vector3) -> void:
 	var yaw := _run_yaw(t, RealmKit.F.RUIN_WALL)
 	var dir := Vector3.RIGHT.rotated(Vector3.UP, yaw)
 	var old: Color = (style["stone2"] as Color).lerp(kit.palette["rock"], 0.35)
+	# Glassy in Crystalline, basalt in Emberreach, pale coral stone in Tidehold.
+	match kit.realm:
+		"crystalline":
+			old = Color("#B8AEE0")
+		"emberreach":
+			old = Color("#4A3A3E")
+		"tidehold":
+			old = Color("#D8D0C0")
 	var tall := [0.78, 0.46, 0.92, 0.3, 0.64]
 	for k in 4:
 		var x := -0.375 + 0.25 * k
@@ -393,16 +423,43 @@ func _ruin(t: Vector2i, c: Vector3) -> void:
 	kit.prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 
 
+## A fence by realm: a split-rail of timber; a white picket in Skyfield and
+## Tidehold; crystal rails on lilac posts in Crystalline; black iron with
+## spear points in Emberreach and Lantern Vale.
 func _fence(t: Vector2i, c: Vector3) -> void:
 	var yaw := _run_yaw(t, RealmKit.F.FENCE)
 	var dir := Vector3.RIGHT.rotated(Vector3.UP, yaw)
-	var wood := KitStyle.WOOD.lightened(0.15)
-	for k in 3:
-		var p := c + dir * (-0.38 + 0.38 * k)
-		kit.hero.box(Geo.place(p + Vector3(0, 0.26, 0), yaw), Vector3(0.08, 0.52, 0.08), wood.darkened(0.1))
-		kit.hero.prism(Geo.place(p + Vector3(0, 0.52, 0), yaw + PI / 4.0), 4, 0.057, 0.0, 0.08, wood.darkened(0.1))
-	for y: float in [0.18, 0.38]:
-		kit.hero.box(Geo.place(c + Vector3(0, y, 0), yaw), Vector3(1.0, 0.06, 0.04), wood)
+	var post := KitStyle.WOOD.darkened(0.05)
+	var rail := KitStyle.WOOD.lightened(0.15)
+	var cap := "point"
+	var n := 3
+	match kit.realm:
+		"skyfield", "tidehold":
+			post = Color("#F4EEE2")
+			rail = Color("#E8E0D2")
+			n = 6
+		"crystalline":
+			post = Color("#C9C0E6")
+			rail = Color(Palette.MATTER.lightened(0.35), 0.75)
+			cap = "gem"
+		"emberreach", "lanternvale":
+			post = KitStyle.IRON
+			rail = KitStyle.IRON.lightened(0.1)
+			cap = "spear"
+			n = 5
+	for k in n:
+		var p := c + dir * (-0.42 + 0.84 * k / (n - 1))
+		var w := 0.08 if n == 3 else 0.05
+		kit.hero.box(Geo.place(p + Vector3(0, 0.25, 0), yaw), Vector3(w, 0.5, w), post)
+		match cap:
+			"gem":
+				kit.hero.gem(Geo.place(p + Vector3(0, 0.56, 0), yaw), 0.05, 0.07, Color(Palette.MATTER.lightened(0.4), 0.6), 4)
+			"spear":
+				kit.hero.prism(Geo.place(p + Vector3(0, 0.5, 0), yaw + PI / 4.0), 4, 0.03, 0.0, 0.1, post)
+			_:
+				kit.hero.prism(Geo.place(p + Vector3(0, 0.5, 0), yaw + PI / 4.0), 4, w * 0.71, 0.0, 0.08, post)
+	for y: float in ([0.18, 0.38] if cap != "spear" else [0.12, 0.42]):
+		kit.hero.box(Geo.place(c + Vector3(0, y, 0), yaw), Vector3(1.0, 0.05, 0.035), rail)
 
 
 func _hedge(t: Vector2i, c: Vector3, plant: Color) -> void:
@@ -432,6 +489,26 @@ func _hedge(t: Vector2i, c: Vector3, plant: Color) -> void:
 		hero.ball(Geo.place(c + o + Vector3(0, 0.52 + 0.1 * RealmKit.jitter(t, k + 2), 0), 0.0, Vector3(1, 0.85, 1)),
 			r, plant.darkened(0.12 - 0.05 * (k % 3)), 3, 7)
 	hero.moving(Geo.Anim.NONE, Vector3.ZERO)
+	# The realm's touch: flowers in Verdant and the Heart, frost in
+	# Crystalline, thorns in Emberreach.
+	var touch := Color.BLACK
+	match kit.realm:
+		"verdant":
+			touch = Color("#F7A6DA")
+		"heart":
+			touch = Color("#FFFFFF")
+		"crystalline":
+			touch = Color("#EAF6FF")
+		"emberreach":
+			touch = Color("#E8C8A0")
+	if touch != Color.BLACK:
+		for k in 6:
+			var o := Vector3(RealmKit.jitter(t, k + 20) - 0.5, 0, RealmKit.jitter(t, k + 26) - 0.5) * 0.7
+			var p := c + o + Vector3(0, 0.62 + 0.12 * RealmKit.jitter(t, k + 32), 0)
+			if kit.realm == "emberreach":
+				kit.prop.prism(Geo.place(p, k), 3, 0.02, 0.0, 0.08, touch)
+			else:
+				kit.prop.ball(Geo.place(p, 0.0, Vector3(1, 0.6, 1)), 0.035, touch, 2, 5)
 
 
 func _tree(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
@@ -475,12 +552,26 @@ func _tree(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
 				var a := j * TAU + PI * k
 				hero.box(Transform3D(Basis(Vector3(cos(a), 0, sin(a)).cross(Vector3.UP), 0.7),
 					c + Vector3(cos(a) * 0.08, 0.45 * tall, sin(a) * 0.08)), Vector3(0.04, 0.22, 0.04), bark)
-			hero.ball(Geo.place(c + Vector3(0, 0.85 * tall, 0), j, Vector3(1.0, 0.86, 1.0)), 0.47 * crown,
-				plant.darkened(0.06), 5, 10)
-			hero.ball(Geo.place(c + Vector3(0.2, 1.08 * tall, 0.09) * Vector3(crown, 1, crown), j), 0.31 * crown,
-				plant.lightened(0.08), 4, 8)
-			hero.ball(Geo.place(c + Vector3(-0.18, 1.12 * tall, -0.09) * Vector3(crown, 1, crown), j), 0.27 * crown,
-				plant.lightened(0.02), 4, 8)
+			# Three shapes, chosen by the tile, so a grove never repeats: the
+			# design's three-blob crown, a tall oval, and a two-tier crown.
+			var shape := int(RealmKit.jitter(t, 22) * 3.0)
+			if shape == 1:
+				hero.ball(Geo.place(c + Vector3(0, 0.95 * tall, 0), j, Vector3(0.8, 1.25, 0.8)), 0.44 * crown,
+					plant.darkened(0.08), 5, 10)
+				hero.ball(Geo.place(c + Vector3(0.1, 1.2 * tall, 0.08) * Vector3(crown, 1, crown), j), 0.24 * crown,
+					plant.lightened(0.06), 4, 8)
+			elif shape == 2:
+				hero.ball(Geo.place(c + Vector3(0, 0.78 * tall, 0), j, Vector3(1.1, 0.7, 1.1)), 0.46 * crown,
+					plant.darkened(0.1), 5, 10)
+				hero.ball(Geo.place(c + Vector3(0.04, 1.1 * tall, 0.02), j, Vector3(1.0, 0.75, 1.0)), 0.34 * crown,
+					plant.lightened(0.04), 4, 9)
+			else:
+				hero.ball(Geo.place(c + Vector3(0, 0.85 * tall, 0), j, Vector3(1.0, 0.86, 1.0)), 0.47 * crown,
+					plant.darkened(0.06), 5, 10)
+				hero.ball(Geo.place(c + Vector3(0.2, 1.08 * tall, 0.09) * Vector3(crown, 1, crown), j), 0.31 * crown,
+					plant.lightened(0.08), 4, 8)
+				hero.ball(Geo.place(c + Vector3(-0.18, 1.12 * tall, -0.09) * Vector3(crown, 1, crown), j),
+					0.27 * crown, plant.lightened(0.02), 4, 8)
 			if kit.realm == "verdant" or kit.realm == "heart":
 				var fruit: Color = Color("#E2536B") if kit.realm == "verdant" else Color("#F7A6DA")
 				for k in 4:
@@ -490,18 +581,59 @@ func _tree(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
 	hero.moving(Geo.Anim.NONE, Vector3.ZERO)
 
 
+## A statue by realm on its plinth: a figure holding up an orb; in
+## Skyfield a figure with wings spread; in Tidehold a great shell; in
+## Verdant a mossy figure with a sapling; in Lantern Vale a hooded figure
+## with a lantern; in Crystalline a faceted obelisk; in Emberreach a horned
+## basalt head.
 func _statue(c: Vector3, j: float, stone: Color) -> void:
 	var hero := kit.hero
 	var s := stone.lightened(0.06)
 	hero.rbox(Geo.place(c + Vector3(0, 0.11, 0)), Vector3(0.48, 0.22, 0.48), stone.darkened(0.08), 0.03)
 	hero.rbox(Geo.place(c + Vector3(0, 0.25, 0)), Vector3(0.4, 0.06, 0.4), stone.darkened(0.02), 0.02)
-	hero.cyl(Geo.place(c + Vector3(0, 0.28, 0)), 0.17, 0.12, 0.5, s, 8)
-	hero.ball(Geo.place(c + Vector3(0, 0.88, 0)), 0.13, s, 4, 8)
-	# Arms raised, holding up an orb.
-	for sx: float in [-1.0, 1.0]:
-		hero.box(Transform3D(Basis(Vector3.FORWARD, sx * 0.5), c + Vector3(sx * 0.15, 0.78, 0)),
-			Vector3(0.06, 0.28, 0.06), s)
-	hero.ball(Geo.place(c + Vector3(0, 1.12, 0)), 0.09, Color(KitStyle.GOLD, 0.6), 3, 7)
+	match kit.realm:
+		"crystalline":
+			hero.gem(Geo.place(c + Vector3(0, 0.75, 0), j), 0.16, 0.47, Color(Color("#D8D0F8"), 0.85), 4)
+		"tidehold":
+			for k in 7:
+				var a := -1.2 + 2.4 * k / 6.0
+				hero.box(Transform3D(Basis(Vector3.BACK, a), c + Vector3(sin(a) * 0.12, 0.46 + cos(a) * 0.12, 0)),
+					Vector3(0.08, 0.38, 0.12), Color("#F3E6D0").darkened(0.05 * (k % 2)))
+			hero.ball(Geo.place(c + Vector3(0, 0.32, 0.02)), 0.07, Color("#F7C6D8"), 3, 6)
+		"emberreach":
+			hero.rock(Geo.place(c + Vector3(0, 0.55, 0), j, Vector3(1, 1.1, 0.9)), 0.22, Color("#3A2E34"), 7)
+			for sx: float in [-1.0, 1.0]:
+				hero.prism(Transform3D(Basis(Vector3.FORWARD, sx * 0.6), c + Vector3(sx * 0.16, 0.72, 0)), 5, 0.05, 0.0,
+					0.22, Color("#E8D8C0"))
+			for sx: float in [-1.0, 1.0]:
+				hero.ball(Geo.place(c + Vector3(sx * 0.08, 0.58, 0.18)), 0.03, Color(Palette.ENERGY, 0.1), 2, 5)
+		_:
+			hero.cyl(Geo.place(c + Vector3(0, 0.28, 0)), 0.17, 0.12, 0.5, s, 8)
+			var hood := kit.realm == "lanternvale"
+			if hood:
+				hero.prism(Geo.place(c + Vector3(0, 0.74, 0)), 8, 0.16, 0.0, 0.32, s.darkened(0.08))
+			else:
+				hero.ball(Geo.place(c + Vector3(0, 0.88, 0)), 0.13, s, 4, 8)
+			match kit.realm:
+				"skyfield":
+					for sx: float in [-1.0, 1.0]:
+						hero.box(Transform3D(Basis(Vector3.FORWARD, sx * 0.9), c + Vector3(sx * 0.26, 0.82, -0.05)),
+							Vector3(0.05, 0.4, 0.16), s.lightened(0.05))
+				"lanternvale":
+					hero.box(Transform3D(Basis(Vector3.FORWARD, -0.4), c + Vector3(0.16, 0.66, 0.05)),
+						Vector3(0.05, 0.24, 0.05), s)
+					hero.rbox(Geo.place(c + Vector3(0.24, 0.56, 0.06)), Vector3(0.09, 0.11, 0.09),
+						Color(Color("#FFD27A"), 0.15), 0.01)
+				"verdant":
+					hero.cyl(Geo.place(c + Vector3(0.14, 0.62, 0.06)), 0.015, 0.012, 0.3, KitStyle.WOOD, 4)
+					hero.ball(Geo.place(c + Vector3(0.14, 0.95, 0.06)), 0.1, kit.palette["plant"], 3, 6)
+					hero.ball(Geo.place(c + Vector3(0, 0.98, 0), 0.0, Vector3(1.1, 0.4, 1.1)), 0.13,
+						kit.palette["plant"].darkened(0.2), 3, 6)
+				_:
+					for sx: float in [-1.0, 1.0]:
+						hero.box(Transform3D(Basis(Vector3.FORWARD, sx * 0.5), c + Vector3(sx * 0.15, 0.78, 0)),
+							Vector3(0.06, 0.28, 0.06), s)
+					hero.ball(Geo.place(c + Vector3(0, 1.12, 0)), 0.09, Color(KitStyle.GOLD, 0.6), 3, 7)
 	kit.prop.moving(Geo.Anim.SHIVER, c)
 	kit.prop.ball(Geo.place(c + Vector3(0.2, 0.25, 0.22), j, Vector3(1, 0.6, 1)), 0.08, kit.palette["plant"], 3, 6)
 	kit.prop.moving(Geo.Anim.NONE, Vector3.ZERO)
@@ -589,25 +721,61 @@ func _spring(t: Vector2i, c: Vector3, rock: Color) -> void:
 		kit.prop.rock(Geo.place(c + Vector3(cos(a) * 0.45, -0.05, sin(a) * 0.45), a), 0.09, rock.lightened(0.15), k)
 	for k in 3:
 		var p := c + Vector3(RealmKit.jitter(t, k) - 0.5, 0, RealmKit.jitter(t, k + 1) - 0.5) * 0.4
-		kit.clear.moving(Geo.Anim.BOB, p + Vector3(0, k, 0))
+		kit.clear.moving(Geo.Anim.RISE, p + Vector3(k * 1.3, 0, 0))
 		kit.clear.ball(Geo.place(p + Vector3(0, 0.2 + 0.22 * k, 0)), 0.12 + 0.05 * k, Color("#FFFFFF", 0.85), 3, 7)
 	kit.clear.moving(Geo.Anim.NONE, Vector3.ZERO)
 
 
+## A lantern post by realm: iron and a glass box; a gilded post in the
+## Heart; a paper lantern hung from a crook in Lantern Vale; a brazier in
+## Emberreach; a crystal on a post in Crystalline.
 func _lantern(c: Vector3) -> void:
 	var hero := kit.hero
 	var iron := KitStyle.IRON
-	hero.cyl(Geo.place(c), 0.07, 0.05, 0.1, iron, 6)
-	hero.cyl(Geo.place(c + Vector3(0, 0.1, 0)), 0.035, 0.028, 0.95, iron.lightened(0.1), 6)
-	hero.box(Geo.place(c + Vector3(0, 1.05, 0)), Vector3(0.24, 0.025, 0.24), iron)
-	hero.rbox(Geo.place(c + Vector3(0, 1.16, 0)), Vector3(0.17, 0.2, 0.17), Color(Color("#FFD27A"), 0.15), 0.02)
-	hero.prism(Geo.place(c + Vector3(0, 1.26, 0), PI / 4.0), 4, 0.17, 0.0, 0.12, iron)
+	match kit.realm:
+		"lanternvale":
+			hero.cyl(Geo.place(c), 0.04, 0.03, 1.1, KitStyle.WOOD_DARK, 6)
+			hero.box(Geo.place(c + Vector3(0.14, 1.08, 0)), Vector3(0.3, 0.035, 0.035), KitStyle.WOOD_DARK)
+			hero.moving(Geo.Anim.SWING, c + Vector3(0.26, 1.06, 0))
+			hero.cyl(Geo.place(c + Vector3(0.26, 0.82, 0)), 0.09, 0.11, 0.2, Color(Color("#FF9A5C"), 0.15), 8)
+			hero.cyl(Geo.place(c + Vector3(0.26, 1.02, 0)), 0.05, 0.05, 0.03, KitStyle.WOOD_DARK, 6)
+			hero.moving(Geo.Anim.NONE, Vector3.ZERO)
+		"emberreach":
+			hero.cyl(Geo.place(c), 0.05, 0.04, 0.8, iron, 6)
+			hero.cyl(Geo.place(c + Vector3(0, 0.8, 0)), 0.1, 0.16, 0.12, iron, 8)
+			hero.moving(Geo.Anim.BOB, c + Vector3(0, 0.95, 0))
+			hero.ball(Geo.place(c + Vector3(0, 0.97, 0), 0.0, Vector3(1, 1.4, 1)), 0.09, Color(Color("#FF8A3C"), 0.1), 3, 7)
+			hero.moving(Geo.Anim.NONE, Vector3.ZERO)
+		"crystalline":
+			hero.cyl(Geo.place(c), 0.06, 0.04, 0.95, Color("#C9C0E6"), 6)
+			hero.moving(Geo.Anim.SPIN_Y, c + Vector3(0, 1.15, 0))
+			hero.gem(Geo.place(c + Vector3(0, 1.15, 0)), 0.09, 0.16, Color(Color("#C8B8FF"), 0.25), 5)
+			hero.moving(Geo.Anim.NONE, Vector3.ZERO)
+		_:
+			var metal := KitStyle.GOLD if kit.realm == "heart" else iron
+			hero.cyl(Geo.place(c), 0.07, 0.05, 0.1, metal.darkened(0.2), 6)
+			hero.cyl(Geo.place(c + Vector3(0, 0.1, 0)), 0.035, 0.028, 0.95, metal, 6)
+			hero.box(Geo.place(c + Vector3(0, 1.05, 0)), Vector3(0.24, 0.025, 0.24), metal.darkened(0.15))
+			hero.rbox(Geo.place(c + Vector3(0, 1.16, 0)), Vector3(0.17, 0.2, 0.17), Color(Color("#FFD27A"), 0.15), 0.02)
+			hero.prism(Geo.place(c + Vector3(0, 1.26, 0), PI / 4.0), 4, 0.17, 0.0, 0.12, metal.darkened(0.15))
 	# Its pool of light on the ground.
 	kit.clear.ring(Geo.place(c + Vector3(0, 0.015, 0)), 0.0, 0.42, Color(Color("#FFC860"), 0.35), 14)
 
 
-func _arch(t: Vector2i, c: Vector3, stone: Color) -> void:
+## An arch by realm: dressed stone with a gold keystone; lilac stone and a
+## crystal keystone in Crystalline; basalt with a glowing keystone in
+## Emberreach; overgrown with vines in Verdant.
+func _arch(t: Vector2i, c: Vector3, stone_in: Color) -> void:
 	var hero := kit.hero
+	var stone := stone_in
+	var key := KitStyle.GOLD
+	match kit.realm:
+		"crystalline":
+			stone = Color("#C9C0E6")
+			key = Color(Color("#C8B8FF"), 0.4)
+		"emberreach":
+			stone = Color("#4A3A3E")
+			key = Color(Palette.ENERGY, 0.3)
 	var yaw := kit.yaw(t)
 	var side := Vector3.RIGHT.rotated(Vector3.UP, yaw)
 	for s: float in [-1.0, 1.0]:
@@ -619,8 +787,17 @@ func _arch(t: Vector2i, c: Vector3, stone: Color) -> void:
 		var a := PI * (k + 0.5) / 7.0
 		var p := c + side * cos(a) * 0.32 + Vector3(0, 0.9 + sin(a) * 0.3, 0)
 		var basis := Basis(Vector3.UP, yaw) * Basis(Vector3.BACK, a - PI / 2.0)
-		hero.rbox(Transform3D(basis, p), Vector3(0.12, 0.16, 0.28), KitStyle.GOLD if k == 3 else stone.lightened(0.04),
-			0.02)
+		hero.rbox(Transform3D(basis, p), Vector3(0.12, 0.16, 0.28), key if k == 3 else stone.lightened(0.04), 0.02)
+	if kit.realm == "verdant" or kit.realm == "lanternvale":
+		kit.prop.moving(Geo.Anim.SWAY, c)
+		for k in 6:
+			var a := PI * (k + 0.3) / 6.0
+			kit.prop.ball(Geo.place(c + side * cos(a) * 0.36 + Vector3(0, 0.9 + sin(a) * 0.34, 0.12)), 0.06,
+				kit.palette["plant"].darkened(0.1 * (k % 2)), 2, 5)
+		for s2: float in [-1.0, 1.0]:
+			kit.prop.prism(Geo.place(c + side * s2 * 0.42 + Vector3(0, 0.1, 0.1)), 4, 0.03, 0.02, 0.75,
+				kit.palette["plant"].darkened(0.2))
+		kit.prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 
 
 func _bell(c: Vector3, j: float, wood: Color) -> void:
@@ -640,7 +817,9 @@ func _bell(c: Vector3, j: float, wood: Color) -> void:
 func _mushroom(t: Vector2i, c: Vector3) -> void:
 	var hero := kit.hero
 	var glows := kit.realm == "lanternvale"
-	var cap := Color("#E2536B") if not glows else Color(Color("#7AD8C8"), 0.5)
+	var caps := {"skyfield": "#F2C84A", "crystalline": "#8FB8F0", "tidehold": "#3CC6D8", "emberreach": "#F07A3C",
+		"verdant": "#E2536B", "heart": "#F27AB4"}
+	var cap := Color(caps.get(kit.realm, "#E2536B")) if not glows else Color(Color("#7AD8C8"), 0.5)
 	hero.cyl(Geo.place(c), 0.11, 0.08, 0.38, Color("#F3E6CC"), 8)
 	hero.moving(Geo.Anim.BOB, c)
 	hero.ball(Geo.place(c + Vector3(0, 0.34, 0), 0.0, Vector3(1, 0.62, 1)), 0.38, cap, 4, 12, true)

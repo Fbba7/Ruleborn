@@ -17,6 +17,8 @@ const SUB := 3
 ## How far a water bed lies below its tile, and the water under its banks.
 const BED := 0.24
 const WATER_DROP := 0.012
+## The most trail segments the ground shader draws (kit_ground.gdshader).
+const LANES := 48
 ## The island's own grass top, which the grid's edge meets.
 const ISLAND_Y := -0.02
 ## A tile's surfaces, as `surfaces()` gives them.
@@ -39,6 +41,9 @@ var tints := {}
 ## The island's own builder (T2's), for the meadow's colour: the grid's
 ## ground starts from the very colour the island's meadow has under it.
 var island: IslandBuilder
+## Courtyards of flagstones, each [centre, radius] in tile space: the
+## plaza round the Keeper's Spire (§21.4: "courtyards").
+var plazas: Array = []
 ## Worn earth trails, tile-space segments [a, b] (Vector2), joining the
 ## buildings' doors and the Vault: ground paint, not the simulation's gravel.
 var trails: Array = []
@@ -183,6 +188,20 @@ static func earth(colours: Dictionary) -> Color:
 	return (colours["stone"] as Color).lerp(colours["soil"], 0.3)
 
 
+## Field `key` as round blobs: 1 at a marked tile's centre, falling to 0
+## `reach` tiles out, so a mark never shows its tile's square.
+func blob(key: String, u: float, v: float, reach: float) -> float:
+	var f: PackedFloat32Array = _fields[key]
+	var best := 0.0
+	var p := Vector2(u, v)
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			var t := Vector2i(int(floor(u)) + dx, int(floor(v)) + dy)
+			if inside(t) and f[index(t)] > 0.5:
+				best = maxf(best, 1.0 - p.distance_to(Vector2(t) + Vector2(0.5, 0.5)) / reach)
+	return clampf(best, 0.0, 1.0)
+
+
 ## A smooth seeded noise in [0, 1) over the ground, for the paint.
 static func noise(u: float, v: float, scale: float) -> float:
 	var p := Vector2(u, v) * scale
@@ -205,16 +224,16 @@ func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 	var w := world(u, v, 0.0)
 	var c := meadow(w.x, w.z)
 	# Lush ground (moss, tall grass, thickets) is deeper and cooler.
-	var lush := field("lush", u, v)
+	var lush := maxf(blob("lush", u, v, 0.8), field("lush", u, v) * 0.5)
 	c = c.lerp(grass.darkened(0.2).lerp(Color("#3E8A5A"), 0.15), clampf(lush * 1.2, 0.0, 1.0) * 0.8)
 	var bloom := field("bloom", u, v)
 	c = c.lerp(grass.lightened(0.12).lerp(palette["accent"], 0.12), bloom * 0.6)
 	# Worn earth where a building stands, fading into the grass.
 	var apron := smoothstep(0.25, 0.7, field("apron", u, v) + (n2 - 0.5) * 0.35)
 	c = c.lerp(dirt.lerp(soil, 0.25), apron * 0.85)
-	var stone := smoothstep(0.3, 0.7, field("stone", u, v) + (n1 - 0.5) * 0.3)
+	var stone := smoothstep(0.2, 0.7, blob("stone", u, v, 0.7) + (n1 - 0.5) * 0.3)
 	c = c.lerp(palette["rock"].lightened(0.25), stone * 0.6)
-	var scorch := smoothstep(0.2, 0.7, field("scorch", u, v) + (n2 - 0.5) * 0.3)
+	var scorch := smoothstep(0.0, 0.7, blob("scorch", u, v, 0.75) + (n2 - 0.5) * 0.4) * 0.7
 	c = c.lerp(palette["rock"].darkened(0.35), scorch * 0.75)
 	var shade := field("shade", u, v)
 	c = c.darkened(0.1 * shade)
@@ -222,16 +241,21 @@ func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 	var occ := field("occ", u, v)
 	c = c.darkened(0.09 * smoothstep(0.1, 0.6, occ) * (1.0 - apron))
 	# A sandy bank where the grass meets water.
-	var bank := smoothstep(0.12, 0.45, field("wet", u, v))
-	c = c.lerp(dirt.lightened(0.12), bank * 0.75)
+	var bank := smoothstep(0.25, 0.5, field("wet", u, v) + (n1 - 0.5) * 0.2)
+	c = c.lerp(c.lerp(dirt, 0.5).darkened(0.05), bank * 0.5)
 	if on_wet:
 		c = dirt.lerp(soil, 0.45).darkened(0.1)
 	# Higher ground catches a little more light.
-	c = c.lightened(0.03 * lvl)
+	c = c.lightened(0.07 * lvl)
 	# A worn trail between doors: trodden earth through the grass.
 	var trail := trail_at(u, v)
-	c = c.lerp(dirt.lerp(soil, 0.35), smoothstep(0.35, 0.8, trail + (n2 - 0.5) * 0.3) * 0.8)
+	# (The shader draws the trail itself, crisp; the vertices only wear the
+	# grass round it a little.)
+	c = c.lerp(c.darkened(0.08).lerp(soil, 0.1), smoothstep(0.0, 0.6, trail))
 	var path := path_at(u, v)
+	for pl: Array in plazas:
+		var dr := Vector2(u, v).distance_to(pl[0] as Vector2) - float(pl[1])
+		path = maxf(path, clampf(0.45 - dr / 0.62, 0.0, 1.0))
 	# Worn earth round a path, before its cobbles start.
 	c = c.lerp(dirt.lerp(soil, 0.3), smoothstep(0.25, 0.5, path) * 0.5)
 	return [c, Vector4(path, lush, 0.0, stone)]
@@ -266,7 +290,7 @@ func trail_at(u: float, v: float) -> float:
 	var p := Vector2(u, v)
 	for seg: Array in trails:
 		best = minf(best, _segment(p, seg[0], seg[1]))
-	return clampf(1.0 - best / 0.36, 0.0, 1.0)
+	return clampf(1.0 - best / 0.6, 0.0, 1.0)
 
 
 ## Tile `t`'s flat top, SUB × SUB quads, its edge rounded where it falls away.
@@ -333,7 +357,7 @@ func _side(t: Vector2i, d: Vector2i) -> void:
 	if y1 < y0 - 0.02:
 		var rows := [0.0, 0.18, 0.55, 1.0]
 		var bulge := [0.0, 0.05, 0.035, 0.0]
-		var tint := [grass.darkened(0.1), soil.lightened(0.12), soil, rock.lerp(soil, 0.4).darkened(0.1)]
+		var tint := [grass.darkened(0.2), soil.lightened(0.05), soil.darkened(0.12), rock.lerp(soil, 0.4).darkened(0.25)]
 		if bank:
 			tint = [dirt.lightened(0.05), dirt.darkened(0.08), soil.lightened(0.05), soil.darkened(0.15)]
 		var grid: Array = []

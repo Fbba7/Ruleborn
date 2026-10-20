@@ -17,26 +17,35 @@ const CORNERS := [PI / 4.0, 3.0 * PI / 4.0, 5.0 * PI / 4.0, 7.0 * PI / 4.0]
 
 
 ## The signature of `realm` round a ring of `radius` into `g` (inked) and
-## `fine`.
-static func build(g: Geo, fine: Geo, realm: String, radius: float, palette: Dictionary) -> void:
+## `fine`, grown by `grow` (0 at a realm's first level, 1 from its fifth,
+## §21.4's "how it grows with level"): one windmill, then two; crystals
+## that grow larger; a young tree, then the great tree; four lanterns, then
+## eight and the floating festival; vents that grow into chimneys.
+static func build(g: Geo, fine: Geo, realm: String, radius: float, palette: Dictionary, grow := 1.0) -> void:
 	var base := -0.1
+	var at := func(a: float) -> Vector3: return Vector3(cos(a) * radius, base, sin(a) * radius)
+	var size := 0.6 + 0.4 * grow
 	match realm:
 		"heart":
 			KitCitadel.walls(g, fine, radius, palette)
 		"skyfield":
-			for a: float in [CORNERS[0], CORNERS[1]]:
-				_windmill(g, fine, Vector3(cos(a) * radius, base, sin(a) * radius), palette)
+			for a: float in ([CORNERS[0], CORNERS[1]] if grow >= 0.5 else [CORNERS[0]]):
+				_grown(g, fine, at.call(a), size, func(tg: Geo, tf: Geo) -> void:
+					_windmill(tg, tf, Vector3.ZERO, palette))
 		"crystalline":
 			for a: float in CORNERS:
-				_crystals(g, Vector3(cos(a) * radius, base, sin(a) * radius), a)
+				_grown(g, fine, at.call(a), 0.5 + 0.6 * grow, func(tg: Geo, _tf: Geo) -> void:
+					_crystals(tg, Vector3.ZERO, a))
 		"verdant":
-			var a: float = CORNERS[0]
-			_great_tree(g, fine, Vector3(cos(a) * radius, base, sin(a) * radius), palette)
+			var a: float = CORNERS[2]
+			_grown(g, fine, at.call(a), 0.45 + 0.55 * grow, func(tg: Geo, tf: Geo) -> void:
+				_great_tree(tg, tf, Vector3.ZERO, palette))
 		"lanternvale":
-			for k in 8:
-				var a := TAU * k / 8.0 + 0.2
-				_lantern(g, fine, Vector3(cos(a) * radius, base, sin(a) * radius))
-			for k in 6:
+			var n := 4 if grow < 0.5 else 8
+			for k in n:
+				var a := TAU * k / n + 0.2
+				_lantern(g, fine, at.call(a))
+			for k in (6 if grow >= 1.0 else 0):
 				var a := TAU * k / 6.0 + 0.5
 				var p := Vector3(cos(a) * radius * 0.55, 2.6 + 0.5 * Geo._hash01(k * 7), sin(a) * radius * 0.55)
 				fine.moving(Geo.Anim.BOB, p)
@@ -45,7 +54,20 @@ static func build(g: Geo, fine: Geo, realm: String, radius: float, palette: Dict
 				fine.moving(Geo.Anim.NONE, Vector3.ZERO)
 		"emberreach":
 			for a: float in [CORNERS[0], CORNERS[1]]:
-				_chimney(g, fine, Vector3(cos(a) * radius, base, sin(a) * radius), palette)
+				_grown(g, fine, at.call(a), 0.45 + 0.55 * grow, func(tg: Geo, tf: Geo) -> void:
+					_chimney(tg, tf, Vector3.ZERO, palette))
+
+
+## A piece drawn by `draw` at the origin, then set at `p` scaled by `size`.
+static func _grown(g: Geo, fine: Geo, p: Vector3, size: float, draw: Callable) -> void:
+	var tg := Geo.new()
+	var tf := Geo.new()
+	tg.skip_down = g.skip_down
+	tf.skip_down = fine.skip_down
+	draw.call(tg, tf)
+	var xf := Transform3D(Basis().scaled(Vector3.ONE * size), p)
+	g.absorb(tg, xf)
+	fine.absorb(tf, xf)
 
 
 static func _windmill(g: Geo, fine: Geo, p: Vector3, palette: Dictionary) -> void:
@@ -113,6 +135,6 @@ static func _chimney(g: Geo, fine: Geo, p: Vector3, palette: Dictionary) -> void
 	fine.ring(Geo.place(p + Vector3(0, 1.305, 0)), 0.0, 0.15, Color(Palette.ENERGY.lightened(0.2), 0.1), 8)
 	for k in 3:
 		var q := p + Vector3(0.04 * k, 1.5 + 0.28 * k, 0)
-		fine.moving(Geo.Anim.BOB, q + Vector3(k * 3.0, 0, 0))
+		fine.moving(Geo.Anim.RISE, q + Vector3(k * 3.0, 0, 0))
 		fine.ball(Geo.place(q), 0.12 + 0.07 * k, Color("#6A5A5E").lightened(0.15 * k), 3, 7)
 	fine.moving(Geo.Anim.NONE, Vector3.ZERO)

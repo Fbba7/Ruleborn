@@ -65,6 +65,8 @@ var prop := Geo.new()
 var clear := Geo.new()
 var water := Geo.new()
 var lava := Geo.new()
+## The worn trails, kept for the ground shader (`instances`).
+var _lanes: Array = []
 
 
 func _init(r: RulebornReplay, colours: Dictionary) -> void:
@@ -151,6 +153,11 @@ func build() -> void:
 	if island_seed != 0:
 		kg.island = IslandBuilder.new(size, island_seed, palette)
 	kg.trails = _trails(footprints)
+	for fp: Array in footprints:
+		if fp[0] == "keeper_s_spire":
+			var side: float = fp[3]
+			kg.plazas.append([Vector2(fp[1], fp[2]) + Vector2(side, side) / 2.0, side / 2.0 + 0.9])
+	_lanes = kg.trails
 	for i in features.size():
 		if features[i] in WATER_TINT:
 			kg.tints[Vector2i(i % size.x, i / size.x)] = Color(WATER_TINT[features[i]])
@@ -171,12 +178,14 @@ func build() -> void:
 		var mid := Vector3(a.x + (side - 1) / 2.0, a.y, a.z + (side - 1) / 2.0)
 		var turn := 0.0 if fp[0] == "keeper_s_spire" else facing(Vector2i(fp[1], fp[2]), side)
 		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop, clear, turn)
-	for m: Vector2i in tunnels:
-		_tunnel(m)
+	for k in range(0, tunnels.size() - 1, 2):
+		_tunnel(tunnels[k], tunnels[k + 1])
+		_tunnel(tunnels[k + 1], tunnels[k])
 	# The realm's signature round its home (the Heart's walls, Skyfield's
 	# windmills, …), just past the grid, where the Spire stands.
 	if footprints.any(func(fp: Array) -> bool: return fp[0] == "keeper_s_spire"):
-		KitSignature.build(hero, prop, realm, Vector2(size).length() / 2.0 + 0.5, palette)
+		KitSignature.build(hero, prop, realm, Vector2(size).length() / 2.0 + 0.5, palette,
+			clampf((maxi(size.x, size.y) - 10) / 4.0, 0.0, 1.0))
 
 
 ## Worn trails joining the buildings' doors and the Vault, as the design's
@@ -207,12 +216,17 @@ func _trails(footprints: Array) -> Array:
 					best = d
 					pair = Vector2i(a, b)
 		joined.append(pair.y)
-		# An elbow rather than a diagonal, so a trail follows the grid's lanes.
+		# A lane that bends round the corner of an elbow, as the design's
+		# lanes curve between its houses: a quadratic curve in four runs.
 		var a2 := stops[pair.x]
 		var b2 := stops[pair.y]
 		var corner := Vector2(b2.x, a2.y)
-		out.append([a2, corner])
-		out.append([corner, b2])
+		var prev := a2
+		for k in range(1, 5):
+			var t := k / 4.0
+			var p := a2.lerp(corner, t).lerp(corner.lerp(b2, t), t)
+			out.append([prev, p])
+			prev = p
 	return out
 
 
@@ -286,19 +300,32 @@ func facing(nw: Vector2i, side: int) -> float:
 	return way
 
 
-## A tunnel's mouth: a grassy mound with a dark arch toward its partner.
-func _tunnel(m: Vector2i) -> void:
+## A tunnel's mouth: a grassy mound of rock with a stone archway in it, its
+## dark opening facing the partner mouth (§6.2's tunnels go under the
+## realm between the two).
+func _tunnel(m: Vector2i, toward: Vector2i) -> void:
 	var c := centre(m)
 	var rock: Color = palette["rock"]
-	hero.ball(Geo.place(c, 0.0, Vector3(1.0, 0.62, 1.0)), 0.44, rock.lightened(0.05), 4, 10, true)
-	prop.ball(Geo.place(c + Vector3(0, 0.22, 0), 0.0, Vector3(1.0, 0.4, 1.0)), 0.36, palette["grass"].darkened(0.08), 3,
-		10, true)
-	prop.cyl(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), c + Vector3(0, 0.0, 0.42)), 0.2, 0.2, 0.04,
+	var stone: Color = KitStyle.of(realm)["stone2"]
+	var d := Vector2(toward - m)
+	var turn := atan2(d.x, d.y) if d.length() > 0.0 else 0.0
+	var basis := Basis(Vector3.UP, turn)
+	var front := basis * Vector3(0, 0, 0.3)
+	hero.ball(Geo.place(c - front * 0.4, turn, Vector3(1.0, 1.15, 1.1)), 0.46, rock.lightened(0.05), 4, 10, true)
+	prop.ball(Geo.place(c - front * 0.4 + Vector3(0, 0.36, 0), turn, Vector3(1.0, 0.5, 1.1)), 0.38,
+		(palette["grass"] as Color).darkened(0.08), 3, 10, true)
+	# The dark opening and its arch of stones.
+	prop.cyl(Transform3D(basis * Basis(Vector3.RIGHT, PI / 2.0), c + front + Vector3(0, 0.0, 0)), 0.2, 0.2, 0.02,
 		Palette.INK.lightened(0.05), 10)
-	for k in 5:
-		var a := PI * (k + 0.5) / 5.0
-		hero.rbox(Geo.place(c + Vector3(cos(a) * 0.24, sin(a) * 0.24, 0.42)), Vector3(0.1, 0.1, 0.08),
-			palette["stone"].darkened(0.05), 0.015)
+	prop.box(Transform3D(basis, c + front + Vector3(0, 0.0, 0) - basis * Vector3(0, 0, 0.01)), Vector3(0.4, 0.02, 0.02),
+		Palette.INK)
+	for k in 7:
+		var a := PI * k / 6.0
+		hero.rbox(Transform3D(basis * Basis(Vector3.BACK, a - PI / 2.0), c + front + basis * Vector3(cos(a) * 0.25,
+			sin(a) * 0.25 + 0.0, 0.02)), Vector3(0.1, 0.1, 0.12), stone.darkened(0.04 * (k % 2)), 0.015)
+	# A worn patch before it.
+	prop.ring(Geo.place(c + front * 1.5 + Vector3(0, 0.012, 0)), 0.0, 0.22,
+		(palette["grass"] as Color).lerp(KitGround.earth(palette), 0.5), 8)
 
 
 ## The layers as instances with the kit's materials: the painted ground,
@@ -307,10 +334,33 @@ func instances() -> Array[MeshInstance3D]:
 	var out: Array[MeshInstance3D] = []
 	var ground_mat := material("ground")
 	ground_mat.set_shader_parameter("grid_offset", Vector2(0.5 * (size.x % 2), 0.5 * (size.y % 2)))
-	ground_mat.set_shader_parameter("cobble", KitGround.earth(palette).lightened(0.18))
+	# §21.4: the Heart's are "cream flagstones".
+	ground_mat.set_shader_parameter("cobble", KitGround.earth(palette).lightened(0.18) if realm != "heart"
+		else Color("#EFE4CF"))
 	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
+	# The trails, as world-space segments (xz of each end), for the shader to
+	# draw crisp.
+	var lanes := PackedVector4Array()
+	var half := Vector2(size) / 2.0
+	for seg: Array in _lanes.slice(0, KitGround.LANES):
+		var a: Vector2 = (seg[0] as Vector2) - half
+		var b: Vector2 = (seg[1] as Vector2) - half
+		lanes.append(Vector4(a.x, a.y, b.x, b.y))
+	ground_mat.set_shader_parameter("lane_count", lanes.size())
+	if lanes.size() > 0:
+		lanes.resize(KitGround.LANES)
+		ground_mat.set_shader_parameter("lanes", lanes)
+	ground_mat.set_shader_parameter("lane_earth", KitGround.earth(palette).lerp(palette["soil"], 0.2)
+		if realm != "lanternvale" else Color("#9A8EC0"))
 	var water_mat := material("water")
-	water_mat.set_shader_parameter("bank", KitGround.earth(palette).lightened(0.2).lerp(palette["grass"], 0.2))
+	# Water by realm (§21.4): Tidehold's teal, Emberreach's hot springs,
+	# Crystalline's ice-melt, Lantern Vale's dark water.
+	var waters := {"tidehold": ["#1F8FA0", "#C8FFF4"], "emberreach": ["#2E8C84", "#D8FFF0"],
+		"crystalline": ["#6FA8E8", "#F0F8FF"], "lanternvale": ["#22306A", "#9FE8FF"]}
+	if waters.has(realm):
+		water_mat.set_shader_parameter("deep", Color(waters[realm][0]))
+		water_mat.set_shader_parameter("foam", Color(waters[realm][1]))
+	water_mat.set_shader_parameter("bank", (palette["grass"] as Color).lerp(KitGround.earth(palette), 0.3))
 	var lava_mat := material("water")
 	lava_mat.set_shader_parameter("deep", Color("#C8401E"))
 	lava_mat.set_shader_parameter("foam", Color("#FFC24A"))
@@ -328,6 +378,19 @@ func instances() -> Array[MeshInstance3D]:
 			else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		out.append(mi)
 	return out
+
+
+## The kit's glow by the hour (§21.2: at night "lanterns and glows carry
+## the realm"): windows, lanterns and crystals under `root` shine twice as
+## bright at night and half again at dusk.
+static func by_hour(root: Node, hour: int) -> void:
+	var night: float = {"day": 0.0, "dusk": 0.5, "night": 1.0}[RealmPalette.hour_key(hour)]
+	if root == null:
+		return
+	for n in root.find_children("*", "MeshInstance3D", true, false):
+		var m := (n as MeshInstance3D).material_override as ShaderMaterial
+		if m != null and (m.shader == _shaders["toon"] or m.shader == _shaders["clear"]):
+			m.set_shader_parameter("night", night)
 
 
 ## A kit material: `toon` (optionally inked), `clear`, `ground`, `water`.
