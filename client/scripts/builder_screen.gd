@@ -72,7 +72,7 @@ func _ready() -> void:
 func _build() -> void:
 	var column := UI.frame(self)
 	var stage := StageScreen.mount(self, column)
-	stage.swipe_turns = false
+	stage.taps_zoom = false
 	stage.fill = 0.86
 	view = stage
 	tiles = OverlayTiles.new(stage)

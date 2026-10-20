@@ -14,11 +14,11 @@ extends RefCounted
 ## top of the screen down; `light` its sun.
 
 const TYPES := {
-	"heart": {"ground": "#E4D3AE", "grass": "#86C46B", "stone": "#D8CFC2", "rock": "#9C8A7A", "soil": "#8A6A4E",
+	"heart": {"ground": "#E4D3AE", "grass": "#7FA462", "stone": "#D8CFC2", "rock": "#9C8A7A", "soil": "#8A6A4E",
 		"dirt": "#9A6B4F", "cliff": "#6A5C8C", "cliff_deep": "#4B3F6E", "trim": "#F2B43C", "plant": "#5CC46A",
 		"accent": "#E05CB4", "bloom": "#F7A6DA", "light": "#FFD8E8",
 		"sky_top": "#1B1250", "sky_mid": "#4A2A8E", "sky_low": "#C86FB0"},
-	"skyfield": {"ground": "#E2D59E", "grass": "#A8D068", "stone": "#F4F0E6", "rock": "#B9AE9F", "soil": "#9A7F5C",
+	"skyfield": {"ground": "#E2D59E", "grass": "#9EB862", "stone": "#F4F0E6", "rock": "#B9AE9F", "soil": "#9A7F5C",
 		"dirt": "#B9875C", "cliff": "#9C8FB4", "cliff_deep": "#746A92", "trim": "#F2B43C", "plant": "#E8D27A",
 		"accent": "#F2B43C", "bloom": "#FFFFFF", "light": "#FFF2D0",
 		"sky_top": "#3B6FD0", "sky_mid": "#7FB5EE", "sky_low": "#FFE3B0"},
@@ -34,7 +34,7 @@ const TYPES := {
 		"dirt": "#5A3B34", "cliff": "#3F2A30", "cliff_deep": "#2B1C22", "trim": "#F07A3C", "plant": "#E0A04A",
 		"accent": "#F07A3C", "bloom": "#FF8A3C", "light": "#FFB070",
 		"sky_top": "#22091A", "sky_mid": "#5E1F2E", "sky_low": "#F08A4C"},
-	"verdant": {"ground": "#86B866", "grass": "#4CA24C", "stone": "#C9C2A8", "rock": "#7F7462", "soil": "#7A5A3E",
+	"verdant": {"ground": "#86B866", "grass": "#4E9650", "stone": "#C9C2A8", "rock": "#7F7462", "soil": "#7A5A3E",
 		"dirt": "#7A5A40", "cliff": "#6B5846", "cliff_deep": "#4F4034", "trim": "#5CC46A", "plant": "#3E9A48",
 		"accent": "#F2E07A", "bloom": "#F7A6DA", "light": "#FFF0B8",
 		"sky_top": "#17402F", "sky_mid": "#3B8657", "sky_low": "#DCF1A8"},
@@ -64,7 +64,7 @@ const SKIES := {
 }
 ## The hour's own light: the sun's tint and strength, and the ambient's tint.
 const HOUR_LIGHT := {
-	"day": ["#FFFFFF", 1.0, "#FFFFFF"], "dusk": ["#FFB98A", 0.86, "#B49AE8"], "night": ["#B4BCFF", 0.62, "#9A92D4"],
+	"day": ["#FFFFFF", 1.0, "#FFFFFF"], "dusk": ["#FFB98A", 0.86, "#B49AE8"], "night": ["#A2AEFF", 0.5, "#7E76C4"],
 }
 
 
@@ -97,7 +97,14 @@ static func light_at(hour: int, type := "heart") -> Array:
 static func hemisphere_at(hour: int, type := "heart") -> Array[Color]:
 	var l: Dictionary = LIGHTS.get(type, LIGHTS["heart"])
 	var tint := Color(HOUR_LIGHT[hour_key(hour)][2])
-	return [Color(l["sky"]) * tint, Color(l["under"]) * tint]
+	var above := Color(l["sky"]) * tint
+	var below := Color(l["under"]) * tint
+	if hour_key(hour) == "night":
+		# Moonlight: a cool blue from above keeps the ground's hue instead of
+		# greying it.
+		above = above.lerp(Color("#5868C8"), 0.55)
+		below = below.lerp(Color("#1A1840"), 0.3)
+	return [above, below]
 
 
 ## Where the sun stands for a realm, as a direction from the island to it;

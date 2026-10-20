@@ -15,7 +15,7 @@ import { KINDS, MAX_TRIS } from './kinds.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, '../..');
-const outDir = path.join(repo, 'client/art/creatures');
+const outDir = process.env.OUT_DIR ? path.resolve(process.env.OUT_DIR) : path.join(repo, 'client/art/creatures');
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || '/opt/node22/lib/node_modules/playwright');
 

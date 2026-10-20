@@ -48,7 +48,7 @@ static func _hull(g: Geo) -> void:
 	for i in rings:
 		for j in around:
 			var shade := HULL.lightened(0.05 * (j % 2))
-			g.quad(section.call(i, j), section.call(i, j + 1), section.call(i + 1, j + 1), section.call(i + 1, j), shade)
+			g.quad(section.call(i, j), section.call(i + 1, j), section.call(i + 1, j + 1), section.call(i, j + 1), shade)
 	for side: int in [0, around]:
 		for i in rings:
 			var a: Vector3 = section.call(i, side)

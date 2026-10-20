@@ -42,12 +42,13 @@ func tri(a: Vector3, b: Vector3, c: Vector3, col: Color, out: Vector3, ua := Vec
 
 
 ## A face with a normal at each corner, wound as given (clockwise from the
-## side the normals face): three points, their normals and their colours.
-func smooth(p: Array[Vector3], n: Array[Vector3], c: Array[Color]) -> void:
+## side the normals face): three points, their normals, their colours and,
+## if given, their UVs.
+func smooth(p: Array[Vector3], n: Array[Vector3], c: Array[Color], uv: Array[Vector2] = []) -> void:
 	verts.append_array(p)
 	normals.append_array(n)
 	colours.append_array(c)
-	uvs.append_array([Vector2.ZERO, Vector2.ZERO, Vector2.ZERO])
+	uvs.append_array(uv if uv.size() == 3 else [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO])
 	triangles += 1
 
 
