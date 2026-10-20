@@ -172,11 +172,16 @@ func build(t: Vector2i, f: int) -> void:
 		RealmKit.F.RAMP:
 			_ramp(t, c)
 		RealmKit.F.STAIRS:
+			var up := _toward(t, 1)
+			var steps: Color = style["stone2"]
 			for k in 4:
-				var step := Vector3(0, 0, 0.375 - 0.25 * k).rotated(Vector3.UP, kit.yaw(t))
+				var step := Vector3(0, 0, 0.375 - 0.25 * k).rotated(Vector3.UP, up)
 				var hh := IslandBuilder.LEVEL * (k + 1) / 4.0
-				prop.rbox(Geo.place(c + step + Vector3(0, hh / 2.0, 0), kit.yaw(t)), Vector3(0.78, hh, 0.25),
-					stone.darkened(0.06 * (k % 2)), 0.02)
+				prop.rbox(Geo.place(c + step + Vector3(0, hh / 2.0, 0), up), Vector3(0.78, hh, 0.25),
+					steps.lightened(0.08 * (k % 2)), 0.02, steps.lightened(0.15))
+			for sx: float in [-1.0, 1.0]:
+				prop.rock(Geo.place(c + Vector3(sx * 0.44, 0.06, 0.3).rotated(Vector3.UP, up)), 0.09,
+					kit.palette["rock"], t.x + int(sx))
 		RealmKit.F.CLIMBING_VINES:
 			_vines(t, c, plant)
 		RealmKit.F.WATERFALL:
@@ -205,6 +210,20 @@ func _pillar(c: Vector3, j: float, rock: Color) -> void:
 	hero.prism(Geo.place(c + Vector3(0, 1.0, 0), j + 0.4), 7, 0.25, 0.18, 0.3, rock.darkened(0.06))
 	hero.rock(Geo.place(c + Vector3(0, 1.38, 0), j, Vector3(1, 0.7, 1)), 0.2, rock.lightened(0.06), int(j * 100))
 	kit.prop.rock(Geo.place(c + Vector3(0.32, 0.04, 0.22)), 0.08, rock.darkened(0.05), int(j * 50))
+
+
+## The yaw (local −Z) toward a neighbour standing `rise` levels above `t`
+## (below when negative), as the design finds a ramp's way up; the tile's
+## own facing when none does.
+func _toward(t: Vector2i, rise: int) -> float:
+	for d: Vector2i in [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]:
+		var n := t + d
+		if not kit.inside(n):
+			continue
+		var dh := roundi((kit.height(n) - kit.height(t)) / IslandBuilder.LEVEL)
+		if (rise > 0 and dh == rise) or (rise < 0 and dh < 0):
+			return atan2(-float(d.x), -float(d.y))
+	return kit.yaw(t)
 
 
 ## Whether the neighbour of `t` toward `d` carries feature `f`.
@@ -484,7 +503,7 @@ func _mushroom(t: Vector2i, c: Vector3) -> void:
 
 
 func _ramp(t: Vector2i, c: Vector3) -> void:
-	var yaw := kit.yaw(t)
+	var yaw := _toward(t, 1)
 	var soil: Color = kit.palette["soil"]
 	kit.prop.wedge(Geo.place(c, yaw), Vector3(0.98, IslandBuilder.LEVEL, 1.0), soil.lightened(0.1))
 	var plank := KitStyle.WOOD.lightened(0.25)
@@ -496,21 +515,30 @@ func _ramp(t: Vector2i, c: Vector3) -> void:
 		kit.prop.box(Transform3D(basis, p), Vector3(0.8, 0.03, 0.18), plank.darkened(0.06 * (k % 2)))
 
 
+## Vines climbing the face of the higher neighbour's cliff, leafy stems
+## from the foot to the lip.
 func _vines(t: Vector2i, c: Vector3, plant: Color) -> void:
-	var back := Vector3(0, 0, -0.42).rotated(Vector3.UP, kit.yaw(t))
+	var up := _toward(t, 1)
+	var back := Vector3(0, 0, -0.5).rotated(Vector3.UP, up)
 	var side := back.cross(Vector3.UP).normalized()
+	var tall := maxf(IslandBuilder.LEVEL, 0.5)
 	kit.prop.moving(Geo.Anim.SWAY, c)
-	for k in 4:
-		var p := c + back + side * (-0.3 + 0.2 * k)
-		kit.prop.prism(Geo.place(p), 4, 0.025, 0.02, 0.9, plant.darkened(0.3))
+	for k in 5:
+		var p := c + back * 0.92 + side * (-0.36 + 0.18 * k)
+		var reach := tall * (0.7 + 0.35 * RealmKit.jitter(t, k + 20))
+		kit.prop.prism(Geo.place(p), 4, 0.02, 0.014, reach, plant.darkened(0.35))
 		for m in 4:
-			kit.prop.ball(Geo.place(p + Vector3(0, 0.15 + 0.22 * m, 0) - back * 0.05, 0.0, Vector3(1, 0.7, 0.6)),
-				0.07 + 0.02 * RealmKit.jitter(t, k * 4 + m), plant.darkened(0.1 * ((k + m) % 3)), 2, 5)
+			var y := reach * (m + 0.5) / 4.0
+			kit.prop.ball(Geo.place(p + Vector3(0, y, 0) - back * 0.06 + side * (0.04 * (m % 2) - 0.02), 0.0,
+				Vector3(1.2, 0.8, 0.5)), 0.06 + 0.02 * RealmKit.jitter(t, k * 4 + m),
+				plant.darkened(0.06 * ((k + m) % 3)), 2, 5)
+		if k % 2 == 0:
+			kit.prop.ball(Geo.place(p + Vector3(0, reach * 0.6, 0) - back * 0.09), 0.03, Color("#F7A6DA"), 2, 4)
 	kit.prop.still()
 
 
 func _waterfall(t: Vector2i, c: Vector3, rock: Color) -> void:
-	var yaw := kit.yaw(t)
+	var yaw := _toward(t, -1)
 	var fwd := Vector3(0, 0, -1).rotated(Vector3.UP, yaw)
 	var below := kit.height(t + Vector2i(roundi(fwd.x), roundi(fwd.z)))
 	var drop := maxf(c.y - below, 0.3) + 0.1

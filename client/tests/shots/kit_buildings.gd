@@ -29,6 +29,7 @@ func _shoot() -> void:
 	look.set_hour(int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 12)
 	var g := Geo.new()
 	var fine := Geo.new()
+	var panes := Geo.new()
 	var count := last - first + 1
 	var spacing := 4.2
 	var grass := Geo.new()
@@ -48,12 +49,12 @@ func _shoot() -> void:
 			var side := 3 if kind == "keeper_s_spire" else 2
 			var mid := Vector3(-span.x / 2.0 + spacing * (col + 0.5), 0, -span.y / 2.0 + spacing * (r + 0.5))
 			var before := g.triangles + fine.triangles
-			BuildingKit.build(g, kind, mid, side, lvl, colours, fine)
+			BuildingKit.build(g, kind, mid, side, lvl, colours, fine, panes)
 			tris.append("%s@%d=%d" % [kind, lvl, g.triangles + fine.triangles - before])
 	print("triangles ", tris)
 	var ground_mat := RealmKit.material("ground")
 	for pair: Array in [[grass.mesh(), ground_mat], [g.mesh(), RealmKit.material("toon", true)],
-			[fine.mesh(), RealmKit.material("toon")]]:
+			[fine.mesh(), RealmKit.material("toon")], [panes.mesh(), RealmKit.material("clear")]]:
 		var mi := MeshInstance3D.new()
 		mi.mesh = pair[0]
 		mi.material_override = pair[1]

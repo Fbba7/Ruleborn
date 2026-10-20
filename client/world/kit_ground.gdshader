@@ -15,6 +15,9 @@ uniform float seam = 0.09;
 uniform vec4 cobble : source_color = vec4(0.91, 0.84, 0.74, 1.0);
 uniform vec4 mortar : source_color = vec4(0.62, 0.52, 0.45, 1.0);
 uniform vec4 strata : source_color = vec4(0.42, 0.33, 0.30, 1.0);
+// The realm's petals, dotted through the grass (§21.4's plants), and pebbles.
+uniform vec4 petal : source_color = vec4(0.97, 0.65, 0.85, 1.0);
+uniform vec4 pebble : source_color = vec4(0.70, 0.66, 0.62, 1.0);
 
 varying vec3 wpos;
 varying float up;
@@ -85,6 +88,16 @@ void fragment() {
 	float fleck = step(length(inside * vec2(1.0, 2.2)), 0.26) * grassy;
 	c = mix(c, c * 1.16 + vec3(0.03, 0.04, 0.0), fleck * step(0.9, h));
 	c = mix(c, c * 0.78, fleck * step(h, 0.08) * (0.5 + lush));
+	// Petals and pebbles scattered through the grass, a few per tile.
+	vec2 sp = p * 4.0;
+	vec2 sc = floor(sp);
+	float sh = hash(sc + 17.0);
+	vec2 so = vec2(hash(sc + 3.1), hash(sc + 9.7)) * 0.6 + 0.2;
+	float sd = length(fract(sp) - so);
+	float speck = (1.0 - smoothstep(0.07, 0.1, sd)) * grassy * (1.0 - lush * 0.5);
+	vec3 bloom = mix(petal.rgb, vec3(1.0, 0.96, 0.85), step(0.5, hash(sc + 5.5)));
+	c = mix(c, bloom, speck * step(0.86, sh));
+	c = mix(c, pebble.rgb * (0.85 + 0.3 * hash(sc)), speck * step(sh, 0.06) * 0.9);
 	// A path: a ribbon of cobbles laid in worn earth (UV.x is how near the
 	// path's middle line this is), a darker kerb at its edge.
 	if (path > 0.3) {

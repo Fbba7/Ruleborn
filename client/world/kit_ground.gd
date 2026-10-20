@@ -237,10 +237,10 @@ func _top(t: Vector2i) -> void:
 				out.z += 1.0
 			var drop := 0.06 if out != Vector3.ZERO else 0.0
 			pts.append(world(u, v, y - drop))
-			nrm.append((Vector3.UP + out * 0.8).normalized())
+			nrm.append((Vector3.UP + out * 0.5).normalized())
 			var p := paint(u, v, lvl, on_wet)
 			var col: Color = p[0]
-			cols.append(col.lightened(0.05) if drop > 0.0 else col)
+			cols.append(col.darkened(0.06) if drop > 0.0 else col)
 			chans.append(p[1])
 	for j in SUB:
 		for i in SUB:
@@ -306,6 +306,19 @@ func _side(t: Vector2i, d: Vector2i) -> void:
 				var ch := Vector4(0, 0, 0.0 if r == 0 else 1.0, 0)
 				var ch2 := Vector4(0, 0, 1.0, 0)
 				_wall_quad(a, b, c, e, na, ca, cb, ch, ch2, out)
+		if not bank and inside(n):
+			# Stones fallen to the cliff's foot, and grass hanging over its lip.
+			for k in 2:
+				var s2 := (RealmKit.jitter(t + d * 7, k) - 0.5) * 0.8
+				var foot := mid + along * s2 + Vector2(d) * 0.1
+				scatter.rock(Geo.place(world(foot.x, foot.y, y1 + 0.03), s2 * 5.0, Vector3(1, 0.65, 1)),
+					0.06 + 0.04 * RealmKit.jitter(t, k + 9), rock.lerp(soil, 0.3), t.x * 5 + k)
+			var lip := mid + along * (RealmKit.jitter(t, 33) - 0.5) * 0.6
+			scatter.moving(Geo.Anim.SHIVER, world(lip.x, lip.y, y0 + 0.06))
+			for b in 3:
+				scatter.blade(world(lip.x, lip.y, y0 + 0.05) + out * 0.02 + Vector3(along.x, 0, along.y) * (b - 1) * 0.05,
+					0.14, 0.025, grass.darkened(0.15), 2.2, atan2(out.z, out.x))
+			scatter.still()
 	if edge_out:
 		_skirt(t, d, minf(y1, y0 + 0.06))
 

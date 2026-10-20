@@ -196,10 +196,10 @@ static func _spring(b: BuildingKit) -> void:
 ## the eggs wobble in the colours of what will hatch.
 static func _nursery(b: BuildingKit) -> void:
 	b.plinth(0.96, 0.96, 0.08)
-	var glass := Color(Color("#E2F6F0"), 0.8)
+	var pane := Color("#E2F6F0")
 	var rib := KitStyle.WOOD if b.tier == 0 else (Color("#F6F2E8") if b.tier == 1 else KitStyle.GOLD)
 	b.cyl(0.42, 0.42, 0.12, Color("#C49A5A"), 0, 0.08, 0, 12)
-	b.g.ball(Geo.place(b.at(0, 0.2, 0), 0.0, Vector3(1, 1.35, 1)), 0.4 * b.unit, glass, 5, 12, true)
+	b.glass.ball(Geo.place(b.at(0, 0.2, 0), 0.0, Vector3(1, 1.35, 1)), 0.4 * b.unit, pane, 5, 12, true)
 	for k in 6:
 		var a := TAU * k / 6.0
 		b.d.torus(Transform3D(Basis(Vector3.UP, a) * Basis(Vector3.RIGHT, PI / 2.0), b.at(0, 0.2, 0)) \
@@ -234,7 +234,8 @@ static func _lab(b: BuildingKit) -> void:
 		spheres.append(Vector3(0.1, 0, 0.38))
 	for s: Vector3 in spheres:
 		b.cyl(0.06, 0.08, 0.3, brass, s.x, 0.08, s.z, 8)
-		b.ball(0.12, Color(Color("#DDF4FF"), 0.6), s.x, 0.5, s.z, 1.0, 4, 10)
+		b.glass.ball(Geo.place(b.at(s.x, 0.5, s.z)), 0.12 * b.unit, Color(Color("#DDF4FF"), 0.6), 4, 10)
+		b.ball(0.04, KitStyle.lit(Palette.MOTION.lightened(0.3), 0.3), s.x, 0.5, s.z, 1.0, 2, 6)
 		b.move(Geo.Anim.SPIN_Y, b.at(s.x, 0.5, s.z))
 		b.d.torus(Transform3D(Basis(Vector3.RIGHT, 0.5), b.at(s.x, 0.5, s.z)), 0.15 * b.unit, 0.01 * b.unit, brass, 16, 3)
 		b.stop()

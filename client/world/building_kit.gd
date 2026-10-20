@@ -27,6 +27,9 @@ var g: Geo
 ## The fine parts — windows, frames, rings, flags — drawn without ink, so a
 ## thin part never turns to a black line at phone size.
 var d: Geo
+## Glass — a greenhouse, the Nursery's egg, the Lab's spheres — drawn
+## see-through, so what grows inside shows.
+var glass: Geo
 ## The building's place: its footprint's middle on the ground, and the
 ## design's unit in metres.
 var origin := Vector3.ZERO
@@ -59,10 +62,11 @@ static func look(lvl: int, colours: Dictionary) -> Array[Color]:
 ## Building `kind` of `side` tiles a side, centred on `mid` on the ground,
 ## at `lvl` (1 to 10).
 static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, colours: Dictionary,
-		details: Geo = null) -> void:
+		details: Geo = null, panes: Geo = null) -> void:
 	var b := BuildingKit.new()
 	b.g = geo
 	b.d = details if details != null else geo
+	b.glass = panes if panes != null else b.d
 	b.origin = mid
 	b.level = clampi(lvl, 1, 10)
 	b.tier = 2 if b.level >= 7 else (1 if b.level >= 4 else 0)
@@ -106,11 +110,13 @@ static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, col
 func move(kind: Geo.Anim, pivot: Vector3) -> void:
 	g.moving(kind, pivot)
 	d.moving(kind, pivot)
+	glass.moving(kind, pivot)
 
 
 func stop() -> void:
 	g.still()
 	d.still()
+	glass.still()
 
 
 ## A point in the building's units, placed in the world.
@@ -509,7 +515,12 @@ func _garden() -> void:
 				stop()
 	if tier >= 1:
 		# The greenhouse: white frame, pale glass.
-		var glass := Color(Color("#D8F4EC"), 0.85)
+		var pane := Color("#D8F4EC")
+		for z: float in [-0.29, 0.29]:
+			glass.box(place(0, 0.37, z), Vector3(0.82, 0.34, 0.01) * unit, pane)
+			glass.gable(Transform3D(Basis(), at(0, 0.54, z)), 0.82 * unit, 0.26 * unit, 0.01 * unit, pane)
+		for x: float in [-0.41, 0.41]:
+			glass.box(place(x, 0.37, 0), Vector3(0.01, 0.34, 0.58) * unit, pane)
 		var fr := Color("#F6F2E8") if tier == 1 else KitStyle.GOLD
 		for i in 5:
 			var x := -0.41 + i * 0.205
@@ -519,8 +530,8 @@ func _garden() -> void:
 			box(0.84, 0.022, 0.022, fr, 0, 0.54, z)
 		box(0.022, 0.022, 0.6, fr, 0, 0.8, 0)
 		for s: float in [-1.0, 1.0]:
-			g.rbox(Transform3D(Basis(Vector3.BACK, -s * 0.56), at(s * 0.205, 0.67, 0)), Vector3(0.48, 0.015, 0.6) * unit,
-				glass, 0.005)
+			glass.rbox(Transform3D(Basis(Vector3.BACK, -s * 0.56), at(s * 0.205, 0.67, 0)),
+				Vector3(0.48, 0.015, 0.6) * unit, pane, 0.005)
 			d.box(Transform3D(Basis(Vector3.BACK, -s * 0.56), at(s * 0.205, 0.68, 0.29)),
 				Vector3(0.48, 0.024, 0.024) * unit, fr)
 		top = 0.85

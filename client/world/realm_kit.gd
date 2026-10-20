@@ -156,7 +156,7 @@ func build() -> void:
 		var a := centre(Vector2i(fp[1], fp[2]))
 		var side: int = fp[3]
 		var mid := Vector3(a.x + (side - 1) / 2.0, a.y, a.z + (side - 1) / 2.0)
-		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop)
+		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop, clear)
 	for m: Vector2i in tunnels:
 		_tunnel(m)
 
@@ -217,6 +217,8 @@ func instances() -> Array[MeshInstance3D]:
 	ground_mat.set_shader_parameter("grid_offset", Vector2(0.5 * (size.x % 2), 0.5 * (size.y % 2)))
 	ground_mat.set_shader_parameter("cobble", palette["ground"].lightened(0.1))
 	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
+	ground_mat.set_shader_parameter("petal", (KitStyle.of(realm)["accent"] as Color).lightened(0.35))
+	ground_mat.set_shader_parameter("pebble", palette["rock"].lightened(0.3))
 	var water_mat := material("water")
 	water_mat.set_shader_parameter("bank", palette["ground"].lightened(0.12).lerp(palette["grass"], 0.25))
 	var lava_mat := material("water")
