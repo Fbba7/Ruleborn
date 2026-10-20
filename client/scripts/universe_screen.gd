@@ -5,7 +5,9 @@ extends Control
 ## room to build, each realm's next level, and the next realm to open. A
 ## purchase is asked for twice — a first tap shows the price to confirm —
 ## because Starlight spent is not given back. It draws the store; Services'
-## `universe_flow` asks, so leaving mid-purchase loses nothing.
+## `universe_flow` asks, so leaving mid-purchase loses nothing. The universe
+## itself is drawn behind the list in 3D (`UniverseView`), each building at
+## the level just bought; a tap on a realm there brings its entry into view.
 
 var controller: UniverseController
 var body: VBoxContainer
@@ -13,6 +15,11 @@ var header_label: Label
 var status_label: Label
 ## The purchase tapped once, by its key: the next tap on it buys.
 var confirm := ""
+## The universe behind the list.
+var world: UniverseView
+
+var _top: Control
+var _sheet: Control
 
 
 func _ready() -> void:
@@ -27,19 +34,53 @@ func _ready() -> void:
 func _on_changed(slice: StringName) -> void:
 	if slice == UniverseState.UNIVERSE and is_inside_tree():
 		_refresh()
+	elif slice in UniverseStore.SLICES and is_inside_tree():
+		_draw_world()
 
 
 func _build() -> void:
 	var column := UI.frame(self)
-	column.add_child(UI.title(Strings.t("UNIVERSE_TITLE")))
+	world = UniverseView.behind(self, column)
+	world.realm_chosen.connect(_show_realm)
+	# The title, the header and the status on one plate at the top.
+	var words := VBoxContainer.new()
+	words.add_child(UI.title(Strings.t("UNIVERSE_TITLE")))
 	header_label = UI.label("", UI.TEXT_POINTS, true)
-	column.add_child(UI.plate(header_label))
+	words.add_child(header_label)
 	status_label = UI.status("info", "")
-	column.add_child(UI.plate(status_label))
+	words.add_child(status_label)
+	var top := UI.plate(words)
+	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(top)
+	_top = top
+	var room := UI.grow()
+	room.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(room)
 	body = UI.scroll(column)
+	# The list takes the lower part of the screen; the world, the rest.
+	_sheet = body.get_parent() as Control
+	_sheet.size_flags_stretch_ratio = 1.1
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
 	column.add_child(UI.narrow(actions))
+	column.sort_children.connect(func() -> void: world.fit_between(_top, _sheet))
+
+
+## The universe in 3D, as the store holds it, and said in words.
+func _draw_world() -> void:
+	var store := App.services.store
+	var view := UniverseStore.view(store)
+	world.show_universe(view, UniverseStore.extras(store))
+	world.accessibility_name = Strings.t("UNIVERSE_TITLE")
+	world.accessibility_description = UniverseStore.spoken(view)
+
+
+## A realm tapped in the world: its entry scrolled into view.
+func _show_realm(id: String) -> void:
+	for l: Label in body.find_children("*", "Label", true, false):
+		if str(l.get_meta("realm", "")) == id:
+			(_sheet as ScrollContainer).ensure_control_visible(l)
+			return
 
 
 ## Built again after each change, keeping which control had focus (as the
@@ -48,6 +89,7 @@ func _refresh() -> void:
 	var focused := get_viewport().gui_get_focus_owner() if is_inside_tree() else null
 	var focus_item := str(focused.get_meta("item", "")) if focused != null else ""
 	var u := UniversePresenter.screen(App.services.store.get_slice(UniverseState.UNIVERSE))
+	_draw_world()
 	if u["error"] != "":
 		UI.set_status(status_label, "alarm", u["error"])
 	elif u["refused"] != "":
@@ -60,6 +102,7 @@ func _refresh() -> void:
 		UI.set_status(status_label, "info", Strings.t("COMMON_LOADING"))
 	else:
 		UI.set_status(status_label, "info", "" if u["ready"] else Strings.t("COMMON_LOADING"))
+	status_label.visible = status_label.text != ""
 	header_label.text = u.get("header", "")
 	for c in body.get_children():
 		body.remove_child(c)
@@ -86,7 +129,9 @@ func _refresh() -> void:
 
 func _realm(r: Dictionary, busy: bool) -> Control:
 	var box := VBoxContainer.new()
-	box.add_child(UI.label(r["title"], UI.TEXT_POINTS, true))
+	var title := UI.label(r["title"], UI.TEXT_POINTS, true)
+	title.set_meta("realm", r["key"])
+	box.add_child(title)
 	if r["raise"] is Dictionary:
 		box.add_child(_offer(r["raise"], busy))
 	for b: Dictionary in r["rows"]:
