@@ -276,52 +276,80 @@ static func _observatory(b: BuildingKit) -> void:
 
 
 ## The Beacon: "a tall lantern mast", iron and constellation colours; a
-## beam of light into the sky.
+## beam of light into the sky. A stone foot, an iron lattice, the lantern
+## room glazed and capped, its beam turning.
 static func _beacon(b: BuildingKit) -> void:
-	b.cyl(0.36, 0.4, 0.14, b.stone2, 0, 0, 0, 8)
 	var iron := KitStyle.IRON if b.tier < 2 else KitStyle.GOLD
-	var h := 1.5 + 0.15 * b.tier
+	var col: Color = b.style["accent"]
+	b.plinth(0.8, 0.8)
+	b.cyl(0.3, 0.26, 0.5, b.stone, 0, 0.08, 0, 10)
+	b.cyl(0.31, 0.31, 0.04, b.stone2, 0, 0.56, 0, 10)
+	b.door(0, 0.08, 0.27, 0, 0.8)
+	var h := 1.55 + 0.15 * b.tier
+	var y0 := 0.6
 	for k in 4:
 		var a := TAU * k / 4.0 + PI / 4.0
-		var foot := Vector3(cos(a) * 0.28, 0.14, sin(a) * 0.28)
-		var head := Vector3(cos(a) * 0.1, h, sin(a) * 0.1)
+		var foot := Vector3(cos(a) * 0.22, y0, sin(a) * 0.22)
+		var head := Vector3(cos(a) * 0.11, h, sin(a) * 0.11)
 		var mid := (foot + head) / 2.0
 		var span := foot.distance_to(head)
-		var tilt := Basis(Vector3(-sin(a), 0, cos(a)), -atan2(0.18, h - 0.14))
-		b.d.box(Transform3D(tilt, b.at(mid.x, mid.y, mid.z)), Vector3(0.04, span, 0.04) * b.unit, iron)
-	for y: float in [0.5, 0.95]:
-		var r := 0.28 - 0.18 * (y - 0.14) / (h - 0.14)
-		b.d.torus(b.place(0, y, 0), r * b.unit * 1.02, 0.012 * b.unit, iron, 4, 3)
-	b.cyl(0.16, 0.16, 0.05, iron, 0, h, 0, 8)
-	b.box(0.18, 0.2, 0.18, KitStyle.lit(Color("#FFE7A8"), 0.15), 0, h + 0.15, 0)
-	b.cone(0.16, 0.14, iron, 0, h + 0.25, 0, 4)
-	var col: Color = b.style["accent"]
-	b.move(Geo.Anim.SPIN_Y, b.at(0, h + 0.15, 0))
-	b.d.box(Geo.place(b.at(0.24, h + 0.15, 0)), Vector3(0.3, 0.04, 0.04) * b.unit, KitStyle.lit(col.lightened(0.4), 0.3))
+		var axis := Vector3(-sin(a), 0, cos(a))
+		b.g.box(Transform3D(Basis(axis, -atan2(0.11, h - y0)), b.at(mid.x, mid.y, mid.z)),
+			Vector3(0.045, span, 0.045) * b.unit, iron)
+	# Cross braces between the legs, ring by ring.
+	for r in 3:
+		var t := (r + 0.5) / 3.0
+		var rad := lerpf(0.22, 0.11, t) * 1.02
+		var y := lerpf(y0, h, t)
+		for k in 4:
+			var a := TAU * k / 4.0
+			b.fine(rad * 1.41, 0.025, 0.025, iron, cos(a) * rad * 0.71, y, sin(a) * rad * 0.71, -a + PI / 2.0)
+	b.cyl(0.2, 0.2, 0.05, iron, 0, h, 0, 8)
+	b.glass.cyl(b.place(0, h + 0.05, 0), 0.14 * b.unit, 0.14 * b.unit, 0.24 * b.unit, Color("#FFF4D0"), 8)
+	b.ball(0.08, KitStyle.lit(Color("#FFE7A8"), 0.1), 0, h + 0.17, 0, 1.2, 3, 8)
+	for k in 4:
+		var a := TAU * k / 4.0 + PI / 8.0
+		b.fine(0.02, 0.24, 0.02, iron, cos(a) * 0.14, h + 0.17, sin(a) * 0.14)
+	b.cone(0.2, 0.18, b.roof_col, 0, h + 0.29, 0, 8)
+	b.cone(0.02, 0.1, KitStyle.GOLD, 0, h + 0.47, 0, 6)
+	# The beam, turning.
+	b.move(Geo.Anim.SPIN_Y, b.at(0, h + 0.17, 0))
+	b.glass.prism(Transform3D(Basis(Vector3.BACK, PI / 2.0), b.at(0.14, h + 0.17, 0)), 8, 0.05 * b.unit,
+		0.18 * b.unit, 0.7 * b.unit, Color(col.lightened(0.5), 0.3))
 	b.stop()
-	b.top = h + 0.4
+	b.top = h + 0.5
 
 
 ## The Visitor's Dock: "a pier with skiff moorings", wood and rope; the
-## skiff bobs.
+## skiff bobs. A boathouse at the back, the pier running out front past
+## its mooring posts, and the skiff tied up, its sail set.
 static func _dock(b: BuildingKit) -> void:
 	var plank := KitStyle.WOOD.lightened(0.3)
-	for k in 7:
-		b.box(0.9, 0.04, 0.12, plank.darkened(0.06 * (k % 2)), 0, 0.2, -0.4 + 0.13 * k)
-	for x: float in [-0.42, 0.42]:
-		for z: float in [-0.4, 0.0, 0.4]:
-			b.cyl(0.035, 0.035, 0.32, KitStyle.WOOD, x, -0.08, z, 6)
-			b.cyl(0.04, 0.04, 0.03, Color("#D8C8A8"), x, 0.18, z, 6)
-	# The skiff, moored, with its sail furled.
-	var at := b.at(0.0, 0.1, 0.62)
+	b.box(0.62, 0.36, 0.44, KitStyle.WOOD.lightened(0.15) if b.tier == 0 else b.wall, -0.12, 0.26, -0.24)
+	b.frame(0.62, 0.36, 0.44, 0.08)
+	b.roof(0.62, 0.44, 0.44, 0.24, 0.06, 3)
+	b.door(-0.12, 0.08, -0.01, 0, 0.9)
+	b.window(-0.43, 0.3, -0.24, -PI / 2.0, 0.8, false)
+	for k in 6:
+		b.box(0.3, 0.035, 0.13, plank.darkened(0.06 * (k % 2)), 0.25, 0.1, -0.15 + 0.13 * k)
+	for z: float in [0.0, 0.4, 0.62]:
+		for x: float in [0.08, 0.42]:
+			b.cyl(0.03, 0.03, 0.22, KitStyle.WOOD, x, 0, z, 6)
+			b.d.torus(b.place(x, 0.18, z), 0.035 * b.unit, 0.008 * b.unit, Color("#D8C8A8"), 8, 3)
+	# The skiff beside the pier, bobbing, its sail up.
+	var at := b.at(-0.24, 0.06, 0.42)
 	b.move(Geo.Anim.BOB, at)
-	b.g.ball(Geo.place(at, 0.0, Vector3(1.6, 0.5, 0.7)), 0.18 * b.unit, Color("#8A5A3A"), 3, 10, true)
-	b.g.cyl(Geo.place(at + Vector3(0, 0.02, 0)), 0.012 * b.unit, 0.01 * b.unit, 0.5 * b.unit, KitStyle.WOOD_DARK, 4)
-	b.g.cyl(Geo.place(at + Vector3(0, 0.2 * b.unit, 0)), 0.04 * b.unit, 0.03 * b.unit, 0.25 * b.unit, Color("#F4EEDF"), 6)
+	b.g.ball(Geo.place(at, 0.0, Vector3(0.7, 0.45, 1.6)), 0.17 * b.unit, Color("#8A5A3A"), 3, 10, true)
+	b.d.box(Geo.place(at + Vector3(0, 0.02, 0) * b.unit), Vector3(0.18, 0.02, 0.4) * b.unit, plank)
+	b.d.cyl(Geo.place(at), 0.01 * b.unit, 0.008 * b.unit, 0.55 * b.unit, KitStyle.WOOD_DARK, 4)
+	var sail := Color("#F4EEDF")
+	var mast := at + Vector3(0, 0.05, 0) * b.unit
+	b.d.tri(mast + Vector3(0, 0.48, 0) * b.unit, mast + Vector3(0, 0.06, 0.22) * b.unit,
+		mast + Vector3(0, 0.06, -0.02) * b.unit, sail)
+	b.d.tri(mast + Vector3(0, 0.48, 0) * b.unit, mast + Vector3(0, 0.06, -0.02) * b.unit,
+		mast + Vector3(0, 0.06, 0.22) * b.unit, sail.darkened(0.08))
 	b.stop()
-	b.box(0.3, 0.24, 0.24, KitStyle.WOOD.lightened(0.2), -0.28, 0.34, -0.28)
-	b.roof(0.32, 0.26, 0.46, 0.14, 0.04, 2)
-	b.flag(0.4, 0.22, -0.4, 0.4)
+	b.flag(0.42, 0.22, 0.62, 0.4)
 	b.top = 0.7
 
 

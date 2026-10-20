@@ -61,10 +61,11 @@ func _shoot() -> void:
 		world.add_child(mi)
 	var cam := Camera3D.new()
 	cam.projection = Camera3D.PROJECTION_ORTHOGONAL
-	cam.size = maxf(span.y * 0.62 + 4.0, span.x * float(h) / w * 1.05)
+	cam.size = maxf(span.y * 0.62 + 2.5, span.x * float(h) / w * 1.05)
 	world.add_child(cam)
 	var pitch := deg_to_rad(float(OS.get_environment("PITCH")) if OS.get_environment("PITCH") != "" else 35.0)
-	cam.look_at_from_position(Vector3(0, sin(pitch), cos(pitch)) * 40.0 + Vector3(0, 1.0, 0), Vector3(0, 1.0, 0))
+	var aim := Vector3(0, 1.6, -0.8)
+	cam.look_at_from_position(Vector3(0, sin(pitch), cos(pitch)) * 40.0 + aim, aim)
 	for i in 4:
 		await process_frame
 	vp.get_texture().get_image().save_png(OS.get_environment("SHOT"))
