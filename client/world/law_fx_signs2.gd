@@ -45,10 +45,10 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> void:
 static func _glowing_dark(fx: LawFx, sig: Node3D) -> void:
 	var base := fx.light()
 	if not base.is_empty():
-		fx.sun.light_energy = float(base["sun"]) * 0.42
+		fx.sun.light_energy = float(base["sun"]) * 0.55
 		fx.environment.ambient_light_energy = float(base["ambient"]) * 0.8
-		fx.environment.ambient_light_color = Color("#3A3A8A")
-	fx.tint(Color("#07041A"), 0.62, 0.06)
+		fx.environment.ambient_light_color = Color("#4A4AA0")
+	fx.tint(Color("#07041A"), 0.5, 0.0)
 	var r := fx.site.rng("glowing_dark")
 	var caps := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	var spots := fx.site.tiles(LawFxSite.PLANTS + LawFxSite.WALLS)

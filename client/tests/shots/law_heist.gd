@@ -37,8 +37,8 @@ func _go() -> void:
 		view.set_zoom(int(OS.get_environment("ZOOM")))
 	fx.sync(replay.tick())
 	fx.sync_world(replay)
-	for b: Dictionary in [fx.budget(str(laws[0])), fx.budget(str(laws[1])), fx.budget(str(laws[2]))]:
-		print(b)
+	for law: String in laws:
+		print(law, " ", fx.budget(law))
 	for i in 4:
 		await process_frame
 	var img := view.viewport.get_texture().get_image()
