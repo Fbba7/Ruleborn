@@ -152,6 +152,9 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 		"soul_lanterns":
 			# "Warm lantern pools in cold blue dusk."
 			fx.tint(Color("#1A2A6B"), 0.45, 0.08)
+			fx.every(func(_s: float) -> void:
+				fx.set_light(0.5, 0.6, Color("#4A5AB0"))
+				fx.set_sky(0.6, 0.3))
 			var pools: Array = []
 			for t: Vector2i in fx.site.tiles(LawFxSite.LIGHTS):
 				pools.append(fx.site.centre(t))
