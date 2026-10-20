@@ -20,11 +20,13 @@ uniform vec2 focus = vec2(0.0);
 varying vec2 world;
 varying vec4 local;
 varying float weight;
+varying vec3 tint;
 
 void vertex() {
 	world = UV;
 	local = CUSTOM0;
 	weight = COLOR.a;
+	tint = COLOR.rgb;
 }
 
 float hash(vec2 p) {
@@ -105,11 +107,11 @@ void fragment() {
 		vec2 d = p - focus;
 		float r = length(d) + 0.001;
 		float ang = atan(d.y, d.x);
-		float arm = fract(ang / 6.28318 * 3.0 + log(r) * 1.3 + s * 0.25);
-		float dash = smoothstep(0.5, 0.1, abs(fract(r * 1.2 + s * 0.6) - 0.5));
-		float line = smoothstep(0.08, 0.0, abs(arm - 0.5));
-		c = mix(colour_a.rgb, colour_b.rgb, 0.25);
-		a = line * (0.35 + 0.45 * dash) * smoothstep(0.3, 1.6, r);
+		float arm = fract(ang / 6.28318 * 4.0 + log(r) * 1.6 + s * 0.25);
+		float dash = smoothstep(0.5, 0.1, abs(fract(r * 0.8 + s * 0.6) - 0.5));
+		float line = smoothstep(0.12, 0.03, abs(arm - 0.5));
+		c = mix(colour_a.rgb, colour_b.rgb, smoothstep(0.03, 0.0, abs(arm - 0.5)));
+		a = line * (0.3 + 0.4 * dash) * smoothstep(0.3, 1.6, r);
 	} else if (pattern == 4) {
 		// Delay: ripples that linger round anything triggered, each ring
 		// a beat behind the one before.
@@ -118,19 +120,19 @@ void fragment() {
 		float ring = 0.0;
 		for (int i = 0; i < 3; i++) {
 			float ui = fract(u - float(i) * 0.18);
-			ring += smoothstep(0.06, 0.0, abs(r - ui * 1.4)) * (1.0 - ui);
+			ring += smoothstep(0.12, 0.0, abs(r - ui * local.w * 0.9)) * (1.0 - ui);
 		}
 		c = colour_a.rgb;
 		a = ring;
 	} else if (pattern == 5) {
 		// Aurora: ribbons of light sweeping slowly across the ground.
-		float w = sin(p.y * 0.35 + sin(p.x * 0.25 + s * 0.3) * 1.6 - s * 0.45);
-		float band = smoothstep(0.55, 0.95, w);
-		float edge = smoothstep(0.9, 0.98, w);
-		float hue = sin(p.x * 0.2 + s * 0.2) * 0.5 + 0.5;
+		float w = sin(p.x * 0.8 + p.y * 0.45 + sin(p.y * 0.6 + s * 0.3) * 1.5 - s * 0.45);
+		float band = smoothstep(0.25, 0.85, w);
+		float edge = smoothstep(0.8, 0.95, w);
+		float hue = smoothstep(-0.6, 0.6, sin(p.x * 0.35 - p.y * 0.5 + s * 0.2));
 		c = mix(colour_a.rgb, colour_b.rgb, hue);
-		c = mix(c, vec3(1.0), edge * 0.5);
-		a = band * 0.62;
+		c = mix(c, vec3(1.0), edge * 0.6);
+		a = band * 0.72;
 	} else if (pattern == 6) {
 		// Regrowth: moss creeping out over everything and in again.
 		float n = noise(p * 1.4) * 0.6 + noise(p * 4.0) * 0.4;
@@ -166,7 +168,8 @@ void fragment() {
 		float e = cells(p * 1.2 + vec2(hash(vec2(step_t, 1.0)), hash(vec2(step_t, 2.0))) * 7.0);
 		float on = step(0.6, hash(floor(p * 0.8) + step_t));
 		c = colour_a.rgb;
-		a = smoothstep(0.03, 0.0, e) * on * 0.9;
+		a = smoothstep(0.06, 0.0, e) * on;
+		c = mix(colour_a.rgb, vec3(1.0), smoothstep(0.02, 0.0, e));
 	} else if (pattern == 11) {
 		// Glass: a clear floor of facets with coloured edges.
 		float e = cells(p * 0.9);
@@ -206,7 +209,17 @@ void fragment() {
 		// Haste: cloud shadows racing over the ground.
 		float n = noise(p * 0.32 + vec2(s * 0.9, s * 0.25)) * 0.7 + noise(p * 0.9 + vec2(s * 1.4, 0.0)) * 0.3;
 		c = colour_a.rgb;
-		a = smoothstep(0.52, 0.68, n) * 0.32;
+		a = smoothstep(0.52, 0.68, n) * 0.24;
+	} else if (pattern == 16) {
+		// Slow rivers: water thick as syrup, folding over itself slowly, a
+		// glossy highlight on each fold.
+		vec2 q = p * 1.1 + vec2(noise(p * 0.7 + s * 0.05), noise(p * 0.7 - s * 0.04)) * 1.8;
+		float fold = sin(q.x * 2.2 + q.y * 1.3 - s * 0.35) * 0.5 + 0.5;
+		float hi = smoothstep(0.86, 0.97, fold);
+		float lo = smoothstep(0.25, 0.0, fold);
+		c = mix(colour_a.rgb, colour_b.rgb, lo * 0.7);
+		c = mix(c, vec3(1.0), hi * 0.85);
+		a = 0.78;
 	} else {
 		// Density: the ground's grain enlarged, a heavy coarse weave.
 		float n = noise(p * 2.0);
@@ -214,6 +227,6 @@ void fragment() {
 		c = mix(colour_a.rgb, colour_b.rgb, n);
 		a = line * 0.45 + n * 0.12;
 	}
-	ALBEDO = c;
+	ALBEDO = c * tint;
 	ALPHA = clamp(a, 0.0, 1.0) * weight * strength;
 }

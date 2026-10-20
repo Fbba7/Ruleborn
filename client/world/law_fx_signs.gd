@@ -44,18 +44,32 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> void:
 			LawFxSigns2.build(fx, sig, law)
 
 
-## How tall a wall-like feature stands, for what a law lays over it.
+## How tall a wall-like feature stands, for what a law lays over it: the
+## realm kit's pieces (RealmKit's `_feature`), measured.
 static func wall_height(code: int) -> float:
+	return wall_size(code).y
+
+
+## A wall-like feature's footprint and height, as the realm kit builds it.
+static func wall_size(code: int) -> Vector3:
 	match code:
 		RealmKit.F.ROCK_PILLAR:
-			return 1.9
+			return Vector3(0.84, 1.45, 0.84)
 		RealmKit.F.BUILDING:
-			return 1.7
-		RealmKit.F.BOULDER, RealmKit.F.STATUE:
-			return 0.9
+			return Vector3(1.0, 1.7, 1.0)
+		RealmKit.F.BOULDER:
+			return Vector3(0.84, 0.62, 0.76)
+		RealmKit.F.STATUE:
+			return Vector3(0.6, 1.15, 0.6)
 		RealmKit.F.FENCE:
-			return 0.7
-	return 1.05
+			return Vector3(0.94, 0.62, 0.14)
+		RealmKit.F.RUIN_WALL:
+			return Vector3(0.94, 0.94, 0.38)
+		RealmKit.F.HEDGE:
+			return Vector3(0.96, 0.74, 0.64)
+		RealmKit.F.CRYSTAL_WALL:
+			return Vector3(0.92, 1.1, 0.32)
+	return Vector3(0.9, 0.8, 0.9)
 
 
 ## Bounce: "Walls wobble like jelly when touched." Every wall wears a coat
@@ -66,17 +80,19 @@ static func _bounce(fx: LawFx, sig: Node3D) -> void:
 	var feet: Array = []
 	for t: Vector2i in walls:
 		var c := fx.site.centre(t)
-		var h := wall_height(fx.site.code(t)) + 0.12
+		var w := wall_size(fx.site.code(t)) + Vector3(0.14, 0.12, 0.14)
+		var h := w.y
 		var g := Geo.new()
-		g.ball(Geo.place(Vector3(0, h * 0.5, 0), 0.0, Vector3(0.56, h * 0.55, 0.56)), 1.0,
-			Color("#FFB8E6"), 5, 10)
+		g.ball(Geo.place(Vector3(0, h * 0.5, 0), 0.0, Vector3(w.x * 0.58, h * 0.56, w.z * 0.62)), 1.0,
+			Color("#FF7AC8"), 5, 10)
 		jelly.geo(g, c, RealmKit.jitter(t, 1))
 		feet.append(c)
 	if jelly.triangles > 0:
-		fx.layer(sig, jelly, fx.glass_material(Color("#F2B43C"), 3, 1.0, 0.16))
-	LawFxPaint.rounds(fx, sig, LawFxPaint.some_points(feet, 24), 0.9, 4, Color("#FFD27A"))
-	LawFxPaint.spray(fx, sig, "bounce", {"n": 26, "shape": 1, "colour": Color("#FFB8E6", 0.9),
-		"radius": [0.05, 0.09], "lift": [0.1, 1.4], "wobble": 0.35, "glow": 0.5})
+		fx.layer(sig, jelly, fx.glass_material(Color("#FFE07A"), 3, 1.0, 0.34))
+	LawFxPaint.rounds(fx, sig, LawFxPaint.some_points(feet, 24), 1.0, 4, Color("#E05CB4"))
+	LawFxPaint.spray(fx, sig, "bounce", {"n": 22, "shape": 1, "colour": Color("#FF7AC8", 0.95),
+		"radius": [0.07, 0.11], "tiles": LawFxPaint.ground(fx.site), "lift": [0.15, 0.9], "wobble": 0.3,
+		"glow": 0.3})
 
 
 ## Half gravity: "Pebbles hover a hand above the ground; dust falls slowly."
@@ -89,12 +105,12 @@ static func _half_gravity(fx: LawFx, sig: Node3D) -> void:
 	for t: Vector2i in LawFxPaint.some(ground, 34):
 		var c := fx.site.centre(t) + Vector3(r.randf_range(-0.3, 0.3), 0.0, r.randf_range(-0.3, 0.3))
 		var g := Geo.new()
-		var s := r.randf_range(0.06, 0.13)
-		g.ball(Geo.place(Vector3.ZERO, 0.0, Vector3(1.2, 0.8, 1.0)), s, Color("#B5A898").darkened(r.randf() * 0.2), 3, 6)
+		var s := r.randf_range(0.1, 0.17)
+		g.ball(Geo.place(Vector3.ZERO, 0.0, Vector3(1.2, 0.8, 1.0)), s, Color("#C9BCAA").darkened(r.randf() * 0.2), 3, 6)
 		stones.geo(g, c + Vector3(0, 0.06, 0), r.randf())
 		under.append(c)
 	fx.layer(sig, stones, fx.solid_material(1, 0.16), true)
-	LawFxPaint.shadows(fx, sig, under, 0.16)
+	LawFxPaint.shadows(fx, sig, under, 0.22)
 	# The diorama's islets: a rock cone under a turf cap, a bush on some.
 	var isles := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	var isle_shadows: Array = []
@@ -141,7 +157,7 @@ static func _frictionless(fx: LawFx, sig: Node3D) -> void:
 ## Inward pull: "Faint spiral streaks lead toward the Heart." Streaks on the
 ## ground wind in, and dust drifts in along them.
 static func _inward_pull(fx: LawFx, sig: Node3D) -> void:
-	LawFxPaint.mark(fx, sig, LawFxPaint.ground(fx.site), 3, Color("#F2B43C"), Color("#8C6CF0"))
+	LawFxPaint.mark(fx, sig, LawFxPaint.ground(fx.site), 3, Color("#D8901E"), Color("#5A3FB0"))
 	var r := fx.site.rng("inward_pull")
 	var b := LawFxBatch.new(LawFxBatch.Kind.MOTES)
 	var heart := fx.site.heart
@@ -154,7 +170,7 @@ static func _inward_pull(fx: LawFx, sig: Node3D) -> void:
 		var swirl := Vector3(-inward.z, 0, inward.x).normalized() * 0.5
 		var period := r.randf_range(4.0, 6.0)
 		b.mote(at, inward / period * 0.8 + swirl, period, r.randf(), r.randf_range(0.05, 0.08), 0.0, 3,
-			Color("#FFE6A8", 0.7))
+			Color("#B8741E", 0.8))
 	fx.layer(sig, b, fx.mote_material(0.4))
 
 
@@ -186,21 +202,25 @@ static func _glass(fx: LawFx, sig: Node3D) -> void:
 	var hues: Array[Color] = [Color("#8C6CF0"), Color("#3CC6D8"), Color("#E05CB4"), Color("#F2B43C")]
 	for t: Vector2i in fx.site.tiles(LawFxSite.WALLS):
 		var c := fx.site.centre(t)
-		var h := wall_height(fx.site.code(t)) + 0.08
+		var w := wall_size(fx.site.code(t)) + Vector3(0.08, 0.08, 0.08)
+		var h := w.y
 		var g := Geo.new()
-		g.box(Geo.place(Vector3(0, h / 2.0, 0)), Vector3(1.02, h, 1.02), Color("#E6F4FF"))
+		g.box(Geo.place(Vector3(0, h / 2.0, 0)), w, Color("#E6F4FF"))
 		shell.geo(g, c, RealmKit.jitter(t, 2))
 		var e := Geo.new()
 		var hue: Color = hues[(t.x + t.y) % hues.size()]
 		var glow := Color(hue.lightened(0.25), 0.25)
-		for sx: float in [-0.51, 0.51]:
-			for sz: float in [-0.51, 0.51]:
-				e.box(Geo.place(Vector3(sx, h / 2.0, sz)), Vector3(0.05, h, 0.05), glow)
-			e.box(Geo.place(Vector3(sx, h, 0)), Vector3(0.05, 0.05, 1.04), glow)
-			e.box(Geo.place(Vector3(0, h, sx)), Vector3(1.04, 0.05, 0.05), glow)
+		var hx := w.x / 2.0
+		var hz := w.z / 2.0
+		for sx: float in [-hx, hx]:
+			for sz: float in [-hz, hz]:
+				e.box(Geo.place(Vector3(sx, h / 2.0, sz)), Vector3(0.07, h, 0.07), glow)
+			e.box(Geo.place(Vector3(sx, h, 0)), Vector3(0.07, 0.07, w.z + 0.04), glow)
+		for sz: float in [-hz, hz]:
+			e.box(Geo.place(Vector3(0, h, sz)), Vector3(w.x + 0.04, 0.07, 0.07), glow)
 		edges.geo(e, c, 0.0)
 	if shell.triangles > 0:
-		fx.layer(sig, shell, fx.glass_material(Color("#C9B6FF"), 0, 1.0, 0.2))
+		fx.layer(sig, shell, fx.glass_material(Color("#8C6CF0"), 0, 1.0, 0.4))
 		var m := fx.solid_material(0)
 		m.set_shader_parameter("glow", 1.4)
 		fx.layer(sig, edges, m)
@@ -227,7 +247,6 @@ static func _density(fx: LawFx, sig: Node3D) -> void:
 			g.ball(Geo.place(Vector3(0, 0.1, 0), 0.0, Vector3(1.3, 0.8, 1.0)), 0.2, Color("#B9AE9F"), 3, 7)
 		tufts.geo(g, c, r.randf())
 	fx.layer(sig, tufts, fx.solid_material(5, 0.12, 0.5), true)
-	LawFxPaint.mark(fx, sig, ground, 13, Color("#8C6CF0"), Color("#5A3FB0"))
 
 
 ## Honeycomb: "A golden hexagon sheen covers the ground." Honey drips from
@@ -257,10 +276,10 @@ static func _slow_rivers(fx: LawFx, sig: Node3D) -> void:
 	if wet.is_empty():
 		# No water in the realm: the drops hang round the pylon instead.
 		var p := LawFxPaint.home(fx, "slow_rivers")
-		LawFxPaint.rounds(fx, sig, [p], 1.6, 4, Color("#9BEAF3"), INK, 0.3)
+		LawFxPaint.rounds(fx, sig, [p], 1.8, 4, Color("#1F8499"), INK, 0.3)
 		near = []
 	else:
-		LawFxPaint.mark(fx, sig, wet, 4, Color("#E6FBFF"), INK, 0.3)
+		LawFxPaint.mark(fx, sig, wet, 16, Color("#3CC6D8"), Color("#1F6A99"))
 	var r := fx.site.rng("slow_rivers")
 	var drops := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	for k in 30:
@@ -271,9 +290,9 @@ static func _slow_rivers(fx: LawFx, sig: Node3D) -> void:
 		else:
 			c = fx.site.centre(near[k % near.size()]) + Vector3(r.randf_range(-0.4, 0.4), 0, r.randf_range(-0.4, 0.4))
 		var g := Geo.new()
-		g.ball(Geo.place(Vector3.ZERO, 0.0, Vector3(1, 1.45, 1)), r.randf_range(0.05, 0.09), Color("#9BEAF3", 0.55), 3, 7)
+		g.ball(Geo.place(Vector3.ZERO, 0.0, Vector3(1, 1.45, 1)), r.randf_range(0.08, 0.13), Color("#5CD8EA", 0.7), 3, 7)
 		drops.geo(g, c + Vector3(0, r.randf_range(0.3, 1.1), 0), r.randf())
-	fx.layer(sig, drops, fx.solid_material(1, 0.04, 0.15))
+	fx.layer(sig, drops, fx.solid_material(1, 0.04, 0.15), true)
 
 
 ## Stillness: "The air is calm; not a leaf moves." The diorama's clock face
@@ -302,8 +321,11 @@ static func _delay(fx: LawFx, sig: Node3D) -> void:
 	for p: Dictionary in fx.site.pylons:
 		at.append(p["at"])
 	at.append_array(fx.site.wards)
-	LawFxPaint.rounds(fx, sig, at, 1.5, 4, Color("#9BEAF3"))
-	LawFxPaint.spray(fx, sig, "delay", {"n": 26, "shape": 6, "colour": Color("#BDF4FA", 0.7), "radius": [0.08, 0.14],
+	at.append_array(fx.site.posts)
+	for t: Vector2i in fx.site.tiles(LawFxSite.METAL + LawFxSite.LIGHTS):
+		at.append(fx.site.centre(t))
+	LawFxPaint.rounds(fx, sig, at, 1.9, 4, Color("#1F8499"))
+	LawFxPaint.spray(fx, sig, "delay", {"n": 26, "shape": 6, "colour": Color("#1F8499", 0.8), "radius": [0.08, 0.14],
 		"lift": [0.2, 1.6], "vel": Vector3(0, 0.08, 0), "period": [5.0, 8.0]})
 
 
@@ -311,10 +333,20 @@ static func _delay(fx: LawFx, sig: Node3D) -> void:
 ## over the ground, wind lines whip past, leaves whirl.
 static func _haste(fx: LawFx, sig: Node3D) -> void:
 	LawFxPaint.mark(fx, sig, fx.site.tiles(LawFxSite.GROUND + LawFxSite.PLANTS + LawFxSite.WATER), 15,
-		Color("#3A2B6B"))
+		Color("#6A5AD8"))
 	var h := fx.site.half()
-	LawFxPaint.spray(fx, sig, "haste", {"n": 30, "shape": 3, "colour": Color("#FFFFFF", 0.75), "radius": [0.05, 0.08],
+	LawFxPaint.spray(fx, sig, "haste", {"n": 30, "shape": 3, "colour": Color("#4A5AC8", 0.75), "radius": [0.05, 0.08],
 		"lift": [0.3, 2.0], "vel": Vector3(h.x * 1.4, 0, h.y * 0.4), "period": [1.2, 1.8]})
+	# Clouds racing past the island's edge, in the sky round it.
+	var r := fx.site.rng("haste_clouds")
+	var clouds := LawFxBatch.new(LawFxBatch.Kind.MOTES)
+	for k in 10:
+		var z := r.randf_range(-h.y - 6.0, -h.y - 2.0) if k % 2 == 0 else r.randf_range(h.y + 1.0, h.y + 4.0)
+		var at := Vector3(-h.x - 8.0, r.randf_range(2.0, 4.0), z)
+		for puff in 3:
+			clouds.mote(at + Vector3(puff * 0.7, sin(puff) * 0.2, 0), Vector3(h.x * 1.6, 0, 0), 2.2, k * 0.1,
+				r.randf_range(0.5, 0.8), 0.0, 0, Color("#FFFFFF", 0.9))
+	fx.layer(sig, clouds, fx.mote_material(0.2))
 	LawFxPaint.spray(fx, sig, "haste_leaves", {"n": 16, "shape": 10, "colour": Color("#7CC46A", 0.95),
 		"radius": [0.06, 0.09], "tiles": fx.site.tiles(LawFxSite.PLANTS), "lift": [0.3, 1.2], "wobble": 0.35,
 		"pace": 2.2})
