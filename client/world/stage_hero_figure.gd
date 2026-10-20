@@ -24,6 +24,9 @@ const KINDS := {
 ## Each school's home realm (§21.4), whose ground a character stands on.
 const REALM := {"motion": "skyfield", "matter": "crystalline", "time": "tidehold", "energy": "emberreach",
 	"life": "verdant", "spirit": "lanternvale"}
+## The kinds that fly (§11.11's "flies"): their clips hover above the
+## ground, so a stage frames them with room above.
+const FLIERS := ["featherkin", "lantern_wisp", "soulmender"]
 ## The Sages, who stand in the Sage hall.
 const SAGES := ["archivist", "tinkerer", "gardener", "wanderer", "chronicler", "lamplighter"]
 
@@ -161,24 +164,30 @@ static func hall(wide: float) -> ArrayMesh:
 		g.ring(Geo.place(Vector3(0, 0.022 + k * 0.0005, 0)), r * (0.3 + 0.27 * k), r * (0.3 + 0.27 * k) + 0.015,
 			stone.darkened(0.2), 40)
 	g.ring(Geo.place(Vector3(0, 0.024, 0)), 0.0, r * 0.22, Color(c["trim"]).lightened(0.2), 24)
-	# Arches round the back half, each a pair of columns under a round top, a
-	# lantern hanging in it.
+	# Arches round the back half in T3's kit style (KitFeatures' arch): two
+	# rounded-block columns on plinths, a round arch block by block with its
+	# keystone in gold, and an iron lantern hanging in each.
 	var arches := 7
+	var block := stone.lightened(0.14)
 	for k in arches:
 		var a := PI + PI * (k + 0.5) / arches
 		var at := Vector3(cos(a) * r * 1.02, 0.0, sin(a) * r * 1.02)
-		var face := atan2(at.x, at.z)
-		var span := r * 0.42
-		for side: float in [-1.0, 1.0]:
-			var off := Vector3(cos(face) * side * span * 0.5, 0, -sin(face) * side * span * 0.5)
-			g.prism(Geo.place(at + off), 8, 0.07, 0.06, 1.5, stone.lightened(0.05), true)
-			g.box(Geo.place(at + off + Vector3(0, 1.52, 0), -face), Vector3(0.18, 0.06, 0.18), Color(c["trim"]))
-		for j in 14:
-			var t := PI * j / 13.0
-			var p := at + Vector3(cos(face) * cos(t) * span * 0.5, 1.55 + sin(t) * span * 0.45,
-				-sin(face) * cos(t) * span * 0.5)
-			g.ball(Geo.place(p), 0.075, stone.lightened(0.12), 4, 8)
-		g.ball(Geo.place(at + Vector3(0, 1.25, 0)), 0.06, Color(1.0, 0.82, 0.45, 0.1), 4, 8)
+		var yaw := atan2(at.x, at.z)
+		var side := Vector3.RIGHT.rotated(Vector3.UP, yaw)
+		var half := r * 0.2
+		for s: float in [-1.0, 1.0]:
+			g.rbox(Geo.place(at + side * s * half + Vector3(0, 0.75, 0), yaw), Vector3(0.2, 1.5, 0.26), block, 0.04)
+			g.rbox(Geo.place(at + side * s * half + Vector3(0, 0.06, 0), yaw), Vector3(0.28, 0.12, 0.34),
+				block.darkened(0.15), 0.03)
+		for j in 9:
+			var t := PI * (j + 0.5) / 9.0
+			var p := at + side * cos(t) * half + Vector3(0, 1.5 + sin(t) * half * 0.95, 0)
+			var basis := Basis(Vector3.UP, yaw) * Basis(Vector3.BACK, t - PI / 2.0)
+			g.rbox(Transform3D(basis, p), Vector3(0.13, 0.19, 0.26), KitStyle.GOLD if j == 4 else block, 0.025)
+		var lamp := at + Vector3(0, 1.22, 0)
+		g.cyl(Geo.place(lamp + Vector3(0, 0.12, 0)), 0.012, 0.012, 0.2 + half * 0.6, KitStyle.IRON, 5)
+		g.rbox(Geo.place(lamp, yaw), Vector3(0.12, 0.15, 0.12), Color(KitStyle.WINDOW, 0.15), 0.02)
+		g.prism(Geo.place(lamp + Vector3(0, 0.075, 0), PI / 4.0), 4, 0.11, 0.0, 0.08, KitStyle.IRON)
 	var m := g.mesh()
 	_cache[cache_key] = m
 	return m
@@ -207,6 +216,8 @@ static func realm_ground(for_school: String, radius: float) -> Node3D:
 		m.set_shader_parameter("paint", paints[i][0])
 		m.set_shader_parameter("paint_strength", paints[i][2])
 		m.set_shader_parameter("world_scale", paints[i][1])
+		# A step darker than the figure on it, so feet read against ground.
+		m.set_shader_parameter("tint", Color(0.78, 0.76, 0.84))
 		var mi := MeshInstance3D.new()
 		mi.mesh = parts[i]
 		mi.material_override = m

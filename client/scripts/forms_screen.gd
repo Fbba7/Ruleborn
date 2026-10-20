@@ -44,7 +44,7 @@ func _build() -> void:
 	column.add_child(StageHeroSkin.plate(status_label))
 	body = UI.scroll(column)
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(0, UI.px(170))
+	stage.custom_minimum_size = Vector2(0, UI.px(210))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(stage)
 	cards = VBoxContainer.new()
@@ -133,6 +133,19 @@ func _stand(kinds: Array) -> void:
 		return
 	stage.set_meta("showing", key)
 	stage.show_kinds(list, looks)
+	for n in stage.get_children():
+		if n.has_meta("words"):
+			n.queue_free()
+	var names := HBoxContainer.new()
+	for f: Dictionary in k["forms"]:
+		var p := StageHeroSkin.pill(FormsPresenter.note_name(str(f["note"])))
+		var edge := p.get_theme_stylebox("panel") as StyleBoxFlat
+		edge.border_color = StageHeroSculpt.NOTE.get(str(f["note"]), StageHeroSkin.OUTLINE)
+		edge.set_border_width_all(UI.px(1) + StageHeroSkin.edge_px())
+		p.size_flags_horizontal = Control.SIZE_EXPAND | Control.SIZE_SHRINK_CENTER
+		names.add_child(p)
+	StageHeroSkin.on_stage(stage, names, Control.PRESET_CENTER_BOTTOM).set_meta("words", true)
+	names.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 
 func _choose(event: InputEvent, kind: String) -> void:

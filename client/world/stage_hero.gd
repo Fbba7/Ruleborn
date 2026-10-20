@@ -23,13 +23,19 @@ const SETTLE := 2.2
 ## How long a tapped action plays, in seconds.
 const ACTION_SECONDS := 0.9
 const FOV := 24.0
+## How often a standing model plays its second idle, in seconds.
+const IDLE2_EVERY := 7.0
 ## §21.3's three points: a warm key from above and in front, the night's
 ## violet as the fill (shade is never black), and a rim from behind.
 const KEY := Color("#FFE6C8")
-const KEY_ENERGY := 0.8
-const FILL := Color("#8E7FD8")
-const FILL_ENERGY := 0.42
+const KEY_ENERGY := 0.78
+const FILL := Color("#C4BCEE")
+const FILL_ENERGY := 0.62
 const RIM_ENERGY := 0.6
+## How much more a close view lifts a model's lit paint, and where its light
+## steps begin (creature_look.gdshaderinc's `lift` and `ramp_bias`).
+const CLOSE_LIFT := 1.7
+const CLOSE_RAMP_BIAS := 0.34
 
 static var _toon: Shader = load("res://world/toon.gdshader")
 static var _outline: Shader = load("res://world/outline.gdshader")
@@ -62,6 +68,9 @@ var _actions: Array[float] = []
 ## Seconds since a hatch's reveal began, or below zero when none plays.
 var _reveal := -1.0
 var _shells: Array[Node3D] = []
+## Seconds until the figures switch between their two idles (§21.6's "two
+## idles"), so a character on a stage never loops one clip for long.
+var _fidget := IDLE2_EVERY
 
 
 func _init() -> void:
@@ -110,6 +119,7 @@ static func make_figure(kind: String, look := "", close := false) -> Node3D:
 		model.set_form(StringName(look))
 	elif look == "guard":
 		model.set_guard(true)
+	_close_look(model)
 	var root := Node3D.new()
 	root.add_child(model)
 	root.set_meta("kind", kind)
@@ -167,7 +177,14 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		if hall:
 			var hall_mesh := MeshInstance3D.new()
 			hall_mesh.mesh = StageHeroFigure.hall(gap * list.size())
-			hall_mesh.material_override = toon(rim, false, true)
+			# The floor in T2's painted stone, the look the realm's rock takes.
+			var floor_paint := ShaderMaterial.new()
+			floor_paint.shader = load("res://world/look_ground.gdshader")
+			floor_paint.set_shader_parameter("paint", LookPaint.rock())
+			floor_paint.set_shader_parameter("paint_strength", 0.7)
+			floor_paint.set_shader_parameter("world_scale", 1.6)
+			floor_paint.set_shader_parameter("tint", Color(0.82, 0.78, 0.8))
+			hall_mesh.material_override = floor_paint
 			scenery.add_child(hall_mesh)
 		else:
 			scenery.add_child(StageHeroFigure.realm_ground(school, gap * list.size() * 0.4))
@@ -181,7 +198,15 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		var h := StageHeroFigure.height(kind)
 		var own_school := StageHeroFigure.school(kind)
 		if not shared:
-			table.add_child(StageHeroFigure.realm_ground(own_school, maxf(0.3, h * (0.55 if list.size() == 1 else 0.4))))
+			if list.size() == 1:
+				table.add_child(StageHeroFigure.realm_ground(own_school, maxf(0.3, h * 0.55)))
+			else:
+				# A row of figures shares §21.3's draw-call budget: each stands on
+				# the one-mesh patch, not the realm's three-piece island.
+				var patch := MeshInstance3D.new()
+				patch.mesh = StageHeroFigure.pedestal(own_school, maxf(0.3, h * 0.4))
+				patch.material_override = toon(rim, false, true)
+				table.add_child(patch)
 		var blob := StageHeroFigure.shadow_disc()
 		blob.scale = Vector3.ONE * h * 0.75
 		blob.position.y = 0.045
@@ -238,19 +263,29 @@ static func shade(figure: Node3D) -> void:
 
 ## Plays the tapped action on figure `index`: a hop and a twirl for a
 ## stand-in, the model's ability clip once the models land.
-func act(index: int) -> void:
+func act(index: int, clip := &"ability") -> void:
 	if index < 0 or index >= figures.size():
 		return
 	_actions[index] = 0.0
 	var model: Variant = figures[index].get_meta("model", null)
 	if model is CreatureModel:
-		(model as CreatureModel).play(&"ability")
+		(model as CreatureModel).play(clip)
+
+
+## A success to share (a level bought, a rest ended): every figure on the
+## stage celebrates, with a hop.
+func cheer() -> void:
+	for i in figures.size():
+		act(i, &"celebrate")
 
 
 ## A hatch's moment (§23.2's Hatch): the egg's shell bursts in two, a ring
 ## of light flares, and the newborn pops up with a squash and a twirl.
 func reveal() -> void:
 	if figures.is_empty():
+		return
+	if not moving:
+		# Reduced motion's form: the newborn is simply there.
 		return
 	_reveal = 0.0
 	for sh in _shells:
@@ -260,8 +295,10 @@ func reveal() -> void:
 	for side: float in [-1.0, 1.0]:
 		var mi := MeshInstance3D.new()
 		mi.mesh = StageHeroSculpt.of("shell")
-		mi.material_override = toon(rim)
-		mi.scale = Vector3.ONE * 0.7
+		var shell_paint := toon(rim)
+		shell_paint.set_shader_parameter("tint", Color(0.84, 0.82, 0.86))
+		mi.material_override = shell_paint
+		mi.scale = Vector3.ONE * 0.45
 		mi.set_meta("side", side)
 		tables[0].add_child(mi)
 		_shells.append(mi)
@@ -277,6 +314,17 @@ func at_time(seconds: float) -> void:
 	backdrop.time = seconds
 	_pose()
 	backdrop.queue_redraw()
+	# Each model's clip too, held there while the stage is still.
+	for f in figures:
+		var model: Variant = f.get_meta("model", null)
+		if not (model is CreatureModel):
+			continue
+		var p := (model as CreatureModel).player()
+		if p.current_animation == "" or p.current_animation_length <= 0.0:
+			continue
+		p.seek(fmod(seconds, p.current_animation_length), true)
+		if not moving:
+			p.pause()
 
 
 func _process(delta: float) -> void:
@@ -285,6 +333,19 @@ func _process(delta: float) -> void:
 	if moving:
 		time += delta
 		backdrop.advance(delta)
+		_fidget -= delta
+		if _fidget <= 0.0:
+			_fidget = IDLE2_EVERY
+			for f in figures:
+				var model: Variant = f.get_meta("model", null)
+				if not (model is CreatureModel):
+					continue
+				# The two idles take turns (both loop in the model).
+				var c := model as CreatureModel
+				if c.clip == &"idle":
+					c.play(&"idle2")
+				elif c.clip == &"idle2":
+					c.play(&"idle")
 	for i in _actions.size():
 		if _actions[i] >= 0.0:
 			_actions[i] += delta
@@ -373,8 +434,10 @@ func _frame() -> void:
 	var tall := 0.0
 	for i in figures.size():
 		var b := bounds(figures[i])
-		tall = maxf(tall, b.end.y if b.size.y > 0.0 else StageHeroFigure.height(kinds[i]))
-	var wide := (tables[-1].position.x - tables[0].position.x) + tall * 1.3 if tables.size() > 1 else tall * 1.3
+		var top := b.end.y if b.size.y > 0.0 else StageHeroFigure.height(kinds[i])
+		# A flier's clip lifts it off the ground: frame the hover too.
+		tall = maxf(tall, top * (1.45 if kinds[i] in StageHeroFigure.FLIERS else 1.0))
+	var wide := (tables[-1].position.x - tables[0].position.x) + tall * 0.95 if tables.size() > 1 else tall * 1.3
 	var aspect := maxf(0.2, size.x / maxf(1.0, size.y)) if size.y > 0.0 else 1.0
 	var need_h := maxf(tall * 1.75, wide / aspect)
 	var dist := need_h * 0.5 / tan(deg_to_rad(FOV) * 0.5)
@@ -393,15 +456,22 @@ func _pose() -> void:
 	var sway := SWAY * sin(time * TAU / SWAY_SECONDS) if moving else 0.0
 	for i in tables.size():
 		var table := tables[i]
-		table.rotation.y = -0.45 + sway * 0.6 + _spin + i * 0.0
+		table.rotation.y = -0.45 + sway * 0.6 + _spin
 		var f := figures[i]
 		var beat := time * 2.2 + i * 1.3
 		var breath := sin(beat) * 0.025 if moving else 0.0
 		f.scale = Vector3(1.0 - breath * 0.5, 1.0 + breath, 1.0 - breath * 0.5)
 		f.position.y = 0.04
 		f.rotation.y = 0.0
+		f.rotation.z = 0.0
+		if kinds[i] == "egg" and moving:
+			# An egg about to hatch rocks now and then: three quick wobbles
+			# every four seconds, dying away.
+			var w := fposmod(time, 4.0)
+			f.rotation.z = sin(w * 14.0) * 0.12 * exp(-w * 2.2) if w < 1.4 else 0.0
 		var a: float = _actions[i] if i < _actions.size() else -1.0
-		if a >= 0.0:
+		# Reduced motion (§20.8) keeps the clip and drops the hop and twirl.
+		if a >= 0.0 and moving:
 			var u := a / ACTION_SECONDS
 			var hop := sin(clampf(u * 1.25, 0.0, 1.0) * PI)
 			var squash := 0.18 * (sin(u * PI * 4.0) * (1.0 - u))
@@ -424,13 +494,29 @@ func _pose() -> void:
 		backdrop.flash = 0.0
 
 
+## A close view's light on a model (the hero stage, portraits): the lit
+## paint lifted further toward warm white and the light steps started
+## earlier, so the model reads pale and soft as the design's portraits do,
+## where the world keeps T1's values for a model seen from far above.
+static func _close_look(model: CreatureModel) -> void:
+	var m := model.material()
+	if m == null:
+		return
+	var lift := float(m.get_shader_parameter("lift")) if m.get_shader_parameter("lift") != null else 0.5
+	m.set_shader_parameter("lift", minf(0.95, lift * CLOSE_LIFT))
+	m.set_shader_parameter("ramp_bias", CLOSE_RAMP_BIAS)
+
+
 ## The stand-in: StageHeroSculpt's figure for the kind, grown to its height.
 static func _stand_in(kind: String, look: String) -> Node3D:
 	var root := Node3D.new()
 	var mi := MeshInstance3D.new()
 	mi.mesh = StageHeroSculpt.of(kind, look)
 	var rim: Color = Palette.SCHOOL.get(StageHeroFigure.school(kind), Palette.MOTION)
-	mi.material_override = toon(rim)
+	var m := toon(rim)
+	# The world's toon reads hot under the close view's brighter fill.
+	m.set_shader_parameter("tint", Color(0.84, 0.82, 0.86))
+	mi.material_override = m
 	mi.scale = Vector3.ONE * StageHeroFigure.height(kind)
 	root.add_child(mi)
 	root.set_meta("kind", kind)

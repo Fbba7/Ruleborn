@@ -74,7 +74,7 @@ static func plate(words: Control, dark := false) -> PanelContainer:
 static func ink(node: Node, dark: bool) -> void:
 	for l: Label in node.find_children("*", "Label", true, false):
 		var kind := str(l.get_meta("status", ""))
-		if not dark and kind in ["alarm", "success"]:
+		if not dark and kind in ["alarm", "success"] or l.has_meta("own_ink"):
 			continue
 		l.add_theme_color_override("font_color", LIGHT if dark else BROWN)
 
@@ -102,6 +102,7 @@ static func badge(text: String, fill: Color, points := 18.0) -> PanelContainer:
 	var l := UI.label(text, points)
 	l.add_theme_font_override("font", numbers_font())
 	l.add_theme_color_override("font_color", LIGHT if fill.get_luminance() < 0.5 else BROWN)
+	l.set_meta("own_ink", true)
 	l.add_theme_color_override("font_outline_color", OUTLINE)
 	l.add_theme_constant_override("outline_size", UI.px(1))
 	var p := PanelContainer.new()
@@ -201,15 +202,21 @@ static func names_font() -> Font:
 static func portrait_tile(kind: String, look := "", side_points := 104.0) -> PanelContainer:
 	var school := StageHeroFigure.school(StageHeroFigure.key(kind))
 	var main: Color = Palette.SCHOOL.get(school, Palette.MOTION)
-	var frame := PanelContainer.new()
-	var b := box(main.darkened(0.35), 12.0, false)
-	b.set_content_margin_all(0)
-	frame.add_theme_stylebox_override("panel", b)
-	frame.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
+	# The tile: an outer holder that badges pin to, and inside it a rounded,
+	# clipped frame with the ground and the portrait, so badges stay unclipped.
+	var tile := PanelContainer.new()
+	tile.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	var holder := Control.new()
 	holder.custom_minimum_size = Vector2(UI.px(48), UI.px(side_points))
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	frame.add_child(holder)
+	tile.add_child(holder)
+	var frame := Panel.new()
+	var b := box(main.darkened(0.35), 12.0, false)
+	frame.add_theme_stylebox_override("panel", b)
+	frame.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
+	frame.set_anchors_preset(Control.PRESET_FULL_RECT)
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	holder.add_child(frame)
 	var glow := TextureRect.new()
 	var tex := GradientTexture2D.new()
 	tex.fill = GradientTexture2D.FILL_RADIAL
@@ -224,7 +231,7 @@ static func portrait_tile(kind: String, look := "", side_points := 104.0) -> Pan
 	glow.stretch_mode = TextureRect.STRETCH_SCALE
 	glow.set_anchors_preset(Control.PRESET_FULL_RECT)
 	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	holder.add_child(glow)
+	frame.add_child(glow)
 	var picture := TextureRect.new()
 	picture.texture = Portrait.of(kind, look)
 	picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -232,9 +239,9 @@ static func portrait_tile(kind: String, look := "", side_points := 104.0) -> Pan
 	picture.set_anchors_preset(Control.PRESET_FULL_RECT)
 	picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	picture.name = "Portrait"
-	holder.add_child(picture)
-	frame.set_meta("kind", kind)
-	return frame
+	frame.add_child(picture)
+	tile.set_meta("kind", kind)
+	return tile
 
 
 ## A badge pinned to a corner of a tile (`corner` one of Control's
@@ -270,3 +277,41 @@ static func cap_buttons(node: Node, wide: float) -> void:
 		if b.custom_minimum_size.x > wide:
 			b.custom_minimum_size.x = wide
 			b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+
+## Words on a stage (§21.8's dark glass pill over the world): a rounded
+## dark card with light words, its name in Marcellus when `named`.
+static func pill(text: String, named_words := false, points := -1.0) -> PanelContainer:
+	var l := UI.label(text, points if points > 0.0 else UI.TEXT_POINTS)
+	if named_words:
+		l.add_theme_font_override("font", names_font())
+	var p := plate(l, true)
+	var b := p.get_theme_stylebox("panel") as StyleBoxFlat
+	b.set_corner_radius_all(UI.px(99))
+	b.content_margin_top = UI.px(3)
+	b.content_margin_bottom = UI.px(4)
+	b.content_margin_left = UI.px(12)
+	b.content_margin_right = UI.px(12)
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return p
+
+
+## Pins `what` to a stage's edge (`corner` as Control's presets: top-right,
+## bottom-centre …), above the 3D, clear of its edge by 8 points. Returns the
+## holder, which a refresh frees.
+static func on_stage(stage: Control, what: Control, corner: int) -> Control:
+	var m := MarginContainer.new()
+	m.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	m.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for side: String in ["margin_left", "margin_right", "margin_top", "margin_bottom"]:
+		m.add_theme_constant_override(side, UI.px(8))
+	var right := corner in [Control.PRESET_TOP_RIGHT, Control.PRESET_BOTTOM_RIGHT, Control.PRESET_CENTER_RIGHT]
+	var centre := corner in [Control.PRESET_CENTER_TOP, Control.PRESET_CENTER_BOTTOM]
+	what.size_flags_horizontal = Control.SIZE_SHRINK_END if right else (Control.SIZE_SHRINK_CENTER if centre
+		else Control.SIZE_SHRINK_BEGIN)
+	what.size_flags_vertical = Control.SIZE_SHRINK_END if corner in [Control.PRESET_BOTTOM_LEFT,
+		Control.PRESET_BOTTOM_RIGHT, Control.PRESET_CENTER_BOTTOM] else (Control.SIZE_SHRINK_CENTER if corner in [
+		Control.PRESET_CENTER_LEFT, Control.PRESET_CENTER_RIGHT] else Control.SIZE_SHRINK_BEGIN)
+	m.add_child(what)
+	stage.add_child(m)
+	return m

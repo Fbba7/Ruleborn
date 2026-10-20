@@ -14,6 +14,8 @@ var controller: FirstController
 var body: VBoxContainer
 var status_label: Label
 var stage: StageHero
+## The beat last drawn, so a new one is greeted.
+var _beat := ""
 
 
 func _ready() -> void:
@@ -51,6 +53,10 @@ func _refresh() -> void:
 	var f := FirstPresenter.screen(App.services.store.get_slice(FirstState.FIRST), App.services.age.band())
 	UI.set_status(status_label, "alarm" if f["error"] != "" else "info", f["error"])
 	status_label.get_parent().visible = status_label.text != ""
+	# Each beat the player moves on to, the welcome party cheers them on.
+	if _beat != "" and str(f["beat"]) != _beat:
+		stage.cheer.call_deferred()
+	_beat = str(f["beat"])
 	for child in body.get_children():
 		body.remove_child(child)
 		child.queue_free()

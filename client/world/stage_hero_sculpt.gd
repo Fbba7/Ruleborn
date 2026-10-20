@@ -8,9 +8,9 @@ extends RefCounted
 ## adds the sash and the small lantern. Built one unit tall, facing +Z, as
 ## one vertex-coloured mesh inside §21.3's 3,000 to 6,000 triangles.
 
-## The launch notes' colours, by name: Hush violet, Spark gold, Echo cyan,
-## as the designs' Forms album draws them.
-const NOTE := {"hush": Color("#7A5CE0"), "spark": Color("#F6C343"), "echo": Color("#46C8E0")}
+## The launch notes' colours, by name, as the design's character sheets
+## set them (Featherkin_dc.html `NOTE`).
+const NOTE := {"hush": Color("#8C6CF0"), "spark": Color("#F07A3C"), "echo": Color("#E05CB4")}
 const SKIN := Color("#F2C9A8")
 const WHITE := Color("#FFFDF6")
 const INK := Color("#1A0C14")
@@ -527,14 +527,19 @@ func _sage() -> void:
 ## A Nursery's egg (§10.2): speckled cream with a band in each school's
 ## colour, since the kind is not known until it hatches.
 func _egg() -> void:
-	var cream := Color("#F6EBD2")
+	var cream := Color("#E2CDAE")
 	_ball(Vector3(0, 0.42, 0), 0.32, cream, Vector3(0.85, 1.3, 0.85))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 11
-	for k in 12:
-		var p := _on(Vector3(0, 0.42, 0), 0.3, rng.randf() * TAU, rng.randf_range(-0.6, 0.9))
-		p.y = 0.42 + (p.y - 0.42) * 1.3
-		_ball(p, 0.03, Color("#C9A0D8").lerp(Color("#9AD8E8"), rng.randf()), Vector3.ONE, Vector3.ZERO, 1)
+	# Painted spots, flush with the shell: flat discs on its surface.
+	var shape := Vector3(0.85, 1.3, 0.85) * 0.32
+	for k in 16:
+		var dir := (_on(Vector3.ZERO, 1.0, rng.randf() * TAU, rng.randf_range(-0.5, 0.95))).normalized()
+		var p := Vector3(0, 0.42, 0) + dir * shape
+		var normal := (dir / shape).normalized()
+		g.ball(Transform3D(Basis.looking_at(-normal, Vector3.UP if absf(normal.y) < 0.95 else Vector3.BACK)
+			* Basis.from_scale(Vector3(1.0, 1.0, 0.25)), p), 0.034 + 0.014 * rng.randf(),
+			Color("#9A6CC8").lerp(Color("#3FA8C8"), rng.randf()), 5, 12)
 	var schools: Array[Color] = [Palette.MOTION, Palette.MATTER, Palette.TIME, Palette.ENERGY, Palette.LIFE,
 		Palette.SPIRIT]
 	for k in schools.size():

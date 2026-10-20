@@ -25,9 +25,11 @@ func _go() -> void:
 		root.add_child(screen)
 	screen.clock = func() -> int: return RosterTests.NOW
 	screen._refresh()
-	for i in 30:
+	for i in 60:
 		await process_frame
-	for s: StageHero in [screen.stage, screen.forms]:
+		if Portrait.settled() and i > 30:
+			break
+	for s: StageHero in [screen.stage]:
 		s.moving = false
 		s.at_time(1.5)
 	if OS.get_environment("SCROLL") != "":

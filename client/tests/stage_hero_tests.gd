@@ -50,10 +50,13 @@ func _stage() -> void:
 		and modelled
 	stage.act(1)
 	var acting: bool = stage.get("_actions")[1] >= 0.0
+	stage.cheer()
+	var cheering: bool = (stage.get("_actions") as Array).all(func(a: float) -> bool: return a >= 0.0) \
+		and (stage.figures[0].get_meta("model") as CreatureModel).clip == &"celebrate"
 	stage.free()
 	check.call("the hero stage stands a kind in its forms and guard form side by side, the Sages in their hall with a "
-		+ "locked one in silhouette, and a tap plays an action (23.2)", four and shaded and hall and acting,
-		"%s %s %s %s" % [four, shaded, hall, acting])
+		+ "locked one in silhouette, a tap plays an action, and a success makes them celebrate (23.2)",
+		four and shaded and hall and acting and cheering, "%s %s %s %s %s" % [four, shaded, hall, acting, cheering])
 
 
 func _portraits() -> void:

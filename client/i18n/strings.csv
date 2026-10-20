@@ -600,6 +600,8 @@ CHARACTER_TOP_LEVEL,at the highest level,at the highest level,no nível máximo,
 CHARACTER_WAKE,"Wake now, %s Essence","Wake now, %s Essence","Acordar agora, %s de Essência","Acordar agora, %s de Essência","Jetzt wecken, %s Essenz","Réveiller maintenant, %s d'Essence"
 CHARACTER_CONFIRM,Tap again to spend %s Essence,Tap again to spend %s Essence,Toque de novo para gastar %s de Essência,Toca de novo para gastar %s de Essência,"Nochmal tippen, um %s Essenz auszugeben",Touche encore pour dépenser %s d'Essence
 CHARACTER_CONFIRM_SPOKEN,%s: tap again to spend %s Essence,%s: tap again to spend %s Essence,%s: toque de novo para gastar %s de Essência,%s: toca de novo para gastar %s de Essência,"%s: nochmal tippen, um %s Essenz auszugeben",%s : touche encore pour dépenser %s d'Essence
+CHARACTER_PREVIOUS,"Previous character, %s","Previous character, %s","Personagem anterior, %s","Personagem anterior, %s","Vorheriger Charakter, %s","Personnage précédent, %s"
+CHARACTER_NEXT,"Next character, %s","Next character, %s","Próximo personagem, %s","Personagem seguinte, %s","Nächster Charakter, %s","Personnage suivant, %s"
 CHARACTER_RAISED,Now level %d,Now level %d,Agora no nível %d,Agora no nível %d,Jetzt Stufe %d,Désormais niveau %d
 CHARACTER_WOKEN,Back from rest,Back from rest,De volta do descanso,De volta do descanso,Zurück von der Rast,De retour du repos
 CHARACTER_MISSING,This character is not in the roster,This character is not in the roster,Este personagem não está no plantel,Esta personagem não está no plantel,Diese Figur ist nicht in der Aufstellung,Ce personnage n'est pas dans l'effectif

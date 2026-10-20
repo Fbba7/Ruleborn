@@ -22,13 +22,17 @@ var body: VBoxContainer
 var status_label: Label
 ## The hero stage, its level badge, and the strip of forms beneath it.
 var stage: StageHero
-var forms: StageHero
+## The forms and guard form as portraits rendered from the model (§21.3):
+## four live models beside the hero would cost more than §21.3's budget.
+var forms: HBoxContainer
 var level_badge: PanelContainer
 var forms_names: PanelContainer
 var cards: VBoxContainer
 ## The spend tapped once, by its key: the next tap on it spends.
 var confirm := ""
 var clock: Callable = func() -> int: return int(Time.get_unix_time_from_system() * 1000)
+## The last success the stage celebrated, so a refresh does not repeat it.
+var _cheered := ""
 
 
 func _ready() -> void:
@@ -60,17 +64,23 @@ func _build() -> void:
 	stage.custom_minimum_size = Vector2(0, UI.px(300))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(stage)
-	forms = StageHero.new()
-	forms.custom_minimum_size = Vector2(0, UI.px(120))
+	forms = HBoxContainer.new()
+	forms.add_theme_constant_override("separation", UI.px(6))
 	forms.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(forms)
-	var names := HBoxContainer.new()
+	var names := HFlowContainer.new()
+	names.alignment = FlowContainer.ALIGNMENT_CENTER
 	for look: String in LOOKS:
-		var l := UI.label(Strings.t("ROSTER_STATE_GUARDING") if look == "guard" else FormsPresenter.note_name(look),
-			UI.TEXT_POINTS, true)
-		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		l.add_theme_color_override("font_color", StageHeroSkin.LIGHT)
-		names.add_child(l)
+		# Each form's name on a pill edged in its note's colour, as Forms has it.
+		var pill := StageHeroSkin.pill(Strings.t("ROSTER_STATE_GUARDING") if look == "guard"
+			else FormsPresenter.note_name(look))
+		var edge := pill.get_theme_stylebox("panel") as StyleBoxFlat
+		edge.border_color = StageHeroSculpt.NOTE.get(look, Palette.ALARM)
+		edge.set_border_width_all(UI.px(1) + StageHeroSkin.edge_px())
+		var slot := CenterContainer.new()
+		slot.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		slot.add_child(pill)
+		names.add_child(slot)
 	var strip := PanelContainer.new()
 	var flat := StyleBoxFlat.new()
 	flat.bg_color = StageHeroSkin.CARD
@@ -102,6 +112,10 @@ func _refresh() -> void:
 		UI.set_status(status_label, "alarm", Strings.t("CHARACTER_MISSING"))
 	elif c["said"] != "":
 		UI.set_status(status_label, "success", c["said"])
+		# A level bought or a rest ended: the character celebrates, once.
+		if c["said"] != _cheered:
+			_cheered = c["said"]
+			stage.cheer.call_deferred()
 	elif c["busy"] != "" or not c["ready"]:
 		UI.set_status(status_label, "info", Strings.t("COMMON_LOADING"))
 	else:
@@ -162,7 +176,12 @@ func _stand(kind: String, c: Dictionary) -> void:
 		return
 	stage.set_meta("showing", kind)
 	stage.show_kinds([kind])
-	forms.show_kinds([kind, kind, kind, kind], LOOKS)
+	for n in forms.get_children():
+		n.queue_free()
+	for look: String in LOOKS:
+		var tile := StageHeroSkin.portrait_tile(kind, look, 96.0)
+		tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		forms.add_child(tile)
 	_badge(c)
 
 
@@ -176,9 +195,32 @@ func _badge(c: Dictionary) -> void:
 		if int(x["id"]) == id:
 			level = int(x["level"])
 	var school: Color = Palette.SCHOOL.get(str(c["school"]), Palette.MOTION)
-	level_badge = StageHeroSkin.badge(str(level), school.darkened(0.55), 28.0)
-	level_badge.position = Vector2(UI.px(10), UI.px(10))
+	level_badge = PanelContainer.new()
+	level_badge.mouse_filter = Control.MOUSE_FILTER_PASS
+	level_badge.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	level_badge.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	stage.add_child(level_badge)
+	StageHeroSkin.on_stage(level_badge, StageHeroSkin.badge(str(level), school.darkened(0.55), 28.0),
+		Control.PRESET_TOP_LEFT)
+	# §23.2's state on the stage, as the design's state pill puts it.
+	StageHeroSkin.on_stage(level_badge, StageHeroSkin.pill(str(c["line"])), Control.PRESET_TOP_RIGHT)
+	# The design's arrows through the roster, in its order, round at the ends.
+	var ids: Array = RosterScreen.kinds_of(slice).keys()
+	var at := ids.find(id)
+	if ids.size() > 1 and at >= 0:
+		var named := RosterPresenter.names((slice.get("view", {}) as Dictionary).get("characters", []),
+			App.services.store.get_slice(WorkshopState.WORKSHOP)["words"])
+		for step: int in [-1, 1]:
+			var to: int = ids[posmod(at + step, ids.size())]
+			var b := StageHeroSkin.button(UI.button("‹" if step < 0 else "›",
+				func() -> void: App.services.router.go(&"character", {"id": to}), false, Color(),
+				Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT", str(named.get(to, "")))))
+			b.set_meta("item", "step:%d" % step)
+			b.add_theme_font_size_override("font_size", UI.text_px(30))
+			b.set_meta("points", 30.0)
+			for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+				(b.get_theme_stylebox(state) as StyleBoxFlat).set_corner_radius_all(UI.px(99))
+			StageHeroSkin.on_stage(level_badge, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
 
 
 ## A spend's button: the first tap shows the price to confirm; the second
