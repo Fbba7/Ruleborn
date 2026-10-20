@@ -62,7 +62,7 @@ Shots to re-render them: `client/tests/shots/kit_realm.gd` (REALM, LEVEL, HOUR, 
 - Trails are drawn by the shader now (crisp, 0.45 m wide, ragged edge, a rim of worn grass), but they are elbowed straight runs where the design's lanes curve.
 - **Value structure** (§21.10's grayscale test): T2's palettes and light make the ground near-white in grayscale; the design's ground is mid-grey under darker roofs. The kit follows the palette so the grid and island stay seamless; a deeper grass from T2 fixes it for both.
 - Water beds and banks are flush (the island-top note above).
-- Several buildings are under §21.3's 2,000-triangle floor (Vault 800, Aether Spring 900, Beacon 900, Ward 360); they read, but the Aether Spring and the Anchor Stone are the plainest silhouettes left.
+- Several buildings are under §21.3's 2,000-triangle floor (Aether Spring 900–1,200, Beacon about 900, Ward 360; the Vault is now 1,300–1,700 with its portico). They read, and the Spring and the Anchor Stone have been rebuilt; the Ward is a small trap by design.
 - Doors face their nearest path (`RealmKit.facing`), a choice the simulation does not make; a screen-given facing would override it.
 - The level-10 crowns are small at the home camera's distance.
 

@@ -136,6 +136,21 @@ static func _vault(b: BuildingKit) -> void:
 	b.door(0, 0.1, 0.375, 0, 1.3)
 	b.g.cyl(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), b.at(0, 0.38, 0.38)), 0.12 * b.unit, 0.12 * b.unit,
 		0.03 * b.unit, KitStyle.lit(KitStyle.GOLD, 0.35), 14)
+	# A portico before the door, as the design's map vault (:847-866): four
+	# white columns, an entablature and a pediment, a broad step below.
+	var white := Color("#F4EEF8")
+	for x: float in [-0.36, -0.14, 0.14, 0.36]:
+		b.cyl(0.04, 0.045, 0.46, white, x, 0.1, 0.52, 8)
+		b.box(0.11, 0.03, 0.11, b.stone2, x, 0.57, 0.52)
+	b.box(0.92, 0.06, 0.2, b.stone2, 0, 0.6, 0.52)
+	b.g.gable(b.place(0, 0.63, 0.52), 0.94 * b.unit, 0.18 * b.unit, 0.2 * b.unit, b.stone)
+	b.box(0.98, 0.05, 0.3, b.stone2, 0, 0.075, 0.55)
+	# Braziers at the corners of the step, and the hoard glinting in coins.
+	for x: float in [-0.52, 0.52]:
+		b.cyl(0.05, 0.07, 0.18, b.stone2, x, 0.1, 0.66, 6)
+		b.ball(0.04, KitStyle.lit(Color("#FFB040"), 0.2), x, 0.31, 0.66, 1.2, 2, 6)
+	for k in 5:
+		b.cyl(0.04, 0.04, 0.015, KitStyle.GOLD, 0.6 + 0.03 * (k % 2), 0.1 + 0.017 * k, 0.4, 8)
 	b.top = 1.05
 	b.unit /= 0.85
 
