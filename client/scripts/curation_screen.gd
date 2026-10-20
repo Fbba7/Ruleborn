@@ -51,7 +51,7 @@ func _build() -> void:
 	column.add_child(UI.plate(status_label))
 	StageScreen.window(column, 1.2)
 	body = UI.scroll(column)
-	_sheet = StageScreen.sheet(body, 0.8)
+	_sheet = StageScreen.sheet(body, 0.62)
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("HOME_MAP"), func() -> void: App.services.router.go(&"map"), true))
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))

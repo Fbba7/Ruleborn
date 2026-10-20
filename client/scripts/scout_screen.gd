@@ -33,7 +33,7 @@ func _on_changed(slice: StringName) -> void:
 func _build() -> void:
 	var column := UI.frame(self)
 	view = StageScreen.mount(self, column)
-	view.fill = 0.95
+	view.fill = 1.12
 	scout = StageScout.new(view)
 	_top = OverlaySheet.ribbon(UI.title(Strings.t("SCOUT_TITLE")))
 	column.add_child(_top)
@@ -41,7 +41,7 @@ func _build() -> void:
 	column.add_child(UI.plate(status_label))
 	StageScreen.window(column, 1.3)
 	body = UI.scroll(column)
-	_sheet = StageScreen.sheet(body, 0.75)
+	_sheet = StageScreen.sheet(body, 0.6)
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("OBS_TITLE"), func() -> void: App.services.router.go(&"observatory")))
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))

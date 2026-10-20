@@ -5,7 +5,7 @@ extends Node3D
 ## and type under the scout's mist, every tile veiled, since where anything
 ## stands is what the raid finds out; the guards it counted lined up on the
 ## rim by role, the wards it counted standing beside them by kind, and its
-## laws named over the realm. Nothing is drawn on a tile.
+## laws flown as banners at its near corner. Nothing is drawn on a tile.
 
 ## The mist's veil and its clouds.
 const VEIL := Color(0.78, 0.74, 0.96, 0.55)
@@ -17,6 +17,7 @@ var view: StageView
 var tiles: OverlayTiles
 var mist: MeshInstance3D
 var figures: Node3D
+var banners: MeshInstance3D
 var _clock := 0.0
 
 
@@ -38,6 +39,8 @@ func _init(on: StageView) -> void:
 	add_child(mist)
 	figures = Node3D.new()
 	add_child(figures)
+	banners = WorldView._instance(null, WorldView.material(_toon, true))
+	add_child(banners)
 	on.layers.add_child(self)
 
 
@@ -61,11 +64,18 @@ func build(realm: Dictionary) -> void:
 	var wards: Dictionary = realm.get("wards", {})
 	_line(guards, false, size)
 	_line(wards, true, size)
-	# The laws named over the realm, a pin each, high over its far side.
+	# The laws fly at the realm's near corner, a banner each, the line-ups
+	# either side of them; the sheet below names them.
 	var laws: Array = realm.get("laws", [])
+	var g := Geo.new()
 	for i in laws.size():
-		pins.pin(OverlaySheet.chip(Strings.term("LAW", str(laws[i]))),
-			Vector3(0, 2.6, 0) + Vector3((i - (laws.size() - 1) / 2.0) * 3.2, 0, -(i - (laws.size() - 1) / 2.0) * 3.2))
+		var across := (i - (laws.size() - 1) / 2.0) * 1.1
+		var at := Vector3(size.x * 0.5 + 1.0 + across * 0.7071, 0.0, size.y * 0.5 + 1.0 - across * 0.7071)
+		g.prism(Geo.place(at), 6, 0.07, 0.05, 2.6, Palette.WOOD.darkened(0.25))
+		g.ball(Geo.place(at + Vector3(0, 2.65, 0)), 0.11, Palette.MOTION, 3, 6)
+		var cloth := Palette.MATTER.lightened(0.15 * (i % 2))
+		g.box(Geo.place(at + Vector3(0.36, 2.15, 0.36), PI / 4.0), Vector3(0.9, 0.62, 0.05), cloth)
+	banners.mesh = g.mesh()
 
 
 ## One rim's line-up: `counts` by kind, guards along the south rim or wards
@@ -75,7 +85,7 @@ func _line(counts: Dictionary, wards: bool, size: Vector2i) -> void:
 	var kinds := counts.keys()
 	kinds.sort()
 	var step := 0.95
-	var along := 0.9
+	var along := 2.4
 	for k: String in kinds:
 		var first := along
 		for i in int(counts[k]):

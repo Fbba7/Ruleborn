@@ -72,12 +72,12 @@ func _scout() -> void:
 	scout.build(card["realm"])
 	await tree.process_frame
 	# Two guards and three wards in the card: five figures, on the rim, none
-	# on a tile; two kinds of each, so four counts, and the two laws named.
+	# on a tile; two kinds of each, so four counts; two laws, two banners.
 	var on_grid := scout.figures.get_children().filter(func(n: Node3D) -> bool:
 		return absf(n.position.x) < 6.0 and absf(n.position.z) < 6.0)
 	check.call("the scout report draws what the scout counted and nothing placed: the guards by role and wards by kind "
-			+ "on the rim, their counts and the laws pinned, and the Vault hidden (12.4)",
-		scout.figures.get_child_count() == 5 and on_grid.is_empty() and pins.count() == 6
+			+ "on the rim with their counts pinned, the laws as banners, and the Vault hidden (12.4)",
+		scout.figures.get_child_count() == 5 and on_grid.is_empty() and pins.count() == 4 and scout.banners.mesh != null
 			and not view._vault.visible,
 		"%d figures, %d on the grid, %d pins" % [scout.figures.get_child_count(), on_grid.size(), pins.count()])
 	pins.queue_free()

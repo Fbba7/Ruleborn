@@ -50,7 +50,7 @@ func _build() -> void:
 	column.add_child(UI.plate(status_label))
 	StageScreen.window(column, 1.1)
 	body = UI.scroll(column)
-	_sheet = StageScreen.sheet(body, 0.9)
+	_sheet = StageScreen.sheet(body, 0.62)
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("OBS_TITLE"), func() -> void: App.services.router.go(&"scout"), true))
 	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
