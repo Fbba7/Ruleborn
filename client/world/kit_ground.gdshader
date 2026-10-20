@@ -80,6 +80,13 @@ void fragment() {
 	// meadow wears beside the grid, so the two meet as one painted ground.
 	c = look_brush(c, p, grassy);
 	vec3 glow = vec3(0.0);
+	// Moss: soft cushions, each a little dome of light over a darker hollow.
+	if (lush > 0.05) {
+		vec3 mc = cells(p * 6.0);
+		float cushion = 1.0 - smoothstep(0.0, 0.42, mc.x);
+		float m = smoothstep(0.3, 0.8, lush) * (1.0 - cliff);
+		c *= mix(1.0, mix(0.8, 1.12, cushion) * (0.94 + 0.12 * mc.z), m);
+	}
 	// A worn trail: crisp trodden earth, wobbling, with stones in it.
 	if (lane_count > 0 && up > 0.6) {
 		float best = 9.0;
