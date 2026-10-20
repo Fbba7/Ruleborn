@@ -46,7 +46,7 @@ Shots to re-render them: `client/tests/shots/kit_realm.gd` (REALM, LEVEL, HOUR, 
 
 ## Hooks in other tracks' files
 
-- `client/world/world_view.gd` (T5): `kit.island_seed = seed_from` (round 21, so the grid takes the meadow's colour); pylons pass their `school` to `PieceKit.pylon`; `_build_statics` adds `kit.instances()` instead of making a material per layer (the kit's materials carry the motion); the Vault, pylons and wards use `RealmKit.material("toon", true)`; a `buildings` var is passed to the kit, so a screen that knows the island's buildings (`RulebornIsland.buildings()`) draws each footprint as its kind. The static key does not include `buildings` yet; T5 may add it.
+- `client/world/world_view.gd` (T5): `RealmKit.by_hour(statics, look.hour)` in `set_sky_hour` and after the statics are built, so the kit's windows, lanterns and crystals shine brighter at dusk and night; `kit.island_seed = seed_from` (round 21, so the grid takes the meadow's colour); pylons pass their `school` to `PieceKit.pylon`; `_build_statics` adds `kit.instances()` instead of making a material per layer (the kit's materials carry the motion); the Vault, pylons and wards use `RealmKit.material("toon", true)`; a `buildings` var is passed to the kit, so a screen that knows the island's buildings (`RulebornIsland.buildings()`) draws each footprint as its kind. The static key does not include `buildings` yet; T5 may add it.
 - `client/tests/world_tests.gd`: the material check accepts the kit's shaders and its moving ink.
 - `client/tests/run.gd`: registers `KitTests`.
 - **For T2:** the island's grass top (`IslandBuilder.rock`) covers the grid at y = −0.02, so anything of the grid below that (water beds, pits) is hidden. Water is kept 1.2 cm under its tile for now (`KitGround.WATER_DROP`), which reads as the design's flush ribbons. If the island leaves a hole for the grid (|x| < w/2, |z| < h/2; the kit's skirt reaches 0.45 m beyond), set `WATER_DROP` to about 0.08 and the beds show. The ground uses `palette["grass"]`, `["ground"]` (paths, worn earth), `["soil"]` and `["rock"]`, so a richer palette from T2 flows straight in; the Heart's walls sit at the grid's half-diagonal + 0.5 m, inside the island's rim (half-diagonal + 1.4).
@@ -65,7 +65,6 @@ Shots to re-render them: `client/tests/shots/kit_realm.gd` (REALM, LEVEL, HOUR, 
 - Several buildings are under §21.3's 2,000-triangle floor (Vault 800, Aether Spring 900, Beacon 900, Ward 360); they read, but the Aether Spring and the Anchor Stone are the plainest silhouettes left.
 - Doors face their nearest path (`RealmKit.facing`), a choice the simulation does not make; a screen-given facing would override it.
 - The level-10 crowns are small at the home camera's distance.
-- Lantern Vale's glowing moss glows by day too; it could follow the hour.
 
 ## Next
 

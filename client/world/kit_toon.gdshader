@@ -9,6 +9,8 @@ render_mode diffuse_toon, specular_disabled;
 
 uniform vec4 tint : source_color = vec4(1.0);
 uniform float glow_from_alpha = 1.0;
+// 0 by day, 1 at night (RealmKit.by_hour): glows shine brighter after dark.
+uniform float night = 0.0;
 
 varying float breath;
 varying float contact;
@@ -24,5 +26,5 @@ void vertex() {
 
 void fragment() {
 	ALBEDO = saturated(COLOR.rgb * tint.rgb) * mix(0.74, 1.0, contact);
-	EMISSION = COLOR.rgb * (1.0 - COLOR.a) * glow_from_alpha * breath;
+	EMISSION = COLOR.rgb * (1.0 - COLOR.a) * glow_from_alpha * breath * (1.0 + 1.6 * night);
 }

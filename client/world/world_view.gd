@@ -199,6 +199,7 @@ func set_sky_hour(when: int) -> void:
 	hour = when
 	# A realm under Glowing dark is lit as at night (§21.7).
 	look.set_hour(NIGHT if laws != null and laws.dark() else when)
+	RealmKit.by_hour(statics, look.hour)
 
 
 static func material(shader: Shader, outlined := false) -> ShaderMaterial:
@@ -273,6 +274,7 @@ func _build_statics() -> void:
 	# The kit's layers with its own materials (T3: they carry its idle motion).
 	for mi: MeshInstance3D in kit.instances():
 		statics.add_child(mi)
+	RealmKit.by_hour(statics, look.hour)
 	# The Vault, the pylons and the wards change as the heist goes, so each
 	# is its own piece.
 	_vault = _instance(PieceKit.vault(false), RealmKit.material("toon", true))

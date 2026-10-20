@@ -351,6 +351,19 @@ func instances() -> Array[MeshInstance3D]:
 	return out
 
 
+## The kit's glow by the hour (§21.2: at night "lanterns and glows carry
+## the realm"): windows, lanterns and crystals under `root` shine twice as
+## bright at night and half again at dusk.
+static func by_hour(root: Node, hour: int) -> void:
+	var night: float = {"day": 0.0, "dusk": 0.5, "night": 1.0}[RealmPalette.hour_key(hour)]
+	if root == null:
+		return
+	for n in root.find_children("*", "MeshInstance3D", true, false):
+		var m := (n as MeshInstance3D).material_override as ShaderMaterial
+		if m != null and (m.shader == _shaders["toon"] or m.shader == _shaders["clear"]):
+			m.set_shader_parameter("night", night)
+
+
 ## A kit material: `toon` (optionally inked), `clear`, `ground`, `water`.
 static func material(kind: String, outlined := false) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
