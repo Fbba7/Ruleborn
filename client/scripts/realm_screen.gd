@@ -43,7 +43,7 @@ func _build() -> void:
 	var column := UI.frame(self)
 	view = StageScreen.mount(self, column)
 	view.tapped.connect(func(at: Vector2) -> void: _on_tap(view.tile_at(at), at))
-	view.fill = 0.7
+	view.fill = 0.6
 	town = StageTown.new(view)
 	var top := VBoxContainer.new()
 	top.add_child(OverlaySheet.ribbon(UI.title(Strings.t("RV_TITLE"))))

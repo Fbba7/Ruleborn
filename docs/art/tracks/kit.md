@@ -6,6 +6,8 @@ Branch `claude/3d-kit`. Everything that stands on the realm's grid: the painted 
 
 | | Still |
 |---|---|
+| **Integrated (after merging all tracks), before round 21**: the grid a lighter square with seams on T2's meadow | `docs/art/shots/kit/21-integrated-before.png` |
+| **Integrated, now**: one meadow, worn trails to the Vault | `21-integrated-meadow.png`, the heist screen `21-heist-screen.png`, a lived-in Heart and Skyfield `22-integrated-realms.png` |
 | Before (the flagstone chequer and box features) | `docs/art/shots/kit/00-before-world.png` |
 | A lived-in Heart, home camera | `09-heart-citadel.png` (and `02-realm.png` from round 2) |
 | The same, close | `03-realm-close.png` |
@@ -25,7 +27,7 @@ Shots to re-render them: `client/tests/shots/kit_realm.gd` (REALM, LEVEL, HOUR, 
 | `client/world/geo.gd` | The shape kit, extended: `rbox` (chamfered box: every edge catches the light and reads soft), `rock` (a faceted seeded icosahedron, the design's dodecahedron stones), `gem`, `torus`, `cyl`, `gable`, `blade` (a three-triangle grass blade), `ball(upper)` for domes, and per-vertex paint (UV/UV2) for the ground. Every vertex carries an idle motion in CUSTOM0 (`Geo.Anim`: sway, spin about Y/X/Z, bob, flag, swing, shiver) with its pivot, so one merged mesh moves with no node or script per piece. |
 | `client/world/kit_anim.gdshaderinc` | That motion, read by every kit shader. |
 | `kit_toon.gdshader`, `kit_outline.gdshader`, `kit_clear.gdshader` | The toon look (T2's `toon_light.gdshaderinc`, included, so the ramp stays one) plus the motion; the ink hull moves with its piece; lanterns and windows breathe. |
-| `client/world/kit_ground.gd` + `kit_ground.gdshader` | The grid's ground as one painted surface. Tiles are flat at their heights; the paint is in the vertices (grass and its patches, lush moss and tall grass, worn earth under buildings, scorch round lava, sandy banks by water, grit by scree, a contact shade round whatever stands up). The shader adds broad light-and-shade patches, soft painterly dabs, blade flecks, the realm's petals and pebbles, cobbled path ribbons with a kerb (a distance field to the path network, so paths turn and branch), strata on cliffs, faint seams where tiles meet, and each realm's own ground: field strips (Skyfield), hexagon flags (Crystalline), sand ovals (Tidehold), glowing cracks (Emberreach), glowing moss (Lantern Vale), dense flowers (Verdant). Steps between levels are soft earthy cliffs with a rounded grass lip, fallen stones at the foot and grass hanging over; the grid's edge runs out onto the island as a grass skirt in the island's own colour. |
+| `client/world/kit_ground.gd` + `kit_ground.gdshader` | The grid's ground as one painted surface, **continuous with T2's island meadow**: since the second integration the meadow turns, over `IslandBuilder.GRID_BLEND` metres beside the grid, to the palette's `grass` and the shared brush (`look_brush.gdshaderinc`, the kit's own brush written out once for both), and the grid paints that same `grass` under that same brush, so the two meet as one ground. Worn earth trails join the buildings' doors and the Vault (a spanning tree of elbowed runs; ground paint only, distinct from the simulation's cobbled gravel, and deciding nothing). |
 | `client/world/water.gdshader` | Water: the shore found per fragment from a side mask, so ponds and streams have rounded banks; deep in the middle, a thin broken foam line, drifting light streaks, ink ripples (§21.10) and a slow swell; marsh, spring and rapids tinted. Lava: a dark crust in plates over a melt that pulses through the cracks. |
 | `client/world/kit_features.gd` | Every sim feature, ported from the design's `feat` switch at its proportions (its cell is one tile: units × 0.45 m) and pushed further: fences, ruin walls and hedges join their neighbours; ramps, stairs and vines find the higher neighbour and waterfalls the lower one; trees grow by realm (round with fruit, pine, willow with fireflies, birch); pillars, boulders, bushes and tall grass have realm variants (glass columns, basalt columns, sea stacks, crystal-studded or glowing-veined boulders, dandelion puffs, frost moss, ember grass, wheat); a round arch with a gold keystone; a bell that swings; crystals that turn; fog that drifts; stepping stones that float. Hero features are inked; the rest are texture. |
 | `client/world/kit_style.gd` | The design's own per-realm wall, roof, stone and accent colours (`REALMS` in realm-diorama.js), found from the palette, and the shared timber, iron, gold and window light. |
@@ -38,9 +40,13 @@ Shots to re-render them: `client/tests/shots/kit_realm.gd` (REALM, LEVEL, HOUR, 
 
 `RealmKit` layers: `ground` (the painted terrain), `scatter` (tufts, cliff stones), `hero` (inked), `prop` (ambient features and buildings' fine parts), `clear` (fog, crystal, glass), `water`, `lava`. `instances()` returns them as MeshInstance3Ds with materials: 7 meshes, 8 draw calls (the hero layer's ink is a second pass). The example heist realm is about 10,500 triangles of kit; the lived-in Heart of `kit_realm.gd` with ten buildings at level 7, eight trees and its walls about 28,500 (faces turned down are never drawn: §21.1's cameras are always above).
 
+## For T4: the map version of every building
+
+`BuildingKit.build_map(geo, kind, mid, side, lvl, colours)` (`client/world/kit_map.gd`) draws the universe map's light version of any of the 17 kinds, as the design's `makeB` does for its map: 32–250 triangles each (the full `build` is 600–4,000), one layer, no fine parts, reading by kind (the cottage and chimney, the barn, the well under its roof, the domed Vault, the Spire in its ring, the obelisk, the fountain, the egg, the tower and lantern, the domed telescope, the mast, the pier and sail) and by §21.5's look (thatch and rough stone at 1–3, the realm's roof and a cap of its colour at 4–6, white walls, lilac roofs and a gold finial at 7–9, a glowing crown at 10, a flag from 3). Same arguments as `build`; set `geo.skip_down = true` to drop faces turned down. `universe_island.gd:337` can call it in place of `BuildingKit.build`. Still: `docs/art/shots/kit/23-map-buildings.png`. `KitTests` holds every kind and look to 250 triangles.
+
 ## Hooks in other tracks' files
 
-- `client/world/world_view.gd` (T5): `_build_statics` adds `kit.instances()` instead of making a material per layer (the kit's materials carry the motion); the Vault, pylons and wards use `RealmKit.material("toon", true)`; a `buildings` var is passed to the kit, so a screen that knows the island's buildings (`RulebornIsland.buildings()`) draws each footprint as its kind. The static key does not include `buildings` yet; T5 may add it.
+- `client/world/world_view.gd` (T5): `kit.island_seed = seed_from` (round 21, so the grid takes the meadow's colour); pylons pass their `school` to `PieceKit.pylon`; `_build_statics` adds `kit.instances()` instead of making a material per layer (the kit's materials carry the motion); the Vault, pylons and wards use `RealmKit.material("toon", true)`; a `buildings` var is passed to the kit, so a screen that knows the island's buildings (`RulebornIsland.buildings()`) draws each footprint as its kind. The static key does not include `buildings` yet; T5 may add it.
 - `client/tests/world_tests.gd`: the material check accepts the kit's shaders and its moving ink.
 - `client/tests/run.gd`: registers `KitTests`.
 - **For T2:** the island's grass top (`IslandBuilder.rock`) covers the grid at y = −0.02, so anything of the grid below that (water beds, pits) is hidden. Water is kept 1.2 cm under its tile for now (`KitGround.WATER_DROP`), which reads as the design's flush ribbons. If the island leaves a hole for the grid (|x| < w/2, |z| < h/2; the kit's skirt reaches 0.45 m beyond), set `WATER_DROP` to about 0.08 and the beds show. The ground uses `palette["grass"]`, `["ground"]` (paths, worn earth), `["soil"]` and `["rock"]`, so a richer palette from T2 flows straight in; the Heart's walls sit at the grid's half-diagonal + 0.5 m, inside the island's rim (half-diagonal + 1.4).
@@ -52,6 +58,8 @@ Shots to re-render them: `client/tests/shots/kit_realm.gd` (REALM, LEVEL, HOUR, 
 
 ## Still worse than the design
 
+- The grid is now hard to read as tiles at all (seams at 3.5 %); the design shows no grid either, but the builder and planner may want a stronger overlay (T5's).
+- Trails are vertex paint at a third of a tile, so they are soft and faint; the design's dirt paths are crisper and wider.
 - **Value structure** (§21.10's grayscale test): T2's palettes and light make the ground near-white in grayscale; the design's ground is mid-grey under darker roofs. The kit follows the palette so the grid and island stay seamless; a deeper grass from T2 fixes it for both.
 - Water beds and banks are flush (the island-top note above).
 - Several buildings are under §21.3's 2,000-triangle floor (Vault 800, Aether Spring 900, Beacon 900, Ward 360); they read, but the Aether Spring and the Anchor Stone are the plainest silhouettes left.
@@ -64,3 +72,11 @@ Shots to re-render them: `client/tests/shots/kit_realm.gd` (REALM, LEVEL, HOUR, 
 - Read the hour (T2's `WorldLook`) to strengthen window and lantern glow at dusk and night.
 - Give the Aether Spring and the Anchor Stone stronger silhouettes; raise the small buildings toward 2,000 triangles where it buys shape.
 - Workers by producers (T5's actors).
+
+## Stopped here
+
+Stopped at the owner's request on 2026-10-20, 07:50 UTC.
+
+- **Done:** everything above, with the second integration merged (commit `b0e88f5`) and the grid matched to its meadow (`506bd9d`). gdlint and all kit tests pass on that state. The last full `check_all` that finished ("All checks passed") ran on `2b639a3`, before the second merge.
+- **In progress:** a full `check_all` on the merged state, stopped before it finished, so it is not confirmed there.
+- **Next:** run `bash tools/check_all.sh` on this branch. Then T4 can switch `universe_island.gd:337` to `BuildingKit.build_map`, and the kit can go on with the items under "Still worse than the design" (crisper trails, the four plainest buildings, a stronger grid overlay for the builder).

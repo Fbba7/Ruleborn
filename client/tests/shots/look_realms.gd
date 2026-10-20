@@ -4,7 +4,8 @@ extends SceneTree
 ## (tools/render/shoot.sh): a row a realm, a column an hour. SHOT is the
 ## file. Optional: REALMS (comma list), HOURS (comma list), CELL ("WxH" of a
 ## still, default 270x480), ZOOM (0 the whole rock, the default) and PITCH
-## (default the home camera's 35°); SPAN widens the camera by a factor;
+## (default the home camera's 35°); SPAN widens the camera by a factor; FOV
+## turns it to a perspective camera of that field of view;
 ## FEATURES=1 dresses the grid.
 const ALL := ["heart", "skyfield", "crystalline", "tidehold", "emberreach", "verdant", "lanternvale"]
 
@@ -51,6 +52,10 @@ func _go() -> void:
 			view.set_zoom(zoom)
 			if OS.get_environment("SPAN") != "":
 				view.camera.size *= float(OS.get_environment("SPAN"))
+			if OS.get_environment("FOV") != "":
+				# A perspective camera, as the heist's follow camera may be.
+				view.camera.projection = Camera3D.PROJECTION_PERSPECTIVE
+				view.camera.fov = float(OS.get_environment("FOV"))
 			views.append(view)
 	for i in 6:
 		await process_frame

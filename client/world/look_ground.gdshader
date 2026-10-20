@@ -41,9 +41,12 @@ uniform float rise_period = 6.0;
 // How much of a piece shows: 0 hides it (the night's fireflies by day).
 uniform float appear = 1.0;
 uniform float glow_from_alpha = 1.0;
+// Glowing pieces twinkle (Crystalline's sparkles, §21.4), 0 for steady.
+uniform float twinkle = 0.0;
 
 varying vec3 world_pos;
 varying vec3 world_normal;
+varying float flicker;
 
 void vertex() {
 	VERTEX *= appear;
@@ -66,6 +69,7 @@ void vertex() {
 		VERTEX.x += sin(f * 9.0 + float(INSTANCE_ID)) * 0.3 / scale;
 	}
 	world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+	flicker = 1.0 - twinkle * (0.5 + 0.5 * sin(TIME * 3.1 + float(INSTANCE_ID) * 2.39));
 	world_normal = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
 }
 
@@ -92,5 +96,5 @@ void fragment() {
 		albedo = look_brush(albedo, world_pos.xz, brush * step(0.6, world_normal.y));
 	}
 	ALBEDO = saturated(albedo);
-	EMISSION = COLOR.rgb * (1.0 - COLOR.a) * glow_from_alpha + lit;
+	EMISSION = COLOR.rgb * (1.0 - COLOR.a) * glow_from_alpha * flicker + lit;
 }
