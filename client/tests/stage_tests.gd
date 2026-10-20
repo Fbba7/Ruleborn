@@ -173,16 +173,22 @@ func _fold() -> void:
 	key.pressed.emit()
 	var back := screen.body.is_visible_in_tree() and not StageScreen.folded
 	var sections := screen.body.get_child_count()
+	# A tap on the Slow rivers pylon (the fixture weaves it at 4, 10) opens
+	# its card with the sheet's own line.
+	screen._on_tap(Vector2i(4, 10), Vector2.ZERO)
+	var card_text := screen.card_label.text
+	var pylon_card := screen.card.visible and card_text == "Pylon 1: Slow rivers"
 	# The fixture's two idle residents of the Heart stroll its doors (where
 	# their models are exported).
 	var strolling: int = screen.town._strollers.size()
 	var exported := CreatureModel.manifest().has("bloomling") and CreatureModel.manifest().has("emberling")
 	screen.queue_free()
 	await tree.process_frame
-	check.call("the realm view wears its woven laws' signatures (21.7), its idle residents stroll its doors, and one key "
-			+ "folds its words away so the world takes the phone, and brings them back (21.1)",
-		laws and shown and hidden and back and sections == 4 and (strolling == 2 or not exported),
-		"%s %s %s %s %d %d" % [laws, shown, hidden, back, sections, strolling])
+	check.call("the realm view wears its woven laws' signatures (21.7), its idle residents stroll its doors, a "
+			+ "tapped pylon opens its card, and one key folds its words away so the world takes the phone, and brings "
+			+ "them back (21.1)",
+		laws and shown and hidden and back and sections == 4 and (strolling == 2 or not exported) and pylon_card,
+		"%s %s %s %s %d %d %s" % [laws, shown, hidden, back, sections, strolling, card_text])
 
 
 static func _button(at: Vector2, pressed: bool) -> InputEventMouseButton:

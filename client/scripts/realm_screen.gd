@@ -3,8 +3,8 @@ extends Control
 ## One realm (§23.2, "Build and shape one realm"), drawn as the diorama it is
 ## (§21.1): the realm's published island in 3D, each building on its tile at
 ## its level, who works where standing at their producers, and the law
-## pylons with their laws named over them. Tapping a building opens its
-## card. The same facts stay in words on the sheet below — its grid and
+## pylons with their laws named over them. Tapping a building or a pylon
+## opens its card. The same facts stay in words on the sheet below — its grid and
 ## terrain, wards and guard posts against its limits, buildings, workers and
 ## pylons — which is what a screen reader reads. The builder shapes the
 ## island; the Universe screen buys buildings.
@@ -160,14 +160,25 @@ func _pin(replay: RulebornReplay) -> void:
 func _on_tap(tile: Vector2i, _at: Vector2) -> void:
 	var b := town.at_tile(tile)
 	town.choose(b)
-	if b.is_empty() or not _screen.get("ready", false):
-		card.visible = false
+	card.visible = false
+	if not _screen.get("ready", false):
 		return
-	var name := UniversePresenter.building_name(str(b["kind"]))
 	var lines: Array[String] = []
-	for line: String in _screen["buildings"] + _screen["workers"]:
-		if line.begins_with(name):
-			lines.append(line)
+	if not b.is_empty():
+		var name := UniversePresenter.building_name(str(b["kind"]))
+		for line: String in _screen["buildings"] + _screen["workers"]:
+			if line.begins_with(name):
+				lines.append(line)
+	elif view.replay != null:
+		# A law pylon: its line from the sheet, the one naming its law.
+		for p: Dictionary in view.replay.pylons():
+			var at: Vector2 = p["at"]
+			if Vector2i(floori(at.x), floori(at.y)) != tile:
+				continue
+			var law := Strings.term("LAW", str(p["law"]))
+			for line: String in _screen["pylons"]:
+				if line.ends_with(law):
+					lines.append(line)
 	card_label.text = "\n".join(lines)
 	card.visible = not lines.is_empty()
 
