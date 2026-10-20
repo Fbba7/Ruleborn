@@ -369,6 +369,13 @@ static func _beacon(b: BuildingKit) -> void:
 	b.glass.prism(Transform3D(Basis(Vector3.BACK, PI / 2.0), b.at(0.14, h + 0.17, 0)), 8, 0.05 * b.unit,
 		0.18 * b.unit, 0.7 * b.unit, Color(col.lightened(0.5), 0.3))
 	b.stop()
+	# Constellation stars round the lantern room, turning slowly.
+	b.move(Geo.Anim.SPIN_Y, b.at(0, h + 0.2, 0))
+	for k in 5:
+		var a := TAU * k / 5.0
+		b.d.gem(Geo.place(b.at(cos(a) * 0.3, h + 0.1 + 0.08 * (k % 2), sin(a) * 0.3)), 0.03 * b.unit, 0.04 * b.unit,
+			KitStyle.lit(col.lightened(0.4), 0.3), 4)
+	b.stop()
 	b.top = h + 0.5
 
 
