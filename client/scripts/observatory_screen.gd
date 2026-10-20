@@ -32,6 +32,7 @@ func _on_changed(slice: StringName) -> void:
 
 func _build() -> void:
 	var column := UI.frame(self)
+	StageScreen.night_sky(self)
 	thumbs = StageThumbs.new()
 	add_child(thumbs)
 	thumbs.drawn.connect(_on_drawn)
@@ -98,6 +99,13 @@ func _picture(card: Dictionary) -> Control:
 	box.set_content_margin_all(UI.px(1))
 	frame.add_theme_stylebox_override("panel", box)
 	frame.set_meta("dressed", true)
+	frame.clip_contents = true
+	var stars := TextureRect.new()
+	stars.texture = StageScreen.night_texture()
+	stars.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	stars.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	stars.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	frame.add_child(stars)
 	var rect := TextureRect.new()
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED

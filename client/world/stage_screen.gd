@@ -6,6 +6,8 @@ extends RefCounted
 ## column keeps every word and control the screen had; only where it stands
 ## changes.
 
+static var _night: ImageTexture
+
 
 ## The view behind `screen`'s frame, which `UI.frame` built: put over the
 ## frame's sky and under its column, with a pins layer over it. The column
@@ -68,3 +70,47 @@ static func covered_above(view: Control, cover: Control) -> float:
 	var h := maxf(1.0, view.size.y)
 	var bottom := cover.get_global_rect().end.y - view.get_global_rect().position.y
 	return clampf(bottom / h, 0.0, 0.6)
+
+
+## The frame's sky turned to night with stars, for a screen that looks out
+## at other universes (the design's Observatory: islands hanging in a galaxy
+## sky). Drawn once, in code: a gradient and seeded points of light.
+static func night_sky(screen: Control) -> void:
+	var sky := screen.get_node_or_null("Sky") as TextureRect
+	if sky == null:
+		return
+	sky.texture = night_texture()
+	sky.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+
+
+## The night sky with its stars and the galaxy's band, made once.
+static func night_texture() -> ImageTexture:
+	if _night != null:
+		return _night
+	var w := 270
+	var h := 585
+	var img := Image.create(w, h, false, Image.FORMAT_RGBA8)
+	var top := Color("#1A1134")
+	var mid := Color("#3A2466")
+	var low := Color("#7A3F7E")
+	for y in h:
+		var f := float(y) / h
+		var c := top.lerp(mid, f * 1.6) if f < 0.62 else mid.lerp(low, (f - 0.62) / 0.38)
+		for x in w:
+			img.set_pixel(x, y, c)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 731
+	for i in 260:
+		var x := rng.randi_range(0, w - 1)
+		var y := rng.randi_range(0, h - 1)
+		var b := rng.randf_range(0.35, 1.0)
+		img.set_pixel(x, y, img.get_pixel(x, y).lerp(Color(1.0, 0.95, 1.0), b))
+	# A faint band of the galaxy across the sky.
+	for i in 900:
+		var t := rng.randf()
+		var x := int(t * w)
+		var y := int(h * (0.2 + 0.5 * t) + rng.randfn(0.0, 18.0))
+		if y >= 0 and y < h:
+			img.set_pixel(x, y, img.get_pixel(x, y).lerp(Color("#E8C8FF"), 0.35))
+	_night = ImageTexture.create_from_image(img)
+	return _night

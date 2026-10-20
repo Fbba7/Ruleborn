@@ -12,8 +12,11 @@ signal drawn(key: String, texture: Texture2D)
 
 ## The picture's size in pixels.
 const SIZE := Vector2i(780, 330)
-## The hour the pictures are lit at: the Observatory looks out at dusk.
-const DUSK := 19
+## The hour the pictures are lit at: a universe seen in full light, hung
+## in the card's own night.
+const LIT := 12
+
+static var _toon: Shader = load("res://world/toon.gdshader")
 
 var view: StageView
 var _queue: Array[Dictionary] = []
@@ -29,11 +32,10 @@ func _init() -> void:
 	size = Vector2(SIZE)
 	view = StageView.new()
 	view.size = Vector2(SIZE)
-	view.pitch = 42.0
+	view.pitch = 52.0
 	view.fill = 2.1
 	add_child(view)
-	# Seen through the Observatory's glass, a universe hangs in its dusk.
-	view.set_sky_hour(DUSK)
+	view.set_sky_hour(LIT)
 	# The view's world drawn by its own viewport, out of its container, so
 	# it draws while nothing on screen shows it.
 	view.container.stretch = false
@@ -41,6 +43,11 @@ func _init() -> void:
 	add_child(view.viewport)
 	view.viewport.size = SIZE
 	view.viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	# The universe alone, its sky left clear: the card's own night shows
+	# behind it.
+	view.viewport.transparent_bg = true
+	view.environment.background_mode = Environment.BG_CLEAR_COLOR
+	view.environment.background_color = Color(0, 0, 0, 0)
 	view.visible = false
 
 
@@ -94,6 +101,14 @@ func stage(card: Dictionary) -> void:
 		c.queue_free()
 	var outer := maxi(0, int(card.get("realms", 1)) - 1)
 	var heart_r := Vector2(view.grid_size()).length() * 0.62
-	StagePlan.outer(view.layers, view, outer, str(card.get("bundle", "")))
-	view.fill = 1.1 if outer == 0 else 1.6
+	var spots := StagePlan.outer(view.layers, view, outer, str(card.get("bundle", "")))
+	# The open faults the card counts, on the outer realms it names.
+	var g := Geo.new()
+	var faults: Array = card.get("fault_realms", [])
+	for i in spots.size():
+		if ("outer-%d" % (i + 1)) in faults:
+			StagePlan.fault(g, spots[i])
+	if g.mesh() != null:
+		view.layers.add_child(WorldView._instance(g.mesh(), WorldView.material(_toon), false))
+	view.fill = 1.0 if outer == 0 else 1.45
 	view.look_up = 0.0 if outer == 0 else heart_r * 0.12

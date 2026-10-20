@@ -61,7 +61,7 @@ func build(card: Dictionary) -> void:
 				var a := TAU * k / 16.0
 				g.ring(Geo.place(at + Vector3(cos(a) * 3.0, 0.08, sin(a) * 3.0)), 0.12, 0.2, Palette.MOTION, 10)
 			if faulted:
-				_fault(g, at)
+				fault(g, at)
 			_route(g, at, to)
 			to = at
 	pins.pin(OverlaySheet.chip(UniversePresenter.realm_name("Heart"), Palette.MOTION),
@@ -124,7 +124,7 @@ static func bridge(g: Geo, a: Vector3, b: Vector3, colours: Dictionary) -> void:
 
 
 ## A fault on an outer realm: a jagged rift of light across it (§5.4).
-static func _fault(g: Geo, at: Vector3) -> void:
+static func fault(g: Geo, at: Vector3) -> void:
 	var glow := Color(Palette.ALARM.lightened(0.2), 0.0)
 	for k in 5:
 		var p := at + Vector3(-1.2 + 0.6 * k, 0.15, 0.35 * ((k % 2) * 2 - 1))
