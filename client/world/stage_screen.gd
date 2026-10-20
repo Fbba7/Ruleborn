@@ -77,6 +77,21 @@ static func fold_key(words: ScrollContainer) -> Button:
 	return b
 
 
+## The fold key as the sheet's handle: on its own row just above the words,
+## so the screen's dock keeps its rows and the key stays where the words
+## were once they are folded.
+static func handle(column: VBoxContainer, words: ScrollContainer) -> Control:
+	var row := UI.row()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(fold_key(words))
+	var holder := UI.narrow(row)
+	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	column.add_child(holder)
+	column.move_child(holder, words.get_index())
+	OverlaySheet.dress(holder)
+	return holder
+
+
 ## How much of `view`'s height lies under `cover` (a control over it) at
 ## the bottom: the share the island is lifted out of.
 static func covered_below(view: Control, cover: Control, folded_to: Control = null) -> float:

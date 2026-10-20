@@ -61,12 +61,11 @@ func _build() -> void:
 	body = UI.scroll(column)
 	_sheet = StageScreen.sheet(body, 0.45)
 	var actions := UI.row(-1.0, true)
-	_keys = actions
 	actions.add_child(UI.button(Strings.t("HOME_MAP"), func() -> void: App.services.router.go(&"map"), true))
 	actions.add_child(UI.button(Strings.t("RV_CURATE"), func() -> void:
 		App.services.curation_flow.open(str(App.services.store.get_slice(RealmState.REALM)["realm"]))))
 	actions.add_child(UI.button(Strings.t("HOME_BUILD"), func() -> void: App.services.router.go(&"builder")))
-	actions.add_child(StageScreen.fold_key(_sheet))
+	_keys = StageScreen.handle(column, _sheet)
 	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
 	OverlaySheet.dress(self)
 
@@ -129,6 +128,13 @@ func _draw_realm() -> void:
 	for c: Dictionary in home.get("characters", []):
 		who[int(c["id"])] = {"kind": str(c.get("kind", "")), "role": str(c.get("role", ""))}
 	town.build(buildings, RealmPalette.of(view.realm_type), producers, who)
+	# The town, not the grid, at the middle of the screen: halfway to the
+	# buildings' centre, so the island's edge still frames it.
+	var middle := Vector3.ZERO
+	for b: Dictionary in town.placed:
+		middle += b["mid"]
+	view.focus = (middle / maxf(1.0, town.placed.size()) * Vector3(0.5, 0.0, 0.5)) if not town.placed.is_empty() \
+		else Vector3.ZERO
 	_pin(replay)
 
 

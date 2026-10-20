@@ -53,9 +53,8 @@ func _build() -> void:
 	body = UI.scroll(column)
 	_sheet = StageScreen.sheet(body, 0.62)
 	var actions := UI.row(-1.0, true)
-	_keys = actions
 	actions.add_child(UI.button(Strings.t("OBS_TITLE"), func() -> void: App.services.router.go(&"scout"), true))
-	actions.add_child(StageScreen.fold_key(_sheet))
+	_keys = StageScreen.handle(column, _sheet)
 	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
 	OverlaySheet.dress(self)
 

@@ -19,6 +19,9 @@ var cover_top := 0.0
 var fill := 1.0
 ## How far above the grid's centre the camera looks, in metres on screen.
 var look_up := 0.0
+## The point on the ground the screen centres on, where it is not the grid's
+## middle: the realm view's town, say.
+var focus := Vector3.ZERO
 ## Whether a second quick tap steps the zoom (`WorldView`'s double tap); a
 ## screen that acts on every tap, as the builder does, turns it off so two
 ## tiles tapped in a row are two edits and never a zoom.
@@ -105,8 +108,10 @@ func fit() -> void:
 		var by_width := diag * fill / maxf(0.1, size.x / size.y)
 		var by_height := (diag * sin(deg_to_rad(pitch)) + 2.5) * fill / open
 		camera.size = maxf(by_width, by_height) * zoom_scale()
-	camera.v_offset = (cover_top - cover_bottom) * 0.5 * camera.size + breath + look_up
-	camera.h_offset = 0.0
+	var right := camera.global_transform.basis.x
+	var up := camera.global_transform.basis.y
+	camera.v_offset = (cover_top - cover_bottom) * 0.5 * camera.size + breath + look_up + up.dot(focus)
+	camera.h_offset = right.dot(focus)
 
 
 ## How far `WorldView`'s pinch and double tap have zoomed, as a share of

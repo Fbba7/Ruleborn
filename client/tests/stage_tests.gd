@@ -24,6 +24,7 @@ func run() -> void:
 	await _scout()
 	await _builder()
 	await _drag()
+	await _fold()
 	await _thumbs()
 
 
@@ -149,6 +150,31 @@ func _drag() -> void:
 	check.call("in the builder a drag paints every tile it crosses and neither turns nor zooms the camera, and two "
 			+ "quick taps are two edits, never a zoom (13, 21.1)",
 		painted == 7 and still and edits == 9, "%d painted, still %s" % [painted, still])
+
+
+## The realm view over a realm with two laws: their signatures drawn
+## (T8's LawFx), and the fold key hiding the words and bringing them back.
+func _fold() -> void:
+	StageFixtures.realm(App.services)
+	var screen: RealmScreen = await mount.call("realm")
+	StageFixtures.realm(App.services)
+	await tree.process_frame
+	var laws := screen.view.law_fx != null and screen.view.law_fx.signatures.size() == 2
+	var key: Button = null
+	for b: Button in screen.find_children("*", "Button", true, false):
+		if b.get_meta("key", "") == "fold":
+			key = b
+	var shown := screen.body.is_visible_in_tree()
+	key.pressed.emit()
+	var hidden := not screen.body.is_visible_in_tree() and key.text == Strings.t("STAGE_SHOW_WORDS")
+	key.pressed.emit()
+	var back := screen.body.is_visible_in_tree() and not StageScreen.folded
+	var sections := screen.body.get_child_count()
+	screen.queue_free()
+	await tree.process_frame
+	check.call("the realm view wears its woven laws' signatures (21.7), and one key folds its words away so the world "
+			+ "takes the phone, and brings them back (21.1)",
+		laws and shown and hidden and back and sections == 4, "%s %s %s %s %d" % [laws, shown, hidden, back, sections])
 
 
 static func _button(at: Vector2, pressed: bool) -> InputEventMouseButton:
