@@ -38,7 +38,7 @@ func build(t: Vector2i, f: int) -> void:
 		RealmKit.F.ROCK_PILLAR:
 			_pillar(c, j, rock)
 		RealmKit.F.RUIN_WALL:
-			_ruin(t, c, stone)
+			_ruin(t, c)
 		RealmKit.F.FENCE:
 			_fence(t, c)
 		RealmKit.F.FOG_BANK:
@@ -219,7 +219,7 @@ func _run_yaw(t: Vector2i, f: int) -> float:
 	return PI / 2.0 if z > x else 0.0
 
 
-func _ruin(t: Vector2i, c: Vector3, stone: Color) -> void:
+func _ruin(t: Vector2i, c: Vector3) -> void:
 	var yaw := _run_yaw(t, RealmKit.F.RUIN_WALL)
 	var dir := Vector3.RIGHT.rotated(Vector3.UP, yaw)
 	var old: Color = (style["stone2"] as Color).lerp(kit.palette["rock"], 0.35)
