@@ -89,7 +89,10 @@ static func rings(view: WorldView, into: MeshInstance3D, t: float) -> void:
 		if not view._crew[i].visible or i == view.chosen:
 			continue
 		var c: Color = Palette.ROLE.get(str(crew[i]["role"]), Palette.PAPER)
-		g.ring(Geo.place(view._crew[i].position + Vector3(0, 0.05, 0)), 0.38, 0.46, c, 24)
+		# A bold ring in the role's colour on an ink rim, so a crew member
+		# stands out from painted grass as the designs' rings do.
+		g.ring(Geo.place(view._crew[i].position + Vector3(0, 0.05, 0)), 0.36, 0.5, c, 24)
+		g.ring(Geo.place(view._crew[i].position + Vector3(0, 0.051, 0)), 0.5, 0.55, Palette.INK, 24)
 	var chosen := view.chosen
 	if chosen >= 0 and chosen < view._crew.size() and view._crew[chosen].visible:
 		var pulse := 0.0 if Settings.reduced_motion else 0.04 * sin(t * TAU * 1.2)
