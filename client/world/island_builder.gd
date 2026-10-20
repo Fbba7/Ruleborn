@@ -416,10 +416,19 @@ func scatter() -> Array:
 		glowing.a = 0.6
 		out.append([_shard_mesh(), _spin_all(shards, 0.7, 1.6), _pick(shards.size(), [glowing]), 0.0, 0.0])
 	else:
-		var embers := _meadow_spots(60, 0.1)
+		# Glowing lava runnels in the rust ground, as Emberreach's land still
+		# shows them: long, thin and few, with short cracks between.
+		var embers := _meadow_spots(40, 0.3)
 		var hot := Color("#FF8A3C")
 		hot.a = 0.0
-		out.append([_ember_mesh(), _spin_all(embers, 0.7, 1.5), _pick(embers.size(), [hot]), 0.0, 0.0])
+		var melt := Color("#FFB04A")
+		melt.a = 0.0
+		var runs: Array[Transform3D] = []
+		for i in embers.size():
+			var long := 2.2 + _rng.randf() * 2.0 if i % 3 == 0 else 0.8 + _rng.randf() * 0.7
+			var wide := 1.4 if i % 3 == 0 else 1.0
+			runs.append(Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(long, 1.0, wide)), embers[i]))
+		out.append([_ember_mesh(), runs, _pick(runs.size(), [hot, melt]), 0.0, 0.0])
 	# The rim's grass fringe: soft flattened lumps along the edge.
 	if kind != "emberreach":
 		var bumps: Array[Transform3D] = []

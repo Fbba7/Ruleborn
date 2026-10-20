@@ -209,7 +209,7 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 		var w := 9.0 + rng.randf() * 5.0
 		mist_at.append(Transform3D(Basis().scaled(Vector3(w, w * 0.3, 1.0)),
 			Vector3(cos(a) * d, -6.5 - rng.randf() * 3.0, sin(a) * d)))
-		mist_alpha.append(0.7)
+		mist_alpha.append(0.45)
 	statics.add_child(_mists_of(mist_at, mist_alpha))
 	set_hour(hour)
 
