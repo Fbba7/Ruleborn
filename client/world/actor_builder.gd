@@ -24,6 +24,9 @@ const TOP := {"Scout": "ears", "Breaker": "horn", "Carrier": "bear", "Warden": "
 const CREAM := Color("#FFF3DF")
 const CHEEK := Color("#FF9AA8")
 const PUPIL := Color("#1B1430")
+## Where an arm hangs from, and a foot stands, on a figure of height 1.
+const SHOULDER := Vector3(0.275, 0.43, 0.0)
+const HIP := Vector3(0.121, 0.0, -0.02)
 
 static var _cache := {}
 
@@ -111,11 +114,6 @@ static func _kit(g: Geo, role: String, body: Color) -> void:
 		"Scout":
 			g.box(Transform3D(Basis(Vector3.RIGHT, 0.2), Vector3(0, 0.5, 0.26)), Vector3(0.36, 0.2, 0.1),
 				body.darkened(0.25))
-
-
-## Where an arm hangs from, and a foot stands, on a figure of height 1.
-const SHOULDER := Vector3(0.275, 0.43, 0.0)
-const HIP := Vector3(0.121, 0.0, -0.02)
 
 
 ## One arm, hanging from its shoulder at the origin: the diorama's stubby

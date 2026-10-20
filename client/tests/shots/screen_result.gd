@@ -26,7 +26,8 @@ func _go() -> void:
 	var screen: Control = load("res://scenes/result_screen.tscn").instantiate()
 	frame.add_child(screen)
 	if (screen as ResultScreen).world_view != null:
-		(screen as ResultScreen).world_view.set_sky_hour(int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 18)
+		var hour := int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 18
+		(screen as ResultScreen).world_view.set_sky_hour(hour)
 	for i in 30:
 		await process_frame
 	await RenderingServer.frame_post_draw

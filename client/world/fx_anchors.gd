@@ -162,8 +162,8 @@ func _draw_pick(m: float, calm: bool) -> void:
 	var bob := 0.0 if calm else absf(sin(_time * 3.0)) * s * 0.25
 	var tip := at + Vector2(0, -bob)
 	var head := tip + Vector2(0, -s * 0.9)
-	draw_colored_polygon(PackedVector2Array([tip, head + Vector2(-s * 0.36, s * 0.12), head + Vector2(s * 0.36, s * 0.12)]),
-		FxSkin.INK_LINE)
+	draw_colored_polygon(PackedVector2Array([tip, head + Vector2(-s * 0.36, s * 0.12),
+		head + Vector2(s * 0.36, s * 0.12)]), FxSkin.INK_LINE)
 	draw_circle(head, s * 0.42, FxSkin.INK_LINE)
 	draw_colored_polygon(PackedVector2Array([tip + Vector2(0, -4), head + Vector2(-s * 0.3, s * 0.1),
 		head + Vector2(s * 0.3, s * 0.1)]), FxSkin.GOLD)
