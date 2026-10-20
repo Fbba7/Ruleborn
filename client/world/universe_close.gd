@@ -12,6 +12,10 @@ extends RefCounted
 ## are kept, under the map's own night light.
 
 
+## The map's night over T2's day colours.
+const NIGHT := Color(0.7, 0.7, 0.8)
+
+
 ## The island of `isl`'s realm, `tiles` across, as a node to stand at its
 ## place on the map; its triangles are in its "triangles" meta.
 static func build(isl: UniverseIsland, tiles: int) -> Node3D:
@@ -21,9 +25,20 @@ static func build(isl: UniverseIsland, tiles: int) -> Node3D:
 	node.name = "Close"
 	look.island(node, Vector2i(tiles, tiles), isl.island_seed, RealmPalette.of(isl.key), isl.key)
 	stand_in.free()
+	_night(node)
 	node.position = isl.at
 	node.set_meta("triangles", triangles(node))
 	return node
+
+
+## T2's ground reads its vertex colours as linear, so beside the map's
+## islands (which read them as sRGB, as the design does) it would glow like
+## day; its `tint` brings it down to the map's night, a little violet.
+static func _night(node: Node3D) -> void:
+	for c in node.find_children("*", "GeometryInstance3D", true, false):
+		var m := (c as GeometryInstance3D).material_override as ShaderMaterial
+		if m != null and m.shader != null and m.shader.resource_path.ends_with("look_ground.gdshader"):
+			m.set_shader_parameter("tint", NIGHT)
 
 
 ## The triangles a node's meshes and instances draw.
