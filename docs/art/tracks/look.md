@@ -9,7 +9,7 @@ Branch `claude/3d-look`. Owns `client/world/world_look.gd`, `island_builder.gd`,
   - a grass lip, three earth bands and an inverted, jittered rock cone in strata, a second cone hanging off-centre and a ring of hanging spikes;
   - roots under the rim, curtains of long roots off the cone, and vines with leaves that sway in the wind;
   - the scatter as `MultiMeshInstance3D`s, one draw call a kind: grass tufts, pebbles, flowers (crystal shards on Crystalline, ember cracks on Emberreach), the rim's soft grass fringe, the hanging fringe, rim rocks, stones round the pools;
-  - waterfalls with pools and mist at their feet (lava falls on Emberreach), floating islets, puffy two-tone clouds, and a soft cloud sea under the rock.
+  - waterfalls with pools and mist at their feet (lava falls on Emberreach), floating islets, puffy two-tone clouds, a soft cloud sea under the rock, and a flock of birds wheeling round the island by day (`look_bird.gdshader`, the diorama's `birds`).
 - **Each realm's signature off the grid** (§21.4): Crystalline's glowing crystal spires round the rim, Skyfield's fence of posts, Lantern Vale's fireflies, glowing caps and pools of light, the Heart's golden motes, Emberreach's rising sparks and heat glows, Verdant's pollen; Tidehold's beach of sand round the rim and four waterfalls, the Heart three. Nothing is put on the grid: the grid is the simulation's.
 - **Painted textures** (`LookPaint`), all drawn in code at start-up, as the diorama draws its canvases:
   - the meadow (soft blots, upward strokes, tufts, flower dots) and the strata (bands, seams, lumps, cracks), grey and tiled, painted by the vertex colour;
@@ -78,12 +78,12 @@ This track owns `outline.gdshader` but not the creature material (T1). The outli
 - Skyfield at noon is a little brighter and paler than the design's; Lantern Vale at noon is brighter than the design's (kept so it reads on a phone).
 - Clouds are low-poly puffs, not the design's soft sprites at the island's level; the cloud sea is subtle.
 - Waterfalls are ribbons with streaks; the design's have a bright core and mist that pulses.
-- No birds, butterflies or wind streaks (§21.4's particles for Skyfield and Verdant).
+- Birds are dark Vs wheeling in the shader; no butterflies or wind streaks yet (§21.4's particles for Skyfield and Verdant).
 - The rock cone is barely seen from the home camera's 35°; it shows from the side and at zoom 0.
 
 ## Next
 
 - With T3: decide whether the flagstones become paths over the meadow (the design's way), using `ground_material()`.
-- Birds and butterflies as a MultiMesh with vertex flapping; wind streaks for Skyfield.
+- Butterflies for Verdant (as the birds: a MultiMesh flapping in the shader); wind streaks for Skyfield.
 - Pulsing mist and a brighter core for the falls.
 - A swoop-proof check: the look rebuilt on every realm change (`island()` already resets the mists and clouds).

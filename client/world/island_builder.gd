@@ -444,7 +444,26 @@ func scatter() -> Array:
 			rock_cols.append(rock if kk % 2 == 1 else mixed)
 	out.append([ico_mesh(), rocks, rock_cols, 0.0, 0.0])
 	out.append_array(signature())
+	if kind != "emberreach" and kind != "lanternvale":
+		var birds: Array[Transform3D] = []
+		for i in 9:
+			var a := TAU * i / 9.0 + _rng.randf() * 0.4
+			var d := radius() + 0.5 + _rng.randf() * 3.0
+			var face := Basis(Vector3.UP, -a)
+			birds.append(Transform3D(face.scaled(Vector3.ONE * (1.3 + _rng.randf() * 0.6)),
+				Vector3(cos(a) * d, 1.6 + _rng.randf() * 2.4, sin(a) * d)))
+		out.append([_bird_mesh(), birds, _pick(birds.size(), [Color.WHITE]), 0.0, 0.0, "bird"])
 	return out
+
+
+## A bird: a V of two wings, 0.36 m across, flying along -Z.
+static func _bird_mesh() -> ArrayMesh:
+	var m := LookMesh.new()
+	var body := Vector3(0, 0, 0)
+	var nose := Vector3(0, 0, -0.06)
+	m.tri(body, nose, Vector3(-0.18, 0.02, 0.03), Color.WHITE, Vector3.UP)
+	m.tri(body, nose, Vector3(0.18, 0.02, 0.03), Color.WHITE, Vector3.UP)
+	return m.mesh()
 
 
 ## Each realm's own dressing off the grid (§21.4's "Signature terrain and
@@ -453,7 +472,8 @@ func scatter() -> Array:
 ## of posts, Lantern Vale's fireflies and glowing caps, the Heart's golden
 ## motes, Emberreach's sparks, Verdant's pollen. Same form as `scatter`, with
 ## a fifth value, how far each drifts on the wind, and an optional sixth:
-## how far each rises before it starts again, or "glow" for pools of light.
+## how far each rises before it starts again, "glow" for pools of light, or
+## "bird" for the flock.
 func signature() -> Array:
 	var out := []
 	var accent: Color = palette["accent"]

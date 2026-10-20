@@ -15,6 +15,7 @@ static var _mist: Shader = load("res://world/look_mist.gdshader")
 static var _cloud: Shader = load("res://world/look_cloud.gdshader")
 static var _hemi: Shader = load("res://world/look_hemi.gdshader")
 static var _glow: Shader = load("res://world/look_glow.gdshader")
+static var _bird: Shader = load("res://world/look_bird.gdshader")
 static var _vignette: Shader = load("res://world/look_vignette.gdshader")
 
 var environment: Environment
@@ -150,8 +151,10 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 		var mi := _scatter(part[0], part[1], part[2], part[3], part[4])
 		if part.size() > 5 and part[5] is String:
 			var gm := ShaderMaterial.new()
-			gm.shader = _glow
+			gm.shader = _glow if part[5] == "glow" else _bird
 			mi.material_override = gm
+			# The flock wheels round the island in the shader, beyond its placed box.
+			mi.custom_aabb = AABB(Vector3(-30, -10, -30), Vector3(60, 20, 60))
 		elif part.size() > 5:
 			(mi.material_override as ShaderMaterial).set_shader_parameter("rise", part[5])
 		statics.add_child(mi)
