@@ -1,8 +1,9 @@
 extends SceneTree
 ## The universe map at a zoom level, saved as a still (tools/render/shoot.sh).
 ## SHOT is the file; ZOOM (0 the whole universe, 1 a realm, 2 a close-up),
-## FOCUS (a realm id, "heart" by default), OUTER (outer realms, 6), TURN and
-## TIME (seconds of animation before the still) are optional. Prints the
+## FOCUS (a realm id, "heart" by default), OUTER (outer realms, 6), TURN,
+## TIME (seconds of animation before the still), and THEN and WIPE (a realm
+## to swoop to next, caught that many seconds in) are optional. Prints the
 ## triangles and draw calls against §21.3's budget.
 
 
@@ -22,6 +23,13 @@ func _initialize() -> void:
 	var frames := int(float(env.call("TIME", "1.5")) * 30.0)
 	for i in maxi(4, frames):
 		await process_frame
+	# THEN: a second realm to swoop to, through the cloud wipe, caught WIPE
+	# seconds in.
+	if env.call("THEN", "") != "":
+		view.focus_realm(env.call("THEN", ""), maxi(1, zoom))
+		var start := Time.get_ticks_msec()
+		while Time.get_ticks_msec() - start < int(float(env.call("WIPE", "0.45")) * 1000.0):
+			await process_frame
 	print("triangles ", view.triangles, " draw calls ", view.draw_calls(), " rendered ",
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME), " prims ",
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME), " calls")

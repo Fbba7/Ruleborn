@@ -2,11 +2,11 @@ class_name StageView
 extends WorldView
 ## A realm on a screen that is not a heist (§21.1's home diorama: "orthographic,
 ## 35° pitch, rotatable in 90° steps"), drawn full-bleed behind the screen's
-## panels. It is a `WorldView`, so the world is the heist's own; this adds
-## what a screen around it needs: the island framed in the part of the
-## screen the panels leave open, a tap told from a swipe, a swipe that turns
-## the camera a quarter, and a slow breath of the camera so the diorama is
-## never a still picture (§21.1: "gentle physical humour").
+## panels. It is a `WorldView`, so the world is the heist's own, with its
+## taps and gestures; this adds what a screen around it needs: the island
+## framed in the part of the screen the panels leave open, scaled by the
+## view's pinch zoom, and a slow breath of the camera so the diorama is never
+## a still picture (§21.1: "gentle physical humour").
 
 
 
@@ -19,9 +19,10 @@ var cover_top := 0.0
 var fill := 1.0
 ## How far above the grid's centre the camera looks, in metres on screen.
 var look_up := 0.0
-## Whether a sideways swipe turns the camera; a screen that paints with a
-## drag turns it with its own control instead.
-var swipe_turns := true
+## Whether a second quick tap steps the zoom (`WorldView`'s double tap); a
+## screen that acts on every tap, as the builder does, turns it off so two
+## tiles tapped in a row are two edits and never a zoom.
+var taps_zoom := true
 ## Layers a screen adds over the realm: tiles, ghosts, its own pieces.
 var layers: Node3D
 
@@ -40,6 +41,19 @@ func _init() -> void:
 func _process(delta: float) -> void:
 	super._process(delta)
 	_breath += delta
+	fit()
+
+
+## The camera framed for the screen: `WorldView` frames it for a zoom level
+## first, then the grid is fitted to the part of the screen the panels leave
+## open, scaled by the pinch zoom. Done whenever `WorldView` frames, too, so
+## a tap that redraws the realm never sees the camera between the two.
+func _frame_camera() -> void:
+	super._frame_camera()
+	fit()
+
+
+func fit() -> void:
 	if camera == null:
 		return
 	# The panels' share of the height, the island lifted into the rest;
@@ -50,9 +64,26 @@ func _process(delta: float) -> void:
 		var open := maxf(0.2, 1.0 - cover_bottom - cover_top)
 		var by_width := diag * fill / maxf(0.1, size.x / size.y)
 		var by_height := (diag * sin(deg_to_rad(pitch)) + 2.5) * fill / open
-		camera.size = maxf(by_width, by_height)
+		camera.size = maxf(by_width, by_height) * zoom_scale()
 	camera.v_offset = (cover_top - cover_bottom) * 0.5 * camera.size + breath + look_up
 	camera.h_offset = 0.0
+
+
+## How far `WorldView`'s pinch and double tap have zoomed, as a share of
+## the screen's own framing: 1 at the realm's zoom level, more drawn back to
+## the whole rock, less closed in, smoothly between the levels.
+func zoom_scale() -> float:
+	var z := clampf(_zoom_f, 0.0, 2.0)
+	var span: float = lerpf(ZOOM_SPAN[0], ZOOM_SPAN[1], z) if z <= 1.0 else lerpf(ZOOM_SPAN[1], ZOOM_SPAN[2], z - 1.0)
+	return span / float(ZOOM_SPAN[1])
+
+
+## A tap's release, as `WorldView` reads it, with the double tap left out
+## where taps do not zoom.
+func _release(at: Vector2) -> void:
+	if not taps_zoom:
+		_last_tap_ms = -10000
+	super._release(at)
 
 
 ## The tile's centre on the ground, raised by `up`.
@@ -83,3 +114,6 @@ func heights() -> PackedByteArray:
 func show_vault(shown: bool) -> void:
 	if _vault != null:
 		_vault.visible = shown
+	if anchors != null:
+		anchors.vault_shown = shown
+		anchors.queue_redraw()

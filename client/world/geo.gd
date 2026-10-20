@@ -16,11 +16,17 @@ enum Anim { NONE, SWAY, SPIN_Y, SPIN_X, SPIN_Z, BOB, FLAG, SWING, SHIVER }
 
 var st := SurfaceTool.new()
 var triangles := 0
-## The motion every shape drawn from now on takes: pivot and kind.
+## The motion every shape drawn from now on takes: pivot and kind. A still
+## shape keeps its piece's foot in the pivot's y (`rest`), for the kit's
+## contact shade.
 var anim := Color(0, 0, 0, 0)
+var rest := Color(0, 0, 0, 0)
 ## Paint channels for the ground (kit_ground.gdshader): written to UV and
 ## UV2 on every vertex once `painted` is set, before the first shape.
 var painted := false
+## Whether faces turned straight down are left out: §21.1's cameras are
+## always above, so the kit sets this on its layers; other users keep them.
+var skip_down := false
 var uv := Vector2.ZERO
 var uv2 := Vector2.ZERO
 
@@ -30,13 +36,18 @@ func _init() -> void:
 	st.set_custom_format(0, SurfaceTool.CUSTOM_RGBA_FLOAT)
 
 
-## Shapes drawn after this move by `kind` about `pivot`, until `still()`.
+## Shapes drawn after this move by `kind` about `pivot`; `Anim.NONE` stills
+## them again.
 func moving(kind: Anim, pivot: Vector3) -> void:
-	anim = Color(pivot.x, pivot.y, pivot.z, float(kind))
+	anim = rest if kind == Anim.NONE else Color(pivot.x, pivot.y, pivot.z, float(kind))
 
 
-func still() -> void:
-	anim = Color(0, 0, 0, 0)
+## The foot of the piece drawn next, at height `y`: its contact shade starts
+## there (kit_toon.gdshader).
+func standing(y: float) -> void:
+	rest = Color(0, y, 0, 0)
+	if int(anim.a + 0.5) == Anim.NONE:
+		anim = rest
 
 
 func _vertex(v: Vector3, n: Vector3, col: Color) -> void:
@@ -82,7 +93,9 @@ func box(at: Transform3D, size: Vector3, col: Color, top := Color(0, 0, 0, 0)) -
 	var up: Color = top if top.a > 0.0 else col
 	var side := col.darkened(0.06)
 	quad(p.call(-1, 1, -1), p.call(-1, 1, 1), p.call(1, 1, 1), p.call(1, 1, -1), up)
-	quad(p.call(-1, -1, -1), p.call(1, -1, -1), p.call(1, -1, 1), p.call(-1, -1, 1), col.darkened(0.2))
+	# §21.1's cameras are always above, so a face turned down is never seen.
+	if _shown(at, Vector3.DOWN):
+		quad(p.call(-1, -1, -1), p.call(1, -1, -1), p.call(1, -1, 1), p.call(-1, -1, 1), col.darkened(0.2))
 	quad(p.call(-1, -1, 1), p.call(1, -1, 1), p.call(1, 1, 1), p.call(-1, 1, 1), col)
 	quad(p.call(1, -1, -1), p.call(-1, -1, -1), p.call(-1, 1, -1), p.call(1, 1, -1), side)
 	quad(p.call(1, -1, 1), p.call(1, -1, -1), p.call(1, 1, -1), p.call(1, 1, 1), side)
@@ -119,7 +132,10 @@ func rbox(at: Transform3D, size: Vector3, col: Color, bevel := 0.04, top := Colo
 			var p1: Vector3 = corner.call(1.0, -1.0)
 			var p2: Vector3 = corner.call(1.0, 1.0)
 			var p3: Vector3 = corner.call(-1.0, 1.0)
-			_outward(p0, p1, p2, p3, face_col.call(ax, s), at.origin)
+			var normal := Vector3.ZERO
+			normal[ax] = s
+			if _shown(at, normal):
+				_outward(p0, p1, p2, p3, face_col.call(ax, s), at.origin)
 	# The twelve chamfers, between two faces along the third axis.
 	for ax in 3:
 		var u := (ax + 1) % 3
@@ -185,9 +201,10 @@ func prism(at: Transform3D, sides: int, r0: float, r1: float, height: float, col
 			tri(at * b0, at * t1, at * b1, col)
 			if r1 > 0.0:
 				tri(at * b0, at * t0, at * t1, col)
-		if r1 > 0.0:
+		if r1 > 0.0 and _shown(at, Vector3.UP * signf(height)):
 			tri(at * Vector3(0, height, 0), at * t1, at * t0, up)
-		tri(at * Vector3.ZERO, at * b0, at * b1, col.darkened(0.2))
+		if _shown(at, Vector3.DOWN * signf(height)):
+			tri(at * Vector3.ZERO, at * b0, at * b1, col.darkened(0.2))
 
 
 ## A blade of grass or a reed: a thin three-sided spike with no base,
@@ -342,11 +359,44 @@ func gable(at: Transform3D, w: float, rise: float, d: float, col: Color) -> void
 	quad(p.call(hw, 0, hz), p.call(hw, 0, -hz), p.call(0, rise, -hz), p.call(0, rise, hz), col.darkened(0.04))
 
 
+## Everything drawn into `other`, moved by `xform` into this one, its
+## motion's pivots moved with it (a turn about X or Z trades axes when the
+## piece is turned a quarter).
+func absorb(other: Geo, xform: Transform3D) -> void:
+	if other.triangles == 0:
+		return
+	var arrays := other.st.commit_to_arrays()
+	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+	var cols: PackedColorArray = arrays[Mesh.ARRAY_COLOR]
+	var customs: PackedFloat32Array = arrays[Mesh.ARRAY_CUSTOM0]
+	var quarter := absf(xform.basis.x.z) > 0.7
+	var keep := anim
+	for i in verts.size():
+		var kind := customs[i * 4 + 3]
+		if kind > 0.5:
+			var pivot := xform * Vector3(customs[i * 4], customs[i * 4 + 1], customs[i * 4 + 2])
+			if quarter and int(kind + 0.5) in [Anim.SPIN_X, Anim.SPIN_Z]:
+				kind = float(Anim.SPIN_Z if int(kind + 0.5) == Anim.SPIN_X else Anim.SPIN_X)
+			anim = Color(pivot.x, pivot.y, pivot.z, kind)
+		else:
+			anim = Color(0, customs[i * 4 + 1] + xform.origin.y, 0, 0)
+		_vertex(xform * verts[i], (xform.basis * normals[i]).normalized(), cols[i])
+	triangles += other.triangles
+	anim = keep
+
+
 ## The mesh so far, or null if nothing was drawn.
 func mesh() -> ArrayMesh:
 	if triangles == 0:
 		return null
 	return st.commit()
+
+
+## Whether a face whose local normal is `n` is drawn: always, unless
+## `skip_down` and it is turned straight down.
+func _shown(at: Transform3D, n: Vector3) -> bool:
+	return not skip_down or (at.basis * n).normalized().y > -0.9
 
 
 static func place(position: Vector3, yaw := 0.0, scale := Vector3.ONE) -> Transform3D:

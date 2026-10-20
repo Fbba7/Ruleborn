@@ -98,6 +98,21 @@ static func clash(fx: LawFx, into: Node3D, which: String, a: Vector3, b: Vector3
 ## §8.5's effect of `id` over the realm.
 static func chord(fx: LawFx, into: Node3D, id: String, pts: Array[Vector3]) -> void:
 	var want: Array = LawFxLinks.CHORDS[id]
+	# A sheet of light spans the three crowns, each corner in its note's colour.
+	var sheet := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
+	var sg := Geo.new()
+	var cs: Array[Color] = []
+	for k in 3:
+		cs.append(LawFxLinks.note_colour(want[k]).lightened(0.35))
+	var mid0 := (pts[0] + pts[1] + pts[2]) / 3.0
+	for k in 3:
+		var c := cs[k].lerp(cs[(k + 1) % 3], 0.5)
+		sg.tri(mid0, pts[k], pts[(k + 1) % 3], c, Vector3.UP)
+		sg.tri(mid0, pts[(k + 1) % 3], pts[k], c, Vector3.DOWN)
+	sheet.solid(sg.mesh(), Transform3D.IDENTITY, mid0, 0.0)
+	var sm := fx.glass_material(Color.WHITE, 0, 1.0, 0.16)
+	sm.set_shader_parameter("rim", 0.0)
+	fx.layer(into, sheet, sm)
 	var mid := (pts[0] + pts[1] + pts[2]) / 3.0 + Vector3(0, 0.5, 0)
 	var tri := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)
 	var g := Geo.new()
@@ -176,30 +191,32 @@ static func paradox(fx: LawFx, into: Node3D, id: String) -> void:
 	match id:
 		"reversal":
 			# Dust falls up, and the sky's violet creeps in from the edges.
-			LawFxPaint.spray(fx, into, "reversal", {"n": 60, "shape": 1, "colour": Color("#C8B8E8", 0.85),
-				"colour_b": Color("#8A6A4E", 0.85), "radius": [0.04, 0.07], "lift": [0.0, 0.3], "vel": Vector3(0, 0.6, 0),
+			LawFxPaint.spray(fx, into, "reversal", {"n": 70, "shape": 1, "colour": Color("#8C6CF0", 0.95),
+				"colour_b": Color("#8A6A4E", 0.95), "radius": [0.06, 0.1], "lift": [0.0, 0.3], "vel": Vector3(0, 0.6, 0),
 				"spread": Vector3(0.05, 0.2, 0.05), "period": [4.0, 6.0]})
 			fx.tint(Color("#6A4FC9"), 0.25)
 		"twin_suns":
-			# A second sun low on the other side: its light and its disc.
-			if fx.sun != null:
-				var second := DirectionalLight3D.new()
-				second.light_color = Color("#FFD6A0")
-				second.light_energy = fx.sun.light_energy * 0.35
-				second.rotation_degrees = Vector3(-35, 215, 0)
-				into.add_child(second)
+			# Two suns in the sky behind the island. A second light would wash
+			# the toon ramp out, so the doubling is drawn, not lit.
 			var h := fx.site.half()
 			var b := LawFxBatch.new(LawFxBatch.Kind.MOTES)
-			b.mote(Vector3(-h.x * 0.8, 7.0, -h.y), Vector3.ZERO, 0.0, 0.0, 0.9, 0.0, 0, Color("#FFF2B0", 0.95))
-			b.mote(Vector3(h.x * 0.8, 6.0, -h.y * 0.9), Vector3.ZERO, 0.0, 0.5, 0.7, 0.0, 0, Color("#FFD27A", 0.95))
+			var side := Vector3(1, 0, -1).normalized()
+			for k in 2:
+				var at := Vector3(-h.x * 0.6, 6.0 + k * 0.6, -h.y * 0.6) + side * (k * 2 - 1) * 2.4
+				b.mote(at, Vector3.ZERO, 0.0, k * 0.5, 1.3, 0.0, 0, Color("#FFE07A", 1.0))
+				b.mote(at, Vector3.ZERO, 0.0, k * 0.5, 0.55, 0.0, 0, Color("#FFFFFF", 1.0))
 			fx.layer(into, b, fx.mote_material(1.0))
 		"unmaking":
-			# Torn scraps flutter; every signature stutters now and then.
-			LawFxPaint.spray(fx, into, "unmaking", {"n": 40, "shape": 7, "colour": Color("#FCFBFF", 0.9),
-				"radius": [0.05, 0.09], "lift": [0.2, 2.0], "vel": Vector3(0.2, -0.15, 0.1), "period": [5.0, 8.0],
-				"wobble": 0.3})
+			# Torn scraps of parchment flutter; every signature stutters now and
+			# then, the screen's edges flickering with it.
+			LawFxPaint.spray(fx, into, "unmaking", {"n": 50, "shape": 7, "colour": Color("#E8D4A8", 1.0),
+				"colour_b": Color("#C9B6FF", 1.0), "radius": [0.08, 0.13], "lift": [0.2, 2.0],
+				"vel": Vector3(0.2, -0.15, 0.1), "period": [5.0, 8.0], "wobble": 0.3})
+			var tint := fx.tint(Color("#2A1A4A"), 0.0)
 			fx.every(func(s: float) -> void:
 				var u := fmod(s, 20.0)
 				var on := not (u < 1.2 and int(s * 10.0) % 3 == 0)
 				for sig: Node in fx.signatures.values():
-					(sig as Node3D).visible = on)
+					(sig as Node3D).visible = on
+				if tint != null:
+					tint.set_shader_parameter("edge", 0.0 if on else 0.6))

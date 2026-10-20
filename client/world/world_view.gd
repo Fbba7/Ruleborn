@@ -294,7 +294,7 @@ func _build_statics() -> void:
 	_vault = _instance(PieceKit.vault(false), RealmKit.material("toon", true))
 	statics.add_child(_vault)
 	for p: Dictionary in replay.pylons():
-		var mi := _instance(PieceKit.pylon(), RealmKit.material("toon", true))
+		var mi := _instance(PieceKit.pylon(str(p.get("school", "matter"))), RealmKit.material("toon", true))
 		mi.position = world_at(p["at"])
 		statics.add_child(mi)
 		_pylons.append(mi)
@@ -688,7 +688,7 @@ func _sync_pieces() -> void:
 	for i in mini(pylons.size(), _pylons.size()):
 		var up: bool = pylons[i]["standing"]
 		if _pylons[i].get_meta("up", true) != up:
-			_pylons[i].mesh = PieceKit.pylon() if up else PieceKit.broken_pylon()
+			_pylons[i].mesh = PieceKit.pylon(str(pylons[i].get("school", "matter"))) if up else PieceKit.broken_pylon()
 			_pylons[i].set_meta("up", up)
 	var wards := replay.wards()
 	for i in mini(wards.size(), _wards.size()):

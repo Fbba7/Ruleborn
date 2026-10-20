@@ -20,6 +20,8 @@ extends Control
 signal realm_chosen(id: String)
 ## The zoom level changed: 0 the whole universe, 1 a realm, 2 a close-up.
 signal zoomed(level: int)
+## The realm still to open was tapped (its pin): where it is bought.
+signal next_chosen
 
 const PITCH := 35.0
 ## A swoop between realms, in milliseconds (§21.1: "a one-second swoop").
@@ -34,6 +36,9 @@ const TAP_MS := 400
 ## The skiffs flying the links, and the glows in each one's wake.
 const SKIFFS := 4
 const WAKE := 12
+## How far back the camera stands from what it looks at: enough that the
+## whole column is in front of it, near enough that the sun's shadow reaches.
+const BACK := 140.0
 ## A fault, in the alarm's red (§21.8 keeps red for alarms).
 const FAULT := Color("#FF5A7A")
 
@@ -41,6 +46,7 @@ static var _toon: Shader = load("res://world/universe_toon.gdshader")
 static var _outline: Shader = load("res://world/outline.gdshader")
 static var _glow: Shader = load("res://world/universe_glow.gdshader")
 static var _veil: Shader = load("res://world/universe_veil.gdshader")
+static var _shade: Shader = load("res://world/universe_shade.gdshader")
 
 var viewport: SubViewport
 var container: SubViewportContainer
@@ -60,12 +66,16 @@ var zoom := 0
 var turns := 0
 ## Triangles drawn by the map's own meshes, for §21.3's budget.
 var triangles := 0
+## Each link as drawn: its kind and its middle, where its pin stands.
+var links: Array[Dictionary] = []
 ## Pixels at the top and bottom that a screen's own controls cover: the
 ## camera frames the universe into what is left (`set_inset`).
 var inset := Vector2.ZERO
 
 var _view := {}
 var _extras := {}
+## A realm asked for before it was drawn: [id, zoom], shown once it is.
+var _wanted := []
 var _key := ""
 var _bounds := AABB()
 ## The camera now, and where a swoop takes it: target, size, yaw.
@@ -89,6 +99,8 @@ var _skiffs: Array[Dictionary] = []
 var _streams: Array[Dictionary] = []
 var _sparks: MultiMeshInstance3D
 var _comets: Array[Dictionary] = []
+var _debris: MultiMeshInstance3D
+var _orbits: Array[Dictionary] = []
 
 
 func _init() -> void:
@@ -132,7 +144,7 @@ func _build_stage() -> void:
 	world.add_child(env_node)
 	sun = DirectionalLight3D.new()
 	sun.light_color = Color("#FFE6C8")
-	sun.light_energy = 0.9
+	sun.light_energy = 0.8
 	sun.shadow_enabled = true
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
 	sun.directional_shadow_max_distance = 160.0
@@ -146,7 +158,7 @@ func _build_stage() -> void:
 	camera = Camera3D.new()
 	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 	camera.near = 1.0
-	camera.far = 900.0
+	camera.far = 600.0
 	world.add_child(camera)
 	statics = Node3D.new()
 	world.add_child(statics)
@@ -172,6 +184,9 @@ func show_universe(view: Dictionary, extras := {}) -> void:
 			focus_id = ""
 			zoom = 0
 		_aim(true)
+		if not _wanted.is_empty() and islands.has(str(_wanted[0])):
+			focus_realm(str(_wanted[0]), int(_wanted[1]))
+			_aim(true)
 	pins.show_pins(view, extras)
 
 
@@ -195,12 +210,14 @@ func _build() -> void:
 	var glows := UniversePaint.new()
 	var light := UniversePaint.new()
 	var flow := UniversePaint.new()
+	var shades := UniversePaint.new()
 	for r: Dictionary in realms:
 		var id := str(r.get("realm", ""))
 		if not places.has(id):
 			continue
 		var island := UniverseIsland.new(r, places[id])
 		island.spire = int(_view.get("spire", 1))
+		island.shades = shades
 		island.build(body, hero, glows, light, flow, r.get("buildings", []))
 		islands[id] = island
 	if ghosts > 0 and places.has("next:0"):
@@ -209,6 +226,7 @@ func _build() -> void:
 			"ghost": true}, places["next:0"])
 		ghost.build(body, hero, glows, light, flow, [])
 		islands["next:0"] = ghost
+	_build_scatter()
 	_build_links(hero, glows, light, flow)
 	_build_faults(light, glows)
 	_bounds = UniverseLayout.bounds(places, UniverseLayout.radius(UniverseLayout.OUTER_GRID) + 2.0)
@@ -218,12 +236,17 @@ func _build() -> void:
 	_add(glows.mesh(), _glow_material(0.3, 0.35), false)
 	_add(light.mesh(), _veil_material(0.0, 0.0), false)
 	_add(flow.mesh(), _veil_material(1.6, 3.0), false)
+	var shade := ShaderMaterial.new()
+	shade.shader = _shade
+	_add(shades.mesh(), shade, false)
+	_build_citadel()
 	_build_heart_rings()
 	var centre := _bounds.get_center()
 	StarSky.new(hash(str(realms.size()))).build(statics, Vector3(centre.x, 0, centre.z),
 		maxf(60.0, _bounds.size.z * 0.6))
 	_build_skiffs()
 	_build_sparks()
+	_build_debris()
 
 
 func _add(mesh: ArrayMesh, mat: Material, shadows: bool) -> MeshInstance3D:
@@ -265,9 +288,45 @@ static func _veil_material(flow: float, streaks: float) -> ShaderMaterial:
 	return m
 
 
+## Every island's meadow: tufts of grass and flowers, two layers of
+## instances for the whole universe (§21.3: MultiMesh scatter).
+func _build_scatter() -> void:
+	var tufts: Array = []
+	var flowers: Array = []
+	for id: String in islands:
+		(islands[id] as UniverseIsland).scatter(tufts, flowers)
+	var tuft := Geo.new()
+	for b in 3:
+		var lean := Basis(Vector3(cos(b * 2.1), 0, sin(b * 2.1)), 0.32)
+		tuft.prism(Transform3D(lean, Vector3(cos(b * 2.1) * 0.07, 0, sin(b * 2.1) * 0.07)), 3, 0.07, 0.0,
+			0.42 - 0.06 * b, Color.WHITE)
+	var bloom := Geo.new()
+	bloom.prism(Geo.place(Vector3.ZERO), 3, 0.025, 0.02, 0.24, Color("#5A9A48"))
+	bloom.ball(Geo.place(Vector3(0, 0.27, 0), 0.0, Vector3(1.0, 0.6, 1.0)), 0.11, Color.WHITE, 2, 5)
+	for layer: Array in [[tufts, tuft.mesh()], [flowers, bloom.mesh()]]:
+		var items: Array = layer[0]
+		if items.is_empty():
+			continue
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.use_colors = true
+		mm.mesh = layer[1]
+		mm.instance_count = items.size()
+		for i in items.size():
+			mm.set_instance_transform(i, items[i][0])
+			mm.set_instance_color(i, items[i][1])
+		var mmi := MultiMeshInstance3D.new()
+		mmi.multimesh = mm
+		mmi.material_override = _material()
+		mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		statics.add_child(mmi)
+		triangles += items.size() * ((layer[1] as ArrayMesh).surface_get_array_len(0) / 3)
+
+
 ## §5.3's links, each built to its gap; a rope bridge on its own node, so it
 ## sways.
 func _build_links(hero: Geo, glows: UniversePaint, light: UniversePaint, flow: UniversePaint) -> void:
+	links.clear()
 	for l: Dictionary in _view.get("links", []):
 		var a := str(l.get("a", ""))
 		var b := str(l.get("b", ""))
@@ -278,6 +337,7 @@ func _build_links(hero: Geo, glows: UniversePaint, light: UniversePaint, flow: U
 		var ends := UniverseLayout.link_ends(ia.at, ia.edge(0.0), ib.at, ib.edge(0.0))
 		var link := LinkBuilder.new(str(l.get("kind", "stone_bridge")), ends[0], ends[1], ib.school,
 			bool(l.get("open", true)))
+		links.append({"kind": link.kind, "mid": (ends[0] + ends[1]) / 2.0 + Vector3(0, link.length * 0.06 + 1.2, 0)})
 		if link.kind == "rope_bridge":
 			var own := Geo.new()
 			var start := link.xf
@@ -327,6 +387,31 @@ func _build_faults(light: UniversePaint, glows: UniversePaint) -> void:
 			glows.glow(p, 0.9 + 0.4 * (k % 2), Color(FAULT, 0.7))
 
 
+## The Heart's citadel on a node of its own, drawn larger than the realm's
+## buildings so the Heart reads from across the universe.
+func _build_citadel() -> void:
+	if not islands.has("heart"):
+		return
+	var heart: UniverseIsland = islands["heart"]
+	var solid := Geo.new()
+	var lights := UniversePaint.new()
+	UniverseCitadel.build(solid, lights, Vector3(0, UniverseIsland.dome(0.0) - 0.05, 0), heart.palette, heart.spire)
+	var node := Node3D.new()
+	node.position = heart.at
+	node.scale = Vector3.ONE * UniverseCitadel.MAP_SCALE
+	node.name = "Citadel"
+	statics.add_child(node)
+	for part: Array in [[solid.mesh(), _material(true), true], [lights.mesh(), _glow_material(0.3, 0.35), false]]:
+		var mi := MeshInstance3D.new()
+		mi.mesh = part[0]
+		mi.material_override = part[1]
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if part[2] \
+			else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.extra_cull_margin = 10.0
+		node.add_child(mi)
+	triangles += solid.triangles + lights.count
+
+
 ## The Heart's rings, turning (the design's three tori, :1166), in the strain
 ## band's colour: calm white, then gold, ember and the alarm's red.
 func _build_heart_rings() -> void:
@@ -338,20 +423,21 @@ func _build_heart_rings() -> void:
 	var tint: Color = colours[clampi(band, 0, colours.size() - 1)]
 	for i in 3:
 		var paint := UniversePaint.new()
-		var r := heart.radius + 1.6 + i * 1.3
+		var r := heart.radius * (1.22 + 0.17 * i)
 		var inner := PackedVector3Array()
 		var outer := PackedVector3Array()
-		for k in 41:
-			var a := PI * 1.25 * k / 40.0
+		for k in 49:
+			var a := PI * (1.2 + 0.2 * i) * k / 48.0
 			inner.append(Vector3(cos(a) * r, 0, sin(a) * r))
-			outer.append(Vector3(cos(a) * (r + 0.45), 0, sin(a) * (r + 0.45)))
-		paint.strip(inner, outer, Color(tint, 0.85), 1.0, true)
+			outer.append(Vector3(cos(a) * (r + 0.24), 0, sin(a) * (r + 0.24)))
+		paint.strip(inner, outer, Color(tint, 1.0), 1.0, true)
 		var mi := MeshInstance3D.new()
 		mi.mesh = paint.mesh()
 		mi.material_override = _veil_material(0.0, 0.0)
+		(mi.material_override as ShaderMaterial).set_shader_parameter("strength", 0.55)
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		mi.position = heart.at + Vector3(0, 0.8 + i * 0.6, 0)
-		mi.rotation.y = i * 2.0
+		mi.position = heart.at + Vector3(0, 0.6 + i * 0.9, 0)
+		mi.rotation = Vector3(0.06 * (i - 1), i * 2.0, 0.05 * (1 - i))
 		statics.add_child(mi)
 		_spinners.append({"node": mi, "axis": Vector3.UP, "turn": (0.35 + i * 0.12) * (-1.0 if i % 2 else 1.0)})
 
@@ -359,11 +445,11 @@ func _build_heart_rings() -> void:
 ## The skiffs: one over each of the first links, back and forth; with no
 ## links, circling the universe.
 func _build_skiffs() -> void:
-	var links: Array = _view.get("links", [])
+	var named: Array = _view.get("links", [])
 	for i in SKIFFS:
 		var route := {}
-		if i < links.size():
-			var l: Dictionary = links[i]
+		if i < named.size():
+			var l: Dictionary = named[i]
 			if islands.has(str(l["a"])) and islands.has(str(l["b"])):
 				var ia: UniverseIsland = islands[str(l["a"])]
 				var ib: UniverseIsland = islands[str(l["b"])]
@@ -375,11 +461,58 @@ func _build_skiffs() -> void:
 		mi.mesh = SkiffBuilder.mesh(school)
 		mi.material_override = _material(true)
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		mi.scale = Vector3.ONE * 0.8
+		mi.scale = Vector3.ONE * 1.1
 		movers.add_child(mi)
 		triangles += (mi.mesh as ArrayMesh).surface_get_array_len(0) / 3 if mi.mesh != null else 0
 		_skiffs.append({"node": mi, "route": route, "phase": i * 0.37, "speed": 0.06 + 0.015 * i,
 			"wake": [] as Array[Vector3], "colour": school})
+
+
+## Rocks drifting round each island, a few with a tree on top (the design's
+## debris, :1157), one layer of instances for the universe, moved each frame.
+func _build_debris() -> void:
+	_orbits.clear()
+	var g := Geo.new()
+	g.prism(Transform3D(Basis(Vector3.RIGHT, PI), Vector3.ZERO), 6, 1.0, 0.0, 1.8, Color("#7E6E9A"))
+	g.prism(Geo.place(Vector3(0, -0.02, 0)), 6, 1.05, 1.0, 0.3, Color("#6E9A55"))
+	g.prism(Geo.place(Vector3(0.2, 0.28, 0.1)), 5, 0.38, 0.0, 0.9, Color("#3E8A45"))
+	for id: String in islands:
+		var isl: UniverseIsland = islands[id]
+		if isl.ghost:
+			continue
+		for k in 3:
+			_orbits.append({"centre": isl.at, "r": isl.radius * (1.18 + 0.25 * isl.noise(900 + k)),
+				"y": -2.0 - 5.0 * isl.noise(910 + k), "a": isl.noise(920 + k) * TAU,
+				"speed": (0.05 + 0.06 * isl.noise(930 + k)) * (1.0 if k % 2 else -1.0),
+				"size": 0.55 + 0.7 * isl.noise(940 + k), "tint": Color.WHITE if isl.key != "emberreach"
+					else Color("#8A6A70")})
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_colors = true
+	mm.mesh = g.mesh()
+	mm.instance_count = _orbits.size()
+	for i in _orbits.size():
+		mm.set_instance_color(i, _orbits[i]["tint"])
+	_debris = MultiMeshInstance3D.new()
+	_debris.multimesh = mm
+	_debris.material_override = _material()
+	_debris.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_debris.extra_cull_margin = 400.0
+	movers.add_child(_debris)
+	triangles += _orbits.size() * g.triangles
+	_drift()
+
+
+func _drift() -> void:
+	if _debris == null:
+		return
+	var mm := _debris.multimesh
+	for i in _orbits.size():
+		var o: Dictionary = _orbits[i]
+		var a := float(o["a"]) + _time * float(o["speed"])
+		var c: Vector3 = o["centre"]
+		var p := c + Vector3(cos(a) * float(o["r"]), float(o["y"]) + sin(_time * 0.7 + a) * 0.5, sin(a) * float(o["r"]))
+		mm.set_instance_transform(i, Transform3D(Basis(Vector3.UP, a * 2.0).scaled(Vector3.ONE * float(o["size"])), p))
 
 
 ## One layer of moving lights — skiffs' wakes, rifts' streams, comets — as
@@ -418,6 +551,7 @@ func _process(delta: float) -> void:
 		else:
 			node.rotation.x = sin(_time * float(s["speed"]) + float(s["phase"])) * float(s["sway"])
 	_fly(delta)
+	_drift()
 	pins.follow()
 
 
@@ -519,12 +653,14 @@ func _place_camera() -> void:
 	var p := deg_to_rad(PITCH + _tilt.y * TILT_DEGREES.y)
 	var back := Vector3(sin(yaw) * cos(p), sin(p), cos(yaw) * cos(p))
 	camera.size = _size
+	# The sun's shadow reaches as far as the camera sees, and no further.
+	sun.directional_shadow_max_distance = BACK + clampf(_size * 0.9, 30.0, 160.0)
 	camera.v_offset = -(inset.y - inset.x) / 2.0 * _size / maxf(1.0, size.y)
 	_set_origin(back)
 	if not camera.is_inside_tree():
-		camera.position = _target + back * 300.0
+		camera.position = _target + back * BACK
 		return
-	camera.look_at_from_position(_target + back * 300.0, _target, Vector3.UP)
+	camera.look_at_from_position(_target + back * BACK, _target, Vector3.UP)
 
 
 ## The galaxy follows the screen most of the way, so it reads as far off.
@@ -607,8 +743,12 @@ func _step_swoop() -> void:
 ## The camera on realm `id` at zoom `level` (1 or 2), swooping there; from
 ## one realm to another, through cloud.
 func focus_realm(id: String, level := 1) -> void:
-	if not islands.has(id) or id.begins_with("next:"):
+	if id.begins_with("next:"):
 		return
+	if not islands.has(id):
+		_wanted = [id, level]
+		return
+	_wanted = []
 	var between := zoom > 0 and focus_id != "" and focus_id != id
 	focus_id = id
 	var was := zoom
@@ -666,9 +806,11 @@ func set_zoom(level: int) -> void:
 		zoomed.emit(zoom)
 
 
-## A quarter turn of the camera, either way (§21.1).
+## A quarter turn of the camera, either way (§21.1). Over the whole
+## universe a turn is a half turn, so its column stays upright on a portrait
+## screen rather than lying across it.
 func turn(by: int) -> void:
-	turns = posmod(turns + by, 4)
+	turns = posmod(turns + by * (2 if zoom == 0 else 1), 4)
 	_aim()
 
 
@@ -812,18 +954,27 @@ func _pan(by: Vector2) -> void:
 	_target = Vector3(clampf(_target.x + move.x, lo.x, hi.x), _target.y, clampf(_target.z + move.z, lo.z, hi.z))
 
 
-## The cloud wipe: soft puffs that close over the screen and open again.
+## The cloud wipe (the design's `cloudWipe`): banks of cloud roll in from
+## both sides, meet over the swoop, and part again; each puff shaded violet
+## underneath and lit on top, as the islands are.
 func _draw_wipe() -> void:
 	if _wipe_amount <= 0.01:
 		return
 	var s := _wipe.size
-	var n := 18
-	for k in n:
-		var fx := fmod(k * 0.618, 1.0)
-		var fy := fmod(k * 0.381 + 0.13, 1.0)
-		var r := (0.25 + 0.2 * fmod(k * 0.77, 1.0)) * s.length() * _wipe_amount
-		var tint := Color("#F4EEFF").lerp(Color("#C9B6FF"), fmod(k * 0.53, 1.0) * 0.5)
-		_wipe.draw_circle(Vector2(fx * s.x, fy * s.y), r, Color(tint, minf(1.0, _wipe_amount * 1.4)))
+	var e := _wipe_amount * _wipe_amount * (3.0 - 2.0 * _wipe_amount)
+	var rows := 9
+	for k in rows * 2:
+		var side := -1.0 if k % 2 == 0 else 1.0
+		var row := k / 2
+		var y := (row + 0.5) / rows * s.y + sin(row * 2.3) * s.y * 0.03
+		var r := s.x * (0.3 + 0.08 * fmod(row * 0.618, 1.0))
+		var rest := s.x * (0.5 + side * (0.04 + 0.12 * fmod(row * 0.381, 1.0)))
+		var off := s.x * 0.5 + side * (s.x * 0.5 + r * 1.2)
+		var x := lerpf(off, rest, e)
+		var at := Vector2(x, y)
+		_wipe.draw_circle(at + Vector2(0, r * 0.18), r * 1.02, Color("#B9A6F2"))
+		_wipe.draw_circle(at, r, Color("#F1EBFF"))
+		_wipe.draw_circle(at + Vector2(-r * 0.22, -r * 0.24), r * 0.6, Color("#FFFFFF"))
 
 
 func _notification(what: int) -> void:

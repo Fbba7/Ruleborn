@@ -6,6 +6,9 @@ extends Control
 ## cost. It changes nothing; Weaving does.
 
 var controller: HarmonyController
+## §21.7's harmony on screen, live: the realm with the most laws woven, its
+## threads, clashes and chords drawn between its pylons (LawFxPreview).
+var preview: LawFxPreview
 var body: VBoxContainer
 var header_label: Label
 var status_label: Label
@@ -33,6 +36,10 @@ func _build() -> void:
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))
 	body = UI.scroll(column)
+	# In the scroll, so large text never pushes the buttons off the phone.
+	preview = LawFxPreview.new()
+	preview.visible = false
+	body.add_child(preview)
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("HOME_WEAVING"), func() -> void: App.services.router.go(&"weaving")))
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
@@ -51,10 +58,13 @@ func _refresh() -> void:
 		UI.set_status(status_label, "info", "")
 	header_label.text = h.get("header", "")
 	for child in body.get_children():
+		if child == preview:
+			continue
 		body.remove_child(child)
 		child.queue_free()
 	if not h["ready"]:
 		return
+	_preview()
 	for r: Dictionary in h["realms"]:
 		var box := VBoxContainer.new()
 		var title := UI.label(r["title"], UI.TEXT_POINTS, true)
@@ -67,3 +77,17 @@ func _refresh() -> void:
 			l.set_meta("combination", true)
 			box.add_child(l)
 		body.add_child(UI.plate(box))
+
+
+## The realm with the most laws, drawn with its links; none if no realm holds
+## two laws to link.
+func _preview() -> void:
+	var v: Dictionary = App.services.store.get_slice(HarmonyState.HARMONY).get("view", {})
+	var best: Dictionary = {}
+	for r: Dictionary in v.get("realms", []):
+		if LawFxPreview.realm_laws(r).size() > LawFxPreview.realm_laws(best).size():
+			best = r
+	var laws := LawFxPreview.realm_laws(best)
+	preview.visible = laws.size() >= 2
+	if preview.visible:
+		preview.show_laws(laws, LawFxPreview.realm_type_of(best))

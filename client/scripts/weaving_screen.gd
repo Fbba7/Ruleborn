@@ -11,6 +11,10 @@ extends Control
 ## simulation (TD.14).
 
 var controller: WeavingController
+## The realm a weave would change, live (§21.7, LawFxPreview): its laws with
+## the one tapped once to weave, so its harmonies and clashes show as
+## threads and jagged lines before it is woven.
+var preview: LawFxPreview
 var body: VBoxContainer
 var header_label: Label
 var status_label: Label
@@ -48,6 +52,10 @@ func _build() -> void:
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))
 	body = UI.scroll(column)
+	# In the scroll, so large text never pushes the buttons off the phone.
+	preview = LawFxPreview.new()
+	preview.visible = false
+	body.add_child(preview)
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("HARMONY_TITLE"), func() -> void: App.services.router.go(&"harmony")))
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
@@ -77,11 +85,14 @@ func _refresh() -> void:
 	holding = ""
 	held = ""
 	for c in body.get_children():
+		if c == preview:
+			continue
 		body.remove_child(c)
 		c.queue_free()
 	if not w["ready"]:
 		return
 	var busy: bool = w["busy"] != ""
+	_preview()
 	body.add_child(_bar(w["bar"]))
 	body.add_child(UI.plate(UI.label(Strings.t("WEAVING_HOW", SettingsScreen.seconds(Settings.hold_ms)),
 		UI.TEXT_POINTS, true)))
@@ -182,3 +193,26 @@ func _tap(o: Dictionary) -> void:
 func _spend(o: Dictionary) -> void:
 	var a: Dictionary = o["args"]
 	await controller.weave(str(a["realm"]), int(a["slot"]), str(a["law"]))
+
+
+## The realm of the weave tapped once, with that law added; else the first
+## realm with a law woven; none if no realm has one.
+func _preview() -> void:
+	var v: Dictionary = App.services.store.get_slice(WeavingState.WEAVING).get("view", {})
+	var shown: Dictionary = {}
+	var extra := ""
+	for r: Dictionary in v.get("realms", []):
+		for o: Dictionary in r.get("offers", []):
+			if confirm == "weave:%s:%s" % [r["realm"], o["law"]]:
+				shown = r
+				extra = str(o["law"])
+	if shown.is_empty():
+		for r: Dictionary in v.get("realms", []):
+			if shown.is_empty() and not LawFxPreview.realm_laws(r).is_empty():
+				shown = r
+	var laws := LawFxPreview.realm_laws(shown)
+	if extra != "" and not laws.has(extra):
+		laws.push_front(extra)
+	preview.visible = not laws.is_empty()
+	if preview.visible:
+		preview.show_laws(laws, LawFxPreview.realm_type_of(shown))
