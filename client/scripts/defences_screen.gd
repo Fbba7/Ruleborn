@@ -42,9 +42,8 @@ func _build() -> void:
 	view = StageScreen.mount(self, column)
 	view.fill = 0.86
 	defence = OverlayDefence.new(view)
-	column.add_child(OverlaySheet.ribbon(UI.title(Strings.t("DEFENCES_TITLE"))))
 	header_label = UI.label("", UI.TEXT_POINTS, true)
-	_top = UI.plate(header_label)
+	_top = OverlaySheet.ribbon(UI.title(Strings.t("DEFENCES_TITLE")), header_label)
 	column.add_child(_top)
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))

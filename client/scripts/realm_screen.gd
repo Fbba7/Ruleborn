@@ -47,9 +47,8 @@ func _build() -> void:
 	view.fill = 0.6
 	town = StageTown.new(view)
 	var top := VBoxContainer.new()
-	top.add_child(OverlaySheet.ribbon(UI.title(Strings.t("RV_TITLE"))))
 	header_label = UI.label("", UI.TEXT_POINTS, true)
-	top.add_child(UI.plate(header_label))
+	top.add_child(OverlaySheet.ribbon(UI.title(Strings.t("RV_TITLE")), header_label))
 	column.add_child(top)
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))

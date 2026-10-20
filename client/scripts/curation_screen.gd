@@ -44,9 +44,8 @@ func _build() -> void:
 	view.fill = 0.74
 	view.tapped.connect(func(at: Vector2) -> void: _on_tap(view.tile_at(at), at))
 	defence = OverlayDefence.new(view)
-	column.add_child(OverlaySheet.ribbon(UI.title(Strings.t("CUR_TITLE"))))
 	header_label = UI.label("", UI.TEXT_POINTS, true)
-	_top = UI.plate(header_label)
+	_top = OverlaySheet.ribbon(UI.title(Strings.t("CUR_TITLE")), header_label)
 	column.add_child(_top)
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))

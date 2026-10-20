@@ -111,8 +111,9 @@ static func chip(text: String, fill := Color(), points := -1.0) -> PanelContaine
 
 
 ## A title as a ribbon across the top: the screen's name on parchment,
-## heavier than a panel.
-static func ribbon(title: Label) -> PanelContainer:
+## heavier than a panel, with the screen's header (`under`) as its second
+## line where it has one, so the world keeps the room a second plate took.
+static func ribbon(title: Label, under: Label = null) -> PanelContainer:
 	var p := PanelContainer.new()
 	var box := paper(PANEL_CORNER + 4)
 	box.set_border_width_all(maxi(3, UI.px(1.0)))
@@ -123,7 +124,14 @@ static func ribbon(title: Label) -> PanelContainer:
 	title.add_theme_font_size_override("font_size", UI.text_px(RIBBON_POINTS))
 	title.set_meta("points", RIBBON_POINTS)
 	title.set_meta("bold", true)
-	p.add_child(title)
+	if under == null:
+		p.add_child(title)
+		return p
+	var lines := VBoxContainer.new()
+	lines.add_theme_constant_override("separation", 0)
+	lines.add_child(title)
+	lines.add_child(under)
+	p.add_child(lines)
 	return p
 
 
