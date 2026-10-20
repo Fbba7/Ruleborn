@@ -23,17 +23,18 @@ func _go() -> void:
 	cam.size = 3.4
 	world.add_child(cam)
 	cam.look_at_from_position(Vector3(0, 1.5 + 6.0, 9.0), Vector3(0, 1.45, 0), Vector3.UP)
+	var toon: Shader = load("res://world/toon.gdshader")
 	var schools: Array[String] = ["motion", "matter", "time", "energy", "life", "spirit"]
 	for k in schools.size():
 		var x := (k - 2.5) * 1.35
 		var pylon := MeshInstance3D.new()
 		pylon.mesh = PieceKit.pylon()
-		pylon.material_override = WorldView.material(load("res://world/toon.gdshader"), true)
+		pylon.material_override = WorldView.material(toon, true)
 		pylon.position = Vector3(x, 0, 0)
 		world.add_child(pylon)
 		var crown := MeshInstance3D.new()
 		crown.mesh = LawFx.crown(schools[k])
-		crown.material_override = WorldView.material(load("res://world/toon.gdshader"), true)
+		crown.material_override = WorldView.material(toon, true)
 		crown.position = Vector3(x, LawFxCrown.HEIGHT, 0)
 		crown.scale = Vector3.ONE * 1.5
 		crown.rotation.y = -0.5
