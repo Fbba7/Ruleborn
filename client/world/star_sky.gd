@@ -37,8 +37,8 @@ func build(parent: Node3D, centre: Vector3, reach: float) -> void:
 	m.shader = _galaxy
 	# Placed from the point under the middle of the screen (`origin`, which
 	# the map moves): the galaxy low in the frame, nebulae round it.
-	m.set_shader_parameter("galaxy_at", Vector2(reach * 0.15, reach * 0.55))
-	m.set_shader_parameter("galaxy_radius", reach * 1.05)
+	m.set_shader_parameter("galaxy_at", Vector2(reach * 0.12, reach * 0.4))
+	m.set_shader_parameter("galaxy_radius", reach * 1.7)
 	m.set_shader_parameter("nebula_a", Vector4(-reach * 0.6, -reach * 0.7, reach * 0.7, 0))
 	m.set_shader_parameter("nebula_b", Vector4(reach * 0.7, reach * 0.1, reach * 0.6, 0))
 	m.set_shader_parameter("nebula_c", Vector4(-reach * 0.3, reach * 0.9, reach * 0.7, 0))
@@ -53,7 +53,7 @@ func build(parent: Node3D, centre: Vector3, reach: float) -> void:
 	var stars := UniversePaint.new()
 	var span := Vector3(reach * 2.6, 0, reach * 3.6)
 	# Far dust, the warm stars, and a few bright ones near the islands.
-	for i in 260:
+	for i in 150:
 		var p := centre + Vector3((_noise(i) - 0.5) * span.x, -reach * (0.25 + 0.5 * _noise(i + 900)),
 			(_noise(i + 1800) - 0.5) * span.z)
 		stars.glow(p, 0.3 + 0.3 * _noise(i + 2700), Color(Color("#FFFFFF"), 0.18 + 0.3 * _noise(i + 3600)))

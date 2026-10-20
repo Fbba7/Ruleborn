@@ -189,7 +189,7 @@ func follow() -> void:
 		var shown: bool = view.zoom in (p["zooms"] as Array)
 		# Islands small on the screen keep only their names and alarms, and a
 		# name only its realm's icon and level.
-		var small := isl.radius / maxf(0.01, view.camera.size) * view.size.y < UI.px(70)
+		var small := isl.radius / maxf(0.01, view.camera.size) * view.size.y < UI.px(45)
 		if int(p["rank"]) >= 2 or p.get("back", false):
 			shown = shown and not small
 		if p.get("front", false):

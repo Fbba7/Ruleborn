@@ -76,6 +76,11 @@ universe, inside §21.3's 40,000 and 150.
   Stills: `round6_young_universe.png` (the Heart and two realms, the next to open as mist),
   `round6_skiff_close.png`.
 
+- Round 7: the galaxy redrawn as the design draws it, two thin spiral arms of dust sweeping across the
+  whole sky behind the islands, its core small, fewer loose stars; pins keep their names unless islands
+  are really small.
+  Stills: `round7_home.png`, `round7_zoom0.png`, `round7_zoom1.png`, `round7_compare_marta.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 
