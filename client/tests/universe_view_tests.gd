@@ -22,6 +22,7 @@ func run() -> void:
 	await _drawn()
 	await _camera()
 	await _pins()
+	await _people()
 	await _home()
 
 
@@ -167,6 +168,47 @@ func _pins() -> void:
 			and texts.has("✦ 320") and texts.any(func(t: String) -> bool:
 			return t.begins_with("ϟ")) and not overlap and quiet.size() == 8 + view.links.size(),
 		"names %d texts %s overlap %s quiet %d" % [names.size(), texts, overlap, quiet.size()])
+	view.queue_free()
+	await tree.process_frame
+
+
+## The player's characters on the realm seen close, where the home view puts
+## them; none from afar; a heading in a word list swoops the map.
+func _people() -> void:
+	var view := _view()
+	Settings.reduced_motion = true
+	view.show_universe(UniverseSample.view(6), UniverseSample.extras())
+	await tree.process_frame
+	var people := view.world.get_node("Characters")
+	var far := people.get_child_count()
+	view.focus_realm("heart", 2)
+	await tree.process_frame
+	var kinds: Array[String] = []
+	for c in people.get_children():
+		if not c.is_queued_for_deletion():
+			kinds.append(str(c.name))
+	var where := [UniverseCrowd.realm_of({"state": "working", "home": "spire",
+			"work": {"realm": "outer-2", "kind": "garden", "n": 1}}),
+		UniverseCrowd.realm_of({"state": "idle", "home": "spire", "work": null}),
+		UniverseCrowd.realm_of({"state": "idle", "home": "outer-3", "work": null})]
+	var title := UI.label("The Heart")
+	var heading := UniverseHeading.make(title, "outer-4", view)
+	view.add_child(heading)
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	heading.gui_input.emit(press)
+	var lift := press.duplicate() as InputEventMouseButton
+	lift.pressed = false
+	heading.gui_input.emit(lift)
+	var swooped := view.focus_id == "outer-4" and view.zoom == 1
+	Settings.reduced_motion = false
+	check.call("the realm seen close shows the player's own characters the home view puts there, at most two, and "
+			+ "none from afar; a character is where it works, else at home (the Spire is the Heart); a realm's "
+			+ "heading in a word list swoops the map to it (23.2, 14.1)",
+		far == 0 and kinds.size() == 2 and kinds.has("featherkin") and kinds.has("mossbear")
+			and where == ["outer-2", "heart", "outer-3"] and swooped and heading.get_child(1) == title,
+		"far %d kinds %s where %s swooped %s" % [far, kinds, where, swooped])
 	view.queue_free()
 	await tree.process_frame
 
