@@ -424,7 +424,7 @@ func _tree(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
 	var hero := kit.hero
 	var bark := KitStyle.WOOD.lightened(0.05)
 	var kind: String = style["tree"]
-	var tall := 0.9 + 0.25 * RealmKit.jitter(t, 21)
+	var tall := (0.9 + 0.25 * RealmKit.jitter(t, 21)) * (1.25 if kit.realm == "verdant" else 1.0)
 	hero.moving(Geo.Anim.SWAY, c)
 	match kind:
 		"pine":
@@ -455,15 +455,18 @@ func _tree(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
 			hero.ball(Geo.place(c + Vector3(0, 1.0 * tall, 0), j, Vector3(0.8, 1.15, 0.8)), 0.36, plant, 4, 8)
 			hero.ball(Geo.place(c + Vector3(0.16, 1.18 * tall, 0.08), j), 0.22, plant.lightened(0.1), 3, 7)
 		_:
-			hero.cyl(Geo.place(c), 0.12, 0.08, 0.63 * tall, bark, 7)
+			var crown := 1.25 if kit.realm == "verdant" else 1.0
+			hero.cyl(Geo.place(c), 0.12 * crown, 0.08 * crown, 0.63 * tall, bark, 7)
 			for k in 2:
 				var a := j * TAU + PI * k
 				hero.box(Transform3D(Basis(Vector3(cos(a), 0, sin(a)).cross(Vector3.UP), 0.7),
 					c + Vector3(cos(a) * 0.08, 0.45 * tall, sin(a) * 0.08)), Vector3(0.04, 0.22, 0.04), bark)
-			hero.ball(Geo.place(c + Vector3(0, 0.85 * tall, 0), j, Vector3(1.0, 0.86, 1.0)), 0.47, plant.darkened(0.06),
-				5, 10)
-			hero.ball(Geo.place(c + Vector3(0.2, 1.08 * tall, 0.09), j), 0.31, plant.lightened(0.08), 4, 8)
-			hero.ball(Geo.place(c + Vector3(-0.18, 1.12 * tall, -0.09), j), 0.27, plant.lightened(0.02), 4, 8)
+			hero.ball(Geo.place(c + Vector3(0, 0.85 * tall, 0), j, Vector3(1.0, 0.86, 1.0)), 0.47 * crown,
+				plant.darkened(0.06), 5, 10)
+			hero.ball(Geo.place(c + Vector3(0.2, 1.08 * tall, 0.09) * Vector3(crown, 1, crown), j), 0.31 * crown,
+				plant.lightened(0.08), 4, 8)
+			hero.ball(Geo.place(c + Vector3(-0.18, 1.12 * tall, -0.09) * Vector3(crown, 1, crown), j), 0.27 * crown,
+				plant.lightened(0.02), 4, 8)
 			if kit.realm == "verdant" or kit.realm == "heart":
 				var fruit: Color = Color("#E2536B") if kit.realm == "verdant" else Color("#F7A6DA")
 				for k in 4:

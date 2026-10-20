@@ -256,7 +256,7 @@ func instances() -> Array[MeshInstance3D]:
 	var out: Array[MeshInstance3D] = []
 	var ground_mat := material("ground")
 	ground_mat.set_shader_parameter("grid_offset", Vector2(0.5 * (size.x % 2), 0.5 * (size.y % 2)))
-	ground_mat.set_shader_parameter("cobble", palette["ground"].lightened(0.1))
+	ground_mat.set_shader_parameter("cobble", KitGround.earth(palette).lightened(0.18))
 	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
 	ground_mat.set_shader_parameter("petal", (KitStyle.of(realm)["accent"] as Color).lightened(0.35))
 	ground_mat.set_shader_parameter("pebble", palette["rock"].lightened(0.3))
@@ -264,7 +264,7 @@ func instances() -> Array[MeshInstance3D]:
 	ground_mat.set_shader_parameter("pattern", patterns.get(realm, 0))
 	ground_mat.set_shader_parameter("specks", 2.0 if realm == "verdant" else 1.0)
 	var water_mat := material("water")
-	water_mat.set_shader_parameter("bank", palette["ground"].lightened(0.12).lerp(palette["grass"], 0.25))
+	water_mat.set_shader_parameter("bank", KitGround.earth(palette).lightened(0.2).lerp(palette["grass"], 0.2))
 	var lava_mat := material("water")
 	lava_mat.set_shader_parameter("deep", Color("#C8401E"))
 	lava_mat.set_shader_parameter("foam", Color("#FFC24A"))

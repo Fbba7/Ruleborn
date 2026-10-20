@@ -427,7 +427,7 @@ func _topper() -> void:
 ## The packed-earth pad a building stands on (the design's foundation disc,
 ## :981): an octagon of trodden earth and stone, wider than the house.
 func _pad() -> void:
-	var earth: Color = (palette["ground"] as Color).lerp(Color("#E8D8B8"), 0.4)
+	var earth := KitGround.earth(palette).lerp(Color("#E8D8B8"), 0.35)
 	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.6 * unit, 0.57 * unit, 0.03 * unit, earth.darkened(0.08), false, earth)
 	for k in 4:
 		var a := TAU * k / 4.0 + 0.5

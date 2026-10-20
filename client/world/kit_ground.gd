@@ -28,6 +28,8 @@ var size := Vector2i.ZERO
 var levels := PackedInt32Array()
 var wet := PackedByteArray()
 var palette: Dictionary = {}
+## §21.4's realm, for its plants among the grass.
+var realm := "heart"
 
 var terrain := Geo.new()
 var water := Geo.new()
@@ -46,6 +48,7 @@ func _init(grid: Vector2i, heights: PackedByteArray, surfaces: PackedByteArray, 
 		blocked: Dictionary, wet_codes: Array, colours: Dictionary) -> void:
 	size = grid
 	palette = colours
+	realm = KitStyle.realm_of(colours)
 	terrain.painted = true
 	water.painted = true
 	var n := size.x * size.y
@@ -90,6 +93,8 @@ func build(open: Callable) -> void:
 				_side(t, d)
 			if is_wet(t):
 				_water(t, tints.get(t, Color.WHITE))
+				if realm in ["tidehold", "verdant"] and RealmKit.jitter(t, 7) < 0.6:
+					_lilies(t)
 			elif open.call(t):
 				_tufts(t)
 
@@ -166,6 +171,12 @@ static func _segment(p: Vector2, a: Vector2, b: Vector2) -> float:
 	return p.distance_to(a + ab * t)
 
 
+## Trodden earth and path stone in a realm: its stone, warmed by its soil
+## (its "ground" is grass-green in some realms, so never that).
+static func earth(colours: Dictionary) -> Color:
+	return (colours["stone"] as Color).lerp(colours["soil"], 0.3)
+
+
 ## A smooth seeded noise in [0, 1) over the ground, for the paint.
 static func noise(u: float, v: float, scale: float) -> float:
 	var p := Vector2(u, v) * scale
@@ -182,7 +193,7 @@ static func noise(u: float, v: float, scale: float) -> float:
 func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 	var grass: Color = palette["grass"]
 	var soil: Color = palette["soil"]
-	var dirt: Color = palette["ground"]
+	var dirt := earth(palette)
 	var n1 := noise(u, v, 0.55)
 	var n2 := noise(u + 17.0, v - 9.0, 1.7)
 	var c := grass.lightened(0.07 * (n1 - 0.4)).darkened(0.06 * (n2 - 0.5))
@@ -276,7 +287,7 @@ func _side(t: Vector2i, d: Vector2i) -> void:
 	var soil: Color = palette["soil"]
 	var rock: Color = palette["rock"]
 	var grass: Color = palette["grass"]
-	var dirt: Color = palette["ground"]
+	var dirt := earth(palette)
 	if y1 < y0 - 0.02:
 		var rows := [0.0, 0.18, 0.55, 1.0]
 		var bulge := [0.0, 0.05, 0.035, 0.0]
@@ -401,22 +412,59 @@ func _water(t: Vector2i, tint := Color.WHITE) -> void:
 			water.tri_painted([pts[a], pts[d], pts[c]], [up, up, up], [tint, tint, tint], [chans[a], chans[d], chans[c]])
 
 
+## Lily pads on a water tile, one in flower (§21.4: Tidehold's "reeds,
+## lilies"), floating with the swell.
+func _lilies(t: Vector2i) -> void:
+	var y := levels[index(t)] * IslandBuilder.LEVEL - WATER_DROP + 0.006
+	for k in 3:
+		var p := world(t.x + 0.25 + 0.5 * RealmKit.jitter(t, 11 + k), t.y + 0.25 + 0.5 * RealmKit.jitter(t, 21 + k), y)
+		scatter.moving(Geo.Anim.BOB, p)
+		var a := RealmKit.jitter(t, 31 + k) * TAU
+		for s in 7:
+			var a0 := a + 0.5 + TAU * s / 8.0
+			var a1 := a + 0.5 + TAU * (s + 1) / 8.0
+			var r := 0.09 - 0.015 * k
+			scatter.tri(p, p + Vector3(cos(a1), 0, sin(a1)) * r, p + Vector3(cos(a0), 0, sin(a0)) * r, Color("#3F9A4A"))
+		if k == 0:
+			scatter.ball(Geo.place(p + Vector3(0, 0.02, 0)), 0.03, Color("#F7A6DA"), 2, 5)
+		scatter.still()
+
+
 ## A couple of grass tufts on an open tile, which shiver in the wind: the
 ## ground's texture made solid (§21.10: ambient, never told apart).
 func _tufts(t: Vector2i) -> void:
 	var y := top_y(t)
 	var grass: Color = palette["grass"]
 	var plant: Color = palette["plant"]
+	var near_water := field("wet", t.x + 0.5, t.y + 0.5) > 0.12
 	for k in 2:
 		if RealmKit.jitter(t, 40 + k) < 0.25:
 			continue
 		var u := t.x + 0.15 + 0.7 * RealmKit.jitter(t, 50 + k)
 		var v := t.y + 0.15 + 0.7 * RealmKit.jitter(t, 60 + k)
 		var base := world(u, v, y)
+		var odd := RealmKit.jitter(t, 90 + k) < 0.3
 		scatter.moving(Geo.Anim.SHIVER, base)
-		for b in 3:
-			var a := TAU * (b / 3.0 + RealmKit.jitter(t, 70 + k))
-			var col := grass.darkened(0.12).lerp(plant, 0.35).lightened(0.06 * b)
-			scatter.blade(base + Vector3(cos(a), 0, sin(a)) * 0.03, 0.16 + 0.08 * RealmKit.jitter(t, 80 + k * 3 + b),
-				0.03, col, 0.35, a)
+		if odd and realm == "lanternvale":
+			# A glowing mushroom (§21.4: "glowing mushrooms").
+			scatter.cyl(Geo.place(base), 0.018, 0.014, 0.07, Color("#E8E0F0"), 5)
+			scatter.ball(Geo.place(base + Vector3(0, 0.075, 0), 0.0, Vector3(1, 0.55, 1)), 0.045,
+				Color(Color("#7AD8C8"), 0.25), 2, 6, true)
+		elif odd and realm == "skyfield":
+			# A dandelion puff.
+			scatter.blade(base, 0.2, 0.01, plant.darkened(0.3))
+			scatter.ball(Geo.place(base + Vector3(0, 0.21, 0)), 0.04, Color("#FFFDF4"), 2, 6)
+		elif near_water and realm in ["tidehold", "verdant", "heart"]:
+			# Reeds by the water, a bulrush or two.
+			for b in 4:
+				var a := TAU * b / 4.0 + RealmKit.jitter(t, 70 + k)
+				var p := base + Vector3(cos(a), 0, sin(a)) * 0.04
+				scatter.blade(p, 0.3 + 0.1 * RealmKit.jitter(t, 80 + b), 0.018, Color("#6A8A3A").lerp(plant, 0.3), 0.15, a)
+			scatter.cyl(Geo.place(base + Vector3(0, 0.22, 0)), 0.018, 0.018, 0.07, Color("#7A4A2A"), 5)
+		else:
+			for b in 3:
+				var a := TAU * (b / 3.0 + RealmKit.jitter(t, 70 + k))
+				var col := grass.darkened(0.12).lerp(plant, 0.35).lightened(0.06 * b)
+				scatter.blade(base + Vector3(cos(a), 0, sin(a)) * 0.03, 0.16 + 0.08 * RealmKit.jitter(t, 80 + k * 3 + b),
+					0.03, col, 0.35, a)
 		scatter.still()
