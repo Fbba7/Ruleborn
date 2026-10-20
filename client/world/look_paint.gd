@@ -13,8 +13,12 @@ const GRASS := 256
 const ROCK_W := 256
 const ROCK_H := 128
 
+## The realm overlay's side in pixels.
+const DECO := 512
+
 static var _grass: ImageTexture
 static var _rock: ImageTexture
+static var _deco := {}
 
 
 ## The meadow texture.
@@ -29,6 +33,99 @@ static func rock() -> ImageTexture:
 	if _rock == null:
 		_rock = ImageTexture.create_from_image(_rock_image())
 	return _rock
+
+
+## A realm's own marks over its meadow, in colour with alpha (the diorama's
+## per-realm canvas, realm-diorama.js:889–894): the Heart's pink petals,
+## Crystalline's hexagons, Tidehold's sand and shells, Skyfield's strips of
+## wheat, Verdant's flowers, Lantern Vale's glows; Emberreach has none (null).
+static func deco(kind: String) -> ImageTexture:
+	if kind == "emberreach":
+		return null
+	if not _deco.has(kind):
+		_deco[kind] = ImageTexture.create_from_image(_deco_image(kind))
+	return _deco[kind]
+
+
+static func _deco_image(kind: String) -> Image:
+	var n := DECO
+	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
+	img.fill(Color(1, 1, 1, 0))
+	var r := _rng(hash(kind))
+	match kind:
+		"heart":
+			for i in 140:
+				_ellipse(img, Vector2(r.randf(), r.randf()) * n, Vector2(9, 4.5), r.randf() * PI,
+					Color(1.0, 0.72, 0.87, 0.8))
+		"crystalline":
+			for i in 70:
+				var c := Vector2(r.randf(), r.randf()) * n
+				var rad := 18.0 + r.randf() * 30.0
+				var pts := PackedVector2Array()
+				for k in 7:
+					pts.append(c + Vector2(cos(TAU * k / 6.0), sin(TAU * k / 6.0)) * rad)
+				if r.randf() < 0.3:
+					_ellipse(img, c, Vector2(rad * 0.85, rad * 0.85), 0.0, Color(0.8, 0.74, 1.0, 0.3))
+				_line(img, pts, 3.0, Color(0.92, 0.9, 1.0, 0.7))
+		"tidehold":
+			for i in 40:
+				_ellipse(img, Vector2(r.randf(), r.randf()) * n, Vector2(20 + r.randf() * 30, 10 + r.randf() * 14),
+					r.randf() * PI, Color(1.0, 0.96, 0.82, 0.3))
+			for i in 40:
+				_ellipse(img, Vector2(r.randf(), r.randf()) * n, Vector2(3, 3), 0.0, Color(1, 1, 1, 0.7))
+		"skyfield":
+			for p in 4:
+				var c := Vector2(r.randf(), r.randf()) * n
+				var w := 110.0 + r.randf() * 90.0
+				for row in 8:
+					var y := c.y + row * 11.0
+					_line(img, PackedVector2Array([Vector2(c.x, y), Vector2(c.x + w, y + (row % 2) * 2)]), 4.0,
+						Color(1.0, 0.9, 0.55, 0.6))
+		"verdant":
+			var cols: Array[Color] = [Color(1, 1, 1, 0.75), Color(1, 0.9, 0.47, 0.75), Color(0.94, 0.59, 0.78, 0.75)]
+			for i in 260:
+				var rad := 2.0 + r.randf() * 2.0
+				_ellipse(img, Vector2(r.randf(), r.randf()) * n, Vector2(rad, rad), 0.0, cols[i % 3])
+		"lanternvale":
+			for i in 60:
+				var c := Vector2(r.randf(), r.randf()) * n
+				for ring in 6:
+					var rad := 12.0 * (1.0 - ring / 6.0)
+					_ellipse(img, c, Vector2(rad, rad), 0.0, Color(0.78, 1.0, 0.6, 0.16))
+	img.generate_mipmaps()
+	return img
+
+
+## A filled ellipse of `radii`, turned by `angle`, laid over `img` in
+## `col`, wrapping so the overlay tiles.
+static func _ellipse(img: Image, c: Vector2, radii: Vector2, angle: float, col: Color) -> void:
+	var n := img.get_width()
+	var reach := int(maxf(radii.x, radii.y)) + 1
+	var ca := cos(angle)
+	var sa := sin(angle)
+	for y in range(-reach, reach + 1):
+		for x in range(-reach, reach + 1):
+			var q := Vector2((x * ca + y * sa) / radii.x, (-x * sa + y * ca) / radii.y)
+			if q.length_squared() <= 1.0:
+				var px := posmod(int(c.x) + x, n)
+				var py := posmod(int(c.y) + y, n)
+				img.set_pixel(px, py, img.get_pixel(px, py).blend(col))
+
+
+## A line through `pts`, `width` pixels wide, laid over `img` in `col`.
+static func _line(img: Image, pts: PackedVector2Array, width: float, col: Color) -> void:
+	var n := img.get_width()
+	for i in pts.size() - 1:
+		var a := pts[i]
+		var b := pts[i + 1]
+		var steps := int(a.distance_to(b)) + 1
+		for k in steps:
+			var p := a.lerp(b, float(k) / steps)
+			for d in int(width):
+				var px := posmod(int(p.x), n)
+				var py := posmod(int(p.y) + d, n)
+				var under := img.get_pixel(px, py)
+				img.set_pixel(px, py, Color(col.r, col.g, col.b, maxf(under.a, col.a)))
 
 
 ## A seeded random stream, the same on every phone.

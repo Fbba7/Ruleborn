@@ -15,6 +15,11 @@ uniform float paint_strength = 1.0;
 // Metres a texture tile spans on the ground; 0 reads the mesh's UV instead.
 uniform float world_scale = 0.0;
 uniform vec4 tint : source_color = vec4(1.0);
+// The realm's own marks over the meadow (LookPaint.deco), `deco_scale`
+// metres a tile, 0 for none; `deco_glow` makes them light, not paint.
+uniform sampler2D deco : source_color, filter_linear_mipmap, repeat_enable;
+uniform float deco_scale = 0.0;
+uniform float deco_glow = 0.0;
 uniform float sway = 0.0;
 // Sway by the distance along a vine (its UV.y) rather than by height.
 uniform bool sway_by_uv = false;
@@ -62,6 +67,13 @@ void fragment() {
 	float p = texture(paint, uv).r;
 	// The grey texture averages about 0.8: lift it so the vertex colour reads true.
 	float m = mix(1.0, p * 1.25, paint_strength);
-	ALBEDO = saturated(COLOR.rgb * tint.rgb * m);
-	EMISSION = COLOR.rgb * (1.0 - COLOR.a) * glow_from_alpha;
+	vec3 albedo = COLOR.rgb * tint.rgb * m;
+	vec3 lit = vec3(0.0);
+	if (deco_scale > 0.0 && world_normal.y > 0.6) {
+		vec4 d = texture(deco, world_pos.xz / deco_scale);
+		albedo = mix(albedo, d.rgb, d.a * (1.0 - deco_glow));
+		lit = d.rgb * d.a * deco_glow;
+	}
+	ALBEDO = saturated(albedo);
+	EMISSION = COLOR.rgb * (1.0 - COLOR.a) * glow_from_alpha + lit;
 }

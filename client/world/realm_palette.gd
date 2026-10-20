@@ -18,7 +18,7 @@ const TYPES := {
 		"dirt": "#9A6B4F", "cliff": "#6A5C8C", "cliff_deep": "#4B3F6E", "trim": "#F2B43C", "plant": "#5CC46A",
 		"accent": "#E05CB4", "bloom": "#F7A6DA", "light": "#FFD8E8",
 		"sky_top": "#1B1250", "sky_mid": "#4A2A8E", "sky_low": "#C86FB0"},
-	"skyfield": {"ground": "#E2D59E", "grass": "#C4DC84", "stone": "#F4F0E6", "rock": "#B9AE9F", "soil": "#9A7F5C",
+	"skyfield": {"ground": "#E2D59E", "grass": "#A8D068", "stone": "#F4F0E6", "rock": "#B9AE9F", "soil": "#9A7F5C",
 		"dirt": "#B9875C", "cliff": "#9C8FB4", "cliff_deep": "#746A92", "trim": "#F2B43C", "plant": "#E8D27A",
 		"accent": "#F2B43C", "bloom": "#FFFFFF", "light": "#FFF2D0",
 		"sky_top": "#3B6FD0", "sky_mid": "#7FB5EE", "sky_low": "#FFE3B0"},

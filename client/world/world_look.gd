@@ -138,7 +138,7 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 	realm = builder.kind
 	_mists.clear()
 	var paint_scale := 4.2
-	statics.add_child(_piece(builder.meadow(), _painted(LookPaint.grass(), paint_scale), false))
+	statics.add_child(_piece(builder.meadow(), _decorated(_painted(LookPaint.grass(), paint_scale)), false))
 	statics.add_child(_piece(builder.cliffs(), _painted(LookPaint.rock(), 0.0), true))
 	var roots := builder.roots()
 	statics.add_child(_piece(roots[0], _painted(LookPaint.rock(), 0.0, 0.5), true))
@@ -208,7 +208,17 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 ## the meadow's painted texture laid lightly over it, so the grid and the
 ## island read as one painted ground.
 func ground_material() -> ShaderMaterial:
-	return _painted(LookPaint.grass(), 4.2, 0.55)
+	return _decorated(_painted(LookPaint.grass(), 4.2, 0.55))
+
+
+## `m` with the realm's own marks laid over it (LookPaint.deco).
+func _decorated(m: ShaderMaterial) -> ShaderMaterial:
+	var d := LookPaint.deco(realm)
+	if d != null:
+		m.set_shader_parameter("deco", d)
+		m.set_shader_parameter("deco_scale", 8.0)
+		m.set_shader_parameter("deco_glow", 1.0 if realm == "lanternvale" else 0.0)
+	return m
 
 
 static func _piece(mesh: Mesh, mat: Material, shadows: bool) -> MeshInstance3D:
