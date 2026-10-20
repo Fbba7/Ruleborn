@@ -66,6 +66,11 @@ universe, inside §21.3's 40,000 and 150.
   MultiMesh); the sky's cost trimmed for phones (three octaves of noise, fewer haze sprites).
   Stills: `round4_zoom0.png`, `round4_zoom1_skyfield.png`, `round4_zoom1_crystalline.png`.
 
+- Round 5: the map's world given more of the screen, and its pins compact when the islands are small
+  (each realm's icon and level, alarms kept; producers and strain only once an island is big enough);
+  the universe screen opens on the Heart; on home a third tap on a realm seen close opens its realm view.
+  Still: `round5_home_map_universe.png` (home, the map, the universe screen).
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

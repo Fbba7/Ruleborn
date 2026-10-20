@@ -46,7 +46,7 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 	if raids > 0:
 		var plate := _plate(Palette.ALARM_FILL, Palette.ALARM_FILL)
 		plate.add_child(_with_icon("alert_raided", _words("! %d" % raids, Palette.ON_ALARM)))
-		_pins.append({"node": plate, "realm": "heart", "lift": 11.0, "zooms": [0, 1, 2], "rank": 0})
+		_pins.append({"node": plate, "realm": "heart", "lift": 6.0, "zooms": [0, 1, 2], "rank": 0})
 	for p: Dictionary in extras.get("producers", []):
 		var kind := str(p.get("kind", ""))
 		var stored := int(p.get("stored", 0))
@@ -179,6 +179,17 @@ func follow() -> void:
 			continue
 		var isl: UniverseIsland = view.islands[id]
 		var shown: bool = view.zoom in (p["zooms"] as Array)
+		# Islands small on the screen keep only their names and alarms, and a
+		# name only its realm's icon and level.
+		var small := isl.radius / maxf(0.01, view.camera.size) * view.size.y < UI.px(70)
+		if int(p["rank"]) >= 2 or p.get("back", false):
+			shown = shown and not small
+		if p.get("front", false):
+			var row := node.get_child(0)
+			var words := row.get_child(row.get_child_count() - 1) as Control
+			if words.visible == small:
+				words.visible = not small
+				node.reset_size()
 		if view.zoom > 0 and id != view.focus_id:
 			shown = false
 		node.visible = shown

@@ -37,6 +37,8 @@ var world: UniverseView
 
 var _top: Control
 var _dock: Control
+## The realm the world is closed in on: one more tap there opens it.
+var _close := ""
 
 
 func _ready() -> void:
@@ -52,6 +54,7 @@ func _ready() -> void:
 		return
 	var column := UI.frame(self)
 	world = UniverseView.behind(self, column)
+	world.realm_chosen.connect(_on_realm)
 	# The game's name and what it is, said aloud; the world shows the rest.
 	accessibility_name = Strings.t("APP_NAME")
 	accessibility_description = Strings.t("HOME_TAGLINE")
@@ -97,6 +100,15 @@ func _ready() -> void:
 		await App.services.defences_flow.load_badge()
 	if App.services.api.online() and is_inside_tree():
 		await App.services.universe_flow.load_universe()
+
+
+## A realm tapped in the world: closer, and once close, its realm view.
+func _on_realm(id: String) -> void:
+	if _close == id:
+		_close = ""
+		App.services.realm_flow.open(id)
+		return
+	_close = id if world.zoom == 2 else ""
 
 
 ## The universe framed into the room between the top bar and the menu.

@@ -59,7 +59,7 @@ func _build() -> void:
 	body = UI.scroll(column)
 	# The words take the lower part of the screen; the world, the rest.
 	_sheet = body.get_parent() as Control
-	_sheet.size_flags_stretch_ratio = 1.0
+	_sheet.size_flags_stretch_ratio = 0.5
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
 	column.add_child(UI.narrow(actions))
