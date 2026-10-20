@@ -74,7 +74,7 @@ static func plate(words: Control, dark := false) -> PanelContainer:
 static func ink(node: Node, dark: bool) -> void:
 	for l: Label in node.find_children("*", "Label", true, false):
 		var kind := str(l.get_meta("status", ""))
-		if not dark and kind in ["alarm", "success"]:
+		if not dark and kind in ["alarm", "success"] or l.has_meta("own_ink"):
 			continue
 		l.add_theme_color_override("font_color", LIGHT if dark else BROWN)
 
@@ -102,6 +102,7 @@ static func badge(text: String, fill: Color, points := 18.0) -> PanelContainer:
 	var l := UI.label(text, points)
 	l.add_theme_font_override("font", numbers_font())
 	l.add_theme_color_override("font_color", LIGHT if fill.get_luminance() < 0.5 else BROWN)
+	l.set_meta("own_ink", true)
 	l.add_theme_color_override("font_outline_color", OUTLINE)
 	l.add_theme_constant_override("outline_size", UI.px(1))
 	var p := PanelContainer.new()
@@ -201,15 +202,21 @@ static func names_font() -> Font:
 static func portrait_tile(kind: String, look := "", side_points := 104.0) -> PanelContainer:
 	var school := StageHeroFigure.school(StageHeroFigure.key(kind))
 	var main: Color = Palette.SCHOOL.get(school, Palette.MOTION)
-	var frame := PanelContainer.new()
-	var b := box(main.darkened(0.35), 12.0, false)
-	b.set_content_margin_all(0)
-	frame.add_theme_stylebox_override("panel", b)
-	frame.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
+	# The tile: an outer holder that badges pin to, and inside it a rounded,
+	# clipped frame with the ground and the portrait, so badges stay unclipped.
+	var tile := PanelContainer.new()
+	tile.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	var holder := Control.new()
 	holder.custom_minimum_size = Vector2(UI.px(48), UI.px(side_points))
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	frame.add_child(holder)
+	tile.add_child(holder)
+	var frame := Panel.new()
+	var b := box(main.darkened(0.35), 12.0, false)
+	frame.add_theme_stylebox_override("panel", b)
+	frame.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
+	frame.set_anchors_preset(Control.PRESET_FULL_RECT)
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	holder.add_child(frame)
 	var glow := TextureRect.new()
 	var tex := GradientTexture2D.new()
 	tex.fill = GradientTexture2D.FILL_RADIAL
@@ -224,7 +231,7 @@ static func portrait_tile(kind: String, look := "", side_points := 104.0) -> Pan
 	glow.stretch_mode = TextureRect.STRETCH_SCALE
 	glow.set_anchors_preset(Control.PRESET_FULL_RECT)
 	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	holder.add_child(glow)
+	frame.add_child(glow)
 	var picture := TextureRect.new()
 	picture.texture = Portrait.of(kind, look)
 	picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -232,9 +239,9 @@ static func portrait_tile(kind: String, look := "", side_points := 104.0) -> Pan
 	picture.set_anchors_preset(Control.PRESET_FULL_RECT)
 	picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	picture.name = "Portrait"
-	holder.add_child(picture)
-	frame.set_meta("kind", kind)
-	return frame
+	frame.add_child(picture)
+	tile.set_meta("kind", kind)
+	return tile
 
 
 ## A badge pinned to a corner of a tile (`corner` one of Control's

@@ -99,6 +99,9 @@ func _refresh() -> void:
 		return
 	var busy: bool = r["busy"] != ""
 	var kinds := kinds_of(slice)
+	var levels := {}
+	for c: Dictionary in (slice.get("view", {}) as Dictionary).get("characters", []):
+		levels[int(c["id"])] = int(c["level"])
 	var rows: Array = r["rows"]
 	if not rows.is_empty():
 		var pick := chosen if kinds.has(chosen) else int(rows[0]["id"])
@@ -124,7 +127,7 @@ func _refresh() -> void:
 	var wide := (get_viewport_rect().size.x - UI.px(40) - UI.px(8) * (per - 1)) / per - UI.px(22)
 	for row: Dictionary in rows:
 		var card := character_row(row, busy, _send.bind(row), str(kinds.get(int(row["id"]), "")),
-			_choose.bind(int(row["id"])))
+			_choose.bind(int(row["id"])), int(levels.get(int(row["id"]), 0)))
 		StageHeroSkin.cap_buttons(card, wide)
 		grid.add_child(card)
 	if focus_item != "":
@@ -148,7 +151,7 @@ static func kinds_of(slice: Dictionary) -> Dictionary:
 ## why it waits when it cannot be used. A tap on the portrait stands it on
 ## the hero stage.
 static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "",
-		choose := Callable()) -> Control:
+		choose := Callable(), level := 0) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", UI.px(6))
 	if kind != "":
@@ -157,6 +160,13 @@ static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "
 			tile.gui_input.connect(func(e: InputEvent) -> void:
 				if e is InputEventMouseButton and (e as InputEventMouseButton).pressed:
 					choose.call())
+		# Its level as a number (§21.8's Lilita One) and its school's shape.
+		var school := StageHeroFigure.school(StageHeroFigure.key(kind))
+		var shade: Color = (Palette.SCHOOL.get(school, Palette.MOTION) as Color).darkened(0.55)
+		if level > 0:
+			StageHeroSkin.pin(tile, StageHeroSkin.badge(str(level), shade, 20.0), Control.PRESET_TOP_LEFT)
+		StageHeroSkin.pin(tile, StageHeroSkin.badge(str(UI.SHAPE_GLYPH.get(Tokens.shape(school), "")), shade, 18.0),
+			Control.PRESET_TOP_RIGHT)
 		box.add_child(tile)
 	var open := UI.button(row["name"], func() -> void:
 		App.services.router.go(&"character", {"id": row["id"]}), false, Color(), row["spoken"])
