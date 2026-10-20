@@ -35,6 +35,13 @@ uniform vec3 body_emit = vec3(0.0);
 uniform float hush : hint_range(0.0, 1.0) = 0.0;
 uniform float spark : hint_range(0.0, 1.0) = 0.0;
 uniform vec4 spark_colour : source_color = vec4(1.0, 0.42, 0.1, 1.0);
+uniform float echo_form : hint_range(0.0, 1.0) = 0.0;
+// The notes' colours (8.1's wheel, as law_fx_links.gd draws them).
+uniform vec4 hush_colour : source_color = vec4(0.353, 0.29, 0.604, 1.0);
+uniform vec4 echo_colour_note : source_color = vec4(0.235, 0.776, 0.847, 1.0);
+// The body's height in the mesh's own units (the export's), so a pattern
+// laid by height fits every kind.
+uniform float unit_height = 1.0;
 // A flash of colour (hit, heal), mixed into the albedo.
 uniform vec4 flash : source_color = vec4(1.0, 1.0, 1.0, 0.0);
 // Readability at small size (§21.3: "every character ... must read as a dark
@@ -95,7 +102,30 @@ vec3 creature_hush(vec3 c, vec2 uv, bool body, out vec3 stars) {
 	return r;
 }
 
-void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 n, vec3 v, float far,
+// Spark's "crackling tips and ember flecks" (11.10): flecks that flare and
+// fade in the paint, and arcs that crawl along the silhouette's edge.
+vec3 creature_spark(vec2 uv, vec3 lp, float fr) {
+	vec2 cell = floor(uv * 72.0);
+	float h = creature_hash(cell);
+	vec2 f = fract(uv * 72.0) - 0.5;
+	float flare = 0.5 + 0.5 * sin(TIME * (2.0 + h * 5.0) + h * 40.0);
+	float fleck = step(0.9, h) * smoothstep(0.38, 0.05, length(f)) * flare;
+	float y = lp.y / unit_height;
+	float arc = abs(sin(y * 38.0 + sin(lp.x / unit_height * 23.0 + TIME * 7.0) * 2.2 + TIME * 3.0));
+	float crackle = smoothstep(0.12, 0.0, arc) * smoothstep(0.25, 0.7, fr);
+	crackle *= step(0.35, fract(sin(floor(TIME * 9.0) * 12.9898 + floor(y * 6.0) * 78.233) * 43758.5453));
+	return vec3(1.0, 0.72, 0.3) * fleck * 1.6 + vec3(1.0, 0.85, 0.5) * crackle * 2.2;
+}
+
+// Echo's pattern: rings that run up the body like a sound's echo, in the
+// note's colour.
+float creature_echo_rings(vec3 lp) {
+	float y = lp.y / unit_height;
+	float band = fract(y * 5.0 - TIME * 0.45);
+	return smoothstep(0.0, 0.06, band) * smoothstep(0.2, 0.08, band);
+}
+
+void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 lp, vec3 n, vec3 v, float far,
 		out vec3 albedo, out vec3 emission) {
 	float glow = body ? glow_vc * smoothstep(0.3, 0.65, c.r - c.b) : emit;
 	vec3 stars = vec3(0.0);
@@ -117,6 +147,11 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 			extra += bow * smoothstep(0.05, 0.6, fr) * body_iris * 0.8;
 		}
 		extra += body_emit * (1.0 - hush);
+		if (echo_form > 0.0) {
+			float ring = creature_echo_rings(lp) * echo_form;
+			col = mix(col, mix(col, echo_colour_note.rgb, 0.55), ring);
+			extra += echo_colour_note.rgb * ring * 0.35;
+		}
 	}
 	// Spark warms the paint toward embers before it glows.
 	col = mix(col, col * vec3(1.2, 0.72, 0.42), 0.55 * spark);
@@ -126,13 +161,20 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 	// colour in shade (a light lift of the darkest step, as emission).
 	float side = smoothstep(mix(-0.2, -0.75, far), 0.6, n.x * 0.8 + n.y * 0.4);
 	float rs = rim_strength * mix(1.0, far_rim, far);
-	vec3 rim = mix(rim_colour.rgb, vec3(0.62, 0.7, 1.0), hush) * fr * side * 0.9 * rs
-		+ albedo * vec3(1.0, 0.55, 0.35) * wrap * fr * 0.6 * rs;
+	// Hush's "soft, silent edges": a broad moonlit rim all round, not a hard one.
+	float soft = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 1.6);
+	vec3 rim_col = mix(rim_colour.rgb, mix(echo_colour_note.rgb, vec3(1.0), 0.2), echo_form);
+	vec3 rim = rim_col * fr * side * 0.9 * rs * (1.0 - hush)
+		+ albedo * vec3(1.0, 0.55, 0.35) * wrap * fr * 0.6 * rs * (1.0 - hush);
+	rim += mix(hush_colour.rgb, vec3(0.75, 0.8, 1.0), 0.45) * soft * 0.55 * hush;
 	rim += albedo * 0.06 * far * (1.0 - hush * 0.6);
 	emission = albedo * glow + rim + stars + extra;
 	if (spark > 0.0) {
 		// Spark: lit from within (the Rig page's emissive #6A2208 at 0.35), hotter at the edge.
 		emission += (albedo * 0.3 + spark_colour.rgb * (0.12 + smoothstep(0.02, 0.5, fr) * 1.8)) * spark;
+		if (body) {
+			emission += creature_spark(uv, lp, fr) * spark;
+		}
 	}
 }
 

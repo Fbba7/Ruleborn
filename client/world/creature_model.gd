@@ -18,8 +18,13 @@ const OUTLINE := true
 const OUTLINE_PX := 1.5
 ## The design's cross-fade between clips (creature-kit.js `play`: 280 ms).
 const BLEND := 0.28
-## The Echo twin trails by this much (Featherkin_Rig.html: 0.3 s).
+## The Echo form's ghosts trail by this much each (Featherkin_Rig.html: 0.3 s),
+## and how strongly each is drawn (11.10: "faint ghost outlines that trail a
+## step behind").
 const ECHO_DELAY := 0.3
+const ECHO_GHOSTS := [0.8, 0.45]
+## The Hush form's ink: a deep violet, finer (11.10: "soft, silent edges").
+const HUSH_INK := Color("#2E2457")
 ## Clips that play once and hold or hand back (`ko` holds, `hit` returns).
 const ONCE := [&"hit", &"ko"]
 const FORMS := [&"base", &"hush", &"spark", &"echo"]
@@ -51,7 +56,11 @@ var _material: ShaderMaterial
 var _glass: ShaderMaterial
 var _sockets: Dictionary = {}
 var _loop_clip: StringName = &"idle"
-var _echo: CreatureModel
+var _echoes: Array[CreatureModel] = []
+# Where the body has been (time, transform), for the Echo ghosts to follow.
+var _trail: Array = []
+var _clock := 0.0
+var _outline: ShaderMaterial
 var _gear: Dictionary = {}
 var _fur := 0
 var _lift := 0.5
@@ -113,8 +122,8 @@ func play(clip_name: StringName, speed := 1.0) -> void:
 	if not ONCE.has(name_ok):
 		_loop_clip = name_ok
 	_player.play(name_ok, BLEND, speed)
-	if _echo != null:
-		_echo.play(name_ok, speed)
+	for g: CreatureModel in _echoes:
+		g.play(name_ok, speed)
 
 
 ## Hold one of the design's expressions (curious, focus, startled, caught) over
@@ -127,38 +136,53 @@ func set_expression(expression_name: StringName) -> void:
 		return
 	expression = expression_name
 	_player.play(anim, BLEND)
-	if _echo != null:
-		_echo.set_expression(expression_name)
+	for g: CreatureModel in _echoes:
+		g.set_expression(expression_name)
 
 
-## §21.6's forms: base, hush (midnight, with a crescent charm), spark (lit from
-## within, embers at the design's ember sockets) or echo (a translucent twin a
-## moment behind).
+## §21.6's forms (11.10), each changing pattern, glow and one accessory in
+## its note's colour: base; hush (midnight paint with star freckles, soft
+## violet edges and a moonlit rim, a crescent charm); spark (lit from within,
+## ember flecks and arcs crackling at the edges, embers rising, a star charm);
+## echo (rings running up the body, faint ghost outlines a step behind where
+## the body was, a ring charm).
 func set_form(form_name: StringName) -> void:
 	form = form_name if FORMS.has(form_name) else &"base"
 	_material.set_shader_parameter("hush", 1.0 if form == &"hush" else 0.0)
 	# Midnight does not pale toward the day's sheen.
 	_material.set_shader_parameter("lift", _lift * (0.25 if form == &"hush" else 1.0))
 	_material.set_shader_parameter("spark", 1.0 if form == &"spark" else 0.0)
+	_material.set_shader_parameter("echo_form", 1.0 if form == &"echo" else 0.0)
 	if _glass != null:
 		_glass.set_shader_parameter("hush", 1.0 if form == &"hush" else 0.0)
 		_glass.set_shader_parameter("spark", 1.0 if form == &"spark" else 0.0)
-	_drop_gear(&"hush")
-	_drop_gear(&"spark")
-	if form == &"hush":
-		_gear[&"hush"] = CreatureGear.hush_charm(self)
-	elif form == &"spark":
-		_gear[&"spark"] = CreatureGear.embers(self)
-	if form == &"echo" and _echo == null:
-		_echo = CreatureModel.make(kind)
-		_echo.name = "echo"
-		_echo._ghost()
-		add_child(_echo)
-		_echo.position = Vector3(0.12, 0.0, 0.18) * height()
-		_echo.play(clip)
-	elif form != &"echo" and _echo != null:
-		_echo.queue_free()
-		_echo = null
+	if _outline != null:
+		_outline.set_shader_parameter("ink", HUSH_INK if form == &"hush" else CreatureGear.INK)
+		_outline.set_shader_parameter("width_px", OUTLINE_PX * (0.7 if form == &"hush" else 1.0))
+	for key: StringName in [&"hush", &"spark", &"echo"]:
+		_drop_gear(key)
+	if form != &"base":
+		_gear[form] = CreatureGear.form_charm(self, form)
+	if form == &"spark":
+		_drop_gear(&"embers")
+		_gear[&"embers"] = CreatureGear.embers(self)
+	else:
+		_drop_gear(&"embers")
+	if form == &"echo" and _echoes.is_empty():
+		_trail.clear()
+		for i in ECHO_GHOSTS.size():
+			var g := CreatureModel.make(kind)
+			g.name = "echo" if i == 0 else "echo%d" % (i + 1)
+			g._ghost(float(ECHO_GHOSTS[i]))
+			add_child(g)
+			g.top_level = true
+			g.global_transform = global_transform if is_inside_tree() else transform
+			g.play(clip)
+			_echoes.append(g)
+	elif form != &"echo" and not _echoes.is_empty():
+		for g: CreatureModel in _echoes:
+			g.queue_free()
+		_echoes.clear()
 
 
 ## As a guard (§21.6: "ruleborn add a sash and a small lantern"): a sash across
@@ -283,6 +307,7 @@ func _materials() -> void:
 	_material.set_shader_parameter("lift", _lift)
 	_material.set_shader_parameter("rim_colour", Color(str(info.get("rim", "#9FD4FF"))))
 	_material.set_shader_parameter("glow_vc", float(info.get("glow", 0.0)))
+	_material.set_shader_parameter("unit_height", height() / maxf(0.0001, float(info.get("scale", 1.0))))
 	for i in mesh.get_surface_count():
 		var src := mesh.surface_get_material(i)
 		if src != null and src.resource_name == "creature_glass":
@@ -315,6 +340,7 @@ func _chain_passes() -> void:
 		o.shader = _outline_shader
 		o.set_shader_parameter("width_px", OUTLINE_PX)
 		last.next_pass = o
+		_outline = o
 	else:
 		last.next_pass = null
 
@@ -358,33 +384,59 @@ func _drop_gear(key: StringName) -> void:
 		_gear.erase(key)
 
 
-# The Echo twin: every surface in the glass material's echo colour.
-func _ghost() -> void:
+# An Echo ghost: every surface in the glass material's echo colour, drawn
+# mostly at its edges, at `strength` of full.
+func _ghost(strength: float) -> void:
 	var g := ShaderMaterial.new()
 	g.shader = _glass_shader
 	g.set_shader_parameter("atlas", _material.get_shader_parameter("atlas"))
-	g.set_shader_parameter("echo", 1.0)
+	g.set_shader_parameter("echo", strength)
+	g.set_shader_parameter("unit_height", _material.get_shader_parameter("unit_height"))
 	for i in _mesh.mesh.get_surface_count():
 		_mesh.set_surface_override_material(i, g)
 	_material = g
+	_outline = null
 	for c in get_children():
 		if c is MeshInstance3D and c != _model:
 			c.queue_free()
 	_player.speed_scale = 1.0
-	set_process(true)
 
 
-func _process(_delta: float) -> void:
-	if _echo == null:
+func _process(delta: float) -> void:
+	if _echoes.is_empty():
 		return
-	# Keep the twin a fixed moment behind on the same clip.
+	# Remember where the body has been; each ghost stands where it stood a
+	# step ago, on the same clip that much earlier.
+	_clock += delta
+	_trail.append([_clock, global_transform])
+	var keep := ECHO_DELAY * float(ECHO_GHOSTS.size()) + 0.1
+	while _trail.size() > 2 and float(_trail[1][0]) < _clock - keep:
+		_trail.pop_front()
 	var a := _player.current_animation
-	if a == "":
-		return
-	if _echo._player.current_animation != a:
-		_echo._player.play(a, 0.0)
-	var length := _player.get_animation(a).length
-	var t := _player.current_animation_position - ECHO_DELAY
-	if t < 0.0:
-		t = fposmod(t, length) if _player.get_animation(a).loop_mode != Animation.LOOP_NONE else 0.0
-	_echo._player.seek(t, true)
+	for i in _echoes.size():
+		var g := _echoes[i]
+		var lag := ECHO_DELAY * float(i + 1)
+		var then := _trail_at(_clock - lag)
+		# Standing still, a ghost still shows: a little behind and aside.
+		var back := global_transform.basis * (Vector3(0.1, 0.0, 0.16) * float(i + 1) * height())
+		var still := clampf(1.0 - then.origin.distance_to(global_position) / maxf(0.05, 0.2 * height()), 0.0, 1.0)
+		g.global_transform = Transform3D(then.basis, then.origin + back * still)
+		if a == "":
+			continue
+		if g._player.current_animation != a:
+			g._player.play(a, 0.0)
+		var length := _player.get_animation(a).length
+		var t := _player.current_animation_position - lag
+		if t < 0.0:
+			t = fposmod(t, length) if _player.get_animation(a).loop_mode != Animation.LOOP_NONE else 0.0
+		g._player.seek(t, true)
+
+
+func _trail_at(time: float) -> Transform3D:
+	var best: Transform3D = global_transform
+	for e: Array in _trail:
+		if float(e[0]) <= time:
+			best = e[1]
+		else:
+			break
+	return best

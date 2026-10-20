@@ -16,6 +16,7 @@ uniform float fur_len = 0.0045;
 uniform float strand_cells = 1500.0;
 
 varying vec2 flags;
+varying vec3 local_pos;
 
 float fur_hash(vec3 p) {
 	p = fract(p * 0.3183099 + 0.1);
@@ -25,6 +26,7 @@ float fur_hash(vec3 p) {
 
 void vertex() {
 	flags = UV2;
+	local_pos = VERTEX;
 	float mask = UV2.x >= 0.5 ? (UV2.x - 0.5) * 2.0 : 0.0;
 	VERTEX += NORMAL * layer * fur_len * step(0.02, mask);
 }
@@ -39,6 +41,6 @@ void fragment() {
 		discard;
 	}
 	vec3 c = texture(atlas, UV).rgb * mix(0.85, 1.15, layer);
-	creature_surface(c, true, 0.0, 0.0, UV, NORMAL, VIEW, creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE), ALBEDO, EMISSION);
+	creature_surface(c, true, 0.0, 0.0, UV, local_pos, NORMAL, VIEW, creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE), ALBEDO, EMISSION);
 	gloss_band = 0.0;
 }

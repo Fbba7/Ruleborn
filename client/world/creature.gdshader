@@ -21,9 +21,11 @@ uniform float relief : hint_range(0.0, 1.0) = 1.0;
 uniform float binormal_sign = -1.0;
 
 varying vec2 flags;
+varying vec3 local_pos;
 
 void vertex() {
 	flags = UV2;
+	local_pos = VERTEX;
 }
 
 void fragment() {
@@ -37,6 +39,6 @@ void fragment() {
 	}
 	float gloss = body ? body_gloss : flags.x / 0.45;
 	float emit = body ? 0.0 : flags.y;
-	creature_surface(c, body, gloss, emit, UV, NORMAL, VIEW, creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE), ALBEDO, EMISSION);
+	creature_surface(c, body, gloss, emit, UV, local_pos, NORMAL, VIEW, creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE), ALBEDO, EMISSION);
 	gloss_band = gloss;
 }
