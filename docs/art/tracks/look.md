@@ -36,6 +36,16 @@ This track owns `outline.gdshader` but not the creature material (T1). The outli
 - A `Color` times a number scales its alpha too, and alpha under 1 means "glow" in the toon kit: darken with `IslandBuilder._dim`.
 - The sky ambient barely answered `ambient_light_energy` here (0.4 to 0.24 changed little); its strength is set by the hemisphere shader's `strength`.
 
+## After the integration merge (da71550)
+
+- The grid's ground is T3's (`kit_ground.gdshader`); `WorldLook.ground_material()` is no longer used for it and stays only as an option.
+- **One meadow across the grid's edge:** within 2.5 m of the grid (`IslandBuilder.GRID_BLEND`), the meadow's vertex colour turns to the palette's `grass` (what KitGround paints the grid with), and its painted texture and realm marks fade out. Everywhere it carries the same brush as the grid's ground: `look_brush.gdshaderinc` writes out T3's patches, dabs and flecks with the same constants. T3 can `#include` it in place of its own copy.
+- Palette `grass` deepened for the Heart, Skyfield and Verdant. Both the island and the grid read it, so their noon greens are near the design's scout stills: Heart 126,143,94 against the design's 111,122,88; Skyfield 152,185,89 against 142,165,89.
+- The waterfall pools give T3's new water shader its shore distance (UV.x), so they have a foam ring and ripples instead of shore everywhere.
+- Night: a soft crescent moon in the sky at night and over Lantern Vale; the fog is lighter so more of the rock shows under the island.
+- Known on the merged base, not from this track: `StageHeroTests._stage` raises a script error (`material_override` on a Nil) in a headless run.
+- Stills: `merged-world.png`, `merged-realms-sheet.png`.
+
 ## Hooks outside the track
 
 - `client/world/world_view.gd` (T5), one line: the grid's ground layer uses `look.ground_material()` instead of the plain toon material.

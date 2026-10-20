@@ -62,7 +62,7 @@ func _init(world: Node3D) -> void:
 	environment.fog_mode = Environment.FOG_MODE_EXPONENTIAL
 	environment.fog_density = 0.0
 	environment.fog_height = -2.5
-	environment.fog_height_density = 0.06
+	environment.fog_height_density = 0.035
 	environment.fog_sky_affect = 0.0
 	var env_node := WorldEnvironment.new()
 	env_node.environment = environment
@@ -106,6 +106,8 @@ func set_hour(new_hour: int) -> void:
 	m.set_shader_parameter("glow", glow)
 	var dark := sky[0].get_luminance() < 0.2
 	m.set_shader_parameter("stars", 0.9 if dark or realm == "crystalline" else 0.0)
+	# A moon over the night realms (§21.2's night sky), low and soft.
+	m.set_shader_parameter("moon", 1.0 if RealmPalette.hour_key(hour) == "night" or realm == "lanternvale" else 0.0)
 	var light: Array = RealmPalette.light_at(hour, realm)
 	sun.light_color = light[0]
 	sun.light_energy = light[1]
@@ -139,7 +141,10 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 	realm = builder.kind
 	_mists.clear()
 	var paint_scale := 4.2
-	statics.add_child(_piece(builder.meadow(), _decorated(_painted(LookPaint.grass(), paint_scale)), false))
+	var meadow := _decorated(_painted(LookPaint.grass(), paint_scale))
+	meadow.set_shader_parameter("grid_blend", IslandBuilder.GRID_BLEND)
+	meadow.set_shader_parameter("brush", 1.0)
+	statics.add_child(_piece(builder.meadow(), meadow, false))
 	statics.add_child(_piece(builder.cliffs(), _painted(LookPaint.rock(), 0.0), true))
 	var roots := builder.roots()
 	statics.add_child(_piece(roots[0], _painted(LookPaint.rock(), 0.0, 0.5), true))

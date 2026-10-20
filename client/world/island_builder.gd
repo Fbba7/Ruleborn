@@ -26,6 +26,9 @@ const DESIGN_R := 12.7
 ## a realm's 25,000–40,000 triangles).
 const RINGS := 12
 const SPOKES := 100
+## Metres from the grid's edge over which the meadow turns from the grid
+## ground's colour and brush to its own painted texture.
+const GRID_BLEND := 2.5
 
 var size := Vector2i(12, 12)
 var island_seed := 1
@@ -160,11 +163,13 @@ func meadow() -> ArrayMesh:
 	var pts: Array[PackedVector3Array] = []
 	var nrm: Array[PackedVector3Array] = []
 	var col: Array[PackedColorArray] = []
+	var off: Array[PackedFloat32Array] = []
 	for i in RINGS + 1:
 		var f := 1.0 - pow(1.0 - float(i) / RINGS, 1.7)
 		var row := PackedVector3Array()
 		var nrow := PackedVector3Array()
 		var crow := PackedColorArray()
+		var orow := PackedFloat32Array()
 		for j in SPOKES:
 			var a := TAU * j / SPOKES
 			var e := edge(a)
@@ -189,10 +194,16 @@ func meadow() -> ArrayMesh:
 				# A beach of sand round the rim (:889).
 				c = c.lerp(Color("#E8D9B0"), smoothstep(e - 1.9, e - 1.2, r) * 0.85)
 			c = c.lerp(dk, smoothstep(e - 0.7, e, r) * 0.45)
+			# Next to the grid, the grid ground's own colour (KitGround paints
+			# the grass `grass`), so the meadow runs on under the tiles.
+			var beside := off_grid(x, z)
+			c = c.lerp(grass, 1.0 - smoothstep(0.0, GRID_BLEND, beside))
 			crow.append(c)
+			orow.append(beside)
 		pts.append(row)
 		nrm.append(nrow)
 		col.append(crow)
+		off.append(orow)
 	for i in RINGS:
 		for j in SPOKES:
 			var j1 := (j + 1) % SPOKES
@@ -200,8 +211,14 @@ func meadow() -> ArrayMesh:
 			var b := pts[i][j1]
 			var c := pts[i + 1][j]
 			var d := pts[i + 1][j1]
-			m.smooth([a, c, b], [nrm[i][j], nrm[i + 1][j], nrm[i][j1]], [col[i][j], col[i + 1][j], col[i][j1]])
-			m.smooth([b, c, d], [nrm[i][j1], nrm[i + 1][j], nrm[i + 1][j1]], [col[i][j1], col[i + 1][j], col[i + 1][j1]])
+			var ua := Vector2(off[i][j], 0)
+			var ub := Vector2(off[i][j1], 0)
+			var uc := Vector2(off[i + 1][j], 0)
+			var ud := Vector2(off[i + 1][j1], 0)
+			m.smooth([a, c, b], [nrm[i][j], nrm[i + 1][j], nrm[i][j1]], [col[i][j], col[i + 1][j], col[i][j1]],
+				[ua, uc, ub])
+			m.smooth([b, c, d], [nrm[i][j1], nrm[i + 1][j], nrm[i + 1][j1]], [col[i][j1], col[i + 1][j],
+				col[i + 1][j1]], [ub, uc, ud])
 	return m.mesh()
 
 
@@ -759,8 +776,9 @@ func waterfalls() -> Array:
 		for i in 20:
 			var a0 := TAU * i / 20.0
 			var a1 := TAU * (i + 1) / 20.0
+			# UV.x is how far from the shore, as the water shader reads it.
 			pools.tri(pool_c, pool_c + Vector3(cos(a0), 0, sin(a0)) * 0.8, pool_c + Vector3(cos(a1), 0, sin(a1)) * 0.8,
-				Color("#6FCDEB"), Vector3.UP)
+				Color.WHITE, Vector3.UP, Vector2(1, 0), Vector2.ZERO, Vector2.ZERO)
 		for st in 9:
 			var sa2 := TAU * (st + _rng.randf() * 0.4) / 9.0
 			var sp := pool_c + Vector3(cos(sa2), -0.02, sin(sa2)) * (0.8 + _rng.randf() * 0.1)
