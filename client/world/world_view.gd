@@ -18,7 +18,8 @@ extends RealmView
 ## no action needs two fingers (§20.8).
 ##
 ## Over the world stand the HUD's world-anchored pieces (`FxAnchors`), the
-## effects of what happens (`FxEvents`) and of the laws running (`FxLaws`).
+## effects of what happens (`FxEvents`) and of the laws running (T8's `LawFx`,
+## under `effects`).
 ## A tap that is not part of a gesture is `tapped`; a long press is `held`.
 
 ## A tap on the world at a point of the view, not part of a pinch or twist.
@@ -44,8 +45,6 @@ const TPS := 30.0
 ## zoom, eight.
 const FOLLOW_TILES := 12.0
 const CLOSE_TILES := 8.0
-## The hour a realm under Glowing dark is lit at.
-const NIGHT := 23
 ## A character model's scale on the heist's world, for readability.
 const MODEL_SCALE := 1.18
 ## The least height a character model is drawn at in a heist, in metres.
@@ -68,9 +67,6 @@ static var _cache := {}
 ## or "ko" by what the simulation says the actor is doing. Unset, the
 ## stand-in figures of `ActorBuilder` are drawn.
 static var figure_maker: Callable = Callable()
-## Whether the laws' world signatures are T8's `LawFx` (on) or this track's
-## own `FxLaws` motes (off).
-static var law_effects := true
 ## Whether the heist's own views use the narrow perspective (else every view
 ## is orthographic).
 static var heist_perspective := true
@@ -109,7 +105,10 @@ var marks_node: MeshInstance3D
 var sight_edge: MeshInstance3D
 var anchors: FxAnchors
 var events: FxEvents
-var laws: FxLaws
+## The laws woven in the realm on show, and how they bend the figures' steps
+## together (T8's `LawFxGait`, §21.7's movement signatures).
+var woven: Array[String] = []
+var gait: Dictionary = LawFxGait.NEUTRAL.duplicate()
 ## Where the laws' world signatures hang (T8's `LawFx` attaches under it),
 ## and the `LawFx` drawn there, synced each tick; null where it is not.
 var effects: Node3D
@@ -206,8 +205,6 @@ func _build_stage() -> void:
 	effects = Node3D.new()
 	effects.name = "Effects"
 	world.add_child(effects)
-	laws = FxLaws.new()
-	world.add_child(laws)
 	set_sky_hour(Time.get_datetime_dict_from_system()["hour"])
 
 
@@ -215,7 +212,7 @@ func _build_stage() -> void:
 func set_sky_hour(when: int) -> void:
 	hour = when
 	# A realm under Glowing dark is lit as at night (§21.7).
-	look.set_hour(NIGHT if laws != null and laws.dark() else when)
+	look.set_hour(when)
 
 
 static func material(shader: Shader, outlined := false) -> ShaderMaterial:
@@ -309,18 +306,18 @@ func _build_statics() -> void:
 	_skiff.scale = Vector3.ONE * 1.4
 	_skiff.visible = false
 	statics.add_child(_skiff)
-	var woven: Array[String] = []
+	woven.clear()
 	for p: Dictionary in replay.pylons():
-		woven.append(str(p.get("law", "")))
-	# The laws' world signatures are T8's `LawFx` where it draws (a 3D
-	# renderer; when `law_effects` is on); this track's `FxLaws` then keeps
-	# only the movement signatures, and draws the motes itself otherwise.
+		if not woven.has(str(p.get("law", ""))):
+			woven.append(str(p.get("law", "")))
+	gait = LawFxGait.blend(woven)
+	# The laws' world signatures are T8's `LawFx`, one system for every
+	# screen, under `effects`; drawn where a 3D renderer is.
 	if law_fx != null:
 		law_fx.queue_free()
 		law_fx = null
-	if law_effects and rendering_3d():
+	if rendering_3d():
 		law_fx = LawFx.attach(self, replay)
-	laws.build(woven, _size, self, law_fx == null)
 	_build_actors()
 
 
@@ -766,7 +763,6 @@ func _process(delta: float) -> void:
 			_aim = _aim.lerp(goal, 1.0 - exp(-delta * 4.0)) if zoom > 0 or _zoom_f > 0.5 else _aim
 	_frame_camera()
 	FxGround.rings(self, _rings, t / TPS)
-	laws.tick(delta, self)
 	if law_fx != null:
 		law_fx.sync(t)
 	anchors.tick(delta)

@@ -171,34 +171,18 @@ func _taps(view: WorldView) -> void:
 		"%s %s %s %s" % [one, dragged, stepped, turned])
 
 
-## Every launch law has its look, each drawn in at most two draw calls.
+## The heist's figures step as the laws woven make them (T8's gait, §21.7):
+## a hoppy law hops higher, a slow one steps slower, none is plain.
 func _laws(view: WorldView) -> void:
-	var path := ProjectSettings.globalize_path("res://").path_join("../content/laws.json")
-	var launch: Array[String] = []
-	var rows: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
-	if rows is Array:
-		for row: Dictionary in rows:
-			if row.get("launch", false):
-				launch.append(str(row["id"]))
-	var missing := launch.filter(func(id: String) -> bool: return not FxLaws.LOOK.has(id))
-	var known := Array(RulebornStability.law_ids())
-	var stray := FxLaws.LOOK.keys().filter(func(id: String) -> bool: return not known.has(id))
-	var heavy := []
-	var fx := FxLaws.new()
-	tree.root.add_child(fx)
-	for id: String in FxLaws.LOOK:
-		var one: Array[String] = [id]
-		fx.build(one, Vector2i(12, 12), view)
-		var calls := fx.get_children().filter(func(n: Node) -> bool: return not n.is_queued_for_deletion()).size()
-		if calls > 2 or calls == 0:
-			heavy.append("%s %d" % [id, calls])
-	var empty: Array[String] = []
-	fx.build(empty, Vector2i(12, 12), view)
-	fx.queue_free()
-	check.call("every launch law has its world signature on screen, each in at most two draw calls, and only laws "
-			+ "the simulation has (21.7, 21.3)",
-		launch.size() == 24 and missing.is_empty() and stray.is_empty() and heavy.is_empty(),
-		"%d launch, missing %s, stray %s, heavy %s" % [launch.size(), missing, stray, heavy])
+	var plain := FxMotion.movement(LawFxGait.blend([]), true, 0.0)
+	var hoppy := FxMotion.movement(LawFxGait.blend(["half_gravity"]), true, 0.0)
+	var woven := view.woven.duplicate()
+	var expect := LawFxGait.blend(woven)
+	check.call("the heist's figures step as the laws woven make them, by the one law-effect system's gait: plain with "
+			+ "none, higher under half gravity, and the realm's own laws read from its pylons (21.7)",
+		is_equal_approx(float(plain["hop"]), 1.0) and is_equal_approx(float(plain["rate"]), 1.0)
+			and (float(hoppy["hop"]) > 1.0 or float(hoppy["float"]) > 0.0) and view.gait == expect
+			and woven.has("bloom"), "%s %s %s" % [plain, hoppy, woven])
 
 
 ## Reduced motion: no shake, no swoop (20.8).

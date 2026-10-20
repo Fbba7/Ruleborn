@@ -100,7 +100,7 @@ static func rings(view: WorldView, into: MeshInstance3D, t: float) -> void:
 		g.ring(Geo.place(at + Vector3(0, 0.05, 0)), 0.4 + pulse, 0.54 + pulse, Palette.MOTION, 28)
 		g.ring(Geo.place(at + Vector3(0, 0.051, 0)), 0.54 + pulse, 0.57 + pulse, Palette.INK, 28)
 	var shown := view.shown_guard()
-	var night := view.hour >= 19 or view.hour < 6 or (view.laws != null and view.laws.dark())
+	var night := view.hour >= 19 or view.hour < 6 or view.woven.has("glowing_dark")
 	for i in view._guards.size():
 		var node := view._guards[i]
 		if node.get_meta("down", false):
