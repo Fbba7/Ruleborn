@@ -323,13 +323,20 @@ func _tree(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
 				hero.prism(Geo.place(c + Vector3(0, y, 0), j + k), 8, (0.42 - 0.1 * k) * tall, 0.0,
 					0.55 * tall, plant.darkened(0.12 - 0.06 * k), true)
 		"willow":
-			hero.cyl(Geo.place(c), 0.1, 0.07, 0.75 * tall, bark.darkened(0.15), 6)
-			hero.ball(Geo.place(c + Vector3(0, 0.9 * tall, 0), j, Vector3(1.1, 0.7, 1.1)), 0.42, plant.darkened(0.05),
-				4, 9)
-			for k in 7:
-				var a := TAU * k / 7.0 + j
-				var p := c + Vector3(cos(a) * 0.36, 0.25 * tall, sin(a) * 0.36)
-				hero.prism(Geo.place(p, a), 4, 0.06, 0.1, 0.55 * tall, plant.lightened(0.05 * (k % 2)))
+			hero.cyl(Geo.place(c), 0.1, 0.07, 0.95 * tall, bark.darkened(0.15), 6)
+			var crown := plant.darkened(0.25).lerp(Color("#2E6A5A"), 0.3)
+			hero.ball(Geo.place(c + Vector3(0, 1.0 * tall, 0), j, Vector3(1.15, 0.6, 1.15)), 0.42, crown, 4, 9)
+			for k in 11:
+				var a := TAU * k / 11.0 + j
+				var p := c + Vector3(cos(a) * 0.38, 0.98 * tall, sin(a) * 0.38)
+				var hang := (0.55 + 0.2 * RealmKit.jitter(t, k + 30)) * tall
+				hero.prism(Transform3D(Basis(Vector3.RIGHT, PI), p), 3, 0.05, 0.012, hang,
+					crown.lightened(0.08 * (k % 3)).lerp(plant, 0.25))
+			if kit.realm == "lanternvale":
+				for k in 3:
+					var a := TAU * k / 3.0 + j
+					hero.ball(Geo.place(c + Vector3(cos(a) * 0.3, 0.55 * tall, sin(a) * 0.3)), 0.035,
+						Color(Color("#FFE7A8"), 0.2), 2, 5)
 		"birch":
 			hero.cyl(Geo.place(c), 0.06, 0.045, 0.9 * tall, Color("#F2EEE4"), 6)
 			for k in 3:

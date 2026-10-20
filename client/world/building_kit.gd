@@ -301,6 +301,7 @@ func _dress(kind: String) -> void:
 	cyl(0.018, 0.014, 0.4, KitStyle.WOOD_DARK, lx, 0, lz, 5)
 	box(0.07, 0.08, 0.07, KitStyle.lit(Color("#FFD27A"), 0.75), lx, 0.44, lz)
 	cone(0.06, 0.05, KitStyle.WOOD_DARK, lx, 0.48, lz, 4)
+	_topper()
 	if level >= 3:
 		flag(-0.32, top * 0.82, -0.22, 0.42)
 	if level >= 6:
@@ -328,6 +329,55 @@ func _dress(kind: String) -> void:
 		stop()
 	if level >= 10:
 		KitBuildings2.crown(self, kind)
+
+
+## The realm's mark on every roof (the design's `topper`, :749–755): crystals
+## in Crystalline, a pinwheel in Skyfield, a shell dome in Tidehold, a
+## brazier in Emberreach, moss in Verdant, a lantern in Lantern Vale and
+## flowers at the door in the Heart.
+func _topper() -> void:
+	var realm := KitStyle.realm_of(palette)
+	match realm:
+		"crystalline":
+			move(Geo.Anim.SPIN_Y, at(0, top, 0))
+			for i in 3:
+				d.gem(Geo.place(at((i - 1) * 0.12, top + 0.06, (i % 2) * 0.07), i * 0.7), 0.045 * unit, 0.12 * unit,
+					KitStyle.lit(Color("#C8B8FF"), 0.45), 4)
+			stop()
+		"skyfield":
+			cyl(0.01, 0.01, 0.3, KitStyle.IRON, 0, top - 0.05, 0, 4)
+			var hub := at(0, top + 0.25, 0.02)
+			move(Geo.Anim.SPIN_Z, hub)
+			for i in 4:
+				var a := TAU * i / 4.0
+				d.tri(hub, hub + Vector3(cos(a), sin(a), 0) * 0.12 * unit,
+					hub + Vector3(cos(a + 0.6), sin(a + 0.6), 0) * 0.08 * unit, KitStyle.GOLD if i % 2 == 0 else Color.WHITE)
+			stop()
+		"tidehold":
+			d.ball(Geo.place(at(0, top - 0.04, 0)), 0.12 * unit, Color("#5ED3E6"), 3, 8, true)
+			for i in 4:
+				var a := i * PI / 2.0 + 0.4
+				cone(0.03, 0.09, Color("#FFF3E0"), cos(a) * 0.45, 0.0, sin(a) * 0.45, 5)
+		"emberreach":
+			cyl(0.05, 0.07, 0.06, KitStyle.IRON, 0, top - 0.04, 0, 6)
+			move(Geo.Anim.BOB, at(0, top + 0.06, 0))
+			ball(0.05, KitStyle.lit(Color("#FF8A3C"), 0.2), 0, top + 0.06, 0, 1.4, 2, 6)
+			stop()
+		"verdant":
+			for i in 4:
+				d.rock(Geo.place(at((Geo._hash01(i * 7 + level) - 0.5) * 0.4, top - 0.12 - 0.08 * (i % 2),
+					(Geo._hash01(i * 3) - 0.5) * 0.3)), 0.06 * unit, Color("#4CA24C"), i)
+		"lanternvale":
+			var hook := at(0.3, 0.42, 0.44)
+			fine(0.02, 0.02, 0.12, KitStyle.WOOD_DARK, 0.3, 0.44, 0.4)
+			move(Geo.Anim.SWING, hook)
+			d.rbox(Geo.place(hook + Vector3(0, -0.07, 0) * unit), Vector3(0.07, 0.09, 0.07) * unit,
+				KitStyle.lit(Color("#FFD27A"), 0.15), 0.01)
+			stop()
+		_:
+			var petals: Array[Color] = [Color("#F7A6DA"), Color.WHITE, Color("#FFE08F")]
+			for i in 5:
+				ball(0.025, petals[i % 3], -0.25 + 0.12 * i, 0.03, 0.46 + 0.04 * (i % 2), 1.0, 2, 5)
 
 
 ## The packed-earth pad a building stands on (the design's foundation disc,
