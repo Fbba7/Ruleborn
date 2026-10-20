@@ -159,7 +159,10 @@ func _fold() -> void:
 	var screen: RealmScreen = await mount.call("realm")
 	StageFixtures.realm(App.services)
 	await tree.process_frame
-	var laws := screen.view.law_fx != null and screen.view.law_fx.signatures.size() == 2
+	# WorldView draws the laws (T8's LawFx) where a 3D renderer runs; a
+	# headless run checks the fold alone.
+	var laws := not WorldView.rendering_3d() or (screen.view.law_fx != null
+		and screen.view.law_fx.signatures.size() == 2)
 	var key: Button = null
 	for b: Button in screen.find_children("*", "Button", true, false):
 		if b.has_meta("fold"):
