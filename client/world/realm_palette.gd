@@ -144,6 +144,13 @@ static func realm_sky_at(hour: int, type := "heart") -> Array[Color]:
 	var r := of(type)
 	var hour_pair := sky_at(hour)
 	var w: float = LIGHTS.get(type, LIGHTS["heart"])["hour"]
+	# The realm keeps its own sky by day; at dusk and at night the hour's
+	# takes over more, so no horizon stays bright after dark.
+	match hour_key(hour):
+		"dusk":
+			w = maxf(w, 0.45)
+		"night":
+			w = maxf(w, 0.7)
 	var top: Color = (r["sky_top"] as Color).lerp(hour_pair[0], w)
 	var mid: Color = (r["sky_mid"] as Color).lerp(hour_pair[0].lerp(hour_pair[1], 0.5), w)
 	var low: Color = (r["sky_low"] as Color).lerp(hour_pair[1], w * 0.8)
