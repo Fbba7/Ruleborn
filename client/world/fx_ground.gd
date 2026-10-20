@@ -80,7 +80,8 @@ static func cone_outline(g: Geo, at: Vector3, facing: float, cone: float, far: f
 
 ## The rings on the ground: each crew member's in its role's colour, as the
 ## designs ring their crew, the chosen one's gold and pulsing; each guard's in
-## its awareness colour, so its state reads from above too.
+## its awareness colour, so its state reads from above too, the shown one's
+## doubled.
 static func rings(view: WorldView, into: MeshInstance3D, t: float) -> void:
 	var g := Geo.new()
 	var crew := view.replay.crew()
@@ -95,12 +96,23 @@ static func rings(view: WorldView, into: MeshInstance3D, t: float) -> void:
 		var at := view._crew[chosen].position
 		g.ring(Geo.place(at + Vector3(0, 0.05, 0)), 0.4 + pulse, 0.54 + pulse, Palette.MOTION, 28)
 		g.ring(Geo.place(at + Vector3(0, 0.051, 0)), 0.54 + pulse, 0.57 + pulse, Palette.INK, 28)
+	var shown := view.shown_guard()
+	var night := view.hour >= 19 or view.hour < 6 or (view.laws != null and view.laws.dark())
 	for i in view._guards.size():
 		var node := view._guards[i]
 		if node.get_meta("down", false):
 			continue
+		if night:
+			# By night a guard's lantern lights a warm pool round it
+			# (§21.2: "lanterns and glows carry the realm").
+			var pool := node.position + node.basis * Vector3(-0.3, 0.0, -0.4)
+			g.ring(Geo.place(Vector3(pool.x, node.position.y + 0.035, pool.z)), 0.0, 1.1, Color("#FFC36A", 0.5), 24)
 		var c: Color = Palette.GUARD_STATE.get(str(node.get_meta("state", "Unaware")), Palette.PAPER)
 		g.ring(Geo.place(node.position + Vector3(0, 0.05, 0)), 0.42, 0.5, c, 24)
+		if i == shown:
+			# The guard whose sight is drawn: an ink-red ring round its own,
+			# so whose cone it is reads at a glance (§21.12).
+			g.ring(Geo.place(node.position + Vector3(0, 0.052, 0)), 0.52, 0.62, Palette.ALARM.darkened(0.3), 28)
 	route(view, g, t)
 	into.mesh = g.mesh()
 

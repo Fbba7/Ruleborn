@@ -4,12 +4,14 @@ extends SceneTree
 ## "start" (just landed, the first orders given), "sneak" (the crew spread, a
 ## guard looking), "vault" (the crew at the Vault, cracking), "alarm" (a
 ## guard alerted, the alarm up), "pick" (the landing picker, before landing),
-## "cross" (the swoop to another realm, at its middle). HOUR and ZOOM are
-## optional; BUTTONS shows Settings' turn and zoom buttons.
+## "cross" (the swoop to another realm, at its middle), "escape" (Get out,
+## the skiff called to the edge). HOUR and ZOOM are optional; BUTTONS shows
+## Settings' turn and zoom buttons, CONTRAST high contrast.
 
-const TO := {"cross": [[4, 9], [3, 10], [4, 11]], "sneak": [[4, 9], [3, 10], [4, 11]],
-	"vault": [[6, 10], [5, 10], [7, 10]], "alarm": [[5, 6], [3, 10], [4, 11]], "start": [[7, 8], [2, 10], [1, 10]]}
-const TICKS := {"cross": 60, "start": 30, "sneak": 150, "vault": 300, "alarm": 150}
+const TO := {"escape": [[2, 10], [3, 10], [2, 11]], "cross": [[4, 9], [3, 10], [4, 11]],
+	"sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]], "alarm": [[5, 6], [3, 10], [4, 11]],
+	"start": [[7, 8], [2, 10], [1, 10]]}
+const TICKS := {"escape": 120, "cross": 60, "start": 30, "sneak": 150, "vault": 300, "alarm": 150}
 
 
 func _initialize() -> void:
@@ -25,6 +27,8 @@ func _go() -> void:
 	root.add_child(frame)
 	App.services = Fixtures.answered(Services.build(frame, "", null, "user://outbox-shot.json"))
 	Settings.camera_buttons = OS.get_environment("BUTTONS") != ""
+	Settings.high_contrast = OS.get_environment("CONTRAST") != ""
+	Settings.apply()
 	App.services.store.dispatch(&"heist_started", {"island": WorldTests.island(), "testing": true})
 	var screen: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
 	frame.add_child(screen)
@@ -56,6 +60,14 @@ func _go() -> void:
 	if moment == "vault":
 		screen.controller.select(0)
 		screen.controller.tap_tile(screen.controller.world.vault()["at"])
+		for k in 4:
+			screen.controller.advance(10)
+			screen._refresh()
+			view._process(1.0 / 3.0)
+	if moment == "escape":
+		# Get out, and the skiff called to the south-west edge.
+		screen.controller.get_out()
+		screen.controller.tap_tile(Vector2i(1, 11))
 		for k in 4:
 			screen.controller.advance(10)
 			screen._refresh()

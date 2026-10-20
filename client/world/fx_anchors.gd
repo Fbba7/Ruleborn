@@ -24,6 +24,9 @@ const POP_SECONDS := 1.1
 const STATE_FILL := {"Unaware": Color("#FFFFFF"), "Returning": Color("#FFFFFF"), "Suspicious": Color("#FFD34A"),
 	"Investigating": Color("#FFB03A"), "Searching": Color("#FF8A3A"), "Alerted": Color("#E2536B")}
 const OFF := Vector2(-99999, -99999)
+## How full each state fills the pip.
+const AWARE_FILL := {"Unaware": 0.0, "Returning": 0.15, "Suspicious": 0.35, "Investigating": 0.6, "Searching": 0.8,
+	"Alerted": 1.0}
 const STATE_MARK := {"Suspicious": "?", "Investigating": "??", "Searching": "?", "Alerted": "!"}
 
 var view: WorldView
@@ -246,16 +249,15 @@ func _draw_guards(replay: RulebornReplay, m: float, calm: bool) -> void:
 			continue
 		var state := str(g["state"])
 		var fill: Color = STATE_FILL.get(state, Color.WHITE)
+		# §21.6's pip over the head, filling white, then yellow, then red with
+		# awareness; once the guard suspects, its mark rides above it.
+		_pip(at + Vector2(0, s * 0.1), s * 0.22, float(AWARE_FILL.get(state, 0.0)), fill)
 		if STATE_MARK.has(state):
 			var bob := 0.0 if calm else sin(_time * 6.0 + i) * s * 0.06
 			var grow := 1.0
 			if state == "Alerted" and not calm:
 				grow = 1.0 + 0.12 * absf(sin(_time * 5.0))
-			FxIcons.bubble(self, at + Vector2(0, bob - s * 0.2), s * grow, STATE_MARK[state], fill)
-		else:
-			# The quiet pip: a small white bead that fills as it notices.
-			draw_circle(at + Vector2(0, s * 0.05), s * 0.2, FxSkin.INK_LINE)
-			draw_circle(at + Vector2(0, s * 0.05), s * 0.14, fill)
+			FxIcons.bubble(self, at + Vector2(0, bob - s * 0.8), s * grow, STATE_MARK[state], fill)
 
 
 func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
@@ -283,6 +285,12 @@ func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
 			var col := FxSkin.SUCCESS if share > 0.5 else (FxSkin.GOLD if share > 0.25 else FxSkin.ALARM)
 			FxIcons.bar(self, Rect2(at + Vector2(-w * 0.5, y), Vector2(w, h)), share, col)
 			y += h + 3.0
+		else:
+			# The designs' pip over each of the crew, in its role's colour: whose
+			# side it is on reads at a glance.
+			var pip: Color = Palette.ROLE.get(str(mem["role"]), Palette.PAPER)
+			draw_circle(at + Vector2(0, h * 0.5), h * 0.95, FxSkin.INK_LINE)
+			draw_circle(at + Vector2(0, h * 0.5), h * 0.7, pip)
 		var bag := float(mem["carried"]) / maxf(1.0, float(mem["carry"]))
 		if bag > 0.0:
 			FxIcons.bar(self, Rect2(at + Vector2(-w * 0.5 + h, y), Vector2(w - h, h * 0.8)), bag, FxSkin.GOLD)
@@ -296,6 +304,25 @@ func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
 			draw_colored_polygon(tri, FxSkin.GOLD)
 		if names_for > 0.0:
 			_name_tag(at + Vector2(0, -w * 0.45), Strings.term("ROLE", str(mem["role"])))
+
+
+## A round pip filled to `share` from the bottom up, in `colour` on white.
+func _pip(at: Vector2, r: float, share: float, colour: Color) -> void:
+	draw_circle(at, r + maxf(2.0, r * 0.25), FxSkin.INK_LINE)
+	draw_circle(at, r, Color.WHITE)
+	if share <= 0.0:
+		return
+	if share >= 1.0:
+		draw_circle(at, r, colour)
+		return
+	# The filled part: the circle's segment below the line at `share` of its
+	# height, its arc closed by the chord.
+	var a0 := asin(clampf(1.0 - 2.0 * share, -1.0, 1.0))
+	var pts := PackedVector2Array()
+	for k in 17:
+		var a := lerpf(a0, PI - a0, k / 16.0)
+		pts.append(at + Vector2(cos(a), sin(a)) * r)
+	draw_colored_polygon(pts, colour.darkened(0.12) if colour == Color.WHITE else colour)
 
 
 func _name_tag(at: Vector2, words: String) -> void:

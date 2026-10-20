@@ -34,6 +34,8 @@ func run() -> void:
 	_taps(view)
 	_laws(view)
 	_calm(view)
+	_skiff(view, replay)
+	_moments()
 	view.queue_free()
 	await tree.process_frame
 
@@ -211,3 +213,33 @@ func _calm(view: WorldView) -> void:
 	view._shake = 0.0
 	check.call("reduced motion takes away the shake and the swoop between realms; without it the shake is gentle "
 			+ "(20.8, 21.8)", still and moves, "%s %s" % [still, moves])
+
+
+## Get out's skiff stands where the order called it, and nowhere before.
+func _skiff(view: WorldView, replay: RulebornReplay) -> void:
+	view._sync_skiff(0.0)
+	var hidden := not view._skiff.visible
+	replay.give(0, HeistController.Kind.SKIFF, 128, 11 * 256 + 128)
+	replay.step()
+	view.describe()
+	view._sync_skiff(0.0)
+	var edge := view.world_at(Vector2(0.5, 11.5))
+	var shown := view._skiff.visible and Vector2(view._skiff.position.x, view._skiff.position.z).length() \
+		> Vector2(edge.x, edge.z).length()
+	check.call("the skiff Get out calls is drawn off the island's edge where it was called, and not before (5.4)",
+		hidden and shown, "%s %s %s" % [hidden, view._skiff.visible, view._skiff.position])
+
+
+## The replay's timeline marks a golden heist's moments where they happen.
+func _moments() -> void:
+	var golden := FileAccess.get_file_as_bytes("res://goldens/planned-clean.rbh")
+	var marks := ReplayScreen.moments(golden, PackedByteArray())
+	var count := func(kind: String) -> int:
+		return marks.filter(func(m: Dictionary) -> bool: return m["kind"] == kind).size()
+	var ordered := true
+	for k in range(1, marks.size()):
+		ordered = ordered and int(marks[k]["tick"]) >= int(marks[k - 1]["tick"])
+	check.call("the replay's timeline marks each knock-out, each rise of the alarm, the Vault opening and each pylon "
+			+ "broken, in the order they happen",
+		count.call("ko") == 4 and count.call("vault") == 1 and count.call("alarm") >= 1 and count.call("pylon") == 1
+			and ordered, "%s" % [marks])

@@ -92,6 +92,8 @@ var _vault: MeshInstance3D
 var _pylons: Array[MeshInstance3D] = []
 var _wards: Array[MeshInstance3D] = []
 var _walls: MeshInstance3D
+## The crew's skiff, where Get out called it.
+var _skiff: MeshInstance3D
 var _crew: Array[Node3D] = []
 var _guards: Array[Node3D] = []
 ## Each actor's place a tick ago and now, for drawing between ticks.
@@ -273,6 +275,10 @@ func _build_statics() -> void:
 		_wards.append(mi)
 	_walls = _instance(null, material(_clear), false)
 	statics.add_child(_walls)
+	_skiff = _instance(ActorBuilder.skiff(), material(_toon, true))
+	_skiff.scale = Vector3.ONE * 1.4
+	_skiff.visible = false
+	statics.add_child(_skiff)
 	var woven: Array[String] = []
 	for p: Dictionary in replay.pylons():
 		woven.append(str(p.get("law", "")))
@@ -554,6 +560,28 @@ func _place_actors(t: float) -> void:
 			_guards[i].position = (_from[k] as Vector3).lerp(_to[k], t)
 
 
+## The skiff where the last Get out called it (§5.4): hovering off the
+## island's edge beside the tile, bobbing, turned to the island.
+func _sync_skiff(t: float) -> void:
+	if _skiff == null:
+		return
+	var at := Vector2(-1, -1)
+	var orders := replay.commands()
+	for k in range(orders.size() - 1, -1, -1):
+		var c: Dictionary = orders[k]
+		if int(c["kind"]) == HeistController.Kind.SKIFF:
+			at = Vector2(c["x"], c["y"]) / 256.0
+			break
+	_skiff.visible = at.x >= 0.0
+	if not _skiff.visible:
+		return
+	var p := world_at(at)
+	var out := Vector2(p.x, p.z).normalized()
+	var bob := 0.0 if Settings.reduced_motion else sin(t * 1.6) * 0.08
+	_skiff.position = Vector3(p.x + out.x * 2.6, maxf(0.0, p.y) + 0.9 + bob, p.z + out.y * 2.6)
+	_skiff.rotation = Vector3(0, atan2(out.x, out.y) + PI / 2.0, sin(t * 1.1) * 0.05)
+
+
 func _sync_pieces() -> void:
 	var v := replay.vault()
 	if _vault != null and v.has("at"):
@@ -637,6 +665,7 @@ func _process(delta: float) -> void:
 	_place_actors(clampf(_since * TPS, 0.0, 1.0))
 	var t := replay.tick() + clampf(_since * TPS, 0.0, 1.0)
 	_animate(t)
+	_sync_skiff(t / TPS)
 	if heist and not follow.is_empty():
 		var goal := _follow_point()
 		if _aimed:
