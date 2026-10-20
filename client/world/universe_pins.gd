@@ -1,0 +1,183 @@
+class_name UniversePins
+extends Control
+## The universe map's pins (§23.2: realms "with their laws, links, strain
+## band, faults, alerts, resources"): each realm's name and level, which a
+## tap swoops to; what each producer has ready, ringed when it is full; new
+## raids on the Heart; a fault on the realm it opens from; and the next realm
+## to open. They are interface, not world: placed each frame where the
+## camera shows the point they belong to (the design's projected pins, :241).
+## Words in ink-dark plates with paper text, so they read over any sky
+## (§21.8), and each says in words what its colour says (§20.8).
+
+## Pins' words: a little under body text, and never under §21.8's 13 points.
+const POINTS := 14.0
+## Each resource's colour and its glyph, so the colour is never alone.
+const RESOURCE := {"star_well": ["#F2B43C", "✦"], "aether_spring": ["#3CC6D8", "◆"], "garden": ["#5CC46A", "❦"]}
+
+var view: UniverseView
+## Each pin: {"node": Control, "at": Vector3 or realm id, "realm": id, "lift": metres, "zooms": [levels]}.
+var _pins: Array[Dictionary] = []
+
+
+func _init(owner_view: UniverseView) -> void:
+	view = owner_view
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+## The pins for a universe and what other slices add (`UniverseView.show_universe`).
+func show_pins(universe: Dictionary, extras: Dictionary) -> void:
+	for p: Dictionary in _pins:
+		(p["node"] as Control).queue_free()
+	_pins.clear()
+	for r: Dictionary in universe.get("realms", []):
+		var id := str(r.get("realm", ""))
+		var title := UniversePresenter.realm_name(str(r.get("type", "Heart")))
+		var key := UniverseLayout.type_key(str(r.get("type", "Heart")))
+		var school: Color = Palette.SCHOOL.get(UniverseLayout.SCHOOLS[key], Palette.SPIRIT)
+		var b := _realm_pin(id, title, int(r.get("level", 1)), school)
+		_pins.append({"node": b, "realm": id, "front": true, "zooms": [0, 1], "rank": 1})
+	var faults: Array = universe.get("faults", [])
+	for f: Variant in faults:
+		var plate := _plate(Palette.ALARM_FILL, Palette.ALARM_FILL)
+		plate.add_child(_words("ϟ " + UniversePresenter.realm_name(_type_of(universe, str(f))), Palette.ON_ALARM))
+		_pins.append({"node": plate, "realm": str(f), "lift": 3.5, "zooms": [0, 1, 2], "rank": 0})
+	var raids := int(extras.get("raids", 0))
+	if raids > 0:
+		var plate := _plate(Palette.ALARM_FILL, Palette.ALARM_FILL)
+		plate.add_child(_words("! %d" % raids, Palette.ON_ALARM))
+		_pins.append({"node": plate, "realm": "heart", "lift": 11.0, "zooms": [0, 1, 2], "rank": 0})
+	for p: Dictionary in extras.get("producers", []):
+		var kind := str(p.get("kind", ""))
+		var stored := int(p.get("stored", 0))
+		if stored <= 0:
+			continue
+		var look: Array = RESOURCE.get(kind, ["#F2B43C", "✦"])
+		var full := stored >= int(p.get("holds", 1))
+		var plate := _plate(Palette.INK, Palette.ALARM if full else Color(look[0]))
+		plate.add_child(_words("%s %s" % [look[1], ShopPresenter.grouped(stored)], Palette.PAPER))
+		_pins.append({"node": plate, "realm": str(p.get("realm", "")), "building": kind, "lift": 0.0,
+			"zooms": [0, 1, 2], "rank": 2})
+	var open: Variant = universe.get("open")
+	if open is Dictionary and not ((open as Dictionary).get("types", []) as Array).is_empty():
+		var plate := _plate(Color(Palette.INK, 0.8), Palette.STONE)
+		var name := UniversePresenter.realm_name(str((open as Dictionary)["types"][0]))
+		plate.add_child(_words("+ " + name, Palette.PAPER))
+		_pins.append({"node": plate, "realm": "next:0", "lift": 1.0, "zooms": [0], "rank": 3})
+	# The most urgent first: a pin that would cover one before it waits.
+	_pins.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a["rank"]) < int(b["rank"]))
+	for p: Dictionary in _pins:
+		add_child(p["node"])
+	follow()
+
+
+static func _type_of(universe: Dictionary, id: String) -> String:
+	for r: Dictionary in universe.get("realms", []):
+		if str(r.get("realm", "")) == id:
+			return str(r.get("type", "Heart"))
+	return "Heart"
+
+
+## A realm's pin: its level in a disc of its school's colour, and its name;
+## a tap swoops to it. Not a button: the screen's own list carries each realm
+## for a screen reader, and the island itself takes the same tap.
+func _realm_pin(id: String, title: String, level: int, school: Color) -> PanelContainer:
+	var plate := _plate(Palette.INK, school)
+	var row := HBoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", UI.px(4))
+	var badge := _plate(school.darkened(0.45), school.lightened(0.3), true)
+	badge.add_child(_words(str(level), Palette.PAPER))
+	row.add_child(badge)
+	row.add_child(_words(title, Palette.PAPER))
+	plate.add_child(row)
+	plate.mouse_filter = Control.MOUSE_FILTER_STOP
+	plate.set_meta("realm", id)
+	plate.gui_input.connect(func(e: InputEvent) -> void:
+		var tap := (e is InputEventMouseButton and not (e as InputEventMouseButton).pressed
+			and (e as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT) \
+			or (e is InputEventScreenTouch and not (e as InputEventScreenTouch).pressed)
+		if tap:
+			view.choose(id))
+	return plate
+
+
+## A rounded plate in `fill`, edged in `edge`.
+static func _plate(fill: Color, edge: Color, disc := false) -> PanelContainer:
+	var p := PanelContainer.new()
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(fill, maxf(fill.a, 0.9)) if fill.a > 0.5 else fill
+	box.border_color = edge
+	box.set_border_width_all(UI.px(1.5))
+	box.set_corner_radius_all(UI.px(20))
+	box.content_margin_left = UI.px(6 if disc else 8)
+	box.content_margin_right = UI.px(6 if disc else 8)
+	box.content_margin_top = UI.px(2)
+	box.content_margin_bottom = UI.px(2)
+	box.shadow_color = Color(0, 0, 0, 0.35)
+	box.shadow_size = UI.px(2)
+	box.shadow_offset = Vector2(0, UI.px(1))
+	p.add_theme_stylebox_override("panel", box)
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return p
+
+
+static func _words(text: String, colour: Color) -> Label:
+	var l := UI.label(text, POINTS)
+	l.add_theme_color_override("font_color", colour)
+	l.add_theme_font_override("font", UI.bold_font())
+	l.set_meta("bold", true)
+	l.set_meta("points", POINTS)
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return l
+
+
+## Every pin where the camera now shows its point, shown at the zooms it
+## belongs to.
+func follow() -> void:
+	if view.camera == null or not view.camera.is_inside_tree():
+		return
+	var toward := view.toward()
+	var taken: Array[Rect2] = []
+	for p: Dictionary in _pins:
+		var node: Control = p["node"]
+		var id := str(p.get("realm", ""))
+		if not view.islands.has(id):
+			node.visible = false
+			continue
+		var isl: UniverseIsland = view.islands[id]
+		var shown: bool = view.zoom in (p["zooms"] as Array)
+		if view.zoom > 0 and id != view.focus_id:
+			shown = false
+		node.visible = shown
+		if not shown:
+			continue
+		var at := isl.at + Vector3(0, float(p.get("lift", 0.0)), 0)
+		if p.get("front", false):
+			at = isl.at + toward * isl.radius * 1.02 + Vector3(0, -1.6, 0)
+		elif p.has("building"):
+			at = _producer_at(isl, str(p["building"]))
+		var s := view.camera.unproject_position(at)
+		node.position = (s - node.size / 2.0).round()
+		var box := Rect2(node.position, node.size).grow(-UI.px(2))
+		for other: Rect2 in taken:
+			if other.intersects(box):
+				node.visible = false
+				break
+		if node.visible:
+			taken.append(box)
+
+
+## Where a producer of `kind` stands on its island, its pin over it.
+static func _producer_at(isl: UniverseIsland, kind: String) -> Vector3:
+	for k: String in isl.places:
+		if k.begins_with(kind + ":"):
+			return isl.places[k]
+	return isl.at + Vector3(0, 3.0, 0)
+
+
+## The realm a pin on the screen stands for, by its id: what a test taps.
+func realm_pin(id: String) -> Control:
+	for p: Dictionary in _pins:
+		if p.get("front", false) and str(p["realm"]) == id:
+			return p["node"]
+	return null
