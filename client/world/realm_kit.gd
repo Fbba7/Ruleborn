@@ -331,6 +331,13 @@ func instances() -> Array[MeshInstance3D]:
 		ground_mat.set_shader_parameter("lanes", lanes)
 	ground_mat.set_shader_parameter("lane_earth", KitGround.earth(palette).lerp(palette["soil"], 0.2))
 	var water_mat := material("water")
+	# Water by realm (§21.4): Tidehold's teal, Emberreach's hot springs,
+	# Crystalline's ice-melt, Lantern Vale's dark water.
+	var waters := {"tidehold": ["#1F8FA0", "#C8FFF4"], "emberreach": ["#2E8C84", "#D8FFF0"],
+		"crystalline": ["#6FA8E8", "#F0F8FF"], "lanternvale": ["#22306A", "#9FE8FF"]}
+	if waters.has(realm):
+		water_mat.set_shader_parameter("deep", Color(waters[realm][0]))
+		water_mat.set_shader_parameter("foam", Color(waters[realm][1]))
 	water_mat.set_shader_parameter("bank", (palette["grass"] as Color).lerp(KitGround.earth(palette), 0.3))
 	var lava_mat := material("water")
 	lava_mat.set_shader_parameter("deep", Color("#C8401E"))
