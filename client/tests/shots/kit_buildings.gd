@@ -32,7 +32,7 @@ func _shoot() -> void:
 	var fine := Geo.new()
 	var panes := Geo.new()
 	var count := last - first + 1
-	var spacing := 4.2
+	var spacing := 5.2
 	var grass := Geo.new()
 	grass.painted = true
 	var span := Vector2(4 * spacing, count * spacing)
