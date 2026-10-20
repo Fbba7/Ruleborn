@@ -40,6 +40,7 @@ func run() -> void:
 	view.queue_free()
 	await tree.process_frame
 	await _models(replay)
+	await _entry_card()
 
 
 func _hud(replay: RulebornReplay) -> void:
@@ -284,3 +285,27 @@ func _models(replay: RulebornReplay) -> void:
 		"%s %s" % [made, played])
 	view.queue_free()
 	await tree.process_frame
+
+
+## Landing in a realm or crossing into the next shows its name on a card for
+## about two seconds (15.3); nothing for a heist of one island.
+func _entry_card() -> void:
+	var maker := WorldView.figure_maker
+	App.services.store.dispatch(&"heist_started", {})
+	var screen: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
+	tree.root.add_child(screen)
+	await tree.process_frame
+	screen.set_process(false)
+	screen.entry_card("")
+	var none := screen.card == null
+	screen.entry_card(HeistHud.realm(0, 0))
+	var words := ""
+	for l in screen.card.find_children("*", "Label", true, false):
+		words = (l as Label).text
+	var shown := screen.card.is_inside_tree() and words == Strings.t("HEIST_IN_HEART")
+	screen.queue_free()
+	await tree.process_frame
+	WorldView.figure_maker = maker
+	check.call("landing in a realm, or crossing into the next, shows its name on a card for about two seconds, and a "
+			+ "heist of one island shows none (15.3, 5.4)", none and shown and HeistScreen.ENTRY_SECONDS <= 3.0,
+		"%s %s %s" % [none, shown, words])

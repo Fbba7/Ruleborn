@@ -17,6 +17,8 @@ extends Control
 signal finished
 
 const Kind := HeistController.Kind
+## §15.3: a realm's entry banner shows for about two seconds.
+const ENTRY_SECONDS := 2.2
 
 var controller := HeistController.new()
 var playing := true
@@ -54,6 +56,8 @@ var actions_node: Control
 ## The row of the crew's portraits and Get out.
 var actions_band: Control
 var crew_node: Control
+## The realm's entry card while it is on screen.
+var card: PanelContainer
 ## Which realm the view is drawing, so a new one is drawn when the crew (or
 ## the picker) moves to another.
 var _shown_realm := ""
@@ -306,6 +310,8 @@ func _refresh() -> void:
 	if key != _shown_realm:
 		_shown_realm = key
 		view.show_replay(controller.world)
+		if not controller.choosing:
+			entry_card(HeistHud.realm(controller.world.realm_code(), controller.world.realms_to_go()))
 	hud.show_state(controller.world)
 	_feel(controller.world)
 	var me: Dictionary = controller.world.crew()[controller.selected]
@@ -360,6 +366,33 @@ func _refresh() -> void:
 		FxSkin.redraw(pause_button)
 	view.describe()
 	view.queue_redraw()
+
+
+## §15.3's two-second banner as the crew lands in a realm or crosses into
+## the next: the realm's name on a parchment card in the middle of the
+## screen, rising in and fading away (reduced motion: shown, then gone).
+## The HUD's top row keeps saying it after the card has gone.
+func entry_card(words: String) -> void:
+	if words == "" or not is_inside_tree():
+		return
+	if card != null and is_instance_valid(card):
+		card.queue_free()
+	card = FxSkin.panel("parchment", 20.0, 14.0)
+	card.add_child(FxSkin.label(words, UI.TEXT_POINTS + 6.0, "parchment", true))
+	(card.get_child(0) as Label).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	card.set_anchors_preset(Control.PRESET_CENTER)
+	card.custom_minimum_size.x = UI.px(260)
+	card.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	card.grow_vertical = Control.GROW_DIRECTION_BOTH
+	add_child(card)
+	var shown := card
+	var tw := create_tween()
+	if not Settings.reduced_motion:
+		shown.modulate.a = 0.0
+		tw.tween_property(shown, "modulate:a", 1.0, UI.motion_ms(250) / 1000.0)
+	tw.tween_interval(ENTRY_SECONDS)
+	tw.tween_property(shown, "modulate:a", 0.0, UI.motion_ms(250) / 1000.0)
+	tw.tween_callback(shown.queue_free)
 
 
 ## The haptic form of what the screen shows: a warning as the alarm rises, a

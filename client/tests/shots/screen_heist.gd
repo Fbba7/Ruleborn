@@ -5,14 +5,14 @@ extends SceneTree
 ## guard looking), "vault" (the crew at the Vault, cracking), "alarm" (a
 ## guard alerted, the alarm up), "pick" (the landing picker, before landing),
 ## "cross" (the swoop to another realm, at its middle), "escape" (Get out,
-## the skiff called to the edge). HOUR and ZOOM are optional; BUTTONS shows
+## the skiff called to the edge), "entry" (a realm's entry card). HOUR and ZOOM are optional; BUTTONS shows
 ## Settings' turn and zoom buttons, CONTRAST high contrast, LEFT left-handed
 ## play, TEXT a text size (150, 200), NAMES the names a long press shows.
 
-const TO := {"escape": [[2, 10], [3, 10], [2, 11]], "cross": [[4, 9], [3, 10], [4, 11]],
+const TO := {"entry": [], "escape": [[2, 10], [3, 10], [2, 11]], "cross": [[4, 9], [3, 10], [4, 11]],
 	"sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]], "alarm": [[5, 6], [3, 10], [4, 11]],
 	"start": [[7, 8], [2, 10], [1, 10]]}
-const TICKS := {"escape": 120, "cross": 60, "start": 30, "sneak": 150, "vault": 300, "alarm": 150}
+const TICKS := {"entry": 20, "escape": 120, "cross": 60, "start": 30, "sneak": 150, "vault": 300, "alarm": 150}
 
 
 func _initialize() -> void:
@@ -77,6 +77,14 @@ func _go() -> void:
 			screen.controller.advance(10)
 			screen._refresh()
 			view._process(1.0 / 3.0)
+	if moment == "entry":
+		# §15.3's banner as the crew comes into a realm.
+		screen.entry_card(HeistHud.realm(0, 0))
+		# The still is taken at its full showing, past the fade in.
+		screen.card.modulate.a = 1.0
+		screen.card.set_process(false)
+		for t in screen.get_tree().get_processed_tweens():
+			t.pause()
 	if moment == "cross":
 		# §21.1's swoop between realms, caught at its middle.
 		view.swoop()
