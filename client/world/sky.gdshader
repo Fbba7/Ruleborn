@@ -18,6 +18,8 @@ uniform vec4 bottom : source_color = vec4(0.965, 0.851, 0.784, 1.0);
 uniform vec4 middle : source_color = vec4(0.0, 0.0, 0.0, 0.0);
 uniform vec4 glow : source_color = vec4(1.0, 1.0, 1.0, 0.0);
 uniform float stars = 0.0;
+// A soft moon high on the left, 0 for none.
+uniform float moon = 0.0;
 // The quad's depth in clip space: just short of the far plane, which the
 // renderer's reversed depth puts at 0.
 uniform float far_z = 0.00001;
@@ -50,6 +52,15 @@ void fragment() {
 		vec2 f = fract(at * vec2(90.0, 180.0)) - 0.5;
 		float s = step(0.985, h) * (1.0 - smoothstep(0.05, 0.25, length(f)));
 		c += vec3(s) * stars * (0.4 + 0.6 * t) * (0.5 + 0.5 * hash(cell + 3.1));
+	}
+	if (moon > 0.0) {
+		vec2 d = (at - vec2(0.24, 0.13)) * vec2(1.0, 1.8);
+		float r = length(d);
+		float disc = 1.0 - smoothstep(0.036, 0.04, r);
+		// A crescent: the disc less a disc offset toward the light.
+		float bite = 1.0 - smoothstep(0.034, 0.038, length(d - vec2(0.018, -0.008)));
+		c = mix(c, vec3(1.0, 0.97, 0.88), moon * disc * (1.0 - bite * 0.92));
+		c += vec3(0.55, 0.52, 0.75) * moon * 0.22 * (1.0 - smoothstep(0.0, 0.22, r));
 	}
 	ALBEDO = c;
 }
