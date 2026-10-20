@@ -41,6 +41,9 @@ var flash := 0.0
 var alarm_share := 0.0
 ## A crossing's wipe, 1 to 0 (`WorldView.swoop`).
 var wipe := 0.0
+## Whether the Vault's tag is drawn: a scout or a planner knows a realm's
+## counts, not where its Vault stands (§12.4).
+var vault_shown := true
 var _time := 0.0
 ## Each figure's most health seen, its bar's whole.
 var _most := {}
@@ -109,7 +112,8 @@ func _draw() -> void:
 	_draw_edge(calm)
 	_draw_pylons(replay, m)
 	_draw_pick(m, calm)
-	_draw_vault(replay, m)
+	if vault_shown:
+		_draw_vault(replay, m)
 	_draw_guards(replay, m, calm)
 	_draw_crew(replay, m, calm)
 	_draw_pops(m, calm)
