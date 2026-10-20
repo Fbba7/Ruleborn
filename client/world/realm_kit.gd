@@ -72,6 +72,8 @@ func _init(r: RulebornReplay, colours: Dictionary) -> void:
 		tunnels = r.tunnels()
 	palette = colours
 	realm = KitStyle.realm_of(colours)
+	for g: Geo in [ground, scatter, hero, prop, clear, water, lava]:
+		g.skip_down = true
 
 
 ## A kit for a grid given directly (the kit's own shots and tests).

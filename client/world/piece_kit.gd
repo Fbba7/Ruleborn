@@ -16,6 +16,7 @@ const IRON := Color("#3A3440")
 
 static func vault(open: bool) -> ArrayMesh:
 	var g := Geo.new()
+	g.skip_down = true
 	_vault_into(g, open)
 	# Drawn a fifth larger than its parts, the heist's prize reads first.
 	var arrays := g.st.commit_to_arrays()
@@ -73,6 +74,7 @@ static func _vault_into(g: Geo, open: bool) -> void:
 ## shape (§21.2), which turns and glows.
 static func pylon(school := "matter") -> ArrayMesh:
 	var g := Geo.new()
+	g.skip_down = true
 	var stone := Palette.STONE
 	var colour: Color = Palette.SCHOOL.get(school, Palette.MATTER)
 	g.prism(Geo.place(Vector3.ZERO, PI / 4.0), 4, 0.32, 0.28, 0.12, stone.darkened(0.2))
@@ -90,6 +92,7 @@ static func pylon(school := "matter") -> ArrayMesh:
 
 static func broken_pylon() -> ArrayMesh:
 	var g := Geo.new()
+	g.skip_down = true
 	var stone := Palette.STONE.darkened(0.2)
 	g.prism(Geo.place(Vector3.ZERO, PI / 4.0), 4, 0.32, 0.28, 0.12, stone.darkened(0.1))
 	g.prism(Geo.place(Vector3(0, 0.12, 0), PI / 4.0), 4, 0.24, 0.22, 0.08, stone)
@@ -105,6 +108,7 @@ static func broken_pylon() -> ArrayMesh:
 ## colour (§10.3), live.
 static func ward(kind: String, level := 1) -> ArrayMesh:
 	var g := Geo.new()
+	g.skip_down = true
 	var colour: Color = Palette.WARD.get(kind, Palette.INK)
 	var school := str(Palette.WARD_SCHOOL.get(kind, "motion"))
 	var lit := Color(colour.lightened(0.2), 0.4)
@@ -182,6 +186,7 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 
 static func dead_ward() -> ArrayMesh:
 	var g := Geo.new()
+	g.skip_down = true
 	g.cyl(Geo.place(Vector3.ZERO), 0.38, 0.4, 0.04, Color("#3A3350"), 12)
 	for k in 3:
 		g.rock(Geo.place(Vector3(-0.12 + 0.12 * k, 0.05, 0.05 * (k - 1))), 0.04, Palette.STONE.darkened(0.35), k)

@@ -67,6 +67,8 @@ static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, col
 		var tg := Geo.new()
 		var td := Geo.new()
 		var tp := Geo.new()
+		for t: Geo in [tg, td, tp]:
+			t.skip_down = geo.skip_down
 		build(tg, kind, Vector3.ZERO, side, lvl, colours, td, tp)
 		var xf := Transform3D(Basis(Vector3.UP, yaw), mid)
 		geo.absorb(tg, xf)

@@ -24,6 +24,9 @@ var rest := Color(0, 0, 0, 0)
 ## Paint channels for the ground (kit_ground.gdshader): written to UV and
 ## UV2 on every vertex once `painted` is set, before the first shape.
 var painted := false
+## Whether faces turned straight down are left out: §21.1's cameras are
+## always above, so the kit sets this on its layers; other users keep them.
+var skip_down := false
 var uv := Vector2.ZERO
 var uv2 := Vector2.ZERO
 
@@ -91,7 +94,7 @@ func box(at: Transform3D, size: Vector3, col: Color, top := Color(0, 0, 0, 0)) -
 	var side := col.darkened(0.06)
 	quad(p.call(-1, 1, -1), p.call(-1, 1, 1), p.call(1, 1, 1), p.call(1, 1, -1), up)
 	# §21.1's cameras are always above, so a face turned down is never seen.
-	if _faces_up(at, Vector3.DOWN):
+	if _shown(at, Vector3.DOWN):
 		quad(p.call(-1, -1, -1), p.call(1, -1, -1), p.call(1, -1, 1), p.call(-1, -1, 1), col.darkened(0.2))
 	quad(p.call(-1, -1, 1), p.call(1, -1, 1), p.call(1, 1, 1), p.call(-1, 1, 1), col)
 	quad(p.call(1, -1, -1), p.call(-1, -1, -1), p.call(-1, 1, -1), p.call(1, 1, -1), side)
@@ -131,7 +134,7 @@ func rbox(at: Transform3D, size: Vector3, col: Color, bevel := 0.04, top := Colo
 			var p3: Vector3 = corner.call(-1.0, 1.0)
 			var normal := Vector3.ZERO
 			normal[ax] = s
-			if _faces_up(at, normal):
+			if _shown(at, normal):
 				_outward(p0, p1, p2, p3, face_col.call(ax, s), at.origin)
 	# The twelve chamfers, between two faces along the third axis.
 	for ax in 3:
@@ -198,9 +201,9 @@ func prism(at: Transform3D, sides: int, r0: float, r1: float, height: float, col
 			tri(at * b0, at * t1, at * b1, col)
 			if r1 > 0.0:
 				tri(at * b0, at * t0, at * t1, col)
-		if r1 > 0.0 and _faces_up(at, Vector3.UP * signf(height)):
+		if r1 > 0.0 and _shown(at, Vector3.UP * signf(height)):
 			tri(at * Vector3(0, height, 0), at * t1, at * t0, up)
-		if _faces_up(at, Vector3.DOWN * signf(height)):
+		if _shown(at, Vector3.DOWN * signf(height)):
 			tri(at * Vector3.ZERO, at * b0, at * b1, col.darkened(0.2))
 
 
@@ -390,10 +393,10 @@ func mesh() -> ArrayMesh:
 	return st.commit()
 
 
-## Whether a face whose local normal is `n` can face a camera above: false
-## only for a face turned straight down.
-static func _faces_up(at: Transform3D, n: Vector3) -> bool:
-	return (at.basis * n).normalized().y > -0.9
+## Whether a face whose local normal is `n` is drawn: always, unless
+## `skip_down` and it is turned straight down.
+func _shown(at: Transform3D, n: Vector3) -> bool:
+	return not skip_down or (at.basis * n).normalized().y > -0.9
 
 
 static func place(position: Vector3, yaw := 0.0, scale := Vector3.ONE) -> Transform3D:
