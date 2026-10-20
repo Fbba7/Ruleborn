@@ -90,6 +90,9 @@ universe, inside §21.3's 40,000 and 150.
   quarter turns.
   Still: `round9_half_turn.png`.
 
+- Round 10: a realm asked for before the universe has arrived (home opening on the Heart on a first
+  launch, before the server answers) is remembered and shown once it is drawn, instead of dropped.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

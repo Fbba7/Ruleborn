@@ -93,7 +93,10 @@ func _drawn() -> void:
 
 func _camera() -> void:
 	var view := _view()
+	view.focus_realm("heart", 1)
+	var waited := view.zoom == 0
 	view.show_universe(UniverseSample.view(6), UniverseSample.extras())
+	var kept := view.zoom == 1 and view.focus_id == "heart"
 	await tree.process_frame
 	var reduced := Settings.reduced_motion
 	Settings.reduced_motion = true
@@ -122,13 +125,14 @@ func _camera() -> void:
 	turned = turned and view.turns == 2
 	view.turn(1)
 	Settings.reduced_motion = reduced
-	check.call("the whole universe is framed on the phone; a tap finds the realm under it and none in the sky; "
-			+ "choosing a realm swoops to it at one zoom and a second time closer, turning in quarter turns "
-			+ "(half turns over the whole universe, which stays upright), instantly under reduced motion (21.1, 20.8)",
-		framed and tapped == "outer-3" and sky == "" and chosen == ["outer-3", "outer-3"] and focused and centred
-			and closer and turned and view.zoom == 0,
-		"framed %s tapped %s sky %s chosen %s focused %s centred %s closer %s" % [framed, tapped, sky, chosen,
-			focused, centred, closer])
+	check.call("a realm asked for before the universe arrives is shown once it does; the whole universe is framed "
+			+ "on the phone; a tap finds the realm under it and none in the sky; choosing a realm swoops to it at "
+			+ "one zoom and a second time closer, turning in quarter turns (half turns over the whole universe, "
+			+ "which stays upright), instantly under reduced motion (21.1, 20.8)",
+		waited and kept and framed and tapped == "outer-3" and sky == "" and chosen == ["outer-3", "outer-3"]
+			and focused and centred and closer and turned and view.zoom == 0,
+		"waited %s kept %s framed %s tapped %s sky %s chosen %s focused %s centred %s closer %s" % [waited, kept,
+			framed, tapped, sky, chosen, focused, centred, closer])
 	view.queue_free()
 	await tree.process_frame
 

@@ -74,6 +74,8 @@ var inset := Vector2.ZERO
 
 var _view := {}
 var _extras := {}
+## A realm asked for before it was drawn: [id, zoom], shown once it is.
+var _wanted := []
 var _key := ""
 var _bounds := AABB()
 ## The camera now, and where a swoop takes it: target, size, yaw.
@@ -182,6 +184,9 @@ func show_universe(view: Dictionary, extras := {}) -> void:
 			focus_id = ""
 			zoom = 0
 		_aim(true)
+		if not _wanted.is_empty() and islands.has(str(_wanted[0])):
+			focus_realm(str(_wanted[0]), int(_wanted[1]))
+			_aim(true)
 	pins.show_pins(view, extras)
 
 
@@ -738,8 +743,12 @@ func _step_swoop() -> void:
 ## The camera on realm `id` at zoom `level` (1 or 2), swooping there; from
 ## one realm to another, through cloud.
 func focus_realm(id: String, level := 1) -> void:
-	if not islands.has(id) or id.begins_with("next:"):
+	if id.begins_with("next:"):
 		return
+	if not islands.has(id):
+		_wanted = [id, level]
+		return
+	_wanted = []
 	var between := zoom > 0 and focus_id != "" and focus_id != id
 	focus_id = id
 	var was := zoom
