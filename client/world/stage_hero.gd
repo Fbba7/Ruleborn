@@ -451,13 +451,19 @@ func _pose() -> void:
 	var sway := SWAY * sin(time * TAU / SWAY_SECONDS) if moving else 0.0
 	for i in tables.size():
 		var table := tables[i]
-		table.rotation.y = -0.45 + sway * 0.6 + _spin + i * 0.0
+		table.rotation.y = -0.45 + sway * 0.6 + _spin
 		var f := figures[i]
 		var beat := time * 2.2 + i * 1.3
 		var breath := sin(beat) * 0.025 if moving else 0.0
 		f.scale = Vector3(1.0 - breath * 0.5, 1.0 + breath, 1.0 - breath * 0.5)
 		f.position.y = 0.04
 		f.rotation.y = 0.0
+		f.rotation.z = 0.0
+		if kinds[i] == "egg" and moving:
+			# An egg about to hatch rocks now and then: three quick wobbles
+			# every four seconds, dying away.
+			var w := fposmod(time, 4.0)
+			f.rotation.z = sin(w * 14.0) * 0.12 * exp(-w * 2.2) if w < 1.4 else 0.0
 		var a: float = _actions[i] if i < _actions.size() else -1.0
 		if a >= 0.0:
 			var u := a / ACTION_SECONDS
@@ -501,7 +507,10 @@ static func _stand_in(kind: String, look: String) -> Node3D:
 	var mi := MeshInstance3D.new()
 	mi.mesh = StageHeroSculpt.of(kind, look)
 	var rim: Color = Palette.SCHOOL.get(StageHeroFigure.school(kind), Palette.MOTION)
-	mi.material_override = toon(rim)
+	var m := toon(rim)
+	# The world's toon reads hot under the close view's brighter fill.
+	m.set_shader_parameter("tint", Color(0.84, 0.82, 0.86))
+	mi.material_override = m
 	mi.scale = Vector3.ONE * StageHeroFigure.height(kind)
 	root.add_child(mi)
 	root.set_meta("kind", kind)
