@@ -11,7 +11,7 @@ extends Control
 signal drawn(key: String, texture: Texture2D)
 
 ## The picture's size in pixels.
-const SIZE := Vector2i(780, 330)
+const SIZE := Vector2i(780, 420)
 ## The hour the pictures are lit at: a universe seen in full light, hung
 ## in the card's own night.
 const LIT := 12
@@ -102,13 +102,18 @@ func stage(card: Dictionary) -> void:
 	var outer := maxi(0, int(card.get("realms", 1)) - 1)
 	var heart_r := Vector2(view.grid_size()).length() * 0.62
 	var spots := StagePlan.outer(view.layers, view, outer, str(card.get("bundle", "")))
+	view.layers.add_child(StageScout.mist_over(view.grid_size()))
 	# The open faults the card counts, on the outer realms it names.
 	var g := Geo.new()
 	var faults: Array = card.get("fault_realms", [])
 	for i in spots.size():
 		if ("outer-%d" % (i + 1)) in faults:
 			StagePlan.fault(g, spots[i])
+	# The design's orbit rings round the Heart, faint and glowing.
+	for k in 2:
+		var r := heart_r * (1.12 + 0.2 * k)
+		g.ring(Geo.place(Vector3(0, -0.6 - 0.5 * k, 0)), r, r + 0.07, Color(0.88, 0.84, 1.0, 0.0), 64)
 	if g.mesh() != null:
 		view.layers.add_child(WorldView._instance(g.mesh(), WorldView.material(_toon), false))
-	view.fill = 1.0 if outer == 0 else 1.45
+	view.fill = 1.15 if outer == 0 else 1.7
 	view.look_up = 0.0 if outer == 0 else heart_r * 0.12

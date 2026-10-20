@@ -64,6 +64,8 @@ func build(card: Dictionary) -> void:
 				fault(g, at)
 			_route(g, at, to)
 			to = at
+	# The Heart is known only by its counts: under the scout's mist.
+	add_child(StageScout.mist_over(size))
 	pins.pin(OverlaySheet.chip(UniversePresenter.realm_name("Heart"), Palette.MOTION),
 		Vector3(0, 2.4, 0))
 	marks.mesh = g.mesh()

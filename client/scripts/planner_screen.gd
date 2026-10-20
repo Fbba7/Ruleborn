@@ -18,6 +18,7 @@ var status_label: Label
 var view: StageView
 var plan: StagePlan
 var _sheet: ScrollContainer
+var _keys: Control
 var _top: Control
 var _drawn_key := ""
 
@@ -42,9 +43,8 @@ func _build() -> void:
 	view = StageScreen.mount(self, column)
 	view.fill = 1.0
 	plan = StagePlan.new(view)
-	column.add_child(OverlaySheet.ribbon(UI.title(Strings.t("PLAN_TITLE"))))
 	header_label = UI.label("", UI.TEXT_POINTS, true)
-	_top = UI.plate(header_label)
+	_top = OverlaySheet.ribbon(UI.title(Strings.t("PLAN_TITLE")), header_label)
 	column.add_child(_top)
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))
@@ -53,6 +53,7 @@ func _build() -> void:
 	_sheet = StageScreen.sheet(body, 0.62)
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("OBS_TITLE"), func() -> void: App.services.router.go(&"scout"), true))
+	_keys = StageScreen.handle(column, _sheet)
 	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
 	OverlaySheet.dress(self)
 
@@ -134,6 +135,7 @@ func _draw_world(card: Dictionary) -> void:
 	view.show_replay(replay)
 	view.show_vault(false)
 	plan.build(card)
+	view.show_bare_laws(realm.get("laws", []))
 	var across: bool = card.get("across", false)
 	var depth := maxi(1, int(card.get("depth", 1)))
 	view.fill = (1.25 + 0.35 * depth) if across else 1.0
@@ -142,5 +144,5 @@ func _draw_world(card: Dictionary) -> void:
 
 func _process(_delta: float) -> void:
 	if _sheet != null and view != null:
-		view.cover_bottom = StageScreen.covered_below(view, _sheet)
+		view.cover_bottom = StageScreen.covered_below(view, _keys)
 		view.cover_top = StageScreen.covered_above(view, _top)

@@ -37,6 +37,8 @@ func draw(island: RulebornIsland, replay: RulebornReplay, picked: Vector2i, move
 	for t: Vector2i in moves:
 		paint[t] = OverlayTiles.OPEN if moves[t] else OverlayTiles.BAD
 	tiles.paint(paint)
+	var open: Array = moves.keys().filter(func(t: Vector2i) -> bool: return moves[t])
+	tiles.arrows(picked, open if picked.x >= 0 else [])
 	var index := guard_at(replay, picked)
 	view.selected_guard = index
 	tiles.cursor(picked, true)
@@ -47,7 +49,7 @@ func draw(island: RulebornIsland, replay: RulebornReplay, picked: Vector2i, move
 			_yaw(f))
 	else:
 		tiles.ghost(null, Vector2i.ZERO)
-	_pins(island, replay, picked)
+	pin_all(view, island, replay, picked)
 	view.describe()
 	return index
 
@@ -64,18 +66,19 @@ static func guard_at(replay: RulebornReplay, t: Vector2i) -> int:
 	return -1
 
 
-## A role's pin over each post and a ward's over each ward.
-func _pins(island: RulebornIsland, replay: RulebornReplay, picked: Vector2i) -> void:
-	var pins := StageScreen.pins_of(view)
+## Each post's number (its place in the list of posts) over it, gold for
+## the picked one, and each ward's school shape over it: on `on`'s pins.
+static func pin_all(on: StageView, island: RulebornIsland, replay: RulebornReplay, picked: Vector2i) -> void:
+	var pins := StageScreen.pins_of(on)
 	pins.clear()
 	var posts := CurationPresenter.posts(island)
 	for i in posts.size():
 		var fill := Palette.MOTION if posts[i]["at"] == picked else Color("#FFC2CC")
-		pins.pin(OverlaySheet.chip(str(i + 1), fill), view.tile_point(posts[i]["at"], 1.45))
+		pins.pin(OverlaySheet.chip(str(i + 1), fill), on.tile_point(posts[i]["at"], 1.45))
 	for w: Dictionary in replay.wards():
 		var school := str(Palette.WARD_SCHOOL.get(str(w["kind"]), "matter"))
 		pins.pin(OverlaySheet.chip(str(UI.SHAPE_GLYPH.get(Tokens.shape(school), "*")),
-			(Palette.SCHOOL.get(school, Palette.MATTER) as Color).lightened(0.55)), view.world_at(w["at"]) + Vector3(0, 1.2, 0))
+			(Palette.SCHOOL.get(school, Palette.MATTER) as Color).lightened(0.55)), on.world_at(w["at"]) + Vector3(0, 1.2, 0))
 
 
 ## The yaw that turns a model facing −Z to face way `f` (0 north to 3 west)

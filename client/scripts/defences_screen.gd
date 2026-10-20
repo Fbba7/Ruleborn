@@ -9,7 +9,7 @@ extends Control
 ## Behind the log stands the defence it records: the player's own island with
 ## the defence overlay (`OverlayDefence`), its posts numbered and its wards
 ## marked, from the curation draft, the realm view's island or the builder's
-## draft, whichever the phone holds.
+## draft, whichever the phone holds. A tap on a post shows its guard's sight.
 
 var controller: DefencesController
 var body: VBoxContainer
@@ -18,8 +18,10 @@ var status_label: Label
 var view: StageView
 var defence: OverlayDefence
 var _sheet: ScrollContainer
+var _keys: Control
 var _top: Control
 var _drawn_key := ""
+var _island: RulebornIsland
 
 
 func _ready() -> void:
@@ -41,9 +43,9 @@ func _build() -> void:
 	view = StageScreen.mount(self, column)
 	view.fill = 0.86
 	defence = OverlayDefence.new(view)
-	column.add_child(OverlaySheet.ribbon(UI.title(Strings.t("DEFENCES_TITLE"))))
+	view.tapped.connect(func(at: Vector2) -> void: _on_tap(view.tile_at(at)))
 	header_label = UI.label("", UI.TEXT_POINTS, true)
-	_top = UI.plate(header_label)
+	_top = OverlaySheet.ribbon(UI.title(Strings.t("DEFENCES_TITLE")), header_label)
 	column.add_child(_top)
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))
@@ -52,6 +54,7 @@ func _build() -> void:
 	_sheet = StageScreen.sheet(body, 0.62)
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
+	_keys = StageScreen.handle(column, _sheet)
 	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
 	OverlaySheet.dress(self)
 	_draw_world()
@@ -122,10 +125,20 @@ func _draw_world() -> void:
 	if replay == null:
 		return
 	view.show_replay(replay)
+	_island = island
 	defence.draw(island, replay, CurationState.NO_POST, {})
+
+
+## A tap on a post shows that guard's sight (§21.12), a tap elsewhere the
+## first guard's: the defence the log records, read post by post.
+func _on_tap(tile: Vector2i) -> void:
+	if _island == null or view.replay == null:
+		return
+	var post := tile if str(_island.occupant(tile.x, tile.y)).begins_with("guard:") else CurationState.NO_POST
+	defence.draw(_island, view.replay, post, {})
 
 
 func _process(_delta: float) -> void:
 	if _sheet != null and view != null:
-		view.cover_bottom = StageScreen.covered_below(view, _sheet)
+		view.cover_bottom = StageScreen.covered_below(view, _keys)
 		view.cover_top = StageScreen.covered_above(view, _top)

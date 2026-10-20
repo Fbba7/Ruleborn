@@ -19,6 +19,7 @@ var confirm := ""
 var view: StageView
 var defence: OverlayDefence
 var _sheet: ScrollContainer
+var _keys: Control
 var _top: Control
 var _drawn_key := ""
 
@@ -43,9 +44,8 @@ func _build() -> void:
 	view.fill = 0.74
 	view.tapped.connect(func(at: Vector2) -> void: _on_tap(view.tile_at(at), at))
 	defence = OverlayDefence.new(view)
-	column.add_child(OverlaySheet.ribbon(UI.title(Strings.t("CUR_TITLE"))))
 	header_label = UI.label("", UI.TEXT_POINTS, true)
-	_top = UI.plate(header_label)
+	_top = OverlaySheet.ribbon(UI.title(Strings.t("CUR_TITLE")), header_label)
 	column.add_child(_top)
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))
@@ -55,6 +55,7 @@ func _build() -> void:
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("HOME_MAP"), func() -> void: App.services.router.go(&"map"), true))
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
+	_keys = StageScreen.handle(column, _sheet)
 	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
 	OverlaySheet.dress(self)
 
@@ -228,5 +229,5 @@ func _on_tap(tile: Vector2i, _at: Vector2) -> void:
 
 func _process(_delta: float) -> void:
 	if _sheet != null and view != null:
-		view.cover_bottom = StageScreen.covered_below(view, _sheet)
+		view.cover_bottom = StageScreen.covered_below(view, _keys)
 		view.cover_top = StageScreen.covered_above(view, _top)

@@ -19,6 +19,9 @@ var cover_top := 0.0
 var fill := 1.0
 ## How far above the grid's centre the camera looks, in metres on screen.
 var look_up := 0.0
+## The point on the ground the screen centres on, where it is not the grid's
+## middle: the realm view's town, say.
+var focus := Vector3.ZERO
 ## Whether a second quick tap steps the zoom (`WorldView`'s double tap); a
 ## screen that acts on every tap, as the builder does, turns it off so two
 ## tiles tapped in a row are two edits and never a zoom.
@@ -44,6 +47,34 @@ func _process(delta: float) -> void:
 	fit()
 
 
+## The signatures of `laws` over this realm with nothing placed: what a
+## scout knows (§12.4). `WorldView` draws a realm's woven laws itself (T8's
+## `LawFx`); a scouted realm has none woven where the scout can see, so its
+## laws are laid over the bare realm here, their crowns and the threads
+## between pylons left out, since those stand on tiles. The realm still
+## wears each law's look, and `WorldView` keeps it in time.
+func show_bare_laws(laws: Array) -> void:
+	_drop_laws()
+	if laws.is_empty() or _size.x == 0:
+		return
+	law_fx = LawFx.new()
+	law_fx.view = self
+	law_fx.camera = camera
+	law_fx.sun = sun
+	law_fx.environment = environment
+	world.add_child(law_fx)
+	law_fx.build(LawFxSite.bare(_size, laws))
+	for hidden: Node3D in [law_fx.crowns, law_fx.links]:
+		if hidden != null:
+			hidden.visible = false
+
+
+func _drop_laws() -> void:
+	if law_fx != null:
+		law_fx.queue_free()
+	law_fx = null
+
+
 ## The camera framed for the screen: `WorldView` frames it for a zoom level
 ## first, then the grid is fitted to the part of the screen the panels leave
 ## open, scaled by the pinch zoom. Done whenever `WorldView` frames, too, so
@@ -65,8 +96,10 @@ func fit() -> void:
 		var by_width := diag * fill / maxf(0.1, size.x / size.y)
 		var by_height := (diag * sin(deg_to_rad(pitch)) + 2.5) * fill / open
 		camera.size = maxf(by_width, by_height) * zoom_scale()
-	camera.v_offset = (cover_top - cover_bottom) * 0.5 * camera.size + breath + look_up
-	camera.h_offset = 0.0
+	var right := camera.global_transform.basis.x
+	var up := camera.global_transform.basis.y
+	camera.v_offset = (cover_top - cover_bottom) * 0.5 * camera.size + breath + look_up + up.dot(focus)
+	camera.h_offset = right.dot(focus)
 
 
 ## How far `WorldView`'s pinch and double tap have zoomed, as a share of

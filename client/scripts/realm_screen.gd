@@ -3,8 +3,8 @@ extends Control
 ## One realm (§23.2, "Build and shape one realm"), drawn as the diorama it is
 ## (§21.1): the realm's published island in 3D, each building on its tile at
 ## its level, who works where standing at their producers, and the law
-## pylons with their laws named over them. Tapping a building opens its
-## card. The same facts stay in words on the sheet below — its grid and
+## pylons with their laws named over them. Tapping a building or a pylon
+## opens its card. The same facts stay in words on the sheet below — its grid and
 ## terrain, wards and guard posts against its limits, buildings, workers and
 ## pylons — which is what a screen reader reads. The builder shapes the
 ## island; the Universe screen buys buildings.
@@ -21,6 +21,7 @@ var town: StageTown
 var card: PanelContainer
 var card_label: Label
 var _sheet: ScrollContainer
+var _keys: Control
 var _drawn_key := ""
 var _screen := {}
 
@@ -46,9 +47,8 @@ func _build() -> void:
 	view.fill = 0.6
 	town = StageTown.new(view)
 	var top := VBoxContainer.new()
-	top.add_child(OverlaySheet.ribbon(UI.title(Strings.t("RV_TITLE"))))
 	header_label = UI.label("", UI.TEXT_POINTS, true)
-	top.add_child(UI.plate(header_label))
+	top.add_child(OverlaySheet.ribbon(UI.title(Strings.t("RV_TITLE")), header_label))
 	column.add_child(top)
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))
@@ -64,6 +64,7 @@ func _build() -> void:
 	actions.add_child(UI.button(Strings.t("RV_CURATE"), func() -> void:
 		App.services.curation_flow.open(str(App.services.store.get_slice(RealmState.REALM)["realm"]))))
 	actions.add_child(UI.button(Strings.t("HOME_BUILD"), func() -> void: App.services.router.go(&"builder")))
+	_keys = StageScreen.handle(column, _sheet)
 	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
 	OverlaySheet.dress(self)
 
@@ -121,10 +122,24 @@ func _draw_realm() -> void:
 	view.show_replay(replay)
 	var producers: Array = (home.get("producers", []) as Array).filter(func(p: Dictionary) -> bool:
 		return str(p["realm"]) == id)
-	var roles := {}
+	var who := {}
 	for c: Dictionary in home.get("characters", []):
-		roles[int(c["id"])] = str(c.get("role", ""))
-	town.build(buildings, RealmPalette.of(view.realm_type), producers, roles)
+		who[int(c["id"])] = {"kind": str(c.get("kind", "")), "role": str(c.get("role", ""))}
+	town.build(buildings, RealmPalette.of(view.realm_type), producers, who)
+	# Who lives here and is not at work: a realm's own Hearth, or the
+	# Keeper's Spire for the Heart.
+	var living: Array = (home.get("characters", []) as Array).filter(func(c: Dictionary) -> bool:
+		var at := str(c.get("home", ""))
+		return (at == id or (at == RosterPresenter.SPIRE and id == "heart")) \
+			and str(c.get("state", "")) in ["idle", "resting"])
+	town.residents(living)
+	# The town, not the grid, at the middle of the screen: halfway to the
+	# buildings' centre, so the island's edge still frames it.
+	var middle := Vector3.ZERO
+	for b: Dictionary in town.placed:
+		middle += b["mid"]
+	view.focus = (middle / maxf(1.0, town.placed.size()) * Vector3(0.5, 0.0, 0.5)) if not town.placed.is_empty() \
+		else Vector3.ZERO
 	_pin(replay)
 
 
@@ -145,19 +160,30 @@ func _pin(replay: RulebornReplay) -> void:
 func _on_tap(tile: Vector2i, _at: Vector2) -> void:
 	var b := town.at_tile(tile)
 	town.choose(b)
-	if b.is_empty() or not _screen.get("ready", false):
-		card.visible = false
+	card.visible = false
+	if not _screen.get("ready", false):
 		return
-	var name := UniversePresenter.building_name(str(b["kind"]))
 	var lines: Array[String] = []
-	for line: String in _screen["buildings"] + _screen["workers"]:
-		if line.begins_with(name):
-			lines.append(line)
+	if not b.is_empty():
+		var name := UniversePresenter.building_name(str(b["kind"]))
+		for line: String in _screen["buildings"] + _screen["workers"]:
+			if line.begins_with(name):
+				lines.append(line)
+	elif view.replay != null:
+		# A law pylon: its line from the sheet, the one naming its law.
+		for p: Dictionary in view.replay.pylons():
+			var at: Vector2 = p["at"]
+			if Vector2i(floori(at.x), floori(at.y)) != tile:
+				continue
+			var law := Strings.term("LAW", str(p["law"]))
+			for line: String in _screen["pylons"]:
+				if line.ends_with(law):
+					lines.append(line)
 	card_label.text = "\n".join(lines)
 	card.visible = not lines.is_empty()
 
 
 func _process(_delta: float) -> void:
 	if _sheet != null and view != null:
-		view.cover_bottom = StageScreen.covered_below(view, _sheet)
+		view.cover_bottom = StageScreen.covered_below(view, _keys)
 		view.cover_top = StageScreen.covered_above(view, header_label)

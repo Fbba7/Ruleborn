@@ -14,5 +14,8 @@ func _go() -> void:
 	root.add_child(screen)
 	await process_frame
 	App.services.store.dispatch(&"defences_loaded", {"view": DefencesTests.sample()})
+	await process_frame
+	if OS.get_environment("TAP") != "":
+		(screen as DefencesScreen)._on_tap(Vector2i(3, 6))
 	await ShotKit.settle(self, screen)
 	quit()

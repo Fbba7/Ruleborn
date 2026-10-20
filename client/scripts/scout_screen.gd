@@ -13,6 +13,7 @@ var status_label: Label
 var view: StageView
 var scout: StageScout
 var _sheet: ScrollContainer
+var _keys: Control
 var _top: Control
 var _drawn_key := ""
 
@@ -45,6 +46,7 @@ func _build() -> void:
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("OBS_TITLE"), func() -> void: App.services.router.go(&"observatory")))
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
+	_keys = StageScreen.handle(column, _sheet)
 	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
 	OverlaySheet.dress(self)
 
@@ -91,11 +93,12 @@ func _draw_world(card: Dictionary) -> void:
 		return
 	view.realm_type = StageRealm.realm_type(str(realm.get("type", "Heart")))
 	view.show_replay(replay)
+	view.show_bare_laws(realm.get("laws", []))
 	view.show_vault(false)
 	scout.build(realm)
 
 
 func _process(_delta: float) -> void:
 	if _sheet != null and view != null:
-		view.cover_bottom = StageScreen.covered_below(view, _sheet)
+		view.cover_bottom = StageScreen.covered_below(view, _keys)
 		view.cover_top = StageScreen.covered_above(view, _top)

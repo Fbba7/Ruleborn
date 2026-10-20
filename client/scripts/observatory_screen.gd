@@ -36,9 +36,8 @@ func _build() -> void:
 	thumbs = StageThumbs.new()
 	add_child(thumbs)
 	thumbs.drawn.connect(_on_drawn)
-	column.add_child(OverlaySheet.ribbon(UI.title(Strings.t("OBS_TITLE"))))
 	header_label = UI.label("", UI.TEXT_POINTS, true)
-	column.add_child(UI.plate(header_label))
+	column.add_child(OverlaySheet.ribbon(UI.title(Strings.t("OBS_TITLE")), header_label))
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label))
 	body = UI.scroll(column)
@@ -109,7 +108,7 @@ func _picture(card: Dictionary) -> Control:
 	var rect := TextureRect.new()
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	rect.custom_minimum_size = Vector2(0, UI.px(130))
+	rect.custom_minimum_size = Vector2(0, UI.px(165))
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	frame.add_child(rect)
 	var key := StageThumbs.key_of(card)

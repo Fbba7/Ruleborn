@@ -6,7 +6,13 @@ extends RefCounted
 ## column keeps every word and control the screen had; only where it stands
 ## changes.
 
+## The text size (§20.8, in percent) from which the words cannot be folded.
+const LARGE_TEXT := 175
+
 static var _night: ImageTexture
+## Whether the player folded the words away, kept from screen to screen so
+## the world keeps the phone once they ask for it.
+static var folded := false
 
 
 ## The view behind `screen`'s frame, which `UI.frame` built: put over the
@@ -58,9 +64,47 @@ static func sheet(body: VBoxContainer, ratio := 0.8) -> ScrollContainer:
 	return s
 
 
+## A key that folds the sheet away, and back: the world takes the phone,
+## the words wait one tap away (and a screen reader still reads the realm).
+static func fold_key(words: ScrollContainer) -> Button:
+	var b := UI.button("", func() -> void: pass)
+	var apply := func() -> void:
+		words.visible = not folded
+		UI.relabel(b, Strings.t("STAGE_SHOW_WORDS" if folded else "STAGE_HIDE_WORDS"))
+	b.pressed.connect(func() -> void:
+		folded = not folded
+		apply.call())
+	apply.call()
+	b.set_meta("fold", true)
+	return b
+
+
+## The fold key as the sheet's handle: on its own row just above the words,
+## so the screen's dock keeps its rows and the key stays where the words
+## were once they are folded.
+static func handle(column: VBoxContainer, words: ScrollContainer) -> Control:
+	# A plain centred row, not `UI.narrow`'s: at §20.8's 200% the key wraps
+	# its words within the column rather than widening it.
+	var holder := UI.row()
+	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# At §20.8's largest text the words are what the player reads, and the
+	# column has no row to spare above the thumb's keys: no handle then, and
+	# the words stay unfolded.
+	if Settings.text_scale >= LARGE_TEXT:
+		words.visible = true
+	else:
+		holder.add_child(fold_key(words))
+	column.add_child(holder)
+	column.move_child(holder, words.get_index())
+	OverlaySheet.dress(holder)
+	return holder
+
+
 ## How much of `view`'s height lies under `cover` (a control over it) at
 ## the bottom: the share the island is lifted out of.
-static func covered_below(view: Control, cover: Control) -> float:
+static func covered_below(view: Control, cover: Control, folded_to: Control = null) -> float:
+	if folded_to != null and not cover.is_visible_in_tree():
+		cover = folded_to
 	var h := maxf(1.0, view.size.y)
 	var top := cover.get_global_rect().position.y - view.get_global_rect().position.y
 	return clampf((h - top) / h, 0.0, 0.8)

@@ -7,35 +7,24 @@ extends Node3D
 ## rim by role, the wards it counted standing beside them by kind, and its
 ## laws flown as banners at its near corner. Nothing is drawn on a tile.
 
-## The mist's veil and its clouds.
+## The mist's veil over every tile.
 const VEIL := Color(0.78, 0.74, 0.96, 0.55)
-const MIST := Color(0.84, 0.8, 0.98, 0.72)
 
 static var _toon: Shader = load("res://world/toon.gdshader")
+static var _mist: Shader = load("res://world/stage_mist.gdshader")
 
 var view: StageView
 var tiles: OverlayTiles
 var mist: MeshInstance3D
 var figures: Node3D
 var banners: MeshInstance3D
-var _clock := 0.0
 
 
 func _init(on: StageView) -> void:
 	view = on
 	name = "Scout"
 	tiles = OverlayTiles.new(on)
-	mist = MeshInstance3D.new()
-	mist.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var m := StandardMaterial3D.new()
-	m.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
-	m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
-	m.rim_enabled = true
-	m.rim = 0.6
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.vertex_color_use_as_albedo = true
-	m.render_priority = 2
-	mist.material_override = m
+	mist = mist_over(Vector2i.ZERO)
 	add_child(mist)
 	figures = Node3D.new()
 	add_child(figures)
@@ -55,7 +44,7 @@ func build(realm: Dictionary) -> void:
 		for x in size.x:
 			veil[Vector2i(x, y)] = VEIL
 	tiles.paint(veil)
-	mist.mesh = _clouds(size)
+	mist.mesh = clouds(size)
 	var pins := StageScreen.pins_of(view)
 	pins.clear()
 	# The guards by role along the near south rim, the wards by kind along
@@ -73,7 +62,9 @@ func build(realm: Dictionary) -> void:
 		var at := Vector3(size.x * 0.5 + 1.0 + across * 0.7071, 0.0, size.y * 0.5 + 1.0 - across * 0.7071)
 		g.prism(Geo.place(at), 6, 0.07, 0.05, 2.6, Palette.WOOD.darkened(0.25))
 		g.ball(Geo.place(at + Vector3(0, 2.65, 0)), 0.11, Palette.MOTION, 3, 6)
-		var cloth := Palette.MATTER.lightened(0.15 * (i % 2))
+		# Each banner in its law's school colour (§21.2), the school's mark
+		# reading by the shape pinned on the sheet's words.
+		var cloth: Color = Palette.SCHOOL.get(LawFxLinks.school(str(laws[i])), Palette.MATTER)
 		g.box(Geo.place(at + Vector3(0.36, 2.15, 0.36), PI / 4.0), Vector3(0.9, 0.62, 0.05), cloth)
 	banners.mesh = g.mesh()
 
@@ -90,8 +81,14 @@ func _line(counts: Dictionary, wards: bool, size: Vector2i) -> void:
 		var first := along
 		for i in int(counts[k]):
 			var at := Vector2(size.x + 0.85, size.y - along) if wards else Vector2(size.x - along, size.y + 0.85)
-			var mesh := PieceKit.ward(k.to_pascal_case()) if wards else ActorBuilder.mesh("guard")
-			_figure(mesh, at, 1.7 if wards else 1.6)
+			var model: CreatureModel = null if wards else guard_model(k)
+			if model != null:
+				model.position = _ground(at)
+				model.rotation.y = PI
+				figures.add_child(model)
+			else:
+				_figure(PieceKit.ward(k.to_pascal_case()) if wards else ActorBuilder.mesh("guard"), at,
+					1.7 if wards else 1.6)
 			along += step
 		var mid := (first + along - step) / 2.0
 		var top := Vector2(size.x + 0.85, size.y - mid) if wards else Vector2(size.x - mid, size.y + 0.85)
@@ -99,8 +96,21 @@ func _line(counts: Dictionary, wards: bool, size: Vector2i) -> void:
 		if wards:
 			var school := str(Palette.WARD_SCHOOL.get(k.to_pascal_case(), "matter"))
 			fill = (Palette.SCHOOL.get(school, Palette.MATTER) as Color).lightened(0.55)
-		pins.pin(OverlaySheet.chip(str(int(counts[k])), fill), _ground(top) + Vector3(0, 1.75, 0))
+		pins.pin(OverlaySheet.chip(str(int(counts[k])), fill), _ground(top) + Vector3(0, 1.15 if wards else 1.35, 0))
 		along += step * 0.5
+
+
+## A guard of `role` as the scout counted it: its role's kind (`Cast`) in
+## the guard form (§21.6: "ruleborn add a sash and a small lantern"), or
+## null where the model is not exported.
+static func guard_model(role: String) -> CreatureModel:
+	var kind: StringName = Cast.KIND.get(role, &"")
+	if kind == &"" or not CreatureModel.manifest().has(String(kind)):
+		return null
+	var model := CreatureModel.make(kind)
+	if model != null:
+		model.set_guard(true)
+	return model
 
 
 func _ground(at: Vector2) -> Vector3:
@@ -117,24 +127,41 @@ func _figure(mesh: Mesh, at: Vector2, scale_by: float) -> void:
 	figures.add_child(mi)
 
 
-## Low clouds of mist over the grid, seeded by its size, as one mesh.
-func _clouds(size: Vector2i) -> ArrayMesh:
-	var g := Geo.new()
-	var n := size.x * size.y / 5
+## The scout's mist as a node, over a grid of `size` tiles (none yet when
+## zero): what the planner and the Observatory's pictures also wear over a
+## realm they know only by its counts.
+static func mist_over(size: Vector2i) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.name = "Mist"
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Every vertex of a card sits at its centre: the box is given.
+	mi.custom_aabb = AABB(Vector3(-12, -1, -12), Vector3(24, 6, 24))
+	var m := ShaderMaterial.new()
+	m.shader = _mist
+	m.render_priority = 2
+	m.set_shader_parameter("drift", 0.0 if Settings.reduced_motion else 1.0)
+	mi.material_override = m
+	if size.x > 0:
+		mi.mesh = clouds(size)
+	return mi
+
+
+## The mist over the grid, seeded by its size: soft cards in two layers
+## (`stage_mist.gdshader`), one mesh.
+static func clouds(size: Vector2i) -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var n := size.x * size.y / 3
 	for i in n:
 		var u := RealmKit.jitter(Vector2i(i, size.x), 1)
 		var v := RealmKit.jitter(Vector2i(size.y, i), 2)
-		var at := Vector3((u - 0.5) * size.x * 0.95, 0.55 + 0.4 * RealmKit.jitter(Vector2i(i, i), 3),
-			(v - 0.5) * size.y * 0.95)
-		for k in 3:
-			var o := Vector3((k - 1) * 0.55, 0.08 * (k % 2), 0.15 * (k - 1))
-			g.ball(Geo.place(at + o, 0.0, Vector3(1.0, 0.5, 0.85)), 0.7 + 0.2 * (k % 2), MIST, 4, 8)
-	return g.mesh()
+		var lift := 0.35 + 0.9 * RealmKit.jitter(Vector2i(i, i), 3)
+		var at := Vector3((u - 0.5) * size.x * 1.02, lift, (v - 0.5) * size.y * 1.02)
+		var colour := Color(RealmKit.jitter(Vector2i(i, 7), 4), 0.42 + 0.3 * RealmKit.jitter(Vector2i(7, i), 5), 0.0)
+		var uvs := [Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)]
+		for k: int in [0, 1, 2, 0, 2, 3]:
+			st.set_color(colour)
+			st.set_uv(uvs[k])
+			st.add_vertex(at)
+	return st.commit()
 
-
-func _process(delta: float) -> void:
-	_clock += delta
-	if Settings.reduced_motion:
-		return
-	# The mist drifts and breathes.
-	mist.position = Vector3(sin(_clock * 0.21) * 0.35, sin(_clock * 0.6) * 0.06, cos(_clock * 0.17) * 0.3)

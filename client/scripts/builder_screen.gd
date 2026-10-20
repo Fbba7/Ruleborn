@@ -368,6 +368,8 @@ func _refresh() -> void:
 		hint = ""
 	together_label.text = together(island.combos())
 	undo_button.disabled = undo_stack.is_empty()
+	if tiles != null and view is StageView:
+		OverlayDefence.pin_all(view as StageView, island, preview, NO_MOUTH)
 	if tiles != null:
 		tiles.show_grid()
 		tiles.cursor(last_tile, last_ok)

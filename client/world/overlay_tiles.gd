@@ -16,7 +16,7 @@ extends Node3D
 ## where a piece may go, where it may not.
 const GRID := Color(0.42, 0.32, 0.86, 0.2)
 const SIGHT := Color("#FF6A7E", 0.5)
-const OPEN := Color("#4DFF8E", 0.42)
+const OPEN := Color("#4DFF8E", 0.6)
 const BAD := Color("#FF5C6E", 0.55)
 const CURSOR := Color("#FFE38A")
 const CURSOR_BAD := Color("#FF5C6E")
@@ -31,6 +31,7 @@ var grid_node: MeshInstance3D
 var paint_node: MeshInstance3D
 var cursor_node: MeshInstance3D
 var ghost_node: MeshInstance3D
+var arrows_node: MeshInstance3D
 var _clock := 0.0
 
 
@@ -40,6 +41,7 @@ func _init(on: StageView) -> void:
 	grid_node = _layer(_plate_material(1.0))
 	paint_node = _layer(_plate_material(1.0))
 	cursor_node = _layer(_flat_material())
+	arrows_node = _layer(_flat_material())
 	ghost_node = MeshInstance3D.new()
 	ghost_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(ghost_node)
@@ -156,6 +158,25 @@ func cursor(t: Vector2i, ok := true) -> void:
 			[Vector3(-0.5, 0, 0), Vector3(w, 0.03, 1.0 + w)], [Vector3(0.5, 0, 0), Vector3(w, 0.03, 1.0 + w)]]:
 		g.box(Geo.place(c + (side[0] as Vector3)), side[1], col)
 	cursor_node.mesh = g.mesh()
+
+
+## A gold chevron from `from` toward each tile of `to`, lying on that tile
+## and pointing away from `from`: where a tap moves the piece (the design's
+## curation arrows). None when `to` is empty.
+func arrows(from: Vector2i, to: Array) -> void:
+	if to.is_empty():
+		arrows_node.mesh = null
+		return
+	var g := Geo.new()
+	for t: Vector2i in to:
+		var d := Vector2(t - from).normalized()
+		var yaw := atan2(-d.x, -d.y)
+		var c := view.tile_point(t, LIFT * 3.0)
+		for side: float in [-1.0, 1.0]:
+			var arm := Transform3D(Basis(Vector3.UP, yaw + side * 0.75),
+				c + Vector3(d.x, 0, d.y) * 0.08 + Vector3(-d.y, 0, d.x) * side * 0.15)
+			g.box(arm, Vector3(0.13, 0.04, 0.5), Color(CURSOR, 0.98))
+	arrows_node.mesh = g.mesh()
 
 
 ## A ghost of `mesh` on tile `t`, turned `yaw`: see-through, tinted gold if
