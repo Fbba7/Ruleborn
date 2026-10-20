@@ -419,10 +419,11 @@ func _frame_camera() -> void:
 		# §21.1's swoop between realms: out and back in, in about a second.
 		cam_size *= 1.0 + 0.9 * sin(_swoop * PI)
 	camera.size = cam_size
-	# The heist's camera is the designs' narrow perspective, so the diorama
-	# has depth; the home pitch keeps §21.1's orthographic view. Either way
-	# `cam_size` metres fit the screen's height at the point looked at.
-	var perspective := heist and pitch == HEIST_PITCH
+	# The heist's camera (following the crew, or picking where to land) is
+	# the designs' narrow perspective, so the diorama has depth; every other
+	# view keeps §21.1's orthographic one. Either way `cam_size` metres fit
+	# the screen's height at the point looked at.
+	var perspective := heist and pitch == HEIST_PITCH and not (follow.is_empty() and landing_marks.is_empty())
 	camera.projection = Camera3D.PROJECTION_PERSPECTIVE if perspective else Camera3D.PROJECTION_ORTHOGONAL
 	camera.fov = HEIST_FOV
 	var distance := cam_size / (2.0 * tan(deg_to_rad(HEIST_FOV) / 2.0)) if perspective else 40.0
