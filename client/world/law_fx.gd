@@ -400,7 +400,8 @@ func _exit_tree() -> void:
 
 ## Attached to a heist, it keeps itself in step with the replay: between
 ## ticks it draws on from the last one, as the world view moves its actors,
-## and on each new tick it reads the pylons and the characters again.
+## and on each new tick it reads the pylons and the characters again. On a
+## realm screen, whose replay never ticks, it runs on its own clock.
 func _process(delta: float) -> void:
 	if source == null or site == null:
 		return
@@ -411,7 +412,11 @@ func _process(delta: float) -> void:
 		sync_world(source)
 	else:
 		_since += delta
-	sync(tick + clampf(_since * TPS, 0.0, 1.0))
+	# Between ticks it draws on from the last one; where the replay stands
+	# still (a realm screen, a paused rehearsal) its clock runs on, so the
+	# realm stays alive. While a heist plays, a tick comes every 1/30 s and
+	# this is the tick's own time, the same on every replay.
+	sync(tick + _since * TPS)
 
 
 ## Haste quickens every signature's clock and Stillness all but stops it
