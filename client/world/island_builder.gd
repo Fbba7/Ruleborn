@@ -484,7 +484,7 @@ func scatter() -> Array:
 			var a := TAU * i / 9.0 + _rng.randf() * 0.4
 			var d := radius() + 0.5 + _rng.randf() * 3.0
 			var face := Basis(Vector3.UP, -a)
-			birds.append(Transform3D(face.scaled(Vector3.ONE * (1.3 + _rng.randf() * 0.6)),
+			birds.append(Transform3D(face.scaled(Vector3.ONE * (2.0 + _rng.randf() * 0.8)),
 				Vector3(cos(a) * d, 1.6 + _rng.randf() * 2.4, sin(a) * d)))
 		out.append([_bird_mesh(), birds, _pick(birds.size(), [Color.WHITE]), 0.0, 0.0, "bird"])
 	return out
