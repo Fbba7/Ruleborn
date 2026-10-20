@@ -210,12 +210,17 @@ func _trails(footprints: Array) -> Array:
 					best = d
 					pair = Vector2i(a, b)
 		joined.append(pair.y)
-		# An elbow rather than a diagonal, so a trail follows the grid's lanes.
+		# A lane that bends round the corner of an elbow, as the design's
+		# lanes curve between its houses: a quadratic curve in four runs.
 		var a2 := stops[pair.x]
 		var b2 := stops[pair.y]
 		var corner := Vector2(b2.x, a2.y)
-		out.append([a2, corner])
-		out.append([corner, b2])
+		var prev := a2
+		for k in range(1, 5):
+			var t := k / 4.0
+			var p := a2.lerp(corner, t).lerp(corner.lerp(b2, t), t)
+			out.append([prev, p])
+			prev = p
 	return out
 
 

@@ -30,7 +30,7 @@ static func build(g: Geo, fine: Geo, realm: String, radius: float, palette: Dict
 			for a: float in CORNERS:
 				_crystals(g, Vector3(cos(a) * radius, base, sin(a) * radius), a)
 		"verdant":
-			var a: float = CORNERS[0]
+			var a: float = CORNERS[2]
 			_great_tree(g, fine, Vector3(cos(a) * radius, base, sin(a) * radius), palette)
 		"lanternvale":
 			for k in 8:
