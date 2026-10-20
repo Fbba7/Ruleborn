@@ -41,6 +41,9 @@ var tints := {}
 ## The island's own builder (T2's), for the meadow's colour: the grid's
 ## ground starts from the very colour the island's meadow has under it.
 var island: IslandBuilder
+## Courtyards of flagstones, each [centre, radius] in tile space: the
+## plaza round the Keeper's Spire (§21.4: "courtyards").
+var plazas: Array = []
 ## Worn earth trails, tile-space segments [a, b] (Vector2), joining the
 ## buildings' doors and the Vault: ground paint, not the simulation's gravel.
 var trails: Array = []
@@ -250,6 +253,9 @@ func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 	# grass round it a little.)
 	c = c.lerp(c.darkened(0.08).lerp(soil, 0.1), smoothstep(0.0, 0.6, trail))
 	var path := path_at(u, v)
+	for pl: Array in plazas:
+		var dr := Vector2(u, v).distance_to(pl[0] as Vector2) - float(pl[1])
+		path = maxf(path, clampf(0.45 - dr / 0.62, 0.0, 1.0))
 	# Worn earth round a path, before its cobbles start.
 	c = c.lerp(dirt.lerp(soil, 0.3), smoothstep(0.25, 0.5, path) * 0.5)
 	return [c, Vector4(path, lush, 0.0, stone)]

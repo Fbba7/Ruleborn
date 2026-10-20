@@ -153,6 +153,10 @@ func build() -> void:
 	if island_seed != 0:
 		kg.island = IslandBuilder.new(size, island_seed, palette)
 	kg.trails = _trails(footprints)
+	for fp: Array in footprints:
+		if fp[0] == "keeper_s_spire":
+			var side: float = fp[3]
+			kg.plazas.append([Vector2(fp[1], fp[2]) + Vector2(side, side) / 2.0, side / 2.0 + 0.9])
 	_lanes = kg.trails
 	for i in features.size():
 		if features[i] in WATER_TINT:
@@ -316,7 +320,9 @@ func instances() -> Array[MeshInstance3D]:
 	var out: Array[MeshInstance3D] = []
 	var ground_mat := material("ground")
 	ground_mat.set_shader_parameter("grid_offset", Vector2(0.5 * (size.x % 2), 0.5 * (size.y % 2)))
-	ground_mat.set_shader_parameter("cobble", KitGround.earth(palette).lightened(0.18))
+	# §21.4: the Heart's are "cream flagstones".
+	ground_mat.set_shader_parameter("cobble", KitGround.earth(palette).lightened(0.18) if realm != "heart"
+		else Color("#EFE4CF"))
 	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
 	# The trails, as world-space segments (xz of each end), for the shader to
 	# draw crisp.
