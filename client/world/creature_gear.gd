@@ -70,27 +70,30 @@ static func embers(c: CreatureModel) -> Node3D:
 		var e := CPUParticles3D.new()
 		e.amount = 10
 		e.lifetime = 1.1
-		e.local_coords = false
 		e.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
-		e.emission_sphere_radius = 0.03 * h
+		e.emission_sphere_radius = 0.03 * h / _scale(c)
 		e.direction = Vector3.UP
 		e.spread = 25.0
 		e.gravity = Vector3(0, 0.35 * h, 0)
 		e.initial_velocity_min = 0.05 * h
 		e.initial_velocity_max = 0.18 * h
+		e.local_coords = true
 		e.scale_amount_min = 0.5
 		e.scale_amount_max = 1.0
 		var ramp := Gradient.new()
 		ramp.set_color(0, Color(1.0, 0.85, 0.45, 1.0))
 		ramp.set_color(1, Color(EMBER, 0.0))
 		e.color_ramp = ramp
-		var q := QuadMesh.new()
-		q.size = Vector2(0.035, 0.035) * h
+		var q := SphereMesh.new()
+		q.radius = 0.02 * h / _scale(c)
+		q.height = q.radius * 2.0
+		q.radial_segments = 6
+		q.rings = 3
 		var m := StandardMaterial3D.new()
 		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-		m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
 		m.vertex_color_use_as_albedo = true
+		m.albedo_color = EMBER
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		q.material = m
 		e.mesh = q
@@ -108,7 +111,8 @@ static func guard_kit(c: CreatureModel) -> Node3D:
 	holder.name = "guard_kit"
 	var s := _scale(c)
 	var chest := _anchor(c, &"chest")
-	var rad := float(c.info.get("chest_radius", c.height() * 0.22 / s))
+	# A little outside the chest, so fleece and fur do not swallow it.
+	var rad := float(c.info.get("chest_radius", c.height() * 0.22 / s)) * 1.18
 	var st := _tool()
 	# The sash: a flat band round an ellipse tilted across the body.
 	var n := 28
@@ -128,6 +132,7 @@ static func guard_kit(c: CreatureModel) -> Node3D:
 	# A knot on the front.
 	_ball(st, tilt * Vector3(rad * 0.25, -rad * 0.05, rad * 1.04), rad * 0.16, SASH.darkened(0.15), 0.0, 0.0)
 	var sash := _instance(st, "sash")
+	sash.position.y = -rad * 0.3
 	chest.add_child(sash)
 	# The lantern at the right hand: brass cap and base, a glowing body, a ring.
 	var hand := _anchor(c, &"hand_R")

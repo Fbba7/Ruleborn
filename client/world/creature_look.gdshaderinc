@@ -67,7 +67,7 @@ vec3 creature_hush(vec3 c, vec2 uv, bool body, out vec3 stars) {
 	float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
 	vec3 deep = vec3(0.03, 0.025, 0.10);
 	vec3 mid = vec3(0.13, 0.10, 0.34);
-	vec3 moon = vec3(0.50, 0.58, 0.95);
+	vec3 moon = vec3(0.24, 0.26, 0.6);
 	vec3 r = l < 0.3 ? mix(deep, mid, l / 0.3) : mix(mid, moon, clamp((l - 0.3) / 0.7, 0.0, 1.0));
 	stars = vec3(0.0);
 	if (body) {
@@ -103,6 +103,8 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 		}
 		extra += body_emit * (1.0 - hush);
 	}
+	// Spark warms the paint toward embers before it glows.
+	col = mix(col, col * vec3(1.2, 0.72, 0.42), 0.55 * spark);
 	col = mix(col, flash.rgb, flash.a);
 	albedo = creature_saturate(col);
 	float side = smoothstep(-0.2, 0.6, n.x * 0.8 + n.y * 0.4);
@@ -111,7 +113,7 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 	emission = albedo * glow + rim + stars + extra;
 	if (spark > 0.0) {
 		// Spark: lit from within (the Rig page's emissive #6A2208 at 0.35), hotter at the edge.
-		emission += (albedo * 0.45 + spark_colour.rgb * (0.25 + fr * 1.2)) * spark;
+		emission += (albedo * 0.3 + spark_colour.rgb * (0.12 + smoothstep(0.02, 0.5, fr) * 1.8)) * spark;
 	}
 }
 

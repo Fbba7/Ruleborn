@@ -13,8 +13,11 @@ var again_button: Button
 ## The island after the heist, and the coins flying home over it.
 var world_view: WorldView
 var flight: FxDraw
+## The haul's number on the card, where the coins land.
+var counter: FxDraw
 var _haul := 0
 var _clock := 0.0
+var _verdict := {}
 
 
 func _ready() -> void:
@@ -36,8 +39,12 @@ func _ready() -> void:
 	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	check_label = FxSkin.label("", 14.0, "parchment")
 	check_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# The grade's stars over it: three for Clean, down to none for Foiled.
+	box.add_child(FxDraw.new(_draw_stars, Vector2(0, UI.px(30))))
 	box.add_child(grade_label)
-	box.add_child(FxDraw.new(_draw_rule, Vector2(0, UI.px(10))))
+	# The haul, counting up beside a coin, on the rule under the grade.
+	counter = FxDraw.new(_draw_rule, Vector2(0, UI.px(30)))
+	box.add_child(counter)
 	box.add_child(detail_label)
 	box.add_child(check_label)
 	column.add_child(card)
@@ -116,25 +123,58 @@ func _draw_rays(ci: Control) -> void:
 		var w := 0.09
 		var pts := PackedVector2Array([c, c + Vector2(cos(a - w), sin(a - w)) * reach,
 			c + Vector2(cos(a + w), sin(a + w)) * reach])
-		ci.draw_colored_polygon(pts, Color(FxSkin.GOLD, 0.16 if k % 2 == 0 else 0.08))
+		ci.draw_colored_polygon(pts, Color(1.0, 0.86, 0.45, 0.26 if k % 2 == 0 else 0.14))
 
 
-## A thin ink rule with a coin at its middle, under the grade.
+## The stars a grade earns, gold for each earned and hollow for the rest,
+## the middle one larger; they pop in one by one (none with reduced motion).
+func _draw_stars(ci: Control) -> void:
+	var grade := str(_verdict.get("grade", "")) if _verdict.get("ok", false) else ""
+	if grade == "":
+		return
+	var earned: int = {"Clean": 3, "Loud": 2, "Partial": 1}.get(grade, 0)
+	var c := Vector2(ci.size.x * 0.5, ci.size.y * 0.55)
+	for k in 3:
+		var big := 1.25 if k == 1 else 1.0
+		var r := ci.size.y * 0.42 * big
+		var at := c + Vector2((k - 1) * ci.size.y * 1.15, -ci.size.y * 0.12 if k == 1 else 0.0)
+		var pop := 1.0 if Settings.reduced_motion else clampf((_clock - 0.3 - k * 0.25) * 5.0, 0.0, 1.0)
+		if k < earned:
+			FxIcons.star(ci, at, r * pop * (1.0 + 0.15 * sin(clampf(pop, 0, 1) * PI)), FxSkin.GOLD)
+		else:
+			FxIcons.star(ci, at, r, Color("#D9CBB0"))
+
+
+## A thin ink rule under the grade, and on it the haul in Lilita One beside a
+## coin, counting up from nothing in a second (reduced motion: at once).
 func _draw_rule(ci: Control) -> void:
 	var y := ci.size.y * 0.5
-	ci.draw_line(Vector2(ci.size.x * 0.12, y), Vector2(ci.size.x * 0.42, y), FxSkin.PARCH_INK, 2.0, true)
-	ci.draw_line(Vector2(ci.size.x * 0.58, y), Vector2(ci.size.x * 0.88, y), FxSkin.PARCH_INK, 2.0, true)
-	FxIcons.coin(ci, Vector2(ci.size.x * 0.5, y), ci.size.y * 0.45)
+	if _haul <= 0:
+		ci.draw_line(Vector2(ci.size.x * 0.12, y), Vector2(ci.size.x * 0.88, y), FxSkin.PARCH_INK, 2.0, true)
+		return
+	var shown := _haul if Settings.reduced_motion else int(_haul * clampf((_clock - 0.6) / 1.0, 0.0, 1.0))
+	var font := FxSkin.numbers()
+	var px := int(ci.size.y * 0.95)
+	var words := "+%d" % shown
+	var w := font.get_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+	var r := ci.size.y * 0.36
+	var x := ci.size.x * 0.5 - (w + r * 2.6) * 0.5
+	ci.draw_line(Vector2(ci.size.x * 0.06, y), Vector2(x - r, y), FxSkin.PARCH_INK, 2.0, true)
+	ci.draw_line(Vector2(x + w + r * 3.6, y), Vector2(ci.size.x * 0.94, y), FxSkin.PARCH_INK, 2.0, true)
+	FxIcons.coin(ci, Vector2(x + r, y), r)
+	var base := Vector2(x + r * 2.6, y + px * 0.36)
+	ci.draw_string_outline(font, base, words, HORIZONTAL_ALIGNMENT_LEFT, -1, px, maxi(4, px / 6), FxSkin.INK_LINE)
+	ci.draw_string(font, base, words, HORIZONTAL_ALIGNMENT_LEFT, -1, px, FxSkin.GOLD)
 
 
 ## §21.8: "rewards fly into their counter": coins rise from the island and
 ## arc into the card, a few at a time, for as long as there is loot to bring
 ## home; reduced motion shows them resting in the card instead.
 func _draw_flight(ci: Control) -> void:
-	if _haul <= 0 or detail_label == null:
+	if _haul <= 0 or counter == null:
 		return
-	var to := detail_label.get_global_rect().get_center() - ci.get_global_rect().position
-	to.y -= detail_label.size.y * 0.5
+	var to := counter.get_global_rect().get_center() - ci.get_global_rect().position
+	to.x -= UI.px(24)
 	var from := Vector2(ci.size.x * 0.5, ci.size.y * 0.3)
 	var count := clampi(_haul / 40, 4, 14)
 	var r := UI.px(5)
@@ -184,6 +224,7 @@ func play_again(id: String) -> void:
 
 
 func show_verdict(v: Dictionary, replay_bytes: int) -> void:
+	_verdict = v
 	var by_server: bool = v.get("server", false)
 	if v.get("ok", false):
 		grade_label.text = Strings.term("GRADE", str(v["grade"]))

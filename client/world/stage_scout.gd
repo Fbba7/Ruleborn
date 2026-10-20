@@ -9,7 +9,7 @@ extends Node3D
 
 ## The mist's veil and its clouds.
 const VEIL := Color(0.78, 0.74, 0.96, 0.55)
-const MIST := Color(0.9, 0.88, 1.0, 0.88)
+const MIST := Color(0.84, 0.8, 0.98, 0.72)
 
 static var _toon: Shader = load("res://world/toon.gdshader")
 

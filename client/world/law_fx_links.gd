@@ -55,7 +55,7 @@ const NOTE_COLOUR := {"flow": "#5AB8F0", "weight": "#8A7AA0", "glow": "#F6C453",
 ## a star's zigzag, a ring, a mask's hexagon.
 const NOTE_SHAPE := {"flow": 11, "weight": 9, "glow": 2, "hush": 0, "bloom": 10, "spark": 8, "echo": 6, "veil": 7}
 ## Where a link hangs, over the pylon's foot: at its crown.
-const LIFT := 1.72
+const LIFT := 1.82
 
 
 static func school(law: String) -> String:
@@ -142,7 +142,7 @@ static func build(fx: LawFx, into: Node3D) -> void:
 	for d: Dictionary in dissonances(laws):
 		var a := fx.site.pylon_of(d["a"]) + lift
 		var b := fx.site.pylon_of(d["b"]) + lift
-		var col := note_colour(d["clash"]).lerp(note_colour(OPPOSITE[d["clash"]]), 0.5).lightened(0.2)
+		var col := note_colour(d["clash"]).lerp(note_colour(OPPOSITE[d["clash"]]), 0.35)
 		threads.strip(LawFxBatch.sagging(a, b, -0.25, 28), col, 1)
 		LawFxHarmony.clash(fx, into, d["clash"], a - lift, b - lift)
 	for c: Dictionary in chords(laws):

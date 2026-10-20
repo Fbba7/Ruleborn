@@ -34,8 +34,12 @@ func run() -> void:
 	_taps(view)
 	_laws(view)
 	_calm(view)
+	_skiff(view, replay)
+	_moments()
+	_sight_marks(view, replay)
 	view.queue_free()
 	await tree.process_frame
+	await _models(replay)
 
 
 func _hud(replay: RulebornReplay) -> void:
@@ -83,9 +87,20 @@ func _events(view: WorldView, replay: RulebornReplay) -> void:
 	fx._last = back
 	fx.read(replay)
 	var fresh := view.anchors.pops.is_empty()
+	# A reading in another realm than the last: the crew crossed, and the
+	# camera swoops (21.1).
+	var crossed: Dictionary = fx._reading(replay)
+	crossed["realm"] = 5
+	fx._last = crossed
+	view._swoop = 0.0
+	fx.read(replay)
+	var swooped := view._swoop > 0.99 and view.anchors.wipe > 0.99
+	view._swoop = 0.0
+	view.anchors.wipe = 0.0
 	check.call("what happens is drawn from the simulation's own readings: a grab rises as its number, the alarm "
 			+ "flashes the screen's edge, a knock-out shows; nothing is shown twice, and a replay restarted starts "
-			+ "afresh (21.8, 24.1)", quiet and shown and fresh, "%s %s %s %s" % [quiet, texts, view.anchors.flash, fresh])
+			+ "afresh; a crossing to another realm swoops (21.8, 24.1, 21.1)", quiet and shown and fresh and swooped,
+		"%s %s %s %s %s" % [quiet, texts, view.anchors.flash, fresh, swooped])
 
 
 ## §21.1: the heist's follow camera shows about 12 tiles across, eight close
@@ -200,3 +215,83 @@ func _calm(view: WorldView) -> void:
 	view._shake = 0.0
 	check.call("reduced motion takes away the shake and the swoop between realms; without it the shake is gentle "
 			+ "(20.8, 21.8)", still and moves, "%s %s" % [still, moves])
+
+
+## Get out's skiff stands where the order called it, and nowhere before.
+func _skiff(view: WorldView, replay: RulebornReplay) -> void:
+	view._sync_skiff(0.0)
+	var hidden := not view._skiff.visible
+	replay.give(0, HeistController.Kind.SKIFF, 128, 11 * 256 + 128)
+	replay.step()
+	view.describe()
+	view._sync_skiff(0.0)
+	var edge := view.world_at(Vector2(0.5, 11.5))
+	var shown := view._skiff.visible and Vector2(view._skiff.position.x, view._skiff.position.z).length() \
+		> Vector2(edge.x, edge.z).length()
+	check.call("the skiff Get out calls is drawn off the island's edge where it was called, and not before (5.4)",
+		hidden and shown, "%s %s %s" % [hidden, view._skiff.visible, view._skiff.position])
+
+
+## The replay's timeline marks a golden heist's moments where they happen.
+func _moments() -> void:
+	var golden := FileAccess.get_file_as_bytes("res://goldens/planned-clean.rbh")
+	var marks := ReplayScreen.moments(golden, PackedByteArray())
+	var count := func(kind: String) -> int:
+		return marks.filter(func(m: Dictionary) -> bool: return m["kind"] == kind).size()
+	var ordered := true
+	for k in range(1, marks.size()):
+		ordered = ordered and int(marks[k]["tick"]) >= int(marks[k - 1]["tick"])
+	check.call("the replay's timeline marks each knock-out, each rise of the alarm, the Vault opening and each pylon "
+			+ "broken, in the order they happen",
+		count.call("ko") == 4 and count.call("vault") == 1 and count.call("alarm") >= 1 and count.call("pylon") == 1
+			and ordered, "%s" % [marks])
+
+
+## The eye over a crew member is the simulation's sight: one standing on a
+## tile any guard on its feet sees, and no other.
+func _sight_marks(view: WorldView, replay: RulebornReplay) -> void:
+	view.describe()
+	var want := {}
+	var crew := replay.crew()
+	for gi in replay.guards().size():
+		if replay.guards()[gi]["down"]:
+			continue
+		var seen := Array(replay.seen(gi))
+		for i in crew.size():
+			var at: Vector2 = crew[i]["at"]
+			if crew[i]["standing"] == "Active" and seen.has(floori(at.y) * replay.size().x + floori(at.x)):
+				want[i] = true
+	check.call("a crew member is marked as in sight exactly when it stands on a tile a guard on its feet sees, by the "
+			+ "simulation's own sight (21.12)", view.in_sight == want, "%s %s" % [view.in_sight, want])
+
+
+## A character model given by `figure_maker` takes each actor's figure and is
+## played the clip for what its actor is doing (the integrator's hook for T1).
+func _models(replay: RulebornReplay) -> void:
+	var model := GDScript.new()
+	model.source_code = "extends Node3D\nvar played: Array[String] = []\n\n\nfunc play(clip: String) -> void:\n" \
+		+ "\tplayed.append(clip)\n"
+	model.reload()
+	var made: Array[String] = []
+	WorldView.figure_maker = func(role: String, _height: float) -> Node3D:
+		made.append(role)
+		var n := Node3D.new()
+		n.set_script(model)
+		return n
+	var view := WorldView.new()
+	view.size = Vector2(540, 960)
+	tree.root.add_child(view)
+	view.show_replay(replay)
+	view.describe()
+	view._animate(float(replay.tick()))
+	var figure := view._crew[0].get_node("Rig/Figure")
+	var played: Array = figure.get("played")
+	var guard_figure := view._guards[0].get_node("Rig/Figure")
+	WorldView.figure_maker = Callable()
+	check.call("a character model, when the integrator gives one, takes each actor's figure and is played the clip "
+			+ "for what the simulation says it is doing (TD.9)",
+		made.size() == replay.crew().size() + replay.guards().size() and made.has("guard") and played.size() == 1
+			and str(played[0]) in ["idle", "walk", "run", "crouch", "ko"] and guard_figure.get_script() == model,
+		"%s %s" % [made, played])
+	view.queue_free()
+	await tree.process_frame

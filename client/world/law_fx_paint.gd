@@ -54,7 +54,9 @@ static func mark(fx: LawFx, sig: Node3D, tiles: Array[Vector2i], pattern: int, a
 	var batch := LawFxBatch.new(LawFxBatch.Kind.DECALS)
 	for t: Vector2i in tiles:
 		batch.tile(fx.site, t, 0.75 + 0.25 * RealmKit.jitter(t, 5))
-	return fx.layer(sig, batch, fx.decal_material(pattern, a, b, pace))
+	var mi := fx.layer(sig, batch, fx.decal_material(pattern, a, b, pace))
+	mi.set_meta("ground", true)
+	return mi
 
 
 ## Round marks of `pattern` at each of `centres` (a Vector3 each), `radius`

@@ -128,6 +128,23 @@ static func bubble(ci: CanvasItem, c: Vector2, s: float, mark: String, fill: Col
 			ci.draw_circle(c, w, INK)
 
 
+## An eye: a crew member in a guard's sight. Almond-shaped, white with a red
+## iris, on an ink outline, so it reads without its colour.
+static func eye(ci: CanvasItem, c: Vector2, s: float) -> void:
+	var pts := PackedVector2Array()
+	for k in 16:
+		var a := TAU * k / 16.0
+		pts.append(c + Vector2(cos(a) * s * 0.5, sin(a) * s * 0.28 * absf(sin(a)) + sin(a) * s * 0.06))
+	var ring := PackedVector2Array(pts)
+	ring.append(pts[0])
+	shadow(ci, c, s * 0.42)
+	ci.draw_colored_polygon(pts, Color.WHITE)
+	ci.draw_polyline(ring, INK, maxf(2.0, s * 0.08), true)
+	ci.draw_circle(c, s * 0.17, Color("#E2536B"))
+	ci.draw_circle(c, s * 0.08, INK)
+	ci.draw_circle(c + Vector2(-s * 0.05, -s * 0.05), s * 0.04, Color.WHITE)
+
+
 ## A school's shape (§21.2), filled in its colour and outlined in ink.
 static func school(ci: CanvasItem, c: Vector2, s: float, name: String) -> void:
 	var colour: Color = Palette.SCHOOL.get(name, Palette.STONE)
