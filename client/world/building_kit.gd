@@ -614,6 +614,13 @@ func _star_well() -> void:
 	move(Geo.Anim.SPIN_Y, at(0, y + 0.3, 0))
 	d.gem(Geo.place(at(0, y + 0.3, 0)), 0.15 * unit, 0.22 * unit, KitStyle.lit(Color("#FFE9A0"), 0.45), 4)
 	stop()
+	# Stars dropping from the crystal into the bucket (§21.5: "stars drop
+	# into the bucket").
+	for k in 3:
+		var drop := at(0.03 * (k - 1), 1.2, 0.02 * k)
+		move(Geo.Anim.FALL, drop + Vector3(k * 0.7, 0, 0))
+		d.gem(Geo.place(drop), 0.025 * unit, 0.03 * unit, KitStyle.lit(Color("#FFE7A8"), 0.3), 4)
+	stop()
 	# The star net: a ring of little stars above it from the second look.
 	if tier >= 1:
 		move(Geo.Anim.SPIN_Y, at(0, y + 0.3, 0))

@@ -102,10 +102,12 @@ func build(t: Vector2i, f: int) -> void:
 			prop.cyl(Geo.place(c), 0.32, 0.16, 0.22, rock.darkened(0.25), 8)
 			prop.rock(Geo.place(c + Vector3(0.22, 0.05, 0.1)), 0.1, rock.darkened(0.1), t.y)
 			prop.ring(Geo.place(c + Vector3(0, 0.225, 0)), 0.0, 0.14, Color(Palette.ENERGY.lightened(0.15), 0.1), 10)
-			kit.clear.moving(Geo.Anim.BOB, c)
-			kit.clear.ball(Geo.place(c + Vector3(0, 0.45, 0), 0.0, Vector3(1, 1.6, 1)), 0.1,
-				Color(Palette.ENERGY.lightened(0.3), 0.2), 3, 6)
-			kit.clear.moving(Geo.Anim.NONE, Vector3.ZERO)
+			# Sparks rising from the vent, each on its own beat.
+			for k in 4:
+				var sp := c + Vector3((RealmKit.jitter(t, k) - 0.5) * 0.12, 0.3, (RealmKit.jitter(t, k + 4) - 0.5) * 0.12)
+				prop.moving(Geo.Anim.RISE, sp + Vector3(k * 1.7, 0, 0))
+				prop.gem(Geo.place(sp), 0.025, 0.035, Color(Palette.ENERGY.lightened(0.3), 0.1), 4)
+			prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 		RealmKit.F.STATIC_STONE:
 			hero.rock(Geo.place(c + Vector3(0, 0.26, 0), j, Vector3(0.8, 1.3, 0.8)), 0.3, Color("#5A6A8A"), t.x + t.y)
 			hero.moving(Geo.Anim.SPIN_Y, c)
@@ -685,7 +687,7 @@ func _spring(t: Vector2i, c: Vector3, rock: Color) -> void:
 		kit.prop.rock(Geo.place(c + Vector3(cos(a) * 0.45, -0.05, sin(a) * 0.45), a), 0.09, rock.lightened(0.15), k)
 	for k in 3:
 		var p := c + Vector3(RealmKit.jitter(t, k) - 0.5, 0, RealmKit.jitter(t, k + 1) - 0.5) * 0.4
-		kit.clear.moving(Geo.Anim.BOB, p + Vector3(0, k, 0))
+		kit.clear.moving(Geo.Anim.RISE, p + Vector3(k * 1.3, 0, 0))
 		kit.clear.ball(Geo.place(p + Vector3(0, 0.2 + 0.22 * k, 0)), 0.12 + 0.05 * k, Color("#FFFFFF", 0.85), 3, 7)
 	kit.clear.moving(Geo.Anim.NONE, Vector3.ZERO)
 

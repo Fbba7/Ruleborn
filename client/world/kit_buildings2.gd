@@ -226,6 +226,15 @@ static func _spring(b: BuildingKit) -> void:
 	b.move(Geo.Anim.BOB, b.at(0, 1.04, 0))
 	b.ball(0.07, ink, 0, 1.04, 0, 1.2, 3, 8)
 	b.stop()
+	# Ink droplets rising from the spout and bubbles from the basin.
+	for k in 4:
+		var a := TAU * k / 4.0
+		var p := b.at(cos(a) * 0.05, 1.05, sin(a) * 0.05)
+		b.move(Geo.Anim.RISE, p + Vector3(k * 0.9, 0, 0))
+		b.d.ball(Geo.place(p), 0.02 * b.unit, KitStyle.lit(Color("#9BF4FA"), 0.4), 2, 5)
+		var q := b.at(cos(a + 0.6) * 0.3, 0.18, sin(a + 0.6) * 0.3)
+		b.move(Geo.Anim.RISE, q + Vector3(k * 1.3, 0, 0))
+		b.d.ball(Geo.place(q), 0.015 * b.unit, Color("#E8FCFF"), 2, 4)
 	b.move(Geo.Anim.SPIN_Y, b.at(0, 1.1, 0))
 	for k in 3:
 		var a := TAU * k / 3.0

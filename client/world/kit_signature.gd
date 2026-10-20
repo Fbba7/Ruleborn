@@ -135,6 +135,6 @@ static func _chimney(g: Geo, fine: Geo, p: Vector3, palette: Dictionary) -> void
 	fine.ring(Geo.place(p + Vector3(0, 1.305, 0)), 0.0, 0.15, Color(Palette.ENERGY.lightened(0.2), 0.1), 8)
 	for k in 3:
 		var q := p + Vector3(0.04 * k, 1.5 + 0.28 * k, 0)
-		fine.moving(Geo.Anim.BOB, q + Vector3(k * 3.0, 0, 0))
+		fine.moving(Geo.Anim.RISE, q + Vector3(k * 3.0, 0, 0))
 		fine.ball(Geo.place(q), 0.12 + 0.07 * k, Color("#6A5A5E").lightened(0.15 * k), 3, 7)
 	fine.moving(Geo.Anim.NONE, Vector3.ZERO)

@@ -12,7 +12,7 @@ extends RefCounted
 ## wheels turn, flags flutter, stones bob.
 
 ## The kit's idle motions, as CUSTOM0.w.
-enum Anim { NONE, SWAY, SPIN_Y, SPIN_X, SPIN_Z, BOB, FLAG, SWING, SHIVER }
+enum Anim { NONE, SWAY, SPIN_Y, SPIN_X, SPIN_Z, BOB, FLAG, SWING, SHIVER, RISE, FALL }
 
 var st := SurfaceTool.new()
 var triangles := 0
