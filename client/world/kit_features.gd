@@ -552,12 +552,26 @@ func _tree(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
 				var a := j * TAU + PI * k
 				hero.box(Transform3D(Basis(Vector3(cos(a), 0, sin(a)).cross(Vector3.UP), 0.7),
 					c + Vector3(cos(a) * 0.08, 0.45 * tall, sin(a) * 0.08)), Vector3(0.04, 0.22, 0.04), bark)
-			hero.ball(Geo.place(c + Vector3(0, 0.85 * tall, 0), j, Vector3(1.0, 0.86, 1.0)), 0.47 * crown,
-				plant.darkened(0.06), 5, 10)
-			hero.ball(Geo.place(c + Vector3(0.2, 1.08 * tall, 0.09) * Vector3(crown, 1, crown), j), 0.31 * crown,
-				plant.lightened(0.08), 4, 8)
-			hero.ball(Geo.place(c + Vector3(-0.18, 1.12 * tall, -0.09) * Vector3(crown, 1, crown), j), 0.27 * crown,
-				plant.lightened(0.02), 4, 8)
+			# Three shapes, chosen by the tile, so a grove never repeats: the
+			# design's three-blob crown, a tall oval, and a two-tier crown.
+			var shape := int(RealmKit.jitter(t, 22) * 3.0)
+			if shape == 1:
+				hero.ball(Geo.place(c + Vector3(0, 0.95 * tall, 0), j, Vector3(0.8, 1.25, 0.8)), 0.44 * crown,
+					plant.darkened(0.08), 5, 10)
+				hero.ball(Geo.place(c + Vector3(0.1, 1.2 * tall, 0.08) * Vector3(crown, 1, crown), j), 0.24 * crown,
+					plant.lightened(0.06), 4, 8)
+			elif shape == 2:
+				hero.ball(Geo.place(c + Vector3(0, 0.78 * tall, 0), j, Vector3(1.1, 0.7, 1.1)), 0.46 * crown,
+					plant.darkened(0.1), 5, 10)
+				hero.ball(Geo.place(c + Vector3(0.04, 1.1 * tall, 0.02), j, Vector3(1.0, 0.75, 1.0)), 0.34 * crown,
+					plant.lightened(0.04), 4, 9)
+			else:
+				hero.ball(Geo.place(c + Vector3(0, 0.85 * tall, 0), j, Vector3(1.0, 0.86, 1.0)), 0.47 * crown,
+					plant.darkened(0.06), 5, 10)
+				hero.ball(Geo.place(c + Vector3(0.2, 1.08 * tall, 0.09) * Vector3(crown, 1, crown), j), 0.31 * crown,
+					plant.lightened(0.08), 4, 8)
+				hero.ball(Geo.place(c + Vector3(-0.18, 1.12 * tall, -0.09) * Vector3(crown, 1, crown), j),
+					0.27 * crown, plant.lightened(0.02), 4, 8)
 			if kit.realm == "verdant" or kit.realm == "heart":
 				var fruit: Color = Color("#E2536B") if kit.realm == "verdant" else Color("#F7A6DA")
 				for k in 4:
