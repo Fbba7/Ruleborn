@@ -9,7 +9,7 @@ extends Control
 ## Behind the log stands the defence it records: the player's own island with
 ## the defence overlay (`OverlayDefence`), its posts numbered and its wards
 ## marked, from the curation draft, the realm view's island or the builder's
-## draft, whichever the phone holds.
+## draft, whichever the phone holds. A tap on a post shows its guard's sight.
 
 var controller: DefencesController
 var body: VBoxContainer
@@ -21,6 +21,7 @@ var _sheet: ScrollContainer
 var _keys: Control
 var _top: Control
 var _drawn_key := ""
+var _island: RulebornIsland
 
 
 func _ready() -> void:
@@ -42,6 +43,7 @@ func _build() -> void:
 	view = StageScreen.mount(self, column)
 	view.fill = 0.86
 	defence = OverlayDefence.new(view)
+	view.tapped.connect(func(at: Vector2) -> void: _on_tap(view.tile_at(at)))
 	header_label = UI.label("", UI.TEXT_POINTS, true)
 	_top = OverlaySheet.ribbon(UI.title(Strings.t("DEFENCES_TITLE")), header_label)
 	column.add_child(_top)
@@ -123,7 +125,17 @@ func _draw_world() -> void:
 	if replay == null:
 		return
 	view.show_replay(replay)
+	_island = island
 	defence.draw(island, replay, CurationState.NO_POST, {})
+
+
+## A tap on a post shows that guard's sight (§21.12), a tap elsewhere the
+## first guard's: the defence the log records, read post by post.
+func _on_tap(tile: Vector2i) -> void:
+	if _island == null or view.replay == null:
+		return
+	var post := tile if str(_island.occupant(tile.x, tile.y)).begins_with("guard:") else CurationState.NO_POST
+	defence.draw(_island, view.replay, post, {})
 
 
 func _process(_delta: float) -> void:
