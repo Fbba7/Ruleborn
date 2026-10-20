@@ -93,6 +93,18 @@ universe, inside §21.3's 40,000 and 150.
 - Round 10: a realm asked for before the universe has arrived (home opening on the Heart on a first
   launch, before the server answers) is remembered and shown once it is drawn, instead of dropped.
 
+- Round 11, on the merged state (T1, T2, T3 in): the realms' buildings are T3's kit at their levels, and
+  the Heart's citadel is T3's Keeper's Spire (on a five-tile footprint, drawn 1.35×) with the map's orb
+  light. T3's buildings cost 1,000–3,900 triangles each, so the map now has two levels of detail: the
+  kit's buildings only on the realm the camera is on, and a block in each building's level colours
+  elsewhere (`UniverseIsland.near` / `far`); the meadow is a few triangles a tuft. The player's own
+  characters (from the home view) appear as T1's sculpts on the realm seen close (zoom 2): at the
+  building they work, napping when resting, strolling when idle; two at most, drawn 2.1× as the design's
+  diorama draws its figures (`UniverseCrowd`). The flying things moved to `UniverseFlight`.
+  Budget: 31,600 triangles and about 70 draw calls (two characters add about 11,800 in a close-up).
+  Stills: `round11_merged_home.png`, `round11_merged_zoom0..2.png`, `round11_merged_map.png`,
+  `round11_compare_marta.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 
@@ -110,8 +122,8 @@ Judged beside `art/design/stills/obs/*.png` at phone size and in grayscale (`rou
 - As good: the night colours, the Heart's citadel, beam and rings, the lit rims and halos, the glowing
   crystals and falls beneath, the dust-armed galaxy.
 - Still worse:
-  - Buildings are `BuildingKit`'s current pieces (T3), boxier and less lit than the design's map
-    buildings; they improve here as T3's kit does.
+  - Away from the realm the camera is on, buildings are blocks in their level's colours (the price of
+    §21.3's budget with T3's detailed kit).
   - No cast shadows: the shared toon light shows none under this renderer (see "For other tracks");
     the map's contact shade stands in.
   - Island tops at the far zoom are sparser than the design's, which packs props densely.
@@ -120,7 +132,9 @@ Judged beside `art/design/stills/obs/*.png` at phone size and in grayscale (`rou
 
 ## Next
 
-- Swap in T3's buildings and Heart citadel once merged; keep `UniverseCitadel` only if T3 draws none.
+- Use T2's island (`IslandBuilder`) for the realm seen close; its meadow (4,800 triangles) is too heavy
+  for all seven at once, so the far islands keep the map's light rock.
+- Wildlife and skiff crews from T1 (each a full character's triangles, so a close-up only).
 - Per-building window lights from the kit, and lantern props per realm type.
 - A gentle bob and wind for the islands and their dressing (vertex animation in `universe_toon`).
 - Measure frame time on a phone (the galaxy plane is one full-screen fragment pass).

@@ -61,6 +61,14 @@ var places := {}
 ## Ghost: a realm still to open, drawn as mist and outline only.
 var ghost := false
 
+## The realm's buildings drawn close — the kit's own (`BuildingKit`), inked,
+## and its fine parts — and from afar, a block in each one's colours: the
+## map shows the close ones only on the realm the camera is on (§21.3: far
+## islands use simplified pieces).
+var near := Geo.new()
+var near_fine := Geo.new()
+var far := Geo.new()
+
 ## Soft shade on the ground under what stands on it (the map's shade layer).
 var shades := UniversePaint.new()
 
@@ -326,8 +334,8 @@ func _shade(p: Vector3, r: float, dark: float) -> void:
 func _tree(g: Geo, p: Vector3, s: float, crown: Color, i: int) -> void:
 	_shade(p, 0.85 * s, 0.45)
 	g.prism(Geo.place(p), 5, 0.13 * s, 0.09 * s, 0.7 * s, Palette.WOOD.darkened(0.25))
-	g.ball(Geo.place(p + Vector3(0, 1.0 * s, 0)), 0.55 * s, crown, 3, 6)
-	g.ball(Geo.place(p + Vector3(0.25 * s, 1.3 * s, 0.1 * s)), 0.36 * s, crown.lightened(0.12 + 0.04 * (i % 3)), 3, 6)
+	g.ball(Geo.place(p + Vector3(0, 1.0 * s, 0)), 0.55 * s, crown, 3, 5)
+	g.ball(Geo.place(p + Vector3(0.25 * s, 1.3 * s, 0.1 * s)), 0.36 * s, crown.lightened(0.12 + 0.04 * (i % 3)), 2, 5)
 
 
 func _pine(g: Geo, p: Vector3, s: float, col: Color) -> void:
@@ -375,11 +383,28 @@ func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) ->
 		if kind == "ward":
 			_ward(hero, glows, mid, lv)
 		else:
-			BuildingKit.build(hero, kind, mid, 4 if kind in ["vault", "keeper_s_spire"] else 3, lv, palette)
+			var side := 4 if kind in ["vault", "keeper_s_spire"] else 3
+			BuildingKit.build(near, kind, mid, side, lv, palette, near_fine)
+			_far_building(kind, mid, side, lv)
 		places["%s:%d" % [kind, int(b.get("n", 1))]] = mid + Vector3(0, 2.2, 0)
 		# Windows lit, more of them in the realms of night (§21.2: "lanterns
 		# and glows carry the realm").
 		glows.glow(mid + Vector3(0, 0.7, 0.9), 0.7 if lit else 0.45, Color("#FFC36A", 0.7 if lit else 0.4))
+
+
+## A building as seen from across the universe: its body and roof in its
+## level's look (§21.5), its height and shape by kind.
+func _far_building(kind: String, mid: Vector3, side: int, lv: int) -> void:
+	var c := BuildingKit.look(lv, palette)
+	var w := side * 0.62
+	if kind in ["guardian_post", "beacon", "observatory", "resonance_lab", "keeper_s_spire"]:
+		var tall := w * (1.6 if kind in ["guardian_post", "beacon"] else 1.0)
+		far.prism(Geo.place(mid), 6, w * 0.42, w * 0.36, tall, c[0])
+		far.prism(Geo.place(mid + Vector3(0, tall, 0)), 6, w * 0.5, 0.0, w * 0.55, c[1])
+		return
+	far.box(Geo.place(mid + Vector3(0, w * 0.32, 0)), Vector3(w, w * 0.64, w * 0.8), c[0])
+	far.prism(Transform3D(Basis(Vector3.UP, PI / 4.0), mid + Vector3(0, w * 0.64, 0)), 4, w * 0.74, 0.0, w * 0.5,
+		c[1])
 
 
 ## Stepping stones from the plaza to a building's door.
@@ -431,8 +456,8 @@ func scatter(tufts: Array, flowers: Array) -> void:
 	elif key == "lanternvale":
 		bloom = [Color("#7AD8C8", 0.4), Color("#FFD27A", 0.4)]
 	var placed := 0
-	for i in 260:
-		if placed >= 150:
+	for i in 200:
+		if placed >= 100:
 			break
 		var a := noise(i * 7 + 1) * TAU
 		var f := sqrt(noise(i * 7 + 2)) * 0.93
