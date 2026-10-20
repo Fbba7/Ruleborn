@@ -68,6 +68,9 @@ static func play_model(view: WorldView, node: Node3D, rig: Node3D, key: String) 
 	var moving := _moving(view, key)
 	var gait := str(node.get_meta("gait", "Walk"))
 	var clip := model_clip(down, moving, gait, node.get_meta("carrying", false), int(node.get_meta("hit", 0)) > 0)
+	# A screen may hold a pose (the result's celebration) while it stands.
+	if not down and not moving and str(node.get_meta("pose", "")) != "":
+		clip = str(node.get_meta("pose", ""))
 	if int(node.get_meta("hit", 0)) > 0:
 		node.set_meta("hit", int(node.get_meta("hit", 0)) - 1)
 	# Crouching is a slow walk; a run is quick.
