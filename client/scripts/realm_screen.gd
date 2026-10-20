@@ -21,6 +21,7 @@ var town: StageTown
 var card: PanelContainer
 var card_label: Label
 var _sheet: ScrollContainer
+var _keys: Control
 var _drawn_key := ""
 var _screen := {}
 
@@ -60,10 +61,12 @@ func _build() -> void:
 	body = UI.scroll(column)
 	_sheet = StageScreen.sheet(body, 0.45)
 	var actions := UI.row(-1.0, true)
+	_keys = actions
 	actions.add_child(UI.button(Strings.t("HOME_MAP"), func() -> void: App.services.router.go(&"map"), true))
 	actions.add_child(UI.button(Strings.t("RV_CURATE"), func() -> void:
 		App.services.curation_flow.open(str(App.services.store.get_slice(RealmState.REALM)["realm"]))))
 	actions.add_child(UI.button(Strings.t("HOME_BUILD"), func() -> void: App.services.router.go(&"builder")))
+	actions.add_child(StageScreen.fold_key(_sheet))
 	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
 	OverlaySheet.dress(self)
 
@@ -160,5 +163,5 @@ func _on_tap(tile: Vector2i, _at: Vector2) -> void:
 
 func _process(_delta: float) -> void:
 	if _sheet != null and view != null:
-		view.cover_bottom = StageScreen.covered_below(view, _sheet)
+		view.cover_bottom = StageScreen.covered_below(view, _sheet, _keys)
 		view.cover_top = StageScreen.covered_above(view, header_label)

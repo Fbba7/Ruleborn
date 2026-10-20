@@ -117,6 +117,11 @@ func _worker(home: Dictionary, k: int, n: int, who: Dictionary) -> void:
 		var model := CreatureModel.make(StringName(kind))
 		if model != null:
 			model.play(&"work")
+			# At the realm's zoom a worker stands a few dozen pixels tall:
+			# its ink pass would double its triangles for a line no one
+			# sees (§21.3's budget), so it goes; the buildings keep theirs.
+			if model.material() != null:
+				model.material().next_pass = null
 			root.set_meta("model", true)
 			body = model
 	if body == null:

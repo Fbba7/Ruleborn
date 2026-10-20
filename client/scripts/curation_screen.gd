@@ -19,6 +19,7 @@ var confirm := ""
 var view: StageView
 var defence: OverlayDefence
 var _sheet: ScrollContainer
+var _keys: Control
 var _top: Control
 var _drawn_key := ""
 var _laws_key := 0
@@ -54,8 +55,10 @@ func _build() -> void:
 	body = UI.scroll(column)
 	_sheet = StageScreen.sheet(body, 0.62)
 	var actions := UI.row(-1.0, true)
+	_keys = actions
 	actions.add_child(UI.button(Strings.t("HOME_MAP"), func() -> void: App.services.router.go(&"map"), true))
 	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
+	actions.add_child(StageScreen.fold_key(_sheet))
 	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
 	OverlaySheet.dress(self)
 
@@ -234,5 +237,5 @@ func _on_tap(tile: Vector2i, _at: Vector2) -> void:
 
 func _process(_delta: float) -> void:
 	if _sheet != null and view != null:
-		view.cover_bottom = StageScreen.covered_below(view, _sheet)
+		view.cover_bottom = StageScreen.covered_below(view, _sheet, _keys)
 		view.cover_top = StageScreen.covered_above(view, _top)

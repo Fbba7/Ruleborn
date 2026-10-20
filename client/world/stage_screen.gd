@@ -7,6 +7,9 @@ extends RefCounted
 ## changes.
 
 static var _night: ImageTexture
+## Whether the player folded the words away, kept from screen to screen so
+## the world keeps the phone once they ask for it.
+static var folded := false
 
 
 ## The view behind `screen`'s frame, which `UI.frame` built: put over the
@@ -58,9 +61,27 @@ static func sheet(body: VBoxContainer, ratio := 0.8) -> ScrollContainer:
 	return s
 
 
+## A key that folds the sheet away, and back: the world takes the phone,
+## the words wait one tap away (and a screen reader still reads the realm).
+static func fold_key(words: ScrollContainer) -> Button:
+	var b := UI.button("", func() -> void: pass)
+	var apply := func() -> void:
+		words.visible = not folded
+		UI.relabel(b, Strings.t("STAGE_SHOW_WORDS" if folded else "STAGE_HIDE_WORDS"), true)
+	b.pressed.connect(func() -> void:
+		folded = not folded
+		apply.call())
+	UI.fit_to(b, [Strings.t("STAGE_SHOW_WORDS"), Strings.t("STAGE_HIDE_WORDS")])
+	apply.call()
+	b.set_meta("key", "fold")
+	return b
+
+
 ## How much of `view`'s height lies under `cover` (a control over it) at
 ## the bottom: the share the island is lifted out of.
-static func covered_below(view: Control, cover: Control) -> float:
+static func covered_below(view: Control, cover: Control, folded_to: Control = null) -> float:
+	if folded_to != null and not cover.is_visible_in_tree():
+		cover = folded_to
 	var h := maxf(1.0, view.size.y)
 	var top := cover.get_global_rect().position.y - view.get_global_rect().position.y
 	return clampf((h - top) / h, 0.0, 0.8)
