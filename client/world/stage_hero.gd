@@ -172,7 +172,14 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		if hall:
 			var hall_mesh := MeshInstance3D.new()
 			hall_mesh.mesh = StageHeroFigure.hall(gap * list.size())
-			hall_mesh.material_override = toon(KEY, false, true)
+			# The floor in T2's painted stone, the look the realm's rock takes.
+			var floor_paint := ShaderMaterial.new()
+			floor_paint.shader = load("res://world/look_ground.gdshader")
+			floor_paint.set_shader_parameter("paint", LookPaint.rock())
+			floor_paint.set_shader_parameter("paint_strength", 0.7)
+			floor_paint.set_shader_parameter("world_scale", 1.6)
+			floor_paint.set_shader_parameter("tint", Color(0.82, 0.78, 0.8))
+			hall_mesh.material_override = floor_paint
 			scenery.add_child(hall_mesh)
 		else:
 			scenery.add_child(StageHeroFigure.realm_ground(school, gap * list.size() * 0.4))
@@ -274,7 +281,7 @@ func reveal() -> void:
 		var mi := MeshInstance3D.new()
 		mi.mesh = StageHeroSculpt.of("shell")
 		mi.material_override = toon(rim)
-		mi.scale = Vector3.ONE * 0.7
+		mi.scale = Vector3.ONE * 0.45
 		mi.set_meta("side", side)
 		tables[0].add_child(mi)
 		_shells.append(mi)
