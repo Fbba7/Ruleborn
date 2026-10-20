@@ -96,11 +96,34 @@ universe, inside §21.3's 40,000 and 150.
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 
-## Worse than the design (to do next)
+## Where it stands against the design
 
-- Island tops are flatter and emptier than the design's dense dressing; scatter and paths next.
-- Buildings come from `BuildingKit` and look as good as T3 makes them.
-- The whole-universe zoom is small on a phone when a screen covers half of it with words.
+Judged beside `art/design/stills/obs/*.png` at phone size and in grayscale (`round3_compare_skyruin.png`,
+`round7_compare_marta.png`):
+
+- Better: every realm, link and fault the server names is drawn (the design draws a fixed sample); the
+  four link kinds are built to their gap and carry their icons; skiffs fly the links with wakes; the sky
+  has depth (three star layers, haze and debris that part on a tilt); the camera has the three zooms,
+  quarter turns, the swoop and the cloud wipe; pins follow and declutter; and the whole seven-realm
+  universe costs about 32,000 triangles in about 32 draw calls (`universe_zoom.gd` prints both), against
+  the design's 676,192 in 1,207.
+- As good: the night colours, the Heart's citadel, beam and rings, the lit rims and halos, the glowing
+  crystals and falls beneath, the dust-armed galaxy.
+- Still worse:
+  - Buildings are `BuildingKit`'s current pieces (T3), boxier and less lit than the design's map
+    buildings; they improve here as T3's kit does.
+  - No cast shadows: the shared toon light shows none under this renderer (see "For other tracks");
+    the map's contact shade stands in.
+  - Island tops at the far zoom are sparser than the design's, which packs props densely.
+  - `HOME_MAP` and `HOME_UNIVERSE` are both "Your universe" in English, so two menu tiles read alike
+    (the icons differ); one string should change (integrator, the strings table).
+
+## Next
+
+- Swap in T3's buildings and Heart citadel once merged; keep `UniverseCitadel` only if T3 draws none.
+- Per-building window lights from the kit, and lantern props per realm type.
+- A gentle bob and wind for the islands and their dressing (vertex animation in `universe_toon`).
+- Measure frame time on a phone (the galaxy plane is one full-screen fragment pass).
 
 ## Hooks in other tracks' files
 
