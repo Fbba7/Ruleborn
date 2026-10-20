@@ -66,6 +66,8 @@ var zoom := 0
 var turns := 0
 ## Triangles drawn by the map's own meshes, for §21.3's budget.
 var triangles := 0
+## Each link as drawn: its kind and its middle, where its pin stands.
+var links: Array[Dictionary] = []
 ## Pixels at the top and bottom that a screen's own controls cover: the
 ## camera frames the universe into what is left (`set_inset`).
 var inset := Vector2.ZERO
@@ -319,6 +321,7 @@ func _build_scatter() -> void:
 ## §5.3's links, each built to its gap; a rope bridge on its own node, so it
 ## sways.
 func _build_links(hero: Geo, glows: UniversePaint, light: UniversePaint, flow: UniversePaint) -> void:
+	links.clear()
 	for l: Dictionary in _view.get("links", []):
 		var a := str(l.get("a", ""))
 		var b := str(l.get("b", ""))
@@ -329,6 +332,7 @@ func _build_links(hero: Geo, glows: UniversePaint, light: UniversePaint, flow: U
 		var ends := UniverseLayout.link_ends(ia.at, ia.edge(0.0), ib.at, ib.edge(0.0))
 		var link := LinkBuilder.new(str(l.get("kind", "stone_bridge")), ends[0], ends[1], ib.school,
 			bool(l.get("open", true)))
+		links.append({"kind": link.kind, "mid": (ends[0] + ends[1]) / 2.0 + Vector3(0, link.length * 0.06 + 1.2, 0)})
 		if link.kind == "rope_bridge":
 			var own := Geo.new()
 			var start := link.xf
@@ -436,11 +440,11 @@ func _build_heart_rings() -> void:
 ## The skiffs: one over each of the first links, back and forth; with no
 ## links, circling the universe.
 func _build_skiffs() -> void:
-	var links: Array = _view.get("links", [])
+	var named: Array = _view.get("links", [])
 	for i in SKIFFS:
 		var route := {}
-		if i < links.size():
-			var l: Dictionary = links[i]
+		if i < named.size():
+			var l: Dictionary = named[i]
 			if islands.has(str(l["a"])) and islands.has(str(l["b"])):
 				var ia: UniverseIsland = islands[str(l["a"])]
 				var ib: UniverseIsland = islands[str(l["b"])]

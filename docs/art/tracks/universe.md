@@ -81,6 +81,10 @@ universe, inside §21.3's 40,000 and 150.
   are really small.
   Stills: `round7_home.png`, `round7_zoom0.png`, `round7_zoom1.png`, `round7_compare_marta.png`.
 
+- Round 8: each link carries the design's icon for its kind at its middle (stone bridge, rope bridge,
+  chute, rift), seen at the realm zooms.
+  Still: `round8_zoom1_links.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

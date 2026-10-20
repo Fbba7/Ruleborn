@@ -78,6 +78,11 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 			if _tapped(e):
 				view.next_chosen.emit())
 		_pins.append({"node": plate, "realm": "next:0", "lift": 1.0, "zooms": [0], "rank": 1})
+	# Each link's kind, at its middle (the design's link icons, :1167).
+	for l: Dictionary in view.links:
+		var plate := _plate(Palette.PAPER, Palette.INK, true)
+		plate.add_child(_icon("link_" + str(l["kind"])))
+		_pins.append({"node": plate, "at": l["mid"], "zooms": [1, 2], "rank": 3})
 	# The most urgent first: a pin that would cover one before it waits.
 	_pins.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a["rank"]) < int(b["rank"]))
 	for p: Dictionary in _pins:
@@ -181,6 +186,11 @@ func follow() -> void:
 	var taken: Array[Rect2] = []
 	for p: Dictionary in _pins:
 		var node: Control = p["node"]
+		if p.has("at"):
+			node.visible = view.zoom in (p["zooms"] as Array)
+			if node.visible:
+				_place(node, view.camera.unproject_position(p["at"]), taken)
+			continue
 		var id := str(p.get("realm", ""))
 		if not view.islands.has(id):
 			node.visible = false
@@ -210,15 +220,18 @@ func follow() -> void:
 			at = isl.at - toward * isl.radius * 0.95 + Vector3(0, 1.0, 0)
 		elif p.has("building"):
 			at = _producer_at(isl, str(p["building"]))
-		var s := view.camera.unproject_position(at)
-		node.position = (s - node.size / 2.0).round()
-		var box := Rect2(node.position, node.size).grow(-UI.px(2))
-		for other: Rect2 in taken:
-			if other.intersects(box):
-				node.visible = false
-				break
-		if node.visible:
-			taken.append(box)
+		_place(node, view.camera.unproject_position(at), taken)
+
+
+## A pin centred on `s`, unless it would cover one already placed.
+static func _place(node: Control, s: Vector2, taken: Array[Rect2]) -> void:
+	node.position = (s - node.size / 2.0).round()
+	var box := Rect2(node.position, node.size).grow(-UI.px(2))
+	for other: Rect2 in taken:
+		if other.intersects(box):
+			node.visible = false
+			return
+	taken.append(box)
 
 
 ## Where a producer of `kind` stands on its island, its pin over it.
