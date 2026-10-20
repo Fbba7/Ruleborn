@@ -102,6 +102,7 @@ func stage(card: Dictionary) -> void:
 	var outer := maxi(0, int(card.get("realms", 1)) - 1)
 	var heart_r := Vector2(view.grid_size()).length() * 0.62
 	var spots := StagePlan.outer(view.layers, view, outer, str(card.get("bundle", "")))
+	view.layers.add_child(StageScout.mist_over(view.grid_size()))
 	# The open faults the card counts, on the outer realms it names.
 	var g := Geo.new()
 	var faults: Array = card.get("fault_realms", [])

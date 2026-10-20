@@ -24,15 +24,7 @@ func _init(on: StageView) -> void:
 	view = on
 	name = "Scout"
 	tiles = OverlayTiles.new(on)
-	mist = MeshInstance3D.new()
-	mist.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	# Every vertex of a card sits at its centre: the box is given.
-	mist.custom_aabb = AABB(Vector3(-12, -1, -12), Vector3(24, 6, 24))
-	var m := ShaderMaterial.new()
-	m.shader = _mist
-	m.render_priority = 2
-	m.set_shader_parameter("drift", 0.0 if Settings.reduced_motion else 1.0)
-	mist.material_override = m
+	mist = mist_over(Vector2i.ZERO)
 	add_child(mist)
 	figures = Node3D.new()
 	add_child(figures)
@@ -52,7 +44,7 @@ func build(realm: Dictionary) -> void:
 		for x in size.x:
 			veil[Vector2i(x, y)] = VEIL
 	tiles.paint(veil)
-	mist.mesh = _clouds(size)
+	mist.mesh = clouds(size)
 	var pins := StageScreen.pins_of(view)
 	pins.clear()
 	# The guards by role along the near south rim, the wards by kind along
@@ -133,9 +125,28 @@ func _figure(mesh: Mesh, at: Vector2, scale_by: float) -> void:
 	figures.add_child(mi)
 
 
+## The scout's mist as a node, over a grid of `size` tiles (none yet when
+## zero): what the planner and the Observatory's pictures also wear over a
+## realm they know only by its counts.
+static func mist_over(size: Vector2i) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.name = "Mist"
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Every vertex of a card sits at its centre: the box is given.
+	mi.custom_aabb = AABB(Vector3(-12, -1, -12), Vector3(24, 6, 24))
+	var m := ShaderMaterial.new()
+	m.shader = _mist
+	m.render_priority = 2
+	m.set_shader_parameter("drift", 0.0 if Settings.reduced_motion else 1.0)
+	mi.material_override = m
+	if size.x > 0:
+		mi.mesh = clouds(size)
+	return mi
+
+
 ## The mist over the grid, seeded by its size: soft cards in two layers
 ## (`stage_mist.gdshader`), one mesh.
-func _clouds(size: Vector2i) -> ArrayMesh:
+static func clouds(size: Vector2i) -> ArrayMesh:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var n := size.x * size.y / 3

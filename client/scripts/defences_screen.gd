@@ -130,5 +130,5 @@ func _draw_world() -> void:
 
 func _process(_delta: float) -> void:
 	if _sheet != null and view != null:
-		view.cover_bottom = StageScreen.covered_below(view, _sheet, _keys)
+		view.cover_bottom = StageScreen.covered_below(view, _keys)
 		view.cover_top = StageScreen.covered_above(view, _top)

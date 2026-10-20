@@ -136,6 +136,7 @@ func _draw_world(card: Dictionary) -> void:
 	view.show_replay(replay)
 	view.show_vault(false)
 	plan.build(card)
+	view.show_bare_laws(realm.get("laws", []))
 	var across: bool = card.get("across", false)
 	var depth := maxi(1, int(card.get("depth", 1)))
 	view.fill = (1.25 + 0.35 * depth) if across else 1.0
@@ -144,5 +145,5 @@ func _draw_world(card: Dictionary) -> void:
 
 func _process(_delta: float) -> void:
 	if _sheet != null and view != null:
-		view.cover_bottom = StageScreen.covered_below(view, _sheet, _keys)
+		view.cover_bottom = StageScreen.covered_below(view, _keys)
 		view.cover_top = StageScreen.covered_above(view, _top)
