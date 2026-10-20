@@ -7,18 +7,17 @@ extends Node3D
 ## rim by role, the wards it counted standing beside them by kind, and its
 ## laws flown as banners at its near corner. Nothing is drawn on a tile.
 
-## The mist's veil and its clouds.
+## The mist's veil over every tile.
 const VEIL := Color(0.78, 0.74, 0.96, 0.55)
-const MIST := Color(0.84, 0.8, 0.98, 0.72)
 
 static var _toon: Shader = load("res://world/toon.gdshader")
+static var _mist: Shader = load("res://world/stage_mist.gdshader")
 
 var view: StageView
 var tiles: OverlayTiles
 var mist: MeshInstance3D
 var figures: Node3D
 var banners: MeshInstance3D
-var _clock := 0.0
 
 
 func _init(on: StageView) -> void:
@@ -27,14 +26,12 @@ func _init(on: StageView) -> void:
 	tiles = OverlayTiles.new(on)
 	mist = MeshInstance3D.new()
 	mist.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var m := StandardMaterial3D.new()
-	m.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
-	m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
-	m.rim_enabled = true
-	m.rim = 0.6
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.vertex_color_use_as_albedo = true
+	# Every vertex of a card sits at its centre: the box is given.
+	mist.custom_aabb = AABB(Vector3(-12, -1, -12), Vector3(24, 6, 24))
+	var m := ShaderMaterial.new()
+	m.shader = _mist
 	m.render_priority = 2
+	m.set_shader_parameter("drift", 0.0 if Settings.reduced_motion else 1.0)
 	mist.material_override = m
 	add_child(mist)
 	figures = Node3D.new()
@@ -136,24 +133,22 @@ func _figure(mesh: Mesh, at: Vector2, scale_by: float) -> void:
 	figures.add_child(mi)
 
 
-## Low clouds of mist over the grid, seeded by its size, as one mesh.
+## The mist over the grid, seeded by its size: soft cards in two layers
+## (`stage_mist.gdshader`), one mesh.
 func _clouds(size: Vector2i) -> ArrayMesh:
-	var g := Geo.new()
-	var n := size.x * size.y / 5
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var n := size.x * size.y / 3
 	for i in n:
 		var u := RealmKit.jitter(Vector2i(i, size.x), 1)
 		var v := RealmKit.jitter(Vector2i(size.y, i), 2)
-		var at := Vector3((u - 0.5) * size.x * 0.95, 0.55 + 0.4 * RealmKit.jitter(Vector2i(i, i), 3),
-			(v - 0.5) * size.y * 0.95)
-		for k in 3:
-			var o := Vector3((k - 1) * 0.55, 0.08 * (k % 2), 0.15 * (k - 1))
-			g.ball(Geo.place(at + o, 0.0, Vector3(1.0, 0.5, 0.85)), 0.7 + 0.2 * (k % 2), MIST, 4, 8)
-	return g.mesh()
+		var lift := 0.35 + 0.9 * RealmKit.jitter(Vector2i(i, i), 3)
+		var at := Vector3((u - 0.5) * size.x * 1.02, lift, (v - 0.5) * size.y * 1.02)
+		var colour := Color(RealmKit.jitter(Vector2i(i, 7), 4), 0.42 + 0.3 * RealmKit.jitter(Vector2i(7, i), 5), 0.0)
+		var uvs := [Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)]
+		for k: int in [0, 1, 2, 0, 2, 3]:
+			st.set_color(colour)
+			st.set_uv(uvs[k])
+			st.add_vertex(at)
+	return st.commit()
 
-
-func _process(delta: float) -> void:
-	_clock += delta
-	if Settings.reduced_motion:
-		return
-	# The mist drifts and breathes.
-	mist.position = Vector3(sin(_clock * 0.21) * 0.35, sin(_clock * 0.6) * 0.06, cos(_clock * 0.17) * 0.3)
