@@ -51,6 +51,15 @@ universe, inside §21.3's 40,000 and 150.
   the camera brought in to 140 m so the sun's shadow could reach.
   Stills: `round2_home.png`, `round2_zoom0.png`, `round2_zoom1.png`, `round2_zoom2.png`.
 
+- Round 3: the islands tightened round their buildings (Heart grid 15, outer 11; buildings three tiles
+  across), the citadel on its own node drawn 1.35× so the Heart reads from afar, the Heart's beam and
+  three turning rings, the galaxy's arms drawn as dust. Fixed what hid every light over the sky: additive
+  materials that write no `ALPHA` are drawn in the opaque pass, and the galaxy plane (drawn after them,
+  without depth) painted over them; the light shaders now write `ALPHA` and the galaxy is opaque with a
+  low render priority. The cloud wipe rolls in as shaded cloud banks from both sides.
+  Stills: `round3_home.png`, `round3_zoom0..2.png`, `round3_wipe.png` (mid-swoop),
+  `round3_compare_skyruin.png` (ours left, the design's right, grayscale below).
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

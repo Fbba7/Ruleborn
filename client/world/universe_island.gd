@@ -42,7 +42,7 @@ const PEAKS := {"skyfield": 2, "crystalline": 3, "emberreach": 3, "lanternvale":
 const PATH := {"heart": "#F0B8C8", "lanternvale": "#8E86B8", "emberreach": "#7A5A50"}
 ## Where buildings stand: the middle, then a ring, then the rim's ring, as
 ## fractions of the island's radius, and how many places each ring has.
-const RINGS := [[0.0, 1], [0.4, 6], [0.68, 9]]
+const RINGS := [[0.0, 1], [0.44, 6], [0.7, 9]]
 ## The Heart's beam (the design's, :1140), in the Spirit pink.
 const BEAM := Color("#F7A6DA")
 
@@ -123,7 +123,8 @@ func build(body: Geo, hero: Geo, glows: UniversePaint, light: UniversePaint, flo
 	_dress(hero, glows)
 	_buildings(body, hero, glows, buildings)
 	if key == "heart":
-		light.beam(at + Vector3(0, 5.0, 0), 1.0, 3.2, 30.0, Color(BEAM, 0.55), 16)
+		light.beam(at + Vector3(0, 9.5, 0), 0.9, 3.0, 30.0, Color(BEAM, 0.22), 16)
+		light.beam(at + Vector3(0, 9.5, 0), 0.3, 0.8, 20.0, Color(BEAM.lightened(0.4), 0.3), 10)
 		glows.glow(at + Vector3(0, -4.0, 0), radius * 1.9, Color(BEAM, 0.22))
 
 
@@ -150,7 +151,7 @@ func _top(g: Geo) -> void:
 			var p := func(f: float, a: float) -> Vector3: return point(a, f, dome(f))
 			g.quad(p.call(f0, a1), p.call(f1, a1), p.call(f1, a0), p.call(f0, a0), shade)
 	# A plaza in the middle, in the realm's ground.
-	var plaza := 4.6 if key == "heart" else 2.0
+	var plaza := 4.4 * UniverseCitadel.MAP_SCALE if key == "heart" else 2.0
 	g.prism(Geo.place(at + Vector3(0, dome(0.0) - 0.06, 0)), 16, plaza, plaza * 0.98, 0.1, palette["ground"])
 	if key == "heart":
 		g.ring(Geo.place(at + Vector3(0, dome(0.0) + 0.05, 0)), plaza * 0.86, plaza * 0.98, palette["trim"], 24)
@@ -352,8 +353,10 @@ func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) ->
 	var next := 0
 	var lit := key == "lanternvale" or key == "heart" or key == "crystalline"
 	if key == "heart":
-		UniverseCitadel.build(hero, glows, at + Vector3(0, dome(0.0) - 0.05, 0), palette, spire)
-		_shade(at, 6.2, 0.5)
+		# The citadel is the map's own piece, drawn larger than the realm's
+		# buildings so the Heart reads from across the universe (the design's
+		# Heart is half again the size of its realms).
+		_shade(at, 6.2 * UniverseCitadel.MAP_SCALE, 0.55)
 		places["keeper_s_spire:1"] = at + Vector3(0, 11.0, 0)
 		next = 1
 	for b: Dictionary in buildings:
@@ -371,7 +374,7 @@ func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) ->
 		if kind == "ward":
 			_ward(hero, glows, mid, lv)
 		else:
-			BuildingKit.build(hero, kind, mid, 3 if kind in ["vault", "keeper_s_spire"] else 2, lv, palette)
+			BuildingKit.build(hero, kind, mid, 4 if kind in ["vault", "keeper_s_spire"] else 3, lv, palette)
 		places["%s:%d" % [kind, int(b.get("n", 1))]] = mid + Vector3(0, 2.2, 0)
 		# Windows lit, more of them in the realms of night (§21.2: "lanterns
 		# and glows carry the realm").
@@ -386,7 +389,7 @@ func _path(g: Geo, to: Vector3) -> void:
 	if reach < 3.0:
 		return
 	var dir := flat / reach
-	var start := 4.4 if key == "heart" else 1.8
+	var start := 4.4 * UniverseCitadel.MAP_SCALE if key == "heart" else 1.8
 	var stone: Color = Color(PATH[key]) if PATH.has(key) else (palette["ground"] as Color).lightened(0.08)
 	var n := int((reach - start - 1.3) / 0.55)
 	for k in n:
@@ -417,7 +420,7 @@ func scatter(tufts: Array, flowers: Array) -> void:
 		var a := noise(i * 7 + 1) * TAU
 		var f := sqrt(noise(i * 7 + 2)) * 0.93
 		var p := point(a, f, dome(f) - 0.02)
-		if f < (0.36 if key == "heart" else 0.17) or _crowded(p):
+		if f < (0.45 if key == "heart" else 0.17) or _crowded(p):
 			continue
 		placed += 1
 		var turn := Basis(Vector3.UP, noise(i * 7 + 3) * TAU).scaled(Vector3.ONE * (0.7 + 0.6 * noise(i * 7 + 4)))

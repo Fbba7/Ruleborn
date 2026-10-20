@@ -228,6 +228,7 @@ func _build() -> void:
 	var shade := ShaderMaterial.new()
 	shade.shader = _shade
 	_add(shades.mesh(), shade, false)
+	_build_citadel()
 	_build_heart_rings()
 	var centre := _bounds.get_center()
 	StarSky.new(hash(str(realms.size()))).build(statics, Vector3(centre.x, 0, centre.z),
@@ -372,6 +373,31 @@ func _build_faults(light: UniversePaint, glows: UniversePaint) -> void:
 			glows.glow(p, 0.9 + 0.4 * (k % 2), Color(FAULT, 0.7))
 
 
+## The Heart's citadel on a node of its own, drawn larger than the realm's
+## buildings so the Heart reads from across the universe.
+func _build_citadel() -> void:
+	if not islands.has("heart"):
+		return
+	var heart: UniverseIsland = islands["heart"]
+	var solid := Geo.new()
+	var lights := UniversePaint.new()
+	UniverseCitadel.build(solid, lights, Vector3(0, UniverseIsland.dome(0.0) - 0.05, 0), heart.palette, heart.spire)
+	var node := Node3D.new()
+	node.position = heart.at
+	node.scale = Vector3.ONE * UniverseCitadel.MAP_SCALE
+	node.name = "Citadel"
+	statics.add_child(node)
+	for part: Array in [[solid.mesh(), _material(true), true], [lights.mesh(), _glow_material(0.3, 0.35), false]]:
+		var mi := MeshInstance3D.new()
+		mi.mesh = part[0]
+		mi.material_override = part[1]
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if part[2] \
+			else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.extra_cull_margin = 10.0
+		node.add_child(mi)
+	triangles += solid.triangles + lights.count
+
+
 ## The Heart's rings, turning (the design's three tori, :1166), in the strain
 ## band's colour: calm white, then gold, ember and the alarm's red.
 func _build_heart_rings() -> void:
@@ -383,20 +409,21 @@ func _build_heart_rings() -> void:
 	var tint: Color = colours[clampi(band, 0, colours.size() - 1)]
 	for i in 3:
 		var paint := UniversePaint.new()
-		var r := heart.radius + 1.6 + i * 1.3
+		var r := heart.radius * (1.22 + 0.17 * i)
 		var inner := PackedVector3Array()
 		var outer := PackedVector3Array()
-		for k in 41:
-			var a := PI * 1.25 * k / 40.0
+		for k in 49:
+			var a := PI * (1.2 + 0.2 * i) * k / 48.0
 			inner.append(Vector3(cos(a) * r, 0, sin(a) * r))
-			outer.append(Vector3(cos(a) * (r + 0.45), 0, sin(a) * (r + 0.45)))
-		paint.strip(inner, outer, Color(tint, 0.85), 1.0, true)
+			outer.append(Vector3(cos(a) * (r + 0.24), 0, sin(a) * (r + 0.24)))
+		paint.strip(inner, outer, Color(tint, 1.0), 1.0, true)
 		var mi := MeshInstance3D.new()
 		mi.mesh = paint.mesh()
 		mi.material_override = _veil_material(0.0, 0.0)
+		(mi.material_override as ShaderMaterial).set_shader_parameter("strength", 0.55)
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		mi.position = heart.at + Vector3(0, 0.8 + i * 0.6, 0)
-		mi.rotation.y = i * 2.0
+		mi.position = heart.at + Vector3(0, 0.6 + i * 0.9, 0)
+		mi.rotation = Vector3(0.06 * (i - 1), i * 2.0, 0.05 * (1 - i))
 		statics.add_child(mi)
 		_spinners.append({"node": mi, "axis": Vector3.UP, "turn": (0.35 + i * 0.12) * (-1.0 if i % 2 else 1.0)})
 
@@ -859,18 +886,27 @@ func _pan(by: Vector2) -> void:
 	_target = Vector3(clampf(_target.x + move.x, lo.x, hi.x), _target.y, clampf(_target.z + move.z, lo.z, hi.z))
 
 
-## The cloud wipe: soft puffs that close over the screen and open again.
+## The cloud wipe (the design's `cloudWipe`): banks of cloud roll in from
+## both sides, meet over the swoop, and part again; each puff shaded violet
+## underneath and lit on top, as the islands are.
 func _draw_wipe() -> void:
 	if _wipe_amount <= 0.01:
 		return
 	var s := _wipe.size
-	var n := 18
-	for k in n:
-		var fx := fmod(k * 0.618, 1.0)
-		var fy := fmod(k * 0.381 + 0.13, 1.0)
-		var r := (0.25 + 0.2 * fmod(k * 0.77, 1.0)) * s.length() * _wipe_amount
-		var tint := Color("#F4EEFF").lerp(Color("#C9B6FF"), fmod(k * 0.53, 1.0) * 0.5)
-		_wipe.draw_circle(Vector2(fx * s.x, fy * s.y), r, Color(tint, minf(1.0, _wipe_amount * 1.4)))
+	var e := _wipe_amount * _wipe_amount * (3.0 - 2.0 * _wipe_amount)
+	var rows := 9
+	for k in rows * 2:
+		var side := -1.0 if k % 2 == 0 else 1.0
+		var row := k / 2
+		var y := (row + 0.5) / rows * s.y + sin(row * 2.3) * s.y * 0.03
+		var r := s.x * (0.3 + 0.08 * fmod(row * 0.618, 1.0))
+		var rest := s.x * (0.5 + side * (0.04 + 0.12 * fmod(row * 0.381, 1.0)))
+		var off := s.x * 0.5 + side * (s.x * 0.5 + r * 1.2)
+		var x := lerpf(off, rest, e)
+		var at := Vector2(x, y)
+		_wipe.draw_circle(at + Vector2(0, r * 0.18), r * 1.02, Color("#B9A6F2"))
+		_wipe.draw_circle(at, r, Color("#F1EBFF"))
+		_wipe.draw_circle(at + Vector2(-r * 0.22, -r * 0.24), r * 0.6, Color("#FFFFFF"))
 
 
 func _notification(what: int) -> void:

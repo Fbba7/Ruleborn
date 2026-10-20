@@ -4,7 +4,7 @@
 // beneath the Heart, and fine star dust. One plane far below the islands,
 // drawn once; everything is worked out here, so no texture is loaded.
 shader_type spatial;
-render_mode unshaded, cull_disabled, shadows_disabled, depth_draw_never, fog_disabled;
+render_mode unshaded, cull_disabled, shadows_disabled, fog_disabled;
 
 uniform vec4 top : source_color = vec4(0.071, 0.039, 0.22, 1.0);
 uniform vec4 middle : source_color = vec4(0.165, 0.078, 0.4, 1.0);
@@ -104,14 +104,15 @@ void fragment() {
 		arms += pow(0.5 + 0.5 * cos(phase), 6.0);
 	}
 	float fade = smoothstep(1.0, 0.15, r);
-	float grain = 0.55 + 0.9 * noise(p * 0.9);
-	vec3 arm_col = mix(vec3(1.0, 0.72, 0.86), vec3(0.75, 0.62, 1.0), smoothstep(0.2, 0.8, r));
-	col += arm_col * arms * fade * grain * 0.3;
+	// The arms are dust: a faint glow, and bright motes thick along them, as
+	// the design's galaxy is drawn in points.
+	float motes = dust(p, 1.4, 0.3, 0.4) + dust(p + 31.0, 1.0, 0.2, 0.3) * 0.6;
+	vec3 arm_col = mix(vec3(1.0, 0.78, 0.9), vec3(0.8, 0.68, 1.0), smoothstep(0.2, 0.8, r));
+	col += arm_col * arms * fade * (0.1 + 0.75 * motes);
 	col += vec3(1.0, 0.86, 0.72) * exp(-r * r * 60.0) * 1.1;
 	col += vec3(1.0, 0.62, 0.78) * exp(-r * r * 9.0) * 0.4;
 	// Star dust: fine and many, and a few brighter ones.
-	float stars = dust(p, 2.3, 0.35, 0.22) * 0.7 + dust(p + 50.0, 6.0, 0.25, 0.35) * 1.1;
-	stars += dust(p - g * 3.0, 1.1, 0.4 * fade * arms, 0.2) * 1.2;
+	float stars = dust(p, 2.3, 0.3, 0.2) * 0.45 + dust(p + 50.0, 6.0, 0.25, 0.32) * 0.8;
 	col += vec3(0.95, 0.92, 1.0) * stars;
 	ALBEDO = col * brightness;
 }
