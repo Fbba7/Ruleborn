@@ -131,10 +131,26 @@ func build(t: Vector2i, f: int) -> void:
 				prop.ball(Geo.place(p + Vector3(0, stem, 0), 0.0, Vector3(1, 0.55, 1)), 0.05, petals[k % 4], 2, 6)
 			prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 		RealmKit.F.ICE_SHEET:
-			kit.clear.rbox(Geo.place(c + Vector3(0, 0.025, 0)), Vector3(0.98, 0.05, 0.98), Color("#DDF4FF"), 0.02)
-			for k in 3:
-				prop.box(Geo.place(c + Vector3((RealmKit.jitter(t, k) - 0.5) * 0.5, 0.052, (k - 1) * 0.25),
-					RealmKit.jitter(t, k + 3) * PI), Vector3(0.36, 0.006, 0.025), Color("#FFFFFF"))
+			# A frozen pool: an irregular sheet, pale at its rim, with a few
+			# white cracks and frost tufts round it.
+			var rim: Array[Vector3] = []
+			for k in 12:
+				var a := TAU * k / 12.0
+				var r := 0.44 + 0.06 * (RealmKit.jitter(t, k + 50) - 0.5)
+				rim.append(c + Vector3(cos(a) * r, 0.03, sin(a) * r))
+			var mid := c + Vector3(0, 0.035, 0)
+			for k in 12:
+				prop.tri(mid, rim[(k + 1) % 12], rim[k], Color(Color("#BDEBFF"), 0.75))
+			for k in 12:
+				var a0 := rim[k]
+				var a1 := rim[(k + 1) % 12]
+				var o0 := (a0 - c) * 1.12 + c + Vector3(0, -0.03, 0)
+				var o1 := (a1 - c) * 1.12 + c + Vector3(0, -0.03, 0)
+				prop.quad(a0, a1, o1, o0, Color(Color("#F4FBFF"), 0.7))
+			for k in 4:
+				var a := RealmKit.jitter(t, k + 3) * PI
+				prop.box(Geo.place(c + Vector3((RealmKit.jitter(t, k) - 0.5) * 0.4, 0.038, (k - 1.5) * 0.16), a),
+					Vector3(0.22 + 0.1 * RealmKit.jitter(t, k + 9), 0.004, 0.012), Color("#FFFFFF"))
 		RealmKit.F.BELL_POST:
 			_bell(c, j, wood)
 		RealmKit.F.STEPPING_STONES:
