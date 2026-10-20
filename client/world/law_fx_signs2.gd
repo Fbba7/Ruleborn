@@ -33,7 +33,8 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> void:
 		"soul_swap":
 			_soul_swap(fx, sig)
 		_:
-			_school(fx, sig, law)
+			if not LawFxSigns3.build(fx, sig, law):
+				_school(fx, sig, law)
 
 
 ## Glowing dark: "A black realm lit by glowing mushrooms and runes." The

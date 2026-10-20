@@ -55,7 +55,7 @@ const NOTE_COLOUR := {"flow": "#5AB8F0", "weight": "#8A7AA0", "glow": "#F6C453",
 ## a star's zigzag, a ring, a mask's hexagon.
 const NOTE_SHAPE := {"flow": 11, "weight": 9, "glow": 2, "hush": 0, "bloom": 10, "spark": 8, "echo": 6, "veil": 7}
 ## Where a link hangs, over the pylon's foot: at its crown.
-const LIFT := 1.72
+const LIFT := 1.82
 
 
 static func school(law: String) -> String:
