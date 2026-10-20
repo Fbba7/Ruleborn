@@ -16,6 +16,25 @@ const IRON := Color("#3A3440")
 
 static func vault(open: bool) -> ArrayMesh:
 	var g := Geo.new()
+	_vault_into(g, open)
+	# Drawn a fifth larger than its parts, the heist's prize reads first.
+	var arrays := g.st.commit_to_arrays()
+	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	for i in verts.size():
+		verts[i] *= 1.2
+	arrays[Mesh.ARRAY_VERTEX] = verts
+	var customs: PackedFloat32Array = arrays[Mesh.ARRAY_CUSTOM0]
+	for i in range(0, customs.size(), 4):
+		for k in 3:
+			customs[i + k] *= 1.2
+	arrays[Mesh.ARRAY_CUSTOM0] = customs
+	var m := ArrayMesh.new()
+	m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays, [], {},
+		Mesh.ARRAY_CUSTOM_RGBA_FLOAT << Mesh.ARRAY_FORMAT_CUSTOM0_SHIFT)
+	return m
+
+
+static func _vault_into(g: Geo, open: bool) -> void:
 	var stone := Color("#E6DCCB")
 	var stone2 := Color("#B9AE9C")
 	g.rbox(Geo.place(Vector3(0, 0.04, 0)), Vector3(0.9, 0.08, 0.8), stone2, 0.02)
@@ -48,7 +67,6 @@ static func vault(open: bool) -> ArrayMesh:
 	for x: float in [-0.3, 0.3]:
 		g.cyl(Geo.place(Vector3(x, 0.08, 0.42)), 0.03, 0.04, 0.14, stone2, 6)
 		g.ball(Geo.place(Vector3(x, 0.25, 0.42)), 0.03, Color(Color("#FFD27A"), 0.2), 2, 5)
-	return g.mesh()
 
 
 ## A law pylon: a stone obelisk on its plinth, crowned by its school's
@@ -90,12 +108,15 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 	var colour: Color = Palette.WARD.get(kind, Palette.INK)
 	var school := str(Palette.WARD_SCHOOL.get(kind, "motion"))
 	var lit := Color(colour.lightened(0.2), 0.4)
-	var dark := Color("#2A2350")
-	g.cyl(Geo.place(Vector3.ZERO), 0.38, 0.4, 0.04, dark, 12)
-	# The rune circle every ward sits in, glowing faintly (a telltale).
+	var stone := Palette.STONE.lerp(colour, 0.12)
+	# A worn stone ring set in the ground, a darker well inside, and the
+	# rune circle glowing faintly in the school's colour (a telltale).
+	g.cyl(Geo.place(Vector3.ZERO), 0.4, 0.42, 0.05, stone.darkened(0.1), 14, stone)
+	g.cyl(Geo.place(Vector3(0, 0.05, 0)), 0.27, 0.27, 0.005, colour.darkened(0.55), 14)
+	g.torus(Geo.place(Vector3(0, 0.055, 0)), 0.33, 0.014, Color(colour.lightened(0.3), 0.3), 20, 3)
 	for i in 8:
-		var q := i * PI / 4.0
-		g.box(Geo.place(Vector3(cos(q) * 0.3, 0.045, sin(q) * 0.3), -q + PI / 2.0), Vector3(0.09, 0.01, 0.025), lit)
+		var q := i * PI / 4.0 + PI / 8.0
+		g.box(Geo.place(Vector3(cos(q) * 0.36, 0.055, sin(q) * 0.36), -q + PI / 2.0), Vector3(0.05, 0.01, 0.025), lit)
 	match school:
 		"motion":
 			# A gravity well: an iron grate over a swirling pit.
@@ -125,11 +146,11 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 			g.still()
 		"energy":
 			# A static coil: a copper coil on a post, sparking.
-			g.cyl(Geo.place(Vector3(0, 0.04, 0)), 0.05, 0.05, 0.36, IRON, 6)
-			for k in 4:
-				g.torus(Geo.place(Vector3(0, 0.1 + 0.07 * k, 0)), 0.09, 0.016, Color("#C87A4A"), 12, 4)
-			g.moving(Geo.Anim.BOB, Vector3(0, 0.45, 0))
-			g.ball(Geo.place(Vector3(0, 0.46, 0)), 0.05, lit, 3, 6)
+			g.cyl(Geo.place(Vector3(0, 0.05, 0)), 0.06, 0.05, 0.5, IRON, 6)
+			for k in 5:
+				g.torus(Geo.place(Vector3(0, 0.12 + 0.075 * k, 0)), 0.12 - 0.008 * k, 0.02, Color("#C87A4A"), 12, 4)
+			g.moving(Geo.Anim.BOB, Vector3(0, 0.62, 0))
+			g.ball(Geo.place(Vector3(0, 0.62, 0)), 0.07, Color(Color("#FFE7A8"), 0.2), 3, 6)
 			g.still()
 		"life":
 			# A thorn hedge: roots curling up from the ground, thorned.
@@ -143,12 +164,13 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 			g.still()
 		_:
 			# A lantern glare: a lantern on a crook, its light breathing.
-			g.cyl(Geo.place(Vector3(0.1, 0.04, 0)), 0.025, 0.02, 0.42, KitStyle.WOOD_DARK, 5)
-			g.box(Geo.place(Vector3(0.02, 0.46, 0)), Vector3(0.18, 0.025, 0.025), KitStyle.WOOD_DARK)
-			g.moving(Geo.Anim.SWING, Vector3(-0.06, 0.45, 0))
-			g.rbox(Geo.place(Vector3(-0.06, 0.36, 0)), Vector3(0.1, 0.12, 0.1), Color(Color("#FFE7A8"), 0.2), 0.015)
-			g.prism(Geo.place(Vector3(-0.06, 0.42, 0), PI / 4.0), 4, 0.08, 0.0, 0.05, KitStyle.WOOD_DARK)
+			g.cyl(Geo.place(Vector3(0.14, 0.05, 0)), 0.035, 0.028, 0.62, KitStyle.WOOD_DARK, 5)
+			g.box(Geo.place(Vector3(0.04, 0.66, 0)), Vector3(0.24, 0.035, 0.035), KitStyle.WOOD_DARK)
+			g.moving(Geo.Anim.SWING, Vector3(-0.06, 0.65, 0))
+			g.rbox(Geo.place(Vector3(-0.06, 0.53, 0)), Vector3(0.14, 0.17, 0.14), Color(Color("#FFE7A8"), 0.15), 0.02)
+			g.prism(Geo.place(Vector3(-0.06, 0.615, 0), PI / 4.0), 4, 0.11, 0.0, 0.06, KitStyle.WOOD_DARK)
 			g.still()
+			g.ring(Geo.place(Vector3(0, 0.058, 0)), 0.0, 0.26, Color(Color("#FFE7A8"), 0.5), 12)
 	if level >= 2:
 		# Gold inlay: a gold ring round the circle and studs on it.
 		g.torus(Geo.place(Vector3(0, 0.045, 0)), 0.36, 0.012, GOLD, 20, 3)
