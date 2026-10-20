@@ -20,6 +20,8 @@ func _initialize() -> void:
 
 
 func _go() -> void:
+	cast()
+	WorldView.heist_perspective = OS.get_environment("ORTHO") == ""
 	# A phone's frame of its own, so the still is 1080 by 2340 whatever the
 	# window does.
 	var frame := SubViewport.new()
@@ -93,3 +95,17 @@ func _go() -> void:
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()
+
+
+## The integrator's cast of character models, until the app sets one: each
+## role's default kind, guards as Glass Golems in the guard form (CAST).
+static func cast() -> void:
+	if WorldView.figure_maker.is_valid() or OS.get_environment("CAST") == "":
+		return
+	var kinds := {"Scout": &"featherkin", "Breaker": &"rambler", "Carrier": &"skyskipper", "Warden": &"mossbear",
+		"Mender": &"hourkeeper", "guard": &"glassgolem"}
+	WorldView.figure_maker = func(role: String, _height: float) -> Node3D:
+		var c := CreatureModel.make(kinds.get(role, &"featherkin"))
+		if c != null and role == "guard":
+			c.set_guard(true)
+		return c

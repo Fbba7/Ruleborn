@@ -244,7 +244,7 @@ func _draw_guards(replay: RulebornReplay, m: float, calm: bool) -> void:
 	for i in mini(guards.size(), nodes.size()):
 		var g: Dictionary = guards[i]
 		var node := nodes[i]
-		var head := node.position + Vector3(0, 1.45, 0)
+		var head := node.position + Vector3(0, float(node.get_meta("head", 1.2)) + 0.25, 0)
 		var at := _on_screen(head)
 		if at == OFF:
 			continue
@@ -275,7 +275,7 @@ func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
 		if not node.visible:
 			continue
 		var mem: Dictionary = crew[i]
-		var at := _on_screen(node.position + Vector3(0, 1.15, 0))
+		var at := _on_screen(node.position + Vector3(0, float(node.get_meta("head", 0.95)) + 0.2, 0))
 		if at == OFF:
 			continue
 		var w := clampf(m * 0.8, 40.0, 110.0)
