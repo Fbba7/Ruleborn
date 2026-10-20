@@ -219,6 +219,9 @@ func instances() -> Array[MeshInstance3D]:
 	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
 	ground_mat.set_shader_parameter("petal", (KitStyle.of(realm)["accent"] as Color).lightened(0.35))
 	ground_mat.set_shader_parameter("pebble", palette["rock"].lightened(0.3))
+	var patterns := {"skyfield": 1, "crystalline": 2, "tidehold": 3, "emberreach": 4, "lanternvale": 5}
+	ground_mat.set_shader_parameter("pattern", patterns.get(realm, 0))
+	ground_mat.set_shader_parameter("specks", 2.0 if realm == "verdant" else 1.0)
 	var water_mat := material("water")
 	water_mat.set_shader_parameter("bank", palette["ground"].lightened(0.12).lerp(palette["grass"], 0.25))
 	var lava_mat := material("water")

@@ -18,6 +18,12 @@ uniform vec4 strata : source_color = vec4(0.42, 0.33, 0.30, 1.0);
 // The realm's petals, dotted through the grass (§21.4's plants), and pebbles.
 uniform vec4 petal : source_color = vec4(0.97, 0.65, 0.85, 1.0);
 uniform vec4 pebble : source_color = vec4(0.70, 0.66, 0.62, 1.0);
+// §21.4's ground by realm, as the design's land stills paint it: 0 the
+// Heart's and Verdant's meadow, 1 Skyfield's field strips, 2 Crystalline's
+// hexagon flags, 3 Tidehold's sand ovals, 4 Emberreach's glowing cracks,
+// 5 Lantern Vale's glowing moss.
+uniform int pattern = 0;
+uniform float specks = 1.0;
 
 varying vec3 wpos;
 varying float up;
@@ -96,8 +102,46 @@ void fragment() {
 	float sd = length(fract(sp) - so);
 	float speck = (1.0 - smoothstep(0.07, 0.1, sd)) * grassy * (1.0 - lush * 0.5);
 	vec3 bloom = mix(petal.rgb, vec3(1.0, 0.96, 0.85), step(0.5, hash(sc + 5.5)));
-	c = mix(c, bloom, speck * step(0.86, sh));
+	c = mix(c, bloom, speck * step(1.0 - 0.14 * specks, sh));
 	c = mix(c, pebble.rgb * (0.85 + 0.3 * hash(sc)), speck * step(sh, 0.06) * 0.9);
+	vec3 glow = vec3(0.0);
+	if (pattern == 1) {
+		// Strips of a field, lighter and darker, in patches.
+		float patch = smoothstep(0.55, 0.62, vnoise(p * 0.35 + 11.0));
+		float rows = step(0.5, fract((p.x * 0.8 + p.y * 0.6) * 3.2));
+		c *= 1.0 + patch * grassy * (rows * 0.12 - 0.04);
+	} else if (pattern == 2) {
+		// Hexagon flags laid in the lilac ground, here and there.
+		vec2 hp = p * 1.15;
+		vec2 r = vec2(1.0, 1.7320508);
+		vec2 a = mod(hp, r) - r * 0.5;
+		vec2 b = mod(hp - r * 0.5, r) - r * 0.5;
+		vec2 g6 = dot(a, a) < dot(b, b) ? a : b;
+		vec2 q6 = abs(g6);
+		float hexd = max(dot(q6, normalize(vec2(1.0, 1.7320508))), q6.x);
+		float rim = smoothstep(0.43, 0.46, hexd) * (1.0 - smoothstep(0.48, 0.5, hexd));
+		float patch = smoothstep(0.35, 0.5, vnoise(p * 0.5 + 3.0));
+		c = mix(c, c * 1.22 + vec3(0.04), rim * patch * grassy);
+	} else if (pattern == 3) {
+		// Sand washed up in soft ovals.
+		vec3 sb = cells(p * vec2(0.55, 0.8));
+		float oval = 1.0 - smoothstep(0.18, 0.28, sb.x + (vnoise(p * 3.0) - 0.5) * 0.1);
+		c = mix(c, pebble.rgb * 1.25 + vec3(0.06, 0.06, 0.02), oval * step(0.45, sb.z) * grassy * 0.7);
+	} else if (pattern == 4) {
+		// The ground cracked, some cracks glowing with the heat below.
+		vec3 ck = cells(p * 1.4);
+		float crack = 1.0 - smoothstep(0.015, 0.05, ck.y - ck.x);
+		float hot = step(0.62, vnoise(p * 0.8 + 7.0));
+		c = mix(c, c * 0.55, crack * grassy);
+		glow += vec3(1.0, 0.42, 0.12) * crack * hot * grassy * 0.9;
+	} else if (pattern == 5) {
+		// Moss that glows in the dark, in round spots.
+		vec3 gs = cells(p * 1.1);
+		float spot = 1.0 - smoothstep(0.08, 0.16, gs.x);
+		float lit = step(0.55, gs.z) * grassy;
+		c = mix(c, vec3(0.55, 0.85, 0.45), spot * lit * 0.6);
+		glow += vec3(0.45, 0.8, 0.35) * spot * lit * 0.45;
+	}
 	// A path: a ribbon of cobbles laid in worn earth (UV.x is how near the
 	// path's middle line this is), a darker kerb at its edge.
 	if (path > 0.3) {
@@ -125,4 +169,5 @@ void fragment() {
 	float line = 1.0 - smoothstep(0.0, 0.03, to_edge);
 	c *= 1.0 - seam * line * smoothstep(0.85, 0.98, up) * (1.0 - cliff);
 	ALBEDO = saturated(c);
+	EMISSION = glow;
 }
