@@ -179,7 +179,8 @@ func build() -> void:
 	# The realm's signature round its home (the Heart's walls, Skyfield's
 	# windmills, …), just past the grid, where the Spire stands.
 	if footprints.any(func(fp: Array) -> bool: return fp[0] == "keeper_s_spire"):
-		KitSignature.build(hero, prop, realm, Vector2(size).length() / 2.0 + 0.5, palette)
+		KitSignature.build(hero, prop, realm, Vector2(size).length() / 2.0 + 0.5, palette,
+			clampf((maxi(size.x, size.y) - 10) / 4.0, 0.0, 1.0))
 
 
 ## Worn trails joining the buildings' doors and the Vault, as the design's
