@@ -77,6 +77,10 @@ var shades := UniversePaint.new()
 
 ## Where buildings stand, which the meadow keeps clear of.
 var _used: Array[Vector3] = []
+## The buildings and path stones to draw close, kept until `build_near`.
+var _near_jobs: Array = []
+var _near_stones: Array = []
+var _near_built := false
 
 
 func _init(realm: Dictionary, where: Vector3) -> void:
@@ -132,7 +136,7 @@ func build(body: Geo, hero: Geo, glows: UniversePaint, light: UniversePaint, flo
 	_rock(body, hero)
 	_beneath(hero, glows, light, flow)
 	_dress(hero, glows)
-	_buildings(body, hero, glows, buildings)
+	_buildings(hero, glows, buildings)
 	if key == "heart":
 		light.beam(at + Vector3(0, 9.5, 0), 0.9, 3.0, 30.0, Color(BEAM, 0.22), 16)
 		light.beam(at + Vector3(0, 9.5, 0), 0.3, 0.8, 20.0, Color(BEAM.lightened(0.4), 0.3), 10)
@@ -359,7 +363,7 @@ func _windmill(g: Geo, p: Vector3, s: float, a: float) -> void:
 
 ## The realm's buildings, each at its level, in rings from the middle; the
 ## Heart's middle is its Spire.
-func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) -> void:
+func _buildings(hero: Geo, glows: UniversePaint, buildings: Array) -> void:
 	var spots := _spots()
 	var next := 0
 	var lit := key == "lanternvale" or key == "heart" or key == "crystalline"
@@ -370,31 +374,53 @@ func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) ->
 		_shade(at, 6.2 * UniverseCitadel.MAP_SCALE, 0.55)
 		places["keeper_s_spire:1"] = at + Vector3(0, 11.0, 0)
 		next = 1
+	var stands: Array[Vector3] = []
 	for b: Dictionary in buildings:
 		if next >= spots.size():
 			break
 		var kind := str(b.get("kind", ""))
 		var spot: Vector3 = spots[next]
+		stands.append(spot)
 		next += 1
 		var f := Vector2(spot.x - at.x, spot.z - at.z).length() / radius
 		var mid := spot + Vector3(0, dome(f), 0)
 		var lv := int(b.get("level", 1))
-		_path(body, spot)
 		_lamp(hero, glows, spot)
 		_used.append(spot)
 		_shade(mid, 2.1, 0.5)
+		# Drawn close only when the camera first comes to the realm
+		# (`build_near`); from afar now.
+		_near_jobs.append([kind, mid, lv])
 		if kind == "ward":
-			_ward(hero, glows, mid, lv)
+			_ward(far, glows, mid, lv)
 		else:
-			var side := 4 if kind in ["vault", "keeper_s_spire"] else 3
-			# The kit's fine parts while the close-up has room for them (§21.3).
-			var fine := near_fine if near.triangles + near_fine.triangles < NEAR_BUDGET else Geo.new()
-			BuildingKit.build(near, kind, mid, side, lv, palette, fine)
-			_far_building(kind, mid, side, lv)
+			_far_building(kind, mid, 4 if kind in ["vault", "keeper_s_spire"] else 3, lv)
 		places["%s:%d" % [kind, int(b.get("n", 1))]] = mid + Vector3(0, 2.2, 0)
 		# Windows lit, more of them in the realms of night (§21.2: "lanterns
 		# and glows carry the realm").
 		glows.glow(mid + Vector3(0, 0.7, 0.9), 0.7 if lit else 0.45, Color("#FFC36A", 0.7 if lit else 0.4))
+	_paths(stands)
+
+
+## The realm's buildings and paths as drawn close (T3's kit), built the
+## first time the camera comes to the realm: building all of them for every
+## realm at once costs a phone a second it need not spend.
+func build_near() -> void:
+	if _near_built:
+		return
+	_near_built = true
+	for job: Array in _near_jobs:
+		var kind: String = job[0]
+		var mid: Vector3 = job[1]
+		var lv: int = job[2]
+		if kind == "ward":
+			_ward(near, UniversePaint.new(), mid, lv)
+			continue
+		# The kit's fine parts while the close-up has room for them (§21.3).
+		var fine := near_fine if near.triangles + near_fine.triangles < NEAR_BUDGET else Geo.new()
+		BuildingKit.build(near, kind, mid, 4 if kind in ["vault", "keeper_s_spire"] else 3, lv, palette, fine)
+	for stone: Array in _near_stones:
+		near.ring(stone[0], 0.0, 0.27, stone[1], 5)
 
 
 ## A building as seen from across the universe: the realm kit's own map
@@ -404,24 +430,59 @@ func _far_building(kind: String, mid: Vector3, side: int, lv: int) -> void:
 	BuildingKit.build_map(far, kind, mid, side, lv, palette)
 
 
-## Stepping stones from the plaza to a building's door.
-func _path(g: Geo, to: Vector3) -> void:
-	var from := Vector3(at.x, 0, at.z)
-	var flat := Vector3(to.x - at.x, 0, to.z - at.z)
+## The realm's paths, the design's network (its scout stills): from the
+## plaza to each building on the first ring, and between neighbours round
+## each ring. They go with the buildings, so they stay on T2's island in a
+## close-up as well as on the map's rock from afar.
+func _paths(stands: Array[Vector3]) -> void:
+	var plaza := 4.4 * UniverseCitadel.MAP_SCALE if key == "heart" else 1.8
+	var by_ring := {}
+	for p: Vector3 in stands:
+		var r := Vector2(p.x - at.x, p.z - at.z).length()
+		var ring := 0 if r < radius * 0.56 else 1
+		if not by_ring.has(ring):
+			by_ring[ring] = []
+		(by_ring[ring] as Array).append(p)
+		if ring == 0:
+			var dir := Vector3(p.x - at.x, 0, p.z - at.z).normalized()
+			_walk(at + dir * plaza, p)
+	for ring: int in by_ring:
+		var loop: Array = by_ring[ring]
+		loop.sort_custom(func(a: Vector3, b: Vector3) -> bool:
+			return atan2(a.z - at.z, a.x - at.x) < atan2(b.z - at.z, b.x - at.x))
+		for k in loop.size():
+			if loop.size() > 2 or k == 0:
+				var a: Vector3 = loop[k]
+				var b: Vector3 = loop[(k + 1) % loop.size()]
+				if a.distance_to(b) < radius * 1.1 and a != b:
+					_walk(a, b)
+	# The outer ring joins the inner at its nearest building.
+	if by_ring.has(0) and by_ring.has(1):
+		for p: Vector3 in by_ring[1]:
+			var best: Vector3 = by_ring[0][0]
+			for q: Vector3 in by_ring[0]:
+				if q.distance_to(p) < best.distance_to(p):
+					best = q
+			if best.distance_to(p) < radius * 0.7:
+				_walk(best, p)
+
+
+## Stepping stones from `a` to `b`, leaving room round a building at each
+## end, into the buildings' near and far layers.
+func _walk(a: Vector3, b: Vector3) -> void:
+	var stone: Color = Color(PATH.get(key, "#D2AE80"))
+	var flat := Vector3(b.x - a.x, 0, b.z - a.z)
 	var reach := flat.length()
-	if reach < 3.0:
-		return
-	var dir := flat / reach
-	var start := 4.4 * UniverseCitadel.MAP_SCALE if key == "heart" else 1.8
-	var stone: Color = Color(PATH[key]) if PATH.has(key) else (palette["ground"] as Color).lightened(0.08)
-	var n := int((reach - start - 1.3) / 0.55)
+	var dir := flat / maxf(reach, 0.001)
+	var n := int((reach - 2.0) / 0.55)
 	for k in n:
-		var d := start + k * 0.55
-		var side := Vector3(-dir.z, 0, dir.x) * (0.12 if k % 2 == 0 else -0.12)
-		var p := from + dir * d + side
-		var f := d / radius
-		g.ring(Geo.place(p + Vector3(0, at.y + dome(f) + 0.03, 0), k * 0.7), 0.0, 0.27,
-			stone.darkened(0.06 * (k % 3)), 5)
+		var d := 1.0 + k * 0.55 + 0.27
+		var side := Vector3(-dir.z, 0, dir.x) * (0.1 if k % 2 == 0 else -0.1)
+		var p := Vector3(a.x, 0, a.z) + dir * d + side
+		var f := Vector2(p.x - at.x, p.z - at.z).length() / radius
+		var t := Geo.place(Vector3(p.x, at.y + dome(f) + 0.03, p.z), k * 0.7)
+		far.ring(t, 0.0, 0.27, stone.darkened(0.06 * (k % 3)), 5)
+		_near_stones.append([t, stone.darkened(0.06 * (k % 3))])
 
 
 ## A lamp where a building's path leaves the plaza: the realm's warm lights
@@ -442,9 +503,20 @@ func _lamp(hero: Geo, glows: UniversePaint, to: Vector3) -> void:
 
 ## The meadow's tufts and flowers, never on a path or under a building:
 ## each [transform, colour], for the map's two scatter layers.
-func scatter(tufts: Array, flowers: Array) -> void:
+func scatter(tufts: Array, flowers: Array, petals: Array) -> void:
 	if ghost:
 		return
+	# The Heart's meadow strewn with blossom petals, as the design draws it.
+	if key == "heart":
+		for i in 140:
+			var a := noise(i * 5 + 701) * TAU
+			var f := 0.4 + 0.55 * sqrt(noise(i * 5 + 702))
+			var p := point(a, f, dome(f) + 0.02)
+			if _crowded(p):
+				continue
+			var turn := Basis(Vector3.UP, noise(i * 5 + 703) * TAU).scaled(Vector3.ONE * (0.8 + 0.6 * noise(i * 5 + 704)))
+			var pink := Color("#F7B8D6").lerp(Color("#FFFFFF"), 0.4 * noise(i * 5 + 705))
+			petals.append([Transform3D(turn, p), pink])
 	var grass: Color = palette["grass"]
 	var plant: Color = palette["plant"]
 	var bloom: Array[Color] = [palette["accent"], Color("#FFFFFF"), Color("#F6D27A"), Color("#F2A6CF")]

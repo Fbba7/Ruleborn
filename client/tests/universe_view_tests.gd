@@ -22,6 +22,8 @@ func run() -> void:
 	await _drawn()
 	await _camera()
 	await _pins()
+	await _people()
+	await _lazy()
 	await _home()
 
 
@@ -76,17 +78,33 @@ func _drawn() -> void:
 	var built := view.statics.get_child_count()
 	view.show_universe(data, UniverseSample.extras())
 	var same := view.statics.get_child_count() == built and not view.statics.get_child(0).is_queued_for_deletion()
-	var budget := view.triangles < 40000 and view.draw_calls() < 150
+	# §21.3, held to what is in view: the whole universe, and each realm
+	# seen close (T2's island and a character there).
+	var reduced := Settings.reduced_motion
+	Settings.reduced_motion = true
+	view.set_zoom(0)
+	view._process(0.01)
+	var drawn: Array[int] = [view.drawn_triangles()]
+	for id: String in ["heart", "outer-1", "outer-2", "outer-3", "outer-4", "outer-5", "outer-6"]:
+		for level: int in [1, 2]:
+			view.set_zoom(0)
+			view.focus_realm(id, level)
+			view._process(0.01)
+			drawn.append(view.drawn_triangles())
+	view.set_zoom(0)
+	Settings.reduced_motion = reduced
+	var budget: bool = drawn.max() < 40000 and view.draw_calls() < 150
 	var small := UniverseSample.view(1)
 	view.show_universe(small, {})
 	await tree.process_frame
 	var shrunk := view.islands.size() == 3 and view.islands.has("next:0")
 	check.call("the map draws every realm the server names and only those, the next realm to open as mist, a rope "
 			+ "bridge on a node of its own so it sways, all four kinds of link, and is not built again for the same "
-			+ "universe; seven realms stay inside 21.3's 40,000 triangles and 150 draw calls (23.2, 5.3, 21.3)",
+			+ "universe; seven realms stay inside 21.3's 40,000 triangles in view and 150 draw calls, from afar and at "
+			+ "each realm's two zooms (23.2, 5.3, 21.3)",
 		realms.size() == 7 and kinds.size() == 4 and bridges >= 1 and same and budget and shrunk,
-		"realms %s kinds %s ropes %d same %s triangles %d calls %d shrunk %s" % [realms, kinds, bridges, same,
-			view.triangles, view.draw_calls(), view.islands.keys()])
+		"realms %s kinds %s ropes %d same %s drawn %s calls %d shrunk %s" % [realms, kinds, bridges, same,
+			drawn, view.draw_calls(), view.islands.keys()])
 	view.queue_free()
 	await tree.process_frame
 
@@ -158,15 +176,93 @@ func _pins() -> void:
 				overlap = overlap or o.intersects(r)
 			shown.append(r)
 	view.show_universe(UniverseSample.view(6), {})
+	var raisable := 0
+	for r: Dictionary in UniverseSample.view(6)["realms"]:
+		for b: Dictionary in r["buildings"]:
+			raisable += 1 if b["next"] is Dictionary and b["next"]["blocked"] == null else 0
 	var quiet := view.pins.get_children().filter(func(c: Node) -> bool: return not c.is_queued_for_deletion())
 	Settings.reduced_motion = false
 	check.call("the map's pins name every realm, say what each producer has ready and the raids, mark the fault, "
-			+ "and never cover one another; with nothing ready and no raids, only the realms, faults and links are "
-			+ "pinned (23.2, 20.8)",
+			+ "and never cover one another; with nothing ready and no raids, only the realms, faults, links and the "
+			+ "buildings that can be raised now are pinned (23.2, 10.2, 20.8)",
 		names.size() == 7 and texts.has(WeavingPresenter.band_name(1) + " 74%") and texts.has("! 2")
 			and texts.has("✦ 320") and texts.any(func(t: String) -> bool:
-			return t.begins_with("ϟ")) and not overlap and quiet.size() == 8 + view.links.size(),
-		"names %d texts %s overlap %s quiet %d" % [names.size(), texts, overlap, quiet.size()])
+			return t.begins_with("ϟ")) and not overlap and quiet.size() == 8 + view.links.size() + raisable,
+		"names %d texts %s overlap %s quiet %d raisable %d" % [names.size(), texts, overlap, quiet.size(),
+			raisable])
+	view.queue_free()
+	await tree.process_frame
+
+
+## The player's characters on the realm seen close, where the home view puts
+## them; none from afar; a heading in a word list swoops the map.
+func _people() -> void:
+	var view := _view()
+	Settings.reduced_motion = true
+	view.show_universe(UniverseSample.view(6), UniverseSample.extras())
+	await tree.process_frame
+	var people := view.world.get_node("Characters")
+	var far := people.get_child_count()
+	view.focus_realm("heart", 2)
+	await tree.process_frame
+	var kinds: Array[String] = []
+	for c in people.get_children():
+		if not c.is_queued_for_deletion():
+			kinds.append(str(c.name))
+	var where := [UniverseCrowd.realm_of({"state": "working", "home": "spire",
+			"work": {"realm": "outer-2", "kind": "garden", "n": 1}}),
+		UniverseCrowd.realm_of({"state": "idle", "home": "spire", "work": null}),
+		UniverseCrowd.realm_of({"state": "idle", "home": "outer-3", "work": null})]
+	var title := UI.label("The Heart")
+	var heading := UniverseHeading.make(title, "outer-4", view)
+	view.add_child(heading)
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	heading.gui_input.emit(press)
+	var lift := press.duplicate() as InputEventMouseButton
+	lift.pressed = false
+	heading.gui_input.emit(lift)
+	var swooped := view.focus_id == "outer-4" and view.zoom == 1
+	Settings.reduced_motion = false
+	check.call("the realm seen close shows the player's own characters the home view puts there, one at most, and "
+			+ "none from afar; a character is where it works, else at home (the Spire is the Heart); a realm's "
+			+ "heading in a word list swoops the map to it (23.2, 14.1)",
+		far == 0 and kinds.size() == 1 and kinds.has("featherkin")
+			and where == ["outer-2", "heart", "outer-3"] and swooped and heading.get_child(1) == title,
+		"far %d kinds %s where %s swooped %s" % [far, kinds, where, swooped])
+	view.queue_free()
+	await tree.process_frame
+
+
+## A realm's detailed buildings are made when the camera first comes to it,
+## and its island as seen close while the camera rests on it.
+func _lazy() -> void:
+	var view := _view()
+	Settings.reduced_motion = true
+	view.show_universe(UniverseSample.view(6), UniverseSample.extras())
+	view.set_zoom(0)
+	view._process(0.01)
+	var empty := true
+	for id: String in view._lods:
+		empty = empty and (view._lods[id][0] as Node3D).get_child_count() == 0
+	var none_close := view._close.is_empty()
+	view.focus_realm("outer-2", 1)
+	view._process(0.01)
+	var built := (view._lods["outer-2"][0] as Node3D).get_child_count() > 0 \
+		and (view._lods["outer-1"][0] as Node3D).get_child_count() == 0
+	var ready: bool = view._close.has("outer-2") and not (view._close["outer-2"] as Node3D).visible
+	view.focus_realm("outer-2", 2)
+	var shown: bool = (view._close["outer-2"] as Node3D).visible and not (view._rocks["outer-2"] as Node3D).visible
+	view.focus_realm("heart", 2)
+	view._process(0.01)
+	var heart_rock: bool = (view._rocks["heart"] as Node3D).visible and not view._close.has("heart")
+	Settings.reduced_motion = false
+	check.call("from afar no realm's detailed buildings or close island are made; coming to a realm makes its "
+			+ "buildings, resting there makes its island as seen close, and the close-up shows it in place of the "
+			+ "map's rock; the Heart keeps its rock (21.3)",
+		empty and none_close and built and ready and shown and heart_rock,
+		"empty %s none %s built %s ready %s shown %s heart %s" % [empty, none_close, built, ready, shown, heart_rock])
 	view.queue_free()
 	await tree.process_frame
 

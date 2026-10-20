@@ -42,8 +42,12 @@ static func view(outer := 6) -> Dictionary:
 		"faults": ["outer-5"] if outer >= 5 else [], "depth": {}, "deepest": 2}
 
 
+## A building at `level`; every third one can be raised now.
 static func _b(kind: String, n: int, level: int) -> Dictionary:
-	return {"kind": kind, "name": kind, "n": n, "level": level, "top": 10, "next": null}
+	var next: Variant = null
+	if (kind.length() + n + level) % 3 == 0:
+		next = {"cost": 400 * (level + 1), "needs": {"keeper": 0, "spire": 0}, "blocked": null}
+	return {"kind": kind, "name": kind, "n": n, "level": level, "top": 10, "next": next}
 
 
 ## What the home and the raid badge add.

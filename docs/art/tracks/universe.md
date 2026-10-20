@@ -114,6 +114,55 @@ universe, inside §21.3's 40,000 and 150.
   locale; the screen's own title is unchanged).
   Still: `round12_budget_home_zoom1_zoom2.png`.
 
+- Round 13 (resumed): in the map and universe screens' word lists each realm's heading carries its
+  realm's icon, and a tap on it swoops the map to that realm (`UniverseHeading`).
+  Still: `round13_screens_headings.png`.
+
+- Round 14: a gold level-up marker (the design's `levelup` icon) over each building the server's
+  universe view says can be raised now (its `next` with nothing blocking), at the realm zooms.
+  Still: `round14_levelup_markers.png`.
+
+- Round 16, on the third integration (its far buildings are T3's `BuildingKit.build_map`, so there is
+  one building path: the kit up close, its map version from afar). Each island is now its own node, and
+  each link its own mesh, so a zoomed-in view draws only what is on the screen. An outer realm seen close
+  (zoom 2) is T2's own island (`UniverseClose`: `WorldLook.island`, its painted meadow, strata cliffs,
+  roots, falls and scatter, toned to the map's night through its `tint`); the Heart keeps the map's rock,
+  as its citadel and buildings cover its ground. One character in a close-up. Wards are drawn with the
+  buildings, so they stay in a close-up. The budget is now held to what is in view (`drawn_triangles`,
+  counted per instance against the camera's frustum), at every zoom of every realm: 32,600 for the whole
+  universe, at most 38,400 at a realm's zoom (the kit's fine parts only in a close-up) and 19,800–37,800
+  for each realm seen close, all under 40,000; `universe_zoom.gd` prints both counts.
+  Stills: `round16_home.png`, `round16_zoom0.png`, `round16_zoom1.png`, `round16_zoom2_heart.png`,
+  `round16_zoom2_skyfield.png`, `round16_zoom2_crystalline.png`.
+
+- Round 17: paths as the design's network (its scout stills), from the plaza to each first-ring
+  building and round each ring between neighbours, in tan cobbles, drawn with the buildings so they stay
+  on T2's island in a close-up; T2's ground tinted greener for the night.
+  Stills: `round17_zoom2_skyfield_paths.png`, `round17_zoom2_verdant_paths.png`,
+  `round17_compare_scout_skyfield.png` (ours at night beside the design's daytime scout still).
+
+- Round 18: level-up markers only in a close-up, so the Heart at home's realm zoom is not crowded.
+  (The design does not bob its islands in universe mode, so neither does the map.)
+  Still: `round18_home.png`.
+
+- Round 19 (cost on the phone): the kit's detailed buildings (about 5 ms each on a desktop CPU) are built
+  for a realm only when the camera first comes to it (`UniverseIsland.build_near`), so the universe builds
+  in 172 ms instead of 454 (desktop, seven realms); while the camera rests on a realm, its T2 island for
+  the close-up is made ready, so the swoop in does not wait for it. The budget counting moved to
+  `UniverseBudget`.
+
+- Round 20: the close island's night tint by realm: the green realms kept green, Lantern Vale and
+  Crystalline cool, Emberreach warm (Lantern Vale had come out teal).
+  Stills: `round20_zoom2_lanternvale.png`, `round20_zoom2_emberreach.png`.
+
+- Round 21: the Heart's meadow strewn with pink blossom petals, as the design's Heart scout still draws
+  it (one more layer of instances, about 260 triangles).
+  Still: `round21_zoom2_heart_petals.png`.
+
+- Round 22: the winds round the Heart (§5.4: "ringed by strong winds, so skiffs can't land there") as
+  the design's faint dome, a shell seen only at its edge with streaks of wind (`universe_dome.gdshader`).
+  Still: `round22_zoom1_heart_dome.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

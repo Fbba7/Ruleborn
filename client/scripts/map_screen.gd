@@ -90,7 +90,7 @@ func _refresh() -> void:
 		var box := VBoxContainer.new()
 		var title := UI.label(r["title"], UI.TEXT_POINTS, true)
 		title.set_meta("realm", r["realm"])
-		box.add_child(title)
+		box.add_child(UniverseHeading.make(title, str(r["realm"]), world))
 		box.add_child(UI.label(r["laws"], UI.TEXT_POINTS, true))
 		box.add_child(RosterScreen.offer(r["open"], false, controller.services.realm_flow.open.bind(str(r["realm"]))))
 		body.add_child(UI.plate(box))
