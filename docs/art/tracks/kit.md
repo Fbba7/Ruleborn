@@ -60,12 +60,12 @@ Shots to re-render them: `client/tests/shots/kit_realm.gd` (REALM, LEVEL, HOUR, 
 ## Still worse than the design
 
 - The grid is now hard to read as tiles at all (seams at 3.5 %); the design shows no grid either, but the builder and planner may want a stronger overlay (T5's).
-- Trails are drawn by the shader now (crisp, 0.45 m wide, ragged edge, a rim of worn grass), but they are elbowed straight runs where the design's lanes curve.
+- Trails are drawn by the shader (crisp, 0.45 m wide, ragged edge, a rim of worn grass) and bend round their corners; they never cross water or avoid features, since they are paint.
 - ~~Value structure~~: since the integrations, the grayscale test passes: mid-grey meadow under dark roofs, as the design's (`docs/art/shots/kit/33-grayscale.png`).
 - Water beds and banks are flush (the island-top note above).
 - Several buildings are under §21.3's 2,000-triangle floor (Aether Spring 900–1,200, Beacon about 900, Ward 360; the Vault is now 1,300–1,700 with its portico). They read, and the Spring and the Anchor Stone have been rebuilt; the Ward is a small trap by design.
 - Doors face their nearest path (`RealmKit.facing`), a choice the simulation does not make; a screen-given facing would override it.
-- The level-10 crowns are small at the home camera's distance.
+- Wards always draw at level 1 in a heist: the simulation's ward record has no level yet (`PieceKit.ward(kind, level)` takes one).
 
 ## Next
 
