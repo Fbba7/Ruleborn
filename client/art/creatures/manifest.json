@@ -1,0 +1,188 @@
+{
+	"note": "Written by tools/art/export.mjs from art/design/creatures; do not edit by hand.",
+	"kinds": {
+		"featherkin": {
+			"file": "featherkin.glb",
+			"group": "ruleborn",
+			"school": "motion",
+			"triangles": 5880,
+			"body_triangles": 2600,
+			"texels_per_unit": 247.7,
+			"bones": 31,
+			"scale": 0.62,
+			"height": 0.6,
+			"body_height": 0.6,
+			"design_height": 0.6,
+			"radius": 0.212,
+			"chest_radius": 0.1942,
+			"clips": {
+				"idle": {
+					"len": 4,
+					"label": "Idle"
+				},
+				"idle2": {
+					"len": 5,
+					"label": "Idle 2"
+				},
+				"walk": {
+					"len": 0.72,
+					"label": "Walk"
+				},
+				"run": {
+					"len": 0.42,
+					"label": "Run"
+				},
+				"carry": {
+					"len": 1.155,
+					"label": "Carry"
+				},
+				"climb": {
+					"len": 1.47,
+					"label": "Climb"
+				},
+				"leap": {
+					"len": 1.6,
+					"label": "Leap"
+				},
+				"slide": {
+					"len": 1.6,
+					"label": "Slide"
+				},
+				"wade": {
+					"len": 2.31,
+					"label": "Wade"
+				},
+				"hit": {
+					"len": 1.2,
+					"label": "Hit"
+				},
+				"ko": {
+					"len": 2.6,
+					"label": "Knocked out"
+				},
+				"celebrate": {
+					"len": 1.8,
+					"label": "Celebrate"
+				},
+				"nap": {
+					"len": 4,
+					"label": "Nap"
+				},
+				"work": {
+					"len": 1.6,
+					"label": "Work loop"
+				},
+				"ability": {
+					"len": 2.2,
+					"label": "Glide"
+				},
+				"expr_curious": {
+					"len": 5.236,
+					"label": "expr_curious"
+				},
+				"expr_focus": {
+					"len": 5.236,
+					"label": "expr_focus"
+				},
+				"expr_startled": {
+					"len": 5.236,
+					"label": "expr_startled"
+				},
+				"expr_caught": {
+					"len": 5.236,
+					"label": "expr_caught"
+				}
+			},
+			"expressions": [
+				"curious",
+				"focus",
+				"startled",
+				"caught"
+			],
+			"sockets": [
+				{
+					"name": "ember_0",
+					"bone": "ember_0",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_1",
+					"bone": "ember_1",
+					"kind": "ember"
+				},
+				{
+					"name": "ember_2",
+					"bone": "ember_2",
+					"kind": "ember"
+				},
+				{
+					"name": "head_top",
+					"bone": "head",
+					"offset": [
+						0,
+						0.34,
+						-0.0053
+					],
+					"kind": "std"
+				},
+				{
+					"name": "chest",
+					"bone": "chest",
+					"offset": [
+						-0.0003,
+						0.0002,
+						0.0067
+					],
+					"kind": "std"
+				},
+				{
+					"name": "back",
+					"bone": "chest",
+					"offset": [
+						-0.0003,
+						0.0002,
+						-0.1859
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_R",
+					"bone": "haR",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "hand_L",
+					"bone": "haL",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				},
+				{
+					"name": "feet",
+					"bone": "rig",
+					"offset": [
+						0,
+						0,
+						0
+					],
+					"kind": "std"
+				}
+			],
+			"rim": "#BFE4FF",
+			"glow": 0,
+			"fur": {
+				"shells": 0,
+				"len": 0.0026
+			},
+			"bytes": 940632
+		}
+	}
+}
