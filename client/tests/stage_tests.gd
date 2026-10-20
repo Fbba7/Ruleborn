@@ -162,7 +162,7 @@ func _fold() -> void:
 	var laws := screen.view.law_fx != null and screen.view.law_fx.signatures.size() == 2
 	var key: Button = null
 	for b: Button in screen.find_children("*", "Button", true, false):
-		if b.get_meta("key", "") == "fold":
+		if b.has_meta("fold"):
 			key = b
 	var shown := screen.body.is_visible_in_tree()
 	key.pressed.emit()

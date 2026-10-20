@@ -6,6 +6,9 @@ extends RefCounted
 ## column keeps every word and control the screen had; only where it stands
 ## changes.
 
+## The text size (§20.8, in percent) from which the words cannot be folded.
+const LARGE_TEXT := 175
+
 static var _night: ImageTexture
 ## Whether the player folded the words away, kept from screen to screen so
 ## the world keeps the phone once they ask for it.
@@ -67,13 +70,12 @@ static func fold_key(words: ScrollContainer) -> Button:
 	var b := UI.button("", func() -> void: pass)
 	var apply := func() -> void:
 		words.visible = not folded
-		UI.relabel(b, Strings.t("STAGE_SHOW_WORDS" if folded else "STAGE_HIDE_WORDS"), true)
+		UI.relabel(b, Strings.t("STAGE_SHOW_WORDS" if folded else "STAGE_HIDE_WORDS"))
 	b.pressed.connect(func() -> void:
 		folded = not folded
 		apply.call())
-	UI.fit_to(b, [Strings.t("STAGE_SHOW_WORDS"), Strings.t("STAGE_HIDE_WORDS")])
 	apply.call()
-	b.set_meta("key", "fold")
+	b.set_meta("fold", true)
 	return b
 
 
@@ -81,11 +83,17 @@ static func fold_key(words: ScrollContainer) -> Button:
 ## so the screen's dock keeps its rows and the key stays where the words
 ## were once they are folded.
 static func handle(column: VBoxContainer, words: ScrollContainer) -> Control:
-	var row := UI.row()
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_child(fold_key(words))
-	var holder := UI.narrow(row)
+	# A plain centred row, not `UI.narrow`'s: at §20.8's 200% the key wraps
+	# its words within the column rather than widening it.
+	var holder := UI.row()
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# At §20.8's largest text the words are what the player reads, and the
+	# column has no row to spare above the thumb's keys: no handle then, and
+	# the words stay unfolded.
+	if Settings.text_scale >= LARGE_TEXT:
+		words.visible = true
+	else:
+		holder.add_child(fold_key(words))
 	column.add_child(holder)
 	column.move_child(holder, words.get_index())
 	OverlaySheet.dress(holder)

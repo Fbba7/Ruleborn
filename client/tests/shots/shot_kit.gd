@@ -14,7 +14,7 @@ static func settle(tree: SceneTree, screen: Control) -> void:
 			(v.get_parent() as WorldView).set_sky_hour(hour)
 	if OS.get_environment("FOLD") != "":
 		for b: Node in screen.find_children("*", "Button", true, false):
-			if b.get_meta("key", "") == "fold":
+			if b.has_meta("fold"):
 				(b as Button).pressed.emit()
 	for i in 6:
 		await tree.process_frame
