@@ -86,3 +86,15 @@ Stopped at the owner's request on 2026-10-20, 07:50 UTC.
 - **Done:** everything above, with the second integration merged (commit `b0e88f5`) and the grid matched to its meadow (`506bd9d`). gdlint and all kit tests pass on that state. The last full `check_all` that finished ("All checks passed") ran on `2b639a3`, before the second merge.
 - **In progress:** a full `check_all` on the merged state, stopped before it finished, so it is not confirmed there.
 - **Next:** run `bash tools/check_all.sh` on this branch. Then T4 can switch `universe_island.gd:337` to `BuildingKit.build_map`, and the kit can go on with the items under "Still worse than the design" (crisper trails, the four plainest buildings, a stronger grid overlay for the builder).
+
+## Stopped here (session two, 19:22 UTC)
+
+Stopped at the owner's request.
+
+- **Done:** everything above, through `e69e866` (round trees in three shapes). The last full `check_all` that finished passed on the merged third integration (`cdfddff`). Since then I have run the client tests (323 of 323) and the kit tests after each change, and measured the universe map at 39,695 triangles, under its 40,000 limit. No full `check_all` has run on the final commits; it takes about 25 minutes, so I skipped it at the stop.
+- **Not started:** the integrator's request (16:19 UTC) for a mid-detail level for the realm-view and home cameras. T6 measures the realm view at about 93k triangles against §21.3's 40k. That note reached this session only at the stop, so no work was done on it.
+- **Still worse than the design:** see "Still worse than the design" above. Water lies flush with the ground (it needs T2's meadow to leave the grid open); wards always draw at level 1 in a heist (the simulation's ward record has no level); trails are paint and ignore features.
+- **Next:**
+  1. The mid-detail level, added alongside the existing calls so T4 and T6 don't break. For example, an optional `detail` argument to `BuildingKit.build` and to `RealmKit`: buildings and hero features at about a third of their heist triangles, silhouettes kept, with fine parts, panes and dress dropped first.
+  2. A test that a fully built realm at that level stays under 40,000 triangles, and a line here telling T6 the call to switch to.
+  3. Then a full `check_all`.
