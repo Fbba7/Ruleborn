@@ -477,7 +477,14 @@ func _hearth() -> void:
 		for x: float in [-0.22, 0.22]:
 			window(x, 0.62, -0.375, PI, 0.9)
 	var y := roof(0.9 if two else 0.86, 0.74 if two else 0.7, eave, 0.42, 0.1)
-	door(0, 0.08, 0.335, 0)
+	# §21.5: "a cottage with a round door" — a round wooden door in a stone ring.
+	var round_at := at(0, 0.215, 0.335)
+	d.cyl(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), round_at), 0.13 * unit, 0.13 * unit, 0.02 * unit, stone2, 10)
+	d.cyl(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), round_at + Vector3(0, 0, 0.012) * unit), 0.1 * unit,
+		0.1 * unit, 0.02 * unit, KitStyle.WOOD.lightened(0.1) if tier < 2 else KitStyle.WOOD.lerp(Color("#8C6CF0"), 0.3),
+		10)
+	d.ball(Geo.place(round_at + Vector3(0.05, 0, 0.035) * unit), 0.014 * unit, KitStyle.GOLD, 2, 4)
+	d.box(place(0, 0.017, 0.4), Vector3(0.26, 0.035, 0.1) * unit, stone)
 	window(-0.25, 0.27, 0.335, 0)
 	window(0.25, 0.27, 0.335, 0)
 	window(0.415, 0.27, 0, PI / 2.0, 0.9, false)
