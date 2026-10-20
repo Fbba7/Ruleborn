@@ -31,6 +31,8 @@ var cards: VBoxContainer
 ## The spend tapped once, by its key: the next tap on it spends.
 var confirm := ""
 var clock: Callable = func() -> int: return int(Time.get_unix_time_from_system() * 1000)
+## The last success the stage celebrated, so a refresh does not repeat it.
+var _cheered := ""
 
 
 func _ready() -> void:
@@ -104,6 +106,10 @@ func _refresh() -> void:
 		UI.set_status(status_label, "alarm", Strings.t("CHARACTER_MISSING"))
 	elif c["said"] != "":
 		UI.set_status(status_label, "success", c["said"])
+		# A level bought or a rest ended: the character celebrates, once.
+		if c["said"] != _cheered:
+			_cheered = c["said"]
+			stage.cheer.call_deferred()
 	elif c["busy"] != "" or not c["ready"]:
 		UI.set_status(status_label, "info", Strings.t("COMMON_LOADING"))
 	else:

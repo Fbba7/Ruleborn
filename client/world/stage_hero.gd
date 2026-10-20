@@ -23,6 +23,8 @@ const SETTLE := 2.2
 ## How long a tapped action plays, in seconds.
 const ACTION_SECONDS := 0.9
 const FOV := 24.0
+## How often a standing model plays its second idle, in seconds.
+const IDLE2_EVERY := 7.0
 ## §21.3's three points: a warm key from above and in front, the night's
 ## violet as the fill (shade is never black), and a rim from behind.
 const KEY := Color("#FFE6C8")
@@ -66,6 +68,9 @@ var _actions: Array[float] = []
 ## Seconds since a hatch's reveal began, or below zero when none plays.
 var _reveal := -1.0
 var _shells: Array[Node3D] = []
+## Seconds until the figures switch between their two idles (§21.6's "two
+## idles"), so a character on a stage never loops one clip for long.
+var _fidget := IDLE2_EVERY
 
 
 func _init() -> void:
@@ -258,13 +263,20 @@ static func shade(figure: Node3D) -> void:
 
 ## Plays the tapped action on figure `index`: a hop and a twirl for a
 ## stand-in, the model's ability clip once the models land.
-func act(index: int) -> void:
+func act(index: int, clip := &"ability") -> void:
 	if index < 0 or index >= figures.size():
 		return
 	_actions[index] = 0.0
 	var model: Variant = figures[index].get_meta("model", null)
 	if model is CreatureModel:
-		(model as CreatureModel).play(&"ability")
+		(model as CreatureModel).play(clip)
+
+
+## A success to share (a level bought, a rest ended): every figure on the
+## stage celebrates, with a hop.
+func cheer() -> void:
+	for i in figures.size():
+		act(i, &"celebrate")
 
 
 ## A hatch's moment (§23.2's Hatch): the egg's shell bursts in two, a ring
@@ -316,6 +328,19 @@ func _process(delta: float) -> void:
 	if moving:
 		time += delta
 		backdrop.advance(delta)
+		_fidget -= delta
+		if _fidget <= 0.0:
+			_fidget = IDLE2_EVERY
+			for f in figures:
+				var model: Variant = f.get_meta("model", null)
+				if not (model is CreatureModel):
+					continue
+				# The two idles take turns (both loop in the model).
+				var c := model as CreatureModel
+				if c.clip == &"idle":
+					c.play(&"idle2")
+				elif c.clip == &"idle2":
+					c.play(&"idle")
 	for i in _actions.size():
 		if _actions[i] >= 0.0:
 			_actions[i] += delta

@@ -24,6 +24,8 @@ var chosen := -1
 ## What "now" is, in milliseconds; a test sets it, so a timer reads the same
 ## on every run.
 var clock: Callable = func() -> int: return int(Time.get_unix_time_from_system() * 1000)
+## The last success the stage celebrated, so a refresh does not repeat it.
+var _cheered := ""
 
 
 func _ready() -> void:
@@ -83,6 +85,9 @@ func _refresh() -> void:
 		UI.set_status(status_label, "alarm", r["refused"])
 	elif r["said"] != "":
 		UI.set_status(status_label, "success", r["said"])
+		if r["said"] != _cheered:
+			_cheered = r["said"]
+			stage.cheer.call_deferred()
 	elif r["confirming"] != "":
 		UI.set_status(status_label, "confirming", r["confirming"])
 	elif r["busy"] != "" or not r["ready"]:
