@@ -24,6 +24,9 @@ const KINDS := {
 ## Each school's home realm (§21.4), whose ground a character stands on.
 const REALM := {"motion": "skyfield", "matter": "crystalline", "time": "tidehold", "energy": "emberreach",
 	"life": "verdant", "spirit": "lanternvale"}
+## The kinds that fly (§11.11's "flies"): their clips hover above the
+## ground, so a stage frames them with room above.
+const FLIERS := ["featherkin", "lantern_wisp", "soulmender"]
 ## The Sages, who stand in the Sage hall.
 const SAGES := ["archivist", "tinkerer", "gardener", "wanderer", "chronicler", "lamplighter"]
 
