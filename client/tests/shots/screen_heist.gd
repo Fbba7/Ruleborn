@@ -5,14 +5,16 @@ extends SceneTree
 ## guard looking), "vault" (the crew at the Vault, cracking), "alarm" (a
 ## guard alerted, the alarm up), "pick" (the landing picker, before landing),
 ## "cross" (the swoop to another realm, at its middle), "escape" (Get out,
-## the skiff called to the edge). HOUR and ZOOM are optional; BUTTONS shows
+## the skiff called to the edge), "entry" (a realm's entry card), "hold" (the gait menu
+## a held press opens). HOUR and ZOOM are optional; BUTTONS shows
 ## Settings' turn and zoom buttons, CONTRAST high contrast, LEFT left-handed
 ## play, TEXT a text size (150, 200), NAMES the names a long press shows.
 
-const TO := {"escape": [[2, 10], [3, 10], [2, 11]], "cross": [[4, 9], [3, 10], [4, 11]],
-	"sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]], "alarm": [[5, 6], [3, 10], [4, 11]],
-	"start": [[7, 8], [2, 10], [1, 10]]}
-const TICKS := {"escape": 120, "cross": 60, "start": 30, "sneak": 150, "vault": 300, "alarm": 150}
+const TO := {"hold": [[4, 9], [3, 10], [4, 11]], "entry": [], "escape": [[2, 10], [3, 10], [2, 11]],
+	"cross": [[4, 9], [3, 10], [4, 11]], "sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]],
+	"alarm": [[5, 6], [3, 10], [4, 11]], "start": [[7, 8], [2, 10], [1, 10]]}
+const TICKS := {"hold": 150, "entry": 20, "escape": 120, "cross": 60, "start": 30, "sneak": 150, "vault": 300,
+	"alarm": 150}
 
 
 func _initialize() -> void:
@@ -77,20 +79,32 @@ func _go() -> void:
 			screen.controller.advance(10)
 			screen._refresh()
 			view._process(1.0 / 3.0)
+	if moment == "hold":
+		# A held press on the ground: the gait menu at the finger.
+		screen.open_gait_menu(view.screen_at(Vector2i(5, 8)))
+	if moment == "entry":
+		# §15.3's banner as the crew comes into a realm.
+		screen.entry_card(HeistHud.realm(0, 0))
+		# The still is taken at its full showing, past the fade in.
+		screen.card.modulate.a = 1.0
+		screen.card.set_process(false)
+		for t in screen.get_tree().get_processed_tweens():
+			t.pause()
 	if moment == "cross":
 		# §21.1's swoop between realms, caught at its middle.
 		view.swoop()
 		view._process(0.45)
 		view.set_process(false)
-	if OS.get_environment("ZOOM") != "":
-		view.set_zoom(int(OS.get_environment("ZOOM")))
+	# The landing's drop from the whole realm is long over by the moment shot.
+	view.set_zoom(int(OS.get_environment("ZOOM")) if OS.get_environment("ZOOM") != "" else 1)
 	if OS.get_environment("NAMES") != "":
 		# A long press: every crew member's name over its head.
 		view.anchors.names_for = 60.0
 	settle(root)
 	screen.set_process(false)
 	screen._refresh()
-	for i in 6:
+	# Portraits rendered from the models fill in over a few frames.
+	for i in 40:
 		await process_frame
 	await RenderingServer.frame_post_draw
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))

@@ -40,6 +40,7 @@ func run() -> void:
 	view.queue_free()
 	await tree.process_frame
 	await _models(replay)
+	await _entry_card()
 
 
 func _hud(replay: RulebornReplay) -> void:
@@ -123,8 +124,8 @@ func _camera(view: WorldView, replay: RulebornReplay) -> void:
 	var picks := view.tile_at(view.screen_at(Vector2i(replay.crew()[0]["at"]))) == Vector2i(replay.crew()[0]["at"])
 	view.follow = []
 	view.set_zoom(1)
-	check.call("the heist's camera follows the crew at 50 degrees showing about 12 tiles across, eight close up "
-			+ "and the whole realm zoomed out, and a tap still picks the tile drawn under it (21.1)",
+	check.call("the heist's camera follows the crew at 50 degrees showing about 12 tiles across (10.5 on its width), "
+			+ "seven close up and the whole realm zoomed out, and a tap still picks the tile drawn under it (21.1)",
 		is_equal_approx(across, WorldView.FOLLOW_TILES) and is_equal_approx(close, WorldView.CLOSE_TILES)
 			and whole > across and framed and picks, "%.2f %.2f %.2f %s %s" % [across, close, whole, framed, picks])
 
@@ -171,34 +172,18 @@ func _taps(view: WorldView) -> void:
 		"%s %s %s %s" % [one, dragged, stepped, turned])
 
 
-## Every launch law has its look, each drawn in at most two draw calls.
+## The heist's figures step as the laws woven make them (T8's gait, §21.7):
+## a hoppy law hops higher, a slow one steps slower, none is plain.
 func _laws(view: WorldView) -> void:
-	var path := ProjectSettings.globalize_path("res://").path_join("../content/laws.json")
-	var launch: Array[String] = []
-	var rows: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
-	if rows is Array:
-		for row: Dictionary in rows:
-			if row.get("launch", false):
-				launch.append(str(row["id"]))
-	var missing := launch.filter(func(id: String) -> bool: return not FxLaws.LOOK.has(id))
-	var known := Array(RulebornStability.law_ids())
-	var stray := FxLaws.LOOK.keys().filter(func(id: String) -> bool: return not known.has(id))
-	var heavy := []
-	var fx := FxLaws.new()
-	tree.root.add_child(fx)
-	for id: String in FxLaws.LOOK:
-		var one: Array[String] = [id]
-		fx.build(one, Vector2i(12, 12), view)
-		var calls := fx.get_children().filter(func(n: Node) -> bool: return not n.is_queued_for_deletion()).size()
-		if calls > 2 or calls == 0:
-			heavy.append("%s %d" % [id, calls])
-	var empty: Array[String] = []
-	fx.build(empty, Vector2i(12, 12), view)
-	fx.queue_free()
-	check.call("every launch law has its world signature on screen, each in at most two draw calls, and only laws "
-			+ "the simulation has (21.7, 21.3)",
-		launch.size() == 24 and missing.is_empty() and stray.is_empty() and heavy.is_empty(),
-		"%d launch, missing %s, stray %s, heavy %s" % [launch.size(), missing, stray, heavy])
+	var plain := FxMotion.movement(LawFxGait.blend([]), true, 0.0)
+	var hoppy := FxMotion.movement(LawFxGait.blend(["half_gravity"]), true, 0.0)
+	var woven := view.woven.duplicate()
+	var expect := LawFxGait.blend(woven)
+	check.call("the heist's figures step as the laws woven make them, by the one law-effect system's gait: plain with "
+			+ "none, higher under half gravity, and the realm's own laws read from its pylons (21.7)",
+		is_equal_approx(float(plain["hop"]), 1.0) and is_equal_approx(float(plain["rate"]), 1.0)
+			and (float(hoppy["hop"]) > 1.0 or float(hoppy["float"]) > 0.0) and view.gait == expect
+			and woven.has("bloom"), "%s %s %s" % [plain, hoppy, woven])
 
 
 ## Reduced motion: no shake, no swoop (20.8).
@@ -288,6 +273,11 @@ func _models(replay: RulebornReplay) -> void:
 	var played: Array = figure.get("played")
 	var guard_figure := view._guards[0].get_node("Rig/Figure")
 	WorldView.figure_maker = Callable()
+	var clips := [FxMotion.model_clip(true, true, "Run", true, true),
+		FxMotion.model_clip(false, false, "Walk", true, true),
+		FxMotion.model_clip(false, true, "Run", true, false), FxMotion.model_clip(false, true, "Run", false, false),
+		FxMotion.model_clip(false, true, "Crouch", false, false), FxMotion.model_clip(false, false, "Walk", false, false)]
+	played = played if clips == ["ko", "hit", "carry", "run", "walk", "idle"] else []
 	check.call("a character model, when the integrator gives one, takes each actor's figure and is played the clip "
 			+ "for what the simulation says it is doing (TD.9)",
 		made.size() == replay.crew().size() + replay.guards().size() and made.has("guard") and played.size() == 1
@@ -295,3 +285,42 @@ func _models(replay: RulebornReplay) -> void:
 		"%s %s" % [made, played])
 	view.queue_free()
 	await tree.process_frame
+
+
+## Landing in a realm or crossing into the next shows its name on a card for
+## about two seconds (15.3); nothing for a heist of one island.
+func _entry_card() -> void:
+	var maker := WorldView.figure_maker
+	App.services.store.dispatch(&"heist_started", {})
+	var screen: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
+	tree.root.add_child(screen)
+	await tree.process_frame
+	screen.set_process(false)
+	screen.entry_card("")
+	var none := screen.card == null
+	screen.entry_card(HeistHud.realm(0, 0))
+	var words := ""
+	for l in screen.card.find_children("*", "Label", true, false):
+		words = (l as Label).text
+	var shown := screen.card.is_inside_tree() and words == Strings.t("HEIST_IN_HEART")
+	# A held press opens the gait menu at the finger; a gait from it is the
+	# chosen member's, sent to the held tile.
+	screen.controller.land_here()
+	screen.view.show_replay(screen.controller.world)
+	var at := screen.view.screen_at(Vector2i(6, 6))
+	screen.open_gait_menu(at)
+	var opened := screen.gait_menu != null and screen.gait_menu.find_children("*", "Button", true, false).size() == 3
+	screen._go_at(2, Vector2i(6, 6))
+	var orders: Array = screen.controller.world.commands()
+	var gave: Dictionary = orders[orders.size() - 1] if orders.size() > 0 else {}
+	var gait: Dictionary = orders[orders.size() - 2] if orders.size() > 1 else {}
+	var sent := screen.gait_menu == null and int(gait.get("kind", -1)) == HeistController.Kind.GAIT \
+		and int(gait.get("x", -1)) == 2 and int(gave.get("kind", -1)) == HeistController.Kind.MOVE_TO
+	screen.queue_free()
+	await tree.process_frame
+	WorldView.figure_maker = maker
+	check.call("holding the ground opens Crouch / Walk / Run at the finger, and the gait chosen is sent with the walk "
+			+ "to the held tile (12.18)", opened and sent, "%s %s %s %s" % [opened, sent, gait, gave])
+	check.call("landing in a realm, or crossing into the next, shows its name on a card for about two seconds, and a "
+			+ "heist of one island shows none (15.3, 5.4)", none and shown and HeistScreen.ENTRY_SECONDS <= 3.0,
+		"%s %s %s" % [none, shown, words])

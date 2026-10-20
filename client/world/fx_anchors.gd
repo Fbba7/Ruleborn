@@ -214,7 +214,12 @@ func _draw_vault(replay: RulebornReplay, m: float) -> void:
 	var v := replay.vault()
 	if not v.has("at"):
 		return
-	var at := _on_screen(view.world_at(v["at"]) + Vector3(0, 1.9, 0))
+	var base := view.world_at(v["at"])
+	# Higher while the crew work at it, so the tag never covers them.
+	var busy := false
+	for c: Node3D in view._crew:
+		busy = busy or (c.visible and Vector2(c.position.x - base.x, c.position.z - base.z).length() < 1.6)
+	var at := _on_screen(base + Vector3(0, 2.9 if busy else 1.9, 0))
 	if at == OFF:
 		return
 	var font := FxSkin.numbers()

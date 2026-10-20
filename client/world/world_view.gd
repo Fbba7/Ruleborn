@@ -18,7 +18,8 @@ extends RealmView
 ## no action needs two fingers (§20.8).
 ##
 ## Over the world stand the HUD's world-anchored pieces (`FxAnchors`), the
-## effects of what happens (`FxEvents`) and of the laws running (`FxLaws`).
+## effects of what happens (`FxEvents`) and of the laws running (T8's `LawFx`,
+## under `effects`).
 ## A tap that is not part of a gesture is `tapped`; a long press is `held`.
 
 ## A tap on the world at a point of the view, not part of a pinch or twist.
@@ -40,16 +41,16 @@ const HEIST_FOV := 22.0
 const ZOOM_SPAN := [1.25, 1.0, 0.6]
 ## Ticks a second, for drawing between them.
 const TPS := 30.0
-## §21.1: the heist's follow camera shows "about 12 tiles across"; its close
-## zoom, eight.
-const FOLLOW_TILES := 12.0
-const CLOSE_TILES := 8.0
-## The hour a realm under Glowing dark is lit at.
-const NIGHT := 23
+## §21.1: the heist's follow camera shows "about 12 tiles across": on a
+## portrait phone, 10.5 tiles across its width (about 12 on its diagonal),
+## so a realm of 10 to 14 tiles is followed rather than shown whole and the
+## creatures read; its close zoom, seven.
+const FOLLOW_TILES := 10.5
+const CLOSE_TILES := 7.0
 ## A character model's scale on the heist's world, for readability.
 const MODEL_SCALE := 1.18
 ## The least height a character model is drawn at in a heist, in metres.
-const MODEL_LEAST := 0.95
+const MODEL_LEAST := 1.05
 ## How aware each guard state is, for choosing whose sight to show.
 const AWARE := {"Unaware": 0, "Returning": 0, "Suspicious": 1, "Investigating": 2, "Searching": 3, "Alerted": 4}
 ## A press that moves less than this many pixels is a tap.
@@ -68,9 +69,6 @@ static var _cache := {}
 ## or "ko" by what the simulation says the actor is doing. Unset, the
 ## stand-in figures of `ActorBuilder` are drawn.
 static var figure_maker: Callable = Callable()
-## Whether the laws' world signatures are T8's `LawFx` (on) or this track's
-## own `FxLaws` motes (off).
-static var law_effects := true
 ## Whether the heist's own views use the narrow perspective (else every view
 ## is orthographic).
 static var heist_perspective := true
@@ -109,7 +107,10 @@ var marks_node: MeshInstance3D
 var sight_edge: MeshInstance3D
 var anchors: FxAnchors
 var events: FxEvents
-var laws: FxLaws
+## The laws woven in the realm on show, and how they bend the figures' steps
+## together (T8's `LawFxGait`, §21.7's movement signatures).
+var woven: Array[String] = []
+var gait: Dictionary = LawFxGait.NEUTRAL.duplicate()
 ## Where the laws' world signatures hang (T8's `LawFx` attaches under it),
 ## and the `LawFx` drawn there, synced each tick; null where it is not.
 var effects: Node3D
@@ -206,17 +207,29 @@ func _build_stage() -> void:
 	effects = Node3D.new()
 	effects.name = "Effects"
 	world.add_child(effects)
-	laws = FxLaws.new()
-	world.add_child(laws)
 	set_sky_hour(Time.get_datetime_dict_from_system()["hour"])
 
 
 ## §21.2: the sky follows the player's local time, and the light with it.
 func set_sky_hour(when: int) -> void:
 	hour = when
-	# A realm under Glowing dark is lit as at night (§21.7).
-	look.set_hour(NIGHT if laws != null and laws.dark() else when)
+	look.set_hour(when)
 	RealmKit.by_hour(statics, look.hour)
+	_light_figures()
+
+
+## By night (§21.2: "lanterns and glows carry the realm") the crew's models
+## take a stronger, warmer rim, so they read against the dark ground.
+func _light_figures() -> void:
+	var night := hour >= 19 or hour < 6
+	for actor: Node3D in _crew:
+		var figure := actor.get_node_or_null("Rig/Figure")
+		if figure != null and figure.has_method("material"):
+			var m := figure.call("material") as ShaderMaterial
+			if m != null:
+				m.set_shader_parameter("rim_strength", 1.6 if night else 0.38)
+				m.set_shader_parameter("lift", 0.85 if night else 0.5)
+				m.set_shader_parameter("rim_colour", Color("#FFD89A") if night else Color(0.62, 0.83, 1.0))
 
 
 static func material(shader: Shader, outlined := false) -> ShaderMaterial:
@@ -312,18 +325,18 @@ func _build_statics() -> void:
 	_skiff.scale = Vector3.ONE * 1.4
 	_skiff.visible = false
 	statics.add_child(_skiff)
-	var woven: Array[String] = []
+	woven.clear()
 	for p: Dictionary in replay.pylons():
-		woven.append(str(p.get("law", "")))
-	# The laws' world signatures are T8's `LawFx` where it draws (a 3D
-	# renderer; when `law_effects` is on); this track's `FxLaws` then keeps
-	# only the movement signatures, and draws the motes itself otherwise.
+		if not woven.has(str(p.get("law", ""))):
+			woven.append(str(p.get("law", "")))
+	gait = LawFxGait.blend(woven)
+	# The laws' world signatures are T8's `LawFx`, one system for every
+	# screen, under `effects`; drawn where a 3D renderer is.
 	if law_fx != null:
 		law_fx.queue_free()
 		law_fx = null
-	if law_effects and rendering_3d():
+	if rendering_3d():
 		law_fx = LawFx.attach(self, replay)
-	laws.build(woven, _size, self, law_fx == null)
 	_build_actors()
 
 
@@ -359,6 +372,7 @@ func _build_actors() -> void:
 			bag.position = Vector3(0, 0, 0.08)
 		actors.add_child(root)
 		_crew.append(root)
+	_light_figures()
 	for _g: Dictionary in replay.guards():
 		var root := _actor("guard", ActorBuilder.HEIGHT["guard"])
 		actors.add_child(root)
@@ -391,8 +405,13 @@ func _actor(role: String, height: float) -> Node3D:
 		# at the heist's 12 tiles across among the marks over it.
 		var tall: float = model.call("height") if model.has_method("height") else height
 		# The small kinds most: none drawn under `MODEL_LEAST` metres.
-		var grow := maxf(MODEL_SCALE, MODEL_LEAST / maxf(0.1, tall))
-		figure.scale = Vector3.ONE * grow
+		# Guards keep their own height, so the crew is not dwarfed beside them.
+		var grow := 1.0 if role == "guard" else maxf(MODEL_SCALE, MODEL_LEAST / maxf(0.1, tall))
+		# T1's own readability scale where the model has it.
+		if model.has_method("set_display_scale"):
+			model.call("set_display_scale", grow)
+		else:
+			figure.scale = Vector3.ONE * grow
 		root.set_meta("head", tall * grow)
 		return root
 	figure.scale = Vector3.ONE * height
@@ -452,6 +471,9 @@ func _frame_camera() -> void:
 		var near := FOLLOW_TILES / aspect
 		var close := CLOSE_TILES / aspect
 		cam_size = lerpf(whole, near, z) if z <= 1.0 else lerpf(near, close, z - 1.0)
+		# Following several (a replay's whole crew), the view widens to keep
+		# them all in it.
+		cam_size = maxf(cam_size, _spread() * 2.6 / aspect)
 		cam_size = minf(cam_size, whole)
 		var goal := _follow_point()
 		# Drift to the crew as the camera closes in; the whole realm sits on
@@ -521,8 +543,30 @@ func _follow_point() -> Vector3:
 	if n == 0:
 		return Vector3(0, 0.3, 0)
 	var at := sum / n
+	if heist and _skiff != null and _skiff.visible:
+		# Once the skiff is called, the camera holds it in view with the crew.
+		at = at.lerp(_skiff.position, 0.35)
 	var half := Vector2(_size) * 0.5
-	return Vector3(clampf(at.x, -half.x + 3.0, half.x - 3.0), 0.3, clampf(at.z, -half.y + 3.0, half.y - 3.0))
+	return Vector3(clampf(at.x, -half.x + 1.5, half.x - 1.5), 0.3, clampf(at.z, -half.y + 1.5, half.y - 1.5))
+
+
+## How far the furthest followed crew member stands from their middle.
+func _spread() -> float:
+	if follow.size() < 2:
+		return 0.0
+	var mid := Vector3.ZERO
+	var shown: Array[Vector3] = []
+	for i: int in follow:
+		if i >= 0 and i < _crew.size() and _crew[i].visible:
+			shown.append(_crew[i].position)
+			mid += _crew[i].position
+	if shown.size() < 2:
+		return 0.0
+	mid /= shown.size()
+	var most := 0.0
+	for p in shown:
+		most = maxf(most, Vector2(p.x - mid.x, p.z - mid.z).length())
+	return most
 
 
 ## A quarter turn of the camera, either way (§21.1).
@@ -594,6 +638,9 @@ func sync() -> void:
 		var node := _guards[i]
 		node.set_meta("down", g["down"])
 		node.set_meta("state", str(g["state"]))
+		# An alerted guard runs at what it saw; a searching or investigating
+		# one walks; a calm one strolls.
+		node.set_meta("gait", "Run" if str(g["state"]) == "Alerted" else "Walk")
 		# The simulation's facing is in the tile grid's frame: x right, y
 		# down; the model faces −Z.
 		var f: float = g["facing"]
@@ -769,7 +816,6 @@ func _process(delta: float) -> void:
 			_aim = _aim.lerp(goal, 1.0 - exp(-delta * 4.0)) if zoom > 0 or _zoom_f > 0.5 else _aim
 	_frame_camera()
 	FxGround.rings(self, _rings, t / TPS)
-	laws.tick(delta, self)
 	if law_fx != null:
 		law_fx.sync(t)
 	anchors.tick(delta)
