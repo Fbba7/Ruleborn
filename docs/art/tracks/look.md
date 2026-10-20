@@ -123,3 +123,6 @@ This track owns `outline.gdshader` but not the creature material (T1). The outli
 - MultiMesh trap: in the Compatibility renderer a quad's size read from the custom data's x and y did not arrive; sizes come from the instance's scale (`MODELVIEW_MATRIX`'s columns).
 - `world_tests.gd`'s budget count no longer stops on another track's primitive mesh or non-shader material (it counts `get_faces()` and asks each surface's material). This happened on the merged base too.
 - Still: `r12-integrated.png` (Heart noon and dusk, Lantern Vale, and the heist screen, on the integrated build).
+- Round 13: against the design's land stills (`r13-land-vs-design.png`, design above, ours below), Emberreach and Lantern Vale had too many pools of light and read as polka dots; they now have fewer, smaller and fainter ones, and Tidehold, Emberreach and Lantern Vale take deeper grass.
+- Round 14: at dusk and night the hour's sky now weighs at least 45% and 70% against the realm's own, so no horizon stays bright after dark. `r13-integrated-sheet.png` shows every realm with T3's buildings at 12, 19 and 23, with grayscale thumbnails.
+- Heist screen checked at noon and night under the perspective camera (vault, alarm, sneak moments): the sky stays behind, and the night meadow keeps its fireflies and glows.
