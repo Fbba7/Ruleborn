@@ -33,6 +33,7 @@ func _go() -> void:
 		screen.advance(step)
 		done += step
 		screen.view._process(0.5 if ticks - done > 30 else 1.0 / 30.0 * step)
+	settle(root)
 	screen._refresh()
 	# FRAMES: how many frames the effects of the last moment play before the
 	# still is taken.
@@ -57,3 +58,12 @@ static func cast() -> void:
 		if c != null and role == "guard":
 			c.set_guard(true)
 		return c
+
+
+## Let each character model's clip play on as it would have in real time,
+## since a shot runs a heist's seconds in a few frames.
+func settle(node: Node) -> void:
+	for c in node.find_children("*", "CreatureModel", true, false):
+		var p: AnimationPlayer = (c as CreatureModel).player()
+		if p != null:
+			p.advance(2.0)

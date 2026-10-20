@@ -61,8 +61,10 @@ static func bounce(view: WorldView, node: Node3D, key: String, t: float) -> void
 ## only lays it down when it is down.
 static func play_model(view: WorldView, node: Node3D, rig: Node3D, key: String) -> void:
 	var down: bool = node.get_meta("down", false)
-	rig.rotation = Vector3.ZERO
-	rig.position = Vector3.ZERO
+	# Knocked out, a model lies on its back whatever its kind's "ko" pose, so
+	# who is out reads from above at a glance.
+	rig.rotation = Vector3(-PI / 2.0, 0, 0) if down else Vector3.ZERO
+	rig.position = Vector3(0, 0.25, 0) if down else Vector3.ZERO
 	var moving := _moving(view, key)
 	var gait := str(node.get_meta("gait", "Walk"))
 	var clip := model_clip(down, moving, gait, node.get_meta("carrying", false), int(node.get_meta("hit", 0)) > 0)

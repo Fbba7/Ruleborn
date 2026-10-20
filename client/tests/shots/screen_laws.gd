@@ -39,6 +39,7 @@ func _go() -> void:
 		screen._refresh()
 		view._process(1.0 / 3.0)
 	view.set_zoom(int(OS.get_environment("ZOOM")) if OS.get_environment("ZOOM") != "" else 1)
+	settle(root)
 	screen.set_process(false)
 	screen._refresh()
 	for i in 8:
@@ -61,3 +62,12 @@ static func cast() -> void:
 		if c != null and role == "guard":
 			c.set_guard(true)
 		return c
+
+
+## Let each character model's clip play on as it would have in real time,
+## since a shot runs a heist's seconds in a few frames.
+func settle(node: Node) -> void:
+	for c in node.find_children("*", "CreatureModel", true, false):
+		var p: AnimationPlayer = (c as CreatureModel).player()
+		if p != null:
+			p.advance(2.0)

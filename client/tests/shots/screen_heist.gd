@@ -87,6 +87,7 @@ func _go() -> void:
 	if OS.get_environment("NAMES") != "":
 		# A long press: every crew member's name over its head.
 		view.anchors.names_for = 60.0
+	settle(root)
 	screen.set_process(false)
 	screen._refresh()
 	for i in 6:
@@ -109,3 +110,12 @@ static func cast() -> void:
 		if c != null and role == "guard":
 			c.set_guard(true)
 		return c
+
+
+## Let each character model's clip play on as it would have in real time,
+## since a shot runs a heist's seconds in a few frames.
+func settle(node: Node) -> void:
+	for c in node.find_children("*", "CreatureModel", true, false):
+		var p: AnimationPlayer = (c as CreatureModel).player()
+		if p != null:
+			p.advance(2.0)

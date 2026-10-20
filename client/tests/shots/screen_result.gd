@@ -30,6 +30,7 @@ func _go() -> void:
 	if (screen as ResultScreen).world_view != null:
 		var hour := int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 18
 		(screen as ResultScreen).world_view.set_sky_hour(hour)
+	settle(root)
 	for i in 30:
 		await process_frame
 	await RenderingServer.frame_post_draw
@@ -50,3 +51,12 @@ static func cast() -> void:
 		if c != null and role == "guard":
 			c.set_guard(true)
 		return c
+
+
+## Let each character model's clip play on as it would have in real time,
+## since a shot runs a heist's seconds in a few frames.
+func settle(node: Node) -> void:
+	for c in node.find_children("*", "CreatureModel", true, false):
+		var p: AnimationPlayer = (c as CreatureModel).player()
+		if p != null:
+			p.advance(2.0)
