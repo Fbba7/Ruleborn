@@ -55,7 +55,7 @@ const LIGHTS := {
 	"tidehold": {"sun": 0.37, "sky": "#B8F0F0", "under": "#284860", "at": Vector3(10, 20, 14), "hour": 0.3},
 	"emberreach": {"sun": 0.53, "sky": "#FF9A70", "under": "#2A1018", "at": Vector3(16, 14, 4), "hour": 0.2},
 	"verdant": {"sun": 0.50, "sky": "#D8FFC0", "under": "#3A4A20", "at": Vector3(12, 22, 10), "hour": 0.4},
-	"lanternvale": {"sun": 0.33, "sky": "#6060B0", "under": "#100820", "at": Vector3(8, 20, 10), "hour": 0.12},
+	"lanternvale": {"sun": 0.27, "sky": "#6060B0", "under": "#100820", "at": Vector3(8, 20, 10), "hour": 0.12},
 }
 
 ## §21.2's skies by the hour: day, dusk and night, top then horizon.
