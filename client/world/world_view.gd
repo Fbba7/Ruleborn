@@ -12,7 +12,19 @@ extends RealmView
 ## One tile is one metre; tile (x, y) of the simulation is centred at
 ## (x − w/2 + 0.5, h, y − h/2 + 0.5) (`world_at`). The camera is §21.1's:
 ## orthographic, at a 50° pitch in a heist and 35° at home, turned in 90°
-## steps, with three zoom levels.
+## steps, with three zoom levels. In a heist it follows the crew members in
+## `follow`, showing about 12 tiles across (§21.1), and a pinch shows the
+## whole realm; a twist turns it a quarter, a double tap steps the zoom, and
+## no action needs two fingers (§20.8).
+##
+## Over the world stand the HUD's world-anchored pieces (`FxAnchors`), the
+## effects of what happens (`FxEvents`) and of the laws running (`FxLaws`).
+## A tap that is not part of a gesture is `tapped`; a long press is `held`.
+
+## A tap on the world at a point of the view, not part of a pinch or twist.
+signal tapped(at: Vector2)
+## A press held for §20.8's hold time.
+signal held(at: Vector2)
 
 ## §21.1's pitches: the heist's follow camera, and the home diorama's.
 const HEIST_PITCH := 50.0
@@ -22,6 +34,16 @@ const HOME_PITCH := 35.0
 const ZOOM_SPAN := [1.25, 1.0, 0.6]
 ## Ticks a second, for drawing between them.
 const TPS := 30.0
+## §21.1: the heist's follow camera shows "about 12 tiles across"; its close
+## zoom, eight.
+const FOLLOW_TILES := 12.0
+const CLOSE_TILES := 8.0
+## How aware each guard state is, for choosing whose sight to show.
+const AWARE := {"Unaware": 0, "Returning": 0, "Suspicious": 1, "Investigating": 2, "Searching": 3, "Alerted": 4}
+## A press that moves less than this many pixels is a tap.
+const TAP_SLOP := 24.0
+## How far a twist turns before it is a quarter turn.
+const TWIST_RADIANS := 0.6
 
 static var _toon: Shader = load("res://world/toon.gdshader")
 static var _clear: Shader = load("res://world/toon_clear.gdshader")
@@ -32,10 +54,17 @@ static var _cache := {}
 ## §21.4's realm type, which picks the palette; and whether this is a heist.
 var realm_type := "heart"
 var heist := true
+## The buildings standing ([kind, x, y, side], `RulebornIsland.buildings()`),
+## when the screen knows them, so each footprint is drawn as its kind.
+var buildings: Array = []
 var pitch := HEIST_PITCH
 ## The camera's quarter turns (§21.1: "rotatable in 90° steps") and zoom.
 var turns := 0
 var zoom := 1
+## The crew members the heist camera follows; none frames the whole grid.
+var follow: Array = []
+## The crew member drawn as chosen, -1 for none.
+var chosen := -1
 
 var viewport: SubViewport
 var container: SubViewportContainer
@@ -48,6 +77,11 @@ var statics: Node3D
 var actors: Node3D
 var overlay: MeshInstance3D
 var marks_node: MeshInstance3D
+## The outline round the shown guard's sight, and the other guards' facings.
+var sight_edge: MeshInstance3D
+var anchors: FxAnchors
+var events: FxEvents
+var laws: FxLaws
 
 var _static_key := ""
 var _vault: MeshInstance3D
@@ -56,13 +90,30 @@ var _wards: Array[MeshInstance3D] = []
 var _walls: MeshInstance3D
 var _crew: Array[Node3D] = []
 var _guards: Array[Node3D] = []
-var _guard_marks: Array[Label3D] = []
 ## Each actor's place a tick ago and now, for drawing between ticks.
 var _from: Dictionary = {}
 var _to: Dictionary = {}
 var _tick := -1
 var _since := 0.0
-
+## The camera's smooth state: where it looks, its zoom as a float between
+## the three levels, its shake and a crossing's swoop.
+var _aim := Vector3.ZERO
+var _aimed := false
+var _zoom_f := 1.0
+var _shake := 0.0
+var _swoop := 0.0
+var _clock := 0.0
+## The presses on the view now, by finger, and the press being read.
+var _touches := {}
+var _press_at := Vector2.ZERO
+var _press_ms := 0
+var _pressing := false
+var _gesture := false
+var _held_sent := false
+var _last_tap_ms := -10000
+var _last_tap_at := Vector2.ZERO
+var _twist := 0.0
+var _rings: MeshInstance3D
 
 
 func _init() -> void:
@@ -80,6 +131,10 @@ func _init() -> void:
 	world = Node3D.new()
 	viewport.add_child(world)
 	_build_stage()
+	anchors = FxAnchors.new(self)
+	add_child(anchors)
+	events = FxEvents.new(self)
+	mouse_filter = Control.MOUSE_FILTER_STOP
 
 
 ## The look (light, sky, fog: `WorldLook`) and the camera.
@@ -102,6 +157,16 @@ func _build_stage() -> void:
 	marks_node = MeshInstance3D.new()
 	marks_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	world.add_child(marks_node)
+	sight_edge = MeshInstance3D.new()
+	sight_edge.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	sight_edge.material_override = clear_material(0.9)
+	world.add_child(sight_edge)
+	_rings = MeshInstance3D.new()
+	_rings.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_rings.material_override = clear_material(0.85)
+	world.add_child(_rings)
+	laws = FxLaws.new()
+	world.add_child(laws)
 	set_sky_hour(Time.get_datetime_dict_from_system()["hour"])
 
 
@@ -119,6 +184,13 @@ static func material(shader: Shader, outlined := false) -> ShaderMaterial:
 		var o := ShaderMaterial.new()
 		o.shader = _outline
 		m.next_pass = o
+	return m
+
+
+## The see-through material at `opacity`: rings, sight, marks on the ground.
+static func clear_material(opacity: float) -> ShaderMaterial:
+	var m := material(_clear)
+	m.set_shader_parameter("opacity", opacity)
 	return m
 
 
@@ -140,6 +212,8 @@ func show_replay(r: RulebornReplay) -> void:
 		_tick = -1
 		_from.clear()
 		_to.clear()
+		events.reset()
+		_aimed = false
 	_frame_camera()
 	sync()
 
@@ -166,28 +240,31 @@ func _build_statics() -> void:
 	var seed_from := hash(_features) ^ (_size.x * 131 + _size.y)
 	look.island(statics, _size, seed_from, colours)
 	var kit := RealmKit.new(replay, colours)
+	kit.buildings = buildings
 	kit.build()
-	for layer: Array in [[kit.ground.mesh(), look.ground_material(), true], [kit.hero.mesh(), material(_toon, true), true],
-			[kit.clear.mesh(), material(_clear), false], [kit.water.mesh(), _water_material(false), false],
-			[kit.lava.mesh(), _water_material(true), false]]:
-		if layer[0] != null:
-			statics.add_child(_instance(layer[0], layer[1], layer[2]))
+	# The kit's layers with its own materials (T3: they carry its idle motion).
+	for mi: MeshInstance3D in kit.instances():
+		statics.add_child(mi)
 	# The Vault, the pylons and the wards change as the heist goes, so each
 	# is its own piece.
-	_vault = _instance(PieceKit.vault(false), material(_toon, true))
+	_vault = _instance(PieceKit.vault(false), RealmKit.material("toon", true))
 	statics.add_child(_vault)
 	for p: Dictionary in replay.pylons():
-		var mi := _instance(PieceKit.pylon(), material(_toon, true))
+		var mi := _instance(PieceKit.pylon(), RealmKit.material("toon", true))
 		mi.position = world_at(p["at"])
 		statics.add_child(mi)
 		_pylons.append(mi)
 	for w: Dictionary in replay.wards():
-		var mi := _instance(PieceKit.ward(str(w["kind"])), material(_toon, true))
+		var mi := _instance(PieceKit.ward(str(w["kind"])), RealmKit.material("toon", true))
 		mi.position = world_at(w["at"])
 		statics.add_child(mi)
 		_wards.append(mi)
 	_walls = _instance(null, material(_clear), false)
 	statics.add_child(_walls)
+	var woven: Array[String] = []
+	for p: Dictionary in replay.pylons():
+		woven.append(str(p.get("law", "")))
+	laws.build(woven, _size, self)
 	_build_actors()
 
 
@@ -200,46 +277,61 @@ func _water_material(lava: bool) -> ShaderMaterial:
 	return m
 
 
-## The crew and the guards, made once a heist and moved every tick.
+## The crew and the guards, made once a heist and moved every tick. Each is
+## a root the simulation places and turns, a "Rig" the animation bobs, leans
+## and knocks over, and under it a "Body": today `ActorBuilder`'s figure; a
+## character model replaces it without touching the rest.
 func _build_actors() -> void:
 	for c in actors.get_children():
 		c.queue_free()
 	_crew.clear()
 	_guards.clear()
-	_guard_marks.clear()
 	for m: Dictionary in replay.crew():
-		var root := Node3D.new()
-		root.add_child(_blob())
-		var body := _instance(ActorBuilder.mesh(str(m["role"])), material(_toon, true))
-		body.name = "Body"
-		root.add_child(body)
+		var role := str(m["role"])
+		var root := _actor(role, ActorBuilder.HEIGHT.get(role, 1.0))
 		var bag := _instance(ActorBuilder.sack(), material(_toon, true))
 		bag.name = "Sack"
-		bag.position = Vector3(0, 0.38, 0.3)
-		root.add_child(bag)
+		bag.position = Vector3(0, 0.42, 0.26)
+		root.get_node("Rig").add_child(bag)
 		actors.add_child(root)
 		_crew.append(root)
-	for g: Dictionary in replay.guards():
-		var root := Node3D.new()
-		root.add_child(_blob())
-		var body := _instance(ActorBuilder.mesh("guard"), material(_toon, true))
-		body.name = "Body"
-		body.scale = Vector3.ONE * 1.25
-		root.set_meta("base", body.scale)
-		root.add_child(body)
-		var mark := Label3D.new()
-		mark.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		mark.no_depth_test = true
-		mark.font_size = 96
-		mark.pixel_size = 0.006
-		mark.outline_size = 18
-		mark.modulate = Palette.INK
-		mark.outline_modulate = Palette.PAPER
-		mark.position = Vector3(0, 1.35, 0)
-		root.add_child(mark)
+	for _g: Dictionary in replay.guards():
+		var root := _actor("guard", ActorBuilder.HEIGHT["guard"])
 		actors.add_child(root)
 		_guards.append(root)
-		_guard_marks.append(mark)
+
+
+## A figure: its shadow, its feet on the ground, and its rig — the body and
+## the arms that swing from its shoulders. A character model replaces the
+## "Figure" under the rig.
+func _actor(role: String, height: float) -> Node3D:
+	var root := Node3D.new()
+	root.add_child(_blob())
+	var feet := Node3D.new()
+	feet.name = "Feet"
+	feet.scale = Vector3.ONE * height
+	root.add_child(feet)
+	var rig := Node3D.new()
+	rig.name = "Rig"
+	root.add_child(rig)
+	var figure := Node3D.new()
+	figure.name = "Figure"
+	figure.scale = Vector3.ONE * height
+	rig.add_child(figure)
+	var body := _instance(ActorBuilder.mesh(role), material(_toon, true))
+	body.name = "Body"
+	figure.add_child(body)
+	for side: float in [-1.0, 1.0]:
+		var arm := _instance(ActorBuilder.arm(role), material(_toon, true))
+		arm.name = "ArmL" if side < 0.0 else "ArmR"
+		arm.position = Vector3(ActorBuilder.SHOULDER.x * side, ActorBuilder.SHOULDER.y, ActorBuilder.SHOULDER.z)
+		figure.add_child(arm)
+		var foot := _instance(ActorBuilder.foot(role), material(_toon))
+		foot.name = "FootL" if side < 0.0 else "FootR"
+		foot.position = Vector3(ActorBuilder.HIP.x * side, 0, ActorBuilder.HIP.z)
+		feet.add_child(foot)
+	root.set_meta("base", Vector3.ONE)
+	return root
 
 
 ## A soft dark shadow on the ground under a figure, so it stands on the
@@ -256,19 +348,85 @@ static func _blob() -> MeshInstance3D:
 	return mi
 
 
-## The camera on §21.1's terms, framing the zoom level's span of the island.
+## The camera on §21.1's terms. Following crew in a heist, it shows about
+## 12 tiles across (8 close up) round them; else it frames the zoom level's
+## span of the island, as the realm screens show it. Between the levels a
+## pinch moves smoothly.
 func _frame_camera() -> void:
 	if _size.x == 0:
 		return
-	var span: float = Vector2(_size).length() * ZOOM_SPAN[clampi(zoom, 0, 2)]
 	var aspect := maxf(0.1, size.x / maxf(1.0, size.y))
-	camera.size = maxf(span * 0.9, span / aspect * 0.78)
-	var yaw := deg_to_rad(45.0 + 90.0 * turns)
-	var p := deg_to_rad(pitch)
-	# The whole island is framed with its rock beneath; a realm, on its grid.
-	var target := Vector3(0, -2.2 if zoom == 0 else 0.3, 0)
+	var z := clampf(_zoom_f, 0.0, 2.0)
+	var whole: float = _whole_size(aspect, 0)
+	var target := Vector3(0, -2.2, 0)
+	var following := heist and not follow.is_empty() and replay != null and replay.has_landed()
+	var cam_size := whole
+	if following:
+		var near := FOLLOW_TILES / aspect
+		var close := CLOSE_TILES / aspect
+		cam_size = lerpf(whole, near, z) if z <= 1.0 else lerpf(near, close, z - 1.0)
+		cam_size = minf(cam_size, whole)
+		var goal := _follow_point()
+		# Drift to the crew as the camera closes in; the whole realm sits on
+		# its rock.
+		target = Vector3(0, -2.2, 0).lerp(goal, clampf(z, 0.0, 1.0))
+	else:
+		var lo: int = floori(z)
+		var hi: int = mini(2, lo + 1)
+		cam_size = lerpf(_whole_size(aspect, lo), _whole_size(aspect, hi), z - lo)
+		target = Vector3(0, lerpf(-2.2, 0.3, clampf(z, 0.0, 1.0)), 0)
+		if heist and landing_pick >= 0 and landing_pick < landing_marks.size():
+			# The landing picker leans toward the spot on show, so an edge
+			# spot is never off the side of a tall screen.
+			var spot := world_at(Vector2(landing_marks[landing_pick]["at"]) + Vector2(0.5, 0.5))
+			target = target.lerp(Vector3(spot.x, target.y, spot.z), 0.55)
+	if _swoop > 0.0:
+		# §21.1's swoop between realms: out and back in, in about a second.
+		cam_size *= 1.0 + 0.9 * sin(_swoop * PI)
+	camera.size = cam_size
+	var yaw := deg_to_rad(45.0 + 90.0 * turns) + _twist * 0.35
+	var p := deg_to_rad(pitch + (12.0 * sin(_swoop * PI) if _swoop > 0.0 else 0.0))
+	if not _aimed or not following:
+		_aim = target
+		_aimed = following
 	var back := Vector3(sin(yaw) * cos(p), sin(p), cos(yaw) * cos(p))
-	camera.look_at_from_position(target + back * 40.0, target, Vector3.UP)
+	camera.look_at_from_position(_aim + back * 40.0, _aim, Vector3.UP)
+	# The HUD covers the top and the bottom of a heist: the crew is framed a
+	# little above the middle, where the screen is clear.
+	camera.v_offset = -cam_size * 0.05 if following else 0.0
+	if heist and not landing_marks.is_empty():
+		# While the landing picker's card covers the lower screen, the realm
+		# sits above it.
+		camera.v_offset = -cam_size * 0.24
+	camera.h_offset = 0.0
+	if _shake > 0.0 and not Settings.reduced_motion:
+		# §21.8: "Screen shake never above 4 pixels".
+		var px := Tokens.number("motion", "shake_px_most") * _shake
+		var m := cam_size / maxf(1.0, size.y)
+		camera.h_offset += sin(_clock * 71.0) * px * m
+		camera.v_offset += cos(_clock * 53.0) * px * m
+
+
+## The camera's size for zoom level `level` of the old fixed framing.
+func _whole_size(aspect: float, level: int) -> float:
+	var span: float = Vector2(_size).length() * ZOOM_SPAN[clampi(level, 0, 2)]
+	return maxf(span * 0.9, span / aspect * 0.78)
+
+
+## Where the followed crew stand: their middle, on the ground, kept on the
+## grid.
+func _follow_point() -> Vector3:
+	var sum := Vector3.ZERO
+	var n := 0
+	for i: int in follow:
+		if i >= 0 and i < _crew.size() and _crew[i].visible:
+			sum += _crew[i].position
+			n += 1
+	if n == 0:
+		return Vector3(0, 0.3, 0)
+	var at := sum / n
+	var half := Vector2(_size) * 0.5
+	return Vector3(clampf(at.x, -half.x + 3.0, half.x - 3.0), 0.3, clampf(at.z, -half.y + 3.0, half.y - 3.0))
 
 
 ## A quarter turn of the camera, either way (§21.1).
@@ -279,7 +437,30 @@ func turn(by: int) -> void:
 
 func set_zoom(level: int) -> void:
 	zoom = clampi(level, 0, 2)
+	_zoom_f = zoom
 	_frame_camera()
+
+
+## A gentle shake, 0 to 1 of §21.8's four pixels; none with reduced motion.
+func shake(strength: float) -> void:
+	if not Settings.reduced_motion:
+		_shake = maxf(_shake, clampf(strength, 0.0, 1.0))
+
+
+## Turn the camera a little off its quarter, by `radians` (a result's slow
+## sway; a twist on its way to a quarter turn).
+func sway(radians: float) -> void:
+	_twist = radians / 0.35
+
+
+## §21.1's one-second swoop between realms, with the rift's wipe at its
+## middle; reduced motion cuts instead (§20.8).
+func swoop() -> void:
+	_aimed = false
+	if Settings.reduced_motion:
+		return
+	_swoop = 1.0
+	anchors.wipe = 1.0
 
 
 ## What changed since the last tick: where each actor is now, the Vault,
@@ -298,27 +479,23 @@ func sync() -> void:
 		var node := _crew[i]
 		node.visible = replay.has_landed() and not (m["standing"] in ["Out", "Gone"])
 		_to["c%d" % i] = world_at(m["at"])
-		var body := node.get_node("Body") as MeshInstance3D
-		var down: bool = m["standing"] != "Active"
-		body.rotation = Vector3(-PI / 2.0 if down else 0.0, 0, 0)
-		body.position = Vector3(0, 0.2 if down else 0.0, 0)
-		var bag := node.get_node("Sack") as MeshInstance3D
+		node.set_meta("down", m["standing"] != "Active")
+		node.set_meta("gait", str(m["gait"]))
+		var bag := node.get_node("Rig/Sack") as MeshInstance3D
 		var share: float = float(m["carried"]) / maxf(1.0, float(m["carry"]))
-		bag.visible = share > 0.0 and not down
+		bag.visible = share > 0.0 and m["standing"] == "Active"
 		bag.scale = Vector3.ONE * (0.6 + 0.8 * share)
 	var guards := replay.guards()
 	for i in mini(guards.size(), _guards.size()):
 		var g: Dictionary = guards[i]
 		_to["g%d" % i] = world_at(g["at"])
 		var node := _guards[i]
-		var body := node.get_node("Body") as MeshInstance3D
-		body.rotation = Vector3(-PI / 2.0 if g["down"] else 0.0, 0, 0)
+		node.set_meta("down", g["down"])
+		node.set_meta("state", str(g["state"]))
 		# The simulation's facing is in the tile grid's frame: x right, y
 		# down; the model faces −Z.
 		var f: float = g["facing"]
 		node.rotation.y = atan2(-cos(f), -sin(f))
-		_guard_marks[i].text = "" if g["down"] else str(GUARD_MARK.get(g["state"], ""))
-		_guard_marks[i].modulate = mark_colour(str(g["state"]))
 	for k: String in _to:
 		if not _from.has(k):
 			_from[k] = _to[k]
@@ -327,6 +504,9 @@ func sync() -> void:
 	_sync_pieces()
 	_sync_overlay()
 	_sync_marks()
+	events.read(replay)
+	if anchors != null:
+		anchors.queue_redraw()
 
 
 ## Each crew member turned the way it last walked.
@@ -379,34 +559,91 @@ func _sync_pieces() -> void:
 	_walls.mesh = g.mesh()
 
 
-## The guard whose sight is drawn: the selected one, else the first on its
-## feet (§21.12: "The selected guard's vision is drawn").
+## The guard whose sight is drawn: the selected one; else, as the designs
+## focus it, the most aware guard on its feet, the nearest to the chosen crew
+## member breaking a tie (§21.12: "The selected guard's vision is drawn").
 func shown_guard() -> int:
 	var guards := replay.guards()
 	if selected_guard >= 0 and selected_guard < guards.size() and not guards[selected_guard]["down"]:
 		return selected_guard
+	var near := Vector2(-1, -1)
+	var crew := replay.crew()
+	if chosen >= 0 and chosen < crew.size():
+		near = crew[chosen]["at"]
+	var best := -1
+	var best_key := -INF
 	for gi in guards.size():
-		if not guards[gi]["down"]:
-			return gi
-	return -1
+		if guards[gi]["down"]:
+			continue
+		var key := float(AWARE.get(str(guards[gi]["state"]), 0)) * 1000.0
+		if near.x >= 0.0:
+			key -= (guards[gi]["at"] as Vector2).distance_to(near)
+		else:
+			key -= gi
+		if key > best_key:
+			best_key = key
+			best = gi
+	return best
 
 
 ## §21.12: "Sharp edges, no gradients. A tile is inside or outside": each
 ## tile the shown guard's cone reaches, as the simulation decides it, filled
-## flat in the alarm's red just above the ground.
+## flat in the alarm's red just above the ground, and an ink-red line round
+## the shape it makes. Every other guard on its feet shows a quiet outline of
+## its cone, so its facing reads without a second shape to read (§21.12:
+## "the others show only their facing").
 func _sync_overlay() -> void:
 	var g := Geo.new()
+	var edge := Geo.new()
 	var shown := shown_guard()
 	if shown >= 0:
+		var seen := {}
 		for tile in replay.seen(shown):
+			seen[tile] = true
+		for tile: int in seen:
 			var p := Vector2(tile % _size.x, tile / _size.x)
 			var c := world_at(p + Vector2(0.5, 0.5))
-			g.box(Geo.place(c + Vector3(0, 0.03, 0)), Vector3(0.96, 0.02, 0.96), Palette.ALARM)
+			g.box(Geo.place(c + Vector3(0, 0.03, 0)), Vector3(0.98, 0.02, 0.98), Palette.ALARM)
+			for side: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+				var q := Vector2i(p) + side
+				var inside := q.x >= 0 and q.y >= 0 and q.x < _size.x and q.y < _size.y and seen.has(q.y * _size.x + q.x)
+				if not inside:
+					var mid := c + Vector3(side.x * 0.47, 0.045, side.y * 0.47)
+					var along := Vector3(absf(side.y), 0, absf(side.x))
+					edge.box(Geo.place(mid), along * 1.0 + Vector3(absf(side.x), 0, absf(side.y)) * 0.07 \
+						+ Vector3(0, 0.02, 0), Palette.ALARM.darkened(0.35))
+	var guards := replay.guards()
+	for i in guards.size():
+		var gd: Dictionary = guards[i]
+		if i == shown or gd["down"] or i >= _guards.size():
+			continue
+		_cone_outline(edge, _guards[i].position + Vector3(0, 0.05, 0), float(gd["facing"]), float(gd["cone"]),
+			float(gd["far"]))
 	overlay.mesh = g.mesh()
+	sight_edge.mesh = edge.mesh()
 	if overlay.material_override == null:
-		var m := material(_clear)
-		m.set_shader_parameter("opacity", 0.42)
-		overlay.material_override = m
+		overlay.material_override = clear_material(0.42)
+
+
+## A thin outline of a cone on the ground: two edges and the far arc.
+func _cone_outline(g: Geo, at: Vector3, facing: float, cone: float, far: float) -> void:
+	var half := cone * 0.5
+	var steps := 10
+	var colour := Color("#F3EEFF", 0.55)
+	var w := 0.04
+	var pts: Array[Vector3] = [at]
+	for k in steps + 1:
+		var a := facing - half + cone * k / steps
+		pts.append(at + Vector3(cos(a), 0, sin(a)) * far)
+	pts.append(at)
+	for k in pts.size() - 1:
+		var a3: Vector3 = pts[k]
+		var b3: Vector3 = pts[k + 1]
+		var d := b3 - a3
+		if d.length() < 0.001:
+			continue
+		var side := Vector3(-d.z, 0, d.x).normalized() * w
+		g.quad(a3 - side, b3 - side, b3 + side, a3 + side, colour)
 
 
 ## §5.4's landing marks: a ring where a landing is heard, a disc where it is
@@ -431,13 +668,28 @@ func _process(delta: float) -> void:
 	if replay == null:
 		return
 	_since += delta
+	_clock += delta
+	_shake = maxf(0.0, _shake - delta * 2.5)
+	_swoop = maxf(0.0, _swoop - delta)
 	_place_actors(clampf(_since * TPS, 0.0, 1.0))
-	_animate(replay.tick() + clampf(_since * TPS, 0.0, 1.0))
+	var t := replay.tick() + clampf(_since * TPS, 0.0, 1.0)
+	_animate(t)
+	if heist and not follow.is_empty():
+		var goal := _follow_point()
+		if _aimed:
+			_aim = _aim.lerp(goal, 1.0 - exp(-delta * 4.0)) if zoom > 0 or _zoom_f > 0.5 else _aim
+	_frame_camera()
+	_sync_rings(t / TPS)
+	laws.tick(delta, self)
+	anchors.tick(delta)
+	_read_hold()
 
 
 ## Gentle physical humour (§21.1): a figure on the move bobs and squashes
-## with its steps, one standing still breathes. Its time is the heist's
-## ticks, so a replay moves the same every time it is played.
+## with its steps — tiptoeing crouched, bounding at a run — and one standing
+## still breathes; one that is down lies on its back. Its time is the
+## heist's ticks, so a replay moves the same every time it is played. The
+## laws running bend how everyone moves (§21.7's movement signatures).
 func _animate(ticks: float) -> void:
 	var t := ticks / TPS
 	for i in _crew.size():
@@ -447,18 +699,146 @@ func _animate(ticks: float) -> void:
 
 
 func _bounce(node: Node3D, key: String, t: float) -> void:
-	var body := node.get_node_or_null("Body") as MeshInstance3D
-	if body == null or absf(body.rotation.x) > 0.1:
+	var rig := node.get_node_or_null("Rig") as Node3D
+	if rig == null:
 		return
+	var feet := node.get_node_or_null("Feet") as Node3D
+	if node.get_meta("down", false):
+		rig.rotation = Vector3(-PI / 2.0, 0, 0)
+		rig.position = Vector3(0, 0.22, 0)
+		rig.scale = Vector3.ONE
+		if feet != null:
+			feet.visible = false
+		_limbs(rig, null, 0.0, 0.0, 0.0)
+		return
+	if feet != null:
+		feet.visible = true
 	var moving := _from.has(key) and _to.has(key) and (_from[key] as Vector3).distance_to(_to[key]) > 0.001
+	var gait := str(node.get_meta("gait", "Walk"))
+	var move := laws.movement(moving, gait, t)
 	if moving:
-		var step := absf(sin(t * TAU * 2.2))
-		body.position.y = step * 0.07
-		body.scale = node.get_meta("base", Vector3.ONE) * Vector3(1.0 + 0.05 * (1.0 - step), 0.94 + 0.08 * step,
-			1.0 + 0.05 * (1.0 - step))
+		var rate: float = (2.2 if gait == "Walk" else (1.6 if gait == "Crouch" else 3.0)) * move["rate"]
+		var step := absf(sin(t * TAU * rate))
+		var lift: float = (0.07 if gait != "Crouch" else 0.03) * move["hop"]
+		rig.position = Vector3(0, step * lift + move["float"], 0)
+		var squat := 0.82 if gait == "Crouch" else 1.0
+		rig.scale = Vector3(1.0 + 0.05 * (1.0 - step), (0.94 + 0.08 * step) * squat, 1.0 + 0.05 * (1.0 - step))
+		rig.rotation = Vector3(-0.12 if gait == "Run" else (-0.05 if gait == "Crouch" else 0.0), 0,
+			sin(t * TAU * rate * 0.5) * 0.06 + move["lean"])
+		var swing := 1.0 if gait == "Run" else (0.35 if gait == "Crouch" else 0.7)
+		_limbs(rig, feet, sin(t * TAU * rate * 0.5) * swing, 0.08 * swing, move["float"])
 	else:
-		body.position.y = 0.0
-		body.scale = node.get_meta("base", Vector3.ONE) * Vector3(1.0, 1.0 + 0.02 * sin(t * TAU * 0.4), 1.0)
+		rig.position = Vector3(0, move["float"], 0)
+		rig.scale = Vector3(1.0, 1.0 + 0.02 * sin(t * TAU * 0.4), 1.0)
+		rig.rotation = Vector3(0, 0, move["lean"] * 0.4)
+		_limbs(rig, feet, sin(t * TAU * 0.4) * 0.08, 0.0, move["float"])
+
+
+## Arms swing against the steps and feet step out in turn: `phase` is the
+## stride's swing (-1 to 1), `stride` how far a foot steps, `lift` how far
+## the figure floats (feet rise with it).
+func _limbs(rig: Node3D, feet: Node3D, phase: float, stride: float, lift: float) -> void:
+	var figure := rig.get_node_or_null("Figure") as Node3D
+	if figure != null:
+		var l := figure.get_node_or_null("ArmL") as Node3D
+		var r := figure.get_node_or_null("ArmR") as Node3D
+		if l != null and r != null:
+			l.rotation = Vector3(phase * 0.9, 0, -0.15)
+			r.rotation = Vector3(-phase * 0.9, 0, 0.15)
+	if feet == null:
+		return
+	feet.position.y = lift
+	var fl := feet.get_node_or_null("FootL") as Node3D
+	var fr := feet.get_node_or_null("FootR") as Node3D
+	if fl != null and fr != null:
+		fl.position.z = ActorBuilder.HIP.z - phase * stride / maxf(0.01, feet.scale.z)
+		fr.position.z = ActorBuilder.HIP.z + phase * stride / maxf(0.01, feet.scale.z)
+		fl.position.y = maxf(0.0, phase) * stride * 0.6
+		fr.position.y = maxf(0.0, -phase) * stride * 0.6
+
+
+## The rings on the ground: each crew member's in its role's colour, as the
+## designs ring their crew, the chosen one's gold and pulsing; each guard's in
+## its awareness colour, so its state reads from above too.
+func _sync_rings(t: float) -> void:
+	var g := Geo.new()
+	var crew := replay.crew()
+	for i in mini(crew.size(), _crew.size()):
+		if not _crew[i].visible or i == chosen:
+			continue
+		var c: Color = Palette.ROLE.get(str(crew[i]["role"]), Palette.PAPER)
+		g.ring(Geo.place(_crew[i].position + Vector3(0, 0.05, 0)), 0.38, 0.46, c, 24)
+	if chosen >= 0 and chosen < _crew.size() and _crew[chosen].visible:
+		var pulse := 0.0 if Settings.reduced_motion else 0.04 * sin(t * TAU * 1.2)
+		g.ring(Geo.place(_crew[chosen].position + Vector3(0, 0.05, 0)), 0.4 + pulse, 0.54 + pulse, Palette.MOTION, 28)
+		g.ring(Geo.place(_crew[chosen].position + Vector3(0, 0.051, 0)), 0.54 + pulse, 0.57 + pulse, Palette.INK, 28)
+	for i in _guards.size():
+		var node := _guards[i]
+		if node.get_meta("down", false):
+			continue
+		var c: Color = Palette.GUARD_STATE.get(str(node.get_meta("state", "Unaware")), Palette.PAPER)
+		g.ring(Geo.place(node.position + Vector3(0, 0.05, 0)), 0.42, 0.5, c, 24)
+	_route(g, t)
+	_rings.mesh = g.mesh()
+
+
+## The chosen crew member's last order, drawn as the designs' route preview:
+## ink dots on the ground from where it stands to where it was sent, white
+## where they cross the shown guard's red sight, and a ring at the end. It draws the
+## order the player gave, not a path the client works out (§12.18).
+func _route(g: Geo, t: float) -> void:
+	if not heist or chosen < 0 or chosen >= _crew.size() or not _crew[chosen].visible:
+		return
+	var goal := _order_goal(chosen)
+	if goal.x < 0.0:
+		return
+	var from := _crew[chosen].position
+	var to := world_at(goal)
+	var flat := Vector2(to.x - from.x, to.z - from.z)
+	if flat.length() < 0.6:
+		return
+	var seen := {}
+	var shown := shown_guard()
+	if shown >= 0:
+		for tile in replay.seen(shown):
+			seen[tile] = true
+	var steps := int(flat.length() / 0.36)
+	var drift := 0.0 if Settings.reduced_motion else fmod(t * 1.2, 1.0)
+	for k in range(1, steps):
+		var u := (k + drift) / float(steps)
+		var p := from.lerp(to, u)
+		var tile := Vector2i(floori(p.x + _size.x / 2.0), floori(p.z + _size.y / 2.0))
+		var lit := seen.has(tile.y * _size.x + tile.x)
+		g.ring(Geo.place(Vector3(p.x, world_at(Vector2(tile) + Vector2(0.5, 0.5)).y + 0.06, p.z)), 0.0, 0.09,
+			Palette.PAPER if lit else Color(Palette.INK, 0.8), 8)
+	var pulse := 0.0 if Settings.reduced_motion else 0.05 * sin(t * TAU)
+	g.ring(Geo.place(to + Vector3(0, 0.06, 0)), 0.24 + pulse, 0.33 + pulse, Palette.INK, 20)
+	g.ring(Geo.place(to + Vector3(0, 0.061, 0)), 0.0, 0.1, Palette.MOTION, 10)
+
+
+## Where crew member `i` was last sent, in tiles, or (-1, -1) when its last
+## order sends it nowhere (a halt, a gait, nothing yet).
+func _order_goal(i: int) -> Vector2:
+	var orders := replay.commands()
+	for k in range(orders.size() - 1, -1, -1):
+		var c: Dictionary = orders[k]
+		if int(c["actor"]) != i:
+			continue
+		match int(c["kind"]):
+			HeistController.Kind.MOVE_TO, HeistController.Kind.BREAK, HeistController.Kind.DISARM:
+				return Vector2(c["x"], c["y"]) / 256.0
+			HeistController.Kind.CRACK, HeistController.Kind.LOAD:
+				var v := replay.vault()
+				return (v["at"] as Vector2) if v.has("at") else Vector2(-1, -1)
+			HeistController.Kind.ATTACK, HeistController.Kind.DRAG:
+				var guards := replay.guards()
+				var gi := int(c["x"])
+				return (guards[gi]["at"] as Vector2) if gi >= 0 and gi < guards.size() else Vector2(-1, -1)
+			HeistController.Kind.GAIT:
+				continue
+			_:
+				return Vector2(-1, -1)
+	return Vector2(-1, -1)
 
 
 ## A screen describes the view after every tick: the words for a screen
@@ -466,6 +846,98 @@ func _bounce(node: Node3D, key: String, t: float) -> void:
 func describe() -> void:
 	super.describe()
 	sync()
+
+
+## Taps, holds and gestures on the world (§21.1, §20.8). A press that moves
+## less than `TAP_SLOP` and lifts before the hold time is a tap; a second tap
+## soon after on the same spot steps the zoom; two fingers pinch to zoom and
+## twist to turn, and neither is ever a tap. A mouse wheel zooms.
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch:
+		var st := event as InputEventScreenTouch
+		if st.pressed:
+			_touches[st.index] = st.position
+		else:
+			_touches.erase(st.index)
+		if _touches.size() > 1:
+			_gesture = true
+	elif event is InputEventScreenDrag:
+		var sd := event as InputEventScreenDrag
+		if _touches.size() == 2 and _touches.has(sd.index):
+			var other: Vector2 = Vector2.ZERO
+			for k: int in _touches:
+				if k != sd.index:
+					other = _touches[k]
+			var before: Vector2 = (_touches[sd.index] as Vector2) - other
+			var after := sd.position - other
+			if before.length() > 4.0 and after.length() > 4.0:
+				_zoom_by(log(after.length() / before.length()) * 1.6)
+				_twist_by(before.angle_to(after))
+		_touches[sd.index] = sd.position
+	elif event is InputEventMagnifyGesture:
+		_zoom_by(log((event as InputEventMagnifyGesture).factor) * 1.6)
+		_gesture = true
+	elif event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_WHEEL_UP and mb.pressed:
+			_zoom_by(0.15)
+		elif mb.button_index == MOUSE_BUTTON_WHEEL_DOWN and mb.pressed:
+			_zoom_by(-0.15)
+		elif mb.button_index == MOUSE_BUTTON_LEFT:
+			if mb.pressed:
+				_pressing = true
+				_gesture = _touches.size() > 1
+				_held_sent = false
+				_press_at = mb.position
+				_press_ms = Time.get_ticks_msec()
+			elif _pressing:
+				_pressing = false
+				_release(mb.position)
+	elif event is InputEventMouseMotion and _pressing:
+		if (event as InputEventMouseMotion).position.distance_to(_press_at) > TAP_SLOP:
+			_gesture = true
+
+
+func _release(at: Vector2) -> void:
+	if _gesture or _held_sent or at.distance_to(_press_at) > TAP_SLOP:
+		_gesture = _touches.size() > 0 and _gesture
+		_twist = 0.0
+		return
+	var now := Time.get_ticks_msec()
+	if now - _last_tap_ms < 320 and at.distance_to(_last_tap_at) < TAP_SLOP * 2.0:
+		# A double tap steps the zoom: realm, crew, close, and round again.
+		set_zoom((zoom + 1) % 3 if zoom > 0 else 1)
+		_last_tap_ms = -10000
+	else:
+		_last_tap_ms = now
+		_last_tap_at = at
+	if heist and replay != null:
+		var t := tile_at(at)
+		if t.x >= 0:
+			events.ring(world_at(Vector2(t) + Vector2(0.5, 0.5)), Palette.PAPER, 0.9)
+	tapped.emit(at)
+
+
+## A press held still for §20.8's hold time is `held`, once.
+func _read_hold() -> void:
+	if _pressing and not _gesture and not _held_sent and Time.get_ticks_msec() - _press_ms >= Settings.hold_ms:
+		_held_sent = true
+		anchors.names_for = 2.5
+		held.emit(_press_at)
+
+
+func _zoom_by(amount: float) -> void:
+	_zoom_f = clampf(_zoom_f + amount, 0.0, 2.0)
+	zoom = roundi(_zoom_f)
+	_gesture = true
+
+
+func _twist_by(radians: float) -> void:
+	_twist += radians
+	_gesture = true
+	if absf(_twist) > TWIST_RADIANS:
+		turn(1 if _twist > 0.0 else -1)
+		_twist = 0.0
 
 
 func _notification(what: int) -> void:
@@ -504,6 +976,22 @@ func tile_at(at: Vector2) -> Vector2i:
 		if (_heights[i] if i < _heights.size() else 0) == level:
 			return t
 	return Vector2i(-1, -1)
+
+
+## The guard nearest a point on the screen, where the camera draws it, is the
+## one whose sight is shown (§21.12).
+func select_guard_near(at: Vector2) -> void:
+	if replay == null or camera == null:
+		return
+	var best := -1
+	var best_d := INF
+	for gi in _guards.size():
+		var d := camera.unproject_position(_guards[gi].position + Vector3(0, 0.6, 0)).distance_to(at)
+		if d < best_d:
+			best_d = d
+			best = gi
+	selected_guard = best
+	describe()
 
 
 ## The point on the screen over a tile's centre: what `tile_at` inverts.

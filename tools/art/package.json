@@ -1,0 +1,11 @@
+{
+  "name": "ruleborn-art-export",
+  "private": true,
+  "description": "Exports the design's creature modules (art/design/creatures) to Godot .glb files, run headless in Chromium.",
+  "type": "module",
+  "dependencies": {
+    "meshoptimizer": "0.22.0",
+    "three": "0.184.0",
+    "xatlasjs": "0.2.0"
+  }
+}

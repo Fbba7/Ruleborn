@@ -4,13 +4,17 @@ extends Control
 ## each Sage's heist powers and at-home effect, and what every fifth level
 ## adds, those reached marked in words; when a locked Sage unlocks; and which
 ## Sage guards the Heart (§11.7). It draws the store; Services' `sage_flow`
-## asks.
+## asks. The Sages stand together in their hall on a 3D stage (§21.6), a
+## locked one as a silhouette, the one on guard a step forward; each card
+## carries its portrait rendered from its model (§21.3).
 
 var controller: SageController
 var body: VBoxContainer
 var header_label: Label
 var guard_label: Label
 var status_label: Label
+var stage: StageHero
+var cards: VBoxContainer
 
 
 func _ready() -> void:
@@ -29,18 +33,27 @@ func _on_changed(slice: StringName) -> void:
 
 func _build() -> void:
 	var column := UI.frame(self)
-	column.add_child(UI.title(Strings.t("SAGE_TITLE")))
+	StageHeroSkin.night(self)
+	column.add_child(StageHeroSkin.title(UI.title(Strings.t("SAGE_TITLE"))))
 	var top := VBoxContainer.new()
 	header_label = UI.label("", UI.TEXT_POINTS, true)
 	top.add_child(header_label)
 	guard_label = UI.label("", UI.TEXT_POINTS, true)
 	top.add_child(guard_label)
-	column.add_child(UI.plate(top))
+	column.add_child(StageHeroSkin.plate(top, true))
 	status_label = UI.status("info", "")
-	column.add_child(UI.plate(status_label))
+	column.add_child(StageHeroSkin.plate(status_label))
 	body = UI.scroll(column)
+	stage = StageHero.new()
+	stage.custom_minimum_size = Vector2(0, UI.px(230))
+	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body.add_child(stage)
+	cards = VBoxContainer.new()
+	cards.add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
+	body.add_child(cards)
 	var actions := UI.row(-1.0, true)
-	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
+	actions.add_child(StageHeroSkin.button(UI.button(Strings.t("COMMON_HOME"),
+		func() -> void: App.services.router.go(&"home"), true), true))
 	column.add_child(UI.narrow(actions))
 
 
@@ -58,16 +71,20 @@ func _refresh() -> void:
 		UI.set_status(status_label, "info", Strings.t("COMMON_LOADING"))
 	else:
 		UI.set_status(status_label, "info", "")
+	status_label.get_parent().visible = status_label.text != ""
 	header_label.text = h.get("header", "")
 	guard_label.text = h.get("guard", "")
-	for c in body.get_children():
-		body.remove_child(c)
+	for c in cards.get_children():
+		cards.remove_child(c)
 		c.queue_free()
+	stage.visible = h["ready"]
 	if not h["ready"]:
 		return
+	_stand(h["sages"])
 	var busy: bool = h["busy"] != ""
 	for s: Dictionary in h["sages"]:
-		body.add_child(_sage(s, busy))
+		cards.add_child(_sage(s, busy))
+	StageHeroSkin.cap_buttons(cards, get_viewport_rect().size.x - UI.px(64))
 	if focus_item != "":
 		for b: Button in find_children("*", "Button", true, false):
 			if b.get_meta("item", "") == focus_item and b.is_visible_in_tree():
@@ -75,9 +92,30 @@ func _refresh() -> void:
 				break
 
 
+## The Sages in their hall, the one on guard a step forward, a locked one
+## in silhouette; drawn again only when that changes.
+func _stand(sages: Array) -> void:
+	var list: Array[String] = []
+	var looks: Array[String] = []
+	var guard := -1
+	for s: Dictionary in sages:
+		list.append(str(s["id"]))
+		looks.append("" if s["unlocked"] else "shadow")
+		if s["guarding"]:
+			guard = list.size() - 1
+	var key := "%s%s%d" % [list, looks, guard]
+	if str(stage.get_meta("showing", "")) == key:
+		return
+	stage.set_meta("showing", key)
+	stage.show_kinds(list, looks, "hall")
+	if guard >= 0:
+		stage.tables[guard].position.z += 0.35
+
+
 func _sage(s: Dictionary, busy: bool) -> Control:
 	var box := VBoxContainer.new()
-	box.add_child(UI.label(s["name"], UI.TEXT_POINTS, true))
+	box.add_child(StageHeroSkin.portrait_tile(str(s["id"]), "" if s["unlocked"] else "shadow", 120.0))
+	box.add_child(StageHeroSkin.named(UI.label(s["name"], UI.TITLE_POINTS * 0.75, true)))
 	box.add_child(UI.status("success" if s["unlocked"] else "info", s["lock"]))
 	if s["guarding"]:
 		box.add_child(UI.status("success", Strings.t("SAGE_ON_GUARD")))
@@ -90,7 +128,8 @@ func _sage(s: Dictionary, busy: bool) -> Control:
 		line.set_meta("reached", lv["reached"])
 		box.add_child(line)
 	var o: Dictionary = s["button"]
-	var b := UI.button(o["action"], controller.station.bind(o["sage"]), false, Color(), o["spoken"])
+	var b := StageHeroSkin.button(UI.button(o["action"], controller.station.bind(o["sage"]), false, Color(),
+		o["spoken"]), s["unlocked"] and not s["guarding"])
 	b.disabled = busy or not o["can"]
 	b.set_meta("key", o["key"])
 	b.set_meta("item", o["item"])
@@ -99,4 +138,4 @@ func _sage(s: Dictionary, busy: bool) -> Control:
 	if o["why"] != "":
 		r.add_child(UI.label(o["why"], UI.TEXT_POINTS, true))
 	box.add_child(r)
-	return UI.plate(box)
+	return StageHeroSkin.plate(box)
