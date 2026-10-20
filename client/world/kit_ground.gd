@@ -185,6 +185,20 @@ static func earth(colours: Dictionary) -> Color:
 	return (colours["stone"] as Color).lerp(colours["soil"], 0.3)
 
 
+## Field `key` as round blobs: 1 at a marked tile's centre, falling to 0
+## `reach` tiles out, so a mark never shows its tile's square.
+func blob(key: String, u: float, v: float, reach: float) -> float:
+	var f: PackedFloat32Array = _fields[key]
+	var best := 0.0
+	var p := Vector2(u, v)
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			var t := Vector2i(int(floor(u)) + dx, int(floor(v)) + dy)
+			if inside(t) and f[index(t)] > 0.5:
+				best = maxf(best, 1.0 - p.distance_to(Vector2(t) + Vector2(0.5, 0.5)) / reach)
+	return clampf(best, 0.0, 1.0)
+
+
 ## A smooth seeded noise in [0, 1) over the ground, for the paint.
 static func noise(u: float, v: float, scale: float) -> float:
 	var p := Vector2(u, v) * scale
@@ -216,7 +230,7 @@ func paint(u: float, v: float, lvl: int, on_wet: bool) -> Array:
 	c = c.lerp(dirt.lerp(soil, 0.25), apron * 0.85)
 	var stone := smoothstep(0.3, 0.7, field("stone", u, v) + (n1 - 0.5) * 0.3)
 	c = c.lerp(palette["rock"].lightened(0.25), stone * 0.6)
-	var scorch := smoothstep(0.2, 0.7, field("scorch", u, v) + (n2 - 0.5) * 0.3)
+	var scorch := smoothstep(0.0, 0.7, blob("scorch", u, v, 0.75) + (n2 - 0.5) * 0.4) * 0.7
 	c = c.lerp(palette["rock"].darkened(0.35), scorch * 0.75)
 	var shade := field("shade", u, v)
 	c = c.darkened(0.1 * shade)
