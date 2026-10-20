@@ -364,6 +364,9 @@ func _dress(kind: String) -> void:
 	cyl(0.018, 0.014, 0.4, KitStyle.WOOD_DARK, lx, 0, lz, 5)
 	box(0.07, 0.08, 0.07, KitStyle.lit(Color("#FFD27A"), 0.75), lx, 0.44, lz)
 	cone(0.06, 0.05, KitStyle.WOOD_DARK, lx, 0.48, lz, 4)
+	# Warm light spilling onto the ground at the door and under the lamp.
+	glass.ring(place(0, 0.012, 0.5), 0.0, 0.2 * unit, Color(Color("#FFB860"), 0.35), 12)
+	glass.ring(place(lx, 0.014, lz), 0.0, 0.13 * unit, Color(Color("#FFB860"), 0.35), 10)
 	_topper()
 	if level >= 3:
 		flag(-0.32, top * 0.82, -0.22, 0.42)
