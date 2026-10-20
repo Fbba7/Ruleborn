@@ -90,7 +90,13 @@ func _metre() -> float:
 	var cam := _cam()
 	if cam == null or cam.size <= 0.0:
 		return 40.0
-	return size.y / cam.size
+	if cam.projection == Camera3D.PROJECTION_ORTHOGONAL:
+		return size.y / cam.size
+	# In perspective, a metre at the point the camera looks at.
+	var at := view._aim
+	if cam.is_position_behind(at):
+		return 40.0
+	return cam.unproject_position(at).distance_to(cam.unproject_position(at + cam.global_basis.x))
 
 
 func _draw() -> void:

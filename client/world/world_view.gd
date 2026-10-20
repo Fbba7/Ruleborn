@@ -32,6 +32,9 @@ signal looted(at: Vector2, amount: int)
 ## §21.1's pitches: the heist's follow camera, and the home diorama's.
 const HEIST_PITCH := 50.0
 const HOME_PITCH := 35.0
+## The heist camera's vertical field of view: the designs' realm and heist
+## camera is a narrow 20°, close to orthographic but with a diorama's depth.
+const HEIST_FOV := 22.0
 ## How much of the island a zoom level shows: the whole rock, the realm's
 ## grid (§21.1: "about 12 tiles across"), and a close-up.
 const ZOOM_SPAN := [1.25, 1.0, 0.6]
@@ -402,13 +405,20 @@ func _frame_camera() -> void:
 		# §21.1's swoop between realms: out and back in, in about a second.
 		cam_size *= 1.0 + 0.9 * sin(_swoop * PI)
 	camera.size = cam_size
+	# The heist's camera is the designs' narrow perspective, so the diorama
+	# has depth; the home pitch keeps §21.1's orthographic view. Either way
+	# `cam_size` metres fit the screen's height at the point looked at.
+	var perspective := heist and pitch == HEIST_PITCH
+	camera.projection = Camera3D.PROJECTION_PERSPECTIVE if perspective else Camera3D.PROJECTION_ORTHOGONAL
+	camera.fov = HEIST_FOV
+	var distance := cam_size / (2.0 * tan(deg_to_rad(HEIST_FOV) / 2.0)) if perspective else 40.0
 	var yaw := deg_to_rad(45.0 + 90.0 * turns) + _twist * 0.35
 	var p := deg_to_rad(pitch + (12.0 * sin(_swoop * PI) if _swoop > 0.0 else 0.0))
 	if not _aimed or not following:
 		_aim = target
 		_aimed = following
 	var back := Vector3(sin(yaw) * cos(p), sin(p), cos(yaw) * cos(p))
-	camera.look_at_from_position(_aim + back * 40.0, _aim, Vector3.UP)
+	camera.look_at_from_position(_aim + back * distance, _aim, Vector3.UP)
 	# The HUD covers the top and the bottom of a heist: the crew is framed a
 	# little above the middle, where the screen is clear.
 	camera.v_offset = -cam_size * 0.05 if following else 0.0
