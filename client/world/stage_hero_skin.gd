@@ -298,12 +298,13 @@ static func on_stage(stage: Control, what: Control, corner: int) -> Control:
 	m.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for side: String in ["margin_left", "margin_right", "margin_top", "margin_bottom"]:
 		m.add_theme_constant_override(side, UI.px(8))
-	var right := corner in [Control.PRESET_TOP_RIGHT, Control.PRESET_BOTTOM_RIGHT]
+	var right := corner in [Control.PRESET_TOP_RIGHT, Control.PRESET_BOTTOM_RIGHT, Control.PRESET_CENTER_RIGHT]
 	var centre := corner in [Control.PRESET_CENTER_TOP, Control.PRESET_CENTER_BOTTOM]
 	what.size_flags_horizontal = Control.SIZE_SHRINK_END if right else (Control.SIZE_SHRINK_CENTER if centre
 		else Control.SIZE_SHRINK_BEGIN)
 	what.size_flags_vertical = Control.SIZE_SHRINK_END if corner in [Control.PRESET_BOTTOM_LEFT,
-		Control.PRESET_BOTTOM_RIGHT, Control.PRESET_CENTER_BOTTOM] else Control.SIZE_SHRINK_BEGIN
+		Control.PRESET_BOTTOM_RIGHT, Control.PRESET_CENTER_BOTTOM] else (Control.SIZE_SHRINK_CENTER if corner in [
+		Control.PRESET_CENTER_LEFT, Control.PRESET_CENTER_RIGHT] else Control.SIZE_SHRINK_BEGIN)
 	m.add_child(what)
 	stage.add_child(m)
 	return m

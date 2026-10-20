@@ -177,7 +177,7 @@ func _badge(c: Dictionary) -> void:
 			level = int(x["level"])
 	var school: Color = Palette.SCHOOL.get(str(c["school"]), Palette.MOTION)
 	level_badge = PanelContainer.new()
-	level_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	level_badge.mouse_filter = Control.MOUSE_FILTER_PASS
 	level_badge.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	level_badge.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	stage.add_child(level_badge)
@@ -185,6 +185,23 @@ func _badge(c: Dictionary) -> void:
 		Control.PRESET_TOP_LEFT)
 	# §23.2's state on the stage, as the design's state pill puts it.
 	StageHeroSkin.on_stage(level_badge, StageHeroSkin.pill(str(c["line"])), Control.PRESET_TOP_RIGHT)
+	# The design's arrows through the roster, in its order, round at the ends.
+	var ids: Array = RosterScreen.kinds_of(slice).keys()
+	var at := ids.find(id)
+	if ids.size() > 1 and at >= 0:
+		var named := RosterPresenter.names((slice.get("view", {}) as Dictionary).get("characters", []),
+			App.services.store.get_slice(WorkshopState.WORKSHOP)["words"])
+		for step: int in [-1, 1]:
+			var to: int = ids[posmod(at + step, ids.size())]
+			var b := StageHeroSkin.button(UI.button("‹" if step < 0 else "›",
+				func() -> void: App.services.router.go(&"character", {"id": to}), false, Color(),
+				Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT", str(named.get(to, "")))))
+			b.set_meta("item", "step:%d" % step)
+			b.add_theme_font_size_override("font_size", UI.text_px(30))
+			b.set_meta("points", 30.0)
+			for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+				(b.get_theme_stylebox(state) as StyleBoxFlat).set_corner_radius_all(UI.px(99))
+			StageHeroSkin.on_stage(level_badge, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
 
 
 ## A spend's button: the first tap shows the price to confirm; the second
