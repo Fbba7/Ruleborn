@@ -39,6 +39,9 @@ func _go() -> void:
 			view.set_zoom(int(OS.get_environment("ZOOM")))
 		var fx := LawFx.attach(view, replay)
 		fx.source = null
+		# The view syncs its LawFx each frame from the replay's clock; the
+		# sheet holds the moment it chose instead.
+		view.set_process(false)
 		fx.sync(ticks + k * float(OS.get_environment("STEP") if OS.get_environment("STEP") != "" else "0"))
 		fx.sync_world(replay)
 		for i in 3:

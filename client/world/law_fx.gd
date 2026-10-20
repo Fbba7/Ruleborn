@@ -79,6 +79,12 @@ var _since := 0.0
 ## Every woven law of `replay`'s realm drawn over `v`'s world: under T5's
 ## `effects` node when the view has one, else under its world.
 static func attach(v: WorldView, replay: RulebornReplay) -> LawFx:
+	# A view that already draws this replay's laws (WorldView attaches its
+	# own, `law_fx`) is not given a second copy.
+	var own_fx: Variant = v.get("law_fx")
+	if own_fx is LawFx and is_instance_valid(own_fx) and (own_fx as LawFx).is_inside_tree() \
+			and (own_fx as LawFx).source == replay:
+		return own_fx
 	var fx := LawFx.new()
 	fx.view = v
 	fx.camera = v.camera
