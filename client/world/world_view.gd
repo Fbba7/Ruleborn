@@ -405,7 +405,11 @@ func _actor(role: String, height: float) -> Node3D:
 		# The small kinds most: none drawn under `MODEL_LEAST` metres.
 		# Guards keep their own height, so the crew is not dwarfed beside them.
 		var grow := 1.0 if role == "guard" else maxf(MODEL_SCALE, MODEL_LEAST / maxf(0.1, tall))
-		figure.scale = Vector3.ONE * grow
+		# T1's own readability scale where the model has it.
+		if model.has_method("set_display_scale"):
+			model.call("set_display_scale", grow)
+		else:
+			figure.scale = Vector3.ONE * grow
 		root.set_meta("head", tall * grow)
 		return root
 	figure.scale = Vector3.ONE * height
