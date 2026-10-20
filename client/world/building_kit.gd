@@ -50,7 +50,7 @@ var top := 1.0
 
 
 ## The materials of a level's look: walls, roof, trim.
-static func look(lvl: int, colours: Dictionary) -> Array[Color]:
+static func _look(lvl: int, colours: Dictionary) -> Array[Color]:
 	var s := KitStyle.of(KitStyle.realm_of(colours))
 	if lvl >= 7:
 		return [Color("#ECE6FF"), (s["roof"] as Color).lerp(Color("#8C6CF0"), 0.35).lightened(0.1), KitStyle.GOLD]
@@ -87,7 +87,7 @@ static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, col
 	b.palette = colours
 	b.style = KitStyle.of(KitStyle.realm_of(colours))
 	b.unit = side * 0.92
-	var c := look(b.level, colours)
+	var c := _look(b.level, colours)
 	b.wall = c[0]
 	b.roof_col = c[1]
 	b.roof_dark = b.roof_col.darkened(0.22)
@@ -131,6 +131,14 @@ func stop() -> void:
 	g.moving(Geo.Anim.NONE, Vector3.ZERO)
 	d.moving(Geo.Anim.NONE, Vector3.ZERO)
 	glass.moving(Geo.Anim.NONE, Vector3.ZERO)
+
+
+## The light version of building `kind` for the universe map (the design's
+## `makeB`, realm-diorama.js :756–880), 80–250 triangles, reading by kind
+## and by §21.5's look from far away: KitMap's.
+static func build_map(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, colours: Dictionary) -> void:
+	var c := _look(clampi(lvl, 1, 10), colours)
+	KitMap.build(geo, kind, mid, side * 0.92, clampi(lvl, 1, 10), colours, c)
 
 
 ## A point in the building's units, placed in the world.

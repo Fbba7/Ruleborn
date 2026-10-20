@@ -218,7 +218,7 @@ func _draw_world() -> void:
 	var store := App.services.store
 	var view := UniverseStore.view(store)
 	world.show_universe(view, UniverseStore.extras(store))
-	world.accessibility_name = Strings.t("HOME_UNIVERSE")
+	world.accessibility_name = Strings.t("HOME_MAP")
 	world.accessibility_description = UniverseStore.spoken(view)
 
 

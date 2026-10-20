@@ -269,8 +269,8 @@ func _sight_marks(view: WorldView, replay: RulebornReplay) -> void:
 ## played the clip for what its actor is doing (the integrator's hook for T1).
 func _models(replay: RulebornReplay) -> void:
 	var model := GDScript.new()
-	model.source_code = "extends Node3D\nvar played: Array[String] = []\n\n\nfunc play(clip: String) -> void:\n" \
-		+ "\tplayed.append(clip)\n"
+	model.source_code = "extends Node3D\nvar played: Array[String] = []\n\n\n" \
+		+ "func play(clip: StringName, _speed := 1.0) -> void:\n\tplayed.append(String(clip))\n"
 	model.reload()
 	var made: Array[String] = []
 	WorldView.figure_maker = func(role: String, _height: float) -> Node3D:
@@ -283,7 +283,7 @@ func _models(replay: RulebornReplay) -> void:
 	tree.root.add_child(view)
 	view.show_replay(replay)
 	view.describe()
-	view._animate(float(replay.tick()))
+	FxMotion.animate(view, float(replay.tick()))
 	var figure := view._crew[0].get_node("Rig/Figure")
 	var played: Array = figure.get("played")
 	var guard_figure := view._guards[0].get_node("Rig/Figure")
@@ -291,7 +291,7 @@ func _models(replay: RulebornReplay) -> void:
 	check.call("a character model, when the integrator gives one, takes each actor's figure and is played the clip "
 			+ "for what the simulation says it is doing (TD.9)",
 		made.size() == replay.crew().size() + replay.guards().size() and made.has("guard") and played.size() == 1
-			and str(played[0]) in ["idle", "walk", "run", "crouch", "ko"] and guard_figure.get_script() == model,
+			and str(played[0]) in ["idle", "walk", "run", "carry", "hit", "ko"] and guard_figure.get_script() == model,
 		"%s %s" % [made, played])
 	view.queue_free()
 	await tree.process_frame

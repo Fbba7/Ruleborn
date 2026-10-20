@@ -1,0 +1,125 @@
+class_name FxMotion
+extends RefCounted
+## How `WorldView`'s figures move between the simulation's ticks: the
+## stand-ins' bobs, squashes, leans and swinging limbs, and a character
+## model's clips, each from what the simulation says its actor is doing.
+
+
+## Gentle physical humour (§21.1): a figure on the move bobs and squashes
+## with its steps — tiptoeing crouched, bounding at a run — and one standing
+## still breathes; one that is down lies on its back. Its time is the
+## heist's ticks, so a replay moves the same every time it is played. The
+## laws running bend how everyone moves (§21.7's movement signatures).
+static func animate(view: WorldView, ticks: float) -> void:
+	var t := ticks / WorldView.TPS
+	for i in view._crew.size():
+		bounce(view, view._crew[i], "c%d" % i, t + i * 0.37)
+	for i in view._guards.size():
+		bounce(view, view._guards[i], "g%d" % i, t + i * 0.61)
+
+
+static func bounce(view: WorldView, node: Node3D, key: String, t: float) -> void:
+	var rig := node.get_node_or_null("Rig") as Node3D
+	if rig == null:
+		return
+	var feet := node.get_node_or_null("Feet") as Node3D
+	if node.get_meta("model", false):
+		play_model(view, node, rig, key)
+		return
+	if node.get_meta("down", false):
+		rig.rotation = Vector3(-PI / 2.0, 0, 0)
+		rig.position = Vector3(0, 0.22, 0)
+		rig.scale = Vector3.ONE
+		if feet != null:
+			feet.visible = false
+		limbs(rig, null, 0.0, 0.0, 0.0)
+		return
+	if feet != null:
+		feet.visible = true
+	var moving := _moving(view, key)
+	var gait := str(node.get_meta("gait", "Walk"))
+	var move := view.laws.movement(moving, gait, t)
+	if moving:
+		var rate: float = (2.2 if gait == "Walk" else (1.6 if gait == "Crouch" else 3.0)) * move["rate"]
+		var step := absf(sin(t * TAU * rate))
+		var lift: float = (0.07 if gait != "Crouch" else 0.03) * move["hop"]
+		rig.position = Vector3(0, step * lift + move["float"], 0)
+		var squat := 0.82 if gait == "Crouch" else 1.0
+		rig.scale = Vector3(1.0 + 0.05 * (1.0 - step), (0.94 + 0.08 * step) * squat, 1.0 + 0.05 * (1.0 - step))
+		rig.rotation = Vector3(-0.12 if gait == "Run" else (-0.05 if gait == "Crouch" else 0.0), 0,
+			sin(t * TAU * rate * 0.5) * 0.06 + move["lean"])
+		var swing := 1.0 if gait == "Run" else (0.35 if gait == "Crouch" else 0.7)
+		limbs(rig, feet, sin(t * TAU * rate * 0.5) * swing, 0.08 * swing, move["float"])
+	else:
+		rig.position = Vector3(0, move["float"], 0)
+		rig.scale = Vector3(1.0, 1.0 + 0.02 * sin(t * TAU * 0.4), 1.0)
+		rig.rotation = Vector3(0, 0, move["lean"] * 0.4)
+		limbs(rig, feet, sin(t * TAU * 0.4) * 0.08, 0.0, move["float"])
+
+
+## A character model plays the clip for what its actor is doing; the rig
+## only lays it down when it is down.
+static func play_model(view: WorldView, node: Node3D, rig: Node3D, key: String) -> void:
+	var down: bool = node.get_meta("down", false)
+	# Knocked out, a model lies on its back whatever its kind's "ko" pose, so
+	# who is out reads from above at a glance.
+	rig.rotation = Vector3(-PI / 2.0, 0, 0) if down else Vector3.ZERO
+	rig.position = Vector3(0, 0.25, 0) if down else Vector3.ZERO
+	var moving := _moving(view, key)
+	var gait := str(node.get_meta("gait", "Walk"))
+	var clip := model_clip(down, moving, gait, node.get_meta("carrying", false), int(node.get_meta("hit", 0)) > 0)
+	# A screen may hold a pose (the result's celebration) while it stands.
+	if not down and not moving and str(node.get_meta("pose", "")) != "":
+		clip = str(node.get_meta("pose", ""))
+	if int(node.get_meta("hit", 0)) > 0:
+		node.set_meta("hit", int(node.get_meta("hit", 0)) - 1)
+	# Crouching is a slow walk; a run is quick.
+	var speed: float = {"Crouch": 0.6, "Run": 1.2}.get(gait, 1.0) if moving else 1.0
+	var figure := rig.get_node_or_null("Figure")
+	if figure != null and figure.has_method("play") and node.get_meta("clip", "") != clip:
+		node.set_meta("clip", clip)
+		figure.call("play", StringName(clip), speed)
+
+
+## The design's clip for what the simulation says an actor is doing: "ko"
+## when down, "hit" as a blow lands, "carry" moving with loot, "run" at a run,
+## "walk" walking or crouched, else "idle".
+static func model_clip(down: bool, moving: bool, gait: String, carrying: bool, struck: bool) -> String:
+	if down:
+		return "ko"
+	if struck:
+		return "hit"
+	if not moving:
+		return "idle"
+	if carrying:
+		return "carry"
+	return "run" if gait == "Run" else "walk"
+
+
+## Arms swing against the steps and feet step out in turn: `phase` is the
+## stride's swing (-1 to 1), `stride` how far a foot steps, `lift` how far
+## the figure floats (feet rise with it).
+static func limbs(rig: Node3D, feet: Node3D, phase: float, stride: float, lift: float) -> void:
+	var figure := rig.get_node_or_null("Figure") as Node3D
+	if figure != null:
+		var l := figure.get_node_or_null("ArmL") as Node3D
+		var r := figure.get_node_or_null("ArmR") as Node3D
+		if l != null and r != null:
+			l.rotation = Vector3(phase * 0.9, 0, -0.15)
+			r.rotation = Vector3(-phase * 0.9, 0, 0.15)
+	if feet == null:
+		return
+	feet.position.y = lift
+	var fl := feet.get_node_or_null("FootL") as Node3D
+	var fr := feet.get_node_or_null("FootR") as Node3D
+	if fl != null and fr != null:
+		fl.position.z = ActorBuilder.HIP.z - phase * stride / maxf(0.01, feet.scale.z)
+		fr.position.z = ActorBuilder.HIP.z + phase * stride / maxf(0.01, feet.scale.z)
+		fl.position.y = maxf(0.0, phase) * stride * 0.6
+		fr.position.y = maxf(0.0, -phase) * stride * 0.6
+
+
+## Whether the actor `key` moved between its last two ticks.
+static func _moving(view: WorldView, key: String) -> bool:
+	return view._from.has(key) and view._to.has(key) \
+		and (view._from[key] as Vector3).distance_to(view._to[key]) > 0.001

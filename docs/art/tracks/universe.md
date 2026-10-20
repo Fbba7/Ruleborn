@@ -35,7 +35,7 @@ Branch `claude/3d-universe`. Owns `client/world/universe_*`, `link_*`, `skiff_*`
 - Light: the map uses `universe_toon.gdshader` (the shared toon light, but vertex colours read as sRGB,
   as three.js reads them), which is why it is not washed out like a vertex colour read as linear.
 
-Budget (`universe_zoom.gd` prints it): about 27,000 triangles and 25 draw calls for the full seven-realm
+Budget (`universe_zoom.gd` prints it; first rounds, before the merge): about 27,000 triangles and 25 draw calls for the full seven-realm
 universe, inside §21.3's 40,000 and 150.
 
 ## Stills
@@ -93,6 +93,27 @@ universe, inside §21.3's 40,000 and 150.
 - Round 10: a realm asked for before the universe has arrived (home opening on the Heart on a first
   launch, before the server answers) is remembered and shown once it is drawn, instead of dropped.
 
+- Round 11, on the merged state (T1, T2, T3 in): the realms' buildings are T3's kit at their levels, and
+  the Heart's citadel is T3's Keeper's Spire (on a five-tile footprint, drawn 1.35×) with the map's orb
+  light. T3's buildings cost 1,000–3,900 triangles each, so the map now has two levels of detail: the
+  kit's buildings only on the realm the camera is on, and a block in each building's level colours
+  elsewhere (`UniverseIsland.near` / `far`); the meadow is a few triangles a tuft. The player's own
+  characters (from the home view) appear as T1's sculpts on the realm seen close (zoom 2): at the
+  building they work, napping when resting, strolling when idle; two at most, drawn 2.1× as the design's
+  diorama draws its figures (`UniverseCrowd`). The flying things moved to `UniverseFlight`.
+  Budget: 31,600 triangles and about 70 draw calls (two characters add about 11,800 in a close-up).
+  Stills: `round11_merged_home.png`, `round11_merged_zoom0..2.png`, `round11_merged_map.png`,
+  `round11_compare_marta.png`.
+
+- Round 12 (the integrator's notes): the triangle count no longer drops the scatter, the far buildings and
+  the rope bridges (it was assigned after they were added); counted honestly the map was 54,600, now
+  39,700 for seven realms: lighter tops and rims, flat path stones, fewer peaks' crystals and debris,
+  three-blade tufts and three-petal flowers, a lighter chute, and the kit's fine parts (windows, frames,
+  flags) only while the close realm's buildings are under 4,500 triangles. The home menu's two "Your
+  universe" tiles are now "Your universe" (the map) and "Buildings and realms" (`HOME_UNIVERSE`, every
+  locale; the screen's own title is unchanged).
+  Still: `round12_budget_home_zoom1_zoom2.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 
@@ -105,22 +126,22 @@ Judged beside `art/design/stills/obs/*.png` at phone size and in grayscale (`rou
   four link kinds are built to their gap and carry their icons; skiffs fly the links with wakes; the sky
   has depth (three star layers, haze and debris that part on a tilt); the camera has the three zooms,
   quarter turns, the swoop and the cloud wipe; pins follow and declutter; and the whole seven-realm
-  universe costs about 32,000 triangles in about 32 draw calls (`universe_zoom.gd` prints both), against
+  universe costs about 39,700 triangles in about 70 draw calls (`universe_zoom.gd` prints both), against
   the design's 676,192 in 1,207.
 - As good: the night colours, the Heart's citadel, beam and rings, the lit rims and halos, the glowing
   crystals and falls beneath, the dust-armed galaxy.
 - Still worse:
-  - Buildings are `BuildingKit`'s current pieces (T3), boxier and less lit than the design's map
-    buildings; they improve here as T3's kit does.
+  - Away from the realm the camera is on, buildings are blocks in their level's colours (the price of
+    §21.3's budget with T3's detailed kit).
   - No cast shadows: the shared toon light shows none under this renderer (see "For other tracks");
     the map's contact shade stands in.
   - Island tops at the far zoom are sparser than the design's, which packs props densely.
-  - `HOME_MAP` and `HOME_UNIVERSE` are both "Your universe" in English, so two menu tiles read alike
-    (the icons differ); one string should change (integrator, the strings table).
 
 ## Next
 
-- Swap in T3's buildings and Heart citadel once merged; keep `UniverseCitadel` only if T3 draws none.
+- Use T2's island (`IslandBuilder`) for the realm seen close; its meadow (4,800 triangles) is too heavy
+  for all seven at once, so the far islands keep the map's light rock.
+- Wildlife and skiff crews from T1 (each a full character's triangles, so a close-up only).
 - Per-building window lights from the kit, and lantern props per realm type.
 - A gentle bob and wind for the islands and their dressing (vertex animation in `universe_toon`).
 - Measure frame time on a phone (the galaxy plane is one full-screen fragment pass).
@@ -137,3 +158,15 @@ Judged beside `art/design/stills/obs/*.png` at phone size and in grayscale (`rou
 - T2/T3: `toon.gdshader` reads vertex colours as linear, so every hex colour renders paler than the
   design (three.js converts hex from sRGB). `universe_toon.gdshader` converts; the realm view may want the
   same.
+
+## Stopped here
+
+Stopped at the integrator's request (2026-10-20).
+
+- Done: the universe map in 3D (islands, the four link kinds, skiffs, galaxy sky, pins, the three zooms with
+  turns, swoop and cloud wipe), home, the map and the universe screens over it; merged with the first
+  integration (T3's buildings and citadel, T1's characters on a close-up); inside §21.3's budget, counted
+  honestly (39,735 triangles, about 70 draw calls); `check_all` passed on `a196c75`.
+- In progress: nothing; the second integration had not landed, so it is not merged.
+- Next: merge the second integration and reconcile its `universe_island.gd` `_building()` with this
+  branch's near/far buildings (keep one); then use T2's island for the realm seen close.
