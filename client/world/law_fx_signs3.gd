@@ -10,10 +10,10 @@ const INK := Color("#1A0C14")
 static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 	var ground := LawFxPaint.ground(fx.site)
 	var home := LawFxPaint.home(fx, law)
-	var h := fx.site.half()
 	match law:
 		"tilt":
 			# "Trees, lanterns and banners lean one way; water runs downhill."
+			LawFxPaint.mark(fx, sig, ground, 18, Color("#9ADFE8"), Color("#1A0C14"))
 			LawFxPaint.spray(fx, sig, law, {"n": 50, "shape": 3, "colour": Color("#6A3A1A", 0.9), "radius": [0.08, 0.11],
 				"tiles": ground, "lift": [0.05, 0.3], "vel": Vector3(0.9, -0.05, 0.3), "period": [2.0, 3.0]})
 			LawFxPaint.spray(fx, sig, law + "_leaves", {"n": 16, "shape": 10, "colour": Color("#5CC46A"),
@@ -83,7 +83,7 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 				"lift": [0.3, 2.4], "radius": [0.05, 0.08]})
 		"tidemark":
 			# "A thin silver tide line sweeps the ground at each mark."
-			LawFxPaint.rounds(fx, sig, [fx.site.heart], h.length(), 4, Color("#C9D3E6"), INK, 0.4)
+			LawFxPaint.mark(fx, sig, ground + fx.site.tiles(LawFxSite.PLANTS), 19, Color("#F4F8FF"), Color("#3A4A6A"))
 		"heat_bloom":
 			# "Heat haze around braziers."
 			var hot := fx.site.tiles(LawFxSite.LIGHTS)

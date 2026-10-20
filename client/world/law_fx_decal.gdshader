@@ -247,6 +247,26 @@ void fragment() {
 		c = mix(colour_a.rgb, colour_b.rgb, rim);
 		a = smoothstep(0.85, 0.2, r) * 0.25 + band * 0.85 + rim * 0.9 + notch * 0.8;
 		a *= step(r, 0.95);
+	} else if (pattern == 18) {
+		// Tilt: chevrons flowing downhill, inked, the way the realm slopes.
+		vec2 q = vec2(p.x + p.y, p.y - p.x) * 0.7071;
+		float v = fract(q.x * 0.9 - s * 0.6);
+		float row = fract(q.y * 0.9);
+		float chev = abs(v - 0.5 - abs(row - 0.5) * 0.6);
+		float line = smoothstep(0.09, 0.04, chev) * step(0.15, row) * step(row, 0.85);
+		float ink = smoothstep(0.13, 0.09, chev) * step(0.15, row) * step(row, 0.85) - line;
+		c = mix(colour_b.rgb, colour_a.rgb, line);
+		a = line * 0.8 + ink * 0.6;
+	} else if (pattern == 19) {
+		// Tidemark: a thin silver tide line sweeping across the ground and
+		// back, the wet ground darker behind it.
+		float u = sin(s * 0.35) * 0.5 + 0.5;
+		float d = dot(p - focus, normalize(vec2(1.0, 0.6))) / 9.0 + 0.5;
+		float line = smoothstep(0.022, 0.012, abs(d - u));
+		float edge = smoothstep(0.035, 0.022, abs(d - u)) - line;
+		float wet = step(d, u) * 0.18;
+		c = mix(colour_b.rgb, colour_a.rgb, line);
+		a = line + edge * 0.8 + wet;
 	} else {
 		// Density: the ground's grain enlarged, a heavy coarse weave.
 		float n = noise(p * 2.0);
