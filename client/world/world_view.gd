@@ -518,6 +518,9 @@ func _follow_point() -> Vector3:
 	if n == 0:
 		return Vector3(0, 0.3, 0)
 	var at := sum / n
+	if heist and _skiff != null and _skiff.visible:
+		# Once the skiff is called, the camera holds it in view with the crew.
+		at = at.lerp(_skiff.position, 0.35)
 	var half := Vector2(_size) * 0.5
 	return Vector3(clampf(at.x, -half.x + 1.5, half.x - 1.5), 0.3, clampf(at.z, -half.y + 1.5, half.y - 1.5))
 
