@@ -329,7 +329,8 @@ func instances() -> Array[MeshInstance3D]:
 	if lanes.size() > 0:
 		lanes.resize(KitGround.LANES)
 		ground_mat.set_shader_parameter("lanes", lanes)
-	ground_mat.set_shader_parameter("lane_earth", KitGround.earth(palette).lerp(palette["soil"], 0.2))
+	ground_mat.set_shader_parameter("lane_earth", KitGround.earth(palette).lerp(palette["soil"], 0.2)
+		if realm != "lanternvale" else Color("#9A8EC0"))
 	var water_mat := material("water")
 	# Water by realm (§21.4): Tidehold's teal, Emberreach's hot springs,
 	# Crystalline's ice-melt, Lantern Vale's dark water.
