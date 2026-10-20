@@ -231,7 +231,7 @@ func roof(w: float, depth: float, y0: float, rise: float, over := 0.08, rows := 
 	for s: float in [-1.0, 1.0]:
 		for i in rows:
 			var t := (i + 0.5) / rows
-			var col := roof_col if i % 2 == 1 else roof_dark
+			var col := roof_col if i % 2 == 1 else roof_col.darkened(0.07)
 			var p := at(0, 0, 0) + turn * Vector3(s * t * run, y0 + rise - t * run * tan(ang), 0) * unit
 			var basis := turn * Basis(Vector3.BACK, -s * ang)
 			var thick := 0.05 if tier == 0 else 0.035
@@ -328,8 +328,8 @@ func _smoke(x: float, y: float, z: float) -> void:
 
 ## A chimney standing from (x, y, z) to `h` units up, with smoke.
 func chimney(x: float, y: float, z: float, h: float) -> void:
-	box(0.13, h, 0.13, stone2 if tier > 0 else Color("#8A4A3A"), x, y + h / 2.0, z)
-	box(0.17, 0.045, 0.17, stone.darkened(0.2), x, y + h, z)
+	box(0.17, h, 0.17, stone2 if tier > 0 else Color("#8A4A3A"), x, y + h / 2.0, z)
+	box(0.21, 0.05, 0.21, stone.darkened(0.2), x, y + h, z)
 	_smoke(x, y + h, z)
 
 
