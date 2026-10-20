@@ -41,6 +41,8 @@ const TPS := 30.0
 ## zoom, eight.
 const FOLLOW_TILES := 12.0
 const CLOSE_TILES := 8.0
+## The hour a realm under Glowing dark is lit at.
+const NIGHT := 23
 ## How aware each guard state is, for choosing whose sight to show.
 const AWARE := {"Unaware": 0, "Returning": 0, "Suspicious": 1, "Investigating": 2, "Searching": 3, "Alerted": 4}
 ## A press that moves less than this many pixels is a tap.
@@ -61,6 +63,8 @@ var pitch := HEIST_PITCH
 ## The camera's quarter turns (§21.1: "rotatable in 90° steps") and zoom.
 var turns := 0
 var zoom := 1
+## The hour the sky is drawn at (§21.2: the player's local time).
+var hour := 12
 ## The crew members the heist camera follows; none frames the whole grid.
 var follow: Array = []
 ## The crew member drawn as chosen, -1 for none.
@@ -175,8 +179,10 @@ func _build_stage() -> void:
 
 
 ## §21.2: the sky follows the player's local time, and the light with it.
-func set_sky_hour(hour: int) -> void:
-	look.set_hour(hour)
+func set_sky_hour(when: int) -> void:
+	hour = when
+	# A realm under Glowing dark is lit as at night (§21.7).
+	look.set_hour(NIGHT if laws != null and laws.dark() else when)
 
 
 static func material(shader: Shader, outlined := false) -> ShaderMaterial:
