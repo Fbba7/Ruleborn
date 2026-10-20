@@ -405,9 +405,12 @@ func _actor(role: String, height: float) -> Node3D:
 		# at the heist's 12 tiles across among the marks over it.
 		var tall: float = model.call("height") if model.has_method("height") else height
 		# The small kinds most: none drawn under `MODEL_LEAST` metres.
-		# Guards keep their own height, so the crew is not dwarfed beside them.
-		var grow := 1.0 if role == "guard" else maxf(MODEL_SCALE, MODEL_LEAST / maxf(0.1, tall))
-		# T1's own readability scale where the model has it.
+		# Guards keep their own height, so the crew is not dwarfed beside them;
+		# the crew take T1's readability scale where the model has it.
+		var grow := 1.0
+		if role != "guard":
+			grow = model.call("readable_scale") if model.has_method("readable_scale") \
+				else maxf(MODEL_SCALE, MODEL_LEAST / maxf(0.1, tall))
 		if model.has_method("set_display_scale"):
 			model.call("set_display_scale", grow)
 		else:

@@ -37,12 +37,27 @@ uniform float spark : hint_range(0.0, 1.0) = 0.0;
 uniform vec4 spark_colour : source_color = vec4(1.0, 0.42, 0.1, 1.0);
 // A flash of colour (hit, heal), mixed into the albedo.
 uniform vec4 flash : source_color = vec4(1.0, 1.0, 1.0, 0.0);
+// Readability at small size (§21.3: "every character ... must read as a dark
+// shape at 32 points tall"): under this many pixels per metre on screen the
+// rim strengthens toward `far_rim` and the shade opens a little, so a
+// character the heist's camera draws 40 px tall keeps its edge and its colour.
+uniform float far_ppm = 240.0;
+uniform float far_rim = 1.8;
 
 varying float gloss_band;
 
 vec3 creature_saturate(vec3 c) {
 	float l = dot(c, vec3(0.299, 0.587, 0.114));
 	return clamp(mix(vec3(l), c, 1.1), 0.0, 1.0);
+}
+
+// How far toward "small on screen" this fragment is (0 near, 1 at the
+// heist's 12 tiles across): from the projection and the view depth.
+float creature_far(mat4 proj, vec3 view_pos, vec2 viewport) {
+	float ortho = proj[3][3];
+	float depth = mix(max(0.05, -view_pos.z), 1.0, ortho);
+	float ppm = viewport.y * proj[1][1] * 0.5 / depth;
+	return smoothstep(far_ppm, far_ppm * 0.4, ppm);
 }
 
 float creature_ramp(float ndl) {
@@ -80,7 +95,7 @@ vec3 creature_hush(vec3 c, vec2 uv, bool body, out vec3 stars) {
 	return r;
 }
 
-void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 n, vec3 v,
+void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 n, vec3 v, float far,
 		out vec3 albedo, out vec3 emission) {
 	float glow = body ? glow_vc * smoothstep(0.3, 0.65, c.r - c.b) : emit;
 	vec3 stars = vec3(0.0);
@@ -107,9 +122,13 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 	col = mix(col, col * vec3(1.2, 0.72, 0.42), 0.55 * spark);
 	col = mix(col, flash.rgb, flash.a);
 	albedo = creature_saturate(col);
-	float side = smoothstep(-0.2, 0.6, n.x * 0.8 + n.y * 0.4);
-	vec3 rim = mix(rim_colour.rgb, vec3(0.62, 0.7, 1.0), hush) * fr * side * 0.9 * rim_strength
-		+ albedo * vec3(1.0, 0.55, 0.35) * wrap * fr * 0.6 * rim_strength;
+	// Small on screen, the rim wraps further round and the paint keeps its
+	// colour in shade (a light lift of the darkest step, as emission).
+	float side = smoothstep(mix(-0.2, -0.75, far), 0.6, n.x * 0.8 + n.y * 0.4);
+	float rs = rim_strength * mix(1.0, far_rim, far);
+	vec3 rim = mix(rim_colour.rgb, vec3(0.62, 0.7, 1.0), hush) * fr * side * 0.9 * rs
+		+ albedo * vec3(1.0, 0.55, 0.35) * wrap * fr * 0.6 * rs;
+	rim += albedo * 0.06 * far * (1.0 - hush * 0.6);
 	emission = albedo * glow + rim + stars + extra;
 	if (spark > 0.0) {
 		// Spark: lit from within (the Rig page's emissive #6A2208 at 0.35), hotter at the edge.
