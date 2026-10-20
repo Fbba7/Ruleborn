@@ -748,8 +748,20 @@ func _lantern(c: Vector3) -> void:
 	kit.clear.ring(Geo.place(c + Vector3(0, 0.015, 0)), 0.0, 0.42, Color(Color("#FFC860"), 0.35), 14)
 
 
-func _arch(t: Vector2i, c: Vector3, stone: Color) -> void:
+## An arch by realm: dressed stone with a gold keystone; lilac stone and a
+## crystal keystone in Crystalline; basalt with a glowing keystone in
+## Emberreach; overgrown with vines in Verdant.
+func _arch(t: Vector2i, c: Vector3, stone_in: Color) -> void:
 	var hero := kit.hero
+	var stone := stone_in
+	var key := KitStyle.GOLD
+	match kit.realm:
+		"crystalline":
+			stone = Color("#C9C0E6")
+			key = Color(Color("#C8B8FF"), 0.4)
+		"emberreach":
+			stone = Color("#4A3A3E")
+			key = Color(Palette.ENERGY, 0.3)
 	var yaw := kit.yaw(t)
 	var side := Vector3.RIGHT.rotated(Vector3.UP, yaw)
 	for s: float in [-1.0, 1.0]:
@@ -761,8 +773,17 @@ func _arch(t: Vector2i, c: Vector3, stone: Color) -> void:
 		var a := PI * (k + 0.5) / 7.0
 		var p := c + side * cos(a) * 0.32 + Vector3(0, 0.9 + sin(a) * 0.3, 0)
 		var basis := Basis(Vector3.UP, yaw) * Basis(Vector3.BACK, a - PI / 2.0)
-		hero.rbox(Transform3D(basis, p), Vector3(0.12, 0.16, 0.28), KitStyle.GOLD if k == 3 else stone.lightened(0.04),
-			0.02)
+		hero.rbox(Transform3D(basis, p), Vector3(0.12, 0.16, 0.28), key if k == 3 else stone.lightened(0.04), 0.02)
+	if kit.realm == "verdant" or kit.realm == "lanternvale":
+		kit.prop.moving(Geo.Anim.SWAY, c)
+		for k in 6:
+			var a := PI * (k + 0.3) / 6.0
+			kit.prop.ball(Geo.place(c + side * cos(a) * 0.36 + Vector3(0, 0.9 + sin(a) * 0.34, 0.12)), 0.06,
+				kit.palette["plant"].darkened(0.1 * (k % 2)), 2, 5)
+		for s2: float in [-1.0, 1.0]:
+			kit.prop.prism(Geo.place(c + side * s2 * 0.42 + Vector3(0, 0.1, 0.1)), 4, 0.03, 0.02, 0.75,
+				kit.palette["plant"].darkened(0.2))
+		kit.prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 
 
 func _bell(c: Vector3, j: float, wood: Color) -> void:
@@ -782,7 +803,9 @@ func _bell(c: Vector3, j: float, wood: Color) -> void:
 func _mushroom(t: Vector2i, c: Vector3) -> void:
 	var hero := kit.hero
 	var glows := kit.realm == "lanternvale"
-	var cap := Color("#E2536B") if not glows else Color(Color("#7AD8C8"), 0.5)
+	var caps := {"skyfield": "#F2C84A", "crystalline": "#8FB8F0", "tidehold": "#3CC6D8", "emberreach": "#F07A3C",
+		"verdant": "#E2536B", "heart": "#F27AB4"}
+	var cap := Color(caps.get(kit.realm, "#E2536B")) if not glows else Color(Color("#7AD8C8"), 0.5)
 	hero.cyl(Geo.place(c), 0.11, 0.08, 0.38, Color("#F3E6CC"), 8)
 	hero.moving(Geo.Anim.BOB, c)
 	hero.ball(Geo.place(c + Vector3(0, 0.34, 0), 0.0, Vector3(1, 0.62, 1)), 0.38, cap, 4, 12, true)
