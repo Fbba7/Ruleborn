@@ -319,10 +319,11 @@ func plinth(w: float, depth: float, h := 0.08) -> void:
 
 ## Smoke rising from a chimney's top at (x, y, z), three soft puffs.
 func _smoke(x: float, y: float, z: float) -> void:
+	# Puffs rising out of the chimney one after another, swelling as they go.
 	for k in 3:
-		var p := at(x + 0.03 * k, y + 0.12 + 0.16 * k, z)
-		move(Geo.Anim.BOB, p + Vector3(k * 2.0, 0, 0))
-		d.ball(Geo.place(p), (0.05 + 0.03 * k) * unit, Color("#EEE8F4"), 3, 6)
+		var p := at(x + 0.02 * k, y + 0.1, z)
+		move(Geo.Anim.RISE, p + Vector3(k * 1.9, 0, 0))
+		d.ball(Geo.place(p), (0.06 + 0.02 * k) * unit, Color("#EEE8F4"), 3, 6)
 	stop()
 
 
