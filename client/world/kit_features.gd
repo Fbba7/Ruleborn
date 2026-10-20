@@ -387,6 +387,14 @@ func _ruin(t: Vector2i, c: Vector3) -> void:
 	var yaw := _run_yaw(t, RealmKit.F.RUIN_WALL)
 	var dir := Vector3.RIGHT.rotated(Vector3.UP, yaw)
 	var old: Color = (style["stone2"] as Color).lerp(kit.palette["rock"], 0.35)
+	# Glassy in Crystalline, basalt in Emberreach, pale coral stone in Tidehold.
+	match kit.realm:
+		"crystalline":
+			old = Color("#B8AEE0")
+		"emberreach":
+			old = Color("#4A3A3E")
+		"tidehold":
+			old = Color("#D8D0C0")
 	var tall := [0.78, 0.46, 0.92, 0.3, 0.64]
 	for k in 4:
 		var x := -0.375 + 0.25 * k
@@ -537,18 +545,59 @@ func _tree(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
 	hero.moving(Geo.Anim.NONE, Vector3.ZERO)
 
 
+## A statue by realm on its plinth: a figure holding up an orb; in
+## Skyfield a figure with wings spread; in Tidehold a great shell; in
+## Verdant a mossy figure with a sapling; in Lantern Vale a hooded figure
+## with a lantern; in Crystalline a faceted obelisk; in Emberreach a horned
+## basalt head.
 func _statue(c: Vector3, j: float, stone: Color) -> void:
 	var hero := kit.hero
 	var s := stone.lightened(0.06)
 	hero.rbox(Geo.place(c + Vector3(0, 0.11, 0)), Vector3(0.48, 0.22, 0.48), stone.darkened(0.08), 0.03)
 	hero.rbox(Geo.place(c + Vector3(0, 0.25, 0)), Vector3(0.4, 0.06, 0.4), stone.darkened(0.02), 0.02)
-	hero.cyl(Geo.place(c + Vector3(0, 0.28, 0)), 0.17, 0.12, 0.5, s, 8)
-	hero.ball(Geo.place(c + Vector3(0, 0.88, 0)), 0.13, s, 4, 8)
-	# Arms raised, holding up an orb.
-	for sx: float in [-1.0, 1.0]:
-		hero.box(Transform3D(Basis(Vector3.FORWARD, sx * 0.5), c + Vector3(sx * 0.15, 0.78, 0)),
-			Vector3(0.06, 0.28, 0.06), s)
-	hero.ball(Geo.place(c + Vector3(0, 1.12, 0)), 0.09, Color(KitStyle.GOLD, 0.6), 3, 7)
+	match kit.realm:
+		"crystalline":
+			hero.gem(Geo.place(c + Vector3(0, 0.75, 0), j), 0.16, 0.47, Color(Color("#D8D0F8"), 0.85), 4)
+		"tidehold":
+			for k in 7:
+				var a := -1.2 + 2.4 * k / 6.0
+				hero.box(Transform3D(Basis(Vector3.BACK, a), c + Vector3(sin(a) * 0.12, 0.46 + cos(a) * 0.12, 0)),
+					Vector3(0.08, 0.38, 0.12), Color("#F3E6D0").darkened(0.05 * (k % 2)))
+			hero.ball(Geo.place(c + Vector3(0, 0.32, 0.02)), 0.07, Color("#F7C6D8"), 3, 6)
+		"emberreach":
+			hero.rock(Geo.place(c + Vector3(0, 0.55, 0), j, Vector3(1, 1.1, 0.9)), 0.22, Color("#3A2E34"), 7)
+			for sx: float in [-1.0, 1.0]:
+				hero.prism(Transform3D(Basis(Vector3.FORWARD, sx * 0.6), c + Vector3(sx * 0.16, 0.72, 0)), 5, 0.05, 0.0,
+					0.22, Color("#E8D8C0"))
+			for sx: float in [-1.0, 1.0]:
+				hero.ball(Geo.place(c + Vector3(sx * 0.08, 0.58, 0.18)), 0.03, Color(Palette.ENERGY, 0.1), 2, 5)
+		_:
+			hero.cyl(Geo.place(c + Vector3(0, 0.28, 0)), 0.17, 0.12, 0.5, s, 8)
+			var hood := kit.realm == "lanternvale"
+			if hood:
+				hero.prism(Geo.place(c + Vector3(0, 0.74, 0)), 8, 0.16, 0.0, 0.32, s.darkened(0.08))
+			else:
+				hero.ball(Geo.place(c + Vector3(0, 0.88, 0)), 0.13, s, 4, 8)
+			match kit.realm:
+				"skyfield":
+					for sx: float in [-1.0, 1.0]:
+						hero.box(Transform3D(Basis(Vector3.FORWARD, sx * 0.9), c + Vector3(sx * 0.26, 0.82, -0.05)),
+							Vector3(0.05, 0.4, 0.16), s.lightened(0.05))
+				"lanternvale":
+					hero.box(Transform3D(Basis(Vector3.FORWARD, -0.4), c + Vector3(0.16, 0.66, 0.05)),
+						Vector3(0.05, 0.24, 0.05), s)
+					hero.rbox(Geo.place(c + Vector3(0.24, 0.56, 0.06)), Vector3(0.09, 0.11, 0.09),
+						Color(Color("#FFD27A"), 0.15), 0.01)
+				"verdant":
+					hero.cyl(Geo.place(c + Vector3(0.14, 0.62, 0.06)), 0.015, 0.012, 0.3, KitStyle.WOOD, 4)
+					hero.ball(Geo.place(c + Vector3(0.14, 0.95, 0.06)), 0.1, kit.palette["plant"], 3, 6)
+					hero.ball(Geo.place(c + Vector3(0, 0.98, 0), 0.0, Vector3(1.1, 0.4, 1.1)), 0.13,
+						kit.palette["plant"].darkened(0.2), 3, 6)
+				_:
+					for sx: float in [-1.0, 1.0]:
+						hero.box(Transform3D(Basis(Vector3.FORWARD, sx * 0.5), c + Vector3(sx * 0.15, 0.78, 0)),
+							Vector3(0.06, 0.28, 0.06), s)
+					hero.ball(Geo.place(c + Vector3(0, 1.12, 0)), 0.09, Color(KitStyle.GOLD, 0.6), 3, 7)
 	kit.prop.moving(Geo.Anim.SHIVER, c)
 	kit.prop.ball(Geo.place(c + Vector3(0.2, 0.25, 0.22), j, Vector3(1, 0.6, 1)), 0.08, kit.palette["plant"], 3, 6)
 	kit.prop.moving(Geo.Anim.NONE, Vector3.ZERO)
