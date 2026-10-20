@@ -52,11 +52,6 @@ func _init(on: StageView) -> void:
 ## gives them) and, for each `producers` entry {kind, workers}, a figure per
 ## worker by its building, in `roles` order (a worker's role, by id).
 func build(buildings: Array[Dictionary], colours: Dictionary, producers: Array, roles: Dictionary) -> void:
-	_smoke()
-	if not _chosen.is_empty():
-		ring.scale = Vector3.ONE * (1.0 + 0.04 * sin(_clock * 4.0))
-		var mid: Vector3 = _chosen["mid"]
-		ring.position = mid - mid * ring.scale
 	for w: Node3D in _workers:
 		w.queue_free()
 	_workers.clear()
