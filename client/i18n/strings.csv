@@ -117,6 +117,7 @@ BUILDER_BARE,Bare ground,Bare ground,Chão limpo,Chão limpo,Leerer Boden,Sol nu
 GROUND_MOSS,Moss,Moss,Musgo,Musgo,Moos,Mousse
 BUILDER_LEVEL,Level %d,Level %d,Nível %d,Nível %d,Level %d,Niveau %d
 BUILDER_SAVE,Save,Save,Salvar,Guardar,Sichern,Enregistrer
+BUILDER_UNDO,Undo,Undo,Desfazer,Anular,Rückgängig,Annuler
 BUILDER_SAVED,Saved on this phone,Saved on this phone,Salva neste celular,Guardada neste telemóvel,Auf diesem Handy gespeichert,Enregistrée sur ce téléphone
 BUILDER_TUNNEL_END,"Now tap where the tunnel comes out, %d to %d tiles away","Now tap where the tunnel comes out, %d to %d tiles away","Agora toque onde o túnel sai, a %d a %d casas de distância","Agora toque onde o túnel sai, a %d a %d casas de distância","Tippe jetzt dort, wo der Tunnel herauskommt, %d bis %d Felder entfernt","Touchez maintenant là où le tunnel ressort, à %d à %d cases"
 BUILDER_TUNNEL_FAR,A tunnel's mouths are %d to %d tiles apart,A tunnel's mouths are %d to %d tiles apart,As entradas de um túnel ficam a %d a %d casas uma da outra,As entradas de um túnel ficam a %d a %d casas uma da outra,Die Öffnungen eines Tunnels liegen %d bis %d Felder auseinander,Les entrées d'un tunnel sont à %d à %d cases l'une de l'autre
