@@ -109,7 +109,7 @@ faces, plays, takes forms and the guard form.
   0.8 m. Sages: §21.1's "about 1.5 m"; the Archivist "tall" at 1.6 m, the
   Tinkerer "small" at 1.2 m, Gardener 1.55, Wanderer and Chronicler 1.5,
   Lamplighter 1.45. Anomalies and wildlife to the heights measured from the
-  design in `docs/analysis/screens-v3/3d-pipeline.md` §3.3 (their modules
+  design in `docs/analysis/screens-v3/3d-pipeline.md` (section 3.3) (their modules
   have no `GAME_SCALE`).
 - **Forms.** Hush: the paint remapped by its own luminance into midnight (the
   pattern survives), a scatter of star freckles on the body, and a small
