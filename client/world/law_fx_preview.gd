@@ -57,6 +57,14 @@ func show_laws(which: Array, type := "heart") -> void:
 	walker = LawFxWalker.new(law, ActorBuilder.mesh("Scout"), WorldView.material(_toon(), true))
 	walker.reach = 1.6
 	walker.scale = Vector3.ONE * 1.4
+	# T1's character where the export has one: the first ruleborn.
+	var kinds := CreatureModel.kinds("ruleborn")
+	if not kinds.is_empty():
+		walker.use_figure(StringName(kinds[0]))
+		walker.scale = Vector3.ONE * 2.0
+	# Round open ground in front of the pylon, not through it.
+	walker.centre = view.world_at(Vector2(SPOTS[0]) + Vector2(1.5, 2.5))
+	walker.reach = 1.3
 	fx.add_child(walker)
 	_tick(0.0)
 
