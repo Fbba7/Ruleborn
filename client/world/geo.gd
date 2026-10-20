@@ -82,11 +82,23 @@ func box(at: Transform3D, size: Vector3, col: Color, top := Color(0, 0, 0, 0)) -
 	var up: Color = top if top.a > 0.0 else col
 	var side := col.darkened(0.06)
 	quad(p.call(-1, 1, -1), p.call(-1, 1, 1), p.call(1, 1, 1), p.call(1, 1, -1), up)
-	quad(p.call(-1, -1, -1), p.call(1, -1, -1), p.call(1, -1, 1), p.call(-1, -1, 1), col.darkened(0.2))
+	# §21.1's cameras are always above, so a face turned down is never seen.
+	if _faces_up(at, Vector3.DOWN):
+		quad(p.call(-1, -1, -1), p.call(1, -1, -1), p.call(1, -1, 1), p.call(-1, -1, 1), col.darkened(0.2))
 	quad(p.call(-1, -1, 1), p.call(1, -1, 1), p.call(1, 1, 1), p.call(-1, 1, 1), col)
 	quad(p.call(1, -1, -1), p.call(-1, -1, -1), p.call(-1, 1, -1), p.call(1, 1, -1), side)
 	quad(p.call(1, -1, 1), p.call(1, -1, -1), p.call(1, 1, -1), p.call(1, 1, 1), side)
 	quad(p.call(-1, -1, -1), p.call(-1, -1, 1), p.call(-1, 1, 1), p.call(-1, 1, -1), col)
+
+
+## A flat panel `w` × `h` facing `at`'s +Z: a window pane, a shutter, a
+## mullion — two triangles where a box would take twelve.
+func panel(at: Transform3D, w: float, h: float, col: Color) -> void:
+	var a := at * Vector3(-w / 2.0, -h / 2.0, 0)
+	var b := at * Vector3(w / 2.0, -h / 2.0, 0)
+	var c := at * Vector3(w / 2.0, h / 2.0, 0)
+	var d := at * Vector3(-w / 2.0, h / 2.0, 0)
+	quad(a, b, c, d, col)
 
 
 ## A box with its edges chamfered by `bevel`, so it catches the light on
@@ -119,7 +131,10 @@ func rbox(at: Transform3D, size: Vector3, col: Color, bevel := 0.04, top := Colo
 			var p1: Vector3 = corner.call(1.0, -1.0)
 			var p2: Vector3 = corner.call(1.0, 1.0)
 			var p3: Vector3 = corner.call(-1.0, 1.0)
-			_outward(p0, p1, p2, p3, face_col.call(ax, s), at.origin)
+			var normal := Vector3.ZERO
+			normal[ax] = s
+			if _faces_up(at, normal):
+				_outward(p0, p1, p2, p3, face_col.call(ax, s), at.origin)
 	# The twelve chamfers, between two faces along the third axis.
 	for ax in 3:
 		var u := (ax + 1) % 3
@@ -185,9 +200,10 @@ func prism(at: Transform3D, sides: int, r0: float, r1: float, height: float, col
 			tri(at * b0, at * t1, at * b1, col)
 			if r1 > 0.0:
 				tri(at * b0, at * t0, at * t1, col)
-		if r1 > 0.0:
+		if r1 > 0.0 and _faces_up(at, Vector3.UP * signf(height)):
 			tri(at * Vector3(0, height, 0), at * t1, at * t0, up)
-		tri(at * Vector3.ZERO, at * b0, at * b1, col.darkened(0.2))
+		if _faces_up(at, Vector3.DOWN * signf(height)):
+			tri(at * Vector3.ZERO, at * b0, at * b1, col.darkened(0.2))
 
 
 ## A blade of grass or a reed: a thin three-sided spike with no base,
@@ -347,6 +363,12 @@ func mesh() -> ArrayMesh:
 	if triangles == 0:
 		return null
 	return st.commit()
+
+
+## Whether a face whose local normal is `n` can face a camera above: false
+## only for a face turned straight down.
+static func _faces_up(at: Transform3D, n: Vector3) -> bool:
+	return (at.basis * n).normalized().y > -0.9
 
 
 static func place(position: Vector3, yaw := 0.0, scale := Vector3.ONE) -> Transform3D:

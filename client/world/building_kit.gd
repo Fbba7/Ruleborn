@@ -132,7 +132,7 @@ func place(x: float, y: float, z: float, yaw := 0.0) -> Transform3D:
 ## softened when it is big enough to show them.
 func box(w: float, h: float, depth: float, col: Color, x: float, y: float, z: float, yaw := 0.0) -> void:
 	var size := Vector3(w, h, depth) * unit
-	if minf(size.x, minf(size.y, size.z)) > 0.07:
+	if minf(size.x, minf(size.y, size.z)) > 0.1:
 		g.rbox(place(x, y, z, yaw), size, col, minf(0.035, minf(size.x, minf(size.y, size.z)) * 0.25))
 	else:
 		d.box(place(x, y, z, yaw), size, col)
@@ -158,15 +158,14 @@ func window(x: float, y: float, z: float, yaw: float, s := 1.0, shutters := true
 	var turn := Basis(Vector3.UP, yaw)
 	var p := func(dx: float, dy: float, dz: float) -> Vector3: return at(x, y, z) + turn * Vector3(dx, dy, dz) * unit
 	d.box(Transform3D(turn, p.call(0, 0, 0)), Vector3(0.15 * s, 0.19 * s, 0.03) * unit, KitStyle.WOOD_DARK)
-	d.box(Transform3D(turn, p.call(0, 0, 0.012)), Vector3(0.11 * s, 0.15 * s, 0.02) * unit,
-		KitStyle.lit(KitStyle.WINDOW, 0.55))
-	d.box(Transform3D(turn, p.call(0, 0, 0.02)), Vector3(0.014, 0.15 * s, 0.012) * unit, KitStyle.WOOD_DARK)
-	d.box(Transform3D(turn, p.call(0, 0, 0.02)), Vector3(0.11 * s, 0.014, 0.012) * unit, KitStyle.WOOD_DARK)
+	d.panel(Transform3D(turn, p.call(0, 0, 0.016)), 0.11 * s * unit, 0.15 * s * unit, KitStyle.lit(KitStyle.WINDOW, 0.55))
+	d.panel(Transform3D(turn, p.call(0, 0, 0.018)), 0.014 * unit, 0.15 * s * unit, KitStyle.WOOD_DARK)
+	d.panel(Transform3D(turn, p.call(0, 0, 0.019)), 0.11 * s * unit, 0.014 * unit, KitStyle.WOOD_DARK)
 	d.box(Transform3D(turn, p.call(0, -0.105 * s, 0.025)), Vector3(0.19 * s, 0.025, 0.06) * unit, stone2)
 	if shutters:
 		for sx: float in [-1.0, 1.0]:
 			var b := turn * Basis(Vector3.UP, sx * 0.35)
-			d.box(Transform3D(b, p.call(sx * 0.115 * s, 0, 0.025)), Vector3(0.06 * s, 0.19 * s, 0.015) * unit,
+			d.panel(Transform3D(b, p.call(sx * 0.115 * s, 0, 0.03)), 0.06 * s * unit, 0.19 * s * unit,
 				roof_col if tier > 0 else KitStyle.WOOD.lightened(0.2))
 
 
@@ -176,15 +175,14 @@ func door(x: float, y: float, z: float, yaw: float, s := 1.0) -> void:
 	var p := func(dx: float, dy: float, dz: float) -> Vector3: return at(x, y, z) + turn * Vector3(dx, dy, dz) * unit
 	d.box(Transform3D(turn, p.call(0, 0.1 * s, 0)), Vector3(0.21 * s, 0.2 * s, 0.03) * unit, stone2)
 	d.cyl(Transform3D(turn * Basis(Vector3.RIGHT, PI / 2.0), p.call(0, 0.2 * s, -0.015)), 0.105 * s * unit,
-		0.105 * s * unit, 0.03 * unit, stone2, 10)
+		0.105 * s * unit, 0.03 * unit, stone2, 8)
 	var wood := KitStyle.WOOD if tier < 2 else KitStyle.WOOD.lerp(Color("#8C6CF0"), 0.3)
-	d.box(Transform3D(turn, p.call(0, 0.085 * s, 0.012)), Vector3(0.15 * s, 0.17 * s, 0.02) * unit, wood)
-	d.cyl(Transform3D(turn * Basis(Vector3.RIGHT, PI / 2.0), p.call(0, 0.17 * s, 0.002)), 0.075 * s * unit,
-		0.075 * s * unit, 0.02 * unit, wood, 10)
+	d.panel(Transform3D(turn, p.call(0, 0.085 * s, 0.017)), 0.15 * s * unit, 0.17 * s * unit, wood)
+	d.cyl(Transform3D(turn * Basis(Vector3.RIGHT, PI / 2.0), p.call(0, 0.17 * s, 0.006)), 0.075 * s * unit,
+		0.075 * s * unit, 0.012 * unit, wood, 8)
 	for px: float in [-0.04, 0.04]:
-		d.box(Transform3D(turn, p.call(px * s, 0.1 * s, 0.024)), Vector3(0.008, 0.2 * s, 0.01) * unit,
-			KitStyle.WOOD_DARK)
-	d.ball(Geo.place(p.call(0.045 * s, 0.09 * s, 0.03)), 0.014 * unit, KitStyle.GOLD, 2, 5)
+		d.panel(Transform3D(turn, p.call(px * s, 0.1 * s, 0.019)), 0.008 * unit, 0.2 * s * unit, KitStyle.WOOD_DARK)
+	d.ball(Geo.place(p.call(0.045 * s, 0.09 * s, 0.03)), 0.014 * unit, KitStyle.GOLD, 2, 4)
 	d.box(Transform3D(turn, p.call(0, 0.017, 0.06)), Vector3(0.26 * s, 0.035, 0.1) * unit, stone)
 
 
@@ -246,8 +244,8 @@ func courses(w: float, depth: float, y0: float, y1: float, n: int) -> void:
 func plinth(w: float, depth: float, h := 0.08) -> void:
 	box(w, h, depth, stone2, 0, h / 2.0, 0)
 	if tier == 0:
-		for k in 8:
-			var a := TAU * k / 8.0
+		for k in 5:
+			var a := TAU * k / 5.0 + 0.3
 			d.rock(Geo.place(at(cos(a) * w * 0.5, 0.02, sin(a) * depth * 0.5), a, Vector3(1, 0.6, 1)), 0.05 * unit,
 				stone.darkened(0.05 * (k % 2)), k)
 	elif tier == 2:
@@ -385,8 +383,8 @@ func _topper() -> void:
 func _pad() -> void:
 	var earth: Color = (palette["ground"] as Color).lerp(Color("#E8D8B8"), 0.4)
 	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.6 * unit, 0.57 * unit, 0.03 * unit, earth.darkened(0.08), false, earth)
-	for k in 6:
-		var a := TAU * k / 6.0 + 0.3
+	for k in 4:
+		var a := TAU * k / 4.0 + 0.5
 		d.rock(Geo.place(at(cos(a) * 0.6, 0.012, sin(a) * 0.6), a, Vector3(1, 0.5, 1)), 0.035 * unit,
 			(palette["rock"] as Color).lightened(0.2), k)
 

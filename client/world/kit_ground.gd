@@ -13,7 +13,7 @@ extends RefCounted
 ## Paint channels (UV, UV2): path, lushness; cliff, stone.
 
 ## Quads along a tile's side: the ground's resolution.
-const SUB := 4
+const SUB := 3
 ## How far a water bed lies below its tile, and the water under its banks.
 const BED := 0.24
 const WATER_DROP := 0.012

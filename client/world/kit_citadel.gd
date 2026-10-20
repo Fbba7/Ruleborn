@@ -8,7 +8,7 @@ extends RefCounted
 ## the Keeper's Spire stands in a Heart realm: its citadel.
 
 ## Segments in the ring, and towers round it.
-const SEGMENTS := 44
+const SEGMENTS := 36
 const TOWERS := 8
 const WALL_H := 0.4
 
@@ -29,8 +29,8 @@ static func walls(g: Geo, fine: Geo, radius: float, palette: Dictionary) -> void
 			continue
 		var p := Vector3(cos(a) * radius, base, sin(a) * radius)
 		var yaw := -a + PI / 2.0
-		g.rbox(Geo.place(p + Vector3(0, (WALL_H + 0.12) / 2.0, 0), yaw), Vector3(seg_len, WALL_H + 0.12, 0.2),
-			stone.darkened(0.04 * (i % 2)), 0.02)
+		g.box(Geo.place(p + Vector3(0, (WALL_H + 0.12) / 2.0, 0), yaw), Vector3(seg_len, WALL_H + 0.12, 0.2),
+			stone.darkened(0.04 * (i % 2)))
 		fine.box(Geo.place(p + Vector3(0, WALL_H + 0.13, 0), yaw), Vector3(seg_len, 0.04, 0.26), stone2)
 		for u: float in [-0.25, 0.25]:
 			var m := p + Vector3(cos(yaw), 0, -sin(yaw)) * u * seg_len
