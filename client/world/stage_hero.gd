@@ -94,10 +94,26 @@ func _init() -> void:
 
 
 ## The figure for a kind in a look ("" for its own, a note's name for that
-## form, "guard" for its guard form). Until the characters' models land this
-## is a stand-in (StageHeroSculpt); swapping it is this one line.
-static func make_figure(kind: String, look := "") -> Node3D:
-	return _stand_in(kind, look)
+## form, "guard" for its guard form): the design's model (CreatureModel)
+## where the export has the kind, else StageHeroSculpt's stand-in. The model
+## sits in a node of the stage's own, so the stage's sway and hop never fight
+## its facing; `close` asks for its fur, as only a close view affords.
+static func make_figure(kind: String, look := "", close := false) -> Node3D:
+	if not CreatureModel.manifest().has(kind):
+		return _stand_in(kind, look)
+	var fur := int(((CreatureModel.manifest()[kind] as Dictionary).get("fur", {}) as Dictionary).get("shells", 0))
+	var model := CreatureModel.make(StringName(kind), fur if close else 0)
+	model.face(Vector3.BACK)
+	if look in ["hush", "spark", "echo"]:
+		model.set_form(StringName(look))
+	elif look == "guard":
+		model.set_guard(true)
+	var root := Node3D.new()
+	root.add_child(model)
+	root.set_meta("kind", kind)
+	root.set_meta("look", look)
+	root.set_meta("model", model)
+	return root
 
 
 ## A material in §21.3's look, its rim in `rim`; inked when INKED.
@@ -166,7 +182,7 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		blob.position.y = 0.045
 		table.add_child(blob)
 		var look := str(looks[i]) if i < looks.size() else ""
-		var figure := make_figure(kind, "" if look == "shadow" else look)
+		var figure := make_figure(kind, "" if look == "shadow" else look, list.size() == 1)
 		if look == "shadow":
 			shade(figure)
 		figure.position.y = 0.04
@@ -194,8 +210,9 @@ func act(index: int) -> void:
 	if index < 0 or index >= figures.size():
 		return
 	_actions[index] = 0.0
-	if figures[index].has_method("play"):
-		figures[index].call("play", "ability")
+	var model: Variant = figures[index].get_meta("model", null)
+	if model is CreatureModel:
+		(model as CreatureModel).play(&"ability")
 
 
 ## A hatch's moment (§23.2's Hatch): the egg's shell bursts in two, a ring
@@ -238,6 +255,9 @@ func _process(delta: float) -> void:
 			_actions[i] += delta
 			if _actions[i] > ACTION_SECONDS:
 				_actions[i] = -1.0
+				var model: Variant = figures[i].get_meta("model", null)
+				if model is CreatureModel:
+					(model as CreatureModel).play(&"idle")
 	if _reveal >= 0.0:
 		_reveal += delta
 		if _reveal > 1.6:
