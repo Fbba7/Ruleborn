@@ -4,7 +4,7 @@
 // beneath the Heart, and fine star dust. One plane far below the islands,
 // drawn once; everything is worked out here, so no texture is loaded.
 shader_type spatial;
-render_mode unshaded, cull_disabled, shadows_disabled, depth_draw_never, fog_disabled;
+render_mode unshaded, cull_disabled, shadows_disabled, fog_disabled;
 
 uniform vec4 top : source_color = vec4(0.071, 0.039, 0.22, 1.0);
 uniform vec4 middle : source_color = vec4(0.165, 0.078, 0.4, 1.0);
@@ -52,7 +52,7 @@ float noise(vec2 p) {
 float fbm(vec2 p) {
 	float v = 0.0;
 	float a = 0.5;
-	for (int k = 0; k < 4; k++) {
+	for (int k = 0; k < 3; k++) {
 		v += a * noise(p);
 		p = p * 2.03 + vec2(17.1, 9.2);
 		a *= 0.5;
@@ -98,20 +98,23 @@ void fragment() {
 	vec2 g = (p - galaxy_at) / galaxy_radius;
 	float r = length(g);
 	float a = atan(g.y, g.x) + TIME * spin;
+	// Two thin arms winding out from the core, drawn in dust.
 	float arms = 0.0;
-	for (int k = 0; k < 3; k++) {
-		float phase = a + float(k) * 2.094 - log(max(r, 0.02)) * 2.6;
-		arms += pow(0.5 + 0.5 * cos(phase), 6.0);
+	for (int k = 0; k < 2; k++) {
+		float phase = a + float(k) * PI - log(max(r, 0.02)) * 1.7;
+		float d = abs(fract(phase / TAU) - 0.5);
+		arms += smoothstep(0.075, 0.0, d);
 	}
 	float fade = smoothstep(1.0, 0.15, r);
-	float grain = 0.55 + 0.9 * noise(p * 0.9);
-	vec3 arm_col = mix(vec3(1.0, 0.72, 0.86), vec3(0.75, 0.62, 1.0), smoothstep(0.2, 0.8, r));
-	col += arm_col * arms * fade * grain * 0.3;
-	col += vec3(1.0, 0.86, 0.72) * exp(-r * r * 60.0) * 1.1;
-	col += vec3(1.0, 0.62, 0.78) * exp(-r * r * 9.0) * 0.4;
+	// The arms are dust: a faint glow, and bright motes thick along them, as
+	// the design's galaxy is drawn in points.
+	float motes = dust(p, 1.1, 0.85, 0.42) + dust(p + 31.0, 0.8, 0.6, 0.32) * 0.7;
+	vec3 arm_col = mix(vec3(1.0, 0.78, 0.9), vec3(0.8, 0.68, 1.0), smoothstep(0.2, 0.8, r));
+	col += arm_col * arms * fade * (0.06 + 1.3 * motes);
+	col += vec3(1.0, 0.86, 0.72) * exp(-r * r * 260.0) * 0.75;
+	col += vec3(1.0, 0.62, 0.78) * exp(-r * r * 25.0) * 0.3;
 	// Star dust: fine and many, and a few brighter ones.
-	float stars = dust(p, 2.3, 0.35, 0.22) * 0.7 + dust(p + 50.0, 6.0, 0.25, 0.35) * 1.1;
-	stars += dust(p - g * 3.0, 1.1, 0.4 * fade * arms, 0.2) * 1.2;
+	float stars = dust(p, 3.0, 0.2, 0.2) * 0.35 + dust(p + 50.0, 7.0, 0.2, 0.3) * 0.6;
 	col += vec3(0.95, 0.92, 1.0) * stars;
 	ALBEDO = col * brightness;
 }

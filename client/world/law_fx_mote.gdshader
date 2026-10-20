@@ -82,7 +82,7 @@ void fragment() {
 		a *= a;
 	} else if (k == 1) {
 		a = step(r, 0.82);
-		ink = step(0.58, r) * a;
+		ink = step(0.68, r) * a;
 	} else if (k == 2) {
 		float star = min(abs(p.x) * 3.0 + abs(p.y), abs(p.y) * 3.0 + abs(p.x));
 		a = smoothstep(1.0, 0.6, star) + smoothstep(0.35, 0.0, r);
@@ -107,7 +107,8 @@ void fragment() {
 	} else if (k == 8) {
 		float d = min(min(sd_segment(p, vec2(-0.2, 0.9), vec2(0.25, 0.1)),
 			sd_segment(p, vec2(0.25, 0.1), vec2(-0.25, -0.1))), sd_segment(p, vec2(-0.25, -0.1), vec2(0.2, -0.9)));
-		a = smoothstep(0.22, 0.1, d);
+		a = smoothstep(0.26, 0.16, d);
+		ink = smoothstep(0.08, 0.16, d) * a;
 	} else if (k == 9) {
 		vec2 q = vec2(p.x, p.y + 0.25);
 		float d = length(q) - 0.6;
@@ -121,7 +122,8 @@ void fragment() {
 		ink = a * max(step(-0.22, d), step(abs(q.x), 0.06));
 	} else {
 		float d = abs(p.y - sin(p.x * 3.0 + t * 3.0) * 0.3);
-		a = smoothstep(0.35, 0.05, d) * smoothstep(1.0, 0.5, abs(p.x));
+		a = smoothstep(0.5, 0.2, d) * smoothstep(1.0, 0.5, abs(p.x));
+		ink = smoothstep(0.3, 0.45, d) * a;
 	}
 	vec3 c = mix(colour.rgb, vec3(0.102, 0.047, 0.078), ink * 0.85);
 	ALBEDO = c * (1.0 + glow * (1.0 - ink));

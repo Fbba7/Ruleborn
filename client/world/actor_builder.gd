@@ -144,6 +144,26 @@ static func foot(role: String) -> ArrayMesh:
 	return m
 
 
+## The crew's skiff (§5.4): a round wooden hull with a gold rim, a mast and
+## a cream sail with the Motion school's stripe, sized for a crew to board.
+static func skiff() -> ArrayMesh:
+	if _cache.has("skiff"):
+		return _cache["skiff"]
+	var g := Geo.new()
+	g.ball(Geo.place(Vector3(0, 0.1, 0), 0.0, Vector3(1.9, 0.6, 0.85)), 0.6, Palette.WOOD, 6, 14)
+	g.prism(Geo.place(Vector3(0, 0.36, 0), 0.0, Vector3(1.9, 1.0, 0.85)), 14, 0.52, 0.52, 0.03, Palette.WOOD.darkened(0.4))
+	g.ring(Geo.place(Vector3(0, 0.4, 0), 0.0, Vector3(1.9, 1.0, 0.85)), 0.5, 0.6, Palette.MOTION, 28)
+	for x: float in [-0.35, 0.0, 0.35]:
+		g.box(Geo.place(Vector3(x, 0.42, 0)), Vector3(0.08, 0.04, 0.8), Palette.WOOD.lightened(0.1))
+	g.prism(Geo.place(Vector3(0, 0.3, 0)), 6, 0.04, 0.03, 1.5, Palette.WOOD.darkened(0.3))
+	g.box(Transform3D(Basis(Vector3.UP, 0.15), Vector3(0.32, 1.15, 0)), Vector3(0.6, 0.85, 0.03), Palette.PAPER)
+	g.box(Transform3D(Basis(Vector3.UP, 0.15), Vector3(0.28, 1.15, -0.02)), Vector3(0.5, 0.14, 0.035), Palette.MOTION)
+	g.prism(Geo.place(Vector3(0, 1.8, 0)), 4, 0.07, 0.0, 0.18, Palette.ALARM)
+	var m := g.mesh()
+	_cache["skiff"] = m
+	return m
+
+
 ## A bag of loot on the back, its size by how full it is (§12.19): the
 ## diorama's sack, with a tie and a coin peeking out.
 static func sack() -> ArrayMesh:

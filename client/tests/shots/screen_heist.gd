@@ -1,14 +1,18 @@
 extends SceneTree
 ## The heist screen at a moment of a rehearsal on WorldTests' island
 ## (tools/render/shoot.sh). SHOT is the file; MOMENT picks the moment:
-## "start" (just landed, the first orders given), "sneak" (the crew spread, a guard looking),
-## "vault" (the crew at the Vault, cracking), "alarm" (a guard alerted, the
-## alarm up), "pick" (the landing picker, before landing). HOUR and ZOOM are optional; BUTTONS shows Settings' turn and
-## zoom buttons.
+## "start" (just landed, the first orders given), "sneak" (the crew spread, a
+## guard looking), "vault" (the crew at the Vault, cracking), "alarm" (a
+## guard alerted, the alarm up), "pick" (the landing picker, before landing),
+## "cross" (the swoop to another realm, at its middle), "escape" (Get out,
+## the skiff called to the edge). HOUR and ZOOM are optional; BUTTONS shows
+## Settings' turn and zoom buttons, CONTRAST high contrast, LEFT left-handed
+## play, TEXT a text size (150, 200), NAMES the names a long press shows.
 
-const TO := {"sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]],
-	"alarm": [[5, 6], [3, 10], [4, 11]], "start": [[7, 8], [2, 10], [1, 10]]}
-const TICKS := {"start": 30, "sneak": 150, "vault": 300, "alarm": 150}
+const TO := {"escape": [[2, 10], [3, 10], [2, 11]], "cross": [[4, 9], [3, 10], [4, 11]],
+	"sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]], "alarm": [[5, 6], [3, 10], [4, 11]],
+	"start": [[7, 8], [2, 10], [1, 10]]}
+const TICKS := {"escape": 120, "cross": 60, "start": 30, "sneak": 150, "vault": 300, "alarm": 150}
 
 
 func _initialize() -> void:
@@ -24,6 +28,10 @@ func _go() -> void:
 	root.add_child(frame)
 	App.services = Fixtures.answered(Services.build(frame, "", null, "user://outbox-shot.json"))
 	Settings.camera_buttons = OS.get_environment("BUTTONS") != ""
+	Settings.high_contrast = OS.get_environment("CONTRAST") != ""
+	Settings.left_handed = OS.get_environment("LEFT") != ""
+	Settings.text_scale = int(OS.get_environment("TEXT")) if OS.get_environment("TEXT") != "" else 100
+	Settings.apply()
 	App.services.store.dispatch(&"heist_started", {"island": WorldTests.island(), "testing": true})
 	var screen: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
 	frame.add_child(screen)
@@ -59,8 +67,24 @@ func _go() -> void:
 			screen.controller.advance(10)
 			screen._refresh()
 			view._process(1.0 / 3.0)
+	if moment == "escape":
+		# Get out, and the skiff called to the south-west edge.
+		screen.controller.get_out()
+		screen.controller.tap_tile(Vector2i(1, 11))
+		for k in 4:
+			screen.controller.advance(10)
+			screen._refresh()
+			view._process(1.0 / 3.0)
+	if moment == "cross":
+		# §21.1's swoop between realms, caught at its middle.
+		view.swoop()
+		view._process(0.45)
+		view.set_process(false)
 	if OS.get_environment("ZOOM") != "":
 		view.set_zoom(int(OS.get_environment("ZOOM")))
+	if OS.get_environment("NAMES") != "":
+		# A long press: every crew member's name over its head.
+		view.anchors.names_for = 60.0
 	screen.set_process(false)
 	screen._refresh()
 	for i in 6:

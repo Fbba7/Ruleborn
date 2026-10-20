@@ -29,4 +29,7 @@ void fragment() {
 		s = 0.55 + 0.75 * smoothstep(0.75, 0.95, w) * smoothstep(1.0, 0.95, w);
 	}
 	ALBEDO = linear(COLOR.rgb) * COLOR.a * fade * s * strength;
+	// Written, so the light is drawn after every solid and the galaxy, as
+	// light should be; added, so its own strength is in ALBEDO.
+	ALPHA = 1.0;
 }

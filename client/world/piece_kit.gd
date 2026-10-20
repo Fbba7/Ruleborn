@@ -16,6 +16,7 @@ const IRON := Color("#3A3440")
 
 static func vault(open: bool) -> ArrayMesh:
 	var g := Geo.new()
+	g.skip_down = true
 	_vault_into(g, open)
 	# Drawn a fifth larger than its parts, the heist's prize reads first.
 	var arrays := g.st.commit_to_arrays()
@@ -73,28 +74,40 @@ static func _vault_into(g: Geo, open: bool) -> void:
 ## shape (§21.2), which turns and glows.
 static func pylon(school := "matter") -> ArrayMesh:
 	var g := Geo.new()
+	g.skip_down = true
 	var stone := Palette.STONE
 	var colour: Color = Palette.SCHOOL.get(school, Palette.MATTER)
-	g.prism(Geo.place(Vector3.ZERO, PI / 4.0), 4, 0.32, 0.28, 0.12, stone.darkened(0.2))
-	g.prism(Geo.place(Vector3(0, 0.12, 0), PI / 4.0), 4, 0.24, 0.22, 0.08, stone.darkened(0.1))
+	g.rbox(Geo.place(Vector3(0, 0.06, 0), PI / 4.0), Vector3(0.6, 0.12, 0.6), stone.darkened(0.2), 0.03)
+	g.rbox(Geo.place(Vector3(0, 0.16, 0), PI / 4.0), Vector3(0.44, 0.08, 0.44), stone.darkened(0.1), 0.02)
+	# The school's colour inlaid round the step.
+	g.torus(Geo.place(Vector3(0, 0.2, 0)), 0.21, 0.012, Color(colour.lightened(0.2), 0.4), 16, 3)
 	g.prism(Geo.place(Vector3(0, 0.2, 0), PI / 4.0), 4, 0.16, 0.09, 1.1, stone)
-	g.prism(Geo.place(Vector3(0, 1.3, 0), PI / 4.0), 4, 0.09, 0.0, 0.12, stone.lightened(0.1))
-	# Runes up its face in the school's colour.
-	for k in 3:
-		g.box(Geo.place(Vector3(0, 0.45 + 0.25 * k, 0.13 - 0.016 * k)), Vector3(0.07, 0.07, 0.01), Color(colour, 0.4))
-	g.moving(Geo.Anim.SPIN_Y, Vector3(0, 1.62, 0))
-	_shape(g, school, Vector3(0, 1.62, 0), 0.13, Color(colour.lightened(0.15), 0.35))
-	g.still()
+	g.prism(Geo.place(Vector3(0, 1.3, 0), PI / 4.0), 4, 0.09, 0.0, 0.14, stone.lightened(0.1))
+	# Runes up each face in the school's colour, breathing.
+	for f in 4:
+		var yaw := PI / 2.0 * f
+		var out := Vector3(0, 0, 1).rotated(Vector3.UP, yaw)
+		for k in 3:
+			var y := 0.45 + 0.25 * k
+			g.box(Geo.place(Vector3(0, y, 0) + out * (0.128 - 0.024 * k), yaw), Vector3(0.06, 0.07, 0.008),
+				Color(colour, 0.4))
+	g.moving(Geo.Anim.SPIN_Y, Vector3(0, 1.66, 0))
+	_shape(g, school, Vector3(0, 1.66, 0), 0.13, Color(colour.lightened(0.15), 0.35))
+	g.torus(Transform3D(Basis(Vector3.RIGHT, 0.4), Vector3(0, 1.66, 0)), 0.22, 0.012, Color(colour.lightened(0.3), 0.3),
+		20, 3)
+	g.moving(Geo.Anim.NONE, Vector3.ZERO)
 	return g.mesh()
 
 
 static func broken_pylon() -> ArrayMesh:
 	var g := Geo.new()
+	g.skip_down = true
 	var stone := Palette.STONE.darkened(0.2)
 	g.prism(Geo.place(Vector3.ZERO, PI / 4.0), 4, 0.32, 0.28, 0.12, stone.darkened(0.1))
 	g.prism(Geo.place(Vector3(0, 0.12, 0), PI / 4.0), 4, 0.24, 0.22, 0.08, stone)
 	g.prism(Geo.place(Vector3(0, 0.2, 0), PI / 4.0), 4, 0.16, 0.14, 0.3, stone)
-	# The top fallen beside it, and the rubble.
+	# Its runes gone dark, a crack up the stump; the top fallen beside it.
+	g.box(Geo.place(Vector3(0.03, 0.36, 0.152), 0.3), Vector3(0.02, 0.22, 0.01), Palette.INK)
 	g.prism(Transform3D(Basis(Vector3.BACK, 1.4), Vector3(0.38, 0.09, 0.1)), 4, 0.12, 0.09, 0.6, stone.lightened(0.05))
 	for k in 4:
 		g.rock(Geo.place(Vector3(-0.25 + 0.15 * k, 0.03, 0.25 - 0.08 * k)), 0.05, stone, k)
@@ -105,6 +118,7 @@ static func broken_pylon() -> ArrayMesh:
 ## colour (§10.3), live.
 static func ward(kind: String, level := 1) -> ArrayMesh:
 	var g := Geo.new()
+	g.skip_down = true
 	var colour: Color = Palette.WARD.get(kind, Palette.INK)
 	var school := str(Palette.WARD_SCHOOL.get(kind, "motion"))
 	var lit := Color(colour.lightened(0.2), 0.4)
@@ -127,7 +141,7 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 			for k in 3:
 				var a := TAU * k / 3.0
 				g.gem(Geo.place(Vector3(cos(a) * 0.14, 0.12, sin(a) * 0.14)), 0.03, 0.03, lit, 4)
-			g.still()
+			g.moving(Geo.Anim.NONE, Vector3.ZERO)
 		"matter":
 			# A crystal wall: shards breaking from the ground.
 			for k in 4:
@@ -143,7 +157,7 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 				g.box(Geo.place(Vector3(cos(q) * 0.18, 0.075, sin(q) * 0.18), -q), Vector3(0.04, 0.01, 0.015), lit)
 			g.moving(Geo.Anim.SPIN_Y, Vector3(0, 0.08, 0))
 			g.box(Geo.place(Vector3(0.07, 0.085, 0)), Vector3(0.15, 0.015, 0.025), GOLD)
-			g.still()
+			g.moving(Geo.Anim.NONE, Vector3.ZERO)
 		"energy":
 			# A static coil: a copper coil on a post, sparking.
 			g.cyl(Geo.place(Vector3(0, 0.05, 0)), 0.06, 0.05, 0.5, IRON, 6)
@@ -151,7 +165,7 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 				g.torus(Geo.place(Vector3(0, 0.12 + 0.075 * k, 0)), 0.12 - 0.008 * k, 0.02, Color("#C87A4A"), 12, 4)
 			g.moving(Geo.Anim.BOB, Vector3(0, 0.62, 0))
 			g.ball(Geo.place(Vector3(0, 0.62, 0)), 0.07, Color(Color("#FFE7A8"), 0.2), 3, 6)
-			g.still()
+			g.moving(Geo.Anim.NONE, Vector3.ZERO)
 		"life":
 			# A thorn hedge: roots curling up from the ground, thorned.
 			for k in 5:
@@ -161,7 +175,7 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 				g.moving(Geo.Anim.SHIVER, p)
 				g.prism(Transform3D(tilt, p), 4, 0.04, 0.0, 0.3, Color("#5A3A2A").lerp(colour, 0.35))
 				g.prism(Transform3D(tilt, p + Vector3(0, 0.12, 0)), 3, 0.02, 0.0, 0.08, colour.lightened(0.2))
-			g.still()
+			g.moving(Geo.Anim.NONE, Vector3.ZERO)
 		_:
 			# A lantern glare: a lantern on a crook, its light breathing.
 			g.cyl(Geo.place(Vector3(0.14, 0.05, 0)), 0.035, 0.028, 0.62, KitStyle.WOOD_DARK, 5)
@@ -169,7 +183,7 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 			g.moving(Geo.Anim.SWING, Vector3(-0.06, 0.65, 0))
 			g.rbox(Geo.place(Vector3(-0.06, 0.53, 0)), Vector3(0.14, 0.17, 0.14), Color(Color("#FFE7A8"), 0.15), 0.02)
 			g.prism(Geo.place(Vector3(-0.06, 0.615, 0), PI / 4.0), 4, 0.11, 0.0, 0.06, KitStyle.WOOD_DARK)
-			g.still()
+			g.moving(Geo.Anim.NONE, Vector3.ZERO)
 			g.ring(Geo.place(Vector3(0, 0.058, 0)), 0.0, 0.26, Color(Color("#FFE7A8"), 0.5), 12)
 	if level >= 2:
 		# Gold inlay: a gold ring round the circle and studs on it.
@@ -182,6 +196,7 @@ static func ward(kind: String, level := 1) -> ArrayMesh:
 
 static func dead_ward() -> ArrayMesh:
 	var g := Geo.new()
+	g.skip_down = true
 	g.cyl(Geo.place(Vector3.ZERO), 0.38, 0.4, 0.04, Color("#3A3350"), 12)
 	for k in 3:
 		g.rock(Geo.place(Vector3(-0.12 + 0.12 * k, 0.05, 0.05 * (k - 1))), 0.04, Palette.STONE.darkened(0.35), k)
