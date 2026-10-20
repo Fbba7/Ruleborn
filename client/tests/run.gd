@@ -464,6 +464,7 @@ func _run() -> void:
 	await ProfileTests.new(self, check, _mount, server_url).run()
 	await PlannerTests.new(self, check, _mount, server_url).run()
 	await MapTests.new(self, check, _mount, server_url).run()
+	await UniverseViewTests.new(self, check, _mount).run()
 	await RealmTests.new(self, check, _mount, server_url).run()
 	await ShareTests.new(self, check, _mount, server_url).run()
 	await FirstTests.new(self, check, _mount, server_url).run()

@@ -45,6 +45,15 @@ universe, inside §21.3's 40,000 and 150.
 - `round1_home.png`, `round1_zoom0.png`, `round1_zoom1.png`, `round1_zoom2.png`,
   `round1_map_and_universe_screens.png`.
 
+- Round 2: the meadow (two noise fields shade the grass in patches; MultiMesh tufts and flowers, two
+  draw calls for the whole universe), rose cobble paths from the plaza to each building, peaks only on the
+  rugged realms, soft violet contact shade under buildings, trees and peaks (`universe_shade.gdshader`),
+  the camera brought in to 140 m so the sun's shadow could reach.
+  Stills: `round2_home.png`, `round2_zoom0.png`, `round2_zoom1.png`, `round2_zoom2.png`.
+
+Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
+link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
+
 ## Worse than the design (to do next)
 
 - Island tops are flatter and emptier than the design's dense dressing; scatter and paths next.
@@ -53,4 +62,13 @@ universe, inside §21.3's 40,000 and 150.
 
 ## Hooks in other tracks' files
 
-None.
+- `client/tests/run.gd`: one line registering `UniverseViewTests`.
+
+## For other tracks
+
+- T2: directional shadows do not show on anything drawn with `toon_light.gdshaderinc` under the
+  Compatibility renderer here (tried orthogonal and two splits, the light at 30°, MSAA off). The map uses
+  its own contact shade meanwhile.
+- T2/T3: `toon.gdshader` reads vertex colours as linear, so every hex colour renders paler than the
+  design (three.js converts hex from sRGB). `universe_toon.gdshader` converts; the realm view may want the
+  same.

@@ -34,6 +34,9 @@ const TAP_MS := 400
 ## The skiffs flying the links, and the glows in each one's wake.
 const SKIFFS := 4
 const WAKE := 12
+## How far back the camera stands from what it looks at: enough that the
+## whole column is in front of it, near enough that the sun's shadow reaches.
+const BACK := 140.0
 ## A fault, in the alarm's red (§21.8 keeps red for alarms).
 const FAULT := Color("#FF5A7A")
 
@@ -41,6 +44,7 @@ static var _toon: Shader = load("res://world/universe_toon.gdshader")
 static var _outline: Shader = load("res://world/outline.gdshader")
 static var _glow: Shader = load("res://world/universe_glow.gdshader")
 static var _veil: Shader = load("res://world/universe_veil.gdshader")
+static var _shade: Shader = load("res://world/universe_shade.gdshader")
 
 var viewport: SubViewport
 var container: SubViewportContainer
@@ -132,7 +136,7 @@ func _build_stage() -> void:
 	world.add_child(env_node)
 	sun = DirectionalLight3D.new()
 	sun.light_color = Color("#FFE6C8")
-	sun.light_energy = 0.9
+	sun.light_energy = 0.8
 	sun.shadow_enabled = true
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
 	sun.directional_shadow_max_distance = 160.0
@@ -146,7 +150,7 @@ func _build_stage() -> void:
 	camera = Camera3D.new()
 	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 	camera.near = 1.0
-	camera.far = 900.0
+	camera.far = 600.0
 	world.add_child(camera)
 	statics = Node3D.new()
 	world.add_child(statics)
@@ -195,12 +199,14 @@ func _build() -> void:
 	var glows := UniversePaint.new()
 	var light := UniversePaint.new()
 	var flow := UniversePaint.new()
+	var shades := UniversePaint.new()
 	for r: Dictionary in realms:
 		var id := str(r.get("realm", ""))
 		if not places.has(id):
 			continue
 		var island := UniverseIsland.new(r, places[id])
 		island.spire = int(_view.get("spire", 1))
+		island.shades = shades
 		island.build(body, hero, glows, light, flow, r.get("buildings", []))
 		islands[id] = island
 	if ghosts > 0 and places.has("next:0"):
@@ -209,6 +215,7 @@ func _build() -> void:
 			"ghost": true}, places["next:0"])
 		ghost.build(body, hero, glows, light, flow, [])
 		islands["next:0"] = ghost
+	_build_scatter()
 	_build_links(hero, glows, light, flow)
 	_build_faults(light, glows)
 	_bounds = UniverseLayout.bounds(places, UniverseLayout.radius(UniverseLayout.OUTER_GRID) + 2.0)
@@ -218,6 +225,9 @@ func _build() -> void:
 	_add(glows.mesh(), _glow_material(0.3, 0.35), false)
 	_add(light.mesh(), _veil_material(0.0, 0.0), false)
 	_add(flow.mesh(), _veil_material(1.6, 3.0), false)
+	var shade := ShaderMaterial.new()
+	shade.shader = _shade
+	_add(shades.mesh(), shade, false)
 	_build_heart_rings()
 	var centre := _bounds.get_center()
 	StarSky.new(hash(str(realms.size()))).build(statics, Vector3(centre.x, 0, centre.z),
@@ -263,6 +273,41 @@ static func _veil_material(flow: float, streaks: float) -> ShaderMaterial:
 	m.set_shader_parameter("flow", flow)
 	m.set_shader_parameter("streaks", streaks)
 	return m
+
+
+## Every island's meadow: tufts of grass and flowers, two layers of
+## instances for the whole universe (§21.3: MultiMesh scatter).
+func _build_scatter() -> void:
+	var tufts: Array = []
+	var flowers: Array = []
+	for id: String in islands:
+		(islands[id] as UniverseIsland).scatter(tufts, flowers)
+	var tuft := Geo.new()
+	for b in 3:
+		var lean := Basis(Vector3(cos(b * 2.1), 0, sin(b * 2.1)), 0.32)
+		tuft.prism(Transform3D(lean, Vector3(cos(b * 2.1) * 0.07, 0, sin(b * 2.1) * 0.07)), 3, 0.07, 0.0,
+			0.42 - 0.06 * b, Color.WHITE)
+	var bloom := Geo.new()
+	bloom.prism(Geo.place(Vector3.ZERO), 3, 0.025, 0.02, 0.24, Color("#5A9A48"))
+	bloom.ball(Geo.place(Vector3(0, 0.27, 0), 0.0, Vector3(1.0, 0.6, 1.0)), 0.11, Color.WHITE, 2, 5)
+	for layer: Array in [[tufts, tuft.mesh()], [flowers, bloom.mesh()]]:
+		var items: Array = layer[0]
+		if items.is_empty():
+			continue
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.use_colors = true
+		mm.mesh = layer[1]
+		mm.instance_count = items.size()
+		for i in items.size():
+			mm.set_instance_transform(i, items[i][0])
+			mm.set_instance_color(i, items[i][1])
+		var mmi := MultiMeshInstance3D.new()
+		mmi.multimesh = mm
+		mmi.material_override = _material()
+		mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		statics.add_child(mmi)
+		triangles += items.size() * ((layer[1] as ArrayMesh).surface_get_array_len(0) / 3)
 
 
 ## §5.3's links, each built to its gap; a rope bridge on its own node, so it
@@ -519,12 +564,14 @@ func _place_camera() -> void:
 	var p := deg_to_rad(PITCH + _tilt.y * TILT_DEGREES.y)
 	var back := Vector3(sin(yaw) * cos(p), sin(p), cos(yaw) * cos(p))
 	camera.size = _size
+	# The sun's shadow reaches as far as the camera sees, and no further.
+	sun.directional_shadow_max_distance = BACK + clampf(_size * 0.9, 30.0, 160.0)
 	camera.v_offset = -(inset.y - inset.x) / 2.0 * _size / maxf(1.0, size.y)
 	_set_origin(back)
 	if not camera.is_inside_tree():
-		camera.position = _target + back * 300.0
+		camera.position = _target + back * BACK
 		return
-	camera.look_at_from_position(_target + back * 300.0, _target, Vector3.UP)
+	camera.look_at_from_position(_target + back * BACK, _target, Vector3.UP)
 
 
 ## The galaxy follows the screen most of the way, so it reads as far off.
