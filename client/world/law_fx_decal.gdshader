@@ -16,6 +16,11 @@ uniform vec4 colour_a : source_color = vec4(1.0);
 uniform vec4 colour_b : source_color = vec4(0.1, 0.05, 0.08, 1.0);
 // The Heart, for patterns that lead toward it (Inward pull).
 uniform vec2 focus = vec2(0.0);
+// How much of the realm's light a mark takes (0 for one that glows by
+// itself: runes, pools, aurora), and the light now (1 at noon, less at night
+// and in Glowing dark), so ice and cracks darken with the ground they lie on.
+uniform float lit = 1.0;
+uniform float lum = 1.0;
 
 varying vec2 world;
 varying vec4 local;
@@ -227,6 +232,6 @@ void fragment() {
 		c = mix(colour_a.rgb, colour_b.rgb, n);
 		a = line * 0.45 + n * 0.12;
 	}
-	ALBEDO = c * tint;
+	ALBEDO = c * tint * mix(1.0, lum, lit);
 	ALPHA = clamp(a, 0.0, 1.0) * weight * strength;
 }

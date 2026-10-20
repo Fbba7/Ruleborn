@@ -35,6 +35,13 @@ const PARADOXES: Array[String] = ["reversal", "twin_suns", "unmaking"]
 ## sight overlay (render priority 0), motes and clear pieces over it.
 const UNDER := -2
 const OVER := 1
+## How much of the realm's light each ground pattern takes (law_fx_decal's
+## `lit`); a pattern not named takes it all. Light that glows by itself takes
+## none: Aurora's ribbons, Glowing dark's runes, pools of light, Static.
+const LIT := {4: 0.4, 5: 0.0, 7: 0.0, 8: 0.0, 9: 0.5, 10: 0.0, 3: 0.5}
+## The sun's strength at noon (RealmPalette.light_at), the light marks are
+## drawn for.
+const NOON_SUN := 0.82
 
 static var _shaders := {}
 
@@ -59,6 +66,7 @@ var seconds := 0.0
 var source: RulebornReplay
 
 var _clocked: Array[ShaderMaterial] = []
+var _lit: Array[ShaderMaterial] = []
 var _hooks: Array[Callable] = []
 var _watchers: Array[Callable] = []
 var _followers: Array[Dictionary] = []
@@ -97,6 +105,7 @@ func build(s: LawFxSite) -> void:
 		remove_child(c)
 		c.queue_free()
 	_clocked.clear()
+	_lit.clear()
 	_hooks.clear()
 	_watchers.clear()
 	_followers.clear()
@@ -180,6 +189,10 @@ func sync(tick: float) -> void:
 		m.set_shader_parameter("t", seconds)
 	for h: Callable in _hooks:
 		h.call(seconds)
+	if sun != null:
+		var lum := clampf(sun.light_energy / NOON_SUN, 0.35, 1.0)
+		for m: ShaderMaterial in _lit:
+			m.set_shader_parameter("lum", lum)
 
 
 ## What the heist shows this tick: each pylon standing or broken (§7.1:
@@ -283,7 +296,9 @@ func decal_material(pattern: int, a: Color, b := Color("#1A0C14"), pace := 1.0) 
 	m.set_shader_parameter("colour_b", b)
 	m.set_shader_parameter("pace", pace * _pace())
 	m.set_shader_parameter("focus", Vector2(site.heart.x, site.heart.z) if site != null else Vector2.ZERO)
+	m.set_shader_parameter("lit", float(LIT.get(pattern, 1.0)))
 	m.render_priority = UNDER
+	_lit.append(m)
 	return m
 
 
