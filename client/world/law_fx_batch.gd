@@ -23,7 +23,7 @@ func _init(k: Kind) -> void:
 	kind = k
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	st.set_custom_format(0, SurfaceTool.CUSTOM_RGBA_FLOAT)
-	if k == Kind.MOTES:
+	if k == Kind.MOTES or k == Kind.DECALS:
 		st.set_custom_format(1, SurfaceTool.CUSTOM_RGBA_FLOAT)
 
 

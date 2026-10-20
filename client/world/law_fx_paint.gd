@@ -54,21 +54,24 @@ static func mark(fx: LawFx, sig: Node3D, tiles: Array[Vector2i], pattern: int, a
 	var batch := LawFxBatch.new(LawFxBatch.Kind.DECALS)
 	for t: Vector2i in tiles:
 		batch.tile(fx.site, t, 0.75 + 0.25 * RealmKit.jitter(t, 5))
-	var mi := fx.layer(sig, batch, fx.decal_material(pattern, a, b, pace))
-	mi.set_meta("ground", true)
-	return mi
+	var m := fx.decal_material(pattern, a, b, pace)
+	m.set_meta("ground", true)
+	return fx.layer(sig, batch, m)
 
 
 ## Round marks of `pattern` at each of `centres` (a Vector3 each), `radius`
 ## metres across: pools of light, ripples, rune rings, a clock face.
+## A mark drawn `alone` keeps its own draw, for a law that drives it itself.
 static func rounds(fx: LawFx, sig: Node3D, centres: Array, radius: float, pattern: int, a: Color,
-		b := Color("#1A0C14"), pace := 1.0) -> MeshInstance3D:
+		b := Color("#1A0C14"), pace := 1.0, alone := false) -> MeshInstance3D:
 	var batch := LawFxBatch.new(LawFxBatch.Kind.DECALS)
 	var k := 0
 	for c: Vector3 in centres:
 		batch.decal(c + Vector3(0, 0.025, 0), Vector2(radius, radius), 1.0, Vector4(c.x, c.z, k * 0.37, radius))
 		k += 1
-	return fx.layer(sig, batch, fx.decal_material(pattern, a, b, pace))
+	var m := fx.decal_material(pattern, a, b, pace)
+	m.set_meta("alone", alone)
+	return fx.layer(sig, batch, m)
 
 
 ## Ground a crew walks on: every tile a ground mark may lie on.
