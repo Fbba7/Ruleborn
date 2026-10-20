@@ -50,7 +50,13 @@ static func realm(services: Services) -> void:
 	var home := RosterTests.sample()
 	for p: Dictionary in home["producers"]:
 		if str(p["realm"]) == "heart" and str(p["kind"]) == "garden":
-			p["workers"] = [2, 4]
+			p["workers"] = [4]
+	# Two of the Heart's own, idle, to stroll between its doors.
+	for c: Dictionary in [{"id": 5, "kind": "bloomling", "role": "Mender"},
+			{"id": 6, "kind": "emberling", "role": "Breaker"}]:
+		c.merge({"school": "Life", "traits": [], "level": 1, "top": 2, "home": "heart", "via": "woke", "state": "idle",
+			"work": null, "next_level": null})
+		(home["characters"] as Array).append(c)
 	services.store.dispatch(&"universe_loaded", {"view": universe()})
 	services.store.dispatch(&"weaving_loaded", {"view": WeavingTests.sample()})
 	services.store.dispatch(&"roster_loaded", {"view": home})

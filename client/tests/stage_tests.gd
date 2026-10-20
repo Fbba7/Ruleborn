@@ -173,11 +173,16 @@ func _fold() -> void:
 	key.pressed.emit()
 	var back := screen.body.is_visible_in_tree() and not StageScreen.folded
 	var sections := screen.body.get_child_count()
+	# The fixture's two idle residents of the Heart stroll its doors (where
+	# their models are exported).
+	var strolling: int = screen.town._strollers.size()
+	var exported := CreatureModel.manifest().has("bloomling") and CreatureModel.manifest().has("emberling")
 	screen.queue_free()
 	await tree.process_frame
-	check.call("the realm view wears its woven laws' signatures (21.7), and one key folds its words away so the world "
-			+ "takes the phone, and brings them back (21.1)",
-		laws and shown and hidden and back and sections == 4, "%s %s %s %s %d" % [laws, shown, hidden, back, sections])
+	check.call("the realm view wears its woven laws' signatures (21.7), its idle residents stroll its doors, and one key "
+			+ "folds its words away so the world takes the phone, and brings them back (21.1)",
+		laws and shown and hidden and back and sections == 4 and (strolling == 2 or not exported),
+		"%s %s %s %s %d %d" % [laws, shown, hidden, back, sections, strolling])
 
 
 static func _button(at: Vector2, pressed: bool) -> InputEventMouseButton:

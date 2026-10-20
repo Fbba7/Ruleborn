@@ -126,6 +126,13 @@ func _draw_realm() -> void:
 	for c: Dictionary in home.get("characters", []):
 		who[int(c["id"])] = {"kind": str(c.get("kind", "")), "role": str(c.get("role", ""))}
 	town.build(buildings, RealmPalette.of(view.realm_type), producers, who)
+	# Who lives here and is not at work: a realm's own Hearth, or the
+	# Keeper's Spire for the Heart.
+	var living: Array = (home.get("characters", []) as Array).filter(func(c: Dictionary) -> bool:
+		var at := str(c.get("home", ""))
+		return (at == id or (at == RosterPresenter.SPIRE and id == "heart")) \
+			and str(c.get("state", "")) in ["idle", "resting"])
+	town.residents(living)
 	# The town, not the grid, at the middle of the screen: halfway to the
 	# buildings' centre, so the island's edge still frames it.
 	var middle := Vector3.ZERO

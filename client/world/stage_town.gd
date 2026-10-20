@@ -21,6 +21,10 @@ var placed: Array[Dictionary] = []
 var smoke: MeshInstance3D
 var ring: MeshInstance3D
 var _workers: Array[Node3D] = []
+## Residents strolling between the doors: {node, share of the round}, and
+## the doors.
+var _strollers: Array[Dictionary] = []
+var _doors: Array[Vector3] = []
 var _puffs: Array[Vector3] = []
 var _chosen := {}
 var _clock := 0.0
@@ -147,6 +151,71 @@ func choose(b: Dictionary) -> void:
 	ring.mesh = g.mesh()
 
 
+## The realm's residents not at work (the home view's characters who live
+## here: §10's homes): each idle one strolls the round of the buildings'
+## doors, each resting one naps by the Hearth (or the first building), with
+## the design's `walk` and `nap` clips. `who` is [{kind, state}].
+func residents(who: Array) -> void:
+	for d: Dictionary in _strollers:
+		(d["node"] as Node3D).queue_free()
+	_strollers.clear()
+	_doors.clear()
+	for b: Dictionary in placed:
+		_doors.append((b["mid"] as Vector3) + Vector3(0, 0, int(b["side"]) * 0.5 + 0.9))
+	if _doors.is_empty():
+		return
+	var bed: Dictionary = _find("hearth") if not _find("hearth").is_empty() else placed[0]
+	var napping := 0
+	for i in who.size():
+		var c: Dictionary = who[i]
+		var kind := str(c.get("kind", ""))
+		if kind == "" or not CreatureModel.manifest().has(kind):
+			continue
+		var model := CreatureModel.make(StringName(kind))
+		if model == null:
+			continue
+		if model.material() != null:
+			model.material().next_pass = null
+		add_child(model)
+		if str(c.get("state", "")) == "resting":
+			model.play(&"nap")
+			var side: int = bed["side"]
+			model.position = (bed["mid"] as Vector3) + Vector3(side * 0.5 + 0.35, 0, 0.3 + 0.6 * napping)
+			model.rotation.y = PI * 0.75
+			napping += 1
+		elif _doors.size() > 1:
+			model.play(&"walk")
+			_strollers.append({"node": model, "share": 0.0})
+	# Spread evenly round the doors, each its share of the round.
+	for k in _strollers.size():
+		_strollers[k]["share"] = (k + 0.5) / float(_strollers.size())
+	_stroll(0.0)
+
+
+## Each stroller `t` seconds round the doors, at a walking pace.
+func _stroll(t: float) -> void:
+	if _doors.size() < 2:
+		return
+	var legs: Array[float] = []
+	var round_trip := 0.0
+	for k in _doors.size():
+		var leg := _doors[k].distance_to(_doors[(k + 1) % _doors.size()])
+		legs.append(leg)
+		round_trip += leg
+	for d: Dictionary in _strollers:
+		var along := fposmod(t * 0.55 + float(d["share"]) * round_trip, maxf(0.01, round_trip))
+		var k := 0
+		while along > legs[k] and k < legs.size() - 1:
+			along -= legs[k]
+			k += 1
+		var a := _doors[k]
+		var b := _doors[(k + 1) % _doors.size()]
+		var node := d["node"] as Node3D
+		node.position = a.lerp(b, clampf(along / maxf(0.01, legs[k]), 0.0, 1.0))
+		var dir := b - a
+		node.rotation.y = atan2(-dir.x, -dir.z)
+
+
 func worker_count() -> int:
 	return _workers.size()
 
@@ -156,6 +225,7 @@ func _process(delta: float) -> void:
 	if Settings.reduced_motion:
 		return
 	_smoke()
+	_stroll(_clock)
 	if not _chosen.is_empty():
 		ring.scale = Vector3.ONE * (1.0 + 0.04 * sin(_clock * 4.0))
 		var mid: Vector3 = _chosen["mid"]
