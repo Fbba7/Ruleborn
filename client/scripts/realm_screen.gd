@@ -121,7 +121,6 @@ func _draw_realm() -> void:
 		return
 	view.realm_type = StageRealm.realm_type(str(realm.get("type", "Heart")))
 	view.show_replay(replay)
-	view.show_laws(replay)
 	var producers: Array = (home.get("producers", []) as Array).filter(func(p: Dictionary) -> bool:
 		return str(p["realm"]) == id)
 	var who := {}

@@ -28,12 +28,8 @@ var focus := Vector3.ZERO
 var taps_zoom := true
 ## Layers a screen adds over the realm: tiles, ghosts, its own pieces.
 var layers: Node3D
-## The woven laws' world signatures (T8's `LawFx`, §21.7), when shown.
-var law_fx: LawFx
 
 var _breath := 0.0
-## The laws' clock, for signatures with no heist behind them.
-var _law_seconds := 0.0
 
 
 func _init() -> void:
@@ -49,22 +45,14 @@ func _process(delta: float) -> void:
 	super._process(delta)
 	_breath += delta
 	fit()
-	if law_fx != null and law_fx.source == null:
-		_law_seconds += delta
-		law_fx.sync(_law_seconds * LawFx.TPS)
-
-
-## §21.7: every law woven in `r`'s realm, its world signature always on, so a
-## player reads the island without a menu (T8's `LawFx.attach`).
-func show_laws(r: RulebornReplay) -> void:
-	_drop_laws()
-	if r != null:
-		law_fx = LawFx.attach(self, r)
 
 
 ## The signatures of `laws` over this realm with nothing placed: what a
-## scout knows (§12.4). Their crowns and the threads between pylons stand on
-## tiles, so they are left out; the realm still wears each law's look.
+## scout knows (§12.4). `WorldView` draws a realm's woven laws itself (T8's
+## `LawFx`); a scouted realm has none woven where the scout can see, so its
+## laws are laid over the bare realm here, their crowns and the threads
+## between pylons left out, since those stand on tiles. The realm still
+## wears each law's look, and `WorldView` keeps it in time.
 func show_bare_laws(laws: Array) -> void:
 	_drop_laws()
 	if laws.is_empty() or _size.x == 0:
