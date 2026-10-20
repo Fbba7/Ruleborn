@@ -152,6 +152,11 @@ func ball(r: float, col: Color, x: float, y: float, z: float, squash := 1.0, rin
 		segments)
 
 
+## A ring lying flat at (x, y, z), un-inked: a collar, a mooring ring.
+func torus_at(r: float, t: float, col: Color, x: float, y: float, z: float) -> void:
+	d.torus(place(x, y, z), r * unit, t * unit, col, 12, 3)
+
+
 ## A window on a wall facing `yaw`: a frame, warm glass, mullions, a sill
 ## and, by default, a pair of open shutters in the roof's colour.
 func window(x: float, y: float, z: float, yaw: float, s := 1.0, shutters := true) -> void:
@@ -206,6 +211,37 @@ func roof(w: float, depth: float, y0: float, rise: float, over := 0.08, rows := 
 		-(depth / 2.0 + over + 0.01)) * unit), 0.03 * unit, 0.03 * unit, (depth + over * 2.0 + 0.02) * unit,
 		KitStyle.GOLD if tier == 2 else roof_dark, 6)
 	g.gable(Transform3D(turn, at(0, y0, 0)), w * unit, rise * unit, (depth - 0.01) * unit, wall)
+	return y0 + rise
+
+
+## A hip roof: four shingled slopes rising from eaves `w` × `depth` at
+## `y0` to a short ridge, `rise` high; reads as a roof from every side.
+func hip_roof(w: float, depth: float, y0: float, rise: float) -> float:
+	var rows := 3
+	for i in rows:
+		var t0 := float(i) / rows
+		var t1 := float(i + 1) / rows
+		var col := roof_col if i % 2 == 1 else roof_dark
+		var hw0 := lerpf(w / 2.0 + 0.06, 0.04, t0)
+		var hd0 := lerpf(depth / 2.0 + 0.06, 0.12, t0)
+		var hw1 := lerpf(w / 2.0 + 0.06, 0.04, t1)
+		var hd1 := lerpf(depth / 2.0 + 0.06, 0.12, t1)
+		var ya := y0 + rise * t0
+		var yb := y0 + rise * t1
+		var lo: Array[Vector3] = [at(-hw0, ya, -hd0), at(hw0, ya, -hd0), at(hw0, ya, hd0), at(-hw0, ya, hd0)]
+		var hi: Array[Vector3] = [at(-hw1, yb, -hd1), at(hw1, yb, -hd1), at(hw1, yb, hd1), at(-hw1, yb, hd1)]
+		for k in 4:
+			var n := (k + 1) % 4
+			var a: Vector3 = lo[k]
+			var b: Vector3 = lo[n]
+			var c: Vector3 = hi[n]
+			var e: Vector3 = hi[k]
+			if (b - a).cross(e - a).y > 0:
+				g.quad(a, b, c, e, col.darkened(0.04 * (k % 2)))
+			else:
+				g.quad(a, e, c, b, col.darkened(0.04 * (k % 2)))
+	var ridge := at(0, y0 + rise, 0)
+	g.box(Geo.place(ridge), Vector3(0.1, 0.035, 0.28) * unit, KitStyle.GOLD if tier == 2 else roof_dark)
 	return y0 + rise
 
 
@@ -527,7 +563,7 @@ func _star_well() -> void:
 	stop()
 	cyl(0.004, 0.004, 0.36, Color("#D8C8A8"), 0, 0.82, 0, 3)
 	# Its little roof, turned across the beam.
-	var y := roof(0.5, 0.84, 1.25, 0.34, 0.05, 3, PI / 2.0)
+	var y := hip_roof(0.62, 0.48, 1.25, 0.38)
 	move(Geo.Anim.SPIN_Y, at(0, y + 0.3, 0))
 	d.gem(Geo.place(at(0, y + 0.3, 0)), 0.15 * unit, 0.22 * unit, KitStyle.lit(Color("#FFE9A0"), 0.45), 4)
 	stop()

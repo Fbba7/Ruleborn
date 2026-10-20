@@ -141,55 +141,90 @@ static func _vault(b: BuildingKit) -> void:
 
 
 ## The Anchor Stone: "a standing stone chained to the island's underside",
-## grey stone and a school rune.
+## grey stone and a school rune; the chains tighten when strain rises. A
+## carved menhir on a paving of runes, chains running down from its iron
+## collar to rings set in anchor blocks.
 static func _anchor(b: BuildingKit) -> void:
 	var rune: Color = b.style["accent"]
-	b.cyl(0.42, 0.46, 0.06, b.stone2, 0, 0, 0, 8)
-	b.g.prism(b.place(0, 0.06, 0, 0.3), 5, 0.2 * b.unit, 0.12 * b.unit, 1.0 * b.unit, Color("#9C98A8"))
-	b.g.prism(b.place(0, 1.06, 0, 0.3), 5, 0.12 * b.unit, 0.0, 0.18 * b.unit, Color("#ACA8B8"))
-	b.d.gem(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), b.at(0, 0.62, 0.17)), 0.06 * b.unit, 0.015 * b.unit,
+	var grey := Color("#9C98A8") if b.tier < 2 else Color("#E6E0FF")
+	b.cyl(0.52, 0.54, 0.05, b.stone2, 0, 0, 0, 12)
+	b.cyl(0.4, 0.4, 0.006, Color("#3A3350"), 0, 0.05, 0, 12)
+	for i in 12:
+		var q := TAU * i / 12.0
+		b.fine(0.06, 0.008, 0.02, KitStyle.lit(rune, 0.5), cos(q) * 0.34, 0.056, sin(q) * 0.34, -q)
+	b.g.prism(b.place(0, 0.05, 0, 0.3), 6, 0.22 * b.unit, 0.13 * b.unit, 1.1 * b.unit, grey, false, grey.lightened(0.1))
+	b.g.prism(b.place(0, 1.15, 0, 0.3), 6, 0.13 * b.unit, 0.04 * b.unit, 0.16 * b.unit, grey.lightened(0.08))
+	# The carved band and its glowing rune.
+	b.cyl(0.2, 0.2, 0.05, b.stone2 if b.tier == 0 else KitStyle.GOLD, 0, 0.72, 0, 6)
+	b.d.gem(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), b.at(0, 0.5, 0.19)), 0.07 * b.unit, 0.015 * b.unit,
 		KitStyle.lit(rune.lightened(0.2), 0.3), 4)
-	# The chains, down from the stone to rings in the ground.
+	if b.tier == 2:
+		for k in 3:
+			b.d.gem(Geo.place(b.at(0.08 * (k - 1), 0.3 + 0.25 * k, 0.17)), 0.025 * b.unit, 0.06 * b.unit,
+				KitStyle.lit(Color("#C8B8FF"), 0.5), 4)
+	b.torus_at(0.17, 0.03, KitStyle.IRON, 0, 0.42, 0)
 	for k in 4:
 		var a := TAU * k / 4.0 + PI / 4.0
-		var top := Vector3(cos(a) * 0.14, 0.5, sin(a) * 0.14)
-		var foot := Vector3(cos(a) * 0.4, 0.04, sin(a) * 0.4)
-		for m in 5:
-			var p := top.lerp(foot, (m + 0.5) / 5.0)
+		var top := Vector3(cos(a) * 0.17, 0.42, sin(a) * 0.17)
+		var foot := Vector3(cos(a) * 0.5, 0.08, sin(a) * 0.5)
+		for m in 6:
+			var p := top.lerp(foot, (m + 0.5) / 6.0)
+			p.y -= sin((m + 0.5) / 6.0 * PI) * 0.04
 			var yaw := -a + (PI / 2.0 if m % 2 == 0 else 0.0)
 			b.d.torus(Transform3D(Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, PI / 2.0), b.at(p.x, p.y, p.z)),
-				0.03 * b.unit, 0.01 * b.unit, KitStyle.IRON, 8, 3)
-		b.d.torus(Geo.place(b.at(foot.x, 0.04, foot.z)), 0.04 * b.unit, 0.012 * b.unit, KitStyle.IRON, 8, 3)
-	b.top = 1.2
+				0.028 * b.unit, 0.009 * b.unit, KitStyle.IRON, 8, 3)
+		b.box(0.12, 0.08, 0.12, b.stone2.darkened(0.1), foot.x, 0.04, foot.z, -a)
+		b.torus_at(0.035, 0.01, KitStyle.IRON, foot.x, 0.09, foot.z)
+	b.top = 1.3
 
 
 ## The Aether Spring: "a tiered fountain of glowing ink", teal stone and
-## cyan ink; ink ribbons rise.
+## cyan ink; bubbling, ink ribbons rise. An eight-sided basin with scalloped
+## rims, three tiers, ink falling from each, the spout's orb breathing and
+## ribbons of ink turning up out of it.
 static func _spring(b: BuildingKit) -> void:
 	var teal := Color("#4E8E94").lerp(b.stone, 0.15)
+	var rim := teal.lightened(0.15) if b.tier < 2 else KitStyle.GOLD
 	var ink := KitStyle.lit(Color("#5FE6F0"), 0.6)
-	b.cyl(0.5, 0.52, 0.16, teal.darkened(0.1), 0, 0, 0, 12)
-	b.g.cyl(b.place(0, 0.16, 0), 0.44 * b.unit, 0.44 * b.unit, 0.01 * b.unit, ink, 12)
-	b.cyl(0.08, 0.1, 0.36, teal, 0, 0.16, 0, 8)
-	b.cyl(0.3, 0.26, 0.08, teal, 0, 0.5, 0, 10)
-	b.g.cyl(b.place(0, 0.58, 0), 0.25 * b.unit, 0.25 * b.unit, 0.01 * b.unit, ink, 10)
-	b.cyl(0.05, 0.06, 0.24, teal, 0, 0.58, 0, 8)
-	b.cyl(0.16, 0.13, 0.06, teal, 0, 0.82, 0, 8)
-	b.ball(0.06, ink, 0, 0.92, 0, 1.4, 3, 6)
-	b.move(Geo.Anim.SPIN_Y, b.at(0, 0.6, 0))
+	var fall := Color(Color("#9BF4FA"), 0.5)
+	b.g.prism(b.place(0, 0, 0, PI / 8.0), 8, 0.52 * b.unit, 0.5 * b.unit, 0.18 * b.unit, teal.darkened(0.1), false,
+		teal)
+	b.g.cyl(b.place(0, 0.18, 0), 0.45 * b.unit, 0.45 * b.unit, 0.008 * b.unit, ink, 12)
+	for k in 16:
+		var a := TAU * k / 16.0
+		b.ball(0.035, rim, cos(a) * 0.5, 0.19, sin(a) * 0.5, 0.7, 2, 5)
+	var tiers := [[0.32, 0.5], [0.2, 0.78]]
+	b.cyl(0.08, 0.1, 0.62, teal, 0, 0.18, 0, 8)
+	for tr: Array in tiers:
+		var r: float = tr[0]
+		var y: float = tr[1]
+		b.cyl(r * 0.6, r, 0.08, teal, 0, y - 0.08, 0, 10)
+		b.g.cyl(b.place(0, y, 0), r * 0.92 * b.unit, r * 0.92 * b.unit, 0.006 * b.unit, ink, 10)
+		for k in 10:
+			var a := TAU * k / 10.0
+			b.ball(0.025, rim, cos(a) * r, y + 0.005, sin(a) * r, 0.7, 2, 4)
+		# Ink falling from the tier's lip to the one below.
+		for k in 4:
+			var a := TAU * k / 4.0 + PI / 4.0
+			b.glass.box(b.place(cos(a) * r, y - 0.14, sin(a) * r, -a), Vector3(0.05, 0.26, 0.008) * b.unit, fall)
+	b.cyl(0.05, 0.03, 0.2, teal.lightened(0.1), 0, 0.78, 0, 8)
+	b.move(Geo.Anim.BOB, b.at(0, 1.04, 0))
+	b.ball(0.07, ink, 0, 1.04, 0, 1.2, 3, 8)
+	b.stop()
+	b.move(Geo.Anim.SPIN_Y, b.at(0, 1.1, 0))
 	for k in 3:
 		var a := TAU * k / 3.0
-		for m in 4:
-			var t := m / 4.0
-			b.ball(0.025 - 0.004 * m, ink, cos(a + t * 2.0) * (0.2 - 0.04 * m), 0.95 + 0.12 * m, sin(a + t * 2.0) * 0.2,
-				1.0, 2, 5)
+		for m in 5:
+			var t := m / 5.0
+			b.ball(0.026 - 0.003 * m, ink, cos(a + t * 2.4) * (0.1 + 0.06 * m), 1.1 + 0.11 * m, sin(a + t * 2.4) * 0.12,
+				1.0, 2, 4)
 	b.stop()
 	if b.tier >= 1:
-		for k in 6:
-			var a := TAU * k / 6.0
-			b.box(0.08, 0.2, 0.08, b.stone, cos(a) * 0.5, 0.1, sin(a) * 0.5, -a)
-			b.ball(0.03, KitStyle.lit(Color("#9BEAF3"), 0.5), cos(a) * 0.5, 0.24, sin(a) * 0.5, 1.0, 2, 5)
-	b.top = 1.1
+		for k in 4:
+			var a := TAU * k / 4.0 + PI / 4.0
+			b.cyl(0.04, 0.035, 0.32, b.stone, cos(a) * 0.62, 0, sin(a) * 0.62, 6)
+			b.ball(0.04, KitStyle.lit(Color("#9BEAF3"), 0.4), cos(a) * 0.62, 0.36, sin(a) * 0.62, 1.0, 2, 5)
+	b.top = 1.3
 
 
 ## The Nursery: "an egg-shaped greenhouse with nests", glass and wicker;
