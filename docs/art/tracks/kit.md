@@ -72,3 +72,11 @@ Shots to re-render them: `client/tests/shots/kit_realm.gd` (REALM, LEVEL, HOUR, 
 - Read the hour (T2's `WorldLook`) to strengthen window and lantern glow at dusk and night.
 - Give the Aether Spring and the Anchor Stone stronger silhouettes; raise the small buildings toward 2,000 triangles where it buys shape.
 - Workers by producers (T5's actors).
+
+## Stopped here
+
+Stopped at the owner's request on 2026-10-20, 07:50 UTC.
+
+- **Done:** everything above, with the second integration merged (commit `b0e88f5`) and the grid matched to its meadow (`506bd9d`). gdlint and all kit tests pass on that state. The last full `check_all` that finished ("All checks passed") ran on `2b639a3`, before the second merge.
+- **In progress:** a full `check_all` on the merged state, stopped before it finished, so it is not confirmed there.
+- **Next:** run `bash tools/check_all.sh` on this branch. Then T4 can switch `universe_island.gd:337` to `BuildingKit.build_map`, and the kit can go on with the items under "Still worse than the design" (crisper trails, the four plainest buildings, a stronger grid overlay for the builder).
