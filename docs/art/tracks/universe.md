@@ -151,6 +151,10 @@ universe, inside §21.3's 40,000 and 150.
   the close-up is made ready, so the swoop in does not wait for it. The budget counting moved to
   `UniverseBudget`.
 
+- Round 20: the close island's night tint by realm: the green realms kept green, Lantern Vale and
+  Crystalline cool, Emberreach warm (Lantern Vale had come out teal).
+  Stills: `round20_zoom2_lanternvale.png`, `round20_zoom2_emberreach.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 
