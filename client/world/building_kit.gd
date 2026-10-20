@@ -50,7 +50,7 @@ var top := 1.0
 
 
 ## The materials of a level's look: walls, roof, trim.
-static func _look(lvl: int, colours: Dictionary) -> Array[Color]:
+static func look(lvl: int, colours: Dictionary) -> Array[Color]:
 	var s := KitStyle.of(KitStyle.realm_of(colours))
 	if lvl >= 7:
 		return [Color("#ECE6FF"), (s["roof"] as Color).lerp(Color("#8C6CF0"), 0.35).lightened(0.1), KitStyle.GOLD]
@@ -87,7 +87,7 @@ static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, col
 	b.palette = colours
 	b.style = KitStyle.of(KitStyle.realm_of(colours))
 	b.unit = side * 0.92
-	var c := _look(b.level, colours)
+	var c := look(b.level, colours)
 	b.wall = c[0]
 	b.roof_col = c[1]
 	b.roof_dark = b.roof_col.darkened(0.22)
@@ -137,7 +137,7 @@ func stop() -> void:
 ## `makeB`, realm-diorama.js :756–880), 80–250 triangles, reading by kind
 ## and by §21.5's look from far away: KitMap's.
 static func build_map(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, colours: Dictionary) -> void:
-	var c := _look(clampi(lvl, 1, 10), colours)
+	var c := look(clampi(lvl, 1, 10), colours)
 	KitMap.build(geo, kind, mid, side * 0.92, clampi(lvl, 1, 10), colours, c)
 
 
@@ -182,7 +182,7 @@ func _pane(xf: Transform3D, w: float, h: float, col: Color) -> void:
 
 
 ## A ring lying flat at (x, y, z), un-inked: a collar, a mooring ring.
-func torus_at(r: float, t: float, col: Color, x: float, y: float, z: float) -> void:
+func _torus_at(r: float, t: float, col: Color, x: float, y: float, z: float) -> void:
 	d.torus(place(x, y, z), r * unit, t * unit, col, 12, 3)
 
 

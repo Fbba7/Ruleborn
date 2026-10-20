@@ -162,7 +162,7 @@ static func _anchor(b: BuildingKit) -> void:
 		for k in 3:
 			b.d.gem(Geo.place(b.at(0.08 * (k - 1), 0.3 + 0.25 * k, 0.17)), 0.025 * b.unit, 0.06 * b.unit,
 				KitStyle.lit(Color("#C8B8FF"), 0.5), 4)
-	b.torus_at(0.17, 0.03, KitStyle.IRON, 0, 0.42, 0)
+	b._torus_at(0.17, 0.03, KitStyle.IRON, 0, 0.42, 0)
 	for k in 4:
 		var a := TAU * k / 4.0 + PI / 4.0
 		var top := Vector3(cos(a) * 0.17, 0.42, sin(a) * 0.17)
@@ -174,7 +174,7 @@ static func _anchor(b: BuildingKit) -> void:
 			b.d.torus(Transform3D(Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, PI / 2.0), b.at(p.x, p.y, p.z)),
 				0.028 * b.unit, 0.009 * b.unit, KitStyle.IRON, 8, 3)
 		b.box(0.12, 0.08, 0.12, b.stone2.darkened(0.1), foot.x, 0.04, foot.z, -a)
-		b.torus_at(0.035, 0.01, KitStyle.IRON, foot.x, 0.09, foot.z)
+		b._torus_at(0.035, 0.01, KitStyle.IRON, foot.x, 0.09, foot.z)
 	b.top = 1.3
 
 
