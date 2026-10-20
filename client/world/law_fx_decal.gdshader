@@ -20,6 +20,8 @@ uniform vec2 focus = vec2(0.0);
 // itself: runes, pools, aurora), and the light now (1 at noon, less at night
 // and in Glowing dark), so ice and cracks darken with the ground they lie on.
 uniform float lit = 1.0;
+// §20.8's reduced motion: 1 slows what jumps (Static's crackle).
+uniform float steady = 0.0;
 uniform float lum = 1.0;
 
 varying vec2 world;
@@ -172,7 +174,7 @@ void fragment() {
 		a = smoothstep(0.35, 0.8, n) * 0.5;
 	} else if (pattern == 10) {
 		// Static: thin crackling lines that jump about the ground.
-		float step_t = floor(s * 6.0);
+		float step_t = floor(s * mix(6.0, 0.5, steady));
 		float e = cells(p * 1.2 + vec2(hash(vec2(step_t, 1.0)), hash(vec2(step_t, 2.0))) * 7.0);
 		float on = step(0.6, hash(floor(p * 0.8) + step_t));
 		c = colour_a.rgb;

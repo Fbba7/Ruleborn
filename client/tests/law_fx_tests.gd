@@ -26,6 +26,7 @@ func run() -> void:
 	_crowns()
 	await _creature()
 	await _restores()
+	_calm()
 	await _signatures()
 	await _same_every_time()
 
@@ -149,6 +150,24 @@ func _restores() -> void:
 	check.call("a law that darkens a realm darkens its sun and sky while woven and gives them back when its effects "
 			+ "leave; attaching twice to a view draws its laws once (21.7)", dark and back and again,
 		"%s %s %s" % [dark, back, again])
+
+
+## §20.8's reduced motion: no flash jumps, no strobe, slower signatures.
+func _calm() -> void:
+	var was := Settings.reduced_motion
+	Settings.reduced_motion = true
+	var soft := true
+	for k in 21:
+		soft = soft and LawFx.flash(k / 20.0, 0.7) <= 0.2
+	var fx := LawFx.new()
+	var steady := float(fx.thread_material().get_shader_parameter("steady")) == 1.0
+	Settings.reduced_motion = false
+	var sharp := LawFx.flash(0.0, 0.7) > 0.6
+	var flickers := float(fx.thread_material().get_shader_parameter("steady")) == 0.0
+	fx.free()
+	Settings.reduced_motion = was
+	check.call("with reduced motion a law's flashes swell softly, never past a fifth, and its lines stop flickering "
+			+ "(20.8, 21.7)", soft and steady and sharp and flickers, "%s %s %s %s" % [soft, steady, sharp, flickers])
 
 
 static func realm(law: String) -> PackedByteArray:

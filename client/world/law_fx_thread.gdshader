@@ -16,6 +16,8 @@ uniform float pace = 1.0;
 uniform float strength = 1.0;
 // Half the strip's width, in metres.
 uniform float width = 0.07;
+// §20.8's reduced motion: 1 stops the flicker and slows the jags.
+uniform float steady = 0.0;
 
 varying float along;
 varying float side;
@@ -39,14 +41,14 @@ void vertex() {
 	float w = width;
 	if (kind > 0.5 && kind < 1.5) {
 		// A dissonance's jags, redrawn several times a second.
-		float k = floor(s * 9.0);
+		float k = floor(s * mix(9.0, 1.0, steady));
 		float seg = floor(along * 14.0);
 		float j = (hash(seg + k * 7.0) - 0.5) * 0.28 * sin(3.14159 * along);
 		v.xy += n * j;
 		w *= 1.25;
 	} else if (kind > 2.5 && kind < 3.5) {
 		// A bolt: jags like a dissonance's, redrawn faster.
-		float k = floor(s * 14.0);
+		float k = floor(s * mix(14.0, 1.0, steady));
 		float seg = floor(along * 18.0);
 		v.xy += n * (hash(seg + k * 5.0) - 0.5) * 0.35 * sin(3.14159 * along);
 	} else if (kind > 3.5) {
@@ -74,20 +76,20 @@ void fragment() {
 		a = smoothstep(0.0, 0.25, core) * (0.7 + 0.25 * pulse);
 	} else if (kind < 1.5) {
 		// Dissonance: flickers on and off, uneasy.
-		float k = floor(s * 9.0);
+		float k = floor(s * mix(9.0, 1.0, steady));
 		// An ink core in a rim of the clashing notes' colour, so it reads
 		// by value on any ground (§21.10).
-		float f = step(0.3, hash(k + 3.0));
+		float f = mix(step(0.3, hash(k + 3.0)), 1.0, steady);
 		c = mix(c, vec3(0.16, 0.06, 0.14), smoothstep(0.45, 0.7, core));
 		a = smoothstep(0.0, 0.35, core) * (0.5 + 0.5 * f);
 	} else if (kind > 2.5 && kind < 3.5) {
 		// A bolt: white-hot in the middle, its colour as a glow round it,
 		// flickering out now and then.
-		float k = floor(s * 14.0);
+		float k = floor(s * mix(14.0, 1.0, steady));
 		float hot = smoothstep(0.55, 0.85, core);
 		c = mix(c, vec3(1.0), hot);
 		a = smoothstep(0.0, 0.9, core) * 0.5 + hot * 0.5;
-		a *= step(0.12, hash(k + floor(colour.g * 16.0) * 3.0 + 11.0));
+		a *= mix(step(0.12, hash(k + floor(colour.g * 16.0) * 3.0 + 11.0)), 1.0, steady);
 	} else if (kind > 3.5) {
 		// A wind line: whispers running along it.
 		float run = smoothstep(0.3, 0.0, abs(fract(along * 4.0 - s * 0.6) - 0.5) - 0.15);

@@ -324,6 +324,7 @@ func decal_material(pattern: int, a: Color, b := Color("#1A0C14"), pace := 1.0) 
 	m.set_shader_parameter("pace", pace * _pace())
 	m.set_shader_parameter("focus", Vector2(site.heart.x, site.heart.z) if site != null else Vector2.ZERO)
 	m.set_shader_parameter("lit", float(LIT.get(pattern, 1.0)))
+	m.set_shader_parameter("steady", 1.0 if calm() else 0.0)
 	m.render_priority = UNDER
 	_lit.append(m)
 	return m
@@ -357,6 +358,7 @@ func thread_material(width := 0.07) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = _shader("thread")
 	m.set_shader_parameter("width", width)
+	m.set_shader_parameter("steady", 1.0 if calm() else 0.0)
 	m.set_shader_parameter("pace", _pace())
 	m.render_priority = OVER
 	return m
@@ -496,12 +498,28 @@ func _process(delta: float) -> void:
 	sync(tick + _since * TPS)
 
 
+## §20.8's reduced motion: no strobes, no flashes, no blinking; flashes come
+## and go softly and every signature runs slower.
+static func calm() -> bool:
+	return Settings.reduced_motion
+
+
+## A flash of light `u` seconds into it, over its first second: sharp, or
+## with reduced motion a soft swell that never jumps.
+static func flash(u: float, peak: float) -> float:
+	if u >= 1.0 or u < 0.0:
+		return 0.0
+	if calm():
+		return sin(u * PI) * minf(peak, 0.2)
+	return peak * (1.0 - u)
+
+
 ## Haste quickens every signature's clock and Stillness all but stops it
 ## (§21.7: "Clouds race overhead; plants sway quickly", "not a leaf moves").
 func _pace() -> float:
 	if site == null:
-		return 1.0
-	var p := 1.0
+		return 0.6 if calm() else 1.0
+	var p := 0.6 if calm() else 1.0
 	for d: Dictionary in site.pylons:
 		if d["law"] == "haste":
 			p *= 1.6

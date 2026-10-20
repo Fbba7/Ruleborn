@@ -111,7 +111,7 @@ static func build(fx: LawFx, sig: Node3D, law: String) -> bool:
 			if tint != null:
 				fx.every(func(s: float) -> void:
 					var u := fmod(s, 25.0)
-					tint.set_shader_parameter("flash", 0.5 * (1.0 - u) if u < 1.0 else 0.0))
+					tint.set_shader_parameter("flash", LawFx.flash(u, 0.5)))
 		"wild_paths":
 			# "Flowers bloom wherever people walk."
 			LawFxPaint.spray(fx, sig, law, {"n": 80, "shape": 5, "colour": Color("#F07AC0"),
