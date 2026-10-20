@@ -85,6 +85,11 @@ universe, inside §21.3's 40,000 and 150.
   chute, rift), seen at the realm zooms.
   Still: `round8_zoom1_links.png`.
 
+- Round 9: over the whole universe a twist turns the camera half way round, so the column stays upright
+  on a portrait phone (a quarter turn laid it across the screen as a thin strip); the realm zooms keep
+  quarter turns.
+  Still: `round9_half_turn.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

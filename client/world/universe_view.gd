@@ -797,9 +797,11 @@ func set_zoom(level: int) -> void:
 		zoomed.emit(zoom)
 
 
-## A quarter turn of the camera, either way (§21.1).
+## A quarter turn of the camera, either way (§21.1). Over the whole
+## universe a turn is a half turn, so its column stays upright on a portrait
+## screen rather than lying across it.
 func turn(by: int) -> void:
-	turns = posmod(turns + by, 4)
+	turns = posmod(turns + by * (2 if zoom == 0 else 1), 4)
 	_aim()
 
 

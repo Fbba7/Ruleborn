@@ -118,10 +118,13 @@ func _camera() -> void:
 	var turned := view.turns == 1
 	view.turn(-1)
 	view.set_zoom(0)
+	view.turn(1)
+	turned = turned and view.turns == 2
+	view.turn(1)
 	Settings.reduced_motion = reduced
 	check.call("the whole universe is framed on the phone; a tap finds the realm under it and none in the sky; "
-			+ "choosing a realm swoops to it at one zoom and a second time closer, turning in quarter turns, "
-			+ "instantly under reduced motion (21.1, 20.8)",
+			+ "choosing a realm swoops to it at one zoom and a second time closer, turning in quarter turns "
+			+ "(half turns over the whole universe, which stays upright), instantly under reduced motion (21.1, 20.8)",
 		framed and tapped == "outer-3" and sky == "" and chosen == ["outer-3", "outer-3"] and focused and centred
 			and closer and turned and view.zoom == 0,
 		"framed %s tapped %s sky %s chosen %s focused %s centred %s closer %s" % [framed, tapped, sky, chosen,
