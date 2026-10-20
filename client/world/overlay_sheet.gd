@@ -134,7 +134,8 @@ static func dock(row: Control) -> PanelContainer:
 	var p := PanelContainer.new()
 	var box := night(PANEL_CORNER + 6)
 	box.bg_color = Color(NIGHT, 0.88)
-	box.set_content_margin_all(UI.px(6))
+	# Thin, so the row inside keeps the width §20.8's 200% text needs.
+	box.set_content_margin_all(UI.px(2.5))
 	p.add_theme_stylebox_override("panel", box)
 	p.set_meta("dressed", true)
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE

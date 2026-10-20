@@ -43,7 +43,7 @@ func _build() -> void:
 	var column := UI.frame(self)
 	view = StageScreen.mount(self, column)
 	view.tapped.connect(_on_tap)
-	view.fill = 0.82
+	view.fill = 0.7
 	town = StageTown.new(view)
 	var top := VBoxContainer.new()
 	top.add_child(OverlaySheet.ribbon(UI.title(Strings.t("RV_TITLE"))))
@@ -58,7 +58,7 @@ func _build() -> void:
 	card.visible = false
 	column.add_child(card)
 	body = UI.scroll(column)
-	_sheet = StageScreen.sheet(body, 0.55)
+	_sheet = StageScreen.sheet(body, 0.45)
 	var actions := UI.row(-1.0, true)
 	actions.add_child(UI.button(Strings.t("HOME_MAP"), func() -> void: App.services.router.go(&"map"), true))
 	actions.add_child(UI.button(Strings.t("RV_CURATE"), func() -> void:
@@ -144,6 +144,7 @@ func _pin(replay: RulebornReplay) -> void:
 ## works there; a tap elsewhere closes it.
 func _on_tap(tile: Vector2i, _at: Vector2) -> void:
 	var b := town.at_tile(tile)
+	town.choose(b)
 	if b.is_empty() or not _screen.get("ready", false):
 		card.visible = false
 		return
