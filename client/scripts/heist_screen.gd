@@ -21,12 +21,12 @@ const Kind := HeistController.Kind
 var controller := HeistController.new()
 var playing := true
 
-var view: RealmView
+var view: WorldView
 var hud: HeistHud
 var hint_label: Label
 var gait_button: Button
 var pause_button: Button
-var crew_buttons: Array[Button] = []
+var crew_buttons: Array[FxPortrait] = []
 ## A rehearsal: the player's own island, from the builder.
 var rehearsal := false
 ## Paused by the player, in a rehearsal only.
@@ -51,6 +51,8 @@ var picker_realm: Label
 var picker_across: Label
 var next_realm_button: Button
 var actions_node: Control
+## The row of the crew's portraits and Get out.
+var actions_band: Control
 var crew_node: Control
 ## Which realm the view is drawing, so a new one is drawn when the crew (or
 ## the picker) moves to another.
@@ -59,6 +61,8 @@ var _owed := 0.0
 var _alarm := 0
 var _live_wards := -1
 var _pylons := -1
+## The most health each crew member has shown, its health ring's whole.
+var _most_health := {}
 
 
 func _ready() -> void:
@@ -311,9 +315,12 @@ func _refresh() -> void:
 	var choosing := controller.choosing
 	picker.visible = choosing
 	actions_node.visible = not choosing
+	actions_band.visible = not choosing
 	crew_node.visible = not choosing
 	view.landing_marks = controller.shown_marks() if choosing else []
 	view.landing_pick = controller.shown_pick()
+	view.follow = [] if choosing else [controller.selected]
+	view.chosen = -1 if choosing else controller.selected
 	var across := not controller.universe.is_empty()
 	picker_realm.visible = across
 	picker_across.visible = across
@@ -331,13 +338,19 @@ func _refresh() -> void:
 	var crew := controller.world.crew()
 	for i in crew_buttons.size():
 		var b := crew_buttons[i]
-		var role := Strings.term("ROLE", crew[i]["role"])
-		# Chosen is said in the button's words and its border, never by
-		# fading the others, which would take their words below 4.5:1.
+		if i >= crew.size():
+			b.visible = false
+			continue
+		var m: Dictionary = crew[i].duplicate()
+		var role := Strings.term("ROLE", m["role"])
+		_most_health[i] = maxi(int(_most_health.get(i, 0)), int(m["health"]))
+		m["max_health"] = _most_health[i]
+		# Chosen is said in the portrait's words and drawn as a gold ring and a
+		# lift, never by fading the others.
 		var chosen := i == controller.selected
-		UI.relabel(b, ("▸" if chosen else "") + role.substr(0, 2), true)
-		UI.set_outline(b, 3 if chosen else 1)
+		b.show_member(m, chosen)
 		b.accessibility_name = Strings.t("HEIST_CREW_CHOSEN" if chosen else "HEIST_CREW", role)
+		b.tooltip_text = b.accessibility_name
 	if pause_button != null:
 		UI.relabel(pause_button, Strings.t("HEIST_RESUME" if paused else "HEIST_PAUSE"))
 		pause_button.accessibility_name = pause_button.text
@@ -377,64 +390,106 @@ static func cues(alarm_before: int, alarm: int, live_before: int, live: int, pyl
 
 
 func _build() -> void:
-	var column := UI.frame(self)
-	column_node = column
+	# The world fills the screen (§21.8: the heist is played on the world);
+	# the HUD floats over it inside §21.1's safe areas, and lets every tap it
+	# does not take fall through to the world.
+	view = WorldView.new()
+	view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	view.tapped.connect(func(at: Vector2) -> void: controller.tap_tile(view.tile_at(at)))
+	add_child(view)
+	var columns := FxSkin.frame(self)
+	var column := columns[0]
+	var lower := columns[1]
+	column_node = lower
 	hud = HeistHud.new()
 	column.add_child(hud)
-	view = WorldView.new()
-	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	view.gui_input.connect(func(event: InputEvent) -> void:
-		if event is InputEventMouseButton and event.pressed:
-			controller.tap_tile(view.tile_at(event.position)))
-	column.add_child(view)
-	hint_label = UI.label("", UI.TEXT_POINTS, true)
-	column.add_child(UI.plate(hint_label))
+	column = lower
+	hint_label = FxSkin.label("", 14.0)
+	hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var hint := FxSkin.panel("glass", 16.0, 8.0)
+	hint.add_child(hint_label)
+	column.add_child(hint)
 
 	var box := VBoxContainer.new()
-	box.add_child(UI.label(Strings.t("LANDING_TITLE"), UI.TEXT_POINTS, true))
-	picker_realm = UI.label("", UI.TEXT_POINTS, true)
-	box.add_child(picker_realm)
-	picker_across = UI.label("", UI.TEXT_POINTS, true)
-	box.add_child(picker_across)
-	picker_spot = UI.label("", UI.TEXT_POINTS, true)
-	box.add_child(picker_spot)
-	picker_count = UI.label("", UI.TEXT_POINTS, true)
-	box.add_child(picker_count)
-	picker_clock = UI.label("", UI.TEXT_POINTS, true)
-	box.add_child(picker_clock)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(FxSkin.label(Strings.t("LANDING_TITLE"), UI.TEXT_POINTS + 4.0, "parchment", true))
+	picker_realm = _picker_line(box)
+	picker_across = _picker_line(box)
+	picker_spot = _picker_line(box)
+	picker_count = _picker_line(box)
+	picker_clock = _picker_line(box)
 	var steps := UI.row(-1.0, true)
-	steps.add_child(UI.button(Strings.t("LANDING_PREV"), controller.next_spot.bind(-1)))
-	steps.add_child(UI.button(Strings.t("LANDING_NEXT"), controller.next_spot.bind(1)))
-	next_realm_button = UI.button(Strings.t("LANDING_NEXT_REALM"), controller.next_realm)
+	steps.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	steps.add_child(_button(Strings.t("LANDING_PREV"), controller.next_spot.bind(-1), "parchment"))
+	steps.add_child(_button(Strings.t("LANDING_NEXT"), controller.next_spot.bind(1), "parchment"))
+	next_realm_button = _button(Strings.t("LANDING_NEXT_REALM"), controller.next_realm, "parchment")
 	steps.add_child(next_realm_button)
-	steps.add_child(UI.button(Strings.t("LANDING_HERE"), controller.land_here, true))
+	steps.add_child(_button(Strings.t("LANDING_HERE"), controller.land_here, "gold"))
 	box.add_child(steps)
-	picker = UI.plate(box)
+	picker = FxSkin.panel("parchment", 18.0, 12.0)
+	picker.add_child(box)
 	column.add_child(picker)
 
-	var actions := UI.row(-1.0, true)
+	# §21.8: the crew's portraits at the bottom left, Get out at the bottom
+	# right with the other orders above it, all above the corners §21.1 keeps
+	# clear; mirrored for a left-handed player (§20.8).
+	var actions := VBoxContainer.new()
+	actions.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	actions.add_theme_constant_override("separation", UI.px(6))
 	actions_node = actions
-	column.add_child(actions)
+	var small := UI.row(6.0, true)
+	small.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	small.alignment = FlowContainer.ALIGNMENT_END
 	if rehearsal:
-		pause_button = UI.button(Strings.t("HEIST_PAUSE"), toggle_pause)
-		actions.add_child(pause_button)
-	gait_button = UI.button(Strings.term("GAIT", "Walk"), controller.next_gait)
+		pause_button = _button(Strings.t("HEIST_PAUSE"), toggle_pause, "card")
+		small.add_child(pause_button)
+	gait_button = _button(Strings.term("GAIT", "Walk"), controller.next_gait)
 	# As wide as its widest word, so a change of gait never moves the row.
 	UI.fit_to(gait_button, HeistController.GAITS.map(func(g: String) -> String: return Strings.term("GAIT", g)))
-	actions.add_child(gait_button)
-	actions.add_child(UI.button(Strings.t("HEIST_HALT"), controller.halt))
-	actions.add_child(UI.button(Strings.t("HEIST_DROP"), controller.drop_half))
-	actions.add_child(UI.button(Strings.t("HEIST_GET_OUT"), controller.get_out, true))
-	# The crew's portraits lowest, where the thumb rests (§21.8 puts them at
-	# the bottom); a narrow row, so it stays clear of the corners.
-	var crew_row := UI.row(-1.0, true)
-	crew_node = UI.narrow(crew_row)
-	column.add_child(crew_node)
+	small.add_child(gait_button)
+	small.add_child(_button(Strings.t("HEIST_HALT"), controller.halt))
+	small.add_child(_button(Strings.t("HEIST_DROP"), controller.drop_half))
+	actions.add_child(small)
+	column.add_child(actions)
+	var band := UI.row(-1.0, true)
+	band.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	band.alignment = FlowContainer.ALIGNMENT_BEGIN
+	var crew_row := UI.row(4.0, true)
+	crew_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	crew_row.alignment = FlowContainer.ALIGNMENT_BEGIN
+	crew_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	crew_node = crew_row
+	band.add_child(crew_row)
 	var crew := controller.world.crew()
 	for i in crew.size():
-		var role: String = crew[i]["role"]
-		var b := UI.button(Strings.term("ROLE", role).substr(0, 2), controller.select.bind(i), false,
-				(Palette.ROLE.get(role, Palette.PAPER) as Color).lightened(0.45))
-		UI.fit_to(b, ["▸" + Strings.term("ROLE", role).substr(0, 2)])
+		var b := FxPortrait.new(str(crew[i]["role"]), controller.select.bind(i))
 		crew_buttons.append(b)
 		crew_row.add_child(b)
+	var go := _button(Strings.t("HEIST_GET_OUT"), controller.get_out, "alarm", 24.0)
+	go.add_theme_font_override("font", FxSkin.numbers())
+	go.add_theme_font_size_override("font_size", UI.text_px(UI.TEXT_POINTS + 6.0))
+	go.add_theme_constant_override("outline_size", UI.px(1.5))
+	go.set_meta("points", UI.TEXT_POINTS + 6.0)
+	UI.fit(go)
+	go.custom_minimum_size = Vector2(maxf(go.custom_minimum_size.x, UI.px(112)), UI.px(64))
+	go.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	band.add_child(go)
+	actions_band = band
+	column.add_child(band)
+	# Clear of the bottom corners, where §21.1 puts nothing to tap.
+	column.add_child(FxSkin.corner_clear())
+
+
+func _picker_line(box: VBoxContainer) -> Label:
+	var l := FxSkin.label("", UI.TEXT_POINTS, "parchment")
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	box.add_child(l)
+	return l
+
+
+## A HUD button: `UI.button`'s sizes and haptics, in the heist's own skin.
+func _button(words: String, call: Callable, kind := "leather", radius := 16.0) -> Button:
+	var b := UI.button(words, call)
+	FxSkin.style_button(b, kind, radius)
+	UI.fit(b)
+	return b
