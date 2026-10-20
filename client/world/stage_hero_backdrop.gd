@@ -51,9 +51,11 @@ func _init() -> void:
 func set_glow(colour: Color) -> void:
 	glow = colour
 	var g := Gradient.new()
-	g.offsets = PackedFloat32Array([0.0, 0.35, 0.7, 1.0])
-	g.colors = PackedColorArray([Color(colour.lightened(0.35), 0.85), Color(colour, 0.5),
-		Color(colour.darkened(0.2), 0.14), Color(colour.darkened(0.4), 0.0)])
+	# A deep core and a bright ring: a pale character reads as a shape against
+	# it, as §21.1's silhouette rule asks, while the stage still glows.
+	g.offsets = PackedFloat32Array([0.0, 0.4, 0.62, 1.0])
+	g.colors = PackedColorArray([Color(colour.darkened(0.15), 0.42), Color(colour, 0.5),
+		Color(colour.darkened(0.1), 0.22), Color(colour.darkened(0.4), 0.0)])
 	_glow_texture.gradient = g
 	queue_redraw()
 

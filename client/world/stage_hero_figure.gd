@@ -213,6 +213,8 @@ static func realm_ground(for_school: String, radius: float) -> Node3D:
 		m.set_shader_parameter("paint", paints[i][0])
 		m.set_shader_parameter("paint_strength", paints[i][2])
 		m.set_shader_parameter("world_scale", paints[i][1])
+		# A step darker than the figure on it, so feet read against ground.
+		m.set_shader_parameter("tint", Color(0.78, 0.76, 0.84))
 		var mi := MeshInstance3D.new()
 		mi.mesh = parts[i]
 		mi.material_override = m
