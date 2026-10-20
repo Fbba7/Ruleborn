@@ -229,7 +229,7 @@ static func paradox(fx: LawFx, into: Node3D, id: String) -> void:
 			var tint := fx.tint(Color("#2A1A4A"), 0.0)
 			fx.every(func(s: float) -> void:
 				var u := fmod(s, 20.0)
-				var on := not (u < 1.2 and (LawFx.calm() or int(s * 10.0) % 3 == 0))
+				var on := not (u < 1.2 and (LawFx.calm() or int(s * 4.0) % 2 == 0))
 				for sig: Node in fx.signatures.values():
 					(sig as Node3D).visible = on
 				if tint != null:
