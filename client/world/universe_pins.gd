@@ -34,17 +34,18 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 		var title := UniversePresenter.realm_name(str(r.get("type", "Heart")))
 		var key := UniverseLayout.type_key(str(r.get("type", "Heart")))
 		var school: Color = Palette.SCHOOL.get(UniverseLayout.SCHOOLS[key], Palette.SPIRIT)
-		var b := _realm_pin(id, title, int(r.get("level", 1)), school)
+		var b := _realm_pin(id, title, int(r.get("level", 1)), school, key)
 		_pins.append({"node": b, "realm": id, "front": true, "zooms": [0, 1], "rank": 1})
 	var faults: Array = universe.get("faults", [])
 	for f: Variant in faults:
 		var plate := _plate(Palette.ALARM_FILL, Palette.ALARM_FILL)
-		plate.add_child(_words("ϟ " + UniversePresenter.realm_name(_type_of(universe, str(f))), Palette.ON_ALARM))
+		plate.add_child(_with_icon("band_fault",
+			_words("ϟ " + UniversePresenter.realm_name(_type_of(universe, str(f))), Palette.ON_ALARM)))
 		_pins.append({"node": plate, "realm": str(f), "lift": 3.5, "zooms": [0, 1, 2], "rank": 0})
 	var raids := int(extras.get("raids", 0))
 	if raids > 0:
 		var plate := _plate(Palette.ALARM_FILL, Palette.ALARM_FILL)
-		plate.add_child(_words("! %d" % raids, Palette.ON_ALARM))
+		plate.add_child(_with_icon("alert_raided", _words("! %d" % raids, Palette.ON_ALARM)))
 		_pins.append({"node": plate, "realm": "heart", "lift": 11.0, "zooms": [0, 1, 2], "rank": 0})
 	for p: Dictionary in extras.get("producers", []):
 		var kind := str(p.get("kind", ""))
@@ -54,9 +55,19 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 		var look: Array = RESOURCE.get(kind, ["#F2B43C", "✦"])
 		var full := stored >= int(p.get("holds", 1))
 		var plate := _plate(Palette.INK, Palette.ALARM if full else Color(look[0]))
-		plate.add_child(_words("%s %s" % [look[1], ShopPresenter.grouped(stored)], Palette.PAPER))
+		var words := _words("%s %s" % [look[1], ShopPresenter.grouped(stored)], Palette.PAPER)
+		if full:
+			plate.add_child(_with_icon("alert_ready", words))
+		else:
+			plate.add_child(words)
 		_pins.append({"node": plate, "realm": str(p.get("realm", "")), "building": kind, "lift": 0.0,
 			"zooms": [0, 1, 2], "rank": 2})
+	# §5.5's strain band over the Heart, in words beside the rings' colour.
+	if extras.has("strain"):
+		var plate := _plate(Palette.INK, Palette.STONE)
+		plate.add_child(_with_icon("hud_strain", _words("%s %d%%" % [WeavingPresenter.band_name(int(extras["band"])),
+			roundi(float(extras["strain"]) * 100.0)], Palette.PAPER)))
+		_pins.append({"node": plate, "realm": "heart", "back": true, "zooms": [0, 1], "rank": 1})
 	var open: Variant = universe.get("open")
 	if open is Dictionary and not ((open as Dictionary).get("types", []) as Array).is_empty():
 		var plate := _plate(Color(Palette.INK, 0.8), Palette.STONE)
@@ -80,11 +91,12 @@ static func _type_of(universe: Dictionary, id: String) -> String:
 ## A realm's pin: its level in a disc of its school's colour, and its name;
 ## a tap swoops to it. Not a button: the screen's own list carries each realm
 ## for a screen reader, and the island itself takes the same tap.
-func _realm_pin(id: String, title: String, level: int, school: Color) -> PanelContainer:
+func _realm_pin(id: String, title: String, level: int, school: Color, key: String) -> PanelContainer:
 	var plate := _plate(Palette.INK, school)
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_theme_constant_override("separation", UI.px(4))
+	row.add_child(_icon("realm_" + key))
 	var badge := _plate(school.darkened(0.45), school.lightened(0.3), true)
 	badge.add_child(_words(str(level), Palette.PAPER))
 	row.add_child(badge)
@@ -99,6 +111,27 @@ func _realm_pin(id: String, title: String, level: int, school: Color) -> PanelCo
 		if tap:
 			view.choose(id))
 	return plate
+
+
+## One of the design's icons, at the height of a pin's words.
+static func _icon(name: String) -> TextureRect:
+	var t := TextureRect.new()
+	t.texture = load("res://world/universe_icons/%s.svg" % name)
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	t.custom_minimum_size = Vector2.ONE * UI.text_px(POINTS) * 1.35
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return t
+
+
+## Words led by an icon.
+static func _with_icon(name: String, words: Label) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", UI.px(3))
+	row.add_child(_icon(name))
+	row.add_child(words)
+	return row
 
 
 ## A rounded plate in `fill`, edged in `edge`.
@@ -154,6 +187,8 @@ func follow() -> void:
 		var at := isl.at + Vector3(0, float(p.get("lift", 0.0)), 0)
 		if p.get("front", false):
 			at = isl.at + toward * isl.radius * 1.02 + Vector3(0, -1.6, 0)
+		elif p.get("back", false):
+			at = isl.at - toward * isl.radius * 0.95 + Vector3(0, 1.0, 0)
 		elif p.has("building"):
 			at = _producer_at(isl, str(p["building"]))
 		var s := view.camera.unproject_position(at)

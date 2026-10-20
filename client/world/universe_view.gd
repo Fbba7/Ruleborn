@@ -93,6 +93,8 @@ var _skiffs: Array[Dictionary] = []
 var _streams: Array[Dictionary] = []
 var _sparks: MultiMeshInstance3D
 var _comets: Array[Dictionary] = []
+var _debris: MultiMeshInstance3D
+var _orbits: Array[Dictionary] = []
 
 
 func _init() -> void:
@@ -235,6 +237,7 @@ func _build() -> void:
 		maxf(60.0, _bounds.size.z * 0.6))
 	_build_skiffs()
 	_build_sparks()
+	_build_debris()
 
 
 func _add(mesh: ArrayMesh, mat: Material, shadows: bool) -> MeshInstance3D:
@@ -454,6 +457,53 @@ func _build_skiffs() -> void:
 			"wake": [] as Array[Vector3], "colour": school})
 
 
+## Rocks drifting round each island, a few with a tree on top (the design's
+## debris, :1157), one layer of instances for the universe, moved each frame.
+func _build_debris() -> void:
+	_orbits.clear()
+	var g := Geo.new()
+	g.prism(Transform3D(Basis(Vector3.RIGHT, PI), Vector3.ZERO), 6, 1.0, 0.0, 1.8, Color("#7E6E9A"))
+	g.prism(Geo.place(Vector3(0, -0.02, 0)), 6, 1.05, 1.0, 0.3, Color("#6E9A55"))
+	g.prism(Geo.place(Vector3(0.2, 0.28, 0.1)), 5, 0.38, 0.0, 0.9, Color("#3E8A45"))
+	for id: String in islands:
+		var isl: UniverseIsland = islands[id]
+		if isl.ghost:
+			continue
+		for k in 3:
+			_orbits.append({"centre": isl.at, "r": isl.radius * (1.18 + 0.25 * isl.noise(900 + k)),
+				"y": -2.0 - 5.0 * isl.noise(910 + k), "a": isl.noise(920 + k) * TAU,
+				"speed": (0.05 + 0.06 * isl.noise(930 + k)) * (1.0 if k % 2 else -1.0),
+				"size": 0.55 + 0.7 * isl.noise(940 + k), "tint": Color.WHITE if isl.key != "emberreach"
+					else Color("#8A6A70")})
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_colors = true
+	mm.mesh = g.mesh()
+	mm.instance_count = _orbits.size()
+	for i in _orbits.size():
+		mm.set_instance_color(i, _orbits[i]["tint"])
+	_debris = MultiMeshInstance3D.new()
+	_debris.multimesh = mm
+	_debris.material_override = _material()
+	_debris.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_debris.extra_cull_margin = 400.0
+	movers.add_child(_debris)
+	triangles += _orbits.size() * g.triangles
+	_drift()
+
+
+func _drift() -> void:
+	if _debris == null:
+		return
+	var mm := _debris.multimesh
+	for i in _orbits.size():
+		var o: Dictionary = _orbits[i]
+		var a := float(o["a"]) + _time * float(o["speed"])
+		var c: Vector3 = o["centre"]
+		var p := c + Vector3(cos(a) * float(o["r"]), float(o["y"]) + sin(_time * 0.7 + a) * 0.5, sin(a) * float(o["r"]))
+		mm.set_instance_transform(i, Transform3D(Basis(Vector3.UP, a * 2.0).scaled(Vector3.ONE * float(o["size"])), p))
+
+
 ## One layer of moving lights — skiffs' wakes, rifts' streams, comets — as
 ## one draw call, placed each frame.
 func _build_sparks() -> void:
@@ -490,6 +540,7 @@ func _process(delta: float) -> void:
 		else:
 			node.rotation.x = sin(_time * float(s["speed"]) + float(s["phase"])) * float(s["sway"])
 	_fly(delta)
+	_drift()
 	pins.follow()
 
 

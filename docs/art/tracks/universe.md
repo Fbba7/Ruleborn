@@ -60,6 +60,12 @@ universe, inside §21.3's 40,000 and 150.
   Stills: `round3_home.png`, `round3_zoom0..2.png`, `round3_wipe.png` (mid-swoop),
   `round3_compare_skyruin.png` (ours left, the design's right, grayscale below).
 
+- Round 4: a lamp where each building's path leaves the plaza; denser realm dressing; the design's icons
+  in the pins (each realm's own icon, raids, faults, a full producer); a strain pin behind the Heart
+  (§5.5's band name and the strain); the design's debris, rocks with trees drifting round each island (one
+  MultiMesh); the sky's cost trimmed for phones (three octaves of noise, fewer haze sprites).
+  Stills: `round4_zoom0.png`, `round4_zoom1_skyfield.png`, `round4_zoom1_crystalline.png`.
+
 Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
 link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
 

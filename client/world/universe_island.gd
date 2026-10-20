@@ -270,7 +270,7 @@ func _waterfall(flow: UniversePaint, glows: UniversePaint, a: float, colour: Col
 func _dress(hero: Geo, glows: UniversePaint) -> void:
 	var plant: Color = palette["plant"]
 	var accent: Color = palette["accent"]
-	var n := 16
+	var n := 22
 	for i in n:
 		var a := TAU * (i + noise(i * 29) * 0.6) / n
 		var f := 0.82 + 0.12 * noise(i * 31)
@@ -369,6 +369,7 @@ func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) ->
 		var mid := spot + Vector3(0, dome(f), 0)
 		var lv := int(b.get("level", 1))
 		_path(body, spot)
+		_lamp(hero, glows, spot)
 		_used.append(spot)
 		_shade(mid, 2.1, 0.5)
 		if kind == "ward":
@@ -399,6 +400,22 @@ func _path(g: Geo, to: Vector3) -> void:
 		var f := d / radius
 		g.prism(Geo.place(p + Vector3(0, at.y + dome(f) - 0.02, 0), k * 0.7), 6, 0.26, 0.24, 0.06,
 			stone.darkened(0.06 * (k % 3)))
+
+
+## A lamp where a building's path leaves the plaza: the realm's warm lights
+## at night (§21.2: "lanterns and glows carry the realm").
+func _lamp(hero: Geo, glows: UniversePaint, to: Vector3) -> void:
+	var flat := Vector3(to.x - at.x, 0, to.z - at.z)
+	if flat.length() < 3.0:
+		return
+	var dir := flat.normalized()
+	var d := (4.4 * UniverseCitadel.MAP_SCALE if key == "heart" else 1.8) + 0.4
+	var p := at + dir * d + Vector3(-dir.z, 0, dir.x) * 0.55
+	p.y = at.y + dome(d / radius)
+	var post := Color("#3A2E4A") if key in ["lanternvale", "crystalline"] else Palette.WOOD.darkened(0.35)
+	hero.prism(Geo.place(p), 4, 0.06, 0.05, 1.15, post)
+	hero.ball(Geo.place(p + Vector3(0, 1.22, 0)), 0.13, Color("#FFD27A", 0.1), 2, 5)
+	glows.glow(p + Vector3(0, 1.22, 0), 0.95, Color("#FFC36A", 0.85))
 
 
 ## The meadow's tufts and flowers, never on a path or under a building:

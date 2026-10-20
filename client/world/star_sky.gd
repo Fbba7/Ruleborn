@@ -68,13 +68,13 @@ func build(parent: Node3D, centre: Vector3, reach: float) -> void:
 		stars.glow(p, 0.9 + 1.2 * _noise(i + 8500), Color(tint, 0.9))
 	parent.add_child(_layer(stars.mesh(), 0.75, 0.5, "Stars"))
 	var haze := UniversePaint.new()
-	for i in 26:
+	for i in 16:
 		var p := centre + Vector3((_noise(i + 9000) - 0.5) * span.x * 0.8, -reach * (0.12 + 0.18 * _noise(i + 9100)),
 			(_noise(i + 9200) - 0.5) * span.z * 0.85)
 		var tint := Color("#8A7AD8") if i % 3 else Color("#C86FB0")
 		if i % 7 == 0:
 			tint = Color("#3CC6D8")
-		haze.glow(p, reach * (0.22 + 0.2 * _noise(i + 9300)), Color(tint, 0.14 + 0.08 * _noise(i + 9400)))
+		haze.glow(p, reach * (0.22 + 0.2 * _noise(i + 9300)), Color(tint, 0.18 + 0.1 * _noise(i + 9400)))
 	parent.add_child(_layer(haze.mesh(), 0.08, 0.0, "Haze"))
 
 
