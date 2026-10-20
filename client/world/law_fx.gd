@@ -66,6 +66,9 @@ var seconds := 0.0
 var source: RulebornReplay
 
 var _clocked: Array[ShaderMaterial] = []
+## Every law's motes in one batch, drawn in one call (§21.3), and that draw.
+var _motes: LawFxBatch
+var _mote_layer: MeshInstance3D
 var _lit: Array[ShaderMaterial] = []
 var _hooks: Array[Callable] = []
 var _watchers: Array[Callable] = []
@@ -125,12 +128,17 @@ func build(s: LawFxSite) -> void:
 	_followers.clear()
 	signatures.clear()
 	_restore_light()
+	_motes = LawFxBatch.new(LawFxBatch.Kind.MOTES)
+	_mote_layer = null
 	site = s
 	crowns = Node3D.new()
 	crowns.name = "Crowns"
 	add_child(crowns)
 	var pools: Array = []
 	for p: Dictionary in site.pylons:
+		# A broken pylon's law has ended (§7.1): nothing of it is drawn.
+		if not p.get("standing", true):
+			continue
 		pools.append(p)
 		var law: String = p["law"]
 		if not signatures.has(law):
@@ -167,6 +175,12 @@ func build(s: LawFxSite) -> void:
 	LawFxLinks.build(self, links)
 	if paradox != "":
 		LawFxLinks.paradox(self, paradox)
+	if _motes.triangles > 0:
+		var shared := Node3D.new()
+		shared.name = "Motes"
+		add_child(shared)
+		_mote_layer = layer(shared, _motes, mote_material(1.0))
+		_mote_layer.set_meta("triangles", _motes.triangles)
 	sync(seconds * TPS)
 
 
@@ -192,13 +206,6 @@ func _share_ground() -> void:
 	for mi: MeshInstance3D in marks:
 		mi.set_meta("strength", share)
 		(mi.material_override as ShaderMaterial).set_shader_parameter("strength", share)
-
-
-## A law's signature on its own (the law card's and Weaving's preview).
-func build_one(s: LawFxSite, law: String) -> void:
-	build(s)
-	for k: String in signatures.keys():
-		(signatures[k] as Node3D).visible = k == law
 
 
 ## §7.5: the universe's paradox, over every realm (Reversal, Twin suns,
@@ -227,6 +234,15 @@ func sync(tick: float) -> void:
 ## piece that follows a character (Soul swap's wisps, Kinship's threads)
 ## moved to where the simulation puts it.
 func sync_world(replay: RulebornReplay) -> void:
+	# A pylon broken since the last build ends its law: build again without it.
+	var changed := false
+	var now := replay.pylons()
+	for i in mini(now.size(), site.pylons.size()):
+		if bool(now[i]["standing"]) != bool(site.pylons[i].get("standing", true)):
+			site.pylons[i]["standing"] = bool(now[i]["standing"])
+			changed = true
+	if changed:
+		build(site)
 	var up := {}
 	for p: Dictionary in replay.pylons():
 		up[str(p["law"])] = bool(up.get(str(p["law"]), false)) or bool(p["standing"])
@@ -265,6 +281,28 @@ func sync_world(replay: RulebornReplay) -> void:
 		w.call(crew, guards)
 
 
+func _merge_motes(batch: LawFxBatch, mat: ShaderMaterial) -> void:
+	if batch.triangles == 0:
+		return
+	var arrays := batch.st.commit_to_arrays()
+	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var uvs: PackedVector2Array = arrays[Mesh.ARRAY_TEX_UV]
+	var colours: PackedColorArray = arrays[Mesh.ARRAY_COLOR]
+	var c0: PackedFloat32Array = arrays[Mesh.ARRAY_CUSTOM0]
+	var c1: PackedFloat32Array = arrays[Mesh.ARRAY_CUSTOM1]
+	var glow := float(mat.get_shader_parameter("glow"))
+	var pace := float(mat.get_shader_parameter("pace")) / maxf(0.01, _pace())
+	var st := _motes.st
+	for i in verts.size():
+		st.set_color(colours[i])
+		st.set_uv(uvs[i])
+		st.set_custom(0, Color(c0[i * 4], c0[i * 4 + 1], c0[i * 4 + 2], c0[i * 4 + 3]))
+		st.set_custom(1, Color(c1[i * 4], c1[i * 4 + 1], c1[i * 4 + 2], c1[i * 4 + 3]))
+		st.set_uv2(Vector2(glow, pace))
+		st.add_vertex(verts[i])
+	_motes.triangles += batch.triangles
+
+
 ## Something that redraws from the characters' places each tick: called
 ## with the crew's and the guards' world positions.
 func watch(hook: Callable) -> void:
@@ -279,8 +317,14 @@ func follow(sig: Node3D, batch: LawFxBatch, mat: ShaderMaterial, who: String) ->
 		"triangles": batch.triangles})
 
 
-## A layer of `sig`: `batch`'s mesh drawn in `mat`, moved by the clock.
+## A layer of `sig`: `batch`'s mesh drawn in `mat`, moved by the clock. A
+## layer of motes joins every other law's motes in one draw (§21.3), its
+## material's glow and pace carried by each of its motes; null comes back.
 func layer(sig: Node3D, batch: LawFxBatch, mat: ShaderMaterial, outlined := false) -> MeshInstance3D:
+	if batch.kind == LawFxBatch.Kind.MOTES and _motes != null and sig.name != "Motes":
+		_merge_motes(batch, mat)
+		sig.set_meta("mote_triangles", int(sig.get_meta("mote_triangles", 0)) + batch.triangles)
+		return null
 	var mi := MeshInstance3D.new()
 	mi.mesh = batch.mesh()
 	mi.material_override = mat
@@ -324,7 +368,7 @@ func decal_material(pattern: int, a: Color, b := Color("#1A0C14"), pace := 1.0) 
 	m.set_shader_parameter("pace", pace * _pace())
 	m.set_shader_parameter("focus", Vector2(site.heart.x, site.heart.z) if site != null else Vector2.ZERO)
 	m.set_shader_parameter("lit", float(LIT.get(pattern, 1.0)))
-	m.set_shader_parameter("steady", 1.0 if calm() else 0.0)
+	m.set_shader_parameter("steady", 1.0 if LawFxPaint.calm() else 0.0)
 	m.render_priority = UNDER
 	_lit.append(m)
 	return m
@@ -358,7 +402,7 @@ func thread_material(width := 0.07) -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = _shader("thread")
 	m.set_shader_parameter("width", width)
-	m.set_shader_parameter("steady", 1.0 if calm() else 0.0)
+	m.set_shader_parameter("steady", 1.0 if LawFxPaint.calm() else 0.0)
 	m.set_shader_parameter("pace", _pace())
 	m.render_priority = OVER
 	return m
@@ -401,7 +445,7 @@ func tint(colour: Color, edge: float, wash := 0.0) -> ShaderMaterial:
 
 ## The realm's light, dimmed or turned by a law (Glowing dark, Day and
 ## night): the sun's and the ambient's strength as built, kept to restore.
-func light() -> Dictionary:
+func _base_light() -> Dictionary:
 	if _light.is_empty() and sun != null and environment != null:
 		_light = {"sun": sun.light_energy, "sun_colour": sun.light_color, "ambient": environment.ambient_light_energy,
 			"ambient_colour": environment.ambient_light_color}
@@ -410,7 +454,7 @@ func light() -> Dictionary:
 
 ## T2's look on the attached view (its sky and the hemisphere the ambient
 ## light comes from), or null in a bare scene.
-func look() -> WorldLook:
+func _look() -> WorldLook:
 	var v: Variant = view.get("look") if view != null else null
 	return v as WorldLook
 
@@ -420,7 +464,7 @@ func look() -> WorldLook:
 ## from §21.2's skies for this realm; and `dark` (0..1) dims the hemisphere
 ## the ambient light comes from (Glowing dark), so the ground darkens too.
 func set_sky(night: float, dark := 0.0) -> void:
-	var l := look()
+	var l := _look()
 	if l == null:
 		return
 	var day_sky := RealmPalette.realm_sky_at(12, l.realm)
@@ -446,11 +490,11 @@ func set_sky(night: float, dark := 0.0) -> void:
 func set_light(sun_k: float, ambient_k: float, colour := Color(0, 0, 0, 0)) -> void:
 	if sun == null or environment == null:
 		return
-	var base := light()
+	var base := _base_light()
 	if _light.has("wrote") and not is_equal_approx(sun.light_energy, float(_light["wrote"])):
 		# Someone else lit the realm since: that is the base now.
 		_light = {}
-		base = light()
+		base = _base_light()
 	sun.light_energy = float(base["sun"]) * sun_k
 	environment.ambient_light_energy = float(base["ambient"]) * ambient_k
 	if colour.a > 0.0:
@@ -459,9 +503,9 @@ func set_light(sun_k: float, ambient_k: float, colour := Color(0, 0, 0, 0)) -> v
 
 
 func _restore_light() -> void:
-	if _light.has("sky") and look() != null:
+	if _light.has("sky") and _look() != null:
 		# The look puts its own sky, hemisphere and light back for its hour.
-		look().set_hour(look().hour)
+		_look().set_hour(_look().hour)
 		_light = {}
 		return
 	if _light.is_empty() or sun == null or environment == null:
@@ -498,28 +542,12 @@ func _process(delta: float) -> void:
 	sync(tick + _since * TPS)
 
 
-## §20.8's reduced motion: no strobes, no flashes, no blinking; flashes come
-## and go softly and every signature runs slower.
-static func calm() -> bool:
-	return Settings.reduced_motion
-
-
-## A flash of light `u` seconds into it, over its first second: sharp, or
-## with reduced motion a soft swell that never jumps.
-static func flash(u: float, peak: float) -> float:
-	if u >= 1.0 or u < 0.0:
-		return 0.0
-	if calm():
-		return sin(u * PI) * minf(peak, 0.2)
-	return peak * (1.0 - u)
-
-
 ## Haste quickens every signature's clock and Stillness all but stops it
 ## (§21.7: "Clouds race overhead; plants sway quickly", "not a leaf moves").
 func _pace() -> float:
 	if site == null:
-		return 0.6 if calm() else 1.0
-	var p := 0.6 if calm() else 1.0
+		return 0.6 if LawFxPaint.calm() else 1.0
+	var p := 0.6 if LawFxPaint.calm() else 1.0
 	for d: Dictionary in site.pylons:
 		if d["law"] == "haste":
 			p *= 1.6
@@ -548,7 +576,17 @@ func budget(law: String) -> Dictionary:
 		var passes := 2 if mi.material_override != null and mi.material_override.next_pass != null else 1
 		tris += n * passes
 		draws += passes
+	# Its motes are drawn with every other law's, in the one shared draw.
+	tris += int(sig.get_meta("mote_triangles", 0))
 	return {"triangles": tris, "draws": draws}
+
+
+## Every law's signature shown or hidden at once (Unmaking's stutter).
+func show_signatures(on: bool) -> void:
+	for sig: Node in signatures.values():
+		(sig as Node3D).visible = on
+	if _mote_layer != null:
+		_mote_layer.visible = on
 
 
 ## §21.7's movement signature of `law` as numbers a character controller

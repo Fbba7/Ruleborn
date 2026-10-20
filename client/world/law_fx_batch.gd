@@ -11,6 +11,10 @@ const CORNERS: Array[Vector2] = [Vector2(-1, -1), Vector2(1, -1), Vector2(1, 1),
 	Vector2(-1, 1)]
 
 var kind := Kind.MOTES
+## What the next motes glow and how fast they run, written per vertex
+## (UV2), so motes of every law share one material and one draw call.
+var glow := 0.35
+var pace := 1.0
 var st := SurfaceTool.new()
 var triangles := 0
 
@@ -34,6 +38,7 @@ func mote(at: Vector3, velocity: Vector3, period: float, phase: float, radius: f
 		st.set_uv(c)
 		st.set_custom(0, Color(velocity.x, velocity.y, velocity.z, period))
 		st.set_custom(1, Color(phase, radius, wobble, float(shape)))
+		st.set_uv2(Vector2(glow, pace))
 		st.add_vertex(at)
 	triangles += 2
 

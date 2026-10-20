@@ -106,3 +106,19 @@ static func home(fx: LawFx, law: String) -> Vector3:
 ## A soft shadow under something floating, as a dark pool.
 static func shadows(fx: LawFx, sig: Node3D, centres: Array, radius: float) -> MeshInstance3D:
 	return rounds(fx, sig, centres, radius, 8, Color(0.16, 0.1, 0.25, 1.0))
+
+
+## §20.8's reduced motion: no strobes, no flashes, no blinking; flashes come
+## and go softly and every signature runs slower.
+static func calm() -> bool:
+	return Settings.reduced_motion
+
+
+## A flash of light `u` seconds into it, over its first second: sharp, or
+## with reduced motion a soft swell that never jumps.
+static func flash(u: float, peak: float) -> float:
+	if u >= 1.0 or u < 0.0:
+		return 0.0
+	if calm():
+		return sin(u * PI) * minf(peak, 0.2)
+	return peak * (1.0 - u)

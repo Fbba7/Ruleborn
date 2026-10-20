@@ -70,9 +70,9 @@ static func clash(fx: LawFx, into: Node3D, which: String, a: Vector3, b: Vector3
 				fx.every(func(s: float) -> void:
 					var u := fmod(s, 15.0)
 					var on := u > 12.0
-					if LawFx.calm():
+					if LawFxPaint.calm():
 						# No strobe: the dark phase settles in and lifts.
-						tint.set_shader_parameter("wash", LawFx.flash((u - 12.0) / 3.0, 0.35) if on else 0.0)
+						tint.set_shader_parameter("wash", LawFxPaint.flash((u - 12.0) / 3.0, 0.35) if on else 0.0)
 						return
 					# Two flashes a second at most over the whole screen (WCAG
 					# 2.3.1's three-flash limit, kept well under).
@@ -145,7 +145,7 @@ static func chord(fx: LawFx, into: Node3D, id: String, pts: Array[Vector3]) -> v
 			if tint != null:
 				fx.every(func(s: float) -> void:
 					var u := fmod(s, 20.0)
-					tint.set_shader_parameter("flash", LawFx.flash(u, 0.7)))
+					tint.set_shader_parameter("flash", LawFxPaint.flash(u, 0.7)))
 		"deep_sleep":
 			LawFxPaint.spray(fx, into, slot, {"n": 16, "shape": 4, "colour": Color("#E8E0FF", 0.9), "radius": [0.1, 0.14],
 				"at": mid, "reach": 3.0, "lift": [-0.5, 0.5], "vel": Vector3(0, 0.25, 0), "period": [4.0, 6.0]})
@@ -229,8 +229,7 @@ static func paradox(fx: LawFx, into: Node3D, id: String) -> void:
 			var tint := fx.tint(Color("#2A1A4A"), 0.0)
 			fx.every(func(s: float) -> void:
 				var u := fmod(s, 20.0)
-				var on := not (u < 1.2 and (LawFx.calm() or int(s * 4.0) % 2 == 0))
-				for sig: Node in fx.signatures.values():
-					(sig as Node3D).visible = on
+				var on := not (u < 1.2 and (LawFxPaint.calm() or int(s * 4.0) % 2 == 0))
+				fx.show_signatures(on)
 				if tint != null:
-					tint.set_shader_parameter("edge", 0.0 if on or LawFx.calm() else 0.6))
+					tint.set_shader_parameter("edge", 0.0 if on or LawFxPaint.calm() else 0.6))

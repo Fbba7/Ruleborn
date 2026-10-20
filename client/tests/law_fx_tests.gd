@@ -158,11 +158,11 @@ func _calm() -> void:
 	Settings.reduced_motion = true
 	var soft := true
 	for k in 21:
-		soft = soft and LawFx.flash(k / 20.0, 0.7) <= 0.2
+		soft = soft and LawFxPaint.flash(k / 20.0, 0.7) <= 0.2
 	var fx := LawFx.new()
 	var steady := float(fx.thread_material().get_shader_parameter("steady")) == 1.0
 	Settings.reduced_motion = false
-	var sharp := LawFx.flash(0.0, 0.7) > 0.6
+	var sharp := LawFxPaint.flash(0.0, 0.7) > 0.6
 	var flickers := float(fx.thread_material().get_shader_parameter("steady")) == 0.0
 	fx.free()
 	Settings.reduced_motion = was
