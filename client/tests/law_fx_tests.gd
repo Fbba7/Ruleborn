@@ -24,6 +24,7 @@ func run() -> void:
 	_links()
 	_gaits()
 	_crowns()
+	await _creature()
 	await _signatures()
 	await _same_every_time()
 
@@ -90,6 +91,32 @@ func _crowns() -> void:
 			off.append([school, tris])
 	check.call("every school's crown is its own shape, built from code within a few hundred triangles (21.2)",
 		off.is_empty() and LawFx.crown("time") != LawFx.crown("life"), "%s" % [off])
+
+
+## §21.7's movement signatures on T1's characters: Half gravity lifts a
+## walking body off the ground and Frictionless slides it, without moving the
+## model from where the caller placed it; at rest it stands as it was.
+func _creature() -> void:
+	var kinds := CreatureModel.kinds()
+	if kinds.is_empty():
+		check.call("a law changes how a character moves (21.7)", false, "no exported creatures")
+		return
+	var c := CreatureModel.make(StringName(kinds[0]))
+	tree.root.add_child(c)
+	c.place(Vector3(2, 0, 3))
+	await tree.process_frame
+	var body := LawFxCreature.body_of(c)
+	var rest_y := body.position.y
+	var g := LawFxCreature.apply(c, ["half_gravity"], 0.11, true)
+	var lifted := body.position.y > rest_y + 0.01
+	var slide := LawFxCreature.apply(c, ["frictionless"], 0.5, true)
+	var slides := c.clip == LawFxCreature.clip_for(slide, c) and float(slide["skate"]) == 1.0
+	LawFxCreature.rest(c)
+	var back := absf(body.position.y - rest_y) < 0.0001 and c.position == Vector3(2, 0, 3)
+	c.queue_free()
+	check.call("a law changes how a character moves: Half gravity lifts a walking body, Frictionless slides it, and "
+			+ "the model stays where it was placed (21.7)", lifted and slides and back and float(g["float"]) > 0.5,
+		"%s %s %s %s" % [kinds[0], lifted, slides, back])
 
 
 static func realm(law: String) -> PackedByteArray:
