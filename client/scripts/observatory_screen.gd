@@ -108,7 +108,7 @@ func _picture(card: Dictionary) -> Control:
 	var rect := TextureRect.new()
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	rect.custom_minimum_size = Vector2(0, UI.px(130))
+	rect.custom_minimum_size = Vector2(0, UI.px(165))
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	frame.add_child(rect)
 	var key := StageThumbs.key_of(card)
