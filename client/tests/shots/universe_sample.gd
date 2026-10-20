@@ -48,7 +48,7 @@ static func _b(kind: String, n: int, level: int) -> Dictionary:
 
 ## What the home and the raid badge add.
 static func extras() -> Dictionary:
-	return {"band": 1, "raids": 2, "producers": [
+	return {"band": 1, "strain": 0.74, "raids": 2, "producers": [
 		{"kind": "star_well", "realm": "heart", "stored": 320, "holds": 320},
 		{"kind": "garden", "realm": "outer-4", "stored": 85, "holds": 200},
 		{"kind": "aether_spring", "realm": "outer-2", "stored": 40, "holds": 140}]}

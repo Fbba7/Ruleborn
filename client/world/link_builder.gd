@@ -220,7 +220,7 @@ func _torus(g: Geo, c: Vector3, r: float, tube: float, col: Color) -> void:
 		return _at(c + ring_dir * (r + cos(b) * tube) + Vector3(sin(b) * tube, 0, 0))
 	for i in segs:
 		for j in sides:
-			g.quad(at.call(i, j), at.call(i, j + 1), at.call(i + 1, j + 1), at.call(i + 1, j), col)
+			g.quad(at.call(i, j), at.call(i + 1, j), at.call(i + 1, j + 1), at.call(i, j + 1), col)
 
 
 ## The rift's stream: where its light runs, for the map to move each frame.

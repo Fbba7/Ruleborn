@@ -35,9 +35,14 @@ const NIGHT := {
 	"lanternvale": {"grass": "#3F6D5B", "soil": "#4E3F4A", "rock": "#363160", "rock2": "#26224A", "accent": "#F2B43C",
 		"roof": "#4B3C8A", "wall": "#6A5A78", "stone": "#C4BCD8"},
 }
+## How many peaks stand on each realm's rim (the design's three cones,
+## :1146); the gentle realms have none.
+const PEAKS := {"skyfield": 2, "crystalline": 3, "emberreach": 3, "lanternvale": 2}
+## Path stones, by realm: the Heart's are the design's rose cobbles.
+const PATH := {"heart": "#F0B8C8", "lanternvale": "#8E86B8", "emberreach": "#7A5A50"}
 ## Where buildings stand: the middle, then a ring, then the rim's ring, as
 ## fractions of the island's radius, and how many places each ring has.
-const RINGS := [[0.0, 1], [0.4, 6], [0.68, 9]]
+const RINGS := [[0.0, 1], [0.44, 6], [0.7, 9]]
 ## The Heart's beam (the design's, :1140), in the Spirit pink.
 const BEAM := Color("#F7A6DA")
 
@@ -55,6 +60,12 @@ var island_seed := 1
 var places := {}
 ## Ghost: a realm still to open, drawn as mist and outline only.
 var ghost := false
+
+## Soft shade on the ground under what stands on it (the map's shade layer).
+var shades := UniversePaint.new()
+
+## Where buildings stand, which the meadow keeps clear of.
+var _used: Array[Vector3] = []
 
 
 func _init(realm: Dictionary, where: Vector3) -> void:
@@ -110,35 +121,49 @@ func build(body: Geo, hero: Geo, glows: UniversePaint, light: UniversePaint, flo
 	_rock(body, hero)
 	_beneath(hero, glows, light, flow)
 	_dress(hero, glows)
-	_buildings(hero, glows, buildings)
+	_buildings(body, hero, glows, buildings)
 	if key == "heart":
-		light.beam(at + Vector3(0, 5.0, 0), 1.0, 3.2, 30.0, Color(BEAM, 0.55), 16)
+		light.beam(at + Vector3(0, 9.5, 0), 0.9, 3.0, 30.0, Color(BEAM, 0.22), 16)
+		light.beam(at + Vector3(0, 9.5, 0), 0.3, 0.8, 20.0, Color(BEAM.lightened(0.4), 0.3), 10)
 		glows.glow(at + Vector3(0, -4.0, 0), radius * 1.9, Color(BEAM, 0.22))
 
 
-## The grass top: rings from the middle to the rim, each quad a little
-## different (the design's two noise fields, :953), lighter at the lip.
+## The grass top: rings from the middle to the rim, shaded in soft patches
+## by two noise fields (the design's, :953) so it reads as meadow, not felt,
+## lighter at the lip.
 func _top(g: Geo) -> void:
-	var spokes := 44
-	var rings := 5
+	var spokes := 48
+	var rings := 7
 	var grass: Color = palette["grass"]
 	var plant: Color = palette["plant"]
+	var accent: Color = palette["accent"]
 	for i in rings:
 		for k in spokes:
 			var a0 := TAU * k / spokes
 			var a1 := TAU * (k + 1) / spokes
-			var f0 := float(i) / rings
-			var f1 := float(i + 1) / rings
-			var shade := grass.lerp(plant, 0.18 * noise(i * spokes + k)).lightened(0.07 * noise(k * 7 + i * 3))
+			var f0 := pow(float(i) / rings, 0.8)
+			var f1 := pow(float(i + 1) / rings, 0.8)
+			var mid := point((a0 + a1) / 2.0, (f0 + f1) / 2.0)
+			var shade := grass.darkened(0.12 + 0.3 * patch(mid)).lerp(plant, 0.25 * patch(mid * 1.7 + Vector3(9, 0, 4)))
+			shade = shade.lerp(accent, 0.06 * maxf(0.0, patch(mid * 0.6 + Vector3(3, 0, 7)) - 0.5))
 			if i == rings - 1:
-				shade = shade.lightened(0.08)
+				shade = shade.lightened(0.1)
 			var p := func(f: float, a: float) -> Vector3: return point(a, f, dome(f))
 			g.quad(p.call(f0, a1), p.call(f1, a1), p.call(f1, a0), p.call(f0, a0), shade)
 	# A plaza in the middle, in the realm's ground.
-	var plaza := 4.6 if key == "heart" else 2.0
+	var plaza := 4.4 * UniverseCitadel.MAP_SCALE if key == "heart" else 2.0
 	g.prism(Geo.place(at + Vector3(0, dome(0.0) - 0.06, 0)), 16, plaza, plaza * 0.98, 0.1, palette["ground"])
 	if key == "heart":
 		g.ring(Geo.place(at + Vector3(0, dome(0.0) + 0.05, 0)), plaza * 0.86, plaza * 0.98, palette["trim"], 24)
+
+
+## A soft field in [0, 1] over the island: where grass grows darker, where
+## flowers gather.
+func patch(p: Vector3) -> float:
+	var q := p - at
+	var s := float(island_seed % 31)
+	var v := sin(q.x * 0.42 + s) * cos(q.z * 0.37 - s * 0.5) + 0.6 * sin((q.x + q.z) * 0.8 + s * 1.3)
+	return clampf(0.5 + v * 0.32, 0.0, 1.0)
 
 
 ## The earth rim and the rock beneath in strata, narrowing to a point, with
@@ -177,12 +202,15 @@ func _rock(g: Geo, hero: Geo) -> void:
 		cap = Color("#FF7A3C", 0.2)
 	elif key == "lanternvale" or key == "crystalline":
 		cap = Color("#D8CCFF")
-	for q in 3:
+	if not PEAKS.has(key):
+		return
+	for q in int(PEAKS[key]):
 		var a := noise(77) * TAU + q * 2.1 + 0.6
 		var h := 2.4 + q * 0.7
 		var p := point(a, 0.8, dome(0.8) - 0.2)
 		var rock_col: Color = rock.lerp(palette["grass"], 0.25)
 		hero.prism(Geo.place(p, a), 7, 1.7 + q * 0.3, 0.55, h * 0.7, rock_col)
+		_shade(p, 2.6 + q * 0.3, 0.4)
 		hero.prism(Geo.place(p + Vector3(0, h * 0.7, 0), a), 7, 0.62, 0.0, h * 0.38, cap)
 
 
@@ -242,7 +270,7 @@ func _waterfall(flow: UniversePaint, glows: UniversePaint, a: float, colour: Col
 func _dress(hero: Geo, glows: UniversePaint) -> void:
 	var plant: Color = palette["plant"]
 	var accent: Color = palette["accent"]
-	var n := 16
+	var n := 22
 	for i in n:
 		var a := TAU * (i + noise(i * 29) * 0.6) / n
 		var f := 0.82 + 0.12 * noise(i * 31)
@@ -290,7 +318,13 @@ func _dress(hero: Geo, glows: UniversePaint) -> void:
 					hero.ball(Geo.place(p + Vector3(0, 0.15, 0)), 0.18, accent, 2, 5)
 
 
+## Shade on the ground at `p`, `r` across, `dark` at its middle.
+func _shade(p: Vector3, r: float, dark: float) -> void:
+	shades.disc(p + Vector3(0.25, 0.05, 0.25), Vector3.UP, r, Color(0, 0, 0, minf(1.0, dark * 1.3)), 14)
+
+
 func _tree(g: Geo, p: Vector3, s: float, crown: Color, i: int) -> void:
+	_shade(p, 0.85 * s, 0.45)
 	g.prism(Geo.place(p), 5, 0.13 * s, 0.09 * s, 0.7 * s, Palette.WOOD.darkened(0.25))
 	g.ball(Geo.place(p + Vector3(0, 1.0 * s, 0)), 0.55 * s, crown, 3, 6)
 	g.ball(Geo.place(p + Vector3(0.25 * s, 1.3 * s, 0.1 * s)), 0.36 * s, crown.lightened(0.12 + 0.04 * (i % 3)), 3, 6)
@@ -314,12 +348,15 @@ func _windmill(g: Geo, p: Vector3, s: float, a: float) -> void:
 
 ## The realm's buildings, each at its level, in rings from the middle; the
 ## Heart's middle is its Spire.
-func _buildings(hero: Geo, glows: UniversePaint, buildings: Array) -> void:
+func _buildings(body: Geo, hero: Geo, glows: UniversePaint, buildings: Array) -> void:
 	var spots := _spots()
 	var next := 0
 	var lit := key == "lanternvale" or key == "heart" or key == "crystalline"
 	if key == "heart":
-		UniverseCitadel.build(hero, glows, at + Vector3(0, dome(0.0) - 0.05, 0), palette, spire)
+		# The citadel is the map's own piece, drawn larger than the realm's
+		# buildings so the Heart reads from across the universe (the design's
+		# Heart is half again the size of its realms).
+		_shade(at, 6.2 * UniverseCitadel.MAP_SCALE, 0.55)
 		places["keeper_s_spire:1"] = at + Vector3(0, 11.0, 0)
 		next = 1
 	for b: Dictionary in buildings:
@@ -331,14 +368,92 @@ func _buildings(hero: Geo, glows: UniversePaint, buildings: Array) -> void:
 		var f := Vector2(spot.x - at.x, spot.z - at.z).length() / radius
 		var mid := spot + Vector3(0, dome(f), 0)
 		var lv := int(b.get("level", 1))
+		_path(body, spot)
+		_lamp(hero, glows, spot)
+		_used.append(spot)
+		_shade(mid, 2.1, 0.5)
 		if kind == "ward":
 			_ward(hero, glows, mid, lv)
 		else:
-			BuildingKit.build(hero, kind, mid, 3 if kind in ["vault", "keeper_s_spire"] else 2, lv, palette)
+			BuildingKit.build(hero, kind, mid, 4 if kind in ["vault", "keeper_s_spire"] else 3, lv, palette)
 		places["%s:%d" % [kind, int(b.get("n", 1))]] = mid + Vector3(0, 2.2, 0)
 		# Windows lit, more of them in the realms of night (§21.2: "lanterns
 		# and glows carry the realm").
 		glows.glow(mid + Vector3(0, 0.7, 0.9), 0.7 if lit else 0.45, Color("#FFC36A", 0.7 if lit else 0.4))
+
+
+## Stepping stones from the plaza to a building's door.
+func _path(g: Geo, to: Vector3) -> void:
+	var from := Vector3(at.x, 0, at.z)
+	var flat := Vector3(to.x - at.x, 0, to.z - at.z)
+	var reach := flat.length()
+	if reach < 3.0:
+		return
+	var dir := flat / reach
+	var start := 4.4 * UniverseCitadel.MAP_SCALE if key == "heart" else 1.8
+	var stone: Color = Color(PATH[key]) if PATH.has(key) else (palette["ground"] as Color).lightened(0.08)
+	var n := int((reach - start - 1.3) / 0.55)
+	for k in n:
+		var d := start + k * 0.55
+		var side := Vector3(-dir.z, 0, dir.x) * (0.12 if k % 2 == 0 else -0.12)
+		var p := from + dir * d + side
+		var f := d / radius
+		g.prism(Geo.place(p + Vector3(0, at.y + dome(f) - 0.02, 0), k * 0.7), 6, 0.26, 0.24, 0.06,
+			stone.darkened(0.06 * (k % 3)))
+
+
+## A lamp where a building's path leaves the plaza: the realm's warm lights
+## at night (§21.2: "lanterns and glows carry the realm").
+func _lamp(hero: Geo, glows: UniversePaint, to: Vector3) -> void:
+	var flat := Vector3(to.x - at.x, 0, to.z - at.z)
+	if flat.length() < 3.0:
+		return
+	var dir := flat.normalized()
+	var d := (4.4 * UniverseCitadel.MAP_SCALE if key == "heart" else 1.8) + 0.4
+	var p := at + dir * d + Vector3(-dir.z, 0, dir.x) * 0.55
+	p.y = at.y + dome(d / radius)
+	var post := Color("#3A2E4A") if key in ["lanternvale", "crystalline"] else Palette.WOOD.darkened(0.35)
+	hero.prism(Geo.place(p), 4, 0.06, 0.05, 1.15, post)
+	hero.ball(Geo.place(p + Vector3(0, 1.22, 0)), 0.13, Color("#FFD27A", 0.1), 2, 5)
+	glows.glow(p + Vector3(0, 1.22, 0), 0.95, Color("#FFC36A", 0.85))
+
+
+## The meadow's tufts and flowers, never on a path or under a building:
+## each [transform, colour], for the map's two scatter layers.
+func scatter(tufts: Array, flowers: Array) -> void:
+	if ghost:
+		return
+	var grass: Color = palette["grass"]
+	var plant: Color = palette["plant"]
+	var bloom: Array[Color] = [palette["accent"], Color("#FFFFFF"), Color("#F6D27A"), Color("#F2A6CF")]
+	if key == "emberreach":
+		bloom = [Color("#FF8A3C", 0.3), Color("#FFC24A", 0.3)]
+	elif key == "lanternvale":
+		bloom = [Color("#7AD8C8", 0.4), Color("#FFD27A", 0.4)]
+	var placed := 0
+	for i in 260:
+		if placed >= 150:
+			break
+		var a := noise(i * 7 + 1) * TAU
+		var f := sqrt(noise(i * 7 + 2)) * 0.93
+		var p := point(a, f, dome(f) - 0.02)
+		if f < (0.45 if key == "heart" else 0.17) or _crowded(p):
+			continue
+		placed += 1
+		var turn := Basis(Vector3.UP, noise(i * 7 + 3) * TAU).scaled(Vector3.ONE * (0.7 + 0.6 * noise(i * 7 + 4)))
+		if noise(i * 7 + 5) < 0.3 + 0.35 * patch(p * 1.3):
+			var c: Color = bloom[int(noise(i * 7 + 6) * bloom.size()) % bloom.size()]
+			flowers.append([Transform3D(turn, p), c])
+		else:
+			var c := grass.darkened(0.1 + 0.15 * noise(i * 11)).lerp(plant, 0.4 * noise(i * 13))
+			tufts.append([Transform3D(turn, p), c])
+
+
+func _crowded(p: Vector3) -> bool:
+	for u: Vector3 in _used:
+		if Vector2(p.x - u.x, p.z - u.z).length() < 1.7:
+			return true
+	return false
 
 
 ## A ward: a stone of its school's colour, glowing at its top.
