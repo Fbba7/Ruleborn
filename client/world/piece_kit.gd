@@ -77,15 +77,24 @@ static func pylon(school := "matter") -> ArrayMesh:
 	g.skip_down = true
 	var stone := Palette.STONE
 	var colour: Color = Palette.SCHOOL.get(school, Palette.MATTER)
-	g.prism(Geo.place(Vector3.ZERO, PI / 4.0), 4, 0.32, 0.28, 0.12, stone.darkened(0.2))
-	g.prism(Geo.place(Vector3(0, 0.12, 0), PI / 4.0), 4, 0.24, 0.22, 0.08, stone.darkened(0.1))
+	g.rbox(Geo.place(Vector3(0, 0.06, 0), PI / 4.0), Vector3(0.6, 0.12, 0.6), stone.darkened(0.2), 0.03)
+	g.rbox(Geo.place(Vector3(0, 0.16, 0), PI / 4.0), Vector3(0.44, 0.08, 0.44), stone.darkened(0.1), 0.02)
+	# The school's colour inlaid round the step.
+	g.torus(Geo.place(Vector3(0, 0.2, 0)), 0.21, 0.012, Color(colour.lightened(0.2), 0.4), 16, 3)
 	g.prism(Geo.place(Vector3(0, 0.2, 0), PI / 4.0), 4, 0.16, 0.09, 1.1, stone)
-	g.prism(Geo.place(Vector3(0, 1.3, 0), PI / 4.0), 4, 0.09, 0.0, 0.12, stone.lightened(0.1))
-	# Runes up its face in the school's colour.
-	for k in 3:
-		g.box(Geo.place(Vector3(0, 0.45 + 0.25 * k, 0.13 - 0.016 * k)), Vector3(0.07, 0.07, 0.01), Color(colour, 0.4))
-	g.moving(Geo.Anim.SPIN_Y, Vector3(0, 1.62, 0))
-	_shape(g, school, Vector3(0, 1.62, 0), 0.13, Color(colour.lightened(0.15), 0.35))
+	g.prism(Geo.place(Vector3(0, 1.3, 0), PI / 4.0), 4, 0.09, 0.0, 0.14, stone.lightened(0.1))
+	# Runes up each face in the school's colour, breathing.
+	for f in 4:
+		var yaw := PI / 2.0 * f
+		var out := Vector3(0, 0, 1).rotated(Vector3.UP, yaw)
+		for k in 3:
+			var y := 0.45 + 0.25 * k
+			g.box(Geo.place(Vector3(0, y, 0) + out * (0.128 - 0.024 * k), yaw), Vector3(0.06, 0.07, 0.008),
+				Color(colour, 0.4))
+	g.moving(Geo.Anim.SPIN_Y, Vector3(0, 1.66, 0))
+	_shape(g, school, Vector3(0, 1.66, 0), 0.13, Color(colour.lightened(0.15), 0.35))
+	g.torus(Transform3D(Basis(Vector3.RIGHT, 0.4), Vector3(0, 1.66, 0)), 0.22, 0.012, Color(colour.lightened(0.3), 0.3),
+		20, 3)
 	g.moving(Geo.Anim.NONE, Vector3.ZERO)
 	return g.mesh()
 
@@ -97,7 +106,8 @@ static func broken_pylon() -> ArrayMesh:
 	g.prism(Geo.place(Vector3.ZERO, PI / 4.0), 4, 0.32, 0.28, 0.12, stone.darkened(0.1))
 	g.prism(Geo.place(Vector3(0, 0.12, 0), PI / 4.0), 4, 0.24, 0.22, 0.08, stone)
 	g.prism(Geo.place(Vector3(0, 0.2, 0), PI / 4.0), 4, 0.16, 0.14, 0.3, stone)
-	# The top fallen beside it, and the rubble.
+	# Its runes gone dark, a crack up the stump; the top fallen beside it.
+	g.box(Geo.place(Vector3(0.03, 0.36, 0.152), 0.3), Vector3(0.02, 0.22, 0.01), Palette.INK)
 	g.prism(Transform3D(Basis(Vector3.BACK, 1.4), Vector3(0.38, 0.09, 0.1)), 4, 0.12, 0.09, 0.6, stone.lightened(0.05))
 	for k in 4:
 		g.rock(Geo.place(Vector3(-0.25 + 0.15 * k, 0.03, 0.25 - 0.08 * k)), 0.05, stone, k)
