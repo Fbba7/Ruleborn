@@ -403,6 +403,37 @@ func light() -> Dictionary:
 	return _light
 
 
+## T2's look on the attached view (its sky and the hemisphere the ambient
+## light comes from), or null in a bare scene.
+func look() -> WorldLook:
+	var v: Variant = view.get("look") if view != null else null
+	return v as WorldLook
+
+
+## The realm's sky and ambient hemisphere between its day (0) and its
+## night (1) (§21.7, Day and night: "The sky flips between day and night"),
+## from §21.2's skies for this realm; and `dark` (0..1) dims the hemisphere
+## the ambient light comes from (Glowing dark), so the ground darkens too.
+func set_sky(night: float, dark := 0.0) -> void:
+	var l := look()
+	if l == null:
+		return
+	var day_sky := RealmPalette.realm_sky_at(12, l.realm)
+	var night_sky := RealmPalette.realm_sky_at(23, l.realm)
+	var m := l.sky_material
+	for k: int in 3:
+		var key: String = ["top", "middle", "bottom"][k]
+		m.set_shader_parameter(key, day_sky[k].lerp(night_sky[k], night))
+	m.set_shader_parameter("stars", clampf(night * 1.4 - 0.3, 0.0, 0.9))
+	m.set_shader_parameter("moon", clampf(night * 2.0 - 1.0, 0.0, 1.0))
+	var day_h := RealmPalette.hemisphere_at(12, l.realm)
+	var night_h := RealmPalette.hemisphere_at(23, l.realm)
+	var dim := 1.0 - dark
+	l.hemi_material.set_shader_parameter("above", day_h[0].lerp(night_h[0], night) * dim)
+	l.hemi_material.set_shader_parameter("below", day_h[1].lerp(night_h[1], night) * dim)
+	_light["sky"] = true
+
+
 ## Dim or brighten the realm's light from its own: the sun to `sun_k` of it,
 ## the ambient to `ambient_k` and, if given, toward `colour`. Called every
 ## sync, so when the view relights (the hour changes, a screen sets its sky)
@@ -423,6 +454,11 @@ func set_light(sun_k: float, ambient_k: float, colour := Color(0, 0, 0, 0)) -> v
 
 
 func _restore_light() -> void:
+	if _light.has("sky") and look() != null:
+		# The look puts its own sky, hemisphere and light back for its hour.
+		look().set_hour(look().hour)
+		_light = {}
+		return
 	if _light.is_empty() or sun == null or environment == null:
 		return
 	sun.light_energy = _light["sun"]

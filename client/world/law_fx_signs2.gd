@@ -46,7 +46,10 @@ static func _glowing_dark(fx: LawFx, sig: Node3D) -> void:
 	# The ambient comes from the sky (T2's look), so its strength is what
 	# dims; the sun falls to a glow.
 	fx.set_light(0.35, 0.4, Color("#4A4AA0"))
-	fx.every(func(_s: float) -> void: fx.set_light(0.35, 0.4, Color("#4A4AA0")))
+	fx.set_sky(0.85, 0.5)
+	fx.every(func(_s: float) -> void:
+		fx.set_light(0.35, 0.4, Color("#4A4AA0"))
+		fx.set_sky(0.85, 0.5))
 	fx.tint(Color("#07041A"), 0.6, 0.2)
 	var r := fx.site.rng("glowing_dark")
 	var caps := LawFxBatch.new(LawFxBatch.Kind.SOLIDS)

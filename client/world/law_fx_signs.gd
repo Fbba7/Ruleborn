@@ -367,6 +367,7 @@ static func _day_and_night(fx: LawFx, sig: Node3D) -> void:
 	fx.every(func(s: float) -> void:
 		var d := sin(s * TAU / 30.0) * 0.5 + 0.5
 		fx.set_light(0.3 + 0.7 * d, 0.55 + 0.45 * d)
+		fx.set_sky(1.0 - d, (1.0 - d) * 0.45)
 		if tint != null:
 			tint.set_shader_parameter("wash", (1.0 - d) * 0.28)
 			tint.set_shader_parameter("edge", (1.0 - d) * 0.5)
