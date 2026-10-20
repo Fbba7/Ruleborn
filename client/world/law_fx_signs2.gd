@@ -200,6 +200,13 @@ static func _kinship(fx: LawFx, sig: Node3D) -> void:
 			seen[[t, o]] = true
 			var a := fx.site.centre(t) + Vector3(0, LawFxSigns.wall_height(fx.site.code(t)) + 0.08, 0)
 			var b := fx.site.centre(o) + Vector3(0, LawFxSigns.wall_height(fx.site.code(o)) + 0.08, 0)
+			# A runner along the ground too, read from above.
+			var low := LawFxBatch.sagging(fx.site.centre(t) + Vector3(0, 0.05, 0), fx.site.centre(o) + Vector3(0, 0.05, 0),
+				0.0, 14)
+			var across := (b - a).cross(Vector3.UP).normalized()
+			for k in low.size():
+				low[k] += across * sin(float(k) / (low.size() - 1) * TAU * 1.5) * 0.12
+			vines.strip(low, Color("#2F8A45"), 4)
 			for strand in 2:
 				var pts := LawFxBatch.sagging(a, b, -0.25, 14)
 				var side := (b - a).cross(Vector3.UP).normalized()
@@ -307,9 +314,12 @@ static func _whispers(fx: LawFx, sig: Node3D) -> void:
 				0.12, 11, Color("#C83C9A", 0.9))
 	fx.layer(sig, b, fx.mote_material(0.6))
 	fx.layer(sig, lines, fx.thread_material(0.07))
-	LawFxPaint.spray(fx, sig, "whispers_lines", {"n": 18, "shape": 3, "colour": Color("#9C3380", 0.6),
-		"radius": [0.04, 0.06], "lift": [0.8, 2.0], "vel": Vector3(0.8, 0, -0.4), "spread": Vector3(0.4, 0, 0.4),
-		"period": [3.0, 5.0], "wobble": 0.2})
+	# Wind lines drift along the way the whispers carry, guard to guard.
+	var way: Vector3 = (posts[1] as Vector3) - (posts[0] as Vector3)
+	way.y = 0.0
+	LawFxPaint.spray(fx, sig, "whispers_lines", {"n": 26, "shape": 3, "colour": Color("#9C3380", 0.7),
+		"radius": [0.05, 0.07], "lift": [0.3, 1.6], "vel": way.normalized() * 1.1, "spread": Vector3(0.15, 0, 0.15),
+		"period": [3.0, 5.0], "wobble": 0.15})
 
 
 ## Echoes: "Soft chimes; faint silhouettes." Clear figures stand about the
