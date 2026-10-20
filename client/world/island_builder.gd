@@ -6,21 +6,51 @@ extends RefCounted
 ## is one metre, the grid centred on the origin, a height level half a tile
 ## (G65). Everything here is drawn from the grid's size and a seed, so the
 ## same island looks the same on every phone.
+##
+## The method and the numbers are the Screens v3 diorama's (`makeIsland`,
+## realm-diorama.js:945–977, and `detail`, :881–911), scaled from its rock
+## of radius 12.7 to the grid's: a polar meadow with a noisy edge, painted
+## from two noise fields with a swell toward the rim and an accent tint; a
+## grass lip, three earth bands and an inverted, jittered rock cone in
+## strata; roots, fringes, rocks and vines along the rim; and the meadow's
+## tufts, pebbles and flowers drawn as instances. The grid sits in the
+## meadow's flat middle, so its tiles meet the grass without a seam.
 
 ## §21.1 and G65: one height level is half a metre.
 const LEVEL := 0.5
-## The rock's top: the grid's ground sits at y = 0.
+## The meadow's top: the grid's ground sits at y = 0, the grass just under it.
 const TOP := 0.0
+## The diorama's rock radius, which its numbers are written for.
+const DESIGN_R := 12.7
+## The meadow's rings and spokes (§21.3: the island stays a small share of
+## a realm's 25,000–40,000 triangles).
+const RINGS := 14
+const SPOKES := 120
 
 var size := Vector2i(12, 12)
 var island_seed := 1
 var palette := RealmPalette.of("heart")
+## The realm type, for the few things only one realm has.
+var kind := "heart"
+var _phase := 0.0
+var _rng := RandomNumberGenerator.new()
 
 
-func _init(grid: Vector2i, new_seed: int, colours: Dictionary) -> void:
+func _init(grid: Vector2i, new_seed: int, colours: Dictionary, type := "") -> void:
 	size = grid
 	island_seed = new_seed
 	palette = colours
+	kind = type if type != "" else _kind_of(colours)
+	_rng.seed = new_seed
+	_phase = float(posmod(new_seed, 1000)) / 100.0
+
+
+## The realm a palette is, when the caller gave only its colours.
+static func _kind_of(colours: Dictionary) -> String:
+	for k: String in RealmPalette.TYPES:
+		if RealmPalette.of(k)["grass"] == colours.get("grass"):
+			return k
+	return "heart"
 
 
 ## How far the round rock reaches: the grid's corners, and a rim beyond.
@@ -28,15 +58,22 @@ func radius() -> float:
 	return Vector2(size).length() / 2.0 + 1.4
 
 
-## The rock's edge at angle `a`: a few seeded waves, so no two islands share
-## an outline.
+## The rock's scale against the diorama's.
+func scale_k() -> float:
+	return radius() / DESIGN_R
+
+
+## The diorama's edge noise (`EF`, :948): five sines, so no two islands
+## share an outline.
+func ef(a: float) -> float:
+	var s := _phase
+	return sin(a * 3 + s) * 0.5 + sin(a * 7 + s * 1.7) * 0.3 + sin(a * 13 + s * 0.3) * 0.22 \
+		+ sin(a * 23 + s * 2.1) * 0.12 + sin(a * 37 - s) * 0.07
+
+
+## The rock's edge at angle `a`.
 func edge(a: float) -> float:
-	var r := radius()
-	var w := 0.0
-	for k in 4:
-		var f := float(k + 2)
-		w += sin(a * f + float(island_seed % 97) * 0.37 * (k + 1)) * 0.22 / (k + 1)
-	return r + w
+	return radius() + 0.4 * ef(a)
 
 
 ## A seeded value in [0, 1) for `i`, the same everywhere.
@@ -46,109 +83,718 @@ func noise(i: int) -> float:
 	return float(posmod(h ^ (h >> 16), 100000)) / 100000.0
 
 
-## The island's rock and earth, one mesh: the grass top around the grid, the
-## earth rim, and the inverted rock cone beneath in strata, with roots.
-func rock() -> ArrayMesh:
-	var g := Geo.new()
-	var spokes := 72
-	var rings := 6
-	var grass: Color = palette["grass"]
-	var soil: Color = palette["soil"]
-	var stone: Color = palette["rock"]
-	# The top: rings from the middle to the edge, a little lower at the rim.
-	for i in rings:
-		for k in spokes:
-			var a0 := TAU * k / spokes
-			var a1 := TAU * (k + 1) / spokes
-			var f0 := float(i) / rings
-			var f1 := float(i + 1) / rings
-			var p := func(f: float, a: float) -> Vector3:
-				var r := edge(a) * f
-				return Vector3(cos(a) * r, TOP - 0.02 - pow(f, 6.0) * 0.12, sin(a) * r)
-			var shade := grass.lightened(0.05 * noise(i * spokes + k)).darkened(0.04 * noise(k * 7 + i))
-			g.quad(p.call(f0, a1), p.call(f1, a1), p.call(f1, a0), p.call(f0, a0), shade)
-	# The earth rim, and the rock below it in bands narrowing to a point.
-	# Cliffs first, steep enough to show from §21.1's pitches, then the
-	# rock tapering to its point.
-	var bands: Array = [[TOP - 0.14, 1.0, soil], [TOP - 0.7, 0.995, soil.darkened(0.1)],
-		[TOP - 1.6, 0.97, stone], [TOP - 2.7, 0.93, stone.darkened(0.12)], [TOP - 3.9, 0.85, stone.darkened(0.04)],
-		[TOP - 5.2, 0.68, stone.darkened(0.18)], [TOP - 6.6, 0.42, stone.darkened(0.08)],
-		[TOP - 8.0, 0.08, stone.darkened(0.28)]]
-	for b in range(bands.size() - 1):
-		var top_y: float = bands[b][0]
-		var low_y: float = bands[b + 1][0]
-		for k in spokes:
-			var a0 := TAU * k / spokes
-			var a1 := TAU * (k + 1) / spokes
-			var j0 := 1.0 + (noise(b * 131 + k) - 0.5) * 0.12
-			var j1 := 1.0 + (noise(b * 131 + (k + 1) % spokes) - 0.5) * 0.12
-			var r_top: float = bands[b][1]
-			var r_low: float = bands[b + 1][1]
-			var p := func(r: float, y: float, a: float, j: float) -> Vector3:
-				return Vector3(cos(a) * edge(a) * r * j, y, sin(a) * edge(a) * r * j)
-			var col: Color = bands[b][2]
-			g.quad(p.call(r_top, top_y, a1, j1 if b > 0 else 1.0), p.call(r_low, low_y, a1, j1),
-				p.call(r_low, low_y, a0, j0), p.call(r_top, top_y, a0, j0 if b > 0 else 1.0),
-				col.darkened(0.05 * noise(k + b * 7)))
-	# Hanging roots, and a few stones on the rim.
-	for k in 9:
-		var a := TAU * (k + noise(k * 3)) / 9.0
-		var r := edge(a) * (0.78 + 0.1 * noise(k * 5))
-		var base := Vector3(cos(a) * r * 1.05, TOP - 2.5 - noise(k) * 1.5, sin(a) * r * 1.05)
-		var root := Transform3D(Basis(Vector3.RIGHT, PI), base)
-		g.prism(root, 5, 0.12, 0.0, 1.4 + 1.6 * noise(k * 11), soil.darkened(0.25), true)
-	for k in 14:
-		var a := TAU * (k + noise(k * 13)) / 14.0
-		var r := edge(a) * 0.93
-		var at := Geo.place(Vector3(cos(a) * r, TOP - 0.05, sin(a) * r), a, Vector3(1.0, 0.7, 1.0))
-		g.ball(at, 0.16 + 0.14 * noise(k * 17), stone.lightened(0.15), 3, 6)
-	return g.mesh()
+## The diorama's soft noise field (`n2`, :951), about 0.5.
+func n2(x: float, z: float) -> float:
+	var s := _phase
+	return 0.5 + 0.25 * sin(x * 1.7 + s) * sin(z * 1.3 - s) + 0.15 * sin(x * 3.1 + z * 2.3 + s) \
+		+ 0.1 * sin(x * 5.7 - z * 4.9)
 
 
-## Clouds drifting below the island and a few stones floating beside it
-## (§21.1: "Islands hang over the sky"), one mesh.
-func sky_dressing() -> ArrayMesh:
-	var g := Geo.new()
-	var r := radius()
-	for k in 6:
-		var a := TAU * (k + noise(k * 53)) / 6.0
-		var d := r * (1.05 + 0.45 * noise(k * 59))
-		var base := Vector3(cos(a) * d, -3.0 - 3.5 * noise(k * 61), sin(a) * d)
-		for puff in 4:
-			var o := Vector3((puff - 1.5) * 0.9, noise(k * 7 + puff) * 0.3, (noise(k * 3 + puff) - 0.5) * 0.8)
-			g.ball(Geo.place(base + o, 0.0, Vector3(1.2, 0.7, 1.0)), 0.6 + 0.35 * noise(k + puff * 5), Color("#FFFFFF"),
-				3, 7)
-	for k in 5:
-		var a := TAU * (k + 0.5 + noise(k * 67)) / 5.0
-		var d := r * (1.12 + 0.2 * noise(k * 71))
-		var at := Geo.place(Vector3(cos(a) * d, -0.6 - 1.4 * noise(k * 73), sin(a) * d), a)
-		g.prism(at, 6, 0.32 + 0.2 * noise(k), 0.38, 0.22, palette["grass"])
-		g.prism(Transform3D(Basis(Vector3.RIGHT, PI), at.origin), 6, 0.36, 0.0, 0.7 + 0.5 * noise(k * 79),
-			palette["rock"])
-	return g.mesh()
+## A smooth 3D hash in [0, 1) (`n3`, :93).
+static func n3(x: float, y: float, z: float) -> float:
+	var s := sin(x * 12.9898 + y * 78.233 + z * 37.719) * 43758.5453
+	return s - floorf(s)
 
 
-## Tufts of grass and flowers on the island's rim, off the grid (§21.4's
-## plants), as one mesh.
-func scatter() -> ArrayMesh:
-	var g := Geo.new()
+## How far a point lies outside the grid, in metres; 0 on it.
+func off_grid(x: float, z: float) -> float:
 	var half := Vector2(size) / 2.0
-	var plant: Color = palette["plant"]
+	return Vector2(maxf(absf(x) - half.x, 0.0), maxf(absf(z) - half.y, 0.0)).length()
+
+
+## The meadow's height: flat under the grid, swelling into a soft bank
+## between the grid and the rim, rolling down at the edge (`hAt`, :952).
+func height(x: float, z: float) -> float:
+	var r := Vector2(x, z).length()
+	var e := edge(atan2(z, x))
+	var bank := smoothstep(0.5, 2.2, off_grid(x, z)) * (1.0 - smoothstep(e - 0.75, e - 0.1, r))
+	return TOP - 0.02 + bank * (0.12 + 0.45 * n2(x * 0.66, z * 0.66))
+
+
+## A colour darkened by multiplying, as three.js's `multiplyScalar`, still
+## opaque.
+static func _dim(c: Color, f: float) -> Color:
+	return Color(c.r * f, c.g * f, c.b * f, 1.0)
+
+
+## A colour moved in hue, saturation and lightness, as three.js's
+## `offsetHSL` moves it.
+static func hsl(c: Color, dh: float, ds: float, dl: float) -> Color:
+	var mx := maxf(c.r, maxf(c.g, c.b))
+	var mn := minf(c.r, minf(c.g, c.b))
+	var l := (mx + mn) / 2.0
+	var s := 0.0
+	if mx != mn:
+		s = (mx - mn) / (2.0 - mx - mn) if l > 0.5 else (mx - mn) / (mx + mn)
+	var h := c.h
+	h = fposmod(h + dh, 1.0)
+	s = clampf(s + ds, 0.0, 1.0)
+	l = clampf(l + dl, 0.0, 1.0)
+	var q := l * (1.0 + s) if l < 0.5 else l + s - l * s
+	var p := 2.0 * l - q
+	return Color(_hue(p, q, h + 1.0 / 3.0), _hue(p, q, h), _hue(p, q, h - 1.0 / 3.0), c.a)
+
+
+static func _hue(p: float, q: float, t: float) -> float:
+	t = fposmod(t, 1.0)
+	if t < 1.0 / 6.0:
+		return p + (q - p) * 6.0 * t
+	if t < 0.5:
+		return q
+	if t < 2.0 / 3.0:
+		return p + (q - p) * (2.0 / 3.0 - t) * 6.0
+	return p
+
+
+## The meadow: a polar grid from the middle to the edge, its rings closer
+## toward the rim where the bank and the colour change; vertex colour from
+## the diorama's two noise fields, lighter on the bank, a touch of the
+## realm's accent, darker at the rim. Smooth-shaded; painted by the shader.
+func meadow() -> ArrayMesh:
+	var m := LookMesh.new()
+	var grass: Color = palette["grass"]
+	var gc := hsl(grass, 0.0, -0.08, -0.03)
+	var lt := hsl(gc, 0.015, 0.02, 0.06)
+	var dk := hsl(gc, -0.01, 0.02, -0.1)
 	var accent: Color = palette["accent"]
-	for k in 70:
-		var a := TAU * noise(k * 29)
-		var f := 0.62 + 0.34 * noise(k * 31)
-		var r := edge(a) * f
-		var p := Vector3(cos(a) * r, TOP - 0.03, sin(a) * r)
-		# Never on the grid, where the realm's own ground and features are.
-		if absf(p.x) < half.x + 0.2 and absf(p.z) < half.y + 0.2:
+	var pts: Array[PackedVector3Array] = []
+	var nrm: Array[PackedVector3Array] = []
+	var col: Array[PackedColorArray] = []
+	for i in RINGS + 1:
+		var f := 1.0 - pow(1.0 - float(i) / RINGS, 1.7)
+		var row := PackedVector3Array()
+		var nrow := PackedVector3Array()
+		var crow := PackedColorArray()
+		for j in SPOKES:
+			var a := TAU * j / SPOKES
+			var e := edge(a)
+			var r := f * e
+			var x := cos(a) * r
+			var z := sin(a) * r
+			var h := height(x, z)
+			row.append(Vector3(x, h, z))
+			var dx := height(x + 0.05, z) - height(x - 0.05, z)
+			var dz := height(x, z + 0.05) - height(x, z - 0.05)
+			nrow.append(Vector3(-dx / 0.1, 1.0, -dz / 0.1).normalized())
+			var nn := n2(x * 0.42 + 3.0, z * 0.42 - 2.0)
+			var c := gc.lerp(lt if nn > 0.55 else dk, minf(1.0, absf(nn - 0.55) * 1.8))
+			if h > 0.05:
+				c = c.lerp(lt, minf(0.8, h * 1.4))
+			var w := n2(x * 0.22 + 9.0, z * 0.22 - 4.0)
+			if w > 0.62:
+				c = c.lerp(accent, minf(0.22, (w - 0.62) * 0.9))
+			if w < 0.36:
+				c = hsl(c, 0.02, 0.06, 0.02)
+			if kind == "tidehold":
+				# A beach of sand round the rim (:889).
+				c = c.lerp(Color("#E8D9B0"), smoothstep(e - 1.9, e - 1.2, r) * 0.85)
+			c = c.lerp(dk, smoothstep(e - 0.7, e, r) * 0.45)
+			crow.append(c)
+		pts.append(row)
+		nrm.append(nrow)
+		col.append(crow)
+	for i in RINGS:
+		for j in SPOKES:
+			var j1 := (j + 1) % SPOKES
+			var a := pts[i][j]
+			var b := pts[i][j1]
+			var c := pts[i + 1][j]
+			var d := pts[i + 1][j1]
+			m.smooth([a, c, b], [nrm[i][j], nrm[i + 1][j], nrm[i][j1]], [col[i][j], col[i + 1][j], col[i][j1]])
+			m.smooth([b, c, d], [nrm[i][j1], nrm[i + 1][j], nrm[i + 1][j1]], [col[i][j1], col[i + 1][j], col[i + 1][j1]])
+	return m.mesh()
+
+
+## A band of the rim, or the cone beneath: rings of (radius, height) round
+## the edge, pushed out by the edge noise `amt` and jittered by `jit`
+## (`jr`, :944) except on the top ring, flat-shaded in strata UV.
+func _lathe(m: LookMesh, rings: Array[Vector2], segs: int, amt: float, jit: float, cols: Array[Color],
+		v_scale: float, salt: int) -> void:
+	var grid: Array[PackedVector3Array] = []
+	for i in rings.size():
+		var row := PackedVector3Array()
+		for j in segs:
+			var a := TAU * j / segs
+			var r := rings[i].x + amt * ef(a) * signf(rings[i].x)
+			var y := rings[i].y
+			if i > 0 and r > 0.01:
+				var px := cos(a) * r
+				var pz := sin(a) * r
+				var nr := n3(snappedf(px, 0.02) + salt, snappedf(y, 0.02), snappedf(pz, 0.02)) - 0.5
+				var ny := n3(snappedf(pz, 0.02), snappedf(px, 0.02) + salt, snappedf(y, 0.02)) - 0.5
+				r += nr * jit * 2.0
+				y += ny * jit * 0.6
+			row.append(Vector3(cos(a) * maxf(r, 0.0), y, sin(a) * maxf(r, 0.0)))
+		grid.append(row)
+	var reps := 10.0
+	for i in rings.size() - 1:
+		var base: Color = cols[mini(i, cols.size() - 1)]
+		for j in segs:
+			var j1 := (j + 1) % segs
+			var a := grid[i][j]
+			var b := grid[i][j1]
+			var c := grid[i + 1][j]
+			var d := grid[i + 1][j1]
+			var u0 := reps * j / segs
+			var u1 := reps * (j + 1) / segs
+			var out := Vector3(cos(TAU * (j + 0.5) / segs), -0.25, sin(TAU * (j + 0.5) / segs))
+			var shade := base.darkened(0.08 * noise(salt * 977 + i * 131 + j))
+			m.tri(a, b, d, shade, out, Vector2(u0, -a.y * v_scale), Vector2(u1, -b.y * v_scale),
+				Vector2(u1, -d.y * v_scale))
+			m.tri(a, d, c, shade, out, Vector2(u0, -a.y * v_scale), Vector2(u1, -d.y * v_scale),
+				Vector2(u0, -c.y * v_scale))
+
+
+## The rim and the rock beneath, one mesh in strata: the grass lip, the
+## three earth bands (:958), the inverted rock cone (:960), a second cone
+## hanging off-centre (:961) and a ring of hanging spikes (:962).
+func cliffs() -> ArrayMesh:
+	var m := LookMesh.new()
+	var s := scale_k()
+	var grass: Color = palette["grass"]
+	var dirt: Color = palette["dirt"]
+	var cliff: Color = palette["cliff"]
+	var deep: Color = palette["cliff_deep"]
+	var e := radius()
+	var lip: Array[Vector2] = [Vector2(e + 0.05, -0.02), Vector2(e + 0.08, -0.12), Vector2(e - 0.02, -0.36)]
+	_lathe(m, lip, SPOKES, 0.4, 0.0, [_dim(grass, 0.92), _dim(grass, 0.8)], 2.2, 1)
+	var bands: Array[Vector2] = [Vector2(e - 0.02, -0.36), Vector2(e - 0.2 * s - 0.02, -0.82),
+		Vector2(e - 0.58 * s, -1.24), Vector2(e - 1.04 * s, -1.74)]
+	var dirt_dark := _dim(dirt, 0.76)
+	_lathe(m, bands, 96, 0.4, 0.05, [dirt, dirt_dark, cliff.lerp(dirt, 0.35)], 2.2, 2)
+	var cone: Array[Vector2] = []
+	var top_r := e - 1.04 * s
+	var depth := 10.0 * s
+	for i in 9:
+		var f := float(i) / 8.0
+		cone.append(Vector2(top_r * (1.0 - f) * (1.0 - 0.15 * f * (1.0 - f)), -1.74 - depth * f))
+	_lathe(m, cone, 30, 0.3, 0.6 * s + 0.15, [cliff], 0.9, 3)
+	# A second, smaller cone off-centre, so the rock is not a spinning top.
+	var off := Vector3(2.3, 0, -1.3) * s
+	var sub := LookMesh.new()
+	var sub_rings: Array[Vector2] = [Vector2(5.4 * s, 0.0), Vector2(3.6 * s, -1.8 * s), Vector2(1.8 * s, -3.6 * s),
+		Vector2(0.0, -5.4 * s)]
+	_lathe(sub, sub_rings, 12, 0.0, 0.5 * s, [deep], 0.9, 4)
+	var drop := Vector3(off.x, -1.74 - depth * 0.62, off.z)
+	for i in sub.verts.size() / 3:
+		m.tri(sub.verts[i * 3] + drop, sub.verts[i * 3 + 2] + drop, sub.verts[i * 3 + 1] + drop, sub.colours[i * 3],
+			sub.normals[i * 3], sub.uvs[i * 3], sub.uvs[i * 3 + 2], sub.uvs[i * 3 + 1])
+	# Hanging spikes of the deeper rock under the rim.
+	for i in 12:
+		var h := 1.6 + _rng.randf() * 2.6
+		var a := _rng.randf() * TAU
+		var r := (7.3 + _rng.randf() * 2.4) * s
+		var w := (0.6 + _rng.randf() * 0.7) * maxf(s, 0.7)
+		var tip := Vector3(cos(a) * r, -1.5 - h, sin(a) * r)
+		for kk in 6:
+			var a0 := TAU * kk / 6.0
+			var a1 := TAU * (kk + 1) / 6.0
+			var p0 := Vector3(cos(a) * r + cos(a0) * w, -1.5, sin(a) * r + sin(a0) * w)
+			var p1 := Vector3(cos(a) * r + cos(a1) * w, -1.5, sin(a) * r + sin(a1) * w)
+			var mid := (p0 + p1) / 2.0 - Vector3(cos(a) * r, -1.5, sin(a) * r)
+			m.tri(p0, p1, tip, deep.darkened(0.06 * (kk % 2)), mid, Vector2(kk * 0.3, 1.5 * 0.9),
+				Vector2(kk * 0.3 + 0.3, 1.5 * 0.9), Vector2(kk * 0.3 + 0.15, (1.5 + h) * 0.9))
+	return m.mesh()
+
+
+## Roots hanging from under the rim and curtains of them off the rock
+## (§21.1; `detail`, :885), with vines and their leaves swaying (:900).
+## Two meshes: the roots, still; the vines, which the shader sways by the
+## distance along each (UV.y).
+func roots() -> Array[ArrayMesh]:
+	var m := LookMesh.new()
+	var vines := LookMesh.new()
+	var s := scale_k()
+	var dirt: Color = palette["dirt"]
+	var root_col := _dim(dirt, 0.7)
+	var count := 22 if kind != "emberreach" else 10
+	for i in count:
+		var q := _rng.randf() * TAU
+		var e := edge(q) - 0.3
+		var pts := PackedVector3Array()
+		var x := cos(q) * e
+		var z := sin(q) * e
+		var y := -0.4
+		var steps := 5 + _rng.randi() % 4
+		for kk in steps:
+			pts.append(Vector3(x, y, z))
+			x += cos(q) * 0.12 + (_rng.randf() - 0.5) * 0.25
+			z += sin(q) * 0.12 + (_rng.randf() - 0.5) * 0.25
+			y -= 0.35 + _rng.randf() * 0.25
+		m.tube(pts, 0.07, 0.025, 4, root_col)
+	# Curtains: long roots off the cone's flank, deeper under the island.
+	for i in (16 if kind != "emberreach" else 6):
+		var q := TAU * (i + _rng.randf() * 0.6) / 16.0
+		var r := (radius() - 1.3 * s) * (0.75 + 0.15 * _rng.randf())
+		var pts := PackedVector3Array()
+		var y := -1.9 - _rng.randf() * 1.2
+		var x := cos(q) * r
+		var z := sin(q) * r
+		for kk in 6:
+			pts.append(Vector3(x, y, z))
+			x += cos(q) * 0.08 + (_rng.randf() - 0.5) * 0.18
+			z += sin(q) * 0.08 + (_rng.randf() - 0.5) * 0.18
+			y -= 0.55 + _rng.randf() * 0.4
+		m.tube(pts, 0.06, 0.02, 4, root_col.darkened(0.1))
+	var vine_col := Color("#3F8A45")
+	match kind:
+		"emberreach":
+			vine_col = Color("#5A3A30")
+		"crystalline":
+			vine_col = Color("#6A5FA8")
+		"lanternvale":
+			vine_col = Color("#2F6A5A")
+	for i in 24:
+		var q := _rng.randf() * TAU
+		var r := edge(q) - 0.45
+		var top := Vector3(cos(q) * r, -0.5 - _rng.randf() * 0.6, sin(q) * r)
+		var length := 1.2 + _rng.randf() * 3.0
+		var pts := PackedVector3Array([top, top + Vector3(cos(q) * 0.1, -length * 0.5, sin(q) * 0.1),
+			top + Vector3(cos(q) * 0.12, -length, sin(q) * 0.12)])
+		vines.tube(pts, 0.03, 0.015, 3, vine_col)
+		for leaf in 3:
+			var at := pts[0].lerp(pts[2], (leaf + 1) / 3.0)
+			var side := 0.07 if leaf % 2 == 0 else -0.07
+			var p := at + Vector3(-sin(q) * side, 0, cos(q) * side)
+			var before := vines.uvs.size()
+			vines.ico(Transform3D(Basis().scaled(Vector3(0.08, 0.05, 0.08)), p), vine_col.lightened(0.12))
+			for u in range(before, vines.uvs.size()):
+				vines.uvs[u] = Vector2(0, length * (leaf + 1) / 3.0)
+	return [m.mesh(), vines.mesh()]
+
+
+## The scatter: each kind one MultiMesh (§21.3: few draw calls), placed by
+## the seed. Returns [mesh, transforms, colours, sway, drift] for each kind:
+## grass tufts and pebbles and flowers on the meadow off the grid (:907–911),
+## and along the rim the grass fringe, the hanging fringe and rocks (:883–885).
+func scatter() -> Array:
+	var out := []
+	var grass: Color = palette["grass"]
+	var gc := Color(grass)
+	var tuft_cols: Array[Color] = [hsl(gc, 0.0, 0.05, -0.08), hsl(gc, 0.02, 0.05, 0.04)]
+	var accent: Color = palette["accent"]
+	var bloom: Color = palette["bloom"]
+	var rock: Color = palette["cliff"]
+	var stone: Color = palette["stone"]
+	match kind:
+		"emberreach":
+			tuft_cols = [Color("#8A5A48"), Color("#9A6A50")]
+		"crystalline":
+			tuft_cols = [Color("#A8A2D8"), Color("#E6E2F8")]
+	var tufts := _meadow_spots(380 if kind != "emberreach" else 90, 0.15)
+	out.append([_tuft_mesh(), _spin_all(tufts, 0.8, 1.3), _pick(tufts.size(), tuft_cols), 0.25, 0.0])
+	var pebbles := _meadow_spots(70, 0.1)
+	out.append([_ico_mesh(), _spin_all(pebbles, 0.04, 0.09, 0.6), _pick(pebbles.size(), [stone, rock]), 0.0, 0.0])
+	if kind != "emberreach" and kind != "crystalline":
+		var flowers := _meadow_spots(130, 0.1)
+		var fc: Array[Color] = [accent, Color.WHITE, Color("#FFE08F"), bloom]
+		out.append([_flower_mesh(), _spin_all(flowers, 0.8, 1.4), _pick(flowers.size(), fc), 0.12, 0.0])
+	elif kind == "crystalline":
+		var shards := _meadow_spots(70, 0.1)
+		var glowing := Color("#BFAEFF")
+		glowing.a = 0.6
+		out.append([_shard_mesh(), _spin_all(shards, 0.7, 1.6), _pick(shards.size(), [glowing]), 0.0, 0.0])
+	else:
+		var embers := _meadow_spots(60, 0.1)
+		var hot := Color("#FF8A3C")
+		hot.a = 0.0
+		out.append([_ember_mesh(), _spin_all(embers, 0.7, 1.5), _pick(embers.size(), [hot]), 0.0, 0.0])
+	# The rim's grass fringe: soft flattened lumps along the edge.
+	if kind != "emberreach":
+		var bumps: Array[Transform3D] = []
+		var bump_cols: Array[Color] = []
+		var gc2 := hsl(gc, 0.0, 0.08, -0.07)
+		var n := int(TAU * radius() / 0.62)
+		for i in n:
+			var q := TAU * i / n + _rng.randf() * 0.02
+			var e := edge(q)
+			var sz := 0.3 + _rng.randf() * 0.18
+			var at := Vector3(cos(q) * (e - 0.05), -0.1 - _rng.randf() * 0.08, sin(q) * (e - 0.05))
+			bumps.append(Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(1.1, 0.55, 1.1) * sz), at))
+			bump_cols.append(gc2.lerp(hsl(gc, 0.0, 0.05, -0.14), _rng.randf() * 0.6))
+		out.append([_puff_mesh(), bumps, bump_cols, 0.0, 0.0])
+	# The hanging fringe: grass cones pointing down under the lip.
+	var cones: Array[Transform3D] = []
+	var cone_cols: Array[Color] = []
+	var fringe := 110 if kind != "emberreach" else 50
+	for i in fringe:
+		var q := TAU * i / fringe + _rng.randf() * 0.05
+		var hh := 0.18 + _rng.randf() * 0.4
+		var r := edge(q) - 0.06
+		var w := 0.1 + _rng.randf() * 0.09
+		cones.append(Transform3D(Basis().scaled(Vector3(w, hh, w)), Vector3(cos(q) * r, -0.3, sin(q) * r)))
+		var hang: Color = _dim(grass, 0.85) if kind != "emberreach" else palette["dirt"]
+		cone_cols.append(hang.lerp(grass, _rng.randf() * 0.3))
+	out.append([_hang_mesh(), cones, cone_cols, 0.0, 0.0])
+	# Rocks on the rim, in small clusters.
+	var rocks: Array[Transform3D] = []
+	var rock_cols: Array[Color] = []
+	rock = rock.lerp(palette["dirt"], 0.3)
+	var mixed := rock.lerp(palette["dirt"], 0.5)
+	for i in 20:
+		var q := _rng.randf() * TAU
+		var e := edge(q) - 0.1
+		var n := 2 + _rng.randi() % 3
+		for kk in n:
+			var sz := 0.18 + _rng.randf() * 0.26
+			var p := Vector3(cos(q) * e + (_rng.randf() - 0.5) * 0.5, -0.06 + _rng.randf() * 0.16,
+				sin(q) * e + (_rng.randf() - 0.5) * 0.5)
+			rocks.append(Transform3D(Basis(Vector3(_rng.randf(), 1, _rng.randf()).normalized(), _rng.randf() * TAU)
+				.scaled(Vector3(1.0, 0.75, 1.0) * sz), p))
+			rock_cols.append(rock if kk % 2 == 1 else mixed)
+	out.append([_ico_mesh(), rocks, rock_cols, 0.0, 0.0])
+	out.append_array(signature())
+	return out
+
+
+## Each realm's own dressing off the grid (§21.4's "Signature terrain and
+## props", "Plants" and "Sky and particles"; the diorama's `deco`,
+## :891–899): Crystalline's crystal spires round the rim, Skyfield's fence
+## of posts, Lantern Vale's fireflies and glowing caps, the Heart's golden
+## motes, Emberreach's sparks, Verdant's pollen. Same form as `scatter`, with
+## a fifth value: how far each drifts on the wind.
+func signature() -> Array:
+	var out := []
+	var accent: Color = palette["accent"]
+	match kind:
+		"crystalline":
+			var spires: Array[Transform3D] = []
+			var cols: Array[Color] = []
+			var n := 40
+			for i in n:
+				var q := TAU * i / n + _rng.randf() * 0.08
+				var r := edge(q) - 0.35 - _rng.randf() * 0.5
+				var sz := 0.22 + _rng.randf() * 0.24
+				var tilt := Basis(Vector3(_rng.randf() - 0.5, 0, _rng.randf() - 0.5).normalized(), _rng.randf() * 0.4)
+				spires.append(Transform3D(tilt * Basis(Vector3.UP, _rng.randf() * TAU).scaled(
+					Vector3(sz, sz * (2.0 + _rng.randf() * 1.8), sz)), Vector3(cos(q) * r, height(cos(q) * r, sin(q) * r)
+					+ 0.1, sin(q) * r)))
+				var c := Color("#BFAEFF") if i % 2 == 0 else Color("#9BEAF3")
+				c.a = 0.75
+				cols.append(c)
+			out.append([_octa_mesh(), spires, cols, 0.0, 0.0])
+		"skyfield":
+			var one: Array[Transform3D] = [Transform3D()]
+			var cream: Array[Color] = [Color("#F6EBD6")]
+			out.append([_fence_mesh(), one, cream, 0.0, 0.0])
+		"lanternvale":
+			var flies := _meadow_spots(90, 0.0)
+			var at: Array[Transform3D] = []
+			for p in flies:
+				at.append(Transform3D(Basis().scaled(Vector3.ONE * (0.035 + _rng.randf() * 0.03)),
+					p + Vector3(0, 0.3 + _rng.randf() * 1.4, 0)))
+			var glow := Color("#C8FF96")
+			glow.a = 0.0
+			out.append([_ico_mesh(), at, _pick(at.size(), [glow, Color(1.0, 0.85, 0.45, 0.0)]), 0.0, 0.25])
+			var caps := _meadow_spots(40, 0.2)
+			var cap_cols: Array[Color] = []
+			for i in caps.size():
+				var c := Color("#7AD8C8") if i % 3 else Color("#E05CB4")
+				c.a = 0.45
+				cap_cols.append(c)
+			out.append([_mushroom_mesh(), _spin_all(caps, 0.8, 1.5), cap_cols, 0.0, 0.0])
+		"heart", "verdant", "emberreach":
+			var motes := _meadow_spots(60 if kind != "emberreach" else 50, -10.0)
+			var at: Array[Transform3D] = []
+			for p in motes:
+				at.append(Transform3D(Basis().scaled(Vector3.ONE * (0.025 + _rng.randf() * 0.025)),
+					p + Vector3(0, 0.4 + _rng.randf() * 2.2, 0)))
+			var c := Color("#FFD27A") if kind == "heart" else (Color("#FFF6B0") if kind == "verdant" else Color("#FF8A3C"))
+			c.a = 0.0
+			out.append([_ico_mesh(), at, _pick(at.size(), [c, c.lerp(accent, 0.4)]), 0.0, 0.3])
+	return out
+
+
+## A crystal: an octahedron of radius 1, standing on its lower point.
+static func _octa_mesh() -> ArrayMesh:
+	var m := LookMesh.new()
+	var pts := [Vector3(1, 0, 0), Vector3(0, 0, 1), Vector3(-1, 0, 0), Vector3(0, 0, -1)]
+	for i in 4:
+		var a: Vector3 = pts[i]
+		var b: Vector3 = pts[(i + 1) % 4]
+		m.tri(a, b, Vector3(0, 1, 0), Color.WHITE, (a + b) / 2.0 + Vector3(0, 0.5, 0))
+		m.tri(a, b, Vector3(0, -1, 0), Color.WHITE, (a + b) / 2.0 - Vector3(0, 0.5, 0))
+	return m.mesh()
+
+
+## A glowing mushroom: a short stem under a round cap.
+static func _mushroom_mesh() -> ArrayMesh:
+	var m := LookMesh.new()
+	m.puff(Transform3D(Basis().scaled(Vector3(0.02, 0.06, 0.02)), Vector3(0, 0.05, 0)), Color("#E8E0F0"), 3, 5)
+	m.puff(Transform3D(Basis().scaled(Vector3(0.07, 0.04, 0.07)), Vector3(0, 0.11, 0)), Color.WHITE, 3, 7)
+	return m.mesh()
+
+
+## Skyfield's fence: posts and a rail round the rim (:896).
+func _fence_mesh() -> ArrayMesh:
+	var m := LookMesh.new()
+	var n := 56
+	for i in n:
+		var q := TAU * i / n
+		var r := edge(q) - 0.7
+		var p := Vector3(cos(q) * r, height(cos(q) * r, sin(q) * r), sin(q) * r)
+		_post(m, p, Vector3(0.05, 0.34, 0.05))
+		var q2 := TAU * (i + 1) / n
+		var r2 := edge(q2) - 0.7
+		var p2 := Vector3(cos(q2) * r2, height(cos(q2) * r2, sin(q2) * r2), sin(q2) * r2)
+		for y: float in [0.16, 0.27]:
+			var a := p + Vector3(0, y, 0)
+			var b := p2 + Vector3(0, y, 0)
+			var side := (b - a).cross(Vector3.UP).normalized() * 0.018
+			m.tri(a - side, b - side, b + side + Vector3(0, 0.03, 0), Color.WHITE, Vector3.UP)
+			m.tri(a - side, b + side + Vector3(0, 0.03, 0), a + side + Vector3(0, 0.03, 0), Color.WHITE, Vector3.UP)
+			m.tri(a - side, b - side, b - side + Vector3(0, 0.04, 0), Color.WHITE, -side)
+			m.tri(a - side, b - side + Vector3(0, 0.04, 0), a - side + Vector3(0, 0.04, 0), Color.WHITE, -side)
+	return m.mesh()
+
+
+## A box post standing on `p`, `box` wide, tall and deep.
+static func _post(m: LookMesh, p: Vector3, box: Vector3) -> void:
+	var h := Vector3(box.x / 2.0, 0, box.z / 2.0)
+	var c: Array[Vector3] = [p + Vector3(-h.x, 0, -h.z), p + Vector3(h.x, 0, -h.z), p + Vector3(h.x, 0, h.z),
+		p + Vector3(-h.x, 0, h.z)]
+	var up := Vector3(0, box.y, 0)
+	for i in 4:
+		var a := c[i]
+		var b := c[(i + 1) % 4]
+		m.tri(a, b, b + up, Color.WHITE, (a + b) / 2.0 - p)
+		m.tri(a, b + up, a + up, Color.WHITE, (a + b) / 2.0 - p)
+	m.tri(c[0] + up, c[1] + up, c[2] + up, Color.WHITE, Vector3.UP)
+	m.tri(c[0] + up, c[2] + up, c[3] + up, Color.WHITE, Vector3.UP)
+
+
+## Spots on the meadow, off the grid by `margin`, as (x, y, z).
+func _meadow_spots(n: int, margin: float) -> PackedVector3Array:
+	var out := PackedVector3Array()
+	var tries := 0
+	while out.size() < n and tries < n * 8:
+		tries += 1
+		var q := _rng.randf() * TAU
+		var r := sqrt(_rng.randf()) * (edge(q) - 0.35)
+		var x := cos(q) * r
+		var z := sin(q) * r
+		if off_grid(x, z) < margin:
 			continue
-		if noise(k * 37) < 0.75:
-			for blade in 3:
-				var tilt := Basis(Vector3(noise(k + blade), 0, noise(k * 2 + blade)).normalized(), 0.35)
-				g.prism(Transform3D(tilt, p + Vector3(0.06 * blade - 0.06, 0, 0.04 * blade)), 3, 0.05, 0.0,
-					0.22 + 0.12 * noise(k * 41 + blade), plant.darkened(0.08 * blade))
+		out.append(Vector3(x, height(x, z), z))
+	return out
+
+
+## A transform for each spot, turned at random and sized from `lo` to `hi`;
+## `squash` flattens them.
+func _spin_all(spots: PackedVector3Array, lo: float, hi: float, squash := 1.0) -> Array[Transform3D]:
+	var out: Array[Transform3D] = []
+	for p in spots:
+		var sz := lerpf(lo, hi, _rng.randf())
+		out.append(Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(sz, sz * squash, sz)), p))
+	return out
+
+
+func _pick(n: int, cols: Array[Color]) -> Array[Color]:
+	var out: Array[Color] = []
+	for i in n:
+		out.append(cols[_rng.randi() % cols.size()])
+	return out
+
+
+## A tuft of three blades leaning out (:907's cones, made a clump).
+static func _tuft_mesh() -> ArrayMesh:
+	var m := LookMesh.new()
+	for b in 3:
+		var a := TAU * b / 3.0
+		var lean := Vector3(cos(a) * 0.05, 0.0, sin(a) * 0.05)
+		var base := Vector3(cos(a) * 0.025, 0, sin(a) * 0.025)
+		var tip := base + lean + Vector3(0, 0.15 + 0.04 * b, 0)
+		for side in 3:
+			var s0 := TAU * side / 3.0
+			var s1 := TAU * (side + 1) / 3.0
+			var p0 := base + Vector3(cos(s0), 0, sin(s0)) * 0.028
+			var p1 := base + Vector3(cos(s1), 0, sin(s1)) * 0.028
+			m.tri(p0, p1, tip, Color.WHITE, (p0 + p1) / 2.0 - base + Vector3(0, 0.3, 0))
+	return m.mesh()
+
+
+## A soft lump with round normals, for the rim's grass fringe.
+static func _puff_mesh() -> ArrayMesh:
+	var m := LookMesh.new()
+	m.puff(Transform3D(), Color.WHITE, 3, 7)
+	return m.mesh()
+
+
+static func _ico_mesh() -> ArrayMesh:
+	var m := LookMesh.new()
+	m.ico(Transform3D(), Color.WHITE)
+	return m.mesh()
+
+
+## A flower: a head of petals on a short stem.
+static func _flower_mesh() -> ArrayMesh:
+	var m := LookMesh.new()
+	m.tri(Vector3(-0.008, 0, 0), Vector3(0.008, 0, 0), Vector3(0, 0.07, 0), Color("#4E9A40"), Vector3(0, 0, 1))
+	m.ico(Transform3D(Basis().scaled(Vector3(0.04, 0.025, 0.04)), Vector3(0, 0.075, 0)), Color.WHITE)
+	return m.mesh()
+
+
+## A crystal shard standing up, for Crystalline's meadow (:910).
+static func _shard_mesh() -> ArrayMesh:
+	var m := LookMesh.new()
+	var tip := Vector3(0, 0.16, 0)
+	var foot := Vector3(0, -0.02, 0)
+	for i in 4:
+		var a0 := TAU * i / 4.0
+		var a1 := TAU * (i + 1) / 4.0
+		var p0 := Vector3(cos(a0), 0.04, sin(a0)) * 0.045
+		var p1 := Vector3(cos(a1), 0.04, sin(a1)) * 0.045
+		p0.y = 0.03
+		p1.y = 0.03
+		m.tri(p0, p1, tip, Color.WHITE, (p0 + p1) / 2.0)
+		m.tri(p0, p1, foot, Color.WHITE, (p0 + p1) / 2.0 - Vector3(0, 0.05, 0))
+	return m.mesh()
+
+
+## A glowing ember crack, for Emberreach's ground (:911).
+static func _ember_mesh() -> ArrayMesh:
+	var m := LookMesh.new()
+	var a := Vector3(-0.15, 0.012, -0.015)
+	var b := Vector3(0.15, 0.012, -0.015)
+	var c := Vector3(0.15, 0.012, 0.015)
+	var d := Vector3(-0.15, 0.012, 0.015)
+	m.tri(a, b, c, Color.WHITE, Vector3.UP)
+	m.tri(a, c, d, Color.WHITE, Vector3.UP)
+	return m.mesh()
+
+
+## A cone of radius 1 and height 1 hanging point down from its base.
+static func _hang_mesh() -> ArrayMesh:
+	var m := LookMesh.new()
+	var tip := Vector3(0, -1, 0)
+	for i in 5:
+		var a0 := TAU * i / 5.0
+		var a1 := TAU * (i + 1) / 5.0
+		var p0 := Vector3(cos(a0), 0, sin(a0))
+		var p1 := Vector3(cos(a1), 0, sin(a1))
+		m.tri(p0, p1, tip, Color.WHITE, (p0 + p1) / 2.0)
+	return m.mesh()
+
+
+## Where the waterfalls leave the rim: off the middles of the grid's sides,
+## where the meadow is widest, toward the camera's usual side; Tidehold has
+## one off every side (§21.4: "waterfalls off the edges").
+func fall_angles() -> PackedFloat32Array:
+	match kind:
+		"emberreach", "crystalline":
+			return PackedFloat32Array()
+		"tidehold":
+			return PackedFloat32Array([0.15, PI / 2.0 - 0.2, PI + 0.1, PI * 1.5 + 0.2])
+		"heart":
+			return PackedFloat32Array([0.18, PI / 2.0 - 0.15, PI * 1.25])
+	return PackedFloat32Array([0.2 + _rng.randf() * 0.2, PI / 2.0 - 0.1 - _rng.randf() * 0.2])
+
+
+## The waterfalls (`islandFX`, :1004): a pool on the meadow, a ribbon over
+## the lip and down past the rock, widening as it falls. Returns [ribbons,
+## pools, feet], the feet being where the mist gathers.
+func waterfalls() -> Array:
+	var ribbons := LookMesh.new()
+	var pools := LookMesh.new()
+	var feet := PackedVector3Array()
+	var s := scale_k()
+	for a in fall_angles():
+		var e := edge(a)
+		var ca := cos(a)
+		var sa := sin(a)
+		var pool_r := e - 1.2
+		var pool_c := Vector3(ca * pool_r, height(ca * pool_r, sa * pool_r) + 0.03, sa * pool_r)
+		for i in 20:
+			var a0 := TAU * i / 20.0
+			var a1 := TAU * (i + 1) / 20.0
+			pools.tri(pool_c, pool_c + Vector3(cos(a0), 0, sin(a0)) * 0.8, pool_c + Vector3(cos(a1), 0, sin(a1)) * 0.8,
+				Color("#6FCDEB"), Vector3.UP)
+		var lip_y := height(ca * (e - 0.3), sa * (e - 0.3)) + 0.03
+		var prof: Array[Vector2] = [Vector2(e - 1.2, pool_c.y), Vector2(e - 0.2, lip_y),
+			Vector2(e + 0.15, -0.25), Vector2(e + 0.35, -1.4), Vector2(e + 0.5, -3.2), Vector2(e + 0.5, -5.4 * s),
+			Vector2(e + 0.4, -7.6 * s)]
+		var n := 36
+		var prev_l := Vector3.ZERO
+		var prev_r := Vector3.ZERO
+		for i in n + 1:
+			var u := float(i) / n
+			var p := _catmull(prof, u)
+			var w := 0.55 * (1.0 + u * 0.4)
+			var centre := Vector3(ca * p.x, p.y, sa * p.x)
+			var side := Vector3(-sa, 0, ca) * w
+			var l := centre - side
+			var r := centre + side
+			if i > 0:
+				var u0 := float(i - 1) / n
+				var out := Vector3(ca, 0.3, sa)
+				ribbons.tri(prev_l, prev_r, r, Color.WHITE, out, Vector2(0, u0), Vector2(1, u0), Vector2(1, u))
+				ribbons.tri(prev_l, r, l, Color.WHITE, out, Vector2(0, u0), Vector2(1, u), Vector2(0, u))
+			prev_l = l
+			prev_r = r
+		feet.append(Vector3(ca * (e + 0.4), -7.2 * s, sa * (e + 0.4)))
+	return [ribbons.mesh(), pools.mesh(), feet]
+
+
+## A point `u` of the way along a Catmull-Rom curve through `pts`.
+static func _catmull(pts: Array[Vector2], u: float) -> Vector2:
+	var n := pts.size() - 1
+	var f := clampf(u, 0.0, 1.0) * n
+	var i := mini(int(f), n - 1)
+	var t := f - i
+	var p0 := pts[maxi(i - 1, 0)]
+	var p1 := pts[i]
+	var p2 := pts[i + 1]
+	var p3 := pts[mini(i + 2, n)]
+	var t2 := t * t
+	var t3 := t2 * t
+	return 0.5 * ((2.0 * p1) + (-p0 + p2) * t + (2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3) * t2
+		+ (-p0 + 3.0 * p1 - 3.0 * p2 + p3) * t3)
+
+
+## Small islets floating beside the island, with a grass cap and, on most,
+## a bush (`islandFX`, :1007), and puffy clouds at the island's level and
+## below (`cloud`, :940), one mesh each.
+func sky_dressing() -> Array[ArrayMesh]:
+	var m := LookMesh.new()
+	var clouds := LookMesh.new()
+	var r := radius()
+	var grass: Color = palette["grass"]
+	var cliff: Color = palette["cliff"]
+	var plant: Color = palette["plant"]
+	for i in 4:
+		var a := TAU * i / 4.0 + 0.6 + _rng.randf() * 0.6
+		var d := r + 2.6 + _rng.randf() * 2.4
+		var y := -1.5 + _rng.randf() * 3.0
+		var c := Vector3(cos(a) * d, y, sin(a) * d)
+		var sz := 0.5 + _rng.randf() * 0.45
+		var rim: Array[Vector2] = [Vector2(sz * 1.02, 0.06), Vector2(sz * 0.95, -0.1)]
+		var cone: Array[Vector2] = [Vector2(sz * 0.95, -0.1), Vector2(sz * 0.5, -sz * 1.0), Vector2(0.0, -sz * 2.1)]
+		var piece := LookMesh.new()
+		_lathe(piece, rim, 9, 0.0, 0.0, [_dim(grass, 0.9)], 2.2, 7 + i)
+		_lathe(piece, cone, 7, 0.0, 0.08, [cliff], 0.9, 11 + i)
+		for t in 9:
+			var a0 := TAU * t / 9.0
+			var a1 := TAU * (t + 1) / 9.0
+			piece.tri(Vector3(0, 0.06, 0), Vector3(cos(a0), 0, sin(a0)) * sz * 1.02 + Vector3(0, 0.06, 0),
+				Vector3(cos(a1), 0, sin(a1)) * sz * 1.02 + Vector3(0, 0.06, 0), grass, Vector3.UP)
+		if kind != "emberreach" and _rng.randf() < 0.75:
+			piece.ico(Transform3D(Basis().scaled(Vector3.ONE * sz * 0.4), Vector3(0, sz * 0.38, 0)), plant)
+			piece.ico(Transform3D(Basis().scaled(Vector3.ONE * sz * 0.28), Vector3(sz * 0.25, sz * 0.55, 0.05)),
+				plant.lightened(0.1))
 		else:
-			g.prism(Geo.place(p), 4, 0.02, 0.02, 0.16, plant.darkened(0.2))
-			g.ball(Geo.place(p + Vector3(0, 0.2, 0)), 0.07, accent, 2, 5)
-	return g.mesh()
+			piece.ico(Transform3D(Basis().scaled(Vector3(1, 0.7, 1) * sz * 0.35), Vector3(sz * 0.2, 0.15, 0)),
+				palette["cliff_deep"])
+		for v in piece.verts.size() / 3:
+			m.tri(piece.verts[v * 3] + c, piece.verts[v * 3 + 2] + c, piece.verts[v * 3 + 1] + c, piece.colours[v * 3],
+				piece.normals[v * 3], piece.uvs[v * 3], piece.uvs[v * 3 + 2], piece.uvs[v * 3 + 1])
+	for i in 7:
+		var a := TAU * (i + _rng.randf() * 0.7) / 7.0
+		var d := r + 1.5 + _rng.randf() * 6.0
+		var base := Vector3(cos(a) * d, -1.2 - _rng.randf() * 6.0, sin(a) * d)
+		var puffs := 4 + _rng.randi() % 3
+		var scale := 0.8 + _rng.randf() * 0.8
+		for p in puffs:
+			var o := Vector3((p - puffs / 2.0) * 0.55, (_rng.randf() - 0.5) * 0.3, (_rng.randf() - 0.5) * 0.5) * scale
+			var rad := (0.5 + _rng.randf() * 0.5) * scale
+			clouds.puff(Transform3D(Basis().scaled(Vector3(rad, rad * 0.75, rad)), base + o), Color.WHITE)
+	return [m.mesh(), clouds.mesh()]
