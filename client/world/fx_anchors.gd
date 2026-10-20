@@ -24,6 +24,9 @@ const POP_SECONDS := 1.1
 const STATE_FILL := {"Unaware": Color("#FFFFFF"), "Returning": Color("#FFFFFF"), "Suspicious": Color("#FFD34A"),
 	"Investigating": Color("#FFB03A"), "Searching": Color("#FF8A3A"), "Alerted": Color("#E2536B")}
 const OFF := Vector2(-99999, -99999)
+## How full each state fills the pip.
+const AWARE_FILL := {"Unaware": 0.0, "Returning": 0.15, "Suspicious": 0.35, "Investigating": 0.6, "Searching": 0.8,
+	"Alerted": 1.0}
 const STATE_MARK := {"Suspicious": "?", "Investigating": "??", "Searching": "?", "Alerted": "!"}
 
 var view: WorldView
@@ -90,7 +93,13 @@ func _metre() -> float:
 	var cam := _cam()
 	if cam == null or cam.size <= 0.0:
 		return 40.0
-	return size.y / cam.size
+	if cam.projection == Camera3D.PROJECTION_ORTHOGONAL:
+		return size.y / cam.size
+	# In perspective, a metre at the point the camera looks at.
+	var at := view._aim
+	if cam.is_position_behind(at):
+		return 40.0
+	return cam.unproject_position(at).distance_to(cam.unproject_position(at + cam.global_basis.x))
 
 
 func _draw() -> void:
@@ -109,9 +118,24 @@ func _draw() -> void:
 	_draw_crew(replay, m, calm)
 	_draw_pops(m, calm)
 	if wipe > 0.0:
-		# The crossing's cloud wipe: the swoop's middle in the rift's violet.
+		# The crossing's cloud wipe: the swoop's middle in the rift's violet,
+		# clouds rolling across it.
 		var a := sin(wipe * PI) * 0.85
 		draw_rect(Rect2(Vector2.ZERO, size), Color(0.36, 0.22, 0.6, a))
+		var u := 1.0 - wipe
+		for k in 9:
+			var row := float(k % 3) / 2.0
+			var x := lerpf(-0.4, 1.4, fmod(u * (1.0 + 0.2 * k) + k * 0.37, 1.0)) * size.x
+			var y := lerpf(0.15, 0.85, (row + float(k) / 9.0) * 0.5 + 0.2) * size.y
+			var r := size.x * (0.16 + 0.05 * (k % 4))
+			var cloud := Color(0.93, 0.9, 1.0, clampf(a * 1.6, 0.0, 1.0))
+			var shade := Color(0.72, 0.64, 0.9, cloud.a)
+			# Opaque puffs, so where they meet is one cloud: its underside
+			# first, a shade deeper, then its body.
+			for pass_shade: bool in [true, false]:
+				for blob: Vector3 in [Vector3(0, 0, 1.0), Vector3(0.7, 0.15, 0.75), Vector3(-0.7, 0.18, 0.7)]:
+					var c := Vector2(x + blob.x * r, y + blob.y * r + (r * 0.12 if pass_shade else 0.0))
+					draw_circle(c, r * blob.z, shade if pass_shade else cloud)
 
 
 ## A soft shade of the night's ink at the top and bottom of a heist, behind
@@ -235,16 +259,15 @@ func _draw_guards(replay: RulebornReplay, m: float, calm: bool) -> void:
 			continue
 		var state := str(g["state"])
 		var fill: Color = STATE_FILL.get(state, Color.WHITE)
+		# §21.6's pip over the head, filling white, then yellow, then red with
+		# awareness; once the guard suspects, its mark rides above it.
+		_pip(at + Vector2(0, s * 0.1), s * 0.22, float(AWARE_FILL.get(state, 0.0)), fill)
 		if STATE_MARK.has(state):
 			var bob := 0.0 if calm else sin(_time * 6.0 + i) * s * 0.06
 			var grow := 1.0
 			if state == "Alerted" and not calm:
 				grow = 1.0 + 0.12 * absf(sin(_time * 5.0))
-			FxIcons.bubble(self, at + Vector2(0, bob - s * 0.2), s * grow, STATE_MARK[state], fill)
-		else:
-			# The quiet pip: a small white bead that fills as it notices.
-			draw_circle(at + Vector2(0, s * 0.05), s * 0.2, FxSkin.INK_LINE)
-			draw_circle(at + Vector2(0, s * 0.05), s * 0.14, fill)
+			FxIcons.bubble(self, at + Vector2(0, bob - s * 0.8), s * grow, STATE_MARK[state], fill)
 
 
 func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
@@ -272,6 +295,12 @@ func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
 			var col := FxSkin.SUCCESS if share > 0.5 else (FxSkin.GOLD if share > 0.25 else FxSkin.ALARM)
 			FxIcons.bar(self, Rect2(at + Vector2(-w * 0.5, y), Vector2(w, h)), share, col)
 			y += h + 3.0
+		else:
+			# The designs' pip over each of the crew, in its role's colour: whose
+			# side it is on reads at a glance.
+			var pip: Color = Palette.ROLE.get(str(mem["role"]), Palette.PAPER)
+			draw_circle(at + Vector2(0, h * 0.5), h * 0.95, FxSkin.INK_LINE)
+			draw_circle(at + Vector2(0, h * 0.5), h * 0.7, pip)
 		var bag := float(mem["carried"]) / maxf(1.0, float(mem["carry"]))
 		if bag > 0.0:
 			FxIcons.bar(self, Rect2(at + Vector2(-w * 0.5 + h, y), Vector2(w - h, h * 0.8)), bag, FxSkin.GOLD)
@@ -283,8 +312,31 @@ func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
 			draw_colored_polygon(PackedVector2Array([tri[0] + Vector2(0, 3), tri[1] + Vector2(-3, -2),
 				tri[2] + Vector2(3, -2)]), FxSkin.INK_LINE)
 			draw_colored_polygon(tri, FxSkin.GOLD)
+		if view.in_sight.has(i):
+			# In a guard's sight: an eye beside the head, blinking open.
+			var blink := 1.0 if calm else 0.85 + 0.15 * absf(sin(_time * 4.0))
+			FxIcons.eye(self, at + Vector2(w * 0.62, -h * 0.2), w * 0.55 * blink)
 		if names_for > 0.0:
 			_name_tag(at + Vector2(0, -w * 0.45), Strings.term("ROLE", str(mem["role"])))
+
+
+## A round pip filled to `share` from the bottom up, in `colour` on white.
+func _pip(at: Vector2, r: float, share: float, colour: Color) -> void:
+	draw_circle(at, r + maxf(2.0, r * 0.25), FxSkin.INK_LINE)
+	draw_circle(at, r, Color.WHITE)
+	if share <= 0.0:
+		return
+	if share >= 1.0:
+		draw_circle(at, r, colour)
+		return
+	# The filled part: the circle's segment below the line at `share` of its
+	# height, its arc closed by the chord.
+	var a0 := asin(clampf(1.0 - 2.0 * share, -1.0, 1.0))
+	var pts := PackedVector2Array()
+	for k in 17:
+		var a := lerpf(a0, PI - a0, k / 16.0)
+		pts.append(at + Vector2(cos(a), sin(a)) * r)
+	draw_colored_polygon(pts, colour.darkened(0.12) if colour == Color.WHITE else colour)
 
 
 func _name_tag(at: Vector2, words: String) -> void:

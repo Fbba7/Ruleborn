@@ -50,6 +50,7 @@ var _loop_clip: StringName = &"idle"
 var _echo: CreatureModel
 var _gear: Dictionary = {}
 var _fur := 0
+var _lift := 0.5
 
 
 ## A new model of `kind_name`, playing its idle; null for an unknown kind.
@@ -67,10 +68,10 @@ static func make(kind_name: StringName, fur_shells := 0) -> CreatureModel:
 ## The export's manifest: every kind with its triangles, clips, sockets, scale.
 static func manifest() -> Dictionary:
 	if _manifest.is_empty():
-		var text := FileAccess.get_file_as_string(MANIFEST)
-		var parsed: Variant = JSON.parse_string(text)
-		if parsed is Dictionary:
-			_manifest = (parsed as Dictionary).get("kinds", {})
+		# Loaded as Godot's JSON resource, so an exported pack carries it.
+		var res := load(MANIFEST) as JSON
+		if res != null and res.data is Dictionary:
+			_manifest = (res.data as Dictionary).get("kinds", {})
 	return _manifest
 
 
@@ -132,6 +133,8 @@ func set_expression(expression_name: StringName) -> void:
 func set_form(form_name: StringName) -> void:
 	form = form_name if FORMS.has(form_name) else &"base"
 	_material.set_shader_parameter("hush", 1.0 if form == &"hush" else 0.0)
+	# Midnight does not pale toward the day's sheen.
+	_material.set_shader_parameter("lift", _lift * (0.25 if form == &"hush" else 1.0))
 	_material.set_shader_parameter("spark", 1.0 if form == &"spark" else 0.0)
 	if _glass != null:
 		_glass.set_shader_parameter("hush", 1.0 if form == &"hush" else 0.0)
@@ -251,7 +254,8 @@ func _materials() -> void:
 	var emit: Array = surface.get("emit", [0.0, 0.0, 0.0])
 	_material.set_shader_parameter("body_emit", Vector3(float(emit[0]), float(emit[1]), float(emit[2])))
 	# Metal keeps its greys; only paint pales toward the design's sheen.
-	_material.set_shader_parameter("lift", (0.5 + 0.25 * float(surface.get("gloss", 0.0))) * (1.0 - metal))
+	_lift = (0.5 + 0.25 * float(surface.get("gloss", 0.0))) * (1.0 - metal)
+	_material.set_shader_parameter("lift", _lift)
 	_material.set_shader_parameter("rim_colour", Color(str(info.get("rim", "#9FD4FF"))))
 	_material.set_shader_parameter("glow_vc", float(info.get("glow", 0.0)))
 	for i in mesh.get_surface_count():

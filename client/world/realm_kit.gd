@@ -72,6 +72,8 @@ func _init(r: RulebornReplay, colours: Dictionary) -> void:
 		tunnels = r.tunnels()
 	palette = colours
 	realm = KitStyle.realm_of(colours)
+	for g: Geo in [ground, scatter, hero, prop, clear, water, lava]:
+		g.skip_down = true
 
 
 ## A kit for a grid given directly (the kit's own shots and tests).
@@ -156,9 +158,14 @@ func build() -> void:
 		var a := centre(Vector2i(fp[1], fp[2]))
 		var side: int = fp[3]
 		var mid := Vector3(a.x + (side - 1) / 2.0, a.y, a.z + (side - 1) / 2.0)
-		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop, clear)
+		var turn := 0.0 if fp[0] == "keeper_s_spire" else facing(Vector2i(fp[1], fp[2]), side)
+		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop, clear, turn)
 	for m: Vector2i in tunnels:
 		_tunnel(m)
+	# The realm's signature round its home (the Heart's walls, Skyfield's
+	# windmills, …), just past the grid, where the Spire stands.
+	if footprints.any(func(fp: Array) -> bool: return fp[0] == "keeper_s_spire"):
+		KitSignature.build(hero, prop, realm, Vector2(size).length() / 2.0 + 0.5, palette)
 
 
 ## Every building: [kind, x, y, side, level], from `buildings` where a
@@ -194,6 +201,43 @@ func _footprints() -> Array:
 	return out
 
 
+## Which way a building's door faces, as the design's houses face their
+## lanes: toward the side of its footprint with the most path beside it
+## (then the most open ground), south when none is better. A yaw from +Z.
+func facing(nw: Vector2i, side: int) -> float:
+	var best := -1.0
+	var way := 0.0
+	# South, east, north, west: the door's side and the yaw that turns +Z to it.
+	for option: Array in [[Vector2i(0, 1), 0.0], [Vector2i(1, 0), PI / 2.0], [Vector2i(0, -1), PI],
+			[Vector2i(-1, 0), -PI / 2.0]]:
+		var d: Vector2i = option[0]
+		var score := 0.0
+		for k in side:
+			var t := nw
+			if d.y > 0:
+				t = nw + Vector2i(k, side)
+			elif d.y < 0:
+				t = nw + Vector2i(k, -1)
+			elif d.x > 0:
+				t = nw + Vector2i(side, k)
+			else:
+				t = nw + Vector2i(-1, k)
+			if not inside(t):
+				continue
+			var i := t.y * size.x + t.x
+			var gravel := i < surfaces.size() and surfaces[i] == KitGround.GRAVEL
+			if gravel or code(t) == F.GRAVEL_PATH:
+				score += 1.0
+			elif code(t) == F.OPEN:
+				score += 0.1
+		# A little for facing the first camera, so a tie stays south.
+		score += 0.05 if d.y > 0 else 0.0
+		if score > best:
+			best = score
+			way = option[1]
+	return way
+
+
 ## A tunnel's mouth: a grassy mound with a dark arch toward its partner.
 func _tunnel(m: Vector2i) -> void:
 	var c := centre(m)
@@ -215,7 +259,7 @@ func instances() -> Array[MeshInstance3D]:
 	var out: Array[MeshInstance3D] = []
 	var ground_mat := material("ground")
 	ground_mat.set_shader_parameter("grid_offset", Vector2(0.5 * (size.x % 2), 0.5 * (size.y % 2)))
-	ground_mat.set_shader_parameter("cobble", palette["ground"].lightened(0.1))
+	ground_mat.set_shader_parameter("cobble", KitGround.earth(palette).lightened(0.18))
 	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
 	ground_mat.set_shader_parameter("petal", (KitStyle.of(realm)["accent"] as Color).lightened(0.35))
 	ground_mat.set_shader_parameter("pebble", palette["rock"].lightened(0.3))
@@ -223,7 +267,7 @@ func instances() -> Array[MeshInstance3D]:
 	ground_mat.set_shader_parameter("pattern", patterns.get(realm, 0))
 	ground_mat.set_shader_parameter("specks", 2.0 if realm == "verdant" else 1.0)
 	var water_mat := material("water")
-	water_mat.set_shader_parameter("bank", palette["ground"].lightened(0.12).lerp(palette["grass"], 0.25))
+	water_mat.set_shader_parameter("bank", KitGround.earth(palette).lightened(0.2).lerp(palette["grass"], 0.2))
 	var lava_mat := material("water")
 	lava_mat.set_shader_parameter("deep", Color("#C8401E"))
 	lava_mat.set_shader_parameter("foam", Color("#FFC24A"))

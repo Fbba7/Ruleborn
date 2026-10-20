@@ -80,13 +80,13 @@ void fragment() {
 	// of its own tint, soft at its edge, like a painter's short strokes.
 	float n1 = vnoise(p * 0.9) * 0.6 + vnoise(p * 2.3 + 5.0) * 0.4;
 	float grassy = (1.0 - cliff) * (1.0 - smoothstep(0.4, 0.46, path)) * (1.0 - stone * 0.6);
-	c *= 1.0 + (n1 - 0.5) * 0.26 * grassy;
+	c *= 1.0 + (n1 - 0.5) * 0.32 * grassy;
 	vec3 dab = cells(vec2(p.x * 3.2 + p.y * 0.9, p.y * 8.5 - p.x * 0.6));
 	float soft = smoothstep(0.05, 0.6, dab.y - dab.x);
 	float tone = dab.z - 0.5;
 	vec3 warm = vec3(1.06, 1.05, 0.9);
 	vec3 cool = vec3(0.88, 0.97, 0.94);
-	c *= mix(vec3(1.0), tone > 0.0 ? warm : cool, abs(tone) * 1.1 * soft * grassy);
+	c *= mix(vec3(1.0), tone > 0.0 ? warm : cool, abs(tone) * 1.4 * soft * grassy);
 	// Flecks: light blade tips and the odd dark clump.
 	vec2 cell = floor(p * 11.0);
 	float h = hash(cell);

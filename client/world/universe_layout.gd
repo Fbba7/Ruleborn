@@ -23,8 +23,8 @@ const SLOTS := [[-14.0, 33.0, -1.2], [14.5, -33.0, 1.0], [15.0, 32.0, -0.6], [-1
 ## A realm's grid across, in tiles: the server's view does not carry it, so
 ## the map draws the Heart a size up on the outer realms (the design's map
 ## scales the Heart 0.29 to the others' 0.19).
-const OUTER_GRID := 12
-const HEART_GRID := 18
+const OUTER_GRID := 11
+const HEART_GRID := 15
 ## A link's span of the island's radius where it leaves the rim.
 const RIM := 0.93
 

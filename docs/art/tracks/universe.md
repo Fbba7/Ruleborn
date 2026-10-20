@@ -45,12 +45,95 @@ universe, inside §21.3's 40,000 and 150.
 - `round1_home.png`, `round1_zoom0.png`, `round1_zoom1.png`, `round1_zoom2.png`,
   `round1_map_and_universe_screens.png`.
 
-## Worse than the design (to do next)
+- Round 2: the meadow (two noise fields shade the grass in patches; MultiMesh tufts and flowers, two
+  draw calls for the whole universe), rose cobble paths from the plaza to each building, peaks only on the
+  rugged realms, soft violet contact shade under buildings, trees and peaks (`universe_shade.gdshader`),
+  the camera brought in to 140 m so the sun's shadow could reach.
+  Stills: `round2_home.png`, `round2_zoom0.png`, `round2_zoom1.png`, `round2_zoom2.png`.
 
-- Island tops are flatter and emptier than the design's dense dressing; scatter and paths next.
-- Buildings come from `BuildingKit` and look as good as T3 makes them.
-- The whole-universe zoom is small on a phone when a screen covers half of it with words.
+- Round 3: the islands tightened round their buildings (Heart grid 15, outer 11; buildings three tiles
+  across), the citadel on its own node drawn 1.35× so the Heart reads from afar, the Heart's beam and
+  three turning rings, the galaxy's arms drawn as dust. Fixed what hid every light over the sky: additive
+  materials that write no `ALPHA` are drawn in the opaque pass, and the galaxy plane (drawn after them,
+  without depth) painted over them; the light shaders now write `ALPHA` and the galaxy is opaque with a
+  low render priority. The cloud wipe rolls in as shaded cloud banks from both sides.
+  Stills: `round3_home.png`, `round3_zoom0..2.png`, `round3_wipe.png` (mid-swoop),
+  `round3_compare_skyruin.png` (ours left, the design's right, grayscale below).
+
+- Round 4: a lamp where each building's path leaves the plaza; denser realm dressing; the design's icons
+  in the pins (each realm's own icon, raids, faults, a full producer); a strain pin behind the Heart
+  (§5.5's band name and the strain); the design's debris, rocks with trees drifting round each island (one
+  MultiMesh); the sky's cost trimmed for phones (three octaves of noise, fewer haze sprites).
+  Stills: `round4_zoom0.png`, `round4_zoom1_skyfield.png`, `round4_zoom1_crystalline.png`.
+
+- Round 5: the map's world given more of the screen, and its pins compact when the islands are small
+  (each realm's icon and level, alarms kept; producers and strain only once an island is big enough);
+  the universe screen opens on the Heart; on home a third tap on a realm seen close opens its realm view.
+  Still: `round5_home_map_universe.png` (home, the map, the universe screen).
+
+- Round 6: skiff hulls faced the right way and drawn larger; the realm still to open keeps its pin, which
+  leads to the universe screen where it is bought; the galaxy's core no longer glares.
+  Stills: `round6_young_universe.png` (the Heart and two realms, the next to open as mist),
+  `round6_skiff_close.png`.
+
+- Round 7: the galaxy redrawn as the design draws it, two thin spiral arms of dust sweeping across the
+  whole sky behind the islands, its core small, fewer loose stars; pins keep their names unless islands
+  are really small.
+  Stills: `round7_home.png`, `round7_zoom0.png`, `round7_zoom1.png`, `round7_compare_marta.png`.
+
+- Round 8: each link carries the design's icon for its kind at its middle (stone bridge, rope bridge,
+  chute, rift), seen at the realm zooms.
+  Still: `round8_zoom1_links.png`.
+
+- Round 9: over the whole universe a twist turns the camera half way round, so the column stays upright
+  on a portrait phone (a quarter turn laid it across the screen as a thin strip); the realm zooms keep
+  quarter turns.
+  Still: `round9_half_turn.png`.
+
+- Round 10: a realm asked for before the universe has arrived (home opening on the Heart on a first
+  launch, before the server answers) is remembered and shown once it is drawn, instead of dropped.
+
+Tests: `client/tests/universe_view_tests.gd` (registered in `run.gd`): the layout, that every realm and
+link is drawn and nothing else, the budget, the camera's framing and taps, the pins, and home's menu.
+
+## Where it stands against the design
+
+Judged beside `art/design/stills/obs/*.png` at phone size and in grayscale (`round3_compare_skyruin.png`,
+`round7_compare_marta.png`):
+
+- Better: every realm, link and fault the server names is drawn (the design draws a fixed sample); the
+  four link kinds are built to their gap and carry their icons; skiffs fly the links with wakes; the sky
+  has depth (three star layers, haze and debris that part on a tilt); the camera has the three zooms,
+  quarter turns, the swoop and the cloud wipe; pins follow and declutter; and the whole seven-realm
+  universe costs about 32,000 triangles in about 32 draw calls (`universe_zoom.gd` prints both), against
+  the design's 676,192 in 1,207.
+- As good: the night colours, the Heart's citadel, beam and rings, the lit rims and halos, the glowing
+  crystals and falls beneath, the dust-armed galaxy.
+- Still worse:
+  - Buildings are `BuildingKit`'s current pieces (T3), boxier and less lit than the design's map
+    buildings; they improve here as T3's kit does.
+  - No cast shadows: the shared toon light shows none under this renderer (see "For other tracks");
+    the map's contact shade stands in.
+  - Island tops at the far zoom are sparser than the design's, which packs props densely.
+  - `HOME_MAP` and `HOME_UNIVERSE` are both "Your universe" in English, so two menu tiles read alike
+    (the icons differ); one string should change (integrator, the strings table).
+
+## Next
+
+- Swap in T3's buildings and Heart citadel once merged; keep `UniverseCitadel` only if T3 draws none.
+- Per-building window lights from the kit, and lantern props per realm type.
+- A gentle bob and wind for the islands and their dressing (vertex animation in `universe_toon`).
+- Measure frame time on a phone (the galaxy plane is one full-screen fragment pass).
 
 ## Hooks in other tracks' files
 
-None.
+- `client/tests/run.gd`: one line registering `UniverseViewTests`.
+
+## For other tracks
+
+- T2: directional shadows do not show on anything drawn with `toon_light.gdshaderinc` under the
+  Compatibility renderer here (tried orthogonal and two splits, the light at 30°, MSAA off). The map uses
+  its own contact shade meanwhile.
+- T2/T3: `toon.gdshader` reads vertex colours as linear, so every hex colour renders paler than the
+  design (three.js converts hex from sRGB). `universe_toon.gdshader` converts; the realm view may want the
+  same.

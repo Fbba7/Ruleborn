@@ -26,6 +26,7 @@ func run() -> void:
 	_footprints()
 	_ground()
 	_realm()
+	_signatures()
 
 
 static func _layers(kit: RealmKit) -> int:
@@ -126,10 +127,19 @@ func _footprints() -> void:
 	var plain := kit._footprints()
 	kit.buildings = [["library", 5, 5, 2, 7]]
 	var told := kit._footprints()
+	# A path down the east side of the 2 × 2 at (5, 5) turns its door east.
+	var lanes := zeros.duplicate()
+	lanes[5 * 8 + 7] = KitGround.GRAVEL
+	lanes[6 * 8 + 7] = KitGround.GRAVEL
+	kit.surfaces = lanes
+	var east := kit.facing(Vector2i(5, 5), 2)
+	kit.surfaces = zeros
+	var south := kit.facing(Vector2i(5, 5), 2)
 	check.call("a 3 × 3 footprint is drawn as the Keeper's Spire and another as its building where the screen names "
-			+ "it, at its level (10.1, 21.5)",
+			+ "it, at its level, its door toward the path beside it (10.1, 21.5)",
 		plain.size() == 2 and plain[0][0] == "keeper_s_spire" and plain[1][0] == "hearth" and told[1][0] == "library"
-			and told[1][4] == 7, "%s %s" % [plain, told])
+			and told[1][4] == 7 and is_equal_approx(east, PI / 2.0) and is_zero_approx(south),
+		"%s %s %f %f" % [plain, told, east, south])
 
 
 func _ground() -> void:
@@ -165,3 +175,17 @@ func _realm() -> void:
 	check.call("a realm's ground, features and buildings take under §21.3's 40,000 triangles in at most seven merged "
 			+ "meshes, so it draws in a handful of calls (21.3)",
 		total > 3000 and total < REALM_MAX and nodes.size() <= 7, "%d triangles, %d meshes" % [total, nodes.size()])
+
+
+func _signatures() -> void:
+	var missing := []
+	for realm: String in RealmPalette.TYPES:
+		if realm == "tidehold":
+			continue
+		var g := Geo.new()
+		var fine := Geo.new()
+		KitSignature.build(g, fine, realm, 10.0, RealmPalette.of(realm))
+		if g.triangles + fine.triangles == 0:
+			missing.append(realm)
+	check.call("each realm's home carries its signature past the grid — the Heart's walls, Skyfield's windmills, "
+			+ "great crystals, a great tree, a lantern festival, smoking vents (21.4)", missing.is_empty(), str(missing))

@@ -84,7 +84,8 @@ func _seamless() -> void:
 		if part.size() > 5 and part[5] is float and float(part[5]) > 0.0:
 			continue
 		for t: Transform3D in part[1]:
-			if absf(t.origin.x) < 5.9 and absf(t.origin.z) < 5.9 and t.origin.y < 0.3:
+			# Standing on the ground, not flying over it as motes and fireflies do.
+			if absf(t.origin.x) < 5.9 and absf(t.origin.z) < 5.9 and t.origin.y < 0.15:
 				on_grid += 1
 	check.call("the island holds the realm's grid without a seam: flat under every tile, its rim clear of the "
 			+ "corners, and its grass, stones and flowers off the grid (21.1, 21.11)",
