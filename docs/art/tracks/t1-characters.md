@@ -198,6 +198,26 @@ All 43: 27 MB of .glb (each also carries a 512² colour atlas and normal map, ex
 - `forms_featherkin_guard.png`: base, Hush, Spark, Echo, and the guard form
   on Rambler and Bloomling.
 
+## Install size
+
+The `.glb` names its two textures as files beside it (`<kind>_paint.jpg`, the
+colour atlas, and `<kind>_relief.jpg`, the normal map) instead of embedding
+them, so Godot imports each once; the exporter writes their import settings:
+GPU-compressed with mipmaps (a 40 px character must not shimmer), the relief
+map read as a normal map and held to 256². Per kind the imported textures
+fell from about 614 KB (lossless, no mipmaps) to about 262 KB. The source
+folder is 29 MB (was 32 MB). The imported scene (mesh and clips) is about
+276 KB a kind and is the larger share now.
+
+## For the look track
+
+`sky.gdshader` draws its quad at clip depth 1e-5. Godot's Compatibility
+renderer here uses reversed depth without clip control, where far is −1, so
+under a perspective camera the quad sits mid-depth and covers the scene (the
+orthographic world camera escapes it). My perspective shots set `far_z` to
+−0.99999 for themselves; the heist's perspective camera will need the shader
+fixed.
+
 ## Still worse than the design
 
 - Softness: the hero renders have sheen, image-based light and ACES; ours are
