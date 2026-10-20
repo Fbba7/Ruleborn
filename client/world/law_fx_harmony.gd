@@ -74,7 +74,9 @@ static func clash(fx: LawFx, into: Node3D, which: String, a: Vector3, b: Vector3
 						# No strobe: the dark phase settles in and lifts.
 						tint.set_shader_parameter("wash", LawFx.flash((u - 12.0) / 3.0, 0.35) if on else 0.0)
 						return
-					var beat := int(s * 8.0) % 2 == 0
+					# Two flashes a second at most over the whole screen (WCAG
+					# 2.3.1's three-flash limit, kept well under).
+					var beat := int(s * 4.0) % 2 == 0
 					tint.set_shader_parameter("flash", 0.3 if on and beat else 0.0)
 					tint.set_shader_parameter("wash", 0.35 if on and not beat else 0.0))
 		"bloom":
