@@ -469,6 +469,9 @@ func _frame_camera() -> void:
 		var near := FOLLOW_TILES / aspect
 		var close := CLOSE_TILES / aspect
 		cam_size = lerpf(whole, near, z) if z <= 1.0 else lerpf(near, close, z - 1.0)
+		# Following several (a replay's whole crew), the view widens to keep
+		# them all in it.
+		cam_size = maxf(cam_size, _spread() * 2.6 / aspect)
 		cam_size = minf(cam_size, whole)
 		var goal := _follow_point()
 		# Drift to the crew as the camera closes in; the whole realm sits on
@@ -543,6 +546,25 @@ func _follow_point() -> Vector3:
 		at = at.lerp(_skiff.position, 0.35)
 	var half := Vector2(_size) * 0.5
 	return Vector3(clampf(at.x, -half.x + 1.5, half.x - 1.5), 0.3, clampf(at.z, -half.y + 1.5, half.y - 1.5))
+
+
+## How far the furthest followed crew member stands from their middle.
+func _spread() -> float:
+	if follow.size() < 2:
+		return 0.0
+	var mid := Vector3.ZERO
+	var shown: Array[Vector3] = []
+	for i: int in follow:
+		if i >= 0 and i < _crew.size() and _crew[i].visible:
+			shown.append(_crew[i].position)
+			mid += _crew[i].position
+	if shown.size() < 2:
+		return 0.0
+	mid /= shown.size()
+	var most := 0.0
+	for p in shown:
+		most = maxf(most, Vector2(p.x - mid.x, p.z - mid.z).length())
+	return most
 
 
 ## A quarter turn of the camera, either way (§21.1).
