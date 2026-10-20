@@ -38,6 +38,8 @@ const TPS := 30.0
 ## zoom, eight.
 const FOLLOW_TILES := 12.0
 const CLOSE_TILES := 8.0
+## How aware each guard state is, for choosing whose sight to show.
+const AWARE := {"Unaware": 0, "Returning": 0, "Suspicious": 1, "Investigating": 2, "Searching": 3, "Alerted": 4}
 ## A press that moves less than this many pixels is a tap.
 const TAP_SLOP := 24.0
 ## How far a twist turns before it is a quarter turn.
@@ -526,16 +528,31 @@ func _sync_pieces() -> void:
 	_walls.mesh = g.mesh()
 
 
-## The guard whose sight is drawn: the selected one, else the first on its
-## feet (§21.12: "The selected guard's vision is drawn").
+## The guard whose sight is drawn: the selected one; else, as the designs
+## focus it, the most aware guard on its feet, the nearest to the chosen crew
+## member breaking a tie (§21.12: "The selected guard's vision is drawn").
 func shown_guard() -> int:
 	var guards := replay.guards()
 	if selected_guard >= 0 and selected_guard < guards.size() and not guards[selected_guard]["down"]:
 		return selected_guard
+	var near := Vector2(-1, -1)
+	var crew := replay.crew()
+	if chosen >= 0 and chosen < crew.size():
+		near = crew[chosen]["at"]
+	var best := -1
+	var best_key := -INF
 	for gi in guards.size():
-		if not guards[gi]["down"]:
-			return gi
-	return -1
+		if guards[gi]["down"]:
+			continue
+		var key := float(AWARE.get(str(guards[gi]["state"]), 0)) * 1000.0
+		if near.x >= 0.0:
+			key -= (guards[gi]["at"] as Vector2).distance_to(near)
+		else:
+			key -= gi
+		if key > best_key:
+			best_key = key
+			best = gi
+	return best
 
 
 ## §21.12: "Sharp edges, no gradients. A tile is inside or outside": each
@@ -677,13 +694,21 @@ func _bounce(node: Node3D, key: String, t: float) -> void:
 		rig.rotation = Vector3(0, 0, move["lean"] * 0.4)
 
 
-## The rings on the ground: gold under the chosen crew member, pulsing; each
-## guard's in its awareness colour, so its state reads from above too.
+## The rings on the ground: each crew member's in its role's colour, as the
+## designs ring their crew, the chosen one's gold and pulsing; each guard's in
+## its awareness colour, so its state reads from above too.
 func _sync_rings(t: float) -> void:
 	var g := Geo.new()
+	var crew := replay.crew()
+	for i in mini(crew.size(), _crew.size()):
+		if not _crew[i].visible or i == chosen:
+			continue
+		var c: Color = Palette.ROLE.get(str(crew[i]["role"]), Palette.PAPER)
+		g.ring(Geo.place(_crew[i].position + Vector3(0, 0.05, 0)), 0.38, 0.46, c, 24)
 	if chosen >= 0 and chosen < _crew.size() and _crew[chosen].visible:
 		var pulse := 0.0 if Settings.reduced_motion else 0.04 * sin(t * TAU * 1.2)
-		g.ring(Geo.place(_crew[chosen].position + Vector3(0, 0.05, 0)), 0.36 + pulse, 0.46 + pulse, Palette.MOTION, 28)
+		g.ring(Geo.place(_crew[chosen].position + Vector3(0, 0.05, 0)), 0.4 + pulse, 0.54 + pulse, Palette.MOTION, 28)
+		g.ring(Geo.place(_crew[chosen].position + Vector3(0, 0.051, 0)), 0.54 + pulse, 0.57 + pulse, Palette.INK, 28)
 	for i in _guards.size():
 		var node := _guards[i]
 		if node.get_meta("down", false):

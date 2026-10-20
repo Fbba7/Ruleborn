@@ -458,6 +458,7 @@ func _run() -> void:
 	await ObservatoryTests.new(self, check, _mount, server_url).run()
 	await LandingTests.new(self, check, _mount).run()
 	await WorldTests.new(self, check).run()
+	await HeistFxTests.new(self, check).run()
 	await LabTests.new(self, check, _mount, server_url).run()
 	await DefencesTests.new(self, check, _mount, server_url).run()
 	await LawTests.new(self, check, _mount, server_url).run()

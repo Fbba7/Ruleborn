@@ -3,7 +3,8 @@ extends SceneTree
 ## (tools/render/shoot.sh). SHOT is the file; MOMENT picks the moment:
 ## "start" (just landed), "sneak" (the crew spread, a guard looking),
 ## "vault" (the crew at the Vault, cracking), "alarm" (a guard alerted, the
-## alarm up). HOUR and ZOOM are optional.
+## alarm up). HOUR and ZOOM are optional; BUTTONS shows Settings' turn and
+## zoom buttons.
 
 const TO := {"sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]],
 	"alarm": [[5, 6], [3, 10], [4, 11]], "start": []}
@@ -15,11 +16,17 @@ func _initialize() -> void:
 
 
 func _go() -> void:
-	root.size = Vector2i(1080, 2340)
-	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
+	# A phone's frame of its own, so the still is 1080 by 2340 whatever the
+	# window does.
+	var frame := SubViewport.new()
+	frame.size = Vector2i(1080, 2340)
+	frame.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	root.add_child(frame)
+	App.services = Fixtures.answered(Services.build(frame, "", null, "user://outbox-shot.json"))
+	Settings.camera_buttons = OS.get_environment("BUTTONS") != ""
 	App.services.store.dispatch(&"heist_started", {"island": WorldTests.island(), "testing": true})
 	var screen: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
-	root.add_child(screen)
+	frame.add_child(screen)
 	await process_frame
 	var view := screen.view
 	view.set_sky_hour(int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 12)
@@ -49,6 +56,6 @@ func _go() -> void:
 	for i in 6:
 		await process_frame
 	await RenderingServer.frame_post_draw
-	root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
+	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()

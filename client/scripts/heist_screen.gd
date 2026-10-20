@@ -404,9 +404,11 @@ func _build() -> void:
 	hud = HeistHud.new()
 	column.add_child(hud)
 	column = lower
-	hint_label = FxSkin.label("", 14.0)
+	hint_label = FxSkin.label("", 13.0)
 	hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var hint := FxSkin.panel("glass", 16.0, 8.0)
+	var hint := FxSkin.panel("glass", 14.0, 6.0)
+	hint.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	hint.custom_minimum_size.x = UI.px(240)
 	hint.add_child(hint_label)
 	column.add_child(hint)
 
@@ -433,6 +435,7 @@ func _build() -> void:
 	# §21.8: the crew's portraits at the bottom left, Get out at the bottom
 	# right with the other orders above it, all above the corners §21.1 keeps
 	# clear; mirrored for a left-handed player (§20.8).
+	column.add_child(FxSkin.camera_row(view))
 	var actions := VBoxContainer.new()
 	actions.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	actions.add_theme_constant_override("separation", UI.px(6))

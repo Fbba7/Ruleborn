@@ -29,15 +29,16 @@ static func bell(ci: CanvasItem, c: Vector2, s: float, fill: Color, lit: bool) -
 		pts.append(c + Vector2(cos(a) * s * 0.36, sin(a) * s * 0.42 - s * 0.02))
 	pts.append(c + Vector2(s * 0.42, s * 0.3))
 	pts.append(c + Vector2(-s * 0.42, s * 0.3))
-	var body := fill if lit else Color("#3A2E52")
+	var body := fill if lit else Color("#57497A")
 	var outline := PackedVector2Array(pts)
 	outline.append(pts[0])
 	ci.draw_colored_polygon(pts, body)
 	ci.draw_polyline(outline, INK, maxf(1.5, s * 0.08), true)
 	ci.draw_circle(c + Vector2(0, s * 0.38), s * 0.1, INK)
+	ci.draw_line(c + Vector2(-s * 0.18, -s * 0.22), c + Vector2(-s * 0.12, s * 0.12),
+		Color(1, 1, 1, 0.55 if lit else 0.18), maxf(1.0, s * 0.07), true)
 	if lit:
-		ci.draw_line(c + Vector2(-s * 0.18, -s * 0.22), c + Vector2(-s * 0.12, s * 0.12), Color(1, 1, 1, 0.55),
-			maxf(1.0, s * 0.07), true)
+		ci.draw_circle(c + Vector2(0, -s * 0.5), s * 0.07, INK)
 
 
 ## Five points: a knock-out star, a loot sparkle.
@@ -58,6 +59,22 @@ static func coin(ci: CanvasItem, c: Vector2, r: float) -> void:
 	_circle(ci, c, r, Color("#F2B43C"), maxf(1.0, r * 0.18))
 	ci.draw_circle(c, r * 0.62, Color("#FFD872"))
 	ci.draw_circle(c + Vector2(-r * 0.25, -r * 0.3), r * 0.18, Color(1, 1, 1, 0.8))
+
+
+## The Vault's lock: shut, or with its shackle swung open.
+static func lock(ci: CanvasItem, c: Vector2, s: float, open: bool) -> void:
+	var w := maxf(1.5, s * 0.12)
+	var top := c + Vector2(s * 0.12 if open else 0.0, -s * 0.12)
+	ci.draw_arc(top + Vector2(0, -s * (0.12 if open else 0.0)), s * 0.2, PI, TAU, 10, INK, w * 1.6, true)
+	ci.draw_arc(top + Vector2(0, -s * (0.12 if open else 0.0)), s * 0.2, PI, TAU, 10, Color("#C9C3D8"), w * 0.7, true)
+	var body := Rect2(c + Vector2(-s * 0.3, -s * 0.12), Vector2(s * 0.6, s * 0.48))
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color("#3FBF7F") if open else Color("#9B8CF0")
+	box.border_color = INK
+	box.set_border_width_all(maxi(1, int(w * 0.8)))
+	box.set_corner_radius_all(int(s * 0.08))
+	ci.draw_style_box(box, body)
+	ci.draw_circle(body.get_center(), s * 0.06, INK)
 
 
 ## A loot sack, filled to `share`.
@@ -85,8 +102,9 @@ static func bubble(ci: CanvasItem, c: Vector2, s: float, mark: String, fill: Col
 	var w := maxf(2.0, s * 0.14)
 	match mark:
 		"!":
-			ci.draw_line(c + Vector2(0, -r * 0.55), c + Vector2(0, r * 0.12), INK, w * 1.2, true)
-			ci.draw_circle(c + Vector2(0, r * 0.45), w * 0.75, INK)
+			ci.draw_line(c + Vector2(0, -r * 0.55), c + Vector2(0, r * 0.08), INK, w * 1.15, true)
+			ci.draw_circle(c + Vector2(0, -r * 0.55), w * 0.58, INK)
+			ci.draw_circle(c + Vector2(0, r * 0.5), w * 0.72, INK)
 		"!!":
 			for dx: float in [-r * 0.26, r * 0.26]:
 				ci.draw_line(c + Vector2(dx, -r * 0.55), c + Vector2(dx, r * 0.12), INK, w, true)

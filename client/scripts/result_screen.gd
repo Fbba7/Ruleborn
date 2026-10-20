@@ -24,6 +24,8 @@ func _ready() -> void:
 	var column := FxSkin.frame(self)[1]
 	# The outcome on parchment, as the designs' result card: the grade in
 	# Lilita One, outlined, then what was banked and how it was checked.
+	# Rays behind the card when the heist paid: the moment to celebrate.
+	column.add_child(FxDraw.new(_draw_rays, Vector2(0, UI.px(8))))
 	var card := FxSkin.panel("parchment", 22.0, 14.0)
 	var box := VBoxContainer.new()
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -65,6 +67,9 @@ func _ready() -> void:
 	column.add_child(UI.narrow(actions))
 	column.add_child(FxSkin.corner_clear())
 	show_verdict(heist["verdict"], (heist["replay"] as PackedByteArray).size())
+	# The coins fly over everything, into the card.
+	if flight != null:
+		add_child(flight)
 
 
 ## The island after the heist (§23.2's result: "Celebrate or learn"): the
@@ -96,7 +101,22 @@ func _build_world(heist: Dictionary) -> void:
 	_haul = int(v.get("banked", 0)) if v.get("ok", false) else 0
 	flight = FxDraw.new(_draw_flight)
 	flight.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(flight)
+
+
+## A burst of gold rays rising behind the card, turning slowly, when the
+## heist banked loot (§23.2's result: "Celebrate or learn").
+func _draw_rays(ci: Control) -> void:
+	if _haul <= 0:
+		return
+	var c := Vector2(ci.size.x * 0.5, ci.size.y + UI.px(60))
+	var turn := 0.0 if Settings.reduced_motion else _clock * 0.15
+	var reach := ci.size.x * 0.62
+	for k in 9:
+		var a := PI + fmod(turn + PI * (k + 0.5) / 9.0, PI)
+		var w := 0.09
+		var pts := PackedVector2Array([c, c + Vector2(cos(a - w), sin(a - w)) * reach,
+			c + Vector2(cos(a + w), sin(a + w)) * reach])
+		ci.draw_colored_polygon(pts, Color(FxSkin.GOLD, 0.16 if k % 2 == 0 else 0.08))
 
 
 ## A thin ink rule with a coin at its middle, under the grade.
@@ -117,7 +137,7 @@ func _draw_flight(ci: Control) -> void:
 	to.y -= detail_label.size.y * 0.5
 	var from := Vector2(ci.size.x * 0.5, ci.size.y * 0.3)
 	var count := clampi(_haul / 40, 4, 14)
-	var r := UI.px(7)
+	var r := UI.px(5)
 	if Settings.reduced_motion:
 		for k in 3:
 			FxIcons.coin(ci, to + Vector2((k - 1) * r * 2.4, -r * 2.0), r)
@@ -126,7 +146,7 @@ func _draw_flight(ci: Control) -> void:
 		var u := fmod(_clock * 0.55 + float(k) / count, 1.0)
 		var side := (float(k % 5) - 2.0) * ci.size.x * 0.06
 		var p := from.lerp(to, u) + Vector2(side * sin(u * PI), -sin(u * PI) * ci.size.y * 0.12)
-		FxIcons.coin(ci, p, r * (0.8 + 0.4 * sin(u * PI)))
+		FxIcons.coin(ci, p, r * (0.7 + 0.5 * sin(u * PI)) * (1.0 - 0.4 * u))
 
 
 func _process(delta: float) -> void:
@@ -136,6 +156,8 @@ func _process(delta: float) -> void:
 		world_view.sway(sin(_clock * 0.25) * 0.5)
 	if flight != null:
 		flight.queue_redraw()
+	for c in find_children("*", "FxDraw", true, false):
+		(c as FxDraw).queue_redraw()
 
 
 ## A result button in the heist's skin.

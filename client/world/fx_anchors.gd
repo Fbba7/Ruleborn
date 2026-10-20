@@ -96,6 +96,7 @@ func _draw() -> void:
 		return
 	var m := clampf(_metre(), 18.0, 120.0)
 	var calm := Settings.reduced_motion
+	_draw_frame()
 	_draw_edge(calm)
 	_draw_pylons(replay, m)
 	_draw_vault(replay, m)
@@ -108,7 +109,25 @@ func _draw() -> void:
 		draw_rect(Rect2(Vector2.ZERO, size), Color(0.36, 0.22, 0.6, a))
 
 
+## A soft shade of the night's ink at the top and bottom of a heist, behind
+## the HUD, so its pills read on any sky and the eye goes to the middle,
+## where the play is: a screen-space tint, never a full-screen pass (§21.3).
+func _draw_frame() -> void:
+	if not view.heist or view.follow.is_empty():
+		return
+	var ink := Color("#1A1134")
+	var steps := 8
+	for i in steps:
+		var k := float(i) / steps
+		var a := 0.2 * (1.0 - k) * (1.0 - k)
+		draw_rect(Rect2(0, size.y * 0.16 * k, size.x, size.y * 0.16 / steps + 1.0), Color(ink, a))
+		draw_rect(Rect2(0, size.y * (1.0 - 0.3 * k) - size.y * 0.3 / steps, size.x, size.y * 0.3 / steps + 1.0),
+			Color(ink, a * 1.3))
+
+
 func _draw_edge(calm: bool) -> void:
+	if view.follow.is_empty():
+		return
 	var a := alarm_share * 0.32 + flash * 0.4
 	if a <= 0.01:
 		return

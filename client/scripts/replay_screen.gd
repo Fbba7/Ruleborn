@@ -144,6 +144,7 @@ func _build() -> void:
 	status_box.add_child(grade_label)
 	column.add_child(status)
 
+	column.add_child(FxSkin.camera_row(view))
 	var controls := UI.row(-1.0, true)
 	controls.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	controls.add_child(_button("‹", func() -> void: open_entry(current - 1); playing = true, "leather",

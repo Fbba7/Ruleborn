@@ -202,6 +202,50 @@ static func frame(screen: Control) -> Array[VBoxContainer]:
 	return out
 
 
+## §21.1's switch: when the player asks for them in Settings, buttons that
+## turn the view a quarter either way and step its zoom, so no action needs
+## two fingers (§20.8). Each is drawn as its arrow or sign and named in words.
+static func camera_row(view: WorldView) -> HFlowContainer:
+	var r := UI.row(6.0, true)
+	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	r.alignment = FlowContainer.ALIGNMENT_BEGIN
+	r.visible = Settings.camera_buttons
+	for spec: Array in [["turn", -1, "CAMERA_TURN_LEFT"], ["turn", 1, "CAMERA_TURN_RIGHT"],
+			["zoom", -1, "CAMERA_ZOOM_OUT"], ["zoom", 1, "CAMERA_ZOOM_IN"]]:
+		var kind: String = spec[0]
+		var by: int = spec[1]
+		var act := func() -> void:
+			if kind == "turn":
+				view.turn(by)
+			else:
+				view.set_zoom(view.zoom + by)
+		var b := UI.button("", act, false, Color(), Strings.t(spec[2]))
+		style_button(b, "card", 24.0)
+		b.add_child(FxDraw.new(func(ci: Control) -> void: _camera_icon(ci, kind, by)))
+		(b.get_child(b.get_child_count() - 1) as Control).set_anchors_preset(Control.PRESET_FULL_RECT)
+		r.add_child(b)
+	return r
+
+
+static func _camera_icon(ci: Control, kind: String, by: int) -> void:
+	var c := ci.size / 2.0
+	var s := minf(ci.size.x, ci.size.y) * 0.26
+	var w := maxf(3.0, s * 0.22)
+	if kind == "zoom":
+		ci.draw_line(c - Vector2(s, 0), c + Vector2(s, 0), ON_DARK, w)
+		if by > 0:
+			ci.draw_line(c - Vector2(0, s), c + Vector2(0, s), ON_DARK, w)
+		return
+	var start := -PI * 0.85 if by > 0 else -PI * 0.15
+	var end := PI * 0.35 if by > 0 else -PI * 1.35
+	ci.draw_arc(c, s, start, end, 20, ON_DARK, w, true)
+	var tip := c + Vector2(cos(end), sin(end)) * s
+	var along := Vector2(-sin(end), cos(end)) * (1.0 if by > 0 else -1.0)
+	var out := Vector2(cos(end), sin(end))
+	ci.draw_colored_polygon(PackedVector2Array([tip + along * s * 0.55, tip + out * s * 0.4 - along * s * 0.1,
+		tip - out * s * 0.4 - along * s * 0.1]), ON_DARK)
+
+
 ## Space under the lowest controls, so none sits in a bottom corner (§21.1).
 static func corner_clear() -> Control:
 	var c := Control.new()
