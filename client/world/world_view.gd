@@ -594,6 +594,9 @@ func sync() -> void:
 		var node := _guards[i]
 		node.set_meta("down", g["down"])
 		node.set_meta("state", str(g["state"]))
+		# An alerted guard runs at what it saw; a searching or investigating
+		# one walks; a calm one strolls.
+		node.set_meta("gait", "Run" if str(g["state"]) == "Alerted" else "Walk")
 		# The simulation's facing is in the tile grid's frame: x right, y
 		# down; the model faces −Z.
 		var f: float = g["facing"]
