@@ -157,8 +157,8 @@ func _rod(g: Geo, a: Vector3, b: Vector3, r: float, col: Color) -> void:
 ## A half-pipe on a curve: up a little, then down to the far end, with the
 ## water running the way the chute goes (§5.3: "Fast, one way").
 func _chute(g: Geo, flow: UniversePaint, glows: UniversePaint) -> void:
-	var segs := 20
-	var around := 6
+	var segs := 14
+	var around := 5
 	var rad := W * 0.46
 	var centre: Array[Vector3] = []
 	for k in segs + 1:

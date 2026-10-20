@@ -50,9 +50,9 @@ static func _hull(g: Geo) -> void:
 			var shade := HULL.lightened(0.05 * (j % 2))
 			g.quad(section.call(i, j), section.call(i + 1, j), section.call(i + 1, j + 1), section.call(i, j + 1), shade)
 	for side: int in [0, around]:
-		for i in rings:
+		for i in range(0, rings, 2):
 			var a: Vector3 = section.call(i, side)
-			var b: Vector3 = section.call(i + 1, side)
+			var b: Vector3 = section.call(i + 2, side)
 			var mid := (a + b) / 2.0
 			var d := b - a
 			g.box(Transform3D(Basis(Vector3.UP, atan2(-d.z, d.x)), mid + Vector3(0, 0.04, 0)),
