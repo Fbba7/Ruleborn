@@ -16,6 +16,7 @@ static var _cloud: Shader = load("res://world/look_cloud.gdshader")
 static var _hemi: Shader = load("res://world/look_hemi.gdshader")
 static var _glow: Shader = load("res://world/look_glow.gdshader")
 static var _bird: Shader = load("res://world/look_bird.gdshader")
+static var _streak: Shader = load("res://world/look_streak.gdshader")
 static var _vignette: Shader = load("res://world/look_vignette.gdshader")
 
 var environment: Environment
@@ -163,23 +164,7 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 	vines.set_shader_parameter("sway_by_uv", true)
 	statics.add_child(_piece(roots[1], vines, false))
 	for part: Array in builder.scatter():
-		var mi := _scatter(part[0], part[1], part[2], part[3], part[4])
-		if part.size() > 5 and part[5] is String and part[5] == "night":
-			_night.append(mi.material_override as ShaderMaterial)
-		elif part.size() > 5 and part[5] is String and part[5] == "night glow":
-			var ng := ShaderMaterial.new()
-			ng.shader = _glow
-			mi.material_override = ng
-			_night_glows.append(ng)
-		elif part.size() > 5 and part[5] is String:
-			var gm := ShaderMaterial.new()
-			gm.shader = _glow if part[5] == "glow" else _bird
-			mi.material_override = gm
-			# The flock wheels round the island in the shader, beyond its placed box.
-			mi.custom_aabb = AABB(Vector3(-30, -10, -30), Vector3(60, 20, 60))
-		elif part.size() > 5:
-			(mi.material_override as ShaderMaterial).set_shader_parameter("rise", part[5])
-		statics.add_child(mi)
+		statics.add_child(_scatter_part(part))
 	var mist_at: Array[Transform3D] = []
 	var mist_alpha: Array[float] = []
 	var falls := builder.waterfalls()
@@ -227,6 +212,63 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 		mist_alpha.append(0.7)
 	statics.add_child(_mists_of(mist_at, mist_alpha))
 	set_hour(hour)
+
+
+## One kind of the builder's scatter, drawn as its tag asks (IslandBuilder.
+## signature): a rise for sparks, pools of light, the flock, butterflies,
+## wind streaks, sparkles, or what shows only after dark.
+func _scatter_part(part: Array) -> MultiMeshInstance3D:
+	var tag: Variant = part[5] if part.size() > 5 else null
+	if tag is String and tag == "streak":
+		return _streaks_of(part[1])
+	var mi := _scatter(part[0], part[1], part[2], part[3], part[4])
+	var m := mi.material_override as ShaderMaterial
+	if tag is float:
+		m.set_shader_parameter("rise", tag)
+	elif tag is String:
+		match tag:
+			"night":
+				_night.append(m)
+			"twinkle":
+				m.set_shader_parameter("twinkle", 0.8)
+			"glow", "night glow":
+				var gm := ShaderMaterial.new()
+				gm.shader = _glow
+				mi.material_override = gm
+				if tag == "night glow":
+					_night_glows.append(gm)
+			"bird", "butterfly":
+				var bm := ShaderMaterial.new()
+				bm.shader = _bird
+				if tag == "butterfly":
+					bm.set_shader_parameter("coloured", true)
+					bm.set_shader_parameter("beat", 16.0)
+					bm.set_shader_parameter("turn", 0.03)
+					bm.set_shader_parameter("wander", 0.8)
+				mi.material_override = bm
+				# The flock wheels round the island in the shader, beyond its placed box.
+				mi.custom_aabb = AABB(Vector3(-30, -10, -30), Vector3(60, 20, 60))
+	return mi
+
+
+## Wind streaks: long thin dashes facing the camera, one MultiMesh; each
+## transform's scale gives a streak's length (x) and thickness (y).
+static func _streaks_of(at: Array[Transform3D]) -> MultiMeshInstance3D:
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_custom_data = true
+	mm.mesh = _quad()
+	mm.instance_count = at.size()
+	for i in at.size():
+		mm.set_instance_transform(i, Transform3D(Basis(), at[i].origin))
+		mm.set_instance_custom_data(i, Color(at[i].basis.x.length(), at[i].basis.y.length(), 0, 0))
+	var m := ShaderMaterial.new()
+	m.shader = _streak
+	var mi := MultiMeshInstance3D.new()
+	mi.multimesh = mm
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return mi
 
 
 ## The material for the grid's ground (T3's flagstones): the toon ramp with

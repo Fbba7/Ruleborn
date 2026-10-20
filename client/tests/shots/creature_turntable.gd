@@ -45,6 +45,10 @@ func _initialize() -> void:
 			c.play(action)
 		elif OS.get_environment("EXPR") != "":
 			c.set_expression(StringName(OS.get_environment("EXPR")))
+	# The look's sky quad sits at clip depth 1e-5, mid-depth where the GL driver
+	# has no clip control (far is -1), which covers a perspective view: put it at
+	# the far plane for this shot (noted for the look track).
+	look.sky_material.set_shader_parameter("far_z", -0.99999)
 	var cam := Camera3D.new()
 	world.add_child(cam)
 	if portrait:

@@ -78,7 +78,9 @@ var _dark := 0.0
 
 ## Draw the laws `ids` over a realm of `grid` tiles. Laws with no look of
 ## their own (not launched yet) draw nothing.
-func build(ids: Array[String], grid: Vector2i, view: WorldView) -> void:
+## `visuals` false keeps only the movement signatures: T8's `LawFx` draws
+## the laws' world signatures when the view carries it.
+func build(ids: Array[String], grid: Vector2i, view: WorldView, visuals := true) -> void:
 	for c in get_children():
 		c.queue_free()
 	woven.clear()
@@ -93,6 +95,8 @@ func build(ids: Array[String], grid: Vector2i, view: WorldView) -> void:
 			continue
 		woven.append(id)
 		var look: Dictionary = LOOK[id]
+		if not visuals:
+			continue
 		_dark = maxf(_dark, float(look.get("dark", 0.0)))
 		_add_motes(id, look, rng)
 		if look.has("ground"):

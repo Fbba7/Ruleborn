@@ -27,6 +27,7 @@ func run() -> void:
 	_ground()
 	_realm()
 	_signatures()
+	_map()
 
 
 static func _layers(kit: RealmKit) -> int:
@@ -159,8 +160,8 @@ func _ground() -> void:
 		reach = maxf(reach, out)
 		if out > 3.4 and not cols[i].is_equal_approx(colours["grass"]):
 			off += 1
-	check.call("the grid's ground runs out past its edge onto the island and ends in the island's own grass, so the "
-			+ "two meet with no seam (21.1)", reach > 3.4 and off == 0, "%f %d" % [reach, off])
+	check.call("the grid's ground runs out past its edge onto the island and ends in the colour the island's meadow "
+			+ "turns to beside it, so the two meet with no seam (21.1)", reach > 3.4 and off == 0, "%f %d" % [reach, off])
 
 
 func _realm() -> void:
@@ -189,3 +190,21 @@ func _signatures() -> void:
 			missing.append(realm)
 	check.call("each realm's home carries its signature past the grid — the Heart's walls, Skyfield's windmills, "
 			+ "great crystals, a great tree, a lantern festival, smoking vents (21.4)", missing.is_empty(), str(missing))
+
+
+## The universe map's versions (BuildingKit.build_map): 80–250 triangles
+## each, every look apart.
+func _map() -> void:
+	var bad := []
+	var colours := RealmPalette.of("skyfield")
+	for kind: String in BuildingKit.KINDS:
+		var prev := -1
+		for lvl: int in BuildingKit.LOOKS:
+			var g := Geo.new()
+			g.skip_down = true
+			BuildingKit.build_map(g, kind, Vector3.ZERO, 2, lvl, colours)
+			if g.triangles < 20 or g.triangles > 250 or g.triangles == prev:
+				bad.append([kind, lvl, g.triangles])
+			prev = g.triangles
+	check.call("every building has a map version for the universe map of at most 250 triangles, each of §21.5's "
+			+ "looks apart (21.3, 21.5)", bad.is_empty(), str(bad))
