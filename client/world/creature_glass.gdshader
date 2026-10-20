@@ -7,27 +7,31 @@ render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_toon, specular_disa
 #include "res://world/creature_look.gdshaderinc"
 
 uniform sampler2D atlas : source_color, filter_linear_mipmap, repeat_disable;
-// The Echo twin: everything one translucent colour.
+// An Echo ghost (CreatureModel.ECHO_GHOSTS): its strength, 0 off.
 uniform float echo = 0.0;
-uniform vec4 echo_colour : source_color = vec4(0.93, 0.36, 0.86, 0.38);
 
 varying vec2 flags;
+varying vec3 local_pos;
 
 void vertex() {
 	flags = UV2;
+	local_pos = VERTEX;
 }
 
 void fragment() {
 	vec3 c = texture(atlas, UV).rgb * COLOR.rgb;
 	bool body = flags.x >= 0.5;
 	float emit = body ? 0.0 : flags.y;
-	creature_surface(c, body, 0.0, emit, UV, NORMAL, VIEW, creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE), ALBEDO, EMISSION);
+	creature_surface(c, body, 0.0, emit, UV, local_pos, NORMAL, VIEW, creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE), ALBEDO, EMISSION);
 	gloss_band = body ? 0.0 : flags.x / 0.45;
 	float fr = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 2.0);
 	ALPHA = clamp(COLOR.a + fr * 0.35, 0.0, 1.0);
 	if (echo > 0.0) {
-		ALBEDO = mix(ALBEDO, echo_colour.rgb, echo * 0.85);
-		EMISSION = mix(EMISSION, echo_colour.rgb * (0.4 + fr), echo);
-		ALPHA = mix(ALPHA, echo_colour.a * (0.55 + fr), echo);
+		// An Echo ghost: the note's colour, faint inside and bright at the
+		// silhouette, so it reads as an outline a step behind.
+		float edge = smoothstep(0.1, 0.7, pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 1.5));
+		ALBEDO = echo_colour_note.rgb * 0.6;
+		EMISSION = mix(echo_colour_note.rgb, vec3(0.85, 1.0, 1.0), edge * 0.4) * (0.25 + edge * 1.3);
+		ALPHA = echo * (0.07 + 0.8 * edge);
 	}
 }

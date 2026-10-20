@@ -12,6 +12,12 @@ const SASH_TRIM := Color("#F2C25C")
 const BRASS := Color("#C8963E")
 const LANTERN_GLOW := Color("#FFD68A")
 const MOON := Color("#DCE6FF")
+## The notes' colours (8.1's wheel, as law_fx_links.gd draws them).
+const NOTE_HUSH := Color("#5A4A9A")
+const NOTE_SPARK := Color("#F07A3C")
+const NOTE_ECHO := Color("#3CC6D8")
+## §21.3's ink.
+const INK := Color("#1A0C14")
 const EMBER := Color("#FF8A2A")
 
 static var _blob_shader: Shader = load("res://world/creature_blob.gdshader")
@@ -36,18 +42,25 @@ static func blob(c: CreatureModel) -> MeshInstance3D:
 	return mi
 
 
-## Hush: a small glowing crescent that hovers over the head and turns slowly.
-static func hush_charm(c: CreatureModel) -> Node3D:
+## A form's one accessory (§21.6: "pattern, glow and one accessory in its
+## note's colour"), the note's own symbol from 8.1's wheel hovering over the
+## head and turning slowly: Hush's crescent, Spark's star, Echo's ring.
+static func form_charm(c: CreatureModel, form: StringName) -> Node3D:
 	var at := _anchor(c, &"head_top")
 	var st := _tool()
-	var h := c.height()
-	var r := 0.075 * h / _scale(c)
-	_crescent(st, r, r * 0.3, MOON, 1.0)
-	var mi := _instance(st, "hush_charm")
+	var r := 0.085 * c.height() / _scale(c)
+	match form:
+		&"hush":
+			_crescent(st, r, r * 0.3, MOON.lerp(NOTE_HUSH, 0.25), 1.0)
+		&"spark":
+			_star(st, r * 1.1, NOTE_SPARK.lerp(Color.WHITE, 0.25), 1.0)
+		_:
+			_ring(st, Vector3.ZERO, r * 0.8, r * 0.16, NOTE_ECHO.lerp(Color.WHITE, 0.15), 1.0)
+	var mi := _instance(st, String(form) + "_charm")
 	mi.position = Vector3(0, r * 1.6, 0)
 	at.add_child(mi)
 	var tw := mi.create_tween().set_loops()
-	tw.tween_property(mi, "rotation:y", TAU, 6.0).from(0.0)
+	tw.tween_property(mi, "rotation:y", TAU, 6.0 if form != &"spark" else 3.5).from(0.0)
 	return mi
 
 
@@ -240,7 +253,7 @@ static func _cylinder(st: SurfaceTool, at: Vector3, r: float, h: float, col: Col
 		_quad(st, [at - up, at - up + d0 * r, at - up + d1 * r, at - up], nd, col, gloss, 0.0)
 
 
-static func _ring(st: SurfaceTool, at: Vector3, r: float, t: float, col: Color) -> void:
+static func _ring(st: SurfaceTool, at: Vector3, r: float, t: float, col: Color, glow := 0.0) -> void:
 	var segs := 10
 	var sides := 5
 	for j in segs:
@@ -254,7 +267,7 @@ static func _ring(st: SurfaceTool, at: Vector3, r: float, t: float, col: Color) 
 				var d := (Vector3(cos(a), sin(a), 0) * cos(b) + Vector3(0, 0, sin(b))).normalized()
 				pts.append(at + centre + d * t)
 				nrm.append(d)
-			_quad(st, pts, nrm, col, 0.45, 0.0)
+			_quad(st, pts, nrm, col, 0.45, glow)
 
 
 # A crescent: a disc of radius r with a disc offset by `bite` cut out, as a thin slab.
@@ -280,3 +293,30 @@ static func _crescent(st: SurfaceTool, r: float, bite: float, col: Color, glow: 
 		var o1 := outer[i + 1].normalized()
 		_quad(st, [outer[i] - Vector3(0, 0, depth), outer[i + 1] - Vector3(0, 0, depth), outer[i + 1] + Vector3(0, 0, depth),
 			outer[i] + Vector3(0, 0, depth)], [o0, o1, o1, o0], col, 0.0, glow)
+
+
+# A five-pointed star with rounded tips (§21.6: no sharp points), as a slab.
+static func _star(st: SurfaceTool, r: float, col: Color, glow: float) -> void:
+	var n := 30
+	var depth := r * 0.22
+	var rim: Array[Vector3] = []
+	for i in n:
+		var a := TAU * float(i) / float(n) + PI / 2.0
+		# Five lobes; the cosine's power rounds each tip.
+		var lobe := pow(0.5 + 0.5 * cos(a * 5.0 - PI * 2.5), 2.0)
+		var rr := r * (0.48 + 0.52 * lobe)
+		rim.append(Vector3(cos(a) * rr, sin(a) * rr, 0))
+	for i in n:
+		var p0 := rim[i]
+		var p1 := rim[(i + 1) % n]
+		for side: float in [1.0, -1.0]:
+			var z := Vector3(0, 0, depth * side)
+			var f := Vector3(0, 0, side)
+			var tri := [Vector3.ZERO + z * 1.4, p0 + z, p1 + z]
+			if side < 0.0:
+				tri = [tri[0], tri[2], tri[1]]
+			for k: int in [0, 1, 2]:
+				_vertex(st, tri[k] as Vector3, f, col, 0.0, glow)
+		var e := (p0 + p1).normalized()
+		_quad(st, [p0 - Vector3(0, 0, depth), p1 - Vector3(0, 0, depth), p1 + Vector3(0, 0, depth),
+			p0 + Vector3(0, 0, depth)], [e, e, e, e], col, 0.0, glow)
