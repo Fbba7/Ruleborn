@@ -107,6 +107,10 @@ func _go() -> void:
 	for i in 40:
 		await process_frame
 	await RenderingServer.frame_post_draw
+	# §21.3's budgets, as the renderer counted the frame.
+	print("budget: %d draw calls, %d primitives" % [
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)])
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()

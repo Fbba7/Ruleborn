@@ -16,7 +16,7 @@ func _go() -> void:
 	if OS.get_environment("LAWS") != "":
 		laws = Array(OS.get_environment("LAWS").split(","))
 	# NOLAW draws the same heist without LawFx, to measure what it costs.
-	WorldView.law_effects = OS.get_environment("NOLAW") == ""
+	var with_laws := OS.get_environment("NOLAW") == ""
 	var replay := RulebornReplay.new()
 	replay.start("7", 4500, 3, island(laws))
 	var view := WorldView.new()
@@ -24,7 +24,7 @@ func _go() -> void:
 	root.add_child(view)
 	view.set_sky_hour(int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 12)
 	view.show_replay(replay)
-	var fx: LawFx = LawFx.attach(view, replay) if WorldView.law_effects else LawFx.new()
+	var fx: LawFx = LawFx.attach(view, replay) if with_laws else LawFx.new()
 	if OS.get_environment("PARADOX") != "":
 		fx.set_paradox(OS.get_environment("PARADOX"))
 	var spots := replay.reaching()
@@ -37,7 +37,7 @@ func _go() -> void:
 	view.describe()
 	if OS.get_environment("ZOOM") != "":
 		view.set_zoom(int(OS.get_environment("ZOOM")))
-	if WorldView.law_effects:
+	if with_laws:
 		fx.sync(replay.tick())
 		fx.sync_world(replay)
 	for law: String in laws:

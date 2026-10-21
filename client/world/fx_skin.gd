@@ -232,17 +232,17 @@ static func _camera_icon(ci: Control, kind: String, by: int) -> void:
 	var s := minf(ci.size.x, ci.size.y) * 0.26
 	var w := maxf(3.0, s * 0.22)
 	if kind == "zoom":
-		ci.draw_line(c - Vector2(s, 0), c + Vector2(s, 0), ON_DARK, w)
+		FxPen.line(ci, c - Vector2(s, 0), c + Vector2(s, 0), ON_DARK, w)
 		if by > 0:
-			ci.draw_line(c - Vector2(0, s), c + Vector2(0, s), ON_DARK, w)
+			FxPen.line(ci, c - Vector2(0, s), c + Vector2(0, s), ON_DARK, w)
 		return
 	var start := -PI * 0.85 if by > 0 else -PI * 0.15
 	var end := PI * 0.35 if by > 0 else -PI * 1.35
-	ci.draw_arc(c, s, start, end, 20, ON_DARK, w, true)
+	FxPen.arc(ci, c, s, start, end, 20, ON_DARK, w, true)
 	var tip := c + Vector2(cos(end), sin(end)) * s
 	var along := Vector2(-sin(end), cos(end)) * (1.0 if by > 0 else -1.0)
 	var out := Vector2(cos(end), sin(end))
-	ci.draw_colored_polygon(PackedVector2Array([tip + along * s * 0.55, tip + out * s * 0.4 - along * s * 0.1,
+	FxPen.polygon(ci, PackedVector2Array([tip + along * s * 0.55, tip + out * s * 0.4 - along * s * 0.1,
 		tip - out * s * 0.4 - along * s * 0.1]), ON_DARK)
 
 

@@ -66,6 +66,13 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
+	# Every shape in one call (FxPen).
+	FxPen.begin(self)
+	_paint()
+	FxPen.end(self)
+
+
+func _paint() -> void:
 	var w := size.x
 	var r := minf(w, size.y / 1.12) * 0.46
 	var c := Vector2(w * 0.5, r + 2.0)
@@ -73,34 +80,34 @@ func _draw() -> void:
 	var out := standing in ["Out", "Gone", "Captured"]
 	var down := standing != "Active" and not out
 	# The drop shadow and the disc.
-	draw_circle(c + Vector2(0, r * 0.1), r * 1.04, Color(0.05, 0.0, 0.1, 0.35))
+	FxPen.circle(self, c + Vector2(0, r * 0.1), r * 1.04, Color(0.05, 0.0, 0.1, 0.35))
 	var lift := -r * 0.06 if chosen else 0.0
 	c.y += lift
-	draw_circle(c, r, FxSkin.INK_LINE)
+	FxPen.circle(self, c, r, FxSkin.INK_LINE)
 	# A rendered portrait stands on its role's colour, as the cards put a
 	# school-coloured ground behind one.
 	var disc := colour.darkened(0.2) if _picture_ready and not out else FxSkin.CARD_TOP
 	if down:
 		disc = FxSkin.ALARM_DEEP if fmod(_time, 1.0) < 0.5 or Settings.reduced_motion else FxSkin.ALARM_DEEP.darkened(0.25)
-	draw_circle(c, r * 0.9, disc)
-	draw_circle(c + Vector2(0, -r * 0.3), r * 0.55, Color(1, 1, 1, 0.06))
+	FxPen.circle(self, c, r * 0.9, disc)
+	FxPen.circle(self, c + Vector2(0, -r * 0.3), r * 0.55, Color(1, 1, 1, 0.06))
 	# The health ring: green, amber, red as it falls; the share is its length.
 	var ring_col := FxSkin.SUCCESS if health > 0.5 else (FxSkin.GOLD if health > 0.25 else FxSkin.ALARM)
-	draw_arc(c, r * 0.9, -PI / 2.0, -PI / 2.0 + TAU, 48, Color("#2A1E40"), r * 0.14, true)
+	FxPen.arc(self, c, r * 0.9, -PI / 2.0, -PI / 2.0 + TAU, 48, Color("#2A1E40"), r * 0.14, true)
 	if health > 0.0:
-		draw_arc(c, r * 0.9, -PI / 2.0, -PI / 2.0 + TAU * health, 48, ring_col, r * 0.14, true)
+		FxPen.arc(self, c, r * 0.9, -PI / 2.0, -PI / 2.0 + TAU * health, 48, ring_col, r * 0.14, true)
 	var face_col := colour if not out else Color("#7A7488")
 	if _picture_ready:
 		# The model's own head and shoulders, inside the disc; greyed when out.
 		var side := r * 1.62
 		var tint := Color(0.55, 0.55, 0.6) if out else (Color(1.0, 0.75, 0.75) if down else Color.WHITE)
-		draw_texture_rect(picture, Rect2(c - Vector2(side, side) * 0.5 + Vector2(0, r * 0.05), Vector2(side, side)),
+		FxPen.texture_rect(self, picture, Rect2(c - Vector2(side, side) * 0.5 + Vector2(0, r * 0.05), Vector2(side, side)),
 			false, tint)
 	else:
 		FxIcons.face(self, c + Vector2(0, r * 0.12), r * 0.62, face_col, role, down or out)
 	if chosen:
-		draw_arc(c, r * 1.02, 0, TAU, 56, FxSkin.GOLD, r * 0.13, true)
-		draw_arc(c, r * 1.1, 0, TAU, 56, FxSkin.INK_LINE, r * 0.05, true)
+		FxPen.arc(self, c, r * 1.02, 0, TAU, 56, FxSkin.GOLD, r * 0.13, true)
+		FxPen.arc(self, c, r * 1.1, 0, TAU, 56, FxSkin.INK_LINE, r * 0.05, true)
 	# The bag, at the lower right, when it holds anything.
 	if carried > 0.0:
 		FxIcons.sack(self, c + Vector2(r * 0.72, r * 0.62), r * 0.6, carried)
@@ -114,6 +121,6 @@ func _draw() -> void:
 	box.border_color = FxSkin.INK_LINE
 	box.set_border_width_all(2)
 	box.set_corner_radius_all(int(px * 0.6))
-	draw_style_box(box, tag)
-	draw_string(font, Vector2(tag.position.x, tag.position.y + px * 0.98), letters, HORIZONTAL_ALIGNMENT_CENTER,
+	FxPen.style_box(self, box, tag)
+	FxPen.string(self, font, Vector2(tag.position.x, tag.position.y + px * 0.98), letters, HORIZONTAL_ALIGNMENT_CENTER,
 		tag.size.x, px, FxSkin.PARCH_INK if chosen else FxSkin.ON_DARK)

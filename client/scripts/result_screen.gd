@@ -85,7 +85,7 @@ func _ready() -> void:
 ## replay this phone cannot load leaves the night sky behind the card.
 func _build_world(heist: Dictionary) -> void:
 	var sky := FxDraw.new(func(ci: Control) -> void:
-		ci.draw_rect(Rect2(Vector2.ZERO, ci.size), FxSkin.CARD_BOTTOM))
+		FxPen.rect(ci, Rect2(Vector2.ZERO, ci.size), FxSkin.CARD_BOTTOM))
 	sky.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(sky)
 	var bytes: PackedByteArray = heist["replay"]
@@ -152,7 +152,7 @@ func _draw_rays(ci: Control) -> void:
 		var w := 0.09
 		var pts := PackedVector2Array([c, c + Vector2(cos(a - w), sin(a - w)) * reach,
 			c + Vector2(cos(a + w), sin(a + w)) * reach])
-		ci.draw_colored_polygon(pts, Color(1.0, 0.86, 0.45, 0.26 if k % 2 == 0 else 0.14))
+		FxPen.polygon(ci, pts, Color(1.0, 0.86, 0.45, 0.26 if k % 2 == 0 else 0.14))
 
 
 ## The stars a grade earns, gold for each earned and hollow for the rest,
@@ -179,7 +179,7 @@ func _draw_stars(ci: Control) -> void:
 func _draw_rule(ci: Control) -> void:
 	var y := ci.size.y * 0.5
 	if _haul <= 0:
-		ci.draw_line(Vector2(ci.size.x * 0.12, y), Vector2(ci.size.x * 0.88, y), FxSkin.PARCH_INK, 2.0, true)
+		FxPen.line(ci, Vector2(ci.size.x * 0.12, y), Vector2(ci.size.x * 0.88, y), FxSkin.PARCH_INK, 2.0, true)
 		return
 	var shown := _haul if Settings.reduced_motion else int(_haul * clampf((_clock - 0.6) / 1.0, 0.0, 1.0))
 	var font := FxSkin.numbers()
@@ -188,12 +188,12 @@ func _draw_rule(ci: Control) -> void:
 	var w := font.get_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
 	var r := ci.size.y * 0.36
 	var x := ci.size.x * 0.5 - (w + r * 2.6) * 0.5
-	ci.draw_line(Vector2(ci.size.x * 0.06, y), Vector2(x - r, y), FxSkin.PARCH_INK, 2.0, true)
-	ci.draw_line(Vector2(x + w + r * 3.6, y), Vector2(ci.size.x * 0.94, y), FxSkin.PARCH_INK, 2.0, true)
+	FxPen.line(ci, Vector2(ci.size.x * 0.06, y), Vector2(x - r, y), FxSkin.PARCH_INK, 2.0, true)
+	FxPen.line(ci, Vector2(x + w + r * 3.6, y), Vector2(ci.size.x * 0.94, y), FxSkin.PARCH_INK, 2.0, true)
 	FxIcons.coin(ci, Vector2(x + r, y), r)
 	var base := Vector2(x + r * 2.6, y + px * 0.36)
-	ci.draw_string_outline(font, base, words, HORIZONTAL_ALIGNMENT_LEFT, -1, px, maxi(4, px / 6), FxSkin.INK_LINE)
-	ci.draw_string(font, base, words, HORIZONTAL_ALIGNMENT_LEFT, -1, px, FxSkin.GOLD)
+	FxPen.string_outline(ci, font, base, words, HORIZONTAL_ALIGNMENT_LEFT, -1, px, maxi(4, px / 6), FxSkin.INK_LINE)
+	FxPen.string(ci, font, base, words, HORIZONTAL_ALIGNMENT_LEFT, -1, px, FxSkin.GOLD)
 
 
 ## §21.8: "rewards fly into their counter": coins rise from the island and

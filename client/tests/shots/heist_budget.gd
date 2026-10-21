@@ -53,8 +53,6 @@ func _go() -> void:
 	for n: Node in [view.statics, view.actors, view.effects, view.overlay, view.marks_node, view.sight_edge,
 			view._rings]:
 		parts.append(n)
-	for n: Node in view.statics.get_children():
-		parts.append(n)
 	for n: Node in parts:
 		var n3 := n as Node3D
 		if n3 == null or not n3.visible:
@@ -62,6 +60,16 @@ func _go() -> void:
 		n3.visible = false
 		await _report("  without %s" % _named(n3), view)
 		n3.visible = true
+	# The HUD's canvas, part by part.
+	var huds: Array[CanvasItem] = [view.anchors]
+	for c: Node in screen.find_children("*", "Control", true, false):
+		if c is Control and not view.is_ancestor_of(c) and (c as Control).is_visible_in_tree() \
+				and c.get_child_count() <= 1 and c is not Container:
+			huds.append(c as CanvasItem)
+	for c: CanvasItem in huds:
+		c.visible = false
+		await _report("  without %s %s" % [c.get_class(), c.name], view)
+		c.visible = true
 	view.anchors.visible = false
 	screen.hud.visible = false
 	for c: Node in screen.get_children():
