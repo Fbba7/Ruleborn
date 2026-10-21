@@ -14,7 +14,7 @@ const CARD := Color("#241848")
 const CARD_EDGE := Color("#3A2A6E")
 const LIGHT := Color("#F3EEFF")
 ## §21.8: secondary words on a dark surface are no darker than #B8A8D8.
-const LIGHT_SOFT := Color("#C9BCE8")
+const LIGHT_SOFT := Color("#DCD2F2")
 ## §21.8: "Parchment: #FFFBF0 to #F1E3C4 with brown ink #2A1A10".
 const PARCHMENT := Color("#F8EEDA")
 const PARCHMENT_EDGE := Color("#E6D3AC")
@@ -34,6 +34,8 @@ static func night(screen: Control) -> void:
 	var sky := screen.get_node_or_null("Sky") as TextureRect
 	if sky == null:
 		return
+	# What words drawn straight on the night sit on, for the contrast checks.
+	screen.set_meta("behind", [NIGHT_TOP, NIGHT_BOTTOM] as Array[Color])
 	var gradient := Gradient.new()
 	gradient.set_color(0, NIGHT_TOP)
 	gradient.set_color(1, NIGHT_BOTTOM)

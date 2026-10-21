@@ -288,8 +288,8 @@ func _on_screen() -> void:
 			wake = b
 		if b.get_meta("key", "") == "level:2:3":
 			raise = b
-	var words := page.body.find_children("*", "Label", true, false).map(func(l: Label) -> String: return l.text)
-	var shown: bool = page.title_label.text == "Tidewalker" and words.has("Best at: Aether Springs, water routes") \
+	var words := page.find_children("*", "Label", true, false).map(func(l: Label) -> String: return l.text)
+	var shown: bool = page.title_label.text == "Tidewalker" and words.has("Aether Springs, water routes") \
 		and words.has("its home allows no higher") and raise != null and raise.disabled and wake != null
 	wake.pressed.emit()
 	await tree.process_frame

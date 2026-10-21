@@ -60,7 +60,12 @@ func _backgrounds(c: Control) -> Array[Color]:
 	var fills: Array[Color] = []
 	var n: Node = c
 	while n != null and fills.is_empty():
-		if n is Button:
+		# A fill a style box cannot say — a gradient material — says what its
+		# words sit on itself (StageHeroMaterial).
+		if n.has_meta("behind"):
+			for f: Color in n.get_meta("behind"):
+				fills.append(f)
+		elif n is Button:
 			for state: String in ["normal", "hover", "pressed", "focus"]:
 				var box := (n as Button).get_theme_stylebox(state)
 				if box is StyleBoxFlat and (box as StyleBoxFlat).bg_color.a > 0.0:

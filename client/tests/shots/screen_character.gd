@@ -1,6 +1,7 @@
 extends SceneTree
 ## The Character screen for one of ShotData's roster (tools/render/shoot.sh):
-## ID picks the character (5, a Skyskipper, by default); SCROLL scrolls.
+## ID picks the character (5, a Skyskipper, by default); TAB the tab (0
+## Heist, 1 Stats, 2 Compare); SCROLL scrolls.
 func _initialize() -> void:
 	_go()
 
@@ -24,6 +25,7 @@ func _go() -> void:
 		screen = load("res://scenes/character.tscn").instantiate()
 		root.add_child(screen)
 	screen.clock = func() -> int: return RosterTests.NOW
+	screen.tab = int(OS.get_environment("TAB")) if OS.get_environment("TAB") != "" else 0
 	screen._refresh()
 	for i in 60:
 		await process_frame

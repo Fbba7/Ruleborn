@@ -605,7 +605,31 @@ CHARACTER_NEXT,"Next character, %s","Next character, %s","Próximo personagem, %
 CHARACTER_RAISED,Now level %d,Now level %d,Agora no nível %d,Agora no nível %d,Jetzt Stufe %d,Désormais niveau %d
 CHARACTER_WOKEN,Back from rest,Back from rest,De volta do descanso,De volta do descanso,Zurück von der Rast,De retour du repos
 CHARACTER_MISSING,This character is not in the roster,This character is not in the roster,Este personagem não está no plantel,Esta personagem não está no plantel,Diese Figur ist nicht in der Aufstellung,Ce personnage n'est pas dans l'effectif
+CHARACTER_TAB_HEIST,Heist,Heist,Assalto,Assalto,Raubzug,Casse
+CHARACTER_TAB_STATS,Stats,Stats,Atributos,Atributos,Werte,Stats
+CHARACTER_TAB_COMPARE,Compare,Compare,Comparar,Comparar,Vergleich,Comparer
+CHARACTER_KICK_ABILITY,Ability,Ability,Habilidade,Habilidade,Fähigkeit,Capacité
+CHARACTER_KICK_ROLE,Role,Role,Função,Função,Rolle,Rôle
+CHARACTER_KICK_RESISTS,Resists,Resists,Resiste,Resiste,Widersteht,Résiste
+CHARACTER_KICK_BEST,Best at,Best at,Melhor em,Melhor em,Am besten,Doué pour
+CHARACTER_KICK_TRAITS,Traits,Traits,Traços,Traços,Eigenschaften,Traits
+CHARACTER_KICK_FORMS,Forms,Forms,Formas,Formas,Formen,Formes
+CHARACTER_STAT_HEALTH,Health,Health,Vida,Vida,Leben,Vie
+CHARACTER_STAT_SPEED,Speed,Speed,Velocidade,Velocidade,Tempo,Vitesse
+CHARACTER_STAT_POWER,Power,Power,Força,Força,Kraft,Puissance
+CHARACTER_STAT_CARRY,Carry,Carry,Carga,Carga,Tragen,Charge
+CHARACTER_STATS_NOTE,Every %s has these numbers on a heist,Every %s has these numbers on a heist,Todo %s tem estes números num assalto,Todo o %s tem estes números num assalto,Jeder %s hat diese Werte im Raubzug,Chaque %s a ces valeurs en casse
+CHARACTER_STAT_SPOKEN,%s: %s,%s: %s,%s: %s,%s: %s,%s: %s,%s : %s
+CHARACTER_COMPARE_WITH,Compare with %s,Compare with %s,Comparar com %s,Comparar com %s,Mit %s vergleichen,Comparer avec %s
+CHARACTER_COMPARE_NONE,No one else to compare with yet,No one else to compare with yet,Ainda não há com quem comparar,Ainda não há com quem comparar,Noch niemand zum Vergleichen,Personne à comparer pour l'instant
+CHARACTER_LEVEL_SHORT,LV,LV,NV,NV,ST,NV
+CHARACTER_LEVEL_OF,Level %d of %d,Level %d of %d,Nível %d de %d,Nível %d de %d,Stufe %d von %d,Niveau %d sur %d
+CHARACTER_COUNT,%d / %d,%d / %d,%d / %d,%d / %d,%d / %d,%d / %d
 ROSTER_SEND_WORK,Send to work,Send to work,Mandar trabalhar,Mandar trabalhar,Zur Arbeit schicken,Envoyer au travail
+ROSTER_ALL,All,All,Todos,Todos,Alle,Tous
+ROSTER_FILTER,%s · %d,%s · %d,%s · %d,%s · %d,%s · %d,%s · %d
+ROSTER_FILTER_SPOKEN,Show %s: %d,Show %s: %d,Mostrar %s: %d,Mostrar %s: %d,%s zeigen: %d,Afficher %s : %d
+ROSTER_DETAILS,Details,Details,Detalhes,Detalhes,Details,Détails
 HOME_SAGES,Sage hall,Sage hall,Salão dos Sábios,Salão dos Sábios,Halle der Weisen,Salle des Sages
 SAGE_TITLE,Sage hall,Sage hall,Salão dos Sábios,Salão dos Sábios,Halle der Weisen,Salle des Sages
 SAGE_HEADER,"Your Sages are at level %d, the Keeper's","Your Sages are at level %d, the Keeper's","Seus Sábios estão no nível %d, o do Guardião","Os teus Sábios estão no nível %d, o do Guardião","Deine Weisen sind auf Stufe %d, der des Hüters","Tes Sages sont au niveau %d, celui du Gardien"
