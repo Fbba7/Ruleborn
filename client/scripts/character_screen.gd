@@ -211,6 +211,9 @@ func _sub_line(c: Dictionary, me: Dictionary) -> Control:
 		"#" + colour.darkened(0.55).to_html(false), "schools/" + school))
 	var sub := StageHeroKit.words("%s · %s" % [RosterPresenter.kind_name(str(me.get("kind", ""))), c["role"]], 16.0,
 		StageHeroSkin.LIGHT_SOFT)
+	if Settings.text_scale > 100:
+		sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		sub.custom_minimum_size.x = UI.px(100)
 	sub.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	line.add_child(sub)
 	return line
@@ -430,7 +433,7 @@ func _actions(c: Dictionary) -> void:
 
 ## The design's UPGRADE: "Level up" in Lilita One over the levels it moves
 ## between (or why it waits, or, asked once, the price to confirm), and the
-## price on a dark pill with Essence's icon. Spent on a second tap.
+## price beside Essence's icon. Spent on a second tap.
 func _upgrade(o: Dictionary, busy: bool) -> Button:
 	var confirming: bool = confirm == o["key"]
 	var b := UI.action("", _tap.bind(o), "green", Strings.t("CHARACTER_CONFIRM_SPOKEN", [o["spoken"], o["cost"]])
@@ -439,7 +442,7 @@ func _upgrade(o: Dictionary, busy: bool) -> Button:
 	b.set_meta("key", o["key"])
 	b.set_meta("item", o["item"])
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	b.custom_minimum_size.x = UI.px(200)
+	b.custom_minimum_size.x = UI.px(180)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
 	row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, UI.px(10))
@@ -448,7 +451,7 @@ func _upgrade(o: Dictionary, busy: bool) -> Button:
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.alignment = BoxContainer.ALIGNMENT_CENTER
 	words.add_theme_constant_override("separation", 0)
-	var big := StageHeroKit.words(Strings.t("CHARACTER_UPGRADE").to_upper(), 24.0, Color("#FFFDF0"), true)
+	var big := StageHeroKit.words(Strings.t("CHARACTER_UPGRADE").to_upper(), 22.0, Color("#FFFDF0"), true)
 	big.add_theme_font_override("font", StageHeroSkin.numbers_font())
 	big.add_theme_constant_override("outline_size", UI.px(3))
 	big.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -461,10 +464,15 @@ func _upgrade(o: Dictionary, busy: bool) -> Button:
 	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	sub.custom_minimum_size.x = UI.px(90)
 	words.add_child(sub)
+	# The price under the words, beside Essence's icon.
+	var price := HBoxContainer.new()
+	price.add_theme_constant_override("separation", UI.px(4))
+	price.add_child(Icons.view("resources/essence", 18.0))
+	var cost := StageHeroKit.words(str(o["cost"]), 16.0, Color("#FFFDF0"), true)
+	cost.add_theme_font_override("font", StageHeroSkin.numbers_font())
+	price.add_child(cost)
+	words.add_child(price)
 	row.add_child(words)
-	var price := StageHeroKit.chip(str(o["cost"]), "#1A0E22", "resources/essence")
-	price.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(price)
 	b.add_child(row)
 	b.custom_minimum_size.y = maxf(b.custom_minimum_size.y, row.get_combined_minimum_size().y + UI.px(20))
 	row.minimum_size_changed.connect(func() -> void:

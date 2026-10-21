@@ -20,6 +20,9 @@ var guard_label: Label
 var status_label: Label
 var stage: StageHero
 var cards: VBoxContainer
+## The Sage whose powers and levels are shown, by id; the one on guard, or
+## the first, when none is chosen.
+var chosen := ""
 
 
 func _ready() -> void:
@@ -47,10 +50,15 @@ func _build() -> void:
 	column.add_child(RosterScreen.padded(StageHeroSkin.plate(status_label)))
 	body = UI.scroll(column)
 	body.add_theme_constant_override("separation", UI.px(10))
+	var head := Control.new()
+	head.custom_minimum_size.y = UI.px(Tokens.number("size", "safe_top_points") - 34.0)
+	body.add_child(head)
+	body.add_child(RosterScreen.padded(StageHeroKit.hub(1)))
+	# The hall, every Sage in it, on the design's rimmed hero card.
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(0, UI.px(Tokens.number("size", "safe_top_points") + 250.0))
+	stage.custom_minimum_size = Vector2(0, UI.px(230))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	body.add_child(stage)
+	body.add_child(RosterScreen.padded(StageHeroMaterial.panel("rim", stage, 18.0, 4.0)))
 	var top := VBoxContainer.new()
 	top.add_theme_constant_override("separation", UI.px(2))
 	header_label = StageHeroKit.words("", 15.0, StageHeroSkin.LIGHT)
@@ -96,8 +104,20 @@ func _refresh() -> void:
 		return
 	_stand(h["sages"])
 	var busy: bool = h["busy"] != ""
+	var shown: Dictionary = {}
 	for s: Dictionary in h["sages"]:
-		cards.add_child(_sage(s, busy))
+		if str(s["id"]) == chosen or (shown.is_empty() and s["guarding"]):
+			shown = s
+	if shown.is_empty() and not (h["sages"] as Array).is_empty():
+		shown = h["sages"][0]
+	if not shown.is_empty():
+		cards.add_child(_sage(shown))
+	var count := StageHeroKit.kicker(Strings.t("CREW_HUB_SAGES"))
+	cards.add_child(count)
+	var tiles: Array = []
+	for s: Dictionary in h["sages"]:
+		tiles.append(_tile(s, busy, str(s["id"]) == str(shown.get("id", ""))))
+	cards.add_child(StageHeroKit.grid(tiles, self))
 	StageHeroSkin.cap_buttons(cards, get_viewport_rect().size.x - UI.px(64))
 	if focus_item != "":
 		for b: Button in find_children("*", "Button", true, false):
@@ -142,10 +162,10 @@ func _stand(sages: Array) -> void:
 ## glass plate, gold-edged for the one on guard; its words a size smaller
 ## for every Sage past three, and wrapping when still too long.
 static func _name_plate(s: Dictionary, count: int) -> Control:
-	var points := clampf(17.0 - float(maxi(0, count - 3)) * 1.5, 13.0, 17.0)
+	var points := clampf(17.0 - float(maxi(0, count - 2)) * 2.0, 13.0, 17.0)
 	var l := StageHeroKit.words(str(s["name"]), points, StageHeroSkin.LIGHT if s["unlocked"] else StageHeroSkin.LIGHT_SOFT)
 	StageHeroSkin.named(l)
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD
 	l.custom_minimum_size.x = UI.px(40)
 	var p := StageHeroMaterial.panel("rim" if s["guarding"] else "glass", l, 10.0, 5.0)
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -154,11 +174,11 @@ static func _name_plate(s: Dictionary, count: int) -> Control:
 	return p
 
 
-## A Sage's card: its portrait with its school's shape and the guard's mark,
-## its name, whether it is unlocked or on guard as chips, its powers and its
-## at-home effect, every fifth level's gain on a track of pips, and the
-## guard choice.
-func _sage(s: Dictionary, busy: bool) -> Control:
+## The chosen Sage's card: its portrait with its school's shape and the
+## guard's mark, its name, whether it is unlocked or on guard as chips, its
+## powers, its at-home and on-guard effects, and every fifth level's gain on
+## a track of pips.
+func _sage(s: Dictionary) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", UI.px(6))
 	# Portrait beside the name, or above it at §20.8's larger text.
@@ -189,10 +209,9 @@ func _sage(s: Dictionary, busy: bool) -> Control:
 	var chips := HFlowContainer.new()
 	chips.add_theme_constant_override("h_separation", UI.px(6))
 	chips.add_theme_constant_override("v_separation", UI.px(4))
-	chips.add_child(StageHeroKit.chip(s["lock"], "#1F6A35" if s["unlocked"] else "card", "✓" if s["unlocked"] else "",
-		true))
+	chips.add_child(StageHeroKit.chip(s["lock"], "#1F6A35" if s["unlocked"] else "card", "✓" if s["unlocked"] else ""))
 	if s["guarding"]:
-		chips.add_child(StageHeroKit.chip(Strings.t("SAGE_ON_GUARD"), "#5A3FB0", "sagepowers/onguard", true))
+		chips.add_child(StageHeroKit.chip(Strings.t("SAGE_ON_GUARD"), "#5A3FB0", "sagepowers/onguard"))
 	side.add_child(chips)
 	head.add_child(side)
 	box.add_child(head)
@@ -212,17 +231,6 @@ func _sage(s: Dictionary, busy: bool) -> Control:
 	box.add_child(StageHeroKit.kicker(Strings.t("SAGE_EVERY_FIFTH")))
 	for lv: Dictionary in s["levels"]:
 		box.add_child(_step(lv))
-	var o: Dictionary = s["button"]
-	var b := UI.button(o["action"], controller.station.bind(o["sage"]), false, Color(), o["spoken"])
-	StageHeroMaterial.button(b, "gold" if s["unlocked"] and not s["guarding"] else "leather")
-	b.disabled = busy or not o["can"]
-	b.set_meta("key", o["key"])
-	b.set_meta("item", o["item"])
-	var r := UI.row()
-	r.add_child(b)
-	if o["why"] != "":
-		r.add_child(StageHeroKit.para(o["why"], 15.0))
-	box.add_child(r)
 	return StageHeroMaterial.panel("card", box, 16.0, 12.0)
 
 
@@ -261,3 +269,37 @@ static func _power(key: String, i: int) -> Control:
 ## A card's clause as a sentence: its first letter raised.
 static func _sentence(words: String) -> String:
 	return words.left(1).to_upper() + words.substr(1)
+
+
+## A Sage's tile in the hall's grid: its portrait (a silhouette while
+## locked) with the guard's mark, its name, and the guard choice, saying
+## why it waits; a tap on the portrait shows its powers above.
+func _tile(s: Dictionary, busy: bool, shown: bool) -> Control:
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(4))
+	var tile := StageHeroSkin.portrait_tile(str(s["id"]), "" if s["unlocked"] else "shadow", 96.0)
+	tile.gui_input.connect(func(e: InputEvent) -> void:
+		if e is InputEventMouseButton and (e as InputEventMouseButton).pressed:
+			chosen = str(s["id"])
+			_refresh())
+	if s["guarding"]:
+		StageHeroSkin.pin(tile, StageHeroSkin.badge(str(RosterPresenter.MARK["guarding"]), Palette.MATTER.darkened(0.45),
+			16.0), Control.PRESET_TOP_LEFT)
+	v.add_child(tile)
+	var name := StageHeroKit.words(s["name"], 16.0, StageHeroSkin.LIGHT)
+	StageHeroSkin.named(name)
+	name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	name.custom_minimum_size.x = UI.px(60)
+	v.add_child(name)
+	if not s["unlocked"]:
+		v.add_child(StageHeroKit.chip(s["lock"], "card", "generalui/lock", true))
+	var o: Dictionary = s["button"]
+	var b := UI.button(o["action"], controller.station.bind(o["sage"]), false, Color(), o["spoken"])
+	StageHeroMaterial.button(b, "gold" if s["unlocked"] and not s["guarding"] else "leather")
+	b.disabled = busy or not o["can"]
+	b.set_meta("key", o["key"])
+	b.set_meta("item", o["item"])
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	v.add_child(b)
+	StageHeroSkin.cap_buttons(v, UI.px(130))
+	return StageHeroMaterial.panel("rim" if shown else "card", v, 14.0, 6.0)

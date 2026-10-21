@@ -98,16 +98,26 @@ static func para(words_shown: String, points := 16.0, colour := Color("#F3EEFF")
 ## the chosen one on the kit's gold chip, the rest on its glass chips, as
 ## the design's hub and tabs. `pick` takes the index.
 static func tabs(names: Array, chosen: int, pick: Callable, icons: Array = []) -> PanelContainer:
-	# One row, wrapping when the words are long (German, §20.8's larger text).
-	var row := HFlowContainer.new()
-	row.add_theme_constant_override("h_separation", UI.px(4))
-	row.add_theme_constant_override("v_separation", UI.px(4))
+	# One row; rows that wrap when the words are long (§20.8's larger text, or
+	# a language's longer words).
+	var row: Container = HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(4))
+	if Settings.text_scale > 100 or "".join(names).length() > 22:
+		row = HFlowContainer.new()
+		row.add_theme_constant_override("h_separation", UI.px(4))
+		row.add_theme_constant_override("v_separation", UI.px(4))
 	for i: int in names.size():
 		var b := UI.action(str(names[i]), pick.bind(i), "chip_on" if i == chosen else "chip")
+		b.add_theme_font_size_override("font_size", UI.text_px(15))
+		b.set_meta("points", 15.0)
+		for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+			b.add_theme_stylebox_override(state, UI.clear_box(6, 4))
 		if i < icons.size() and Icons.has(str(icons[i])):
 			b.icon = Icons.texture(str(icons[i]))
-			b.add_theme_constant_override("icon_max_width", UI.px(22))
-			b.custom_minimum_size.x += UI.px(26)
+			b.add_theme_constant_override("icon_max_width", UI.px(20))
+			b.add_theme_constant_override("h_separation", UI.px(4))
+			UI.fit(b)
+			b.custom_minimum_size.x += UI.px(22)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.set_meta("item", "tab:%d" % i)
 		b.set_meta("chosen", i == chosen)
@@ -188,13 +198,15 @@ static func name_plate(name: Label, school: String, sub: String) -> Control:
 ## The level on a gold hexagon, a bar of the levels its home allows, and its
 ## health on a chip (none when `health` is negative).
 static func level_row(level: int, top: int, health := -1) -> Control:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", UI.px(10))
+	var row := HFlowContainer.new()
+	row.add_theme_constant_override("h_separation", UI.px(10))
+	row.add_theme_constant_override("v_separation", UI.px(6))
 	top = maxi(1, top)
 	row.add_child(StageHeroHex.make(str(level), Strings.t("CHARACTER_LEVEL_SHORT"), 58.0))
 	var v := VBoxContainer.new()
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	v.custom_minimum_size.x = UI.px(110)
 	v.add_theme_constant_override("separation", UI.px(4))
 	var said := words(Strings.t("CHARACTER_LEVEL_OF", [level, top]), 15.0, StageHeroSkin.LIGHT_SOFT)
 	said.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
