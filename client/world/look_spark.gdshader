@@ -12,11 +12,11 @@ render_mode skip_vertex_transform, unshaded, cull_disabled, depth_draw_never, sh
 // Shown by the hour: 0 hides it (by day), 1 shows it.
 uniform float appear = 1.0;
 // The halo's width over the speck's.
-uniform float halo = 5.0;
+uniform float halo = 3.0;
 // The halo's smallest width on screen, in pixels at the viewport's size.
-uniform float min_px = 12.0;
-// The halo's largest width, in metres.
-uniform float max_width = 0.7;
+uniform float min_px = 16.0;
+// The halo's largest width, in metres, unless `min_px` needs more.
+uniform float max_width = 0.32;
 uniform float strength = 1.0;
 // Metres it wanders sideways, and metres it rises over `rise_period`
 // seconds before starting again (sparks, motes).
@@ -43,7 +43,7 @@ void vertex() {
 	// is the same everywhere; a perspective camera's falls with distance.
 	float persp = PROJECTION_MATRIX[2][3] < -0.5 ? -centre.z : 1.0;
 	float px_per_m = VIEWPORT_SIZE.y * 0.5 * PROJECTION_MATRIX[1][1] / max(persp, 0.01);
-	float width = min(max(size * halo, min_px / max(px_per_m, 0.001)), max_width);
+	float width = max(min(size * halo, max_width), min(min_px / max(px_per_m, 0.001), 0.6));
 	vec2 corner = (UV - 0.5) * width;
 	VERTEX = centre + vec3(corner, 0.0);
 	pulse = 0.65 + 0.35 * sin(TIME * (1.6 + fract(seed) * 1.4) + seed * 5.0);

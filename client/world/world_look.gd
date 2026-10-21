@@ -145,7 +145,7 @@ func set_hour(new_hour: int) -> void:
 	for n: ShaderMaterial in _night:
 		n.set_shader_parameter("appear", after_dark)
 	for n: ShaderMaterial in _night_glows:
-		n.set_shader_parameter("strength", 0.45 * after_dark)
+		n.set_shader_parameter("strength", 0.3 * after_dark)
 	if _clouds != null:
 		var lit: Color = light[0]
 		_clouds.set_shader_parameter("top", Color.WHITE.lerp(lit, 0.25).lerp(sky[2], 0.12))

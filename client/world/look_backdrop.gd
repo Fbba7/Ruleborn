@@ -55,6 +55,7 @@ func set_colours(upper: Color, lower: Color) -> void:
 	m.set_shader_parameter("islet", upper.lerp(lower, 0.55).darkened(0.18))
 	m.set_shader_parameter("islet_lit", lower.lerp(Color("#9C8CE8"), 0.5))
 	m.set_shader_parameter("edge", upper.darkened(0.6))
+	m.set_shader_parameter("nebula", lower.lerp(Color("#C050B0"), 0.55))
 
 
 ## Swap the plain gradient UI.frame puts behind `screen` (its "Sky") for

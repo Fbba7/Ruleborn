@@ -19,6 +19,10 @@ uniform vec4 cloud_body : source_color = vec4(0.36, 0.33, 0.78, 1.0);
 uniform float cloud_far = 0.80;
 uniform float cloud_near = 0.88;
 uniform float stars = 1.0;
+// Soft nebula clouds and a band of star dust across the sky, as the design's
+// universe sky draws them (art/design/stills/obs): their colour and strength.
+uniform vec4 nebula : source_color = vec4(0.62, 0.25, 0.62, 1.0);
+uniform float nebula_strength = 0.45;
 uniform float islets = 1.0;
 // The far islets' colour (a dark violet against the sky).
 uniform vec4 islet : source_color = vec4(0.16, 0.12, 0.38, 1.0);
@@ -33,6 +37,24 @@ uniform float motion = 1.0;
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+float vnoise(vec2 p) {
+	vec2 i = floor(p);
+	vec2 f = fract(p);
+	f = f * f * (3.0 - 2.0 * f);
+	return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0)), f.x), f.y);
+}
+
+float fbm(vec2 p) {
+	float v = 0.0;
+	float a = 0.5;
+	for (int i = 0; i < 4; i++) {
+		v += vnoise(p) * a;
+		p = p * 2.03 + vec2(1.7, 9.2);
+		a *= 0.5;
+	}
+	return v;
 }
 
 // The top of a row of round cloud lobes at `x`: the highest lobe over it.
@@ -77,6 +99,20 @@ void fragment() {
 	// The glow where the world would float, a little above the middle.
 	float g = exp(-pow(length((p - vec2(0.5 * aspect, 0.55)) * vec2(1.0, 1.3)) * 2.2, 2.0));
 	c = mix(c, glow.rgb, g * glow_strength);
+	// Nebula clouds drifting, brighter in their hearts, and a diagonal band of
+	// star dust through them.
+	if (nebula_strength > 0.0) {
+		float n = fbm(p * 3.2 + vec2(t * 0.004, 0.0));
+		float n2 = fbm(p * 6.0 - vec2(0.0, t * 0.003) + 4.0);
+		float cloud = smoothstep(0.38, 0.75, n) * (0.55 + 0.45 * n2);
+		c = mix(c, nebula.rgb, cloud * nebula_strength);
+		c += nebula.rgb * smoothstep(0.7, 0.9, n) * nebula_strength * 0.35;
+		float band = exp(-pow((p.y - 0.35 - (p.x - 0.5 * aspect) * 0.9) * 5.0, 2.0));
+		vec2 dc = p * 150.0;
+		float dh = hash(floor(dc));
+		float dust = step(0.9, dh) * smoothstep(0.32, 0.05, length(fract(dc) - 0.5)) * (0.4 + 0.6 * n2);
+		c += vec3(0.85, 0.8, 1.0) * dust * band * 0.5 * nebula_strength + glow.rgb * band * 0.06;
+	}
 	// Stars in the upper sky, twinkling.
 	if (stars > 0.0) {
 		vec2 cell = floor(p * 90.0);
