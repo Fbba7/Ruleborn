@@ -234,8 +234,8 @@ func _people() -> void:
 	var swooped := view.focus_id == "outer-4" and view.zoom == 1
 	Settings.reduced_motion = false
 	check.call("the realm seen close shows the player's own characters the home view puts there, two at most on "
-			+ "an outer realm and one on the Heart, and none from afar; a character is where it works, else at home (the Spire is the Heart); a realm's "
-			+ "heading in a word list swoops the map to it (23.2, 14.1)",
+			+ "an outer realm and one on the Heart, and none from afar; a character is where it works, else at home "
+			+ "(the Spire is the Heart); a realm's heading in a word list swoops the map to it (23.2, 14.1)",
 		far == 0 and kinds == ["featherkin"] and outer == ["bloomling", "tidewalker"]
 			and where == ["outer-2", "heart", "outer-3"] and swooped and heading.get_child(1) == title,
 		"far %d kinds %s outer %s where %s swooped %s" % [far, kinds, outer, where, swooped])
