@@ -1223,3 +1223,6 @@ SCREEN_COST,Cost,Cost,Custo,Custo,Kosten,Coût
 SCREEN_READY_IN,Ready in,Ready in,Pronta em,Pronta em,Fertig in,Prête dans
 SCREEN_CHOOSE,Choose %s,Choose %s,Escolher %s,Escolher %s,%s wählen,Choisir %s
 SCREEN_OPEN,Open,Open,Abrir,Abrir,Öffnen,Ouvrir
+SCREEN_STARPASS_LINE,Cosmetics only,Cosmetics only,Só cosméticos,Só cosméticos,Nur Kosmetik,Cosmétiques seulement
+SCREEN_PASS,Pass,Pass,Passe,Passe,Pass,Passe
+SCREEN_LEAGUE,League,League,Liga,Liga,Liga,Ligue

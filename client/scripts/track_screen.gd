@@ -19,6 +19,9 @@ var premium_button: Button
 var _stars: PanelContainer
 var _bar: ScreenMeter
 var _tier: ScreenMeter
+var _strip: HBoxContainer
+var _pass: HBoxContainer
+var _pass_card: PanelContainer
 
 
 func _ready() -> void:
@@ -42,13 +45,16 @@ func _build() -> void:
 	var head := ScreenNav.header("", _stars)
 	title_label = head.find_child("Title", true, false) as Label
 	column.add_child(head)
+	status_label = UI.status("info", "")
+	column.add_child(ScreenParts.status_plate(status_label))
+	body = UI.scroll(column)
 	stars_label = ScreenKit.text("", 13.0, "words", "card_lit", true, true)
 	next_label = ScreenKit.text("", 17.0, "words", "card_lit", false, true)
 	_bar = ScreenMeter.bar(0, 1, Color("#F2B43C"), 12.0)
-	var strip := HBoxContainer.new()
-	strip.add_theme_constant_override("separation", UI.px(10))
 	_tier = ScreenMeter.ring(0, 1, Color("#F2B43C"), 56.0, "")
-	strip.add_child(_tier)
+	_strip = HBoxContainer.new()
+	_strip.add_theme_constant_override("separation", UI.px(10))
+	_strip.add_child(_tier)
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.add_theme_constant_override("separation", UI.px(4))
@@ -56,14 +62,25 @@ func _build() -> void:
 	words.add_child(next_label)
 	words.add_child(_bar)
 	words.add_child(stars_label)
-	strip.add_child(words)
-	column.add_child(ScreenKit.panel("card_lit", strip, 18.0, 12.0))
-	status_label = UI.status("info", "")
-	column.add_child(ScreenParts.status_plate(status_label))
-	body = UI.scroll(column)
-	claim_button = ScreenKit.button(Strings.t("TRACK_CLAIM"), controller.claim, "gold")
-	premium_button = ScreenKit.button(Strings.t("TRACK_PREMIUM"), _buy_premium, "leather")
-	column.add_child(ScreenNav.dock(&"home", [claim_button, premium_button]))
+	_strip.add_child(words)
+	_pass = HBoxContainer.new()
+	_pass.add_theme_constant_override("separation", UI.px(10))
+	_pass.add_child(ScreenKit.icon("season", "premiumtrack", 40.0))
+	var pass_words := VBoxContainer.new()
+	pass_words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	pass_words.alignment = BoxContainer.ALIGNMENT_CENTER
+	pass_words.add_child(ScreenKit.text(Strings.t("SCREEN_STARPASS_LANE"), 17.0, "number", "card_lit"))
+	pass_words.add_child(ScreenKit.text(Strings.t("SCREEN_STARPASS_LINE"), 13.0, "words", "card_lit", true, true))
+	_pass.add_child(pass_words)
+	premium_button = ScreenKit.button(Strings.t("TRACK_PREMIUM"), _buy_premium, "gold", "", 14.0)
+	premium_button.size_flags_horizontal = Control.SIZE_SHRINK_END
+	premium_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	premium_button.tooltip_text = Strings.t("TRACK_PREMIUM")
+	_pass.add_child(premium_button)
+	_pass_card = ScreenKit.panel("card_lit", _pass, 18.0, 10.0)
+	column.add_child(_pass_card)
+	claim_button = ScreenKit.button(Strings.t("TRACK_CLAIM"), controller.claim, "green")
+	column.add_child(ScreenNav.dock(&"home", [claim_button]))
 
 
 func _buy_premium() -> void:
@@ -96,8 +113,11 @@ func _refresh() -> void:
 	_bar.set_value(mini(int(t["stars_n"]), int(t["next_cost"])))
 	claim_button.disabled = not t["can_claim"] or t["busy"]
 	premium_button.visible = not t["premium"] and t["premium_product"] != ""
-	UI.relabel(premium_button, Strings.t("TRACK_PREMIUM_PRICE", ShopPresenter.money(t["premium_price"],
-		App.services.purchases.price(t["premium_product"]))))
+	# The price on the gold button, as the design's Starpass bar; the button
+	# is named in full for a screen reader.
+	var price := ShopPresenter.money(t["premium_price"], App.services.purchases.price(t["premium_product"]))
+	UI.relabel(premium_button, price)
+	premium_button.accessibility_name = Strings.t("TRACK_PREMIUM_PRICE", price)
 	premium_button.disabled = str(shop.get("buying", "")) != ""
 	# A purchase's failure is this screen's only if it was the premium track.
 	var premium_failed := str(shop.get("failed", "")).trim_prefix("gift.").begins_with("premium.")
@@ -110,70 +130,108 @@ func _refresh() -> void:
 	else:
 		UI.set_status(status_label, "info", "")
 	ScreenParts.show_status(status_label)
+	_pass_card.visible = premium_button.visible
+	if _strip.get_parent() != null:
+		_strip.get_parent().remove_child(_strip)
 	for c in body.get_children():
 		c.queue_free()
-	var lanes := HBoxContainer.new()
+	body.add_child(ScreenParts.segmented([{"text": Strings.t("SCREEN_PASS"), "key": "pass", "on": true},
+		{"text": Strings.t("SCREEN_LEAGUE"), "key": "league", "on": false}], func(key: String) -> void:
+			if key == "league":
+				App.services.router.go(&"social")))
+	body.add_child(ScreenKit.panel("card_lit", _strip, 18.0, 12.0))
+	body.add_child(_road(t["rows"], bool(t["premium"])))
+
+
+## The design's track: one column a tier, the Starpass reward over the
+## tier's node on the road and the free reward under it, scrolled sideways,
+## the next tier lit; the lanes named at their start.
+func _road(rows: Array, premium: bool) -> Control:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	var lanes := VBoxContainer.new()
 	lanes.add_theme_constant_override("separation", UI.px(8))
-	for key: String in ["SCREEN_FREE_LANE", "", "SCREEN_STARPASS_LANE"]:
-		var l := ScreenKit.text(Strings.t(key) if key != "" else "", 13.0, "words", "card", true)
-		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL if key != "" else Control.SIZE_SHRINK_CENTER
-		l.custom_minimum_size.x = 0 if key != "" else UI.px(44)
-		lanes.add_child(l)
-	body.add_child(lanes)
-	for row: Dictionary in t["rows"]:
-		body.add_child(_tier_row(row, bool(t["premium"])))
+	for key: String in ["SCREEN_STARPASS_LANE", "", "SCREEN_FREE_LANE"]:
+		var tag: Control
+		if key == "":
+			tag = Control.new()
+			tag.custom_minimum_size = Vector2(UI.px(20), UI.px(44))
+		else:
+			var l := ScreenKit.text(Strings.t(key), 13.0, "words", "active" if key != "SCREEN_FREE_LANE" else "card")
+			tag = ScreenKit.panel("tab_active" if key != "SCREEN_FREE_LANE" else "card", l, 10.0, 4.0)
+			tag.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		lanes.add_child(tag)
+	row.add_child(lanes)
+	for r: Dictionary in rows:
+		row.add_child(_tier_row(r, premium))
+	var strip := ScrollContainer.new()
+	strip.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	strip.custom_minimum_size.y = row.get_combined_minimum_size().y + UI.px(10)
+	strip.add_child(row)
+	# Open at the next tier, as the design does.
+	strip.ready.connect(func() -> void:
+		var at := 0
+		for r: Dictionary in rows:
+			if r["state"] == "next":
+				at = int(r["tier"])
+		strip.set_deferred("scroll_horizontal", maxi(0, (at - 2) * UI.px(112))))
+	return strip
 
 
-## One tier on the road: the free reward, the tier's node, and the
-## Starpass reward, locked while the pass is not held; claimed tiers carry
-## a tick, the next one is lit.
+## One tier on the road: the Starpass reward, locked while the pass is not
+## held; the tier's node; the free reward. Claimed tiers carry a tick, the
+## next one is lit.
 func _tier_row(row: Dictionary, premium: bool) -> Control:
 	var state := str(row["state"])
-	var r := HBoxContainer.new()
-	r.add_theme_constant_override("separation", UI.px(8))
-	var free := _reward(row["free"], row["free_mark"], state, false)
-	r.add_child(free)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", UI.px(8))
+	col.custom_minimum_size.x = UI.px(104)
+	col.add_child(_reward(row["paid"], row["paid_mark"], state, not premium and row["paid"] != ""))
 	var node := ScreenKit.text(str(int(row["tier"])), 17.0, "number", "gold" if state != "later" else "well")
 	node.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var plate := ScreenKit.panel("gold" if state != "later" else "well", node, -1.0, 4.0)
+	node.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	var plate := ScreenKit.panel("gold" if state != "later" else "well", node, -1.0, 2.0)
 	plate.custom_minimum_size = Vector2(UI.px(44), UI.px(44))
-	plate.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	r.add_child(plate)
-	r.add_child(_reward(row["paid"], row["paid_mark"], state, not premium and row["paid"] != ""))
-	var words := ScreenKit.text(row["text"], 13.0, "body", "card", true, true)
-	words.visible = false
-	var box := VBoxContainer.new()
-	box.add_child(r)
-	box.add_child(words)
-	if state == "claimed":
-		box.modulate = Color(1, 1, 1, 0.92)
-	return box
+	plate.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	if state == "next":
+		RbBox.of(plate).set_chosen(true)
+	col.add_child(plate)
+	col.add_child(_reward(row["free"], row["free_mark"], state, false))
+	col.tooltip_text = row["text"]
+	return col
 
 
-## A reward card: its mark and words, a tick once claimed, a lock while the
-## Starpass is not held; an empty lane where the tier gives nothing there.
+## A reward card: its mark over its words, a tick once claimed, a lock
+## while the Starpass is not held; an empty slot where the tier gives
+## nothing in that lane.
 func _reward(words: String, mark: Array, state: String, locked: bool) -> Control:
-	var col := HBoxContainer.new()
-	col.add_theme_constant_override("separation", UI.px(6))
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", UI.px(4))
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	var material := "card_selected" if state == "next" else ("parchment" if state == "claimed" else "card")
 	if words == "":
-		var empty := Control.new()
-		empty.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var empty := ScreenKit.panel("track", null, 14.0, 4.0)
+		empty.custom_minimum_size.y = UI.px(112)
 		return empty
-	var material := "card_lit" if state == "next" else ("cream" if state == "claimed" else "card")
+	var top := HBoxContainer.new()
+	top.alignment = BoxContainer.ALIGNMENT_CENTER
 	if mark.size() == 2:
 		if mark[0] == "coin":
-			col.add_child(ScreenCoin.make(str(mark[1]), 28.0))
+			top.add_child(ScreenCoin.make(str(mark[1]), 40.0))
 		else:
-			col.add_child(ScreenKit.icon(str(mark[0]), str(mark[1]), 30.0))
+			top.add_child(ScreenKit.icon(str(mark[0]), str(mark[1]), 44.0))
+	col.add_child(top)
 	var l := ScreenKit.text(words, 13.0, "words", material, false, true)
-	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(l)
 	if state == "claimed":
-		col.add_child(ScreenKit.icon("generalui", "confirm", 22.0))
+		var tick := ScreenKit.icon("generalui", "confirm", 22.0)
+		tick.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		col.add_child(tick)
 	elif locked:
-		col.add_child(ScreenKit.icon("generalui", "lock", 22.0))
-	var p := ScreenKit.panel(material, col, 14.0, 8.0)
-	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var lock := ScreenKit.icon("generalui", "lock", 22.0)
+		lock.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		col.add_child(lock)
+	var p := ScreenKit.panel(material, col, 14.0, 6.0)
+	p.custom_minimum_size.y = UI.px(112)
 	return p

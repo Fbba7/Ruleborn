@@ -255,8 +255,9 @@ static func set_pill(p: PanelContainer, words: String) -> void:
 
 
 ## Stops drawing `view` (a 3D preview the screen wants shown, meta
-## "wanted") while less than `share` of it is in the list's view: a world drawn behind a sliver costs its full draw calls
-## (§21.3's 150) and the phone's time for nothing.
+## "wanted") while less than `share` of it is in the list's view: a world
+## drawn behind a sliver costs its full draw calls (§21.3's 150) and the
+## phone's time for nothing.
 static func cull(view: Control, list: Control, share := 0.5) -> void:
 	var scroll := list.get_parent() as ScrollContainer
 	if scroll == null:
