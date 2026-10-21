@@ -57,6 +57,9 @@ var level := 3
 var island_seed := 0
 ## The Vault's tile, which the worn trails lead to; (-1, -1) for none.
 var vault_at := Vector2i(-1, -1)
+## The level of detail (`BuildingKit.FULL`, or `BuildingKit.MID` for the
+## realm view and the home camera): set before `build`.
+var detail := BuildingKit.FULL
 
 var ground := Geo.new()
 var scatter := Geo.new()
@@ -138,6 +141,9 @@ static func jitter(t: Vector2i, slot: int) -> float:
 
 ## Build every layer.
 func build() -> void:
+	for g: Geo in [scatter, hero, prop, clear, water, lava]:
+		g.coarse = detail == BuildingKit.MID
+	prop.least = BuildingKit.LEAST if detail == BuildingKit.MID else 0.0
 	var footprints := _footprints()
 	var blocked := {}
 	for fp: Array in footprints:
@@ -177,7 +183,7 @@ func build() -> void:
 		var side: int = fp[3]
 		var mid := Vector3(a.x + (side - 1) / 2.0, a.y, a.z + (side - 1) / 2.0)
 		var turn := 0.0 if fp[0] == "keeper_s_spire" else facing(Vector2i(fp[1], fp[2]), side)
-		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop, clear, turn)
+		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop, clear, turn, detail)
 	for k in range(0, tunnels.size() - 1, 2):
 		_tunnel(tunnels[k], tunnels[k + 1])
 		_tunnel(tunnels[k + 1], tunnels[k])
@@ -334,10 +340,18 @@ func instances() -> Array[MeshInstance3D]:
 	var out: Array[MeshInstance3D] = []
 	var ground_mat := material("ground")
 	ground_mat.set_shader_parameter("grid_offset", Vector2(0.5 * (size.x % 2), 0.5 * (size.y % 2)))
+	ground_mat.set_shader_parameter("grid_half", Vector2(size) / 2.0 + Vector2(0.001, 0.001))
 	# §21.4: the Heart's are "cream flagstones".
 	ground_mat.set_shader_parameter("cobble", KitGround.earth(palette).lightened(0.18) if realm != "heart"
 		else Color("#EFE4CF"))
 	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
+	ground_mat.set_shader_parameter("pebble", (palette["rock"] as Color).lightened(0.25))
+	# The realm's marks over its meadow (T2's), continued over the grid.
+	var marks := LookPaint.deco(realm)
+	if marks != null:
+		ground_mat.set_shader_parameter("deco", marks)
+		ground_mat.set_shader_parameter("deco_scale", 8.0)
+		ground_mat.set_shader_parameter("deco_glow", 1.0 if realm == "lanternvale" else 0.0)
 	# The trails, as world-space segments (xz of each end), for the shader to
 	# draw crisp.
 	var lanes := PackedVector4Array()
@@ -361,6 +375,7 @@ func instances() -> Array[MeshInstance3D]:
 		water_mat.set_shader_parameter("deep", Color(waters[realm][0]))
 		water_mat.set_shader_parameter("foam", Color(waters[realm][1]))
 	water_mat.set_shader_parameter("bank", (palette["grass"] as Color).lerp(KitGround.earth(palette), 0.3))
+	water_mat.set_shader_parameter("cut", KitGround.earth(palette).lerp(palette["soil"], 0.5))
 	var lava_mat := material("water")
 	lava_mat.set_shader_parameter("deep", Color("#C8401E"))
 	lava_mat.set_shader_parameter("foam", Color("#FFC24A"))
@@ -391,6 +406,18 @@ static func by_hour(root: Node, hour: int) -> void:
 		var m := (n as MeshInstance3D).material_override as ShaderMaterial
 		if m != null and (m.shader == _shaders["toon"] or m.shader == _shaders["clear"]):
 			m.set_shader_parameter("night", night)
+
+
+## The builder's grid on the kit's ground under `root` (T6's terrain
+## editor): `strength` 0 hides it, 1 draws every tile with an ink line, a
+## light inner edge and a faint chequer.
+static func show_grid(root: Node, strength: float) -> void:
+	if root == null:
+		return
+	for n in root.find_children("*", "MeshInstance3D", true, false):
+		var m := (n as MeshInstance3D).material_override as ShaderMaterial
+		if m != null and m.shader == _shaders["ground"]:
+			m.set_shader_parameter("grid_show", clampf(strength, 0.0, 1.0))
 
 
 ## A kit material: `toon` (optionally inked), `clear`, `ground`, `water`.

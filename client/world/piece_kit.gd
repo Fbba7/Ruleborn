@@ -38,36 +38,48 @@ static func vault(open: bool) -> ArrayMesh:
 static func _vault_into(g: Geo, open: bool) -> void:
 	var stone := Color("#E6DCCB")
 	var stone2 := Color("#B9AE9C")
-	g.rbox(Geo.place(Vector3(0, 0.04, 0)), Vector3(0.9, 0.08, 0.8), stone2, 0.02)
-	g.rbox(Geo.place(Vector3(0, 0.27, 0)), Vector3(0.72, 0.38, 0.62), stone, 0.03)
-	for x: float in [-0.36, 0.36]:
-		for z: float in [-0.31, 0.31]:
-			g.rbox(Geo.place(Vector3(x, 0.25, z)), Vector3(0.1, 0.42, 0.1), stone2, 0.02)
-	g.rbox(Geo.place(Vector3(0, 0.47, 0)), Vector3(0.76, 0.04, 0.66), Color("#B9AE9C"), 0.015)
-	# Star rivets round the drum.
-	for k in 10:
-		var a := TAU * k / 10.0
-		g.ball(Geo.place(Vector3(cos(a) * 0.37, 0.36, sin(a) * 0.32)), 0.022, Color(Color("#FFF1C4"), 0.6), 2, 4)
+	var iron := Color("#4A4258")
+	# An eight-sided stone plinth in two steps.
+	g.prism(Geo.place(Vector3.ZERO, PI / 8.0), 8, 0.5, 0.48, 0.06, stone2, false, stone2.lightened(0.05))
+	g.prism(Geo.place(Vector3(0, 0.06, 0), PI / 8.0), 8, 0.43, 0.42, 0.05, stone, false, stone.lightened(0.04))
+	# The round strongbox: an iron drum girt with brass bands, star rivets
+	# round the upper one.
+	g.cyl(Geo.place(Vector3(0, 0.11, 0)), 0.36, 0.35, 0.34, iron, 16)
+	for y: float in [0.13, 0.4]:
+		g.cyl(Geo.place(Vector3(0, y, 0)), 0.37, 0.37, 0.05, BRASS, 16)
+	for k in 12:
+		var a := TAU * k / 12.0
+		g.gem(Geo.place(Vector3(cos(a) * 0.375, 0.425, sin(a) * 0.375), -a), 0.022, 0.022,
+			Color(Color("#FFF1C4"), 0.5), 4)
 	if open:
 		# The dome swung back on its hinge, and the hoard glowing within.
-		var hinge := Transform3D(Basis(Vector3.RIGHT, -1.25), Vector3(0, 0.49, -0.3))
-		g.ball(hinge * Transform3D(Basis().scaled(Vector3(1, 0.8, 0.9)), Vector3(0, 0, 0.3)), 0.32, BRASS, 4, 12, true)
-		for k in 7:
-			var a := TAU * k / 7.0
-			g.cyl(Geo.place(Vector3(cos(a) * 0.14, 0.49 + 0.02 * (k % 3), sin(a) * 0.12)), 0.05, 0.05, 0.02,
+		var hinge := Transform3D(Basis(Vector3.RIGHT, -1.25), Vector3(0, 0.45, -0.34))
+		g.ball(hinge * Transform3D(Basis().scaled(Vector3(1, 0.85, 1)), Vector3(0, 0, 0.34)), 0.35, BRASS, 4, 14,
+			true)
+		g.cyl(Geo.place(Vector3(0, 0.42, 0)), 0.33, 0.33, 0.03, Color("#2A2236"), 16)
+		for k in 9:
+			var a := TAU * k / 9.0
+			g.cyl(Geo.place(Vector3(cos(a) * 0.17, 0.45 + 0.02 * (k % 3), sin(a) * 0.15)), 0.05, 0.05, 0.02,
 				Color(GOLD.lightened(0.2), 0.5), 8)
-		g.ball(Geo.place(Vector3(0, 0.56, 0)), 0.16, Color(GOLD.lightened(0.35), 0.1), 3, 8)
+		g.ball(Geo.place(Vector3(0, 0.52, 0)), 0.18, Color(GOLD.lightened(0.35), 0.1), 3, 8)
 	else:
-		g.ball(Geo.place(Vector3(0, 0.49, 0), 0.0, Vector3(1, 0.8, 0.9)), 0.32, BRASS, 4, 12, true)
-		g.ball(Geo.place(Vector3(0, 0.76, 0)), 0.04, GOLD, 2, 6)
-		g.prism(Geo.place(Vector3(0, 0.78, 0)), 6, 0.02, 0.0, 0.12, GOLD)
-		# The sealed door with its dial, breathing.
-		g.cyl(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), Vector3(0, 0.27, 0.31)), 0.13, 0.13, 0.03, GOLD, 14)
-		g.torus(Transform3D(Basis(Vector3.RIGHT, PI / 2.0), Vector3(0, 0.27, 0.345)), 0.07, 0.014,
-			Color(Color("#FFF1C4"), 0.5), 12, 4)
-	for x: float in [-0.3, 0.3]:
-		g.cyl(Geo.place(Vector3(x, 0.08, 0.42)), 0.03, 0.04, 0.14, stone2, 6)
-		g.ball(Geo.place(Vector3(x, 0.25, 0.42)), 0.03, Color(Color("#FFD27A"), 0.2), 2, 5)
+		g.ball(Geo.place(Vector3(0, 0.45, 0), 0.0, Vector3(1, 0.85, 1)), 0.35, BRASS, 4, 14, true)
+		# A star finial (thin ribs would ink to black at the heist's zoom).
+		g.cyl(Geo.place(Vector3(0, 0.73, 0)), 0.06, 0.04, 0.05, GOLD, 8)
+		g.moving(Geo.Anim.SPIN_Y, Vector3(0, 0.86, 0))
+		g.gem(Geo.place(Vector3(0, 0.86, 0)), 0.07, 0.09, Color(Color("#FFE7A8"), 0.3), 5)
+		g.moving(Geo.Anim.NONE, Vector3.ZERO)
+		# The great round door with its dial and star lock, breathing.
+		var face := Basis(Vector3.RIGHT, PI / 2.0)
+		g.cyl(Transform3D(face, Vector3(0, 0.27, 0.33)), 0.15, 0.15, 0.04, GOLD, 16)
+		g.cyl(Transform3D(face, Vector3(0, 0.27, 0.35)), 0.11, 0.11, 0.02, BRASS.darkened(0.15), 16)
+		g.torus(Transform3D(face, Vector3(0, 0.27, 0.37)), 0.075, 0.012, Color(Color("#FFF1C4"), 0.5), 14, 3)
+		g.gem(Transform3D(face, Vector3(0, 0.27, 0.375)), 0.04, 0.012, Color(Color("#FFF1C4"), 0.3), 5)
+	# Two braziers before it, alight.
+	for x: float in [-0.34, 0.34]:
+		g.cyl(Geo.place(Vector3(x, 0.11, 0.38)), 0.035, 0.045, 0.16, iron, 6)
+		g.cyl(Geo.place(Vector3(x, 0.27, 0.38)), 0.06, 0.045, 0.04, BRASS, 6)
+		g.ball(Geo.place(Vector3(x, 0.32, 0.38), 0.0, Vector3(1, 1.3, 1)), 0.035, Color(Color("#FFB040"), 0.2), 2, 5)
 
 
 ## A law pylon: a stone obelisk on its plinth, crowned by its school's
