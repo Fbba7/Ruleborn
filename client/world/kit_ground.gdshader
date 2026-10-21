@@ -15,6 +15,12 @@ render_mode diffuse_toon, specular_disabled;
 // Where tile edges fall: 0 for an even grid, 0.5 for an odd one.
 uniform vec2 grid_offset = vec2(0.0);
 uniform float seam = 0.035;
+// The builder's grid (RealmKit.show_grid): 0 none, 1 every tile drawn — an ink
+// line round it with a light edge inside and the tiles in a faint chequer,
+// on flat ground and cliffs alike, so a tile can be picked at a glance.
+uniform float grid_show = 0.0;
+// Half the grid's size in tiles: no tile is drawn past it.
+uniform vec2 grid_half = vec2(7.0);
 uniform vec4 cobble : source_color = vec4(0.91, 0.84, 0.74, 1.0);
 uniform vec4 mortar : source_color = vec4(0.62, 0.52, 0.45, 1.0);
 // The worn trails between doors, world xz of each end (RealmKit's), drawn
@@ -137,6 +143,18 @@ void fragment() {
 	float to_edge = 0.5 - max(g.x, g.y);
 	float line = 1.0 - smoothstep(0.0, 0.03, to_edge);
 	c *= 1.0 - seam * line * smoothstep(0.85, 0.98, up) * (1.0 - cliff);
+	if (grid_show > 0.0) {
+		float px = fwidth(p.x) + fwidth(p.y);
+		float ink_line = 1.0 - smoothstep(px * 0.6, px * 1.6 + 0.012, to_edge);
+		float lit_edge = (1.0 - smoothstep(px * 1.6 + 0.012, px * 2.6 + 0.05, to_edge)) * (1.0 - ink_line);
+		vec2 cell = floor(p + grid_offset);
+		float odd = mod(cell.x + cell.y, 2.0);
+		vec2 past = abs(p) - grid_half;
+		float flat_ = smoothstep(0.6, 0.9, up) * step(max(past.x, past.y), 0.0);
+		c *= 1.0 + grid_show * (odd * 0.07 - 0.02) * flat_;
+		c = mix(c, c * 1.25 + 0.05, lit_edge * 0.5 * grid_show * flat_);
+		c = mix(c, vec3(0.10, 0.05, 0.08), ink_line * 0.55 * grid_show * flat_);
+	}
 	ALBEDO = saturated(c);
 	EMISSION = glow;
 }

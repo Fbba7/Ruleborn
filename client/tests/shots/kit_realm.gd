@@ -3,7 +3,8 @@ extends SceneTree
 ## garden, a library and more joined by gravel paths, with trees, hedges, a
 ## stream and a pond, on the home camera (§21.1's 35°), saved as a still
 ## (tools/render/shoot.sh). REALM (default heart), LEVEL (the buildings'
-## level, default 5), HOUR, ZOOM, TURN, PITCH and DETAIL (0 full, 1 mid) are optional; SHOT is the file.
+## level, default 5), HOUR, ZOOM, TURN, PITCH, DETAIL (0 full, 1 mid) and GRID
+## (the builder's grid, 0–1) are optional; SHOT is the file.
 func _initialize() -> void:
 	_shoot()
 
@@ -50,6 +51,8 @@ func _shoot() -> void:
 	root.add_child(view)
 	view.set_sky_hour(int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 12)
 	view.show_replay(replay)
+	if OS.get_environment("GRID") != "":
+		RealmKit.show_grid(view, float(OS.get_environment("GRID")))
 	if OS.get_environment("TURN") != "":
 		view.turn(int(OS.get_environment("TURN")))
 	view.set_zoom(int(OS.get_environment("ZOOM")) if OS.get_environment("ZOOM") != "" else 1)

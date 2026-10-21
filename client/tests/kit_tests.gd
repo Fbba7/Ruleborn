@@ -305,7 +305,21 @@ func _hours() -> void:
 	var night: Array = lit.call()
 	RealmKit.by_hour(root, 12)
 	var day: Array = lit.call()
-	root.free()
 	check.call("the kit's windows, lanterns and crystals glow by the hour: brighter at night than by day (21.2)",
 		not night.is_empty() and night.all(func(v: float) -> bool: return v == 1.0)
 			and day.all(func(v: float) -> bool: return v == 0.0), "%s %s" % [night, day])
+	# The builder's grid (RealmKit.show_grid) on the ground, and off again.
+	var shown := func() -> Array:
+		var out := []
+		for n in root.get_children():
+			var v: Variant = ((n as MeshInstance3D).material_override as ShaderMaterial).get_shader_parameter("grid_show")
+			if v != null:
+				out.append(float(v))
+		return out
+	RealmKit.show_grid(root, 1.0)
+	var on: Array = shown.call()
+	RealmKit.show_grid(root, 0.0)
+	var off: Array = shown.call()
+	root.free()
+	check.call("the builder's grid shows on the realm's ground when asked and goes again (T6's terrain editor)",
+		on == [1.0] and off == [0.0], "%s %s" % [on, off])
