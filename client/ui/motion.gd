@@ -71,7 +71,8 @@ static func pop(node: Control) -> Tween:
 ## A sheet sliding up from the bottom edge by its own height, or fading.
 static func sheet_in(node: Control) -> Tween:
 	var t := node.create_tween()
-	if Settings.reduced_motion:
+	# A container places its children, so a sheet inside one fades in.
+	if Settings.reduced_motion or node.get_parent() is Container:
 		node.modulate.a = 0.0
 		t.tween_property(node, "modulate:a", 1.0, _ms("fade_ms"))
 		return _arrive(node, t)

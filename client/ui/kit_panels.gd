@@ -1,0 +1,128 @@
+class_name KitPanels
+## The kit's larger surfaces: section headings, list rows (a card with an
+## icon, a title, a line under it and something at its end), bottom sheets
+## and dialogs over a dimmed screen.
+
+
+## A section's heading in Marcellus, set to the left of its list.
+static func section(title: String) -> Label:
+	var l := UI.label(title, float(Tokens.type_role("heading")["points"]), true)
+	l.theme_type_variation = "Heading"
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	l.name = "Section"
+	return l
+
+
+## A list row: an icon (if named), a bold title and a secondary line, and
+## `trailing` at its end. With `pressed` it is one 64-point button, named
+## by its title; without, a card.
+static func row(icon: String, title: String, line := "", trailing: Control = null,
+		pressed := Callable()) -> Control:
+	var host: Control
+	if pressed.is_valid():
+		var b := UI.action("", pressed, "card", title)
+		b.name = "Row"
+		b.custom_minimum_size = Vector2(UI.px(120), UI.px(64))
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		host = b
+	else:
+		var p := UI.panel("card")
+		p.name = "Row"
+		p.custom_minimum_size.y = UI.px(64)
+		host = p
+	var content := HBoxContainer.new()
+	content.add_theme_constant_override("separation", UI.px(10))
+	content.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if icon != "":
+		content.add_child(Icons.view(icon, 36))
+	var words := VBoxContainer.new()
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.alignment = BoxContainer.ALIGNMENT_CENTER
+	words.add_theme_constant_override("separation", 0)
+	words.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var t := UI.label(title, 16, true)
+	t.theme_type_variation = "BodyBold"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	t.set_meta("bold", true)
+	words.add_child(t)
+	if line != "":
+		var s := UI.label(line, 13, true)
+		s.theme_type_variation = "Secondary"
+		s.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		words.add_child(s)
+	content.add_child(words)
+	if trailing != null:
+		trailing.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		content.add_child(trailing)
+	if host is Button:
+		var m := MarginContainer.new()
+		m.set_anchors_preset(Control.PRESET_FULL_RECT)
+		m.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		for side: String in ["margin_left", "margin_right"]:
+			m.add_theme_constant_override(side, UI.px(12))
+		m.add_child(content)
+		host.add_child(m)
+	else:
+		host.add_child(content)
+	return host
+
+
+## A bottom sheet with a title: the designs' tray, sliding up over the
+## screen. Its body is the VBox under meta "body".
+static func sheet(title: String) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.name = "Sheet"
+	p.add_theme_stylebox_override("panel", UI.clear_box(16, 10))
+	UI.dress(p, "sheet")
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(8))
+	var grip := ColorRect.new()
+	grip.color = Color(Tokens.color("text_on_night_2"), 0.35)
+	grip.custom_minimum_size = Vector2(UI.px(40), UI.px(4))
+	grip.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	grip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(grip)
+	var t := UI.label(title, float(Tokens.type_role("heading")["points"]), true)
+	t.theme_type_variation = "Heading"
+	v.add_child(t)
+	var body := VBoxContainer.new()
+	body.add_theme_constant_override("separation", UI.px(8))
+	v.add_child(body)
+	p.add_child(v)
+	p.set_meta("body", body)
+	p.ready.connect(func() -> void: Motion.sheet_in(p))
+	return p
+
+
+## A dialog over `host`: the screen dimmed behind, a card with a title,
+## words and `actions` in the thumb's reach; it pops in. Closing it is the
+## caller's (queue_free on what this returns).
+static func dialog(host: Control, title: String, words: String, actions: Array) -> Control:
+	var veil := Control.new()
+	veil.name = "Dialog"
+	veil.set_anchors_preset(Control.PRESET_FULL_RECT)
+	veil.mouse_filter = Control.MOUSE_FILTER_STOP
+	RbBox.dress(veil, "scrim", 0)
+	var centre := CenterContainer.new()
+	centre.set_anchors_preset(Control.PRESET_FULL_RECT)
+	veil.add_child(centre)
+	var card := UI.panel("card")
+	card.custom_minimum_size.x = UI.px(300)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(12))
+	var t := UI.label(title, float(Tokens.type_role("heading")["points"]), true)
+	t.theme_type_variation = "Heading"
+	v.add_child(t)
+	v.add_child(KitNav.rule())
+	if words != "":
+		v.add_child(UI.label(words, 16, true))
+	var r := UI.row()
+	for a: Control in actions:
+		r.add_child(a)
+	v.add_child(r)
+	card.add_child(v)
+	centre.add_child(card)
+	host.add_child(veil)
+	veil.theme = RbTheme.of("dark")
+	card.ready.connect(func() -> void: Motion.pop(card))
+	return veil

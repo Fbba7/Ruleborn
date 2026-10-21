@@ -180,6 +180,10 @@ static func set_status(l: Label, kind: String, text: String) -> void:
 static func plate(words: Control, look := "card") -> PanelContainer:
 	var p := panel(look)
 	p.add_child(words)
+	# A plate whose words are still empty is not drawn until they come.
+	var box := RbBox.of(p)
+	box.hide_empty = true
+	words.minimum_size_changed.connect(box.queue_redraw)
 	return p
 
 
@@ -385,7 +389,7 @@ static func banner(kind: String, text: String, ms := -1.0) -> PanelContainer:
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.accessibility_live = AccessibilityServer.LIVE_ASSERTIVE if kind == "alarm" else AccessibilityServer.LIVE_POLITE
 	r.add_child(words)
-	r.add_child(button("×", p.queue_free, false, Color(), Strings.t("COMMON_DISMISS")))
+	r.add_child(KitControls.icon_button("generalui/close", Strings.t("COMMON_DISMISS"), p.queue_free))
 	p.add_child(r)
 	p.ready.connect(func() -> void: Motion.pop(p))
 	if not Settings.banners_stay:

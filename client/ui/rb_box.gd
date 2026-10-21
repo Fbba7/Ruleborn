@@ -18,6 +18,9 @@ var look := ""
 var spec: Dictionary = {}
 ## A corner radius in points instead of the material's.
 var radius_points := -1.0
+## Not drawn while every word in the host is empty (a plate whose label has
+## nothing to say yet), so no empty card stands on the screen.
+var hide_empty := false
 ## Drawn as the chosen one of a set: a gold edge and glow, so the choice
 ## never rests on colour or fading alone (§20.8).
 var chosen := false
@@ -101,7 +104,7 @@ func set_look(material_name: String) -> void:
 	var drop: Array = spec.get("drop", [Color(), 0.0])
 	var soft: Array = spec.get("soft", [Color(), 0.0, 0.0])
 	var glow: Array = spec.get("glow", [Color(), 0.0])
-	_reach = ceilf(maxf(p.call(drop[1]) + p.call(soft[1]) + p.call(soft[2]), p.call(glow[1])) + 2.0)
+	_reach = ceilf(maxf(p.call(drop[1]) + absf(p.call(soft[1])) + p.call(soft[2]), p.call(glow[1])) + 2.0)
 	var shape := Tokens.gradient_shape(str(spec["fill"]))
 	var u := _shader
 	u.set_shader_parameter("fill_tex", texture(str(spec["fill"])))
@@ -129,6 +132,23 @@ func set_look(material_name: String) -> void:
 	u.set_shader_parameter("stars", 1.0 if material_name == "night" and not Tokens.high_contrast else 0.0)
 	u.set_shader_parameter("star_color", Tokens.color("night_star"))
 	_shade()
+
+
+## Refills the box top to bottom from `top` to `bottom` (a bar in a
+## resource's colour), keeping the rest of its material.
+func tint(top: Color, bottom: Color) -> void:
+	var key := "tint:%s:%s" % [top.to_html(), bottom.to_html()]
+	if not _textures.has(key):
+		var g := Gradient.new()
+		g.set_color(0, top)
+		g.set_color(1, bottom)
+		var t := GradientTexture1D.new()
+		t.gradient = g
+		t.width = 64
+		_textures[key] = t
+	_shader.set_shader_parameter("fill_tex", _textures[key])
+	_shader.set_shader_parameter("fill_mode", 0)
+	_shader.set_shader_parameter("fill_angle", 180.0)
 
 
 ## Marks or unmarks the box as the chosen one of a set.
@@ -179,4 +199,13 @@ func _draw() -> void:
 	var flat := _flat()
 	if flat != null and flat.bg_color.a > 0.01:
 		return
+	if hide_empty and _empty():
+		return
 	draw_rect(quad(), Color.WHITE)
+
+
+func _empty() -> bool:
+	for c: Node in host.find_children("*", "Label", true, false):
+		if (c as Label).text != "" and (c as Label).is_visible_in_tree():
+			return false
+	return host.find_children("*", "Button", true, false).is_empty()
