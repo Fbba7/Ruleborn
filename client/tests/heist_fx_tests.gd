@@ -38,6 +38,7 @@ func run() -> void:
 	_moments()
 	_sight_marks(view, replay)
 	_pen()
+	_speech(view)
 	view.queue_free()
 	await tree.process_frame
 	await _models(replay)
@@ -352,3 +353,16 @@ func _pen() -> void:
 		closed_before == -1 and shapes > 60 and after_words == 0 and FxPen.gathered(ci) == -1 and whole.size() > 12,
 		"%d %d %d %d" % [closed_before, shapes, after_words, whole.size()])
 	ci.queue_free()
+
+
+## A guard says what it has come to (§12.16's examples), for a while, and
+## says nothing for a state without words.
+func _speech(view: WorldView) -> void:
+	view.anchors.speech.clear()
+	view.anchors.say(0, "Unaware")
+	var quiet := view.anchors.speech.is_empty()
+	view.anchors.say(0, "Alerted")
+	var said := str(view.anchors.speech.get(0, {}).get("text", "")) == Strings.t("GUARD_SAY_ALERTED")
+	view.anchors.tick(FxAnchors.SAY_SECONDS + 0.1)
+	check.call("a guard says what it has come to over its head, then falls quiet (12.16)",
+		quiet and said and view.anchors.speech.is_empty(), "%s %s %s" % [quiet, said, view.anchors.speech])

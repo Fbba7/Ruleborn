@@ -27,6 +27,10 @@ ROLE_BREAKER,Breaker,Breaker,Quebrador,Quebrador,Knacker,Briseur
 ROLE_CARRIER,Carrier,Carrier,Carregador,Carregador,Träger,Porteur
 ROLE_WARDEN,Warden,Warden,Sentinela,Sentinela,Wächter,Veilleur
 ROLE_MENDER,Mender,Mender,Curandeiro,Curandeiro,Heiler,Soigneur
+GUARD_SAY_SUSPICIOUS,Hm?,Hm?,Hum?,Hum?,Hm?,Hein ?
+GUARD_SAY_INVESTIGATING,Who's there?,Who's there?,Quem está aí?,Quem está aí?,Wer ist da?,Qui est là ?
+GUARD_SAY_ALERTED,Intruder!,Intruder!,Intruso!,Intruso!,Eindringling!,Intrus !
+GUARD_SAY_RETURNING,Must be the wind.,Must be the wind.,Deve ser o vento.,Deve ser o vento.,Wohl nur der Wind.,Ce doit être le vent.
 HUD_ALARM,Alarm %s,Alarm %s,Alarme %s,Alarme %s,Alarm %s,Alarme %s
 HUD_ROOM,Room,Room,Espaço,Espaço,Platz,Place
 HUD_LEFT,Left,Left,Restam,Restam,Übrig,Reste

@@ -111,6 +111,14 @@ func _go() -> void:
 	# Portraits rendered from the models fill in over a few frames.
 	for i in 40:
 		await process_frame
+	# Each guard's last words as they were said, which a heist's seconds
+	# played in a few frames would have let fade.
+	var guards := screen.controller.world.guards()
+	for i in guards.size():
+		if not guards[i]["down"]:
+			view.anchors.say(i, str(guards[i]["state"]))
+			view.anchors.speech.get(i, {})["t"] = 0.6
+	await process_frame
 	await RenderingServer.frame_post_draw
 	# §21.3's budgets, as the renderer counted the frame.
 	print("budget: %d draw calls, %d primitives" % [
