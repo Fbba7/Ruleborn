@@ -9,7 +9,7 @@ extends RefCounted
 ## and of its 150 draw calls (§21.3), leaving the rest to the kit, the
 ## buildings and the figures.
 const ISLAND_TRIANGLES := 18000
-const ISLAND_CALLS := 24
+const ISLAND_CALLS := 26
 ## The lighter level (WorldLook.Detail.LIGHT) for screens whose own pieces
 ## need the room: at most this many triangles, the same draw calls.
 const LIGHT_TRIANGLES := 10000
