@@ -21,8 +21,10 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_roster(column)
 		8:
 			_result(column)
-		_:
+		9:
 			_heist(column)
+		_:
+			_character(column)
 
 
 static func _materials(column: VBoxContainer) -> void:
@@ -364,3 +366,38 @@ static func _heist(column: VBoxContainer) -> void:
 	(foot.get_child(foot.get_child_count() - 1) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	foot.add_child(KitControls.big_action("heistcontrols/getout", "Get out", func() -> void: pass))
 	column.add_child(foot)
+
+
+## The design's Character pieces (11-character.png).
+static func _character(column: VBoxContainer) -> void:
+	column.add_child(UI.grow())
+	var stats := HBoxContainer.new()
+	stats.add_theme_constant_override("separation", UI.px(8))
+	stats.add_child(KitHex.make("LV", "5"))
+	var xp := KitStatus.xp(588, 600, "588 / 600 XP")
+	xp.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	stats.add_child(xp)
+	stats.add_child(KitStatus.pill("200", "hud/star", "leather"))
+	column.add_child(stats)
+	column.add_child(KitNav.segmented([["Heist", "screens/heist"], ["Stats", "realmactions/upgrade"],
+		["Compare", "generalui/sort"]], 0, func(_i: int) -> void: pass))
+	var facts := GridContainer.new()
+	facts.columns = 2
+	facts.add_theme_constant_override("h_separation", UI.px(8))
+	facts.add_theme_constant_override("v_separation", UI.px(8))
+	facts.add_child(KitCards.fact("crewroles/carrier", "Carrier", "Carries the loot"))
+	facts.add_child(KitCards.fact("hud/shield", "Resists", "No-jump zones"))
+	facts.add_child(KitCards.fact("traits/hoarder", "Traits", "Swift · Lucky"))
+	facts.add_child(KitCards.fact("buildings/starwell" if Icons.has("buildings/starwell") else "hud/home",
+		"At home", "Star Well · +12%"))
+	var paper := UI.panel("parchment")
+	paper.add_child(facts)
+	column.add_child(paper)
+	var end := HBoxContainer.new()
+	end.add_theme_constant_override("separation", UI.px(8))
+	end.add_child(KitControls.round_action("screens/heist", "Heist", func() -> void: pass, false, 52))
+	var up := KitControls.upgrade("Upgrade", "Lv 5 → 6 · +539 power", "resources/essence", "866", func() -> void: pass)
+	up.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	up.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	end.add_child(up)
+	column.add_child(end)

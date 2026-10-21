@@ -188,3 +188,37 @@ static func law_chip(icon: String, title: String) -> PanelContainer:
 	var p := KitStatus.pill(title, icon, "leather")
 	p.name = "Law"
 	return p
+
+
+## A fact tile (the Character screen's Carrier, Resists, Traits, At home):
+## its icon on a disc, a kicker in capitals and a bold line.
+static func fact(icon: String, kicker: String, words: String) -> PanelContainer:
+	var p := UI.panel("fact")
+	p.name = "Fact"
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	var disc := PanelContainer.new()
+	disc.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
+	UI.dress(disc, "icon_disc")
+	disc.add_child(Icons.view(icon, 24))
+	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(disc)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 0)
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var k := UI.label(kicker, 13)
+	k.theme_type_variation = "Kicker"
+	k.uppercase = true
+	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	k.add_theme_color_override("font_color", Tokens.color("parchment_text_2"))
+	k.set_meta("bold", true)
+	v.add_child(k)
+	var w := UI.label(words, 14, true)
+	w.theme_type_variation = "BodyBold"
+	w.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	w.set_meta("bold", true)
+	v.add_child(w)
+	row.add_child(v)
+	p.add_child(row)
+	return p

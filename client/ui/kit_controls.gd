@@ -243,3 +243,38 @@ static func big_action(icon: String, words: String, pressed: Callable, look := "
 	v.add_child(l)
 	b.add_child(v)
 	return b
+
+
+## A big call to action with a price inside it (the Character screen's
+## UPGRADE): its words in stroked capitals over a second line, and the
+## price on a dark chip at its end with the currency's icon.
+static func upgrade(text: String, line: String, icon: String, price: String, pressed: Callable,
+		look := "green") -> Button:
+	var b := action2(text, line, pressed, look)
+	b.name = "Upgrade"
+	b.accessibility_name = "%s, %s, %s" % [text, line, price]
+	b.custom_minimum_size.y = UI.px(64)
+	var v := b.get_child(0) as Control
+	v.offset_right = -UI.px(96)
+	(v.get_child(0) as Label).uppercase = true
+	(v.get_child(0) as Label).add_theme_font_size_override("font_size", UI.text_px(20))
+	(v.get_child(0) as Label).add_theme_font_override("font", Tokens.font("display"))
+	var cost := PanelContainer.new()
+	cost.add_theme_stylebox_override("panel", UI.clear_box(8, 3))
+	UI.dress(cost, "price_chip")
+	cost.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", UI.px(4))
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(Icons.view(icon, 20))
+	var n := UI.label(price, 16)
+	n.theme_type_variation = "Number"
+	n.set_meta("bold", true)
+	h.add_child(n)
+	cost.add_child(h)
+	cost.set_anchors_preset(Control.PRESET_CENTER_RIGHT)
+	cost.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	cost.grow_vertical = Control.GROW_DIRECTION_BOTH
+	cost.offset_right = -UI.px(10)
+	b.add_child(cost)
+	return b

@@ -207,3 +207,25 @@ static func tag(text: String, dark := false) -> PanelContainer:
 	l.set_meta("bold", true)
 	p.add_child(l)
 	return p
+
+
+## Experience toward the next level (the Character screen): a green bar
+## cut into segments with its figures written inside it ("588 / 600 XP").
+static func xp(done: float, of: float, words: String, segments := 8) -> Control:
+	var bar := KitBar.make(0.0 if of <= 0.0 else done / of, Tokens.color("green_bar"), 22)
+	bar.name = "Experience"
+	var ticks := KitTicks.new()
+	ticks.count = segments
+	ticks.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ticks.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bar.add_child(ticks)
+	var l := UI.label(words, 13)
+	l.theme_type_variation = "Number"
+	l.set_anchors_preset(Control.PRESET_FULL_RECT)
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	l.add_theme_color_override("font_color", Tokens.color("text_on_night"))
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", UI.px(2))
+	l.set_meta("bold", true)
+	bar.add_child(l)
+	return bar
