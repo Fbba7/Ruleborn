@@ -169,7 +169,8 @@ static func badge(text: String, look := "gold_round", points := 14.0) -> PanelCo
 
 
 ## The realm's medallion: its realm's mark on a gold round, its level on a
-## badge at its foot (the design's 62-point medallion).
+## badge at its foot (the design's 62-point medallion); no badge for a
+## level below 0.
 static func medallion(icon: String, level: int, points := 58.0) -> Control:
 	var holder := Control.new()
 	holder.custom_minimum_size = Vector2.ONE * UI.px(points)
@@ -181,10 +182,11 @@ static func medallion(icon: String, level: int, points := 58.0) -> Control:
 	disc.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	disc.add_child(Icons.view(icon, points * 0.72))
 	holder.add_child(disc)
-	var b := badge(str(level), "badge", 13.0)
-	b.position = Vector2(UI.px(points - 20.0), UI.px(points - 20.0))
-	b.size = b.custom_minimum_size
-	holder.add_child(b)
+	if level >= 0:
+		var b := badge(str(level), "badge", 13.0)
+		b.position = Vector2(UI.px(points - 20.0), UI.px(points - 20.0))
+		b.size = b.custom_minimum_size
+		holder.add_child(b)
 	holder.name = "Medallion"
 	return holder
 

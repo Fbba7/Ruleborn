@@ -1143,6 +1143,12 @@ DEFENCES_PYLON,%s pylon,%s pylon,pilar de %s,pilar de %s,%s-Pylon,pylône de %s
 OBS_DEPTH,Up to %d realms to the Heart,Up to %d realms to the Heart,Até %d reinos até o Coração,Até %d reinos até ao Coração,Bis zu %d Reiche bis zum Herzen,Jusqu'à %d royaumes jusqu'au Cœur
 OBS_FAULTS_FROM,Faults open from %s,Faults open from %s,Falhas abertas a partir de %s,Falhas abertas a partir de %s,Risse öffnen sich von %s aus,Failles ouvertes depuis %s
 OBS_OUTER_REALM,outer realm %d,outer realm %d,reino exterior %d,reino exterior %d,Außenreich %d,royaume extérieur %d
+OBS_RIBBON_TRACE,Trace,Trace,Rastro,Rasto,Spur,Trace
+OBS_RIBBON_ECHO,Echo,Echo,Eco,Eco,Echo,Écho
+OBS_RIBBON_GENERATED,The game's own,The game's own,Do jogo,Do jogo,Vom Spiel,Du jeu
+OBS_TILE_LOOT,Rough loot,Rough loot,Saque aproximado,Saque aproximado,Grobe Beute,Butin estimé
+OBS_TILE_DEPTH,Depth,Depth,Profundidade,Profundidade,Tiefe,Profondeur
+OBS_TILE_DEPTH_N,%d to the Heart,%d to the Heart,%d até o Coração,%d até ao Coração,%d bis zum Herzen,%d jusqu'au Cœur
 ERR_ALREADY_LINKED,those two realms are already linked,those two realms are already linked,esses dois reinos já estão ligados,esses dois reinos já estão ligados,diese zwei Reiche sind schon verbunden,ces deux royaumes sont déjà reliés
 ERR_NO_FREE_SOCKET,that realm has no free link socket,that realm has no free link socket,esse reino não tem encaixe de ligação livre,esse reino não tem encaixe de ligação livre,dieses Reich hat keinen freien Verbindungssockel,ce royaume n'a plus d'emplacement de lien libre
 ERR_NO_SUCH_LINK,that link does not exist,that link does not exist,essa ligação não existe,essa ligação não existe,diese Verbindung gibt es nicht,ce lien n'existe pas
