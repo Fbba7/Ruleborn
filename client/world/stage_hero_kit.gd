@@ -58,7 +58,7 @@ static func chip(text: String, kind := "glass", glyph := "", wraps := false) -> 
 	var b := p.get_theme_stylebox("panel") as StyleBoxTexture
 	b.content_margin_top = UI.px(4)
 	b.content_margin_bottom = UI.px(5) + int(b.texture_margin_bottom - b.texture_margin_top)
-	p.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	p.size_flags_horizontal = Control.SIZE_FILL if wraps else Control.SIZE_SHRINK_BEGIN
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return p
 
