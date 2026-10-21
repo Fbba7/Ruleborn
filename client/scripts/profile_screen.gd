@@ -6,6 +6,8 @@ extends Control
 ## §20.2's visibility switch, locked private for 13 to 15.
 
 var controller: ProfileController
+## The tab on show: "overview" or "log".
+var tab_shown := "overview"
 var body: VBoxContainer
 var header_label: Label
 var status_label: Label
@@ -58,19 +60,31 @@ func _refresh() -> void:
 		return
 	var busy: bool = p["busy"] != ""
 	body.add_child(_hero(p))
-	body.add_child(_split(p))
-	body.add_child(ScreenParts.section(Strings.t("PROFILE_RECORDS")))
-	body.add_child(_records(p["record_tiles"]))
-	body.add_child(ScreenParts.section(Strings.t("PROFILE_BADGES")))
-	body.add_child(_badges(p))
+	# The design's tabs: both built, the one chosen shown.
+	body.add_child(ScreenParts.segmented([
+		{"text": Strings.t("SCREEN_OVERVIEW"), "key": "overview", "on": tab_shown == "overview"},
+		{"text": Strings.t("PROFILE_LOG_TITLE"), "key": "log", "on": tab_shown == "log"}], func(key: String) -> void:
+			tab_shown = key
+			_refresh()))
+	var overview := VBoxContainer.new()
+	var battles := VBoxContainer.new()
+	for tab: VBoxContainer in [overview, battles]:
+		tab.add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
+		body.add_child(tab)
+	overview.visible = tab_shown == "overview"
+	battles.visible = tab_shown == "log"
+	overview.add_child(_split(p))
+	overview.add_child(ScreenParts.section(Strings.t("PROFILE_RECORDS")))
+	overview.add_child(_records(p["record_tiles"]))
+	overview.add_child(ScreenParts.section(Strings.t("PROFILE_BADGES")))
+	overview.add_child(_badges(p))
 	var titles := VBoxContainer.new()
 	for line: String in p["titles"]:
 		titles.add_child(ScreenKit.text(line, 15.0, "words", "card", false, true))
-	body.add_child(ScreenParts.section(Strings.t("PROFILE_TITLES_TITLE")))
-	body.add_child(ScreenKit.panel("card", titles, 16.0, 10.0))
-	body.add_child(ScreenParts.section(Strings.t("PROFILE_LOG_TITLE")))
+	overview.add_child(ScreenParts.section(Strings.t("PROFILE_TITLES_TITLE")))
+	overview.add_child(ScreenKit.panel("card", titles, 16.0, 10.0))
 	for e: Dictionary in p["log"]:
-		body.add_child(_battle(e, busy))
+		battles.add_child(_battle(e, busy))
 	var share: Dictionary = p["share"]
 	var right: Control = null
 	if share.has("button"):
@@ -80,7 +94,7 @@ func _refresh() -> void:
 		go.set_meta("key", b["key"])
 		go.set_meta("item", b["item"])
 		right = go
-	body.add_child(ScreenParts.item("social", "share", share.get("locked", share.get("state", "")), "", right))
+	battles.add_child(ScreenParts.item("social", "share", share.get("locked", share.get("state", "")), "", right))
 
 
 ## The league's crest, the Keeper and the place, Renown in large figures and

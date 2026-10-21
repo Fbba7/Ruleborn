@@ -10,6 +10,8 @@ extends Control
 var volume_labels := {}
 var text_label: Label
 var list_scroll: ScrollContainer
+## The tab on show: "game" (language, sound, play) or "access".
+var tab_shown := "game"
 
 
 func _ready() -> void:
@@ -44,30 +46,49 @@ func _layout() -> void:
 	var list := UI.scroll(column)
 	list_scroll = list.get_parent() as ScrollContainer
 
+	# The design's tabs, as a strip at the head of the list: both are built,
+	# the one chosen is shown.
+	var game := VBoxContainer.new()
+	var access := VBoxContainer.new()
+	for tab: VBoxContainer in [game, access]:
+		tab.add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
+	list.add_child(ScreenParts.segmented([
+		{"text": Strings.t("SCREEN_SETTINGS_GAME"), "key": "game", "on": tab_shown == "game"},
+		{"text": Strings.t("SCREEN_SETTINGS_ACCESS"), "key": "access", "on": tab_shown == "access"}],
+		func(key: String) -> void:
+			tab_shown = key
+			_build()))
+	list.add_child(game)
+	list.add_child(access)
+	game.visible = tab_shown == "game"
+	access.visible = tab_shown == "access"
 	var lang := ScreenKit.button(Strings.t("LANGUAGE_" + Settings.locale), next_language, "cream", "", 14.0)
-	list.add_child(ScreenParts.item("settingsandwellbeing", "language", Strings.t("SETTINGS_LANGUAGE"), "",
+	game.add_child(ScreenParts.item("settingsandwellbeing", "language", Strings.t("SETTINGS_LANGUAGE"), "",
 		_tag(lang, "language")))
 
-	list.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_SOUND")))
+	game.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_SOUND")))
 	var icons := {"music": "music", "effects": "effectsvolume", "alerts": "notifications"}
 	for bus: String in Settings.VOLUMES:
 		var name := Strings.t("SETTINGS_" + bus.to_upper(), Settings.volume[bus])
 		var l := ScreenKit.text(name, 15.0, "words", "card")
 		volume_labels[bus] = l
-		list.add_child(_stepper(icons.get(bus, "sound"), l, step.bind(bus, -1), step.bind(bus, 1),
+		game.add_child(_stepper(icons.get(bus, "sound"), l, step.bind(bus, -1), step.bind(bus, 1),
 			Strings.t("SETTINGS_QUIETER", name), Strings.t("SETTINGS_LOUDER", name), bus,
 			float(Settings.volume[bus]) / float(Settings.VOLUME_STEPS)))
 
-	list.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_ACCESS")))
+	game.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_PLAY")))
+	game.add_child(_toggle("slow_rehearsals", "SETTINGS_SLOW_REHEARSALS", "playtimereminder"))
+
+	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_ACCESS")))
 	var size_name := Strings.t("SETTINGS_TEXT_SIZE", Settings.text_scale)
 	text_label = ScreenKit.text(size_name, 15.0, "words", "card")
 	var steps := Settings.text_steps()
-	list.add_child(_stepper("textsize", text_label, text_step.bind(-1), text_step.bind(1),
+	access.add_child(_stepper("textsize", text_label, text_step.bind(-1), text_step.bind(1),
 		Strings.t("SETTINGS_SMALLER", size_name), Strings.t("SETTINGS_LARGER", size_name), "text",
 		float(steps.find(Settings.text_scale)) / float(maxi(steps.size() - 1, 1))))
 	var hold_name := Strings.t("SETTINGS_HOLD", seconds(Settings.hold_ms))
 	var holds := Settings.hold_steps()
-	list.add_child(_stepper("remindertime", ScreenKit.text(hold_name, 15.0, "words", "card"), hold_step.bind(-1),
+	access.add_child(_stepper("remindertime", ScreenKit.text(hold_name, 15.0, "words", "card"), hold_step.bind(-1),
 		hold_step.bind(1), Strings.t("SETTINGS_SHORTER", hold_name), Strings.t("SETTINGS_LONGER", hold_name), "hold",
 		float(holds.find(Settings.hold_ms)) / float(maxi(holds.size() - 1, 1))))
 	for toggle: Array in [
@@ -75,10 +96,7 @@ func _layout() -> void:
 			["haptics", "SETTINGS_HAPTICS", "haptics"], ["left_handed", "SETTINGS_LEFT_HANDED", "lefthanded"],
 			["banners_stay", "SETTINGS_BANNERS_STAY", "notifications"],
 			["camera_buttons", "SETTINGS_CAMERA_BUTTONS", "accessibility"]]:
-		list.add_child(_toggle(toggle[0], toggle[1], toggle[2]))
-	list.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_PLAY")))
-	list.add_child(_toggle("slow_rehearsals", "SETTINGS_SLOW_REHEARSALS", "playtimereminder"))
-
+		access.add_child(_toggle(toggle[0], toggle[1], toggle[2]))
 	var profile := ScreenKit.button(Strings.t("HOME_PROFILE"), func() -> void: App.services.router.go(&"profile"),
 		"leather")
 	column.add_child(ScreenNav.dock(&"home", [profile]))
@@ -99,8 +117,11 @@ func _stepper(icon: String, words: Label, down: Callable, up: Callable, spoken_d
 	mid.add_child(words)
 	mid.add_child(ScreenMeter.bar(share, 1.0, Color("#8C6CF0"), 8.0))
 	row.add_child(mid)
-	row.add_child(_tag(ScreenKit.button("−", down, "leather", spoken_down, -1.0), tag + "-"))
-	row.add_child(_tag(ScreenKit.button("+", up, "leather", spoken_up, -1.0), tag + "+"))
+	for b: Button in [_tag(ScreenKit.button("−", down, "leather", spoken_down, -1.0), tag + "-"),
+			_tag(ScreenKit.button("+", up, "leather", spoken_up, -1.0), tag + "+")]:
+		b.add_theme_font_size_override("font_size", UI.text_px(24))
+		b.set_meta("points", 24.0)
+		row.add_child(b)
 	return ScreenKit.panel("card", row, 16.0, 8.0)
 
 
