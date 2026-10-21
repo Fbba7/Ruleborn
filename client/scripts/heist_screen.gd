@@ -383,7 +383,8 @@ func entry_card(words: String) -> void:
 		return
 	if card != null and is_instance_valid(card):
 		card.queue_free()
-	card = FxSkin.panel("parchment", 20.0, 14.0)
+	card = UI.panel("parchment")
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_child(FxSkin.label(words, UI.TEXT_POINTS + 6.0, "parchment", true))
 	(card.get_child(0) as Label).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	card.set_anchors_preset(Control.PRESET_CENTER)
@@ -497,7 +498,7 @@ func _build() -> void:
 	if rehearsal:
 		# A rehearsal's pause (§20.8), under the law banner: not one of the
 		# hand's orders.
-		pause_button = FxSkin.icon_button(Strings.t("HEIST_PAUSE"), toggle_pause, "pause", "card")
+		pause_button = _order(Strings.t("HEIST_PAUSE"), toggle_pause, "pause")
 		pause_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 		column.add_child(pause_button)
 	view.looted.connect(func(at: Vector2, amount: int) -> void: hud.fly_coins(at, amount / 20))
@@ -525,7 +526,8 @@ func _build() -> void:
 	steps.add_child(next_realm_button)
 	steps.add_child(_button(Strings.t("LANDING_HERE"), controller.land_here, "gold"))
 	box.add_child(steps)
-	picker = FxSkin.panel("parchment", 18.0, 12.0)
+	picker = UI.panel("parchment")
+	picker.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	picker.add_child(box)
 	column.add_child(picker)
 
@@ -611,8 +613,9 @@ func _order(words: String, call: Callable, icon: String) -> Button:
 	b.custom_minimum_size = Vector2.ONE * UI.px(UI.CONTROL_POINTS)
 	b.size_flags_vertical = Control.SIZE_SHRINK_END
 	UI.dress(b, "leather", 12.0)
+	b.set_meta("icon", icon)
 	var draw := FxDraw.new(func(ci: Control) -> void:
-		FxIcons.order(ci, ci.size * 0.5, minf(ci.size.x, ci.size.y) * 0.55, icon, FxSkin.ON_DARK))
+		FxIcons.order(ci, ci.size * 0.5, minf(ci.size.x, ci.size.y) * 0.55, str(b.get_meta("icon", icon)), FxSkin.ON_DARK))
 	draw.set_anchors_preset(Control.PRESET_FULL_RECT)
 	b.add_child(draw)
 	return b
@@ -648,9 +651,10 @@ func _square(words: String, call: Callable, look: String) -> Button:
 	return b
 
 
-## A HUD button: `UI.button`'s sizes and haptics, in the heist's own skin.
-func _button(words: String, call: Callable, kind := "leather", radius := 16.0) -> Button:
-	var b := UI.button(words, call)
-	FxSkin.style_button(b, kind, radius)
+## A HUD button in the kit's material: leather, gold for the main action,
+## red for leaving ("alarm"); a button asked for on parchment is leather.
+func _button(words: String, call: Callable, kind := "leather", _radius := 16.0) -> Button:
+	var look: String = {"gold": "gold", "alarm": "red"}.get(kind, "leather")
+	var b := UI.action(words, call, look)
 	UI.fit(b)
 	return b
