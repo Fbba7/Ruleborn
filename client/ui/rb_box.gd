@@ -110,9 +110,9 @@ func set_look(material_name: String) -> void:
 		host.set_meta("text_bg", spec["text_bg"])
 		host.set_meta("rb_family", spec["family"])
 	var p := func(points: float) -> float: return points * UI.PX_PER_POINT
-	var drop: Array = spec.get("drop", [Color(), 0.0])
-	var soft: Array = spec.get("soft", [Color(), 0.0, 0.0])
-	var glow: Array = spec.get("glow", [Color(), 0.0])
+	var drop: Array = spec.get("drop", [Color(0, 0, 0, 0), 0.0])
+	var soft: Array = spec.get("soft", [Color(0, 0, 0, 0), 0.0, 0.0])
+	var glow: Array = spec.get("glow", [Color(0, 0, 0, 0), 0.0])
 	_reach = ceilf(maxf(p.call(drop[1]) + absf(p.call(soft[1])) + p.call(soft[2]), p.call(glow[1])) + 2.0)
 	var shape := Tokens.gradient_shape(str(spec["fill"]))
 	var u := _shader

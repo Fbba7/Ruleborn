@@ -401,14 +401,18 @@ static func grow() -> Control:
 static func banner(kind: String, text: String, ms := -1.0) -> PanelContainer:
 	if ms < 0:
 		ms = Tokens.number("motion", "banner_ms")
-	var p := panel("banner_" + kind if kind in ["alarm", "success"] else "parchment")
+	var p := panel("banner_" + kind if kind in ["alarm", "success"] else "banner_info")
 	p.name = "Banner"
 	var r := row()
 	var words := status(kind, text)
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.accessibility_live = AccessibilityServer.LIVE_ASSERTIVE if kind == "alarm" else AccessibilityServer.LIVE_POLITE
 	r.add_child(words)
-	r.add_child(KitControls.icon_button("generalui/close", Strings.t("COMMON_DISMISS"), p.queue_free))
+	# The designs' bare cross, a 48-point target all the same.
+	var close := action("×", p.queue_free, "seg", Strings.t("COMMON_DISMISS"))
+	close.add_theme_font_size_override("font_size", px(26))
+	close.add_theme_color_override("font_color", Tokens.color("text_on_night_2"))
+	r.add_child(close)
 	p.add_child(r)
 	p.ready.connect(func() -> void: Motion.pop(p))
 	if not Settings.banners_stay:

@@ -60,9 +60,11 @@ static func _controls(column: VBoxContainer) -> void:
 		buttons.add_child(UI.action(look.capitalize(), func() -> void: pass, look))
 	column.add_child(buttons)
 	var rounds := UI.row(18)
-	rounds.add_child(KitControls.round_action("realmactions/weave", "Weave", func() -> void: pass, false, 60, "1"))
-	rounds.add_child(KitControls.round_action("realmactions/build", "Build", func() -> void: pass, true, 72))
-	rounds.add_child(KitControls.round_action("hud/compass", "Map", func() -> void: pass, false, 60))
+	rounds.add_child(KitControls.round_action("realmactions/weave", "Weave", func() -> void: pass, false, 60,
+		"1 free", "violet"))
+	rounds.add_child(KitControls.round_action("realmactions/build", "Build", func() -> void: pass, true, 76))
+	rounds.add_child(KitControls.round_action("screens/universe", "Map", func() -> void: pass, false, 68, "",
+		"sky"))
 	rounds.add_child(KitNav.back(func() -> void: pass))
 	column.add_child(rounds)
 	column.add_child(KitControls.toggle_row("settingsandwellbeing/reducedmotion", "Reduced motion",
@@ -97,7 +99,7 @@ static func _status(column: VBoxContainer) -> void:
 	pills.add_child(KitStatus.strain("82% · Humming", "humming"))
 	pills.add_child(KitStatus.badge("4"))
 	pills.add_child(KitStatus.plate("LV 5"))
-	pills.add_child(KitStatus.pill("Ready", "", "parchment"))
+	pills.add_child(KitStatus.island_label("realms/verdant", "Verdant", 3))
 	column.add_child(pills)
 	column.add_child(KitStatus.progress(3, 5, "3 / 5", Tokens.color("motion")))
 	column.add_child(KitStatus.progress(7, 12, "7 / 12", Tokens.color("time")))
@@ -107,6 +109,8 @@ static func _status(column: VBoxContainer) -> void:
 	column.add_child(KitPanels.row("alerts/raided", "Raided by Marta", "Held · 2 of 3 pylons stood",
 		KitStatus.plate("12m")))
 	var banners := VBoxContainer.new()
+	banners.add_child(KitPanels.notice("alarm", "alerts/raided", "Marta raided Verdant", "Your defence kept 1,240 Essence",
+		"Trace", func() -> void: pass))
 	banners.add_child(UI.banner("success", "Woven: Haste into the Heart"))
 	banners.add_child(UI.banner("alarm", "Not enough Essence to level Pip"))
 	column.add_child(banners)

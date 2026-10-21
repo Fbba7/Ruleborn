@@ -45,25 +45,28 @@ static func icon_button(icon: String, spoken: String, pressed: Callable, look :=
 	return b
 
 
-## A round action with its name on a plate beneath (the realm view's MAP,
-## WEAVE and BUILD): leather, or gold round for the main one; a badge is
-## written on it if given.
+## A round action with its name on a plate overlapping its foot (the realm
+## view's MAP, WEAVE and BUILD): a disc in `tone` ("leather", "violet",
+## "sky") in a gold ring on a dark plate, or, as the main one, gold on a
+## leather plate; a badge's words ("1 free") ride its top right.
 static func round_action(icon: String, words: String, pressed: Callable, main := false, points := 60.0,
-		badge := "") -> VBoxContainer:
+		badge := "", tone := "leather") -> VBoxContainer:
 	var v := VBoxContainer.new()
 	v.name = "RoundAction"
-	v.add_theme_constant_override("separation", -UI.px(8))
+	v.add_theme_constant_override("separation", -UI.px(12))
 	v.alignment = BoxContainer.ALIGNMENT_CENTER
-	var b := icon_button(icon, words, pressed, "gold_round" if main else "leather", points)
+	var look := "gold_round" if main else ("leather" if tone == "leather" else "round_" + tone)
+	var b := icon_button(icon, words, pressed, look, points, points * 0.55)
 	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(b)
 	if badge != "":
 		var tag := KitStatus.badge(badge)
 		tag.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 		tag.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-		tag.position.y = -UI.px(4)
+		tag.position = Vector2(UI.px(2), -UI.px(4))
 		b.add_child(tag)
 	var plate := KitStatus.plate(words)
+	UI.dress(plate, "plate_leather" if main or tone == "leather" else "plate_dark")
 	plate.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var l := plate.get_child(0) as Label
 	l.theme_type_variation = "Kicker"

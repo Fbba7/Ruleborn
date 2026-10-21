@@ -160,3 +160,33 @@ static func strain(words: String, band: String) -> PanelContainer:
 	row.add_child(dot)
 	row.move_child(dot, 0)
 	return p
+
+
+## An island's label over the map: a cream pill with the realm's icon, its
+## name in Marcellus and its level on a dark disc.
+static func island_label(icon: String, name: String, level: int) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.name = "IslandLabel"
+	p.add_theme_stylebox_override("panel", UI.clear_box(5, 2))
+	UI.dress(p, "island_label")
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(5))
+	if icon != "":
+		row.add_child(Icons.view(icon, 22))
+	var n := UI.label(name, 16)
+	n.theme_type_variation = "Heading"
+	n.add_theme_font_size_override("font_size", UI.text_px(16))
+	row.add_child(n)
+	var disc := PanelContainer.new()
+	disc.add_theme_stylebox_override("panel", UI.clear_box(4, 0))
+	UI.dress(disc, "level_disc")
+	disc.custom_minimum_size = Vector2.ONE * UI.px(22)
+	var l := UI.label(str(level), 13)
+	l.theme_type_variation = "Number"
+	l.set_meta("bold", true)
+	disc.add_child(l)
+	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(disc)
+	p.add_child(row)
+	return p
