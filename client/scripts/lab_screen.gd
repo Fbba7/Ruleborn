@@ -8,9 +8,6 @@ extends Control
 ## and hint; from Lab level 3 the third sphere, which names a chord free; and
 ## what has been found, hinted and remains by school.
 
-## The design's art for the resonances it draws, by content id.
-const RESONANCE_ART := {"drifting_echoes": "drifting", "mangrove_banks": "mangrove"}
-
 var controller: LabController
 var body: VBoxContainer
 var header_label: Label
@@ -116,7 +113,7 @@ func _chamber(c: Dictionary, busy: bool) -> Control:
 		for i: int in laws.size():
 			if i == 1:
 				bench.add_child(_core(true))
-			var p := ScreenKit.panel("well", ScreenKit.icon("law", str(laws[i]), 52.0), -1.0, 6.0)
+			var p := ScreenKit.panel("well", ScreenKit.icon("laws", str(laws[i]), 52.0), -1.0, 6.0)
 			bench.add_child(p)
 	else:
 		var i := 0
@@ -124,9 +121,9 @@ func _chamber(c: Dictionary, busy: bool) -> Control:
 			if i == 1:
 				bench.add_child(_core(false))
 			var b := ScreenKit.button(s["text"], controller.cycle.bind(n, int(s["slot"])), "card", s["spoken"], 16.0)
-			var path := ScreenKit.icon_path("law", str(s["law"]))
-			if path != "":
-				b.icon = load(path)
+			var tex := ScreenKit.icon_texture("laws", str(s["law"]))
+			if tex != null:
+				b.icon = tex
 				b.expand_icon = true
 				b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
 				b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -197,9 +194,7 @@ func _shelf(l: Dictionary) -> Control:
 	for f: Dictionary in l.get("finds", []):
 		var col := VBoxContainer.new()
 		col.add_theme_constant_override("separation", UI.px(2))
-		var mark := ScreenKit.icon("resonance", RESONANCE_ART.get(f["id"], ""), 44.0)
-		if mark.texture == null:
-			mark = ScreenKit.icon("harmony", "chord" if f["kind"] == "chord" else "resonance", 44.0)
+		var mark := ScreenKit.icon("harmony", "chord" if f["kind"] == "chord" else "resonance", 44.0)
 		mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		col.add_child(mark)
 		var name := ScreenKit.text(f["name"], 13.0, "words", "parchment", false, true)

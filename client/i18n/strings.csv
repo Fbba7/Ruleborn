@@ -1196,3 +1196,13 @@ SCREEN_SETTINGS_ACCESS,Seeing and touch,Seeing and touch,Visão e toque,Visão e
 SCREEN_SETTINGS_PLAY,Play,Play,Jogo,Jogo,Spiel,Jeu
 SCREEN_HELD,Held,Held,Defendidas,Defendidas,Gehalten,Tenues
 SCREEN_LEAKED,Leaked,Leaked,Vazadas,Vazadas,Durchbrochen,Percées
+KIT_TAB_ISLANDS,Islands,Islands,Ilhas,Ilhas,Inseln,Îles
+KIT_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
+KIT_TAB_HEIST,Heist,Heist,Assalto,Assalto,Raubzug,Casse
+KIT_TAB_CREW,Crew,Crew,Equipe,Equipa,Crew,Équipe
+KIT_TAB_FRIENDS,Friends,Friends,Amigos,Amigos,Freunde,Amis
+KIT_BACK,Back,Back,Voltar,Voltar,Zurück,Retour
+KIT_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
+KIT_FULL,Full,Full,Cheio,Cheio,Voll,Plein
+KIT_TAB_BADGE,%s: %s new,%s: %s new,%s: %s novos,%s: %s novos,%s: %s neu,%s : %s nouveaux
+SCREEN_SHOW_REALM,Show %s above,Show %s above,Mostrar %s acima,Mostrar %s acima,%s oben zeigen,Montrer %s en haut

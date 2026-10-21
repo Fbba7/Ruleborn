@@ -74,7 +74,7 @@ func _refresh() -> void:
 	UI.set_status(status_label, "info", "")
 	ScreenParts.show_status(status_label)
 	var frame_kind: String = ScreenParts.RANK_FRAME.get(c["rank_key"], "oak")
-	_frame.add_theme_stylebox_override("panel", ScreenKit.box(frame_kind, 24.0, 7.0))
+	ScreenKit.restyle(_frame, frame_kind, 24.0)
 	box.add_child(_top(c))
 	var name := ScreenKit.inked(ScreenKit.text(c["name"], 30.0, "name", "card_lit"), 1.5)
 	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

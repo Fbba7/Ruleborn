@@ -13,7 +13,7 @@ var body: VBoxContainer
 var header_label: Label
 var status_label: Label
 var _strain: PanelContainer
-var _stage: PanelContainer
+var _stage: MarginContainer
 ## The realm the preview shows, chosen by its chip.
 var _shown := ""
 
@@ -45,9 +45,10 @@ func _build() -> void:
 	body = UI.scroll(column)
 	# In the scroll, so large text never pushes the buttons off the phone.
 	preview = LawFxPreview.new()
-	preview.custom_minimum_size.y = UI.px(190)
+	preview.custom_minimum_size.y = UI.px(236)
 	preview.visible = false
-	_stage = ScreenKit.panel("well", preview, 18.0, 3.0)
+	_stage = MarginContainer.new()
+	_stage.add_child(preview)
 	body.add_child(_stage)
 	column.add_child(ScreenNav.hub("laws", &"harmony"))
 	column.add_child(ScreenNav.bar("laws"))
@@ -76,13 +77,6 @@ func _refresh() -> void:
 	_strain.tooltip_text = h["header"]
 	_preview()
 	_stage.visible = preview.visible
-	var chips := ScreenParts.flow(6.0)
-	for r: Dictionary in h["realms"]:
-		chips.add_child(ScreenParts.chip(r["title"], r["realm"] == _shown, func() -> void:
-			_shown = str(r["realm"])
-			_refresh()))
-	body.add_child(chips)
-	body.move_child(chips, 0)
 	for r: Dictionary in h["realms"]:
 		body.add_child(_realm(r))
 	body.add_child(ScreenKit.button(Strings.t("HOME_WEAVING"), func() -> void: App.services.router.go(&"weaving"),
@@ -96,8 +90,6 @@ func _realm(r: Dictionary) -> Control:
 	box.add_theme_constant_override("separation", UI.px(6))
 	var band := HBoxContainer.new()
 	band.add_theme_constant_override("separation", UI.px(8))
-	var icon := "theheart" if str(r["type"]) == "Heart" else str(r["type"]).to_lower().replace(" ", "")
-	band.add_child(ScreenKit.icon("realms", icon, 34.0))
 	var title := ScreenKit.text(r["title"], 20.0, "name", "card")
 	title.set_meta("realm", r["realm"])
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -112,8 +104,6 @@ func _realm(r: Dictionary) -> Control:
 		else:
 			box.add_child(ScreenKit.text(line, 15.0, "body", "card", true, true))
 		i += 1
-	if not (r["lines"] as Array).is_empty():
-		box.add_child(ScreenParts.section(Strings.t("SCREEN_COMBINATIONS")))
 	var k := 0
 	for line: String in r["lines"]:
 		var kinds: Array = r["kinds"]
@@ -127,27 +117,41 @@ func _realm(r: Dictionary) -> Control:
 			row.add_child(ScreenKit.icon("harmony", kind["kind"], 34.0))
 			row.add_child(l)
 			var pct := int(kind["pct"])
-			var tag := ScreenParts.pill(("−%d%%" if pct < 0 else "+%d%%") % absi(pct), "green" if pct < 0 else "red")
+			var tag := ScreenKit.text(("−%d%%" if pct < 0 else "+%d%%") % absi(pct), 17.0, "number", "card")
+			tag.add_theme_color_override("font_color", Tokens.color("success_text_on_night") if pct < 0
+				else Tokens.color("alarm_text_on_night"))
+			tag.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 			row.add_child(tag)
 		else:
 			row.add_child(l)
 		box.add_child(row)
 		k += 1
-	return ScreenKit.panel("card", box, 18.0, 12.0)
+	# A realm's card is the switch for the preview: tapped, it is the realm
+	# shown, and lit.
+	var on: bool = str(r["realm"]) == _shown
+	var card := ScreenKit.panel("card_lit" if on else "card", box, 18.0, 12.0)
+	if not on:
+		ScreenParts.tap(card, func() -> void:
+			_shown = str(r["realm"])
+			_refresh(), Strings.t("SCREEN_SHOW_REALM", r["title"]))
+	return card
 
 
 ## A law at work: its mark, its name (crowned or not) and its notes.
 func _law(l: Dictionary, line: String) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
-	row.add_child(ScreenKit.icon("law", str(l["law"]), 36.0))
+	row.add_child(ScreenKit.icon("laws", str(l["law"]), 36.0))
 	var name := ScreenKit.text(l["name"], 15.0, "words", "card")
 	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	name.tooltip_text = line
 	row.add_child(name)
 	if l["crowned"]:
-		row.add_child(ScreenParts.pill(Strings.t("SCREEN_CROWNED"), "cream", "lawranksandtiers", "mastery"))
+		var crown := ScreenKit.icon("lawranksandtiers", "mastery", 26.0)
+		crown.tooltip_text = Strings.t("SCREEN_CROWNED")
+		row.add_child(crown)
+		name.text = "%s · %s" % [l["name"], Strings.t("SCREEN_CROWNED")]
 	for n: String in l["notes"]:
 		var note := ScreenKit.icon("lawnotes", n.to_lower(), 26.0)
 		note.tooltip_text = Strings.term("NOTE", n)

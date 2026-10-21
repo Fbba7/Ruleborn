@@ -41,6 +41,20 @@ const ROUTES := {
 	&"scout": "res://scenes/scout.tscn",
 }
 
+## The five tabs of the design's bar (SCREENS.md): Islands opens the
+## universe, Laws the Laws hub, Heist the Observatory, Crew the Crew hub and
+## Friends the friends list.
+const TABS := {"islands": &"home", "laws": &"codex", "heist": &"observatory", "crew": &"roster",
+	"friends": &"friends"}
+## The hubs a tab opens, chosen by the gold control under the header: their
+## screens, in order, with the words on each segment.
+const HUBS := {
+	"laws": [{"route": &"codex", "words": "HUB_ALL_LAWS"}, {"route": &"harmony", "words": "HUB_HARMONY"},
+		{"route": &"lab", "words": "HUB_LAB"}],
+	"crew": [{"route": &"roster", "words": "HUB_ROSTER"}, {"route": &"sages", "words": "HUB_SAGES"},
+		{"route": &"forms", "words": "HUB_FORMS"}],
+}
+
 var store: Store
 ## How a scene is shown; a test replaces it.
 var change: Callable = func(path: String) -> void:

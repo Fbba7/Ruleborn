@@ -110,19 +110,19 @@ func _toggle(setting: String, words: String, icon: String) -> Control:
 	var on := Settings.flag(setting)
 	var b := ScreenKit.button(Strings.t(words + ("_ON" if on else "_OFF")), flip.bind(setting), "card", "", 16.0)
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	var path := ScreenKit.icon_path("settingsandwellbeing", icon)
-	if path != "":
-		b.icon = load(path)
+	var tex := ScreenKit.icon_texture("settingsandwellbeing", icon)
+	if tex != null:
+		b.icon = tex
 		b.expand_icon = true
 		b.add_theme_constant_override("icon_max_width", UI.px(28))
 		b.add_theme_constant_override("h_separation", UI.px(10))
 	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	b.custom_minimum_size.x = 0
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var normal := b.get_theme_stylebox("normal") as ScreenBox
+	var normal := b.get_theme_stylebox("normal") as StyleBox
 	normal.content_margin_right = UI.px(64)
 	for state: String in ["hover", "pressed", "disabled"]:
-		(b.get_theme_stylebox(state) as ScreenBox).content_margin_right = UI.px(64)
+		(b.get_theme_stylebox(state) as StyleBox).content_margin_right = UI.px(64)
 	var sw := ScreenSwitch.make(on)
 	sw.set_anchors_preset(Control.PRESET_CENTER_RIGHT)
 	sw.position = Vector2(-UI.px(56), -UI.px(14))

@@ -43,14 +43,46 @@ func _set_contrast(on: bool) -> void:
 
 
 ## What a node and every canvas item above it multiply its colours by: a
-## faded control's words are faded too.
+## faded control's words are faded too. A node still arriving (Motion's
+## entrances, marked "entering") is judged as it will stand.
 func _tint(c: CanvasItem) -> Color:
 	var t := c.self_modulate
 	var n: Node = c
 	while n is CanvasItem:
-		t *= (n as CanvasItem).modulate
+		if not n.has_meta("entering"):
+			t *= (n as CanvasItem).modulate
 		n = n.get_parent()
 	return t
+
+
+## The skies the HUD over the world is checked against (§21.8: "over the
+## day, dusk and night skies"): §21.2's day and the kit's night.
+func _skies() -> Array[Color]:
+	return [Palette.SKY_TOP, Palette.SKY_BOTTOM, Tokens.color("night_top"), Tokens.color("night_bottom")]
+
+
+## What the kit says is behind words in a box it drew (`text_bg`, the
+## stops its words sit on), with glass over the world laid over each sky.
+func _kit_backgrounds(n: Node) -> Array[Color]:
+	var out: Array[Color] = []
+	var glass := n.has_meta("rb_material") and bool(Tokens.material(str(n.get_meta("rb_material")))["over_world"])
+	for c: Color in n.get_meta("text_bg"):
+		if glass:
+			for sky: Color in _skies():
+				out.append(ColourCheck.over(Tokens.color("glass"), sky))
+		else:
+			out.append(c)
+	return out
+
+
+## §21.8: "Words with an ink outline all round, at least 1.5 points or 12% of
+## their size wide, are measured against the outline". The outline's colour,
+## or a transparent colour when the words have none that counts.
+func _outline(c: Control, points: float) -> Color:
+	var width := c.get_theme_constant("outline_size") / UI.PX_PER_POINT
+	if width >= maxf(1.5, 0.12 * points):
+		return c.get_theme_color("font_outline_color")
+	return Color(0, 0, 0, 0)
 
 
 ## Behind a word, for each state it is drawn in — a button's normal, hover,
@@ -60,10 +92,17 @@ func _backgrounds(c: Control) -> Array[Color]:
 	var fills: Array[Color] = []
 	var n: Node = c
 	while n != null and fills.is_empty():
-		# A control drawn by a ScreenBox names the colours behind its words.
-		if n is Control and n.has_meta("behind"):
-			fills.assign(n.get_meta("behind"))
-		elif n is Button:
+		# A box the kit drew says what its words sit on; a control another
+		# script has dressed in a fill of its own is read from that fill.
+		if n.has_meta("text_bg") and not _own_fill(n):
+			var kit := _kit_backgrounds(n)
+			var faded: Array[Color] = []
+			var tint_kit := _tint(c)
+			for k: Color in kit:
+				faded.append(ColourCheck.over(Color(k.r * tint_kit.r, k.g * tint_kit.g, k.b * tint_kit.b, tint_kit.a),
+					Tokens.color("night_bottom")))
+			return faded
+		if n is Button:
 			for state: String in ["normal", "hover", "pressed", "focus"]:
 				var box := (n as Button).get_theme_stylebox(state)
 				if box is StyleBoxFlat and (box as StyleBoxFlat).bg_color.a > 0.0:
@@ -75,20 +114,23 @@ func _backgrounds(c: Control) -> Array[Color]:
 		n = n.get_parent()
 	var tint := _tint(c)
 	var out: Array[Color] = []
-	var skies: Array[Color] = [Palette.SKY_TOP, Palette.SKY_BOTTOM]
-	# A screen on the night backdrop (ScreenKit) names its own sky.
-	var top: Node = c
-	while top.get_parent() is Control:
-		top = top.get_parent()
-	if top.has_meta("sky"):
-		skies.assign(top.get_meta("sky"))
-	for sky: Color in skies:
+	for sky: Color in [Palette.SKY_TOP, Palette.SKY_BOTTOM]:
 		if fills.is_empty():
 			out.append(sky)
 		for f in fills:
 			var faded := Color(f.r * tint.r, f.g * tint.g, f.b * tint.b, f.a * tint.a)
 			out.append(ColourCheck.over(faded, sky))
 	return out
+
+
+## Whether a control the kit dressed has since been given a fill of its own.
+func _own_fill(n: Node) -> bool:
+	var box: StyleBox = null
+	if n is PanelContainer:
+		box = (n as PanelContainer).get_theme_stylebox("panel")
+	elif n is Button:
+		box = (n as Button).get_theme_stylebox("normal")
+	return box is StyleBoxFlat and (box as StyleBoxFlat).bg_color.a > 0.01
 
 
 func _token_pairs() -> void:
@@ -116,10 +158,46 @@ func _token_pairs() -> void:
 				if not ColourCheck.readable(fg, bg, points, pairs[name][2]):
 					bad.append("%s%s: %.2f:1, Lc %.0f" % [name, " (high contrast)" if hc else "",
 						ColourCheck.ratio(fg, bg), ColourCheck.apca(fg, bg)])
+		bad.append_array(_kit_pairs(hc))
 	_set_contrast(false)
 	check.call("every colour the client puts words in reads at 4.5:1 and at APCA's level for its size and weight, "
-			+ "the realm's marks on their halo included, in both contrast modes (§21.8, §20.8)",
+			+ "the realm's marks on their halo and every material's words on the stops they sit on included, "
+			+ "in both contrast modes (§21.8, §20.8)",
 		bad.is_empty(), "; ".join(bad))
+
+
+## Each material's words (bold, as a control's are) and its secondary words
+## (bold, §21.8's tertiary rule) on each stop they sit on, measured against
+## an ink outline where §21.8 lets the outline count; and each family's
+## status words on its surfaces.
+func _kit_pairs(hc: bool) -> Array:
+	var bad := []
+	for m: String in Tokens.materials():
+		var spec := Tokens.material(m)
+		var bgs: Array[Color] = []
+		bgs.assign(spec["text_bg"])
+		if bool(spec["over_world"]):
+			bgs.assign(_skies().map(func(sky: Color) -> Color: return ColourCheck.over(Tokens.color("glass"), sky)))
+		if spec.has("text_outline") and spec["text_outline"][1] >= maxf(1.5, 0.12 * UI.TEXT_POINTS):
+			bgs = [spec["text_outline"][0]]
+		for part: String in ["text", "text_2"]:
+			for bg: Color in bgs:
+				if not ColourCheck.readable(spec[part], bg, UI.TEXT_POINTS, true):
+					bad.append("%s's %s%s: %.2f:1, Lc %.0f" % [m, part, " (high contrast)" if hc else "",
+						ColourCheck.ratio(spec[part], bg), ColourCheck.apca(spec[part], bg)])
+	for family: String in ["dark", "light"]:
+		var surfaces := ["card", "glass"] if family == "dark" else ["parchment"]
+		for surface: String in surfaces:
+			for status: String in RbTheme.STATUSES:
+				var words := RbTheme.status_colour(status, family)
+				var under: Array = Tokens.material(surface)["text_bg"]
+				if bool(Tokens.material(surface)["over_world"]):
+					under = _skies().map(func(sky: Color) -> Color: return ColourCheck.over(Tokens.color("glass"), sky))
+				for bg: Color in under:
+					if not ColourCheck.readable(words, bg, UI.TEXT_POINTS, status != "info" and status != "confirming"):
+						bad.append("%s words on %s%s: %.2f:1, Lc %.0f" % [status, surface, " (hc)" if hc else "",
+							ColourCheck.ratio(words, bg), ColourCheck.apca(words, bg)])
+	return bad
 
 
 func _every_word() -> void:
@@ -141,6 +219,9 @@ func _every_word() -> void:
 				fg = ColourCheck.over(Color(fg.r * tint.r, fg.g * tint.g, fg.b * tint.b, fg.a * tint.a), bgs[0])
 				var points := float(c.get_meta("points", UI.TEXT_POINTS))
 				var bold := bool(c.get_meta("bold", false))
+				var outline := _outline(c as Control, points)
+				if outline.a > 0.5:
+					bgs = [outline]
 				for bg in bgs:
 					if not ColourCheck.readable(fg, bg, points, bold):
 						bad.append("%s%s: %s %.2f:1 Lc %.0f" % [sname, " (hc)" if hc else "", c.text,

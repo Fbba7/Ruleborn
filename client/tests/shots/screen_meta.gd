@@ -28,7 +28,9 @@ func _go() -> void:
 		for i in 3:
 			await process_frame
 	if OS.get_environment("HIDE") != "":
-		for c: Control in screen.find_children("*", OS.get_environment("HIDE"), true, false):
+		var by_name := OS.get_environment("HIDE").begins_with("@")
+		for c: Control in screen.find_children(OS.get_environment("HIDE").trim_prefix("@") if by_name else "*",
+				"" if by_name else OS.get_environment("HIDE"), true, false):
 			c.visible = false
 		await process_frame
 		await process_frame

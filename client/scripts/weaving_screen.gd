@@ -141,8 +141,8 @@ func _bar(b: Dictionary) -> Control:
 		cell.set_meta("band", band["name"])
 		cell.set_meta("current", on)
 		var p := ScreenKit.panel("cream" if on else "well", cell, -1.0, 2.0)
-		(p.get_theme_stylebox("panel") as ScreenBox).content_margin_left = UI.px(8)
-		(p.get_theme_stylebox("panel") as ScreenBox).content_margin_right = UI.px(8)
+		(p.get_theme_stylebox("panel") as StyleBox).content_margin_left = UI.px(8)
+		(p.get_theme_stylebox("panel") as StyleBox).content_margin_right = UI.px(8)
 		strip.add_child(p)
 	box.add_child(strip)
 	box.add_child(ScreenKit.text(b["effect"], 15.0, "words", "card_lit", false, true))
@@ -191,7 +191,7 @@ func _slot(s: Dictionary, busy: bool) -> Control:
 	row.add_theme_constant_override("separation", UI.px(6))
 	var state := str(s.get("state", "empty"))
 	if s.get("law") is String:
-		row.add_child(ScreenKit.icon("law", str(s["law"]), 34.0))
+		row.add_child(ScreenKit.icon("laws", str(s["law"]), 34.0))
 	else:
 		row.add_child(ScreenKit.icon("hud" if state == "empty" else "generalui",
 			{"resting": "timer", "locked": "lock"}.get(state, "plus"), 30.0))
@@ -224,7 +224,7 @@ func _offer(o: Dictionary, busy: bool) -> Control:
 	box.add_theme_constant_override("separation", UI.px(6))
 	var top := HBoxContainer.new()
 	top.add_theme_constant_override("separation", UI.px(8))
-	top.add_child(ScreenKit.icon("law", str(o["law"]), 40.0))
+	top.add_child(ScreenKit.icon("laws", str(o["law"]), 40.0))
 	var words := VBoxContainer.new()
 	words.add_theme_constant_override("separation", 0)
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL

@@ -187,7 +187,7 @@ func _tile(l: Dictionary) -> Control:
 	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var known := bool(l["known"])
 	var frame_kind: String = ScreenParts.RANK_FRAME.get(str(l.get("rank", "")), "well") if known else "well"
-	var mark := ScreenKit.icon("law", str(l["law"]) if known else "", 46.0)
+	var mark := ScreenKit.icon("laws", str(l["law"]) if known else "", 46.0)
 	if not known:
 		mark = ScreenKit.icon("harmony", "unknownlaw", 40.0)
 	var frame := ScreenKit.panel(frame_kind, mark, 14.0, 4.0)
@@ -230,7 +230,7 @@ func _step(l: Dictionary, busy: bool) -> Control:
 		return null
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
-	row.add_child(ScreenKit.icon("law", str(l["law"]), 30.0))
+	row.add_child(ScreenKit.icon("laws", str(l["law"]), 30.0))
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.add_theme_constant_override("separation", 0)

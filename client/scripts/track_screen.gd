@@ -40,7 +40,7 @@ func _build() -> void:
 	var column := ScreenKit.frame(self)
 	_stars = ScreenParts.pill("", "glass", "currencies", "seasonstars", 15.0)
 	var head := ScreenNav.header("", _stars)
-	title_label = head.get_node("Title") as Label
+	title_label = head.find_child("Title", true, false) as Label
 	column.add_child(head)
 	stars_label = ScreenKit.text("", 13.0, "words", "card_lit", true, true)
 	next_label = ScreenKit.text("", 17.0, "words", "card_lit", false, true)
