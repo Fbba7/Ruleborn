@@ -75,9 +75,9 @@ var links: Array[Dictionary] = []
 ## Pixels at the top and bottom that a screen's own controls cover: the
 ## camera frames the universe into what is left (`set_inset`).
 var inset := Vector2.ZERO
-## The pixels a screen's side columns cover at the left and the right, which
-## pins keep clear of.
-var inset_x := Vector2.ZERO
+## The screen's own controls over the world (home's side buttons), in the
+## view's pixels, which pins keep clear of.
+var keep_clear: Array[Rect2] = []
 
 var _view := {}
 var _extras := {}
@@ -236,7 +236,9 @@ func _build() -> void:
 	_build_lods()
 	_build_links(glows, light, flow)
 	_build_faults(light, glows)
-	_bounds = UniverseLayout.bounds(places, UniverseLayout.radius(UniverseLayout.OUTER_GRID) + 2.0)
+	# Framed to the islands' rims, so the whole universe fills the screen's
+	# width as the designs' home does.
+	_bounds = UniverseLayout.bounds(places, UniverseLayout.radius(UniverseLayout.OUTER_GRID))
 	triangles += glows.count + light.count + flow.count
 	_add(glows.mesh(), _glow_material(0.3, 0.35), false)
 	_add(light.mesh(), _veil_material(0.0, 0.0), false)

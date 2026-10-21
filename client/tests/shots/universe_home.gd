@@ -2,7 +2,8 @@ extends SceneTree
 ## The home screen with its interface over the universe (§23.2), saved as a
 ## still (tools/render/shoot.sh). SHOT is the file; OUTER (outer realms, 6),
 ## ZOOM and FOCUS (as universe_zoom.gd), TEXT (the text size, 100) and TIME
-## (seconds of animation) are optional; WHOLE shows the whole universe.
+## (seconds of animation) are optional; WHOLE shows the whole universe; RAIDS the
+## raids not yet seen (2).
 
 
 func _initialize() -> void:
@@ -17,7 +18,7 @@ func _go() -> void:
 	store.dispatch(&"universe_loaded", {"view": UniverseSample.view(int(env.call("OUTER", "6")))})
 	var extras := UniverseSample.extras()
 	store.dispatch(&"roster_loaded", {"view": {"producers": extras["producers"]}})
-	store.dispatch(&"defences_badge", {"unseen": extras["raids"]})
+	store.dispatch(&"defences_badge", {"unseen": int(env.call("RAIDS", str(extras["raids"])))})
 	store.dispatch(&"keeper_loaded", {"view": {"level": 14, "xp": 1240, "toNext": 2000}})
 	store.dispatch(&"wallet_loaded", {"balance": {"starlight": 142050, "essence": 61020}})
 	store.dispatch(&"codex_loaded", {"view": {"aether": 31400}})

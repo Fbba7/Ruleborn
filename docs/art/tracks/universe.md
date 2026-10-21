@@ -314,3 +314,22 @@ When the shell's bar exists, home stops adding its own (`Home.tabs`) and listens
   Budget (drawn in view, `universe_zoom.gd`): whole universe 32,162 triangles, 83 draw calls; realm zoom
   16,400–38,900; close-ups: the Heart 39,068 (one character), Tidehold 35,700 (two), others 25,000–26,000.
   Stills: `r34_home_on_kit.png`, `r34_zoom2_heart_meadow.png`, `r34_zoom2_tidehold_two.png`.
+- Round 35, judged against the design's own home (`art/design/stills/screens/01-universe-map.png` and
+  `01-universe-map-raid.png`, landed at 00:58). The three worst differences were: the world squeezed into the
+  top half by the notice, Collect and the goal stacked over it; dark island labels where the design's are
+  parchment; the goal a heavy two-line card. Fixed:
+  - the universe in the design's 2-3-2 (`UniverseLayout.SLOTS`: two above the Heart, one either side, two
+    below), framed to the islands' rims and down to the tabs, so it fills the screen's width as the design's
+    does; the goal, Collect and the raid notice float over its foot, as the design's Collect and raid banner;
+  - each realm's label the design's parchment plate edged in ink: its icon, its name in Marcellus in brown
+    ink, its level on a dark disc, floating over the island's far rim at the whole-universe zoom;
+  - pins keep clear of the side buttons' own rectangles and inside the screen's edges;
+  - the goal one line on a glass pill beside Collect;
+  - the side buttons high on each edge beside the top row, as the design places them (marked infrequent, so
+    §21.1's thumb zone does not bind them; they keep 48 points and stay out of the corners);
+  - the shot's sample universe a mid-game one in the design's order (Skyfield, Crystalline, Tidehold,
+    Verdant, Emberreach, Lantern Vale), five or six buildings a realm, linked between neighbours as the
+    design links them.
+  Budget at the home camera: 35,895 triangles, 83 draw calls.
+  Stills: `r35_compare_01_universe_map.png`, `r35_compare_01_raid.png` (ours left, the design right, grayscale
+  thumbnails beneath).

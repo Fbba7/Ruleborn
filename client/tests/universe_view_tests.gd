@@ -265,13 +265,16 @@ func _lazy() -> void:
 	var shown: bool = (view._close["outer-2"] as Node3D).visible and not (view._rocks["outer-2"] as Node3D).visible
 	view.focus_realm("heart", 2)
 	view._process(0.01)
-	var heart_rock: bool = (view._rocks["heart"] as Node3D).visible and not view._close.has("heart")
+	# The Heart too is T2's island seen close, without its own tufts.
+	var heart: Node3D = view._close.get("heart")
+	var heart_close: bool = heart != null and heart.visible and not (view._rocks["heart"] as Node3D).visible \
+		and not heart.get_children().any(func(c: Node) -> bool: return str(c.name).begins_with("Scatter"))
 	Settings.reduced_motion = false
 	check.call("from afar no realm's detailed buildings or close island are made; coming to a realm makes its "
 			+ "buildings, resting there makes its island as seen close, and the close-up shows it in place of the "
-			+ "map's rock; the Heart keeps its rock (21.3)",
-		empty and none_close and built and ready and shown and heart_rock,
-		"empty %s none %s built %s ready %s shown %s heart %s" % [empty, none_close, built, ready, shown, heart_rock])
+			+ "map's rock; the Heart's close-up is its island too, its tufts left to its buildings (21.3)",
+		empty and none_close and built and ready and shown and heart_close,
+		"empty %s none %s built %s ready %s shown %s heart %s" % [empty, none_close, built, ready, shown, heart_close])
 	view.queue_free()
 	await tree.process_frame
 

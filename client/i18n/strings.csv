@@ -1169,7 +1169,6 @@ HOME_UNKNOWN,not yet known,not yet known,ainda não sabido,ainda não sabido,noc
 HOME_BADGE_SPOKEN,"%s, %s new","%s, %s new","%s, %s novos","%s, %s novos","%s, %s neu","%s, %s nouveaux"
 HOME_MENU,Every screen,Every screen,Todas as telas,Todos os ecrãs,Alle Bildschirme,Tous les écrans
 HOME_MENU_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
-HOME_GOAL,NEAREST GOAL,NEAREST GOAL,META MAIS PRÓXIMA,OBJETIVO MAIS PRÓXIMO,NÄCHSTES ZIEL,OBJECTIF LE PLUS PROCHE
 HOME_GOAL_SPOKEN,Nearest goal: %s,Nearest goal: %s,Meta mais próxima: %s,Objetivo mais próximo: %s,Nächstes Ziel: %s,Objectif le plus proche : %s
 HOME_GOAL_KEEPER,%s experience to go · Keeper %d,%s experience to go · Keeper %d,faltam %s de experiência · Guardião %d,faltam %s de experiência · Guardião %d,noch %s EP · Hüter %d,encore %s d'expérience · Gardien %d
 HOME_GOAL_TRACK,%s stars to go · tier %d,%s stars to go · tier %d,faltam %s estrelas · nível %d,faltam %s estrelas · nível %d,noch %s Sterne · Stufe %d,encore %s étoiles · palier %d

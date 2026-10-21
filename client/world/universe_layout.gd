@@ -3,9 +3,8 @@ extends RefCounted
 ## Where each realm of a universe hangs on the map (§21.1: "Islands hang in a
 ## vertical column for a portrait screen"; §23.2: "Home. See every realm and
 ## link at once"). The Heart in the middle, the outer realms in the order
-## they opened, filling the rows above and below it as the design's map does
-## (realm_diorama.js `UMAP`, :73), so a young universe is a short column and
-## a full one fills the phone. Where a link's two ends meet each island, and
+## they opened round it in the design's 2-3-2 (realm_diorama.js `UMAP`,
+## :73), so a full universe fills the phone. Where a link's two ends meet each island, and
 ## what each realm's type looks like, are worked out here too: no rule of
 ## the game is, so this is the map's art alone.
 
@@ -18,8 +17,11 @@ const SCHOOLS := {"heart": "spirit", "skyfield": "motion", "crystalline": "matte
 	"emberreach": "energy", "verdant": "life", "lanternvale": "spirit"}
 ## The outer realms' places, in the order realms open: [x, z, y] in metres
 ## from the Heart, the column running along z (down the screen).
-const SLOTS := [[-14.5, 28.0, -1.2], [15.0, -28.0, 1.0], [15.5, 27.5, -0.6], [-15.0, -27.5, 0.8],
-	[0.5, 54.0, -2.0], [-0.5, -54.0, 2.0]]
+## The design's 2-3-2 (`UMAP`): two above the Heart, one either side of it,
+## two below, the rows spread so the whole universe fills a portrait screen's
+## width at §21.1's 35° pitch; the realm side of the Heart opening last.
+const SLOTS := [[-16.0, -56.0, 1.0], [16.0, -56.0, 0.8], [27.0, 2.0, -0.4], [-18.5, 56.0, -1.2],
+	[18.5, 56.0, -1.0], [-27.0, 2.0, 0.4]]
 ## A realm's grid across, in tiles: the server's view does not carry it, so
 ## the map draws the Heart a size up on the outer realms (the design's map
 ## scales the Heart 0.29 to the others' 0.19).

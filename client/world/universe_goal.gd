@@ -52,8 +52,8 @@ func show_goal(g: Dictionary) -> void:
 	_tex = UniverseHud.icon(str(g["icon"]))
 	var font := UniverseHud.words_font()
 	var w := font.get_string_size(str(g["text"]), HORIZONTAL_ALIGNMENT_LEFT, -1, _px()).x
-	custom_minimum_size = Vector2(minf(w + UI.px(110), 330.0 * UI.PX_PER_POINT),
-		maxf(UI.CONTROL_POINTS * UI.PX_PER_POINT, _px() * 3.1))
+	custom_minimum_size = Vector2(minf(w + UI.px(52), 190.0 * UI.PX_PER_POINT),
+		maxf(UI.CONTROL_POINTS * UI.PX_PER_POINT, _px() * 2.2))
 	queue_redraw()
 
 
@@ -64,27 +64,25 @@ func _px() -> int:
 func _draw() -> void:
 	if goal.is_empty():
 		return
-	var h := size.y - UI.px(6)
-	var pill := Rect2(Vector2(h * 0.4, UI.px(3)), Vector2(size.x - h * 0.4, h))
+	# One line on a glass pill, drawn smaller than its 48-point hit area: the
+	# gold ball with the goal's icon, what is left, a thin bar of what is done.
+	var h := minf(size.y - UI.px(8), _px() * 2.2)
+	var pill := Rect2(Vector2(h * 0.4, (size.y - h) * 0.5), Vector2(size.x - h * 0.4, h))
 	if is_pressed():
 		pill.position.y += UI.px(1.5)
-	UniverseHud.glass(UI.px(14)).draw(get_canvas_item(), pill)
+	UniverseHud.glass(h * 0.5).draw(get_canvas_item(), pill)
 	var c := Vector2(h * 0.5, pill.get_center().y)
-	UniverseHud.ball(self, c, h * 0.5, UniverseHud.GOLD, UniverseHud.GOLD_RIM)
+	UniverseHud.ball(self, c, h * 0.55, UniverseHud.GOLD, UniverseHud.GOLD_RIM)
 	var tex := _tex
 	if tex != null:
-		var s := h * 0.7
+		var s := h * 0.78
 		draw_texture_rect(tex, Rect2(c - Vector2(s, s) * 0.5, Vector2(s, s)), false)
 	var font := UniverseHud.words_font()
-	var x := c.x + h * 0.62
+	var x := c.x + h * 0.72
 	var px := _px()
-	var kicker := Strings.t("HOME_GOAL")
-	var kpx := UI.text_px(13.0)
-	draw_string(UniverseHud.words_font(), Vector2(x, pill.position.y + kpx * 1.15), kicker, HORIZONTAL_ALIGNMENT_LEFT,
-		-1, kpx, UniverseHud.GOLD[1])
-	draw_string(font, Vector2(x, pill.position.y + kpx * 1.15 + px * 1.2), str(goal["text"]),
+	draw_string(font, Vector2(x, pill.get_center().y + font.get_ascent(px) * 0.3), str(goal["text"]),
 		HORIZONTAL_ALIGNMENT_LEFT, pill.end.x - x - UI.px(10), px, UniverseHud.WORDS)
-	var track := Rect2(Vector2(x, pill.end.y - UI.px(9)), Vector2(pill.end.x - x - UI.px(14), UI.px(4)))
+	var track := Rect2(Vector2(x, pill.end.y - UI.px(6)), Vector2(pill.end.x - x - h * 0.45, UI.px(3)))
 	draw_rect(track, Color(0, 0, 0, 0.5))
 	draw_rect(Rect2(track.position, Vector2(track.size.x * float(goal["share"]), track.size.y)), UniverseHud.GOLD[1])
 	if has_focus():

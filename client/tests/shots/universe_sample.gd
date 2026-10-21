@@ -1,32 +1,36 @@
 class_name UniverseSample
 extends RefCounted
 ## A full universe as the server answers GET /v1/universe, for the map's
-## stills and tests: the Heart and six outer realms, each with buildings at
-## their levels, links of all four kinds, a fault, and the producers the home
-## view adds. `outer` keeps that many outer realms.
+## stills and tests: the Heart and six outer realms in the design's home order
+## (Skyfield, Crystalline, Tidehold, Verdant, Emberreach, Lantern Vale), each
+## with a mid-game's buildings at their levels, links of all four kinds
+## between neighbours as the design links them, a fault, and the producers
+## the home view adds. `outer` keeps that many outer realms.
 
 
 static func view(outer := 6) -> Dictionary:
-	var types := ["Skyfield", "Tidehold", "Crystalline", "Verdant", "Emberreach", "Lantern Vale"]
+	var types := ["Skyfield", "Crystalline", "Tidehold", "Verdant", "Emberreach", "Lantern Vale"]
 	var realms: Array = [{"realm": "heart", "type": "Heart", "level": 6, "buildings": [
 		_b("vault", 1, 5), _b("star_well", 1, 4), _b("hearth", 1, 5), _b("library", 1, 3), _b("garden", 1, 4),
 		_b("nursery", 1, 2), _b("observatory", 1, 6), _b("ward", 1, 3), _b("ward", 2, 2), _b("storehouse", 1, 4),
 		_b("guardian_post", 1, 3), _b("aether_spring", 1, 2), _b("beacon", 1, 5)], "room": [], "raise": null}]
-	var kinds := [["star_well", "garden", "guardian_post", "ward"], ["aether_spring", "storehouse", "ward"],
-		["resonance_lab", "star_well", "ward", "ward"], ["garden", "nursery", "hearth"],
-		["beacon", "guardian_post", "ward"], ["observatory", "library", "ward"]]
+	var kinds := [["star_well", "garden", "guardian_post", "hearth", "star_well", "ward"],
+		["aether_spring", "storehouse", "resonance_lab", "hearth", "ward", "ward"],
+		["aether_spring", "star_well", "library", "guardian_post", "ward"],
+		["garden", "nursery", "hearth", "garden", "guardian_post", "ward"],
+		["beacon", "guardian_post", "star_well", "storehouse", "ward"], ["observatory", "library", "ward"]]
 	for i in mini(outer, types.size()):
 		var bs: Array = []
 		var n := {}
 		for k: String in kinds[i]:
 			n[k] = int(n.get(k, 0)) + 1
 			bs.append(_b(k, n[k], 1 + (i + bs.size()) % 6))
-		realms.append({"realm": "outer-%d" % (i + 1), "type": types[i], "level": 1 + i % 4, "buildings": bs,
+		realms.append({"realm": "outer-%d" % (i + 1), "type": types[i], "level": [4, 5, 4, 3, 3, 2][i], "buildings": bs,
 			"room": [], "raise": null})
 	var links: Array = []
-	var plan := [["heart", "outer-1", "stone_bridge"], ["heart", "outer-2", "rope_bridge"],
-		["heart", "outer-3", "stone_bridge"], ["heart", "outer-4", "rift"], ["outer-2", "outer-3", "chute"],
-		["outer-1", "outer-5", "rope_bridge"], ["outer-4", "outer-6", "stone_bridge"]]
+	var plan := [["heart", "outer-1", "stone_bridge"], ["heart", "outer-3", "stone_bridge"],
+		["heart", "outer-4", "rift"], ["outer-1", "outer-2", "rope_bridge"], ["outer-2", "outer-3", "chute"],
+		["outer-3", "outer-5", "rope_bridge"], ["outer-4", "outer-5", "stone_bridge"]]
 	var k := 1
 	for l: Array in plan:
 		var far := int(str(l[1]).get_slice("-", 1))

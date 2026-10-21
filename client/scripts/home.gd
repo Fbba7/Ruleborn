@@ -51,6 +51,7 @@ var notice: UniverseNotice
 var collect_button: Button
 
 var _top: Control
+var _foot: HFlowContainer
 ## Each side button's badge as last drawn, so a button is rebuilt only when
 ## its badge changes.
 var _badges := {}
@@ -88,22 +89,31 @@ func _ready() -> void:
 	middle.add_child(_room())
 	middle.add_child(_edge(RIGHT))
 	column.add_child(middle)
-	notice = UniverseNotice.new()
-	notice.visible = false
-	notice.seen.connect(func() -> void: App.services.router.go(&"defences"))
-	notice.dismissed.connect(_dismiss)
-	column.add_child(notice)
-	collect_button = UI.action(Strings.t("HOME_COLLECT"), _collect, "gold")
-	collect_button.icon = Icons.texture("hud/collectall")
-	collect_button.add_theme_constant_override("icon_max_width", UI.px(30))
-	collect_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	collect_button.visible = false
-	column.add_child(collect_button)
+	# The foot over the world, just above the tabs: the goal and Collect side
+	# by side; the raid notice in their place while it shows, as the designs
+	# raise their raid banner over Collect.
+	_foot = HFlowContainer.new()
+	_foot.alignment = FlowContainer.ALIGNMENT_CENTER
+	_foot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_foot.add_theme_constant_override("separation", UI.px(8))
 	goal = UniverseGoal.new()
 	goal.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	goal.visible = false
 	goal.pressed.connect(func() -> void: App.services.router.go(goal.goal.get("route", &"profile")))
-	column.add_child(goal)
+	_foot.add_child(goal)
+	collect_button = UI.action(Strings.t("HOME_COLLECT"), _collect, "gold")
+	collect_button.icon = Icons.texture("hud/collectall")
+	collect_button.add_theme_constant_override("icon_max_width", UI.px(30))
+	collect_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	collect_button.visible = false
+	_foot.add_child(collect_button)
+	column.add_child(_foot)
+	notice = UniverseNotice.new()
+	notice.visible = false
+	_foot.visible = true
+	notice.seen.connect(func() -> void: App.services.router.go(&"defences"))
+	notice.dismissed.connect(_dismiss)
+	column.add_child(notice)
 	_build_tabs({})
 	menu = UniverseMenu.make(PLACES, WORDS)
 	menu.picked.connect(func(route: StringName) -> void: App.services.router.go(route))
@@ -156,8 +166,10 @@ func _build_top(column: VBoxContainer) -> void:
 
 ## A column of side buttons down one edge, in the middle of the screen.
 func _edge(which: Array) -> VBoxContainer:
+	# High on each edge, beside the top row of islands, as the designs place
+	# them: secondary places, not the thumb's (§21.1 binds frequent controls).
 	var edge := VBoxContainer.new()
-	edge.alignment = BoxContainer.ALIGNMENT_CENTER
+	edge.alignment = BoxContainer.ALIGNMENT_BEGIN
 	edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	edge.add_theme_constant_override("separation", UI.px(8))
 	for s: Array in which:
@@ -184,6 +196,7 @@ func _side(holder: CenterContainer, badge: String) -> void:
 		SIDE_POINTS, badge)
 	action.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var b := action.find_children("*", "Button", true, false)[0] as Button
+	b.set_meta("frequent", false)
 	b.accessibility_name = words if badge == "" else Strings.t("HOME_BADGE_SPOKEN", [words, badge])
 	holder.add_child(action)
 
@@ -199,10 +212,15 @@ func _build_tabs(badges: Dictionary) -> void:
 		tabs.queue_free()
 	tabs = KitTabs.make("islands", badges)
 	tabs.picked.connect(_on_tab)
-	var column := goal.get_parent()
+	var column := _foot.get_parent()
 	column.add_child(tabs)
 	if at >= 0:
 		column.move_child(tabs, at)
+	# The chosen tab's name with an ink outline wide enough to be measured
+	# against (§21.8: 1.5 points or 12% of its size), over the periwinkle.
+	var chosen := tabs.buttons["islands"] as Button
+	for l: Label in chosen.find_children("*", "Label", true, false):
+		l.add_theme_constant_override("outline_size", maxi(UI.px(2), ceili(l.get_theme_font_size("font_size") * 0.13)))
 
 
 ## A night tint over the world behind the top's or the foot's interface, so
@@ -254,18 +272,17 @@ func _on_realm(id: String) -> void:
 	_close = id if world.zoom == 2 else ""
 
 
-## The universe framed into the room between the resources and what is over
-## the tabs, its pins clear of the side buttons.
+## The universe framed into the whole room between the resources and the
+## tabs, as the designs fill it; the goal, Collect and the raid notice float
+## over its foot, as the designs' Collect and raid banner do. Its pins keep
+## clear of the side buttons.
 func _frame_world() -> void:
-	var foot: Control = tabs
-	for c: Control in [goal, collect_button, notice]:
-		if c.visible:
-			foot = c
-	world.fit_between(_top, foot)
-	var left: Control = sides[LEFT[0][0]]
-	var right: Control = sides[RIGHT[0][0]]
-	world.inset_x = Vector2(left.get_global_rect().end.x - world.global_position.x,
-		world.global_position.x + world.size.x - right.get_global_rect().position.x)
+	world.fit_between(_top, tabs)
+	var clear: Array[Rect2] = []
+	for route: StringName in sides:
+		var r := (sides[route] as Control).get_global_rect()
+		clear.append(Rect2(r.position - world.global_position, r.size))
+	world.keep_clear = clear
 
 
 func _on_changed(slice: StringName) -> void:
@@ -306,6 +323,7 @@ func _show_hud() -> void:
 	if unseen < _dismissed:
 		_dismissed = 0
 	notice.show_raids(unseen if unseen > _dismissed else 0)
+	_foot.visible = not notice.visible
 	var track := ShopPresenter.track(store.get_slice(ShopState.TRACK))
 	_side(sides[&"track"], "!" if bool(track.get("can_claim", false)) else "")
 	# The Islands tab counts the producers that are full (§9.3); Collect shows
@@ -372,7 +390,7 @@ func send_waiting(column: VBoxContainer) -> int:
 	if sent > 0 and is_inside_tree():
 		var banner := UI.banner("success", Strings.t("OFFLINE_SENT", sent))
 		column.add_child(banner)
-		column.move_child(banner, goal.get_index())
+		column.move_child(banner, _foot.get_index())
 	return sent
 
 

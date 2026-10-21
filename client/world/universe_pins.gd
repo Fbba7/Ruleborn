@@ -11,6 +11,9 @@ extends Control
 
 ## Pins' words: a little under body text, and never under §21.8's 13 points.
 const POINTS := 14.0
+## The realm labels' parchment and brown ink (§21.8's light family).
+const PARCHMENT := Color("#FBF1DA")
+const BROWN_INK := Color("#2A1A10")
 ## Each resource's colour and its glyph, so the colour is never alone.
 const RESOURCE := {"star_well": ["#F2B43C", "✦"], "aether_spring": ["#3CC6D8", "◆"], "garden": ["#5CC46A", "❦"]}
 
@@ -106,15 +109,26 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 ## a tap swoops to it. Not a button: the screen's own list carries each realm
 ## for a screen reader, and the island itself takes the same tap.
 func _realm_pin(id: String, title: String, level: int, school: Color, key: String) -> PanelContainer:
-	var plate := _plate(Palette.INK, school)
+	# The design's label: a parchment plate edged in ink, the realm's icon,
+	# its name in Marcellus in brown ink, its level on a dark disc after it.
+	var plate := _plate(PARCHMENT, Palette.INK)
+	var box := plate.get_theme_stylebox("panel") as StyleBoxFlat
+	box.set_border_width_all(UI.px(2))
+	box.border_color = school.darkened(0.55)
+	box.shadow_color = Color(0.04, 0.02, 0.03, 0.55)
+	box.shadow_size = 0
+	box.shadow_offset = Vector2(0, UI.px(3))
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation", UI.px(4))
+	row.add_theme_constant_override("separation", UI.px(5))
 	row.add_child(_icon("realm_" + key))
-	var badge := _plate(school.darkened(0.45), school.lightened(0.3), true)
-	badge.add_child(_words(str(level), Palette.PAPER))
+	var name := _words(title, BROWN_INK)
+	name.add_theme_font_override("font", Tokens.font("title"))
+	name.add_theme_font_size_override("font_size", UI.text_px(POINTS + 1.0))
+	row.add_child(name)
+	var badge := _plate(BROWN_INK, BROWN_INK, true)
+	badge.add_child(_words(str(level), PARCHMENT))
 	row.add_child(badge)
-	row.add_child(_words(title, Palette.PAPER))
 	plate.add_child(row)
 	plate.mouse_filter = Control.MOUSE_FILTER_STOP
 	plate.set_meta("realm", id)
@@ -189,15 +203,14 @@ func follow() -> void:
 		return
 	var toward := view.toward()
 	var taken: Array[Rect2] = []
-	# Pins stay between the screen's side columns (home's side buttons).
-	var lo := view.inset_x.x
-	var hi := view.size.x - view.inset_x.y
+	# Pins keep clear of the screen's own controls (home's side buttons).
+	var taken_by_screen: Array[Rect2] = view.keep_clear
 	for p: Dictionary in _pins:
 		var node: Control = p["node"]
 		if p.has("at"):
 			node.visible = view.zoom in (p["zooms"] as Array)
 			if node.visible:
-				_place(node, view.camera.unproject_position(p["at"]), taken, lo, hi)
+				_place(node, view.camera.unproject_position(p["at"]), taken, taken_by_screen)
 			continue
 		var id := str(p.get("realm", ""))
 		if not view.islands.has(id):
@@ -211,15 +224,11 @@ func follow() -> void:
 		if int(p["rank"]) >= 2 or p.get("back", false):
 			shown = shown and not small
 		if p.get("front", false):
-			# A small island's pin is its icon and level; a mid-sized one's
-			# its level and name (the whole universe); a near one's all three.
-			var row := node.get_child(0)
-			var words := row.get_child(row.get_child_count() - 1) as Control
-			var icon := row.get_child(0) as Control
-			var mid := view.zoom == 0 and not small
-			if words.visible == small or icon.visible == mid:
+			# A small island's pin is its icon and level; a nearer one's its name
+			# between them.
+			var words := node.get_child(0).get_child(1) as Control
+			if words.visible == small:
 				words.visible = not small
-				icon.visible = not mid
 				node.reset_size()
 		if view.zoom > 0 and id != view.focus_id:
 			shown = false
@@ -227,7 +236,11 @@ func follow() -> void:
 		if not shown:
 			continue
 		var at := isl.at + Vector3(0, float(p.get("lift", 0.0)), 0)
-		if p.get("front", false):
+		if p.get("front", false) and view.zoom == 0:
+			# Over the whole universe a realm's name floats over its far rim,
+			# as the designs label their islands.
+			at = isl.at - toward * isl.radius * 0.7 + Vector3(0, 4.5, 0)
+		elif p.get("front", false):
 			at = isl.at + toward * isl.radius * 1.02 + Vector3(0, -1.6, 0)
 		elif p.get("back", false):
 			at = isl.at - toward * isl.radius * 0.95 + Vector3(0, 1.0, 0)
@@ -238,15 +251,21 @@ func follow() -> void:
 				node.visible = false
 				continue
 			at = (isl.places[str(p["place"])] as Vector3) + Vector3(0, float(p["lift"]), 0)
-		_place(node, view.camera.unproject_position(at), taken, lo, hi)
+		_place(node, view.camera.unproject_position(at), taken, taken_by_screen)
 
 
-## A pin centred on `s`, kept between `lo` and `hi` across, unless it would
-## cover one already placed.
-static func _place(node: Control, s: Vector2, taken: Array[Rect2], lo: float, hi: float) -> void:
+## A pin centred on `s`, moved out from under any of `screen`'s controls,
+## unless it would cover one already placed.
+static func _place(node: Control, s: Vector2, taken: Array[Rect2], screen: Array[Rect2]) -> void:
 	node.position = (s - node.size / 2.0).round()
-	if hi - lo > node.size.x:
-		node.position.x = clampf(node.position.x, lo, hi - node.size.x)
+	for r: Rect2 in screen:
+		if r.intersects(Rect2(node.position, node.size)):
+			var left := r.get_center().x < s.x
+			node.position.x = r.end.x + UI.px(2) if left else r.position.x - node.size.x - UI.px(2)
+	# And inside the screen's edges.
+	var wide := (node.get_parent() as Control).size.x
+	if wide > node.size.x:
+		node.position.x = clampf(node.position.x, UI.px(4), wide - node.size.x - UI.px(4))
 	# Where it would cover another, a step down or up, else not at all.
 	for step: float in [0.0, 1.0, -1.0]:
 		var box := Rect2(node.position + Vector2(0.0, step * (node.size.y + UI.px(2))), node.size).grow(-UI.px(2))
