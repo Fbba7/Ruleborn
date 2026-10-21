@@ -6,9 +6,12 @@ extends RefCounted
 ## the rest; Lilita One for numbers that do not change, Marcellus for names.
 ## The words are the screens' own; this only dresses them.
 
-## §21.2: "Menus stand on a night backdrop (#171046 to #2C3AA8)".
-const NIGHT_TOP := Color("#171046")
-const NIGHT_BOTTOM := Color("#2C3AA8")
+## §21.2: "Menus stand on a night backdrop (#171046 to #2C3AA8)", taken at
+## its deep end, as the design's sub-screens take it (#2E1F5E to #140C30):
+## the page starts at the hero stage's foot (StageHeroBackdrop.NIGHT_FOOT),
+## so stage and page are one night, and lifts toward §21.2's violet below.
+const NIGHT_TOP := Color("#140C30")
+const NIGHT_BOTTOM := Color("#1A1240")
 ## §21.8: "a violet card from #261A4C to #1A1134 … with light text #F3EEFF".
 const CARD := Color("#241848")
 const CARD_EDGE := Color("#3A2A6E")

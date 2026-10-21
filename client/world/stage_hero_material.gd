@@ -22,7 +22,7 @@ const KINDS := {
 		"lip": 3.0, "lip_c": "#4A2A10", "gloss": "#FFFFFF8C", "ink": "#1B1430"},
 	"green": {"fill": ["#A8F0B8", "#7EDDA0", "#4FC384"], "rim": "#1F6E46", "rim_w": 1.0, "line": "#1A0C14",
 		"lip": 3.0, "lip_c": "#0E3A20", "gloss": "#FFFFFF80", "ink": "#0A3A20"},
-	"tab": {"fill": ["#7480F4", "#4E40D0", "#3426A0"], "rim": "#F2C45C", "rim_w": 1.5, "line": "#120C2A",
+	"tab": {"fill": ["#6470E8", "#4A3CCB", "#3226A0"], "rim": "#F2C45C", "rim_w": 1.5, "line": "#120C2A",
 		"lip": 0.0, "lip_c": "#00000000", "gloss": "#FFFFFF4D", "ink": "#FFF6DC"},
 	"glass": {"fill": ["#1A0E22D9", "#140A1CD0", "#100816C8"], "rim": "#E9B65C73", "rim_w": 1.0,
 		"line": "#00000000", "lip": 0.0, "lip_c": "#00000000", "gloss": "#FFFFFF10", "ink": "#F3EEFF"},

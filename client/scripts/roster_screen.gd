@@ -67,6 +67,9 @@ func _build() -> void:
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(stage)
 	header_label = StageHeroKit.words("", 15.0, StageHeroSkin.LIGHT)
+	if Settings.text_scale > 100:
+		header_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		header_label.custom_minimum_size.x = UI.px(120)
 	cards = VBoxContainer.new()
 	cards.add_theme_constant_override("separation", UI.px(10))
 	body.add_child(padded(cards))

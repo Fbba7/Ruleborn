@@ -181,7 +181,7 @@ func _sage(s: Dictionary, busy: bool) -> Control:
 	var chips := HFlowContainer.new()
 	chips.add_theme_constant_override("h_separation", UI.px(6))
 	chips.add_theme_constant_override("v_separation", UI.px(4))
-	chips.add_child(StageHeroKit.chip(s["lock"], "#2F8A45" if s["unlocked"] else "card", "✓" if s["unlocked"] else ""))
+	chips.add_child(StageHeroKit.chip(s["lock"], "#1F6A35" if s["unlocked"] else "card", "✓" if s["unlocked"] else ""))
 	if s["guarding"]:
 		chips.add_child(StageHeroKit.chip(Strings.t("SAGE_ON_GUARD"), "#5A3FB0", str(RosterPresenter.MARK["guarding"])))
 	side.add_child(chips)

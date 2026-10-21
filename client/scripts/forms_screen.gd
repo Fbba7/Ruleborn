@@ -53,6 +53,9 @@ func _build() -> void:
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(stage)
 	header_label = StageHeroKit.words("", 15.0, StageHeroSkin.LIGHT)
+	if Settings.text_scale > 100:
+		header_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		header_label.custom_minimum_size.x = UI.px(120)
 	cards = VBoxContainer.new()
 	cards.add_theme_constant_override("separation", UI.px(10))
 	body.add_child(RosterScreen.padded(cards))
@@ -154,7 +157,7 @@ func _detail(k: Dictionary, o: Dictionary) -> Control:
 ## A note's badge: its glyph on its colour, bright when had, dim when not.
 static func _pip(note: String, had: bool, points := 22.0) -> PanelContainer:
 	var colour: Color = StageHeroSculpt.NOTE.get(note, StageHeroSkin.OUTLINE)
-	var p := StageHeroSkin.badge(str(GLYPH.get(note, "?")), colour.darkened(0.35) if had else Color("#2A1E52"),
+	var p := StageHeroSkin.badge(str(GLYPH.get(note, "?")), colour.darkened(0.45) if had else Color("#2A1E52"),
 		points * 0.6)
 	p.custom_minimum_size = Vector2.ONE * UI.px(points)
 	if not had:
@@ -177,7 +180,7 @@ func _tile(k: Dictionary, o: Dictionary) -> Control:
 	tile.custom_minimum_size.x = UI.px(60)
 	tile.gui_input.connect(_choose.bind(str(k["kind"])))
 	if not o.is_empty() and int(o["have"]) >= int(o["of"]):
-		var done := StageHeroSkin.badge("✓", Color("#2F8A45"), 16.0)
+		var done := StageHeroSkin.badge("✓", Color("#1F6A35"), 16.0)
 		done.accessibility_name = Strings.t("FORMS_OUTFIT_DONE", int(o["of"]))
 		StageHeroSkin.pin(tile, done, Control.PRESET_TOP_RIGHT)
 	v.add_child(tile)

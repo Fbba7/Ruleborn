@@ -49,6 +49,8 @@ static func chip(text: String, kind := "glass", glyph := "", wraps := false) -> 
 	if glyph != "":
 		row.add_child(words(glyph, 14.0, ink))
 	var said := words(text, 14.0, ink)
+	# At §20.8's larger text every chip may wrap, so none outgrows the phone.
+	wraps = wraps or Settings.text_scale > 100
 	if wraps:
 		said.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		said.custom_minimum_size.x = UI.px(60)

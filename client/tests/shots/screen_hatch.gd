@@ -35,6 +35,9 @@ func _go() -> void:
 		(screen.body.get_parent() as ScrollContainer).scroll_vertical = int(OS.get_environment("SCROLL"))
 	screen.stage.at_time(1.5)
 	await RenderingServer.frame_post_draw
+	# §21.3's budget, as RenderingServer counts the frame.
+	print("draw calls ", RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+		", primitives ", RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME))
 	root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()

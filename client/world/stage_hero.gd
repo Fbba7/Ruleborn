@@ -89,6 +89,27 @@ func _init() -> void:
 	viewport.msaa_3d = Viewport.MSAA_4X
 	viewport.handle_input_locally = false
 	container.add_child(viewport)
+	# The stage's foot fades into the page's night, so the island's roots
+	# hang into the same dark the cards stand on and no edge shows.
+	var foot := TextureRect.new()
+	var fade := GradientTexture2D.new()
+	fade.fill_from = Vector2(0, 0)
+	fade.fill_to = Vector2(0, 1)
+	fade.width = 4
+	fade.height = 64
+	var ramp := Gradient.new()
+	ramp.set_color(0, Color(StageHeroBackdrop.NIGHT_FOOT, 0.0))
+	ramp.set_color(1, StageHeroBackdrop.NIGHT_FOOT)
+	fade.gradient = ramp
+	foot.texture = fade
+	foot.stretch_mode = TextureRect.STRETCH_SCALE
+	foot.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	foot.anchor_left = 0.0
+	foot.anchor_right = 1.0
+	foot.anchor_top = 0.8
+	foot.anchor_bottom = 1.0
+	foot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(foot)
 	world = Node3D.new()
 	viewport.add_child(world)
 	_light()
