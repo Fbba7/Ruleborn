@@ -1219,3 +1219,7 @@ SCREEN_RATE_FAIRNESS,Fair,Fair,Justa,Justa,Fair,Juste
 SCREEN_MILESTONES,Milestones %s,Milestones %s,Marcos %s,Marcos %s,Meilensteine %s,Paliers %s
 SCREEN_MASTERY,Mastery %d/%d,Mastery %d/%d,Maestria %d/%d,Mestria %d/%d,Meisterschaft %d/%d,Maîtrise %d/%d
 SCREEN_WEAVE,Weave,Weave,Tecer,Tecer,Weben,Tisser
+SCREEN_COST,Cost,Cost,Custo,Custo,Kosten,Coût
+SCREEN_READY_IN,Ready in,Ready in,Pronta em,Pronta em,Fertig in,Prête dans
+SCREEN_CHOOSE,Choose %s,Choose %s,Escolher %s,Escolher %s,%s wählen,Choisir %s
+SCREEN_OPEN,Open,Open,Abrir,Abrir,Öffnen,Ouvrir

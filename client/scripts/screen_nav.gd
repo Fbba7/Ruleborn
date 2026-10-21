@@ -8,6 +8,10 @@ extends RefCounted
 ## header holds no control, the hub sits above the tabs, and a sub-screen's
 ## back control is the first of its dock.
 
+## How far the dock stands above the safe area: the corners' band is 8% of
+## the frame's height as the build checks it (187 of 2340 pixels), of which
+## the safe area is 132.
+const CORNER_LIFT_POINTS := 20.0
 ## The largest text size, in percent, at which every tab shows its word.
 const LABELS_UP_TO := 125
 
@@ -36,13 +40,16 @@ static func header(title: String, right: Control = null) -> BoxContainer:
 
 
 ## The lowest band of a sub-screen (§21.1): the back button to `back`, then
-## the screen's actions, clear of the corners; it wraps at large text.
+## the screen's actions. It stands above the corners' band, as the tab bar
+## does, so it may use the frame's width; it wraps at large text.
 static func dock(back: StringName, actions: Array = []) -> MarginContainer:
 	var row := UI.row(8.0, true)
 	row.add_child(back_button(back))
 	for a: Control in actions:
 		row.add_child(a)
-	var m := UI.narrow(row)
+	var m := MarginContainer.new()
+	m.add_theme_constant_override("margin_bottom", UI.px(CORNER_LIFT_POINTS))
+	m.add_child(row)
 	m.name = "Dock"
 	return m
 

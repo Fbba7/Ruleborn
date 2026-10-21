@@ -45,10 +45,11 @@ func _build() -> void:
 	body = UI.scroll(column)
 	# In the scroll, so large text never pushes the buttons off the phone.
 	preview = LawFxPreview.new()
-	preview.custom_minimum_size.y = UI.px(236)
+	preview.custom_minimum_size.y = UI.px(300)
 	preview.visible = false
 	_stage = MarginContainer.new()
 	_stage.add_child(preview)
+	ScreenParts.cull(preview, body)
 	body.add_child(_stage)
 	column.add_child(ScreenNav.hub("laws", &"harmony"))
 	column.add_child(ScreenNav.bar("laws"))
@@ -76,7 +77,7 @@ func _refresh() -> void:
 	ScreenParts.set_pill(_strain, "%s · %s" % [h["percent"], WeavingPresenter.band_name(int(h["band"]))])
 	_strain.tooltip_text = h["header"]
 	_preview()
-	_stage.visible = preview.visible
+	_stage.visible = bool(preview.get_meta("wanted", false))
 	for r: Dictionary in h["realms"]:
 		body.add_child(_realm(r))
 	body.add_child(ScreenKit.button(Strings.t("HOME_WEAVING"), func() -> void: App.services.router.go(&"weaving"),
@@ -178,6 +179,7 @@ func _preview() -> void:
 	if _shown == "" and not best.is_empty():
 		_shown = str(best["realm"])
 	var laws := LawFxPreview.realm_laws(best)
+	preview.set_meta("wanted", laws.size() >= 2)
 	preview.visible = laws.size() >= 2
 	if preview.visible:
 		preview.show_laws(laws, LawFxPreview.realm_type_of(best))

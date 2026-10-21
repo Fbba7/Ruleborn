@@ -252,3 +252,29 @@ static func set_pill(p: PanelContainer, words: String) -> void:
 	for l: Label in p.find_children("*", "Label", true, false):
 		l.text = words
 	p.visible = words != ""
+
+
+## Stops drawing `view` (a 3D preview the screen wants shown, meta
+## "wanted") while less than `share` of it is in the list's view: a world drawn behind a sliver costs its full draw calls
+## (§21.3's 150) and the phone's time for nothing.
+static func cull(view: Control, list: Control, share := 0.5) -> void:
+	var scroll := list.get_parent() as ScrollContainer
+	if scroll == null:
+		return
+	var check := func(_v: float = 0.0) -> void:
+		if not is_instance_valid(view) or not view.is_inside_tree() or view.get_parent() == null:
+			return
+		var host := view.get_parent() as Control
+		var seen := host.get_global_rect().intersection(scroll.get_global_rect())
+		var wanted := bool(view.get_meta("wanted", true))
+		var shown := wanted and (host.size.y <= 0.0 or seen.size.y >= host.size.y * share)
+		if view.visible != shown:
+			# The frame keeps the preview's height while it is not drawn, so
+			# the list does not jump, and so it can be seen to come back.
+			host.custom_minimum_size.y = view.get_combined_minimum_size().y if not shown else 0.0
+			view.visible = shown
+	scroll.get_v_scroll_bar().value_changed.connect(check)
+	# The list moves under the scroll as it scrolls, whether a finger or the
+	# code moved it.
+	list.item_rect_changed.connect(check)
+	view.tree_entered.connect(check.call_deferred)
