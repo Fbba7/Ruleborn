@@ -21,6 +21,7 @@ func _init(t: SceneTree, c: Callable, m: Callable) -> void:
 func run() -> void:
 	_realm()
 	_defence()
+	_lod()
 	await _scout()
 	await _builder()
 	await _drag()
@@ -44,6 +45,26 @@ func _realm() -> void:
 			and bare.buildings().is_empty() and replay != null and replay.size() == Vector2i(12, 12)
 			and StageRealm.realm_type("Lantern Vale") == "lanternvale" and StageRealm.realm_type("?") == "heart",
 		"%s %s %s" % [kinds, bare.buildings(), replay])
+
+
+func _lod() -> void:
+	var sphere := SphereMesh.new()
+	sphere.radial_segments = 48
+	sphere.rings = 24
+	var st := SurfaceTool.new()
+	st.create_from_arrays(sphere.get_mesh_arrays())
+	st.deindex()
+	var loose := st.commit()
+	var made := StageLod.of(loose)
+	var lods: Array = RenderingServer.mesh_get_surface(made.get_rid(), 0).get("lods", [])
+	var small := BoxMesh.new()
+	var box := ArrayMesh.new()
+	box.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, small.get_mesh_arrays())
+	check.call("a realm screen's loose-triangle meshes gain lower levels for the home camera, once, and small ones "
+			+ "are left as they are (21.3)",
+		made != loose and not lods.is_empty() and StageLod.of(loose) == made and StageLod.of(made) == made
+			and StageLod.of(box) == box and made.get_surface_count() == loose.get_surface_count(),
+		"%s %d" % [made, lods.size()])
 
 
 func _defence() -> void:
