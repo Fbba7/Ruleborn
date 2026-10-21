@@ -575,7 +575,7 @@ func signature() -> Array:
 					p + Vector3(0, 0.3 + _rng.randf() * 1.4, 0)))
 			var glow := Color("#C8FF96")
 			glow.a = 0.0
-			out.append([_octa_mesh(), at, _pick(at.size(), [glow, Color(1.0, 0.85, 0.45, 0.0)]), 0.0, 0.25])
+			out.append([_octa_mesh(), at, _pick(at.size(), [glow, Color(1.0, 0.85, 0.45, 0.0)]), 0.0, 0.25, "spark"])
 			var caps := _meadow_spots(_few(32, 0.6), 0.2)
 			var cap_cols: Array[Color] = []
 			for i in caps.size():
@@ -885,6 +885,14 @@ static func _catmull(pts: Array[Vector2], u: float) -> Vector2:
 		+ (-p0 + 3.0 * p1 - 3.0 * p2 + p3) * t3)
 
 
+## The highest a cloud `tall` metres high and `d` metres out may float and
+## still never cover the meadow from the home camera's 35° on any of its four
+## turns: a cloud on the camera's side stands in front of the rim, so its top
+## must stay under the line from the rim to the eye.
+func _clear_of_rim(d: float, tall: float) -> float:
+	return (d - radius() - 0.4) * tan(deg_to_rad(35.0)) - tall * 0.5
+
+
 ## Small islets floating beside the island, with a grass cap and, on most,
 ## a bush (`islandFX`, :1007), one mesh; and where the clouds float at the
 ## island's level and below (`cloud`, :940), drawn as painted sprites.
@@ -943,15 +951,19 @@ func sky_dressing() -> Array:
 		var a := TAU * (i + _rng.randf() * 0.7) / 7.0
 		var d := r + 1.0 + _rng.randf() * 5.5
 		var w := 2.2 + _rng.randf() * 2.4
-		clouds.append(Transform3D(Basis().scaled(Vector3(w, w * (0.42 + _rng.randf() * 0.12), 1.0)),
-			Vector3(cos(a) * d, -2.5 + _rng.randf() * 4.5 - (3.0 if i % 3 == 0 else 0.0), sin(a) * d)))
+		var tall := w * (0.42 + _rng.randf() * 0.12)
+		var y := -2.5 + _rng.randf() * 4.5 - (3.0 if i % 3 == 0 else 0.0)
+		clouds.append(Transform3D(Basis().scaled(Vector3(w, tall, 1.0)),
+			Vector3(cos(a) * d, minf(y, _clear_of_rim(d, tall)), sin(a) * d)))
 	if kind == "skyfield":
 		# §21.4: Skyfield's "High clouds": a few more, wide and high.
 		# Beyond the rim, so none hides the realm.
 		for i in 4:
 			var a := TAU * (i + 0.5 + _rng.randf() * 0.5) / 4.0
-			var d := r * (1.05 + _rng.randf() * 0.5)
 			var w := 3.5 + _rng.randf() * 2.5
-			clouds.append(Transform3D(Basis().scaled(Vector3(w, w * 0.36, 1.0)),
-				Vector3(cos(a) * d, 5.0 + _rng.randf() * 3.0, sin(a) * d)))
+			var y := 5.0 + _rng.randf() * 3.0
+			# Far enough out that, on whichever side the camera turns to,
+			# the cloud never stands over the meadow.
+			var d := r + 1.5 + (y + w * 0.18) / tan(deg_to_rad(35.0))
+			clouds.append(Transform3D(Basis().scaled(Vector3(w, w * 0.36, 1.0)), Vector3(cos(a) * d, y, sin(a) * d)))
 	return [m.mesh(), clouds]

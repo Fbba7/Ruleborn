@@ -24,6 +24,7 @@ static var _glow: Shader = load("res://world/look_glow.gdshader")
 static var _bird: Shader = load("res://world/look_bird.gdshader")
 static var _streak: Shader = load("res://world/look_streak.gdshader")
 static var _vignette: Shader = load("res://world/look_vignette.gdshader")
+static var _spark: Shader = load("res://world/look_spark.gdshader")
 
 var environment: Environment
 var sun: DirectionalLight3D
@@ -230,14 +231,12 @@ func _scatter_part(part: Array) -> MultiMeshInstance3D:
 	var tag: Variant = part[5] if part.size() > 5 else null
 	if tag is String and tag == "streak":
 		return _streaks_of(part[1])
+	if tag is float or (tag is String and (tag == "night" or tag == "spark")):
+		return _sparks_of(part, tag)
 	var mi := _scatter(part[0], part[1], part[2], part[3], part[4])
 	var m := mi.material_override as ShaderMaterial
-	if tag is float:
-		m.set_shader_parameter("rise", tag)
-	elif tag is String:
+	if tag is String:
 		match tag:
-			"night":
-				_night.append(m)
 			"twinkle":
 				m.set_shader_parameter("twinkle", 0.8)
 			"glow", "night glow":
@@ -258,6 +257,26 @@ func _scatter_part(part: Array) -> MultiMeshInstance3D:
 				mi.material_override = bm
 				# The flock wheels round the island in the shader, beyond its placed box.
 				mi.custom_aabb = AABB(Vector3(-30, -10, -30), Vector3(60, 20, 60))
+	return mi
+
+
+## Specks of light (look_spark.gdshader): a firefly shown after dark ("night"),
+## a drifting fly ("spark"), or a mote or spark rising `tag` metres.
+func _sparks_of(part: Array, tag: Variant) -> MultiMeshInstance3D:
+	var mi := _scatter(_quad(), part[1], part[2], 0.0, 0.0)
+	var m := ShaderMaterial.new()
+	m.shader = _spark
+	m.set_shader_parameter("drift", part[4])
+	if tag is float:
+		m.set_shader_parameter("rise", tag)
+		# Motes and sparks show by day too: fainter and finer than fireflies.
+		m.set_shader_parameter("min_px", 7.0)
+		m.set_shader_parameter("strength", 0.5)
+	elif tag == "night":
+		_night.append(m)
+	mi.material_override = m
+	# They wander and rise beyond their placed box.
+	mi.custom_aabb = AABB(Vector3(-30, -5, -30), Vector3(60, 15, 60))
 	return mi
 
 
