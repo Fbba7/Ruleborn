@@ -79,6 +79,9 @@ var heist := true
 ## The buildings standing ([kind, x, y, side], `RulebornIsland.buildings()`),
 ## when the screen knows them, so each footprint is drawn as its kind.
 var buildings: Array = []
+## The kit's level of detail (T3: `BuildingKit.FULL`, or `BuildingKit.MID`
+## for the realm screens and the home camera), set before `show_replay`.
+var kit_detail := BuildingKit.FULL
 var pitch := HEIST_PITCH
 ## The camera's quarter turns (§21.1: "rotatable in 90° steps") and zoom.
 var turns := 0
@@ -300,6 +303,7 @@ func _build_statics() -> void:
 	var kit := RealmKit.new(replay, colours)
 	kit.buildings = buildings
 	kit.island_seed = seed_from
+	kit.detail = kit_detail
 	kit.build()
 	# The kit's layers with its own materials (T3: they carry its idle motion).
 	for mi: MeshInstance3D in kit.instances():

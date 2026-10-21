@@ -70,7 +70,8 @@ static func _citadel(b: BuildingKit) -> void:
 	for p: Vector2 in [Vector2(-s, -s), Vector2(s, -s), Vector2(-s, s), Vector2(s, s)]:
 		var th := 1.1 if p.y < 0 else 0.95
 		b.cyl(0.2, 0.2, th, b.stone, p.x, 0.3, p.y, 10)
-		b.cyl(0.21, 0.21, 0.03, b.stone2, p.x, 0.3 + th * 0.5, p.y, 10)
+		if not b.lighter:
+			b.cyl(0.21, 0.21, 0.03, b.stone2, p.x, 0.3 + th * 0.5, p.y, 10)
 		b.cyl(0.25, 0.22, 0.08, b.stone2, p.x, 0.3 + th, p.y, 10)
 		b.cone(0.26, 0.5, roof, p.x, 0.38 + th, p.y, 10)
 		b.cone(0.02, 0.15, KitStyle.GOLD, p.x, 0.88 + th, p.y, 6)
@@ -88,7 +89,7 @@ static func _citadel(b: BuildingKit) -> void:
 		b.box(0.02, 0.34, 0.08, KitStyle.lit(Color("#FFE7F4"), 0.5), cos(q) * 0.33, 1.6, sin(q) * 0.33, -q)
 	b.cyl(0.52, 0.44, 0.08, roof, 0, 2.36, 0, 8)
 	b.cyl(0.3, 0.26, 0.5, body, 0, 2.44, 0, 8)
-	for i in 4:
+	for i in (0 if b.lighter else 4):
 		var q := i * PI / 2.0 + PI / 4.0
 		b.cone(0.05, 0.24, KitStyle.GOLD, cos(q) * 0.33, 2.84, sin(q) * 0.33, 4)
 	b.cone(0.42, 1.0, roof, 0, 2.94, 0, 8)
@@ -107,7 +108,7 @@ static func _citadel(b: BuildingKit) -> void:
 	b.d.torus(Transform3D(Basis(Vector3.RIGHT, 1.1), orb), 0.28 * b.unit, 0.014 * b.unit, KitStyle.GOLD, 20, 4)
 	b.stop()
 	# Pages fluttering round it, from the second look.
-	if b.tier >= 1:
+	if b.tier >= 1 and not b.lighter:
 		b.move(Geo.Anim.SPIN_Y, b.at(0, 2.0, 0))
 		for k in 5:
 			var a := TAU * k / 5.0
@@ -179,7 +180,12 @@ static func _anchor(b: BuildingKit) -> void:
 		var a := TAU * k / 4.0 + PI / 4.0
 		var top := Vector3(cos(a) * 0.17, 0.42, sin(a) * 0.17)
 		var foot := Vector3(cos(a) * 0.5, 0.08, sin(a) * 0.5)
-		for m in 6:
+		if b.lighter:
+			# The chain as one dark bar at the mid detail.
+			var run := b.at(foot.x, foot.y, foot.z) - b.at(top.x, top.y, top.z)
+			b.d.box(Transform3D(Basis.looking_at(run.normalized()), b.at(top.x, top.y, top.z) + run / 2.0),
+				Vector3(0.02 * b.unit, 0.02 * b.unit, run.length()), KitStyle.IRON)
+		for m in (0 if b.lighter else 6):
 			var p := top.lerp(foot, (m + 0.5) / 6.0)
 			p.y -= sin((m + 0.5) / 6.0 * PI) * 0.04
 			var yaw := -a + (PI / 2.0 if m % 2 == 0 else 0.0)
@@ -202,7 +208,7 @@ static func _spring(b: BuildingKit) -> void:
 	b.g.prism(b.place(0, 0, 0, PI / 8.0), 8, 0.52 * b.unit, 0.5 * b.unit, 0.18 * b.unit, teal.darkened(0.1), false,
 		teal)
 	b.g.cyl(b.place(0, 0.18, 0), 0.45 * b.unit, 0.45 * b.unit, 0.008 * b.unit, ink, 12)
-	for k in 16:
+	for k in range(0, 16, 2 if b.lighter else 1):
 		var a := TAU * k / 16.0
 		b.ball(0.035, rim, cos(a) * 0.5, 0.19, sin(a) * 0.5, 0.7, 2, 5)
 	var tiers := [[0.32, 0.5], [0.2, 0.78]]
@@ -212,7 +218,7 @@ static func _spring(b: BuildingKit) -> void:
 		var y: float = tr[1]
 		b.cyl(r * 0.6, r, 0.08, teal, 0, y - 0.08, 0, 10)
 		b.g.cyl(b.place(0, y, 0), r * 0.92 * b.unit, r * 0.92 * b.unit, 0.006 * b.unit, ink, 10)
-		for k in 10:
+		for k in (0 if b.lighter else 10):
 			var a := TAU * k / 10.0
 			b.ball(0.025, rim, cos(a) * r, y + 0.005, sin(a) * r, 0.7, 2, 4)
 		# Ink falling from the tier's lip to the one below.

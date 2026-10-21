@@ -64,6 +64,8 @@ static func _grown(g: Geo, fine: Geo, p: Vector3, size: float, draw: Callable) -
 	var tf := Geo.new()
 	tg.skip_down = g.skip_down
 	tf.skip_down = fine.skip_down
+	tg.coarse = g.coarse
+	tf.coarse = fine.coarse
 	draw.call(tg, tf)
 	var xf := Transform3D(Basis().scaled(Vector3.ONE * size), p)
 	g.absorb(tg, xf)

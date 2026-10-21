@@ -57,6 +57,9 @@ var level := 3
 var island_seed := 0
 ## The Vault's tile, which the worn trails lead to; (-1, -1) for none.
 var vault_at := Vector2i(-1, -1)
+## The level of detail (`BuildingKit.FULL`, or `BuildingKit.MID` for the
+## realm view and the home camera): set before `build`.
+var detail := BuildingKit.FULL
 
 var ground := Geo.new()
 var scatter := Geo.new()
@@ -138,6 +141,8 @@ static func jitter(t: Vector2i, slot: int) -> float:
 
 ## Build every layer.
 func build() -> void:
+	for g: Geo in [scatter, hero, prop, clear, water, lava]:
+		g.coarse = detail == BuildingKit.MID
 	var footprints := _footprints()
 	var blocked := {}
 	for fp: Array in footprints:
@@ -177,7 +182,7 @@ func build() -> void:
 		var side: int = fp[3]
 		var mid := Vector3(a.x + (side - 1) / 2.0, a.y, a.z + (side - 1) / 2.0)
 		var turn := 0.0 if fp[0] == "keeper_s_spire" else facing(Vector2i(fp[1], fp[2]), side)
-		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop, clear, turn)
+		BuildingKit.build(hero, str(fp[0]), mid, side, int(fp[4]), palette, prop, clear, turn, detail)
 	for k in range(0, tunnels.size() - 1, 2):
 		_tunnel(tunnels[k], tunnels[k + 1])
 		_tunnel(tunnels[k + 1], tunnels[k])

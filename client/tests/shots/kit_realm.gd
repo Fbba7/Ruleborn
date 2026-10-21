@@ -3,7 +3,7 @@ extends SceneTree
 ## garden, a library and more joined by gravel paths, with trees, hedges, a
 ## stream and a pond, on the home camera (§21.1's 35°), saved as a still
 ## (tools/render/shoot.sh). REALM (default heart), LEVEL (the buildings'
-## level, default 5), HOUR, ZOOM, TURN and PITCH are optional; SHOT is the file.
+## level, default 5), HOUR, ZOOM, TURN, PITCH and DETAIL (0 full, 1 mid) are optional; SHOT is the file.
 func _initialize() -> void:
 	_shoot()
 
@@ -45,6 +45,7 @@ func _shoot() -> void:
 		known.append([b[0], b[1], b[2], b[3], lvl])
 	view.buildings = known
 	view.heist = false
+	view.kit_detail = int(OS.get_environment("DETAIL")) if OS.get_environment("DETAIL") != "" else BuildingKit.FULL
 	view.pitch = WorldView.HOME_PITCH
 	root.add_child(view)
 	view.set_sky_hour(int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 12)

@@ -27,6 +27,10 @@ var painted := false
 ## Whether faces turned straight down are left out: §21.1's cameras are
 ## always above, so the kit sets this on its layers; other users keep them.
 var skip_down := false
+## The mid-detail level (the realm view's and home camera's, §21.3's 40,000
+## triangles): round shapes take about half their sides and rings, and a
+## chamfered box is a plain one, so a silhouette stays and its facets go.
+var coarse := false
 var uv := Vector2.ZERO
 var uv2 := Vector2.ZERO
 
@@ -105,6 +109,9 @@ func box(at: Transform3D, size: Vector3, col: Color, top := Color(0, 0, 0, 0)) -
 ## A box with its edges chamfered by `bevel`, so it catches the light on
 ## every edge and reads soft, like a toy (§21.1). 44 triangles.
 func rbox(at: Transform3D, size: Vector3, col: Color, bevel := 0.04, top := Color(0, 0, 0, 0)) -> void:
+	if coarse:
+		box(at, size, col, top)
+		return
 	var h := size / 2.0
 	var b := minf(bevel, minf(h.x, minf(h.y, h.z)) * 0.9)
 	var up: Color = top if top.a > 0.0 else col
@@ -183,6 +190,7 @@ func _outward(a: Vector3, b: Vector3, c: Vector3, d: Vector3, col: Color, centre
 func prism(at: Transform3D, sides: int, r0: float, r1: float, height: float, col: Color, smooth := false,
 		top := Color(0, 0, 0, 0)) -> void:
 	var up: Color = top if top.a > 0.0 else col
+	sides = _fewer(sides, 6)
 	for k in sides:
 		var a0 := TAU * k / sides
 		var a1 := TAU * (k + 1) / sides
@@ -239,6 +247,9 @@ func _tri_n(a: Vector3, b: Vector3, c: Vector3, na: Vector3, nb: Vector3, nc: Ve
 ## only the top half, a dome.
 func ball(at: Transform3D, radius: float, col: Color, rings := 5, segments := 8, upper := false) -> void:
 	var basis := at.basis.inverse().transposed()
+	if coarse:
+		rings = maxi(2, ceili(rings * 0.6))
+		segments = maxi(5, ceili(segments * 0.6))
 	var point := func(i: int, j: int) -> Vector3:
 		var v := PI * i / rings * (0.5 if upper else 1.0)
 		var u := TAU * j / segments
@@ -299,6 +310,8 @@ func gem(at: Transform3D, radius: float, tall: float, col: Color, sides := 4) ->
 ## A ring of tube lying in `at`'s XZ plane: radius `r`, thickness `t`.
 func torus(at: Transform3D, r: float, t: float, col: Color, segments := 16, sides := 5) -> void:
 	var basis := at.basis.inverse().transposed()
+	segments = _fewer(segments, 6)
+	sides = _fewer(sides, 3)
 	for i in segments:
 		for j in sides:
 			var pts: Array[Vector3] = []
@@ -318,6 +331,7 @@ func torus(at: Transform3D, r: float, t: float, col: Color, segments := 16, side
 
 ## A flat ring or disc lying on the ground at `at`.
 func ring(at: Transform3D, r_in: float, r_out: float, col: Color, segments := 20) -> void:
+	segments = _fewer(segments, 6)
 	for k in segments:
 		var a0 := TAU * k / segments
 		var a1 := TAU * (k + 1) / segments
@@ -397,6 +411,12 @@ func mesh() -> ArrayMesh:
 ## `skip_down` and it is turned straight down.
 func _shown(at: Transform3D, n: Vector3) -> bool:
 	return not skip_down or (at.basis * n).normalized().y > -0.9
+
+
+## `n` sides or segments, about halved at the mid-detail level but never
+## under `least`.
+func _fewer(n: int, least: int) -> int:
+	return maxi(least, n >> 1) if coarse and n > least else n
 
 
 static func place(position: Vector3, yaw := 0.0, scale := Vector3.ONE) -> Transform3D:
