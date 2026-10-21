@@ -20,6 +20,8 @@ var status_label: Label
 ## crown and a figure walking in its gait (LawFxPreview).
 var preview: LawFxPreview
 var _frame: PanelContainer
+var _window: PanelContainer
+var _below: VBoxContainer
 
 
 func _ready() -> void:
@@ -45,17 +47,21 @@ func _build() -> void:
 	var list := UI.scroll(column)
 	box = VBoxContainer.new()
 	box.add_theme_constant_override("separation", UI.px(8))
-	var inner := ScreenKit.panel("card_lit", box, 18.0, 12.0)
-	_frame = ScreenKit.panel("oak", inner, 24.0, 7.0)
+	_window = ScreenKit.panel("card_lit", box, 18.0, 10.0)
+	_frame = ScreenKit.panel("oak", _window, 24.0, 8.0)
 	list.add_child(_frame)
+	_below = VBoxContainer.new()
+	_below.add_theme_constant_override("separation", UI.px(8))
+	list.add_child(_below)
 	# In the scroll, so large text never pushes the buttons off the phone.
 	preview = LawFxPreview.new()
 	preview.custom_minimum_size.y = UI.px(190)
 	if law != "":
 		preview.show_laws([law])
 	var lab := ScreenKit.button(Strings.t("HUB_LAB"), func() -> void: App.services.router.go(&"lab"), "leather")
-	var codex := ScreenKit.button(Strings.t("CODEX_TITLE"), func() -> void: App.services.router.go(&"codex"), "gold")
-	column.add_child(ScreenNav.dock(&"codex", [lab, codex]))
+	var weave := ScreenKit.button(Strings.t("SCREEN_WEAVE"), func() -> void: App.services.router.go(&"weaving"),
+		"gold")
+	column.add_child(ScreenNav.dock(&"codex", [lab, weave]))
 
 
 func _refresh() -> void:
@@ -73,38 +79,60 @@ func _refresh() -> void:
 		return
 	UI.set_status(status_label, "info", "")
 	ScreenParts.show_status(status_label)
+	for child in _below.get_children():
+		_below.remove_child(child)
+		child.queue_free()
 	var frame_kind: String = ScreenParts.RANK_FRAME.get(c["rank_key"], "oak")
 	ScreenKit.restyle(_frame, frame_kind, 24.0)
+	# The card's face is its school's colour, as the design's (§21.7: "the
+	# school shape and colour at the top").
+	UI.dress(_window, "window_" + str(c["school"]), 18.0)
 	box.add_child(_top(c))
-	var name := ScreenKit.inked(ScreenKit.text(c["name"], 30.0, "name", "card_lit"), 1.5)
+	var name := ScreenKit.text(c["name"], 30.0, "name", "parchment")
 	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name.set_meta("law", c["law"])
-	box.add_child(name)
-	box.add_child(_pips(c))
+	box.add_child(ScreenKit.panel("parchment", name, 14.0, 6.0))
 	var art := ScreenKit.panel("well", preview, 16.0, 3.0)
 	box.add_child(art)
 	var rule := ScreenKit.text(c["rule"], 17.0, "body", "parchment", false, true)
 	rule.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(ScreenKit.panel("parchment", rule, 14.0, 10.0))
-	box.add_child(_notes(c))
-	box.add_child(_pages(c))
-	var weak := ScreenParts.item("hud", "warning", Strings.t("SCREEN_WEAKNESS"), c["weak"], null, "well")
-	box.add_child(weak)
+	box.add_child(_strip(c))
+	_below.add_child(_notes(c))
+	_below.add_child(_pages(c))
+	var weak := ScreenParts.item("hud", "warning", Strings.t("SCREEN_WEAKNESS"), c["weak"], null, "card")
+	_below.add_child(weak)
+
+
+## The design's info strip at the card's foot, on parchment: the rank on
+## its frame's chip, the school, and the tier in pips and words.
+func _strip(c: Dictionary) -> Control:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(6))
+	var frame_kind: String = ScreenParts.RANK_FRAME.get(c["rank_key"], "oak")
+	var rank := ScreenKit.panel(frame_kind, ScreenKit.text(c["rank_words"].to_upper(), 13.0, "words", frame_kind),
+		8.0, 3.0)
+	rank.tooltip_text = c["rank"]
+	rank.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(rank)
+	var school := ScreenKit.text(c["school_words"].to_upper(), 13.0, "words", "parchment", true)
+	school.set_meta("school", c["school"])
+	school.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	school.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(school)
+	row.add_child(_pips(c))
+	return ScreenKit.panel("parchment", row, 12.0, 8.0)
 
 
 ## The school's mark and name, and the rank on its chip.
 func _top(c: Dictionary) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(6))
-	row.add_child(ScreenCoin.make("school:" + str(c["school"]), 26.0))
-	var school := ScreenKit.text(c["school_words"].to_upper(), 13.0, "words", "card_lit", true)
-	school.set_meta("school", c["school"])
-	school.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	school.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	row.add_child(school)
-	var rank := ScreenParts.pill(c["rank_words"], "well", "lawranksandtiers", str(c["rank_key"]).to_lower())
-	rank.tooltip_text = c["rank"]
-	row.add_child(rank)
+	row.add_child(ScreenKit.icon("schools", str(c["school"]), 30.0))
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(spacer)
+	row.add_child(ScreenKit.icon("laws", str(c["law"]), 34.0))
 	return row
 
 
@@ -120,7 +148,7 @@ func _pips(c: Dictionary) -> Control:
 		gem.modulate = Color.WHITE if on else Color(1, 1, 1, 0.28)
 		row.add_child(gem)
 	var words := ScreenKit.text(Strings.t("SCREEN_TIER", CodexPresenter.ROMAN[tier]) if tier > 0
-		else Strings.t("SCREEN_NOT_RESTORED"), 13.0, "words", "card_lit", true)
+		else Strings.t("SCREEN_NOT_RESTORED"), 13.0, "words", "parchment")
 	words.accessibility_name = c["tier_spoken"]
 	words.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	row.add_child(words)
@@ -134,7 +162,7 @@ func _notes(c: Dictionary) -> Control:
 	for n: Dictionary in c["note_list"]:
 		row.add_child(ScreenParts.pill(n["name"], "well", "lawnotes", n["note"], 15.0))
 	if (c["note_list"] as Array).is_empty():
-		row.add_child(ScreenKit.text(c["notes"], 13.0, "body", "card_lit", true, true))
+		row.add_child(ScreenKit.text(c["notes"], 13.0, "body", "card", true, true))
 	row.tooltip_text = c["notes"]
 	return row
 
@@ -146,7 +174,7 @@ func _pages(c: Dictionary) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(6))
 	row.add_child(ScreenKit.icon("currencies", "pages", 22.0))
-	var words := ScreenKit.text(c["pages"], 13.0, "words", "card_lit", false, true)
+	var words := ScreenKit.text(c["pages"], 13.0, "words", "card", false, true)
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(words)
 	col.add_child(row)

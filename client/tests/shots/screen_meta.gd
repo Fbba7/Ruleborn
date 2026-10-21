@@ -34,6 +34,12 @@ func _go() -> void:
 			c.visible = false
 		await process_frame
 		await process_frame
+	if OS.get_environment("NAMED") != "":
+		for c: Control in screen.find_children(OS.get_environment("NAMED"), "", true, false):
+			print(c.name, " ", c.get_combined_minimum_size())
+			for k: Node in c.find_children("*", "Control", true, false):
+				if (k as Control).get_combined_minimum_size().x > 200:
+					print("  ", k.name, " ", k.get_class(), " ", (k as Control).get_combined_minimum_size())
 	if OS.get_environment("WIDE") != "":
 		for c: Control in screen.find_children("*", "Control", true, false):
 			if c.get_combined_minimum_size().x > 1000:

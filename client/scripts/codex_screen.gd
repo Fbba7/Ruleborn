@@ -118,17 +118,31 @@ func _summary(c: Dictionary) -> Control:
 	return ScreenKit.panel("card_lit", box, 18.0, 12.0)
 
 
-## Chips that filter the albums by school: All, then each school's mark.
+## The design's filter strip: All with the restored count, then each
+## school's round mark (T9's school button), the chosen one gold-edged.
 func _filters(albums: Array) -> Control:
-	var row := ScreenParts.flow(6.0)
-	row.add_child(ScreenParts.chip(Strings.t("SCREEN_ALL"), school_filter == "", _filter.bind("")))
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(6))
+	var restored := 0
+	var total := 0
+	for a: Dictionary in albums:
+		restored += int(a["restored"])
+		total += int(a["total"])
+	var all := ScreenParts.chip("%s %d/%d" % [Strings.t("SCREEN_ALL"), restored, total], school_filter == "",
+		_filter.bind(""))
+	row.add_child(all)
 	for a: Dictionary in albums:
 		var school := str(a["school"])
-		var on := school_filter == school
-		row.add_child(ScreenParts.chip("%d/%d" % [int(a["restored"]), int(a["total"])], on, _filter.bind(school), "",
-			"", Strings.t("SCREEN_FILTER_SCHOOL", Strings.t("SCHOOL_" + school.to_upper())),
-			ScreenCoin.make("school:" + school.to_lower(), 22.0)))
-	return row
+		var b := KitControls.school_button(school.to_lower(), school_filter == school, _filter.bind(school))
+		b.accessibility_name = Strings.t("SCREEN_FILTER_SCHOOL", Strings.t("SCHOOL_" + school.to_upper()))
+		b.tooltip_text = "%d/%d" % [int(a["restored"]), int(a["total"])]
+		row.add_child(b)
+	# One strip that scrolls sideways, as the design's, rather than two rows.
+	var strip := ScrollContainer.new()
+	strip.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	strip.custom_minimum_size.y = UI.px(56)
+	strip.add_child(row)
+	return strip
 
 
 func _filter(school: String) -> void:
@@ -136,86 +150,85 @@ func _filter(school: String) -> void:
 	_refresh()
 
 
-## A school's album: its band, its laws as tiles, and their next steps.
+## A school's album as the design draws it: the gold chapter band with the
+## school's mark, its name, the milestones and the restored count; its
+## mastery; then its laws as cards in their rank's frames on parchment, and
+## their next steps beneath.
 func _album(a: Dictionary, busy: bool) -> Control:
+	var school := str(a["school"])
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", UI.px(8))
-	var band := ScreenParts.flow(8.0)
-	var school := str(a["school"])
-	band.add_child(ScreenCoin.make("school:" + school.to_lower(), 30.0))
-	var name := ScreenKit.text(Strings.t("SCHOOL_" + school.to_upper()), 18.0, "name", "card")
+	var band := KitPanels.chapter(school.to_lower(), Strings.t("SCHOOL_" + school.to_upper()),
+		Strings.t("SCREEN_MASTERY", [int(a["steps"]), int(a["steps_total"])]),
+		"%d/%d" % [int(a["restored"]), int(a["total"])])
+	band.accessibility_description = "%s. %s" % [a["count"], a["mastery"]]
+	var name := band.find_children("*", "Label", true, false)[0] as Label
 	name.set_meta("school", a["school"])
-	name.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	band.add_child(name)
-	band.add_child(ScreenParts.pill(a["count"], "well"))
+	band.tooltip_text = "\n".join(a["milestones"])
 	box.add_child(band)
+	# The milestones as stamps: reached ones ticked, the rest locked.
 	var stamps := ScreenParts.flow(4.0)
 	var i := 0
 	for ms: Dictionary in a["reached"]:
 		var reached := bool(ms.get("reached", false))
-		var p := ScreenParts.pill(str(int(ms.get("at", 0))), "cream" if reached else "well",
-			"generalui", "confirm" if reached else "lock")
+		var p := ScreenParts.pill(str(int(ms.get("at", 0))), "cream" if reached else "well", "generalui",
+			"confirm" if reached else "lock")
 		p.tooltip_text = a["milestones"][i] if i < (a["milestones"] as Array).size() else ""
 		stamps.add_child(p)
 		i += 1
-	var mastery := VBoxContainer.new()
-	mastery.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	mastery.add_theme_constant_override("separation", UI.px(2))
-	mastery.add_child(ScreenKit.text(a["mastery"], 13.0, "words", "card", true, true))
-	mastery.add_child(ScreenMeter.bar(int(a["steps"]), maxi(int(a["steps_total"]), 1),
-		Palette.SCHOOL.get(school.to_lower(), Color("#E9B65C")), 8.0))
-	box.add_child(ScreenParts.columns([stamps, mastery], 10.0))
+	var bar := ScreenMeter.bar(int(a["steps"]), maxi(int(a["steps_total"]), 1),
+		Palette.SCHOOL.get(school.to_lower(), Color("#E9B65C")), 8.0)
+	bar.tooltip_text = a["marks"]
+	box.add_child(ScreenParts.columns([stamps, bar], 10.0))
 	var grid := GridContainer.new()
-	grid.columns = ScreenParts.grid_columns(3)
-	grid.add_theme_constant_override("h_separation", UI.px(5))
-	grid.add_theme_constant_override("v_separation", UI.px(6))
+	grid.columns = 2 if Settings.text_scale <= 125 else 1
+	grid.add_theme_constant_override("h_separation", UI.px(6))
+	grid.add_theme_constant_override("v_separation", UI.px(8))
 	for l: Dictionary in a["laws"]:
-		grid.add_child(_tile(l))
-	box.add_child(grid)
+		grid.add_child(_tile(l, school.to_lower()))
+	box.add_child(ScreenKit.panel("parchment", grid, 16.0, 8.0))
 	for l: Dictionary in a["laws"]:
 		var step := _step(l, busy)
 		if step != null:
 			box.add_child(step)
-	return ScreenKit.panel("card", box, 18.0, 10.0)
+	return box
 
 
-## One law as a tile: its school-framed mark in its rank's frame, its name,
-## and its tier or its pages; a law not met is a "?" that names nothing.
-func _tile(l: Dictionary) -> Control:
-	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", UI.px(3))
-	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+## One law as the design's card (T9's law card): its mark in a window of its
+## school's colour, framed by its rank, its tier on the corner plate and its
+## pages on the disc; a law not met is a dark "?" that names nothing, with
+## its chapter's lock while that is closed.
+func _tile(l: Dictionary, school: String) -> Control:
 	var known := bool(l["known"])
-	var frame_kind: String = ScreenParts.RANK_FRAME.get(str(l.get("rank", "")), "well") if known else "well"
-	var mark := ScreenKit.icon("laws", str(l["law"]) if known else "", 46.0)
-	if not known:
-		mark = ScreenKit.icon("harmony", "unknownlaw", 40.0)
-	var frame := ScreenKit.panel(frame_kind, mark, 14.0, 4.0)
-	frame.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	col.add_child(frame)
-	var name := ScreenKit.text(l["name"] if known else "?", 13.0, "words", "card", false, true)
-	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	col.add_child(name)
-	var tag: Control
-	if known and int(l["tier"]) > 0:
-		tag = ScreenParts.pill(Strings.t("SCREEN_TIER", l["tier_words"]), "cream")
-	elif known:
-		tag = ScreenParts.pill("%d/%d" % [int(l["pages"]), int(l["need"])], "well", "currencies", "pages")
-	elif not l.get("open", false):
-		tag = ScreenParts.pill(Strings.t("SCREEN_CHAPTER", int(l.get("chapter", 2))), "well", "generalui", "lock")
+	var points := 130.0
+	var tile: PanelContainer
+	if known:
+		var number := "%d/%d" % [int(l["pages"]), int(l["need"])] if int(l["tier"]) == 0 else ""
+		tile = KitCards.law_card("laws/" + str(l["law"]).replace("_", ""), l["name"], school,
+			str(l["rank"]).to_lower(), l["tier_words"] if int(l["tier"]) > 0 else "", points, number)
 	else:
-		tag = ScreenParts.pill(Strings.t("SCREEN_NOT_MET"), "well")
-	tag.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	col.add_child(tag)
-	var tile := ScreenKit.panel("well" if not known else "card_lit", col, 14.0, 4.0)
+		var col := VBoxContainer.new()
+		col.add_theme_constant_override("separation", UI.px(4))
+		col.alignment = BoxContainer.ALIGNMENT_CENTER
+		var mark := ScreenKit.icon("harmony", "unknownlaw", points * 0.42)
+		mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		col.add_child(mark)
+		var q := ScreenKit.text("?", 20.0, "number", "card")
+		q.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		col.add_child(q)
+		var tag: Control = ScreenParts.pill(Strings.t("SCREEN_NOT_MET"), "well") if l.get("open", false) \
+			else ScreenParts.pill(Strings.t("SCREEN_CHAPTER", int(l.get("chapter", 2))), "well", "generalui", "lock")
+		tag.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		col.add_child(tag)
+		tile = ScreenKit.panel("card", col, 14.0, 6.0)
+		tile.custom_minimum_size = Vector2(UI.px(points), UI.px(points * 1.25))
+		tile.accessibility_name = l["text"]
 	tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	if l.has("card"):
 		var card: Dictionary = l["card"]
 		var b := ScreenParts.tap(tile, App.services.router.go.bind(&"law", {"law": str(l["law"])}), card["spoken"],
 			card["key"], card["item"])
 		b.accessibility_description = l["text"]
-	else:
-		tile.accessibility_name = l["text"]
 	return tile
 
 
