@@ -8,6 +8,11 @@ shader_type canvas_item;
 
 uniform vec4 top : source_color = vec4(0.090, 0.063, 0.275, 1.0);
 uniform vec4 bottom : source_color = vec4(0.173, 0.227, 0.659, 1.0);
+// With `radial` on, the design's sub-screen backdrop instead of a straight
+// gradient: "radial-gradient(ellipse 90% 50% at 50% 0%, top 0%, middle 55%,
+// bottom 100%)" (Screens v3, 15 uses; the UI kit's `night` material).
+uniform vec4 middle : source_color = vec4(0.078, 0.047, 0.188, 1.0);
+uniform float radial = 0.0;
 // The glow behind the middle of the screen, and its strength.
 uniform vec4 glow : source_color = vec4(0.62, 0.45, 0.95, 1.0);
 uniform float glow_strength = 0.35;
@@ -94,6 +99,11 @@ void fragment() {
 	vec2 uv = UV;
 	float t = TIME * motion;
 	vec3 c = mix(top.rgb, bottom.rgb, smoothstep(0.0, 1.0, uv.y));
+	if (radial > 0.0) {
+		float r = length((uv - vec2(0.5, 0.0)) / vec2(0.9, 0.5));
+		vec3 rc = r < 0.55 ? mix(top.rgb, middle.rgb, r / 0.55) : mix(middle.rgb, bottom.rgb, clamp((r - 0.55) / 0.45, 0.0, 1.0));
+		c = mix(c, rc, radial);
+	}
 	// Square units: x across scaled by the aspect, so circles stay round.
 	vec2 p = vec2(uv.x * aspect, uv.y);
 	// The glow where the world would float, a little above the middle.

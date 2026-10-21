@@ -4,7 +4,7 @@ extends ColorRect
 ## (#171046 to #2C3AA8)"), painted as the realms' own sky so the world and
 ## the interface read as one picture: the gradient, a glow, stars, far
 ## islets, a cloud sea at the foot and the vignette as a tint
-## (look_backdrop.gdshader, one quad). `for_world` gives a screen standing
+## (look_backdrop.gdshader, one quad), in the UI kit's colours. `for_world` gives a screen standing
 ## over a realm the same sky as that realm at the player's hour.
 ##
 ## Use it in place of a plain gradient behind a screen's controls:
@@ -29,9 +29,28 @@ func _init() -> void:
 	night()
 
 
-## The night backdrop of §21.2, unchanged: its two colours from the palette.
+## The night backdrop menus stand on (§21.2), as the design draws it behind
+## its sub-screens and the UI kit's `night` material paints it: a radial glow
+## of #2E1F5E from the top centre through #140C30 to #0A0620, with stars, a
+## faint nebula, far islets and a dark cloud sea, quiet enough that words on
+## it keep their contrast (the kit's `text_bg` for it is the top two stops).
 func night() -> void:
-	set_colours(Color("#171046"), Color("#2C3AA8"))
+	set_colours(Color("#2E1F5E"), Color("#0A0620"))
+	var m := material as ShaderMaterial
+	m.set_shader_parameter("middle", Color("#140C30"))
+	m.set_shader_parameter("radial", 1.0)
+	m.set_shader_parameter("stars", 1.0)
+	m.set_shader_parameter("nebula", Color("#3A2070"))
+	m.set_shader_parameter("nebula_strength", 0.35)
+	m.set_shader_parameter("glow", Color("#3C2A78"))
+	m.set_shader_parameter("glow_strength", 0.25)
+	m.set_shader_parameter("cloud_body", Color("#140C30"))
+	m.set_shader_parameter("cloud_top", Color("#33246A"))
+	m.set_shader_parameter("islet", Color("#251A52"))
+	m.set_shader_parameter("islet_lit", Color("#45358A"))
+	m.set_shader_parameter("islets", 0.8)
+	m.set_shader_parameter("edge", Color("#05030F"))
+	m.set_shader_parameter("vignette", 0.4)
 
 
 ## The sky of `realm` at `hour` (RealmPalette.realm_sky_at), for a sheet or
@@ -40,6 +59,11 @@ func for_world(hour: int, realm: String) -> void:
 	var sky := RealmPalette.realm_sky_at(hour, realm)
 	set_colours(sky[0], sky[2].lerp(sky[1], 0.5))
 	var m := material as ShaderMaterial
+	m.set_shader_parameter("radial", 0.0)
+	m.set_shader_parameter("nebula_strength", 0.45)
+	m.set_shader_parameter("glow_strength", 0.35)
+	m.set_shader_parameter("islets", 1.0)
+	m.set_shader_parameter("vignette", 0.35)
 	m.set_shader_parameter("stars", 1.0 if sky[0].get_luminance() < 0.2 else 0.0)
 
 

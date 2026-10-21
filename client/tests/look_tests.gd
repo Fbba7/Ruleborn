@@ -161,8 +161,8 @@ func _backdrop() -> void:
 	screen.add_child(Control.new())
 	var b := LookBackdrop.dress(screen)
 	var m := b.material as ShaderMaterial
-	var night_ok: bool = m.get_shader_parameter("top") == Color("#171046") \
-		and m.get_shader_parameter("bottom") == Color("#2C3AA8")
+	var night_ok: bool = m.get_shader_parameter("top") == Color("#2E1F5E") \
+		and m.get_shader_parameter("bottom") == Color("#0A0620") and m.get_shader_parameter("radial") == 1.0
 	var under: bool = screen.get_child(0) == b and screen.get_children().filter(
 		func(n: Node) -> bool: return n.name == "Sky").size() == 1
 	b.for_world(23, "tidehold")
