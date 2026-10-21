@@ -90,7 +90,7 @@ var _from := [Vector3.ZERO, 100.0, 0.0]
 var _to := [Vector3.ZERO, 100.0, 0.0]
 var _swoop := 1.0
 var _wiping := false
-var _wipe: Control
+var _wipe: UniverseWipe
 var _wipe_amount := 0.0
 var _tilt := Vector2.ZERO
 var _time := 0.0
@@ -125,10 +125,7 @@ func _init() -> void:
 	pins = UniversePins.new(self)
 	pins.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(pins)
-	_wipe = Control.new()
-	_wipe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_wipe.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_wipe.draw.connect(_draw_wipe)
+	_wipe = UniverseWipe.new()
 	add_child(_wipe)
 	_build_stage()
 
@@ -723,7 +720,7 @@ func _step_swoop() -> void:
 		if _swoop >= 1.0:
 			_wiping = false
 			_wipe_amount = 0.0
-		_wipe.queue_redraw()
+		_wipe.set_amount(_wipe_amount)
 		return
 	_target = (_from[0] as Vector3).lerp(_to[0], e)
 	_size = lerpf(_from[1], _to[1], e)
@@ -942,29 +939,6 @@ func _pan(by: Vector2) -> void:
 	var lo := _bounds.position
 	var hi := _bounds.end
 	_target = Vector3(clampf(_target.x + move.x, lo.x, hi.x), _target.y, clampf(_target.z + move.z, lo.z, hi.z))
-
-
-## The cloud wipe (the design's `cloudWipe`): banks of cloud roll in from
-## both sides, meet over the swoop, and part again; each puff shaded violet
-## underneath and lit on top, as the islands are.
-func _draw_wipe() -> void:
-	if _wipe_amount <= 0.01:
-		return
-	var s := _wipe.size
-	var e := _wipe_amount * _wipe_amount * (3.0 - 2.0 * _wipe_amount)
-	var rows := 9
-	for k in rows * 2:
-		var side := -1.0 if k % 2 == 0 else 1.0
-		var row := k / 2
-		var y := (row + 0.5) / rows * s.y + sin(row * 2.3) * s.y * 0.03
-		var r := s.x * (0.3 + 0.08 * fmod(row * 0.618, 1.0))
-		var rest := s.x * (0.5 + side * (0.04 + 0.12 * fmod(row * 0.381, 1.0)))
-		var off := s.x * 0.5 + side * (s.x * 0.5 + r * 1.2)
-		var x := lerpf(off, rest, e)
-		var at := Vector2(x, y)
-		_wipe.draw_circle(at + Vector2(0, r * 0.18), r * 1.02, Color("#B9A6F2"))
-		_wipe.draw_circle(at, r, Color("#F1EBFF"))
-		_wipe.draw_circle(at + Vector2(-r * 0.22, -r * 0.24), r * 0.6, Color("#FFFFFF"))
 
 
 func _notification(what: int) -> void:

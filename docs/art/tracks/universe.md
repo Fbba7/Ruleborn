@@ -292,3 +292,11 @@ needs from the shared one, so it can be swapped in with no change to the screen'
   tabs sit inside the safe area and clear of the corners (84% of the width).
 
 When the shell's bar exists, home stops adding its own (`Home.tabs`) and listens to the shell's.
+- Round 32: a night tint (screen-space gradients, not a pass) behind the top HUD and the tabs so their words
+  read over any island; the raid notice (`UniverseNotice`, the design's raid banner): "Raided 2 times while
+  you were away", See (the defence log) and a dismiss; it stays until dismissed (§21.8) and returns only when
+  more raids come. Still: `r32_home_notice.png`.
+- Round 33: the cloud wipe (`UniverseWipe`, out of `universe_view.gd`): banks of four puffs each, violet
+  underneath and cream on top, edged in ink only on the outside, rolling in row after row from the middle
+  out, with a faint night veil; shut, they overlap so the jump is hidden. Reduced motion still cuts.
+  Still: `r33_wipe_half_and_shut.png`; shot `tests/shots/universe_wipe.gd` (AMOUNT).

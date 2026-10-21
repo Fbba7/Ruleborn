@@ -44,8 +44,11 @@ func _draw() -> void:
 		var r := s.x * (0.17 + 0.04 * fmod(row * 0.618 + side * 0.2, 1.0))
 		# Each bank rests just past the middle, so the two overlap when shut.
 		var rest := s.x * 0.5 + side * s.x * (0.02 + 0.08 * fmod(row * 0.381, 1.0))
-		var gone := s.x * 0.5 + side * (s.x * 0.5 + r * 3.2)
-		var x := lerpf(gone, rest, e)
+		var gone := s.x * 0.5 + side * (s.x * 0.5 + r * 1.6)
+		# Rows roll in one after another, the middle first.
+		var lag := absf(row - (ROWS - 1) * 0.5) / ROWS * 0.5
+		var f := clampf((e - lag) / (1.0 - lag), 0.0, 1.0) if e < 1.0 else 1.0
+		var x := lerpf(gone, rest, sqrt(f))
 		_bank(Vector2(x, y), r, side, ink)
 
 
@@ -66,4 +69,4 @@ func _bank(at: Vector2, r: float, side: float, ink: float) -> void:
 	for p: Vector3 in puffs:
 		draw_circle(Vector2(p.x - p.z * 0.06, p.y - p.z * 0.04), p.z * 0.9, BODY, true, -1.0, true)
 	for p: Vector3 in puffs:
-		draw_circle(Vector2(p.x - p.z * 0.3, p.y - p.z * 0.32), p.z * 0.42, Color(LIGHT, 0.85), true, -1.0, true)
+		draw_circle(Vector2(p.x - p.z * 0.22, p.y - p.z * 0.26), p.z * 0.55, BODY.lerp(LIGHT, 0.5), true, -1.0, true)
