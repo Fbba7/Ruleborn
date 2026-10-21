@@ -29,6 +29,15 @@ uniform vec4 lanes[48];
 uniform int lane_count = 0;
 uniform vec4 lane_earth : source_color = vec4(0.72, 0.6, 0.45, 1.0);
 uniform vec4 strata : source_color = vec4(0.42, 0.33, 0.30, 1.0);
+// The realm's own marks, the very texture the island's meadow wears (T2's
+// LookPaint.deco, `deco_scale` metres a tile in world space): the Heart's
+// petals, Tidehold's shells, …; `deco_glow` makes them light. Faded in from
+// the grid's edge, where the meadow's own fade out.
+uniform sampler2D deco : source_color, filter_linear_mipmap, repeat_enable;
+uniform float deco_scale = 0.0;
+uniform float deco_glow = 0.0;
+// Pebbles strewn over the grass, as the design's meadow has them.
+uniform vec4 pebble : source_color = vec4(0.62, 0.58, 0.6, 1.0);
 varying vec3 wpos;
 varying float up;
 
@@ -155,6 +164,18 @@ void fragment() {
 		float kerb = smoothstep(0.43, 0.47, path + wob) * (1.0 - smoothstep(0.47, 0.53, path + wob));
 		c = mix(c, pathC, inside_);
 		c = mix(c, mortar.rgb * 0.8, kerb * 0.7);
+	}
+	// Pebbles in the grass: a few small stones, lit above, shaded below.
+	vec3 pb = cells(p * 2.6 + 11.0);
+	float stone_dot = (1.0 - smoothstep(0.07, 0.1, pb.x)) * step(0.82, pb.z) * grassy * step(0.6, up);
+	c = mix(c, pebble.rgb * (0.85 + 0.25 * pb.z), stone_dot);
+	// The realm's marks over the grass.
+	if (deco_scale > 0.0 && up > 0.6) {
+		vec4 dm = texture(deco, p / deco_scale);
+		vec2 inside_grid = grid_half - abs(p);
+		dm.a *= 0.8 * grassy * smoothstep(0.2, 1.6, min(inside_grid.x, inside_grid.y));
+		c = mix(c, dm.rgb, dm.a * (1.0 - deco_glow));
+		glow += dm.rgb * dm.a * deco_glow;
 	}
 	// Scree and bare rock: grit.
 	c *= 1.0 - stone * (hash(floor(p * 30.0)) - 0.5) * 0.25;

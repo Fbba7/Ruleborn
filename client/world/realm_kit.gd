@@ -344,6 +344,13 @@ func instances() -> Array[MeshInstance3D]:
 	ground_mat.set_shader_parameter("cobble", KitGround.earth(palette).lightened(0.18) if realm != "heart"
 		else Color("#EFE4CF"))
 	ground_mat.set_shader_parameter("mortar", palette["soil"].lightened(0.15))
+	ground_mat.set_shader_parameter("pebble", (palette["rock"] as Color).lightened(0.25))
+	# The realm's marks over its meadow (T2's), continued over the grid.
+	var marks := LookPaint.deco(realm)
+	if marks != null:
+		ground_mat.set_shader_parameter("deco", marks)
+		ground_mat.set_shader_parameter("deco_scale", 8.0)
+		ground_mat.set_shader_parameter("deco_glow", 1.0 if realm == "lanternvale" else 0.0)
 	# The trails, as world-space segments (xz of each end), for the shader to
 	# draw crisp.
 	var lanes := PackedVector4Array()

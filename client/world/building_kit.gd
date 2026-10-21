@@ -490,12 +490,12 @@ func _topper() -> void:
 ## The packed-earth pad a building stands on (the design's foundation disc,
 ## :981): an octagon of trodden earth and stone, wider than the house.
 func _pad() -> void:
-	var earth := KitGround.earth(palette).lerp(Color("#E8D8B8"), 0.35)
+	var earth := KitGround.earth(palette).lerp(Color("#EAD2B4"), 0.45)
 	if KitStyle.realm_of(palette) == "lanternvale":
 		# Lantern Vale's pads are pale and faintly lit, so its town shows in the
 		# dark (the design's night realm).
 		earth = Color(Color("#D8CCE8"), 0.8)
-	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.6 * unit, 0.57 * unit, 0.03 * unit, earth.darkened(0.08), false, earth)
+	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.66 * unit, 0.63 * unit, 0.03 * unit, earth.darkened(0.1), false, earth)
 
 
 ## The Hearth: "a cottage with a round door and chimney", warm window light.
