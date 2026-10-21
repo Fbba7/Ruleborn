@@ -192,6 +192,7 @@ func _run() -> void:
 	_seed()
 	await A11yTests.new(self, check, _mount, _control_problems, SCREENS).run()
 	StageHeroTests.new(check).run()
+	await UiKitTests.new(self, check).run()
 
 	# The game's languages (§20.6 and the owner's, D99): every key a script
 	# asks for is in the catalogue, in every language, with the same

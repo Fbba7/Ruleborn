@@ -1,10 +1,12 @@
 class_name UI
 ## The pieces every screen is built from, so §21.1's, §21.8's and §20.8's
-## rules are applied in one place: a sky, a safe-area column, paper panels,
-## labels and buttons of the stated sizes, rows that wrap when the text is
-## large, words that say what a colour says, banners, and a name for every
-## control a screen reader reaches. Claude Design's components replace these;
-## the screens call them by the same names.
+## rules are applied in one place: the night backdrop, a safe-area column,
+## the designs' surfaces (violet cards, leather, parchment, gold), labels and
+## buttons in Manrope and Marcellus at the stated sizes, rows that wrap when
+## the text is large, words that say what a colour says, banners, and a name
+## for every control a screen reader reaches. Each surface is a material
+## drawn by RbBox (ui/rb_box.gd); the type is RbTheme's. Richer pieces (tabs,
+## headers, pills, chips, sheets) are in ui/kit_*.gd.
 
 ## What a status says, with the glyph that says it without colour (§20.8:
 ## "no information carried by colour alone").
@@ -19,7 +21,7 @@ static var CONTROL_POINTS: float = Tokens.number("size", "control_points")
 ## §21.8: body text "at least 16 pixels", nothing smaller than 13 points.
 static var TEXT_POINTS: float = Tokens.number("size", "body_points")
 static var TITLE_POINTS: float = Tokens.number("size", "title_points")
-static var _bold: FontVariation = null
+static var _rooted := false
 
 
 
@@ -43,22 +45,35 @@ static func motion_ms(ms: float) -> float:
 	return 0.0 if Settings.reduced_motion else ms
 
 
-## §21.2's day sky behind everything, and a column inside §21.1's safe areas:
-## 44 points clear of the notch and the home bar.
+## §21.8's night backdrop behind everything ("menus stand on a night
+## backdrop"), with its stars, and a column inside §21.1's safe areas: 44
+## points clear of the notch and the home bar. The screen takes the dark
+## family's type, so its words are light.
 static func frame(screen: Control) -> VBoxContainer:
 	screen.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root_theme()
+	screen.theme = RbTheme.of("dark")
+	var night := Tokens.material("night")
+	screen.set_meta("text_bg", night["text_bg"])
+	screen.set_meta("rb_family", "dark")
+	# The backdrop is drawn by the kit's box behind a clear texture, so a
+	# screen that paints its own sky (a galaxy, a dusk) lays it over the top.
 	var sky := TextureRect.new()
-	var gradient := Gradient.new()
-	gradient.set_color(0, Palette.SKY_TOP)
-	gradient.set_color(1, Palette.SKY_BOTTOM)
+	var clear := Gradient.new()
+	clear.set_color(0, Color(0, 0, 0, 0))
+	clear.set_color(1, Color(0, 0, 0, 0))
 	var texture := GradientTexture2D.new()
-	texture.gradient = gradient
+	texture.gradient = clear
 	texture.fill_from = Vector2(0, 0)
 	texture.fill_to = Vector2(0, 1)
+	texture.width = 4
+	texture.height = 4
 	sky.texture = texture
 	sky.stretch_mode = TextureRect.STRETCH_SCALE
 	sky.set_anchors_preset(Control.PRESET_FULL_RECT)
+	sky.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	sky.name = "Sky"
+	RbBox.dress(sky, "night", 0)
 	screen.add_child(sky)
 	var safe := MarginContainer.new()
 	safe.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -103,17 +118,16 @@ static func field(spoken: String) -> LineEdit:
 	f.accessibility_name = spoken
 	f.custom_minimum_size = Vector2(px(160), CONTROL_POINTS * PX_PER_POINT)
 	f.add_theme_font_size_override("font_size", text_px(TEXT_POINTS))
-	f.add_theme_color_override("font_color", Palette.INK)
-	f.add_theme_color_override("font_placeholder_color", Palette.INK)
-	var box := StyleBoxFlat.new()
-	box.bg_color = Palette.PAPER
-	box.border_color = Palette.INK
-	box.set_border_width_all(px(1))
-	box.set_corner_radius_all(px(Tokens.number("size", "corner_points")))
-	box.set_content_margin_all(px(6))
+	f.add_theme_font_override("font", bold_font())
+	var ink := Tokens.color("parchment_ink")
+	f.add_theme_color_override("font_color", ink)
+	f.add_theme_color_override("font_placeholder_color", Tokens.color("parchment_text_2"))
+	f.add_theme_color_override("caret_color", ink)
 	for state: String in ["normal", "focus", "read_only"]:
-		f.add_theme_stylebox_override(state, box)
+		f.add_theme_stylebox_override(state, clear_box(10, 6))
+	RbBox.dress(f, "parchment", Tokens.number("size", "radius_m"))
 	f.set_meta("points", TEXT_POINTS)
+	f.set_meta("bold", true)
 	return f
 
 
@@ -122,20 +136,30 @@ static func field(spoken: String) -> LineEdit:
 static func label(text := "", points := -1.0, wraps := false) -> Label:
 	if points < 0:
 		points = TEXT_POINTS
+	root_theme()
 	var l := Label.new()
 	l.text = text
 	l.add_theme_font_size_override("font_size", text_px(points))
-	l.add_theme_color_override("font_color", Palette.INK)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.tree_entered.connect(RbTheme.adapt.bind(l))
 	if wraps:
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.set_meta("points", points)
 	return l
 
 
+## A screen's title in Marcellus (§21.8), with the designs' hard drop under
+## it and their gold rule beneath.
 static func title(text: String) -> Label:
 	var l := label(text, TITLE_POINTS, true)
+	l.theme_type_variation = "Title"
 	l.accessibility_live = AccessibilityServer.LIVE_OFF
+	var rule := KitNav.rule()
+	rule.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	rule.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	rule.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	rule.position.y = -px(2)
+	l.add_child(rule, false, Node.INTERNAL_MODE_FRONT)
 	return l
 
 
@@ -150,39 +174,86 @@ static func status(kind: String, text: String, wraps := true) -> Label:
 static func set_status(l: Label, kind: String, text: String) -> void:
 	assert(GLYPH.has(kind), "no status %s" % kind)
 	l.text = "%s %s" % [GLYPH.get(kind, ""), text] if text != "" else ""
-	var colour := Palette.INK
-	match kind:
-		"success":
-			colour = Palette.SUCCESS_TEXT
-		"alarm":
-			colour = Palette.ALARM_TEXT
-	l.add_theme_color_override("font_color", colour)
+	# The family's shade for the status (§21.8: alarm and success words are
+	# bold, deep on parchment and light on dark), from the theme around it.
+	l.remove_theme_color_override("font_color")
+	l.theme_type_variation = "Status" + kind.capitalize()
 	l.set_meta("status", kind)
+	l.set_meta("bold", kind == "alarm" or kind == "success")
 
 
-## Body text on its own paper plate: the sky is too light behind body text for
-## APCA's Lc 75 at its top (Lc 63), so words sit on paper, as §21.8 puts them.
-static func plate(words: Control) -> PanelContainer:
-	var p := panel()
+## Words on their own card, so they read over anything (§21.8).
+static func plate(words: Control, look := "card") -> PanelContainer:
+	var p := panel(look)
 	p.add_child(words)
+	# A plate whose words are still empty is not drawn until they come.
+	var box := RbBox.of(p)
+	box.hide_empty = true
+	words.minimum_size_changed.connect(box.queue_redraw)
 	return p
 
 
-## §21.8: "Ink #221C3A on paper panels at 85% opacity over the world".
-static func panel() -> PanelContainer:
+## §21.8's surfaces: a violet card by default; "parchment", "glass" over the
+## world, "leather", or any tokens.json `material`. The panel's words take
+## the material's family of colours.
+static func panel(look := "card") -> PanelContainer:
+	root_theme()
 	var p := PanelContainer.new()
-	var box := StyleBoxFlat.new()
-	box.bg_color = Palette.PANEL
-	box.set_corner_radius_all(px(Tokens.number("size", "corner_points")))
-	box.set_content_margin_all(px(Tokens.number("size", "gap_points")))
-	p.add_theme_stylebox_override("panel", box)
+	p.add_theme_stylebox_override("panel", clear_box(10, 8))
+	dress(p, look)
 	return p
 
 
-## §21.8: ink on paper, "gold for main actions". A screen reader says a
-## button's text; `spoken` replaces it for a button whose text is a symbol
-## ("+", "‹").
+## A control dressed in a material: its box behind it and its family's
+## type for everything inside it.
+static func dress(c: Control, look: String, radius := -1.0) -> RbBox:
+	var box := RbBox.dress(c, look, radius)
+	c.theme = RbTheme.of(str(box.spec["family"]))
+	return box
+
+
+## A StyleBoxFlat that draws nothing, with content margins in points: the
+## box a dressed control keeps, so scripts that round or edge a control's
+## own box still find one.
+static func clear_box(side_points: float, top_points: float) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0, 0, 0, 0)
+	box.draw_center = false
+	box.set_corner_radius_all(0)
+	box.content_margin_left = px(side_points)
+	box.content_margin_right = px(side_points)
+	box.content_margin_top = px(top_points)
+	box.content_margin_bottom = px(top_points)
+	return box
+
+
+## The kit's theme on the whole window, so any control a screen makes on its
+## own is drawn in Manrope with light words, as the night backdrop wants.
+static func root_theme() -> void:
+	if _rooted:
+		return
+	var tree := Engine.get_main_loop() as SceneTree
+	if tree != null and tree.root != null:
+		tree.root.theme = RbTheme.of("dark")
+		_rooted = true
+
+
+## §21.8: "gold for main actions"; leather for the rest, red for an alarm
+## fill and green for a success one. It squashes and sinks onto its drop
+## when pressed. A screen reader says a button's text; `spoken` replaces it
+## for a button whose text is a symbol ("+", "‹").
 static func button(text: String, pressed: Callable, main := false, fill := Color(), spoken := "") -> Button:
+	var look := "gold" if main else "leather"
+	if fill != Color():
+		look = "red" if fill.is_equal_approx(Palette.ALARM) or fill.is_equal_approx(Palette.ALARM_FILL) else \
+			("green" if fill.is_equal_approx(Palette.SUCCESS) else look)
+	return action(text, pressed, look, spoken)
+
+
+## A button in any material (tokens.json `material`): "gold", "leather",
+## "red", "green", "ghost", "parchment", "card"...
+static func action(text: String, pressed: Callable, look := "leather", spoken := "") -> Button:
+	root_theme()
 	var b := Button.new()
 	b.text = text
 	b.accessibility_name = spoken
@@ -192,45 +263,55 @@ static func button(text: String, pressed: Callable, main := false, fill := Color
 	# body text on a panel carries Lc 75 (ui/colour_check.gd).
 	b.add_theme_font_override("font", bold_font())
 	b.set_meta("bold", true)
-	var base := fill if fill != Color() else (Palette.MOTION if main else Palette.PANEL)
 	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
-		var box := StyleBoxFlat.new()
-		box.bg_color = base
-		# Pressed lightens, so its words keep their contrast (ink is dark).
-		if state == "pressed":
-			box.bg_color = base.lightened(0.15)
-		if state == "disabled":
-			box.bg_color = Color(base, 0.45)
-		box.set_corner_radius_all(px(Tokens.number("size", "corner_points")))
-		box.border_color = Palette.INK
-		box.set_border_width_all(px(1))
-		box.set_content_margin_all(px(4))
-		b.add_theme_stylebox_override(state, box)
-	for colour: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
-			"font_disabled_color"]:
-		b.add_theme_color_override(colour, Palette.INK)
+		b.add_theme_stylebox_override(state, clear_box(12, 4))
+	set_look(b, look)
 	b.set_meta("points", TEXT_POINTS)
 	fit(b)
+	b.button_down.connect(Motion.press.bind(b, true))
+	b.button_up.connect(Motion.press.bind(b, false))
 	b.pressed.connect(func() -> void: Haptics.play("tap"))
 	b.pressed.connect(pressed)
 	return b
 
 
-## The client's font, emboldened: a control's words.
-static func bold_font() -> FontVariation:
-	if _bold == null:
-		_bold = FontVariation.new()
-		_bold.base_font = ThemeDB.fallback_font
-		_bold.variation_embolden = 0.7
-	return _bold
+## A button's material changed, its words recoloured to suit (a chip
+## turning on).
+static func set_look(b: Button, look: String) -> void:
+	var box := dress(b, look)
+	var words: Color = box.spec["text"]
+	for colour: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
+			"font_hover_pressed_color"]:
+		b.add_theme_color_override(colour, words)
+	b.add_theme_color_override("font_disabled_color", Color(words, 0.55))
+	if box.spec.has("text_outline"):
+		b.add_theme_color_override("font_outline_color", box.spec["text_outline"][0])
+		b.add_theme_constant_override("outline_size", px(box.spec["text_outline"][1]))
+	else:
+		b.remove_theme_constant_override("outline_size")
+	# Light words on a dark or deep control stand on the designs' hard drop.
+	if words.get_luminance() > 0.6:
+		b.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
+		b.add_theme_constant_override("shadow_offset_x", 0)
+		b.add_theme_constant_override("shadow_offset_y", maxi(2, px(0.75)))
+		b.add_theme_constant_override("shadow_outline_size", px(box.spec["text_outline"][1]) if box.spec.has(
+			"text_outline") else 0)
+	else:
+		b.remove_theme_color_override("font_shadow_color")
+
+
+## Manrope at 800, as §21.8 draws 900: a control's words.
+static func bold_font() -> Font:
+	return Tokens.font("ui", 800)
 
 
 ## A button's width for its words: as wide as they are, up to the widest a
 ## control may be, past which they wrap onto more lines (§20.8's large text).
 static func fit(b: Button) -> void:
 	var font := b.get_theme_font("font")
+	# The designs' chunky pills: 12 points of material either side of the words.
 	var natural := font.get_string_size(b.text, HORIZONTAL_ALIGNMENT_LEFT, -1, b.get_theme_font_size("font_size")).x \
-		+ px(12)
+		+ px(24)
 	var most := px(Tokens.number("size", "widest_control_points"))
 	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if natural > most else TextServer.AUTOWRAP_OFF
 	b.custom_minimum_size.x = maxf(CONTROL_POINTS * PX_PER_POINT, minf(natural, most))
@@ -259,10 +340,14 @@ static func fit_to(b: Button, words: Array) -> void:
 ## A button's border, in points: a chosen one is drawn heavier (§20.8: never
 ## by colour or fading alone).
 static func set_outline(b: Button, points: int) -> void:
+	var box := RbBox.of(b)
+	if box != null:
+		box.set_chosen(points > 1)
+		return
 	for state: String in ["normal", "hover", "pressed", "focus"]:
-		var box := b.get_theme_stylebox(state) as StyleBoxFlat
-		if box != null:
-			box.set_border_width_all(px(points))
+		var flat := b.get_theme_stylebox(state) as StyleBoxFlat
+		if flat != null:
+			flat.set_border_width_all(px(points))
 
 
 ## The lowest row of a screen, kept clear of the bottom corners (§21.1), where
@@ -313,15 +398,16 @@ static func grow() -> Control:
 static func banner(kind: String, text: String, ms := -1.0) -> PanelContainer:
 	if ms < 0:
 		ms = Tokens.number("motion", "banner_ms")
-	var p := panel()
+	var p := panel("parchment")
 	p.name = "Banner"
 	var r := row()
 	var words := status(kind, text)
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.accessibility_live = AccessibilityServer.LIVE_ASSERTIVE if kind == "alarm" else AccessibilityServer.LIVE_POLITE
 	r.add_child(words)
-	r.add_child(button("×", p.queue_free, false, Color(), Strings.t("COMMON_DISMISS")))
+	r.add_child(KitControls.icon_button("generalui/close", Strings.t("COMMON_DISMISS"), p.queue_free))
 	p.add_child(r)
+	p.ready.connect(func() -> void: Motion.pop(p))
 	if not Settings.banners_stay:
 		var tree := Engine.get_main_loop() as SceneTree
 		if tree != null:
