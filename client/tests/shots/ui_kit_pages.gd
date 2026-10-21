@@ -9,8 +9,10 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_materials(column)
 		2:
 			_controls(column)
-		_:
+		3:
 			_status(column)
+		_:
+			_home(column)
 
 
 static func _materials(column: VBoxContainer) -> void:
@@ -98,3 +100,55 @@ static func _status(column: VBoxContainer) -> void:
 	var sheet := KitPanels.sheet("Build")
 	(sheet.get_meta("body") as VBoxContainer).add_child(UI.label("Choose a building for the Heart.", 16, true))
 	column.add_child(sheet)
+
+
+## The home arrangement §21.8 names, from the kit's pieces: Keeper and
+## Renown top left, strain top right, resources with storage beneath, side
+## buttons down both edges, the nearest goal above five tabs; and the heist's
+## clock, alarm meter and ability pips.
+static func _home(column: VBoxContainer) -> void:
+	var top := HBoxContainer.new()
+	top.add_child(KitHud.keeper(Icons.texture("crewroles/scout"), "Ines", 7, 0.64, "410"))
+	top.add_child(UI.grow())
+	(top.get_child(1) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var strain := KitStatus.pill("82% · Humming", "hud/strain")
+	strain.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	top.add_child(strain)
+	column.add_child(top)
+	var res := HBoxContainer.new()
+	res.add_theme_constant_override("separation", UI.px(6))
+	for r: Array in [["resources/starlight", "12,480", 0.62, Tokens.color("starlight")],
+			["resources/aether", "3,105", 0.95, Tokens.color("aether")],
+			["resources/essence", "840", 0.2, Tokens.color("essence")]]:
+		var pill := KitStatus.resource(r[0], r[1], r[2], r[3])
+		pill.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		res.add_child(pill)
+	column.add_child(res)
+	var hud := HBoxContainer.new()
+	hud.alignment = BoxContainer.ALIGNMENT_CENTER
+	hud.add_theme_constant_override("separation", UI.px(12))
+	hud.add_child(KitHud.pips(1, 2))
+	hud.add_child(KitHud.clock("2:26"))
+	hud.add_child(KitHud.meter(4, 6, "Alarm 4 / 6"))
+	hud.add_child(KitHud.clock("0:24", true))
+	column.add_child(hud)
+	var sides := HBoxContainer.new()
+	sides.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var left := VBoxContainer.new()
+	left.alignment = BoxContainer.ALIGNMENT_CENTER
+	left.add_child(KitControls.round_action("hud/crew", "Crew", func() -> void: pass, false, 52))
+	left.add_child(KitControls.round_action("alerts/newtargets", "Raid", func() -> void: pass, false, 52, "4"))
+	sides.add_child(left)
+	sides.add_child(UI.grow())
+	(sides.get_child(1) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var right := VBoxContainer.new()
+	right.alignment = BoxContainer.ALIGNMENT_CENTER
+	right.add_child(KitControls.round_action("screens/shop", "Shop", func() -> void: pass, false, 52))
+	right.add_child(KitControls.round_action("screens/season", "Season", func() -> void: pass, false, 52))
+	sides.add_child(right)
+	column.add_child(sides)
+	var collect := UI.row()
+	collect.add_child(UI.action("Collect 3.4k", func() -> void: pass, "gold"))
+	column.add_child(collect)
+	column.add_child(KitHud.goal("realmactions/upgrade", "Raise the Star Well to level 3", 2, 3, "2 / 3"))
+	column.add_child(KitNav.tabs("islands", {"islands": 3, "heist": 4, "friends": 1}))

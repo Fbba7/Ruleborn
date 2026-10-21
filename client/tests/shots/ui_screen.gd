@@ -24,4 +24,7 @@ func _go() -> void:
 	for i: int in 12:
 		await process_frame
 	await ShotKit.settle(self, screen)
+	# §21.3: under 150 draw calls on every screen, 2D and 3D together.
+	print("budget %s: %d draw calls in all" % [scene,
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)])
 	quit()
