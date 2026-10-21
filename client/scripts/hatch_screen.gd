@@ -61,7 +61,7 @@ func _build() -> void:
 	actions.alignment = FlowContainer.ALIGNMENT_CENTER
 	var home := UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"))
 	actions.add_child(StageHeroMaterial.button(home, "leather"))
-	column.add_child(RosterScreen.padded(actions))
+	column.add_child(RosterScreen.padded(UI.narrow(actions)))
 
 
 func _refresh() -> void:

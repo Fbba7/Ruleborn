@@ -12,7 +12,7 @@ extends RefCounted
 ## other screen. A colour ("#5CC46A") wears the card with that colour as its
 ## fill.
 const LOOK := {"card": "card", "well": "bar_track", "glass": "glass", "parchment": "parchment",
-	"leather": "leather", "gold": "gold", "green": "green", "tab": "tab_active"}
+	"leather": "leather", "gold": "gold", "green": "green", "tab": "tab_active", "rim": "card_selected"}
 
 ## Each material: its gradient (top, middle, bottom), its inner rim and that
 ## rim's width in points, its outline, the hard lip beneath in points and its

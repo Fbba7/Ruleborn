@@ -48,8 +48,9 @@ static func chip(text: String, kind := "glass", glyph := "", wraps := false) -> 
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	var ink := StageHeroMaterial.ink(kind)
 	# A glyph, or one of the design's icons by its name ("traits/swift").
-	if glyph.contains("/") and Icons.has(glyph):
-		row.add_child(Icons.view(glyph, 20.0))
+	if glyph.contains("/"):
+		if Icons.has(glyph):
+			row.add_child(Icons.view(glyph, 20.0))
 	elif glyph != "":
 		row.add_child(words(glyph, 14.0, ink))
 	var said := words(text, 14.0, ink)
@@ -90,13 +91,18 @@ static func para(words_shown: String, points := 16.0, colour := Color("#F3EEFF")
 	return l
 
 
-## A segmented control: one button a name, the chosen one on the kit's
-## periwinkle tab, the rest on its glass chips. `pick` takes the index.
-static func tabs(names: Array, chosen: int, pick: Callable) -> PanelContainer:
+## A segmented control: one button a name, each with its icon when given,
+## the chosen one on the kit's gold chip, the rest on its glass chips, as
+## the design's hub and tabs. `pick` takes the index.
+static func tabs(names: Array, chosen: int, pick: Callable, icons: Array = []) -> PanelContainer:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(4))
 	for i: int in names.size():
-		var b := UI.action(str(names[i]), pick.bind(i), "tab_active" if i == chosen else "chip")
+		var b := UI.action(str(names[i]), pick.bind(i), "chip_on" if i == chosen else "chip")
+		if i < icons.size() and Icons.has(str(icons[i])):
+			b.icon = Icons.texture(str(icons[i]))
+			b.add_theme_constant_override("icon_max_width", UI.px(22))
+			b.custom_minimum_size.x += UI.px(26)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.set_meta("item", "tab:%d" % i)
 		b.set_meta("chosen", i == chosen)

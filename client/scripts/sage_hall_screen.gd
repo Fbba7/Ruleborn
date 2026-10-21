@@ -8,6 +8,11 @@ extends Control
 ## locked one as a silhouette, the one on guard a step forward; each card
 ## carries its portrait rendered from its model (§21.3).
 
+## Each launch Sage's three heist powers' icons, in its card's order (the
+## design's `sagepowers` set).
+const POWER_ICONS := {"THE_ARCHIVIST": ["suspend", "reveal", "recall"], "THE_TINKERER": ["invert", "jam", "plank"],
+	"THE_GARDENER": ["vinebridge", "renew", "decoy"], "THE_WANDERER": ["copy", "rift", "tailwind"]}
+
 var controller: SageController
 var body: VBoxContainer
 var header_label: Label
@@ -62,7 +67,7 @@ func _build() -> void:
 	actions.alignment = FlowContainer.ALIGNMENT_CENTER
 	var home := UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"))
 	actions.add_child(StageHeroMaterial.button(home, "leather"))
-	column.add_child(RosterScreen.padded(actions))
+	column.add_child(RosterScreen.padded(UI.narrow(actions)))
 
 
 func _refresh() -> void:
@@ -142,7 +147,7 @@ static func _name_plate(s: Dictionary, count: int) -> Control:
 	StageHeroSkin.named(l)
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.custom_minimum_size.x = UI.px(40)
-	var p := StageHeroMaterial.panel("tab" if s["guarding"] else "glass", l, 10.0, 5.0)
+	var p := StageHeroMaterial.panel("rim" if s["guarding"] else "glass", l, 10.0, 5.0)
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	p.size_flags_vertical = Control.SIZE_SHRINK_END
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -156,7 +161,10 @@ static func _name_plate(s: Dictionary, count: int) -> Control:
 func _sage(s: Dictionary, busy: bool) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", UI.px(6))
-	var head := HBoxContainer.new()
+	# Portrait beside the name, or above it at §20.8's larger text.
+	var head: BoxContainer = HBoxContainer.new()
+	if Settings.text_scale > 100:
+		head = VBoxContainer.new()
 	head.add_theme_constant_override("separation", UI.px(10))
 	var tile := StageHeroSkin.portrait_tile(str(s["id"]), "" if s["unlocked"] else "shadow", 96.0)
 	tile.custom_minimum_size.x = UI.px(96)
@@ -240,8 +248,9 @@ static func _power(key: String, i: int) -> Control:
 	v.add_theme_constant_override("separation", UI.px(3))
 	var head := HBoxContainer.new()
 	head.add_theme_constant_override("separation", UI.px(6))
-	var name := Strings.t("SAGE_POWER_%s_%d" % [key, i])
-	head.add_child(StageHeroKit.chip(name, "gold", "sagepowers/" + name.to_lower().replace(" ", "")))
+	var icons: Array = POWER_ICONS.get(key, [])
+	head.add_child(StageHeroKit.chip(Strings.t("SAGE_POWER_%s_%d" % [key, i]), "gold",
+		"sagepowers/" + str(icons[i - 1]) if i <= icons.size() else ""))
 	head.add_child(StageHeroKit.chip(Strings.t("SAGE_POWER_USES_%s_%d" % [key, i]), "card"))
 	v.add_child(head)
 	v.add_child(StageHeroKit.para(_sentence(Strings.t("SAGE_POWER_DOES_%s_%d" % [key, i])), 15.0))

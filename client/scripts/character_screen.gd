@@ -21,8 +21,9 @@ const LOOKS := ["hush", "spark", "echo", "guard"]
 ## each with its glyph and its bar's colour.
 const STATS := [["health", "♥", "#5CC46A"], ["speed", "»", "#3CC6D8"], ["power", "✸", "#F07A3C"],
 	["carry", "▣", "#F2B43C"]]
-## The tabs, by their words' keys.
+## The tabs, by their words' keys, and the design's icon for each.
 const TABS := ["CHARACTER_TAB_HEIST", "CHARACTER_TAB_STATS", "CHARACTER_TAB_COMPARE"]
+const TAB_ICONS := ["screens/heist", "realmactions/upgrade", "screens/roster"]
 
 var controller: RosterController
 var id := 0
@@ -81,7 +82,14 @@ func _build() -> void:
 	stage.custom_minimum_size = Vector2(0, UI.px(Tokens.number("size", "safe_top_points") + 290.0))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(stage)
+	# The name on a gold-rimmed plate at the stage's foot, as the design's.
 	title_label = UI.title("")
+	StageHeroSkin.named(title_label)
+	title_label.add_theme_font_size_override("font_size", UI.text_px(30))
+	title_label.set_meta("points", 30.0)
+	title_label.add_theme_color_override("font_color", Color("#FFF3CC"))
+	title_label.set_meta("own_ink", true)
+	title_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	cards = VBoxContainer.new()
 	cards.add_theme_constant_override("separation", UI.px(10))
 	body.add_child(_padded(cards))
@@ -96,7 +104,7 @@ func _build() -> void:
 	actions.alignment = FlowContainer.ALIGNMENT_CENTER
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(actions)
-	column.add_child(_padded(bottom))
+	column.add_child(_padded(UI.narrow(bottom)))
 
 
 ## `what` held in from the screen's sides by the safe area's margin.
@@ -157,12 +165,12 @@ func _refresh() -> void:
 		return
 	var me := _raw(slice, id)
 	_stand(str(me.get("kind", "")), c, slice, words)
-	var kind := RosterPresenter.kind_name(str(me.get("kind", "")))
-	cards.add_child(StageHeroKit.name_plate(title_label, str(c["school"]), "%s · %s" % [kind, c["role"]]))
+	cards.add_child(_sub_line(c, me))
 	var numbers := _numbers(str(me.get("role", "")))
 	cards.add_child(StageHeroKit.level_row(int(me.get("level", 1)), int(me.get("top", 1)),
 		int(numbers.get("health", -1))))
-	cards.add_child(StageHeroKit.tabs(TABS.map(func(k: String) -> String: return Strings.t(k)), tab, _pick_tab))
+	cards.add_child(StageHeroKit.tabs(TABS.map(func(k: String) -> String: return Strings.t(k)), tab, _pick_tab,
+		TAB_ICONS))
 	match tab:
 		0:
 			_heist_tab(c, me)
@@ -189,35 +197,73 @@ static func _numbers(role: String) -> Dictionary:
 	return RulebornReplay.role_numbers().get(role, {})
 
 
-## The ability on its own card, then role, resists, traits and best work two
-## to a row, then the forms.
+## Under the stage, centred: its school on a chip in the school's colour
+## with its mark (§21.2), and its kind and role.
+func _sub_line(c: Dictionary, me: Dictionary) -> Control:
+	var line := HFlowContainer.new()
+	line.alignment = FlowContainer.ALIGNMENT_CENTER
+	line.add_theme_constant_override("h_separation", UI.px(8))
+	var school := str(c["school"])
+	var colour: Color = Palette.SCHOOL.get(school, Palette.MOTION)
+	line.add_child(StageHeroKit.chip(Strings.t("SCHOOL_" + school.to_upper()).to_upper(),
+		"#" + colour.darkened(0.55).to_html(false), "schools/" + school))
+	var sub := StageHeroKit.words("%s · %s" % [RosterPresenter.kind_name(str(me.get("kind", ""))), c["role"]], 16.0,
+		StageHeroSkin.LIGHT_SOFT)
+	sub.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	line.add_child(sub)
+	return line
+
+
+## As the design's Heist tab: on one parchment frame, the ability on a dark
+## card beside its icon, with its uses as a tag; then role, resists, traits
+## and best work two to a row, each on a light card beside its icon; then
+## the forms, and where it lives and works.
 func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 	var kind := str(me.get("kind", ""))
-	cards.add_child(StageHeroKit.card(Strings.t("CHARACTER_KICK_ABILITY"),
-		StageHeroKit.para(Strings.term("ABILITY", kind), 17.0)))
-	var role := VBoxContainer.new()
-	var role_head := HBoxContainer.new()
-	role_head.add_theme_constant_override("separation", UI.px(6))
-	var role_icon := "crewroles/" + str(me.get("role", "")).to_lower()
-	if Icons.has(role_icon):
-		role_head.add_child(Icons.view(role_icon, 28.0))
-	var role_name := StageHeroKit.para(str(c["role"]), 20.0, Color("#FFF3CC"))
-	StageHeroSkin.named(role_name)
-	role_name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	role_head.add_child(role_name)
-	role.add_child(role_head)
-	role.add_child(StageHeroKit.para(Strings.term("ROLE_JOB", str(me.get("role", ""))), 14.0, StageHeroSkin.LIGHT_SOFT))
-	var traits := VBoxContainer.new()
-	traits.add_theme_constant_override("separation", UI.px(5))
-	for t: String in me.get("traits", []):
-		traits.add_child(StageHeroKit.chip(Strings.term("TRAIT", t), "#5A3FB0", "traits/" + t.replace("_", "")))
-		traits.add_child(StageHeroKit.para(Strings.term("TRAIT_EFFECT", t), 14.0, StageHeroSkin.LIGHT_SOFT))
-	cards.add_child(StageHeroKit.grid([
-		StageHeroKit.card(Strings.t("CHARACTER_KICK_ROLE"), role),
-		StageHeroKit.card(Strings.t("CHARACTER_KICK_RESISTS"), StageHeroKit.para(Strings.term("RESISTS", kind), 15.0)),
-		StageHeroKit.card(Strings.t("CHARACTER_KICK_TRAITS"), traits),
-		StageHeroKit.card(Strings.t("CHARACTER_KICK_BEST"), StageHeroKit.para(Strings.term("BEST_AT", kind), 15.0)),
+	var frame := VBoxContainer.new()
+	frame.add_theme_constant_override("separation", UI.px(8))
+	var ability := HBoxContainer.new()
+	ability.add_theme_constant_override("separation", UI.px(10))
+	var tile := StageHeroMaterial.panel("gold", Icons.view("heistcontrols/ability", 34.0), 14.0, 6.0)
+	tile.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	ability.add_child(tile)
+	var said := VBoxContainer.new()
+	said.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var head := HFlowContainer.new()
+	head.add_theme_constant_override("h_separation", UI.px(6))
+	var kick := StageHeroKit.kicker(Strings.t("CHARACTER_KICK_ABILITY"))
+	kick.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	head.add_child(kick)
+	head.add_child(StageHeroKit.chip(Strings.term("ABILITY_USES", kind).to_upper(), "#5A3448"))
+	said.add_child(head)
+	said.add_child(StageHeroKit.para(Strings.term("ABILITY_DOES", kind), 16.0))
+	ability.add_child(said)
+	frame.add_child(StageHeroMaterial.panel("card", ability, 14.0, 10.0))
+	var role := str(me.get("role", ""))
+	var traits: Array = (me.get("traits", []) as Array).map(func(t: String) -> String: return Strings.term("TRAIT", t))
+	var first_trait := str((me.get("traits", []) as Array).front()) if not (me.get("traits", []) as Array).is_empty() \
+		else ""
+	frame.add_child(StageHeroKit.grid([
+		_info("crewroles/" + role.to_lower(), str(c["role"]), "#7A4A10", Strings.term("ROLE_JOB", role)),
+		_info("hud/shield", Strings.t("CHARACTER_KICK_RESISTS"), "#1F6A35", Strings.term("RESISTS", kind)),
+		_info("traits/" + first_trait.replace("_", ""), Strings.t("CHARACTER_KICK_TRAITS"), "#5A3AB0",
+			" · ".join(traits)),
+		_info("realmactions/assignworker", Strings.t("CHARACTER_KICK_BEST"), "#1A6A78",
+			Strings.term("BEST_AT", kind)),
 	], self))
+	# What each trait does, under the cards, as the traits card names them.
+	for t: String in me.get("traits", []):
+		var line := HBoxContainer.new()
+		line.add_theme_constant_override("separation", UI.px(6))
+		var icon := "traits/" + t.replace("_", "")
+		if Icons.has(icon):
+			line.add_child(Icons.view(icon, 22.0))
+		var effect := StageHeroKit.para("%s: %s" % [Strings.term("TRAIT", t), Strings.term("TRAIT_EFFECT", t)], 14.0,
+			Color("#2A1A10"))
+		effect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		line.add_child(effect)
+		frame.add_child(line)
+	cards.add_child(StageHeroMaterial.panel("parchment", frame, 18.0, 6.0))
 	var strip := VBoxContainer.new()
 	strip.add_theme_constant_override("separation", UI.px(4))
 	strip.add_child(forms)
@@ -241,6 +287,29 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 	_dress(send, "leather")
 	work.add_child(send)
 	cards.add_child(StageHeroKit.card(Strings.t("ROSTER_STATE_WORKING"), work))
+
+
+## A light card on the Heist frame: the design's icon on a disc, a kicker in
+## `tone` and the value in dark ink.
+static func _info(icon: String, heading: String, tone: String, value: String) -> Control:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(6))
+	if Icons.has(icon):
+		var disc := StageHeroMaterial.panel("#F1E3C4", Icons.view(icon, 24.0), 99.0, 2.0)
+		disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(disc)
+	var v := VBoxContainer.new()
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	v.add_theme_constant_override("separation", UI.px(1))
+	v.add_child(StageHeroKit.kicker(heading, Color(tone)))
+	var said := StageHeroKit.para(value, 14.0, Color("#2A1A10"))
+	said.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	said.autowrap_mode = TextServer.AUTOWRAP_WORD
+	said.add_theme_font_override("font", UI.bold_font())
+	said.set_meta("bold", true)
+	v.add_child(said)
+	row.add_child(v)
+	return StageHeroMaterial.panel("#FBF3E2", row, 14.0, 6.0)
 
 
 ## §11.1's four numbers on bars, each against the largest any role has.
@@ -346,15 +415,58 @@ func _compare_tab(slice: Dictionary, words: Dictionary, me: Dictionary) -> void:
 
 
 ## The fixed spends, beside the way back to the roster: the next level on
-## the green button, and waking.
+## the design's big green button, and waking.
 func _actions(c: Dictionary) -> void:
 	var busy: bool = c["busy"] != ""
 	if c["raise"] is Dictionary:
-		actions.add_child(_spend(c["raise"], busy, "green"))
+		actions.add_child(_upgrade(c["raise"], busy))
 	else:
-		actions.add_child(StageHeroKit.chip(Strings.t("CHARACTER_TOP_LEVEL"), "card", "★"))
+		actions.add_child(StageHeroKit.chip(Strings.t("CHARACTER_TOP_LEVEL"), "card", "hud/star"))
 	if c["wake"] is Dictionary:
 		actions.add_child(_spend(c["wake"], busy, "gold"))
+
+
+## The design's UPGRADE: "Level up" in Lilita One over the levels it moves
+## between (or why it waits, or, asked once, the price to confirm), and the
+## price on a dark pill with Essence's icon. Spent on a second tap.
+func _upgrade(o: Dictionary, busy: bool) -> Button:
+	var confirming: bool = confirm == o["key"]
+	var b := UI.action("", _tap.bind(o), "green", Strings.t("CHARACTER_CONFIRM_SPOKEN", [o["spoken"], o["cost"]])
+		if confirming else str(o["spoken"]))
+	b.disabled = busy or not o["can"]
+	b.set_meta("key", o["key"])
+	b.set_meta("item", o["item"])
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, UI.px(10))
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var words := VBoxContainer.new()
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.alignment = BoxContainer.ALIGNMENT_CENTER
+	words.add_theme_constant_override("separation", 0)
+	var big := StageHeroKit.words(Strings.t("CHARACTER_UPGRADE").to_upper(), 24.0, Color("#FFFDF0"), true)
+	big.add_theme_font_override("font", StageHeroSkin.numbers_font())
+	big.add_theme_constant_override("outline_size", UI.px(3))
+	big.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	words.add_child(big)
+	var to := int(o["args"]["to"])
+	var line := Strings.t("CHARACTER_CONFIRM", o["cost"]) if confirming else (str(o["why"]) if str(o["why"]) != ""
+		else Strings.t("CHARACTER_UPGRADE_LINE", [to - 1, to]))
+	var sub := StageHeroKit.words(line, 14.0, Color("#0A3A20"))
+	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	sub.custom_minimum_size.x = UI.px(90)
+	words.add_child(sub)
+	row.add_child(words)
+	var price := StageHeroKit.chip(str(o["cost"]), "#1A0E22", "resources/essence")
+	price.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(price)
+	b.add_child(row)
+	b.custom_minimum_size.y = maxf(b.custom_minimum_size.y, row.get_combined_minimum_size().y + UI.px(20))
+	row.minimum_size_changed.connect(func() -> void:
+		b.custom_minimum_size.y = maxf(UI.px(64), row.get_combined_minimum_size().y + UI.px(20)))
+	return b
 
 
 ## Every button in `node` on `kind`, squashing when pressed; the words
@@ -393,6 +505,12 @@ func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -
 	level_badge.add_child(top)
 	var ids: Array = RosterScreen.kinds_of(slice).keys()
 	var at := ids.find(id)
+	var plate := StageHeroMaterial.panel("rim", title_label, 14.0, 14.0)
+	var foot := MarginContainer.new()
+	foot.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	foot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	level_badge.add_child(foot)
+	StageHeroSkin.on_stage(foot, plate, Control.PRESET_CENTER_BOTTOM)
 	var state := StageHeroKit.chip(str(c["line"]), "glass", "characterstates/" + str(c["state"]))
 	StageHeroSkin.on_stage(top, state, Control.PRESET_TOP_RIGHT)
 	if at >= 0:

@@ -77,7 +77,7 @@ func _build() -> void:
 	actions.alignment = FlowContainer.ALIGNMENT_CENTER
 	var home := UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"))
 	actions.add_child(StageHeroMaterial.button(home, "leather"))
-	column.add_child(padded(actions))
+	column.add_child(padded(UI.narrow(actions)))
 
 
 ## `what` held in from the screen's sides by the safe area's margin.

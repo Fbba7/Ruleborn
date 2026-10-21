@@ -636,6 +636,9 @@ CHARACTER_COMPARE_NONE,No one else to compare with yet,No one else to compare wi
 CHARACTER_LEVEL_SHORT,LV,LV,NV,NV,ST,NV
 CHARACTER_LEVEL_OF,Level %d of %d,Level %d of %d,Nível %d de %d,Nível %d de %d,Stufe %d von %d,Niveau %d sur %d
 CHARACTER_COUNT,%d / %d,%d / %d,%d / %d,%d / %d,%d / %d,%d / %d
+CHARACTER_UPGRADE,Level up,Level up,Subir de nível,Subir de nível,Aufsteigen,Monter
+CHARACTER_UPGRADE_LINE,Level %d → %d,Level %d → %d,Nível %d → %d,Nível %d → %d,Stufe %d → %d,Niveau %d → %d
+CHARACTER_KICK_HEALTH,Health,Health,Vida,Vida,Leben,Vie
 ROSTER_SEND_WORK,Send to work,Send to work,Mandar trabalhar,Mandar trabalhar,Zur Arbeit schicken,Envoyer au travail
 ROSTER_ALL,All,All,Todos,Todos,Alle,Tous
 ROSTER_FILTER,%s · %d,%s · %d,%s · %d,%s · %d,%s · %d,%s · %d
