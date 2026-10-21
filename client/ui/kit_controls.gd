@@ -26,14 +26,21 @@ static func set_chip(b: Button, on: bool) -> void:
 
 ## A round button with an icon (the back arrow, a close cross), named for a
 ## screen reader.
-static func icon_button(icon: String, spoken: String, pressed: Callable, look := "leather", points := 48.0) -> Button:
+static func icon_button(icon: String, spoken: String, pressed: Callable, look := "leather", points := 48.0,
+		icon_points := -1.0) -> Button:
 	var b := UI.action("", pressed, look, spoken)
 	b.name = "IconButton"
 	b.custom_minimum_size = Vector2.ONE * UI.px(maxf(points, UI.CONTROL_POINTS))
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	RbBox.dress(b, look, 999)
-	var i := Icons.view(icon, points * 0.5)
-	i.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var shown := icon_points if icon_points > 0.0 else points * 0.5
+	var i := Icons.view(icon, shown)
+	# Centred at its size, however large the button grows.
+	i.set_anchors_preset(Control.PRESET_CENTER)
+	i.offset_left = -UI.px(shown) * 0.5
+	i.offset_right = UI.px(shown) * 0.5
+	i.offset_top = -UI.px(shown) * 0.5
+	i.offset_bottom = UI.px(shown) * 0.5
 	b.add_child(i)
 	return b
 
@@ -93,3 +100,35 @@ static func toggle_row(icon: String, title: String, line: String, on: bool, togg
 	row.add_child(sw)
 	p.add_child(row)
 	return p
+
+
+## A school's round filter: its mark on a dark disc ringed in the school's
+## colour, gold-edged when chosen, named for a screen reader.
+static func school_button(school: String, on: bool, pressed: Callable) -> Button:
+	var b := icon_button("schools/" + school, Strings.t("SCHOOL_" + school.to_upper()), pressed, "ring_" + school,
+		48.0, 26.0)
+	b.name = "School"
+	RbBox.of(b).set_chosen(on)
+	b.set_meta("chosen", on)
+	return b
+
+
+## A search field: dark glass with the designs' magnifier before the words.
+static func search(spoken: String) -> LineEdit:
+	var f := UI.field(spoken)
+	f.name = "Search"
+	UI.dress(f, "field_glass", 12)
+	for c: String in ["font_color", "caret_color"]:
+		f.add_theme_color_override(c, Tokens.color("text_on_night"))
+	f.add_theme_color_override("font_placeholder_color", Tokens.color("text_on_night_2"))
+	f.right_icon = null
+	var pad := UI.clear_box(10, 6)
+	pad.content_margin_left = UI.px(40)
+	for state: String in ["normal", "focus", "read_only"]:
+		f.add_theme_stylebox_override(state, pad)
+	var glass := Icons.view("generalui/search", 22)
+	glass.set_anchors_preset(Control.PRESET_CENTER_LEFT)
+	glass.position.x = UI.px(10)
+	glass.grow_vertical = Control.GROW_DIRECTION_BOTH
+	f.add_child(glass)
+	return f

@@ -17,11 +17,12 @@ static func school_chip(school: String) -> PanelContainer:
 
 
 ## A law card `points` wide: frame by rank ("common", "uncommon", "rare",
-## "deep") with the rank also in words on its corner plate, and a tier
-## ("III") after it if given; the law's icon in its school's window, its
-## name and school.
+## "deep") with the rank also in words under its name beside the school's
+## mark, and a tier ("III") on the window's corner plate if given; the law's icon in its school's window, its
+## name and school, and a number on a disc in the window's corner if given
+## (its stability cost, as the Codex shows).
 static func law_card(icon: String, title: String, school: String, rarity: String, tier := "",
-		points := 150.0) -> PanelContainer:
+		points := 150.0, number := "") -> PanelContainer:
 	var card := PanelContainer.new()
 	card.name = "LawCard"
 	card.add_theme_stylebox_override("panel", UI.clear_box(7, 7))
@@ -42,11 +43,23 @@ static func law_card(icon: String, title: String, school: String, rarity: String
 	var art := Icons.view(icon, points * 0.5)
 	art.set_anchors_preset(Control.PRESET_FULL_RECT)
 	stage.add_child(art)
-	var rank := Strings.t("LAW_RANK_" + rarity.to_upper())
-	var tag := KitStatus.plate(rank if tier == "" else "%s · %s" % [rank, tier])
-	tag.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	tag.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	stage.add_child(tag)
+	if tier != "":
+		var tag := KitStatus.plate(tier)
+		tag.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+		tag.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		stage.add_child(tag)
+	if number != "":
+		var disc := PanelContainer.new()
+		disc.add_theme_stylebox_override("panel", UI.clear_box(4, 0))
+		UI.dress(disc, "disc")
+		disc.custom_minimum_size = Vector2.ONE * UI.px(26)
+		var n := UI.label(number, 13)
+		n.theme_type_variation = "Number"
+		n.set_meta("bold", true)
+		n.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+		n.add_theme_constant_override("outline_size", UI.px(2))
+		disc.add_child(n)
+		stage.add_child(disc)
 	v.add_child(window)
 	var name_plate := UI.plate(_name(title), "parchment")
 	v.add_child(name_plate)
@@ -54,7 +67,8 @@ static func law_card(icon: String, title: String, school: String, rarity: String
 	mark.alignment = BoxContainer.ALIGNMENT_CENTER
 	mark.add_theme_constant_override("separation", UI.px(4))
 	mark.add_child(Icons.view("schools/" + school, 20))
-	var s := UI.label(Strings.t("SCHOOL_" + school.to_upper()), 13)
+	# The school by its mark's shape, the rank by its frame and its word.
+	var s := UI.label(Strings.t("LAW_RANK_" + rarity.to_upper()), 13)
 	s.theme_type_variation = "Kicker"
 	s.uppercase = true
 	s.set_meta("bold", true)

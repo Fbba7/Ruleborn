@@ -169,7 +169,15 @@ static func _home(column: VBoxContainer) -> void:
 
 ## Law cards in the four rarity frames, and the six school chips.
 static func _cards(column: VBoxContainer) -> void:
-	column.add_child(KitNav.header("Codex", "Law cards"))
+	column.add_child(KitNav.segmented([["All laws", "screens/lawcodex"], ["Harmony", "screens/harmonyview"],
+		["Lab", "screens/resonancelab"]], 0, func(_i: int) -> void: pass))
+	var filters := UI.row(4)
+	filters.add_child(KitControls.chip("All 18 / 24", true, func() -> void: pass))
+	for school: String in Tokens.schools():
+		filters.add_child(KitControls.school_button(school, school == "time", func() -> void: pass))
+	column.add_child(filters)
+	column.add_child(KitControls.search("Search laws"))
+	column.add_child(KitPanels.chapter("motion", "Motion", "Chapter I", "3 of 4 restored"))
 	var grid := GridContainer.new()
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", UI.px(14))
@@ -179,7 +187,7 @@ static func _cards(column: VBoxContainer) -> void:
 			["laws/brittlestone", "Brittle Stone", "matter", "rare", ""],
 			["laws/soullanterns", "Soul Lanterns", "spirit", "deep", ""]]:
 		var icon: String = c[0] if Icons.has(c[0]) else "laws/bounce"
-		grid.add_child(KitCards.law_card(icon, c[1], c[2], c[3], c[4]))
+		grid.add_child(KitCards.law_card(icon, c[1], c[2], c[3], c[4], 150, str(12 + grid.get_child_count() * 4)))
 	var centre := CenterContainer.new()
 	centre.add_child(grid)
 	column.add_child(centre)
