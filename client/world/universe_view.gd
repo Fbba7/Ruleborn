@@ -141,14 +141,14 @@ func _build_stage() -> void:
 	environment.background_color = Color("#120A38")
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	environment.ambient_light_color = Color("#8A78D8")
-	environment.ambient_light_energy = 0.42
+	environment.ambient_light_energy = 0.5
 	environment.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	var env_node := WorldEnvironment.new()
 	env_node.environment = environment
 	world.add_child(env_node)
 	sun = DirectionalLight3D.new()
 	sun.light_color = Color("#FFE6C8")
-	sun.light_energy = 0.8
+	sun.light_energy = 0.95
 	sun.shadow_enabled = true
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
 	sun.directional_shadow_max_distance = 160.0
