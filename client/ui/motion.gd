@@ -142,3 +142,17 @@ static func screen_in(screen: Control) -> Tween:
 	t.tween_property(screen, "scale", Vector2.ONE, _ms("screen_fade_ms")).set_trans(Tween.TRANS_CUBIC) \
 		.set_ease(Tween.EASE_OUT)
 	return _arrive(screen, t)
+
+
+## A slow glow (the Heist tab's pulse): the node brightens a little and
+## settles over the designs' 3.2 s, far below §20.8's three flashes a
+## second; not started under reduced motion.
+static func glow(node: CanvasItem) -> Tween:
+	if Settings.reduced_motion:
+		return null
+	var t := node.create_tween().set_loops()
+	var half := Tokens.number("motion", "glow_ms") / 2000.0
+	t.tween_property(node, "self_modulate", Color(1.18, 1.14, 1.05), half).set_trans(Tween.TRANS_SINE) \
+		.set_ease(Tween.EASE_IN_OUT)
+	t.tween_property(node, "self_modulate", Color.WHITE, half).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	return t

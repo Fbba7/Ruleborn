@@ -22,6 +22,7 @@ var active := ""
 var buttons: Dictionary = {}
 var _icons: Dictionary = {}
 var _bobs: Dictionary = {}
+var _glows: Dictionary = {}
 
 
 ## The bar with `chosen` chosen and a badge on each tab named in `badges`
@@ -112,6 +113,15 @@ func choose(id: String, animate := true) -> void:
 			var bob := Motion.bob(icon, 2.0)
 			if bob != null:
 				_bobs[k] = bob
+		var box := RbBox.of(b)
+		if _glows.has(k):
+			(_glows[k] as Tween).kill()
+			_glows.erase(k)
+			box.self_modulate = Color.WHITE
+		if k == "heist" and not on and is_inside_tree():
+			var pulse := Motion.glow(box)
+			if pulse != null:
+				_glows[k] = pulse
 
 
 func _ready() -> void:
