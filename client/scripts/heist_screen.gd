@@ -342,7 +342,9 @@ func _refresh() -> void:
 		picker_clock.text = p["clock"]
 		picker_realm.text = p.get("realm", "")
 		picker_across.text = p.get("across", "")
-	UI.relabel(gait_button, Strings.term("GAIT", me["gait"]), true)
+	gait_button.accessibility_name = Strings.term("GAIT", me["gait"])
+	gait_button.tooltip_text = gait_button.accessibility_name
+	(gait_button.get_meta("plate") as Label).text = gait_button.accessibility_name
 	gait_button.set_meta("icon", str(me["gait"]))
 	FxSkin.redraw(gait_button)
 	var crew := controller.world.crew()
@@ -490,6 +492,12 @@ func _build() -> void:
 	column_node = lower
 	hud = HeistHud.new()
 	column.add_child(hud)
+	if rehearsal:
+		# A rehearsal's pause (§20.8), under the law banner: not one of the
+		# hand's orders.
+		pause_button = FxSkin.icon_button(Strings.t("HEIST_PAUSE"), toggle_pause, "pause", "card")
+		pause_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		column.add_child(pause_button)
 	view.looted.connect(func(at: Vector2, amount: int) -> void: hud.fly_coins(at, amount / 20))
 	column = lower
 	hint_label = FxSkin.label("", 13.0)
@@ -498,7 +506,6 @@ func _build() -> void:
 	hint.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	hint.custom_minimum_size.x = UI.px(240)
 	hint.add_child(hint_label)
-	column.add_child(hint)
 
 	var box := VBoxContainer.new()
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -524,32 +531,20 @@ func _build() -> void:
 	# right with the other orders above it, all above the corners §21.1 keeps
 	# clear; mirrored for a left-handed player (§20.8).
 	column.add_child(FxSkin.camera_row(view))
-	var actions := VBoxContainer.new()
-	actions.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	actions.add_theme_constant_override("separation", UI.px(6))
-	actions_node = actions
-	var small := UI.row(6.0, true)
-	small.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	small.alignment = FlowContainer.ALIGNMENT_END
-	if rehearsal:
-		pause_button = FxSkin.icon_button(Strings.t("HEIST_PAUSE"), toggle_pause, "pause", "card")
-		small.add_child(pause_button)
-	gait_button = _button(Strings.term("GAIT", "Walk"), controller.next_gait)
-	# As wide as its widest word, so a change of gait never moves the row.
-	UI.fit_to(gait_button, HeistController.GAITS.map(func(g: String) -> String: return Strings.term("GAIT", g)))
-	FxSkin.add_icon(gait_button, "Walk")
-	small.add_child(gait_button)
-	small.add_child(FxSkin.icon_button(Strings.t("HEIST_HALT"), controller.halt, "halt"))
-	small.add_child(FxSkin.icon_button(Strings.t("HEIST_DROP"), controller.drop_half, "drop"))
-	actions.add_child(small)
-	column.add_child(actions)
-	var band := UI.row(-1.0, true)
+	# §21.8 as the designs lay it out: the crew's portraits at the bottom
+	# left; at the bottom right a column of round orders (Halt and Drop, the
+	# gait with its name beneath) standing on a round red Get out. Mirrored
+	# for a left-handed player (§20.8).
+	var band := HBoxContainer.new()
 	band.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	band.alignment = FlowContainer.ALIGNMENT_BEGIN
-	var crew_row := UI.row(4.0, true)
+	band.add_theme_constant_override("separation", UI.px(6))
+	if Settings.left_handed:
+		band.layout_direction = Control.LAYOUT_DIRECTION_RTL
+	var crew_row := UI.row(2.0, true)
 	crew_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	crew_row.alignment = FlowContainer.ALIGNMENT_BEGIN
 	crew_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	crew_row.size_flags_vertical = Control.SIZE_SHRINK_END
 	crew_node = crew_row
 	band.add_child(crew_row)
 	var crew := controller.world.crew()
@@ -557,18 +552,40 @@ func _build() -> void:
 		var b := FxPortrait.new(str(crew[i]["role"]), controller.select.bind(i))
 		crew_buttons.append(b)
 		crew_row.add_child(b)
-	var go := _button(Strings.t("HEIST_GET_OUT"), controller.get_out, "alarm", 24.0)
-	go.add_theme_font_override("font", FxSkin.numbers())
-	go.add_theme_font_size_override("font_size", UI.text_px(UI.TEXT_POINTS + 6.0))
-	go.add_theme_constant_override("outline_size", UI.px(1.5))
-	go.set_meta("points", UI.TEXT_POINTS + 6.0)
-	UI.fit(go)
-	go.custom_minimum_size.y = UI.px(64)
-	FxSkin.add_icon(go, "skiff")
-	go.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	band.add_child(go)
+	var right := VBoxContainer.new()
+	right.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	right.add_theme_constant_override("separation", UI.px(4))
+	right.size_flags_vertical = Control.SIZE_SHRINK_END
+	actions_node = right
+	var small := HBoxContainer.new()
+	small.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	small.alignment = BoxContainer.ALIGNMENT_END
+	small.add_theme_constant_override("separation", UI.px(4))
+	small.add_child(FxSkin.icon_button(Strings.t("HEIST_HALT"), controller.halt, "halt"))
+	small.add_child(FxSkin.icon_button(Strings.t("HEIST_DROP"), controller.drop_half, "drop"))
+	right.add_child(small)
+	var main := HBoxContainer.new()
+	main.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	main.alignment = BoxContainer.ALIGNMENT_END
+	main.add_theme_constant_override("separation", UI.px(6))
+	gait_button = FxSkin.icon_button(Strings.term("GAIT", "Walk"), controller.next_gait, "Walk")
+	var gait := _named(gait_button, Strings.term("GAIT", "Walk"))
+	gait.size_flags_vertical = Control.SIZE_SHRINK_END
+	main.add_child(gait)
+	var go := UI.action("", controller.get_out, "red", Strings.t("HEIST_GET_OUT"))
+	go.tooltip_text = Strings.t("HEIST_GET_OUT")
+	go.custom_minimum_size = Vector2.ONE * UI.px(68)
+	UI.dress(go, "red", 999)
+	var skiff := Icons.view("heistcontrols/getout", 34.0)
+	skiff.set_anchors_preset(Control.PRESET_FULL_RECT)
+	go.add_child(skiff)
+	main.add_child(_named(go, Strings.t("HEIST_GET_OUT")))
+	right.add_child(main)
+	band.add_child(right)
 	actions_band = band
 	column.add_child(band)
+	# The hint on the bottom line, under the hand's controls (the designs').
+	column.add_child(hint)
 	# Clear of the bottom corners, where §21.1 puts nothing to tap.
 	column.add_child(FxSkin.corner_clear())
 
@@ -578,6 +595,25 @@ func _picker_line(box: VBoxContainer) -> Label:
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(l)
 	return l
+
+
+## A round control with its name on a plate beneath it (the designs'
+## round actions), so what it does is said in words as well as drawn.
+func _named(b: Button, words: String) -> VBoxContainer:
+	var v := VBoxContainer.new()
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_theme_constant_override("separation", -UI.px(8))
+	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	v.add_child(b)
+	var plate := KitStatus.plate(words)
+	plate.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var l := plate.get_child(0) as Label
+	l.theme_type_variation = "Kicker"
+	l.uppercase = true
+	v.add_child(plate)
+	b.set_meta("plate", l)
+	return v
 
 
 ## A HUD button: `UI.button`'s sizes and haptics, in the heist's own skin.

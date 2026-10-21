@@ -93,9 +93,12 @@ func _init() -> void:
 	var right_box := VBoxContainer.new()
 	right_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	right_box.add_theme_constant_override("separation", UI.px(3))
-	var stats := HBoxContainer.new()
+	# Side by side; with §20.8's large text, one under the other.
+	var stats := HFlowContainer.new()
 	stats.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	stats.add_theme_constant_override("separation", UI.px(10))
+	stats.alignment = FlowContainer.ALIGNMENT_END
+	stats.add_theme_constant_override("h_separation", UI.px(10))
+	stats.custom_minimum_size.x = UI.px(84)
 	room_label = _stat(stats, Strings.t("HUD_ROOM"))
 	left_label = _stat(stats, Strings.t("HUD_LEFT"))
 	right_box.add_child(stats)
@@ -116,7 +119,7 @@ func _init() -> void:
 
 ## One of the loot panel's numbers: its name small above it, the number
 ## large in tabular figures; returns the number's label.
-func _stat(row: HBoxContainer, title: String) -> Label:
+func _stat(row: HFlowContainer, title: String) -> Label:
 	var col := VBoxContainer.new()
 	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	col.add_theme_constant_override("separation", 0)

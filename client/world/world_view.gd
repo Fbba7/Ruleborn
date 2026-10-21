@@ -312,7 +312,7 @@ func _build_statics() -> void:
 	statics.add_child(_vault)
 	_pieces = _instance(null, RealmKit.material("toon", true))
 	statics.add_child(_pieces)
-	_merge_pieces()
+	FxGround.pieces(self)
 	_walls = _instance(null, material(_clear), false)
 	statics.add_child(_walls)
 	_skiff = _instance(ActorBuilder.skiff(), material(_toon, true))
@@ -733,44 +733,13 @@ func _sync_pieces() -> void:
 		if _vault.get_meta("open", false) != open:
 			_vault.mesh = PieceKit.vault(open)
 			_vault.set_meta("open", open)
-	_merge_pieces()
+	FxGround.pieces(self)
 	var walls := replay.walls()
 	var g := Geo.new()
 	for w: Vector2i in walls:
 		g.box(Geo.place(world_at(Vector2(w) + Vector2(0.5, 0.5)) + Vector3(0, 0.6, 0)), Vector3(0.86, 1.2, 0.86),
 			Palette.TIME.lightened(0.3))
 	_walls.mesh = g.mesh()
-
-
-## The pylons, each standing or broken, and the wards, each live or down, as
-## one mesh, built again only when one of them changes.
-func _merge_pieces() -> void:
-	if _pieces == null:
-		return
-	var pylons := replay.pylons()
-	var wards := replay.wards()
-	var key := ",".join(pylons.map(func(p: Dictionary) -> String: return str(p["standing"]))) + "|" \
-		+ ",".join(wards.map(func(w: Dictionary) -> String: return str(w["live"])))
-	if key == _piece_key:
-		return
-	_piece_key = key
-	var st := SurfaceTool.new()
-	var any := false
-	for p: Dictionary in pylons:
-		var mesh := PieceKit.pylon(str(p.get("school", "matter"))) if p["standing"] else PieceKit.broken_pylon()
-		any = _append(st, mesh, world_at(p["at"])) or any
-	for w: Dictionary in wards:
-		var mesh := PieceKit.ward(str(w["kind"])) if w["live"] else PieceKit.dead_ward()
-		any = _append(st, mesh, world_at(w["at"])) or any
-	_pieces.mesh = st.commit() if any else null
-
-
-static func _append(st: SurfaceTool, mesh: ArrayMesh, at: Vector3) -> bool:
-	if mesh == null:
-		return false
-	for k in mesh.get_surface_count():
-		st.append_from(mesh, k, Transform3D(Basis.IDENTITY, at))
-	return mesh.get_surface_count() > 0
 
 
 ## The guard whose sight is drawn: the selected one; else, as the designs

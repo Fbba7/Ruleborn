@@ -178,3 +178,34 @@ static func order_goal(view: WorldView, i: int) -> Vector2:
 			_:
 				return Vector2(-1, -1)
 	return Vector2(-1, -1)
+
+
+## The pylons, each standing or broken, and the wards, each live or down, as
+## one mesh, built again only when one of them changes.
+static func pieces(view: WorldView) -> void:
+	if view._pieces == null:
+		return
+	var pylons := view.replay.pylons()
+	var wards := view.replay.wards()
+	var key := ",".join(pylons.map(func(p: Dictionary) -> String: return str(p["standing"]))) + "|" \
+		+ ",".join(wards.map(func(w: Dictionary) -> String: return str(w["live"])))
+	if key == view._piece_key:
+		return
+	view._piece_key = key
+	var st := SurfaceTool.new()
+	var any := false
+	for p: Dictionary in pylons:
+		var mesh := PieceKit.pylon(str(p.get("school", "matter"))) if p["standing"] else PieceKit.broken_pylon()
+		any = _append(st, mesh, view.world_at(p["at"])) or any
+	for w: Dictionary in wards:
+		var mesh := PieceKit.ward(str(w["kind"])) if w["live"] else PieceKit.dead_ward()
+		any = _append(st, mesh, view.world_at(w["at"])) or any
+	view._pieces.mesh = st.commit() if any else null
+
+
+static func _append(st: SurfaceTool, mesh: ArrayMesh, at: Vector3) -> bool:
+	if mesh == null:
+		return false
+	for k in mesh.get_surface_count():
+		st.append_from(mesh, k, Transform3D(Basis.IDENTITY, at))
+	return mesh.get_surface_count() > 0
