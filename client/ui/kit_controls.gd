@@ -218,3 +218,28 @@ static func search(spoken: String) -> LineEdit:
 	glass.grow_vertical = Control.GROW_DIRECTION_BOTH
 	f.add_child(glass)
 	return f
+
+
+## A big square action with its icon over its words (the heist's Get out,
+## red): 64 by 58 points as the designs draw it.
+static func big_action(icon: String, words: String, pressed: Callable, look := "red") -> Button:
+	var b := UI.action("", pressed, look, words)
+	b.name = "BigAction"
+	b.custom_minimum_size = Vector2(UI.px(76), UI.px(64))
+	var v := VBoxContainer.new()
+	v.set_anchors_preset(Control.PRESET_FULL_RECT)
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", 0)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(Icons.view(icon, 26))
+	var box := RbBox.of(b)
+	var l := UI.label(words, 14)
+	l.add_theme_font_override("font", UI.bold_font())
+	l.add_theme_color_override("font_color", box.spec["text"])
+	l.set_meta("bold", true)
+	if box.spec.has("text_outline"):
+		l.add_theme_color_override("font_outline_color", box.spec["text_outline"][0])
+		l.add_theme_constant_override("outline_size", UI.px(box.spec["text_outline"][1]))
+	v.add_child(l)
+	b.add_child(v)
+	return b

@@ -8,7 +8,7 @@ extends Range
 
 var fill: Control = null
 ## How far the fill sits inside the track, in points.
-var inset_points := 1.5
+var inset_points := 1.0
 var _top := Color()
 var _bottom := Color()
 

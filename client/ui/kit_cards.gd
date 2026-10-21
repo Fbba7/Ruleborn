@@ -180,3 +180,11 @@ static func reward(icon: String, amount: String, words: String, tone := "gold") 
 	v.add_child(w)
 	p.add_child(v)
 	return p
+
+
+## A law's chip (the heist's "Laws here"): its icon and name on a leather
+## pill, so a law is always named, never only drawn (§20.8).
+static func law_chip(icon: String, title: String) -> PanelContainer:
+	var p := KitStatus.pill(title, icon, "leather")
+	p.name = "Law"
+	return p

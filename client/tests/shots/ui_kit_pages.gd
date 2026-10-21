@@ -19,8 +19,10 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_settings(column)
 		7:
 			_roster(column)
-		_:
+		8:
 			_result(column)
+		_:
+			_heist(column)
 
 
 static func _materials(column: VBoxContainer) -> void:
@@ -333,3 +335,32 @@ static func _result(column: VBoxContainer) -> void:
 	again.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	end.add_child(again)
 	column.add_child(end)
+
+
+## The design's heist HUD pieces (02-heist.png), over a stand-in for the
+## world.
+static func _heist(column: VBoxContainer) -> void:
+	var top := HBoxContainer.new()
+	top.add_theme_constant_override("separation", UI.px(8))
+	var laws := VBoxContainer.new()
+	laws.add_child(KitCards.law_chip("laws/sleepwalk", "Sleepwalk"))
+	laws.add_child(KitCards.law_chip("laws/glass", "Glass"))
+	top.add_child(laws)
+	var mid := VBoxContainer.new()
+	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	mid.add_child(KitHud.clock("2:38"))
+	mid.add_child(KitHud.alarm(2, 6, "Alarm"))
+	top.add_child(mid)
+	top.add_child(KitHud.figures([["Room", "1,840"], ["Left", "2,600"]]))
+	column.add_child(top)
+	column.add_child(UI.grow())
+	column.add_child(KitStatus.pill("Tap crew, then ground · hold to sneak or run"))
+	var foot := HBoxContainer.new()
+	foot.add_theme_constant_override("separation", UI.px(4))
+	for c: Array in [["crewroles/scout", "Pip", 1.0, 2], ["crewroles/carrier", "Mo", 0.7, 1],
+			["crewroles/breaker", "Bramble", 0.4, 0]]:
+		foot.add_child(KitHud.crew(Icons.texture(c[0]), c[1], c[2], c[3], func() -> void: pass))
+	foot.add_child(UI.grow())
+	(foot.get_child(foot.get_child_count() - 1) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	foot.add_child(KitControls.big_action("heistcontrols/getout", "Get out", func() -> void: pass))
+	column.add_child(foot)

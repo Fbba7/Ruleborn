@@ -197,3 +197,93 @@ static func week(minutes: Array, letters: Array, today: int) -> HBoxContainer:
 		day.add_child(l)
 		row.add_child(day)
 	return row
+
+
+## A crew member's portrait at the heist's foot (02-heist.png): the picture
+## in a gold ring, its health as a green bar under it, its ability's uses as
+## pips over it, and its name with an ink outline so it reads over the
+## world. `pressed` makes it a button named by its name.
+static func crew(picture: Texture2D, name: String, health: float, uses: int, pressed: Callable) -> VBoxContainer:
+	var v := VBoxContainer.new()
+	v.name = "Crew"
+	v.add_theme_constant_override("separation", UI.px(2))
+	v.alignment = BoxContainer.ALIGNMENT_END
+	if uses >= 0:
+		var p := pips(uses, 2)
+		p.alignment = BoxContainer.ALIGNMENT_CENTER
+		v.add_child(p)
+	var b := UI.action("", pressed, "seg", name)
+	b.custom_minimum_size = Vector2.ONE * UI.px(56)
+	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var ring := KitRing.new()
+	ring.picture = picture
+	ring.fraction = 1.0
+	ring.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	b.add_child(ring)
+	v.add_child(b)
+	var bar := KitBar.make(health, Tokens.color("success"), 7)
+	bar.custom_minimum_size.x = UI.px(52)
+	bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	v.add_child(bar)
+	var n := UI.label(name, 14)
+	n.add_theme_font_override("font", UI.bold_font())
+	n.add_theme_color_override("font_color", Tokens.color("text_on_night"))
+	n.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	n.add_theme_constant_override("outline_size", UI.px(2))
+	n.set_meta("bold", true)
+	v.add_child(n)
+	return v
+
+
+## The alarm meter in its own panel (02-heist.png): "Alarm" and its count
+## in the header, the bells beneath.
+static func alarm(level: int, of: int, title: String) -> PanelContainer:
+	var p := UI.panel("leather")
+	p.name = "Alarm"
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(4))
+	var head := HBoxContainer.new()
+	var t := UI.label(title, 14)
+	t.add_theme_font_override("font", UI.bold_font())
+	t.set_meta("bold", true)
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	head.add_child(t)
+	var n := UI.label("%d / %d" % [level, of], 14)
+	n.theme_type_variation = "Number"
+	n.set_meta("bold", true)
+	head.add_child(n)
+	v.add_child(head)
+	var bells := meter(level, of, "")
+	bells.get_child(1).queue_free()
+	v.add_child(bells)
+	p.add_child(v)
+	return p
+
+
+## Numbers in rows on a card (the heist's loot: "Room 1,840", "Left
+## 2,600"), each word on the left and its number in gold tabular figures on
+## the right.
+static func figures(rows: Array) -> PanelContainer:
+	var p := UI.panel("card")
+	p.name = "Figures"
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(2))
+	for r: Array in rows:
+		var h := HBoxContainer.new()
+		var w := UI.label(str(r[0]), 14)
+		w.theme_type_variation = "Secondary"
+		w.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		w.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		w.set_meta("bold", true)
+		w.add_theme_font_override("font", UI.bold_font())
+		h.add_child(w)
+		var n := UI.label(str(r[1]), 16)
+		n.theme_type_variation = "Number"
+		n.add_theme_color_override("font_color", Tokens.color("gold_top"))
+		n.set_meta("bold", true)
+		h.add_child(n)
+		v.add_child(h)
+	p.add_child(v)
+	return p
