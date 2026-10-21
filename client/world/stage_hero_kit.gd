@@ -19,7 +19,7 @@ static func words(text: String, points: float, colour: Color, edged := false) ->
 	l.set_meta("bold", true)
 	if edged:
 		l.add_theme_color_override("font_outline_color", Color("#120C2A"))
-		l.add_theme_constant_override("outline_size", UI.px(1.5))
+		l.add_theme_constant_override("outline_size", UI.px(2))
 	return l
 
 

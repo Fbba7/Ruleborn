@@ -48,10 +48,15 @@ func _build() -> void:
 	column.add_child(RosterScreen.padded(StageHeroSkin.plate(status_label)))
 	body = UI.scroll(column)
 	body.add_theme_constant_override("separation", UI.px(10))
+	var head := Control.new()
+	head.custom_minimum_size.y = UI.px(Tokens.number("size", "safe_top_points") - 34.0)
+	body.add_child(head)
+	body.add_child(RosterScreen.padded(StageHeroKit.hub(2)))
+	# The chosen kind's three forms on the design's rimmed hero card.
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(0, UI.px(Tokens.number("size", "safe_top_points") + 230.0))
+	stage.custom_minimum_size = Vector2(0, UI.px(210))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	body.add_child(stage)
+	body.add_child(RosterScreen.padded(StageHeroMaterial.panel("rim", stage, 18.0, 4.0)))
 	header_label = StageHeroKit.words("", 15.0, StageHeroSkin.LIGHT)
 	if Settings.text_scale > 100:
 		header_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -63,7 +68,6 @@ func _build() -> void:
 	actions.alignment = FlowContainer.ALIGNMENT_CENTER
 	toggle = StageHeroMaterial.button(UI.button(Strings.t("FORMS_SHOW_MINE"), _toggle), "gold")
 	UI.fit_to(toggle, [Strings.t("FORMS_SHOW_ALL")])
-	actions.add_child(toggle)
 	var home := UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"))
 	actions.add_child(StageHeroMaterial.button(home, "leather"))
 	column.add_child(RosterScreen.padded(UI.narrow(actions)))
@@ -88,8 +92,9 @@ func _refresh() -> void:
 	header_label.text = a.get("header", "")
 	UI.relabel(toggle, a["toggle"]["action"], true)
 	toggle.set_meta("mine", a["mine"])
-	if header_label.get_parent() != null:
-		header_label.get_parent().remove_child(header_label)
+	for kept: Control in [header_label, toggle]:
+		if kept.get_parent() != null:
+			kept.get_parent().remove_child(kept)
 	for c in cards.get_children():
 		cards.remove_child(c)
 		c.queue_free()
@@ -104,9 +109,7 @@ func _refresh() -> void:
 	_stand(k)
 	if not k.is_empty():
 		cards.add_child(_detail(k, outfits.get(k["kind"], {})))
-	var count := StageHeroMaterial.panel("glass", header_label, 12.0, 8.0)
-	count.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	cards.add_child(count)
+	cards.add_child(_count(slice))
 	var grid := GridContainer.new()
 	grid.columns = 1 if Settings.text_scale > 150 else (2 if Settings.text_scale > 100 else 3)
 	grid.add_theme_constant_override("h_separation", UI.px(8))
@@ -117,6 +120,35 @@ func _refresh() -> void:
 	for n: Dictionary in a["notes"]:
 		cards.add_child(_note(n))
 	cards.add_child(_sails(a["sails"], (slice.get("view", {}) as Dictionary).get("sails", [])))
+
+
+## The design's count line: the album's kicker, the forms hatched, each
+## note's count beside its icon, and Show mine.
+func _count(slice: Dictionary) -> Control:
+	var line := HFlowContainer.new()
+	line.add_theme_constant_override("h_separation", UI.px(10))
+	line.add_theme_constant_override("v_separation", UI.px(6))
+	var kick := StageHeroKit.kicker(Strings.t("CREW_HUB_FORMS"))
+	kick.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	line.add_child(kick)
+	header_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	line.add_child(header_label)
+	var had := {}
+	for f: Dictionary in (slice.get("view", {}) as Dictionary).get("forms", []):
+		if int(f["owned"]) > 0:
+			had[f["note"]] = int(had.get(f["note"], 0)) + 1
+	for note: String in GLYPH:
+		var each := HBoxContainer.new()
+		each.add_theme_constant_override("separation", UI.px(2))
+		each.add_child(Icons.view("lawnotes/" + note, 20.0))
+		var n := StageHeroKit.words(str(int(had.get(note, 0))), 15.0, StageHeroSkin.LIGHT)
+		n.add_theme_font_override("font", StageHeroSkin.numbers_font())
+		each.add_child(n)
+		each.accessibility_name = "%s: %d" % [FormsPresenter.note_name(note), int(had.get(note, 0))]
+		each.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		line.add_child(each)
+	line.add_child(toggle)
+	return line
 
 
 ## The kind chosen, or the album's first.
