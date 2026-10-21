@@ -3,7 +3,8 @@ extends SceneTree
 ## still (tools/render/shoot.sh). KIND is the kind (featherkin by default),
 ## CLIP the action (its ability), FORM a form (base, hush, spark, echo), GUARD=1
 ## the guard form, PORTRAIT=1 a close three-quarter view framed like the design's
-## portraits (art/design/stills/portraits), EXPR an expression.
+## portraits (art/design/stills/portraits), EXPR an expression, PARAMS
+## material uniforms to try (`lift=0,rim_strength=0`).
 
 
 func _initialize() -> void:
@@ -30,7 +31,8 @@ func _initialize() -> void:
 	var n := 1 if portrait else 4
 	var tall := 1.0
 	for i in n:
-		var c := CreatureModel.make(kind, 4 if portrait else 0)
+		var shells := int(OS.get_environment("FUR")) if OS.get_environment("FUR") != "" else (4 if portrait else 0)
+		var c := CreatureModel.make(kind, shells)
 		if c == null:
 			quit(1)
 			return
@@ -41,6 +43,18 @@ func _initialize() -> void:
 		c.place(Vector3(0.0 if portrait else (float(i) - 1.5) * tall * 1.25, 0, 0), facing[0] if portrait else facing[i])
 		c.set_form(form)
 		c.set_guard(OS.get_environment("GUARD") == "1")
+		# PARAMS=name=value,... sets the body material's uniforms (for tuning).
+		for pair: String in OS.get_environment("PARAMS").split(",", false):
+			var kv := pair.split("=")
+			var m: Material = c.material()
+			while m != null:
+				(m as ShaderMaterial).set_shader_parameter(kv[0], float(kv[1]))
+				m = m.next_pass
+		if OS.get_environment("FLAT") == "1":
+			# Shading only: the atlas as plain white (for judging the mesh's light).
+			var img := Image.create(4, 4, false, Image.FORMAT_RGBA8)
+			img.fill(Color.WHITE)
+			c.material().set_shader_parameter("atlas", ImageTexture.create_from_image(img))
 		if i == 3:
 			c.play(action)
 		elif OS.get_environment("EXPR") != "":

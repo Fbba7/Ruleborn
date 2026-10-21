@@ -11,13 +11,19 @@ uniform float width_px = 1.5;
 // Small on screen (under `far_ppm` pixels per metre) the line thickens toward
 // `far_width`, so a 40 px character keeps its dark silhouette on the grass.
 uniform float far_ppm = 240.0;
-uniform float far_width = 1.7;
+uniform float far_width = 2.1;
+// The hull sits this far (metres) behind the body, so it shows only at the
+// silhouette: the relief's bumps (fleece, scales, feathers) do not poke ink
+// through the paint as speckles, and the inside of the shape stays clean.
+uniform float depth_push = 0.05;
 
 void vertex() {
 	// Accessories (UV2.x under 0.5) take a finer line than the body, so eyes and
 	// straps are not ringed in ink.
 	float w = UV2.x >= 0.5 ? width_px : width_px * 0.3;
-	vec4 clip = PROJECTION_MATRIX * MODELVIEW_MATRIX * vec4(VERTEX, 1.0);
+	vec4 view = MODELVIEW_MATRIX * vec4(VERTEX, 1.0);
+	view.z -= depth_push;
+	vec4 clip = PROJECTION_MATRIX * view;
 	float depth = mix(max(0.05, clip.w), 1.0, PROJECTION_MATRIX[3][3]);
 	float ppm = VIEWPORT_SIZE.y * PROJECTION_MATRIX[1][1] * 0.5 / depth;
 	w *= mix(1.0, far_width, smoothstep(far_ppm, far_ppm * 0.4, ppm));

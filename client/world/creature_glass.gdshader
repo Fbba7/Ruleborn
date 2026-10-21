@@ -22,7 +22,9 @@ void fragment() {
 	vec3 c = texture(atlas, UV).rgb * COLOR.rgb;
 	bool body = flags.x >= 0.5;
 	float emit = body ? 0.0 : flags.y;
-	creature_surface(c, body, 0.0, emit, UV, local_pos, NORMAL, VIEW, creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE), ALBEDO, EMISSION);
+	relief_n = NORMAL;
+	far_mix = creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE);
+	creature_surface(c, body, 0.0, emit, UV, local_pos, NORMAL, VIEW, far_mix, ALBEDO, EMISSION);
 	gloss_band = body ? 0.0 : flags.x / 0.45;
 	float fr = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 2.0);
 	ALPHA = clamp(COLOR.a + fr * 0.35, 0.0, 1.0);

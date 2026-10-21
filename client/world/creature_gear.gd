@@ -147,34 +147,101 @@ static func guard_kit(c: CreatureModel) -> Node3D:
 	var sash := _instance(st, "sash")
 	sash.position.y = -rad * 0.3
 	chest.add_child(sash)
-	# The lantern at the right hand: brass cap and base, a glowing body, a ring.
-	var hand := _anchor(c, &"hand_R")
-	var lt := _tool()
-	# Larger than life (a lantern a fifth of the body is still a hand lamp):
-	# at the heist's size it is the guard's mark.
-	var lr := 0.1 * c.height() / s
-	_ball(lt, Vector3(0, -lr * 1.9, 0), lr, LANTERN_GLOW, 0.0, 1.0)
-	_cylinder(lt, Vector3(0, -lr * 0.95, 0), lr * 0.7, lr * 0.32, BRASS, 0.45)
-	_cylinder(lt, Vector3(0, -lr * 2.85, 0), lr * 0.75, lr * 0.25, BRASS, 0.45)
-	_ring(lt, Vector3(0, -lr * 0.45, 0), lr * 0.35, lr * 0.07, BRASS)
-	var lantern := _instance(lt, "lantern")
-	hand.add_child(lantern)
+	# The lantern on a crook staff at the right hand, hung above the head (a
+	# watchman's lamp): at the heist's 40 px a guard is told by its light and
+	# by the staff in its silhouette, in black as in colour.
+	var lantern := _instance(_crook_lantern(c), "lantern")
+	chest.add_child(lantern)
+	var lr := 0.085 * c.height() / s
 	# A soft halo, so the lantern reads at the heist's scale (a guard is found by its light).
 	var halo := MeshInstance3D.new()
 	var hq := QuadMesh.new()
-	hq.size = Vector2(lr * 8.0, lr * 8.0)
+	hq.size = Vector2(lr * 7.0, lr * 7.0)
 	halo.mesh = hq
 	var hm := ShaderMaterial.new()
 	hm.shader = _blob_shader
 	hm.set_shader_parameter("face_camera", true)
-	hm.set_shader_parameter("shade", Color(LANTERN_GLOW, 0.6))
+	hm.set_shader_parameter("shade", Color(LANTERN_GLOW, 0.55))
 	halo.material_override = hm
 	halo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	halo.position = Vector3(0, -lr * 1.9, 0)
+	halo.position = _lamp_at(c)
 	lantern.add_child(halo)
 	holder.set_meta("parts", [sash, lantern])
 	c.add_child(holder)
 	return holder
+
+
+# Where a socket stands at rest, in the chest socket's frame (export units).
+static func _rest_from_chest(c: CreatureModel, socket_name: StringName) -> Vector3:
+	var sk := c.skeleton()
+	var at := {}
+	for d: Dictionary in c.info.get("sockets", []):
+		at[StringName(str(d.get("name", "")))] = d
+	var out := Vector3.ZERO
+	for pair: Array in [[socket_name, 1.0], [&"chest", -1.0]]:
+		var d: Dictionary = at.get(pair[0], {})
+		var idx := sk.find_bone(str(d.get("bone", "")))
+		if idx < 0:
+			continue
+		var off: Array = d.get("offset", [0.0, 0.0, 0.0])
+		var p := sk.get_bone_global_rest(idx) * Vector3(float(off[0]), float(off[1]), float(off[2]))
+		out += p * float(pair[1])
+	return out
+
+
+# The crook's top, over the head on the lantern hand's side.
+static func _crook_top(c: CreatureModel) -> Vector3:
+	var s := _scale(c)
+	var hand := _rest_from_chest(c, &"hand_R")
+	var head := _rest_from_chest(c, &"head_top")
+	var side := signf(hand.x) if absf(hand.x) > 0.001 else -1.0
+	var rad := float(c.info.get("chest_radius", c.height() * 0.22 / s))
+	var x := side * maxf(absf(hand.x) * 1.05, rad * 1.25)
+	return Vector3(x, head.y + 0.12 * c.height() / s, hand.z + rad * 0.35)
+
+
+# The lantern's glowing body, hung from the crook's hook.
+static func _lamp_at(c: CreatureModel) -> Vector3:
+	var h := c.height() / _scale(c)
+	var top := _crook_top(c)
+	return top + Vector3(signf(top.x) * 0.07 * h, 0.03 * h - 0.085 * h * 2.5, 0)
+
+
+# The staff (a dark rod from below the hand to over the head, bent into a
+# crook) and the lantern hung from it: brass cap and base, a glowing body.
+static func _crook_lantern(c: CreatureModel) -> SurfaceTool:
+	var s := _scale(c)
+	var st := _tool()
+	var h := c.height() / s
+	var top := _crook_top(c)
+	var hand := _rest_from_chest(c, &"hand_R")
+	var foot := Vector3(top.x, hand.y - 0.18 * h, top.z)
+	var r := 0.018 * h
+	var wood := Color("#4A2E24")
+	_rod(st, foot, top, r, wood)
+	var hook := top + Vector3(signf(top.x) * 0.07 * h, 0.03 * h, 0)
+	_rod(st, top, hook, r, wood)
+	var lr := 0.085 * h
+	var at := _lamp_at(c) + Vector3(0, lr * 1.9, 0)
+	_ball(st, at + Vector3(0, -lr * 1.9, 0), lr, LANTERN_GLOW, 0.0, 1.0)
+	_cylinder(st, at + Vector3(0, -lr * 0.95, 0), lr * 0.7, lr * 0.32, BRASS, 0.45)
+	_cylinder(st, at + Vector3(0, -lr * 2.85, 0), lr * 0.75, lr * 0.25, BRASS, 0.45)
+	_rod(st, hook, at + Vector3(0, -lr * 0.8, 0), r * 0.5, BRASS)
+	return st
+
+
+# A round rod from a to b (six sides, capped by its neighbours).
+static func _rod(st: SurfaceTool, a: Vector3, b: Vector3, r: float, col: Color) -> void:
+	var axis := (b - a).normalized()
+	var u := axis.cross(Vector3.FORWARD if absf(axis.z) < 0.9 else Vector3.RIGHT).normalized()
+	var v := axis.cross(u)
+	var sides := 6
+	for j in sides:
+		var a0 := TAU * float(j) / float(sides)
+		var a1 := TAU * float(j + 1) / float(sides)
+		var d0 := u * cos(a0) + v * sin(a0)
+		var d1 := u * cos(a1) + v * sin(a1)
+		_quad(st, [a + d0 * r, b + d0 * r, b + d1 * r, a + d1 * r], [d0, d0, d1, d1], col, 0.0, 0.0)
 
 
 static func _scale(c: CreatureModel) -> float:

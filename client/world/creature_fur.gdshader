@@ -40,7 +40,9 @@ void fragment() {
 	if (h < layer * 1.05) {
 		discard;
 	}
-	vec3 c = texture(atlas, UV).rgb * mix(0.85, 1.15, layer);
-	creature_surface(c, true, 0.0, 0.0, UV, local_pos, NORMAL, VIEW, creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE), ALBEDO, EMISSION);
+	vec3 c = texture(atlas, UV).rgb * mix(0.82, 1.05, layer);
+	relief_n = NORMAL;
+	far_mix = creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE);
+	creature_surface(c, true, 0.0, 0.0, UV, local_pos, NORMAL, VIEW, far_mix, ALBEDO, EMISSION);
 	gloss_band = 0.0;
 }
