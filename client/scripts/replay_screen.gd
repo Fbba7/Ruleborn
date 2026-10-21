@@ -191,7 +191,8 @@ func _build() -> void:
 	view.looted.connect(func(at: Vector2, amount: int) -> void: hud.fly_coins(at, amount / 20))
 	var column := columns[1]
 
-	var status := FxSkin.panel("card", 16.0, 8.0)
+	var status := UI.panel("leather")
+	status.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var status_box := VBoxContainer.new()
 	status_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	status_box.add_theme_constant_override("separation", 0)
@@ -259,10 +260,9 @@ func _draw_progress(ci: Control) -> void:
 				FxIcons.bubble(ci, at, s * 0.9, "z", FxSkin.ALARM_DEEP)
 
 
-## A playback button in the heist's skin.
+## A playback button in the kit's material (§21.8: gold the main action).
 func _button(words: String, call: Callable, kind: String, spoken := "") -> Button:
-	var b := UI.button(words, call, false, Color(), spoken)
-	FxSkin.style_button(b, kind)
+	var b := UI.action(words, call, kind, spoken)
 	UI.fit(b)
 	return b
 

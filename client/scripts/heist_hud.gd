@@ -113,7 +113,7 @@ func _init() -> void:
 	alarm_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	alarm_row.add_child(alarm_label)
 	alarm_box.add_child(alarm_row)
-	meter = FxDraw.new(_draw_meter, Vector2(UI.px(17) * BELLS, UI.px(13)))
+	meter = FxDraw.new(_draw_meter, Vector2(UI.px(15) * BELLS, UI.px(12)))
 	alarm_box.add_child(meter)
 	alarm.add_child(alarm_box)
 	centre.add_child(alarm)
@@ -126,7 +126,7 @@ func _init() -> void:
 	var right_box := VBoxContainer.new()
 	right_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	right_box.add_theme_constant_override("separation", UI.px(3))
-	right_box.custom_minimum_size.x = UI.px(98)
+	right_box.custom_minimum_size.x = UI.px(88)
 	# A row each: its name, and the number at the row's end.
 	room_label = _stat(right_box, Strings.t("HUD_ROOM"))
 	left_label = _stat(right_box, Strings.t("HUD_LEFT"))
@@ -205,7 +205,7 @@ static func _wrap_by_words(l: Label) -> void:
 	var widest := 0.0
 	for w: String in l.text.replace("\n", " ").split(" ", false):
 		widest = maxf(widest, font.get_string_size(w, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x)
-	l.custom_minimum_size.x = minf(ceilf(widest) + 2.0, UI.px(150))
+	l.custom_minimum_size.x = minf(ceilf(widest) + 2.0, UI.px(72) * maxf(1.0, Settings.text_scale / 100.0))
 
 
 ## A side column of the top row: it takes what room there is and holds its
