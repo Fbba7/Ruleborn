@@ -85,6 +85,58 @@ static func resource(icon: String, amount: String, spoken: String, colour: Color
 	return p
 
 
+## A hero number in a gold ring (the design's "~3,300 VAULT"): the number
+## in the display face over its kicker, on a round card.
+static func ring(number: String, kicker: String, spoken: String, points := 108.0) -> Control:
+	var disc := CenterContainer.new()
+	disc.custom_minimum_size = Vector2.ONE * UI.px(points)
+	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	disc.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var box := UI.dress(disc, "card_selected", points / 2.0)
+	box.chosen = true
+	var words := VBoxContainer.new()
+	words.add_theme_constant_override("separation", -UI.px(2))
+	words.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var n := UI.label(number, 24.0)
+	n.add_theme_font_override("font", Tokens.font("display"))
+	n.name = "Number"
+	words.add_child(n)
+	var k := UI.label(kicker.to_upper(), KICKER_POINTS)
+	k.theme_type_variation = "Kicker"
+	words.add_child(k)
+	disc.add_child(words)
+	disc.accessibility_name = spoken
+	disc.name = "Ring"
+	return disc
+
+
+## The screen's main action as a wide gold key with two lines: its name in
+## capitals and what it costs or brings beneath (the design's PLAN THE
+## HEIST · With Mo, Bramble, Hollow).
+static func main_key(title: String, under: String, pressed: Callable, spoken: String) -> Button:
+	var b := UI.action("", pressed, "gold", spoken)
+	b.custom_minimum_size = Vector2(UI.px(250), UI.px(62))
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var lines := VBoxContainer.new()
+	lines.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	lines.alignment = BoxContainer.ALIGNMENT_CENTER
+	lines.add_theme_constant_override("separation", -UI.px(2))
+	lines.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var t := UI.label(title.to_upper(), 18.0)
+	t.theme_type_variation = "ButtonText"
+	t.add_theme_font_override("font", Tokens.font("ui", 800, false, 2))
+	t.set_meta("bold", true)
+	t.name = "Title"
+	lines.add_child(t)
+	var u := UI.label(under, 13.0)
+	u.theme_type_variation = "Caption"
+	u.name = "Under"
+	lines.add_child(u)
+	b.add_child(lines)
+	b.custom_minimum_size.y = maxf(b.custom_minimum_size.y, lines.get_combined_minimum_size().y + UI.px(12))
+	return b
+
+
 ## A smaller pill for a pin over the world, where many stand close.
 static func tag(icon: String, text: String, look := "glass") -> PanelContainer:
 	var p := pill(icon, text, "", look)

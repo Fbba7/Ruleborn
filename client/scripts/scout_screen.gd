@@ -47,6 +47,8 @@ func _build() -> void:
 	_top = top
 	column.add_child(top)
 	status_label = UI.status("info", "")
+	status_label.add_theme_font_size_override("font_size", UI.text_px(13))
+	status_label.set_meta("points", 13.0)
 	column.add_child(UI.plate(status_label, "glass"))
 	StageScreen.window(column, 1.3)
 	var s := ScrollContainer.new()
@@ -60,7 +62,7 @@ func _build() -> void:
 	glass.add_child(body)
 	s.add_child(glass)
 	column.add_child(s)
-	_sheet = StageScreen.sheet(body, 0.6)
+	_sheet = StageScreen.sheet(body, 1.0)
 	_keys = StageScreen.handle(column, _sheet)
 	_dock = HFlowContainer.new()
 	_dock.alignment = FlowContainer.ALIGNMENT_CENTER
@@ -88,13 +90,26 @@ func _refresh() -> void:
 	var card: Dictionary = s["card"]
 	var realm: Dictionary = card.get("realm", {})
 	var lines: Array = s["lines"]
-	# Which realm, at what level, and its Vault's.
+	# The loot in a gold ring, and the realm's threats counted beside it.
+	var hero := HBoxContainer.new()
+	hero.add_theme_constant_override("separation", UI.px(10))
+	var loot := "~" + ShopPresenter.grouped(int(card.get("loot", 0)))
+	hero.add_child(OverlayHud.ring(loot, Strings.t("SCOUT_LOOT_KICKER"), (s["facts"] as Array)[0]))
+	var counts := VBoxContainer.new()
+	counts.add_theme_constant_override("separation", UI.px(5))
+	counts.alignment = BoxContainer.ALIGNMENT_CENTER
+	var type := "Heart" if realm.get("realm") == "heart" else str(realm.get("type", "Heart"))
+	counts.add_child(OverlayHud.pill(OverlayHud.realm_icon(type), "%d · %d" % [int(realm.get("realm_level", 1)),
+		int(realm.get("vault_level", 1))], lines[0], "card"))
+	counts.add_child(OverlayHud.pill("crewroles/warden", str(ObservatoryPresenter.total(realm.get("guards", {}))),
+		lines[2], "card"))
+	counts.add_child(OverlayHud.pill("hud/shield", str(ObservatoryPresenter.total(realm.get("wards", {}))),
+		lines[3], "card"))
+	hero.add_child(counts)
+	body.add_child(hero)
 	var sec := OverlayHud.section("island", lines[0])
 	var row := OverlayHud.pills_of(sec)
-	var type := "Heart" if realm.get("realm") == "heart" else str(realm.get("type", "Heart"))
-	row.add_child(OverlayHud.pill(OverlayHud.realm_icon(type), str(int(realm.get("realm_level", 1))), lines[0]))
-	row.add_child(OverlayHud.pill("heiststatus/vaultprogress", str(int(realm.get("vault_level", 1))), lines[0]))
-	for p: Control in OverlayFacts.universe(card, s["facts"]):
+	for p: Control in OverlayFacts.universe(card, s["facts"], false):
 		row.add_child(p)
 	body.add_child(sec)
 	sec = OverlayHud.section("laws", lines[1])
@@ -116,12 +131,10 @@ func _refresh() -> void:
 	(hidden.find_child("Words", true, false) as Label).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(hidden)
 	var o: Dictionary = s["raid"]
-	var raid := UI.action(o["action"], controller.raid.bind(card), "gold", o["spoken"])
-	raid.custom_minimum_size.y = UI.px(60)
+	var raid := OverlayHud.main_key(Strings.t("SCOUT_PLAN_KEY"), ObservatoryPresenter.fee(card),
+		controller.raid.bind(card), o["spoken"])
 	raid.disabled = not o["can"]
 	raid.set_meta("key", o["key"])
-	raid.icon = Icons.texture("planningactions/plan")
-	raid.add_theme_constant_override("icon_max_width", UI.px(26))
 	raid.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_dock.add_child(raid)
 	_draw_world(card)

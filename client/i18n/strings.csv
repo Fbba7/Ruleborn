@@ -821,6 +821,8 @@ SCOUT_NONE,none,none,nenhum,nenhum,keine,aucun
 SCOUT_WATCH,"Watch: suspicion fills at %d%%, sight reaches %d%%","Watch: suspicion fills at %d%%, sight reaches %d%%","Vigia: suspeita enche a %d%%, a visão alcança %d%%","Vigia: a suspeita enche a %d%%, a visão alcança %d%%","Wache: Verdacht füllt sich zu %d%%, Sicht reicht %d%%","Guet : le soupçon monte à %d %%, la vue porte à %d %%"
 SCOUT_HIDDEN,Where guards stand and wards lie is found in the heist,Where guards stand and wards lie is found in the heist,Onde ficam guardas e proteções se descobre no assalto,Onde estão guardas e proteções descobre-se no assalto,"Wo Wachen stehen und Siegel liegen, zeigt erst der Raubzug",Où se tiennent les gardes et les protections se découvre pendant le casse
 SCOUT_RAID,Plan · %s,Plan · %s,Planejar · %s,Planear · %s,Planen · %s,Planifier · %s
+SCOUT_LOOT_KICKER,Loot,Loot,Saque,Saque,Beute,Butin
+SCOUT_PLAN_KEY,Plan the heist,Plan the heist,Planejar o assalto,Planear o assalto,Raubzug planen,Préparer le casse
 LANDING_TITLE,Choose where to land,Choose where to land,Escolha onde pousar,Escolhe onde aterrar,Wähle den Landeplatz,Choisis où atterrir
 LANDING_HINT,"Tap an edge spot to land there, or step through the spots below","Tap an edge spot to land there, or step through the spots below","Toque num ponto da borda para pousar lá, ou percorra os pontos abaixo","Toca num ponto da orla para aterrar lá, ou percorre os pontos abaixo","Tippe auf einen Randplatz, um dort zu landen, oder geh die Plätze unten durch","Touche un point du bord pour y atterrir, ou parcours les points ci-dessous"
 LANDING_SPOT,"%s edge, %d of %d: %s","%s edge, %d of %d: %s","Borda %s, %d de %d: %s","Orla %s, %d de %d: %s","%s Rand, %d von %d: %s","Bord %s, %d sur %d : %s"
@@ -1165,6 +1167,15 @@ HEIST_IN_HEART,In the Heart,In the Heart,No Coração,No Coração,Im Herzen,Dan
 PLAN_ENTRY_ACROSS,"Entry: you choose an outer realm's edge spot, or a fault, as the crew lands","Entry: you choose an outer realm's edge spot, or a fault, as the crew lands","Entrada: você escolhe um ponto da borda de um reino exterior, ou uma falha, ao pousar","Entrada: escolhes um ponto da orla de um reino exterior, ou uma falha, ao aterrar",Einstieg: du wählst beim Landen einen Randplatz eines Außenreichs oder einen Riss,"Entrée : tu choisis un point du bord d'un royaume extérieur, ou une faille, à l'atterrissage"
 PLAN_ROUTE,"Route: realm by realm to the Heart, up to %d realms, then out by skiff from wherever the crew stands","Route: realm by realm to the Heart, up to %d realms, then out by skiff from wherever the crew stands","Rota: reino a reino até o Coração, até %d reinos, e saída de barco de onde a equipe estiver","Rota: reino a reino até ao Coração, até %d reinos, e saída de barco de onde a equipa estiver","Route: Reich für Reich zum Herzen, bis zu %d Reiche, dann hinaus per Boot, wo die Crew gerade steht","Itinéraire : royaume par royaume jusqu'au Cœur, jusqu'à %d royaumes, puis sortie en esquif d'où se trouve l'équipe"
 PLAN_CLOCK_RANGE,"Heist clock %s to %s, by the realm you land in","Heist clock %s to %s, by the realm you land in","Relógio do assalto de %s a %s, conforme o reino onde pousar","Relógio do assalto de %s a %s, conforme o reino onde aterrares","Raubzug-Uhr %s bis %s, je nach Landereich","Horloge du casse de %s à %s, selon le royaume d'atterrissage"
+PLAN_ROW_CLOCK,Clock,Clock,Relógio,Relógio,Uhr,Horloge
+PLAN_ROW_ENTRY,Entry,Entry,Entrada,Entrada,Einstieg,Entrée
+PLAN_ROW_ROUTE,Route,Route,Rota,Rota,Route,Route
+PLAN_ROW_FAULTS,Faults,Faults,Falhas,Falhas,Risse,Failles
+PLAN_ROW_LOAD,Load,Load,Carga,Carga,Ladung,Charge
+PLAN_TAB_PLAN,Plan,Plan,Plano,Plano,Plan,Plan
+PLAN_TAB_CREW,Crew,Crew,Equipe,Equipa,Crew,Équipe
+PLAN_LAWS_ROUTE,Laws on the route,Laws on the route,Leis no caminho,Leis no caminho,Gesetze auf dem Weg,Lois sur la route
+PLAN_CASTS_ROW,Casts,Casts,Lançamentos,Lançamentos,Würfe,Sorts
 SETTINGS_CAMERA_BUTTONS_ON,Turn and zoom buttons: on,Turn and zoom buttons: on,Botões de girar e zoom: sim,Botões de rodar e zoom: sim,Dreh- und Zoomtasten: an,Boutons pivoter et zoom : oui
 SETTINGS_CAMERA_BUTTONS_OFF,Turn and zoom buttons: off,Turn and zoom buttons: off,Botões de girar e zoom: não,Botões de rodar e zoom: não,Dreh- und Zoomtasten: aus,Boutons pivoter et zoom : non
 CAMERA_TURN_LEFT,Turn the view left,Turn the view left,Girar a vista para a esquerda,Rodar a vista para a esquerda,Ansicht nach links drehen,Pivoter la vue à gauche

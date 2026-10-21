@@ -11,12 +11,11 @@ const BANDS := ["quiet", "steady", "humming", "brimming", "strained", "cracking"
 
 ## A universe's size, Renown, loot, strain and faults (`card`, the server's
 ## card), each as a pill; `spoken` is the presenter's lines for them.
-static func universe(card: Dictionary, spoken: Array) -> Array[Control]:
+static func universe(card: Dictionary, spoken: Array, with_loot := true) -> Array[Control]:
 	var said: String = spoken[0] if not spoken.is_empty() else ""
-	var out: Array[Control] = [
-		OverlayHud.pill("screens/universe", str(int(card.get("realms", 1))), said),
-		OverlayHud.pill("heiststatus/lootbag", "~" + ShopPresenter.grouped(int(card.get("loot", 0))), said),
-	]
+	var out: Array[Control] = [OverlayHud.pill("screens/universe", str(int(card.get("realms", 1))), said)]
+	if with_loot:
+		out.append(OverlayHud.pill("heiststatus/lootbag", "~" + ShopPresenter.grouped(int(card.get("loot", 0))), said))
 	if card.get("renown") != null:
 		out.append(OverlayHud.pill("resources/renown", ShopPresenter.grouped(int(card["renown"])), said))
 	var band := clampi(int(card.get("band", 0)), 0, BANDS.size() - 1)
