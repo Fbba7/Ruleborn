@@ -1186,4 +1186,4 @@ KIT_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
 KIT_FULL,Full,Full,Cheio,Cheio,Voll,Plein
 KIT_TAB_BADGE,%s: %s new,%s: %s new,%s: %s novos,%s: %s novos,%s: %s neu,%s : %s nouveaux
 HOME_COLLECT,Collect all,Collect all,Coletar tudo,Recolher tudo,Alles einsammeln,Tout récolter
-HOME_COLLECT_SPOKEN,"Collect all: %s waiting","Collect all: %s waiting","Coletar tudo: %s esperando","Recolher tudo: %s à espera","Alles einsammeln: %s bereit","Tout récolter : %s en attente"
+HOME_COLLECT_SPOKEN,Collect all: %s waiting,Collect all: %s waiting,Coletar tudo: %s esperando,Recolher tudo: %s à espera,Alles einsammeln: %s bereit,Tout récolter : %s en attente
