@@ -20,6 +20,8 @@ var friend_index := 0
 ## law: its index into those.
 var target_index := {}
 var _starlight: PanelContainer
+## The kind the list is filtered to, or "" for all.
+var _kind := ""
 var _essence: PanelContainer
 
 
@@ -100,13 +102,40 @@ func _refresh() -> void:
 			friend_index += 1
 			_refresh(), "leather", "", 14.0)
 		body.add_child(ScreenParts.item("social", "gift", Strings.t("SHOP_GIFT_TO", friend["name"]), "", other))
-	var grid := GridContainer.new()
-	grid.columns = ScreenParts.grid_columns(2) if Settings.text_scale <= 125 else 1
-	grid.add_theme_constant_override("h_separation", UI.px(8))
-	grid.add_theme_constant_override("v_separation", UI.px(8))
+	var kinds: Array[String] = []
 	for item: Dictionary in s["items"]:
-		grid.add_child(_for_sale(item, s["buying"] != "", friend))
-	body.add_child(grid)
+		if not kinds.has(str(item["kind"])):
+			kinds.append(str(item["kind"]))
+	if kinds.size() > 1:
+		var chips := HBoxContainer.new()
+		chips.add_theme_constant_override("separation", UI.px(6))
+		chips.add_child(ScreenParts.chip(Strings.t("SCREEN_ALL"), _kind == "", func() -> void:
+			_kind = ""
+			_refresh()))
+		for k: String in kinds:
+			chips.add_child(ScreenParts.chip(Strings.term("KIND", k), _kind == k, func() -> void:
+				_kind = k
+				_refresh(), "shopcosmetics", k.replace("_", "")))
+		var strip := ScrollContainer.new()
+		strip.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		strip.custom_minimum_size.y = UI.px(56)
+		strip.add_child(chips)
+		body.add_child(strip)
+		body.move_child(strip, 0)
+	var shown: Array = (s["items"] as Array).filter(func(i: Dictionary) -> bool:
+		return _kind == "" or str(i["kind"]) == _kind)
+	if not shown.is_empty():
+		body.add_child(_featured(shown[0], s["buying"] != "", friend))
+	if shown.size() > 1:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", UI.px(8))
+		for item: Dictionary in shown.slice(1):
+			row.add_child(_for_sale(item, s["buying"] != "", friend))
+		var strip2 := ScrollContainer.new()
+		strip2.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		strip2.custom_minimum_size.y = row.get_combined_minimum_size().y + UI.px(10)
+		strip2.add_child(row)
+		body.add_child(strip2)
 	if not (s["owned"] as Array).is_empty():
 		body.add_child(ScreenParts.section(Strings.t("SCREEN_SHOP_OWNED"), str((s["owned"] as Array).size())))
 	for item: Dictionary in s["owned"]:
@@ -118,6 +147,44 @@ func _refresh() -> void:
 	if not lines.is_empty():
 		body.add_child(ScreenParts.item("shopcosmetics", "spendingcap", Strings.t("SCREEN_SHOP_SPENT"),
 			"\n".join(lines)))
+
+
+## The first cosmetic on show as the design's featured card: its art large
+## on a lit stage, its name in Marcellus, its kind, and its price on gold.
+func _featured(item: Dictionary, busy: bool, friend: Dictionary) -> Control:
+	var top := HBoxContainer.new()
+	top.add_theme_constant_override("separation", UI.px(10))
+	var words := VBoxContainer.new()
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.add_theme_constant_override("separation", UI.px(4))
+	var kicker := ScreenKit.text(Strings.t("SCREEN_FEATURED").to_upper(), 13.0, "words", "card")
+	kicker.add_theme_color_override("font_color", Tokens.color("gold"))
+	words.add_child(kicker)
+	var name := ScreenKit.text(item["name"], 26.0, "name", "card", false, true)
+	name.tooltip_text = Strings.t("SHOP_ITEM", [item["name"], item["price"]])
+	words.add_child(name)
+	words.add_child(ScreenParts.pill(Strings.term("KIND", str(item["kind"])), "well", "shopcosmetics",
+		str(item["kind"]).replace("_", "")))
+	top.add_child(words)
+	var art := ScreenKit.icon("shopcosmetics", str(item["kind"]).replace("_", ""), 104.0)
+	top.add_child(art)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UI.px(10))
+	box.add_child(top)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	var buy := ScreenKit.button(item["price"], controller.buy.bind(item["id"]), "gold",
+		Strings.t("SHOP_BUY_NAMED", [item["name"], item["price"]]), 14.0)
+	buy.disabled = busy
+	buy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(buy)
+	if not friend.is_empty():
+		var give := ScreenKit.button(Strings.t("SHOP_GIVE"), controller.buy.bind(item["id"], friend["account"]),
+			"leather", Strings.t("SHOP_GIVE_NAMED", [item["name"], friend["name"]]), 14.0)
+		give.disabled = busy
+		row.add_child(give)
+	box.add_child(row)
+	return ScreenKit.panel("frame_gold", ScreenKit.panel("card", box, 18.0, 12.0), 22.0, 5.0)
 
 
 ## A cosmetic for sale as the design's card: its kind's art on a lit stage,
@@ -149,7 +216,7 @@ func _for_sale(item: Dictionary, busy: bool, friend: Dictionary) -> Control:
 		give.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		box.add_child(give)
 	var p := ScreenKit.panel("card_lit", box, 18.0, 10.0)
-	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	p.custom_minimum_size.x = UI.px(150)
 	return p
 
 
