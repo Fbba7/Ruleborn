@@ -20,7 +20,6 @@ static func header(title: String, kicker := "") -> VBoxContainer:
 		k.set_meta("bold", true)
 		v.add_child(k)
 	v.add_child(UI.title(title))
-	v.add_child(rule())
 	return v
 
 

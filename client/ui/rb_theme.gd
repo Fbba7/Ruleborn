@@ -96,6 +96,11 @@ static func _build(family: String) -> Theme:
 			th.set_color("font_outline_color", v, Tokens.color("ink_line"))
 			th.set_constant("outline_size", v, UI.px(float(t["outline"])))
 			th.set_color("font_color", v, Tokens.color("cream") if not light else text)
+	# A title stands over the designs' gold rule (UI.title draws it in this
+	# margin).
+	var under := StyleBoxEmpty.new()
+	under.content_margin_bottom = UI.px(14)
+	th.set_stylebox("normal", "Title", under)
 	th.set_type_variation("Secondary", "Label")
 	th.set_color("font_color", "Secondary", soft)
 	for s: String in STATUSES:
@@ -115,16 +120,15 @@ static func _controls(th: Theme, text: Color, light: bool) -> void:
 	th.set_color("caret_color", "LineEdit", Tokens.color("parchment_ink"))
 	th.set_color("font_color", "RichTextLabel", text)
 	th.set_color("default_color", "RichTextLabel", text)
+	# A quiet scroll bar: a thin rounded grabber, no track, as phones draw it.
 	var grab := StyleBoxFlat.new()
-	grab.bg_color = Tokens.color("gold") if not light else Tokens.color("gold_rim")
-	grab.set_corner_radius_all(UI.px(3))
-	grab.content_margin_left = UI.px(2)
-	grab.content_margin_right = UI.px(2)
-	var track := StyleBoxFlat.new()
-	track.bg_color = Color(0, 0, 0, 0.25)
-	track.set_corner_radius_all(UI.px(3))
-	track.content_margin_left = UI.px(2)
-	track.content_margin_right = UI.px(2)
+	grab.bg_color = Color(Tokens.color("text_on_night_2") if not light else Tokens.color("parchment_text_2"), 0.45)
+	grab.set_corner_radius_all(UI.px(2))
+	grab.content_margin_left = UI.px(1.5)
+	grab.content_margin_right = UI.px(1.5)
+	var track := StyleBoxEmpty.new()
+	track.content_margin_left = UI.px(1.5)
+	track.content_margin_right = UI.px(1.5)
 	for part: String in ["grabber", "grabber_highlight", "grabber_pressed"]:
 		th.set_stylebox(part, "VScrollBar", grab)
 	th.set_stylebox("scroll", "VScrollBar", track)

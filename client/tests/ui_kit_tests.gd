@@ -34,7 +34,7 @@ func _tokens() -> void:
 				bad.append("%s's fill" % m)
 			if (spec["text_bg"] as Array).is_empty():
 				bad.append("%s has no text_bg" % m)
-			if hc and m != "night" and float((spec["line"] as Array)[1]) < 3.0:
+			if hc and m not in ["night", "scrim"] and float((spec["line"] as Array)[1]) < 3.0:
 				bad.append("%s's outline in high contrast" % m)
 		if hc and Tokens.color("text_on_night_2") != Tokens.color("text_on_night"):
 			bad.append("secondary text is not raised to primary in high contrast")

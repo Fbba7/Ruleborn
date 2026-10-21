@@ -149,11 +149,17 @@ static func label(text := "", points := -1.0, wraps := false) -> Label:
 
 
 ## A screen's title in Marcellus (§21.8), with the designs' hard drop under
-## it.
+## it and their gold rule beneath.
 static func title(text: String) -> Label:
 	var l := label(text, TITLE_POINTS, true)
 	l.theme_type_variation = "Title"
 	l.accessibility_live = AccessibilityServer.LIVE_OFF
+	var rule := KitNav.rule()
+	rule.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	rule.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	rule.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	rule.position.y = -px(2)
+	l.add_child(rule, false, Node.INTERNAL_MODE_FRONT)
 	return l
 
 
@@ -283,6 +289,15 @@ static func set_look(b: Button, look: String) -> void:
 		b.add_theme_constant_override("outline_size", px(box.spec["text_outline"][1]))
 	else:
 		b.remove_theme_constant_override("outline_size")
+	# Light words on a dark or deep control stand on the designs' hard drop.
+	if words.get_luminance() > 0.6:
+		b.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
+		b.add_theme_constant_override("shadow_offset_x", 0)
+		b.add_theme_constant_override("shadow_offset_y", maxi(2, px(0.75)))
+		b.add_theme_constant_override("shadow_outline_size", px(box.spec["text_outline"][1]) if box.spec.has(
+			"text_outline") else 0)
+	else:
+		b.remove_theme_color_override("font_shadow_color")
 
 
 ## Manrope at 800, as §21.8 draws 900: a control's words.

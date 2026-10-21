@@ -11,8 +11,10 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_controls(column)
 		3:
 			_status(column)
-		_:
+		4:
 			_home(column)
+		_:
+			_cards(column)
 
 
 static func _materials(column: VBoxContainer) -> void:
@@ -152,3 +154,25 @@ static func _home(column: VBoxContainer) -> void:
 	column.add_child(collect)
 	column.add_child(KitHud.goal("realmactions/upgrade", "Raise the Star Well to level 3", 2, 3, "2 / 3"))
 	column.add_child(KitNav.tabs("islands", {"islands": 3, "heist": 4, "friends": 1}))
+
+
+## Law cards in the four rarity frames, and the six school chips.
+static func _cards(column: VBoxContainer) -> void:
+	column.add_child(KitNav.header("Codex", "Law cards"))
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", UI.px(14))
+	grid.add_theme_constant_override("v_separation", UI.px(14))
+	for c: Array in [["laws/bounce", "Bounce", "motion", "common", "I"],
+			["laws/stillness", "Stillness", "time", "uncommon", "II"],
+			["laws/brittlestone", "Brittle Stone", "matter", "rare", "III"],
+			["laws/soullanterns", "Soul Lanterns", "spirit", "deep", "IV"]]:
+		var icon: String = c[0] if Icons.has(c[0]) else "laws/bounce"
+		grid.add_child(KitCards.law_card(icon, c[1], c[2], c[3], c[4]))
+	var centre := CenterContainer.new()
+	centre.add_child(grid)
+	column.add_child(centre)
+	var schools := UI.row(6)
+	for school: String in Tokens.schools():
+		schools.add_child(KitCards.school_chip(school))
+	column.add_child(schools)

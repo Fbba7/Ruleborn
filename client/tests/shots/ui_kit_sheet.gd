@@ -11,6 +11,9 @@ func _initialize() -> void:
 
 func _go() -> void:
 	root.size = Vector2i(1080, 2340)
+	Settings.path = "user://settings-shot.cfg"
+	# Read once now, so a screen that restores the settings keeps these.
+	Settings.restore()
 	Settings.locale = "en"
 	Settings.high_contrast = OS.get_environment("HC") != ""
 	Settings.apply()

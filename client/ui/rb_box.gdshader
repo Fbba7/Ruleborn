@@ -41,6 +41,9 @@ uniform float soft_blur = 1.0;
 uniform vec4 glow_color : source_color = vec4(0.0);
 uniform float glow_r = 1.0;
 uniform vec4 grain_color : source_color = vec4(0.0);
+// A soft white gloss over the top half, inset from the edges (a toy's
+// lacquer), at this strength.
+uniform float gloss = 0.0;
 // Seeded star dots over the fill (the night backdrop), per 10,000 px².
 uniform float stars = 0.0;
 uniform vec4 star_color : source_color = vec4(1.0, 0.96, 0.86, 0.7);
@@ -128,6 +131,15 @@ void fragment() {
 		float ri = max(radius - line_w, 0.0);
 		float sdi = sd_box(pb, bi, ri);
 		float inside = cover(sdi, px);
+		if (gloss > 0.0) {
+			// Over the top half, but no deeper than one line of words, so a
+			// button whose words wrap is not cut across the middle.
+			float uvy = (pb.y + b.y) / (2.0 * min(box_size.y * 0.5, 66.0));
+			float lacquer = cover(sd_box(pb, bi - vec2(3.0 + line_w), max(ri - 3.0, 0.0)), px);
+			// A crisp lower edge at half height, brighter towards the top.
+			float band = (1.0 - smoothstep(0.42, 0.5, uvy)) * (0.45 + 0.55 * (1.0 - uvy * 2.0));
+			fill.rgb = mix(fill.rgb, vec3(1.0), gloss * lacquer * band);
+		}
 		if (hi_w > 0.0) {
 			float below = cover(sd_box(pb - vec2(0.0, hi_w), bi, ri), px);
 			fill.rgb = mix(fill.rgb, hi_color.rgb, hi_color.a * inside * (1.0 - below));

@@ -127,6 +127,7 @@ func set_look(material_name: String) -> void:
 	u.set_shader_parameter("soft_color", soft[0])
 	u.set_shader_parameter("soft_y", p.call(soft[1]))
 	u.set_shader_parameter("soft_blur", maxf(p.call(soft[2]), 1.0))
+	u.set_shader_parameter("gloss", float(spec.get("gloss", 0.0)))
 	var grain: Array = spec.get("grain", [Color(0, 0, 0, 0), 0.0])
 	u.set_shader_parameter("grain_color", Color(grain[0], grain[1]))
 	u.set_shader_parameter("stars", 1.0 if material_name == "night" and not Tokens.high_contrast else 0.0)
