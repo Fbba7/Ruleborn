@@ -67,10 +67,12 @@ static func sheet(body: VBoxContainer, ratio := 0.8) -> ScrollContainer:
 ## A key that folds the sheet away, and back: the world takes the phone,
 ## the words wait one tap away (and a screen reader still reads the realm).
 static func fold_key(words: ScrollContainer) -> Button:
-	var b := UI.button("", func() -> void: pass)
+	var b := UI.action("", func() -> void: pass, "glass")
 	var apply := func() -> void:
 		words.visible = not folded
 		UI.relabel(b, Strings.t("STAGE_SHOW_WORDS" if folded else "STAGE_HIDE_WORDS"))
+		b.icon = Icons.texture("generalui/more")
+		b.add_theme_constant_override("icon_max_width", UI.px(18))
 	b.pressed.connect(func() -> void:
 		folded = not folded
 		apply.call())

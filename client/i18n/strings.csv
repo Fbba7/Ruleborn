@@ -1065,6 +1065,12 @@ ERR_NOTHING_TO_SWAP,no law is woven in that slot to swap,no law is woven in that
 ERR_REALM_NOT_OPEN,that realm is not open yet,that realm is not open yet,esse reino ainda não está aberto,esse reino ainda não está aberto,dieses Reich ist noch nicht geöffnet,ce royaume n'est pas encore ouvert
 ERR_POST_CANNOT_MOVE,a post moves only onto open ground,a post moves only onto open ground,um posto só se move para chão livre,um posto só se move para chão livre,ein Posten zieht nur auf freien Boden,un poste ne se déplace que sur un sol libre
 RV_CURATE,Curate,Curate,Curar,Curar,Kuratieren,Arranger
+RV_LEVEL,Realm level %d,Realm level %d,Nível de reino %d,Nível de reino %d,Reichsstufe %d,Niveau de royaume %d
+RV_KEY_MAP,Map,Map,Mapa,Mapa,Karte,Carte
+RV_KEY_DEFENCE,Defence,Defence,Defesa,Defesa,Abwehr,Défense
+RV_KEY_BUILD,Build,Build,Construir,Construir,Bauen,Construire
+RV_LAWS,Laws %d/%d,Laws %d/%d,Leis %d/%d,Leis %d/%d,Gesetze %d/%d,Lois %d/%d
+RV_STARLIGHT,%s Starlight,%s Starlight,%s de Luz Estelar,%s de Luz Estelar,%s Sternenlicht,%s Lumière stellaire
 CUR_TITLE,Curate your defence,Curate your defense,Cure sua defesa,Cura a tua defesa,Verteidigung kuratieren,Arrange ta défense
 CUR_HEADER,"%s, realm level %d","%s, realm level %d","%s, nível de reino %d","%s, nível de reino %d","%s, Reichsstufe %d","%s, niveau de royaume %d"
 CUR_FAILED,Curation could not answer: %s,Curation could not answer: %s,A curadoria não pôde responder: %s,A curadoria não pôde responder: %s,Das Kuratieren konnte nicht antworten: %s,L'arrangement n'a pas pu répondre : %s
