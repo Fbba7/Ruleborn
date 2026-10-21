@@ -102,9 +102,21 @@ func _init() -> void:
 	room_label = _stat(stats, Strings.t("HUD_ROOM"))
 	left_label = _stat(stats, Strings.t("HUD_LEFT"))
 	right_box.add_child(stats)
-	loot_bars = FxDraw.new(_draw_bars, Vector2(UI.px(84), UI.px(22)))
+	# The bags' fill and the Vault's cracking as bars, each beside the
+	# designs' icon for it.
+	var bars := HBoxContainer.new()
+	bars.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bars.add_theme_constant_override("separation", UI.px(3))
+	var icons := VBoxContainer.new()
+	icons.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	icons.add_theme_constant_override("separation", 0)
+	icons.add_child(Icons.view("heiststatus/lootbag", 13.0))
+	icons.add_child(Icons.view("heiststatus/vaultprogress", 13.0))
+	bars.add_child(icons)
+	loot_bars = FxDraw.new(_draw_bars, Vector2(UI.px(64), UI.px(26)))
 	loot_bars.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right_box.add_child(loot_bars)
+	bars.add_child(loot_bars)
+	right_box.add_child(bars)
 	right.add_child(right_box)
 	right_side.add_child(right)
 	realm_label = FxSkin.label("", 14.0)
@@ -220,8 +232,13 @@ func _show_laws(r: RulebornReplay) -> void:
 		chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		chip.add_theme_constant_override("separation", UI.px(3))
 		var school := str(p.get("school", ""))
-		chip.add_child(FxDraw.new(func(ci: Control) -> void:
-			FxIcons.school(ci, ci.size / 2.0, minf(ci.size.x, ci.size.y), school), Vector2(UI.px(20), UI.px(20))))
+		var icon := "laws/" + str(p.get("law", "")).replace("_", "")
+		if Icons.has(icon):
+			# The law's own icon from the designs.
+			chip.add_child(Icons.view(icon, 24.0))
+		else:
+			chip.add_child(FxDraw.new(func(ci: Control) -> void:
+				FxIcons.school(ci, ci.size / 2.0, minf(ci.size.x, ci.size.y), school), Vector2(UI.px(20), UI.px(20))))
 		var words := FxSkin.label(Strings.term("LAW", str(p.get("law", ""))), 13.0)
 		words.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		_wrap_by_words(words)
@@ -289,16 +306,13 @@ func _draw_meter(ci: Control) -> void:
 		FxIcons.bell(ci, c, s * 0.9, fill, i < _alarm)
 
 
-## The bags' fill beside a sack, and the Vault's cracking beside a lock that
-## opens: the bars say which binds first without a word (§12.19).
+## The bags' fill and the Vault's cracking: the bars say which binds first
+## without a word (§12.19).
 func _draw_bars(ci: Control) -> void:
-	var h := ci.size.y * 0.4
-	var icon := ci.size.y * 0.5
-	var w := ci.size.x - icon - 4.0
-	FxIcons.sack(ci, Vector2(icon * 0.5, h * 0.5), icon * 0.95, _bags)
-	FxIcons.bar(ci, Rect2(Vector2(icon + 4.0, 0), Vector2(w, h)), _bags, FxSkin.GOLD)
-	FxIcons.lock(ci, Vector2(icon * 0.5, ci.size.y - h * 0.5), icon * 0.9, _open)
-	FxIcons.bar(ci, Rect2(Vector2(icon + 4.0, ci.size.y - h), Vector2(w, h)), _cracked,
+	var h := ci.size.y * 0.36
+	var gap := (ci.size.y * 0.5 - h) * 0.5
+	FxIcons.bar(ci, Rect2(Vector2(0, gap), Vector2(ci.size.x, h)), _bags, FxSkin.GOLD)
+	FxIcons.bar(ci, Rect2(Vector2(0, ci.size.y * 0.5 + gap), Vector2(ci.size.x, h)), _cracked,
 		FxSkin.SUCCESS if _open else Color("#9B8CF0"))
 
 
