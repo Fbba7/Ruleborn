@@ -449,7 +449,9 @@ func scatter() -> Array:
 	if kind != "emberreach":
 		var bumps: Array[Transform3D] = []
 		var bump_cols: Array[Color] = []
-		var gc2 := hsl(gc, 0.0, 0.08, -0.07)
+		# Lighter than the meadow, as the design's scalloped rim reads
+		# (04-realm-view.png), over the darker lip beneath.
+		var gc2 := hsl(gc, 0.01, 0.1, 0.07)
 		var gap := 0.62 if not light else 0.9
 		var n := int(TAU * radius() / gap)
 		for i in n:
@@ -458,7 +460,7 @@ func scatter() -> Array:
 			var sz := (0.3 + _rng.randf() * 0.18) * gap / 0.62
 			var at := Vector3(cos(q) * (e - 0.05), -0.1 - _rng.randf() * 0.08, sin(q) * (e - 0.05))
 			bumps.append(Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(1.1, 0.55, 1.1) * sz), at))
-			bump_cols.append(gc2.lerp(hsl(gc, 0.0, 0.05, -0.14), _rng.randf() * 0.6))
+			bump_cols.append(gc2.lerp(hsl(gc, 0.0, 0.06, 0.0), _rng.randf() * 0.6))
 		out.append([_puff_mesh(), bumps, bump_cols, 0.0, 0.0])
 	# The hanging fringe: grass cones pointing down under the lip.
 	var cones: Array[Transform3D] = []
@@ -749,7 +751,7 @@ static func _tuft_mesh() -> ArrayMesh:
 static func _puff_mesh() -> ArrayMesh:
 	var m := LookMesh.new()
 	m.puff(Transform3D(), Color.WHITE, 2, 6)
-	return m.mesh()
+	return LookFlora.soft(m)
 
 
 ## A unit icosahedron, for pebbles, stones and specks of light.

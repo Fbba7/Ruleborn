@@ -87,7 +87,7 @@ static func bush_mesh() -> ArrayMesh:
 	var m := LookMesh.new()
 	m.puff(Transform3D(Basis().scaled(Vector3(1.0, 0.8, 1.0)), Vector3(0, 0.38, 0)), Color.WHITE, 3, 7)
 	m.puff(Transform3D(Basis().scaled(Vector3.ONE * 0.62), Vector3(0.38, 0.28, 0.1)), Color.WHITE, 3, 6)
-	return _soft(m)
+	return soft(m)
 
 
 ## The blooms on a bush's top: three round flowers, placed as the bush is.
@@ -97,13 +97,13 @@ static func bloom_mesh() -> ArrayMesh:
 		var a := TAU * i / 3.0 + 0.4
 		m.puff(Transform3D(Basis().scaled(Vector3.ONE * 0.34), Vector3(cos(a) * 0.3, 0.7, sin(a) * 0.3)),
 			Color.WHITE, 2, 5)
-	return _soft(m)
+	return soft(m)
 
 
 ## `m` with its normals bent upward, as foliage is lit in a picture book: a
 ## small round puff would otherwise stand mostly in the toon ramp's two dark
 ## steps and read as a dark blot at the home camera's zoom.
-static func _soft(m: LookMesh) -> ArrayMesh:
+static func soft(m: LookMesh) -> ArrayMesh:
 	for i in m.normals.size():
 		m.normals[i] = (m.normals[i] + Vector3.UP * 1.3).normalized()
 	return m.mesh()

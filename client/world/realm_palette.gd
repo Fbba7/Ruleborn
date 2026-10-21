@@ -17,7 +17,7 @@ const TYPES := {
 	"heart": {"ground": "#E4D3AE", "grass": "#7FA462", "stone": "#D8CFC2", "rock": "#9C8A7A", "soil": "#8A6A4E",
 		"dirt": "#9A6B4F", "cliff": "#6A5C8C", "cliff_deep": "#4B3F6E", "trim": "#F2B43C", "plant": "#5CC46A",
 		"accent": "#E05CB4", "bloom": "#F7A6DA", "light": "#FFD8E8",
-		"sky_top": "#1B1250", "sky_mid": "#4A2A8E", "sky_low": "#C86FB0"},
+		"sky_top": "#1A0E46", "sky_mid": "#3E2484", "sky_low": "#A65EA6"},
 	"skyfield": {"ground": "#E2D59E", "grass": "#9EB862", "stone": "#F4F0E6", "rock": "#B9AE9F", "soil": "#9A7F5C",
 		"dirt": "#B9875C", "cliff": "#9C8FB4", "cliff_deep": "#746A92", "trim": "#F2B43C", "plant": "#E8D27A",
 		"accent": "#F2B43C", "bloom": "#FFFFFF", "light": "#FFF2D0",
@@ -58,7 +58,7 @@ const TYPES := {
 ## its night is barely darker than its noon and its lanterns carry it.
 const LIGHTS := {
 	"heart": {"sun": 0.36, "fill": 0.78, "sky": "#FFC8F0", "under": "#4B2F6E", "at": Vector3(12, 20, 8),
-		"hour": 0.3, "dusk": "#FFB49A", "night": "#B0B4F0"},
+		"hour": 0.12, "dusk": "#FFB49A", "night": "#B0B4F0"},
 	"skyfield": {"sun": 0.40, "fill": 0.8, "sky": "#CFE8FF", "under": "#6A5A40", "at": Vector3(14, 24, 6),
 		"hour": 0.45, "dusk": "#FFC878", "night": "#B4C4FF"},
 	"crystalline": {"sun": 0.33, "fill": 0.74, "sky": "#C4C0E8", "under": "#2A2660", "at": Vector3(8, 22, 12),
