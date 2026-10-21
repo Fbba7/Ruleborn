@@ -130,3 +130,70 @@ static func clock(text: String, warning := false) -> PanelContainer:
 	l.name = "Time"
 	p.add_child(l)
 	return p
+
+
+## A big ring around a number (the play-time ring, the Codex's count): the
+## number in Lilita One with its unit under it, the ring filled to
+## `fraction` in gold.
+static func dial(number: String, unit: String, fraction: float, points := 112.0) -> KitRing:
+	var ring := KitRing.new()
+	ring.name = "Dial"
+	ring.heavy = true
+	ring.fraction = clampf(fraction, 0.0, 1.0)
+	ring.custom_minimum_size = Vector2.ONE * UI.px(points)
+	ring.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var v := VBoxContainer.new()
+	v.set_anchors_preset(Control.PRESET_FULL_RECT)
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", -UI.px(4))
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var n := UI.label(number, 30)
+	n.theme_type_variation = "Display"
+	v.add_child(n)
+	var u := UI.label(unit, 13)
+	u.theme_type_variation = "Kicker"
+	u.add_theme_font_override("font", Tokens.font("ui", 800))
+	u.uppercase = true
+	u.set_meta("bold", true)
+	v.add_child(u)
+	ring.add_child(v)
+	return ring
+
+
+## A week's bars (the play-time card): one bar a day, its height its share
+## of the most, today's in gold and the rest violet, each day's letter
+## under it and its minutes in its spoken name (§20.8: the numbers are read).
+static func week(minutes: Array, letters: Array, today: int) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.name = "Week"
+	row.add_theme_constant_override("separation", UI.px(10))
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	var most := 1.0
+	for m: Variant in minutes:
+		most = maxf(most, float(m))
+	for i: int in minutes.size():
+		var day := VBoxContainer.new()
+		day.add_theme_constant_override("separation", UI.px(4))
+		day.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var well := Control.new()
+		well.custom_minimum_size = Vector2(UI.px(18), UI.px(56))
+		well.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var bar := Control.new()
+		bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var share := float(minutes[i]) / most
+		bar.anchor_left = 0.15
+		bar.anchor_right = 0.85
+		bar.anchor_top = 1.0 - maxf(share, 0.08)
+		bar.anchor_bottom = 1.0
+		well.add_child(bar)
+		var box := RbBox.dress(bar, "bar", 4)
+		var c := Tokens.color("gold") if i == today else Tokens.color("matter")
+		box.tint(c.lightened(0.3), c.darkened(0.15))
+		well.accessibility_name = "%s %s" % [letters[i], minutes[i]]
+		day.add_child(well)
+		var l := UI.label(str(letters[i]), 13)
+		l.theme_type_variation = "Kicker"
+		l.set_meta("bold", true)
+		day.add_child(l)
+		row.add_child(day)
+	return row

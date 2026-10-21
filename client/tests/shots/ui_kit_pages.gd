@@ -13,8 +13,10 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_status(column)
 		4:
 			_home(column)
-		_:
+		5:
 			_cards(column)
+		_:
+			_settings(column)
 
 
 static func _materials(column: VBoxContainer) -> void:
@@ -199,3 +201,69 @@ static func _cards(column: VBoxContainer) -> void:
 	for school: String in Tokens.schools():
 		schools.add_child(KitCards.school_chip(school))
 	column.add_child(schools)
+
+
+## The design's Settings and wellbeing screen (19-settings-and-wellbeing.png)
+## built from the kit alone, as the reference for the screen's owner.
+static func _settings(column: VBoxContainer) -> void:
+	column.add_child(KitNav.top_bar("Settings", func() -> void: pass, "Age 18+"))
+	column.add_child(KitNav.segmented([["Wellbeing", "settingsandwellbeing/playtimereminder"],
+		["Game", "settingsandwellbeing/sound"], ["Access", "settingsandwellbeing/accessibility"],
+		["Account", "settingsandwellbeing/account"]], 0, func(_i: int) -> void: pass))
+	var body := UI.scroll(column)
+	var play := UI.panel("card_gold")
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(12))
+	var top := HBoxContainer.new()
+	top.add_theme_constant_override("separation", UI.px(12))
+	top.add_child(KitHud.dial("38", "min today", 0.38))
+	var words := VBoxContainer.new()
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.alignment = BoxContainer.ALIGNMENT_CENTER
+	var t := UI.label("Play-time reminder is off", 16, true)
+	t.theme_type_variation = "BodyBold"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	t.set_meta("bold", true)
+	words.add_child(t)
+	var s := UI.label("Turn it on below for a gentle pause card.", 13, true)
+	s.theme_type_variation = "Secondary"
+	s.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	words.add_child(s)
+	top.add_child(words)
+	v.add_child(top)
+	var week := PanelContainer.new()
+	week.add_theme_stylebox_override("panel", UI.clear_box(10, 8))
+	UI.dress(week, "seg_track")
+	var wv := VBoxContainer.new()
+	var head := HBoxContainer.new()
+	var k := UI.label("This week", 13)
+	k.theme_type_variation = "Kicker"
+	k.uppercase = true
+	k.set_meta("bold", true)
+	k.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	head.add_child(k)
+	var total := UI.label("4 h this week", 13)
+	total.theme_type_variation = "Number"
+	total.add_theme_color_override("font_color", Tokens.color("gold_top"))
+	total.set_meta("bold", true)
+	head.add_child(total)
+	wv.add_child(head)
+	wv.add_child(KitHud.week([60, 40, 55, 15, 38, 20, 48], ["M", "T", "W", "T", "F", "S", "S"], 6))
+	week.add_child(wv)
+	v.add_child(week)
+	play.add_child(v)
+	body.add_child(play)
+	body.add_child(KitPanels.section("Reminders"))
+	for r: Array in [["settingsandwellbeing/playtimereminder", "Play-time reminder", "A pause card after long play",
+			["Off", "45 min", "60 min", "90 min"]],
+			["settingsandwellbeing/notifications", "Quiet hours", "No notifications 22:00 - 08:00", ["On", "Off"]]]:
+		var card := UI.panel("card")
+		var cv := VBoxContainer.new()
+		cv.add_theme_constant_override("separation", UI.px(8))
+		cv.add_child(KitPanels.row(r[0], r[1], r[2], null, Callable(), "seg"))
+		cv.add_child(KitNav.segmented(r[3], 0, func(_i: int) -> void: pass))
+		card.add_child(cv)
+		body.add_child(card)
+	body.add_child(KitControls.toggle_row("settingsandwellbeing/reducedmotion", "Reduced motion",
+		"No swoops, fewer particles", false, func(_on: bool) -> void: pass))

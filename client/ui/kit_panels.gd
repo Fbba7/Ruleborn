@@ -15,18 +15,19 @@ static func section(title: String) -> Label:
 
 ## A list row: an icon (if named), a bold title and a secondary line, and
 ## `trailing` at its end. With `pressed` it is one 64-point button, named
-## by its title; without, a card.
+## by its title; without, a card. `look` "seg" draws it flat, as a row
+## inside a card.
 static func row(icon: String, title: String, line := "", trailing: Control = null,
-		pressed := Callable()) -> Control:
+		pressed := Callable(), look := "card") -> Control:
 	var host: Control
 	if pressed.is_valid():
-		var b := UI.action("", pressed, "card", title)
+		var b := UI.action("", pressed, look, title)
 		b.name = "Row"
 		b.custom_minimum_size = Vector2(UI.px(120), UI.px(64))
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		host = b
 	else:
-		var p := UI.panel("card")
+		var p := UI.panel(look)
 		p.name = "Row"
 		p.custom_minimum_size.y = UI.px(64)
 		host = p
