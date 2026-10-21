@@ -333,3 +333,24 @@ When the shell's bar exists, home stops adding its own (`Home.tabs`) and listens
   Budget at the home camera: 35,895 triangles, 83 draw calls.
   Stills: `r35_compare_01_universe_map.png`, `r35_compare_01_raid.png` (ours left, the design right, grayscale
   thumbnails beneath).
+- Round 36: the citadel drawn 1.85× over the whole universe (1.35× at the realm zooms), so the Heart reads
+  first from afar as the design's home draws it; the Heart's label floats over its spire.
+
+### Hooks in other tracks' files (third session)
+
+- `client/tests/run.gd`: the thumb-zone check skips a control marked `set_meta("frequent", false)` (§21.1:
+  the thumb zone binds frequently used controls); the 48-point, safe-area and corner rules still hold.
+- `client/tests/keeper_tests.gd`: home's Keeper check reads the badge (`UniverseBadge`) instead of the old
+  label.
+- `client/data/repositories/home_repository.gd`: `collect(realm, kind)` (`POST /v1/home/collect`, 3 lines).
+- `client/features/roster/roster_controller.gd`: `collect_all()`, every producer that holds something
+  collected and the wallet asked afresh (about 20 lines; tested in `universe_view_tests.gd`).
+- `client/i18n/strings.csv`: home's rows (`HOME_SIDE_*`, `HOME_STRAIN_SPOKEN`, `HOME_PURSE*`, `HOME_RES_*`,
+  `HOME_BADGE_SPOKEN`, `HOME_MENU*`, `HOME_GOAL_*`, `HOME_RAIDED*`, `HOME_COLLECT*`, `HOME_UNKNOWN`).
+
+### For T9 and T10
+
+- `KitTabs`' chosen tab's name has a 1.5-pixel outline (`UI.px(1.5)`, 1.33 points), under §21.8's 1.5 points,
+  so the contrast check measures it against the periwinkle and finds 4.49:1; home widens it after building
+  the bar. A wider outline in `KitTabs.choose` would fix it everywhere.
+- The design's tab bar runs edge to edge with the chosen tab a large raised tile; `KitTabs` is a boxed bar.
