@@ -4,7 +4,7 @@ extends SceneTree
 ## CLIP the action (its ability), FORM a form (base, hush, spark, echo), GUARD=1
 ## the guard form, PORTRAIT=1 a close three-quarter view framed like the design's
 ## portraits (art/design/stills/portraits), EXPR an expression, PARAMS
-## material uniforms to try (`lift=0,rim_strength=0`).
+## material uniforms to try (`lift=0,rim_strength=0`), HERO=1 the hero view.
 
 
 func _initialize() -> void:
@@ -43,6 +43,8 @@ func _initialize() -> void:
 		c.place(Vector3(0.0 if portrait else (float(i) - 1.5) * tall * 1.25, 0, 0), facing[0] if portrait else facing[i])
 		c.set_form(form)
 		c.set_guard(OS.get_environment("GUARD") == "1")
+		if OS.get_environment("HERO") == "1":
+			c.set_hero(true)
 		# PARAMS=name=value,... sets the body material's uniforms (for tuning).
 		for pair: String in OS.get_environment("PARAMS").split(",", false):
 			var kv := pair.split("=")

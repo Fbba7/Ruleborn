@@ -102,13 +102,26 @@ float creature_far(mat4 proj, vec3 view_pos, vec2 viewport) {
 	return smoothstep(far_ppm, far_ppm * 0.4, ppm);
 }
 
+// The hero view (the Character screen, portraits: CreatureModel.set_hero):
+// the design's hero pages light a sculpt with sheen, image light and a soft
+// tone curve. In the toon look that is softer step edges, an image light
+// (the paint lit by a cool sky above and a warm bounce below, by the
+// normal's facing), and a sheen of the kind's own colour at grazing angles.
+uniform float hero : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 hero_sky : source_color = vec4(0.78, 0.8, 1.0, 1.0);
+uniform vec4 hero_bounce : source_color = vec4(1.0, 0.82, 0.66, 1.0);
+uniform float hero_image = 0.2;
+uniform float hero_sheen = 0.4;
+// The fragment's normal against the world's up (set in fragment()).
+varying float n_up;
+
 // How soft each of the ramp's step edges is, in N·L. Sharp steps on a light
 // mesh draw its polygons (a band edge runs straight across each triangle);
 // a softer edge keeps the four values and loses the facets.
 uniform float ramp_soft = 0.07;
 
 float creature_ramp(float ndl) {
-	float w = ramp_soft;
+	float w = mix(ramp_soft, 0.16, hero);
 	float r = 62.0 / 255.0;
 	r += (140.0 - 62.0) / 255.0 * smoothstep(-w, w, ndl);
 	r += (215.0 - 140.0) / 255.0 * smoothstep(0.33 - w, 0.33 + w, ndl);
@@ -242,7 +255,8 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 		}
 		if (body_iris > 0.0) {
 			vec3 bow = 0.5 + 0.5 * cos(6.2831 * (fr * 1.6 + dot(n, v) * 0.6 + vec3(0.0, 0.33, 0.67)));
-			extra += bow * smoothstep(0.05, 0.6, fr) * body_iris * 0.8;
+			// Small on screen the rainbow is sparkle noise over the shape: it fades.
+			extra += bow * smoothstep(0.05, 0.6, fr) * body_iris * 0.8 * (1.0 - far * 0.8);
 		}
 		extra += body_emit * (1.0 - hush);
 		if (echo_form > 0.0) {
@@ -276,7 +290,18 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 		+ albedo * vec3(1.0, 0.55, 0.35) * wrap * fr * 0.6 * rs * (1.0 - hush);
 	rim += mix(hush_colour.rgb, vec3(0.75, 0.8, 1.0), 0.45) * soft * 0.55 * hush;
 	rim += albedo * 0.06 * far * (1.0 - hush * 0.6);
-	emission = albedo * glow + rim + stars + extra;
+	// A glowing part (flames, lanterns, embers) burns hotter at its core: the
+	// design's flames run orange to yellow under bloom; here the face turned to
+	// the eye goes toward warm yellow-white, the edge keeps the paint's colour.
+	vec3 hot = mix(albedo, vec3(1.0, 0.86, 0.48), 0.55 * smoothstep(0.2, 0.9, dot(n, v)));
+	emission = mix(albedo, hot, step(0.01, emit) * (body ? 0.0 : 1.0)) * glow + rim + stars + extra;
+	if (hero > 0.0) {
+		vec3 image = albedo * mix(hero_bounce.rgb * 0.55, hero_sky.rgb, smoothstep(-0.6, 0.8, n_up)) * hero_image;
+		float graze = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.2);
+		float pale = smoothstep(0.08, 0.5, dot(albedo, vec3(0.2126, 0.7152, 0.0722)));
+		vec3 sheen_col = mix(sheen.rgb, albedo, 0.35);
+		emission += (image + sheen_col * graze * hero_sheen * pale) * hero * (1.0 - hush * 0.6);
+	}
 	if (spark > 0.0) {
 		// Spark: lit from within (the Rig page's emissive #6A2208 at 0.35), hotter at the edge.
 		emission += (albedo * 0.3 + spark_colour.rgb * (0.12 + smoothstep(0.02, 0.5, fr) * 1.8)) * spark;
@@ -293,14 +318,16 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 void light() {
 	vec3 sun = mix(LIGHT_COLOR, vec3(dot(LIGHT_COLOR, vec3(0.299, 0.587, 0.114))), light_neutral);
 	float ndl = dot(NORMAL, LIGHT) + ramp_bias;
-	float grain = clamp(1.0 + relief_detail * (dot(normalize(relief_n), LIGHT) - dot(NORMAL, LIGHT)), 0.55, 1.25);
+	// Close up (the hero view) the relief shades deeper: the fleece's lumps, the feathers' scallops.
+	float rd = mix(relief_detail, 1.6, hero);
+	float grain = clamp(1.0 + rd * (dot(normalize(relief_n), LIGHT) - dot(NORMAL, LIGHT)), mix(0.55, 0.3, hero), 1.3);
 	float lit = creature_ramp(ndl) * grain * mix(0.62, 1.0, smoothstep(0.3, 0.7, ATTENUATION));
 	// Small on screen the darkest step opens, so the shape is one clear value.
 	lit = mix(lit, 0.3 + lit * 0.7, far_mix * 0.6);
 	vec3 shade = mix(shade_tint.rgb, vec3(1.0), lit);
 	DIFFUSE_LIGHT += sun / PI * lit * shade * exposure;
-	float top = smoothstep(0.33 - ramp_soft, 0.33 + ramp_soft, ndl) * 0.45
-		+ smoothstep(0.66 - ramp_soft, 0.66 + ramp_soft, ndl) * 0.55;
+	float rs = mix(ramp_soft, 0.16, hero);
+	float top = smoothstep(0.33 - rs, 0.33 + rs, ndl) * 0.45 + smoothstep(0.66 - rs, 0.66 + rs, ndl) * 0.55;
 	// Only light paint pales (a tone curve's shoulder); pupils and ink stay dark.
 	float value = smoothstep(0.12, 0.55, dot(ALBEDO, vec3(0.2126, 0.7152, 0.0722)));
 	SPECULAR_LIGHT += sun / PI * (sheen.rgb - ALBEDO * sheen.rgb) * top * lift * value

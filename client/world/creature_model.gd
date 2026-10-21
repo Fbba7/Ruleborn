@@ -50,6 +50,10 @@ const FORM_PATTERN := {
 const LOOK := {
 	"featherkin": {"tone": 0.5, "tint": Vector3(1.0, 1.05, 0.62)},
 	"glassgolem": {"tone": 0.45, "tint": Vector3(1.4, 1.22, 0.98)},
+	"rambler": {"tone": 0.08},
+	"mossbear": {"tint": Vector3(0.9, 1.02, 0.9)},
+	"lanternwisp": {"tone": 0.55},
+	"soulmender": {"tone": 0.4},
 }
 ## The heights the ruleborn band (0.5–1.4 m) is drawn at in a heist.
 const READABLE := Vector2(0.95, 1.4)
@@ -245,6 +249,15 @@ func set_fur(shells: int) -> void:
 	_chain_passes()
 
 
+## The hero view (the Character screen, portraits; T7's stage): softer light
+## steps, an image light of cool sky and warm bounce, and the paint's sheen at
+## grazing angles, as the design's hero pages draw a sculpt; with `on` the
+## fur shells the design gives the kind come too (each one more draw).
+func set_hero(on: bool) -> void:
+	_material.set_shader_parameter("hero", 1.0 if on else 0.0)
+	set_fur(int((info.get("fur", {}) as Dictionary).get("shells", 0)) if on else 0)
+
+
 ## A light readability scale on top of §21.6's height (1 is true size): the
 ## heist's camera shows a character 30–60 px tall, and a caller there may draw
 ## it a little larger without changing what the simulation measures.
@@ -357,11 +370,12 @@ func _chain_passes() -> void:
 		var m := ShaderMaterial.new()
 		m.shader = _fur_shader
 		m.set_shader_parameter("atlas", _material.get_shader_parameter("atlas"))
+		m.set_shader_parameter("normals", _material.get_shader_parameter("normals"))
 		m.set_shader_parameter("rim_colour", _material.get_shader_parameter("rim_colour"))
 		# The body's own sheen: the shader's default lift pales fleece to pink-white.
 		m.set_shader_parameter("lift", _lift)
 		for p: StringName in [&"form_pattern", &"form_scale", &"unit_height", &"hush", &"spark", &"echo_form", &"tone",
-				&"paint_tint"]:
+				&"paint_tint", &"hero"]:
 			m.set_shader_parameter(p, _material.get_shader_parameter(p))
 		m.set_shader_parameter("layer", float(s + 1) / float(_fur + 1))
 		m.set_shader_parameter("fur_len", float(fur.get("len", 0.0045)) * 2.2)
@@ -372,6 +386,8 @@ func _chain_passes() -> void:
 		var o := ShaderMaterial.new()
 		o.shader = _outline_shader
 		o.set_shader_parameter("width_px", OUTLINE_PX)
+		# The export marks a faceted body by giving it no relief map.
+		o.set_shader_parameter("smooth_push", 0.6 if float(info.get("relief", 1.0)) == 0.0 else 0.0)
 		last.next_pass = o
 		_outline = o
 	else:

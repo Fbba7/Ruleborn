@@ -10,6 +10,9 @@ render_mode diffuse_toon, specular_disabled, cull_back;
 
 uniform sampler2D atlas : source_color, filter_linear_mipmap, repeat_disable;
 uniform float layer = 0.5;
+// The body's relief, so the shells shade the fleece's lumps as the body does.
+uniform sampler2D normals : hint_normal, filter_linear_mipmap, repeat_disable;
+uniform float binormal_sign = -1.0;
 uniform float fur_len = 0.0045;
 // Strand cells across the atlas: the module's density per sculpt unit times
 // the atlas's texels per unit, so a strand is a column through every shell.
@@ -41,8 +44,11 @@ void fragment() {
 		discard;
 	}
 	vec3 c = texture(atlas, UV).rgb * mix(0.82, 1.05, layer);
-	relief_n = NORMAL;
+	vec2 nxy = texture(normals, UV).xy * 2.0 - 1.0;
+	vec3 nt = vec3(nxy, sqrt(max(0.0, 1.0 - dot(nxy, nxy))));
+	relief_n = normalize(TANGENT * nt.x + BINORMAL * nt.y * binormal_sign + NORMAL * nt.z);
 	far_mix = creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE);
+	n_up = dot(NORMAL, normalize((VIEW_MATRIX * vec4(0.0, 1.0, 0.0, 0.0)).xyz));
 	creature_surface(c, true, 0.0, 0.0, UV, local_pos, NORMAL, VIEW, far_mix, ALBEDO, EMISSION);
 	gloss_band = 0.0;
 }

@@ -156,12 +156,12 @@ static func guard_kit(c: CreatureModel) -> Node3D:
 	# A soft halo, so the lantern reads at the heist's scale (a guard is found by its light).
 	var halo := MeshInstance3D.new()
 	var hq := QuadMesh.new()
-	hq.size = Vector2(lr * 7.0, lr * 7.0)
+	hq.size = Vector2(lr * 9.0, lr * 9.0)
 	halo.mesh = hq
 	var hm := ShaderMaterial.new()
 	hm.shader = _blob_shader
 	hm.set_shader_parameter("face_camera", true)
-	hm.set_shader_parameter("shade", Color(LANTERN_GLOW, 0.55))
+	hm.set_shader_parameter("shade", Color(LANTERN_GLOW, 0.7))
 	halo.material_override = hm
 	halo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	halo.position = _lamp_at(c)
