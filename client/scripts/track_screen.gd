@@ -20,7 +20,7 @@ var _stars: PanelContainer
 var _bar: ScreenMeter
 var _tier: ScreenMeter
 var _strip: HBoxContainer
-var _pass: HBoxContainer
+var _pass: BoxContainer
 var _pass_card: PanelContainer
 
 
@@ -64,6 +64,8 @@ func _build() -> void:
 	words.add_child(stars_label)
 	_strip.add_child(words)
 	_pass = HBoxContainer.new()
+	if Settings.text_scale > 125:
+		_pass = VBoxContainer.new()
 	_pass.add_theme_constant_override("separation", UI.px(10))
 	_pass.add_child(ScreenKit.icon("season", "premiumtrack", 40.0))
 	var pass_words := VBoxContainer.new()
@@ -147,8 +149,8 @@ func _refresh() -> void:
 ## tier's node on the road and the free reward under it, scrolled sideways,
 ## the next tier lit; the lanes named at their start.
 func _road(rows: Array, premium: bool) -> Control:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", UI.px(8))
+	var row := ScreenStrip.new()
+	row.separation = UI.px(8)
 	var lanes := VBoxContainer.new()
 	lanes.add_theme_constant_override("separation", UI.px(8))
 	for key: String in ["SCREEN_STARPASS_LANE", "", "SCREEN_FREE_LANE"]:
@@ -162,20 +164,14 @@ func _road(rows: Array, premium: bool) -> Control:
 			tag.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		lanes.add_child(tag)
 	row.add_child(lanes)
+	var at := 0
 	for r: Dictionary in rows:
 		row.add_child(_tier_row(r, premium))
-	var strip := ScrollContainer.new()
-	strip.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	strip.custom_minimum_size.y = row.get_combined_minimum_size().y + UI.px(10)
-	strip.add_child(row)
+		if r["state"] == "next":
+			at = int(r["tier"])
 	# Open at the next tier, as the design does.
-	strip.ready.connect(func() -> void:
-		var at := 0
-		for r: Dictionary in rows:
-			if r["state"] == "next":
-				at = int(r["tier"])
-		strip.set_deferred("scroll_horizontal", maxi(0, (at - 2) * UI.px(112))))
-	return strip
+	row.ready.connect(func() -> void: row.set_deferred("offset", maxf(0.0, (at - 2) * UI.px(112))))
+	return row
 
 
 ## One tier on the road: the Starpass reward, locked while the pass is not

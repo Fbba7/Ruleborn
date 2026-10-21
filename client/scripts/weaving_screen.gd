@@ -299,8 +299,10 @@ func _cells(o: Dictionary) -> Control:
 ## The deck: every other law to weave here as a small card in its school's
 ## window, the chosen one lit; a tap chooses it.
 func _deck(offers: Array) -> Control:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", UI.px(8))
+	var row := GridContainer.new()
+	row.columns = ScreenParts.grid_columns(3)
+	row.add_theme_constant_override("h_separation", UI.px(6))
+	row.add_theme_constant_override("v_separation", UI.px(6))
 	for o: Dictionary in offers:
 		var law := str(o["law"])
 		var on := law == _picked
@@ -322,7 +324,7 @@ func _deck(offers: Array) -> Control:
 		var card := ScreenKit.panel(win, col, 14.0, 6.0)
 		if on:
 			RbBox.of(card).set_chosen(true)
-		card.custom_minimum_size.x = UI.px(96)
+		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		if not on:
 			ScreenParts.tap(card, func() -> void:
 				_picked = law

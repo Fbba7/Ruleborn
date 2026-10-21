@@ -40,8 +40,7 @@ func _build() -> void:
 	status_label = UI.status("info", "")
 	column.add_child(ScreenParts.status_plate(status_label))
 	body = UI.scroll(column)
-	var join := HBoxContainer.new()
-	join.add_theme_constant_override("separation", UI.px(8))
+	var join := UI.row(8.0)
 	invite_field = UI.field(Strings.t("SOCIAL_CREW_CODE"))
 	invite_field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	join.add_child(invite_field)

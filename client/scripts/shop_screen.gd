@@ -107,8 +107,7 @@ func _refresh() -> void:
 		if not kinds.has(str(item["kind"])):
 			kinds.append(str(item["kind"]))
 	if kinds.size() > 1:
-		var chips := HBoxContainer.new()
-		chips.add_theme_constant_override("separation", UI.px(6))
+		var chips := ScreenParts.flow(6.0)
 		chips.add_child(ScreenParts.chip(Strings.t("SCREEN_ALL"), _kind == "", func() -> void:
 			_kind = ""
 			_refresh()))
@@ -116,26 +115,20 @@ func _refresh() -> void:
 			chips.add_child(ScreenParts.chip(Strings.term("KIND", k), _kind == k, func() -> void:
 				_kind = k
 				_refresh(), "shopcosmetics", k.replace("_", "")))
-		var strip := ScrollContainer.new()
-		strip.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		strip.custom_minimum_size.y = UI.px(56)
-		strip.add_child(chips)
-		body.add_child(strip)
-		body.move_child(strip, 0)
+		body.add_child(chips)
+		body.move_child(chips, 0)
 	var shown: Array = (s["items"] as Array).filter(func(i: Dictionary) -> bool:
 		return _kind == "" or str(i["kind"]) == _kind)
 	if not shown.is_empty():
 		body.add_child(_featured(shown[0], s["buying"] != "", friend))
 	if shown.size() > 1:
-		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", UI.px(8))
+		var grid := GridContainer.new()
+		grid.columns = 2 if Settings.text_scale <= 125 else 1
+		grid.add_theme_constant_override("h_separation", UI.px(8))
+		grid.add_theme_constant_override("v_separation", UI.px(8))
 		for item: Dictionary in shown.slice(1):
-			row.add_child(_for_sale(item, s["buying"] != "", friend))
-		var strip2 := ScrollContainer.new()
-		strip2.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		strip2.custom_minimum_size.y = row.get_combined_minimum_size().y + UI.px(10)
-		strip2.add_child(row)
-		body.add_child(strip2)
+			grid.add_child(_for_sale(item, s["buying"] != "", friend))
+		body.add_child(grid)
 	if not (s["owned"] as Array).is_empty():
 		body.add_child(ScreenParts.section(Strings.t("SCREEN_SHOP_OWNED"), str((s["owned"] as Array).size())))
 	for item: Dictionary in s["owned"]:
@@ -152,7 +145,9 @@ func _refresh() -> void:
 ## The first cosmetic on show as the design's featured card: its art large
 ## on a lit stage, its name in Marcellus, its kind, and its price on gold.
 func _featured(item: Dictionary, busy: bool, friend: Dictionary) -> Control:
-	var top := HBoxContainer.new()
+	var top: BoxContainer = VBoxContainer.new()
+	if Settings.text_scale <= 125:
+		top = HBoxContainer.new()
 	top.add_theme_constant_override("separation", UI.px(10))
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -216,7 +211,7 @@ func _for_sale(item: Dictionary, busy: bool, friend: Dictionary) -> Control:
 		give.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		box.add_child(give)
 	var p := ScreenKit.panel("card_lit", box, 18.0, 10.0)
-	p.custom_minimum_size.x = UI.px(150)
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	return p
 
 

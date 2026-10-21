@@ -37,8 +37,10 @@ func _build() -> void:
 	var card := VBoxContainer.new()
 	card.add_theme_constant_override("separation", UI.px(8))
 	card.add_child(ScreenParts.section(Strings.t("SCREEN_FRIENDS_ADD")))
-	var add := HBoxContainer.new()
-	add.add_theme_constant_override("separation", UI.px(8))
+	var add: Container = UI.row(8.0)
+	if Settings.text_scale <= 125:
+		add = HBoxContainer.new()
+		add.add_theme_constant_override("separation", UI.px(8))
 	code_field = UI.field(Strings.t("FRIENDS_CODE"))
 	code_field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	add.add_child(code_field)
@@ -137,7 +139,7 @@ func _person(name: String, right: Control) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(10))
 	row.add_child(_face(name, 40.0))
-	var n := ScreenKit.text(name, 16.0, "words", "card")
+	var n := ScreenKit.text(name, 16.0, "words", "card", false, true)
 	n.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	n.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	row.add_child(n)

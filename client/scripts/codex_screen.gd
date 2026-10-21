@@ -121,8 +121,7 @@ func _summary(c: Dictionary) -> Control:
 ## The design's filter strip: All with the restored count, then each
 ## school's round mark (T9's school button), the chosen one gold-edged.
 func _filters(albums: Array) -> Control:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", UI.px(6))
+	var row := ScreenParts.flow(6.0)
 	var restored := 0
 	var total := 0
 	for a: Dictionary in albums:
@@ -137,12 +136,7 @@ func _filters(albums: Array) -> Control:
 		b.accessibility_name = Strings.t("SCREEN_FILTER_SCHOOL", Strings.t("SCHOOL_" + school.to_upper()))
 		b.tooltip_text = "%d/%d" % [int(a["restored"]), int(a["total"])]
 		row.add_child(b)
-	# One strip that scrolls sideways, as the design's, rather than two rows.
-	var strip := ScrollContainer.new()
-	strip.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	strip.custom_minimum_size.y = UI.px(56)
-	strip.add_child(row)
-	return strip
+	return row
 
 
 func _filter(school: String) -> void:
@@ -164,6 +158,13 @@ func _album(a: Dictionary, busy: bool) -> Control:
 	band.accessibility_description = "%s. %s" % [a["count"], a["mastery"]]
 	var name := band.find_children("*", "Label", true, false)[0] as Label
 	name.set_meta("school", a["school"])
+	# The ink of words on gold, so the school's name reads at its size; at
+	# large text the band's words wrap rather than widen the screen.
+	name.add_theme_color_override("font_color", ScreenKit.ink("gold"))
+	for l: Label in band.find_children("*", "Label", true, false):
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		if l.get_parent() is VBoxContainer:
+			l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	band.tooltip_text = "\n".join(a["milestones"])
 	box.add_child(band)
 	# The milestones as stamps: reached ones ticked, the rest locked.

@@ -107,7 +107,10 @@ func _refresh() -> void:
 ## The design's info strip at the card's foot, on parchment: the rank on
 ## its frame's chip, the school, and the tier in pips and words.
 func _strip(c: Dictionary) -> Control:
-	var row := HBoxContainer.new()
+	# At large text the strip's three parts stack rather than widen the card.
+	var row: BoxContainer = VBoxContainer.new()
+	if Settings.text_scale <= 125:
+		row = HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(6))
 	var frame_kind: String = ScreenParts.RANK_FRAME.get(c["rank_key"], "oak")
 	var rank := ScreenKit.panel(frame_kind, ScreenKit.text(c["rank_words"].to_upper(), 13.0, "words", frame_kind),
@@ -162,7 +165,7 @@ func _notes(c: Dictionary) -> Control:
 	for n: Dictionary in c["note_list"]:
 		row.add_child(ScreenParts.pill(n["name"], "well", "lawnotes", n["note"], 15.0))
 	if (c["note_list"] as Array).is_empty():
-		row.add_child(ScreenKit.text(c["notes"], 13.0, "body", "card", true, true))
+		row.add_child(ScreenKit.text(c["notes"], 13.0, "words", "card", true, true))
 	row.tooltip_text = c["notes"]
 	return row
 

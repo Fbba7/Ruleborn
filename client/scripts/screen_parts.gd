@@ -75,7 +75,13 @@ static func badge(words: String) -> PanelContainer:
 
 ## A gold segmented control (T9's): options are {text, key, on}; `pressed`
 ## is called with the chosen option's key.
-static func segmented(options: Array, pressed: Callable) -> PanelContainer:
+static func segmented(options: Array, pressed: Callable) -> Control:
+	# At large text the strip's words do not fit side by side: chips wrap.
+	if Settings.text_scale > 125:
+		var row := flow(6.0)
+		for o: Dictionary in options:
+			row.add_child(chip(str(o["text"]), bool(o.get("on", false)), pressed.bind(o["key"])))
+		return row
 	var words: Array = []
 	var chosen := 0
 	for i: int in options.size():
