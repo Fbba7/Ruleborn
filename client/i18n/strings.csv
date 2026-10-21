@@ -1159,11 +1159,6 @@ HOME_SIDE_DEFENCE,Defence,Defense,Defesa,Defesa,Abwehr,Défense
 HOME_SIDE_LAB,Lab,Lab,Lab,Lab,Labor,Labo
 HOME_SIDE_SEASON,Season,Season,Temporada,Temporada,Saison,Saison
 HOME_SIDE_SHOP,Shop,Shop,Loja,Loja,Shop,Boutique
-HOME_TAB_ISLANDS,Islands,Islands,Ilhas,Ilhas,Inseln,Îles
-HOME_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
-HOME_TAB_HEIST,Heist,Heist,Assalto,Assalto,Raubzug,Casse
-HOME_TAB_CREW,Crew,Crew,Equipe,Equipa,Crew,Équipe
-HOME_TAB_FRIENDS,Friends,Friends,Amigos,Amigos,Freunde,Amis
 HOME_STRAIN_SPOKEN,"Strain: %s, %d%%","Strain: %s, %d%%","Tensão: %s, %d%%","Tensão: %s, %d%%","Spannung: %s, %d%%","Tension : %s, %d%%"
 HOME_PURSE,Your resources,Your resources,Seus recursos,Os teus recursos,Deine Ressourcen,Tes ressources
 HOME_PURSE_SPOKEN,"%s: %s held, %s ready to collect","%s: %s held, %s ready to collect","%s: %s guardados, %s prontos para coletar","%s: %s guardados, %s prontos a recolher","%s: %s gelagert, %s bereit zum Einsammeln","%s : %s en réserve, %s prêts à récolter"
@@ -1171,7 +1166,6 @@ HOME_RES_STARLIGHT,Starlight,Starlight,Luz Estelar,Luz Estelar,Sternenlicht,Lumi
 HOME_RES_AETHER,Aether,Aether,Aether,Aether,Aether,Aether
 HOME_RES_ESSENCE,Essence,Essence,Essência,Essência,Essenz,Essence
 HOME_UNKNOWN,not yet known,not yet known,ainda não sabido,ainda não sabido,noch nicht bekannt,pas encore connu
-HOME_FULL,FULL,FULL,CHEIO,CHEIO,VOLL,PLEIN
 HOME_BADGE_SPOKEN,"%s, %s new","%s, %s new","%s, %s novos","%s, %s novos","%s, %s neu","%s, %s nouveaux"
 HOME_MENU,Every screen,Every screen,Todas as telas,Todos os ecrãs,Alle Bildschirme,Tous les écrans
 HOME_MENU_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
@@ -1192,3 +1186,5 @@ KIT_BACK,Back,Back,Voltar,Voltar,Zurück,Retour
 KIT_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
 KIT_FULL,Full,Full,Cheio,Cheio,Voll,Plein
 KIT_TAB_BADGE,%s: %s new,%s: %s new,%s: %s novos,%s: %s novos,%s: %s neu,%s : %s nouveaux
+HOME_COLLECT,Collect all,Collect all,Coletar tudo,Recolher tudo,Alles einsammeln,Tout récolter
+HOME_COLLECT_SPOKEN,"Collect all: %s waiting","Collect all: %s waiting","Coletar tudo: %s esperando","Recolher tudo: %s à espera","Alles einsammeln: %s bereit","Tout récolter : %s en attente"

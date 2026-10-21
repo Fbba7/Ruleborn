@@ -279,6 +279,9 @@ then `docs/analysis/screens-v3/screens-home-realm-shell.md` §1.1 and §2.2) and
 
 ### The tab bar, for T9 (UI kit) and T10 (app shell)
 
+Update (round 34): home now uses T9's `KitTabs` (merged from `claude/ui-kit`), its resource pills and its round
+actions; what follows is what home asks of whichever bar the shell settles on.
+
 Home draws its own five tabs (`client/world/universe_tabs.gd`) until the app shell's tab bar lands. What home
 needs from the shared one, so it can be swapped in with no change to the screen's look:
 
@@ -300,3 +303,14 @@ When the shell's bar exists, home stops adding its own (`Home.tabs`) and listens
   underneath and cream on top, edged in ink only on the outside, rolling in row after row from the middle
   out, with a faint night veil; shut, they overlap so the jump is hidden. Reduced motion still cuts.
   Still: `r33_wipe_half_and_shut.png`; shot `tests/shots/universe_wipe.gd` (AMOUNT).
+- Round 34, on T9's UI kit (merged): home's tabs are the kit's `KitTabs`, its resource row the kit's resource
+  pills (`KitStatus.resource`, inside `UniversePurse`), its side buttons the kit's round actions with cream
+  plates (`KitControls.round_action`; the design's own icons from the kit's set); my own drawn tabs and side
+  buttons are gone. The Keeper badge, the strain pill and the goal stay home's, as the kit's are not tappable.
+  The close-up: every realm, the Heart included, is T2's lighter island (`WorldLook.Detail.LIGHT`); the
+  Heart's own tufts and the kit's fine parts give way to its buildings; an outer realm shows two of the
+  player's characters, standing in front of the building they work or out on the meadow; the sky keeps its
+  scale at every zoom (`sky_scale`), where its dust had swelled into blocks in a close-up.
+  Budget (drawn in view, `universe_zoom.gd`): whole universe 32,162 triangles, 83 draw calls; realm zoom
+  16,400–38,900; close-ups: the Heart 39,068 (one character), Tidehold 35,700 (two), others 25,000–26,000.
+  Stills: `r34_home_on_kit.png`, `r34_zoom2_heart_meadow.png`, `r34_zoom2_tidehold_two.png`.

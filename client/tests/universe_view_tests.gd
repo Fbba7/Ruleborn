@@ -26,6 +26,7 @@ func run() -> void:
 	await _lazy()
 	await _home()
 	_hud()
+	await _collect()
 
 
 func _layout() -> void:
@@ -326,3 +327,30 @@ func _hud() -> void:
 	check.call("home's nearest goal is the one closest to done, said as what is left, and its resource row shows "
 			+ "only what the slices hold, each resource's producers summed (14.8, 9.3)", goals_ok and purse_ok,
 		"%s %s | %s %s" % [both, only, unknown, known])
+
+
+## Home's Collect: every producer that holds something is collected, one
+## call each, the home each answer brings kept, the wallet asked after; what
+## was paid comes back by resource (9.3).
+func _collect() -> void:
+	var transport := FakeTransport.new()
+	var s := Fixtures.answered(Services.build(tree.root, "https://edge.example", transport,
+		"user://outbox-collect-test.json"))
+	s.api.token = "t"
+	var producers := [{"kind": "star_well", "realm": "heart", "stored": 320, "holds": 320},
+		{"kind": "garden", "realm": "outer-4", "stored": 0, "holds": 200},
+		{"kind": "aether_spring", "realm": "outer-2", "stored": 40, "holds": 140}]
+	s.store.dispatch(&"roster_loaded", {"view": {"producers": producers}})
+	var after := {"producers": [{"kind": "star_well", "realm": "heart", "stored": 0, "holds": 320}]}
+	transport.on("POST /v1/home/collect", {"collected": {"resource": "starlight", "made": 320, "kept": 0,
+		"paid": 320}, "home": after})
+	transport.on("GET /v1/balance", {"starlight": 1320, "essence": 5})
+	var paid: Dictionary = await s.roster_flow.collect_all()
+	var routes := transport.calls.map(func(c: Dictionary) -> String: return str(c["route"]))
+	var kept: Array = s.store.get_slice(RosterState.ROSTER)["view"]["producers"]
+	check.call("home's Collect collects every producer that holds something, keeps the home each answer brings, "
+			+ "and asks the wallet afresh (9.3)",
+		routes.count("POST /v1/home/collect") == 2 and routes.has("GET /v1/balance") and int(paid["starlight"]) == 640
+			and int(kept[0]["stored"]) == 0,
+		"%s %s %s" % [routes, paid, kept])
+	s.close()

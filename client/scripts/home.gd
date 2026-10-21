@@ -19,8 +19,11 @@ const WORDS := {&"map": "HOME_MAP", &"observatory": "HOME_OBSERVATORY", &"defenc
 	&"share": "HOME_SHARE", &"track": "HOME_TRACK", &"shop": "HOME_SHOP", &"social": "HOME_SOCIAL",
 	&"friends": "HOME_FRIENDS", &"settings": "HOME_SETTINGS"}
 ## The side buttons: the left edge's and the right's (the designs' four).
-const LEFT := [[&"defences", "defences", "HOME_SIDE_DEFENCE"], [&"lab", "lab", "HOME_SIDE_LAB"]]
-const RIGHT := [[&"track", "track", "HOME_SIDE_SEASON"], [&"shop", "shop", "HOME_SIDE_SHOP"]]
+const LEFT := [[&"defences", "realmactions/defence", "HOME_SIDE_DEFENCE"],
+	[&"lab", "screens/resonancelab", "HOME_SIDE_LAB"]]
+const RIGHT := [[&"track", "screens/season", "HOME_SIDE_SEASON"], [&"shop", "screens/shop", "HOME_SIDE_SHOP"]]
+## The side buttons' size, as the designs draw them, over a 48-point hit area.
+const SIDE_POINTS := 52.0
 ## Where each tab goes; the Islands tab is home itself.
 const TAB_ROUTES := {"laws": &"codex", "crew": &"roster", "friends": &"friends"}
 
@@ -33,17 +36,25 @@ var keeper_plate: UniverseBadge
 var strain: UniverseStrain
 var purse: UniversePurse
 var goal: UniverseGoal
-var tabs: UniverseTabs
+## The UI kit's five tabs (`KitTabs`), Islands chosen.
+var tabs: KitTabs
 var menu: UniverseMenu
-## The side buttons by route; the defence log's carries the raid badge (TD.66).
+## The side buttons by route (the kit's round actions); the defence log's
+## carries the raid badge (TD.66).
 var sides := {}
-var defences_button: UniverseSide
 ## The universe behind the interface.
 var world: UniverseView
 ## The raid notice over the goal.
 var notice: UniverseNotice
+## The design's Collect button over the goal, while any producer holds
+## something (§9.3).
+var collect_button: Button
 
 var _top: Control
+## Each side button's badge as last drawn, so a button is rebuilt only when
+## its badge changes.
+var _badges := {}
+var _tab_badges := {}
 ## The realm the world is closed in on: one more tap there opens it.
 var _close := ""
 
@@ -82,14 +93,18 @@ func _ready() -> void:
 	notice.seen.connect(func() -> void: App.services.router.go(&"defences"))
 	notice.dismissed.connect(_dismiss)
 	column.add_child(notice)
+	collect_button = UI.action(Strings.t("HOME_COLLECT"), _collect, "gold")
+	collect_button.icon = Icons.texture("hud/collectall")
+	collect_button.add_theme_constant_override("icon_max_width", UI.px(30))
+	collect_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	collect_button.visible = false
+	column.add_child(collect_button)
 	goal = UniverseGoal.new()
 	goal.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	goal.visible = false
 	goal.pressed.connect(func() -> void: App.services.router.go(goal.goal.get("route", &"profile")))
 	column.add_child(goal)
-	tabs = UniverseTabs.new()
-	tabs.chosen.connect(_on_tab)
-	column.add_child(tabs)
+	_build_tabs({})
 	menu = UniverseMenu.make(PLACES, WORDS)
 	menu.picked.connect(func(route: StringName) -> void: App.services.router.go(route))
 	add_child(menu)
@@ -144,14 +159,50 @@ func _edge(which: Array) -> VBoxContainer:
 	var edge := VBoxContainer.new()
 	edge.alignment = BoxContainer.ALIGNMENT_CENTER
 	edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	edge.add_theme_constant_override("separation", UI.px(10))
+	edge.add_theme_constant_override("separation", UI.px(8))
 	for s: Array in which:
-		var route: StringName = s[0]
-		var b := UniverseSide.make(s[1], Strings.t(s[2]), func() -> void: App.services.router.go(route))
-		sides[route] = b
-		edge.add_child(b)
-	defences_button = sides.get(&"defences", defences_button)
+		var holder := CenterContainer.new()
+		holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		holder.set_meta("side", s)
+		edge.add_child(holder)
+		sides[s[0]] = holder
+		_side(holder, "")
 	return edge
+
+
+## A side button in `holder`, with `badge` on it ("" for none).
+func _side(holder: CenterContainer, badge: String) -> void:
+	if _badges.get(holder, null) == badge and holder.get_child_count() > 0:
+		return
+	_badges[holder] = badge
+	for c: Node in holder.get_children():
+		c.queue_free()
+	var s: Array = holder.get_meta("side")
+	var route: StringName = s[0]
+	var words := Strings.t(s[2])
+	var action := KitControls.round_action(s[1], words, func() -> void: App.services.router.go(route), false,
+		SIDE_POINTS, badge)
+	action.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var b := action.find_children("*", "Button", true, false)[0] as Button
+	b.accessibility_name = words if badge == "" else Strings.t("HOME_BADGE_SPOKEN", [words, badge])
+	holder.add_child(action)
+
+
+## The kit's five tabs, rebuilt when a badge changes.
+func _build_tabs(badges: Dictionary) -> void:
+	if tabs != null and badges == _tab_badges:
+		return
+	_tab_badges = badges
+	var at := -1
+	if tabs != null:
+		at = tabs.get_index()
+		tabs.queue_free()
+	tabs = KitTabs.make("islands", badges)
+	tabs.picked.connect(_on_tab)
+	var column := goal.get_parent()
+	column.add_child(tabs)
+	if at >= 0:
+		column.move_child(tabs, at)
 
 
 ## A night tint over the world behind the top's or the foot's interface, so
@@ -207,10 +258,9 @@ func _on_realm(id: String) -> void:
 ## the tabs, its pins clear of the side buttons.
 func _frame_world() -> void:
 	var foot: Control = tabs
-	if notice.visible:
-		foot = notice
-	elif goal.visible:
-		foot = goal
+	for c: Control in [goal, collect_button, notice]:
+		if c.visible:
+			foot = c
 	world.fit_between(_top, foot)
 	var left: Control = sides[LEFT[0][0]]
 	var right: Control = sides[RIGHT[0][0]]
@@ -252,19 +302,40 @@ func _show_hud() -> void:
 	var nearest := UniverseGoal.goals(store.get_slice(KeeperState.KEEPER), store.get_slice(ShopState.TRACK))
 	goal.show_goal(nearest[0] if not nearest.is_empty() else {})
 	var unseen := int(store.get_slice(DefencesState.DEFENCES).get("unseen", 0))
+	_side(sides[&"defences"], str(unseen) if unseen > 0 else "")
 	if unseen < _dismissed:
 		_dismissed = 0
 	notice.show_raids(unseen if unseen > _dismissed else 0)
-	defences_button.relabel(Strings.t("HOME_SIDE_DEFENCE"), str(unseen) if unseen > 0 else "")
 	var track := ShopPresenter.track(store.get_slice(ShopState.TRACK))
-	(sides[&"track"] as UniverseSide).relabel(Strings.t("HOME_SIDE_SEASON"),
-		"!" if bool(track.get("can_claim", false)) else "")
-	# The Islands tab counts the producers that are full (§9.3).
+	_side(sides[&"track"], "!" if bool(track.get("can_claim", false)) else "")
+	# The Islands tab counts the producers that are full (§9.3); Collect shows
+	# while any holds something, what each resource has waiting said aloud.
 	var full := 0
+	var ready := {}
 	for p: Dictionary in store.get_slice(RosterState.ROSTER).get("view", {}).get("producers", []):
 		if int(p.get("holds", 0)) > 0 and float(p.get("stored", 0)) >= UniversePurse.FULL * int(p["holds"]):
 			full += 1
-	tabs.set_badge("islands", str(full) if full > 0 else "")
+		var kind: String = UniverseStore.PRODUCES.get(str(p.get("kind", "")), "")
+		if kind != "" and int(p.get("stored", 0)) > 0:
+			ready[kind] = int(ready.get(kind, 0)) + int(p["stored"])
+	collect_button.visible = not ready.is_empty() and str(store.get_slice(RosterState.ROSTER)["busy"]) == ""
+	var waiting := PackedStringArray()
+	for kind: String in UniversePurse.ORDER:
+		if ready.has(kind):
+			waiting.append("%s %s" % [UniverseHud.grouped(ready[kind]), Strings.t("HOME_RES_" + kind.to_upper())])
+	collect_button.accessibility_name = Strings.t("HOME_COLLECT_SPOKEN", ", ".join(waiting))
+	_build_tabs({"islands": full} if full > 0 else {})
+
+
+## Every producer collected (§9.3), the amounts flying into their bars.
+func _collect() -> void:
+	collect_button.disabled = true
+	var paid: Dictionary = await App.services.roster_flow.collect_all()
+	if not is_inside_tree():
+		return
+	collect_button.disabled = false
+	UniverseReward.fly(self, collect_button, purse, paid)
+	_show_hud()
 
 
 func _dismiss() -> void:

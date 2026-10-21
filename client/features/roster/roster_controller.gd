@@ -85,6 +85,27 @@ func name_character(id: int, adjective: int, noun: int) -> void:
 		services.home.name_character.bind(id, adjective, noun))
 
 
+## §9.3: every producer that holds something collected, one after another,
+## each answer's home dispatched; the wallet asked afresh after. Returns what
+## was paid in, by resource.
+func collect_all() -> Dictionary:
+	var paid := {}
+	var home: Dictionary = _store().get_slice(RosterState.ROSTER).get("view", {})
+	for p: Dictionary in home.get("producers", []):
+		if int(p.get("stored", 0)) <= 0:
+			continue
+		var r: Result = await services.home.collect(str(p.get("realm", "")), str(p.get("kind", "")))
+		if not r.ok:
+			_store().dispatch(&"roster_failed", {"code": r.code, "detail": r.detail})
+			break
+		var got: Dictionary = r.value.get("collected", {})
+		paid[str(got.get("resource", ""))] = int(paid.get(str(got.get("resource", "")), 0)) + int(got.get("paid", 0))
+		_store().dispatch(&"roster_changed", {"home": r.value["home"], "what": {"collected": got}})
+	if not paid.is_empty():
+		await services.shop_flow.load_wallet()
+	return paid
+
+
 ## One change at a time: a second tap while one is on its way is ignored.
 func _change(key: String, what: Dictionary, call: Callable, offline := {}) -> void:
 	if str(_store().get_slice(RosterState.ROSTER)["busy"]) != "":
