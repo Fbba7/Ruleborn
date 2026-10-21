@@ -10,6 +10,7 @@ extends SceneTree
 ## Settings' turn and zoom buttons, CONTRAST high contrast, LEFT left-handed
 ## play, TEXT a text size (150, 200), NAMES the names a long press shows.
 
+const LawShot := preload("res://tests/shots/law_heist.gd")
 const TO := {"hold": [[4, 9], [3, 10], [4, 11]], "entry": [], "escape": [[2, 10], [3, 10], [2, 11]],
 	"cross": [[4, 9], [3, 10], [4, 11]], "sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]],
 	"alarm": [[5, 6], [3, 10], [4, 11]], "start": [[7, 8], [2, 10], [1, 10]]}
@@ -36,7 +37,11 @@ func _go() -> void:
 	Settings.left_handed = OS.get_environment("LEFT") != ""
 	Settings.text_scale = int(OS.get_environment("TEXT")) if OS.get_environment("TEXT") != "" else 100
 	Settings.apply()
-	App.services.store.dispatch(&"heist_started", {"island": WorldTests.island(), "testing": true})
+	var island := WorldTests.island()
+	if OS.get_environment("LAWS") != "":
+		# LAWS: these laws woven into law_heist's dressed island instead.
+		island = LawShot.island(Array(OS.get_environment("LAWS").split(",")))
+	App.services.store.dispatch(&"heist_started", {"island": island, "testing": true})
 	var screen: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
 	frame.add_child(screen)
 	await process_frame

@@ -4,6 +4,8 @@ extends RefCounted
 ## motes for a law not yet drawn (LawFxSigns has Motion, Matter and Time).
 
 const INK := Color("#1A0C14")
+## Kinship's "next to an ally": on a neighbouring tile, the diagonal too.
+const KIN_REACH := 1.6
 
 
 static func build(fx: LawFx, sig: Node3D, law: String) -> void:
@@ -196,28 +198,22 @@ static func _bloom(fx: LawFx, sig: Node3D) -> void:
 		"period": [6.0, 9.0], "wobble": 0.25})
 
 
-## Kinship: "Vines braid between neighbours." Twined vines run between
-## neighbouring plants and walls; the crew, linked by a green thread.
+## Kinship: "Vines braid between neighbours." Its rule is allies next to
+## each other healing each other, so that is what reads at the heist's
+## camera: a bold green bond, with light running along it, between any two
+## allies standing side by side (crew with crew, guards with guards). Low
+## creepers twine between neighbouring plants and walls, one strand each,
+## under everything that matters.
 static func _kinship(fx: LawFx, sig: Node3D) -> void:
-	var r := fx.site.rng("kinship")
-	# Every thing that stands — plants, walls, pylons, wards, posts — is
-	# braided by a vine to its nearest neighbour within three tiles.
 	var anchors := fx.site.tiles(LawFxSite.PLANTS + LawFxSite.WALLS)
 	var tops: Array[Vector3] = []
 	for t: Vector2i in anchors:
-		tops.append(fx.site.centre(t) + Vector3(0, LawFxSigns.wall_height(fx.site.code(t)) + 0.05, 0))
-	for p: Dictionary in fx.site.pylons:
-		tops.append((p["at"] as Vector3) + Vector3(0, 1.1, 0))
-	for w: Vector3 in fx.site.wards:
-		tops.append(w + Vector3(0, 0.5, 0))
-	for g: Vector3 in fx.site.posts:
-		tops.append(g + Vector3(0, 0.3, 0))
+		tops.append(fx.site.centre(t) + Vector3(0, minf(0.35, LawFxSigns.wall_height(fx.site.code(t)) * 0.5), 0))
 	var vines := LawFxBatch.new(LawFxBatch.Kind.THREADS)
-	var blossoms := LawFxBatch.new(LawFxBatch.Kind.MOTES)
 	var seen := {}
 	for i in tops.size():
 		var best := -1
-		var near := 3.2
+		var near := 2.2
 		for j in tops.size():
 			var d := Vector2(tops[i].x - tops[j].x, tops[i].z - tops[j].z).length()
 			if j != i and d > 0.6 and d < near and not seen.has(Vector2i(mini(i, j), maxi(i, j))):
@@ -226,37 +222,24 @@ static func _kinship(fx: LawFx, sig: Node3D) -> void:
 		if best < 0:
 			continue
 		seen[Vector2i(mini(i, best), maxi(i, best))] = true
-		var a := tops[i]
-		var b := tops[best]
-		var side := (b - a).cross(Vector3.UP).normalized()
-		for strand in 2:
-			var pts := LawFxBatch.sagging(a, b, -0.4, 16)
-			for k in pts.size():
-				var u := float(k) / (pts.size() - 1)
-				pts[k] += side * sin(u * TAU * 2.0 + strand * PI) * 0.08
-			vines.strip(pts, Color("#2A6A2A") if strand == 0 else Color("#B8E04A"), 4)
-			if strand == 1:
-				for k in range(3, pts.size() - 2, 4):
-					blossoms.mote(pts[k], Vector3.ZERO, 0.0, r.randf(), 0.09, 0.0, 5,
-						Color("#FFF6C8") if k % 8 == 3 else Color("#F7A6DA"))
+		vines.strip(LawFxBatch.sagging(tops[i], tops[best], 0.12, 12), Color("#3E8A34"), 4)
 	if vines.triangles > 0:
-		fx.layer(sig, vines, fx.thread_material(0.1))
-	if blossoms.triangles > 0:
-		fx.layer(sig, blossoms, fx.mote_material(0.3))
-	# The crew, shoulder to shoulder, each to the next by a green thread.
+		fx.layer(sig, vines, fx.thread_material(0.05))
 	var link := MeshInstance3D.new()
 	link.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	link.material_override = fx.thread_material(0.06)
+	link.material_override = fx.thread_material(0.1)
 	link.extra_cull_margin = 40.0
 	sig.add_child(link)
-	fx.watch(func(crew: Array, _guards: Array) -> void:
+	fx.watch(func(crew: Array, guards: Array) -> void:
 		var b := LawFxBatch.new(LawFxBatch.Kind.THREADS)
-		for k in crew.size() - 1:
-			var a: Vector3 = crew[k]
-			var c: Vector3 = crew[k + 1]
-			if a.distance_to(c) < 4.5:
-				b.strip(LawFxBatch.sagging(a + Vector3(0, 0.55, 0), c + Vector3(0, 0.55, 0), 0.15, 10),
-					Color("#7AF08A"), 0)
+		for side: Array in [crew, guards]:
+			for k in side.size():
+				for j in range(k + 1, side.size()):
+					var a: Vector3 = side[k]
+					var c: Vector3 = side[j]
+					if a.distance_to(c) < KIN_REACH:
+						b.strip(LawFxBatch.sagging(a + Vector3(0, 0.6, 0), c + Vector3(0, 0.6, 0), -0.25, 10),
+							Color("#5CE07A"), 0)
 		link.mesh = b.mesh())
 
 
@@ -314,8 +297,10 @@ static func _regrowth(fx: LawFx, sig: Node3D) -> void:
 		"lift": [0.1, 0.6], "vel": Vector3(0, 0.25, 0), "period": [3.0, 5.0], "glow": 0.7})
 
 
-## Whispers: "Whispering wind lines drift between guards." Wisps carry from
-## each guard's post to the next, in the realm's quiet magenta.
+## Whispers: "Whispering wind lines drift between guards." Its rule is one
+## alerted guard alerting every other, so each guard and the law's pylon are
+## joined by one wind line, inked so it reads on any ground, with whispers
+## running along it; a ring at each listener's ear.
 static func _whispers(fx: LawFx, sig: Node3D) -> void:
 	var posts: Array = fx.site.posts.duplicate()
 	if posts.size() < 2:
@@ -324,34 +309,23 @@ static func _whispers(fx: LawFx, sig: Node3D) -> void:
 	var r := fx.site.rng("whispers")
 	var b := LawFxBatch.new(LawFxBatch.Kind.MOTES)
 	var lines := LawFxBatch.new(LawFxBatch.Kind.THREADS)
-	# Every guard whispers to every other and to the law's pylon: pale wind
-	# lines with whispers running along them, a ring at each listener's ear.
 	var ears: Array = posts.duplicate()
 	ears.append(LawFxPaint.home(fx, "whispers"))
 	for i in ears.size():
 		var a: Vector3 = ears[i]
-		b.mote(a + Vector3(0, 1.05, 0), Vector3.ZERO, 0.0, r.randf(), 0.22, 0.0, 6, Color("#F8D8F4"))
+		b.mote(a + Vector3(0, 1.6, 0), Vector3.ZERO, 0.0, r.randf(), 0.26, 0.0, 6, Color("#F8D8F4"))
 		for j in range(i + 1, ears.size()):
 			var c: Vector3 = ears[j]
 			if a.distance_to(c) > 6.5:
 				continue
-			for k in 2:
-				var up := Vector3(0, 0.95 + k * 0.3, 0)
-				lines.strip(LawFxBatch.sagging(a + up, c + up, -0.35 - k * 0.25, 24),
-					Color("#FBE6F8") if k == 0 else Color("#E07AC8"), 4)
+			var up := Vector3(0, 1.6, 0)
+			lines.strip(LawFxBatch.sagging(a + up, c + up, -0.5, 24), Color("#F07AD8"), 4)
 			var period := maxf(2.5, a.distance_to(c) / 1.4)
-			for k in 4:
-				var lift := Vector3(0, 1.15 + r.randf_range(-0.15, 0.25), 0)
-				b.mote(a + lift, (c - a) / period, period, float(k) / 4.0 + r.randf() * 0.05, r.randf_range(0.22, 0.3),
-					0.1, 11, Color("#FFFFFF", 0.95))
+			for k in 3:
+				b.mote(a + up + Vector3(0, 0.25, 0), (c - a) / period, period, float(k) / 3.0 + r.randf() * 0.05,
+					0.24, 0.1, 11, Color("#FFFFFF", 0.95))
 	fx.layer(sig, b, fx.mote_material(0.6))
-	fx.layer(sig, lines, fx.thread_material(0.06))
-	# Wind lines drift along the way the whispers carry, guard to guard.
-	var way: Vector3 = (posts[1] as Vector3) - (posts[0] as Vector3)
-	way.y = 0.0
-	LawFxPaint.spray(fx, sig, "whispers_lines", {"n": 26, "shape": 3, "colour": Color("#9C3380", 0.7),
-		"radius": [0.05, 0.07], "lift": [0.3, 1.6], "vel": way.normalized() * 1.1, "spread": Vector3(0.15, 0, 0.15),
-		"period": [3.0, 5.0], "wobble": 0.15})
+	fx.layer(sig, lines, fx.thread_material(0.09))
 
 
 ## Echoes: "Soft chimes; faint silhouettes." Clear figures stand about the
