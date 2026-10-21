@@ -37,6 +37,13 @@ static func screen(slice: Dictionary, now_ms: int) -> Dictionary:
 		chambers.append(chamber(c, slice, t, aether, now_ms))
 	out["chambers"] = chambers
 	out["found"] = found(v)
+	out["level"] = int(v.get("level", 0))
+	out["aether"] = ShopPresenter.grouped(aether)
+	out["finds"] = (v.get("found", []) as Array).map(func(f: Dictionary) -> Dictionary:
+		return {"kind": str(f["kind"]), "id": str(f["id"]), "name": Strings.term("CHORD" if f["kind"] == "chord"
+			else "RES", str(f["id"]))})
+	out["hinted"] = (v.get("hinted", []) as Array).size()
+	out["remaining"] = v.get("remaining", {})
 	return out
 
 
@@ -101,19 +108,24 @@ static func chamber(c: Dictionary, slice: Dictionary, t: Dictionary, aether: int
 	var running: Variant = c.get("running")
 	if running is Dictionary:
 		var r: Dictionary = running
+		out["running"] = r.get("laws", [])
+		out["left"] = WeavingPresenter.duration(WeavingPresenter.minutes_until(int(r.get("ready_at", 0)), now_ms))
+		out["unstable"] = bool(r.get("unstable", false))
 		lines.append(Strings.t("LAB_RUNNING", [names(r.get("laws", [])),
 			WeavingPresenter.duration(WeavingPresenter.minutes_until(int(r.get("ready_at", 0)), now_ms))]))
 		if r.get("unstable", false):
 			lines.append(Strings.t("LAB_UNSTABLE"))
 	if c.get("result") is Dictionary:
 		lines.append_array(result(c["result"]))
+		var got: Variant = (c["result"] as Dictionary).get("found")
+		out["found"] = str(got) if got is String else ""
 	if running is Dictionary:
 		return out
 	var laws := picks(slice, n)
 	var slots: Array[Dictionary] = out["slots"]
 	for i in laws.size():
 		var law := Strings.term("LAW", str(laws[i]))
-		slots.append({"slot": i, "text": Strings.t("LAB_SLOT", [i + 1, law]),
+		slots.append({"slot": i, "law": str(laws[i]), "name": law, "text": Strings.t("LAB_SLOT", [i + 1, law]),
 			"spoken": Strings.t("LAB_SLOT_SPOKEN", [i + 1, n, law]), "key": "slot:%d:%d" % [n, i]})
 	var cost := int(t.get("aether", 0))
 	var time := WeavingPresenter.duration(int(t.get("minutes", 0)))

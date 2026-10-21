@@ -1,7 +1,7 @@
 extends SceneTree
 ## One of T10's menu and meta screens with its tests' sample state
 ## (tools/render/shoot.sh). SCREEN names the route; SCROLL scrolls its list;
-## TEXT sets the text size in percent.
+## TEXT sets the text size in percent; LOCALE the language.
 func _initialize() -> void:
 	_go()
 
@@ -9,6 +9,8 @@ func _initialize() -> void:
 func _go() -> void:
 	root.size = Vector2i(1080, 2340)
 	var name := OS.get_environment("SCREEN")
+	if OS.get_environment("LOCALE") != "":
+		Strings.set_locale(OS.get_environment("LOCALE"))
 	if OS.get_environment("TEXT") != "":
 		Settings.text_scale = int(OS.get_environment("TEXT"))
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))

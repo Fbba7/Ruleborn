@@ -8,6 +8,9 @@ extends Control
 ## and hint; from Lab level 3 the third sphere, which names a chord free; and
 ## what has been found, hinted and remains by school.
 
+## The design's art for the resonances it draws, by content id.
+const RESONANCE_ART := {"drifting_echoes": "drifting", "mangrove_banks": "mangrove"}
+
 var controller: LabController
 var body: VBoxContainer
 var header_label: Label
@@ -15,6 +18,7 @@ var status_label: Label
 ## The run tapped once, by its key: the next tap on it spends.
 var confirm := ""
 var clock: Callable = func() -> int: return int(Time.get_unix_time_from_system() * 1000)
+var _aether: PanelContainer
 
 
 func _ready() -> void:
@@ -32,16 +36,17 @@ func _on_changed(slice: StringName) -> void:
 
 
 func _build() -> void:
-	var column := UI.frame(self)
-	column.add_child(UI.title(Strings.t("LAB_TITLE")))
-	header_label = UI.label("", UI.TEXT_POINTS, true)
-	column.add_child(UI.plate(header_label))
+	var column := ScreenKit.frame(self)
+	_aether = ScreenParts.resource("aether", "")
+	column.add_child(ScreenNav.header(Strings.t("LAB_TITLE"), _aether))
+	header_label = ScreenKit.text("", 13.0, "body", "card", true, true)
+	header_label.visible = false
+	column.add_child(header_label)
 	status_label = UI.status("info", "")
-	column.add_child(UI.plate(status_label))
+	column.add_child(ScreenParts.status_plate(status_label))
 	body = UI.scroll(column)
-	var actions := UI.row(-1.0, true)
-	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
-	column.add_child(UI.narrow(actions))
+	column.add_child(ScreenNav.hub("laws", &"lab"))
+	column.add_child(ScreenNav.bar("laws"))
 
 
 func _refresh() -> void:
@@ -58,30 +63,29 @@ func _refresh() -> void:
 		UI.set_status(status_label, "info", Strings.t("COMMON_LOADING"))
 	else:
 		UI.set_status(status_label, "info", "")
+	ScreenParts.show_status(status_label)
 	header_label.text = l.get("header", "")
 	for child in body.get_children():
 		body.remove_child(child)
 		child.queue_free()
 	if not l["ready"]:
 		return
+	ScreenParts.set_resource(_aether, str(l.get("aether", "")))
 	var busy: bool = l["busy"] != ""
-	var top := VBoxContainer.new()
-	for key: String in ["none", "terms", "chords"]:
+	var tags := ScreenParts.flow(6.0)
+	if l.has("level"):
+		tags.add_child(ScreenParts.pill(Strings.t("SCREEN_LAB_LEVEL", int(l["level"])), "glass", "buildings",
+			"resonancelab"))
+	body.add_child(tags)
+	for key: String in ["terms", "none", "chords"]:
 		if str(l.get(key, "")) != "":
-			top.add_child(UI.label(l[key], UI.TEXT_POINTS, true))
-	body.add_child(UI.plate(top))
+			body.add_child(ScreenParts.pill(l[key], "glass", "generalui", "timer" if key == "terms" else "info",
+				13.0, "words", true))
 	for c: Dictionary in l["chambers"]:
 		body.add_child(_chamber(c, busy))
 	if not (l.get("sphere", {}) as Dictionary).is_empty():
-		var sphere := VBoxContainer.new()
-		sphere.add_child(UI.label(Strings.t("LAB_SPHERE_TITLE"), UI.TEXT_POINTS, true))
-		sphere.add_child(RosterScreen.offer(l["sphere"], busy, controller.name_chord))
-		body.add_child(UI.plate(sphere))
-	var found := VBoxContainer.new()
-	found.add_child(UI.label(Strings.t("LAB_FOUND_TITLE"), UI.TEXT_POINTS, true))
-	for line: String in l["found"]:
-		found.add_child(UI.label(line, UI.TEXT_POINTS, true))
-	body.add_child(UI.plate(found))
+		body.add_child(_sphere(l["sphere"], busy))
+	body.add_child(_shelf(l))
 	if focus_item != "":
 		for b: Button in find_children("*", "Button", true, false):
 			if b.get_meta("item", "") == focus_item and b.is_visible_in_tree():
@@ -89,27 +93,152 @@ func _refresh() -> void:
 				break
 
 
+## A chamber as the design's test bench: two pedestals linked through the
+## core, each a law a tap moves along; or the pair running with its time
+## left; its last result beneath; and the run button.
 func _chamber(c: Dictionary, busy: bool) -> Control:
 	var box := VBoxContainer.new()
-	var title := UI.label(c["title"], UI.TEXT_POINTS, true)
+	box.add_theme_constant_override("separation", UI.px(8))
+	var head := HBoxContainer.new()
+	var title := ScreenKit.text(c["title"], 20.0, "name", "card_lit")
 	title.set_meta("chamber", c["chamber"])
-	box.add_child(title)
-	for line: String in c["lines"]:
-		box.add_child(UI.label(line, UI.TEXT_POINTS, true))
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(title)
+	if c.has("left"):
+		head.add_child(ScreenParts.pill(c["left"], "cream", "generalui", "timer"))
+	box.add_child(head)
 	var n := int(c["chamber"])
-	for s: Dictionary in c["slots"]:
-		var b := UI.button(s["text"], controller.cycle.bind(n, int(s["slot"])), false, Color(), s["spoken"])
-		b.disabled = busy
-		b.set_meta("key", s["key"])
-		b.set_meta("item", s["key"])
-		box.add_child(b)
+	var bench := HBoxContainer.new()
+	bench.add_theme_constant_override("separation", UI.px(4))
+	bench.alignment = BoxContainer.ALIGNMENT_CENTER
+	if c.has("running"):
+		var laws: Array = c["running"]
+		for i: int in laws.size():
+			if i == 1:
+				bench.add_child(_core(true))
+			var p := ScreenKit.panel("well", ScreenKit.icon("law", str(laws[i]), 52.0), -1.0, 6.0)
+			bench.add_child(p)
+	else:
+		var i := 0
+		for s: Dictionary in c["slots"]:
+			if i == 1:
+				bench.add_child(_core(false))
+			var b := ScreenKit.button(s["text"], controller.cycle.bind(n, int(s["slot"])), "card", s["spoken"], 16.0)
+			var path := ScreenKit.icon_path("law", str(s["law"]))
+			if path != "":
+				b.icon = load(path)
+				b.expand_icon = true
+				b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
+				b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+				b.add_theme_constant_override("icon_max_width", UI.px(48))
+			b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			b.custom_minimum_size = Vector2(UI.px(116), UI.px(104))
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			b.disabled = busy
+			b.set_meta("key", s["key"])
+			b.set_meta("item", s["key"])
+			bench.add_child(b)
+			i += 1
+	box.add_child(bench)
+	if c.get("unstable", false):
+		box.add_child(ScreenParts.pill(Strings.t("LAB_UNSTABLE"), "red", "hud", "warning", 13.0, "words", true))
+	for line: String in c["lines"]:
+		if line == Strings.t("LAB_UNSTABLE") or c.has("running") and line == c["lines"][0]:
+			continue
+		var found := str(c.get("found", ""))
+		box.add_child(ScreenParts.pill(line, "green" if found != "" and line == c["lines"][0] else "well",
+			"harmony", "resonance" if found != "" else "signature", 13.0, "words", true))
 	if not (c["run"] as Dictionary).is_empty():
 		var shown: Dictionary = (c["run"] as Dictionary).duplicate()
 		if confirm == shown["key"]:
 			shown["action"] = Strings.t("CODEX_CONFIRM", shown["cost"])
 			shown["spoken"] = Strings.t("CODEX_CONFIRM_SPOKEN", [shown["spoken"], shown["cost"]])
-		box.add_child(RosterScreen.offer(shown, busy, _run.bind(c["run"], n)))
-	return UI.plate(box)
+		var run := ScreenKit.button(shown["action"], _run.bind(c["run"], n), "gold", shown["spoken"], 14.0)
+		run.disabled = busy or not shown["can"]
+		run.set_meta("key", shown["key"])
+		run.set_meta("item", shown["item"])
+		box.add_child(run)
+		if shown["why"] != "":
+			box.add_child(ScreenKit.text(shown["why"], 13.0, "words", "card_lit", true, true))
+	return ScreenKit.panel("card_lit", box, 18.0, 12.0)
+
+
+## The core between the pedestals: the resonance mark, lit while it runs.
+func _core(lit: bool) -> Control:
+	var core := ScreenKit.icon("harmony", "resonance", 40.0 if lit else 32.0)
+	core.modulate = Color.WHITE if lit else Color(1, 1, 1, 0.55)
+	core.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	return core
+
+
+## §8.5's third sphere: names a chord woven or crossed, once a day, free.
+func _sphere(o: Dictionary, busy: bool) -> Control:
+	var b := ScreenKit.button(o["action"], controller.name_chord, "leather", o["spoken"], 14.0)
+	b.disabled = busy or not o["can"]
+	b.set_meta("key", o["key"])
+	b.set_meta("item", o["item"])
+	var right := VBoxContainer.new()
+	right.add_child(b)
+	if o["why"] != "":
+		right.add_child(ScreenKit.text(o["why"], 13.0, "words", "card", true, true))
+	return ScreenParts.item("harmony", "chord", Strings.t("LAB_SPHERE_TITLE"), "", right)
+
+
+## What the Lab has found, by mark and name; how many are hinted; and how
+## many remain in each school (§8.6).
+func _shelf(l: Dictionary) -> Control:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UI.px(8))
+	box.add_child(ScreenParts.section(Strings.t("LAB_FOUND_TITLE"), str((l.get("finds", []) as Array).size())))
+	var grid := GridContainer.new()
+	grid.columns = ScreenParts.grid_columns(3)
+	grid.add_theme_constant_override("h_separation", UI.px(6))
+	grid.add_theme_constant_override("v_separation", UI.px(6))
+	for f: Dictionary in l.get("finds", []):
+		var col := VBoxContainer.new()
+		col.add_theme_constant_override("separation", UI.px(2))
+		var mark := ScreenKit.icon("resonance", RESONANCE_ART.get(f["id"], ""), 44.0)
+		if mark.texture == null:
+			mark = ScreenKit.icon("harmony", "chord" if f["kind"] == "chord" else "resonance", 44.0)
+		mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		col.add_child(mark)
+		var name := ScreenKit.text(f["name"], 13.0, "words", "parchment", false, true)
+		name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		col.add_child(name)
+		var tile := ScreenKit.panel("parchment", col, 14.0, 6.0)
+		tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		grid.add_child(tile)
+	if int(l.get("hinted", 0)) > 0:
+		var hint := VBoxContainer.new()
+		var q := ScreenKit.icon("harmony", "unknownlaw", 44.0)
+		q.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		hint.add_child(q)
+		var words := ScreenKit.text(Strings.t("LAB_HINTED", int(l["hinted"])), 13.0, "words", "well", true, true)
+		words.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		hint.add_child(words)
+		var tile2 := ScreenKit.panel("well", hint, 14.0, 6.0)
+		tile2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		grid.add_child(tile2)
+	box.add_child(grid)
+	if (l.get("finds", []) as Array).is_empty():
+		box.add_child(ScreenKit.text(Strings.t("LAB_FOUND_NONE"), 13.0, "body", "card", true, true))
+	var remaining: Dictionary = l.get("remaining", {})
+	if not remaining.is_empty():
+		box.add_child(ScreenParts.section(Strings.t("SCREEN_LAB_REMAINING")))
+		var row := ScreenParts.flow(6.0)
+		for school: String in remaining:
+			var p := HBoxContainer.new()
+			p.add_theme_constant_override("separation", UI.px(4))
+			p.add_child(ScreenCoin.make("school:" + school.to_lower(), 24.0))
+			var count := ScreenKit.text(str(int(remaining[school])), 17.0, "number", "well")
+			p.add_child(count)
+			var plate := ScreenKit.panel("well", p, -1.0, 4.0)
+			plate.tooltip_text = Strings.t("LAB_REMAINING_SCHOOL", [Strings.t("SCHOOL_" + school.to_upper()),
+				int(remaining[school])])
+			count.accessibility_name = plate.tooltip_text
+			row.add_child(plate)
+		box.add_child(row)
+	return ScreenKit.panel("card", box, 18.0, 12.0)
 
 
 ## A paid run's first tap shows its price to confirm; the second spends it.

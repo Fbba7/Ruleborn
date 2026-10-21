@@ -34,7 +34,6 @@ static func header(title: String, right: Control = null) -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
 	var t := ScreenKit.text(title, 26.0, "name", "card")
-	ScreenKit.inked(t, 1.0)
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	t.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS

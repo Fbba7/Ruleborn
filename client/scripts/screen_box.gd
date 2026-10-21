@@ -100,7 +100,7 @@ static func outline(r: Rect2, rad: float) -> PackedVector2Array:
 ## A rounded rectangle filled with a vertical gradient, built as horizontal
 ## bands so the middle stop lands exactly where it is set.
 func _fill(r: Rect2, rad: float, c0: Color, c1: Color, c2: Color) -> void:
-	if r.size.x <= 0.0 or r.size.y <= 0.0:
+	if r.size.x <= 0.0 or r.size.y <= 0.0 or c0.a <= 0.0 and c1.a <= 0.0 and c2.a <= 0.0:
 		return
 	rad = minf(rad, minf(r.size.x, r.size.y) * 0.5)
 	var ys: Array[float] = []

@@ -257,3 +257,10 @@ static func tap(panel: PanelContainer, pressed: Callable, spoken: String, key :=
 static func recolour(node: Node, material: String) -> void:
 	for l: Label in node.find_children("*", "Label", true, false):
 		l.add_theme_color_override("font_color", ScreenKit.ink(material, false))
+
+
+## New words on a pill made by `pill`.
+static func set_pill(p: PanelContainer, words: String) -> void:
+	for l: Label in p.find_children("*", "Label", true, false):
+		l.text = words
+	p.visible = words != ""
