@@ -11,16 +11,18 @@ Merge this branch, then:
 - **Type roles:** set `label.theme_type_variation` to `Kicker`, `Caption`, `LabelText`, `ButtonText`, `Body`, `BodyBold`, `Heading`, `Title`, `Hero`, `Number` (tabular), `NumberM`, `DisplayS`, `Display`, `DisplayXl`, `Tab`, `Secondary`, or the statuses `StatusAlarm`, `StatusSuccess`, `StatusInfo`. Fonts directly: `Tokens.font("ui", 800, tnum)`, `Tokens.font("title")`, `Tokens.font("display")`.
 - **Icons:** `Icons.texture("resources/starlight")`, `Icons.view("schools/matter", 24)` (a TextureRect). 370 icons in 33 groups; `Icons.names()` lists them. (`Icons.get` is not possible in GDScript: every Object has `get`.)
 - **Motion:** `Motion.enter(node, delay_ms)`, `Motion.cascade(parent)`, `Motion.pop(node)`, `Motion.sheet_in(node)`, `Motion.press(button, down)`, `Motion.fill(bar, to)`, `Motion.bob(node)`. All 150-250 ms easing out with no overshoot, each with its reduced-motion form.
-- **Components** (all at least 48 points, all writing their number or word beside any colour):
-  - `KitNav`: `header(title, kicker)`, `rule()`, `back(call)`, `segmented(options, chosen, picked)`, `tabs(chosen, badges)` → `KitTabs` (signal `picked(id)`, `choose(id)`; Islands, Laws, Heist in the centre, Crew, Friends; lifted clear of the corners).
-  - `KitControls`: `chip(text, on, call)`, `set_chip`, `icon_button(icon, spoken, call, look, points)`, `round_action(icon, words, call, main, points, badge)` (MAP, WEAVE, BUILD with their name plates), `toggle_row(icon, title, line, on, toggled_to)`.
+- **Components** (all at least 48 points, all writing their number or word beside any colour). The sheet's pages show each in use: `PAGE=n bash tools/render/shoot.sh client/tests/shots/ui_kit_sheet.gd out.png` (1 materials and type, 2 controls, 3 status, 4 the home arrangement, 5 the Codex, 6 the design's Settings rebuilt from the kit, 7 the design's Roster pieces).
+  - `KitNav`: `top_bar(title, back, chip)` (the design's sub-screen header), `header(title, kicker)`, `rule()`, `back(call)`, `segmented(options, chosen, picked)` (options as words or `[words, icon]`), `tabs(chosen, badges)` → `KitTabs` (signal `picked(id)`, `choose(id)`): the design's bar, full width and flush to the foot, the chosen tile rising above it, the Heist pulsing gold.
+  - `KitControls`: `chip(text, on, call, count, dot)`, `set_chip`, `action2(text, line, call, look)`, `icon_button(icon, spoken, call, look, points, icon_points)`, `round_action(icon, words, call, main, points, badge, tone)` (tone `leather`, `violet`, `sky`; main is gold), `school_button(school, on, call)`, `search(spoken)`, `toggle_row(icon, title, line, on, toggled_to)`.
   - `KitSwitch.make(on, on_words, off_words, spoken, toggled_to)`: a switch that says On or Off.
-  - `KitStatus`: `badge(text)`, `pill(text, icon, look)`, `resource(icon, amount, fraction, tone)` + `set_resource` (storage line, FULL at 90%), `plate(text)`, `progress(done, of, words, tone)`.
+  - `KitStatus`: `badge(text)`, `pill(text, icon, look)`, `strain(words, band)`, `resource(icon, amount, fraction, tone)` + `set_resource`, `plate(text)`, `progress(done, of, words, tone)`, `island_label(icon, name, level)`.
   - `KitBar.make(fraction, tone, points)`: a `Range`, so `Motion.fill(bar, to)` moves it.
-  - `KitHud`: `keeper(portrait, name, level, xp, renown)`, `goal(icon, words, done, of, count)`, `pips(left, of)`, `meter(level, of, words)`, `clock(text, warning)`.
-  - `KitPanels`: `section(title)`, `row(icon, title, line, trailing, pressed)`, `link(...)`, `locked(icon, title, value, why)`, `sheet(title)` (body under meta `body`), `dialog(host, title, words, actions)`.
-  - `KitCards`: `law_card(icon, title, school, rarity, rank, points)` (oak, silver, gold, prismatic frames, a window in the school's colours), `school_chip(school)`.
+  - `KitHud`: `keeper(portrait, name, level, xp, renown)`, `goal(icon, words, done, of, count)`, `pips(left, of)`, `meter(level, of, words)`, `clock(text, warning)`, `dial(number, unit, fraction)`, `week(minutes, letters, today)`.
+  - `KitPanels`: `section(title)`, `row(icon, title, line, trailing, pressed, look)`, `link(...)`, `locked(icon, title, value, why)`, `chapter(school, title, kicker, count)`, `sheet(title, look)`, `dialog(host, title, words, actions)`, `notice(kind, icon, title, line, action, acted)` (the raid banner).
+  - `KitCards`: `law_card(icon, title, school, rarity, tier, points, number)`, `portrait(picture, name, level, school, state, role_icon, pressed, chosen)`, `school_chip(school)`.
+  - `KitRing`: a round picture in an XP ring, a pip, or (`heavy`) a dial.
   - Sliders (`HSlider`) and scroll bars are themed.
+  - `Motion.screen_in(screen)` is the design's 160 ms screen fade from 0.985; the router could call it on each screen it shows (`client/app/router.gd` is the integrator's; not hooked, because other tracks' shot scripts settle in a few frames and would catch screens mid-fade).
 - **Your own skins:** a control a script dresses in its own `StyleBoxFlat` with a fill keeps that look (the kit's box steps aside), and a label on such a light panel turns to ink by itself. So nothing breaks, but `FxSkin`, `StageHeroSkin` and `OverlaySheet.key` can now be replaced by the kit's materials.
 
 ## Done
@@ -80,9 +82,28 @@ Render any screen: `SCREEN=settings bash tools/render/shoot.sh client/tests/shot
 - §21.8 says red words on a dark surface are `#FF9AAA`; on 78% glass over a day sky that is Lc 55-58. The kit uses `#FFB0BC` (Lc 63-71 over every sky).
 - Green buttons carry cream words with a 2-point ink outline (the designs' CLAIM and UPGRADE), measured against the outline.
 
+## Judged against the design's stills
+
+`art/design/stills/screens/` landed at 01:00 and was merged in. Each round put a kit page beside the matching screen, at phone size and in grayscale:
+
+| Still | What it shows |
+|---|---|
+| `vs-design-settings-r8.png` | 19 Settings beside the kit's page 6, built from kit pieces alone: the top bar, the icon strip, the gold-edged play-time card with its dial and week bars, the section heading, rows with option strips. Colours sampled from the design (backdrop exact, card edge #332753, foot #100924, track #0E0822, gold rim #B9945F). |
+| `vs-design-roster-r9.png` | 10 Roster beside page 7: the hub strip, Assign and the two-line Level up, filters with dots and counts, portrait cards, the tab bar. |
+| `vs-design-hud-r6.png` | 01's top HUD beside the kit's home arrangement: Keeper ring and gold level plate, Renown, the strain pill's band dot, resource pills with discs, FULL in gold and the glowing storage line. |
+| `sheet-p2-r7.png`, `sheet-p3-r7.png` | 04's round actions (violet WEAVE with its "1 free", gold BUILD, sky MAP, plates over their feet) and 01's raid banner (a dark card glowing in its status's colour, icon disc, gold action, bare cross). |
+| `sheet-codex-r6.png` | 13's Codex pieces: the strip, school filters ringed in their colours, the search field, the gold chapter band, law tiles with their number discs, rank words and frames. |
+
 ## Still worse than the design
 
-(To be filled per round once the design stills land.)
+- **Type is larger than the design's** everywhere, by rule: §21.8's 13-point floor and 16-point body text against the design's 9-11 px. Rows wrap where the design's fit on one line (a 4-segment strip with icons drops the design's capitals for plain case to fit at 13 points).
+- **The tab bar sits higher** than the design's: on the client's 360-point frame five tabs cannot fit the middle 70% at 48 points with the chosen one widened, so §21.1's corner rule (and `run.gd`'s check) lifts the whole row 64 points above the foot, leaving a taller strip of bar under it than the design's home-bar gap.
+- **The sub-screen back button** in `KitNav.top_bar` is at the top as the design draws it, which §21.1's thumb-zone rule and `run.gd`'s layout check forbid for a fixed control; a screen adopting it fails that check until the owner decides (finding H). `KitNav.back` in the lowest row is the compliant form.
+- **Chosen tab art**: the design's chosen tab shows the screen's own character large (Pip's face on Crew); the kit shows the tab's icon at 46 points. A screen can put any texture in `KitTabs.buttons[id]`'s icon.
+- **Dense pages cost draw calls**: about two per dressed control. The Roster page with six portrait cards and the tab bar is 142, the home arrangement 129; a real screen adds its 3D. Lists of more than about 40 dressed rows need paging.
+- **Icons are 144-pixel rasters**: crisp up to 48 points; the chosen tab (46) and round actions (up to 42) are inside that, a hero icon larger than 48 points softens.
+- **No wood-grain fidelity**: the oak frame's grain is a procedural streak, not the design's repeating board pattern.
+- **Screens still mix skins**: T5's `FxSkin`, T6's `OverlaySheet` and T7's `StageHeroSkin` draw their own parchment titles and boxes beside the kit's; the table above says what each should switch to.
 
 ## Next
 
