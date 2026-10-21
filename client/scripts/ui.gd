@@ -125,7 +125,10 @@ static func field(spoken: String) -> LineEdit:
 	f.add_theme_color_override("caret_color", ink)
 	for state: String in ["normal", "focus", "read_only"]:
 		f.add_theme_stylebox_override(state, clear_box(10, 6))
-	RbBox.dress(f, "parchment", Tokens.number("size", "radius_m"))
+	var box := RbBox.dress(f, "parchment", Tokens.number("size", "radius_m"))
+	# Where the words go: a gold edge while the field has the keyboard.
+	f.focus_entered.connect(box.set_chosen.bind(true))
+	f.focus_exited.connect(box.set_chosen.bind(false))
 	f.set_meta("points", TEXT_POINTS)
 	f.set_meta("bold", true)
 	return f
@@ -398,7 +401,7 @@ static func grow() -> Control:
 static func banner(kind: String, text: String, ms := -1.0) -> PanelContainer:
 	if ms < 0:
 		ms = Tokens.number("motion", "banner_ms")
-	var p := panel("parchment")
+	var p := panel("banner_" + kind if kind in ["alarm", "success"] else "parchment")
 	p.name = "Banner"
 	var r := row()
 	var words := status(kind, text)

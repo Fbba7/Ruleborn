@@ -84,6 +84,9 @@ func _ready() -> void:
 	# its host's rect, wherever the container has put the box itself.
 	if host != null:
 		host.resized.connect(_shade)
+		# The host redraws when its state changes (pressed, disabled), and
+		# the box follows it.
+		host.draw.connect(queue_redraw)
 	item_rect_changed.connect(queue_redraw)
 	_shade()
 
@@ -202,7 +205,9 @@ func _draw() -> void:
 		return
 	if hide_empty and _empty():
 		return
-	draw_rect(quad(), Color.WHITE)
+	# A disabled control is faded, box and words (its words by the theme).
+	var faded := host is BaseButton and (host as BaseButton).disabled
+	draw_rect(quad(), Color(1, 1, 1, 0.5 if faded else 1.0))
 
 
 func _empty() -> bool:

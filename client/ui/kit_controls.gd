@@ -32,7 +32,7 @@ static func icon_button(icon: String, spoken: String, pressed: Callable, look :=
 	b.custom_minimum_size = Vector2.ONE * UI.px(maxf(points, UI.CONTROL_POINTS))
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	RbBox.dress(b, look, 999)
-	var i := Icons.view(icon, points * 0.6)
+	var i := Icons.view(icon, points * 0.5)
 	i.set_anchors_preset(Control.PRESET_FULL_RECT)
 	b.add_child(i)
 	return b
