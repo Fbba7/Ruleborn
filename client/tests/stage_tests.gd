@@ -188,11 +188,13 @@ func _fold() -> void:
 	for b: Button in screen.find_children("*", "Button", true, false):
 		if b.has_meta("fold"):
 			key = b
-	var shown := screen.body.is_visible_in_tree()
+	# The design's realm view is the world alone: its facts wait folded
+	# behind the Details key.
+	var shown := not screen.body.is_visible_in_tree()
 	key.pressed.emit()
-	var hidden := not screen.body.is_visible_in_tree() and key.text == Strings.t("STAGE_SHOW_WORDS")
+	var hidden := screen.body.is_visible_in_tree() and key.accessibility_name == Strings.t("RV_KEY_DETAILS")
 	key.pressed.emit()
-	var back := screen.body.is_visible_in_tree() and not StageScreen.folded
+	var back := not screen.body.is_visible_in_tree()
 	var sections := screen.body.get_child_count()
 	# A tap on the Slow rivers pylon (the fixture weaves it at 4, 10) opens
 	# its card with the sheet's own line.
@@ -206,8 +208,8 @@ func _fold() -> void:
 	screen.queue_free()
 	await tree.process_frame
 	check.call("the realm view wears its woven laws' signatures (21.7), its idle residents stroll its doors, a "
-			+ "tapped pylon opens its card, and one key folds its words away so the world takes the phone, and brings "
-			+ "them back (21.1)",
+			+ "tapped pylon opens its card, and its facts wait folded behind one key, which shows them and folds them "
+			+ "away again, so the world has the phone (21.1)",
 		laws and shown and hidden and back and sections == 4 and (strolling == 2 or not exported) and pylon_card,
 		"%s %s %s %s %d %d %s" % [laws, shown, hidden, back, sections, strolling, card_text])
 

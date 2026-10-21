@@ -1072,6 +1072,10 @@ RV_KEY_DEFENCE,Defence,Defence,Defesa,Defesa,Abwehr,Défense
 RV_KEY_BUILD,Build,Build,Construir,Construir,Bauen,Construire
 RV_LAWS,Laws %d/%d,Laws %d/%d,Leis %d/%d,Leis %d/%d,Gesetze %d/%d,Lois %d/%d
 RV_STARLIGHT,%s Starlight,%s Starlight,%s de Luz Estelar,%s de Luz Estelar,%s Sternenlicht,%s Lumière stellaire
+RV_KEY_DETAILS,Details,Details,Detalhes,Detalhes,Details,Détails
+RV_AETHER,%s Aether,%s Aether,%s de Aether,%s de Aether,%s Aether,%s d'Aether
+RV_ESSENCE,%s Essence,%s Essence,%s de Essência,%s de Essência,%s Essenz,%s Essence
+RV_LAWS_BAND,Laws %d/%d · %s %d%%,Laws %d/%d · %s %d%%,Leis %d/%d · %s %d%%,Leis %d/%d · %s %d%%,Gesetze %d/%d · %s %d%%,Lois %d/%d · %s %d %%
 CUR_TITLE,Curate your defence,Curate your defense,Cure sua defesa,Cura a tua defesa,Verteidigung kuratieren,Arrange ta défense
 CUR_HEADER,"%s, realm level %d","%s, realm level %d","%s, nível de reino %d","%s, nível de reino %d","%s, Reichsstufe %d","%s, niveau de royaume %d"
 CUR_FAILED,Curation could not answer: %s,Curation could not answer: %s,A curadoria não pôde responder: %s,A curadoria não pôde responder: %s,Das Kuratieren konnte nicht antworten: %s,L'arrangement n'a pas pu répondre : %s

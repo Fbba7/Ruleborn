@@ -11,13 +11,16 @@ extends RefCounted
 ## A pill's icon and words, in points.
 const PILL_ICON := 20.0
 const PILL_POINTS := 15.0
+## A resource bar's width.
+const RESOURCE_WIDTH := 104.0
 ## A section's kicker.
 const KICKER_POINTS := 13.0
 ## Each section's mark.
 const SECTION_ICONS := {"island": "realmactions/terrain", "buildings": "realmactions/build",
 	"workers": "realmactions/assignworker", "pylons": "buildings/lawpylon", "defence": "realmactions/defence",
 	"laws": "hud/strain", "crew": "hud/crew", "loot": "heiststatus/lootbag", "layouts": "realmactions/terrain",
-	"posts": "crewroles/warden", "naming": "generalui/new", "law": "buildings/lawpylon", "log": "planningactions/defencelog"}
+	"posts": "crewroles/warden", "naming": "generalui/new", "law": "buildings/lawpylon",
+	"log": "planningactions/defencelog"}
 ## The round keys: the main one larger, as the design's BUILD.
 const KEY_POINTS := 60.0
 const MAIN_KEY_POINTS := 76.0
@@ -57,6 +60,31 @@ static func pill(icon: String, text: String, spoken := "", look := "glass") -> P
 	return p
 
 
+## A resource bar (the design's capsules at the top right): its icon, its
+## amount in the number face, on glass with a line of the resource's colour
+## along its foot.
+static func resource(icon: String, amount: String, spoken: String, colour: Color) -> PanelContainer:
+	var p := pill(icon, amount, spoken)
+	p.custom_minimum_size.x = UI.px(RESOURCE_WIDTH)
+	var words := p.find_child("Words", true, false) as Label
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	var row := words.get_parent() as HBoxContainer
+	var stack := VBoxContainer.new()
+	stack.add_theme_constant_override("separation", UI.px(1))
+	stack.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	p.remove_child(row)
+	stack.add_child(row)
+	var line := ColorRect.new()
+	line.color = colour
+	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	line.custom_minimum_size.y = UI.px(2.5)
+	line.name = "Line"
+	stack.add_child(line)
+	p.add_child(stack)
+	return p
+
+
 ## A smaller pill for a pin over the world, where many stand close.
 static func tag(icon: String, text: String, look := "glass") -> PanelContainer:
 	var p := pill(icon, text, "", look)
@@ -93,6 +121,7 @@ static func badge(text: String, look := "gold_round", points := 14.0) -> PanelCo
 static func medallion(icon: String, level: int, points := 58.0) -> Control:
 	var holder := Control.new()
 	holder.custom_minimum_size = Vector2.ONE * UI.px(points)
+	holder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var disc := CenterContainer.new()
 	UI.dress(disc, "gold_round", points / 2.0)

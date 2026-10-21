@@ -27,7 +27,7 @@ var _sheet: ScrollContainer
 var _keys: Control
 var _top: Control
 var _medal_holder: HBoxContainer
-var _resources: HBoxContainer
+var _resources: VBoxContainer
 var _laws: HBoxContainer
 var _card_head: HBoxContainer
 var _drawn_key := ""
@@ -71,8 +71,11 @@ func _build() -> void:
 	column.add_child(card)
 	column.add_child(_tray())
 	_sheet = StageScreen.sheet(body, 0.62)
-	_keys = StageScreen.handle(column, _sheet)
-	column.add_child(_dock())
+	# The design's realm view is the world alone: the facts wait behind a
+	# key, folded until asked for (and always shown at §20.8's largest text).
+	_sheet.visible = Settings.text_scale >= StageScreen.LARGE_TEXT
+	_keys = _dock()
+	column.add_child(_keys)
 
 
 ## The realm's medallion and name at the top left, its Starlight at the top
@@ -106,8 +109,8 @@ func _header() -> Control:
 	plate.add_child(words)
 	names.add_child(plate)
 	line.add_child(names)
-	_resources = HBoxContainer.new()
-	_resources.alignment = BoxContainer.ALIGNMENT_END
+	_resources = VBoxContainer.new()
+	_resources.add_theme_constant_override("separation", UI.px(4))
 	line.add_child(_resources)
 	top.add_child(line)
 	_laws = HBoxContainer.new()
@@ -142,6 +145,10 @@ func _dock() -> Control:
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(OverlayHud.key("screens/universe", Strings.t("RV_KEY_MAP"),
 		func() -> void: App.services.router.go(&"map")))
+	var details := OverlayHud.key("generalui/info", Strings.t("RV_KEY_DETAILS"), func() -> void:
+		_sheet.visible = not _sheet.visible)
+	(details.get_meta("key") as Button).set_meta("fold", true)
+	row.add_child(details)
 	row.add_child(OverlayHud.key("planningactions/curatedefence", Strings.t("RV_KEY_DEFENCE"), func() -> void:
 		App.services.curation_flow.open(str(App.services.store.get_slice(RealmState.REALM)["realm"]))))
 	row.add_child(OverlayHud.key("realmactions/build", Strings.t("RV_KEY_BUILD"),
@@ -186,14 +193,28 @@ func _dress_header(realm: Dictionary, uv: Dictionary, r: Dictionary) -> void:
 	header_label.accessibility_name = r.get("title", "")
 	for c: Node in _resources.get_children():
 		c.queue_free()
-	var starlight := int(uv.get("starlight", 0))
-	_resources.add_child(OverlayHud.pill("resources/starlight", ShopPresenter.grouped(starlight),
-		Strings.t("RV_STARLIGHT", ShopPresenter.grouped(starlight))))
+	var store := App.services.store
+	var wv: Dictionary = store.get_slice(WeavingState.WEAVING).get("view", {})
+	var hv: Dictionary = store.get_slice(RosterState.ROSTER).get("view", {})
+	for res: Array in [["starlight", uv.get("starlight"), "RV_STARLIGHT", Palette.MOTION],
+			["aether", wv.get("aether"), "RV_AETHER", Palette.TIME],
+			["essence", hv.get("essence"), "RV_ESSENCE", Palette.LIFE]]:
+		if res[1] == null:
+			continue
+		var amount := ShopPresenter.grouped(int(res[1]))
+		_resources.add_child(OverlayHud.resource("resources/" + str(res[0]), amount, Strings.t(res[2], amount),
+			res[3]))
 	for c: Node in _laws.get_children():
 		c.queue_free()
 	var slots: Array = _slots()
 	var woven := slots.filter(func(s: Dictionary) -> bool: return s.get("law") is String)
-	_laws.add_child(OverlayHud.pill("hud/strain", Strings.t("RV_LAWS", [woven.size(), slots.size()]), "", "leather"))
+	# The universe's band, never a realm's own strain (§5.5).
+	var st: Dictionary = (store.get_slice(WeavingState.WEAVING).get("view", {}) as Dictionary).get("stability", {})
+	var band := clampi(int(st.get("band", 0)), 0, OverlayFacts.BANDS.size() - 1)
+	_laws.add_child(OverlayHud.pill("stabilitybands/" + OverlayFacts.BANDS[band],
+		Strings.t("RV_LAWS_BAND", [woven.size(), slots.size(), WeavingPresenter.band_name(band),
+			roundi(float(st.get("strain", 0.0)) * 100.0)]) if not st.is_empty()
+		else Strings.t("RV_LAWS", [woven.size(), slots.size()]), "", "leather"))
 	for i: int in slots.size():
 		var s: Dictionary = slots[i]
 		var line: String = (r["pylons"] as Array)[i] if i < (r["pylons"] as Array).size() else ""
@@ -350,8 +371,7 @@ func _pin(replay: RulebornReplay) -> void:
 		var top := (b["mid"] as Vector3) + Vector3(0, 1.6 + 0.35 * int(b["side"]), 0)
 		pins.pin(OverlayHud.badge(str(int(b["level"]))), top)
 	for p: Dictionary in replay.pylons():
-		pins.pin(OverlayHud.pill(OverlayHud.law_icon(str(p["law"])), Strings.term("LAW", str(p["law"]))),
-			view.world_at(p["at"]) + Vector3(0, 2.0, 0))
+		pins.pin(OverlayHud.tag(OverlayHud.law_icon(str(p["law"])), ""), view.world_at(p["at"]) + Vector3(0, 2.0, 0))
 
 
 ## A tap on a building opens its card: its mark, name and level, its line
@@ -429,5 +449,5 @@ func _head(icon: String, name: String, level: String) -> void:
 
 func _process(_delta: float) -> void:
 	if _sheet != null and view != null:
-		view.cover_bottom = StageScreen.covered_below(view, _keys)
+		view.cover_bottom = StageScreen.covered_below(view, _sheet if _sheet.visible else _keys)
 		view.cover_top = StageScreen.covered_above(view, _top)
