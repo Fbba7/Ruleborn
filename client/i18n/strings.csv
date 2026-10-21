@@ -133,6 +133,7 @@ BUILDER_HARMONY,%s harmony,%s harmony,harmonia de %s,harmonia de %s,%s-Harmonie,
 BUILDER_CLASH,%s clash,%s clash,choque de %s,choque de %s,%s-Konflikt,choc %s
 BUILDER_RESTORE,Swap back,Swap back,Trocar de volta,Trocar de volta,Zurücktauschen,Rétablir
 BUILDER_RESTORE_NAMED,Swap back to the island the remix replaced; the remix is kept,Swap back to the island the remix replaced; the remix is kept,Trocar de volta para a ilha que o remix substituiu; o remix fica guardado,Voltar à ilha que o remix substituiu; o remix fica guardado,"Zurück zur Insel, die der Remix ersetzt hat; der Remix bleibt erhalten",Revenir à l'île remplacée par le remix ; le remix est conservé
+BUILDER_KICKER,Terrain editor,Terrain editor,Editor de terreno,Editor de terreno,Geländeeditor,Éditeur de terrain
 PROBLEM_TOOMANYWARDS,too many wards for the realm,too many wards for the realm,proteções demais para o reino,demasiadas proteções para o reino,zu viele Siegel für das Reich,trop de protections pour le royaume
 PROBLEM_TOOMANYGUARDS,too many guards for the realm,too many guards for the realm,guardas demais para o reino,demasiados guardas para o reino,zu viele Wachen für das Reich,trop de gardes pour le royaume
 PROBLEM_TOOMANYLAWS,too many laws for the realm,too many laws for the realm,leis demais para o reino,demasiadas leis para o reino,zu viele Gesetze für das Reich,trop de lois pour le royaume
