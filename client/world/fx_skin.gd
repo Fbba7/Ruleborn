@@ -58,6 +58,17 @@ static func words() -> Font:
 	return _font("manrope_800.woff2")
 
 
+## Manrope at 800 with tabular figures: numbers that change (§21.8), so a
+## count ticking down never shifts its neighbours.
+static func figures() -> Font:
+	var key := "figures"
+	if not _fonts.has(key):
+		var f := (words() as FontVariation).duplicate() as FontVariation
+		f.opentype_features = {"tnum": 1}
+		_fonts[key] = f
+	return _fonts[key]
+
+
 ## Manrope at 600: secondary words.
 static func soft_words() -> Font:
 	return _font("manrope_600.woff2")

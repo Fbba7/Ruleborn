@@ -28,13 +28,8 @@ ROLE_CARRIER,Carrier,Carrier,Carregador,Carregador,Träger,Porteur
 ROLE_WARDEN,Warden,Warden,Sentinela,Sentinela,Wächter,Veilleur
 ROLE_MENDER,Mender,Mender,Curandeiro,Curandeiro,Heiler,Soigneur
 HUD_ALARM,Alarm %s,Alarm %s,Alarme %s,Alarme %s,Alarm %s,Alarme %s
-HUD_LOOT,"Bags can take %d
-Vault %d left","Bags can take %d
-Vault %d left","Bolsas: cabem %d
-Cofre: restam %d","Sacos: cabem %d
-Cofre: restam %d","Taschen fassen %d
-Im Tresor noch %d","Sacs : encore %d
-Coffre : reste %d"
+HUD_ROOM,Room,Room,Espaço,Espaço,Platz,Place
+HUD_LEFT,Left,Left,Restam,Restam,Übrig,Reste
 REPLAY_GOLDEN,Golden replay: %s,Golden replay: %s,Replay de referência: %s,Replay de referência: %s,Referenz-Replay: %s,Replay de référence : %s
 REPLAY_YOURS,Your heist,Your heist,Seu assalto,O teu assalto,Dein Raubzug,Ton casse
 REPLAY_DIVERGED,Diverged at %d:%02d,Diverged at %d:%02d,Divergiu em %d:%02d,Divergiu aos %d:%02d,Abweichung bei %d:%02d,Divergence à %d:%02d

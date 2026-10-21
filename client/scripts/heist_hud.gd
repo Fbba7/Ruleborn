@@ -18,7 +18,11 @@ const BELLS := 6
 
 var clock_label: Label
 var alarm_label: Label
-var loot_label: Label
+## The loot panel's two numbers (§21.8, 12.19): what the bags can still
+## take, and what is left to load ("?" until the Vault opens, 12.6).
+var room_label: Label
+var left_label: Label
+var loot_panel: PanelContainer
 ## Across a universe, the realm the crew is in and how many it has yet to
 ## cross to the Heart (§5.4).
 var realm_label: Label
@@ -83,16 +87,20 @@ func _init() -> void:
 	top.add_child(centre)
 	# The loot, top right: two numbers and the bars beside them.
 	var right_side := _side(top, BoxContainer.ALIGNMENT_END)
-	var right := FxSkin.panel("glass", 12.0, 6.0)
+	var right := FxSkin.panel("glass", 12.0, 7.0)
 	right.size_flags_horizontal = Control.SIZE_SHRINK_END
+	loot_panel = right
 	var right_box := VBoxContainer.new()
 	right_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	right_box.add_theme_constant_override("separation", UI.px(2))
-	loot_label = FxSkin.label("", 13.0)
-	loot_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	loot_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	right_box.add_child(loot_label)
-	loot_bars = FxDraw.new(_draw_bars, Vector2(UI.px(72), UI.px(22)))
+	right_box.add_theme_constant_override("separation", UI.px(3))
+	var stats := HBoxContainer.new()
+	stats.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stats.add_theme_constant_override("separation", UI.px(10))
+	room_label = _stat(stats, Strings.t("HUD_ROOM"))
+	left_label = _stat(stats, Strings.t("HUD_LEFT"))
+	right_box.add_child(stats)
+	loot_bars = FxDraw.new(_draw_bars, Vector2(UI.px(84), UI.px(22)))
+	loot_bars.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right_box.add_child(loot_bars)
 	right.add_child(right_box)
 	right_side.add_child(right)
@@ -104,6 +112,24 @@ func _init() -> void:
 	realm_panel.name = "Realm"
 	realm_panel.visible = false
 	add_child(realm_panel)
+
+
+## One of the loot panel's numbers: its name small above it, the number
+## large in tabular figures; returns the number's label.
+func _stat(row: HBoxContainer, title: String) -> Label:
+	var col := VBoxContainer.new()
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_theme_constant_override("separation", 0)
+	var name_label := FxSkin.label(title, 13.0)
+	name_label.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT)
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	col.add_child(name_label)
+	var number := FxSkin.label("", 20.0)
+	number.add_theme_font_override("font", FxSkin.figures())
+	number.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	col.add_child(number)
+	row.add_child(col)
+	return number
 
 
 ## Words that wrap between words: as narrow as their longest word, so a long
@@ -156,13 +182,15 @@ func show_state(r: RulebornReplay) -> void:
 		carried += int(m["carried"])
 		carry += int(m["carry"])
 	var v := r.vault()
-	loot_label.text = Strings.t("HUD_LOOT", [carry - carried, int(v.get("exposed", 0))])
-	_wrap_by_words(loot_label)
+	_open = bool(v.get("open", false))
+	room_label.text = str(carry - carried)
+	left_label.text = str(int(v.get("exposed", 0))) if _open else "?"
+	loot_panel.accessibility_name = "%s %s, %s %s" % [Strings.t("HUD_ROOM"), room_label.text, Strings.t("HUD_LEFT"),
+		left_label.text]
 	_bags = float(carried) / maxf(1.0, float(carry))
 	var health := int(v.get("health", 0))
 	if _vault_full < 0 or health > _vault_full:
 		_vault_full = health
-	_open = bool(v.get("open", false))
 	_cracked = 1.0 if _open else 1.0 - float(health) / maxf(1.0, float(_vault_full))
 	loot_bars.queue_redraw()
 	realm_label.text = realm(r.realm_code(), r.realms_to_go())
