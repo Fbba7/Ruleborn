@@ -17,8 +17,10 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_cards(column)
 		6:
 			_settings(column)
-		_:
+		7:
 			_roster(column)
+		_:
+			_result(column)
 
 
 static func _materials(column: VBoxContainer) -> void:
@@ -303,3 +305,31 @@ static func _roster(column: VBoxContainer) -> void:
 	column.add_child(grid)
 	column.add_child(UI.grow())
 	column.add_child(KitNav.tabs("crew", {"islands": 3, "laws": 1, "heist": 4, "friends": 3}))
+
+
+## The design's result and shop pieces (07-heist-result.png, 18-shop.png).
+static func _result(column: VBoxContainer) -> void:
+	KitNav.celebrate(column.get_parent().get_parent() as Control)
+	column.add_child(KitNav.hero("Heist complete", "Loud", "Alarm raised · everyone out", "Haul ×0.7 · Renown ×0.8"))
+	var rewards := HBoxContainer.new()
+	rewards.add_theme_constant_override("separation", UI.px(8))
+	rewards.add_child(KitCards.reward("resources/starlight", "+2,310", "Starlight", "gold"))
+	rewards.add_child(KitCards.reward("resources/essence", "+805", "Essence", "green"))
+	rewards.add_child(KitCards.reward("resources/renown", "+15", "Renown", "pink"))
+	column.add_child(rewards)
+	var tags := UI.row(8)
+	tags.add_child(KitStatus.tag("Featured set"))
+	tags.add_child(KitStatus.tag("Emote", true))
+	column.add_child(tags)
+	var prices := UI.row(8)
+	prices.add_child(KitControls.action2("120", "≈ €1.20", func() -> void: pass, "gem", "currencies/starglass"))
+	prices.add_child(KitControls.action2("€8.99", "899 ✦", func() -> void: pass, "gold"))
+	column.add_child(prices)
+	column.add_child(UI.grow())
+	var end := HBoxContainer.new()
+	end.add_theme_constant_override("separation", UI.px(8))
+	end.add_child(UI.action("Home", func() -> void: pass, "leather"))
+	var again := KitControls.action2("Raid again", "Idle crew of 5 ready", func() -> void: pass, "gold")
+	again.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	end.add_child(again)
+	column.add_child(end)

@@ -51,8 +51,8 @@ static func chip(text: String, on: bool, pressed: Callable, count := "", dot := 
 
 ## An action with a second line under its words (the Roster's "Level up"
 ## over "866 Essence"): what it does, and what it costs or needs.
-static func action2(text: String, line: String, pressed: Callable, look := "gold") -> Button:
-	var b := UI.action("", pressed, look, "%s, %s" % [text, line])
+static func action2(text: String, line: String, pressed: Callable, look := "gold", icon := "") -> Button:
+	var b := UI.action("", pressed, look, "%s, %s" % [text, line] if line != "" else text)
 	b.name = "Action"
 	b.custom_minimum_size = Vector2(UI.px(120), UI.px(56))
 	var v := VBoxContainer.new()
@@ -61,15 +61,38 @@ static func action2(text: String, line: String, pressed: Callable, look := "gold
 	v.add_theme_constant_override("separation", -UI.px(2))
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var box := RbBox.of(b)
+	var top: Control = v
+	if icon != "":
+		# A price: the currency's icon before its amount.
+		var h := HBoxContainer.new()
+		h.alignment = BoxContainer.ALIGNMENT_CENTER
+		h.add_theme_constant_override("separation", UI.px(4))
+		h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		h.add_child(Icons.view(icon, 20))
+		v.add_child(h)
+		top = h
 	var t := UI.label(text, 16)
 	t.add_theme_font_override("font", UI.bold_font())
 	t.add_theme_color_override("font_color", box.spec["text"])
 	t.set_meta("bold", true)
-	v.add_child(t)
+	# A gold call to action is set in the designs' tracked capitals.
+	if look == "gold":
+		t.uppercase = true
+		t.add_theme_font_override("font", Tokens.font("ui", 800, false, UI.px(1)))
+	if box.spec.has("text_outline"):
+		t.add_theme_color_override("font_outline_color", box.spec["text_outline"][0])
+		t.add_theme_constant_override("outline_size", UI.px(box.spec["text_outline"][1]))
+	top.add_child(t)
+	if line == "":
+		b.add_child(v)
+		return b
 	var s := UI.label(line, 13)
 	s.add_theme_font_override("font", UI.bold_font())
 	s.add_theme_color_override("font_color", box.spec["text_2"])
 	s.set_meta("bold", true)
+	if box.spec.has("text_outline"):
+		s.add_theme_color_override("font_outline_color", box.spec["text_outline"][0])
+		s.add_theme_constant_override("outline_size", UI.px(box.spec["text_outline"][1]))
 	v.add_child(s)
 	b.add_child(v)
 	return b

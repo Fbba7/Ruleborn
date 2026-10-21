@@ -155,3 +155,28 @@ static func portrait(picture: Texture2D, name: String, level: int, school: Strin
 		role.offset_bottom = -UI.px(30)
 		b.add_child(role)
 	return b
+
+
+## A reward tile on the result (07-heist-result.png): parchment edged in the
+## reward's colour ("gold", "green", "pink", "sky"), its icon, the amount in
+## Lilita One and what it is in words.
+static func reward(icon: String, amount: String, words: String, tone := "gold") -> PanelContainer:
+	var p := UI.panel("reward_" + tone)
+	p.name = "Reward"
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 0)
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_child(Icons.view(icon, 34))
+	var n := UI.label(amount, 24)
+	n.theme_type_variation = "DisplayS"
+	n.add_theme_font_size_override("font_size", UI.text_px(24))
+	n.set_meta("points", 24.0)
+	v.add_child(n)
+	var w := UI.label(words, 13)
+	w.theme_type_variation = "Secondary"
+	w.set_meta("bold", true)
+	w.add_theme_font_override("font", UI.bold_font())
+	v.add_child(w)
+	p.add_child(v)
+	return p

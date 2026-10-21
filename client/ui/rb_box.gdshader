@@ -47,6 +47,10 @@ uniform float gloss = 0.0;
 // Seeded star dots over the fill (the night backdrop), per 10,000 px².
 uniform float stars = 0.0;
 uniform vec4 star_color : source_color = vec4(1.0, 0.96, 0.86, 0.7);
+// A sunburst over the fill (a result, a level-up): `rays_count` soft rays
+// from fill_geo.xy, fading out from the centre. Still, never spinning.
+uniform vec4 rays_color : source_color = vec4(0.0);
+uniform float rays_count = 18.0;
 
 float sd_box(vec2 p, vec2 b, float r) {
 	r = min(r, min(b.x, b.y));
@@ -115,6 +119,16 @@ void fragment() {
 			float w = pb.y * 0.32 + sin(pb.x * 0.018) * 3.0 + sin(pb.x * 0.061 + pb.y * 0.013) * 1.3;
 			float g = 0.5 + 0.5 * sin(w);
 			fill.rgb = mix(fill.rgb, grain_color.rgb, grain_color.a * smoothstep(0.72, 1.0, g));
+		}
+		if (rays_color.a > 0.0) {
+			vec2 o = pb - (vec2(0.5, 0.16) - 0.5) * box_size;
+			float ang = atan(o.x, -o.y);
+			float wave = 0.5 + 0.5 * cos(ang * rays_count);
+			float fade = 1.0 - smoothstep(0.0, max(box_size.x, box_size.y) * 0.6, length(o));
+			fill.rgb = mix(fill.rgb, rays_color.rgb, rays_color.a * smoothstep(0.55, 0.95, wave) * fade);
+			// The lit halo the rays come from.
+			float halo = 1.0 - smoothstep(0.0, max(box_size.x, box_size.y) * 0.3, length(o));
+			fill.rgb = mix(fill.rgb, vec3(0.42, 0.34, 0.78), 0.45 * halo * halo);
 		}
 		if (stars > 0.0) {
 			vec2 cell = floor(pb / 34.0);

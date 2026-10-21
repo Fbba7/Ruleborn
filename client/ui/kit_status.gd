@@ -190,3 +190,20 @@ static func island_label(icon: String, name: String, level: int) -> PanelContain
 	row.add_child(disc)
 	p.add_child(row)
 	return p
+
+
+## A ribbon tag on a card's corner (FEATURED SET, EMOTE): small capitals on
+## gold, or on a dark plate.
+static func tag(text: String, dark := false) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.name = "Tag"
+	p.add_theme_stylebox_override("panel", UI.clear_box(7, 1))
+	UI.dress(p, "tag_dark" if dark else "tag")
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	p.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	var l := UI.label(text, 13)
+	l.theme_type_variation = "Kicker"
+	l.uppercase = true
+	l.set_meta("bold", true)
+	p.add_child(l)
+	return p

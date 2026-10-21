@@ -116,6 +116,43 @@ static func top_bar(title: String, back_call: Callable, chip := "") -> HBoxConta
 	return row
 
 
+## A result's title (07-heist-result.png): a kicker in gold capitals, the
+## outcome in Marcellus at hero size with its hard drop, a line under it,
+## and a gold-edged pill for what changed it ("Haul ×0.7").
+static func hero(kicker: String, title: String, line := "", pill := "") -> VBoxContainer:
+	var v := VBoxContainer.new()
+	v.name = "Hero"
+	v.add_theme_constant_override("separation", UI.px(2))
+	var k := UI.label(kicker, 14)
+	k.theme_type_variation = "Kicker"
+	k.uppercase = true
+	k.add_theme_color_override("font_color", Tokens.color("gold"))
+	k.set_meta("bold", true)
+	v.add_child(k)
+	var t := UI.label(title, 52)
+	t.theme_type_variation = "Hero"
+	t.add_theme_color_override("font_color", Tokens.color("cream"))
+	t.add_theme_constant_override("shadow_offset_y", UI.px(3))
+	v.add_child(t)
+	if line != "":
+		var l := UI.label(line, 16, true)
+		l.theme_type_variation = "Secondary"
+		v.add_child(l)
+	if pill != "":
+		var p := KitStatus.pill(pill, "", "pill_gold_edge")
+		p.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		v.add_child(p)
+	return v
+
+
+## The backdrop of a screen made by UI.frame turned to a celebration: the
+## night with a still sunburst behind the title (results, a level-up).
+static func celebrate(screen: Control) -> void:
+	var sky := screen.get_node_or_null("Sky") as Control
+	if sky != null:
+		RbBox.dress(sky, "night_rays", 0)
+
+
 ## The five tabs, `chosen` chosen, with badges ({"heist": 4}); the bar emits
 ## `picked(id)`.
 static func tabs(chosen: String, badges := {}) -> KitTabs:
