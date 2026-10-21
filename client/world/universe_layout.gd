@@ -18,8 +18,8 @@ const SCHOOLS := {"heart": "spirit", "skyfield": "motion", "crystalline": "matte
 	"emberreach": "energy", "verdant": "life", "lanternvale": "spirit"}
 ## The outer realms' places, in the order realms open: [x, z, y] in metres
 ## from the Heart, the column running along z (down the screen).
-const SLOTS := [[-14.0, 33.0, -1.2], [14.5, -33.0, 1.0], [15.0, 32.0, -0.6], [-14.5, -32.0, 0.8],
-	[0.5, 63.0, -2.0], [-0.5, -63.0, 2.0]]
+const SLOTS := [[-14.5, 28.0, -1.2], [15.0, -28.0, 1.0], [15.5, 27.5, -0.6], [-15.0, -27.5, 0.8],
+	[0.5, 54.0, -2.0], [-0.5, -54.0, 2.0]]
 ## A realm's grid across, in tiles: the server's view does not carry it, so
 ## the map draws the Heart a size up on the outer realms (the design's map
 ## scales the Heart 0.29 to the others' 0.19).

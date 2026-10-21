@@ -808,7 +808,9 @@ func _control_problems(screen: Control) -> Array:
 		# place rules hold for what does not move.
 		if _scrolls(b):
 			continue
-		if r.position.y < frame.y / 3.0:
+		# §21.1: the thumb zone binds frequently used controls; one marked
+		# otherwise (home's Keeper badge, its strain) keeps the other rules.
+		if r.position.y < frame.y / 3.0 and b.get_meta("frequent", true):
 			problems.append("%s is above the thumb zone" % b.text)
 		if r.end.y > frame.y - 44 * point or r.position.y < 44 * point:
 			problems.append("%s is inside a safe area" % b.text)

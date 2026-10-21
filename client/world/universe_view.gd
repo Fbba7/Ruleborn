@@ -72,6 +72,9 @@ var links: Array[Dictionary] = []
 ## Pixels at the top and bottom that a screen's own controls cover: the
 ## camera frames the universe into what is left (`set_inset`).
 var inset := Vector2.ZERO
+## The pixels a screen's side columns cover at the left and the right, which
+## pins keep clear of.
+var inset_x := Vector2.ZERO
 
 var _view := {}
 var _extras := {}

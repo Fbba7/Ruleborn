@@ -237,3 +237,58 @@ Stopped at the integrator's request (2026-10-20).
   near the 40,000 ceiling.
 - Next: run `check_all` on the last commit; a lighter T2 scatter for the close-up would make room for the
   Heart's T2 meadow and a second character.
+
+## Third session (2026-10-21): the home screen as the design's 01 Universe map
+
+The target is the design's home (`art/design/stills/screens/01-*.png` once the integrator lands it; until
+then `docs/analysis/screens-v3/screens-home-realm-shell.md` §1.1 and §2.2) and §21.8's home layout.
+
+- Round 30 (the starting point): home was a Keeper bar across the top, a scrolling grid of 21 menu tiles over
+  the bottom half of the world, a large "Play a heist" button, and the camera on the Heart.
+  Still: `r30_before_home.png`.
+- Round 31: home rebuilt in the design's arrangement (§21.8), the world opening on the whole universe:
+  - top left, the Keeper badge (`UniverseBadge`): an emblem in a ring whose gold arc is the way to the next
+    level, the level on a gold disc, "Keeper 14" in Marcellus, Renown on a glass chip with the design's gem;
+    it opens the menu of every screen (`UniverseMenu`, the design's portrait menu), so all 21 places stay one
+    tap away;
+  - top right, strain on a glass pill (`UniverseStrain`): the band's colour dot, "74% · Steady"; it opens the
+    weaving;
+  - a full-width row of the three resources (`UniversePurse`): the design's own icons, the amount held, a line
+    along the foot that fills as that resource's producers fill, FULL in words when they are nearly full; an
+    amount no slice holds is a dash (the server gives no Aether to the wallet yet; the codex's view has it);
+  - side buttons down both edges (`UniverseSide`): leather balls with a bronze rim, the design's icons, a plate
+    with the name, red count badges (Defence's unseen raids, Season's "!" when a tier can be claimed);
+  - the nearest goal above the tabs (`UniverseGoal`, §14.8): whichever goal the store holds is nearest to done
+    (the Keeper's next level, the season track's next tier), said as what is left;
+  - five tabs (`UniverseTabs`, `UniverseTab`): Islands (raised on the design's periwinkle disc), Laws, the Heist
+    as a larger gold ball in the centre, Crew, Friends; a count badge on Islands for full producers. Heist
+    plays a heist as the old button did.
+  - the world: the whole universe at once (§23.2), the column drawn tighter (rows at 28 and 54 m, not 33 and
+    63), each island's pin its level and name; only a full producer is pinned at that zoom; the fault's pin a
+    mark over its realm; pins kept between the side buttons and stepped clear of each other rather than
+    dropped; strain is the HUD's, so the Heart carries no strain pin on home.
+  Still: `r31_home.png`. Budget at the home camera: 32,162 triangles, 83 draw calls.
+- Drawn in code (`UniverseHud`): §21.8's dark glass (#140A16 at 78%), leather, gold, ink outlines #1A0C14,
+  light words #F3EEFF, secondary #B8A8D8, Manrope 800 for words and numbers, Lilita One for the level,
+  Marcellus for the Keeper's name (the fonts T5 and T7 brought). High contrast makes the glass opaque with
+  3-point outlines. Every control is 48 points or more; the badge and the strain pill are marked infrequent
+  (`set_meta("frequent", false)`), which §21.1 allows in the top band, and the check in `tests/run.gd` now
+  reads (a two-line hook, see below).
+- Found: a texture first loaded inside `_draw` draws as a white square under the Compatibility renderer;
+  load icons when the control is set up (`UniverseHud.icon`'s note).
+
+### The tab bar, for T9 (UI kit) and T10 (app shell)
+
+Home draws its own five tabs (`client/world/universe_tabs.gd`) until the app shell's tab bar lands. What home
+needs from the shared one, so it can be swapped in with no change to the screen's look:
+
+- five tabs in this order, keys `islands`, `laws`, `heist`, `crew`, `friends`, the Heist in the centre drawn
+  larger (a gold ball above the bar), the active tab raised on the periwinkle disc with a larger name;
+- `set_badge(key, text)` for a count or a glyph ("" for none), each badge said in words;
+- a `chosen(key)` signal; home answers `islands` by showing the whole universe, `heist` by playing a heist
+  (as the old "Play a heist" button did), and routes `laws` → `codex`, `crew` → `roster`,
+  `friends` → `friends` (`Home.TAB_ROUTES`);
+- the bar's height: 52 points plus a 13-point name; its background runs under the home indicator and its
+  tabs sit inside the safe area and clear of the corners (84% of the width).
+
+When the shell's bar exists, home stops adding its own (`Home.tabs`) and listens to the shell's.

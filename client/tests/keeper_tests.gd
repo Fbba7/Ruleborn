@@ -114,20 +114,21 @@ func _on_screen() -> void:
 	var home: Home = await mount.call("home")
 	var hidden := not home.keeper_plate.visible
 	services.store.dispatch(&"keeper_loaded", {"view": {"level": 3, "xp": 12, "toNext": 270, "cap": 40}})
-	var shown := home.keeper_plate.visible and home.keeper_label.text.contains("Keeper 3") \
-		and home.keeper_label.text.contains("○○○○○○○○○○") and home.keeper_label.text.contains("12 of 270") \
-		and home.keeper_label.accessibility_name == Strings.t("KEEPER_SPOKEN", [3, Strings.t("KEEPER_PROGRESS",
+	var shown := home.keeper_plate.visible and home.keeper_plate.title.contains("Keeper 3") \
+		and home.keeper_plate.level == 3 and is_equal_approx(home.keeper_plate.share, 12.0 / 270.0) \
+		and home.keeper_plate.accessibility_name == Strings.t("KEEPER_SPOKEN", [3, Strings.t("KEEPER_PROGRESS",
 			["12", "270", 4])])
 	services.store.dispatch(&"keeper_earned", {"keeper": {"gained": 300, "level": 4, "xp": 42, "toNext": 370}})
-	var moved := home.keeper_label.text.contains("Keeper 4") and home.keeper_label.text.contains("42 of 370")
+	var moved := home.keeper_plate.title.contains("Keeper 4") and is_equal_approx(home.keeper_plate.share, 42.0 / 370.0) \
+		and str(home.keeper_plate.accessibility_name).contains("42 of 370")
 	home.queue_free()
 	var result: ResultScreen = await mount.call("result_screen")
 	result.show_verdict({"ok": true, "server": true, "grade": "Clean", "banked": 508, "haul": 11250, "fee": 0,
 		"keeper": {"gained": 36, "level": 2, "levelled": 1}}, 900)
 	var said := result.detail_label.text
 	result.queue_free()
-	check.call("Home's Keeper bar waits for the server, then shows the level, the pips and the numbers, said aloud "
-			+ "in words, and moves with a heist's answer; the result screen says what the raid earned (14.2)",
+	check.call("Home's Keeper badge waits for the server, then shows the level and the way to the next, said "
+			+ "aloud in words, and moves with a heist's answer; the result screen says what the raid earned (14.2)",
 		hidden and shown and moved and said.contains(Strings.t("RESULT_KEEPER", "36"))
 			and said.contains(Strings.t("RESULT_KEEPER_UP", 2)),
 		"%s %s %s | %s" % [hidden, shown, moved, said.replace("\n", " / ")])

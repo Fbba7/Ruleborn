@@ -25,6 +25,7 @@ func run() -> void:
 	await _people()
 	await _lazy()
 	await _home()
+	_hud()
 
 
 func _layout() -> void:
@@ -274,13 +275,47 @@ func _home() -> void:
 	var places := []
 	for b: Button in home.find_children("*", "Button", true, false):
 		places.append(b.text)
-	var every := Home.PLACES.all(func(r: StringName) -> bool: return places.has(Strings.t(Home.WORDS[r])) \
-		or r == &"defences")
+	var every := Home.PLACES.all(func(r: StringName) -> bool: return places.has(Strings.t(Home.WORDS[r])))
+	var tabs: Array = home.tabs.buttons.keys()
+	var sides: Array = home.sides.keys()
 	var drawn := home.world != null and home.world.islands.has("heart") and home.world.islands.size() == 5
 	var said := str(home.world.accessibility_description)
 	home.queue_free()
 	await tree.process_frame
-	check.call("home draws the universe behind it, keeps every place in its menu and the Heist button, and reads "
-			+ "the universe aloud (23.2, 21.8, 20.8)",
-		every and places.has(Strings.t("HOME_PLAY")) and drawn and said.contains(Strings.t("UNIVERSE_HEART_TITLE", 6)),
-		"%s drawn %s said %s" % [places, drawn, said])
+	check.call("home draws the universe behind it, keeps every place in its menu, five tabs with the Heist in the "
+			+ "centre and side buttons down both edges, and reads the universe aloud (23.2, 21.8, 20.8)",
+		every and tabs == ["islands", "laws", "heist", "crew", "friends"] and sides.size() == 4 and drawn
+			and said.contains(Strings.t("UNIVERSE_HEART_TITLE", 6)),
+		"%s tabs %s sides %s drawn %s said %s" % [places, tabs, sides, drawn, said])
+
+
+## Home's interface reads only what the slices hold: the nearest goal is the
+## one closest to done, said as what is left (14.8); the resource row takes
+## each amount from the slice that holds it, a dash where none does, and sums
+## each resource's producers (9.3).
+func _hud() -> void:
+	var keeper := {"view": {"level": 14, "xp": 1240, "toNext": 2000}}
+	var track := {"view": {"season": 2, "stars": 1130, "next": {"tier": 7, "cost": 1200}}}
+	var both := UniverseGoal.goals(keeper, track)
+	var only := UniverseGoal.goals(keeper, {})
+	var top := UniverseGoal.goals({"view": {"level": 30, "xp": 5, "toNext": null}}, {})
+	var goals_ok: bool = both.size() == 2 and both[0]["route"] == &"track" \
+		and both[0]["text"] == Strings.t("HOME_GOAL_TRACK", ["70", 7]) \
+		and only.size() == 1 and only[0]["text"] == Strings.t("HOME_GOAL_KEEPER", ["760", 15]) and top.is_empty()
+	var store := Store.new()
+	UniverseState.register(store)
+	RosterState.register(store)
+	ShopState.register(store)
+	CodexState.register(store)
+	var unknown := UniverseStore.purse(store)
+	store.dispatch(&"wallet_loaded", {"balance": {"starlight": 900, "essence": 40}})
+	store.dispatch(&"roster_loaded", {"view": {"producers": [{"kind": "star_well", "stored": 30, "holds": 100},
+		{"kind": "star_well", "stored": 70, "holds": 100}, {"kind": "garden", "stored": 5, "holds": 50}]}})
+	var known := UniverseStore.purse(store)
+	var purse_ok: bool = int(unknown["starlight"]["amount"]) == -1 and int(unknown["aether"]["amount"]) == -1 \
+		and int(known["starlight"]["amount"]) == 900 and int(known["essence"]["amount"]) == 40 \
+		and int(known["aether"]["amount"]) == -1 and int(known["starlight"]["ready"]) == 100 \
+		and int(known["starlight"]["holds"]) == 200 and int(known["essence"]["ready"]) == 5
+	check.call("home's nearest goal is the one closest to done, said as what is left, and its resource row shows "
+			+ "only what the slices hold, each resource's producers summed (14.8, 9.3)", goals_ok and purse_ok,
+		"%s %s | %s %s" % [both, only, unknown, known])

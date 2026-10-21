@@ -39,8 +39,8 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 	var faults: Array = universe.get("faults", [])
 	for f: Variant in faults:
 		var plate := _plate(Palette.ALARM_FILL, Palette.ALARM_FILL)
-		plate.add_child(_with_icon("band_fault",
-			_words("ϟ " + UniversePresenter.realm_name(_type_of(universe, str(f))), Palette.ON_ALARM)))
+		# The fault's mark over its realm, whose name is on the realm's own pin.
+		plate.add_child(_with_icon("band_fault", _words("ϟ", Palette.ON_ALARM)))
 		_pins.append({"node": plate, "realm": str(f), "lift": 3.5, "zooms": [0, 1, 2], "rank": 0})
 	var raids := int(extras.get("raids", 0))
 	if raids > 0:
@@ -60,8 +60,10 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 			plate.add_child(_with_icon("alert_ready", words))
 		else:
 			plate.add_child(words)
+		# Over the whole universe only a full producer is pinned, as the
+		# designs pin a realm's label only once it is nearly full.
 		_pins.append({"node": plate, "realm": str(p.get("realm", "")), "building": kind, "lift": 0.0,
-			"zooms": [0, 1, 2], "rank": 2})
+			"zooms": [0, 1, 2] if full else [1, 2], "rank": 2})
 	# A gold arrow over each building the server says can be raised now: a
 	# price met and nothing in the way (§10.2's `next`, unblocked).
 	for r: Dictionary in universe.get("realms", []):
@@ -98,13 +100,6 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 	for p: Dictionary in _pins:
 		add_child(p["node"])
 	follow()
-
-
-static func _type_of(universe: Dictionary, id: String) -> String:
-	for r: Dictionary in universe.get("realms", []):
-		if str(r.get("realm", "")) == id:
-			return str(r.get("type", "Heart"))
-	return "Heart"
 
 
 ## A realm's pin: its level in a disc of its school's colour, and its name;
@@ -194,12 +189,15 @@ func follow() -> void:
 		return
 	var toward := view.toward()
 	var taken: Array[Rect2] = []
+	# Pins stay between the screen's side columns (home's side buttons).
+	var lo := view.inset_x.x
+	var hi := view.size.x - view.inset_x.y
 	for p: Dictionary in _pins:
 		var node: Control = p["node"]
 		if p.has("at"):
 			node.visible = view.zoom in (p["zooms"] as Array)
 			if node.visible:
-				_place(node, view.camera.unproject_position(p["at"]), taken)
+				_place(node, view.camera.unproject_position(p["at"]), taken, lo, hi)
 			continue
 		var id := str(p.get("realm", ""))
 		if not view.islands.has(id):
@@ -209,14 +207,19 @@ func follow() -> void:
 		var shown: bool = view.zoom in (p["zooms"] as Array)
 		# Islands small on the screen keep only their names and alarms, and a
 		# name only its realm's icon and level.
-		var small := isl.radius / maxf(0.01, view.camera.size) * view.size.y < UI.px(45)
+		var small := isl.radius / maxf(0.01, view.camera.size) * view.size.y < UI.px(28)
 		if int(p["rank"]) >= 2 or p.get("back", false):
 			shown = shown and not small
 		if p.get("front", false):
+			# A small island's pin is its icon and level; a mid-sized one's
+			# its level and name (the whole universe); a near one's all three.
 			var row := node.get_child(0)
 			var words := row.get_child(row.get_child_count() - 1) as Control
-			if words.visible == small:
+			var icon := row.get_child(0) as Control
+			var mid := view.zoom == 0 and not small
+			if words.visible == small or icon.visible == mid:
 				words.visible = not small
+				icon.visible = not mid
 				node.reset_size()
 		if view.zoom > 0 and id != view.focus_id:
 			shown = false
@@ -235,18 +238,23 @@ func follow() -> void:
 				node.visible = false
 				continue
 			at = (isl.places[str(p["place"])] as Vector3) + Vector3(0, float(p["lift"]), 0)
-		_place(node, view.camera.unproject_position(at), taken)
+		_place(node, view.camera.unproject_position(at), taken, lo, hi)
 
 
-## A pin centred on `s`, unless it would cover one already placed.
-static func _place(node: Control, s: Vector2, taken: Array[Rect2]) -> void:
+## A pin centred on `s`, kept between `lo` and `hi` across, unless it would
+## cover one already placed.
+static func _place(node: Control, s: Vector2, taken: Array[Rect2], lo: float, hi: float) -> void:
 	node.position = (s - node.size / 2.0).round()
-	var box := Rect2(node.position, node.size).grow(-UI.px(2))
-	for other: Rect2 in taken:
-		if other.intersects(box):
-			node.visible = false
+	if hi - lo > node.size.x:
+		node.position.x = clampf(node.position.x, lo, hi - node.size.x)
+	# Where it would cover another, a step down or up, else not at all.
+	for step: float in [0.0, 1.0, -1.0]:
+		var box := Rect2(node.position + Vector2(0.0, step * (node.size.y + UI.px(2))), node.size).grow(-UI.px(2))
+		if not taken.any(func(other: Rect2) -> bool: return other.intersects(box)):
+			node.position = box.grow(UI.px(2)).position
+			taken.append(box)
 			return
-	taken.append(box)
+	node.visible = false
 
 
 ## Where a producer of `kind` stands on its island, its pin over it.
