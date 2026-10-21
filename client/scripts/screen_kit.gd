@@ -68,6 +68,11 @@ static func text(words: String, points: float, role := "words", material := "car
 	var l := UI.label(words, points, wraps)
 	l.add_theme_font_override("font", font(role))
 	l.add_theme_color_override("font_color", ink(material, soft))
+	# Words on a bright fill wear the material's ink outline, as T9 draws them.
+	var spec := Tokens.material(look(material))
+	if spec.has("text_outline"):
+		l.add_theme_color_override("font_outline_color", spec["text_outline"][0])
+		l.add_theme_constant_override("outline_size", UI.px(spec["text_outline"][1]))
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	l.set_meta("bold", role in ["words", "number"])
 	l.set_meta("own_ink", true)

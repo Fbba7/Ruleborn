@@ -1206,3 +1206,6 @@ KIT_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
 KIT_FULL,Full,Full,Cheio,Cheio,Voll,Plein
 KIT_TAB_BADGE,%s: %s new,%s: %s new,%s: %s novos,%s: %s novos,%s: %s neu,%s : %s nouveaux
 SCREEN_SHOW_REALM,Show %s above,Show %s above,Mostrar %s acima,Mostrar %s acima,%s oben zeigen,Montrer %s en haut
+SCREEN_FRIENDS_ADD,Play with more friends,Play with more friends,Jogue com mais amigos,Joga com mais amigos,Mit mehr Freunden spielen,Jouer avec plus d’amis
+SCREEN_SHARE_CHALLENGE,Your island as a challenge,Your island as a challenge,Sua ilha como desafio,A tua ilha como desafio,Deine Insel als Herausforderung,Ton île en défi
+SCREEN_SHARE_INVITE,Invite a friend,Invite a friend,Convide um amigo,Convida um amigo,Lade einen Freund ein,Invite un ami

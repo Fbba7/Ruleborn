@@ -105,9 +105,9 @@ func _hero(p: Dictionary) -> Control:
 	if int(p["next_n"]) > 0:
 		box.add_child(ScreenMeter.bar(int(p["renown_n"]), int(p["next_n"]), Color("#E05CB4"), 10.0))
 	box.add_child(ScreenKit.text(p["to_next"], 13.0, "words", "card_lit", true, true))
-	var seasons := ScreenParts.flow(6.0)
+	var seasons := VBoxContainer.new()
 	for line: String in (p["renown"] as Array).slice(1):
-		seasons.add_child(ScreenParts.pill(line, "well", "season", "seasontrack"))
+		seasons.add_child(ScreenParts.pill(line, "well", "season", "seasontrack", 13.0, "words", true))
 	if seasons.get_child_count() > 0:
 		box.add_child(seasons)
 	return ScreenKit.panel("card_lit", box, 18.0, 12.0)

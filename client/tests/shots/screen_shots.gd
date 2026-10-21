@@ -40,3 +40,19 @@ static func fill(name: String, store: Store) -> void:
 				"owned": ["track-1-5", "season-1-ember"], "equipped": {"realm_skin": "season-1-ember"}}})
 			store.dispatch(&"summary_loaded", {"summary": {"months": [{"month": "2026-10", "cents": 1100,
 				"refunded": 0}], "left": 3900}})
+		"friends":
+			store.dispatch(&"friends_loaded", {"friends": [{"account": "kofi1234"}, {"account": "mira5678"},
+				{"account": "juno9012"}],
+				"feed": [{"raider": "kofi1234", "defender": "mira5678", "grade": "clean", "mode": "raid"},
+					{"raider": "juno9012", "defender": "kofi1234", "grade": "foiled", "mode": "raid"},
+					{"raider": "mira5678", "defender": "juno9012", "grade": "loud", "mode": "raid"}],
+				"blocked": [{"account": "zzzz0000"}]})
+			store.dispatch(&"invite_made", {"invite": {"invite": "k7q2px"}})
+		"share":
+			store.dispatch(&"share_link", {"link": {"challenge": "a1b2c3", "bundle": "b"}})
+		"social":
+			store.dispatch(&"league_loaded", {"view": {"season": 3, "renown": 1250, "league": "ember", "division": 2,
+				"next": 1500}})
+			store.dispatch(&"groups_loaded", {"constellation": {"name": "bright-harbour", "members": [
+				{"account": "kofi1234", "role": "founder"}, {"account": "mira5678", "role": "member"}]},
+				"crew": {"id": "c1", "invite": "ab12", "members": [{"account": "kofi1234"}], "formed": false}})

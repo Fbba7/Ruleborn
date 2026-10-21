@@ -35,21 +35,23 @@ func _on_changed(slice: StringName) -> void:
 
 
 func _build() -> void:
-	var column := UI.frame(self)
-	column.add_child(UI.title(Strings.t("SOCIAL_TITLE")))
+	var column := ScreenKit.frame(self)
+	column.add_child(ScreenNav.header(Strings.t("SOCIAL_TITLE")))
 	status_label = UI.status("info", "")
-	column.add_child(UI.plate(status_label))
-	body = UI.scroll(column, true)
-	var join := UI.row()
+	column.add_child(ScreenParts.status_plate(status_label))
+	body = UI.scroll(column)
+	var join := HBoxContainer.new()
+	join.add_theme_constant_override("separation", UI.px(8))
 	invite_field = UI.field(Strings.t("SOCIAL_CREW_CODE"))
+	invite_field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	join.add_child(invite_field)
-	join.add_child(UI.button(Strings.t("SOCIAL_JOIN_CREW"), func() -> void: controller.join_crew(invite_field.text)))
-	join_row = join
-	column.add_child(join)
-	var actions := UI.row(-1.0, true)
-	actions.add_child(UI.button(Strings.t("SOCIAL_FRIENDS"), func() -> void: App.services.router.go(&"friends"), true))
-	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
-	column.add_child(UI.narrow(actions))
+	join.add_child(ScreenKit.button(Strings.t("SOCIAL_JOIN_CREW"), func() -> void: controller.join_crew(invite_field.text),
+		"gold"))
+	join_row = ScreenKit.panel("card", join, 18.0, 8.0)
+	column.add_child(join_row)
+	var friends := ScreenKit.button(Strings.t("SOCIAL_FRIENDS"), func() -> void: App.services.router.go(&"friends"),
+		"leather")
+	column.add_child(ScreenNav.dock(&"home", [friends]))
 
 
 func _me() -> String:
@@ -63,48 +65,94 @@ func _refresh() -> void:
 	var error: String = l["error"] if l["error"] != "" else g["error"]
 	UI.set_status(status_label, "alarm" if error != "" else "info",
 		Errors.message("SOCIAL_FAILED", error) if error != "" else ("" if l["ready"] else Strings.t("COMMON_LOADING")))
+	ScreenParts.show_status(status_label)
 	for c in body.get_children():
 		c.queue_free()
 	if l["ready"]:
-		for key: String in ["place", "renown", "next"]:
-			body.add_child(UI.label(l[key], UI.TEXT_POINTS, true))
+		body.add_child(_league(l))
 	# Until the server has said, nothing claims the player is in no group.
 	join_row.visible = g["known"] and not g["in_crew"]
 	if not g["known"]:
 		if error == "" and l["ready"]:
-			body.add_child(UI.label(Strings.t("COMMON_LOADING"), UI.TEXT_POINTS, true))
+			body.add_child(ScreenKit.text(Strings.t("COMMON_LOADING"), 15.0, "words", "card", true))
 		return
-	body.add_child(UI.label(g["constellation"], UI.TEXT_POINTS, true))
+	body.add_child(_constellation(g, gs))
+	body.add_child(_crew(g))
+
+
+## This season's league: its crest, the place, Renown and the way on.
+func _league(l: Dictionary) -> Control:
+	var v: Dictionary = App.services.store.get_slice(SocialState.LEAGUE).get("view", {})
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(12))
+	row.add_child(ScreenKit.icon("leagues", str(v.get("league", "dust")), 64.0))
+	var words := VBoxContainer.new()
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.alignment = BoxContainer.ALIGNMENT_CENTER
+	words.add_child(ScreenKit.text(l["place"], 20.0, "name", "card_lit", false, true))
+	words.add_child(ScreenKit.text(l["renown"], 15.0, "words", "card_lit", false, true))
+	words.add_child(ScreenKit.text(l["next"], 13.0, "words", "card_lit", true, true))
+	row.add_child(words)
+	return ScreenKit.panel("card_lit", row, 18.0, 12.0)
+
+
+## The constellation: its name and members by role, or founding one from
+## the word lists.
+func _constellation(g: Dictionary, gs: Dictionary) -> Control:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UI.px(6))
+	box.add_child(_heading("constellation", "constellation", g["constellation"]))
 	for m: String in g["members"]:
-		body.add_child(UI.label(m, UI.TEXT_POINTS, true))
-	var cons := UI.row()
+		box.add_child(ScreenParts.pill(m, "well", "", "", 13.0, "words", true))
+	var cons := UI.row(6.0)
 	if g["in_constellation"]:
-		cons.add_child(UI.button(Strings.t("SOCIAL_LEAVE_CONSTELLATION"), controller.leave))
+		cons.add_child(ScreenKit.button(Strings.t("SOCIAL_LEAVE_CONSTELLATION"), controller.leave, "leather", "", 14.0))
 	elif not (gs["words"] as Dictionary).is_empty():
 		var words: Dictionary = gs["words"]
 		var adjectives: Array = words.get("adjectives", [])
 		var nouns: Array = words.get("nouns", [])
 		if not adjectives.is_empty() and not nouns.is_empty():
 			var name := SocialPresenter.word_name(words, adjective, noun)
-			body.add_child(UI.label(Strings.t("SOCIAL_NAME", name), UI.TEXT_POINTS, true))
-			cons.add_child(UI.button(Strings.t("SOCIAL_OTHER_ADJECTIVE"), func() -> void:
+			var said := ScreenKit.text(Strings.t("SOCIAL_NAME", name), 17.0, "words", "parchment", false, true)
+			box.add_child(ScreenKit.panel("parchment", said, 14.0, 10.0))
+			cons.add_child(ScreenKit.button(Strings.t("SOCIAL_OTHER_ADJECTIVE"), func() -> void:
 				adjective = (adjective + 1) % adjectives.size()
-				_refresh()))
-			cons.add_child(UI.button(Strings.t("SOCIAL_OTHER_NOUN"), func() -> void:
+				_refresh(), "card", "", 14.0))
+			cons.add_child(ScreenKit.button(Strings.t("SOCIAL_OTHER_NOUN"), func() -> void:
 				noun = (noun + 1) % nouns.size()
-				_refresh()))
-			cons.add_child(UI.button(Strings.t("SOCIAL_FOUND"), func() -> void: controller.found(adjective, noun), true,
-				Color(), Strings.t("SOCIAL_FOUND_NAMED", name)))
-	body.add_child(cons)
-	body.add_child(UI.label(g["crew"], UI.TEXT_POINTS, true))
-	for m: String in g["crew_members"]:
-		body.add_child(UI.label(m, UI.TEXT_POINTS, true))
-	if g["crew_invite"] != "":
-		body.add_child(UI.label(Strings.t("SOCIAL_CREW_INVITE", g["crew_invite"]), UI.TEXT_POINTS, true))
-	var crew := UI.row()
-	if g["in_crew"]:
-		crew.add_child(UI.button(Strings.t("SOCIAL_LEAVE_CREW"), controller.leave_crew))
-	else:
-		crew.add_child(UI.button(Strings.t("SOCIAL_START_CREW"), controller.start_crew))
-	body.add_child(crew)
+				_refresh(), "card", "", 14.0))
+			cons.add_child(ScreenKit.button(Strings.t("SOCIAL_FOUND"), func() -> void: controller.found(adjective, noun),
+				"gold", Strings.t("SOCIAL_FOUND_NAMED", name), 14.0))
+	box.add_child(cons)
+	return ScreenKit.panel("card", box, 18.0, 12.0)
 
+
+## The crew: its members, its invite, and starting or leaving one.
+func _crew(g: Dictionary) -> Control:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UI.px(6))
+	box.add_child(_heading("constellation", "crew", g["crew"]))
+	for m: String in g["crew_members"]:
+		box.add_child(ScreenParts.pill(m, "well", "", "", 13.0, "words", true))
+	if g["crew_invite"] != "":
+		var code := ScreenKit.text(Strings.t("SOCIAL_CREW_INVITE", g["crew_invite"]), 17.0, "words", "parchment", false,
+			true)
+		box.add_child(ScreenKit.panel("parchment", code, 14.0, 10.0))
+	var crew := UI.row(6.0)
+	if g["in_crew"]:
+		crew.add_child(ScreenKit.button(Strings.t("SOCIAL_LEAVE_CREW"), controller.leave_crew, "leather", "", 14.0))
+	else:
+		crew.add_child(ScreenKit.button(Strings.t("SOCIAL_START_CREW"), controller.start_crew, "gold", "", 14.0))
+	box.add_child(crew)
+	return ScreenKit.panel("card", box, 18.0, 12.0)
+
+
+func _heading(group: String, icon: String, words: String) -> Control:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	row.add_child(ScreenKit.icon(group, icon, 34.0))
+	var t := ScreenKit.text(words, 17.0, "words", "card", false, true)
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(t)
+	return row

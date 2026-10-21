@@ -142,7 +142,7 @@ func _law(l: Dictionary, line: String) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
 	row.add_child(ScreenKit.icon("laws", str(l["law"]), 36.0))
-	var name := ScreenKit.text(l["name"], 15.0, "words", "card")
+	var name := ScreenKit.text(l["name"], 15.0, "words", "card", false, true)
 	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	name.tooltip_text = line

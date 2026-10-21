@@ -14,8 +14,11 @@ const LABELS_UP_TO := 125
 
 ## The header: the title (T9's, with its gold rule) and `right` (a pill, a
 ## count) at its end.
-static func header(title: String, right: Control = null) -> HBoxContainer:
-	var row := HBoxContainer.new()
+static func header(title: String, right: Control = null) -> BoxContainer:
+	# At large text the title and its pill stack, rather than widen the screen.
+	var row: BoxContainer = VBoxContainer.new()
+	if Settings.text_scale <= 125:
+		row = HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
 	var h := KitNav.header(title)
 	h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -26,6 +29,7 @@ static func header(title: String, right: Control = null) -> HBoxContainer:
 	(h.get_child(h.get_child_count() - 1) as Control).size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	if right != null:
 		right.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		right.size_flags_horizontal = Control.SIZE_SHRINK_END if row is HBoxContainer else Control.SIZE_SHRINK_BEGIN
 		row.add_child(right)
 	return row
 
@@ -65,6 +69,7 @@ static func hub(name: String, route: StringName) -> PanelContainer:
 			App.services.router.go(routes[i]))
 	for b: Button in s.find_children("*", "Button", true, false):
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		b.custom_minimum_size.x = UI.CONTROL_POINTS * UI.PX_PER_POINT
 	s.name = "Hub"
 	return s
 
