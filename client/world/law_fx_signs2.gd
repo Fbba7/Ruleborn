@@ -201,30 +201,13 @@ static func _bloom(fx: LawFx, sig: Node3D) -> void:
 ## Kinship: "Vines braid between neighbours." Its rule is allies next to
 ## each other healing each other, so that is what reads at the heist's
 ## camera: a bold green bond, with light running along it, between any two
-## allies standing side by side (crew with crew, guards with guards). Low
-## creepers twine between neighbouring plants and walls, one strand each,
-## under everything that matters.
+## allies standing side by side (crew with crew, guards with guards): the
+## vine braided between neighbours, and nothing over the rest of the realm.
 static func _kinship(fx: LawFx, sig: Node3D) -> void:
-	var anchors := fx.site.tiles(LawFxSite.PLANTS + LawFxSite.WALLS)
-	var tops: Array[Vector3] = []
-	for t: Vector2i in anchors:
-		tops.append(fx.site.centre(t) + Vector3(0, minf(0.35, LawFxSigns.wall_height(fx.site.code(t)) * 0.5), 0))
-	var vines := LawFxBatch.new(LawFxBatch.Kind.THREADS)
-	var seen := {}
-	for i in tops.size():
-		var best := -1
-		var near := 2.2
-		for j in tops.size():
-			var d := Vector2(tops[i].x - tops[j].x, tops[i].z - tops[j].z).length()
-			if j != i and d > 0.6 and d < near and not seen.has(Vector2i(mini(i, j), maxi(i, j))):
-				best = j
-				near = d
-		if best < 0:
-			continue
-		seen[Vector2i(mini(i, best), maxi(i, best))] = true
-		vines.strip(LawFxBatch.sagging(tops[i], tops[best], 0.12, 12), Color("#3E8A34"), 4)
-	if vines.triangles > 0:
-		fx.layer(sig, vines, fx.thread_material(0.05))
+	# Always on, so the law reads with nobody side by side: a few leaves
+	# drifting low over the realm.
+	LawFxPaint.spray(fx, sig, "kinship", {"n": 14, "shape": 2, "colour": Color("#8EE07A", 0.9), "radius": [0.06, 0.09],
+		"lift": [0.15, 0.7], "vel": Vector3(0.1, 0.05, 0.06), "period": [4.0, 6.0], "wobble": 0.2})
 	var link := MeshInstance3D.new()
 	link.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	link.material_override = fx.thread_material(0.1)
