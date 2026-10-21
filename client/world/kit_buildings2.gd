@@ -314,124 +314,205 @@ static func _lab(b: BuildingKit) -> void:
 
 
 ## The Observatory: "a domed telescope", copper and slate; the dome turns.
+## A stone drum with a timber gallery round it, the dome ribbed in copper
+## with its slit open and the telescope reaching out of it, a lit star on
+## a vane at the top. Slate under copper ribs at the first look, a copper
+## dome at the second, lilac and gold at the third.
 static func _observatory(b: BuildingKit) -> void:
 	b.plinth(0.96, 0.96)
-	b.cyl(0.42, 0.42, 0.5, b.stone, 0, 0.08, 0, 12)
-	b.cyl(0.44, 0.44, 0.04, b.stone2, 0, 0.58, 0, 12)
+	b.cyl(0.42, 0.4, 0.46, b.stone, 0, 0.08, 0, 12)
+	b.courses(0.84, 0.84, 0.08, 0.54, 3)
 	for k in 4:
 		var a := TAU * k / 4.0 + 0.4
-		b.window(cos(a) * 0.42, 0.34, sin(a) * 0.42, PI / 2.0 - a, 0.8, false)
-	b.door(0, 0.08, 0.42, 0, 0.9)
-	var slate := Color("#5E6A7A") if b.tier < 2 else Color("#B9A6F2")
+		b.window(cos(a) * 0.41, 0.3, sin(a) * 0.41, PI / 2.0 - a, 0.8, false)
+	b.door(0, 0.08, 0.41, 0, 0.9)
+	# The gallery: a timber walk round the drum, posts and a rail.
+	var wood := KitStyle.WOOD if b.tier < 2 else KitStyle.GOLD
+	b.cyl(0.5, 0.48, 0.04, KitStyle.WOOD.lightened(0.1), 0, 0.54, 0, 12)
+	for k in 12:
+		var a := TAU * k / 12.0
+		b.fine(0.02, 0.1, 0.02, wood, cos(a) * 0.48, 0.63, sin(a) * 0.48)
+	if not b.lighter:
+		b.d.torus(b.place(0, 0.68, 0), 0.48 * b.unit, 0.01 * b.unit, wood, 16, 3)
+	var dome: Color = [Color("#5A6B8C"), Color("#C8804A"), Color("#B9A6F2")][b.tier]
+	var rib: Color = [Color("#D08850"), Color("#6A4A3A"), KitStyle.GOLD][b.tier]
 	var copper := Color("#C87A4A") if b.tier < 2 else KitStyle.GOLD
-	var hub := b.at(0, 0.62, 0)
+	var hub := b.at(0, 0.58, 0)
 	b.move(Geo.Anim.SPIN_Y, hub)
-	b.g.ball(Geo.place(hub), 0.4 * b.unit, slate, 5, 12, true)
-	b.d.box(Transform3D(Basis(Vector3.RIGHT, -0.6), b.at(0, 0.82, -0.12)), Vector3(0.1, 0.02, 0.5) * b.unit,
-		slate.darkened(0.35))
-	b.g.cyl(Transform3D(Basis(Vector3.RIGHT, -0.9), b.at(0, 0.8, -0.05)), 0.06 * b.unit, 0.08 * b.unit, 0.5 * b.unit,
-		copper, 8)
+	b.g.ball(Geo.place(hub), 0.4 * b.unit, dome, 5, 14, true)
+	# Copper ribs over the dome, meridian by meridian.
+	for k in (2 if b.lighter else 4):
+		var turn := Basis(Vector3.UP, PI / 4.0 * k + PI / 8.0) * Basis(Vector3.RIGHT, PI / 2.0)
+		b.d.torus(Transform3D(turn, hub), 0.405 * b.unit, 0.012 * b.unit, rib, 16, 3)
+	# The slit, dark, from the crown down the front, and the telescope out of it.
+	var slit := Basis(Vector3.RIGHT, -0.55)
+	b.d.box(Transform3D(slit, b.at(0, 0.88, 0.2)), Vector3(0.12, 0.02, 0.36) * b.unit, Color("#20182E"))
+	var tube := Basis(Vector3.RIGHT, -0.95)
+	b.g.cyl(Transform3D(tube, b.at(0, 0.78, 0.0)), 0.075 * b.unit, 0.09 * b.unit, 0.58 * b.unit, copper, 10)
+	var mouth := b.at(0, 0.78, 0.0) + tube * Vector3(0, 0.58, 0) * b.unit
+	b.d.torus(Transform3D(tube, mouth), 0.09 * b.unit, 0.015 * b.unit, KitStyle.GOLD, 10, 3)
+	b.d.cyl(Transform3D(tube, mouth - tube * Vector3(0, 0.01, 0) * b.unit), 0.075 * b.unit, 0.075 * b.unit,
+		0.01 * b.unit, KitStyle.lit(Color("#BFE4FF"), 0.5), 10)
 	if b.level >= 10:
-		b.g.cyl(Transform3D(Basis(Vector3.RIGHT, 0.9), b.at(0.15, 0.8, 0.05)), 0.04 * b.unit, 0.05 * b.unit,
-			0.36 * b.unit, copper, 8)
+		var second := Basis(Vector3.UP, 1.2) * Basis(Vector3.RIGHT, -0.8)
+		b.g.cyl(Transform3D(second, b.at(0.1, 0.78, 0.0)), 0.05 * b.unit, 0.06 * b.unit, 0.42 * b.unit, copper, 8)
+	# The vane and its star.
+	b.cyl(0.01, 0.008, 0.2, KitStyle.IRON, 0, 0.96, 0, 4)
+	b.d.gem(Geo.place(b.at(0, 1.18, 0)), 0.05 * b.unit, 0.06 * b.unit, KitStyle.lit(Color("#FFE7A8"), 0.3), 4)
 	b.stop()
-	b.ball(0.04, KitStyle.GOLD, 0, 1.03, 0, 1.0, 3, 6)
-	b.top = 1.05
+	b.top = 1.1
 
 
 ## The Beacon: "a tall lantern mast", iron and constellation colours; a
-## beam of light into the sky. A stone foot, an iron lattice, the lantern
-## room glazed and capped, its beam turning.
+## beam of light into the sky. A banded tower tapering up from a stone
+## foot to a railed gallery, the glazed lantern room lit gold, its cap and
+## gold spike, a beam turning round it and a column of light rising from it.
 static func _beacon(b: BuildingKit) -> void:
 	var iron := KitStyle.IRON if b.tier < 2 else KitStyle.GOLD
 	var col: Color = b.style["accent"]
+	var body := b.stone.lightened(0.08) if b.tier == 0 else (b.wall if b.tier == 1 else Color("#F4EEF8"))
 	b.plinth(0.8, 0.8)
-	b.cyl(0.3, 0.26, 0.5, b.stone, 0, 0.08, 0, 10)
-	b.cyl(0.31, 0.31, 0.04, b.stone2, 0, 0.56, 0, 10)
-	b.door(0, 0.08, 0.27, 0, 0.8)
-	var h := 1.55 + 0.15 * b.tier
-	var y0 := 0.6
-	for k in 4:
-		var a := TAU * k / 4.0 + PI / 4.0
-		var foot := Vector3(cos(a) * 0.22, y0, sin(a) * 0.22)
-		var head := Vector3(cos(a) * 0.11, h, sin(a) * 0.11)
-		var mid := (foot + head) / 2.0
-		var span := foot.distance_to(head)
-		var axis := Vector3(-sin(a), 0, cos(a))
-		b.g.box(Transform3D(Basis(axis, -atan2(0.11, h - y0)), b.at(mid.x, mid.y, mid.z)),
-			Vector3(0.045, span, 0.045) * b.unit, iron)
-	# Cross braces between the legs, ring by ring.
-	for r in 3:
-		var t := (r + 0.5) / 3.0
-		var rad := lerpf(0.22, 0.11, t) * 1.02
-		var y := lerpf(y0, h, t)
-		for k in 4:
-			var a := TAU * k / 4.0
-			b.fine(rad * 1.41, 0.025, 0.025, iron, cos(a) * rad * 0.71, y, sin(a) * rad * 0.71, -a + PI / 2.0)
-	b.cyl(0.2, 0.2, 0.05, iron, 0, h, 0, 8)
-	b.glass.cyl(b.place(0, h + 0.05, 0), 0.14 * b.unit, 0.14 * b.unit, 0.24 * b.unit, Color("#FFF4D0"), 8)
-	b.ball(0.08, KitStyle.lit(Color("#FFE7A8"), 0.1), 0, h + 0.17, 0, 1.2, 3, 8)
+	b.cyl(0.32, 0.3, 0.3, b.stone2, 0, 0.08, 0, 10)
+	b.door(0, 0.08, 0.3, 0, 0.8)
+	var h := 1.6 + 0.15 * b.tier
+	var y0 := 0.38
+	b.cyl(0.25, 0.15, h - y0, body, 0, y0, 0, 10)
+	# Bands up the tower in the realm's colour, as a lighthouse's.
+	for k in 3:
+		var t0 := 0.2 + 0.27 * k
+		var y := lerpf(y0, h, t0)
+		var r := lerpf(0.25, 0.15, t0) + 0.006
+		b.cyl(r, r - 0.012, 0.09, col if k % 2 == 0 else iron, 0, y, 0, 10)
+	for k in 2:
+		b.window(0, lerpf(y0, h, 0.38 + 0.3 * k), lerpf(0.25, 0.15, 0.38 + 0.3 * k) + 0.005, 0, 0.6, false)
+	# The gallery and its rail.
+	b.cyl(0.26, 0.24, 0.05, iron, 0, h, 0, 10)
+	for k in 10:
+		var a := TAU * k / 10.0
+		b.fine(0.015, 0.1, 0.015, iron, cos(a) * 0.24, h + 0.1, sin(a) * 0.24)
+	if not b.lighter:
+		b.d.torus(b.place(0, h + 0.15, 0), 0.24 * b.unit, 0.008 * b.unit, iron, 14, 3)
+	b.glass.cyl(b.place(0, h + 0.05, 0), 0.15 * b.unit, 0.15 * b.unit, 0.26 * b.unit, Color("#FFF4D0"), 8)
+	b.g.ball(Geo.place(b.at(0, h + 0.18, 0), 0.0, Vector3(1, 1.2, 1)), 0.1 * b.unit, KitStyle.lit(Color("#FFE7A8"), 0.1),
+		3, 8)
 	for k in 4:
 		var a := TAU * k / 4.0 + PI / 8.0
-		b.fine(0.02, 0.24, 0.02, iron, cos(a) * 0.14, h + 0.17, sin(a) * 0.14)
-	b.cone(0.2, 0.18, b.roof_col, 0, h + 0.29, 0, 8)
-	b.cone(0.02, 0.1, KitStyle.GOLD, 0, h + 0.47, 0, 6)
-	# The beam, turning.
-	b.move(Geo.Anim.SPIN_Y, b.at(0, h + 0.17, 0))
-	b.glass.prism(Transform3D(Basis(Vector3.BACK, PI / 2.0), b.at(0.14, h + 0.17, 0)), 8, 0.05 * b.unit,
-		0.18 * b.unit, 0.7 * b.unit, Color(col.lightened(0.5), 0.3))
+		b.fine(0.02, 0.26, 0.02, iron, cos(a) * 0.15, h + 0.18, sin(a) * 0.15)
+	b.cone(0.21, 0.2, b.roof_col, 0, h + 0.31, 0, 8)
+	b.cone(0.025, 0.14, KitStyle.GOLD, 0, h + 0.5, 0, 6)
+	# The beam, turning, and the light rising into the sky.
+	b.move(Geo.Anim.SPIN_Y, b.at(0, h + 0.18, 0))
+	b.glass.prism(Transform3D(Basis(Vector3.BACK, PI / 2.0), b.at(0.15, h + 0.18, 0)), 8, 0.05 * b.unit,
+		0.2 * b.unit, 0.8 * b.unit, Color(col.lightened(0.5), 0.3))
 	b.stop()
+	b.glass.prism(b.place(0, h + 0.62, 0), 8, 0.06 * b.unit, 0.16 * b.unit, 1.2 * b.unit,
+		Color(Color("#FFE9A8"), 0.12))
 	# Constellation stars round the lantern room, turning slowly.
 	b.move(Geo.Anim.SPIN_Y, b.at(0, h + 0.2, 0))
 	for k in 5:
 		var a := TAU * k / 5.0
-		b.d.gem(Geo.place(b.at(cos(a) * 0.3, h + 0.1 + 0.08 * (k % 2), sin(a) * 0.3)), 0.03 * b.unit, 0.04 * b.unit,
-			KitStyle.lit(col.lightened(0.4), 0.3), 4)
+		b.d.gem(Geo.place(b.at(cos(a) * 0.34, h + 0.12 + 0.1 * (k % 2), sin(a) * 0.34)), 0.035 * b.unit,
+			0.05 * b.unit, KitStyle.lit(col.lightened(0.4), 0.3), 4)
 	b.stop()
-	b.top = h + 0.5
+	b.top = h + 0.6
 
 
 ## The Visitor's Dock: "a pier with skiff moorings", wood and rope; the
-## skiff bobs. A boathouse at the back, the pier running out front past
-## its mooring posts, and the skiff tied up, its sail set.
+## skiffs bob. A stone quay with a boathouse at the back, the pier running
+## out to the front between rope-railed posts to a lamp at its end, and the
+## skiff tied up beside it, afloat on the air, its sail set in the realm's
+## colour; crates and a coil of rope on the quay.
 static func _dock(b: BuildingKit) -> void:
 	var plank := KitStyle.WOOD.lightened(0.3)
-	b.box(0.62, 0.36, 0.44, KitStyle.WOOD.lightened(0.15) if b.tier == 0 else b.wall, -0.12, 0.26, -0.24)
-	b.frame(0.62, 0.36, 0.44, 0.08)
-	b.roof(0.62, 0.44, 0.44, 0.24, 0.06, 3)
-	b.door(-0.12, 0.08, -0.01, 0, 0.9)
-	b.window(-0.43, 0.3, -0.24, -PI / 2.0, 0.8, false)
-	for k in 6:
-		b.box(0.3, 0.035, 0.13, plank.darkened(0.06 * (k % 2)), 0.25, 0.1, -0.15 + 0.13 * k)
-	for z: float in [0.0, 0.4, 0.62]:
-		for x: float in [0.08, 0.42]:
-			b.cyl(0.03, 0.03, 0.22, KitStyle.WOOD, x, 0, z, 6)
-			b.d.torus(b.place(x, 0.18, z), 0.035 * b.unit, 0.008 * b.unit, Color("#D8C8A8"), 8, 3)
-	# The skiff beside the pier, bobbing, its sail up.
-	var at := b.at(-0.24, 0.06, 0.42)
+	var acc: Color = b.style["accent"]
+	b.box(1.0, 0.1, 0.42, b.stone2, 0, 0.05, -0.28)
+	b.box(0.44, 0.34, 0.32, KitStyle.WOOD.lightened(0.15) if b.tier == 0 else b.wall, 0.24, 0.27, -0.3)
+	b.frame(0.44, 0.34, 0.32, 0.1)
+	b.roof(0.44, 0.32, 0.44, 0.22, 0.06, 3)
+	b.door(0.24, 0.1, -0.13, 0, 0.8)
+	b.window(0.465, 0.28, -0.3, PI / 2.0, 0.75, false)
+	# The pier: planks out to the footprint's front, on posts, rope between.
+	for k in 7:
+		b.box(0.26, 0.035, 0.11, plank.darkened(0.06 * (k % 2)), 0.12, 0.11, -0.08 + 0.11 * k)
+	for z: float in [-0.04, 0.26, 0.58]:
+		for x: float in [-0.02, 0.26]:
+			b.cyl(0.026, 0.026, 0.26, KitStyle.WOOD, x, 0, z, 6)
+			b.ball(0.032, KitStyle.WOOD_DARK, x, 0.27, z, 0.6, 2, 6)
+	for x: float in [-0.02, 0.26]:
+		b.fine(0.012, 0.012, 0.62, Color("#D8C8A8"), x, 0.22, 0.27)
+	# The lamp at the pier's end.
+	b.cyl(0.016, 0.014, 0.42, KitStyle.WOOD_DARK, 0.26, 0.13, 0.62, 5)
+	b.box(0.07, 0.08, 0.07, KitStyle.lit(Color("#FFD27A"), 0.6), 0.26, 0.58, 0.62)
+	b.cone(0.06, 0.05, KitStyle.WOOD_DARK, 0.26, 0.62, 0.62, 4)
+	# Crates, a barrel and a coil of rope on the quay.
+	b.box(0.13, 0.13, 0.13, Color("#B88A5A"), -0.36, 0.165, -0.38, 0.3)
+	b.box(0.1, 0.1, 0.1, Color("#C89A6A"), -0.22, 0.15, -0.36, -0.2)
+	b.cyl(0.06, 0.06, 0.15, KitStyle.WOOD.lightened(0.2), -0.4, 0.1, -0.2, 8)
+	b._torus_at(0.05, 0.018, Color("#D8C8A8"), -0.12, 0.12, -0.2)
+	# The skiff moored beside the pier, bobbing on the air, its sail set
+	# across it toward the camera.
+	var at := b.at(-0.3, 0.22, 0.24)
 	b.move(Geo.Anim.BOB, at)
-	b.g.ball(Geo.place(at, 0.0, Vector3(0.7, 0.45, 1.6)), 0.17 * b.unit, Color("#8A5A3A"), 3, 10, true)
-	b.d.box(Geo.place(at + Vector3(0, 0.02, 0) * b.unit), Vector3(0.18, 0.02, 0.4) * b.unit, plank)
-	b.d.cyl(Geo.place(at), 0.01 * b.unit, 0.008 * b.unit, 0.55 * b.unit, KitStyle.WOOD_DARK, 4)
-	var sail := Color("#F4EEDF")
-	var mast := at + Vector3(0, 0.05, 0) * b.unit
-	b.d.tri(mast + Vector3(0, 0.48, 0) * b.unit, mast + Vector3(0, 0.06, 0.22) * b.unit,
-		mast + Vector3(0, 0.06, -0.02) * b.unit, sail)
-	b.d.tri(mast + Vector3(0, 0.48, 0) * b.unit, mast + Vector3(0, 0.06, -0.02) * b.unit,
-		mast + Vector3(0, 0.06, 0.22) * b.unit, sail.darkened(0.08))
+	b.g.ball(Geo.place(at, 0.0, Vector3(0.8, 0.55, 1.7)), 0.2 * b.unit, Color("#8A5A3A"), 3, 10, true)
+	b.d.box(Geo.place(at + Vector3(0, 0.02, 0) * b.unit), Vector3(0.22, 0.02, 0.5) * b.unit, plank)
+	b.d.torus(Transform3D(Basis().scaled(Vector3(0.8, 1, 1.7)), at + Vector3(0, 0.005, 0) * b.unit), 0.2 * b.unit,
+		0.016 * b.unit, KitStyle.GOLD if b.tier >= 2 else KitStyle.WOOD_DARK, 12, 3)
+	var mast := at + Vector3(0, 0.02, 0) * b.unit
+	b.g.cyl(Geo.place(mast), 0.016 * b.unit, 0.012 * b.unit, 0.68 * b.unit, KitStyle.WOOD_DARK, 5)
+	var sail := Color("#F4EEDF") if b.tier == 0 else acc.lightened(0.25)
+	var top := mast + Vector3(0, 0.62, 0.01) * b.unit
+	var foot_l := mast + Vector3(-0.17, 0.12, 0.01) * b.unit
+	var foot_r := mast + Vector3(0.17, 0.12, 0.01) * b.unit
+	b.g.tri(top, foot_l, foot_r, sail)
+	b.g.tri(top, foot_r, foot_l, sail.darkened(0.08))
+	b.d.tri(top + Vector3(0, 0.08, 0) * b.unit, top + Vector3(0.13, 0.04, 0) * b.unit, top, acc)
+	b.d.tri(top + Vector3(0, 0.08, 0) * b.unit, top, top + Vector3(0.13, 0.04, 0) * b.unit, acc.darkened(0.1))
 	b.stop()
-	b.flag(0.42, 0.22, 0.62, 0.4)
-	b.top = 0.7
+	# A glow under the skiff where it rides the air.
+	b.glass.ring(b.place(-0.3, 0.015, 0.24), 0.0, 0.24 * b.unit, Color(Color("#BFE4FF"), 0.3), 10)
+	b.flag(-0.44, 0.1, -0.44, 0.4)
+	b.top = 0.85
 
 
-## A Law Pylon: "an obelisk topped with the school's shape".
+## A Law Pylon: "an obelisk topped with the school's shape", stone and the
+## school's colour; it pulses in the law's rhythm. A two-step base turned
+## to the diagonal, the obelisk with runes glowing up its faces and a band
+## of colour, its pyramidion capped in gold from the second look, the shape
+## turning over it in its ring, and a rune circle on the ground.
 static func _pylon(b: BuildingKit) -> void:
-	b.g.prism(b.place(0, 0, 0, PI / 4.0), 4, 0.3 * b.unit, 0.26 * b.unit, 0.16 * b.unit, b.stone2)
-	b.g.prism(b.place(0, 0.16, 0, PI / 4.0), 4, 0.15 * b.unit, 0.08 * b.unit, 0.9 * b.unit, b.stone)
-	b.move(Geo.Anim.SPIN_Y, b.at(0, 1.2, 0))
-	b.d.gem(Geo.place(b.at(0, 1.2, 0)), 0.1 * b.unit, 0.14 * b.unit, KitStyle.lit(b.style["accent"], 0.3), 4)
+	var col: Color = b.style["accent"]
+	var stone := b.stone if b.tier < 2 else Color("#F2EEF8")
+	b.g.cyl(b.place(0, 0, 0), 0.5 * b.unit, 0.5 * b.unit, 0.02 * b.unit, Color("#3A3350"), 16)
+	if not b.lighter:
+		b.d.torus(b.place(0, 0.025, 0), 0.42 * b.unit, 0.012 * b.unit, KitStyle.lit(col, 0.45), 20, 3)
+		for i in 8:
+			var q := TAU * i / 8.0
+			b.fine(0.07, 0.006, 0.025, KitStyle.lit(col, 0.5), cos(q) * 0.46, 0.026, sin(q) * 0.46, -q)
+	b.g.rbox(b.place(0, 0.08, 0, PI / 4.0), Vector3(0.52, 0.12, 0.52) * b.unit, b.stone2, 0.02)
+	b.g.rbox(b.place(0, 0.18, 0, PI / 4.0), Vector3(0.38, 0.08, 0.38) * b.unit, b.stone2.lightened(0.08), 0.015)
+	if b.tier >= 1:
+		for i in 4:
+			var q := i * PI / 2.0
+			b.cone(0.05, 0.16, b.trim, cos(q) * 0.28, 0.14, sin(q) * 0.28, 4)
+	b.g.prism(b.place(0, 0.22, 0, PI / 4.0), 4, 0.15 * b.unit, 0.085 * b.unit, 0.95 * b.unit, stone)
+	b.g.prism(b.place(0, 1.17, 0, PI / 4.0), 4, 0.085 * b.unit, 0.0, 0.14 * b.unit,
+		KitStyle.GOLD if b.tier >= 1 else stone.lightened(0.1))
+	b.cyl(0.13, 0.125, 0.06, col, 0, 0.4, 0, 4)
+	# Runes up each face in the school's colour, breathing.
+	for f in 4:
+		var yaw := PI / 2.0 * f
+		var out := Vector3(0, 0, 1).rotated(Vector3.UP, yaw)
+		for k in (2 if b.lighter else 3):
+			var y := 0.58 + 0.18 * k
+			var inset := lerpf(0.15, 0.085, (y - 0.22) / 0.95) / 1.414 + 0.004
+			b._pane(Transform3D(Basis(Vector3.UP, yaw), b.at(0, y, 0) + out * inset * b.unit), 0.045 * b.unit,
+				0.06 * b.unit, KitStyle.lit(col.lightened(0.2), 0.4))
+	var crest := b.at(0, 1.55, 0)
+	b.move(Geo.Anim.SPIN_Y, crest)
+	b.g.gem(Geo.place(crest), 0.11 * b.unit, 0.15 * b.unit, KitStyle.lit(col.lightened(0.15), 0.3), 4)
+	b.d.torus(Transform3D(Basis(Vector3.RIGHT, 0.4), crest), 0.17 * b.unit, 0.01 * b.unit, KitStyle.GOLD, 16, 3)
 	b.stop()
-	b.top = 1.3
+	b.top = 1.65
 
 
 ## A Ward on its rune circle (the design's ward, :816–825).
