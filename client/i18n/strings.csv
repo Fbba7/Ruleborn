@@ -1155,3 +1155,29 @@ CAMERA_TURN_LEFT,Turn the view left,Turn the view left,Girar a vista para a esqu
 CAMERA_TURN_RIGHT,Turn the view right,Turn the view right,Girar a vista para a direita,Rodar a vista para a direita,Ansicht nach rechts drehen,Pivoter la vue à droite
 CAMERA_ZOOM_IN,Zoom in,Zoom in,Aproximar,Aproximar,Heranzoomen,Zoomer
 CAMERA_ZOOM_OUT,Zoom out,Zoom out,Afastar,Afastar,Herauszoomen,Dézoomer
+SCREEN_BACK,Back,Back,Voltar,Voltar,Zurück,Retour
+SCREEN_CHOSEN,chosen,chosen,escolhido,escolhido,gewählt,choisi
+NAV_ISLANDS,Islands,Islands,Ilhas,Ilhas,Inseln,Îles
+NAV_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
+NAV_HEIST,Heist,Heist,Assalto,Assalto,Raubzug,Casse
+NAV_CREW,Crew,Crew,Equipe,Equipa,Crew,Équipe
+NAV_FRIENDS,Friends,Friends,Amigos,Amigos,Freunde,Amis
+HUB_ALL_LAWS,All laws,All laws,Todas as leis,Todas as leis,Alle Gesetze,Toutes les lois
+HUB_HARMONY,Harmony,Harmony,Harmonia,Harmonia,Harmonie,Harmonie
+HUB_LAB,Lab,Lab,Laboratório,Laboratório,Labor,Labo
+HUB_ROSTER,Roster,Roster,Elenco,Elenco,Aufstellung,Effectif
+HUB_SAGES,Sages,Sages,Sábios,Sábios,Weise,Sages
+HUB_FORMS,Forms,Forms,Formas,Formas,Formen,Formes
+SCREEN_CODEX_RESTORED,%d of %d laws restored,%d of %d laws restored,%d de %d leis restauradas,%d de %d leis restauradas,%d von %d Gesetzen wiederhergestellt,%d lois restaurées sur %d
+SCREEN_CODEX_OF_LAWS,Codex of Laws,Codex of Laws,Códice das Leis,Códice das Leis,Kodex der Gesetze,Codex des lois
+SCREEN_CODEX_MET,%d of %d laws met,%d of %d laws met,%d de %d leis encontradas,%d de %d leis encontradas,%d von %d Gesetzen begegnet,%d lois rencontrées sur %d
+SCREEN_KEEPER_LEVEL,Keeper %d,Keeper %d,Guardião %d,Guardião %d,Hüter %d,Gardien %d
+SCREEN_SPIRE_LEVEL,Spire %d,Spire %d,Torre %d,Torre %d,Turm %d,Flèche %d
+SCREEN_ALL,All,All,Todas,Todas,Alle,Toutes
+SCREEN_FILTER_SCHOOL,Show only %s,Show only %s,Mostrar só %s,Mostrar só %s,Nur %s zeigen,Afficher seulement %s
+SCREEN_TIER,Tier %s,Tier %s,Nível %s,Nível %s,Stufe %s,Rang %s
+SCREEN_CHAPTER,Ch. %d,Ch. %d,Cap. %d,Cap. %d,Kap. %d,Ch. %d
+SCREEN_NOT_MET,Not met,Not met,Não vista,Não vista,Unbekannt,Inconnue
+SCREEN_WEAKNESS,Weak against,Weak against,Fraca contra,Fraca contra,Schwach gegen,Faible contre
+SCREEN_NOT_RESTORED,Not restored,Not restored,Não restaurada,Não restaurada,Nicht wiederhergestellt,Non restaurée
+SCREEN_POINTS,%s pts,%s pts,%s pts,%s pts,%s Pkt.,%s pts

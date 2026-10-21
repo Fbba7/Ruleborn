@@ -40,6 +40,13 @@ static func card(l: Dictionary) -> Dictionary:
 		"tier_spoken": Strings.t("LAW_CARD_TIER_SPOKEN", tier),
 		"pages": page_line,
 		"weakness": Strings.t("LAW_CARD_WEAKNESS", Strings.t("LAW_WEAKNESS_" + key)),
+		"weak": Strings.t("LAW_WEAKNESS_" + key),
+		"note_list": notes.map(func(n: String) -> Dictionary:
+			return {"note": n.to_lower(), "name": Strings.term("NOTE", n)}),
+		"tier_n": tier, "pages_n": pages, "need": int((next as Dictionary)["pages"]) if next is Dictionary else 0,
+		"rank_key": str(l.get("rank", "Common")).capitalize(),
+		"rank_words": Strings.t("LAW_RANK_" + str(l.get("rank", "common")).to_upper()),
+		"school_words": Strings.t("SCHOOL_" + str(l.get("school", "")).to_upper()),
 	}
 
 

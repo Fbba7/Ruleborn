@@ -217,6 +217,7 @@ tools/
   check_design_consistency.py     the design half, which check_document.py runs
   vendor/                         v3.1's own checker, kept unmodified to diff against
   art/                            the design's creature modules -> client/art/creatures/*.glb (node tools/art/export.mjs)
+  screen_icons/                   the design's icon set and law marks -> client/art/screen_icons/*.svg (node tools/screen_icons/export.mjs)
   extract_content.py              design document -> content/*.json
   validate_content.py             schema and cross-reference checks on content/
   compare_module.py               the prototype's data module against content/, by hash, read as text

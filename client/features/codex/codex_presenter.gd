@@ -33,6 +33,20 @@ static func screen(slice: Dictionary) -> Dictionary:
 	for a: Dictionary in v.get("albums", []):
 		albums.append(album(a, tracks.get(a["school"], {}), v))
 	out["albums"] = albums
+	var known := 0
+	var restored := 0
+	var total := 0
+	for a: Dictionary in albums:
+		restored += int(a["restored"])
+		for l: Dictionary in a["laws"]:
+			total += 1
+			known += 1 if l["known"] else 0
+	out["known"] = known
+	out["restored"] = restored
+	out["total"] = total
+	out["aether"] = ShopPresenter.grouped(int(v.get("aether", 0)))
+	out["keeper"] = int(v.get("keeper_level", 1))
+	out["spire"] = int(v.get("spire", 1))
 	return out
 
 
@@ -54,7 +68,8 @@ static func album(a: Dictionary, m: Dictionary, v: Dictionary) -> Dictionary:
 		"mastery": Strings.t("CODEX_MASTERY", [int(m.get("steps", 0)), int(m.get("total", 0))]),
 		"marks": Strings.t("CODEX_MASTERY_MARKS", [int(marks.get("title", 0)), int(marks.get("style", 0)),
 			int(marks.get("last_title", 0))]),
-		"laws": entries}
+		"laws": entries, "restored": int(a.get("restored", 0)), "total": laws.size(),
+		"reached": a.get("milestones", []), "steps": int(m.get("steps", 0)), "steps_total": int(m.get("total", 0))}
 
 
 ## One law of an album: a "?" until it is met; then its rank, pages and
@@ -64,7 +79,8 @@ static func entry(l: Dictionary, v: Dictionary) -> Dictionary:
 	if not l.get("known", false):
 		var text := Strings.t("CODEX_UNKNOWN") if l.get("open", false) \
 			else Strings.t("CODEX_UNKNOWN_CLOSED", [int(l.get("chapter", 2)), int(v.get("next_chapter_at", 0))])
-		return {"known": false, "text": text, "act": {}, "work": {}, "worked": false}
+		return {"known": false, "text": text, "act": {}, "work": {}, "worked": false, "open": l.get("open", false),
+			"chapter": int(l.get("chapter", 2)), "rank": str(l.get("rank", ""))}
 	var law := str(l["law"])
 	var name := Strings.term("LAW", law)
 	var rank := Strings.t("LAW_RANK_" + str(l["rank"]).to_upper())
@@ -82,7 +98,9 @@ static func entry(l: Dictionary, v: Dictionary) -> Dictionary:
 	var card := {"key": "card:" + law, "item": "card:" + law, "action": Strings.t("CODEX_CARD"),
 		"spoken": Strings.t("CODEX_CARD_SPOKEN", name), "can": true, "why": ""}
 	return {"known": true, "law": law, "text": text, "act": act, "work": work, "worked": worked, "card": card,
-		"worked_text": Strings.t("CODEX_WORKED") if worked else ""}
+		"worked_text": Strings.t("CODEX_WORKED") if worked else "", "name": name, "rank": str(l["rank"]),
+		"rank_words": rank, "tier": tier, "tier_words": ROMAN[tier], "pages": pages,
+		"need": int((next as Dictionary)["pages"]) if next is Dictionary else 0, "school": str(l.get("school", ""))}
 
 
 ## The next step for a law met: restoring it at tier I, or its next tier, its

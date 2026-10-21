@@ -60,7 +60,10 @@ func _backgrounds(c: Control) -> Array[Color]:
 	var fills: Array[Color] = []
 	var n: Node = c
 	while n != null and fills.is_empty():
-		if n is Button:
+		# A control drawn by a ScreenBox names the colours behind its words.
+		if n is Control and n.has_meta("behind"):
+			fills.assign(n.get_meta("behind"))
+		elif n is Button:
 			for state: String in ["normal", "hover", "pressed", "focus"]:
 				var box := (n as Button).get_theme_stylebox(state)
 				if box is StyleBoxFlat and (box as StyleBoxFlat).bg_color.a > 0.0:
@@ -72,7 +75,14 @@ func _backgrounds(c: Control) -> Array[Color]:
 		n = n.get_parent()
 	var tint := _tint(c)
 	var out: Array[Color] = []
-	for sky: Color in [Palette.SKY_TOP, Palette.SKY_BOTTOM]:
+	var skies: Array[Color] = [Palette.SKY_TOP, Palette.SKY_BOTTOM]
+	# A screen on the night backdrop (ScreenKit) names its own sky.
+	var top: Node = c
+	while top.get_parent() is Control:
+		top = top.get_parent()
+	if top.has_meta("sky"):
+		skies.assign(top.get_meta("sky"))
+	for sky: Color in skies:
 		if fills.is_empty():
 			out.append(sky)
 		for f in fills:
