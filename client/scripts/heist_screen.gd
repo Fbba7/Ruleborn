@@ -563,8 +563,8 @@ func _build() -> void:
 	small.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	small.alignment = BoxContainer.ALIGNMENT_END
 	small.add_theme_constant_override("separation", UI.px(4))
-	small.add_child(FxSkin.icon_button(Strings.t("HEIST_HALT"), controller.halt, "halt"))
-	small.add_child(FxSkin.icon_button(Strings.t("HEIST_DROP"), controller.drop_half, "drop"))
+	small.add_child(_order(Strings.t("HEIST_HALT"), controller.halt, "halt"))
+	small.add_child(_order(Strings.t("HEIST_DROP"), controller.drop_half, "drop"))
 	right.add_child(small)
 	var main := HBoxContainer.new()
 	main.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -601,6 +601,21 @@ func _picker_line(box: VBoxContainer) -> Label:
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(l)
 	return l
+
+
+## A small order (Halt, Drop): a leather square with its drawn icon, named
+## in words for a screen reader and on a long press.
+func _order(words: String, call: Callable, icon: String) -> Button:
+	var b := UI.action("", call, "leather", words)
+	b.tooltip_text = words
+	b.custom_minimum_size = Vector2.ONE * UI.px(UI.CONTROL_POINTS)
+	b.size_flags_vertical = Control.SIZE_SHRINK_END
+	UI.dress(b, "leather", 12.0)
+	var draw := FxDraw.new(func(ci: Control) -> void:
+		FxIcons.order(ci, ci.size * 0.5, minf(ci.size.x, ci.size.y) * 0.55, icon, FxSkin.ON_DARK))
+	draw.set_anchors_preset(Control.PRESET_FULL_RECT)
+	b.add_child(draw)
+	return b
 
 
 ## The designs' square order (Cast, Get out): a rounded square in the kit's
