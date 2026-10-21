@@ -93,9 +93,14 @@ void fragment() {
 		float m = smoothstep(0.3, 0.8, lush) * (1.0 - cliff);
 		c *= mix(1.0, mix(0.8, 1.12, cushion) * (0.94 + 0.12 * mc.z), m);
 	}
-	// A worn trail: crisp trodden earth, wobbling, with stones in it.
+	// A worn trail as the design's lanes: a chain of rounded flat stones laid
+	// one after another along it, each with a lit top and a shaded foot, on a
+	// narrow strip of trodden earth with a rim of worn grass.
 	if (lane_count > 0 && up > 0.6) {
 		float best = 9.0;
+		float along = 0.0;
+		float side = 0.0;
+		float which = 0.0;
 		for (int i = 0; i < 48; i++) {
 			if (i >= lane_count) {
 				break;
@@ -104,18 +109,39 @@ void fragment() {
 			vec2 b = lanes[i].zw;
 			vec2 ab = b - a;
 			float t = clamp(dot(p - a, ab) / max(dot(ab, ab), 0.0001), 0.0, 1.0);
-			best = min(best, length(p - (a + ab * t)));
+			float dl = length(p - (a + ab * t));
+			if (dl < best) {
+				best = dl;
+				along = t * length(ab);
+				vec2 nrm = normalize(vec2(-ab.y, ab.x) + vec2(0.0001));
+				side = dot(p - a, nrm);
+				which = float(i);
+			}
 		}
-		float wob = (vnoise(p * 5.0) - 0.5) * 0.08 + (vnoise(p * 17.0) - 0.5) * 0.03;
+		float wob = (vnoise(p * 5.0) - 0.5) * 0.05;
 		float d = best + wob;
-		float rim = 1.0 - smoothstep(0.24, 0.34, d);
-		float earth = 1.0 - smoothstep(0.2, 0.23, d);
+		float off_path = 1.0 - smoothstep(0.4, 0.46, path);
+		float rim = 1.0 - smoothstep(0.2, 0.3, d);
+		float earth = 1.0 - smoothstep(0.15, 0.18, d);
 		c = mix(c, c * 0.84, rim * (1.0 - earth) * grassy);
-		vec3 dirt = lane_earth.rgb * (0.9 + 0.18 * vnoise(p * 6.0));
-		vec3 pebbles = cells(p * 9.0);
-		dirt = mix(dirt, dirt * 1.18, (1.0 - smoothstep(0.08, 0.14, pebbles.x)) * step(0.7, pebbles.z));
-		c = mix(c, dirt, earth * (1.0 - smoothstep(0.4, 0.46, path)) * (1.0 - cliff));
-		grassy *= 1.0 - earth;
+		vec3 dirt = lane_earth.rgb * (0.86 + 0.14 * vnoise(p * 6.0));
+		c = mix(c, dirt, earth * off_path * (1.0 - cliff));
+		// The stones: one every 0.3 m, each nudged aside and turned a little.
+		float step_len = 0.33;
+		float k = floor(along / step_len);
+		float h1 = hash(vec2(k, which));
+		vec2 q = vec2(fract(along / step_len) - 0.5 + (h1 - 0.5) * 0.15, 0.0) * step_len;
+		q.y = side - (hash(vec2(which, k + 3.1)) - 0.5) * 0.07;
+		vec2 e = q / vec2(0.14, 0.115 + 0.02 * h1);
+		float r = length(e);
+		float stone_in = 1.0 - smoothstep(0.86, 1.0, r);
+		float lit = clamp(0.5 - e.y * 0.35 + 0.35 * (1.0 - r), 0.0, 1.0);
+		vec3 slab = mix(cobble.rgb, lane_earth.rgb, 0.3) * (0.92 + 0.12 * h1) * mix(0.84, 1.12, lit);
+		float shade = (1.0 - smoothstep(0.95, 1.18, r)) * (1.0 - stone_in);
+		float on_lane = off_path * (1.0 - cliff) * step(best, 0.3);
+		c = mix(c, c * 0.72, shade * on_lane * 0.6);
+		c = mix(c, slab, stone_in * on_lane);
+		grassy *= 1.0 - max(earth, stone_in * on_lane);
 	}
 	// A path: a ribbon of cobbles laid in worn earth (UV.x is how near the
 	// path's middle line this is), a darker kerb at its edge.

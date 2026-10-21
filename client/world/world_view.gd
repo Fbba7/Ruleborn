@@ -319,7 +319,7 @@ func _build_statics() -> void:
 		statics.add_child(mi)
 		_pylons.append(mi)
 	for w: Dictionary in replay.wards():
-		var mi := _instance(PieceKit.ward(str(w["kind"])), RealmKit.material("toon", true))
+		var mi := _instance(PieceKit.ward(str(w["kind"]), int(w.get("level", 1))), RealmKit.material("toon", true))
 		mi.position = world_at(w["at"])
 		statics.add_child(mi)
 		_wards.append(mi)
@@ -751,7 +751,8 @@ func _sync_pieces() -> void:
 	for i in mini(wards.size(), _wards.size()):
 		var live: bool = wards[i]["live"]
 		if _wards[i].get_meta("live", true) != live:
-			_wards[i].mesh = PieceKit.ward(str(wards[i]["kind"])) if live else PieceKit.dead_ward()
+			_wards[i].mesh = PieceKit.ward(str(wards[i]["kind"]), int(wards[i].get("level", 1))) if live \
+				else PieceKit.dead_ward()
 			_wards[i].set_meta("live", live)
 	var walls := replay.walls()
 	var g := Geo.new()

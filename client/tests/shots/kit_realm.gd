@@ -4,7 +4,8 @@ extends SceneTree
 ## stream and a pond, on the home camera (§21.1's 35°), saved as a still
 ## (tools/render/shoot.sh). REALM (default heart), LEVEL (the buildings'
 ## level, default 5), HOUR, ZOOM, TURN, PITCH, DETAIL (0 full, 1 mid) and GRID
-## (the builder's grid, 0–1) are optional; SHOT is the file.
+## (the builder's grid, 0–1) are optional, and PATHS=0 leaves the gravel
+## out, so only the worn trails join the doors; SHOT is the file.
 func _initialize() -> void:
 	_shoot()
 
@@ -32,6 +33,8 @@ func _shoot() -> void:
 		"flower_meadow": [[5, 0], [6, 0], [0, 3], [7, 13], [6, 13]], "bush": [[8, 0], [12, 11], [3, 13]],
 		"tall_grass": [[0, 9], [0, 10], [13, 12], [13, 13]], "boulder": [[10, 0]], "bell_post": [[9, 8]],
 		"statue": [[5, 8]], "fence": [[0, 13], [1, 13], [2, 13]], "shade_canopy": [[7, 8]]}
+	if OS.get_environment("PATHS") == "0":
+		put.erase("gravel_path")
 	for id: String in put:
 		for xy: Array in put[id]:
 			ex.set_ground(xy[0], xy[1], id)
