@@ -235,7 +235,18 @@ func _show_laws(r: RulebornReplay) -> void:
 		var icon := "laws/" + str(p.get("law", "")).replace("_", "")
 		if Icons.has(icon):
 			# The law's own icon from the designs.
-			chip.add_child(Icons.view(icon, 24.0))
+			# On a light disc: a dark law's icon (Glowing dark) reads on the glass.
+			var disc := PanelContainer.new()
+			disc.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			var ring := StyleBoxFlat.new()
+			ring.bg_color = FxSkin.PARCH_TOP
+			ring.border_color = FxSkin.INK_LINE
+			ring.set_border_width_all(maxi(2, UI.px(1.5)))
+			ring.set_corner_radius_all(UI.px(14))
+			ring.set_content_margin_all(UI.px(2))
+			disc.add_theme_stylebox_override("panel", ring)
+			disc.add_child(Icons.view(icon, 22.0))
+			chip.add_child(disc)
 		else:
 			chip.add_child(FxDraw.new(func(ci: Control) -> void:
 				FxIcons.school(ci, ci.size / 2.0, minf(ci.size.x, ci.size.y), school), Vector2(UI.px(20), UI.px(20))))

@@ -207,37 +207,40 @@ func _build() -> void:
 	status_box.add_child(grade_label)
 	# How far into the heist the playback is: a bar, the alarm's levels
 	# ticked along it.
-	progress = FxDraw.new(_draw_progress, Vector2(0, UI.px(20)))
+	progress = FxDraw.new(_draw_progress, Vector2(0, UI.px(34)))
 	status_box.add_child(progress)
 	column.add_child(status)
 
 	column.add_child(FxSkin.camera_row(view))
 	var controls := UI.row(-1.0, true)
 	controls.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	controls.add_child(_button("‹", func() -> void: open_entry(current - 1); playing = true, "leather",
-			Strings.t("REPLAY_PREVIOUS")))
+	controls.add_child(KitControls.icon_button("hud/prev", Strings.t("REPLAY_PREVIOUS"), func() -> void:
+		open_entry(current - 1)
+		playing = true))
 	play_button = _button(Strings.t("REPLAY_PAUSE"), func() -> void: playing = not playing; _refresh(), "gold")
 	controls.add_child(play_button)
 	speed_button = _button("×2", func() -> void: speed_index = (speed_index + 1) % SPEEDS.size(); _refresh(),
 			"leather", Strings.t("REPLAY_SPEED", SPEEDS[speed_index]))
 	controls.add_child(speed_button)
-	controls.add_child(_button("›", func() -> void: open_entry(current + 1); playing = true, "leather",
-			Strings.t("REPLAY_NEXT")))
+	controls.add_child(KitControls.icon_button("hud/next", Strings.t("REPLAY_NEXT"), func() -> void:
+		open_entry(current + 1)
+		playing = true))
 	# Home rides with the playback controls: one row fewer, so the realm
 	# keeps its room when §20.8's large text makes the words take more.
-	controls.add_child(_button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "card"))
+	controls.add_child(KitControls.icon_button("hud/home", Strings.t("COMMON_HOME"), func() -> void:
+		App.services.router.go(&"home")))
 	column.add_child(UI.narrow(controls))
 	column.add_child(FxSkin.corner_clear())
 
 
 func _draw_progress(ci: Control) -> void:
 	var whole := maxf(1.0, float(replay.ticks()))
-	var bar := Rect2(Vector2(0, ci.size.y * 0.42), Vector2(ci.size.x, ci.size.y * 0.4))
+	var bar := Rect2(Vector2(0, ci.size.y * 0.62), Vector2(ci.size.x, ci.size.y * 0.3))
 	FxIcons.bar(ci, bar, float(replay.tick()) / whole, FxSkin.GOLD)
 	# Each moment's mark above the bar where it happens: stars for a
 	# knock-out, a bell for the alarm, a lock for the Vault, a shard for a
 	# pylon, a red "!" for a guard alerted, a red bubble for one caught.
-	var s := ci.size.y * 0.42
+	var s := ci.size.y * 0.55
 	for m in marks:
 		var x := bar.position.x + bar.size.x * float(m["tick"]) / whole
 		var at := Vector2(clampf(x, s * 0.5, ci.size.x - s * 0.5), s * 0.5)
