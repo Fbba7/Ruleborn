@@ -32,3 +32,11 @@ static func fill(name: String, store: Store) -> void:
 			store.dispatch(&"wallet_loaded", {"balance": {"starlight": 11250, "essence": 500}})
 		"shop":
 			store.dispatch(&"wallet_loaded", {"balance": {"starlight": 11250, "essence": 500}})
+			store.dispatch(&"shop_loaded", {"catalogue": {"items": [
+				{"id": "robe-aurora", "kind": "sage_robe", "price": 500},
+				{"id": "skin-ember", "kind": "realm_skin", "price": 800},
+				{"id": "sky-dusk", "kind": "sky_theme", "price": 300},
+				{"id": "wave", "kind": "emote", "price": 100}],
+				"owned": ["track-1-5", "season-1-ember"], "equipped": {"realm_skin": "season-1-ember"}}})
+			store.dispatch(&"summary_loaded", {"summary": {"months": [{"month": "2026-10", "cents": 1100,
+				"refunded": 0}], "left": 3900}})

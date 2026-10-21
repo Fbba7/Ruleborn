@@ -19,6 +19,8 @@ var friend_index := 0
 ## Where each owned item would be worn, for the slots worn by a role or a
 ## law: its index into those.
 var target_index := {}
+var _starlight: PanelContainer
+var _essence: PanelContainer
 
 
 func _ready() -> void:
@@ -37,19 +39,22 @@ func _on_changed(slice: StringName) -> void:
 
 
 func _build() -> void:
-	var column := UI.frame(self)
-	column.add_child(UI.title(Strings.t("SHOP_TITLE")))
-	var head := UI.panel()
-	wallet_label = UI.label("", UI.TEXT_POINTS, true)
-	head.add_child(wallet_label)
-	column.add_child(head)
+	var column := ScreenKit.frame(self)
+	var purse := HBoxContainer.new()
+	purse.add_theme_constant_override("separation", UI.px(4))
+	_starlight = ScreenParts.resource("starlight", "")
+	_essence = ScreenParts.resource("essence", "")
+	purse.add_child(_starlight)
+	purse.add_child(_essence)
+	column.add_child(ScreenNav.header(Strings.t("SHOP_TITLE"), purse))
+	wallet_label = ScreenKit.text("", 13.0, "words", "card", true, true)
+	wallet_label.visible = false
+	column.add_child(wallet_label)
 	status_label = UI.status("info", "")
-	column.add_child(UI.plate(status_label))
+	column.add_child(ScreenParts.status_plate(status_label))
 	body = UI.scroll(column)
-	var actions := UI.row(-1.0, true)
-	actions.add_child(UI.button(Strings.t("SHOP_TRACK"), func() -> void: App.services.router.go(&"track"), true))
-	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
-	column.add_child(UI.narrow(actions))
+	var track := ScreenKit.button(Strings.t("SHOP_TRACK"), func() -> void: App.services.router.go(&"track"), "gold")
+	column.add_child(ScreenNav.dock(&"home", [track]))
 
 
 ## The places a slot is worn in: the crew roles for an outfit, the launch laws
@@ -66,6 +71,11 @@ func _refresh() -> void:
 	var s := ShopPresenter.shop(App.services.store.get_slice(ShopState.SHOP), App.services.purchases)
 	var w := ShopPresenter.wallet(App.services.store.get_slice(ShopState.WALLET))
 	wallet_label.text = w["text"]
+	var balance: Dictionary = App.services.store.get_slice(ShopState.WALLET)
+	ScreenParts.set_resource(_starlight, ShopPresenter.grouped(int(balance["starlight"]))
+		if balance.has("starlight") else "")
+	ScreenParts.set_resource(_essence, ShopPresenter.grouped(int(balance["essence"])) if balance.has("essence") else "")
+	wallet_label.visible = not balance.has("starlight")
 	if s["error"] != "":
 		UI.set_status(status_label, "alarm", Errors.message("SHOP_FAILED", s["error"]))
 	elif s["buying"] != "":
@@ -76,21 +86,29 @@ func _refresh() -> void:
 		UI.set_status(status_label, "info", Strings.t("COMMON_LOADING"))
 	else:
 		UI.set_status(status_label, "info", "")
+	ScreenParts.show_status(status_label)
 	for c in body.get_children():
 		c.queue_free()
 	if s["empty"]:
-		body.add_child(UI.plate(UI.label(Strings.t("SHOP_EMPTY"), UI.TEXT_POINTS, true)))
+		body.add_child(ScreenParts.item("shopcosmetics", "bundle", Strings.t("SHOP_EMPTY")))
 	var friends: Array = s["friends"]
 	var friend: Dictionary = friends[friend_index % friends.size()] if not friends.is_empty() else {}
+	if not s["items"].is_empty():
+		body.add_child(ScreenParts.section(Strings.t("SCREEN_SHOP_FOR_SALE"), str((s["items"] as Array).size())))
 	if not s["items"].is_empty() and not friend.is_empty():
-		var pick := UI.row()
-		pick.add_child(UI.plate(UI.label(Strings.t("SHOP_GIFT_TO", friend["name"]))))
-		pick.add_child(UI.button(Strings.t("SHOP_OTHER_FRIEND"), func() -> void:
+		var other := ScreenKit.button(Strings.t("SHOP_OTHER_FRIEND"), func() -> void:
 			friend_index += 1
-			_refresh()))
-		body.add_child(pick)
+			_refresh(), "leather", "", 14.0)
+		body.add_child(ScreenParts.item("social", "gift", Strings.t("SHOP_GIFT_TO", friend["name"]), "", other))
+	var grid := GridContainer.new()
+	grid.columns = ScreenParts.grid_columns(2) if Settings.text_scale <= 125 else 1
+	grid.add_theme_constant_override("h_separation", UI.px(8))
+	grid.add_theme_constant_override("v_separation", UI.px(8))
 	for item: Dictionary in s["items"]:
-		body.add_child(_for_sale(item, s["buying"] != "", friend))
+		grid.add_child(_for_sale(item, s["buying"] != "", friend))
+	body.add_child(grid)
+	if not (s["owned"] as Array).is_empty():
+		body.add_child(ScreenParts.section(Strings.t("SCREEN_SHOP_OWNED"), str((s["owned"] as Array).size())))
 	for item: Dictionary in s["owned"]:
 		body.add_child(_owned(item))
 	# §20.2's summary, and a minor's cap, after what is on sale.
@@ -98,46 +116,76 @@ func _refresh() -> void:
 	if s["left"] != "":
 		lines.append(s["left"])
 	if not lines.is_empty():
-		body.add_child(UI.plate(UI.label("\n".join(lines), UI.TEXT_POINTS, true)))
+		body.add_child(ScreenParts.item("shopcosmetics", "spendingcap", Strings.t("SCREEN_SHOP_SPENT"),
+			"\n".join(lines)))
 
 
+## A cosmetic for sale as the design's card: its kind's art on a lit stage,
+## its name and kind, the price on its Buy button, and Give for a friend.
 func _for_sale(item: Dictionary, busy: bool, friend: Dictionary) -> Control:
 	var box := VBoxContainer.new()
-	box.add_child(UI.label(Strings.t("SHOP_ITEM", [item["name"], item["price"]]), UI.TEXT_POINTS, true))
-	var r := UI.row()
-	var buy := UI.button(Strings.t("SHOP_BUY"), controller.buy.bind(item["id"]), true, Color(),
-		Strings.t("SHOP_BUY_NAMED", [item["name"], item["price"]]))
+	box.add_theme_constant_override("separation", UI.px(6))
+	var art := ScreenKit.icon("shopcosmetics", str(item["kind"]).replace("_", ""), 84.0)
+	art.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var stage := ScreenKit.panel("well", art, 14.0, 10.0)
+	box.add_child(stage)
+	var name := ScreenKit.text(item["name"], 15.0, "words", "card_lit", false, true)
+	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name.tooltip_text = Strings.t("SHOP_ITEM", [item["name"], item["price"]])
+	box.add_child(name)
+	var kind := ScreenParts.pill(Strings.term("KIND", str(item["kind"])), "well")
+	kind.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	box.add_child(kind)
+	var buy := ScreenKit.button(item["price"], controller.buy.bind(item["id"]), "gold",
+		Strings.t("SHOP_BUY_NAMED", [item["name"], item["price"]]), 14.0)
 	buy.disabled = busy
-	r.add_child(buy)
+	buy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	buy.tooltip_text = Strings.t("SHOP_BUY")
+	box.add_child(buy)
 	if not friend.is_empty():
-		var give := UI.button(Strings.t("SHOP_GIVE"), controller.buy.bind(item["id"], friend["account"]), false,
-			Color(), Strings.t("SHOP_GIVE_NAMED", [item["name"], friend["name"]]))
+		var give := ScreenKit.button(Strings.t("SHOP_GIVE"), controller.buy.bind(item["id"], friend["account"]),
+			"leather", Strings.t("SHOP_GIVE_NAMED", [item["name"], friend["name"]]), 14.0)
 		give.disabled = busy
-		r.add_child(give)
-	box.add_child(r)
-	return UI.plate(box)
+		give.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		box.add_child(give)
+	var p := ScreenKit.panel("card_lit", box, 18.0, 10.0)
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return p
 
 
+## A cosmetic owned: its art and name, where it is worn, and the controls
+## that choose where and put it on or take it off.
 func _owned(item: Dictionary) -> Control:
-	var box := VBoxContainer.new()
 	var worn: Array = item["worn_in"]
-	box.add_child(UI.label(Strings.t("SHOP_OWNED_WORN" if not worn.is_empty() else "SHOP_OWNED", item["name"]),
-		UI.TEXT_POINTS, true))
-	if not item["wearable"]:
-		return UI.plate(box)
-	var r := UI.row()
-	var places := targets(item["kind"])
-	var target: Variant = null
-	if not places.is_empty():
-		target = places[int(target_index.get(item["id"], 0)) % places.size()]
-		var place := Strings.term("ROLE" if item["target"] == "role" else "LAW", str(target))
-		r.add_child(UI.button(Strings.t("SHOP_WORN_BY", place), func() -> void:
-			target_index[item["id"]] = int(target_index.get(item["id"], 0)) + 1
-			_refresh(), false, Color(), Strings.t("SHOP_WORN_BY_NEXT", place)))
-	var slot := str(item["kind"]) if target == null else "%s:%s" % [item["kind"], target]
-	var on := slot in worn
-	r.add_child(UI.button(Strings.t("SHOP_TAKE_OFF" if on else "SHOP_WEAR"),
-		controller.wear.bind(item["kind"], null if on else item["id"], target), false, Color(),
-		Strings.t("SHOP_TAKE_OFF_NAMED" if on else "SHOP_WEAR_NAMED", item["name"])))
-	box.add_child(r)
-	return UI.plate(box)
+	var words := Strings.t("SHOP_OWNED_WORN" if not worn.is_empty() else "SHOP_OWNED", item["name"])
+	var controls := ScreenParts.flow(6.0)
+	controls.alignment = FlowContainer.ALIGNMENT_END
+	if item["wearable"]:
+		var places := targets(item["kind"])
+		var target: Variant = null
+		if not places.is_empty():
+			target = places[int(target_index.get(item["id"], 0)) % places.size()]
+			var place := Strings.term("ROLE" if item["target"] == "role" else "LAW", str(target))
+			controls.add_child(ScreenKit.button(Strings.t("SHOP_WORN_BY", place), func() -> void:
+				target_index[item["id"]] = int(target_index.get(item["id"], 0)) + 1
+				_refresh(), "card", Strings.t("SHOP_WORN_BY_NEXT", place), 14.0))
+		var slot := str(item["kind"]) if target == null else "%s:%s" % [item["kind"], target]
+		var on := slot in worn
+		controls.add_child(ScreenKit.button(Strings.t("SHOP_TAKE_OFF" if on else "SHOP_WEAR"),
+			controller.wear.bind(item["kind"], null if on else item["id"], target), "leather" if on else "gold",
+			Strings.t("SHOP_TAKE_OFF_NAMED" if on else "SHOP_WEAR_NAMED", item["name"]), 14.0))
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UI.px(6))
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	row.add_child(ScreenKit.icon("shopcosmetics", str(item["kind"]).replace("_", ""), 40.0))
+	var l := ScreenKit.text(words, 15.0, "words", "card", false, true)
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(l)
+	if not worn.is_empty():
+		row.add_child(ScreenKit.icon("generalui", "confirm", 24.0))
+	box.add_child(row)
+	if controls.get_child_count() > 0:
+		box.add_child(controls)
+	return ScreenKit.panel("card", box, 16.0, 10.0)

@@ -131,7 +131,11 @@ static func section(words: String, right := "") -> VBoxContainer:
 		var r := ScreenKit.text(right, 13.0, "words", "card", true)
 		r.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		row.add_child(r)
-	box.add_child(row)
+	row.add_theme_constant_override("separation", UI.px(8))
+	var inset := MarginContainer.new()
+	inset.add_theme_constant_override("margin_right", UI.px(8))
+	inset.add_child(row)
+	box.add_child(inset)
 	var rule := ColorRect.new()
 	rule.color = Color("#E9B65C40")
 	rule.custom_minimum_size = Vector2(0, maxf(1.0, UI.px(0.7)))
