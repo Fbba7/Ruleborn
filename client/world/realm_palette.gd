@@ -22,7 +22,7 @@ const TYPES := {
 		"dirt": "#B9875C", "cliff": "#9C8FB4", "cliff_deep": "#746A92", "trim": "#F2B43C", "plant": "#E8D27A",
 		"accent": "#F2B43C", "bloom": "#FFFFFF", "light": "#FFF2D0",
 		"sky_top": "#3B6FD0", "sky_mid": "#7FB5EE", "sky_low": "#FFE3B0"},
-	"crystalline": {"ground": "#CDBDE6", "grass": "#ABA9D8", "stone": "#BFAEDB", "rock": "#7E6AA8", "soil": "#5E4A86",
+	"crystalline": {"ground": "#CDBDE6", "grass": "#A4A0C8", "stone": "#BFAEDB", "rock": "#7E6AA8", "soil": "#5E4A86",
 		"dirt": "#8C86B0", "cliff": "#4F4C86", "cliff_deep": "#37346A", "trim": "#8C6CF0", "plant": "#A9D8E8",
 		"accent": "#8C6CF0", "bloom": "#BFAEFF", "light": "#E0E8FF",
 		"sky_top": "#15123F", "sky_mid": "#34307D", "sky_low": "#8F7FE0"},
@@ -47,15 +47,30 @@ const TYPES := {
 ## Each realm's light, after the diorama's `lights` (:1056): the sun's
 ## strength, the sky's and the ground's ambient (its hemisphere light), the
 ## sun's place (x, height, z) and how much of the hour's sky the realm takes
-## (Lantern Vale keeps its twilight at noon, §21.4).
+## (Lantern Vale keeps its twilight at noon, §21.4). `dusk` and `night` are
+## the low sun's and the moon's tint in that realm, so the realms keep their
+## hue territory after dark (§21.10): Tidehold's rose dusk over teal water
+## against Verdant's gold over its meadow, a cyan moon over Tidehold and a
+## silver one over Skyfield. `fill` scales the ambient, so each realm's
+## ground sits at the design's value at noon (§21.10's value ladder, measured
+## against the scout and land stills). `dark` is how much of the hour's
+## dimming a realm takes: Lantern Vale is twilight at every hour (§21.4), so
+## its night is barely darker than its noon and its lanterns carry it.
 const LIGHTS := {
-	"heart": {"sun": 0.53, "sky": "#FFC8F0", "under": "#4B2F6E", "at": Vector3(12, 20, 8), "hour": 0.3},
-	"skyfield": {"sun": 0.59, "sky": "#CFE8FF", "under": "#6A5A40", "at": Vector3(14, 24, 6), "hour": 0.45},
-	"crystalline": {"sun": 0.57, "sky": "#C8C0FF", "under": "#2A2660", "at": Vector3(8, 22, 12), "hour": 0.25},
-	"tidehold": {"sun": 0.37, "sky": "#B8F0F0", "under": "#284860", "at": Vector3(10, 20, 14), "hour": 0.3},
-	"emberreach": {"sun": 0.53, "sky": "#FF9A70", "under": "#2A1018", "at": Vector3(16, 14, 4), "hour": 0.2},
-	"verdant": {"sun": 0.50, "sky": "#D8FFC0", "under": "#3A4A20", "at": Vector3(12, 22, 10), "hour": 0.4},
-	"lanternvale": {"sun": 0.27, "sky": "#6060B0", "under": "#100820", "at": Vector3(8, 20, 10), "hour": 0.12},
+	"heart": {"sun": 0.36, "fill": 0.78, "sky": "#FFC8F0", "under": "#4B2F6E", "at": Vector3(12, 20, 8),
+		"hour": 0.3, "dusk": "#FFB49A", "night": "#B0B4F0"},
+	"skyfield": {"sun": 0.40, "fill": 0.8, "sky": "#CFE8FF", "under": "#6A5A40", "at": Vector3(14, 24, 6),
+		"hour": 0.45, "dusk": "#FFC878", "night": "#B4C4FF"},
+	"crystalline": {"sun": 0.33, "fill": 0.74, "sky": "#C4C0E8", "under": "#2A2660", "at": Vector3(8, 22, 12),
+		"hour": 0.25, "dusk": "#F0B0E0", "night": "#A898FF"},
+	"tidehold": {"sun": 0.37, "sky": "#B8F0F0", "under": "#284860", "at": Vector3(10, 20, 14),
+		"hour": 0.3, "dusk": "#E8B8D8", "night": "#80B8FF"},
+	"emberreach": {"sun": 0.31, "fill": 0.72, "sky": "#FF9A70", "under": "#2A1018", "at": Vector3(16, 14, 4),
+		"hour": 0.2, "dusk": "#FF9058", "night": "#C890B0"},
+	"verdant": {"sun": 0.50, "sky": "#D8FFC0", "under": "#3A4A20", "at": Vector3(12, 22, 10),
+		"hour": 0.4, "dusk": "#FFD070", "night": "#A0A4E0"},
+	"lanternvale": {"sun": 0.13, "fill": 0.66, "sky": "#6060B0", "under": "#100820", "at": Vector3(8, 20, 10),
+		"hour": 0.12, "dusk": "#B8A0FF", "night": "#8FA0FF", "dark": 0.4},
 }
 
 ## §21.2's skies by the hour: day, dusk and night, top then horizon.
@@ -64,7 +79,7 @@ const SKIES := {
 }
 ## The hour's own light: the sun's tint and strength, and the ambient's tint.
 const HOUR_LIGHT := {
-	"day": ["#FFFFFF", 1.0, "#FFFFFF"], "dusk": ["#FFD2A8", 0.92, "#C4B0EE"], "night": ["#A2AEFF", 0.5, "#7E76C4"],
+	"day": ["#FFFFFF", 1.0, "#FFFFFF"], "dusk": ["#FFD2A8", 0.86, "#B8A4EE"], "night": ["#A2AEFF", 0.4, "#6C66C0"],
 }
 
 
@@ -84,27 +99,31 @@ static func hour_key(hour: int) -> String:
 static func light_at(hour: int, type := "heart") -> Array:
 	var l: Dictionary = LIGHTS.get(type, LIGHTS["heart"])
 	var h: Array = HOUR_LIGHT[hour_key(hour)]
-	var tint := Color(h[0])
+	var key := hour_key(hour)
+	var tint := Color(l.get(key, h[0]))
 	# The realm's light keeps its hue but not all its strength of colour, so
 	# the ground's own colours read under it (§21.10).
 	# The hour's tint is blended in rather than multiplied, so a green meadow
 	# under a low amber sun stays green and glows, not olive.
-	var sun := Color(TYPES.get(type, TYPES["heart"])["light"]).lerp(Color.WHITE, 0.35).lerp(tint, 0.45)
+	var sun := Color(TYPES.get(type, TYPES["heart"])["light"]).lerp(Color.WHITE, 0.35).lerp(tint,
+		0.45 if key == "day" else 0.7)
 	var ambient := Color(l["sky"]).lerp(Color(l["under"]), 0.45).lerp(Color("#B8B0E0"), 0.3) * Color(h[2])
-	return [sun, float(l["sun"]) * float(h[1]), ambient, 0.24 if hour_key(hour) != "night" else 0.3]
+	var dark: float = l.get("dark", 1.0)
+	return [sun, float(l["sun"]) * lerpf(1.0, float(h[1]), dark), ambient, 0.24 if key != "night" else 0.3]
 
 
 ## The realm's ambient as a hemisphere: what the sky gives a face turned up
 ## and the ground one turned down, by the hour.
 static func hemisphere_at(hour: int, type := "heart") -> Array[Color]:
 	var l: Dictionary = LIGHTS.get(type, LIGHTS["heart"])
-	var tint := Color(HOUR_LIGHT[hour_key(hour)][2])
-	var above := Color(l["sky"]) * tint
-	var below := Color(l["under"]) * tint
+	var tint := Color.WHITE.lerp(Color(HOUR_LIGHT[hour_key(hour)][2]), l.get("dark", 1.0))
+	var fill: float = l.get("fill", 1.0)
+	var above := Color(l["sky"]) * tint * fill
+	var below := Color(l["under"]) * tint * fill
 	if hour_key(hour) == "night":
 		# Moonlight: a cool blue from above keeps the ground's hue instead of
 		# greying it.
-		above = above.lerp(Color("#5868C8"), 0.55)
+		above = above.lerp(Color(l["night"]).darkened(0.35), 0.6)
 		below = below.lerp(Color("#1A1840"), 0.3)
 	return [above, below]
 
