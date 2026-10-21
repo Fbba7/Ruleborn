@@ -65,10 +65,9 @@ static func round_action(icon: String, words: String, pressed: Callable, main :=
 	return v
 
 
-## A settings row: an icon, a title and a line under it, and an on/off
-## switch drawn as a chip that says On or Off.
-static func toggle_row(icon: String, title: String, line: String, on_words: String, on: bool,
-		pressed: Callable) -> PanelContainer:
+## A settings row: an icon, a title and a line under it, and a switch that
+## says On or Off in words; `toggled_to` is called with the new state.
+static func toggle_row(icon: String, title: String, line: String, on: bool, toggled_to: Callable) -> PanelContainer:
 	var p := UI.panel("card")
 	p.name = "ToggleRow"
 	var row := HBoxContainer.new()
@@ -89,8 +88,8 @@ static func toggle_row(icon: String, title: String, line: String, on_words: Stri
 		s.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		words.add_child(s)
 	row.add_child(words)
-	var c := chip(on_words, on, pressed)
-	c.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(c)
+	var sw := KitSwitch.make(on, Strings.t("KIT_ON"), Strings.t("KIT_OFF"), title, toggled_to)
+	sw.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(sw)
 	p.add_child(row)
 	return p

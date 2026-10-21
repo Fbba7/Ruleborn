@@ -1164,3 +1164,5 @@ KIT_BACK,Back,Back,Voltar,Voltar,Zurück,Retour
 KIT_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
 KIT_FULL,Full,Full,Cheio,Cheio,Voll,Plein
 KIT_TAB_BADGE,%s: %s new,%s: %s new,%s: %s novos,%s: %s novos,%s: %s neu,%s : %s nouveaux
+KIT_ON,On,On,Ligado,Ligado,An,Activé
+KIT_OFF,Off,Off,Desligado,Desligado,Aus,Désactivé

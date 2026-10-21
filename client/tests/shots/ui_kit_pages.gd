@@ -63,9 +63,17 @@ static func _controls(column: VBoxContainer) -> void:
 	rounds.add_child(KitNav.back(func() -> void: pass))
 	column.add_child(rounds)
 	column.add_child(KitControls.toggle_row("settingsandwellbeing/reducedmotion", "Reduced motion",
-		"No swoops, fewer particles", "On", true, func() -> void: pass))
+		"No swoops, fewer particles", true, func(_on: bool) -> void: pass))
 	column.add_child(KitControls.toggle_row("settingsandwellbeing/accessibility", "High contrast",
-		"Opaque cards, heavier outlines", "Off", false, func() -> void: pass))
+		"Opaque cards, heavier outlines", false, func(_on: bool) -> void: pass))
+	var sw := UI.row(10)
+	var slider := HSlider.new()
+	slider.custom_minimum_size = Vector2(UI.px(140), UI.px(48))
+	slider.value = 60
+	sw.add_child(slider)
+	column.add_child(sw)
+	column.add_child(KitPanels.locked("settingsandwellbeing/playtimereminder", "Play reminder", "Every 60 min",
+		"Set for ages 13 to 15"))
 	column.add_child(UI.field("Keeper name"))
 	column.add_child(UI.grow())
 	column.add_child(KitNav.tabs("heist", {"islands": 3, "laws": 1, "crew": 2}))
