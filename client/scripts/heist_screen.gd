@@ -344,9 +344,11 @@ func _refresh() -> void:
 		picker_across.text = p.get("across", "")
 	gait_button.accessibility_name = Strings.term("GAIT", me["gait"])
 	gait_button.tooltip_text = gait_button.accessibility_name
-	(gait_button.get_meta("plate") as Label).text = gait_button.accessibility_name
-	gait_button.set_meta("icon", str(me["gait"]))
-	FxSkin.redraw(gait_button)
+	(gait_button.get_meta("words") as Label).text = gait_button.accessibility_name
+	if str(gait_button.get_meta("icon", "")) != str(me["gait"]):
+		gait_button.set_meta("icon", str(me["gait"]))
+		for c in gait_button.find_children("*", "FxDraw", true, false):
+			(c as FxDraw).queue_redraw()
 	var crew := controller.world.crew()
 	for i in crew_buttons.size():
 		var b := crew_buttons[i]
@@ -568,18 +570,22 @@ func _build() -> void:
 	main.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	main.alignment = BoxContainer.ALIGNMENT_END
 	main.add_theme_constant_override("separation", UI.px(6))
-	gait_button = FxSkin.icon_button(Strings.term("GAIT", "Walk"), controller.next_gait, "Walk")
-	var gait := _named(gait_button, Strings.term("GAIT", "Walk"))
-	gait.size_flags_vertical = Control.SIZE_SHRINK_END
-	main.add_child(gait)
-	var go := UI.action("", controller.get_out, "red", Strings.t("HEIST_GET_OUT"))
-	go.tooltip_text = Strings.t("HEIST_GET_OUT")
-	go.custom_minimum_size = Vector2.ONE * UI.px(68)
-	UI.dress(go, "red", 999)
-	var skiff := Icons.view("heistcontrols/getout", 34.0)
-	skiff.set_anchors_preset(Control.PRESET_FULL_RECT)
-	go.add_child(skiff)
-	main.add_child(_named(go, Strings.t("HEIST_GET_OUT")))
+	# The designs' Cast and Get out: rounded squares with an icon over their
+	# word. The gait stands where Cast does (the build has no casts yet).
+	gait_button = _square(Strings.term("GAIT", "Walk"), controller.next_gait, "leather")
+	gait_button.set_meta("icon", "Walk")
+	var feet := FxDraw.new(func(ci: Control) -> void:
+		FxIcons.order(ci, ci.size * 0.5, minf(ci.size.x, ci.size.y), str(gait_button.get_meta("icon", "")),
+			FxSkin.ON_DARK))
+	feet.custom_minimum_size = Vector2.ONE * UI.px(28)
+	(gait_button.get_meta("box") as VBoxContainer).add_child(feet)
+	(gait_button.get_meta("box") as VBoxContainer).move_child(feet, 0)
+	main.add_child(gait_button)
+	var go := _square(Strings.t("HEIST_GET_OUT"), controller.get_out, "red")
+	var skiff := Icons.view("heistcontrols/getout", 28.0)
+	(go.get_meta("box") as VBoxContainer).add_child(skiff)
+	(go.get_meta("box") as VBoxContainer).move_child(skiff, 0)
+	main.add_child(go)
 	right.add_child(main)
 	band.add_child(right)
 	actions_band = band
@@ -597,23 +603,34 @@ func _picker_line(box: VBoxContainer) -> Label:
 	return l
 
 
-## A round control with its name on a plate beneath it (the designs'
-## round actions), so what it does is said in words as well as drawn.
-func _named(b: Button, words: String) -> VBoxContainer:
-	var v := VBoxContainer.new()
-	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_theme_constant_override("separation", -UI.px(8))
-	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	v.add_child(b)
-	var plate := KitStatus.plate(words)
-	plate.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var l := plate.get_child(0) as Label
-	l.theme_type_variation = "Kicker"
-	l.uppercase = true
-	v.add_child(plate)
-	b.set_meta("plate", l)
-	return v
+## The designs' square order (Cast, Get out): a rounded square in the kit's
+## `look`, an icon over its word inside it; the screen puts the icon in the
+## VBox under meta "box". Its word is meta "words"; a screen reader hears it.
+func _square(words: String, call: Callable, look: String) -> Button:
+	var b := UI.action("", call, look, words)
+	b.tooltip_text = words
+	b.custom_minimum_size = Vector2(UI.px(66), UI.px(60))
+	b.size_flags_vertical = Control.SIZE_SHRINK_END
+	UI.dress(b, look, 16.0)
+	var box := VBoxContainer.new()
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	box.add_theme_constant_override("separation", 0)
+	box.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var l := FxSkin.label(words, 14.0)
+	l.add_theme_constant_override("outline_size", UI.px(3))
+	box.add_child(l)
+	b.add_child(box)
+	b.set_meta("box", box)
+	b.set_meta("words", l)
+	# As wide as its word needs with §20.8's large text, never narrower than
+	# the designs' square.
+	var fit := func() -> void:
+		b.custom_minimum_size = Vector2(maxf(UI.px(66), l.get_minimum_size().x + UI.px(14)),
+			maxf(UI.px(60), l.get_minimum_size().y + UI.px(36)))
+	fit.call()
+	l.minimum_size_changed.connect(fit)
+	return b
 
 
 ## A HUD button: `UI.button`'s sizes and haptics, in the heist's own skin.

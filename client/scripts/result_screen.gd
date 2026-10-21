@@ -94,6 +94,7 @@ func _ready() -> void:
 	moment_when = FxSkin.label("", 13.0)
 	moment_when.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT)
 	moment_when.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	moment_when.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	moment_label = FxSkin.label("", UI.TEXT_POINTS)
 	moment_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	moment_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

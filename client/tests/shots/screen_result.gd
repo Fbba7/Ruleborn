@@ -18,6 +18,11 @@ func _go() -> void:
 	frame.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	root.add_child(frame)
 	App.services = Fixtures.answered(Services.build(frame, "", null, "user://outbox-shot.json"))
+	if OS.get_environment("LOCALE") != "":
+		Strings.set_locale(OS.get_environment("LOCALE"))
+	if OS.get_environment("TEXT") != "":
+		Settings.text_scale = int(OS.get_environment("TEXT"))
+		Settings.apply()
 	# The golden clean heist on the fixture realm: what the result shows when
 	# a heist pays. GOLDEN picks another.
 	var golden := OS.get_environment("GOLDEN") if OS.get_environment("GOLDEN") != "" else "planned-clean"

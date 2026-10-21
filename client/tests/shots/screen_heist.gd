@@ -32,6 +32,11 @@ func _go() -> void:
 	frame.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	root.add_child(frame)
 	App.services = Fixtures.answered(Services.build(frame, "", null, "user://outbox-shot.json"))
+	if OS.get_environment("LOCALE") != "":
+		Strings.set_locale(OS.get_environment("LOCALE"))
+	if OS.get_environment("TEXT") != "":
+		Settings.text_scale = int(OS.get_environment("TEXT"))
+		Settings.apply()
 	Settings.camera_buttons = OS.get_environment("BUTTONS") != ""
 	Settings.high_contrast = OS.get_environment("CONTRAST") != ""
 	Settings.left_handed = OS.get_environment("LEFT") != ""

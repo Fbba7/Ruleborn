@@ -28,6 +28,7 @@ var loot_panel: PanelContainer
 var realm_label: Label
 var laws_box: VBoxContainer
 var clock_panel: PanelContainer
+var alarm_panel: PanelContainer
 var meter: FxDraw
 var loot_bars: FxDraw
 
@@ -49,17 +50,32 @@ var _coins: FxDraw
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
+	# Three columns; with §20.8's large text the loot takes a row of its own
+	# under them, rather than outgrow the phone.
 	var top := HBoxContainer.new()
 	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	top.add_theme_constant_override("separation", UI.px(4))
 	add_child(top)
+	var lower := top
+	if Settings.text_scale > 130:
+		lower = HBoxContainer.new()
+		lower.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(lower)
 	# The law banner, top left.
 	var left := _side(top, BoxContainer.ALIGNMENT_BEGIN)
-	var laws := FxSkin.panel("glass", 12.0, 5.0)
+	# The designs': "Laws here" in gold, a leather chip for each law.
+	var laws := VBoxContainer.new()
+	laws.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	laws.add_theme_constant_override("separation", UI.px(4))
 	laws.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	var here := FxSkin.label(Strings.t("HUD_LAWS_HERE"), 14.0)
+	here.add_theme_color_override("font_color", FxSkin.GOLD)
+	here.add_theme_constant_override("outline_size", UI.px(3))
+	here.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	laws.add_child(here)
 	laws_box = VBoxContainer.new()
 	laws_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	laws_box.add_theme_constant_override("separation", UI.px(3))
+	laws_box.add_theme_constant_override("separation", UI.px(5))
 	laws.add_child(laws_box)
 	laws.name = "Laws"
 	laws.visible = false
@@ -70,38 +86,50 @@ func _init() -> void:
 	centre.add_theme_constant_override("separation", UI.px(3))
 	centre.alignment = BoxContainer.ALIGNMENT_BEGIN
 	centre.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	clock_panel = FxSkin.panel("glass", 20.0, 6.0)
-	clock_label = FxSkin.label("", 24.0, "glass", true)
+	# The clock on cream with a gold rim, in tabular figures; the alarm on
+	# leather beneath it: its word and "N / 6", six segments under them.
+	clock_panel = _surface("parchment", true)
+	clock_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	clock_label = FxSkin.label("", 26.0, "parchment")
+	clock_label.add_theme_font_override("font", FxSkin.figures())
+	clock_label.custom_minimum_size.x = UI.px(76)
 	clock_panel.add_child(clock_label)
 	centre.add_child(clock_panel)
-	var alarm := FxSkin.panel("glass", 12.0, 6.0)
+	var alarm := _surface("leather")
+	alarm_panel = alarm
 	var alarm_box := VBoxContainer.new()
 	alarm_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	alarm_box.add_theme_constant_override("separation", 0)
-	alarm_label = FxSkin.label("", 13.0)
-	alarm_box.add_child(alarm_label)
-	meter = FxDraw.new(_draw_meter, Vector2(UI.px(13) * BELLS, UI.px(17)))
+	alarm_box.add_theme_constant_override("separation", UI.px(3))
+	var alarm_row := HFlowContainer.new()
+	alarm_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	alarm_row.add_theme_constant_override("h_separation", UI.px(8))
+	var alarm_word := FxSkin.label(Strings.t("HUD_ALARM_WORD"), 14.0)
+	alarm_word.add_theme_color_override("font_color", FxSkin.PARCH_TOP)
+	alarm_word.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	alarm_word.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	alarm_row.add_child(alarm_word)
+	alarm_label = FxSkin.label("", 14.0)
+	alarm_label.add_theme_font_override("font", FxSkin.figures())
+	alarm_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	alarm_row.add_child(alarm_label)
+	alarm_box.add_child(alarm_row)
+	meter = FxDraw.new(_draw_meter, Vector2(UI.px(17) * BELLS, UI.px(13)))
 	alarm_box.add_child(meter)
 	alarm.add_child(alarm_box)
 	centre.add_child(alarm)
 	top.add_child(centre)
 	# The loot, top right: two numbers and the bars beside them.
-	var right_side := _side(top, BoxContainer.ALIGNMENT_END)
-	var right := FxSkin.panel("glass", 12.0, 7.0)
+	var right_side := _side(lower, BoxContainer.ALIGNMENT_END)
+	var right := _surface("leather")
 	right.size_flags_horizontal = Control.SIZE_SHRINK_END
 	loot_panel = right
 	var right_box := VBoxContainer.new()
 	right_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	right_box.add_theme_constant_override("separation", UI.px(3))
-	# Side by side; with §20.8's large text, one under the other.
-	var stats := HFlowContainer.new()
-	stats.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	stats.alignment = FlowContainer.ALIGNMENT_END
-	stats.add_theme_constant_override("h_separation", UI.px(10))
-	stats.custom_minimum_size.x = UI.px(84)
-	room_label = _stat(stats, Strings.t("HUD_ROOM"))
-	left_label = _stat(stats, Strings.t("HUD_LEFT"))
-	right_box.add_child(stats)
+	right_box.custom_minimum_size.x = UI.px(98)
+	# A row each: its name, and the number at the row's end.
+	room_label = _stat(right_box, Strings.t("HUD_ROOM"))
+	left_label = _stat(right_box, Strings.t("HUD_LEFT"))
 	# The bags' fill and the Vault's cracking as bars, each beside the
 	# designs' icon for it.
 	var bars := HBoxContainer.new()
@@ -129,22 +157,42 @@ func _init() -> void:
 	add_child(realm_panel)
 
 
-## One of the loot panel's numbers: its name small above it, the number
-## large in tabular figures; returns the number's label.
-func _stat(row: HFlowContainer, title: String) -> Label:
-	var col := VBoxContainer.new()
-	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	col.add_theme_constant_override("separation", 0)
-	var name_label := FxSkin.label(title, 13.0)
+## One of the loot panel's numbers: its name, and the number in tabular
+## figures at the row's end (wrapping under it with large text); returns the
+## number's label.
+func _stat(box: VBoxContainer, title: String) -> Label:
+	var row := HFlowContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("h_separation", UI.px(6))
+	var name_label := FxSkin.label(title, 14.0)
 	name_label.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT)
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	col.add_child(name_label)
-	var number := FxSkin.label("", 20.0)
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(name_label)
+	var number := FxSkin.label("", 18.0)
 	number.add_theme_font_override("font", FxSkin.figures())
 	number.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	col.add_child(number)
-	row.add_child(col)
+	number.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(number)
+	box.add_child(row)
 	return number
+
+
+## A HUD surface in the kit's material (§21.8's leather or parchment over
+## the world), gold-rimmed as the designs' clock when asked.
+static func _surface(look: String, gold_rim := false) -> PanelContainer:
+	var p := UI.panel(look)
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if gold_rim:
+		_gold_rim(p)
+	return p
+
+
+static func _gold_rim(p: Control) -> void:
+	var box := RbBox.of(p)
+	if box != null and box.material is ShaderMaterial:
+		(box.material as ShaderMaterial).set_shader_parameter("rim_color", FxSkin.GOLD)
+		(box.material as ShaderMaterial).set_shader_parameter("rim_w", UI.px(3.5))
 
 
 ## Words that wrap between words: as narrow as their longest word, so a long
@@ -157,7 +205,7 @@ static func _wrap_by_words(l: Label) -> void:
 	var widest := 0.0
 	for w: String in l.text.replace("\n", " ").split(" ", false):
 		widest = maxf(widest, font.get_string_size(w, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x)
-	l.custom_minimum_size.x = minf(ceilf(widest) + 2.0, UI.px(84))
+	l.custom_minimum_size.x = minf(ceilf(widest) + 2.0, UI.px(150))
 
 
 ## A side column of the top row: it takes what room there is and holds its
@@ -179,16 +227,16 @@ func show_state(r: RulebornReplay) -> void:
 	var red := r.ticks() > 0 and left <= RED_SECONDS
 	if red != _red:
 		_red = red
-		var box := FxSkin.glass(20.0, 6.0)
-		if red:
-			# Paper on §21.8's alarm fill: the one red that carries words.
-			box.bg_color = FxSkin.ALARM_DEEP
-		clock_panel.add_theme_stylebox_override("panel", box)
+		# The last 30 seconds in paper on the alarm's red; else ink on cream.
+		RbBox.of(clock_panel).set_look("red" if red else "parchment")
+		_gold_rim(clock_panel)
+		clock_label.add_theme_color_override("font_color", FxSkin.PARCH_TOP if red else FxSkin.PARCH_INK)
+		clock_label.add_theme_constant_override("outline_size", UI.px(3) if red else 0)
 	if r.alarm() > _alarm and r.tick() > 0:
 		_ring = 1.0
 	_alarm = r.alarm()
-	alarm_label.text = Strings.t("HUD_ALARM", "%d / %d" % [_alarm, BELLS])
-	_wrap_by_words(alarm_label)
+	alarm_label.text = "%d / %d" % [_alarm, BELLS]
+	alarm_panel.accessibility_name = Strings.t("HUD_ALARM", alarm_label.text)
 	alarm_label.add_theme_color_override("font_color", FxSkin.ALARM_ON_DARK if _alarm >= 4 else FxSkin.ON_DARK)
 	meter.queue_redraw()
 	var carried := 0
@@ -234,8 +282,8 @@ func _show_laws(r: RulebornReplay) -> void:
 		var school := str(p.get("school", ""))
 		var icon := "laws/" + str(p.get("law", "")).replace("_", "")
 		if Icons.has(icon):
-			# The law's own icon from the designs.
-			# On a light disc: a dark law's icon (Glowing dark) reads on the glass.
+			# The law's own icon from the designs, on a light disc so a dark
+			# one (Glowing dark) reads on the leather.
 			var disc := PanelContainer.new()
 			disc.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			var ring := StyleBoxFlat.new()
@@ -245,17 +293,20 @@ func _show_laws(r: RulebornReplay) -> void:
 			ring.set_corner_radius_all(UI.px(14))
 			ring.set_content_margin_all(UI.px(2))
 			disc.add_theme_stylebox_override("panel", ring)
+			disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 			disc.add_child(Icons.view(icon, 22.0))
 			chip.add_child(disc)
 		else:
 			chip.add_child(FxDraw.new(func(ci: Control) -> void:
 				FxIcons.school(ci, ci.size / 2.0, minf(ci.size.x, ci.size.y), school), Vector2(UI.px(20), UI.px(20))))
-		var words := FxSkin.label(Strings.term("LAW", str(p.get("law", ""))), 13.0)
+		var words := FxSkin.label(Strings.term("LAW", str(p.get("law", ""))), 15.0)
 		words.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		_wrap_by_words(words)
 		words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		chip.add_child(words)
-		laws_box.add_child(chip)
+		var plate := _surface("leather")
+		plate.add_child(chip)
+		laws_box.add_child(plate)
 	(laws_box.get_parent() as Control).visible = not laws.is_empty()
 
 
@@ -307,14 +358,24 @@ func _draw_flights(ci: Control) -> void:
 
 
 func _draw_meter(ci: Control) -> void:
-	var s := ci.size.y
 	var step := ci.size.x / BELLS
+	var gap := maxf(2.0, step * 0.12)
 	for i in BELLS:
-		var c := Vector2(step * (i + 0.5), s * 0.5)
+		var r := Rect2(Vector2(step * i + gap * 0.5, 0), Vector2(step - gap, ci.size.y))
 		if _ring > 0.0 and i < _alarm and not Settings.reduced_motion:
-			c.x += sin(_time * 40.0 + i) * s * 0.12 * _ring
-		var fill := FxSkin.ALARM if i >= 3 else FxSkin.GOLD
-		FxIcons.bell(ci, c, s * 0.9, fill, i < _alarm)
+			r.position.y += sin(_time * 40.0 + i) * ci.size.y * 0.12 * _ring
+		# The designs' segments: amber to three, red from four, dark when not
+		# yet reached, each with its ink edge.
+		var lit := i < _alarm
+		var box := StyleBoxFlat.new()
+		box.bg_color = (FxSkin.ALARM if i >= 3 else FxSkin.GOLD) if lit else Color("#1C1210")
+		box.border_color = FxSkin.INK_LINE
+		box.set_border_width_all(maxi(1, UI.px(1)))
+		box.set_corner_radius_all(int(ci.size.y * 0.3))
+		FxPen.style_box(ci, box, r)
+		if lit:
+			FxPen.rect(ci, Rect2(r.position + Vector2(r.size.x * 0.2, r.size.y * 0.18), Vector2(r.size.x * 0.6,
+				r.size.y * 0.16)), Color(1, 1, 1, 0.4))
 
 
 ## The bags' fill and the Vault's cracking: the bars say which binds first
