@@ -197,8 +197,8 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 	var name_label := Label.new()
 	name_label.text = str(row.get("name", ""))
 	var school := str(c.get("school", "")).to_lower()
-	var top := HBoxContainer.new()
-	top.add_theme_constant_override("separation", UI.px(8))
+	var top := HFlowContainer.new()
+	top.add_theme_constant_override("h_separation", UI.px(8))
 	var plate := StageHeroKit.name_plate(name_label, school, "%s · %s" % [RosterPresenter.kind_name(kind),
 		Strings.term("ROLE", str(c.get("role", "")))])
 	plate.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -276,7 +276,7 @@ static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "
 		if level > 0:
 			StageHeroSkin.pin(tile, StageHeroSkin.badge(str(level), Color("#E9B65C"), 20.0), Control.PRESET_TOP_LEFT)
 		var state: Color = Palette.ROSTER_STATE.get(row["state"], Palette.STONE)
-		StageHeroSkin.pin(tile, StageHeroSkin.badge(str(row["mark"]), state.darkened(0.45), 18.0),
+		StageHeroSkin.pin(tile, StageHeroSkin.badge(str(row["mark"]), state.darkened(0.6), 18.0),
 			Control.PRESET_TOP_RIGHT)
 		StageHeroSkin.pin(tile, StageHeroSkin.badge(str(UI.SHAPE_GLYPH.get(Tokens.shape(school), "")), shade, 16.0),
 			Control.PRESET_BOTTOM_LEFT)

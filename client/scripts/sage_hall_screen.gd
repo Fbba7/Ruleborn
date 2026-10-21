@@ -34,27 +34,35 @@ func _on_changed(slice: StringName) -> void:
 func _build() -> void:
 	var column := UI.frame(self)
 	StageHeroSkin.night(self)
-	column.add_child(StageHeroSkin.title(UI.title(Strings.t("SAGE_TITLE"))))
-	var top := VBoxContainer.new()
-	header_label = UI.label("", UI.TEXT_POINTS, true)
-	top.add_child(header_label)
-	guard_label = UI.label("", UI.TEXT_POINTS, true)
-	top.add_child(guard_label)
-	column.add_child(StageHeroSkin.plate(top, true))
+	# The hall runs to the screen's edges and under the status bar.
+	var safe := column.get_parent() as MarginContainer
+	for side: String in ["margin_left", "margin_right", "margin_top"]:
+		safe.add_theme_constant_override(side, 0)
 	status_label = UI.status("info", "")
-	column.add_child(StageHeroSkin.plate(status_label))
+	column.add_child(RosterScreen.padded(StageHeroSkin.plate(status_label)))
 	body = UI.scroll(column)
+	body.add_theme_constant_override("separation", UI.px(10))
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(0, UI.px(230))
+	stage.custom_minimum_size = Vector2(0, UI.px(Tokens.number("size", "safe_top_points") + 250.0))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(stage)
+	var top := VBoxContainer.new()
+	top.add_theme_constant_override("separation", UI.px(2))
+	header_label = StageHeroKit.words("", 15.0, StageHeroSkin.LIGHT)
+	header_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	top.add_child(header_label)
+	guard_label = StageHeroKit.words("", 15.0, Color("#FFE6A0"))
+	guard_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	top.add_child(guard_label)
 	cards = VBoxContainer.new()
-	cards.add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
-	body.add_child(cards)
+	cards.add_theme_constant_override("separation", UI.px(10))
+	cards.add_child(StageHeroMaterial.panel("glass", top, 14.0, 8.0))
+	body.add_child(RosterScreen.padded(cards))
 	var actions := UI.row(-1.0, true)
-	actions.add_child(StageHeroSkin.button(UI.button(Strings.t("COMMON_HOME"),
-		func() -> void: App.services.router.go(&"home"), true), true))
-	column.add_child(UI.narrow(actions))
+	actions.alignment = FlowContainer.ALIGNMENT_CENTER
+	var home := UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"))
+	actions.add_child(StageHeroMaterial.button(home, "leather"))
+	column.add_child(RosterScreen.padded(actions))
 
 
 func _refresh() -> void:
@@ -71,12 +79,13 @@ func _refresh() -> void:
 		UI.set_status(status_label, "info", Strings.t("COMMON_LOADING"))
 	else:
 		UI.set_status(status_label, "info", "")
-	status_label.get_parent().visible = status_label.text != ""
+	status_label.get_parent().get_parent().visible = status_label.text != ""
 	header_label.text = h.get("header", "")
 	guard_label.text = h.get("guard", "")
 	for c in cards.get_children():
-		cards.remove_child(c)
-		c.queue_free()
+		if c.get_index() > 0:
+			cards.remove_child(c)
+			c.queue_free()
 	stage.visible = h["ready"]
 	if not h["ready"]:
 		return
@@ -93,7 +102,8 @@ func _refresh() -> void:
 
 
 ## The Sages in their hall, the one on guard a step forward, a locked one
-## in silhouette; drawn again only when that changes.
+## in silhouette, each named beneath on a row of plates that shrink their
+## words, and wrap them, to fit; drawn again only when that changes.
 func _stand(sages: Array) -> void:
 	var list: Array[String] = []
 	var looks: Array[String] = []
@@ -110,41 +120,133 @@ func _stand(sages: Array) -> void:
 	stage.show_kinds(list, looks, "hall")
 	if guard >= 0:
 		stage.tables[guard].position.z += 0.35
+	for n in stage.get_children():
+		if n.has_meta("words"):
+			n.queue_free()
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(4))
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for s: Dictionary in sages:
+		row.add_child(_name_plate(s, sages.size()))
+	var m := StageHeroSkin.on_stage(stage, row, Control.PRESET_CENTER_BOTTOM)
+	m.set_meta("words", true)
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 
+## A Sage's name on the hall's floor, under where it stands: Marcellus on a
+## glass plate, gold-edged for the one on guard; its words a size smaller
+## for every Sage past three, and wrapping when still too long.
+static func _name_plate(s: Dictionary, count: int) -> Control:
+	var points := clampf(17.0 - float(maxi(0, count - 3)) * 1.5, 13.0, 17.0)
+	var l := StageHeroKit.words(str(s["name"]), points, StageHeroSkin.LIGHT if s["unlocked"] else StageHeroSkin.LIGHT_SOFT)
+	StageHeroSkin.named(l)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.custom_minimum_size.x = UI.px(40)
+	var p := StageHeroMaterial.panel("tab" if s["guarding"] else "glass", l, 10.0, 5.0)
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	p.size_flags_vertical = Control.SIZE_SHRINK_END
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return p
+
+
+## A Sage's card: its portrait with its school's shape and the guard's mark,
+## its name, whether it is unlocked or on guard as chips, its powers and its
+## at-home effect, every fifth level's gain on a track of pips, and the
+## guard choice.
 func _sage(s: Dictionary, busy: bool) -> Control:
 	var box := VBoxContainer.new()
-	var tile := StageHeroSkin.portrait_tile(str(s["id"]), "" if s["unlocked"] else "shadow", 120.0)
+	box.add_theme_constant_override("separation", UI.px(6))
+	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", UI.px(10))
+	var tile := StageHeroSkin.portrait_tile(str(s["id"]), "" if s["unlocked"] else "shadow", 96.0)
+	tile.custom_minimum_size.x = UI.px(96)
 	var school := StageHeroFigure.school(StageHeroFigure.key(str(s["id"])))
 	var shade: Color = (Palette.SCHOOL.get(school, Palette.MOTION) as Color).darkened(0.55)
-	StageHeroSkin.pin(tile, StageHeroSkin.badge(str(UI.SHAPE_GLYPH.get(Tokens.shape(school), "")), shade, 18.0),
+	StageHeroSkin.pin(tile, StageHeroSkin.badge(str(UI.SHAPE_GLYPH.get(Tokens.shape(school), "")), shade, 16.0),
 		Control.PRESET_TOP_RIGHT)
 	if s["guarding"]:
 		# The Roster's mark for a guard, so the post reads without its colour.
 		StageHeroSkin.pin(tile, StageHeroSkin.badge(str(RosterPresenter.MARK["guarding"]), Palette.MATTER.darkened(0.45),
-			18.0), Control.PRESET_TOP_LEFT)
-	box.add_child(tile)
-	box.add_child(StageHeroSkin.named(UI.label(s["name"], UI.TITLE_POINTS * 0.75, true)))
-	box.add_child(UI.status("success" if s["unlocked"] else "info", s["lock"]))
+			16.0), Control.PRESET_TOP_LEFT)
+	head.add_child(tile)
+	var side := VBoxContainer.new()
+	side.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	side.add_theme_constant_override("separation", UI.px(4))
+	var name := StageHeroKit.words(s["name"], 24.0, StageHeroSkin.LIGHT)
+	StageHeroSkin.named(name)
+	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	name.custom_minimum_size.x = UI.px(80)
+	side.add_child(name)
+	var chips := HFlowContainer.new()
+	chips.add_theme_constant_override("h_separation", UI.px(6))
+	chips.add_theme_constant_override("v_separation", UI.px(4))
+	chips.add_child(StageHeroKit.chip(s["lock"], "#2F8A45" if s["unlocked"] else "card", "✓" if s["unlocked"] else ""))
 	if s["guarding"]:
-		box.add_child(UI.status("success", Strings.t("SAGE_ON_GUARD")))
-		box.add_child(UI.label(Strings.t("SAGE_STAYS"), UI.TEXT_POINTS, true))
-	box.add_child(UI.label(s["powers"], UI.TEXT_POINTS, true))
-	box.add_child(UI.label(s["home"], UI.TEXT_POINTS, true))
-	box.add_child(UI.label(Strings.t("SAGE_EVERY_FIFTH"), UI.TEXT_POINTS, true))
+		chips.add_child(StageHeroKit.chip(Strings.t("SAGE_ON_GUARD"), "#5A3FB0", str(RosterPresenter.MARK["guarding"])))
+	side.add_child(chips)
+	head.add_child(side)
+	box.add_child(head)
+	if s["guarding"]:
+		box.add_child(StageHeroKit.para(Strings.t("SAGE_STAYS"), 15.0, Color("#FFE6A0")))
+	var key := str(s["id"]).to_upper()
+	box.add_child(StageHeroKit.kicker(Strings.t("SAGE_KICK_POWERS")))
+	for i: int in [1, 2, 3]:
+		if Strings.rows().has("SAGE_POWER_%s_%d" % [key, i]):
+			box.add_child(_power(key, i))
+	var home := StageHeroKit.grid([
+		StageHeroKit.card(Strings.t("SAGE_KICK_HOME"), StageHeroKit.para(Strings.t("SAGE_HOME_ONLY_" + key), 15.0),
+			"well"),
+		StageHeroKit.card(Strings.t("SAGE_KICK_GUARD"), StageHeroKit.para(_sentence(Strings.t("SAGE_GUARD_" + key)),
+			15.0), "well")], self)
+	box.add_child(home)
+	box.add_child(StageHeroKit.kicker(Strings.t("SAGE_EVERY_FIFTH")))
 	for lv: Dictionary in s["levels"]:
-		var line := UI.label(lv["text"], UI.TEXT_POINTS, true)
-		line.set_meta("reached", lv["reached"])
-		box.add_child(line)
+		box.add_child(_step(lv))
 	var o: Dictionary = s["button"]
-	var b := StageHeroSkin.button(UI.button(o["action"], controller.station.bind(o["sage"]), false, Color(),
-		o["spoken"]), s["unlocked"] and not s["guarding"])
+	var b := UI.button(o["action"], controller.station.bind(o["sage"]), false, Color(), o["spoken"])
+	StageHeroMaterial.button(b, "gold" if s["unlocked"] and not s["guarding"] else "leather")
 	b.disabled = busy or not o["can"]
 	b.set_meta("key", o["key"])
 	b.set_meta("item", o["item"])
 	var r := UI.row()
 	r.add_child(b)
 	if o["why"] != "":
-		r.add_child(UI.label(o["why"], UI.TEXT_POINTS, true))
+		r.add_child(StageHeroKit.para(o["why"], 15.0))
 	box.add_child(r)
-	return StageHeroSkin.plate(box)
+	return StageHeroMaterial.panel("card", box, 16.0, 12.0)
+
+
+## One fifth level on the track: a round pip with its number, gold and
+## ticked when reached, and what it adds.
+static func _step(lv: Dictionary) -> Control:
+	var line := HBoxContainer.new()
+	line.add_theme_constant_override("separation", UI.px(8))
+	var reached: bool = lv["reached"]
+	var pip := StageHeroSkin.badge(str(lv["level"]), Color("#E9B65C") if reached else Color("#3A2A6A"), 15.0)
+	pip.custom_minimum_size = Vector2.ONE * UI.px(30)
+	line.add_child(pip)
+	var words := StageHeroKit.para(lv["text"], 14.0, StageHeroSkin.LIGHT if reached else StageHeroSkin.LIGHT_SOFT)
+	words.set_meta("reached", reached)
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	line.add_child(words)
+	return line
+
+
+## One heist power: its name on a gold chip and its uses beside it, then
+## what it does.
+static func _power(key: String, i: int) -> Control:
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(3))
+	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", UI.px(6))
+	head.add_child(StageHeroKit.chip(Strings.t("SAGE_POWER_%s_%d" % [key, i]), "gold"))
+	head.add_child(StageHeroKit.chip(Strings.t("SAGE_POWER_USES_%s_%d" % [key, i]), "card"))
+	v.add_child(head)
+	v.add_child(StageHeroKit.para(_sentence(Strings.t("SAGE_POWER_DOES_%s_%d" % [key, i])), 15.0))
+	return v
+
+
+## A card's clause as a sentence: its first letter raised.
+static func _sentence(words: String) -> String:
+	return words.left(1).to_upper() + words.substr(1)

@@ -105,6 +105,8 @@ static func badge(text: String, fill: Color, points := 18.0) -> PanelContainer:
 	l.add_theme_font_override("font", numbers_font())
 	l.add_theme_color_override("font_color", LIGHT if fill.get_luminance() < 0.5 else BROWN)
 	l.set_meta("own_ink", true)
+	# Lilita One is a display face, as heavy as a bold (§21.8).
+	l.set_meta("bold", true)
 	l.add_theme_color_override("font_outline_color", OUTLINE)
 	l.add_theme_constant_override("outline_size", UI.px(1))
 	var p := PanelContainer.new()

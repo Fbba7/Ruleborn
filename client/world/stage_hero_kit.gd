@@ -39,15 +39,21 @@ static func kicker(text: String, colour := Color("#E9B65C")) -> Label:
 	return l
 
 
-## A chip: a glyph and a word on a pill of `kind` (a material or a colour).
-static func chip(text: String, kind := "glass", glyph := "") -> PanelContainer:
+## A chip: a glyph and a word on a pill of `kind` (a material or a colour);
+## its words wrap when `wraps`, for a chip that may hold a phrase.
+static func chip(text: String, kind := "glass", glyph := "", wraps := false) -> PanelContainer:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(4))
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	var ink := StageHeroMaterial.ink(kind)
 	if glyph != "":
 		row.add_child(words(glyph, 14.0, ink))
-	row.add_child(words(text, 14.0, ink))
+	var said := words(text, 14.0, ink)
+	if wraps:
+		said.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		said.custom_minimum_size.x = UI.px(60)
+		said.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(said)
 	var p := StageHeroMaterial.panel(kind, row, 12.0, 9.0)
 	var b := p.get_theme_stylebox("panel") as StyleBoxTexture
 	b.content_margin_top = UI.px(4)

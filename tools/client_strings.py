@@ -82,6 +82,16 @@ def rows() -> list[tuple[str, str]]:
         out += [(f"SAGE_{key}", sg["name"]), (f"SAGE_POWERS_{key}", sg["heist_powers"]),
                 (f"SAGE_HOME_{key}", sg["at_home"])]
         out += [(f"SAGE_LEVEL_{lv}_{key}", text) for lv, text in sg["levels"].items()]
+        # The same card cut into its parts, for the hall's chips: each power's
+        # name, what it does and its uses ("Suspend", "switch off one law …",
+        # "1 use"); and the at-home effect apart from the on-guard one.
+        powers = re.findall(r"([A-Z][\w ]*?): (.*?) \(([^;)]*)[^)]*\)\.", sg["heist_powers"])
+        assert len(powers) == 3, f"{sg['id']}'s powers do not read as three"
+        for i, (name, does, uses) in enumerate(powers, 1):
+            out += [(f"SAGE_POWER_{key}_{i}", name), (f"SAGE_POWER_DOES_{key}_{i}", does),
+                    (f"SAGE_POWER_USES_{key}_{i}", uses)]
+        home, guard = sg["at_home"].split(" On guard: ")
+        out += [(f"SAGE_HOME_ONLY_{key}", home), (f"SAGE_GUARD_{key}", guard)]
     # §11.10's forms: each note's look and quirk, the same for every kind
     # (one per note, or the content disagrees with itself), and each note's
     # symbol (§8), for the Forms album (§23.2).

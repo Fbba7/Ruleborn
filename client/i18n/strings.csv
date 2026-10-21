@@ -649,6 +649,9 @@ SAGE_STAYS,A Sage on guard stays home from heists,A Sage on guard stays home fro
 SAGE_NONE_ON_GUARD,No Sage is on guard,No Sage is on guard,Nenhum Sábio está de guarda,Nenhum Sábio está de guarda,Kein Weiser hält Wache,Aucun Sage n'est de garde
 SAGE_STATIONED,%s is on guard at the Heart,%s is on guard at the Heart,%s está de guarda no Coração,%s está de guarda no Coração,%s hält Wache im Herzen,%s est de garde au Cœur
 SAGE_FAILED,The Sages did not change: %s,The Sages did not change: %s,Os Sábios não mudaram: %s,Os Sábios não mudaram: %s,Die Weisen haben sich nicht geändert: %s,Les Sages n'ont pas changé : %s
+SAGE_KICK_POWERS,Heist powers,Heist powers,Poderes no assalto,Poderes no assalto,Kräfte im Raubzug,Pouvoirs de casse
+SAGE_KICK_HOME,At home,At home,Em casa,Em casa,Zu Hause,À la maison
+SAGE_KICK_GUARD,On guard,On guard,De guarda,De guarda,Auf Wache,De garde
 ERR_SAGE_LOCKED,that Sage is not unlocked yet,that Sage is not unlocked yet,esse Sábio ainda não foi desbloqueado,esse Sábio ainda não foi desbloqueado,dieser Weise ist noch nicht freigeschaltet,ce Sage n'est pas encore débloqué
 ERR_NO_SUCH_SAGE,there is no such Sage,there is no such Sage,esse Sábio não existe,esse Sábio não existe,diesen Weisen gibt es nicht,ce Sage n'existe pas
 HOME_FORMS,Forms album,Forms album,Álbum de formas,Álbum de formas,Formenalbum,Album des formes
