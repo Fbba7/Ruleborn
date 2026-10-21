@@ -77,7 +77,7 @@ func _paint() -> void:
 	var r := minf(w, size.y / 1.12) * 0.46
 	var c := Vector2(w * 0.5, r + 2.0)
 	var colour: Color = Palette.ROLE.get(role, Palette.STONE)
-	var out := standing in ["Out", "Gone", "Captured"]
+	var out := standing in ["Out", "Gone", "Caught"]
 	var down := standing != "Active" and not out
 	# The drop shadow and the disc.
 	FxPen.circle(self, c + Vector2(0, r * 0.1), r * 1.04, Color(0.05, 0.0, 0.1, 0.35))

@@ -88,8 +88,9 @@ func open_entry(index: int) -> bool:
 
 ## The moments of a heist worth marking on its timeline, read by playing it
 ## through once: each guard knocked out, each rise of the alarm, the Vault
-## opening, each pylon broken. [{tick, kind}], kind "ko", "alarm", "vault" or
-## "pylon".
+## opening, each pylon broken, each guard alerted and each crew member
+## caught. [{tick, kind, who}], kind "ko", "alarm", "vault", "pylon", "seen"
+## (who: the guard) or "caught" (who: the crew member).
 static func moments(bytes: PackedByteArray, island: PackedByteArray) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	var r := RulebornReplay.new()
@@ -99,7 +100,25 @@ static func moments(bytes: PackedByteArray, island: PackedByteArray) -> Array[Di
 	var alarm := 0
 	var open := false
 	var standing := -1
+	var states: Array[String] = []
+	var caught: Array[bool] = []
 	while r.step():
+		var guards := r.guards()
+		for i in guards.size():
+			var state := str(guards[i]["state"])
+			if i >= states.size():
+				states.append(state)
+			elif state == "Alerted" and states[i] != "Alerted":
+				out.append({"tick": r.tick(), "kind": "seen", "who": i})
+			states[i] = state
+		var crew := r.crew()
+		for i in crew.size():
+			var is_caught := str(crew[i]["standing"]) == "Caught"
+			if i >= caught.size():
+				caught.append(is_caught)
+			elif is_caught and not caught[i]:
+				out.append({"tick": r.tick(), "kind": "caught", "who": i})
+			caught[i] = is_caught
 		var d := r.guards().filter(func(g: Dictionary) -> bool: return g["down"]).size()
 		if d > down:
 			out.append({"tick": r.tick(), "kind": "ko"})
@@ -212,7 +231,7 @@ func _draw_progress(ci: Control) -> void:
 	FxIcons.bar(ci, bar, float(replay.tick()) / whole, FxSkin.GOLD)
 	# Each moment's mark above the bar where it happens: stars for a
 	# knock-out, a bell for the alarm, a lock for the Vault, a shard for a
-	# pylon.
+	# pylon, a red "!" for a guard alerted, a red bubble for one caught.
 	var s := ci.size.y * 0.42
 	for m in marks:
 		var x := bar.position.x + bar.size.x * float(m["tick"]) / whole
@@ -226,6 +245,10 @@ func _draw_progress(ci: Control) -> void:
 				FxIcons.lock(ci, at, s, true)
 			"pylon":
 				FxIcons.star(ci, at, s * 0.4, Palette.MATTER, PI / 5.0)
+			"seen":
+				FxIcons.bubble(ci, at, s * 0.9, "!", FxSkin.ALARM)
+			"caught":
+				FxIcons.bubble(ci, at, s * 0.9, "z", FxSkin.ALARM_DEEP)
 
 
 ## A playback button in the heist's skin.
