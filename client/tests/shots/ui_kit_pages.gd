@@ -91,7 +91,7 @@ static func _status(column: VBoxContainer) -> void:
 		res.add_child(pill)
 	column.add_child(res)
 	var pills := UI.row(8)
-	pills.add_child(KitStatus.pill("82% · Humming", "hud/strain"))
+	pills.add_child(KitStatus.strain("82% · Humming", "humming"))
 	pills.add_child(KitStatus.badge("4"))
 	pills.add_child(KitStatus.plate("LV 5"))
 	pills.add_child(KitStatus.pill("Ready", "", "parchment"))
@@ -121,7 +121,7 @@ static func _home(column: VBoxContainer) -> void:
 	top.add_child(KitHud.keeper(Icons.texture("crewroles/scout"), "Ines", 7, 0.64, "410"))
 	top.add_child(UI.grow())
 	(top.get_child(1) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var strain := KitStatus.pill("82% · Humming", "hud/strain")
+	var strain := KitStatus.strain("82% · Humming", "humming")
 	strain.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	top.add_child(strain)
 	column.add_child(top)
@@ -171,10 +171,10 @@ static func _cards(column: VBoxContainer) -> void:
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", UI.px(14))
 	grid.add_theme_constant_override("v_separation", UI.px(14))
-	for c: Array in [["laws/bounce", "Bounce", "motion", "common", "I"],
+	for c: Array in [["laws/bounce", "Bounce", "motion", "common", ""],
 			["laws/stillness", "Stillness", "time", "uncommon", "II"],
-			["laws/brittlestone", "Brittle Stone", "matter", "rare", "III"],
-			["laws/soullanterns", "Soul Lanterns", "spirit", "deep", "IV"]]:
+			["laws/brittlestone", "Brittle Stone", "matter", "rare", ""],
+			["laws/soullanterns", "Soul Lanterns", "spirit", "deep", ""]]:
 		var icon: String = c[0] if Icons.has(c[0]) else "laws/bounce"
 		grid.add_child(KitCards.law_card(icon, c[1], c[2], c[3], c[4]))
 	var centre := CenterContainer.new()

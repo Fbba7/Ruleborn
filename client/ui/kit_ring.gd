@@ -16,6 +16,8 @@ var picture: Texture2D = null:
 		queue_redraw()
 ## A pip rather than a ring.
 var dot := false
+## A full pip's colour (gold if unset).
+var tint := Color()
 
 
 func _draw() -> void:
@@ -25,7 +27,8 @@ func _draw() -> void:
 	var gold := Tokens.color("gold_top")
 	if dot:
 		draw_circle(c, r, ink, true, -1.0, true)
-		draw_circle(c, r - maxf(1.5, r * 0.28), gold if fraction >= 0.5 else Tokens.color("card_bottom"), true, -1.0,
+		var full := tint if tint != Color() else gold
+		draw_circle(c, r - maxf(1.5, r * 0.28), full if fraction >= 0.5 else Tokens.color("card_bottom"), true, -1.0,
 			true)
 		return
 	var line := maxf(2.0, r * 0.14)

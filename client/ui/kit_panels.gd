@@ -68,12 +68,13 @@ static func row(icon: String, title: String, line := "", trailing: Control = nul
 
 
 ## A bottom sheet with a title: the designs' tray, sliding up over the
-## screen. Its body is the VBox under meta "body".
-static func sheet(title: String) -> PanelContainer:
+## screen, dark, or parchment as the designs' menu sheet. Its body is the
+## VBox under meta "body".
+static func sheet(title: String, look := "sheet") -> PanelContainer:
 	var p := PanelContainer.new()
 	p.name = "Sheet"
 	p.add_theme_stylebox_override("panel", UI.clear_box(16, 10))
-	UI.dress(p, "sheet")
+	UI.dress(p, look, 26)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(8))
 	var grip := ColorRect.new()

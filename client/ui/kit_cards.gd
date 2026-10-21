@@ -16,9 +16,11 @@ static func school_chip(school: String) -> PanelContainer:
 	return p
 
 
-## A law card `points` wide: frame by rarity ("common", "uncommon", "rare",
-## "deep"), the law's icon in its school's window, its name, school and rank.
-static func law_card(icon: String, title: String, school: String, rarity: String, rank: String,
+## A law card `points` wide: frame by rank ("common", "uncommon", "rare",
+## "deep") with the rank also in words on its corner plate, and a tier
+## ("III") after it if given; the law's icon in its school's window, its
+## name and school.
+static func law_card(icon: String, title: String, school: String, rarity: String, tier := "",
 		points := 150.0) -> PanelContainer:
 	var card := PanelContainer.new()
 	card.name = "LawCard"
@@ -40,7 +42,8 @@ static func law_card(icon: String, title: String, school: String, rarity: String
 	var art := Icons.view(icon, points * 0.5)
 	art.set_anchors_preset(Control.PRESET_FULL_RECT)
 	stage.add_child(art)
-	var tag := KitStatus.plate(rank)
+	var rank := Strings.t("LAW_RANK_" + rarity.to_upper())
+	var tag := KitStatus.plate(rank if tier == "" else "%s · %s" % [rank, tier])
 	tag.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	tag.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	stage.add_child(tag)

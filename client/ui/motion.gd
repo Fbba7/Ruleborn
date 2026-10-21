@@ -124,3 +124,21 @@ static func bob(node: CanvasItem, amp_points := 3.0) -> Tween:
 	t.tween_property(node, "position:y", amp, half).as_relative().set_trans(Tween.TRANS_SINE) \
 		.set_ease(Tween.EASE_IN_OUT)
 	return t
+
+
+## A screen arriving (the designs' 160 ms fade from 0.985 scale), for the
+## router to call on the screen it has just shown; a plain 150 ms fade under
+## reduced motion.
+static func screen_in(screen: Control) -> Tween:
+	var t := screen.create_tween()
+	screen.modulate.a = 0.0
+	if Settings.reduced_motion:
+		t.tween_property(screen, "modulate:a", 1.0, _ms("fade_ms"))
+		return _arrive(screen, t)
+	screen.pivot_offset = screen.size * 0.5
+	screen.scale = Vector2.ONE * 0.985
+	t.set_parallel(true)
+	t.tween_property(screen, "modulate:a", 1.0, _ms("screen_fade_ms")).set_ease(Tween.EASE_OUT)
+	t.tween_property(screen, "scale", Vector2.ONE, _ms("screen_fade_ms")).set_trans(Tween.TRANS_CUBIC) \
+		.set_ease(Tween.EASE_OUT)
+	return _arrive(screen, t)
