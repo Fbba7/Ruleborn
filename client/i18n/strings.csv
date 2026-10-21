@@ -1080,6 +1080,8 @@ SHARE_LIMIT_CLIP_NO,Clips stay in the game,Clips stay in the game,Clipes ficam n
 SHARE_LIMIT_CLIP_CONFIRM,A clip leaves the game only after you confirm,A clip leaves the game only after you confirm,Um clipe só sai do jogo depois que você confirmar,Um clipe só sai do jogo depois de confirmares,Ein Clip verlässt das Spiel erst nach deiner Bestätigung,Un clip ne quitte le jeu qu'après ta confirmation
 SHARE_LIMIT_CLIP_YES,Clips can be shared anywhere,Clips can be shared anywhere,Clipes podem ser compartilhados em qualquer lugar,Os clipes podem ser partilhados em qualquer lado,Clips können überall geteilt werden,Les clips peuvent être partagés partout
 FIRST_TITLE,Welcome to Ruleborn,Welcome to Ruleborn,Bem-vindo ao Ruleborn,Bem-vindo ao Ruleborn,Willkommen bei Ruleborn,Bienvenue dans Ruleborn
+FIRST_LOGO,Ruleborn,Ruleborn,Ruleborn,Ruleborn,Ruleborn,Ruleborn
+FIRST_TAGLINE,Your islands. Your rules. Their treasure.,Your islands. Your rules. Their treasure.,Suas ilhas. Suas regras. O tesouro deles.,As tuas ilhas. As tuas regras. O tesouro deles.,Deine Inseln. Deine Regeln. Ihr Schatz.,Tes îles. Tes règles. Leur trésor.
 FIRST_FAILED,The game could not reach the server: %s,The game could not reach the server: %s,O jogo não alcançou o servidor: %s,O jogo não chegou ao servidor: %s,Das Spiel erreichte den Server nicht: %s,Le jeu n'a pas joint le serveur : %s
 FIRST_BEGIN,Begin,Begin,Começar,Começar,Los geht's,Commencer
 FIRST_GO_ON,Go on,Go on,Continuar,Continuar,Weiter,Continuer

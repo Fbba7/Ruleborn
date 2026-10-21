@@ -9,6 +9,8 @@ extends Control
 
 ## Who greets a new Keeper: the Archivist among ruleborn of three schools.
 const WELCOME := ["featherkin", "archivist", "bloomling", "lantern_wisp"]
+## The realms floating behind them, of the other schools.
+const FAR := ["time", "energy", "matter", "spirit", "life"]
 
 var controller: FirstController
 var body: VBoxContainer
@@ -44,18 +46,41 @@ func _build() -> void:
 	stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stage.size_flags_stretch_ratio = 2.4
 	column.add_child(stage)
+	stage.headroom = 0.3
 	stage.show_kinds(WELCOME, [], "island")
-	# The game's name over the welcome scene, as a title card: Marcellus in
-	# cream, edged in ink, at the top of the sky, under the status bar.
-	var title := UI.title(Strings.t("FIRST_TITLE"))
-	StageHeroSkin.named(title)
-	title.add_theme_font_size_override("font_size", UI.text_px(36))
-	title.set_meta("points", 36.0)
-	title.add_theme_color_override("font_color", Color("#FFF3CC"))
-	title.add_theme_color_override("font_outline_color", Color("#120C2A"))
-	title.add_theme_constant_override("outline_size", UI.px(4))
-	title.set_meta("own_ink", true)
-	title.custom_minimum_size.x = UI.px(200)
+	stage.add_far_islands(FAR)
+	# The game's name over the welcome scene as the design's logo: Lilita One
+	# in cream and gold, edged in ink on a hard drop; the welcome under it in
+	# Marcellus, and the line that says what the game is.
+	var title := VBoxContainer.new()
+	title.add_theme_constant_override("separation", UI.px(2))
+	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var logo := UI.label(Strings.t("FIRST_LOGO").to_upper(), 54.0)
+	logo.add_theme_font_override("font", StageHeroSkin.numbers_font())
+	logo.add_theme_color_override("font_color", Color("#FFE08A"))
+	logo.add_theme_color_override("font_outline_color", Color("#3A1E08"))
+	logo.add_theme_constant_override("outline_size", UI.px(5))
+	logo.add_theme_color_override("font_shadow_color", Color("#120C2A"))
+	logo.add_theme_constant_override("shadow_offset_y", UI.px(4))
+	logo.add_theme_constant_override("shadow_offset_x", 0)
+	logo.add_theme_constant_override("shadow_outline_size", UI.px(5))
+	logo.set_meta("own_ink", true)
+	logo.set_meta("bold", true)
+	title.add_child(logo)
+	var welcome := UI.title(Strings.t("FIRST_TITLE"))
+	StageHeroSkin.named(welcome)
+	welcome.add_theme_font_size_override("font_size", UI.text_px(22))
+	welcome.set_meta("points", 22.0)
+	welcome.add_theme_color_override("font_color", Color("#FFF3CC"))
+	welcome.add_theme_color_override("font_outline_color", Color("#120C2A"))
+	welcome.add_theme_constant_override("outline_size", UI.px(3))
+	welcome.set_meta("own_ink", true)
+	welcome.custom_minimum_size.x = UI.px(200)
+	title.add_child(welcome)
+	var tagline := StageHeroKit.words(Strings.t("FIRST_TAGLINE"), 16.0, StageHeroSkin.LIGHT, true)
+	tagline.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	tagline.custom_minimum_size.x = UI.px(200)
+	title.add_child(tagline)
 	var top := MarginContainer.new()
 	top.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	top.mouse_filter = Control.MOUSE_FILTER_IGNORE

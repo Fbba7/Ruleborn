@@ -59,6 +59,9 @@ var school := "motion"
 var time := 0.0
 ## Whether the stage moves by itself (§20.8's reduced motion stills it).
 var moving := true
+## Sky kept clear above the figures for words over the stage, as a share of
+## the frame's height (the first launch's title).
+var headroom := 0.0
 var _spin := 0.0
 var _spin_speed := 0.0
 var _press := Vector2.ZERO
@@ -244,6 +247,19 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		_actions.append(-1.0)
 	_frame()
 	_pose()
+
+
+## Far islands behind the stage, each a realm of one of `schools` as T2
+## builds it, small with distance and hung at different heights: the
+## universe a welcome stands in (the first launch). Cleared by show_kinds.
+func add_far_islands(schools: Array) -> void:
+	var span := 1.6 * maxf(1.0, float(tables.size()) * 0.5)
+	for i: int in schools.size():
+		var isle := StageHeroFigure.realm_ground(str(schools[i]), 0.55 + 0.15 * float(i % 2))
+		var along := float(i) / maxf(1.0, float(schools.size() - 1))
+		isle.position = Vector3(lerpf(-span, span, along), -0.2 + 0.7 * sin(float(i) * 2.3), -4.5 - 1.6 * float(i % 3))
+		isle.rotation.y = float(i) * 1.7
+		scenery.add_child(isle)
 
 
 ## What a figure takes up, in its own space: every mesh under it at rest,
@@ -460,9 +476,9 @@ func _frame() -> void:
 		tall = maxf(tall, top * (1.45 if kinds[i] in StageHeroFigure.FLIERS else 1.0))
 	var wide := (tables[-1].position.x - tables[0].position.x) + tall * 0.95 if tables.size() > 1 else tall * 1.3
 	var aspect := maxf(0.2, size.x / maxf(1.0, size.y)) if size.y > 0.0 else 1.0
-	var need_h := maxf(tall * 1.75, wide / aspect)
+	var need_h := maxf(tall * 1.75, wide / aspect) * (1.0 + headroom)
 	var dist := need_h * 0.5 / tan(deg_to_rad(FOV) * 0.5)
-	var target := Vector3(0, tall * 0.42, 0)
+	var target := Vector3(0, tall * (0.42 + headroom * 0.9), 0)
 	var eye := target + Vector3(0, 0.32, 1.0).normalized() * dist
 	camera.transform = Transform3D(Basis.looking_at(target - eye, Vector3.UP), eye)
 
