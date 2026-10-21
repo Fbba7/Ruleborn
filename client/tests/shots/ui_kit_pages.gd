@@ -46,8 +46,11 @@ static func _materials(column: VBoxContainer) -> void:
 
 
 static func _controls(column: VBoxContainer) -> void:
-	column.add_child(KitNav.header("Settings", "Wellbeing"))
-	column.add_child(KitNav.segmented(["Roster", "Sages", "Forms"], 0, func(_i: int) -> void: pass))
+	column.add_child(KitNav.top_bar("Settings", func() -> void: pass, "Age 18+"))
+	column.add_child(KitNav.segmented([["Wellbeing", "settingsandwellbeing/playtimereminder"],
+		["Game", "settingsandwellbeing/sound"], ["Access", "settingsandwellbeing/accessibility"],
+		["Account", "settingsandwellbeing/account"]], 0, func(_i: int) -> void: pass))
+	column.add_child(KitNav.segmented(["Off", "45 min", "60 min", "90 min"], 0, func(_i: int) -> void: pass))
 	var chips := UI.row(6)
 	for c: Array in [["All", true], ["Motion", false], ["Time", false]]:
 		chips.add_child(KitControls.chip(c[0], c[1], func() -> void: pass))

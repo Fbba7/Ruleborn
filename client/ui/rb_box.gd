@@ -18,6 +18,12 @@ var look := ""
 var spec: Dictionary = {}
 ## A corner radius in points instead of the material's.
 var radius_points := -1.0
+## Pixels of the host's top left undrawn, so something in it can rise above
+## the box (the chosen tab over the bar).
+var inset_top := 0.0:
+	set(v):
+		inset_top = v
+		_shade()
 ## Not drawn while every word in the host is empty (a plate whose label has
 ## nothing to say yet), so no empty card stands on the screen.
 var hide_empty := false
@@ -183,8 +189,8 @@ func _flat() -> StyleBoxFlat:
 
 ## The host's rect in the box's own space, grown by the reach.
 func quad() -> Rect2:
-	var at := -position if host != null else Vector2.ZERO
-	var inner := host.size if host != null else size
+	var at := (-position if host != null else Vector2.ZERO) + Vector2(0, inset_top)
+	var inner := (host.size if host != null else size) - Vector2(0, inset_top)
 	return Rect2(at - Vector2.ONE * _reach, inner + Vector2.ONE * 2.0 * _reach)
 
 
