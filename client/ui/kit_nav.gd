@@ -153,6 +153,23 @@ static func celebrate(screen: Control) -> void:
 		RbBox.dress(sky, "night_rays", 0)
 
 
+## The game's name as the designs set it on first launch (20-first-launch
+## .png): Lilita One in gold capitals with an ink stroke and a hard drop.
+static func logo(text: String) -> Label:
+	var l := UI.label(text, 56)
+	l.theme_type_variation = "DisplayXl"
+	l.uppercase = true
+	l.add_theme_font_size_override("font_size", UI.text_px(56))
+	l.add_theme_color_override("font_color", Tokens.color("gold_top"))
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", UI.px(5))
+	l.add_theme_color_override("font_shadow_color", Tokens.color("gold_drop"))
+	l.add_theme_constant_override("shadow_offset_y", UI.px(4))
+	l.add_theme_constant_override("shadow_outline_size", UI.px(5))
+	l.set_meta("points", 56.0)
+	return l
+
+
 ## The five tabs, `chosen` chosen, with badges ({"heist": 4}); the bar emits
 ## `picked(id)`.
 static func tabs(chosen: String, badges := {}) -> KitTabs:

@@ -109,7 +109,7 @@ static func material(name: String) -> Dictionary:
 		"gloss": float(m.get("gloss", 0.0)) if not high_contrast else 0.0,
 		"family": str(m.get("family", "dark")), "over_world": bool(m.get("over_world", false))}
 	for part: String in ["line", "rim", "rim_2", "highlight", "shade", "drop", "soft", "glow", "grain", "text_outline",
-			"rays"]:
+			"rays", "stripes"]:
 		var v: Variant = m.get(part)
 		if v is Array:
 			var a: Array = (v as Array).duplicate()

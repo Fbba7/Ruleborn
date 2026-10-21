@@ -23,8 +23,10 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_result(column)
 		9:
 			_heist(column)
-		_:
+		10:
 			_character(column)
+		_:
+			_season(column)
 
 
 static func _materials(column: VBoxContainer) -> void:
@@ -401,3 +403,18 @@ static func _character(column: VBoxContainer) -> void:
 	up.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	end.add_child(up)
 	column.add_child(end)
+
+
+## The design's first-launch logo and season pieces (20, 17).
+static func _season(column: VBoxContainer) -> void:
+	column.add_child(KitNav.logo("Ruleborn"))
+	var line := UI.label("Your islands. Your rules. Their treasure.", 18, true)
+	column.add_child(line)
+	column.add_child(KitNav.top_bar("Held Breath", func() -> void: pass, "18 days"))
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_child(KitCards.season_reward("Common", "currencies/starglass", "600", func() -> void: pass, false, "Claim"))
+	row.add_child(KitCards.season_reward("Common", "currencies/pages", "×2", func() -> void: pass, false, "Claim"))
+	row.add_child(KitCards.season_reward("Rare", "", "", Callable(), true))
+	column.add_child(row)

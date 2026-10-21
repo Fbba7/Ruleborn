@@ -222,3 +222,43 @@ static func fact(icon: String, kicker: String, words: String) -> PanelContainer:
 	row.add_child(v)
 	p.add_child(row)
 	return p
+
+
+## A season reward (17-season.png): its rank on a band across the top, its
+## icon, its amount on a plate, and CLAIM when it can be taken; a locked one
+## is hatched with its lock and says so in its spoken name.
+static func season_reward(rank: String, icon: String, amount: String, claim: Callable, locked := false,
+		claim_words := "") -> PanelContainer:
+	var p := UI.panel("locked" if locked else "parchment")
+	p.name = "SeasonReward"
+	p.add_theme_stylebox_override("panel", UI.clear_box(0, 0))
+	p.custom_minimum_size = Vector2(UI.px(96), UI.px(124))
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(4))
+	var band := PanelContainer.new()
+	band.add_theme_stylebox_override("panel", UI.clear_box(4, 1))
+	if not locked:
+		UI.dress(band, "tier_band", 10)
+	var r := UI.label(rank, 13)
+	r.theme_type_variation = "Kicker"
+	r.uppercase = true
+	r.set_meta("bold", true)
+	band.add_child(r)
+	v.add_child(band)
+	var art := Icons.view(icon if not locked else "generalui/lock", 36 if not locked else 28)
+	art.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	v.add_child(art)
+	if amount != "" and not locked:
+		var plate := KitStatus.plate(amount)
+		UI.dress(plate, "plate_dark")
+		plate.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		v.add_child(plate)
+	if claim.is_valid() and not locked:
+		var b := UI.action(claim_words, claim, "green")
+		b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		v.add_child(b)
+	var m := MarginContainer.new()
+	m.add_theme_constant_override("margin_bottom", UI.px(6))
+	m.add_child(v)
+	p.add_child(m)
+	return p

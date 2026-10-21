@@ -141,6 +141,8 @@ func set_look(material_name: String) -> void:
 	u.set_shader_parameter("grain_color", Color(grain[0], grain[1]))
 	u.set_shader_parameter("stars", 1.0 if material_name.begins_with("night") and not Tokens.high_contrast else 0.0)
 	u.set_shader_parameter("star_color", Tokens.color("night_star"))
+	var stripes: Array = spec.get("stripes", [Color(0, 0, 0, 0)])
+	u.set_shader_parameter("stripes_color", stripes[0])
 	var rays: Array = spec.get("rays", [Color(0, 0, 0, 0), 18.0])
 	u.set_shader_parameter("rays_color", rays[0])
 	u.set_shader_parameter("rays_count", rays[1])
