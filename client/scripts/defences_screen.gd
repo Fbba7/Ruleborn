@@ -22,6 +22,7 @@ var _keys: Control
 var _top: Control
 var _drawn_key := ""
 var _island: RulebornIsland
+var _stats: HBoxContainer
 
 
 func _ready() -> void:
@@ -44,26 +45,41 @@ func _build() -> void:
 	view.fill = 0.86
 	defence = OverlayDefence.new(view)
 	view.tapped.connect(func(at: Vector2) -> void: _on_tap(view.tile_at(at)))
-	header_label = UI.label("", UI.TEXT_POINTS, true)
-	_top = OverlaySheet.ribbon(UI.title(Strings.t("DEFENCES_TITLE")), header_label)
-	column.add_child(_top)
+	var top := VBoxContainer.new()
+	top.add_theme_constant_override("separation", UI.px(6))
+	var heading := OverlayHud.heading("", Strings.t("DEFENCES_TITLE"))
+	header_label = heading.find_child("Kicker", true, false) as Label
+	top.add_child(heading)
+	_stats = HBoxContainer.new()
+	_stats.add_theme_constant_override("separation", UI.px(6))
+	top.add_child(_stats)
+	_top = top
+	column.add_child(top)
 	status_label = UI.status("info", "")
-	column.add_child(UI.plate(status_label))
-	StageScreen.window(column, 1.2)
-	body = UI.scroll(column)
-	_sheet = StageScreen.sheet(body, 0.62)
-	var actions := UI.row(-1.0, true)
-	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
+	column.add_child(UI.plate(status_label, "glass"))
+	StageScreen.window(column, 0.8)
+	var scroller := ScrollContainer.new()
+	scroller.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroller.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body = VBoxContainer.new()
+	body.add_theme_constant_override("separation", UI.px(8))
+	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroller.add_child(body)
+	column.add_child(scroller)
+	_sheet = StageScreen.sheet(body, 1.0)
 	_keys = StageScreen.handle(column, _sheet)
-	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
-	OverlaySheet.dress(self)
+	var dock := HBoxContainer.new()
+	dock.alignment = BoxContainer.ALIGNMENT_CENTER
+	dock.add_child(OverlayHud.key("hud/home", Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
+	column.add_child(dock)
 	_draw_world()
 
 
 func _refresh() -> void:
 	if not is_inside_tree():
 		return
-	var d := DefencesPresenter.screen(App.services.store.get_slice(DefencesState.DEFENCES))
+	var slice: Dictionary = App.services.store.get_slice(DefencesState.DEFENCES)
+	var d := DefencesPresenter.screen(slice)
 	if d["error"] != "":
 		UI.set_status(status_label, "alarm", d["error"])
 	elif d["busy"] != "" or not d["ready"]:
@@ -71,33 +87,121 @@ func _refresh() -> void:
 	else:
 		UI.set_status(status_label, "info", "")
 	(status_label.get_parent() as Control).visible = status_label.text != ""
-	header_label.text = d.get("header", "")
-	for child in body.get_children():
-		body.remove_child(child)
-		child.queue_free()
+	header_label.text = str(d.get("header", "")).to_upper()
+	for holder: Node in [body, _stats]:
+		for child: Node in holder.get_children():
+			holder.remove_child(child)
+			child.queue_free()
 	if not d["ready"]:
 		return
+	var season: Dictionary = (slice.get("view", {}) as Dictionary).get("season", {})
+	for stat: Array in [["held", "DEFENCES_STAT_HELD", "heistoutcomes/foiled"],
+			["leaked", "DEFENCES_STAT_LEAKED", "heistoutcomes/loud"],
+			["partial", "DEFENCES_STAT_PARTIAL", "heistoutcomes/partial"]]:
+		_stats.add_child(_stat(str(int(season.get(stat[0], 0))), Strings.t(stat[1]), stat[2], d.get("header", "")))
 	var busy: bool = d["busy"] != ""
 	if d.has("empty"):
-		body.add_child(UI.plate(UI.label(d["empty"], UI.TEXT_POINTS, true)))
+		body.add_child(UI.plate(UI.label(d["empty"], UI.TEXT_POINTS, true), "glass"))
 	for r: Dictionary in d["raids"]:
 		body.add_child(_raid(r, busy))
-	OverlaySheet.dress(body)
-	OverlaySheet.unsqueeze(body)
 
 
+## A season count on a card: the number large over its name.
+func _stat(number: String, name: String, icon: String, spoken: String) -> Control:
+	var card := UI.panel("card")
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.accessibility_name = spoken
+	var words := VBoxContainer.new()
+	words.add_theme_constant_override("separation", 0)
+	var line := HBoxContainer.new()
+	line.alignment = BoxContainer.ALIGNMENT_CENTER
+	line.add_theme_constant_override("separation", UI.px(4))
+	line.add_child(Icons.view(icon, 20.0))
+	var n := UI.label(number, 22.0)
+	n.add_theme_font_override("font", Tokens.font("display"))
+	line.add_child(n)
+	words.add_child(line)
+	var k := UI.label(name, 13.0)
+	k.theme_type_variation = "Secondary"
+	words.add_child(k)
+	card.add_child(words)
+	return card
+
+
+## A raid as the design's row: the raider's medallion with its level and its
+## outcome's mark, the raider and the outcome on a tag, how long the defence
+## held and who was caught, the haul denied, and Watch and Trace. Its lines
+## are what a screen reader says for it.
 func _raid(r: Dictionary, busy: bool) -> Control:
-	var box := VBoxContainer.new()
-	var title := UI.label(r["title"] + (Strings.t("DEFENCES_NEW") if r["new"] else ""), UI.TEXT_POINTS, true)
+	var raw: Dictionary = r["raid"]
+	var lines: Array = r["lines"]
+	var row := UI.panel("parchment")
+	row.accessibility_description = "\n".join(lines)
+	var outer := VBoxContainer.new()
+	outer.add_theme_constant_override("separation", UI.px(6))
+	row.add_child(outer)
+	var line := HBoxContainer.new()
+	line.add_theme_constant_override("separation", UI.px(8))
+	outer.add_child(line)
+	var raider: Dictionary = raw.get("raider", {})
+	line.add_child(OverlayHud.medallion("heistoutcomes/" + str(raw.get("grade", "clean")),
+		int(raider["keeper_level"]) if raider.get("keeper_level") != null else -1, 46.0))
+	var middle := VBoxContainer.new()
+	middle.add_theme_constant_override("separation", UI.px(2))
+	middle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var name_row := HFlowContainer.new()
+	name_row.add_theme_constant_override("h_separation", UI.px(6))
+	var title := UI.label(r["title"], 15.0)
+	title.add_theme_font_override("font", UI.bold_font())
+	title.set_meta("bold", true)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	title.set_meta("heist", r["heist"])
-	box.add_child(title)
-	for line: String in r["lines"]:
-		box.add_child(UI.label(line, UI.TEXT_POINTS, true))
+	name_row.add_child(title)
+	var tag := "green" if raw.get("held", false) else "red"
+	name_row.add_child(OverlayHud.badge(str(lines[0]).to_upper(), tag, 13.0))
+	if r["new"]:
+		var fresh := Strings.t("DEFENCES_NEW").trim_prefix(" · ").strip_edges().to_upper()
+		name_row.add_child(OverlayHud.badge(fresh, "badge", 13.0))
+	middle.add_child(name_row)
+	var facts: Array[Control] = []
+	if raw.get("held_seconds") != null:
+		var t := int(raw["held_seconds"])
+		facts.append(OverlayHud.pill("heiststatus/clock", "%d:%02d" % [t / 60, t % 60], lines[2], "card"))
+	facts.append(OverlayHud.pill("heiststatus/knockedout", "%d/%d" % [int(raw.get("caught", 0)),
+		int(raw.get("crew", 0))], lines[3], "card"))
+	if raw.get("denied") != null:
+		facts.append(OverlayHud.pill("heiststatus/lootbag", ShopPresenter.grouped(int(raw["denied"])), lines[1],
+			"green" if raw.get("held", false) else "card"))
+	middle.add_child(OverlayHud.row_of(facts))
+	line.add_child(middle)
+	var keys: Array[Control] = []
 	if not (r["watch"] as Dictionary).is_empty():
-		box.add_child(RosterScreen.offer(r["watch"], busy, controller.watch.bind(r["raid"])))
+		keys.append(_key(r["watch"], busy, controller.watch.bind(r["raid"]), "heistoutcomes/replay"))
 	if not (r["trace"] as Dictionary).is_empty():
-		box.add_child(RosterScreen.offer(r["trace"], busy, controller.trace.bind(r["raid"])))
-	return UI.plate(box)
+		keys.append(_key(r["trace"], busy, controller.trace.bind(r["raid"]), "planningactions/scout"))
+	if not keys.is_empty():
+		var side := VBoxContainer.new()
+		side.alignment = BoxContainer.ALIGNMENT_CENTER
+		side.add_theme_constant_override("separation", UI.px(4))
+		for k: Control in keys:
+			side.add_child(k)
+		line.add_child(side)
+	return row
+
+
+func _key(o: Dictionary, busy: bool, pressed: Callable, icon: String) -> Button:
+	# A round key with its mark: its words are what a screen reader says.
+	var b := UI.action("", pressed, "leather", o["spoken"])
+	b.custom_minimum_size = Vector2.ONE * UI.px(48)
+	UI.dress(b, "leather", 24.0)
+	b.tooltip_text = o["action"]
+	b.disabled = busy or not o["can"]
+	b.set_meta("key", o["key"])
+	b.set_meta("item", o["item"])
+	b.icon = Icons.texture(icon)
+	b.add_theme_constant_override("icon_max_width", UI.px(26))
+	b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	return b
 
 
 ## The island the phone holds for the player's own defence: the curation

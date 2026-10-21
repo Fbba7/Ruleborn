@@ -1140,6 +1140,9 @@ SHARE_COPY_INVITE,Copy the invite,Copy the invite,Copiar o convite,Copiar o conv
 SHARE_INVITE_MESSAGE,Join me in Ruleborn: open Friends and enter the invite %s,Join me in Ruleborn: open Friends and enter the invite %s,Jogue comigo no Ruleborn: abra Amigos e digite o convite %s,Joga comigo no Ruleborn: abre Amigos e escreve o convite %s,Spiel mit mir Ruleborn: Öffne Freunde und gib die Einladung %s ein,Rejoins-moi dans Ruleborn : ouvre Amis et saisis l'invitation %s
 DEFENCES_NEAR,"near the %s at %d, %d","near the %s at %d, %d","perto de %s, em %d, %d","perto de %s, em %d, %d","nahe %s bei %d, %d","près de %s, en %d, %d"
 DEFENCES_PYLON,%s pylon,%s pylon,pilar de %s,pilar de %s,%s-Pylon,pylône de %s
+DEFENCES_STAT_HELD,Held,Held,Seguradas,Seguradas,Gehalten,Tenues
+DEFENCES_STAT_LEAKED,Leaked,Leaked,Vazadas,Vazadas,Durchgelassen,Percées
+DEFENCES_STAT_PARTIAL,Partial,Partial,Parciais,Parciais,Teilweise,Partielles
 OBS_DEPTH,Up to %d realms to the Heart,Up to %d realms to the Heart,Até %d reinos até o Coração,Até %d reinos até ao Coração,Bis zu %d Reiche bis zum Herzen,Jusqu'à %d royaumes jusqu'au Cœur
 OBS_FAULTS_FROM,Faults open from %s,Faults open from %s,Falhas abertas a partir de %s,Falhas abertas a partir de %s,Risse öffnen sich von %s aus,Failles ouvertes depuis %s
 OBS_OUTER_REALM,outer realm %d,outer realm %d,reino exterior %d,reino exterior %d,Außenreich %d,royaume extérieur %d
