@@ -129,12 +129,18 @@ func build(t: Vector2i, f: int) -> void:
 			prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 		RealmKit.F.FLOWER_MEADOW:
 			var petals: Array[Color] = [Color("#FF8AB0"), Color("#FFE08A"), Color("#FFFFFF"), Color("#B79BFF")]
-			for k in 22:
+			var lighter := kit.detail == BuildingKit.MID
+			for k in (12 if lighter else 22):
 				var p := c + Vector3(RealmKit.jitter(t, k) - 0.5, 0.0, RealmKit.jitter(t, k + 9) - 0.5) * 0.9
 				var stem := 0.07 + 0.08 * RealmKit.jitter(t, k + 40)
 				prop.moving(Geo.Anim.SHIVER, p)
 				prop.blade(p, stem, 0.012, plant.darkened(0.2))
-				prop.ball(Geo.place(p + Vector3(0, stem, 0), 0.0, Vector3(1, 0.55, 1)), 0.05, petals[k % 4], 2, 6)
+				if lighter:
+					# A flat flower head, three petals, at the mid detail.
+					prop.gem(Geo.place(p + Vector3(0, stem, 0), RealmKit.jitter(t, k + 3) * TAU, Vector3(1, 0.3, 1)),
+						0.06, 0.06, petals[k % 4], 3)
+				else:
+					prop.ball(Geo.place(p + Vector3(0, stem, 0), 0.0, Vector3(1, 0.55, 1)), 0.05, petals[k % 4], 2, 6)
 			prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 		RealmKit.F.ICE_SHEET:
 			# A frozen pool: an irregular sheet, pale at its rim, with a few

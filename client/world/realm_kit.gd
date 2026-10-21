@@ -143,6 +143,7 @@ static func jitter(t: Vector2i, slot: int) -> float:
 func build() -> void:
 	for g: Geo in [scatter, hero, prop, clear, water, lava]:
 		g.coarse = detail == BuildingKit.MID
+	prop.least = BuildingKit.LEAST if detail == BuildingKit.MID else 0.0
 	var footprints := _footprints()
 	var blocked := {}
 	for fp: Array in footprints:

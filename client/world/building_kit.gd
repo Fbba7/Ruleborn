@@ -29,6 +29,8 @@ const LOOKS := [1, 4, 7, 10]
 ## fewer sides and chamfered boxes are plain.
 const FULL := 0
 const MID := 1
+## At `MID`, the size in metres under which a part is left out.
+const LEAST := 0.035
 
 var g: Geo
 ## The fine parts — windows, frames, rings, flags — drawn without ink, so a
@@ -91,9 +93,12 @@ static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, col
 	b.glass = panes if panes != null else b.d
 	b.lighter = detail == MID
 	var was: Array[bool] = [b.g.coarse, b.d.coarse, b.glass.coarse]
+	var least: Array[float] = [b.g.least, b.d.least, b.glass.least]
 	for layer: Geo in [b.g, b.d, b.glass]:
 		layer.standing(mid.y)
 		layer.coarse = layer.coarse or b.lighter
+		if b.lighter:
+			layer.least = maxf(layer.least, LEAST)
 	b.origin = mid
 	b.level = clampi(lvl, 1, 10)
 	b.tier = 2 if b.level >= 7 else (1 if b.level >= 4 else 0)
@@ -131,9 +136,10 @@ static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, col
 		_:
 			KitBuildings2.build(b, kind)
 	b._dress(kind)
-	b.g.coarse = was[0]
-	b.d.coarse = was[1]
-	b.glass.coarse = was[2]
+	for k in 3:
+		var layer: Geo = [b.g, b.d, b.glass][k]
+		layer.coarse = was[k]
+		layer.least = least[k]
 
 
 ## Shapes drawn after this move by `kind` about `pivot`, inked or not.
