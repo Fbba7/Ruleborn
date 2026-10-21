@@ -1168,3 +1168,12 @@ CAMERA_TURN_LEFT,Turn the view left,Turn the view left,Girar a vista para a esqu
 CAMERA_TURN_RIGHT,Turn the view right,Turn the view right,Girar a vista para a direita,Rodar a vista para a direita,Ansicht nach rechts drehen,Pivoter la vue à droite
 CAMERA_ZOOM_IN,Zoom in,Zoom in,Aproximar,Aproximar,Heranzoomen,Zoomer
 CAMERA_ZOOM_OUT,Zoom out,Zoom out,Afastar,Afastar,Herauszoomen,Dézoomer
+KIT_TAB_ISLANDS,Islands,Islands,Ilhas,Ilhas,Inseln,Îles
+KIT_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
+KIT_TAB_HEIST,Heist,Heist,Assalto,Assalto,Raubzug,Casse
+KIT_TAB_CREW,Crew,Crew,Equipe,Equipa,Crew,Équipe
+KIT_TAB_FRIENDS,Friends,Friends,Amigos,Amigos,Freunde,Amis
+KIT_BACK,Back,Back,Voltar,Voltar,Zurück,Retour
+KIT_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
+KIT_FULL,Full,Full,Cheio,Cheio,Voll,Plein
+KIT_TAB_BADGE,%s: %s new,%s: %s new,%s: %s novos,%s: %s novos,%s: %s neu,%s : %s nouveaux
