@@ -20,6 +20,7 @@ static func keeper(portrait: Texture2D, name: String, level: int, xp: float, ren
 	ring.picture = portrait
 	ring.custom_minimum_size = Vector2.ONE * UI.px(52)
 	var plate := KitStatus.plate(str(level))
+	UI.dress(plate, "plate_gold")
 	plate.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	plate.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	plate.grow_vertical = Control.GROW_DIRECTION_BEGIN

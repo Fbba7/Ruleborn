@@ -7,6 +7,8 @@ extends Range
 ## (§20.8).
 
 var fill: Control = null
+## How far the fill sits inside the track, in points.
+var inset_points := 1.5
 var _top := Color()
 var _bottom := Color()
 
@@ -53,7 +55,7 @@ func _ready() -> void:
 func _layout() -> void:
 	if fill == null:
 		return
-	var inset := UI.px(1.5)
+	var inset := UI.px(inset_points)
 	var ratio := 0.0 if max_value <= min_value else (value - min_value) / (max_value - min_value)
 	var h := size.y - 2.0 * inset
 	var w := (size.x - 2.0 * inset) * clampf(ratio, 0.0, 1.0)

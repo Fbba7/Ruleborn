@@ -267,7 +267,7 @@ static func action(text: String, pressed: Callable, look := "leather", spoken :=
 	b.add_theme_font_override("font", bold_font())
 	b.set_meta("bold", true)
 	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
-		b.add_theme_stylebox_override(state, clear_box(12, 4))
+		b.add_theme_stylebox_override(state, clear_box(9, 4))
 	set_look(b, look)
 	b.set_meta("points", TEXT_POINTS)
 	fit(b)
@@ -312,9 +312,9 @@ static func bold_font() -> Font:
 ## control may be, past which they wrap onto more lines (§20.8's large text).
 static func fit(b: Button) -> void:
 	var font := b.get_theme_font("font")
-	# The designs' chunky pills: 12 points of material either side of the words.
+	# The designs' chunky pills: 9 points of material either side of the words.
 	var natural := font.get_string_size(b.text, HORIZONTAL_ALIGNMENT_LEFT, -1, b.get_theme_font_size("font_size")).x \
-		+ px(24)
+		+ px(18)
 	var most := px(Tokens.number("size", "widest_control_points"))
 	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if natural > most else TextServer.AUTOWRAP_OFF
 	b.custom_minimum_size.x = maxf(CONTROL_POINTS * PX_PER_POINT, minf(natural, most))

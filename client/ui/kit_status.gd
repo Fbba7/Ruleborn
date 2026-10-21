@@ -48,35 +48,59 @@ static func pill(text: String, icon := "", look := "glass") -> PanelContainer:
 
 
 ## A resource with its storage (§21.8's home layout: "resources with storage
-## bars"): its icon on a disc, the amount in tabular figures, and the share
-## of storage as a line along the pill's foot, with FULL written when the
-## store is nine-tenths full or more.
+## bars"): its icon in a dark disc, the amount in tabular figures at the
+## pill's end, FULL written in gold before it when the store is nine-tenths
+## full or more, and the share of storage as a line glowing along the
+## pill's foot.
 static func resource(icon: String, amount: String, fraction: float, tone: Color) -> PanelContainer:
 	var p := PanelContainer.new()
 	p.name = "Resource"
-	p.add_theme_stylebox_override("panel", UI.clear_box(4, 3))
+	var pad := UI.clear_box(3, 2)
+	pad.content_margin_right = UI.px(10)
+	pad.content_margin_bottom = UI.px(1)
+	p.add_theme_stylebox_override("panel", pad)
 	UI.dress(p, "track", 999)
 	p.custom_minimum_size.y = UI.px(Tokens.number("size", "pill_points"))
 	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", UI.px(1))
+	v.add_theme_constant_override("separation", 0)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(4))
 	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	row.add_child(Icons.view(icon, 26))
+	var disc := PanelContainer.new()
+	disc.add_theme_stylebox_override("panel", UI.clear_box(2, 2))
+	UI.dress(disc, "icon_disc")
+	disc.add_child(Icons.view(icon, 22))
+	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(disc)
+	var full := UI.label(Strings.t("KIT_FULL"), 13)
+	full.theme_type_variation = "Kicker"
+	full.uppercase = true
+	full.add_theme_color_override("font_color", Tokens.color("gold_top"))
+	full.set_meta("bold", true)
+	full.name = "Full"
+	var room := Control.new()
+	room.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	room.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(room)
+	row.add_child(full)
 	var l := UI.label(amount, 16)
 	l.theme_type_variation = "Number"
 	l.set_meta("bold", true)
 	l.name = "Amount"
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	row.add_child(l)
-	var full := badge(Strings.t("KIT_FULL"))
-	full.name = "Full"
-	row.add_child(full)
 	v.add_child(row)
 	var bar := KitBar.make(fraction, tone, 4)
 	bar.name = "Storage"
-	v.add_child(bar)
+	bar.inset_points = 0.0
+	RbBox.dress(bar, "icon_disc")
+	RbBox.dress(bar.fill, "bar_line")
+	bar.colour(tone.lightened(0.15))
+	var inset := MarginContainer.new()
+	inset.add_theme_constant_override("margin_left", UI.px(14))
+	inset.add_theme_constant_override("margin_right", UI.px(4))
+	inset.add_child(bar)
+	v.add_child(inset)
 	p.add_child(v)
 	set_resource(p, amount, fraction)
 	return p
