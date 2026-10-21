@@ -35,22 +35,38 @@ static func pill(words: String, material := "glass", group := "", name := "", po
 	return p
 
 
-## A filter chip: cream when chosen, glass when not, 48 points to tap.
-static func chip(words: String, on: bool, pressed: Callable, group := "", name := "", spoken := "") -> Button:
-	var b := ScreenKit.button(words, pressed, "cream" if on else "card", spoken, -1.0)
+## A filter chip: cream when chosen, glass when not, 48 points to tap. A
+## `lead` control (a school's mark) goes before its words.
+static func chip(words: String, on: bool, pressed: Callable, group := "", name := "", spoken := "",
+		lead: Control = null) -> Button:
+	var material := "cream" if on else "card"
+	var b := ScreenKit.button(words if lead == null else "", pressed, material, spoken if spoken != "" else words,
+		-1.0)
 	if group != "":
 		var path := ScreenKit.icon_path(group, name)
 		if path != "":
 			b.icon = load(path)
 			b.expand_icon = true
 			b.add_theme_constant_override("icon_max_width", UI.px(22))
-	b.toggle_mode = false
 	b.set_meta("on", on)
-	if on:
-		UI.set_outline(b, 2)
-	UI.fit(b)
-	if b.icon != null:
-		b.custom_minimum_size.x += UI.px(26)
+	if lead != null:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", UI.px(5))
+		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.alignment = BoxContainer.ALIGNMENT_CENTER
+		row.set_anchors_preset(Control.PRESET_FULL_RECT)
+		lead.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(lead)
+		var l := ScreenKit.text(words, 16.0, "words", material)
+		l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		row.add_child(l)
+		b.add_child(row)
+		b.custom_minimum_size.x = maxf(UI.CONTROL_POINTS * UI.PX_PER_POINT,
+			row.get_combined_minimum_size().x + UI.px(28))
+	else:
+		UI.fit(b)
+		if b.icon != null:
+			b.custom_minimum_size.x += UI.px(26)
 	return b
 
 
@@ -73,8 +89,14 @@ static func badge(words: String, material := "red", points := 13.0) -> PanelCont
 ## A gold segmented control: one button per option, the chosen one gold and
 ## the rest flat in a dark well. Options are {text, key, on, spoken?}.
 static func segmented(options: Array, pressed: Callable) -> PanelContainer:
-	var row := HBoxContainer.new()
+	# At large text the segments' words may not fit side by side: they wrap
+	# onto a second line rather than widen the screen.
+	var row: Container = HFlowContainer.new()
+	if Settings.text_scale <= 125:
+		row = HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(4))
+	row.add_theme_constant_override("h_separation", UI.px(4))
+	row.add_theme_constant_override("v_separation", UI.px(4))
 	for o: Dictionary in options:
 		var on := bool(o.get("on", false))
 		var b := ScreenKit.button(str(o["text"]), pressed.bind(o["key"]), "gold" if on else "tab",
@@ -101,7 +123,7 @@ static func section(words: String, right := "") -> VBoxContainer:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", UI.px(2))
 	var row := HBoxContainer.new()
-	var l := ScreenKit.text(words.to_upper(), 13.0, "words", "card", true)
+	var l := ScreenKit.text(words.to_upper(), 13.0, "words", "card", true, true)
 	l.add_theme_constant_override("line_spacing", 0)
 	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(l)
@@ -170,9 +192,12 @@ static func flow(separation := 6.0) -> HFlowContainer:
 	return r
 
 
-## A row that lays its children side by side, each given an equal share.
-static func columns(children: Array, separation := 8.0) -> HBoxContainer:
-	var r := HBoxContainer.new()
+## A row that lays its children side by side, each given an equal share;
+## stacked instead at large text, where side by side they would not fit.
+static func columns(children: Array, separation := 8.0) -> BoxContainer:
+	var r: BoxContainer = VBoxContainer.new()
+	if Settings.text_scale <= 125:
+		r = HBoxContainer.new()
 	r.add_theme_constant_override("separation", UI.px(separation))
 	for c: Control in children:
 		c.size_flags_horizontal = Control.SIZE_EXPAND_FILL

@@ -66,7 +66,9 @@ static func track(t: Dictionary) -> Dictionary:
 		rows.append({"tier": n, "state": state,
 			"text": Strings.t("TRACK_TIER", [n, reward(tier.get("free")),
 				(Strings.t("TRACK_AND_PREMIUM", premium) if premium != "" else "")]),
-			"premium_held": premium != "" and not bool(v.get("premium", false))})
+			"premium_held": premium != "" and not bool(v.get("premium", false)),
+			"free": reward(tier.get("free")), "free_mark": mark(tier.get("free")), "paid": premium,
+			"paid_mark": mark(tier.get("premium"))})
 	var can := next is Dictionary and stars >= int(next["cost"])
 	return {
 		"ready": true, "busy": bool(t.get("busy", false)), "error": str(t.get("error", "")),
@@ -81,7 +83,25 @@ static func track(t: Dictionary) -> Dictionary:
 		"season": int(v["season"]),
 		"rows": rows,
 		"claimed": _claimed_text(t.get("claimed", {})),
+		"stars_n": stars, "next_tier": int(next["tier"]) if next is Dictionary else 0,
+		"next_cost": int(next["cost"]) if next is Dictionary else 0, "claimed_n": claimed,
 	}
+
+
+## A reward's mark: [group, icon] from the design's set, or a resource.
+static func mark(r: Variant) -> Array:
+	if not (r is Dictionary) or (r as Dictionary).is_empty():
+		return []
+	var d: Dictionary = r
+	if d.has("essence"):
+		return ["coin", "essence"]
+	if d.has("pages"):
+		return ["currencies", "pages"]
+	if d.has("strayOffer"):
+		return ["season", "tierreward"]
+	if d.has("cosmetic"):
+		return ["shopcosmetics", str(d.get("kind", "")).replace("_", "")]
+	return []
 
 
 static func _claimed_text(c: Variant) -> String:

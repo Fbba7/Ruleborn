@@ -67,7 +67,8 @@ func _reducers() -> void:
 		"%s %s %s %s" % [track, shop, wallet, seen])
 
 
-func _view() -> Dictionary:
+## The track as the server sends it: ten tiers, four claimed, the fifth next.
+static func track_view() -> Dictionary:
 	var tiers := []
 	for n in range(1, 11):
 		var free := {"essence": 500} if n % 5 != 0 else {"pages": 5}
@@ -83,7 +84,7 @@ func _track_words() -> void:
 	var out := {}
 	for locale: String in Strings.LOCALES:
 		Strings.set_locale(locale)
-		out[locale] = ShopPresenter.track({"view": _view(), "error": "", "busy": false, "claimed": {}})
+		out[locale] = ShopPresenter.track({"view": track_view(), "error": "", "busy": false, "claimed": {}})
 	Strings.set_locale("en")
 	var en: Dictionary = out["en"]
 	var rows: Array = en["rows"]

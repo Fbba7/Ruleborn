@@ -125,14 +125,9 @@ func _filters(albums: Array) -> Control:
 	for a: Dictionary in albums:
 		var school := str(a["school"])
 		var on := school_filter == school
-		var chip := ScreenParts.chip("%d/%d" % [int(a["restored"]), int(a["total"])], on, _filter.bind(school), "",
-			"", Strings.t("SCREEN_FILTER_SCHOOL", Strings.t("SCHOOL_" + school.to_upper())))
-		var mark := ScreenCoin.make("school:" + school.to_lower(), 22.0)
-		chip.add_child(mark)
-		mark.position = Vector2(UI.px(8), UI.px(13))
-		chip.custom_minimum_size.x += UI.px(24)
-		chip.alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		row.add_child(chip)
+		row.add_child(ScreenParts.chip("%d/%d" % [int(a["restored"]), int(a["total"])], on, _filter.bind(school), "",
+			"", Strings.t("SCREEN_FILTER_SCHOOL", Strings.t("SCHOOL_" + school.to_upper())),
+			ScreenCoin.make("school:" + school.to_lower(), 22.0)))
 	return row
 
 
@@ -145,13 +140,11 @@ func _filter(school: String) -> void:
 func _album(a: Dictionary, busy: bool) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", UI.px(8))
-	var band := HBoxContainer.new()
-	band.add_theme_constant_override("separation", UI.px(8))
+	var band := ScreenParts.flow(8.0)
 	var school := str(a["school"])
 	band.add_child(ScreenCoin.make("school:" + school.to_lower(), 30.0))
 	var name := ScreenKit.text(Strings.t("SCHOOL_" + school.to_upper()), 18.0, "name", "card")
 	name.set_meta("school", a["school"])
-	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	band.add_child(name)
 	band.add_child(ScreenParts.pill(a["count"], "well"))
@@ -168,7 +161,7 @@ func _album(a: Dictionary, busy: bool) -> Control:
 	var mastery := VBoxContainer.new()
 	mastery.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	mastery.add_theme_constant_override("separation", UI.px(2))
-	mastery.add_child(ScreenKit.text(a["mastery"], 13.0, "words", "card", true))
+	mastery.add_child(ScreenKit.text(a["mastery"], 13.0, "words", "card", true, true))
 	mastery.add_child(ScreenMeter.bar(int(a["steps"]), maxi(int(a["steps_total"]), 1),
 		Palette.SCHOOL.get(school.to_lower(), Color("#E9B65C")), 8.0))
 	box.add_child(ScreenParts.columns([stamps, mastery], 10.0))

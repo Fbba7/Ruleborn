@@ -1185,3 +1185,6 @@ SCREEN_LAB_LEVEL,Lab level %d,Lab level %d,Laboratório nível %d,Laboratório n
 SCREEN_LAB_REMAINING,"Still to find, by school","Still to find, by school","Ainda por encontrar, por escola","Ainda por encontrar, por escola","Noch zu finden, nach Schule","Encore à trouver, par école"
 SCREEN_COMBINATIONS,What sounds here,What sounds here,O que soa aqui,O que soa aqui,Was hier klingt,Ce qui sonne ici
 SCREEN_CROWNED,Crowned,Crowned,Coroada,Coroada,Gekrönt,Couronnée
+SCREEN_FREE_LANE,FREE,FREE,GRÁTIS,GRÁTIS,GRATIS,GRATUIT
+SCREEN_STARPASS_LANE,STARPASS,STARPASS,STARPASS,STARPASS,STARPASS,STARPASS
+SCREEN_TIERS_CLAIMED,%d of %d tiers claimed,%d of %d tiers claimed,%d de %d níveis resgatados,%d de %d níveis resgatados,%d von %d Stufen abgeholt,%d paliers sur %d récupérés

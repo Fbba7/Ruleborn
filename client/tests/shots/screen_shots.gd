@@ -28,7 +28,7 @@ static func fill(name: String, store: Store) -> void:
 		"profile":
 			store.dispatch(&"profile_loaded", {"view": ProfileTests.sample()})
 		"track":
-			store.dispatch(&"track_loaded", {"view": {"season": 1, "claimed": 3}})
+			store.dispatch(&"track_loaded", {"view": ShopTests.track_view()})
 			store.dispatch(&"wallet_loaded", {"balance": {"starlight": 11250, "essence": 500}})
 		"shop":
 			store.dispatch(&"wallet_loaded", {"balance": {"starlight": 11250, "essence": 500}})

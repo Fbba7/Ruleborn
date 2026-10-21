@@ -18,6 +18,8 @@ const TABS := [
 ## the frame's height (21.1's corners as the build checks them), 187 of 2340
 ## pixels, of which the safe area is 132.
 const CORNER_LIFT_POINTS := 20.0
+## The largest text size, in percent, at which every tab shows its word.
+const LABELS_UP_TO := 125
 ## The hubs: a tab that opens several screens, chosen by the gold control.
 const HUBS := {
 	"laws": [{"route": &"codex", "words": "HUB_ALL_LAWS"}, {"route": &"harmony", "words": "HUB_HARMONY"},
@@ -139,11 +141,15 @@ static func _tab(t: Dictionary, on: bool, count: int) -> Control:
 	col.add_child(i)
 	var l := ScreenKit.text(words, 13.0, "words", "active" if on else "tab", not on)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# Five words at large text do not fit 360 points: the tabs not chosen
+	# keep their icon and their spoken name, the chosen one its word too.
+	l.visible = on or Settings.text_scale <= LABELS_UP_TO
 	if on:
 		ScreenKit.inked(l, 1.6)
 	col.add_child(l)
 	b.add_child(col)
-	b.custom_minimum_size.y = maxf(b.custom_minimum_size.y, UI.px(34 if on else 28) + l.get_minimum_size().y)
+	if l.visible:
+		b.custom_minimum_size.y = maxf(b.custom_minimum_size.y, UI.px(34 if on else 28) + l.get_minimum_size().y)
 	if count > 0:
 		var badge := ScreenParts.badge(str(count))
 		badge.set_anchors_preset(Control.PRESET_TOP_RIGHT)
