@@ -210,6 +210,13 @@ func _people() -> void:
 	for c in people.get_children():
 		if not c.is_queued_for_deletion():
 			kinds.append(str(c.name))
+	view.focus_realm("outer-2", 2)
+	await tree.process_frame
+	var outer: Array[String] = []
+	for c in people.get_children():
+		if not c.is_queued_for_deletion():
+			outer.append(str(c.name))
+	outer.sort()
 	var where := [UniverseCrowd.realm_of({"state": "working", "home": "spire",
 			"work": {"realm": "outer-2", "kind": "garden", "n": 1}}),
 		UniverseCrowd.realm_of({"state": "idle", "home": "spire", "work": null}),
@@ -226,12 +233,12 @@ func _people() -> void:
 	heading.gui_input.emit(lift)
 	var swooped := view.focus_id == "outer-4" and view.zoom == 1
 	Settings.reduced_motion = false
-	check.call("the realm seen close shows the player's own characters the home view puts there, one at most, and "
-			+ "none from afar; a character is where it works, else at home (the Spire is the Heart); a realm's "
+	check.call("the realm seen close shows the player's own characters the home view puts there, two at most on "
+			+ "an outer realm and one on the Heart, and none from afar; a character is where it works, else at home (the Spire is the Heart); a realm's "
 			+ "heading in a word list swoops the map to it (23.2, 14.1)",
-		far == 0 and kinds.size() == 1 and kinds.has("featherkin")
+		far == 0 and kinds == ["featherkin"] and outer == ["bloomling", "tidewalker"]
 			and where == ["outer-2", "heart", "outer-3"] and swooped and heading.get_child(1) == title,
-		"far %d kinds %s where %s swooped %s" % [far, kinds, where, swooped])
+		"far %d kinds %s outer %s where %s swooped %s" % [far, kinds, outer, where, swooped])
 	view.queue_free()
 	await tree.process_frame
 

@@ -28,6 +28,10 @@ uniform float brightness = 1.0;
 // nebulae are placed from: a backdrop that far off barely moves as the
 // camera pans (the map sets it each frame).
 uniform vec2 origin = vec2(0.0);
+// How much nearer the camera has come than over the whole universe: the sky
+// is that much farther off, so its dust and stars keep their size on the
+// screen at every zoom instead of swelling into blobs.
+uniform float sky_scale = 1.0;
 
 varying vec3 world;
 
@@ -78,7 +82,7 @@ float dust(vec2 p, float cell, float chance, float size) {
 }
 
 void fragment() {
-	vec2 p = world.xz - origin;
+	vec2 p = (world.xz - origin) * sky_scale;
 	float t = clamp(SCREEN_UV.y, 0.0, 1.0);
 	vec3 col = mix(top.rgb, middle.rgb, smoothstep(0.0, 0.4, t));
 	col = mix(col, low.rgb, smoothstep(0.4, 0.75, t));

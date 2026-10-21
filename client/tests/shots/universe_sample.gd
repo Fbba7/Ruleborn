@@ -57,7 +57,8 @@ static func extras() -> Dictionary:
 			"work": {"realm": "heart", "kind": "star_well", "n": 1}},
 		{"kind": "mossbear", "state": "idle", "home": "spire", "work": null},
 		{"kind": "tidewalker", "state": "working", "home": "outer-2",
-			"work": {"realm": "outer-2", "kind": "aether_spring", "n": 1}}], "producers": [
+			"work": {"realm": "outer-2", "kind": "aether_spring", "n": 1}},
+		{"kind": "bloomling", "state": "idle", "home": "outer-2", "work": null}], "producers": [
 		{"kind": "star_well", "realm": "heart", "stored": 320, "holds": 320},
 		{"kind": "garden", "realm": "outer-4", "stored": 85, "holds": 200},
 		{"kind": "aether_spring", "realm": "outer-2", "stored": 40, "holds": 140}]}

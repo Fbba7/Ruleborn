@@ -39,6 +39,9 @@ const CITADEL_FROM_KIT := true
 ## How far back the camera stands from what it looks at: enough that the
 ## whole column is in front of it, near enough that the sun's shadow reaches.
 const BACK := 140.0
+## The camera's size over a whole universe, at which the sky is drawn at its
+## own scale (`universe_galaxy.gdshader`'s `sky_scale`).
+const SKY_SIZE := 90.0
 ## A fault, in the alarm's red (§21.8 keeps red for alarms).
 const FAULT := Color("#FF5A7A")
 
@@ -274,10 +277,7 @@ func _rock(id: String, island: UniverseIsland, glows: UniversePaint, light: Univ
 ## The realm seen close (zoom 2) drawn as T2 draws a realm's island, built
 ## the first time it is seen close and kept; every other island its rock.
 func _show_close() -> void:
-	# Not the Heart: its citadel and buildings cover its ground, so it keeps
-	# the map's rock and the triangles go to the buildings.
-	var shown := focus_id if zoom == 2 and islands.has(focus_id) and not focus_id.begins_with("next:") \
-		and focus_id != "heart" else ""
+	var shown := focus_id if zoom == 2 and islands.has(focus_id) and not focus_id.begins_with("next:") else ""
 	if shown != "" and not _close.has(shown):
 		_make_close(shown)
 	for id: String in _rocks:
@@ -385,10 +385,11 @@ func _show_lods() -> void:
 		(_lods[id][0] as Node3D).visible = close
 		(_lods[id][1] as Node3D).visible = not close
 		# The kit's fine parts (windows, frames, flags) only in a close-up,
-		# where they can be seen.
+		# where they can be seen, and not on the Heart, whose island takes
+		# their room in §21.3's budget.
 		var fine := (_lods[id][0] as Node3D).get_node_or_null("Fine") as Node3D
 		if fine != null:
-			fine.visible = zoom == 2
+			fine.visible = zoom == 2 and id != "heart"
 	_show_close()
 	# The realm's own characters, in a close-up only.
 	var shown := focus_id if zoom == 2 and islands.has(focus_id) else ""
@@ -659,6 +660,7 @@ func _set_origin(back: Vector3) -> void:
 	var m := galaxy.material_override as ShaderMaterial
 	var fixed := Vector2(galaxy.position.x, galaxy.position.z)
 	m.set_shader_parameter("origin", Vector2(under.x, under.z) * 0.85 + fixed * 0.15)
+	m.set_shader_parameter("sky_scale", maxf(1.0, SKY_SIZE / maxf(1.0, camera.size)))
 
 
 ## Where the camera should be for the focus, zoom and turn: the whole
