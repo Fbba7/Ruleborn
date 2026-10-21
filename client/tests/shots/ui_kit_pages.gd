@@ -15,8 +15,10 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_home(column)
 		5:
 			_cards(column)
-		_:
+		6:
 			_settings(column)
+		_:
+			_roster(column)
 
 
 static func _materials(column: VBoxContainer) -> void:
@@ -267,3 +269,37 @@ static func _settings(column: VBoxContainer) -> void:
 		body.add_child(card)
 	body.add_child(KitControls.toggle_row("settingsandwellbeing/reducedmotion", "Reduced motion",
 		"No swoops, fewer particles", false, func(_on: bool) -> void: pass))
+
+
+## The design's Roster pieces (10-roster.png): the hub strip, the actions,
+## the filters with their dots and counts, and portrait cards.
+static func _roster(column: VBoxContainer) -> void:
+	column.add_child(KitNav.segmented([["Roster", "screens/roster"], ["Sages", "screens/sagehall"],
+		["Forms", "screens/formsalbum"]], 0, func(_i: int) -> void: pass))
+	var acts := HBoxContainer.new()
+	acts.add_theme_constant_override("separation", UI.px(8))
+	var assign := UI.action("Assign", func() -> void: pass, "gold")
+	assign.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	acts.add_child(assign)
+	var up := KitControls.action2("Level up", "866 Essence", func() -> void: pass, "green_muted")
+	up.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	acts.add_child(up)
+	acts.add_child(KitControls.icon_button("generalui/info", "About Pip", func() -> void: pass))
+	column.add_child(acts)
+	var filters := UI.row(6)
+	filters.add_child(KitControls.chip("All", true, func() -> void: pass, "12"))
+	filters.add_child(KitControls.chip("Idle", false, func() -> void: pass, "3", Tokens.color("success")))
+	filters.add_child(KitControls.chip("Working", false, func() -> void: pass, "4", Tokens.color("motion")))
+	column.add_child(filters)
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", UI.px(8))
+	grid.add_theme_constant_override("v_separation", UI.px(8))
+	for c: Array in [["crewroles/scout", "Bramble", 6, "life"], ["crewroles/carrier", "Pip", 5, "motion"],
+			["crewroles/warden", "Facet", 5, "matter"], ["crewroles/breaker", "Mo", 4, "time"],
+			["crewroles/mender", "Ash", 4, "energy"], ["crewroles/scout", "Volt", 4, "spirit"]]:
+		grid.add_child(KitCards.portrait(Icons.texture(c[0]), c[1], c[2], c[3], Tokens.color("success"),
+			"crewroles/carrier", func() -> void: pass, c[1] == "Pip"))
+	column.add_child(grid)
+	column.add_child(UI.grow())
+	column.add_child(KitNav.tabs("crew", {"islands": 3, "laws": 1, "heist": 4, "friends": 3}))

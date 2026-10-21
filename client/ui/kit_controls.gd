@@ -6,12 +6,72 @@ class_name KitControls
 
 
 ## A chip: glass when off, gold when on. It is a control, so it is 48 points
-## tall (§21.1), not the designs' 30.
-static func chip(text: String, on: bool, pressed: Callable) -> Button:
+## tall (§21.1), not the designs' 30. A `dot` in a state's colour leads its
+## words and a `count` follows them on a dark disc (the Roster's filters).
+static func chip(text: String, on: bool, pressed: Callable, count := "", dot := Color(0, 0, 0, 0)) -> Button:
 	var b := UI.action(text, pressed, "chip_on" if on else "chip")
 	b.name = "Chip"
 	b.custom_minimum_size.y = UI.px(Tokens.number("size", "chip_height"))
 	set_chip(b, on)
+	if dot.a > 0.0 or count != "":
+		var pad := UI.clear_box(9, 4)
+		pad.content_margin_left = UI.px(9 + (16 if dot.a > 0.0 else 0))
+		pad.content_margin_right = UI.px(9 + (30 if count != "" else 0))
+		for state: String in ["normal", "hover", "pressed", "focus", "disabled", "hover_pressed"]:
+			b.add_theme_stylebox_override(state, pad)
+		b.custom_minimum_size.x = 0
+	if dot.a > 0.0:
+		var d := KitRing.new()
+		d.dot = true
+		d.fraction = 1.0
+		d.tint = dot
+		d.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		d.set_anchors_preset(Control.PRESET_CENTER_LEFT)
+		d.offset_left = UI.px(10)
+		d.offset_right = UI.px(22)
+		d.offset_top = -UI.px(6)
+		d.offset_bottom = UI.px(6)
+		b.add_child(d)
+	if count != "":
+		var c := PanelContainer.new()
+		c.add_theme_stylebox_override("panel", UI.clear_box(5, 0))
+		UI.dress(c, "level_disc")
+		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var n := UI.label(count, 13)
+		n.theme_type_variation = "Number"
+		n.set_meta("bold", true)
+		c.add_child(n)
+		c.set_anchors_preset(Control.PRESET_CENTER_RIGHT)
+		c.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		c.grow_vertical = Control.GROW_DIRECTION_BOTH
+		c.offset_right = -UI.px(8)
+		b.add_child(c)
+	return b
+
+
+## An action with a second line under its words (the Roster's "Level up"
+## over "866 Essence"): what it does, and what it costs or needs.
+static func action2(text: String, line: String, pressed: Callable, look := "gold") -> Button:
+	var b := UI.action("", pressed, look, "%s, %s" % [text, line])
+	b.name = "Action"
+	b.custom_minimum_size = Vector2(UI.px(120), UI.px(56))
+	var v := VBoxContainer.new()
+	v.set_anchors_preset(Control.PRESET_FULL_RECT)
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", -UI.px(2))
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var box := RbBox.of(b)
+	var t := UI.label(text, 16)
+	t.add_theme_font_override("font", UI.bold_font())
+	t.add_theme_color_override("font_color", box.spec["text"])
+	t.set_meta("bold", true)
+	v.add_child(t)
+	var s := UI.label(line, 13)
+	s.add_theme_font_override("font", UI.bold_font())
+	s.add_theme_color_override("font_color", box.spec["text_2"])
+	s.set_meta("bold", true)
+	v.add_child(s)
+	b.add_child(v)
 	return b
 
 

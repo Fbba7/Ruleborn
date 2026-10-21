@@ -82,3 +82,76 @@ static func _name(title: String) -> Label:
 	var l := UI.label(title, 18, true)
 	l.theme_type_variation = "Heading"
 	return l
+
+
+## A character's card on the Roster: the portrait filling a card in its
+## school's colour, its level on a disc at the top left, a dot for its state
+## at the top right (the state is in its spoken name and the screen's words
+## too), its role on a disc at the bottom left, its name on a dark plate,
+## and a gold edge when chosen. `pressed` makes it one button.
+static func portrait(picture: Texture2D, name: String, level: int, school: String, state: Color, role_icon: String,
+		pressed: Callable, chosen := false, spoken := "") -> Button:
+	var b := UI.action("", pressed, "portrait_" + school, spoken if spoken != "" else name)
+	b.name = "Portrait"
+	b.custom_minimum_size = Vector2(UI.px(100), UI.px(128))
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	RbBox.of(b).set_chosen(chosen)
+	var art := TextureRect.new()
+	art.texture = picture
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	art.set_anchors_preset(Control.PRESET_FULL_RECT)
+	art.offset_left = UI.px(2)
+	art.offset_right = -UI.px(2)
+	art.offset_top = UI.px(2)
+	art.offset_bottom = -UI.px(26)
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	art.clip_contents = true
+	b.add_child(art)
+	var plate := PanelContainer.new()
+	plate.add_theme_stylebox_override("panel", UI.clear_box(4, 2))
+	UI.dress(plate, "name_plate")
+	plate.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	plate.offset_top = -UI.px(26)
+	plate.offset_left = UI.px(2)
+	plate.offset_right = -UI.px(2)
+	plate.offset_bottom = -UI.px(2)
+	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var n := UI.label(name, 14)
+	n.theme_type_variation = "LabelText"
+	n.set_meta("bold", true)
+	n.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	n.clip_text = true
+	plate.add_child(n)
+	b.add_child(plate)
+	var lv := PanelContainer.new()
+	lv.add_theme_stylebox_override("panel", UI.clear_box(4, 0))
+	UI.dress(lv, "level_disc")
+	lv.custom_minimum_size = Vector2.ONE * UI.px(22)
+	lv.position = Vector2(UI.px(5), UI.px(5))
+	lv.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var l := UI.label(str(level), 13)
+	l.theme_type_variation = "Number"
+	l.set_meta("bold", true)
+	lv.add_child(l)
+	b.add_child(lv)
+	var dot := KitRing.new()
+	dot.dot = true
+	dot.fraction = 1.0
+	dot.tint = state
+	dot.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	dot.offset_left = -UI.px(18)
+	dot.offset_right = -UI.px(6)
+	dot.offset_top = UI.px(6)
+	dot.offset_bottom = UI.px(18)
+	dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	b.add_child(dot)
+	if role_icon != "":
+		var role := Icons.view(role_icon, 24)
+		role.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+		role.offset_left = UI.px(5)
+		role.offset_right = UI.px(29)
+		role.offset_top = -UI.px(54)
+		role.offset_bottom = -UI.px(30)
+		b.add_child(role)
+	return b
