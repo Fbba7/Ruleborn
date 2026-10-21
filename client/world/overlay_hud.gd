@@ -16,7 +16,8 @@ const KICKER_POINTS := 13.0
 ## Each section's mark.
 const SECTION_ICONS := {"island": "realmactions/terrain", "buildings": "realmactions/build",
 	"workers": "realmactions/assignworker", "pylons": "buildings/lawpylon", "defence": "realmactions/defence",
-	"laws": "hud/strain", "crew": "hud/crew", "loot": "heiststatus/lootbag"}
+	"laws": "hud/strain", "crew": "hud/crew", "loot": "heiststatus/lootbag", "layouts": "realmactions/terrain",
+	"posts": "crewroles/warden", "naming": "generalui/new", "law": "buildings/lawpylon", "log": "planningactions/defencelog"}
 ## The round keys: the main one larger, as the design's BUILD.
 const KEY_POINTS := 60.0
 const MAIN_KEY_POINTS := 76.0
@@ -53,6 +54,20 @@ static func pill(icon: String, text: String, spoken := "", look := "glass") -> P
 	p.accessibility_name = spoken if spoken != "" else text
 	p.tooltip_text = spoken
 	p.set_meta("spoken", spoken if spoken != "" else text)
+	return p
+
+
+## A smaller pill for a pin over the world, where many stand close.
+static func tag(icon: String, text: String, look := "glass") -> PanelContainer:
+	var p := pill(icon, text, "", look)
+	p.add_theme_stylebox_override("panel", UI.clear_box(4, 1))
+	var mark := p.find_child("Icon", true, false) as Control
+	if mark != null:
+		mark.custom_minimum_size = Vector2.ONE * UI.px(15)
+	var words := p.find_child("Words", true, false) as Label
+	if words != null:
+		words.add_theme_font_size_override("font_size", UI.text_px(13))
+		words.set_meta("points", 13.0)
 	return p
 
 
@@ -125,6 +140,46 @@ static func key(icon: String, name: String, pressed: Callable, look := "leather"
 	return column
 
 
+## A small round key back to where the player came from (48 points, the
+## smallest a control may be), for the dock: §21.1 keeps every control in
+## the thumb's reach, never at the top.
+static func back_key(pressed: Callable) -> Control:
+	var b := UI.action("", pressed, "leather", Strings.t("STAGE_BACK"))
+	b.custom_minimum_size = Vector2.ONE * UI.px(48)
+	UI.dress(b, "leather", 24.0)
+	var middle := CenterContainer.new()
+	middle.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	middle.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	middle.add_child(Icons.view("generalui/back", 26.0))
+	b.add_child(middle)
+	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	b.name = "Back"
+	return b
+
+
+## A screen's heading on glass: a small kicker over a title in the title
+## face (the design's "SCOUT REPORT · Marta's universe").
+static func heading(kicker: String, title: String) -> PanelContainer:
+	var plate := UI.panel("glass")
+	plate.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var words := VBoxContainer.new()
+	words.add_theme_constant_override("separation", 0)
+	var k := UI.label(kicker.to_upper(), KICKER_POINTS)
+	k.theme_type_variation = "Kicker"
+	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	k.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	k.name = "Kicker"
+	words.add_child(k)
+	var t := UI.title(title)
+	t.add_theme_font_size_override("font_size", UI.text_px(20))
+	t.set_meta("points", 20.0)
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	t.name = "Title"
+	words.add_child(t)
+	plate.add_child(words)
+	return plate
+
+
 ## A section of a realm's facts: its kicker, then a flowing row of pills.
 ## The section is marked with `id` for the screens' tests.
 static func section(id: String, kicker: String) -> VBoxContainer:
@@ -142,7 +197,8 @@ static func section(id: String, kicker: String) -> VBoxContainer:
 	mark.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
 	UI.dress(mark, "leather", 99.0)
 	mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	mark.add_child(Icons.view(SECTION_ICONS.get(id, "generalui/info"), PILL_ICON + 2.0))
+	var icon: String = SECTION_ICONS.get(id, SECTION_ICONS.get(id.get_slice(":", 0), "generalui/info"))
+	mark.add_child(Icons.view(icon, PILL_ICON + 2.0))
 	mark.accessibility_name = kicker
 	mark.tooltip_text = kicker
 	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -178,7 +234,7 @@ static func ground_icon(ground: String) -> String:
 
 
 static func ward_icon(ward: String) -> String:
-	return "wards/" + ward.replace("_", "")
+	return "wards/" + ward.replace("_", "").to_lower()
 
 
 static func realm_icon(realm_type: String) -> String:

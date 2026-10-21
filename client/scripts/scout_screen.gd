@@ -3,9 +3,11 @@ extends Control
 ## The scout report (§12.4, §23.2, "Read their laws"): the chosen target's
 ## realm as the scout saw it (`StageScout`: its island under mist, the guards
 ## it counted by role and the wards by kind lined up on the rim, its laws
-## named over it, nothing placed), and below, its free facts in words — its
-## laws, its guards by role, its wards by kind, its watch, one rough loot
-## estimate, strain and faults — and the button that raids it.
+## named over it, nothing placed), under the design's report: a back key and
+## the target's name, its free facts as pills of icons and counts — its
+## laws, its guards by role and wards by kind with its watch, its universe's
+## size, loot, strain and faults — the line that says what a scout cannot
+## see, and the gold key that plans the raid.
 
 var controller: ObservatoryController
 var body: VBoxContainer
@@ -15,6 +17,8 @@ var scout: StageScout
 var _sheet: ScrollContainer
 var _keys: Control
 var _top: Control
+var _heading: PanelContainer
+var _dock: HFlowContainer
 var _drawn_key := ""
 
 
@@ -36,49 +40,91 @@ func _build() -> void:
 	view = StageScreen.mount(self, column)
 	view.fill = 1.12
 	scout = StageScout.new(view)
-	_top = OverlaySheet.ribbon(UI.title(Strings.t("SCOUT_TITLE")))
-	column.add_child(_top)
+	var top := HBoxContainer.new()
+	top.add_theme_constant_override("separation", UI.px(8))
+	_heading = OverlayHud.heading(Strings.t("SCOUT_TITLE"), "")
+	top.add_child(_heading)
+	_top = top
+	column.add_child(top)
 	status_label = UI.status("info", "")
-	column.add_child(UI.plate(status_label))
+	column.add_child(UI.plate(status_label, "glass"))
 	StageScreen.window(column, 1.3)
-	body = UI.scroll(column)
+	var s := ScrollContainer.new()
+	s.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	s.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var glass := UI.panel("glass")
+	glass.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body = VBoxContainer.new()
+	body.add_theme_constant_override("separation", UI.px(8))
+	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	glass.add_child(body)
+	s.add_child(glass)
+	column.add_child(s)
 	_sheet = StageScreen.sheet(body, 0.6)
-	var actions := UI.row(-1.0, true)
-	actions.add_child(UI.button(Strings.t("OBS_TITLE"), func() -> void: App.services.router.go(&"observatory")))
-	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
 	_keys = StageScreen.handle(column, _sheet)
-	column.add_child(UI.narrow(OverlaySheet.dock(actions)))
-	OverlaySheet.dress(self)
+	_dock = HFlowContainer.new()
+	_dock.alignment = FlowContainer.ALIGNMENT_CENTER
+	_dock.add_theme_constant_override("h_separation", UI.px(12))
+	column.add_child(_dock)
 
 
 func _refresh() -> void:
 	if not is_inside_tree():
 		return
 	var s := ObservatoryPresenter.scout(App.services.store.get_slice(ObservatoryState.OBSERVATORY))
-	for child in body.get_children():
+	for child: Node in body.get_children():
 		body.remove_child(child)
 		child.queue_free()
+	for child: Node in _dock.get_children():
+		child.queue_free()
+	_dock.add_child(OverlayHud.back_key(func() -> void: App.services.router.go(&"observatory")))
 	if not s["ready"]:
 		UI.set_status(status_label, "info", Strings.t("SCOUT_NONE_CHOSEN"))
 		(status_label.get_parent() as Control).visible = true
 		return
 	UI.set_status(status_label, "info", s["protected"])
 	(status_label.get_parent() as Control).visible = status_label.text != ""
-	var box := VBoxContainer.new()
-	box.add_child(UI.label(s["title"], UI.TEXT_POINTS, true))
-	for line: String in s["facts"]:
-		box.add_child(UI.label(line, UI.TEXT_POINTS, true))
-	body.add_child(UI.plate(box))
-	var realm := VBoxContainer.new()
-	for line: String in s["lines"]:
-		var l := UI.label(line, UI.TEXT_POINTS, true)
-		l.set_meta("fact", true)
-		realm.add_child(l)
-	body.add_child(UI.plate(realm))
-	body.add_child(RosterScreen.offer(s["raid"], false, controller.raid.bind(s["card"])))
-	OverlaySheet.dress(body)
-	OverlaySheet.unsqueeze(body)
-	_draw_world(s["card"])
+	(_heading.find_child("Title", true, false) as Label).text = s["title"]
+	var card: Dictionary = s["card"]
+	var realm: Dictionary = card.get("realm", {})
+	var lines: Array = s["lines"]
+	# Which realm, at what level, and its Vault's.
+	var sec := OverlayHud.section("island", lines[0])
+	var row := OverlayHud.pills_of(sec)
+	var type := "Heart" if realm.get("realm") == "heart" else str(realm.get("type", "Heart"))
+	row.add_child(OverlayHud.pill(OverlayHud.realm_icon(type), str(int(realm.get("realm_level", 1))), lines[0]))
+	row.add_child(OverlayHud.pill("heiststatus/vaultprogress", str(int(realm.get("vault_level", 1))), lines[0]))
+	for p: Control in OverlayFacts.universe(card, s["facts"]):
+		row.add_child(p)
+	body.add_child(sec)
+	sec = OverlayHud.section("laws", lines[1])
+	row = OverlayHud.pills_of(sec)
+	var laws := OverlayFacts.laws(realm)
+	if laws.is_empty():
+		laws.append(OverlayHud.pill("generalui/cancel", "0", lines[1]))
+	for p: Control in laws:
+		row.add_child(p)
+	body.add_child(sec)
+	sec = OverlayHud.section("defence", "%s · %s" % [lines[2], lines[3]])
+	row = OverlayHud.pills_of(sec)
+	for p: Control in OverlayFacts.defence(realm):
+		row.add_child(p)
+	body.add_child(sec)
+	# What a scout cannot know (§12.4), behind its padlock.
+	var hidden := OverlayHud.pill("generalui/lock", lines[5], lines[5], "track")
+	(hidden.find_child("Words", true, false) as Label).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	(hidden.find_child("Words", true, false) as Label).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body.add_child(hidden)
+	var o: Dictionary = s["raid"]
+	var raid := UI.action(o["action"], controller.raid.bind(card), "gold", o["spoken"])
+	raid.custom_minimum_size.y = UI.px(60)
+	raid.disabled = not o["can"]
+	raid.set_meta("key", o["key"])
+	raid.icon = Icons.texture("planningactions/plan")
+	raid.add_theme_constant_override("icon_max_width", UI.px(26))
+	raid.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_dock.add_child(raid)
+	_draw_world(card)
 
 
 ## The target's realm as the scout knows it: a bare island of its level.
