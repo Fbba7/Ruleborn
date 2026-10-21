@@ -34,6 +34,9 @@ static func kicker(text: String, colour := Color("#E9B65C")) -> Label:
 	l.add_theme_font_override("font", _tracked)
 	l.add_theme_color_override("font_color", colour)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	if Settings.text_scale > 100:
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		l.custom_minimum_size.x = UI.px(60)
 	l.set_meta("own_ink", true)
 	l.set_meta("bold", true)
 	return l
@@ -95,8 +98,10 @@ static func para(words_shown: String, points := 16.0, colour := Color("#F3EEFF")
 ## the chosen one on the kit's gold chip, the rest on its glass chips, as
 ## the design's hub and tabs. `pick` takes the index.
 static func tabs(names: Array, chosen: int, pick: Callable, icons: Array = []) -> PanelContainer:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", UI.px(4))
+	# One row, wrapping when the words are long (German, §20.8's larger text).
+	var row := HFlowContainer.new()
+	row.add_theme_constant_override("h_separation", UI.px(4))
+	row.add_theme_constant_override("v_separation", UI.px(4))
 	for i: int in names.size():
 		var b := UI.action(str(names[i]), pick.bind(i), "chip_on" if i == chosen else "chip")
 		if i < icons.size() and Icons.has(str(icons[i])):
@@ -202,3 +207,17 @@ static func level_row(level: int, top: int, health := -1) -> Control:
 		heart.accessibility_name = Strings.t("CHARACTER_STAT_SPOKEN", [Strings.t("CHARACTER_STAT_HEALTH"), str(health)])
 		row.add_child(heart)
 	return row
+
+
+## The crew's hub, as the design heads the Roster, the Sage hall and the
+## Forms album: one segment each with its icon, the open one in gold; a tap
+## on another goes there.
+static func hub(open: int) -> PanelContainer:
+	var routes: Array[StringName] = [&"roster", &"sages", &"forms"]
+	var p := tabs([Strings.t("CREW_HUB_ROSTER"), Strings.t("CREW_HUB_SAGES"), Strings.t("CREW_HUB_FORMS")], open,
+		func(i: int) -> void:
+			if i != open:
+				App.services.router.go(routes[i]),
+		["screens/roster", "screens/sagehall", "screens/formsalbum"])
+	p.name = "Hub"
+	return p

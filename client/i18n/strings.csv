@@ -644,6 +644,10 @@ ROSTER_ALL,All,All,Todos,Todos,Alle,Tous
 ROSTER_FILTER,%s · %d,%s · %d,%s · %d,%s · %d,%s · %d,%s · %d
 ROSTER_FILTER_SPOKEN,Show %s: %d,Show %s: %d,Mostrar %s: %d,Mostrar %s: %d,%s zeigen: %d,Afficher %s : %d
 ROSTER_DETAILS,Details,Details,Detalhes,Detalhes,Details,Détails
+CREW_HUB_ROSTER,Roster,Roster,Plantel,Plantel,Aufstellung,Effectif
+CREW_HUB_SAGES,Sages,Sages,Sábios,Sábios,Weise,Sages
+CREW_HUB_FORMS,Forms,Forms,Formas,Formas,Formen,Formes
+ROSTER_COLLECTION,Collection,Collection,Coleção,Coleção,Sammlung,Collection
 HOME_SAGES,Sage hall,Sage hall,Salão dos Sábios,Salão dos Sábios,Halle der Weisen,Salle des Sages
 SAGE_TITLE,Sage hall,Sage hall,Salão dos Sábios,Salão dos Sábios,Halle der Weisen,Salle des Sages
 SAGE_HEADER,"Your Sages are at level %d, the Keeper's","Your Sages are at level %d, the Keeper's","Seus Sábios estão no nível %d, o do Guardião","Os teus Sábios estão no nível %d, o do Guardião","Deine Weisen sind auf Stufe %d, der des Hüters","Tes Sages sont au niveau %d, celui du Gardien"

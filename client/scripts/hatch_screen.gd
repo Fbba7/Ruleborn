@@ -103,6 +103,8 @@ func _refresh() -> void:
 	if not (h["strays"] as Array).is_empty():
 		var title := StageHeroKit.words(Strings.t("HATCH_STRAYS"), 20.0, Color("#FFE6A0"))
 		StageHeroSkin.named(title)
+		title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		title.custom_minimum_size.x = UI.px(60)
 		cards.add_child(title)
 	var kinds := {}
 	for s: Dictionary in (slice.get("view", {}) as Dictionary).get("strays", []):

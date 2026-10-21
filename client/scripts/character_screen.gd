@@ -98,8 +98,10 @@ func _build() -> void:
 	forms.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var bottom := HBoxContainer.new()
 	bottom.add_theme_constant_override("separation", UI.px(8))
-	var back := UI.button(Strings.t("HOME_ROSTER"), func() -> void: App.services.router.go(&"roster"))
-	bottom.add_child(StageHeroMaterial.button(back, "leather"))
+	# Back to the roster: the kit's round back button, named for a screen
+	# reader, in the lowest row as §21.1 keeps it.
+	bottom.add_child(KitControls.icon_button("generalui/back", Strings.t("HOME_ROSTER"),
+		func() -> void: App.services.router.go(&"roster"), "leather", 56.0))
 	actions = UI.row(-1.0, true)
 	actions.alignment = FlowContainer.ALIGNMENT_CENTER
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -248,7 +250,7 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 		_info("hud/shield", Strings.t("CHARACTER_KICK_RESISTS"), "#1F6A35", Strings.term("RESISTS", kind)),
 		_info("traits/" + first_trait.replace("_", ""), Strings.t("CHARACTER_KICK_TRAITS"), "#5A3AB0",
 			" · ".join(traits)),
-		_info("realmactions/assignworker", Strings.t("CHARACTER_KICK_BEST"), "#1A6A78",
+		_info("realmactions/assignworker", Strings.t("CHARACTER_KICK_BEST"), "#145560",
 			Strings.term("BEST_AT", kind)),
 	], self))
 	# What each trait does, under the cards, as the traits card names them.
@@ -437,6 +439,7 @@ func _upgrade(o: Dictionary, busy: bool) -> Button:
 	b.set_meta("key", o["key"])
 	b.set_meta("item", o["item"])
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.custom_minimum_size.x = UI.px(200)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
 	row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, UI.px(10))
@@ -453,7 +456,7 @@ func _upgrade(o: Dictionary, busy: bool) -> Button:
 	var to := int(o["args"]["to"])
 	var line := Strings.t("CHARACTER_CONFIRM", o["cost"]) if confirming else (str(o["why"]) if str(o["why"]) != ""
 		else Strings.t("CHARACTER_UPGRADE_LINE", [to - 1, to]))
-	var sub := StageHeroKit.words(line, 14.0, Color("#0A3A20"))
+	var sub := StageHeroKit.words(line, 14.0, Color("#FFFDF0"), true)
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	sub.custom_minimum_size.x = UI.px(90)
