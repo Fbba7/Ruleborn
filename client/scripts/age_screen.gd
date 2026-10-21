@@ -10,13 +10,20 @@ var answers: HFlowContainer
 
 func _ready() -> void:
 	App.ready(self)
-	var column := UI.frame(self)
-	column.add_child(UI.title(Strings.t("APP_NAME")))
+	var column := ScreenKit.frame(self)
 	column.add_child(UI.grow())
-	question_label = UI.label("", UI.TEXT_POINTS, true)
-	column.add_child(UI.plate(question_label))
+	var mark := ScreenKit.icon("screens", "universe", 120.0)
+	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	column.add_child(mark)
+	var name := ScreenKit.inked(ScreenKit.text(Strings.t("APP_NAME"), 44.0, "name", "card"), 2.0)
+	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(name)
+	column.add_child(KitNav.rule())
 	column.add_child(UI.grow())
-	answers = UI.row(-1.0, true)
+	question_label = ScreenKit.text("", 20.0, "words", "parchment", false, true)
+	question_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(ScreenKit.panel("parchment", question_label, 18.0, 16.0))
+	answers = UI.row(10.0, true)
 	column.add_child(UI.narrow(answers))
 	show_check()
 
@@ -30,8 +37,11 @@ func show_check() -> void:
 		return
 	question_label.text = Strings.t("AGE_QUESTION")
 	for band: String in AgeCheck.BANDS:
-		answers.add_child(UI.button(Strings.t("AGE_" + band.replace("-", "_").replace("+", "_UP").to_upper()),
-			choose.bind(band)))
+		# Four bands, none suggested: every answer in the same material.
+		var b := ScreenKit.button(Strings.t("AGE_" + band.replace("-", "_").replace("+", "_UP").to_upper()),
+			choose.bind(band), "leather")
+		b.custom_minimum_size.x = maxf(b.custom_minimum_size.x, UI.px(110))
+		answers.add_child(b)
 
 
 ## The player's answer: kept, and — 13 and over — on to the game.

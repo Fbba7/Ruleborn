@@ -33,6 +33,8 @@ static func item(i: Dictionary, me: String) -> Dictionary:
 		"listed": not i.get("withdrawn", false) and i.get("removed") == null,
 		# §17.8: another player's island offers to block its creator.
 		"creator": str(creator) if creator != null and not mine else "",
+		"fun": _one(r.get("fun")), "cleverness": _one(r.get("cleverness")), "fairness": _one(r.get("fairness")),
+		"rated": count > 0, "completions": _number(i.get("completions", 0)), "remixes": _number(i.get("remixes", 0)),
 	}
 
 
