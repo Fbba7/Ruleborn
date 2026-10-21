@@ -125,7 +125,10 @@ static func field(spoken: String) -> LineEdit:
 	f.add_theme_color_override("caret_color", ink)
 	for state: String in ["normal", "focus", "read_only"]:
 		f.add_theme_stylebox_override(state, clear_box(10, 6))
-	RbBox.dress(f, "parchment", Tokens.number("size", "radius_m"))
+	var box := RbBox.dress(f, "parchment", Tokens.number("size", "radius_m"))
+	# Where the words go: a gold edge while the field has the keyboard.
+	f.focus_entered.connect(box.set_chosen.bind(true))
+	f.focus_exited.connect(box.set_chosen.bind(false))
 	f.set_meta("points", TEXT_POINTS)
 	f.set_meta("bold", true)
 	return f
@@ -149,11 +152,17 @@ static func label(text := "", points := -1.0, wraps := false) -> Label:
 
 
 ## A screen's title in Marcellus (§21.8), with the designs' hard drop under
-## it.
+## it and their gold rule beneath.
 static func title(text: String) -> Label:
 	var l := label(text, TITLE_POINTS, true)
 	l.theme_type_variation = "Title"
 	l.accessibility_live = AccessibilityServer.LIVE_OFF
+	var rule := KitNav.rule()
+	rule.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	rule.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	rule.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	rule.position.y = -px(2)
+	l.add_child(rule, false, Node.INTERNAL_MODE_FRONT)
 	return l
 
 
@@ -283,6 +292,15 @@ static func set_look(b: Button, look: String) -> void:
 		b.add_theme_constant_override("outline_size", px(box.spec["text_outline"][1]))
 	else:
 		b.remove_theme_constant_override("outline_size")
+	# Light words on a dark or deep control stand on the designs' hard drop.
+	if words.get_luminance() > 0.6:
+		b.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
+		b.add_theme_constant_override("shadow_offset_x", 0)
+		b.add_theme_constant_override("shadow_offset_y", maxi(2, px(0.75)))
+		b.add_theme_constant_override("shadow_outline_size", px(box.spec["text_outline"][1]) if box.spec.has(
+			"text_outline") else 0)
+	else:
+		b.remove_theme_color_override("font_shadow_color")
 
 
 ## Manrope at 800, as §21.8 draws 900: a control's words.
@@ -383,7 +401,7 @@ static func grow() -> Control:
 static func banner(kind: String, text: String, ms := -1.0) -> PanelContainer:
 	if ms < 0:
 		ms = Tokens.number("motion", "banner_ms")
-	var p := panel("parchment")
+	var p := panel("banner_" + kind if kind in ["alarm", "success"] else "parchment")
 	p.name = "Banner"
 	var r := row()
 	var words := status(kind, text)

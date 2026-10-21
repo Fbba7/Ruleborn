@@ -11,8 +11,10 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_controls(column)
 		3:
 			_status(column)
-		_:
+		4:
 			_home(column)
+		_:
+			_cards(column)
 
 
 static func _materials(column: VBoxContainer) -> void:
@@ -44,8 +46,11 @@ static func _materials(column: VBoxContainer) -> void:
 
 
 static func _controls(column: VBoxContainer) -> void:
-	column.add_child(KitNav.header("Settings", "Wellbeing"))
-	column.add_child(KitNav.segmented(["Roster", "Sages", "Forms"], 0, func(_i: int) -> void: pass))
+	column.add_child(KitNav.top_bar("Settings", func() -> void: pass, "Age 18+"))
+	column.add_child(KitNav.segmented([["Wellbeing", "settingsandwellbeing/playtimereminder"],
+		["Game", "settingsandwellbeing/sound"], ["Access", "settingsandwellbeing/accessibility"],
+		["Account", "settingsandwellbeing/account"]], 0, func(_i: int) -> void: pass))
+	column.add_child(KitNav.segmented(["Off", "45 min", "60 min", "90 min"], 0, func(_i: int) -> void: pass))
 	var chips := UI.row(6)
 	for c: Array in [["All", true], ["Motion", false], ["Time", false]]:
 		chips.add_child(KitControls.chip(c[0], c[1], func() -> void: pass))
@@ -61,9 +66,17 @@ static func _controls(column: VBoxContainer) -> void:
 	rounds.add_child(KitNav.back(func() -> void: pass))
 	column.add_child(rounds)
 	column.add_child(KitControls.toggle_row("settingsandwellbeing/reducedmotion", "Reduced motion",
-		"No swoops, fewer particles", "On", true, func() -> void: pass))
+		"No swoops, fewer particles", true, func(_on: bool) -> void: pass))
 	column.add_child(KitControls.toggle_row("settingsandwellbeing/accessibility", "High contrast",
-		"Opaque cards, heavier outlines", "Off", false, func() -> void: pass))
+		"Opaque cards, heavier outlines", false, func(_on: bool) -> void: pass))
+	var sw := UI.row(10)
+	var slider := HSlider.new()
+	slider.custom_minimum_size = Vector2(UI.px(140), UI.px(48))
+	slider.value = 60
+	sw.add_child(slider)
+	column.add_child(sw)
+	column.add_child(KitPanels.locked("settingsandwellbeing/playtimereminder", "Play reminder", "Every 60 min",
+		"Set for ages 13 to 15"))
 	column.add_child(UI.field("Keeper name"))
 	column.add_child(UI.grow())
 	column.add_child(KitNav.tabs("heist", {"islands": 3, "laws": 1, "crew": 2}))
@@ -81,7 +94,7 @@ static func _status(column: VBoxContainer) -> void:
 		res.add_child(pill)
 	column.add_child(res)
 	var pills := UI.row(8)
-	pills.add_child(KitStatus.pill("82% · Humming", "hud/strain"))
+	pills.add_child(KitStatus.strain("82% · Humming", "humming"))
 	pills.add_child(KitStatus.badge("4"))
 	pills.add_child(KitStatus.plate("LV 5"))
 	pills.add_child(KitStatus.pill("Ready", "", "parchment"))
@@ -111,7 +124,7 @@ static func _home(column: VBoxContainer) -> void:
 	top.add_child(KitHud.keeper(Icons.texture("crewroles/scout"), "Ines", 7, 0.64, "410"))
 	top.add_child(UI.grow())
 	(top.get_child(1) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var strain := KitStatus.pill("82% · Humming", "hud/strain")
+	var strain := KitStatus.strain("82% · Humming", "humming")
 	strain.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	top.add_child(strain)
 	column.add_child(top)
@@ -152,3 +165,33 @@ static func _home(column: VBoxContainer) -> void:
 	column.add_child(collect)
 	column.add_child(KitHud.goal("realmactions/upgrade", "Raise the Star Well to level 3", 2, 3, "2 / 3"))
 	column.add_child(KitNav.tabs("islands", {"islands": 3, "heist": 4, "friends": 1}))
+
+
+## Law cards in the four rarity frames, and the six school chips.
+static func _cards(column: VBoxContainer) -> void:
+	column.add_child(KitNav.segmented([["All laws", "screens/lawcodex"], ["Harmony", "screens/harmonyview"],
+		["Lab", "screens/resonancelab"]], 0, func(_i: int) -> void: pass))
+	var filters := UI.row(4)
+	filters.add_child(KitControls.chip("All 18 / 24", true, func() -> void: pass))
+	for school: String in Tokens.schools():
+		filters.add_child(KitControls.school_button(school, school == "time", func() -> void: pass))
+	column.add_child(filters)
+	column.add_child(KitControls.search("Search laws"))
+	column.add_child(KitPanels.chapter("motion", "Motion", "Chapter I", "3 of 4 restored"))
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", UI.px(14))
+	grid.add_theme_constant_override("v_separation", UI.px(14))
+	for c: Array in [["laws/bounce", "Bounce", "motion", "common", ""],
+			["laws/stillness", "Stillness", "time", "uncommon", "II"],
+			["laws/brittlestone", "Brittle Stone", "matter", "rare", ""],
+			["laws/soullanterns", "Soul Lanterns", "spirit", "deep", ""]]:
+		var icon: String = c[0] if Icons.has(c[0]) else "laws/bounce"
+		grid.add_child(KitCards.law_card(icon, c[1], c[2], c[3], c[4], 150, str(12 + grid.get_child_count() * 4)))
+	var centre := CenterContainer.new()
+	centre.add_child(grid)
+	column.add_child(centre)
+	var schools := UI.row(6)
+	for school: String in Tokens.schools():
+		schools.add_child(KitCards.school_chip(school))
+	column.add_child(schools)

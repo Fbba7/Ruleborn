@@ -68,12 +68,13 @@ static func row(icon: String, title: String, line := "", trailing: Control = nul
 
 
 ## A bottom sheet with a title: the designs' tray, sliding up over the
-## screen. Its body is the VBox under meta "body".
-static func sheet(title: String) -> PanelContainer:
+## screen, dark, or parchment as the designs' menu sheet. Its body is the
+## VBox under meta "body".
+static func sheet(title: String, look := "sheet") -> PanelContainer:
 	var p := PanelContainer.new()
 	p.name = "Sheet"
 	p.add_theme_stylebox_override("panel", UI.clear_box(16, 10))
-	UI.dress(p, "sheet")
+	UI.dress(p, look, 26)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(8))
 	var grip := ColorRect.new()
@@ -126,3 +127,60 @@ static func dialog(host: Control, title: String, words: String, actions: Array) 
 	veil.theme = RbTheme.of("dark")
 	card.ready.connect(func() -> void: Motion.pop(card))
 	return veil
+
+
+## A row that goes somewhere (Profile and stats, Privacy policy): a list
+## row with the designs' chevron at its end.
+static func link(icon: String, title: String, line: String, pressed: Callable) -> Control:
+	return row(icon, title, line, Icons.view("hud/next", 20), pressed)
+
+
+## A value the player's age band fixes (§20.2, §23.5 "shown locked"): not a
+## control but words, a lock beside the value and why it is fixed, read as
+## one sentence.
+static func locked(icon: String, title: String, value: String, why: String) -> Control:
+	var tag := HBoxContainer.new()
+	tag.add_theme_constant_override("separation", UI.px(4))
+	tag.add_child(Icons.view("generalui/lock", 18))
+	var v := UI.label(value, 14)
+	v.theme_type_variation = "LabelText"
+	v.set_meta("bold", true)
+	tag.add_child(v)
+	var r := row(icon, title, why, tag)
+	r.accessibility_name = "%s: %s. %s" % [title, value, why]
+	return r
+
+
+## A chapter's band (the Codex's school albums): gold, the school's mark in
+## a dark disc, the title in Marcellus over a kicker, and a count on a pill
+## at its end.
+static func chapter(school: String, title: String, kicker: String, count: String) -> PanelContainer:
+	var p := UI.panel("chapter")
+	p.name = "Chapter"
+	var band := HBoxContainer.new()
+	band.add_theme_constant_override("separation", UI.px(10))
+	var disc := PanelContainer.new()
+	disc.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
+	UI.dress(disc, "ring_" + school, 999)
+	disc.add_child(Icons.view("schools/" + school, 26))
+	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	band.add_child(disc)
+	var words := VBoxContainer.new()
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.add_theme_constant_override("separation", 0)
+	var t := UI.label(title, 22)
+	t.theme_type_variation = "Heading"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	words.add_child(t)
+	var k := UI.label(kicker, 13)
+	k.theme_type_variation = "Kicker"
+	k.uppercase = true
+	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	k.set_meta("bold", true)
+	words.add_child(k)
+	band.add_child(words)
+	var c := KitStatus.pill(count, "", "parchment")
+	c.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	band.add_child(c)
+	p.add_child(band)
+	return p

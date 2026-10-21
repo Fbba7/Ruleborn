@@ -118,3 +118,21 @@ static func progress(done: float, of: float, words: String, tone := Color()) -> 
 	l.set_meta("bold", true)
 	row.add_child(l)
 	return row
+
+
+## The universe's stability (§5.5) on a glass pill: a dot in its band's
+## colour and the share and band in words ("82% · Humming"), so the band
+## never rests on its colour.
+static func strain(words: String, band: String) -> PanelContainer:
+	var p := pill(words)
+	p.name = "Strain"
+	var dot := KitRing.new()
+	dot.dot = true
+	dot.fraction = 1.0
+	dot.tint = Tokens.color("band_" + band)
+	dot.custom_minimum_size = Vector2.ONE * UI.px(14)
+	dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var row := p.get_child(0) as HBoxContainer
+	row.add_child(dot)
+	row.move_child(dot, 0)
+	return p

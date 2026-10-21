@@ -14,6 +14,7 @@ class_name RbTheme
 const STATUSES := ["alarm", "success", "info", "confirming"]
 
 static var _themes: Dictionary = {}
+static var _knob: ImageTexture = null
 
 
 ## The theme for a family of surface, made once per contrast mode.
@@ -96,6 +97,11 @@ static func _build(family: String) -> Theme:
 			th.set_color("font_outline_color", v, Tokens.color("ink_line"))
 			th.set_constant("outline_size", v, UI.px(float(t["outline"])))
 			th.set_color("font_color", v, Tokens.color("cream") if not light else text)
+	# A title stands over the designs' gold rule (UI.title draws it in this
+	# margin).
+	var under := StyleBoxEmpty.new()
+	under.content_margin_bottom = UI.px(14)
+	th.set_stylebox("normal", "Title", under)
 	th.set_type_variation("Secondary", "Label")
 	th.set_color("font_color", "Secondary", soft)
 	for s: String in STATUSES:
@@ -115,16 +121,56 @@ static func _controls(th: Theme, text: Color, light: bool) -> void:
 	th.set_color("caret_color", "LineEdit", Tokens.color("parchment_ink"))
 	th.set_color("font_color", "RichTextLabel", text)
 	th.set_color("default_color", "RichTextLabel", text)
+	# A quiet scroll bar: a thin rounded grabber, no track, as phones draw it.
 	var grab := StyleBoxFlat.new()
-	grab.bg_color = Tokens.color("gold") if not light else Tokens.color("gold_rim")
-	grab.set_corner_radius_all(UI.px(3))
-	grab.content_margin_left = UI.px(2)
-	grab.content_margin_right = UI.px(2)
-	var track := StyleBoxFlat.new()
-	track.bg_color = Color(0, 0, 0, 0.25)
-	track.set_corner_radius_all(UI.px(3))
-	track.content_margin_left = UI.px(2)
-	track.content_margin_right = UI.px(2)
+	grab.bg_color = Color(Tokens.color("text_on_night_2") if not light else Tokens.color("parchment_text_2"), 0.45)
+	grab.set_corner_radius_all(UI.px(2))
+	grab.content_margin_left = UI.px(1.5)
+	grab.content_margin_right = UI.px(1.5)
+	var track := StyleBoxEmpty.new()
+	track.content_margin_left = UI.px(1.5)
+	track.content_margin_right = UI.px(1.5)
 	for part: String in ["grabber", "grabber_highlight", "grabber_pressed"]:
 		th.set_stylebox(part, "VScrollBar", grab)
 	th.set_stylebox("scroll", "VScrollBar", track)
+	# Sliders: an ink-edged dark track, filled in gold up to a gold knob.
+	var rail := StyleBoxFlat.new()
+	rail.bg_color = Tokens.paint("#140A16")
+	rail.border_color = Tokens.color("ink_line")
+	rail.set_border_width_all(UI.px(1))
+	rail.set_corner_radius_all(UI.px(6))
+	rail.content_margin_top = UI.px(5)
+	rail.content_margin_bottom = UI.px(5)
+	var filled := rail.duplicate() as StyleBoxFlat
+	filled.bg_color = Tokens.color("gold")
+	for kind: String in ["HSlider", "VSlider"]:
+		th.set_stylebox("slider", kind, rail)
+		th.set_stylebox("grabber_area", kind, filled)
+		th.set_stylebox("grabber_area_highlight", kind, filled)
+		for icon: String in ["grabber", "grabber_highlight"]:
+			th.set_icon(icon, kind, knob())
+
+
+
+## The slider's knob: a gold disc in an ink ring, drawn once, smoothed by
+## coverage at its edge.
+static func knob() -> ImageTexture:
+	if _knob != null:
+		return _knob
+	var n := UI.px(26)
+	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
+	var c := Vector2(n, n) * 0.5
+	var r := n * 0.5 - 1.0
+	var ink := Tokens.color("ink_line")
+	var gold := Tokens.color("gold")
+	var top := Tokens.color("gold_top")
+	for y: int in n:
+		for x: int in n:
+			var d := Vector2(x + 0.5, y + 0.5).distance_to(c)
+			var cover := clampf(r - d + 0.5, 0.0, 1.0)
+			var inner := clampf(r - UI.px(1.5) - d + 0.5, 0.0, 1.0)
+			var lit := top.lerp(gold, clampf(float(y) / n * 1.4, 0.0, 1.0))
+			var col := ink.lerp(lit, inner)
+			img.set_pixel(x, y, Color(col, cover))
+	_knob = ImageTexture.create_from_image(img)
+	return _knob
