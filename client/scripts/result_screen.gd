@@ -50,6 +50,11 @@ func _ready() -> void:
 	_build_world(heist)
 	# The designs' result: the outcome over gold rays (a red dusk when
 	# foiled) on the night under the island, the haul on a parchment tile.
+	# The page is the night's: its words take the dark family's shades, and
+	# the contrast checks read them against the night they stand on.
+	theme = RbTheme.of("dark")
+	set_meta("text_bg", Tokens.material("night")["text_bg"])
+	set_meta("rb_family", "dark")
 	var backdrop := FxDraw.new(_draw_rays)
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(backdrop)
@@ -68,6 +73,7 @@ func _ready() -> void:
 	grade_label.add_theme_constant_override("outline_size", UI.px(5))
 	grade_label.add_theme_color_override("font_shadow_color", Color(FxSkin.INK_LINE, 0.9))
 	grade_label.add_theme_constant_override("shadow_offset_y", UI.px(3))
+	grade_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	condition_label = FxSkin.label("", UI.TEXT_POINTS)
 	condition_label.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT)
 	condition_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -75,6 +81,7 @@ func _ready() -> void:
 	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	chip.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	chip_label = FxSkin.label("", 15.0)
+	chip_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	chip.add_child(chip_label)
 	subline_label = FxSkin.label("", 14.0)
 	subline_label.add_theme_font_override("font", FxSkin.figures())

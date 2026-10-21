@@ -539,7 +539,11 @@ func _build() -> void:
 	# left; at the bottom right a column of round orders (Halt and Drop, the
 	# gait with its name beneath) standing on a round red Get out. Mirrored
 	# for a left-handed player (§20.8).
-	var band := HBoxContainer.new()
+	# With §20.8's large text the orders stand over the portraits rather
+	# than beside them, so neither runs off the phone.
+	var band: BoxContainer = HBoxContainer.new()
+	if Settings.text_scale > 130:
+		band = VBoxContainer.new()
 	band.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	band.add_theme_constant_override("separation", UI.px(6))
 	if Settings.left_handed:
@@ -590,6 +594,9 @@ func _build() -> void:
 	main.add_child(go)
 	right.add_child(main)
 	band.add_child(right)
+	if band is VBoxContainer:
+		band.move_child(right, 0)
+		right.size_flags_horizontal = Control.SIZE_SHRINK_END
 	actions_band = band
 	column.add_child(band)
 	# The hint on the bottom line, under the hand's controls (the designs').
