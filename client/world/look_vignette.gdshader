@@ -6,11 +6,20 @@ shader_type canvas_item;
 
 uniform vec4 edge : source_color = vec4(0.031, 0.02, 0.102, 0.42);
 uniform vec4 wash : source_color = vec4(1.0, 1.0, 1.0, 0.0);
+// A haze rising from the foot of the frame (WorldLook.haze_under), so a
+// sheet or a hub's controls over the lower screen meet the world softly:
+// its colour, its opacity at the foot, and where it fades out (0 the top of
+// the frame, 1 its foot).
+uniform vec4 haze : source_color = vec4(0.17, 0.23, 0.66, 0.0);
+uniform float haze_from = 0.6;
 
 void fragment() {
 	vec2 q = (UV - 0.5) / vec2(0.9, 0.7);
 	float d = length(q);
 	float v = smoothstep(0.55, 1.0, d) * edge.a;
 	vec3 c = mix(wash.rgb, edge.rgb, v / max(v + wash.a, 0.0001));
-	COLOR = vec4(c, clamp(v + wash.a, 0.0, 1.0));
+	float a = clamp(v + wash.a, 0.0, 1.0);
+	float h = haze.a * smoothstep(haze_from, 1.0, UV.y);
+	c = mix(c, haze.rgb, h / max(h + a * (1.0 - h), 0.0001));
+	COLOR = vec4(c, a + h * (1.0 - a));
 }

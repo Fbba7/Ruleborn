@@ -43,6 +43,8 @@ var _clouds: ShaderMaterial
 ## What shows only after dark: its share by the hour.
 var _night: Array[ShaderMaterial] = []
 var _night_glows: Array[ShaderMaterial] = []
+## The haze under the world: where it starts and how strong (haze_under).
+var _haze := Vector2(0.6, 0.0)
 
 
 ## One warm sun with its shadow, a sky by the hour, ambient light from the
@@ -152,6 +154,24 @@ func set_hour(new_hour: int) -> void:
 	var edge := sky[0].darkened(0.55)
 	edge.a = 0.42
 	vm.set_shader_parameter("edge", edge)
+	_apply_haze(sky)
+
+
+## A haze over the lower part of the world (look_vignette.gdshader), from
+## `from` of the frame's height (0 its top) to its foot at `strength`, in the
+## sky's low colour: for a screen whose sheet or hub controls cover the lower
+## screen, so the world fades into them instead of being cut. 0 removes it.
+func haze_under(from: float, strength: float) -> void:
+	_haze = Vector2(from, strength)
+	_apply_haze(RealmPalette.realm_sky_at(hour, realm))
+
+
+func _apply_haze(sky: Array[Color]) -> void:
+	var vm := vignette.material as ShaderMaterial
+	var c := sky[2].lerp(sky[1], 0.5)
+	c.a = _haze.y
+	vm.set_shader_parameter("haze", c)
+	vm.set_shader_parameter("haze_from", _haze.x)
 
 
 ## The floating rock round a grid of `grid` tiles, its scatter and the sky's
