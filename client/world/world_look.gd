@@ -7,6 +7,12 @@ extends RefCounted
 ## roots, waterfalls and clouds. `WorldView` asks for these and draws the
 ## simulation's pieces on top.
 
+## FULL for the heist and the home realm; LIGHT where a screen's own pieces
+## need the room (the realm view, curation, the universe's close-up): fewer,
+## larger grass tufts, fewer flowers and rocks, a coarser meadow and rim,
+## and no fireflies or pools of light beyond the realm's signature.
+enum Detail { FULL, LIGHT }
+
 static var _sky: Shader = load("res://world/sky.gdshader")
 static var _toon: Shader = load("res://world/toon.gdshader")
 static var _ground: Shader = load("res://world/look_ground.gdshader")
@@ -24,6 +30,8 @@ var sun: DirectionalLight3D
 ## The realm type the look is drawn for (§21.4), and the hour (§21.2).
 var realm := "heart"
 var hour := 12
+## How much the island draws (§21.3's budgets): set before `island`.
+var detail := Detail.FULL
 var vignette: ColorRect
 ## The sky's gradient (sky.gdshader), drawn behind the world.
 var sky_material: ShaderMaterial
@@ -150,6 +158,7 @@ func set_hour(new_hour: int) -> void:
 ## palette names it.
 func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary, type := "") -> void:
 	var builder := IslandBuilder.new(grid, seed_from, colours, type)
+	builder.light = detail == Detail.LIGHT
 	realm = builder.kind
 	_mists.clear()
 	_night.clear()
@@ -158,16 +167,16 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 	var meadow := _decorated(_painted(LookPaint.grass(), paint_scale))
 	meadow.set_shader_parameter("grid_blend", IslandBuilder.GRID_BLEND)
 	meadow.set_shader_parameter("brush", 1.0)
-	statics.add_child(_piece(builder.meadow(), meadow, false))
-	statics.add_child(_piece(builder.cliffs(), _painted(LookPaint.rock(), 0.0), true))
+	_add(statics, "Meadow", _piece(builder.meadow(), meadow, false))
+	_add(statics, "Cliffs", _piece(builder.cliffs(), _painted(LookPaint.rock(), 0.0), true))
 	var roots := builder.roots()
-	statics.add_child(_piece(roots[0], _painted(LookPaint.rock(), 0.0, 0.5), true))
+	_add(statics, "Roots", _piece(roots[0], _painted(LookPaint.rock(), 0.0, 0.5), true))
 	var vines := _painted(null, 0.0)
 	vines.set_shader_parameter("sway", 0.18)
 	vines.set_shader_parameter("sway_by_uv", true)
-	statics.add_child(_piece(roots[1], vines, false))
+	_add(statics, "Vines", _piece(roots[1], vines, false))
 	for part: Array in builder.scatter():
-		statics.add_child(_scatter_part(part))
+		_add(statics, "Scatter", _scatter_part(part))
 	var mist_at: Array[Transform3D] = []
 	var mist_alpha: Array[float] = []
 	var falls := builder.waterfalls()
@@ -184,21 +193,21 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 			pm.set_shader_parameter("deep", Color("#C8401E"))
 			pm.set_shader_parameter("foam", Color("#FFC24A"))
 			pm.set_shader_parameter("glowing", 0.8)
-		statics.add_child(_piece(falls[0], fm, false))
-		statics.add_child(_piece(falls[1], pm, false))
+		_add(statics, "Falls", _piece(falls[0], fm, false))
+		_add(statics, "Pools", _piece(falls[1], pm, false))
 		var stones: Array[Transform3D] = falls[3]
 		var grey: Array[Color] = []
 		for i in stones.size():
 			grey.append((colours["stone"] as Color).darkened(0.1 + 0.15 * (i % 2)))
-		statics.add_child(_scatter(IslandBuilder.ico_mesh(), stones, grey, 0.0, 0.0))
+		_add(statics, "PoolStones", _scatter(IslandBuilder.ico_mesh(), stones, grey, 0.0, 0.0))
 		for foot: Vector3 in falls[2]:
 			for j in 3 if realm != "emberreach" else 0:
 				mist_at.append(Transform3D(Basis().scaled(Vector3(2.4 + j, (2.4 + j) * 0.6, 1.0)),
 					foot + Vector3((j - 1) * 0.5, j * 0.3, 0)))
 				mist_alpha.append(1.0)
 	var dressing := builder.sky_dressing()
-	statics.add_child(_piece(dressing[0], _painted(LookPaint.rock(), 0.0, 0.6), true))
-	statics.add_child(_clouds_of(dressing[1], seed_from))
+	_add(statics, "Islets", _piece(dressing[0], _painted(LookPaint.rock(), 0.0, 0.6), true))
+	_add(statics, "Clouds", _clouds_of(dressing[1], seed_from))
 	# The cloud sea under the island: soft, wide and slow.
 	var r := builder.radius()
 	var rng := RandomNumberGenerator.new()
@@ -210,7 +219,7 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 		mist_at.append(Transform3D(Basis().scaled(Vector3(w, w * 0.3, 1.0)),
 			Vector3(cos(a) * d, -6.5 - rng.randf() * 3.0, sin(a) * d)))
 		mist_alpha.append(0.45)
-	statics.add_child(_mists_of(mist_at, mist_alpha))
+	_add(statics, "Mists", _mists_of(mist_at, mist_alpha))
 	set_hour(hour)
 
 
@@ -315,6 +324,13 @@ func _decorated(m: ShaderMaterial) -> ShaderMaterial:
 		m.set_shader_parameter("deco_scale", 8.0)
 		m.set_shader_parameter("deco_glow", 1.0 if realm == "lanternvale" else 0.0)
 	return m
+
+
+## `node` added under `parent` as `label` (numbered when repeated), so a
+## budget count can name the look's parts.
+static func _add(parent: Node, label: String, node: Node) -> void:
+	node.name = label
+	parent.add_child(node, true)
 
 
 static func _piece(mesh: Mesh, mat: Material, shadows: bool) -> MeshInstance3D:

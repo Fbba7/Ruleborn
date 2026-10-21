@@ -10,6 +10,9 @@ extends RefCounted
 ## buildings and the figures.
 const ISLAND_TRIANGLES := 18000
 const ISLAND_CALLS := 24
+## The lighter level (WorldLook.Detail.LIGHT) for screens whose own pieces
+## need the room: at most this many triangles, the same draw calls.
+const LIGHT_TRIANGLES := 10000
 
 var tree: SceneTree
 var check: Callable
@@ -25,6 +28,7 @@ func run() -> void:
 	_hours()
 	_seamless()
 	await _budget()
+	await _light()
 
 
 ## §21.4: all seven realms, each with every colour the world draws from.
@@ -114,6 +118,34 @@ func _budget() -> void:
 			% [ISLAND_TRIANGLES, ISLAND_CALLS] + "draw calls on a 14 by 14 grid (21.3)",
 		worst.x <= ISLAND_TRIANGLES and worst.y <= ISLAND_CALLS, "%d triangles, %d draw calls (%s)" % [worst.x,
 			worst.y, at])
+
+
+## The lighter level: within its budget for every realm, and never more than
+## the full level's draw calls.
+func _light() -> void:
+	var worst := 0
+	var at := ""
+	var calls_ok := true
+	for realm: String in RealmPalette.TYPES:
+		var drawn: Array[Vector2i] = []
+		for detail: int in [WorldLook.Detail.FULL, WorldLook.Detail.LIGHT]:
+			var world := Node3D.new()
+			tree.root.add_child(world)
+			var look := WorldLook.new(world)
+			look.detail = detail
+			var statics := Node3D.new()
+			world.add_child(statics)
+			look.island(statics, Vector2i(14, 14), 5, RealmPalette.of(realm), realm)
+			drawn.append(LookTests.count(world))
+			world.free()
+		if drawn[1].x > worst:
+			worst = drawn[1].x
+			at = realm
+		calls_ok = calls_ok and drawn[1].y <= drawn[0].y and drawn[1].x < drawn[0].x
+	await tree.process_frame
+	check.call("the island's lighter level stays within %d triangles in every realm, lighter than the full level and "
+			% LIGHT_TRIANGLES + "with no more draw calls (21.3)", worst <= LIGHT_TRIANGLES and calls_ok,
+		"%d triangles (%s)" % [worst, at])
 
 
 ## Triangles and draw calls under `root`: every mesh, every instance.

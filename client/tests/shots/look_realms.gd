@@ -6,7 +6,7 @@ extends SceneTree
 ## still, default 270x480), ZOOM (0 the whole rock, the default) and PITCH
 ## (default the home camera's 35°); SPAN widens the camera by a factor; FOV
 ## turns it to a perspective camera of that field of view;
-## FEATURES=1 dresses the grid.
+## FEATURES=1 dresses the grid; DETAIL=light draws WorldLook.Detail.LIGHT.
 const ALL := ["heart", "skyfield", "crystalline", "tidehold", "emberreach", "verdant", "lanternvale"]
 
 
@@ -47,6 +47,8 @@ func _go() -> void:
 			view.position = Vector2(cell.x * h, cell.y * r)
 			view.size = Vector2(cell)
 			root.add_child(view)
+			if OS.get_environment("DETAIL") == "light":
+				view.look.detail = WorldLook.Detail.LIGHT
 			view.set_sky_hour(int(hours[h]))
 			view.show_replay(replay)
 			view.set_zoom(zoom)

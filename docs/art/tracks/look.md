@@ -143,3 +143,28 @@ This track owns `outline.gdshader` but not the creature material (T1). The outli
 - **Done:** everything above through Lantern Vale's darker twilight (`0c8d449`). The last full check_all passed on `60f0383` (client 323/323); `8566d4a` and `0c8d449` change only palette values and islet dressing and were rendered and linted but not run through check_all (skipped: it takes about 25 minutes).
 - **Still worse than the design:** the grid's tile seams (T3's) still show faintly; wind streaks and fireflies are small at the home zoom; Lantern Vale stays a little brighter than its land still; Verdant and Tidehold read close in hue at dusk.
 - **Next step:** run check_all on the last commit; then tune the cloud sea per realm and check the remaining T5 screens (curation, defences, observatory) in both cameras.
+
+## Third session (2026-10-21, from 00:00 UTC)
+
+### Budget headroom: the lighter level (pushed first, for T4 and T6)
+
+**The call:** set `look.detail = WorldLook.Detail.LIGHT` before `look.island(...)`. On a `WorldView`, after it is in the tree and before `show_replay`:
+
+```gdscript
+add_child(view)
+view.look.detail = WorldLook.Detail.LIGHT
+view.show_replay(replay)
+```
+
+`WorldLook.Detail.FULL` stays the default (the heist and home). The lighter level keeps every piece and every draw call but draws fewer, larger ones: a third of the grass tufts at 1.5 times the size, 40% of the flowers, pebbles and fireflies, half the rim rocks, roots, curtains and vines, a wider-spaced rim fringe, and a coarser meadow (8 rings × 64 spokes) and rim (the lip follows the meadow's spokes, so the two still meet). Side by side at the realm zoom it reads the same (`docs/art/shots/look/s3-detail-full-vs-light.png`, full left).
+
+Measured (`client/tests/shots/look_budget.gd`, headless; `PARTS=1` lists every piece), 12 × 12 grid:
+
+| Realm | Full | Light |
+|---|---|---|
+| Heart | 16,222 tris / 21 calls | 8,698 / 21 |
+| Skyfield | 16,432 / 22 | 9,276 / 22 |
+
+On a 14 × 14 grid the worst realm is 16,976 at full and 9,448 at light (`LookTests`, which holds the light level to 10,000). That gives T6's realm view and curation about 7,500 triangles back, and T4 room for the meadow in the Heart's close-up.
+
+Where the full level's triangles go (Heart, 12 × 12): meadow 2,400; cliffs 1,558; roots 1,206; vines 864; tufts 2,430; rim fringe 2,000; flowers 1,170; rim rocks 1,080; hanging fringe 550; pebbles 560; motes 480; fireflies 512; pool stones 540; islets 496; falls, pools, clouds and mist under 400 together.
