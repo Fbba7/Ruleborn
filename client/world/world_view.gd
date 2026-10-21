@@ -118,8 +118,10 @@ var law_fx: LawFx
 
 var _static_key := ""
 var _vault: MeshInstance3D
-var _pylons: Array[MeshInstance3D] = []
-var _wards: Array[MeshInstance3D] = []
+## The pylons and the wards, merged into one mesh (§21.3's draw calls),
+## rebuilt when one breaks or goes down; `_piece_key` is what it shows.
+var _pieces: MeshInstance3D
+var _piece_key := ""
 var _walls: MeshInstance3D
 ## The crew's skiff, where Get out called it.
 var _skiff: MeshInstance3D
@@ -290,8 +292,7 @@ func world_at(at: Vector2) -> Vector3:
 func _build_statics() -> void:
 	for c in statics.get_children():
 		c.queue_free()
-	_pylons.clear()
-	_wards.clear()
+	_piece_key = ""
 	if replay == null or _size.x == 0:
 		return
 	var colours := RealmPalette.of(realm_type)
@@ -309,16 +310,9 @@ func _build_statics() -> void:
 	# is its own piece.
 	_vault = _instance(PieceKit.vault(false), RealmKit.material("toon", true))
 	statics.add_child(_vault)
-	for p: Dictionary in replay.pylons():
-		var mi := _instance(PieceKit.pylon(str(p.get("school", "matter"))), RealmKit.material("toon", true))
-		mi.position = world_at(p["at"])
-		statics.add_child(mi)
-		_pylons.append(mi)
-	for w: Dictionary in replay.wards():
-		var mi := _instance(PieceKit.ward(str(w["kind"])), RealmKit.material("toon", true))
-		mi.position = world_at(w["at"])
-		statics.add_child(mi)
-		_wards.append(mi)
+	_pieces = _instance(null, RealmKit.material("toon", true))
+	statics.add_child(_pieces)
+	_merge_pieces()
 	_walls = _instance(null, material(_clear), false)
 	statics.add_child(_walls)
 	_skiff = _instance(ActorBuilder.skiff(), material(_toon, true))
@@ -401,6 +395,8 @@ func _actor(role: String, height: float) -> Node3D:
 	if model != null:
 		root.set_meta("model", true)
 		feet.visible = false
+		# The model casts its own soft shadow (CreatureGear.blob).
+		root.get_node("Blob").queue_free()
 		# A touch larger than life, inside §21.1's heights, so a figure reads
 		# at the heist's 12 tiles across among the marks over it.
 		var tall: float = model.call("height") if model.has_method("height") else height
@@ -737,24 +733,44 @@ func _sync_pieces() -> void:
 		if _vault.get_meta("open", false) != open:
 			_vault.mesh = PieceKit.vault(open)
 			_vault.set_meta("open", open)
-	var pylons := replay.pylons()
-	for i in mini(pylons.size(), _pylons.size()):
-		var up: bool = pylons[i]["standing"]
-		if _pylons[i].get_meta("up", true) != up:
-			_pylons[i].mesh = PieceKit.pylon(str(pylons[i].get("school", "matter"))) if up else PieceKit.broken_pylon()
-			_pylons[i].set_meta("up", up)
-	var wards := replay.wards()
-	for i in mini(wards.size(), _wards.size()):
-		var live: bool = wards[i]["live"]
-		if _wards[i].get_meta("live", true) != live:
-			_wards[i].mesh = PieceKit.ward(str(wards[i]["kind"])) if live else PieceKit.dead_ward()
-			_wards[i].set_meta("live", live)
+	_merge_pieces()
 	var walls := replay.walls()
 	var g := Geo.new()
 	for w: Vector2i in walls:
 		g.box(Geo.place(world_at(Vector2(w) + Vector2(0.5, 0.5)) + Vector3(0, 0.6, 0)), Vector3(0.86, 1.2, 0.86),
 			Palette.TIME.lightened(0.3))
 	_walls.mesh = g.mesh()
+
+
+## The pylons, each standing or broken, and the wards, each live or down, as
+## one mesh, built again only when one of them changes.
+func _merge_pieces() -> void:
+	if _pieces == null:
+		return
+	var pylons := replay.pylons()
+	var wards := replay.wards()
+	var key := ",".join(pylons.map(func(p: Dictionary) -> String: return str(p["standing"]))) + "|" \
+		+ ",".join(wards.map(func(w: Dictionary) -> String: return str(w["live"])))
+	if key == _piece_key:
+		return
+	_piece_key = key
+	var st := SurfaceTool.new()
+	var any := false
+	for p: Dictionary in pylons:
+		var mesh := PieceKit.pylon(str(p.get("school", "matter"))) if p["standing"] else PieceKit.broken_pylon()
+		any = _append(st, mesh, world_at(p["at"])) or any
+	for w: Dictionary in wards:
+		var mesh := PieceKit.ward(str(w["kind"])) if w["live"] else PieceKit.dead_ward()
+		any = _append(st, mesh, world_at(w["at"])) or any
+	_pieces.mesh = st.commit() if any else null
+
+
+static func _append(st: SurfaceTool, mesh: ArrayMesh, at: Vector3) -> bool:
+	if mesh == null:
+		return false
+	for k in mesh.get_surface_count():
+		st.append_from(mesh, k, Transform3D(Basis.IDENTITY, at))
+	return mesh.get_surface_count() > 0
 
 
 ## The guard whose sight is drawn: the selected one; else, as the designs

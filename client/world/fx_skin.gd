@@ -22,6 +22,8 @@ const PARCH_BOTTOM := Color("#F1E3C4")
 const PARCH_INK := Color("#2A1A10")
 const GOLD := Color("#F2B43C")
 const GOLD_DEEP := Color("#C97F12")
+## Gold as words on parchment: deep enough for 4.5:1 (§21.8).
+const GOLD_INK := Color("#7A4E00")
 const ALARM := Color("#E2536B")
 const ALARM_DEEP := Color("#B3203A")
 ## §21.8: red words on a dark surface.

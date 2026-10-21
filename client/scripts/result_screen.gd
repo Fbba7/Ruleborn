@@ -5,7 +5,22 @@ extends Control
 ## claims: the grade is the re-simulation's (§24.12). A cleared rehearsal
 ## offers to publish the island (§18.6); a Workshop play, to rate it.
 
+## §12.9's outcomes: each one's condition and what it multiplies (the haul
+## and Renown), as the document's table gives them.
+const OUTCOME := {"Clean": ["RESULT_CONDITION_CLEAN", "1.0", "1.0"], "Loud": ["RESULT_CONDITION_LOUD", "0.7", "0.8"],
+	"Partial": ["RESULT_CONDITION_PARTIAL", "0.4", "0.5"], "Foiled": ["RESULT_CONDITION_FOILED", "0", "0"]}
+
+var kicker_label: Label
 var grade_label: Label
+## §12.9's condition under the outcome, and its multipliers on a chip.
+var condition_label: Label
+var chip_label: Label
+## The heist's length and the alarm's true peak (§12.9).
+var subline_label: Label
+## §12.13's moment: when, and what happened.
+var moment_when: Label
+var moment_label: Label
+var moment_card: PanelContainer
 var detail_label: Label
 var check_label: Label
 ## A Workshop play's Again, which waits for the island's answer.
@@ -16,6 +31,12 @@ var flight: FxDraw
 ## The haul's number on the card, where the coins land.
 var counter: FxDraw
 var _haul := 0
+## The replay's moments (ReplayScreen.moments), its length in ticks, its
+## alarm's peak and the crew as it ended.
+var _moments: Array[Dictionary] = []
+var _ticks := 0
+var _peak := 0
+var _crew_end: Array = []
 var _clock := 0.0
 var _verdict := {}
 
@@ -32,45 +53,87 @@ func _ready() -> void:
 	var card := FxSkin.panel("parchment", 22.0, 14.0)
 	var box := VBoxContainer.new()
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	box.add_theme_constant_override("separation", UI.px(6))
+	box.add_theme_constant_override("separation", UI.px(4))
 	card.add_child(box)
-	grade_label = FxSkin.label("", UI.TITLE_POINTS + 8.0, "parchment", true)
+	kicker_label = FxSkin.label("", 13.0, "parchment")
+	kicker_label.add_theme_color_override("font_color", FxSkin.GOLD_INK)
+	grade_label = FxSkin.label("", UI.TITLE_POINTS + 18.0, "parchment", true)
+	condition_label = FxSkin.label("", UI.TEXT_POINTS, "parchment")
+	condition_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var chip := FxSkin.panel("card", 12.0, 8.0)
+	chip.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	chip_label = FxSkin.label("", 13.0)
+	chip.add_child(chip_label)
+	subline_label = FxSkin.label("", 13.0, "parchment")
+	subline_label.add_theme_font_override("font", FxSkin.figures())
 	detail_label = FxSkin.label("", UI.TEXT_POINTS, "parchment")
 	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	check_label = FxSkin.label("", 14.0, "parchment")
+	check_label = FxSkin.label("", 13.0, "parchment")
 	check_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	box.add_child(kicker_label)
 	# The grade's stars over it: three for Clean, down to none for Foiled.
 	box.add_child(FxDraw.new(_draw_stars, Vector2(0, UI.px(30))))
 	box.add_child(grade_label)
+	box.add_child(condition_label)
+	box.add_child(chip)
+	box.add_child(subline_label)
 	# The haul, counting up beside a coin, on the rule under the grade.
-	counter = FxDraw.new(_draw_rule, Vector2(0, UI.px(30)))
+	counter = FxDraw.new(_draw_rule, Vector2(0, UI.px(34)))
 	box.add_child(counter)
 	box.add_child(detail_label)
 	box.add_child(check_label)
 	column.add_child(card)
+	# §12.13: the moment that decided it, with its replay a tap away.
+	moment_card = FxSkin.panel("card", 18.0, 12.0)
+	var moment := HBoxContainer.new()
+	moment.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	moment.add_theme_constant_override("separation", UI.px(10))
+	var words := VBoxContainer.new()
+	words.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	moment_when = FxSkin.label("", 13.0)
+	moment_when.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT)
+	moment_when.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	moment_label = FxSkin.label("", UI.TEXT_POINTS)
+	moment_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	moment_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	words.add_child(moment_when)
+	words.add_child(moment_label)
+	var watch := FxSkin.icon_button(Strings.t("RESULT_WATCH"), _watch_moment, "play", "gold")
+	watch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	moment.add_child(watch)
+	moment.add_child(words)
+	moment.add_child(FxDraw.new(_draw_crew, Vector2(UI.px(30) * 3.2, UI.px(48))))
+	moment_card.add_child(moment)
+	moment_card.visible = false
+	column.add_child(moment_card)
 	var actions := UI.row()
 	actions.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	actions.add_child(_button(Strings.t("RESULT_WATCH"), func() -> void: App.services.router.go(&"replay"), "gold"))
 	var play: Dictionary = heist["workshop"]
 	if heist["testing"]:
+		actions.add_child(_button(Strings.t("RESULT_WATCH"), func() -> void: App.services.router.go(&"replay"), "card"))
 		actions.add_child(_button(Strings.t("RESULT_BUILDER"), func() -> void: App.services.router.go(&"builder")))
 		# §18.6: a cleared rehearsal is the clear the Workshop publishes with.
 		if WorkshopController.clears(heist["verdict"]) and not heist["published"]:
 			actions.add_child(_button(Strings.t("RESULT_PUBLISH"), func() -> void:
-				App.services.router.go(&"workshop", {"publish": true})))
+				App.services.router.go(&"workshop", {"publish": true}), "gold"))
 	elif not play.is_empty():
+		actions.add_child(_button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "card"))
 		# §18.6: a play the server has checked may rate the island.
 		var v: Dictionary = heist["verdict"]
 		if v.get("ok", false) and v.get("server", false):
 			actions.add_child(_button(Strings.t("RESULT_RATE"), func() -> void:
 				App.services.router.go(&"workshop", {"rate": true})))
-		again_button = _button(Strings.t("RESULT_AGAIN"), play_again.bind(str(play["id"])))
+		again_button = _button(Strings.t("RESULT_AGAIN"), play_again.bind(str(play["id"])), "gold")
 		actions.add_child(again_button)
 	else:
-		actions.add_child(_button(Strings.t("RESULT_AGAIN"), func() -> void:
+		# The designs' bottom bar: Home, and the next raid as the main action.
+		actions.add_child(_button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "card"))
+		var again := _button(Strings.t("RESULT_AGAIN"), func() -> void:
 			App.services.store.dispatch(&"heist_started", {})
-			App.services.router.go(&"heist")))
-	actions.add_child(_button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "card"))
+			App.services.router.go(&"heist"), "gold")
+		again.custom_minimum_size.x = UI.px(170)
+		actions.add_child(again)
 	column.add_child(UI.narrow(actions))
 	column.add_child(FxSkin.corner_clear())
 	show_verdict(heist["verdict"], (heist["replay"] as PackedByteArray).size())
@@ -92,8 +155,11 @@ func _build_world(heist: Dictionary) -> void:
 	var r := RulebornReplay.new()
 	if bytes.is_empty() or not r.load(bytes, heist.get("island", PackedByteArray())):
 		return
+	_moments = ReplayScreen.moments(bytes, heist.get("island", PackedByteArray()))
 	while r.step():
-		pass
+		_peak = maxi(_peak, r.alarm())
+	_ticks = r.tick()
+	_crew_end = r.crew()
 	world_view = WorldView.new()
 	world_view.heist = false
 	world_view.pitch = WorldView.HOME_PITCH
@@ -229,6 +295,68 @@ func _process(delta: float) -> void:
 		(c as FxDraw).queue_redraw()
 
 
+## The replay from three seconds before the moment (§12.13).
+func _watch_moment() -> void:
+	App.services.router.go(&"replay", {"from": int(_moment().get("tick", 0))})
+
+
+## §12.13's moment that decided the heist, from its replay's moments: the
+## first crew member caught when any was (Partial, Foiled), else the first
+## guard alerted (Loud), else the Vault opening (Clean); {} when none.
+func _moment() -> Dictionary:
+	for kind: String in ["caught", "seen", "vault"]:
+		for m in _moments:
+			if str(m["kind"]) == kind:
+				return m
+	return {}
+
+
+## The moment in words: what happened, to whom.
+func _moment_words(m: Dictionary) -> String:
+	match str(m.get("kind", "")):
+		"caught":
+			var who := int(m.get("who", 0))
+			var role := str(_crew_end[who]["role"]) if who < _crew_end.size() else ""
+			return Strings.t("RESULT_MOMENT_CAUGHT", Strings.term("ROLE", role))
+		"seen":
+			return Strings.t("RESULT_MOMENT_SEEN")
+		"vault":
+			return Strings.t("RESULT_MOMENT_VAULT")
+	return Strings.t("RESULT_MOMENT_CLOCK")
+
+
+## The crew as the heist ended, a face each: ringed green when it got out,
+## greyed with a red ring when it was caught.
+func _draw_crew(ci: Control) -> void:
+	var n := _crew_end.size()
+	if n == 0:
+		return
+	var r := minf(ci.size.y * 0.42, ci.size.x / (n * 2.1))
+	# Discs, then faces, then rings: each pass one draw.
+	for step in 3:
+		for i in n:
+			var m: Dictionary = _crew_end[i]
+			var c := Vector2(ci.size.x - r * 1.05 - (n - 1 - i) * r * 1.7, ci.size.y * 0.5)
+			var caught := str(m["standing"]) == "Caught"
+			var role := str(m["role"])
+			var picture: Texture2D = Portrait.of(String(Cast.KIND[role])) if Cast.KIND.has(role) else null
+			match step:
+				0:
+					FxPen.circle(ci, c, r + UI.px(1.5), FxSkin.INK_LINE)
+					FxPen.circle(ci, c, r, Color(Palette.ROLE.get(role, Palette.STONE)).darkened(0.6 if caught else 0.25))
+					if picture == null:
+						FxIcons.face(ci, c + Vector2(0, r * 0.1), r * 0.6, Palette.ROLE.get(role, Palette.STONE), role,
+							caught)
+				1:
+					if picture != null:
+						FxPen.texture_rect(ci, picture, Rect2(c - Vector2(r, r) * 0.9, Vector2(r, r) * 1.8), false,
+							Color(0.5, 0.5, 0.55) if caught else Color.WHITE)
+				2:
+					var out := str(m["standing"]) == "Out"
+					var ring := FxSkin.ALARM if caught else (FxSkin.SUCCESS if out else FxSkin.ON_DARK_SOFT)
+					FxPen.arc(ci, c, r, 0.0, TAU, 32, ring, UI.px(2.5))
+
+
 ## A result button in the heist's skin.
 func _button(words: String, call: Callable, kind := "leather") -> Button:
 	var b := UI.button(words, call)
@@ -255,6 +383,7 @@ func play_again(id: String) -> void:
 func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 	_verdict = v
 	var by_server: bool = v.get("server", false)
+	_show_outcome(v)
 	if v.get("ok", false):
 		grade_label.text = Strings.term("GRADE", str(v["grade"]))
 		if v.get("workshop", false):
@@ -280,6 +409,8 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 		else:
 			detail_label.text = Strings.t("RESULT_BANKED", int(v["banked"]))
 			check_label.text = Strings.t("RESULT_ACCEPTED_LOCAL", replay_bytes)
+		# The haul's count on the rule already says what was banked.
+		detail_label.visible = not (detail_label.text == Strings.t("RESULT_BANKED", int(v["banked"])) and _haul > 0)
 		UI.set_status(check_label, "confirming" if v.get("confirming", false) else "success", check_label.text)
 	else:
 		grade_label.text = Strings.t("RESULT_NOT_ACCEPTED")
@@ -287,3 +418,29 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 		# A Workshop play stakes and pays nothing: refused, it does not count.
 		var nothing := "RESULT_PAID_NOTHING" if by_server else "RESULT_WOULD_PAY_NOTHING"
 		UI.set_status(check_label, "alarm", Strings.t("RESULT_PLAY_NOT_COUNTED" if v.get("workshop", false) else nothing))
+
+
+## §12.9's outcome in full: the kicker, the condition, what it multiplies,
+## and the heist's length with the alarm's true peak; §12.13's moment under
+## it. A Workshop play and a refusal show only their own lines.
+func _show_outcome(v: Dictionary) -> void:
+	var grade := str(v.get("grade", ""))
+	var shown: bool = v.get("ok", false) and not v.get("workshop", false) and OUTCOME.has(grade)
+	for l: Control in [kicker_label, condition_label, chip_label.get_parent(), subline_label]:
+		l.visible = shown
+	if not shown:
+		moment_card.visible = false
+		return
+	var row: Array = OUTCOME[grade]
+	kicker_label.text = Strings.t("RESULT_KICKER_FOILED" if grade == "Foiled" else "RESULT_KICKER_DONE").to_upper()
+	condition_label.text = Strings.t(row[0])
+	chip_label.text = Strings.t("RESULT_FOILED_CHIP") if grade == "Foiled" else Strings.t("RESULT_MULTIPLIERS",
+		[row[1], row[2]])
+	var seconds := _ticks / RulebornReplay.ticks_per_second()
+	subline_label.text = Strings.t("RESULT_SUBLINE", [seconds / 60, seconds % 60, _peak])
+	subline_label.visible = _ticks > 0
+	var m := _moment()
+	moment_card.visible = _ticks > 0
+	var at := int(m.get("tick", _ticks)) / RulebornReplay.ticks_per_second()
+	moment_when.text = Strings.t("RESULT_MOMENT", [at / 60, at % 60])
+	moment_label.text = _moment_words(m)

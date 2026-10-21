@@ -49,6 +49,11 @@ func _ready() -> void:
 	_build()
 	if entries.size() > 0:
 		open_entry(0)
+		# The result's moment: played from three seconds before it (§12.13).
+		var params: Dictionary = App.services.store.get_slice(AppState.ROUTE).get("params", {})
+		if int(params.get("from", -1)) > 0 and not yours.is_empty():
+			advance(maxi(0, int(params["from"]) - 3 * RulebornReplay.ticks_per_second()))
+			playing = true
 
 
 static func find_goldens() -> PackedStringArray:

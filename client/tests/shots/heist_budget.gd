@@ -25,6 +25,10 @@ func _go() -> void:
 	root.add_child(_frame)
 	App.services = Fixtures.answered(Services.build(_frame, "", null, "user://outbox-shot.json"))
 	Settings.apply()
+	if OS.get_environment("SCREEN") == "result":
+		await _result()
+		quit()
+		return
 	var island := WorldTests.island()
 	if OS.get_environment("LAWS") != "":
 		island = LawShot.island(Array(OS.get_environment("LAWS").split(",")))
@@ -77,6 +81,31 @@ func _go() -> void:
 			(c as Control).visible = false
 	await _report("  without the HUD", view)
 	quit()
+
+
+## The result screen on GOLDEN's replay (default long-crew5), its world part
+## by part.
+func _result() -> void:
+	var golden := OS.get_environment("GOLDEN") if OS.get_environment("GOLDEN") != "" else "long-crew5"
+	var replay := FileAccess.get_file_as_bytes("res://goldens/%s.rbh" % golden)
+	App.services.store.dispatch(&"heist_started", {})
+	App.services.store.dispatch(&"heist_finished", {"replay": replay,
+		"verdict": RulebornReplay.validate(replay, PackedByteArray())})
+	var screen: ResultScreen = load("res://scenes/result_screen.tscn").instantiate()
+	_frame.add_child(screen)
+	for i in 20:
+		await process_frame
+	var view := screen.world_view
+	await _report("result", view)
+	for n: Node in [view.statics, view.actors, view.effects]:
+		(n as Node3D).visible = false
+		await _report("  without %s" % _named(n), view)
+		(n as Node3D).visible = true
+	for n: Node in view.statics.get_children():
+		if n is Node3D and (n as Node3D).visible:
+			(n as Node3D).visible = false
+			await _report("  without %s" % _named(n), view)
+			(n as Node3D).visible = true
 
 
 func _named(n: Node) -> String:
