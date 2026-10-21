@@ -393,6 +393,11 @@ func _show_lods() -> void:
 		if fine != null:
 			fine.visible = zoom == 2 and id != "heart"
 	_show_close()
+	# The citadel larger over the whole universe, so the Heart reads first
+	# from afar as the designs' home draws it; life-sized for the realm zooms.
+	var citadel := statics.get_node_or_null("Citadel") as Node3D
+	if citadel != null:
+		citadel.scale = Vector3.ONE * (UniverseCitadel.FAR_SCALE if zoom == 0 else UniverseCitadel.MAP_SCALE)
 	# The realm's own characters, in a close-up only.
 	var shown := focus_id if zoom == 2 and islands.has(focus_id) else ""
 	if _crowd != null:
@@ -537,7 +542,7 @@ func _build_citadel() -> void:
 			heart.spire)
 	var node := Node3D.new()
 	node.position = heart.at
-	node.scale = Vector3.ONE * UniverseCitadel.MAP_SCALE
+	node.scale = Vector3.ONE * (UniverseCitadel.FAR_SCALE if zoom == 0 else UniverseCitadel.MAP_SCALE)
 	node.name = "Citadel"
 	statics.add_child(node)
 	for part: Array in [[solid.mesh(), _material(true), true], [fine.mesh(), _material(), false],

@@ -239,7 +239,9 @@ func follow() -> void:
 		if p.get("front", false) and view.zoom == 0:
 			# Over the whole universe a realm's name floats over its far rim,
 			# as the designs label their islands.
-			at = isl.at - toward * isl.radius * 0.7 + Vector3(0, 4.5, 0)
+			# The Heart's over its spire.
+			at = isl.at - toward * isl.radius * 0.7 + Vector3(0, 4.5, 0) if id != "heart" \
+				else isl.at - toward * isl.radius * 0.2 + Vector3(0, 22.0, 0)
 		elif p.get("front", false):
 			at = isl.at + toward * isl.radius * 1.02 + Vector3(0, -1.6, 0)
 		elif p.get("back", false):
