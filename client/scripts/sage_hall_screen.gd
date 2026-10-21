@@ -183,7 +183,7 @@ func _sage(s: Dictionary, busy: bool) -> Control:
 	chips.add_theme_constant_override("v_separation", UI.px(4))
 	chips.add_child(StageHeroKit.chip(s["lock"], "#1F6A35" if s["unlocked"] else "card", "✓" if s["unlocked"] else ""))
 	if s["guarding"]:
-		chips.add_child(StageHeroKit.chip(Strings.t("SAGE_ON_GUARD"), "#5A3FB0", str(RosterPresenter.MARK["guarding"])))
+		chips.add_child(StageHeroKit.chip(Strings.t("SAGE_ON_GUARD"), "#5A3FB0", "sagepowers/onguard"))
 	side.add_child(chips)
 	head.add_child(side)
 	box.add_child(head)
@@ -240,7 +240,8 @@ static func _power(key: String, i: int) -> Control:
 	v.add_theme_constant_override("separation", UI.px(3))
 	var head := HBoxContainer.new()
 	head.add_theme_constant_override("separation", UI.px(6))
-	head.add_child(StageHeroKit.chip(Strings.t("SAGE_POWER_%s_%d" % [key, i]), "gold"))
+	var name := Strings.t("SAGE_POWER_%s_%d" % [key, i])
+	head.add_child(StageHeroKit.chip(name, "gold", "sagepowers/" + name.to_lower().replace(" ", "")))
 	head.add_child(StageHeroKit.chip(Strings.t("SAGE_POWER_USES_%s_%d" % [key, i]), "card"))
 	v.add_child(head)
 	v.add_child(StageHeroKit.para(_sentence(Strings.t("SAGE_POWER_DOES_%s_%d" % [key, i])), 15.0))

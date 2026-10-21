@@ -88,12 +88,13 @@ func _build() -> void:
 	forms = HBoxContainer.new()
 	forms.add_theme_constant_override("separation", UI.px(6))
 	forms.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var bottom := UI.row(-1.0, true)
-	bottom.alignment = FlowContainer.ALIGNMENT_CENTER
+	var bottom := HBoxContainer.new()
+	bottom.add_theme_constant_override("separation", UI.px(8))
 	var back := UI.button(Strings.t("HOME_ROSTER"), func() -> void: App.services.router.go(&"roster"))
 	bottom.add_child(StageHeroMaterial.button(back, "leather"))
 	actions = UI.row(-1.0, true)
 	actions.alignment = FlowContainer.ALIGNMENT_CENTER
+	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(actions)
 	column.add_child(_padded(bottom))
 
@@ -195,14 +196,21 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 	cards.add_child(StageHeroKit.card(Strings.t("CHARACTER_KICK_ABILITY"),
 		StageHeroKit.para(Strings.term("ABILITY", kind), 17.0)))
 	var role := VBoxContainer.new()
+	var role_head := HBoxContainer.new()
+	role_head.add_theme_constant_override("separation", UI.px(6))
+	var role_icon := "crewroles/" + str(me.get("role", "")).to_lower()
+	if Icons.has(role_icon):
+		role_head.add_child(Icons.view(role_icon, 28.0))
 	var role_name := StageHeroKit.para(str(c["role"]), 20.0, Color("#FFF3CC"))
 	StageHeroSkin.named(role_name)
-	role.add_child(role_name)
+	role_name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	role_head.add_child(role_name)
+	role.add_child(role_head)
 	role.add_child(StageHeroKit.para(Strings.term("ROLE_JOB", str(me.get("role", ""))), 14.0, StageHeroSkin.LIGHT_SOFT))
 	var traits := VBoxContainer.new()
 	traits.add_theme_constant_override("separation", UI.px(5))
 	for t: String in me.get("traits", []):
-		traits.add_child(StageHeroKit.chip(Strings.term("TRAIT", t), "#5A3FB0"))
+		traits.add_child(StageHeroKit.chip(Strings.term("TRAIT", t), "#5A3FB0", "traits/" + t.replace("_", "")))
 		traits.add_child(StageHeroKit.para(Strings.term("TRAIT_EFFECT", t), 14.0, StageHeroSkin.LIGHT_SOFT))
 	cards.add_child(StageHeroKit.grid([
 		StageHeroKit.card(Strings.t("CHARACTER_KICK_ROLE"), role),
@@ -385,7 +393,7 @@ func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -
 	level_badge.add_child(top)
 	var ids: Array = RosterScreen.kinds_of(slice).keys()
 	var at := ids.find(id)
-	var state := StageHeroKit.chip(str(c["line"]), "glass")
+	var state := StageHeroKit.chip(str(c["line"]), "glass", "characterstates/" + str(c["state"]))
 	StageHeroSkin.on_stage(top, state, Control.PRESET_TOP_RIGHT)
 	if at >= 0:
 		StageHeroSkin.on_stage(top, StageHeroKit.chip(Strings.t("CHARACTER_COUNT", [at + 1, ids.size()]), "glass"),

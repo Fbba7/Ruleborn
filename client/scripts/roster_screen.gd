@@ -185,7 +185,8 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 	var at := ids.find(pick)
 	StageHeroSkin.on_stage(over, StageHeroKit.chip(Strings.t("CHARACTER_COUNT", [at + 1, ids.size()]), "glass"),
 		Control.PRESET_TOP_LEFT)
-	StageHeroSkin.on_stage(over, StageHeroKit.chip(str(row.get("line", "")), "glass"), Control.PRESET_TOP_RIGHT)
+	StageHeroSkin.on_stage(over, StageHeroKit.chip(str(row.get("line", "")), "glass",
+		"characterstates/" + str(row.get("state", ""))), Control.PRESET_TOP_RIGHT)
 	if ids.size() > 1:
 		for step: int in [-1, 1]:
 			var to: int = ids[posmod(at + step, ids.size())]

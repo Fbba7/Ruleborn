@@ -168,7 +168,7 @@ func _nursery(n: Dictionary, raw: Dictionary, busy: bool) -> Control:
 			var colour: Color = StageHeroSculpt.NOTE.get(note, StageHeroSkin.OUTLINE)
 			forms.add_child(StageHeroKit.chip(Strings.t("HATCH_ODDS", [FormsPresenter.note_name(note),
 				HatchPresenter.percent(float(f["odds"]))]), "#" + colour.darkened(0.45).to_html(false),
-				str(FormsScreen.GLYPH.get(note, ""))))
+				"lawnotes/" + note))
 	v.add_child(forms)
 	v.add_child(_spend(n["button"], busy, "gold"))
 	return StageHeroKit.card("", v)

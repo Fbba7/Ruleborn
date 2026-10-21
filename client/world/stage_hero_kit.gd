@@ -39,14 +39,18 @@ static func kicker(text: String, colour := Color("#E9B65C")) -> Label:
 	return l
 
 
-## A chip: a glyph and a word on a pill of `kind` (a material or a colour);
+## A chip: a glyph or an icon and a word on a pill of `kind` (a material
+## or a colour);
 ## its words wrap when `wraps`, for a chip that may hold a phrase.
 static func chip(text: String, kind := "glass", glyph := "", wraps := false) -> PanelContainer:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(4))
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	var ink := StageHeroMaterial.ink(kind)
-	if glyph != "":
+	# A glyph, or one of the design's icons by its name ("traits/swift").
+	if glyph.contains("/") and Icons.has(glyph):
+		row.add_child(Icons.view(glyph, 20.0))
+	elif glyph != "":
 		row.add_child(words(glyph, 14.0, ink))
 	var said := words(text, 14.0, ink)
 	# At §20.8's larger text every chip may wrap, so none outgrows the phone.
@@ -56,10 +60,8 @@ static func chip(text: String, kind := "glass", glyph := "", wraps := false) -> 
 		said.custom_minimum_size.x = UI.px(60)
 		said.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(said)
-	var p := StageHeroMaterial.panel(kind, row, 12.0, 9.0)
-	var b := p.get_theme_stylebox("panel") as StyleBoxTexture
-	b.content_margin_top = UI.px(4)
-	b.content_margin_bottom = UI.px(5) + int(b.texture_margin_bottom - b.texture_margin_top)
+	var p := StageHeroMaterial.panel(kind, row, 999.0, 10.0)
+	p.add_theme_stylebox_override("panel", UI.clear_box(10, 4))
 	p.size_flags_horizontal = Control.SIZE_FILL if wraps else Control.SIZE_SHRINK_BEGIN
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return p
@@ -88,30 +90,19 @@ static func para(words_shown: String, points := 16.0, colour := Color("#F3EEFF")
 	return l
 
 
-## A segmented control: one button a name, the chosen one on the design's
-## periwinkle tab material, the rest on a dark well. `pick` takes the index.
+## A segmented control: one button a name, the chosen one on the kit's
+## periwinkle tab, the rest on its glass chips. `pick` takes the index.
 static func tabs(names: Array, chosen: int, pick: Callable) -> PanelContainer:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(4))
 	for i: int in names.size():
-		var b := UI.button(str(names[i]), pick.bind(i))
+		var b := UI.action(str(names[i]), pick.bind(i), "tab_active" if i == chosen else "chip")
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.toggle_mode = true
-		b.button_pressed = i == chosen
 		b.set_meta("item", "tab:%d" % i)
+		b.set_meta("chosen", i == chosen)
 		b.accessibility_name = Strings.t("WORKSHOP_TAB_SHOWN" if i == chosen else "WORKSHOP_TAB_SHOW", str(names[i]))
-		if i == chosen:
-			StageHeroMaterial.button(b, "tab", 12.0)
-			b.add_theme_color_override("font_outline_color", Color("#120C2A"))
-			b.add_theme_constant_override("outline_size", UI.px(3))
-		else:
-			for state: String in ["normal", "hover", "pressed", "disabled", "focus"]:
-				b.add_theme_stylebox_override(state, StyleBoxEmpty.new())
-			for c: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
-					"font_hover_pressed_color"]:
-				b.add_theme_color_override(c, StageHeroSkin.LIGHT_SOFT)
 		row.add_child(b)
-	var p := StageHeroMaterial.panel("well", row, 16.0, 3.0)
+	var p := StageHeroMaterial.panel("well", row, 18.0, 4.0)
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	return p
 
@@ -150,15 +141,10 @@ static func grid(cells: Array, screen: Control) -> GridContainer:
 	return g
 
 
-## The design's round arrow on a stage: a leather disc with a light chevron.
+## The design's round arrow on a stage: the kit's leather disc with its
+## arrow icon, named for a screen reader.
 static func arrow(back: bool, spoken: String, go: Callable) -> Button:
-	var b := UI.button("‹" if back else "›", go, false, Color(), spoken)
-	StageHeroMaterial.button(b, "leather", 20.0)
-	b.add_theme_font_size_override("font_size", UI.text_px(30))
-	b.add_theme_font_override("font", StageHeroSkin.numbers_font())
-	b.set_meta("points", 30.0)
-	b.custom_minimum_size = Vector2.ONE * UI.px(48)
-	return b
+	return KitControls.icon_button("hud/prev" if back else "hud/next", spoken, go, "leather", 48.0)
 
 
 ## A character's name plate: the name in Marcellus, light, edged in ink; and
@@ -180,7 +166,7 @@ static func name_plate(name: Label, school: String, sub: String) -> Control:
 	line.add_theme_constant_override("h_separation", UI.px(8))
 	var colour: Color = Palette.SCHOOL.get(school, Palette.MOTION)
 	line.add_child(chip(Strings.t("SCHOOL_" + school.to_upper()).to_upper(),
-		"#" + colour.darkened(0.55).to_html(false), UI.SHAPE_GLYPH.get(Tokens.shape(school), "")))
+		"#" + colour.darkened(0.55).to_html(false), "schools/" + school))
 	var under := words(sub, 16.0, StageHeroSkin.LIGHT_SOFT)
 	under.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	line.add_child(under)

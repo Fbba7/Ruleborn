@@ -154,14 +154,27 @@ func _detail(k: Dictionary, o: Dictionary) -> Control:
 	return StageHeroKit.card("", v)
 
 
-## A note's badge: its glyph on its colour, bright when had, dim when not.
+## A note's badge: the design's icon for the note on its colour, bright
+## when had, dim when not; its glyph is kept as its words (`mark`) for a
+## screen reader and the album's own checks.
 static func _pip(note: String, had: bool, points := 22.0) -> PanelContainer:
 	var colour: Color = StageHeroSculpt.NOTE.get(note, StageHeroSkin.OUTLINE)
-	var p := StageHeroSkin.badge(str(GLYPH.get(note, "?")), colour.darkened(0.45) if had else Color("#2A1E52"),
-		points * 0.6)
-	p.custom_minimum_size = Vector2.ONE * UI.px(points)
+	var holder := CenterContainer.new()
+	holder.custom_minimum_size = Vector2.ONE * UI.px(points * 0.8)
+	var icon := Icons.view("lawnotes/" + note, points * 0.72)
 	if not had:
-		p.modulate = Color(1, 1, 1, 0.75)
+		icon.modulate = Color(1, 1, 1, 0.45)
+	holder.add_child(icon)
+	var mark := Label.new()
+	mark.text = str(GLYPH.get(note, "?"))
+	mark.name = "Mark"
+	mark.visible = false
+	holder.add_child(mark)
+	var p := StageHeroMaterial.panel("#" + (colour.darkened(0.45) if had else Color("#2A1E52")).to_html(false), holder,
+		99.0, 1.0)
+	p.custom_minimum_size = Vector2.ONE * UI.px(points)
+	p.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	p.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	return p
 
 
@@ -189,7 +202,7 @@ func _tile(k: Dictionary, o: Dictionary) -> Control:
 	pips.add_theme_constant_override("separation", UI.px(4))
 	for f: Dictionary in k["forms"]:
 		var pip := _pip(str(f["note"]), int(f["owned"]) > 0, 26.0)
-		var mark := pip.get_child(0) as Label
+		var mark := pip.find_child("Mark", true, false) as Label
 		mark.set_meta("form", "%s/%s" % [k["kind"], f["note"]])
 		pip.accessibility_name = str(f["text"])
 		pips.add_child(pip)
@@ -272,7 +285,7 @@ func _stand(k: Dictionary) -> void:
 		var note := str(f["note"])
 		var colour: Color = StageHeroSculpt.NOTE.get(note, StageHeroSkin.OUTLINE)
 		var p := StageHeroKit.chip(FormsPresenter.note_name(note), "#" + colour.darkened(0.45).to_html(false),
-			str(GLYPH.get(note, "")))
+			"lawnotes/" + note)
 		p.size_flags_horizontal = Control.SIZE_EXPAND | Control.SIZE_SHRINK_CENTER
 		names.add_child(p)
 	StageHeroSkin.on_stage(stage, names, Control.PRESET_CENTER_BOTTOM).set_meta("words", true)

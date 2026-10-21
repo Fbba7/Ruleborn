@@ -1,10 +1,18 @@
 class_name StageHeroMaterial
 extends RefCounted
-## The design's materials for the character screens' 2D (§21.8), as
-## nine-patch textures drawn here once and cached: a vertical gradient fill,
-## an ink outline, an inner rim, a top highlight and a hard lip beneath —
-## what a flat style box cannot draw. One texture a material and size, so a
-## card costs one nine-patch.
+## The character screens' surfaces (§21.8). Panels and buttons wear the UI
+## kit's materials (RbBox), so these screens share every other screen's
+## look; a bar's well and fill, drawn many times a screen, are nine-patch
+## textures drawn here once and cached: a vertical gradient fill, an ink
+## outline, an inner rim, a top highlight and a hard lip beneath. One texture
+## a material and size, so a bar costs one nine-patch.
+
+## The UI kit's material each of these names wears (T9's tokens.json
+## `material`): the character screens draw on the same surfaces as every
+## other screen. A colour ("#5CC46A") wears the card with that colour as its
+## fill.
+const LOOK := {"card": "card", "well": "bar_track", "glass": "glass", "parchment": "parchment",
+	"leather": "leather", "gold": "gold", "green": "green", "tab": "tab_active"}
 
 ## Each material: its gradient (top, middle, bottom), its inner rim and that
 ## rim's width in points, its outline, the hard lip beneath in points and its
@@ -59,8 +67,11 @@ static func box(kind: String, corner_points := 14.0, pad_points := 10.0) -> Styl
 	return s
 
 
-## The ink words take on `kind`.
+## The ink words take on `kind`: the kit material's, or for a colour, light
+## or dark by its lightness.
 static func ink(kind: String) -> Color:
+	if LOOK.has(kind):
+		return Tokens.material(LOOK[kind])["text"]
 	return Color(str(of(kind)["ink"]))
 
 
@@ -87,8 +98,8 @@ static func of(kind: String) -> Dictionary:
 ## A panel of `kind` holding `child`, its labels in the material's ink.
 static func panel(kind: String, child: Control, corner_points := 14.0, pad_points := 10.0) -> PanelContainer:
 	var p := PanelContainer.new()
-	p.add_theme_stylebox_override("panel", box(kind, corner_points, pad_points))
-	p.set_meta("behind", behind(kind))
+	p.add_theme_stylebox_override("panel", UI.clear_box(pad_points, pad_points * 0.8))
+	_wear(p, kind, corner_points)
 	p.add_child(child)
 	for l: Label in child.find_children("*", "Label", true, false) + ([child] if child is Label else []):
 		if not l.has_meta("own_ink"):
@@ -96,48 +107,30 @@ static func panel(kind: String, child: Control, corner_points := 14.0, pad_point
 	return p
 
 
-## Dresses a button in `kind`: pressed, a shade brighter and squashed;
-## focused, a light ring; disabled, dimmed.
+## Dresses a button in `kind`: the kit's press (it squashes and sinks onto
+## its drop), focus ring and dimmed disabled state.
 static func button(b: Button, kind: String, corner_points := 14.0) -> Button:
-	var normal := box(kind, corner_points, 8.0)
-	b.add_theme_stylebox_override("normal", normal)
-	b.add_theme_stylebox_override("hover", normal)
-	var pressed := box(kind, corner_points, 8.0)
-	pressed.modulate_color = Color(1.06, 1.06, 1.06)
-	b.add_theme_stylebox_override("pressed", pressed)
-	var dim := box(kind, corner_points, 8.0)
-	dim.modulate_color = Color(0.62, 0.6, 0.7, 0.8)
-	b.add_theme_stylebox_override("disabled", dim)
-	var focus := StyleBoxFlat.new()
-	focus.draw_center = false
-	focus.bg_color = Color(0, 0, 0, 0)
-	focus.border_color = Color("#FFF3CC")
-	focus.set_border_width_all(UI.px(1.5))
-	focus.set_corner_radius_all(UI.px(corner_points + 2.0))
-	focus.set_expand_margin_all(UI.px(2))
-	b.add_theme_stylebox_override("focus", focus)
-	b.set_meta("behind", behind(kind))
-	var words := ink(kind)
-	for c: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
-			"font_hover_pressed_color"]:
-		b.add_theme_color_override(c, words)
-	b.add_theme_color_override("font_disabled_color", Color(words, 0.7))
-	if not b.has_meta("squashes"):
-		b.set_meta("squashes", true)
-		b.button_down.connect(func() -> void: _squash(b, 0.95))
-		b.button_up.connect(func() -> void: _squash(b, 1.0))
+	if LOOK.has(kind):
+		UI.set_look(b, LOOK[kind])
+		if corner_points < 14.0 or corner_points > 16.0:
+			RbBox.of(b).radius_points = corner_points
+	else:
+		_wear(b, kind, corner_points)
+		var words := ink(kind)
+		for c: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
+				"font_hover_pressed_color"]:
+			b.add_theme_color_override(c, words)
 	return b
 
 
-## §21.8: "buttons squash slightly when pressed"; not under reduced motion.
-static func _squash(b: Button, to: float) -> void:
-	if not b.is_inside_tree() or Settings.reduced_motion:
-		return
-	b.pivot_offset = b.size / 2.0
-	var t := b.create_tween()
-	t.set_ease(Tween.EASE_OUT)
-	t.set_trans(Tween.TRANS_QUAD)
-	t.tween_property(b, "scale", Vector2(to, to), 0.12)
+## `c` in the kit's material for `kind`, or a card refilled in its colour,
+## which then says what its words sit on (`behind`).
+static func _wear(c: Control, kind: String, corner_points: float) -> void:
+	var worn := UI.dress(c, LOOK.get(kind, "card"), corner_points)
+	if not LOOK.has(kind):
+		var stops := behind(kind)
+		worn.tint(stops[0], stops[2])
+		c.set_meta("behind", stops)
 
 
 ## The texture: an outline, the gradient inside it, the rim inside that,
