@@ -53,6 +53,8 @@ static func make(chosen: String, badges := {}) -> KitTabs:
 	bar.add_theme_stylebox_override("panel", pad)
 	var box := UI.dress(bar, "tab_bar", 24)
 	box.inset_top = UI.px(RISE)
+	# Its sides and foot run off the screen: only the gold top edge shows.
+	box.bleed = UI.px(32)
 	t.add_child(bar)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 0)
