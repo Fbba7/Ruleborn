@@ -7,6 +7,17 @@ HOME_SETTINGS,Settings,Settings,Ajustes,Definições,Einstellungen,Réglages
 COMMON_HOME,Home,Home,Início,Início,Start,Accueil
 COMMON_DISMISS,Dismiss,Dismiss,Dispensar,Dispensar,Schließen,Fermer
 COMMON_LOADING,Loading…,Loading…,Carregando…,A carregar…,Lädt…,Chargement…
+KIT_TAB_ISLANDS,Islands,Islands,Ilhas,Ilhas,Inseln,Îles
+KIT_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
+KIT_TAB_HEIST,Heist,Heist,Assalto,Assalto,Raubzug,Casse
+KIT_TAB_CREW,Crew,Crew,Equipe,Equipa,Crew,Équipe
+KIT_TAB_FRIENDS,Friends,Friends,Amigos,Amigos,Freunde,Amis
+KIT_BACK,Back,Back,Voltar,Voltar,Zurück,Retour
+KIT_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
+KIT_FULL,Full,Full,Cheio,Cheio,Voll,Plein
+KIT_TAB_BADGE,%s: %s new,%s: %s new,%s: %s novos,%s: %s novos,%s: %s neu,%s : %s nouveaux
+KIT_ON,On,On,Ligado,Ligado,An,Activé
+KIT_OFF,Off,Off,Desligado,Desligado,Aus,Désactivé
 HEIST_ASKING,Asking the server for a target,Asking the server for a target,Pedindo um alvo ao servidor,A pedir um alvo ao servidor,Server sucht ein Ziel,Demande d'une cible au serveur
 HEIST_NONE,No heist: %s,No heist: %s,Sem assalto: %s,Sem assalto: %s,Kein Raubzug: %s,Pas de casse : %s
 HEIST_CHECKING,The server is checking the heist,The server is checking the heist,O servidor está conferindo o assalto,O servidor está a verificar o assalto,Der Server prüft den Raubzug,Le serveur vérifie le casse
@@ -1172,12 +1183,3 @@ CAMERA_TURN_LEFT,Turn the view left,Turn the view left,Girar a vista para a esqu
 CAMERA_TURN_RIGHT,Turn the view right,Turn the view right,Girar a vista para a direita,Rodar a vista para a direita,Ansicht nach rechts drehen,Pivoter la vue à droite
 CAMERA_ZOOM_IN,Zoom in,Zoom in,Aproximar,Aproximar,Heranzoomen,Zoomer
 CAMERA_ZOOM_OUT,Zoom out,Zoom out,Afastar,Afastar,Herauszoomen,Dézoomer
-KIT_TAB_ISLANDS,Islands,Islands,Ilhas,Ilhas,Inseln,Îles
-KIT_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
-KIT_TAB_HEIST,Heist,Heist,Assalto,Assalto,Raubzug,Casse
-KIT_TAB_CREW,Crew,Crew,Equipe,Equipa,Crew,Équipe
-KIT_TAB_FRIENDS,Friends,Friends,Amigos,Amigos,Freunde,Amis
-KIT_BACK,Back,Back,Voltar,Voltar,Zurück,Retour
-KIT_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
-KIT_FULL,Full,Full,Cheio,Cheio,Voll,Plein
-KIT_TAB_BADGE,%s: %s new,%s: %s new,%s: %s novos,%s: %s novos,%s: %s neu,%s : %s nouveaux

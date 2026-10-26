@@ -41,9 +41,18 @@ uniform float soft_blur = 1.0;
 uniform vec4 glow_color : source_color = vec4(0.0);
 uniform float glow_r = 1.0;
 uniform vec4 grain_color : source_color = vec4(0.0);
+// A soft white gloss over the top half, inset from the edges (a toy's
+// lacquer), at this strength.
+uniform float gloss = 0.0;
 // Seeded star dots over the fill (the night backdrop), per 10,000 px².
 uniform float stars = 0.0;
 uniform vec4 star_color : source_color = vec4(1.0, 0.96, 0.86, 0.7);
+// A sunburst over the fill (a result, a level-up): `rays_count` soft rays
+// from fill_geo.xy, fading out from the centre. Still, never spinning.
+uniform vec4 rays_color : source_color = vec4(0.0);
+uniform float rays_count = 18.0;
+// Diagonal hatching over the fill (a locked reward), in this colour.
+uniform vec4 stripes_color : source_color = vec4(0.0);
 
 float sd_box(vec2 p, vec2 b, float r) {
 	r = min(r, min(b.x, b.y));
@@ -113,6 +122,21 @@ void fragment() {
 			float g = 0.5 + 0.5 * sin(w);
 			fill.rgb = mix(fill.rgb, grain_color.rgb, grain_color.a * smoothstep(0.72, 1.0, g));
 		}
+		if (stripes_color.a > 0.0) {
+			float band = fract((pb.x + pb.y) / 26.0);
+			fill.rgb = mix(fill.rgb, stripes_color.rgb, stripes_color.a * smoothstep(0.45, 0.5, band) *
+				(1.0 - smoothstep(0.95, 1.0, band)));
+		}
+		if (rays_color.a > 0.0) {
+			vec2 o = pb - (vec2(0.5, 0.16) - 0.5) * box_size;
+			float ang = atan(o.x, -o.y);
+			float wave = 0.5 + 0.5 * cos(ang * rays_count);
+			float fade = 1.0 - smoothstep(0.0, max(box_size.x, box_size.y) * 0.6, length(o));
+			fill.rgb = mix(fill.rgb, rays_color.rgb, rays_color.a * smoothstep(0.55, 0.95, wave) * fade);
+			// The lit halo the rays come from.
+			float halo = 1.0 - smoothstep(0.0, max(box_size.x, box_size.y) * 0.3, length(o));
+			fill.rgb = mix(fill.rgb, vec3(0.42, 0.34, 0.78), 0.45 * halo * halo);
+		}
 		if (stars > 0.0) {
 			vec2 cell = floor(pb / 34.0);
 			float h = hash(cell);
@@ -128,6 +152,15 @@ void fragment() {
 		float ri = max(radius - line_w, 0.0);
 		float sdi = sd_box(pb, bi, ri);
 		float inside = cover(sdi, px);
+		if (gloss > 0.0) {
+			// Over the top half, but no deeper than one line of words, so a
+			// button whose words wrap is not cut across the middle.
+			float uvy = (pb.y + b.y) / (2.0 * min(box_size.y * 0.5, 66.0));
+			float lacquer = cover(sd_box(pb, bi - vec2(3.0 + line_w), max(ri - 3.0, 0.0)), px);
+			// A crisp lower edge at half height, brighter towards the top.
+			float band = (1.0 - smoothstep(0.42, 0.5, uvy)) * (0.45 + 0.55 * (1.0 - uvy * 2.0));
+			fill.rgb = mix(fill.rgb, vec3(1.0), gloss * lacquer * band);
+		}
 		if (hi_w > 0.0) {
 			float below = cover(sd_box(pb - vec2(0.0, hi_w), bi, ri), px);
 			fill.rgb = mix(fill.rgb, hi_color.rgb, hi_color.a * inside * (1.0 - below));

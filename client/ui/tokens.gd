@@ -99,15 +99,17 @@ static func gradient_shape(name: String) -> Dictionary:
 
 ## A material (tokens.json `material`) with its colours resolved: each of
 ## line, rim, rim_2, highlight, shade, drop, soft, glow and grain is
-## [Color, points...] or absent; text, text_2 and text_outline are colours;
+## [Color, points...] or absent; gloss is a strength, 0 to 1; text, text_2 and text_outline are colours;
 ## text_bg is the colours its words sit on. In high contrast an outline is
 ## 21.8's 3 points and glass is opaque.
 static func material(name: String) -> Dictionary:
 	var m: Dictionary = (_all().get("material", {}) as Dictionary).get(name, {})
 	assert(not m.is_empty(), "no material %s" % name)
 	var out := {"name": name, "fill": str(m.get("fill", "card")), "radius": float(m.get("radius", 16)),
+		"gloss": float(m.get("gloss", 0.0)) if not high_contrast else 0.0,
 		"family": str(m.get("family", "dark")), "over_world": bool(m.get("over_world", false))}
-	for part: String in ["line", "rim", "rim_2", "highlight", "shade", "drop", "soft", "glow", "grain", "text_outline"]:
+	for part: String in ["line", "rim", "rim_2", "highlight", "shade", "drop", "soft", "glow", "grain", "text_outline",
+			"rays", "stripes"]:
 		var v: Variant = m.get(part)
 		if v is Array:
 			var a: Array = (v as Array).duplicate()
@@ -115,10 +117,11 @@ static func material(name: String) -> Dictionary:
 			for i: int in range(1, a.size()):
 				a[i] = float(a[i])
 			out[part] = a
-	if high_contrast:
+	if high_contrast and not name.begins_with("night") and name != "scrim":
 		var line: Array = out.get("line", [paint("ink_line"), 0.0])
-		out["line"] = [line[0] if line[1] > 0.0 else paint("ink_line"), number("size", "line_hc")]
+		out["line"] = [Color(line[0], 1.0) if line[1] > 0.0 else paint("ink_line"), number("size", "line_hc")]
 		out.erase("glow")
+		out.erase("rays")
 	for part: String in ["text", "text_2"]:
 		out[part] = paint(str(m.get(part, "text_on_night")))
 	var bg: Array[Color] = []
