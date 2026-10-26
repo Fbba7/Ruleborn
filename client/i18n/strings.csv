@@ -1187,14 +1187,5 @@ HOME_RAIDED_ONE,Raided once while you were away,Raided once while you were away,
 HOME_RAIDED,Raided %d times while you were away,Raided %d times while you were away,Assaltado %d vezes enquanto você estava fora,Assaltado %d vezes enquanto estavas fora,"%d-mal überfallen, während du weg warst",Pillé %d fois pendant ton absence
 HOME_RAIDED_SEE,See,See,Ver,Ver,Ansehen,Voir
 HOME_RAIDED_CLOSE,Dismiss,Dismiss,Dispensar,Dispensar,Schließen,Fermer
-KIT_TAB_ISLANDS,Islands,Islands,Ilhas,Ilhas,Inseln,Îles
-KIT_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
-KIT_TAB_HEIST,Heist,Heist,Assalto,Assalto,Raubzug,Casse
-KIT_TAB_CREW,Crew,Crew,Equipe,Equipa,Crew,Équipe
-KIT_TAB_FRIENDS,Friends,Friends,Amigos,Amigos,Freunde,Amis
-KIT_BACK,Back,Back,Voltar,Voltar,Zurück,Retour
-KIT_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
-KIT_FULL,Full,Full,Cheio,Cheio,Voll,Plein
-KIT_TAB_BADGE,%s: %s new,%s: %s new,%s: %s novos,%s: %s novos,%s: %s neu,%s : %s nouveaux
 HOME_COLLECT,Collect all,Collect all,Coletar tudo,Recolher tudo,Alles einsammeln,Tout récolter
 HOME_COLLECT_SPOKEN,Collect all: %s waiting,Collect all: %s waiting,Coletar tudo: %s esperando,Recolher tudo: %s à espera,Alles einsammeln: %s bereit,Tout récolter : %s en attente
