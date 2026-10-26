@@ -210,7 +210,7 @@ static func _kinship(fx: LawFx, sig: Node3D) -> void:
 		"lift": [0.15, 0.7], "vel": Vector3(0.1, 0.05, 0.06), "period": [4.0, 6.0], "wobble": 0.2})
 	var link := MeshInstance3D.new()
 	link.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	link.material_override = fx.thread_material(0.1)
+	link.material_override = fx.thread_material(0.18)
 	link.extra_cull_margin = 40.0
 	sig.add_child(link)
 	fx.watch(func(crew: Array, guards: Array) -> void:
@@ -222,7 +222,7 @@ static func _kinship(fx: LawFx, sig: Node3D) -> void:
 					var c: Vector3 = side[j]
 					if a.distance_to(c) < KIN_REACH:
 						b.strip(LawFxBatch.sagging(a + Vector3(0, 0.6, 0), c + Vector3(0, 0.6, 0), -0.25, 10),
-							Color("#5CE07A"), 0)
+							Color("#3FD866"), 0)
 		link.mesh = b.mesh())
 
 
@@ -296,19 +296,19 @@ static func _whispers(fx: LawFx, sig: Node3D) -> void:
 	ears.append(LawFxPaint.home(fx, "whispers"))
 	for i in ears.size():
 		var a: Vector3 = ears[i]
-		b.mote(a + Vector3(0, 1.6, 0), Vector3.ZERO, 0.0, r.randf(), 0.26, 0.0, 6, Color("#F8D8F4"))
+		b.mote(a + Vector3(0, 1.6, 0), Vector3.ZERO, 0.0, r.randf(), 0.4, 0.0, 6, Color("#FFC4F2"))
 		for j in range(i + 1, ears.size()):
 			var c: Vector3 = ears[j]
 			if a.distance_to(c) > 6.5:
 				continue
 			var up := Vector3(0, 1.6, 0)
-			lines.strip(LawFxBatch.sagging(a + up, c + up, -0.5, 24), Color("#F07AD8"), 4)
+			lines.strip(LawFxBatch.sagging(a + up, c + up, -0.5, 24), Color("#E64FCB"), 4)
 			var period := maxf(2.5, a.distance_to(c) / 1.4)
 			for k in 3:
 				b.mote(a + up + Vector3(0, 0.25, 0), (c - a) / period, period, float(k) / 3.0 + r.randf() * 0.05,
-					0.24, 0.1, 11, Color("#FFFFFF", 0.95))
+					0.32, 0.1, 11, Color("#FFFFFF", 0.95))
 	fx.layer(sig, b, fx.mote_material(0.6))
-	fx.layer(sig, lines, fx.thread_material(0.09))
+	fx.layer(sig, lines, fx.thread_material(0.16))
 
 
 ## Echoes: "Soft chimes; faint silhouettes." Clear figures stand about the

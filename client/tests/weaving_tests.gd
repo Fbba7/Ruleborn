@@ -300,11 +300,15 @@ func _online() -> void:
 		if r["realm"] == "heart":
 			heart = r
 	var offers: Array = heart.get("offers", [])
-	var first: String = str((heart.get("recommended", []) as Array).front()) if heart.has("recommended") else ""
+	# The first recommended law with a price: in an era that makes a law free
+	# (High Tide's Slow rivers) that one is recommended first and costs nothing.
+	var first := ""
 	var priced := 0
-	for o: Dictionary in offers:
-		if o["law"] == first:
-			priced = int(o["price"])
+	for law: Variant in heart.get("recommended", []):
+		for o: Dictionary in offers:
+			if first == "" and o["law"] == str(law) and int(o["price"]) > 0:
+				first = str(law)
+				priced = int(o["price"])
 	var before := int(v.get("aether", 0))
 	var w := WeavingPresenter.screen(s.store.get_slice(WeavingState.WEAVING), NOW)
 	if first != "":

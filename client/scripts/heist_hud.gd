@@ -207,7 +207,7 @@ static func _wrap_by_words(l: Label) -> void:
 	var widest := 0.0
 	for w: String in l.text.replace("\n", " ").split(" ", false):
 		widest = maxf(widest, font.get_string_size(w, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x)
-	l.custom_minimum_size.x = minf(ceilf(widest) + 2.0, UI.px(66) * maxf(1.0, Settings.text_scale / 100.0))
+	l.custom_minimum_size.x = minf(ceilf(widest) + 2.0, UI.px(100) * maxf(1.0, Settings.text_scale / 100.0))
 
 
 ## A side column of the top row: it takes what room there is and holds its

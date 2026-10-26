@@ -59,6 +59,22 @@ func _ready() -> void:
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(backdrop)
 	var column := FxSkin.frame(self)[1]
+	# With large text the page is taller than the phone: it scrolls under the
+	# safe top, over the bottom bar that stays where the thumb is.
+	var page := column
+	if Settings.text_scale > 100:
+		var safe := column.get_parent() as MarginContainer
+		safe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		safe.add_theme_constant_override("margin_top", UI.px(Tokens.number("size", "safe_top_points")))
+		var scroll := ScrollContainer.new()
+		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		page = VBoxContainer.new()
+		page.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		page.add_theme_constant_override("separation", column.get_theme_constant("separation"))
+		scroll.add_child(page)
+		column.add_child(scroll)
 	var card := VBoxContainer.new()
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var box := VBoxContainer.new()
@@ -81,7 +97,11 @@ func _ready() -> void:
 	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	chip.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	chip_label = FxSkin.label("", 15.0)
-	chip_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# A pill as wide as its words; with large text it spans the page and its
+	# words wrap there (a wrapping label in a shrunk pill has no width at all).
+	if Settings.text_scale > 100:
+		chip.size_flags_horizontal = Control.SIZE_FILL
+		chip_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	chip.add_child(chip_label)
 	subline_label = FxSkin.label("", 14.0)
 	subline_label.add_theme_font_override("font", FxSkin.figures())
@@ -119,7 +139,7 @@ func _ready() -> void:
 	counter = haul_tile
 	box.add_child(detail_label)
 	box.add_child(check_label)
-	column.add_child(card)
+	page.add_child(card)
 	# §12.13: the moment that decided it, with its replay a tap away.
 	moment_card = UI.panel("card")
 	var moment := HBoxContainer.new()
@@ -152,10 +172,17 @@ func _ready() -> void:
 	watch.add_child(watch_box)
 	moment.add_child(watch)
 	moment.add_child(words)
-	moment.add_child(FxDraw.new(_draw_crew, Vector2(UI.px(30) * 3.2, UI.px(48))))
+	# The crew as it ended beside the words; under them with large text, so
+	# the words keep the card's width.
+	var faces := FxDraw.new(_draw_crew, Vector2(UI.px(30) * 3.2, UI.px(48)))
+	if Settings.text_scale > 100:
+		faces.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		words.add_child(faces)
+	else:
+		moment.add_child(faces)
 	moment_card.add_child(moment)
 	moment_card.visible = false
-	column.add_child(moment_card)
+	page.add_child(moment_card)
 	var play: Dictionary = heist["workshop"]
 	var plain: bool = not heist["testing"] and play.is_empty()
 	# The plain result's bottom bar is one row, Home and the wide next raid;
