@@ -29,6 +29,7 @@ decision).
 | SR-08 | Low | client, sim | A crafted replay could abort or freeze the app | fixed |
 | SR-13 | Low | server | "constructor" and its like were taken as law ids | fixed |
 | SR-12 | Medium | server | The Island Fund pays one player's replays as if each were a new player | needs the owner |
+| SR-15 | Medium | server | An island's exposed loot is the bundle's word (register D60) | needs the owner |
 | SR-09 | Low | server | The public target lists carry every island's raw rating | needs the owner |
 | SR-10 | Low | server | A minor's monthly cap holds only on the client's word | needs the owner |
 | SR-14 | Low | server | A crew is anyone's who holds its invite, a 13-to-15's too | needs the owner |
@@ -292,6 +293,29 @@ decision).
 - **Choice:** require a joiner to share the constellation with, or be a
   friend of, a member — and for 13 to 15, a friend of every member — before
   co-op heists or the thread are built.
+
+### SR-15 — An island's exposed loot is the bundle's word (Medium; register D60)
+
+- **Where:** `server/src/service.mjs` `publish` stores bytes 6 to 9 of the
+  bundle as the snapshot's `exposed`; `grant` prices every raid on it from
+  them (§9.6's richness and fill).
+- **What:** §24.8 says a published island's Vault level and exposed loot
+  *"come from the owner's own ledger and buildings on the server, never from
+  the bundle's word, and a bundle that disagrees is refused"*. The Vault
+  level is held to the one built; the exposed amount is not checked at all.
+  A player holding nothing publishes `0xffffffff` and every raid on the
+  island pays the most richness pays: a clean raid on a Vault 3 island at
+  Keeper 1 mints 18,562 against 11,250 at the level median and 0 for an
+  empty vault. Colluding players, or one player's second account, mint at
+  the top of the band within §9.6's day and week caps, and the island also
+  shows raiders the richest loot (`loot` on the Observatory card).
+- **Test:** `server/test/security_owner.test.mjs` (SR-15).
+- **Why not fixed here:** deriving the figure needs §9.6's level medians and
+  §10.2's sealed shares, which the server's facts do not carry yet; the
+  register already holds it as D60, left to the build (TC.12). Until then a
+  cap at the level median's figure would close the abuse without the full
+  derivation, but it changes what every honest rich island pays, so it is
+  the owner's call.
 
 ## Sent to T11
 

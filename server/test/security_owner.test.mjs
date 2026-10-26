@@ -70,3 +70,17 @@ test("SR-14 (needs the owner): a 13-to-15 joins a crew of strangers with its inv
   assert.equal(t.service.friends.areFriends(minor, stranger), false);
   assert.equal(social.joinCrew(minor, crew.invite).members.length, 2);
 });
+
+// SR-15 (register D60): §24.8 has a published island's exposed loot "come
+// from the owner's own ledger and buildings on the server, never from the
+// bundle's word"; the server stores the four bytes the client wrote.
+test("SR-15 (needs the owner, D60): an island's exposed loot is the bundle's word", () => {
+  const t = server();
+  const owner = t.service.session("gc:owner").account;
+  const island = t.build.exampleIsland(true);
+  new DataView(island.buffer, island.byteOffset).setUint32(6, 0xffffffff, true);
+  const { bundle } = t.service.publish(owner, island);
+  const exposed = t.service.db.prepare("SELECT exposed FROM snapshots WHERE bundle = ?").get(bundle).exposed;
+  assert.equal(exposed, 0xffffffff, "a player with nothing stored claims the most richness pays");
+  assert.deepEqual(t.service.balance(owner), { starlight: 0, essence: 0 });
+});
