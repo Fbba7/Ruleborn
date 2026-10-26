@@ -511,6 +511,9 @@ func _tufts(t: Vector2i) -> void:
 			continue
 		var u := t.x + 0.15 + 0.7 * RealmKit.jitter(t, 50 + k)
 		var v := t.y + 0.15 + 0.7 * RealmKit.jitter(t, 60 + k)
+		if trail_at(u, v) > 0.45:
+			# Kept off the trail's stones.
+			continue
 		var base := world(u, v, y)
 		var odd := RealmKit.jitter(t, 90 + k) < 0.3
 		scatter.moving(Geo.Anim.SHIVER, base)

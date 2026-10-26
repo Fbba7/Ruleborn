@@ -9,7 +9,7 @@ extends RefCounted
 ## and of its 150 draw calls (§21.3), leaving the rest to the kit, the
 ## buildings and the figures.
 const ISLAND_TRIANGLES := 18000
-const ISLAND_CALLS := 24
+const ISLAND_CALLS := 26
 ## The lighter level (WorldLook.Detail.LIGHT) for screens whose own pieces
 ## need the room: at most this many triangles, the same draw calls.
 const LIGHT_TRIANGLES := 10000
@@ -161,8 +161,8 @@ func _backdrop() -> void:
 	screen.add_child(Control.new())
 	var b := LookBackdrop.dress(screen)
 	var m := b.material as ShaderMaterial
-	var night_ok: bool = m.get_shader_parameter("top") == Color("#171046") \
-		and m.get_shader_parameter("bottom") == Color("#2C3AA8")
+	var night_ok: bool = m.get_shader_parameter("top") == Color("#2E1F5E") \
+		and m.get_shader_parameter("bottom") == Color("#0A0620") and m.get_shader_parameter("radial") == 1.0
 	var under: bool = screen.get_child(0) == b and screen.get_children().filter(
 		func(n: Node) -> bool: return n.name == "Sky").size() == 1
 	b.for_world(23, "tidehold")

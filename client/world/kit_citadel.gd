@@ -31,6 +31,10 @@ static func walls(g: Geo, fine: Geo, radius: float, palette: Dictionary) -> void
 		var yaw := -a + PI / 2.0
 		g.box(Geo.place(p + Vector3(0, (WALL_H + 0.12) / 2.0, 0), yaw), Vector3(seg_len, WALL_H + 0.12, 0.2),
 			stone.darkened(0.04 * (i % 2)))
+		if g.coarse:
+			# The mid detail: one merlon a segment, no coping.
+			g.box(Geo.place(p + Vector3(0, WALL_H + 0.22, 0), yaw), Vector3(0.14, 0.12, 0.2), stone2)
+			continue
 		fine.box(Geo.place(p + Vector3(0, WALL_H + 0.13, 0), yaw), Vector3(seg_len, 0.04, 0.26), stone2)
 		for u: float in [-0.25, 0.25]:
 			var m := p + Vector3(cos(yaw), 0, -sin(yaw)) * u * seg_len
@@ -58,7 +62,7 @@ static func _tower(g: Geo, fine: Geo, p: Vector3, r: float, h: float, stone: Col
 	g.cyl(Geo.place(p), r * 1.08, r, h, stone, 10)
 	fine.cyl(Geo.place(p + Vector3(0, h * 0.55, 0)), r * 1.02, r * 1.02, 0.03, stone2, 10)
 	g.cyl(Geo.place(p + Vector3(0, h, 0)), r * 1.15, r * 1.2, 0.08, stone2, 10)
-	for k in 7:
+	for k in (0 if g.coarse else 7):
 		var a := TAU * k / 7.0
 		fine.box(Geo.place(p + Vector3(cos(a) * r * 1.12, h + 0.13, sin(a) * r * 1.12), -a), Vector3(0.07, 0.09, 0.07),
 			stone2)

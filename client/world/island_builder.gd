@@ -417,7 +417,7 @@ func scatter() -> Array:
 		"crystalline":
 			tuft_cols = [Color("#A8A2D8"), Color("#E6E2F8")]
 	# The lighter level: a third of the tufts, half as large again.
-	var tufts := _meadow_spots(_few(270 if kind != "emberreach" else 90, 0.36), 0.15)
+	var tufts := _meadow_spots(_few(200 if kind != "emberreach" else 90, 0.4), 0.15)
 	var grow := 1.0 if not light else 1.5
 	out.append([_tuft_mesh(), _spin_all(tufts, 0.8 * grow, 1.3 * grow), _pick(tufts.size(), tuft_cols), 0.25, 0.0])
 	var pebbles := _meadow_spots(_few(70, 0.4), 0.1)
@@ -449,7 +449,9 @@ func scatter() -> Array:
 	if kind != "emberreach":
 		var bumps: Array[Transform3D] = []
 		var bump_cols: Array[Color] = []
-		var gc2 := hsl(gc, 0.0, 0.08, -0.07)
+		# Lighter than the meadow, as the design's scalloped rim reads
+		# (04-realm-view.png), over the darker lip beneath.
+		var gc2 := hsl(gc, 0.01, 0.1, 0.07)
 		var gap := 0.62 if not light else 0.9
 		var n := int(TAU * radius() / gap)
 		for i in n:
@@ -458,7 +460,7 @@ func scatter() -> Array:
 			var sz := (0.3 + _rng.randf() * 0.18) * gap / 0.62
 			var at := Vector3(cos(q) * (e - 0.05), -0.1 - _rng.randf() * 0.08, sin(q) * (e - 0.05))
 			bumps.append(Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(1.1, 0.55, 1.1) * sz), at))
-			bump_cols.append(gc2.lerp(hsl(gc, 0.0, 0.05, -0.14), _rng.randf() * 0.6))
+			bump_cols.append(gc2.lerp(hsl(gc, 0.0, 0.06, 0.0), _rng.randf() * 0.6))
 		out.append([_puff_mesh(), bumps, bump_cols, 0.0, 0.0])
 	# The hanging fringe: grass cones pointing down under the lip.
 	var cones: Array[Transform3D] = []
@@ -478,7 +480,7 @@ func scatter() -> Array:
 	var rock_cols: Array[Color] = []
 	rock = rock.lerp(palette["dirt"], 0.3)
 	var mixed := rock.lerp(palette["dirt"], 0.5)
-	for i in _few(20, 0.5):
+	for i in _few(14, 0.5):
 		var q := _rng.randf() * TAU
 		var e := edge(q) - 0.1
 		var n := 2 + _rng.randi() % 3
@@ -490,6 +492,7 @@ func scatter() -> Array:
 				.scaled(Vector3(1.0, 0.75, 1.0) * sz), p))
 			rock_cols.append(rock if kk % 2 == 1 else mixed)
 	out.append([ico_mesh(), rocks, rock_cols, 0.0, 0.0])
+	out.append_array(LookFlora.parts(self))
 	out.append_array(signature())
 	if kind != "emberreach" and kind != "lanternvale":
 		# Fireflies for the night (§21.2: at night "lanterns and glows carry the
@@ -689,6 +692,12 @@ static func _post(m: LookMesh, p: Vector3, box: Vector3) -> void:
 
 
 ## Spots on the meadow, off the grid by `margin`, as (x, y, z).
+## `n` spots on the meadow at least `margin` metres off the grid, for the
+## realm's plants (LookFlora).
+func meadow_spots(n: int, margin: float) -> PackedVector3Array:
+	return _meadow_spots(n, margin)
+
+
 func _meadow_spots(n: int, margin: float) -> PackedVector3Array:
 	var out := PackedVector3Array()
 	var tries := 0
@@ -741,8 +750,8 @@ static func _tuft_mesh() -> ArrayMesh:
 ## A soft lump with round normals, for the rim's grass fringe.
 static func _puff_mesh() -> ArrayMesh:
 	var m := LookMesh.new()
-	m.puff(Transform3D(), Color.WHITE, 3, 5)
-	return m.mesh()
+	m.puff(Transform3D(), Color.WHITE, 2, 6)
+	return LookFlora.soft(m)
 
 
 ## A unit icosahedron, for pebbles, stones and specks of light.

@@ -186,3 +186,32 @@ Where the full level's triangles go (Heart, 12 × 12): meadow 2,400; cliffs 1,55
   - Before and after, the Codex on its frame: `s3-r2-backdrop-before-after.png` (left today's day gradient, right the backdrop). The title's dark ink does not read on the night: that is the UI kit's to restyle.
 - **`WorldLook.haze_under(from, strength)`**: a haze in the sky's low colour rising over the lower frame (in the vignette's quad), so a screen whose sheet covers the lower screen fades the world into it instead of cutting it. `s3-r2-haze-under.png` (from 0.55, strength 0.85). For T6's realm view, curation and defence log: `view.look.haze_under(0.6, 0.8)`.
 - **T6's screens checked** at noon (`s3-r2-t6-screens-noon.png`: realm view, curation, defence log, observatory): nothing of the look breaks; the Heart's daytime motes show as small gold specks round the buildings. Budgets as T6 measured them (realm view 98,610 triangles / 103 calls; curation 67,313 / 91; defence log 66,557 / 87; observatory 20,761 / 29); each can take about 7,500 back with `Detail.LIGHT`.
+
+### Round 3: the heist camera and the falls
+
+- Under the heist's close perspective camera the fireflies were big blurry orbs crowding the crew. A speck's halo is now 3 times its size and at most 0.32 m across, unless the 16-pixel floor needs more (so they still read at the whole-realm zoom); the night pools of light are fainter (0.45 → 0.3). `s3-r3-heist-night-and-whole.png`: the heist screen at 23 and the whole-realm zoom.
+- Waterfalls: soft rounded strands wavering as they fall instead of hard 9-column dashes, white water at the lip, and a foot that thins into spray, the strands lasting longest. `s3-r3-whole-zoom-sheet.png` (every realm at 12, 19 and 23, the home camera's whole-realm zoom).
+- The menu backdrop has the design's universe sky in it: soft nebula clouds and a diagonal band of star dust (`s3-r3-backdrop-nebula.png`).
+- Trap: in the spark shader a speck's pixel floor must itself be capped (here 0.6 m): some instances reach the vertex stage with a pixels-per-metre near zero (seen at noon on the Heart's motes), and an uncapped floor whites out the whole frame through the additive blend.
+- check_all on `6045177`: client 334/334, server 393/393, simulation 326/326; it stopped at the prototype-conformance step for want of the `playwright` module on this machine (installed since; rerun before the final push).
+
+### Round 4: the backdrop beside the design's screens and the UI kit
+
+- The design's 28 screen stills landed (`art/design/stills/screens/`) and T9's kit is on `origin/claude/ui-kit`. The design's menus do not stand on §21.2's blue (#171046 to #2C3AA8) but on a dark violet radial, "#2E1F5E at the top centre through #140C30 to #0A0620", which T9's `night` material already paints. `LookBackdrop.night()` now uses the same radial and the same three colours, so the two agree, and adds only what the kit's box does not: a faint nebula, three far islets, a dark two-layer cloud sea at the foot, and the vignette. Words on it keep the kit's `text_bg` (the top two stops). `for_world(hour, realm)` keeps the realm's own straight gradient.
+- Judged in a worktree with `origin/claude/ui-kit` merged: `s3-r4-settings-design-kit-backdrop.png` — the design's Settings, the kit's Settings on its `night`, and the same on `LookBackdrop`.
+- **For T9:** in `UI.frame`, `LookBackdrop.dress(screen)` after the frame is built swaps the "Sky" for the backdrop (the kit's `text_bg` meta on the screen stays right). Whether every menu should take it, or only the hubs (home's menus, the Laws and Crew hubs), is T9's call; the backdrop costs one draw call and one full-screen fragment pass (four noise octaves).
+
+### Round 5: each realm's plants (against the design's realm view and heist)
+
+- Beside `04-realm-view.png` and `02-heist.png` (`s3-r5-design-vs-ours-realm-heist.png`: design, ours, design, ours, grayscale thumbnails beneath), the worst differences of the look's own parts were: (1) the design's Heart meadow is strewn with pale pink petals and round blossom bushes and ours was plain grass; (2) the design's realms carry their §21.4 plants in the meadow, ours only tufts and flowers; (3) the design's island reads with soft lit lumps where ours had dark blots.
+- **`LookFlora`** (`client/world/look_flora.gd`): fallen petals lying in the grass and round flowering bushes standing in it, off the grid, per realm: the Heart's pink petals and blossom bushes, Verdant's leafy bushes with yellow blooms and petals, Skyfield's white dandelion puffs, Tidehold's sea-green bushes and shells, Crystalline's frost bushes, Emberreach's ember grass. Three MultiMeshes a realm (petals, bushes, blooms); the lighter level takes 45% of them, larger.
+- Trap: in the Compatibility renderer a MultiMesh instance's colour takes the place of the mesh's vertex colour rather than multiplying it, so a bush and its blooms are two instance sets with their own colours.
+- The bushes' normals are bent upward (`LookFlora.soft`), as foliage is lit in a picture book: a small round puff otherwise stands mostly in the toon ramp's two dark steps and reads as a dark blot.
+- To keep the budget: petals are two triangles, the tufts 270 → 200, rim rock clusters 20 → 14, the rim fringe's lumps 20 → 12 triangles, and the flora's count stops growing past a 12 by 12 island. `LookTests`' draw-call share rises 24 → 26.
+- Budget now (12 × 12, `look_budget.gd`), full / light: Heart 16,292 / 8,657; Skyfield 16,278 / 9,043; Crystalline 13,928 / 7,237; Tidehold 15,558 / 8,449; Emberreach 9,930 / 5,422; Verdant 16,142 / 8,517; Lantern Vale 14,392 / 7,881; 20–25 draw calls.
+- Stills: `s3-r5-flora-sheet.png` (every realm at 12, 19, 23), `s3-r5-heist-heart-flora.png` (the heist screen at noon).
+
+### Round 6: the Heart's sky and rim against the design's heist
+
+- Sampled beside `02-heist.png` (`s3-r6-heist-design-vs-ours.png`, design left): the design's sky at a third of the way down is a saturated violet, #351E70, where ours was a greyish #3F3E75, and its foot #794496–#A95E9B where ours was #C480AC. The Heart now takes only 12% of the daytime sky (was 30%) and its own colours are deeper (top #1A0E46, middle #3E2484, low #A65EA6): ours now samples #281F56 high and #724A94 low.
+- The design's rim is a scalloped edge lighter than the meadow; ours read as a dark line. The rim's lumps are lighter than the meadow now and lit as foliage (`LookFlora.soft`), so the edge reads light against the violet (`s3-r6-heart-rim.png`).
