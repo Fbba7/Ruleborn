@@ -21,6 +21,7 @@ decision).
 | --- | --- | --- | --- | --- |
 | SR-01 | High | server | Any player could loosen their own age band | fixed |
 | SR-02 | Medium | server | A heist's crew manifest was unchecked when the crew went unnamed | fixed |
+| SR-03 | Medium | server | Every offer and Observatory view read the whole game's islands | fixed |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -64,4 +65,32 @@ decision).
   `crew_not_named`, and pays nothing. A replay without a manifest (`RBH1`,
   `RBH2`) still plays §11.1's crew by role, as before. The client's planner
   always sends the two together (`planner_presenter.gd`), so it is unchanged.
+- **Status:** fixed.
+
+### SR-03 — Every offer and Observatory view read the whole game's islands (Medium)
+
+- **Where:** `server/src/matchmaking.mjs` `candidates`, called by
+  `GET /v1/offer` (`http.mjs`) and `GET /v1/observatory` and its refresh
+  (`observatory.mjs`).
+- **What:** each call made §12.22's candidates afresh: every current island
+  and every echo, each with its rating and its owner's Renown read — two
+  statements a candidate. §24.8 has choosing a target cost *"a cached
+  download rather than a database search"*; these routes are the search,
+  per caller. Measured here, 1,000 islands cost about 150 ms of the process
+  a call, linear in islands. G44's bucket lets one account make 60 such calls
+  at once and two a second after, so a handful of accounts holds a server
+  that serves everyone else from one thread.
+- **Reproduce:** publish many islands, then call `GET /v1/offer`
+  repeatedly from one account and time it (or count statements, as the test
+  does).
+- **Test:** `server/test/security_limits.test.mjs`.
+- **Fix:** one making of the candidates serves every caller for
+  `CANDIDATES_MS` (a minute), and is made again at once when an island is
+  published, replaced or taken away, or an account is banned or deleted
+  (four aggregate reads tell). What moves in between — a rating, Renown, a
+  new player's shield running out — only orders the list, and the lease
+  checks the target again (`service.lease`). At 1,000 islands a repeated
+  call now costs about 10 ms.
+- **Left:** `Matchmaking.chapters` keeps a chapter for every bundle ever
+  offered, for the process's life: small, but it grows with the game.
 - **Status:** fixed.
