@@ -29,6 +29,7 @@ decision).
 | SR-06 | Low | client | The cleartext guard let a userinfo hide the host; the terms link could leave the server | fixed |
 | SR-08 | Low | client, sim | A crafted replay could abort or freeze the app | fixed |
 | SR-13 | Low | server | "constructor" and its like were taken as law ids | fixed |
+| SR-18 | Low | server | A 13-to-15 could play any Workshop island by its id | fixed |
 | SR-12 | Medium | server | The Island Fund pays one player's replays as if each were a new player | needs the owner |
 | SR-15 | Medium | server | An island's exposed loot is the bundle's word (register D60) | needs the owner |
 | SR-16 | Medium | server | An island's laws and guards are the bundle's word (register G60, G61) | needs the owner |
@@ -256,6 +257,19 @@ decision).
   (`holds.test.mjs`: in parts as in one call). The measurement still costs
   about a third of one core while anything is queued; moving it off the
   request thread (a worker) is the deployment's next step.
+- **Status:** fixed.
+
+### SR-18 — A 13-to-15 could play any Workshop island by its id (Low)
+
+- **Where:** `server/src/workshop.mjs` `play` and `remix`.
+- **What:** §20.7 gives 13 to 15 *"Curated lists only"* for browsing the
+  Workshop. `browse` held it, but `play` and `remix` took any listed item's
+  id, and ids reach a player from more than the lists: a featured remix
+  names its original (`remixOf`), which nobody curated.
+- **Test:** `server/test/security_age.test.mjs` (SR-18).
+- **Fix:** a 13-to-15 plays and remixes only an island a person featured, or
+  their own, else 403 `curated_lists_only` (the code `browse` already
+  answers, with its words on the client). Reporting is never held back.
 - **Status:** fixed.
 
 ## Needs the owner

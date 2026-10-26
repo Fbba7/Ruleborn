@@ -267,6 +267,16 @@ export class Workshop {
     return rows.map((r) => this.view(r));
   }
 
+  /** §20.7: a player aged 13 to 15 has "curated lists only", so plays and
+   *  remixes only an island a person featured, or their own — not one
+   *  reached by its id from elsewhere, such as a featured remix's original
+   *  (SR-18). Reporting is never held back. */
+  curated(player, item) {
+    if (item.creator !== player && item.featured_at === null && this.account(player).age_band === "13-15") {
+      throw new Refused(403, "curated_lists_only");
+    }
+  }
+
   /** A creator's own islands, withdrawn and removed ones too, each removal
    *  with its reason (§20.11). */
   mine(creator) {
@@ -281,6 +291,7 @@ export class Workshop {
     const item = this.row(id);
     if (!this.listed(item)) throw new Refused(404, "no_such_island");
     if (this.account(player).banned_at) throw new Refused(403, "banned");
+    this.curated(player, item);
     this.service.safety.requireTerms(player);
     const row = {
       token: this.service.random(16).toString("hex"),
@@ -419,6 +430,7 @@ export class Workshop {
   remix(player, id) {
     const item = this.row(id);
     if (!this.listed(item)) throw new Refused(404, "no_such_island");
+    this.curated(player, item);
     this.service.safety.requireTerms(player);
     this.db.prepare(
       "INSERT OR IGNORE INTO workshop_remixes (item, player, at) VALUES (?, ?, ?)")
