@@ -64,13 +64,9 @@ func _build() -> void:
 	cards = VBoxContainer.new()
 	cards.add_theme_constant_override("separation", UI.px(10))
 	body.add_child(RosterScreen.padded(cards))
-	var actions := UI.row(-1.0, true)
-	actions.alignment = FlowContainer.ALIGNMENT_CENTER
 	toggle = StageHeroMaterial.button(UI.button(Strings.t("FORMS_SHOW_MINE"), _toggle), "gold")
 	UI.fit_to(toggle, [Strings.t("FORMS_SHOW_ALL")])
-	var home := UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"))
-	actions.add_child(StageHeroMaterial.button(home, "leather"))
-	column.add_child(RosterScreen.padded(UI.narrow(actions)))
+	column.add_child(StageHeroKit.tab_bar())
 
 
 func _toggle() -> void:

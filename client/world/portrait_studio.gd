@@ -102,18 +102,18 @@ func _frame(kind: String, _figure: Node3D) -> void:
 
 
 ## A portrait cut from a render: a square from the top of what was drawn,
-## as wide as the figure's body and tall enough for head and shoulders down
-## to the knees, as the design's portraits frame them; then SIZE across.
+## the whole figure with a little air above, as the design's cards stand
+## theirs; then SIZE across.
 static func crop(image: Image) -> Image:
 	var used := _body(image)
 	if used.size.x < 4 or used.size.y < 4:
 		image.resize(SIZE, SIZE, Image.INTERPOLATE_LANCZOS)
 		return image
-	# A tall, thin one (a heron) is cut to its upper body, as the design does.
-	var side := int(clampf(maxf(minf(used.size.y * 0.82, used.size.x * 1.7), used.size.x * 0.78), 8.0,
+	# A tall, thin one (a heron) is cut above its feet, as the design does.
+	var side := int(clampf(maxf(minf(used.size.y * 1.0, used.size.x * 2.2), used.size.x * 1.12), 8.0,
 		float(image.get_width())))
 	var x := clampi(int(used.position.x + used.size.x / 2.0 - side / 2.0), 0, image.get_width() - side)
-	var y := clampi(used.position.y - int(side * 0.04), 0, image.get_height() - side)
+	var y := clampi(used.position.y - int(side * 0.06), 0, image.get_height() - side)
 	var out := image.get_region(Rect2i(x, y, side, side))
 	out.resize(SIZE, SIZE, Image.INTERPOLATE_LANCZOS)
 	return out

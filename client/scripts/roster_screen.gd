@@ -74,7 +74,7 @@ func _build() -> void:
 	var hero := HBoxContainer.new()
 	hero.add_theme_constant_override("separation", UI.px(8))
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(UI.px(150), UI.px(200))
+	stage.custom_minimum_size = Vector2(UI.px(150), UI.px(185))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stage.size_flags_stretch_ratio = 0.9
 	hero.add_child(stage)
@@ -92,11 +92,7 @@ func _build() -> void:
 	cards = VBoxContainer.new()
 	cards.add_theme_constant_override("separation", UI.px(10))
 	body.add_child(padded(cards))
-	var actions := UI.row(-1.0, true)
-	actions.alignment = FlowContainer.ALIGNMENT_CENTER
-	var home := UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"))
-	actions.add_child(StageHeroMaterial.button(home, "leather"))
-	column.add_child(padded(UI.narrow(actions)))
+	column.add_child(StageHeroKit.tab_bar())
 
 
 ## `what` held in from the screen's sides by the safe area's margin.
@@ -224,7 +220,7 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 			var b := StageHeroKit.arrow(step < 0, Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT",
 				name), _choose.bind(to))
 			b.set_meta("item", "step:%d" % step)
-			StageHeroSkin.on_stage(over, b, Control.PRESET_TOP_LEFT if step < 0 else Control.PRESET_TOP_RIGHT)
+			StageHeroSkin.on_stage(over, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
 	var state := StageHeroKit.chip(str(row.get("line", "")), "glass", "characterstates/" + str(row.get("state", "")))
 	state.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	hero_info.add_child(state)
@@ -293,6 +289,12 @@ func _filters(rows: Array) -> Control:
 		b.toggle_mode = true
 		b.button_pressed = filter == o[0]
 		StageHeroMaterial.button(b, "tab" if filter == o[0] else "card", 12.0)
+		# The design's small pills: a row of five fits the phone at 100%.
+		b.add_theme_font_size_override("font_size", UI.text_px(14))
+		b.set_meta("points", 14.0)
+		for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+			b.add_theme_stylebox_override(state, UI.clear_box(6, 4))
+		UI.fit(b)
 		flow.add_child(b)
 	return flow
 
@@ -318,10 +320,11 @@ static func kinds_of(slice: Dictionary) -> Dictionary:
 static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "",
 		choose := Callable(), level := 0) -> Control:
 	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", UI.px(4))
+	box.add_theme_constant_override("separation", 0)
 	var send_button := _send_button(row["send"], busy, send)
 	if kind != "":
-		var tile := StageHeroSkin.portrait_tile(kind, "", 104.0)
+		# Taller than wide, as the design's cards: the whole figure stands.
+		var tile := StageHeroSkin.portrait_tile(kind, "", 132.0)
 		if choose.is_valid():
 			tile.gui_input.connect(func(e: InputEvent) -> void:
 				if e is InputEventMouseButton and (e as InputEventMouseButton).pressed:
@@ -336,27 +339,47 @@ static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "
 		box.add_child(tile)
 	else:
 		box.add_child(send_button)
+	# The name on the card's dark strip under the picture, which opens its
+	# page; the state's swatch, mark and word under it.
 	var open := UI.button(row["name"], func() -> void:
 		App.services.router.go(&"character", {"id": row["id"]}), false, Color(), row["spoken"])
 	open.set_meta("item", "open:%d" % row["id"])
 	StageHeroSkin.flat(open, 15.0)
 	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
 		var flat := open.get_theme_stylebox(state) as StyleBoxFlat
-		flat.bg_color = Color("#2A1E52") if state != "pressed" else Color("#3A2A6A")
-		flat.border_color = Color("#E9B65C")
+		flat.bg_color = Color("#1E1440") if state != "pressed" else Color("#3A2A6A")
+		flat.border_color = Color("#FFF3CC") if state == "focus" else Color("#1E1440")
+		flat.set_corner_radius_all(0)
 	for c: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		open.add_theme_color_override(c, StageHeroSkin.LIGHT)
 	open.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	open.clip_text = true
 	box.add_child(open)
 	var line := state_line(row)
+	line.alignment = BoxContainer.ALIGNMENT_CENTER
 	for l: Label in line.find_children("*", "Label", true, false):
 		l.add_theme_color_override("font_color", StageHeroSkin.LIGHT)
 		l.set_meta("points", 13.0)
 		l.add_theme_font_size_override("font_size", UI.text_px(13))
-	box.add_child(line)
-	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	return box
+		l.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var foot := MarginContainer.new()
+	foot.add_theme_constant_override("margin_bottom", UI.px(6))
+	foot.add_child(line)
+	box.add_child(foot)
+	# One dark card round it all, rimmed: a flat box, so a grid of a dozen
+	# stays inside §21.3's draw calls.
+	var card := PanelContainer.new()
+	var frame := StyleBoxFlat.new()
+	frame.bg_color = Color("#1E1440")
+	frame.border_color = Color("#4A3A7A")
+	frame.set_border_width_all(UI.px(2))
+	frame.set_corner_radius_all(UI.px(14))
+	frame.set_content_margin_all(UI.px(3))
+	card.add_theme_stylebox_override("panel", frame)
+	card.add_child(box)
+	card.set_meta("behind", [frame.bg_color] as Array[Color])
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return card
 
 
 ## The tile's one-tap send (§23.2's reassign): a round button with the

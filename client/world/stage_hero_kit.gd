@@ -35,9 +35,11 @@ static func kicker(text: String, colour := Color("#E9B65C")) -> Label:
 	l.add_theme_color_override("font_color", colour)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	# A kicker wraps: tracked wide in capitals, a long language's runs past
-	# the phone (French's every-fifth-level heading).
+	# the phone (French's every-fifth-level heading). A short one keeps its
+	# own width, so it never breaks inside a word.
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	l.custom_minimum_size.x = UI.px(60)
+	var natural := _tracked.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, l.get_theme_font_size("font_size")).x
+	l.custom_minimum_size.x = minf(natural, UI.px(140 if Settings.text_scale <= 100 else 60))
 	l.set_meta("own_ink", true)
 	l.set_meta("bold", true)
 	return l
@@ -234,3 +236,27 @@ static func hub(open: int) -> PanelContainer:
 		["screens/roster", "screens/sagehall", "screens/formsalbum"])
 	p.name = "Hub"
 	return p
+
+
+## The design's five tabs at the foot of a crew screen, Crew chosen; a tab
+## goes where the app's bar sends it (Islands home, Laws the Codex, Heist
+## the Observatory, Friends the friends list).
+static func tab_bar() -> KitTabs:
+	var routes := {"islands": &"home", "laws": &"codex", "heist": &"observatory", "crew": &"roster",
+		"friends": &"friends"}
+	var t := KitNav.tabs("crew")
+	# The chosen tab's 15-point word on the kit's 1.5-point outline reads
+	# 4.49:1 on its tile; at 2 points (past §21.8's 12%) it stands on the ink.
+	for l: Label in (t.buttons["crew"] as Button).find_children("*", "Label", true, false):
+		l.add_theme_constant_override("outline_size", UI.px(2))
+	t.picked.connect(func(to: String) -> void:
+		if to != "crew":
+			App.services.router.go(routes[to]))
+	# Five words do not fit at large text: the tabs not chosen keep their
+	# icon and spoken name.
+	if Settings.text_scale > 125:
+		for key: String in t.buttons:
+			if key != "crew":
+				for l: Label in (t.buttons[key] as Button).find_children("*", "Label", true, false):
+					l.visible = false
+	return t
