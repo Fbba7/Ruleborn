@@ -39,6 +39,9 @@ var level_badge: Control
 var cards: VBoxContainer
 ## The fixed spends beneath the scroll.
 var actions: HFlowContainer
+## Above them: waking from a rest, and why a level waits, on a row of
+## their own so a long language's words wrap rather than widen the phone.
+var notes: VBoxContainer
 ## The tab shown, and the character the Compare tab sets beside this one.
 var tab := 0
 var versus := 0
@@ -106,6 +109,9 @@ func _build() -> void:
 	actions.alignment = FlowContainer.ALIGNMENT_CENTER
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(actions)
+	notes = VBoxContainer.new()
+	notes.add_theme_constant_override("separation", UI.px(6))
+	column.add_child(_padded(UI.narrow(notes)))
 	column.add_child(_padded(UI.narrow(bottom)))
 
 
@@ -151,7 +157,7 @@ func _refresh() -> void:
 	else:
 		UI.set_status(status_label, "info", "")
 	status_label.get_parent().get_parent().visible = status_label.text != ""
-	for box: Container in [cards, actions]:
+	for box: Container in [cards, actions, notes]:
 		for n in box.get_children():
 			box.remove_child(n)
 			if n != title_label and n != forms:
@@ -427,8 +433,12 @@ func _actions(c: Dictionary) -> void:
 		actions.add_child(_upgrade(c["raise"], busy))
 	else:
 		actions.add_child(StageHeroKit.chip(Strings.t("CHARACTER_TOP_LEVEL"), "card", "hud/star"))
+	# Why a level waits, in light words on the card's violet (§21.8).
+	if c["raise"] is Dictionary and str(c["raise"]["why"]) != "":
+		notes.add_child(StageHeroKit.chip(str(c["raise"]["why"]), "card", "generalui/lock", true))
 	if c["wake"] is Dictionary:
-		actions.add_child(_spend(c["wake"], busy, "gold"))
+		notes.add_child(_spend(c["wake"], busy, "gold"))
+	notes.get_parent().visible = notes.get_child_count() > 0
 
 
 ## The design's UPGRADE: "Level up" in Lilita One over the levels it moves
@@ -457,8 +467,8 @@ func _upgrade(o: Dictionary, busy: bool) -> Button:
 	big.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	words.add_child(big)
 	var to := int(o["args"]["to"])
-	var line := Strings.t("CHARACTER_CONFIRM", o["cost"]) if confirming else (str(o["why"]) if str(o["why"]) != ""
-		else Strings.t("CHARACTER_UPGRADE_LINE", [to - 1, to]))
+	var line := Strings.t("CHARACTER_CONFIRM", o["cost"]) if confirming \
+		else Strings.t("CHARACTER_UPGRADE_LINE", [to - 1, to])
 	var sub := StageHeroKit.words(line, 14.0, Color("#FFFDF0"), true)
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

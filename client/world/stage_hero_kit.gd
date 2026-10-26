@@ -34,9 +34,10 @@ static func kicker(text: String, colour := Color("#E9B65C")) -> Label:
 	l.add_theme_font_override("font", _tracked)
 	l.add_theme_color_override("font_color", colour)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	if Settings.text_scale > 100:
-		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		l.custom_minimum_size.x = UI.px(60)
+	# A kicker wraps: tracked wide in capitals, a long language's runs past
+	# the phone (French's every-fifth-level heading).
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.custom_minimum_size.x = UI.px(60)
 	l.set_meta("own_ink", true)
 	l.set_meta("bold", true)
 	return l
