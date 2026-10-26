@@ -71,7 +71,8 @@ static func pop(node: Control) -> Tween:
 ## A sheet sliding up from the bottom edge by its own height, or fading.
 static func sheet_in(node: Control) -> Tween:
 	var t := node.create_tween()
-	if Settings.reduced_motion:
+	# A container places its children, so a sheet inside one fades in.
+	if Settings.reduced_motion or node.get_parent() is Container:
 		node.modulate.a = 0.0
 		t.tween_property(node, "modulate:a", 1.0, _ms("fade_ms"))
 		return _arrive(node, t)
@@ -122,4 +123,36 @@ static func bob(node: CanvasItem, amp_points := 3.0) -> Tween:
 		.set_ease(Tween.EASE_IN_OUT)
 	t.tween_property(node, "position:y", amp, half).as_relative().set_trans(Tween.TRANS_SINE) \
 		.set_ease(Tween.EASE_IN_OUT)
+	return t
+
+
+## A screen arriving (the designs' 160 ms fade from 0.985 scale), for the
+## router to call on the screen it has just shown; a plain 150 ms fade under
+## reduced motion.
+static func screen_in(screen: Control) -> Tween:
+	var t := screen.create_tween()
+	screen.modulate.a = 0.0
+	if Settings.reduced_motion:
+		t.tween_property(screen, "modulate:a", 1.0, _ms("fade_ms"))
+		return _arrive(screen, t)
+	screen.pivot_offset = screen.size * 0.5
+	screen.scale = Vector2.ONE * 0.985
+	t.set_parallel(true)
+	t.tween_property(screen, "modulate:a", 1.0, _ms("screen_fade_ms")).set_ease(Tween.EASE_OUT)
+	t.tween_property(screen, "scale", Vector2.ONE, _ms("screen_fade_ms")).set_trans(Tween.TRANS_CUBIC) \
+		.set_ease(Tween.EASE_OUT)
+	return _arrive(screen, t)
+
+
+## A slow glow (the Heist tab's pulse): the node brightens a little and
+## settles over the designs' 3.2 s, far below §20.8's three flashes a
+## second; not started under reduced motion.
+static func glow(node: CanvasItem) -> Tween:
+	if Settings.reduced_motion:
+		return null
+	var t := node.create_tween().set_loops()
+	var half := Tokens.number("motion", "glow_ms") / 2000.0
+	t.tween_property(node, "self_modulate", Color(1.18, 1.14, 1.05), half).set_trans(Tween.TRANS_SINE) \
+		.set_ease(Tween.EASE_IN_OUT)
+	t.tween_property(node, "self_modulate", Color.WHITE, half).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	return t

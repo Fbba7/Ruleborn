@@ -11,6 +11,9 @@ func _initialize() -> void:
 
 func _go() -> void:
 	root.size = Vector2i(1080, 2340)
+	Settings.path = "user://settings-shot.cfg"
+	# Read once now, so a screen that restores the settings keeps these.
+	Settings.restore()
 	Settings.locale = "en"
 	Settings.high_contrast = OS.get_environment("HC") != ""
 	Settings.apply()
@@ -24,5 +27,9 @@ func _go() -> void:
 		await process_frame
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
+	# §21.3: under 150 draw calls on every screen.
+	print("budget %s: %d draw calls, %d boxes" % [screen.name,
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+		screen.find_children("*", "RbBox", true, false).size()])
 	print("wrote")
 	quit()
