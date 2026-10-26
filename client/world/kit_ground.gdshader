@@ -155,9 +155,12 @@ void fragment() {
 	// A path: a ribbon of cobbles laid in worn earth (UV.x is how near the
 	// path's middle line this is), a darker kerb at its edge.
 	if (path > 0.3) {
-		vec3 cb = cells(p * 5.0);
-		float edge = smoothstep(0.02, 0.08, cb.y - cb.x);
-		vec3 stoneC = cobble.rgb * (0.84 + 0.22 * cb.z) * (0.95 + 0.08 * n1);
+		vec3 cb = cells(p * 3.4);
+		float edge = smoothstep(0.03, 0.1, cb.y - cb.x);
+		// Each stone lit on its upper side, so the ribbon reads as rounded
+		// stones, not a mosaic.
+		float dome = 1.0 - smoothstep(0.0, 0.55, cb.x);
+		vec3 stoneC = cobble.rgb * (0.86 + 0.12 * cb.z + 0.1 * dome) * (0.97 + 0.04 * n1);
 		vec3 pathC = mix(mortar.rgb, stoneC, edge);
 		float wob = (vnoise(p * 9.0) - 0.5) * 0.06;
 		float inside_ = smoothstep(0.43, 0.47, path + wob);
