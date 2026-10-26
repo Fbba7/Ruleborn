@@ -93,7 +93,7 @@ static func portrait(picture: Texture2D, name: String, level: int, school: Strin
 		pressed: Callable, chosen := false, spoken := "") -> Button:
 	var b := UI.action("", pressed, "portrait_" + school, spoken if spoken != "" else name)
 	b.name = "Portrait"
-	b.custom_minimum_size = Vector2(UI.px(100), UI.px(128))
+	b.custom_minimum_size = Vector2(UI.px(100), UI.px(140))
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	RbBox.of(b).set_chosen(chosen)
 	var art := TextureRect.new()

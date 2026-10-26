@@ -303,10 +303,11 @@ static func _roster(column: VBoxContainer) -> void:
 	grid.columns = 3
 	grid.add_theme_constant_override("h_separation", UI.px(8))
 	grid.add_theme_constant_override("v_separation", UI.px(8))
-	for c: Array in [["crewroles/scout", "Bramble", 6, "life"], ["crewroles/carrier", "Pip", 5, "motion"],
-			["crewroles/warden", "Facet", 5, "matter"], ["crewroles/breaker", "Mo", 4, "time"],
-			["crewroles/mender", "Ash", 4, "energy"], ["crewroles/scout", "Volt", 4, "spirit"]]:
-		grid.add_child(KitCards.portrait(Icons.texture(c[0]), c[1], c[2], c[3], Tokens.color("success"),
+	# The characters' own portraits, as the design's cards show them.
+	for c: Array in [["mossbear", "Bramble", 6, "life"], ["skyskipper", "Pip", 5, "motion"],
+			["glass_golem", "Facet", 5, "matter"], ["tidewalker", "Mo", 4, "time"],
+			["emberling", "Ash", 4, "energy"], ["lantern_wisp", "Volt", 4, "spirit"]]:
+		grid.add_child(KitCards.portrait(Portrait.of(str(c[0])), c[1], c[2], c[3], Tokens.color("success"),
 			"crewroles/carrier", func() -> void: pass, c[1] == "Pip"))
 	column.add_child(grid)
 	column.add_child(UI.grow())
