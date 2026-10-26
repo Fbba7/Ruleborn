@@ -248,3 +248,31 @@ static func xp(done: float, of: float, words: String, segments := 8) -> Control:
 	l.set_meta("bold", true)
 	bar.add_child(l)
 	return bar
+
+
+## A stat tile (the designs' profile and result tiles): an icon if named,
+## a big number in Lilita One, and what it counts beneath, wrapping.
+static func stat(number: String, words: String, icon := "", look := "card") -> PanelContainer:
+	var p := UI.panel(look)
+	p.name = "Stat"
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 0)
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	if icon != "":
+		var i := Icons.view(icon, 26)
+		i.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		v.add_child(i)
+	var n := UI.label(number, 24)
+	n.theme_type_variation = "DisplayS"
+	n.add_theme_font_size_override("font_size", UI.text_px(24))
+	n.set_meta("points", 24.0)
+	n.name = "Number"
+	v.add_child(n)
+	var w := UI.label(words, 13, true)
+	w.theme_type_variation = "Secondary"
+	w.add_theme_font_override("font", UI.bold_font())
+	w.set_meta("bold", true)
+	v.add_child(w)
+	p.add_child(v)
+	return p
