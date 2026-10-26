@@ -777,7 +777,7 @@ func _lantern(c: Vector3) -> void:
 			hero.rbox(Geo.place(c + Vector3(0, 1.16, 0)), Vector3(0.17, 0.2, 0.17), Color(Color("#FFD27A"), 0.15), 0.02)
 			hero.prism(Geo.place(c + Vector3(0, 1.26, 0), PI / 4.0), 4, 0.17, 0.0, 0.12, metal.darkened(0.15))
 	# Its pool of light on the ground.
-	kit.clear.ring(Geo.place(c + Vector3(0, 0.015, 0)), 0.0, 0.42, Color(Color("#FFC860"), 0.35), 14)
+	kit.clear.ring(Geo.place(c + Vector3(0, 0.015, 0)), 0.0, 0.26, Color(Color("#FFC860"), 0.2), 12)
 
 
 ## An arch by realm: dressed stone with a gold keystone; lilac stone and a
