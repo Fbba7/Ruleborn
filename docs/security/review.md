@@ -385,6 +385,37 @@ decision).
 - **Status:** sent to T11, who owns sign-in; no test here, since the change
   is a decision about the token, not a defect a test can pin.
 
+## Left as they are (Info)
+
+Each was looked at and judged not worth a change now; each is one line to
+pick up later.
+
+- **A crew by role skips resting.** After SR-02 a replay with no manifest
+  (`RBH1`, `RBH2`) still plays §11.1's crew by role with no roster named,
+  so no character rests after it. It plays no kind's ability, so it is the
+  weaker crew; requiring every replay to name its crew would retire the
+  older formats.
+- **Simulation time on the request thread.** A heist's re-simulation is 30
+  to 90 ms of the one thread; G44's six at once an account bounds one
+  caller, not many. §24.1's edge isolates are what scale it.
+- **Hourly target lists.** `targetLists` reads every island and its owner's
+  Renown in one go, once an hour, on the request thread: honest load, not a
+  caller's, but it grows with the game.
+- **Unsigned reads.** `GET /v1/bundles/:hash` takes no session and no
+  bucket, as §24.8's static files must; each miss is one indexed read and a
+  file check, and the edge caches the hits.
+- **Leases.** One lease a target a raider at a time (§24.13), but a raider
+  may hold one on every island; unplayed ones are deleted seven days after
+  they lapse (G38). Bounded by the game's islands, not by the caller.
+- **A profile's record** reads all of a player's heists each time it is
+  shown: slow for a heavy player, within the call bucket.
+- **The client's outbox** keeps receipts, lease tokens and replays as plain
+  JSON in the app's sandbox (`user://`); Android backups are off. The
+  session token is never written.
+- **`tools/art`** loads Playwright from the machine's global install
+  (`PLAYWRIGHT_MODULE`), outside its lockfile, and its loopback file server
+  checks paths by prefix: tools for the developer's machine, not shipped.
+
 ## Checked and held
 
 What was tried and found sound, so the next reader need not try it again.
