@@ -11,15 +11,23 @@ var answers: HFlowContainer
 func _ready() -> void:
 	App.ready(self)
 	var column := ScreenKit.frame(self)
-	column.add_child(UI.grow())
-	var mark := ScreenKit.icon("screens", "universe", 120.0)
-	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	column.add_child(mark)
-	var name := ScreenKit.inked(ScreenKit.text(Strings.t("APP_NAME"), 44.0, "name", "card"), 2.0)
+	var top := Control.new()
+	top.custom_minimum_size.y = UI.px(36)
+	column.add_child(top)
+	# The design's first launch: the gold logo, the line under it, then the
+	# universe's mark.
+	var name := KitNav.logo(Strings.t("APP_NAME"))
 	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(name)
+	var line := ScreenKit.text(Strings.t("SCREEN_TAGLINE"), 18.0, "name", "card", false, true)
+	line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(line)
 	column.add_child(KitNav.rule())
-	column.add_child(UI.grow())
+	var mark := ScreenKit.icon("screens", "universe", 180.0)
+	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	mark.size_flags_vertical = Control.SIZE_EXPAND | Control.SIZE_SHRINK_CENTER
+	column.add_child(mark)
 	question_label = ScreenKit.text("", 20.0, "words", "parchment", false, true)
 	question_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(ScreenKit.panel("parchment", question_label, 18.0, 16.0))
