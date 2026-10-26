@@ -19,7 +19,12 @@ var header_label: Label
 var status_label: Label
 var toggle: Button
 var stage: StageHero
+## Beside the stage: the chosen form's state, kind, note, the three notes'
+## pips to choose between and the outfit's progress.
+var hero_info: VBoxContainer
 var cards: VBoxContainer
+## The chosen kind's form on the stage, by its note; its first when none.
+var form_note := ""
 ## The kind the hero stage shows; the first in the album when none is chosen.
 var chosen := ""
 
@@ -52,11 +57,23 @@ func _build() -> void:
 	head.custom_minimum_size.y = UI.px(Tokens.number("size", "safe_top_points") - 34.0)
 	body.add_child(head)
 	body.add_child(RosterScreen.padded(StageHeroKit.hub(2)))
-	# The chosen kind's three forms on the design's rimmed hero card.
+	# The design's hero card: the chosen form on the stage at the left, its
+	# state, name, note, the three pips and the outfit at the right.
+	var hero: BoxContainer = HBoxContainer.new()
+	if Settings.text_scale > 100:
+		hero = VBoxContainer.new()
+	hero.add_theme_constant_override("separation", UI.px(8))
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(0, UI.px(210))
+	stage.custom_minimum_size = Vector2(UI.px(130), UI.px(190))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	body.add_child(RosterScreen.padded(StageHeroMaterial.panel("rim", stage, 18.0, 4.0)))
+	stage.size_flags_stretch_ratio = 0.9
+	hero.add_child(stage)
+	hero_info = VBoxContainer.new()
+	hero_info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hero_info.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	hero_info.add_theme_constant_override("separation", UI.px(6))
+	hero.add_child(hero_info)
+	body.add_child(RosterScreen.padded(StageHeroMaterial.panel("rim", hero, 18.0, 4.0)))
 	header_label = StageHeroKit.words("", 15.0, StageHeroSkin.LIGHT)
 	if Settings.text_scale > 100:
 		header_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -103,6 +120,7 @@ func _refresh() -> void:
 		outfits[o["kind"]] = o
 	var k := _chosen(kinds)
 	_stand(k)
+	_hero(k, outfits.get(k.get("kind", ""), {}))
 	cards.add_child(_count(slice))
 	var grid := GridContainer.new()
 	grid.columns = 1 if Settings.text_scale > 150 else (2 if Settings.text_scale > 100 else 3)
@@ -294,38 +312,88 @@ static func _sails(lines: Array, raw: Array) -> Control:
 	return StageHeroKit.card("", v)
 
 
-## The chosen kind's three forms side by side, one not hatched in
-## silhouette, each named beneath on a plate in its note's colour.
+## The chosen form on the stage, in silhouette until it is hatched; drawn
+## again only when that changes.
 func _stand(k: Dictionary) -> void:
 	if k.is_empty():
 		return
-	var list: Array[String] = []
-	var looks: Array[String] = []
-	for f: Dictionary in k["forms"]:
-		list.append(str(k["kind"]))
-		looks.append(str(f["note"]) if int(f["owned"]) > 0 else "shadow")
-	var key := "%s%s" % [k["kind"], looks]
+	var f := _form(k)
+	var look := str(f["note"]) if int(f["owned"]) > 0 else "shadow"
+	var key := "%s%s" % [k["kind"], look]
 	if str(stage.get_meta("showing", "")) == key:
 		return
 	stage.set_meta("showing", key)
-	stage.show_kinds(list, looks)
-	for n in stage.get_children():
-		if n.has_meta("words"):
-			n.queue_free()
-	var names := HBoxContainer.new()
-	names.add_theme_constant_override("separation", UI.px(6))
-	for f: Dictionary in k["forms"]:
-		var note := str(f["note"])
-		var colour: Color = StageHeroSculpt.NOTE.get(note, StageHeroSkin.OUTLINE)
-		var p := StageHeroKit.chip(FormsPresenter.note_name(note), "#" + colour.darkened(0.45).to_html(false),
-			"lawnotes/" + note)
-		p.size_flags_horizontal = Control.SIZE_EXPAND | Control.SIZE_SHRINK_CENTER
-		names.add_child(p)
-	StageHeroSkin.on_stage(stage, names, Control.PRESET_CENTER_BOTTOM).set_meta("words", true)
-	names.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stage.show_kinds([str(k["kind"])], [look])
+
+
+## The chosen kind's chosen form.
+func _form(k: Dictionary) -> Dictionary:
+	var list: Array = k["forms"]
+	for f: Dictionary in list:
+		if str(f["note"]) == form_note:
+			return f
+	return list[0]
+
+
+## Beside the stage: the form's state on a chip, the kind's name in
+## Marcellus, its note, a pip for each of its three forms to stand it on
+## the stage, and the outfit's progress on a bar.
+func _hero(k: Dictionary, o: Dictionary) -> void:
+	for n in hero_info.get_children():
+		hero_info.remove_child(n)
+		n.queue_free()
+	if k.is_empty():
+		return
+	var f := _form(k)
+	var had := int(f["owned"]) > 0
+	var note_name := FormsPresenter.note_name(str(f["note"]))
+	var state := StageHeroKit.chip(("✓ " + note_name) if had else note_name, "#1F6A35" if had else "card",
+		"" if had else "generalui/lock")
+	hero_info.add_child(state)
+	var name := StageHeroKit.words(k["title"], 26.0, StageHeroSkin.LIGHT)
+	StageHeroSkin.named(name)
+	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	name.custom_minimum_size.x = UI.px(80)
+	hero_info.add_child(name)
+	hero_info.add_child(StageHeroKit.para(str(f["text"]), 14.0, StageHeroSkin.LIGHT_SOFT))
+	var pips := HBoxContainer.new()
+	pips.add_theme_constant_override("separation", UI.px(4))
+	for each: Dictionary in k["forms"]:
+		var note := str(each["note"])
+		var b := Button.new()
+		b.custom_minimum_size = Vector2.ONE * UI.px(48)
+		b.accessibility_name = str(each["text"])
+		b.set_meta("item", "form:%s" % note)
+		for st: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+			var ring := StyleBoxFlat.new()
+			ring.bg_color = Color(0, 0, 0, 0)
+			ring.draw_center = false
+			ring.set_corner_radius_all(UI.px(99))
+			var on := note == str(f["note"])
+			ring.border_color = Color("#FFF3CC") if on or st == "focus" else Color(0, 0, 0, 0)
+			ring.set_border_width_all(UI.px(2))
+			b.add_theme_stylebox_override(st, ring)
+		var pip := _pip(note, int(each["owned"]) > 0, 38.0)
+		pip.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+		pip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		b.add_child(pip)
+		b.pressed.connect(func() -> void:
+			form_note = note
+			_refresh())
+		pips.add_child(b)
+	hero_info.add_child(pips)
+	if not o.is_empty():
+		var have := int(o["have"])
+		var of := maxi(1, int(o["of"]))
+		hero_info.add_child(StageHeroBar.make(float(have) / float(of), Color("#3FBF7F") if have >= of
+			else Color("#E9B65C"), "", 10.0))
+		hero_info.add_child(StageHeroKit.para(k["outfit"], 13.0, Color("#FFE6A0") if have >= of
+			else StageHeroSkin.LIGHT_SOFT))
 
 
 func _choose(event: InputEvent, kind: String) -> void:
 	if event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
 		chosen = kind
+		form_note = ""
 		_refresh()
