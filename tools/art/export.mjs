@@ -68,11 +68,13 @@ const round = (x, n = 3) => Math.round(x * 10 ** n) / 10 ** n;
 
 // Godot's import settings for a kind's two textures: compressed for the GPU
 // with mipmaps (a small character must not shimmer), the relief map read as a
-// normal map and held to 256. Written when missing or patched when present, so
-// Godot keeps its own uid lines.
+// normal map and held to 128 (at 256 a hero portrait looks the same and the
+// install carries 2.8 MB more), a faceted body's flat one to 16. Written when
+// missing or patched when present, so Godot keeps its own uid lines.
 const TEXTURE_PARAMS = {
 	paint: { 'compress/mode': 2, 'mipmaps/generate': 'true', 'compress/normal_map': 2, 'process/size_limit': 0 },
-	relief: { 'compress/mode': 2, 'mipmaps/generate': 'true', 'compress/normal_map': 1, 'process/size_limit': 256 },
+	relief: { 'compress/mode': 2, 'mipmaps/generate': 'true', 'compress/normal_map': 1, 'process/size_limit': 128 },
+	flat: { 'compress/mode': 2, 'mipmaps/generate': 'true', 'compress/normal_map': 1, 'process/size_limit': 16 },
 };
 function textureImport(file, role) {
 	const p = file + '.import';
@@ -300,7 +302,7 @@ async function main() {
 			sceneImport(path.join(outDir, `${kind}.glb`));
 			for (const [n, b] of Object.entries(slimmed.images)) {
 				fs.writeFileSync(path.join(outDir, n), b);
-				textureImport(path.join(outDir, n), n.endsWith('_relief.jpg') ? 'relief' : 'paint');
+				textureImport(path.join(outDir, n), n.endsWith('_relief.jpg') ? (info.faceted ? 'flat' : 'relief') : 'paint');
 			}
 			manifest.kinds[kind] = {
 				file: `${kind}.glb`,

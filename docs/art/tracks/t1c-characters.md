@@ -196,58 +196,61 @@ and value accessors, mostly copies. `slim` now shares identical accessors
 (about half of them), and `SLIM_ONLY=1 node tools/art/export.mjs` re-slims
 the exported files without exporting again: 24.6 MB to 21.7 MB for the 43
 `.glb`s, with the same clips (a checksum of the imported tracks matches).
-Installed, nothing changes by this; measured per kind (imported, s3tc):
+Installed, nothing changes by this. What did: the relief map is held to
+128² (was 256²; side by side in the hero view, Rambler's fleece and
+Featherkin's feathers look the same) and the Glass Golem's flat one to 16²,
+so the textures fell from 10.8 MB to 8.0 MB and the 43 kinds install in
+about 14.5 MB (was 16.8 MB). Measured per kind (imported, s3tc):
 
 | Kind | Triangles | .glb KB | Scene KB | Textures KB | Installed KB |
 |---|---:|---:|---:|---:|---:|
-| archivist | 5880 | 541 | 179 | 256 | 435 |
-| ashmoth | 5440 | 409 | 113 | 256 | 369 |
-| bloomling | 4551 | 394 | 134 | 256 | 390 |
-| cartographer | 5879 | 540 | 142 | 256 | 398 |
-| chronicler | 5427 | 521 | 155 | 256 | 411 |
-| collector | 5880 | 606 | 149 | 256 | 405 |
-| devourer | 5879 | 545 | 149 | 256 | 405 |
-| echoplate | 5395 | 422 | 144 | 256 | 400 |
-| emberling | 5879 | 477 | 150 | 256 | 406 |
-| featherkin | 5880 | 621 | 169 | 256 | 425 |
-| gardener | 5852 | 668 | 150 | 256 | 406 |
-| glassgolem | 4104 | 695 | 173 | 256 | 429 |
-| hourglassstorm | 5659 | 369 | 133 | 256 | 389 |
-| hourkeeper | 5876 | 411 | 137 | 256 | 393 |
-| illusoryguard | 5872 | 636 | 176 | 256 | 432 |
-| lamplighter | 5876 | 574 | 144 | 256 | 400 |
-| lanternfish | 4056 | 270 | 83 | 256 | 339 |
-| lanternmoth | 5440 | 399 | 111 | 256 | 367 |
-| lanternwisp | 5430 | 403 | 139 | 256 | 395 |
-| mossbear | 5854 | 926 | 203 | 256 | 459 |
-| prismbeetle | 3063 | 290 | 95 | 256 | 351 |
-| prismmite | 4576 | 401 | 136 | 256 | 392 |
-| puffballflock | 3698 | 307 | 108 | 256 | 364 |
-| puffbee | 5878 | 459 | 136 | 256 | 393 |
-| quarryback | 4690 | 414 | 146 | 256 | 402 |
-| rambler | 5880 | 496 | 166 | 256 | 423 |
-| reverser | 5420 | 445 | 147 | 256 | 403 |
-| rootrunner | 5799 | 419 | 145 | 256 | 401 |
-| skyjelly | 4276 | 284 | 97 | 256 | 353 |
-| skyskipper | 5875 | 622 | 179 | 256 | 436 |
-| soulmender | 5880 | 454 | 148 | 256 | 404 |
-| sparkwright | 5880 | 465 | 148 | 256 | 405 |
-| stillwatch | 5090 | 413 | 144 | 256 | 400 |
-| stormhound | 4794 | 465 | 152 | 256 | 408 |
-| stray | 4855 | 432 | 143 | 256 | 399 |
-| swarmling | 3329 | 341 | 109 | 256 | 365 |
-| tidewalker | 5876 | 555 | 145 | 256 | 402 |
-| tinkerer | 5875 | 777 | 171 | 256 | 427 |
-| twinned | 5887 | 692 | 191 | 256 | 448 |
-| unmade | 3568 | 380 | 135 | 256 | 392 |
-| valemoth | 5880 | 454 | 119 | 256 | 375 |
-| wanderer | 5821 | 493 | 156 | 256 | 412 |
-| wildfirebloom | 5880 | 645 | 165 | 256 | 421 |
-| **All 43** | | 20.7 MB | 6.1 MB | 10.8 MB | 16.8 MB |
+| archivist | 5880 | 541 | 179 | 192 | 371 |
+| ashmoth | 5440 | 409 | 113 | 192 | 305 |
+| bloomling | 4551 | 394 | 134 | 192 | 326 |
+| cartographer | 5879 | 540 | 142 | 192 | 334 |
+| chronicler | 5427 | 521 | 155 | 192 | 347 |
+| collector | 5880 | 606 | 149 | 192 | 341 |
+| devourer | 5879 | 545 | 149 | 192 | 341 |
+| echoplate | 5395 | 422 | 144 | 192 | 336 |
+| emberling | 5879 | 477 | 150 | 192 | 342 |
+| featherkin | 5880 | 621 | 169 | 192 | 361 |
+| gardener | 5852 | 668 | 150 | 192 | 342 |
+| glassgolem | 4104 | 695 | 173 | 171 | 344 |
+| hourglassstorm | 5659 | 369 | 133 | 192 | 325 |
+| hourkeeper | 5876 | 411 | 137 | 192 | 329 |
+| illusoryguard | 5872 | 636 | 176 | 192 | 368 |
+| lamplighter | 5876 | 574 | 144 | 192 | 336 |
+| lanternfish | 4056 | 270 | 83 | 192 | 275 |
+| lanternmoth | 5440 | 399 | 111 | 192 | 303 |
+| lanternwisp | 5430 | 403 | 139 | 192 | 331 |
+| mossbear | 5854 | 926 | 203 | 192 | 395 |
+| prismbeetle | 3063 | 290 | 95 | 192 | 287 |
+| prismmite | 4576 | 401 | 136 | 192 | 328 |
+| puffballflock | 3698 | 307 | 108 | 192 | 300 |
+| puffbee | 5878 | 459 | 136 | 192 | 329 |
+| quarryback | 4690 | 414 | 146 | 192 | 338 |
+| rambler | 5880 | 496 | 166 | 192 | 359 |
+| reverser | 5420 | 445 | 147 | 192 | 339 |
+| rootrunner | 5799 | 419 | 145 | 192 | 337 |
+| skyjelly | 4276 | 284 | 97 | 192 | 289 |
+| skyskipper | 5875 | 622 | 179 | 192 | 372 |
+| soulmender | 5880 | 454 | 148 | 192 | 340 |
+| sparkwright | 5880 | 465 | 148 | 192 | 341 |
+| stillwatch | 5090 | 413 | 144 | 192 | 336 |
+| stormhound | 4794 | 465 | 152 | 192 | 344 |
+| stray | 4855 | 432 | 143 | 192 | 335 |
+| swarmling | 3329 | 341 | 109 | 192 | 301 |
+| tidewalker | 5876 | 555 | 145 | 192 | 338 |
+| tinkerer | 5875 | 777 | 171 | 192 | 363 |
+| twinned | 5887 | 692 | 191 | 192 | 384 |
+| unmade | 3568 | 380 | 135 | 192 | 328 |
+| valemoth | 5880 | 454 | 119 | 192 | 311 |
+| wanderer | 5821 | 493 | 156 | 192 | 348 |
+| wildfirebloom | 5880 | 645 | 165 | 192 | 357 |
+| **All 43** | | 20.7 MB | 6.1 MB | 8.0 MB | 14.1 MB |
 
-The textures are two thirds of it (each kind's 512² paint, 175 KB, and its
-256² relief, 87 KB); a scene is about 70% mesh (a Rambler without its clips
-imports at 125 KB of 171 KB).
+Each kind's 512² paint (175 KB) is now most of it; a scene is about 70%
+mesh (a Rambler without its clips imports at 125 KB of 171 KB).
 
 ## For T5 (the heist)
 
