@@ -50,17 +50,13 @@ var _coins: FxDraw
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
-	# Three columns; with §20.8's large text the loot takes a row of its own
-	# under them, rather than outgrow the phone.
+	# Three columns; with §20.8's large text the loot stands under the law
+	# banner, rather than outgrow the phone.
 	var top := HBoxContainer.new()
 	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	top.add_theme_constant_override("separation", UI.px(4))
 	add_child(top)
-	var lower := top
-	if Settings.text_scale > 130:
-		lower = HBoxContainer.new()
-		lower.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(lower)
+	var large := Settings.text_scale > 130
 	# The law banner, top left.
 	var left := _side(top, BoxContainer.ALIGNMENT_BEGIN)
 	# The designs': "Laws here" in gold, a leather chip for each law.
@@ -119,17 +115,19 @@ func _init() -> void:
 	centre.add_child(alarm)
 	top.add_child(centre)
 	# The loot, top right: two numbers and the bars beside them.
-	var right_side := _side(lower, BoxContainer.ALIGNMENT_END)
+	# With large text it stands under the law banner instead, its rows kept
+	# whole, so the column stays above the hand's controls.
+	var right_side := left if large else _side(top, BoxContainer.ALIGNMENT_END)
 	var right := _surface("leather")
-	right.size_flags_horizontal = Control.SIZE_SHRINK_END
+	right.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN if large else Control.SIZE_SHRINK_END
 	loot_panel = right
 	var right_box := VBoxContainer.new()
 	right_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	right_box.add_theme_constant_override("separation", UI.px(3))
 	right_box.custom_minimum_size.x = UI.px(82)
 	# A row each: its name, and the number at the row's end.
-	room_label = _stat(right_box, Strings.t("HUD_ROOM"))
-	left_label = _stat(right_box, Strings.t("HUD_LEFT"))
+	room_label = _stat(right_box, Strings.t("HUD_ROOM"), large)
+	left_label = _stat(right_box, Strings.t("HUD_LEFT"), large)
 	# The bags' fill and the Vault's cracking as bars, each beside the
 	# designs' icon for it.
 	var bars := HBoxContainer.new()
@@ -158,12 +156,14 @@ func _init() -> void:
 
 
 ## One of the loot panel's numbers: its name, and the number in tabular
-## figures at the row's end (wrapping under it with large text); returns the
+## figures at the row's end (wrapping under it unless `whole`); returns the
 ## number's label.
-func _stat(box: VBoxContainer, title: String) -> Label:
-	var row := HFlowContainer.new()
+func _stat(box: VBoxContainer, title: String, whole := false) -> Label:
+	var row: Container = HFlowContainer.new()
+	if whole:
+		row = HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("h_separation", UI.px(6))
+	row.add_theme_constant_override("separation" if whole else "h_separation", UI.px(6))
 	var name_label := FxSkin.label(title, 14.0)
 	name_label.add_theme_color_override("font_color", FxSkin.PARCH_BOTTOM)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT

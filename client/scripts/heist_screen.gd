@@ -560,22 +560,36 @@ func _build() -> void:
 		var b := FxPortrait.new(str(crew[i]["role"]), controller.select.bind(i))
 		crew_buttons.append(b)
 		crew_row.add_child(b)
+	# With large text a rehearsal's pause stands at the end of the portraits,
+	# low in reach, rather than under the taller HUD.
+	if Settings.text_scale > 130 and pause_button != null:
+		pause_button.reparent(crew_row)
 	var right := VBoxContainer.new()
 	right.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	right.add_theme_constant_override("separation", UI.px(4))
 	right.size_flags_vertical = Control.SIZE_SHRINK_END
 	actions_node = right
-	var small := HBoxContainer.new()
+	# With large text every order stands on one row (wrapping if it must),
+	# so the hand's controls stay low in the thumb's reach (§21.1).
+	var large := Settings.text_scale > 130
+	var small: Container = HBoxContainer.new()
+	if large:
+		small = UI.row(4.0, true)
 	small.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	small.alignment = BoxContainer.ALIGNMENT_END
-	small.add_theme_constant_override("separation", UI.px(4))
+	if small is FlowContainer:
+		(small as FlowContainer).alignment = FlowContainer.ALIGNMENT_END
+	else:
+		(small as HBoxContainer).alignment = BoxContainer.ALIGNMENT_END
+		small.add_theme_constant_override("separation", UI.px(4))
 	small.add_child(_order(Strings.t("HEIST_HALT"), controller.halt, "halt"))
 	small.add_child(_order(Strings.t("HEIST_DROP"), controller.drop_half, "drop"))
 	right.add_child(small)
-	var main := HBoxContainer.new()
-	main.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	main.alignment = BoxContainer.ALIGNMENT_END
-	main.add_theme_constant_override("separation", UI.px(6))
+	var main: Container = small
+	if not large:
+		main = HBoxContainer.new()
+		main.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		(main as HBoxContainer).alignment = BoxContainer.ALIGNMENT_END
+		main.add_theme_constant_override("separation", UI.px(6))
 	# The designs' Cast and Get out: rounded squares with an icon over their
 	# word. The gait stands where Cast does (the build has no casts yet).
 	gait_button = _square(Strings.term("GAIT", "Walk"), controller.next_gait, "leather")
@@ -592,11 +606,14 @@ func _build() -> void:
 	(go.get_meta("box") as VBoxContainer).add_child(skiff)
 	(go.get_meta("box") as VBoxContainer).move_child(skiff, 0)
 	main.add_child(go)
-	right.add_child(main)
+	if not large:
+		right.add_child(main)
 	band.add_child(right)
 	if band is VBoxContainer:
 		band.move_child(right, 0)
-		right.size_flags_horizontal = Control.SIZE_SHRINK_END
+		right.size_flags_horizontal = Control.SIZE_FILL
+		# The hint as wide as the phone, so it takes fewer lines.
+		hint.size_flags_horizontal = Control.SIZE_FILL
 	actions_band = band
 	column.add_child(band)
 	# The hint on the bottom line, under the hand's controls (the designs').
