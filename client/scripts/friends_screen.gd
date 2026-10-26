@@ -8,6 +8,8 @@ var controller: SocialController
 var body: VBoxContainer
 var status_label: Label
 var code_field: LineEdit
+## The tab on show: "feed" or "friends".
+var tab_shown := "feed"
 var _count: PanelContainer
 var _invite: PanelContainer
 
@@ -86,26 +88,61 @@ func _refresh() -> void:
 		body.add_child(ScreenParts.item("social", "invite", Strings.t("FRIENDS_NONE"), "", null, "card_lit"))
 	else:
 		body.add_child(_strip(f["friends"]))
-	for x: Dictionary in f["friends"]:
-		var remove := ScreenKit.button(Strings.t("FRIENDS_REMOVE"), controller.remove.bind(x["account"]), "leather",
-			Strings.t("FRIENDS_REMOVE_NAMED", x["name"]), 14.0)
-		body.add_child(_person(x["name"], remove))
+	# The design's tabs under the faces: what friends did, or the friends
+	# themselves with what can be done about each.
+	body.add_child(ScreenParts.segmented([
+		{"text": Strings.t("SCREEN_FEED"), "key": "feed", "on": tab_shown == "feed"},
+		{"text": Strings.t("KIT_TAB_FRIENDS"), "key": "friends", "on": tab_shown == "friends"}],
+		func(key: String) -> void:
+			tab_shown = key
+			_refresh()))
+	if tab_shown == "friends":
+		_friends_tab(f)
+	else:
+		_feed_tab(f)
+	body.move_child(_invite, body.get_child_count() - 1)
+
+
+## What friends did this week, each as the design's cream card with its
+## outcome's mark on a disc.
+func _feed_tab(f: Dictionary) -> void:
+	# Nothing done yet this week: the friends themselves.
+	if f["feed"].is_empty():
+		_friends_tab(f)
+		return
 	if not f["feed"].is_empty():
 		body.add_child(ScreenParts.section(Strings.t("FRIENDS_FEED")))
 	var i := 0
 	for line: String in f["feed"]:
 		var item: Dictionary = f["feed_items"][i] if i < (f["feed_items"] as Array).size() else {}
 		var grade := str(item.get("grade", ""))
-		body.add_child(ScreenParts.item("heistoutcomes" if grade != "" else "social",
-			grade if grade != "" else "presetchat", line))
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", UI.px(10))
+		var mark := ScreenKit.icon("heistoutcomes" if grade != "" else "social", grade if grade != "" else "presetchat",
+			30.0)
+		var disc := ScreenKit.panel("well", mark, -1.0, 6.0)
+		disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(disc)
+		var words := ScreenKit.text(line, 15.0, "words", "parchment", false, true)
+		words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		words.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		row.add_child(words)
+		body.add_child(ScreenKit.panel("parchment", row, 16.0, 10.0))
 		i += 1
+
+
+## Each friend with Remove, then the players blocked, each to unblock.
+func _friends_tab(f: Dictionary) -> void:
+	for x: Dictionary in f["friends"]:
+		var remove := ScreenKit.button(Strings.t("FRIENDS_REMOVE"), controller.remove.bind(x["account"]), "leather",
+			Strings.t("FRIENDS_REMOVE_NAMED", x["name"]), 14.0)
+		body.add_child(_person(x["name"], remove))
 	if not f["blocked"].is_empty():
 		body.add_child(ScreenParts.section(Strings.t("FRIENDS_BLOCKED")))
 	for x: Dictionary in f["blocked"]:
 		var unblock := ScreenKit.button(Strings.t("FRIENDS_UNBLOCK"), controller.unblock.bind(x["account"]), "leather",
 			Strings.t("FRIENDS_UNBLOCK_NAMED", x["name"]), 14.0)
 		body.add_child(ScreenParts.item("social", "block", x["name"], "", unblock))
-	body.move_child(_invite, body.get_child_count() - 1)
 
 
 ## The friends at the top as the design's strip: a round portrait each, the
