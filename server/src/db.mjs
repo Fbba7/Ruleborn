@@ -758,6 +758,32 @@ CREATE TABLE IF NOT EXISTS bans (
   reason    TEXT
 );
 
+-- A signed-in device's session (auth.mjs, docs/security/auth.md): the
+-- access token names it and is refused once it has ended; the refresh token
+-- is a MAC over its salt and generation, rotated on every use, and a used
+-- generation seen again ends it ('reused'). Deleted seven days after it
+-- ended or lapsed (§20.5).
+-- Its id is a rowid, not a secret: every token naming it is a MAC (one
+-- index the fewer to write, §24.1).
+CREATE TABLE IF NOT EXISTS sessions (
+  id          INTEGER PRIMARY KEY,
+  account     TEXT NOT NULL REFERENCES accounts(id),
+  salt        TEXT NOT NULL,
+  generation  INTEGER NOT NULL DEFAULT 0,
+  created_at  INTEGER NOT NULL,
+  used_at     INTEGER NOT NULL,
+  ended_at    INTEGER,
+  ended       TEXT
+);
+CREATE INDEX IF NOT EXISTS sessions_by_account ON sessions(account);
+
+-- A platform proof or nonce already spent, by a hash of it, until it could
+-- no longer be accepted anyway: §24.8's single use (auth_proofs.mjs).
+CREATE TABLE IF NOT EXISTS auth_spent (
+  key         TEXT PRIMARY KEY,
+  expires_at  INTEGER NOT NULL
+);
+
 -- What an under-13 deletion still has to delete outside the database — a
 -- replay, an island's bytes — or remake (the target lists, store 'lists'),
 -- written in the deletion's transaction and cleared once done (accounts.mjs).

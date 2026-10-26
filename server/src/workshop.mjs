@@ -496,6 +496,8 @@ export class Workshop {
     this.db.prepare("DELETE FROM challenges WHERE account = ?").run(account);
     this.db.prepare("DELETE FROM friends WHERE a = ? OR b = ?").run(account, account);
     this.db.prepare("DELETE FROM friend_invites WHERE account = ?").run(account);
+    // Every device signed in to it, signed out (auth.mjs).
+    this.service.auth.endAll(account, "banned", now);
     const social = new Social(this.service);
     const m = social.membership(account);
     if (m) social.depart(m);

@@ -35,7 +35,8 @@ import { readHeader, readManifest } from "./sim.mjs";
 import { Journal } from "./accounts.mjs";
 import { Keeper, heistExperience } from "./keeper.mjs";
 import { Store } from "./store.mjs";
-import { check, issue } from "./tokens.mjs";
+import { Auth } from "./auth.mjs";
+import { keyring } from "./tokens.mjs";
 import { Telemetry, lawsOf } from "./telemetry.mjs";
 import { Track } from "./track.mjs";
 import { Safety } from "./safety.mjs";
@@ -99,9 +100,12 @@ const weekStart = (ms) => dayStart(ms) - ((new Date(ms).getUTCDay() + 6) % 7) * 
 
 export class Service {
   /**
-   * `verifyPlatform(credential)` returns the platform identity a credential
-   * proves, or null. It is the seam to Game Center and Play Games, which need
-   * the stores' own services (see tokens.mjs).
+   * `verifyPlatform(credential, once)` returns the platform identity a
+   * credential proves, or null. It is the seam to Game Center and Google,
+   * which need the stores' own keys (see tokens.mjs); `once` is what makes a
+   * proof single-use (auth_proofs.mjs). `tokenKeys` is a list of
+   * `kid:secret` pairs the session tokens are signed with, the first
+   * signing; without it, one key made from `secret` (tokens.mjs keyring).
    */
   /**
    * `replays` is the private store the submitted replays are kept in (§24.3)
@@ -128,10 +132,11 @@ export class Service {
                 random = randomBytes, seasonStart = 0, verifyReceipt = () => null,
                 settleReceipt = async () => ({ ok: true }),
                 cosmetics = undefined, preparePlatform = async () => {}, replays = new Store(),
-                firstBand = "13-15", deletions = new Journal(), edge = null }) {
+                firstBand = "13-15", deletions = new Journal(), edge = null, tokenKeys = "" }) {
     if (!["13-15", "16-17", "18+"].includes(firstBand)) throw new Error(`no age band ${firstBand}`);
     Object.assign(this, { db, store, builds, secret, verifyPlatform, now, random, verifyReceipt,
                           preparePlatform, replays, firstBand, deletions, edge });
+    this.auth = new Auth(this, keyring(secret, tokenKeys));
     this.seasons = new Seasons(this, seasonStart);
     this.track = new Track(this);
     this.telemetry = new Telemetry(this);
@@ -162,7 +167,7 @@ export class Service {
   /** `admit(identity)` is asked once the credential is proven and before
    *  anything is read: the edge's limit on sign-ins an account (G44). */
   session(credential, { admit = null } = {}) {
-    const identity = this.verifyPlatform(credential);
+    const identity = this.auth.prove(credential);
     if (!identity) throw new Refused(401, "platform_identity_refused");
     admit?.(identity);
     const now = this.now();
@@ -189,26 +194,21 @@ export class Service {
     // the day's later sign-ins would each be a written row saying nothing
     // new (F47).
     this.telemetry.once(row.id, "sign_in", now);
-    return { account: row.id, token: issue(this.secret, row.id, now) };
+    // A new session every sign-in, its id the server's (auth.mjs): a token
+    // pair, `{account, token, expiresIn, refreshToken}`.
+    return this.auth.start(row.id, now);
   }
 
   /** The account a token was issued to, from its signature alone: what the
    *  edge limits a caller by before it reads anything (G44). */
   holder(token) {
-    const id = check(this.secret, token, this.now());
-    if (!id) throw new Refused(401, "session_refused");
-    return id;
+    return this.auth.holder(token).account;
   }
 
+  /** The account a token is good for: its session live, the account
+   *  neither deleted (§20.5) nor banned (§20.12) — auth.mjs. */
   account(token) {
-    const id = this.holder(token);
-    // A token outlives nothing it was issued to: a deleted account's is
-    // refused at once (§20.5), and so is a banned one's, which sign-in
-    // already refuses (§20.12).
-    const row = this.db.prepare("SELECT deleted_at, banned_at FROM accounts WHERE id = ?").get(id);
-    if (row?.deleted_at) throw new Refused(401, "account_deleted");
-    if (row?.banned_at) throw new Refused(403, "banned");
-    return id;
+    return this.auth.account(token);
   }
 
   // -- publishing ----------------------------------------------------------

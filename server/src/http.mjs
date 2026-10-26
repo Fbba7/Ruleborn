@@ -2,7 +2,8 @@
 // "Edge functions against a managed serverless SQL database"). It routes and
 // translates; every decision is the service's.
 //
-//   POST /v1/session             {"credential": …}          → {account, token}
+//   POST /v1/session             {"credential": …}          → {account, token, expiresIn, refreshToken}
+//   POST /v1/session/…           nonce, refresh, end; GET /v1/session (auth_http.mjs)
 //   PUT  /v1/islands/:realm      island bundle bytes         → {bundle}; heart or outer-1 … outer-6
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
 //   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?, "mode"?, "challenge"?, "universe"?} → the lease
@@ -154,6 +155,7 @@
 import { readFileSync } from "node:fs";
 
 import { deleteAccount, reapplyDeletions } from "./accounts.mjs";
+import { deleteByGoogle, deletePage, sessionRoute } from "./auth_http.mjs";
 import { planning } from "./keeper.mjs";
 import { offer } from "./matchmaking.mjs";
 import { privacyPage, supportPage, termsPage } from "./pages.mjs";
@@ -327,9 +329,6 @@ export function routeOf(url) {
   return String(url ?? "").split("?")[0].split("/").filter(Boolean).slice(0, 2).join("/");
 }
 
-/** G39's page, with the web OAuth client id put in (see server/web/). */
-const DELETE_PAGE = readFileSync(new URL("../web/delete.html", import.meta.url), "utf8");
-
 /**
  * The edge function. `webClientId` is the OAuth client id G39's web page
  * signs in with (it must be among the ids Google sign-in accepts); without
@@ -390,7 +389,8 @@ export function handler(service, { webClientId = null, appleNotifications = null
     let caller = null;
     const who = () => {
       if (caller) return caller;
-      const token = (request.headers.get("authorization") ?? "").replace(/^Bearer /, "");
+      const header = request.headers.get("authorization") ?? "";
+      const token = header.startsWith("Bearer ") ? header.slice(7) : "";
       const id = service.holder(token);
       limit("calls", id);
       if (simulates) limit("simulations", id);
@@ -416,6 +416,9 @@ export function handler(service, { webClientId = null, appleNotifications = null
       }
     };
     try {
+      if (parts[0] === "v1" && parts[1] === "session") {
+        return await sessionRoute(service, request, parts, { signIn, limit, read: body, optional });
+      }
       if (["league", "seasons", "constellations", "crews"].includes(parts[1])) {
         const out = await socialRoute(service, social, request, parts, who);
         return out ?? json({ error: "no_such_route" }, 404);
@@ -637,12 +640,6 @@ export function handler(service, { webClientId = null, appleNotifications = null
         return out ?? json({ error: "no_such_route" }, 404);
       }
       switch (route) {
-        case "POST /v1/session":
-          return await signIn(async (admit) => {
-            const { credential } = await body(request);
-            await service.preparePlatform(credential);
-            return json(service.session(credential, { admit }));
-          });
         case "PUT /v1/islands": {
           const owner = who();
           const realm = parts[2] ?? "heart";
@@ -754,31 +751,12 @@ export function handler(service, { webClientId = null, appleNotifications = null
         case "GET /account/delete": {
           // G39: deletion without the app, proven with Sign in with Google.
           if (!webClientId) return json({ error: "not_configured" }, 503);
-          return new Response(DELETE_PAGE.replace("{{WEB_CLIENT_ID}}", webClientId), { headers: {
-            "content-type": "text/html; charset=utf-8",
-            "cache-control": "no-store",
-            "x-frame-options": "DENY",
-          } });
+          return deletePage(service, webClientId);
         }
         case "POST /v1/account": {
           if (parts[2] !== "delete") return json({ error: "no_such_route" }, 404);
-          return await signIn(async (admit) => {
-            // The page's Google ID token names the account as gp:<sub>, the
-            // Android game's own identity; nothing else is taken here.
-            const { idToken, withdrawIslands = false } = await body(request);
-            const credential = { idToken: text(idToken) };
-            await service.preparePlatform(credential);
-            const identity = service.verifyPlatform(credential);
-            if (typeof identity !== "string" || !identity.startsWith("gp:")) {
-              throw new Refused(401, "google_identity_refused");
-            }
-            admit(identity);
-            const row = service.db.prepare(
-              "SELECT id FROM accounts WHERE platform_identity = ?").get(identity);
-            if (!row) throw new Refused(404, "no_such_account");
-            return json({ deleted: true, reason: deleteAccount(service, row.id, "requested",
-                                                               { withdraw: withdrawIslands }).reason });
-          });
+          // The page's Google ID token, bound to its cookie (auth_http.mjs).
+          return await deleteByGoogle(service, request, { signIn, read: body });
         }
         case "DELETE /v1/account": {
           // F43: the deletion screen's "withdraw my islands too".

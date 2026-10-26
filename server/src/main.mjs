@@ -6,7 +6,12 @@
 // RULEBORN_SECRET is the key session tokens are signed with and telemetry's
 // pseudonyms are made under; unset, one is made on the first start and kept
 // in the data directory, so a restart neither signs everyone out nor orphans
-// a player's telemetry from their deletion. RULEBORN_DELETIONS names the
+// a player's telemetry from their deletion. RULEBORN_TOKEN_KEYS, if set,
+// is a comma-separated list of kid:key pairs (each key 32 characters or
+// more) the session tokens are signed with instead: the first signs, every
+// one is accepted, so a key is rotated by putting a new one first and
+// removing the old one once its tokens have lapsed — 180 days for a refresh
+// token (docs/security/auth.md). RULEBORN_DELETIONS names the
 // deletion journal's object store (accounts.mjs; a bucket where the edge
 // runs), which must live where a restore of the database does not reach:
 // every deletion of the last 31 days in it is made again at start (F50).
@@ -54,7 +59,8 @@ import { Service, TARGET_LISTS_MS } from "./service.mjs";
 import { Builds } from "./sim.mjs";
 import { Store } from "./store.mjs";
 import { raiseTo } from "./universe.mjs";
-import { GOOGLE_KEYS_URL, GameCenter, GoogleSignIn, appStoreNotification, receipts, signIn } from "./stores.mjs";
+import { GOOGLE_KEYS_URL, GameCenter, GoogleSignIn, appStoreNotification, receipts } from "./stores.mjs";
+import { platformProofs } from "./auth_proofs.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
@@ -121,7 +127,9 @@ const playPurchases = playAccount
 // A server that takes money must not take any credential as an identity:
 // paid accounts would be anyone's for the naming. Stubbed sign-in beside real
 // purchases only when the operator says so, for a test deployment.
-const platforms = signIn({ gameCenter, google });
+// Each proof single-use: a Game Center salt once, a Google token's nonce once
+// (auth_proofs.mjs).
+const platforms = platformProofs({ gameCenter, google });
 if ((storeKit || play) && platforms.stubbed && process.env.RULEBORN_STUB_SIGNIN !== "1") {
   throw new Error("a store's receipts would pay out with sign-in stubbed: set RULEBORN_GAMECENTER_ROOTS "
                   + "or RULEBORN_GOOGLE_CLIENT_IDS, or RULEBORN_STUB_SIGNIN=1 for a test deployment");
@@ -172,6 +180,7 @@ const service = new Service({
   store: new Store(join(data, "bundles")),
   builds: Builds.load([join(root, "sim/target/wasm32-unknown-unknown/release/ruleborn_sim.wasm")]),
   secret: secret(),
+  tokenKeys: process.env.RULEBORN_TOKEN_KEYS ?? "",
   verifyPlatform: platforms.verify,
   preparePlatform: platforms.prepare,
   verifyReceipt: receipts({ appStore: storeKit ? { roots: storeKitRoots, bundleId, sandbox } : null, play }),
@@ -314,6 +323,8 @@ const tidy = () => {
   service.notifications.expire();
   service.friends.expire();
   service.expireLapsed();
+  // Sessions ended or lapsed a week ago, and proofs past their five minutes.
+  service.auth.expire();
   // §18.9: each ended quarter's Island Fund divided, once.
   service.fund.closeEnded();
   // G32: what Google refunded or revoked, taken back, once a day.

@@ -1939,6 +1939,72 @@
     }
    }
   },
+  "sessions": {
+   "about": "Each signed-in device's session: what its access token names and its refresh token is signed over (docs/security/auth.md).",
+   "purposes": [
+    "security",
+    "account"
+   ],
+   "keep": {
+    "days": 7,
+    "after": "signed out, ended, or lapsed (30 days unused, 180 days at most)",
+    "by": "auth.expire"
+   },
+   "deletion": "erased",
+   "columns": {
+    "id": {
+     "type": "user-id",
+     "holds": "a random session id the server drew"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "salt": {
+     "type": "none",
+     "holds": "a random value the refresh token is signed over"
+    },
+    "generation": {
+     "type": "none",
+     "holds": "how many times the refresh token was rotated"
+    },
+    "created_at": {
+     "type": "interaction"
+    },
+    "used_at": {
+     "type": "interaction"
+    },
+    "ended_at": {
+     "type": "interaction"
+    },
+    "ended": {
+     "type": "other-usage",
+     "holds": "why it ended: signed out, everywhere, reused, deleted, banned, identity"
+    }
+   }
+  },
+  "auth_spent": {
+   "about": "Platform proofs and nonces already used once, by a hash, for the five minutes they could be used again (§24.8's single use).",
+   "purposes": [
+    "security"
+   ],
+   "keep": {
+    "days": 1,
+    "after": "its five minutes, when the proof could no longer be accepted anyway",
+    "by": "auth.expire"
+   },
+   "deletion": "kept",
+   "deletion_note": "kept: a hash names nobody, and lapses within five minutes",
+   "columns": {
+    "key": {
+     "type": "none",
+     "holds": "a SHA-256 of a spent Game Center proof's player, salt and timestamp, or of a spent nonce"
+    },
+    "expires_at": {
+     "type": "none"
+    }
+   }
+  },
   "erasures": {
    "about": "Files an under-13 deletion still has to delete, and the target lists it remakes, until done: hashes, no player.",
    "purposes": [
