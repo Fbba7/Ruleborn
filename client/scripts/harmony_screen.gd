@@ -78,7 +78,21 @@ func _refresh() -> void:
 	_strain.tooltip_text = h["header"]
 	_preview()
 	_stage.visible = bool(preview.get_meta("wanted", false))
-	for r: Dictionary in h["realms"]:
+	# The design's realm strip over the preview: the realm sounding is chosen
+	# there, and its card comes first.
+	if (h["realms"] as Array).size() > 1:
+		var options: Array = []
+		for r: Dictionary in h["realms"]:
+			options.append({"text": r["title"], "key": str(r["realm"]), "on": str(r["realm"]) == _shown})
+		var strip := ScreenParts.segmented(options, func(key: String) -> void:
+			if key != _shown:
+				_shown = key
+				_refresh())
+		body.add_child(strip)
+		body.move_child(strip, 0)
+	var ordered: Array = (h["realms"] as Array).filter(func(r: Dictionary) -> bool: return str(r["realm"]) == _shown)
+	ordered += (h["realms"] as Array).filter(func(r: Dictionary) -> bool: return str(r["realm"]) != _shown)
+	for r: Dictionary in ordered:
 		body.add_child(_realm(r))
 	body.add_child(ScreenKit.button(Strings.t("HOME_WEAVING"), func() -> void: App.services.router.go(&"weaving"),
 		"gold"))
