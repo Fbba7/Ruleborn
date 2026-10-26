@@ -105,7 +105,7 @@ static func tabs(names: Array, chosen: int, pick: Callable, icons: Array = []) -
 	# a language's longer words).
 	var row: Container = HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(4))
-	if Settings.text_scale > 100 or "".join(names).length() > 22:
+	if Settings.text_scale > 100 or "".join(names).length() > (16 if not icons.is_empty() else 22):
 		row = HFlowContainer.new()
 		row.add_theme_constant_override("h_separation", UI.px(4))
 		row.add_theme_constant_override("v_separation", UI.px(4))
