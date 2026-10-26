@@ -252,6 +252,43 @@ about 14.1 MB (was 16.8 MB). Measured per kind (imported, s3tc):
 Each kind's 512² paint (175 KB) is now most of it; a scene is about 70%
 mesh (a Rambler without its clips imports at 125 KB of 171 KB).
 
+### More of the colour pass
+
+- **Emberling's crown** burns cream at its core (`hot_core` 0.85, and the
+  glass veil thinner face-on, `veil_see` 0.8 for every kind).
+- **Metal parts** catch a pale sky where they face up (`metal_sky`): dark
+  iron drew black where the design's sits pale in its bright room.
+- **Prism Mite** lilac rather than saturated violet (`pastel` 0.35).
+- The 24 portraits re-rendered after these global changes: no kind moved
+  away from its portrait.
+
+### Rounds (each judged at phone size and as a grayscale thumbnail)
+
+1. Portraits of Golem, Bloomling, Emberling: worst were the Golem's pink
+   sheen and near-black facets, Bloomling's crimson petals, the Emberling's
+   all-orange crown. Fixed by the LOOK uniforms above.
+2. Heist lineup: worst were muddy lit/shaded halves, noisy paint at 40 px,
+   a pixel-wide sash on small kinds. Far floor, far blur, wider sash.
+3. Heist screen: no ink at all on the crew. Cause: the 2× drawing
+   resolution; ink and the far measure now in phone pixels.
+4. Guards: red rim too faint to tell; crimson ink instead.
+5. Golem as guard from four sides: the sash reads across the chest now.
+6. Portraits again: Golem's dark bracers, Emberling's crown, the belly's
+   glare. Metal sky and a hotter core (the belly still glows warm).
+7. Install: relief 256 against 128 in the hero view, no visible change.
+8. All 24 portraits: Prism Mite too saturated; pastel.
+
+### Stills (`docs/art/shots/t1c/`, this session)
+
+- `w4_heist_before_after.png`: the heist screen (`heist_shot.gd`, 200
+  ticks) at phone size, wave 3 against wave 4, with grayscale thumbnails.
+- `w4_crew_guards.png`: the eighteen ruleborn at the heist's camera as crew
+  and as guards, wave 3 against wave 4.
+- `w4_portrait_colour.png`: Glass Golem, Bloomling and Emberling: design,
+  wave 3, wave 4.
+- `w4_portraits_a.png`, `_b`, `_c`: the 24 design portraits, each beside
+  ours in the hero view.
+
 ## For T5 (the heist)
 
 - Call `CreatureModel.set_night(night)` instead of setting `rim_strength`,
@@ -262,3 +299,30 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   Prism Mite guard is 15 px tall. Call `readable_scale()` for guards too.
 - In `heist_shot.gd` at 200 ticks the two Glass Golem guards stand on the
   Rambler and the Skyskipper; overlapping figures merge whatever their ink.
+- The "Weaving offers the starting laws" client test fails in this
+  container on the base commit (1e8619b) too: the server recommends
+  `slow_rivers` at price 0. Not from the characters; for the integrator.
+
+## Still worse than the design
+
+- **Size on the heist screen.** The design's heist shows its crew as small,
+  bright, saturated toys; ours are 30–50 px and more earthen (Rambler,
+  Rootrunner, Skyskipper are brown kinds by design). Their read now rests
+  on the ink and the value step; crowding (crew inside the guards' rings)
+  still merges figures.
+- **Glass Golem**: our facets are larger than the design's (2,400 body
+  triangles), and its bracers are darker than the design's pale stone.
+- **Emberling**: the belly still glows warmer and brighter than the
+  portrait's tan.
+- **Bloomling's petals** are flat pink; the design's darken to magenta at
+  their base.
+- Hero softness (image light, ACES) is still the shader's approximation.
+
+## Next
+
+- T5: `set_night`, `readable_scale` for guards, and keeping the crew out of
+  the guards' rings in the heist shot.
+- A per-kind sheen colour for every kind from the design's `def.sheen` in
+  the manifest (only the Golem has its own now), at the next full export.
+- Paint atlas: 512² is now two thirds of the install; a 384² atlas for the
+  smallest kinds (texels per unit over 500) would save about 1.5 MB.
