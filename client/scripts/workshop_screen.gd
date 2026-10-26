@@ -166,35 +166,45 @@ func _card(item: Dictionary, busy: bool) -> Control:
 	for key: String in ["withdrawn", "removed"]:
 		if item[key] != "":
 			box.add_child(ScreenParts.pill(item[key], "well", "generalui", "info", 13.0, "words", true))
-	var r := ScreenParts.flow(6.0)
+	# The card's own actions side by side (play, remix, or withdraw one's
+	# own), then the safety ones (why, report, block) in a quieter row.
+	var main: BoxContainer = HBoxContainer.new()
+	if Settings.text_scale > 125:
+		main = VBoxContainer.new()
+	main.add_theme_constant_override("separation", UI.px(6))
+	var safety := ScreenParts.flow(6.0)
 	var name: String = item["name"]
 	var id: String = item["id"]
 	if item["mine"]:
 		if item["listed"]:
-			r.add_child(_act("withdraw:" + id, Strings.t("WORKSHOP_WITHDRAW"), controller.withdraw.bind(id), busy,
+			main.add_child(_act("withdraw:" + id, Strings.t("WORKSHOP_WITHDRAW"), controller.withdraw.bind(id), busy,
 				Strings.t("WORKSHOP_WITHDRAW_NAMED", name)))
 	elif item["listed"]:
-		r.add_child(_act("play:" + id, Strings.t("WORKSHOP_PLAY"), _play.bind(id), busy,
+		main.add_child(_act("play:" + id, Strings.t("WORKSHOP_PLAY"), _play.bind(id), busy,
 			Strings.t("WORKSHOP_PLAY_NAMED", name), true))
 		var reason: String = reasons.get(id, WorkshopState.REPORT_REASONS[0])
 		var why := Strings.term("REPORT", reason)
-		r.add_child(_act("reason:" + id, Strings.t("WORKSHOP_REASON", why), _next_reason.bind(id), false,
+		safety.add_child(_act("reason:" + id, Strings.t("WORKSHOP_REASON", why), _next_reason.bind(id), false,
 			Strings.t("WORKSHOP_REASON_NAMED", [name, why]), false, "ghost"))
-		r.add_child(_act("report:" + id, Strings.t("WORKSHOP_REPORT"), controller.report.bind(id, reason), busy,
+		safety.add_child(_act("report:" + id, Strings.t("WORKSHOP_REPORT"), controller.report.bind(id, reason), busy,
 			Strings.t("WORKSHOP_REPORT_NAMED", [name, why]), false, "ghost"))
 	if item["listed"] and item["creator"] != "":
 		var blocking := confirm_block == id
-		r.add_child(_act("block:" + id, Strings.t("WORKSHOP_BLOCK_CONFIRM" if blocking else "WORKSHOP_BLOCK"),
+		safety.add_child(_act("block:" + id, Strings.t("WORKSHOP_BLOCK_CONFIRM" if blocking else "WORKSHOP_BLOCK"),
 			_block.bind(id, item["creator"]), busy,
 			Strings.t("WORKSHOP_BLOCK_CONFIRM_NAMED" if blocking else "WORKSHOP_BLOCK_NAMED", [item["by"], name]),
 			false, "ghost"))
 	if item["listed"]:
 		var confirming := confirm_remix == id
-		r.add_child(_act("remix:" + id, Strings.t("WORKSHOP_REMIX_CONFIRM" if confirming else "WORKSHOP_REMIX"),
+		main.add_child(_act("remix:" + id, Strings.t("WORKSHOP_REMIX_CONFIRM" if confirming else "WORKSHOP_REMIX"),
 			_remix.bind(id), busy, Strings.t("WORKSHOP_REMIX_CONFIRM_NAMED" if confirming else "WORKSHOP_REMIX_NAMED",
 				name)))
-	if r.get_child_count() > 0:
-		box.add_child(r)
+	for c: Node in main.get_children():
+		(c as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	if main.get_child_count() > 0:
+		box.add_child(main)
+	if safety.get_child_count() > 0:
+		box.add_child(safety)
 	return ScreenKit.panel("card", box, 18.0, 12.0)
 
 
