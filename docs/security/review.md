@@ -409,6 +409,12 @@ pick up later.
   they lapse (G38). Bounded by the game's islands, not by the caller.
 - **A profile's record** reads all of a player's heists each time it is
   shown: slow for a heavy player, within the call bucket.
+- **Unsubmitted Workshop plays.** `POST /v1/workshop/:id/play` writes a
+  row naming the player that never expires, and `privacy.json` keeps every
+  play as a record (F43). A play never submitted is the Workshop's
+  unplayed lease, which §20.5 deletes seven days after it closes; it never
+  closes, since a play has no expiry. Giving plays a lease's day, and
+  deleting the unsubmitted ones with `expireLapsed`, is the owner's call.
 - **The client's outbox** keeps receipts, lease tokens and replays as plain
   JSON in the app's sandbox (`user://`); Android backups are off. The
   session token is never written.
