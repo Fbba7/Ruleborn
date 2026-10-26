@@ -128,10 +128,134 @@ Universal for the paint atlas (253 KB against 175 KB for the VRAM-compressed
 - The crew stand inside the guards' rings in `heist_shot.gd` at 200 ticks;
   overlapping figures merge in grayscale whatever their edges.
 
-## Still worse than the design
+## Fourth session (wave 4)
 
-(see the last round)
+### The ink at the game's resolution
 
-## Next
+The heist draws its 3D at project.godot's 1080 × 2340 and the phone shows it
+at half that, so every width in pixels came out half as thick as in the
+creature shots (540 wide): in `heist_shot.gd` the crew had almost no ink and
+read as washed shapes on the grass. The outline's width and the "small on
+screen" measure (`creature_far`) now count in a 540 × 1170 phone's pixels,
+whatever the drawing's resolution (`dpi` in `creature_outline.gdshader` and
+`creature_look.gdshaderinc`). This was the largest single readability step.
 
-(see the last round)
+### Readability at the heist camera
+
+- **One clear shape.** Small on screen the darkest light step rises to
+  `far_floor` (0.45), so a character is one value of its own colour, not a
+  lit and a shaded half; the paint is read `far_blur` (1.5) mip levels
+  softer, so scales, fleece and cracks do not speckle at 40 px; the relief
+  goes entirely. The value step from the ground is larger (`far_value` 0.18,
+  saturation ×1.4 on it) and the ink a little thicker (`far_width` 2.4).
+- **A night switch** (`CreatureModel.set_night`): the stronger, warmer rim
+  and paler sheen T5 sets by hand today, keeping each kind's own sheen and a
+  guard's red rim (see For T5).
+
+### The guard form at 40 px
+
+- **Crimson ink.** A guard's outline is a dark crimson (`GUARD_INK`,
+  #4A0A14) instead of §21.3's #1A0C14: as dark a line in grayscale, but the
+  whole silhouette says "guard" on every kind, from any side, even where
+  the sash is hidden. Small on screen its rim stays red too.
+- **The sash** is never narrower than 8% of the height (on small kinds a
+  chest-wide band was a pixel), brighter (#D63A40), and edged in ink outside
+  its gold trim. On the Glass Golem it reads across the chest from the
+  front, the side and behind.
+- **The crook** is thicker and darker, so the staff shows in the silhouette.
+
+### Colour fidelity
+
+`CreatureModel.LOOK` is now a map of the body material's uniforms by name,
+per kind (tested: every key is a kind and a real uniform). New uniforms:
+`paint_contrast` and `paint_mid` (the paint's values drawn together),
+`flatten` (a flatter light), `pastel` and `pastel_colour` (saturated paint
+toward a pale colour by its saturation), `hot_core` (a glowing part's face
+toward warm white), and `veil_see` in the glass shader (a glowing veil is
+thinner face-on, so the core inside shows).
+
+- **Glass Golem**: its baked facets ran from near black to lilac, under a
+  warm sheen that turned them pink. Values drawn together, a flatter light,
+  its own lilac sheen (#E0D0FF, the design's): median #8B6ED6 against the
+  portrait's #8C6CCE (was a blue #7960BE and a pink #B892C8, half and half).
+- **Bloomling**: the petals were crimson (#FF5369); pastel toward lilac-white
+  gives #FF839E against the portrait's #EE86A2; the body a little greener.
+- **Emberling**: the flame crown is three nested tongues, the outer one a
+  translucent veil over a cream core; ours drew the veil nearly opaque, so
+  the crown was all orange. Now the core shows through face-on. The belly
+  no longer glares white (tone 0.1, glow 0.8, a duller clearcoat).
+
+### Install size
+
+Already in place: no LODs, no shadow meshes, the clips optimised and
+compressed on import. Static channels: the harness already writes a still
+channel as two keys (216 of 456 on Rambler), and Godot's importer drops
+immutable tracks, so collapsing them further changes nothing installed.
+What was large in each `.glb` was its JSON: every channel had its own time
+and value accessors, mostly copies. `slim` now shares identical accessors
+(about half of them), and `SLIM_ONLY=1 node tools/art/export.mjs` re-slims
+the exported files without exporting again: 24.6 MB to 21.7 MB for the 43
+`.glb`s, with the same clips (a checksum of the imported tracks matches).
+Installed, nothing changes by this; measured per kind (imported, s3tc):
+
+| Kind | Triangles | .glb KB | Scene KB | Textures KB | Installed KB |
+|---|---:|---:|---:|---:|---:|
+| archivist | 5880 | 541 | 179 | 256 | 435 |
+| ashmoth | 5440 | 409 | 113 | 256 | 369 |
+| bloomling | 4551 | 394 | 134 | 256 | 390 |
+| cartographer | 5879 | 540 | 142 | 256 | 398 |
+| chronicler | 5427 | 521 | 155 | 256 | 411 |
+| collector | 5880 | 606 | 149 | 256 | 405 |
+| devourer | 5879 | 545 | 149 | 256 | 405 |
+| echoplate | 5395 | 422 | 144 | 256 | 400 |
+| emberling | 5879 | 477 | 150 | 256 | 406 |
+| featherkin | 5880 | 621 | 169 | 256 | 425 |
+| gardener | 5852 | 668 | 150 | 256 | 406 |
+| glassgolem | 4104 | 695 | 173 | 256 | 429 |
+| hourglassstorm | 5659 | 369 | 133 | 256 | 389 |
+| hourkeeper | 5876 | 411 | 137 | 256 | 393 |
+| illusoryguard | 5872 | 636 | 176 | 256 | 432 |
+| lamplighter | 5876 | 574 | 144 | 256 | 400 |
+| lanternfish | 4056 | 270 | 83 | 256 | 339 |
+| lanternmoth | 5440 | 399 | 111 | 256 | 367 |
+| lanternwisp | 5430 | 403 | 139 | 256 | 395 |
+| mossbear | 5854 | 926 | 203 | 256 | 459 |
+| prismbeetle | 3063 | 290 | 95 | 256 | 351 |
+| prismmite | 4576 | 401 | 136 | 256 | 392 |
+| puffballflock | 3698 | 307 | 108 | 256 | 364 |
+| puffbee | 5878 | 459 | 136 | 256 | 393 |
+| quarryback | 4690 | 414 | 146 | 256 | 402 |
+| rambler | 5880 | 496 | 166 | 256 | 423 |
+| reverser | 5420 | 445 | 147 | 256 | 403 |
+| rootrunner | 5799 | 419 | 145 | 256 | 401 |
+| skyjelly | 4276 | 284 | 97 | 256 | 353 |
+| skyskipper | 5875 | 622 | 179 | 256 | 436 |
+| soulmender | 5880 | 454 | 148 | 256 | 404 |
+| sparkwright | 5880 | 465 | 148 | 256 | 405 |
+| stillwatch | 5090 | 413 | 144 | 256 | 400 |
+| stormhound | 4794 | 465 | 152 | 256 | 408 |
+| stray | 4855 | 432 | 143 | 256 | 399 |
+| swarmling | 3329 | 341 | 109 | 256 | 365 |
+| tidewalker | 5876 | 555 | 145 | 256 | 402 |
+| tinkerer | 5875 | 777 | 171 | 256 | 427 |
+| twinned | 5887 | 692 | 191 | 256 | 448 |
+| unmade | 3568 | 380 | 135 | 256 | 392 |
+| valemoth | 5880 | 454 | 119 | 256 | 375 |
+| wanderer | 5821 | 493 | 156 | 256 | 412 |
+| wildfirebloom | 5880 | 645 | 165 | 256 | 421 |
+| **All 43** | | 20.7 MB | 6.1 MB | 10.8 MB | 16.8 MB |
+
+The textures are two thirds of it (each kind's 512² paint, 175 KB, and its
+256² relief, 87 KB); a scene is about 70% mesh (a Rambler without its clips
+imports at 125 KB of 171 KB).
+
+## For T5 (the heist)
+
+- Call `CreatureModel.set_night(night)` instead of setting `rim_strength`,
+  `lift` and `rim_colour` on the crew's material in
+  `WorldView._light_figures`: those overwrite each kind's own sheen (Rambler's
+  fleece takes 0.5 instead of its 0.2) and would wipe a guard's red rim.
+- Guards are drawn at true size while the crew take `readable_scale()`; a
+  Prism Mite guard is 15 px tall. Call `readable_scale()` for guards too.
+- In `heist_shot.gd` at 200 ticks the two Glass Golem guards stand on the
+  Rambler and the Skyskipper; overlapping figures merge whatever their ink.
