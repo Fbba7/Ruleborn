@@ -322,8 +322,10 @@ const tidy = () => {
 tidy();
 setInterval(tidy, DAY_MS).unref();
 // §13.3's hold measurements, a few of the reference crew's raids at a time,
-// so the queue never holds up a request for long (holds.mjs).
-setInterval(() => service.holds.work(), 5_000).unref();
+// so the queue never holds up a request for long (holds.mjs): a raid is
+// some 30 to 50 ms, so two every quarter second, the eight a second forty
+// every five seconds once played in one two-second block (SR-17).
+setInterval(() => service.holds.work(2), 250).unref();
 
 // §14.6's notifications, sent once a minute through Firebase Cloud Messaging
 // (§24.1, push.mjs) as the project's service account: RULEBORN_FCM_SERVICE_ACCOUNT

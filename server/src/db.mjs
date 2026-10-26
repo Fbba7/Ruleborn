@@ -89,6 +89,8 @@ CREATE TABLE IF NOT EXISTS islands (
   name_noun  INTEGER,
   PRIMARY KEY (owner, realm)
 );
+-- Who holds a bundle: the lease's holders, and the hold queue's turns.
+CREATE INDEX IF NOT EXISTS islands_by_bundle ON islands (bundle);
 
 -- §20.11: "a way to block another player". The blocker's list (safety.mjs).
 CREATE TABLE IF NOT EXISTS blocks (

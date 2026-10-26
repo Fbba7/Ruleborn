@@ -23,6 +23,7 @@ decision).
 | SR-02 | Medium | server | A heist's crew manifest was unchecked when the crew went unnamed | fixed |
 | SR-03 | Medium | server | Every offer and Observatory view read the whole game's islands | fixed |
 | SR-07 | Medium | server, sim | One trap in the simulation stopped its rules version until a restart | fixed |
+| SR-17 | Medium | server | The hold queue stalled the server and could be filled by one player | fixed |
 | SR-04 | Low | server web | The web pages had no CSP, nosniff or referrer policy | fixed |
 | SR-05 | Low | server | A block did not hide a player's profile | fixed |
 | SR-06 | Low | client | The cleartext guard let a userinfo hide the host; the terms link could leave the server | fixed |
@@ -228,6 +229,33 @@ decision).
 - **Test:** `server/test/security_heists.test.mjs` (SR-13).
 - **Fix:** a law is a law only as its own key (`Object.hasOwn`), so each of
   these names is refused 400 `no_such_law` or `malformed_body`.
+- **Status:** fixed.
+
+### SR-17 — The hold queue stalled the server and could be filled by one player (Medium)
+
+- **Where:** `server/src/holds.mjs` `work`, scheduled by `server/src/main.mjs`.
+- **What:** every island published queues §13.3's 800 raids of the
+  reference crew, and the server worked the oldest measurement forty raids
+  at a time, every five seconds. Measured here, forty raids are 1.3 to 1.9
+  seconds of the one thread: while anything is queued, every request waits
+  up to two seconds, a quarter to a third of the time. And the queue drains
+  one island every 100 seconds, while one account publishing a new island
+  each 20 seconds (its simulation bucket) adds five: oldest-first, every
+  other player's island waited behind all of them, its hold *"measuring…"*
+  and its rating the prior, for as long as the account kept on.
+- **Test:** `server/test/security_limits.test.mjs` (SR-17).
+- **Fix:** only a bundle some player's island now is gets measured (a
+  superseded one waits, and is measured if published again), and owners
+  take turns, each owner's oldest first, so one player has at most their
+  seven realms in the queue and goes no further ahead than anyone else.
+  The next measurement is chosen once, when the last one lands, and the
+  index `islands_by_bundle` keeps that and the lease's holder lookup off a
+  full scan. `main.mjs` plays two raids every quarter second: the same
+  eight raids a second, a tenth of a second at a time. Three things are
+  unchanged: the 800 raids, the cost of a measurement, and the result
+  (`holds.test.mjs`: in parts as in one call). The measurement still costs
+  about a third of one core while anything is queued; moving it off the
+  request thread (a worker) is the deployment's next step.
 - **Status:** fixed.
 
 ## Needs the owner
