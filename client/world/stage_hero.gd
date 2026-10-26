@@ -326,7 +326,8 @@ func reveal() -> void:
 		return
 	_reveal = 0.0
 	for sh in _shells:
-		sh.queue_free()
+		if is_instance_valid(sh):
+			sh.queue_free()
 	_shells.clear()
 	var rim: Color = Palette.SCHOOL.get(school, Palette.MOTION)
 	for side: float in [-1.0, 1.0]:
@@ -396,7 +397,8 @@ func _process(delta: float) -> void:
 		if _reveal > 1.6:
 			_reveal = -1.0
 			for sh in _shells:
-				sh.queue_free()
+				if is_instance_valid(sh):
+					sh.queue_free()
 			_shells.clear()
 	if not _pressed:
 		_spin_speed = lerpf(_spin_speed, 0.0, clampf(delta * SETTLE, 0.0, 1.0))
@@ -521,6 +523,8 @@ func _pose() -> void:
 		var u := clampf(_reveal / 0.7, 0.0, 1.0)
 		var grow := 1.0 + 0.25 * sin(u * PI) * (1.0 - u) if u > 0.4 else u / 0.4
 		figures[0].scale *= maxf(0.01, grow)
+		# A shell the stage cleared away (show_kinds) is gone from the list.
+		_shells.assign(_shells.filter(func(x: Node3D) -> bool: return is_instance_valid(x)))
 		for sh in _shells:
 			var side: float = sh.get_meta("side")
 			var t := _reveal

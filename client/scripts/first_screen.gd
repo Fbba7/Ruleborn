@@ -44,7 +44,7 @@ func _build() -> void:
 	stage = StageHero.new()
 	stage.custom_minimum_size = Vector2(0, UI.px(Tokens.number("size", "safe_top_points") + 230.0))
 	stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	stage.size_flags_stretch_ratio = 2.4
+	stage.size_flags_stretch_ratio = 5.0
 	column.add_child(stage)
 	stage.headroom = 0.3
 	stage.show_kinds(WELCOME, [], "island")
@@ -101,6 +101,8 @@ func _refresh() -> void:
 	if _beat != "" and str(f["beat"]) != _beat:
 		stage.cheer.call_deferred()
 	_beat = str(f["beat"])
+	# The title gives the scene the screen; later beats give their words room.
+	stage.size_flags_stretch_ratio = 5.0 if _beat == "title" else 2.4
 	for child in body.get_children():
 		body.remove_child(child)
 		child.queue_free()
@@ -108,6 +110,10 @@ func _refresh() -> void:
 	box.add_theme_constant_override("separation", UI.px(8))
 	box.set_meta("beat", f["beat"])
 	for line: String in f["lines"]:
+		# The title's own lines, the game's name and what it is, are the
+		# logo and tagline over the scene already.
+		if f["beat"] == "title":
+			break
 		var l := StageHeroKit.para(line, 17.0)
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		box.add_child(l)
@@ -134,4 +140,8 @@ func _refresh() -> void:
 		go.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		go.set_meta("key", "next")
 		box.add_child(go)
-	body.add_child(RosterScreen.padded(StageHeroKit.card("", box)))
+	# On the night under the scene, as the design's, no card round it.
+	var m := RosterScreen.padded(box)
+	m.add_theme_constant_override("margin_top", UI.px(6))
+	m.add_theme_constant_override("margin_bottom", UI.px(10))
+	body.add_child(m)
