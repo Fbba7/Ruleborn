@@ -181,19 +181,22 @@ static func week(minutes: Array, letters: Array, today: int) -> HBoxContainer:
 		var bar := Control.new()
 		bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var share := float(minutes[i]) / most
-		bar.anchor_left = 0.15
-		bar.anchor_right = 0.85
-		bar.anchor_top = 1.0 - maxf(share, 0.08)
+		# At most 24 points wide, as the design's, centred in its day.
+		bar.anchor_left = 0.5
+		bar.anchor_right = 0.5
+		bar.offset_left = -UI.px(12)
+		bar.offset_right = UI.px(12)
+		bar.anchor_top = 1.0 - maxf(share, 0.12)
 		bar.anchor_bottom = 1.0
 		well.add_child(bar)
-		var box := RbBox.dress(bar, "bar", 4)
-		var c := Tokens.color("gold") if i == today else Tokens.color("matter")
-		box.tint(c.lightened(0.3), c.darkened(0.15))
+		RbBox.dress(bar, "week_today" if i == today else "week_day", 6)
 		well.accessibility_name = "%s %s" % [letters[i], minutes[i]]
 		day.add_child(well)
 		var l := UI.label(str(letters[i]), 13)
 		l.theme_type_variation = "Kicker"
 		l.set_meta("bold", true)
+		l.add_theme_color_override("font_color", Tokens.color("gold_top") if i == today else Tokens.color(
+			"text_on_night_2"))
 		day.add_child(l)
 		row.add_child(day)
 	return row

@@ -226,7 +226,7 @@ static func _settings(column: VBoxContainer) -> void:
 	v.add_theme_constant_override("separation", UI.px(12))
 	var top := HBoxContainer.new()
 	top.add_theme_constant_override("separation", UI.px(12))
-	top.add_child(KitHud.dial("38", "min today", 0.38))
+	top.add_child(KitHud.dial("38", "min today", 1.0))
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -243,7 +243,7 @@ static func _settings(column: VBoxContainer) -> void:
 	v.add_child(top)
 	var week := PanelContainer.new()
 	week.add_theme_stylebox_override("panel", UI.clear_box(10, 8))
-	UI.dress(week, "seg_track")
+	UI.dress(week, "well")
 	var wv := VBoxContainer.new()
 	var head := HBoxContainer.new()
 	var k := UI.label("This week", 13)

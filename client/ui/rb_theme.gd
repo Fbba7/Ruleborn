@@ -173,18 +173,15 @@ static func _build(family: String) -> Theme:
 
 ## The rest of what a screen's own controls draw: fields, scroll bars and
 ## the tooltips, in the family's colours.
-static func _controls(th: Theme, text: Color, light: bool) -> void:
+static func _controls(th: Theme, text: Color, _light: bool) -> void:
 	th.set_color("font_color", "LineEdit", Tokens.color("parchment_ink"))
 	th.set_color("font_placeholder_color", "LineEdit", Tokens.color("parchment_text_2"))
 	th.set_color("caret_color", "LineEdit", Tokens.color("parchment_ink"))
 	th.set_color("font_color", "RichTextLabel", text)
 	th.set_color("default_color", "RichTextLabel", text)
-	# A quiet scroll bar: a thin rounded grabber, no track, as phones draw it.
-	var grab := StyleBoxFlat.new()
-	grab.bg_color = Color(Tokens.color("text_on_night_2") if not light else Tokens.color("parchment_text_2"), 0.45)
-	grab.set_corner_radius_all(UI.px(2))
-	grab.content_margin_left = UI.px(1.5)
-	grab.content_margin_right = UI.px(1.5)
+	# No scroll bar drawn, as the designs' lists (`scrollbar-width:none`):
+	# a list shows it goes on by the row cut at its foot.
+	var grab := StyleBoxEmpty.new()
 	var track := StyleBoxEmpty.new()
 	track.content_margin_left = UI.px(1.5)
 	track.content_margin_right = UI.px(1.5)
