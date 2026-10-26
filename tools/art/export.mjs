@@ -85,6 +85,24 @@ function textureImport(file, role) {
 	fs.writeFileSync(p, text);
 }
 
+// Godot's import settings for a kind's scene (the install size): no LODs (a
+// character is 3,000–6,000 triangles at every distance) and no shadow mesh
+// (characters cast no sun shadow, only their blob), and the clips optimised
+// and compressed on import (about a third smaller). Patched in place so
+// Godot keeps its uid.
+const SCENE_PARAMS = { 'meshes/generate_lods': 'false', 'meshes/create_shadow_meshes': 'false' };
+const ANIM_PLAYER = '{"nodes":{"PATH:AnimationPlayer":{"optimizer/enabled":true,"optimizer/max_velocity_error":0.01,'
+	+ '"optimizer/max_angular_error":0.01,"optimizer/max_precision_error":3,"compression/enabled":true,"compression/page_size":8}}}';
+function sceneImport(file) {
+	const p = file + '.import';
+	if (!fs.existsSync(p)) return;
+	let text = fs.readFileSync(p, 'utf8');
+	for (const [k, v] of Object.entries(SCENE_PARAMS)) text = text.replace(new RegExp('^' + k.replace('/', '\\/') + '=.*$', 'm'), `${k}=${v}`);
+	// _subresources may span lines (Godot writes it out pretty): replace up to the next key.
+	text = text.replace(/^_subresources=[\s\S]*?\n(?=[a-z_]+\/|[a-z_]+=|$)/m, `_subresources=${ANIM_PLAYER}\n`);
+	fs.writeFileSync(p, text);
+}
+
 // Lighter glTF JSON: min/max kept only where glTF requires them (positions and
 // animation times), numbers there rounded. The binary chunk is untouched.
 function slim(glb, kind) {
@@ -160,6 +178,11 @@ function slim(glb, kind) {
 
 async function main() {
 	const want = process.argv.slice(2);
+	if (process.env.IMPORT_ONLY) {
+		// Only rewrite the scenes' import settings (no export).
+		for (const k of want.length ? want : Object.keys(KINDS)) sceneImport(path.join(outDir, `${k}.glb`));
+		return;
+	}
 	const kinds = want.length ? want : Object.keys(KINDS);
 	for (const k of kinds) if (!KINDS[k]) throw new Error(`unknown kind ${k}`);
 	fs.mkdirSync(outDir, { recursive: true });
@@ -202,6 +225,7 @@ async function main() {
 			if (info.triangles > MAX_TRIS && !process.env.FORCE) { console.log(`FAIL ${line}: over the ${MAX_TRIS}-triangle budget`); failed++; continue; }
 			console.log(line);
 			fs.writeFileSync(path.join(outDir, `${kind}.glb`), glb);
+			sceneImport(path.join(outDir, `${kind}.glb`));
 			for (const [n, b] of Object.entries(slimmed.images)) {
 				fs.writeFileSync(path.join(outDir, n), b);
 				textureImport(path.join(outDir, n), n.endsWith('_relief.jpg') ? 'relief' : 'paint');

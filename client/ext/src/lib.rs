@@ -690,6 +690,8 @@ impl RulebornReplay {
             let (x, y) = w.grid.centre(ward.tile);
             d.set("at", Vector2::new(tiles(x), tiles(y)));
             d.set("kind", &GString::from(&format!("{:?}", ward.kind)));
+            // Its level, which the kit draws (§21.5: a level-2 ward's gold inlay).
+            d.set("level", ward.level as i64);
             d.set("live", ward.live());
             out.push(&d);
         }

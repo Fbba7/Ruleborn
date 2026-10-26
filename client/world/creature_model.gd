@@ -31,6 +31,30 @@ const FORMS := [&"base", &"hush", &"spark", &"echo"]
 const MANIFEST := "res://art/creatures/manifest.json"
 ## The guard form's rim (CreatureGear.SASH, lifted).
 const GUARD_RIM := Color("#FF6F5E")
+## Each kind's own form pattern (§21.6: forms change "pattern, glow and one
+## accessory"; creature_look.gdshaderinc): [shape, cells over the body's
+## height]. Shapes: 0 spots, 1 bands, 2 chevrons, 3 rings, 4 scales, 5 swirl,
+## 6 zigzag. Read from each kind's look: a feather's chevrons, a shell's
+## bands, a storm's zigzag, a clock's swirl. Kinds not listed take spots.
+const FORM_PATTERN := {
+	"featherkin": [2, 7.0], "skyskipper": [1, 6.0], "rambler": [0, 5.0], "glassgolem": [4, 6.0],
+	"quarryback": [1, 9.0], "prismmite": [4, 10.0], "tidewalker": [3, 6.0], "hourkeeper": [5, 4.0],
+	"stillwatch": [2, 10.0], "emberling": [6, 6.0], "stormhound": [6, 9.0], "sparkwright": [0, 9.0],
+	"mossbear": [0, 4.0], "bloomling": [3, 8.0], "rootrunner": [1, 5.0], "echoplate": [4, 5.0],
+	"lanternwisp": [5, 6.0], "soulmender": [3, 5.0],
+}
+## Corrections toward the design's portraits (art/design/stills/portraits),
+## where the hero pages' sheen and glass carry a kind's paint further than
+## the shared tone does: the tone (light paint toward white), and a tint on
+## the paint. Judged side by side with each portrait.
+const LOOK := {
+	"featherkin": {"tone": 0.5, "tint": Vector3(1.0, 1.05, 0.62)},
+	"glassgolem": {"tone": 0.45, "tint": Vector3(1.4, 1.22, 0.98)},
+	"rambler": {"tone": 0.08},
+	"mossbear": {"tint": Vector3(0.9, 1.02, 0.9)},
+	"lanternwisp": {"tone": 0.55},
+	"soulmender": {"tone": 0.4},
+}
 ## The heights the ruleborn band (0.5–1.4 m) is drawn at in a heist.
 const READABLE := Vector2(0.95, 1.4)
 
@@ -148,11 +172,11 @@ func set_expression(expression_name: StringName) -> void:
 ## the body was, a ring charm).
 func set_form(form_name: StringName) -> void:
 	form = form_name if FORMS.has(form_name) else &"base"
-	_material.set_shader_parameter("hush", 1.0 if form == &"hush" else 0.0)
-	# Midnight does not pale toward the day's sheen.
-	_material.set_shader_parameter("lift", _lift * (0.25 if form == &"hush" else 1.0))
-	_material.set_shader_parameter("spark", 1.0 if form == &"spark" else 0.0)
-	_material.set_shader_parameter("echo_form", 1.0 if form == &"echo" else 0.0)
+	# The body and its fur shells alike. Midnight does not pale toward the day's sheen.
+	_body_param("hush", 1.0 if form == &"hush" else 0.0)
+	_body_param("lift", _lift * (0.25 if form == &"hush" else 1.0))
+	_body_param("spark", 1.0 if form == &"spark" else 0.0)
+	_body_param("echo_form", 1.0 if form == &"echo" else 0.0)
 	if _glass != null:
 		_glass.set_shader_parameter("hush", 1.0 if form == &"hush" else 0.0)
 		_glass.set_shader_parameter("spark", 1.0 if form == &"spark" else 0.0)
@@ -223,6 +247,15 @@ func clip_names() -> PackedStringArray:
 func set_fur(shells: int) -> void:
 	_fur = clampi(shells, 0, int((info.get("fur", {}) as Dictionary).get("shells", 0)))
 	_chain_passes()
+
+
+## The hero view (the Character screen, portraits; T7's stage): softer light
+## steps, an image light of cool sky and warm bounce, and the paint's sheen at
+## grazing angles, as the design's hero pages draw a sculpt; with `on` the
+## fur shells the design gives the kind come too (each one more draw).
+func set_hero(on: bool) -> void:
+	_material.set_shader_parameter("hero", 1.0 if on else 0.0)
+	set_fur(int((info.get("fur", {}) as Dictionary).get("shells", 0)) if on else 0)
 
 
 ## A light readability scale on top of §21.6's height (1 is true size): the
@@ -303,11 +336,19 @@ func _materials() -> void:
 	var emit: Array = surface.get("emit", [0.0, 0.0, 0.0])
 	_material.set_shader_parameter("body_emit", Vector3(float(emit[0]), float(emit[1]), float(emit[2])))
 	# Metal keeps its greys; only paint pales toward the design's sheen.
-	_lift = (0.5 + 0.25 * float(surface.get("gloss", 0.0))) * (1.0 - metal)
+	_lift = (0.2 + 0.2 * float(surface.get("gloss", 0.0))) * (1.0 - metal)
 	_material.set_shader_parameter("lift", _lift)
 	_material.set_shader_parameter("rim_colour", Color(str(info.get("rim", "#9FD4FF"))))
 	_material.set_shader_parameter("glow_vc", float(info.get("glow", 0.0)))
 	_material.set_shader_parameter("unit_height", height() / maxf(0.0001, float(info.get("scale", 1.0))))
+	var look: Dictionary = LOOK.get(String(kind), {})
+	if look.has("tone"):
+		_material.set_shader_parameter("tone", float(look["tone"]))
+	if look.has("tint"):
+		_material.set_shader_parameter("paint_tint", look["tint"])
+	var pattern: Array = FORM_PATTERN.get(String(kind), [0, 6.0])
+	_material.set_shader_parameter("form_pattern", float(pattern[0]))
+	_material.set_shader_parameter("form_scale", float(pattern[1]))
 	for i in mesh.get_surface_count():
 		var src := mesh.surface_get_material(i)
 		if src != null and src.resource_name == "creature_glass":
@@ -329,7 +370,13 @@ func _chain_passes() -> void:
 		var m := ShaderMaterial.new()
 		m.shader = _fur_shader
 		m.set_shader_parameter("atlas", _material.get_shader_parameter("atlas"))
+		m.set_shader_parameter("normals", _material.get_shader_parameter("normals"))
 		m.set_shader_parameter("rim_colour", _material.get_shader_parameter("rim_colour"))
+		# The body's own sheen: the shader's default lift pales fleece to pink-white.
+		m.set_shader_parameter("lift", _lift)
+		for p: StringName in [&"form_pattern", &"form_scale", &"unit_height", &"hush", &"spark", &"echo_form", &"tone",
+				&"paint_tint", &"hero"]:
+			m.set_shader_parameter(p, _material.get_shader_parameter(p))
 		m.set_shader_parameter("layer", float(s + 1) / float(_fur + 1))
 		m.set_shader_parameter("fur_len", float(fur.get("len", 0.0045)) * 2.2)
 		m.set_shader_parameter("strand_cells", cells)
@@ -339,10 +386,20 @@ func _chain_passes() -> void:
 		var o := ShaderMaterial.new()
 		o.shader = _outline_shader
 		o.set_shader_parameter("width_px", OUTLINE_PX)
+		# The export marks a faceted body by giving it no relief map.
+		o.set_shader_parameter("smooth_push", 0.6 if float(info.get("relief", 1.0)) == 0.0 else 0.0)
 		last.next_pass = o
 		_outline = o
 	else:
 		last.next_pass = null
+
+
+# A uniform on the body's material and every fur shell after it.
+func _body_param(param: StringName, value: Variant) -> void:
+	var m: Material = _material
+	while m != null and m != _outline:
+		(m as ShaderMaterial).set_shader_parameter(param, value)
+		m = m.next_pass
 
 
 func _set_loops() -> void:
