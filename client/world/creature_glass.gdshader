@@ -11,7 +11,7 @@ uniform sampler2D atlas : source_color, filter_linear_mipmap, repeat_disable;
 uniform float echo = 0.0;
 // A glowing veil (the design's translucent outer flame over a hotter core,
 // drawn with bloom) is thinner face-on, so the core inside shows through.
-uniform float veil_see = 0.6;
+uniform float veil_see = 0.8;
 
 varying vec2 flags;
 varying vec3 local_pos;

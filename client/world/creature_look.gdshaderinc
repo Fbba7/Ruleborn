@@ -51,6 +51,8 @@ uniform float ramp_bias : hint_range(0.0, 0.5) = 0.22;
 uniform float glow_vc = 0.0;
 // How far a glowing part's face burns toward warm white (the flames' core).
 uniform float hot_core = 0.55;
+// The sky a metal part reflects where it faces up (alpha: how much).
+uniform vec4 metal_sky : source_color = vec4(0.8, 0.8, 0.88, 0.45);
 // The body material's character, from the design's bodyMat: metal (Echoplate),
 // clearcoat (the highlight band, set as gloss in the shader), iridescence
 // (Prism Mite's rainbow edges) and a body glow (the Golem's inner light).
@@ -260,6 +262,12 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 		c = clamp(c * mix(paint_mid, pl, paint_contrast) / pl, 0.0, 1.0);
 	}
 	c = creature_tone(c * paint_tint);
+	if (!body && gloss > 0.99) {
+		// Metal parts (iron bands, brass): the design's sit in a bright room
+		// and read pale where they face up; dark iron otherwise drew black.
+		float up = reflect(-v, n).y;
+		c = mix(c, metal_sky.rgb, metal_sky.a * smoothstep(-0.3, 0.6, up));
+	}
 	if (pastel > 0.0) {
 		float sat = (max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b))) / max(0.02, max(c.r, max(c.g, c.b)));
 		c = mix(c, pastel_colour.rgb, pastel * smoothstep(0.35, 0.85, sat));

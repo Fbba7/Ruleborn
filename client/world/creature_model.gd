@@ -55,7 +55,7 @@ const LOOK := {
 	"glassgolem": {"tone": 0.3, "paint_tint": Vector3(1.12, 1.08, 1.02), "paint_contrast": 0.35, "paint_mid": 0.5,
 		"flatten": 0.5, "hero_sheen": 0.2, "sheen": Color("#E0D0FF")},
 	"bloomling": {"pastel": 0.35, "pastel_colour": Color(0.88, 0.74, 1.0), "paint_tint": Vector3(0.95, 1.02, 0.84)},
-	"emberling": {"tone": 0.1, "body_gloss": 0.05, "glow_vc": 0.8},
+	"emberling": {"tone": 0.1, "body_gloss": 0.05, "glow_vc": 0.6, "hot_core": 0.85},
 	"rambler": {"tone": 0.08},
 	"mossbear": {"paint_tint": Vector3(0.9, 1.02, 0.9)},
 	"lanternwisp": {"tone": 0.55},
