@@ -105,7 +105,7 @@ static func meter(level: int, of: int, words: String) -> VBoxContainer:
 		if i < level:
 			RbBox.of(bell).tint(lit.lightened(0.3), lit)
 	v.add_child(row)
-	var l := UI.label(words, 13)
+	var l := UI.label(words, 13, true)
 	l.theme_type_variation = "Caption"
 	l.set_meta("bold", true)
 	l.add_theme_font_override("font", UI.bold_font())
@@ -244,7 +244,7 @@ static func alarm(level: int, of: int, title: String) -> PanelContainer:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(4))
 	var head := HBoxContainer.new()
-	var t := UI.label(title, 14)
+	var t := UI.label(title, 14, true)
 	t.add_theme_font_override("font", UI.bold_font())
 	t.set_meta("bold", true)
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL

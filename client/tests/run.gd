@@ -782,9 +782,17 @@ func _control_problems(screen: Control) -> Array:
 	# wrap stretches the whole column and pushes every row off-centre.
 	var widest := 0.0
 	var culprit := ""
+	var widest_leaf := ""
+	var leaf_w := 0.0
 	for c in screen.find_children("*", "Control", true, false):
 		var w: float = c.get_combined_minimum_size().x
 		widest = max(widest, w)
+		# The widest words that will not wrap are usually the ones to fix.
+		if (c is Label and (c as Label).autowrap_mode == TextServer.AUTOWRAP_OFF and not (c as Label).clip_text
+				or c is Button and (c as Button).autowrap_mode == TextServer.AUTOWRAP_OFF and (c as Button).text != "") \
+				and w > leaf_w:
+			leaf_w = w
+			widest_leaf = " (widest words: %s, %d px)" % [_control_name(screen, c), w]
 		# Name the rows that are too wide for the column they sit in.
 		if c is HBoxContainer and w > frame.x - 2 * 16 * point:
 			var describe := func(k: Variant) -> String:
@@ -792,7 +800,7 @@ func _control_problems(screen: Control) -> Array:
 				return "%s %d px" % [label, k.get_combined_minimum_size().x]
 			culprit += " [%s]" % ", ".join(c.get_children().map(describe))
 	if widest > frame.x:
-		problems.append("something asks for %d px of a %d px frame:%s" % [widest, frame.x, culprit])
+		problems.append("something asks for %d px of a %d px frame:%s%s" % [widest, frame.x, culprit, widest_leaf])
 	var buttons := screen.find_children("*", "Button", true, false)
 	if buttons.is_empty():
 		problems.append("no controls")
@@ -802,9 +810,9 @@ func _control_problems(screen: Control) -> Array:
 			continue
 		var r: Rect2 = b.get_global_rect()
 		if min(r.size.x, r.size.y) < 48 * point - 0.5:
-			problems.append("%s is %s across" % [b.text, r.size])
+			problems.append("%s is %s across" % [_control_name(screen, b), r.size])
 		if r.position.x < 0 or r.end.x > frame.x:
-			problems.append("%s is off the screen" % b.text)
+			problems.append("%s is off the screen" % _control_name(screen, b))
 		# A control in a scrolling list is wherever the player scrolls it; the
 		# place rules hold for what does not move.
 		if _scrolls(b):
@@ -812,11 +820,20 @@ func _control_problems(screen: Control) -> Array:
 		if r.position.y < frame.y / 3.0:
 			problems.append("%s is above the thumb zone" % b.text)
 		if r.end.y > frame.y - 44 * point or r.position.y < 44 * point:
-			problems.append("%s is inside a safe area" % b.text)
+			problems.append("%s is inside a safe area" % _control_name(screen, b))
 		var corner := Vector2(frame.x * 0.15, frame.y * 0.08)
 		if (r.position.x < corner.x or r.end.x > frame.x - corner.x) and r.end.y > frame.y - corner.y:
-			problems.append("%s is in a corner at %s of %s" % [b.text, r, frame])
+			problems.append("%s is in a corner at %s of %s" % [_control_name(screen, b), r, frame])
 	return problems
+
+
+## A control as a failure names it: its words, or what a screen reader says
+## for it, then its path from the screen.
+func _control_name(screen: Control, c: Node) -> String:
+	var words := str(c.get("text")) if c.get("text") != null else ""
+	if words == "":
+		words = str((c as Control).accessibility_name)
+	return "\"%s\" (%s %s)" % [words.replace("\n", " "), c.get_class(), str(screen.get_path_to(c))]
 
 
 func _scrolls(c: Node) -> bool:

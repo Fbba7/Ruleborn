@@ -173,7 +173,7 @@ static func reward(icon: String, amount: String, words: String, tone := "gold") 
 	n.add_theme_font_size_override("font_size", UI.text_px(24))
 	n.set_meta("points", 24.0)
 	v.add_child(n)
-	var w := UI.label(words, 13)
+	var w := UI.label(words, 13, true)
 	w.theme_type_variation = "Secondary"
 	w.set_meta("bold", true)
 	w.add_theme_font_override("font", UI.bold_font())
@@ -207,7 +207,7 @@ static func fact(icon: String, kicker: String, words: String) -> PanelContainer:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 0)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var k := UI.label(kicker, 13)
+	var k := UI.label(kicker, 13, true)
 	k.theme_type_variation = "Kicker"
 	k.uppercase = true
 	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT

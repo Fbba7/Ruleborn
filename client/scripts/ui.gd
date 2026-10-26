@@ -211,7 +211,7 @@ static func panel(look := "card") -> PanelContainer:
 ## type for everything inside it.
 static func dress(c: Control, look: String, radius := -1.0) -> RbBox:
 	var box := RbBox.dress(c, look, radius)
-	c.theme = RbTheme.of(str(box.spec["family"]))
+	c.theme = RbTheme.of_material(look)
 	return box
 
 

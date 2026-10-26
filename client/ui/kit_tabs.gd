@@ -22,6 +22,8 @@ const TABS := [
 ]
 ## How far the chosen tab rises above the bar, in points.
 const RISE := 18.0
+## The largest text size, in percent, at which every tab shows its word.
+const LABELS_UP_TO := 125
 
 var active := ""
 var buttons: Dictionary = {}
@@ -99,7 +101,6 @@ func _tab(tab: Array, badge: int) -> Button:
 	l.clip_text = true
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_deep"))
-	l.add_theme_constant_override("outline_size", UI.px(1.5))
 	l.set_meta("bold", true)
 	content.add_child(l)
 	b.add_child(content)
@@ -132,6 +133,13 @@ func choose(id: String, animate := true) -> void:
 		var label: Label = _labels[k]
 		label.add_theme_font_size_override("font_size", UI.text_px(15 if on else 13))
 		label.set_meta("points", 15.0 if on else 13.0)
+		# Five words at large text do not fit 360 points: the tabs not chosen
+		# keep their icon and their spoken name, the chosen one its word too.
+		label.visible = on or Settings.text_scale <= LABELS_UP_TO
+		# Stroked in ink as the design draws it, wide enough (§21.8: 12% of
+		# the size) that the words are read against their outline, which the
+		# pale chosen tile alone (4.49:1) is not.
+		label.add_theme_constant_override("outline_size", UI.px(2.0 if on else 1.5))
 		if on:
 			label.add_theme_color_override("font_color", Tokens.color("tab_label"))
 		else:

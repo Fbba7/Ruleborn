@@ -169,11 +169,13 @@ static func chapter(school: String, title: String, kicker: String, count: String
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.add_theme_constant_override("separation", 0)
-	var t := UI.label(title, 22)
+	# 24 points: Marcellus is not bold, and on the gold's deep stop no ink
+	# reaches APCA Lc 75, so the title stands at §21.8's large size (Lc 60).
+	var t := UI.label(title, 24, true)
 	t.theme_type_variation = "Heading"
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	words.add_child(t)
-	var k := UI.label(kicker, 13)
+	var k := UI.label(kicker, 13, true)
 	k.theme_type_variation = "Kicker"
 	k.uppercase = true
 	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT

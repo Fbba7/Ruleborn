@@ -27,8 +27,10 @@ static func badge(text: String) -> PanelContainer:
 
 
 ## A pill of words, with an icon before them if named: glass over the world
-## unless another material is given.
-static func pill(text: String, icon := "", look := "glass") -> PanelContainer:
+## unless another material is given. Words wider than `widest` points (at
+## large text) end in an ellipsis; the label keeps them all, and a screen
+## reader says them all.
+static func pill(text: String, icon := "", look := "glass", widest := 240.0) -> PanelContainer:
 	var p := PanelContainer.new()
 	p.name = "Pill"
 	p.add_theme_stylebox_override("panel", UI.clear_box(10, 4))
@@ -42,9 +44,26 @@ static func pill(text: String, icon := "", look := "glass") -> PanelContainer:
 	l.theme_type_variation = "LabelText"
 	l.set_meta("bold", true)
 	l.name = "Words"
+	l.set_meta("widest", widest)
 	row.add_child(l)
 	p.add_child(row)
+	set_pill(p, text)
 	return p
+
+
+## A pill's new words, ellipsised past its widest.
+static func set_pill(p: PanelContainer, text: String) -> void:
+	var l := p.find_child("Words", true, false) as Label
+	l.text = text
+	var font := RbTheme.role_font("label")
+	var natural := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1,
+		l.get_theme_font_size("font_size") if l.is_inside_tree() else UI.text_px(14)).x + 2.0
+	var cap := float(UI.px(float(l.get_meta("widest", 240.0))))
+	# A label that may trim asks for no width at all, so it trims only
+	# when the words pass the cap, and then holds the cap.
+	l.clip_text = natural > cap
+	l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS if natural > cap else TextServer.OVERRUN_NO_TRIMMING
+	l.custom_minimum_size.x = cap if natural > cap else 0.0
 
 
 ## A resource with its storage (§21.8's home layout: "resources with storage
