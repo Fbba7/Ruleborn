@@ -60,6 +60,10 @@ Merged `claude/videogame-project-analysis-ewkkk2` and `claude/ui-kit` (502b5a0).
 
 `client/tests/_mine.gd` (kept out of git through `.git/info/exclude`) runs `run.gd`'s screen checks over `ONLY=<screens>` in a few minutes instead of the whole suite.
 
+## Not this track's: one test red on the main branch too
+
+`check_all` stops at one client test outside these screens: "against the server: Weaving offers the starting laws at the simulation's prices…" (`client/tests/weaving_tests.gd`, `_online`). The server recommends `slow_rivers` first for the Heart, priced 0 at 0 points (it is already woven there), so the test's price is 0. The main branch (`1e8619b`, run in a separate worktree here) fails it the same way, 337 of 338; this branch passes every other client test, 342 of 343. The server's `recommend` (`server/src/weaving.mjs`) or the simulation's price for a law already in the realm is where it is decided; neither is this track's.
+
 ## Still worse than the design
 
 - The Laws hub (All laws · Harmony · Lab) sits above the tab bar by §21.1's rule, where the design puts it at the top: the scrolling area is 60% of the frame, against the design's 75%.
