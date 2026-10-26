@@ -74,6 +74,7 @@ func _build() -> void:
 	_dock.alignment = BoxContainer.ALIGNMENT_CENTER
 	_dock.add_theme_constant_override("separation", UI.px(10))
 	column.add_child(_dock)
+	StageScreen.corner_gap(column)
 
 
 func _refresh() -> void:
@@ -97,9 +98,10 @@ func _refresh() -> void:
 		return
 	var card: Dictionary = store.get_slice(PlannerState.PLANNER).get("target", {})
 	_tab_key("plan", Strings.t("PLAN_TAB_PLAN"))
-	_tab_key("crew", "%s %s" % [Strings.t("PLAN_TAB_CREW"), _after_colon(p["crew_count"])])
+	var v := _values(store.get_slice(PlannerState.PLANNER), store.get_slice(KeeperState.KEEPER))
+	_tab_key("crew", "%s %s" % [Strings.t("PLAN_TAB_CREW"), v["crew"]])
 	# Both tabs are built, the chosen one shown.
-	_plan_tab(p, card)
+	_plan_tab(p, card, v)
 	_crew_tab(p)
 	for holder: Node in body.get_children():
 		if holder.has_meta("tab"):
@@ -139,21 +141,24 @@ func _tab_key(id: String, words: String) -> void:
 ## The plan as the design's parchment table: each row a name and its value,
 ## then the target's laws as chips, the unfamiliar ones flagged in red, and
 ## the load target with its steps.
-func _plan_tab(p: Dictionary, card: Dictionary) -> void:
+func _plan_tab(p: Dictionary, card: Dictionary, v: Dictionary) -> void:
 	var page := _page("plan")
 	var table := UI.panel("parchment")
 	var rows := VBoxContainer.new()
 	rows.add_theme_constant_override("separation", UI.px(2))
 	table.add_child(rows)
 	_row(rows, "heiststatus/clock", "PLAN_ROW_CLOCK", _clock(card), p["clock"])
-	_row(rows, "planningactions/landing", "PLAN_ROW_ENTRY", _after_colon(p["entry"]), p["entry"])
+	var across: bool = card.get("across", false)
+	_row(rows, "planningactions/landing", "PLAN_ROW_ENTRY",
+		Strings.t("PLAN_VALUE_ENTRY_ACROSS" if across else "PLAN_VALUE_ENTRY"), p["entry"])
 	if p["route"] != "":
-		_row(rows, "planningactions/route", "PLAN_ROW_ROUTE", _after_colon(p["route"]), p["route"])
+		_row(rows, "planningactions/route", "PLAN_ROW_ROUTE",
+			Strings.t("PLAN_VALUE_ROUTE", maxi(1, int(card.get("depth", 1)))), p["route"])
 	if p["faults"] != "":
-		_row(rows, "stabilitybands/fault", "PLAN_ROW_FAULTS", _after_colon(p["faults"]), p["faults"])
-	_row(rows, "hud/crew", "PLAN_TAB_CREW", _after_colon(p["crew_count"]), p["crew_count"])
-	_row(rows, "heistcontrols/cast", "PLAN_CASTS_ROW", _after_colon(p["casts_count"]), p["casts_count"])
-	_row(rows, "heiststatus/bagcapacity", "PLAN_ROW_LOAD", _after_colon(p["load"]), p["load"])
+		_row(rows, "stabilitybands/fault", "PLAN_ROW_FAULTS", p["faults"], p["faults"])
+	_row(rows, "hud/crew", "PLAN_TAB_CREW", v["crew"], p["crew_count"])
+	_row(rows, "heistcontrols/cast", "PLAN_CASTS_ROW", v["casts"], p["casts_count"])
+	_row(rows, "heiststatus/bagcapacity", "PLAN_ROW_LOAD", v["load"], p["load"])
 	page.add_child(table)
 	var laws: Array = (card.get("realm", {}) as Dictionary).get("laws", [])
 	var flagged: Array = (p["laws"] as Dictionary).get("ids", [])
@@ -175,7 +180,7 @@ func _plan_tab(p: Dictionary, card: Dictionary) -> void:
 		b.set_meta("key", "load:%d" % step)
 		b.set_meta("item", "load:%d" % step)
 		steps.append(b)
-	steps.insert(1, OverlayHud.pill("heiststatus/bagcapacity", _after_colon(p["load"]), p["load"]))
+	steps.insert(1, OverlayHud.pill("heiststatus/bagcapacity", v["load"], p["load"]))
 	var load_row := OverlayHud.row_of(steps)
 	load_row.alignment = FlowContainer.ALIGNMENT_CENTER
 	page.add_child(load_row)
@@ -196,6 +201,12 @@ func _crew_tab(p: Dictionary) -> void:
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		grid.add_child(b)
 	page.add_child(grid)
+	# Two cards a row, as the design's, unless their words ask for more than
+	# half the sheet (a long language, large text): then one.
+	var half := (get_viewport_rect().size.x - UI.px(64)) / 2.0
+	for b: Node in grid.get_children():
+		if (b as Control).get_combined_minimum_size().x > half:
+			grid.columns = 1
 	var sages: Array[Control] = []
 	for o: Dictionary in p["sages"]:
 		sages.append(_choice(o, func() -> void: controller.pick_sage(str(o["id"])),
@@ -226,6 +237,8 @@ func _choice(o: Dictionary, pressed: Callable, look: String, icon: String) -> Bu
 	var b := UI.action(o["action"], pressed, look, o["spoken"] if str(o["why"]) == "" else "%s, %s" % [o["spoken"],
 		o["why"]])
 	b.disabled = not o["can"]
+	# Its words wrap at large text rather than widen the sheet.
+	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	b.set_meta("key", o["key"])
 	b.set_meta("item", o["item"])
 	b.tooltip_text = o["why"]
@@ -269,10 +282,14 @@ static func _clock(card: Dictionary) -> String:
 	return t.call(a) if b <= a else "%s–%s" % [t.call(a), t.call(b)]
 
 
-## What follows a line's "Name:" — its value, for a table row.
-static func _after_colon(line: String) -> String:
-	var at := line.find(":")
-	return line.substr(at + 1).strip_edges() if at >= 0 else line
+## The table's values without their names (the row names them): the crew
+## and casts against their limits, and the load target, each from the
+## catalogue's own value line so every language words it whole.
+static func _values(planner: Dictionary, keeper: Dictionary) -> Dictionary:
+	var lim := PlannerPresenter.limits(keeper)
+	return {"crew": Strings.t("PLAN_VALUE_OF", [(planner.get("crew", []) as Array).size(), int(lim["crew"])]),
+		"casts": Strings.t("PLAN_VALUE_CASTS", [(planner.get("casts", []) as Array).size(), int(lim["casts"])]),
+		"load": Strings.t("PLAN_VALUE_LOAD", int(planner.get("load", 100)))}
 
 
 ## The target's universe, rebuilt when the target changes.

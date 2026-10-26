@@ -130,10 +130,28 @@ static func main_key(title: String, under: String, pressed: Callable, spoken: St
 	lines.add_child(t)
 	var u := UI.label(under, 13.0)
 	u.theme_type_variation = "Caption"
+	u.add_theme_font_override("font", UI.bold_font())
+	u.set_meta("bold", true)
 	u.name = "Under"
+	# The line under wraps inside the key (a refusal can be a sentence), so
+	# the key never asks for more than the phone's width.
+	u.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	u.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lines.add_child(u)
 	b.add_child(lines)
-	b.custom_minimum_size.y = maxf(b.custom_minimum_size.y, lines.get_combined_minimum_size().y + UI.px(12))
+	# The key's height from its words at the key's own width (a wrapped
+	# label's minimum is read before it has one).
+	var least := b.custom_minimum_size.y
+	var fit := func() -> void:
+		var width := maxf(b.size.x, b.custom_minimum_size.x) - UI.px(16)
+		var size_px := u.get_theme_font_size("font_size")
+		var under_h := u.get_theme_font("font").get_multiline_string_size(u.text, HORIZONTAL_ALIGNMENT_CENTER,
+			width, size_px).y
+		var tall := t.get_combined_minimum_size().y + under_h - UI.px(2) + UI.px(12)
+		if not is_equal_approx(b.custom_minimum_size.y, maxf(least, tall)):
+			b.custom_minimum_size.y = maxf(least, tall)
+	fit.call()
+	b.resized.connect(fit)
 	return b
 
 
@@ -159,7 +177,9 @@ static func badge(text: String, look := "gold_round", points := 14.0) -> PanelCo
 	UI.dress(p, look, 99.0)
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var l := UI.label(text, points)
+	# The display face is a heavy one: read as bold text (§21.8).
 	l.add_theme_font_override("font", Tokens.font("display"))
+	l.set_meta("bold", true)
 	l.name = "Words"
 	p.add_child(l)
 	p.custom_minimum_size = Vector2.ONE * UI.px(points + 10.0)

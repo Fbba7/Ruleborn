@@ -102,6 +102,26 @@ static func handle(column: VBoxContainer, words: ScrollContainer) -> Control:
 	return holder
 
 
+## Space under the screen's bottom keys so they stand above §21.1's corner
+## band (the lowest twelfth of the phone, where a thumb reaches the corners
+## worst): the column's bottom margin and this make up the band and a
+## little more, whatever the phone's height.
+static func corner_gap(column: VBoxContainer) -> Control:
+	var gap := Control.new()
+	gap.name = "CornerGap"
+	gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var fit := func() -> void:
+		if not gap.is_inside_tree():
+			return
+		var frame := gap.get_viewport_rect().size
+		var margin := UI.px(Tokens.number("size", "safe_top_points"))
+		gap.custom_minimum_size.y = maxf(0.0, frame.y * 0.08 + UI.px(8) - margin)
+	column.add_child(gap)
+	gap.ready.connect(fit)
+	column.resized.connect(fit)
+	return gap
+
+
 ## How much of `view`'s height lies under `cover` (a control over it) at
 ## the bottom: the share the island is lifted out of.
 static func covered_below(view: Control, cover: Control, folded_to: Control = null) -> float:

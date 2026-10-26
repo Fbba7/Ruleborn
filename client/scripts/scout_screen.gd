@@ -68,6 +68,7 @@ func _build() -> void:
 	_dock.alignment = FlowContainer.ALIGNMENT_CENTER
 	_dock.add_theme_constant_override("h_separation", UI.px(12))
 	column.add_child(_dock)
+	StageScreen.corner_gap(column)
 
 
 func _refresh() -> void:

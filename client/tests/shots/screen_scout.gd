@@ -6,6 +6,7 @@ func _initialize() -> void:
 
 func _go() -> void:
 	root.size = Vector2i(1080, 2340)
+	ShotKit.prepare()
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	App.services.store.dispatch(&"observatory_loaded", {"view": ObservatoryTests.sample()})
 	App.services.store.dispatch(&"observatory_chosen", {"bundle": "p1"})

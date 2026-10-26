@@ -28,7 +28,7 @@ var _drawn_key := ""
 var _heading: PanelContainer
 var _facts: HFlowContainer
 var _save_row: HFlowContainer
-var _tabs: HBoxContainer
+var _tabs: HFlowContainer
 ## The chosen tab of the tray, and the tabs the last refresh filled.
 var _tab := ""
 var _tab_names: Array[String] = []
@@ -72,8 +72,10 @@ func _build() -> void:
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label, "glass"))
 	StageScreen.window(column, 1.2)
-	_tabs = HBoxContainer.new()
-	_tabs.add_theme_constant_override("separation", UI.px(4))
+	# A flow, so at §20.8's large text the tabs take two rows, not the phone.
+	_tabs = HFlowContainer.new()
+	_tabs.add_theme_constant_override("h_separation", UI.px(4))
+	_tabs.add_theme_constant_override("v_separation", UI.px(4))
 	column.add_child(_tabs)
 	var scroller := ScrollContainer.new()
 	scroller.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED

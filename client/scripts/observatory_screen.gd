@@ -7,8 +7,10 @@ extends Control
 ## at its realm level and the other realms around it, bare — drawn by one
 ## shared offscreen world (`StageThumbs`), never a 3D view per card.
 
-## A card's width: the next one peeks in at the phone's edge.
-const CARD_POINTS := 300.0
+## How far a swipe goes before it turns the deck a card.
+const SWIPE_POINTS := 40.0
+## The sliver of the next card that peeks in at the deck's edge.
+const PEEK_POINTS := 10.0
 const PICTURE_POINTS := 150.0
 
 var controller: ObservatoryController
@@ -19,8 +21,15 @@ var thumbs: StageThumbs
 ## Each card's picture, by its key, while it waits to be drawn.
 var _pictures := {}
 var _row: HBoxContainer
+var _peek: Control
 var _notes: VBoxContainer
 var _dock: HFlowContainer
+var _pager: HBoxContainer
+## The card on show, and the deck's cards, one shown at a time.
+var _page := 0
+var _cards: Array[Control] = []
+var _swipe := 0.0
+var _turned := false
 
 
 func _ready() -> void:
@@ -51,24 +60,35 @@ func _build() -> void:
 	status_label.add_theme_font_size_override("font_size", UI.text_px(13))
 	status_label.set_meta("points", 13.0)
 	column.add_child(UI.plate(status_label, "glass"))
-	# The deck: the cards side by side, swiped across, as the design's.
+	# The deck, as the design's: one card on show with the next peeking in,
+	# swiped across or turned by the keys under it in the thumb's reach. One
+	# card at a time, so the deck is never wider than the phone.
+	# A tall card (large text) scrolls up and down within the deck.
 	var deck := ScrollContainer.new()
-	deck.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	deck.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	deck.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	body = VBoxContainer.new()
-	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body.mouse_filter = Control.MOUSE_FILTER_PASS
+	body.gui_input.connect(_on_deck_input)
 	_row = HBoxContainer.new()
-	_row.add_theme_constant_override("separation", UI.px(12))
-	_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_row.add_theme_constant_override("separation", UI.px(6))
 	body.add_child(_row)
 	deck.add_child(body)
 	column.add_child(deck)
+	# The notes under the cards, scrolled with them.
 	_notes = VBoxContainer.new()
-	column.add_child(_notes)
+	body.add_child(_notes)
+	_pager = HBoxContainer.new()
+	_pager.alignment = BoxContainer.ALIGNMENT_CENTER
+	_pager.add_theme_constant_override("separation", UI.px(14))
+	column.add_child(_pager)
 	_dock = HFlowContainer.new()
 	_dock.alignment = FlowContainer.ALIGNMENT_CENTER
 	_dock.add_theme_constant_override("h_separation", UI.px(12))
+	_dock.add_theme_constant_override("v_separation", UI.px(8))
 	column.add_child(_dock)
+	StageScreen.corner_gap(column)
 
 
 func _refresh() -> void:
@@ -83,18 +103,28 @@ func _refresh() -> void:
 		UI.set_status(status_label, "info", o.get("protected", ""))
 	(status_label.get_parent() as Control).visible = status_label.text != ""
 	header_label.text = str(o.get("header", "")).to_upper()
-	for holder: Node in [_row, _notes, _dock]:
+	for holder: Node in [_row, _notes, _dock, _pager]:
 		for child: Node in holder.get_children():
 			holder.remove_child(child)
 			child.queue_free()
+	_cards.clear()
 	_dock.add_child(OverlayHud.back_key(func() -> void: App.services.router.go(&"home")))
 	if not o["ready"]:
 		return
 	var busy: bool = o["busy"] != ""
 	if not (o["trace"] as Dictionary).is_empty():
-		_row.add_child(_card(o["trace"], busy))
+		_cards.append(_card(o["trace"], busy))
 	for c: Dictionary in o["cards"]:
-		_row.add_child(_card(c, busy))
+		_cards.append(_card(c, busy))
+	for card: Control in _cards:
+		_row.add_child(card)
+	_peek = UI.panel("parchment")
+	_peek.custom_minimum_size.x = UI.px(PEEK_POINTS)
+	_peek.size_flags_vertical = Control.SIZE_FILL
+	_peek.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_row.add_child(_peek)
+	_build_pager()
+	_show_page(_page)
 	for note: String in ["wanderer", "fallback", "empty"]:
 		if o.get(note, "") != "":
 			var p := OverlayHud.pill("generalui/info", o[note], o[note], "glass")
@@ -123,7 +153,7 @@ func _refresh() -> void:
 func _card(c: Dictionary, busy: bool) -> Control:
 	var raw: Dictionary = c["card"]
 	var panel := UI.panel("parchment")
-	panel.custom_minimum_size.x = UI.px(CARD_POINTS)
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	panel.accessibility_description = "\n".join(c["lines"])
 	var box := VBoxContainer.new()
@@ -152,8 +182,10 @@ func _card(c: Dictionary, busy: bool) -> Control:
 	title.set_meta("kind", c["kind"])
 	who.add_child(title)
 	box.add_child(who)
-	var tiles := HBoxContainer.new()
-	tiles.add_theme_constant_override("separation", UI.px(6))
+	# A flow, so at §20.8's large text the tiles stack rather than widen.
+	var tiles := HFlowContainer.new()
+	tiles.add_theme_constant_override("h_separation", UI.px(6))
+	tiles.add_theme_constant_override("v_separation", UI.px(6))
 	tiles.add_child(_tile(Strings.t("OBS_TILE_LOOT"), "~" + ShopPresenter.grouped(int(raw.get("loot", 0)))))
 	var depth := int(raw.get("depth", 0))
 	tiles.add_child(_tile(Strings.t("OBS_TILE_DEPTH"), Strings.t("OBS_TILE_DEPTH_N", depth) if depth > 0
@@ -167,12 +199,8 @@ func _card(c: Dictionary, busy: bool) -> Control:
 	facts.append(OverlayHud.pill("hud/shield", str(ObservatoryPresenter.total(realm.get("wards", {}))), "", "card"))
 	box.add_child(OverlayHud.row_of(facts))
 	if str(c["kind"]) != "trace":
-		var why := UI.label((c["lines"] as Array)[-1], 13.0, true)
-		why.theme_type_variation = "Secondary"
-		box.add_child(why)
-	var fee := UI.label(ObservatoryPresenter.fee(raw), 13.0, true)
-	fee.theme_type_variation = "Secondary"
-	box.add_child(fee)
+		box.add_child(UI.label((c["lines"] as Array)[-1], 13.0, true))
+	box.add_child(UI.label(ObservatoryPresenter.fee(raw), 13.0, true))
 	var b := UI.action(c["action"], controller.choose.bind(str(c["bundle"])), "gold", c["spoken"])
 	b.disabled = busy or not c["can"]
 	b.set_meta("key", c["key"])
@@ -184,14 +212,89 @@ func _card(c: Dictionary, busy: bool) -> Control:
 	return panel
 
 
+## The keys that turn the deck, with a dot for each card between them.
+func _build_pager() -> void:
+	if _cards.size() < 2:
+		return
+	_pager.add_child(_turn_key(-1))
+	var dots := HBoxContainer.new()
+	dots.add_theme_constant_override("separation", UI.px(6))
+	dots.alignment = BoxContainer.ALIGNMENT_CENTER
+	dots.name = "Dots"
+	for i: int in _cards.size():
+		var dot := PanelContainer.new()
+		dot.add_theme_stylebox_override("panel", UI.clear_box(0, 0))
+		dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		dots.add_child(dot)
+	_pager.add_child(dots)
+	_pager.add_child(_turn_key(1))
+
+
+func _turn_key(step: int) -> Button:
+	var b := UI.action("", func() -> void: _show_page(_page + step), "leather",
+		Strings.t("OBS_NEXT_CARD" if step > 0 else "OBS_PREV_CARD"))
+	b.custom_minimum_size = Vector2.ONE * UI.px(48)
+	UI.dress(b, "leather", 24.0)
+	var middle := CenterContainer.new()
+	middle.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	middle.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var mark := Icons.view("generalui/back", 24.0)
+	mark.flip_h = step > 0
+	middle.add_child(mark)
+	b.add_child(middle)
+	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	b.set_meta("step", step)
+	return b
+
+
+## Show the card at `page`, kept within the deck: the dots say which, the
+## keys at either end of the deck go grey.
+func _show_page(page: int) -> void:
+	_page = clampi(page, 0, maxi(0, _cards.size() - 1))
+	for i: int in _cards.size():
+		_cards[i].visible = i == _page
+	if _peek != null:
+		_peek.visible = _page < _cards.size() - 1
+	var dots := _pager.find_child("Dots", false, false)
+	if dots != null:
+		for i: int in dots.get_child_count():
+			var dot := dots.get_child(i) as PanelContainer
+			var on := i == _page
+			dot.custom_minimum_size = Vector2(UI.px(22 if on else 9), UI.px(9))
+			UI.dress(dot, "gold" if on else "glass", 99.0)
+		(dots as Control).accessibility_name = Strings.t("OBS_PAGE", [_page + 1, _cards.size()])
+	for b: Node in _pager.get_children():
+		if b is Button:
+			var step := int(b.get_meta("step", 0))
+			(b as Button).disabled = _page + step < 0 or _page + step >= _cards.size()
+
+
+## A sideways swipe on the deck turns it, the design's carousel.
+func _on_deck_input(event: InputEvent) -> void:
+	var dx := 0.0
+	if event is InputEventScreenDrag:
+		dx = (event as InputEventScreenDrag).relative.x
+	elif event is InputEventMouseMotion and (event as InputEventMouseMotion).button_mask & MOUSE_BUTTON_MASK_LEFT:
+		dx = (event as InputEventMouseMotion).relative.x
+	elif (event is InputEventScreenTouch or event is InputEventMouseButton) and not event.is_pressed():
+		_swipe = 0.0
+		_turned = false
+		return
+	_swipe += dx
+	# One card per swipe, however long the drag.
+	if not _turned and absf(_swipe) >= UI.px(SWIPE_POINTS):
+		_show_page(_page + (1 if _swipe < 0 else -1))
+		_turned = true
+
+
 ## A tile on the card: a small name over a value in the number face.
 func _tile(name: String, value: String) -> Control:
 	var tile := UI.panel("parchment")
 	tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var words := VBoxContainer.new()
 	words.add_theme_constant_override("separation", 0)
-	var n := UI.label(name, 13.0)
-	n.theme_type_variation = "Secondary"
+	var n := UI.label(name, 13.0, true)
 	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	words.add_child(n)
 	var v := UI.label(value, 18.0, true)
@@ -205,7 +308,7 @@ func _tile(name: String, value: String) -> Control:
 ## The corner ribbon: a Trace in gold, an echo in violet, the game's own
 ## island on leather; a player's card has none.
 func _ribbon(kind: String) -> Control:
-	var looks := {"trace": ["OBS_RIBBON_TRACE", "gold"], "echo": ["OBS_RIBBON_ECHO", "tab_active"],
+	var looks := {"trace": ["OBS_RIBBON_TRACE", "gold"], "echo": ["OBS_RIBBON_ECHO", "round_violet"],
 		"generated": ["OBS_RIBBON_GENERATED", "leather"]}
 	if not looks.has(kind):
 		return null

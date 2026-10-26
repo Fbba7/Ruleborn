@@ -76,6 +76,7 @@ func _build() -> void:
 	_sheet.visible = Settings.text_scale >= StageScreen.LARGE_TEXT
 	_keys = _dock()
 	column.add_child(_keys)
+	StageScreen.corner_gap(column)
 
 
 ## The realm's medallion and name at the top left, its Starlight at the top
@@ -92,17 +93,18 @@ func _header() -> Control:
 	names.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	names.alignment = BoxContainer.ALIGNMENT_CENTER
 	var plate := UI.panel("glass")
-	plate.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	plate.size_flags_horizontal = Control.SIZE_FILL
 	var words := VBoxContainer.new()
 	words.add_theme_constant_override("separation", 0)
 	var title := UI.title(Strings.t("RV_TITLE"))
 	title.add_theme_font_size_override("font_size", UI.text_px(22))
 	title.set_meta("points", 22.0)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	title.autowrap_mode = TextServer.AUTOWRAP_OFF
+	# A long realm name in a long language wraps rather than widen the row.
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	title.name = "RealmName"
 	words.add_child(title)
-	header_label = UI.label("", 13.0)
+	header_label = UI.label("", 13.0, true)
 	header_label.theme_type_variation = "Kicker"
 	header_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	words.add_child(header_label)

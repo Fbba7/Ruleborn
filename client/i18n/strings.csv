@@ -1082,7 +1082,7 @@ ERR_POST_CANNOT_MOVE,a post moves only onto open ground,a post moves only onto o
 RV_CURATE,Curate,Curate,Curar,Curar,Kuratieren,Arranger
 RV_LEVEL,Realm level %d,Realm level %d,Nível de reino %d,Nível de reino %d,Reichsstufe %d,Niveau de royaume %d
 RV_KEY_MAP,Map,Map,Mapa,Mapa,Karte,Carte
-RV_KEY_DEFENCE,Defence,Defence,Defesa,Defesa,Abwehr,Défense
+RV_KEY_DEFENCE,Defence,Defense,Defesa,Defesa,Abwehr,Défense
 RV_KEY_BUILD,Build,Build,Construir,Construir,Bauen,Construire
 RV_LAWS,Laws %d/%d,Laws %d/%d,Leis %d/%d,Leis %d/%d,Gesetze %d/%d,Lois %d/%d
 RV_STARLIGHT,%s Starlight,%s Starlight,%s de Luz Estelar,%s de Luz Estelar,%s Sternenlicht,%s Lumière stellaire
@@ -1176,7 +1176,7 @@ CUR_TAB_LAYOUT,Layout,Layout,Layout,Disposição,Anlage,Plan
 CUR_TAB_POSTS,Posts,Posts,Postos,Postos,Posten,Postes
 CUR_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
 CUR_TAB_NAME,Name,Name,Nome,Nome,Name,Nom
-CUR_KICKER,Your defence,Your defence,Sua defesa,A tua defesa,Deine Abwehr,Ta défense
+CUR_KICKER,Your defence,Your defense,Sua defesa,A tua defesa,Deine Abwehr,Ta défense
 ERR_FUND_ADULTS_ONLY,the Island Fund is open from 18,the Island Fund is open from 18,o Island Fund é aberto a partir dos 18,o Island Fund está aberto a partir dos 18,der Island Fund ist ab 18 offen,l'Island Fund est ouvert dès 18 ans
 LANDING_REALM_ONE,"In %s, one link from the Heart","In %s, one link from the Heart","Em %s, a uma ligação do Coração","Em %s, a uma ligação do Coração","In %s, eine Verbindung vom Herzen","Dans %s, à un lien du Cœur"
 LANDING_REALM_MANY,"In %s, %d links from the Heart","In %s, %d links from the Heart","Em %s, a %d ligações do Coração","Em %s, a %d ligações do Coração","In %s, %d Verbindungen vom Herzen","Dans %s, à %d liens du Cœur"
@@ -1203,3 +1203,12 @@ CAMERA_TURN_LEFT,Turn the view left,Turn the view left,Girar a vista para a esqu
 CAMERA_TURN_RIGHT,Turn the view right,Turn the view right,Girar a vista para a direita,Rodar a vista para a direita,Ansicht nach rechts drehen,Pivoter la vue à droite
 CAMERA_ZOOM_IN,Zoom in,Zoom in,Aproximar,Aproximar,Heranzoomen,Zoomer
 CAMERA_ZOOM_OUT,Zoom out,Zoom out,Afastar,Afastar,Herauszoomen,Dézoomer
+PLAN_VALUE_ENTRY,You choose an edge spot as the crew lands,You choose an edge spot as the crew lands,Você escolhe um ponto da borda ao pousar,Escolhes um ponto da orla ao aterrar,Du wählst beim Landen einen Randplatz,Tu choisis un point du bord à l'atterrissage
+PLAN_VALUE_ENTRY_ACROSS,"You choose an outer realm's edge spot, or a fault, as the crew lands","You choose an outer realm's edge spot, or a fault, as the crew lands","Você escolhe um ponto da borda de um reino exterior, ou uma falha, ao pousar","Escolhes um ponto da orla de um reino exterior, ou uma falha, ao aterrar",Du wählst beim Landen einen Randplatz eines Außenreichs oder einen Riss,"Tu choisis un point du bord d'un royaume extérieur, ou une faille, à l'atterrissage"
+PLAN_VALUE_ROUTE,"Realm by realm to the Heart, up to %d realms, then out by skiff from wherever the crew stands","Realm by realm to the Heart, up to %d realms, then out by skiff from wherever the crew stands","Reino a reino até o Coração, até %d reinos, e saída de barco de onde a equipe estiver","Reino a reino até ao Coração, até %d reinos, e saída de barco de onde a equipa estiver","Reich für Reich zum Herzen, bis zu %d Reiche, dann hinaus per Boot, wo die Crew gerade steht","Royaume par royaume jusqu'au Cœur, jusqu'à %d royaumes, puis sortie en esquif d'où se trouve l'équipe"
+PLAN_VALUE_OF,%d of %d,%d of %d,%d de %d,%d de %d,%d von %d,%d sur %d
+PLAN_VALUE_CASTS,"%d of %d, paid only if used","%d of %d, paid only if used","%d de %d, pagos só se usados","%d de %d, pagos só se usados","%d von %d, nur bezahlt, wenn genutzt","%d sur %d, payés seulement s'ils servent"
+PLAN_VALUE_LOAD,%d%%,%d%%,%d%%,%d%%,%d%%,%d%%
+OBS_PREV_CARD,Previous target,Previous target,Alvo anterior,Alvo anterior,Vorheriges Ziel,Cible précédente
+OBS_NEXT_CARD,Next target,Next target,Próximo alvo,Alvo seguinte,Nächstes Ziel,Cible suivante
+OBS_PAGE,Target %d of %d,Target %d of %d,Alvo %d de %d,Alvo %d de %d,Ziel %d von %d,Cible %d sur %d
