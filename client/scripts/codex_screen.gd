@@ -172,6 +172,10 @@ func _album(a: Dictionary, busy: bool) -> Control:
 	# rather than widen the screen.
 	name.add_theme_color_override("font_color", Tokens.color("cream"))
 	ScreenKit.inked(name, maxf(1.5, 0.12 * float(name.get_meta("points", 22.0))) / 2.0 + 0.1)
+	name.add_theme_color_override("font_shadow_color", Tokens.color("gold_drop"))
+	name.add_theme_constant_override("shadow_offset_y", UI.px(2))
+	name.add_theme_constant_override("shadow_offset_x", 0)
+	name.add_theme_constant_override("shadow_outline_size", UI.px(3))
 	# Only the title and kicker wrap: the count's pill keeps its words whole.
 	for l: Label in band.find_children("*", "Label", true, false):
 		if l.get_parent() is VBoxContainer:
