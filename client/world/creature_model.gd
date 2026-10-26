@@ -45,13 +45,17 @@ const FORM_PATTERN := {
 }
 ## Corrections toward the design's portraits (art/design/stills/portraits),
 ## where the hero pages' sheen and glass carry a kind's paint further than
-## the shared tone does: the tone (light paint toward white), and a tint on
-## the paint. Judged side by side with each portrait.
+## the shared tone does: the body material's uniforms by name (the tone,
+## light paint toward white; a tint on the paint; the paint's value range;
+## the sheen's colour, the design's own per kind). Judged beside each portrait.
 const LOOK := {
-	"featherkin": {"tone": 0.5, "tint": Vector3(1.0, 1.05, 0.62)},
-	"glassgolem": {"tone": 0.45, "tint": Vector3(1.4, 1.22, 0.98)},
+	"featherkin": {"tone": 0.5, "paint_tint": Vector3(1.0, 1.05, 0.62)},
+	"glassgolem": {"tone": 0.3, "paint_tint": Vector3(1.12, 1.08, 1.02), "paint_contrast": 0.35, "paint_mid": 0.5,
+		"flatten": 0.5, "hero_sheen": 0.2, "sheen": Color("#E0D0FF")},
+	"bloomling": {"pastel": 0.35, "pastel_colour": Color(0.88, 0.74, 1.0), "paint_tint": Vector3(0.95, 1.02, 0.84)},
+	"emberling": {"tone": 0.1, "body_gloss": 0.05, "glow_vc": 0.8},
 	"rambler": {"tone": 0.08},
-	"mossbear": {"tint": Vector3(0.9, 1.02, 0.9)},
+	"mossbear": {"paint_tint": Vector3(0.9, 1.02, 0.9)},
 	"lanternwisp": {"tone": 0.55},
 	"soulmender": {"tone": 0.4},
 }
@@ -342,10 +346,8 @@ func _materials() -> void:
 	_material.set_shader_parameter("glow_vc", float(info.get("glow", 0.0)))
 	_material.set_shader_parameter("unit_height", height() / maxf(0.0001, float(info.get("scale", 1.0))))
 	var look: Dictionary = LOOK.get(String(kind), {})
-	if look.has("tone"):
-		_material.set_shader_parameter("tone", float(look["tone"]))
-	if look.has("tint"):
-		_material.set_shader_parameter("paint_tint", look["tint"])
+	for u: String in look:
+		_material.set_shader_parameter(u, look[u])
 	var pattern: Array = FORM_PATTERN.get(String(kind), [0, 6.0])
 	_material.set_shader_parameter("form_pattern", float(pattern[0]))
 	_material.set_shader_parameter("form_scale", float(pattern[1]))
@@ -374,9 +376,10 @@ func _chain_passes() -> void:
 		m.set_shader_parameter("rim_colour", _material.get_shader_parameter("rim_colour"))
 		# The body's own sheen: the shader's default lift pales fleece to pink-white.
 		m.set_shader_parameter("lift", _lift)
-		for p: StringName in [&"form_pattern", &"form_scale", &"unit_height", &"hush", &"spark", &"echo_form", &"tone",
-				&"paint_tint", &"hero"]:
+		for p: StringName in [&"form_pattern", &"form_scale", &"unit_height", &"hush", &"spark", &"echo_form", &"hero"]:
 			m.set_shader_parameter(p, _material.get_shader_parameter(p))
+		for u: String in LOOK.get(String(kind), {}):
+			m.set_shader_parameter(u, _material.get_shader_parameter(u))
 		m.set_shader_parameter("layer", float(s + 1) / float(_fur + 1))
 		m.set_shader_parameter("fur_len", float(fur.get("len", 0.0045)) * 2.2)
 		m.set_shader_parameter("strand_cells", cells)
