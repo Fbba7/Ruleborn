@@ -200,11 +200,15 @@ decision).
   so no screen reaches one today: Low. The server's own `verified` already
   refuses a crew outside 3 to 5 and a clock outside §24.10's.
 - **Test:** the fuzz case that found it (seed 13, a crew of 15) is in the
-  review's scratch work, not the repository; the client suite's replay
-  checks run on the fixed `load`.
+  review's scratch work, not the repository, since a client test would need
+  a recorder for crews the simulation refuses; the client suite's replay
+  checks run on the fixed `load`, and the server half has its own test.
 - **Fix:** `load` refuses a replay whose crew or clock `verified` would
   refuse. The simulation's mask is unchanged, since changing the simulation
-  changes its rules version.
+  changes its rules version. And the server no longer hands a defender the
+  bytes of a submission it refused (`service.replay`): a defender watches
+  the raids that were played; the raider keeps their own
+  (`server/test/security_heists.test.mjs`, SR-08).
 - **Status:** fixed.
 
 ### SR-13 — "constructor" and its like were taken as law ids (Low)

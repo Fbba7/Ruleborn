@@ -49,3 +49,19 @@ test("SR-13: a name every object answers to is no law", async () => {
   const working = t.service.db.prepare("SELECT working_on FROM accounts WHERE id = ?").get(t.raider.account).working_on;
   assert.equal(working, null);
 });
+
+// SR-08's server half: every submission's bytes are kept before they are
+// checked, and the defender was handed even a refused one's.
+test("SR-08: a defender is served the replays of raids that were played, never a refused submission's bytes", async () => {
+  const t = twoPlayers(true);
+  const get = async (who, token) => (await t.handle(new Request(`https://edge.example/v1/heists/${token}/replay`,
+    { headers: { authorization: `Bearer ${who.token}` } }))).status;
+  const bad = t.service.lease(t.raider.account, t.bundle);
+  const refused = t.service.submit(t.raider.account, bad.token, new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]));
+  assert.equal(refused.validated, false);
+  assert.equal(await get(t.defender, bad.token), 404, "the refused bytes are not the defender's to load");
+  assert.equal(await get(t.raider, bad.token), 200, "the raider keeps their own");
+  const good = t.service.lease(t.raider.account, t.bundle);
+  assert.equal(t.service.submit(t.raider.account, good.token, play(t, good, { plan: openPlan() })).validated, true);
+  assert.equal(await get(t.defender, good.token), 200, "a raid played is theirs to watch");
+});

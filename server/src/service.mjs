@@ -945,9 +945,14 @@ export class Service {
    */
   replay(account, token) {
     const h = this.db.prepare(
-      `SELECT h.log_hash, h.replay_gone, l.attacker, l.defender FROM heists h JOIN leases l ON l.token = h.token
-        WHERE h.token = ?`).get(token);
-    if (!h || (h.attacker !== account && h.defender !== account)) throw new Refused(404, "no_such_heist");
+      `SELECT h.log_hash, h.replay_gone, h.validated, l.attacker, l.defender FROM heists h
+         JOIN leases l ON l.token = h.token WHERE h.token = ?`).get(token);
+    // A defender watches the raids that were played (§13): a submission the
+    // server refused is the raider's bytes, unchecked, and is no raid on
+    // them — never handed to them to load (SR-08).
+    if (!h || (h.attacker !== account && (h.defender !== account || !h.validated))) {
+      throw new Refused(404, "no_such_heist");
+    }
     const bytes = h.replay_gone ? null : this.replays.get(h.log_hash);
     if (!bytes) throw new Refused(410, "replay_no_longer_kept", { days: facts.RAW_KEEP_DAYS });
     return bytes;
