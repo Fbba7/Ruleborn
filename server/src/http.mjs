@@ -156,7 +156,7 @@ import { readFileSync } from "node:fs";
 import { deleteAccount, reapplyDeletions } from "./accounts.mjs";
 import { planning } from "./keeper.mjs";
 import { offer } from "./matchmaking.mjs";
-import { privacyPage, supportPage, termsPage } from "./pages.mjs";
+import { PAGE_HEADERS, hashOf, privacyPage, supportPage, termsPage } from "./pages.mjs";
 import { Limiter, peerKey } from "./limits.mjs";
 import { Refused, TARGET_LISTS_MS } from "./service.mjs";
 import { Social } from "./social.mjs";
@@ -330,6 +330,22 @@ export function routeOf(url) {
 /** G39's page, with the web OAuth client id put in (see server/web/). */
 const DELETE_PAGE = readFileSync(new URL("../web/delete.html", import.meta.url), "utf8");
 
+/** G39's page runs Google's sign-in and nothing else: its own one script,
+ *  by its hash, and Google Identity Services' script, frame, style and
+ *  calls, as Google lists them for a page with a CSP. Google's script sets
+ *  inline styles and draws its logo from a data: image, so styles are not
+ *  held to a hash here, and only styles (SR-04). */
+const inline = (tag) => [...DELETE_PAGE.matchAll(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, "g"))]
+  .map((m) => hashOf(m[1])).join(" ");
+const GSI = "https://accounts.google.com/gsi/";
+const DELETE_HEADERS = Object.freeze({
+  ...PAGE_HEADERS,
+  "content-security-policy": `default-src 'none'; script-src ${inline("script")} ${GSI}client; `
+    + `style-src 'unsafe-inline' ${GSI}style; img-src data:; frame-src ${GSI}; connect-src 'self' ${GSI}; `
+    + "base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+  "x-frame-options": "DENY",
+});
+
 /**
  * The edge function. `webClientId` is the OAuth client id G39's web page
  * signs in with (it must be among the ids Google sign-in accepts); without
@@ -369,6 +385,9 @@ export function handler(service, { webClientId = null, appleNotifications = null
     }
     const response = await answer(request);
     response.headers.set("strict-transport-security", "max-age=31536000");
+    // No answer is sniffed into another type: a bundle or a replay's bytes
+    // are never run as a page (SR-04).
+    response.headers.set("x-content-type-options", "nosniff");
     return response;
   };
   async function answer(request) {
@@ -450,7 +469,7 @@ export function handler(service, { webClientId = null, appleNotifications = null
         // Asked for afresh each time: a player asked to accept new terms
         // must never be shown a cached copy of the old ones.
         return new Response(request.method === "HEAD" ? null : html, {
-          headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache" } });
+          headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache", ...PAGE_HEADERS } });
       }
       if (parts[1] === "terms" && parts.length === 2) {
         const me = who();
@@ -754,10 +773,10 @@ export function handler(service, { webClientId = null, appleNotifications = null
         case "GET /account/delete": {
           // G39: deletion without the app, proven with Sign in with Google.
           if (!webClientId) return json({ error: "not_configured" }, 503);
-          return new Response(DELETE_PAGE.replace("{{WEB_CLIENT_ID}}", webClientId), { headers: {
+          return new Response(DELETE_PAGE.replace("{{WEB_CLIENT_ID}}", () => webClientId), { headers: {
             "content-type": "text/html; charset=utf-8",
             "cache-control": "no-store",
-            "x-frame-options": "DENY",
+            ...DELETE_HEADERS,
           } });
         }
         case "POST /v1/account": {
