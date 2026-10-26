@@ -227,7 +227,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 623396
+			"bytes": 554964
 		},
 		"ashmoth": {
 			"file": "ashmoth.glb",
@@ -522,7 +522,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 464608
+			"bytes": 419440
 		},
 		"bloomling": {
 			"file": "bloomling.glb",
@@ -712,7 +712,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 467716
+			"bytes": 403948
 		},
 		"cartographer": {
 			"file": "cartographer.glb",
@@ -910,7 +910,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 619352
+			"bytes": 553588
 		},
 		"chronicler": {
 			"file": "chronicler.glb",
@@ -1113,7 +1113,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 628780
+			"bytes": 534292
 		},
 		"collector": {
 			"file": "collector.glb",
@@ -1319,7 +1319,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 696768
+			"bytes": 621440
 		},
 		"devourer": {
 			"file": "devourer.glb",
@@ -1538,7 +1538,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 589296
+			"bytes": 558568
 		},
 		"echoplate": {
 			"file": "echoplate.glb",
@@ -1728,7 +1728,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 497516
+			"bytes": 432208
 		},
 		"emberling": {
 			"file": "emberling.glb",
@@ -1918,7 +1918,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 553192
+			"bytes": 488768
 		},
 		"featherkin": {
 			"file": "featherkin.glb",
@@ -2108,7 +2108,7 @@
 				"shells": 0,
 				"len": 0.0026
 			},
-			"bytes": 702836
+			"bytes": 636464
 		},
 		"gardener": {
 			"file": "gardener.glb",
@@ -2311,7 +2311,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 788972
+			"bytes": 684176
 		},
 		"glassgolem": {
 			"file": "glassgolem.glb",
@@ -2539,7 +2539,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 767600
+			"bytes": 711700
 		},
 		"hourglassstorm": {
 			"file": "hourglassstorm.glb",
@@ -2750,7 +2750,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 398168
+			"bytes": 378244
 		},
 		"hourkeeper": {
 			"file": "hourkeeper.glb",
@@ -2940,7 +2940,7 @@
 				"shells": 2,
 				"len": 0.003
 			},
-			"bytes": 486992
+			"bytes": 421392
 		},
 		"illusoryguard": {
 			"file": "illusoryguard.glb",
@@ -3130,7 +3130,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 713236
+			"bytes": 651608
 		},
 		"lamplighter": {
 			"file": "lamplighter.glb",
@@ -3333,7 +3333,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 679040
+			"bytes": 588540
 		},
 		"lanternfish": {
 			"file": "lanternfish.glb",
@@ -3508,7 +3508,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 295756
+			"bytes": 277488
 		},
 		"lanternmoth": {
 			"file": "lanternmoth.glb",
@@ -3763,7 +3763,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 453940
+			"bytes": 409012
 		},
 		"lanternwisp": {
 			"file": "lanternwisp.glb",
@@ -3959,7 +3959,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 478116
+			"bytes": 412948
 		},
 		"mossbear": {
 			"file": "mossbear.glb",
@@ -4149,7 +4149,7 @@
 				"shells": 6,
 				"len": 0.013
 			},
-			"bytes": 1109540
+			"bytes": 948992
 		},
 		"prismbeetle": {
 			"file": "prismbeetle.glb",
@@ -4339,7 +4339,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 365080
+			"bytes": 297060
 		},
 		"prismmite": {
 			"file": "prismmite.glb",
@@ -4530,7 +4530,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 475384
+			"bytes": 411456
 		},
 		"puffballflock": {
 			"file": "puffballflock.glb",
@@ -4720,7 +4720,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 382704
+			"bytes": 315256
 		},
 		"puffbee": {
 			"file": "puffbee.glb",
@@ -4910,7 +4910,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 538272
+			"bytes": 470244
 		},
 		"quarryback": {
 			"file": "quarryback.glb",
@@ -5100,7 +5100,7 @@
 				"shells": 0,
 				"len": 0.004
 			},
-			"bytes": 476924
+			"bytes": 424176
 		},
 		"rambler": {
 			"file": "rambler.glb",
@@ -5290,7 +5290,7 @@
 				"shells": 7,
 				"len": 0.011
 			},
-			"bytes": 561588
+			"bytes": 508684
 		},
 		"reverser": {
 			"file": "reverser.glb",
@@ -5480,7 +5480,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 519920
+			"bytes": 455704
 		},
 		"rootrunner": {
 			"file": "rootrunner.glb",
@@ -5670,7 +5670,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 493748
+			"bytes": 429236
 		},
 		"skyjelly": {
 			"file": "skyjelly.glb",
@@ -5941,7 +5941,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 324568
+			"bytes": 291732
 		},
 		"skyskipper": {
 			"file": "skyskipper.glb",
@@ -6117,7 +6117,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 687472
+			"bytes": 636996
 		},
 		"soulmender": {
 			"file": "soulmender.glb",
@@ -6312,7 +6312,7 @@
 					-0.3
 				]
 			},
-			"bytes": 532924
+			"bytes": 465404
 		},
 		"sparkwright": {
 			"file": "sparkwright.glb",
@@ -6507,7 +6507,7 @@
 					-0.4
 				]
 			},
-			"bytes": 540428
+			"bytes": 476416
 		},
 		"stillwatch": {
 			"file": "stillwatch.glb",
@@ -6697,7 +6697,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 484052
+			"bytes": 423512
 		},
 		"stormhound": {
 			"file": "stormhound.glb",
@@ -6892,7 +6892,7 @@
 					-0.45
 				]
 			},
-			"bytes": 539148
+			"bytes": 476936
 		},
 		"stray": {
 			"file": "stray.glb",
@@ -7090,7 +7090,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 506364
+			"bytes": 443208
 		},
 		"swarmling": {
 			"file": "swarmling.glb",
@@ -7360,7 +7360,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 445440
+			"bytes": 349900
 		},
 		"tidewalker": {
 			"file": "tidewalker.glb",
@@ -7550,7 +7550,7 @@
 				"shells": 5,
 				"len": 0.008
 			},
-			"bytes": 629744
+			"bytes": 569232
 		},
 		"tinkerer": {
 			"file": "tinkerer.glb",
@@ -7753,7 +7753,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 896692
+			"bytes": 795740
 		},
 		"twinned": {
 			"file": "twinned.glb",
@@ -7975,7 +7975,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 855308
+			"bytes": 708740
 		},
 		"unmade": {
 			"file": "unmade.glb",
@@ -8160,7 +8160,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 455272
+			"bytes": 389748
 		},
 		"valemoth": {
 			"file": "valemoth.glb",
@@ -8439,7 +8439,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 510728
+			"bytes": 465804
 		},
 		"wanderer": {
 			"file": "wanderer.glb",
@@ -8642,7 +8642,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 599140
+			"bytes": 505760
 		},
 		"wildfirebloom": {
 			"file": "wildfirebloom.glb",
@@ -8921,7 +8921,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 749756
+			"bytes": 660552
 		}
 	}
 }

@@ -31,6 +31,8 @@ const FORMS := [&"base", &"hush", &"spark", &"echo"]
 const MANIFEST := "res://art/creatures/manifest.json"
 ## The guard form's rim (CreatureGear.SASH, lifted).
 const GUARD_RIM := Color("#FF6F5E")
+## A guard's ink (§21.3's #1A0C14 toward the sash's red, as dark).
+const GUARD_INK := Color("#4A0A14")
 ## Each kind's own form pattern (§21.6: forms change "pattern, glow and one
 ## accessory"; creature_look.gdshaderinc): [shape, cells over the body's
 ## height]. Shapes: 0 spots, 1 bands, 2 chevrons, 3 rings, 4 scales, 5 swirl,
@@ -59,6 +61,12 @@ const LOOK := {
 	"lanternwisp": {"tone": 0.55},
 	"soulmender": {"tone": 0.4},
 }
+## The rim's strength by day and by night, and night's lamplit rim colour.
+const DAY_RIM := 0.38
+const NIGHT_RIM := 1.6
+const NIGHT_RIM_COLOUR := Color("#FFD89A")
+## Small on screen the rim's light all round (creature_look's far_rim_colour).
+const FAR_RIM := Color(1.0, 0.96, 0.86)
 ## The heights the ruleborn band (0.5–1.4 m) is drawn at in a heist.
 const READABLE := Vector2(0.95, 1.4)
 
@@ -73,6 +81,7 @@ var kind: StringName = &""
 var info: Dictionary = {}
 var form: StringName = &"base"
 var guard := false
+var night := false
 var clip: StringName = &""
 var expression: StringName = &""
 
@@ -178,15 +187,13 @@ func set_form(form_name: StringName) -> void:
 	form = form_name if FORMS.has(form_name) else &"base"
 	# The body and its fur shells alike. Midnight does not pale toward the day's sheen.
 	_body_param("hush", 1.0 if form == &"hush" else 0.0)
-	_body_param("lift", _lift * (0.25 if form == &"hush" else 1.0))
+	_body_param("lift", minf(1.0, _lift * (1.7 if night else 1.0)) * (0.25 if form == &"hush" else 1.0))
 	_body_param("spark", 1.0 if form == &"spark" else 0.0)
 	_body_param("echo_form", 1.0 if form == &"echo" else 0.0)
 	if _glass != null:
 		_glass.set_shader_parameter("hush", 1.0 if form == &"hush" else 0.0)
 		_glass.set_shader_parameter("spark", 1.0 if form == &"spark" else 0.0)
-	if _outline != null:
-		_outline.set_shader_parameter("ink", HUSH_INK if form == &"hush" else CreatureGear.INK)
-		_outline.set_shader_parameter("width_px", OUTLINE_PX * (0.7 if form == &"hush" else 1.0))
+	_ink()
 	for key: StringName in [&"hush", &"spark", &"echo"]:
 		_drop_gear(key)
 	if form != &"base":
@@ -222,7 +229,22 @@ func set_guard(on: bool) -> void:
 		_gear[&"guard"] = CreatureGear.guard_kit(self)
 	# A guard's rim is the sash's warm red, so at the heist's size a guard
 	# is told from the crew by its edge as well as its kit.
-	_material.set_shader_parameter("rim_colour", GUARD_RIM if on else Color(str(info.get("rim", "#9FD4FF"))))
+	_material.set_shader_parameter("rim_colour", _rim())
+	# Small on screen the rim pales toward warm white; a guard's stays red.
+	_material.set_shader_parameter("far_rim_colour", GUARD_RIM if on else FAR_RIM)
+	# And its ink is a dark crimson: as dark a line, but the whole silhouette
+	# says "guard" at 40 px, on every kind, from any side.
+	_ink()
+
+
+## By night (§21.2: "lanterns and glows carry the realm") a stronger, warmer
+## rim and a paler sheen, so the figure reads against the dark ground; the
+## kind's own sheen and the guard's red rim are kept under it.
+func set_night(on: bool) -> void:
+	night = on
+	_material.set_shader_parameter("rim_strength", NIGHT_RIM if on else DAY_RIM)
+	_body_param("lift", minf(1.0, _lift * (1.7 if on else 1.0)) * (0.25 if form == &"hush" else 1.0))
+	_material.set_shader_parameter("rim_colour", _rim())
 
 
 ## A socket by name (a node that follows its bone): the design's glow points
@@ -432,6 +454,20 @@ func _make_sockets() -> void:
 func _on_finished(anim: StringName) -> void:
 	if anim == &"hit":
 		play(_loop_clip)
+
+
+# The outline's ink: §21.3's, Hush's violet, a guard's crimson.
+func _ink() -> void:
+	if _outline == null:
+		return
+	_outline.set_shader_parameter("ink", HUSH_INK if form == &"hush" else (GUARD_INK if guard else CreatureGear.INK))
+	_outline.set_shader_parameter("width_px", OUTLINE_PX * (0.7 if form == &"hush" else 1.0))
+
+
+# The rim's colour: the kind's, the guard's red, warmed toward lamplight by night.
+func _rim() -> Color:
+	var c := GUARD_RIM if guard else Color(str(info.get("rim", "#9FD4FF")))
+	return c.lerp(NIGHT_RIM_COLOUR, 0.6) if night else c
 
 
 func _drop_gear(key: StringName) -> void:
