@@ -137,31 +137,68 @@ func _split(p: Dictionary) -> Control:
 	heists.set_meta("heist_split", true)
 	heists.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(heists)
-	var bar := HBoxContainer.new()
-	bar.add_theme_constant_override("separation", UI.px(2))
-	bar.custom_minimum_size.y = UI.px(14)
 	var colours := {"clean": Color("#3FBF7F"), "loud": Color("#F2A03C"), "partial": Color("#3CC6D8"),
 		"foiled": Color("#E2536B")}
-	var legend := ScreenParts.flow(6.0)
+	# The design's two cards side by side: heists as a ring of the share that
+	# got away with something, defences as a ring of the share held, each
+	# with its counts named beside it.
+	var raids := 0
+	var got := 0
+	var legend := VBoxContainer.new()
+	legend.add_theme_constant_override("separation", UI.px(4))
 	for g: String in ProfilePresenter.GRADES:
 		var n := int(counts.get(g, 0))
-		if n > 0:
-			var seg := ScreenMeter.bar(1, 1, colours.get(g, Color.WHITE), 14.0)
-			seg.size_flags_stretch_ratio = float(n)
-			bar.add_child(seg)
-		legend.add_child(ScreenParts.pill("%s %d" % [Strings.term("GRADE", g), n], "well", "heistoutcomes", g))
-	box.add_child(bar)
-	box.add_child(legend)
+		raids += n
+		if g != "foiled":
+			got += n
+		var pill := ScreenParts.pill("%s %d" % [Strings.term("GRADE", g), n], "well", "heistoutcomes", g, 13.0,
+			"words", true)
+		pill.set_meta("grade", g)
+		legend.add_child(pill)
 	var held: Dictionary = p["held"]
-	var defences := ScreenParts.columns([
-		ScreenParts.stat(str(int(held.get("held", 0))), Strings.t("SCREEN_HELD"), "alerts", "defencewon", "well"),
-		ScreenParts.stat(str(int(held.get("leaked", 0))), Strings.t("SCREEN_LEAKED"), "alerts", "raided", "well"),
-		ScreenParts.stat(str(int(held.get("partial", 0))), Strings.term("GRADE", "partial"), "heistoutcomes",
-			"partial", "well")], 6.0)
-	box.add_child(defences)
+	var kept := int(held.get("held", 0))
+	var lost := int(held.get("leaked", 0)) + int(held.get("partial", 0))
+	var cards: Array = [
+		_ring_card("screens", "heist", Strings.t("SCREEN_HEISTS"), got, raids, colours["clean"], legend),
+		_ring_card("alerts", "defencewon", Strings.t("SCREEN_DEFENCE"), kept, kept + lost, Color("#3CC6D8"),
+			_counts([[Strings.t("SCREEN_HELD"), kept, "alerts", "defencewon"],
+				[Strings.t("SCREEN_LEAKED"), int(held.get("leaked", 0)), "alerts", "raided"],
+				[Strings.term("GRADE", "partial"), int(held.get("partial", 0)), "heistoutcomes", "partial"]]))]
+	box.add_child(ScreenParts.columns(cards, 8.0))
 	var said := ScreenKit.text(p["defences"], 13.0, "words", "card", true, true)
 	box.add_child(said)
 	return ScreenKit.panel("card", box, 18.0, 12.0)
+
+
+## A card the design's way: its mark and name, a ring of `part` of `whole`
+## with the share in its middle, and what it counts beneath.
+func _ring_card(group: String, icon: String, title: String, part: int, whole: int, colour: Color,
+		below: Control) -> Control:
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", UI.px(8))
+	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", UI.px(6))
+	head.add_child(ScreenKit.icon(group, icon, 24.0))
+	var name := ScreenKit.text(title, 15.0, "words", "card")
+	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name.autowrap_mode = TextServer.AUTOWRAP_WORD
+	head.add_child(name)
+	col.add_child(head)
+	var share := roundi(100.0 * part / whole) if whole > 0 else 0
+	col.add_child(ScreenMeter.ring(part, maxi(whole, 1), colour, 72.0, "%d%%" % share))
+	col.add_child(below)
+	var card := ScreenKit.panel("card", col, 16.0, 10.0)
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return card
+
+
+## Counts as a column of pills, each its mark, its name and its number.
+func _counts(rows: Array) -> Control:
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", UI.px(4))
+	for r: Array in rows:
+		col.add_child(ScreenParts.pill("%s %d" % [r[0], r[1]], "well", str(r[2]), str(r[3]), 13.0, "words", true))
+	return col
 
 
 ## The records as tiles, two to a row: a value, or a dash while none is kept.
