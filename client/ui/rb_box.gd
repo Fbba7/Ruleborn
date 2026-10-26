@@ -18,6 +18,12 @@ var look := ""
 var spec: Dictionary = {}
 ## A corner radius in points instead of the material's.
 var radius_points := -1.0
+## Pixels of the host's top left undrawn, so something in it can rise above
+## the box (the chosen tab over the bar).
+var inset_top := 0.0:
+	set(v):
+		inset_top = v
+		_shade()
 ## Not drawn while every word in the host is empty (a plate whose label has
 ## nothing to say yet), so no empty card stands on the screen.
 var hide_empty := false
@@ -84,6 +90,9 @@ func _ready() -> void:
 	# its host's rect, wherever the container has put the box itself.
 	if host != null:
 		host.resized.connect(_shade)
+		# The host redraws when its state changes (pressed, disabled), and
+		# the box follows it.
+		host.draw.connect(queue_redraw)
 	item_rect_changed.connect(queue_redraw)
 	_shade()
 
@@ -101,9 +110,9 @@ func set_look(material_name: String) -> void:
 		host.set_meta("text_bg", spec["text_bg"])
 		host.set_meta("rb_family", spec["family"])
 	var p := func(points: float) -> float: return points * UI.PX_PER_POINT
-	var drop: Array = spec.get("drop", [Color(), 0.0])
-	var soft: Array = spec.get("soft", [Color(), 0.0, 0.0])
-	var glow: Array = spec.get("glow", [Color(), 0.0])
+	var drop: Array = spec.get("drop", [Color(0, 0, 0, 0), 0.0])
+	var soft: Array = spec.get("soft", [Color(0, 0, 0, 0), 0.0, 0.0])
+	var glow: Array = spec.get("glow", [Color(0, 0, 0, 0), 0.0])
 	_reach = ceilf(maxf(p.call(drop[1]) + absf(p.call(soft[1])) + p.call(soft[2]), p.call(glow[1])) + 2.0)
 	var shape := Tokens.gradient_shape(str(spec["fill"]))
 	var u := _shader
@@ -130,8 +139,13 @@ func set_look(material_name: String) -> void:
 	u.set_shader_parameter("gloss", float(spec.get("gloss", 0.0)))
 	var grain: Array = spec.get("grain", [Color(0, 0, 0, 0), 0.0])
 	u.set_shader_parameter("grain_color", Color(grain[0], grain[1]))
-	u.set_shader_parameter("stars", 1.0 if material_name == "night" and not Tokens.high_contrast else 0.0)
+	u.set_shader_parameter("stars", 1.0 if material_name.begins_with("night") and not Tokens.high_contrast else 0.0)
 	u.set_shader_parameter("star_color", Tokens.color("night_star"))
+	var stripes: Array = spec.get("stripes", [Color(0, 0, 0, 0)])
+	u.set_shader_parameter("stripes_color", stripes[0])
+	var rays: Array = spec.get("rays", [Color(0, 0, 0, 0), 18.0])
+	u.set_shader_parameter("rays_color", rays[0])
+	u.set_shader_parameter("rays_count", rays[1])
 	_shade()
 
 
@@ -180,8 +194,8 @@ func _flat() -> StyleBoxFlat:
 
 ## The host's rect in the box's own space, grown by the reach.
 func quad() -> Rect2:
-	var at := -position if host != null else Vector2.ZERO
-	var inner := host.size if host != null else size
+	var at := (-position if host != null else Vector2.ZERO) + Vector2(0, inset_top)
+	var inner := (host.size if host != null else size) - Vector2(0, inset_top)
 	return Rect2(at - Vector2.ONE * _reach, inner + Vector2.ONE * 2.0 * _reach)
 
 
@@ -202,7 +216,9 @@ func _draw() -> void:
 		return
 	if hide_empty and _empty():
 		return
-	draw_rect(quad(), Color.WHITE)
+	# A disabled control is faded, box and words (its words by the theme).
+	var faded := host is BaseButton and (host as BaseButton).disabled
+	draw_rect(quad(), Color(1, 1, 1, 0.5 if faded else 1.0))
 
 
 func _empty() -> bool:

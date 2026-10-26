@@ -16,6 +16,11 @@ var picture: Texture2D = null:
 		queue_redraw()
 ## A pip rather than a ring.
 var dot := false
+## A dial: a thick gold ring all round (the play-time ring), the fill
+## drawn as a brighter arc over it.
+var heavy := false
+## A full pip's colour (gold if unset).
+var tint := Color()
 
 
 func _draw() -> void:
@@ -25,8 +30,12 @@ func _draw() -> void:
 	var gold := Tokens.color("gold_top")
 	if dot:
 		draw_circle(c, r, ink, true, -1.0, true)
-		draw_circle(c, r - maxf(1.5, r * 0.28), gold if fraction >= 0.5 else Tokens.color("card_bottom"), true, -1.0,
+		var full := tint if tint != Color() else gold
+		draw_circle(c, r - maxf(1.5, r * 0.28), full if fraction >= 0.5 else Tokens.color("card_bottom"), true, -1.0,
 			true)
+		return
+	if heavy:
+		_heavy(c, r, ink, gold)
 		return
 	var line := maxf(2.0, r * 0.14)
 	draw_circle(c, r, ink, true, -1.0, true)
@@ -46,3 +55,17 @@ func _draw() -> void:
 	if fraction > 0.0:
 		draw_arc(c, r - line * 0.5, -PI * 0.5, -PI * 0.5 + TAU * fraction, 64, gold, line, true)
 	draw_arc(c, r, 0.0, TAU, 64, ink, maxf(1.5, UI.px(0.7)), true)
+
+
+func _heavy(c: Vector2, r: float, ink: Color, gold: Color) -> void:
+	var band := r * 0.2
+	draw_circle(c + Vector2(0, UI.px(2)), r, Tokens.color("drop"), true, -1.0, true)
+	draw_circle(c, r, ink, true, -1.0, true)
+	# The torus: deep gold under a lit band, as the designs' gold round.
+	draw_arc(c, r - band * 0.5 - 1.0, 0.0, TAU, 96, Tokens.color("gold_bottom"), band, true)
+	draw_arc(c, r - band * 0.62 - 1.0, PI * 1.05, PI * 1.95, 64, Color(Tokens.color("cream"), 0.8), band * 0.35, true)
+	if fraction > 0.0:
+		draw_arc(c, r - band * 0.5 - 1.0, -PI * 0.5, -PI * 0.5 + TAU * fraction, 96, Color(gold, 0.9), band * 0.45,
+			true)
+	draw_circle(c, r - band - 1.0, ink, true, -1.0, true)
+	draw_circle(c, r - band - maxf(2.0, UI.px(1)), Tokens.color("card_top"), true, -1.0, true)

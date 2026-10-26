@@ -108,7 +108,8 @@ static func material(name: String) -> Dictionary:
 	var out := {"name": name, "fill": str(m.get("fill", "card")), "radius": float(m.get("radius", 16)),
 		"gloss": float(m.get("gloss", 0.0)) if not high_contrast else 0.0,
 		"family": str(m.get("family", "dark")), "over_world": bool(m.get("over_world", false))}
-	for part: String in ["line", "rim", "rim_2", "highlight", "shade", "drop", "soft", "glow", "grain", "text_outline"]:
+	for part: String in ["line", "rim", "rim_2", "highlight", "shade", "drop", "soft", "glow", "grain", "text_outline",
+			"rays", "stripes"]:
 		var v: Variant = m.get(part)
 		if v is Array:
 			var a: Array = (v as Array).duplicate()
@@ -116,10 +117,11 @@ static func material(name: String) -> Dictionary:
 			for i: int in range(1, a.size()):
 				a[i] = float(a[i])
 			out[part] = a
-	if high_contrast and name not in ["night", "scrim"]:
+	if high_contrast and not name.begins_with("night") and name != "scrim":
 		var line: Array = out.get("line", [paint("ink_line"), 0.0])
 		out["line"] = [Color(line[0], 1.0) if line[1] > 0.0 else paint("ink_line"), number("size", "line_hc")]
 		out.erase("glow")
+		out.erase("rays")
 	for part: String in ["text", "text_2"]:
 		out[part] = paint(str(m.get(part, "text_on_night")))
 	var bg: Array[Color] = []
