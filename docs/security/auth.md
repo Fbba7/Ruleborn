@@ -168,8 +168,8 @@ address is held.
 
 A lost phone: "Sign out everywhere" from another device ends its session,
 but the phone's own Game Center or Google sign-in could still prove the
-identity again. The player should also remove the device from their Apple
-ID or Google account; the panel's words do not say so yet (**open**).
+identity again, so the "sign out everywhere" confirm also tells the player
+to remove a lost phone from their Apple ID or Google account.
 
 ### Interface
 

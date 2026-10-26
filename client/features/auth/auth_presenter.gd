@@ -53,6 +53,10 @@ static func confirm(everywhere: bool, pending: int) -> Dictionary:
 	var words := Strings.t("AUTH_CONFIRM_ALL_WORDS" if everywhere else "AUTH_CONFIRM_WORDS")
 	if pending > 0:
 		words += "\n" + Strings.t("AUTH_CONFIRM_PENDING", pending)
+	# Sign out everywhere is what a lost phone needs; its own platform
+	# sign-in would still prove the identity (docs/security/auth.md T9).
+	if everywhere:
+		words += "\n" + Strings.t("AUTH_LOST_DEVICE")
 	return {"title": Strings.t("AUTH_SIGN_OUT_ALL" if everywhere else "AUTH_SIGN_OUT"), "words": words,
 		"yes": Strings.t("AUTH_SIGN_OUT_ALL" if everywhere else "AUTH_SIGN_OUT")}
 

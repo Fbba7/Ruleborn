@@ -151,7 +151,7 @@ func _refused_refresh_asks_the_platform() -> void:
 	var vault: FakeSecureStore = f[2]
 	var platform: FakePlatformIdentity = f[3]
 	vault.write(AuthSession.REFRESH_KEY, "r1.k0.7.3.SPENT")
-	t.then("POST /v1/session/refresh", [[{"error": "unreachable_server"}, 503]])
+	t.then("POST /v1/session/refresh", [[{"error": "internal"}, 503]])
 	var down := await s.auth.ensure(true)
 	var kept := vault.read(AuthSession.REFRESH_KEY)
 	t.then("POST /v1/session/refresh", [[{"error": "session_refused"}, 401]])
@@ -188,7 +188,7 @@ func _sign_out_clears_everything() -> void:
 	var vault: FakeSecureStore = f[2]
 	await s.auth_flow.sign_in()
 	# A heist played offline, waiting; a lease in stock; a session event unsent.
-	t.on("POST /v1/heists/lease-1", {"error": "unreachable_server"}, 503)
+	t.on("POST /v1/heists/lease-1", {"error": "internal"}, 503)
 	s.outbox.put("lease-1", "/v1/heists/lease-1", PackedByteArray([1, 2, 3]))
 	s.heists.stock.add("bundle-1", {"token": "lease-2", "expiresAt": 1}, PackedByteArray([4]))
 	s.notices.start(1000)
@@ -284,6 +284,8 @@ func _words() -> void:
 			+ "its reason, signed out — and each sign-out's confirm names what still waits to be sent",
 		not raw and str(failed["line"]).contains(Errors.text("platform_identity_refused"))
 			and str(confirm["words"]).contains("2") and str(everywhere["title"]) == Strings.t("AUTH_SIGN_OUT_ALL")
+			and str(everywhere["words"]).contains(Strings.t("AUTH_LOST_DEVICE"))
+			and not str(confirm["words"]).contains(Strings.t("AUTH_LOST_DEVICE"))
 			and not str(everywhere["words"]).contains(Strings.t("AUTH_CONFIRM_PENDING", 0)),
 		" | ".join(statuses))
 
