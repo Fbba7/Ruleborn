@@ -64,14 +64,35 @@ Merged `claude/videogame-project-analysis-ewkkk2` and `claude/ui-kit` (502b5a0).
 
 `check_all` stops at one client test outside these screens: "against the server: Weaving offers the starting laws at the simulation's prices…" (`client/tests/weaving_tests.gd`, `_online`). The server recommends `slow_rivers` first for the Heart, priced 0 at 0 points (it is already woven there), so the test's price is 0. The main branch (`1e8619b`, run in a separate worktree here) fails it the same way, 337 of 338; this branch passes every other client test, 342 of 343. The server's `recommend` (`server/src/weaving.mjs`) or the simulation's price for a law already in the realm is where it is decided; neither is this track's.
 
+## Wave 4 rounds, judged against the design stills
+
+Stills: `docs/art/shots/ui-screens/w4a-<screen>.png`, the design's still on the left and this build on the right (Social has no design still).
+
+| Round | Three worst differences | What changed |
+|---|---|---|
+| 1 Codex | count pill on the chapter band one glyph a line; school filters split 4 + 2; band title in ink on gold | pill kept whole; six marks on one row; cream title in its ink stroke |
+| 2 Weaving | tapestry as sentences per slot; deck words broken mid-word; preview card taller than the design's | slot gems on a gold thread (solid between two laws) with name plates; four-card deck with price plates, names beneath; preview 132 points |
+| 3 Law card | the two actions as short words, wrapped under the back button | "Pair it in the Lab" and "Weave into a realm" sharing the dock; every dock is one line when it fits |
+| 4 Lab | chambers as two big text buttons | the design's test bench: gems in their school rings on a thread through the core |
+| 5 Laws hub at 200% | "Harm/ony" broken mid-word | the hub becomes wrapping chips at large text |
+| 6 First launch | a small icon and a plain title | the gold logo, the serif line under it, the universe's mark; at large text the mark gives way to the question |
+| 7 Shop | cards titled "sage robe (robe-aurora)" | titled by the name ("Aurora"), the kind on its pill |
+| 8 Workshop | five equal buttons per island | Play and Remix share the card's main row; why, report and block beneath |
+
 ## Still worse than the design
 
 - The Laws hub (All laws · Harmony · Lab) sits above the tab bar by §21.1's rule, where the design puts it at the top: the scrolling area is 60% of the frame, against the design's 75%.
 - T9's tab bar stands 20 points above the safe area for the corner rule, leaving a band of empty violet under the tabs.
 
+- Settings has two tabs (Game, Access) where the design has four with a Wellbeing page (play-time ring, week chart, reminders); the game keeps no play-time record to draw.
+- Harmony lists every realm's card (its test needs them all); the design shows one realm chosen from a chip row with the chord card beneath.
+- The Lab has no resonance grid of twelve numbered tiles; its finds are a shelf.
+- Cosmetics have no catalogue names: a card's title is the end of its id.
+- Law rule lines (`LAW_RULE_*`) are English in every language.
+
 ## Next steps
 
-Rounds against the design stills, every screen at 200% text and in high contrast.
+Harmony's realm chips and chord card; the Lab's numbered resonance grid; Profile's rating card and renown chart; Friends' feed cards.
 
 ## Stopped here
 
