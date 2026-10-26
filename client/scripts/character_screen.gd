@@ -88,8 +88,8 @@ func _build() -> void:
 	# The name on a gold-rimmed plate at the stage's foot, as the design's.
 	title_label = UI.title("")
 	StageHeroSkin.named(title_label)
-	title_label.add_theme_font_size_override("font_size", UI.text_px(30))
-	title_label.set_meta("points", 30.0)
+	title_label.add_theme_font_size_override("font_size", UI.text_px(24))
+	title_label.set_meta("points", 24.0)
 	title_label.add_theme_color_override("font_color", Color("#FFF3CC"))
 	title_label.set_meta("own_ink", true)
 	title_label.autowrap_mode = TextServer.AUTOWRAP_OFF
@@ -111,8 +111,14 @@ func _build() -> void:
 	bottom.add_child(actions)
 	notes = VBoxContainer.new()
 	notes.add_theme_constant_override("separation", UI.px(6))
-	column.add_child(_padded(UI.narrow(notes)))
-	column.add_child(_padded(UI.narrow(bottom)))
+	column.add_child(_padded(notes))
+	# The lowest row stands above the corners' band (§21.1: 8% of the
+	# frame's height, of which the safe area is 44 points), so it may run the
+	# column's width as the design's does.
+	var lift := MarginContainer.new()
+	lift.add_theme_constant_override("margin_bottom", UI.px(20))
+	lift.add_child(bottom)
+	column.add_child(_padded(lift))
 
 
 ## `what` held in from the screen's sides by the safe area's margin.
@@ -474,15 +480,29 @@ func _upgrade(o: Dictionary, busy: bool) -> Button:
 	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	sub.custom_minimum_size.x = UI.px(90)
 	words.add_child(sub)
-	# The price under the words, beside Essence's icon.
+	row.add_child(words)
+	# The price at the bar's end on a dark chip, beside Essence's icon, as
+	# the design's UPGRADE.
 	var price := HBoxContainer.new()
 	price.add_theme_constant_override("separation", UI.px(4))
-	price.add_child(Icons.view("resources/essence", 18.0))
-	var cost := StageHeroKit.words(str(o["cost"]), 16.0, Color("#FFFDF0"), true)
+	price.add_child(Icons.view("resources/essence", 20.0))
+	var cost := StageHeroKit.words(str(o["cost"]), 18.0, Color("#FFFDF0"), true)
 	cost.add_theme_font_override("font", StageHeroSkin.numbers_font())
 	price.add_child(cost)
-	words.add_child(price)
-	row.add_child(words)
+	var chip := PanelContainer.new()
+	var dark := StyleBoxFlat.new()
+	dark.bg_color = Color("#1E1440")
+	dark.set_corner_radius_all(UI.px(12))
+	dark.content_margin_left = UI.px(10)
+	dark.content_margin_right = UI.px(10)
+	dark.content_margin_top = UI.px(4)
+	dark.content_margin_bottom = UI.px(4)
+	chip.add_theme_stylebox_override("panel", dark)
+	chip.set_meta("behind", [dark.bg_color] as Array[Color])
+	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	chip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	chip.add_child(price)
+	row.add_child(chip)
 	b.add_child(row)
 	b.custom_minimum_size.y = maxf(b.custom_minimum_size.y, row.get_combined_minimum_size().y + UI.px(20))
 	row.minimum_size_changed.connect(func() -> void:
@@ -526,7 +546,7 @@ func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -
 	level_badge.add_child(top)
 	var ids: Array = RosterScreen.kinds_of(slice).keys()
 	var at := ids.find(id)
-	var plate := StageHeroMaterial.panel("rim", title_label, 14.0, 14.0)
+	var plate := StageHeroMaterial.panel("rim", title_label, 12.0, 8.0)
 	var foot := MarginContainer.new()
 	foot.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	foot.mouse_filter = Control.MOUSE_FILTER_IGNORE
