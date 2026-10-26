@@ -752,6 +752,36 @@ window.exportKind = async function exportKind(cfg) {
 		bpos[v * 3 + k] = bg.attributes.position.array[un.oldOf[v] * 3 + k];
 		bnrm[v * 3 + k] = bg.attributes.normal.array[un.oldOf[v] * 3 + k];
 	}
+	// A smooth body takes the light mesh's own normals (area-weighted, welded
+	// across chart seams by position), not the fine sculpt's at each kept
+	// vertex: those carry the feather and fleece relief, and across a light
+	// mesh's large triangles they shade as crumpled facets. The relief map
+	// below is baked against these normals, so the detail comes back there.
+	if (!dec.faceted) {
+		const key = (v) => Math.round(bpos[v * 3] * 1e4) + ',' + Math.round(bpos[v * 3 + 1] * 1e4) + ',' + Math.round(bpos[v * 3 + 2] * 1e4);
+		const weld = new Map();
+		const slot = new Uint32Array(nv);
+		for (let v = 0; v < nv; v++) { const k = key(v); if (!weld.has(k)) weld.set(k, weld.size); slot[v] = weld.get(k); }
+		const acc = new Float32Array(weld.size * 3);
+		const ix = un.idx;
+		for (let t = 0; t < ix.length; t += 3) {
+			const a = ix[t], b = ix[t + 1], c = ix[t + 2];
+			const ax = bpos[a * 3], ay = bpos[a * 3 + 1], az = bpos[a * 3 + 2];
+			const ux = bpos[b * 3] - ax, uy = bpos[b * 3 + 1] - ay, uz = bpos[b * 3 + 2] - az;
+			const vx = bpos[c * 3] - ax, vy = bpos[c * 3 + 1] - ay, vz = bpos[c * 3 + 2] - az;
+			const nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+			for (const v of [a, b, c]) { acc[slot[v] * 3] += nx; acc[slot[v] * 3 + 1] += ny; acc[slot[v] * 3 + 2] += nz; }
+		}
+		for (let v = 0; v < nv; v++) {
+			const s = slot[v];
+			const x = acc[s * 3], y = acc[s * 3 + 1], z = acc[s * 3 + 2];
+			const l = Math.hypot(x, y, z);
+			if (l < 1e-12) continue;
+			// Facing the same way as the sculpt's (a fold can flip a sum).
+			const sg = x * bnrm[v * 3] + y * bnrm[v * 3 + 1] + z * bnrm[v * 3 + 2] < 0 ? -1 : 1;
+			bnrm[v * 3] = sg * x / l; bnrm[v * 3 + 1] = sg * y / l; bnrm[v * 3 + 2] = sg * z / l;
+		}
+	}
 	if (dec.faceted) for (let f = 0; f < nv / 3; f++) {
 		const a = new THREE.Vector3().fromArray(bpos, f * 9), b = new THREE.Vector3().fromArray(bpos, f * 9 + 3), c = new THREE.Vector3().fromArray(bpos, f * 9 + 6);
 		const n = b.sub(a).cross(c.sub(a)).normalize();

@@ -129,12 +129,18 @@ func build(t: Vector2i, f: int) -> void:
 			prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 		RealmKit.F.FLOWER_MEADOW:
 			var petals: Array[Color] = [Color("#FF8AB0"), Color("#FFE08A"), Color("#FFFFFF"), Color("#B79BFF")]
-			for k in 22:
+			var lighter := kit.detail == BuildingKit.MID
+			for k in (12 if lighter else 22):
 				var p := c + Vector3(RealmKit.jitter(t, k) - 0.5, 0.0, RealmKit.jitter(t, k + 9) - 0.5) * 0.9
 				var stem := 0.07 + 0.08 * RealmKit.jitter(t, k + 40)
 				prop.moving(Geo.Anim.SHIVER, p)
 				prop.blade(p, stem, 0.012, plant.darkened(0.2))
-				prop.ball(Geo.place(p + Vector3(0, stem, 0), 0.0, Vector3(1, 0.55, 1)), 0.05, petals[k % 4], 2, 6)
+				if lighter:
+					# A flat flower head, three petals, at the mid detail.
+					prop.gem(Geo.place(p + Vector3(0, stem, 0), RealmKit.jitter(t, k + 3) * TAU, Vector3(1, 0.3, 1)),
+						0.06, 0.06, petals[k % 4], 3)
+				else:
+					prop.ball(Geo.place(p + Vector3(0, stem, 0), 0.0, Vector3(1, 0.55, 1)), 0.05, petals[k % 4], 2, 6)
 			prop.moving(Geo.Anim.NONE, Vector3.ZERO)
 		RealmKit.F.ICE_SHEET:
 			# A frozen pool: an irregular sheet, pale at its rim, with a few
@@ -198,8 +204,9 @@ func build(t: Vector2i, f: int) -> void:
 			for k in 4:
 				var step := Vector3(0, 0, 0.375 - 0.25 * k).rotated(Vector3.UP, up)
 				var hh := IslandBuilder.LEVEL * (k + 1) / 4.0
+				# Dark risers under light treads, so each step reads.
 				prop.rbox(Geo.place(c + step + Vector3(0, hh / 2.0, 0), up), Vector3(0.78, hh, 0.25),
-					steps.lightened(0.08 * (k % 2)), 0.02, steps.lightened(0.15))
+					steps.darkened(0.18 - 0.05 * (k % 2)), 0.02, steps.lightened(0.14))
 			for sx: float in [-1.0, 1.0]:
 				prop.rock(Geo.place(c + Vector3(sx * 0.44, 0.06, 0.3).rotated(Vector3.UP, up)), 0.09,
 					kit.palette["rock"], t.x + int(sx))
@@ -253,11 +260,24 @@ func _pillar(c: Vector3, j: float, rock: Color) -> void:
 	if kit.realm == "tidehold":
 		body = rock.lightened(0.25)
 		band = Color("#E8E2D0")
-	hero.prism(Geo.place(c, j), 7, 0.34, 0.25, 1.0, body, false, body.lightened(0.12))
-	for y: float in [0.3, 0.62]:
-		hero.prism(Geo.place(c + Vector3(0, y, 0), j), 7, 0.33 - y * 0.09, 0.32 - y * 0.09, 0.05, band)
-	hero.prism(Geo.place(c + Vector3(0, 1.0, 0), j + 0.4), 7, 0.25, 0.18, 0.3, body.darkened(0.06))
-	hero.rock(Geo.place(c + Vector3(0, 1.38, 0), j, Vector3(1, 0.7, 1)), 0.2, body.lightened(0.06), seed_from)
+		hero.prism(Geo.place(c, j), 7, 0.34, 0.25, 1.0, body, false, body.lightened(0.12))
+		for y: float in [0.3, 0.62]:
+			hero.prism(Geo.place(c + Vector3(0, y, 0), j), 7, 0.33 - y * 0.09, 0.32 - y * 0.09, 0.05, band)
+		hero.prism(Geo.place(c + Vector3(0, 1.0, 0), j + 0.4), 7, 0.25, 0.18, 0.3, body.darkened(0.06))
+		hero.rock(Geo.place(c + Vector3(0, 1.38, 0), j, Vector3(1, 0.7, 1)), 0.2, body.lightened(0.06), seed_from)
+	else:
+		# Stones balanced one on another, each faceted and turned its own way
+		# (the diorama's dodecahedron rocks), lighter toward the top, a cap of
+		# moss on the highest: a toy cairn that blocks the way.
+		var sway := Vector3(cos(j * 9.0), 0, sin(j * 9.0)) * 0.05
+		hero.rock(Geo.place(c + Vector3(0, 0.24, 0), j, Vector3(1.05, 0.78, 1.05)), 0.36, body.darkened(0.04),
+			seed_from)
+		hero.rock(Geo.place(c + Vector3(0, 0.68, 0) + sway, j + 1.3, Vector3(1, 0.85, 1)), 0.28, body,
+			seed_from + 1)
+		hero.rock(Geo.place(c + Vector3(0, 1.04, 0) - sway, j + 2.1, Vector3(1, 0.9, 1)), 0.21, body.lightened(0.08),
+			seed_from + 2)
+		kit.prop.ball(Geo.place(c + Vector3(0, 1.18, 0) - sway, 0.0, Vector3(1, 0.45, 1)), 0.15,
+			(kit.palette["plant"] as Color).darkened(0.1), 3, 7, true)
 	kit.prop.rock(Geo.place(c + Vector3(0.32, 0.04, 0.22)), 0.08, rock.darkened(0.05), int(j * 50))
 	if kit.realm == "lanternvale" or kit.realm == "verdant":
 		kit.prop.ball(Geo.place(c + Vector3(-0.1, 0.55, 0.26), 0.0, Vector3(1.4, 0.7, 0.6)), 0.14,
