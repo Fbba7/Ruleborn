@@ -17,6 +17,10 @@ var action_log: ActionLog
 ## sign in. A sign-in the server holds back (too_many_requests, G44) is the
 ## call's answer, with its wait, not a session refused.
 var reauth: Callable
+## Whether the token held has reached its renewal (AuthSession.stale): a
+## call then renews first rather than be refused. Unset, a token is used
+## until refused.
+var stale: Callable
 
 
 func _init(t: Transport, url: String, l: ActionLog) -> void:
@@ -45,8 +49,10 @@ static func secure(url: String) -> bool:
 func raw(method: HTTPClient.Method, path: String, body := PackedByteArray()) -> Result:
 	if not online():
 		return Result.failure("offline")
-	var signing := path == "/v1/session"
-	if token == "" and not signing and reauth.is_valid():
+	# The session's own routes never sign in to be made: they are how.
+	var signing := method == HTTPClient.METHOD_POST and (path == "/v1/session" or path.begins_with("/v1/session/"))
+	var renew := token == "" or (stale.is_valid() and bool(stale.call()))
+	if renew and not signing and reauth.is_valid():
 		var signed: Result = await reauth.call()
 		if signed.code == "too_many_requests":
 			return signed

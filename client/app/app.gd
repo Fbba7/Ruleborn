@@ -17,8 +17,21 @@ static func ready(node: Node) -> void:
 	if services == null:
 		var root := node.get_tree().root
 		services = Services.build(root, Services.server_url())
+		services.auth_flow.reset = restart.bind(root)
 		root.add_child.call_deferred(AppLifetime.new())
 		# Development builds only: the state and the last actions, on F12 or a
 		# three-finger tap (ui/debug_overlay.gd).
 		if OS.is_debug_build():
 			root.add_child.call_deferred(DebugOverlay.new(services))
+
+
+## Signed out (AuthController): the services built anew, so nothing the
+## account's session held stays in memory, the panel's `shown` status in the
+## new ones, and the player back at the first screen.
+static func restart(shown: Dictionary, root: Window) -> void:
+	if services != null:
+		services.close()
+	services = Services.build(root, Services.server_url())
+	services.auth_flow.reset = restart.bind(root)
+	services.store.dispatch(&"auth_status", shown)
+	services.router.go(&"home")

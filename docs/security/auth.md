@@ -81,11 +81,113 @@ without OAuth's ceremony (one first-party client).
   (idempotent), so a retried sign-out is harmless.
 - Deletion, a ban and an identity change end every session (`Auth.endAll`).
 
+### Platform proofs (`server/src/auth_proofs.mjs`)
+
+`stores.mjs` already checked the signatures; around it:
+
+- Game Center: `(player, salt, timestamp)` is spent in `auth_spent` (by a
+  SHA-256, so the row names nobody) until the five minutes it could be
+  accepted in are over. Key fetched only from `static.gc.apple.com` /
+  `sandbox.gc.apple.com`, HTTPS, no query/port/user, no redirects
+  (`main.mjs`), chained to the pinned root, `O=Apple Inc.` in the subject.
+- Google: the ID token's `nonce` must be a server nonce (`POST
+  /v1/session/nonce`), in date, and is spent with the token. Nonces are
+  MACed, not stored, so asking for one writes nothing and an address held
+  back by the failure limit gets none.
+- `verifyPlatform(credential, once)` is still the one seam: tests fake the
+  platforms with a plain function; with no `once`, a real proof is refused,
+  so single use cannot be skipped by forgetting to pass it.
+
+### Web deletion page (`server/src/auth_http.mjs`, `server/web/delete.html`)
+
+- Each serving draws a nonce, puts it in the page for Google Identity
+  Services (`data-nonce`) and in a `__Host-rb_delete` cookie (`Secure;
+  HttpOnly; SameSite=Strict; Path=/`, five minutes). The POST's ID token must
+  carry exactly that nonce, once: a token minted for another page, another
+  browser, or replayed, is refused.
+- A POST with a foreign `Origin`, a `Sec-Fetch-Site` other than
+  same-origin/none, or a body that is not JSON is refused before anything
+  is read (no form can post JSON cross-site without a CORS preflight, which
+  the server never grants).
+- Strict CSP: `default-src 'none'`, the page's own script and style by a
+  per-response nonce, Google's sign-in and nothing else; `frame-ancestors
+  'none'`, `no-referrer`, `nosniff`, `no-store`.
+- `no_such_account` is still a distinct answer here: only someone holding a
+  valid Google token for that subject can ask, so it tells them only about
+  their own account.
+
+### Abuse limits
+
+The document's numbers, in `limits.mjs` (unchanged): sign-ins ten at once
+then one every 10 s by the identity a proof names (a refresh by its
+session), failures twenty at once then one every 3 s by address (/64 for
+IPv6). A limit answers `429 too_many_requests` with `Retry-After` and is the
+same whether or not the account exists (`auth_http.test.mjs`). A refresh
+failure counts as a failed sign-in; nonce requests are refused while an
+address is held.
+
+### On the device (`client/features/auth/`)
+
+- `AuthSession` holds the access token in memory (`Api.token`) and the
+  refresh token in `SecureStore`: Keychain
+  (`kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`) or Android Keystore
+  through the platform plugin singleton `RulebornSecureStore`
+  (`read/write/erase`). **Without the plugin nothing is persisted**: the next
+  launch signs in with the platform again. `FakeSecureStore` is the test
+  double. **Open:** the two native plugins are not in this repository;
+  their contract is in `secure_store.gd` and `platform_identity.gd`.
+- Expiry is timed on `Time.get_ticks_msec()` (monotonic) from the server's
+  `expiresIn`, renewed a minute early; one renewal at a time.
+- `PlatformIdentity` asks `RulebornGameCenter` / `RulebornGoogleSignIn` for a
+  proof (`request(nonce)` → `credential(answer)` signal), fetching the
+  server's nonce first for Google. Without either, the local server's stub.
+- `auth.json` on the phone holds only whether the player signed out and the
+  account's opaque id; no token is in any file (`auth_tests.gd` scans them).
+- HTTPS only (`Api.secure`); `HttpTransport` pins the server's chain when
+  the project setting `ruleborn/tls_pins` names a PEM file (Godot's
+  `TLSOptions.client(trusted_chain)`). **Owner to confirm:** pin the CA the
+  production certificate chains to (pinning the leaf would break at every
+  renewal); unset today, so the platform's authorities are trusted.
+
+### Sign-out on the device (`AuthController`)
+
+1. Everything waiting is sent if the server answers.
+2. The server ends the session (Bearer), or — the access token past its
+   hour — the session the refresh token names. With no network the phone
+   still forgets, and the refresh token is kept in secure storage only to
+   send that sign-out, first thing, when the server next answers.
+3. What still waits (§24.12's queue: a heist played offline) is **parked**
+   under the account's id beside the outbox — never sent as another account
+   (the server would refuse it as `lease_refused` and the queue would drop
+   it), never deleted. The confirm dialog says how many, and so does the
+   panel after. The same account signing in gets them back and sent.
+4. The lease stock and unsent session events go; every in-memory state goes
+   with the services, which `App.restart` builds anew.
+5. Signed out, nothing signs in again by itself (`ensure` answers
+   `signed_out`) until the player taps Sign in — on this launch or the next.
+
+A lost phone: "Sign out everywhere" from another device ends its session,
+but the phone's own Game Center or Google sign-in could still prove the
+identity again. The player should also remove the device from their Apple
+ID or Google account; the panel's words do not say so yet (**open**).
+
+### Interface
+
+`client/scripts/auth_panel.gd` (kit pieces, words from `AuthPresenter`):
+first launch, signing in, signed in (and on how many devices), offline,
+failed with the reason in words, signed out. Sign out and Sign out
+everywhere each confirm in `KitPanels.dialog` with the safe answer focused.
+**Shared-file edit:** two lines in `client/scripts/settings_screen.gd` add the
+panel to the Settings list (there is no Account tab yet; T10 can move it).
+
 ### Writes
 
 A sign-in writes one `sessions` row, a refresh one update, a sign-out one
-update. `server/load.json` is rewritten with them. **Owner to confirm:** this
-adds about one row a session to §24.1's write budget.
+update. `server/load.mjs` now models the device as it behaves — signing in
+once and refreshing when its hour is up — and `server/load.json` is
+rewritten: one billed row a session, engaged players 81.15 → 86.15 billed
+rows a day, $767 → $817 a month at a million monthly players. **Owner to
+confirm** this addition to §24.1's budget (the register is not edited here).
 
 ## Stopped here
 

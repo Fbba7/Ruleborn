@@ -3,7 +3,10 @@
 // translates; every decision is the service's.
 //
 //   POST /v1/session             {"credential": …}          → {account, token, expiresIn, refreshToken}
-//   POST /v1/session/…           nonce, refresh, end; GET /v1/session (auth_http.mjs)
+//   POST /v1/session/nonce                                   → {nonce, expiresIn}: for a Google ID token (auth_http.mjs)
+//   POST /v1/session/refresh     {"refreshToken"}           → a new pair; the one sent is spent
+//   POST /v1/session/end         {"everywhere"?, "refreshToken"?} → {ended}: this session, or every one
+//   GET  /v1/session                                         → {account, devices}
 //   PUT  /v1/islands/:realm      island bundle bytes         → {bundle}; heart or outer-1 … outer-6
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
 //   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?, "mode"?, "challenge"?, "universe"?} → the lease

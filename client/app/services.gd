@@ -10,6 +10,8 @@ var router: Router
 var api: Api
 var outbox: Outbox
 var account: AccountRepository
+## The session's tokens, kept on the phone (features/auth/).
+var auth: AuthSession
 var heists: HeistRepository
 var track: TrackRepository
 var shop: ShopRepository
@@ -62,6 +64,7 @@ var map_flow: MapController
 var realm_flow: RealmController
 var share_flow: ShareController
 var first_flow: FirstController
+var auth_flow: AuthController
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -91,6 +94,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	RealmState.register(s.store)
 	ShareState.register(s.store)
 	FirstState.register(s.store)
+	AuthState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
 		parent.add_child(t)
@@ -126,7 +130,10 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.notifier = LocalNotifier.new()
 	s.notices = DeviceNotices.new(DeviceNotices.FILE if outbox_path == Outbox.FILE
 		else outbox_path.get_basename() + "-notices.json")
+	s.auth = AuthSession.new(s.api, SecureStore.new(), PlatformIdentity.new(),
+		AuthSession.FILE if outbox_path == Outbox.FILE else outbox_path.get_basename() + "-auth.json")
 	s.api.reauth = s.session.bind(true)
+	s.api.stale = s.auth.stale
 	s.shop_flow = ShopController.new(s)
 	s.social_flow = SocialController.new(s)
 	s.workshop_flow = WorkshopController.new(s)
@@ -148,6 +155,7 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	s.realm_flow = RealmController.new(s)
 	s.share_flow = ShareController.new(s)
 	s.first_flow = FirstController.new(s)
+	s.auth_flow = AuthController.new(s)
 	# What the phone built, wove or assigned offline is answered when the
 	# outbox sends it (§24).
 	s.outbox.settled.connect(s.universe_flow.offline_settled)
@@ -174,8 +182,8 @@ func session(fresh := false) -> Result:
 		return Result.failure("age_check_first")
 	var held := str(store.get_slice(AppState.SESSION).get("account", ""))
 	var r := Result.success({"account": held})
-	if fresh or held == "" or api.token == "":
-		r = await account.sign_in(Services.credential())
+	if fresh or held == "" or not auth.fresh():
+		r = await auth.ensure(fresh)
 	if not r.ok:
 		return r
 	store.dispatch(&"signed_in", {"account": r.value["account"]})
@@ -265,8 +273,10 @@ func close() -> void:
 	realm_flow = null
 	share_flow = null
 	first_flow = null
+	auth_flow = null
 	if api != null:
 		api.reauth = Callable()
+		api.stale = Callable()
 	if transport != null and is_instance_valid(transport):
 		if transport.get_parent() != null:
 			transport.get_parent().remove_child(transport)
