@@ -1299,7 +1299,7 @@ DELIVERABLES = [
     ("10 to 13", "Accessibility", FRONTEND, client_tests(
         "a banner leads with its glyph, is announced, goes by itself, or stays until dismissed when the player asks (§20.8)",
         "a rehearsal can be paused at any time and run at 75%; a raid cannot be paused (§20.8)",
-        "every colour the client puts words in reads at 4.5:1 and at APCA's level for its size and weight, the realm's marks on their halo included, in both contrast modes (§21.8, §20.8)",
+        "every colour the client puts words in reads at 4.5:1 and at APCA's level for its size and weight, the realm's marks on their halo and every material's words on the stops they sit on included, in both contrast modes (§21.8, §20.8)",
         "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)",
         "every screen works with text at 150% and 200%: nothing wider than the phone, every control in reach (§20.8, §21.1)",
         "haptics: a light tap on a button, a warning as the alarm rises, a pulse as a ward or a pylon goes down, nothing when switched off (§21.8, §20.8)",
