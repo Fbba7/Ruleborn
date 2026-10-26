@@ -25,6 +25,7 @@ func run() -> void:
 	await _people()
 	await _lazy()
 	await _home()
+	await _fits()
 	_hud()
 	await _collect()
 
@@ -357,3 +358,61 @@ func _collect() -> void:
 			and int(kept[0]["stored"]) == 0,
 		"%s %s %s" % [routes, paid, kept])
 	s.close()
+
+
+## Home fits the phone (§21.1, §20.8): with every amount at its widest, in
+## every language, at 9:19.5 and 9:16 and with text at 100%, 150% and 200%,
+## every control it shows lies inside the screen, the top row, the side
+## buttons, the resource row and the tabs included, and nothing asks for more
+## width than the screen has.
+func _fits() -> void:
+	var bad := []
+	var was := tree.root.size
+	# Its own services, so the widest amounts never reach the other tests.
+	var kept: Services = App.services
+	App.services = Fixtures.answered(Services.build(tree.root, "", null, "user://outbox-fit-test.json"))
+	for tall: int in [1170, 960]:
+		tree.root.size = Vector2i(540, tall)
+		await tree.process_frame
+		tree.root.size = Vector2i(540, tall)
+		await tree.process_frame
+		for scale: int in [100, 150, 200]:
+			Settings.text_scale = scale
+			for locale: String in Strings.LOCALES:
+				Strings.set_locale(locale)
+				UniverseSample.fill(App.services.store, 6, 2, true)
+				var home: Home = await mount.call("home")
+				home.set_process(false)
+				await tree.process_frame
+				await tree.process_frame
+				for p: String in outside(home):
+					bad.append("%d:%d %d%% %s: %s" % [540, tall, scale, locale, p])
+				home.queue_free()
+				await tree.process_frame
+	Settings.text_scale = 100
+	Strings.set_locale("en")
+	tree.root.size = was
+	App.services.close()
+	App.services = kept
+	check.call("home fits the phone with every amount at its widest, in every language, at 9:19.5 and 9:16 and "
+			+ "with text at 100%, 150% and 200%: every control inside the screen (21.1, 20.8)",
+		bad.is_empty(), "; ".join(bad.slice(0, 12)))
+
+
+## What on a screen lies outside it, or asks for more width than it has.
+static func outside(screen: Control) -> Array[String]:
+	var frame := screen.get_viewport_rect()
+	var out: Array[String] = []
+	if frame.size.y <= frame.size.x:
+		out.append("the frame is %s, not portrait" % frame.size)
+	for c: Control in screen.find_children("*", "Control", true, false):
+		if not c.is_visible_in_tree() or c.size.x <= 0.0 or c is UniverseMenu or c.get_parent() is UniverseMenu:
+			continue
+		var r := c.get_global_rect()
+		if r.position.x < frame.position.x - 1.0 or r.end.x > frame.end.x + 1.0 \
+				or r.position.y < frame.position.y - 1.0 or r.end.y > frame.end.y + 1.0:
+			var said: String = str(c.get("text")) if c.get("text") != null else c.get_class()
+			out.append("%s (%s) at %s" % [c.name, said.replace("\n", " "), r])
+		if out.size() > 6:
+			break
+	return out

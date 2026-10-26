@@ -4,7 +4,9 @@ extends PanelContainer
 ## bar: a dark card edged in the alarm's red with the design's raided icon,
 ## how many raids came while the player was away, a way to the defence log,
 ## and a close control. §21.8: a notice that carries information stays until
-## the player dismisses it; it never clears itself.
+## the player dismisses it; it never clears itself. With large text (§20.8)
+## the words take the card's whole width, the mark, See and the close control
+## in a row beneath, so the card stays a few lines high.
 
 signal seen
 signal dismissed
@@ -20,9 +22,9 @@ func _init() -> void:
 	box.set_content_margin_all(UI.px(8))
 	box.content_margin_left = UI.px(10)
 	add_theme_stylebox_override("panel", box)
+	var large := Settings.text_scale >= 150
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
-	add_child(row)
 	var mark := TextureRect.new()
 	mark.texture = UniverseHud.icon("alert_raided")
 	mark.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -35,7 +37,20 @@ func _init() -> void:
 	words.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	words.add_theme_font_override("font", UniverseHud.words_font())
 	words.add_theme_color_override("font_color", UniverseHud.WORDS)
-	row.add_child(words)
+	if large:
+		words.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		var stack := VBoxContainer.new()
+		stack.add_theme_constant_override("separation", UI.px(6))
+		stack.add_child(words)
+		stack.add_child(row)
+		add_child(stack)
+		var room := Control.new()
+		room.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		room.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(room)
+	else:
+		add_child(row)
+		row.add_child(words)
 	see_button = UI.button(Strings.t("HOME_RAIDED_SEE"), func() -> void: seen.emit(), true)
 	row.add_child(see_button)
 	close_button = UI.button("×", func() -> void: dismissed.emit(), false, UniverseHud.CARD[1],
@@ -44,7 +59,6 @@ func _init() -> void:
 			"font_disabled_color"]:
 		close_button.add_theme_color_override(colour, UniverseHud.WORDS)
 	row.add_child(close_button)
-
 
 ## The raids not yet seen; none hides the notice.
 func show_raids(unseen: int) -> void:

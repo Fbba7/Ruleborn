@@ -66,3 +66,26 @@ static func extras() -> Dictionary:
 		{"kind": "star_well", "realm": "heart", "stored": 320, "holds": 320},
 		{"kind": "garden", "realm": "outer-4", "stored": 85, "holds": 200},
 		{"kind": "aether_spring", "realm": "outer-2", "stored": 40, "holds": 140}]}
+
+
+## Fills a store as a mid-game home sees it: the universe, the producers, the
+## raids, the Keeper, the wallet, Renown, strain and the season track. `most`
+## gives each amount its widest (seven figures, every producer full), as the
+## home's fit check asks.
+static func fill(store: Store, outer := 6, raids := 2, most := false) -> void:
+	var more := extras()
+	var producers: Array = more["producers"]
+	if most:
+		producers = producers.map(func(p: Dictionary) -> Dictionary:
+			return p.merged({"stored": p["holds"]}, true))
+	store.dispatch(&"universe_loaded", {"view": view(outer)})
+	store.dispatch(&"roster_loaded", {"view": {"producers": producers}})
+	store.dispatch(&"defences_badge", {"unseen": raids})
+	store.dispatch(&"keeper_loaded", {"view": {"level": 99 if most else 14, "xp": 1240, "toNext": 2000}})
+	store.dispatch(&"wallet_loaded", {"balance": {"starlight": 9999999 if most else 142050,
+		"essence": 9999999 if most else 61020}})
+	store.dispatch(&"codex_loaded", {"view": {"aether": 9999999 if most else 31400}})
+	store.dispatch(&"league_loaded", {"view": {"renown": 99999 if most else 1460, "season": 2}})
+	store.dispatch(&"weaving_loaded", {"view": {"stability": {"strain": more["strain"], "band": more["band"]}}})
+	store.dispatch(&"track_loaded", {"view": {"season": 2, "stars": 1130, "claimed": 6, "tiers": [],
+		"next": {"tier": 7, "cost": 1200}}})

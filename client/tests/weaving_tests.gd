@@ -301,17 +301,21 @@ func _online() -> void:
 			heart = r
 	var offers: Array = heart.get("offers", [])
 	var first: String = str((heart.get("recommended", []) as Array).front()) if heart.has("recommended") else ""
-	var priced := 0
+	var priced := -1
+	var points := -1.0
 	for o: Dictionary in offers:
 		if o["law"] == first:
 			priced = int(o["price"])
+			points = float(o["points"])
 	var before := int(v.get("aether", 0))
 	var w := WeavingPresenter.screen(s.store.get_slice(WeavingState.WEAVING), NOW)
 	if first != "":
 		await s.weaving_flow.weave("heart", 1, first)
 	var after: Dictionary = s.store.get_slice(WeavingState.WEAVING)
 	check.call(name,
-		offers.size() == 3 and (heart.get("recommended", []) as Array).size() >= 2 and priced > 0
+		offers.size() == 3 and (heart.get("recommended", []) as Array).size() >= 2
+			# High Tide's era makes Slow rivers free (5.5): a law is free only at no points.
+			and (priced > 0 or (priced == 0 and points == 0.0))
 			# A new Keeper has no Aether yet: the server's refusal names the
 			# cost it would have charged, which is the price shown.
 			and ((after["error"] == "not_enough_aether" and int(after["detail"].get("cost", -1)) == priced)

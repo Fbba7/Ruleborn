@@ -53,7 +53,28 @@ func _width() -> float:
 	var name_w := UniverseHud.names_font().get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, _name_px()).x
 	var chip_w := UniverseHud.words_font().get_string_size(renown, HORIZONTAL_ALIGNMENT_LEFT, -1, _chip_px()).x \
 		+ UI.px(34)
-	return _ring() + UI.px(10) + maxf(name_w, chip_w if renown != "" else 0.0) + UI.px(6)
+	return _text_x() + maxf(name_w, chip_w + _gem_out() if renown != "" else 0.0) + UI.px(6)
+
+
+## The level disc's radius: it grows with the text.
+func _disc() -> float:
+	return maxf(UI.px(11.5), UI.text_px(13.0) * 0.75)
+
+
+## Where the name starts: past the ring, and past the level disc, which large
+## text pushes out beyond the ring.
+func _text_x() -> float:
+	return _ring() + UI.px(11) + _grown()
+
+
+## How much larger text has grown the level disc.
+func _grown() -> float:
+	return _disc() - UI.px(11.5)
+
+
+## How far the Renown gem reaches left of its chip, clear of the level disc.
+func _gem_out() -> float:
+	return _grown()
 
 
 func _draw() -> void:
@@ -78,7 +99,7 @@ func _draw() -> void:
 	draw_arc(c, r, 0.0, TAU, 64, UniverseHud.INK_LINE, UniverseHud.outline_px(), true)
 	# The level on a gold disc at the ring's foot.
 	var lc := c + Vector2(r * 0.72, r * 0.72)
-	var lr := maxf(UI.px(11.5), UI.text_px(13.0) * 0.75)
+	var lr := _disc()
 	UniverseHud.ball(self, lc, lr, UniverseHud.GOLD, UniverseHud.GOLD_RIM)
 	var nf := UniverseHud.numbers_font()
 	var npx := UI.text_px(14.0)
@@ -86,7 +107,7 @@ func _draw() -> void:
 	UniverseHud.inked(self, nf, Vector2(lc.x - lr * 2.0, lc.y + nf.get_ascent(npx) * 0.42), digits, npx,
 		Color.WHITE, lr * 4.0, HORIZONTAL_ALIGNMENT_CENTER)
 	# The name, and Renown beneath it.
-	var x := c.x + r + UI.px(9)
+	var x := _text_x() + (c.x - r - UI.px(2))
 	var names := UniverseHud.names_font()
 	var top: float = c.y - UI.px(4) if renown != "" else c.y + names.get_ascent(_name_px()) * 0.35
 	UniverseHud.inked(self, names, Vector2(x, top), title, _name_px(), UniverseHud.WORDS)
@@ -94,7 +115,7 @@ func _draw() -> void:
 		var words := UniverseHud.words_font()
 		var w := words.get_string_size(renown, HORIZONTAL_ALIGNMENT_LEFT, -1, _chip_px()).x
 		var h := _chip_px() * 1.5
-		var chip := Rect2(Vector2(x + UI.px(8), top + UI.px(7)), Vector2(w + UI.px(26), h))
+		var chip := Rect2(Vector2(x + UI.px(8) + _gem_out(), top + UI.px(7)), Vector2(w + UI.px(26), h))
 		UniverseHud.glass(h * 0.5).draw(get_canvas_item(), chip)
 		var gem := _gem
 		var g := h * 1.15

@@ -51,6 +51,8 @@ var notice: UniverseNotice
 var collect_button: Button
 
 var _top: Control
+## The two edges of side buttons.
+var _edges: Array[Control] = []
 var _foot: HFlowContainer
 ## Each side button's badge as last drawn, so a button is rebuilt only when
 ## its badge changes.
@@ -85,10 +87,12 @@ func _ready() -> void:
 	var middle := HBoxContainer.new()
 	middle.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	middle.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	middle.add_child(_edge(LEFT))
+	_edges = [_edge(LEFT), _edge(RIGHT)]
+	middle.add_child(_edges[0])
 	middle.add_child(_room())
-	middle.add_child(_edge(RIGHT))
+	middle.add_child(_edges[1])
 	column.add_child(middle)
+	column.pre_sort_children.connect(_fit_edges.bind(column, middle))
 	# The foot over the world, just above the tabs: the goal and Collect side
 	# by side; the raid notice in their place while it shows, as the designs
 	# raise their raid banner over Collect.
@@ -142,7 +146,9 @@ func _load() -> void:
 ## The Keeper badge at the top left, strain at the top right, and the
 ## resources in a full-width row beneath.
 func _build_top(column: VBoxContainer) -> void:
-	var top := HBoxContainer.new()
+	# A flow, so strain goes to a line of its own when the two will not fit
+	# side by side (large text, long words).
+	var top := HFlowContainer.new()
 	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	keeper_plate = UniverseBadge.new()
 	keeper_plate.visible = false
@@ -150,8 +156,8 @@ func _build_top(column: VBoxContainer) -> void:
 	keeper_plate.pressed.connect(func() -> void: Haptics.play("tap"))
 	keeper_plate.pressed.connect(func() -> void: menu.open())
 	top.add_child(keeper_plate)
-	top.add_child(_room())
 	strain = UniverseStrain.new()
+	strain.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	strain.visible = false
 	strain.set_meta("frequent", false)
 	strain.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
@@ -159,6 +165,13 @@ func _build_top(column: VBoxContainer) -> void:
 	strain.pressed.connect(func() -> void: App.services.router.go(&"weaving"))
 	top.add_child(strain)
 	column.add_child(top)
+	# Strain fits beside the badge on the screen's own width, never the row's,
+	# which a pill too wide would stretch.
+	top.pre_sort_children.connect(func() -> void:
+		var frame := column.get_parent() as MarginContainer
+		var room := get_viewport_rect().size.x - frame.get_theme_constant("margin_left") \
+			- frame.get_theme_constant("margin_right")
+		strain.fit(room - keeper_plate.get_combined_minimum_size().x - top.get_theme_constant("h_separation")))
 	purse = UniversePurse.new()
 	column.add_child(purse)
 	_top = purse
@@ -221,6 +234,26 @@ func _build_tabs(badges: Dictionary) -> void:
 	var chosen := tabs.buttons["islands"] as Button
 	for l: Label in chosen.find_children("*", "Label", true, false):
 		l.add_theme_constant_override("outline_size", maxi(UI.px(2), ceili(l.get_theme_font_size("font_size") * 0.13)))
+	tabs.resized.connect(_fit_tab_words, CONNECT_DEFERRED)
+
+
+## Where large text would cut the other tabs' names short ("ISLA…"), they show
+## their icons alone, each still named aloud; the chosen tab keeps its name if
+## it fits. A word in pieces reads worse than none.
+func _fit_tab_words() -> void:
+	var words := {}
+	var cut := false
+	for key: String in tabs.buttons:
+		for l: Label in (tabs.buttons[key] as Button).find_children("*", "Label", true, false):
+			if l.get_parent() is VBoxContainer:
+				words[key] = l
+				var w := l.get_theme_font("font").get_string_size(l.text.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1,
+					l.get_theme_font_size("font_size")).x
+				l.set_meta("cut", w > (tabs.buttons[key] as Button).size.x - UI.px(4))
+				cut = cut or (key != tabs.active and l.get_meta("cut"))
+	for key: String in words:
+		var l: Label = words[key]
+		l.visible = not (l.get_meta("cut") or (cut and key != tabs.active))
 
 
 ## A night tint over the world behind the top's or the foot's interface, so
@@ -276,10 +309,37 @@ func _on_realm(id: String) -> void:
 ## tabs, as the designs fill it; the goal, Collect and the raid notice float
 ## over its foot, as the designs' Collect and raid banner do. Its pins keep
 ## clear of the side buttons.
+## The side buttons give way where the screen has no height for them (text at
+## 200% on a shorter phone): every place they lead to is on the badge's menu,
+## and the raids are on the notice.
+func _fit_edges(column: VBoxContainer, middle: Control) -> void:
+	var frame := column.get_parent() as MarginContainer
+	var room := get_viewport_rect().size.y - frame.get_theme_constant("margin_top") \
+		- frame.get_theme_constant("margin_bottom")
+	var need := 0.0
+	var shown := 0
+	for c: Control in column.get_children():
+		if c.visible and c != middle:
+			need += c.get_combined_minimum_size().y
+			shown += 1
+	need += column.get_theme_constant("separation") * shown
+	var tall := 0.0
+	for edge: Control in _edges:
+		for holder: Control in edge.get_children():
+			tall += holder.get_combined_minimum_size().y + edge.get_theme_constant("separation")
+	tall = tall / maxf(1.0, float(_edges.size()))
+	var fits := need + tall <= room
+	for edge: Control in _edges:
+		if edge.visible != fits:
+			edge.visible = fits
+
+
 func _frame_world() -> void:
 	world.fit_between(_top, tabs)
 	var clear: Array[Rect2] = []
 	for route: StringName in sides:
+		if not (sides[route] as Control).is_visible_in_tree():
+			continue
 		var r := (sides[route] as Control).get_global_rect()
 		clear.append(Rect2(r.position - world.global_position, r.size))
 	world.keep_clear = clear
