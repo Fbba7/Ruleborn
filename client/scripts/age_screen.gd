@@ -12,7 +12,7 @@ func _ready() -> void:
 	App.ready(self)
 	var column := ScreenKit.frame(self)
 	var top := Control.new()
-	top.custom_minimum_size.y = UI.px(36)
+	top.custom_minimum_size.y = UI.px(36 if Settings.text_scale <= 125 else 0)
 	column.add_child(top)
 	# The design's first launch: the gold logo, the line under it, then the
 	# universe's mark.
@@ -27,6 +27,8 @@ func _ready() -> void:
 	var mark := ScreenKit.icon("screens", "universe", 180.0)
 	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	mark.size_flags_vertical = Control.SIZE_EXPAND | Control.SIZE_SHRINK_CENTER
+	# At large text the question and its answers need the height.
+	mark.visible = Settings.text_scale <= 125
 	column.add_child(mark)
 	question_label = ScreenKit.text("", 20.0, "words", "parchment", false, true)
 	question_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
