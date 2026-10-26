@@ -83,11 +83,18 @@ static func said(w: Dictionary) -> String:
 
 ## §20.11's terms-of-use gate: shown until the player has accepted the
 ## current terms, once the server has said which they are.
+## The link is a path on the game's own server, which the screen puts after
+## its address: anything else the answer names — `@host`, `.host`, a whole
+## URL — would open another site, so it is the terms' own path instead
+## (the security review's SR-06).
 static func terms(w: Dictionary) -> Dictionary:
 	var t: Dictionary = w.get("terms", {})
 	var show := not t.is_empty() and not bool(t.get("accepted", false))
+	var url := str(t.get("url", "/terms"))
+	if RegEx.create_from_string("^/[a-z/]+$").search(url) == null:
+		url = "/terms"
 	return {"show": show, "text": Strings.t("WORKSHOP_TERMS", str(t.get("version", ""))) if show else "",
-		"url": str(t.get("url", "/terms"))}
+		"url": url}
 
 
 ## §18.6: the island just rehearsed may be published once it is cleared, on

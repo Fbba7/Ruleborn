@@ -15,7 +15,8 @@
 // `verify(credential, once)` takes `once` from the service: `spend(key,
 // until)` and `spendNonce(nonce)` (auth.mjs), and `expectNonce`, the one
 // nonce a web page's cookie holds (CSRF: the token must be the one the page
-// asked for). With no `once` a real proof is
+// asked for), with `audience` and `freshMs` (that page's client id alone,
+// issued minutes ago, T12's SR-11). With no `once` a real proof is
 // refused: the check that makes it single-use is never skipped by
 // omission. The stubbed sign-in of a local server (stores.mjs signIn) is
 // passed through as it was.
@@ -57,8 +58,11 @@ export function platformProofs({ gameCenter = null, google = null } = {}) {
         return once.spend(key, timestamp + GAME_CENTER_FRESH_MS) ? identity : null;
       }
       if (identity.startsWith("gp:")) {
-        const nonce = claims(credential.idToken)?.nonce;
+        const c = claims(credential.idToken) ?? {};
+        const nonce = c.nonce;
         if (typeof nonce !== "string" || (once.expectNonce != null && !same(nonce, once.expectNonce))) return null;
+        if (once.audience != null && c.aud !== once.audience) return null;
+        if (once.freshMs != null && !(Number(c.iat) * 1000 >= once.now - once.freshMs)) return null;
         return once.spendNonce(nonce) ? identity : null;
       }
       return null;

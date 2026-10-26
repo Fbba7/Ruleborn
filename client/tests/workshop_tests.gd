@@ -171,6 +171,12 @@ func _terms_gate() -> void:
 			and transport.calls[-1]["route"] == "PUT /v1/terms" and sent == {"version": "v2"}
 			and not after["show"] and WorkshopPresenter.said(slice) == Strings.t("WORKSHOP_DONE_TERMS"),
 		"%s | %s | %s" % [gated, sent, after])
+	# SR-06: the link opened is a path on the game's own server, whatever the answer names.
+	var links: Array[String] = []
+	for u: String in ["/terms", "@evil.example/x", ".evil.example/", "https://evil.example/", "/terms\\@x"]:
+		links.append(str(WorkshopPresenter.terms({"terms": {"version": "v2", "url": u}})["url"]))
+	check.call("SR-06: the terms link is a path on the game's own server, never another site",
+		links == ["/terms", "/terms", "/terms", "/terms", "/terms"], str(links))
 	s.close()
 
 

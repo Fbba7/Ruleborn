@@ -94,9 +94,33 @@ const MICRO = 1_000_000;
 
 export class Build {
   constructor(wasmBytes) {
-    this.x = new WebAssembly.Instance(new WebAssembly.Module(wasmBytes), {}).exports;
-    this.x.rb_rules_version();
+    this.module = new WebAssembly.Module(wasmBytes);
+    this.instantiate();
     this.rulesVersion = hex(this.buffer().slice(0, 32));
+    // A trap (a panic, built to abort) leaves the instance's memory as it
+    // stopped — its buffer's lock held — and every later call traps too: one
+    // bad input would stop every heist on this rules version until a restart
+    // (SR-07). So a trap costs only its own call: the instance is made again,
+    // fresh, before the error goes on to the caller.
+    for (const name of Object.getOwnPropertyNames(Build.prototype)) {
+      const f = this[name];
+      if (name === "constructor" || name === "instantiate" || typeof f !== "function") continue;
+      this[name] = (...args) => {
+        try {
+          return f.apply(this, args);
+        } catch (err) {
+          if (err instanceof WebAssembly.RuntimeError) this.instantiate();
+          throw err;
+        }
+      };
+    }
+  }
+
+  /** A fresh instance, its buffer made once so that `buffer()`'s view is
+   *  never of memory the first call grows away. */
+  instantiate() {
+    this.x = new WebAssembly.Instance(this.module, {}).exports;
+    this.x.rb_rules_version();
   }
 
   static load(path) {

@@ -190,8 +190,8 @@ test("the web deletion page serves a nonce in a host-only, script-proof cookie a
   const csp = p.res.headers.get("content-security-policy");
   assert.match(csp, /default-src 'none'/);
   assert.match(csp, /frame-ancestors 'none'/);
-  const scriptNonce = /script-src 'nonce-([^']+)'/.exec(csp)[1];
-  for (const tag of p.html.match(/<script[^>]*>/g)) assert.ok(tag.includes(`nonce="${scriptNonce}"`), tag);
+  assert.match(csp, /script-src 'sha256-[^']+' https:\/\/accounts\.google\.com\/gsi\/client;/, "its own script by hash");
+  assert.match(csp, /img-src data:/, "Google's logo");
   assert.ok(!p.html.includes("{{"), "every placeholder filled");
   assert.equal(p.res.headers.get("cache-control"), "no-store");
   assert.equal(p.res.headers.get("referrer-policy"), "no-referrer");
@@ -199,7 +199,7 @@ test("the web deletion page serves a nonce in a host-only, script-proof cookie a
   assert.notEqual(second.nonce, p.nonce, "a nonce a serving");
 });
 
-test("a web deletion needs the Google token that carries this browser's nonce, once, sent from this site (20.11, CSRF)", async () => {
+test("a web deletion needs a fresh Google token for the web client that carries this browser's nonce, once, sent from this site (20.11, CSRF, SR-11)", async () => {
   const r = real();
   const handle = handler(r.t.service, { webClientId: WEB });
   const me = await r.signIn({ idToken: r.idToken({ nonce: r.t.service.auth.nonce().nonce }) });
@@ -218,6 +218,13 @@ test("a web deletion needs the Google token that carries this browser's nonce, o
                    [401, "google_identity_refused"], "another browser's nonce");
   assert.deepEqual(await status(await remove(handle, { idToken: r.idToken({ aud: WEB }), cookie: p.cookie })),
                    [401, "google_identity_refused"], "a token with no nonce");
+  // T12's SR-11: the game's own tokens delete nothing, nor one issued long ago.
+  assert.deepEqual(await status(await remove(handle, { idToken: r.idToken({ nonce: p.nonce }), cookie: p.cookie })),
+                   [401, "google_identity_refused"], "a token minted for the game, not the page");
+  const s = Math.floor(r.clock.now / 1000);
+  assert.deepEqual(await status(await remove(handle, { idToken: r.idToken({ aud: WEB, nonce: p.nonce, iat: s - 6 * 60 }),
+                                                       cookie: p.cookie })),
+                   [401, "google_identity_refused"], "issued six minutes ago");
   assert.equal(r.t.service.account(me.token), me.account, "nothing deleted yet");
   const ok = await remove(handle, { idToken, cookie: p.cookie });
   assert.equal(ok.status, 200);

@@ -161,7 +161,7 @@ import { deleteAccount, reapplyDeletions } from "./accounts.mjs";
 import { deleteByGoogle, deletePage, sessionRoute } from "./auth_http.mjs";
 import { planning } from "./keeper.mjs";
 import { offer } from "./matchmaking.mjs";
-import { privacyPage, supportPage, termsPage } from "./pages.mjs";
+import { PAGE_HEADERS, privacyPage, supportPage, termsPage } from "./pages.mjs";
 import { Limiter, peerKey } from "./limits.mjs";
 import { Refused, TARGET_LISTS_MS } from "./service.mjs";
 import { Social } from "./social.mjs";
@@ -371,6 +371,9 @@ export function handler(service, { webClientId = null, appleNotifications = null
     }
     const response = await answer(request);
     response.headers.set("strict-transport-security", "max-age=31536000");
+    // No answer is sniffed into another type: a bundle or a replay's bytes
+    // are never run as a page (SR-04).
+    response.headers.set("x-content-type-options", "nosniff");
     return response;
   };
   async function answer(request) {
@@ -456,7 +459,7 @@ export function handler(service, { webClientId = null, appleNotifications = null
         // Asked for afresh each time: a player asked to accept new terms
         // must never be shown a cached copy of the old ones.
         return new Response(request.method === "HEAD" ? null : html, {
-          headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache" } });
+          headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-cache", ...PAGE_HEADERS } });
       }
       if (parts[1] === "terms" && parts.length === 2) {
         const me = who();
@@ -759,7 +762,7 @@ export function handler(service, { webClientId = null, appleNotifications = null
         case "POST /v1/account": {
           if (parts[2] !== "delete") return json({ error: "no_such_route" }, 404);
           // The page's Google ID token, bound to its cookie (auth_http.mjs).
-          return await deleteByGoogle(service, request, { signIn, read: body });
+          return await deleteByGoogle(service, request, { signIn, read: body, webClientId });
         }
         case "DELETE /v1/account": {
           // F43: the deletion screen's "withdraw my islands too".

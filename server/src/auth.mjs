@@ -196,10 +196,11 @@ export class Auth {
   /** The platform identity `credential` proves, once (auth_proofs.mjs):
    *  the service's `verifyPlatform` given what spends a proof. With
    *  `expectNonce`, a Google token must carry exactly that nonce — the web
-   *  page's, bound to its cookie. */
-  prove(credential, { expectNonce = null } = {}) {
+   *  page's, bound to its cookie; with `audience`, be for that client id
+   *  alone; with `freshMs`, have been issued no longer ago than that. */
+  prove(credential, { expectNonce = null, audience = null, freshMs = null } = {}) {
     return this.service.verifyPlatform(credential, {
-      expectNonce,
+      expectNonce, audience, freshMs, now: this.service.now(),
       spend: (key, until) => this.spend(key, until),
       spendNonce: (nonce) => this.spendNonce(nonce),
     });

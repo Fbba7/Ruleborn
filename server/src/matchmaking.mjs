@@ -72,11 +72,17 @@ export function prior(realmLevel, origin = "authored") {
   return fresh(ratingFor((lo + hi) / 2));
 }
 
+/** How long one making of the candidates serves every caller (SR-03). */
+export const CANDIDATES_MS = 60 * 1000;
+
 export class Matchmaking {
   constructor(service) {
     this.service = service;
     /** Each bundle's chapter, by its hash (§7.6). */
     this.chapters = new Map();
+    /** The last candidates made, and when and from what (`candidates`). */
+    this.made = null;
+    this.publishes = 0;
   }
 
   get db() { return this.service.db; }
@@ -109,6 +115,7 @@ export class Matchmaking {
    *  one keeps its mean and widens back to the prior's deviation, since the
    *  defence it measured has changed (G30). */
   published(owner, realm, realmLevel, now, origin = "authored") {
+    this.publishes++;
     const had = this.islandRating(owner, realm);
     const start = prior(realmLevel, origin);
     const r = had ? { ...had, deviation: Math.max(had.deviation, start.deviation) } : { ...start, games: 0 };
@@ -184,6 +191,25 @@ export class Matchmaking {
    * that are no longer anyone's current island.
    */
   candidates(now = this.service.now()) {
+    // Two reads a candidate: at every GET /v1/offer and Observatory view
+    // that was the whole game's islands read for one caller (SR-03). Kept
+    // CANDIDATES_MS, and made again at once when an island is published or
+    // taken away or its owner banned or deleted, which a few aggregate
+    // reads tell; what else moves in the meantime (a rating, Renown, a
+    // shield running out) the lease checks again, or only orders the list.
+    const seen = this.db.prepare(
+      `SELECT (SELECT COUNT(*) FROM islands) AS n, (SELECT MAX(changed_at) FROM islands) AS changed,
+              (SELECT MAX(banned_at) FROM accounts) AS banned, (SELECT MAX(deleted_at) FROM accounts) AS deleted`)
+      .get();
+    const key = `${this.publishes}:${seen.n}:${seen.changed}:${seen.banned}:${seen.deleted}`;
+    const m = this.made;
+    if (m && m.key === key && now >= m.at && now - m.at < CANDIDATES_MS) return m.list;
+    const list = this.fresh(now);
+    this.made = { key, at: now, list };
+    return list;
+  }
+
+  fresh(now) {
     const live = this.db.prepare(
       `SELECT s.bundle, i.owner, i.realm, s.realm_level, a.keeper_level, i.origin
          FROM islands i JOIN snapshots s ON s.bundle = i.bundle JOIN accounts a ON a.id = i.owner

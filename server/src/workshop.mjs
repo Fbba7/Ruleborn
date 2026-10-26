@@ -112,10 +112,19 @@ export class Workshop {
     return this.db.prepare("SELECT * FROM accounts WHERE id = ?").get(id);
   }
 
-  /** §20.5's age band, declared at the neutral age gate (§20.11). */
+  /** §20.5's age band, declared at the neutral age gate (§20.11). §20.1:
+   *  "After the first answer the band can only tighten from the device …
+   *  the server refuses any other loosening": the first answer sets it,
+   *  and after it a looser band is refused, the band held as it was. */
   setAgeBand(account, band) {
-    if (!["13-15", "16-17", "18+"].includes(band)) throw new Refused(400, "no_such_age_band");
-    this.db.prepare("UPDATE accounts SET age_band = ? WHERE id = ?").run(band, account);
+    const order = ["13-15", "16-17", "18+"];
+    if (!order.includes(band)) throw new Refused(400, "no_such_age_band");
+    const was = this.db.prepare("SELECT age_band, age_answered_at FROM accounts WHERE id = ?").get(account);
+    if (was.age_answered_at !== null && order.indexOf(band) > order.indexOf(was.age_band)) {
+      throw new Refused(403, "age_band_only_tightens", { ageBand: was.age_band });
+    }
+    this.db.prepare("UPDATE accounts SET age_band = ?, age_answered_at = COALESCE(age_answered_at, ?) WHERE id = ?")
+      .run(band, this.now(), account);
     return { ageBand: band };
   }
 

@@ -13,14 +13,16 @@
 // ever in a URL, and nothing here logs one.
 
 import { readFileSync } from "node:fs";
-import { randomBytes } from "node:crypto";
 
 import { deleteAccount } from "./accounts.mjs";
+import { PAGE_HEADERS, hashOf } from "./pages.mjs";
 import { Refused } from "./refused.mjs";
 import { NONCE_MS, peekRefresh } from "./tokens.mjs";
 
 /** G39's page, with the web OAuth client id and nonces put in (server/web/). */
 const DELETE_PAGE = readFileSync(new URL("../web/delete.html", import.meta.url), "utf8");
+/** The page's own script, by its hash: the one inline script its policy runs. */
+const DELETE_SCRIPT = hashOf(/<script>([\s\S]*?)<\/script>/.exec(DELETE_PAGE)[1]);
 /** The cookie the page's nonce rides in: `__Host-` so only this host, over
  *  HTTPS, at `/`, can have set it. */
 export const DELETE_COOKIE = "__Host-rb_delete";
@@ -96,28 +98,29 @@ export async function sessionRoute(service, request, parts, { signIn, limit, rea
 
 /**
  * G39's page. Each serving draws a nonce for Google to sign into the ID
- * token, kept in a cookie only this host can set and no script can read,
- * and a second, CSP's, for the page's own script and style: nothing else
- * runs on it but Google's sign-in.
+ * token, kept in a cookie only this host can set and no script can read.
+ * No script runs on it but its own, by hash, and Google's sign-in. Google's
+ * script sets inline styles and draws its logo from a data: image, so
+ * styles take 'unsafe-inline', and only styles (T12's SR-04, checked in
+ * Chromium). Each value is put in by a function, so a `$` in it is never a
+ * pattern.
  */
 export function deletePage(service, webClientId) {
   const { nonce } = service.auth.nonce();
-  const csp = randomBytes(16).toString("base64");
-  const page = DELETE_PAGE.replaceAll("{{WEB_CLIENT_ID}}", webClientId)
-    .replaceAll("{{NONCE}}", nonce).replaceAll("{{CSP_NONCE}}", csp);
+  const page = DELETE_PAGE.replaceAll("{{WEB_CLIENT_ID}}", () => webClientId)
+    .replaceAll("{{NONCE}}", () => nonce);
   return new Response(page, { headers: {
     "content-type": "text/html; charset=utf-8",
     "cache-control": "no-store",
+    ...PAGE_HEADERS,
     "x-frame-options": "DENY",
-    "x-content-type-options": "nosniff",
-    "referrer-policy": "no-referrer",
     "content-security-policy": [
       "default-src 'none'",
-      `script-src 'nonce-${csp}' https://accounts.google.com/gsi/client`,
-      `style-src 'nonce-${csp}' https://accounts.google.com/gsi/style`,
+      `script-src ${DELETE_SCRIPT} https://accounts.google.com/gsi/client`,
+      "style-src 'unsafe-inline' https://accounts.google.com/gsi/style",
       "frame-src https://accounts.google.com/gsi/",
       "connect-src 'self' https://accounts.google.com/gsi/",
-      "img-src https://*.googleusercontent.com",
+      "img-src data: https://*.googleusercontent.com",
       "base-uri 'none'",
       "form-action 'none'",
       "frame-ancestors 'none'",
@@ -134,7 +137,7 @@ export function deletePage(service, webClientId) {
  * refused before anything is read: a foreign Origin, a cross-site fetch, or
  * a body that is not JSON (which no form can send without CORS's leave).
  */
-export async function deleteByGoogle(service, request, { signIn, read }) {
+export async function deleteByGoogle(service, request, { signIn, read, webClientId = null }) {
   const own = new URL(request.url).origin;
   const origin = request.headers.get("origin");
   const site = request.headers.get("sec-fetch-site");
@@ -149,7 +152,11 @@ export async function deleteByGoogle(service, request, { signIn, read }) {
     if (typeof idToken !== "string") throw new Refused(400, "malformed_body");
     const credential = { idToken };
     await service.preparePlatform(credential);
-    const identity = service.auth.prove(credential, { expectNonce: cookie(request, DELETE_COOKIE) ?? "" });
+    // T12's SR-11: a token the game signs in with deletes nothing here —
+    // only one minted for the web client, minutes ago, carrying this
+    // browser's nonce.
+    const identity = service.auth.prove(credential, { expectNonce: cookie(request, DELETE_COOKIE) ?? "",
+                                                      audience: webClientId, freshMs: NONCE_MS });
     if (typeof identity !== "string" || !identity.startsWith("gp:")) {
       throw new Refused(401, "google_identity_refused");
     }

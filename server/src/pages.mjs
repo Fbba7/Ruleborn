@@ -10,6 +10,8 @@
 // the page is not served, since contact details that reach nobody are not
 // contact details.
 
+import { createHash } from "node:crypto";
+
 import { collected, load } from "./privacy.mjs";
 import { TERMS, TERMS_VERSION } from "./safety.mjs";
 
@@ -28,6 +30,19 @@ const STYLE = `body{font:17px/1.5 system-ui,sans-serif;max-width:42rem;margin:0 
 color:#221c3a;background:#fbf8f1}h1{font-size:1.6rem}h2{font-size:1.2rem;margin-top:2rem}
 table{border-collapse:collapse;width:100%;font-size:15px}td,th{border-top:1px solid #ccc;padding:.4rem;text-align:left;
 vertical-align:top}a{color:#1d4f91}@media(prefers-color-scheme:dark){body{background:#17142a;color:#eee8dc}a{color:#9cc2ff}}`;
+
+/** A CSP source for an inline element's exact text. */
+export const hashOf = (text) => `'sha256-${createHash("sha256").update(text).digest("base64")}'`;
+
+/** The headers every page is served with: nothing loads but the page's own
+ *  style, no other site frames it, and nothing is sniffed into a type (the
+ *  security review's SR-04). */
+export const PAGE_HEADERS = Object.freeze({
+  "content-security-policy": `default-src 'none'; style-src ${hashOf(STYLE)}; base-uri 'none'; `
+    + "form-action 'none'; frame-ancestors 'none'",
+  "x-content-type-options": "nosniff",
+  "referrer-policy": "no-referrer",
+});
 
 function page(title, body) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8">

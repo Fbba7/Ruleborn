@@ -8,6 +8,8 @@
   "Hatch shows the two traits a birth rolled, its form, and the free outfit with the first hatch, and offers a name from the word lists (11.3, 19.20, 23.2)": "passed",
   "Home's Keeper bar waits for the server, then shows the level, the pips and the numbers, said aloud in words, and moves with a heist's answer; the result screen says what the raid earned (14.2)": "passed",
   "LawFx's notes, schools and chords are content's, and its launch list is §7.10's 24 (8.1, 8.5, 21.7)": "passed",
+  "SR-06: plain HTTP is refused to a host hidden behind the loopback's name": "passed",
+  "SR-06: the terms link is a path on the game's own server, never another site": "passed",
   "Watch replay fetches the raid's replay and the island it was played on and opens the replay; Trace leases the raider's island as a Trace (12.3, 13)": "passed",
   "Weaving puts each weave's Aether price and weaving time on its button, the server's price for that weave, into the realm's first free slot (5.6, 23.2)": "passed",
   "Weaving recommends two or three laws for a realm, ranked: one that harmonises first, one that clashes last, then the cheapest, each compared by its points, the band after weaving and its harmonies and clashes (23.2, C48)": "passed",

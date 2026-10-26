@@ -251,6 +251,14 @@
       "compliance"
      ]
     },
+    "age_answered_at": {
+     "type": "age",
+     "holds": "when the device's age check first answered; after it the band only tightens (§20.1)",
+     "purposes": [
+      "functionality",
+      "compliance"
+     ]
+    },
     "moderator": {
      "type": "none",
      "holds": "a staff role, set by the operator"
