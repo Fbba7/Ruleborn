@@ -80,7 +80,12 @@ func _build() -> void:
 	premium_button.tooltip_text = Strings.t("TRACK_PREMIUM")
 	_pass.add_child(premium_button)
 	_pass_card = ScreenKit.panel("card_lit", _pass, 18.0, 10.0)
-	column.add_child(_pass_card)
+	# Above the dock, as the design's Starpass bar; at large text it scrolls
+	# with the road, so the dock keeps its place above the corners.
+	if Settings.text_scale <= 125:
+		column.add_child(_pass_card)
+	else:
+		body.add_child(_pass_card)
 	claim_button = ScreenKit.button(Strings.t("TRACK_CLAIM"), controller.claim, "green")
 	column.add_child(ScreenNav.dock(&"home", [claim_button]))
 
@@ -135,6 +140,8 @@ func _refresh() -> void:
 	_pass_card.visible = premium_button.visible
 	if _strip.get_parent() != null:
 		_strip.get_parent().remove_child(_strip)
+	if _pass_card.get_parent() == body:
+		body.remove_child(_pass_card)
 	for c in body.get_children():
 		c.queue_free()
 	body.add_child(ScreenParts.segmented([{"text": Strings.t("SCREEN_PASS"), "key": "pass", "on": true},
@@ -143,6 +150,8 @@ func _refresh() -> void:
 				App.services.router.go(&"social")))
 	body.add_child(ScreenKit.panel("card_lit", _strip, 18.0, 12.0))
 	body.add_child(_road(t["rows"], bool(t["premium"])))
+	if Settings.text_scale > 125:
+		body.add_child(_pass_card)
 
 
 ## The design's track: one column a tier, the Starpass reward over the

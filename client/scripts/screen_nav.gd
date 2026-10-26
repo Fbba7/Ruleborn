@@ -88,6 +88,11 @@ static func bar(active: String, badges := {}) -> KitTabs:
 	t.picked.connect(func(id: String) -> void:
 		if id != active:
 			App.services.router.go(Router.TABS[id]))
+	# The chosen tab's word in the design's thick ink stroke (10-roster.png),
+	# wide enough that §21.8 measures it against the stroke.
+	if t.buttons.has(active):
+		for l: Label in (t.buttons[active] as Button).find_children("*", "Label", true, false):
+			l.add_theme_constant_override("outline_size", UI.px(maxf(2.0, 0.12 * float(l.get_meta("points", 15.0)))))
 	# Five words at large text do not fit 360 points: the tabs not chosen keep
 	# their icon and their spoken name, the chosen one its word too.
 	if Settings.text_scale > LABELS_UP_TO:

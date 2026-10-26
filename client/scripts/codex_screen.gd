@@ -88,17 +88,21 @@ func _refresh() -> void:
 ## The ring of laws restored, the laws met, the Keeper and Spire, the next
 ## chapter, and the law worked on.
 func _summary(c: Dictionary) -> Control:
-	var top := HBoxContainer.new()
+	# The ring beside the words, or above them where large text needs the width.
+	var top: BoxContainer = VBoxContainer.new()
+	if Settings.text_scale <= 125:
+		top = HBoxContainer.new()
 	top.add_theme_constant_override("separation", UI.px(12))
 	var ring := ScreenMeter.ring(int(c["restored"]), maxi(int(c["total"]), 1), Color("#E9B65C"), 64.0,
 		"%d/%d" % [int(c["restored"]), int(c["total"])])
 	ring.accessibility_name = Strings.t("SCREEN_CODEX_RESTORED", [int(c["restored"]), int(c["total"])])
+	ring.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	top.add_child(ring)
 	var words := VBoxContainer.new()
 	words.add_theme_constant_override("separation", UI.px(4))
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.alignment = BoxContainer.ALIGNMENT_CENTER
-	var title := ScreenKit.text(Strings.t("SCREEN_CODEX_OF_LAWS"), 20.0, "name", "card_lit")
+	var title := ScreenKit.text(Strings.t("SCREEN_CODEX_OF_LAWS"), 20.0, "name", "card_lit", false, true)
 	words.add_child(title)
 	words.add_child(ScreenKit.text(Strings.t("SCREEN_CODEX_MET", [int(c["known"]), int(c["total"])]), 13.0,
 		"words", "card_lit", true, true))
@@ -158,9 +162,11 @@ func _album(a: Dictionary, busy: bool) -> Control:
 	band.accessibility_description = "%s. %s" % [a["count"], a["mastery"]]
 	var name := band.find_children("*", "Label", true, false)[0] as Label
 	name.set_meta("school", a["school"])
-	# The ink of words on gold, so the school's name reads at its size; at
-	# large text the band's words wrap rather than widen the screen.
-	name.add_theme_color_override("font_color", ScreenKit.ink("gold"))
+	# Cream in the design's ink stroke on the gold band, so the school's name
+	# is measured against its stroke; at large text the band's words wrap
+	# rather than widen the screen.
+	name.add_theme_color_override("font_color", Tokens.color("cream"))
+	ScreenKit.inked(name, maxf(1.5, 0.12 * float(name.get_meta("points", 22.0))) / 2.0 + 0.1)
 	for l: Label in band.find_children("*", "Label", true, false):
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		if l.get_parent() is VBoxContainer:
@@ -205,8 +211,9 @@ func _tile(l: Dictionary, school: String) -> Control:
 	var tile: PanelContainer
 	if known:
 		var number := "%d/%d" % [int(l["pages"]), int(l["need"])] if int(l["tier"]) == 0 else ""
+		var tier: String = Strings.t("SCREEN_TIER_MARK", l["tier_words"]) if int(l["tier"]) > 0 else ""
 		tile = KitCards.law_card("laws/" + str(l["law"]).replace("_", ""), l["name"], school,
-			str(l["rank"]).to_lower(), l["tier_words"] if int(l["tier"]) > 0 else "", points, number)
+			str(l["rank"]).to_lower(), tier, points, number)
 	else:
 		var col := VBoxContainer.new()
 		col.add_theme_constant_override("separation", UI.px(4))

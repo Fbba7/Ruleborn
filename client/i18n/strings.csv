@@ -1187,6 +1187,7 @@ SCREEN_SPIRE_LEVEL,Spire %d,Spire %d,Torre %d,Torre %d,Turm %d,Flèche %d
 SCREEN_ALL,All,All,Todas,Todas,Alle,Toutes
 SCREEN_FILTER_SCHOOL,Show only %s,Show only %s,Mostrar só %s,Mostrar só %s,Nur %s zeigen,Afficher seulement %s
 SCREEN_TIER,Tier %s,Tier %s,Nível %s,Nível %s,Stufe %s,Rang %s
+SCREEN_TIER_MARK,%s,%s,%s,%s,%s,%s
 SCREEN_CHAPTER,Ch. %d,Ch. %d,Cap. %d,Cap. %d,Kap. %d,Ch. %d
 SCREEN_NOT_MET,Not met,Not met,Não vista,Não vista,Unbekannt,Inconnue
 SCREEN_WEAKNESS,Weak against,Weak against,Fraca contra,Fraca contra,Schwach gegen,Faible contre

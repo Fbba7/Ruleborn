@@ -37,10 +37,12 @@ func _build() -> void:
 	var card := VBoxContainer.new()
 	card.add_theme_constant_override("separation", UI.px(8))
 	card.add_child(ScreenParts.section(Strings.t("SCREEN_FRIENDS_ADD")))
-	var add: Container = UI.row(8.0)
+	# The code field beside its button, or above it where large text needs
+	# the width (German, French and Portuguese run longest).
+	var add: BoxContainer = VBoxContainer.new()
 	if Settings.text_scale <= 125:
 		add = HBoxContainer.new()
-		add.add_theme_constant_override("separation", UI.px(8))
+	add.add_theme_constant_override("separation", UI.px(8))
 	code_field = UI.field(Strings.t("FRIENDS_CODE"))
 	code_field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	add.add_child(code_field)

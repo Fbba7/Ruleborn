@@ -165,7 +165,7 @@ func _notes(c: Dictionary) -> Control:
 	for n: Dictionary in c["note_list"]:
 		row.add_child(ScreenParts.pill(n["name"], "well", "lawnotes", n["note"], 15.0))
 	if (c["note_list"] as Array).is_empty():
-		row.add_child(ScreenKit.text(c["notes"], 13.0, "words", "card", true, true))
+		row.add_child(ScreenKit.text(c["notes"], 13.0, "words", "card", false, true))
 	row.tooltip_text = c["notes"]
 	return row
 
