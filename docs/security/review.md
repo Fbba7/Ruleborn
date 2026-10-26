@@ -31,6 +31,7 @@ decision).
 | SR-12 | Medium | server | The Island Fund pays one player's replays as if each were a new player | needs the owner |
 | SR-09 | Low | server | The public target lists carry every island's raw rating | needs the owner |
 | SR-10 | Low | server | A minor's monthly cap holds only on the client's word | needs the owner |
+| SR-14 | Low | server | A crew is anyone's who holds its invite, a 13-to-15's too | needs the owner |
 | SR-11 | Low | server | The ID token that signs in also deletes the account, at once | sent to T11 |
 
 ### SR-01 — Any player could loosen their own age band (High)
@@ -276,6 +277,21 @@ decision).
 - **Choice:** the cap's number — say one play's time a player an island a
   day, or a few hours a quarter — and whether a play that does not clear
   counts at all.
+
+### SR-14 — A crew is anyone's who holds its invite, a 13-to-15's too (Low)
+
+- **Where:** `server/src/social.mjs` `joinCrew`, `POST /v1/crews/join`.
+- **What:** §17.7's crew is *"formed inside a constellation, or with friends
+  across constellations"*, and §20.7 holds a 13-to-15's co-op heists to
+  *"Friends only"*. Joining asks only for the invite, so a stranger's
+  invite, posted anywhere, puts a 13-to-15 in a crew with strangers — the
+  layer §17.7 gives *"a private thread"*. Co-op heists and the thread are
+  version 1.1's, not built, so nothing reaches them yet; the season tests
+  join strangers to crews, so the build means it.
+- **Test:** `server/test/security_owner.test.mjs` (SR-14).
+- **Choice:** require a joiner to share the constellation with, or be a
+  friend of, a member — and for 13 to 15, a friend of every member — before
+  co-op heists or the thread are built.
 
 ## Sent to T11
 

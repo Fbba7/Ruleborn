@@ -7,6 +7,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { quarterOf } from "../src/fund.mjs";
+import { Social } from "../src/social.mjs";
 import { TICKS_PER_SECOND } from "../src/service.mjs";
 import { twoPlayers, server } from "./setup.mjs";
 
@@ -54,4 +55,18 @@ test("SR-12 (needs the owner): one player replaying one island is credited every
   }
   assert.equal(t.service.fund.played(q.starts_at, q.ends_at)[creator], 200 * 150,
                "200 plays by one account, 200 plays' seconds");
+});
+
+// SR-14: §17.7's crews are "formed inside a constellation, or with friends
+// across constellations", and §20.7 holds a 13-to-15's co-op heists to
+// friends only; joining takes only the invite.
+test("SR-14 (needs the owner): a 13-to-15 joins a crew of strangers with its invite", () => {
+  const t = server();
+  const social = new Social(t.service);
+  const stranger = t.service.session("gc:stranger").account;
+  const minor = t.service.session("gc:minor").account;
+  t.service.db.prepare("UPDATE accounts SET age_band = '13-15' WHERE id = ?").run(minor);
+  const crew = social.startCrew(stranger);
+  assert.equal(t.service.friends.areFriends(minor, stranger), false);
+  assert.equal(social.joinCrew(minor, crew.invite).members.length, 2);
 });
