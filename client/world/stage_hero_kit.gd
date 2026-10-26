@@ -190,10 +190,42 @@ static func level_row(level: int, top: int, health := -1) -> Control:
 	v.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	v.custom_minimum_size.x = UI.px(110)
 	v.add_theme_constant_override("separation", UI.px(4))
-	var said := words(Strings.t("CHARACTER_LEVEL_OF", [level, top]), 15.0, StageHeroSkin.LIGHT_SOFT)
-	said.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	v.add_child(said)
-	v.add_child(StageHeroBar.make(float(level) / float(top), Color("#E9B65C"), "", 14.0))
+	# The design's segmented bar: a green segment for each level reached on
+	# a dark track, the words inside it edged in ink.
+	var track := PanelContainer.new()
+	var well := StyleBoxFlat.new()
+	well.bg_color = Color("#120C2A")
+	well.border_color = Color("#0A0618")
+	well.set_border_width_all(UI.px(2))
+	well.set_corner_radius_all(UI.px(10))
+	well.set_content_margin_all(UI.px(3))
+	track.add_theme_stylebox_override("panel", well)
+	var stack := MarginContainer.new()
+	var steps := HBoxContainer.new()
+	steps.add_theme_constant_override("separation", UI.px(2))
+	for i: int in mini(top, 20):
+		var step := Panel.new()
+		var fill := StyleBoxFlat.new()
+		var lit := i < roundi(float(level) / float(top) * mini(top, 20))
+		fill.bg_color = Color("#4FC384") if lit else Color("#2A2050")
+		fill.border_color = Color("#A8F0B8") if lit else Color("#2A2050")
+		fill.border_width_top = UI.px(2) if lit else 0
+		fill.set_corner_radius_all(UI.px(6))
+		step.add_theme_stylebox_override("panel", fill)
+		step.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		step.custom_minimum_size = Vector2(UI.px(4), UI.px(22))
+		step.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		steps.add_child(step)
+	stack.add_child(steps)
+	var said := words(Strings.t("CHARACTER_LEVEL_OF", [level, top]), 14.0, StageHeroSkin.LIGHT, true)
+	said.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	said.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	said.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	said.custom_minimum_size.x = UI.px(60)
+	stack.add_child(said)
+	track.add_child(stack)
+	track.set_meta("behind", [well.bg_color] as Array[Color])
+	v.add_child(track)
 	row.add_child(v)
 	if health >= 0:
 		var heart := chip("%d" % health, "card", "♥")
