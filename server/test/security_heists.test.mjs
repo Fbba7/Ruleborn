@@ -30,3 +30,22 @@ test("SR-02: a replay carrying a crew manifest is refused unless it names the ro
   assert.equal(out.reason, "crew_not_named");
   assert.deepEqual(t.service.balance(me), { starlight: 0, essence: 0 }, "and nothing is paid");
 });
+
+// SR-13: the Codex and the Lab knew a law by `BY_ID[law]`, which every
+// object answers for "constructor", "toString" and the rest: such a name was
+// taken as a law — marked worked on, so heists booked its pages — and a
+// restore or tier of one was the server's own failure, a 500.
+test("SR-13: a name every object answers to is no law", async () => {
+  const t = twoPlayers(true);
+  const call = async (path, json) => (await t.handle(new Request(`https://edge.example${path}`, {
+    method: "POST", headers: { authorization: `Bearer ${t.raider.token}`, "content-type": "application/json" },
+    body: JSON.stringify(json) }))).status;
+  for (const law of ["constructor", "toString", "__proto__", "hasOwnProperty"]) {
+    assert.equal(await call("/v1/codex/working", { law }), 400, `working on ${law}`);
+    assert.equal(await call("/v1/codex/restore", { law }), 400, `restoring ${law}`);
+    assert.equal(await call("/v1/codex/tier", { law, to: 2 }), 400, `raising ${law}`);
+    assert.equal(await call("/v1/lab", { chamber: 1, laws: [law, "bloom"] }), 400, `an experiment on ${law}`);
+  }
+  const working = t.service.db.prepare("SELECT working_on FROM accounts WHERE id = ?").get(t.raider.account).working_on;
+  assert.equal(working, null);
+});

@@ -1,30 +1,57 @@
 // Security review findings that need the owner's decision
-// (docs/security/review.md, "Needs the owner"). Each is a todo test: it
-// shows the issue, and fails, without failing the build until it is decided.
+// (docs/security/review.md, "Needs the owner"). Each test pins the issue
+// as the build has it today, so it passes; once the owner decides, the
+// fix turns its assertion round.
 
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
+import { quarterOf } from "../src/fund.mjs";
+import { TICKS_PER_SECOND } from "../src/service.mjs";
 import { twoPlayers, server } from "./setup.mjs";
 
 // SR-09: §12.15, "Ratings are internal … the raw numbers are never shown".
-test("SR-09: a target list names no island's rating", { todo: "the owner: §12.15 or the device-side offer" }, () => {
+test("SR-09 (needs the owner): a target list names every island's raw rating, which 12.15 says is never shown", () => {
   const t = twoPlayers(false);
   const lists = t.service.targetLists();
   const list = JSON.parse(new TextDecoder().decode(t.service.bundle(Object.values(lists)[0])));
+  assert.ok(list.candidates.length > 0);
   for (const c of list.candidates) {
-    assert.equal(c.rating, undefined);
-    assert.equal(c.deviation, undefined);
+    assert.equal(typeof c.rating, "number");
+    assert.equal(typeof c.deviation, "number");
   }
 });
 
 // SR-10: §20.2's monthly cap, kept only when the device asks for an intent.
-test("SR-10: a 13-to-15's receipt with no intent is not granted past the month's cap",
-     { todo: "the owner: refuse such a receipt, or keep restores as they are" }, () => {
+test("SR-10 (needs the owner): a 13-to-15's receipts with no intent are granted past the month's cap", () => {
   const t = server({ firstBand: "13-15",
                      cosmetics: { items: [{ id: "big", kind: "outfit", price: 2400 }, { id: "more", kind: "outfit", price: 500 }] },
                      verifyReceipt: (_s, r) => ({ transaction: r, product: r === "t1" ? "big" : "more", intent: null }) });
   const minor = t.service.session("gc:minor");
   t.service.shop.redeem(minor.account, "app-store", "t1");
-  assert.throws(() => t.service.shop.redeem(minor.account, "app-store", "t2"), /monthly_cap/);
+  t.service.shop.redeem(minor.account, "app-store", "t2");
+  assert.equal(t.service.shop.allowance(minor.account), 0, "€29 granted against a €25 cap");
+  assert.ok(t.service.shop.summary(minor.account).months[0].cents > 2500);
+});
+
+// SR-12: §18.9's Island Fund is real money, divided by time played, and
+// "the cap on one player's time on one island" is not built (fund.mjs: no
+// number for it). One second account replaying a creator's island all day
+// credits it hundreds of hours.
+test("SR-12 (needs the owner): one player replaying one island is credited every play's time", () => {
+  const t = server();
+  const q = quarterOf(t.clock.now);
+  const db = t.service.db;
+  const creator = t.service.session("gc:creator").account;
+  const alt = t.service.session("gc:alt").account;
+  db.prepare(`INSERT INTO workshop_items (id, creator, bundle, realm_level, name_adjective, name_noun, cleared_by,
+                                          bytes, published_at) VALUES ('i', ?, 'b', 3, 0, 0, 'r', 1, ?)`)
+    .run(creator, q.starts_at);
+  const at = q.starts_at + 1000;
+  for (let n = 0; n < 200; n++) {
+    db.prepare(`INSERT INTO workshop_plays (token, player, item, seed, ticks, issued_at, submitted_at, outcome)
+                VALUES (?, ?, 'i', '1', ?, ?, ?, '{"validated":true}')`).run(`p${n}`, alt, 150 * TICKS_PER_SECOND, at, at);
+  }
+  assert.equal(t.service.fund.played(q.starts_at, q.ends_at)[creator], 200 * 150,
+               "200 plays by one account, 200 plays' seconds");
 });

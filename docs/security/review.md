@@ -27,6 +27,11 @@ decision).
 | SR-05 | Low | server | A block did not hide a player's profile | fixed |
 | SR-06 | Low | client | The cleartext guard let a userinfo hide the host; the terms link could leave the server | fixed |
 | SR-08 | Low | client, sim | A crafted replay could abort or freeze the app | fixed |
+| SR-13 | Low | server | "constructor" and its like were taken as law ids | fixed |
+| SR-12 | Medium | server | The Island Fund pays one player's replays as if each were a new player | needs the owner |
+| SR-09 | Low | server | The public target lists carry every island's raw rating | needs the owner |
+| SR-10 | Low | server | A minor's monthly cap holds only on the client's word | needs the owner |
+| SR-11 | Low | server | The ID token that signs in also deletes the account, at once | sent to T11 |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -202,6 +207,22 @@ decision).
   changes its rules version.
 - **Status:** fixed.
 
+### SR-13 — "constructor" and its like were taken as law ids (Low)
+
+- **Where:** `server/src/codex.mjs` (`workOn`, `restore`, `tier`, `study`,
+  `add`), `server/src/lab.mjs` `start`.
+- **What:** a law was known by `BY_ID[law]` / `LAWS[l]`, plain objects that
+  answer for `constructor`, `toString`, `__proto__` and the rest. Such a
+  name passed as a law: `POST /v1/codex/working {"law": "constructor"}` was
+  stored and later heists booked pages to a Codex row of that name, and a
+  restore or tier of one threw inside the server — a 500 instead of a
+  refusal. Only the caller's own account is touched; weaving, shop and the
+  other modules already use `Object.hasOwn`.
+- **Test:** `server/test/security_heists.test.mjs` (SR-13).
+- **Fix:** a law is a law only as its own key (`Object.hasOwn`), so each of
+  these names is refused 400 `no_such_law` or `malformed_body`.
+- **Status:** fixed.
+
 ## Needs the owner
 
 ### SR-09 — The public target lists carry every island's raw rating (Low)
@@ -214,8 +235,9 @@ decision).
   `deviation`, deliberately, so the device can run §12.22's `offer` on it
   (`server/test/matchmaking.test.mjs` asserts it). Any client can read
   them and shop for targets.
-- **Test:** `server/test/security_owner.test.mjs` (a `todo` test: it fails
-  until decided, without failing the build).
+- **Test:** `server/test/security_owner.test.mjs` (SR-09). Each owner
+  item's test pins the behaviour as it is today, so it passes; the fix turns
+  its assertion round.
 - **Choice:** drop the numbers from the lists and have the device ask
   `GET /v1/offer` (losing the offline offer), or coarsen them to the bands
   `offer` needs, or accept the device-side offer and amend §12.15.
@@ -231,7 +253,25 @@ decision).
   refuse to grant a minor's receipt with no intent over the cap — Play then
   refunds an unacknowledged purchase by itself, Apple does not — but that
   changes what a restore does, so it is the owner's call.
-- **Test:** `server/test/security_owner.test.mjs` (`todo`).
+- **Test:** `server/test/security_owner.test.mjs` (SR-10).
+
+### SR-12 — The Island Fund pays one player's replays as if each were a new player (Medium)
+
+- **Where:** `server/src/fund.mjs` `played`.
+- **What:** §18.9's fund is real money, *"divided … by time actually played
+  on each island"*, and §18.9 caps *"one player's time on one island"* —
+  with no number, so the build has no cap (`fund.mjs` says so). Every
+  validated Workshop play counts its seconds, cleared or not, however many
+  times the same player played. A creator with one second adult account
+  (the platforms give identities freely) replaying their island once every
+  20 seconds — the simulation bucket's rate — credits about 180 hours a day.
+  Only §18.9's 2% a creator bounds it. §18.7's quarter weight for
+  constellation-mates does not apply to an account outside the
+  constellation.
+- **Test:** `server/test/security_owner.test.mjs` (SR-12).
+- **Choice:** the cap's number — say one play's time a player an island a
+  day, or a few hours a quarter — and whether a play that does not clear
+  counts at all.
 
 ## Sent to T11
 
