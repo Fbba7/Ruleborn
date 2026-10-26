@@ -730,9 +730,38 @@ func _garden() -> void:
 
 ## The Guardian Post: "a small watch platform with a lantern".
 func _guard() -> void:
+	if tier == 0:
+		_guard_platform()
+		return
+	# From the second look a stone watchtower, as the design's realm view
+	# draws the post (:733–741): a broad round tower in bands, a parapet of
+	# merlons round a drum and a cone roof.
+	var ring := 10 if not lighter else 8
+	cyl(0.44, 0.48, 0.12, stone2, 0, 0, 0, ring)
+	cyl(0.37, 0.32, 1.1, stone, 0, 0.12, 0, ring)
+	for y: float in ([0.5, 0.9] if not lighter else [0.9]):
+		cyl(0.36 - 0.045 * y, 0.36 - 0.045 * y, 0.035, stone2, 0, y, 0, ring)
+	door(0, 0.12, 0.35, 0, 0.95)
+	for a: float in [0.6, -0.9, 2.2]:
+		fine(0.03, 0.14, 0.02, KitStyle.IRON, sin(a) * 0.345, 0.75, cos(a) * 0.345, a)
+	var py := 1.22
+	cyl(0.36, 0.44, 0.12, stone2, 0, py, 0, ring)
+	for i in ring:
+		var a := TAU * i / ring
+		box(0.12, 0.14, 0.09, stone, cos(a) * 0.39, py + 0.19, sin(a) * 0.39, PI / 2.0 - a)
+	cyl(0.2, 0.19, 0.28, stone, 0, py + 0.12, 0, ring)
+	cone(0.28, 0.42, roof_col, 0, py + 0.4, 0, ring)
+	ball(0.03, KitStyle.GOLD, 0, py + 0.83, 0, 1.0, 2, 5)
+	_guard_dress(0.37, 0.12 + 0.55, py - 0.05)
+	top = py + 1.1
+
+
+## The first look's post (§21.5: "a small watch platform with a lantern",
+## wood): a timber tower under a railed platform and a pointed roof.
+func _guard_platform() -> void:
 	cyl(0.36, 0.4, 0.14, stone2, 0, 0, 0, 8)
-	var th := 0.9 + 0.15 * tier
-	cyl(0.28, 0.22, th, stone if tier > 0 else KitStyle.WOOD.lightened(0.2), 0, 0.14, 0, 8)
+	var th := 0.9
+	cyl(0.28, 0.22, th, KitStyle.WOOD.lightened(0.2), 0, 0.14, 0, 8)
 	for y: float in [0.35, 0.14 + th * 0.7]:
 		cyl(0.285, 0.285, 0.04, stone2, 0, y, 0, 8)
 	door(0, 0.14, 0.25, 0, 0.8)
@@ -746,13 +775,17 @@ func _guard() -> void:
 		var a := i * PI / 2.0 + PI / 4.0
 		box(0.04, 0.3, 0.04, KitStyle.WOOD_DARK, cos(a) * 0.3, py + 0.26, sin(a) * 0.3)
 	cone(0.44, 0.42, roof_col, 0, py + 0.41, 0, 8)
-	# The lantern, swinging.
-	var hook := at(0.36, py + 0.3, 0.1)
+	_guard_dress(0.27, 0.14 + th * 0.62, py)
+	top = py + 0.9
+
+
+## The post's swinging lantern under its platform and its school banner on
+## the tower's face, `r` out, the banner's middle at `bank`.
+func _guard_dress(r: float, bank: float, py: float) -> void:
+	var hook := at(r + 0.09, py + 0.3, 0.1)
 	move(Geo.Anim.SWING, hook)
 	d.box(Geo.place(hook + Vector3(0, -0.1, 0) * unit), Vector3(0.07, 0.09, 0.07) * unit,
 		KitStyle.lit(Color("#FFD27A"), 0.7))
 	stop()
-	# The school banner.
-	d.box(place(0, 0.14 + th * 0.62, 0.27), Vector3(0.16, 0.34, 0.01) * unit, style["accent"])
-	d.box(place(0, 0.14 + th * 0.62 + 0.18, 0.27), Vector3(0.2, 0.03, 0.03) * unit, KitStyle.GOLD)
-	top = py + 0.9
+	d.box(place(0, bank, r), Vector3(0.16, 0.34, 0.01) * unit, style["accent"])
+	d.box(place(0, bank + 0.18, r), Vector3(0.2, 0.03, 0.03) * unit, KitStyle.GOLD)
