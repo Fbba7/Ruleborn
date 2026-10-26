@@ -22,6 +22,15 @@ const KINDS := ["keeper_s_spire", "vault", "anchor_stone", "star_well", "aether_
 	"visitor_s_dock"]
 ## The level that opens each of §21.5's looks.
 const LOOKS := [1, 4, 7, 10]
+## Levels of detail: `FULL` for the heist's close camera, `MID` for the realm
+## view and the home camera (§21.3: a realm in 25,000–40,000 triangles), at
+## about a third of the triangles with the silhouette kept: fine parts,
+## window frames, shutters, courses and dress go first, round shapes take
+## fewer sides and chamfered boxes are plain.
+const FULL := 0
+const MID := 1
+## At `MID`, the size in metres under which a part is left out.
+const LEAST := 0.035
 
 var g: Geo
 ## The fine parts — windows, frames, rings, flags — drawn without ink, so a
@@ -47,6 +56,8 @@ var stone2 := Color.WHITE
 var trim := Color.WHITE
 ## How tall the building stands, in units, for its dress.
 var top := 1.0
+## Whether this is the mid-detail level (`MID`).
+var lighter := false
 
 
 ## The materials of a level's look: walls, roof, trim.
@@ -60,16 +71,17 @@ static func look(lvl: int, colours: Dictionary) -> Array[Color]:
 
 
 ## Building `kind` of `side` tiles a side, centred on `mid` on the ground,
-## at `lvl` (1 to 10), its door turned `yaw` from +Z (quarter turns).
+## at `lvl` (1 to 10), its door turned `yaw` from +Z (quarter turns), at
+## `detail` (`FULL`, or `MID` for the realm view and the home camera).
 static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, colours: Dictionary,
-		details: Geo = null, panes: Geo = null, yaw := 0.0) -> void:
+		details: Geo = null, panes: Geo = null, yaw := 0.0, detail := FULL) -> void:
 	if absf(yaw) > 0.01:
 		var tg := Geo.new()
 		var td := Geo.new()
 		var tp := Geo.new()
 		for t: Geo in [tg, td, tp]:
 			t.skip_down = geo.skip_down
-		build(tg, kind, Vector3.ZERO, side, lvl, colours, td, tp)
+		build(tg, kind, Vector3.ZERO, side, lvl, colours, td, tp, 0.0, detail)
 		var xf := Transform3D(Basis(Vector3.UP, yaw), mid)
 		geo.absorb(tg, xf)
 		(details if details != null else geo).absorb(td, xf)
@@ -79,8 +91,14 @@ static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, col
 	b.g = geo
 	b.d = details if details != null else geo
 	b.glass = panes if panes != null else b.d
+	b.lighter = detail == MID
+	var was: Array[bool] = [b.g.coarse, b.d.coarse, b.glass.coarse]
+	var least: Array[float] = [b.g.least, b.d.least, b.glass.least]
 	for layer: Geo in [b.g, b.d, b.glass]:
 		layer.standing(mid.y)
+		layer.coarse = layer.coarse or b.lighter
+		if b.lighter:
+			layer.least = maxf(layer.least, LEAST)
 	b.origin = mid
 	b.level = clampi(lvl, 1, 10)
 	b.tier = 2 if b.level >= 7 else (1 if b.level >= 4 else 0)
@@ -118,6 +136,10 @@ static func build(geo: Geo, kind: String, mid: Vector3, side: int, lvl: int, col
 		_:
 			KitBuildings2.build(b, kind)
 	b._dress(kind)
+	for k in 3:
+		var layer: Geo = [b.g, b.d, b.glass][k]
+		layer.coarse = was[k]
+		layer.least = least[k]
 
 
 ## Shapes drawn after this move by `kind` about `pivot`, inked or not.
@@ -154,7 +176,7 @@ func place(x: float, y: float, z: float, yaw := 0.0) -> Transform3D:
 ## softened when it is big enough to show them.
 func box(w: float, h: float, depth: float, col: Color, x: float, y: float, z: float, yaw := 0.0) -> void:
 	var size := Vector3(w, h, depth) * unit
-	if minf(size.x, minf(size.y, size.z)) > 0.1:
+	if minf(size.x, minf(size.y, size.z)) > (0.16 if lighter else 0.1):
 		g.rbox(place(x, y, z, yaw), size, col, minf(0.035, minf(size.x, minf(size.y, size.z)) * 0.25))
 	else:
 		d.box(place(x, y, z, yaw), size, col)
@@ -162,14 +184,22 @@ func box(w: float, h: float, depth: float, col: Color, x: float, y: float, z: fl
 
 ## A cylinder standing on (x, y, z).
 func cyl(r0: float, r1: float, h: float, col: Color, x: float, y: float, z: float, sides := 10) -> void:
-	(g if maxf(r0, r1) * unit > 0.06 else d).cyl(place(x, y, z), r0 * unit, r1 * unit, h * unit, col, sides)
+	var big := maxf(r0, r1) * unit > (0.1 if lighter else 0.06)
+	(g if big else d).cyl(place(x, y, z), r0 * unit, r1 * unit, h * unit, col, sides)
 
 
 func cone(r: float, h: float, col: Color, x: float, y: float, z: float, sides := 10) -> void:
-	(g if r * unit > 0.08 else d).prism(place(x, y, z, PI / sides), sides, r * unit, 0.0, h * unit, col)
+	var big := r * unit > (0.12 if lighter else 0.08)
+	(g if big else d).prism(place(x, y, z, PI / sides), sides, r * unit, 0.0, h * unit, col)
 
 
 func ball(r: float, col: Color, x: float, y: float, z: float, squash := 1.0, rings := 4, segments := 8) -> void:
+	if lighter and r * unit < 0.045:
+		# A bead too small to see at the realm's zoom: a flower, a knob.
+		return
+	if lighter and r * unit < 0.1:
+		d.gem(Geo.place(at(x, y, z), 0.0, Vector3(1, squash, 1)), r * unit, r * unit, col, 3)
+		return
 	(g if r * unit > 0.08 else d).ball(Geo.place(at(x, y, z), 0.0, Vector3(1, squash, 1)), r * unit, col, rings,
 		segments)
 
@@ -191,6 +221,11 @@ func _torus_at(r: float, t: float, col: Color, x: float, y: float, z: float) -> 
 func window(x: float, y: float, z: float, yaw: float, s := 1.0, shutters := true) -> void:
 	var turn := Basis(Vector3.UP, yaw)
 	var p := func(dx: float, dy: float, dz: float) -> Vector3: return at(x, y, z) + turn * Vector3(dx, dy, dz) * unit
+	if lighter:
+		# Only the lit glass, a little larger, on the wall: two triangles.
+		_pane(Transform3D(turn, p.call(0, 0, 0.012)), 0.13 * s * unit, 0.17 * s * unit,
+			KitStyle.lit(KitStyle.WINDOW, 0.55))
+		return
 	d.box(Transform3D(turn, p.call(0, 0, 0)), Vector3(0.15 * s, 0.19 * s, 0.03) * unit, KitStyle.WOOD_DARK)
 	_pane(Transform3D(turn, p.call(0, 0, 0.016)), 0.11 * s * unit, 0.15 * s * unit, KitStyle.lit(KitStyle.WINDOW, 0.55))
 	_pane(Transform3D(turn, p.call(0, 0, 0.018)), 0.014 * unit, 0.15 * s * unit, KitStyle.WOOD_DARK)
@@ -207,10 +242,13 @@ func window(x: float, y: float, z: float, yaw: float, s := 1.0, shutters := true
 func door(x: float, y: float, z: float, yaw: float, s := 1.0) -> void:
 	var turn := Basis(Vector3.UP, yaw)
 	var p := func(dx: float, dy: float, dz: float) -> Vector3: return at(x, y, z) + turn * Vector3(dx, dy, dz) * unit
+	var wood := KitStyle.WOOD if tier < 2 else KitStyle.WOOD.lerp(Color("#8C6CF0"), 0.3)
+	if lighter:
+		_pane(Transform3D(turn, p.call(0, 0.1 * s, 0.017)), 0.17 * s * unit, 0.2 * s * unit, wood)
+		return
 	d.box(Transform3D(turn, p.call(0, 0.1 * s, 0)), Vector3(0.21 * s, 0.2 * s, 0.03) * unit, stone2)
 	d.cyl(Transform3D(turn * Basis(Vector3.RIGHT, PI / 2.0), p.call(0, 0.2 * s, -0.015)), 0.105 * s * unit,
 		0.105 * s * unit, 0.03 * unit, stone2, 8)
-	var wood := KitStyle.WOOD if tier < 2 else KitStyle.WOOD.lerp(Color("#8C6CF0"), 0.3)
 	_pane(Transform3D(turn, p.call(0, 0.085 * s, 0.017)), 0.15 * s * unit, 0.17 * s * unit, wood)
 	d.cyl(Transform3D(turn * Basis(Vector3.RIGHT, PI / 2.0), p.call(0, 0.17 * s, 0.006)), 0.075 * s * unit,
 		0.075 * s * unit, 0.012 * unit, wood, 8)
@@ -224,6 +262,8 @@ func door(x: float, y: float, z: float, yaw: float, s := 1.0) -> void:
 ## laid in rows of shingles (thatch at the first look), a round ridge and
 ## plaster gable ends.
 func roof(w: float, depth: float, y0: float, rise: float, over := 0.08, rows := 4, yaw := 0.0) -> float:
+	if lighter:
+		rows = mini(rows, 2)
 	var run := w / 2.0 + over
 	var ang := atan2(rise, w / 2.0)
 	var slant := run / cos(ang)
@@ -277,6 +317,8 @@ func _hip_roof(w: float, depth: float, y0: float, rise: float) -> float:
 ## Timber framing round a storey: corner posts, sills, a head beam and
 ## braces on the front, as the design's half-timbered houses.
 func frame(w: float, h: float, depth: float, y0: float) -> void:
+	if lighter:
+		return
 	var c := KitStyle.WOOD if tier < 2 else KitStyle.GOLD
 	for p: Vector2 in [Vector2(-1, -1), Vector2(1, -1), Vector2(1, 1), Vector2(-1, 1)]:
 		fine(0.045, h, 0.045, c, p.x * w / 2.0, y0 + h / 2.0, p.y * depth / 2.0)
@@ -294,11 +336,15 @@ func frame(w: float, h: float, depth: float, y0: float) -> void:
 
 ## A fine part: a plain box in the un-inked layer.
 func fine(w: float, h: float, depth: float, col: Color, x: float, y: float, z: float, yaw := 0.0) -> void:
+	if lighter:
+		return
 	d.box(place(x, y, z, yaw), Vector3(w, h, depth) * unit, col)
 
 
 ## Stone courses: lines across a stone storey.
 func courses(w: float, depth: float, y0: float, y1: float, n: int) -> void:
+	if lighter:
+		return
 	for i in range(1, n):
 		var y := y0 + (y1 - y0) * i / n
 		d.box(place(0, y, 0), Vector3(w + 0.012, 0.012, depth + 0.012) * unit, stone.darkened(0.14))
@@ -308,7 +354,7 @@ func courses(w: float, depth: float, y0: float, y1: float, n: int) -> void:
 ## step after, crystal-white with a gold band at the third.
 func plinth(w: float, depth: float, h := 0.08) -> void:
 	box(w, h, depth, stone2, 0, h / 2.0, 0)
-	if tier == 0:
+	if tier == 0 and not lighter:
 		for k in 5:
 			var a := TAU * k / 5.0 + 0.3
 			d.rock(Geo.place(at(cos(a) * w * 0.5, 0.02, sin(a) * depth * 0.5), a, Vector3(1, 0.6, 1)), 0.05 * unit,
@@ -371,7 +417,7 @@ func _dress(kind: String) -> void:
 	_topper()
 	if level >= 3:
 		flag(-0.32, top * 0.82, -0.22, 0.42)
-	if level >= 6:
+	if level >= 6 and not lighter:
 		# Two banner poles at the front corners, the realm's colour hanging.
 		for sx: float in [-1.0, 1.0]:
 			var px := sx * 0.5
@@ -450,12 +496,12 @@ func _topper() -> void:
 ## The packed-earth pad a building stands on (the design's foundation disc,
 ## :981): an octagon of trodden earth and stone, wider than the house.
 func _pad() -> void:
-	var earth := KitGround.earth(palette).lerp(Color("#E8D8B8"), 0.35)
+	var earth := KitGround.earth(palette).lerp(Color("#EAD2B4"), 0.45)
 	if KitStyle.realm_of(palette) == "lanternvale":
 		# Lantern Vale's pads are pale and faintly lit, so its town shows in the
 		# dark (the design's night realm).
 		earth = Color(Color("#D8CCE8"), 0.8)
-	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.6 * unit, 0.57 * unit, 0.03 * unit, earth.darkened(0.08), false, earth)
+	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.66 * unit, 0.63 * unit, 0.03 * unit, earth.darkened(0.1), false, earth)
 
 
 ## The Hearth: "a cottage with a round door and chimney", warm window light.
@@ -590,7 +636,10 @@ func _library() -> void:
 func _star_well() -> void:
 	cyl(0.52, 0.56, 0.1, stone2, 0, 0, 0, 10)
 	cyl(0.45, 0.47, 0.08, stone, 0, 0.1, 0, 10)
-	for c in 2:
+	if lighter:
+		# The mid detail: the well's wall one round course.
+		cyl(0.4, 0.38, 0.24, stone, 0, 0.18, 0, 10)
+	for c in (0 if lighter else 2):
 		for i in 12:
 			var a := (i + c * 0.5) / 12.0 * TAU
 			box(0.17, 0.12, 0.1, stone if (i + c) % 2 == 1 else stone.darkened(0.12), cos(a) * 0.33, 0.24 + c * 0.12,
@@ -682,7 +731,7 @@ func _garden() -> void:
 	# Planters in front and a water butt; a scarecrow at the back.
 	for x: float in [-0.28, 0.12]:
 		box(0.3, 0.08, 0.16, KitStyle.WOOD, x, 0.04, 0.52)
-		for i in 4:
+		for i in (0 if lighter else 4):
 			move(Geo.Anim.SHIVER, at(x - 0.1 + i * 0.066, 0.08, 0.52))
 			cone(0.03, 0.09, Color("#F2B43C") if i % 2 == 1 else Color("#5CC46A"), x - 0.1 + i * 0.066, 0.08, 0.52, 5)
 		stop()

@@ -7,6 +7,12 @@ extends RefCounted
 ## roots, waterfalls and clouds. `WorldView` asks for these and draws the
 ## simulation's pieces on top.
 
+## FULL for the heist and the home realm; LIGHT where a screen's own pieces
+## need the room (the realm view, curation, the universe's close-up): fewer,
+## larger grass tufts, fewer flowers and rocks, a coarser meadow and rim,
+## and no fireflies or pools of light beyond the realm's signature.
+enum Detail { FULL, LIGHT }
+
 static var _sky: Shader = load("res://world/sky.gdshader")
 static var _toon: Shader = load("res://world/toon.gdshader")
 static var _ground: Shader = load("res://world/look_ground.gdshader")
@@ -18,12 +24,15 @@ static var _glow: Shader = load("res://world/look_glow.gdshader")
 static var _bird: Shader = load("res://world/look_bird.gdshader")
 static var _streak: Shader = load("res://world/look_streak.gdshader")
 static var _vignette: Shader = load("res://world/look_vignette.gdshader")
+static var _spark: Shader = load("res://world/look_spark.gdshader")
 
 var environment: Environment
 var sun: DirectionalLight3D
 ## The realm type the look is drawn for (§21.4), and the hour (§21.2).
 var realm := "heart"
 var hour := 12
+## How much the island draws (§21.3's budgets): set before `island`.
+var detail := Detail.FULL
 var vignette: ColorRect
 ## The sky's gradient (sky.gdshader), drawn behind the world.
 var sky_material: ShaderMaterial
@@ -34,6 +43,8 @@ var _clouds: ShaderMaterial
 ## What shows only after dark: its share by the hour.
 var _night: Array[ShaderMaterial] = []
 var _night_glows: Array[ShaderMaterial] = []
+## The haze under the world: where it starts and how strong (haze_under).
+var _haze := Vector2(0.6, 0.0)
 
 
 ## One warm sun with its shadow, a sky by the hour, ambient light from the
@@ -134,7 +145,7 @@ func set_hour(new_hour: int) -> void:
 	for n: ShaderMaterial in _night:
 		n.set_shader_parameter("appear", after_dark)
 	for n: ShaderMaterial in _night_glows:
-		n.set_shader_parameter("strength", 0.45 * after_dark)
+		n.set_shader_parameter("strength", 0.3 * after_dark)
 	if _clouds != null:
 		var lit: Color = light[0]
 		_clouds.set_shader_parameter("top", Color.WHITE.lerp(lit, 0.25).lerp(sky[2], 0.12))
@@ -143,6 +154,24 @@ func set_hour(new_hour: int) -> void:
 	var edge := sky[0].darkened(0.55)
 	edge.a = 0.42
 	vm.set_shader_parameter("edge", edge)
+	_apply_haze(sky)
+
+
+## A haze over the lower part of the world (look_vignette.gdshader), from
+## `from` of the frame's height (0 its top) to its foot at `strength`, in the
+## sky's low colour: for a screen whose sheet or hub controls cover the lower
+## screen, so the world fades into them instead of being cut. 0 removes it.
+func haze_under(from: float, strength: float) -> void:
+	_haze = Vector2(from, strength)
+	_apply_haze(RealmPalette.realm_sky_at(hour, realm))
+
+
+func _apply_haze(sky: Array[Color]) -> void:
+	var vm := vignette.material as ShaderMaterial
+	var c := sky[2].lerp(sky[1], 0.5)
+	c.a = _haze.y
+	vm.set_shader_parameter("haze", c)
+	vm.set_shader_parameter("haze_from", _haze.x)
 
 
 ## The floating rock round a grid of `grid` tiles, its scatter and the sky's
@@ -150,6 +179,7 @@ func set_hour(new_hour: int) -> void:
 ## palette names it.
 func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary, type := "") -> void:
 	var builder := IslandBuilder.new(grid, seed_from, colours, type)
+	builder.light = detail == Detail.LIGHT
 	realm = builder.kind
 	_mists.clear()
 	_night.clear()
@@ -158,16 +188,16 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 	var meadow := _decorated(_painted(LookPaint.grass(), paint_scale))
 	meadow.set_shader_parameter("grid_blend", IslandBuilder.GRID_BLEND)
 	meadow.set_shader_parameter("brush", 1.0)
-	statics.add_child(_piece(builder.meadow(), meadow, false))
-	statics.add_child(_piece(builder.cliffs(), _painted(LookPaint.rock(), 0.0), true))
+	_add(statics, "Meadow", _piece(builder.meadow(), meadow, false))
+	_add(statics, "Cliffs", _piece(builder.cliffs(), _painted(LookPaint.rock(), 0.0), true))
 	var roots := builder.roots()
-	statics.add_child(_piece(roots[0], _painted(LookPaint.rock(), 0.0, 0.5), true))
+	_add(statics, "Roots", _piece(roots[0], _painted(LookPaint.rock(), 0.0, 0.5), true))
 	var vines := _painted(null, 0.0)
 	vines.set_shader_parameter("sway", 0.18)
 	vines.set_shader_parameter("sway_by_uv", true)
-	statics.add_child(_piece(roots[1], vines, false))
+	_add(statics, "Vines", _piece(roots[1], vines, false))
 	for part: Array in builder.scatter():
-		statics.add_child(_scatter_part(part))
+		_add(statics, "Scatter", _scatter_part(part))
 	var mist_at: Array[Transform3D] = []
 	var mist_alpha: Array[float] = []
 	var falls := builder.waterfalls()
@@ -184,21 +214,21 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 			pm.set_shader_parameter("deep", Color("#C8401E"))
 			pm.set_shader_parameter("foam", Color("#FFC24A"))
 			pm.set_shader_parameter("glowing", 0.8)
-		statics.add_child(_piece(falls[0], fm, false))
-		statics.add_child(_piece(falls[1], pm, false))
+		_add(statics, "Falls", _piece(falls[0], fm, false))
+		_add(statics, "Pools", _piece(falls[1], pm, false))
 		var stones: Array[Transform3D] = falls[3]
 		var grey: Array[Color] = []
 		for i in stones.size():
 			grey.append((colours["stone"] as Color).darkened(0.1 + 0.15 * (i % 2)))
-		statics.add_child(_scatter(IslandBuilder.ico_mesh(), stones, grey, 0.0, 0.0))
+		_add(statics, "PoolStones", _scatter(IslandBuilder.ico_mesh(), stones, grey, 0.0, 0.0))
 		for foot: Vector3 in falls[2]:
 			for j in 3 if realm != "emberreach" else 0:
 				mist_at.append(Transform3D(Basis().scaled(Vector3(2.4 + j, (2.4 + j) * 0.6, 1.0)),
 					foot + Vector3((j - 1) * 0.5, j * 0.3, 0)))
 				mist_alpha.append(1.0)
 	var dressing := builder.sky_dressing()
-	statics.add_child(_piece(dressing[0], _painted(LookPaint.rock(), 0.0, 0.6), true))
-	statics.add_child(_clouds_of(dressing[1], seed_from))
+	_add(statics, "Islets", _piece(dressing[0], _painted(LookPaint.rock(), 0.0, 0.6), true))
+	_add(statics, "Clouds", _clouds_of(dressing[1], seed_from))
 	# The cloud sea under the island: soft, wide and slow.
 	var r := builder.radius()
 	var rng := RandomNumberGenerator.new()
@@ -210,7 +240,7 @@ func island(statics: Node3D, grid: Vector2i, seed_from: int, colours: Dictionary
 		mist_at.append(Transform3D(Basis().scaled(Vector3(w, w * 0.3, 1.0)),
 			Vector3(cos(a) * d, -6.5 - rng.randf() * 3.0, sin(a) * d)))
 		mist_alpha.append(0.45)
-	statics.add_child(_mists_of(mist_at, mist_alpha))
+	_add(statics, "Mists", _mists_of(mist_at, mist_alpha))
 	set_hour(hour)
 
 
@@ -221,14 +251,12 @@ func _scatter_part(part: Array) -> MultiMeshInstance3D:
 	var tag: Variant = part[5] if part.size() > 5 else null
 	if tag is String and tag == "streak":
 		return _streaks_of(part[1])
+	if tag is float or (tag is String and (tag == "night" or tag == "spark")):
+		return _sparks_of(part, tag)
 	var mi := _scatter(part[0], part[1], part[2], part[3], part[4])
 	var m := mi.material_override as ShaderMaterial
-	if tag is float:
-		m.set_shader_parameter("rise", tag)
-	elif tag is String:
+	if tag is String:
 		match tag:
-			"night":
-				_night.append(m)
 			"twinkle":
 				m.set_shader_parameter("twinkle", 0.8)
 			"glow", "night glow":
@@ -249,6 +277,26 @@ func _scatter_part(part: Array) -> MultiMeshInstance3D:
 				mi.material_override = bm
 				# The flock wheels round the island in the shader, beyond its placed box.
 				mi.custom_aabb = AABB(Vector3(-30, -10, -30), Vector3(60, 20, 60))
+	return mi
+
+
+## Specks of light (look_spark.gdshader): a firefly shown after dark ("night"),
+## a drifting fly ("spark"), or a mote or spark rising `tag` metres.
+func _sparks_of(part: Array, tag: Variant) -> MultiMeshInstance3D:
+	var mi := _scatter(_quad(), part[1], part[2], 0.0, 0.0)
+	var m := ShaderMaterial.new()
+	m.shader = _spark
+	m.set_shader_parameter("drift", part[4])
+	if tag is float:
+		m.set_shader_parameter("rise", tag)
+		# Motes and sparks show by day too: fainter and finer than fireflies.
+		m.set_shader_parameter("min_px", 7.0)
+		m.set_shader_parameter("strength", 0.5)
+	elif tag == "night":
+		_night.append(m)
+	mi.material_override = m
+	# They wander and rise beyond their placed box.
+	mi.custom_aabb = AABB(Vector3(-30, -5, -30), Vector3(60, 15, 60))
 	return mi
 
 
@@ -315,6 +363,13 @@ func _decorated(m: ShaderMaterial) -> ShaderMaterial:
 		m.set_shader_parameter("deco_scale", 8.0)
 		m.set_shader_parameter("deco_glow", 1.0 if realm == "lanternvale" else 0.0)
 	return m
+
+
+## `node` added under `parent` as `label` (numbered when repeated), so a
+## budget count can name the look's parts.
+static func _add(parent: Node, label: String, node: Node) -> void:
+	node.name = label
+	parent.add_child(node, true)
 
 
 static func _piece(mesh: Mesh, mat: Material, shadows: bool) -> MeshInstance3D:

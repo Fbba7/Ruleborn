@@ -26,6 +26,7 @@ func run() -> void:
 	_footprints()
 	_ground()
 	_realm()
+	_mid()
 	_signatures()
 	_map()
 	_hours()
@@ -39,7 +40,7 @@ static func _layers(kit: RealmKit) -> int:
 
 
 ## A 3 × 3 realm with feature `code` in the middle.
-static func _one(code: int) -> RealmKit:
+static func single(code: int) -> RealmKit:
 	var codes := PackedByteArray()
 	codes.resize(9)
 	codes[4] = code
@@ -61,7 +62,7 @@ func _features() -> void:
 	for code in range(1, RealmKit.F.size()):
 		if code in [RealmKit.F.VAULT, RealmKit.F.PYLON, RealmKit.F.BUILDING, RealmKit.F.TUNNEL]:
 			continue
-		var kit := _one(code)
+		var kit := single(code)
 		var n := _layers(kit)
 		if n > FEATURE_MAX:
 			over.append([RealmKit.F.keys()[code], n])
@@ -179,6 +180,72 @@ func _realm() -> void:
 		total > 3000 and total < REALM_MAX and nodes.size() <= 7, "%d triangles, %d meshes" % [total, nodes.size()])
 
 
+## A lived-in realm (the kit's own `kit_realm.gd` shot, grown): the
+## Keeper's Spire and nine more buildings at `lvl` on the largest grid,
+## joined by paths, with trees, hedges, water, lanterns and a statue, its kit
+## built at `detail`.
+static func lived_in(lvl: int, detail: int) -> RealmKit:
+	var ex := RulebornIsland.new()
+	ex.reset(9)
+	for b: Array in [["keeper_s_spire", 5, 4], ["hearth", 1, 1], ["star_well", 9, 1], ["hearth", 11, 4],
+			["garden", 1, 9], ["library", 10, 9], ["storehouse", 5, 10], ["nursery", 1, 5], ["observatory", 11, 12],
+			["hearth", 8, 12]]:
+		ex.place_building(b[0], b[1], b[2])
+	var put := {"gravel_path": [[2, 3], [3, 3], [4, 3], [5, 3], [6, 3], [7, 3], [8, 3], [9, 3], [10, 3], [6, 7],
+		[6, 8], [6, 9], [3, 7], [4, 7], [5, 7], [7, 7], [8, 7], [9, 7], [10, 7], [10, 6], [3, 8], [3, 9]],
+		"tree": [[0, 0], [4, 0], [13, 1], [0, 12], [13, 9], [4, 12], [12, 0], [7, 0]],
+		"hedge": [[4, 9], [4, 10], [4, 11]], "pond": [[12, 2], [13, 2], [13, 3]], "stream": [[0, 7], [1, 7], [2, 7]],
+		"lantern_post": [[4, 4], [9, 4], [8, 8], [2, 11]], "flower_meadow": [[5, 0], [6, 0], [0, 3], [7, 13]],
+		"bush": [[8, 0], [12, 11], [3, 13]], "tall_grass": [[0, 9], [0, 10], [13, 12], [13, 13]],
+		"boulder": [[10, 0]], "bell_post": [[9, 8]], "statue": [[5, 8]], "fence": [[0, 13], [1, 13], [2, 13]],
+		"shade_canopy": [[7, 8]]}
+	for id: String in put:
+		for xy: Array in put[id]:
+			ex.set_ground(xy[0], xy[1], id)
+	var replay := RulebornReplay.new()
+	replay.start("7", 4500, 3, ex.bytes())
+	var kit := RealmKit.new(replay, RealmPalette.of("heart"))
+	var known := []
+	for b: Array in ex.buildings():
+		known.append([b[0], b[1], b[2], b[3], lvl])
+	kit.buildings = known
+	kit.island_seed = 7
+	kit.detail = detail
+	kit.build()
+	return kit
+
+
+## The mid-detail level (BuildingKit.MID): a lived-in realm of ten
+## buildings at level 10 on the home camera stays under §21.3's 40,000
+## triangles as drawn, the inked layer counted twice for its ink pass; the
+## buildings at that level take under 40 % of their full detail, and none
+## of the larger ones over two thirds.
+func _mid() -> void:
+	var drawn := func(kit: RealmKit) -> int:
+		var n := kit.hero.triangles
+		for g: Geo in [kit.ground, kit.scatter, kit.hero, kit.prop, kit.clear, kit.water, kit.lava]:
+			n += g.triangles
+		return n
+	var full: int = drawn.call(lived_in(10, BuildingKit.FULL))
+	var mid: int = drawn.call(lived_in(10, BuildingKit.MID))
+	var heavy := []
+	var sums := Vector2i.ZERO
+	for kind: String in BuildingKit.KINDS:
+		var n: Array[int] = []
+		for det: int in [BuildingKit.FULL, BuildingKit.MID]:
+			var g := Geo.new()
+			g.skip_down = true
+			BuildingKit.build(g, kind, Vector3.ZERO, 2, 10, RealmPalette.of("heart"), null, null, 0.0, det)
+			n.append(g.triangles)
+		sums += Vector2i(n[0], n[1])
+		if (n[0] > 600 and n[1] * 3 > n[0] * 2) or n[1] < 50:
+			heavy.append([kind, n[0], n[1]])
+	check.call("at the mid detail a fully built realm draws under §21.3's 40,000 triangles with its ink, and the "
+			+ "buildings take about a third of their full detail (21.3)",
+		mid < REALM_MAX and mid * 2 < full and sums.y * 5 < sums.x * 2 and heavy.is_empty(),
+		"%d full, %d mid, %s %s" % [full, mid, sums, heavy])
+
+
 func _signatures() -> void:
 	var missing := []
 	for realm: String in RealmPalette.TYPES:
@@ -238,7 +305,21 @@ func _hours() -> void:
 	var night: Array = lit.call()
 	RealmKit.by_hour(root, 12)
 	var day: Array = lit.call()
-	root.free()
 	check.call("the kit's windows, lanterns and crystals glow by the hour: brighter at night than by day (21.2)",
 		not night.is_empty() and night.all(func(v: float) -> bool: return v == 1.0)
 			and day.all(func(v: float) -> bool: return v == 0.0), "%s %s" % [night, day])
+	# The builder's grid (RealmKit.show_grid) on the ground, and off again.
+	var shown := func() -> Array:
+		var out := []
+		for n in root.get_children():
+			var v: Variant = ((n as MeshInstance3D).material_override as ShaderMaterial).get_shader_parameter("grid_show")
+			if v != null:
+				out.append(float(v))
+		return out
+	RealmKit.show_grid(root, 1.0)
+	var on: Array = shown.call()
+	RealmKit.show_grid(root, 0.0)
+	var off: Array = shown.call()
+	root.free()
+	check.call("the builder's grid shows on the realm's ground when asked and goes again (T6's terrain editor)",
+		on == [1.0] and off == [0.0], "%s %s" % [on, off])

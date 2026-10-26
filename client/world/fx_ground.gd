@@ -202,7 +202,7 @@ static func pieces(view: WorldView) -> void:
 		var mesh := PieceKit.pylon(str(p.get("school", "matter"))) if p["standing"] else PieceKit.broken_pylon()
 		any = _append(st, mesh, view.world_at(p["at"])) or any
 	for w: Dictionary in wards:
-		var mesh := PieceKit.ward(str(w["kind"])) if w["live"] else PieceKit.dead_ward()
+		var mesh := PieceKit.ward(str(w["kind"]), int(w.get("level", 1))) if w["live"] else PieceKit.dead_ward()
 		any = _append(st, mesh, view.world_at(w["at"])) or any
 	view._pieces.mesh = st.commit() if any else null
 
