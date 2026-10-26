@@ -105,37 +105,40 @@ func _chamber(c: Dictionary, busy: bool) -> Control:
 		head.add_child(ScreenParts.pill(c["left"], "cream", "generalui", "timer"))
 	box.add_child(head)
 	var n := int(c["chamber"])
+	# The design's test bench: each law a round gem in its school's ring with
+	# its name beneath, joined to the core by a gold thread.
 	var bench := HBoxContainer.new()
-	bench.add_theme_constant_override("separation", UI.px(4))
+	bench.add_theme_constant_override("separation", 0)
 	bench.alignment = BoxContainer.ALIGNMENT_CENTER
-	if c.has("running"):
-		var laws: Array = c["running"]
-		for i: int in laws.size():
-			if i == 1:
-				bench.add_child(_core(true))
-			var p := ScreenKit.panel("well", ScreenKit.icon("laws", str(laws[i]), 52.0), -1.0, 6.0)
-			bench.add_child(p)
-	else:
-		var i := 0
-		for s: Dictionary in c["slots"]:
-			if i == 1:
-				bench.add_child(_core(false))
-			var b := ScreenKit.button(s["text"], controller.cycle.bind(n, int(s["slot"])), "card", s["spoken"], 16.0)
-			var tex := ScreenKit.icon_texture("laws", str(s["law"]))
-			if tex != null:
-				b.icon = tex
-				b.expand_icon = true
-				b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
-				b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-				b.add_theme_constant_override("icon_max_width", UI.px(48))
+	var running := c.has("running")
+	var items: Array = c["running"] if running else c["slots"]
+	for i: int in items.size():
+		if i == 1:
+			bench.add_child(ScreenThread.make(UI.px(64), running))
+			bench.add_child(_core(running))
+			bench.add_child(ScreenThread.make(UI.px(64), running))
+		var law := str(items[i]) if running else str((items[i] as Dictionary)["law"])
+		var col := VBoxContainer.new()
+		col.add_theme_constant_override("separation", UI.px(4))
+		col.custom_minimum_size.x = UI.px(104)
+		var gem := ScreenKit.panel("ring_" + LawFxLinks.school(law), ScreenKit.icon("laws", law, 46.0), -1.0, 6.0)
+		gem.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		col.add_child(gem)
+		if running:
+			var name := ScreenKit.text(Strings.term("LAW", law), 13.0, "words", "card_lit", false, true)
+			name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			col.add_child(name)
+		else:
+			var s: Dictionary = items[i]
+			# A tap moves the sphere to the next restored law.
+			var b := ScreenKit.button(s["text"], controller.cycle.bind(n, int(s["slot"])), "well", s["spoken"], 14.0)
 			b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			b.custom_minimum_size = Vector2(UI.px(116), UI.px(104))
-			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			b.custom_minimum_size.x = UI.px(96)
 			b.disabled = busy
 			b.set_meta("key", s["key"])
 			b.set_meta("item", s["key"])
-			bench.add_child(b)
-			i += 1
+			col.add_child(b)
+		bench.add_child(col)
 	box.add_child(bench)
 	if c.get("unstable", false):
 		box.add_child(ScreenParts.pill(Strings.t("LAB_UNSTABLE"), "red", "hud", "warning", 13.0, "words", true))
@@ -164,7 +167,9 @@ func _chamber(c: Dictionary, busy: bool) -> Control:
 func _core(lit: bool) -> Control:
 	var core := ScreenKit.icon("harmony", "resonance", 40.0 if lit else 32.0)
 	core.modulate = Color.WHITE if lit else Color(1, 1, 1, 0.55)
-	core.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	# As tall as the thread's band, so the mark sits on the thread's line.
+	core.custom_minimum_size.y = UI.px(64)
+	core.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	return core
 
 

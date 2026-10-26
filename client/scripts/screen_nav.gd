@@ -87,6 +87,19 @@ static func hub(name: String, route: StringName) -> PanelContainer:
 			chosen = routes.size()
 		options.append(Strings.t(str(h["words"])))
 		routes.append(h["route"])
+	# At large text three words do not fit one strip: chips that wrap, so no
+	# word is broken.
+	if Settings.text_scale > 125:
+		var row := ScreenParts.flow(6.0)
+		row.alignment = FlowContainer.ALIGNMENT_CENTER
+		for i: int in options.size():
+			var to: StringName = routes[i]
+			row.add_child(ScreenParts.chip(str(options[i]), i == chosen, func() -> void:
+				if to != route:
+					App.services.router.go(to)))
+		var p := ScreenKit.panel("well", row, 18.0, 6.0)
+		p.name = "Hub"
+		return p
 	var s := KitNav.segmented(options, chosen, func(i: int) -> void:
 		if routes[i] != route:
 			App.services.router.go(routes[i]))
