@@ -20,6 +20,7 @@ decision).
 | Id | Severity | Area | Title | Status |
 | --- | --- | --- | --- | --- |
 | SR-01 | High | server | Any player could loosen their own age band | fixed |
+| SR-02 | Medium | server | A heist's crew manifest was unchecked when the crew went unnamed | fixed |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -42,4 +43,25 @@ decision).
   band on the server's side, not through this route. An account made before
   this column has one answer left, which is the device's first one if it
   never sent it.
+- **Status:** fixed.
+
+### SR-02 — A heist's crew manifest was unchecked when the crew went unnamed (Medium)
+
+- **Where:** `server/src/service.mjs` `submit`; `POST /v1/heists/:token`.
+- **What:** an `RBH3` replay carries §12.5's crew manifest, and the
+  simulation plays each member by the kind it names (role, size, speed,
+  ability). §12.5: the manifest is one *"which the server checks against the
+  roster it holds"*. The check (`home.crewProblem`) ran only when the request
+  named the crew with `?crew=`; leave the query out and any three kinds were
+  played, kinds the raider never hatched, and no character rested afterwards
+  (§11.6), so the same crew could raid without pause.
+- **Reproduce:** lease, record a replay whose manifest names kinds the raider
+  does not hold, and `POST /v1/heists/:token` with no `?crew=`: validated and
+  paid.
+- **Test:** `server/test/security_heists.test.mjs`; `server/test/crew.test.mjs`
+  now names its roster crew, as the device does.
+- **Fix:** a replay carrying a manifest with no crew named is refused,
+  `crew_not_named`, and pays nothing. A replay without a manifest (`RBH1`,
+  `RBH2`) still plays §11.1's crew by role, as before. The client's planner
+  always sends the two together (`planner_presenter.gd`), so it is unchanged.
 - **Status:** fixed.

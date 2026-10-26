@@ -633,7 +633,11 @@ export class Service {
     }
 
     // TD.34: the roster's characters the device names as the crew, held,
-    // not away, and the replay manifest's own (home.mjs).
+    // not away, and the replay manifest's own (home.mjs). §12.5: a manifest
+    // is "checked against the roster it holds", so one the device sends
+    // without naming the crew is refused: else any kind could be claimed,
+    // and nobody would rest after.
+    if (header.manifest && !crew) return refuse("crew_not_named");
     if (crew) {
       const why = this.home.crewProblem(attacker, crew, replay, header, now);
       if (why) return refuse(why);
