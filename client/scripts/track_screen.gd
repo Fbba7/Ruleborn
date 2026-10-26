@@ -200,7 +200,13 @@ func _tier_row(row: Dictionary, premium: bool) -> Control:
 	plate.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	if state == "next":
 		RbBox.of(plate).set_chosen(true)
-	col.add_child(plate)
+	# The road through the nodes: solid up to the next tier, dashed beyond.
+	var road := HBoxContainer.new()
+	road.add_theme_constant_override("separation", 0)
+	road.add_child(ScreenThread.make(UI.px(44), state != "later"))
+	road.add_child(plate)
+	road.add_child(ScreenThread.make(UI.px(44), state == "claimed"))
+	col.add_child(road)
 	col.add_child(_reward(row["free"], row["free_mark"], state, false))
 	col.tooltip_text = row["text"]
 	return col
@@ -215,9 +221,11 @@ func _reward(words: String, mark: Array, state: String, locked: bool) -> Control
 	col.alignment = BoxContainer.ALIGNMENT_CENTER
 	var material := "card_selected" if state == "next" else ("parchment" if state == "claimed" else "card")
 	if words == "":
-		var empty := ScreenKit.panel("track", null, 14.0, 4.0)
-		empty.custom_minimum_size.y = UI.px(112)
-		return empty
+		# Nothing in this lane at this tier: open road, not an empty box.
+		var gap := Control.new()
+		gap.custom_minimum_size.y = UI.px(112)
+		gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		return gap
 	var top := HBoxContainer.new()
 	top.alignment = BoxContainer.ALIGNMENT_CENTER
 	if mark.size() == 2:

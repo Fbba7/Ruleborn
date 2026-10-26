@@ -13,6 +13,9 @@ func _go() -> void:
 		Strings.set_locale(OS.get_environment("LOCALE"))
 	if OS.get_environment("TEXT") != "":
 		Settings.text_scale = int(OS.get_environment("TEXT"))
+	if OS.get_environment("HC") == "1":
+		Settings.high_contrast = true
+		Settings.apply()
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	App.services.router.change = func(_path: String) -> void: pass
 	App.services.store.dispatch(&"navigated", {"name": StringName(name), "params": ScreenShots.params(name)})
