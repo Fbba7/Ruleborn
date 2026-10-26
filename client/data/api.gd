@@ -37,8 +37,12 @@ static func secure(url: String) -> bool:
 		return true
 	if not url.begins_with("http://"):
 		return false
-	var host := url.trim_prefix("http://").get_slice("/", 0).get_slice(":", 0)
-	return host == "127.0.0.1" or host == "localhost"
+	# The whole authority is the loopback and at most a port, and no "@" or
+	# backslash anywhere, which a URL reader may take as ending a userinfo:
+	# "localhost:1@host" names another host (SR-06).
+	if url.contains("@") or url.contains("\\"):
+		return false
+	return RegEx.create_from_string("^http://(127\\.0\\.0\\.1|localhost)(:\\d{1,5})?([/?#]|$)").search(url) != null
 
 
 ## A call answered with bytes: a bundle, a replay.

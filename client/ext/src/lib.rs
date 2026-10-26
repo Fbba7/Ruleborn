@@ -62,6 +62,16 @@ fn realm_of(bytes: &PackedByteArray) -> Option<Island> {
     }
 }
 
+/// Whether a replay from elsewhere — the server's copy of a heist, which it
+/// keeps before it has checked it — is one the simulation would play: the
+/// crew and the clock inside what `verified` allows. A crew past eight
+/// overflows the out mask, which aborts the app, and a clock of billions of
+/// ticks never ends its stepping (the security review's SR-08).
+fn playable(heist: &Heist) -> bool {
+    (3..=5).contains(&heist.crew)
+        && (sim::MIN_TICKS..=sim::MAX_TICKS + sim::era::extra_ticks(heist.era)).contains(&heist.ticks)
+}
+
 fn hex(bytes: &[u8]) -> GString {
     let s: String = bytes.iter().map(|b| format!("{b:02x}")).collect();
     GString::from(&s)
@@ -110,10 +120,14 @@ impl RulebornReplay {
 
     /// Load a replay onto the realm it was played in. With no island, the
     /// fixture realm the golden replays are recorded on. False if either does
-    /// not decode, or the island is not the one the replay names.
+    /// not decode, the replay is not one the simulation plays (`playable`),
+    /// or the island is not the one the replay names.
     #[func]
     fn load(&mut self, replay: PackedByteArray, island: PackedByteArray) -> bool {
         let Some(heist) = Heist::decode(replay.as_slice()) else { return false };
+        if !playable(&heist) {
+            return false;
+        }
         let Some(realm) = realm_of(&island) else { return false };
         if !island.is_empty() && realm.digest() != heist.island {
             return false;

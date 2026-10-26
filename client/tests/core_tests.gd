@@ -86,7 +86,13 @@ func _api() -> void:
 		action_log.dump())
 	check.call("only HTTPS leaves the phone; plain HTTP only to this machine, for tests",
 		Api.secure("https://edge.example/") and Api.secure("http://127.0.0.1:8787") and not Api.secure("http://edge.example")
-			and not Api.secure("http://127.0.0.1.edge.example/"))
+			and not Api.secure("http://127.0.0.1.edge.example/") and Api.secure("http://localhost")
+			and Api.secure("http://localhost:8787/v1"))
+	# SR-06: a userinfo or backslash before the real host is not the loopback.
+	check.call("SR-06: plain HTTP is refused to a host hidden behind the loopback's name",
+		not Api.secure("http://localhost:1@edge.example/") and not Api.secure("http://127.0.0.1:80@edge.example")
+			and not Api.secure("http://localhost\\@edge.example/") and not Api.secure("http://localhost.:80/")
+			and not Api.secure("http://localhost:x@edge.example") and not Api.secure("http://localhost:1?@edge.example"))
 	fake.queue_free()
 	DirAccess.remove_absolute("user://outbox-core.json")
 
