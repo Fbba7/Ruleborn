@@ -261,7 +261,7 @@ func door(x: float, y: float, z: float, yaw: float, s := 1.0) -> void:
 ## A gable roof `w` across and `depth` deep, its eaves at `y0`, rising `rise`,
 ## laid in rows of shingles (thatch at the first look), a round ridge and
 ## plaster gable ends.
-func roof(w: float, depth: float, y0: float, rise: float, over := 0.08, rows := 4, yaw := 0.0) -> float:
+func roof(w: float, depth: float, y0: float, rise: float, over := 0.08, rows := 4, yaw := 0.0, infill := true) -> float:
 	if lighter:
 		rows = mini(rows, 2)
 	var run := w / 2.0 + over
@@ -279,38 +279,8 @@ func roof(w: float, depth: float, y0: float, rise: float, over := 0.08, rows := 
 	g.cyl(Transform3D(turn * Basis(Vector3.RIGHT, PI / 2.0), at(0, 0, 0) + turn * Vector3(0, y0 + rise + 0.015,
 		-(depth / 2.0 + over + 0.01)) * unit), 0.03 * unit, 0.03 * unit, (depth + over * 2.0 + 0.02) * unit,
 		KitStyle.GOLD if tier == 2 else roof_dark, 6)
-	g.gable(Transform3D(turn, at(0, y0, 0)), w * unit, rise * unit, (depth - 0.01) * unit, wall)
-	return y0 + rise
-
-
-## A hip roof: four shingled slopes rising from eaves `w` × `depth` at
-## `y0` to a short ridge, `rise` high; reads as a roof from every side.
-func _hip_roof(w: float, depth: float, y0: float, rise: float) -> float:
-	var rows := 3
-	for i in rows:
-		var t0 := float(i) / rows
-		var t1 := float(i + 1) / rows
-		var col := roof_col if i % 2 == 1 else roof_dark
-		var hw0 := lerpf(w / 2.0 + 0.06, 0.04, t0)
-		var hd0 := lerpf(depth / 2.0 + 0.06, 0.12, t0)
-		var hw1 := lerpf(w / 2.0 + 0.06, 0.04, t1)
-		var hd1 := lerpf(depth / 2.0 + 0.06, 0.12, t1)
-		var ya := y0 + rise * t0
-		var yb := y0 + rise * t1
-		var lo: Array[Vector3] = [at(-hw0, ya, -hd0), at(hw0, ya, -hd0), at(hw0, ya, hd0), at(-hw0, ya, hd0)]
-		var hi: Array[Vector3] = [at(-hw1, yb, -hd1), at(hw1, yb, -hd1), at(hw1, yb, hd1), at(-hw1, yb, hd1)]
-		for k in 4:
-			var n := (k + 1) % 4
-			var a: Vector3 = lo[k]
-			var b: Vector3 = lo[n]
-			var c: Vector3 = hi[n]
-			var e: Vector3 = hi[k]
-			if (b - a).cross(e - a).y > 0:
-				g.quad(a, b, c, e, col.darkened(0.04 * (k % 2)))
-			else:
-				g.quad(a, e, c, b, col.darkened(0.04 * (k % 2)))
-	var ridge := at(0, y0 + rise, 0)
-	g.box(Geo.place(ridge), Vector3(0.1, 0.035, 0.28) * unit, KitStyle.GOLD if tier == 2 else roof_dark)
+	if infill:
+		g.gable(Transform3D(turn, at(0, y0, 0)), w * unit, rise * unit, (depth - 0.01) * unit, wall)
 	return y0 + rise
 
 
@@ -659,7 +629,7 @@ func _star_well() -> void:
 			box(0.17, 0.12, 0.1, stone if (i + c) % 2 == 1 else stone.darkened(0.12), cos(a) * 0.33, 0.24 + c * 0.12,
 				sin(a) * 0.33, PI / 2.0 - a)
 	d.torus(place(0, 0.44, 0), 0.33 * unit, 0.05 * unit, stone2, 16, 5)
-	g.cyl(place(0, 0.39, 0), 0.28 * unit, 0.28 * unit, 0.02 * unit, KitStyle.lit(Color("#FFE08F"), 0.25), 14)
+	g.cyl(place(0, 0.39, 0), 0.28 * unit, 0.28 * unit, 0.02 * unit, KitStyle.lit(Color("#FFD23C"), 0.7), 14)
 	for x: float in [-0.36, 0.36]:
 		box(0.1, 0.08, 0.1, stone2, x, 0.48, 0)
 		box(0.06, 0.72, 0.06, KitStyle.WOOD, x, 0.88, 0)
@@ -676,8 +646,9 @@ func _star_well() -> void:
 	cyl(0.055, 0.045, 0.08, KitStyle.WOOD, 0, 0.66, 0, 8)
 	stop()
 	cyl(0.004, 0.004, 0.36, Color("#D8C8A8"), 0, 0.82, 0, 3)
-	# Its little roof, turned across the beam.
-	var y := _hip_roof(0.62, 0.48, 1.25, 0.38)
+	# Its open gable roof along the beam, as broad as the design's (:713):
+	# the shape the well reads by at the realm's zoom.
+	var y := roof(0.6, 1.0, 1.25, 0.3, 0.04, 3, PI / 2.0, false)
 	move(Geo.Anim.SPIN_Y, at(0, y + 0.3, 0))
 	d.gem(Geo.place(at(0, y + 0.3, 0)), 0.15 * unit, 0.22 * unit, KitStyle.lit(Color("#FFE9A0"), 0.45), 4)
 	stop()
