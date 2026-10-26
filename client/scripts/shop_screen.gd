@@ -155,7 +155,7 @@ func _featured(item: Dictionary, busy: bool, friend: Dictionary) -> Control:
 	var kicker := ScreenKit.text(Strings.t("SCREEN_FEATURED").to_upper(), 13.0, "words", "card")
 	kicker.add_theme_color_override("font_color", Tokens.color("gold"))
 	words.add_child(kicker)
-	var name := ScreenKit.text(item["name"], 26.0, "name", "card", false, true)
+	var name := ScreenKit.text(item.get("title", item["name"]), 26.0, "name", "card", false, true)
 	name.tooltip_text = Strings.t("SHOP_ITEM", [item["name"], item["price"]])
 	words.add_child(name)
 	words.add_child(ScreenParts.pill(Strings.term("KIND", str(item["kind"])), "well", "shopcosmetics",
@@ -191,7 +191,7 @@ func _for_sale(item: Dictionary, busy: bool, friend: Dictionary) -> Control:
 	art.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var stage := ScreenKit.panel("well", art, 14.0, 10.0)
 	box.add_child(stage)
-	var name := ScreenKit.text(item["name"], 15.0, "words", "card_lit", false, true)
+	var name := ScreenKit.text(item.get("title", item["name"]), 15.0, "words", "card_lit", false, true)
 	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name.tooltip_text = Strings.t("SHOP_ITEM", [item["name"], item["price"]])
 	box.add_child(name)

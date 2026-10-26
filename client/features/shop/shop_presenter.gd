@@ -129,6 +129,16 @@ static func kind_of(id: String, catalogue: Array) -> String:
 	return ""
 
 
+## A cosmetic's name for its card's title: its catalogue words, else the
+## name its id ends in ("robe-aurora" is Aurora), as its kind is shown beside.
+static func cosmetic_title(id: String) -> String:
+	var key := "COSMETIC_" + id.to_upper().replace("-", "_")
+	if Strings.rows().has(key):
+		return Strings.t(key)
+	var tail := id.get_slice("-", 1) if id.contains("-") else id
+	return Strings.t("SCREEN_COSMETIC_TITLE", tail.replace("_", " ").capitalize())
+
+
 ## A cosmetic's name: its catalogue words if it has them, else its kind and id.
 static func cosmetic_name(id: String, kind: String) -> String:
 	var key := "COSMETIC_" + id.to_upper().replace("-", "_")
@@ -151,7 +161,7 @@ static func shop(s: Dictionary, purchases: StorePurchases) -> Dictionary:
 		if id in owned:
 			continue
 		items.append({"id": id, "kind": str(i.get("kind", "")), "name": cosmetic_name(id, str(i.get("kind", ""))),
-			"price": money(int(i.get("price", 0)), purchases.price(id)),
+			"title": cosmetic_title(id), "price": money(int(i.get("price", 0)), purchases.price(id)),
 			"product": str(i.get("product", id)), "gift": str(i.get("gift", "gift." + id))})
 	var mine: Array[Dictionary] = []
 	for id: Variant in owned:
