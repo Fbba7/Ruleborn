@@ -47,6 +47,9 @@ CREATE TABLE IF NOT EXISTS accounts (
   created_at        INTEGER NOT NULL,
   -- §20.5: "Age bands instead of birthdates"; §20.7 sets what each may do.
   age_band          TEXT NOT NULL DEFAULT '18+' CHECK (age_band IN ('13-15', '16-17', '18+')),
+  -- §20.1: when the device's age check first answered; after it the band
+  -- only tightens (workshop.mjs setAgeBand).
+  age_answered_at   INTEGER,
   -- §20.4: a person reviews reports; this marks who may act on them.
   moderator         INTEGER NOT NULL DEFAULT 0,
   -- Who may read the telemetry report (telemetry.mjs).
@@ -867,6 +870,7 @@ const ADDED = [
   ["islands", "name_noun", "INTEGER"],
   ["snapshots", "origin", "TEXT"],
   ["accounts", "age_band", "TEXT NOT NULL DEFAULT '18+'"],
+  ["accounts", "age_answered_at", "INTEGER"],
   ["accounts", "moderator", "INTEGER NOT NULL DEFAULT 0"],
   ["accounts", "banned_at", "INTEGER"],
   ["accounts", "banned_reason", "TEXT"],

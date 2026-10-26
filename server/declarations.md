@@ -98,7 +98,7 @@ Export compliance — Uses non-exempt encryption (ITSAppUsesNonExemptEncryption)
 - **Product Interaction** (sessions and what was done in them): `accounts.created_at`, `event_batches.at`, `event_batches.day`, `event_batches.events`, `first_seen.day`.
 - **Other Usage Data** (notification settings, moderation): `accounts.terms_version`, `accounts.banned_at`, `accounts.banned_reason`, `accounts.reminder_at`, `accounts.night_quiet`, `workshop_items.removed_at`, `workshop_items.removed_reason`, `notifications.kind`, `notifications.due_at`, `notifications.sent_at`, `bans.banned_at`, `bans.reason`, `event_batches.events`.
 - **Crash Data** (whether a session ended in a crash): `event_batches.events`.
-- **Other Data Types** (the age band): `accounts.age_band`.
+- **Other Data Types** (the age band): `accounts.age_band`, `accounts.age_answered_at`.
 - **Other Data Types** (the device's time zone): `accounts.time_zone`, `fund_payouts.cents`.
 
 ## What deleting an account does, table by table
