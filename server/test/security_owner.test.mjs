@@ -9,6 +9,8 @@ import { test } from "node:test";
 import { quarterOf } from "../src/fund.mjs";
 import { Social } from "../src/social.mjs";
 import { TICKS_PER_SECOND } from "../src/service.mjs";
+import { lawsOf } from "../src/telemetry.mjs";
+import { raiseTo } from "../src/universe.mjs";
 import { twoPlayers, server } from "./setup.mjs";
 
 // SR-09: §12.15, "Ratings are internal … the raw numbers are never shown".
@@ -83,4 +85,22 @@ test("SR-15 (needs the owner, D60): an island's exposed loot is the bundle's wor
   const exposed = t.service.db.prepare("SELECT exposed FROM snapshots WHERE bundle = ?").get(bundle).exposed;
   assert.equal(exposed, 0xffffffff, "a player with nothing stored claims the most richness pays");
   assert.deepEqual(t.service.balance(owner), { starlight: 0, essence: 0 });
+});
+
+// SR-16 (register G60, G61): §24.8, "a realm plays what its owner wove",
+// and "each posted guard's kind, form and level ride in the bundle, checked
+// against the owner's roster". Neither is checked: an island defends with
+// laws its owner never wove and guards nobody posted.
+test("SR-16 (needs the owner, G60 and G61): an island's laws and guards are the bundle's word", () => {
+  const t = server({ strictUniverse: true });
+  const owner = t.service.session("gc:owner").account;
+  const island = t.build.exampleIsland(false);
+  raiseTo(t.service.db, owner, "heart", island[4], island[5]);
+  assert.deepEqual(lawsOf(island), ["brittle_stone", "haste"], "the example island runs two laws");
+  const woven = t.service.db.prepare("SELECT COUNT(*) AS n FROM law_slots WHERE owner = ?").get(owner).n;
+  assert.equal(woven, 0, "nothing woven");
+  const posted = t.service.db.prepare("SELECT COUNT(*) AS n FROM characters WHERE owner = ? AND work_kind = 'guardian_post'")
+    .get(owner).n;
+  assert.equal(posted, 0, "nobody posted");
+  assert.match(t.service.publish(owner, island).bundle, /^[0-9a-f]{64}$/, "and the island is published to defend");
 });

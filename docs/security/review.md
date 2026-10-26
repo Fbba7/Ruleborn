@@ -30,6 +30,7 @@ decision).
 | SR-13 | Low | server | "constructor" and its like were taken as law ids | fixed |
 | SR-12 | Medium | server | The Island Fund pays one player's replays as if each were a new player | needs the owner |
 | SR-15 | Medium | server | An island's exposed loot is the bundle's word (register D60) | needs the owner |
+| SR-16 | Medium | server | An island's laws and guards are the bundle's word (register G60, G61) | needs the owner |
 | SR-09 | Low | server | The public target lists carry every island's raw rating | needs the owner |
 | SR-10 | Low | server | A minor's monthly cap holds only on the client's word | needs the owner |
 | SR-14 | Low | server | A crew is anyone's who holds its invite, a 13-to-15's too | needs the owner |
@@ -316,6 +317,27 @@ decision).
   cap at the level median's figure would close the abuse without the full
   derivation, but it changes what every honest rich island pays, so it is
   the owner's call.
+
+### SR-16 — An island's laws and guards are the bundle's word (Medium; register G60, G61)
+
+- **Where:** `server/src/service.mjs` `publish` and
+  `server/src/universe.mjs` `problems`.
+- **What:** §24.8: *"Each posted guard's kind, form and level ride in the
+  bundle, checked against the owner's roster … so a realm plays what its
+  owner wove."* `problems` checks the realm, its level, the Vault and where
+  buildings stand; the simulation checks how many laws, wards and guards a
+  realm level allows. Which laws, and whose guards, nobody checks. A new
+  Keeper with nothing woven publishes Haste, a chapter-two law they cannot
+  restore before Keeper 6, and guards no character is posted to. A stronger
+  island than its owner has built foils more raids, and every foil pays the
+  defender the fee and §12.9's share and moves Renown.
+- **Test:** `server/test/security_owner.test.mjs` (SR-16).
+- **Why not fixed here:** the register holds both as open with the build
+  left (G60: posted guards against the roster; G61: crown laws carried in
+  the bundle, and chords against the universe's stability). Refusing a law
+  not woven in the realm is a few lines in `problems`, but the client's
+  builder and every test that publishes an example island would have to
+  weave first, so it belongs with that build work, not in a review.
 
 ## Sent to T11
 
