@@ -82,7 +82,7 @@ func _build() -> void:
 	body = UI.scroll(column)
 	body.add_theme_constant_override("separation", UI.px(10))
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(0, UI.px(Tokens.number("size", "safe_top_points") + 290.0))
+	stage.custom_minimum_size = Vector2(0, UI.px(Tokens.number("size", "safe_top_points") + 245.0))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(stage)
 	# The name on a gold-rimmed plate at the stage's foot, as the design's.
@@ -334,14 +334,55 @@ func _stats_tab(me: Dictionary) -> void:
 	var role := str(me.get("role", ""))
 	var numbers := _numbers(role)
 	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", UI.px(10))
+	v.add_theme_constant_override("separation", UI.px(8))
+	var tiles: Array = []
 	for s: Array in STATS:
 		var value := float(numbers.get(s[0], 0.0))
-		v.add_child(StageHeroKit.stat(Strings.t("CHARACTER_STAT_" + str(s[0]).to_upper()), _shown(str(s[0]), value),
+		tiles.append(_stat_tile(Strings.t("CHARACTER_STAT_" + str(s[0]).to_upper()), _shown(str(s[0]), value),
 			value / _most(str(s[0])), Color(str(s[2])), str(s[1])))
+	v.add_child(StageHeroKit.grid(tiles, self))
 	v.add_child(StageHeroKit.para(Strings.t("CHARACTER_STATS_NOTE", Strings.term("ROLE", role)), 14.0,
-		StageHeroSkin.LIGHT_SOFT))
-	cards.add_child(StageHeroKit.card("", v))
+		StageHeroSkin.BROWN))
+	cards.add_child(StageHeroMaterial.panel("parchment", v, 16.0, 10.0))
+
+
+## A stat as the design's tile: its glyph and name small and tracked, its
+## number large in Lilita One, and a track of ten pips filled to its share
+## of the largest any role has; read aloud as name and number.
+static func _stat_tile(name: String, number: String, fraction: float, colour: Color, glyph: String) -> Control:
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(2))
+	var top := HBoxContainer.new()
+	top.add_theme_constant_override("separation", UI.px(4))
+	top.add_child(StageHeroKit.words(glyph, 15.0, colour.darkened(0.45)))
+	var n := StageHeroKit.kicker(name, Color("#6A4A2A"))
+	n.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	top.add_child(n)
+	v.add_child(top)
+	var value := StageHeroKit.words(number, 26.0, Color("#2A1A10"))
+	value.add_theme_font_override("font", StageHeroSkin.numbers_font())
+	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	v.add_child(value)
+	var pips := HBoxContainer.new()
+	pips.add_theme_constant_override("separation", UI.px(2))
+	var lit := roundi(clampf(fraction, 0.0, 1.0) * 10.0)
+	for i: int in 10:
+		var pip := Panel.new()
+		var dot := StyleBoxFlat.new()
+		dot.bg_color = colour.darkened(0.15) if i < lit else Color("#D8C8A4")
+		dot.set_corner_radius_all(UI.px(3))
+		pip.add_theme_stylebox_override("panel", dot)
+		pip.custom_minimum_size = Vector2(UI.px(8), UI.px(7))
+		pip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		pip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		pips.add_child(pip)
+	v.add_child(pips)
+	v.accessibility_name = Strings.t("CHARACTER_STAT_SPOKEN", [name, number])
+	for l: Label in v.find_children("*", "Label", true, false):
+		l.set_meta("own_ink", true)
+	var tile := StageHeroMaterial.panel("parchment", v, 12.0, 8.0)
+	tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return tile
 
 
 ## A number as the design writes it: speed with one decimal, the rest whole.

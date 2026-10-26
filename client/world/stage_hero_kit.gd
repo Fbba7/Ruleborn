@@ -131,27 +131,6 @@ static func tabs(names: Array, chosen: int, pick: Callable, icons: Array = []) -
 	return p
 
 
-## A stat as the design draws one: its name and number above a bar filled to
-## `fraction` in `colour`; read aloud as name and number.
-static func stat(name: String, number: String, fraction: float, colour: Color, glyph := "") -> Control:
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", UI.px(3))
-	var top := HBoxContainer.new()
-	if glyph != "":
-		top.add_child(words(glyph, 15.0, colour))
-	var n := words(name, 15.0, StageHeroSkin.LIGHT_SOFT)
-	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	n.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	top.add_child(n)
-	var value := words(number, 20.0, Color("#FFF3CC"))
-	value.add_theme_font_override("font", StageHeroSkin.numbers_font())
-	top.add_child(value)
-	v.add_child(top)
-	v.add_child(StageHeroBar.make(fraction, colour, "", 12.0))
-	v.accessibility_name = Strings.t("CHARACTER_STAT_SPOKEN", [name, number])
-	return v
-
-
 ## Two columns of cards that fall to one at large text (§20.8).
 static func grid(cells: Array, screen: Control) -> GridContainer:
 	var g := GridContainer.new()
