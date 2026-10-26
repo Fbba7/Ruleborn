@@ -107,10 +107,36 @@ func _model() -> void:
 	check.call("characters: the forms are Hush (midnight, with a charm), Spark (lit, embers) and Echo (a twin), and "
 		+ "base clears them (21.6)", hush and spark and echo and c.get_node_or_null("echo") == null)
 	c.set_guard(true)
-	var hand := c.socket(&"hand_R")
-	var lantern := hand != null and hand.get_node_or_null("lantern") != null
+	await tree.process_frame
+	var chest := c.socket(&"chest")
+	var lamp := chest.get_node_or_null("lantern") as MeshInstance3D if chest != null else null
+	var sash := chest != null and chest.get_node_or_null("sash") != null
+	# The lantern hangs from a crook over the head, so a guard is told by its light at the heist's 40 px.
+	var top := (lamp.global_transform * lamp.get_aabb()).end.y if lamp != null else 0.0
+	var over_head := top > c.socket(&"head_top").global_position.y
 	c.set_guard(false)
 	await tree.process_frame
-	check.call("characters: as a guard a ruleborn wears a sash and carries a lantern on its own bones, and takes them "
-		+ "off (21.6)", lantern and hand.get_node_or_null("lantern") == null)
+	check.call("characters: as a guard a ruleborn wears a sash and carries a lantern on a crook over its head, on its "
+		+ "own bones, and takes them off (21.6)", sash and over_head and chest.get_node_or_null("lantern") == null,
+		"sash %s, lantern top %.2f over head %s" % [sash, top, over_head])
+	c.set_hero(true)
+	var hero := float(c.material().get_shader_parameter("hero")) == 1.0
+	c.set_hero(false)
+	check.call("characters: the hero view is a switch on the same material (the Character screen's model is the "
+		+ "world's, 21.3)", hero and float(c.material().get_shader_parameter("hero")) == 0.0)
 	host.queue_free()
+	_patterns()
+
+
+# §21.6: a form "changes a ruleborn's pattern, glow and one accessory": each
+# ruleborn's pattern is its own (shape and scale), not one shared recolour.
+func _patterns() -> void:
+	var seen := {}
+	var missing: Array[String] = []
+	for k: String in RULEBORN:
+		if not CreatureModel.FORM_PATTERN.has(k):
+			missing.append(k)
+			continue
+		seen[str(CreatureModel.FORM_PATTERN[k])] = true
+	check.call("characters: each ruleborn's forms draw a pattern of its own (21.6)",
+		missing.is_empty() and seen.size() == RULEBORN.size(), "missing %s, %d distinct" % [missing, seen.size()])

@@ -31,14 +31,21 @@ void vertex() {
 void fragment() {
 	vec3 c = texture(atlas, UV).rgb * COLOR.rgb;
 	bool body = flags.x >= 0.5;
-	if (body && relief > 0.0) {
+	float far = creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE);
+	// Small on screen the relief fades: its bumps are noise at 40 px.
+	float rel = relief * mix(1.0, 0.3, far);
+	relief_n = NORMAL;
+	if (body && rel > 0.0) {
 		vec2 nxy = texture(normals, UV).xy * 2.0 - 1.0;
 		vec3 nt = vec3(nxy, sqrt(max(0.0, 1.0 - dot(nxy, nxy))));
 		vec3 n = normalize(TANGENT * nt.x + BINORMAL * nt.y * binormal_sign + NORMAL * nt.z);
-		NORMAL = normalize(mix(NORMAL, n, relief));
+		relief_n = normalize(mix(NORMAL, n, rel));
 	}
 	float gloss = body ? body_gloss : flags.x / 0.45;
 	float emit = body ? 0.0 : flags.y;
-	creature_surface(c, body, gloss, emit, UV, local_pos, NORMAL, VIEW, creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE), ALBEDO, EMISSION);
-	gloss_band = gloss;
+	far_mix = far;
+	n_up = dot(NORMAL, normalize((VIEW_MATRIX * vec4(0.0, 1.0, 0.0, 0.0)).xyz));
+	creature_surface(c, body, gloss, emit, UV, local_pos, NORMAL, VIEW, far, ALBEDO, EMISSION);
+	// The highlight band is a glint at 40 px, not a shape: it thins out far away.
+	gloss_band = gloss * (1.0 - far * 0.7);
 }

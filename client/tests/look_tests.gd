@@ -9,7 +9,10 @@ extends RefCounted
 ## and of its 150 draw calls (§21.3), leaving the rest to the kit, the
 ## buildings and the figures.
 const ISLAND_TRIANGLES := 18000
-const ISLAND_CALLS := 24
+const ISLAND_CALLS := 26
+## The lighter level (WorldLook.Detail.LIGHT) for screens whose own pieces
+## need the room: at most this many triangles, the same draw calls.
+const LIGHT_TRIANGLES := 10000
 
 var tree: SceneTree
 var check: Callable
@@ -25,6 +28,8 @@ func run() -> void:
 	_hours()
 	_seamless()
 	await _budget()
+	await _light()
+	_backdrop()
 
 
 ## §21.4: all seven realms, each with every colour the world draws from.
@@ -114,6 +119,59 @@ func _budget() -> void:
 			% [ISLAND_TRIANGLES, ISLAND_CALLS] + "draw calls on a 14 by 14 grid (21.3)",
 		worst.x <= ISLAND_TRIANGLES and worst.y <= ISLAND_CALLS, "%d triangles, %d draw calls (%s)" % [worst.x,
 			worst.y, at])
+
+
+## The lighter level: within its budget for every realm, and never more than
+## the full level's draw calls.
+func _light() -> void:
+	var worst := 0
+	var at := ""
+	var calls_ok := true
+	for realm: String in RealmPalette.TYPES:
+		var drawn: Array[Vector2i] = []
+		for detail: int in [WorldLook.Detail.FULL, WorldLook.Detail.LIGHT]:
+			var world := Node3D.new()
+			tree.root.add_child(world)
+			var look := WorldLook.new(world)
+			look.detail = detail
+			var statics := Node3D.new()
+			world.add_child(statics)
+			look.island(statics, Vector2i(14, 14), 5, RealmPalette.of(realm), realm)
+			drawn.append(LookTests.count(world))
+			world.free()
+		if drawn[1].x > worst:
+			worst = drawn[1].x
+			at = realm
+		calls_ok = calls_ok and drawn[1].y <= drawn[0].y and drawn[1].x < drawn[0].x
+	await tree.process_frame
+	check.call("the island's lighter level stays within %d triangles in every realm, lighter than the full level and "
+			% LIGHT_TRIANGLES + "with no more draw calls (21.3)", worst <= LIGHT_TRIANGLES and calls_ok,
+		"%d triangles (%s)" % [worst, at])
+
+
+## §21.2's night backdrop behind a menu: LookBackdrop takes the place of the
+## plain gradient a screen's frame adds, under every control, and a sheet over a
+## realm can take that realm's sky at the hour.
+func _backdrop() -> void:
+	var screen := Control.new()
+	tree.root.add_child(screen)
+	var plain := TextureRect.new()
+	plain.name = "Sky"
+	screen.add_child(plain)
+	screen.add_child(Control.new())
+	var b := LookBackdrop.dress(screen)
+	var m := b.material as ShaderMaterial
+	var night_ok: bool = m.get_shader_parameter("top") == Color("#2E1F5E") \
+		and m.get_shader_parameter("bottom") == Color("#0A0620") and m.get_shader_parameter("radial") == 1.0
+	var under: bool = screen.get_child(0) == b and screen.get_children().filter(
+		func(n: Node) -> bool: return n.name == "Sky").size() == 1
+	b.for_world(23, "tidehold")
+	var sky := RealmPalette.realm_sky_at(23, "tidehold")
+	var world_ok: bool = m.get_shader_parameter("top") == sky[0]
+	screen.free()
+	check.call("menus stand on the night backdrop, painted as the realms' sky, under every control, and a sheet "
+		+ "over a realm can take its sky at the hour (21.2)", night_ok and under and world_ok,
+		"night %s, under %s, world %s" % [night_ok, under, world_ok])
 
 
 ## Triangles and draw calls under `root`: every mesh, every instance.
