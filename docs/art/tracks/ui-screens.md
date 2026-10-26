@@ -15,9 +15,9 @@ Stills are rendered by `client/tests/shots/screen_meta.gd` (`SCREEN=<route>`, op
 
 The window is 540 × 1170 showing the 1080 × 2340 frame (360 points at 3 pixels a point) at half size, the same aspect as the design's 390 × 844.
 
-## The kit (local, for T9 to fold in)
+## The local kit (beside T9's)
 
-T9's kit had not landed when this started, so the screens stand on a small local one, in `client/scripts/screen_*.gd`:
+The screens stand on T9's kit (`client/ui/kit_*.gd`: tab bar, segmented strips, school buttons, law cards, chapter bands) and on a small local layer over it, in `client/scripts/screen_*.gd`:
 
 | File | What it is |
 |---|---|
@@ -42,11 +42,33 @@ The design puts the back button and the hub tabs at the top. §21.1 is the rule:
 
 - `client/tests/a11y_tests.gd` (shared): `_backgrounds` reads meta `behind` on a control (the colours a ScreenBox draws behind its words) and meta `sky` on the screen's root (the night backdrop's ends), so the contrast check measures words against what they really sit on. Six lines.
 
+## Wave 4: the merged build's failures (fixed on this branch)
+
+Merged `claude/videogame-project-analysis-ewkkk2` and `claude/ui-kit` (502b5a0). What failed on these screens, and the fix:
+
+| Failure | Fix |
+|---|---|
+| Codex: a bare "I" (the tier numeral on a law card) | The numeral goes through the catalogue (`SCREEN_TIER_MARK`). |
+| Codex: school names on the gold chapter band at 9.51:1, Lc 67 (Lilita at 22 points needs Lc 75; no ink on that gold reaches it) | The name in cream inside an ink stroke of 2.8 points, which §21.8 lets it be measured against, as the design draws it. |
+| Codex: at 200% the summary (ring beside words) asked for 1230 px | Ring above the words at large text; the title wraps. |
+| Codex: the count pill on the chapter band wrapped one glyph a line | Only the band's title and kicker wrap. |
+| Codex: school filters split four and two | The six marks keep one row; All leads them or sits above. |
+| Laws/Friends tab words at 4.49:1 (T9's tab bar: a 1.5-point stroke under §21.8's 12% of 15 points) | Worked round in `ScreenNav.bar`: the chosen tab's word gets a stroke of 12% of its size (2 points). **For T9:** the same change in `KitTabs.choose` would cover every screen. |
+| Season at 200% Portuguese: the claim button 3 px into the bottom-right corner band | The Starpass card scrolls with the road at large text, so the dock keeps its place. |
+| Friends, League and crews: the code field and its button side by side at large text | They stack at large text (no longer through `UI.row`). |
+| Law card: the note line in secondary ink | Primary ink. |
+
+`client/tests/_mine.gd` (kept out of git through `.git/info/exclude`) runs `run.gd`'s screen checks over `ONLY=<screens>` in a few minutes instead of the whole suite.
+
 ## Still worse than the design
 
-- The design stills had not landed; judged against `docs/analysis/screens-v3/screens-*.md`.
-- Most screens are still the old lists (see the next steps).
+- The Laws hub (All laws · Harmony · Lab) sits above the tab bar by §21.1's rule, where the design puts it at the top: the scrolling area is 60% of the frame, against the design's 75%.
+- T9's tab bar stands 20 points above the safe area for the corner rule, leaving a band of empty violet under the tabs.
 
 ## Next steps
 
-Lab, Harmony, Season, Shop, Settings, Player stats, Share, Friends, Social, Workshop, Age; then rounds against the design stills.
+Rounds against the design stills, every screen at 200% text and in high contrast.
+
+## Stopped here
+
+(Written at each stop.)

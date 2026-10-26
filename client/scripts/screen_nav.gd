@@ -43,8 +43,23 @@ static func header(title: String, right: Control = null) -> BoxContainer:
 ## the screen's actions. It stands above the corners' band, as the tab bar
 ## does, so it may use the frame's width; it wraps at large text.
 static func dock(back: StringName, actions: Array = []) -> MarginContainer:
-	var row := UI.row(8.0, true)
-	row.add_child(back_button(back))
+	var back_b := back_button(back)
+	# One line, the actions sharing the width after the back button, when
+	# they fit it; else a row that wraps.
+	var wide := back_b.get_combined_minimum_size().x
+	for a: Control in actions:
+		wide += a.get_combined_minimum_size().x + UI.px(8)
+	var room := UI.px(360.0 - 2.0 * Tokens.number("size", "safe_side_points"))
+	var row: Container = UI.row(8.0, true)
+	if wide <= room:
+		var line := HBoxContainer.new()
+		line.add_theme_constant_override("separation", UI.px(8))
+		line.alignment = BoxContainer.ALIGNMENT_CENTER
+		if Settings.left_handed:
+			line.layout_direction = Control.LAYOUT_DIRECTION_RTL
+		line.set_meta("thumb", true)
+		row = line
+	row.add_child(back_b)
 	for a: Control in actions:
 		row.add_child(a)
 	var m := MarginContainer.new()

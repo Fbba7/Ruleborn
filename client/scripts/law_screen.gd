@@ -58,10 +58,25 @@ func _build() -> void:
 	preview.custom_minimum_size.y = UI.px(190)
 	if law != "":
 		preview.show_laws([law])
-	var lab := ScreenKit.button(Strings.t("HUB_LAB"), func() -> void: App.services.router.go(&"lab"), "leather")
-	var weave := ScreenKit.button(Strings.t("SCREEN_WEAVE"), func() -> void: App.services.router.go(&"weaving"),
+	# The design's two wide buttons in words, each taking half the dock.
+	var lab := ScreenKit.button(Strings.t("SCREEN_PAIR_IN_LAB"), func() -> void: App.services.router.go(&"lab"),
+		"leather")
+	var weave := ScreenKit.button(Strings.t("SCREEN_WEAVE_INTO"), func() -> void: App.services.router.go(&"weaving"),
 		"gold")
-	column.add_child(ScreenNav.dock(&"codex", [lab, weave]))
+	var pair: BoxContainer = HBoxContainer.new()
+	if Settings.text_scale > 125:
+		pair = VBoxContainer.new()
+	pair.add_theme_constant_override("separation", UI.px(8))
+	pair.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for b: Button in [lab, weave]:
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		# Long words wrap inside the button rather than push it off the line.
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		b.custom_minimum_size.x = UI.px(96)
+		b.add_theme_font_size_override("font_size", UI.text_px(14))
+		b.set_meta("points", 14.0)
+		pair.add_child(b)
+	column.add_child(ScreenNav.dock(&"codex", [pair]))
 
 
 func _refresh() -> void:

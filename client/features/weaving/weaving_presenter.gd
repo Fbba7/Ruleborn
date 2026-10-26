@@ -93,22 +93,29 @@ static func realm(r: Dictionary, now_ms: int) -> Dictionary:
 			var law_name := Strings.term("LAW", law)
 			var text := Strings.t("WEAVING_SLOT_WEAVING", [n, law_name, duration(minutes_until(int(s["ready_at"]), now_ms))]) \
 				if s.get("weaving", false) else Strings.t("WEAVING_SLOT_LAW", [n, law_name, int(s["tier"])])
+			var sub := Strings.t("SCREEN_TIER", CodexPresenter.ROMAN[clampi(int(s.get("tier", 1)), 0, 3)])
+			if s.get("weaving", false):
+				sub = duration(minutes_until(int(s["ready_at"]), now_ms))
 			slots.append({"n": n, "law": law, "state": "weaving" if s.get("weaving", false) else "woven",
-				"tier": int(s.get("tier", 1)), "text": text, "out": {"key": "unweave:%s:%d" % [name, n],
+				"tier": int(s.get("tier", 1)), "text": text, "name": law_name, "sub": sub,
+				"out": {"key": "unweave:%s:%d" % [name, n],
 				"item": "unweave:%s:%d" % [name, n],
 				"action": Strings.t("WEAVING_UNWEAVE"), "spoken": Strings.t("WEAVING_UNWEAVE_SPOKEN", [law_name, n]),
 				"can": true, "why": "", "args": {"realm": name, "slot": n}}})
 		elif s.get("rests_until") != null:
 			var rest := duration(minutes_until(int(s["rests_until"]), now_ms))
 			slots.append({"n": n, "state": "resting", "text": Strings.t("WEAVING_SLOT_RESTING", [n, rest]),
-				"out": {}})
+				"name": Strings.t("SCREEN_SLOT_RESTING"), "sub": rest, "out": {}})
 		else:
-			slots.append({"n": n, "state": "empty", "text": Strings.t("WEAVING_SLOT_EMPTY", n), "out": {}})
+			slots.append({"n": n, "state": "empty", "text": Strings.t("WEAVING_SLOT_EMPTY", n),
+				"name": Strings.t("SCREEN_SLOT_EMPTY"), "sub": Strings.t("SCREEN_SLOT_N", n), "out": {}})
 			if free == 0:
 				free = n
 	# §5.1: the crown's slots open with the Spire.
 	if r.get("opens_at") != null:
-		slots.append({"state": "locked", "text": Strings.t("WEAVING_CROWN_OPENS", int(r["opens_at"])), "out": {}})
+		slots.append({"state": "locked", "text": Strings.t("WEAVING_CROWN_OPENS", int(r["opens_at"])),
+			"name": Strings.t("SCREEN_SLOT_LOCKED"), "sub": Strings.t("SCREEN_SPIRE_LEVEL", int(r["opens_at"])),
+			"out": {}})
 	var by_law := {}
 	# A realm with no slots yet offers nothing to weave in them.
 	var offers: Array = r.get("offers", []) if not (r.get("slots", []) as Array).is_empty() else []

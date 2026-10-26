@@ -1188,6 +1188,10 @@ SCREEN_ALL,All,All,Todas,Todas,Alle,Toutes
 SCREEN_FILTER_SCHOOL,Show only %s,Show only %s,Mostrar só %s,Mostrar só %s,Nur %s zeigen,Afficher seulement %s
 SCREEN_TIER,Tier %s,Tier %s,Nível %s,Nível %s,Stufe %s,Rang %s
 SCREEN_TIER_MARK,%s,%s,%s,%s,%s,%s
+SCREEN_SLOT_EMPTY,Empty,Empty,Vazio,Vazio,Leer,Vide
+SCREEN_SLOT_N,Slot %d,Slot %d,Espaço %d,Espaço %d,Platz %d,Emplacement %d
+SCREEN_SLOT_RESTING,Resting,Resting,Descansando,A descansar,Ruht,Au repos
+SCREEN_SLOT_LOCKED,Locked,Locked,Bloqueado,Bloqueado,Gesperrt,Verrouillé
 SCREEN_CHAPTER,Ch. %d,Ch. %d,Cap. %d,Cap. %d,Kap. %d,Ch. %d
 SCREEN_NOT_MET,Not met,Not met,Não vista,Não vista,Unbekannt,Inconnue
 SCREEN_WEAKNESS,Weak against,Weak against,Fraca contra,Fraca contra,Schwach gegen,Faible contre
@@ -1220,6 +1224,8 @@ SCREEN_RATE_FAIRNESS,Fair,Fair,Justa,Justa,Fair,Juste
 SCREEN_MILESTONES,Milestones %s,Milestones %s,Marcos %s,Marcos %s,Meilensteine %s,Paliers %s
 SCREEN_MASTERY,Mastery %d/%d,Mastery %d/%d,Maestria %d/%d,Mestria %d/%d,Meisterschaft %d/%d,Maîtrise %d/%d
 SCREEN_WEAVE,Weave,Weave,Tecer,Tecer,Weben,Tisser
+SCREEN_PAIR_IN_LAB,Pair it in the Lab,Pair it in the Lab,Combinar no Laboratório,Combinar no Laboratório,Im Labor paaren,Associer au Labo
+SCREEN_WEAVE_INTO,Weave into a realm,Weave into a realm,Tecer em um reino,Tecer num reino,In ein Reich weben,Tisser dans un royaume
 SCREEN_COST,Cost,Cost,Custo,Custo,Kosten,Coût
 SCREEN_READY_IN,Ready in,Ready in,Pronta em,Pronta em,Fertig in,Prête dans
 SCREEN_CHOOSE,Choose %s,Choose %s,Escolher %s,Escolher %s,%s wählen,Choisir %s

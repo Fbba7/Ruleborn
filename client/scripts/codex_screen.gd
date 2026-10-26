@@ -134,12 +134,17 @@ func _filters(albums: Array) -> Control:
 	var all := ScreenParts.chip("%s %d/%d" % [Strings.t("SCREEN_ALL"), restored, total], school_filter == "",
 		_filter.bind(""))
 	row.add_child(all)
+	# The six schools' marks keep one row together; All leads them, or sits
+	# above them where the phone has not the width for all seven.
+	var marks := HBoxContainer.new()
+	marks.add_theme_constant_override("separation", UI.px(6))
+	row.add_child(marks)
 	for a: Dictionary in albums:
 		var school := str(a["school"])
 		var b := KitControls.school_button(school.to_lower(), school_filter == school, _filter.bind(school))
 		b.accessibility_name = Strings.t("SCREEN_FILTER_SCHOOL", Strings.t("SCHOOL_" + school.to_upper()))
 		b.tooltip_text = "%d/%d" % [int(a["restored"]), int(a["total"])]
-		row.add_child(b)
+		marks.add_child(b)
 	return row
 
 
@@ -167,9 +172,10 @@ func _album(a: Dictionary, busy: bool) -> Control:
 	# rather than widen the screen.
 	name.add_theme_color_override("font_color", Tokens.color("cream"))
 	ScreenKit.inked(name, maxf(1.5, 0.12 * float(name.get_meta("points", 22.0))) / 2.0 + 0.1)
+	# Only the title and kicker wrap: the count's pill keeps its words whole.
 	for l: Label in band.find_children("*", "Label", true, false):
-		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		if l.get_parent() is VBoxContainer:
+			l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	band.tooltip_text = "\n".join(a["milestones"])
 	box.add_child(band)

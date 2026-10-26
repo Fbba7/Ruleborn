@@ -16,6 +16,9 @@ extends Control
 ## the strain it brings and its time, then the deck of the other laws, and
 ## the weave button in the thumb's reach.
 
+## A tapestry gem's size, in points.
+const GEM_POINTS := 52.0
+
 var controller: WeavingController
 ## The realm a weave would change, live (§21.7, LawFxPreview): its laws with
 ## the one tapped once to weave, so its harmonies and clashes show as
@@ -68,7 +71,7 @@ func _build() -> void:
 	body = UI.scroll(column)
 	# In the scroll, so large text never pushes the buttons off the phone.
 	preview = LawFxPreview.new()
-	preview.custom_minimum_size.y = UI.px(170)
+	preview.custom_minimum_size.y = UI.px(132)
 	preview.visible = false
 	_stage = MarginContainer.new()
 	_stage.add_child(preview)
@@ -177,41 +180,57 @@ func _realms(realms: Array) -> Control:
 			_refresh())
 
 
-## The realm's tapestry: each slot as a gem on a woven band, the law in it
-## with its tier, or empty, resting or locked, and its Take out button.
+## The realm's tapestry as the design's band: each slot a gem on one gold
+## thread (solid between two laws, dashed elsewhere), its name on a plate
+## and its tier, time or number beneath; a woven slot's Take out under it.
 func _tapestry(r: Dictionary, busy: bool) -> Control:
-	var row := ScreenParts.flow(8.0)
-	row.alignment = FlowContainer.ALIGNMENT_CENTER
-	for s: Dictionary in r["slots"]:
-		row.add_child(_slot(s, busy))
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", UI.px(6))
-	var title := ScreenKit.text(r["title"], 18.0, "name", "card")
-	title.set_meta("realm", r["realm"])
-	box.add_child(title)
-	box.add_child(row)
-	return ScreenKit.panel("card", box, 18.0, 10.0)
+	# At large text a slot's words need the width: the slots stack.
+	var large := Settings.text_scale > 125
+	var row: BoxContainer = HBoxContainer.new()
+	if large:
+		row = VBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8) if large else 0)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	var slots: Array = r["slots"]
+	for i: int in slots.size():
+		if i > 0 and not large:
+			var both: bool = (slots[i - 1] as Dictionary).get("law") is String \
+				and (slots[i] as Dictionary).get("law") is String
+			row.add_child(ScreenThread.make(UI.px(GEM_POINTS + 12.0), both))
+		row.add_child(_slot(slots[i], busy))
+	# The realm is named on the strip above, so the band carries no title.
+	row.set_meta("realm", r["realm"])
+	return ScreenKit.panel("card", row, 18.0, 8.0)
 
 
 func _slot(s: Dictionary, busy: bool) -> Control:
 	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", UI.px(4))
-	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	col.add_theme_constant_override("separation", UI.px(2))
+	col.custom_minimum_size.x = UI.px(92)
+	col.size_flags_horizontal = Control.SIZE_SHRINK_CENTER if Settings.text_scale <= 125 else Control.SIZE_FILL
 	var state := str(s.get("state", "empty"))
 	var gem: Control
 	if s.get("law") is String:
 		var law := str(s["law"])
-		gem = ScreenKit.panel("ring_" + LawFxLinks.school(law), ScreenKit.icon("laws", law, 40.0), -1.0, 6.0)
+		gem = ScreenKit.panel("ring_" + LawFxLinks.school(law), ScreenKit.icon("laws", law, GEM_POINTS - 12.0), -1.0,
+			6.0)
 	else:
 		var icon := ScreenKit.icon("hud" if state == "empty" else "generalui",
-			{"resting": "timer", "locked": "lock"}.get(state, "plus"), 34.0)
+			{"resting": "timer", "locked": "lock"}.get(state, "plus"), GEM_POINTS - 18.0)
 		gem = ScreenKit.panel("track", icon, -1.0, 9.0)
 	gem.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	gem.tooltip_text = s["text"]
+	gem.accessibility_name = s["text"]
 	col.add_child(gem)
-	var words := ScreenKit.text(s["text"], 13.0, "words", "card", state != "woven", true)
-	words.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	words.custom_minimum_size.x = UI.px(96)
-	col.add_child(words)
+	var name := ScreenKit.text(s.get("name", s["text"]), 13.0, "words", "well", state != "woven", true)
+	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var plate := ScreenKit.panel("well", name, 10.0, 2.0)
+	plate.size_flags_horizontal = Control.SIZE_FILL
+	col.add_child(plate)
+	if str(s.get("sub", "")) != "":
+		var sub := ScreenKit.text(s["sub"], 13.0, "words", "card", true, true)
+		sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		col.add_child(sub)
 	if not (s["out"] as Dictionary).is_empty():
 		var a: Dictionary = s["out"]["args"]
 		var out: Dictionary = s["out"]
@@ -296,46 +315,47 @@ func _cells(o: Dictionary) -> Control:
 	return ScreenKit.panel("card", ScreenParts.columns(cells, 4.0), 16.0, 8.0)
 
 
-## The deck: every other law to weave here as a small card in its school's
-## window, the chosen one lit; a tap chooses it.
+## The deck as the design's row of cards: each law's mark in its school's
+## window with its price on a dark plate (a note when it would harmonise, a
+## cross when it would clash), its name beneath; the chosen one lit; a tap
+## chooses it.
 func _deck(offers: Array) -> Control:
 	var row := GridContainer.new()
-	row.columns = ScreenParts.grid_columns(3)
+	row.columns = ScreenParts.grid_columns(4)
 	row.add_theme_constant_override("h_separation", UI.px(6))
-	row.add_theme_constant_override("v_separation", UI.px(6))
+	row.add_theme_constant_override("v_separation", UI.px(8))
 	for o: Dictionary in offers:
 		var law := str(o["law"])
 		var on := law == _picked
-		var col := VBoxContainer.new()
-		col.add_theme_constant_override("separation", UI.px(2))
-		col.alignment = BoxContainer.ALIGNMENT_CENTER
-		var art := ScreenKit.icon("laws", law, 52.0)
+		var face := VBoxContainer.new()
+		face.add_theme_constant_override("separation", UI.px(4))
+		face.alignment = BoxContainer.ALIGNMENT_CENTER
+		var art := ScreenKit.icon("laws", law, 44.0)
 		art.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		col.add_child(art)
-		var win := "window_" + LawFxLinks.school(law)
-		var name := ScreenKit.text(o["name"], 13.0, "words", win, false, true)
-		name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		col.add_child(name)
-		var tag := "♪" if not (o["harmonies"] as Array).is_empty() else ("✕" if not (o["clashes"] as Array).is_empty()
+		face.add_child(art)
+		var tag := "♪ " if not (o["harmonies"] as Array).is_empty() else ("✕ " if not (o["clashes"] as Array).is_empty()
 			else "")
-		var price := ScreenKit.text(("%s %s" % [tag, o["price"]]).strip_edges(), 15.0, "number", win)
-		price.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		col.add_child(price)
-		var card := ScreenKit.panel(win, col, 14.0, 6.0)
+		var price := ScreenParts.pill(tag + str(o["price"]), "well", "", "", 13.0, "number")
+		price.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		face.add_child(price)
+		var card := ScreenKit.panel("window_" + LawFxLinks.school(law), face, 14.0, 6.0)
 		if on:
 			RbBox.of(card).set_chosen(true)
-		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		if not on:
+		else:
 			ScreenParts.tap(card, func() -> void:
 				_picked = law
 				confirm = ""
 				_refresh(), Strings.t("SCREEN_CHOOSE", o["name"]))
-		row.add_child(card)
-	var strip := ScrollContainer.new()
-	strip.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	strip.custom_minimum_size.y = row.get_combined_minimum_size().y + UI.px(8)
-	strip.add_child(row)
-	return strip
+		var cell := VBoxContainer.new()
+		cell.add_theme_constant_override("separation", UI.px(2))
+		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cell.add_child(card)
+		var name := ScreenKit.text(o["name"], 13.0, "words", "card", not on, false)
+		name.autowrap_mode = TextServer.AUTOWRAP_WORD
+		name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		cell.add_child(name)
+		row.add_child(cell)
+	return row
 
 
 ## A law's weave button: its price and time on it, the first tap showing the
