@@ -200,7 +200,7 @@ Installed, nothing changes by this. What did: the relief map is held to
 128² (was 256²; side by side in the hero view, Rambler's fleece and
 Featherkin's feathers look the same) and the Glass Golem's flat one to 16²,
 so the textures fell from 10.8 MB to 8.0 MB and the 43 kinds install in
-about 14.5 MB (was 16.8 MB). Measured per kind (imported, s3tc):
+about 14.1 MB (was 16.8 MB). Measured per kind (imported, s3tc):
 
 | Kind | Triangles | .glb KB | Scene KB | Textures KB | Installed KB |
 |---|---:|---:|---:|---:|---:|
