@@ -6,12 +6,95 @@ class_name KitControls
 
 
 ## A chip: glass when off, gold when on. It is a control, so it is 48 points
-## tall (§21.1), not the designs' 30.
-static func chip(text: String, on: bool, pressed: Callable) -> Button:
+## tall (§21.1), not the designs' 30. A `dot` in a state's colour leads its
+## words and a `count` follows them on a dark disc (the Roster's filters).
+static func chip(text: String, on: bool, pressed: Callable, count := "", dot := Color(0, 0, 0, 0)) -> Button:
 	var b := UI.action(text, pressed, "chip_on" if on else "chip")
 	b.name = "Chip"
 	b.custom_minimum_size.y = UI.px(Tokens.number("size", "chip_height"))
 	set_chip(b, on)
+	if dot.a > 0.0 or count != "":
+		var pad := UI.clear_box(9, 4)
+		pad.content_margin_left = UI.px(9 + (16 if dot.a > 0.0 else 0))
+		pad.content_margin_right = UI.px(9 + (30 if count != "" else 0))
+		for state: String in ["normal", "hover", "pressed", "focus", "disabled", "hover_pressed"]:
+			b.add_theme_stylebox_override(state, pad)
+		b.custom_minimum_size.x = 0
+	if dot.a > 0.0:
+		var d := KitRing.new()
+		d.dot = true
+		d.fraction = 1.0
+		d.tint = dot
+		d.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		d.set_anchors_preset(Control.PRESET_CENTER_LEFT)
+		d.offset_left = UI.px(10)
+		d.offset_right = UI.px(22)
+		d.offset_top = -UI.px(6)
+		d.offset_bottom = UI.px(6)
+		b.add_child(d)
+	if count != "":
+		var c := PanelContainer.new()
+		c.add_theme_stylebox_override("panel", UI.clear_box(5, 0))
+		UI.dress(c, "level_disc")
+		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var n := UI.label(count, 13)
+		n.theme_type_variation = "Number"
+		n.set_meta("bold", true)
+		c.add_child(n)
+		c.set_anchors_preset(Control.PRESET_CENTER_RIGHT)
+		c.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		c.grow_vertical = Control.GROW_DIRECTION_BOTH
+		c.offset_right = -UI.px(8)
+		b.add_child(c)
+	return b
+
+
+## An action with a second line under its words (the Roster's "Level up"
+## over "866 Essence"): what it does, and what it costs or needs.
+static func action2(text: String, line: String, pressed: Callable, look := "gold", icon := "") -> Button:
+	var b := UI.action("", pressed, look, "%s, %s" % [text, line] if line != "" else text)
+	b.name = "Action"
+	b.custom_minimum_size = Vector2(UI.px(120), UI.px(56))
+	var v := VBoxContainer.new()
+	v.set_anchors_preset(Control.PRESET_FULL_RECT)
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", -UI.px(2))
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var box := RbBox.of(b)
+	var top: Control = v
+	if icon != "":
+		# A price: the currency's icon before its amount.
+		var h := HBoxContainer.new()
+		h.alignment = BoxContainer.ALIGNMENT_CENTER
+		h.add_theme_constant_override("separation", UI.px(4))
+		h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		h.add_child(Icons.view(icon, 20))
+		v.add_child(h)
+		top = h
+	var t := UI.label(text, 16)
+	t.add_theme_font_override("font", UI.bold_font())
+	t.add_theme_color_override("font_color", box.spec["text"])
+	t.set_meta("bold", true)
+	# A gold call to action is set in the designs' tracked capitals.
+	if look == "gold":
+		t.uppercase = true
+		t.add_theme_font_override("font", Tokens.font("ui", 800, false, UI.px(1)))
+	if box.spec.has("text_outline"):
+		t.add_theme_color_override("font_outline_color", box.spec["text_outline"][0])
+		t.add_theme_constant_override("outline_size", UI.px(box.spec["text_outline"][1]))
+	top.add_child(t)
+	if line == "":
+		b.add_child(v)
+		return b
+	var s := UI.label(line, 13)
+	s.add_theme_font_override("font", UI.bold_font())
+	s.add_theme_color_override("font_color", box.spec["text_2"])
+	s.set_meta("bold", true)
+	if box.spec.has("text_outline"):
+		s.add_theme_color_override("font_outline_color", box.spec["text_outline"][0])
+		s.add_theme_constant_override("outline_size", UI.px(box.spec["text_outline"][1]))
+	v.add_child(s)
+	b.add_child(v)
 	return b
 
 
@@ -45,25 +128,28 @@ static func icon_button(icon: String, spoken: String, pressed: Callable, look :=
 	return b
 
 
-## A round action with its name on a plate beneath (the realm view's MAP,
-## WEAVE and BUILD): leather, or gold round for the main one; a badge is
-## written on it if given.
+## A round action with its name on a plate overlapping its foot (the realm
+## view's MAP, WEAVE and BUILD): a disc in `tone` ("leather", "violet",
+## "sky") in a gold ring on a dark plate, or, as the main one, gold on a
+## leather plate; a badge's words ("1 free") ride its top right.
 static func round_action(icon: String, words: String, pressed: Callable, main := false, points := 60.0,
-		badge := "") -> VBoxContainer:
+		badge := "", tone := "leather") -> VBoxContainer:
 	var v := VBoxContainer.new()
 	v.name = "RoundAction"
-	v.add_theme_constant_override("separation", -UI.px(8))
+	v.add_theme_constant_override("separation", -UI.px(12))
 	v.alignment = BoxContainer.ALIGNMENT_CENTER
-	var b := icon_button(icon, words, pressed, "gold_round" if main else "leather", points)
+	var look := "gold_round" if main else ("leather" if tone == "leather" else "round_" + tone)
+	var b := icon_button(icon, words, pressed, look, points, points * 0.55)
 	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(b)
 	if badge != "":
 		var tag := KitStatus.badge(badge)
 		tag.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 		tag.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-		tag.position.y = -UI.px(4)
+		tag.position = Vector2(UI.px(2), -UI.px(4))
 		b.add_child(tag)
 	var plate := KitStatus.plate(words)
+	UI.dress(plate, "plate_leather" if main or tone == "leather" else "plate_dark")
 	plate.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var l := plate.get_child(0) as Label
 	l.theme_type_variation = "Kicker"
@@ -132,3 +218,63 @@ static func search(spoken: String) -> LineEdit:
 	glass.grow_vertical = Control.GROW_DIRECTION_BOTH
 	f.add_child(glass)
 	return f
+
+
+## A big square action with its icon over its words (the heist's Get out,
+## red): 64 by 58 points as the designs draw it.
+static func big_action(icon: String, words: String, pressed: Callable, look := "red") -> Button:
+	var b := UI.action("", pressed, look, words)
+	b.name = "BigAction"
+	b.custom_minimum_size = Vector2(UI.px(76), UI.px(64))
+	var v := VBoxContainer.new()
+	v.set_anchors_preset(Control.PRESET_FULL_RECT)
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", 0)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(Icons.view(icon, 26))
+	var box := RbBox.of(b)
+	var l := UI.label(words, 14)
+	l.add_theme_font_override("font", UI.bold_font())
+	l.add_theme_color_override("font_color", box.spec["text"])
+	l.set_meta("bold", true)
+	if box.spec.has("text_outline"):
+		l.add_theme_color_override("font_outline_color", box.spec["text_outline"][0])
+		l.add_theme_constant_override("outline_size", UI.px(box.spec["text_outline"][1]))
+	v.add_child(l)
+	b.add_child(v)
+	return b
+
+
+## A big call to action with a price inside it (the Character screen's
+## UPGRADE): its words in stroked capitals over a second line, and the
+## price on a dark chip at its end with the currency's icon.
+static func upgrade(text: String, line: String, icon: String, price: String, pressed: Callable,
+		look := "green") -> Button:
+	var b := action2(text, line, pressed, look)
+	b.name = "Upgrade"
+	b.accessibility_name = "%s, %s, %s" % [text, line, price]
+	b.custom_minimum_size.y = UI.px(64)
+	var v := b.get_child(0) as Control
+	v.offset_right = -UI.px(96)
+	(v.get_child(0) as Label).uppercase = true
+	(v.get_child(0) as Label).add_theme_font_size_override("font_size", UI.text_px(20))
+	(v.get_child(0) as Label).add_theme_font_override("font", Tokens.font("display"))
+	var cost := PanelContainer.new()
+	cost.add_theme_stylebox_override("panel", UI.clear_box(8, 3))
+	UI.dress(cost, "price_chip")
+	cost.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", UI.px(4))
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(Icons.view(icon, 20))
+	var n := UI.label(price, 16)
+	n.theme_type_variation = "Number"
+	n.set_meta("bold", true)
+	h.add_child(n)
+	cost.add_child(h)
+	cost.set_anchors_preset(Control.PRESET_CENTER_RIGHT)
+	cost.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	cost.grow_vertical = Control.GROW_DIRECTION_BOTH
+	cost.offset_right = -UI.px(10)
+	b.add_child(cost)
+	return b

@@ -110,9 +110,9 @@ func set_look(material_name: String) -> void:
 		host.set_meta("text_bg", spec["text_bg"])
 		host.set_meta("rb_family", spec["family"])
 	var p := func(points: float) -> float: return points * UI.PX_PER_POINT
-	var drop: Array = spec.get("drop", [Color(), 0.0])
-	var soft: Array = spec.get("soft", [Color(), 0.0, 0.0])
-	var glow: Array = spec.get("glow", [Color(), 0.0])
+	var drop: Array = spec.get("drop", [Color(0, 0, 0, 0), 0.0])
+	var soft: Array = spec.get("soft", [Color(0, 0, 0, 0), 0.0, 0.0])
+	var glow: Array = spec.get("glow", [Color(0, 0, 0, 0), 0.0])
 	_reach = ceilf(maxf(p.call(drop[1]) + absf(p.call(soft[1])) + p.call(soft[2]), p.call(glow[1])) + 2.0)
 	var shape := Tokens.gradient_shape(str(spec["fill"]))
 	var u := _shader
@@ -139,8 +139,13 @@ func set_look(material_name: String) -> void:
 	u.set_shader_parameter("gloss", float(spec.get("gloss", 0.0)))
 	var grain: Array = spec.get("grain", [Color(0, 0, 0, 0), 0.0])
 	u.set_shader_parameter("grain_color", Color(grain[0], grain[1]))
-	u.set_shader_parameter("stars", 1.0 if material_name == "night" and not Tokens.high_contrast else 0.0)
+	u.set_shader_parameter("stars", 1.0 if material_name.begins_with("night") and not Tokens.high_contrast else 0.0)
 	u.set_shader_parameter("star_color", Tokens.color("night_star"))
+	var stripes: Array = spec.get("stripes", [Color(0, 0, 0, 0)])
+	u.set_shader_parameter("stripes_color", stripes[0])
+	var rays: Array = spec.get("rays", [Color(0, 0, 0, 0), 18.0])
+	u.set_shader_parameter("rays_color", rays[0])
+	u.set_shader_parameter("rays_count", rays[1])
 	_shade()
 
 
