@@ -15,9 +15,8 @@ render_mode diffuse_toon, specular_disabled;
 // Where tile edges fall: 0 for an even grid, 0.5 for an odd one.
 uniform vec2 grid_offset = vec2(0.0);
 uniform float seam = 0.035;
-// The builder's grid (RealmKit.show_grid): 0 none, 1 every tile drawn — an ink
-// line round it with a light edge inside and the tiles in a faint chequer,
-// on flat ground and cliffs alike, so a tile can be picked at a glance.
+// The builder's grid (RealmKit.show_grid): 0 none, 1 every tile drawn as a
+// pale rounded square on flat ground, so a tile can be picked at a glance.
 uniform float grid_show = 0.0;
 // Half the grid's size in tiles: no tile is drawn past it.
 uniform vec2 grid_half = vec2(7.0);
@@ -170,7 +169,7 @@ void fragment() {
 	}
 	// Pebbles in the grass: a few small stones, lit above, shaded below.
 	vec3 pb = cells(p * 2.6 + 11.0);
-	float stone_dot = (1.0 - smoothstep(0.07, 0.1, pb.x)) * step(0.82, pb.z) * grassy * step(0.6, up);
+	float stone_dot = (1.0 - smoothstep(0.07, 0.1, pb.x)) * step(0.82, pb.z) * grassy * step(0.6, up) * step(path, 0.4);
 	c = mix(c, pebble.rgb * (0.85 + 0.25 * pb.z), stone_dot);
 	// The realm's marks over the grass.
 	if (deco_scale > 0.0 && up > 0.6) {
@@ -194,16 +193,21 @@ void fragment() {
 	float line = 1.0 - smoothstep(0.0, 0.03, to_edge);
 	c *= 1.0 - seam * line * smoothstep(0.85, 0.98, up) * (1.0 - cliff);
 	if (grid_show > 0.0) {
+		// Each tile a soft rounded square inset from its neighbours, as the
+		// design's terrain editor draws it (21-terrain-editor): a pale rim, a
+		// lighter face, and a darker gutter between tiles.
 		float px = fwidth(p.x) + fwidth(p.y);
-		float ink_line = 1.0 - smoothstep(px * 0.6, px * 1.6 + 0.012, to_edge);
-		float lit_edge = (1.0 - smoothstep(px * 1.6 + 0.012, px * 2.6 + 0.05, to_edge)) * (1.0 - ink_line);
-		vec2 cell = floor(p + grid_offset);
-		float odd = mod(cell.x + cell.y, 2.0);
+		vec2 q = fract(p + grid_offset) - 0.5;
+		vec2 k = abs(q) - vec2(0.5 - 0.07 - 0.13);
+		float box = length(max(k, 0.0)) + min(max(k.x, k.y), 0.0) - 0.13;
+		float rim = 1.0 - smoothstep(0.018, 0.018 + px * 1.2, abs(box));
+		float face = 1.0 - smoothstep(-px, px, box);
 		vec2 past = abs(p) - grid_half;
 		float flat_ = smoothstep(0.6, 0.9, up) * step(max(past.x, past.y), 0.0);
-		c *= 1.0 + grid_show * (odd * 0.07 - 0.02) * flat_;
-		c = mix(c, c * 1.25 + 0.05, lit_edge * 0.5 * grid_show * flat_);
-		c = mix(c, vec3(0.10, 0.05, 0.08), ink_line * 0.55 * grid_show * flat_);
+		float s_ = grid_show * flat_;
+		c = mix(c, c * 0.78, (1.0 - face) * (1.0 - rim) * 0.8 * s_);
+		c = mix(c, c * 1.1 + 0.03, face * (1.0 - rim) * s_);
+		c = mix(c, vec3(1.0, 0.97, 0.9), rim * 0.6 * s_);
 	}
 	ALBEDO = saturated(c);
 	EMISSION = glow;

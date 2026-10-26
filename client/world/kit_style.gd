@@ -6,7 +6,7 @@ extends RefCounted
 ## dressed stone are in each of §21.4's realms, and how its trees grow.
 
 const REALMS := {
-	"heart": {"wall": "#F6DDE6", "roof": "#9C3380", "stone": "#E6DCCB", "stone2": "#B9AE9C", "accent": "#E05CB4",
+	"heart": {"wall": "#FCE0D8", "roof": "#9C3380", "stone": "#E6DCCB", "stone2": "#B9AE9C", "accent": "#E05CB4",
 		"tree": "round"},
 	"skyfield": {"wall": "#FFFFFF", "roof": "#C0502E", "stone": "#E6DCCB", "stone2": "#B9AE9C", "accent": "#F2B43C",
 		"tree": "birch"},

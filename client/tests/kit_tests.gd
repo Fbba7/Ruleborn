@@ -66,7 +66,7 @@ func _features() -> void:
 		var n := _layers(kit)
 		if n > FEATURE_MAX:
 			over.append([RealmKit.F.keys()[code], n])
-		if n == 0 and code not in [RealmKit.F.STREAM]:
+		if n == 0 and code not in [RealmKit.F.STREAM, RealmKit.F.GRAVEL_PATH]:
 			empty.append(RealmKit.F.keys()[code])
 		if code in RealmKit.HERO and code != RealmKit.F.BUILDING and kit.hero.triangles == 0:
 			uninked.append(RealmKit.F.keys()[code])

@@ -341,12 +341,13 @@ func instances() -> Array[MeshInstance3D]:
 	var ground_mat := material("ground")
 	ground_mat.set_shader_parameter("grid_offset", Vector2(0.5 * (size.x % 2), 0.5 * (size.y % 2)))
 	ground_mat.set_shader_parameter("grid_half", Vector2(size) / 2.0 + Vector2(0.001, 0.001))
-	# §21.4: the Heart's are "cream flagstones".
-	# §21.4: the Heart's are "cream flagstones", warmed to the design's
+	# Other realms' paths are their dirt toward sand, as the design's land
+	# stills; §21.4: the Heart's are "cream flagstones", warmed to the design's
 	# rose-cream (04-realm-view).
-	var cobble: Color = KitGround.earth(palette).lightened(0.18) if realm != "heart" else Color("#FFE2D6")
+	var cobble: Color = (palette["soil"] as Color).lerp(Color("#F0DCC0"), 0.6) if realm != "heart" \
+		else Color("#FFE2D6")
 	ground_mat.set_shader_parameter("cobble", cobble)
-	ground_mat.set_shader_parameter("mortar", (palette["soil"] as Color).lerp(cobble, 0.45))
+	ground_mat.set_shader_parameter("mortar", (palette["soil"] as Color).lerp(cobble, 0.65))
 	ground_mat.set_shader_parameter("pebble", (palette["rock"] as Color).lightened(0.25))
 	# The realm's marks over its meadow (T2's), continued over the grid.
 	var marks := LookPaint.deco(realm)

@@ -72,7 +72,7 @@ Shots to re-render them: `client/tests/shots/kit_realm.gd` (REALM, LEVEL, HOUR, 
 
 ## Still worse than the design
 
-- The grid is now hard to read as tiles at all (seams at 3.5 %); the design shows no grid either, but the builder and planner may want a stronger overlay (T5's).
+- The grid is hard to read as tiles at all with the overlay off (seams at 3.5 %), as the design's realm view; the builder's overlay (`RealmKit.show_grid`) draws the design's rounded tiles.
 - Trails are drawn by the shader (crisp, 0.45 m wide, ragged edge, a rim of worn grass) and bend round their corners; they never cross water or avoid features, since they are paint.
 - ~~Value structure~~: since the integrations, the grayscale test passes: mid-grey meadow under dark roofs, as the design's (`docs/art/shots/kit/33-grayscale.png`).
 - Water beds and banks are flush (the island-top note above).
@@ -109,3 +109,12 @@ Stopped at the owner's request.
   1. The mid-detail level, added alongside the existing calls so T4 and T6 don't break. For example, an optional `detail` argument to `BuildingKit.build` and to `RealmKit`: buildings and hero features at about a third of their heist triangles, silhouettes kept, with fine parts, panes and dress dropped first.
   2. A test that a fully built realm at that level stays under 40,000 triangles, and a line here telling T6 the call to switch to.
   3. Then a full `check_all`.
+
+## Session three (fourth wave, from 22:41 UTC)
+
+The mid-detail level, crisper trails, the four plainest buildings, sunken water and the builder's grid were all pushed in the third wave (`a5f7c7e` to `3256e66`); the session-two "Next" list above is done. This session compares the kit with the design's Realm view (`04-realm-view`), terrain editor (`21-terrain-editor`) and land stills, round by round.
+
+- **Round 1, the Heart against 04-realm-view.** Worst: (1) the design's salmon octagon pads under every building were lost under our buildings and read dull brown; (2) its paths are rose-cream pebbles, ours grey mosaic; (3) its Spire is a slim banded tower on a stepped octagon, ours a castle with curtain walls and four towers. Fixed: pads are the design's formula (the realm's soil halfway to cream) lifted to its rendered salmon (#C98879 drawn, against the still's #CC8C79), broader (0.8 of the footprint) and kept out of the kit's contact shade; the Heart's flagstones are rose-cream and each stone lit as a rounded top; the Spire stands alone on its terrace as the design's realm view draws it (`kit_buildings2.gd` `_citadel`), steps and a door south, lit slits between the buttresses. Still `46-heart-pads-spire.png` (design left).
+- **Round 2, the builder's grid against 21-terrain-editor.** The dark ink net is now the design's soft tiles: each a pale rounded square inset from its neighbours, a lighter face and a darker gutter (`kit_ground.gdshader`, still `grid_show`). Still `47-builder-grid-tiles.png`.
+- **Round 3, houses.** The design's cottages are plaster and dark timber on both storeys; ours had a grey stone ground floor that read dull at the realm's zoom. From the second look the Hearth's ground floor is plaster with the frame, the frame is dark timber with its braces by the corners (clear of the windows), and its posts and braces stay at the mid detail. The Heart's plaster is warmer (#FCE0D8), as the toon ramp's violet shade greyed the design's #F6DDE6.
+- **Round 4, paths.** A gravel path tile no longer scatters six dark grit stones (they read as dirt on the painted cobbles, and cost about 120 triangles a tile); other realms' paths are their soil toward sand, as Skyfield's land still (`48-skyfield-paths.png`).

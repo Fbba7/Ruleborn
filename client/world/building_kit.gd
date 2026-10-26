@@ -317,20 +317,22 @@ func _hip_roof(w: float, depth: float, y0: float, rise: float) -> float:
 ## Timber framing round a storey: corner posts, sills, a head beam and
 ## braces on the front, as the design's half-timbered houses.
 func frame(w: float, h: float, depth: float, y0: float) -> void:
-	if lighter:
-		return
-	var c := KitStyle.WOOD if tier < 2 else KitStyle.GOLD
+	var c := KitStyle.WOOD_DARK if tier < 2 else KitStyle.GOLD
+	# The posts and the front's braces carry the half-timbered look at the
+	# mid detail too (the design's houses read by them at the realm's zoom);
+	# the beams are fine parts.
 	for p: Vector2 in [Vector2(-1, -1), Vector2(1, -1), Vector2(1, 1), Vector2(-1, 1)]:
-		fine(0.045, h, 0.045, c, p.x * w / 2.0, y0 + h / 2.0, p.y * depth / 2.0)
+		d.box(place(p.x * w / 2.0, y0 + h / 2.0, p.y * depth / 2.0), Vector3(0.055, h, 0.055) * unit, c)
 	for y: float in [y0 + 0.02, y0 + h - 0.02]:
-		fine(w + 0.02, 0.04, 0.045, c, 0, y, depth / 2.0)
-		fine(w + 0.02, 0.04, 0.045, c, 0, y, -depth / 2.0)
-		fine(0.045, 0.04, depth + 0.02, c, w / 2.0, y, 0)
-		fine(0.045, 0.04, depth + 0.02, c, -w / 2.0, y, 0)
+		fine(w + 0.02, 0.045, 0.05, c, 0, y, depth / 2.0)
+		fine(w + 0.02, 0.045, 0.05, c, 0, y, -depth / 2.0)
+		fine(0.05, 0.045, depth + 0.02, c, w / 2.0, y, 0)
+		fine(0.05, 0.045, depth + 0.02, c, -w / 2.0, y, 0)
 	for sx: float in [-1.0, 1.0]:
-		var span := sqrt(pow(w * 0.3, 2) + h * h) * 0.95
-		var basis := Basis(Vector3.BACK, sx * atan2(w * 0.3, h))
-		d.box(Transform3D(basis, at(sx * w * 0.32, y0 + h / 2.0, depth / 2.0 + 0.012)), Vector3(0.03, span, 0.02) * unit,
+		# Braces out by the corners, clear of the windows.
+		var span := sqrt(pow(w * 0.12, 2) + h * h) * 0.95
+		var basis := Basis(Vector3.BACK, sx * atan2(w * 0.12, h))
+		d.box(Transform3D(basis, at(sx * w * 0.41, y0 + h / 2.0, depth / 2.0 + 0.012)), Vector3(0.04, span, 0.02) * unit,
 			c)
 
 
@@ -515,8 +517,13 @@ func _pad() -> void:
 func _hearth() -> void:
 	plinth(0.94, 0.82)
 	var two := tier >= 1
-	box(0.82, 0.36, 0.66, stone, 0, 0.26, 0)
-	courses(0.82, 0.66, 0.08, 0.44, 3)
+	# From the second look the ground floor is plaster and timber too, as the
+	# design's cottages; the first look's is rough stone.
+	box(0.82, 0.36, 0.66, wall if two else stone, 0, 0.26, 0)
+	if two:
+		frame(0.82, 0.36, 0.66, 0.08)
+	else:
+		courses(0.82, 0.66, 0.08, 0.44, 3)
 	var eave := 0.44
 	if two:
 		box(0.9, 0.34, 0.74, wall, 0, 0.61, 0)

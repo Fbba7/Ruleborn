@@ -75,9 +75,7 @@ func build(t: Vector2i, f: int) -> void:
 		RealmKit.F.LAVA_CRACK:
 			_lava(t, c)
 		RealmKit.F.GRAVEL_PATH:
-			for k in 6:
-				prop.rock(Geo.place(c + Vector3(RealmKit.jitter(t, k) - 0.5, 0.0, RealmKit.jitter(t, k + 6) - 0.5) * 0.8,
-					0.0, Vector3(1, 0.5, 1)), 0.04 + 0.025 * RealmKit.jitter(t, k + 3), Palette.GRAVEL.darkened(0.12), k)
+			pass  # The ground paints its stones (kit_ground.gdshader); loose grit read as dirt on them.
 		RealmKit.F.THICKET:
 			prop.moving(Geo.Anim.SWAY, c)
 			for k in 6:
