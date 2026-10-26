@@ -103,8 +103,6 @@ func _refresh() -> void:
 		outfits[o["kind"]] = o
 	var k := _chosen(kinds)
 	_stand(k)
-	if not k.is_empty():
-		cards.add_child(_detail(k, outfits.get(k["kind"], {})))
 	cards.add_child(_count(slice))
 	var grid := GridContainer.new()
 	grid.columns = 1 if Settings.text_scale > 150 else (2 if Settings.text_scale > 100 else 3)
@@ -113,6 +111,10 @@ func _refresh() -> void:
 	for each: Dictionary in kinds:
 		grid.add_child(_tile(each, outfits.get(each["kind"], {})))
 	cards.add_child(grid)
+	# The chosen kind's forms and outfit under the album, as the design's
+	# hero card leads to them.
+	if not k.is_empty():
+		cards.add_child(_detail(k, outfits.get(k["kind"], {})))
 	for n: Dictionary in a["notes"]:
 		cards.add_child(_note(n))
 	cards.add_child(_sails(a["sails"], (slice.get("view", {}) as Dictionary).get("sails", [])))
@@ -217,24 +219,27 @@ func _tile(k: Dictionary, o: Dictionary) -> Control:
 		if int(f["owned"]) > 0:
 			look = str(f["note"])
 			break
-	var tile := StageHeroSkin.portrait_tile(str(k["kind"]), look, 92.0)
+	var tile := StageHeroSkin.portrait_tile(str(k["kind"]), look, 118.0)
 	tile.custom_minimum_size.x = UI.px(60)
 	tile.gui_input.connect(_choose.bind(str(k["kind"])))
 	if not o.is_empty() and int(o["have"]) >= int(o["of"]):
 		var done := StageHeroSkin.badge("✓", Color("#1F6A35"), 16.0)
 		done.accessibility_name = Strings.t("FORMS_OUTFIT_DONE", int(o["of"]))
-		StageHeroSkin.pin(tile, done, Control.PRESET_TOP_RIGHT)
+		StageHeroSkin.pin(tile, done, Control.PRESET_BOTTOM_RIGHT)
 	v.add_child(tile)
 	var pips := HBoxContainer.new()
 	pips.alignment = BoxContainer.ALIGNMENT_CENTER
 	pips.add_theme_constant_override("separation", UI.px(4))
 	for f: Dictionary in k["forms"]:
-		var pip := _pip(str(f["note"]), int(f["owned"]) > 0, 26.0)
+		var pip := _pip(str(f["note"]), int(f["owned"]) > 0, 19.0)
 		var mark := pip.find_child("Mark", true, false) as Label
 		mark.set_meta("form", "%s/%s" % [k["kind"], f["note"]])
 		pip.accessibility_name = str(f["text"])
 		pips.add_child(pip)
-	v.add_child(pips)
+	# The notes' pips over the picture's top corner, as the design's cards.
+	pips.alignment = BoxContainer.ALIGNMENT_BEGIN
+	pips.add_theme_constant_override("separation", UI.px(2))
+	StageHeroSkin.pin(tile, pips, Control.PRESET_TOP_LEFT)
 	var name := StageHeroKit.words(k["title"], 15.0, StageHeroSkin.LIGHT)
 	StageHeroSkin.named(name)
 	name.clip_text = true
