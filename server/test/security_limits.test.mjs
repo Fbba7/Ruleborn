@@ -50,3 +50,22 @@ test("SR-03: one making of the candidates serves every caller for a while, and a
   t.clock.now += matchmaking.CANDIDATES_MS ?? 60_000;
   assert.ok(await statements(t, offer) >= 40, "made again once the window has passed");
 });
+
+// SR-17: every island published queued §13.3's 800 reference raids, worked
+// oldest first, forty raids (about two seconds of the process) every five
+// seconds. One account publishing one new island after another, inside its
+// limits, queued them faster than they were measured: everyone's islands
+// behind its, for good.
+test("SR-17: the hold queue measures islands that stand, owners in turn, so one player cannot hold everyone's back", () => {
+  const t = server();
+  const spammer = t.service.session("gc:spammer");
+  established(t, spammer.account);
+  for (let i = 0; i < 20; i++) t.service.publish(spammer.account, t.build.generate(100 + i, 3));
+  const honest = t.service.session("gc:honest");
+  established(t, honest.account);
+  const { bundle } = t.service.publish(honest.account, t.build.generate(7, 3));
+  t.service.db.prepare("UPDATE island_holds SET raids = 2").run();
+  for (let i = 0; i < 2; i++) t.service.holds.work(2);
+  assert.equal(t.service.holds.status(bundle).status, "measured",
+               "measured after the spammer's one standing island, not after all twenty");
+});

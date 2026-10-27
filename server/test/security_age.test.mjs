@@ -40,3 +40,29 @@ test("SR-01: after the first answer a looser age band is refused, a tighter one 
   assert.equal((await call(t, "PUT", "/v1/age", { token: adult.token, json: { band: "18+" } })).status, 403);
   assert.equal(band(t, adult.account), "16-17");
 });
+
+// SR-18: §20.7 gives 13 to 15 the Workshop's "curated lists only", and the
+// lists held it; an island's id from anywhere else — a featured remix names
+// its original — played and remixed it all the same.
+test("SR-18: a 13-to-15 plays and remixes only islands a person featured, or their own", async () => {
+  const { Workshop } = await import("../src/workshop.mjs");
+  const { clockTicks } = await import("../src/service.mjs");
+  const { openPlan } = await import("./setup.mjs");
+  const t = server();
+  const w = new Workshop(t.service);
+  const island = t.build.exampleIsland(true);
+  const cleared = t.build.record(island, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() });
+  const creator = t.service.session("gc:creator").account;
+  const original = w.publish(creator, island, cleared, { adjective: 1, noun: 9 });
+  const young = t.service.session("gc:young").account;
+  w.setAgeBand(young, "13-15");
+  const refused = (f) => assert.throws(f, (e) => e.reason === "curated_lists_only");
+  refused(() => w.play(young, original.id));
+  refused(() => w.remix(young, original.id));
+  assert.equal(w.report(young, original.id, "unfair").report > 0, true, "reporting is never held back");
+  const person = t.service.session("gc:moderator").account;
+  t.service.db.prepare("UPDATE accounts SET moderator = 1 WHERE id = ?").run(person);
+  w.feature(person, original.id);
+  assert.ok(w.play(young, original.id).token, "featured: theirs to play");
+  assert.ok(w.remix(young, original.id).length > 0);
+});
