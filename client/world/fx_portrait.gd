@@ -27,7 +27,7 @@ func _init(member_role := "", pressed_call: Callable = Callable()) -> void:
 	if Cast.KIND.has(role) and CreatureModel.manifest().has(String(Cast.KIND[role])):
 		picture = Portrait.of(String(Cast.KIND[role]))
 	text = ""
-	var side := UI.px(60)
+	var side := UI.px(54)
 	# As wide as its role's name, so with large text names never run together.
 	var name_w := FxSkin.words().get_string_size(letters, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(13.0)).x
 	custom_minimum_size = Vector2(maxf(side, name_w + UI.px(4)), side + UI.px(30))
@@ -77,7 +77,7 @@ func _draw() -> void:
 
 func _paint() -> void:
 	var w := size.x
-	var r := minf(UI.px(30), size.y - UI.px(30)) * 0.9
+	var r := minf(UI.px(27), size.y - UI.px(30)) * 0.9
 	var c := Vector2(w * 0.5, r + UI.px(3))
 	var colour: Color = Palette.ROLE.get(role, Palette.STONE)
 	var out := standing in ["Out", "Gone", "Caught"]

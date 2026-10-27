@@ -406,6 +406,7 @@ func _draw_speech(replay: RulebornReplay, m: float, calm: bool) -> void:
 	var nodes: Array[Node3D] = view._guards
 	var font := FxSkin.words()
 	var px := int(clampf(m * 0.4, 40.0, 54.0))
+	var placed: Array[Rect2] = []
 	for i: int in speech:
 		if i >= nodes.size() or i >= replay.guards().size():
 			continue
@@ -421,11 +422,18 @@ func _draw_speech(replay: RulebornReplay, m: float, calm: bool) -> void:
 		var side := 1.0 if head.x < size.x + px * 2.0 or head.x < get_viewport_rect().size.x * 0.5 else -1.0
 		var corner := head + Vector2(side * px * 0.9, -px * 2.4)
 		var box := Rect2(corner - Vector2(0.0 if side > 0.0 else size.x, size.y * 0.5), size)
-		# Beside the numbers rising nearby, so neither covers the other.
+		# Over the numbers rising nearby, clear of where they climb, so
+		# neither covers the other.
 		for r: Rect2 in _pop_rects(m, calm):
 			if box.grow(px * 0.2).intersects(r):
-				box.position.x = r.end.x + px * 0.3 if side > 0.0 else r.position.x - px * 0.3 - size.x
+				box.position.y = r.position.y - size.y - px * 0.2
+		# And over another guard's words said nearby, rather than across them.
+		for other: Rect2 in placed:
+			if box.grow(px * 0.1).intersects(other):
+				box.position.y = other.position.y - size.y - px * 0.2
 		box.position.x = clampf(box.position.x, px * 0.2, get_viewport_rect().size.x - size.x - px * 0.2)
+		box.position.y = maxf(box.position.y, px * 0.2)
+		placed.append(box)
 		var tail := PackedVector2Array([box.get_center() + Vector2(-side * size.x * 0.25, size.y * 0.3),
 			box.get_center() + Vector2(-side * size.x * 0.05, size.y * 0.3), head + Vector2(side * px * 0.2, -px * 0.3)])
 		# An alert is said in paper on §21.8's alarm fill; the rest on parchment.
@@ -456,7 +464,7 @@ static func _grown(tri: PackedVector2Array, by: float) -> PackedVector2Array:
 
 
 ## The column each rising number climbs through in its life, as
-## `_draw_pops` places it: a bubble kept out of it stays put.
+## `_draw_pops` places it: a bubble kept above it stays put.
 func _pop_rects(m: float, calm: bool) -> Array[Rect2]:
 	var out: Array[Rect2] = []
 	var font := FxSkin.numbers()
