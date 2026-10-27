@@ -286,28 +286,22 @@ export class Service {
     const now = this.now();
     // The owner is the island's, not the snapshot's: two players who publish
     // the same bytes share a snapshot, and each is a target of their own.
-    const rows = this.db.prepare(
-      `SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin,
-              COALESCE(s.band, 'realm-level-' || s.realm_level) AS band, a.keeper_level
-         FROM islands i
-         JOIN snapshots s ON s.bundle = i.bundle
-         JOIN accounts a ON a.id = i.owner
-        WHERE a.banned_at IS NULL
-        ORDER BY s.bundle, i.owner`).all();
+    // Every island with what the list carries, in one read (matchmaking.live).
+    const rows = this.matchmaking.live(now);
     const bands = new Map();
     for (const r of rows) {
       // §12.3: a new player's island is nobody's target yet.
-      if (this.matchmaking.shielded(r.owner, now)) continue;
-      if (!bands.has(r.band)) bands.set(r.band, []);
+      if (r.shielded) continue;
+      const band = r.band ?? `realm-level-${r.realm_level}`;
+      if (!bands.has(band)) bands.set(band, []);
       // What §12.22's steps read, so the device can run `offer` on the list.
-      const rating = this.matchmaking.islandRating(r.owner, r.realm);
-      bands.get(r.band).push({
+      bands.get(band).push({
         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
         vaultLevel: r.vault_level, exposed: r.exposed, keeperLevel: r.keeper_level,
-        renown: this.seasons.league(r.owner, now).renown,
+        renown: r.renown,
         origin: r.origin ?? (r.owner === GENERATOR ? "generated" : "authored"),
-        rating: rating ? Math.round(rating.rating) : null,
-        deviation: rating ? Math.round(rating.deviation) : null,
+        rating: r.rating === null ? null : Math.round(r.rating),
+        deviation: r.rating === null ? null : Math.round(r.deviation),
       });
     }
     const index = {};

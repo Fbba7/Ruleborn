@@ -95,6 +95,13 @@ CREATE TABLE IF NOT EXISTS islands (
 );
 -- Who holds a bundle: the lease's holders, and the hold queue's turns.
 CREATE INDEX IF NOT EXISTS islands_by_bundle ON islands (bundle);
+-- The newest change to any island, and the newest ban and deletion: what
+-- tells matchmaking its candidates are stale (matchmaking.candidates), one
+-- row each to read where each read every island or account. A ban and a
+-- deletion are rare, and only they write their partial index.
+CREATE INDEX IF NOT EXISTS islands_by_change ON islands (changed_at);
+CREATE INDEX IF NOT EXISTS accounts_banned ON accounts (banned_at) WHERE banned_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS accounts_deleted ON accounts (deleted_at) WHERE deleted_at IS NOT NULL;
 
 -- §20.11: "a way to block another player". The blocker's list (safety.mjs).
 CREATE TABLE IF NOT EXISTS blocks (

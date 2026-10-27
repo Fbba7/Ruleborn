@@ -158,8 +158,8 @@ export class Matchmaking {
 
   /** "New players can't be raided by other players for their first 72
    *  hours, or until they raid a player themselves." */
-  shielded(account, now = this.service.now()) {
-    const a = this.db.prepare("SELECT created_at, seeded FROM accounts WHERE id = ?").get(account);
+  shielded(account, now = this.service.now(), a = null) {
+    a ??= this.db.prepare("SELECT created_at, seeded FROM accounts WHERE id = ?").get(account);
     if (!a || a.seeded || now - a.created_at >= facts.NEW_PLAYER_SHIELD_HOURS * HOUR_MS) return false;
     const raided = this.db.prepare(
       `SELECT 1 FROM heists h JOIN leases l ON l.token = h.token
@@ -197,11 +197,14 @@ export class Matchmaking {
     // taken away or its owner banned or deleted, which a few aggregate
     // reads tell; what else moves in the meantime (a rating, Renown, a
     // shield running out) the lease checks again, or only orders the list.
+    // Each the newest of its kind, one index row apiece (db.mjs): an island
+    // goes only with its owner's deletion, so the newest deletion tells it.
     const seen = this.db.prepare(
-      `SELECT (SELECT COUNT(*) FROM islands) AS n, (SELECT MAX(changed_at) FROM islands) AS changed,
-              (SELECT MAX(banned_at) FROM accounts) AS banned, (SELECT MAX(deleted_at) FROM accounts) AS deleted`)
+      `SELECT (SELECT MAX(changed_at) FROM islands) AS changed,
+              (SELECT MAX(banned_at) FROM accounts WHERE banned_at IS NOT NULL) AS banned,
+              (SELECT MAX(deleted_at) FROM accounts WHERE deleted_at IS NOT NULL) AS deleted`)
       .get();
-    const key = `${this.publishes}:${seen.n}:${seen.changed}:${seen.banned}:${seen.deleted}`;
+    const key = `${this.publishes}:${seen.changed}:${seen.banned}:${seen.deleted}`;
     const m = this.made;
     if (m && m.key === key && now >= m.at && now - m.at < CANDIDATES_MS) return m.list;
     const list = this.fresh(now);
@@ -209,11 +212,37 @@ export class Matchmaking {
     return list;
   }
 
-  fresh(now) {
-    const live = this.db.prepare(
-      `SELECT s.bundle, i.owner, i.realm, s.realm_level, a.keeper_level, i.origin
+  /**
+   * Every current island of a player who is not banned, in one read: its
+   * snapshot, its owner's Keeper level and protection, its rating, and its
+   * owner's season Renown from their standing and newest Renown row (§24.8's
+   * running total) — six rows an island, where a read each took seven and
+   * every Renown row of the season. An unprotected owner with no standing
+   * yet this season is given one, as their Renown read always has
+   * (seasons.standing).
+   */
+  live(now) {
+    const season = this.service.seasons.current(now).id;
+    const rows = this.db.prepare(
+      `SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin, s.band,
+              a.keeper_level, a.created_at, a.seeded, a.deleted_at, r.rating, r.deviation, st.start,
+              (SELECT n.total FROM renown n WHERE n.season = :season AND n.account = i.owner
+                ORDER BY n.id DESC LIMIT 1) AS moved
          FROM islands i JOIN snapshots s ON s.bundle = i.bundle JOIN accounts a ON a.id = i.owner
-        WHERE a.banned_at IS NULL AND a.deleted_at IS NULL ORDER BY s.bundle, i.owner`).all();
+         LEFT JOIN ratings r ON r.kind = 'island' AND r.key = i.owner || '/' || i.realm
+         LEFT JOIN standings st ON st.season = :season AND st.account = i.owner
+        WHERE a.banned_at IS NULL ORDER BY s.bundle, i.owner`).all({ season });
+    const seasons = this.service.seasons;
+    // A protected island is nobody's target, and its Renown is not asked for.
+    return rows.map((r) => {
+      const shielded = this.shielded(r.owner, now, r);
+      return { ...r, shielded, renown: shielded ? null : r.start === null ? seasons.league(r.owner, now).renown
+        : r.start + (r.moved ?? seasons.moved(r.owner, season)) };
+    });
+  }
+
+  fresh(now) {
+    const live = this.live(now).filter((r) => r.deleted_at === null);
     const echoes = this.db.prepare(
       `SELECT s.bundle, s.owner, s.realm, s.realm_level, a.keeper_level, s.origin
          FROM snapshots s JOIN accounts a ON a.id = s.owner
@@ -229,16 +258,17 @@ export class Matchmaking {
     const view = (r, echo) => {
       // §13.3: a player's curated layout is judged as generated too.
       const origin = r.origin ?? (r.owner === GENERATOR ? "generated" : "authored");
-      const rating = this.islandRating(r.owner, r.realm) ?? prior(r.realm_level, origin);
+      const rating = (echo ? this.islandRating(r.owner, r.realm)
+        : r.rating === null ? null : { rating: r.rating, deviation: r.deviation }) ?? prior(r.realm_level, origin);
       return {
         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
-        keeperLevel: r.keeper_level, renown: this.service.seasons.league(r.owner, now).renown,
+        keeperLevel: r.keeper_level, renown: echo ? this.service.seasons.league(r.owner, now).renown : r.renown,
         rating: rating.rating, deviation: rating.deviation, echo, chapter: chapter(r.bundle),
         origin,
       };
     };
     return [
-      ...live.filter((r) => !this.shielded(r.owner, now)).map((r) => view(r, false)),
+      ...live.filter((r) => !r.shielded).map((r) => view(r, false)),
       // The protection covers a new player's echoes too (G30).
       ...echoes.filter((r) => !this.shielded(r.owner, now)).map((r) => view(r, true)),
     ];
