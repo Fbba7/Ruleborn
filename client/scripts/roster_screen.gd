@@ -247,14 +247,20 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 	# Its health beside its role, as the design's: the simulation's number.
 	var numbers: Dictionary = RulebornReplay.role_numbers().get(str(c.get("role", "")), {})
 	var health := int(numbers.get("health", -1))
+	var placed := false
 	if health >= 0:
-		var spacer := Control.new()
-		spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		role.add_child(spacer)
 		var heart := StageHeroKit.chip("%d" % health, "card", "♥")
 		heart.accessibility_name = Strings.t("CHARACTER_STAT_SPOKEN", [Strings.t("CHARACTER_STAT_HEALTH"), str(health)])
-		role.add_child(heart)
-	hero_info.add_child(role)
+		heart.size_flags_horizontal = Control.SIZE_SHRINK_END
+		# Its own line when the column is narrow (a long language).
+		var line := HFlowContainer.new()
+		line.add_theme_constant_override("h_separation", UI.px(6))
+		line.add_child(role)
+		line.add_child(heart)
+		hero_info.add_child(line)
+		placed = true
+	if not placed:
+		hero_info.add_child(role)
 	var top := maxi(1, int(c.get("top", 1)))
 	hero_info.add_child(StageHeroBar.make(float(c.get("level", 1)) / float(top), Color("#3FBF7F"), "", 12.0))
 	hero_info.add_child(StageHeroKit.para(Strings.t("CHARACTER_LEVEL_OF", [int(c.get("level", 1)), top]), 14.0,
