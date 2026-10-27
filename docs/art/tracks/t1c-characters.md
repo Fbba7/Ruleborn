@@ -426,6 +426,10 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
     kinds would make the result 150.
 12. Quarryback's tone 0.1 and Stillwatch a warmer tint, measured as in
     round 9 (Stillwatch 0.96/0.99/1.05 against 0.95/1.00/1.05).
+13. The six Sages measured the same way: five within 0.04; Lamplighter read
+    grey-blue (0.10 off) and takes a warm tint (now 1.25/0.94/0.81 against
+    1.28/0.95/0.77). Bloomling's body warmer (1.10/1.04/0.87 against
+    1.12/1.00/0.89).
 
 ### Stills (`docs/art/shots/t1d/`)
 
