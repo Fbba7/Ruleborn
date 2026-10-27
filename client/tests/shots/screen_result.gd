@@ -18,6 +18,11 @@ func _go() -> void:
 	frame.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	root.add_child(frame)
 	App.services = Fixtures.answered(Services.build(frame, "", null, "user://outbox-shot.json"))
+	if OS.get_environment("LOCALE") != "":
+		Strings.set_locale(OS.get_environment("LOCALE"))
+	if OS.get_environment("TEXT") != "":
+		Settings.text_scale = int(OS.get_environment("TEXT"))
+		Settings.apply()
 	# The golden clean heist on the fixture realm: what the result shows when
 	# a heist pays. GOLDEN picks another.
 	var golden := OS.get_environment("GOLDEN") if OS.get_environment("GOLDEN") != "" else "planned-clean"
@@ -34,6 +39,10 @@ func _go() -> void:
 	for i in 30:
 		await process_frame
 	await RenderingServer.frame_post_draw
+	# §21.3's budgets, as the renderer counted the frame.
+	print("budget: %d draw calls, %d primitives" % [
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)])
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote ", verdict)
 	quit()

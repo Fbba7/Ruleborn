@@ -6,7 +6,7 @@ extends RefCounted
 ## dressed stone are in each of §21.4's realms, and how its trees grow.
 
 const REALMS := {
-	"heart": {"wall": "#F6DDE6", "roof": "#9C3380", "stone": "#E6DCCB", "stone2": "#B9AE9C", "accent": "#E05CB4",
+	"heart": {"wall": "#FCE0D8", "roof": "#9C3380", "stone": "#F2E0D6", "stone2": "#C9AEA6", "accent": "#E05CB4",
 		"tree": "round"},
 	"skyfield": {"wall": "#FFFFFF", "roof": "#C0502E", "stone": "#E6DCCB", "stone2": "#B9AE9C", "accent": "#F2B43C",
 		"tree": "birch"},
@@ -14,11 +14,11 @@ const REALMS := {
 		"accent": "#8C6CF0", "tree": "pine"},
 	"tidehold": {"wall": "#E4F4F2", "roof": "#1F7F95", "stone": "#E6DCCB", "stone2": "#9FB0B8", "accent": "#3CC6D8",
 		"tree": "round"},
-	"emberreach": {"wall": "#5A4448", "roof": "#8A2F22", "stone": "#A8928A", "stone2": "#7A625C",
+	"emberreach": {"wall": "#D8BEB0", "roof": "#8A2F22", "stone": "#A8928A", "stone2": "#7A625C",
 		"accent": "#F07A3C", "tree": "pine"},
 	"verdant": {"wall": "#E8D2A8", "roof": "#B5533C", "stone": "#E6DCCB", "stone2": "#B9AE9C", "accent": "#5CC46A",
 		"tree": "round"},
-	"lanternvale": {"wall": "#6A5A78", "roof": "#4B3C8A", "stone": "#C4BCD8", "stone2": "#8E86A8",
+	"lanternvale": {"wall": "#C2B2D6", "roof": "#4B3C8A", "stone": "#C4BCD8", "stone2": "#8E86A8",
 		"accent": "#F2B43C", "tree": "willow"},
 }
 ## The timber, iron, gold and window light every realm shares (the

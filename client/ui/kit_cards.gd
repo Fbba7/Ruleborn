@@ -61,12 +61,21 @@ static func law_card(icon: String, title: String, school: String, rarity: String
 		disc.add_child(n)
 		stage.add_child(disc)
 	v.add_child(window)
-	var name_plate := UI.plate(_name(title), "parchment")
+	# A card three to a row (under 130 points) sets its name smaller and its
+	# school's mark over its rank's word, so neither widens it past its row.
+	var compact := points < 130.0
+	var name_plate := UI.plate(_name(title, _fit(title, points - 22.0) if compact else 18.0), "parchment")
+	if compact:
+		name_plate.add_theme_stylebox_override("panel", UI.clear_box(4, 6))
 	v.add_child(name_plate)
-	var mark := HBoxContainer.new()
+	var mark: BoxContainer = HBoxContainer.new()
+	if compact:
+		mark = VBoxContainer.new()
 	mark.alignment = BoxContainer.ALIGNMENT_CENTER
-	mark.add_theme_constant_override("separation", UI.px(4))
-	mark.add_child(Icons.view("schools/" + school, 20))
+	mark.add_theme_constant_override("separation", UI.px(0 if compact else 4))
+	var shape := Icons.view("schools/" + school, 20)
+	shape.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	mark.add_child(shape)
 	# The school by its mark's shape, the rank by its frame and its word.
 	var s := UI.label(Strings.t("LAW_RANK_" + rarity.to_upper()), 13)
 	s.theme_type_variation = "Kicker"
@@ -78,8 +87,22 @@ static func law_card(icon: String, title: String, school: String, rarity: String
 	return card
 
 
-static func _name(title: String) -> Label:
-	var l := UI.label(title, 18, true)
+## The largest size from 15 points down to §21.8's 13 at which the name's
+## longest word fits `room` points, so it wraps between words, not in one.
+static func _fit(title: String, room: float) -> float:
+	var face := RbTheme.role_font("heading")
+	var longest := ""
+	for word: String in title.split(" "):
+		if word.length() > longest.length():
+			longest = word
+	for size: float in [15.0, 14.0]:
+		if face.get_string_size(longest, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(size)).x <= UI.px(room):
+			return size
+	return 13.0
+
+
+static func _name(title: String, points: float) -> Label:
+	var l := UI.label(title, points, true)
 	l.theme_type_variation = "Heading"
 	return l
 
@@ -93,7 +116,7 @@ static func portrait(picture: Texture2D, name: String, level: int, school: Strin
 		pressed: Callable, chosen := false, spoken := "") -> Button:
 	var b := UI.action("", pressed, "portrait_" + school, spoken if spoken != "" else name)
 	b.name = "Portrait"
-	b.custom_minimum_size = Vector2(UI.px(100), UI.px(128))
+	b.custom_minimum_size = Vector2(UI.px(100), UI.px(140))
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	RbBox.of(b).set_chosen(chosen)
 	var art := TextureRect.new()
@@ -159,7 +182,8 @@ static func portrait(picture: Texture2D, name: String, level: int, school: Strin
 
 ## A reward tile on the result (07-heist-result.png): parchment edged in the
 ## reward's colour ("gold", "green", "pink", "sky"), its icon, the amount in
-## Lilita One and what it is in words.
+## Manrope 800 with tabular figures (as the design's, not the display face)
+## and what it is in words.
 static func reward(icon: String, amount: String, words: String, tone := "gold") -> PanelContainer:
 	var p := UI.panel("reward_" + tone)
 	p.name = "Reward"
@@ -170,10 +194,11 @@ static func reward(icon: String, amount: String, words: String, tone := "gold") 
 	v.add_child(Icons.view(icon, 34))
 	var n := UI.label(amount, 24)
 	n.theme_type_variation = "DisplayS"
+	n.add_theme_font_override("font", Tokens.font("ui", 800, true))
 	n.add_theme_font_size_override("font_size", UI.text_px(24))
 	n.set_meta("points", 24.0)
 	v.add_child(n)
-	var w := UI.label(words, 13)
+	var w := UI.label(words, 13, true)
 	w.theme_type_variation = "Secondary"
 	w.set_meta("bold", true)
 	w.add_theme_font_override("font", UI.bold_font())
@@ -191,27 +216,32 @@ static func law_chip(icon: String, title: String) -> PanelContainer:
 
 
 ## A fact tile (the Character screen's Carrier, Resists, Traits, At home):
-## its icon on a disc, a kicker in capitals and a bold line.
-static func fact(icon: String, kicker: String, words: String) -> PanelContainer:
+## its icon on a disc, a kicker in capitals and a bold line. With a `tone`
+## (a school's name) the disc is lit from white to that school's light and
+## the kicker is in its deep shade, as the design tells the four facts apart;
+## the kicker's words say which fact it is, so the tone is never alone.
+static func fact(icon: String, kicker: String, words: String, tone := "") -> PanelContainer:
 	var p := UI.panel("fact")
 	p.name = "Fact"
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
 	var disc := PanelContainer.new()
-	disc.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
-	UI.dress(disc, "icon_disc")
+	disc.add_theme_stylebox_override("panel", UI.clear_box(6, 6))
+	var lit := UI.dress(disc, "icon_disc")
+	if tone != "":
+		lit.tint(Color.WHITE, Tokens.color(tone + "_light"))
 	disc.add_child(Icons.view(icon, 24))
 	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(disc)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 0)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var k := UI.label(kicker, 13)
+	var k := UI.label(kicker, 13, true)
 	k.theme_type_variation = "Kicker"
 	k.uppercase = true
 	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	k.add_theme_color_override("font_color", Tokens.color("parchment_text_2"))
+	k.add_theme_color_override("font_color", tone_ink(tone) if tone != "" else Tokens.color("parchment_text_2"))
 	k.set_meta("bold", true)
 	v.add_child(k)
 	var w := UI.label(words, 14, true)
@@ -261,4 +291,57 @@ static func season_reward(rank: String, icon: String, amount: String, claim: Cal
 	m.add_theme_constant_override("margin_bottom", UI.px(6))
 	m.add_child(v)
 	p.add_child(m)
+	return p
+
+
+## A school's deep shade, darkened only as far as bold 13-point words need
+## to read on parchment's darker stop (§21.8: 4.5:1 and APCA Lc 60).
+static func tone_ink(school: String) -> Color:
+	var ink := Tokens.color(school + "_shadow")
+	var under := Tokens.color("parchment_bottom")
+	for i: int in 20:
+		if ColourCheck.readable(ink, under, 13.0, true):
+			break
+		ink = ink.darkened(0.08)
+	return ink
+
+
+## A character's ability (11-character.png): a plum card, the ability's
+## icon on a square in its school's colours, a gold kicker ("Ability") with
+## its tag ("Once a heist"), the name in Marcellus and the rule beneath it.
+static func ability(icon: String, school: String, kicker: String, tag: String, title: String,
+		rule: String) -> PanelContainer:
+	var p := UI.panel("ability")
+	p.name = "Ability"
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(12))
+	var square := PanelContainer.new()
+	square.add_theme_stylebox_override("panel", UI.clear_box(10, 10))
+	UI.dress(square, "window_" + school, 16)
+	square.add_child(Icons.view(icon, 40))
+	square.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(square)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(2))
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var head := KitLayout.flow(6)
+	var k := UI.label(kicker, 13)
+	k.theme_type_variation = "Kicker"
+	k.uppercase = true
+	k.add_theme_color_override("font_color", Tokens.color("gold"))
+	k.set_meta("bold", true)
+	head.add_child(k)
+	if tag != "":
+		head.add_child(KitStatus.tag(tag, true))
+	v.add_child(head)
+	var t := UI.label(title, 20, true)
+	t.theme_type_variation = "Heading"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	v.add_child(t)
+	var r := UI.label(rule, 14, true)
+	r.theme_type_variation = "Secondary"
+	r.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	v.add_child(r)
+	row.add_child(v)
+	p.add_child(row)
 	return p

@@ -51,6 +51,9 @@ static func dress(root: Node) -> void:
 	var nodes: Array[Node] = [root]
 	nodes.append_array(root.find_children("*", "", true, false))
 	for n: Node in nodes:
+		# T9's kit draws its own materials: a control it dressed keeps them.
+		if n is Control and RbBox.of(n as Control) != null:
+			continue
 		if n is PanelContainer and not n.has_meta("dressed"):
 			var p := n as PanelContainer
 			var was := p.get_theme_stylebox("panel") as StyleBoxFlat

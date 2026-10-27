@@ -67,6 +67,8 @@ static func bar(st: Dictionary) -> Dictionary:
 	for i in BANDS:
 		bands.append({"name": band_name(i), "current": i == band})
 	return {"band": band, "bands": bands, "name": band_name(band), "effect": Strings.t("WEAVING_EFFECT_%d" % band),
+		"percent": str(roundi(float(st.get("strain", 0.0)) * 100.0)) + "%", "share": float(st.get("strain", 0.0)),
+		"total": points(float(st.get("total", 0.0))), "capacity": points(float(st.get("capacity", 0.0))),
 		"strain": Strings.t("WEAVING_STRAIN", [str(roundi(float(st.get("strain", 0.0)) * 100.0)) + "%",
 			points(float(st.get("total", 0.0))), points(float(st.get("capacity", 0.0))), band_name(band)])}
 
@@ -91,19 +93,29 @@ static func realm(r: Dictionary, now_ms: int) -> Dictionary:
 			var law_name := Strings.term("LAW", law)
 			var text := Strings.t("WEAVING_SLOT_WEAVING", [n, law_name, duration(minutes_until(int(s["ready_at"]), now_ms))]) \
 				if s.get("weaving", false) else Strings.t("WEAVING_SLOT_LAW", [n, law_name, int(s["tier"])])
-			slots.append({"text": text, "out": {"key": "unweave:%s:%d" % [name, n], "item": "unweave:%s:%d" % [name, n],
+			var sub := Strings.t("SCREEN_TIER", CodexPresenter.ROMAN[clampi(int(s.get("tier", 1)), 0, 3)])
+			if s.get("weaving", false):
+				sub = duration(minutes_until(int(s["ready_at"]), now_ms))
+			slots.append({"n": n, "law": law, "state": "weaving" if s.get("weaving", false) else "woven",
+				"tier": int(s.get("tier", 1)), "text": text, "name": law_name, "sub": sub,
+				"out": {"key": "unweave:%s:%d" % [name, n],
+				"item": "unweave:%s:%d" % [name, n],
 				"action": Strings.t("WEAVING_UNWEAVE"), "spoken": Strings.t("WEAVING_UNWEAVE_SPOKEN", [law_name, n]),
 				"can": true, "why": "", "args": {"realm": name, "slot": n}}})
 		elif s.get("rests_until") != null:
-			slots.append({"text": Strings.t("WEAVING_SLOT_RESTING", [n, duration(minutes_until(int(s["rests_until"]),
-				now_ms))]), "out": {}})
+			var rest := duration(minutes_until(int(s["rests_until"]), now_ms))
+			slots.append({"n": n, "state": "resting", "text": Strings.t("WEAVING_SLOT_RESTING", [n, rest]),
+				"name": Strings.t("SCREEN_SLOT_RESTING"), "sub": rest, "out": {}})
 		else:
-			slots.append({"text": Strings.t("WEAVING_SLOT_EMPTY", n), "out": {}})
+			slots.append({"n": n, "state": "empty", "text": Strings.t("WEAVING_SLOT_EMPTY", n),
+				"name": Strings.t("SCREEN_SLOT_EMPTY"), "sub": Strings.t("SCREEN_SLOT_N", n), "out": {}})
 			if free == 0:
 				free = n
 	# §5.1: the crown's slots open with the Spire.
 	if r.get("opens_at") != null:
-		slots.append({"text": Strings.t("WEAVING_CROWN_OPENS", int(r["opens_at"])), "out": {}})
+		slots.append({"state": "locked", "text": Strings.t("WEAVING_CROWN_OPENS", int(r["opens_at"])),
+			"name": Strings.t("SCREEN_SLOT_LOCKED"), "sub": Strings.t("SCREEN_SPIRE_LEVEL", int(r["opens_at"])),
+			"out": {}})
 	var by_law := {}
 	# A realm with no slots yet offers nothing to weave in them.
 	var offers: Array = r.get("offers", []) if not (r.get("slots", []) as Array).is_empty() else []
@@ -117,7 +129,8 @@ static func realm(r: Dictionary, now_ms: int) -> Dictionary:
 	for o: Dictionary in offers:
 		if not (o["law"] in r.get("recommended", [])):
 			others.append(by_law[o["law"]])
-	return {"realm": name, "title": realm_title(r), "slots": slots, "recommended": recommended, "others": others}
+	return {"realm": name, "title": realm_title(r), "slots": slots, "recommended": recommended, "others": others,
+		"type": str(r.get("type", "")) if r.get("type") is String else ""}
 
 
 static func notes(ids: Array) -> String:
@@ -145,6 +158,9 @@ static func offer(o: Dictionary, realm_id: String, free: int) -> Dictionary:
 	var key := "weave:%s:%s" % [realm_id, law]
 	var title := Strings.t("WEAVING_OFFER", [law_name, points(float(o["points"])), band_name(int(o["band"]))])
 	return {"law": law, "title": title, "lines": lines, "band": int(o["band"]), "key": key, "item": key,
+		"name": law_name, "points": points(float(o["points"])), "band_name": band_name(int(o["band"])),
+		"harmonies": o.get("harmonies", []), "clashes": o.get("clashes", []), "resonances": int(o.get("resonances", 0)),
+		"chords": int(o.get("chords", 0)), "price": price, "time": time,
 		"action": Strings.t("WEAVING_BUTTON", [price, time]),
 		"spoken": Strings.t("WEAVING_BUTTON_SPOKEN", [law_name, price, time]), "can": why == "", "why": why,
 		"cost": price, "args": {"realm": realm_id, "slot": free, "law": law}}

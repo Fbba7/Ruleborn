@@ -62,7 +62,12 @@ var lighter := false
 
 ## The materials of a level's look: walls, roof, trim.
 static func look(lvl: int, colours: Dictionary) -> Array[Color]:
-	var s := KitStyle.of(KitStyle.realm_of(colours))
+	var realm := KitStyle.realm_of(colours)
+	var s := KitStyle.of(realm)
+	if realm == "lanternvale":
+		# The night realm's plaster holds a little of its lamplight, as its
+		# land still draws the houses glowing warm in the dark.
+		s["wall"] = KitStyle.lit((s["wall"] as Color).lerp(Color("#FFD8B0"), 0.25), 0.18)
 	if lvl >= 7:
 		return [Color("#ECE6FF"), (s["roof"] as Color).lerp(Color("#8C6CF0"), 0.35).lightened(0.1), KitStyle.GOLD]
 	if lvl >= 4:
@@ -261,7 +266,7 @@ func door(x: float, y: float, z: float, yaw: float, s := 1.0) -> void:
 ## A gable roof `w` across and `depth` deep, its eaves at `y0`, rising `rise`,
 ## laid in rows of shingles (thatch at the first look), a round ridge and
 ## plaster gable ends.
-func roof(w: float, depth: float, y0: float, rise: float, over := 0.08, rows := 4, yaw := 0.0) -> float:
+func roof(w: float, depth: float, y0: float, rise: float, over := 0.08, rows := 4, yaw := 0.0, infill := true) -> float:
 	if lighter:
 		rows = mini(rows, 2)
 	var run := w / 2.0 + over
@@ -279,58 +284,30 @@ func roof(w: float, depth: float, y0: float, rise: float, over := 0.08, rows := 
 	g.cyl(Transform3D(turn * Basis(Vector3.RIGHT, PI / 2.0), at(0, 0, 0) + turn * Vector3(0, y0 + rise + 0.015,
 		-(depth / 2.0 + over + 0.01)) * unit), 0.03 * unit, 0.03 * unit, (depth + over * 2.0 + 0.02) * unit,
 		KitStyle.GOLD if tier == 2 else roof_dark, 6)
-	g.gable(Transform3D(turn, at(0, y0, 0)), w * unit, rise * unit, (depth - 0.01) * unit, wall)
-	return y0 + rise
-
-
-## A hip roof: four shingled slopes rising from eaves `w` × `depth` at
-## `y0` to a short ridge, `rise` high; reads as a roof from every side.
-func _hip_roof(w: float, depth: float, y0: float, rise: float) -> float:
-	var rows := 3
-	for i in rows:
-		var t0 := float(i) / rows
-		var t1 := float(i + 1) / rows
-		var col := roof_col if i % 2 == 1 else roof_dark
-		var hw0 := lerpf(w / 2.0 + 0.06, 0.04, t0)
-		var hd0 := lerpf(depth / 2.0 + 0.06, 0.12, t0)
-		var hw1 := lerpf(w / 2.0 + 0.06, 0.04, t1)
-		var hd1 := lerpf(depth / 2.0 + 0.06, 0.12, t1)
-		var ya := y0 + rise * t0
-		var yb := y0 + rise * t1
-		var lo: Array[Vector3] = [at(-hw0, ya, -hd0), at(hw0, ya, -hd0), at(hw0, ya, hd0), at(-hw0, ya, hd0)]
-		var hi: Array[Vector3] = [at(-hw1, yb, -hd1), at(hw1, yb, -hd1), at(hw1, yb, hd1), at(-hw1, yb, hd1)]
-		for k in 4:
-			var n := (k + 1) % 4
-			var a: Vector3 = lo[k]
-			var b: Vector3 = lo[n]
-			var c: Vector3 = hi[n]
-			var e: Vector3 = hi[k]
-			if (b - a).cross(e - a).y > 0:
-				g.quad(a, b, c, e, col.darkened(0.04 * (k % 2)))
-			else:
-				g.quad(a, e, c, b, col.darkened(0.04 * (k % 2)))
-	var ridge := at(0, y0 + rise, 0)
-	g.box(Geo.place(ridge), Vector3(0.1, 0.035, 0.28) * unit, KitStyle.GOLD if tier == 2 else roof_dark)
+	if infill:
+		g.gable(Transform3D(turn, at(0, y0, 0)), w * unit, rise * unit, (depth - 0.01) * unit, wall)
 	return y0 + rise
 
 
 ## Timber framing round a storey: corner posts, sills, a head beam and
 ## braces on the front, as the design's half-timbered houses.
 func frame(w: float, h: float, depth: float, y0: float) -> void:
-	if lighter:
-		return
-	var c := KitStyle.WOOD if tier < 2 else KitStyle.GOLD
+	var c := KitStyle.WOOD_DARK if tier < 2 else KitStyle.GOLD
+	# The posts and the front's braces carry the half-timbered look at the
+	# mid detail too (the design's houses read by them at the realm's zoom);
+	# the beams are fine parts.
 	for p: Vector2 in [Vector2(-1, -1), Vector2(1, -1), Vector2(1, 1), Vector2(-1, 1)]:
-		fine(0.045, h, 0.045, c, p.x * w / 2.0, y0 + h / 2.0, p.y * depth / 2.0)
+		d.box(place(p.x * w / 2.0, y0 + h / 2.0, p.y * depth / 2.0), Vector3(0.055, h, 0.055) * unit, c)
 	for y: float in [y0 + 0.02, y0 + h - 0.02]:
-		fine(w + 0.02, 0.04, 0.045, c, 0, y, depth / 2.0)
-		fine(w + 0.02, 0.04, 0.045, c, 0, y, -depth / 2.0)
-		fine(0.045, 0.04, depth + 0.02, c, w / 2.0, y, 0)
-		fine(0.045, 0.04, depth + 0.02, c, -w / 2.0, y, 0)
+		fine(w + 0.02, 0.045, 0.05, c, 0, y, depth / 2.0)
+		fine(w + 0.02, 0.045, 0.05, c, 0, y, -depth / 2.0)
+		fine(0.05, 0.045, depth + 0.02, c, w / 2.0, y, 0)
+		fine(0.05, 0.045, depth + 0.02, c, -w / 2.0, y, 0)
 	for sx: float in [-1.0, 1.0]:
-		var span := sqrt(pow(w * 0.3, 2) + h * h) * 0.95
-		var basis := Basis(Vector3.BACK, sx * atan2(w * 0.3, h))
-		d.box(Transform3D(basis, at(sx * w * 0.32, y0 + h / 2.0, depth / 2.0 + 0.012)), Vector3(0.03, span, 0.02) * unit,
+		# Braces out by the corners, clear of the windows.
+		var span := sqrt(pow(w * 0.12, 2) + h * h) * 0.95
+		var basis := Basis(Vector3.BACK, sx * atan2(w * 0.12, h))
+		d.box(Transform3D(basis, at(sx * w * 0.41, y0 + h / 2.0, depth / 2.0 + 0.012)), Vector3(0.04, span, 0.02) * unit,
 			c)
 
 
@@ -496,20 +473,34 @@ func _topper() -> void:
 ## The packed-earth pad a building stands on (the design's foundation disc,
 ## :981): an octagon of trodden earth and stone, wider than the house.
 func _pad() -> void:
-	var earth := KitGround.earth(palette).lerp(Color("#EAD2B4"), 0.45)
+	# The design's pad is its realm's dirt halfway to cream (:979), lifted, as
+	# the toon ramp lights it darker than the design's; the Heart's drawn
+	# salmon, as its realm view (04-realm-view).
+	var earth := (palette["soil"] as Color).lerp(Color("#E8D8B8"), 0.5)
+	earth = earth.lerp(Color("#FFC0A4"), 0.5) if KitStyle.realm_of(palette) == "heart" else earth.lightened(0.18)
 	if KitStyle.realm_of(palette) == "lanternvale":
 		# Lantern Vale's pads are pale and faintly lit, so its town shows in the
 		# dark (the design's night realm).
 		earth = Color(Color("#D8CCE8"), 0.8)
-	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.66 * unit, 0.63 * unit, 0.03 * unit, earth.darkened(0.1), false, earth)
+	# Its foot a metre down, so the contact shade at a building's foot
+	# (kit_toon) leaves the pad as bright as the design's.
+	var was := d.anim
+	d.anim = Color(0, origin.y - 1.0, 0, 0)
+	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.8 * unit, 0.76 * unit, 0.04 * unit, earth.darkened(0.16), false, earth)
+	d.anim = was
 
 
 ## The Hearth: "a cottage with a round door and chimney", warm window light.
 func _hearth() -> void:
 	plinth(0.94, 0.82)
 	var two := tier >= 1
-	box(0.82, 0.36, 0.66, stone, 0, 0.26, 0)
-	courses(0.82, 0.66, 0.08, 0.44, 3)
+	# From the second look the ground floor is plaster and timber too, as the
+	# design's cottages; the first look's is rough stone.
+	box(0.82, 0.36, 0.66, wall if two else stone, 0, 0.26, 0)
+	if two:
+		frame(0.82, 0.36, 0.66, 0.08)
+	else:
+		courses(0.82, 0.66, 0.08, 0.44, 3)
 	var eave := 0.44
 	if two:
 		box(0.9, 0.34, 0.74, wall, 0, 0.61, 0)
@@ -645,7 +636,7 @@ func _star_well() -> void:
 			box(0.17, 0.12, 0.1, stone if (i + c) % 2 == 1 else stone.darkened(0.12), cos(a) * 0.33, 0.24 + c * 0.12,
 				sin(a) * 0.33, PI / 2.0 - a)
 	d.torus(place(0, 0.44, 0), 0.33 * unit, 0.05 * unit, stone2, 16, 5)
-	g.cyl(place(0, 0.39, 0), 0.28 * unit, 0.28 * unit, 0.02 * unit, KitStyle.lit(Color("#FFE08F"), 0.25), 14)
+	g.cyl(place(0, 0.39, 0), 0.28 * unit, 0.28 * unit, 0.02 * unit, KitStyle.lit(Color("#FFD23C"), 0.7), 14)
 	for x: float in [-0.36, 0.36]:
 		box(0.1, 0.08, 0.1, stone2, x, 0.48, 0)
 		box(0.06, 0.72, 0.06, KitStyle.WOOD, x, 0.88, 0)
@@ -662,8 +653,9 @@ func _star_well() -> void:
 	cyl(0.055, 0.045, 0.08, KitStyle.WOOD, 0, 0.66, 0, 8)
 	stop()
 	cyl(0.004, 0.004, 0.36, Color("#D8C8A8"), 0, 0.82, 0, 3)
-	# Its little roof, turned across the beam.
-	var y := _hip_roof(0.62, 0.48, 1.25, 0.38)
+	# Its open gable roof along the beam, as broad as the design's (:713):
+	# the shape the well reads by at the realm's zoom.
+	var y := roof(0.6, 1.0, 1.25, 0.3, 0.04, 3, PI / 2.0, false)
 	move(Geo.Anim.SPIN_Y, at(0, y + 0.3, 0))
 	d.gem(Geo.place(at(0, y + 0.3, 0)), 0.15 * unit, 0.22 * unit, KitStyle.lit(Color("#FFE9A0"), 0.45), 4)
 	stop()
@@ -706,25 +698,35 @@ func _garden() -> void:
 				stop()
 	if tier >= 1:
 		# The greenhouse: white frame, pale glass.
-		var pane := Color("#D8F4EC")
+		var pane := Color("#E6FBF4")
 		for z: float in [-0.29, 0.29]:
 			glass.box(place(0, 0.37, z), Vector3(0.82, 0.34, 0.01) * unit, pane)
 			glass.gable(Transform3D(Basis(), at(0, 0.54, z)), 0.82 * unit, 0.26 * unit, 0.01 * unit, pane)
 		for x: float in [-0.41, 0.41]:
 			glass.box(place(x, 0.37, 0), Vector3(0.01, 0.34, 0.58) * unit, pane)
-		var fr := Color("#F6F2E8") if tier == 1 else KitStyle.GOLD
+		# A bold white frame, as the design's greenhouse reads by its grid of
+		# glazing bars: posts round all four walls, a rail at mid height and
+		# rafters over the roof.
+		var fr := Color("#FFFBF2") if tier == 1 else KitStyle.GOLD
+		var bar := 0.032
 		for i in 5:
 			var x := -0.41 + i * 0.205
 			for z: float in [-0.29, 0.29]:
-				box(0.022, 0.34, 0.022, fr, x, 0.37, z)
+				box(bar, 0.34, bar, fr, x, 0.37, z)
+		for z: float in [-0.145, 0.0, 0.145]:
+			for x: float in [-0.41, 0.41]:
+				box(bar, 0.34, bar, fr, x, 0.37, z)
 		for z: float in [-0.29, 0.29]:
-			box(0.84, 0.022, 0.022, fr, 0, 0.54, z)
-		box(0.022, 0.022, 0.6, fr, 0, 0.8, 0)
+			box(0.84, bar, bar, fr, 0, 0.53, z)
+			if not lighter:
+				fine(0.84, 0.02, 0.02, fr, 0, 0.37, z)
+		box(bar, bar, 0.62, fr, 0, 0.8, 0)
 		for s: float in [-1.0, 1.0]:
 			glass.rbox(Transform3D(Basis(Vector3.BACK, -s * 0.56), at(s * 0.205, 0.67, 0)),
 				Vector3(0.48, 0.015, 0.6) * unit, pane, 0.005)
-			d.box(Transform3D(Basis(Vector3.BACK, -s * 0.56), at(s * 0.205, 0.68, 0.29)),
-				Vector3(0.48, 0.024, 0.024) * unit, fr)
+			for z: float in ([-0.29, 0.0, 0.29] if not lighter else [-0.29, 0.29]):
+				d.box(Transform3D(Basis(Vector3.BACK, -s * 0.56), at(s * 0.205, 0.68, z)),
+					Vector3(0.48, bar, bar) * unit, fr)
 		top = 0.85
 	else:
 		top = 0.5
@@ -745,9 +747,38 @@ func _garden() -> void:
 
 ## The Guardian Post: "a small watch platform with a lantern".
 func _guard() -> void:
+	if tier == 0:
+		_guard_platform()
+		return
+	# From the second look a stone watchtower, as the design's realm view
+	# draws the post (:733–741): a broad round tower in bands, a parapet of
+	# merlons round a drum and a cone roof.
+	var ring := 10 if not lighter else 8
+	cyl(0.44, 0.48, 0.12, stone2, 0, 0, 0, ring)
+	cyl(0.37, 0.32, 1.1, stone, 0, 0.12, 0, ring)
+	for y: float in ([0.5, 0.9] if not lighter else [0.9]):
+		cyl(0.36 - 0.045 * y, 0.36 - 0.045 * y, 0.035, stone2, 0, y, 0, ring)
+	door(0, 0.12, 0.35, 0, 0.95)
+	for a: float in [0.6, -0.9, 2.2]:
+		fine(0.03, 0.14, 0.02, KitStyle.IRON, sin(a) * 0.345, 0.75, cos(a) * 0.345, a)
+	var py := 1.22
+	cyl(0.36, 0.44, 0.12, stone2, 0, py, 0, ring)
+	for i in ring:
+		var a := TAU * i / ring
+		box(0.12, 0.14, 0.09, stone, cos(a) * 0.39, py + 0.19, sin(a) * 0.39, PI / 2.0 - a)
+	cyl(0.2, 0.19, 0.28, stone, 0, py + 0.12, 0, ring)
+	cone(0.28, 0.42, roof_col, 0, py + 0.4, 0, ring)
+	ball(0.03, KitStyle.GOLD, 0, py + 0.83, 0, 1.0, 2, 5)
+	_guard_dress(0.37, 0.12 + 0.55, py - 0.05)
+	top = py + 1.1
+
+
+## The first look's post (§21.5: "a small watch platform with a lantern",
+## wood): a timber tower under a railed platform and a pointed roof.
+func _guard_platform() -> void:
 	cyl(0.36, 0.4, 0.14, stone2, 0, 0, 0, 8)
-	var th := 0.9 + 0.15 * tier
-	cyl(0.28, 0.22, th, stone if tier > 0 else KitStyle.WOOD.lightened(0.2), 0, 0.14, 0, 8)
+	var th := 0.9
+	cyl(0.28, 0.22, th, KitStyle.WOOD.lightened(0.2), 0, 0.14, 0, 8)
 	for y: float in [0.35, 0.14 + th * 0.7]:
 		cyl(0.285, 0.285, 0.04, stone2, 0, y, 0, 8)
 	door(0, 0.14, 0.25, 0, 0.8)
@@ -761,13 +792,17 @@ func _guard() -> void:
 		var a := i * PI / 2.0 + PI / 4.0
 		box(0.04, 0.3, 0.04, KitStyle.WOOD_DARK, cos(a) * 0.3, py + 0.26, sin(a) * 0.3)
 	cone(0.44, 0.42, roof_col, 0, py + 0.41, 0, 8)
-	# The lantern, swinging.
-	var hook := at(0.36, py + 0.3, 0.1)
+	_guard_dress(0.27, 0.14 + th * 0.62, py)
+	top = py + 0.9
+
+
+## The post's swinging lantern under its platform and its school banner on
+## the tower's face, `r` out, the banner's middle at `bank`.
+func _guard_dress(r: float, bank: float, py: float) -> void:
+	var hook := at(r + 0.09, py + 0.3, 0.1)
 	move(Geo.Anim.SWING, hook)
 	d.box(Geo.place(hook + Vector3(0, -0.1, 0) * unit), Vector3(0.07, 0.09, 0.07) * unit,
 		KitStyle.lit(Color("#FFD27A"), 0.7))
 	stop()
-	# The school banner.
-	d.box(place(0, 0.14 + th * 0.62, 0.27), Vector3(0.16, 0.34, 0.01) * unit, style["accent"])
-	d.box(place(0, 0.14 + th * 0.62 + 0.18, 0.27), Vector3(0.2, 0.03, 0.03) * unit, KitStyle.GOLD)
-	top = py + 0.9
+	d.box(place(0, bank, r), Vector3(0.16, 0.34, 0.01) * unit, style["accent"])
+	d.box(place(0, bank + 0.18, r), Vector3(0.2, 0.03, 0.03) * unit, KitStyle.GOLD)

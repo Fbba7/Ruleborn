@@ -13,6 +13,13 @@ func _init() -> void:
 
 
 func _draw() -> void:
+	# Every shape in one call (FxPen).
+	FxPen.begin(self)
+	_paint()
+	FxPen.end(self)
+
+
+func _paint() -> void:
 	if Settings.high_contrast:
 		return
 	var w := size.x
@@ -28,7 +35,7 @@ func _draw() -> void:
 	band.set_corner_radius_all(int(maxf(2.0, r)))
 	band.corner_radius_bottom_left = int(maxf(2.0, r * 0.4))
 	band.corner_radius_bottom_right = int(maxf(2.0, r * 0.4))
-	draw_style_box(band, top)
+	FxPen.style_box(self, band, top)
 	# The shade: the lowest quarter, darker, so the face reads as a dome.
 	var low := Rect2(Vector2(inset, h * 0.7), Vector2(w - inset * 2.0, h * 0.3 - inset))
 	var shade := StyleBoxFlat.new()
@@ -36,4 +43,4 @@ func _draw() -> void:
 	shade.set_corner_radius_all(int(maxf(2.0, r)))
 	shade.corner_radius_top_left = 2
 	shade.corner_radius_top_right = 2
-	draw_style_box(shade, low)
+	FxPen.style_box(self, shade, low)

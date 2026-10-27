@@ -24,6 +24,12 @@ var inset_top := 0.0:
 	set(v):
 		inset_top = v
 		_shade()
+## Pixels the box runs past the host's left, right and foot: a bar flush
+## to the screen's edges shows only its top edge, its corners off the screen.
+var bleed := 0.0:
+	set(v):
+		bleed = v
+		_shade()
 ## Not drawn while every word in the host is empty (a plate whose label has
 ## nothing to say yet), so no empty card stands on the screen.
 var hide_empty := false
@@ -194,8 +200,8 @@ func _flat() -> StyleBoxFlat:
 
 ## The host's rect in the box's own space, grown by the reach.
 func quad() -> Rect2:
-	var at := (-position if host != null else Vector2.ZERO) + Vector2(0, inset_top)
-	var inner := (host.size if host != null else size) - Vector2(0, inset_top)
+	var at := (-position if host != null else Vector2.ZERO) + Vector2(-bleed, inset_top)
+	var inner := (host.size if host != null else size) - Vector2(-2.0 * bleed, inset_top - bleed)
 	return Rect2(at - Vector2.ONE * _reach, inner + Vector2.ONE * 2.0 * _reach)
 
 

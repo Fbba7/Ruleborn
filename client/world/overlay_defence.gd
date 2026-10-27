@@ -73,12 +73,13 @@ static func pin_all(on: StageView, island: RulebornIsland, replay: RulebornRepla
 	pins.clear()
 	var posts := CurationPresenter.posts(island)
 	for i in posts.size():
-		var fill := Palette.MOTION if posts[i]["at"] == picked else Color("#FFC2CC")
-		pins.pin(OverlaySheet.chip(str(i + 1), fill), on.tile_point(posts[i]["at"], 1.45))
+		# The picked post on gold, the others on leather: told apart by the
+		# gold edge and the ring under it, not the fill alone (§20.8).
+		pins.pin(OverlayHud.badge(str(i + 1), "gold_round" if posts[i]["at"] == picked else "leather", 15.0),
+			on.tile_point(posts[i]["at"], 1.45))
 	for w: Dictionary in replay.wards():
-		var school := str(Palette.WARD_SCHOOL.get(str(w["kind"]), "matter"))
-		pins.pin(OverlaySheet.chip(str(UI.SHAPE_GLYPH.get(Tokens.shape(school), "*")),
-			(Palette.SCHOOL.get(school, Palette.MATTER) as Color).lightened(0.55)), on.world_at(w["at"]) + Vector3(0, 1.2, 0))
+		pins.pin(OverlayHud.tag(OverlayHud.ward_icon(str(w["kind"]).to_snake_case()), ""),
+			on.world_at(w["at"]) + Vector3(0, 1.2, 0))
 
 
 ## The yaw that turns a model facing −Z to face way `f` (0 north to 3 west)

@@ -10,6 +10,7 @@ extends SceneTree
 ## Settings' turn and zoom buttons, CONTRAST high contrast, LEFT left-handed
 ## play, TEXT a text size (150, 200), NAMES the names a long press shows.
 
+const LawShot := preload("res://tests/shots/law_heist.gd")
 const TO := {"hold": [[4, 9], [3, 10], [4, 11]], "entry": [], "escape": [[2, 10], [3, 10], [2, 11]],
 	"cross": [[4, 9], [3, 10], [4, 11]], "sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]],
 	"alarm": [[5, 6], [3, 10], [4, 11]], "start": [[7, 8], [2, 10], [1, 10]]}
@@ -31,12 +32,21 @@ func _go() -> void:
 	frame.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	root.add_child(frame)
 	App.services = Fixtures.answered(Services.build(frame, "", null, "user://outbox-shot.json"))
+	if OS.get_environment("LOCALE") != "":
+		Strings.set_locale(OS.get_environment("LOCALE"))
+	if OS.get_environment("TEXT") != "":
+		Settings.text_scale = int(OS.get_environment("TEXT"))
+		Settings.apply()
 	Settings.camera_buttons = OS.get_environment("BUTTONS") != ""
 	Settings.high_contrast = OS.get_environment("CONTRAST") != ""
 	Settings.left_handed = OS.get_environment("LEFT") != ""
 	Settings.text_scale = int(OS.get_environment("TEXT")) if OS.get_environment("TEXT") != "" else 100
 	Settings.apply()
-	App.services.store.dispatch(&"heist_started", {"island": WorldTests.island(), "testing": true})
+	var island := WorldTests.island()
+	if OS.get_environment("LAWS") != "":
+		# LAWS: these laws woven into law_heist's dressed island instead.
+		island = LawShot.island(Array(OS.get_environment("LAWS").split(",")))
+	App.services.store.dispatch(&"heist_started", {"island": island, "testing": true})
 	var screen: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
 	frame.add_child(screen)
 	await process_frame
@@ -106,7 +116,19 @@ func _go() -> void:
 	# Portraits rendered from the models fill in over a few frames.
 	for i in 40:
 		await process_frame
+	# Each guard's last words as they were said, which a heist's seconds
+	# played in a few frames would have let fade.
+	var guards := screen.controller.world.guards()
+	for i in guards.size():
+		if not guards[i]["down"]:
+			view.anchors.say(i, str(guards[i]["state"]))
+			view.anchors.speech.get(i, {})["t"] = 0.6
+	await process_frame
 	await RenderingServer.frame_post_draw
+	# §21.3's budgets, as the renderer counted the frame.
+	print("budget: %d draw calls, %d primitives" % [
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)])
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()

@@ -14,5 +14,12 @@ func _init(paint: Callable = Callable(), minimum := Vector2.ZERO) -> void:
 
 
 func _draw() -> void:
+	# Every shape in one call (FxPen).
+	FxPen.begin(self)
+	_paint()
+	FxPen.end(self)
+
+
+func _paint() -> void:
 	if painter.is_valid():
 		painter.call(self)

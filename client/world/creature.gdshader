@@ -29,11 +29,11 @@ void vertex() {
 }
 
 void fragment() {
-	vec3 c = texture(atlas, UV).rgb * COLOR.rgb;
 	bool body = flags.x >= 0.5;
 	float far = creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE);
+	vec3 c = texture(atlas, UV, far * far_blur).rgb * COLOR.rgb;
 	// Small on screen the relief fades: its bumps are noise at 40 px.
-	float rel = relief * mix(1.0, 0.3, far);
+	float rel = relief * mix(1.0, 0.0, far);
 	relief_n = NORMAL;
 	if (body && rel > 0.0) {
 		vec2 nxy = texture(normals, UV).xy * 2.0 - 1.0;

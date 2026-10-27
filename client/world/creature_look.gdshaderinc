@@ -28,6 +28,14 @@ uniform float tone_from = 0.2;
 uniform float tone_to = 0.75;
 // A kind's own correction toward its portrait (CreatureModel.LOOK), times the paint.
 uniform vec3 paint_tint = vec3(1.0);
+// The paint's values drawn closer to `paint_mid` (1 keeps them): the Golem's
+// baked facets run from near black to lilac, its portrait's from violet to lilac.
+uniform float paint_contrast : hint_range(0.0, 1.0) = 1.0;
+uniform float paint_mid = 0.4;
+// Saturated paint pales this much toward white (by its saturation): the
+// portraits' sheen turns Bloomling's crimson petals pink, not the paler body.
+uniform float pastel : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 pastel_colour : source_color = vec4(1.0);
 // The world's noon sun clips warm paint's red (Featherkin's gold went
 // orange-pink): characters take it a little softer.
 uniform float exposure : hint_range(0.5, 1.5) = 0.8;
@@ -41,6 +49,10 @@ uniform float light_neutral : hint_range(0.0, 1.0) = 0.6;
 uniform float ramp_bias : hint_range(0.0, 0.5) = 0.22;
 // The design's vcGlow: the body's warm paint glows (embers, lanterns).
 uniform float glow_vc = 0.0;
+// How far a glowing part's face burns toward warm white (the flames' core).
+uniform float hot_core = 0.55;
+// The sky a metal part reflects where it faces up (alpha: how much).
+uniform vec4 metal_sky : source_color = vec4(0.8, 0.8, 0.88, 0.45);
 // The body material's character, from the design's bodyMat: metal (Echoplate),
 // clearcoat (the highlight band, set as gloss in the shader), iridescence
 // (Prism Mite's rainbow edges) and a body glow (the Golem's inner light).
@@ -71,8 +83,15 @@ uniform float far_rim = 1.8;
 // Small on screen: the value step from the ground (the paint drawn this much
 // lighter and its shade opened, so a character stands off painted grass in
 // grayscale) and a light rim all round its silhouette inside the ink.
-uniform float far_value = 0.12;
+uniform float far_value = 0.18;
 uniform vec4 far_rim_colour : source_color = vec4(1.0, 0.96, 0.86, 1.0);
+// Small on screen the darkest light step rises to this, so a character is one
+// clear shape of its own colour (a sticker on the grass), not a lit and a
+// shaded half.
+uniform float far_floor = 0.45;
+// Small on screen the paint is read this many mip levels softer: its fine
+// detail (scales, fleece, cracks) is noise at 40 px, its large shapes are not.
+uniform float far_blur = 1.5;
 
 varying float gloss_band;
 varying float far_mix;
@@ -99,6 +118,8 @@ float creature_far(mat4 proj, vec3 view_pos, vec2 viewport) {
 	float ortho = proj[3][3];
 	float depth = mix(max(0.05, -view_pos.z), 1.0, ortho);
 	float ppm = viewport.y * proj[1][1] * 0.5 / depth;
+	// In a phone's 540 × 1170 pixels, whatever the drawing's resolution.
+	ppm /= clamp(min(viewport.x / 540.0, viewport.y / 1170.0), 1.0, 3.0);
 	return smoothstep(far_ppm, far_ppm * 0.4, ppm);
 }
 
@@ -119,6 +140,9 @@ varying float n_up;
 // mesh draw its polygons (a band edge runs straight across each triangle);
 // a softer edge keeps the four values and loses the facets.
 uniform float ramp_soft = 0.07;
+// A kind lit flatter than the ramp (CreatureModel.LOOK): the Glass Golem's
+// portrait is glass lit through, its facets close in value, not four steps.
+uniform float flatten : hint_range(0.0, 1.0) = 0.0;
 
 float creature_ramp(float ndl) {
 	float w = mix(ramp_soft, 0.16, hero);
@@ -233,7 +257,21 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 		out vec3 albedo, out vec3 emission) {
 	float glow = body ? glow_vc * smoothstep(0.3, 0.65, c.r - c.b) : emit;
 	vec3 stars = vec3(0.0);
+	if (paint_contrast < 1.0 && body) {
+		float pl = max(0.02, dot(c, vec3(0.299, 0.587, 0.114)));
+		c = clamp(c * mix(paint_mid, pl, paint_contrast) / pl, 0.0, 1.0);
+	}
 	c = creature_tone(c * paint_tint);
+	if (!body && gloss > 0.99) {
+		// Metal parts (iron bands, brass): the design's sit in a bright room
+		// and read pale where they face up; dark iron otherwise drew black.
+		float up = reflect(-v, n).y;
+		c = mix(c, metal_sky.rgb, metal_sky.a * smoothstep(-0.3, 0.6, up));
+	}
+	if (pastel > 0.0) {
+		float sat = (max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b))) / max(0.02, max(c.r, max(c.g, c.b)));
+		c = mix(c, pastel_colour.rgb, pastel * smoothstep(0.35, 0.85, sat));
+	}
 	vec3 col = c;
 	vec2 pat = vec2(0.0);
 	if (body && hush + spark + echo_form > 0.0) {
@@ -277,7 +315,7 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 	// so dark kinds keep their order) and the rim wraps all the way round.
 	vec3 up_value = 1.0 - (1.0 - albedo) * (1.0 - far_value);
 	float l_up = dot(up_value, vec3(0.299, 0.587, 0.114));
-	up_value = clamp(mix(vec3(l_up), up_value, 1.25), 0.0, 1.0);
+	up_value = clamp(mix(vec3(l_up), up_value, 1.4), 0.0, 1.0);
 	albedo = mix(albedo, up_value, far * (1.0 - hush * 0.7));
 	float side = mix(smoothstep(-0.2, 0.6, n.x * 0.8 + n.y * 0.4), 1.0, far);
 	float rs = rim_strength * mix(1.0, far_rim, far);
@@ -293,7 +331,7 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 	// A glowing part (flames, lanterns, embers) burns hotter at its core: the
 	// design's flames run orange to yellow under bloom; here the face turned to
 	// the eye goes toward warm yellow-white, the edge keeps the paint's colour.
-	vec3 hot = mix(albedo, vec3(1.0, 0.86, 0.48), 0.55 * smoothstep(0.2, 0.9, dot(n, v)));
+	vec3 hot = mix(albedo, vec3(1.0, 0.86, 0.48), hot_core * smoothstep(0.2, 0.9, dot(n, v)));
 	emission = mix(albedo, hot, step(0.01, emit) * (body ? 0.0 : 1.0)) * glow + rim + stars + extra;
 	if (hero > 0.0) {
 		vec3 image = albedo * mix(hero_bounce.rgb * 0.55, hero_sky.rgb, smoothstep(-0.6, 0.8, n_up)) * hero_image;
@@ -323,7 +361,8 @@ void light() {
 	float grain = clamp(1.0 + rd * (dot(normalize(relief_n), LIGHT) - dot(NORMAL, LIGHT)), mix(0.55, 0.3, hero), 1.3);
 	float lit = creature_ramp(ndl) * grain * mix(0.62, 1.0, smoothstep(0.3, 0.7, ATTENUATION));
 	// Small on screen the darkest step opens, so the shape is one clear value.
-	lit = mix(lit, 0.3 + lit * 0.7, far_mix * 0.6);
+	lit = mix(lit, far_floor + lit * (1.0 - far_floor), far_mix * 0.85);
+	lit = mix(lit, 0.62 + lit * 0.38, flatten);
 	vec3 shade = mix(shade_tint.rgb, vec3(1.0), lit);
 	DIFFUSE_LIGHT += sun / PI * lit * shade * exposure;
 	float rs = mix(ramp_soft, 0.16, hero);

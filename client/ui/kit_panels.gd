@@ -152,11 +152,11 @@ static func locked(icon: String, title: String, value: String, why: String) -> C
 	return r
 
 
-## A chapter's band (the Codex's school albums): gold, the school's mark in
-## a dark disc, the title in Marcellus over a kicker, and a count on a pill
-## at its end.
+## A chapter's band (the Codex's school albums): in its school's colours,
+## the school's mark in a disc, the title in Marcellus over a kicker, both
+## stroked in ink, and a count on a dark pill at its end.
 static func chapter(school: String, title: String, kicker: String, count: String) -> PanelContainer:
-	var p := UI.panel("chapter")
+	var p := UI.panel("chapter_" + school)
 	p.name = "Chapter"
 	var band := HBoxContainer.new()
 	band.add_theme_constant_override("separation", UI.px(10))
@@ -169,18 +169,20 @@ static func chapter(school: String, title: String, kicker: String, count: String
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.add_theme_constant_override("separation", 0)
-	var t := UI.label(title, 22)
+	# 24 points: Marcellus is not bold, and on the gold's deep stop no ink
+	# reaches APCA Lc 75, so the title stands at §21.8's large size (Lc 60).
+	var t := UI.label(title, 24, true)
 	t.theme_type_variation = "Heading"
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	words.add_child(t)
-	var k := UI.label(kicker, 13)
+	var k := UI.label(kicker, 13, true)
 	k.theme_type_variation = "Kicker"
 	k.uppercase = true
 	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	k.set_meta("bold", true)
 	words.add_child(k)
 	band.add_child(words)
-	var c := KitStatus.pill(count, "", "parchment")
+	var c := KitStatus.pill(count, "", "track")
 	c.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	band.add_child(c)
 	p.add_child(band)

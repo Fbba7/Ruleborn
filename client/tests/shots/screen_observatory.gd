@@ -7,6 +7,7 @@ func _initialize() -> void:
 
 func _go() -> void:
 	root.size = Vector2i(1080, 2340)
+	ShotKit.prepare()
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	var screen: Control = load("res://scenes/observatory.tscn").instantiate()
 	root.add_child(screen)

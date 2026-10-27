@@ -135,7 +135,7 @@ func _on_screen() -> void:
 		and screen.guard_label.text == "The Archivist is on guard at the Heart" \
 		and buttons.has("guard:none") and buttons.has("guard:the_tinkerer") \
 		and not (buttons["guard:the_tinkerer"] as Button).disabled and (buttons["guard:the_gardener"] as Button).disabled \
-		and words.has("Unlocks at Keeper level 13") and reached.size() == 4 \
+		and words.has("Unlocks at Keeper level 13") and reached.size() == 1 \
 		and words.has("A Sage on guard stays home from heists")
 	(buttons["guard:the_tinkerer"] as Button).pressed.emit()
 	for i in 5:

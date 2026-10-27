@@ -55,7 +55,10 @@ function moduleFacts(file) {
 		const k = f('emissiveIntensity') || 1;
 		surface.emit = [0, 2, 4].map((i) => round(lin(em[1].slice(i, i + 2)) * k, 4));
 	}
-	return { rim: rim ? '#' + rim[1].toUpperCase() : '#9FD4FF', glow: num(/vcGlow:([\d.]+)/) || 0, fur: furFacts, surface };
+	// The hero pages' sheen colour, the module's own (in its def, not a part's material).
+	const sheen = src.match(/const def=\{[^\n]*?sheen:0x([0-9A-Fa-f]{6})/);
+	return { rim: rim ? '#' + rim[1].toUpperCase() : '#9FD4FF', sheen: sheen ? '#' + sheen[1].toUpperCase() : undefined,
+		glow: num(/vcGlow:([\d.]+)/) || 0, fur: furFacts, surface };
 }
 
 function seedScript(kind) {
@@ -68,11 +71,13 @@ const round = (x, n = 3) => Math.round(x * 10 ** n) / 10 ** n;
 
 // Godot's import settings for a kind's two textures: compressed for the GPU
 // with mipmaps (a small character must not shimmer), the relief map read as a
-// normal map and held to 256. Written when missing or patched when present, so
-// Godot keeps its own uid lines.
+// normal map and held to 128 (at 256 a hero portrait looks the same and the
+// install carries 2.8 MB more), a faceted body's flat one to 16. Written when
+// missing or patched when present, so Godot keeps its own uid lines.
 const TEXTURE_PARAMS = {
 	paint: { 'compress/mode': 2, 'mipmaps/generate': 'true', 'compress/normal_map': 2, 'process/size_limit': 0 },
-	relief: { 'compress/mode': 2, 'mipmaps/generate': 'true', 'compress/normal_map': 1, 'process/size_limit': 256 },
+	relief: { 'compress/mode': 2, 'mipmaps/generate': 'true', 'compress/normal_map': 1, 'process/size_limit': 128 },
+	flat: { 'compress/mode': 2, 'mipmaps/generate': 'true', 'compress/normal_map': 1, 'process/size_limit': 16 },
 };
 function textureImport(file, role) {
 	const p = file + '.import';
@@ -103,12 +108,69 @@ function sceneImport(file) {
 	fs.writeFileSync(p, text);
 }
 
+// The clips' keys, shared: the harness writes each channel its own time and
+// value accessors, and most are copies (every still channel's two keys at the
+// clip's start and end, a scale of one, the same times on every bone), which
+// make up a third of a scene's JSON. Identical accessors become one; the ones
+// nothing reads are dropped.
+const NUM = { SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4, MAT4: 16 };
+const BYTES = { 5120: 1, 5121: 1, 5122: 2, 5123: 2, 5125: 4, 5126: 4 };
+function shareKeys(j, src) {
+	// One buffer view per accessor first (an earlier slim shares one view
+	// among the clips), so the compaction after keeps only what is read.
+	j.accessors.forEach((a) => {
+		const v = j.bufferViews[a.bufferView];
+		const nv = { buffer: 0, byteOffset: (v.byteOffset || 0) + (a.byteOffset || 0) };
+		nv.byteLength = v.byteStride ? v.byteLength - (a.byteOffset || 0) : a.count * NUM[a.type] * BYTES[a.componentType];
+		if (v.byteStride) nv.byteStride = v.byteStride;
+		if (v.target) nv.target = v.target;
+		j.bufferViews.push(nv);
+		a.bufferView = j.bufferViews.length - 1;
+		delete a.byteOffset;
+	});
+	const seen = new Map();
+	let shared = 0, total = 0;
+	const one = (ai) => {
+		const a = j.accessors[ai];
+		const v = j.bufferViews[a.bufferView];
+		const key = `${a.type}/${a.componentType}/${a.count}/` + src.subarray(v.byteOffset, v.byteOffset + v.byteLength).toString('base64');
+		if (seen.has(key)) { shared++; return seen.get(key); }
+		seen.set(key, ai);
+		return ai;
+	};
+	for (const anim of j.animations || []) for (const sm of anim.samplers) {
+		total += 2;
+		sm.input = one(sm.input);
+		sm.output = one(sm.output);
+	}
+	// Drop the accessors nothing reads now, and renumber the rest.
+	const used = new Set();
+	for (const m of j.meshes || []) for (const p of m.primitives) {
+		Object.values(p.attributes).forEach((a) => used.add(a));
+		if (p.indices !== undefined) used.add(p.indices);
+	}
+	for (const s of j.skins || []) if (s.inverseBindMatrices !== undefined) used.add(s.inverseBindMatrices);
+	for (const anim of j.animations || []) for (const sm of anim.samplers) { used.add(sm.input); used.add(sm.output); }
+	const remap = new Map();
+	const kept = [];
+	j.accessors.forEach((a, i) => { if (used.has(i)) { remap.set(i, kept.length); kept.push(a); } });
+	j.accessors = kept;
+	for (const m of j.meshes || []) for (const p of m.primitives) {
+		for (const k of Object.keys(p.attributes)) p.attributes[k] = remap.get(p.attributes[k]);
+		if (p.indices !== undefined) p.indices = remap.get(p.indices);
+	}
+	for (const s of j.skins || []) if (s.inverseBindMatrices !== undefined) s.inverseBindMatrices = remap.get(s.inverseBindMatrices);
+	for (const anim of j.animations || []) for (const sm of anim.samplers) { sm.input = remap.get(sm.input); sm.output = remap.get(sm.output); }
+	return { shared, total };
+}
+
 // Lighter glTF JSON: min/max kept only where glTF requires them (positions and
-// animation times), numbers there rounded. The binary chunk is untouched.
+// animation times), numbers there rounded; the clips' keys shared.
 function slim(glb, kind) {
 	const jsonLen = glb.readUInt32LE(12);
 	const j = JSON.parse(glb.subarray(20, 20 + jsonLen).toString('utf8'));
 	let src = glb.subarray(20 + jsonLen + 8);
+	const keys = shareKeys(j, src);
 	// Textures go beside the model as files the .glb names, so Godot imports
 	// each once (no embedded copy to extract), and the buffer is compacted.
 	const images = {};
@@ -173,11 +235,43 @@ function slim(glb, kind) {
 	const head = Buffer.alloc(20);
 	head.writeUInt32LE(0x46546c67, 0); head.writeUInt32LE(2, 4); head.writeUInt32LE(20 + text.length + bin.length, 8);
 	head.writeUInt32LE(text.length, 12); head.writeUInt32LE(0x4e4f534a, 16);
-	return { glb: Buffer.concat([head, text, bin]), images };
+	return { glb: Buffer.concat([head, text, bin]), images, shared: keys.shared, accessors: keys.total };
 }
 
 async function main() {
 	const want = process.argv.slice(2);
+	if (process.env.SLIM_ONLY) {
+		// Only slim the exported scenes again (no export): `SLIM_ONLY=1 node tools/art/export.mjs [kind…]`.
+		const manPath = path.join(outDir, 'manifest.json');
+		const manifest = JSON.parse(fs.readFileSync(manPath, 'utf8'));
+		for (const k of want.length ? want : Object.keys(manifest.kinds)) {
+			const file = path.join(outDir, `${k}.glb`);
+			const before = fs.statSync(file).size;
+			const r = slim(fs.readFileSync(file), k);
+			fs.writeFileSync(file, r.glb);
+			manifest.kinds[k].bytes = r.glb.length;
+			console.log(`${k}: ${(before / 1024).toFixed(0)} KB to ${(r.glb.length / 1024).toFixed(0)} KB, ${r.shared} of ${r.accessors} clip accessors shared`);
+		}
+		fs.writeFileSync(manPath, JSON.stringify(manifest, null, '\t') + '\n');
+		return;
+	}
+	if (process.env.FACTS_ONLY) {
+		// Only read the modules' facts (rim, sheen, glow, surface, fur) into the manifest again.
+		const manPath = path.join(outDir, 'manifest.json');
+		const manifest = JSON.parse(fs.readFileSync(manPath, 'utf8'));
+		for (const k of want.length ? want : Object.keys(manifest.kinds)) {
+			if (!KINDS[k]) continue;
+			const facts = moduleFacts(KINDS[k].module);
+			const e = manifest.kinds[k];
+			const kept = Object.assign({}, e);
+			const order = Object.keys(e);
+			order.splice(order.indexOf('rim') + 1, 0, 'sheen');
+			Object.assign(kept, facts);
+			manifest.kinds[k] = Object.fromEntries([...new Set(order)].filter((x) => kept[x] !== undefined).map((x) => [x, kept[x]]));
+		}
+		fs.writeFileSync(manPath, JSON.stringify(manifest, null, '\t') + '\n');
+		return;
+	}
 	if (process.env.IMPORT_ONLY) {
 		// Only rewrite the scenes' import settings (no export).
 		for (const k of want.length ? want : Object.keys(KINDS)) sceneImport(path.join(outDir, `${k}.glb`));
@@ -228,7 +322,7 @@ async function main() {
 			sceneImport(path.join(outDir, `${kind}.glb`));
 			for (const [n, b] of Object.entries(slimmed.images)) {
 				fs.writeFileSync(path.join(outDir, n), b);
-				textureImport(path.join(outDir, n), n.endsWith('_relief.jpg') ? 'relief' : 'paint');
+				textureImport(path.join(outDir, n), n.endsWith('_relief.jpg') ? (info.faceted ? 'flat' : 'relief') : 'paint');
 			}
 			manifest.kinds[kind] = {
 				file: `${kind}.glb`,
@@ -250,6 +344,7 @@ async function main() {
 				expressions: info.expressions,
 				sockets: info.sockets,
 				rim: facts.rim,
+				sheen: facts.sheen,
 				glow: facts.glow,
 				surface: facts.surface,
 				fur: facts.fur,

@@ -195,22 +195,19 @@ static func _cards(column: VBoxContainer) -> void:
 	column.add_child(KitControls.search("Search laws"))
 	column.add_child(KitPanels.chapter("motion", "Motion", "Chapter I", "3 of 4 restored"))
 	var grid := GridContainer.new()
-	grid.columns = 2
-	grid.add_theme_constant_override("h_separation", UI.px(14))
-	grid.add_theme_constant_override("v_separation", UI.px(14))
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", UI.px(8))
+	grid.add_theme_constant_override("v_separation", UI.px(8))
 	for c: Array in [["laws/bounce", "Bounce", "motion", "common", ""],
-			["laws/stillness", "Stillness", "time", "uncommon", "II"],
-			["laws/brittlestone", "Brittle Stone", "matter", "rare", ""],
-			["laws/soullanterns", "Soul Lanterns", "spirit", "deep", ""]]:
+			["laws/halfgravity", "Half gravity", "motion", "uncommon", "II"],
+			["laws/frictionless", "Frictionless", "motion", "rare", ""]]:
 		var icon: String = c[0] if Icons.has(c[0]) else "laws/bounce"
-		grid.add_child(KitCards.law_card(icon, c[1], c[2], c[3], c[4], 150, str(12 + grid.get_child_count() * 4)))
+		grid.add_child(KitCards.law_card(icon, c[1], c[2], c[3], c[4], 102, str(12 + grid.get_child_count() * 4)))
 	var centre := CenterContainer.new()
 	centre.add_child(grid)
 	column.add_child(centre)
-	var schools := UI.row(6)
-	for school: String in Tokens.schools():
-		schools.add_child(KitCards.school_chip(school))
-	column.add_child(schools)
+	column.add_child(KitPanels.chapter("matter", "Matter", "Chapter II", "1 of 4 restored"))
+	column.add_child(KitPanels.chapter("time", "Time", "Chapter III", "2 of 4 restored"))
 
 
 ## The design's Settings and wellbeing screen (19-settings-and-wellbeing.png)
@@ -226,7 +223,7 @@ static func _settings(column: VBoxContainer) -> void:
 	v.add_theme_constant_override("separation", UI.px(12))
 	var top := HBoxContainer.new()
 	top.add_theme_constant_override("separation", UI.px(12))
-	top.add_child(KitHud.dial("38", "min today", 0.38))
+	top.add_child(KitHud.dial("38", "min today", 1.0))
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -243,7 +240,7 @@ static func _settings(column: VBoxContainer) -> void:
 	v.add_child(top)
 	var week := PanelContainer.new()
 	week.add_theme_stylebox_override("panel", UI.clear_box(10, 8))
-	UI.dress(week, "seg_track")
+	UI.dress(week, "well")
 	var wv := VBoxContainer.new()
 	var head := HBoxContainer.new()
 	var k := UI.label("This week", 13)
@@ -303,10 +300,11 @@ static func _roster(column: VBoxContainer) -> void:
 	grid.columns = 3
 	grid.add_theme_constant_override("h_separation", UI.px(8))
 	grid.add_theme_constant_override("v_separation", UI.px(8))
-	for c: Array in [["crewroles/scout", "Bramble", 6, "life"], ["crewroles/carrier", "Pip", 5, "motion"],
-			["crewroles/warden", "Facet", 5, "matter"], ["crewroles/breaker", "Mo", 4, "time"],
-			["crewroles/mender", "Ash", 4, "energy"], ["crewroles/scout", "Volt", 4, "spirit"]]:
-		grid.add_child(KitCards.portrait(Icons.texture(c[0]), c[1], c[2], c[3], Tokens.color("success"),
+	# The characters' own portraits, as the design's cards show them.
+	for c: Array in [["mossbear", "Bramble", 6, "life"], ["skyskipper", "Pip", 5, "motion"],
+			["glass_golem", "Facet", 5, "matter"], ["tidewalker", "Mo", 4, "time"],
+			["emberling", "Ash", 4, "energy"], ["lantern_wisp", "Volt", 4, "spirit"]]:
+		grid.add_child(KitCards.portrait(Portrait.of(str(c[0])), c[1], c[2], c[3], Tokens.color("success"),
 			"crewroles/carrier", func() -> void: pass, c[1] == "Pip"))
 	column.add_child(grid)
 	column.add_child(UI.grow())
@@ -361,9 +359,9 @@ static func _heist(column: VBoxContainer) -> void:
 	column.add_child(KitStatus.pill("Tap crew, then ground · hold to sneak or run"))
 	var foot := HBoxContainer.new()
 	foot.add_theme_constant_override("separation", UI.px(4))
-	for c: Array in [["crewroles/scout", "Pip", 1.0, 2], ["crewroles/carrier", "Mo", 0.7, 1],
-			["crewroles/breaker", "Bramble", 0.4, 0]]:
-		foot.add_child(KitHud.crew(Icons.texture(c[0]), c[1], c[2], c[3], func() -> void: pass))
+	for c: Array in [["skyskipper", "Pip", 1.0, 2], ["tidewalker", "Mo", 0.7, 1],
+			["mossbear", "Bramble", 0.4, 0]]:
+		foot.add_child(KitHud.crew(Portrait.of(str(c[0])), c[1], c[2], c[3], func() -> void: pass))
 	foot.add_child(UI.grow())
 	(foot.get_child(foot.get_child_count() - 1) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	foot.add_child(KitControls.big_action("heistcontrols/getout", "Get out", func() -> void: pass))
@@ -387,13 +385,18 @@ static func _character(column: VBoxContainer) -> void:
 	facts.columns = 2
 	facts.add_theme_constant_override("h_separation", UI.px(8))
 	facts.add_theme_constant_override("v_separation", UI.px(8))
-	facts.add_child(KitCards.fact("crewroles/carrier", "Carrier", "Carries the loot"))
-	facts.add_child(KitCards.fact("hud/shield", "Resists", "No-jump zones"))
-	facts.add_child(KitCards.fact("traits/hoarder", "Traits", "Swift · Lucky"))
+	facts.add_child(KitCards.fact("crewroles/carrier", "Carrier", "Carries the loot", "motion"))
+	facts.add_child(KitCards.fact("hud/shield", "Resists", "No-jump zones", "life"))
+	facts.add_child(KitCards.fact("traits/hoarder", "Traits", "Swift · Lucky", "matter"))
 	facts.add_child(KitCards.fact("buildings/starwell" if Icons.has("buildings/starwell") else "hud/home",
-		"At home", "Star Well · +12%"))
+		"At home", "Star Well · +12%", "time"))
 	var paper := UI.panel("parchment")
-	paper.add_child(facts)
+	var inside := VBoxContainer.new()
+	inside.add_theme_constant_override("separation", UI.px(10))
+	inside.add_child(KitCards.ability("crewroles/carrier", "motion", "Ability", "Once a heist", "Stuff the satchel",
+		"Loads loot at 60 a second instead of 30 for 5 s."))
+	inside.add_child(facts)
+	paper.add_child(inside)
 	column.add_child(paper)
 	var end := HBoxContainer.new()
 	end.add_theme_constant_override("separation", UI.px(8))

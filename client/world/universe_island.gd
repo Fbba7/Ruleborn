@@ -426,8 +426,10 @@ func build_near() -> void:
 ## A building as seen from across the universe: the realm kit's own map
 ## version (`BuildingKit.build_map`, the diorama's lighter `makeB`), its kind
 ## and its level's look (§21.5) in a couple of hundred triangles.
+## Drawn a third larger than its footprint, as the designs' home draws its
+## buildings large on small islands, so each reads from afar.
 func _far_building(kind: String, mid: Vector3, side: int, lv: int) -> void:
-	BuildingKit.build_map(far, kind, mid, side, lv, palette)
+	BuildingKit.build_map(far, kind, mid, side + 1, lv, palette)
 
 
 ## The realm's paths, the design's network (its scout stills): from the

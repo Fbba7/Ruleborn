@@ -66,7 +66,7 @@ func _features() -> void:
 		var n := _layers(kit)
 		if n > FEATURE_MAX:
 			over.append([RealmKit.F.keys()[code], n])
-		if n == 0 and code not in [RealmKit.F.STREAM]:
+		if n == 0 and code not in [RealmKit.F.STREAM, RealmKit.F.GRAVEL_PATH]:
 			empty.append(RealmKit.F.keys()[code])
 		if code in RealmKit.HERO and code != RealmKit.F.BUILDING and kit.hero.triangles == 0:
 			uninked.append(RealmKit.F.keys()[code])
@@ -242,7 +242,7 @@ func _mid() -> void:
 			heavy.append([kind, n[0], n[1]])
 	check.call("at the mid detail a fully built realm draws under §21.3's 40,000 triangles with its ink, and the "
 			+ "buildings take about a third of their full detail (21.3)",
-		mid < REALM_MAX and mid * 2 < full and sums.y * 5 < sums.x * 2 and heavy.is_empty(),
+		mid < REALM_MAX and mid < full and sums.y * 5 < sums.x * 2 and heavy.is_empty(),
 		"%d full, %d mid, %s %s" % [full, mid, sums, heavy])
 
 

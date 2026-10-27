@@ -118,6 +118,23 @@ impl RulebornReplay {
         hex(&sim::rules_version())
     }
 
+    /// §11.1's numbers for each role as the simulation plays them, keyed by
+    /// the role's name: `{"health", "speed" (tiles a second), "power",
+    /// "carry"}`. The Character screen's Stats tab shows these.
+    #[func]
+    fn role_numbers() -> VarDictionary {
+        let mut out = VarDictionary::new();
+        for role in [sim::Role::Scout, sim::Role::Warden, sim::Role::Breaker, sim::Role::Carrier, sim::Role::Mender] {
+            let mut d = VarDictionary::new();
+            d.set("health", role.health() as i64);
+            d.set("speed", role.speed_tenths() as f64 / 10.0);
+            d.set("power", role.power() as i64);
+            d.set("carry", role.carry() as i64);
+            out.set(&GString::from(&format!("{role:?}")), &d);
+        }
+        out
+    }
+
     /// Load a replay onto the realm it was played in. With no island, the
     /// fixture realm the golden replays are recorded on. False if either does
     /// not decode, the replay is not one the simulation plays (`playable`),

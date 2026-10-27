@@ -55,8 +55,7 @@ func build(card: Dictionary) -> void:
 		for i in spots.size():
 			var at: Vector3 = spots[i]
 			var faulted := ("outer-%d" % (i + 1)) in faults
-			pins.pin(OverlaySheet.chip(str(i + 1), Palette.ALARM.lightened(0.45) if faulted else Color()),
-				at + Vector3(0, 1.8, 0))
+			pins.pin(OverlayHud.badge(str(i + 1), "red" if faulted else "leather", 15.0), at + Vector3(0, 1.8, 0))
 			for k in 16:
 				var a := TAU * k / 16.0
 				g.ring(Geo.place(at + Vector3(cos(a) * 3.0, 0.08, sin(a) * 3.0)), 0.12, 0.2, Palette.MOTION, 10)
@@ -66,7 +65,7 @@ func build(card: Dictionary) -> void:
 			to = at
 	# The Heart is known only by its counts: under the scout's mist.
 	add_child(StageScout.mist_over(size))
-	pins.pin(OverlaySheet.chip(UniversePresenter.realm_name("Heart"), Palette.MOTION),
+	pins.pin(OverlayHud.pill("realms/theheart", UniversePresenter.realm_name("Heart"), "", "gold"),
 		Vector3(0, 2.4, 0))
 	marks.mesh = g.mesh()
 

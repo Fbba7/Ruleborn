@@ -342,9 +342,13 @@ func _refresh() -> void:
 		picker_clock.text = p["clock"]
 		picker_realm.text = p.get("realm", "")
 		picker_across.text = p.get("across", "")
-	UI.relabel(gait_button, Strings.term("GAIT", me["gait"]), true)
-	gait_button.set_meta("icon", str(me["gait"]))
-	FxSkin.redraw(gait_button)
+	gait_button.accessibility_name = Strings.term("GAIT", me["gait"])
+	gait_button.tooltip_text = gait_button.accessibility_name
+	(gait_button.get_meta("words") as Label).text = gait_button.accessibility_name
+	if str(gait_button.get_meta("icon", "")) != str(me["gait"]):
+		gait_button.set_meta("icon", str(me["gait"]))
+		for c in gait_button.find_children("*", "FxDraw", true, false):
+			(c as FxDraw).queue_redraw()
 	var crew := controller.world.crew()
 	for i in crew_buttons.size():
 		var b := crew_buttons[i]
@@ -379,7 +383,8 @@ func entry_card(words: String) -> void:
 		return
 	if card != null and is_instance_valid(card):
 		card.queue_free()
-	card = FxSkin.panel("parchment", 20.0, 14.0)
+	card = UI.panel("parchment")
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_child(FxSkin.label(words, UI.TEXT_POINTS + 6.0, "parchment", true))
 	(card.get_child(0) as Label).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	card.set_anchors_preset(Control.PRESET_CENTER)
@@ -490,6 +495,12 @@ func _build() -> void:
 	column_node = lower
 	hud = HeistHud.new()
 	column.add_child(hud)
+	if rehearsal:
+		# A rehearsal's pause (§20.8), under the law banner: not one of the
+		# hand's orders.
+		pause_button = _order(Strings.t("HEIST_PAUSE"), toggle_pause, "pause")
+		pause_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		column.add_child(pause_button)
 	view.looted.connect(func(at: Vector2, amount: int) -> void: hud.fly_coins(at, amount / 20))
 	column = lower
 	hint_label = FxSkin.label("", 13.0)
@@ -498,7 +509,6 @@ func _build() -> void:
 	hint.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	hint.custom_minimum_size.x = UI.px(240)
 	hint.add_child(hint_label)
-	column.add_child(hint)
 
 	var box := VBoxContainer.new()
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -516,7 +526,8 @@ func _build() -> void:
 	steps.add_child(next_realm_button)
 	steps.add_child(_button(Strings.t("LANDING_HERE"), controller.land_here, "gold"))
 	box.add_child(steps)
-	picker = FxSkin.panel("parchment", 18.0, 12.0)
+	picker = UI.panel("parchment")
+	picker.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	picker.add_child(box)
 	column.add_child(picker)
 
@@ -524,32 +535,24 @@ func _build() -> void:
 	# right with the other orders above it, all above the corners §21.1 keeps
 	# clear; mirrored for a left-handed player (§20.8).
 	column.add_child(FxSkin.camera_row(view))
-	var actions := VBoxContainer.new()
-	actions.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	actions.add_theme_constant_override("separation", UI.px(6))
-	actions_node = actions
-	var small := UI.row(6.0, true)
-	small.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	small.alignment = FlowContainer.ALIGNMENT_END
-	if rehearsal:
-		pause_button = FxSkin.icon_button(Strings.t("HEIST_PAUSE"), toggle_pause, "pause", "card")
-		small.add_child(pause_button)
-	gait_button = _button(Strings.term("GAIT", "Walk"), controller.next_gait)
-	# As wide as its widest word, so a change of gait never moves the row.
-	UI.fit_to(gait_button, HeistController.GAITS.map(func(g: String) -> String: return Strings.term("GAIT", g)))
-	FxSkin.add_icon(gait_button, "Walk")
-	small.add_child(gait_button)
-	small.add_child(FxSkin.icon_button(Strings.t("HEIST_HALT"), controller.halt, "halt"))
-	small.add_child(FxSkin.icon_button(Strings.t("HEIST_DROP"), controller.drop_half, "drop"))
-	actions.add_child(small)
-	column.add_child(actions)
-	var band := UI.row(-1.0, true)
+	# §21.8 as the designs lay it out: the crew's portraits at the bottom
+	# left; at the bottom right a column of round orders (Halt and Drop, the
+	# gait with its name beneath) standing on a round red Get out. Mirrored
+	# for a left-handed player (§20.8).
+	# With §20.8's large text the orders stand over the portraits rather
+	# than beside them, so neither runs off the phone.
+	var band: BoxContainer = HBoxContainer.new()
+	if Settings.text_scale > 130:
+		band = VBoxContainer.new()
 	band.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	band.alignment = FlowContainer.ALIGNMENT_BEGIN
-	var crew_row := UI.row(4.0, true)
+	band.add_theme_constant_override("separation", UI.px(6))
+	if Settings.left_handed:
+		band.layout_direction = Control.LAYOUT_DIRECTION_RTL
+	var crew_row := UI.row(2.0, true)
 	crew_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	crew_row.alignment = FlowContainer.ALIGNMENT_BEGIN
 	crew_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	crew_row.size_flags_vertical = Control.SIZE_SHRINK_END
 	crew_node = crew_row
 	band.add_child(crew_row)
 	var crew := controller.world.crew()
@@ -557,18 +560,64 @@ func _build() -> void:
 		var b := FxPortrait.new(str(crew[i]["role"]), controller.select.bind(i))
 		crew_buttons.append(b)
 		crew_row.add_child(b)
-	var go := _button(Strings.t("HEIST_GET_OUT"), controller.get_out, "alarm", 24.0)
-	go.add_theme_font_override("font", FxSkin.numbers())
-	go.add_theme_font_size_override("font_size", UI.text_px(UI.TEXT_POINTS + 6.0))
-	go.add_theme_constant_override("outline_size", UI.px(1.5))
-	go.set_meta("points", UI.TEXT_POINTS + 6.0)
-	UI.fit(go)
-	go.custom_minimum_size.y = UI.px(64)
-	FxSkin.add_icon(go, "skiff")
-	go.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	band.add_child(go)
+	# With large text a rehearsal's pause stands at the end of the portraits,
+	# low in reach, rather than under the taller HUD.
+	if Settings.text_scale > 130 and pause_button != null:
+		pause_button.reparent(crew_row)
+	var right := VBoxContainer.new()
+	right.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	right.add_theme_constant_override("separation", UI.px(4))
+	right.size_flags_vertical = Control.SIZE_SHRINK_END
+	actions_node = right
+	# With large text every order stands on one row (wrapping if it must),
+	# so the hand's controls stay low in the thumb's reach (§21.1).
+	var large := Settings.text_scale > 130
+	var small: Container = HBoxContainer.new()
+	if large:
+		small = UI.row(4.0, true)
+	small.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if small is FlowContainer:
+		(small as FlowContainer).alignment = FlowContainer.ALIGNMENT_END
+	else:
+		(small as HBoxContainer).alignment = BoxContainer.ALIGNMENT_END
+		small.add_theme_constant_override("separation", UI.px(4))
+	small.add_child(_order(Strings.t("HEIST_HALT"), controller.halt, "halt"))
+	small.add_child(_order(Strings.t("HEIST_DROP"), controller.drop_half, "drop"))
+	right.add_child(small)
+	var main: Container = small
+	if not large:
+		main = HBoxContainer.new()
+		main.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		(main as HBoxContainer).alignment = BoxContainer.ALIGNMENT_END
+		main.add_theme_constant_override("separation", UI.px(6))
+	# The designs' Cast and Get out: rounded squares with an icon over their
+	# word. The gait stands where Cast does (the build has no casts yet).
+	gait_button = _square(Strings.term("GAIT", "Walk"), controller.next_gait, "leather")
+	gait_button.set_meta("icon", "Walk")
+	var feet := FxDraw.new(func(ci: Control) -> void:
+		FxIcons.order(ci, ci.size * 0.5, minf(ci.size.x, ci.size.y), str(gait_button.get_meta("icon", "")),
+			FxSkin.ON_DARK))
+	feet.custom_minimum_size = Vector2.ONE * UI.px(28)
+	(gait_button.get_meta("box") as VBoxContainer).add_child(feet)
+	(gait_button.get_meta("box") as VBoxContainer).move_child(feet, 0)
+	main.add_child(gait_button)
+	var go := _square(Strings.t("HEIST_GET_OUT"), controller.get_out, "red")
+	var skiff := Icons.view("heistcontrols/getout", 28.0)
+	(go.get_meta("box") as VBoxContainer).add_child(skiff)
+	(go.get_meta("box") as VBoxContainer).move_child(skiff, 0)
+	main.add_child(go)
+	if not large:
+		right.add_child(main)
+	band.add_child(right)
+	if band is VBoxContainer:
+		band.move_child(right, 0)
+		right.size_flags_horizontal = Control.SIZE_FILL
+		# The hint as wide as the phone, so it takes fewer lines.
+		hint.size_flags_horizontal = Control.SIZE_FILL
 	actions_band = band
 	column.add_child(band)
+	# The hint on the bottom line, under the hand's controls (the designs').
+	column.add_child(hint)
 	# Clear of the bottom corners, where §21.1 puts nothing to tap.
 	column.add_child(FxSkin.corner_clear())
 
@@ -580,9 +629,56 @@ func _picker_line(box: VBoxContainer) -> Label:
 	return l
 
 
-## A HUD button: `UI.button`'s sizes and haptics, in the heist's own skin.
-func _button(words: String, call: Callable, kind := "leather", radius := 16.0) -> Button:
-	var b := UI.button(words, call)
-	FxSkin.style_button(b, kind, radius)
+## A small order (Halt, Drop): a leather square with its drawn icon, named
+## in words for a screen reader and on a long press.
+func _order(words: String, call: Callable, icon: String) -> Button:
+	var b := UI.action("", call, "leather", words)
+	b.tooltip_text = words
+	b.custom_minimum_size = Vector2.ONE * UI.px(UI.CONTROL_POINTS)
+	b.size_flags_vertical = Control.SIZE_SHRINK_END
+	UI.dress(b, "leather", 12.0)
+	b.set_meta("icon", icon)
+	var draw := FxDraw.new(func(ci: Control) -> void:
+		FxIcons.order(ci, ci.size * 0.5, minf(ci.size.x, ci.size.y) * 0.55, str(b.get_meta("icon", icon)), FxSkin.ON_DARK))
+	draw.set_anchors_preset(Control.PRESET_FULL_RECT)
+	b.add_child(draw)
+	return b
+
+
+## The designs' square order (Cast, Get out): a rounded square in the kit's
+## `look`, an icon over its word inside it; the screen puts the icon in the
+## VBox under meta "box". Its word is meta "words"; a screen reader hears it.
+func _square(words: String, call: Callable, look: String) -> Button:
+	var b := UI.action("", call, look, words)
+	b.tooltip_text = words
+	b.custom_minimum_size = Vector2(UI.px(66), UI.px(60))
+	b.size_flags_vertical = Control.SIZE_SHRINK_END
+	UI.dress(b, look, 16.0)
+	var box := VBoxContainer.new()
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	box.add_theme_constant_override("separation", 0)
+	box.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var l := FxSkin.label(words, 14.0)
+	l.add_theme_constant_override("outline_size", UI.px(3))
+	box.add_child(l)
+	b.add_child(box)
+	b.set_meta("box", box)
+	b.set_meta("words", l)
+	# As wide as its word needs with §20.8's large text, never narrower than
+	# the designs' square.
+	var fit := func() -> void:
+		b.custom_minimum_size = Vector2(maxf(UI.px(66), l.get_minimum_size().x + UI.px(14)),
+			maxf(UI.px(60), l.get_minimum_size().y + UI.px(36)))
+	fit.call()
+	l.minimum_size_changed.connect(fit)
+	return b
+
+
+## A HUD button in the kit's material: leather, gold for the main action,
+## red for leaving ("alarm"); a button asked for on parchment is leather.
+func _button(words: String, call: Callable, kind := "leather", _radius := 16.0) -> Button:
+	var look: String = {"gold": "gold", "alarm": "red"}.get(kind, "leather")
+	var b := UI.action(words, call, look)
 	UI.fit(b)
 	return b

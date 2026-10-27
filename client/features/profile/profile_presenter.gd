@@ -58,7 +58,42 @@ static func screen(slice: Dictionary) -> Dictionary:
 		battles.append(entry(e))
 	out["log"] = battles
 	out["share"] = share(v)
+	var rn: Dictionary = v.get("renown", {})
+	out["league"] = str(rn.get("league", "dust"))
+	out["place"] = str(league.get("place", ""))
+	out["renown_n"] = int(rn.get("renown", 0))
+	out["next_n"] = int(rn["next"]) if rn.get("next") != null else 0
+	out["to_next"] = str(league.get("next", ""))
+	out["counts"] = h
+	out["held"] = d
+	var tiles: Array[Dictionary] = []
+	for r: Dictionary in v.get("records", []):
+		tiles.append(record_tile(r))
+	out["record_tiles"] = tiles
+	var marks: Array[Dictionary] = []
+	for b: Dictionary in v.get("badges", []):
+		marks.append({"name": Strings.t("PROFILE_BADGE_" + str(b["id"]).to_upper()), "count": int(b["count"]),
+			"mark": int(b["mark"]), "grade": str(b["grade"]) if b.get("grade") is String else "",
+			"text": badge(b)})
+	out["badge_tiles"] = marks
 	return out
+
+
+## A record as a tile: its value, or a dash while no fact is kept, and its
+## name.
+static func record_tile(r: Dictionary) -> Dictionary:
+	var id := str(r["id"])
+	var name := Strings.t("PROFILE_RECORD_" + id.to_upper())
+	if r.get("value") == null:
+		return {"id": id, "name": name, "value": "—", "text": record(r), "kept": false}
+	var value := ""
+	if id == "favourite_edge":
+		value = Strings.t("LANDING_" + str(r["value"]).to_upper())
+	elif id in TIMED:
+		value = DefencesPresenter.clock(roundi(int(r["value"]) / 1000.0))
+	else:
+		value = ShopPresenter.grouped(int(r["value"]))
+	return {"id": id, "name": name, "value": value, "text": record(r), "kept": true}
 
 
 ## One record: its value in words, or that no fact is kept for it yet.
@@ -95,7 +130,8 @@ static func entry(e: Dictionary) -> Dictionary:
 			"spoken": Strings.t("PROFILE_WATCH_SPOKEN", text), "can": true, "why": ""}
 	else:
 		text += Strings.t("PROFILE_LOG_GONE")
-	return {"heist": heist, "text": text, "watch": watch, "raid": e}
+	return {"heist": heist, "text": text, "watch": watch, "raid": e, "grade": str(e["grade"]),
+		"haul": ShopPresenter.grouped(int(e["haul"]))}
 
 
 ## §20.2's switch: locked private for 13 to 15, else the player's to flip.

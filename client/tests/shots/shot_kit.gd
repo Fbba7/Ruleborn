@@ -3,7 +3,19 @@ extends RefCounted
 ## What every screen shot does once its screen is up: the sky's hour from
 ## HOUR, the words folded away with FOLD, a few frames for the world to
 ## settle, the frame saved to SHOT, and each world's triangles and draw
-## calls printed (§21.3's budgets).
+## calls printed (§21.3's budgets). `prepare` takes the text size from TEXT
+## (in percent), high contrast from HC and the language from LANG_SHOT, before a
+## screen is made; WIDE prints every control asking for more than the phone.
+
+
+static func prepare() -> void:
+	Settings.path = "user://settings-shot.cfg"
+	Settings.change(func() -> void:
+		if OS.get_environment("TEXT") != "":
+			Settings.text_scale = int(OS.get_environment("TEXT"))
+		Settings.high_contrast = OS.get_environment("HC") != ""
+		if OS.get_environment("LANG_SHOT") != "":
+			Settings.locale = OS.get_environment("LANG_SHOT"))
 
 
 static func settle(tree: SceneTree, screen: Control) -> void:
@@ -20,6 +32,12 @@ static func settle(tree: SceneTree, screen: Control) -> void:
 		await tree.process_frame
 	await RenderingServer.frame_post_draw
 	tree.root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
+	if OS.get_environment("WIDE") != "":
+		var frame := screen.get_viewport_rect().size
+		for c: Node in screen.find_children("*", "Control", true, false):
+			var w := (c as Control).get_combined_minimum_size().x
+			if w > frame.x - UI.px(32):
+				print("wide %d %s %s" % [w, screen.get_path_to(c), str(c.get("text")).left(40)])
 	for v: Node in screen.find_children("*", "SubViewportContainer", true, false):
 		if v.get_parent() is WorldView:
 			var rid := (v.get_parent() as WorldView).viewport.get_viewport_rid()

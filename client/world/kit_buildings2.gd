@@ -35,52 +35,42 @@ static func build(b: BuildingKit, kind: String) -> void:
 			b._hearth()
 
 
-## The Keeper's Spire as the Heart's citadel (the design's `castle` and
-## `spire`, :638–664, :826–846): a terrace, a curtain wall with four towers
-## at the footprint's corners and a gate, and the Spire at the middle,
-## "a tall tower wrapped in rings" that turn. In units of a third of the
-## footprint, so the 3 × 3 citadel stands about six metres.
+## The Keeper's Spire as the realm view draws it (the design's `spire`,
+## :842–846, which its realm view stands alone on the Spire's footprint):
+## a stepped octagonal terrace, buttresses round a lit base, a slim banded
+## tower "wrapped in rings" that turn, and an orb above. In units of about
+## half a tile, so the Spire stands about seven metres, the realm's tallest.
 static func _citadel(b: BuildingKit) -> void:
 	var u := b.unit
-	b.unit = u / 3.0 * 1.55
+	b.unit = u / 3.0 * 1.75
 	var acc: Color = b.style["accent"]
 	var roof := b.roof_col if b.tier > 0 else Color(b.style["roof"])
 	b.cyl(0.95, 1.0, 0.16, b.stone2, 0, 0, 0, 8)
 	b.cyl(0.8, 0.86, 0.14, b.stone, 0, 0.16, 0, 8)
-	# The curtain wall round the terrace, crenellated, with its gate south.
-	var s := 0.86
-	for side in 4:
-		var yaw := PI / 2.0 * side
-		var dir := Vector3(sin(yaw), 0, cos(yaw))
-		for k in 5:
-			var off := -0.68 + 0.34 * k
-			if side == 0 and k == 2:
-				continue
-			var p := dir * s + dir.cross(Vector3.UP) * off
-			b.box(0.36, 0.34, 0.1, b.stone, p.x, 0.3 + 0.17, p.z, yaw)
-			b.box(0.1, 0.08, 0.11, b.stone2, p.x + dir.cross(Vector3.UP).x * 0.1, 0.68, p.z + dir.cross(Vector3.UP).z * 0.1,
-				yaw)
-	# The gatehouse.
-	b.box(0.42, 0.5, 0.18, b.stone, 0, 0.55, s)
-	b.g.gable(b.place(0, 0.8, s), 0.5 * b.unit, 0.16 * b.unit, 0.22 * b.unit, roof)
-	b.door(0, 0.3, s + 0.09, 0, 1.3)
-	for x: float in [-0.16, 0.16]:
-		b.ball(0.035, KitStyle.lit(Color("#FFD27A"), 0.7), x, 0.62, s + 0.1, 1.0, 2, 5)
-	# Four towers at the corners.
-	for p: Vector2 in [Vector2(-s, -s), Vector2(s, -s), Vector2(-s, s), Vector2(s, s)]:
-		var th := 1.1 if p.y < 0 else 0.95
-		b.cyl(0.2, 0.2, th, b.stone, p.x, 0.3, p.y, 10)
-		if not b.lighter:
-			b.cyl(0.21, 0.21, 0.03, b.stone2, p.x, 0.3 + th * 0.5, p.y, 10)
-		b.cyl(0.25, 0.22, 0.08, b.stone2, p.x, 0.3 + th, p.y, 10)
-		b.cone(0.26, 0.5, roof, p.x, 0.38 + th, p.y, 10)
-		b.cone(0.02, 0.15, KitStyle.GOLD, p.x, 0.88 + th, p.y, 6)
-		b.window(p.x + 0.0, 0.3 + th * 0.65, p.y + 0.2, 0, 0.7, false)
+	# Steps up to the door, south.
+	for k in 3:
+		b.box(0.5 - 0.08 * k, 0.1, 0.16, b.stone2, 0, 0.05 + 0.1 * k, 1.0 - 0.1 * k)
+	b.door(0, 0.3, 0.7, 0, 1.2)
+	# A balustrade round the terrace's edge, open at the steps, and urns of
+	# flowers by them: close-up detail, left out at the mid detail.
+	for k in 16:
+		var a := TAU * (k + 0.5) / 16.0
+		if absf(wrapf(a - PI / 2.0, -PI, PI)) < 0.3:
+			continue
+		b.fine(0.035, 0.12, 0.035, b.stone, cos(a) * 0.78, 0.36, sin(a) * 0.78)
+	if not b.lighter:
+		b.d.torus(b.place(0, 0.43, 0), 0.78 * b.unit, 0.018 * b.unit, b.stone2, 24, 4)
+		for x: float in [-0.3, 0.3]:
+			b.cyl(0.06, 0.045, 0.1, b.stone2, x, 0.3, 0.86, 8)
+			b.ball(0.06, Color("#F7A6DA"), x, 0.43, 0.86, 0.8, 3, 6)
 	# The Spire.
 	b.cyl(0.62, 0.7, 0.6, b.stone, 0, 0.3, 0, 8)
 	for i in 4:
 		var q := i * PI / 2.0 + PI / 8.0
 		b.box(0.14, 0.7, 0.3, b.stone2, cos(q) * 0.66, 0.6, sin(q) * 0.66, -q)
+		if i > 0:
+			var w := q + PI / 4.0
+			b.box(0.02, 0.2, 0.12, KitStyle.lit(Color("#FFE7F4"), 0.5), cos(w) * 0.66, 0.62, sin(w) * 0.66, -w)
 	b.cyl(0.66, 0.66, 0.06, acc, 0, 0.9, 0, 8)
 	var body := Color("#F4EEF8") if b.tier > 0 else b.stone.lightened(0.1)
 	b.cyl(0.36, 0.3, 1.4, body, 0, 0.96, 0, 8)
