@@ -87,6 +87,49 @@ static func law_card(icon: String, title: String, school: String, rarity: String
 	return card
 
 
+## A law in a Codex album (13-law-codex.png): its rank's frame round its
+## school's window (number on a disc, tier in the corner, as `law_card`),
+## then a cream foot with its name, its rank in words, and where it lives on
+## a leather plate ("In Skyfield"); "" leaves the plate off.
+static func album_card(icon: String, title: String, school: String, rarity: String, where := "", number := "",
+		tier := "", points := 96.0) -> PanelContainer:
+	var card := law_card(icon, title, school, rarity, tier, points, number)
+	card.name = "AlbumCard"
+	var v := card.get_child(0) as VBoxContainer
+	# The foot replaces law_card's name plate and mark.
+	for i: int in [2, 1]:
+		var old := v.get_child(i)
+		v.remove_child(old)
+		old.queue_free()
+	var foot := PanelContainer.new()
+	foot.name = "Foot"
+	foot.add_theme_stylebox_override("panel", UI.clear_box(3, 4))
+	UI.dress(foot, "parchment", 10)
+	foot.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var words := VBoxContainer.new()
+	words.add_theme_constant_override("separation", UI.px(2))
+	words.alignment = BoxContainer.ALIGNMENT_CENTER
+	words.add_child(_name(title, _fit(title, points - 18.0)))
+	var rank := UI.label(Strings.t("LAW_RANK_" + rarity.to_upper()), 13)
+	rank.theme_type_variation = "Kicker"
+	rank.uppercase = true
+	rank.set_meta("bold", true)
+	words.add_child(rank)
+	if where != "":
+		var at := KitStatus.plate(where)
+		UI.dress(at, "plate_leather")
+		at.size_flags_horizontal = Control.SIZE_FILL
+		# A long place wraps inside the card rather than widening it.
+		at.add_theme_stylebox_override("panel", UI.clear_box(3, 1))
+		var l := at.get_child(0) as Label
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		words.add_child(at)
+	foot.add_child(words)
+	v.add_child(foot)
+	return card
+
+
 ## The largest size from 15 points down to §21.8's 13 at which the name's
 ## longest word fits `room` points, so it wraps between words, not in one.
 static func _fit(title: String, room: float) -> float:

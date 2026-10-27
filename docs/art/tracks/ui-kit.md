@@ -175,7 +175,9 @@ Main (d2343591) merged clean.
 - **Folded in**: `KitSkin` maps the other tracks' surface names (glass, card, parchment, leather, gold, alarm, night) to the kit's materials; `FxSkin.panel` and `style_button` (T5), `StageHeroSkin.plate` and `button` (T7), `OverlaySheet.dress`'s panels and `key` (T6) call it, and `OverlayHud.badge` is `KitStatus.badge(text, look, points)`. A few lines in each of those files, marked "Drawn by T9's kit".
 - **`KitPanels.album`** (13 Codex): the band square at its foot on a cream album with an ink edge (sheet page 5).
 - **KitRail** draws its rail and discs as one triangle array (`RenderingServer.canvas_item_add_triangle_array`), feathered a pixel: page 11 went from 63 to 41 draw calls, the picture unchanged.
-- **Heist pieces for T5** (the integrator's verdict: plain-face crew, no Sage, "Left ?" with no load bar): `KitHud.loot`, `KitHud.sage`, and `KitHud.crew` on the school's ground (sheet page 9 beside 02-heist).
+- **Heist pieces for T5** (the integrator's verdict: plain-face crew, no Sage, "Left ?" with no load bar): `KitHud.loot`, `KitHud.sage`, and `KitHud.crew` on the school's ground (sheet page 9 beside 02-heist). `KitRing` draws its discs and rings through `KitTris` (one triangle array under the picture, one over): the heist page went from 145 to 85 draw calls.
+- **People and shop pieces** (27 Friends, 18 Shop): `KitSocial.avatar` (portrait or initials in a ring, name, a status tag with a dot of its tone), `KitSocial.tag`, `KitSocial.feed_row` (parchment row: who, tag, when, what happened, a picture over Watch or Play, which goes under the words at large text); `KitLayout.strip` (a row that scrolls sideways, the designs' filter chips and decks); `KitCards.album_card` (13 Codex: the cream foot with name, rank in words and "In Skyfield"). Sheet pages 5 and 12.
+- Stills: `vs-design-heist-w5r3.png`, `vs-design-codex-w5r4.png`, `vs-design-friends-w5r5.png`, `tabs-text-and-rail-w5r2.png` (the design's bar, then the kit's at 100, 150 and 200% text, then the rail before and after).
 
 **Consistency pass: where screens pass the kit by or differ from the design system**
 
@@ -186,7 +188,10 @@ Main (d2343591) merged clean.
 | T5 | heist, replay | Use `KitHud.crew(picture, name, health, uses, call, school)` for the crew (the design's school grounds and diamonds), `KitHud.sage` for the Sage and Cast above Get out, `KitHud.loot(rows, carried, 0.8, "Load to 80%")` for Room/Left (no "?": the load bar is the design's); the three parchment panels in the laws column as `KitCards.law_chip`. Heist is at 141 draw calls and replay at 147 on `ui_screen.gd`: little room under 150. |
 | T6 | realm | Round actions' plates in capitals (`round_action` does it; the realm's own keys say "Map"); the design's MAP and BUILD are 72-point discs low in the corners and WEAVE above MAP. |
 | T7 | roster | Filters as `KitControls.chip(words, on, call, count, dot)` (the design's dot and count pill), not "○ free · 8" in the words; give the Crew tab Pip's face (`tabs.face`). |
-| T10 | codex | Chapters as `KitPanels.album(...)` around their cards. |
+| T10 | codex | Chapters as `KitPanels.album(...)` around `KitCards.album_card`s; the school filters as one `KitLayout.strip` row (they wrap to two lines now). |
+| T10 | shop | Category chips as a `KitLayout.strip` (the design's one sideways row); the design's featured set and daily picks are tall picture cards with a ribbon tag. |
+| T10 | friends | The friends row as `KitSocial.avatar`s in a strip, the feed as `KitSocial.feed_row`s; the design leads with a "Friendly raid" card and Feed / Friends / Invite segments. |
+| T10 | weaving | Cost, strain and ready-in as `KitStatus.stat` tiles; the deck as a `KitLayout.strip` of law cards; the call as `KitControls.action2` (its two lines). |
 | T10 | settings | The design has four segments (Wellbeing, Game, Access, Account); the screen has two. |
 | T4 | home | Side balls through `disc_points` 36 at 48-point hit areas; drop `_fit_tab_words` (the kit does it). |
 | all | screens with a title | The design's sub-screen header (`KitNav.top_bar`) puts back at the top; §21.1's thumb rule keeps it at the foot (finding H, the owner's). |

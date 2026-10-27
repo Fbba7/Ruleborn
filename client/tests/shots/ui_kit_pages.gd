@@ -25,6 +25,8 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_heist(column)
 		10:
 			_character(column)
+		12:
+			_friends(column)
 		_:
 			_season(column)
 
@@ -190,10 +192,12 @@ static func _home(column: VBoxContainer) -> void:
 static func _cards(column: VBoxContainer) -> void:
 	column.add_child(KitNav.segmented([["All laws", "screens/lawcodex"], ["Harmony", "screens/harmonyview"],
 		["Lab", "screens/resonancelab"]], 0, func(_i: int) -> void: pass))
-	var filters := UI.row(4)
-	filters.add_child(KitControls.chip("All 18 / 24", true, func() -> void: pass))
+	# One row that scrolls sideways, as the design's, rather than two.
+	var filters := KitLayout.strip(4)
+	var row := filters.get_node("Row") as HBoxContainer
+	row.add_child(KitControls.chip("All 18 / 24", true, func() -> void: pass))
 	for school: String in Tokens.schools():
-		filters.add_child(KitControls.school_button(school, school == "time", func() -> void: pass))
+		row.add_child(KitControls.school_button(school, school == "time", func() -> void: pass))
 	column.add_child(filters)
 	column.add_child(KitControls.search("Search laws"))
 	var grid := GridContainer.new()
@@ -208,8 +212,12 @@ static func _cards(column: VBoxContainer) -> void:
 	var centre := CenterContainer.new()
 	centre.add_child(grid)
 	column.add_child(KitPanels.album("motion", "Motion", "Chapter I", "3 of 4 restored", centre))
-	var more := CenterContainer.new()
-	more.add_child(KitCards.law_card("laws/bounce", "Brittle stone", "matter", "common", "", 102, "10"))
+	var more := HBoxContainer.new()
+	more.alignment = BoxContainer.ALIGNMENT_CENTER
+	more.add_theme_constant_override("separation", UI.px(8))
+	more.add_child(KitCards.album_card("laws/bounce", "Brittle stone", "matter", "common", "In Skyfield", "10"))
+	more.add_child(KitCards.album_card("laws/frictionless", "Glass", "matter", "rare", "In Emberreach", "12", "I"))
+	more.add_child(KitCards.album_card("laws/halfgravity", "Inward pull", "matter", "deep", "", "22"))
 	column.add_child(KitPanels.album("matter", "Matter", "Chapter II", "1 of 4 restored", more))
 
 
@@ -436,3 +444,31 @@ static func _season(column: VBoxContainer) -> void:
 	row.add_child(KitCards.season_reward("Rare", "currencies/starglass", "1,200", Callable(), true))
 	column.add_child(KitRail.make(11, 3, 12, 0.68, "Tier 12, 340 of 500 to the next"))
 	column.add_child(row)
+
+
+## The design's Friends pieces (27-friends.png) and a chip strip that
+## scrolls sideways (18-shop.png).
+static func _friends(column: VBoxContainer) -> void:
+	var chips := KitLayout.strip(6)
+	var chip_row := chips.get_node("Row") as HBoxContainer
+	chip_row.add_child(KitControls.chip("All", true, func() -> void: pass))
+	for c: String in ["Realm skins", "Outfits", "Sage robes", "Emotes"]:
+		chip_row.add_child(KitControls.chip(c, false, func() -> void: pass))
+	column.add_child(chips)
+	var people := KitLayout.strip(10)
+	var people_row := people.get_node("Row") as HBoxContainer
+	for f: Array in [["mossbear", "Kofi", "Raiding", "alarm"], ["lantern_wisp", "Lea", "Workshop", "spirit"],
+			["glass_golem", "Tomas", "Home", "life"], ["tidewalker", "Aiko", "3 h ago", ""], ["", "Ines", "Yesterday", ""]]:
+		var picture: Texture2D = Portrait.of(str(f[0])) if f[0] != "" else null
+		people_row.add_child(KitSocial.avatar(picture, str(f[1]).left(2).to_upper(), f[1], f[2], f[3],
+			func() -> void: pass))
+	column.add_child(people)
+	column.add_child(KitSocial.feed_row(Portrait.of("mossbear"), "KO", "Kofi", "Escaped", "success", "12 min",
+		"Kofi's crew slipped through Ines's Glowing dark with 2,300 Starlight.", Icons.texture("screens/heist"),
+		"Watch", func() -> void: pass))
+	column.add_child(KitSocial.feed_row(null, "LE", "Lea", "Challenge", "gold", "40 min",
+		"Sent you her Lantern Vale to beat: Stillness and Echoes, 2:30 on the clock.", null, "Play",
+		func() -> void: pass))
+	column.add_child(KitSocial.feed_row(Portrait.of("tidewalker"), "AI", "Aiko", "Hatched", "", "3 h",
+		"Hatched a Spark Emberling. It was born swift, a body trait."))
+
