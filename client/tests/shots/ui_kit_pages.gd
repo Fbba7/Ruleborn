@@ -463,7 +463,8 @@ static func _friends(column: VBoxContainer) -> void:
 	var pick_row := picks.get_node("Row") as HBoxContainer
 	for p: Array in [["archivist", "Emote", "Tip of the Hat", "120"], ["tidewalker", "Outfit", "Tide Raincoat", "160"],
 			["lantern_wisp", "Bridge style", "Living Vines", "240"]]:
-		var card := KitCards.product(Portrait.of(str(p[0])), p[1], p[2], p[3], func() -> void: pass)
+		var card := KitCards.product(Portrait.of(str(p[0])), p[1], p[2], p[3], func() -> void: pass, "round_violet",
+			128.0, "resources/renown")
 		if pick_row.get_child_count() == 0:
 			card.add_child(KitStatus.sash("Trace · 24 h"))
 		pick_row.add_child(card)
@@ -491,6 +492,9 @@ static func _log(column: VBoxContainer) -> void:
 	column.add_child(KitNav.segmented(["Rehearse", "Defence log"], 1, func(_i: int) -> void: pass))
 	column.add_child(KitLayout.columns([KitStatus.stat("5", "Raids this week"), KitStatus.stat("4", "Held"),
 		KitStatus.stat("2", "Trace ready")], 6))
+	column.add_child(KitLayout.columns([KitControls.tile("Easy", "Slow rivers", "life", func() -> void: pass),
+		KitControls.tile("Medium", "Glass", "motion", func() -> void: pass),
+		KitControls.tile("Hard", "Haste", "energy", func() -> void: pass)], 6))
 	column.add_child(KitPanels.notice("alarm", "", "A crew is in Tidehold now",
 		"The raider's name shows when the raid ends", "", func() -> void: pass))
 	column.add_child(KitSocial.log_row(Portrait.of("lantern_wisp"), "MA", "Marta", "Held", "success",

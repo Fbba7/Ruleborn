@@ -133,9 +133,10 @@ static func album_card(icon: String, title: String, school: String, rarity: Stri
 ## Something for sale (18-shop.png's daily picks): a gold-edged card, its
 ## picture filling the top with a dark ribbon tag in its corner ("EMOTE"),
 ## its name, and its price on a pill that buys it: violet for a price in
-## gems (`look` "round_violet"), gold for money ("gold").
+## gems (`look` "round_violet"), gold for money ("gold"), the currency's
+## icon before it when `icon` names one.
 static func product(picture: Texture2D, tag: String, title: String, price: String, pressed: Callable,
-		look := "round_violet", points := 128.0) -> PanelContainer:
+		look := "round_violet", points := 128.0, icon := "") -> PanelContainer:
 	var card := PanelContainer.new()
 	card.name = "Product"
 	card.add_theme_stylebox_override("panel", UI.clear_box(7, 6))
@@ -172,7 +173,9 @@ static func product(picture: Texture2D, tag: String, title: String, price: Strin
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	name_label.set_meta("bold", true)
 	v.add_child(name_label)
-	var buy := UI.action(price, pressed, look, "%s, %s" % [title, price])
+	# The price's currency, when named, before its amount (`icon`).
+	var buy := UI.action(price, pressed, look, "%s, %s" % [title, price]) if icon == "" else \
+		KitControls.action2(price, "", pressed, look, icon)
 	buy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.add_child(buy)
 	card.add_child(v)
