@@ -66,6 +66,9 @@ export const LADDER = [
 export const SPIKE_MIN = 50;
 export const SPIKE_FACTOR = 5;
 
+/** The most plays a player may hold unsubmitted from a day (SR-19). */
+export const MOST_OPEN_PLAYS = 50;
+
 /** §20.4: "reports reviewed by a person within 24 hours". */
 export const REVIEW_MS = DAY_MS;
 
@@ -293,6 +296,12 @@ export class Workshop {
     if (this.account(player).banned_at) throw new Refused(403, "banned");
     this.curated(player, item);
     this.service.safety.requireTerms(player);
+    // A play is a row kept for good (F43), so a day's unsubmitted ones are
+    // held to MOST_OPEN_PLAYS, like the open invites (SR-19).
+    const open = this.db.prepare(
+      "SELECT COUNT(*) AS n FROM workshop_plays WHERE player = ? AND submitted_at IS NULL AND issued_at > ?")
+      .get(player, this.now() - DAY_MS).n;
+    if (open >= MOST_OPEN_PLAYS) throw new Refused(409, "too_many_open_plays", { most: MOST_OPEN_PLAYS });
     const row = {
       token: this.service.random(16).toString("hex"),
       player, item: id,

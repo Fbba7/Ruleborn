@@ -3,14 +3,14 @@
 // stood; the fixes turned the assertions round.
 
 import assert from "node:assert/strict";
-import { generateKeyPairSync, sign } from "node:crypto";
+import { X509Certificate, createPrivateKey, createSign, generateKeyPairSync, sign } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
 import { DELETE_COOKIE } from "../src/auth_http.mjs";
 import { platformProofs } from "../src/auth_proofs.mjs";
 import { handler } from "../src/http.mjs";
-import { GoogleSignIn } from "../src/stores.mjs";
+import { GAME_CENTER_CACHE, GameCenter, GoogleSignIn } from "../src/stores.mjs";
 import { T0, server } from "./setup.mjs";
 
 const ANDROID = "android-game.apps.googleusercontent.com";
@@ -72,4 +72,40 @@ test("Sign-out (T11, built): a session token is refused the moment its session i
     method: "POST", headers: { authorization: `Bearer ${s.token}` } }));
   assert.equal(out.status, 200);
   assert.equal((await ask(s.token)).status, 401, "well inside its hour");
+});
+
+// SR-20: Game Center's keys are fetched at most one new URL a second into a
+// cache of GAME_CENTER_CACHE, and the names are Apple's own, so a caller
+// naming one after another pushed out the key in use and the next real
+// sign-in waited on the fetch the caller kept taking. Now a key that has
+// verified a real signature goes only after every key not yet proven.
+test("SR-20 (T11, fixed): a caller cycling through Apple's key names cannot push out the key players sign in with", async () => {
+  const fixture = (name) => readFileSync(new URL(`./fixtures/apple/${name}`, import.meta.url));
+  const cert = (name) => new X509Certificate(fixture(`${name}.pem`));
+  const [ROOT, INTERMEDIATE, GAMECENTER] = [cert("root"), cert("intermediate"), cert("gamecenter")];
+  const BUNDLE = "com.example.ruleborn";
+  const URL_ = "https://static.gc.apple.com/public-key/gc-prod-6.cer";
+  const clock = { now: Date.parse(ROOT.validFrom) + 24 * 60 * 60 * 1000 };
+  // Apple serving a certificate at each of its names, as it does for the keys it has used.
+  const gc = new GameCenter({ roots: [INTERMEDIATE, ROOT], bundleId: BUNDLE, now: () => clock.now,
+                              fetchCertificate: async () => GAMECENTER.raw });
+  const identity = () => {
+    const salt = Buffer.from("0123456789abcdef");
+    const stamp = Buffer.alloc(8);
+    stamp.writeBigUInt64BE(BigInt(clock.now));
+    const signer = createSign("RSA-SHA256");
+    signer.update(Buffer.concat([Buffer.from("T:_player1"), Buffer.from(BUNDLE), stamp, salt]));
+    return { playerId: "T:_player1", bundleId: BUNDLE, timestamp: clock.now, publicKeyUrl: URL_,
+             salt: salt.toString("base64"),
+             signature: signer.sign(createPrivateKey(fixture("gamecenter.key"))).toString("base64") };
+  };
+  await gc.prepare(identity());
+  assert.equal(gc.verify(identity()), "gc:T:_player1");
+  for (let i = 1; i <= 3 * GAME_CENTER_CACHE; i++) {
+    clock.now += 1000;
+    await gc.prepare({ publicKeyUrl: `https://static.gc.apple.com/public-key/gc-prod-${10 + i}.cer` });
+  }
+  assert.ok(gc.certificates.size <= GAME_CENTER_CACHE, "the cache keeps its size");
+  await gc.prepare(identity());
+  assert.equal(gc.verify(identity()), "gc:T:_player1", "the player still signs in, with no fetch to wait for");
 });

@@ -241,10 +241,17 @@ export class GameCenter {
     } catch {
       // An unreachable or unreadable certificate proves nothing; verify refuses.
     }
+    // Past `most`, the oldest goes — but a key that has verified a real
+    // signature only once every key not yet proven is gone: a caller naming
+    // Apple's key URLs one after another cannot push out the key players
+    // sign in with (T12's SR-20).
     const keep = (map, key, value, most) => {
       map.delete(key);
       map.set(key, value);
-      while (map.size > most) map.delete(map.keys().next().value);
+      while (map.size > most) {
+        const unproven = [...map].find(([, v]) => !v?.proven);
+        map.delete(unproven ? unproven[0] : map.keys().next().value);
+      }
     };
     if (cert) {
       this.failures.delete(url);
@@ -261,7 +268,8 @@ export class GameCenter {
     if (!GameCenter.trustedUrl(publicKeyUrl) || !Number.isSafeInteger(timestamp)) return null;
     const now = this.now();
     if (Math.abs(now - timestamp) > GAME_CENTER_FRESH_MS) return null;
-    const cert = this.certificates.get(publicKeyUrl)?.cert;
+    const held = this.certificates.get(publicKeyUrl);
+    const cert = held?.cert;
     if (!cert || !verifyChain([cert], this.roots, now)) return null;
     // The pinned CA sells certificates to anyone; the key must be Apple's.
     if (!cert.subject.split("\n").includes(`O=${this.organization}`)) return null;
@@ -271,7 +279,9 @@ export class GameCenter {
                                    stamp, Buffer.from(String(salt ?? ""), "base64")]);
     const check = createVerify("RSA-SHA256");
     check.update(payload);
-    return check.verify(cert.publicKey, Buffer.from(String(signature ?? ""), "base64")) ? `gc:${playerId}` : null;
+    if (!check.verify(cert.publicKey, Buffer.from(String(signature ?? ""), "base64"))) return null;
+    held.proven = true;
+    return `gc:${playerId}`;
   }
 }
 

@@ -45,6 +45,10 @@ export const BATCH = 100;
 /** The most events one row of a player's day holds: a heavy day — every
  *  session, rating and heist a day allows — fits in one or two. */
 export const ROW_EVENTS = 200;
+/** The most events one player's device sends in a day, every kind
+ *  together: the heavy day above, twice over. Past it a batch is refused,
+ *  so no caller writes the store full (SR-19). */
+export const DEVICE_EVENTS_A_DAY = 2 * ROW_EVENTS;
 export const LATE_MS = 7 * DAY_MS;
 
 /** What a player's day counts (§20.3's one tap, §25.3's gates): no more
@@ -221,6 +225,16 @@ export class Telemetry {
       for (const r of rows) if (r.kind === kind) days[day(r.at)] = (days[day(r.at)] ?? 0) + 1;
       for (const [d, n] of Object.entries(days)) {
         if (n + Number(sent.get(who, kind, d).n) > most) throw new Refused(429, reason, { most });
+      }
+    }
+    const kinds = Object.keys(DEVICE_EVENTS);
+    const all = this.db.prepare(
+      `SELECT COUNT(*) AS n FROM events WHERE who = ? AND day = ? AND kind IN (${kinds.map(() => "?").join(", ")})`);
+    const days = {};
+    for (const r of rows) days[day(r.at)] = (days[day(r.at)] ?? 0) + 1;
+    for (const [d, n] of Object.entries(days)) {
+      if (n + Number(all.get(who, d, ...kinds).n) > DEVICE_EVENTS_A_DAY) {
+        throw new Refused(429, "too_many_events", { most: DEVICE_EVENTS_A_DAY });
       }
     }
     this.write(account, rows);

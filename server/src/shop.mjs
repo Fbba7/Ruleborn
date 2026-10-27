@@ -36,6 +36,9 @@ const content = (name) => JSON.parse(readFileSync(new URL(`../../content/${name}
 /** How long an intent holds its place under the month's cap. */
 export const INTENT_MS = 15 * 60 * 1000;
 
+/** The most intents a player holds open at once (SR-19). */
+export const MOST_OPEN_INTENTS = 10;
+
 /** How long a gift's lapsed intent is kept: it alone names the friend, and
  *  a store can send its receipt late (G38, F41). */
 export const GIFT_KEEP_DAYS = 30;
@@ -153,6 +156,12 @@ export class Shop {
     }
     if (this.has(recipient ?? account, p)) throw new Refused(409, "already_owned");
     const now = this.service.now();
+    // An intent is a row until a week after it lapses (G38): a player holds
+    // at most MOST_OPEN_INTENTS open at once, whatever their band (SR-19).
+    const open = this.db.prepare(
+      "SELECT COUNT(*) AS n FROM purchase_intents WHERE account = ? AND redeemed_at IS NULL AND created_at > ?")
+      .get(account, now - INTENT_MS).n;
+    if (open >= MOST_OPEN_INTENTS) throw new Refused(409, "too_many_open_intents", { most: MOST_OPEN_INTENTS });
     return transaction(this.db, () => {
       const left = this.allowance(account, now);
       if (left !== null && p.price > left) {
