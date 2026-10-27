@@ -112,7 +112,10 @@ func _refresh() -> void:
 			_kind = ""
 			_refresh()))
 		for k: String in kinds:
-			chips.add_child(ScreenParts.chip(Strings.term("KIND", k), _kind == k, func() -> void:
+			# A chip leads with a capital, as the design's filters do.
+			var kind_words := Strings.term("KIND", k)
+			kind_words = kind_words.left(1).to_upper() + kind_words.substr(1)
+			chips.add_child(ScreenParts.chip(kind_words, _kind == k, func() -> void:
 				_kind = k
 				_refresh(), "shopcosmetics", k.replace("_", "")))
 		body.add_child(chips)

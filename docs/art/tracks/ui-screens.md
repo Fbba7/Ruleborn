@@ -84,6 +84,10 @@ Stills: `docs/art/shots/ui-screens/w4a-<screen>.png`, the design's still on the 
 | 12 Friends | faces, then every friend with Remove, then the feed as plain rows | faces, then Feed and Friends tabs; the week's raids as cream cards with their outcome on a disc |
 | 13 Codex | chapter title thin and hollow on gold; (tried three cards a row: German rank words do not fit 84 points, reverted) | a gold drop under the title |
 | 14 Share and the dock | Challenge and Invite stacked; dock buttons small and centred | tab strip, one card shown; a one-line dock's actions take the width left |
+| 15 Strips and hubs | segments as words only | each segment its icon over its word (Settings, Profile, Share, Friends, Season, the Laws and Crew hubs) |
+| 16 League, Shop | members as plain pills; kind filters in lower case | members with Friends' round portraits; filters lead with a capital |
+| 17 Every screen at 200% | the Season road's cards clipped their words; portrait initials outgrew their round | wider tiers at large text, opened one before the next; portraits grow with the text |
+| 18 Season | the road as separate nodes joined by threads | T9's `KitRail`: one rail, gold to the tier reached, the reached tier large in its ring, rewards over and under it |
 
 High contrast (`HC=1` in the shot script) checked on Codex, Weaving, Law, Lab, Shop, Season, Profile and Friends: every surface keeps its edge; nothing found to fix.
 
@@ -95,7 +99,7 @@ High contrast (`HC=1` in the shot script) checked on Codex, Weaving, Law, Lab, S
 
 ## Draw calls (§21.3: fewer than 150)
 
-Measured with the shot script (`calls` line), at 540 × 1170, after this wave: Codex 119, Weaving 142, Law card 119, Lab 103, **Harmony 162**, Season 69, Shop 62, Settings 61, Profile 70, Share 33, Friends 78, Workshop 82, First launch 23, League 35.
+Measured with the shot script (`calls` line), at 540 × 1170, after this wave: Codex 119, Weaving 142, Law card 119, Lab 103, **Harmony 162**, Season 108 (the rail), Shop 62, Settings 61, Profile 70, Share 33, Friends 78, Workshop 82, First launch 23, League 35.
 
 Harmony was already 155 at this track's wave-3 head. Of its 162, the live 3D preview (`client/world/law_fx_preview.gd`, T5's since T8 retired) is about 93 and T9's tab bar about 25 (each icon its own texture); the rest of the screen is about 44. A shorter preview shows more cards and costs more (165). **For T5:** a lighter preview for Harmony (the realm's pylons and links without the decoration props) would bring it under. **For T9:** an atlas for the tab and hub icons would save a call an icon.
 
@@ -116,4 +120,11 @@ Harmony's realm chips and chord card; the Lab's numbered resonance grid; Profile
 
 ## Stopped here
 
-(Written at each stop.)
+Wave 4, about 04:00 UTC. Main (with the 00:45 and 02:45 integrations) and T9's kit merged in; `check_all` prints "All checks passed" on d4942aa (client 367 of 367, server 439 of 439): the server Weaving test above was fixed on main.
+
+Still worse than the design, in order of how much a first-time player would notice:
+1. Art the design has and the game does not: the Shop's featured set and daily picks, the Lab's test realm, the first launch's universe, character portraits for friends.
+2. Density: the Laws hub and the tab bar sit low by §21.1, and law cards are two to a row (three do not fit German rank words), so the Codex shows less at once.
+3. Harmony's draw calls (162) and the Lab's missing numbered resonance grid (it would cost about 50 calls).
+
+Next: T5 to lighten Harmony's preview; T9 to stroke the chosen tab's word in the kit and atlas the icons; then the Settings wellbeing page once the game keeps play time.

@@ -299,5 +299,6 @@ static func face(name: String, points: float) -> Control:
 	initials.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	initials.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	var p := ScreenKit.panel("card_lit", initials, -1.0, 2.0)
-	p.custom_minimum_size = Vector2.ONE * UI.px(points)
+	# Larger with large text, so the initials stay inside the round.
+	p.custom_minimum_size = Vector2.ONE * UI.px(points * maxf(1.0, Settings.text_scale / 100.0 * 0.8))
 	return p
