@@ -22,8 +22,6 @@ const WORDS := {&"map": "HOME_MAP", &"observatory": "HOME_OBSERVATORY", &"defenc
 const LEFT := [[&"defences", "realmactions/defence", "HOME_SIDE_DEFENCE"],
 	[&"lab", "screens/resonancelab", "HOME_SIDE_LAB"]]
 const RIGHT := [[&"track", "screens/season", "HOME_SIDE_SEASON"], [&"shop", "screens/shop", "HOME_SIDE_SHOP"]]
-## The side buttons' size: the 48-point hit area (§21.1), the nearest it may come to the designs' smaller balls.
-const SIDE_POINTS := 48.0
 ## Where each tab goes; the Islands tab is home itself.
 const TAB_ROUTES := {"laws": &"codex", "crew": &"roster", "friends": &"friends"}
 
@@ -46,9 +44,9 @@ var sides := {}
 var world: UniverseView
 ## The raid notice over the goal.
 var notice: UniverseNotice
-## The design's Collect button over the goal, while any producer holds
-## something (§9.3).
-var collect_button: Button
+## The design's "COLLECT 3.4k" over the foot, while any producer holds
+## something (§9.3); the goal shows in its place while nothing waits.
+var collect_button: UniverseCollect
 
 var _top: Control
 ## The two edges of side buttons.
@@ -95,9 +93,10 @@ func _ready() -> void:
 	column.pre_sort_children.connect(_fit_edges.bind(column, middle))
 	for edge: Control in _edges:
 		edge.item_rect_changed.connect(_frame_world, CONNECT_DEFERRED)
-	# The foot over the world, just above the tabs: the goal and Collect side
-	# by side; the raid notice in their place while it shows, as the designs
-	# raise their raid banner over Collect.
+	# The foot over the world, just above the tabs: Collect while anything
+	# waits, as the design's lone pill, else the nearest goal; the raid notice
+	# in their place while it shows, as the designs raise their raid banner
+	# over Collect.
 	_foot = HFlowContainer.new()
 	_foot.alignment = FlowContainer.ALIGNMENT_CENTER
 	_foot.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -107,9 +106,8 @@ func _ready() -> void:
 	goal.visible = false
 	goal.pressed.connect(func() -> void: App.services.router.go(goal.goal.get("route", &"profile")))
 	_foot.add_child(goal)
-	collect_button = UI.action(Strings.t("HOME_COLLECT"), _collect, "gold")
-	collect_button.icon = Icons.texture("hud/collectall")
-	collect_button.add_theme_constant_override("icon_max_width", UI.px(30))
+	collect_button = UniverseCollect.new()
+	collect_button.pressed.connect(_collect)
 	collect_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	collect_button.visible = false
 	_foot.add_child(collect_button)
@@ -125,6 +123,8 @@ func _ready() -> void:
 	menu.picked.connect(func(route: StringName) -> void: App.services.router.go(route))
 	add_child(menu)
 	column.sort_children.connect(_frame_world)
+	for c: Control in [goal, collect_button, notice]:
+		c.visibility_changed.connect(_frame_world, CONNECT_DEFERRED)
 	App.services.store.changed.connect(_on_changed)
 	show_keeper()
 	_show_hud()
@@ -186,7 +186,7 @@ func _edge(which: Array) -> VBoxContainer:
 	var edge := VBoxContainer.new()
 	edge.alignment = BoxContainer.ALIGNMENT_BEGIN
 	edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	edge.add_theme_constant_override("separation", UI.px(8))
+	edge.add_theme_constant_override("separation", UI.px(14))
 	for s: Array in which:
 		var holder := CenterContainer.new()
 		holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -209,13 +209,9 @@ func _side(holder: CenterContainer, badge: String) -> void:
 		c.queue_free()
 	var s: Array = holder.get_meta("side")
 	var route: StringName = s[0]
-	var words := Strings.t(s[2])
-	var action := KitControls.round_action(s[1], words, func() -> void: App.services.router.go(route), false,
-		SIDE_POINTS, badge)
-	action.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var b := action.find_children("*", "Button", true, false)[0] as Button
-	b.set_meta("frequent", false)
-	b.accessibility_name = words if badge == "" else Strings.t("HOME_BADGE_SPOKEN", [words, badge])
+	var action := UniverseSide.make(s[1], Strings.t(s[2]), badge)
+	action.pressed.connect(func() -> void: App.services.router.go(route))
+	action.set_meta("frequent", false)
 	holder.add_child(action)
 
 
@@ -348,6 +344,11 @@ func _frame_world() -> void:
 			continue
 		var r := (sides[route] as Control).get_global_rect()
 		clear.append(Rect2(r.position - world.global_position, r.size))
+	# And of what floats over the foot: Collect or the goal, or the raid card.
+	for c: Control in [collect_button, goal, notice]:
+		if c.is_visible_in_tree():
+			var r := c.get_global_rect()
+			clear.append(Rect2(r.position - world.global_position, r.size))
 	world.keep_clear = clear
 
 
@@ -370,6 +371,7 @@ func _draw_world() -> void:
 	# Strain is the HUD's, at the top right, so the Heart carries no pin of it.
 	var extras := UniverseStore.extras(store)
 	extras.erase("strain")
+	extras["quiet"] = true
 	world.show_universe(view, extras)
 	world.accessibility_name = Strings.t("HOME_MAP")
 	world.accessibility_description = UniverseStore.spoken(view)
@@ -402,12 +404,18 @@ func _show_hud() -> void:
 		var kind: String = UniverseStore.PRODUCES.get(str(p.get("kind", "")), "")
 		if kind != "" and int(p.get("stored", 0)) > 0:
 			ready[kind] = int(ready.get(kind, 0)) + int(p["stored"])
+	var was := collect_button.visible
 	collect_button.visible = not ready.is_empty() and str(store.get_slice(RosterState.ROSTER)["busy"]) == ""
+	if collect_button.visible and not was:
+		Motion.pop.call_deferred(collect_button)
+	goal.visible = goal.visible and not collect_button.visible
 	var waiting := PackedStringArray()
+	var total := 0
 	for kind: String in UniversePurse.ORDER:
 		if ready.has(kind):
 			waiting.append("%s %s" % [UniverseHud.grouped(ready[kind]), Strings.t("HOME_RES_" + kind.to_upper())])
-	collect_button.accessibility_name = Strings.t("HOME_COLLECT_SPOKEN", ", ".join(waiting))
+			total += int(ready[kind])
+	collect_button.show_amount(total, Strings.t("HOME_COLLECT_SPOKEN", ", ".join(waiting)))
 	_build_tabs({"islands": full} if full > 0 else {})
 
 

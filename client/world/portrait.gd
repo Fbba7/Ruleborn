@@ -18,7 +18,11 @@ static var _studio: Node = null
 ## The portrait of a kind in a look ("" its own, a note for a form, "guard",
 ## or "shadow" for its silhouette, as a locked card shows it).
 static func of(kind: String, look := "") -> Texture2D:
-	var key := StageHeroFigure.key(kind) + "/" + look
+	return _ask(kind, look, false)
+
+
+static func _ask(kind: String, look: String, as_bust: bool) -> Texture2D:
+	var key := StageHeroFigure.key(kind) + "/" + look + ("/bust" if as_bust else "")
 	if _cache.has(key):
 		return _cache[key]
 	var image := Image.create_empty(SIZE, SIZE, false, Image.FORMAT_RGBA8)
@@ -26,8 +30,47 @@ static func of(kind: String, look := "") -> Texture2D:
 	_cache[key] = texture
 	if _can_draw():
 		_ensure_studio()
-		_studio.call("ask", StageHeroFigure.key(kind), look, texture)
+		_studio.call("ask", StageHeroFigure.key(kind), look, texture, as_bust)
 	return texture
+
+
+## Head and shoulders of a kind in a look, square and centred on the face,
+## for a round frame: the heist's crew row and its Sage (T5). `look` is as
+## `of` takes it: "" its own, a form's note ("hush", "spark", "echo"),
+## "guard" or "shadow". Cached as `of` is; the texture fills in a frame or
+## two after it is first asked for.
+static func bust(kind: String, look := "") -> Texture2D:
+	return _ask(kind, look, true)
+
+
+## The portrait of a heist crew member or a roster character from the
+## server's record: its `kind` (else its heist role's kind, Cast.KIND) and
+## its `form` when it wears one.
+static func of_member(m: Dictionary, as_bust := true) -> Texture2D:
+	var look := str(m.get("form", ""))
+	if look in ["none", "base"]:
+		look = ""
+	var kind := str(m.get("kind", ""))
+	if kind == "":
+		kind = str(Cast.KIND.get(str(m.get("role", "")), ""))
+	return _ask(kind, look, as_bust)
+
+
+## Draws `texture` (a bust) clipped to a circle on `canvas`, inside its
+## _draw: one textured polygon, so a row of portraits costs no masks or
+## shaders. `zoom` above 1 crops closer on the face. The heist's crew row:
+## `Portrait.draw_disc(self, Portrait.bust(kind, form), c, r * 0.82)`.
+static func draw_disc(canvas: CanvasItem, texture: Texture2D, centre: Vector2, radius: float,
+		tint := Color.WHITE, zoom := 1.0) -> void:
+	var points := PackedVector2Array()
+	var uvs := PackedVector2Array()
+	var sides := 40
+	for k in sides:
+		var a := TAU * float(k) / float(sides)
+		var d := Vector2(cos(a), sin(a))
+		points.append(centre + d * radius)
+		uvs.append(Vector2(0.5, 0.5) + d * 0.5 / zoom)
+	canvas.draw_colored_polygon(points, tint, uvs, texture)
 
 
 ## Whether every portrait asked for has been drawn.

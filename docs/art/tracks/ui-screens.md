@@ -128,3 +128,39 @@ Still worse than the design, in order of how much a first-time player would noti
 3. Harmony's draw calls (162) and the Lab's missing numbered resonance grid (it would cost about 50 calls).
 
 Next: T5 to lighten Harmony's preview; T9 to stroke the chosen tab's word in the kit and atlas the icons; then the Settings wellbeing page once the game keeps play time.
+
+## Wave 5 rounds, judged against the design stills
+
+Stills: `docs/art/shots/ui-screens/w5-<screen>.png`, the design's still on the left and this build on the right.
+
+| Round | Three worst differences | What changed |
+|---|---|---|
+| 1 Harmony | 162 draw calls; the realm shown bare, no law named on it; realm strip as words only | `ScreenHarmonyStage` (this track's, over T5's `LawFxPreview`): no shadow pass and no walking figure, 118 calls; the laws' cards in the stage's corners, threaded to their pylons; realm chips with their marks; the realm sounding on parchment with a Sounding pill (137 calls) |
+| 2 Settings | no Account tab; T11's panel in the old kit's look at the foot of Game | the design's fourth tab, Account: T11's `AuthPanel` dressed by `ScreenAccount` (lit card, the account's mark, status on parchment, gold sign-in, leather sign-outs), the Profile row and the no-tracking note |
+| 3 Workshop | island cards a list of words; "Reason / Report / Block" as three big buttons on two lines; lists as chips | the lists as the strip with icons; each island headed by a lit cover (name, maker, level and tags, the realm's mark); the safety actions at 13 points on one line |
+| 4 Lab | no resonance grid; finds a shelf of three | the design's numbered grid, four a row: finds on parchment, the hinted lit, each school's still to find dimmed with its count; found of all in the heading |
+| 5 Profile | the heist and defence sentences above and below their cards, twice said | a heading; the sentences on the cards for a screen reader and a long press |
+| 6 Friends | the invite code first, above the faces; feed cards a sentence each; no Invite tab | faces, then Feed · Friends · Invite; feed cards with the raider's portrait, the outcome's mark on its corner and its pill; the code and adding a friend under Invite (opened when a code is made) |
+| 7 Share | a two-line title; no share card | titled Share; the challenge as a share card, its code large and inked |
+| 8 Season | lane names scrolled off with the road | the Starpass's crown and the free lane's gift pinned at the left edge |
+| 9 Codex | two cards a row, the album two screens tall | three a row wherever every met law's rank word fits a third of the album (T9's compact card); two in German |
+| 10 First launch | a lone icon where the design gathers its characters | three of the ruleborn (T1's portraits through `Portrait.of`) under the universe's mark |
+| 11 Weaving | 144 calls scrolled | its preview without the shadow pass, the figure kept (133) |
+| 13 Settings' Access | the text size a stepper among the rest; every switch its own framed card | the design's text-size card (small and large A, the size in large figures over a dot a step, a law's card to read at that size); the switches as rows of one card with hairlines |
+| 14 Shop | every card's art on the same dark well; kinds in lower case | each kind's stage edged in its colour (the design's reward tiles); kinds lead with a capital |
+| 15 Profile's log | each heist a list row with a large gold Watch replay | a stripe in the outcome's colour down the row's edge, the outcome's mark and pill; Watch replay in leather |
+| 16 First open with nothing yet | Harmony, Lab and Workshop an empty night under a red plate when their view cannot come; Friends with no friends opened on an empty feed | the screen's mark large on its own card with the reason and Try again (`ScreenParts.empty`); no friends opens Invite, where adding one is |
+| 17 Lab's chambers | an idle chamber's spheres as large two-line buttons | 13 points, quiet under their gems |
+| 12 Large text and contrast | Harmony's Sounding pill at 12 points, its band 1151 px wide at 200%; the share card's dash 3.7:1 on the bright material; Workshop's remix tag squeezed narrow | 13 points and under the name at large text; the share card on the lit card, inked at 12%; the remix tag on its own line |
+
+Every changed screen checked at 150% and 200% in six languages and in high contrast by `A11yTests` (the fast runner below); grayscale thumbnails of Harmony and Workshop compared.
+
+## Hooks in other tracks' files, wave 5
+
+- `client/scripts/auth_panel.gd` (T11): `signal built`, emitted at the end of `_build`, so a host screen dresses the panel after each build. Two lines; behaviour, words and the confirm unchanged. **For T11:** the Account tab dresses the panel's own nodes (the heading beside a mark, the status plate on parchment, buttons in the screens' materials); if the panel's children change order or kind, `ScreenAccount.dress` needs the same change.
+
+## Draw calls, wave 5 (540 × 1170, `calls` line)
+
+Harmony 137 (was 162; the stage alone without the laws' cards 118), Weaving 124 at the top and 133 scrolled (was 144), Codex 131, Lab 122 scrolled, Season 123, Law card 112, Friends 82, Workshop 90, Profile 75, Settings 62, Share 38, League 38, First launch 26.
+
+**For T9:** the tab bar's words are cut at German lengths ("RAUBZU", "FREUND").

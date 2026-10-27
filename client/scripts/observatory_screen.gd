@@ -52,7 +52,7 @@ func _build() -> void:
 	thumbs = StageThumbs.new()
 	add_child(thumbs)
 	thumbs.drawn.connect(_on_drawn)
-	var heading := OverlayHud.heading("", Strings.t("OBS_TITLE"))
+	var heading := OverlayTop.bar(func() -> void: App.services.router.go(&"home"), "", Strings.t("OBS_TITLE"))
 	header_label = heading.find_child("Kicker", true, false) as Label
 	(heading.find_child("Title", true, false) as Label).add_theme_font_size_override("font_size", UI.text_px(26))
 	column.add_child(heading)
@@ -108,7 +108,6 @@ func _refresh() -> void:
 			holder.remove_child(child)
 			child.queue_free()
 	_cards.clear()
-	_dock.add_child(OverlayHud.back_key(func() -> void: App.services.router.go(&"home")))
 	if not o["ready"]:
 		return
 	var busy: bool = o["busy"] != ""

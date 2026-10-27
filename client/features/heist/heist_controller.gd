@@ -14,7 +14,7 @@ signal changed
 ## The clock ran out: the heist is over and `record()` is its replay.
 signal clock_out
 
-enum Kind { MOVE_TO, GAIT, HALT, CRACK, LOAD, SKIFF, ATTACK, BREAK, DROP, DISARM, DRAG, LAND }
+enum Kind { MOVE_TO, GAIT, HALT, CRACK, LOAD, SKIFF, ATTACK, BREAK, DROP, DISARM, DRAG, LAND, ABILITY, SAGE, CAST }
 
 ## §5.4's clock at the Heart with no links: 150 seconds, 30 ticks each.
 const TICKS := 150 * 30
@@ -196,7 +196,7 @@ static func lease_era(leased: Dictionary) -> String:
 
 
 func select(member: int) -> void:
-	selected = clampi(member, 0, CREW - 1)
+	selected = clampi(member, 0, maxi(0, world.crew_size() - 1))
 	calling_skiff = false
 	changed.emit()
 
@@ -365,6 +365,10 @@ static func settled(r: Result, local: Dictionary) -> Dictionary:
 	var verdict: Dictionary = out["verdict"]
 	return {"ok": true, "grade": str(verdict["grade"]).capitalize(), "banked": verdict["banked"],
 		"haul": out["haul"]["total"], "fee": out["fee"], "server": true,
+		# §9.6's split and §12.9's Renown, as the settle answer has them.
+		"starlight": int(out["haul"].get("starlight", 0)), "essence": int(out["haul"].get("essence", 0)),
+		"renown": int((out.get("renown", {}) as Dictionary).get("raider", 0)),
+		"fee_returned": int(out.get("feeReturned", 0)),
 		"keeper": null if out.get("repeated", false) else out.get("keeper"),
 		# §17.6: an invited friend's first heist brings both the gift.
 		"gift": out.get("inviteGift") is Dictionary}

@@ -27,6 +27,8 @@ func run() -> void:
 	await _drag()
 	await _fold()
 	await _thumbs()
+	await _rehearsal()
+	_deck()
 
 
 func _realm() -> void:
@@ -239,3 +241,51 @@ func _thumbs() -> void:
 		"%d viewports, drawn %s" % [views.size(), drawn])
 	thumbs.queue_free()
 	await tree.process_frame
+
+
+func _rehearsal() -> void:
+	var island := RulebornIsland.new()
+	island.reset(3)
+	var stage := StageRehearsal.new(island.bytes())
+	tree.root.add_child(stage)
+	await tree.process_frame
+	var results := {}
+	for style: String in StageRehearsal.STYLES:
+		stage._choose(style)
+		stage.playing = false
+		stage.run()
+		stage._finish()
+		var r := stage.replay
+		# The same replay, checked as the server checks any: the crew's every
+		# step is the simulation's.
+		var verdict := RulebornReplay.validate(r.record(), island.bytes())
+		results[style] = [verdict.get("ok", false), r.report().get("held", -1), stage.route.trails.size(),
+			stage.playing]
+	var gaits := {}
+	for style: String in StageRehearsal.STYLES:
+		var bytes := RulebornReplay.rehearse(island.bytes(), StageRehearsal.STYLES.find(style) + 1, "1",
+			HeistController.TICKS, HeistController.CREW)
+		var r := RulebornReplay.new()
+		r.load(bytes, island.bytes())
+		gaits[style] = r.commands().filter(func(c: Dictionary) -> bool: return int(c["kind"]) == 1).map(
+			func(c: Dictionary) -> int: return int(c["x"]))
+	check.call("a rehearsal sends the simulation's own cautious, greedy or fast crew against the player's island, "
+			+ "a replay the server's check accepts, and shows its route and its report (13, 13.2)",
+		results.values().all(func(v: Array) -> bool: return v[0] and v[1] >= 0 and v[2] == 3 and not v[3])
+			and gaits["fast"].all(func(g: int) -> bool: return g == 2)
+			and gaits["cautious"].all(func(g: int) -> bool: return g == 1),
+		"%s %s" % [results, gaits])
+	stage.queue_free()
+	await tree.process_frame
+
+
+func _deck() -> void:
+	var marks := [{"place": 1, "code": 1, "at": Vector2i(0, 3), "covered": false, "links": 1, "ticks": 4950},
+		{"place": 1, "code": 1, "at": Vector2i(0, 4), "covered": true, "links": 1, "ticks": 4950},
+		{"place": 2, "code": 2, "at": Vector2i(0, 2), "covered": false, "links": 2, "ticks": 5400},
+		{"place": 2, "code": 2, "at": Vector2i(-1, -1), "fault": true, "links": 2, "ticks": 5400}]
+	var cards := OverlayLandingDeck.choices(marks)
+	var got := cards.map(func(c: Dictionary) -> Array: return [c["key"], c["first"], c["spots"], c["covered"]])
+	check.call("the landing deck has a card for each island the crew can land on and each fault, and a tap on one "
+			+ "shows its covered spot first (5.4, 23.2)",
+		got == [["1:false", 1, 2, 1], ["2:false", 2, 1, 0], ["2:true", 3, 1, 0]], "%s" % [got])

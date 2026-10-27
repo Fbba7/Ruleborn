@@ -84,6 +84,8 @@ func _build() -> void:
 	stage = StageHero.new()
 	stage.custom_minimum_size = Vector2(0, UI.px(Tokens.number("size", "safe_top_points") + 245.0))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Clear of the place and state chips over the stage's top.
+	stage.headroom = 0.08
 	body.add_child(stage)
 	# The name on a gold-rimmed plate at the stage's foot, as the design's.
 	title_label = UI.title("")
@@ -564,7 +566,10 @@ func _dress(node: Control, kind: String) -> void:
 func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -> void:
 	if kind != "" and str(stage.get_meta("showing", "")) != kind:
 		stage.set_meta("showing", kind)
-		stage.show_kinds([kind])
+		# The design's violet disc, its lip lit lavender.
+		stage.plinth_edge = Color("#6E60C8")
+		stage.show_kinds([kind], [], "plinth")
+		stage.backdrop.set_glow(Color("#8A78E8"))
 		for n in forms.get_children():
 			n.queue_free()
 		for look: String in LOOKS:

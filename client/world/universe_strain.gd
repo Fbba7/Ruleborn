@@ -80,14 +80,17 @@ func _draw() -> void:
 	var pill := Rect2(Vector2(size.x - w - UI.px(2), (size.y - h) * 0.5), Vector2(w, h))
 	if is_pressed():
 		pill.position.y += UI.px(1.5)
-	UniverseHud.glass(h * 0.5).draw(get_canvas_item(), pill)
+	# Baked, as every pill over the world: one draw call (§21.3).
+	var glass := UniverseHud.glass(h * 0.5)
+	UniverseHud.baked_box(glass.bg_color, glass.border_color, glass.border_width_left, h * 0.5,
+		Color(0, 0, 0, 0.35), UI.px(2)).draw(get_canvas_item(), pill)
 	var dot := Vector2(pill.position.x + h * 0.5, pill.get_center().y)
 	var colour: Color = UniverseHud.BANDS[band]
 	var d := minf(h, _px() * 1.9)
 	dot.x = pill.position.x + d * 0.5 + UI.px(4)
-	draw_circle(dot, d * 0.3, Color(colour, 0.35), true, -1.0, true)
-	draw_circle(dot, d * 0.2, colour, true, -1.0, true)
-	draw_arc(dot, d * 0.2, 0.0, TAU, 24, UniverseHud.INK_LINE, UI.px(1.5), true)
+	var halo := Color(colour, 0.35)
+	UniverseHud.ball(self, dot, d * 0.3, [halo, halo, halo], Color(), false)
+	UniverseHud.ball(self, dot, d * 0.2, [colour.lightened(0.35), colour, colour.darkened(0.2)])
 	var font := UniverseHud.words_font()
 	var x := dot.x + d * 0.42
 	var base := pill.get_center().y + font.get_ascent(_px()) * 0.36

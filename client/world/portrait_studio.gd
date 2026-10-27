@@ -46,8 +46,8 @@ func _init() -> void:
 	world.add_child(camera)
 
 
-func ask(kind: String, look: String, texture: ImageTexture) -> void:
-	_jobs.append([kind, look, texture])
+func ask(kind: String, look: String, texture: ImageTexture, bust := false) -> void:
+	_jobs.append([kind, look, texture, bust])
 	if not _busy:
 		_run.call_deferred()
 
@@ -85,7 +85,7 @@ func _run() -> void:
 				break
 		if image != null and not image.is_empty():
 			image.convert(Image.FORMAT_RGBA8)
-			(job[2] as ImageTexture).set_image(crop(image))
+			(job[2] as ImageTexture).set_image(crop_bust(image) if bool(job[3]) else crop(image))
 		figure.queue_free()
 	_busy = false
 
@@ -114,6 +114,36 @@ static func crop(image: Image) -> Image:
 		float(image.get_width())))
 	var x := clampi(int(used.position.x + used.size.x / 2.0 - side / 2.0), 0, image.get_width() - side)
 	var y := clampi(used.position.y - int(side * 0.06), 0, image.get_height() - side)
+	var out := image.get_region(Rect2i(x, y, side, side))
+	out.resize(SIZE, SIZE, Image.INTERPOLATE_LANCZOS)
+	return out
+
+
+## A bust cut from a render: head and shoulders, square, centred on the
+## head rather than on the whole figure, so a staff or a tail held out to
+## one side never pulls the face off-centre. A round frame (the heist's
+## crew row) fills with the face, as the design's portraits do.
+static func crop_bust(image: Image) -> Image:
+	var used := _body(image)
+	if used.size.x < 4 or used.size.y < 4:
+		return crop(image)
+	# Ears, a crest or a flame stay in: the top is what is drawn at all.
+	var top := mini(used.position.y, image.get_used_rect().position.y)
+	var tall := used.end.y - top
+	var side := int(clampf(minf(tall * 0.95, maxf(used.size.x * 0.9, tall * 0.62)), 8.0,
+		float(mini(image.get_width(), image.get_height()))))
+	# The head's middle: where the top fifth of the figure is drawn.
+	var band := Rect2i(used.position.x, top, used.size.x, maxi(1, int(tall * 0.25)))
+	var sum := 0.0
+	var count := 0.0
+	for y in range(band.position.y, band.end.y, 4):
+		for x in range(band.position.x, band.end.x, 4):
+			if image.get_pixel(x, y).a > 0.4:
+				sum += x
+				count += 1.0
+	var mid := sum / count if count > 0.0 else used.position.x + used.size.x / 2.0
+	var x := clampi(int(mid - side / 2.0), 0, image.get_width() - side)
+	var y := clampi(top - int(side * 0.05), 0, image.get_height() - side)
 	var out := image.get_region(Rect2i(x, y, side, side))
 	out.resize(SIZE, SIZE, Image.INTERPOLATE_LANCZOS)
 	return out

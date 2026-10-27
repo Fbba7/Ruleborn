@@ -24,6 +24,11 @@ if [ "$target" != check ] && [ ! -f "$templates/version.txt" ]; then
   mkdir -p "$templates"
   curl -sSL --fail -o "$templates.tpz" \
     "https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz"
+  # The templates become the app players install: Godot's own sum for them,
+  # checked before they are unpacked (T12's SR-26).
+  python3 -c "import hashlib, sys; sys.exit(hashlib.sha512(open(sys.argv[1], 'rb').read()).hexdigest() != sys.argv[2])" \
+    "$templates.tpz" ca4d71c4d7b81dfc15d1a98baa07534aa95b03fdda78a0075b06672e1648d2e5f40980c9adc28d23e1b92e732ee7bf3461997aa804af74ec2fcd7a93ccb84079 \
+    || { rm -f "$templates.tpz"; echo "the export templates do not match their pinned sum" >&2; exit 1; }
   python3 - "$templates.tpz" "$templates" <<'EOF'
 import os, sys, zipfile
 z = zipfile.ZipFile(sys.argv[1])

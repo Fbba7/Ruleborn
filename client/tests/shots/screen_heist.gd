@@ -8,7 +8,9 @@ extends SceneTree
 ## the skiff called to the edge), "entry" (a realm's entry card), "hold" (the gait menu
 ## a held press opens). HOUR and ZOOM are optional; BUTTONS shows
 ## Settings' turn and zoom buttons, CONTRAST high contrast, LEFT left-handed
-## play, TEXT a text size (150, 200), NAMES the names a long press shows.
+## play, TEXT a text size (150, 200), NAMES the names a long press shows,
+## MANIFEST the design's planned crew of five with a Sage and a cast, and
+## ESTIMATE a target card's rough loot estimate.
 
 const LawShot := preload("res://tests/shots/law_heist.gd")
 const TO := {"hold": [[4, 9], [3, 10], [4, 11]], "entry": [], "escape": [[2, 10], [3, 10], [2, 11]],
@@ -50,6 +52,20 @@ func _go() -> void:
 	var screen: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
 	frame.add_child(screen)
 	await process_frame
+	if OS.get_environment("MANIFEST") != "":
+		# MANIFEST: the design's planned crew of five, each its own kind, with
+		# the Archivist and one cast, named as the design names them.
+		var law := Array(RulebornStability.law_ids()).find("glowing_dark")
+		var plan := PackedByteArray()
+		for k: int in [0, 6, 4, 3, 9]:
+			plan.append_array(PackedByteArray([k, 0, 3, 0]))
+		plan.append_array(PackedByteArray([1, 1, law]))
+		screen.names_given = ["Pip", "Mo", "Bramble", "Hollow", "Ash"]
+		screen.begin(HeistController.SEED, HeistController.TICKS, 5, island, "", plan)
+		# ESTIMATE: the target card's rough loot estimate (§12.4).
+		if OS.get_environment("ESTIMATE") != "":
+			screen.hud.estimate = int(OS.get_environment("ESTIMATE"))
+		screen.controller.load_target = 80
 	var view := screen.view
 	view.set_sky_hour(int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 12)
 	var moment := OS.get_environment("MOMENT") if OS.get_environment("MOMENT") != "" else "sneak"
@@ -128,8 +144,15 @@ func _go() -> void:
 			if OS.get_environment("POP") != "":
 				view.anchors.pop(view._guards[i].position + Vector3(0, 1.0, 0), "-12", FxSkin.ALARM)
 				view.anchors.pops[-1]["t"] = 0.25
+	# HIDE: parts of the screen left out, to weigh each one's draw calls.
+	for part: String in OS.get_environment("HIDE").split(",", false):
+		(screen.get(part) as CanvasItem).visible = false
 	await process_frame
 	await RenderingServer.frame_post_draw
+	if OS.get_environment("SIZES") != "":
+		print("row ", screen.crew_node.size, " band ", screen.actions_band.size, " hand ", screen.hand.size,
+			" frame ", frame.size, " screen ", screen.size, " ", screen.crew_buttons.map(func(b: Control) -> Vector2:
+				return b.size))
 	# §21.3's budgets, as the renderer counted the frame.
 	print("budget: %d draw calls, %d primitives" % [
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),

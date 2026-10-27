@@ -166,6 +166,9 @@ func _refresh() -> void:
 func _road(rows: Array, premium: bool, claimed: int, share: float) -> Control:
 	var row := ScreenStrip.new()
 	row.separation = UI.px(8)
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# The lanes named at the left edge, pinned while the road scrolls under
+	# them, as the design's tabs: the Starpass's crown, the free lane's gift.
 	var lanes := VBoxContainer.new()
 	lanes.add_theme_constant_override("separation", UI.px(8))
 	for key: String in ["SCREEN_STARPASS_LANE", "", "SCREEN_FREE_LANE"]:
@@ -174,11 +177,18 @@ func _road(rows: Array, premium: bool, claimed: int, share: float) -> Control:
 			tag = Control.new()
 			tag.custom_minimum_size = Vector2(UI.px(20), UI.px(RAIL_POINTS))
 		else:
-			var l := ScreenKit.text(Strings.t(key), 13.0, "words", "active" if key != "SCREEN_FREE_LANE" else "card")
-			tag = ScreenKit.panel("tab_active" if key != "SCREEN_FREE_LANE" else "card", l, 10.0, 4.0)
+			var paid_lane := key != "SCREEN_FREE_LANE"
+			var mark := ScreenKit.icon("season" if paid_lane else "shopcosmetics", "premiumtrack" if paid_lane
+				else "gift", 26.0)
+			mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			tag = ScreenKit.panel("tab_active" if paid_lane else "card", mark, 10.0, 4.0)
+			tag.tooltip_text = Strings.t(key)
 			tag.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		lanes.add_child(tag)
-	row.add_child(lanes)
+	var whole := HBoxContainer.new()
+	whole.add_theme_constant_override("separation", UI.px(6))
+	whole.add_child(lanes)
+	whole.add_child(row)
 	# The design's road: the Starpass rewards over T9's tier rail (gold up to
 	# the tier reached, the reached one large in its ring), the free ones
 	# under it, a column a tier.
@@ -213,7 +223,7 @@ func _road(rows: Array, premium: bool, claimed: int, share: float) -> Control:
 	# or one where large text leaves room for two.
 	var before := 2 if Settings.text_scale <= 125 else 1
 	row.ready.connect(func() -> void: row.set_deferred("offset", maxf(0.0, (at - before) * UI.px(_column() + 8.0))))
-	return row
+	return whole
 
 
 ## A tier's width on the road, in points: wider at large text.

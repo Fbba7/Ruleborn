@@ -41,11 +41,12 @@ const HEIST_FOV := 22.0
 const ZOOM_SPAN := [1.25, 1.0, 0.6]
 ## Ticks a second, for drawing between them.
 const TPS := 30.0
-## §21.1: the heist's follow camera shows "about 12 tiles across": on a
-## portrait phone, 10.5 tiles across its width (about 12 on its diagonal),
-## so a realm of 10 to 14 tiles is followed rather than shown whole and the
-## creatures read; its close zoom, seven.
-const FOLLOW_TILES := 10.5
+## §21.1: the heist's follow camera shows "about 12 tiles across": turned
+## 45° as the designs' camera is, 15 metres across a portrait phone hold
+## about 11 tiles along the grid and 12 on the screen's diagonal, so a realm
+## of up to 11 tiles sits whole across the screen as the design's heist
+## frames it, and a larger one is followed. Its close zoom, seven metres.
+const FOLLOW_TILES := 15.0
 const CLOSE_TILES := 7.0
 ## A character model's scale on the heist's world, for readability.
 const MODEL_SCALE := 1.18
@@ -229,15 +230,11 @@ func _light_figures() -> void:
 	var night := hour >= 19 or hour < 6
 	for actor: Node3D in _crew:
 		var figure := actor.get_node_or_null("Rig/Figure")
-		if figure != null and figure.has_method("material"):
-			var m := figure.call("material") as ShaderMaterial
-			if m != null:
-				# By day a rim in the member's role colour, so the crew stands
-				# off painted grass and reads as the player's own.
-				var role: Color = Palette.ROLE.get(str(actor.get_meta("role", "")), Color(0.62, 0.83, 1.0))
-				m.set_shader_parameter("rim_strength", 1.6 if night else 0.9)
-				m.set_shader_parameter("lift", 0.85 if night else 0.55)
-				m.set_shader_parameter("rim_colour", Color("#FFD89A") if night else role.lightened(0.35))
+		if figure != null and figure.has_method("set_night"):
+			# A rim in the member's role colour, so the crew stands off painted
+			# grass and reads as the player's own; T1's model keeps its sheen.
+			var role: Color = Palette.ROLE.get(str(actor.get_meta("role", "")), Color(0.62, 0.83, 1.0))
+			figure.call("set_night", night, role.lightened(0.35))
 
 
 static func material(shader: Shader, outlined := false) -> ShaderMaterial:
@@ -315,7 +312,7 @@ func _build_statics() -> void:
 	RealmKit.by_hour(statics, look.hour)
 	# The Vault, the pylons and the wards change as the heist goes, so each
 	# is its own piece.
-	_vault = _instance(PieceKit.vault(false), RealmKit.material("toon", true))
+	_vault = _instance(PieceKit.vault(false, realm_type), RealmKit.material("toon", true))
 	statics.add_child(_vault)
 	_pieces = _instance(null, RealmKit.material("toon", true))
 	statics.add_child(_pieces)
@@ -482,7 +479,7 @@ func _frame_camera() -> void:
 		# them all in it.
 		cam_size = maxf(cam_size, _spread() * 2.6 / aspect)
 		cam_size = minf(cam_size, whole)
-		var goal := _follow_point()
+		var goal := _kept_on_island(_follow_point(), cam_size * aspect)
 		# Drift to the crew as the camera closes in; the whole realm sits on
 		# its rock.
 		target = Vector3(0, -2.2, 0).lerp(goal, clampf(z, 0.0, 1.0))
@@ -516,9 +513,10 @@ func _frame_camera() -> void:
 		_aimed = following
 	var back := Vector3(sin(yaw) * cos(p), sin(p), cos(yaw) * cos(p))
 	camera.look_at_from_position(_aim + back * distance, _aim, Vector3.UP)
-	# The HUD covers the top and the bottom of a heist: the crew is framed a
-	# little above the middle, where the screen is clear.
-	camera.v_offset = -cam_size * 0.05 if following else 0.0
+	# The HUD covers the top and the bottom of a heist: as the design frames
+	# it, the island stands a little below the middle, sky above it and the
+	# crew's row over its near edge.
+	camera.v_offset = cam_size * 0.07 if following else 0.0
 	if heist and not landing_marks.is_empty():
 		# While the landing picker's card covers the lower screen, the realm
 		# sits above it.
@@ -555,6 +553,14 @@ func _follow_point() -> Vector3:
 		at = at.lerp(_skiff.position, 0.35)
 	var half := Vector2(_size) * 0.5
 	return Vector3(clampf(at.x, -half.x + 1.5, half.x - 1.5), 0.3, clampf(at.z, -half.y + 1.5, half.y - 1.5))
+
+
+## `goal` held so a view `across` metres wide never looks past the realm's
+## ground: a realm narrower than the view stays whole and centred.
+func _kept_on_island(goal: Vector3, across: float) -> Vector3:
+	var reach := maxf(0.0, (Vector2(_size).length() - across) * 0.5)
+	var flat := Vector2(goal.x, goal.z).limit_length(reach)
+	return Vector3(flat.x, goal.y, flat.y)
 
 
 ## How far the furthest followed crew member stands from their middle.
@@ -739,7 +745,7 @@ func _sync_pieces() -> void:
 		_vault.position = world_at(v["at"])
 		var open: bool = v["open"]
 		if _vault.get_meta("open", false) != open:
-			_vault.mesh = PieceKit.vault(open)
+			_vault.mesh = PieceKit.vault(open, realm_type)
 			_vault.set_meta("open", open)
 	FxGround.pieces(self)
 	var walls := replay.walls()

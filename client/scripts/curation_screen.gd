@@ -25,10 +25,10 @@ var _sheet: ScrollContainer
 var _keys: Control
 var _top: Control
 var _drawn_key := ""
-var _heading: PanelContainer
+var _heading: HBoxContainer
 var _facts: HFlowContainer
 var _save_row: HFlowContainer
-var _tabs: HFlowContainer
+var _tabs: VBoxContainer
 ## The chosen tab of the tray, and the tabs the last refresh filled.
 var _tab := ""
 var _tab_names: Array[String] = []
@@ -57,12 +57,10 @@ func _build() -> void:
 	defence = OverlayDefence.new(view)
 	var top := VBoxContainer.new()
 	top.add_theme_constant_override("separation", UI.px(6))
-	var line := HBoxContainer.new()
-	line.add_theme_constant_override("separation", UI.px(8))
-	_heading = OverlayHud.heading(Strings.t("CUR_KICKER"), Strings.t("CUR_TITLE"))
+	_heading = OverlayTop.bar(func() -> void: App.services.router.go(&"map"), Strings.t("CUR_KICKER"),
+		Strings.t("CUR_TITLE"))
 	header_label = _heading.find_child("Kicker", true, false) as Label
-	line.add_child(_heading)
-	top.add_child(line)
+	top.add_child(_heading)
 	_facts = HFlowContainer.new()
 	_facts.add_theme_constant_override("h_separation", UI.px(5))
 	_facts.add_theme_constant_override("v_separation", UI.px(5))
@@ -72,10 +70,8 @@ func _build() -> void:
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label, "glass"))
 	StageScreen.window(column, 1.2)
-	# A flow, so at §20.8's large text the tabs take two rows, not the phone.
-	_tabs = HFlowContainer.new()
-	_tabs.add_theme_constant_override("h_separation", UI.px(4))
-	_tabs.add_theme_constant_override("v_separation", UI.px(4))
+	# The design's segmented tray tabs; their words wrap at large text.
+	_tabs = VBoxContainer.new()
 	column.add_child(_tabs)
 	var scroller := ScrollContainer.new()
 	scroller.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -121,8 +117,11 @@ func _refresh() -> void:
 		for child: Node in holder.get_children():
 			holder.remove_child(child)
 			child.queue_free()
-	_save_row.add_child(OverlayHud.key("screens/universe", Strings.t("RV_KEY_MAP"),
-		func() -> void: App.services.router.go(&"map")))
+	# §13's rehearsal: the draft as it stands, against a simulated crew.
+	_save_row.add_child(KitControls.round_action("planningactions/rehearse", Strings.t("CUR_TEST_RUN"),
+		func() -> void:
+			DefencesScreen.tab = 0
+			App.services.router.go(&"defences")))
 	if not c["ready"]:
 		return
 	var busy: bool = c["busy"] != ""
@@ -271,15 +270,14 @@ func _naming(n: Dictionary, busy: bool) -> void:
 func _show_tab() -> void:
 	if not _tab_names.has(_tab):
 		_tab = _tab_names[0] if not _tab_names.is_empty() else ""
-	for t: String in TABS:
-		if not _tab_names.has(t):
-			continue
-		var b := UI.action(Strings.t("CUR_TAB_" + t.to_upper()), func() -> void:
-			_tab = t
-			_refresh(), "tab_active" if t == _tab else "tab")
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.set_meta("tab", t)
-		_tabs.add_child(b)
+	var ids: Array = TABS.filter(func(t: String) -> bool: return _tab_names.has(t))
+	if not ids.is_empty():
+		var tabs := OverlayTop.tabs(ids, ids.map(func(t: String) -> String: return Strings.t("CUR_TAB_" + t.to_upper())),
+			_tab, func(id: String) -> void:
+				_tab = id
+				_refresh.call_deferred())
+		tabs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_tabs.add_child(tabs)
 	for holder: Node in body.get_children():
 		var box := holder.get_child(0) if holder.get_child_count() > 0 else null
 		if box != null and box.has_meta("tab"):

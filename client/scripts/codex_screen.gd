@@ -11,6 +11,10 @@ extends Control
 ## with the restored ring, filter chips by school, and each album as a band
 ## over a grid of law tiles framed by rank, with its next steps beneath.
 
+## The room an album's cards share, in points: the frame inside its safe
+## sides and the parchment's own margin.
+const ALBUM_POINTS := 360.0 - 2.0 * 16.0 - 2.0 * 8.0
+
 var controller: CodexController
 var body: VBoxContainer
 var header_label: Label
@@ -198,11 +202,19 @@ func _album(a: Dictionary, busy: bool) -> Control:
 	bar.tooltip_text = a["marks"]
 	box.add_child(ScreenParts.columns([stamps, bar], 10.0))
 	var grid := GridContainer.new()
-	grid.columns = 2 if Settings.text_scale <= 125 else 1
 	grid.add_theme_constant_override("h_separation", UI.px(6))
 	grid.add_theme_constant_override("v_separation", UI.px(8))
+	# Three cards a row, as the design has them, where every card's words fit
+	# a third of the album; two where they do not (German rank words), one at
+	# large text.
+	grid.columns = 1
+	if Settings.text_scale <= 125:
+		grid.columns = 3 if _fits_three(a["laws"]) else 2
+	var tiles: Array[Control] = []
 	for l: Dictionary in a["laws"]:
-		grid.add_child(_tile(l, school.to_lower()))
+		tiles.append(_tile(l, school.to_lower(), 94.0 if grid.columns == 3 else 130.0))
+	for t: Control in tiles:
+		grid.add_child(t)
 	box.add_child(ScreenKit.panel("parchment", grid, 16.0, 8.0))
 	for l: Dictionary in a["laws"]:
 		var step := _step(l, busy)
@@ -215,9 +227,8 @@ func _album(a: Dictionary, busy: bool) -> Control:
 ## school's colour, framed by its rank, its tier on the corner plate and its
 ## pages on the disc; a law not met is a dark "?" that names nothing, with
 ## its chapter's lock while that is closed.
-func _tile(l: Dictionary, school: String) -> Control:
+func _tile(l: Dictionary, school: String, points: float) -> Control:
 	var known := bool(l["known"])
-	var points := 130.0
 	var tile: PanelContainer
 	if known:
 		var number := "%d/%d" % [int(l["pages"]), int(l["need"])] if int(l["tier"]) == 0 else ""
@@ -248,6 +259,22 @@ func _tile(l: Dictionary, school: String) -> Control:
 			card["key"], card["item"])
 		b.accessibility_description = l["text"]
 	return tile
+
+
+## Whether every met law's rank word, in capitals at 13 points, fits a card
+## a third of the album wide.
+static func _fits_three(laws: Array) -> bool:
+	var face := ScreenKit.font("words")
+	for l: Dictionary in laws:
+		if not l["known"]:
+			continue
+		var word := Strings.t("LAW_RANK_" + str(l["rank"]).to_upper()).to_upper()
+		# Its letters' spacing and the card's frame either side.
+		var wide := face.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(13)).x / UI.px(1) \
+			+ word.length() * 1.0 + 20.0
+		if wide > (ALBUM_POINTS - 12.0) / 3.0:
+			return false
+	return true
 
 
 ## A law's next step under its album: its mark and name, why it waits, and

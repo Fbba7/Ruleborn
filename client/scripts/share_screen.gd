@@ -26,7 +26,7 @@ func _on_changed(slice: StringName) -> void:
 
 func _build() -> void:
 	var column := ScreenKit.frame(self)
-	column.add_child(ScreenNav.header(Strings.t("SHARE_TITLE")))
+	column.add_child(ScreenNav.header(Strings.t("SCREEN_SHARE_TITLE")))
 	status_label = UI.status("info", "")
 	column.add_child(ScreenParts.status_plate(status_label))
 	body = UI.scroll(column)
@@ -55,7 +55,7 @@ func _refresh() -> void:
 			_refresh()))
 	var link := VBoxContainer.new()
 	link.add_theme_constant_override("separation", UI.px(8))
-	link.add_child(_title("screens", "realm", Strings.t("SCREEN_SHARE_CHALLENGE")))
+	link.add_child(_poster(str(s["code"])))
 	var text := ScreenKit.text(s["link"], 15.0, "words", "card_lit", false, true)
 	text.set_meta("link", true)
 	link.add_child(ScreenKit.panel("parchment", text, 14.0, 10.0))
@@ -101,6 +101,28 @@ func _refresh() -> void:
 		r.add_child(l)
 		limits.add_child(r)
 	body.add_child(ScreenKit.panel("card", limits, 18.0, 12.0))
+
+
+## What a friend is sent, as the design's share card: the game's mark, the
+## player's island, and the challenge's code large (a dash until made).
+func _poster(code: String) -> Control:
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", UI.px(6))
+	var kicker := ScreenParts.pill(Strings.t("SCREEN_SHARE_CHALLENGE"), "glass", "screens", "realm", 13.0, "words",
+		true)
+	kicker.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	col.add_child(kicker)
+	var mark := ScreenKit.icon("screens", "islandworkshop", 96.0)
+	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	col.add_child(mark)
+	# Inked at 12% of its size, so §21.8 measures it against its outline.
+	var shown := Strings.t("SCREEN_CODE", code) if code != "" else "—"
+	var big := ScreenKit.inked(ScreenKit.text(shown, 34.0, "number", "card_lit"), 4.2)
+	big.add_theme_color_override("font_color", Tokens.color("gold_top"))
+	big.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	big.accessibility_name = Strings.t("SHARE_MESSAGE", code) if code != "" else Strings.t("SHARE_NO_LINK")
+	col.add_child(big)
+	return ScreenKit.panel("card_lit", col, 18.0, 14.0)
 
 
 ## A card's buttons side by side in equal shares, their words wrapping;

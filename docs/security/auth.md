@@ -45,7 +45,8 @@ at the code and the test that prove it.
 | T8 | **Downgrade** — an old token format, `alg: none`, HTTP, a stubbed verifier in production | Only the current token version is read. JWT `alg` is pinned to RS256. The server refuses to start with real stores and stubbed sign-in (`main.mjs`). The client refuses a server reached in the clear. |
 | T9 | **Lost or stolen device** | "Sign out everywhere" from any other device ends every session at once. The refresh token is in Keychain/Keystore, bound to the device (not in iCloud backups: `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`; Android Keystore-wrapped). Deleting the account or a ban ends every session. |
 | T10 | **Shared device** — the next person picks up a signed-out phone | Sign-out ends the session on the server first, then clears the access token, the refresh token, every cached private state, and parks the outbox under the account it belongs to (never sent as someone else, never lost). |
-| T11 | **Account takeover through a platform switch** — a second identity attached to someone else's account | An account has exactly one platform identity; there is no linking route. Any future change of identity must go through `Auth.identityChanged`, which ends every session of that account. A proof only ever names `gc:` or `gp:` identities from its own verifier; a Google token cannot sign into a `gc:` account, and the web deletion page takes only `gp:`. |
+| T11 | **Account takeover through a platform switch** — a thief's identity attached to someone else's account, to keep it after the stolen token dies | An account has the identity it was made with and at most one linked identity of the other platform (`linked_identities`). Linking needs a live session **and** two fresh, single-use proofs in the same request: one of an identity the account already signs in with (step-up) and one of the identity added — a stolen access token alone links nothing. An identity that has an account of its own, or a ban, is never linked (no merging). Unlinking needs a fresh proof of the identity that stays and ends every session the removed one signed in (`sessions.via`). A ban bans the linked identity too (`Auth.endAll(…, "banned")`); a deletion erases the link. The web deletion page takes only `gp:`, made-with or linked. |
+| T16 | **A session left on a device the player no longer has** — sold, lent, lost | The devices list shows every live session: the device's kind and model as it named them, the country the edge last saw it in, when it was last used (to the hour), its platform. Any one is ended from any other device (`{"device": id}`), or every other at once (`{"others": true}`); an id of another account ends nothing and answers the same. |
 | T12 | **Clock skew** — a phone's clock wrong by minutes or days | The server never trusts the device's clock: lifetimes are checked against the server's own. The client is told `expiresIn` (seconds) rather than an absolute time, refreshes a minute early, and on `session_refused` refreshes once anyway. Google tokens get five minutes of skew either way; Game Center's five-minute window is symmetric. |
 | T13 | **CSRF on the web deletion page** | The page asks the server for a nonce (stored in an `HttpOnly; Secure; SameSite=Strict` cookie, double-submitted), gives it to Google Identity Services, and the server requires the ID token's `nonce` to match the cookie and to be unused. The POST must carry `Content-Type: application/json` and an `Origin` that is the server's own. |
 | T14 | **Secrets in logs** | The server logs a route's first two segments only (`routeOf`), never a header or body; the client's action log does the same; tests assert both. |
@@ -76,10 +77,57 @@ without OAuth's ceremony (one first-party client).
 
 ### Sign-out
 
-- `POST /v1/session/end` ends this session. `POST /v1/session/end {"everywhere": true}`
-  ends every session of the account. Both answer 200 when already ended
-  (idempotent), so a retried sign-out is harmless.
+- `POST /v1/session/end` ends this session. `{"everywhere": true}` ends
+  every session of the account; `{"others": true}` every one but this;
+  `{"device": id}` one from the devices list. All answer 200 when already
+  ended (idempotent), so a retried sign-out is harmless. Without a live
+  access token only this session or every one can be ended, proven by the
+  refresh token.
 - Deletion, a ban and an identity change end every session (`Auth.endAll`).
+- An access token never outlives its session's 180 days: one issued in the
+  last hour lasts only to the end of them.
+
+### Devices list (`GET /v1/session/devices`)
+
+**Choice** (the market's: Google, Apple, Discord, Steam): each live
+session with `device` (a kind from a fixed list: iPhone, iPad, Android
+phone or tablet, PC, other), `model` (what the system calls it, at most 32
+plain characters), `via` (`gc` or `gp`, never the identity), `place`, the
+day it signed in, the hour it was last used and `idleHours` on the
+server's clock; this device first. Also `identities`: which platforms sign
+in to the account.
+
+- **Place** is a country code (ISO 3166-1) from a header the edge sets
+  from the address (`RULEBORN_PLACE_HEADER`, Cloudflare's `cf-ipcountry`),
+  kept on the session at sign-in and refreshed with each refresh, in the
+  same write. The address itself is never read for it or stored anywhere
+  (the test scans the rows for the addresses it signed in from). Declared in
+  `server/privacy.json` as approximate location (App Store "Coarse
+  Location", Play "Approximate location"), for security, erased with the
+  account, deleted seven days after the session ends. Unset header, no
+  place. The phone words the code with the engine's country names.
+- **Last used** is a refresh's `used_at`: no extra write, accurate to the
+  hour, which is all the list shows.
+- Nothing the device sends can name its player: the kind is from a list,
+  the model is held to plain characters, and neither is required.
+
+### One account on iPhone, iPad and Android (`POST /v1/session/link`, `/unlink`)
+
+§24.8 names Game Center on iPhone and Google on Android, and the design
+promises "One account across iPhone, iPad, Android and later PC, with
+platform sign-in". iPhone and iPad share Game Center already; the move to
+Android needs the account to also sign in with Google. Google's sign-in
+runs on iPhone, so an iPhone can add it (`{"current": <Game Center proof>,
+"credential": <Google proof>}`); afterwards the Android phone signs in to
+the same account. An Android phone has no Game Center, so the way back is
+the same link, made on the iPhone: the panel offers a platform only where
+the device has its plugin. No account is ever merged into another.
+
+**Recovery.** No password, so nothing to recover: a new or reset phone
+signed in to the same Apple ID or Google account signs in to the same
+account (the panel says so). The account follows the platform identity;
+if that identity itself is lost, Apple's and Google's own recovery are the
+route, and the support contact (§20.11) for anything else.
 
 ### Platform proofs (`server/src/auth_proofs.mjs`)
 
@@ -126,6 +174,27 @@ same whether or not the account exists (`auth_http.test.mjs`). A refresh
 failure counts as a failed sign-in; nonce requests are refused while an
 address is held.
 
+Every session path, and its bucket (`auth_devices.test.mjs` "every session
+path is limited"):
+
+| Path | Held by |
+|---|---|
+| `POST /v1/session` | the address's failures, then the identity proven |
+| `POST /v1/session/nonce` | the address's failures (signed, never stored: nothing to fill) |
+| `POST /v1/session/refresh` | the address's failures, then the session's sign-ins |
+| `POST /v1/session/end` with a Bearer | the account's calls |
+| `POST /v1/session/end` with a refresh token | the address's failures, then the session's sign-ins |
+| `GET /v1/session`, `GET /v1/session/devices` | the account's calls |
+| `POST /v1/session/link`, `/unlink` | the account's calls, then each proof as a sign-in: the address's failures and the identity it proves |
+| `POST /v1/account/delete` (web) | the address's failures, then the identity proven |
+
+**Back-off on the device** (`AuthSession`): a renewal the server never
+decided (unreachable, a 5xx) is not tried again at once — the next
+automatic one waits 2 s, then 4, 8 … at most 5 minutes, at half to all of
+it (jitter, so phones that lost the server together do not return
+together); the player's own tap skips that wait. A 429 waits the server's
+`Retry-After`, whoever asks. A decision (refused, signed out) clears it.
+
 ### On the device (`client/features/auth/`)
 
 - `AuthSession` holds the access token in memory (`Api.token`) and the
@@ -148,6 +217,39 @@ address is held.
   `TLSOptions.client(trusted_chain)`). **Owner to confirm:** pin the CA the
   production certificate chains to (pinning the leaf would break at every
   renewal); unset today, so the platform's authorities are trusted.
+
+### Native plugins: the steps (the owner's third decision)
+
+Each plugin is an engine singleton; the client turns it on by its presence
+alone, so adding the built plugin to the export is the one switch. Until
+then each has a working stand-in: memory-only storage, the local server's
+stub sign-in, and `FakeSecureStore` / `FakePlatformIdentity` in tests.
+
+| Singleton | Contract (GDScript) | iOS | Android |
+|---|---|---|---|
+| `RulebornSecureStore` | `read(key) -> String` ("" for none), `write(key, value) -> bool`, `erase(key)` (`secure_store.gd`) | Keychain generic password, service `com.<bundle>.session`, `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`, no access group | AES-256-GCM key in Android Keystore (non-exportable, `setUserAuthenticationRequired(false)`), ciphertext in app-private SharedPreferences; `allowBackup=false` for that file |
+| `RulebornGameCenter` | `request(nonce)`, then the signal `credential(answer: Dictionary)`: `{playerId, bundleId, publicKeyUrl, signature, salt, timestamp}` base64 as Apple gives them, or `{"error": code}` (`platform_identity.gd`) | `GKLocalPlayer.local.authenticateHandler`, then `fetchItems(forIdentityVerificationSignature:)`; `teamPlayerID` as `playerId`; the nonce is unused (Apple's salt is the single use) | — |
+| `RulebornGoogleSignIn` | as above, answering `{idToken}` | GoogleSignIn-iOS with the iOS client id and `serverClientID` = the web client id; `nonce` passed through. Only for linking (the panel's "Add your Google account") | Credential Manager, `GetGoogleIdOption` with `serverClientId` and `setNonce(nonce)`; `setFilterByAuthorizedAccounts(true)` first, `false` if none |
+
+Error codes the plugins answer, each with words in the strings table:
+`platform_cancelled` (the sheet closed), `no_platform_account` (no Game
+Center or Google account on the phone).
+
+Steps, on a machine with Xcode 16 and the Android SDK 35:
+
+1. iOS: a Swift static library implementing the two iOS singletons through
+   Godot's iOS plugin interface (`.gdip`), linked into the Xcode export;
+   GameKit and the GoogleSignIn package added; the Game Center capability on
+   the App ID.
+2. Android: a Godot Android plugin (v2, `GodotPlugin` subclass, `.aar`) for
+   `RulebornSecureStore` and `RulebornGoogleSignIn`; the dependencies
+   `androidx.credentials`, `com.google.android.libraries.identity.googleid`.
+3. Server: `RULEBORN_GOOGLE_CLIENT_IDS` lists the Android, iOS and web
+   client ids; `RULEBORN_GAMECENTER_ROOTS` and `RULEBORN_BUNDLE_ID` set.
+4. Check on each phone: sign in, kill the app, reopen — no platform sheet
+   (the refresh token was kept); uninstall and reinstall — the platform
+   proves it again (nothing in a backup); on iPhone add Google, then sign
+   in on an Android phone with it: the same account.
 
 ### Sign-out on the device (`AuthController`)
 
@@ -177,13 +279,27 @@ to remove a lost phone from their Apple ID or Google account.
 first launch, signing in, signed in (and on how many devices), offline,
 failed with the reason in words, signed out. Sign out and Sign out
 everywhere each confirm in `KitPanels.dialog` with the safe answer focused.
-**Shared-file edit:** two lines in `client/scripts/settings_screen.gd` add the
-panel to the Settings list (there is no Account tab yet; T10 can move it).
+**Shared-file edit:** a few lines in `client/scripts/settings_screen.gd`
+(T10's) add the design's Account tab and put the panel on it. The panel is
+built from the same pieces as the rest of Settings (`ScreenParts.section`,
+`ScreenParts.item`, `ScreenKit.button`), as the Settings still draws them:
+the status card with the account's mark and its action at the end; the
+signed-in devices, each a row with its own Sign out (this one marked "This
+device"); Sign out every other device and Sign out everywhere; the ways to
+sign in, with the other platform offered; the recovery line.
 
 ### Writes
 
 A sign-in writes one `sessions` row, a refresh one update, a sign-out one
-update. `server/load.mjs` now models the device as it behaves — signing in
+update. **One switch** for the owner's decision on that update:
+`RULEBORN_REFRESH_ROTATE_HOURS` (default 0) rotates the refresh token on
+every refresh; 24 rotates it once a day — within the day a refresh answers
+a new access token and the same refresh token and writes nothing, so an
+engaged player's 5 refresh rows a day become 1.33 (82.48 instead of 86.15
+billed rows a day). The price: a copied refresh token is caught at the next
+rotation, not the next refresh, and the devices list's "last used" and
+country are as old as a day (`auth_devices.test.mjs` "rotating the refresh
+token once a day"). `server/load.mjs` now models the device as it behaves — signing in
 once and refreshing when its hour is up — and `server/load.json` is
 rewritten: one billed row a session, engaged players 81.15 → 86.15 billed
 rows a day, $767 → $817 a month at a million monthly players. **Owner to
@@ -201,51 +317,44 @@ confirm** this addition to §24.1's budget (the register is not edited here).
 
 ## Stopped here
 
-At 04:45 UTC on 27 October 2026, on `claude/auth`.
+At 18:30 UTC on 27 October 2026 (wave 5), on `claude/auth`.
 
-**Built and proven** (check_all green; server 443 tests, client 13 auth checks):
+**Built this wave and proven** (server `auth_devices.test.mjs`, 10 tests;
+client `auth_tests.gd`, 18 checks with the round trip against the server):
 
-- Sessions: an hour's access token, a rotating refresh token with reuse
-  detection (a reused one ends its family), 30-day idle and 180-day
-  absolute limits, key ids and a key ring for rotation, every MAC compared
-  in constant time, one primary-key row read a request for revocation.
-- Sign-out, sign-out everywhere, and every session ended by deletion, a
-  ban and an identity change; closed sessions deleted after seven days.
-- Platform proofs single-use: a Game Center salt and timestamp once, a
-  Google token's server nonce once; every rejection path tested with the
-  real verifiers. A proven Game Center key cannot be evicted by a caller
-  cycling Apple's key names (T12's SR-20).
-- The web deletion page: a nonce bound to a `__Host-` cookie, the web
-  client's token only, issued within five minutes, once; cross-site and
-  non-JSON posts refused; a strict CSP checked in Chromium (T12's SR-11).
-- Limits: the document's sign-in numbers, refresh and nonce included, with
-  the same answer whether or not an account exists.
-- The device: the access token in memory, the refresh token behind the
-  platform storage seam (memory only without a plugin), renewal on the
-  monotonic clock, one at a time, the nonce fetched for Google; a sign-out
-  that ends the session on the server or owes it, forgets every token,
-  parks the unsent queue under the account and rebuilds the app's state;
-  TLS pinning by project setting; no token in any log or file.
-- The account panel, from the UI kit, every state in words, both sign-outs
-  behind a confirm; stills in `docs/art/shots/auth/`.
+- The devices list: kind, model, platform, country in words, last used;
+  sign out one device, every other, or everywhere; an access token never
+  outlives its session's 180 days.
+- One account on iPhone, iPad and Android: link the other platform with
+  two fresh proofs (step-up), unlink with a proof of the one that stays,
+  no merging, a ban covering both, deletion erasing the link; recovery is
+  the platform identity itself, and the panel says so.
+- Limits on every session path, tabled above; the device's renewal
+  backs off (2 s doubling to 5 minutes, jittered; a 429's Retry-After).
+- The panel on Settings' Account tab in T10's Settings pieces; stills in
+  `docs/art/shots/auth/` (signed_in, linkable, confirm, device,
+  signed_out, failed).
+- Refresh's billed row is one switch (`RULEBORN_REFRESH_ROTATE_HOURS`).
 
 **Open:**
 
-- The native plugins: `RulebornSecureStore` (Keychain, Keystore),
-  `RulebornGameCenter`, `RulebornGoogleSignIn`. Their contracts are in
-  `client/features/auth/secure_store.gd` and `platform_identity.gd`; this
-  machine has no Android SDK or Xcode to build them.
-- No certificate is pinned until the production chain is known.
-- The register is not told of `server/load.json`'s new numbers.
+- The native plugins (steps above): no Android SDK or Xcode here.
+- No certificate is pinned until the production chain is known
+  (`ruleborn/tls_pins`, one setting).
+- Country names come from the engine, in English in every language.
 
 **For the owner to confirm:**
 
-- One billed row a session for refresh: engaged players 81.15 → 86.15
-  billed rows a day; $767 → $817 a month at a million monthly players.
-- Lifetimes: access one hour (the document's), refresh 30 days idle and
-  180 days absolute.
+- Refresh's billed row: keep rotation on every refresh (86.15 rows a day
+  for an engaged player) or set `RULEBORN_REFRESH_ROTATE_HOURS=24`
+  (82.48, from `server/load.mjs` run with it).
 - Which CA the client pins.
-- A sign-out keeps the age check and the first launch's answers on the
-  phone (device-level), while the queue is parked by account.
-- The account panel sits at the end of Settings (two lines in
-  `settings_screen.gd`) until Settings has an Account tab.
+- The native Keychain/Keystore and sign-in plugins.
+- Noted, not asked: the devices list's country is declared to both stores
+  as approximate location (`server/privacy.json`); unset
+  `RULEBORN_PLACE_HEADER` and no place is kept.
+- Shared-file edits: the Account tab in `client/scripts/settings_screen.gd`
+  (T10's), one line in `server/test/privacy.test.mjs`, the `sessions`
+  columns and `linked_identities` in `server/src/db.mjs`, the place header
+  in `server/src/main.mjs`, and Apple's "Coarse Location" in
+  `tools/privacy_manifest.py` (the iOS privacy manifest written from it).

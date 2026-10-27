@@ -193,6 +193,28 @@ static func hall(wide: float) -> ArrayMesh:
 	return m
 
 
+## The design's hero plinth (Screens v3's Roster, Character and Sage hall):
+## a low dark-violet disc with a bevelled lip, a ring of `edge` round its
+## top and a faint inner ring, so the figure stands on the menus' night
+## rather than on a piece of the world. One mesh, a few hundred triangles.
+static func plinth(edge: Color, radius := 0.75) -> ArrayMesh:
+	var cache_key := "plinth:%s:%.2f" % [edge.to_html(), radius]
+	if _cache.has(cache_key):
+		return _cache[cache_key]
+	var g := Geo.new()
+	var body := Color("#1C1438")
+	var top := Color("#2E2464")
+	g.prism(Geo.place(Vector3(0, -0.07, 0)), 48, radius * 0.94, radius * 1.02, 0.045, body.darkened(0.3), true)
+	g.prism(Geo.place(Vector3(0, -0.025, 0)), 48, radius * 1.02, radius, 0.035, edge.darkened(0.45), true,
+		edge.darkened(0.2))
+	g.ring(Geo.place(Vector3(0, 0.012, 0)), 0.0, radius * 0.94, top, 48)
+	g.ring(Geo.place(Vector3(0, 0.014, 0)), radius * 0.94, radius, edge, 48)
+	g.ring(Geo.place(Vector3(0, 0.016, 0)), radius * 0.62, radius * 0.645, top.lightened(0.18), 48)
+	var m := g.mesh()
+	_cache[cache_key] = m
+	return m
+
+
 ## The realm's own ground under a hero (§21.4): T2's island — painted
 ## meadow, grass lip, earth bands, rock strata and roots — built for one
 ## tile and shrunk to `radius`, in the painted ground look the realm view

@@ -28,14 +28,18 @@ const IDLE2_EVERY := 7.0
 ## §21.3's three points: a warm key from above and in front, the night's
 ## violet as the fill (shade is never black), and a rim from behind.
 const KEY := Color("#FFE6C8")
-const KEY_ENERGY := 0.78
+const KEY_ENERGY := 0.6
 const FILL := Color("#C4BCEE")
-const FILL_ENERGY := 0.62
+const FILL_ENERGY := 0.3
 const RIM_ENERGY := 0.6
-## How much more a close view lifts a model's lit paint, and where its light
-## steps begin (creature_look.gdshaderinc's `lift` and `ramp_bias`).
-const CLOSE_LIFT := 1.7
-const CLOSE_RAMP_BIAS := 0.34
+## A close view's paint (creature_look.gdshaderinc): how far lit paint is
+## taken toward warm white (`lift`), how pale light paint grows (`tone`),
+## and where the light steps begin (`ramp_bias`). Lower than the world's,
+## so a character keeps its own colour and its shading up close, as the
+## design's hero renders do (Skyskipper gold, not butter).
+const CLOSE_LIFT := 0.25
+const CLOSE_TONE := 0.1
+const CLOSE_RAMP_BIAS := 0.1
 
 static var _toon: Shader = load("res://world/toon.gdshader")
 static var _outline: Shader = load("res://world/outline.gdshader")
@@ -62,6 +66,15 @@ var moving := true
 ## Sky kept clear above the figures for words over the stage, as a share of
 ## the frame's height (the first launch's title).
 var headroom := 0.0
+## The lip's colour on a "plinth" ground: gold on the Roster, the school's
+## or the form's note's colour elsewhere.
+var plinth_edge := Color("#E9B65C")
+## Whether the figures stand on plinths (show_kinds' "plinth" ground).
+var plinth := false
+## A welcome's framing (the first launch, as the design's title screen): the
+## party large across the foot of the frame, cut at the knees, the middle one
+## nearest, and the universe (add_universe) filling the frame above them.
+var welcome := false
 var _spin := 0.0
 var _spin_speed := 0.0
 var _press := Vector2.ZERO
@@ -175,7 +188,9 @@ static func toon(rim: Color, inked := INKED, ground := false) -> ShaderMaterial:
 ## `looks` (the same index; "" when missing; "shadow" for a silhouette, as a
 ## locked one shows); the stage takes the first one's school. `ground`
 ## "hall" stands them on one floor of flagstones under arches, "island" on
-## one island together; otherwise each has its own patch.
+## one island together; "plinth" each on the design's dark disc; "bare" on
+## nothing (a welcome's party in front of the world); otherwise each has its
+## own patch.
 func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 	for t in tables:
 		t.queue_free()
@@ -195,6 +210,7 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 	for k: Variant in list:
 		gap = maxf(gap, StageHeroFigure.height(StageHeroFigure.key(str(k))))
 	var hall := ground == "hall"
+	plinth = ground == "plinth"
 	var shared := hall or ground == "island"
 	gap = maxf(gap * (0.62 if shared else 0.95), 0.75)
 	if shared:
@@ -221,8 +237,15 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		world.add_child(table)
 		var h := StageHeroFigure.height(kind)
 		var own_school := StageHeroFigure.school(kind)
-		if not shared:
-			if list.size() == 1:
+		if ground == "bare":
+			pass
+		elif not shared:
+			if ground == "plinth":
+				var disc := MeshInstance3D.new()
+				disc.mesh = StageHeroFigure.plinth(plinth_edge, maxf(0.35, h * 0.62))
+				disc.material_override = toon(rim, false, true)
+				table.add_child(disc)
+			elif list.size() == 1:
 				table.add_child(StageHeroFigure.realm_ground(own_school, maxf(0.3, h * 0.55)))
 			else:
 				# A row of figures shares §21.3's draw-call budget: each stands on
@@ -260,6 +283,65 @@ func add_far_islands(schools: Array) -> void:
 		isle.position = Vector3(lerpf(-span, span, along), -0.2 + 0.7 * sin(float(i) * 2.3), -4.5 - 1.6 * float(i % 3))
 		isle.rotation.y = float(i) * 1.7
 		scenery.add_child(isle)
+
+
+## The universe behind a welcome (the first launch, as the design's title
+## screen): the Heart's realm in the middle, raised and larger, and the
+## outer realms in a ring round it, all far behind and above the figures so
+## the party stands in front of the world they will play.
+func add_universe(schools: Array, centre := Vector3(0.0, 2.75, -9.0), ring := 1.45) -> void:
+	# The ring is tipped toward the camera, so the realms show their tops as
+	# the universe map's view looks down on them, while the party in front
+	# is seen level.
+	var group := Node3D.new()
+	group.position = centre
+	group.rotation.x = 0.75
+	scenery.add_child(group)
+	group.add_child(StageHeroFigure.realm_ground("heart", 0.55))
+	# The Heart's Spire among a vault and a well, and a cottage or two on
+	# each outer realm: the map's light buildings (KitMap), all one mesh.
+	var g := Geo.new()
+	g = _town(g, "heart", Vector3.ZERO, 0.55, ["keeper_s_spire", "vault", "star_well", "library"])
+	for i: int in schools.size():
+		var a := TAU * float(i) / float(schools.size())
+		var r := 0.32 + 0.05 * float(i % 2)
+		var at := Vector3(cos(a) * ring, 0.15 * sin(float(i) * 2.1), sin(a) * ring)
+		var isle := StageHeroFigure.realm_ground(str(schools[i]), r)
+		isle.position = at
+		isle.rotation.y = float(i) * 1.7
+		group.add_child(isle)
+		g = _town(g, str(StageHeroFigure.REALM.get(str(schools[i]), "heart")), at, r,
+			["storehouse", "garden", "nursery"])
+		# A plank bridge from the Heart to it, as the map's links.
+		var flat := Vector3(at.x, 0.0, at.z)
+		var from := flat.normalized() * 0.5
+		var to := flat - flat.normalized() * r * 0.8
+		var mid := (from + to) * 0.5 + Vector3(0, 0.01, 0)
+		var yaw := atan2(flat.x, flat.z)
+		g.rbox(Geo.place(mid, yaw), Vector3(0.07, 0.025, from.distance_to(to)), Color("#7A5A3A"), 0.01)
+	var town := MeshInstance3D.new()
+	town.mesh = g.mesh()
+	town.material_override = toon(Color("#FFE6C8"), false, true)
+	town.material_override.set_shader_parameter("tint", Color(1.05, 1.0, 1.05))
+	group.add_child(town)
+	# The universe is lit as the map's day, brighter than a hero's ground
+	# (which stays a step darker than the figure on it).
+	for mi: MeshInstance3D in group.find_children("*", "MeshInstance3D", true, false):
+		if mi != town and mi.material_override is ShaderMaterial:
+			(mi.material_override as ShaderMaterial).set_shader_parameter("tint", Color(1.35, 1.3, 1.4))
+
+
+## A few of the map's buildings on an island of `radius` at `at`, the
+## first in the middle and the rest round it, added to `g`.
+static func _town(g: Geo, realm: String, at: Vector3, radius: float, list: Array) -> Geo:
+	var colours := RealmPalette.of(realm)
+	for i: int in list.size():
+		var a := TAU * float(i) / maxf(1.0, float(list.size() - 1)) + 0.7
+		var spot := at + (Vector3(cos(a), 0.0, sin(a)) * radius * 0.5 if i > 0 else Vector3.ZERO)
+		var lvl := 6 if i == 0 else 3
+		KitMap.build(g, str(list[i]), spot + Vector3(0, 0.02, 0), radius * (0.6 if i == 0 else 0.36), lvl, colours,
+			BuildingKit.look(lvl, colours))
+	return g
 
 
 ## What a figure takes up, in its own space: every mesh under it at rest,
@@ -470,19 +552,36 @@ func _light() -> void:
 ## Places the camera so every figure and its ground fit, a little below
 ## centre, as the design's hero view frames one.
 func _frame() -> void:
+	if welcome:
+		_frame_welcome()
+		return
 	var tall := 0.0
 	for i in figures.size():
 		var b := bounds(figures[i])
 		var top := b.end.y if b.size.y > 0.0 else StageHeroFigure.height(kinds[i])
 		# A flier's clip lifts it off the ground: frame the hover too.
-		tall = maxf(tall, top * (1.45 if kinds[i] in StageHeroFigure.FLIERS else 1.0))
+		tall = maxf(tall, top * ((1.2 if plinth else 1.45) if kinds[i] in StageHeroFigure.FLIERS else 1.0))
 	var wide := (tables[-1].position.x - tables[0].position.x) + tall * 0.95 if tables.size() > 1 else tall * 1.3
 	var aspect := maxf(0.2, size.x / maxf(1.0, size.y)) if size.y > 0.0 else 1.0
-	var need_h := maxf(tall * 1.75, wide / aspect) * (1.0 + headroom)
+	# One figure on its plinth is framed closer, as the design's hero cards
+	# fill their picture with the character.
+	var room := 1.42 if plinth and tables.size() == 1 else 1.75
+	var need_h := maxf(tall * room, wide / aspect) * (1.0 + headroom)
 	var dist := need_h * 0.5 / tan(deg_to_rad(FOV) * 0.5)
 	var target := Vector3(0, tall * (0.42 + headroom * 0.9), 0)
 	var eye := target + Vector3(0, 0.32, 1.0).normalized() * dist
 	camera.transform = Transform3D(Basis.looking_at(target - eye, Vector3.UP), eye)
+
+
+func _frame_welcome() -> void:
+	for i in tables.size():
+		var side := float(i) - (tables.size() - 1) / 2.0
+		tables[i].position = Vector3(side * 0.42, 0.0, 0.9 - absf(side) * 0.9)
+	var aspect := maxf(0.2, size.x / maxf(1.0, size.y)) if size.y > 0.0 else 0.5
+	# Far enough that the row fills the width, whatever the phone's shape.
+	var dist := 1.45 / (2.0 * tan(deg_to_rad(FOV) * 0.5) * aspect)
+	var eye := Vector3(0.0, 0.62, dist)
+	camera.transform = Transform3D(Basis.looking_at(Vector3(0.0, 2.2, -9.0) - eye, Vector3.UP), eye)
 
 
 func _notification(what: int) -> void:
@@ -535,16 +634,16 @@ func _pose() -> void:
 		backdrop.flash = 0.0
 
 
-## A close view's light on a model (the hero stage, portraits): the lit
-## paint lifted further toward warm white and the light steps started
-## earlier, so the model reads pale and soft as the design's portraits do,
-## where the world keeps T1's values for a model seen from far above.
+## A close view's light on a model (the hero stage, portraits): less of
+## the world's pale lift, so the paint keeps its colour and its shading
+## under the stage's key, as the design's hero renders; the world keeps
+## T1's values for a model seen from far above.
 static func _close_look(model: CreatureModel) -> void:
 	var m := model.material()
 	if m == null:
 		return
-	var lift := float(m.get_shader_parameter("lift")) if m.get_shader_parameter("lift") != null else 0.5
-	m.set_shader_parameter("lift", minf(0.95, lift * CLOSE_LIFT))
+	m.set_shader_parameter("lift", CLOSE_LIFT)
+	m.set_shader_parameter("tone", CLOSE_TONE)
 	m.set_shader_parameter("ramp_bias", CLOSE_RAMP_BIAS)
 
 

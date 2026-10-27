@@ -36,10 +36,12 @@ func _init(on: StageView) -> void:
 	view = on
 	name = "Town"
 	houses = MeshInstance3D.new()
-	houses.material_override = WorldView.material(_toon, true)
+	# The kit's own toon: it reads each part's foot and motion from the
+	# kit's vertex data (kit_toon.gdshader), which the plain toon does not.
+	houses.material_override = RealmKit.material("toon", true)
 	add_child(houses)
 	trim = MeshInstance3D.new()
-	trim.material_override = WorldView.material(_toon)
+	trim.material_override = RealmKit.material("toon")
 	add_child(trim)
 	smoke = MeshInstance3D.new()
 	smoke.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

@@ -12,23 +12,27 @@ extends RefCounted
 const GOLD := Color("#E9B65C")
 const BRASS := Color("#EBC25A")
 const IRON := Color("#3A3440")
+## How much larger than its parts the Vault is drawn, so the heist's prize
+## reads first, near a house's size as the design's realm and heist views
+## draw it.
+const SCALE := 1.6
 
 
-static func vault(open: bool) -> ArrayMesh:
+## The Vault, shut or `open`, in `realm`'s colours (§21.4; KitStyle): its
+## dome the realm's roof, its drum the realm's dressed stone.
+static func vault(open: bool, realm := "heart") -> ArrayMesh:
 	var g := Geo.new()
 	g.skip_down = true
-	_vault_into(g, open)
-	# Drawn two fifths larger than its parts, the heist's prize reads first,
-	# near a house's size as the design's realm and heist views draw it.
+	_vault_into(g, open, realm)
 	var arrays := g.st.commit_to_arrays()
 	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	for i in verts.size():
-		verts[i] *= 1.4
+		verts[i] *= SCALE
 	arrays[Mesh.ARRAY_VERTEX] = verts
 	var customs: PackedFloat32Array = arrays[Mesh.ARRAY_CUSTOM0]
 	for i in range(0, customs.size(), 4):
 		for k in 3:
-			customs[i + k] *= 1.4
+			customs[i + k] *= SCALE
 	arrays[Mesh.ARRAY_CUSTOM0] = customs
 	var m := ArrayMesh.new()
 	m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays, [], {},
@@ -36,16 +40,21 @@ static func vault(open: bool) -> ArrayMesh:
 	return m
 
 
-static func _vault_into(g: Geo, open: bool) -> void:
-	var stone := Color("#E6DCCB")
-	var stone2 := Color("#B9AE9C")
+static func _vault_into(g: Geo, open: bool, realm := "heart") -> void:
+	var style := KitStyle.of(realm)
+	var stone: Color = style["stone"]
+	var stone2: Color = style["stone2"]
+	var roof: Color = style["roof"]
 	var iron := Color("#4A4258")
-	# An eight-sided stone plinth in two steps.
-	g.prism(Geo.place(Vector3.ZERO, PI / 8.0), 8, 0.5, 0.48, 0.06, stone2, false, stone2.lightened(0.05))
-	g.prism(Geo.place(Vector3(0, 0.06, 0), PI / 8.0), 8, 0.43, 0.42, 0.05, stone, false, stone.lightened(0.04))
-	# The round strongbox: an iron drum girt with brass bands, star rivets
-	# round the upper one.
-	g.cyl(Geo.place(Vector3(0, 0.11, 0)), 0.36, 0.35, 0.34, iron, 16)
+	# The design's salmon pad (its heist draws the Vault on a broad one), then
+	# an eight-sided stone plinth.
+	var pad := Color("#E8A890") if realm == "heart" else stone2.lerp(Color("#E8D8B8"), 0.4)
+	g.prism(Geo.place(Vector3.ZERO, PI / 8.0), 8, 0.62, 0.6, 0.03, pad.darkened(0.12), false, pad)
+	g.prism(Geo.place(Vector3(0, 0.03, 0), PI / 8.0), 8, 0.47, 0.45, 0.06, stone2, false, stone2.lightened(0.05))
+	g.prism(Geo.place(Vector3(0, 0.09, 0), PI / 8.0), 8, 0.42, 0.41, 0.03, stone, false, stone.lightened(0.04))
+	# The round strongbox: a dressed-stone drum girt with brass bands, star
+	# rivets round the upper one (§21.5: "iron, brass, star rivets").
+	g.cyl(Geo.place(Vector3(0, 0.11, 0)), 0.36, 0.35, 0.34, stone, 16)
 	for y: float in [0.13, 0.4]:
 		g.cyl(Geo.place(Vector3(0, y, 0)), 0.37, 0.37, 0.05, BRASS, 16)
 	for k in 12:
@@ -64,7 +73,12 @@ static func _vault_into(g: Geo, open: bool) -> void:
 				Color(GOLD.lightened(0.2), 0.5), 8)
 		g.ball(Geo.place(Vector3(0, 0.52, 0)), 0.18, Color(GOLD.lightened(0.35), 0.1), 3, 8)
 	else:
-		g.ball(Geo.place(Vector3(0, 0.45, 0), 0.0, Vector3(1, 0.85, 1)), 0.35, BRASS, 4, 14, true)
+		# The dome in the realm's roof colour, as the design's Vault wears its
+		# realm's roof (02-heist), ribbed in brass.
+		g.ball(Geo.place(Vector3(0, 0.45, 0), 0.0, Vector3(1, 0.85, 1)), 0.35, roof, 4, 14, true)
+		for k in 4:
+			g.torus(Transform3D(Basis(Vector3.UP, PI / 4.0 * k) * Basis(Vector3.RIGHT, PI / 2.0)
+				* Basis().scaled(Vector3(1, 0.85, 1)), Vector3(0, 0.45, 0)), 0.352, 0.014, BRASS, 16, 3)
 		# A star finial (thin ribs would ink to black at the heist's zoom).
 		g.cyl(Geo.place(Vector3(0, 0.73, 0)), 0.06, 0.04, 0.05, GOLD, 8)
 		g.moving(Geo.Anim.SPIN_Y, Vector3(0, 0.86, 0))
@@ -76,6 +90,10 @@ static func _vault_into(g: Geo, open: bool) -> void:
 		g.cyl(Transform3D(face, Vector3(0, 0.27, 0.35)), 0.11, 0.11, 0.02, BRASS.darkened(0.15), 16)
 		g.torus(Transform3D(face, Vector3(0, 0.27, 0.37)), 0.075, 0.012, Color(Color("#FFF1C4"), 0.5), 14, 3)
 		g.gem(Transform3D(face, Vector3(0, 0.27, 0.375)), 0.04, 0.012, Color(Color("#FFF1C4"), 0.3), 5)
+		# Its gold sign over the door, framed dark, as the design marks the
+		# Vault in gold.
+		g.box(Geo.place(Vector3(0, 0.5, 0.36)), Vector3(0.34, 0.11, 0.03), KitStyle.WOOD_DARK)
+		g.box(Geo.place(Vector3(0, 0.5, 0.375)), Vector3(0.3, 0.075, 0.02), Color(Color("#FFD978"), 0.6))
 	# Two braziers before it, alight.
 	for x: float in [-0.34, 0.34]:
 		g.cyl(Geo.place(Vector3(x, 0.11, 0.38)), 0.035, 0.045, 0.16, iron, 6)

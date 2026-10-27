@@ -76,4 +76,10 @@ static func realm(r: Dictionary) -> Dictionary:
 		shown.append({"law": str(l["law"]), "name": Strings.term("LAW", str(l["law"])),
 			"crowned": bool(l.get("crowned", false)), "notes": l.get("notes", [])})
 	return {"realm": r["realm"], "title": UniversePresenter.realm_name(str(r.get("type", ""))), "laws": law_lines,
-		"lines": lines, "kinds": kinds, "shown": shown, "type": str(r.get("type", ""))}
+		"lines": lines, "kinds": kinds, "shown": shown, "type": str(r.get("type", "")),
+		"icon": realm_icon(str(r.get("type", "")))}
+
+
+## The design's mark for a realm type: the Heart's is "theheart".
+static func realm_icon(type: String) -> String:
+	return "theheart" if type.to_lower() == "heart" else type.to_lower()

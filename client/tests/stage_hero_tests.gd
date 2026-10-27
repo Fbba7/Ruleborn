@@ -70,3 +70,17 @@ func _portraits() -> void:
 	check.call("a portrait is made once a kind and look and shared, cut square from the top of what is drawn, a "
 		+ "stray glint left out (21.3)", a == b and a != c and a.get_width() == 256 and cut.get_width() == 256
 		and cut.get_pixel(128, 40).a > 0.5 and cut.get_pixel(4, 4).a == 0.0)
+	# A bust: a figure with a head (a round top) on a body, and a staff held
+	# out to the right; the bust is centred on the head, not the staff.
+	var figure := Image.create_empty(512, 512, false, Image.FORMAT_RGBA8)
+	figure.fill_rect(Rect2i(180, 80, 80, 80), Color.WHITE)
+	figure.fill_rect(Rect2i(160, 160, 120, 260), Color.WHITE)
+	figure.fill_rect(Rect2i(380, 60, 12, 380), Color.WHITE)
+	var head := PortraitStudio.crop_bust(figure)
+	var bust := Portrait.bust("featherkin")
+	var member := Portrait.of_member({"role": "Scout", "form": "hush"})
+	check.call("a portrait for a round frame is head and shoulders, centred on the face and cached by kind and form, "
+		+ "and a crew record finds its own (21.3, 21.8)",
+		bust == Portrait.bust("featherkin") and bust != a and member == Portrait.bust("featherkin", "hush")
+		and head.get_width() == 256 and head.get_pixel(128, 40).a > 0.5,
+		"%s %s" % [head.get_pixel(128, 40), bust == a])
