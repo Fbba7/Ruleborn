@@ -288,11 +288,18 @@ func _device_words() -> void:
 		"platforms": ["gc", "gp"]}
 	var on_iphone := AuthPresenter.methods(both, "gc")
 	var on_android := AuthPresenter.methods(both, "gp")
+	Strings.set_locale("pt_BR")
+	var in_portuguese := AuthPresenter.place("ES")
+	Strings.set_locale("de")
+	var in_german := AuthPresenter.place("es")
+	Strings.set_locale("en")
 	check.call("a device is named by its model, else its kind in words, then when it was last used on the "
-			+ "server's clock, its country in words (never an address) and its platform; the other platform "
+			+ "server's clock, its country in the player's language (never an address) and its platform; the other platform "
 			+ "is offered to add, and a link is removable only from a device that signs in the other way",
 		row["title"] == Strings.t("AUTH_KIND_ANDROID_PHONE") and str(row["line"]).contains(Strings.t("AUTH_SEEN_DAYS", 5))
 			and str(row["line"]).contains("Spain") and str(row["line"]).contains("Google")
+			and in_portuguese == "Espanha" and in_german == "Spanien" and AuthPresenter.place("ZZZ") == Strings.t(
+				"AUTH_PLACE_UNKNOWN")
 			and mine["title"] == "iPhone 15" and str(mine["spoken"]).contains(Strings.t("AUTH_THIS_DEVICE"))
 			and not str(mine["line"]).contains(Strings.t("AUTH_SEEN_NOW"))
 			and str(mine["line"]).contains(Strings.t("AUTH_PLACE_UNKNOWN"))

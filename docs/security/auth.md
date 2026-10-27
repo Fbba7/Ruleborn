@@ -105,7 +105,9 @@ in to the account.
   `server/privacy.json` as approximate location (App Store "Coarse
   Location", Play "Approximate location"), for security, erased with the
   account, deleted seven days after the session ends. Unset header, no
-  place. The phone words the code with the engine's country names.
+  place. The phone words the code in the player's language from
+  `client/i18n/countries.csv`, the CLDR's names for every ISO 3166-1
+  country (`tools/auth_countries.py`, which needs Babel to write it).
 - **Last used** is a refresh's `used_at`: no extra write, accurate to the
   hour, which is all the list shows.
 - Nothing the device sends can name its player: the kind is from a list,
@@ -341,7 +343,6 @@ client `auth_tests.gd`, 18 checks with the round trip against the server):
 - The native plugins (steps above): no Android SDK or Xcode here.
 - No certificate is pinned until the production chain is known
   (`ruleborn/tls_pins`, one setting).
-- Country names come from the engine, in English in every language.
 
 **For the owner to confirm:**
 
@@ -357,4 +358,5 @@ client `auth_tests.gd`, 18 checks with the round trip against the server):
   (T10's), one line in `server/test/privacy.test.mjs`, the `sessions`
   columns and `linked_identities` in `server/src/db.mjs`, the place header
   in `server/src/main.mjs`, and Apple's "Coarse Location" in
-  `tools/privacy_manifest.py` (the iOS privacy manifest written from it).
+  `tools/privacy_manifest.py` (the iOS privacy manifest written from it),
+  and `countries.csv` in `client/scripts/strings.gd`'s catalogue list.
