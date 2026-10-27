@@ -419,5 +419,5 @@ static func _season(column: VBoxContainer) -> void:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_child(KitCards.season_reward("Common", "currencies/starglass", "600", func() -> void: pass, false, "Claim"))
 	row.add_child(KitCards.season_reward("Common", "currencies/pages", "×2", func() -> void: pass, false, "Claim"))
-	row.add_child(KitCards.season_reward("Rare", "", "", Callable(), true))
+	row.add_child(KitCards.season_reward("Rare", "currencies/starglass", "1,200", Callable(), true))
 	column.add_child(row)
