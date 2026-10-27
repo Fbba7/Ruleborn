@@ -284,6 +284,15 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
    Quarryback a little further; the Emberling keeps the warm white).
 10. Paint at 256² for the smallest kinds: rejected, the hero view's irises
     lose their striations; the paint stays 512².
+11. Bloomling's petals were flat pink: pastel now lifts light paint most
+    (`pastel_by_value`), so a petal keeps its deep base under a pale tip.
+12. Glass Golem's bracers: not metal parts (the design's dark stone), so
+    the metal lift does nothing; left as they are.
+13. The heist at 21h: the Glass Golem guards were dark blobs on dark grass
+    (T5 brightens only the crew by night). A character's light now adapts
+    to a dim sun (`night_eye` 0.5 toward the Heart's noon `day_sun`, at most
+    ×1.7), so it keeps part of its daytime value at dusk and night; noon is
+    unchanged. Still: `w4_heist_night.png` (noon and 21h, before and after).
 
 ### Stills (`docs/art/shots/t1c/`, this session)
 
