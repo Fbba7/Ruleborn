@@ -146,6 +146,9 @@ Stills: `docs/art/shots/ui-screens/w5-<screen>.png`, the design's still on the l
 | 9 Codex | two cards a row, the album two screens tall | three a row wherever every met law's rank word fits a third of the album (T9's compact card); two in German |
 | 10 First launch | a lone icon where the design gathers its characters | three of the ruleborn (T1's portraits through `Portrait.of`) under the universe's mark |
 | 11 Weaving | 144 calls scrolled | its preview without the shadow pass, the figure kept (133) |
+| 13 Settings' Access | the text size a stepper among the rest; every switch its own framed card | the design's text-size card (small and large A, the size in large figures over a dot a step, a law's card to read at that size); the switches as rows of one card with hairlines |
+| 14 Shop | every card's art on the same dark well; kinds in lower case | each kind's stage edged in its colour (the design's reward tiles); kinds lead with a capital |
+| 15 Profile's log | each heist a list row with a large gold Watch replay | a stripe in the outcome's colour down the row's edge, the outcome's mark and pill; Watch replay in leather |
 | 12 Large text and contrast | Harmony's Sounding pill at 12 points, its band 1151 px wide at 200%; the share card's dash 3.7:1 on the bright material; Workshop's remix tag squeezed narrow | 13 points and under the name at large text; the share card on the lit card, inked at 12%; the remix tag on its own line |
 
 Every changed screen checked at 150% and 200% in six languages and in high contrast by `A11yTests` (the fast runner below); grayscale thumbnails of Harmony and Workshop compared.
