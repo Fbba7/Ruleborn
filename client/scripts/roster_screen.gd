@@ -78,7 +78,7 @@ func _build() -> void:
 	stage = StageHero.new()
 	stage.custom_minimum_size = Vector2(UI.px(150), UI.px(176))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	stage.size_flags_stretch_ratio = 0.9
+	stage.size_flags_stretch_ratio = 1.15
 	hero.add_child(stage)
 	hero_info = VBoxContainer.new()
 	hero_info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
