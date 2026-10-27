@@ -564,7 +564,10 @@ func _dress(node: Control, kind: String) -> void:
 func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -> void:
 	if kind != "" and str(stage.get_meta("showing", "")) != kind:
 		stage.set_meta("showing", kind)
-		stage.show_kinds([kind])
+		# The design's violet disc, its lip lit lavender.
+		stage.plinth_edge = Color("#6E60C8")
+		stage.show_kinds([kind], [], "plinth")
+		stage.backdrop.set_glow(Color("#8A78E8"))
 		for n in forms.get_children():
 			n.queue_free()
 		for look: String in LOOKS:

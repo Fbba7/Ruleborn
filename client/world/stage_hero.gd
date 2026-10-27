@@ -28,14 +28,18 @@ const IDLE2_EVERY := 7.0
 ## §21.3's three points: a warm key from above and in front, the night's
 ## violet as the fill (shade is never black), and a rim from behind.
 const KEY := Color("#FFE6C8")
-const KEY_ENERGY := 0.78
+const KEY_ENERGY := 0.6
 const FILL := Color("#C4BCEE")
-const FILL_ENERGY := 0.62
+const FILL_ENERGY := 0.3
 const RIM_ENERGY := 0.6
-## How much more a close view lifts a model's lit paint, and where its light
-## steps begin (creature_look.gdshaderinc's `lift` and `ramp_bias`).
-const CLOSE_LIFT := 1.7
-const CLOSE_RAMP_BIAS := 0.34
+## A close view's paint (creature_look.gdshaderinc): how far lit paint is
+## taken toward warm white (`lift`), how pale light paint grows (`tone`),
+## and where the light steps begin (`ramp_bias`). Lower than the world's,
+## so a character keeps its own colour and its shading up close, as the
+## design's hero renders do (Skyskipper gold, not butter).
+const CLOSE_LIFT := 0.25
+const CLOSE_TONE := 0.1
+const CLOSE_RAMP_BIAS := 0.1
 
 static var _toon: Shader = load("res://world/toon.gdshader")
 static var _outline: Shader = load("res://world/outline.gdshader")
@@ -62,6 +66,11 @@ var moving := true
 ## Sky kept clear above the figures for words over the stage, as a share of
 ## the frame's height (the first launch's title).
 var headroom := 0.0
+## The lip's colour on a "plinth" ground: gold on the Roster, the school's
+## or the form's note's colour elsewhere.
+var plinth_edge := Color("#E9B65C")
+## Whether the figures stand on plinths (show_kinds' "plinth" ground).
+var plinth := false
 var _spin := 0.0
 var _spin_speed := 0.0
 var _press := Vector2.ZERO
@@ -175,7 +184,8 @@ static func toon(rim: Color, inked := INKED, ground := false) -> ShaderMaterial:
 ## `looks` (the same index; "" when missing; "shadow" for a silhouette, as a
 ## locked one shows); the stage takes the first one's school. `ground`
 ## "hall" stands them on one floor of flagstones under arches, "island" on
-## one island together; otherwise each has its own patch.
+## one island together; "plinth" each on the design's dark disc; otherwise
+## each has its own patch.
 func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 	for t in tables:
 		t.queue_free()
@@ -195,6 +205,7 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 	for k: Variant in list:
 		gap = maxf(gap, StageHeroFigure.height(StageHeroFigure.key(str(k))))
 	var hall := ground == "hall"
+	plinth = ground == "plinth"
 	var shared := hall or ground == "island"
 	gap = maxf(gap * (0.62 if shared else 0.95), 0.75)
 	if shared:
@@ -222,7 +233,12 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		var h := StageHeroFigure.height(kind)
 		var own_school := StageHeroFigure.school(kind)
 		if not shared:
-			if list.size() == 1:
+			if ground == "plinth":
+				var disc := MeshInstance3D.new()
+				disc.mesh = StageHeroFigure.plinth(plinth_edge, maxf(0.35, h * 0.62))
+				disc.material_override = toon(rim, false, true)
+				table.add_child(disc)
+			elif list.size() == 1:
 				table.add_child(StageHeroFigure.realm_ground(own_school, maxf(0.3, h * 0.55)))
 			else:
 				# A row of figures shares §21.3's draw-call budget: each stands on
@@ -478,7 +494,10 @@ func _frame() -> void:
 		tall = maxf(tall, top * (1.45 if kinds[i] in StageHeroFigure.FLIERS else 1.0))
 	var wide := (tables[-1].position.x - tables[0].position.x) + tall * 0.95 if tables.size() > 1 else tall * 1.3
 	var aspect := maxf(0.2, size.x / maxf(1.0, size.y)) if size.y > 0.0 else 1.0
-	var need_h := maxf(tall * 1.75, wide / aspect) * (1.0 + headroom)
+	# One figure on its plinth is framed closer, as the design's hero cards
+	# fill their picture with the character.
+	var room := 1.42 if plinth and tables.size() == 1 else 1.75
+	var need_h := maxf(tall * room, wide / aspect) * (1.0 + headroom)
 	var dist := need_h * 0.5 / tan(deg_to_rad(FOV) * 0.5)
 	var target := Vector3(0, tall * (0.42 + headroom * 0.9), 0)
 	var eye := target + Vector3(0, 0.32, 1.0).normalized() * dist
@@ -535,16 +554,16 @@ func _pose() -> void:
 		backdrop.flash = 0.0
 
 
-## A close view's light on a model (the hero stage, portraits): the lit
-## paint lifted further toward warm white and the light steps started
-## earlier, so the model reads pale and soft as the design's portraits do,
-## where the world keeps T1's values for a model seen from far above.
+## A close view's light on a model (the hero stage, portraits): less of
+## the world's pale lift, so the paint keeps its colour and its shading
+## under the stage's key, as the design's hero renders; the world keeps
+## T1's values for a model seen from far above.
 static func _close_look(model: CreatureModel) -> void:
 	var m := model.material()
 	if m == null:
 		return
-	var lift := float(m.get_shader_parameter("lift")) if m.get_shader_parameter("lift") != null else 0.5
-	m.set_shader_parameter("lift", minf(0.95, lift * CLOSE_LIFT))
+	m.set_shader_parameter("lift", CLOSE_LIFT)
+	m.set_shader_parameter("tone", CLOSE_TONE)
 	m.set_shader_parameter("ramp_bias", CLOSE_RAMP_BIAS)
 
 

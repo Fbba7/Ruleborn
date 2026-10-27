@@ -76,7 +76,7 @@ func _build() -> void:
 		hero = VBoxContainer.new()
 	hero.add_theme_constant_override("separation", UI.px(8))
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(UI.px(150), UI.px(160))
+	stage.custom_minimum_size = Vector2(UI.px(150), UI.px(176))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stage.size_flags_stretch_ratio = 0.9
 	hero.add_child(stage)
@@ -194,7 +194,7 @@ func _refresh() -> void:
 func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 	var kind := str(c.get("kind", ""))
 	if str(stage.get_meta("showing", "")) != kind:
-		stage.show_kinds([kind])
+		stage.show_kinds([kind], [], "plinth")
 		stage.set_meta("showing", kind)
 	for n in stage.get_children():
 		if n.has_meta("words"):
@@ -270,7 +270,8 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 
 
 ## A chip a state, with how many are in it, that shows only those; "All"
-## first. The chosen one on the tab material.
+## first. The chosen one on the tab material. They wrap rather than scroll
+## sideways, so none is ever off the screen (§21.1).
 func _filters(rows: Array) -> Control:
 	var counts := {}
 	for row: Dictionary in rows:
@@ -347,6 +348,8 @@ static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "
 		App.services.router.go(&"character", {"id": row["id"]}), false, Color(), row["spoken"])
 	open.set_meta("item", "open:%d" % row["id"])
 	StageHeroSkin.flat(open, 15.0)
+	# The design's card names: the bold face, small, on the dark strip.
+	open.add_theme_font_override("font", UI.bold_font())
 	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
 		var flat := open.get_theme_stylebox(state) as StyleBoxFlat
 		flat.bg_color = Color("#1E1440") if state != "pressed" else Color("#3A2A6A")
@@ -360,10 +363,12 @@ static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "
 	var line := state_line(row)
 	line.alignment = BoxContainer.ALIGNMENT_CENTER
 	for l: Label in line.find_children("*", "Label", true, false):
-		l.add_theme_color_override("font_color", StageHeroSkin.LIGHT)
+		l.add_theme_color_override("font_color", StageHeroSkin.LIGHT_SOFT)
 		l.set_meta("points", 13.0)
 		l.add_theme_font_size_override("font_size", UI.text_px(13))
-		l.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	for r: ColorRect in line.find_children("*", "ColorRect", true, false):
+		r.custom_minimum_size = Vector2.ONE * UI.px(10)
 	var foot := MarginContainer.new()
 	foot.add_theme_constant_override("margin_bottom", UI.px(6))
 	foot.add_child(line)

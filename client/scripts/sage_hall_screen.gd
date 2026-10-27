@@ -130,13 +130,10 @@ func _refresh() -> void:
 		_hero(shown)
 		# The design's guard choice for the chosen Sage, wide under its card;
 		# each tile below keeps its own.
-		var o: Dictionary = shown["button"]
-		var guard := UI.button(o["action"], controller.station.bind(o["sage"]), false, Color(), o["spoken"])
-		StageHeroMaterial.button(guard, "tab")
-		guard.disabled = busy or not o["can"]
-		guard.set_meta("item", "hero_guard")
-		guard.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		cards.add_child(guard)
+		# The pair says where the chosen Sage is; the line naming the Sage on
+		# guard stays for when another one is shown.
+		(cards.get_child(0) as Control).visible = not shown["guarding"]
+		cards.add_child(_post(shown, busy))
 		cards.add_child(_powers(shown))
 	var count := StageHeroKit.kicker(Strings.t("CREW_HUB_SAGES"))
 	cards.add_child(count)
@@ -168,7 +165,9 @@ func _stand(s: Dictionary, sages: Array) -> void:
 	var key := "%s%s" % [s["id"], s["unlocked"]]
 	if str(stage.get_meta("showing", "")) != key:
 		stage.set_meta("showing", key)
-		stage.show_kinds([str(s["id"])], ["" if s["unlocked"] else "shadow"])
+		var own: Color = Palette.SCHOOL.get(str(s.get("school", "")).to_lower(), Palette.SPIRIT)
+		stage.plinth_edge = own.lightened(0.2)
+		stage.show_kinds([str(s["id"])], ["" if s["unlocked"] else "shadow"], "plinth")
 	for n in stage.get_children():
 		if n.has_meta("words"):
 			n.queue_free()
@@ -193,13 +192,45 @@ func _stand(s: Dictionary, sages: Array) -> void:
 			StageHeroSkin.on_stage(over, b, Control.PRESET_BOTTOM_LEFT if step < 0 else Control.PRESET_BOTTOM_RIGHT)
 
 
+## The design's pair under the hero card: on heists or on guard, the one
+## the Sage is at in gold with a tick; a tap on the other moves it there
+## (the server's station or recall, as the tile's own button does).
+func _post(s: Dictionary, busy: bool) -> Control:
+	var o: Dictionary = s["button"]
+	var row: BoxContainer = HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	if Settings.text_scale > 125:
+		row = VBoxContainer.new()
+		row.add_theme_constant_override("separation", UI.px(6))
+	for on_guard: bool in [false, true]:
+		var here: bool = bool(s["guarding"]) == on_guard
+		var words := Strings.t("SAGE_KICK_GUARD" if on_guard else "SAGE_ON_HEISTS")
+		var b := UI.button(("✓ " + words) if here else words, Callable() if here
+			else controller.station.bind(o["sage"]), false, Color(), words if here else str(o["spoken"]))
+		StageHeroMaterial.button(b, "gold" if here else ("tab" if on_guard else "leather"))
+		b.toggle_mode = true
+		b.button_pressed = here
+		b.disabled = not here and (busy or not o["can"])
+		b.set_meta("item", "post:%s" % ("guard" if on_guard else "heists"))
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(b)
+	return row
+
+
 ## Beside the stage: whether the chosen Sage is unlocked or on guard as
 ## chips, its name in Marcellus, its school, and the Sages' level.
 func _hero(s: Dictionary) -> void:
 	var chips := HFlowContainer.new()
 	chips.add_theme_constant_override("h_separation", UI.px(6))
 	chips.add_theme_constant_override("v_separation", UI.px(4))
-	chips.add_child(StageHeroKit.chip(s["lock"], "#1F6A35" if s["unlocked"] else "card", "✓" if s["unlocked"] else ""))
+	# As the design's: what the Sage is (a heist Sage, or on guard) on a gold
+	# chip; a locked one says when it unlocks.
+	if not s["unlocked"]:
+		chips.add_child(StageHeroKit.chip(s["lock"], "card", "generalui/lock", true))
+	elif s["guarding"]:
+		chips.add_child(StageHeroKit.chip(Strings.t("SAGE_KICK_GUARD").to_upper(), "gold", "◆"))
+	else:
+		chips.add_child(StageHeroKit.chip(Strings.t("SAGE_HEIST_SAGE").to_upper(), "gold", "screens/heist"))
 	hero_info.add_child(chips)
 	var name := StageHeroKit.words(s["name"], 26.0, StageHeroSkin.LIGHT)
 	StageHeroSkin.named(name)
@@ -208,7 +239,14 @@ func _hero(s: Dictionary) -> void:
 	name.custom_minimum_size.x = UI.px(80)
 	hero_info.add_child(name)
 	var school := StageHeroFigure.school(StageHeroFigure.key(str(s["id"])))
-	hero_info.add_child(StageHeroKit.para(Strings.t("SCHOOL_" + school.to_upper()), 14.0, StageHeroSkin.LIGHT_SOFT))
+	var key := str(s["id"]).to_upper()
+	var powers := [1, 2, 3].filter(func(i: int) -> bool: return Strings.rows().has("SAGE_POWER_%s_%d" % [key, i]))
+	hero_info.add_child(StageHeroKit.para(Strings.t("SAGE_LINE", [Strings.t("SCHOOL_" + school.to_upper()),
+		powers.size()]), 14.0, Color("#FFC8E8")))
+	hero_info.add_child(StageHeroKit.para(Strings.t("SAGE_STAYS" if s["guarding"] else "SAGE_JOINS"), 13.0,
+		StageHeroSkin.LIGHT_SOFT))
+	header_label.add_theme_font_size_override("font_size", UI.text_px(13))
+	header_label.set_meta("points", 13.0)
 	hero_info.add_child(header_label)
 
 

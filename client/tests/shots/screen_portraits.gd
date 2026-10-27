@@ -21,7 +21,9 @@ func _go() -> void:
 		var t := TextureRect.new()
 		t.custom_minimum_size = Vector2(200, 200)
 		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		t.texture = Portrait.of(k, OS.get_environment("LOOK"))
+		# BUST=1 draws the heads and shoulders a round frame takes (the heist).
+		t.texture = Portrait.bust(k, OS.get_environment("LOOK")) if OS.get_environment("BUST") != "" \
+			else Portrait.of(k, OS.get_environment("LOOK"))
 		grid.add_child(t)
 	for i in 120:
 		await process_frame
