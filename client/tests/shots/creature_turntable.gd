@@ -50,7 +50,7 @@ func _initialize() -> void:
 			var kv := pair.split("=")
 			var m: Material = c.material()
 			while m != null:
-				(m as ShaderMaterial).set_shader_parameter(kv[0], float(kv[1]))
+				(m as ShaderMaterial).set_shader_parameter(kv[0], _param(kv[1]))
 				m = m.next_pass
 		if OS.get_environment("FLAT") == "1":
 			# Shading only: the atlas as plain white (for judging the mesh's light).
@@ -100,3 +100,14 @@ func _initialize() -> void:
 
 func _aim(cam: Camera3D, from: Vector3, to: Vector3) -> void:
 	cam.transform = Transform3D(Basis.looking_at(to - from, Vector3.UP), from)
+
+
+# A PARAMS value: a float, or a colour as r:g:b (a vector as x;y;z).
+func _param(text: String) -> Variant:
+	var parts := text.split(":")
+	if parts.size() == 3:
+		return Color(float(parts[0]), float(parts[1]), float(parts[2]))
+	parts = text.split(";")
+	if parts.size() == 3:
+		return Vector3(float(parts[0]), float(parts[1]), float(parts[2]))
+	return float(text)

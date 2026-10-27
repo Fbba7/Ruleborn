@@ -227,7 +227,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 623396
+			"bytes": 554964
 		},
 		"ashmoth": {
 			"file": "ashmoth.glb",
@@ -522,7 +522,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 464608
+			"bytes": 419440
 		},
 		"bloomling": {
 			"file": "bloomling.glb",
@@ -701,6 +701,7 @@
 				}
 			],
 			"rim": "#FFD0E4",
+			"sheen": "#F0FFD8",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -712,7 +713,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 467716
+			"bytes": 403948
 		},
 		"cartographer": {
 			"file": "cartographer.glb",
@@ -899,6 +900,7 @@
 				}
 			],
 			"rim": "#BFEFFF",
+			"sheen": "#FFE8C8",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -910,7 +912,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 619352
+			"bytes": 553588
 		},
 		"chronicler": {
 			"file": "chronicler.glb",
@@ -1102,6 +1104,7 @@
 				}
 			],
 			"rim": "#9BEAF3",
+			"sheen": "#E8FCFF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -1113,7 +1116,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 628780
+			"bytes": 534292
 		},
 		"collector": {
 			"file": "collector.glb",
@@ -1308,6 +1311,7 @@
 				}
 			],
 			"rim": "#C8D8FF",
+			"sheen": "#C8E0FF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -1319,7 +1323,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 696768
+			"bytes": 621440
 		},
 		"devourer": {
 			"file": "devourer.glb",
@@ -1527,6 +1531,7 @@
 				}
 			],
 			"rim": "#9A6AFF",
+			"sheen": "#C8A8FF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -1538,7 +1543,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 589296
+			"bytes": 558568
 		},
 		"echoplate": {
 			"file": "echoplate.glb",
@@ -1717,6 +1722,7 @@
 				}
 			],
 			"rim": "#C08AD8",
+			"sheen": "#F4E8FF",
 			"glow": 0,
 			"surface": {
 				"metal": 1,
@@ -1728,7 +1734,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 497516
+			"bytes": 432208
 		},
 		"emberling": {
 			"file": "emberling.glb",
@@ -1907,6 +1913,7 @@
 				}
 			],
 			"rim": "#FF9A50",
+			"sheen": "#FFB070",
 			"glow": 1.6,
 			"surface": {
 				"metal": 0,
@@ -1918,7 +1925,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 553192
+			"bytes": 488768
 		},
 		"featherkin": {
 			"file": "featherkin.glb",
@@ -2097,6 +2104,7 @@
 				}
 			],
 			"rim": "#BFE4FF",
+			"sheen": "#FFF0D0",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -2108,7 +2116,7 @@
 				"shells": 0,
 				"len": 0.0026
 			},
-			"bytes": 702836
+			"bytes": 636464
 		},
 		"gardener": {
 			"file": "gardener.glb",
@@ -2300,6 +2308,7 @@
 				}
 			],
 			"rim": "#D8FF9A",
+			"sheen": "#FFF6DC",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -2311,7 +2320,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 788972
+			"bytes": 684176
 		},
 		"glassgolem": {
 			"file": "glassgolem.glb",
@@ -2523,6 +2532,7 @@
 				}
 			],
 			"rim": "#C8B0FF",
+			"sheen": "#E0D0FF",
 			"glow": 0,
 			"surface": {
 				"metal": 0.05,
@@ -2539,7 +2549,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 767600
+			"bytes": 711700
 		},
 		"hourglassstorm": {
 			"file": "hourglassstorm.glb",
@@ -2739,6 +2749,7 @@
 				}
 			],
 			"rim": "#FFE8B0",
+			"sheen": "#FFFFFF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -2750,7 +2761,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 398168
+			"bytes": 378244
 		},
 		"hourkeeper": {
 			"file": "hourkeeper.glb",
@@ -2929,6 +2940,7 @@
 				}
 			],
 			"rim": "#BFEFFF",
+			"sheen": "#E0F4FF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -2940,7 +2952,7 @@
 				"shells": 2,
 				"len": 0.003
 			},
-			"bytes": 486992
+			"bytes": 421392
 		},
 		"illusoryguard": {
 			"file": "illusoryguard.glb",
@@ -3130,7 +3142,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 713236
+			"bytes": 651608
 		},
 		"lamplighter": {
 			"file": "lamplighter.glb",
@@ -3322,6 +3334,7 @@
 				}
 			],
 			"rim": "#FFB070",
+			"sheen": "#FFE8D0",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -3333,7 +3346,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 679040
+			"bytes": 588540
 		},
 		"lanternfish": {
 			"file": "lanternfish.glb",
@@ -3497,6 +3510,7 @@
 				}
 			],
 			"rim": "#9BEAF3",
+			"sheen": "#C8F0FF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -3508,7 +3522,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 295756
+			"bytes": 277488
 		},
 		"lanternmoth": {
 			"file": "lanternmoth.glb",
@@ -3763,7 +3777,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 453940
+			"bytes": 409012
 		},
 		"lanternwisp": {
 			"file": "lanternwisp.glb",
@@ -3943,6 +3957,7 @@
 				}
 			],
 			"rim": "#FFD08A",
+			"sheen": "#FFE8F6",
 			"glow": 1.1,
 			"surface": {
 				"metal": 0,
@@ -3959,7 +3974,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 478116
+			"bytes": 412948
 		},
 		"mossbear": {
 			"file": "mossbear.glb",
@@ -4138,6 +4153,7 @@
 				}
 			],
 			"rim": "#C8F0B0",
+			"sheen": "#D8F0C0",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -4149,7 +4165,7 @@
 				"shells": 6,
 				"len": 0.013
 			},
-			"bytes": 1109540
+			"bytes": 948992
 		},
 		"prismbeetle": {
 			"file": "prismbeetle.glb",
@@ -4328,6 +4344,7 @@
 				}
 			],
 			"rim": "#C8B8FF",
+			"sheen": "#E8E0FF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -4339,7 +4356,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 365080
+			"bytes": 297060
 		},
 		"prismmite": {
 			"file": "prismmite.glb",
@@ -4519,6 +4536,7 @@
 				}
 			],
 			"rim": "#D8C8FF",
+			"sheen": "#E8DCFF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -4530,7 +4548,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 475384
+			"bytes": 411456
 		},
 		"puffballflock": {
 			"file": "puffballflock.glb",
@@ -4720,7 +4738,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 382704
+			"bytes": 315256
 		},
 		"puffbee": {
 			"file": "puffbee.glb",
@@ -4910,7 +4928,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 538272
+			"bytes": 470244
 		},
 		"quarryback": {
 			"file": "quarryback.glb",
@@ -5089,6 +5107,7 @@
 				}
 			],
 			"rim": "#C8B8FF",
+			"sheen": "#E8D8F0",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -5100,7 +5119,7 @@
 				"shells": 0,
 				"len": 0.004
 			},
-			"bytes": 476924
+			"bytes": 424176
 		},
 		"rambler": {
 			"file": "rambler.glb",
@@ -5279,6 +5298,7 @@
 				}
 			],
 			"rim": "#FFE0A0",
+			"sheen": "#FFE6B0",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -5290,7 +5310,7 @@
 				"shells": 7,
 				"len": 0.011
 			},
-			"bytes": 561588
+			"bytes": 508684
 		},
 		"reverser": {
 			"file": "reverser.glb",
@@ -5469,6 +5489,7 @@
 				}
 			],
 			"rim": "#FF9AD8",
+			"sheen": "#E8F8FF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -5480,7 +5501,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 519920
+			"bytes": 455704
 		},
 		"rootrunner": {
 			"file": "rootrunner.glb",
@@ -5659,6 +5680,7 @@
 				}
 			],
 			"rim": "#FFE0B0",
+			"sheen": "#FFE4B8",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -5670,7 +5692,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 493748
+			"bytes": 429236
 		},
 		"skyjelly": {
 			"file": "skyjelly.glb",
@@ -5930,6 +5952,7 @@
 				}
 			],
 			"rim": "#FFC8E8",
+			"sheen": "#FFFFFF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -5941,7 +5964,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 324568
+			"bytes": 291732
 		},
 		"skyskipper": {
 			"file": "skyskipper.glb",
@@ -6117,7 +6140,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 687472
+			"bytes": 636996
 		},
 		"soulmender": {
 			"file": "soulmender.glb",
@@ -6296,6 +6319,7 @@
 				}
 			],
 			"rim": "#E0B8FF",
+			"sheen": "#FFF0FF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -6312,7 +6336,7 @@
 					-0.3
 				]
 			},
-			"bytes": 532924
+			"bytes": 465404
 		},
 		"sparkwright": {
 			"file": "sparkwright.glb",
@@ -6491,6 +6515,7 @@
 				}
 			],
 			"rim": "#FFC89A",
+			"sheen": "#FFD8B8",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -6507,7 +6532,7 @@
 					-0.4
 				]
 			},
-			"bytes": 540428
+			"bytes": 476416
 		},
 		"stillwatch": {
 			"file": "stillwatch.glb",
@@ -6686,6 +6711,7 @@
 				}
 			],
 			"rim": "#BFF4FF",
+			"sheen": "#E0EEFF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -6697,7 +6723,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 484052
+			"bytes": 423512
 		},
 		"stormhound": {
 			"file": "stormhound.glb",
@@ -6876,6 +6902,7 @@
 				}
 			],
 			"rim": "#A8E4FF",
+			"sheen": "#FFD8B0",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -6892,7 +6919,7 @@
 					-0.45
 				]
 			},
-			"bytes": 539148
+			"bytes": 476936
 		},
 		"stray": {
 			"file": "stray.glb",
@@ -7079,6 +7106,7 @@
 				}
 			],
 			"rim": "#FFE0B8",
+			"sheen": "#FFE8D0",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -7090,7 +7118,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 506364
+			"bytes": 443208
 		},
 		"swarmling": {
 			"file": "swarmling.glb",
@@ -7349,6 +7377,7 @@
 				}
 			],
 			"rim": "#E8FFB0",
+			"sheen": "#F4FFD8",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -7360,7 +7389,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 445440
+			"bytes": 349900
 		},
 		"tidewalker": {
 			"file": "tidewalker.glb",
@@ -7539,6 +7568,7 @@
 				}
 			],
 			"rim": "#BFEFFF",
+			"sheen": "#FFE8C8",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -7550,7 +7580,7 @@
 				"shells": 5,
 				"len": 0.008
 			},
-			"bytes": 629744
+			"bytes": 569232
 		},
 		"tinkerer": {
 			"file": "tinkerer.glb",
@@ -7742,6 +7772,7 @@
 				}
 			],
 			"rim": "#9FF0E8",
+			"sheen": "#FFF0D8",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -7753,7 +7784,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 896692
+			"bytes": 795740
 		},
 		"twinned": {
 			"file": "twinned.glb",
@@ -7964,6 +7995,7 @@
 				}
 			],
 			"rim": "#FFE6A0",
+			"sheen": "#FFF0C8",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -7975,7 +8007,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 855308
+			"bytes": 708740
 		},
 		"unmade": {
 			"file": "unmade.glb",
@@ -8149,6 +8181,7 @@
 				}
 			],
 			"rim": "#FFFFFF",
+			"sheen": "#FFFFFF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -8160,7 +8193,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 455272
+			"bytes": 389748
 		},
 		"valemoth": {
 			"file": "valemoth.glb",
@@ -8439,7 +8472,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 510728
+			"bytes": 465804
 		},
 		"wanderer": {
 			"file": "wanderer.glb",
@@ -8631,6 +8664,7 @@
 				}
 			],
 			"rim": "#B8C8FF",
+			"sheen": "#E8ECFF",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -8642,7 +8676,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 599140
+			"bytes": 505760
 		},
 		"wildfirebloom": {
 			"file": "wildfirebloom.glb",
@@ -8910,6 +8944,7 @@
 				}
 			],
 			"rim": "#FFB060",
+			"sheen": "#FFE0A0",
 			"glow": 0,
 			"surface": {
 				"metal": 0,
@@ -8921,7 +8956,7 @@
 				"shells": 0,
 				"len": 0.0045
 			},
-			"bytes": 749756
+			"bytes": 660552
 		}
 	}
 }
