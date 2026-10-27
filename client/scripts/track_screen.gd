@@ -8,6 +8,9 @@ extends Control
 ## ring and the stars toward the next tier, then the pass as a road, the
 ## free lane and the Starpass lane either side of each tier's node.
 
+## The tier rail's height, in points.
+const RAIL_POINTS := 64.0
+
 var controller: ShopController
 var body: VBoxContainer
 var title_label: Label
@@ -151,7 +154,8 @@ func _refresh() -> void:
 			if key == "league":
 				App.services.router.go(&"social")))
 	body.add_child(ScreenKit.panel("card_lit", _strip, 18.0, 12.0))
-	body.add_child(_road(t["rows"], bool(t["premium"])))
+	var share := float(t["stars_n"]) / maxf(float(t["next_cost"]), 1.0)
+	body.add_child(_road(t["rows"], bool(t["premium"]), int(t["claimed_n"]), share))
 	if Settings.text_scale > 125:
 		body.add_child(_pass_card)
 
@@ -159,7 +163,7 @@ func _refresh() -> void:
 ## The design's track: one column a tier, the Starpass reward over the
 ## tier's node on the road and the free reward under it, scrolled sideways,
 ## the next tier lit; the lanes named at their start.
-func _road(rows: Array, premium: bool) -> Control:
+func _road(rows: Array, premium: bool, claimed: int, share: float) -> Control:
 	var row := ScreenStrip.new()
 	row.separation = UI.px(8)
 	var lanes := VBoxContainer.new()
@@ -168,52 +172,48 @@ func _road(rows: Array, premium: bool) -> Control:
 		var tag: Control
 		if key == "":
 			tag = Control.new()
-			tag.custom_minimum_size = Vector2(UI.px(20), UI.px(44))
+			tag.custom_minimum_size = Vector2(UI.px(20), UI.px(RAIL_POINTS))
 		else:
 			var l := ScreenKit.text(Strings.t(key), 13.0, "words", "active" if key != "SCREEN_FREE_LANE" else "card")
 			tag = ScreenKit.panel("tab_active" if key != "SCREEN_FREE_LANE" else "card", l, 10.0, 4.0)
 			tag.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		lanes.add_child(tag)
 	row.add_child(lanes)
+	# The design's road: the Starpass rewards over T9's tier rail (gold up to
+	# the tier reached, the reached one large in its ring), the free ones
+	# under it, a column a tier.
+	var road := VBoxContainer.new()
+	road.add_theme_constant_override("separation", UI.px(8))
+	var paid := HBoxContainer.new()
+	var free := HBoxContainer.new()
+	for lane: HBoxContainer in [paid, free]:
+		lane.add_theme_constant_override("separation", UI.px(8))
 	var at := 0
 	for r: Dictionary in rows:
-		row.add_child(_tier_row(r, premium))
-		if r["state"] == "next":
+		var state := str(r["state"])
+		var top := _reward(r["paid"], r["paid_mark"], state, not premium and r["paid"] != "")
+		var bottom := _reward(r["free"], r["free_mark"], state, false)
+		for cell: Control in [top, bottom]:
+			cell.custom_minimum_size.x = UI.px(_column())
+			cell.tooltip_text = r["text"]
+		paid.add_child(top)
+		free.add_child(bottom)
+		if state == "next":
 			at = int(r["tier"])
-	# Open at the next tier, as the design does.
-	# Two tiers before it on show, or one where large text leaves room for two.
+	var first := int((rows[0] as Dictionary)["tier"]) if not rows.is_empty() else 1
+	var reached := at - 1 if at > 0 else first + rows.size() - 1
+	var rail := KitRail.make(first, maxi(rows.size(), 1), reached, share,
+		Strings.t("SCREEN_TIERS_CLAIMED", [claimed, rows.size()]))
+	rail.custom_minimum_size = Vector2(UI.px(_column() + 8.0) * rows.size(), UI.px(RAIL_POINTS))
+	road.add_child(paid)
+	road.add_child(rail)
+	road.add_child(free)
+	row.add_child(road)
+	# Open at the next tier, as the design does: two tiers before it on show,
+	# or one where large text leaves room for two.
 	var before := 2 if Settings.text_scale <= 125 else 1
 	row.ready.connect(func() -> void: row.set_deferred("offset", maxf(0.0, (at - before) * UI.px(_column() + 8.0))))
 	return row
-
-
-## One tier on the road: the Starpass reward, locked while the pass is not
-## held; the tier's node; the free reward. Claimed tiers carry a tick, the
-## next one is lit.
-func _tier_row(row: Dictionary, premium: bool) -> Control:
-	var state := str(row["state"])
-	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", UI.px(8))
-	col.custom_minimum_size.x = UI.px(_column())
-	col.add_child(_reward(row["paid"], row["paid_mark"], state, not premium and row["paid"] != ""))
-	var node := ScreenKit.text(str(int(row["tier"])), 17.0, "number", "gold" if state != "later" else "well")
-	node.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	node.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	var plate := ScreenKit.panel("gold" if state != "later" else "well", node, -1.0, 2.0)
-	plate.custom_minimum_size = Vector2(UI.px(44), UI.px(44))
-	plate.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	if state == "next":
-		RbBox.of(plate).set_chosen(true)
-	# The road through the nodes: solid up to the next tier, dashed beyond.
-	var road := HBoxContainer.new()
-	road.add_theme_constant_override("separation", 0)
-	road.add_child(ScreenThread.make(UI.px(44), state != "later"))
-	road.add_child(plate)
-	road.add_child(ScreenThread.make(UI.px(44), state == "claimed"))
-	col.add_child(road)
-	col.add_child(_reward(row["free"], row["free_mark"], state, false))
-	col.tooltip_text = row["text"]
-	return col
 
 
 ## A tier's width on the road, in points: wider at large text.
