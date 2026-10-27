@@ -37,6 +37,7 @@
   "SR-26: a Godot download that is not Godot's own is refused before it is unpacked": "passed",
   "SR-27: the client follows no redirect, so its token goes to no other host": "passed",
   "SR-28: made-up refresh tokens naming a session cannot hold its real refresh back": "passed",
+  "SR-29: the server will not start with sign-in stubbed unless told it is a test": "passed",
   "Sign-out (T11, built): a session token is refused the moment its session is signed out": "passed",
   "a 13-to-15 profile is never served to another account, a 16-to-17 or adult one only once its switch is on, and a 13-to-15 player cannot turn it on (20.2)": "passed",
   "a 13-to-15's challenge link is played by their friends only (17.6, 20.7)": "passed",
