@@ -398,6 +398,8 @@ func _refresh() -> void:
 			b.accessibility_name += ", " + Strings.t("HEIST_USES_LEFT", b.uses)
 		b.tooltip_text = b.accessibility_name
 	if pause_button != null:
+		# Nothing runs before the crew lands: the picker's title has the room.
+		pause_button.visible = not choosing
 		pause_button.accessibility_name = Strings.t("HEIST_RESUME" if paused else "HEIST_PAUSE")
 		pause_button.tooltip_text = pause_button.accessibility_name
 		pause_button.set_meta("icon", "play" if paused else "pause")

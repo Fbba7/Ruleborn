@@ -6,6 +6,11 @@ extends RefCounted
 ## order. All of it is read from `RulebornReplay`; none of it decides
 ## anything.
 
+## How far an unshown guard's facing fan reaches, in metres: enough to say
+## where it looks (§21.12) without lines across the island (the design's calm
+## middle); the shown guard's whole sight is the overlay's.
+const FAN_REACH := 1.6
+
 
 ## §21.12: "Sharp edges, no gradients. A tile is inside or outside": each
 ## tile the shown guard's cone reaches, as the simulation decides it, filled
@@ -47,9 +52,11 @@ static func sight(view: WorldView) -> void:
 		view.overlay.material_override = WorldView.clear_material(0.42)
 
 
-## A thin dashed outline of a cone on the ground: two edges and the far arc,
-## a hint of where a guard looks rather than a second shape to read.
+## A thin dashed fan on the ground at a guard's feet: its cone's two edges
+## and an arc, cut short, a hint of where it looks rather than a second shape
+## to read.
 static func cone_outline(g: Geo, at: Vector3, facing: float, cone: float, far: float) -> void:
+	far = minf(far, FAN_REACH)
 	var half := cone * 0.5
 	var steps := 10
 	var colour := Color("#F3EEFF", 0.55)
@@ -59,8 +66,8 @@ static func cone_outline(g: Geo, at: Vector3, facing: float, cone: float, far: f
 		var a := facing - half + cone * k / steps
 		pts.append(at + Vector3(cos(a), 0, sin(a)) * far)
 	pts.append(at)
-	var dash := 0.28
-	var gap := 0.18
+	var dash := 0.2
+	var gap := 0.12
 	for k in pts.size() - 1:
 		var a3: Vector3 = pts[k]
 		var b3: Vector3 = pts[k + 1]
