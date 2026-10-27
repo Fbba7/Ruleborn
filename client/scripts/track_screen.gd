@@ -144,8 +144,10 @@ func _refresh() -> void:
 		body.remove_child(_pass_card)
 	for c in body.get_children():
 		c.queue_free()
-	body.add_child(ScreenParts.segmented([{"text": Strings.t("SCREEN_PASS"), "key": "pass", "on": true},
-		{"text": Strings.t("SCREEN_LEAGUE"), "key": "league", "on": false}], func(key: String) -> void:
+	body.add_child(ScreenParts.segmented([{"text": Strings.t("SCREEN_PASS"), "key": "pass", "on": true,
+		"icon": "season/seasontrack"},
+		{"text": Strings.t("SCREEN_LEAGUE"), "key": "league", "on": false,
+		"icon": "leagues/ember"}], func(key: String) -> void:
 			if key == "league":
 				App.services.router.go(&"social")))
 	body.add_child(ScreenKit.panel("card_lit", _strip, 18.0, 12.0))

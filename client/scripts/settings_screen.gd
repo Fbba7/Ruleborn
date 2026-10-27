@@ -53,8 +53,10 @@ func _layout() -> void:
 	for tab: VBoxContainer in [game, access]:
 		tab.add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
 	list.add_child(ScreenParts.segmented([
-		{"text": Strings.t("SCREEN_SETTINGS_GAME"), "key": "game", "on": tab_shown == "game"},
-		{"text": Strings.t("SCREEN_SETTINGS_ACCESS"), "key": "access", "on": tab_shown == "access"}],
+		{"text": Strings.t("SCREEN_SETTINGS_GAME"), "key": "game", "on": tab_shown == "game",
+			"icon": "generalui/settings"},
+		{"text": Strings.t("SCREEN_SETTINGS_ACCESS"), "key": "access", "on": tab_shown == "access",
+			"icon": "settingsandwellbeing/accessibility"}],
 		func(key: String) -> void:
 			tab_shown = key
 			_build()))

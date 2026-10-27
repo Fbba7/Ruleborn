@@ -62,8 +62,10 @@ func _refresh() -> void:
 	body.add_child(_hero(p))
 	# The design's tabs: both built, the one chosen shown.
 	body.add_child(ScreenParts.segmented([
-		{"text": Strings.t("SCREEN_OVERVIEW"), "key": "overview", "on": tab_shown == "overview"},
-		{"text": Strings.t("PROFILE_LOG_TITLE"), "key": "log", "on": tab_shown == "log"}], func(key: String) -> void:
+		{"text": Strings.t("SCREEN_OVERVIEW"), "key": "overview", "on": tab_shown == "overview",
+			"icon": "screens/character"},
+		{"text": Strings.t("PROFILE_LOG_TITLE"), "key": "log", "on": tab_shown == "log",
+			"icon": "screens/heist"}], func(key: String) -> void:
 			tab_shown = key
 			_refresh()))
 	var overview := VBoxContainer.new()

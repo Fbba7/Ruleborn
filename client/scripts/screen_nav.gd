@@ -89,7 +89,10 @@ static func hub(name: String, route: StringName) -> PanelContainer:
 	for h: Dictionary in Router.HUBS[name]:
 		if h["route"] == route:
 			chosen = routes.size()
-		options.append(Strings.t(str(h["words"])))
+		if h.has("icon"):
+			options.append([Strings.t(str(h["words"])), str(h["icon"])])
+		else:
+			options.append(Strings.t(str(h["words"])))
 		routes.append(h["route"])
 	# At large text three words do not fit one strip: chips that wrap, so no
 	# word is broken.
@@ -98,7 +101,9 @@ static func hub(name: String, route: StringName) -> PanelContainer:
 		row.alignment = FlowContainer.ALIGNMENT_CENTER
 		for i: int in options.size():
 			var to: StringName = routes[i]
-			row.add_child(ScreenParts.chip(str(options[i]), i == chosen, func() -> void:
+			var option: Variant = options[i]
+			var words: String = str((option as Array)[0]) if option is Array else str(option)
+			row.add_child(ScreenParts.chip(words, i == chosen, func() -> void:
 				if to != route:
 					App.services.router.go(to)))
 		var p := ScreenKit.panel("well", row, 18.0, 6.0)

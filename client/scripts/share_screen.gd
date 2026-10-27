@@ -46,8 +46,10 @@ func _refresh() -> void:
 		body.remove_child(child)
 		child.queue_free()
 	body.add_child(ScreenParts.segmented([
-		{"text": Strings.t("SCREEN_TAB_CHALLENGE"), "key": "challenge", "on": tab_shown == "challenge"},
-		{"text": Strings.t("SCREEN_TAB_INVITE"), "key": "invite", "on": tab_shown == "invite"}],
+		{"text": Strings.t("SCREEN_TAB_CHALLENGE"), "key": "challenge", "on": tab_shown == "challenge",
+			"icon": "screens/realm"},
+		{"text": Strings.t("SCREEN_TAB_INVITE"), "key": "invite", "on": tab_shown == "invite",
+			"icon": "social/invite"}],
 		func(key: String) -> void:
 			tab_shown = key
 			_refresh()))

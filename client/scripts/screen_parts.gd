@@ -85,7 +85,12 @@ static func segmented(options: Array, pressed: Callable) -> Control:
 	var words: Array = []
 	var chosen := 0
 	for i: int in options.size():
-		words.append(str((options[i] as Dictionary)["text"]))
+		var o: Dictionary = options[i]
+		# With an icon, the design's segment: the icon over its word.
+		if o.has("icon"):
+			words.append([str(o["text"]), str(o["icon"])])
+		else:
+			words.append(str(o["text"]))
 		if (options[i] as Dictionary).get("on", false):
 			chosen = i
 	return KitNav.segmented(words, chosen, func(i: int) -> void: pressed.call((options[i] as Dictionary)["key"]))

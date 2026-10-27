@@ -49,10 +49,12 @@ const TABS := {"islands": &"home", "laws": &"codex", "heist": &"observatory", "c
 ## The hubs a tab opens, chosen by the gold control under the header: their
 ## screens, in order, with the words on each segment.
 const HUBS := {
-	"laws": [{"route": &"codex", "words": "HUB_ALL_LAWS"}, {"route": &"harmony", "words": "HUB_HARMONY"},
-		{"route": &"lab", "words": "HUB_LAB"}],
-	"crew": [{"route": &"roster", "words": "HUB_ROSTER"}, {"route": &"sages", "words": "HUB_SAGES"},
-		{"route": &"forms", "words": "HUB_FORMS"}],
+	"laws": [{"route": &"codex", "words": "HUB_ALL_LAWS", "icon": "screens/lawcodex"},
+		{"route": &"harmony", "words": "HUB_HARMONY", "icon": "screens/harmonyview"},
+		{"route": &"lab", "words": "HUB_LAB", "icon": "screens/resonancelab"}],
+	"crew": [{"route": &"roster", "words": "HUB_ROSTER", "icon": "screens/roster"},
+		{"route": &"sages", "words": "HUB_SAGES", "icon": "screens/sagehall"},
+		{"route": &"forms", "words": "HUB_FORMS", "icon": "screens/formsalbum"}],
 }
 
 var store: Store

@@ -91,8 +91,10 @@ func _refresh() -> void:
 	# The design's tabs under the faces: what friends did, or the friends
 	# themselves with what can be done about each.
 	body.add_child(ScreenParts.segmented([
-		{"text": Strings.t("SCREEN_FEED"), "key": "feed", "on": tab_shown == "feed"},
-		{"text": Strings.t("KIT_TAB_FRIENDS"), "key": "friends", "on": tab_shown == "friends"}],
+		{"text": Strings.t("SCREEN_FEED"), "key": "feed", "on": tab_shown == "feed",
+			"icon": "social/share"},
+		{"text": Strings.t("KIT_TAB_FRIENDS"), "key": "friends", "on": tab_shown == "friends",
+			"icon": "social/friends"}],
 		func(key: String) -> void:
 			tab_shown = key
 			_refresh()))
