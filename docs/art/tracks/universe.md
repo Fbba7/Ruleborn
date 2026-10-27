@@ -426,3 +426,21 @@ settings survive home's `Settings.restore()`.
   out; the cloud wipe is held fully shut for the middle 40% of a swoop between realms (it had been shut
   only at the instant of the jump, where a frame either side could show gaps between the banks and the
   world changing behind them). Reduced motion still cuts.
+
+## Stopped here (fourth session, 03:50 UTC)
+
+- Done: merged main (1e8619b) and the UI kit (502b5a0); home fits every phone shape, text size and language,
+  with a test that fills home with the widest amounts and checks every control lies inside the screen
+  (it would have caught the clipped right edge); rounds 37–39 against the design (compact amounts, FULL
+  in the row, 48-point side buttons, realm labels clear of the side buttons, ease-out swoop, wipe held
+  shut through the jump). Two one-line fixes outside my files that every branch needed (weaving test's
+  High Tide date, completion's contrast proof name). Full `check_all` passed on cd3ac6e.
+- Still worse than the design: the tab bar is boxed, not edge to edge (T9's `KitTabs`), and its names
+  truncate at large text (home hides them); the side balls are 48 points where the design's are about 36
+  (the kit draws the disc at the full hit area); Collect shows no amount; at 150–200% text some realm
+  labels hide for want of room; the strain pill's high-contrast outline is not drawn.
+- Next: re-measure triangles at every zoom after this wave's merge; a kit hook for a smaller disc over a
+  48-point hit area; Collect with its compact amount; a still of the swoop's frames.
+- Container restarts this session lost two check runs; the environment needed `rustup target add
+  wasm32-unknown-unknown`, `pip install gdtoolkit==4.*` and `pip install playwright==1.63.0` (to match the
+  pre-installed Chromium) before `check_all` could run.
