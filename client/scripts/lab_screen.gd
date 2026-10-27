@@ -135,6 +135,10 @@ func _chamber(c: Dictionary, busy: bool) -> Control:
 			var s: Dictionary = items[i]
 			# A tap moves the sphere to the next restored law.
 			var b := ScreenKit.button(s["text"], controller.cycle.bind(n, int(s["slot"])), "well", s["spoken"], 14.0)
+			# Quiet under its gem, as the running pair's names are.
+			b.add_theme_font_size_override("font_size", UI.text_px(13))
+			b.set_meta("points", 13.0)
+			UI.fit(b)
 			b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			b.custom_minimum_size.x = UI.px(96)
 			b.disabled = busy
