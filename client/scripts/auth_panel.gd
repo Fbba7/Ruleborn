@@ -8,6 +8,10 @@ extends VBoxContainer
 ## which stays on the phone for this account. Built from the UI kit; the
 ## words from AuthPresenter.
 
+## After each build: a host screen may dress the panel in its own look
+## (Settings, ScreenAccount), its words and actions unchanged.
+signal built
+
 var status_label: Label
 var detail_label: Label
 var _dialog: Control
@@ -55,6 +59,7 @@ func _build() -> void:
 		b.set_meta("auth", a)
 		r.add_child(b)
 	add_child(r)
+	built.emit()
 
 
 ## An action pressed: signing in at once; a sign-out confirmed first.

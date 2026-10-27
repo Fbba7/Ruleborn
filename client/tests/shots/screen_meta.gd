@@ -25,6 +25,18 @@ func _go() -> void:
 	ScreenShots.fill(name, App.services.store)
 	for i in 8:
 		await process_frame
+	# TAB: a screen's tab on show (Settings' "account").
+	if OS.get_environment("TAB") != "" and "tab_shown" in screen:
+		screen.set("tab_shown", OS.get_environment("TAB"))
+		screen.call("_build")
+		for i in 4:
+			await process_frame
+	# AUTH: the account's sign-in state ("signed_in", "failed", "offline").
+	if OS.get_environment("AUTH") != "":
+		App.services.store.dispatch(&"auth_status", {"status": OS.get_environment("AUTH"), "reason": "network"})
+		App.services.store.dispatch(&"auth_devices", {"devices": 2})
+		for i in 3:
+			await process_frame
 	if OS.get_environment("SCROLL") != "":
 		for s: ScrollContainer in screen.find_children("*", "ScrollContainer", true, false):
 			s.scroll_vertical = int(OS.get_environment("SCROLL"))

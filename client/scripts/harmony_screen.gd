@@ -7,7 +7,7 @@ extends Control
 
 var controller: HarmonyController
 ## §21.7's harmony on screen, live: the realm with the most laws woven, its
-## threads, clashes and chords drawn between its pylons (LawFxPreview).
+## threads, clashes and chords drawn between its pylons (ScreenHarmonyStage).
 var preview: LawFxPreview
 var body: VBoxContainer
 var header_label: Label
@@ -44,7 +44,7 @@ func _build() -> void:
 	column.add_child(ScreenParts.status_plate(status_label))
 	body = UI.scroll(column)
 	# In the scroll, so large text never pushes the buttons off the phone.
-	preview = LawFxPreview.new()
+	preview = ScreenHarmonyStage.new()
 	preview.custom_minimum_size.y = UI.px(300)
 	preview.visible = false
 	_stage = MarginContainer.new()
