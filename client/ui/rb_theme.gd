@@ -151,10 +151,13 @@ static func _build(family: String) -> Theme:
 			th.set_constant("shadow_offset_x", v, 0)
 			th.set_constant("shadow_offset_y", v, maxi(1, UI.px(float(t["drop"]))))
 			th.set_constant("shadow_outline_size", v, 0)
-		if t.has("outline"):
+		# Light words on a dark surface are stroked in ink; ink words on a
+		# light one are not (the designs' figures on parchment are plain
+		# ink, and an ink stroke round ink only fattens it).
+		if t.has("outline") and not light:
 			th.set_color("font_outline_color", v, Tokens.color("ink_line"))
 			th.set_constant("outline_size", v, UI.px(float(t["outline"])))
-			th.set_color("font_color", v, Tokens.color("cream") if not light else text)
+			th.set_color("font_color", v, Tokens.color("cream"))
 	# A title stands over the designs' gold rule (UI.title draws it in this
 	# margin).
 	var under := StyleBoxEmpty.new()
