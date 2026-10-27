@@ -223,7 +223,12 @@ const contact = contactMatch ? { name: contactMatch[1], email: contactMatch[2] }
 const peerHeader = (process.env.RULEBORN_PEER_HEADER ?? "").trim().toLowerCase();
 if (!peerHeader) console.warn("RULEBORN_PEER_HEADER unset: failed sign-ins are not limited by address (G44)");
 const peerOf = peerHeader ? (request) => request.headers.get(peerHeader) : null;
-const handle = handler(service, { webClientId, appleNotifications, contact, peerOf });
+// The devices list's country: a header the edge sets from the address,
+// RULEBORN_PLACE_HEADER (Cloudflare's cf-ipcountry). Only the country is
+// kept, never the address (docs/security/auth.md). Unset, no place is shown.
+const placeHeader = (process.env.RULEBORN_PLACE_HEADER ?? "").trim().toLowerCase();
+const placeOf = placeHeader ? (request) => request.headers.get(placeHeader) : null;
+const handle = handler(service, { webClientId, appleNotifications, contact, peerOf, placeOf });
 
 // §20.12's "backups included": a database restored from before a deletion
 // has it made again before anyone can sign in.

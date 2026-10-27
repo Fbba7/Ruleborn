@@ -5,8 +5,10 @@
 //   POST /v1/session             {"credential": …}          → {account, token, expiresIn, refreshToken}
 //   POST /v1/session/nonce                                   → {nonce, expiresIn}: for a Google ID token (auth_http.mjs)
 //   POST /v1/session/refresh     {"refreshToken"}           → a new pair; the one sent is spent
-//   POST /v1/session/end         {"everywhere"?, "refreshToken"?} → {ended}: this session, or every one
+//   POST /v1/session/end         {"everywhere"?, "others"?, "device"?, "refreshToken"?} → {ended}
 //   GET  /v1/session                                         → {account, devices}
+//   GET  /v1/session/devices                                 → the devices list (auth_http.mjs)
+//   POST /v1/session/link|unlink {"current", …}              → another platform's identity (auth_http.mjs)
 //   PUT  /v1/islands/:realm      island bundle bytes         → {bundle}; heart or outer-1 … outer-6
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
 //   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?, "mode"?, "challenge"?, "universe"?} → the lease
@@ -342,10 +344,11 @@ export function routeOf(url) {
  * served. `limiter` holds each caller to limits.mjs's buckets (G44). Failed
  * sign-ins are held by address only where `peerOf(request)` says what the
  * caller's address is — a header the deployment's own proxy sets, never one
- * a caller could choose.
+ * a caller could choose. `placeOf(request)` is the country the edge says a
+ * request came from, kept on a session for its devices list (auth.mjs).
  */
 export function handler(service, { webClientId = null, appleNotifications = null, contact = null,
-                                   limiter = new Limiter(), peerOf = null } = {}) {
+                                   limiter = new Limiter(), peerOf = null, placeOf = null } = {}) {
   const workshop = new Workshop(service);
   const social = new Social(service);
   // Every answer tells the device to reach this host over HTTPS only: the
@@ -423,7 +426,8 @@ export function handler(service, { webClientId = null, appleNotifications = null
     };
     try {
       if (parts[0] === "v1" && parts[1] === "session") {
-        return await sessionRoute(service, request, parts, { signIn, limit, read: body, optional });
+        return await sessionRoute(service, request, parts,
+                                  { signIn, limit, read: body, optional, place: placeOf?.(request) ?? null });
       }
       if (["league", "seasons", "constellations", "crews"].includes(parts[1])) {
         const out = await socialRoute(service, social, request, parts, who);

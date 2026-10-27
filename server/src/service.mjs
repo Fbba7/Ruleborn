@@ -166,7 +166,7 @@ export class Service {
 
   /** `admit(identity)` is asked once the credential is proven and before
    *  anything is read: the edge's limit on sign-ins an account (G44). */
-  session(credential, { admit = null } = {}) {
+  session(credential, { admit = null, device = null, place = null } = {}) {
     const identity = this.auth.prove(credential);
     if (!identity) throw new Refused(401, "platform_identity_refused");
     admit?.(identity);
@@ -176,8 +176,8 @@ export class Service {
     if (this.db.prepare("SELECT 1 FROM bans WHERE identity = ?").get(identity)) {
       throw new Refused(403, "banned");
     }
-    let row = this.db.prepare("SELECT id, banned_at FROM accounts WHERE platform_identity = ?")
-      .get(identity);
+    // The account made with it, or the one it is linked to (auth.mjs link).
+    let row = this.auth.accountOf(identity);
     if (row?.banned_at) throw new Refused(403, "banned");
     if (!row) {
       // §20.1's age check comes first on the device; until it has answered,
@@ -196,7 +196,7 @@ export class Service {
     this.telemetry.once(row.id, "sign_in", now);
     // A new session every sign-in, its id the server's (auth.mjs): a token
     // pair, `{account, token, expiresIn, refreshToken}`.
-    return this.auth.start(row.id, now);
+    return this.auth.start(row.id, now, { via: identity, device, place });
   }
 
   /** The account a token was issued to, from its signature alone: what the
