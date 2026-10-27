@@ -98,8 +98,8 @@ static func _controls(column: VBoxContainer) -> void:
 
 static func _status(column: VBoxContainer) -> void:
 	column.add_child(KitNav.header("Status", "Pieces"))
-	var res := HBoxContainer.new()
-	res.add_theme_constant_override("separation", UI.px(6))
+	# A flow, so at large text the pills take a second line, not the phone's edge.
+	var res := KitLayout.flow(6)
 	for r: Array in [["resources/starlight", "12,480", 0.62, Tokens.color("starlight")],
 			["resources/aether", "3,105", 0.95, Tokens.color("aether")],
 			["resources/essence", "840", 0.2, Tokens.color("essence")]]:
@@ -144,8 +144,8 @@ static func _home(column: VBoxContainer) -> void:
 	strain.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	top.add_child(strain)
 	column.add_child(top)
-	var res := HBoxContainer.new()
-	res.add_theme_constant_override("separation", UI.px(6))
+	# A flow, so at large text the pills take a second line, not the phone's edge.
+	var res := KitLayout.flow(6)
 	for r: Array in [["resources/starlight", "12,480", 0.62, Tokens.color("starlight")],
 			["resources/aether", "3,105", 0.95, Tokens.color("aether")],
 			["resources/essence", "840", 0.2, Tokens.color("essence")]]:
@@ -419,5 +419,6 @@ static func _season(column: VBoxContainer) -> void:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_child(KitCards.season_reward("Common", "currencies/starglass", "600", func() -> void: pass, false, "Claim"))
 	row.add_child(KitCards.season_reward("Common", "currencies/pages", "×2", func() -> void: pass, false, "Claim"))
-	row.add_child(KitCards.season_reward("Rare", "", "", Callable(), true))
+	row.add_child(KitCards.season_reward("Rare", "currencies/starglass", "1,200", Callable(), true))
+	column.add_child(KitRail.make(11, 3, 12, 0.68, "Tier 12, 340 of 500 to the next"))
 	column.add_child(row)

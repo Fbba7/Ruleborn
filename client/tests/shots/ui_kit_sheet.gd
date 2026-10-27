@@ -2,7 +2,8 @@ extends SceneTree
 ## The kit's component sheet (tools/render/shoot.sh): every material and every
 ## component on the night backdrop, judged beside the design's stills in
 ## art/design/stills/screens/. PAGE picks a page (1 materials and type, 2
-## controls, 3 status pieces); HC=1 draws it in high contrast.
+## controls, 3 status pieces, up to 11); HC=1 draws it in high contrast,
+## TEXT=150 or 200 at that text size.
 
 
 func _initialize() -> void:
@@ -16,6 +17,7 @@ func _go() -> void:
 	Settings.restore()
 	Settings.locale = "en"
 	Settings.high_contrast = OS.get_environment("HC") != ""
+	Settings.text_scale = int(OS.get_environment("TEXT")) if OS.get_environment("TEXT") != "" else 100
 	Settings.apply()
 	var screen := Control.new()
 	screen.name = "KitSheet"

@@ -14,23 +14,16 @@ static func section(title: String) -> Label:
 
 
 ## A list row: an icon (if named), a bold title and a secondary line, and
-## `trailing` at its end. With `pressed` it is one 64-point button, named
-## by its title; without, a card. `look` "seg" draws it flat, as a row
-## inside a card.
+## `trailing` at its end, at least 64 points tall and as tall as its words
+## at any text size. With `pressed` the whole card is one button over it,
+## named by its title (KitLayout.tap); without, a card. `look` "seg" draws
+## it flat, as a row inside a card.
 static func row(icon: String, title: String, line := "", trailing: Control = null,
 		pressed := Callable(), look := "card") -> Control:
-	var host: Control
-	if pressed.is_valid():
-		var b := UI.action("", pressed, look, title)
-		b.name = "Row"
-		b.custom_minimum_size = Vector2(UI.px(120), UI.px(64))
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		host = b
-	else:
-		var p := UI.panel(look)
-		p.name = "Row"
-		p.custom_minimum_size.y = UI.px(64)
-		host = p
+	var host := UI.panel(look)
+	host.name = "Row"
+	host.custom_minimum_size = Vector2(UI.px(120), UI.px(64))
+	host.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var content := HBoxContainer.new()
 	content.add_theme_constant_override("separation", UI.px(10))
 	content.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -55,16 +48,11 @@ static func row(icon: String, title: String, line := "", trailing: Control = nul
 	if trailing != null:
 		trailing.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		content.add_child(trailing)
-	if host is Button:
-		var m := MarginContainer.new()
-		m.set_anchors_preset(Control.PRESET_FULL_RECT)
-		m.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		for side: String in ["margin_left", "margin_right"]:
-			m.add_theme_constant_override(side, UI.px(12))
-		m.add_child(content)
-		host.add_child(m)
-	else:
-		host.add_child(content)
+	# The button under the words, so a control at the row's end keeps its
+	# own taps.
+	if pressed.is_valid():
+		KitLayout.tap(host, pressed, title)
+	host.add_child(content)
 	return host
 
 

@@ -275,10 +275,18 @@ static func season_reward(rank: String, icon: String, amount: String, claim: Cal
 	r.set_meta("bold", true)
 	band.add_child(r)
 	v.add_child(band)
-	var art := Icons.view(icon if not locked else "generalui/lock", 36 if not locked else 28)
-	art.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	v.add_child(art)
-	if amount != "" and not locked:
+	# A locked reward still shows what it is, dimmed under the hatching,
+	# with a small lock in its corner (the design's), not a lock alone.
+	var art := Icons.view(icon if icon != "" else "generalui/lock", 36 if icon != "" else 28)
+	if locked:
+		art.self_modulate = Color(0.62, 0.62, 0.7)
+	# At its own size in the room left, never swelling to fill it.
+	var room := CenterContainer.new()
+	room.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	room.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	room.add_child(art)
+	v.add_child(room)
+	if amount != "":
 		var plate := KitStatus.plate(amount)
 		UI.dress(plate, "plate_dark")
 		plate.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -291,6 +299,18 @@ static func season_reward(rank: String, icon: String, amount: String, claim: Cal
 	m.add_theme_constant_override("margin_bottom", UI.px(6))
 	m.add_child(v)
 	p.add_child(m)
+	if locked and icon != "":
+		var badge := PanelContainer.new()
+		badge.name = "Lock"
+		badge.add_theme_stylebox_override("panel", UI.clear_box(3, 3))
+		UI.dress(badge, "icon_disc", 999)
+		badge.add_child(Icons.view("generalui/lock", 16))
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var corner := Control.new()
+		corner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		corner.add_child(badge)
+		badge.position = Vector2(UI.px(66), UI.px(24))
+		p.add_child(corner)
 	return p
 
 

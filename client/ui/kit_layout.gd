@@ -62,5 +62,8 @@ static func tap(panel: Control, pressed: Callable, spoken: String) -> Button:
 		box.visible = false
 	b.custom_minimum_size = Vector2.ZERO
 	b.set_anchors_preset(Control.PRESET_FULL_RECT)
+	# The card squashes and sinks as a button does (§21.8).
+	b.button_down.connect(Motion.press.bind(panel, true))
+	b.button_up.connect(Motion.press.bind(panel, false))
 	panel.add_child(b)
 	return b

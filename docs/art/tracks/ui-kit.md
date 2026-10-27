@@ -146,3 +146,19 @@ Render any screen: `SCREEN=settings bash tools/render/shoot.sh client/tests/shot
 ## Next
 
 Components (tab bar, header with back, segmented hub, resource pills, chips, badges, progress bars, sheets, dialogs, list rows), the component sheet's pages 2 and 3, and the screens judged beside `art/design/stills/screens/`.
+
+## Stopped here (wave 4, 04:45 UTC)
+
+**Pushed**: the merge of main, the kit's share of the five failures fixed (contrast, large text, messages), KitLayout, KitStatus.stat, KitRail, KitCards.ability, and twelve rounds against the design stills (listed above). Every check is green on this branch except main's own week-dependent Weaving test (red on main too; see "Main itself is red" above).
+
+**One hook outside the kit**: `tools/completion.py` cites the contrast test by its name, which the kit's first wave changed (it now also covers every material's words). Its proof line names the test as it is now; the old name passed only against a stale `client/status.json`.
+
+**Still worse than the design**:
+- Type is larger than the design's everywhere (§21.8's 13-point floor), so rows wrap where the design's fit one line, and law cards go three to a row where the design's go four.
+- The design's slim Claim bar (28 pixels) and 36-point school filters are under §21.1's 48 points; the kit keeps 48.
+- The tab bar still sits 20 points above the foot (§21.1's corner rule); the chosen tab shows the screen's icon, not the character's face, unless the screen sets it.
+- The heist rail, the hero stage and the Codex's cream album panel are the screens' (T5, T7, T10); the kit gives pieces, not those arrangements.
+- Dense pages run close to the draw-call budget: the Roster page is 142 and 134 at 200% text; KitRail alone is 26 draw calls.
+- Not folded in yet: T5's `FxSkin`, T6's `OverlayHud.badge` and `OverlaySheet`, T7's `StageHeroSkin`.
+
+**Next**: fold those in (OverlayHud.badge as KitStatus.badge with a look, StageHeroSkin's card as the `ability`/`card_gold` materials); a cream album panel under the chapter band (`KitPanels.album`); the chosen tab's face hook; draw KitRail's discs as one fan per disc to cut its draw calls; judge the remaining stills (05 Weaving, 08 Observatory, 14 Lab, 18 Shop, 27 Friends) beside kit pages.
