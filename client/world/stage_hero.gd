@@ -560,7 +560,7 @@ func _frame() -> void:
 		var b := bounds(figures[i])
 		var top := b.end.y if b.size.y > 0.0 else StageHeroFigure.height(kinds[i])
 		# A flier's clip lifts it off the ground: frame the hover too.
-		tall = maxf(tall, top * (1.45 if kinds[i] in StageHeroFigure.FLIERS else 1.0))
+		tall = maxf(tall, top * ((1.2 if plinth else 1.45) if kinds[i] in StageHeroFigure.FLIERS else 1.0))
 	var wide := (tables[-1].position.x - tables[0].position.x) + tall * 0.95 if tables.size() > 1 else tall * 1.3
 	var aspect := maxf(0.2, size.x / maxf(1.0, size.y)) if size.y > 0.0 else 1.0
 	# One figure on its plinth is framed closer, as the design's hero cards
