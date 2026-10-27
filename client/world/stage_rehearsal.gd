@@ -101,7 +101,11 @@ func _map_card() -> Control:
 	var tag := UI.panel("tag_dark")
 	tag.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_kicker = UI.label("", 13, true)
+	# One line at the card's top; at large text it wraps across the card.
+	var large := Settings.text_scale >= 150
+	_kicker = UI.label("", 13, large)
+	if large:
+		tag.size_flags_horizontal = Control.SIZE_FILL
 	_kicker.uppercase = true
 	_kicker.add_theme_font_override("font", UI.bold_font())
 	_kicker.add_theme_color_override("font_color", Tokens.color("gold"))
@@ -112,9 +116,20 @@ func _map_card() -> Control:
 	gap.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	words.add_child(gap)
-	words.add_child(_legend())
-	card.add_child(words)
-	return card
+	var legend := _legend()
+	if not large:
+		words.add_child(legend)
+		card.add_child(words)
+		return card
+	# At large text the crew's name and the legend would cover the island:
+	# they stand above and below the card instead.
+	words.remove_child(tag)
+	var stack := VBoxContainer.new()
+	stack.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stack.add_child(tag)
+	stack.add_child(card)
+	stack.add_child(legend)
+	return stack
 
 
 ## The legend in the card's corner: "! seen", guard sight, the Vault's star.
@@ -321,9 +336,23 @@ func _show_result(rep: Dictionary) -> void:
 		var tile := KitStatus.stat(s[0], Strings.t(s[1]).to_upper(), "", "fact")
 		stats.add_child(tile)
 	_result.add_child(stats)
-	var words: Array[String] = DefencesPresenter.report(rep, _island)
-	# The report's first word: where it was seen, or that it never was.
-	var line := UI.label(words[0] if not words.is_empty() else "", 15.0, true)
+	# Where it was seen, a place a mark, by what stands nearest (§13.2's
+	# words), or that no guard ever was alerted.
+	var island := RulebornIsland.new()
+	island.read(_island)
+	var places: Array[String] = []
+	var named := {}
+	for t: Vector2i in route.seen:
+		var near := DefencesPresenter.nearest(island, t.x, t.y)
+		# One place a name: two marks by the same path read as one.
+		if near != "" and named.has(near):
+			continue
+		named[near] = true
+		places.append(Strings.t("DEFENCES_NEAR", [near, t.x + 1, t.y + 1]) if near != ""
+			else Strings.t("DEFENCES_AT", [t.x + 1, t.y + 1]))
+	var said := Strings.t("DEFENCES_SEEN", "; ".join(places)) if not places.is_empty() \
+		else Strings.t("DEFENCES_UNSEEN")
+	var line := UI.label(said, 15.0, true)
 	line.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	line.add_theme_color_override("font_color", Tokens.color("parchment_ink"))
 	_result.add_child(line)
