@@ -1212,3 +1212,12 @@ PLAN_VALUE_LOAD,%d%%,%d%%,%d%%,%d%%,%d%%,%d%%
 OBS_PREV_CARD,Previous target,Previous target,Alvo anterior,Alvo anterior,Vorheriges Ziel,Cible précédente
 OBS_NEXT_CARD,Next target,Next target,Próximo alvo,Alvo seguinte,Nächstes Ziel,Cible suivante
 OBS_PAGE,Target %d of %d,Target %d of %d,Alvo %d de %d,Alvo %d de %d,Ziel %d von %d,Cible %d sur %d
+LANDING_FAULT_NAME,Fault,Fault,Falha,Falha,Riss,Faille
+LANDING_EDGE_NAME,%s edge,%s edge,Borda %s,Orla %s,Rand %s,Bord %s
+LANDING_SPOT_OF,Spot %d of %d,Spot %d of %d,Ponto %d de %d,Ponto %d de %d,Platz %d von %d,Point %d sur %d
+LANDING_PILL_COVERED,Covered,Covered,Coberto,Coberto,Gedeckt,Couvert
+LANDING_PILL_OPEN,Open,Open,Aberto,Aberto,Offen,Ouvert
+LANDING_SILENT,Silent,Silent,Silencioso,Silencioso,Lautlos,Silencieux
+LANDING_HEARD_TILES,%d tiles,%d tiles,%d casas,%d casas,%d Felder,%d cases
+LANDING_TILE_NOISE,Noise,Noise,Ruído,Ruído,Lärm,Bruit
+LANDING_TILE_CLOCK,Clock,Clock,Relógio,Relógio,Uhr,Horloge

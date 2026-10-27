@@ -44,6 +44,7 @@ var column_node: VBoxContainer
 ## §5.4's landing picker, shown in place of the action and crew rows until
 ## the crew lands.
 var picker: Control
+var landing: OverlayLanding
 var picker_spot: Label
 var picker_count: Label
 var picker_clock: Label
@@ -342,6 +343,9 @@ func _refresh() -> void:
 		picker_clock.text = p["clock"]
 		picker_realm.text = p.get("realm", "")
 		picker_across.text = p.get("across", "")
+		landing.show_pick()
+	hud.visible = not choosing
+	(hint_label.get_parent() as Control).visible = not choosing
 	UI.relabel(gait_button, Strings.term("GAIT", me["gait"]), true)
 	gait_button.set_meta("icon", str(me["gait"]))
 	FxSkin.redraw(gait_button)
@@ -491,6 +495,7 @@ func _build() -> void:
 	hud = HeistHud.new()
 	column.add_child(hud)
 	view.looted.connect(func(at: Vector2, amount: int) -> void: hud.fly_coins(at, amount / 20))
+	var top_column := column
 	column = lower
 	hint_label = FxSkin.label("", 13.0)
 	hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -500,24 +505,17 @@ func _build() -> void:
 	hint.add_child(hint_label)
 	column.add_child(hint)
 
-	var box := VBoxContainer.new()
-	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	box.add_child(FxSkin.label(Strings.t("LANDING_TITLE"), UI.TEXT_POINTS + 4.0, "parchment", true))
-	picker_realm = _picker_line(box)
-	picker_across = _picker_line(box)
-	picker_spot = _picker_line(box)
-	picker_count = _picker_line(box)
-	picker_clock = _picker_line(box)
-	var steps := UI.row(-1.0, true)
-	steps.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	steps.add_child(_button(Strings.t("LANDING_PREV"), controller.next_spot.bind(-1), "parchment"))
-	steps.add_child(_button(Strings.t("LANDING_NEXT"), controller.next_spot.bind(1), "parchment"))
-	next_realm_button = _button(Strings.t("LANDING_NEXT_REALM"), controller.next_realm, "parchment")
-	steps.add_child(next_realm_button)
-	steps.add_child(_button(Strings.t("LANDING_HERE"), controller.land_here, "gold"))
-	box.add_child(steps)
-	picker = FxSkin.panel("parchment", 18.0, 12.0)
-	picker.add_child(box)
+	# The design's landing picker (T6's `OverlayLanding`), its header over
+	# the world at the top while the crew chooses.
+	landing = OverlayLanding.new(controller)
+	picker = landing
+	picker_realm = landing.realm_line
+	picker_across = landing.across_line
+	picker_spot = landing.spot_line
+	picker_count = landing.count_line
+	picker_clock = landing.clock_line
+	next_realm_button = landing.next_realm
+	top_column.add_child(landing.header)
 	column.add_child(picker)
 
 	# §21.8: the crew's portraits at the bottom left, Get out at the bottom
@@ -571,13 +569,6 @@ func _build() -> void:
 	column.add_child(band)
 	# Clear of the bottom corners, where §21.1 puts nothing to tap.
 	column.add_child(FxSkin.corner_clear())
-
-
-func _picker_line(box: VBoxContainer) -> Label:
-	var l := FxSkin.label("", UI.TEXT_POINTS, "parchment")
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	box.add_child(l)
-	return l
 
 
 ## A HUD button: `UI.button`'s sizes and haptics, in the heist's own skin.
