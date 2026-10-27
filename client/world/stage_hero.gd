@@ -71,6 +71,10 @@ var headroom := 0.0
 var plinth_edge := Color("#E9B65C")
 ## Whether the figures stand on plinths (show_kinds' "plinth" ground).
 var plinth := false
+## A welcome's framing (the first launch, as the design's title screen): the
+## party large across the foot of the frame, cut at the knees, the middle one
+## nearest, and the universe (add_universe) filling the frame above them.
+var welcome := false
 var _spin := 0.0
 var _spin_speed := 0.0
 var _press := Vector2.ZERO
@@ -184,8 +188,9 @@ static func toon(rim: Color, inked := INKED, ground := false) -> ShaderMaterial:
 ## `looks` (the same index; "" when missing; "shadow" for a silhouette, as a
 ## locked one shows); the stage takes the first one's school. `ground`
 ## "hall" stands them on one floor of flagstones under arches, "island" on
-## one island together; "plinth" each on the design's dark disc; otherwise
-## each has its own patch.
+## one island together; "plinth" each on the design's dark disc; "bare" on
+## nothing (a welcome's party in front of the world); otherwise each has its
+## own patch.
 func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 	for t in tables:
 		t.queue_free()
@@ -232,7 +237,9 @@ func show_kinds(list: Array, looks: Array = [], ground := "") -> void:
 		world.add_child(table)
 		var h := StageHeroFigure.height(kind)
 		var own_school := StageHeroFigure.school(kind)
-		if not shared:
+		if ground == "bare":
+			pass
+		elif not shared:
 			if ground == "plinth":
 				var disc := MeshInstance3D.new()
 				disc.mesh = StageHeroFigure.plinth(plinth_edge, maxf(0.35, h * 0.62))
@@ -276,6 +283,52 @@ func add_far_islands(schools: Array) -> void:
 		isle.position = Vector3(lerpf(-span, span, along), -0.2 + 0.7 * sin(float(i) * 2.3), -4.5 - 1.6 * float(i % 3))
 		isle.rotation.y = float(i) * 1.7
 		scenery.add_child(isle)
+
+
+## The universe behind a welcome (the first launch, as the design's title
+## screen): the Heart's realm in the middle, raised and larger, and the
+## outer realms in a ring round it, all far behind and above the figures so
+## the party stands in front of the world they will play.
+func add_universe(schools: Array, centre := Vector3(0.0, 2.75, -9.0), ring := 1.45) -> void:
+	# The ring is tipped toward the camera, so the realms show their tops as
+	# the universe map's view looks down on them, while the party in front
+	# is seen level.
+	var group := Node3D.new()
+	group.position = centre
+	group.rotation.x = 0.75
+	scenery.add_child(group)
+	group.add_child(StageHeroFigure.realm_ground("heart", 0.55))
+	# The Heart's Spire among a vault and a well, and a cottage or two on
+	# each outer realm: the map's light buildings (KitMap), all one mesh.
+	var g := Geo.new()
+	g = _town(g, "heart", Vector3.ZERO, 0.55, ["keeper_s_spire", "vault", "star_well", "library"])
+	for i: int in schools.size():
+		var a := TAU * float(i) / float(schools.size())
+		var r := 0.32 + 0.05 * float(i % 2)
+		var at := Vector3(cos(a) * ring, 0.15 * sin(float(i) * 2.1), sin(a) * ring)
+		var isle := StageHeroFigure.realm_ground(str(schools[i]), r)
+		isle.position = at
+		isle.rotation.y = float(i) * 1.7
+		group.add_child(isle)
+		g = _town(g, str(StageHeroFigure.REALM.get(str(schools[i]), "heart")), at, r,
+			["storehouse", "garden", "nursery"])
+	var town := MeshInstance3D.new()
+	town.mesh = g.mesh()
+	town.material_override = toon(Color("#FFE6C8"), false, true)
+	group.add_child(town)
+
+
+## A few of the map's buildings on an island of `radius` at `at`, the
+## first in the middle and the rest round it, added to `g`.
+static func _town(g: Geo, realm: String, at: Vector3, radius: float, list: Array) -> Geo:
+	var colours := RealmPalette.of(realm)
+	for i: int in list.size():
+		var a := TAU * float(i) / maxf(1.0, float(list.size() - 1)) + 0.7
+		var spot := at + (Vector3(cos(a), 0.0, sin(a)) * radius * 0.5 if i > 0 else Vector3.ZERO)
+		var lvl := 6 if i == 0 else 3
+		KitMap.build(g, str(list[i]), spot + Vector3(0, 0.02, 0), radius * (0.6 if i == 0 else 0.36), lvl, colours,
+			BuildingKit.look(lvl, colours))
+	return g
 
 
 ## What a figure takes up, in its own space: every mesh under it at rest,
@@ -486,6 +539,9 @@ func _light() -> void:
 ## Places the camera so every figure and its ground fit, a little below
 ## centre, as the design's hero view frames one.
 func _frame() -> void:
+	if welcome:
+		_frame_welcome()
+		return
 	var tall := 0.0
 	for i in figures.size():
 		var b := bounds(figures[i])
@@ -502,6 +558,17 @@ func _frame() -> void:
 	var target := Vector3(0, tall * (0.42 + headroom * 0.9), 0)
 	var eye := target + Vector3(0, 0.32, 1.0).normalized() * dist
 	camera.transform = Transform3D(Basis.looking_at(target - eye, Vector3.UP), eye)
+
+
+func _frame_welcome() -> void:
+	for i in tables.size():
+		var side := float(i) - (tables.size() - 1) / 2.0
+		tables[i].position = Vector3(side * 0.42, 0.0, 0.9 - absf(side) * 0.9)
+	var aspect := maxf(0.2, size.x / maxf(1.0, size.y)) if size.y > 0.0 else 0.5
+	# Far enough that the row fills the width, whatever the phone's shape.
+	var dist := 1.45 / (2.0 * tan(deg_to_rad(FOV) * 0.5) * aspect)
+	var eye := Vector3(0.0, 0.62, dist)
+	camera.transform = Transform3D(Basis.looking_at(Vector3(0.0, 2.2, -9.0) - eye, Vector3.UP), eye)
 
 
 func _notification(what: int) -> void:

@@ -7,10 +7,11 @@ extends Control
 ## three ruleborn of different schools on one small floating island, the
 ## first look at the game's world (§21.1).
 
-## Who greets a new Keeper: the Archivist among ruleborn of three schools.
-const WELCOME := ["featherkin", "archivist", "bloomling", "lantern_wisp"]
-## The realms floating behind them, of the other schools.
-const FAR := ["time", "energy", "matter", "spirit", "life"]
+## Who greets a new Keeper, large in front, as the design's title screen:
+## ruleborn of three schools.
+const WELCOME := ["emberling", "featherkin", "tidewalker"]
+## The outer realms round the Heart in the universe behind them.
+const FAR := ["motion", "time", "energy", "matter", "spirit", "life"]
 
 var controller: FirstController
 var body: VBoxContainer
@@ -46,12 +47,12 @@ func _build() -> void:
 	stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stage.size_flags_stretch_ratio = 5.0
 	column.add_child(stage)
-	stage.headroom = 0.12
-	stage.show_kinds(WELCOME, [], "island")
-	stage.add_far_islands(FAR)
+	stage.welcome = true
+	stage.show_kinds(WELCOME, [], "bare")
+	stage.add_universe(FAR)
 	# The game's name over the welcome scene as the design's logo: Lilita One
-	# in cream and gold, edged in ink on a hard drop; the welcome under it in
-	# Marcellus, and the line that says what the game is.
+	# in cream and gold, edged in ink on a hard drop; under it the line that
+	# says what the game is, as the design's title screen has it.
 	var title := VBoxContainer.new()
 	title.add_theme_constant_override("separation", UI.px(2))
 	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -67,17 +68,8 @@ func _build() -> void:
 	logo.set_meta("own_ink", true)
 	logo.set_meta("bold", true)
 	title.add_child(logo)
-	var welcome := UI.title(Strings.t("FIRST_TITLE"))
-	StageHeroSkin.named(welcome)
-	welcome.add_theme_font_size_override("font_size", UI.text_px(22))
-	welcome.set_meta("points", 22.0)
-	welcome.add_theme_color_override("font_color", Color("#FFF3CC"))
-	welcome.add_theme_color_override("font_outline_color", Color("#120C2A"))
-	welcome.add_theme_constant_override("outline_size", UI.px(3))
-	welcome.set_meta("own_ink", true)
-	welcome.custom_minimum_size.x = UI.px(200)
-	title.add_child(welcome)
-	var tagline := StageHeroKit.words(Strings.t("FIRST_TAGLINE"), 16.0, StageHeroSkin.LIGHT, true)
+	var tagline := StageHeroKit.words(Strings.t("FIRST_TAGLINE"), 17.0, StageHeroSkin.LIGHT, true)
+	tagline.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	tagline.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	tagline.custom_minimum_size.x = UI.px(200)
 	title.add_child(tagline)
