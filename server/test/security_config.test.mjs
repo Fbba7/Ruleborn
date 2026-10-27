@@ -3,8 +3,14 @@
 // SR-21 onwards). Each test failed before its fix.
 
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { spawn } from "node:child_process";
+import { request as httpRequest } from "node:http";
+import { mkdtempSync, readFileSync, statSync } from "node:fs";
+import { createServer as createNetServer } from "node:net";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 
 import { DELETE_COOKIE } from "../src/auth_http.mjs";
 import { handler } from "../src/http.mjs";
@@ -61,4 +67,50 @@ test("SR-22: a player's own answers are never kept by a cache; bundles and pages
   }
   const bundle = t.service.publish(t.service.session("gc:island").account, t.build.exampleIsland(true)).bundle;
   assert.equal((await get(`/v1/bundles/${bundle}`)).headers.get("cache-control"), "public, max-age=31536000, immutable");
+});
+
+/** The server as deployed: main.mjs on a free port, its data in `dir`. */
+async function listening(dir) {
+  const port = await new Promise((done) => {
+    const probe = createNetServer().listen(0, "127.0.0.1", () => {
+      const { port: p } = probe.address();
+      probe.close(() => done(p));
+    });
+  });
+  const child = spawn(process.execPath, ["--no-warnings", fileURLToPath(new URL("../src/main.mjs", import.meta.url)),
+                                         String(port)],
+                      { env: { ...process.env, RULEBORN_DATA: dir }, stdio: ["ignore", "pipe", "pipe"] });
+  await new Promise((done, fail) => {
+    let said = "";
+    child.stdout.on("data", (b) => { said += b; if (said.includes("ruleborn server on")) done(); });
+    child.on("exit", (code) => fail(new Error(`main.mjs exited ${code}: ${said}`)));
+  });
+  return { port, stop: () => child.kill() };
+}
+
+// SR-21 again, through the real listener; and SR-23: the data directory —
+// the database names every player, their identities and push tokens — was
+// made 0755 with the database 0644, readable by every user on the machine.
+test("SR-21 and SR-23, as deployed: the deletion page's own site passes the listener, and the data is the server's alone", async () => {
+  const dir = join(mkdtempSync(join(tmpdir(), "rb-sr23-")), "data");
+  const server = await listening(dir);
+  try {
+    // node:http, as a proxy sends it: fetch would write its own Host.
+    const post = (origin) => new Promise((done, fail) => {
+      const req = httpRequest({ host: "127.0.0.1", port: server.port, path: "/v1/account/delete", method: "POST",
+                                headers: { host: PUBLIC, origin, "sec-fetch-site": "same-origin",
+                                           "content-type": "application/json" } }, (res) => {
+        let text = "";
+        res.on("data", (b) => { text += b; });
+        res.on("end", () => done(JSON.parse(text)));
+      });
+      req.on("error", fail);
+      req.end(JSON.stringify({ idToken: "x" }));
+    });
+    assert.notEqual((await post(`https://${PUBLIC}`)).error, "cross_site", "the page's own site reaches the token check");
+    assert.equal((await post("https://evil.example")).error, "cross_site");
+  } finally {
+    server.stop();
+  }
+  assert.equal(statSync(dir).mode & 0o077, 0, "nobody else enters the data directory");
 });

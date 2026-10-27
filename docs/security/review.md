@@ -41,6 +41,7 @@ decision).
 | SR-20 | Low | server | A caller can keep Game Center sign-in failing | fixed by T11 |
 | SR-21 | Medium | server | The web deletion page refused every browser once deployed | fixed |
 | SR-22 | Low | server | A player's own answers carried no word against caching | fixed |
+| SR-23 | Low | server | The database was readable by every user on the machine | fixed |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -338,7 +339,142 @@ decision).
 - **Test:** `server/test/security_config.test.mjs` (SR-22); it failed
   before the fix.
 
+### SR-23 — The database was readable by every user on the machine (Low)
+
+- **Where:** `server/src/main.mjs`, where the data directory is made.
+- **What:** the directory was made `0755` and SQLite made the database
+  `0644`, so any account on the host — a co-tenant, a compromised
+  service — could copy it: every player's platform identity, push token
+  and age band. (The secret beside it was already `0600`, and refresh
+  tokens are stored as salts, so a copy mints no session.)
+- **Fix:** the directory is made, and kept, `0700`, as PostgreSQL insists
+  of its own. 3 lines.
+- **Test:** `server/test/security_config.test.mjs` (SR-21 and SR-23, as
+  deployed): starts `main.mjs` on a free port, posts to the deletion route
+  through `node:http` as a proxy would (SR-21 end to end), and reads the
+  directory's mode. It failed before the fix.
+
+## Configuration against the market standard
+
+Read against OWASP's Secure Headers and ASVS 4 (V3, V8, V14) and what a
+mobile game's backend usually ships. Checked by running `main.mjs` here.
+
+| Item | The build | Standard | Verdict |
+| --- | --- | --- | --- |
+| HTTPS | HSTS `max-age=31536000` on every answer; the listener binds 127.0.0.1 behind a TLS proxy; the client refuses cleartext | HSTS a year or more | held. `includeSubDomains` and preload are the operator's, once the domain is known |
+| CORS | no `Access-Control-*` header anywhere; JSON-only POSTs | none for a native client | held |
+| Caching | `no-store` on every player answer (SR-22); hashed bundles `immutable`; lists an hour | sensitive data not cached | fixed |
+| Pages | CSP `default-src 'none'`, hashes, `frame-ancestors 'none'`, `nosniff`, `no-referrer` (SR-04) | the same | held. `Permissions-Policy` and COOP would add nothing on pages that run no script but Google's sign-in, whose popup COOP `same-origin` breaks |
+| Cookies | one: `__Host-rb_delete`, `Secure; HttpOnly; SameSite=Strict; Path=/`, five minutes | `__Host-`, Secure, HttpOnly, SameSite | held |
+| CSRF | Origin and Sec-Fetch-Site checked, JSON only, nonce in cookie and token (SR-11, SR-21) | the same | fixed (SR-21) |
+| Bodies | 64 KB at the listener, per-route parsers, buckets per caller (G44) | a limit at the edge | held |
+| Errors | `{error: code}`; logs name the route alone | no stack to the caller, no token in a log | held |
+| Secrets | from the environment, or a `0600` file made atomically; a 32-character floor; key rings to rotate | a secret store, rotation | held. The data directory is now `0700` (SR-23) |
+| Dependencies | the server has none (Node's own `node:sqlite`, `node:crypto`); Node ≥ 22.5 | patched LTS | held. Node 22 is LTS to April 2027: the operator should run its latest patch |
+| Tools | `tools/art`: nine pinned packages, integrity hashes, no install scripts, `npm audit` clean on 27 October; `tools/ui` (new) needs only Playwright, as `tools/art` does | lockfile, audit | held |
+| Rust | both lockfiles unchanged since the RustSec check of 26 October | `cargo audit` | held |
+
+## The client, second pass
+
+What the Godot client stores, logs and sends, the codes players share, and
+what a modified client could claim. No new finding; each line is what was
+read, so the next reader need not.
+
+- **Stored** (`user://`, the app's sandbox, Android backups off with
+  `user_data_backup/allow=false`): the sign-in state (whether signed out,
+  and the opaque account id: no token), the age check's band, settings,
+  the outbox (receipts, lease tokens, replays; see "Left as they are"), the lease
+  stock, drafts, first-launch and device notices. The refresh token is in
+  Keychain or Keystore through `SecureStore`, or nowhere: without the
+  plugin nothing is kept. The access token is in memory only.
+- **Logged:** `ActionLog` keeps 64 entries in memory, scalars of at most 64
+  characters. The length is no guard (a refresh token is 53 characters),
+  but no action carries one: only `AuthSession` touches it. Its
+  `dump()` is called by nothing, so nothing leaves the phone. `push_error`
+  lines name paths and codes, never a value.
+- **Sent:** `Authorization: Bearer` and a content type; no device id,
+  advertising id or location. Telemetry is bounded on the server (SR-19).
+  Every id the client puts in a path from what a player typed or pasted
+  (`open_challenge`, blocks, friends, constellations, Workshop items) is
+  `uri_encode`d, so a pasted "code" like `../account` stays one segment
+  (`..%2Faccount`); the rest are the server's own tokens and hashes.
+- **TLS:** the platform's authorities with the host checked; a build may pin
+  (`ruleborn/tls_pins`, `HttpTransport.pinned`), and none does yet. Pinning
+  is optional at the market standard for a game (MASVS-NETWORK-2); if the
+  operator pins, pin the intermediate and ship a backup pin.
+- **Share codes:** invites and challenge links are 48 random bits from the
+  server's CSPRNG, five open a player, seven days, single use for an invite.
+  Guessing one at the call bucket's rate finds nothing in a lifetime. A
+  13-to-15's challenge opens only for friends (`Service.challenge`), and a
+  block closes both. An invite is a bearer code: whoever holds one becomes a
+  friend, so every "friends only" gate of §20.7 rests on a 13-to-15 not
+  accepting a stranger's posted invite. That is the design (§17.6); a
+  friend request the 13-to-15 must also accept would be the stricter
+  reading, and is noted for the owner with SR-14.
+- **Deep links:** not built (TD.23): no URL scheme, intent filter or
+  associated domain in the export presets. When built, a link should carry
+  only a challenge or invite code, open the screen that asks, and never act
+  on its own.
+- **A modified client** can send anything; what the server believes of it:
+  heists are re-simulated from their seed and commands, crews checked
+  against the roster (SR-02), offline actions remade by the online rules
+  and timed by the server's clock, the age band only ever tightened
+  (SR-01), ratings only after a validated play, Codex studies only of a law
+  the heist crossed. It is still believed about an island's exposed loot,
+  laws and guards (SR-15, SR-16), a minor's purchases with no intent
+  (SR-10), and its time zone: a minor who sets another zone moves §20.2's
+  night (`notifications.mjs`). The phone's own zone is the market's source
+  for it, and the harm is to the caller alone, so it stays.
+
 ## Needs the owner
+
+### Ready to say yes to
+
+Each fix below was built on a scratch copy of this branch and run against
+every server test (445). "Breaks" counts the tests that turned red beyond the
+item's own pin, which the fix turns round. Each is the owner's one word; the
+reviewer applies it with its test in under an hour.
+
+| Id | Recommend | Size | Breaks | Cost to honest players |
+| --- | --- | --- | --- | --- |
+| SR-09 | Drop `rating` and `deviation` from the target lists | 4 lines, `service.mjs` | 1 test's assertion (`matchmaking.test.mjs`) | none: the device never reads them; `GET /v1/offer` runs §12.22 |
+| SR-10 | Refuse a minor's new receipt with no intent past the month's cap, before it is settled | 13 lines, `shop.mjs` | none | an Ask-to-Buy approved after its intent lapsed, over the cap, is refused (Play refunds; Apple leaves it unfinished) |
+| SR-12 | Cap one player's time on one island at one hour a quarter | 10 lines, `fund.mjs` | none | none a real player meets; one alt account credits 1 hour a quarter, not 180 a day |
+| SR-14 | A joiner must be a friend of, or share the constellation with, one member; a 13-to-15 on either side must be friends with each | 11 lines, `social.mjs` | 1 test, 3 lines (`seasons.test.mjs` joins strangers) | none: the client's flow befriends first |
+| SR-15 | Until D60, store an island's exposed loot as at most §9.6's median richness (one full crew's carry, 750) | 5 lines, `service.mjs` | none | the richest honest islands pay raiders richness 1.0, not up to 1.65 |
+| SR-16 | Refuse a law not woven, and ready, in the realm's slots or the crown's (G61's half); guards (G60) after | 11 lines, `service.mjs`, `universe.mjs`; 6 in `test/setup.mjs` | none on the server; one client test against the server (`share_tests.gd` `_online`) publishes unwoven laws and must weave first | none: the builder only offers woven laws |
+
+The designs, and the test each turns round (`server/test/security_owner.test.mjs`):
+
+- **SR-09.** `targetLists` stops writing the two fields. The pin asserts
+  `typeof c.rating === "number"`; it becomes `!("rating" in c) &&
+  !("deviation" in c)`. `matchmaking.test.mjs`'s `deviation === 350` on the
+  list moves to the offer's own test.
+- **SR-10.** `Shop.withinCap(account, product)`, the check `intent` already
+  makes, called from `claim` before the receipt is settled and from
+  `redeem` when there is no intent. A restore of a purchase already granted
+  answers from its grant first, so it is untouched. The pin's second
+  `redeem` now throws `monthly_cap`, and the month's total stays at €24.
+- **SR-12.** `played` keys each play by player and item and credits at most
+  `ONE_PLAYER_ONE_ISLAND_S = 3600` seconds to each pair a quarter, uncleared
+  plays included (§18.9 counts "time actually played"). The pin's 200 plays
+  of 150 s credit 3,600 s, not 30,000. The number is the owner's; one hour
+  is the recommendation.
+- **SR-14.** In `joinCrew`'s transaction, before the insert: refused as
+  `no_such_crew` (so a stranger learns nothing) unless some member is a
+  friend or in the joiner's constellation, and, if the joiner or any member
+  is 13 to 15, every member is the joiner's friend. The pin's minor is
+  refused; befriended, they join.
+- **SR-15.** `publish` stores `min(exposed, FULL_CREW_CARRY)`; the bytes and
+  their hash are unchanged. The pin's `0xffffffff` is stored as 750. When D60
+  derives the figure from the ledger, the clamp becomes that derivation.
+- **SR-16.** `Universe.problems` takes the bundle's laws (`lawsOf`) and adds
+  `law_not_woven` for any not in a ready slot of the realm or the crown. The
+  test harness's non-strict `publish` weaves what it publishes, as it
+  already raises the realm. The pin's Keeper with nothing woven is refused
+  `island_not_publishable`. Guards (G60) need the bundle's guard to be
+  matched to a posted character, which the bundle does not name yet: that
+  half stays with the build.
 
 ### SR-09 — The public target lists carry every island's raw rating (Low)
 

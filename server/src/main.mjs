@@ -45,7 +45,7 @@
 
 import { createServer } from "node:http";
 import { X509Certificate, createPublicKey, randomBytes } from "node:crypto";
-import { existsSync, linkSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, linkSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -147,7 +147,10 @@ if (edgeVars.some(Boolean) && !edgeVars.every(Boolean)) {
 const edge = edgeVars.every(Boolean)
   ? new CloudflarePurge({ zone: edgeVars[0], token: edgeVars[1], origin: edgeVars[2] }) : null;
 
-mkdirSync(data, { recursive: true });
+// The database names every player: no other user on the machine reads it
+// (T12's SR-23).
+mkdirSync(data, { recursive: true, mode: 0o700 });
+chmodSync(data, 0o700);
 // A key shorter than this signs nothing: an empty one, from a file a crash
 // left before it was written, would let anyone make any session token.
 const SECRET_MIN = 32;
