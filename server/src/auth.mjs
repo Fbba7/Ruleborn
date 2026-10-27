@@ -143,7 +143,9 @@ export class Auth {
   signOut(token, { everywhere = false } = {}) {
     const t = this.holder(token);
     const now = this.service.now();
-    if (everywhere) return this.endAll(t.account, "everywhere", now);
+    // Every device's sign-out takes a live session: a token whose session
+    // is over ends nothing more (T12's SR-24).
+    if (everywhere) return this.endAll(this.account(token), "everywhere", now);
     return this.#end("id", t.session, "signed_out", now, t.account);
   }
 
@@ -184,10 +186,15 @@ export class Auth {
    *  refresh is if the token is not this server's for that session. */
   signOutWith(refreshToken, { everywhere = false } = {}) {
     const peek = peekRefresh(refreshToken);
-    const s = peek && this.db.prepare("SELECT id, account, salt FROM sessions WHERE id = ?").get(peek.session);
+    const s = peek && this.db.prepare(
+      "SELECT id, account, salt, generation, ended_at FROM sessions WHERE id = ?").get(peek.session);
     if (!s || !refreshSigned(this.keys, refreshToken, s.salt)) throw refused();
     const now = this.service.now();
-    if (everywhere) return this.endAll(s.account, "everywhere", now);
+    if (everywhere) {
+      // Only the session's current token, while it lives (T12's SR-24).
+      if (s.ended_at !== null || peek.generation !== s.generation) throw refused();
+      return this.endAll(s.account, "everywhere", now);
+    }
     return this.#end("id", s.id, "signed_out", now);
   }
 

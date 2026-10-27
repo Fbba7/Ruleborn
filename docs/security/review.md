@@ -42,6 +42,7 @@ decision).
 | SR-21 | Medium | server | The web deletion page refused every browser once deployed | fixed |
 | SR-22 | Low | server | A player's own answers carried no word against caching | fixed |
 | SR-23 | Low | server | The database was readable by every user on the machine | fixed |
+| SR-24 | Low | server | A dead token could still sign a player out everywhere | fixed |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -353,6 +354,30 @@ decision).
   deployed): starts `main.mjs` on a free port, posts to the deletion route
   through `node:http` as a proxy would (SR-21 end to end), and reads the
   directory's mode. It failed before the fix.
+
+### SR-24 — A dead token could still sign a player out everywhere (Low)
+
+- **Where:** `server/src/auth.mjs` `signOut` and `signOutWith` (T11's,
+  this wave), behind `POST /v1/session/end {"everywhere": true}`.
+- **What:** with an access token, "everywhere" checked only its signature
+  and expiry, not its session; with a refresh token, only that the server
+  had signed it once, not its generation or whether its session lived. So a
+  copied access token whose session the player had since ended, or a
+  refresh token rotated away long ago, signed the player out of every
+  device — again each time they signed back in, for the old session's 180
+  days and the seven its row is kept after. These are the tokens that
+  sign-out and rotation are meant to make worthless (auth.md's T2, T9). The
+  harm is a sign-out, which the platform undoes silently, so Low.
+- **Fix:** "everywhere" by access token takes a live session (the same check
+  every other route makes); by refresh token, the session's current
+  generation while it lives. Ending one's own session stays idempotent.
+  7 lines in T11's file; T11 told here.
+- **Test:** `server/test/security_auth.test.mjs` (SR-24); it failed before
+  the fix.
+- **For T11, not a finding:** `docs/security/auth.md` (T6) says session ids
+  are 128-bit; they are SQLite row ids, sequential. Tokens are MACed, so a
+  guessed id gains nothing, but each player's id tells them roughly how many
+  sign-ins the game has had. The doc, or a random id, should change.
 
 ## Configuration against the market standard
 
