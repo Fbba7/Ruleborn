@@ -420,4 +420,5 @@ static func _season(column: VBoxContainer) -> void:
 	row.add_child(KitCards.season_reward("Common", "currencies/starglass", "600", func() -> void: pass, false, "Claim"))
 	row.add_child(KitCards.season_reward("Common", "currencies/pages", "×2", func() -> void: pass, false, "Claim"))
 	row.add_child(KitCards.season_reward("Rare", "currencies/starglass", "1,200", Callable(), true))
+	column.add_child(KitRail.make(11, 3, 12, 0.68, "Tier 12, 340 of 500 to the next"))
 	column.add_child(row)
