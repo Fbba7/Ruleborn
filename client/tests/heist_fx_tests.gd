@@ -126,7 +126,7 @@ func _camera(view: WorldView, replay: RulebornReplay) -> void:
 	var picks := view.tile_at(view.screen_at(Vector2i(replay.crew()[0]["at"]))) == Vector2i(replay.crew()[0]["at"])
 	view.follow = []
 	view.set_zoom(1)
-	check.call("the heist's camera follows the crew at 50 degrees showing about 12 tiles across (10.5 on its width), "
+	check.call("the heist's camera follows the crew at 50 degrees showing about 12 tiles across (15 metres on its width), "
 			+ "seven close up and the whole realm zoomed out, and a tap still picks the tile drawn under it (21.1)",
 		is_equal_approx(across, WorldView.FOLLOW_TILES) and is_equal_approx(close, WorldView.CLOSE_TILES)
 			and whole > across and framed and picks, "%.2f %.2f %.2f %s %s" % [across, close, whole, framed, picks])
