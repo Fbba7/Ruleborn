@@ -170,13 +170,18 @@ func _stand(s: Dictionary, sages: Array) -> void:
 	over.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	over.set_meta("words", true)
 	stage.add_child(over)
+	# The Sages' level, the Keeper's, on a gold plate at the stage's foot.
+	var view: Dictionary = App.services.store.get_slice(SageState.SAGES).get("view", {})
+	if view.has("level"):
+		StageHeroSkin.on_stage(over, StageHeroKit.chip("%s %d" % [Strings.t("CHARACTER_LEVEL_SHORT"),
+			int(view["level"])], "gold"), Control.PRESET_CENTER_BOTTOM)
 	if ids.size() > 1:
 		for step: int in [-1, 1]:
 			var to: Dictionary = sages[posmod(at + step, ids.size())]
 			var b := StageHeroKit.arrow(step < 0, Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT",
 				str(to["name"])), _choose.bind(str(to["id"])))
 			b.set_meta("item", "step:%d" % step)
-			StageHeroSkin.on_stage(over, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
+			StageHeroSkin.on_stage(over, b, Control.PRESET_BOTTOM_LEFT if step < 0 else Control.PRESET_BOTTOM_RIGHT)
 
 
 ## Beside the stage: whether the chosen Sage is unlocked or on guard as

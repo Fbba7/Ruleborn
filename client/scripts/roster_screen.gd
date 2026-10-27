@@ -222,7 +222,7 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 			var b := StageHeroKit.arrow(step < 0, Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT",
 				name), _choose.bind(to))
 			b.set_meta("item", "step:%d" % step)
-			StageHeroSkin.on_stage(over, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
+			StageHeroSkin.on_stage(over, b, Control.PRESET_BOTTOM_LEFT if step < 0 else Control.PRESET_BOTTOM_RIGHT)
 	var state := StageHeroKit.chip(str(row.get("line", "")), "glass", "characterstates/" + str(row.get("state", "")))
 	state.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	hero_info.add_child(state)
