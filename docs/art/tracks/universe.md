@@ -510,3 +510,13 @@ are counted once, as §21.3 counts them. Every zoom is inside 25,000–40,000 or
 - For T9 (asked here; no channel reached them this session): a kit round action whose disc is drawn
   smaller than its 48-point hit area (`KitControls.round_action(..., disc_points)`), and the kit's own
   pills baked or batched: the tab bar is 28 draw calls of home's 150 and the three resource pills 19.
+- Round 44: realm labels slipped under the side plates at 200% text (the last step that keeps labels off
+  each other moved them back onto the buttons) and under Collect. Labels now never step onto the screen's
+  own controls, and a control across the middle (Collect, the goal, the raid card) lifts a label above it.
+- Round 45: the resource row as the design's: 30-point dark pills with a faint gold rim, the icon on a night
+  disc, the amount at the right, FULL in gold just before it, a 3-point line in the resource's colour along
+  the foot (easing to its share). Drawn by `UniversePurse._draw` in one run of each kind: 19 calls to 9.
+- Round 46: the Keeper badge as the design's: the level on a gold pill across the ring's foot (it was a
+  ball at the side, which large text pushed into the name), Renown on a night chip edged in rose.
+  Stills: `docs/art/shots/universe/w5_r46_home_vs_design.png` (design, ours, design raid, ours raid) and
+  `w5_r46_gray_thumbs.png`. Home now 132 draw calls (138 with the raid card).
