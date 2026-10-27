@@ -197,9 +197,10 @@ static func _gold_rim(p: Control) -> void:
 		(box.material as ShaderMaterial).set_shader_parameter("rim_w", UI.px(3.5))
 
 
-## Words that wrap between words: as narrow as their longest word, so a long
-## law's name wraps the line rather than breaking a word; with §20.8's large
-## text a word too long for its column breaks rather than outgrow the phone.
+## Words that wrap between words: on one line when it fits the column (the
+## designs' chips), else as narrow as their longest word, so a long law's
+## name wraps the line rather than breaking a word; with §20.8's large text a
+## word too long for its column breaks rather than outgrow the phone.
 static func _wrap_by_words(l: Label) -> void:
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var font := l.get_theme_font("font")
@@ -207,7 +208,9 @@ static func _wrap_by_words(l: Label) -> void:
 	var widest := 0.0
 	for w: String in l.text.replace("\n", " ").split(" ", false):
 		widest = maxf(widest, font.get_string_size(w, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x)
-	l.custom_minimum_size.x = minf(ceilf(widest) + 2.0, UI.px(100) * maxf(1.0, Settings.text_scale / 100.0))
+	var line := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+	var cap := UI.px(100) * maxf(1.0, Settings.text_scale / 100.0)
+	l.custom_minimum_size.x = minf(ceilf(line if line <= UI.px(100) else widest) + 2.0, cap)
 
 
 ## A side column of the top row: it takes what room there is and holds its

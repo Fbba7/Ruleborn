@@ -86,6 +86,8 @@ func _ready() -> void:
 	kicker_label.add_theme_constant_override("outline_size", UI.px(3))
 	grade_label = FxSkin.label("", UI.TITLE_POINTS + 26.0)
 	grade_label.add_theme_font_override("font", Tokens.font("title"))
+	# Warm cream, as the designs' title over its rays.
+	grade_label.add_theme_color_override("font_color", Color("#FFF1CF"))
 	grade_label.add_theme_constant_override("outline_size", UI.px(5))
 	grade_label.add_theme_color_override("font_shadow_color", Color(FxSkin.INK_LINE, 0.9))
 	grade_label.add_theme_constant_override("shadow_offset_y", UI.px(3))
@@ -172,17 +174,20 @@ func _ready() -> void:
 	watch.add_child(watch_box)
 	moment.add_child(watch)
 	moment.add_child(words)
-	# The crew as it ended beside the words; under them with large text, so
-	# the words keep the card's width.
-	var faces := FxDraw.new(_draw_crew, Vector2(UI.px(30) * 3.2, UI.px(48)))
-	if Settings.text_scale > 100:
-		faces.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-		words.add_child(faces)
-	else:
-		moment.add_child(faces)
+	# The crew as it ended, under the words, so they keep the card's width.
+	var faces := FxDraw.new(_draw_crew, Vector2(UI.px(30) * 5.0, UI.px(40)))
+	faces.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	words.add_child(faces)
 	moment_card.add_child(moment)
 	moment_card.visible = false
 	page.add_child(moment_card)
+	# The designs' order: the outcome, the moment, then what it paid.
+	var paid := VBoxContainer.new()
+	paid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	paid.add_theme_constant_override("separation", UI.px(4))
+	for c: Control in [haul_tile, detail_label, check_label]:
+		c.reparent(paid)
+	page.add_child(paid)
 	var play: Dictionary = heist["workshop"]
 	var plain: bool = not heist["testing"] and play.is_empty()
 	# The plain result's bottom bar is one row, Home and the wide next raid;
