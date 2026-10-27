@@ -168,7 +168,6 @@ func open_wheel(title: String, rows: Array[Dictionary]) -> void:
 	close_wheel()
 	var parent: Control = host if host != null else self
 	var scrim := Button.new()
-	scrim.flat = true
 	scrim.accessibility_name = Strings.t("HEIST_WHEEL_CLOSE")
 	scrim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	scrim.pressed.connect(close_wheel)

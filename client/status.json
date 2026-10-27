@@ -53,6 +53,7 @@
   "a name from the word lists reads in the player's language, as the server makes it: \"Quiet Harbour\", and in Portuguese the noun first with the adjective agreeing, \"Porto Silencioso\", \"Horta Silenciosa\" (D63)": "passed",
   "a new player starts in the phone's language: Portuguese and English by region, German and French, British English otherwise, and the picker names each language in itself": "passed",
   "a personal invite is made by the server and its code copied, with the matching cosmetic it brings both players at the friend's first heist, which the result then names (17.6)": "passed",
+  "a planned crew's portraits, Sage and Cast read the simulation: each member's kind and two ability uses, the Archivist's three powers, the cast carried; a power and a cast given spend a use (21.8, 12.7)": "passed",
   "a play refused for the terms of use shows the terms to read and accept; accepting sends the version shown, and the gate closes once the server has it (§20.11)": "passed",
   "a player aged 13 to 15, refused the top list, is shown the featured list and offered only it and their own islands, with no failure shown (§20.7)": "passed",
   "a player can raid their own island from the builder: the heist plays it, the server's check judges it, and the result leads back": "passed",

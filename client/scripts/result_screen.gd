@@ -68,10 +68,12 @@ func _ready() -> void:
 	var backdrop := FxDraw.new(_draw_rays)
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(backdrop)
-	var column := FxSkin.frame(self)[1]
+	var columns := FxSkin.frame(self)
+	var column := columns[1]
+	# The page hangs from the top, as the design's, over the bottom bar.
 	# With large text the page is taller than the phone: it scrolls under the
 	# safe top, over the bottom bar that stays where the thumb is.
-	var page := column
+	var page: VBoxContainer = columns[0]
 	if Settings.text_scale > 100:
 		var safe := column.get_parent() as MarginContainer
 		safe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -195,6 +197,9 @@ func _ready() -> void:
 	watch.custom_minimum_size = Vector2(UI.px(60), UI.px(60))
 	watch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	watch.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	# Watching the moment is occasional, not one of the hand's frequent
+	# controls §21.1's thumb zone binds; it stays with its words.
+	watch.set_meta("frequent", false)
 	UI.dress(watch, "leather", 14.0)
 	var watch_box := VBoxContainer.new()
 	watch_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -252,10 +257,19 @@ func _ready() -> void:
 		actions.add_child(UI.action(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"),
 			"leather"))
 		var foiled := str((heist["verdict"] as Dictionary).get("grade", "")) == "Foiled"
-		var again := UI.action(Strings.t("RESULT_AGAIN").to_upper(), func() -> void:
+		# The design's "Raid again", with how many of the roster are idle to
+		# go (the roster's states) when it is known.
+		var idle := idle_crew()
+		var again_words := Strings.t("RESULT_RAID_AGAIN").to_upper()
+		if idle >= 0:
+			again_words += "\n" + Strings.t("RESULT_IDLE_CREW", idle)
+		var again := UI.action(again_words, func() -> void:
 			App.services.store.dispatch(&"heist_started", {})
 			App.services.router.go(&"heist"), "red" if foiled else "gold")
 		again.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		# Its words wrap rather than outgrow the phone with large text.
+		again.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		again.custom_minimum_size.x = UI.px(UI.CONTROL_POINTS)
 		actions.add_child(again)
 	column.add_child(actions if plain else UI.narrow(actions))
 	column.add_child(FxSkin.corner_clear())
@@ -289,6 +303,9 @@ func _build_world(heist: Dictionary) -> void:
 	world_view.pitch = WorldView.HOME_PITCH
 	world_view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	world_view.anchor_bottom = 0.56
+	# Under the title's rays, as the design's page: the island a quiet
+	# backdrop, so the outcome reads first.
+	world_view.modulate = Color(0.5, 0.45, 0.65)
 	world_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(world_view)
 	world_view.show_replay(r)
@@ -397,6 +414,8 @@ func _process(delta: float) -> void:
 		# once).
 		var shown := _haul if Settings.reduced_motion else int(_haul * clampf((_clock - 0.6) / 1.0, 0.0, 1.0))
 		haul_label.text = "+%d" % shown
+	if reward_row != null and reward_row.visible:
+		_count_rewards(1.0 if Settings.reduced_motion else clampf((_clock - 0.6) / 1.0, 0.0, 1.0))
 	for c in find_children("*", "FxDraw", true, false):
 		(c as FxDraw).queue_redraw()
 
@@ -494,22 +513,42 @@ func _reward_tile(kind: String, rim: Color) -> PanelContainer:
 ## play).
 func _show_rewards(v: Dictionary) -> void:
 	var split: bool = v.get("ok", false) and v.has("starlight") and not v.get("workshop", false)
-	reward_row.visible = split
+	# Foiled pays nothing: the chip says the Renown lost, and no tiles stand
+	# (the design's foiled page).
+	var paid := split and str(v.get("grade", "")) != "Foiled"
+	reward_row.visible = paid
 	fee_label.visible = split and int(v.get("fee", 0)) > 0
 	if not split:
 		return
 	haul_tile.visible = false
 	counter = reward_row
 	for kind: String in reward_labels:
-		var n := int(v.get(kind, 0))
-		(reward_labels[kind] as Label).text = ("+" if n >= 0 else "") + ShopPresenter.grouped(n) if n >= 0 \
-			else "-" + ShopPresenter.grouped(-n)
+		(reward_labels[kind] as Label).set_meta("to", int(v.get(kind, 0)))
+	_count_rewards(1.0)
 	var fee := int(v["fee"])
 	var back := int(v.get("fee_returned", 0))
 	fee_label.text = Strings.t("RESULT_FEE_RETURNED", ShopPresenter.grouped(fee)) if back >= fee \
 		else (Strings.t("RESULT_FEE_PAID", ShopPresenter.grouped(fee)) if back <= 0
 		else Strings.t("RESULT_FEE_HALF", [ShopPresenter.grouped(fee), ShopPresenter.grouped(back)]))
 	fee_label.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT if back > 0 else FxSkin.ALARM_ON_DARK)
+
+
+## How many of the roster's characters are idle, ready for the next raid;
+## -1 when the roster has not been read.
+static func idle_crew() -> int:
+	var view: Dictionary = App.services.store.get_slice(RosterState.ROSTER).get("view", {})
+	if not view.has("characters"):
+		return -1
+	return (view["characters"] as Array).filter(func(c: Dictionary) -> bool: return str(c["state"]) == "idle").size()
+
+
+## The reward tiles' numbers at `share` of the way up from nothing, signed
+## and grouped.
+func _count_rewards(share: float) -> void:
+	for kind: String in reward_labels:
+		var l: Label = reward_labels[kind]
+		var n := int(int(l.get_meta("to", 0)) * share)
+		l.text = ("+" if n >= 0 else "-") + ShopPresenter.grouped(absi(n))
 
 
 ## A result button in the heist's skin.

@@ -1514,7 +1514,7 @@ LANDING_SILENT,Silent,Silent,Silencioso,Silencioso,Lautlos,Silencieux
 LANDING_HEARD_TILES,%d tiles,%d tiles,%d casas,%d casas,%d Felder,%d cases
 LANDING_TILE_NOISE,Noise,Noise,Ruído,Ruído,Lärm,Bruit
 LANDING_TILE_CLOCK,Clock,Clock,Relógio,Relógio,Uhr,Horloge
-HEIST_HINT_SHORT,"Tap crew, then ground · hold ground to sneak or run","Tap crew, then ground · hold ground to sneak or run","Toque na equipe, depois no chão · segure no chão para se esgueirar ou correr","Toca na equipa, depois no chão · mantém premido para te esgueirares ou correres","Tippe auf die Crew, dann auf den Boden · halte gedrückt zum Schleichen oder Rennen","Touchez l'équipe, puis le sol · maintenez pour vous faufiler ou courir"
+HEIST_HINT_SHORT,"Tap crew, then ground · hold to sneak or run","Tap crew, then ground · hold to sneak or run","Toque na equipe, depois no chão · segure para se esgueirar ou correr","Toca na equipa, depois no chão · mantém premido para te esgueirares ou correres","Tippe auf die Crew, dann auf den Boden · halte zum Schleichen oder Rennen","Touchez l'équipe, puis le sol · maintenez pour vous faufiler ou courir"
 HEIST_AIM,Tap the world where %s goes · tap the portrait again to put it away,Tap the world where %s goes · tap the portrait again to put it away,Toque no mundo onde vai %s · toque de novo no retrato para cancelar,Toca no mundo onde vai %s · toca de novo no retrato para cancelar,"Tippe in die Welt, wohin %s soll · tippe das Porträt erneut zum Abbrechen",Touchez le monde où va %s · touchez de nouveau le portrait pour annuler
 HEIST_STOP,Stop,Stop,Parar,Parar,Anhalten,Arrêter
 HEIST_DROP_HALF,Drop half,Drop half,Largar metade,Largar metade,Hälfte ablegen,Lâcher la moitié
@@ -1545,3 +1545,5 @@ LANDING_DECK_SPOTS,%d spots · %d covered,%d spots · %d covered,%d pontos · %d
 LANDING_DECK_HOPS,%d hops to the Vault · %d spots,%d hops to the Vault · %d spots,%d saltos até o Cofre · %d pontos,%d saltos até ao Cofre · %d pontos,%d Sprünge zum Tresor · %d Stellen,%d sauts jusqu'au Coffre · %d points
 LANDING_DECK_HOP,1 hop to the Vault · %d spots,1 hop to the Vault · %d spots,1 salto até o Cofre · %d pontos,1 salto até ao Cofre · %d pontos,1 Sprung zum Tresor · %d Stellen,1 saut jusqu'au Coffre · %d points
 LANDING_DECK_ISLAND,This island,This island,Esta ilha,Esta ilha,Diese Insel,Cette île
+RESULT_RAID_AGAIN,Raid again,Raid again,Assaltar de novo,Assaltar outra vez,Erneut rauben,Repartir en casse
+RESULT_IDLE_CREW,Idle crew of %d ready,Idle crew of %d ready,%d da equipe livres e prontos,%d da equipa livres e prontos,%d freie Crew bereit,%d membres libres prêts

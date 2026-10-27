@@ -10,7 +10,8 @@ extends SceneTree
 ## Settings' turn and zoom buttons, CONTRAST high contrast, LEFT left-handed
 ## play, TEXT a text size (150, 200), NAMES the names a long press shows,
 ## MANIFEST the design's planned crew of five with a Sage and a cast, and
-## ESTIMATE a target card's rough loot estimate.
+## ESTIMATE a target card's rough loot estimate, WHEEL "sage" or "cast" a
+## wheel open.
 
 const LawShot := preload("res://tests/shots/law_heist.gd")
 const TO := {"hold": [[4, 9], [3, 10], [4, 11]], "entry": [], "escape": [[2, 10], [3, 10], [2, 11]],
@@ -57,7 +58,7 @@ func _go() -> void:
 		# the Archivist and one cast, named as the design names them.
 		var law := Array(RulebornStability.law_ids()).find("glowing_dark")
 		var plan := PackedByteArray()
-		for k: int in [0, 6, 4, 3, 9]:
+		for k: int in [1, 6, 4, 3, 9]:
 			plan.append_array(PackedByteArray([k, 0, 3, 0]))
 		plan.append_array(PackedByteArray([1, 1, law]))
 		screen.names_given = ["Pip", "Mo", "Bramble", "Hollow", "Ash"]
@@ -144,6 +145,12 @@ func _go() -> void:
 			if OS.get_environment("POP") != "":
 				view.anchors.pop(view._guards[i].position + Vector3(0, 1.0, 0), "-12", FxSkin.ALARM)
 				view.anchors.pops[-1]["t"] = 0.25
+	# WHEEL: the Sage's ("sage") or the casts' ("cast") wheel open (§12.7).
+	if OS.get_environment("WHEEL") == "sage":
+		screen.hand._open_sage()
+	elif OS.get_environment("WHEEL") == "cast":
+		screen.hand._open_casts()
+	await process_frame
 	# HIDE: parts of the screen left out, to weigh each one's draw calls.
 	for part: String in OS.get_environment("HIDE").split(",", false):
 		(screen.get(part) as CanvasItem).visible = false

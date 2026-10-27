@@ -52,6 +52,8 @@ var vault_shown := true
 ## What each guard is saying: guard index -> {text: String, t: float}.
 var speech := {}
 var _time := 0.0
+## Where the VAULT tag stands this frame, so a guard's words stay off it.
+var _vault_plate := Rect2()
 ## Each figure's most health seen, its bar's whole.
 var _most := {}
 
@@ -130,6 +132,7 @@ func _paint() -> void:
 	_draw_edge(calm)
 	_draw_pylons(replay, m)
 	_draw_pick(m, calm)
+	_vault_plate = Rect2()
 	if vault_shown:
 		_draw_vault(replay, m)
 	_draw_guards(replay, m, calm)
@@ -247,17 +250,20 @@ func _draw_vault(replay: RulebornReplay, m: float) -> void:
 	var w := font.get_string_size(words, HORIZONTAL_ALIGNMENT_CENTER, -1, px).x + px
 	var open: bool = v.get("open", false)
 	var plate := Rect2(at - Vector2(w * 0.5, px * 0.8), Vector2(w, px * 1.25))
+	_vault_plate = plate
+	# The design's tag: a gold plate with ink words; once open, cream rimmed
+	# in green, its cracking bar gone.
 	var box := StyleBoxFlat.new()
-	box.bg_color = FxSkin.GOLD if open else FxSkin.CARD_TOP
-	box.border_color = FxSkin.INK_LINE
-	box.set_border_width_all(maxi(2, int(px * 0.09)))
+	box.bg_color = FxSkin.PARCH_TOP if open else FxSkin.GOLD
+	box.border_color = FxSkin.SUCCESS.darkened(0.3) if open else FxSkin.INK_LINE
+	box.set_border_width_all(maxi(2, int(px * (0.14 if open else 0.09))))
 	box.set_corner_radius_all(int(px * 0.4))
 	box.shadow_color = Color(0, 0, 0, 0.3)
 	box.shadow_size = 4
 	box.shadow_offset = Vector2(0, 3)
 	FxPen.style_box(self, box, plate)
 	FxPen.string(self, font, Vector2(plate.position.x, plate.position.y + px * 0.98), words, HORIZONTAL_ALIGNMENT_CENTER,
-		plate.size.x, px, FxSkin.PARCH_INK if open else FxSkin.GOLD)
+		plate.size.x, px, FxSkin.PARCH_INK)
 	var health := int(v.get("health", 0))
 	_most["vault"] = maxi(int(_most.get("vault", 0)), health)
 	var whole := int(_most["vault"])
@@ -430,6 +436,9 @@ func _draw_speech(replay: RulebornReplay, m: float, calm: bool) -> void:
 		for r: Rect2 in _pop_rects(m, calm):
 			if box.grow(px * 0.2).intersects(r):
 				box.position.y = r.position.y - size.y - px * 0.2
+		# Above the VAULT tag, never across it.
+		if _vault_plate.has_area() and box.grow(px * 0.1).intersects(_vault_plate):
+			box.position.y = _vault_plate.position.y - size.y - px * 0.2
 		# And over another guard's words said nearby, rather than across them.
 		for other: Rect2 in placed:
 			if box.grow(px * 0.1).intersects(other):

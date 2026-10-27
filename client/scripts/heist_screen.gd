@@ -589,7 +589,8 @@ func _build() -> void:
 	band.add_theme_constant_override("separation", UI.px(4))
 	if Settings.left_handed:
 		band.layout_direction = Control.LAYOUT_DIRECTION_RTL
-	var crew_row := UI.row(1.0, true)
+	# With large text the names, wider than their discs, keep apart.
+	var crew_row := UI.row(1.0 if Settings.text_scale <= 100 else 8.0, true)
 	crew_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	crew_row.alignment = FlowContainer.ALIGNMENT_BEGIN
 	crew_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -650,6 +651,8 @@ func _build_crew() -> void:
 	for b in crew_buttons:
 		b.queue_free()
 	crew_buttons.clear()
+	# Another crew: each portrait's whole health is learnt afresh.
+	_most_health.clear()
 	var crew := controller.world.crew()
 	var names := crew_names()
 	for i in crew.size():

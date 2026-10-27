@@ -57,7 +57,10 @@ func _init(member_role := "", pressed_call: Callable = Callable(), member_kind :
 	var side := UI.px(50)
 	# As wide as its name, so with large text names never run together.
 	var name_w := FxSkin.words().get_string_size(letters, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(13.0)).x
-	custom_minimum_size = Vector2(maxf(side, name_w + UI.px(4)), side + UI.px(32))
+	# At 100% a name may reach a little past its disc, as the design's do, so
+	# five fit beside the hand; with large text names keep apart.
+	var spare := UI.px(4) if Settings.text_scale > 100 else -UI.px(4)
+	custom_minimum_size = Vector2(maxf(side, name_w + spare), side + UI.px(32))
 	focus_mode = Control.FOCUS_ALL
 	var clear := StyleBoxFlat.new()
 	# A dark fill, so a screen's checks find what is behind its words.
@@ -146,7 +149,7 @@ func _paint() -> void:
 	# The bag, at the lower left, when it holds anything.
 	if carried > 0.0:
 		FxIcons.sack(self, c + Vector2(-r * 0.78, r * 0.6), r * 0.5, carried)
-	var tag := c + Vector2(r * 0.42, -r * 0.88)
+	var tag := c + Vector2(r * 0.36, -r * 0.9)
 	if uses >= 0:
 		_pips(tag, r)
 	# The health bar beneath: green, amber, red as it falls.
@@ -167,7 +170,7 @@ func _paint() -> void:
 ## The ability's tag: a dark pill with two diamonds, filled for each use
 ## left (dimmed while it waits its turn to be ready), and the number left.
 func _pips(at: Vector2, r: float) -> void:
-	var h := r * 0.5
+	var h := r * 0.62
 	var pill := Rect2(at - Vector2(h * 1.5, h * 0.5), Vector2(h * 3.0, h))
 	var box := StyleBoxFlat.new()
 	box.bg_color = FxSkin.INK_LINE
@@ -176,8 +179,8 @@ func _pips(at: Vector2, r: float) -> void:
 	box.bg_color = Color("#2A1E40")
 	FxPen.style_box(self, box, pill)
 	for i in PIPS:
-		var p := pill.position + Vector2(h * (0.62 + 0.72 * i), h * 0.5)
-		var d := h * 0.34
+		var p := pill.position + Vector2(h * (0.56 + 0.78 * i), h * 0.5)
+		var d := h * 0.4
 		var shape := PackedVector2Array([p + Vector2(0, -d), p + Vector2(d, 0), p + Vector2(0, d), p + Vector2(-d, 0)])
 		var full := i < uses
 		var lit := Color(FxSkin.PARCH_TOP, 1.0 if is_ready else 0.55)
@@ -187,7 +190,7 @@ func _pips(at: Vector2, r: float) -> void:
 ## §21.8 (12.6): the pips carry the number too, so uses never rest on shape.
 ## Drawn as strokes, with the shapes, so it costs no draw of its own.
 func _pips_number(at: Vector2, r: float) -> void:
-	var h := r * 0.5
+	var h := r * 0.62
 	var pill := Rect2(at - Vector2(h * 1.5, h * 0.5), Vector2(h * 3.0, h))
 	var cell := Rect2(pill.position + Vector2(h * 2.08, h * 0.2), Vector2(h * 0.4, h * 0.6))
 	var ink := maxf(1.5, h * 0.16)
@@ -211,5 +214,5 @@ static func _disc_uv() -> PackedVector2Array:
 	var uv := PackedVector2Array()
 	for i in 40:
 		var a := TAU * i / 40.0
-		uv.append(Vector2(0.5, 0.36) + Vector2(cos(a), sin(a)) * 0.33)
+		uv.append(Vector2(0.5, 0.44) + Vector2(cos(a), sin(a)) * 0.42)
 	return uv
