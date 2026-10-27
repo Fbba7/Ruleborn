@@ -63,7 +63,9 @@ func _init() -> void:
 	var laws := VBoxContainer.new()
 	laws.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	laws.add_theme_constant_override("separation", UI.px(4))
-	laws.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	# The chips share the column's width, as the designs': a name lies on one line
+	# wherever the column has room for it.
+	laws.size_flags_horizontal = Control.SIZE_FILL
 	var here := FxSkin.label(Strings.t("HUD_LAWS_HERE"), 14.0)
 	here.add_theme_color_override("font_color", FxSkin.GOLD)
 	here.add_theme_constant_override("outline_size", UI.px(3))
@@ -210,7 +212,7 @@ static func _wrap_by_words(l: Label) -> void:
 		widest = maxf(widest, font.get_string_size(w, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x)
 	var line := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
 	var cap := UI.px(100) * maxf(1.0, Settings.text_scale / 100.0)
-	l.custom_minimum_size.x = minf(ceilf(line if line <= UI.px(100) else widest) + 2.0, cap)
+	l.custom_minimum_size.x = minf(ceilf(line if line <= UI.px(88) else widest) + 2.0, cap)
 
 
 ## A side column of the top row: it takes what room there is and holds its
@@ -304,7 +306,7 @@ func _show_laws(r: RulebornReplay) -> void:
 		else:
 			chip.add_child(FxDraw.new(func(ci: Control) -> void:
 				FxIcons.school(ci, ci.size / 2.0, minf(ci.size.x, ci.size.y), school), Vector2(UI.px(20), UI.px(20))))
-		var words := FxSkin.label(Strings.term("LAW", str(p.get("law", ""))), 15.0)
+		var words := FxSkin.label(Strings.term("LAW", str(p.get("law", ""))), 14.0)
 		words.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		_wrap_by_words(words)
 		words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
