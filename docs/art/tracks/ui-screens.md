@@ -93,6 +93,12 @@ High contrast (`HC=1` in the shot script) checked on Codex, Weaving, Law, Lab, S
 - `tools/completion.py`: the roadmap's accessibility proof named the contrast test by its old wording; it now names it as `a11y_tests.gd` does ("…the realm's marks on their halo and every material's words on the stops they sit on included…"). T9's branch has the same stale line.
 - For T9: the chosen tab's word in `KitTabs.choose` needs a stroke of 12% of its size for §21.8 to count it (this track sets it in `ScreenNav.bar`).
 
+## Draw calls (§21.3: fewer than 150)
+
+Measured with the shot script (`calls` line), at 540 × 1170, after this wave: Codex 119, Weaving 142, Law card 119, Lab 103, **Harmony 162**, Season 69, Shop 62, Settings 61, Profile 70, Share 33, Friends 78, Workshop 82, First launch 23, League 35.
+
+Harmony was already 155 at this track's wave-3 head. Of its 162, the live 3D preview (`client/world/law_fx_preview.gd`, T5's since T8 retired) is about 93 and T9's tab bar about 25 (each icon its own texture); the rest of the screen is about 44. A shorter preview shows more cards and costs more (165). **For T5:** a lighter preview for Harmony (the realm's pylons and links without the decoration props) would bring it under. **For T9:** an atlas for the tab and hub icons would save a call an icon.
+
 ## Still worse than the design
 
 - The Laws hub (All laws · Harmony · Lab) sits above the tab bar by §21.1's rule, where the design puts it at the top: the scrolling area is 60% of the frame, against the design's 75%.
