@@ -185,11 +185,20 @@ func _crew_tab(p: Dictionary) -> void:
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", UI.px(6))
 	grid.add_theme_constant_override("v_separation", UI.px(6))
+	# Each member by its portrait, rendered from its model (`Portrait`).
+	var kinds := {}
+	var home: Dictionary = App.services.store.get_slice(RosterState.ROSTER).get("view", {})
+	for c: Dictionary in home.get("characters", []):
+		kinds[int(c["id"])] = str(c.get("kind", ""))
 	for o: Dictionary in p["crew"]:
 		var picked := str(o["action"]).begins_with("● ")
 		var b := _choice(o, func() -> void: controller.toggle(int(o["id"])), "card_selected" if picked else "card",
 			"characterstates/resting" if o.get("resting", false) else "characterstates/onaheist")
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var kind: String = kinds.get(int(o["id"]), "")
+		if kind != "" and not o.get("resting", false):
+			b.icon = Portrait.of(kind)
+			b.add_theme_constant_override("icon_max_width", UI.px(44))
 		grid.add_child(b)
 	page.add_child(grid)
 	# Two cards a row, as the design's, unless their words ask for more than
