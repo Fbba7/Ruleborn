@@ -148,6 +148,7 @@ BUILDER_SAVE,Save,Save,Salvar,Guardar,Sichern,Enregistrer
 BUILDER_UNDO,Undo,Undo,Desfazer,Anular,Rückgängig,Annuler
 STAGE_HIDE_WORDS,Hide details,Hide details,Ocultar detalhes,Ocultar detalhes,Details ausblenden,Masquer les détails
 STAGE_SHOW_WORDS,Show details,Show details,Mostrar detalhes,Mostrar detalhes,Details einblenden,Afficher les détails
+STAGE_BACK,Back,Back,Voltar,Voltar,Zurück,Retour
 BUILDER_SAVED,Saved on this phone,Saved on this phone,Salva neste celular,Guardada neste telemóvel,Auf diesem Handy gespeichert,Enregistrée sur ce téléphone
 BUILDER_TUNNEL_END,"Now tap where the tunnel comes out, %d to %d tiles away","Now tap where the tunnel comes out, %d to %d tiles away","Agora toque onde o túnel sai, a %d a %d casas de distância","Agora toque onde o túnel sai, a %d a %d casas de distância","Tippe jetzt dort, wo der Tunnel herauskommt, %d bis %d Felder entfernt","Touchez maintenant là où le tunnel ressort, à %d à %d cases"
 BUILDER_TUNNEL_FAR,A tunnel's mouths are %d to %d tiles apart,A tunnel's mouths are %d to %d tiles apart,As entradas de um túnel ficam a %d a %d casas uma da outra,As entradas de um túnel ficam a %d a %d casas uma da outra,Die Öffnungen eines Tunnels liegen %d bis %d Felder auseinander,Les entrées d'un tunnel sont à %d à %d cases l'une de l'autre
@@ -160,6 +161,7 @@ BUILDER_HARMONY,%s harmony,%s harmony,harmonia de %s,harmonia de %s,%s-Harmonie,
 BUILDER_CLASH,%s clash,%s clash,choque de %s,choque de %s,%s-Konflikt,choc %s
 BUILDER_RESTORE,Swap back,Swap back,Trocar de volta,Trocar de volta,Zurücktauschen,Rétablir
 BUILDER_RESTORE_NAMED,Swap back to the island the remix replaced; the remix is kept,Swap back to the island the remix replaced; the remix is kept,Trocar de volta para a ilha que o remix substituiu; o remix fica guardado,Voltar à ilha que o remix substituiu; o remix fica guardado,"Zurück zur Insel, die der Remix ersetzt hat; der Remix bleibt erhalten",Revenir à l'île remplacée par le remix ; le remix est conservé
+BUILDER_KICKER,Terrain editor,Terrain editor,Editor de terreno,Editor de terreno,Geländeeditor,Éditeur de terrain
 PROBLEM_TOOMANYWARDS,too many wards for the realm,too many wards for the realm,proteções demais para o reino,demasiadas proteções para o reino,zu viele Siegel für das Reich,trop de protections pour le royaume
 PROBLEM_TOOMANYGUARDS,too many guards for the realm,too many guards for the realm,guardas demais para o reino,demasiados guardas para o reino,zu viele Wachen für das Reich,trop de gardes pour le royaume
 PROBLEM_TOOMANYLAWS,too many laws for the realm,too many laws for the realm,leis demais para o reino,demasiadas leis para o reino,zu viele Gesetze für das Reich,trop de lois pour le royaume
@@ -850,6 +852,8 @@ SCOUT_NONE,none,none,nenhum,nenhum,keine,aucun
 SCOUT_WATCH,"Watch: suspicion fills at %d%%, sight reaches %d%%","Watch: suspicion fills at %d%%, sight reaches %d%%","Vigia: suspeita enche a %d%%, a visão alcança %d%%","Vigia: a suspeita enche a %d%%, a visão alcança %d%%","Wache: Verdacht füllt sich zu %d%%, Sicht reicht %d%%","Guet : le soupçon monte à %d %%, la vue porte à %d %%"
 SCOUT_HIDDEN,Where guards stand and wards lie is found in the heist,Where guards stand and wards lie is found in the heist,Onde ficam guardas e proteções se descobre no assalto,Onde estão guardas e proteções descobre-se no assalto,"Wo Wachen stehen und Siegel liegen, zeigt erst der Raubzug",Où se tiennent les gardes et les protections se découvre pendant le casse
 SCOUT_RAID,Plan · %s,Plan · %s,Planejar · %s,Planear · %s,Planen · %s,Planifier · %s
+SCOUT_LOOT_KICKER,Loot,Loot,Saque,Saque,Beute,Butin
+SCOUT_PLAN_KEY,Plan the heist,Plan the heist,Planejar o assalto,Planear o assalto,Raubzug planen,Préparer le casse
 LANDING_TITLE,Choose where to land,Choose where to land,Escolha onde pousar,Escolhe onde aterrar,Wähle den Landeplatz,Choisis où atterrir
 LANDING_HINT,"Tap an edge spot to land there, or step through the spots below","Tap an edge spot to land there, or step through the spots below","Toque num ponto da borda para pousar lá, ou percorra os pontos abaixo","Toca num ponto da orla para aterrar lá, ou percorre os pontos abaixo","Tippe auf einen Randplatz, um dort zu landen, oder geh die Plätze unten durch","Touche un point du bord pour y atterrir, ou parcours les points ci-dessous"
 LANDING_SPOT,"%s edge, %d of %d: %s","%s edge, %d of %d: %s","Borda %s, %d de %d: %s","Orla %s, %d de %d: %s","%s Rand, %d von %d: %s","Bord %s, %d sur %d : %s"
@@ -1095,6 +1099,16 @@ ERR_NOTHING_TO_SWAP,no law is woven in that slot to swap,no law is woven in that
 ERR_REALM_NOT_OPEN,that realm is not open yet,that realm is not open yet,esse reino ainda não está aberto,esse reino ainda não está aberto,dieses Reich ist noch nicht geöffnet,ce royaume n'est pas encore ouvert
 ERR_POST_CANNOT_MOVE,a post moves only onto open ground,a post moves only onto open ground,um posto só se move para chão livre,um posto só se move para chão livre,ein Posten zieht nur auf freien Boden,un poste ne se déplace que sur un sol libre
 RV_CURATE,Curate,Curate,Curar,Curar,Kuratieren,Arranger
+RV_LEVEL,Realm level %d,Realm level %d,Nível de reino %d,Nível de reino %d,Reichsstufe %d,Niveau de royaume %d
+RV_KEY_MAP,Map,Map,Mapa,Mapa,Karte,Carte
+RV_KEY_DEFENCE,Defence,Defense,Defesa,Defesa,Abwehr,Défense
+RV_KEY_BUILD,Build,Build,Construir,Construir,Bauen,Construire
+RV_LAWS,Laws %d/%d,Laws %d/%d,Leis %d/%d,Leis %d/%d,Gesetze %d/%d,Lois %d/%d
+RV_STARLIGHT,%s Starlight,%s Starlight,%s de Luz Estelar,%s de Luz Estelar,%s Sternenlicht,%s Lumière stellaire
+RV_KEY_DETAILS,Details,Details,Detalhes,Detalhes,Details,Détails
+RV_AETHER,%s Aether,%s Aether,%s de Aether,%s de Aether,%s Aether,%s d'Aether
+RV_ESSENCE,%s Essence,%s Essence,%s de Essência,%s de Essência,%s Essenz,%s Essence
+RV_LAWS_BAND,Laws %d/%d · %s %d%%,Laws %d/%d · %s %d%%,Leis %d/%d · %s %d%%,Leis %d/%d · %s %d%%,Gesetze %d/%d · %s %d%%,Lois %d/%d · %s %d %%
 CUR_TITLE,Curate your defence,Curate your defense,Cure sua defesa,Cura a tua defesa,Verteidigung kuratieren,Arrange ta défense
 CUR_HEADER,"%s, realm level %d","%s, realm level %d","%s, nível de reino %d","%s, nível de reino %d","%s, Reichsstufe %d","%s, niveau de royaume %d"
 CUR_FAILED,Curation could not answer: %s,Curation could not answer: %s,A curadoria não pôde responder: %s,A curadoria não pôde responder: %s,Das Kuratieren konnte nicht antworten: %s,L'arrangement n'a pas pu répondre : %s
@@ -1157,9 +1171,18 @@ SHARE_COPY_INVITE,Copy the invite,Copy the invite,Copiar o convite,Copiar o conv
 SHARE_INVITE_MESSAGE,Join me in Ruleborn: open Friends and enter the invite %s,Join me in Ruleborn: open Friends and enter the invite %s,Jogue comigo no Ruleborn: abra Amigos e digite o convite %s,Joga comigo no Ruleborn: abre Amigos e escreve o convite %s,Spiel mit mir Ruleborn: Öffne Freunde und gib die Einladung %s ein,Rejoins-moi dans Ruleborn : ouvre Amis et saisis l'invitation %s
 DEFENCES_NEAR,"near the %s at %d, %d","near the %s at %d, %d","perto de %s, em %d, %d","perto de %s, em %d, %d","nahe %s bei %d, %d","près de %s, en %d, %d"
 DEFENCES_PYLON,%s pylon,%s pylon,pilar de %s,pilar de %s,%s-Pylon,pylône de %s
+DEFENCES_STAT_HELD,Held,Held,Seguradas,Seguradas,Gehalten,Tenues
+DEFENCES_STAT_LEAKED,Leaked,Leaked,Vazadas,Vazadas,Durchgelassen,Percées
+DEFENCES_STAT_PARTIAL,Partial,Partial,Parciais,Parciais,Teilweise,Partielles
 OBS_DEPTH,Up to %d realms to the Heart,Up to %d realms to the Heart,Até %d reinos até o Coração,Até %d reinos até ao Coração,Bis zu %d Reiche bis zum Herzen,Jusqu'à %d royaumes jusqu'au Cœur
 OBS_FAULTS_FROM,Faults open from %s,Faults open from %s,Falhas abertas a partir de %s,Falhas abertas a partir de %s,Risse öffnen sich von %s aus,Failles ouvertes depuis %s
 OBS_OUTER_REALM,outer realm %d,outer realm %d,reino exterior %d,reino exterior %d,Außenreich %d,royaume extérieur %d
+OBS_RIBBON_TRACE,Trace,Trace,Rastro,Rasto,Spur,Trace
+OBS_RIBBON_ECHO,Echo,Echo,Eco,Eco,Echo,Écho
+OBS_RIBBON_GENERATED,The game's own,The game's own,Do jogo,Do jogo,Vom Spiel,Du jeu
+OBS_TILE_LOOT,Rough loot,Rough loot,Saque aproximado,Saque aproximado,Grobe Beute,Butin estimé
+OBS_TILE_DEPTH,Depth,Depth,Profundidade,Profundidade,Tiefe,Profondeur
+OBS_TILE_DEPTH_N,%d to the Heart,%d to the Heart,%d até o Coração,%d até ao Coração,%d bis zum Herzen,%d jusqu'au Cœur
 ERR_ALREADY_LINKED,those two realms are already linked,those two realms are already linked,esses dois reinos já estão ligados,esses dois reinos já estão ligados,diese zwei Reiche sind schon verbunden,ces deux royaumes sont déjà reliés
 ERR_NO_FREE_SOCKET,that realm has no free link socket,that realm has no free link socket,esse reino não tem encaixe de ligação livre,esse reino não tem encaixe de ligação livre,dieses Reich hat keinen freien Verbindungssockel,ce royaume n'a plus d'emplacement de lien libre
 ERR_NO_SUCH_LINK,that link does not exist,that link does not exist,essa ligação não existe,essa ligação não existe,diese Verbindung gibt es nicht,ce lien n'existe pas
@@ -1168,6 +1191,11 @@ ERR_LINK_LIMIT,your universe already has as many of that link as it may,your uni
 ERR_TOO_MANY_LINKS,a universe may have one link per outer realm and two more,a universe may have one link per outer realm and two more,um universo pode ter uma ligação por reino exterior e mais duas,um universo pode ter uma ligação por reino exterior e mais duas,ein Universum darf eine Verbindung pro Außenreich und zwei mehr haben,"un univers peut avoir un lien par royaume extérieur, plus deux"
 CUR_HOLD_MEASURING,Hold: measuring… %d of %d raids of the reference crew,Hold: measuring… %d of %d raids of the reference crew,Resistência: medindo… %d de %d assaltos da equipe de referência,Resistência: a medir… %d de %d assaltos da equipa de referência,Halten: wird gemessen … %d von %d Raubzügen der Referenz-Crew,Tenue : mesure en cours… %d sur %d casses de l'équipe de référence
 CUR_HOLD,Held %d of %d raids of the reference crew (%s),Held %d of %d raids of the reference crew (%s),Resistiu a %d de %d assaltos da equipe de referência (%s),Resistiu a %d de %d assaltos da equipa de referência (%s),%d von %d Raubzügen der Referenz-Crew gehalten (%s),A tenu %d casses sur %d de l'équipe de référence (%s)
+CUR_TAB_LAYOUT,Layout,Layout,Layout,Disposição,Anlage,Plan
+CUR_TAB_POSTS,Posts,Posts,Postos,Postos,Posten,Postes
+CUR_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
+CUR_TAB_NAME,Name,Name,Nome,Nome,Name,Nom
+CUR_KICKER,Your defence,Your defense,Sua defesa,A tua defesa,Deine Abwehr,Ta défense
 ERR_FUND_ADULTS_ONLY,the Island Fund is open from 18,the Island Fund is open from 18,o Island Fund é aberto a partir dos 18,o Island Fund está aberto a partir dos 18,der Island Fund ist ab 18 offen,l'Island Fund est ouvert dès 18 ans
 LANDING_REALM_ONE,"In %s, one link from the Heart","In %s, one link from the Heart","Em %s, a uma ligação do Coração","Em %s, a uma ligação do Coração","In %s, eine Verbindung vom Herzen","Dans %s, à un lien du Cœur"
 LANDING_REALM_MANY,"In %s, %d links from the Heart","In %s, %d links from the Heart","Em %s, a %d ligações do Coração","Em %s, a %d ligações do Coração","In %s, %d Verbindungen vom Herzen","Dans %s, à %d liens du Cœur"
@@ -1179,6 +1207,15 @@ HEIST_IN_HEART,In the Heart,In the Heart,No Coração,No Coração,Im Herzen,Dan
 PLAN_ENTRY_ACROSS,"Entry: you choose an outer realm's edge spot, or a fault, as the crew lands","Entry: you choose an outer realm's edge spot, or a fault, as the crew lands","Entrada: você escolhe um ponto da borda de um reino exterior, ou uma falha, ao pousar","Entrada: escolhes um ponto da orla de um reino exterior, ou uma falha, ao aterrar",Einstieg: du wählst beim Landen einen Randplatz eines Außenreichs oder einen Riss,"Entrée : tu choisis un point du bord d'un royaume extérieur, ou une faille, à l'atterrissage"
 PLAN_ROUTE,"Route: realm by realm to the Heart, up to %d realms, then out by skiff from wherever the crew stands","Route: realm by realm to the Heart, up to %d realms, then out by skiff from wherever the crew stands","Rota: reino a reino até o Coração, até %d reinos, e saída de barco de onde a equipe estiver","Rota: reino a reino até ao Coração, até %d reinos, e saída de barco de onde a equipa estiver","Route: Reich für Reich zum Herzen, bis zu %d Reiche, dann hinaus per Boot, wo die Crew gerade steht","Itinéraire : royaume par royaume jusqu'au Cœur, jusqu'à %d royaumes, puis sortie en esquif d'où se trouve l'équipe"
 PLAN_CLOCK_RANGE,"Heist clock %s to %s, by the realm you land in","Heist clock %s to %s, by the realm you land in","Relógio do assalto de %s a %s, conforme o reino onde pousar","Relógio do assalto de %s a %s, conforme o reino onde aterrares","Raubzug-Uhr %s bis %s, je nach Landereich","Horloge du casse de %s à %s, selon le royaume d'atterrissage"
+PLAN_ROW_CLOCK,Clock,Clock,Relógio,Relógio,Uhr,Horloge
+PLAN_ROW_ENTRY,Entry,Entry,Entrada,Entrada,Einstieg,Entrée
+PLAN_ROW_ROUTE,Route,Route,Rota,Rota,Route,Route
+PLAN_ROW_FAULTS,Faults,Faults,Falhas,Falhas,Risse,Failles
+PLAN_ROW_LOAD,Load,Load,Carga,Carga,Ladung,Charge
+PLAN_TAB_PLAN,Plan,Plan,Plano,Plano,Plan,Plan
+PLAN_TAB_CREW,Crew,Crew,Equipe,Equipa,Crew,Équipe
+PLAN_LAWS_ROUTE,Laws on the route,Laws on the route,Leis no caminho,Leis no caminho,Gesetze auf dem Weg,Lois sur la route
+PLAN_CASTS_ROW,Casts,Casts,Lançamentos,Lançamentos,Würfe,Sorts
 SETTINGS_CAMERA_BUTTONS_ON,Turn and zoom buttons: on,Turn and zoom buttons: on,Botões de girar e zoom: sim,Botões de rodar e zoom: sim,Dreh- und Zoomtasten: an,Boutons pivoter et zoom : oui
 SETTINGS_CAMERA_BUTTONS_OFF,Turn and zoom buttons: off,Turn and zoom buttons: off,Botões de girar e zoom: não,Botões de rodar e zoom: não,Dreh- und Zoomtasten: aus,Boutons pivoter et zoom : non
 CAMERA_TURN_LEFT,Turn the view left,Turn the view left,Girar a vista para a esquerda,Rodar a vista para a esquerda,Ansicht nach links drehen,Pivoter la vue à gauche
@@ -1288,3 +1325,12 @@ SCREEN_LEAGUE,League,League,Liga,Liga,Liga,Ligue
 SCREEN_FEATURED,Featured,Featured,Em destaque,Em destaque,Im Fokus,À la une
 SCREEN_SETTINGS_GAME,Game,Game,Jogo,Jogo,Spiel,Jeu
 SCREEN_OVERVIEW,Overview,Overview,Resumo,Resumo,Überblick,Aperçu
+PLAN_VALUE_ENTRY,You choose an edge spot as the crew lands,You choose an edge spot as the crew lands,Você escolhe um ponto da borda ao pousar,Escolhes um ponto da orla ao aterrar,Du wählst beim Landen einen Randplatz,Tu choisis un point du bord à l'atterrissage
+PLAN_VALUE_ENTRY_ACROSS,"You choose an outer realm's edge spot, or a fault, as the crew lands","You choose an outer realm's edge spot, or a fault, as the crew lands","Você escolhe um ponto da borda de um reino exterior, ou uma falha, ao pousar","Escolhes um ponto da orla de um reino exterior, ou uma falha, ao aterrar",Du wählst beim Landen einen Randplatz eines Außenreichs oder einen Riss,"Tu choisis un point du bord d'un royaume extérieur, ou une faille, à l'atterrissage"
+PLAN_VALUE_ROUTE,"Realm by realm to the Heart, up to %d realms, then out by skiff from wherever the crew stands","Realm by realm to the Heart, up to %d realms, then out by skiff from wherever the crew stands","Reino a reino até o Coração, até %d reinos, e saída de barco de onde a equipe estiver","Reino a reino até ao Coração, até %d reinos, e saída de barco de onde a equipa estiver","Reich für Reich zum Herzen, bis zu %d Reiche, dann hinaus per Boot, wo die Crew gerade steht","Royaume par royaume jusqu'au Cœur, jusqu'à %d royaumes, puis sortie en esquif d'où se trouve l'équipe"
+PLAN_VALUE_OF,%d of %d,%d of %d,%d de %d,%d de %d,%d von %d,%d sur %d
+PLAN_VALUE_CASTS,"%d of %d, paid only if used","%d of %d, paid only if used","%d de %d, pagos só se usados","%d de %d, pagos só se usados","%d von %d, nur bezahlt, wenn genutzt","%d sur %d, payés seulement s'ils servent"
+PLAN_VALUE_LOAD,%d%%,%d%%,%d%%,%d%%,%d%%,%d%%
+OBS_PREV_CARD,Previous target,Previous target,Alvo anterior,Alvo anterior,Vorheriges Ziel,Cible précédente
+OBS_NEXT_CARD,Next target,Next target,Próximo alvo,Alvo seguinte,Nächstes Ziel,Cible suivante
+OBS_PAGE,Target %d of %d,Target %d of %d,Alvo %d de %d,Alvo %d de %d,Ziel %d von %d,Cible %d sur %d

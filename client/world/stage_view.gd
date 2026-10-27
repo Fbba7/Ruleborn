@@ -10,6 +10,10 @@ extends WorldView
 
 
 
+## How far, in pixels at 540 wide, a lower level may stray from the full
+## mesh before the renderer keeps the fuller one.
+const LOD_PIXELS := 24.0
+
 ## The share of the view's height the panels cover at its bottom and top:
 ## the island is framed in what is left.
 var cover_bottom := 0.0
@@ -30,6 +34,7 @@ var taps_zoom := true
 var layers: Node3D
 
 var _breath := 0.0
+var _lod_frames := 0
 
 
 func _init() -> void:
@@ -45,6 +50,18 @@ func _process(delta: float) -> void:
 	super._process(delta)
 	_breath += delta
 	fit()
+	_refine()
+
+
+## §21.3 at the home camera: the realm's meshes take their lower levels by
+## size on screen, with the threshold measured at the phone's size so the
+## count holds at any resolution (`StageLod`). New meshes are given their
+## levels a few frames after they appear.
+func _refine() -> void:
+	viewport.mesh_lod_threshold = LOD_PIXELS * maxf(1.0, viewport.size.x / 540.0)
+	if _lod_frames < 30 or _lod_frames % 15 == 0:
+		StageLod.apply(world)
+	_lod_frames += 1
 
 
 ## The signatures of `laws` over this realm with nothing placed: what a
