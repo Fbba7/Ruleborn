@@ -223,9 +223,7 @@ func _sub_line(c: Dictionary, me: Dictionary) -> Control:
 		"#" + colour.darkened(0.55).to_html(false), "schools/" + school))
 	var sub := StageHeroKit.words("%s · %s" % [RosterPresenter.kind_name(str(me.get("kind", ""))), c["role"]], 16.0,
 		StageHeroSkin.LIGHT_SOFT)
-	if Settings.text_scale > 100:
-		sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		sub.custom_minimum_size.x = UI.px(100)
+	StageHeroKit.wrapped(sub, 300.0)
 	sub.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	line.add_child(sub)
 	return line

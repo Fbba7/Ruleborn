@@ -324,7 +324,12 @@ func _tile(s: Dictionary, busy: bool, shown: bool) -> Control:
 	name.custom_minimum_size.x = UI.px(60)
 	v.add_child(name)
 	if not s["unlocked"]:
-		v.add_child(StageHeroKit.chip(s["lock"], "card", "generalui/lock", true))
+		# When it unlocks, small under its name: a long language's words
+		# wrap inside the tile.
+		var lock := StageHeroKit.para(s["lock"], 13.0, StageHeroSkin.LIGHT_SOFT)
+		lock.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lock.custom_minimum_size.x = UI.px(40)
+		v.add_child(lock)
 	var o: Dictionary = s["button"]
 	var b := UI.button(o["action"], controller.station.bind(o["sage"]), false, Color(), o["spoken"])
 	StageHeroMaterial.button(b, "gold" if s["unlocked"] and not s["guarding"] else "leather")

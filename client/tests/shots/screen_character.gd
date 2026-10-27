@@ -8,6 +8,11 @@ func _initialize() -> void:
 
 func _go() -> void:
 	root.size = Vector2i(1080, 2340)
+	# TEXT=200 and HC=1 render §20.8's larger text and high contrast.
+	if OS.get_environment("TEXT") != "":
+		Settings.text_scale = int(OS.get_environment("TEXT"))
+	Settings.high_contrast = OS.get_environment("HC") != ""
+	Settings.apply()
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	App.services.store.dispatch(&"roster_loaded", {"view": ShotData.roster()})
 	var id := int(OS.get_environment("ID")) if OS.get_environment("ID") != "" else 5

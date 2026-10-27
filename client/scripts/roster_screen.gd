@@ -71,7 +71,9 @@ func _build() -> void:
 	body.add_child(padded(StageHeroKit.hub(0)))
 	# The design's hero card: the chosen character on its stage at the left,
 	# its name, kind, role, health and level at the right.
-	var hero := HBoxContainer.new()
+	var hero: BoxContainer = HBoxContainer.new()
+	if Settings.text_scale > 100:
+		hero = VBoxContainer.new()
 	hero.add_theme_constant_override("separation", UI.px(8))
 	stage = StageHero.new()
 	stage.custom_minimum_size = Vector2(UI.px(150), UI.px(185))

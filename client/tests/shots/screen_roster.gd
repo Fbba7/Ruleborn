@@ -7,6 +7,11 @@ func _initialize() -> void:
 
 func _go() -> void:
 	root.size = Vector2i(1080, 2340)
+	# TEXT=200 and HC=1 render §20.8's larger text and high contrast.
+	if OS.get_environment("TEXT") != "":
+		Settings.text_scale = int(OS.get_environment("TEXT"))
+	Settings.high_contrast = OS.get_environment("HC") != ""
+	Settings.apply()
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	var screen: RosterScreen = load("res://scenes/roster.tscn").instantiate()
 	root.add_child(screen)

@@ -23,6 +23,29 @@ static func words(text: String, points: float, colour: Color, edged := false) ->
 	return l
 
 
+## `l` wraps onto more lines when its column is narrow, but never below its
+## own width up to `cap_points`, so a short word is never broken inside.
+static func wrapped(l: Label, cap_points := 120.0) -> Label:
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.custom_minimum_size.x = UI.px(minf(cap_points, 60.0))
+	# Measured as drawn, once the label has its theme: unwrapped, on its
+	# longest word and on the whole.
+	l.ready.connect(func() -> void:
+		var said := l.text
+		l.autowrap_mode = TextServer.AUTOWRAP_OFF
+		l.custom_minimum_size.x = 0
+		var longest := 0.0
+		for word: String in said.split(" "):
+			l.text = word
+			longest = maxf(longest, l.get_minimum_size().x)
+		l.text = said
+		var whole := l.get_minimum_size().x
+		# Between words only: a word is never split.
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD
+		l.custom_minimum_size.x = maxf(longest + UI.px(2), minf(whole + UI.px(2), UI.px(cap_points))))
+	return l
+
+
 ## A kicker: a card's small capital heading, tracked wide, in gold.
 static func kicker(text: String, colour := Color("#E9B65C")) -> Label:
 	if _tracked == null:
@@ -37,9 +60,7 @@ static func kicker(text: String, colour := Color("#E9B65C")) -> Label:
 	# A kicker wraps: tracked wide in capitals, a long language's runs past
 	# the phone (French's every-fifth-level heading). A short one keeps its
 	# own width, so it never breaks inside a word.
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var natural := _tracked.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, l.get_theme_font_size("font_size")).x
-	l.custom_minimum_size.x = minf(natural, UI.px(140 if Settings.text_scale <= 100 else 60))
+	wrapped(l, 100.0)
 	l.set_meta("own_ink", true)
 	l.set_meta("bold", true)
 	return l
@@ -63,13 +84,13 @@ static func chip(text: String, kind := "glass", glyph := "", wraps := false) -> 
 	# At §20.8's larger text every chip may wrap, so none outgrows the phone.
 	wraps = wraps or Settings.text_scale > 100
 	if wraps:
-		said.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		said.custom_minimum_size.x = UI.px(60)
+		wrapped(said, 160.0)
 		said.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(said)
 	var p := StageHeroMaterial.panel(kind, row, 999.0, 10.0)
 	p.add_theme_stylebox_override("panel", UI.clear_box(10, 4))
 	p.size_flags_horizontal = Control.SIZE_FILL if wraps else Control.SIZE_SHRINK_BEGIN
+	p.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return p
 
@@ -170,7 +191,7 @@ static func name_plate(name: Label, school: String, sub: String) -> Control:
 	var colour: Color = Palette.SCHOOL.get(school, Palette.MOTION)
 	line.add_child(chip(Strings.t("SCHOOL_" + school.to_upper()).to_upper(),
 		"#" + colour.darkened(0.55).to_html(false), "schools/" + school))
-	var under := words(sub, 16.0, StageHeroSkin.LIGHT_SOFT)
+	var under := wrapped(words(sub, 16.0, StageHeroSkin.LIGHT_SOFT), 100.0)
 	under.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	line.add_child(under)
 	v.add_child(line)
