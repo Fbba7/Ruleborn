@@ -107,7 +107,7 @@ export class Auth {
    * copied it — and ends the session for both. Anything else is refused and
    * changes nothing, so a guess cannot end someone's session.
    */
-  refresh(token, now = this.service.now()) {
+  refresh(token, now = this.service.now(), admit = () => {}) {
     const peek = peekRefresh(token);
     if (!peek) throw refused();
     // A reuse ends the family in its own transaction, kept though the
@@ -118,6 +118,7 @@ export class Auth {
                 a.deleted_at, a.banned_at
            FROM sessions s JOIN accounts a ON a.id = s.account WHERE s.id = ?`).get(peek.session);
       if (!s || !refreshSigned(this.keys, token, s.salt)) throw refused();
+      admit();
       if (s.deleted_at || s.banned_at || s.ended_at !== null) throw refused();
       if (peek.generation !== s.generation) {
         if (peek.generation < s.generation) this.#end("id", s.id, "reused", now);

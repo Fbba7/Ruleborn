@@ -69,3 +69,33 @@ test("SR-25: a Game Center proof respelled is the same proof, and is refused the
                          `the salt respelled ${JSON.stringify(salt)} is a replay`);
   }
 });
+
+// SR-28: a refresh was held to the bucket of the session its token names
+// (§24.1's sign-ins, ten at once then one every ten seconds) before the
+// token was checked, and session ids are sequential. Anyone could send
+// made-up refresh tokens naming every session id in turn, about one a
+// session every ten seconds, and keep every player's refresh "held back";
+// the device keeps its token and waits on a 429 rather than proving itself
+// again, so a player stays signed out of the server while it lasts — and
+// with no RULEBORN_PEER_HEADER, the default, no address limit stops it.
+// Now a token is admitted to its session's bucket only once it is proven.
+test("SR-28: made-up refresh tokens naming a session cannot hold its real refresh back", async () => {
+  const t = server();
+  const player = await signIn(t, "gc:held");
+  const session = player.refreshToken.split(".")[2];
+  for (let i = 0; i < 30; i++) {
+    const forged = await call(t, "/v1/session/refresh", { body: { refreshToken: `r1.k0.${session}.0.${"A".repeat(43)}` } });
+    assert.equal(forged.status, 401, "a made-up token is refused");
+  }
+  const real = await call(t, "/v1/session/refresh", { body: { refreshToken: player.refreshToken } });
+  assert.equal(real.status, 200, "the player's own refresh is not held back");
+  // The bucket still holds a real token's holder: ten at once, then held.
+  let token = (await real.json()).refreshToken;
+  let held = null;
+  for (let i = 0; i < 12 && !held; i++) {
+    const r = await call(t, "/v1/session/refresh", { body: { refreshToken: token } });
+    if (r.status === 429) held = i;
+    else token = (await r.json()).refreshToken;
+  }
+  assert.equal(held, 9, "a proven session's refreshes are still limited");
+});

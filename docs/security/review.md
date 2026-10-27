@@ -46,6 +46,7 @@ decision).
 | SR-25 | Medium | server | One captured Game Center proof signed in again with its salt respelled | fixed |
 | SR-26 | Low | build | Godot and its export templates were run and shipped unchecked | fixed |
 | SR-27 | Low | client | A redirect carried the session token to another host, in the clear | fixed |
+| SR-28 | Medium | server | Made-up refresh tokens could keep every player's session from renewing | fixed |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -380,7 +381,32 @@ decision).
 - **For T11, not a finding:** `docs/security/auth.md` (T6) says session ids
   are 128-bit; they are SQLite row ids, sequential. Tokens are MACed, so a
   guessed id gains nothing, but each player's id tells them roughly how many
-  sign-ins the game has had. The doc, or a random id, should change.
+  sign-ins the game has had, and made SR-28 cheap to aim. A random 128-bit
+  id, as the doc says, or the doc saying what is built.
+
+### SR-28 — Made-up refresh tokens could keep every player's session from renewing (Medium)
+
+- **Where:** `server/src/auth_http.mjs`, `POST /v1/session/refresh`, and
+  `server/src/auth.mjs` `refresh` (T11's).
+- **What:** a refresh is held to §24.1's sign-in bucket of the session its
+  token names — ten at once, then one every ten seconds — and the bucket was
+  spent before the token was checked. Session ids are sequential, so any
+  caller could send made-up tokens (`r1.k0.<id>.0.<anything>`) naming each
+  live session in turn, about one a session every ten seconds, and every
+  player's real refresh was answered `429`. The device keeps its token and
+  waits on a `429` (`AuthSession._renew`) rather than proving itself
+  again, so its access token runs out and the player is off the server for
+  as long as it lasts. Without `RULEBORN_PEER_HEADER`, the default, no
+  address limit slows the sender; with it, a block of IPv6 /64s does. A
+  thousand players' sessions cost about 100 requests a second.
+- **Fix:** the token is admitted to its session's bucket only once its
+  signature against the session's salt is proven: a made-up one costs one
+  read by primary key and spends nothing of the player's. A proven session
+  is still limited as before. 4 lines in T11's files; T11 told here.
+- **Test:** `server/test/security_auth.test.mjs` (SR-28): thirty made-up
+  tokens naming a player's session, then the player's refresh succeeds,
+  and a proven holder is still held at the bucket's tenth. It failed before
+  the fix.
 
 ### SR-25 — One captured Game Center proof signed in again with its salt respelled (Medium)
 
@@ -446,6 +472,14 @@ decision).
   no other client script makes a request of its own. The engine's
   behaviour was measured outside the suite, since the server's tests do not
   run Godot. It failed before the fix.
+
+## Wave 5's diffs
+
+Each track's branch, read as it was pushed, from d2343591.
+
+| Branch | Commits read | What it touches | Verdict |
+| --- | --- | --- | --- |
+| `claude/3d-characters-2` | `72c5966`, `51ea7ea` | busts for the heist's crew row and the Sage disc (`creature_bust*.gd`, `creature_model.gd`, `world_view.gd`) | no finding: rendering only, no network, file, link or loaded data; environment read only by its screenshot tool under `tests/shots` |
 
 ## Configuration against the market standard
 

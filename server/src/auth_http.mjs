@@ -71,9 +71,9 @@ export async function sessionRoute(service, request, parts, { signIn, limit, rea
       const peek = peekRefresh(refreshToken);
       if (!peek) throw new Refused(401, "session_refused");
       // §24.1's sign-ins an account, held by the session the token names
-      // before anything is read.
-      admit(`session:${peek.session}`);
-      return answer(service.auth.refresh(refreshToken));
+      // once the token is proven: a made-up one naming someone's session
+      // spends nothing of theirs (T12's SR-28).
+      return answer(service.auth.refresh(refreshToken, undefined, () => admit(`session:${peek.session}`)));
     });
   }
   if (m === "POST" && verb === "end") {
