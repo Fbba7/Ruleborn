@@ -30,6 +30,7 @@ var _kicker: Label
 var _result: VBoxContainer
 var _run: Button
 var _report_seen := -1
+var _sight := {}
 
 
 func _init(island: PackedByteArray) -> void:
@@ -145,7 +146,7 @@ func _legend() -> Control:
 	row.add_theme_constant_override("separation", UI.px(10))
 	row.add_theme_constant_override("h_separation", UI.px(10))
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	for item: String in ["! " + Strings.t("REHEARSE_LEGEND_SEEN"), "◯ " + Strings.t("REHEARSE_LEGEND_SIGHT"),
+	for item: String in ["! " + Strings.t("REHEARSE_LEGEND_SEEN"), "▢ " + Strings.t("REHEARSE_LEGEND_SIGHT"),
 			"★ " + Strings.t("REHEARSE_LEGEND_VAULT")]:
 		row.add_child(UI.label(item, 13))
 	plate.add_child(row)
@@ -229,6 +230,7 @@ func run() -> void:
 	for i in replay.crew_size():
 		route.trails.append(PackedVector2Array())
 	_report_seen = -1
+	_sight.clear()
 	playing = true
 	_show_result({})
 	if Settings.reduced_motion:
@@ -251,6 +253,18 @@ func _process(_delta: float) -> void:
 			return
 		_step()
 	view.sync()
+	_read_sight()
+
+
+## Where the guards' sight reached in this run so far, every awake guard's
+## `seen` gathered as it plays: the card's guard sight.
+func _read_sight() -> void:
+	var guards := replay.guards()
+	for gi: int in guards.size():
+		if not guards[gi]["down"]:
+			for t: int in replay.seen(gi):
+				_sight[t] = true
+	route.sight = PackedInt32Array(_sight.keys())
 
 
 func _step() -> void:
@@ -263,6 +277,7 @@ func _step() -> void:
 				route.trails[i].append(m["at"])
 		if replay.tick() % (TRAIL_EVERY * 5) == 0:
 			_mark_seen()
+			_read_sight()
 
 
 ## Everyone out or caught: nothing left to watch.
@@ -293,6 +308,7 @@ func _mark_seen() -> void:
 func _end() -> void:
 	playing = false
 	view.sync()
+	_read_sight()
 	_mark_seen()
 	route.queue_redraw()
 	_show_result(replay.report())

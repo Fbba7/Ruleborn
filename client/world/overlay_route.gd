@@ -15,6 +15,9 @@ var trails: Array[PackedVector2Array] = []
 ## The tiles where the crew was seen, from the report.
 var seen: Array[Vector2i] = []
 var vault := Vector2(-1, -1)
+## The tiles the guards' sight reached in the run, as the simulation's
+## `seen` gave them (row-major indices): the legend's guard sight.
+var sight := PackedInt32Array()
 
 
 func _init(on: StageView) -> void:
@@ -26,12 +29,13 @@ func _init(on: StageView) -> void:
 func clear() -> void:
 	trails.clear()
 	seen.clear()
+	sight.clear()
 	queue_redraw()
 
 
 func _process(_delta: float) -> void:
 	# The camera breathes and the island is framed as the card resizes.
-	if not trails.is_empty() or vault.x >= 0:
+	if not trails.is_empty() or vault.x >= 0 or not sight.is_empty():
 		queue_redraw()
 
 
@@ -44,6 +48,13 @@ func _point(at: Vector2) -> Vector2:
 func _draw() -> void:
 	if view == null or view.replay == null or view.camera == null or view.viewport == null:
 		return
+	var side := view.grid_size().x
+	if side > 0:
+		var glow := Color(Tokens.color("cream"), 0.3)
+		for i: int in sight:
+			var t := Vector2(i % side, i / side)
+			draw_colored_polygon(PackedVector2Array([_point(t), _point(t + Vector2(1, 0)), _point(t + Vector2(1, 1)),
+				_point(t + Vector2(0, 1))]), glow)
 	var wide := UI.px(5)
 	var dash := UI.px(DASH_POINTS)
 	var green := Tokens.color("success_light")
