@@ -3,9 +3,10 @@ extends SceneTree
 ## garden, a library and more joined by gravel paths, with trees, hedges, a
 ## stream and a pond, on the home camera (§21.1's 35°), saved as a still
 ## (tools/render/shoot.sh). REALM (default heart), LEVEL (the buildings'
-## level, default 5), HOUR, ZOOM, TURN, PITCH, DETAIL (0 full, 1 mid) and GRID
-## (the builder's grid, 0–1) are optional, and PATHS=0 leaves the gravel
-## out, so only the worn trails join the doors; SHOT is the file.
+## level, default 5), HOUR, ZOOM, TURN, PITCH, DETAIL (0 full, 1 mid), GRID
+## (the builder's grid, 0–1) and HEIST (the heist's camera) are optional,
+## and PATHS=0 leaves the gravel out, so only the worn trails join the
+## doors; SHOT is the file.
 func _initialize() -> void:
 	_shoot()
 
@@ -48,9 +49,10 @@ func _shoot() -> void:
 	for b: Array in ex.buildings():
 		known.append([b[0], b[1], b[2], b[3], lvl])
 	view.buildings = known
-	view.heist = false
+	# HEIST=1: the heist's own camera (§21.1's 50°, close), as 02-heist.
+	view.heist = OS.get_environment("HEIST") != ""
 	view.kit_detail = int(OS.get_environment("DETAIL")) if OS.get_environment("DETAIL") != "" else BuildingKit.FULL
-	view.pitch = WorldView.HOME_PITCH
+	view.pitch = WorldView.HEIST_PITCH if view.heist else WorldView.HOME_PITCH
 	root.add_child(view)
 	view.set_sky_hour(int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 12)
 	view.show_replay(replay)

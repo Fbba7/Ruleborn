@@ -70,6 +70,8 @@ var water := Geo.new()
 var lava := Geo.new()
 ## The worn trails, kept for the ground shader (`instances`).
 var _lanes: Array = []
+## The Heart's clock dial for the ground shader: centre xz, radius, on.
+var _dial := Vector4.ZERO
 
 
 func _init(r: RulebornReplay, colours: Dictionary) -> void:
@@ -161,8 +163,15 @@ func build() -> void:
 	kg.trails = _trails(footprints)
 	for fp: Array in footprints:
 		if fp[0] == "keeper_s_spire":
-			var side: float = fp[3]
-			kg.plazas.append([Vector2(fp[1], fp[2]) + Vector2(side, side) / 2.0, side / 2.0 + 0.9])
+			var side: int = fp[3]
+			if realm == "heart":
+				# The Heart's Spire stands on its clock dial (KitDial).
+				var a := centre(Vector2i(fp[1], fp[2]))
+				var mid := Vector3(a.x + (side - 1) / 2.0, a.y, a.z + (side - 1) / 2.0)
+				_dial = Vector4(mid.x, mid.z, KitDial.radius(side), 1.0)
+				KitDial.build(hero, prop, mid, _dial.z)
+			else:
+				kg.plazas.append([Vector2(fp[1], fp[2]) + Vector2(side, side) / 2.0, side / 2.0 + 0.9])
 	_lanes = kg.trails
 	for i in features.size():
 		if features[i] in WATER_TINT:
@@ -343,12 +352,13 @@ func instances() -> Array[MeshInstance3D]:
 	ground_mat.set_shader_parameter("grid_half", Vector2(size) / 2.0 + Vector2(0.001, 0.001))
 	# Other realms' paths are their stone and dirt toward sand, as the design's land
 	# stills; §21.4: the Heart's are "cream flagstones", warmed to the design's
-	# rose-cream (04-realm-view).
+	# dusty rose pebbles (02-heist's lanes draw #C79092 in the light).
 	var cobble: Color = KitGround.earth(palette).lightened(0.18).lerp(Color("#F0DCC0"), 0.4) if realm != "heart" \
-		else Color("#FFE2D6")
+		else Color("#F0B8B2")
 	ground_mat.set_shader_parameter("cobble", cobble)
 	ground_mat.set_shader_parameter("mortar", (palette["soil"] as Color).lerp(cobble, 0.65))
 	ground_mat.set_shader_parameter("pebble", (palette["rock"] as Color).lightened(0.25))
+	ground_mat.set_shader_parameter("dial", _dial)
 	# The realm's marks over its meadow (T2's), continued over the grid.
 	var marks := LookPaint.deco(realm)
 	if marks != null:

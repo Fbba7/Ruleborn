@@ -72,7 +72,10 @@ static func look(lvl: int, colours: Dictionary) -> Array[Color]:
 		return [Color("#ECE6FF"), (s["roof"] as Color).lerp(Color("#8C6CF0"), 0.35).lightened(0.1), KitStyle.GOLD]
 	if lvl >= 4:
 		return [s["wall"], s["roof"], s["accent"]]
-	return [(s["wall"] as Color).lerp(Color("#E8D4B0"), 0.5), KitStyle.THATCH, KitStyle.WOOD]
+	# The first look's thatch is dyed the realm's roof colour, so a realm reads
+	# by its roofs at every level, as the design draws its towns (02-heist:
+	# the Heart's houses all under magenta).
+	return [(s["wall"] as Color).lerp(Color("#E8D4B0"), 0.5), KitStyle.THATCH.lerp(s["roof"], 0.8), KitStyle.WOOD]
 
 
 ## Building `kind` of `side` tiles a side, centred on `mid` on the ground,
