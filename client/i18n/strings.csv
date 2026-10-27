@@ -1334,6 +1334,7 @@ SCREEN_SETTINGS_SOUND,Sound,Sound,Som,Som,Ton,Son
 SCREEN_SETTINGS_ACCESS,Access,Access,Acesso,Acesso,Zugang,Accès
 SCREEN_SETTINGS_ACCOUNT,Account,Account,Conta,Conta,Konto,Compte
 SCREEN_SETTINGS_PLAY,Play,Play,Jogo,Jogo,Spiel,Jeu
+SCREEN_HARMONY_SOUNDING,Sounding,Sounding,Soando,A soar,Erklingt,Résonne
 SCREEN_HELD,Held,Held,Defendidas,Defendidas,Gehalten,Tenues
 SCREEN_LEAKED,Leaked,Leaked,Vazadas,Vazadas,Durchbrochen,Percées
 SCREEN_SHOW_REALM,Show %s above,Show %s above,Mostrar %s acima,Mostrar %s acima,%s oben zeigen,Montrer %s en haut
