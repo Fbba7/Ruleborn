@@ -136,6 +136,8 @@ HOME_WORKSHOP,Workshop,Workshop,Oficina,Oficina,Werkstatt,Atelier
 BUILDER_TITLE,"Your island, realm level %d","Your island, realm level %d","Sua ilha, reino nível %d","A tua ilha, nível de reino %d","Deine Insel, Reichslevel %d","Ton île, royaume niveau %d"
 BUILDER_HINT,Tap the realm to place what is chosen below,Tap the realm to place what is chosen below,Toque no reino para pôr o que está escolhido abaixo,Toca no reino para colocar o que está escolhido abaixo,"Tippe ins Reich, um das unten Gewählte zu platzieren",Touche le royaume pour placer la sélection ci-dessous
 BUILDER_TOOL_GROUND,Ground,Ground,Terreno,Terreno,Boden,Sol
+BUILDER_CARD_MOVEMENT,Movement,Movement,Movimento,Movimento,Bewegung,Déplacement
+BUILDER_CARD_SIGHT,Guard sight,Guard sight,Visão dos guardas,Visão dos guardas,Wächterblick,Vue des gardes
 BUILDER_TOOL_WARD,Ward,Ward,Proteção,Proteção,Siegel,Protection
 BUILDER_TOOL_GUARD,Guard,Guard,Guarda,Guarda,Wache,Garde
 BUILDER_TOOL_LAW,Law,Law,Lei,Lei,Gesetz,Loi

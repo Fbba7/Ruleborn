@@ -68,6 +68,7 @@ var _tool_tabs: HBoxContainer
 var _cards: HFlowContainer
 var _shelf: ScrollContainer
 var _cards_key := ""
+var _detail: VBoxContainer
 
 
 func _ready() -> void:
@@ -124,6 +125,9 @@ func _build() -> void:
 	var sheet := UI.panel("card")
 	var inside := VBoxContainer.new()
 	inside.add_theme_constant_override("separation", UI.px(6))
+	# The chosen feature's card, as the design's, over the tools.
+	_detail = VBoxContainer.new()
+	inside.add_child(_detail)
 	_tool_tabs = HBoxContainer.new()
 	_tool_tabs.add_theme_constant_override("separation", UI.px(3))
 	inside.add_child(_tool_tabs)
@@ -204,9 +208,11 @@ func _fill_cards() -> void:
 		return
 	var same_tool := _cards_key.begins_with("%d|" % tool)
 	_cards_key = key
+	_fill_detail()
 	if same_tool:
 		for c: Node in _cards.get_children():
 			UI.set_look(c as Button, "card_selected" if int(c.get_meta("kind")) == kind else "card")
+		_show_chosen.call_deferred()
 		return
 	for c: Node in _cards.get_children():
 		_cards.remove_child(c)
@@ -231,6 +237,30 @@ func _fill_cards() -> void:
 	if ks.is_empty():
 		var p := OverlayHud.pill(TOOL_ICONS[tool], Strings.t("BUILDER_TOOL_" + TOOLS[tool]), "", "glass")
 		_cards.add_child(p)
+	_show_chosen.call_deferred()
+
+
+## The shelf scrolled to the chosen kind's card.
+func _show_chosen() -> void:
+	# Once the cards are laid out: the row the chosen one is on at the top.
+	await get_tree().process_frame
+	for c: Node in _cards.get_children():
+		if c is Button and int(c.get_meta("kind", -1)) == kind and c.is_inside_tree():
+			_shelf.scroll_vertical = int((c as Control).position.y)
+
+
+## The chosen ground feature's card (`OverlayToolCard`); none for the other
+## tools, or at large text, where the tray keeps its room for the kinds.
+func _fill_detail() -> void:
+	for c: Node in _detail.get_children():
+		_detail.remove_child(c)
+		c.queue_free()
+	var ks := kinds()
+	if tool != Tool.GROUND or kind >= ks.size() or Settings.text_scale >= 150:
+		return
+	var card := OverlayToolCard.ground(str(ks[kind]), _kind_icon(ks[kind]))
+	if card != null:
+		_detail.add_child(card)
 
 
 func _kind_icon(k: Variant) -> String:
