@@ -129,6 +129,7 @@ func _refresh() -> void:
 		outfits[o["kind"]] = o
 	var k := _chosen(kinds)
 	_stand(k)
+	_over_stage(k, kinds)
 	_hero(k, outfits.get(k.get("kind", ""), {}))
 	cards.add_child(_errands(k, outfits.get(k.get("kind", ""), {})))
 	cards.add_child(_shelves(kinds, outfits))
@@ -427,6 +428,37 @@ func _stand(k: Dictionary) -> void:
 	stage.set_meta("showing", key)
 	stage.plinth_edge = StageHeroSculpt.NOTE.get(str(f["note"]), Color("#E9B65C"))
 	stage.show_kinds([str(k["kind"])], [look], "plinth")
+
+
+## Over the stage, as the design's: the form's note on a plate at the
+## plinth, and small arrows through the album's kinds at the sides.
+func _over_stage(k: Dictionary, kinds: Array) -> void:
+	for n in stage.get_children():
+		if n.has_meta("words"):
+			n.queue_free()
+	if k.is_empty():
+		return
+	var over := MarginContainer.new()
+	over.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	over.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	over.set_meta("words", true)
+	stage.add_child(over)
+	var note := str(_form(k)["note"])
+	var colour: Color = StageHeroSculpt.NOTE.get(note, StageHeroSkin.OUTLINE)
+	StageHeroSkin.on_stage(over, StageHeroKit.chip(FormsPresenter.note_name(note).to_upper(),
+		"#" + colour.darkened(0.5).to_html(false), "lawnotes/" + note), Control.PRESET_CENTER_BOTTOM)
+	var at := kinds.find(k)
+	if kinds.size() < 2 or at < 0:
+		return
+	for step: int in [-1, 1]:
+		var to: Dictionary = kinds[posmod(at + step, kinds.size())]
+		var b := StageHeroKit.small_arrow(step < 0, Strings.t("FORMS_PREVIOUS" if step < 0 else "FORMS_NEXT",
+			str(to["title"])), func() -> void:
+				chosen = str(to["kind"])
+				form_note = ""
+				_refresh())
+		b.set_meta("item", "step:%d" % step)
+		StageHeroSkin.on_stage(over, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
 
 
 ## The chosen kind's chosen form.

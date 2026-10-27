@@ -731,6 +731,8 @@ FORMS_FILTER_ALL,All,All,Todas,Todas,Alle,Toutes
 FORMS_FILTER_OUTFITS,Outfits,Outfits,Trajes,Trajes,Outfits,Tenues
 FORMS_FILTER_MISSING,Missing,Missing,Faltando,Em falta,Fehlend,Manquantes
 FORMS_FILTER_SPOKEN,Show %s: %d kinds,Show %s: %d kinds,Mostrar %s: %d espécies,Mostrar %s: %d espécies,%s zeigen: %d Arten,Afficher %s : %d espèces
+FORMS_PREVIOUS,"Previous kind, %s","Previous kind, %s","Espécie anterior, %s","Espécie anterior, %s","Vorherige Art, %s","Espèce précédente, %s"
+FORMS_NEXT,"Next kind, %s","Next kind, %s","Próxima espécie, %s","Espécie seguinte, %s","Nächste Art, %s","Espèce suivante, %s"
 HOME_HATCH,Hatch,Hatch,Chocar,Chocar,Ausbrüten,Faire éclore
 HATCH_TITLE,Hatch,Hatch,Chocar,Chocar,Ausbrüten,Faire éclore
 HATCH_HEADER,Each birth costs %s Essence; you have %s,Each birth costs %s Essence; you have %s,Cada nascimento custa %s de Essência; você tem %s,Cada nascimento custa %s de Essência; tens %s,Jede Geburt kostet %s Essenz; du hast %s,Chaque naissance coûte %s d'Essence ; tu en as %s
