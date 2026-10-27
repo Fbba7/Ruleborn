@@ -125,7 +125,7 @@ static func friends(f: Dictionary, me: String) -> Dictionary:
 	var challenge: Dictionary = f.get("challenge", {})
 	return {
 		"error": str(f.get("error", "")), "busy": bool(f.get("busy", false)),
-		"friends": list, "none": list.is_empty(), "blocked": blocked,
+		"friends": list, "none": list.is_empty(), "blocked": blocked, "loaded": bool(f.get("loaded", false)),
 		"feed": feed, "feed_items": feed_items,
 		"invite_code": str(invite.get("invite", "")), "challenge_code": str(challenge.get("challenge", "")),
 		"invite": Strings.t("FRIENDS_INVITE_CODE", str(invite["invite"])) if invite.has("invite") else "",

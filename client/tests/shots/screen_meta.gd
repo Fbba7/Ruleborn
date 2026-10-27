@@ -22,7 +22,9 @@ func _go() -> void:
 	var screen: Control = load(Router.ROUTES[StringName(name)]).instantiate()
 	root.add_child(screen)
 	await process_frame
-	ScreenShots.fill(name, App.services.store)
+	# EMPTY=1: the screen before its state comes, as a first open shows it.
+	if OS.get_environment("EMPTY") != "1":
+		ScreenShots.fill(name, App.services.store)
 	for i in 8:
 		await process_frame
 	# TAB: a screen's tab on show (Settings' "account").

@@ -84,6 +84,12 @@ func _refresh() -> void:
 		body.remove_child(child)
 		child.queue_free()
 	if not h["ready"]:
+		_stage.visible = false
+		# Nothing to show: the reason on the screen's own card, with a way to
+		# ask again, rather than an empty night.
+		if h["error"] != "":
+			(status_label.get_parent() as Control).visible = false
+			body.add_child(ScreenParts.empty("screens", "harmonyview", h["error"], controller.load_harmony))
 		return
 	ScreenParts.set_pill(_strain, "%s · %s" % [h["percent"], WeavingPresenter.band_name(int(h["band"]))])
 	_strain.tooltip_text = h["header"]

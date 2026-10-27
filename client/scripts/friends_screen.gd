@@ -15,6 +15,8 @@ var code_field: LineEdit
 var tab_shown := "feed"
 ## The kind of code last shown, so a code just made opens the Invite tab once.
 var _shown_code := ""
+## Whether the screen has chosen its first tab.
+var _opened := false
 var _count: PanelContainer
 var _invite: PanelContainer
 
@@ -87,9 +89,11 @@ func _refresh() -> void:
 	for c in body.get_children():
 		if c != _invite:
 			c.queue_free()
-	# A code just made opens the Invite tab, where it is shown.
-	if coded and f["last"] != _shown_code:
+	# A code just made opens the Invite tab, where it is shown; so does a
+	# first visit with no friends yet, where the way to make one is.
+	if coded and f["last"] != _shown_code or f["none"] and f["loaded"] and not _opened:
 		tab_shown = "invite"
+	_opened = _opened or f["loaded"]
 	_shown_code = str(f["last"]) if coded else ""
 	if f["none"]:
 		body.add_child(ScreenParts.item("social", "invite", Strings.t("FRIENDS_NONE"), "", null, "card_lit"))

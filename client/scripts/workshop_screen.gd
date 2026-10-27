@@ -99,8 +99,14 @@ func _refresh() -> void:
 	if w["ladder"] != "":
 		body.add_child(ScreenParts.item("leagues", "star", w["ladder"], "", null, "card_lit"))
 	if w["empty"]:
-		body.add_child(ScreenParts.item("screens", "islandworkshop",
+		body.add_child(ScreenParts.empty("screens", "islandworkshop",
 			Strings.t("WORKSHOP_EMPTY_" + str(w["list"]).to_upper())))
+	elif (w["items"] as Array).is_empty() and w["error"] != "":
+		# A list that could not come: the reason on the list's own card, with
+		# a way to ask again.
+		(status_label.get_parent() as Control).visible = false
+		body.add_child(ScreenParts.empty("screens", "islandworkshop", Errors.message("WORKSHOP_FAILED", w["error"]),
+			controller.show_list.bind(str(w["list"]))))
 	for item: Dictionary in w["items"]:
 		body.add_child(_card(item, w["busy"]))
 	if focus_key != "":

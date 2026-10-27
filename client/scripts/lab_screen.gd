@@ -66,6 +66,9 @@ func _refresh() -> void:
 		body.remove_child(child)
 		child.queue_free()
 	if not l["ready"]:
+		if l["error"] != "":
+			(status_label.get_parent() as Control).visible = false
+			body.add_child(ScreenParts.empty("screens", "resonancelab", l["error"], controller.load_lab))
 		return
 	ScreenParts.set_resource(_aether, str(l.get("aether", "")))
 	var busy: bool = l["busy"] != ""

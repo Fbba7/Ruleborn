@@ -302,3 +302,26 @@ static func face(name: String, points: float) -> Control:
 	# Larger with large text, so the initials stay inside the round.
 	p.custom_minimum_size = Vector2.ONE * UI.px(points * maxf(1.0, Settings.text_scale / 100.0 * 0.8))
 	return p
+
+
+## A screen with nothing to show yet, as a first open may find it: the
+## screen's mark large, what is the matter in words, and the way to try again.
+static func empty(group: String, name: String, words: String, again := Callable()) -> PanelContainer:
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", UI.px(10))
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	var mark := ScreenKit.icon(group, name, 96.0)
+	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	mark.modulate.a = 0.8
+	col.add_child(mark)
+	var said := ScreenKit.text(words, 15.0, "words", "card", false, true)
+	said.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	col.add_child(said)
+	if again.is_valid():
+		var b := ScreenKit.button(Strings.t("SCREEN_TRY_AGAIN"), again, "gold")
+		b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		b.set_meta("key", "again")
+		col.add_child(b)
+	var p := ScreenKit.panel("card", col, 20.0, 18.0)
+	p.name = "Empty"
+	return p
