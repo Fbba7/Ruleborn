@@ -21,6 +21,7 @@ func run() -> void:
 	_fonts()
 	await _boxes()
 	await _press()
+	_motion()
 	_icons()
 
 
@@ -119,6 +120,16 @@ func _press() -> void:
 	check.call("a pressed button squashes slightly and sinks onto its drop within 250 ms, easing out, and back; "
 			+ "under reduced motion the change is immediate (§21.8, §20.8)", at_once and squashed and back and bounded,
 		"%s %s %s %s" % [at_once, squashed, back, bounded])
+
+
+func _motion() -> void:
+	var bad := []
+	for name: String in ["fade_ms", "rise_ms", "pop_ms", "sheet_ms", "press_ms", "screen_fade_ms", "bar_fill_ms"]:
+		var seconds := Motion._ms(name)
+		if seconds < 0.15 - 0.0001 or seconds > 0.25 + 0.0001:
+			bad.append("%s %.0f ms" % [name, seconds * 1000.0])
+	check.call("every interface movement the kit makes takes 150 to 250 ms (§21.8), a bar's fill included",
+		bad.is_empty(), "; ".join(bad))
 
 
 func _icons() -> void:
