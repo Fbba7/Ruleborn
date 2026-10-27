@@ -89,7 +89,7 @@ func _build() -> void:
 	view.gui_input.connect(_on_input)
 	var top := VBoxContainer.new()
 	top.add_theme_constant_override("separation", UI.px(6))
-	var heading := OverlayHud.heading(Strings.t("BUILDER_KICKER"), "")
+	var heading := OverlayTop.bar(func() -> void: App.services.router.go(&"home"), Strings.t("BUILDER_KICKER"), "")
 	title_label = heading.find_child("Title", true, false) as Label
 	top.add_child(heading)
 	_stats = HFlowContainer.new()
@@ -146,7 +146,6 @@ func _build() -> void:
 	actions.alignment = FlowContainer.ALIGNMENT_CENTER
 	actions.add_theme_constant_override("h_separation", UI.px(5))
 	actions.add_theme_constant_override("v_separation", UI.px(6))
-	actions.add_child(OverlayHud.back_key(func() -> void: App.services.router.go(&"home")))
 	level_button = _small(Strings.t("BUILDER_LEVEL", 1), next_level, "realmactions/upgrade")
 	actions.add_child(level_button)
 	undo_button = _small(Strings.t("BUILDER_UNDO"), undo, "heistoutcomes/replay")

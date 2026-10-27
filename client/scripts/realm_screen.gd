@@ -52,7 +52,8 @@ func _build() -> void:
 	var column := UI.frame(self)
 	view = StageScreen.mount(self, column)
 	view.tapped.connect(func(at: Vector2) -> void: _on_tap(view.tile_at(at), at))
-	view.fill = 1.0
+	# The island as large as the design draws it: its rim to the phone's edges.
+	view.fill = 0.84
 	town = StageTown.new(view)
 	column.add_child(_header())
 	status_label = UI.status("info", "")
