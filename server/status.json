@@ -345,6 +345,7 @@
   "retention by cohort, day 1, 7, 30 and 60, outlives the raw events discarded after 90 days (24.3, G29)": "passed",
   "richness is clamped to 0.6–1.8 and the excess over 1.5 halved: 1.8 pays 1.65": "passed",
   "robbing an echo takes nothing from its owner: no fee, no Renown, no stars (12.3)": "passed",
+  "rotating the refresh token once a day writes once a day, and a copy is still caught at the next rotation": "passed",
   "settling a heist does not write its lease again: its heist row says it is settled (F47)": "passed",
   "sign in, publish, lease, play, submit and read the balance over HTTP": "passed",
   "sign in, refresh, sign out over HTTP: every answer no-store, and the session ended at once": "passed",
