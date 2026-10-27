@@ -41,11 +41,12 @@ const HEIST_FOV := 22.0
 const ZOOM_SPAN := [1.25, 1.0, 0.6]
 ## Ticks a second, for drawing between them.
 const TPS := 30.0
-## §21.1: the heist's follow camera shows "about 12 tiles across": on a
-## portrait phone, 10.5 tiles across its width (about 12 on its diagonal),
-## so a realm of 10 to 14 tiles is followed rather than shown whole and the
-## creatures read; its close zoom, seven.
-const FOLLOW_TILES := 10.5
+## §21.1: the heist's follow camera shows "about 12 tiles across", counted
+## along the grid; turned 45° as the designs' camera is, that is about 17
+## metres across a portrait phone, so a realm of up to 12 tiles sits whole
+## across the screen as the design's heist frames it, and a larger one is
+## followed. Its close zoom, seven metres across.
+const FOLLOW_TILES := 12.0
 const CLOSE_TILES := 7.0
 ## A character model's scale on the heist's world, for readability.
 const MODEL_SCALE := 1.18
@@ -475,14 +476,14 @@ func _frame_camera() -> void:
 	var following := heist and not follow.is_empty() and replay != null and replay.has_landed()
 	var cam_size := whole
 	if following:
-		var near := FOLLOW_TILES / aspect
+		var near := FOLLOW_TILES * sqrt(2.0) / aspect
 		var close := CLOSE_TILES / aspect
 		cam_size = lerpf(whole, near, z) if z <= 1.0 else lerpf(near, close, z - 1.0)
 		# Following several (a replay's whole crew), the view widens to keep
 		# them all in it.
 		cam_size = maxf(cam_size, _spread() * 2.6 / aspect)
 		cam_size = minf(cam_size, whole)
-		var goal := _follow_point()
+		var goal := _kept_on_island(_follow_point(), cam_size * aspect)
 		# Drift to the crew as the camera closes in; the whole realm sits on
 		# its rock.
 		target = Vector3(0, -2.2, 0).lerp(goal, clampf(z, 0.0, 1.0))
@@ -516,9 +517,10 @@ func _frame_camera() -> void:
 		_aimed = following
 	var back := Vector3(sin(yaw) * cos(p), sin(p), cos(yaw) * cos(p))
 	camera.look_at_from_position(_aim + back * distance, _aim, Vector3.UP)
-	# The HUD covers the top and the bottom of a heist: the crew is framed a
-	# little above the middle, where the screen is clear.
-	camera.v_offset = -cam_size * 0.05 if following else 0.0
+	# The HUD covers the top and the bottom of a heist: as the design frames
+	# it, the island stands a little below the middle, sky above it and the
+	# crew's row over its near edge.
+	camera.v_offset = cam_size * 0.07 if following else 0.0
 	if heist and not landing_marks.is_empty():
 		# While the landing picker's card covers the lower screen, the realm
 		# sits above it.
@@ -555,6 +557,14 @@ func _follow_point() -> Vector3:
 		at = at.lerp(_skiff.position, 0.35)
 	var half := Vector2(_size) * 0.5
 	return Vector3(clampf(at.x, -half.x + 1.5, half.x - 1.5), 0.3, clampf(at.z, -half.y + 1.5, half.y - 1.5))
+
+
+## `goal` held so a view `across` metres wide never looks past the realm's
+## ground: a realm narrower than the view stays whole and centred.
+func _kept_on_island(goal: Vector3, across: float) -> Vector3:
+	var reach := maxf(0.0, (Vector2(_size).length() - across) * 0.5)
+	var flat := Vector2(goal.x, goal.z).limit_length(reach)
+	return Vector3(flat.x, goal.y, flat.y)
 
 
 ## How far the furthest followed crew member stands from their middle.

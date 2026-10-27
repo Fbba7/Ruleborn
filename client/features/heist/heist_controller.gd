@@ -14,7 +14,7 @@ signal changed
 ## The clock ran out: the heist is over and `record()` is its replay.
 signal clock_out
 
-enum Kind { MOVE_TO, GAIT, HALT, CRACK, LOAD, SKIFF, ATTACK, BREAK, DROP, DISARM, DRAG, LAND }
+enum Kind { MOVE_TO, GAIT, HALT, CRACK, LOAD, SKIFF, ATTACK, BREAK, DROP, DISARM, DRAG, LAND, ABILITY, SAGE, CAST }
 
 ## §5.4's clock at the Heart with no links: 150 seconds, 30 ticks each.
 const TICKS := 150 * 30
@@ -196,7 +196,7 @@ static func lease_era(leased: Dictionary) -> String:
 
 
 func select(member: int) -> void:
-	selected = clampi(member, 0, CREW - 1)
+	selected = clampi(member, 0, maxi(0, world.crew_size() - 1))
 	calling_skiff = false
 	changed.emit()
 

@@ -672,6 +672,11 @@ impl RulebornReplay {
             d.set("health", r.health);
             d.set("standing", &GString::from(&format!("{:?}", r.standing)));
             d.set("gait", &GString::from(&format!("{:?}", r.gait)));
+            // §21.8's portrait: its kind (§12.5's manifest) and ability uses left.
+            let kind = r.kind.and_then(|k| sim::ruleborn::RULEBORN.get(k as usize)).map_or("", |k| k.id);
+            d.set("kind", &GString::from(kind));
+            d.set("uses", r.uses as i64);
+            d.set("ready", r.ready);
             out.push(&d);
         }
         out
@@ -728,6 +733,42 @@ impl RulebornReplay {
             let def = &sim::laws_table::LAWS[law.def];
             d.set("law", &GString::from(def.id));
             d.set("school", &GString::from(&def.school.to_lowercase()));
+            out.push(&d);
+        }
+        out
+    }
+
+    /// The Sage on the heist (§11.7): its id, each power's name and uses left,
+    /// and the tick its cooldown ends; empty without one.
+    #[func]
+    fn sage(&self) -> VarDictionary {
+        let mut d = VarDictionary::new();
+        let Some(s) = self.w().and_then(|w| w.sage) else { return d };
+        let def = &sim::ruleborn::SAGES[s.sage as usize];
+        d.set("id", &GString::from(def.id));
+        let mut powers = Array::<VarDictionary>::new();
+        for (i, (power, _)) in def.powers.iter().enumerate() {
+            let mut p = VarDictionary::new();
+            p.set("power", &GString::from(&format!("{power:?}")));
+            p.set("uses", s.uses[i] as i64);
+            powers.push(&p);
+        }
+        d.set("powers", &powers);
+        d.set("cooling_until", s.cooling_until as i64);
+        d
+    }
+
+    /// The casts the manifest carries (§12.5), by law id, and whether each
+    /// has been used.
+    #[func]
+    fn casts(&self) -> Array<VarDictionary> {
+        let mut out = Array::new();
+        let Some(w) = self.w() else { return out };
+        for (i, row) in w.casts.iter().enumerate() {
+            let mut d = VarDictionary::new();
+            let law = sim::laws_table::LAWS.get(*row as usize).map_or("", |l| l.id);
+            d.set("law", &GString::from(law));
+            d.set("used", w.casts_used & (1 << i) != 0);
             out.push(&d);
         }
         out
