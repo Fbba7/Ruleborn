@@ -32,6 +32,12 @@ const SAGE_ASIDE := 0.12
 ## small, so the bust keeps more of its colour and its light steps.
 const LIFT := 0.72
 const RAMP_BIAS := 0.26
+## The hero stage's lilac fill taken part way to a warm grey, and its light
+## a little lower: the stage's blue fill lifts every kind's blue over the
+## design's portraits (measured kind by kind) and the busts read paler.
+const WARM_FILL := Color("#E6D8CC")
+const FILL_WARMTH := 0.45
+const LIGHT := 0.88
 ## The turn toward the light, radians: a three-quarter face.
 const TURN := -0.32
 ## The camera's rise above the face, as a portrait looks a little down.
@@ -54,15 +60,15 @@ func _init() -> void:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_CLEAR_COLOR
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = StageHero.FILL
-	env.ambient_light_energy = StageHero.FILL_ENERGY
+	env.ambient_light_color = StageHero.FILL.lerp(WARM_FILL, FILL_WARMTH)
+	env.ambient_light_energy = StageHero.FILL_ENERGY * LIGHT
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	var env_node := WorldEnvironment.new()
 	env_node.environment = env
 	world.add_child(env_node)
 	var key := DirectionalLight3D.new()
 	key.light_color = StageHero.KEY
-	key.light_energy = StageHero.KEY_ENERGY
+	key.light_energy = StageHero.KEY_ENERGY * LIGHT
 	key.rotation_degrees = Vector3(-34, 28, 0)
 	world.add_child(key)
 	var rim := DirectionalLight3D.new()

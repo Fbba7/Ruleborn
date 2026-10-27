@@ -53,7 +53,7 @@ const FORM_PATTERN := {
 ## each portrait.
 const LOOK := {
 	"featherkin": {"tone": 0.5, "paint_tint": Vector3(1.0, 1.05, 0.62)},
-	"glassgolem": {"tone": 0.3, "paint_tint": Vector3(1.12, 1.08, 1.02), "paint_contrast": 0.35, "paint_mid": 0.5,
+	"glassgolem": {"tone": 0.15, "paint_tint": Vector3(1.12, 1.08, 1.02), "paint_contrast": 0.35, "paint_mid": 0.5,
 		"flatten": 0.5, "hero_sheen": 0.2, "gear_tint": Vector3(2.5, 2.4, 2.55)},
 	"bloomling": {"pastel": 0.45, "pastel_colour": Color(0.88, 0.74, 1.0), "paint_tint": Vector3(0.95, 1.02, 0.84),
 		"red_tint": Vector3(0.84, 1.4, 1.3)},
@@ -62,8 +62,9 @@ const LOOK := {
 	"prismmite": {"pastel": 0.35, "pastel_colour": Color(0.94, 0.9, 1.0)},
 	"rambler": {"tone": 0.08},
 	"mossbear": {"paint_tint": Vector3(0.9, 1.02, 0.9)},
-	"lanternwisp": {"tone": 0.55},
-	"soulmender": {"tone": 0.4},
+	"lanternwisp": {"tone": 0.65, "paint_tint": Vector3(1.0, 1.1, 0.84)},
+	"soulmender": {"tone": 0.4, "paint_tint": Vector3(1.0, 1.06, 0.9), "pastel": 0.65,
+		"pastel_colour": Color(1.0, 0.86, 0.97), "pastel_by_value": 0.75},
 }
 ## The rim's strength by day and by night, and night's lamplit rim colour.
 const DAY_RIM := 0.38

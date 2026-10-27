@@ -405,6 +405,16 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
    black blobs of the crew; at 1.8 they read as toys and still stand off the
    grass in grayscale (`w5_heist_ink_before_after.png`).
 
+9. Every kind against its portrait, measured: the mean colour of each bust
+   over its luminance, beside the design portrait's. The hero light's lilac
+   fill made every kind bluer than the design's; the bust studio's fill is
+   now part way to warm grey and its light 0.88 (the sum of the eighteen
+   ruleborn's largest channel differences 1.03 to 0.81).
+10. Soul Mender's wings read violet where the design's are pale pink: a
+    pastel toward pink that spares dark paint (the eyes) and a warmer tint.
+    Lantern Wisp warmer and paler; Glass Golem's tone 0.3 to 0.15 (its
+    violet 0.94/0.77/1.31 against 0.94/0.74/1.31).
+
 ### Stills (`docs/art/shots/t1d/`)
 
 - `w5_busts.png`, `w5_busts_guard.png`: every ruleborn's and Sage's bust on
@@ -417,3 +427,5 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   Bloomling beneath.
 - `w5_heist_ink_before_after.png`: the crew at the heist camera, thick ink
   against 1.8.
+- `w5_portraits_vs_design.png`: the 24 design portraits, each over ours in
+  the hero view.
