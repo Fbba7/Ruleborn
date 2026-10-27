@@ -21,6 +21,15 @@ var dot := false
 var heavy := false
 ## A full pip's colour (gold if unset).
 var tint := Color()
+## The ground behind the picture, lit from above (a crew member's school,
+## 02-heist.png); the card's violet if unset.
+var ground := Color()
+## The ring's band (leather for a crew member); the card's violet if unset.
+var band := Color()
+## How far the picture is drawn in, about `focus` (fractions of it): a
+## head-and-shoulders portrait filling the disc as the designs crop it.
+var zoom := 1.0
+var focus := Vector2(0.5, 0.5)
 
 
 func _draw() -> void:
@@ -37,9 +46,13 @@ func _draw() -> void:
 	if heavy:
 		_heavy(c, r, ink, gold)
 		return
-	var line := maxf(2.0, r * 0.14)
+	var line := maxf(2.0, r * (0.2 if band != Color() else 0.14))
 	draw_circle(c, r, ink, true, -1.0, true)
-	draw_circle(c, r - line * 0.5, Tokens.color("card_top"), true, -1.0, true)
+	draw_circle(c, r - line * 0.5, band if band != Color() else Tokens.color("card_top"), true, -1.0, true)
+	if ground != Color():
+		var inner_r := r - line * 1.2
+		draw_circle(c, inner_r, ground.darkened(0.25), true, -1.0, true)
+		draw_circle(c + Vector2(0, -inner_r * 0.2), inner_r * 0.78, ground.lightened(0.18), true, -1.0, true)
 	if picture != null:
 		var inner := r - line * 1.2
 		# The picture cut round: a polygon of the circle, textured.
@@ -49,9 +62,13 @@ func _draw() -> void:
 			var a := TAU * i / 48.0
 			var d := Vector2(cos(a), sin(a))
 			points.append(c + d * inner)
-			uvs.append(Vector2(0.5, 0.5) + d * 0.5)
+			uvs.append(focus + d * 0.5 / zoom)
 		draw_colored_polygon(points, Color.WHITE, uvs, picture)
-	draw_arc(c, r - line * 0.5, 0.0, TAU, 64, Color(Tokens.color("text_on_night_2"), 0.25), line, true)
+	if band != Color():
+		# A gold line inside the leather band, as the designs edge a portrait.
+		draw_arc(c, r - line * 1.15, 0.0, TAU, 64, Tokens.color("gold"), maxf(1.0, UI.px(0.8)), true)
+	else:
+		draw_arc(c, r - line * 0.5, 0.0, TAU, 64, Color(Tokens.color("text_on_night_2"), 0.25), line, true)
 	if fraction > 0.0:
 		draw_arc(c, r - line * 0.5, -PI * 0.5, -PI * 0.5 + TAU * fraction, 64, gold, line, true)
 	draw_arc(c, r, 0.0, TAU, 64, ink, maxf(1.5, UI.px(0.7)), true)
@@ -68,9 +85,9 @@ func _heavy(c: Vector2, r: float, ink: Color, gold: Color) -> void:
 		draw_circle(c, r + halo + UI.px(3.0 + 4.0 * i), Color(gold, 0.09), true, -1.0, true)
 	draw_circle(c, r + halo, Color(Tokens.color("gold_bottom"), 0.55), true, -1.0, true)
 	draw_circle(c, r, ink, true, -1.0, true)
-	var band := r * 0.196
-	var mid := r - band * 0.5
-	draw_arc(c, mid, 0.0, TAU, 96, Tokens.paint("#0E0920"), band, true)
+	var track := r * 0.196
+	var mid := r - track * 0.5
+	draw_arc(c, mid, 0.0, TAU, 96, Tokens.paint("#0E0920"), track, true)
 	if fraction > 0.0:
 		# One polyline, its colour per point: a single draw call.
 		var steps := maxi(2, int(72 * fraction))
@@ -82,8 +99,8 @@ func _heavy(c: Vector2, r: float, ink: Color, gold: Color) -> void:
 			var a := -PI * 0.5 + TAU * fraction * i / steps
 			points.append(c + Vector2(cos(a), sin(a)) * mid)
 			colours.append(from.lerp(to, float(i) / steps))
-		draw_polyline_colors(points, colours, band, true)
-	var inner := r - band
+		draw_polyline_colors(points, colours, track, true)
+	var inner := r - track
 	draw_circle(c, inner, ink, true, -1.0, true)
 	# The disc lit from above: a fan from its light, a little over its
 	# centre, out to its dark rim, smooth and one draw call.
@@ -98,7 +115,7 @@ func _heavy(c: Vector2, r: float, ink: Color, gold: Color) -> void:
 	if fraction > 0.0 and fraction < 1.0:
 		var end := -PI * 0.5 + TAU * fraction
 		var at := c + Vector2(cos(end), sin(end)) * mid
-		var dot_r := band * 0.62
+		var dot_r := track * 0.62
 		draw_circle(at, dot_r + UI.px(2), Color(Tokens.paint("#F9DE9C"), 0.35), true, -1.0, true)
 		draw_circle(at, dot_r, ink, true, -1.0, true)
 		draw_circle(at, dot_r - edge, Tokens.color("cream"), true, -1.0, true)

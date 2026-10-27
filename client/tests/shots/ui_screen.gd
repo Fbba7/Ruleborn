@@ -1,7 +1,8 @@
 extends SceneTree
 ## Any screen by its scene name (SCREEN=settings), on the tests' answered
 ## fixtures, for judging the kit's look on real screens (tools/render/shoot.sh).
-## HC=1 draws it in high contrast, TEXT=200 at that text size.
+## HC=1 draws it in high contrast, TEXT=200 at that text size; AUDIT=1
+## lists where it draws past the kit (UiAudit).
 
 
 func _initialize() -> void:
@@ -21,11 +22,22 @@ func _go() -> void:
 	services.router.change = func(_path: String) -> void: pass
 	App.services = services
 	var scene := OS.get_environment("SCREEN") if OS.get_environment("SCREEN") != "" else "settings"
-	var screen: Control = load("res://scenes/%s.tscn" % scene).instantiate()
+	# T10's screens with their tests' samples (ScreenShots), as screen_meta.gd.
+	if Router.ROUTES.has(StringName(scene)):
+		services.store.dispatch(&"navigated", {"name": StringName(scene), "params": ScreenShots.params(scene)})
+	var path := "res://scenes/%s.tscn" % scene
+	if not ResourceLoader.exists(path):
+		path = Router.ROUTES[StringName(scene)]
+	var screen: Control = load(path).instantiate()
 	root.add_child(screen)
+	await process_frame
+	ScreenShots.fill(scene, services.store)
 	for i: int in 12:
 		await process_frame
 	await ShotKit.settle(self, screen)
+	if OS.get_environment("AUDIT") != "":
+		for line: String in UiAudit.report(screen):
+			print("audit " + line)
 	# §21.3: under 150 draw calls on every screen, 2D and 3D together.
 	print("budget %s: %d draw calls in all" % [scene,
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)])

@@ -359,18 +359,26 @@ static func _heist(column: VBoxContainer) -> void:
 	mid.add_child(KitHud.clock("2:38"))
 	mid.add_child(KitHud.alarm(2, 6, "Alarm"))
 	top.add_child(mid)
-	top.add_child(KitHud.figures([["Room", "1,840"], ["Left", "2,600"]]))
+	top.add_child(KitHud.loot([["Room", "1,840"], ["Left", "2,600"]], 0.62, 0.8, "Load to 80%"))
 	column.add_child(top)
 	column.add_child(UI.grow())
 	column.add_child(KitStatus.pill("Tap crew, then ground · hold to sneak or run"))
 	var foot := HBoxContainer.new()
 	foot.add_theme_constant_override("separation", UI.px(4))
-	for c: Array in [["skyskipper", "Pip", 1.0, 2], ["tidewalker", "Mo", 0.7, 1],
-			["mossbear", "Bramble", 0.4, 0]]:
-		foot.add_child(KitHud.crew(Portrait.of(str(c[0])), c[1], c[2], c[3], func() -> void: pass))
+	var crew := HBoxContainer.new()
+	crew.add_theme_constant_override("separation", UI.px(2))
+	crew.size_flags_vertical = Control.SIZE_SHRINK_END
+	for c: Array in [["skyskipper", "Pip", 1.0, 2, "motion"], ["tidewalker", "Mo", 0.7, 1, "time"],
+			["mossbear", "Bramble", 0.4, 0, "life"], ["emberling", "Ash", 0.9, 2, "energy"]]:
+		crew.add_child(KitHud.crew(Portrait.of(str(c[0])), c[1], c[2], c[3], func() -> void: pass, c[4]))
+	foot.add_child(crew)
 	foot.add_child(UI.grow())
 	(foot.get_child(foot.get_child_count() - 1) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	foot.add_child(KitControls.big_action("heistcontrols/getout", "Get out", func() -> void: pass))
+	var right := VBoxContainer.new()
+	right.add_theme_constant_override("separation", UI.px(8))
+	right.add_child(KitHud.sage(Portrait.of("archivist"), "The Archivist", "Cast", func() -> void: pass))
+	right.add_child(KitControls.big_action("heistcontrols/getout", "Get out", func() -> void: pass))
+	foot.add_child(right)
 	column.add_child(foot)
 
 

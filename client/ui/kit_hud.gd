@@ -202,31 +202,43 @@ static func week(minutes: Array, letters: Array, today: int) -> HBoxContainer:
 	return row
 
 
-## A crew member's portrait at the heist's foot (02-heist.png): the picture
-## in a gold ring, its health as a green bar under it, its ability's uses as
-## pips over it, and its name with an ink outline so it reads over the
-## world. `pressed` makes it a button named by its name.
-static func crew(picture: Texture2D, name: String, health: float, uses: int, pressed: Callable) -> VBoxContainer:
+## A crew member's key (02-heist.png): their portrait on their school's
+## ground in a leather ring, their ability's uses as diamonds on a dark tag
+## at its shoulder (filled and hollow: told apart by shape), their health
+## as a green bar and their name beneath. `school` "" keeps the violet.
+static func crew(picture: Texture2D, name: String, health: float, uses: int, pressed: Callable,
+		school := "") -> VBoxContainer:
 	var v := VBoxContainer.new()
 	v.name = "Crew"
-	v.add_theme_constant_override("separation", UI.px(2))
+	v.add_theme_constant_override("separation", UI.px(3))
 	v.alignment = BoxContainer.ALIGNMENT_END
-	if uses >= 0:
-		var p := pips(uses, 2)
-		p.alignment = BoxContainer.ALIGNMENT_CENTER
-		v.add_child(p)
 	var b := UI.action("", pressed, "seg", name)
-	b.custom_minimum_size = Vector2.ONE * UI.px(56)
+	b.custom_minimum_size = Vector2.ONE * UI.px(58)
 	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	# The ring is the whole key: the segment's box stays undrawn behind it.
+	RbBox.of(b).visible = false
 	var ring := KitRing.new()
 	ring.picture = picture
-	ring.fraction = 1.0
+	ring.band = Tokens.color("leather_dark")
+	ring.ground = Tokens.color(school) if school != "" else Color()
+	ring.zoom = 1.3
+	ring.focus = Vector2(0.5, 0.42)
 	ring.set_anchors_preset(Control.PRESET_FULL_RECT)
 	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	b.add_child(ring)
+	if uses >= 0:
+		var tag := _uses(uses, 2)
+		# On the disc's shoulder, its right edge a little past the disc's.
+		tag.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+		tag.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		tag.offset_left = UI.px(6)
+		tag.offset_right = UI.px(6)
+		tag.offset_top = -UI.px(8)
+		tag.offset_bottom = -UI.px(8)
+		b.add_child(tag)
 	v.add_child(b)
-	var bar := KitBar.make(health, Tokens.color("success"), 7)
-	bar.custom_minimum_size.x = UI.px(52)
+	var bar := KitBar.make(health, Tokens.color("success"), 8)
+	bar.custom_minimum_size.x = UI.px(54)
 	bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(bar)
 	var n := UI.label(name, 14)
@@ -237,6 +249,26 @@ static func crew(picture: Texture2D, name: String, health: float, uses: int, pre
 	n.set_meta("bold", true)
 	v.add_child(n)
 	return v
+
+
+## An ability's uses on a dark tag: `of` diamonds, those left filled in
+## cream, those spent hollow.
+static func _uses(left: int, of: int) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.name = "Uses"
+	p.add_theme_stylebox_override("panel", UI.clear_box(4, 2))
+	UI.dress(p, "tag_dark", 999)
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(1))
+	for i: int in of:
+		var d := _Diamond.new()
+		d.full = i < left
+		d.custom_minimum_size = Vector2.ONE * UI.px(12)
+		d.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(d)
+	p.add_child(row)
+	return p
 
 
 ## The alarm meter in its own panel (02-heist.png): "Alarm" and its count
@@ -268,8 +300,8 @@ static func alarm(level: int, of: int, title: String) -> PanelContainer:
 ## Numbers in rows on a card (the heist's loot: "Room 1,840", "Left
 ## 2,600"), each word on the left and its number in gold tabular figures on
 ## the right.
-static func figures(rows: Array) -> PanelContainer:
-	var p := UI.panel("card")
+static func figures(rows: Array, look := "card") -> PanelContainer:
+	var p := UI.panel(look)
 	p.name = "Figures"
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(2))
@@ -290,3 +322,83 @@ static func figures(rows: Array) -> PanelContainer:
 		v.add_child(h)
 	p.add_child(v)
 	return p
+
+
+## The heist's loot panel (02-heist.png): "Room" and "Left" with their
+## numbers, the load as a bar with a cream tick at the share the player aims
+## for (`mark`, 0 to 1), and that aim in words beneath ("Load to 80%").
+## `carried` is how full the crew is (0 to 1); the numbers say it too (§20.8).
+static func loot(rows: Array, carried: float, mark: float, words: String) -> PanelContainer:
+	var p := figures(rows, "leather")
+	p.name = "Loot"
+	var v := p.get_child(0) as VBoxContainer
+	var bar := KitBar.make(carried, Color(), 8.0)
+	bar.name = "Load"
+	var tick := ColorRect.new()
+	tick.name = "Aim"
+	tick.color = Tokens.color("cream")
+	tick.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tick.anchor_left = clampf(mark, 0.0, 1.0)
+	tick.anchor_right = tick.anchor_left
+	tick.anchor_bottom = 1.0
+	tick.offset_left = -UI.px(1.5)
+	tick.offset_right = UI.px(1.5)
+	tick.offset_top = -UI.px(2)
+	tick.offset_bottom = UI.px(2)
+	bar.add_child(tick)
+	v.add_child(bar)
+	if words != "":
+		var l := UI.label(words, 14)
+		l.theme_type_variation = "Secondary"
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		l.set_meta("bold", true)
+		l.add_theme_font_override("font", UI.bold_font())
+		v.add_child(l)
+	return p
+
+
+## The Sage beside the crew (02-heist.png): their portrait round in a gold
+## ring, and Cast beneath it, a leather key with the wand over its word;
+## `pressed` casts. The portrait is a picture, the key says what it does.
+static func sage(picture: Texture2D, name: String, words: String, pressed: Callable) -> VBoxContainer:
+	var v := VBoxContainer.new()
+	v.name = "Sage"
+	v.add_theme_constant_override("separation", UI.px(6))
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var face := PanelContainer.new()
+	face.name = "Face"
+	face.add_theme_stylebox_override("panel", UI.clear_box(0, 0))
+	face.custom_minimum_size = Vector2.ONE * UI.px(60)
+	face.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	face.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	face.accessibility_name = name
+	var ring := KitRing.new()
+	ring.picture = picture
+	ring.band = Tokens.color("gold")
+	ring.ground = Tokens.paint("#4A3A9A")
+	ring.zoom = 1.3
+	ring.focus = Vector2(0.5, 0.42)
+	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	face.add_child(ring)
+	v.add_child(face)
+	var cast := KitControls.big_action("heistcontrols/cast", words, pressed, "leather")
+	cast.name = "Cast"
+	v.add_child(cast)
+	return v
+
+
+## A diamond, filled or hollow (an ability's use).
+class _Diamond:
+	extends Control
+	var full := true
+
+	func _draw() -> void:
+		var c := size * 0.5
+		var r := minf(size.x, size.y) * 0.5
+		var points := PackedVector2Array([c + Vector2(0, -r), c + Vector2(r, 0), c + Vector2(0, r), c + Vector2(-r, 0)])
+		var cream := Tokens.color("cream")
+		if full:
+			draw_colored_polygon(points, cream)
+		else:
+			points.append(points[0])
+			draw_polyline(points, cream, maxf(1.0, UI.px(0.8)), true)

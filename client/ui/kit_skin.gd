@@ -40,7 +40,7 @@ static func clear(box: StyleBox) -> StyleBoxFlat:
 ## corners (the material's own when negative); its padding kept.
 static func panel(p: PanelContainer, kind: String, radius_points := -1.0) -> RbBox:
 	p.add_theme_stylebox_override("panel", clear(p.get_theme_stylebox("panel")))
-	var box := RbBox.dress(p, material(kind), radius_points)
+	var box := UI.dress(p, material(kind), radius_points)
 	p.set_meta("surface", kind)
 	return box
 
