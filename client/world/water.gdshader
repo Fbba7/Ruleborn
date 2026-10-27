@@ -10,7 +10,7 @@ render_mode diffuse_toon, specular_disabled;
 
 #include "res://world/toon_light.gdshaderinc"
 
-uniform vec4 deep : source_color = vec4(0.22, 0.58, 0.80, 1.0);
+uniform vec4 deep : source_color = vec4(0.14, 0.68, 0.78, 1.0);
 uniform vec4 foam : source_color = vec4(0.88, 0.97, 1.0, 1.0);
 uniform vec4 ink : source_color = vec4(0.10, 0.18, 0.32, 1.0);
 uniform float speed = 0.35;
