@@ -23,6 +23,15 @@ func _go() -> void:
 			break
 	screen.stage.moving = false
 	screen.stage.at_time(1.5)
+	# SAGE chooses which Sage the hall shows (the_tinkerer, the_gardener).
+	if OS.get_environment("SAGE") != "":
+		screen._choose(OS.get_environment("SAGE"))
+		for i in 30:
+			await process_frame
+			if Portrait.settled() and i > 6:
+				break
+		screen.stage.moving = false
+		screen.stage.at_time(1.5)
 	if OS.get_environment("SCROLL") != "":
 		(screen.body.get_parent() as ScrollContainer).scroll_vertical = int(OS.get_environment("SCROLL"))
 	for i in 4:
