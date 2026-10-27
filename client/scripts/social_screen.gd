@@ -89,15 +89,28 @@ func _league(l: Dictionary) -> Control:
 	var v: Dictionary = App.services.store.get_slice(SocialState.LEAGUE).get("view", {})
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(12))
-	row.add_child(ScreenKit.icon("leagues", str(v.get("league", "dust")), 64.0))
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.alignment = BoxContainer.ALIGNMENT_CENTER
 	words.add_child(ScreenKit.text(l["place"], 20.0, "name", "card_lit", false, true))
-	words.add_child(ScreenKit.text(l["renown"], 15.0, "words", "card_lit", false, true))
-	words.add_child(ScreenKit.text(l["next"], 13.0, "words", "card_lit", true, true))
+	# Renown large in gold, as the profile's card has it.
+	var big := ScreenKit.inked(ScreenKit.text(ShopPresenter.grouped(int(l["renown_n"])), 30.0, "number", "card_lit"),
+		1.5)
+	big.add_theme_color_override("font_color", Tokens.color("gold_top"))
+	big.accessibility_name = l["renown"]
+	words.add_child(big)
+	words.add_child(ScreenKit.text(l["renown"], 13.0, "words", "card_lit", true, true))
 	row.add_child(words)
-	return ScreenKit.panel("card_lit", row, 18.0, 12.0)
+	var crest := ScreenKit.icon("leagues", str(v.get("league", "dust")), 80.0)
+	crest.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(crest)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UI.px(6))
+	box.add_child(row)
+	if int(l["next_n"]) > 0:
+		box.add_child(ScreenMeter.bar(int(l["renown_n"]), int(l["next_n"]), Color("#E05CB4"), 10.0))
+	box.add_child(ScreenKit.text(l["next"], 13.0, "words", "card_lit", true, true))
+	return ScreenKit.panel("card_lit", box, 18.0, 12.0)
 
 
 ## The constellation: its name and members by role, or founding one from

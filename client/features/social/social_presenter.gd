@@ -69,6 +69,7 @@ static func league(l: Dictionary) -> Dictionary:
 		"renown": Strings.t("LEAGUE_RENOWN", [ShopPresenter.grouped(int(v["renown"])), int(v["season"])]),
 		"next": Strings.t("LEAGUE_TO_NEXT", ShopPresenter.grouped(int(next) - int(v["renown"])))
 			if next != null else Strings.t("LEAGUE_TOP"),
+		"renown_n": int(v["renown"]), "next_n": int(next) if next != null else 0,
 	}
 
 
