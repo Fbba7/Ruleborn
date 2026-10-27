@@ -317,6 +317,9 @@ func _boulder(t: Vector2i, c: Vector3, j: float, rock: Color) -> void:
 ## Crystalline; ember grass in Emberreach; berried in Verdant.
 func _bush(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
 	var prop := kit.prop
+	if kit.realm == "heart" and RealmKit.jitter(t, 24) > 0.3:
+		# Most of the Heart's bushes are in blossom, as its trees.
+		plant = Color("#F7A8D2")
 	prop.moving(Geo.Anim.SWAY, c)
 	match kit.realm:
 		"skyfield":

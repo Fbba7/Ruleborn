@@ -489,7 +489,9 @@ func _pad() -> void:
 	# (kit_toon) leaves the pad as bright as the design's.
 	var was := d.anim
 	d.anim = Color(0, origin.y - 1.0, 0, 0)
-	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.8 * unit, 0.76 * unit, 0.04 * unit, earth.darkened(0.16), false, earth)
+	# The design's pad is 0.62 of the footprint's side out (:979); ours a
+	# little more, as our buildings fill more of their footprint.
+	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.7 * unit, 0.67 * unit, 0.04 * unit, earth.darkened(0.16), false, earth)
 	d.anim = was
 
 

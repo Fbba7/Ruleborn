@@ -41,7 +41,7 @@ uniform vec4 pebble : source_color = vec4(0.62, 0.58, 0.6, 1.0);
 // it (02-heist): centre xz, radius in metres, and 1 to draw it (0 none).
 uniform vec4 dial = vec4(0.0);
 uniform vec4 dial_face : source_color = vec4(1.0, 0.88, 0.96, 1.0);
-uniform vec4 dial_ink : source_color = vec4(0.42, 0.29, 0.54, 1.0);
+uniform vec4 dial_ink : source_color = vec4(0.48, 0.35, 0.6, 1.0);
 uniform vec4 dial_line : source_color = vec4(0.6, 0.48, 0.72, 1.0);
 // Each hour's numeral as its letters, base 4, last letter lowest: 1 I, 2 V,
 // 3 X; XII first, then clockwise.
@@ -161,9 +161,9 @@ void fragment() {
 		float m = smoothstep(0.3, 0.8, lush) * (1.0 - cliff);
 		c *= mix(1.0, mix(0.8, 1.12, cushion) * (0.94 + 0.12 * mc.z), m);
 	}
-	// A worn trail as the design's lanes: a chain of rounded flat stones laid
-	// one after another along it, each with a lit top and a shaded foot, on a
-	// narrow strip of trodden earth with a rim of worn grass.
+	// A worn trail as the design's lanes: rounded flat stones three abreast,
+	// each with a lit top and a shaded foot, on a strip of trodden earth with
+	// a rim of worn grass.
 	if (lane_count > 0 && up > 0.6) {
 		float best = 9.0;
 		float along = 0.0;
@@ -189,28 +189,28 @@ void fragment() {
 		float wob = (vnoise(p * 5.0) - 0.5) * 0.05;
 		float d = best + wob;
 		float off_path = 1.0 - smoothstep(0.4, 0.46, path);
-		float rim = 1.0 - smoothstep(0.28, 0.38, d);
-		float earth = 1.0 - smoothstep(0.23, 0.26, d);
+		float rim = 1.0 - smoothstep(0.38, 0.48, d);
+		float earth = 1.0 - smoothstep(0.33, 0.36, d);
 		c = mix(c, c * 0.84, rim * (1.0 - earth) * grassy);
 		vec3 dirt = lane_earth.rgb * (0.86 + 0.14 * vnoise(p * 6.0));
 		c = mix(c, dirt, earth * off_path * (1.0 - cliff));
-		// The stones, as the design's pebble lanes (02-heist): two rows of
-		// round stones laid staggered, one every 0.3 m in each row, each
-		// nudged aside a little.
+		// The stones, as the design's pebble lanes (02-heist): a broad ribbon
+		// three stones abreast, the rows staggered, one every 0.3 m in each
+		// row, each nudged aside a little.
 		float step_len = 0.3;
-		float row = step(0.0, side);
+		float row = clamp(floor((side + 0.3) / 0.2), 0.0, 2.0);
 		float shift = along / step_len + row * 0.5;
 		float k = floor(shift);
 		float h1 = hash(vec2(k + row * 31.0, which));
 		vec2 q = vec2(fract(shift) - 0.5 + (h1 - 0.5) * 0.12, 0.0) * step_len;
-		q.y = side - (row * 2.0 - 1.0) * 0.105 - (hash(vec2(which, k + 3.1 + row * 7.0)) - 0.5) * 0.05;
-		vec2 e = q / vec2(0.135, 0.105 + 0.02 * h1);
+		q.y = side - (row - 1.0) * 0.2 - (hash(vec2(which, k + 3.1 + row * 7.0)) - 0.5) * 0.04;
+		vec2 e = q / vec2(0.135, 0.095 + 0.02 * h1);
 		float r = length(e);
-		float stone_in = (1.0 - smoothstep(0.86, 1.0, r)) * (1.0 - smoothstep(0.24, 0.27, abs(side)));
+		float stone_in = (1.0 - smoothstep(0.86, 1.0, r)) * (1.0 - smoothstep(0.32, 0.35, abs(side)));
 		float lit = clamp(0.5 - e.y * 0.35 + 0.35 * (1.0 - r), 0.0, 1.0);
 		vec3 slab = mix(cobble.rgb, lane_earth.rgb, 0.3) * (0.92 + 0.12 * h1) * mix(0.84, 1.12, lit);
 		float shade = (1.0 - smoothstep(0.95, 1.18, r)) * (1.0 - stone_in);
-		float on_lane = off_path * (1.0 - cliff) * step(best, 0.32);
+		float on_lane = off_path * (1.0 - cliff) * step(best, 0.42);
 		c = mix(c, c * 0.72, shade * on_lane * 0.6);
 		c = mix(c, slab, stone_in * on_lane);
 		grassy *= 1.0 - max(earth, stone_in * on_lane);
@@ -267,9 +267,9 @@ void fragment() {
 			float ha = hour / 12.0 * 6.2831853;
 			vec2 at_ = vec2(sin(ha), -cos(ha)) * 0.68 * dial.z;
 			vec2 lp = vec2(dv.x - at_.x, -(dv.y - at_.y));
-			float nh = 0.12 * dial.z;
+			float nh = 0.105 * dial.z;
 			float dn = numeral(lp, int(mod(hour, 12.0)), nh);
-			float numer = (1.0 - smoothstep(0.05 * nh, 0.05 * nh + px * dial.z, dn)) * 0.85;
+			float numer = (1.0 - smoothstep(0.045 * nh, 0.045 * nh + px * dial.z, dn)) * 0.85;
 			fc = mix(fc, line_c, ink);
 			fc = mix(fc, dial_ink.rgb, numer);
 			c = mix(c, fc, face);
