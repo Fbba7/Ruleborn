@@ -33,7 +33,7 @@ func show_keeper(bar: Dictionary, xp_share: float, renown_text: String) -> void:
 	title = str(bar.get("title", ""))
 	renown = renown_text
 	accessibility_name = str(bar.get("spoken", title))
-	custom_minimum_size = Vector2(_width(), _ring() + UI.px(10))
+	custom_minimum_size = Vector2(_width(), maxf(_ring() + UI.px(10), _ring() + _tag().y * 0.5 + UI.px(1)))
 	queue_redraw()
 
 
@@ -53,28 +53,19 @@ func _width() -> float:
 	var name_w := UniverseHud.names_font().get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, _name_px()).x
 	var chip_w := UniverseHud.words_font().get_string_size(renown, HORIZONTAL_ALIGNMENT_LEFT, -1, _chip_px()).x \
 		+ UI.px(34)
-	return _text_x() + maxf(name_w, chip_w + _gem_out() if renown != "" else 0.0) + UI.px(6)
+	return _text_x() + maxf(name_w, chip_w if renown != "" else 0.0) + UI.px(6)
 
 
-## The level disc's radius: it grows with the text.
-func _disc() -> float:
-	return maxf(UI.px(11.5), UI.text_px(13.0) * 0.75)
+## The level's gold pill: the design's 28 by 18 points, grown with the text.
+func _tag() -> Vector2:
+	var w := UniverseHud.words_font().get_string_size(str(level), HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(13.0)).x
+	var h := maxf(UI.px(18), UI.text_px(13.0) * 1.4)
+	return Vector2(maxf(UI.px(28), w + h * 0.8), h)
 
 
-## Where the name starts: past the ring, and past the level disc, which large
-## text pushes out beyond the ring.
+## Where the name starts: past the ring.
 func _text_x() -> float:
-	return _ring() + UI.px(11) + _grown()
-
-
-## How much larger text has grown the level disc.
-func _grown() -> float:
-	return _disc() - UI.px(11.5)
-
-
-## How far the Renown gem reaches left of its chip, clear of the level disc.
-func _gem_out() -> float:
-	return _grown()
+	return _ring() + UI.px(11)
 
 
 func _draw() -> void:
@@ -97,15 +88,16 @@ func _draw() -> void:
 	if face != null:
 		var s := (r - UI.px(8)) * 1.35
 		draw_texture_rect(face, Rect2(c - Vector2(s, s) * 0.5, Vector2(s, s)), false)
-	# The level on a gold disc at the ring's foot.
-	var lc := c + Vector2(r * 0.72, r * 0.72)
-	var lr := _disc()
-	UniverseHud.ball(self, lc, lr, UniverseHud.GOLD, UniverseHud.GOLD_RIM)
-	var nf := UniverseHud.numbers_font()
-	var npx := UI.text_px(14.0)
+	# The level on a gold pill across the ring's foot, as the design's.
 	var digits := str(level)
-	UniverseHud.inked(self, nf, Vector2(lc.x - lr * 2.0, lc.y + nf.get_ascent(npx) * 0.42), digits, npx,
-		Color.WHITE, lr * 4.0, HORIZONTAL_ALIGNMENT_CENTER)
+	var tag := _tag()
+	var lc := Vector2(c.x, c.y + r - UI.px(3))
+	var plate := Rect2(lc - tag * 0.5, tag)
+	UniverseHud.gold_pill(tag.y).draw(get_canvas_item(), plate)
+	var nf := UniverseHud.words_font()
+	var npx := UI.text_px(13.0)
+	draw_string(nf, Vector2(plate.position.x, lc.y + nf.get_ascent(npx) * 0.36), digits, HORIZONTAL_ALIGNMENT_CENTER,
+		plate.size.x, npx, Color("#1B1430"))
 	# The name, and Renown beneath it.
 	var x := _text_x() + (c.x - r - UI.px(2))
 	var names := UniverseHud.names_font()
@@ -115,9 +107,11 @@ func _draw() -> void:
 		var words := UniverseHud.words_font()
 		var w := words.get_string_size(renown, HORIZONTAL_ALIGNMENT_LEFT, -1, _chip_px()).x
 		var h := _chip_px() * 1.5
-		var chip := Rect2(Vector2(x + UI.px(8) + _gem_out(), top + UI.px(7)), Vector2(w + UI.px(26), h))
-		var glass := UniverseHud.glass(h * 0.5)
-		UniverseHud.baked_box(glass.bg_color, glass.border_color, glass.border_width_left, h * 0.5,
+		var chip := Rect2(Vector2(x + UI.px(8), top + UI.px(7)), Vector2(w + UI.px(26), h))
+		# The design's chip: deep night, edged in the gem's rose.
+		var hc := Settings.high_contrast
+		UniverseHud.baked_box(Color("#0C0820") if hc else Color(0.047, 0.031, 0.125, 0.8), UniverseHud.INK_LINE if hc
+			else Color(0.878, 0.361, 0.706, 0.45), float(UI.px(3.0)) if hc else maxf(2.0, UI.px(1.0)), h * 0.5,
 			Color(0, 0, 0, 0.35), UI.px(2)).draw(get_canvas_item(), chip)
 		var gem := _gem
 		var g := h * 1.15

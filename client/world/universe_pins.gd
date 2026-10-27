@@ -317,13 +317,23 @@ static func _place(node: Control, s: Vector2, taken: Array[Rect2], screen: Array
 		var lo := UI.px(4)
 		var hi := wide - UI.px(4)
 		var lowest := -1.0
+		var above := INF
 		for r: Rect2 in screen:
 			if r.position.y < node.position.y + node.size.y and r.end.y > node.position.y:
-				if r.get_center().x < wide * 0.5:
+				# A control across the middle (home's Collect, the raid card):
+				# the pin rises above it.
+				if r.position.x < wide * 0.5 and r.end.x > wide * 0.5:
+					if r.position.x < node.position.x + node.size.x and r.end.x > node.position.x:
+						above = minf(above, r.position.y)
+					continue
+				elif r.get_center().x < wide * 0.5:
 					lo = maxf(lo, r.end.x + UI.px(2))
 				else:
 					hi = minf(hi, r.position.x - UI.px(2))
 				lowest = maxf(lowest, r.end.y)
+		if above < INF:
+			node.position.y = above - node.size.y - UI.px(2)
+			continue
 		if hi - lo >= node.size.x:
 			node.position.x = clampf(node.position.x, lo, hi - node.size.x)
 			break
@@ -333,10 +343,12 @@ static func _place(node: Control, s: Vector2, taken: Array[Rect2], screen: Array
 				node.position.x = clampf(node.position.x, UI.px(4), wide - node.size.x - UI.px(4))
 			break
 		node.position.y = lowest + UI.px(2)
-	# Where it would cover another, a step down or up, else not at all.
+	# Where it would cover another, a step down or up, else not at all; never
+	# onto the screen's own controls.
 	for step: float in [0.0, 1.0, -1.0]:
 		var box := Rect2(node.position + Vector2(0.0, step * (node.size.y + UI.px(2))), node.size).grow(-UI.px(2))
-		if not taken.any(func(other: Rect2) -> bool: return other.intersects(box)):
+		if not taken.any(func(other: Rect2) -> bool: return other.intersects(box)) \
+				and not screen.any(func(other: Rect2) -> bool: return other.intersects(box)):
 			node.position = box.grow(UI.px(2)).position
 			taken.append(box)
 			return

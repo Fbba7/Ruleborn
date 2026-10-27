@@ -123,6 +123,8 @@ func _ready() -> void:
 	menu.picked.connect(func(route: StringName) -> void: App.services.router.go(route))
 	add_child(menu)
 	column.sort_children.connect(_frame_world)
+	for c: Control in [goal, collect_button, notice]:
+		c.visibility_changed.connect(_frame_world, CONNECT_DEFERRED)
 	App.services.store.changed.connect(_on_changed)
 	show_keeper()
 	_show_hud()
@@ -342,6 +344,11 @@ func _frame_world() -> void:
 			continue
 		var r := (sides[route] as Control).get_global_rect()
 		clear.append(Rect2(r.position - world.global_position, r.size))
+	# And of what floats over the foot: Collect or the goal, or the raid card.
+	for c: Control in [collect_button, goal, notice]:
+		if c.is_visible_in_tree():
+			var r := c.get_global_rect()
+			clear.append(Rect2(r.position - world.global_position, r.size))
 	world.keep_clear = clear
 
 
