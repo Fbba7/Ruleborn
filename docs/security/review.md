@@ -476,8 +476,9 @@ read, so the next reader need not.
 
 Each fix below was built on a scratch copy of this branch and run against
 every server test (445). "Breaks" counts the tests that turned red beyond the
-item's own pin, which the fix turns round. Each is the owner's one word; the
-reviewer applies it with its test in under an hour.
+item's own pin, which the fix turns round. Each is the owner's one word:
+its patch, with its test turned round, is in the appendix ("the six owner
+fixes as patches") and applies with `git apply`.
 
 | Id | Recommend | Size | Breaks | Cost to honest players |
 | --- | --- | --- | --- | --- |
@@ -821,6 +822,463 @@ What was tried and found sound, so the next reader need not try it again.
 - Each fixed finding's test was run against the code before its fix and
   failed, then passed after it. The tests of the owner's and T11's items
   pin the behaviour as it stands, so they pass until the fix.
+
+## Appendix: the six owner fixes as patches
+
+Each applies alone to this branch with `git apply`, its pinned test turned
+round with it, and passes every server test; applied together all six pass
+448 of 448 (built and run 27 October). Together, SR-12's and SR-15's patches
+both add an import to `security_owner.test.mjs`, so the second needs its
+import line added by hand.
+
+### SR-09: no ratings on the target lists
+
+```diff
+diff --git a/server/src/service.mjs b/server/src/service.mjs
+index bc0411e..9b15a13 100644
+--- a/server/src/service.mjs
++++ b/server/src/service.mjs
+@@ -296,15 +296,13 @@ export class Service {
+       // §12.3: a new player's island is nobody's target yet.
+       if (this.matchmaking.shielded(r.owner, now)) continue;
+       if (!bands.has(r.band)) bands.set(r.band, []);
+-      // What §12.22's steps read, so the device can run `offer` on the list.
+-      const rating = this.matchmaking.islandRating(r.owner, r.realm);
++      // §12.15: ratings are internal; §12.22's `offer` runs on the server
++      // (GET /v1/offer), so a list carries no rating (T12's SR-09).
+       bands.get(r.band).push({
+         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
+         vaultLevel: r.vault_level, exposed: r.exposed, keeperLevel: r.keeper_level,
+         renown: this.seasons.league(r.owner, now).renown,
+         origin: r.origin ?? (r.owner === GENERATOR ? "generated" : "authored"),
+-        rating: rating ? Math.round(rating.rating) : null,
+-        deviation: rating ? Math.round(rating.deviation) : null,
+       });
+     }
+     const index = {};
+diff --git a/server/test/matchmaking.test.mjs b/server/test/matchmaking.test.mjs
+index 3e7cff2..bcb96d5 100644
+--- a/server/test/matchmaking.test.mjs
++++ b/server/test/matchmaking.test.mjs
+@@ -262,7 +262,7 @@ test("a bundle the raider holds is not offered to them, and equal entries sort o
+   assert.deepEqual(order([p, q]), order([q, p]));
+ });
+ 
+-test("the offer over HTTP: the caller's list, its middle in the band, and ratings on the target lists", async () => {
++test("the offer over HTTP: the caller's list, its middle in the band, and no ratings on the target lists (12.15)", async () => {
+   const t = twoPlayers(false);
+   const call = (method, path, token) => t.handle(new Request(`https://edge.example${path}`, {
+     method, headers: { authorization: `Bearer ${token}` } }));
+@@ -275,7 +275,7 @@ test("the offer over HTTP: the caller's list, its middle in the band, and rating
+   assert.deepEqual(body.targets.map((c) => c.bundle), [t.bundle]);
+   const lists = t.service.targetLists();
+   const list = JSON.parse(new TextDecoder().decode(t.service.bundle(Object.values(lists)[0])));
+-  assert.equal(list.candidates[0].deviation, 350);
++  assert.equal(list.candidates[0].deviation, undefined, "ratings stay on the server (T12's SR-09)");
+   assert.equal(list.candidates[0].origin, "authored");
+ });
+ 
+diff --git a/server/test/security_owner.test.mjs b/server/test/security_owner.test.mjs
+index b1d5283..3a5aef8 100644
+--- a/server/test/security_owner.test.mjs
++++ b/server/test/security_owner.test.mjs
+@@ -14,14 +14,13 @@ import { raiseTo } from "../src/universe.mjs";
+ import { twoPlayers, server } from "./setup.mjs";
+ 
+ // SR-09: §12.15, "Ratings are internal … the raw numbers are never shown".
+-test("SR-09 (needs the owner): a target list names every island's raw rating, which 12.15 says is never shown", () => {
++test("SR-09 (fixed): a target list names no island's rating, which 12.15 says is never shown", () => {
+   const t = twoPlayers(false);
+   const lists = t.service.targetLists();
+   const list = JSON.parse(new TextDecoder().decode(t.service.bundle(Object.values(lists)[0])));
+   assert.ok(list.candidates.length > 0);
+   for (const c of list.candidates) {
+-    assert.equal(typeof c.rating, "number");
+-    assert.equal(typeof c.deviation, "number");
++    assert.ok(!("rating" in c) && !("deviation" in c));
+   }
+ });
+ 
+```
+
+### SR-10: a minor's cap without an intent
+
+```diff
+diff --git a/server/src/shop.mjs b/server/src/shop.mjs
+index 782a536..b3285ff 100644
+--- a/server/src/shop.mjs
++++ b/server/src/shop.mjs
+@@ -138,6 +138,17 @@ export class Shop {
+     return Math.max(0, cap * 100 - spent - held);
+   }
+ 
++  /** §20.2's cap on a receipt that comes with no intent: a minor's new
++   *  purchase past the month's cap is refused unsettled, so Play refunds it
++   *  and an App Store one stays unfinished (T12's SR-10). A restore of one
++   *  already granted never reaches here. */
++  withinCap(account, p) {
++    const left = this.allowance(account);
++    if (p && left !== null && p.price > left) {
++      throw new Refused(403, "monthly_cap", { left, cap: facts.SPENDING_CAPS_EUR[this.ageBand(account)] * 100 });
++    }
++  }
++
+   /**
+    * Step one: ask to buy a product, for oneself or, as a gift, for a friend
+    * (`for`). Refused over a minor's cap, before the store is asked for
+@@ -200,6 +211,7 @@ export class Shop {
+       const p = this.product(proof.product);
+       if (!p) throw new Refused(404, "no_such_product");
+       const i = this.intentOf(proof);
++      if (!i) this.withinCap(account, p);
+       if (i) {
+         if (i.account !== account || i.product !== proof.product) throw new Refused(409, "intent_mismatch");
+         this.db.prepare("UPDATE purchase_intents SET redeemed_at = ? WHERE id = ?").run(now, i.id);
+@@ -261,7 +273,7 @@ export class Shop {
+     if (!done) {
+       // Refused before the store is told anything, so nothing is consumed.
+       if (this.refunded(store, proof.transaction)) throw new Refused(402, "receipt_refunded");
+-      this.intentOf(proof);
++      if (!this.intentOf(proof)) this.withinCap(account, this.product(proof.product));
+       const settled = await this.settleReceipt(store, proof);
+       if (!settled?.ok) {
+         const reason = settled?.reason ?? "receipt_refused";
+diff --git a/server/test/security_owner.test.mjs b/server/test/security_owner.test.mjs
+index b1d5283..bc2ec99 100644
+--- a/server/test/security_owner.test.mjs
++++ b/server/test/security_owner.test.mjs
+@@ -26,15 +26,15 @@ test("SR-09 (needs the owner): a target list names every island's raw rating, wh
+ });
+ 
+ // SR-10: §20.2's monthly cap, kept only when the device asks for an intent.
+-test("SR-10 (needs the owner): a 13-to-15's receipts with no intent are granted past the month's cap", () => {
++test("SR-10 (fixed): a 13-to-15's receipt with no intent past the month's cap is refused", () => {
+   const t = server({ firstBand: "13-15",
+                      cosmetics: { items: [{ id: "big", kind: "outfit", price: 2400 }, { id: "more", kind: "outfit", price: 500 }] },
+                      verifyReceipt: (_s, r) => ({ transaction: r, product: r === "t1" ? "big" : "more", intent: null }) });
+   const minor = t.service.session("gc:minor");
+   t.service.shop.redeem(minor.account, "app-store", "t1");
+-  t.service.shop.redeem(minor.account, "app-store", "t2");
+-  assert.equal(t.service.shop.allowance(minor.account), 0, "€29 granted against a €25 cap");
+-  assert.ok(t.service.shop.summary(minor.account).months[0].cents > 2500);
++  assert.throws(() => t.service.shop.redeem(minor.account, "app-store", "t2"), (err) => err.reason === "monthly_cap");
++  assert.equal(t.service.shop.allowance(minor.account), 100, "€24 granted, €1 left of €25");
++  assert.equal(t.service.shop.summary(minor.account).months[0].cents, 2400);
+ });
+ 
+ // SR-12: §18.9's Island Fund is real money, divided by time played, and
+```
+
+### SR-12: an hour a player an island a quarter
+
+```diff
+diff --git a/server/src/fund.mjs b/server/src/fund.mjs
+index adbb231..7ad34a5 100644
+--- a/server/src/fund.mjs
++++ b/server/src/fund.mjs
+@@ -26,8 +26,9 @@
+ // A quarter is closed once, after it ends, by the daily job: the payouts are
+ // written then and never again (G-register). Not built, because §18.9 gives
+ // no numbers for them: the share per hour that "falls in bands as a
+-// creator's total rises", the floor for an island past 500 completions, and
+-// the cap on one player's time on one island. Identity checks and paying the
++// creator's total rises" and the floor for an island past 500 completions.
++// The cap on one player's time on one island is the owner's number (T12's
++// SR-12, ONE_PLAYER_ONE_ISLAND_S). Identity checks and paying the
+ // money are outside the server.
+ 
+ import { readFileSync } from "node:fs";
+@@ -39,6 +40,10 @@ import { kin } from "./workshop.mjs";
+ 
+ const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
+ 
++/** §18.9's cap on one player's time on one island, a quarter (T12's SR-12,
++ *  the owner's number): past it, a player's replays credit nothing. */
++export const ONE_PLAYER_ONE_ISLAND_S = 60 * 60;
++
+ /** The UTC quarter `at` falls in: its number since 1970 and its bounds. */
+ export function quarterOf(at) {
+   const d = new Date(at);
+@@ -100,14 +105,18 @@ export class Fund {
+    *  on an island removed from the Workshop. */
+   played(from, to) {
+     const rows = this.db.prepare(
+-      `SELECT p.player, p.ticks, p.outcome, i.creator, i.published_at FROM workshop_plays p
++      `SELECT p.player, p.item, p.ticks, p.outcome, i.creator, i.published_at FROM workshop_plays p
+          JOIN workshop_items i ON i.id = p.item
+         WHERE p.submitted_at >= ? AND p.submitted_at < ? AND i.removed_at IS NULL`).all(from, to);
+     const out = {};
++    const each = new Map();
+     for (const r of rows) {
+       const o = r.outcome ? JSON.parse(r.outcome) : null;
+       if (!o?.validated || r.player === r.creator) continue;
+-      const seconds = Number.isInteger(o.report?.held) ? o.report.held : r.ticks / TICKS_PER_SECOND;
++      const played = Number.isInteger(o.report?.held) ? o.report.held : r.ticks / TICKS_PER_SECOND;
++      const key = `${r.player} ${r.item}`;
++      const seconds = Math.min(played, ONE_PLAYER_ONE_ISLAND_S - (each.get(key) ?? 0));
++      each.set(key, (each.get(key) ?? 0) + seconds);
+       const weight = kin(this.db, r.player, r.creator, r.published_at) ? facts.KIN_COMPLETION_WEIGHT : 1;
+       out[r.creator] = (out[r.creator] ?? 0) + seconds * weight;
+     }
+diff --git a/server/test/security_owner.test.mjs b/server/test/security_owner.test.mjs
+index b1d5283..3d8b470 100644
+--- a/server/test/security_owner.test.mjs
++++ b/server/test/security_owner.test.mjs
+@@ -6,7 +6,7 @@
+ import assert from "node:assert/strict";
+ import { test } from "node:test";
+ 
+-import { quarterOf } from "../src/fund.mjs";
++import { ONE_PLAYER_ONE_ISLAND_S, quarterOf } from "../src/fund.mjs";
+ import { Social } from "../src/social.mjs";
+ import { TICKS_PER_SECOND } from "../src/service.mjs";
+ import { lawsOf } from "../src/telemetry.mjs";
+@@ -41,7 +41,7 @@ test("SR-10 (needs the owner): a 13-to-15's receipts with no intent are granted
+ // "the cap on one player's time on one island" is not built (fund.mjs: no
+ // number for it). One second account replaying a creator's island all day
+ // credits it hundreds of hours.
+-test("SR-12 (needs the owner): one player replaying one island is credited every play's time", () => {
++test("SR-12 (fixed): one player replaying one island is credited an hour a quarter at most", () => {
+   const t = server();
+   const q = quarterOf(t.clock.now);
+   const db = t.service.db;
+@@ -55,8 +55,8 @@ test("SR-12 (needs the owner): one player replaying one island is credited every
+     db.prepare(`INSERT INTO workshop_plays (token, player, item, seed, ticks, issued_at, submitted_at, outcome)
+                 VALUES (?, ?, 'i', '1', ?, ?, ?, '{"validated":true}')`).run(`p${n}`, alt, 150 * TICKS_PER_SECOND, at, at);
+   }
+-  assert.equal(t.service.fund.played(q.starts_at, q.ends_at)[creator], 200 * 150,
+-               "200 plays by one account, 200 plays' seconds");
++  assert.equal(t.service.fund.played(q.starts_at, q.ends_at)[creator], ONE_PLAYER_ONE_ISLAND_S,
++               "200 plays by one account, one hour");
+ });
+ 
+ // SR-14: §17.7's crews are "formed inside a constellation, or with friends
+```
+
+### SR-14: crews of friends or constellation-mates
+
+```diff
+diff --git a/server/src/social.mjs b/server/src/social.mjs
+index 81cc6a1..63038b7 100644
+--- a/server/src/social.mjs
++++ b/server/src/social.mjs
+@@ -223,6 +223,17 @@ export class Social {
+     return transaction(this.db, () => {
+       const [, most] = facts.CREW_SIZE;
+       if (this.crew(c.id).members.length >= most) throw new Refused(409, "crew_full", { size: most });
++      // §17.7: "formed inside a constellation, or with friends across
++      // constellations"; §20.7 holds a 13-to-15 to friends only, either way
++      // round (T12's SR-14).
++      const members = this.crew(c.id).members.map((m) => m.account);
++      const band = (a) => this.db.prepare("SELECT age_band FROM accounts WHERE id = ?").get(a)?.age_band;
++      const friend = (m) => this.service.friends.areFriends(account, m);
++      const mine = this.membership(account)?.constellation;
++      const near = (m) => friend(m) || (mine != null && this.membership(m)?.constellation === mine);
++      if (!members.some(near) || members.some((m) => (band(m) === "13-15" || band(account) === "13-15") && !friend(m))) {
++        throw new Refused(404, "no_such_crew");
++      }
+       this.db.prepare("INSERT INTO crew_members (crew, account, joined_at) VALUES (?, ?, ?)")
+         .run(c.id, account, this.now());
+       return this.crew(c.id, account);
+diff --git a/server/test/seasons.test.mjs b/server/test/seasons.test.mjs
+index 2d9b93f..1ad7467 100644
+--- a/server/test/seasons.test.mjs
++++ b/server/test/seasons.test.mjs
+@@ -207,6 +207,9 @@ test("a ban takes the player out of their constellation, handing it on, and out
+ test("a crew is four to eight, joined by its invite, and survives its founder leaving (17.7)", () => {
+   const t = beacon(10);
+   const [first, ...rest] = t.players;
++  // Formed inside a constellation (§17.7, T12's SR-14).
++  const c = t.social.found(first, { adjective: 0, noun: 0 });
++  for (const p of rest) t.social.join(p, c.id);
+   const crew = t.social.startCrew(first);
+   assert.equal(crew.formed, false, "one Keeper is not yet a crew");
+   for (const p of rest.slice(0, 3)) t.social.joinCrew(p, crew.invite);
+diff --git a/server/test/security_owner.test.mjs b/server/test/security_owner.test.mjs
+index b1d5283..42a1405 100644
+--- a/server/test/security_owner.test.mjs
++++ b/server/test/security_owner.test.mjs
+@@ -62,15 +62,24 @@ test("SR-12 (needs the owner): one player replaying one island is credited every
+ // SR-14: §17.7's crews are "formed inside a constellation, or with friends
+ // across constellations", and §20.7 holds a 13-to-15's co-op heists to
+ // friends only; joining takes only the invite.
+-test("SR-14 (needs the owner): a 13-to-15 joins a crew of strangers with its invite", () => {
++test("SR-14 (fixed): a crew takes friends or constellation-mates, and a 13-to-15 only friends", () => {
+   const t = server();
+   const social = new Social(t.service);
+   const stranger = t.service.session("gc:stranger").account;
+   const minor = t.service.session("gc:minor").account;
++  const adult = t.service.session("gc:adult").account;
+   t.service.db.prepare("UPDATE accounts SET age_band = '13-15' WHERE id = ?").run(minor);
+   const crew = social.startCrew(stranger);
+-  assert.equal(t.service.friends.areFriends(minor, stranger), false);
+-  assert.equal(social.joinCrew(minor, crew.invite).members.length, 2);
++  const refused = (who) => assert.throws(() => social.joinCrew(who, crew.invite), (err) => err.reason === "no_such_crew");
++  refused(minor);
++  refused(adult);
++  const befriend = (a, b) => t.service.friends.accept(b, t.service.friends.invite(a).invite);
++  befriend(stranger, minor);
++  assert.equal(social.joinCrew(minor, crew.invite).members.length, 2, "a friend joins");
++  befriend(stranger, adult);
++  refused(adult);
++  befriend(minor, adult);
++  assert.equal(social.joinCrew(adult, crew.invite).members.length, 3, "a friend of every member joins a 13-to-15's crew");
+ });
+ 
+ // SR-15 (register D60): §24.8 has a published island's exposed loot "come
+```
+
+### SR-15: exposed loot at most the median's
+
+```diff
+diff --git a/server/src/service.mjs b/server/src/service.mjs
+index bc0411e..51e4a16 100644
+--- a/server/src/service.mjs
++++ b/server/src/service.mjs
+@@ -24,7 +24,7 @@ import { readFileSync } from "node:fs";
+ 
+ import { transaction } from "./db.mjs";
+ import { Refused } from "./refused.mjs";
+-import { capHaul, defenceShare, entryFee, feeReturned, haul, RAIDS_A_WEEK, RENOWN_HEISTS_A_WEEK } from "./economy.mjs";
++import { capHaul, defenceShare, entryFee, feeReturned, FULL_CREW_CARRY, haul, RAIDS_A_WEEK, RENOWN_HEISTS_A_WEEK } from "./economy.mjs";
+ import { byWire, eraAt } from "./eras.mjs";
+ import { Friends } from "./friends.mjs";
+ import { Matchmaking } from "./matchmaking.mjs";
+@@ -239,7 +239,10 @@ export class Service {
+         `INSERT OR IGNORE INTO snapshots
+            (bundle, owner, realm, realm_level, vault_level, exposed, rules, published_at, origin)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+-        .run(key, owner, realm, bundle[4], bundle[5], view.getUint32(6, true),
++        // §24.8: never the bundle's word. Until D60 derives it from the
++        // ledger, no island claims more than §9.6's median richness, 1.0
++        // (T12's SR-15).
++        .run(key, owner, realm, bundle[4], bundle[5], Math.min(view.getUint32(6, true), FULL_CREW_CARRY),
+              build.rulesVersion, now, origin);
+       // §13.3: a curated layout keeps the seed it was drawn from and its
+       // terrain's digest while it stays generated (curation.mjs).
+diff --git a/server/test/security_owner.test.mjs b/server/test/security_owner.test.mjs
+index b1d5283..7ee05fd 100644
+--- a/server/test/security_owner.test.mjs
++++ b/server/test/security_owner.test.mjs
+@@ -6,6 +6,7 @@
+ import assert from "node:assert/strict";
+ import { test } from "node:test";
+ 
++import { FULL_CREW_CARRY } from "../src/economy.mjs";
+ import { quarterOf } from "../src/fund.mjs";
+ import { Social } from "../src/social.mjs";
+ import { TICKS_PER_SECOND } from "../src/service.mjs";
+@@ -76,14 +77,14 @@ test("SR-14 (needs the owner): a 13-to-15 joins a crew of strangers with its inv
+ // SR-15 (register D60): §24.8 has a published island's exposed loot "come
+ // from the owner's own ledger and buildings on the server, never from the
+ // bundle's word"; the server stores the four bytes the client wrote.
+-test("SR-15 (needs the owner, D60): an island's exposed loot is the bundle's word", () => {
++test("SR-15 (fixed until D60): an island's exposed loot is at most the median richness's, whatever the bundle says", () => {
+   const t = server();
+   const owner = t.service.session("gc:owner").account;
+   const island = t.build.exampleIsland(true);
+   new DataView(island.buffer, island.byteOffset).setUint32(6, 0xffffffff, true);
+   const { bundle } = t.service.publish(owner, island);
+   const exposed = t.service.db.prepare("SELECT exposed FROM snapshots WHERE bundle = ?").get(bundle).exposed;
+-  assert.equal(exposed, 0xffffffff, "a player with nothing stored claims the most richness pays");
++  assert.equal(exposed, FULL_CREW_CARRY, "a claim of the most richness pays is held to 1.0");
+   assert.deepEqual(t.service.balance(owner), { starlight: 0, essence: 0 });
+ });
+ 
+```
+
+### SR-16: only woven laws
+
+```diff
+diff --git a/server/src/service.mjs b/server/src/service.mjs
+index bc0411e..39eb5d8 100644
+--- a/server/src/service.mjs
++++ b/server/src/service.mjs
+@@ -229,7 +229,8 @@ export class Service {
+     // And what the owner's universe has built: the realm open, its level,
+     // the Vault (universe.mjs).
+     const problems = [...read.problems, ...(realm === "heart" && bundle[4] !== HEART_LEVEL ? ["heart_level"] : []),
+-                      ...this.universe.problems(owner, realm, bundle[4], bundle[5], build.buildings(bundle))];
++                      ...this.universe.problems(owner, realm, bundle[4], bundle[5], build.buildings(bundle),
++                                                lawsOf(bundle), this.now())];
+     if (problems.length) throw new Refused(422, "island_not_publishable", { problems });
+     const key = this.store.put(bundle, read.digest);      // the two SHA-256s must agree
+     const now = this.now();
+diff --git a/server/src/universe.mjs b/server/src/universe.mjs
+index 0f446f8..e61da42 100644
+--- a/server/src/universe.mjs
++++ b/server/src/universe.mjs
+@@ -346,7 +346,7 @@ export class Universe {
+    *  built, or its `buildings` ([{kind, x, y}]) not the realm's placed ones
+    *  on their tiles. The game's own seeded islands answer to no universe
+    *  (§13.1). */
+-  problems(owner, realm, realmLevel, vaultLevel, buildings = []) {
++  problems(owner, realm, realmLevel, vaultLevel, buildings = [], laws = [], now = 0) {
+     if (this.db.prepare("SELECT seeded FROM accounts WHERE id = ?").get(owner)?.seeded) return [];
+     const out = [];
+     const r = this.realms(owner).find((x) => x.realm === realm);
+@@ -357,6 +357,12 @@ export class Universe {
+     const at = (b) => `${b.kind} ${b.x} ${b.y}`;
+     const placed = this.buildings(owner).filter((b) => b.realm === realm && b.x != null).map(at).sort();
+     if (placed.join() !== buildings.map(at).sort().join()) out.push("buildings_not_as_placed");
++    // §24.8: "a realm plays what its owner wove" — each law woven, and ready,
++    // in this realm's slots or the crown's (T12's SR-16, register G61).
++    const woven = new Set(this.db.prepare(
++      "SELECT law FROM law_slots WHERE owner = ? AND realm IN (?, 'crown') AND law IS NOT NULL AND ready_at <= ?")
++      .all(owner, realm, now).map((r) => r.law));
++    if (laws.some((l) => !woven.has(l))) out.push("law_not_woven");
+     return out;
+   }
+ }
+diff --git a/server/test/security_owner.test.mjs b/server/test/security_owner.test.mjs
+index b1d5283..62c502a 100644
+--- a/server/test/security_owner.test.mjs
++++ b/server/test/security_owner.test.mjs
+@@ -91,7 +91,7 @@ test("SR-15 (needs the owner, D60): an island's exposed loot is the bundle's wor
+ // and "each posted guard's kind, form and level ride in the bundle, checked
+ // against the owner's roster". Neither is checked: an island defends with
+ // laws its owner never wove and guards nobody posted.
+-test("SR-16 (needs the owner, G60 and G61): an island's laws and guards are the bundle's word", () => {
++test("SR-16 (laws fixed, G61; guards still the bundle's word, G60): an island runs only laws its owner wove", () => {
+   const t = server({ strictUniverse: true });
+   const owner = t.service.session("gc:owner").account;
+   const island = t.build.exampleIsland(false);
+@@ -102,5 +102,6 @@ test("SR-16 (needs the owner, G60 and G61): an island's laws and guards are the
+   const posted = t.service.db.prepare("SELECT COUNT(*) AS n FROM characters WHERE owner = ? AND work_kind = 'guardian_post'")
+     .get(owner).n;
+   assert.equal(posted, 0, "nobody posted");
+-  assert.match(t.service.publish(owner, island).bundle, /^[0-9a-f]{64}$/, "and the island is published to defend");
++  assert.throws(() => t.service.publish(owner, island),
++                (err) => err.reason === "island_not_publishable" && err.detail.problems.includes("law_not_woven"));
+ });
+diff --git a/server/test/setup.mjs b/server/test/setup.mjs
+index e404b41..67b99e4 100644
+--- a/server/test/setup.mjs
++++ b/server/test/setup.mjs
+@@ -12,6 +12,7 @@ import { REALMS, Service } from "../src/service.mjs";
+ import { Build, Builds } from "../src/sim.mjs";
+ import { Store } from "../src/store.mjs";
+ import { raiseTo } from "../src/universe.mjs";
++import { lawsOf } from "../src/telemetry.mjs";
+ 
+ export const WASM = fileURLToPath(new URL(
+   "../../sim/target/wasm32-unknown-unknown/release/ruleborn_sim.wasm", import.meta.url));
+@@ -68,7 +69,13 @@ export function server({ strictUniverse = false, strictTerms = false, ...options
+   if (!strictUniverse) {
+     const publish = service.publish.bind(service);
+     service.publish = (owner, bundle, realm = "heart", options = {}) => {
+-      if (REALMS.includes(realm) && bundle?.length > 5) raiseTo(service.db, owner, realm, bundle[4], bundle[5]);
++      if (REALMS.includes(realm) && bundle?.length > 5) {
++        raiseTo(service.db, owner, realm, bundle[4], bundle[5]);
++        // And its laws woven in the realm, ready (T12's SR-16).
++        lawsOf(bundle).forEach((law, i) => service.db.prepare(
++          `INSERT INTO law_slots (owner, realm, slot, law, tier, ready_at) VALUES (?, ?, ?, ?, 1, 0)
++           ON CONFLICT (owner, realm, slot) DO UPDATE SET law = excluded.law, ready_at = 0`).run(owner, realm, 100 + i, law));
++      }
+       return publish(owner, bundle, realm, options);
+     };
+   }
+```
 
 ## Stopped here
 
