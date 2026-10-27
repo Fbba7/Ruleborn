@@ -293,6 +293,9 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
     to a dim sun (`night_eye` 0.5 toward the Heart's noon `day_sun`, at most
     ×1.7), so it keeps part of its daytime value at dusk and night; noon is
     unchanged. Still: `w4_heist_night.png` (noon and 21h, before and after).
+14. Emberling's belly glare: the body glow (`glow_vc` 0.6 to 0.2) barely
+    changes it, so it comes from a glowing accessory near the belly, not
+    the paint. Not fixed; next to look at.
 
 ### Stills (`docs/art/shots/t1c/`, this session)
 
@@ -344,16 +347,17 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
 - Bloomling's petals: a darker base toward magenta, as the design's
   vertex colours run (#B0184E at the base to #FFB0CC at the tip).
 
-## Stopped here (fourth session, about 00:45 UTC)
+## Stopped here (fourth session, 04:45 UTC)
 
-- **Checked:** `tools/check_all.sh` on this work: the simulation (326/326),
-  the server (393/393) and the client (339 of 340) pass, and every stage
-  after the client passes up to `check_dependencies`. Two failures are not
-  the characters': the Weaving-against-the-server client test (fails the
-  same on the base commit 1e8619b in this container) and
-  `check_dependencies`, whose proofs name tests missing from the committed
-  `client/status.json` (the integrator's file).
+- **Last pushed:** see the branch head; every change is inside T1's files.
+- **Checked:** `tools/check_all.sh` on the final head: the simulation
+  (326/326), the server (393/393) and the client (339 of 340) pass. The one
+  client failure, the Weaving-against-the-server test, fails the same on
+  the base commit 1e8619b in this container (the server recommends
+  `slow_rivers` at price 0); `check_dependencies` after it fails on test
+  names missing from the committed `client/status.json`. Neither is T1's.
 - **Container setup this needed:** `rustup target add wasm32-unknown-unknown`,
   `pip install gdtoolkit==4.*`, and `pip install playwright==1.63.0` (the
   version whose browser is under /opt/pw-browsers).
-- **Still worse and next:** see the two sections above.
+- **Still worse and next:** the two sections above, and the Emberling's
+  belly (round 14).
