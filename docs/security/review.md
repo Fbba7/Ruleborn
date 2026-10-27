@@ -24,6 +24,7 @@ decision).
 | SR-03 | Medium | server | Every offer and Observatory view read the whole game's islands | fixed |
 | SR-07 | Medium | server, sim | One trap in the simulation stopped its rules version until a restart | fixed |
 | SR-17 | Medium | server | The hold queue stalled the server and could be filled by one player | fixed |
+| SR-19 | Medium | server | A player could write the store full, half a second at a time | fixed |
 | SR-04 | Low | server web | The web pages had no CSP, nosniff or referrer policy | fixed |
 | SR-05 | Low | server | A block did not hide a player's profile | fixed |
 | SR-06 | Low | client | The cleartext guard let a userinfo hide the host; the terms link could leave the server | fixed |
@@ -270,6 +271,28 @@ decision).
 - **Fix:** a 13-to-15 plays and remixes only an island a person featured, or
   their own, else 403 `curated_lists_only` (the code `browse` already
   answers, with its words on the client). Reporting is never held back.
+- **Status:** fixed.
+
+### SR-19 — A player could write the store full, half a second at a time (Medium)
+
+- **Where:** `server/src/telemetry.mjs` `batch` (`POST /v1/events`),
+  `server/src/friends.mjs` `invite` and `challenge`
+  (`POST /v1/friends/invites`, `POST /v1/challenges`).
+- **What:** G44's call bucket, two a second, was the only bound on what one
+  account writes. A batch of device events holds up to 100, and only three
+  kinds (sessions and the "worth" rating) had a daily count: `weave` and
+  `birth` events had none. Measured here, sixty batches stored 870 kB, so
+  two a second all day is about 2.5 GB a day from one account, kept §24.3's
+  90 days, on a database §24.1 budgets by the row. An invite and a challenge
+  link were each a row a call too, kept a week.
+- **Test:** `server/test/security_limits.test.mjs` (SR-19).
+- **Fix:** a player's device sends at most `DEVICE_EVENTS_A_DAY` events a
+  day, every kind together — 400, twice the heavy day the module's own
+  comment fits in one or two rows — and past it a batch is refused 429
+  `too_many_events`. A player holds at most 50 open invites and 50 open
+  challenge links (`MOST_OPEN`), as `safety.mjs` holds blocks to 500;
+  past them 409, and a used or lapsed one frees its place. The client has
+  the words for all three. No honest player reaches any of them.
 - **Status:** fixed.
 
 ## Needs the owner
@@ -532,5 +555,6 @@ What was tried and found sound, so the next reader need not try it again.
   from the line after each failure), and passed: the simulation's gate,
   all of the server's tests, the client's other 339, the export check, and
   the docs, audit and roadmap builds, which end in "All checks passed."
-- Each finding's test was run against the code before its fix and failed,
-  then passed after it.
+- Each fixed finding's test was run against the code before its fix and
+  failed, then passed after it. The tests of the owner's and T11's items
+  pin the behaviour as it stands, so they pass until the fix.
