@@ -108,18 +108,20 @@ func _refresh() -> void:
 func _poster(code: String) -> Control:
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", UI.px(6))
-	var kicker := ScreenParts.pill(Strings.t("SCREEN_SHARE_CHALLENGE"), "glass", "screens", "realm", 13.0)
+	var kicker := ScreenParts.pill(Strings.t("SCREEN_SHARE_CHALLENGE"), "glass", "screens", "realm", 13.0, "words",
+		true)
 	kicker.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(kicker)
 	var mark := ScreenKit.icon("screens", "islandworkshop", 96.0)
 	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(mark)
-	var big := ScreenKit.inked(ScreenKit.text(code if code != "" else "—", 34.0, "number", "card_lit"), 2.0)
+	# Inked at 12% of its size, so §21.8 measures it against its outline.
+	var big := ScreenKit.inked(ScreenKit.text(code if code != "" else "—", 34.0, "number", "card_lit"), 4.2)
 	big.add_theme_color_override("font_color", Tokens.color("gold_top"))
 	big.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	big.accessibility_name = Strings.t("SHARE_MESSAGE", code) if code != "" else Strings.t("SHARE_NO_LINK")
 	col.add_child(big)
-	return ScreenKit.panel("active", col, 18.0, 14.0)
+	return ScreenKit.panel("card_lit", col, 18.0, 14.0)
 
 
 ## A card's buttons side by side in equal shares, their words wrapping;
