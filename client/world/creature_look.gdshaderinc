@@ -367,7 +367,9 @@ void light() {
 	// part of its daytime value, so a guard is not a dark blob on dark grass:
 	// the sun is taken toward `day_sun` by `night_eye`, at most `night_gain` times.
 	float sun_l = max(0.001, dot(sun, vec3(0.299, 0.587, 0.114)));
-	sun *= clamp(pow(day_sun / sun_l, night_eye), 1.0, night_gain);
+	if (LIGHT_IS_DIRECTIONAL) {
+		sun *= clamp(pow(day_sun / sun_l, night_eye), 1.0, night_gain);
+	}
 	float ndl = dot(NORMAL, LIGHT) + ramp_bias;
 	// Close up (the hero view) the relief shades deeper: the fleece's lumps, the feathers' scallops.
 	float rd = mix(relief_detail, 1.6, hero);
