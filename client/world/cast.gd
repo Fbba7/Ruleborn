@@ -6,9 +6,14 @@ extends RefCounted
 ## spread, and a guard is a Warden in the guard form (§21.6: "ruleborn add a
 ## sash and a small lantern").
 
-## A role's kind, one per role (§21.6's table: each role's first kind).
-const KIND := {"Scout": &"featherkin", "Breaker": &"rambler", "Carrier": &"skyskipper", "Warden": &"mossbear",
-	"Mender": &"hourkeeper", "guard": &"glassgolem"}
+## A role's kind, one per role, from §21.6's table: 02-heist.png's own crew
+## where it shows one (Skyskipper, Mossbear, Emberling), and a kind of
+## another school for the rest, so no two of a crew share a colour and each
+## reads apart on the grass at a glance. The Mender is Bloomling, one surface
+## to Hourkeeper's two, so the eleven figures of a long crew's result keep
+## §21.3's draw calls (149).
+const KIND := {"Scout": &"lanternwisp", "Breaker": &"emberling", "Carrier": &"skyskipper", "Warden": &"mossbear",
+	"Mender": &"bloomling", "guard": &"glassgolem"}
 
 
 ## The model for an actor of `role` ("guard" for a guard), or null to draw

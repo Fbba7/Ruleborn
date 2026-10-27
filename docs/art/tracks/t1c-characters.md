@@ -415,6 +415,15 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
     Lantern Wisp warmer and paler; Glass Golem's tone 0.3 to 0.15 (its
     violet 0.94/0.77/1.31 against 0.94/0.74/1.31).
 
+11. The heist's crew were three motion kinds (Featherkin, Rambler,
+    Skyskipper): three cream-and-gold figures that merged on the grass and
+    in their portraits. `Cast.KIND` (the integrator's, a few lines) now takes
+    02-heist.png's own crew where it shows one (Skyskipper, Mossbear,
+    Emberling) and Lantern Wisp and Bloomling for Scout and Mender: five
+    colours, each read apart at a glance and in grayscale. Draw calls: heist
+    128, long-crew5's result 149 (Hourkeeper's second surface would make it
+    150).
+
 ### Stills (`docs/art/shots/t1d/`)
 
 - `w5_busts.png`, `w5_busts_guard.png`: every ruleborn's and Sage's bust on
@@ -427,5 +436,7 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   Bloomling beneath.
 - `w5_heist_ink_before_after.png`: the crew at the heist camera, thick ink
   against 1.8.
+- `w5_heist_crew_before_after.png`, `w5_heist_crew.png`: the crew at the
+  Vault, three motion kinds against the new cast, with grayscale.
 - `w5_portraits_vs_design.png`: the 24 design portraits, each over ours in
   the hero view.
