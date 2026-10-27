@@ -197,6 +197,9 @@ func _ready() -> void:
 	watch.custom_minimum_size = Vector2(UI.px(60), UI.px(60))
 	watch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	watch.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	# Watching the moment is occasional, not one of the hand's frequent
+	# controls §21.1's thumb zone binds; it stays with its words.
+	watch.set_meta("frequent", false)
 	UI.dress(watch, "leather", 14.0)
 	var watch_box := VBoxContainer.new()
 	watch_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
