@@ -363,6 +363,22 @@ impl RulebornReplay {
         world.give(actor as u8, kind, x as i16, y as i16)
     }
 
+    /// A rehearsal (§13): the crew of `style` (1 cautious, 2 greedy, 3
+    /// fast) against `island` (empty for the fixture realm) with this seed,
+    /// clock and crew, as the simulation's own policy plays it. The replay's
+    /// bytes, for `load`; empty if the island or style does not read.
+    #[func]
+    fn rehearse(island: PackedByteArray, style: i64, seed: GString, ticks: i64, crew: i64) -> PackedByteArray {
+        let (Some(realm), Some(style), Ok(seed)) = (realm_of(&island),
+            sim::reference::Style::from_u8(style.clamp(0, 255) as u8), seed.to_string().parse::<u64>())
+        else {
+            return PackedByteArray::new();
+        };
+        let heist = sim::reference::rehearse(&realm, seed, ticks.clamp(1, 18_000) as u32, crew.clamp(3, 5) as u8,
+                                             style);
+        PackedByteArray::from(heist.encode().as_slice())
+    }
+
     /// The heist as played so far, written down as the replay a device queues
     /// (§24.12): the header, the command log and a checksum a second, made by
     /// re-simulating the log from the start.
@@ -761,6 +777,53 @@ impl RulebornReplay {
     #[func]
     fn alarm(&self) -> i64 {
         self.w().map_or(0, |w| w.alarm as i64)
+    }
+
+    /// §13.2's report of the heist played so far on one island (TD.39), in
+    /// the server's shape: `{"held"` seconds, `"alarm"`, `"bells"`, `"seen"`
+    /// [{crew, x, y}], `"fired"` [{ward, x, y, times}], `"caught_by"` [{row,
+    /// x, y}]}`; empty across a universe or with nothing loaded.
+    #[func]
+    fn report(&self) -> VarDictionary {
+        const WARDS: [&str; 6] = ["crystal_wall", "thorn_hedge", "static_coil", "gravity_well", "time_snare",
+                                  "lantern_glare"];
+        let mut d = VarDictionary::new();
+        let (None, Some(w), Some(realm)) = (self.crossing.as_ref(), self.w(), self.island.as_ref()) else { return d };
+        let r = w.report(realm);
+        d.set("held", r.held as i64);
+        d.set("alarm", r.alarm as i64);
+        d.set("bells", r.bells as i64);
+        let place = |x: u8, y: u8| {
+            let mut e = VarDictionary::new();
+            e.set("x", x as i64);
+            e.set("y", y as i64);
+            e
+        };
+        let mut seen: Array<VarDictionary> = Array::new();
+        for &(c, x, y) in &r.seen {
+            let mut e = place(x, y);
+            e.set("crew", c as i64);
+            seen.push(&e);
+        }
+        d.set("seen", &seen);
+        let mut fired: Array<VarDictionary> = Array::new();
+        for &(k, x, y, n) in &r.fired {
+            let mut e = place(x, y);
+            e.set("ward", WARDS.get(k as usize).copied().unwrap_or(""));
+            e.set("times", n as i64);
+            fired.push(&e);
+        }
+        d.set("fired", &fired);
+        let mut caught: Array<VarDictionary> = Array::new();
+        for &(row, x, y) in &r.caught_by {
+            let mut e = place(x, y);
+            if row != 255 {
+                e.set("row", row as i64);
+            }
+            caught.push(&e);
+        }
+        d.set("caught_by", &caught);
+        d
     }
 
     /// What the heist came to (§12.9), as the re-simulation reads it: across

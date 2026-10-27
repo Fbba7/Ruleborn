@@ -50,6 +50,35 @@ const HEARD_LANDING: usize = 6;
 /// The landings a competent crew weighs: within this many tiles of the best.
 const LANDING_SLACK: usize = 6;
 
+/// §13's rehearsal crews, each a policy on the same simulation as the
+/// competent crew: cautious waits whenever a guard could see its next tile
+/// and never runs; greedy loads until the bag is full, whatever the clock;
+/// fast takes the shortest route and runs.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Style {
+    Competent,
+    Cautious,
+    Greedy,
+    Fast,
+}
+
+impl Style {
+    /// By the wire number the client sends: 1 cautious, 2 greedy, 3 fast.
+    pub fn from_u8(n: u8) -> Option<Style> {
+        [Style::Competent, Style::Cautious, Style::Greedy, Style::Fast].get(n as usize).copied()
+    }
+
+    /// The gait it keeps: crouched, but the fast crew runs.
+    fn gait(self) -> i16 {
+        if self == Style::Fast { 2 } else { 1 }
+    }
+
+    /// How full it loads the bag, in per cent.
+    fn fill(self) -> i32 {
+        if self == Style::Greedy { 100 } else { BREAKEVEN_FILL }
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Leg {
     In,
@@ -177,6 +206,18 @@ pub fn competent(island: &Island, seed: u64, ticks: u32, crew: u8, era: Option<e
 /// The heist played to its end, the world as the clock left it: what
 /// `competent` records and `hold` reads the outcome of.
 pub fn play(island: &Island, seed: u64, ticks: u32, crew: u8, era: Option<era::Era>) -> World {
+    play_styled(island, seed, ticks, crew, era, Style::Competent)
+}
+
+/// One rehearsal (§13): a heist of the crew of `style` on `island`, its
+/// replay.
+pub fn rehearse(island: &Island, seed: u64, ticks: u32, crew: u8, style: Style) -> Heist {
+    let world = play_styled(island, seed, ticks, crew, None, style);
+    record_with(island, seed, ticks, crew, None, None, world.commands().to_vec())
+}
+
+/// `play`, with the crew of `style`.
+pub fn play_styled(island: &Island, seed: u64, ticks: u32, crew: u8, era: Option<era::Era>, style: Style) -> World {
     let blank = Heist { seed, island: island.digest(), rules: rules_version(), ticks, crew, era, manifest: None,
                         commands: Vec::new(), checksums: Vec::new() };
     let mut world = World::from_island(island, &blank);
@@ -190,14 +231,14 @@ pub fn play(island: &Island, seed: u64, ticks: u32, crew: u8, era: Option<era::E
     let (lx, ly) = aim(&world, landing);
     world.give(0, Kind::Land, lx, ly);
     for i in 0..n {
-        world.give(i as u8, Kind::Gait, 1, 0);
+        world.give(i as u8, Kind::Gait, style.gait(), 0);
     }
     let mut cracked_at: Option<u32> = None;
     let mut leaving = false;
     let mut skiff: Option<TileIndex> = None;
     for _ in 0..ticks {
         if world.tick > 0 && world.tick % ACT_EVERY == 0 {
-            let taps = act(&world, &mut members, &goals, true, 0, &mut cracked_at, &mut leaving, &mut skiff);
+            let taps = act(&world, &mut members, &goals, true, 0, &mut cracked_at, &mut leaving, &mut skiff, style);
             for (actor, kind, x, y) in taps {
                 world.give(actor, kind, x, y);
             }
@@ -295,7 +336,8 @@ pub fn play_universe_on(universe: &Universe, islands: &[Island], seed: u64, crew
         }
         if c.world.tick > 0 && c.world.tick % ACT_EVERY == 0 {
             let heart = c.at_heart();
-            let taps = act(&c.world, &mut members, &goals, heart, arrived, &mut cracked_at, &mut leaving, &mut skiff);
+            let taps = act(&c.world, &mut members, &goals, heart, arrived, &mut cracked_at, &mut leaving, &mut skiff,
+                           Style::Competent);
             for (actor, kind, x, y) in taps {
                 c.give(actor, kind, x, y);
             }
@@ -320,7 +362,7 @@ pub fn hold_universe(universe: &Universe, islands: &[Island], seed: u64, raids: 
 /// stands beside it to cross; its way in is counted from `arrived`.
 #[allow(clippy::too_many_arguments)]
 fn act(world: &World, members: &mut [Member], goals: &[TileIndex], heart: bool, arrived: u32,
-       cracked_at: &mut Option<u32>, leaving: &mut bool, skiff: &mut Option<TileIndex>)
+       cracked_at: &mut Option<u32>, leaving: &mut bool, skiff: &mut Option<TileIndex>, style: Style)
        -> Vec<(u8, Kind, i16, i16)> {
     let mut taps = Vec::new();
     let now = world.tick;
@@ -331,7 +373,8 @@ fn act(world: &World, members: &mut [Member], goals: &[TileIndex], heart: bool, 
     }
     // Out of time: the way out is the way in and 15% more, and the skiff's
     // own time to come (§5.4).
-    if !*leaving {
+    // The greedy crew does not watch the clock.
+    if !*leaving && style != Style::Greedy {
         if let Some(at) = *cracked_at {
             let left = world.clock.saturating_sub(now);
             if left <= at * CLOCK_MARGIN.0 / CLOCK_MARGIN.1 + world.skiff_ticks {
@@ -342,7 +385,7 @@ fn act(world: &World, members: &mut [Member], goals: &[TileIndex], heart: bool, 
     // Loaded as the simulation loads: to the target's whole units.
     let loaded = |w: &World, i: usize| {
         let r = &w.raiders[i];
-        r.carried >= r.role.carry() * BREAKEVEN_FILL / 100
+        r.carried >= r.role.carry() * style.fill() / 100
     };
     if !*leaving && world.vault.opened_at.is_some() {
         let crew_in = (0..members.len()).filter(|&i| world.raiders[i].active()).collect::<Vec<_>>();
@@ -393,7 +436,7 @@ fn act(world: &World, members: &mut [Member], goals: &[TileIndex], heart: bool, 
                         cracked_at.get_or_insert(now - arrived);
                     }
                 } else if !m.loading {
-                    taps.push((i as u8, Kind::Load, BREAKEVEN_FILL as i16, 0));
+                    taps.push((i as u8, Kind::Load, style.fill() as i16, 0));
                     m.loading = true;
                 }
                 continue;
@@ -414,8 +457,17 @@ fn act(world: &World, members: &mut [Member], goals: &[TileIndex], heart: bool, 
         let threatened = m.route.get(m.next).is_some_and(|&t| {
             (0..world.guards.len()).any(|gi| !world.guards[gi].knocked_out && world.seen_tiles(gi).contains(&t))
         });
-        if m.route.is_empty() || (still && threatened) {
-            m.route = plan(world, here, goal);
+        // The cautious crew waits where it stands while a guard could see
+        // its next tile; the fast crew never looks.
+        if style == Style::Cautious && still && threatened && !m.route.is_empty() {
+            continue;
+        }
+        if m.route.is_empty() || (still && threatened && style == Style::Competent) {
+            m.route = if style == Style::Fast {
+                crate::path::find(&world.grid, here, goal).unwrap_or_default()
+            } else {
+                plan(world, here, goal)
+            };
             m.next = 0;
             if m.route.is_empty() {
                 continue;
