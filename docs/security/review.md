@@ -503,6 +503,7 @@ Each track's branch, read as it was pushed, from d2343591.
 
 | Branch | Commits read | What it touches | Verdict |
 | --- | --- | --- | --- |
+| `claude/3d-universe` | `930fd3a`, `d02613c`, `13eec89` | the universe map's pins, notices, side panel, strain and whole view | no finding: drawing only; a file is written only by the probe in `tests/shots/universe_zoom.gd`; the realm icon is a `res://…/realm_<key>.svg` from the server's realm key, as before, so at worst another of the game's own pictures |
 | `claude/ui-kit` | `5b864e6`, `3b109da`, `a829d14` | the kit's tabs, rails, rings, HUD and skins (`client/ui/`) | no finding: drawing only; the one `load` of a path built from the environment is the screenshot tool `tests/shots/ui_screen.gd`, which the export leaves out |
 | `claude/3d-character-screens` | `316ea57`, `2c09fbe` | the character screens (Forms, roster, Sage hall), portraits and the first launch's stage | no finding: layout and rendering; environment read only by the screenshot tools under `tests/shots`, which the export leaves out (`exclude_filter="tests/*"`) |
 | `claude/3d-characters-2` | `72c5966`, `51ea7ea` | busts for the heist's crew row and the Sage disc (`creature_bust*.gd`, `creature_model.gd`, `world_view.gd`) | no finding: rendering only, no network, file, link or loaded data; environment read only by its screenshot tool under `tests/shots` |
