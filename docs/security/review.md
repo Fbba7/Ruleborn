@@ -555,6 +555,12 @@ read, so the next reader need not.
   `uri_encode`d, so a pasted "code" like `../account` stays one segment
   (`..%2Faccount`); the rest are the server's own tokens and hashes.
 - **Redirects:** none followed (SR-27).
+- **TLS, measured** in the 4.7.2 engine headless against local HTTPS
+  servers: a certificate from an authority the device does not trust is
+  refused (`RESULT_TLS_HANDSHAKE_ERROR`); with that authority pinned as
+  `HttpTransport.pinned` pins it (`TLSOptions.client(chain)`) the right
+  host is served, and a certificate it issued for another name is refused.
+  The token reached only the right host.
 - **TLS:** the platform's authorities with the host checked; a build may pin
   (`ruleborn/tls_pins`, `HttpTransport.pinned`), and none does yet. Pinning
   is optional at the market standard for a game (MASVS-NETWORK-2); if the
