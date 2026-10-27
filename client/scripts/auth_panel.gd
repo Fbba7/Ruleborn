@@ -90,9 +90,7 @@ func _devices(slice: Dictionary) -> void:
 	if list.is_empty():
 		return
 	add_child(ScreenParts.section(Strings.t("AUTH_DEVICES_TITLE"), str(list.size())))
-	var group := VBoxContainer.new()
-	group.name = "Devices"
-	group.add_theme_constant_override("separation", UI.px(6))
+	var rows: Array[Control] = []
 	for d: Variant in list:
 		var row := AuthPresenter.device_row(d)
 		var end: Control = ScreenParts.pill(Strings.t("AUTH_THIS_DEVICE"), "gold")
@@ -102,8 +100,8 @@ func _devices(slice: Dictionary) -> void:
 			end.accessibility_name = "%s: %s" % [Strings.t("AUTH_SIGN_OUT"), row["title"]]
 		var item := ScreenParts.item("settingsandwellbeing", "account", str(row["title"]), str(row["line"]), end)
 		item.accessibility_name = str(row["spoken"])
-		group.add_child(item)
-	add_child(group)
+		rows.append(item)
+	add_child(_group(rows, "Devices"))
 	# Stacked, each the column's width: their words are long in every
 	# language, and side by side they would push the screen wider.
 	if list.size() > 1:
@@ -119,6 +117,7 @@ func _methods(slice: Dictionary) -> void:
 	if rows.is_empty():
 		return
 	add_child(ScreenParts.section(Strings.t("AUTH_METHODS_TITLE")))
+	var items: Array[Control] = []
 	for m: Dictionary in rows:
 		var p := str(m["platform"])
 		var end: Control = null
@@ -129,7 +128,29 @@ func _methods(slice: Dictionary) -> void:
 				end = _button("unlink", Strings.t("AUTH_UNLINK"), ask_change.bind("unlink", 0, str(m["title"]), p),
 					"leather")
 		var icon := "account" if p == "gc" else "privacy"
-		add_child(ScreenParts.item("settingsandwellbeing", icon, str(m["title"]), str(m["line"]), end))
+		items.append(ScreenParts.item("settingsandwellbeing", icon, str(m["title"]), str(m["line"]), end))
+	add_child(_group(items, "Methods"))
+
+
+## Rows in one card, a hairline between each, as the Settings still groups
+## its rows: each row keeps its words' ink for the card, its own card hidden.
+func _group(rows: Array[Control], named: String) -> PanelContainer:
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 0)
+	for i: int in rows.size():
+		if i > 0:
+			var line := ColorRect.new()
+			line.color = Color(ScreenKit.ink("card", true), 0.18)
+			line.custom_minimum_size.y = maxf(1.0, UI.px(1))
+			line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			v.add_child(line)
+		var own := RbBox.of(rows[i])
+		if own != null:
+			own.visible = false
+		v.add_child(rows[i])
+	var card := ScreenKit.panel("card", v, 18.0, 4.0)
+	card.name = named
+	return card
 
 
 ## A button as wide as the column, its words wrapping rather than widening it.
