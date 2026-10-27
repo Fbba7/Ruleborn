@@ -29,6 +29,8 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_friends(column)
 		13:
 			_log(column)
+		14:
+			_stats(column)
 		_:
 			_season(column)
 
@@ -503,3 +505,21 @@ static func _log(column: VBoxContainer) -> void:
 		"You lost nothing", "info", "Report", func() -> void: pass))
 	column.add_child(KitSocial.log_row(null, "TO", "Tomas", "Friendly", "violet", "2 days ago · caught twice",
 		"+2 pages", "success", "Report", func() -> void: pass))
+
+
+## The design's Player stats chart (19b-player-stats.png).
+static func _stats(column: VBoxContainer) -> void:
+	column.add_child(KitPanels.section("Renown"))
+	var renown := UI.panel("card")
+	var rv := VBoxContainer.new()
+	var head := KitLayout.flow(8)
+	var big := UI.label("1,460", 30)
+	big.theme_type_variation = "Display"
+	head.add_child(big)
+	head.add_child(UI.status("success", "+11", false))
+	rv.add_child(head)
+	rv.add_child(KitChart.make([1260, 1270, 1262, 1290, 1300, 1295, 1330, 1350, 1345, 1372, 1390, 1380, 1405, 1420, 1410,
+		1430, 1445, 1460], [[1450, "1,450"], [1350, "1,350"], [1250, "1,250"]], "Sep 28", "Today",
+		"Renown 1,460 today, up 201 in 30 days"))
+	renown.add_child(rv)
+	column.add_child(renown)
