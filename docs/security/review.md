@@ -399,7 +399,9 @@ decision).
 - **Fix:** "everywhere" by access token takes a live session (the same check
   every other route makes); by refresh token, the session's current
   generation while it lives. Ending one's own session stays idempotent.
-  7 lines in T11's file; T11 told here.
+  7 lines in T11's file; T11 told here. T11's wave-5 "every other device"
+  and "end this device from the list" took the same dead token; the merge
+  here holds them to the same check.
 - **Test:** `server/test/security_auth.test.mjs` (SR-24); it failed before
   the fix.
 - **For T11, not a finding:** `docs/security/auth.md` (T6) says session ids
@@ -426,7 +428,9 @@ decision).
 - **Fix:** the token is admitted to its session's bucket only once its
   signature against the session's salt is proven: a made-up one costs one
   read by primary key and spends nothing of the player's. A proven session
-  is still limited as before. 4 lines in T11's files; T11 told here.
+  is still limited as before. 4 lines in T11's files; T11 told here. T11's
+  wave-5 sign-out by refresh token spent the bucket the same way; the merge
+  here admits it after the proof too.
 - **Test:** `server/test/security_auth.test.mjs` (SR-28): thirty made-up
   tokens naming a player's session, then the player's refresh succeeds,
   and a proven holder is still held at the bucket's tenth. It failed before
@@ -503,6 +507,7 @@ Each track's branch, read as it was pushed, from d2343591.
 
 | Branch | Commits read | What it touches | Verdict |
 | --- | --- | --- | --- |
+| `claude/auth` | `f536fc2`, `82fe4d9`, `777f2a8`, `6ac2347` | the devices list, ending one device or every other, linking a second platform's identity, refresh rotation as a switch, the account panel | merged here, conflicts resolved, 462 server tests green. Linking is sound: both proofs fresh and single-use, one identity a platform, never one with an account or a ban, no merging, a ban covering linked identities through the one ban path (`workshop.mjs` → `endAll("banned")`), deletion forgetting them, unlinking proven by the identity that stays. Two new paths repeated SR-24 and SR-28 and are fixed with them: "every other device" and ending another device from the list took a dead access token; sign-out by refresh token spent the session's bucket before the token was proven |
 | `claude/3d-kit` | `11b4fa3`, `6d8ddbd` | the realm kit's pieces, ground shader and dial | no finding: geometry and a shader; environment read only by `tests/shots/kit_realm.gd` |
 | `claude/3d-universe` | `930fd3a`, `d02613c`, `13eec89` | the universe map's pins, notices, side panel, strain and whole view | no finding: drawing only; a file is written only by the probe in `tests/shots/universe_zoom.gd`; the realm icon is a `res://…/realm_<key>.svg` from the server's realm key, as before, so at worst another of the game's own pictures |
 | `claude/ui-kit` | `5b864e6`, `3b109da`, `a829d14` | the kit's tabs, rails, rings, HUD and skins (`client/ui/`) | no finding: drawing only; the one `load` of a path built from the environment is the screenshot tool `tests/shots/ui_screen.gd`, which the export leaves out |

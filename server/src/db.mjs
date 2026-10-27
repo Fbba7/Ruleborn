@@ -778,9 +778,26 @@ CREATE TABLE IF NOT EXISTS sessions (
   created_at  INTEGER NOT NULL,
   used_at     INTEGER NOT NULL,
   ended_at    INTEGER,
-  ended       TEXT
+  ended       TEXT,
+  -- What the devices list shows (docs/security/auth.md): which platform
+  -- signed it in ('gc', 'gp'), the device's kind and model as it names
+  -- them, and the country the edge saw it last in. Never an address.
+  via         TEXT,
+  device      TEXT,
+  model       TEXT,
+  place       TEXT
 );
 CREATE INDEX IF NOT EXISTS sessions_by_account ON sessions(account);
+
+-- A second platform identity an account may also sign in with: one account
+-- across iPhone, iPad and Android (auth.mjs link). At most one of each
+-- platform, never the one the account was made with.
+CREATE TABLE IF NOT EXISTS linked_identities (
+  identity    TEXT PRIMARY KEY,
+  account     TEXT NOT NULL REFERENCES accounts(id),
+  linked_at   INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS linked_identities_by_account ON linked_identities(account);
 
 -- A platform proof or nonce already spent, by a hash of it, until it could
 -- no longer be accepted anyway: §24.8's single use (auth_proofs.mjs).
@@ -882,6 +899,11 @@ const DROPPED = [
 /** Columns added to a table after a database was first made: `CREATE TABLE IF
  *  NOT EXISTS` leaves an old table as it was, so each is added if missing. */
 const ADDED = [
+  // The devices list (auth.mjs).
+  ["sessions", "via", "TEXT"],
+  ["sessions", "device", "TEXT"],
+  ["sessions", "model", "TEXT"],
+  ["sessions", "place", "TEXT"],
   // §18.9: a creator's opting in to the Island Fund (fund.mjs).
   ["accounts", "fund_opt_in", "INTEGER NOT NULL DEFAULT 0"],
   // §17.6's invite gift (friends.mjs): which of a pair shared the invite the

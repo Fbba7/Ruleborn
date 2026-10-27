@@ -155,6 +155,7 @@ async function busy() {
   // The device's sessions (G29), which first_seen is kept from.
   for (const p of [x.account, y.account]) t.service.telemetry.batch(p, [{ kind: "session_start", data: {} }]);
   n.set(x.account, { timeZone: "Europe/Berlin" });
+  t.service.auth.link(x.account, "gc:x", "gp:x");     // the same account on Android (auth.mjs)
   return { t, x: x.account, y: y.account, xBundle, yBundle, held, mine, theirs, w };
 }
 

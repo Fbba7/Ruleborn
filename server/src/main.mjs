@@ -181,12 +181,24 @@ function secret() {
   return key;
 }
 
+function rotateHours() {
+  const h = Number(process.env.RULEBORN_REFRESH_ROTATE_HOURS ?? 0);
+  if (!Number.isInteger(h) || h < 0 || h > 24 * 30) {
+    throw new Error("RULEBORN_REFRESH_ROTATE_HOURS is a whole number of hours, 0 to 720");
+  }
+  return h;
+}
+
 const service = new Service({
   db: open(join(data, "ruleborn.sqlite")),
   store: new Store(join(data, "bundles")),
   builds: Builds.load([join(root, "sim/target/wasm32-unknown-unknown/release/ruleborn_sim.wasm")]),
   secret: secret(),
   tokenKeys: process.env.RULEBORN_TOKEN_KEYS ?? "",
+  // The owner's decision on refresh's billed row (docs/security/auth.md):
+  // RULEBORN_REFRESH_ROTATE_HOURS, unset or 0, rotates the refresh token on
+  // every refresh (one row a session an hour); 24 rotates it once a day.
+  refreshRotateMs: rotateHours() * 60 * 60 * 1000,
   verifyPlatform: platforms.verify,
   preparePlatform: platforms.prepare,
   verifyReceipt: receipts({ appStore: storeKit ? { roots: storeKitRoots, bundleId, sandbox } : null, play }),
@@ -229,7 +241,12 @@ const contact = contactMatch ? { name: contactMatch[1], email: contactMatch[2] }
 const peerHeader = (process.env.RULEBORN_PEER_HEADER ?? "").trim().toLowerCase();
 if (!peerHeader) console.warn("RULEBORN_PEER_HEADER unset: failed sign-ins are not limited by address (G44)");
 const peerOf = peerHeader ? (request) => request.headers.get(peerHeader) : null;
-const handle = handler(service, { webClientId, appleNotifications, contact, peerOf });
+// The devices list's country: a header the edge sets from the address,
+// RULEBORN_PLACE_HEADER (Cloudflare's cf-ipcountry). Only the country is
+// kept, never the address (docs/security/auth.md). Unset, no place is shown.
+const placeHeader = (process.env.RULEBORN_PLACE_HEADER ?? "").trim().toLowerCase();
+const placeOf = placeHeader ? (request) => request.headers.get(placeHeader) : null;
+const handle = handler(service, { webClientId, appleNotifications, contact, peerOf, placeOf });
 
 // §20.12's "backups included": a database restored from before a deletion
 // has it made again before anyone can sign in.

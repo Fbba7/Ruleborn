@@ -42,6 +42,12 @@ test("SR-24: only a live session's current token signs out everywhere", async ()
   assert.equal(live(t, phone.account), 1, "the phone signed out");
   const dead = await call(t, "/v1/session/end", { token: stolen.token, body: { everywhere: true } });
   assert.equal(dead.status, 401, "an ended session's access token ends nothing everywhere");
+  // Nor every other device, nor another device from the list (T11's wave 5).
+  const tabletId = Number(tablet.refreshToken.split(".")[2]);
+  for (const body of [{ others: true }, { device: tabletId }]) {
+    const r = await call(t, "/v1/session/end", { token: stolen.token, body });
+    assert.equal(r.status, 401, `an ended session's access token ends nothing with ${JSON.stringify(body)}`);
+  }
   assert.equal(live(t, phone.account), 1, "the tablet is still signed in");
 
   // A device's own sign-out is still harmless to retry, and everywhere
@@ -86,6 +92,10 @@ test("SR-28: made-up refresh tokens naming a session cannot hold its real refres
   for (let i = 0; i < 30; i++) {
     const forged = await call(t, "/v1/session/refresh", { body: { refreshToken: `r1.k0.${session}.0.${"A".repeat(43)}` } });
     assert.equal(forged.status, 401, "a made-up token is refused");
+  }
+  for (let i = 0; i < 30; i++) {
+    const forged = await call(t, "/v1/session/end", { body: { refreshToken: `r1.k0.${session}.0.${"A".repeat(43)}` } });
+    assert.equal(forged.status, 401, "nor does a made-up sign-out spend the session's bucket");
   }
   const real = await call(t, "/v1/session/refresh", { body: { refreshToken: player.refreshToken } });
   assert.equal(real.status, 200, "the player's own refresh is not held back");
