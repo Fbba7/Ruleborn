@@ -157,8 +157,10 @@ void fragment() {
 			// button whose words wrap is not cut across the middle.
 			float uvy = (pb.y + b.y) / (2.0 * min(box_size.y * 0.5, 66.0));
 			float lacquer = cover(sd_box(pb, bi - vec2(3.0 + line_w), max(ri - 3.0, 0.0)), px);
-			// A crisp lower edge at half height, brighter towards the top.
-			float band = (1.0 - smoothstep(0.42, 0.5, uvy)) * (0.45 + 0.55 * (1.0 - uvy * 2.0));
+			// Fading out by half height, brightest at the top: no edge to cut
+			// across words, however large the text (the designs' fills are
+			// lit, not lacquered with a seam).
+			float band = (1.0 - smoothstep(0.1, 0.5, uvy)) * (0.45 + 0.55 * (1.0 - uvy * 2.0));
 			fill.rgb = mix(fill.rgb, vec3(1.0), gloss * lacquer * band);
 		}
 		if (hi_w > 0.0) {

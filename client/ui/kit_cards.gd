@@ -61,12 +61,21 @@ static func law_card(icon: String, title: String, school: String, rarity: String
 		disc.add_child(n)
 		stage.add_child(disc)
 	v.add_child(window)
-	var name_plate := UI.plate(_name(title), "parchment")
+	# A card three to a row (under 130 points) sets its name smaller and its
+	# school's mark over its rank's word, so neither widens it past its row.
+	var compact := points < 130.0
+	var name_plate := UI.plate(_name(title, _fit(title, points - 22.0) if compact else 18.0), "parchment")
+	if compact:
+		name_plate.add_theme_stylebox_override("panel", UI.clear_box(4, 6))
 	v.add_child(name_plate)
-	var mark := HBoxContainer.new()
+	var mark: BoxContainer = HBoxContainer.new()
+	if compact:
+		mark = VBoxContainer.new()
 	mark.alignment = BoxContainer.ALIGNMENT_CENTER
-	mark.add_theme_constant_override("separation", UI.px(4))
-	mark.add_child(Icons.view("schools/" + school, 20))
+	mark.add_theme_constant_override("separation", UI.px(0 if compact else 4))
+	var shape := Icons.view("schools/" + school, 20)
+	shape.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	mark.add_child(shape)
 	# The school by its mark's shape, the rank by its frame and its word.
 	var s := UI.label(Strings.t("LAW_RANK_" + rarity.to_upper()), 13)
 	s.theme_type_variation = "Kicker"
@@ -78,8 +87,22 @@ static func law_card(icon: String, title: String, school: String, rarity: String
 	return card
 
 
-static func _name(title: String) -> Label:
-	var l := UI.label(title, 18, true)
+## The largest size from 15 points down to §21.8's 13 at which the name's
+## longest word fits `room` points, so it wraps between words, not in one.
+static func _fit(title: String, room: float) -> float:
+	var face := RbTheme.role_font("heading")
+	var longest := ""
+	for word: String in title.split(" "):
+		if word.length() > longest.length():
+			longest = word
+	for size: float in [15.0, 14.0]:
+		if face.get_string_size(longest, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(size)).x <= UI.px(room):
+			return size
+	return 13.0
+
+
+static func _name(title: String, points: float) -> Label:
+	var l := UI.label(title, points, true)
 	l.theme_type_variation = "Heading"
 	return l
 
@@ -93,7 +116,7 @@ static func portrait(picture: Texture2D, name: String, level: int, school: Strin
 		pressed: Callable, chosen := false, spoken := "") -> Button:
 	var b := UI.action("", pressed, "portrait_" + school, spoken if spoken != "" else name)
 	b.name = "Portrait"
-	b.custom_minimum_size = Vector2(UI.px(100), UI.px(128))
+	b.custom_minimum_size = Vector2(UI.px(100), UI.px(140))
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	RbBox.of(b).set_chosen(chosen)
 	var art := TextureRect.new()
@@ -173,7 +196,7 @@ static func reward(icon: String, amount: String, words: String, tone := "gold") 
 	n.add_theme_font_size_override("font_size", UI.text_px(24))
 	n.set_meta("points", 24.0)
 	v.add_child(n)
-	var w := UI.label(words, 13)
+	var w := UI.label(words, 13, true)
 	w.theme_type_variation = "Secondary"
 	w.set_meta("bold", true)
 	w.add_theme_font_override("font", UI.bold_font())
@@ -207,7 +230,7 @@ static func fact(icon: String, kicker: String, words: String) -> PanelContainer:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 0)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var k := UI.label(kicker, 13)
+	var k := UI.label(kicker, 13, true)
 	k.theme_type_variation = "Kicker"
 	k.uppercase = true
 	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT

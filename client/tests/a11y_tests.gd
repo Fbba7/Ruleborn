@@ -42,6 +42,18 @@ func _set_contrast(on: bool) -> void:
 	Settings.apply()
 
 
+## Which control a failure is about, for the screen's owner to find: its
+## type and its path from the screen, and the kit's material if it has one.
+static func _where(screen: Node, c: Control) -> String:
+	var n: Node = c
+	var look := ""
+	while n != null and n != screen and look == "":
+		if n.has_meta("rb_material"):
+			look = " in the kit's %s" % str(n.get_meta("rb_material"))
+		n = n.get_parent()
+	return "%s %s%s" % [c.get_class(), str(screen.get_path_to(c)), look]
+
+
 ## What a node and every canvas item above it multiply its colours by: a
 ## faded control's words are faded too. A node still arriving (Motion's
 ## entrances, marked "entering") is judged as it will stand.
@@ -166,10 +178,11 @@ func _token_pairs() -> void:
 		bad.is_empty(), "; ".join(bad))
 
 
-## Each material's words (bold, as a control's are) and its secondary words
-## (bold, §21.8's tertiary rule) on each stop they sit on, measured against
-## an ink outline where §21.8 lets the outline count; and each family's
-## status words on its surfaces.
+## Each material's words and its secondary words, at the weight a label in
+## it is drawn in (regular, so any label a screen puts there reads, unless
+## the material makes its words bold), on each stop they sit on, measured
+## against an ink outline where §21.8 lets the outline count; and each
+## family's status words on its surfaces.
 func _kit_pairs(hc: bool) -> Array:
 	var bad := []
 	for m: String in Tokens.materials():
@@ -182,7 +195,7 @@ func _kit_pairs(hc: bool) -> Array:
 			bgs = [spec["text_outline"][0]]
 		for part: String in ["text", "text_2"]:
 			for bg: Color in bgs:
-				if not ColourCheck.readable(spec[part], bg, UI.TEXT_POINTS, true):
+				if not ColourCheck.readable(spec[part], bg, UI.TEXT_POINTS, bool(spec["bold_words"])):
 					bad.append("%s's %s%s: %.2f:1, Lc %.0f" % [m, part, " (high contrast)" if hc else "",
 						ColourCheck.ratio(spec[part], bg), ColourCheck.apca(spec[part], bg)])
 	for family: String in ["dark", "light"]:
@@ -224,8 +237,11 @@ func _every_word() -> void:
 					bgs = [outline]
 				for bg in bgs:
 					if not ColourCheck.readable(fg, bg, points, bold):
-						bad.append("%s%s: %s %.2f:1 Lc %.0f" % [sname, " (hc)" if hc else "", c.text,
-							ColourCheck.ratio(fg, bg), ColourCheck.apca(fg, bg)])
+						bad.append("%s%s: \"%s\" (%s) is %.2f:1 Lc %.0f on #%s, needs %.1f:1 Lc %.0f at %.0f points%s"
+							% [sname, " (high contrast)" if hc else "", c.text, _where(screen, c as Control),
+							ColourCheck.ratio(fg, bg), ColourCheck.apca(fg, bg), bg.to_html(false),
+							ColourCheck.MIN_RATIO, ColourCheck.lc_needed(points, bold), points,
+							" bold" if bold else ""])
 						break
 			screen.queue_free()
 			await tree.process_frame
@@ -330,7 +346,7 @@ func _named() -> void:
 			if name.length() <= 2 and not name.is_empty() and (b as Control).accessibility_name == "":
 				name = ""   # two letters or a symbol are not a name
 			if not letter.search(name):
-				bad.append("%s: a control named \"%s\"" % [sname, name])
+				bad.append("%s: a control named \"%s\" (%s)" % [sname, name, _where(screen, b as Control)])
 		for v in screen.find_children("*", "RealmView", true, false):
 			described = described or str((v as Control).accessibility_name) != ""
 		screen.queue_free()

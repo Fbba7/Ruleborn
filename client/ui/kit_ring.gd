@@ -58,14 +58,47 @@ func _draw() -> void:
 
 
 func _heavy(c: Vector2, r: float, ink: Color, gold: Color) -> void:
-	var band := r * 0.2
-	draw_circle(c + Vector2(0, UI.px(2)), r, Tokens.color("drop"), true, -1.0, true)
+	# The designs' play-time ring (19 Settings): a soft gold glow, a gold
+	# halo outside an ink edge, a dark track filled clockwise from the top in
+	# a gold that deepens as it goes, an ink-edged violet disc recessed in
+	# it, and a cream marker where the fill ends.
+	var halo := maxf(2.0, UI.px(1.2))
+	var edge := maxf(1.5, UI.px(0.7))
+	for i: int in 2:
+		draw_circle(c, r + halo + UI.px(3.0 + 4.0 * i), Color(gold, 0.09), true, -1.0, true)
+	draw_circle(c, r + halo, Color(Tokens.color("gold_bottom"), 0.55), true, -1.0, true)
 	draw_circle(c, r, ink, true, -1.0, true)
-	# The torus: deep gold under a lit band, as the designs' gold round.
-	draw_arc(c, r - band * 0.5 - 1.0, 0.0, TAU, 96, Tokens.color("gold_bottom"), band, true)
-	draw_arc(c, r - band * 0.62 - 1.0, PI * 1.05, PI * 1.95, 64, Color(Tokens.color("cream"), 0.8), band * 0.35, true)
+	var band := r * 0.196
+	var mid := r - band * 0.5
+	draw_arc(c, mid, 0.0, TAU, 96, Tokens.paint("#0E0920"), band, true)
 	if fraction > 0.0:
-		draw_arc(c, r - band * 0.5 - 1.0, -PI * 0.5, -PI * 0.5 + TAU * fraction, 96, Color(gold, 0.9), band * 0.45,
-			true)
-	draw_circle(c, r - band - 1.0, ink, true, -1.0, true)
-	draw_circle(c, r - band - maxf(2.0, UI.px(1)), Tokens.color("card_top"), true, -1.0, true)
+		# One polyline, its colour per point: a single draw call.
+		var steps := maxi(2, int(72 * fraction))
+		var from := Tokens.paint("#F9DE9C")
+		var to := Tokens.paint("#F2B43C")
+		var points := PackedVector2Array()
+		var colours := PackedColorArray()
+		for i: int in steps + 1:
+			var a := -PI * 0.5 + TAU * fraction * i / steps
+			points.append(c + Vector2(cos(a), sin(a)) * mid)
+			colours.append(from.lerp(to, float(i) / steps))
+		draw_polyline_colors(points, colours, band, true)
+	var inner := r - band
+	draw_circle(c, inner, ink, true, -1.0, true)
+	# The disc lit from above: a fan from its light, a little over its
+	# centre, out to its dark rim, smooth and one draw call.
+	var light := c + Vector2(0, -inner * 0.3)
+	var fan := PackedVector2Array([light])
+	var shades := PackedColorArray([Tokens.paint("#3A2878")])
+	for i: int in 49:
+		var a := TAU * i / 48.0
+		fan.append(c + Vector2(cos(a), sin(a)) * (inner - edge))
+		shades.append(Tokens.paint("#1A1036"))
+	draw_polygon(fan, shades)
+	if fraction > 0.0 and fraction < 1.0:
+		var end := -PI * 0.5 + TAU * fraction
+		var at := c + Vector2(cos(end), sin(end)) * mid
+		var dot_r := band * 0.62
+		draw_circle(at, dot_r + UI.px(2), Color(Tokens.paint("#F9DE9C"), 0.35), true, -1.0, true)
+		draw_circle(at, dot_r, ink, true, -1.0, true)
+		draw_circle(at, dot_r - edge, Tokens.color("cream"), true, -1.0, true)
