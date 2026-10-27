@@ -322,19 +322,38 @@ func _publish() -> void:
 func _rating_panel(slice: Dictionary, busy: bool) -> void:
 	var p := WorkshopPresenter.rating(slice, scores)
 	var box := VBoxContainer.new()
-	box.add_child(ScreenKit.text(Strings.t("WORKSHOP_RATE_TITLE", p["name"]), 15.0, "words", "card", false, true))
+	box.add_theme_constant_override("separation", UI.px(8))
+	box.add_child(ScreenKit.text(Strings.t("WORKSHOP_RATE_TITLE", p["name"]), 20.0, "name", "card_lit", false, true))
+	# Each aspect a row: its words over five pips, the score lit; − and +.
 	for aspect: String in ASPECTS:
-		var r := UI.row(6.0)
 		var said: String = p[aspect]
-		r.add_child(_act("lower:" + aspect, "−", _score.bind(aspect, -1), false, Strings.t("WORKSHOP_LOWER", said)))
-		r.add_child(ScreenKit.panel("track", ScreenKit.text(said, 15.0, "words", "well"), 14.0, 8.0))
-		r.add_child(_act("raise:" + aspect, "+", _score.bind(aspect, 1), false, Strings.t("WORKSHOP_HIGHER", said)))
-		box.add_child(r)
-	var send := UI.row(6.0)
-	send.add_child(_act("rate", Strings.t("WORKSHOP_SEND_RATING"), _send_rating.bind(p["id"]), busy,
-		Strings.t("WORKSHOP_SEND_RATING_NAMED", p["name"]), true))
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", UI.px(8))
+		var col := VBoxContainer.new()
+		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		col.alignment = BoxContainer.ALIGNMENT_CENTER
+		col.add_theme_constant_override("separation", UI.px(4))
+		col.add_child(ScreenKit.text(said, 15.0, "words", "card_lit", false, true))
+		var pips := HBoxContainer.new()
+		pips.add_theme_constant_override("separation", UI.px(4))
+		for i: int in 5:
+			var pip := ScreenKit.panel("gold" if i < int(scores[aspect]) else "well", null, -1.0, 0.0)
+			pip.custom_minimum_size = Vector2.ONE * UI.px(14)
+			pips.add_child(pip)
+		col.add_child(pips)
+		row.add_child(col)
+		for b: Button in [_act("lower:" + aspect, "−", _score.bind(aspect, -1), false, Strings.t("WORKSHOP_LOWER", said)),
+				_act("raise:" + aspect, "+", _score.bind(aspect, 1), false, Strings.t("WORKSHOP_HIGHER", said))]:
+			b.add_theme_font_size_override("font_size", UI.text_px(24))
+			b.set_meta("points", 24.0)
+			b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			row.add_child(b)
+		box.add_child(row)
+	var send := _act("rate", Strings.t("WORKSHOP_SEND_RATING"), _send_rating.bind(p["id"]), busy,
+		Strings.t("WORKSHOP_SEND_RATING_NAMED", p["name"]), true)
+	send.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_child(send)
-	body.add_child(ScreenKit.panel("card", box, 18.0, 12.0))
+	body.add_child(ScreenKit.panel("card_lit", box, 18.0, 12.0))
 
 
 ## The rating sent; the panel closes once the server has it, and stays, with
