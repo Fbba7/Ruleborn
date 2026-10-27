@@ -418,11 +418,14 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
 11. The heist's crew were three motion kinds (Featherkin, Rambler,
     Skyskipper): three cream-and-gold figures that merged on the grass and
     in their portraits. `Cast.KIND` (the integrator's, a few lines) now takes
-    02-heist.png's own crew where it shows one (Skyskipper, Mossbear,
-    Emberling) and Lantern Wisp and Bloomling for Scout and Mender: five
-    colours, each read apart at a glance and in grayscale. Draw calls: heist
-    128, long-crew5's result 149 (Hourkeeper's second surface would make it
-    150).
+    02-heist.png's own crew where it shows one (Emberling, Tidewalker,
+    Mossbear) and Featherkin and Soul Mender for Scout and Mender: five
+    schools, five colours, read apart at a glance and in grayscale (a test
+    holds the five schools). Draw calls: heist 128, long-crew5's result 149;
+    Featherkin and Mossbear are one surface each, and a crew of two-surface
+    kinds would make the result 150.
+12. Quarryback's tone 0.1 and Stillwatch a warmer tint, measured as in
+    round 9 (Stillwatch 0.96/0.99/1.05 against 0.95/1.00/1.05).
 
 ### Stills (`docs/art/shots/t1d/`)
 

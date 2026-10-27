@@ -7,13 +7,13 @@ extends RefCounted
 ## sash and a small lantern").
 
 ## A role's kind, one per role, from §21.6's table: 02-heist.png's own crew
-## where it shows one (Skyskipper, Mossbear, Emberling), and a kind of
-## another school for the rest, so no two of a crew share a colour and each
-## reads apart on the grass at a glance. The Mender is Bloomling, one surface
-## to Hourkeeper's two, so the eleven figures of a long crew's result keep
-## §21.3's draw calls (149).
-const KIND := {"Scout": &"lanternwisp", "Breaker": &"emberling", "Carrier": &"skyskipper", "Warden": &"mossbear",
-	"Mender": &"bloomling", "guard": &"glassgolem"}
+## where it shows one (Ash the Emberling, Mo the Tidewalker, Bramble the
+## Mossbear), and one kind each of the other two schools, so the five are
+## five colours and read apart on the grass at a glance. Featherkin and
+## Mossbear are one surface each, so the eleven figures of a long crew's
+## result keep §21.3's draw calls (149).
+const KIND := {"Scout": &"featherkin", "Breaker": &"emberling", "Carrier": &"tidewalker", "Warden": &"mossbear",
+	"Mender": &"soulmender", "guard": &"glassgolem"}
 
 
 ## The model for an actor of `role` ("guard" for a guard), or null to draw
