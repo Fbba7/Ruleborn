@@ -27,8 +27,10 @@ static func badge(text: String) -> PanelContainer:
 
 
 ## A pill of words, with an icon before them if named: glass over the world
-## unless another material is given.
-static func pill(text: String, icon := "", look := "glass") -> PanelContainer:
+## unless another material is given. Words wider than `widest` points (by
+## default the phone less its margins) end in an ellipsis; the label keeps
+## them all, and a screen reader says them all.
+static func pill(text: String, icon := "", look := "glass", widest := 300.0) -> PanelContainer:
 	var p := PanelContainer.new()
 	p.name = "Pill"
 	p.add_theme_stylebox_override("panel", UI.clear_box(10, 4))
@@ -42,9 +44,26 @@ static func pill(text: String, icon := "", look := "glass") -> PanelContainer:
 	l.theme_type_variation = "LabelText"
 	l.set_meta("bold", true)
 	l.name = "Words"
+	l.set_meta("widest", widest)
 	row.add_child(l)
 	p.add_child(row)
+	set_pill(p, text)
 	return p
+
+
+## A pill's new words, ellipsised past its widest.
+static func set_pill(p: PanelContainer, text: String) -> void:
+	var l := p.find_child("Words", true, false) as Label
+	l.text = text
+	var font := RbTheme.role_font("label")
+	var natural := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1,
+		l.get_theme_font_size("font_size") if l.is_inside_tree() else UI.text_px(14)).x + 2.0
+	var cap := float(UI.px(float(l.get_meta("widest", 300.0))))
+	# A label that may trim asks for no width at all, so it trims only
+	# when the words pass the cap, and then holds the cap.
+	l.clip_text = natural > cap
+	l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS if natural > cap else TextServer.OVERRUN_NO_TRIMMING
+	l.custom_minimum_size.x = cap if natural > cap else 0.0
 
 
 ## A resource with its storage (§21.8's home layout: "resources with storage
@@ -229,3 +248,31 @@ static func xp(done: float, of: float, words: String, segments := 8) -> Control:
 	l.set_meta("bold", true)
 	bar.add_child(l)
 	return bar
+
+
+## A stat tile (the designs' profile and result tiles): an icon if named,
+## a big number in Lilita One, and what it counts beneath, wrapping.
+static func stat(number: String, words: String, icon := "", look := "card") -> PanelContainer:
+	var p := UI.panel(look)
+	p.name = "Stat"
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 0)
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	if icon != "":
+		var i := Icons.view(icon, 26)
+		i.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		v.add_child(i)
+	var n := UI.label(number, 24)
+	n.theme_type_variation = "DisplayS"
+	n.add_theme_font_size_override("font_size", UI.text_px(24))
+	n.set_meta("points", 24.0)
+	n.name = "Number"
+	v.add_child(n)
+	var w := UI.label(words, 13, true)
+	w.theme_type_variation = "Secondary"
+	w.add_theme_font_override("font", UI.bold_font())
+	w.set_meta("bold", true)
+	v.add_child(w)
+	p.add_child(v)
+	return p

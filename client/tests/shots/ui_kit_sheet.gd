@@ -25,6 +25,13 @@ func _go() -> void:
 	UiKitPages.page(column, page)
 	for i: int in 8:
 		await process_frame
+	# Portraits draw in a frame or two each; the page waits for them.
+	for i: int in 120:
+		if Portrait.settled():
+			break
+		await process_frame
+	for i: int in 4:
+		await process_frame
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	# §21.3: under 150 draw calls on every screen.

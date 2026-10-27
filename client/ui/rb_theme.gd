@@ -25,6 +25,33 @@ static func of(family: String) -> Theme:
 	return _themes[key]
 
 
+## The theme for words inside a material: its family's, with the
+## material's own colour for words and secondary words, its ink outline
+## round every word, and bold words where it says (`bold_words`), so a
+## label a screen puts on the red, the green or the gold reads as the kit
+## measured it.
+static func of_material(name: String) -> Theme:
+	var key := "%s:%s" % [name, Tokens.high_contrast]
+	if not _themes.has(key):
+		var spec := Tokens.material(name)
+		var th := _build(str(spec["family"]))
+		_words(th, spec)
+		_themes[key] = th
+	return _themes[key]
+
+
+## Whether a font draws bold words, as §21.8's contrast levels mean it: Manrope
+## at 700 or heavier, or the heavy display face.
+static func is_bold(f: Font) -> bool:
+	if not f is FontVariation:
+		return false
+	var v := f as FontVariation
+	if v.base_font == (Tokens.font("display") as FontVariation).base_font:
+		return true
+	var tag := TextServerManager.get_primary_interface().name_to_tag("wght")
+	return int(v.variation_opentype.get(tag, 400)) >= 700
+
+
 ## A type role's variation name: "number_m" is "NumberM", and a role named
 ## as an engine class takes "Text" after it ("label" is "LabelText").
 static func variation(role: String) -> String:
@@ -54,6 +81,10 @@ static func status_colour(status: String, family: String) -> Color:
 ## light panel (a StyleBoxFlat drawn by a screen's own code), so its words
 ## stay ink there; the kit's own boxes set their family themselves.
 static func adapt(label: Control) -> void:
+	# Words drawn bold are marked so, for §21.8's levels (the contrast check
+	# reads the mark): the theme may have made them bold on a gold surface.
+	if not label.has_meta("bold") and is_bold(label.get_theme_font("font")):
+		label.set_meta("bold", true)
 	var n: Node = label.get_parent()
 	while n is Control:
 		var c := n as Control
@@ -71,6 +102,28 @@ static func adapt(label: Control) -> void:
 		n = n.get_parent()
 
 
+static func _words(th: Theme, spec: Dictionary) -> void:
+	var light := str(spec["family"]) == "light"
+	var plain := Tokens.color("parchment_ink" if light else "text_on_night")
+	var words: Color = spec["text"]
+	var outline: Array = spec.get("text_outline", [])
+	var kinds: Array[String] = ["Label"]
+	for role: String in Tokens.type_roles():
+		kinds.append(variation(role))
+	for kind: String in kinds:
+		if words != plain:
+			th.set_color("font_color", kind, words)
+		if not outline.is_empty():
+			th.set_color("font_outline_color", kind, outline[0])
+			th.set_constant("outline_size", kind, UI.px(float(outline[1])))
+	if spec["text_2"] != Tokens.color("parchment_text_2" if light else "text_on_night_2"):
+		th.set_color("font_color", "Secondary", spec["text_2"])
+	if bool(spec["bold_words"]):
+		th.default_font = role_font("body_bold")
+		th.set_font("font", "Label", role_font("body_bold"))
+		th.set_font("font", "Secondary", role_font("body_bold"))
+
+
 static func _build(family: String) -> Theme:
 	var th := Theme.new()
 	var light := family == "light"
@@ -81,6 +134,11 @@ static func _build(family: String) -> Theme:
 	th.default_font_size = UI.px(Tokens.number("size", "body_points"))
 	th.set_color("font_color", "Label", text)
 	th.set_constant("line_spacing", "Label", UI.px(1))
+	# Stated as none, so a label never takes the outline of a material
+	# further out (a theme lacking an item hands the lookup to its parent's).
+	for kind: String in ["Label", "Button"]:
+		th.set_constant("outline_size", kind, 0)
+		th.set_color("font_outline_color", kind, drop)
 	for role: String in Tokens.type_roles():
 		var t := Tokens.type_role(role)
 		var v := variation(role)
@@ -115,18 +173,15 @@ static func _build(family: String) -> Theme:
 
 ## The rest of what a screen's own controls draw: fields, scroll bars and
 ## the tooltips, in the family's colours.
-static func _controls(th: Theme, text: Color, light: bool) -> void:
+static func _controls(th: Theme, text: Color, _light: bool) -> void:
 	th.set_color("font_color", "LineEdit", Tokens.color("parchment_ink"))
 	th.set_color("font_placeholder_color", "LineEdit", Tokens.color("parchment_text_2"))
 	th.set_color("caret_color", "LineEdit", Tokens.color("parchment_ink"))
 	th.set_color("font_color", "RichTextLabel", text)
 	th.set_color("default_color", "RichTextLabel", text)
-	# A quiet scroll bar: a thin rounded grabber, no track, as phones draw it.
-	var grab := StyleBoxFlat.new()
-	grab.bg_color = Color(Tokens.color("text_on_night_2") if not light else Tokens.color("parchment_text_2"), 0.45)
-	grab.set_corner_radius_all(UI.px(2))
-	grab.content_margin_left = UI.px(1.5)
-	grab.content_margin_right = UI.px(1.5)
+	# No scroll bar drawn, as the designs' lists (`scrollbar-width:none`):
+	# a list shows it goes on by the row cut at its foot.
+	var grab := StyleBoxEmpty.new()
 	var track := StyleBoxEmpty.new()
 	track.content_margin_left = UI.px(1.5)
 	track.content_margin_right = UI.px(1.5)

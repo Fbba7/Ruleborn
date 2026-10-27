@@ -107,7 +107,8 @@ static func material(name: String) -> Dictionary:
 	assert(not m.is_empty(), "no material %s" % name)
 	var out := {"name": name, "fill": str(m.get("fill", "card")), "radius": float(m.get("radius", 16)),
 		"gloss": float(m.get("gloss", 0.0)) if not high_contrast else 0.0,
-		"family": str(m.get("family", "dark")), "over_world": bool(m.get("over_world", false))}
+		"family": str(m.get("family", "dark")), "over_world": bool(m.get("over_world", false)),
+		"bold_words": bool(m.get("bold_words", false))}
 	for part: String in ["line", "rim", "rim_2", "highlight", "shade", "drop", "soft", "glow", "grain", "text_outline",
 			"rays", "stripes"]:
 		var v: Variant = m.get(part)

@@ -13,7 +13,7 @@ static func header(title: String, kicker := "") -> VBoxContainer:
 	v.name = "Header"
 	v.add_theme_constant_override("separation", UI.px(2))
 	if kicker != "":
-		var k := UI.label(kicker, 13)
+		var k := UI.label(kicker, 13, true)
 		k.theme_type_variation = "Kicker"
 		k.uppercase = true
 		k.add_theme_color_override("font_color", Tokens.color("gold"))
@@ -56,6 +56,10 @@ static func segmented(options: Array, chosen: int, picked: Callable) -> PanelCon
 		var words := str(option[0]) if option is Array else str(option)
 		var b := UI.action(words if not option is Array else "", func() -> void: pass, "seg", words)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		# At large text the words wrap inside their segment rather than
+		# widening the strip past the phone; each keeps 48 points.
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		b.custom_minimum_size.x = UI.px(UI.CONTROL_POINTS)
 		if option is Array:
 			b.custom_minimum_size.y = UI.px(56)
 			var v := VBoxContainer.new()
@@ -103,7 +107,7 @@ static func top_bar(title: String, back_call: Callable, chip := "") -> HBoxConta
 	row.name = "TopBar"
 	row.add_theme_constant_override("separation", UI.px(10))
 	row.add_child(back(back_call))
-	var t := UI.label(title, 26)
+	var t := UI.label(title, 26, true)
 	t.theme_type_variation = "Title"
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	t.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
@@ -123,13 +127,13 @@ static func hero(kicker: String, title: String, line := "", pill := "") -> VBoxC
 	var v := VBoxContainer.new()
 	v.name = "Hero"
 	v.add_theme_constant_override("separation", UI.px(2))
-	var k := UI.label(kicker, 14)
+	var k := UI.label(kicker, 14, true)
 	k.theme_type_variation = "Kicker"
 	k.uppercase = true
 	k.add_theme_color_override("font_color", Tokens.color("gold"))
 	k.set_meta("bold", true)
 	v.add_child(k)
-	var t := UI.label(title, 52)
+	var t := UI.label(title, 52, true)
 	t.theme_type_variation = "Hero"
 	t.add_theme_color_override("font_color", Tokens.color("cream"))
 	t.add_theme_constant_override("shadow_offset_y", UI.px(3))
