@@ -18,16 +18,17 @@ static func vault(open: bool) -> ArrayMesh:
 	var g := Geo.new()
 	g.skip_down = true
 	_vault_into(g, open)
-	# Drawn a fifth larger than its parts, the heist's prize reads first.
+	# Drawn two fifths larger than its parts, the heist's prize reads first,
+	# near a house's size as the design's realm and heist views draw it.
 	var arrays := g.st.commit_to_arrays()
 	var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	for i in verts.size():
-		verts[i] *= 1.2
+		verts[i] *= 1.4
 	arrays[Mesh.ARRAY_VERTEX] = verts
 	var customs: PackedFloat32Array = arrays[Mesh.ARRAY_CUSTOM0]
 	for i in range(0, customs.size(), 4):
 		for k in 3:
-			customs[i + k] *= 1.2
+			customs[i + k] *= 1.4
 	arrays[Mesh.ARRAY_CUSTOM0] = customs
 	var m := ArrayMesh.new()
 	m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays, [], {},
