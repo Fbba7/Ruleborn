@@ -279,6 +279,7 @@ static func alarm(level: int, of: int, title: String) -> PanelContainer:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(4))
 	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", UI.px(8))
 	var t := UI.label(title, 14)
 	t.add_theme_font_override("font", UI.bold_font())
 	t.set_meta("bold", true)
@@ -307,6 +308,7 @@ static func figures(rows: Array, look := "card") -> PanelContainer:
 	v.add_theme_constant_override("separation", UI.px(2))
 	for r: Array in rows:
 		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", UI.px(8))
 		var w := UI.label(str(r[0]), 14)
 		w.theme_type_variation = "Secondary"
 		w.size_flags_horizontal = Control.SIZE_EXPAND_FILL
