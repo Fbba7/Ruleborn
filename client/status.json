@@ -165,7 +165,7 @@
   "every character's figure, in each form and its guard form, stays within §21.3's 6,000 triangles, one draw call (21.3, 21.6)": "passed",
   "every colour the client puts words in reads at 4.5:1 and at APCA's level for its size and weight, the realm's marks on their halo and every material's words on the stops they sit on included, in both contrast modes (§21.8, §20.8)": "passed",
   "every control a screen reader reaches has a name in words, and a realm is read in words (§20.8)": "passed",
-  "every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:16": "failed",
+  "every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:16": "passed",
   "every control on every screen is 48 points or more, in the lower two-thirds, clear of corners and safe areas (§21.1), at 9:19.5": "passed",
   "every design token has a value and says where it comes from, and the screens' colours and sizes are the tokens'": "passed",
   "every golden replay re-simulates in the client, every second agreeing with its checksums": "passed",
