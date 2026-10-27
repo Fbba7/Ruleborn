@@ -130,6 +130,55 @@ static func album_card(icon: String, title: String, school: String, rarity: Stri
 	return card
 
 
+## Something for sale (18-shop.png's daily picks): a gold-edged card, its
+## picture filling the top with a dark ribbon tag in its corner ("EMOTE"),
+## its name, and its price on a pill that buys it: violet for a price in
+## gems (`look` "round_violet"), gold for money ("gold").
+static func product(picture: Texture2D, tag: String, title: String, price: String, pressed: Callable,
+		look := "round_violet", points := 128.0) -> PanelContainer:
+	var card := PanelContainer.new()
+	card.name = "Product"
+	card.add_theme_stylebox_override("panel", UI.clear_box(7, 6))
+	UI.dress(card, "card_gold")
+	card.custom_minimum_size.x = UI.px(points)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(6))
+	var stage := PanelContainer.new()
+	stage.name = "Picture"
+	stage.add_theme_stylebox_override("panel", UI.clear_box(0, 0))
+	UI.dress(stage, "well", 12)
+	stage.custom_minimum_size.y = UI.px(points * 0.9)
+	stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var art := TextureRect.new()
+	art.texture = picture
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stage.add_child(art)
+	if tag != "":
+		var corner := Control.new()
+		corner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var ribbon := KitStatus.plate(tag)
+		UI.dress(ribbon, "tag_dark")
+		var words := ribbon.get_child(0) as Label
+		words.theme_type_variation = "Kicker"
+		words.uppercase = true
+		ribbon.position = Vector2(UI.px(4), UI.px(4))
+		corner.add_child(ribbon)
+		stage.add_child(corner)
+	v.add_child(stage)
+	var name_label := UI.label(title, 15, true)
+	name_label.theme_type_variation = "BodyBold"
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	name_label.set_meta("bold", true)
+	v.add_child(name_label)
+	var buy := UI.action(price, pressed, look, "%s, %s" % [title, price])
+	buy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	v.add_child(buy)
+	card.add_child(v)
+	return card
+
+
 ## The largest size from 15 points down to §21.8's 13 at which the name's
 ## longest word fits `room` points, so it wraps between words, not in one.
 static func _fit(title: String, room: float) -> float:

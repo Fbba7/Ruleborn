@@ -23,6 +23,9 @@ static func badge(text: String, look := "badge", points := 13.0) -> PanelContain
 	p.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var l := UI.label(text, points)
 	l.name = "Words"
+	# A count grows with the text to half again its size, no further: at 200%
+	# it would cover the icon it counts for (it is also said aloud).
+	l.add_theme_font_size_override("font_size", mini(UI.text_px(points), UI.px(points * 1.5)))
 	l.add_theme_font_override("font", UI.bold_font() if look == "badge" else Tokens.font("display"))
 	l.add_theme_color_override("font_color", Tokens.color("on_alarm") if look == "badge" else box.spec["text"])
 	if look == "badge" or box.spec["family"] == "dark":
@@ -83,7 +86,9 @@ static func resource(icon: String, amount: String, fraction: float, tone: Color)
 	var p := PanelContainer.new()
 	p.name = "Resource"
 	var pad := UI.clear_box(3, 2)
-	pad.content_margin_right = UI.px(10)
+	# 6 points at the end (T4's measure): "FULL 142.0k" fits a third of the
+	# phone at 100% text, as the design's "FULL 61.0k" does.
+	pad.content_margin_right = UI.px(6)
 	pad.content_margin_bottom = UI.px(1)
 	p.add_theme_stylebox_override("panel", pad)
 	UI.dress(p, "track", 999)
@@ -91,7 +96,7 @@ static func resource(icon: String, amount: String, fraction: float, tone: Color)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 0)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", UI.px(4))
+	row.add_theme_constant_override("separation", UI.px(3))
 	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var disc := PanelContainer.new()
 	disc.add_theme_stylebox_override("panel", UI.clear_box(2, 2))
@@ -284,3 +289,40 @@ static func stat(number: String, words: String, icon := "", look := "card") -> P
 	v.add_child(w)
 	p.add_child(v)
 	return p
+
+
+## A sash across a card's top right corner (08-observatory.png's "TRACE ·
+## 24 h"): bold capitals on a gold band at 45 degrees, cut by the card's
+## edge. Add it to the card last (inside a container it fills the card); it
+## lets taps through.
+static func sash(text: String, points := 72.0) -> Control:
+	var corner := Control.new()
+	corner.name = "Sash"
+	corner.set_anchors_preset(Control.PRESET_FULL_RECT)
+	corner.clip_contents = true
+	corner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var band := PanelContainer.new()
+	band.add_theme_stylebox_override("panel", UI.clear_box(0, 2))
+	UI.dress(band, "plate_gold", 0)
+	band.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var l := UI.label(text, 13)
+	l.uppercase = true
+	l.theme_type_variation = "Kicker"
+	l.set_meta("bold", true)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	band.add_child(l)
+	corner.add_child(band)
+	# Long enough to cross the corner at 45 degrees, centred on its diagonal,
+	# wherever the card's right edge lands.
+	var place := func() -> void:
+		# The corner the band crosses is as large as its words need: across
+		# it the band shows 0.85 of `side`.
+		var side := maxf(UI.px(points), (l.get_combined_minimum_size().x + UI.px(16)) / 0.85)
+		band.size = Vector2(side * 1.5, band.get_combined_minimum_size().y)
+		band.pivot_offset = band.size * 0.5
+		band.rotation = PI * 0.25
+		band.position = Vector2(corner.size.x - side * 0.3, side * 0.3) - band.size * 0.5
+	corner.resized.connect(place)
+	band.minimum_size_changed.connect(place)
+	return corner
+

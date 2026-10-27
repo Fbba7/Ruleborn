@@ -232,9 +232,8 @@ static func _settings(column: VBoxContainer) -> void:
 	var play := UI.panel("card_gold")
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(12))
-	var top := HBoxContainer.new()
-	top.add_theme_constant_override("separation", UI.px(12))
-	top.add_child(KitHud.dial("38", "min today", 1.0))
+	var dial := KitHud.dial("38", "min today", 1.0)
+	dial.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -247,13 +246,16 @@ static func _settings(column: VBoxContainer) -> void:
 	s.theme_type_variation = "Secondary"
 	s.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	words.add_child(s)
-	top.add_child(words)
+	# Side by side, stacked at large text (KitLayout.columns).
+	var top := KitLayout.columns([dial, words], 12)
+	dial.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(top)
 	var week := PanelContainer.new()
 	week.add_theme_stylebox_override("panel", UI.clear_box(10, 8))
 	UI.dress(week, "well")
 	var wv := VBoxContainer.new()
-	var head := HBoxContainer.new()
+	# A flow: at large text the total takes a line of its own.
+	var head := KitLayout.flow(8)
 	var k := UI.label("This week", 13)
 	k.theme_type_variation = "Kicker"
 	k.uppercase = true
@@ -455,6 +457,15 @@ static func _friends(column: VBoxContainer) -> void:
 	for c: String in ["Realm skins", "Outfits", "Sage robes", "Emotes"]:
 		chip_row.add_child(KitControls.chip(c, false, func() -> void: pass))
 	column.add_child(chips)
+	var picks := KitLayout.strip(8)
+	var pick_row := picks.get_node("Row") as HBoxContainer
+	for p: Array in [["archivist", "Emote", "Tip of the Hat", "120"], ["tidewalker", "Outfit", "Tide Raincoat", "160"],
+			["lantern_wisp", "Bridge style", "Living Vines", "240"]]:
+		var card := KitCards.product(Portrait.of(str(p[0])), p[1], p[2], p[3], func() -> void: pass)
+		if pick_row.get_child_count() == 0:
+			card.add_child(KitStatus.sash("Trace · 24 h"))
+		pick_row.add_child(card)
+	column.add_child(picks)
 	var people := KitLayout.strip(10)
 	var people_row := people.get_node("Row") as HBoxContainer
 	for f: Array in [["mossbear", "Kofi", "Raiding", "alarm"], ["lantern_wisp", "Lea", "Workshop", "spirit"],

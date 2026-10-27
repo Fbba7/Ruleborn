@@ -57,6 +57,7 @@ var press := 0.0:
 		_shade()
 
 var _reach := 0.0
+var _line_px := 0.0
 var _shader := ShaderMaterial.new()
 
 
@@ -151,6 +152,7 @@ func set_look(material_name: String) -> void:
 		u.set_shader_parameter("glow_color", Color(Tokens.color("card_selected_rim"), 0.45))
 		u.set_shader_parameter("glow_r", p.call(10.0))
 		_reach = maxf(_reach, ceilf(p.call(10.0) + 2.0))
+	_line_px = float(u.get_shader_parameter("line_w"))
 	u.set_shader_parameter("soft_color", soft[0])
 	u.set_shader_parameter("soft_y", p.call(soft[1]))
 	u.set_shader_parameter("soft_blur", maxf(p.call(soft[2]), 1.0))
@@ -220,7 +222,12 @@ func quad() -> Rect2:
 
 func _shade() -> void:
 	var travel: float = (spec.get("drop", [Color(), 0.0]) as Array)[1] * UI.PX_PER_POINT
-	_shader.set_shader_parameter("box_size", quad().size - Vector2.ONE * 2.0 * _reach)
+	var box := quad().size - Vector2.ONE * 2.0 * _reach
+	_shader.set_shader_parameter("box_size", box)
+	# An outline is never more than a fifth of the box's smaller side, so
+	# high contrast's 3 points still leave a thin bar its fill.
+	if box.x > 0.0 and box.y > 0.0:
+		_shader.set_shader_parameter("line_w", minf(_line_px, maxf(1.0, minf(box.x, box.y) * 0.2)))
 	_shader.set_shader_parameter("reach", _reach)
 	_shader.set_shader_parameter("radius", radius_px())
 	_shader.set_shader_parameter("radius_foot", foot_points * UI.PX_PER_POINT if foot_points >= 0.0 else -1.0)
