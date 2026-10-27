@@ -56,6 +56,23 @@ static func of_member(m: Dictionary, as_bust := true) -> Texture2D:
 	return _ask(kind, look, as_bust)
 
 
+## Draws `texture` (a bust) clipped to a circle on `canvas`, inside its
+## _draw: one textured polygon, so a row of portraits costs no masks or
+## shaders. `zoom` above 1 crops closer on the face. The heist's crew row:
+## `Portrait.draw_disc(self, Portrait.bust(kind, form), c, r * 0.82)`.
+static func draw_disc(canvas: CanvasItem, texture: Texture2D, centre: Vector2, radius: float,
+		tint := Color.WHITE, zoom := 1.0) -> void:
+	var points := PackedVector2Array()
+	var uvs := PackedVector2Array()
+	var sides := 40
+	for k in sides:
+		var a := TAU * float(k) / float(sides)
+		var d := Vector2(cos(a), sin(a))
+		points.append(centre + d * radius)
+		uvs.append(Vector2(0.5, 0.5) + d * 0.5 / zoom)
+	canvas.draw_colored_polygon(points, tint, uvs, texture)
+
+
 ## Whether every portrait asked for has been drawn.
 static func settled() -> bool:
 	return _studio == null or not is_instance_valid(_studio) or bool(_studio.call("idle"))
