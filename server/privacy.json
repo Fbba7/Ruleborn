@@ -336,6 +336,10 @@
     "fund_opt_in": {
      "type": "gameplay",
      "holds": "whether the creator opted in to the Island Fund (18.9)"
+    },
+    "raids": {
+     "type": "gameplay",
+     "holds": "how many validated raids the player has played, which the bad-luck floor's page counts (§7.6)"
     }
    }
   },
@@ -994,6 +998,11 @@
       "days": 90,
       "by": "expireReplays"
      }
+    },
+    "defender": {
+     "type": "user-id",
+     "names": "account",
+     "holds": "whose island the heist raided, as its lease names them"
     }
    }
   },
@@ -1037,6 +1046,18 @@
     },
     "at": {
      "type": "gameplay"
+    },
+    "starlight_total": {
+     "type": "gameplay",
+     "holds": "the player's balance with this row, the rows to it summed"
+    },
+    "essence_total": {
+     "type": "gameplay",
+     "holds": "the player's balance with this row, the rows to it summed"
+    },
+    "aether_total": {
+     "type": "gameplay",
+     "holds": "the player's balance with this row, the rows to it summed"
     }
    }
   },
@@ -1454,6 +1475,10 @@
     },
     "at": {
      "type": "gameplay"
+    },
+    "total": {
+     "type": "gameplay",
+     "holds": "the season's Renown moves to this row, summed"
     }
    }
   },
@@ -1489,6 +1514,10 @@
     },
     "at": {
      "type": "gameplay"
+    },
+    "total": {
+     "type": "gameplay",
+     "holds": "the season's stars to this row, summed"
     }
    }
   },

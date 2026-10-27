@@ -146,7 +146,7 @@ export class Matchmaking {
     const rows = this.db.prepare(
       `SELECT h.outcome FROM heists h JOIN leases l ON l.token = h.token
         WHERE h.attacker = ? AND h.validated = 1 AND l.mode = 'raid'
-        ORDER BY h.submitted_at DESC, h.rowid DESC LIMIT ?`).all(account, RECENT);
+        ORDER BY h.day DESC, h.submitted_at DESC, h.rowid DESC LIMIT ?`).all(account, RECENT);
     if (rows.length === 0) {
       const [lo, hi] = successBand(1, "authored");
       return (lo + hi) / 2;
@@ -173,7 +173,7 @@ export class Matchmaking {
   traceable(account, raider, now = this.service.now()) {
     return this.db.prepare(
       `SELECT h.token FROM heists h JOIN leases l ON l.token = h.token
-        WHERE h.attacker = ? AND l.defender = ? AND h.validated = 1 AND ${RAIDED}
+        WHERE h.attacker = ? AND h.defender = ? AND h.validated = 1 AND ${RAIDED}
           AND json_extract(h.outcome, '$.verdict.grade') != 'foiled'
           AND COALESCE(json_extract(h.outcome, '$.haul.cappedBy'), '') != 'week'
           AND h.submitted_at > ?

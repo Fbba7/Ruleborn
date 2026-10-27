@@ -108,10 +108,20 @@ export class Seasons {
 
   renownIn(account, season, standing = null) {
     const s = standing ?? this.standing(account, season);
-    const moved = this.db.prepare(
-      "SELECT COALESCE(SUM(amount), 0) AS n FROM renown WHERE season = ? AND account = ?")
-      .get(season, account).n;
-    return s.start + Number(moved);
+    return s.start + this.moved(account, season);
+  }
+
+  /** What a player's Renown rows have moved this season: their newest row's
+   *  running total, one row read (§24.8's running total, kept on the rows
+   *  themselves, so it costs no row written). A newest row older than the
+   *  totals is summed with the rest, and the next row carries it on. */
+  moved(account, season) {
+    const last = this.db.prepare(
+      "SELECT total FROM renown WHERE season = ? AND account = ? ORDER BY id DESC LIMIT 1").get(season, account);
+    if (!last) return 0;
+    if (last.total !== null) return Number(last.total);
+    return Number(this.db.prepare(
+      "SELECT COALESCE(SUM(amount), 0) AS n FROM renown WHERE season = ? AND account = ?").get(season, account).n);
   }
 
   /** The lowest a player's Renown may go: Dust's floor, or Ember's once
@@ -144,10 +154,11 @@ export class Seasons {
       gain = Math.round(cleanRenown(r, d) * facts.RENOWN_OUTCOME[verdict.grade]);
       loss = Math.min(gain, Math.max(0, d - this.floorOf(defender)));
     }
-    const book = this.db.prepare(
-      "INSERT INTO renown (season, account, amount, reason, heist, at) VALUES (?, ?, ?, ?, ?, ?)");
-    if (gain !== 0) book.run(season, lease.attacker, gain, `heist, ${verdict.grade} (12.9)`, lease.token, now);
-    if (loss !== 0) book.run(season, lease.defender, -loss, `defended, ${verdict.grade} (12.9)`, lease.token, now);
+    const book = (account, amount, reason) => this.db.prepare(
+      "INSERT INTO renown (season, account, amount, reason, heist, at, total) VALUES (?, ?, ?, ?, ?, ?, ?)")
+      .run(season, account, amount, reason, lease.token, now, this.moved(account, season) + amount);
+    if (gain !== 0) book(lease.attacker, gain, `heist, ${verdict.grade} (12.9)`);
+    if (loss !== 0) book(lease.defender, -loss, `defended, ${verdict.grade} (12.9)`);
     for (const [account, s] of [[lease.attacker, raider], [lease.defender, defender]]) {
       if (!s.ember && this.renownIn(account, season, s) >= BOUNDS.leagues.Ember) {
         this.db.prepare("UPDATE standings SET ember = 1 WHERE season = ? AND account = ?")

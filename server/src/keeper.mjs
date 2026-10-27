@@ -71,11 +71,18 @@ export class Keeper {
   /** Add experience; called inside the transaction that earned it. Returns
    *  what it came to: the experience gained, the level and progress after,
    *  and how many levels it climbed. */
-  award(account, xp) {
+  /** `raids`, from a heist: the raids played with it, written in the same
+   *  UPDATE (service.raidsPlayed). */
+  award(account, xp, { raids = null } = {}) {
     const row = this.db.prepare("SELECT keeper_level, keeper_xp FROM accounts WHERE id = ?").get(account);
     const next = climb(row.keeper_level, row.keeper_xp, xp);
-    this.db.prepare("UPDATE accounts SET keeper_level = ?, keeper_xp = ? WHERE id = ?")
-      .run(next.level, next.have, account);
+    if (raids === null) {
+      this.db.prepare("UPDATE accounts SET keeper_level = ?, keeper_xp = ? WHERE id = ?")
+        .run(next.level, next.have, account);
+    } else {
+      this.db.prepare("UPDATE accounts SET keeper_level = ?, keeper_xp = ?, raids = ? WHERE id = ?")
+        .run(next.level, next.have, raids, account);
+    }
     return { gained: counted(row.keeper_level, row.keeper_xp, xp), level: next.level, xp: next.have,
              toNext: this.toNext(next.level), levelled: next.level - row.keeper_level };
   }

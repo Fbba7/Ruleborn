@@ -50,15 +50,25 @@ const arg = (name, fallback) => {
  * writes, or in each index an update's SET columns belong to (a table's text
  * primary key is an index too). An upsert is an insert when it made a row
  * (the connection's last insert rowid moved) and otherwise an update of the
- * columns its DO UPDATE sets. Returns the running count.
+ * columns its DO UPDATE sets. A partial index holds only the rows its WHERE
+ * takes: an inserted row writes it if it is one of them, an update if it
+ * sets a column the index holds or chooses by, and a delete is counted as if
+ * every row it took were in it. Returns the running count.
  */
 export function billed(db) {
   const prepare = db.prepare.bind(db);
   const indexes = new Map();
   const of = (table) => {
     if (!indexes.has(table)) {
-      indexes.set(table, prepare(`PRAGMA index_list(${table})`).all().map((i) =>
-        prepare(`PRAGMA index_info(${i.name})`).all().map((c) => c.name)));
+      indexes.set(table, prepare(`PRAGMA index_list(${table})`).all().map((i) => {
+        const cols = prepare(`PRAGMA index_info(${i.name})`).all().map((c) => c.name);
+        const sql = i.partial ? prepare("SELECT sql FROM sqlite_master WHERE name = ?").get(i.name).sql : null;
+        const where = sql ? /\bWHERE\b([\s\S]*)$/i.exec(sql)[1] : null;
+        // What a partial index chooses by is a column it holds too, for an update.
+        const chosen = where ? prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name)
+          .filter((c) => new RegExp(`\\b${c}\\b`).test(where)) : [];
+        return { cols: [...cols, ...chosen], where };
+      }));
     }
     return indexes.get(table);
   };
@@ -69,12 +79,17 @@ export function billed(db) {
     let m, per = null, table = null;
     const updating = (table, setList) => {
       const set = setList.split(",").map((x) => x.trim().split(/\s*=/)[0]);
-      return 1 + of(table).filter((cols) => cols.some((c) => set.includes(c))).length;
+      return 1 + of(table).filter((i) => i.cols.some((c) => set.includes(c))).length;
     };
     const upsert = /ON CONFLICT .*? DO UPDATE SET (.*?)(?: WHERE .*)?$/i.exec(s);
     if ((m = /^INSERT (?:OR \w+ )?INTO (\w+)/i.exec(s)) || (m = /^DELETE FROM (\w+)/i.exec(s))) {
       table = m[1];
-      per = (inserted) => (upsert && !inserted ? updating(table, upsert[1]) : 1 + of(table).length);
+      const insert = /^INSERT/i.test(s);
+      // An inserted row is in a partial index if the index's WHERE takes it.
+      const holds = (i, rowid) => !i.where || !insert || rowid === null
+        || Boolean(prepare(`SELECT 1 FROM ${table} WHERE rowid = ? AND (${i.where})`).get(rowid));
+      per = (inserted, rowid) => (upsert && !inserted ? updating(table, upsert[1])
+        : 1 + of(table).filter((i) => holds(i, rowid)).length);
     } else if ((m = /^UPDATE (\w+) SET (.*?) WHERE/i.exec(s))) {
       table = m[1];
       const set = m[2];
@@ -86,7 +101,8 @@ export function billed(db) {
       st.run = (...a) => {
         const before = upsert ? rowid() : null;
         const r = run(...a);
-        const n = Number(r.changes) * per(upsert ? rowid() !== before : true);
+        const after = r.changes ? rowid() : null;
+        const n = Number(r.changes) * per(upsert ? after !== before : true, Number(r.changes) === 1 ? after : null);
         count.rows += n;
         if (n) count.byTable.set(table, (count.byTable.get(table) ?? 0) + n);
         return r;
@@ -114,7 +130,7 @@ export function billed(db) {
  */
 export function reads(db) {
   const prepare = db.prepare.bind(db);
-  const count = { rows: 0, bySql: new Map() };
+  const count = { rows: 0, bySql: new Map(), scans: new Map(), op: null };
   let seen = 0;
   db.function("__seen", { deterministic: false }, (_rowid) => { seen++; return 1; });
   const tables = new Set();
@@ -174,6 +190,9 @@ export function reads(db) {
     if (read) {
       read.st = prepare(read.sql);
       read.st.setAllowUnknownNamedParameters?.(true);
+      // The tables it reads whole: a cost that grows with the table.
+      read.scans = [...new Set(prepare(`EXPLAIN QUERY PLAN ${read.sql}`).all()
+        .map((r) => /^SCAN (?:main\.)?(\w+)/.exec(r.detail)?.[1]).filter((t) => t && tables.has(t)))];
     }
     plans.set(sql, read);
     return read;
@@ -187,6 +206,10 @@ export function reads(db) {
     p.st.all(...a);
     count.rows += seen;
     count.bySql.set(sql, (count.bySql.get(sql) ?? 0) + seen);
+    for (const table of p.scans) {
+      const key = `${count.op ?? ""}\u0000${table}\u0000${sql}`;
+      count.scans.set(key, (count.scans.get(key) ?? 0) + seen);
+    }
   };
   /** A statement's query plan and its counted copy's, each loop as its
    *  access alone (the table's name or alias aside): the same loops on the
@@ -245,7 +268,9 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
   const rowsRead = {};
   const count = (what, fn) => {
     const before = [changes(), bill.rows, read.rows];
+    read.op = what;
     const out = fn();
+    read.op = null;
     writes[what] = (writes[what] ?? 0) + changes() - before[0];
     bills[what] = (bills[what] ?? 0) + bill.rows - before[1];
     rowsRead[what] = (rowsRead[what] ?? 0) + read.rows - before[2];
@@ -278,6 +303,7 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
   for (const k of Object.keys(rowsRead)) delete rowsRead[k];
   bill.byTable.clear();
   read.bySql.clear();
+  read.scans.clear();
 
   const [sessions, heists] = ARCHETYPES[archetype];
   const readsByDay = [];
@@ -293,7 +319,12 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
           { kind: "session_end", data: { seconds: 300, crashed: false } },
           { kind: "worth", data: { rating: 4 } },
         ]));
+        // The screens a session reads (the client's Home and its badge, the
+        // Observatory before a heist): reads the budget counts too.
+        count("raid badge", () => service.defences.badge(accounts[i]));
+        if (s === 0) count("defence log", () => service.defences.show(accounts[i]));
         if (s >= heists) continue;
+        count("observatory", () => service.observatory.view(accounts[i]));
         const target = (i + 1 + s + d * heists) % players;
         const lease = count("lease", () => service.lease(accounts[i], bundles[target]));
         // The device's half — recording the replay — is not the server's.
@@ -350,6 +381,12 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
     readsByOperation: Object.fromEntries(readPerPlayer.map(([k, v]) => [k, +(v / playerDays).toFixed(1)])),
     readsPerPlayerByDay: readsByDay,
     periodicReadsADayAnIsland: Object.fromEntries(PERIODIC.map((k) => [k, +((rowsRead[k] ?? 0) / days / players).toFixed(1)])),
+    // Each request's statement that reads a table whole, and the rows it
+    // read so a player a day: a cost that grows with the table, not the player.
+    scans: [...read.scans].map(([k, n]) => [...k.split("\u0000"), n])
+      .filter(([op]) => !PERIODIC.includes(op))
+      .map(([op, table, sql, n]) => ({ op, table, rows: +(n / playerDays).toFixed(1), sql: sql.replace(/\s+/g, " ").trim().slice(0, 120) }))
+      .sort((a, b) => b.rows - a.rows),
     // The statements that read the most, a player a day: where a cut is.
     readsBySql: [...read.bySql].sort((a, b) => b[1] - a[1]).slice(0, Number(process.env.LOAD_SQL_TOP ?? 12))
       .map(([sql, n]) => [+(n / playerDays).toFixed(1), sql.replace(/\s+/g, " ").trim().slice(0, 160)]),

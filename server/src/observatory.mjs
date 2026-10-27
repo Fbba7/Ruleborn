@@ -128,19 +128,21 @@ export class Observatory {
     const size = targetsAt(this.level(account)) + (wanderer ? WANDERER_EXTRA : 0);
     const aside = this.setAside(account);
     const list = offer(mm.raider(account, now), mm.candidates(now).filter((c) => !aside.has(c.bundle)), { size });
-    const targets = list.targets.map((c) => this.card(account, c));
-    return { size, wanderer, targets, trace: this.trace(account, now), echoes: list.echoes, generated: list.generated,
+    // The raider's week and Starlight, read once for every card's fee.
+    const raider = this.service.raider(account, now);
+    const targets = list.targets.map((c) => this.card(account, c, { raider }));
+    return { size, wanderer, targets, trace: this.trace(account, now, raider), echoes: list.echoes, generated: list.generated,
              refresh: { aether: this.refreshCost(account, now) }, aether: this.service.aether(account),
              protected: mm.shielded(account, now) };
   }
 
   /** §12.3's Trace: the island of the most recent raider this player can
    *  still answer, with no fee. */
-  trace(account, now) {
+  trace(account, now, raider = this.service.raider(account, now)) {
     const mm = this.service.matchmaking;
     const raiders = this.db.prepare(
       `SELECT DISTINCT h.attacker FROM heists h JOIN leases l ON l.token = h.token
-        WHERE l.defender = ? AND h.submitted_at > ? ORDER BY h.submitted_at DESC`)
+        WHERE h.defender = ? AND h.submitted_at > ? ORDER BY h.submitted_at DESC`)
       .all(account, now - facts.TRACE_HOURS * HOUR).map((r) => r.attacker);
     for (const raider of raiders) {
       if (!mm.traceable(account, raider, now)) continue;
@@ -149,14 +151,14 @@ export class Observatory {
       if (!island) continue;
       const c = mm.candidates(now).find((x) => x.bundle === island.bundle && x.owner === raider)
         ?? { bundle: island.bundle, owner: raider, echo: false, origin: "authored" };
-      return { ...this.card(account, c, { trace: true }), fee: 0 };
+      return { ...this.card(account, c, { trace: true, raider }), fee: 0 };
     }
     return null;
   }
 
   /** One target card (§12.4): free facts only, the fee the lease would
    *  charge now, and why it was offered — never the rating. */
-  card(account, c, { trace = false } = {}) {
+  card(account, c, { trace = false, raider = this.service.raider(account) } = {}) {
     const snap = this.db.prepare("SELECT realm, realm_level, vault_level, exposed FROM snapshots WHERE bundle = ?")
       .get(c.bundle);
     const generated = c.owner === GENERATOR;
@@ -176,7 +178,8 @@ export class Observatory {
     const kind = trace ? "trace" : generated ? "generated" : c.echo ? "echo" : "player";
     const reason = trace ? "trace" : c.predicted == null ? "fair"
       : c.predicted > hi ? "easier" : c.predicted < lo ? "harder" : "fair";
-    const { fee } = this.service.stakes({ attacker: account, bundle: c.bundle, mode: "raid", trace_of: trace ? "t" : null });
+    const { fee } = this.service.stakes({ attacker: account, bundle: c.bundle, mode: "raid", trace_of: trace ? "t" : null },
+                                        raider);
     const facts_ = realmFacts(this.service.store.get(c.bundle));
     return {
       bundle: c.bundle, kind, reason, fee,
