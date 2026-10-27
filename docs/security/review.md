@@ -507,6 +507,7 @@ Each track's branch, read as it was pushed, from d2343591.
 
 | Branch | Commits read | What it touches | Verdict |
 | --- | --- | --- | --- |
+| third pushes, to 22:53 | `3d-character-screens` `868e7df`, `3d-characters-2` `0bd1c91`, `3d-screens` `ef64101`, `3d-screens-world` `708e22c`, `3d-universe` `8d38c65`, `ui-screens` `7c0ae20` | the hatch, Forms, roster and Sage hall screens; a cast; the heist hand, HUD and result; the builder, Observatory, realm and scout screens with their overlays; the universe's flight, HUD, islands and pins; Friends, Harmony, Lab, profile and Workshop | no finding: layout and drawing; the one new `load` built from server data is another `res://…/link_<kind>.svg`, as before; `tools/client_strings.py` reads the repository's own `terrain.json` |
 | second pushes, to 19:51 | `3d-kit` `0ad09e6`, `3d-characters-2` `cf97c52`, `3d-screens-world` `bc595b1`, `3d-universe` `04c5785`, `auth` `0841c20`, `ui-kit` `af7911c` | busts, the realm screens and their stages, the universe's badge, pins and purse, the account panel's layout, kit cards and layout | no finding: layout and drawing; no network, file, link, loaded data or native code; `auth` touched only `auth_panel.gd` |
 | `claude/ui-screens` | 20 commits, `1573493` to `45a4a1e` | the age screen's line-up, the share card, settings and the account panel's layout, the Shop, Codex, Lab, Harmony, Weaving, Workshop and track screens | no finding: layout and words; environment read only by `tests/shots`. Not security, for the screens' owner: the share card now shows the challenge code upper-cased (`share_presenter.gd`), while codes are lower-case hex matched exactly (`friends.mjs` `opened`); the copied message keeps the real code, but when a screen takes a typed code it must lower-case it, or the server should |
 | `claude/3d-screens` | `09d494c`, `ee298de`, `aba6273`, `c5ed1c1` | the heist screen and its hand, the HUD, the result; three new native accessors in `client/ext/src/lib.rs` (a member's kind and uses, the Sage, the casts) | no finding. The accessors read a replay's world, which a crafted replay shapes (SR-08), so each index was traced: the Sage is set only through `SAGES.get` (`crew_from`), every Sage has exactly three powers (`[(Power, u8); 3]`, as `uses: [u8; 3]`), casts are at most `MAX_CASTS` = 2 and checked against the law table when the manifest is read, and the new code looks them up with `get`. Environment read only by `tests/shots` |
@@ -910,6 +911,15 @@ What was tried and found sound, so the next reader need not try it again.
   and nobody: 23,625 calls, no 500 and nothing thrown (the only 5xx are the
   deliberate `503 not_configured` of Apple's notifications and the
   deletion page in a harness that configures neither).
+- **Fuzzing the native extension again, with wave 5's accessors**
+  (`claude/3d-screens` at `c5ed1c1`, built and run in the 4.7.2 engine
+  headless): planned heists with random manifests — kinds, forms, levels and
+  traits past their tables, Sages 0 to 5, up to three casts of any id,
+  truncated — and random commands, every accessor (`crew`, `guards`,
+  `wards`, `pylons`, `sage`, `casts`, `vault`, `outcome`, `seen`, `record`
+  …) read every 25 ticks, each recording loaded again; then 900 golden
+  replays with bytes changed or cut, 635 of which still loaded and played.
+  39 heists and 11,307 steps; no panic and no engine error.
 - **SQL.** Every statement binds its values; the few built with `${…}` put
   in constants or column names from the code, never a caller's string.
 - **Storage paths.** `store.mjs` takes only 64 hex characters as a key.
