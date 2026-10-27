@@ -28,7 +28,7 @@ func _go() -> void:
 	# TAB: a screen's tab on show (Settings' "account").
 	if OS.get_environment("TAB") != "" and "tab_shown" in screen:
 		screen.set("tab_shown", OS.get_environment("TAB"))
-		screen.call("_build")
+		screen.call("_refresh" if screen.has_method("_refresh") else "_build")
 		for i in 4:
 			await process_frame
 	# AUTH: the account's sign-in state ("signed_in", "failed", "offline").

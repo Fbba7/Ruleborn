@@ -4,12 +4,17 @@ extends Control
 ## heists, an invite to share and a code to accept, and a challenge link to
 ## the player's own island. It draws the store; `SocialController` asks.
 
+## Each outcome's pill on a feed card.
+const GRADE_LOOK := {"clean": "green", "loud": "gold", "partial": "well", "foiled": "red"}
+
 var controller: SocialController
 var body: VBoxContainer
 var status_label: Label
 var code_field: LineEdit
-## The tab on show: "feed" or "friends".
+## The tab on show: "feed", "friends" or "invite".
 var tab_shown := "feed"
+## The kind of code last shown, so a code just made opens the Invite tab once.
+var _shown_code := ""
 var _count: PanelContainer
 var _invite: PanelContainer
 
@@ -82,8 +87,10 @@ func _refresh() -> void:
 	for c in body.get_children():
 		if c != _invite:
 			c.queue_free()
-	if coded:
-		body.add_child(_code(f))
+	# A code just made opens the Invite tab, where it is shown.
+	if coded and f["last"] != _shown_code:
+		tab_shown = "invite"
+	_shown_code = str(f["last"]) if coded else ""
 	if f["none"]:
 		body.add_child(ScreenParts.item("social", "invite", Strings.t("FRIENDS_NONE"), "", null, "card_lit"))
 	else:
@@ -94,12 +101,18 @@ func _refresh() -> void:
 		{"text": Strings.t("SCREEN_FEED"), "key": "feed", "on": tab_shown == "feed",
 			"icon": "social/share"},
 		{"text": Strings.t("KIT_TAB_FRIENDS"), "key": "friends", "on": tab_shown == "friends",
-			"icon": "social/friends"}],
+			"icon": "social/friends"},
+		{"text": Strings.t("SCREEN_TAB_INVITE"), "key": "invite", "on": tab_shown == "invite",
+			"icon": "social/invite"}],
 		func(key: String) -> void:
 			tab_shown = key
 			_refresh()))
+	_invite.visible = tab_shown == "invite"
 	if tab_shown == "friends":
 		_friends_tab(f)
+	elif tab_shown == "invite":
+		if coded:
+			body.add_child(_code(f))
 	else:
 		_feed_tab(f)
 	body.move_child(_invite, body.get_child_count() - 1)
@@ -120,15 +133,33 @@ func _feed_tab(f: Dictionary) -> void:
 		var grade := str(item.get("grade", ""))
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", UI.px(10))
-		var mark := ScreenKit.icon("heistoutcomes" if grade != "" else "social", grade if grade != "" else "presetchat",
-			30.0)
-		var disc := ScreenKit.panel("well", mark, -1.0, 6.0)
-		disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(disc)
-		var words := ScreenKit.text(line, 15.0, "words", "parchment", false, true)
+		# The design's feed card: the raider's portrait, the outcome's mark on
+		# its corner; their name and the outcome's pill; what happened.
+		var face := ScreenParts.face(str(item.get("raider", "")), 48.0)
+		var holder := Control.new()
+		holder.custom_minimum_size = face.custom_minimum_size
+		holder.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		holder.add_child(face)
+		face.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		if grade != "":
+			var mark := ScreenKit.icon("heistoutcomes", grade, 24.0)
+			mark.position = face.custom_minimum_size - Vector2.ONE * UI.px(18)
+			holder.add_child(mark)
+		row.add_child(holder)
+		var col := VBoxContainer.new()
+		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		col.add_theme_constant_override("separation", UI.px(2))
+		var head := ScreenParts.flow(6.0)
+		head.add_child(ScreenKit.text(str(item.get("raider", "")), 16.0, "number", "parchment"))
+		if grade != "":
+			var pill := ScreenParts.pill(Strings.term("GRADE", grade), GRADE_LOOK.get(grade, "well"), "", "", 13.0)
+			pill.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			head.add_child(pill)
+		col.add_child(head)
+		var words := ScreenKit.text(line, 14.0, "body", "parchment", false, true)
 		words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		words.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		row.add_child(words)
+		col.add_child(words)
+		row.add_child(col)
 		body.add_child(ScreenKit.panel("parchment", row, 16.0, 10.0))
 		i += 1
 
