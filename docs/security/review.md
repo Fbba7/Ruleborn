@@ -43,6 +43,7 @@ decision).
 | SR-22 | Low | server | A player's own answers carried no word against caching | fixed |
 | SR-23 | Low | server | The database was readable by every user on the machine | fixed |
 | SR-24 | Low | server | A dead token could still sign a player out everywhere | fixed |
+| SR-25 | Medium | server | One captured Game Center proof signed in again with its salt respelled | fixed |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -378,6 +379,24 @@ decision).
   are 128-bit; they are SQLite row ids, sequential. Tokens are MACed, so a
   guessed id gains nothing, but each player's id tells them roughly how many
   sign-ins the game has had. The doc, or a random id, should change.
+
+### SR-25 — One captured Game Center proof signed in again with its salt respelled (Medium)
+
+- **Where:** `server/src/auth_proofs.mjs` `verify` (T11's), over
+  `GameCenter.verify` in `server/src/stores.mjs`.
+- **What:** a Game Center proof is made single-use by spending its player,
+  salt and timestamp. The salt was spent as the string sent, but Apple's
+  signature covers its decoded bytes, and Node's base64 decoder ignores
+  padding, whitespace and characters outside the alphabet: `AAEC`,
+  `AAEC=`, `AA EC` and `AAEC!` are one salt. So one captured proof — from a
+  proxy the player trusts, a log, a crash report — signed in as that player
+  again and again for its five minutes, each time with a session of its
+  own. That is account takeover from one capture, the replay auth.md's T3
+  says is stopped. Medium: it needs the capture.
+- **Fix:** the salt is spent by its bytes, re-encoded canonically. 1 line in
+  T11's file; T11 told here.
+- **Test:** `server/test/security_auth.test.mjs` (SR-25), with the real
+  Game Center check and its fixture chain; it failed before the fix.
 
 ## Configuration against the market standard
 

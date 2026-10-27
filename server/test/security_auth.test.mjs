@@ -4,6 +4,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
+import { gc, real } from "./auth_fixtures.mjs";
 import { server } from "./setup.mjs";
 
 const call = (t, path, { token, body } = {}) => t.handle(new Request(`https://edge.example${path}`, {
@@ -48,4 +49,23 @@ test("SR-24: only a live session's current token signs out everywhere", async ()
   assert.equal((await call(t, "/v1/session/end", { token: rotated.token })).status, 200);
   assert.equal((await call(t, "/v1/session/end", { token: tablet.token, body: { everywhere: true } })).status, 200);
   assert.equal(live(t, phone.account), 0);
+});
+
+// SR-25: a Game Center proof is single-use by its player, salt and
+// timestamp — but the salt was spent as the string the caller sent, while
+// the signature is over its decoded bytes, and Node's base64 decoder skips
+// padding, spaces and characters outside the alphabet. One captured proof
+// therefore signed in again and again for its five minutes, its salt
+// respelled each time ("AAEC", "AAEC=", "AA EC", "AAEC!"): the replay T3 of
+// docs/security/auth.md says is stopped. Now the salt is spent by its bytes.
+test("SR-25: a Game Center proof respelled is the same proof, and is refused the second time", async () => {
+  const r = real();
+  const proof = gc({ salt: "salt-0025" });
+  const first = await r.signIn(proof);
+  assert.ok(first.token);
+  for (const salt of [`${proof.salt}=`, ` ${proof.salt}`, `${proof.salt}!`, proof.salt.replace(/=+$/, "")]) {
+    if (salt === proof.salt) continue;
+    await assert.rejects(r.signIn({ ...proof, salt }), (err) => err.reason === "platform_identity_refused",
+                         `the salt respelled ${JSON.stringify(salt)} is a replay`);
+  }
 });
