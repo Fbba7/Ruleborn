@@ -217,7 +217,7 @@ func _cover(item: Dictionary) -> Control:
 	if item["featured"] != "":
 		tags.add_child(ScreenParts.pill(item["featured"], "cream", "hud", "star"))
 	if item["remix"] != "":
-		tags.add_child(ScreenParts.pill(item["remix"], "well", "realmactions", "rotate"))
+		tags.add_child(ScreenParts.pill(item["remix"], "well", "realmactions", "rotate", 13.0, "words", true))
 	col.add_child(tags)
 	return ScreenKit.panel("card_lit", col, 14.0, 12.0)
 

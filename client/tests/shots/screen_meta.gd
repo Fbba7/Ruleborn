@@ -27,6 +27,12 @@ func _go() -> void:
 		await process_frame
 	# TAB: a screen's tab on show (Settings' "account").
 	if OS.get_environment("TAB") != "" and "tab_shown" in screen:
+		# Settings restores the saved settings on opening: the shot's again.
+		if OS.get_environment("TEXT") != "":
+			Settings.text_scale = int(OS.get_environment("TEXT"))
+		if OS.get_environment("HC") == "1":
+			Settings.high_contrast = true
+			Settings.apply()
 		screen.set("tab_shown", OS.get_environment("TAB"))
 		screen.call("_refresh" if screen.has_method("_refresh") else "_build")
 		for i in 4:
