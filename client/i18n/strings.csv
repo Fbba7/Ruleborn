@@ -1219,6 +1219,8 @@ DEFENCES_PYLON,%s pylon,%s pylon,pilar de %s,pilar de %s,%s-Pylon,pylône de %s
 DEFENCES_STAT_HELD,Held,Held,Seguradas,Seguradas,Gehalten,Tenues
 DEFENCES_STAT_LEAKED,Leaked,Leaked,Vazadas,Vazadas,Durchgelassen,Percées
 DEFENCES_STAT_PARTIAL,Partial,Partial,Parciais,Parciais,Teilweise,Partielles
+DEFENCES_STAT_RAIDS,Raids this season,Raids this season,Assaltos na temporada,Assaltos na temporada,Raubzüge der Saison,Raids de la saison
+DEFENCES_STAT_TRACE,Trace ready,Trace ready,Rastro pronto,Rasto pronto,Spur bereit,Piste prête
 REHEARSE_TAB,Rehearse,Rehearse,Ensaiar,Ensaiar,Proben,Répéter
 DEFENCES_TAB_LOG,Defence log,Defense log,Registro de defesa,Registo de defesa,Verteidigungslog,Journal de défense
 REHEARSE_REPLAY_CAUTIOUS,Replay · cautious crew,Replay · cautious crew,Replay · equipe cautelosa,Repetição · equipa cautelosa,Wiederholung · vorsichtige Crew,Replay · équipe prudente
