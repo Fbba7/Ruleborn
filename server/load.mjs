@@ -62,21 +62,21 @@ export function billed(db) {
     }
     return indexes.get(table);
   };
-  const count = { rows: 0 };
+  const count = { rows: 0, byTable: new Map() };
   db.prepare = (sql) => {
     const st = prepare(sql);
     const s = sql.replace(/\s+/g, " ").trim();
-    let m, per = null;
+    let m, per = null, table = null;
     const updating = (table, setList) => {
       const set = setList.split(",").map((x) => x.trim().split(/\s*=/)[0]);
       return 1 + of(table).filter((cols) => cols.some((c) => set.includes(c))).length;
     };
     const upsert = /ON CONFLICT .*? DO UPDATE SET (.*?)(?: WHERE .*)?$/i.exec(s);
     if ((m = /^INSERT (?:OR \w+ )?INTO (\w+)/i.exec(s)) || (m = /^DELETE FROM (\w+)/i.exec(s))) {
-      const table = m[1];
+      table = m[1];
       per = (inserted) => (upsert && !inserted ? updating(table, upsert[1]) : 1 + of(table).length);
     } else if ((m = /^UPDATE (\w+) SET (.*?) WHERE/i.exec(s))) {
-      const table = m[1];
+      table = m[1];
       const set = m[2];
       per = () => updating(table, set);
     }
@@ -86,8 +86,112 @@ export function billed(db) {
       st.run = (...a) => {
         const before = upsert ? rowid() : null;
         const r = run(...a);
-        count.rows += Number(r.changes) * per(upsert ? rowid() !== before : true);
+        const n = Number(r.changes) * per(upsert ? rowid() !== before : true);
+        count.rows += n;
+        if (n) count.byTable.set(table, (count.byTable.get(table) ?? 0) + n);
         return r;
+      };
+    }
+    return st;
+  };
+  return count;
+}
+
+/**
+ * Wraps `db` so each statement adds the rows D1 would bill it as read: every
+ * row a scan or a search visits, not the rows it returns ("Rows read measure
+ * how many rows a query reads (scans)"). SQLite keeps no such count where
+ * node can see it, so the statement is run a second time against counting
+ * views — `__r_t`, `SELECT rowid, * FROM t WHERE __seen(rowid)` for each
+ * table `t` — that the planner flattens into the same loops on the same
+ * indexes: the function is called once for each row a loop lands on, an
+ * aggregate's rows and a correlated subquery's each time included, and a
+ * LIMIT that stops a loop stops the count. An UPDATE or DELETE reads the rows
+ * its WHERE visits, counted before it runs; an INSERT … SELECT, its SELECT.
+ * The checks SQLite makes of a key on a write (a unique index, a foreign
+ * key) are not counted. `rows` is the running total; `bySql` each
+ * statement's.
+ */
+export function reads(db) {
+  const prepare = db.prepare.bind(db);
+  const count = { rows: 0, bySql: new Map() };
+  let seen = 0;
+  db.function("__seen", { deterministic: false }, (_rowid) => { seen++; return 1; });
+  const tables = new Set();
+  const views = new Map();
+  const counted = (name) => {
+    if (tables.has(name)) return true;
+    const row = prepare("SELECT type, sql FROM main.sqlite_master WHERE name = ? AND type IN ('table', 'view')").get(name);
+    if (!row) return false;
+    tables.add(name);
+    if (row.type === "table") {
+      db.exec(`CREATE TEMP VIEW IF NOT EXISTS __r_${name} AS SELECT rowid AS rowid, * FROM main.${name} WHERE __seen(rowid)`);
+    } else {
+      views.set(name, row.sql);
+      const body = row.sql.replace(/^[\s\S]*?\bAS\b/i, "");
+      db.exec(`CREATE TEMP VIEW IF NOT EXISTS __r_${name} AS ${rewrite(body)}`);
+    }
+    return true;
+  };
+  // Every table a FROM or a JOIN names (the schema's one comma join, the
+  // events view's, joins a table-valued function).
+  const rewrite = (sql) => sql.replace(/\b(FROM|JOIN)(\s+)(\w+)\b(?!\s*\()/gi,
+    (all, kw, sp, name) => (counted(name) ? `${kw}${sp}__r_${name}` : all));
+  // Made before any transaction, which a rollback would take them back with.
+  for (const r of prepare("SELECT name FROM main.sqlite_master WHERE type IN ('table', 'view') AND name NOT LIKE 'sqlite_%'").all()) {
+    counted(r.name);
+  }
+  const plans = new Map();
+  /** What a statement reads, as a SELECT over the counting views, and which
+   *  of its arguments it takes; null for one that reads no table. */
+  const plan = (sql) => {
+    if (plans.has(sql)) return plans.get(sql);
+    const s = sql.trim();
+    let read = null;
+    let m;
+    const numbered = /\?\d/.test(s);
+    // The `?`s a statement's text has before `at`, as its arguments are bound.
+    const before = (at) => (s.slice(0, at).replace(/'[^']*'/g, "").match(/\?(?!\d)/g) ?? []).length;
+    if (/^(SELECT|WITH)\b/i.test(s)) {
+      read = { sql: rewrite(s), skip: 0 };
+    } else if ((m = /^(UPDATE)\s+(?:OR\s+\w+\s+)?(\w+)\s+SET\b/i.exec(s)) || (m = /^(DELETE)\s+FROM\s+(\w+)/i.exec(s))) {
+      const where = /\bWHERE\b/i.exec(s);
+      if (counted(m[2])) {
+        read = { sql: `SELECT 1 FROM __r_${m[2]}${where ? ` ${rewrite(s.slice(where.index))}` : ""}`,
+                 skip: where && !numbered ? before(where.index) : 0 };
+      }
+    } else if ((m = /^INSERT\b[\s\S]*?\)\s*(SELECT\b[\s\S]*)$/i.exec(s))) {
+      const select = m[1].replace(/\bON\s+CONFLICT\b[\s\S]*$/i, "");
+      read = { sql: rewrite(select), skip: numbered ? 0 : before(s.length - m[1].length) };
+    }
+    if (read && !/__r_/.test(read.sql)) read = null;
+    if (read) {
+      read.st = prepare(read.sql);
+      read.st.setAllowUnknownNamedParameters?.(true);
+    }
+    plans.set(sql, read);
+    return read;
+  };
+  const tally = (sql, args) => {
+    const p = plan(sql);
+    if (!p) return;
+    seen = 0;
+    const a = args.length === 1 && args[0] && typeof args[0] === "object" && !ArrayBuffer.isView(args[0])
+      ? args : args.slice(p.skip);
+    p.st.all(...a);
+    count.rows += seen;
+    count.bySql.set(sql, (count.bySql.get(sql) ?? 0) + seen);
+  };
+  db.prepare = (sql) => {
+    const st = prepare(sql);
+    for (const method of ["get", "all", "iterate", "run"]) {
+      const inner = st[method].bind(st);
+      st[method] = (...a) => {
+        // A write's WHERE reads the rows as they were.
+        if (method === "run") tally(sql, a);
+        const out = inner(...a);
+        if (method !== "run") tally(sql, a);
+        return out;
       };
     }
     return st;
@@ -114,14 +218,17 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
   });
   const db = service.db;
   const bill = billed(db);
+  const read = reads(db);
   const changes = () => Number(db.prepare("SELECT total_changes() AS n").get().n);
   const writes = {};
   const bills = {};
+  const rowsRead = {};
   const count = (what, fn) => {
-    const before = [changes(), bill.rows];
+    const before = [changes(), bill.rows, read.rows];
     const out = fn();
     writes[what] = (writes[what] ?? 0) + changes() - before[0];
     bills[what] = (bills[what] ?? 0) + bill.rows - before[1];
+    rowsRead[what] = (rowsRead[what] ?? 0) + read.rows - before[2];
     return out;
   };
 
@@ -148,6 +255,9 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
   service.targetLists();
   for (const k of Object.keys(writes)) delete writes[k];
   for (const k of Object.keys(bills)) delete bills[k];
+  for (const k of Object.keys(rowsRead)) delete rowsRead[k];
+  bill.byTable.clear();
+  read.bySql.clear();
 
   const [sessions, heists] = ARCHETYPES[archetype];
   const cpu = [];
@@ -194,6 +304,8 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
   const total = perPlayer.reduce((a, [, v]) => a + v, 0);
   const billedPerPlayer = Object.entries(bills).filter(([k]) => !PERIODIC.includes(k));
   const billedTotal = billedPerPlayer.reduce((a, [, v]) => a + v, 0);
+  const readPerPlayer = Object.entries(rowsRead).filter(([k]) => !PERIODIC.includes(k));
+  const readTotal = readPerPlayer.reduce((a, [, v]) => a + v, 0);
   return {
     archetype, players, days, heistsPerDay: heists, sessionsPerDay: sessions,
     writesPerPlayerDay: +(total / playerDays).toFixed(2),
@@ -204,6 +316,18 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
     billedPerHeist: +((bills["heist: validate and grant"] + bills.lease) / (playerDays * heists)).toFixed(2),
     billedByOperation: Object.fromEntries(billedPerPlayer.map(([k, v]) => [k, +(v / playerDays).toFixed(2)])),
     validationMs: { p50: +pct(0.5).toFixed(1), p95: +pct(0.95).toFixed(1), max: +cpu[cpu.length - 1].toFixed(1) },
+    // Where the billed rows go, a player a day, the periodic jobs' included.
+    billedByTable: Object.fromEntries([...bill.byTable].sort((a, b) => b[1] - a[1])
+      .map(([k, v]) => [k, +(v / playerDays).toFixed(2)])),
+    // Rows read as D1 bills them (reads(), above): a player's requests a day,
+    // and the periodic jobs' reads a day an island, as they read every island.
+    readsPerPlayerDay: +(readTotal / playerDays).toFixed(1),
+    readsPerHeist: +((rowsRead["heist: validate and grant"] + rowsRead.lease) / (playerDays * heists)).toFixed(1),
+    readsByOperation: Object.fromEntries(readPerPlayer.map(([k, v]) => [k, +(v / playerDays).toFixed(1)])),
+    periodicReadsADayAnIsland: Object.fromEntries(PERIODIC.map((k) => [k, +((rowsRead[k] ?? 0) / days / players).toFixed(1)])),
+    // The statements that read the most, a player a day: where a cut is.
+    readsBySql: [...read.bySql].sort((a, b) => b[1] - a[1]).slice(0, Number(process.env.LOAD_SQL_TOP ?? 12))
+      .map(([sql, n]) => [+(n / playerDays).toFixed(1), sql.replace(/\s+/g, " ").trim().slice(0, 160)]),
   };
 }
 
