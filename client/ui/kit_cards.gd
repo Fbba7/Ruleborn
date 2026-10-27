@@ -182,7 +182,8 @@ static func portrait(picture: Texture2D, name: String, level: int, school: Strin
 
 ## A reward tile on the result (07-heist-result.png): parchment edged in the
 ## reward's colour ("gold", "green", "pink", "sky"), its icon, the amount in
-## Lilita One and what it is in words.
+## Manrope 800 with tabular figures (as the design's, not the display face)
+## and what it is in words.
 static func reward(icon: String, amount: String, words: String, tone := "gold") -> PanelContainer:
 	var p := UI.panel("reward_" + tone)
 	p.name = "Reward"
@@ -193,6 +194,7 @@ static func reward(icon: String, amount: String, words: String, tone := "gold") 
 	v.add_child(Icons.view(icon, 34))
 	var n := UI.label(amount, 24)
 	n.theme_type_variation = "DisplayS"
+	n.add_theme_font_override("font", Tokens.font("ui", 800, true))
 	n.add_theme_font_size_override("font_size", UI.text_px(24))
 	n.set_meta("points", 24.0)
 	v.add_child(n)
@@ -214,16 +216,21 @@ static func law_chip(icon: String, title: String) -> PanelContainer:
 
 
 ## A fact tile (the Character screen's Carrier, Resists, Traits, At home):
-## its icon on a disc, a kicker in capitals and a bold line.
-static func fact(icon: String, kicker: String, words: String) -> PanelContainer:
+## its icon on a disc, a kicker in capitals and a bold line. With a `tone`
+## (a school's name) the disc is lit from white to that school's light and
+## the kicker is in its deep shade, as the design tells the four facts apart;
+## the kicker's words say which fact it is, so the tone is never alone.
+static func fact(icon: String, kicker: String, words: String, tone := "") -> PanelContainer:
 	var p := UI.panel("fact")
 	p.name = "Fact"
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
 	var disc := PanelContainer.new()
-	disc.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
-	UI.dress(disc, "icon_disc")
+	disc.add_theme_stylebox_override("panel", UI.clear_box(6, 6))
+	var lit := UI.dress(disc, "icon_disc")
+	if tone != "":
+		lit.tint(Color.WHITE, Tokens.color(tone + "_light"))
 	disc.add_child(Icons.view(icon, 24))
 	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(disc)
@@ -234,7 +241,7 @@ static func fact(icon: String, kicker: String, words: String) -> PanelContainer:
 	k.theme_type_variation = "Kicker"
 	k.uppercase = true
 	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	k.add_theme_color_override("font_color", Tokens.color("parchment_text_2"))
+	k.add_theme_color_override("font_color", tone_ink(tone) if tone != "" else Tokens.color("parchment_text_2"))
 	k.set_meta("bold", true)
 	v.add_child(k)
 	var w := UI.label(words, 14, true)
@@ -268,10 +275,18 @@ static func season_reward(rank: String, icon: String, amount: String, claim: Cal
 	r.set_meta("bold", true)
 	band.add_child(r)
 	v.add_child(band)
-	var art := Icons.view(icon if not locked else "generalui/lock", 36 if not locked else 28)
-	art.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	v.add_child(art)
-	if amount != "" and not locked:
+	# A locked reward still shows what it is, dimmed under the hatching,
+	# with a small lock in its corner (the design's), not a lock alone.
+	var art := Icons.view(icon if icon != "" else "generalui/lock", 36 if icon != "" else 28)
+	if locked:
+		art.self_modulate = Color(0.62, 0.62, 0.7)
+	# At its own size in the room left, never swelling to fill it.
+	var room := CenterContainer.new()
+	room.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	room.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	room.add_child(art)
+	v.add_child(room)
+	if amount != "":
 		var plate := KitStatus.plate(amount)
 		UI.dress(plate, "plate_dark")
 		plate.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -284,4 +299,69 @@ static func season_reward(rank: String, icon: String, amount: String, claim: Cal
 	m.add_theme_constant_override("margin_bottom", UI.px(6))
 	m.add_child(v)
 	p.add_child(m)
+	if locked and icon != "":
+		var badge := PanelContainer.new()
+		badge.name = "Lock"
+		badge.add_theme_stylebox_override("panel", UI.clear_box(3, 3))
+		UI.dress(badge, "icon_disc", 999)
+		badge.add_child(Icons.view("generalui/lock", 16))
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var corner := Control.new()
+		corner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		corner.add_child(badge)
+		badge.position = Vector2(UI.px(66), UI.px(24))
+		p.add_child(corner)
+	return p
+
+
+## A school's deep shade, darkened only as far as bold 13-point words need
+## to read on parchment's darker stop (§21.8: 4.5:1 and APCA Lc 60).
+static func tone_ink(school: String) -> Color:
+	var ink := Tokens.color(school + "_shadow")
+	var under := Tokens.color("parchment_bottom")
+	for i: int in 20:
+		if ColourCheck.readable(ink, under, 13.0, true):
+			break
+		ink = ink.darkened(0.08)
+	return ink
+
+
+## A character's ability (11-character.png): a plum card, the ability's
+## icon on a square in its school's colours, a gold kicker ("Ability") with
+## its tag ("Once a heist"), the name in Marcellus and the rule beneath it.
+static func ability(icon: String, school: String, kicker: String, tag: String, title: String,
+		rule: String) -> PanelContainer:
+	var p := UI.panel("ability")
+	p.name = "Ability"
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(12))
+	var square := PanelContainer.new()
+	square.add_theme_stylebox_override("panel", UI.clear_box(10, 10))
+	UI.dress(square, "window_" + school, 16)
+	square.add_child(Icons.view(icon, 40))
+	square.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(square)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(2))
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var head := KitLayout.flow(6)
+	var k := UI.label(kicker, 13)
+	k.theme_type_variation = "Kicker"
+	k.uppercase = true
+	k.add_theme_color_override("font_color", Tokens.color("gold"))
+	k.set_meta("bold", true)
+	head.add_child(k)
+	if tag != "":
+		head.add_child(KitStatus.tag(tag, true))
+	v.add_child(head)
+	var t := UI.label(title, 20, true)
+	t.theme_type_variation = "Heading"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	v.add_child(t)
+	var r := UI.label(rule, 14, true)
+	r.theme_type_variation = "Secondary"
+	r.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	v.add_child(r)
+	row.add_child(v)
+	p.add_child(row)
 	return p

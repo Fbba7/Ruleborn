@@ -100,13 +100,14 @@ static func press(button: Control, down: bool) -> void:
 		t.tween_property(box, "press", 1.0 if down else 0.0, ms).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 
-## A bar's value moving to `to`: a value changing, not a transition, so it
-## takes the designs' 450 ms; at once under reduced motion.
+## A bar's value moving to `to`, easing out within §21.8's 150 to 250 ms
+## ("every interface movement"; the designs' 450 ms is held to 250); at
+## once under reduced motion.
 static func fill(bar: Range, to: float) -> void:
 	if Settings.reduced_motion or not bar.is_inside_tree():
 		bar.value = to
 		return
-	bar.create_tween().tween_property(bar, "value", to, Tokens.number("motion", "bar_fill_ms") / 1000.0) \
+	bar.create_tween().tween_property(bar, "value", to, _ms("bar_fill_ms")) \
 		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 
