@@ -37,7 +37,7 @@ decision).
 | SR-09 | Low | server | The public target lists carry every island's raw rating | needs the owner |
 | SR-10 | Low | server | A minor's monthly cap holds only on the client's word | needs the owner |
 | SR-14 | Low | server | A crew is anyone's who holds its invite, a 13-to-15's too | needs the owner |
-| SR-11 | Low | server | The ID token that signs in also deletes the account, at once | sent to T11 |
+| SR-11 | Low | server | The ID token that signs in also deletes the account, at once | fixed by T11 |
 | SR-20 | Low | server | A caller can keep Game Center sign-in failing | sent to T11 |
 
 ### SR-01 — Any player could loosen their own age band (High)
@@ -426,12 +426,16 @@ decision).
   the page passes a server-issued nonce through GSI and the server requires
   it in the token, or the deletion takes only the web client id's tokens
   and a recent `iat`.
-- **Test:** `server/test/security_t11.test.mjs` (SR-11), with the real
-  `GoogleSignIn`: one ID token minted for the Android client signs the game
-  in at `POST /v1/session` and deletes the account at
-  `POST /v1/account/delete`. It pins the behaviour as it stands; the fix
-  turns it round.
-- **Status:** sent to T11, who owns sign-in.
+- **Test:** first pinned here with the real `GoogleSignIn` (one ID token
+  minted for the Android client signed the game in and deleted the
+  account); T11's fix carries its own test, `server/test/auth_http.test.mjs`
+  (*"a web deletion needs a fresh Google token for the web client that
+  carries this browser's nonce …"*), and the pin here was retired, since its
+  harness wires Google in below T11's new check and would pass either way.
+- **Status:** fixed by T11 on `claude/auth` (`11a8e3c`): the deletion takes
+  only a token for the web client id, issued within five minutes, carrying
+  the page's nonce from its cookie, sent same-origin as JSON. A trial merge
+  of the two branches passes every server test (442).
 
 ### SR-20 — A caller can keep Game Center sign-in failing (Low)
 
@@ -616,9 +620,11 @@ Twenty findings: one High, eight Medium, eleven Low.
   (§12.15, §20.2, §17.7 with §20.7) or a rule without its number (§18.9's
   cap), so no new register item was added: the register tracks the
   document, and these are written up here with their choices.
-- **Sent to T11 (2):** SR-11 and SR-20, with their tests in
-  `server/test/security_t11.test.mjs`, and a note on what sign-out has to
-  do. T11's branch was not on the remote when this was written.
+- **Sent to T11 (2):** SR-11, which T11 has fixed on `claude/auth`
+  (`11a8e3c`), and SR-20, still open, its test in
+  `server/test/security_t11.test.mjs`; and a note on what sign-out has to
+  do, which T11's sessions now answer (`POST /v1/session/end`, refresh
+  tokens). A trial merge of the two branches passes all 442 server tests.
 
 Not reviewed in depth: the client's screens' layout code, beyond what they
 open, run, load, render as rich text or log; `tools/` beyond its supply
