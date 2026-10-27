@@ -107,13 +107,16 @@ func _refresh() -> void:
 	var busy: bool = h["busy"] != ""
 	if not (h["newborn"] as Dictionary).is_empty():
 		cards.add_child(_newborn(h["newborn"], busy))
+	# While a newborn waits for its name, naming it is the lowest row's
+	# action; else the first Nursery's Hatch is.
+	var naming := actions.get_child_count() > 1
 	if h["none"] != "":
 		cards.add_child(StageHeroKit.card("", StageHeroKit.para(h["none"], 16.0)))
 	var raw := {}
 	for n: Dictionary in (slice.get("view", {}) as Dictionary).get("nurseries", []):
 		raw[str(n["realm"])] = n
 	for n: Dictionary in h["nurseries"]:
-		var first := actions.get_child_count() == 1
+		var first := actions.get_child_count() == 1 and not naming
 		cards.add_child(_nursery(n, raw.get(n["realm"], {}), busy, not first))
 		if first:
 			var go := _spend(n["button"], busy, "gold")
@@ -281,7 +284,11 @@ func _newborn(n: Dictionary, busy: bool) -> Control:
 			int(a["adjective"]), int(a["noun"])))
 		for b: Button in give.find_children("*", "Button", true, false):
 			StageHeroMaterial.button(b, "gold")
-		box.add_child(give)
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		give.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		for l: Label in give.find_children("*", "Label", true, false):
+			l.add_theme_color_override("font_color", StageHeroSkin.LIGHT)
+		actions.add_child(give)
 	return StageHeroKit.card("", box, "card")
 
 
