@@ -131,7 +131,9 @@ static func tabs(names: Array, chosen: int, pick: Callable, icons: Array = []) -
 		row.add_theme_constant_override("h_separation", UI.px(4))
 		row.add_theme_constant_override("v_separation", UI.px(4))
 	for i: int in names.size():
-		var b := UI.action(str(names[i]), pick.bind(i), "chip_on" if i == chosen else "chip")
+		# The kit's segmented control, as the design's: the chosen segment a
+		# gold tab inside the track, the rest words on the track.
+		var b := UI.action(str(names[i]), pick.bind(i), "seg_on" if i == chosen else "seg")
 		b.add_theme_font_size_override("font_size", UI.text_px(15))
 		b.set_meta("points", 15.0)
 		for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
@@ -147,7 +149,8 @@ static func tabs(names: Array, chosen: int, pick: Callable, icons: Array = []) -
 		b.set_meta("chosen", i == chosen)
 		b.accessibility_name = Strings.t("WORKSHOP_TAB_SHOWN" if i == chosen else "WORKSHOP_TAB_SHOW", str(names[i]))
 		row.add_child(b)
-	var p := StageHeroMaterial.panel("well", row, 18.0, 4.0)
+	var p := StageHeroMaterial.panel("well", row, 14.0, 4.0)
+	UI.dress(p, "seg_track", 14.0)
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	return p
 
