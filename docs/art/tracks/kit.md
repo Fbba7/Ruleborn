@@ -151,3 +151,20 @@ This wave's brief: the realm's buildings as 02-heist draws them. Rounds compare 
 - **check_all** on `6d8ddbd` (19:04 UTC): "All checks passed". The environment again needed `rustup target add wasm32-unknown-unknown`, `pip install gdtoolkit playwright`, and links `chromium_headless_shell-1248` and `chromium-1248` beside the image's `-1243` builds under `/opt/pw-browsers`.
 - **Round 6, lanes and bushes in the heist (T5's `screen_heist.gd`).** The design's lanes are ribbons about 0.8 m wide; ours were 0.5 m. Now three staggered rows of rose stones on 0.7 m of trodden earth. Most Heart bushes are in blossom (#F7A8D2). Still `58-heist-vault-lane.png`.
 - **Round 7, pads and numerals against 02-heist.** Our octagon pads reached 0.74 of a side out against the design's 0.62 and made the town read crowded; now 0.64. The numerals are finer (0.105 of the radius tall, strokes 9 % of that) and a lighter violet, closer to the design's fine lettering.
+- **Round 8, the Spire on its dial.** The design's dial is about three Spire terraces wide and its inner ring of wedges shows round the terrace; ours hid it. The dial's reach is now 2.6 tiles past the Spire's half side (radius 4.1 for the 3 × 3 Spire), and the Spire's shaft is broad at its foot as the design's (0.46 → 0.36, :848).
+- **Round 9, the realm view's Vault.** `KitBuildings2._vault` and the map's Vault (`KitMap`) had a brass dome; now the realm's roof, as the heist's Vault (`54-…`'s rows: magenta in the Heart).
+- **Round 10, roofs in every realm.** Verdant, Skyfield, Tidehold and Emberreach at level 2 on the heist camera: each reads by its own roof (terracotta, red, teal, rust). In grayscale the roofs stay dark against the mid-grey meadow and the dial light.
+- **Round 11, petals.** Fallen petals round the Heart's blossom trees (8) and bushes (4): small pink ovals, 6 triangles each. Still `59-heart-heist-final.png` (design left).
+- **Budgets** (`kit_probe.gd`): the lived-in Heart with its dial draws 45,216 triangles at full (heist camera, §21.3's ≈60,000) and 21,060 at mid.
+- **At 200 % text** the heist's HUD covers much of the realm (T5's screen, `screen_heist.gd` TEXT=200 CONTRAST=1); the kit's shapes still read in grayscale.
+
+## Stopped here (session four, 23:45 UTC)
+
+- **Done:** rounds 1–11 above. Pushed and green: through `54d197d` (check_all passed) and the commit after it whose client stage passed; the last commit (petals, notes) went through a final check_all before the push.
+- **Paused:** the session's worker restarted about 20:00 and the session sat idle until 22:53, so the 22:00 deploy got `54d197d` only.
+- **Still unlike the design:** the Vault is §21.5's round domed strongbox where the stills draw a square block under a pyramid roof (kept for §21.5; its dome now wears the realm's roof); the Heart's wall ring (owner's call); the dial is the Heart's Spire plaza always, while the design draws it as the Stillness law's mark; the island's framing at the heist camera (T5).
+- **Next:** if the owner wants the dial tied to Stillness, the kit needs the realm's laws from the screen (a `laws` var on `RealmKit` beside `buildings`).
+
+## Session five (wave extended to 06:00 UTC, from 23:23)
+
+- **Round 12, lanes round the dial (04-realm-view, 02-heist).** The design's Heart lanes spread from its plaza to every door; ours were a spanning tree whose Spire end lay under the dial. Now, in a realm with the dial, a lane runs from every door to the dial's rim (`RealmKit._spokes`, one bend), and the spanning tree between doors stays, each lane in two runs so both fit `KitGround.LANES`. The dial is found before the trails. Still `60-heart-lanes-to-dial.png`.
