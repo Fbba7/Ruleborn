@@ -10,7 +10,7 @@ extends Control
 var volume_labels := {}
 var text_label: Label
 var list_scroll: ScrollContainer
-## The tab on show: "game" (language, sound, play) or "access".
+## The tab on show: "game" (language, sound, play), "access" or "account".
 var tab_shown := "game"
 
 
@@ -50,20 +50,25 @@ func _layout() -> void:
 	# the one chosen is shown.
 	var game := VBoxContainer.new()
 	var access := VBoxContainer.new()
-	for tab: VBoxContainer in [game, access]:
+	var account := VBoxContainer.new()
+	for tab: VBoxContainer in [game, access, account]:
 		tab.add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
 	list.add_child(ScreenParts.segmented([
 		{"text": Strings.t("SCREEN_SETTINGS_GAME"), "key": "game", "on": tab_shown == "game",
 			"icon": "generalui/settings"},
 		{"text": Strings.t("SCREEN_SETTINGS_ACCESS"), "key": "access", "on": tab_shown == "access",
-			"icon": "settingsandwellbeing/accessibility"}],
+			"icon": "settingsandwellbeing/accessibility"},
+		{"text": Strings.t("AUTH_TAB"), "key": "account", "on": tab_shown == "account",
+			"icon": "settingsandwellbeing/account"}],
 		func(key: String) -> void:
 			tab_shown = key
 			_build()))
 	list.add_child(game)
 	list.add_child(access)
+	list.add_child(account)
 	game.visible = tab_shown == "game"
 	access.visible = tab_shown == "access"
+	account.visible = tab_shown == "account"
 	var lang := ScreenKit.button(Strings.t("LANGUAGE_" + Settings.locale), next_language, "cream", "", 14.0)
 	game.add_child(ScreenParts.item("settingsandwellbeing", "language", Strings.t("SETTINGS_LANGUAGE"), "",
 		_tag(lang, "language")))
@@ -80,8 +85,8 @@ func _layout() -> void:
 
 	game.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_PLAY")))
 	game.add_child(_toggle("slow_rehearsals", "SETTINGS_SLOW_REHEARSALS", "playtimereminder"))
-	# The account: signing in and out (scripts/auth_panel.gd, T11).
-	game.add_child(AuthPanel.new())
+	# The account: signing in and out, devices, ways to sign in (auth_panel.gd, T11).
+	account.add_child(AuthPanel.new())
 
 	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_ACCESS")))
 	var size_name := Strings.t("SETTINGS_TEXT_SIZE", Settings.text_scale)
