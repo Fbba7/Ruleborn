@@ -436,7 +436,6 @@ func _compare_tab(slice: Dictionary, words: Dictionary, me: Dictionary) -> void:
 		face.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		b.add_child(face)
 		pick.add_child(b)
-	cards.add_child(pick)
 	var them := _raw(slice, versus)
 	var mine := _numbers(str(me.get("role", "")))
 	var theirs := _numbers(str(them.get("role", "")))
@@ -468,6 +467,8 @@ func _compare_tab(slice: Dictionary, words: Dictionary, me: Dictionary) -> void:
 		line.add_child(StageHeroBar.make(b / _most(stat), green if b >= a else dim, "", 14.0))
 		v.add_child(line)
 	cards.add_child(StageHeroKit.card("", v))
+	# The others to choose from, under the comparison they change.
+	cards.add_child(pick)
 
 
 ## The fixed spends, beside the way back to the roster: the next level on

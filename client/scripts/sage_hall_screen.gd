@@ -128,6 +128,15 @@ func _refresh() -> void:
 	if not shown.is_empty():
 		_stand(shown, h["sages"])
 		_hero(shown)
+		# The design's guard choice for the chosen Sage, wide under its card;
+		# each tile below keeps its own.
+		var o: Dictionary = shown["button"]
+		var guard := UI.button(o["action"], controller.station.bind(o["sage"]), false, Color(), o["spoken"])
+		StageHeroMaterial.button(guard, "tab")
+		guard.disabled = busy or not o["can"]
+		guard.set_meta("item", "hero_guard")
+		guard.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cards.add_child(guard)
 		cards.add_child(_powers(shown))
 	var count := StageHeroKit.kicker(Strings.t("CREW_HUB_SAGES"))
 	cards.add_child(count)
@@ -170,13 +179,18 @@ func _stand(s: Dictionary, sages: Array) -> void:
 	over.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	over.set_meta("words", true)
 	stage.add_child(over)
+	# The Sages' level, the Keeper's, on a gold plate at the stage's foot.
+	var view: Dictionary = App.services.store.get_slice(SageState.SAGES).get("view", {})
+	if view.has("level"):
+		StageHeroSkin.on_stage(over, StageHeroKit.chip("%s %d" % [Strings.t("CHARACTER_LEVEL_SHORT"),
+			int(view["level"])], "gold"), Control.PRESET_CENTER_BOTTOM)
 	if ids.size() > 1:
 		for step: int in [-1, 1]:
 			var to: Dictionary = sages[posmod(at + step, ids.size())]
 			var b := StageHeroKit.arrow(step < 0, Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT",
 				str(to["name"])), _choose.bind(str(to["id"])))
 			b.set_meta("item", "step:%d" % step)
-			StageHeroSkin.on_stage(over, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
+			StageHeroSkin.on_stage(over, b, Control.PRESET_BOTTOM_LEFT if step < 0 else Control.PRESET_BOTTOM_RIGHT)
 
 
 ## Beside the stage: whether the chosen Sage is unlocked or on guard as

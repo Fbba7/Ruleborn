@@ -46,7 +46,7 @@ func _build() -> void:
 	stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stage.size_flags_stretch_ratio = 5.0
 	column.add_child(stage)
-	stage.headroom = 0.3
+	stage.headroom = 0.12
 	stage.show_kinds(WELCOME, [], "island")
 	stage.add_far_islands(FAR)
 	# The game's name over the welcome scene as the design's logo: Lilita One

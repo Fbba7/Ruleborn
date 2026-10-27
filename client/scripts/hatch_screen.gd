@@ -57,11 +57,15 @@ func _build() -> void:
 	cards.add_theme_constant_override("separation", UI.px(10))
 	cards.add_child(StageHeroMaterial.panel("glass", header_label, 14.0, 8.0))
 	body.add_child(RosterScreen.padded(cards))
-	var actions := UI.row(-1.0, true)
-	actions.alignment = FlowContainer.ALIGNMENT_CENTER
-	var home := UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"))
-	actions.add_child(StageHeroMaterial.button(home, "leather"))
-	column.add_child(RosterScreen.padded(UI.narrow(actions)))
+	# Back home: the kit's round back button, named for a screen reader, in
+	# the lowest row, which stands above the corners' band (§21.1).
+	var actions := HBoxContainer.new()
+	actions.add_child(KitControls.icon_button("generalui/back", Strings.t("COMMON_HOME"),
+		func() -> void: App.services.router.go(&"home"), "leather", 56.0))
+	var lift := MarginContainer.new()
+	lift.add_theme_constant_override("margin_bottom", UI.px(20))
+	lift.add_child(actions)
+	column.add_child(RosterScreen.padded(lift))
 
 
 func _refresh() -> void:
