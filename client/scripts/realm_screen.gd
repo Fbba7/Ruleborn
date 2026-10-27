@@ -399,7 +399,7 @@ func _pin(replay: RulebornReplay) -> void:
 	pins.clear()
 	for b: Dictionary in town.placed:
 		var top := (b["mid"] as Vector3) + Vector3(0, 1.6 + 0.35 * int(b["side"]), 0)
-		pins.pin(OverlayHud.badge(str(int(b["level"]))), top)
+		pins.pin(OverlayDiamond.new(str(int(b["level"]))), top)
 	for p: Dictionary in replay.pylons():
 		pins.pin(OverlayHud.tag(OverlayHud.law_icon(str(p["law"])), ""), view.world_at(p["at"]) + Vector3(0, 2.0, 0))
 
