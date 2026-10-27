@@ -50,6 +50,8 @@ func _build() -> void:
 	stage.welcome = true
 	stage.show_kinds(WELCOME, [], "bare")
 	stage.add_universe(FAR)
+	# The night's violet behind the universe, as the design's title screen.
+	stage.backdrop.set_glow(Color("#8A5AE0"))
 	# The game's name over the welcome scene as the design's logo: Lilita One
 	# in cream and gold, edged in ink on a hard drop; under it the line that
 	# says what the game is, as the design's title screen has it.

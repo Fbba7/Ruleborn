@@ -312,10 +312,23 @@ func add_universe(schools: Array, centre := Vector3(0.0, 2.75, -9.0), ring := 1.
 		group.add_child(isle)
 		g = _town(g, str(StageHeroFigure.REALM.get(str(schools[i]), "heart")), at, r,
 			["storehouse", "garden", "nursery"])
+		# A plank bridge from the Heart to it, as the map's links.
+		var flat := Vector3(at.x, 0.0, at.z)
+		var from := flat.normalized() * 0.5
+		var to := flat - flat.normalized() * r * 0.8
+		var mid := (from + to) * 0.5 + Vector3(0, 0.01, 0)
+		var yaw := atan2(flat.x, flat.z)
+		g.rbox(Geo.place(mid, yaw), Vector3(0.07, 0.025, from.distance_to(to)), Color("#7A5A3A"), 0.01)
 	var town := MeshInstance3D.new()
 	town.mesh = g.mesh()
 	town.material_override = toon(Color("#FFE6C8"), false, true)
+	town.material_override.set_shader_parameter("tint", Color(1.05, 1.0, 1.05))
 	group.add_child(town)
+	# The universe is lit as the map's day, brighter than a hero's ground
+	# (which stays a step darker than the figure on it).
+	for mi: MeshInstance3D in group.find_children("*", "MeshInstance3D", true, false):
+		if mi != town and mi.material_override is ShaderMaterial:
+			(mi.material_override as ShaderMaterial).set_shader_parameter("tint", Color(1.35, 1.3, 1.4))
 
 
 ## A few of the map's buildings on an island of `radius` at `at`, the
