@@ -63,7 +63,8 @@ func _build() -> void:
 	column.add_child(top)
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label, "glass"))
-	StageScreen.window(column, 0.8)
+	# The design's log is mostly its list: the island shows above it.
+	StageScreen.window(column, 0.45)
 	var scroller := ScrollContainer.new()
 	scroller.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroller.size_flags_vertical = Control.SIZE_EXPAND_FILL
