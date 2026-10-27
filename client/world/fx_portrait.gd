@@ -25,7 +25,9 @@ func _init(member_role := "", pressed_call: Callable = Callable()) -> void:
 	role = member_role
 	letters = Strings.term("ROLE", role)
 	if Cast.KIND.has(role) and CreatureModel.manifest().has(String(Cast.KIND[role])):
-		picture = Portrait.of(String(Cast.KIND[role]))
+		# T1's bust: the head and body on a lit disc of the role's colour.
+		var ground: Color = Palette.ROLE.get(role, Palette.STONE)
+		picture = CreatureBust.of(String(Cast.KIND[role]), "", ground.lightened(0.15))
 	text = ""
 	var side := UI.px(54)
 	# As wide as its role's name, so with large text names never run together.
@@ -99,9 +101,9 @@ func _paint() -> void:
 	FxPen.circle(self, c + Vector2(-r * 0.2, -r * 0.3), r * 0.4, Color(1, 1, 1, 0.16))
 	if _picture_ready:
 		# The model's own head and shoulders, inside the disc; greyed when out.
-		var side := r * 1.5
+		var side := r * 1.64
 		var tint := Color(0.55, 0.55, 0.6) if out else (Color(1.0, 0.75, 0.75) if down else Color.WHITE)
-		FxPen.texture_rect(self, picture, Rect2(c - Vector2(side, side) * 0.5 + Vector2(0, r * 0.08), Vector2(side, side)),
+		FxPen.texture_rect(self, picture, Rect2(c - Vector2(side, side) * 0.5, Vector2(side, side)),
 			false, tint)
 	else:
 		FxIcons.face(self, c + Vector2(0, r * 0.12), r * 0.6, colour if not out else Color("#7A7488"), role, down or out)
