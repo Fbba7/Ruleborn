@@ -443,3 +443,20 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   Vault, three motion kinds against the new cast, with grayscale.
 - `w5_portraits_vs_design.png`: the 24 design portraits, each over ours in
   the hero view.
+
+## Stopped here (fifth session, 23:40 UTC)
+
+- **Last pushed:** the branch head; check_all passed on it. Outside T1's
+  files, a few lines each: `FxPortrait` (busts), `WorldView._light_figures`
+  (`set_night`), `Cast.KIND` (the five-school crew).
+- **For T5:** the Sage disc (`CreatureBust.of(sage, "", ground)`) once the
+  simulation gives a heist its Sage; guards at `readable_scale()`; keep the
+  crew out of the guards' rings in `heist_shot.gd`.
+- **Still worse than the design:** white flecks on Quarryback's shell and
+  Mossbear's stones (in the geometry or paint, not the light: lift, sheen
+  and relief at 0 keep them); Featherkin's knit reads smooth; Lantern
+  Wisp's cream face reads pink; petals are flat where the design's pale
+  toward the tip.
+- **Container setup:** as the fourth session; a worktree at `../rb-exp`
+  (with `client/bin`, `client/goldens` and `client/.godot` copied) let
+  renders run while check_all held the main tree.
