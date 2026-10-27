@@ -284,6 +284,18 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
    Quarryback a little further; the Emberling keeps the warm white).
 10. Paint at 256² for the smallest kinds: rejected, the hero view's irises
     lose their striations; the paint stays 512².
+11. Bloomling's petals were flat pink: pastel now lifts light paint most
+    (`pastel_by_value`), so a petal keeps its deep base under a pale tip.
+12. Glass Golem's bracers: not metal parts (the design's dark stone), so
+    the metal lift does nothing; left as they are.
+13. The heist at 21h: the Glass Golem guards were dark blobs on dark grass
+    (T5 brightens only the crew by night). A character's light now adapts
+    to a dim sun (`night_eye` 0.5 toward the Heart's noon `day_sun`, at most
+    ×1.7), so it keeps part of its daytime value at dusk and night; noon is
+    unchanged. Still: `w4_heist_night.png` (noon and 21h, before and after).
+14. Emberling's belly glare: the body glow (`glow_vc` 0.6 to 0.2) barely
+    changes it, so it comes from a glowing accessory near the belly, not
+    the paint. Not fixed; next to look at.
 
 ### Stills (`docs/art/shots/t1c/`, this session)
 
@@ -321,8 +333,6 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   triangles), and its bracers are darker than the design's pale stone.
 - **Emberling**: the belly still glows warmer and brighter than the
   portrait's tan.
-- **Bloomling's petals** are flat pink; the design's darken to magenta at
-  their base.
 - Hero softness (image light, ACES) is still the shader's approximation.
 
 ## Next
@@ -332,19 +342,19 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
 - Paint atlas: 512² is now most of the install. Downscaling it on import
   costs the eyes; a smaller atlas would need the export to pack the eyes'
   charts larger (more texels for the face, fewer for the back).
-- Bloomling's petals: a darker base toward magenta, as the design's
-  vertex colours run (#B0184E at the base to #FFB0CC at the tip).
+- Emberling's belly: find the glowing part behind its glare (round 14).
 
-## Stopped here (fourth session, about 00:45 UTC)
+## Stopped here (fourth session, 04:45 UTC)
 
-- **Checked:** `tools/check_all.sh` on this work: the simulation (326/326),
-  the server (393/393) and the client (339 of 340) pass, and every stage
-  after the client passes up to `check_dependencies`. Two failures are not
-  the characters': the Weaving-against-the-server client test (fails the
-  same on the base commit 1e8619b in this container) and
-  `check_dependencies`, whose proofs name tests missing from the committed
-  `client/status.json` (the integrator's file).
+- **Last pushed:** see the branch head; every change is inside T1's files.
+- **Checked:** `tools/check_all.sh` on the final head: the simulation
+  (326/326), the server (393/393) and the client (339 of 340) pass. The one
+  client failure, the Weaving-against-the-server test, fails the same on
+  the base commit 1e8619b in this container (the server recommends
+  `slow_rivers` at price 0); `check_dependencies` after it fails on test
+  names missing from the committed `client/status.json`. Neither is T1's.
 - **Container setup this needed:** `rustup target add wasm32-unknown-unknown`,
   `pip install gdtoolkit==4.*`, and `pip install playwright==1.63.0` (the
   version whose browser is under /opt/pw-browsers).
-- **Still worse and next:** see the two sections above.
+- **Still worse and next:** the two sections above, and the Emberling's
+  belly (round 14).

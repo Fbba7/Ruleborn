@@ -36,6 +36,7 @@ uniform float paint_mid = 0.4;
 // portraits' sheen turns Bloomling's crimson petals pink, not the paler body.
 uniform float pastel : hint_range(0.0, 1.0) = 0.0;
 uniform vec4 pastel_colour : source_color = vec4(1.0);
+uniform float pastel_by_value : hint_range(0.0, 1.0) = 1.0;
 // The world's noon sun clips warm paint's red (Featherkin's gold went
 // orange-pink): characters take it a little softer.
 uniform float exposure : hint_range(0.5, 1.5) = 0.8;
@@ -43,6 +44,11 @@ uniform float exposure : hint_range(0.5, 1.5) = 0.8;
 // pink noon turned Featherkin's butter to salmon): the sun's hue is taken
 // this much toward its own grey on characters. The world keeps its light.
 uniform float light_neutral : hint_range(0.0, 1.0) = 0.6;
+// A character's eye adapting to a dim sun (light()): the noon sun's value in
+// LIGHT_COLOR's units, how far toward it, and the most it may gain.
+uniform float day_sun = 1.1;
+uniform float night_eye : hint_range(0.0, 1.0) = 0.5;
+uniform float night_gain = 1.7;
 // The world's sun stands high (58°), which leaves a character's face, a
 // vertical surface, in the lower steps. The steps keep §21.3's values; on a
 // character they start earlier, so faces and fronts read in the light.
@@ -270,7 +276,9 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 	}
 	if (pastel > 0.0) {
 		float sat = (max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b))) / max(0.02, max(c.r, max(c.g, c.b)));
-		c = mix(c, pastel_colour.rgb, pastel * smoothstep(0.35, 0.85, sat));
+		// Light paint pales most, so a petal's deep base stays deep under its pale tip.
+		float pv = dot(c, vec3(0.299, 0.587, 0.114));
+		c = mix(c, pastel_colour.rgb, pastel * smoothstep(0.35, 0.85, sat) * mix(1.0, smoothstep(0.1, 0.5, pv), pastel_by_value));
 	}
 	vec3 col = c;
 	vec2 pat = vec2(0.0);
@@ -355,6 +363,13 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 
 void light() {
 	vec3 sun = mix(LIGHT_COLOR, vec3(dot(LIGHT_COLOR, vec3(0.299, 0.587, 0.114))), light_neutral);
+	// Under a dimmer sun (dusk, night, the twilight realms) a character keeps
+	// part of its daytime value, so a guard is not a dark blob on dark grass:
+	// the sun is taken toward `day_sun` by `night_eye`, at most `night_gain` times.
+	float sun_l = max(0.001, dot(sun, vec3(0.299, 0.587, 0.114)));
+	if (LIGHT_IS_DIRECTIONAL) {
+		sun *= clamp(pow(day_sun / sun_l, night_eye), 1.0, night_gain);
+	}
 	float ndl = dot(NORMAL, LIGHT) + ramp_bias;
 	// Close up (the hero view) the relief shades deeper: the fleece's lumps, the feathers' scallops.
 	float rd = mix(relief_detail, 1.6, hero);
