@@ -14,7 +14,7 @@ const REALMS := {
 		"accent": "#8C6CF0", "tree": "pine"},
 	"tidehold": {"wall": "#E4F4F2", "roof": "#1F7F95", "stone": "#E6DCCB", "stone2": "#9FB0B8", "accent": "#3CC6D8",
 		"tree": "round"},
-	"emberreach": {"wall": "#5A4448", "roof": "#8A2F22", "stone": "#A8928A", "stone2": "#7A625C",
+	"emberreach": {"wall": "#D8BEB0", "roof": "#8A2F22", "stone": "#A8928A", "stone2": "#7A625C",
 		"accent": "#F07A3C", "tree": "pine"},
 	"verdant": {"wall": "#E8D2A8", "roof": "#B5533C", "stone": "#E6DCCB", "stone2": "#B9AE9C", "accent": "#5CC46A",
 		"tree": "round"},

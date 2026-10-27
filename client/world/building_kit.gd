@@ -468,9 +468,11 @@ func _topper() -> void:
 ## The packed-earth pad a building stands on (the design's foundation disc,
 ## :981): an octagon of trodden earth and stone, wider than the house.
 func _pad() -> void:
-	# The design's pad is its realm's dirt halfway to cream (:979); lifted, as
-	# the toon ramp lights it darker than the design's.
-	var earth := (palette["soil"] as Color).lerp(Color("#E8D8B8"), 0.5).lerp(Color("#FFC0A4"), 0.5)
+	# The design's pad is its realm's dirt halfway to cream (:979), lifted, as
+	# the toon ramp lights it darker than the design's; the Heart's drawn
+	# salmon, as its realm view (04-realm-view).
+	var earth := (palette["soil"] as Color).lerp(Color("#E8D8B8"), 0.5)
+	earth = earth.lerp(Color("#FFC0A4"), 0.5) if KitStyle.realm_of(palette) == "heart" else earth.lightened(0.18)
 	if KitStyle.realm_of(palette) == "lanternvale":
 		# Lantern Vale's pads are pale and faintly lit, so its town shows in the
 		# dark (the design's night realm).
