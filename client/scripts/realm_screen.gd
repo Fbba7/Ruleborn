@@ -28,7 +28,7 @@ var _keys: Control
 var _top: Control
 var _medal_holder: HBoxContainer
 var _resources: VBoxContainer
-var _laws: HBoxContainer
+var _laws: HFlowContainer
 var _card_head: HBoxContainer
 var _drawn_key := ""
 var _screen := {}
@@ -52,7 +52,7 @@ func _build() -> void:
 	var column := UI.frame(self)
 	view = StageScreen.mount(self, column)
 	view.tapped.connect(func(at: Vector2) -> void: _on_tap(view.tile_at(at), at))
-	view.fill = 0.6
+	view.fill = 1.0
 	town = StageTown.new(view)
 	column.add_child(_header())
 	status_label = UI.status("info", "")
@@ -92,31 +92,35 @@ func _header() -> Control:
 	names.add_theme_constant_override("separation", 0)
 	names.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	names.alignment = BoxContainer.ALIGNMENT_CENTER
-	var plate := UI.panel("glass")
-	plate.size_flags_horizontal = Control.SIZE_FILL
+	# The design's realm name: gold words straight over the sky, inked so
+	# they read over any island; the level is the medallion's badge.
 	var words := VBoxContainer.new()
 	words.add_theme_constant_override("separation", 0)
 	var title := UI.title(Strings.t("RV_TITLE"))
-	title.add_theme_font_size_override("font_size", UI.text_px(22))
-	title.set_meta("points", 22.0)
+	title.add_theme_font_size_override("font_size", UI.text_px(26))
+	title.set_meta("points", 26.0)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	# A long realm name in a long language wraps rather than widen the row.
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title.add_theme_color_override("font_color", Tokens.color("gold"))
+	title.add_theme_color_override("font_outline_color", Tokens.color("ink_deep"))
+	title.add_theme_constant_override("outline_size", UI.px(3))
 	title.name = "RealmName"
 	words.add_child(title)
+	# The level in words, for a screen reader: the badge shows it.
 	header_label = UI.label("", 13.0, true)
 	header_label.theme_type_variation = "Kicker"
 	header_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	header_label.visible = false
 	words.add_child(header_label)
-	plate.add_child(words)
-	names.add_child(plate)
+	names.add_child(words)
 	line.add_child(names)
 	_resources = VBoxContainer.new()
 	_resources.add_theme_constant_override("separation", UI.px(4))
 	line.add_child(_resources)
 	top.add_child(line)
-	_laws = HBoxContainer.new()
-	_laws.add_theme_constant_override("separation", UI.px(5))
+	_laws = HFlowContainer.new()
+	_laws.add_theme_constant_override("h_separation", UI.px(5))
+	_laws.add_theme_constant_override("v_separation", UI.px(5))
 	top.add_child(_laws)
 	_top = top
 	return top
@@ -192,6 +196,7 @@ func _dress_header(realm: Dictionary, uv: Dictionary, r: Dictionary) -> void:
 	var title := _top.find_child("RealmName", true, false) as Label
 	title.text = UniversePresenter.realm_name(type)
 	header_label.text = Strings.t("RV_LEVEL", level).to_upper()
+	title.accessibility_description = Strings.t("RV_LEVEL", level)
 	header_label.accessibility_name = r.get("title", "")
 	for c: Node in _resources.get_children():
 		c.queue_free()
@@ -213,10 +218,17 @@ func _dress_header(realm: Dictionary, uv: Dictionary, r: Dictionary) -> void:
 	# The universe's band, never a realm's own strain (§5.5).
 	var st: Dictionary = (store.get_slice(WeavingState.WEAVING).get("view", {}) as Dictionary).get("stability", {})
 	var band := clampi(int(st.get("band", 0)), 0, OverlayFacts.BANDS.size() - 1)
-	_laws.add_child(OverlayHud.pill("stabilitybands/" + OverlayFacts.BANDS[band],
+	var laws := OverlayHud.pill("stabilitybands/" + OverlayFacts.BANDS[band],
 		Strings.t("RV_LAWS_BAND", [woven.size(), slots.size(), WeavingPresenter.band_name(band),
 			roundi(float(st.get("strain", 0.0)) * 100.0)]) if not st.is_empty()
-		else Strings.t("RV_LAWS", [woven.size(), slots.size()]), "", "leather"))
+		else Strings.t("RV_LAWS", [woven.size(), slots.size()]), "", "leather")
+	# At large text its words wrap inside the row rather than widen it.
+	if Settings.text_scale >= 150:
+		var said := laws.find_child("Words", true, false) as Label
+		said.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		said.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		laws.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_laws.add_child(laws)
 	for i: int in slots.size():
 		var s: Dictionary = slots[i]
 		var line: String = (r["pylons"] as Array)[i] if i < (r["pylons"] as Array).size() else ""
@@ -342,6 +354,10 @@ func _draw_realm() -> void:
 		return
 	view.realm_type = StageRealm.realm_type(str(realm.get("type", "Heart")))
 	view.show_replay(replay)
+	# The design's realm view is the town at home: its guards stand their
+	# posts on the defence screens, not here (and §21.3's budget is spent on
+	# the town).
+	view.actors.visible = false
 	var producers: Array = (home.get("producers", []) as Array).filter(func(p: Dictionary) -> bool:
 		return str(p["realm"]) == id)
 	var who := {}
@@ -355,13 +371,9 @@ func _draw_realm() -> void:
 		return (at == id or (at == RosterPresenter.SPIRE and id == "heart")) \
 			and str(c.get("state", "")) in ["idle", "resting"])
 	town.residents(living)
-	# The town, not the grid, at the middle of the screen: halfway to the
-	# buildings' centre, so the island's edge still frames it.
-	var middle := Vector3.ZERO
-	for b: Dictionary in town.placed:
-		middle += b["mid"]
-	view.focus = (middle / maxf(1.0, town.placed.size()) * Vector3(0.5, 0.0, 0.5)) if not town.placed.is_empty() \
-		else Vector3.ZERO
+	# The whole island at the middle of the screen, as the design's realm
+	# view draws it: the town on it, the rim and the sky around.
+	view.focus = Vector3.ZERO
 	_pin(replay)
 
 

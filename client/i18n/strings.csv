@@ -1400,3 +1400,12 @@ HOME_RAIDED_SEE,See,See,Ver,Ver,Ansehen,Voir
 HOME_RAIDED_CLOSE,Dismiss,Dismiss,Dispensar,Dispensar,Schließen,Fermer
 HOME_COLLECT,Collect all,Collect all,Coletar tudo,Recolher tudo,Alles einsammeln,Tout récolter
 HOME_COLLECT_SPOKEN,Collect all: %s waiting,Collect all: %s waiting,Coletar tudo: %s esperando,Recolher tudo: %s à espera,Alles einsammeln: %s bereit,Tout récolter : %s en attente
+LANDING_FAULT_NAME,Fault,Fault,Falha,Falha,Riss,Faille
+LANDING_EDGE_NAME,%s edge,%s edge,Borda %s,Orla %s,Rand %s,Bord %s
+LANDING_SPOT_OF,Spot %d of %d,Spot %d of %d,Ponto %d de %d,Ponto %d de %d,Platz %d von %d,Point %d sur %d
+LANDING_PILL_COVERED,Covered,Covered,Coberto,Coberto,Gedeckt,Couvert
+LANDING_PILL_OPEN,Open,Open,Aberto,Aberto,Offen,Ouvert
+LANDING_SILENT,Silent,Silent,Silencioso,Silencioso,Lautlos,Silencieux
+LANDING_HEARD_TILES,%d tiles,%d tiles,%d casas,%d casas,%d Felder,%d cases
+LANDING_TILE_NOISE,Noise,Noise,Ruído,Ruído,Lärm,Bruit
+LANDING_TILE_CLOCK,Clock,Clock,Relógio,Relógio,Uhr,Horloge

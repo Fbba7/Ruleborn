@@ -12,7 +12,7 @@ extends WorldView
 
 ## How far, in pixels at 540 wide, a lower level may stray from the full
 ## mesh before the renderer keeps the fuller one.
-const LOD_PIXELS := 24.0
+const LOD_PIXELS := 56.0
 
 ## The share of the view's height the panels cover at its bottom and top:
 ## the island is framed in what is left.
@@ -41,6 +41,8 @@ func _init() -> void:
 	super._init()
 	heist = false
 	pitch = HOME_PITCH
+	# The kit's mid level at the home camera (§21.3); the heist keeps FULL.
+	kit_detail = BuildingKit.MID
 	layers = Node3D.new()
 	layers.name = "Layers"
 	world.add_child(layers)

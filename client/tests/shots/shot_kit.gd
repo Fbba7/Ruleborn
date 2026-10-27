@@ -5,7 +5,8 @@ extends RefCounted
 ## settle, the frame saved to SHOT, and each world's triangles and draw
 ## calls printed (§21.3's budgets). `prepare` takes the text size from TEXT
 ## (in percent), high contrast from HC and the language from LANG_SHOT, before a
-## screen is made; WIDE prints every control asking for more than the phone.
+## screen is made; WIDE prints every control asking for more than the phone,
+## and PARTS where each world's triangles go, largest first.
 
 
 static func prepare() -> void:
@@ -47,4 +48,48 @@ static func settle(tree: SceneTree, screen: Control) -> void:
 				RenderingServer.viewport_get_render_info(rid, visible, RenderingServer.VIEWPORT_RENDER_INFO_PRIMITIVES_IN_FRAME),
 				RenderingServer.viewport_get_render_info(rid, visible, RenderingServer.VIEWPORT_RENDER_INFO_DRAW_CALLS_IN_FRAME),
 				RenderingServer.viewport_get_render_info(rid, shadow, RenderingServer.VIEWPORT_RENDER_INFO_DRAW_CALLS_IN_FRAME)])
+			if OS.get_environment("PARTS") != "":
+				await _parts(tree, v.get_parent() as WorldView)
 	print("wrote")
+
+
+## Each part of `view`'s world hidden in turn, and the triangles it took.
+static func _parts(tree: SceneTree, view: WorldView) -> void:
+	var rid := view.viewport.get_viewport_rid()
+	var total := await _count(tree, rid)
+	var rows: Array = []
+	var parts: Array[Node3D] = []
+	for c: Node in view.world.get_children():
+		if c is Node3D:
+			_open(c as Node3D, parts, 3)
+	for part: Node3D in parts:
+		var was := part.visible
+		part.visible = false
+		var without := await _count(tree, rid)
+		part.visible = was
+		rows.append([total - without, view.world.get_path_to(part)])
+	rows.sort_custom(func(a: Array, b: Array) -> bool: return a[0] > b[0])
+	for r: Array in rows.slice(0, 16):
+		print("part %7d %s" % [r[0], r[1]])
+
+
+## `node`'s parts down to `depth` holders deep: a holder of a few is opened,
+## a mesh or a crowd is counted whole.
+static func _open(node: Node3D, out: Array[Node3D], depth: int) -> void:
+	var kids := node.get_children().filter(func(k: Node) -> bool: return k is Node3D)
+	if kids.size() == 1 and depth > 0:
+		_open(kids[0] as Node3D, out, depth)
+		return
+	if depth <= 0 or kids.size() < 2 or kids.size() >= 60:
+		out.append(node)
+		return
+	for k: Node in kids:
+		_open(k as Node3D, out, depth - 1)
+
+
+static func _count(tree: SceneTree, rid: RID) -> int:
+	for i in 3:
+		await tree.process_frame
+	await RenderingServer.frame_post_draw
+	return RenderingServer.viewport_get_render_info(rid, RenderingServer.VIEWPORT_RENDER_INFO_TYPE_VISIBLE,
+		RenderingServer.VIEWPORT_RENDER_INFO_PRIMITIVES_IN_FRAME)
