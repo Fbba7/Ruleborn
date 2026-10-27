@@ -255,6 +255,11 @@ static func inked(ci: CanvasItem, font: Font, at: Vector2, text: String, size_px
 ## A count badge: a red disc with its number in paper (or a glyph), outlined
 ## in ink, so it never rests on colour alone (§20.8).
 static func badge(ci: CanvasItem, centre: Vector2, text: String) -> void:
+	badge_words(ci, badge_box(ci, centre, text), text)
+
+
+## A count badge's disc, drawn; returns where its words go.
+static func badge_box(ci: CanvasItem, centre: Vector2, text: String) -> Rect2:
 	var font := words_font()
 	var size_px := UI.text_px(13.0)
 	var w := font.get_string_size(text, HORIZONTAL_ALIGNMENT_CENTER, -1, size_px).x
@@ -262,7 +267,14 @@ static func badge(ci: CanvasItem, centre: Vector2, text: String) -> void:
 	var half := maxf(0.0, w * 0.5 - r * 0.55)
 	var box := Rect2(centre - Vector2(r + half, r), Vector2((r + half) * 2.0, r * 2.0))
 	baked_plate(ALARM_FILL, r).draw(ci.get_canvas_item(), box)
-	var base := centre.y + font.get_ascent(size_px) * 0.5 - font.get_descent(size_px) * 0.35
+	return box
+
+
+## A count badge's words on its disc (`badge_box`).
+static func badge_words(ci: CanvasItem, box: Rect2, text: String) -> void:
+	var font := words_font()
+	var size_px := UI.text_px(13.0)
+	var base := box.get_center().y + font.get_ascent(size_px) * 0.5 - font.get_descent(size_px) * 0.35
 	ci.draw_string(font, Vector2(box.position.x, base), text, HORIZONTAL_ALIGNMENT_CENTER, box.size.x, size_px,
 		Color.WHITE)
 

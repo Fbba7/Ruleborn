@@ -401,6 +401,12 @@ func _show_lods() -> void:
 			fine.visible = zoom == 2 and id != "heart"
 	_show_close()
 	UniverseWhole.show(statics, _whole, zoom == 0)
+	# Only the realm the camera is on casts the sun's shadow: its neighbours'
+	# fall out of frame or too small to see, and each caster is drawn again.
+	for id: String in _rocks:
+		for mi: Node in (_rocks[id] as Node3D).get_children():
+			(mi as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON \
+				if id == focus_id else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# The citadel larger over the whole universe, so the Heart reads first
 	# from afar as the designs' home draws it; life-sized for the realm zooms.
 	var citadel := statics.get_node_or_null("Citadel") as Node3D
