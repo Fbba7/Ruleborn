@@ -801,6 +801,12 @@ a short list of revoked ids) is what makes sign-out mean it.
 Each was looked at and judged not worth a change now; each is one line to
 pick up later.
 
+- **The Android secure store's library.** `secure_store.gd`'s contract
+  names `EncryptedSharedPreferences`, which AndroidX deprecated with
+  `security-crypto` 1.1.0 in 2025. The plugin is not in the repository yet;
+  when it is written, a Keystore AES-GCM key (non-exportable, as the
+  contract says) wrapping the value, or Tink over DataStore, is the current
+  advice. T11's.
 - **Deletion in the game takes the access token alone.** `DELETE
   /v1/account` (and `PUT /v1/age` to under 13) ends the account on the
   session's token, with no fresh proof; ASVS V3.7 asks a sensitive action
