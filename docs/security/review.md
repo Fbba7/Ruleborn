@@ -597,3 +597,30 @@ What was tried and found sound, so the next reader need not try it again.
 - Each fixed finding's test was run against the code before its fix and
   failed, then passed after it. The tests of the owner's and T11's items
   pin the behaviour as it stands, so they pass until the fix.
+
+## Stopped here
+
+Twenty findings: one High, eleven Medium, eight Low.
+
+- **Fixed (12):** SR-01 (High); SR-02, SR-03, SR-07, SR-17 and SR-19
+  (Medium); SR-04, SR-05, SR-06, SR-08, SR-13 and SR-18 (Low). Each has a
+  test that failed before its fix and passes after.
+- **Needs the owner (6):** SR-12, SR-15 and SR-16 (Medium); SR-09, SR-10
+  and SR-14 (Low). Each test pins the behaviour as it stands; the decision
+  turns it round. SR-15 and SR-16 are the register's D60, G60 and G61,
+  open with the build left. The others are the build against a rule
+  (§12.15, §20.2, §17.7 with §20.7) or a rule without its number (§18.9's
+  cap), so no new register item was added: the register tracks the
+  document, and these are written up here with their choices.
+- **Sent to T11 (2):** SR-11 and SR-20, with their tests in
+  `server/test/security_t11.test.mjs`, and a note on what sign-out has to
+  do. T11's branch was not on the remote when this was written.
+
+Not reviewed in depth: the client's screens (`client/scripts/*_screen.gd`,
+`client/ui/**`, `client/world/**`) beyond what they open, run or log;
+`tools/` beyond its supply chain; the design document's own security
+statements against each other.
+
+What would be done next: SR-15 and SR-16 with the economy build (TC.12);
+the hold measurement off the request thread; a cap on realm snapshots like
+the Workshop's quota; and the client's event queue.
