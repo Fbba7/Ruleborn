@@ -25,6 +25,7 @@ func run() -> void:
 	_icons()
 	await _tab_words()
 	await _small_disc()
+	await _pieces()
 
 
 func _tokens() -> void:
@@ -199,3 +200,50 @@ func _small_disc() -> void:
 	await tree.process_frame
 	check.call("a round action can draw its disc smaller than its hit area, which stays 48 points (§21.1)",
 		hit and drawn, said)
+
+
+## The pieces this wave added, each built on a phone-sized screen: every
+## button they hold is 48 points or more (§21.1), every word 13 points or
+## more (§21.8), and each sits inside the screen at 200% text (§20.8).
+func _pieces() -> void:
+	var bad := []
+	var was := Settings.text_scale
+	var picture := Icons.texture("screens/heist")
+	for scale: int in [100, 200]:
+		Settings.text_scale = scale
+		var screen := Control.new()
+		screen.size = Vector2(1080, 2340)
+		tree.root.add_child(screen)
+		var column := UI.frame(screen)
+		var none := func() -> void: pass
+		var pieces: Array[Control] = [
+			KitHud.loot([["Room", "1,840"], ["Left", "2,600"]], 0.6, 0.8, "Load to 80%"),
+			KitHud.sage(picture, "The Archivist", "Cast", none),
+			KitHud.crew(picture, "Pip", 0.8, 1, none, "motion"),
+			KitSocial.avatar(null, "KO", "Kofi", "Raiding", "alarm", none),
+			KitSocial.feed_row(null, "LE", "Lea", "Challenge", "gold", "40 min", "Sent you her Lantern Vale.", picture,
+				"Play", none),
+			KitCards.album_card("laws/bounce", "Brittle stone", "matter", "common", "In Skyfield", "10"),
+			KitCards.product(picture, "Emote", "Tip of the Hat", "120", none),
+			KitPanels.album("motion", "Motion", "Chapter I", "3 of 4", Control.new()),
+		]
+		for piece: Control in pieces:
+			column.add_child(piece)
+		for i: int in 3:
+			await tree.process_frame
+		var least := UI.px(UI.CONTROL_POINTS) - 0.5
+		for piece: Control in pieces:
+			for b: Node in piece.find_children("*", "Button", true, false):
+				var r := (b as Button).get_global_rect()
+				if minf(r.size.x, r.size.y) < least:
+					bad.append("%d%% %s button %s" % [scale, piece.name, r.size])
+			for l: Node in piece.find_children("*", "Label", true, false):
+				if (l as Label).get_theme_font_size("font_size") < UI.text_px(13) - 0.5 and (l as Label).text != "":
+					bad.append("%d%% %s '%s' small" % [scale, piece.name, (l as Label).text])
+			if piece.get_global_rect().end.x > screen.size.x + 0.5:
+				bad.append("%d%% %s past the screen's edge" % [scale, piece.name])
+		screen.queue_free()
+		await tree.process_frame
+	Settings.text_scale = was
+	check.call("the loot panel, Sage, crew key, friend, feed row, album card, product and album meet 48 points and "
+			+ "13 points and stay on the screen at 200% text (§21.1, §21.8, §20.8)", bad.is_empty(), "; ".join(bad))
