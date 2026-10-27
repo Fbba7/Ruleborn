@@ -38,7 +38,9 @@ decision).
 | SR-10 | Low | server | A minor's monthly cap holds only on the client's word | needs the owner |
 | SR-14 | Low | server | A crew is anyone's who holds its invite, a 13-to-15's too | needs the owner |
 | SR-11 | Low | server | The ID token that signs in also deletes the account, at once | fixed by T11 |
-| SR-20 | Low | server | A caller can keep Game Center sign-in failing | sent to T11 |
+| SR-20 | Low | server | A caller can keep Game Center sign-in failing | fixed by T11 |
+| SR-21 | Medium | server | The web deletion page refused every browser once deployed | fixed |
+| SR-22 | Low | server | A player's own answers carried no word against caching | fixed |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -301,6 +303,40 @@ decision).
   10, open at once. The client has the words for all five refusals. No
   honest player reaches any of them.
 - **Status:** fixed.
+
+### SR-21 — The web deletion page refused every browser once deployed (Medium)
+
+- **Where:** `server/src/auth_http.mjs` `deleteByGoogle`, behind the listener
+  in `server/src/main.mjs`.
+- **What:** the CSRF check compared the browser's `Origin` with the request
+  URL's origin. `main.mjs` rebuilds every URL as `http://localhost` plus the
+  path, so the URL's origin is never the page's: every real browser (which
+  sends `Origin` on every POST) was refused `403 cross_site`. §20.5's
+  deletion "from a web page", which Google Play requires of an app with
+  accounts, never worked once deployed. The tests built their requests on
+  `https://edge.example`, where the two agree, so none saw it.
+- **Fix:** the check compares the `Origin`'s host with the `Host` header
+  the proxy passed on (falling back to the URL's host where there is none).
+  A foreign site still cannot pass: the victim's browser sends the real
+  `Host` and the foreign `Origin`. The scheme is not compared: the server
+  is HTTPS-only behind its proxy (HSTS). 4 lines in T11's file; T11 told
+  here.
+- **Test:** `server/test/security_config.test.mjs` (SR-21), with requests
+  made as `main.mjs` makes them; it failed before the fix.
+
+### SR-22 — A player's own answers carried no word against caching (Low)
+
+- **Where:** `server/src/http.mjs` `handler`.
+- **What:** only the session routes answered `Cache-Control: no-store`.
+  Every other answer — a balance, a friends list, a profile — went out with
+  no caching word, so any cache between phone and server (a corporate
+  proxy, an edge rule that caches everything) was free to keep and serve
+  it. OWASP's ASVS (V8.2.1) asks for anti-caching headers on sensitive
+  data.
+- **Fix:** an answer that says nothing of caching says `no-store`; bundles,
+  target lists and pages keep their own rules. 2 lines.
+- **Test:** `server/test/security_config.test.mjs` (SR-22); it failed
+  before the fix.
 
 ## Needs the owner
 
