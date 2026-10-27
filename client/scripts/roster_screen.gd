@@ -244,6 +244,16 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 	var role_name := StageHeroKit.kicker(Strings.term("ROLE", str(c.get("role", ""))))
 	role_name.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	role.add_child(role_name)
+	# Its health beside its role, as the design's: the simulation's number.
+	var numbers: Dictionary = RulebornReplay.role_numbers().get(str(c.get("role", "")), {})
+	var health := int(numbers.get("health", -1))
+	if health >= 0:
+		var spacer := Control.new()
+		spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		role.add_child(spacer)
+		var heart := StageHeroKit.chip("%d" % health, "card", "♥")
+		heart.accessibility_name = Strings.t("CHARACTER_STAT_SPOKEN", [Strings.t("CHARACTER_STAT_HEALTH"), str(health)])
+		role.add_child(heart)
 	hero_info.add_child(role)
 	var top := maxi(1, int(c.get("top", 1)))
 	hero_info.add_child(StageHeroBar.make(float(c.get("level", 1)) / float(top), Color("#3FBF7F"), "", 12.0))
