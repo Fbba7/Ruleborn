@@ -15,6 +15,8 @@ static var _toon: Shader = load("res://world/toon.gdshader")
 
 var view: StageView
 var houses: MeshInstance3D
+## The buildings' fine parts (windows, frames, flags), drawn without ink.
+var trim: MeshInstance3D
 ## Each building as drawn: {kind, at, side, level, mid}, for taps and pins.
 var placed: Array[Dictionary] = []
 ## Smoke from the chimneys and the ring under a chosen building.
@@ -36,6 +38,9 @@ func _init(on: StageView) -> void:
 	houses = MeshInstance3D.new()
 	houses.material_override = WorldView.material(_toon, true)
 	add_child(houses)
+	trim = MeshInstance3D.new()
+	trim.material_override = WorldView.material(_toon)
+	add_child(trim)
 	smoke = MeshInstance3D.new()
 	smoke.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var m := StandardMaterial3D.new()
@@ -63,12 +68,15 @@ func build(buildings: Array[Dictionary], colours: Dictionary, producers: Array, 
 	_puffs.clear()
 	choose({})
 	var g := Geo.new()
+	var fine := Geo.new()
 	for b: Dictionary in buildings:
 		var at: Vector2i = b["at"]
 		var side: int = b["side"]
 		var corner := view.tile_point(at)
 		var mid := corner + Vector3((side - 1) / 2.0, 0, (side - 1) / 2.0)
-		BuildingKit.build(g, str(b["kind"]), mid, side, int(b["level"]), colours)
+		# The kit's mid level at the home camera (§21.3), its fine parts
+		# without the ink line.
+		BuildingKit.build(g, str(b["kind"]), mid, side, int(b["level"]), colours, fine, null, 0.0, BuildingKit.MID)
 		# A doorstep of flagstones, so a building sits on the realm.
 		g.box(Geo.place(mid + Vector3(0, 0.02, side * 0.5)), Vector3(0.5, 0.04, 0.3), colours["stone"])
 		var shown := b.duplicate()
@@ -78,6 +86,7 @@ func build(buildings: Array[Dictionary], colours: Dictionary, producers: Array, 
 			var w := side - 0.32
 			_puffs.append(mid + Vector3(w * 0.25, 1.75, 0))
 	houses.mesh = g.mesh()
+	trim.mesh = fine.mesh()
 	for p: Dictionary in producers:
 		var home := _find(str(p["kind"]))
 		if home.is_empty():

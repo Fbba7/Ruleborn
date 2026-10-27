@@ -15,6 +15,9 @@ const MIN_TRIANGLES := 600
 ## How much more detail the kit keeps than the characters at the same size:
 ## round trees and bushes show their facets long before a body does.
 const KIT_BIAS := 8.0
+## A character's body at the home camera: a few dozen pixels tall, read by
+## its silhouette and colours, it takes its lower levels sooner than the kit.
+const SKINNED_BIAS := 0.4
 ## The shaders of the broad shapes that simplify freely: the island's
 ## ground and rim, and the town's buildings.
 const PLAIN_SHADERS := ["look_ground.gdshader", "kit_ground.gdshader", "toon.gdshader"]
@@ -50,7 +53,7 @@ static func apply(root: Node) -> int:
 
 
 ## `mesh` with lower-detail levels, or `mesh` itself where it has them
-## already, is skinned or blended, or is too small to gain.
+## already, is blended, or is too small to gain.
 static func of(mesh: Mesh) -> Mesh:
 	if mesh == null or not (mesh is ArrayMesh):
 		return mesh
@@ -79,6 +82,9 @@ static func of(mesh: Mesh) -> Mesh:
 ## one mesh across the island) keep more detail than the ground and the
 ## buildings, since a round crown shows its facets first.
 static func _bias(mi: MeshInstance3D) -> float:
+	# A character's body reads by its silhouette and colours, not its facets.
+	if mi.skin != null or mi.get_parent() is Skeleton3D:
+		return SKINNED_BIAS
 	var mat := mi.material_override
 	if mat == null and mi.mesh.get_surface_count() > 0:
 		mat = mi.mesh.surface_get_material(0)
@@ -113,9 +119,10 @@ static func _worth(mesh: ArrayMesh) -> bool:
 	for s: int in mesh.get_surface_count():
 		if mesh.surface_get_primitive_type(s) != Mesh.PRIMITIVE_TRIANGLES:
 			return false
+		# A skinned mesh simplifies too: a level is only another index over
+		# the same vertices, so its bones and weights ride along (the
+		# characters at the home camera are a few dozen pixels tall).
 		var arrays := mesh.surface_get_arrays(s)
-		if arrays[Mesh.ARRAY_BONES] != null:
-			return false
 		var idx: Variant = arrays[Mesh.ARRAY_INDEX]
 		var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 		triangles += (idx as PackedInt32Array).size() / 3 if idx != null else verts.size() / 3
