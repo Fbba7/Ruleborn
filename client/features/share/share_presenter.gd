@@ -25,6 +25,7 @@ static func screen(slice: Dictionary, band: String) -> Dictionary:
 	out["invitation"] = invitation(invite) if not invite.is_empty() else ""
 	out["copy_invite"] = {} if invite.is_empty() else {"key": "copy_invite", "item": "copy_invite",
 		"action": Strings.t("SHARE_COPY_INVITE"), "spoken": Strings.t("SHARE_COPY_INVITE"), "can": true, "why": ""}
+	out["code"] = str(link.get("challenge", "")).to_upper()
 	if link.is_empty():
 		out["link"] = Strings.t("SHARE_NO_LINK")
 		out["copy"] = {}
