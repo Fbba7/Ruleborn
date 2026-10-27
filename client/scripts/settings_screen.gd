@@ -58,7 +58,7 @@ func _layout() -> void:
 			"icon": "generalui/settings"},
 		{"text": Strings.t("SCREEN_SETTINGS_ACCESS"), "key": "access", "on": tab_shown == "access",
 			"icon": "settingsandwellbeing/accessibility"},
-		{"text": Strings.t("AUTH_TAB"), "key": "account", "on": tab_shown == "account",
+		{"text": Strings.t("SCREEN_SETTINGS_ACCOUNT"), "key": "account", "on": tab_shown == "account",
 			"icon": "settingsandwellbeing/account"}],
 		func(key: String) -> void:
 			tab_shown = key
@@ -89,26 +89,28 @@ func _layout() -> void:
 	account.add_child(AuthPanel.new())
 
 	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_ACCESS")))
-	var size_name := Strings.t("SETTINGS_TEXT_SIZE", Settings.text_scale)
-	text_label = ScreenKit.text(size_name, 15.0, "words", "card")
-	var steps := Settings.text_steps()
-	access.add_child(_stepper("textsize", text_label, text_step.bind(-1), text_step.bind(1),
-		Strings.t("SETTINGS_SMALLER", size_name), Strings.t("SETTINGS_LARGER", size_name), "text",
-		float(steps.find(Settings.text_scale)) / float(maxi(steps.size() - 1, 1))))
+	access.add_child(_text_card())
 	var hold_name := Strings.t("SETTINGS_HOLD", seconds(Settings.hold_ms))
 	var holds := Settings.hold_steps()
 	access.add_child(_stepper("remindertime", ScreenKit.text(hold_name, 15.0, "words", "card"), hold_step.bind(-1),
 		hold_step.bind(1), Strings.t("SETTINGS_SHORTER", hold_name), Strings.t("SETTINGS_LONGER", hold_name), "hold",
 		float(holds.find(Settings.hold_ms)) / float(maxi(holds.size() - 1, 1))))
+	# The design's "Seeing and comfort": the switches as rows of one card.
+	var comfort := VBoxContainer.new()
+	comfort.add_theme_constant_override("separation", 0)
 	for toggle: Array in [
 			["high_contrast", "SETTINGS_CONTRAST", "accessibility"], ["reduced_motion", "SETTINGS_MOTION", "reducedmotion"],
 			["haptics", "SETTINGS_HAPTICS", "haptics"], ["left_handed", "SETTINGS_LEFT_HANDED", "lefthanded"],
 			["banners_stay", "SETTINGS_BANNERS_STAY", "notifications"],
 			["camera_buttons", "SETTINGS_CAMERA_BUTTONS", "accessibility"]]:
-		access.add_child(_toggle(toggle[0], toggle[1], toggle[2]))
-	var profile := ScreenKit.button(Strings.t("HOME_PROFILE"), func() -> void: App.services.router.go(&"profile"),
-		"leather")
-	column.add_child(ScreenNav.dock(&"home", [profile]))
+		if comfort.get_child_count() > 0:
+			comfort.add_child(_divider())
+		comfort.add_child(_toggle(toggle[0], toggle[1], toggle[2], true))
+	access.add_child(ScreenKit.panel("card", comfort, 18.0, 4.0))
+	# The profile row and the privacy note under T11's panel (ScreenAccount).
+	account.add_child(ScreenAccount.profile_row())
+	account.add_child(ScreenAccount.privacy_note())
+	column.add_child(ScreenNav.dock(&"home"))
 
 
 ## A setting with steps: its icon, its words over a bar of where it stands,
@@ -135,10 +137,13 @@ func _stepper(icon: String, words: Label, down: Callable, up: Callable, spoken_d
 
 
 ## A switch as a whole row: the setting's icon, its words, and the switch
-## drawn at its end; the row is the one control.
-func _toggle(setting: String, words: String, icon: String) -> Control:
+## drawn at its end; the row is the one control, framed, or a row of a card.
+func _toggle(setting: String, words: String, icon: String, in_card := false) -> Control:
 	var on := Settings.flag(setting)
 	var b := ScreenKit.button(Strings.t(words + ("_ON" if on else "_OFF")), flip.bind(setting), "card", "", 16.0)
+	# A row of a card: the card's fill behind it, no frame of its own.
+	if in_card and RbBox.of(b) != null:
+		RbBox.of(b).visible = false
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	var tex := ScreenKit.icon_texture("settingsandwellbeing", icon)
 	if tex != null:
@@ -159,6 +164,68 @@ func _toggle(setting: String, words: String, icon: String) -> Control:
 	b.add_child(sw)
 	b.set_meta("on", on)
 	return _tag(b, setting)
+
+
+## §20.8's text size as the design's card: a small A and a large A either
+## side of the size in large figures over a dot a step, and a law's card in
+## the size chosen, to read before leaving.
+func _text_card() -> Control:
+	var steps := Settings.text_steps()
+	var at := steps.find(Settings.text_scale)
+	var size_name := Strings.t("SETTINGS_TEXT_SIZE", Settings.text_scale)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	var smaller := _tag(ScreenKit.button(Strings.t("SCREEN_TEXT_A"), text_step.bind(-1), "leather",
+		Strings.t("SETTINGS_SMALLER", size_name), 14.0), "text-")
+	smaller.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(smaller)
+	var mid := VBoxContainer.new()
+	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	mid.add_theme_constant_override("separation", UI.px(6))
+	text_label = ScreenKit.inked(ScreenKit.text("%d%%" % Settings.text_scale, 34.0, "number", "card"), 2.0)
+	text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text_label.accessibility_name = size_name
+	mid.add_child(text_label)
+	var dots := HBoxContainer.new()
+	dots.alignment = BoxContainer.ALIGNMENT_CENTER
+	dots.add_theme_constant_override("separation", UI.px(5))
+	for i: int in steps.size():
+		var dot := ScreenKit.panel("gold" if i == at else "well", null, -1.0, 0.0)
+		dot.custom_minimum_size = Vector2(UI.px(22 if i == at else 9), UI.px(9))
+		dots.add_child(dot)
+	mid.add_child(dots)
+	row.add_child(mid)
+	var larger := _tag(ScreenKit.button(Strings.t("SCREEN_TEXT_A"), text_step.bind(1), "leather",
+		Strings.t("SETTINGS_LARGER", size_name), 14.0), "text+")
+	larger.add_theme_font_size_override("font_size", UI.text_px(26))
+	larger.set_meta("points", 26.0)
+	larger.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(larger)
+	var sample := HBoxContainer.new()
+	sample.add_theme_constant_override("separation", UI.px(10))
+	var mark := ScreenKit.icon("laws", "stillness", 40.0)
+	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	sample.add_child(mark)
+	var words := VBoxContainer.new()
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.add_theme_constant_override("separation", 0)
+	words.add_child(ScreenKit.text(Strings.term("LAW", "stillness"), 20.0, "name", "parchment", false, true))
+	words.add_child(ScreenKit.text(Strings.t("LAW_RULE_STILLNESS"), 13.0, "body", "parchment", false, true))
+	sample.add_child(words)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UI.px(12))
+	box.add_child(row)
+	box.add_child(ScreenKit.panel("parchment", sample, 14.0, 10.0))
+	return ScreenKit.panel("card", box, 18.0, 12.0)
+
+
+## A hairline between a card's rows.
+static func _divider() -> Control:
+	var line := ColorRect.new()
+	line.color = Color(1, 1, 1, 0.08)
+	line.custom_minimum_size.y = maxf(1.0, UI.px(1))
+	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return line
 
 
 func _tag(b: Button, setting: String) -> Button:

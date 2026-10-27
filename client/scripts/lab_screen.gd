@@ -66,6 +66,9 @@ func _refresh() -> void:
 		body.remove_child(child)
 		child.queue_free()
 	if not l["ready"]:
+		if l["error"] != "":
+			(status_label.get_parent() as Control).visible = false
+			body.add_child(ScreenParts.empty("screens", "resonancelab", l["error"], controller.load_lab))
 		return
 	ScreenParts.set_resource(_aether, str(l.get("aether", "")))
 	var busy: bool = l["busy"] != ""
@@ -132,6 +135,10 @@ func _chamber(c: Dictionary, busy: bool) -> Control:
 			var s: Dictionary = items[i]
 			# A tap moves the sphere to the next restored law.
 			var b := ScreenKit.button(s["text"], controller.cycle.bind(n, int(s["slot"])), "well", s["spoken"], 14.0)
+			# Quiet under its gem, as the running pair's names are.
+			b.add_theme_font_size_override("font_size", UI.text_px(13))
+			b.set_meta("points", 13.0)
+			UI.fit(b)
 			b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			b.custom_minimum_size.x = UI.px(96)
 			b.disabled = busy
@@ -186,59 +193,63 @@ func _sphere(o: Dictionary, busy: bool) -> Control:
 	return ScreenParts.item("harmony", "chord", Strings.t("LAB_SPHERE_TITLE"), "", right)
 
 
-## What the Lab has found, by mark and name; how many are hinted; and how
-## many remain in each school (§8.6).
+## The design's resonance grid: one numbered tile for each the Lab has
+## found (its mark and name on parchment), the hinted (a lit question and how
+## many), and each school's still to find (its mark, dimmed, and how many); the section
+## counts found of all (§8.6).
 func _shelf(l: Dictionary) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", UI.px(8))
-	box.add_child(ScreenParts.section(Strings.t("LAB_FOUND_TITLE"), str((l.get("finds", []) as Array).size())))
+	var finds: Array = l.get("finds", [])
+	var remaining: Dictionary = l.get("remaining", {})
+	var total := finds.size() + int(l.get("hinted", 0))
+	for school: String in remaining:
+		total += int(remaining[school])
+	box.add_child(ScreenParts.section(Strings.t("LAB_FOUND_TITLE"), "%d / %d" % [finds.size(), total]))
 	var grid := GridContainer.new()
-	grid.columns = ScreenParts.grid_columns(3)
+	grid.columns = ScreenParts.grid_columns(4)
 	grid.add_theme_constant_override("h_separation", UI.px(6))
 	grid.add_theme_constant_override("v_separation", UI.px(6))
-	for f: Dictionary in l.get("finds", []):
-		var col := VBoxContainer.new()
-		col.add_theme_constant_override("separation", UI.px(2))
-		var mark := ScreenKit.icon("harmony", "chord" if f["kind"] == "chord" else "resonance", 44.0)
-		mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		col.add_child(mark)
-		var name := ScreenKit.text(f["name"], 13.0, "words", "parchment", false, true)
-		name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		col.add_child(name)
-		var tile := ScreenKit.panel("parchment", col, 14.0, 6.0)
-		tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		grid.add_child(tile)
+	var n := 0
+	for f: Dictionary in finds:
+		n += 1
+		grid.add_child(_tile(n, ScreenKit.icon("harmony", "chord" if f["kind"] == "chord" else "resonance", 40.0),
+			f["name"], "parchment"))
 	if int(l.get("hinted", 0)) > 0:
-		var hint := VBoxContainer.new()
-		var q := ScreenKit.icon("harmony", "unknownlaw", 44.0)
-		q.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		hint.add_child(q)
-		var words := ScreenKit.text(Strings.t("LAB_HINTED", int(l["hinted"])), 13.0, "words", "well", true, true)
-		words.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		hint.add_child(words)
-		var tile2 := ScreenKit.panel("well", hint, 14.0, 6.0)
-		tile2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		grid.add_child(tile2)
+		n += 1
+		var hint := _tile(n, ScreenKit.icon("harmony", "unknownlaw", 40.0), "× %d" % int(l["hinted"]), "card_lit",
+			Strings.t("LAB_HINTED", int(l["hinted"])))
+		grid.add_child(hint)
+	for school: String in remaining:
+		var coin := ScreenCoin.make("school:" + school.to_lower(), 34.0)
+		coin.modulate.a = 0.55
+		var said := Strings.t("LAB_REMAINING_SCHOOL", [Strings.t("SCHOOL_" + school.to_upper()),
+			int(remaining[school])])
+		grid.add_child(_tile(0, coin, "× %d" % int(remaining[school]), "well", said))
 	box.add_child(grid)
-	if (l.get("finds", []) as Array).is_empty():
+	if finds.is_empty():
 		box.add_child(ScreenKit.text(Strings.t("LAB_FOUND_NONE"), 13.0, "body", "card", true, true))
-	var remaining: Dictionary = l.get("remaining", {})
-	if not remaining.is_empty():
-		box.add_child(ScreenParts.section(Strings.t("SCREEN_LAB_REMAINING")))
-		var row := ScreenParts.flow(6.0)
-		for school: String in remaining:
-			var p := HBoxContainer.new()
-			p.add_theme_constant_override("separation", UI.px(4))
-			p.add_child(ScreenCoin.make("school:" + school.to_lower(), 24.0))
-			var count := ScreenKit.text(str(int(remaining[school])), 17.0, "number", "well")
-			p.add_child(count)
-			var plate := ScreenKit.panel("well", p, -1.0, 4.0)
-			plate.tooltip_text = Strings.t("LAB_REMAINING_SCHOOL", [Strings.t("SCHOOL_" + school.to_upper()),
-				int(remaining[school])])
-			count.accessibility_name = plate.tooltip_text
-			row.add_child(plate)
-		box.add_child(row)
-	return ScreenKit.panel("card", box, 18.0, 12.0)
+	return box
+
+
+## A tile of the grid: its number in the corner (none for a school's count),
+## its mark, its words; `said` what a screen reader says for it.
+func _tile(n: int, mark: Control, words: String, material: String, said := "") -> PanelContainer:
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", UI.px(2))
+	var number := ScreenKit.text("%02d" % n if n > 0 else " ", 13.0, "number", material, true)
+	col.add_child(number)
+	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	col.add_child(mark)
+	var name := ScreenKit.text(words, 13.0, "words", material, material == "well", true)
+	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	col.add_child(name)
+	var tile := ScreenKit.panel(material, col, 14.0, 6.0)
+	tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	if said != "":
+		tile.tooltip_text = said
+		name.accessibility_name = said
+	return tile
 
 
 ## A paid run's first tap shows its price to confirm; the second spends it.

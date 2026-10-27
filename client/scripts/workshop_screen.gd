@@ -9,6 +9,9 @@ extends Control
 ## store; Services' `workshop_flow` asks, so leaving mid-call loses nothing.
 
 const ASPECTS := ["fun", "cleverness", "fairness"]
+## Each list's icon in the strip.
+const TAB_ICONS := {"top": "leagues/nova", "new": "generalui/new", "featured": "hud/star",
+	"mine": "screens/islandworkshop"}
 
 var controller: WorkshopController
 var body: VBoxContainer
@@ -96,8 +99,14 @@ func _refresh() -> void:
 	if w["ladder"] != "":
 		body.add_child(ScreenParts.item("leagues", "star", w["ladder"], "", null, "card_lit"))
 	if w["empty"]:
-		body.add_child(ScreenParts.item("screens", "islandworkshop",
+		body.add_child(ScreenParts.empty("screens", "islandworkshop",
 			Strings.t("WORKSHOP_EMPTY_" + str(w["list"]).to_upper())))
+	elif (w["items"] as Array).is_empty() and w["error"] != "":
+		# A list that could not come: the reason on the list's own card, with
+		# a way to ask again.
+		(status_label.get_parent() as Control).visible = false
+		body.add_child(ScreenParts.empty("screens", "islandworkshop", Errors.message("WORKSHOP_FAILED", w["error"]),
+			controller.show_list.bind(str(w["list"]))))
 	for item: Dictionary in w["items"]:
 		body.add_child(_card(item, w["busy"]))
 	if focus_key != "":
@@ -107,19 +116,17 @@ func _refresh() -> void:
 				break
 
 
-## The lists the player may open. The list on show is marked in the
-## button's words and border, and said aloud as shown — never by disabling
-## it, which would read as unavailable.
-func _tabs(names: Array[String], on_show: String) -> HFlowContainer:
-	var row := ScreenParts.flow(6.0)
+## The lists the player may open, as the design's strip, each its icon over
+## its word; at large text, chips that wrap. The list on show is marked in
+## the strip, and said aloud as shown.
+func _tabs(names: Array[String], on_show: String) -> Control:
+	var options: Array = []
 	for list: String in names:
-		var chosen := list == on_show
-		var b := ScreenParts.chip(("▸" if chosen else "") + Strings.t("WORKSHOP_TAB_" + list.to_upper()), chosen,
-			controller.show_list.bind(list), "", "", Strings.t("WORKSHOP_TAB_SHOWN" if chosen else "WORKSHOP_TAB_SHOW",
-				Strings.t("WORKSHOP_LIST_" + list.to_upper())))
-		b.set_meta("key", "tab:" + list)
-		row.add_child(b)
-	return row
+		options.append({"text": Strings.t("WORKSHOP_TAB_" + list.to_upper()), "key": list, "on": list == on_show,
+			"icon": TAB_ICONS.get(list, "screens/islandworkshop")})
+	return ScreenParts.segmented(options, func(list: String) -> void:
+		if list != on_show:
+			controller.show_list(list))
 
 
 ## An island as the design's card: its mark, its name and realm level, who
@@ -127,33 +134,8 @@ func _tabs(names: Array[String], on_show: String) -> HFlowContainer:
 ## be done with it.
 func _card(item: Dictionary, busy: bool) -> Control:
 	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", UI.px(6))
-	var head := HBoxContainer.new()
-	head.add_theme_constant_override("separation", UI.px(10))
-	head.add_child(ScreenKit.panel("track", ScreenKit.icon("screens", "realm", 40.0), 14.0, 4.0))
-	var words := VBoxContainer.new()
-	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	words.add_theme_constant_override("separation", 0)
-	words.add_child(ScreenKit.text(item["title"], 17.0, "name", "card", false, true))
-	if item["by"] != "":
-		words.add_child(ScreenKit.text(item["by"], 13.0, "words", "card", true, true))
-	head.add_child(words)
-	box.add_child(head)
-	var tags := ScreenParts.flow(4.0)
-	if item["featured"] != "":
-		tags.add_child(ScreenParts.pill(item["featured"], "cream", "hud", "star"))
-	if item["remix"] != "":
-		tags.add_child(ScreenParts.pill(item["remix"], "well", "realmactions", "rotate"))
-	if tags.get_child_count() > 0:
-		box.add_child(tags)
-	# Plays and remixes as counts, and §18.6's three ratings as figures.
-	var counts := ScreenParts.flow(4.0)
-	counts.add_child(ScreenParts.pill("%s %s" % [item["completions"], Strings.t("SCREEN_PLAYS")], "well", "heistoutcomes",
-		"clean"))
-	counts.add_child(ScreenParts.pill("%s %s" % [item["remixes"], Strings.t("SCREEN_REMIXES")], "well", "realmactions",
-		"rotate"))
-	counts.tooltip_text = item["stats"]
-	box.add_child(counts)
+	box.add_theme_constant_override("separation", UI.px(8))
+	box.add_child(_cover(item))
 	if item["rated"]:
 		var figures: Array = []
 		for aspect: String in ASPECTS:
@@ -161,8 +143,16 @@ func _card(item: Dictionary, busy: bool) -> Control:
 		var row := ScreenParts.columns(figures, 4.0)
 		row.tooltip_text = item["ratings"]
 		box.add_child(row)
-	if not item["rated"]:
+	else:
 		box.add_child(ScreenKit.text(item["ratings"], 13.0, "words", "card", true, true))
+	# Plays and remixes as counts.
+	var counts := ScreenParts.flow(4.0)
+	counts.add_child(ScreenParts.pill("%s %s" % [item["completions"], Strings.t("SCREEN_PLAYS")], "well", "heistoutcomes",
+		"clean"))
+	counts.add_child(ScreenParts.pill("%s %s" % [item["remixes"], Strings.t("SCREEN_REMIXES")], "well", "realmactions",
+		"rotate"))
+	counts.tooltip_text = item["stats"]
+	box.add_child(counts)
 	for key: String in ["withdrawn", "removed"]:
 		if item[key] != "":
 			box.add_child(ScreenParts.pill(item[key], "well", "generalui", "info", 13.0, "words", true))
@@ -205,7 +195,42 @@ func _card(item: Dictionary, busy: bool) -> Control:
 		box.add_child(main)
 	if safety.get_child_count() > 0:
 		box.add_child(safety)
-	return ScreenKit.panel("card", box, 18.0, 12.0)
+	return ScreenKit.panel("card", box, 18.0, 10.0)
+
+
+## The island's cover, as the design's card heads it: its name over a lit
+## band with the realm's mark, who made it, and its featured and remix tags.
+func _cover(item: Dictionary) -> Control:
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", UI.px(4))
+	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", UI.px(10))
+	var words := VBoxContainer.new()
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.add_theme_constant_override("separation", 0)
+	var title := ScreenKit.inked(ScreenKit.text(item["name"], 20.0, "name", "card_lit", false, true), 2.0)
+	title.tooltip_text = item["title"]
+	words.add_child(title)
+	if item["by"] != "":
+		words.add_child(ScreenKit.text(item["by"], 13.0, "words", "card_lit", true, true))
+	head.add_child(words)
+	var mark := ScreenKit.icon("screens", "realm", 52.0)
+	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	head.add_child(mark)
+	col.add_child(head)
+	var tags := ScreenParts.flow(4.0)
+	tags.add_child(ScreenParts.pill(item["level"], "well", "screens", "realm"))
+	if item["featured"] != "":
+		tags.add_child(ScreenParts.pill(item["featured"], "cream", "hud", "star"))
+	col.add_child(tags)
+	# The remix tag on its own line, where its words may wrap at large text.
+	if item["remix"] != "":
+		var remix := ScreenParts.pill(item["remix"], "well", "realmactions", "rotate", 13.0, "words",
+			Settings.text_scale > 125)
+		if Settings.text_scale <= 125:
+			remix.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		col.add_child(remix)
+	return ScreenKit.panel("card_lit", col, 14.0, 12.0)
 
 
 ## §17.8: the first tap asks, the second blocks.
@@ -243,6 +268,12 @@ func _act(key: String, text: String, pressed: Callable, busy: bool, spoken: Stri
 		14.0)
 	b.disabled = busy
 	b.set_meta("key", key)
+	# The safety actions (why, report, block) quieter and smaller than the
+	# card's own, so they share a line.
+	if material == "ghost":
+		b.add_theme_font_size_override("font_size", UI.text_px(13))
+		b.set_meta("points", 13.0)
+		UI.fit(b)
 	return b
 
 
