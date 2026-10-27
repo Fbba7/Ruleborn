@@ -37,6 +37,16 @@ uniform float deco_scale = 0.0;
 uniform float deco_glow = 0.0;
 // Pebbles strewn over the grass, as the design's meadow has them.
 uniform vec4 pebble : source_color = vec4(0.62, 0.58, 0.6, 1.0);
+// The Heart's clock-dial plaza round the Spire, as the design's heist draws
+// it (02-heist): centre xz, radius in metres, and 1 to draw it (0 none).
+uniform vec4 dial = vec4(0.0);
+uniform vec4 dial_face : source_color = vec4(1.0, 0.88, 0.96, 1.0);
+uniform vec4 dial_ink : source_color = vec4(0.48, 0.35, 0.6, 1.0);
+uniform vec4 dial_line : source_color = vec4(0.6, 0.48, 0.72, 1.0);
+// Each hour's numeral as its letters, base 4, last letter lowest: 1 I, 2 V,
+// 3 X; XII first, then clockwise.
+const int NUMERALS[12] = int[12](3 * 16 + 1 * 4 + 1, 1, 5, 21, 1 * 4 + 2, 2, 2 * 4 + 1, 2 * 16 + 1 * 4 + 1,
+	2 * 64 + 21, 1 * 4 + 3, 3, 3 * 4 + 1);
 varying vec3 wpos;
 varying float up;
 
@@ -47,6 +57,56 @@ void vertex() {
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+float segment(vec2 p, vec2 a, vec2 b) {
+	vec2 ab = b - a;
+	return length(p - a - ab * clamp(dot(p - a, ab) / dot(ab, ab), 0.0, 1.0));
+}
+
+// How far `p` (in a numeral's own frame, letters `h` tall, centred) is from
+// the strokes of hour `k`'s Roman numeral.
+float numeral(vec2 p, int k, float h) {
+	int code = NUMERALS[k];
+	int letters[4] = int[4](0, 0, 0, 0);
+	int n = 0;
+	float width = 0.0;
+	for (int i = 0; i < 4; i++) {
+		if (code == 0) {
+			break;
+		}
+		letters[i] = code - (code / 4) * 4;
+		code /= 4;
+		width += (letters[i] == 1 ? 0.0 : 0.6) * h + (n > 0 ? 0.3 * h : 0.0);
+		n++;
+	}
+	// The letters were read last first: lay them from the right.
+	float x = width * 0.5;
+	float best = 9.0;
+	for (int i = 0; i < 4; i++) {
+		if (i >= n) {
+			break;
+		}
+		int l = letters[i];
+		float w = l == 1 ? 0.0 : 0.6 * h;
+		float cx = x - w * 0.5;
+		vec2 q = p - vec2(cx, 0.0);
+		float hh = h * 0.5;
+		if (l == 1) {
+			best = min(best, segment(q, vec2(0.0, -hh), vec2(0.0, hh)));
+		} else if (l == 2) {
+			best = min(best, segment(q, vec2(-w * 0.5, hh), vec2(0.0, -hh)));
+			best = min(best, segment(q, vec2(w * 0.5, hh), vec2(0.0, -hh)));
+		} else {
+			best = min(best, segment(q, vec2(-w * 0.5, hh), vec2(w * 0.5, -hh)));
+			best = min(best, segment(q, vec2(-w * 0.5, -hh), vec2(w * 0.5, hh)));
+		}
+		x -= w + 0.3 * h;
+	}
+	// A serif bar over and under the whole numeral, as the dial's lettering.
+	best = min(best, segment(p, vec2(-width * 0.5 - 0.1 * h, h * 0.5), vec2(width * 0.5 + 0.1 * h, h * 0.5)));
+	best = min(best, segment(p, vec2(-width * 0.5 - 0.1 * h, -h * 0.5), vec2(width * 0.5 + 0.1 * h, -h * 0.5)));
+	return best;
 }
 
 float vnoise(vec2 p) {
@@ -101,9 +161,9 @@ void fragment() {
 		float m = smoothstep(0.3, 0.8, lush) * (1.0 - cliff);
 		c *= mix(1.0, mix(0.8, 1.12, cushion) * (0.94 + 0.12 * mc.z), m);
 	}
-	// A worn trail as the design's lanes: a chain of rounded flat stones laid
-	// one after another along it, each with a lit top and a shaded foot, on a
-	// narrow strip of trodden earth with a rim of worn grass.
+	// A worn trail as the design's lanes: rounded flat stones three abreast,
+	// each with a lit top and a shaded foot, on a strip of trodden earth with
+	// a rim of worn grass.
 	if (lane_count > 0 && up > 0.6) {
 		float best = 9.0;
 		float along = 0.0;
@@ -129,28 +189,28 @@ void fragment() {
 		float wob = (vnoise(p * 5.0) - 0.5) * 0.05;
 		float d = best + wob;
 		float off_path = 1.0 - smoothstep(0.4, 0.46, path);
-		float rim = 1.0 - smoothstep(0.28, 0.38, d);
-		float earth = 1.0 - smoothstep(0.23, 0.26, d);
+		float rim = 1.0 - smoothstep(0.38, 0.48, d);
+		float earth = 1.0 - smoothstep(0.33, 0.36, d);
 		c = mix(c, c * 0.84, rim * (1.0 - earth) * grassy);
 		vec3 dirt = lane_earth.rgb * (0.86 + 0.14 * vnoise(p * 6.0));
 		c = mix(c, dirt, earth * off_path * (1.0 - cliff));
-		// The stones, as the design's pebble lanes (02-heist): two rows of
-		// round stones laid staggered, one every 0.3 m in each row, each
-		// nudged aside a little.
+		// The stones, as the design's pebble lanes (02-heist): a broad ribbon
+		// three stones abreast, the rows staggered, one every 0.3 m in each
+		// row, each nudged aside a little.
 		float step_len = 0.3;
-		float row = step(0.0, side);
+		float row = clamp(floor((side + 0.3) / 0.2), 0.0, 2.0);
 		float shift = along / step_len + row * 0.5;
 		float k = floor(shift);
 		float h1 = hash(vec2(k + row * 31.0, which));
 		vec2 q = vec2(fract(shift) - 0.5 + (h1 - 0.5) * 0.12, 0.0) * step_len;
-		q.y = side - (row * 2.0 - 1.0) * 0.105 - (hash(vec2(which, k + 3.1 + row * 7.0)) - 0.5) * 0.05;
-		vec2 e = q / vec2(0.135, 0.105 + 0.02 * h1);
+		q.y = side - (row - 1.0) * 0.2 - (hash(vec2(which, k + 3.1 + row * 7.0)) - 0.5) * 0.04;
+		vec2 e = q / vec2(0.135, 0.095 + 0.02 * h1);
 		float r = length(e);
-		float stone_in = (1.0 - smoothstep(0.86, 1.0, r)) * (1.0 - smoothstep(0.24, 0.27, abs(side)));
+		float stone_in = (1.0 - smoothstep(0.86, 1.0, r)) * (1.0 - smoothstep(0.32, 0.35, abs(side)));
 		float lit = clamp(0.5 - e.y * 0.35 + 0.35 * (1.0 - r), 0.0, 1.0);
 		vec3 slab = mix(cobble.rgb, lane_earth.rgb, 0.3) * (0.92 + 0.12 * h1) * mix(0.84, 1.12, lit);
 		float shade = (1.0 - smoothstep(0.95, 1.18, r)) * (1.0 - stone_in);
-		float on_lane = off_path * (1.0 - cliff) * step(best, 0.32);
+		float on_lane = off_path * (1.0 - cliff) * step(best, 0.42);
 		c = mix(c, c * 0.72, shade * on_lane * 0.6);
 		c = mix(c, slab, stone_in * on_lane);
 		grassy *= 1.0 - max(earth, stone_in * on_lane);
@@ -170,6 +230,52 @@ void fragment() {
 		float kerb = smoothstep(0.43, 0.47, path + wob) * (1.0 - smoothstep(0.47, 0.53, path + wob));
 		c = mix(c, pathC, inside_);
 		c = mix(c, mortar.rgb * 0.8, kerb * 0.7);
+	}
+	// The Heart's clock dial round the Spire (02-heist): a pale face, a
+	// double rim, sixty ticks, the twelve Roman hours, and an inner ring of
+	// twelve pink and cyan wedges round the Spire's terrace.
+	if (dial.w > 0.0 && up > 0.6) {
+		vec2 dv = p - dial.xy;
+		float rr = length(dv) / dial.z;
+		float px = (fwidth(p.x) + fwidth(p.y)) / dial.z;
+		float face = 1.0 - smoothstep(1.0 - px, 1.0 + px, rr);
+		if (face > 0.0) {
+			// Clockwise from north (−z), as the dial is read from the south.
+			float ang = atan(dv.x, -dv.y);
+			float turn = fract(ang / 6.2831853 + 1.0);
+			vec3 fc = dial_face.rgb * (0.97 + 0.04 * n1);
+			if (rr < 0.5) {
+				float wedge = mod(floor(turn * 12.0), 2.0);
+				fc = mix(fc, wedge > 0.5 ? vec3(0.61, 0.92, 0.95) : vec3(0.97, 0.65, 0.85), wedge > 0.5 ? 0.35 : 0.3);
+			}
+			float ink = 0.0;
+			ink = max(ink, 1.0 - smoothstep(0.014, 0.014 + px, abs(rr - 0.976)));
+			ink = max(ink, 1.0 - smoothstep(0.005, 0.005 + px, abs(rr - 0.84)));
+			ink = max(ink, 1.0 - smoothstep(0.005, 0.005 + px, abs(rr - 0.5)));
+			// Ticks: every minute short, every fifth long and bold.
+			float tick = turn * 60.0;
+			float ti = floor(tick + 0.5);
+			bool major = mod(ti, 5.0) < 0.5;
+			float across = abs(tick - ti) * 6.2831853 / 60.0 * rr;
+			float tlen = major ? 0.08 : 0.036;
+			float tw = major ? 0.009 : 0.004;
+			float in_tick = (1.0 - smoothstep(tw, tw + px, across)) * step(0.84 - tlen, rr) * step(rr, 0.84);
+			ink = max(ink, in_tick);
+			vec3 line_c = dial_line.rgb;
+			// The hour's numeral, upright to the south camera.
+			float hour = floor(turn * 12.0 + 0.5);
+			float ha = hour / 12.0 * 6.2831853;
+			vec2 at_ = vec2(sin(ha), -cos(ha)) * 0.68 * dial.z;
+			vec2 lp = vec2(dv.x - at_.x, -(dv.y - at_.y));
+			float nh = 0.105 * dial.z;
+			float dn = numeral(lp, int(mod(hour, 12.0)), nh);
+			float numer = (1.0 - smoothstep(0.045 * nh, 0.045 * nh + px * dial.z, dn)) * 0.85;
+			fc = mix(fc, line_c, ink);
+			fc = mix(fc, dial_ink.rgb, numer);
+			c = mix(c, fc, face);
+			grassy *= 1.0 - face;
+			path *= 1.0 - face;
+		}
 	}
 	// Pebbles in the grass: a few small stones, lit above, shaded below.
 	vec3 pb = cells(p * 2.6 + 11.0);

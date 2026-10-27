@@ -72,7 +72,10 @@ static func look(lvl: int, colours: Dictionary) -> Array[Color]:
 		return [Color("#ECE6FF"), (s["roof"] as Color).lerp(Color("#8C6CF0"), 0.35).lightened(0.1), KitStyle.GOLD]
 	if lvl >= 4:
 		return [s["wall"], s["roof"], s["accent"]]
-	return [(s["wall"] as Color).lerp(Color("#E8D4B0"), 0.5), KitStyle.THATCH, KitStyle.WOOD]
+	# The first look's thatch is dyed the realm's roof colour, so a realm reads
+	# by its roofs at every level, as the design draws its towns (02-heist:
+	# the Heart's houses all under magenta).
+	return [(s["wall"] as Color).lerp(Color("#E8D4B0"), 0.5), KitStyle.THATCH.lerp(s["roof"], 0.8), KitStyle.WOOD]
 
 
 ## Building `kind` of `side` tiles a side, centred on `mid` on the ground,
@@ -486,7 +489,9 @@ func _pad() -> void:
 	# (kit_toon) leaves the pad as bright as the design's.
 	var was := d.anim
 	d.anim = Color(0, origin.y - 1.0, 0, 0)
-	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.8 * unit, 0.76 * unit, 0.04 * unit, earth.darkened(0.16), false, earth)
+	# The design's pad is 0.62 of the footprint's side out (:979); ours a
+	# little more, as our buildings fill more of their footprint.
+	d.prism(place(0, 0.0, 0, PI / 8.0), 8, 0.7 * unit, 0.67 * unit, 0.04 * unit, earth.darkened(0.16), false, earth)
 	d.anim = was
 
 

@@ -315,7 +315,7 @@ func _build_statics() -> void:
 	RealmKit.by_hour(statics, look.hour)
 	# The Vault, the pylons and the wards change as the heist goes, so each
 	# is its own piece.
-	_vault = _instance(PieceKit.vault(false), RealmKit.material("toon", true))
+	_vault = _instance(PieceKit.vault(false, realm_type), RealmKit.material("toon", true))
 	statics.add_child(_vault)
 	_pieces = _instance(null, RealmKit.material("toon", true))
 	statics.add_child(_pieces)
@@ -739,7 +739,7 @@ func _sync_pieces() -> void:
 		_vault.position = world_at(v["at"])
 		var open: bool = v["open"]
 		if _vault.get_meta("open", false) != open:
-			_vault.mesh = PieceKit.vault(open)
+			_vault.mesh = PieceKit.vault(open, realm_type)
 			_vault.set_meta("open", open)
 	FxGround.pieces(self)
 	var walls := replay.walls()
