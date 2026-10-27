@@ -76,14 +76,14 @@ func _build() -> void:
 		hero = VBoxContainer.new()
 	hero.add_theme_constant_override("separation", UI.px(8))
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(UI.px(150), UI.px(185))
+	stage.custom_minimum_size = Vector2(UI.px(150), UI.px(160))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stage.size_flags_stretch_ratio = 0.9
 	hero.add_child(stage)
 	hero_info = VBoxContainer.new()
 	hero_info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hero_info.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	hero_info.add_theme_constant_override("separation", UI.px(5))
+	hero_info.add_theme_constant_override("separation", UI.px(3))
 	hero.add_child(hero_info)
 	hero_card = StageHeroMaterial.panel("rim", hero, 18.0, 4.0)
 	body.add_child(padded(hero_card))
@@ -226,7 +226,7 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 	var state := StageHeroKit.chip(str(row.get("line", "")), "glass", "characterstates/" + str(row.get("state", "")))
 	state.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	hero_info.add_child(state)
-	var name_label := StageHeroKit.words(str(row.get("name", "")), 28.0, StageHeroSkin.LIGHT)
+	var name_label := StageHeroKit.words(str(row.get("name", "")), 24.0, StageHeroSkin.LIGHT)
 	StageHeroSkin.named(name_label)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD
