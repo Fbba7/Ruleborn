@@ -126,11 +126,16 @@ func _realm(r: Dictionary) -> Control:
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	band.add_child(title)
-	if on:
-		var sounding := ScreenParts.pill(Strings.t("SCREEN_HARMONY_SOUNDING"), "gold", "", "", 12.0)
-		sounding.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		band.add_child(sounding)
 	box.add_child(band)
+	if on:
+		var sounding := ScreenParts.pill(Strings.t("SCREEN_HARMONY_SOUNDING"), "gold", "", "", 13.0)
+		sounding.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		# Beside the name; under it at large text, where both do not fit.
+		if Settings.text_scale <= 125:
+			band.add_child(sounding)
+		else:
+			sounding.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+			box.add_child(sounding)
 	var i := 0
 	for line: String in r["laws"]:
 		var shown: Array = r["shown"]
