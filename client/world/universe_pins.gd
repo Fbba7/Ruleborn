@@ -45,11 +45,16 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 		# The fault's mark over its realm, whose name is on the realm's own pin.
 		plate.add_child(_with_icon("band_fault", _words("ϟ", Palette.ON_ALARM)))
 		_pins.append({"node": plate, "realm": str(f), "lift": 3.5, "zooms": [0, 1, 2], "rank": 0})
+	# Home says the raids and what is ready in its own interface (the raid
+	# notice, Collect), so over its whole universe only the realms are named,
+	# as the designs' home names them.
+	var quiet := bool(extras.get("quiet", false))
 	var raids := int(extras.get("raids", 0))
 	if raids > 0:
 		var plate := _plate(Palette.ALARM_FILL, Palette.ALARM_FILL)
 		plate.add_child(_with_icon("alert_raided", _words("! %d" % raids, Palette.ON_ALARM)))
-		_pins.append({"node": plate, "realm": "heart", "lift": 6.0, "zooms": [0, 1, 2], "rank": 0})
+		_pins.append({"node": plate, "realm": "heart", "lift": 6.0, "zooms": [1, 2] if quiet else [0, 1, 2],
+			"rank": 0})
 	for p: Dictionary in extras.get("producers", []):
 		var kind := str(p.get("kind", ""))
 		var stored := int(p.get("stored", 0))
@@ -66,7 +71,7 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 		# Over the whole universe only a full producer is pinned, as the
 		# designs pin a realm's label only once it is nearly full.
 		_pins.append({"node": plate, "realm": str(p.get("realm", "")), "building": kind, "lift": 0.0,
-			"zooms": [0, 1, 2] if full else [1, 2], "rank": 2})
+			"zooms": [0, 1, 2] if full and not quiet else [1, 2], "rank": 2})
 	# A gold arrow over each building the server says can be raised now: a
 	# price met and nothing in the way (§10.2's `next`, unblocked).
 	for r: Dictionary in universe.get("realms", []):
@@ -109,25 +114,40 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 ## a tap swoops to it. Not a button: the screen's own list carries each realm
 ## for a screen reader, and the island itself takes the same tap.
 func _realm_pin(id: String, title: String, level: int, school: Color, key: String) -> PanelContainer:
-	# The design's label: a parchment plate edged in ink, the realm's icon,
-	# its name in Marcellus in brown ink, its level on a dark disc after it.
-	var plate := _plate(PARCHMENT, Palette.INK)
-	var box := plate.get_theme_stylebox("panel") as StyleBoxFlat
-	box.set_border_width_all(UI.px(2))
-	box.border_color = school.darkened(0.55)
-	box.shadow_color = Color(0.04, 0.02, 0.03, 0.55)
-	box.shadow_size = 0
-	box.shadow_offset = Vector2(0, UI.px(3))
+	# The design's label: a parchment plate edged in brown ink, the realm's
+	# icon, its name in Marcellus in brown ink, its level on a dark disc after
+	# it. Only the name is a node that draws; the plate, icon, disc and level
+	# are drawn by the pins together (`_draw`), so the seven labels cost the
+	# frame a handful of draw calls, not forty (§21.3).
+	var plate := PanelContainer.new()
+	var box := StyleBoxEmpty.new()
+	box.content_margin_left = UI.px(4)
+	box.content_margin_right = UI.px(4)
+	box.content_margin_top = UI.px(2)
+	box.content_margin_bottom = UI.px(2)
+	plate.add_theme_stylebox_override("panel", box)
+	plate.set_meta("behind", [PARCHMENT])
+	plate.set_meta("school", school)
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation", UI.px(5))
-	row.add_child(_icon("realm_" + key))
+	row.add_theme_constant_override("separation", UI.px(4))
+	var icon := Control.new()
+	icon.custom_minimum_size = Vector2.ONE * UI.text_px(POINTS) * 1.35
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	icon.set_meta("icon", load("res://world/universe_icons/realm_%s.svg" % key))
+	row.add_child(icon)
 	var name := _words(title, BROWN_INK)
 	name.add_theme_font_override("font", Tokens.font("title"))
-	name.add_theme_font_size_override("font_size", UI.text_px(POINTS + 1.0))
+	name.add_theme_font_size_override("font_size", UI.text_px(POINTS - 1.0))
 	row.add_child(name)
-	var badge := _plate(BROWN_INK, BROWN_INK, true)
-	badge.add_child(_words(str(level), PARCHMENT))
+	var digits := str(level)
+	var badge := Control.new()
+	var w := UI.bold_font().get_string_size(digits, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(POINTS)).x
+	badge.custom_minimum_size = Vector2(maxf(w + UI.px(10), UI.text_px(POINTS) * 1.3), UI.text_px(POINTS) * 1.3)
+	badge.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	badge.set_meta("digits", digits)
+	badge.accessibility_name = digits
 	row.add_child(badge)
 	plate.add_child(row)
 	plate.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -136,6 +156,37 @@ func _realm_pin(id: String, title: String, level: int, school: Color, key: Strin
 		if _tapped(e):
 			view.choose(id))
 	return plate
+
+
+## The realm labels' plates, discs, icons and levels, each kind drawn in one
+## run across every label so the runs batch: one texture per run.
+func _draw() -> void:
+	var plates: Array[Control] = []
+	for p: Dictionary in _pins:
+		var node: Control = p["node"]
+		if node.visible and node.has_meta("school") and not node.is_queued_for_deletion():
+			plates.append(node)
+	var ci := get_canvas_item()
+	var edge := Color("#6B4420")
+	var plate := UniverseHud.baked_box(PARCHMENT, edge, UI.px(2.0), UI.text_px(POINTS) * 0.6,
+		Color(0.04, 0.02, 0.03, 0.55), UI.px(3.0))
+	for node: Control in plates:
+		plate.draw(ci, Rect2(node.position, node.size))
+	var parts := func(node: Control, at: int) -> Rect2:
+		var c := node.get_child(0).get_child(at) as Control
+		return Rect2(c.global_position - global_position, c.size)
+	var disc := UniverseHud.baked_box(BROWN_INK, BROWN_INK, 0.0, UI.text_px(POINTS) * 0.6, Color(0, 0, 0, 0), 0)
+	for node: Control in plates:
+		disc.draw(ci, parts.call(node, 2))
+	for node: Control in plates:
+		var r: Rect2 = parts.call(node, 0)
+		draw_texture_rect(node.get_child(0).get_child(0).get_meta("icon"), r, false)
+	var font := UI.bold_font()
+	var px := UI.text_px(POINTS)
+	for node: Control in plates:
+		var r: Rect2 = parts.call(node, 2)
+		draw_string(font, Vector2(r.position.x, r.get_center().y + font.get_ascent(px) * 0.36),
+			str(node.get_child(0).get_child(2).get_meta("digits")), HORIZONTAL_ALIGNMENT_CENTER, r.size.x, px, PARCHMENT)
 
 
 ## A finger or the mouse lifted off a pin.
@@ -166,22 +217,21 @@ static func _with_icon(name: String, words: Label) -> HBoxContainer:
 	return row
 
 
-## A rounded plate in `fill`, edged in `edge`.
-static func _plate(fill: Color, edge: Color, disc := false) -> PanelContainer:
+## A rounded plate in `fill`, edged in `edge`, baked (UniverseHud.baked_box)
+## so each costs the frame one draw call; it says what its words sit on.
+static func _plate(fill: Color, edge: Color, disc := false, line := 1.5, shade := Color(0, 0, 0, 0.35),
+		under := 1.0) -> PanelContainer:
 	var p := PanelContainer.new()
-	var box := StyleBoxFlat.new()
-	box.bg_color = Color(fill, maxf(fill.a, 0.9)) if fill.a > 0.5 else fill
-	box.border_color = edge
-	box.set_border_width_all(UI.px(1.5))
-	box.set_corner_radius_all(UI.px(20))
+	var solid := Color(fill, maxf(fill.a, 0.9)) if fill.a > 0.5 else fill
+	var radius := minf(UI.px(20), UI.text_px(POINTS) * 0.6)
+	var box := UniverseHud.baked_box(solid, edge, UI.px(line), radius, shade, UI.px(under)).duplicate() \
+		as StyleBoxTexture
 	box.content_margin_left = UI.px(6 if disc else 8)
 	box.content_margin_right = UI.px(6 if disc else 8)
 	box.content_margin_top = UI.px(2)
 	box.content_margin_bottom = UI.px(2)
-	box.shadow_color = Color(0, 0, 0, 0.35)
-	box.shadow_size = UI.px(2)
-	box.shadow_offset = Vector2(0, UI.px(1))
 	p.add_theme_stylebox_override("panel", box)
+	p.set_meta("behind", [solid])
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return p
 
@@ -201,6 +251,7 @@ static func _words(text: String, colour: Color) -> Label:
 func follow() -> void:
 	if view.camera == null or not view.camera.is_inside_tree():
 		return
+	queue_redraw()
 	var toward := view.toward()
 	var taken: Array[Rect2] = []
 	# Pins keep clear of the screen's own controls (home's side buttons).
@@ -266,13 +317,23 @@ static func _place(node: Control, s: Vector2, taken: Array[Rect2], screen: Array
 		var lo := UI.px(4)
 		var hi := wide - UI.px(4)
 		var lowest := -1.0
+		var above := INF
 		for r: Rect2 in screen:
 			if r.position.y < node.position.y + node.size.y and r.end.y > node.position.y:
-				if r.get_center().x < wide * 0.5:
+				# A control across the middle (home's Collect, the raid card):
+				# the pin rises above it.
+				if r.position.x < wide * 0.5 and r.end.x > wide * 0.5:
+					if r.position.x < node.position.x + node.size.x and r.end.x > node.position.x:
+						above = minf(above, r.position.y)
+					continue
+				elif r.get_center().x < wide * 0.5:
 					lo = maxf(lo, r.end.x + UI.px(2))
 				else:
 					hi = minf(hi, r.position.x - UI.px(2))
 				lowest = maxf(lowest, r.end.y)
+		if above < INF:
+			node.position.y = above - node.size.y - UI.px(2)
+			continue
 		if hi - lo >= node.size.x:
 			node.position.x = clampf(node.position.x, lo, hi - node.size.x)
 			break
@@ -282,10 +343,12 @@ static func _place(node: Control, s: Vector2, taken: Array[Rect2], screen: Array
 				node.position.x = clampf(node.position.x, UI.px(4), wide - node.size.x - UI.px(4))
 			break
 		node.position.y = lowest + UI.px(2)
-	# Where it would cover another, a step down or up, else not at all.
+	# Where it would cover another, a step down or up, else not at all; never
+	# onto the screen's own controls.
 	for step: float in [0.0, 1.0, -1.0]:
 		var box := Rect2(node.position + Vector2(0.0, step * (node.size.y + UI.px(2))), node.size).grow(-UI.px(2))
-		if not taken.any(func(other: Rect2) -> bool: return other.intersects(box)):
+		if not taken.any(func(other: Rect2) -> bool: return other.intersects(box)) \
+				and not screen.any(func(other: Rect2) -> bool: return other.intersects(box)):
 			node.position = box.grow(UI.px(2)).position
 			taken.append(box)
 			return

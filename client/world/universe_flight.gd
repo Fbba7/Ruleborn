@@ -103,7 +103,7 @@ func _debris_build() -> void:
 
 ## Rocks round their islands at `now` seconds.
 func drift(now: float) -> void:
-	time = now
+	time = 0.0 if Settings.reduced_motion else now
 	if _debris == null:
 		return
 	var mm := _debris.multimesh
@@ -124,7 +124,9 @@ func _sparks_build() -> void:
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.use_colors = true
 	mm.mesh = quad.mesh()
-	var n := _skiffs.size() * WAKE + _streams.size() * 10 + 2 * 14 + 3
+	var n := _skiffs.size() * WAKE + 2 * 14 + 3
+	for st: Dictionary in _streams:
+		n += int(st.get("lights", 10))
 	mm.instance_count = n
 	_sparks = MultiMeshInstance3D.new()
 	_sparks.multimesh = mm
@@ -139,15 +141,19 @@ func _sparks_build() -> void:
 
 ## Skiffs along their links, the wake behind each, the rifts' streams and
 ## the comets.
+## Under reduced motion (§20.8) each keeps a still form: the skiffs moored
+## part way along their links with no wake, the links' lights standing where
+## they are, the comets gone.
 func fly(now: float) -> void:
-	time = now
+	var still := Settings.reduced_motion
+	time = 0.0 if still else now
 	if _sparks == null:
 		return
 	var mm := _sparks.multimesh
 	var i := 0
 	for s: Dictionary in _skiffs:
 		var node: MeshInstance3D = s["node"]
-		var t := time * float(s["speed"]) + float(s["phase"])
+		var t := 0.3 + float(s["phase"]) if still else time * float(s["speed"]) + float(s["phase"])
 		var p := _skiff_at(s, t)
 		var ahead := _skiff_at(s, t + 0.01)
 		node.position = p
@@ -155,6 +161,12 @@ func fly(now: float) -> void:
 		if d.length() > 0.0001:
 			node.rotation = Vector3(sin(time * 1.3 + float(s["phase"]) * 9.0) * 0.06, atan2(-d.z, d.x), d.y * 0.4)
 		var wake: Array[Vector3] = s["wake"]
+		if still:
+			wake.clear()
+			for k in WAKE:
+				mm.set_instance_transform(i, Transform3D(Basis().scaled(Vector3.ZERO), p))
+				i += 1
+			continue
 		wake.push_front(p + Vector3(0, 0.5, 0))
 		if wake.size() > WAKE * 2:
 			wake.pop_back()
@@ -166,15 +178,22 @@ func fly(now: float) -> void:
 			i += 1
 	for st: Dictionary in _streams:
 		var path: Array[Vector3] = st["path"]
-		for k in 10:
-			var u := fmod(time * 0.45 + k / 10.0, 1.0)
-			var at := path[mini(int(u * (path.size() - 1)), path.size() - 1)]
-			var c: Color = st["colour"] if k % 2 else Color.WHITE
-			mm.set_instance_transform(i, Transform3D(Basis().scaled(Vector3.ONE * 0.8), at
-				+ Vector3(0, 0, sin(u * PI * 4.0 + time * 3.0) * 0.6)))
-			mm.set_instance_color(i, Color(c, sin(u * PI) * 0.9))
+		var lights := int(st.get("lights", 10))
+		# A rift's stream runs and weaves; a link's few lights walk its deck.
+		var walk := lights < 10
+		for k in lights:
+			var u := fmod(time * (0.08 if walk else 0.45) + (k + 0.5) / lights, 1.0)
+			var f := u * (path.size() - 1)
+			var j := mini(int(f), path.size() - 2)
+			var at := path[j].lerp(path[j + 1], f - j)
+			var c: Color = st["colour"] if k % 2 or walk else Color.WHITE
+			var weave := 0.0 if walk else sin(u * PI * 4.0 + time * 3.0) * 0.6
+			mm.set_instance_transform(i, Transform3D(Basis().scaled(Vector3.ONE * (1.1 if walk else 0.8)), at
+				+ Vector3(0, 0, weave)))
+			mm.set_instance_color(i, Color(c, sin(u * PI) * (0.85 if walk else 0.9)))
 			i += 1
-	i = _fly_comets(mm, i)
+	if not still:
+		i = _fly_comets(mm, i)
 	while i < mm.instance_count:
 		mm.set_instance_transform(i, Transform3D(Basis().scaled(Vector3.ZERO), Vector3.ZERO))
 		i += 1
