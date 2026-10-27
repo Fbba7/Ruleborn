@@ -4,7 +4,10 @@ extends LawFxPreview
 ## draw calls on the screen): the realm's pylons and the threads, clashes
 ## and chords between them as LawFxPreview draws them, without the sun's
 ## shadow pass or the figure walking its loop, which say nothing about how
-## laws combine.
+## laws combine. Weaving keeps the figure (`walking`), whose gait shows the
+## law about to be woven, and drops only the shadow pass.
+
+var walking := false
 
 
 func show_laws(which: Array, type := "heart") -> void:
@@ -14,4 +17,4 @@ func show_laws(which: Array, type := "heart") -> void:
 		return
 	view.sun.shadow_enabled = false
 	if walker != null:
-		walker.visible = false
+		walker.visible = walking
