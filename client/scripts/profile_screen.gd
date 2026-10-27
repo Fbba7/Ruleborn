@@ -134,16 +134,13 @@ func _hero(p: Dictionary) -> Control:
 	return ScreenKit.panel("card_lit", box, 18.0, 12.0)
 
 
-## Heists by outcome as one bar split by count, each outcome named with its
-## mark and number; defences held and leaked beside.
+## Heists and defences under their heading: the design's two cards, each a
+## ring of its share with its counts named beneath.
 func _split(p: Dictionary) -> Control:
 	var counts: Dictionary = p["counts"]
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", UI.px(8))
-	var heists := ScreenKit.text(p["heists"], 15.0, "words", "card")
-	heists.set_meta("heist_split", true)
-	heists.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	box.add_child(heists)
+	box.add_child(ScreenParts.section(Strings.t("SCREEN_PROFILE_RECORD")))
 	var colours := {"clean": Color("#3FBF7F"), "loud": Color("#F2A03C"), "partial": Color("#3CC6D8"),
 		"foiled": Color("#E2536B")}
 	# The design's two cards side by side: heists as a ring of the share that
@@ -171,10 +168,11 @@ func _split(p: Dictionary) -> Control:
 			_counts([[Strings.t("SCREEN_HELD"), kept, "alerts", "defencewon"],
 				[Strings.t("SCREEN_LEAKED"), int(held.get("leaked", 0)), "alerts", "raided"],
 				[Strings.term("GRADE", "partial"), int(held.get("partial", 0)), "heistoutcomes", "partial"]]))]
+	# Each card's whole count in words, for a screen reader and a long press.
+	(cards[0] as Control).tooltip_text = p["heists"]
+	(cards[1] as Control).tooltip_text = p["defences"]
 	box.add_child(ScreenParts.columns(cards, 8.0))
-	var said := ScreenKit.text(p["defences"], 13.0, "words", "card", true, true)
-	box.add_child(said)
-	return ScreenKit.panel("card", box, 18.0, 12.0)
+	return box
 
 
 ## A card the design's way: its mark and name, a ring of `part` of `whole`
