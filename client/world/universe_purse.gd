@@ -25,10 +25,15 @@ var _full := {}
 
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_theme_constant_override("h_separation", UI.px(6))
+	add_theme_constant_override("h_separation", UI.px(4))
 	add_theme_constant_override("v_separation", UI.px(6))
 	for k: String in ORDER:
 		var p := KitStatus.resource("resources/" + k, "–", 0.0, UniverseHud.RESOURCES[k])
+		# Tighter at the right than the kit's pill, so "FULL 61.0k" sits in a
+		# third of the phone as the designs' row has it.
+		var pad := p.get_theme_stylebox("panel").duplicate() as StyleBox
+		pad.content_margin_right = UI.px(6)
+		p.add_theme_stylebox_override("panel", pad)
 		p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		pills[k] = p

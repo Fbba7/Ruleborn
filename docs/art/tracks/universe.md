@@ -415,3 +415,10 @@ settings survive home's `Settings.restore()`.
   name's own width (it had hidden the other tabs' names at 100%: "FRIENDS" is 164 px in 174, and a margin of
   my own had called it cut). Still: `r37_fit_compare_01.png` (design, ours, design raid, ours raid, ours in
   German at 200% on a 9:16 phone).
+- Round 38: the three worst were FULL dropped from the resource row at 100% (the kit pill's right padding: 995
+  of 984 px), realm labels under the side buttons at 150% (in Portuguese "TEMPORADA" and "DEFESA" cover
+  Skyfield and Crystalline), and the boxed tab bar (T9's). Fixed the first two: the purse's pills take 6
+  points at the right, not 10, and 4 between, so "FULL 142.0k" sits in its third; a realm label keeps to the
+  gap between the side buttons on its row, or steps below them, and hides where there is no free place
+  (`UniversePins._place`); the side buttons' rectangles are re-read whenever they move (they had been read
+  as the column sorted, before the buttons inside it had theirs).

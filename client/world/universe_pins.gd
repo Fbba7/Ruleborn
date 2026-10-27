@@ -256,18 +256,32 @@ func follow() -> void:
 		_place(node, view.camera.unproject_position(at), taken, taken_by_screen)
 
 
-## A pin centred on `s`, moved out from under any of `screen`'s controls,
+## A pin centred on `s`, kept in the gap between `screen`'s controls on its
+## row (home's side buttons), or below them where it is wider than the gap,
 ## unless it would cover one already placed.
 static func _place(node: Control, s: Vector2, taken: Array[Rect2], screen: Array[Rect2]) -> void:
 	node.position = (s - node.size / 2.0).round()
-	for r: Rect2 in screen:
-		if r.intersects(Rect2(node.position, node.size)):
-			var left := r.get_center().x < s.x
-			node.position.x = r.end.x + UI.px(2) if left else r.position.x - node.size.x - UI.px(2)
-	# And inside the screen's edges.
 	var wide := (node.get_parent() as Control).size.x
-	if wide > node.size.x:
-		node.position.x = clampf(node.position.x, UI.px(4), wide - node.size.x - UI.px(4))
+	for attempt: int in 4:
+		var lo := UI.px(4)
+		var hi := wide - UI.px(4)
+		var lowest := -1.0
+		for r: Rect2 in screen:
+			if r.position.y < node.position.y + node.size.y and r.end.y > node.position.y:
+				if r.get_center().x < wide * 0.5:
+					lo = maxf(lo, r.end.x + UI.px(2))
+				else:
+					hi = minf(hi, r.position.x - UI.px(2))
+				lowest = maxf(lowest, r.end.y)
+		if hi - lo >= node.size.x:
+			node.position.x = clampf(node.position.x, lo, hi - node.size.x)
+			break
+		if lowest < 0.0 or attempt == 3:
+			# And inside the screen's edges.
+			if wide > node.size.x:
+				node.position.x = clampf(node.position.x, UI.px(4), wide - node.size.x - UI.px(4))
+			break
+		node.position.y = lowest + UI.px(2)
 	# Where it would cover another, a step down or up, else not at all.
 	for step: float in [0.0, 1.0, -1.0]:
 		var box := Rect2(node.position + Vector2(0.0, step * (node.size.y + UI.px(2))), node.size).grow(-UI.px(2))
