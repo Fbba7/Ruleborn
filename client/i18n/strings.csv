@@ -1177,6 +1177,8 @@ HOME_RES_STARLIGHT,Starlight,Starlight,Luz Estelar,Luz Estelar,Sternenlicht,Lumi
 HOME_RES_AETHER,Aether,Aether,Aether,Aether,Aether,Aether
 HOME_RES_ESSENCE,Essence,Essence,Essência,Essência,Essenz,Essence
 HOME_UNKNOWN,not yet known,not yet known,ainda não sabido,ainda não sabido,noch nicht bekannt,pas encore connu
+HOME_AMOUNT_THOUSANDS,%sk,%sk,%s mil,%s mil,%s Tsd.,%s k
+HOME_AMOUNT_MILLIONS,%sM,%sM,%s mi,%s M,%s Mio.,%s M
 HOME_BADGE_SPOKEN,"%s, %s new","%s, %s new","%s, %s novos","%s, %s novos","%s, %s neu","%s, %s nouveaux"
 HOME_MENU,Every screen,Every screen,Todas as telas,Todos os ecrãs,Alle Bildschirme,Tous les écrans
 HOME_MENU_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer

@@ -354,3 +354,64 @@ When the shell's bar exists, home stops adding its own (`Home.tabs`) and listens
   so the contrast check measures it against the periwinkle and finds 4.49:1; home widens it after building
   the bar. A wider outline in `KitTabs.choose` would fix it everywhere.
 - The design's tab bar runs edge to edge with the chosen tab a large raised tile; `KitTabs` is a boxed bar.
+
+## Fourth session (2026-10-26, wave four): home fits every phone, then rounds against the design
+
+Merged `claude/videogame-project-analysis-ewkkk2` (1e8619b) and `claude/ui-kit` (502b5a0). The only conflict
+was `client/i18n/strings.csv` (both sides kept; the kit rows the two merges both brought, `KIT_TAB_*`,
+`KIT_BACK`, `KIT_CLOSE`, `KIT_FULL`, `KIT_TAB_BADGE`, kept once).
+
+### Why the merged home was cut off at the right, and why the tests missed it
+
+Every container in home's column grows to its widest child's minimum, so one row too wide pushes the whole
+column (and every row in it) past the screen's right edge. The resource row was that row: three kit pills,
+each as wide as "FULL 142,050", needed 1,096 px of a 984-px column. The client's width checks mount home with
+an empty store, where every amount is a dash, so nothing was ever wide.
+
+Now (`universe_view_tests.gd`, "home fits the phone ..."): home is filled with the widest amounts (seven
+figures, every producer full, Keeper 99, Renown 99,999; `UniverseSample.fill(store, ..., most = true)`) in its
+own services, at 9:19.5 and 9:16, text at 100%, 150% and 200%, in all six catalogue columns; every visible
+control must lie inside the screen and the frame must be portrait (a headless window needs a frame after
+`root.size` before it takes; the first try measured a square window and passed for nothing).
+
+What changed so it fits:
+- the resource row (`UniversePurse`) is a flow: where the three pills will not sit on one line with Full in
+  words, the word gives way first (the line still shows full; it is still said), then the row wraps;
+- amounts past 10,000 are shown as the designs show them, "142.0k", "9.9M" (`UniverseHud.compact`, cut
+  down, never rounded up; `HOME_AMOUNT_THOUSANDS`/`_MILLIONS`); said in full;
+- the top row is a flow: strain stacks its number over the band where one line will not fit beside the
+  badge, and takes a line of its own where even that will not (`UniverseStrain.fit`); it answers taps only
+  on its pill (`_has_point`), not the row's spare width; its padding grows with the dot, which large text
+  grows (it had drawn words past its own right edge);
+- the Keeper badge moves its name and Renown chip clear of the level disc, which large text grows over them;
+- the raid notice, at 150% and more, gives its words the card's width with the mark, See and close beneath;
+- the side buttons give way when the column has no height for them (200% text on a 9:16 phone): every
+  place they lead to is on the badge's menu, and the raids are on the notice;
+- tab names that large text would cut short ("ISLA", "GESET") show as icons alone, the chosen tab keeping
+  its name if it fits; each tab is still named aloud. A workaround for `KitTabs` in `home.gd` (see T9 below).
+
+Shot `tests/shots/universe_home.gd` now takes LOCALE, CONTRAST, TALL (960 for 9:16) and MOST, and its
+settings survive home's `Settings.restore()`.
+
+### Hook in another track's file (fourth session)
+
+- `client/tests/weaving_tests.gd` (4 lines): "Weaving offers the starting laws ..." failed on every branch,
+  main included: today's era is High Tide, under which the simulation prices Slow rivers at nothing
+  (`sim/src/stability.rs`), the server recommends it first, and the test demanded a price above 0. The test
+  now accepts a free first law only when its points are 0 as well; the rest of the check is unchanged.
+
+### For T9
+
+- `KitTabs`: at 150% and 200% text the five names do not fit and are cut to fragments (`clip_text` with an
+  ellipsis that rarely shows). Home hides the other tabs' names when any would be cut; the kit doing so
+  (or a two-line name) would fix every screen with tabs.
+- `KitStatus.resource`: the pill's padding is wide enough that "FULL 142.0k" does not fit a third of the
+  phone at 100% text, where the design fits "FULL 61.0k"; home drops the word rather than run off.
+- `tools/completion.py` (1 line, fourth session): the kit lengthened the contrast test's name ("... and every
+  material's words on the stops they sit on included ..."); the proof still named the old one, so
+  check_all failed on the kit's own branch and every branch carrying it. The proof now names the test as it is.
+- Round 37 (after the green push at 00:12, f8e4918): the resource row in the designs' short amounts
+  ("142.0k"), side buttons at the 48-point minimum (from 52), and the tab-name fit measured against each
+  name's own width (it had hidden the other tabs' names at 100%: "FRIENDS" is 164 px in 174, and a margin of
+  my own had called it cut). Still: `r37_fit_compare_01.png` (design, ours, design raid, ours raid, ours in
+  German at 200% on a 9:16 phone).

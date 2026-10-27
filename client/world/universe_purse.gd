@@ -2,7 +2,8 @@ class_name UniversePurse
 extends HFlowContainer
 ## Home's full-width row of resources (§21.8's home layout): Starlight, Aether
 ## and Essence, each the UI kit's resource pill (`KitStatus.resource`) with its
-## icon, the amount held, and a line along its foot that fills as that
+## icon, the amount held (past 10,000 in thousands, as the designs show it,
+## "142.0k"; said in full), and a line along its foot that fills as that
 ## resource's producers fill (§9.3's twelve hours), marked Full in words once
 ## they are nearly full, so a player sees what is waiting to be collected. An
 ## amount the server has not given is a dash, never a guess. Where the three
@@ -43,7 +44,7 @@ func show_purse(purse: Dictionary) -> void:
 		var amount := int(r.get("amount", -1))
 		var holds := int(r.get("holds", 0))
 		var share := clampf(float(r.get("ready", 0)) / holds, 0.0, 1.0) if holds > 0 else 0.0
-		KitStatus.set_resource(pills[k], UniverseHud.grouped(amount) if amount >= 0 else "–", share)
+		KitStatus.set_resource(pills[k], UniverseHud.compact(amount) if amount >= 0 else "–", share)
 		_full[k] = share >= FULL
 		said.append(Strings.t("HOME_PURSE_SPOKEN", [Strings.t("HOME_RES_" + k.to_upper()),
 			UniverseHud.grouped(amount) if amount >= 0 else Strings.t("HOME_UNKNOWN"),

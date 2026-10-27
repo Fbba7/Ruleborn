@@ -140,3 +140,15 @@ static func badge(ci: CanvasItem, centre: Vector2, text: String) -> void:
 static func grouped(n: int) -> String:
 	return ShopPresenter.grouped(n)
 
+
+## An amount as the designs' resource row shows it: in full below 10,000, then
+## in thousands or millions to one decimal, cut down, never rounded up, so it
+## never shows more than is held ("142.0k").
+static func compact(n: int) -> String:
+	if absi(n) < 10000:
+		return grouped(n)
+	var big := absi(n) >= 1000000
+	var tenths := absi(n) / (100000 if big else 100)
+	var text := "%s%s%s%d" % ["-" if n < 0 else "", grouped(tenths / 10), Strings.t("NUMBER_DECIMAL"), tenths % 10]
+	return Strings.t("HOME_AMOUNT_MILLIONS" if big else "HOME_AMOUNT_THOUSANDS", text)
+

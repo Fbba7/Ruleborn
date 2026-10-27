@@ -22,8 +22,8 @@ const WORDS := {&"map": "HOME_MAP", &"observatory": "HOME_OBSERVATORY", &"defenc
 const LEFT := [[&"defences", "realmactions/defence", "HOME_SIDE_DEFENCE"],
 	[&"lab", "screens/resonancelab", "HOME_SIDE_LAB"]]
 const RIGHT := [[&"track", "screens/season", "HOME_SIDE_SEASON"], [&"shop", "screens/shop", "HOME_SIDE_SHOP"]]
-## The side buttons' size, as the designs draw them, over a 48-point hit area.
-const SIDE_POINTS := 52.0
+## The side buttons' size: the 48-point hit area (§21.1), the nearest it may come to the designs' smaller balls.
+const SIDE_POINTS := 48.0
 ## Where each tab goes; the Islands tab is home itself.
 const TAB_ROUTES := {"laws": &"codex", "crew": &"roster", "friends": &"friends"}
 
@@ -234,7 +234,8 @@ func _build_tabs(badges: Dictionary) -> void:
 	var chosen := tabs.buttons["islands"] as Button
 	for l: Label in chosen.find_children("*", "Label", true, false):
 		l.add_theme_constant_override("outline_size", maxi(UI.px(2), ceili(l.get_theme_font_size("font_size") * 0.13)))
-	tabs.resized.connect(_fit_tab_words, CONNECT_DEFERRED)
+	for b: Button in tabs.buttons.values():
+		b.resized.connect(_fit_tab_words, CONNECT_DEFERRED)
 
 
 ## Where large text would cut the other tabs' names short ("ISLA…"), they show
@@ -249,7 +250,7 @@ func _fit_tab_words() -> void:
 				words[key] = l
 				var w := l.get_theme_font("font").get_string_size(l.text.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1,
 					l.get_theme_font_size("font_size")).x
-				l.set_meta("cut", w > (tabs.buttons[key] as Button).size.x - UI.px(4))
+				l.set_meta("cut", w > l.size.x + 0.5)
 				cut = cut or (key != tabs.active and l.get_meta("cut"))
 	for key: String in words:
 		var l: Label = words[key]
