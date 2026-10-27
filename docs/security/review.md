@@ -44,6 +44,7 @@ decision).
 | SR-23 | Low | server | The database was readable by every user on the machine | fixed |
 | SR-24 | Low | server | A dead token could still sign a player out everywhere | fixed |
 | SR-25 | Medium | server | One captured Game Center proof signed in again with its salt respelled | fixed |
+| SR-26 | Low | build | Godot and its export templates were run and shipped unchecked | fixed |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -398,6 +399,29 @@ decision).
 - **Test:** `server/test/security_auth.test.mjs` (SR-25), with the real
   Game Center check and its fixture chain; it failed before the fix.
 
+### SR-26 — Godot and its export templates were run and shipped unchecked (Low)
+
+- **Where:** `client/build.sh` (the editor every check runs) and
+  `client/export.sh` (the export templates, which become the app players
+  install).
+- **What:** both were fetched from GitHub's release page and unpacked with
+  no check of what arrived. A swapped release asset, or a proxy the build
+  machine trusts, would run its own code on the developer's machine and
+  ship it inside the app. Before the fix the test's tampered "Godot" was
+  unpacked and run by the build. Low: it needs GitHub or the machine's
+  trust store compromised first; but SLSA and every store's guidance pin
+  what a build downloads.
+- **Fix:** each download is held to Godot's own `SHA512-SUMS.txt` for
+  4.7.2-stable before it is unpacked, checked with `python3` (which both
+  scripts already need, and which, unlike `sha512sum`, is on the Mac that
+  builds for iPhone). The editor's sum matched a fresh download and the
+  binary these checks run. 5 lines each; no track owns the scripts this
+  wave. A Godot upgrade changes the version and both sums together.
+- **Test:** `server/test/security_supply.test.mjs` (SR-26): `build.sh` with
+  a `curl` that serves other bytes stops, unpacks nothing and leaves no
+  download; the templates' pin is checked to come before their unpacking.
+  It failed before the fix.
+
 ## Configuration against the market standard
 
 Read against OWASP's Secure Headers and ASVS 4 (V3, V8, V14) and what a
@@ -417,6 +441,7 @@ mobile game's backend usually ships. Checked by running `main.mjs` here.
 | Dependencies | the server has none (Node's own `node:sqlite`, `node:crypto`); Node ≥ 22.5 | patched LTS | held. Node 22 is LTS to April 2027: the operator should run its latest patch |
 | Tools | `tools/art`: nine pinned packages, integrity hashes, no install scripts, `npm audit` clean on 27 October; `tools/ui` (new) needs only Playwright, as `tools/art` does | lockfile, audit | held |
 | Rust | both lockfiles unchanged since the RustSec check of 26 October | `cargo audit` | held |
+| Godot | editor and export templates fetched from GitHub releases | pinned checksums | fixed (SR-26) |
 
 ## The client, second pass
 
