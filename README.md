@@ -238,6 +238,7 @@ tools/
   roadmap.py                      the roadmap, as data
   build_roadmap.py                renders it, computing progress from the register
   client_strings.py               writes client/i18n/content.csv, the content's names, from content/
+  auth_countries.py               writes client/i18n/countries.csv, every country's name in the game's languages
   native_strings.py               writes the phones' notification tables, iOS and Android, from client/platform/notifications.csv
   english_us.py                   writes US English from British English by a spelling table, in the catalogues and the island words
   client_contract.py              the client's server routes and failure words, checked against server/src/http.mjs
