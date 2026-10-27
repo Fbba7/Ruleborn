@@ -20,5 +20,10 @@ func _go() -> void:
 	App.services.store.dispatch(&"curation_loaded", {"view": view})
 	App.services.store.dispatch(&"curation_island", {"island": StageFixtures.island()})
 	App.services.curation_flow.pick_post(Vector2i(7, 8))
+	# CTAB: another tab of the tray on show (layout, laws, name).
+	if OS.get_environment("CTAB") != "":
+		await process_frame
+		(screen as CurationScreen)._tab = OS.get_environment("CTAB")
+		(screen as CurationScreen)._refresh()
 	await ShotKit.settle(self, screen)
 	quit()

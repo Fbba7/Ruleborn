@@ -69,7 +69,7 @@ func _build() -> void:
 	column.add_child(top)
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label, "glass"))
-	StageScreen.window(column, 1.2)
+	StageScreen.window(column, 1.0)
 	# The design's segmented tray tabs; their words wrap at large text.
 	_tabs = VBoxContainer.new()
 	column.add_child(_tabs)
@@ -84,7 +84,7 @@ func _build() -> void:
 	glass.add_child(body)
 	scroller.add_child(glass)
 	column.add_child(scroller)
-	_sheet = StageScreen.sheet(body, 0.62)
+	_sheet = StageScreen.sheet(body, 0.85)
 	_keys = StageScreen.handle(column, _sheet)
 	column.remove_child(_tabs)
 	column.add_child(_tabs)
