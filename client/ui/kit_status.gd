@@ -86,7 +86,9 @@ static func resource(icon: String, amount: String, fraction: float, tone: Color)
 	var p := PanelContainer.new()
 	p.name = "Resource"
 	var pad := UI.clear_box(3, 2)
-	pad.content_margin_right = UI.px(10)
+	# 6 points at the end (T4's measure): "FULL 142.0k" fits a third of the
+	# phone at 100% text, as the design's "FULL 61.0k" does.
+	pad.content_margin_right = UI.px(6)
 	pad.content_margin_bottom = UI.px(1)
 	p.add_theme_stylebox_override("panel", pad)
 	UI.dress(p, "track", 999)
@@ -94,7 +96,7 @@ static func resource(icon: String, amount: String, fraction: float, tone: Color)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 0)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", UI.px(4))
+	row.add_theme_constant_override("separation", UI.px(3))
 	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var disc := PanelContainer.new()
 	disc.add_theme_stylebox_override("panel", UI.clear_box(2, 2))
