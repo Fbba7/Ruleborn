@@ -121,7 +121,8 @@ static func _triple(laws: Array, want: Array) -> Array:
 static func build(fx: LawFx, into: Node3D) -> void:
 	var laws: Array = []
 	for p: Dictionary in fx.site.pylons:
-		if not laws.has(p["law"]):
+		# A broken pylon's law has ended (§7.1): it links to nothing.
+		if not laws.has(p["law"]) and p.get("standing", true):
 			laws.append(p["law"])
 	var threads := LawFxBatch.new(LawFxBatch.Kind.THREADS)
 	var travel := LawFxBatch.new(LawFxBatch.Kind.MOTES)
