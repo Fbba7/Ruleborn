@@ -53,7 +53,7 @@ func _build() -> void:
 	view = StageScreen.mount(self, column)
 	view.tapped.connect(func(at: Vector2) -> void: _on_tap(view.tile_at(at), at))
 	# The island as large as the design draws it: its rim to the phone's edges.
-	view.fill = 0.84
+	view.fill = 0.9
 	town = StageTown.new(view)
 	column.add_child(_header())
 	status_label = UI.status("info", "")
@@ -142,24 +142,39 @@ func _tray() -> ScrollContainer:
 	return s
 
 
-## The round keys above the home bar: the map, the defence, and the builder
-## in gold as the screen's main action.
+## The round keys above the home bar, as the design's: at the left the
+## defence over the map, at the right the details over the builder in gold,
+## the screen's main action; the island clear between them.
 func _dock() -> Control:
-	# A flow, so at §20.8's 200% the keys take two rows rather than widen.
-	var row := HFlowContainer.new()
-	row.alignment = FlowContainer.ALIGNMENT_CENTER
+	# At §20.8's 200% the keys sit in one centred flow rather than widen.
+	var large := Settings.text_scale >= 150
+	var row: Container = (HFlowContainer.new() as Container) if large else (HBoxContainer.new() as Container)
+	if large:
+		(row as HFlowContainer).alignment = FlowContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("h_separation", UI.px(18))
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_child(OverlayHud.key("screens/universe", Strings.t("RV_KEY_MAP"),
-		func() -> void: App.services.router.go(&"map")))
+	var left := VBoxContainer.new()
+	left.add_theme_constant_override("separation", UI.px(6))
+	left.alignment = BoxContainer.ALIGNMENT_END
+	left.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var right := left.duplicate() as VBoxContainer
+	left.add_child(OverlayHud.key("planningactions/curatedefence", Strings.t("RV_KEY_DEFENCE"), func() -> void:
+		App.services.curation_flow.open(str(App.services.store.get_slice(RealmState.REALM)["realm"]))))
+	left.add_child(OverlayHud.key("screens/universe", Strings.t("RV_KEY_MAP"),
+		func() -> void: App.services.router.go(&"map"), "leather", OverlayHud.MAIN_KEY_POINTS))
 	var details := OverlayHud.key("generalui/info", Strings.t("RV_KEY_DETAILS"), func() -> void:
 		_sheet.visible = not _sheet.visible)
 	(details.get_meta("key") as Button).set_meta("fold", true)
-	row.add_child(details)
-	row.add_child(OverlayHud.key("planningactions/curatedefence", Strings.t("RV_KEY_DEFENCE"), func() -> void:
-		App.services.curation_flow.open(str(App.services.store.get_slice(RealmState.REALM)["realm"]))))
-	row.add_child(OverlayHud.key("realmactions/build", Strings.t("RV_KEY_BUILD"),
+	right.add_child(details)
+	right.add_child(OverlayHud.key("realmactions/build", Strings.t("RV_KEY_BUILD"),
 		func() -> void: App.services.router.go(&"builder"), "gold_round", OverlayHud.MAIN_KEY_POINTS))
+	row.add_child(left)
+	if not large:
+		var gap := Control.new()
+		gap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(gap)
+	row.add_child(right)
 	return row
 
 
@@ -384,7 +399,7 @@ func _pin(replay: RulebornReplay) -> void:
 	pins.clear()
 	for b: Dictionary in town.placed:
 		var top := (b["mid"] as Vector3) + Vector3(0, 1.6 + 0.35 * int(b["side"]), 0)
-		pins.pin(OverlayHud.badge(str(int(b["level"]))), top)
+		pins.pin(OverlayDiamond.new(str(int(b["level"]))), top)
 	for p: Dictionary in replay.pylons():
 		pins.pin(OverlayHud.tag(OverlayHud.law_icon(str(p["law"])), ""), view.world_at(p["at"]) + Vector3(0, 2.0, 0))
 

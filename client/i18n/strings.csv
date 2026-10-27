@@ -136,6 +136,8 @@ HOME_WORKSHOP,Workshop,Workshop,Oficina,Oficina,Werkstatt,Atelier
 BUILDER_TITLE,"Your island, realm level %d","Your island, realm level %d","Sua ilha, reino nível %d","A tua ilha, nível de reino %d","Deine Insel, Reichslevel %d","Ton île, royaume niveau %d"
 BUILDER_HINT,Tap the realm to place what is chosen below,Tap the realm to place what is chosen below,Toque no reino para pôr o que está escolhido abaixo,Toca no reino para colocar o que está escolhido abaixo,"Tippe ins Reich, um das unten Gewählte zu platzieren",Touche le royaume pour placer la sélection ci-dessous
 BUILDER_TOOL_GROUND,Ground,Ground,Terreno,Terreno,Boden,Sol
+BUILDER_CARD_MOVEMENT,Movement,Movement,Movimento,Movimento,Bewegung,Déplacement
+BUILDER_CARD_SIGHT,Guard sight,Guard sight,Visão dos guardas,Visão dos guardas,Wächterblick,Vue des gardes
 BUILDER_TOOL_WARD,Ward,Ward,Proteção,Proteção,Siegel,Protection
 BUILDER_TOOL_GUARD,Guard,Guard,Guarda,Guarda,Wache,Garde
 BUILDER_TOOL_LAW,Law,Law,Lei,Lei,Gesetz,Loi
@@ -1232,6 +1234,8 @@ DEFENCES_PYLON,%s pylon,%s pylon,pilar de %s,pilar de %s,%s-Pylon,pylône de %s
 DEFENCES_STAT_HELD,Held,Held,Seguradas,Seguradas,Gehalten,Tenues
 DEFENCES_STAT_LEAKED,Leaked,Leaked,Vazadas,Vazadas,Durchgelassen,Percées
 DEFENCES_STAT_PARTIAL,Partial,Partial,Parciais,Parciais,Teilweise,Partielles
+DEFENCES_STAT_RAIDS,Raids this season,Raids this season,Assaltos na temporada,Assaltos na temporada,Raubzüge der Saison,Raids de la saison
+DEFENCES_STAT_TRACE,Trace ready,Trace ready,Rastro pronto,Rasto pronto,Spur bereit,Piste prête
 REHEARSE_TAB,Rehearse,Rehearse,Ensaiar,Ensaiar,Proben,Répéter
 DEFENCES_TAB_LOG,Defence log,Defense log,Registro de defesa,Registo de defesa,Verteidigungslog,Journal de défense
 REHEARSE_REPLAY_CAUTIOUS,Replay · cautious crew,Replay · cautious crew,Replay · equipe cautelosa,Repetição · equipa cautelosa,Wiederholung · vorsichtige Crew,Replay · équipe prudente
@@ -1287,6 +1291,7 @@ CUR_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
 CUR_TAB_NAME,Name,Name,Nome,Nome,Name,Nom
 CUR_KICKER,Your defence,Your defense,Sua defesa,A tua defesa,Deine Abwehr,Ta défense
 CUR_TEST_RUN,Test run,Test run,Testar,Testar,Testlauf,Essai
+CUR_HOLDS,Holds,Holds,Resiste,Resiste,Hält,Tient
 ERR_FUND_ADULTS_ONLY,the Island Fund is open from 18,the Island Fund is open from 18,o Island Fund é aberto a partir dos 18,o Island Fund está aberto a partir dos 18,der Island Fund ist ab 18 offen,l'Island Fund est ouvert dès 18 ans
 LANDING_REALM_ONE,"In %s, one link from the Heart","In %s, one link from the Heart","Em %s, a uma ligação do Coração","Em %s, a uma ligação do Coração","In %s, eine Verbindung vom Herzen","Dans %s, à un lien du Cœur"
 LANDING_REALM_MANY,"In %s, %d links from the Heart","In %s, %d links from the Heart","Em %s, a %d ligações do Coração","Em %s, a %d ligações do Coração","In %s, %d Verbindungen vom Herzen","Dans %s, à %d liens du Cœur"

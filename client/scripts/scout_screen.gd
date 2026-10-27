@@ -66,7 +66,7 @@ func _build() -> void:
 	_sheet = StageScreen.sheet(body, 1.0)
 	_keys = StageScreen.handle(column, _sheet)
 	# The tabs sit on the sheet, under its fold key.
-	column.move_child(_tabs, s.get_index())
+	column.move_child(_tabs, s.get_index() - 1)
 	_dock = HFlowContainer.new()
 	_dock.alignment = FlowContainer.ALIGNMENT_CENTER
 	_dock.add_theme_constant_override("h_separation", UI.px(12))

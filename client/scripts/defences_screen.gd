@@ -130,9 +130,13 @@ func _refresh() -> void:
 	if not d["ready"]:
 		return
 	var season: Dictionary = (slice.get("view", {}) as Dictionary).get("season", {})
-	for stat: Array in [["held", "DEFENCES_STAT_HELD"], ["leaked", "DEFENCES_STAT_LEAKED"],
-			["partial", "DEFENCES_STAT_PARTIAL"]]:
-		var tile := KitStatus.stat(str(int(season.get(stat[0], 0))), Strings.t(stat[1]))
+	# The design's three: the season's raids, how many it held, and how
+	# many raiders can be traced back.
+	var raids: Array = (slice.get("view", {}) as Dictionary).get("raids", [])
+	var traced := raids.filter(func(r: Dictionary) -> bool: return r.get("trace") is Dictionary).size()
+	for stat: Array in [[int(season.get("held", 0)) + int(season.get("leaked", 0)), "DEFENCES_STAT_RAIDS"],
+			[int(season.get("held", 0)), "DEFENCES_STAT_HELD"], [traced, "DEFENCES_STAT_TRACE"]]:
+		var tile := KitStatus.stat(str(stat[0]), Strings.t(stat[1]))
 		tile.accessibility_name = d.get("header", "")
 		_stats.add_child(tile)
 	var busy: bool = d["busy"] != ""

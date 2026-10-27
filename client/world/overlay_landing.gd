@@ -131,7 +131,12 @@ func _build_deck(into: Container) -> void:
 	turns.add_child(_turn(1))
 	into.add_child(turns)
 	deck = OverlayLandingDeck.new(controller)
-	into.add_child(deck)
+	# On the design's dark sheet.
+	var sheet := UI.panel("sheet")
+	sheet.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	sheet.add_child(deck)
+	deck.visibility_changed.connect(func() -> void: sheet.visible = deck.visible)
+	into.add_child(sheet)
 	next_realm = UI.action(Strings.t("LANDING_NEXT_REALM"), controller.next_realm, "leather")
 	next_realm.icon = Icons.texture("realms/theheart")
 	next_realm.add_theme_constant_override("icon_max_width", UI.px(20))
@@ -211,12 +216,18 @@ func show_pick() -> void:
 	var fault: bool = m.get("fault", false)
 	var side: int = int(m["side"]) if m.has("side") else controller.world.size().x
 	var covered: bool = m.get("covered", false)
-	if fault:
-		_name.text = Strings.t("LANDING_FAULT_NAME")
-	else:
+	var edge := Strings.t("LANDING_FAULT_NAME")
+	if not fault:
 		var p := LandingPresenter.place(Vector2i(m["at"]), side)
-		_name.text = Strings.t("LANDING_EDGE_NAME", Strings.t("LANDING_" + str(p[0])))
+		edge = Strings.t("LANDING_EDGE_NAME", Strings.t("LANDING_" + str(p[0])))
+	_name.text = edge
 	_kicker.text = Strings.t("LANDING_SPOT_OF", [at + 1, marks.size()]).to_upper()
+	# Across a universe the realm is the name, as the design's ("Lantern
+	# Vale"), and the edge and spot its kicker.
+	if m.has("code"):
+		var realm := LandingPresenter.realm_name(int(m["code"]))
+		_name.text = realm.left(1).to_upper() + realm.substr(1)
+		_kicker.text = ("%s · %s" % [edge, _kicker.text]).to_upper()
 	for c: Node in _pill_holder.get_children():
 		c.queue_free()
 	_pill_holder.add_child(OverlayHud.badge(Strings.t("LANDING_PILL_COVERED" if covered else "LANDING_PILL_OPEN")
