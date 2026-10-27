@@ -336,7 +336,8 @@ func _refresh() -> void:
 		_build_crew()
 	var me: Dictionary = controller.world.crew()[controller.selected]
 	hint_label.text = Strings.t("HEIST_SKIFF_HINT") if controller.calling_skiff else \
-		(Strings.t("HEIST_AIM", str(aiming["words"])) if not aiming.is_empty() else Strings.t("HEIST_HINT_SHORT"))
+		(_aim_hint() if not aiming.is_empty() else Strings.t("HEIST_HINT_SHORT"))
+	hand.armed = int(aiming.get("kind", 0)) if not aiming.is_empty() and int(aiming["kind"]) != Kind.ABILITY else 0
 	hand.show_state(controller.world.sage(), controller.world.casts(), controller.world.tick())
 	# Before the crew lands: where, and nothing else (§5.4).
 	var choosing := controller.choosing
@@ -603,6 +604,9 @@ func _build() -> void:
 	hand = HeistHand.new(_get_out)
 	hand.host = self
 	hand.chosen.connect(_aim)
+	hand.put_away.connect(func() -> void:
+		aiming = {}
+		_refresh())
 	actions_node = hand
 	band.add_child(hand)
 	if band is VBoxContainer:
@@ -733,6 +737,13 @@ func _tap_world(at: Vector2) -> void:
 	controller.world.give(actor, int(aiming["kind"]), tile.x * 256 + 128, tile.y * 256 + 128)
 	aiming = {}
 	controller.changed.emit()
+
+
+## What the hint says while a choice waits to be aimed: where to tap, and
+## how to put it away (its portrait, or the Sage's or Cast's button).
+func _aim_hint() -> String:
+	var key := "HEIST_AIM" if int(aiming["kind"]) == Kind.ABILITY else "HEIST_AIM_HAND"
+	return Strings.t(key, str(aiming["words"]))
 
 
 func _get_out() -> void:
