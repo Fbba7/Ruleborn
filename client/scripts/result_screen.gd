@@ -28,7 +28,7 @@ var moment_label: Label
 var moment_card: PanelContainer
 ## The design's three reward tiles (Starlight, Essence, Renown), shown when
 ## the server's answer carries the split, and the entry fee's line.
-var reward_row: HBoxContainer
+var reward_row: BoxContainer
 var reward_labels := {}
 var fee_label: Label
 ## The haul's tile and its number, counting up.
@@ -151,6 +151,9 @@ func _ready() -> void:
 	box.add_child(haul_tile)
 	counter = haul_tile
 	reward_row = HBoxContainer.new()
+	# With §20.8's large text the tiles stand one above another.
+	if Settings.text_scale > 100:
+		reward_row = VBoxContainer.new()
 	reward_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	reward_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	reward_row.add_theme_constant_override("separation", UI.px(8))

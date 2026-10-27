@@ -41,12 +41,12 @@ const HEIST_FOV := 22.0
 const ZOOM_SPAN := [1.25, 1.0, 0.6]
 ## Ticks a second, for drawing between them.
 const TPS := 30.0
-## §21.1: the heist's follow camera shows "about 12 tiles across", counted
-## along the grid; turned 45° as the designs' camera is, that is about 17
-## metres across a portrait phone, so a realm of up to 12 tiles sits whole
-## across the screen as the design's heist frames it, and a larger one is
-## followed. Its close zoom, seven metres across.
-const FOLLOW_TILES := 12.0
+## §21.1: the heist's follow camera shows "about 12 tiles across": turned
+## 45° as the designs' camera is, 15 metres across a portrait phone hold
+## about 11 tiles along the grid and 12 on the screen's diagonal, so a realm
+## of up to 11 tiles sits whole across the screen as the design's heist
+## frames it, and a larger one is followed. Its close zoom, seven metres.
+const FOLLOW_TILES := 15.0
 const CLOSE_TILES := 7.0
 ## A character model's scale on the heist's world, for readability.
 const MODEL_SCALE := 1.18
@@ -476,7 +476,7 @@ func _frame_camera() -> void:
 	var following := heist and not follow.is_empty() and replay != null and replay.has_landed()
 	var cam_size := whole
 	if following:
-		var near := FOLLOW_TILES * sqrt(2.0) / aspect
+		var near := FOLLOW_TILES / aspect
 		var close := CLOSE_TILES / aspect
 		cam_size = lerpf(whole, near, z) if z <= 1.0 else lerpf(near, close, z - 1.0)
 		# Following several (a replay's whole crew), the view widens to keep

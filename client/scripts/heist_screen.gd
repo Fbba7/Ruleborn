@@ -367,7 +367,9 @@ func _refresh() -> void:
 	# §12.7: never more than eight things to tap; the gait's button stands
 	# only while there is room under them (it is a held tap on the ground too).
 	var taps := crew_buttons.size() + (1 if hand.sage_button.visible else 0) + 2 + (1 if pause_button != null else 0)
-	gait_button.visible = taps < 8
+	# With §20.8's large text the gait is the held tap's alone, so the hand's
+	# rows stay low in reach.
+	gait_button.visible = taps < 8 and Settings.text_scale <= 130
 	gait_button.accessibility_name = Strings.term("GAIT", me["gait"])
 	gait_button.tooltip_text = gait_button.accessibility_name
 	(gait_button.get_meta("words") as Label).text = gait_button.accessibility_name
@@ -601,10 +603,16 @@ func _build() -> void:
 	actions_node = hand
 	band.add_child(hand)
 	if band is VBoxContainer:
-		band.move_child(hand, 0)
-		hand.size_flags_horizontal = Control.SIZE_SHRINK_END
-		# The hint as wide as the phone, so it takes fewer lines.
-		hint.size_flags_horizontal = Control.SIZE_FILL
+		# With large text the hand's buttons and the gait are one row that
+		# wraps, under the portraits and lowest in reach; the hand keeps
+		# them and their state.
+		var flow := UI.row(4.0, true)
+		flow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		flow.alignment = FlowContainer.ALIGNMENT_END
+		for c in hand.get_children():
+			c.reparent(flow)
+		band.add_child(flow)
+		actions_node = flow
 	actions_band = band
 	column.add_child(band)
 	# The hint on the bottom line, under the hand's controls (the design's),
@@ -617,10 +625,20 @@ func _build() -> void:
 		foot.layout_direction = Control.LAYOUT_DIRECTION_RTL
 	gait_button = _gait_pill()
 	foot.add_child(gait_button)
+	if Settings.text_scale > 130:
+		# With §20.8's large text the gait joins the hand's row, so the
+		# controls take one row fewer and stay low in reach.
+		gait_button.reparent(actions_node)
+		actions_node.move_child(gait_button, 0)
 	hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hint.custom_minimum_size.x = UI.px(150)
 	hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	foot.add_child(hint)
 	column.add_child(foot)
+	if Settings.text_scale > 130:
+		# With §20.8's large text the hint, taller, goes over the controls,
+		# so they stay low in reach.
+		column.move_child(foot, band.get_index())
 	# Clear of the bottom corners, where §21.1 puts nothing to tap.
 	column.add_child(FxSkin.corner_clear())
 

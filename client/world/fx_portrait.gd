@@ -55,7 +55,7 @@ func _init(member_role := "", pressed_call: Callable = Callable(), member_kind :
 	var side := UI.px(50)
 	# As wide as its name, so with large text names never run together.
 	var name_w := FxSkin.words().get_string_size(letters, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(13.0)).x
-	custom_minimum_size = Vector2(maxf(side, name_w), side + UI.px(32))
+	custom_minimum_size = Vector2(maxf(side, name_w + UI.px(4)), side + UI.px(32))
 	focus_mode = Control.FOCUS_ALL
 	var clear := StyleBoxFlat.new()
 	# A dark fill, so a screen's checks find what is behind its words.

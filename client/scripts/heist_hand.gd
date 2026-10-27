@@ -1,5 +1,5 @@
 class_name HeistHand
-extends VBoxContainer
+extends BoxContainer
 ## The heist's bottom right as the design draws it (§21.8: "Sage, cast and Get
 ## out at the bottom right"): the Sage's portrait disc, the Cast square under
 ## it and the red Get out square at the bottom. §12.7: a tap on the Sage opens
@@ -39,6 +39,9 @@ func _init(get_out: Callable) -> void:
 	add_theme_constant_override("separation", UI.px(6))
 	size_flags_vertical = Control.SIZE_SHRINK_END
 	alignment = BoxContainer.ALIGNMENT_END
+	# A column, as the design's; with §20.8's large text a row over the
+	# portraits, so it stays on the phone and in reach.
+	vertical = Settings.text_scale <= 130
 	sage_button = Button.new()
 	sage_button.accessibility_name = Strings.t("HEIST_SAGE")
 	sage_button.pressed.connect(_open_sage)
@@ -77,10 +80,14 @@ func show_state(sage: Dictionary, casts: Array, tick: int) -> void:
 			else Strings.t("HEIST_SAGE_NAMED", name)
 		sage_button.tooltip_text = sage_button.accessibility_name
 	var open := casts.any(func(c: Dictionary) -> bool: return not c.get("used", false))
-	var words: Label = cast_button.get_meta("words")
-	words.text = Strings.t("HEIST_CAST") if not casts.is_empty() else Strings.t("HEIST_NO_CASTS")
-	cast_button.accessibility_name = words.text
-	cast_button.modulate.a = 1.0 if open else 0.55
+	var said := Strings.t("HEIST_CAST") if not casts.is_empty() else Strings.t("HEIST_NO_CASTS")
+	cast_button.accessibility_name = said
+	if cast_button.has_meta("words"):
+		(cast_button.get_meta("words") as Label).text = said
+		# Nothing left to cast greys the wand, never the words (§21.10).
+		(cast_button.get_meta("icon") as Control).modulate.a = 1.0 if open else 0.4
+	else:
+		cast_button.text = said
 	FxSkin.redraw(sage_button)
 
 
@@ -203,6 +210,12 @@ func close_wheel() -> void:
 ## `look`, its icon over its word; the icon's box is meta "box", the word's
 ## label meta "words". A screen reader hears the word.
 static func square(words: String, call: Callable, look: String, icon := "") -> Button:
+	if Settings.text_scale > 130:
+		# With §20.8's large text a plain button of its words, which the
+		# screen lays in a row that wraps.
+		var plain := UI.action(words, call, look, words)
+		UI.fit(plain)
+		return plain
 	var b := UI.action("", call, look, words)
 	b.tooltip_text = words
 	b.custom_minimum_size = Vector2(UI.px(62), UI.px(58))
@@ -217,6 +230,7 @@ static func square(words: String, call: Callable, look: String, icon := "") -> B
 		var pic := Icons.view(icon, 28.0)
 		pic.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		box.add_child(pic)
+		b.set_meta("icon", pic)
 	var l := FxSkin.label(words, 14.0)
 	l.add_theme_constant_override("outline_size", UI.px(3))
 	box.add_child(l)
