@@ -179,12 +179,15 @@ Main (d2343591) merged clean.
 - **People and shop pieces** (27 Friends, 18 Shop): `KitSocial.avatar` (portrait or initials in a ring, name, a status tag with a dot of its tone), `KitSocial.tag`, `KitSocial.feed_row` (parchment row: who, tag, when, what happened, a picture over Watch or Play, which goes under the words at large text); `KitLayout.strip` (a row that scrolls sideways, the designs' filter chips and decks); `KitCards.album_card` (13 Codex: the cream foot with name, rank in words and "In Skyfield"). Sheet pages 5 and 12.
 - Stills: `vs-design-heist-w5r3.png`, `vs-design-codex-w5r4.png`, `vs-design-friends-w5r5.png`, `tabs-text-and-rail-w5r2.png` (the design's bar, then the kit's at 100, 150 and 200% text, then the rail before and after).
 
+- **Rounds 6-9** (judged at 200% text and in high contrast): high contrast's 3-point outline swallowed every bar under 15 points tall (the load bar, health bars and storage lines drew as solid ink): an outline is now never more than a fifth of its box's smaller side. At 200% the kit's own Settings page cut its segments ("Wellb", "Acces"), spilled the dial's "MIN TODAY" past its ring and ran the top bar off the phone: segments now go two to a line with their words whole above 125%, the dial grows up to a third and wraps its unit, the top bar's pill goes under its title, and `KitPanels.row` puts a wide end control under its words (`settings-100-200-w5r8.png`). The chosen tab's word keeps 12 points inside its rim, the others give it room down to 48 points, and counts on badges grow to 150% text, no further, so at 200% they no longer cover the icons they count for. `KitCards.product` (18 Shop's picture cards). The resource pill takes 6 points at its end (T4's measure). Test: "the loot panel, Sage, crew key, friend, feed row, album card, product and album meet 48 points and 13 points and stay on the screen at 200% text".
+
 **Consistency pass: where screens pass the kit by or differ from the design system**
 
 `AUDIT=1` over all 33 screens on their samples found own fills only on the heist and replay (three `#FFFBF0` panels in the laws column); every other screen's boxes and faces are the kit's. What remains is arrangement, which is each screen's:
 
 | Owner | Screen | Item |
 |---|---|---|
+| T5 | result | The design adds the entry fee returned, the Archivist's "try this" under the moment, and "Study one law you crossed" (three law tiles, +2 pages each); the world's particles run over the title. |
 | T5 | heist, replay | Use `KitHud.crew(picture, name, health, uses, call, school)` for the crew (the design's school grounds and diamonds), `KitHud.sage` for the Sage and Cast above Get out, `KitHud.loot(rows, carried, 0.8, "Load to 80%")` for Room/Left (no "?": the load bar is the design's); the three parchment panels in the laws column as `KitCards.law_chip`. Heist is at 141 draw calls and replay at 147 on `ui_screen.gd`: little room under 150. |
 | T6 | realm | Round actions' plates in capitals (`round_action` does it; the realm's own keys say "Map"); the design's MAP and BUILD are 72-point discs low in the corners and WEAVE above MAP. |
 | T7 | roster | Filters as `KitControls.chip(words, on, call, count, dot)` (the design's dot and count pill), not "○ free · 8" in the words; give the Crew tab Pip's face (`tabs.face`). |
@@ -193,5 +196,5 @@ Main (d2343591) merged clean.
 | T10 | friends | The friends row as `KitSocial.avatar`s in a strip, the feed as `KitSocial.feed_row`s; the design leads with a "Friendly raid" card and Feed / Friends / Invite segments. |
 | T10 | weaving | Cost, strain and ready-in as `KitStatus.stat` tiles; the deck as a `KitLayout.strip` of law cards; the call as `KitControls.action2` (its two lines). |
 | T10 | settings | The design has four segments (Wellbeing, Game, Access, Account); the screen has two. At 200% text "Language" stands a letter a line beside "English (UK)" (`ScreenParts.item` keeps a wide control beside the title): `KitPanels.row` puts it under the words above 125%. |
-| T4 | home | Side balls through `disc_points` 36 at 48-point hit areas; drop `_fit_tab_words` (the kit does it). |
+| T4 | home | Side balls through `disc_points` 36 at 48-point hit areas; drop `_fit_tab_words` and the purse's own padding (the kit does both). |
 | all | screens with a title | The design's sub-screen header (`KitNav.top_bar`) puts back at the top; §21.1's thumb rule keeps it at the foot (finding H, the owner's). |
