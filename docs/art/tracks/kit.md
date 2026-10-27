@@ -164,3 +164,7 @@ This wave's brief: the realm's buildings as 02-heist draws them. Rounds compare 
 - **Paused:** the session's worker restarted about 20:00 and the session sat idle until 22:53, so the 22:00 deploy got `54d197d` only.
 - **Still unlike the design:** the Vault is §21.5's round domed strongbox where the stills draw a square block under a pyramid roof (kept for §21.5; its dome now wears the realm's roof); the Heart's wall ring (owner's call); the dial is the Heart's Spire plaza always, while the design draws it as the Stillness law's mark; the island's framing at the heist camera (T5).
 - **Next:** if the owner wants the dial tied to Stillness, the kit needs the realm's laws from the screen (a `laws` var on `RealmKit` beside `buildings`).
+
+## Session five (wave extended to 06:00 UTC, from 23:23)
+
+- **Round 12, lanes round the dial (04-realm-view, 02-heist).** The design's Heart lanes spread from its plaza to every door; ours were a spanning tree whose Spire end lay under the dial. Now, in a realm with the dial, a lane runs from every door to the dial's rim (`RealmKit._spokes`, one bend), and the spanning tree between doors stays, each lane in two runs so both fit `KitGround.LANES`. The dial is found before the trails. Still `60-heart-lanes-to-dial.png`.
