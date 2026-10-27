@@ -158,6 +158,7 @@
   "every design token has a value and says where it comes from, and the screens' colours and sizes are the tokens'": "passed",
   "every golden replay re-simulates in the client, every second agreeing with its checksums": "passed",
   "every icon in the manifest exports from the design and loads, the six school marks among them (§21.8)": "passed",
+  "every interface movement the kit makes takes 150 to 250 ms (§21.8), a bar's fill included": "passed",
   "every launch law and paradox has a movement signature with bounce, lean, stride, float and skate, and two laws blend into one gait (21.7)": "passed",
   "every launch law has a world signature over its realm and its pylon marked, each within 6000 triangles and 8 draw calls (21.3, 21.7, 21.9)": "passed",
   "every material, gradient and type role the kit names resolves, none under 13 points, and high contrast makes 3-point outlines and raises secondary text to primary (§21.8, §20.8)": "passed",
