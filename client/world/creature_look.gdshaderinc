@@ -55,6 +55,16 @@ uniform float night_gain = 1.7;
 uniform float ramp_bias : hint_range(0.0, 0.5) = 0.22;
 // The design's vcGlow: the body's warm paint glows (embers, lanterns).
 uniform float glow_vc = 0.0;
+// The paint glows where its red runs this far over its blue: an ember's
+// cracks (far over) glow, its tan belly (a little over) stays paint.
+uniform float glow_from = 0.3;
+uniform float glow_to = 0.65;
+// The accessories' paint scaled where it is mid-valued (stone, wood), so a
+// pale stone bracer reads as the design's while its iron bands stay dark.
+uniform vec3 gear_tint = vec3(1.0);
+// Red paint (red well over green: petals, flames) scaled toward the design's
+// pinks, where the toon light reads a kind's pink as coral.
+uniform vec3 red_tint = vec3(1.0);
 // How far a glowing part's face burns toward warm white (the flames' core).
 uniform float hot_core = 0.55;
 // The sky a metal part reflects where it faces up (alpha: how much).
@@ -261,12 +271,17 @@ vec2 creature_form_pattern(vec3 lp) {
 
 void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 lp, vec3 n, vec3 v, float far,
 		out vec3 albedo, out vec3 emission) {
-	float glow = body ? glow_vc * smoothstep(0.3, 0.65, c.r - c.b) : emit;
+	float glow = body ? glow_vc * smoothstep(glow_from, glow_to, c.r - c.b) : emit;
+	if (!body) {
+		float gv = dot(c, vec3(0.299, 0.587, 0.114));
+		c = clamp(mix(c, c * gear_tint, smoothstep(0.06, 0.12, gv) * (1.0 - step(0.01, emit))), 0.0, 1.0);
+	}
 	vec3 stars = vec3(0.0);
 	if (paint_contrast < 1.0 && body) {
 		float pl = max(0.02, dot(c, vec3(0.299, 0.587, 0.114)));
 		c = clamp(c * mix(paint_mid, pl, paint_contrast) / pl, 0.0, 1.0);
 	}
+	c = mix(c, clamp(c * red_tint, 0.0, 1.0), smoothstep(0.2, 0.45, c.r - c.g));
 	c = creature_tone(c * paint_tint);
 	if (!body && gloss > 0.99) {
 		// Metal parts (iron bands, brass): the design's sit in a bright room

@@ -11,7 +11,7 @@ uniform float width_px = 1.5;
 // Small on screen (under `far_ppm` pixels per metre) the line thickens toward
 // `far_width`, so a 40 px character keeps its dark silhouette on the grass.
 uniform float far_ppm = 240.0;
-uniform float far_width = 2.4;
+uniform float far_width = 1.8;
 // The hull sits this far (metres) behind the body, so it shows only at the
 // silhouette: the relief's bumps (fleece, scales, feathers) do not poke ink
 // through the paint as speckles, and the inside of the shape stays clean.
