@@ -61,6 +61,10 @@ static func dock(back: StringName, actions: Array = []) -> MarginContainer:
 		row = line
 	row.add_child(back_b)
 	for a: Control in actions:
+		# On one line the actions take the width the back button leaves, as
+		# the design's bottom buttons do.
+		if row is HBoxContainer:
+			a.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(a)
 	var m := MarginContainer.new()
 	m.add_theme_constant_override("margin_bottom", UI.px(CORNER_LIFT_POINTS))

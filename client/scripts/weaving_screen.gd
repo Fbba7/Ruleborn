@@ -77,6 +77,7 @@ func _build() -> void:
 	_stage.add_child(preview)
 	ScreenParts.cull(preview, body)
 	_weave_row = HBoxContainer.new()
+	_weave_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	column.add_child(ScreenNav.dock(&"home", [_weave_row]))
 
 
@@ -370,6 +371,7 @@ func _weave(o: Dictionary, busy: bool, shown: bool) -> Control:
 	b.disabled = busy or not o["can"]
 	b.set_meta("key", o["key"])
 	b.set_meta("item", o["item"])
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.button_down.connect(_hold.bind(o))
 	b.button_up.connect(_release.bind(o))
 	b.visible = shown
