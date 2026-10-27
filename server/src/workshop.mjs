@@ -112,10 +112,19 @@ export class Workshop {
     return this.db.prepare("SELECT * FROM accounts WHERE id = ?").get(id);
   }
 
-  /** §20.5's age band, declared at the neutral age gate (§20.11). */
+  /** §20.5's age band, declared at the neutral age gate (§20.11). §20.1:
+   *  "After the first answer the band can only tighten from the device …
+   *  the server refuses any other loosening": the first answer sets it,
+   *  and after it a looser band is refused, the band held as it was. */
   setAgeBand(account, band) {
-    if (!["13-15", "16-17", "18+"].includes(band)) throw new Refused(400, "no_such_age_band");
-    this.db.prepare("UPDATE accounts SET age_band = ? WHERE id = ?").run(band, account);
+    const order = ["13-15", "16-17", "18+"];
+    if (!order.includes(band)) throw new Refused(400, "no_such_age_band");
+    const was = this.db.prepare("SELECT age_band, age_answered_at FROM accounts WHERE id = ?").get(account);
+    if (was.age_answered_at !== null && order.indexOf(band) > order.indexOf(was.age_band)) {
+      throw new Refused(403, "age_band_only_tightens", { ageBand: was.age_band });
+    }
+    this.db.prepare("UPDATE accounts SET age_band = ?, age_answered_at = COALESCE(age_answered_at, ?) WHERE id = ?")
+      .run(band, this.now(), account);
     return { ageBand: band };
   }
 
@@ -258,6 +267,16 @@ export class Workshop {
     return rows.map((r) => this.view(r));
   }
 
+  /** §20.7: a player aged 13 to 15 has "curated lists only", so plays and
+   *  remixes only an island a person featured, or their own — not one
+   *  reached by its id from elsewhere, such as a featured remix's original
+   *  (SR-18). Reporting is never held back. */
+  curated(player, item) {
+    if (item.creator !== player && item.featured_at === null && this.account(player).age_band === "13-15") {
+      throw new Refused(403, "curated_lists_only");
+    }
+  }
+
   /** A creator's own islands, withdrawn and removed ones too, each removal
    *  with its reason (§20.11). */
   mine(creator) {
@@ -272,6 +291,7 @@ export class Workshop {
     const item = this.row(id);
     if (!this.listed(item)) throw new Refused(404, "no_such_island");
     if (this.account(player).banned_at) throw new Refused(403, "banned");
+    this.curated(player, item);
     this.service.safety.requireTerms(player);
     const row = {
       token: this.service.random(16).toString("hex"),
@@ -410,6 +430,7 @@ export class Workshop {
   remix(player, id) {
     const item = this.row(id);
     if (!this.listed(item)) throw new Refused(404, "no_such_island");
+    this.curated(player, item);
     this.service.safety.requireTerms(player);
     this.db.prepare(
       "INSERT OR IGNORE INTO workshop_remixes (item, player, at) VALUES (?, ?, ?)")
@@ -496,6 +517,8 @@ export class Workshop {
     this.db.prepare("DELETE FROM challenges WHERE account = ?").run(account);
     this.db.prepare("DELETE FROM friends WHERE a = ? OR b = ?").run(account, account);
     this.db.prepare("DELETE FROM friend_invites WHERE account = ?").run(account);
+    // Every device signed in to it, signed out (auth.mjs).
+    this.service.auth.endAll(account, "banned", now);
     const social = new Social(this.service);
     const m = social.membership(account);
     if (m) social.depart(m);

@@ -24,10 +24,20 @@ const NIGHT_GREEN := Color(0.62, 0.76, 0.74)
 static func build(isl: UniverseIsland, tiles: int) -> Node3D:
 	var stand_in := Node3D.new()
 	var look := WorldLook.new(stand_in)
+	# T2's lighter island, so the realm's buildings and two characters fit
+	# §21.3's 40,000 triangles in a close-up.
+	look.detail = WorldLook.Detail.LIGHT
 	var node := Node3D.new()
 	node.name = "Close"
 	look.island(node, Vector2i(tiles, tiles), isl.island_seed, RealmPalette.of(isl.key), isl.key)
 	stand_in.free()
+	# The Heart's citadel, buildings and blossom cover its meadow: its tufts,
+	# pebbles and flowers would not be seen, and their triangles are the
+	# room for its buildings in §21.3's 40,000.
+	if isl.key == "heart":
+		for c: Node in node.get_children():
+			if str(c.name).begins_with("Scatter"):
+				c.free()
 	_night(node, NIGHT.get(isl.key, NIGHT_GREEN))
 	node.position = isl.at
 	node.set_meta("triangles", triangles(node))

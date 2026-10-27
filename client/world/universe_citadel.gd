@@ -10,6 +10,8 @@ extends RefCounted
 
 ## How much larger than its own metres the map draws the citadel.
 const MAP_SCALE := 1.35
+## And over the whole universe, where it must read first.
+const FAR_SCALE := 1.85
 const GOLD := Color("#E9B65C")
 const LIT := Color("#FFD77A", 0.15)
 const STONE := Color("#E6DCCB")

@@ -121,8 +121,10 @@ var law_fx: LawFx
 
 var _static_key := ""
 var _vault: MeshInstance3D
-var _pylons: Array[MeshInstance3D] = []
-var _wards: Array[MeshInstance3D] = []
+## The pylons and the wards, merged into one mesh (§21.3's draw calls),
+## rebuilt when one breaks or goes down; `_piece_key` is what it shows.
+var _pieces: MeshInstance3D
+var _piece_key := ""
 var _walls: MeshInstance3D
 ## The crew's skiff, where Get out called it.
 var _skiff: MeshInstance3D
@@ -230,9 +232,12 @@ func _light_figures() -> void:
 		if figure != null and figure.has_method("material"):
 			var m := figure.call("material") as ShaderMaterial
 			if m != null:
-				m.set_shader_parameter("rim_strength", 1.6 if night else 0.38)
-				m.set_shader_parameter("lift", 0.85 if night else 0.5)
-				m.set_shader_parameter("rim_colour", Color("#FFD89A") if night else Color(0.62, 0.83, 1.0))
+				# By day a rim in the member's role colour, so the crew stands
+				# off painted grass and reads as the player's own.
+				var role: Color = Palette.ROLE.get(str(actor.get_meta("role", "")), Color(0.62, 0.83, 1.0))
+				m.set_shader_parameter("rim_strength", 1.6 if night else 0.9)
+				m.set_shader_parameter("lift", 0.85 if night else 0.55)
+				m.set_shader_parameter("rim_colour", Color("#FFD89A") if night else role.lightened(0.35))
 
 
 static func material(shader: Shader, outlined := false) -> ShaderMaterial:
@@ -293,8 +298,7 @@ func world_at(at: Vector2) -> Vector3:
 func _build_statics() -> void:
 	for c in statics.get_children():
 		c.queue_free()
-	_pylons.clear()
-	_wards.clear()
+	_piece_key = ""
 	if replay == null or _size.x == 0:
 		return
 	var colours := RealmPalette.of(realm_type)
@@ -313,16 +317,9 @@ func _build_statics() -> void:
 	# is its own piece.
 	_vault = _instance(PieceKit.vault(false), RealmKit.material("toon", true))
 	statics.add_child(_vault)
-	for p: Dictionary in replay.pylons():
-		var mi := _instance(PieceKit.pylon(str(p.get("school", "matter"))), RealmKit.material("toon", true))
-		mi.position = world_at(p["at"])
-		statics.add_child(mi)
-		_pylons.append(mi)
-	for w: Dictionary in replay.wards():
-		var mi := _instance(PieceKit.ward(str(w["kind"]), int(w.get("level", 1))), RealmKit.material("toon", true))
-		mi.position = world_at(w["at"])
-		statics.add_child(mi)
-		_wards.append(mi)
+	_pieces = _instance(null, RealmKit.material("toon", true))
+	statics.add_child(_pieces)
+	FxGround.pieces(self)
 	_walls = _instance(null, material(_clear), false)
 	statics.add_child(_walls)
 	_skiff = _instance(ActorBuilder.skiff(), material(_toon, true))
@@ -365,6 +362,7 @@ func _build_actors() -> void:
 	for m: Dictionary in replay.crew():
 		var role := str(m["role"])
 		var root := _actor(role, ActorBuilder.HEIGHT.get(role, 1.0))
+		root.set_meta("role", role)
 		var bag := _instance(ActorBuilder.sack(), material(_toon, true))
 		bag.name = "Sack"
 		bag.position = Vector3(0, 0.42, 0.26)
@@ -405,6 +403,8 @@ func _actor(role: String, height: float) -> Node3D:
 	if model != null:
 		root.set_meta("model", true)
 		feet.visible = false
+		# The model casts its own soft shadow (CreatureGear.blob).
+		root.get_node("Blob").queue_free()
 		# A touch larger than life, inside §21.1's heights, so a figure reads
 		# at the heist's 12 tiles across among the marks over it.
 		var tall: float = model.call("height") if model.has_method("height") else height
@@ -741,19 +741,7 @@ func _sync_pieces() -> void:
 		if _vault.get_meta("open", false) != open:
 			_vault.mesh = PieceKit.vault(open)
 			_vault.set_meta("open", open)
-	var pylons := replay.pylons()
-	for i in mini(pylons.size(), _pylons.size()):
-		var up: bool = pylons[i]["standing"]
-		if _pylons[i].get_meta("up", true) != up:
-			_pylons[i].mesh = PieceKit.pylon(str(pylons[i].get("school", "matter"))) if up else PieceKit.broken_pylon()
-			_pylons[i].set_meta("up", up)
-	var wards := replay.wards()
-	for i in mini(wards.size(), _wards.size()):
-		var live: bool = wards[i]["live"]
-		if _wards[i].get_meta("live", true) != live:
-			_wards[i].mesh = PieceKit.ward(str(wards[i]["kind"]), int(wards[i].get("level", 1))) if live \
-				else PieceKit.dead_ward()
-			_wards[i].set_meta("live", live)
+	FxGround.pieces(self)
 	var walls := replay.walls()
 	var g := Geo.new()
 	for w: Vector2i in walls:

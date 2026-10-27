@@ -130,6 +130,8 @@ func _guards(r: RulebornReplay, now: Dictionary) -> void:
 			burst(at, Color("#FFE27A"), 16, 3.0, "star")
 			view.anchors.pop(at + Vector3(0, 0.5, 0), "KO", Color("#FFE27A"), "star")
 			view.shake(0.9)
+		if str(b[1]) != str(a[1]) and not bool(b[0]):
+			view.anchors.say(i, str(b[1]))
 		if str(b[1]) == "Alerted" and str(a[1]) != "Alerted":
 			view.anchors.flash = maxf(view.anchors.flash, 0.7)
 			ring(view.world_at(guards[i]["at"]) + Vector3(0, 0.05, 0), FxSkin.ALARM, 1.8)

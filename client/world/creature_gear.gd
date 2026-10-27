@@ -7,7 +7,7 @@ extends RefCounted
 ## so this is ours). Gear is coloured by vertex, drawn with the character's own
 ## toon material, and sized by the kind's height and chest from the manifest.
 
-const SASH := Color("#B8323C")
+const SASH := Color("#D63A40")
 const SASH_TRIM := Color("#F2C25C")
 const BRASS := Color("#C8963E")
 const LANTERN_GLOW := Color("#FFD68A")
@@ -133,8 +133,11 @@ static func guard_kit(c: CreatureModel) -> Node3D:
 	for i in n:
 		var a0 := TAU * float(i) / float(n)
 		var a1 := TAU * float(i + 1) / float(n)
-		for band: Array in [[-0.5, 0.5, SASH, 0.0], [0.5, 0.62, SASH_TRIM, 0.4], [-0.62, -0.5, SASH_TRIM, 0.4]]:
-			var w := rad * 0.46
+		for band: Array in [[-0.5, 0.5, SASH, 0.0], [0.5, 0.64, SASH_TRIM, 0.4], [-0.64, -0.5, SASH_TRIM, 0.4],
+				[0.64, 0.72, INK, 0.0], [-0.72, -0.64, INK, 0.0]]:
+			# Never narrower than a set share of the height: on the small kinds
+			# a chest-wide band is a pixel at the heist's 40 px.
+			var w := maxf(rad * 0.56, 0.08 * c.height() / s)
 			var p00 := tilt * Vector3(cos(a0) * rad * 1.08, float(band[0]) * w, sin(a0) * rad * 1.02)
 			var p01 := tilt * Vector3(cos(a0) * rad * 1.08, float(band[1]) * w, sin(a0) * rad * 1.02)
 			var p10 := tilt * Vector3(cos(a1) * rad * 1.08, float(band[0]) * w, sin(a1) * rad * 1.02)
@@ -216,8 +219,8 @@ static func _crook_lantern(c: CreatureModel) -> SurfaceTool:
 	var top := _crook_top(c)
 	var hand := _rest_from_chest(c, &"hand_R")
 	var foot := Vector3(top.x, hand.y - 0.18 * h, top.z)
-	var r := 0.018 * h
-	var wood := Color("#4A2E24")
+	var r := 0.026 * h
+	var wood := Color("#3A2420")
 	_rod(st, foot, top, r, wood)
 	var hook := top + Vector3(signf(top.x) * 0.07 * h, 0.03 * h, 0)
 	_rod(st, top, hook, r, wood)

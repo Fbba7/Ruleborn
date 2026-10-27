@@ -141,18 +141,22 @@ static func route(view: WorldView, g: Geo, t: float) -> void:
 	if shown >= 0:
 		for tile in view.replay.seen(shown):
 			seen[tile] = true
-	var steps := int(flat.length() / 0.36)
+	var steps := int(flat.length() / 0.42)
 	var drift := 0.0 if Settings.reduced_motion else fmod(t * 1.2, 1.0)
 	for k in range(1, steps):
 		var u := (k + drift) / float(steps)
 		var p := from.lerp(to, u)
 		var tile := Vector2i(floori(p.x + view._size.x / 2.0), floori(p.z + view._size.y / 2.0))
 		var lit := seen.has(tile.y * view._size.x + tile.x)
-		g.ring(Geo.place(Vector3(p.x, view.world_at(Vector2(tile) + Vector2(0.5, 0.5)).y + 0.06, p.z)), 0.0, 0.09,
-			Palette.PAPER if lit else Color(Palette.INK, 0.8), 8)
+		# Each dot ink on a paper edge, so it reads on grass and stone alike;
+		# red where it crosses the shown guard's sight (the designs').
+		var at := Vector3(p.x, view.world_at(Vector2(tile) + Vector2(0.5, 0.5)).y + 0.06, p.z)
+		g.ring(Geo.place(at), 0.0, 0.15, Palette.PAPER, 10)
+		g.ring(Geo.place(at + Vector3(0, 0.002, 0)), 0.0, 0.1, Palette.ALARM if lit else Palette.INK, 10)
 	var pulse := 0.0 if Settings.reduced_motion else 0.05 * sin(t * TAU)
-	g.ring(Geo.place(to + Vector3(0, 0.06, 0)), 0.24 + pulse, 0.33 + pulse, Palette.INK, 20)
-	g.ring(Geo.place(to + Vector3(0, 0.061, 0)), 0.0, 0.1, Palette.MOTION, 10)
+	g.ring(Geo.place(to + Vector3(0, 0.06, 0)), 0.22 + pulse, 0.4 + pulse, Palette.PAPER, 24)
+	g.ring(Geo.place(to + Vector3(0, 0.061, 0)), 0.26 + pulse, 0.36 + pulse, Palette.INK, 24)
+	g.ring(Geo.place(to + Vector3(0, 0.062, 0)), 0.0, 0.12, Palette.MOTION, 12)
 
 
 ## Where crew member `i` was last sent, in tiles, or (-1, -1) when its last
@@ -178,3 +182,34 @@ static func order_goal(view: WorldView, i: int) -> Vector2:
 			_:
 				return Vector2(-1, -1)
 	return Vector2(-1, -1)
+
+
+## The pylons, each standing or broken, and the wards, each live or down, as
+## one mesh, built again only when one of them changes.
+static func pieces(view: WorldView) -> void:
+	if view._pieces == null:
+		return
+	var pylons := view.replay.pylons()
+	var wards := view.replay.wards()
+	var key := ",".join(pylons.map(func(p: Dictionary) -> String: return str(p["standing"]))) + "|" \
+		+ ",".join(wards.map(func(w: Dictionary) -> String: return str(w["live"])))
+	if key == view._piece_key:
+		return
+	view._piece_key = key
+	var st := SurfaceTool.new()
+	var any := false
+	for p: Dictionary in pylons:
+		var mesh := PieceKit.pylon(str(p.get("school", "matter"))) if p["standing"] else PieceKit.broken_pylon()
+		any = _append(st, mesh, view.world_at(p["at"])) or any
+	for w: Dictionary in wards:
+		var mesh := PieceKit.ward(str(w["kind"]), int(w.get("level", 1))) if w["live"] else PieceKit.dead_ward()
+		any = _append(st, mesh, view.world_at(w["at"])) or any
+	view._pieces.mesh = st.commit() if any else null
+
+
+static func _append(st: SurfaceTool, mesh: ArrayMesh, at: Vector3) -> bool:
+	if mesh == null:
+		return false
+	for k in mesh.get_surface_count():
+		st.append_from(mesh, k, Transform3D(Basis.IDENTITY, at))
+	return mesh.get_surface_count() > 0

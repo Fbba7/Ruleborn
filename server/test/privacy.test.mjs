@@ -284,7 +284,7 @@ test("what privacy.json keeps for a number of days is deleted by a job the serve
       jobs.add(k.by);
     }
   }
-  assert.deepEqual([...jobs].sort(), ["expireLapsed", "expireReplays", "friends.expire", "notifications.expire", "telemetry.compact"]);
+  assert.deepEqual([...jobs].sort(), ["auth.expire", "expireLapsed", "expireReplays", "friends.expire", "notifications.expire", "telemetry.compact"]);
 });
 
 test("a sent notification is kept a week, and one waiting is not dropped (14.6, 20.5)", async () => {

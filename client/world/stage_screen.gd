@@ -67,10 +67,12 @@ static func sheet(body: VBoxContainer, ratio := 0.8) -> ScrollContainer:
 ## A key that folds the sheet away, and back: the world takes the phone,
 ## the words wait one tap away (and a screen reader still reads the realm).
 static func fold_key(words: ScrollContainer) -> Button:
-	var b := UI.button("", func() -> void: pass)
+	var b := UI.action("", func() -> void: pass, "glass")
 	var apply := func() -> void:
 		words.visible = not folded
 		UI.relabel(b, Strings.t("STAGE_SHOW_WORDS" if folded else "STAGE_HIDE_WORDS"))
+		b.icon = Icons.texture("generalui/more")
+		b.add_theme_constant_override("icon_max_width", UI.px(18))
 	b.pressed.connect(func() -> void:
 		folded = not folded
 		apply.call())
@@ -98,6 +100,26 @@ static func handle(column: VBoxContainer, words: ScrollContainer) -> Control:
 	column.move_child(holder, words.get_index())
 	OverlaySheet.dress(holder)
 	return holder
+
+
+## Space under the screen's bottom keys so they stand above §21.1's corner
+## band (the lowest twelfth of the phone, where a thumb reaches the corners
+## worst): the column's bottom margin and this make up the band and a
+## little more, whatever the phone's height.
+static func corner_gap(column: VBoxContainer) -> Control:
+	var gap := Control.new()
+	gap.name = "CornerGap"
+	gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var fit := func() -> void:
+		if not gap.is_inside_tree():
+			return
+		var frame := gap.get_viewport_rect().size
+		var margin := UI.px(Tokens.number("size", "safe_top_points"))
+		gap.custom_minimum_size.y = maxf(0.0, frame.y * 0.08 + UI.px(8) - margin)
+	column.add_child(gap)
+	gap.ready.connect(fit)
+	column.resized.connect(fit)
+	return gap
 
 
 ## How much of `view`'s height lies under `cover` (a control over it) at

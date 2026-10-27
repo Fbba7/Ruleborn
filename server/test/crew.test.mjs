@@ -13,6 +13,13 @@ const KINDS = JSON.parse(readFileSync(new URL("../../content/ruleborn.json", imp
   .map((k) => k.id);
 const crew = (...ids) => ({ members: ids.map((id) => ({ kind: KINDS.indexOf(id) })), sage: 0, casts: [] });
 
+/** Roster characters of a manifest's kinds, level 1 and no traits, as the
+ *  manifest says: §12.5's manifest is checked against the roster, so a
+ *  heist carrying one names them (SR-02). */
+const roster = (t, account, manifest) => manifest.members.map(({ kind }) => Number(t.service.db.prepare(
+  "INSERT INTO characters (owner, kind, traits, home, via, joined_at) VALUES (?, ?, '[]', 'spire', 'woke', ?)")
+  .run(account, KINDS[kind], t.clock.now).lastInsertRowid));
+
 test("a heist carrying its crew manifest is re-simulated with each member's ability (12.5, 12.6)", () => {
   const t = twoPlayers(true);
   const lease = t.service.lease(t.raider.account, t.bundle);
@@ -25,7 +32,7 @@ test("a heist carrying its crew manifest is re-simulated with each member's abil
   const manifest = crew("stormhound", "quarryback", "skyskipper");
   const replay = play(t, lease, { plan, manifest });
   assert.equal(readHeader(replay).manifest, true, "an RBH3 replay");
-  const out = t.service.submit(t.raider.account, lease.token, replay);
+  const out = t.service.submit(t.raider.account, lease.token, replay, roster(t, t.raider.account, manifest));
   assert.equal(out.validated, true, "the server plays the same crew the device did");
   assert.equal(out.verdict.grade, "clean");
   assert.equal(out.verdict.banked, 508, "a Scout's, a Breaker's and a Carrier's bags: 104 + 104 + 300");
@@ -45,7 +52,8 @@ test("§12.5's planning holds by Keeper level: a crew of 3, 4 from level 8 and 5
   const tryWith = (manifest, n = 3) => {
     t.clock.now += 60 * 60 * 1000;
     const lease = t.service.lease(me, t.bundle);
-    const out = t.service.submit(me, lease.token, play(t, lease, { plan: openPlan(), crew: n, manifest }));
+    const out = t.service.submit(me, lease.token, play(t, lease, { plan: openPlan(), crew: n, manifest }),
+                                 manifest ? roster(t, me, manifest) : null);
     return out.validated ? "ok" : out.reason;
   };
   assert.equal(tryWith(null, 4), "crew_too_large", "4 only from level 8");

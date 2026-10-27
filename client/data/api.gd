@@ -17,6 +17,10 @@ var action_log: ActionLog
 ## sign in. A sign-in the server holds back (too_many_requests, G44) is the
 ## call's answer, with its wait, not a session refused.
 var reauth: Callable
+## Whether the token held has reached its renewal (AuthSession.stale): a
+## call then renews first rather than be refused. Unset, a token is used
+## until refused.
+var stale: Callable
 
 
 func _init(t: Transport, url: String, l: ActionLog) -> void:
@@ -37,16 +41,22 @@ static func secure(url: String) -> bool:
 		return true
 	if not url.begins_with("http://"):
 		return false
-	var host := url.trim_prefix("http://").get_slice("/", 0).get_slice(":", 0)
-	return host == "127.0.0.1" or host == "localhost"
+	# The whole authority is the loopback and at most a port, and no "@" or
+	# backslash anywhere, which a URL reader may take as ending a userinfo:
+	# "localhost:1@host" names another host (SR-06).
+	if url.contains("@") or url.contains("\\"):
+		return false
+	return RegEx.create_from_string("^http://(127\\.0\\.0\\.1|localhost)(:\\d{1,5})?([/?#]|$)").search(url) != null
 
 
 ## A call answered with bytes: a bundle, a replay.
 func raw(method: HTTPClient.Method, path: String, body := PackedByteArray()) -> Result:
 	if not online():
 		return Result.failure("offline")
-	var signing := path == "/v1/session"
-	if token == "" and not signing and reauth.is_valid():
+	# The session's own routes never sign in to be made: they are how.
+	var signing := method == HTTPClient.METHOD_POST and (path == "/v1/session" or path.begins_with("/v1/session/"))
+	var renew := token == "" or (stale.is_valid() and bool(stale.call()))
+	if renew and not signing and reauth.is_valid():
 		var signed: Result = await reauth.call()
 		if signed.code == "too_many_requests":
 			return signed

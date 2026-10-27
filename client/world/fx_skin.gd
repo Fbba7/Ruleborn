@@ -22,6 +22,8 @@ const PARCH_BOTTOM := Color("#F1E3C4")
 const PARCH_INK := Color("#2A1A10")
 const GOLD := Color("#F2B43C")
 const GOLD_DEEP := Color("#C97F12")
+## Gold as words on parchment: deep enough for 4.5:1 (§21.8).
+const GOLD_INK := Color("#7A4E00")
 const ALARM := Color("#E2536B")
 const ALARM_DEEP := Color("#B3203A")
 ## §21.8: red words on a dark surface.
@@ -56,6 +58,17 @@ static func numbers() -> Font:
 ## Manrope at 800, drawn at 800 as §21.8 has 900 drawn: the HUD's words.
 static func words() -> Font:
 	return _font("manrope_800.woff2")
+
+
+## Manrope at 800 with tabular figures: numbers that change (§21.8), so a
+## count ticking down never shifts its neighbours.
+static func figures() -> Font:
+	var key := "figures"
+	if not _fonts.has(key):
+		var f := (words() as FontVariation).duplicate() as FontVariation
+		f.opentype_features = {"tnum": 1}
+		_fonts[key] = f
+	return _fonts[key]
 
 
 ## Manrope at 600: secondary words.
@@ -232,17 +245,17 @@ static func _camera_icon(ci: Control, kind: String, by: int) -> void:
 	var s := minf(ci.size.x, ci.size.y) * 0.26
 	var w := maxf(3.0, s * 0.22)
 	if kind == "zoom":
-		ci.draw_line(c - Vector2(s, 0), c + Vector2(s, 0), ON_DARK, w)
+		FxPen.line(ci, c - Vector2(s, 0), c + Vector2(s, 0), ON_DARK, w)
 		if by > 0:
-			ci.draw_line(c - Vector2(0, s), c + Vector2(0, s), ON_DARK, w)
+			FxPen.line(ci, c - Vector2(0, s), c + Vector2(0, s), ON_DARK, w)
 		return
 	var start := -PI * 0.85 if by > 0 else -PI * 0.15
 	var end := PI * 0.35 if by > 0 else -PI * 1.35
-	ci.draw_arc(c, s, start, end, 20, ON_DARK, w, true)
+	FxPen.arc(ci, c, s, start, end, 20, ON_DARK, w, true)
 	var tip := c + Vector2(cos(end), sin(end)) * s
 	var along := Vector2(-sin(end), cos(end)) * (1.0 if by > 0 else -1.0)
 	var out := Vector2(cos(end), sin(end))
-	ci.draw_colored_polygon(PackedVector2Array([tip + along * s * 0.55, tip + out * s * 0.4 - along * s * 0.1,
+	FxPen.polygon(ci, PackedVector2Array([tip + along * s * 0.55, tip + out * s * 0.4 - along * s * 0.1,
 		tip - out * s * 0.4 - along * s * 0.1]), ON_DARK)
 
 

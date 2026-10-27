@@ -7,9 +7,12 @@ extends RefCounted
 ## close-up shows them, and only a few, as each is a whole character's
 ## triangles (§21.3).
 
-## How many characters a close-up shows: one, as each is a whole
-## character's triangles (§21.3's 3,000–6,000) on top of the realm's.
-const MOST := 1
+## How many characters a close-up shows, as each is a whole character's
+## triangles (§21.3's 3,000–6,000) on top of the realm's: two on an outer
+## realm, one on the Heart, whose citadel and buildings take the rest of
+## §21.3's 40,000.
+const MOST := 2
+const MOST_HEART := 1
 ## The map draws its figures larger than life, as the design's diorama does
 ## (its characters at 1.9 to 2.3 times, realm_diorama.js :611), so they read
 ## beside buildings drawn three tiles across.
@@ -40,7 +43,7 @@ func show(id: String, isl: UniverseIsland, characters: Array) -> void:
 		return
 	var n := 0
 	for ch: Dictionary in characters:
-		if n >= MOST:
+		if n >= (MOST_HEART if id == "heart" else MOST):
 			break
 		if realm_of(ch) != id:
 			continue
@@ -77,11 +80,14 @@ func _spot(isl: UniverseIsland, ch: Dictionary, n: int) -> Vector3:
 		var key := "%s:%d" % [str((work as Dictionary).get("kind", "")), int((work as Dictionary).get("n", 1))]
 		if isl.places.has(key):
 			var top: Vector3 = isl.places[key]
-			var out := Vector3(top.x - isl.at.x, 0, top.z - isl.at.z).normalized()
-			var p := top + out * 2.0
+			var out := Vector3(top.x - isl.at.x, 0, top.z - isl.at.z)
+			# A building in the middle: in front of it, toward the camera.
+			out = out.normalized() if out.length() > 0.5 else Vector3(0.3, 0, 1).normalized()
+			var p := top + out * 2.4
 			var f := Vector2(p.x - isl.at.x, p.z - isl.at.z).length() / isl.radius
 			return Vector3(p.x, isl.at.y + UniverseIsland.dome(f), p.z)
-	var r := (8.4 if isl.key == "heart" else 3.0)
+	# Out past the buildings' ring, on the meadow's open front.
+	var r := (8.4 if isl.key == "heart" else 6.2)
 	var a := PI / 2.0 - 0.5 + n * 0.9
 	return isl.at + Vector3(cos(a) * r, UniverseIsland.dome(r / isl.radius), sin(a) * r)
 

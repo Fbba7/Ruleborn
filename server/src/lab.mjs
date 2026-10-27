@@ -124,7 +124,7 @@ export class Lab {
    *  paid now. */
   start(account, { chamber, laws }) {
     const now = this.service.now();
-    if (!Array.isArray(laws) || laws.some((l) => typeof l !== "string" || !LAWS[l])) {
+    if (!Array.isArray(laws) || laws.some((l) => typeof l !== "string" || !Object.hasOwn(LAWS, l))) {
       throw new Refused(400, "malformed_body");
     }
     return transaction(this.db, () => {
@@ -183,7 +183,7 @@ export class Lab {
         // placed".
         const working = this.db.prepare("SELECT working_on FROM accounts WHERE id = ?").get(account).working_on;
         const schools = laws.map((l) => LAWS[l].school);
-        const law = working && LAWS[working] && schools.includes(LAWS[working].school) ? working : laws[0];
+        const law = working && Object.hasOwn(LAWS, working) && schools.includes(LAWS[working].school) ? working : laws[0];
         this.service.codex.add(account, law, facts.LAB_EMPTY_PAGES, now);
         result.pages = { law, n: facts.LAB_EMPTY_PAGES };
         result.hint = this.hint(account, laws, now);

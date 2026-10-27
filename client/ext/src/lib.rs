@@ -62,6 +62,16 @@ fn realm_of(bytes: &PackedByteArray) -> Option<Island> {
     }
 }
 
+/// Whether a replay from elsewhere — the server's copy of a heist, which it
+/// keeps before it has checked it — is one the simulation would play: the
+/// crew and the clock inside what `verified` allows. A crew past eight
+/// overflows the out mask, which aborts the app, and a clock of billions of
+/// ticks never ends its stepping (the security review's SR-08).
+fn playable(heist: &Heist) -> bool {
+    (3..=5).contains(&heist.crew)
+        && (sim::MIN_TICKS..=sim::MAX_TICKS + sim::era::extra_ticks(heist.era)).contains(&heist.ticks)
+}
+
 fn hex(bytes: &[u8]) -> GString {
     let s: String = bytes.iter().map(|b| format!("{b:02x}")).collect();
     GString::from(&s)
@@ -108,12 +118,33 @@ impl RulebornReplay {
         hex(&sim::rules_version())
     }
 
+    /// §11.1's numbers for each role as the simulation plays them, keyed by
+    /// the role's name: `{"health", "speed" (tiles a second), "power",
+    /// "carry"}`. The Character screen's Stats tab shows these.
+    #[func]
+    fn role_numbers() -> VarDictionary {
+        let mut out = VarDictionary::new();
+        for role in [sim::Role::Scout, sim::Role::Warden, sim::Role::Breaker, sim::Role::Carrier, sim::Role::Mender] {
+            let mut d = VarDictionary::new();
+            d.set("health", role.health() as i64);
+            d.set("speed", role.speed_tenths() as f64 / 10.0);
+            d.set("power", role.power() as i64);
+            d.set("carry", role.carry() as i64);
+            out.set(&GString::from(&format!("{role:?}")), &d);
+        }
+        out
+    }
+
     /// Load a replay onto the realm it was played in. With no island, the
     /// fixture realm the golden replays are recorded on. False if either does
-    /// not decode, or the island is not the one the replay names.
+    /// not decode, the replay is not one the simulation plays (`playable`),
+    /// or the island is not the one the replay names.
     #[func]
     fn load(&mut self, replay: PackedByteArray, island: PackedByteArray) -> bool {
         let Some(heist) = Heist::decode(replay.as_slice()) else { return false };
+        if !playable(&heist) {
+            return false;
+        }
         let Some(realm) = realm_of(&island) else { return false };
         if !island.is_empty() && realm.digest() != heist.island {
             return false;

@@ -39,6 +39,9 @@ const CITADEL_FROM_KIT := true
 ## How far back the camera stands from what it looks at: enough that the
 ## whole column is in front of it, near enough that the sun's shadow reaches.
 const BACK := 140.0
+## The camera's size over a whole universe, at which the sky is drawn at its
+## own scale (`universe_galaxy.gdshader`'s `sky_scale`).
+const SKY_SIZE := 90.0
 ## A fault, in the alarm's red (§21.8 keeps red for alarms).
 const FAULT := Color("#FF5A7A")
 
@@ -72,6 +75,9 @@ var links: Array[Dictionary] = []
 ## Pixels at the top and bottom that a screen's own controls cover: the
 ## camera frames the universe into what is left (`set_inset`).
 var inset := Vector2.ZERO
+## The screen's own controls over the world (home's side buttons), in the
+## view's pixels, which pins keep clear of.
+var keep_clear: Array[Rect2] = []
 
 var _view := {}
 var _extras := {}
@@ -87,7 +93,7 @@ var _from := [Vector3.ZERO, 100.0, 0.0]
 var _to := [Vector3.ZERO, 100.0, 0.0]
 var _swoop := 1.0
 var _wiping := false
-var _wipe: Control
+var _wipe: UniverseWipe
 var _wipe_amount := 0.0
 var _tilt := Vector2.ZERO
 var _time := 0.0
@@ -122,10 +128,7 @@ func _init() -> void:
 	pins = UniversePins.new(self)
 	pins.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(pins)
-	_wipe = Control.new()
-	_wipe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_wipe.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_wipe.draw.connect(_draw_wipe)
+	_wipe = UniverseWipe.new()
 	add_child(_wipe)
 	_build_stage()
 
@@ -138,14 +141,14 @@ func _build_stage() -> void:
 	environment.background_color = Color("#120A38")
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	environment.ambient_light_color = Color("#8A78D8")
-	environment.ambient_light_energy = 0.42
+	environment.ambient_light_energy = 0.5
 	environment.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	var env_node := WorldEnvironment.new()
 	env_node.environment = environment
 	world.add_child(env_node)
 	sun = DirectionalLight3D.new()
 	sun.light_color = Color("#FFE6C8")
-	sun.light_energy = 0.8
+	sun.light_energy = 0.95
 	sun.shadow_enabled = true
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
 	sun.directional_shadow_max_distance = 160.0
@@ -233,7 +236,9 @@ func _build() -> void:
 	_build_lods()
 	_build_links(glows, light, flow)
 	_build_faults(light, glows)
-	_bounds = UniverseLayout.bounds(places, UniverseLayout.radius(UniverseLayout.OUTER_GRID) + 2.0)
+	# Framed to the islands' rims, so the whole universe fills the screen's
+	# width as the designs' home does.
+	_bounds = UniverseLayout.bounds(places, UniverseLayout.radius(UniverseLayout.OUTER_GRID))
 	triangles += glows.count + light.count + flow.count
 	_add(glows.mesh(), _glow_material(0.3, 0.35), false)
 	_add(light.mesh(), _veil_material(0.0, 0.0), false)
@@ -274,10 +279,7 @@ func _rock(id: String, island: UniverseIsland, glows: UniversePaint, light: Univ
 ## The realm seen close (zoom 2) drawn as T2 draws a realm's island, built
 ## the first time it is seen close and kept; every other island its rock.
 func _show_close() -> void:
-	# Not the Heart: its citadel and buildings cover its ground, so it keeps
-	# the map's rock and the triangles go to the buildings.
-	var shown := focus_id if zoom == 2 and islands.has(focus_id) and not focus_id.begins_with("next:") \
-		and focus_id != "heart" else ""
+	var shown := focus_id if zoom == 2 and islands.has(focus_id) and not focus_id.begins_with("next:") else ""
 	if shown != "" and not _close.has(shown):
 		_make_close(shown)
 	for id: String in _rocks:
@@ -385,11 +387,17 @@ func _show_lods() -> void:
 		(_lods[id][0] as Node3D).visible = close
 		(_lods[id][1] as Node3D).visible = not close
 		# The kit's fine parts (windows, frames, flags) only in a close-up,
-		# where they can be seen.
+		# where they can be seen, and not on the Heart, whose island takes
+		# their room in §21.3's budget.
 		var fine := (_lods[id][0] as Node3D).get_node_or_null("Fine") as Node3D
 		if fine != null:
-			fine.visible = zoom == 2
+			fine.visible = zoom == 2 and id != "heart"
 	_show_close()
+	# The citadel larger over the whole universe, so the Heart reads first
+	# from afar as the designs' home draws it; life-sized for the realm zooms.
+	var citadel := statics.get_node_or_null("Citadel") as Node3D
+	if citadel != null:
+		citadel.scale = Vector3.ONE * (UniverseCitadel.FAR_SCALE if zoom == 0 else UniverseCitadel.MAP_SCALE)
 	# The realm's own characters, in a close-up only.
 	var shown := focus_id if zoom == 2 and islands.has(focus_id) else ""
 	if _crowd != null:
@@ -534,7 +542,7 @@ func _build_citadel() -> void:
 			heart.spire)
 	var node := Node3D.new()
 	node.position = heart.at
-	node.scale = Vector3.ONE * UniverseCitadel.MAP_SCALE
+	node.scale = Vector3.ONE * (UniverseCitadel.FAR_SCALE if zoom == 0 else UniverseCitadel.MAP_SCALE)
 	node.name = "Citadel"
 	statics.add_child(node)
 	for part: Array in [[solid.mesh(), _material(true), true], [fine.mesh(), _material(), false],
@@ -659,6 +667,7 @@ func _set_origin(back: Vector3) -> void:
 	var m := galaxy.material_override as ShaderMaterial
 	var fixed := Vector2(galaxy.position.x, galaxy.position.z)
 	m.set_shader_parameter("origin", Vector2(under.x, under.z) * 0.85 + fixed * 0.15)
+	m.set_shader_parameter("sky_scale", maxf(1.0, SKY_SIZE / maxf(1.0, camera.size)))
 
 
 ## Where the camera should be for the focus, zoom and turn: the whole
@@ -720,7 +729,7 @@ func _step_swoop() -> void:
 		if _swoop >= 1.0:
 			_wiping = false
 			_wipe_amount = 0.0
-		_wipe.queue_redraw()
+		_wipe.set_amount(_wipe_amount)
 		return
 	_target = (_from[0] as Vector3).lerp(_to[0], e)
 	_size = lerpf(_from[1], _to[1], e)
@@ -939,29 +948,6 @@ func _pan(by: Vector2) -> void:
 	var lo := _bounds.position
 	var hi := _bounds.end
 	_target = Vector3(clampf(_target.x + move.x, lo.x, hi.x), _target.y, clampf(_target.z + move.z, lo.z, hi.z))
-
-
-## The cloud wipe (the design's `cloudWipe`): banks of cloud roll in from
-## both sides, meet over the swoop, and part again; each puff shaded violet
-## underneath and lit on top, as the islands are.
-func _draw_wipe() -> void:
-	if _wipe_amount <= 0.01:
-		return
-	var s := _wipe.size
-	var e := _wipe_amount * _wipe_amount * (3.0 - 2.0 * _wipe_amount)
-	var rows := 9
-	for k in rows * 2:
-		var side := -1.0 if k % 2 == 0 else 1.0
-		var row := k / 2
-		var y := (row + 0.5) / rows * s.y + sin(row * 2.3) * s.y * 0.03
-		var r := s.x * (0.3 + 0.08 * fmod(row * 0.618, 1.0))
-		var rest := s.x * (0.5 + side * (0.04 + 0.12 * fmod(row * 0.381, 1.0)))
-		var off := s.x * 0.5 + side * (s.x * 0.5 + r * 1.2)
-		var x := lerpf(off, rest, e)
-		var at := Vector2(x, y)
-		_wipe.draw_circle(at + Vector2(0, r * 0.18), r * 1.02, Color("#B9A6F2"))
-		_wipe.draw_circle(at, r, Color("#F1EBFF"))
-		_wipe.draw_circle(at + Vector2(-r * 0.22, -r * 0.24), r * 0.6, Color("#FFFFFF"))
 
 
 func _notification(what: int) -> void:

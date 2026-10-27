@@ -92,11 +92,8 @@ func _line(counts: Dictionary, wards: bool, size: Vector2i) -> void:
 			along += step
 		var mid := (first + along - step) / 2.0
 		var top := Vector2(size.x + 0.85, size.y - mid) if wards else Vector2(size.x - mid, size.y + 0.85)
-		var fill := Color("#FFC2CC")
-		if wards:
-			var school := str(Palette.WARD_SCHOOL.get(k.to_pascal_case(), "matter"))
-			fill = (Palette.SCHOOL.get(school, Palette.MATTER) as Color).lightened(0.55)
-		pins.pin(OverlaySheet.chip(str(int(counts[k])), fill), _ground(top) + Vector3(0, 1.15 if wards else 1.35, 0))
+		var icon := OverlayHud.ward_icon(k) if wards else "crewroles/" + k.to_lower()
+		pins.pin(OverlayHud.tag(icon, "×%d" % int(counts[k])), _ground(top) + Vector3(0, 1.15 if wards else 1.35, 0))
 		along += step * 0.5
 
 

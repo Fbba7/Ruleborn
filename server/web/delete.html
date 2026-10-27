@@ -3,7 +3,11 @@
      GET /account/delete (http.mjs), with the web OAuth client id put in
      where the placeholder stands. Signing in with Google proves the same
      Google account the Android game uses; the server then runs the in-game
-     deletion (accounts.mjs deleteAccount) at once. -->
+     deletion (accounts.mjs deleteAccount) at once. The server also puts in
+     a nonce, which Google signs into the ID token and the server holds in
+     a cookie only it can set, so the token is good once and only from this
+     page. Its Content-Security-Policy runs its own script, by hash, and
+     Google's sign-in, nothing else (auth_http.mjs). -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -33,7 +37,8 @@ with. <strong>On iPhone or iPad</strong>, delete from inside the game, on any
 Apple device signed in to your Game Center account. If you cannot, write to
 the contact address on the game's store listing.</p>
 <p><label><input type="checkbox" id="withdraw"> Withdraw my Workshop islands too</label></p>
-<div id="g_id_onload" data-client_id="{{WEB_CLIENT_ID}}" data-callback="signedIn" data-auto_prompt="false"></div>
+<div id="g_id_onload" data-client_id="{{WEB_CLIENT_ID}}" data-nonce="{{NONCE}}" data-callback="signedIn"
+     data-auto_prompt="false" data-itp_support="true"></div>
 <div class="g_id_signin" data-type="standard" data-text="continue_with"></div>
 <p class="done" id="done" hidden>Your account is deleted.</p>
 <p class="failed" id="failed" hidden></p>
@@ -43,6 +48,7 @@ the contact address on the game's store listing.</p>
     failed.hidden = true;
     const res = await fetch("/v1/account/delete", {
       method: "POST",
+      credentials: "same-origin",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ idToken: response.credential,
                              withdrawIslands: document.getElementById("withdraw").checked }),

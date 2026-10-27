@@ -114,6 +114,12 @@ func _model() -> void:
 	# The lantern hangs from a crook over the head, so a guard is told by its light at the heist's 40 px.
 	var top := (lamp.global_transform * lamp.get_aabb()).end.y if lamp != null else 0.0
 	var over_head := top > c.socket(&"head_top").global_position.y
+	c.set_night(true)
+	var red_at_night: bool = (c.material().get_shader_parameter("rim_colour") as Color).r > 0.9 \
+		and c.material().get_shader_parameter("far_rim_colour") == CreatureModel.GUARD_RIM
+	c.set_night(false)
+	check.call("characters: a guard's red rim holds by night and small on screen, so it is told from the crew (21.6)",
+		red_at_night)
 	c.set_guard(false)
 	await tree.process_frame
 	check.call("characters: as a guard a ruleborn wears a sash and carries a lantern on a crook over its head, on its "
@@ -126,6 +132,7 @@ func _model() -> void:
 		+ "world's, 21.3)", hero and float(c.material().get_shader_parameter("hero")) == 0.0)
 	host.queue_free()
 	_patterns()
+	_looks()
 
 
 # §21.6: a form "changes a ruleborn's pattern, glow and one accessory": each
@@ -140,3 +147,21 @@ func _patterns() -> void:
 		seen[str(CreatureModel.FORM_PATTERN[k])] = true
 	check.call("characters: each ruleborn's forms draw a pattern of its own (21.6)",
 		missing.is_empty() and seen.size() == RULEBORN.size(), "missing %s, %d distinct" % [missing, seen.size()])
+
+
+# Each kind's correction toward its portrait names the body material's own
+# uniforms (a misspelt one would be silently ignored).
+func _looks() -> void:
+	var names := {}
+	var shader := load("res://world/creature.gdshader") as Shader
+	for u: Dictionary in RenderingServer.get_shader_parameter_list(shader.get_rid()):
+		names[str(u["name"])] = true
+	var unknown: Array[String] = []
+	for k: String in CreatureModel.LOOK:
+		if not CreatureModel.manifest().has(k):
+			unknown.append(k)
+		for u: String in CreatureModel.LOOK[k]:
+			if not names.has(u):
+				unknown.append("%s.%s" % [k, u])
+	check.call("characters: each kind's portrait correction is a kind and the body material's uniforms",
+		unknown.is_empty(), "unknown: %s" % [unknown])

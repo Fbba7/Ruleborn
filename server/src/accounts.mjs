@@ -136,6 +136,8 @@ export function deleteAccount(service, account, reason = "requested", { journal 
     db.prepare("DELETE FROM friends WHERE a = ? OR b = ?").run(account, account);
     db.prepare("DELETE FROM friend_invites WHERE account = ?").run(account);
     db.prepare("DELETE FROM challenges WHERE account = ?").run(account);
+    // Every device signed in to it, signed out (auth.mjs).
+    service.auth.forget(account);
     // Their blocks, and others' blocks of them: nobody left to keep apart.
     db.prepare("DELETE FROM blocks WHERE blocker = ? OR blocked = ?").run(account, account);
     // The universe they built: nobody's home now.

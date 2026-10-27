@@ -27,6 +27,11 @@ const OFF := Vector2(-99999, -99999)
 ## How full each state fills the pip.
 const AWARE_FILL := {"Unaware": 0.0, "Returning": 0.15, "Suspicious": 0.35, "Investigating": 0.6, "Searching": 0.8,
 	"Alerted": 1.0}
+## How long a guard's words stay over it, in seconds.
+const SAY_SECONDS := 2.4
+## §12.16's guard speech, by the state a guard has just come to.
+const SAYS := {"Suspicious": "GUARD_SAY_SUSPICIOUS", "Investigating": "GUARD_SAY_INVESTIGATING",
+	"Alerted": "GUARD_SAY_ALERTED", "Returning": "GUARD_SAY_RETURNING"}
 const STATE_MARK := {"Suspicious": "?", "Investigating": "??", "Searching": "?", "Alerted": "!"}
 
 var view: WorldView
@@ -44,6 +49,8 @@ var wipe := 0.0
 ## Whether the Vault's tag is drawn: a scout or a planner knows a realm's
 ## counts, not where its Vault stands (§12.4).
 var vault_shown := true
+## What each guard is saying: guard index -> {text: String, t: float}.
+var speech := {}
 var _time := 0.0
 ## Each figure's most health seen, its bar's whole.
 var _most := {}
@@ -67,6 +74,10 @@ func tick(delta: float) -> void:
 	names_for = maxf(0.0, names_for - delta)
 	flash = maxf(0.0, flash - delta * 1.4)
 	wipe = maxf(0.0, wipe - delta * 1.2)
+	for k: int in speech.keys():
+		speech[k]["t"] = float(speech[k]["t"]) + delta
+		if float(speech[k]["t"]) > SAY_SECONDS:
+			speech.erase(k)
 	for p in pops:
 		p["t"] = float(p["t"]) + delta
 	pops = pops.filter(func(p: Dictionary) -> bool: return float(p["t"]) < POP_SECONDS)
@@ -103,6 +114,13 @@ func _metre() -> float:
 
 
 func _draw() -> void:
+	# Every shape in one call (FxPen).
+	FxPen.begin(self)
+	_paint()
+	FxPen.end(self)
+
+
+func _paint() -> void:
 	var replay: RulebornReplay = view.replay
 	if replay == null or _cam() == null:
 		return
@@ -117,11 +135,12 @@ func _draw() -> void:
 	_draw_guards(replay, m, calm)
 	_draw_crew(replay, m, calm)
 	_draw_pops(m, calm)
+	_draw_speech(replay, m, calm)
 	if wipe > 0.0:
 		# The crossing's cloud wipe: the swoop's middle in the rift's violet,
 		# clouds rolling across it.
 		var a := sin(wipe * PI) * 0.85
-		draw_rect(Rect2(Vector2.ZERO, size), Color(0.36, 0.22, 0.6, a))
+		FxPen.rect(self, Rect2(Vector2.ZERO, size), Color(0.36, 0.22, 0.6, a))
 		var u := 1.0 - wipe
 		for k in 9:
 			var row := float(k % 3) / 2.0
@@ -135,7 +154,7 @@ func _draw() -> void:
 			for pass_shade: bool in [true, false]:
 				for blob: Vector3 in [Vector3(0, 0, 1.0), Vector3(0.7, 0.15, 0.75), Vector3(-0.7, 0.18, 0.7)]:
 					var c := Vector2(x + blob.x * r, y + blob.y * r + (r * 0.12 if pass_shade else 0.0))
-					draw_circle(c, r * blob.z, shade if pass_shade else cloud)
+					FxPen.circle(self, c, r * blob.z, shade if pass_shade else cloud)
 
 
 ## A soft shade of the night's ink at the top and bottom of a heist, behind
@@ -149,8 +168,8 @@ func _draw_frame() -> void:
 	for i in steps:
 		var k := float(i) / steps
 		var a := 0.2 * (1.0 - k) * (1.0 - k)
-		draw_rect(Rect2(0, size.y * 0.16 * k, size.x, size.y * 0.16 / steps + 1.0), Color(ink, a))
-		draw_rect(Rect2(0, size.y * (1.0 - 0.3 * k) - size.y * 0.3 / steps, size.x, size.y * 0.3 / steps + 1.0),
+		FxPen.rect(self, Rect2(0, size.y * 0.16 * k, size.x, size.y * 0.16 / steps + 1.0), Color(ink, a))
+		FxPen.rect(self, Rect2(0, size.y * (1.0 - 0.3 * k) - size.y * 0.3 / steps, size.x, size.y * 0.3 / steps + 1.0),
 			Color(ink, a * 1.3))
 
 
@@ -169,10 +188,10 @@ func _draw_edge(calm: bool) -> void:
 		var k := float(i) / steps
 		var w := band * (1.0 - k)
 		var c := Color(red, a * (1.0 - k) * 0.5)
-		draw_rect(Rect2(0, 0, size.x, w), c)
-		draw_rect(Rect2(0, size.y - w, size.x, w), c)
-		draw_rect(Rect2(0, 0, w, size.y), c)
-		draw_rect(Rect2(size.x - w, 0, w, size.y), c)
+		FxPen.rect(self, Rect2(0, 0, size.x, w), c)
+		FxPen.rect(self, Rect2(0, size.y - w, size.x, w), c)
+		FxPen.rect(self, Rect2(0, 0, w, size.y), c)
+		FxPen.rect(self, Rect2(size.x - w, 0, w, size.y), c)
 
 
 ## §5.4's spot on show in the landing picker: a gold pin over it, bobbing,
@@ -190,14 +209,14 @@ func _draw_pick(m: float, calm: bool) -> void:
 	var bob := 0.0 if calm else absf(sin(_time * 3.0)) * s * 0.25
 	var tip := at + Vector2(0, -bob)
 	var head := tip + Vector2(0, -s * 0.9)
-	draw_colored_polygon(PackedVector2Array([tip, head + Vector2(-s * 0.36, s * 0.12),
+	FxPen.polygon(self, PackedVector2Array([tip, head + Vector2(-s * 0.36, s * 0.12),
 		head + Vector2(s * 0.36, s * 0.12)]), FxSkin.INK_LINE)
-	draw_circle(head, s * 0.42, FxSkin.INK_LINE)
-	draw_colored_polygon(PackedVector2Array([tip + Vector2(0, -4), head + Vector2(-s * 0.3, s * 0.1),
+	FxPen.circle(self, head, s * 0.42, FxSkin.INK_LINE)
+	FxPen.polygon(self, PackedVector2Array([tip + Vector2(0, -4), head + Vector2(-s * 0.3, s * 0.1),
 		head + Vector2(s * 0.3, s * 0.1)]), FxSkin.GOLD)
-	draw_circle(head, s * 0.35, FxSkin.GOLD)
-	draw_circle(head, s * 0.14, FxSkin.INK_LINE)
-	draw_circle(head + Vector2(-s * 0.12, -s * 0.14), s * 0.08, Color(1, 1, 1, 0.6))
+	FxPen.circle(self, head, s * 0.35, FxSkin.GOLD)
+	FxPen.circle(self, head, s * 0.14, FxSkin.INK_LINE)
+	FxPen.circle(self, head + Vector2(-s * 0.12, -s * 0.14), s * 0.08, Color(1, 1, 1, 0.6))
 
 
 func _draw_pylons(replay: RulebornReplay, m: float) -> void:
@@ -236,8 +255,8 @@ func _draw_vault(replay: RulebornReplay, m: float) -> void:
 	box.shadow_color = Color(0, 0, 0, 0.3)
 	box.shadow_size = 4
 	box.shadow_offset = Vector2(0, 3)
-	draw_style_box(box, plate)
-	draw_string(font, Vector2(plate.position.x, plate.position.y + px * 0.98), words, HORIZONTAL_ALIGNMENT_CENTER,
+	FxPen.style_box(self, box, plate)
+	FxPen.string(self, font, Vector2(plate.position.x, plate.position.y + px * 0.98), words, HORIZONTAL_ALIGNMENT_CENTER,
 		plate.size.x, px, FxSkin.PARCH_INK if open else FxSkin.GOLD)
 	var health := int(v.get("health", 0))
 	_most["vault"] = maxi(int(_most.get("vault", 0)), health)
@@ -312,8 +331,8 @@ func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
 			# The designs' pip over each of the crew, in its role's colour: whose
 			# side it is on reads at a glance.
 			var pip: Color = Palette.ROLE.get(str(mem["role"]), Palette.PAPER)
-			draw_circle(at + Vector2(0, h * 0.5), h * 0.95, FxSkin.INK_LINE)
-			draw_circle(at + Vector2(0, h * 0.5), h * 0.7, pip)
+			FxPen.circle(self, at + Vector2(0, h * 0.5), h * 0.95, FxSkin.INK_LINE)
+			FxPen.circle(self, at + Vector2(0, h * 0.5), h * 0.7, pip)
 		var bag := float(mem["carried"]) / maxf(1.0, float(mem["carry"]))
 		if bag > 0.0:
 			FxIcons.bar(self, Rect2(at + Vector2(-w * 0.5 + h, y), Vector2(w - h, h * 0.8)), bag, FxSkin.GOLD)
@@ -322,9 +341,9 @@ func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
 			var bob := 0.0 if calm else absf(sin(_time * 3.2)) * w * 0.08
 			var tip := at + Vector2(0, -h * 0.6 - bob)
 			var tri := PackedVector2Array([tip, tip + Vector2(-w * 0.16, -w * 0.18), tip + Vector2(w * 0.16, -w * 0.18)])
-			draw_colored_polygon(PackedVector2Array([tri[0] + Vector2(0, 3), tri[1] + Vector2(-3, -2),
+			FxPen.polygon(self, PackedVector2Array([tri[0] + Vector2(0, 3), tri[1] + Vector2(-3, -2),
 				tri[2] + Vector2(3, -2)]), FxSkin.INK_LINE)
-			draw_colored_polygon(tri, FxSkin.GOLD)
+			FxPen.polygon(self, tri, FxSkin.GOLD)
 		if view.in_sight.has(i):
 			# In a guard's sight: an eye beside the head, blinking open.
 			var blink := 1.0 if calm else 0.85 + 0.15 * absf(sin(_time * 4.0))
@@ -335,12 +354,12 @@ func _draw_crew(replay: RulebornReplay, m: float, calm: bool) -> void:
 
 ## A round pip filled to `share` from the bottom up, in `colour` on white.
 func _pip(at: Vector2, r: float, share: float, colour: Color) -> void:
-	draw_circle(at, r + maxf(2.0, r * 0.25), FxSkin.INK_LINE)
-	draw_circle(at, r, Color.WHITE)
+	FxPen.circle(self, at, r + maxf(2.0, r * 0.25), FxSkin.INK_LINE)
+	FxPen.circle(self, at, r, Color.WHITE)
 	if share <= 0.0:
 		return
 	if share >= 1.0:
-		draw_circle(at, r, colour)
+		FxPen.circle(self, at, r, colour)
 		return
 	# The filled part: the circle's segment below the line at `share` of its
 	# height, its arc closed by the chord.
@@ -349,7 +368,7 @@ func _pip(at: Vector2, r: float, share: float, colour: Color) -> void:
 	for k in 17:
 		var a := lerpf(a0, PI - a0, k / 16.0)
 		pts.append(at + Vector2(cos(a), sin(a)) * r)
-	draw_colored_polygon(pts, colour.darkened(0.12) if colour == Color.WHITE else colour)
+	FxPen.polygon(self, pts, colour.darkened(0.12) if colour == Color.WHITE else colour)
 
 
 func _name_tag(at: Vector2, words: String) -> void:
@@ -362,9 +381,9 @@ func _name_tag(at: Vector2, words: String) -> void:
 	box.border_color = FxSkin.INK_LINE
 	box.set_border_width_all(2)
 	box.set_corner_radius_all(int(px * 0.6))
-	draw_style_box(box, r)
-	draw_string(font, Vector2(r.position.x, r.position.y + px * 0.98), words, HORIZONTAL_ALIGNMENT_CENTER, r.size.x, px,
-		FxSkin.ON_DARK)
+	FxPen.style_box(self, box, r)
+	FxPen.string(self, font, Vector2(r.position.x, r.position.y + px * 0.98), words, HORIZONTAL_ALIGNMENT_CENTER,
+		r.size.x, px, FxSkin.ON_DARK)
 
 
 func _stars(at: Vector2, s: float, calm: bool) -> void:
@@ -373,6 +392,83 @@ func _stars(at: Vector2, s: float, calm: bool) -> void:
 		var a := turn + TAU * k / 3.0
 		var p := at + Vector2(cos(a) * s * 0.45, sin(a) * s * 0.16 - s * 0.1)
 		FxIcons.star(self, p, s * 0.14, Color("#FFE27A"), turn * 2.0)
+
+
+## A guard has come to `state`: it says so, if §12.16 gives it words.
+func say(guard: int, state: String) -> void:
+	if SAYS.has(state):
+		speech[guard] = {"text": Strings.t(SAYS[state]), "t": 0.0, "alarm": state == "Alerted"}
+
+
+## Each guard's words on a parchment bubble beside its head, its tail to the
+## guard's mouth, popping in and fading (reduced motion: shown, then gone).
+func _draw_speech(replay: RulebornReplay, m: float, calm: bool) -> void:
+	var nodes: Array[Node3D] = view._guards
+	var font := FxSkin.words()
+	var px := int(clampf(m * 0.4, 40.0, 54.0))
+	for i: int in speech:
+		if i >= nodes.size() or i >= replay.guards().size():
+			continue
+		var head := _on_screen(nodes[i].position + Vector3(0, float(nodes[i].get_meta("head", 1.2)), 0))
+		if head == OFF:
+			continue
+		var t := float(speech[i]["t"])
+		var a := clampf((SAY_SECONDS - t) / 0.3, 0.0, 1.0)
+		var grow := 1.0 if calm else minf(1.0, 0.6 + t * 4.0)
+		var words := str(speech[i]["text"])
+		var w := font.get_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+		var size := Vector2(w + px * 1.0, px * 1.5) * grow
+		var side := 1.0 if head.x < size.x + px * 2.0 or head.x < get_viewport_rect().size.x * 0.5 else -1.0
+		var corner := head + Vector2(side * px * 0.9, -px * 2.4)
+		var box := Rect2(corner - Vector2(0.0 if side > 0.0 else size.x, size.y * 0.5), size)
+		# Beside the numbers rising nearby, so neither covers the other.
+		for r: Rect2 in _pop_rects(m, calm):
+			if box.grow(px * 0.2).intersects(r):
+				box.position.x = r.end.x + px * 0.3 if side > 0.0 else r.position.x - px * 0.3 - size.x
+		box.position.x = clampf(box.position.x, px * 0.2, get_viewport_rect().size.x - size.x - px * 0.2)
+		var tail := PackedVector2Array([box.get_center() + Vector2(-side * size.x * 0.25, size.y * 0.3),
+			box.get_center() + Vector2(-side * size.x * 0.05, size.y * 0.3), head + Vector2(side * px * 0.2, -px * 0.3)])
+		# An alert is said in paper on §21.8's alarm fill; the rest on parchment.
+		var fill := FxSkin.ALARM_DEEP if speech[i].get("alarm", false) else FxSkin.PARCH_TOP
+		var ink := FxSkin.PARCH_TOP if speech[i].get("alarm", false) else FxSkin.PARCH_INK
+		var bubble := StyleBoxFlat.new()
+		bubble.bg_color = Color(fill, a)
+		bubble.border_color = Color(FxSkin.INK_LINE, a)
+		bubble.set_border_width_all(maxi(2, UI.px(1.5)))
+		bubble.set_corner_radius_all(int(size.y * 0.5))
+		bubble.shadow_color = Color(0.05, 0.02, 0.08, 0.3 * a)
+		bubble.shadow_size = 4
+		FxPen.polygon(self, _grown(tail, 3.0), Color(FxSkin.INK_LINE, a))
+		FxPen.style_box(self, bubble, box)
+		FxPen.polygon(self, tail, Color(fill, a))
+		if grow >= 1.0:
+			FxPen.string(self, font, Vector2(box.position.x, box.position.y + size.y * 0.5 + px * 0.36), words,
+				HORIZONTAL_ALIGNMENT_CENTER, box.size.x, px, Color(ink, a))
+
+
+## A triangle grown outward by `by` pixels round its middle: its ink edge.
+static func _grown(tri: PackedVector2Array, by: float) -> PackedVector2Array:
+	var mid := (tri[0] + tri[1] + tri[2]) / 3.0
+	var out := PackedVector2Array()
+	for p in tri:
+		out.append(p + (p - mid).normalized() * by)
+	return out
+
+
+## The column each rising number climbs through in its life, as
+## `_draw_pops` places it: a bubble kept out of it stays put.
+func _pop_rects(m: float, calm: bool) -> Array[Rect2]:
+	var out: Array[Rect2] = []
+	var font := FxSkin.numbers()
+	for p in pops:
+		var at := _on_screen(p["at"])
+		if at == OFF:
+			continue
+		var px := clampf(m * 0.5, 30.0, 72.0) * 1.25
+		var w := font.get_string_size(str(p["text"]), HORIZONTAL_ALIGNMENT_LEFT, -1, int(px)).x + px
+		var rise := 0.0 if calm else m * 1.1
+		out.append(Rect2(at + Vector2(-w * 0.5, -rise - px), Vector2(w, rise + px * 1.3)))
+	return out
 
 
 func _draw_pops(m: float, calm: bool) -> void:
@@ -395,6 +491,6 @@ func _draw_pops(m: float, calm: bool) -> void:
 		elif icon == "star":
 			FxIcons.star(self, Vector2(x - px * 0.45, pos.y - px * 0.32), px * 0.36, Color("#FFE27A"))
 		var colour: Color = p["colour"]
-		draw_string_outline(font, Vector2(x, pos.y), words, HORIZONTAL_ALIGNMENT_LEFT, -1, px, maxi(6, px / 5),
+		FxPen.string_outline(self, font, Vector2(x, pos.y), words, HORIZONTAL_ALIGNMENT_LEFT, -1, px, maxi(6, px / 5),
 			Color(FxSkin.INK_LINE, a))
-		draw_string(font, Vector2(x, pos.y), words, HORIZONTAL_ALIGNMENT_LEFT, -1, px, Color(colour, a))
+		FxPen.string(self, font, Vector2(x, pos.y), words, HORIZONTAL_ALIGNMENT_LEFT, -1, px, Color(colour, a))

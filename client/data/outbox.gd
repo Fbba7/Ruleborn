@@ -61,6 +61,38 @@ func pending() -> int:
 	return _items.size()
 
 
+## Everything waiting, moved out of the queue to the file `to`, beside what
+## was put there before: the player signed out, and what they played waits
+## for their own account to sign in again (AuthController). Returns how many.
+func park(to: String) -> int:
+	var moved := _items.size()
+	if moved == 0:
+		return 0
+	var kept := Outbox.new(to)
+	for item: Dictionary in _items:
+		if not kept.has(item["key"]):
+			kept._items.append(item)
+	kept._write()
+	_items.clear()
+	_write()
+	return moved
+
+
+## What was parked in `from`, back in the queue, and the file gone.
+func unpark(from: String) -> int:
+	if not FileAccess.file_exists(from):
+		return 0
+	var kept := Outbox.new(from)
+	var back := 0
+	for item: Dictionary in kept._items:
+		if not has(item["key"]):
+			_items.append(item)
+			back += 1
+	_write()
+	DirAccess.remove_absolute(from)
+	return back
+
+
 func has(key: String) -> bool:
 	return _items.any(func(i: Dictionary) -> bool: return i["key"] == key)
 

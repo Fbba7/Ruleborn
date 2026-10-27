@@ -7,6 +7,7 @@ func _initialize() -> void:
 
 func _go() -> void:
 	root.size = Vector2i(1080, 2340)
+	ShotKit.prepare()
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	var d := PlannerTests.slices()
 	var card: Dictionary = d["planner"]["target"]

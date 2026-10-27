@@ -80,6 +80,8 @@ func _layout() -> void:
 
 	game.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_PLAY")))
 	game.add_child(_toggle("slow_rehearsals", "SETTINGS_SLOW_REHEARSALS", "playtimereminder"))
+	# The account: signing in and out (scripts/auth_panel.gd, T11).
+	game.add_child(AuthPanel.new())
 
 	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_ACCESS")))
 	var size_name := Strings.t("SETTINGS_TEXT_SIZE", Settings.text_scale)

@@ -27,6 +27,11 @@ const TUNNEL := "tunnel"
 const NO_MOUTH := Vector2i(-1, -1)
 ## How many edits Undo remembers.
 const UNDO_DEPTH := 40
+## Each tool's mark, in `TOOLS`' order.
+const TOOL_ICONS := ["realmactions/terrain", "wards/staticcoil", "crewroles/warden", "buildings/lawpylon",
+	"heiststatus/vaultprogress", "generalui/cancel"]
+## A kind's card, in points.
+const CARD_POINTS := 76.0
 
 var island := RulebornIsland.new()
 var preview := RulebornReplay.new()
@@ -49,8 +54,6 @@ var view: RealmView
 var title_label: Label
 var status_label: Label
 var together_label: Label
-var tool_button: Button
-var kind_button: Button
 var level_button: Button
 var raid_button: Button
 var restore_button: Button
@@ -58,6 +61,13 @@ var undo_button: Button
 var _stroke := false
 var _dock: Control
 var _stroke_tile := NO_MOUTH
+var _stats: HFlowContainer
+var _top: Control
+var _said: Control
+var _tool_tabs: HBoxContainer
+var _cards: HFlowContainer
+var _shelf: ScrollContainer
+var _cards_key := ""
 
 
 func _ready() -> void:
@@ -77,50 +87,164 @@ func _build() -> void:
 	view = stage
 	tiles = OverlayTiles.new(stage)
 	view.gui_input.connect(_on_input)
-	title_label = UI.label("", UI.TEXT_POINTS, true)
-	column.add_child(OverlaySheet.ribbon(title_label))
+	var top := VBoxContainer.new()
+	top.add_theme_constant_override("separation", UI.px(6))
+	var heading := OverlayHud.heading(Strings.t("BUILDER_KICKER"), "")
+	title_label = heading.find_child("Title", true, false) as Label
+	top.add_child(heading)
+	_stats = HFlowContainer.new()
+	_stats.add_theme_constant_override("h_separation", UI.px(5))
+	top.add_child(_stats)
+	_top = top
+	column.add_child(top)
 	StageScreen.window(column, 2.0)
-	status_label = UI.label("", UI.TEXT_POINTS, true)
-	together_label = UI.label("", UI.TEXT_POINTS, true)
-	# What the island says scrolls in its place when it runs long, so the
-	# controls below keep theirs: at §20.8's 200% a German or French line
-	# wraps where an English one does not, and would push the bottom row
-	# into the phone's safe area. It takes a share of the room the realm
-	# leaves, never less than a line.
-	var words := UI.scroll(column, true)
-	var said := words.get_parent().get_parent() as ScrollContainer
-	said.size_flags_stretch_ratio = 0.4
+	# What the island says, on a glass pill over the world: it scrolls in
+	# its place when it runs long, so the controls below keep theirs at
+	# §20.8's 200%.
+	status_label = UI.label("", 14.0, true)
+	status_label.add_theme_font_override("font", UI.bold_font())
+	status_label.set_meta("bold", true)
+	together_label = UI.label("", 13.0, true)
+	var said := ScrollContainer.new()
+	said.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	said.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	said.size_flags_stretch_ratio = 0.35
 	said.custom_minimum_size.y = UI.px(UI.TEXT_POINTS * 2)
+	var glass := UI.panel("glass")
+	glass.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var words := VBoxContainer.new()
+	words.add_theme_constant_override("separation", 0)
 	words.add_child(status_label)
 	words.add_child(together_label)
-
-	var tools := UI.row()
-	tool_button = UI.button("", next_tool)
-	kind_button = UI.button("", next_kind)
-	tools.add_child(tool_button)
-	tools.add_child(kind_button)
-	# §18.6: the island a remix replaced, back — shown only while one is kept.
-	restore_button = UI.button(Strings.t("BUILDER_RESTORE"), restore)
-	restore_button.accessibility_name = Strings.t("BUILDER_RESTORE_NAMED")
-	tools.add_child(restore_button)
-	undo_button = UI.button(Strings.t("BUILDER_UNDO"), undo)
-	tools.add_child(undo_button)
-	var keys := VBoxContainer.new()
-	keys.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	keys.add_child(tools)
-	var actions := UI.row()
-	level_button = UI.button("", next_level)
+	glass.add_child(words)
+	said.add_child(glass)
+	column.add_child(said)
+	_said = said
+	# The sheet: the tools as tabs, the chosen tool's kinds as cards.
+	var sheet := UI.panel("card")
+	var inside := VBoxContainer.new()
+	inside.add_theme_constant_override("separation", UI.px(6))
+	_tool_tabs = HBoxContainer.new()
+	_tool_tabs.add_theme_constant_override("separation", UI.px(3))
+	inside.add_child(_tool_tabs)
+	# The kinds wrap into rows that scroll, one row in sight: every card
+	# stays on the screen (§21.1).
+	var shelf := ScrollContainer.new()
+	shelf.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	shelf.custom_minimum_size.y = UI.px(CARD_POINTS + 16)
+	_cards = HFlowContainer.new()
+	_cards.add_theme_constant_override("h_separation", UI.px(6))
+	_cards.add_theme_constant_override("v_separation", UI.px(6))
+	_cards.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	shelf.add_child(_cards)
+	_shelf = shelf
+	inside.add_child(shelf)
+	sheet.add_child(inside)
+	column.add_child(sheet)
+	_dock = sheet
+	var actions := HFlowContainer.new()
+	actions.alignment = FlowContainer.ALIGNMENT_CENTER
+	actions.add_theme_constant_override("h_separation", UI.px(5))
+	actions.add_theme_constant_override("v_separation", UI.px(6))
+	actions.add_child(OverlayHud.back_key(func() -> void: App.services.router.go(&"home")))
+	level_button = _small(Strings.t("BUILDER_LEVEL", 1), next_level, "realmactions/upgrade")
 	actions.add_child(level_button)
-	actions.add_child(UI.button(Strings.t("BUILDER_SAVE"), save))
-	raid_button = UI.button(Strings.t("BUILDER_RAID"), raid, true)
+	undo_button = _small(Strings.t("BUILDER_UNDO"), undo, "heistoutcomes/replay")
+	actions.add_child(undo_button)
+	# §18.6: the island a remix replaced, back — shown only while one is kept.
+	restore_button = _small(Strings.t("BUILDER_RESTORE"), restore, "generalui/sort")
+	restore_button.accessibility_name = Strings.t("BUILDER_RESTORE_NAMED")
+	actions.add_child(restore_button)
+	actions.add_child(_small(Strings.t("BUILDER_SAVE"), save, "generalui/confirm"))
+	raid_button = UI.action(Strings.t("BUILDER_RAID"), raid, "gold")
+	raid_button.custom_minimum_size.x = UI.px(104)
+	raid_button.icon = Icons.texture("planningactions/launch")
+	raid_button.add_theme_constant_override("icon_max_width", UI.px(22))
 	actions.add_child(raid_button)
-	# Home rides with the actions: one row fewer, so the realm keeps its room
-	# at §20.8's large text.
-	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home")))
-	keys.add_child(actions)
-	_dock = OverlaySheet.dock(keys)
-	column.add_child(UI.narrow(_dock))
-	OverlaySheet.dress(self)
+	column.add_child(UI.narrow(actions))
+
+
+## A round leather key with a mark: its words are its spoken name and its
+## tooltip.
+func _small(words: String, pressed: Callable, icon: String) -> Button:
+	var b := UI.action("", pressed, "leather", words)
+	b.custom_minimum_size = Vector2.ONE * UI.px(48)
+	UI.dress(b, "leather", 24.0)
+	b.tooltip_text = words
+	b.icon = Icons.texture(icon)
+	b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	b.add_theme_constant_override("icon_max_width", UI.px(26))
+	return b
+
+
+## The tools as tabs of marks, the chosen one lit; each says its name.
+func _fill_tools() -> void:
+	for c: Node in _tool_tabs.get_children():
+		_tool_tabs.remove_child(c)
+		c.queue_free()
+	for t: int in TOOLS.size():
+		var b := UI.action("", func() -> void:
+			tool = t as Tool
+			kind = 0
+			mouth = NO_MOUTH
+			_refresh(), "tab_active" if t == tool else "tab", Strings.t("BUILDER_TOOL_" + TOOLS[t]))
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.icon = Icons.texture(TOOL_ICONS[t])
+		b.add_theme_constant_override("icon_max_width", UI.px(26))
+		b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		b.tooltip_text = Strings.t("BUILDER_TOOL_" + TOOLS[t])
+		b.set_meta("tool", TOOLS[t])
+		_tool_tabs.add_child(b)
+
+
+## The chosen tool's kinds as cards with their marks and names; the chosen
+## one in gold. Rebuilt only when the tool changes.
+func _fill_cards() -> void:
+	var key := "%d|%d" % [tool, kind]
+	if key == _cards_key:
+		return
+	var same_tool := _cards_key.begins_with("%d|" % tool)
+	_cards_key = key
+	if same_tool:
+		for c: Node in _cards.get_children():
+			UI.set_look(c as Button, "card_selected" if int(c.get_meta("kind")) == kind else "card")
+		return
+	for c: Node in _cards.get_children():
+		_cards.remove_child(c)
+		c.queue_free()
+	var ks := kinds()
+	for i: int in ks.size():
+		var b := UI.action(kind_name(ks[i]), func() -> void:
+			kind = i
+			mouth = NO_MOUTH
+			_refresh(), "card_selected" if i == kind else "card")
+		b.custom_minimum_size = Vector2(UI.px(CARD_POINTS), UI.px(CARD_POINTS))
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		b.add_theme_font_size_override("font_size", UI.text_px(13))
+		b.set_meta("points", 13.0)
+		b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
+		b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var icon := _kind_icon(ks[i])
+		b.icon = Icons.texture(icon if Icons.has(icon) else TOOL_ICONS[tool])
+		b.add_theme_constant_override("icon_max_width", UI.px(38))
+		b.set_meta("kind", i)
+		_cards.add_child(b)
+	if ks.is_empty():
+		var p := OverlayHud.pill(TOOL_ICONS[tool], Strings.t("BUILDER_TOOL_" + TOOLS[tool]), "", "glass")
+		_cards.add_child(p)
+
+
+func _kind_icon(k: Variant) -> String:
+	match tool:
+		Tool.GROUND:
+			return "terrain/" + str(k).replace("_", "") if str(k) != "" else "generalui/cancel"
+		Tool.WARD:
+			return OverlayHud.ward_icon(str(k))
+		Tool.GUARD:
+			return "crewroles/" + str(GUARD_ROLES[int(k)]).to_lower()
+		Tool.LAW:
+			return OverlayHud.law_icon(str(k))
+	return TOOL_ICONS[tool]
 
 
 ## The kinds the chosen tool offers, as ids: ground and wards by content id,
@@ -350,7 +474,7 @@ func raid() -> void:
 
 
 func _refresh() -> void:
-	title_label.text = Strings.t("BUILDER_TITLE", island.realm_level())
+	title_label.text = Strings.t("BUILDER_TITLE", island.realm_level()).replace("\n", " ")
 	preview.start("1", 30, 3, island.bytes())
 	view.show_replay(preview)
 	var problems := island.problems()
@@ -378,13 +502,29 @@ func _refresh() -> void:
 		else:
 			tiles.paint({})
 		tiles.ghost(null, Vector2i.ZERO)
-	UI.relabel(tool_button, Strings.t("BUILDER_TOOL_" + TOOLS[tool]))
-	var ks := kinds()
-	UI.relabel(kind_button, kind_name(ks[kind]) if kind < ks.size() else "—")
-	kind_button.disabled = ks.is_empty()
-	UI.relabel(level_button, Strings.t("BUILDER_LEVEL", island.realm_level()))
+	_fill_tools()
+	_fill_cards()
+	level_button.accessibility_name = Strings.t("BUILDER_LEVEL", island.realm_level())
+	level_button.tooltip_text = level_button.accessibility_name
 	raid_button.disabled = not problems.is_empty()
 	restore_button.visible = Draft.has_kept()
+	_fill_stats(problems.size())
+
+
+## The island's limits as pills: wards, guard posts and laws against what
+## its level allows, and a warning while the island cannot be raided.
+func _fill_stats(problems: int) -> void:
+	for c: Node in _stats.get_children():
+		_stats.remove_child(c)
+		c.queue_free()
+	var b: Dictionary = island.budget()
+	var said := status_label.text
+	_stats.add_child(OverlayHud.pill("hud/shield", "%d/%d" % [b["wards"][0], b["wards"][1]], said))
+	_stats.add_child(OverlayHud.pill("crewroles/warden", "%d/%d" % [b["guards"][0], b["guards"][1]], said))
+	_stats.add_child(OverlayHud.pill("buildings/lawpylon", "%d/%d" % [b["laws"][0], b["laws"][1]], said))
+	_stats.add_child(OverlayHud.pill("hud/compass", "%d×%d" % [island.side(), island.side()], title_label.text))
+	if problems > 0:
+		_stats.add_child(OverlayHud.pill("hud/warning", str(problems), said, "red"))
 
 
 ## §8.6: harmonies and dissonances are "shown automatically when weaving", so
@@ -408,5 +548,5 @@ static func together(c: Dictionary) -> String:
 func _process(_delta: float) -> void:
 	var stage := view as StageView
 	if stage != null and _dock != null:
-		stage.cover_bottom = StageScreen.covered_below(stage, status_label.get_parent().get_parent().get_parent())
-		stage.cover_top = StageScreen.covered_above(stage, title_label)
+		stage.cover_bottom = StageScreen.covered_below(stage, _said)
+		stage.cover_top = StageScreen.covered_above(stage, _top)

@@ -30,6 +30,8 @@ export const seedOf = (bundle) => BigInt.asUintN(64, BigInt(`0x${bundle.slice(0,
 export class Holds {
   constructor(service) {
     this.service = service;
+    /** The bundle being measured, while it is (`work`). */
+    this.running = null;
   }
 
   get db() { return this.service.db; }
@@ -52,13 +54,29 @@ export class Holds {
       : { status: "measured", held: r.held, raids: r.raids, hold: r.held / r.raids };
   }
 
-  /** Up to `raids` raids of the oldest measurement still running, written;
+  /** Up to `raids` raids of the next measurement, owners in turn, written;
    *  the measurement that lands rates its islands. Returns the raids played. */
   work(raids = 40, now = this.service.now()) {
     const build = this.service.builds.current;
-    const r = this.db.prepare(
-      "SELECT * FROM island_holds WHERE rules = ? AND measured_at IS NULL ORDER BY queued_at, bundle LIMIT 1")
+    // The next measurement is of a bundle some player's island is now — a
+    // superseded one waits, measured if it is published again — and owners
+    // take turns: each owner's oldest first, then their next. A player who
+    // publishes island after island has at most their seven realms in the
+    // queue, and never puts everyone else's behind theirs (SR-17).
+    // Chosen once a measurement, and kept while it runs and stands.
+    const kept = this.running && this.db.prepare(
+      `SELECT * FROM island_holds WHERE bundle = ? AND rules = ? AND measured_at IS NULL
+          AND EXISTS (SELECT 1 FROM islands WHERE bundle = ?)`)
+      .get(this.running, build.rulesVersion, this.running);
+    const r = kept || this.db.prepare(
+      `WITH live AS (
+         SELECT h.*, ROW_NUMBER() OVER (PARTITION BY o.owner ORDER BY h.queued_at, h.bundle) AS turn
+           FROM island_holds h
+           JOIN (SELECT bundle, MIN(owner) AS owner FROM islands GROUP BY bundle) o ON o.bundle = h.bundle
+          WHERE h.rules = ? AND h.measured_at IS NULL)
+       SELECT * FROM live ORDER BY turn, queued_at, bundle LIMIT 1`)
       .get(build.rulesVersion);
+    this.running = r?.bundle ?? null;
     if (!r) return 0;
     const island = this.service.store.get(r.bundle);
     const n = Math.min(raids, r.raids - r.played);
