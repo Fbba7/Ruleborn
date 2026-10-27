@@ -47,6 +47,7 @@ decision).
 | SR-26 | Low | build | Godot and its export templates were run and shipped unchecked | fixed |
 | SR-27 | Low | client | A redirect carried the session token to another host, in the clear | fixed |
 | SR-28 | Medium | server | Made-up refresh tokens could keep every player's session from renewing | fixed |
+| SR-29 | Low | server | A server deployed without its platforms' settings let anyone in as anyone | fixed |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -358,6 +359,29 @@ decision).
   deployed): starts `main.mjs` on a free port, posts to the deletion route
   through `node:http` as a proxy would (SR-21 end to end), and reads the
   directory's mode. It failed before the fix.
+
+### SR-29 — A server deployed without its platforms' settings let anyone in as anyone (Low)
+
+- **Where:** `server/src/main.mjs`, `server/src/stores.mjs` `signIn`.
+- **What:** with neither `RULEBORN_GAMECENTER_ROOTS` nor
+  `RULEBORN_GOOGLE_CLIENT_IDS` set, sign-in is stubbed: a credential is
+  taken as the identity it names (`"gc:anyone"`). That is the local
+  server's, and the README says it "must not face a network", but the
+  server started so in silence unless a store was configured too. A
+  deployment with those two settings forgotten — a beta, a staging box, a
+  restore from a bare environment — made accounts for whoever asked and
+  signed anyone in as any identity they could name. Low: platform ids are
+  not public, so taking a given player needs their id. The market standard
+  is to fail closed.
+- **Fix:** stubbed sign-in starts only with `RULEBORN_STUB_SIGNIN=1`, the
+  flag the server already used for a test deployment with stores.
+  `client/status.py` (the one harness that starts `main.mjs`) and the
+  README's two local commands set it. **For the integrator:** a deployment
+  meant to run stubbed must now set `RULEBORN_STUB_SIGNIN=1`. 8 lines in
+  all.
+- **Test:** `server/test/security_config.test.mjs` (SR-29): without the
+  flag or a platform, `main.mjs` exits with its reason; with the flag it
+  starts. It failed before the fix.
 
 ### SR-24 — A dead token could still sign a player out everywhere (Low)
 

@@ -3,7 +3,7 @@
 // SR-21 onwards). Each test failed before its fix.
 
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { request as httpRequest } from "node:http";
 import { mkdtempSync, readFileSync, statSync } from "node:fs";
 import { createServer as createNetServer } from "node:net";
@@ -70,7 +70,7 @@ test("SR-22: a player's own answers are never kept by a cache; bundles and pages
 });
 
 /** The server as deployed: main.mjs on a free port, its data in `dir`. */
-async function listening(dir) {
+async function listening(dir, extra = { RULEBORN_STUB_SIGNIN: "1" }) {
   const port = await new Promise((done) => {
     const probe = createNetServer().listen(0, "127.0.0.1", () => {
       const { port: p } = probe.address();
@@ -79,7 +79,7 @@ async function listening(dir) {
   });
   const child = spawn(process.execPath, ["--no-warnings", fileURLToPath(new URL("../src/main.mjs", import.meta.url)),
                                          String(port)],
-                      { env: { ...process.env, RULEBORN_DATA: dir }, stdio: ["ignore", "pipe", "pipe"] });
+                      { env: { ...process.env, RULEBORN_DATA: dir, ...extra }, stdio: ["ignore", "pipe", "pipe"] });
   await new Promise((done, fail) => {
     let said = "";
     child.stdout.on("data", (b) => { said += b; if (said.includes("ruleborn server on")) done(); });
@@ -113,4 +113,22 @@ test("SR-21 and SR-23, as deployed: the deletion page's own site passes the list
     server.stop();
   }
   assert.equal(statSync(dir).mode & 0o077, 0, "nobody else enters the data directory");
+});
+
+// SR-29: with neither Game Center's roots nor Google's client ids set, the
+// server took any credential as the identity it names ("gc:anyone") and
+// said nothing — refusing to start only if a store was configured too. A
+// deployment with those settings forgotten let anyone in as anyone they
+// could name, and made accounts for whoever asked. Now a stubbed sign-in
+// starts only when RULEBORN_STUB_SIGNIN=1 says it is a local or test server.
+test("SR-29: the server will not start with sign-in stubbed unless told it is a test", async () => {
+  const env = { ...process.env, RULEBORN_DATA: join(mkdtempSync(join(tmpdir(), "rb-sr29-")), "data") };
+  for (const k of ["RULEBORN_STUB_SIGNIN", "RULEBORN_GAMECENTER_ROOTS", "RULEBORN_GOOGLE_CLIENT_IDS"]) delete env[k];
+  const run = spawnSync(process.execPath, ["--no-warnings", fileURLToPath(new URL("../src/main.mjs", import.meta.url)), "0"],
+                        { env, encoding: "utf8", timeout: 30000 });
+  assert.notEqual(run.status, 0, "it stops");
+  assert.match(run.stderr, /sign-in would be stubbed/);
+  // Told, it starts (listening() above passes RULEBORN_STUB_SIGNIN=1).
+  const told = await listening(join(mkdtempSync(join(tmpdir(), "rb-sr29-")), "data"));
+  told.stop();
 });
