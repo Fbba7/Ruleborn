@@ -64,6 +64,8 @@ static func dress(root: Node) -> void:
 				box.content_margin_top = was.content_margin_top
 				box.content_margin_bottom = was.content_margin_bottom
 				p.add_theme_stylebox_override("panel", box)
+				# Drawn by T9's kit (`KitSkin`), its padding kept.
+				KitSkin.panel(p, "parchment")
 			p.set_meta("dressed", true)
 		elif n is Button and not n.has_meta("dressed"):
 			key(n as Button)
@@ -73,23 +75,8 @@ static func dress(root: Node) -> void:
 ## parchment for the rest), the ink edge thickened, a drop beneath that
 ## sinks when pressed.
 static func key(b: Button) -> void:
-	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
-		var was := b.get_theme_stylebox(state) as StyleBoxFlat
-		if was == null:
-			continue
-		var box := was.duplicate() as StyleBoxFlat
-		if box.bg_color.is_equal_approx(Palette.PANEL):
-			box.bg_color = PARCHMENT_LIGHT if not Settings.high_contrast else Palette.PAPER
-		elif state == "disabled" and Color(box.bg_color, 1.0).is_equal_approx(Color(Palette.PANEL, 1.0)):
-			box.bg_color = Color(PARCHMENT_LIGHT, box.bg_color.a)
-		box.border_color = OUTLINE if not Settings.high_contrast else Palette.INK
-		box.set_border_width_all(maxi(2, UI.px(0.75)))
-		box.border_width_bottom = maxi(4, UI.px(1.5))
-		box.set_corner_radius_all(UI.px(CONTROL_CORNER))
-		box.shadow_color = Color(OUTLINE, 0.5)
-		box.shadow_offset = Vector2(0, UI.px(1.0 if state != "pressed" else 0.25))
-		box.anti_aliasing = true
-		b.add_theme_stylebox_override(state, box)
+	# Drawn by T9's kit (`KitSkin`): a kit material stays, the rest parchment.
+	KitSkin.button(b, str(b.get_meta("rb_material", "parchment")))
 	b.set_meta("dressed", true)
 
 

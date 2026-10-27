@@ -22,14 +22,19 @@ const TABS := [
 ]
 ## How far the chosen tab rises above the bar, in points.
 const RISE := 18.0
-## The largest text size, in percent, at which every tab shows its word.
-const LABELS_UP_TO := 125
+## How large a face given to the chosen tab stands, in points.
+const FACE := 62.0
+## The widest the chosen tab may grow, against a tab not chosen, to show its
+## whole word at large text; the others keep §21.1's 48 points.
+const MOST_GROW := 3.0
 
 var active := ""
 var buttons: Dictionary = {}
 var _icons: Dictionary = {}
 var _labels: Dictionary = {}
 var _bobs: Dictionary = {}
+var _faces: Dictionary = {}
+var _plain: Dictionary = {}
 var _glows: Dictionary = {}
 
 
@@ -93,13 +98,14 @@ func _tab(tab: Array, badge: int) -> Button:
 	content.add_theme_constant_override("separation", 0)
 	content.offset_bottom = -UI.px(4)
 	content.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var icon := Icons.view(str(tab[1]), 32)
+	var icon := Icons.view(str(tab[1]), 36)
 	icon.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	content.add_child(icon)
 	var l := UI.label(words, 13)
 	l.theme_type_variation = "Tab"
 	l.uppercase = true
-	l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	# Never cut: a word that does not fit is hidden (`_fit`), not shown in
+	# pieces ("ISLA", "GESET").
 	l.clip_text = true
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_deep"))
@@ -114,6 +120,7 @@ func _tab(tab: Array, badge: int) -> Button:
 		b.add_child(tag)
 	buttons[id] = b
 	_icons[id] = icon
+	_plain[id] = icon.texture
 	_labels[id] = l
 	return b
 
@@ -123,9 +130,23 @@ func _pick(id: String) -> void:
 	picked.emit(id)
 
 
+## Gives tab `id` a face to show when chosen in place of its icon (the
+## screen's own character or object, larger, its head above the tile):
+## null takes it back. The tab keeps its spoken name.
+func face(id: String, picture: Texture2D) -> void:
+	if picture == null:
+		_faces.erase(id)
+	else:
+		_faces[id] = picture
+	if buttons.has(id):
+		choose(active, false)
+
+
 ## Chooses a tab: it rises, widens and lights; the others settle.
 func choose(id: String, animate := true) -> void:
 	active = id
+	if is_inside_tree():
+		_fit.call_deferred()
 	for k: String in buttons:
 		var b: Button = buttons[k]
 		var on := k == id
@@ -137,17 +158,25 @@ func choose(id: String, animate := true) -> void:
 		label.set_meta("points", 15.0 if on else 13.0)
 		# Five words at large text do not fit 360 points: the tabs not chosen
 		# keep their icon and their spoken name, the chosen one its word too.
-		label.visible = on or Settings.text_scale <= LABELS_UP_TO
 		# Stroked in ink as the design draws it, wide enough (§21.8: 12% of
 		# the size) that the words are read against their outline, which the
 		# pale chosen tile alone (4.49:1) is not.
-		label.add_theme_constant_override("outline_size", UI.px(2.0 if on else 1.5))
+		# 12% of the size as drawn, at any text size, rounded up.
+		var stroke := float(UI.px(2.0 if on else 1.5))
+		if on:
+			stroke = maxf(stroke, ceilf(UI.text_px(15) * 0.13))
+		label.add_theme_constant_override("outline_size", int(stroke))
 		if on:
 			label.add_theme_color_override("font_color", Tokens.color("tab_label"))
 		else:
 			label.remove_theme_color_override("font_color")
 		var icon: TextureRect = _icons[k]
-		icon.custom_minimum_size = Vector2.ONE * UI.px(46 if on else 30)
+		# A face the screen gave its tab (Pip on Crew) stands larger, its head
+		# above the tile's top edge, as the designs draw it (13, 10).
+		var faced := on and _faces.has(k)
+		icon.texture = (_faces[k] if faced else _plain[k]) as Texture2D
+		icon.custom_minimum_size = Vector2.ONE * UI.px(FACE if faced else (46.0 if on else 36.0))
+		(icon.get_parent() as Control).offset_top = -float(UI.px(FACE - 46.0)) if faced else 0.0
 		if _bobs.has(k):
 			(_bobs[k] as Tween).kill()
 			_bobs.erase(k)
@@ -170,3 +199,60 @@ func choose(id: String, animate := true) -> void:
 
 func _ready() -> void:
 	choose(active, false)
+	resized.connect(_fit, CONNECT_DEFERRED)
+	_fit.call_deferred()
+
+
+## Every tab shows its whole word or none: where large text or a long
+## language would cut a word not chosen, they all show their icons alone
+## (each still named aloud, §20.8), and the chosen tab widens, up to
+## MOST_GROW and while the others keep their least width, to keep its own
+## word whole, else shows its icon alone too.
+func _fit() -> void:
+	if not is_inside_tree() or not _labels.has(active) or size.x <= 0.0:
+		return
+	var chosen: Button = buttons[active]
+	var row := chosen.get_parent() as Control
+	var dividers := (row.get_child_count() - buttons.size()) * maxf(1.0, UI.px(0.5))
+	var width := row.size.x - dividers
+	var others := float(buttons.size() - 1)
+	var grow := Tokens.number("size", "tab_active_grow")
+	var need := _need(_labels[active])
+	if need < width:
+		grow = maxf(grow, others * need / (width - need))
+	# The others keep their own least width (54 points, over §21.1's 48).
+	var least := 0.0
+	for k: String in buttons:
+		if k != active:
+			least = maxf(least, (buttons[k] as Button).get_combined_minimum_size().x)
+	var most := minf(MOST_GROW, width / maxf(least, 1.0) - others)
+	chosen.size_flags_stretch_ratio = minf(grow, most)
+	# Where even the widest tile cannot hold the word at the chosen text size
+	# (200% in English), it takes the largest size that fits, never under
+	# its own at 100%; the screen's title says the name at full size.
+	var label: Label = _labels[active]
+	var full := UI.text_px(15)
+	label.add_theme_font_size_override("font_size", full)
+	var room := width * most / (others + most)
+	if grow > most:
+		var at := floori(full * (room - label.get_theme_constant("outline_size")) / maxf(need, 1.0))
+		label.add_theme_font_size_override("font_size", clampi(at, UI.px(15), full))
+	label.visible = _need(label) <= room + 0.5
+	# The others' width once the chosen one has grown.
+	var each := width / (others + chosen.size_flags_stretch_ratio)
+	var others_fit := true
+	for k: String in _labels:
+		if k != active:
+			others_fit = others_fit and _need(_labels[k]) <= each
+	for k: String in _labels:
+		if k != active:
+			(_labels[k] as Label).visible = others_fit
+
+
+## The width a tab needs to show `l`'s whole word in capitals, its stroke
+## included.
+func _need(l: Label) -> float:
+	var px := l.get_theme_font_size("font_size")
+	var words := l.text.to_upper()
+	return l.get_theme_font("font").get_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x + \
+		l.get_theme_constant("outline_size")

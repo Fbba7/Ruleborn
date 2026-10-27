@@ -6,20 +6,28 @@ class_name KitStatus
 
 
 ## A count badge: white words with an ink outline on the designs' red,
-## measured against the outline (§21.8).
-static func badge(text: String) -> PanelContainer:
+## measured against the outline (§21.8). In another round material (a
+## building's level on "gold_round", a post's number on "leather") its
+## words take that material's ink, in the display face, `points` large.
+static func badge(text: String, look := "badge", points := 13.0) -> PanelContainer:
 	var p := PanelContainer.new()
 	p.name = "Badge"
 	p.add_theme_stylebox_override("panel", UI.clear_box(5, 0))
-	UI.dress(p, "badge")
-	var size := UI.px(Tokens.number("size", "badge_points"))
-	p.custom_minimum_size = Vector2(size, size)
+	var box := UI.dress(p, look, 99.0 if look != "badge" else -1.0)
+	var side := float(UI.px(Tokens.number("size", "badge_points")))
+	if look != "badge":
+		side = maxf(side, UI.px(points + 10.0))
+	p.custom_minimum_size = Vector2(side, side)
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var l := UI.label(text, 13)
-	l.add_theme_font_override("font", UI.bold_font())
-	l.add_theme_color_override("font_color", Tokens.color("on_alarm"))
-	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
-	l.add_theme_constant_override("outline_size", UI.px(2))
+	p.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	p.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var l := UI.label(text, points)
+	l.name = "Words"
+	l.add_theme_font_override("font", UI.bold_font() if look == "badge" else Tokens.font("display"))
+	l.add_theme_color_override("font_color", Tokens.color("on_alarm") if look == "badge" else box.spec["text"])
+	if look == "badge" or box.spec["family"] == "dark":
+		l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+		l.add_theme_constant_override("outline_size", UI.px(2))
 	l.set_meta("bold", true)
 	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	p.add_child(l)

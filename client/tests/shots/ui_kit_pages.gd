@@ -165,15 +165,18 @@ static func _home(column: VBoxContainer) -> void:
 	sides.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var left := VBoxContainer.new()
 	left.alignment = BoxContainer.ALIGNMENT_CENTER
-	left.add_child(KitControls.round_action("hud/crew", "Crew", func() -> void: pass, false, 52))
-	left.add_child(KitControls.round_action("alerts/newtargets", "Raid", func() -> void: pass, false, 52, "4"))
+	# The designs' 36-point balls over §21.1's 48-point hit areas.
+	left.add_child(KitControls.round_action("hud/crew", "Crew", func() -> void: pass, false, 48, "", "leather", 36))
+	left.add_child(KitControls.round_action("alerts/newtargets", "Raid", func() -> void: pass, false, 48, "4",
+		"leather", 36))
 	sides.add_child(left)
 	sides.add_child(UI.grow())
 	(sides.get_child(1) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var right := VBoxContainer.new()
 	right.alignment = BoxContainer.ALIGNMENT_CENTER
-	right.add_child(KitControls.round_action("screens/shop", "Shop", func() -> void: pass, false, 52))
-	right.add_child(KitControls.round_action("screens/season", "Season", func() -> void: pass, false, 52))
+	right.add_child(KitControls.round_action("screens/shop", "Shop", func() -> void: pass, false, 48, "", "leather", 36))
+	right.add_child(KitControls.round_action("screens/season", "Season", func() -> void: pass, false, 48, "",
+		"leather", 36))
 	sides.add_child(right)
 	column.add_child(sides)
 	var collect := UI.row()
@@ -193,7 +196,6 @@ static func _cards(column: VBoxContainer) -> void:
 		filters.add_child(KitControls.school_button(school, school == "time", func() -> void: pass))
 	column.add_child(filters)
 	column.add_child(KitControls.search("Search laws"))
-	column.add_child(KitPanels.chapter("motion", "Motion", "Chapter I", "3 of 4 restored"))
 	var grid := GridContainer.new()
 	grid.columns = 3
 	grid.add_theme_constant_override("h_separation", UI.px(8))
@@ -205,9 +207,10 @@ static func _cards(column: VBoxContainer) -> void:
 		grid.add_child(KitCards.law_card(icon, c[1], c[2], c[3], c[4], 102, str(12 + grid.get_child_count() * 4)))
 	var centre := CenterContainer.new()
 	centre.add_child(grid)
-	column.add_child(centre)
-	column.add_child(KitPanels.chapter("matter", "Matter", "Chapter II", "1 of 4 restored"))
-	column.add_child(KitPanels.chapter("time", "Time", "Chapter III", "2 of 4 restored"))
+	column.add_child(KitPanels.album("motion", "Motion", "Chapter I", "3 of 4 restored", centre))
+	var more := CenterContainer.new()
+	more.add_child(KitCards.law_card("laws/bounce", "Brittle stone", "matter", "common", "", 102, "10"))
+	column.add_child(KitPanels.album("matter", "Matter", "Chapter II", "1 of 4 restored", more))
 
 
 ## The design's Settings and wellbeing screen (19-settings-and-wellbeing.png)
@@ -308,7 +311,10 @@ static func _roster(column: VBoxContainer) -> void:
 			"crewroles/carrier", func() -> void: pass, c[1] == "Pip"))
 	column.add_child(grid)
 	column.add_child(UI.grow())
-	column.add_child(KitNav.tabs("crew", {"islands": 3, "laws": 1, "heist": 4, "friends": 3}))
+	var tabs := KitNav.tabs("crew", {"islands": 3, "laws": 1, "heist": 4, "friends": 3})
+	# Pip's face on the chosen tab, as 10-roster.png draws it.
+	tabs.face("crew", Portrait.of("skyskipper"))
+	column.add_child(tabs)
 
 
 ## The design's result and shop pieces (07-heist-result.png, 18-shop.png).

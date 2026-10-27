@@ -23,6 +23,8 @@ func run() -> void:
 	await _press()
 	_motion()
 	_icons()
+	await _tab_words()
+	await _small_disc()
 
 
 func _tokens() -> void:
@@ -142,3 +144,58 @@ func _icons() -> void:
 	check.call("every icon in the manifest exports from the design and loads, the six school marks among them "
 			+ "(§21.8)", missing.is_empty() and known and Icons.names().size() > 300,
 		"%d missing %s, known %s" % [missing.size(), missing.slice(0, 5), known])
+
+
+func _tab_words() -> void:
+	var bad := []
+	var was := Settings.text_scale
+	for scale: int in [100, 150, 200]:
+		Settings.text_scale = scale
+		var screen := Control.new()
+		screen.size = Vector2(1080, 2340)
+		tree.root.add_child(screen)
+		var column := UI.frame(screen)
+		column.add_child(UI.grow())
+		var tabs := KitTabs.make("friends", {"heist": 4})
+		column.add_child(tabs)
+		for i: int in 4:
+			await tree.process_frame
+		for id: String in tabs.buttons:
+			var b: Button = tabs.buttons[id]
+			var r := b.get_global_rect()
+			if r.position.x < -0.5 or r.end.x > screen.size.x + 0.5:
+				bad.append("%d%% %s outside the screen" % [scale, id])
+			var l: Label = tabs._labels[id]
+			if l.is_visible_in_tree() and tabs._need(l) > l.size.x + 1.0:
+				bad.append("%d%% %s cut (%.0f in %.0f)" % [scale, id, tabs._need(l), l.size.x])
+			if scale == 100 and not l.is_visible_in_tree():
+				bad.append("100%% %s hidden" % id)
+		var chosen: Label = tabs._labels["friends"]
+		if not chosen.is_visible_in_tree():
+			bad.append("%d%% the chosen tab's word hidden" % scale)
+		elif chosen.get_theme_font_size("font_size") < mini(UI.text_px(15), UI.px(15) * 3 / 2):
+			bad.append("%d%% the chosen tab's word under 150%%" % scale)
+		screen.queue_free()
+		await tree.process_frame
+	Settings.text_scale = was
+	check.call("the tab bar shows every name whole at 100% text, and at 150% and 200% each name whole or not at all, "
+			+ "the chosen tab's kept at 150% or more, every tab on the screen (§20.8, §21.8)", bad.is_empty(), "; ".join(bad))
+
+
+func _small_disc() -> void:
+	var screen := Control.new()
+	tree.root.add_child(screen)
+	var action := KitControls.round_action("hud/crew", "Crew", func() -> void: pass, false, 48, "2", "leather", 36)
+	screen.add_child(action)
+	await tree.process_frame
+	await tree.process_frame
+	var b := action.find_children("*", "Button", true, false)[0] as Button
+	var box := RbBox.of(b)
+	var hit := minf(b.size.x, b.size.y) >= UI.px(UI.CONTROL_POINTS) - 0.5
+	var drawn := box != null and is_equal_approx((box.material as ShaderMaterial).get_shader_parameter("box_size").x,
+		float(UI.px(36)))
+	var said := "hit %s %s, drawn %s" % [hit, b.size, drawn]
+	screen.queue_free()
+	await tree.process_frame
+	check.call("a round action can draw its disc smaller than its hit area, which stays 48 points (§21.1)",
+		hit and drawn, said)

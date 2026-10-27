@@ -273,6 +273,7 @@ static func action(text: String, pressed: Callable, look := "leather", spoken :=
 	fit(b)
 	b.button_down.connect(Motion.press.bind(b, true))
 	b.button_up.connect(Motion.press.bind(b, false))
+	b.set_meta("kit_press", true)
 	b.pressed.connect(func() -> void: Haptics.play("tap"))
 	b.pressed.connect(pressed)
 	return b

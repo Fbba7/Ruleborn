@@ -177,6 +177,31 @@ static func chapter(school: String, title: String, kicker: String, count: String
 	return p
 
 
+## A chapter's album (the Codex, 13-law-codex.png): the school's band
+## sitting square on a cream panel that holds `body` (its law cards), one
+## piece edged in ink. The band is `chapter`'s; `body` is the screen's.
+static func album(school: String, title: String, kicker: String, count: String, body: Control) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.name = "Album"
+	p.add_theme_stylebox_override("panel", UI.clear_box(0, 0))
+	UI.dress(p, "album")
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 0)
+	var band := chapter(school, title, kicker, count)
+	# Square at its foot, on the cream, without its own drop.
+	var box := RbBox.of(band)
+	box.foot_points = 0.0
+	v.add_child(band)
+	var inner := MarginContainer.new()
+	inner.name = "Pages"
+	for side: String in ["margin_left", "margin_right", "margin_top", "margin_bottom"]:
+		inner.add_theme_constant_override(side, UI.px(10))
+	inner.add_child(body)
+	v.add_child(inner)
+	p.add_child(v)
+	return p
+
+
 ## A notice with something to do about it (the designs' raid banner): its
 ## icon on a disc, a bold title over a secondary line, a gold action, and a
 ## close cross. It is a banner, so it stays until dismissed when the player

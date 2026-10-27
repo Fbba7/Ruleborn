@@ -70,6 +70,8 @@ static func box(fill: Color, corner_points := 14.0, shadow := true) -> StyleBoxF
 static func plate(words: Control, dark := false) -> PanelContainer:
 	var p := PanelContainer.new()
 	p.add_theme_stylebox_override("panel", box(CARD if dark else PARCHMENT))
+	# Drawn by T9's kit (`KitSkin`), its padding and corners kept.
+	KitSkin.panel(p, "card" if dark else "parchment")
 	p.add_child(words)
 	ink(p, dark)
 	return p
@@ -129,30 +131,8 @@ static func badge(text: String, fill: Color, points := 18.0) -> PanelContainer:
 ## light words otherwise, with a darker lip beneath and a slight squash when
 ## pressed (§21.8: "buttons squash slightly when pressed").
 static func button(b: Button, main := false) -> Button:
-	var fill := GOLD if main else LEATHER
-	var words := BROWN if main else LIGHT
-	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
-		var s := box(fill, 12.0, false)
-		s.set_content_margin_all(UI.px(6))
-		s.border_width_bottom = edge_px() + UI.px(2)
-		match state:
-			"hover":
-				s.bg_color = fill.lightened(0.06)
-			"pressed":
-				s.bg_color = fill.lightened(0.12)
-				s.border_width_bottom = edge_px()
-			"focus":
-				s.border_width_left = edge_px() + UI.px(1)
-				s.border_width_right = edge_px() + UI.px(1)
-				s.border_width_top = edge_px() + UI.px(1)
-			"disabled":
-				s.bg_color = Color(fill.darkened(0.3), 0.6)
-		b.add_theme_stylebox_override(state, s)
-	for colour: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
-		b.add_theme_color_override(colour, words)
-	b.add_theme_color_override("font_disabled_color", Color(LIGHT, 0.75))
-	b.button_down.connect(func() -> void: _squash(b, 0.95))
-	b.button_up.connect(func() -> void: _squash(b, 1.0))
+	# Drawn by T9's kit (`KitSkin`): its box, words, press and contrast.
+	KitSkin.button(b, "gold" if main else "leather", 12.0)
 	return b
 
 
@@ -176,16 +156,6 @@ static func flat(b: Button, points := 22.0) -> Button:
 	b.set_meta("bold", false)
 	b.set_meta("points", points)
 	return b
-
-
-static func _squash(b: Button, to: float) -> void:
-	if not b.is_inside_tree() or Settings.reduced_motion:
-		return
-	b.pivot_offset = b.size / 2.0
-	var t := b.create_tween()
-	t.set_ease(Tween.EASE_OUT)
-	t.set_trans(Tween.TRANS_QUAD)
-	t.tween_property(b, "scale", Vector2(to, to), 0.12)
 
 
 static func numbers_font() -> Font:
