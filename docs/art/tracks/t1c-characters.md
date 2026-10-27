@@ -333,8 +333,6 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   triangles), and its bracers are darker than the design's pale stone.
 - **Emberling**: the belly still glows warmer and brighter than the
   portrait's tan.
-- **Bloomling's petals** are flat pink; the design's darken to magenta at
-  their base.
 - Hero softness (image light, ACES) is still the shader's approximation.
 
 ## Next
@@ -344,8 +342,7 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
 - Paint atlas: 512² is now most of the install. Downscaling it on import
   costs the eyes; a smaller atlas would need the export to pack the eyes'
   charts larger (more texels for the face, fewer for the back).
-- Bloomling's petals: a darker base toward magenta, as the design's
-  vertex colours run (#B0184E at the base to #FFB0CC at the tip).
+- Emberling's belly: find the glowing part behind its glare (round 14).
 
 ## Stopped here (fourth session, 04:45 UTC)
 
