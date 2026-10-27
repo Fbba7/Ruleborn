@@ -385,13 +385,18 @@ static func _character(column: VBoxContainer) -> void:
 	facts.columns = 2
 	facts.add_theme_constant_override("h_separation", UI.px(8))
 	facts.add_theme_constant_override("v_separation", UI.px(8))
-	facts.add_child(KitCards.fact("crewroles/carrier", "Carrier", "Carries the loot"))
-	facts.add_child(KitCards.fact("hud/shield", "Resists", "No-jump zones"))
-	facts.add_child(KitCards.fact("traits/hoarder", "Traits", "Swift · Lucky"))
+	facts.add_child(KitCards.fact("crewroles/carrier", "Carrier", "Carries the loot", "motion"))
+	facts.add_child(KitCards.fact("hud/shield", "Resists", "No-jump zones", "life"))
+	facts.add_child(KitCards.fact("traits/hoarder", "Traits", "Swift · Lucky", "matter"))
 	facts.add_child(KitCards.fact("buildings/starwell" if Icons.has("buildings/starwell") else "hud/home",
-		"At home", "Star Well · +12%"))
+		"At home", "Star Well · +12%", "time"))
 	var paper := UI.panel("parchment")
-	paper.add_child(facts)
+	var inside := VBoxContainer.new()
+	inside.add_theme_constant_override("separation", UI.px(10))
+	inside.add_child(KitCards.ability("crewroles/carrier", "motion", "Ability", "Once a heist", "Stuff the satchel",
+		"Loads loot at 60 a second instead of 30 for 5 s."))
+	inside.add_child(facts)
+	paper.add_child(inside)
 	column.add_child(paper)
 	var end := HBoxContainer.new()
 	end.add_theme_constant_override("separation", UI.px(8))
