@@ -716,12 +716,13 @@ func _fit(box: AABB, target: Vector3, yaw: float, aspect: float) -> float:
 	return maxf(h * 2.0, w * 2.0 / aspect)
 
 
-## A swoop's step: eased, through a wipe of cloud when it goes from one
-## realm to another.
+## A swoop's step: easing out, never past its mark (§21.8), through a wipe
+## of cloud when it goes from one realm to another.
 func _step_swoop() -> void:
-	var e := _swoop * _swoop * (3.0 - 2.0 * _swoop)
+	var e := 1.0 - pow(1.0 - _swoop, 3.0)
 	if _wiping:
-		_wipe_amount = sin(_swoop * PI)
+		# Shut a beat either side of the jump, so no frame shows the world change.
+		_wipe_amount = minf(1.0, sin(_swoop * PI) * 1.25)
 		var jump := 1.0 if _swoop >= 0.5 else 0.0
 		_target = (_from[0] as Vector3).lerp(_to[0], jump)
 		_size = lerpf(_from[1], _to[1], jump)

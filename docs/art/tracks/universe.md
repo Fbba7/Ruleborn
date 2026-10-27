@@ -422,3 +422,7 @@ settings survive home's `Settings.restore()`.
   gap between the side buttons on its row, or steps below them, and hides where there is no free place
   (`UniversePins._place`); the side buttons' rectangles are re-read whenever they move (they had been read
   as the column sorted, before the buttons inside it had theirs).
+- Round 39, motion (§21.8: easing out, no overshoot): the swoop eases out (cubic) where it had eased in and
+  out; the cloud wipe is held fully shut for the middle 40% of a swoop between realms (it had been shut
+  only at the instant of the jump, where a frame either side could show gaps between the banks and the
+  world changing behind them). Reduced motion still cuts.
