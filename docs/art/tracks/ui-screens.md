@@ -120,4 +120,11 @@ Harmony's realm chips and chord card; the Lab's numbered resonance grid; Profile
 
 ## Stopped here
 
-(Written at each stop.)
+Wave 4, about 04:00 UTC. Main (with the 00:45 and 02:45 integrations) and T9's kit merged in; every screen check passes on this track's 14 screens. `check_all` stops only at the server Weaving test that main fails too (see above); with that one test made non-fatal, every other stage prints "All checks passed".
+
+Still worse than the design, in order of how much a first-time player would notice:
+1. Art the design has and the game does not: the Shop's featured set and daily picks, the Lab's test realm, the first launch's universe, character portraits for friends.
+2. Density: the Laws hub and the tab bar sit low by §21.1, and law cards are two to a row (three do not fit German rank words), so the Codex shows less at once.
+3. Harmony's draw calls (162) and the Lab's missing numbered resonance grid (it would cost about 50 calls).
+
+Next: T5 to lighten Harmony's preview; T9 to stroke the chosen tab's word in the kit and atlas the icons; then the Settings wellbeing page once the game keeps play time.
