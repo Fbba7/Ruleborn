@@ -107,7 +107,11 @@ static func feed_row(picture: Texture2D, initials: String, name: String, tag_wor
 	if when != "":
 		var at := _secondary(when)
 		at.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-		head.add_child(at)
+		# At large text it flows on after the tag rather than holding the right.
+		if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+			who.add_child(at)
+		else:
+			head.add_child(at)
 	text.add_child(head)
 	var w := UI.label(words, 14, true)
 	w.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -154,13 +158,15 @@ static func log_row(picture: Texture2D, initials: String, name: String, tag_word
 	end.add_theme_constant_override("separation", -UI.px(10))
 	end.alignment = BoxContainer.ALIGNMENT_CENTER
 	# Led by its status's glyph, so the outcome never rests on its colour.
-	var r := UI.status(result_kind, result, false)
+	# One line beside the words; wrapping under them at large text.
+	var large := Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO
+	var r := UI.status(result_kind, result, large)
 	r.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	end.add_child(r)
 	if link != "":
 		end.add_child(text_link(link + " ›", pressed, "%s: %s" % [link, name]))
-	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
-		end.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	if large:
+		end.size_flags_horizontal = Control.SIZE_FILL
 		r.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		(row.get_child(1) as VBoxContainer).add_child(end)
 	else:

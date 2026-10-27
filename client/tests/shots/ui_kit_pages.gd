@@ -205,7 +205,7 @@ static func _cards(column: VBoxContainer) -> void:
 	column.add_child(filters)
 	column.add_child(KitControls.search("Search laws"))
 	var grid := GridContainer.new()
-	grid.columns = 3
+	grid.columns = KitLayout.grid_columns(3)
 	grid.add_theme_constant_override("h_separation", UI.px(8))
 	grid.add_theme_constant_override("v_separation", UI.px(8))
 	for c: Array in [["laws/bounce", "Bounce", "motion", "common", ""],
@@ -216,9 +216,11 @@ static func _cards(column: VBoxContainer) -> void:
 	var centre := CenterContainer.new()
 	centre.add_child(grid)
 	column.add_child(KitPanels.album("motion", "Motion", "Chapter I", "3 of 4 restored", centre))
-	var more := HBoxContainer.new()
-	more.alignment = BoxContainer.ALIGNMENT_CENTER
-	more.add_theme_constant_override("separation", UI.px(8))
+	# A column fewer as large text widens the cards (KitLayout.grid_columns).
+	var more := GridContainer.new()
+	more.columns = KitLayout.grid_columns(3)
+	more.add_theme_constant_override("h_separation", UI.px(8))
+	more.add_theme_constant_override("v_separation", UI.px(8))
 	more.add_child(KitCards.album_card("laws/bounce", "Brittle stone", "matter", "common", "In Skyfield", "10"))
 	more.add_child(KitCards.album_card("laws/frictionless", "Glass", "matter", "rare", "In Emberreach", "12", "I"))
 	more.add_child(KitCards.album_card("laws/halfgravity", "Inward pull", "matter", "deep", "", "22"))
