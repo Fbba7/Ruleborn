@@ -567,9 +567,10 @@ What was tried and found sound, so the next reader need not try it again.
   versions with a lockfile of nine registry packages, each with its
   integrity hash and no install script; `npm audit` finds nothing. The Rust
   crates pin `godot = "=0.5.5"`, commit both lockfiles, take every crate
-  from crates.io with a checksum and have no build script of their own;
-  `cargo audit` is not installed and the advisory database could not be
-  fetched through the proxy, so the crates' advisories are unchecked.
+  from crates.io with a checksum and have no build script of their own.
+  `cargo audit` is not installed, so the RustSec advisory database (as of
+  26 October 2026) was cloned and every crate in both lockfiles looked up
+  in it by hand: none of the 19 has an advisory.
 - **Secrets.** The whole history's 30 MB of diffs searched for private keys,
   Google, Stripe and GitHub tokens, AWS keys, client secrets, passwords and
   key stores: the only private keys are the Apple test chain under
@@ -621,8 +622,7 @@ Twenty findings: one High, eight Medium, eleven Low.
 
 Not reviewed in depth: the client's screens' layout code, beyond what they
 open, run, load, render as rich text or log; `tools/` beyond its supply
-chain; the Rust crates' advisories (`cargo audit` could not run); the design
-document's own security statements against each other.
+chain; the design document's own security statements against each other.
 
 What would be done next: SR-15 and SR-16 with the economy build (TC.12);
 the hold measurement off the request thread; a cap on realm snapshots like
