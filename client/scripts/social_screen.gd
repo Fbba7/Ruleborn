@@ -107,7 +107,7 @@ func _constellation(g: Dictionary, gs: Dictionary) -> Control:
 	box.add_theme_constant_override("separation", UI.px(6))
 	box.add_child(_heading("constellation", "constellation", g["constellation"]))
 	for m: String in g["members"]:
-		box.add_child(ScreenParts.pill(m, "well", "", "", 13.0, "words", true))
+		box.add_child(_member(m))
 	var cons := UI.row(6.0)
 	if g["in_constellation"]:
 		cons.add_child(ScreenKit.button(Strings.t("SOCIAL_LEAVE_CONSTELLATION"), controller.leave, "leather", "", 14.0))
@@ -137,7 +137,7 @@ func _crew(g: Dictionary) -> Control:
 	box.add_theme_constant_override("separation", UI.px(6))
 	box.add_child(_heading("constellation", "crew", g["crew"]))
 	for m: String in g["crew_members"]:
-		box.add_child(ScreenParts.pill(m, "well", "", "", 13.0, "words", true))
+		box.add_child(_member(m))
 	if g["crew_invite"] != "":
 		var code := ScreenKit.text(Strings.t("SOCIAL_CREW_INVITE", g["crew_invite"]), 17.0, "words", "parchment", false,
 			true)
@@ -149,6 +149,19 @@ func _crew(g: Dictionary) -> Control:
 		crew.add_child(ScreenKit.button(Strings.t("SOCIAL_START_CREW"), controller.start_crew, "gold", "", 14.0))
 	box.add_child(crew)
 	return ScreenKit.panel("card", box, 18.0, 12.0)
+
+
+## A member as Friends shows one: their round portrait, then their name
+## and role.
+func _member(words: String) -> Control:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	row.add_child(ScreenParts.face(words.get_slice(",", 0), 36.0))
+	var l := ScreenKit.text(words, 15.0, "words", "card", false, true)
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(l)
+	return row
 
 
 func _heading(group: String, icon: String, words: String) -> Control:

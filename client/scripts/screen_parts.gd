@@ -290,3 +290,14 @@ static func cull(view: Control, list: Control, share := 0.5) -> void:
 	# code moved it.
 	list.item_rect_changed.connect(check)
 	view.tree_entered.connect(check.call_deferred)
+
+
+## A Keeper's portrait: a round plate with the last word of their name.
+static func face(name: String, points: float) -> Control:
+	var initials := ScreenKit.text(name.get_slice(" ", name.get_slice_count(" ") - 1).left(2), points * 0.36,
+		"number", "card_lit")
+	initials.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	initials.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	var p := ScreenKit.panel("card_lit", initials, -1.0, 2.0)
+	p.custom_minimum_size = Vector2.ONE * UI.px(points)
+	return p

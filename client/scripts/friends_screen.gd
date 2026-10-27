@@ -154,7 +154,7 @@ func _strip(friends: Array) -> Control:
 	for x: Dictionary in friends:
 		var col := VBoxContainer.new()
 		col.add_theme_constant_override("separation", UI.px(2))
-		var face := _face(str(x["name"]), 56.0)
+		var face := ScreenParts.face(str(x["name"]), 56.0)
 		face.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		col.add_child(face)
 		var n := ScreenKit.text(x["name"], 13.0, "words", "card")
@@ -164,22 +164,11 @@ func _strip(friends: Array) -> Control:
 	return row
 
 
-## A Keeper's portrait: a round plate with the last word of their name.
-static func _face(name: String, points: float) -> Control:
-	var initials := ScreenKit.text(name.get_slice(" ", name.get_slice_count(" ") - 1).left(2), points * 0.36,
-		"number", "card_lit")
-	initials.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	initials.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	var p := ScreenKit.panel("card_lit", initials, -1.0, 2.0)
-	p.custom_minimum_size = Vector2.ONE * UI.px(points)
-	return p
-
-
 ## A friend's row: their portrait and name, and what can be done.
 func _person(name: String, right: Control) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(10))
-	row.add_child(_face(name, 40.0))
+	row.add_child(ScreenParts.face(name, 40.0))
 	var n := ScreenKit.text(name, 16.0, "words", "card", false, true)
 	n.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	n.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
