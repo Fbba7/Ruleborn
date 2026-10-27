@@ -91,10 +91,12 @@ void fragment() {
 		a = smoothstep(0.0, 0.9, core) * 0.5 + hot * 0.5;
 		a *= mix(step(0.12, hash(k + floor(colour.g * 16.0) * 3.0 + 11.0)), 1.0, steady);
 	} else if (kind > 3.5) {
-		// A wind line: whispers running along it.
+		// A wind line: an ink rim round its colour, so it reads by value on
+		// any ground (21.10), whispers running along it in white.
 		float run = smoothstep(0.3, 0.0, abs(fract(along * 4.0 - s * 0.6) - 0.5) - 0.15);
-		a *= 0.25 + 0.75 * run;
-		c = mix(c, vec3(1.0), run * step(0.6, core) * 0.6);
+		c = mix(vec3(0.16, 0.06, 0.14), c, smoothstep(0.2, 0.45, core));
+		c = mix(c, vec3(1.0), run * step(0.55, core) * 0.7);
+		a = smoothstep(0.0, 0.2, core) * (0.75 + 0.25 * run);
 	} else {
 		// Chord: light runs round the triangle.
 		float run = smoothstep(0.25, 0.0, abs(fract(along - s * 0.12) - 0.5) - 0.2);

@@ -38,14 +38,15 @@ ROLE_BREAKER,Breaker,Breaker,Quebrador,Quebrador,Knacker,Briseur
 ROLE_CARRIER,Carrier,Carrier,Carregador,Carregador,Träger,Porteur
 ROLE_WARDEN,Warden,Warden,Sentinela,Sentinela,Wächter,Veilleur
 ROLE_MENDER,Mender,Mender,Curandeiro,Curandeiro,Heiler,Soigneur
+GUARD_SAY_SUSPICIOUS,Hm?,Hm?,Hum?,Hum?,Hm?,Hein ?
+GUARD_SAY_INVESTIGATING,Who's there?,Who's there?,Quem está aí?,Quem está aí?,Wer ist da?,Qui est là ?
+GUARD_SAY_ALERTED,Intruder!,Intruder!,Intruso!,Intruso!,Eindringling!,Intrus !
+GUARD_SAY_RETURNING,Must be the wind.,Must be the wind.,Deve ser o vento.,Deve ser o vento.,Wohl nur der Wind.,Ce doit être le vent.
+HUD_LAWS_HERE,Laws here,Laws here,Leis aqui,Leis aqui,Gesetze hier,Lois ici
+HUD_ALARM_WORD,Alarm,Alarm,Alarme,Alarme,Alarm,Alarme
 HUD_ALARM,Alarm %s,Alarm %s,Alarme %s,Alarme %s,Alarm %s,Alarme %s
-HUD_LOOT,"Bags can take %d
-Vault %d left","Bags can take %d
-Vault %d left","Bolsas: cabem %d
-Cofre: restam %d","Sacos: cabem %d
-Cofre: restam %d","Taschen fassen %d
-Im Tresor noch %d","Sacs : encore %d
-Coffre : reste %d"
+HUD_ROOM,Room,Room,Espaço,Espaço,Platz,Place
+HUD_LEFT,Left,Left,Restam,Restam,Übrig,Reste
 REPLAY_GOLDEN,Golden replay: %s,Golden replay: %s,Replay de referência: %s,Replay de referência: %s,Referenz-Replay: %s,Replay de référence : %s
 REPLAY_YOURS,Your heist,Your heist,Seu assalto,O teu assalto,Dein Raubzug,Ton casse
 REPLAY_DIVERGED,Diverged at %d:%02d,Diverged at %d:%02d,Divergiu em %d:%02d,Divergiu aos %d:%02d,Abweichung bei %d:%02d,Divergence à %d:%02d
@@ -76,6 +77,22 @@ RESULT_NOT_ACCEPTED,Not accepted,Not accepted,Não aceito,Não aceite,Nicht akze
 RESULT_REFUSED,Refused: %s,Refused: %s,Recusado: %s,Recusado: %s,Abgelehnt: %s,Refusé : %s
 RESULT_PAID_NOTHING,The server paid nothing for this replay,The server paid nothing for this replay,O servidor não pagou nada por este replay,O servidor não pagou nada por este replay,Der Server zahlte nichts für dieses Replay,Le serveur n'a rien payé pour ce replay
 RESULT_WOULD_PAY_NOTHING,The server would pay nothing for this replay,The server would pay nothing for this replay,O servidor não pagaria nada por este replay,O servidor não pagaria nada por este replay,Der Server würde nichts für dieses Replay zahlen,Le serveur ne paierait rien pour ce replay
+RESULT_KICKER_DONE,Heist complete,Heist complete,Assalto concluído,Assalto concluído,Raubzug geschafft,Casse réussi
+RESULT_KICKER_FOILED,Heist foiled,Heist foiled,Assalto frustrado,Assalto frustrado,Raubzug vereitelt,Casse déjoué
+RESULT_CONDITION_CLEAN,No guard alerted · everyone out with loot,No guard alerted · everyone out with loot,Nenhum guarda alertado · todos saíram com saque,Nenhum guarda alertado · todos saíram com saque,Keine Wache alarmiert · alle mit Beute draußen,Aucun garde alerté · tous sortis avec du butin
+RESULT_CONDITION_LOUD,A guard alerted · everyone out,A guard alerted · everyone out,Um guarda alertado · todos saíram,Um guarda alertado · todos saíram,Eine Wache alarmiert · alle draußen,Un garde alerté · tous sortis
+RESULT_CONDITION_PARTIAL,Some caught · some loot out,Some caught · some loot out,Alguns pegos · parte do saque saiu,Alguns apanhados · parte do saque saiu,Einige gefasst · etwas Beute draußen,Certains pris · une part du butin sortie
+RESULT_CONDITION_FOILED,No loot out,No loot out,Nenhum saque saiu,Nenhum saque saiu,Keine Beute draußen,Aucun butin sorti
+RESULT_MULTIPLIERS,Haul ×%s · Renown ×%s,Haul ×%s · Renown ×%s,Saque ×%s · Renome ×%s,Saque ×%s · Renome ×%s,Beute ×%s · Ruhm ×%s,Butin ×%s · Renom ×%s
+RESULT_FOILED_CHIP,No loot · Renown −8,No loot · Renown −8,Sem saque · Renome −8,Sem saque · Renome −8,Keine Beute · Ruhm −8,Pas de butin · Renom −8
+RESULT_SUBLINE,%d:%02d · alarm %d / 6,%d:%02d · alarm %d / 6,%d:%02d · alarme %d / 6,%d:%02d · alarme %d / 6,%d:%02d · Alarm %d / 6,%d:%02d · alarme %d / 6
+RESULT_MOMENT,The moment · %d:%02d,The moment · %d:%02d,O momento · %d:%02d,O momento · %d:%02d,Der Moment · %d:%02d,Le moment · %d:%02d
+RESULT_MOMENT_CAUGHT,Your %s was caught,Your %s was caught,Seu %s foi pego,O teu %s foi apanhado,Dein %s wurde gefasst,Ton %s a été pris
+RESULT_MOMENT_SEEN,A guard saw your crew: the heist turned Loud,A guard saw your crew: the heist turned Loud,Um guarda viu sua equipe: o assalto ficou barulhento,Um guarda viu a tua equipa: o assalto ficou barulhento,Eine Wache hat deine Crew gesehen: der Raubzug wurde laut,Un garde a vu ton équipe : le casse est devenu bruyant
+RESULT_MOMENT_VAULT,The Vault opened with no guard alerted,The Vault opened with no guard alerted,O Cofre abriu sem nenhum guarda alertado,O Cofre abriu sem nenhum guarda alertado,Der Tresor ging auf und keine Wache war alarmiert,Le Coffre s'est ouvert sans garde alerté
+RESULT_MOMENT_CLOCK,The clock ran out before the loot was out,The clock ran out before the loot was out,O tempo acabou antes de o saque sair,O tempo acabou antes de o saque sair,"Die Zeit lief ab, bevor die Beute draußen war",Le temps s'est écoulé avant que le butin sorte
+RESULT_LOOT,Loot,Loot,Saque,Saque,Beute,Butin
+RESULT_THREE_SECONDS,3 s,3 s,3 s,3 s,3 s,3 s
 RESULT_WATCH,Watch it,Watch it,Assistir,Ver,Ansehen,Regarder
 RESULT_AGAIN,Again,Again,De novo,Outra vez,Nochmal,Rejouer
 GRADE_CLEAN,Clean,Clean,Limpo,Limpo,Sauber,Propre

@@ -405,9 +405,11 @@ func _get_out(screen: Control) -> Array:
 	var go: Button = null
 	var gait: Button = null
 	for b: Button in screen.find_children("*", "Button", true, false):
-		if b.text == Strings.t("HEIST_GET_OUT"):
+		# By its words, or by its name where the words are drawn inside it.
+		var said := b.text if b.text != "" else b.accessibility_name
+		if said == Strings.t("HEIST_GET_OUT"):
 			go = b
-		elif b.text == Strings.term("GAIT", "Walk"):
+		elif said == Strings.term("GAIT", "Walk"):
 			gait = b
 	return [go, gait]
 

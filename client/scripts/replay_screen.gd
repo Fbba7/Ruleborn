@@ -49,6 +49,11 @@ func _ready() -> void:
 	_build()
 	if entries.size() > 0:
 		open_entry(0)
+		# The result's moment: played from three seconds before it (§12.13).
+		var params: Dictionary = App.services.store.get_slice(AppState.ROUTE).get("params", {})
+		if int(params.get("from", -1)) > 0 and not yours.is_empty():
+			advance(maxi(0, int(params["from"]) - 3 * RulebornReplay.ticks_per_second()))
+			playing = true
 
 
 static func find_goldens() -> PackedStringArray:
@@ -88,8 +93,9 @@ func open_entry(index: int) -> bool:
 
 ## The moments of a heist worth marking on its timeline, read by playing it
 ## through once: each guard knocked out, each rise of the alarm, the Vault
-## opening, each pylon broken. [{tick, kind}], kind "ko", "alarm", "vault" or
-## "pylon".
+## opening, each pylon broken, each guard alerted and each crew member
+## caught. [{tick, kind, who}], kind "ko", "alarm", "vault", "pylon", "seen"
+## (who: the guard) or "caught" (who: the crew member).
 static func moments(bytes: PackedByteArray, island: PackedByteArray) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	var r := RulebornReplay.new()
@@ -99,7 +105,25 @@ static func moments(bytes: PackedByteArray, island: PackedByteArray) -> Array[Di
 	var alarm := 0
 	var open := false
 	var standing := -1
+	var states: Array[String] = []
+	var caught: Array[bool] = []
 	while r.step():
+		var guards := r.guards()
+		for i in guards.size():
+			var state := str(guards[i]["state"])
+			if i >= states.size():
+				states.append(state)
+			elif state == "Alerted" and states[i] != "Alerted":
+				out.append({"tick": r.tick(), "kind": "seen", "who": i})
+			states[i] = state
+		var crew := r.crew()
+		for i in crew.size():
+			var is_caught := str(crew[i]["standing"]) == "Caught"
+			if i >= caught.size():
+				caught.append(is_caught)
+			elif is_caught and not caught[i]:
+				out.append({"tick": r.tick(), "kind": "caught", "who": i})
+			caught[i] = is_caught
 		var d := r.guards().filter(func(g: Dictionary) -> bool: return g["down"]).size()
 		if d > down:
 			out.append({"tick": r.tick(), "kind": "ko"})
@@ -167,7 +191,8 @@ func _build() -> void:
 	view.looted.connect(func(at: Vector2, amount: int) -> void: hud.fly_coins(at, amount / 20))
 	var column := columns[1]
 
-	var status := FxSkin.panel("card", 16.0, 8.0)
+	var status := UI.panel("leather")
+	status.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var status_box := VBoxContainer.new()
 	status_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	status_box.add_theme_constant_override("separation", 0)
@@ -183,37 +208,40 @@ func _build() -> void:
 	status_box.add_child(grade_label)
 	# How far into the heist the playback is: a bar, the alarm's levels
 	# ticked along it.
-	progress = FxDraw.new(_draw_progress, Vector2(0, UI.px(20)))
+	progress = FxDraw.new(_draw_progress, Vector2(0, UI.px(34)))
 	status_box.add_child(progress)
 	column.add_child(status)
 
 	column.add_child(FxSkin.camera_row(view))
 	var controls := UI.row(-1.0, true)
 	controls.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	controls.add_child(_button("‹", func() -> void: open_entry(current - 1); playing = true, "leather",
-			Strings.t("REPLAY_PREVIOUS")))
+	controls.add_child(KitControls.icon_button("hud/prev", Strings.t("REPLAY_PREVIOUS"), func() -> void:
+		open_entry(current - 1)
+		playing = true))
 	play_button = _button(Strings.t("REPLAY_PAUSE"), func() -> void: playing = not playing; _refresh(), "gold")
 	controls.add_child(play_button)
 	speed_button = _button("×2", func() -> void: speed_index = (speed_index + 1) % SPEEDS.size(); _refresh(),
 			"leather", Strings.t("REPLAY_SPEED", SPEEDS[speed_index]))
 	controls.add_child(speed_button)
-	controls.add_child(_button("›", func() -> void: open_entry(current + 1); playing = true, "leather",
-			Strings.t("REPLAY_NEXT")))
+	controls.add_child(KitControls.icon_button("hud/next", Strings.t("REPLAY_NEXT"), func() -> void:
+		open_entry(current + 1)
+		playing = true))
 	# Home rides with the playback controls: one row fewer, so the realm
 	# keeps its room when §20.8's large text makes the words take more.
-	controls.add_child(_button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "card"))
+	controls.add_child(KitControls.icon_button("hud/home", Strings.t("COMMON_HOME"), func() -> void:
+		App.services.router.go(&"home")))
 	column.add_child(UI.narrow(controls))
 	column.add_child(FxSkin.corner_clear())
 
 
 func _draw_progress(ci: Control) -> void:
 	var whole := maxf(1.0, float(replay.ticks()))
-	var bar := Rect2(Vector2(0, ci.size.y * 0.42), Vector2(ci.size.x, ci.size.y * 0.4))
+	var bar := Rect2(Vector2(0, ci.size.y * 0.62), Vector2(ci.size.x, ci.size.y * 0.3))
 	FxIcons.bar(ci, bar, float(replay.tick()) / whole, FxSkin.GOLD)
 	# Each moment's mark above the bar where it happens: stars for a
 	# knock-out, a bell for the alarm, a lock for the Vault, a shard for a
-	# pylon.
-	var s := ci.size.y * 0.42
+	# pylon, a red "!" for a guard alerted, a red bubble for one caught.
+	var s := ci.size.y * 0.55
 	for m in marks:
 		var x := bar.position.x + bar.size.x * float(m["tick"]) / whole
 		var at := Vector2(clampf(x, s * 0.5, ci.size.x - s * 0.5), s * 0.5)
@@ -226,12 +254,15 @@ func _draw_progress(ci: Control) -> void:
 				FxIcons.lock(ci, at, s, true)
 			"pylon":
 				FxIcons.star(ci, at, s * 0.4, Palette.MATTER, PI / 5.0)
+			"seen":
+				FxIcons.bubble(ci, at, s * 0.9, "!", FxSkin.ALARM)
+			"caught":
+				FxIcons.bubble(ci, at, s * 0.9, "z", FxSkin.ALARM_DEEP)
 
 
-## A playback button in the heist's skin.
+## A playback button in the kit's material (§21.8: gold the main action).
 func _button(words: String, call: Callable, kind: String, spoken := "") -> Button:
-	var b := UI.button(words, call, false, Color(), spoken)
-	FxSkin.style_button(b, kind)
+	var b := UI.action(words, call, kind, spoken)
 	UI.fit(b)
 	return b
 

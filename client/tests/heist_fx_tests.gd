@@ -37,6 +37,8 @@ func run() -> void:
 	_skiff(view, replay)
 	_moments()
 	_sight_marks(view, replay)
+	_pen()
+	_speech(view)
 	view.queue_free()
 	await tree.process_frame
 	await _models(replay)
@@ -324,3 +326,43 @@ func _entry_card() -> void:
 	check.call("landing in a realm, or crossing into the next, shows its name on a card for about two seconds, and a "
 			+ "heist of one island shows none (15.3, 5.4)", none and shown and HeistScreen.ENTRY_SECONDS <= 3.0,
 		"%s %s %s" % [none, shown, words])
+
+
+## The HUD's shapes gather into one triangle array (FxPen): circles, arcs,
+## lines and boxes add triangles whose corners all exist, words send what is
+## gathered first, and nothing is kept once the drawing ends.
+func _pen() -> void:
+	var ci := Control.new()
+	tree.root.add_child(ci)
+	var closed_before := FxPen.gathered(ci)
+	FxPen.begin(ci)
+	FxPen.circle(ci, Vector2(20, 20), 10.0, Color.RED)
+	FxPen.arc(ci, Vector2(20, 20), 12.0, 0.0, PI, 16, Color.WHITE, 3.0)
+	FxPen.line(ci, Vector2.ZERO, Vector2(30, 0), Color.BLACK, 2.0)
+	var box := StyleBoxFlat.new()
+	box.set_corner_radius_all(8)
+	box.set_border_width_all(2)
+	box.shadow_size = 4
+	FxPen.style_box(ci, box, Rect2(0, 0, 80, 30))
+	var shapes := FxPen.gathered(ci)
+	FxPen.string(ci, ThemeDB.fallback_font, Vector2(0, 20), "Hi")
+	var after_words := FxPen.gathered(ci)
+	FxPen.end(ci)
+	var whole := FxPen.rounded(Rect2(0, 0, 80, 30), 8.0)
+	check.call("the HUD's shapes are gathered as triangles and sent as one draw (21.3: under 150 draw calls)",
+		closed_before == -1 and shapes > 60 and after_words == 0 and FxPen.gathered(ci) == -1 and whole.size() > 12,
+		"%d %d %d %d" % [closed_before, shapes, after_words, whole.size()])
+	ci.queue_free()
+
+
+## A guard says what it has come to (§12.16's examples), for a while, and
+## says nothing for a state without words.
+func _speech(view: WorldView) -> void:
+	view.anchors.speech.clear()
+	view.anchors.say(0, "Unaware")
+	var quiet := view.anchors.speech.is_empty()
+	view.anchors.say(0, "Alerted")
+	var said := str(view.anchors.speech.get(0, {}).get("text", "")) == Strings.t("GUARD_SAY_ALERTED")
+	view.anchors.tick(FxAnchors.SAY_SECONDS + 0.1)
+	check.call("a guard says what it has come to over its head, then falls quiet (12.16)",
+		quiet and said and view.anchors.speech.is_empty(), "%s %s %s" % [quiet, said, view.anchors.speech])
