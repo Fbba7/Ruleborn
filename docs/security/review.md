@@ -500,6 +500,13 @@ pick up later.
 - **The client's outbox** keeps receipts, lease tokens and replays as plain
   JSON in the app's sandbox (`user://`); Android backups are off. The
   session token is never written.
+- **The client's event queue can stick.** `Services.send_events` sends
+  every pending event as one batch and keeps them all on any refusal. Past
+  100 (many sessions offline) the server refuses the batch as too large,
+  and an event older than seven days as too late, both for good, so the
+  queue never drains and grows with each session in `user://`. Not a
+  security matter; for the client's owner: send at most 100 a time, and drop
+  what the server refuses as malformed rather than held back.
 - **`tools/art`** loads Playwright from the machine's global install
   (`PLAYWRIGHT_MODULE`), outside its lockfile, and its loopback file server
   checks paths by prefix: tools for the developer's machine, not shipped.
