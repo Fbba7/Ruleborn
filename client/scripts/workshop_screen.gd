@@ -216,9 +216,14 @@ func _cover(item: Dictionary) -> Control:
 	tags.add_child(ScreenParts.pill(item["level"], "well", "screens", "realm"))
 	if item["featured"] != "":
 		tags.add_child(ScreenParts.pill(item["featured"], "cream", "hud", "star"))
-	if item["remix"] != "":
-		tags.add_child(ScreenParts.pill(item["remix"], "well", "realmactions", "rotate", 13.0, "words", true))
 	col.add_child(tags)
+	# The remix tag on its own line, where its words may wrap at large text.
+	if item["remix"] != "":
+		var remix := ScreenParts.pill(item["remix"], "well", "realmactions", "rotate", 13.0, "words",
+			Settings.text_scale > 125)
+		if Settings.text_scale <= 125:
+			remix.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		col.add_child(remix)
 	return ScreenKit.panel("card_lit", col, 14.0, 12.0)
 
 
