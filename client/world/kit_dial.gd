@@ -9,8 +9,9 @@ extends RefCounted
 ## it lies over.
 
 ## The dial's radius past the Spire's half side, in tiles: the design's dial
-## is about three times as wide as the Spire's terrace.
-const REACH := 2.0
+## is about three times as wide as the Spire's terrace (its inner ring of
+## wedges shows round the terrace).
+const REACH := 2.6
 const CURB := Color("#B89AD0")
 const HAND := Color("#4A2A6A")
 

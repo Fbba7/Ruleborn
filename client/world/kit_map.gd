@@ -85,7 +85,7 @@ func _kind(kind: String) -> void:
 		"vault":
 			_box(0.86, 0.38, 0.72, stone, 0, 0, 0)
 			_box(0.9, 0.04, 0.76, KitStyle.GOLD, 0, 0.38, 0)
-			g.ball(Geo.place(_at(0, 0.42, 0), 0.0, Vector3(1, 0.8, 0.9)), 0.34 * unit, Color("#D9A441"), 3, 8, true)
+			g.ball(Geo.place(_at(0, 0.42, 0), 0.0, Vector3(1, 0.8, 0.9)), 0.34 * unit, roof, 3, 8, true)
 			_box(0.2, 0.24, 0.02, KitStyle.GOLD, 0, 0.06, 0.37)
 			top = 0.75
 		"anchor_stone":
