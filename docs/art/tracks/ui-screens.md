@@ -120,7 +120,7 @@ Harmony's realm chips and chord card; the Lab's numbered resonance grid; Profile
 
 ## Stopped here
 
-Wave 4, about 04:00 UTC. Main (with the 00:45 and 02:45 integrations) and T9's kit merged in; every screen check passes on this track's 14 screens. `check_all` stops only at the server Weaving test that main fails too (see above); with that one test made non-fatal, every other stage prints "All checks passed".
+Wave 4, about 04:00 UTC. Main (with the 00:45 and 02:45 integrations) and T9's kit merged in; `check_all` prints "All checks passed" on d4942aa (client 367 of 367, server 439 of 439): the server Weaving test above was fixed on main.
 
 Still worse than the design, in order of how much a first-time player would notice:
 1. Art the design has and the game does not: the Shop's featured set and daily picks, the Lab's test realm, the first launch's universe, character portraits for friends.
