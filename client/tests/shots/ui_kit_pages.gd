@@ -461,7 +461,10 @@ static func _friends(column: VBoxContainer) -> void:
 	var pick_row := picks.get_node("Row") as HBoxContainer
 	for p: Array in [["archivist", "Emote", "Tip of the Hat", "120"], ["tidewalker", "Outfit", "Tide Raincoat", "160"],
 			["lantern_wisp", "Bridge style", "Living Vines", "240"]]:
-		pick_row.add_child(KitCards.product(Portrait.of(str(p[0])), p[1], p[2], p[3], func() -> void: pass))
+		var card := KitCards.product(Portrait.of(str(p[0])), p[1], p[2], p[3], func() -> void: pass)
+		if pick_row.get_child_count() == 0:
+			card.add_child(KitStatus.sash("Trace · 24 h"))
+		pick_row.add_child(card)
 	column.add_child(picks)
 	var people := KitLayout.strip(10)
 	var people_row := people.get_node("Row") as HBoxContainer

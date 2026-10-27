@@ -289,3 +289,40 @@ static func stat(number: String, words: String, icon := "", look := "card") -> P
 	v.add_child(w)
 	p.add_child(v)
 	return p
+
+
+## A sash across a card's top right corner (08-observatory.png's "TRACE ·
+## 24 h"): bold capitals on a gold band at 45 degrees, cut by the card's
+## edge. Add it to the card last (inside a container it fills the card); it
+## lets taps through.
+static func sash(text: String, points := 72.0) -> Control:
+	var corner := Control.new()
+	corner.name = "Sash"
+	corner.set_anchors_preset(Control.PRESET_FULL_RECT)
+	corner.clip_contents = true
+	corner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var band := PanelContainer.new()
+	band.add_theme_stylebox_override("panel", UI.clear_box(0, 2))
+	UI.dress(band, "plate_gold", 0)
+	band.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var l := UI.label(text, 13)
+	l.uppercase = true
+	l.theme_type_variation = "Kicker"
+	l.set_meta("bold", true)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	band.add_child(l)
+	corner.add_child(band)
+	# Long enough to cross the corner at 45 degrees, centred on its diagonal,
+	# wherever the card's right edge lands.
+	var place := func() -> void:
+		# The corner the band crosses is as large as its words need: across
+		# it the band shows 0.85 of `side`.
+		var side := maxf(UI.px(points), (l.get_combined_minimum_size().x + UI.px(16)) / 0.85)
+		band.size = Vector2(side * 1.5, band.get_combined_minimum_size().y)
+		band.pivot_offset = band.size * 0.5
+		band.rotation = PI * 0.25
+		band.position = Vector2(corner.size.x - side * 0.3, side * 0.3) - band.size * 0.5
+	corner.resized.connect(place)
+	band.minimum_size_changed.connect(place)
+	return corner
+
