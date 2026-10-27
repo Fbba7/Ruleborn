@@ -26,6 +26,10 @@ const DAY = 24 * 60 * 60 * 1000;
 export const INVITE_DAYS = 7;
 export const CHALLENGE_DAYS = 7;
 export const FEED_DAYS = 7;
+/** The most invites, and the most challenge links, a player holds open at
+ *  once: each is a row until it closes, and without a ceiling a caller
+ *  writes one every half second for a week (SR-19). */
+export const MOST_OPEN = 50;
 
 const pair = (a, b) => (a < b ? [a, b] : [b, a]);
 
@@ -54,6 +58,10 @@ export class Friends {
   }
 
   invite(account) {
+    const open = this.db.prepare(
+      "SELECT COUNT(*) AS n FROM friend_invites WHERE account = ? AND used_at IS NULL AND created_at > ?")
+      .get(account, this.now() - INVITE_DAYS * DAY).n;
+    if (open >= MOST_OPEN) throw new Refused(409, "too_many_open_invites", { most: MOST_OPEN });
     const code = this.service.random(6).toString("hex");
     this.db.prepare("INSERT INTO friend_invites (code, account, created_at) VALUES (?, ?, ?)")
       .run(code, account, this.now());
@@ -145,6 +153,9 @@ export class Friends {
   challenge(account, realm = "heart") {
     const island = this.db.prepare("SELECT bundle FROM islands WHERE owner = ? AND realm = ?").get(account, realm);
     if (!island) throw new Refused(404, "no_island_to_share");
+    const open = this.db.prepare("SELECT COUNT(*) AS n FROM challenges WHERE account = ? AND created_at > ?")
+      .get(account, this.now() - CHALLENGE_DAYS * DAY).n;
+    if (open >= MOST_OPEN) throw new Refused(409, "too_many_open_challenges", { most: MOST_OPEN });
     const code = this.service.random(6).toString("hex");
     this.db.prepare("INSERT INTO challenges (code, account, bundle, created_at) VALUES (?, ?, ?, ?)")
       .run(code, account, island.bundle, this.now());

@@ -24,6 +24,7 @@ decision).
 | SR-03 | Medium | server | Every offer and Observatory view read the whole game's islands | fixed |
 | SR-07 | Medium | server, sim | One trap in the simulation stopped its rules version until a restart | fixed |
 | SR-17 | Medium | server | The hold queue stalled the server and could be filled by one player | fixed |
+| SR-19 | Medium | server | A player could write the store full, half a second at a time | fixed |
 | SR-04 | Low | server web | The web pages had no CSP, nosniff or referrer policy | fixed |
 | SR-05 | Low | server | A block did not hide a player's profile | fixed |
 | SR-06 | Low | client | The cleartext guard let a userinfo hide the host; the terms link could leave the server | fixed |
@@ -37,6 +38,7 @@ decision).
 | SR-10 | Low | server | A minor's monthly cap holds only on the client's word | needs the owner |
 | SR-14 | Low | server | A crew is anyone's who holds its invite, a 13-to-15's too | needs the owner |
 | SR-11 | Low | server | The ID token that signs in also deletes the account, at once | sent to T11 |
+| SR-20 | Low | server | A caller can keep Game Center sign-in failing | sent to T11 |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -272,6 +274,34 @@ decision).
   answers, with its words on the client). Reporting is never held back.
 - **Status:** fixed.
 
+### SR-19 — A player could write the store full, half a second at a time (Medium)
+
+- **Where:** `server/src/telemetry.mjs` `batch` (`POST /v1/events`),
+  `server/src/friends.mjs` `invite` and `challenge`
+  (`POST /v1/friends/invites`, `POST /v1/challenges`),
+  `server/src/workshop.mjs` `play`, `server/src/shop.mjs` `intent`.
+- **What:** G44's call bucket, two a second, was the only bound on what one
+  account writes. A batch of device events holds up to 100, and only three
+  kinds (sessions and the "worth" rating) had a daily count: `weave` and
+  `birth` events had none. Measured here, sixty batches stored 870 kB, so
+  two a second all day is about 2.5 GB a day from one account, kept §24.3's
+  90 days, on a database §24.1 budgets by the row. An invite and a challenge
+  link were each a row a call too, kept a week.
+- **Test:** `server/test/security_limits.test.mjs` (SR-19).
+- **Fix:** a player's device sends at most `DEVICE_EVENTS_A_DAY` events a
+  day, every kind together — 400, twice the heavy day the module's own
+  comment fits in one or two rows — and past it a batch is refused 429
+  `too_many_events`. A player holds at most 50 open invites and 50 open
+  challenge links (`MOST_OPEN`), as `safety.mjs` holds blocks to 500;
+  past them 409, and a used or lapsed one frees its place. The same holds
+  for the two other rows a call writes without a bound: a Workshop play
+  (`POST /v1/workshop/:id/play`, kept for good) — at most
+  `MOST_OPEN_PLAYS`, 50, unsubmitted from the last day — and a purchase
+  intent, which only a minor's cap bounded — at most `MOST_OPEN_INTENTS`,
+  10, open at once. The client has the words for all five refusals. No
+  honest player reaches any of them.
+- **Status:** fixed.
+
 ## Needs the owner
 
 ### SR-09 — The public target lists carry every island's raw rating (Low)
@@ -403,6 +433,26 @@ decision).
   turns it round.
 - **Status:** sent to T11, who owns sign-in.
 
+### SR-20 — A caller can keep Game Center sign-in failing (Low)
+
+- **Where:** `server/src/stores.mjs` `GameCenter.prepare`.
+- **What:** a Game Center key is fetched from Apple at most one new URL a
+  second, for the whole server, into a cache of eight. A caller who names
+  key URLs Apple serves — `gc-prod-N.cer`, Apple's own names — has each one
+  fetched and kept, so nine of them push out the key players sign in with;
+  the next player's sign-in then needs a fetch, and the caller, naming one
+  a second, keeps taking the one slot. Game Center sign-in fails for as
+  long as they keep it up. A key in use stays at the back of the cache
+  while players keep signing in, so it takes a quiet hour, and it needs
+  Apple to serve nine or more names: likely, not verified from here.
+- **Test:** `server/test/security_t11.test.mjs` (SR-20), with the fetch
+  standing in for Apple serving every name.
+- **Suggested:** keep the fetch slot for a credential that carries a
+  signature, a player id and a fresh timestamp (the shape of a real one),
+  hold names fetched but never used to sign anything outside the cache of
+  keys in use, or let one caller's address fetch only one new name a minute.
+- **Status:** sent to T11, who owns sign-in.
+
 ### For T11: what sign-out has to do
 
 Not a finding yet, since sign-out is T11's to build: a session token
@@ -431,6 +481,11 @@ pick up later.
 - **Unsigned reads.** `GET /v1/bundles/:hash` takes no session and no
   bucket, as §24.8's static files must; each miss is one indexed read and a
   file check, and the edge caches the hits.
+- **Snapshots.** Every island published is a snapshot kept for good
+  (§24.8), and its bytes in the store; the simulation bucket (one every 20
+  seconds) is the only bound, about 4 MB a day an account at the most.
+  §20.12's quota bounds the Workshop's islands, not a realm's; a quota of
+  the same kind for realms is the owner's call.
 - **Leases.** One lease a target a raider at a time (§24.13), but a raider
   may hold one on every island; unplayed ones are deleted seven days after
   they lapse (G38). Bounded by the game's islands, not by the caller.
@@ -445,6 +500,13 @@ pick up later.
 - **The client's outbox** keeps receipts, lease tokens and replays as plain
   JSON in the app's sandbox (`user://`); Android backups are off. The
   session token is never written.
+- **The client's event queue can stick.** `Services.send_events` sends
+  every pending event as one batch and keeps them all on any refusal. Past
+  100 (many sessions offline) the server refuses the batch as too large,
+  and an event older than seven days as too late, both for good, so the
+  queue never drains and grows with each session in `user://`. Not a
+  security matter; for the client's owner: send at most 100 a time, and drop
+  what the server refuses as malformed rather than held back.
 - **`tools/art`** loads Playwright from the machine's global install
   (`PLAYWRIGHT_MODULE`), outside its lockfile, and its loopback file server
   checks paths by prefix: tools for the developer's machine, not shipped.
@@ -497,14 +559,18 @@ What was tried and found sound, so the next reader need not try it again.
   logged by code and route, never a token; nothing is loaded or run from
   downloaded data (`load()` takes `res://` only; no `str_to_var`,
   `Expression` or resource packs); TLS is the platform's, with no unsafe
-  options; Android backups are off.
+  options; Android backups are off. The screens render no rich text (no
+  `RichTextLabel`, so no BBCode links to click), draw only images they
+  generate themselves, open only the terms link (SR-06), and read the
+  environment only on the desktop (`RULEBORN_SERVER`, `RULEBORN_CREDENTIAL`).
 - **Supply chain.** The server has no dependencies. `tools/art` pins exact
   versions with a lockfile of nine registry packages, each with its
   integrity hash and no install script; `npm audit` finds nothing. The Rust
   crates pin `godot = "=0.5.5"`, commit both lockfiles, take every crate
-  from crates.io with a checksum and have no build script of their own;
-  `cargo audit` is not installed and the advisory database could not be
-  fetched through the proxy, so the crates' advisories are unchecked.
+  from crates.io with a checksum and have no build script of their own.
+  `cargo audit` is not installed, so the RustSec advisory database (as of
+  26 October 2026) was cloned and every crate in both lockfiles looked up
+  in it by hand: none of the 19 has an advisory.
 - **Secrets.** The whole history's 30 MB of diffs searched for private keys,
   Google, Stripe and GitHub tokens, AWS keys, client secrets, passwords and
   key stores: the only private keys are the Apple test chain under
@@ -532,5 +598,32 @@ What was tried and found sound, so the next reader need not try it again.
   from the line after each failure), and passed: the simulation's gate,
   all of the server's tests, the client's other 339, the export check, and
   the docs, audit and roadmap builds, which end in "All checks passed."
-- Each finding's test was run against the code before its fix and failed,
-  then passed after it.
+- Each fixed finding's test was run against the code before its fix and
+  failed, then passed after it. The tests of the owner's and T11's items
+  pin the behaviour as it stands, so they pass until the fix.
+
+## Stopped here
+
+Twenty findings: one High, eight Medium, eleven Low.
+
+- **Fixed (12):** SR-01 (High); SR-02, SR-03, SR-07, SR-17 and SR-19
+  (Medium); SR-04, SR-05, SR-06, SR-08, SR-13 and SR-18 (Low). Each has a
+  test that failed before its fix and passes after.
+- **Needs the owner (6):** SR-12, SR-15 and SR-16 (Medium); SR-09, SR-10
+  and SR-14 (Low). Each test pins the behaviour as it stands; the decision
+  turns it round. SR-15 and SR-16 are the register's D60, G60 and G61,
+  open with the build left. The others are the build against a rule
+  (§12.15, §20.2, §17.7 with §20.7) or a rule without its number (§18.9's
+  cap), so no new register item was added: the register tracks the
+  document, and these are written up here with their choices.
+- **Sent to T11 (2):** SR-11 and SR-20, with their tests in
+  `server/test/security_t11.test.mjs`, and a note on what sign-out has to
+  do. T11's branch was not on the remote when this was written.
+
+Not reviewed in depth: the client's screens' layout code, beyond what they
+open, run, load, render as rich text or log; `tools/` beyond its supply
+chain; the design document's own security statements against each other.
+
+What would be done next: SR-15 and SR-16 with the economy build (TC.12);
+the hold measurement off the request thread; a cap on realm snapshots like
+the Workshop's quota; and the client's event queue.

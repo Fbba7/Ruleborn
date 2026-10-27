@@ -69,3 +69,65 @@ test("SR-17: the hold queue measures islands that stand, owners in turn, so one 
   assert.equal(t.service.holds.status(bundle).status, "measured",
                "measured after the spammer's one standing island, not after all twenty");
 });
+
+// SR-19: the call bucket was the only bound on what a player writes. A
+// device's events past the three kinds with a daily count, an invite and a
+// challenge link were each a stored row a call: sixty batches of events were
+// 870 kB, and two calls a second all day some 2.5 GB, kept 90 days.
+test("SR-19: a day's device events, open invites and open challenge links each have a ceiling", async () => {
+  const { DEVICE_EVENTS_A_DAY } = await import("../src/telemetry.mjs");
+  const { MOST_OPEN } = await import("../src/friends.mjs");
+  const t = server();
+  const me = t.service.session("gc:me");
+  established(t, me.account);
+  t.service.publish(me.account, t.build.generate(3, 3));
+  const call = (method, path, json) => t.handle(new Request(`https://edge.example${path}`, {
+    method, headers: { authorization: `Bearer ${me.token}`, "content-type": "application/json" },
+    body: json ? JSON.stringify(json) : undefined }));
+  const batch = Array.from({ length: 100 }, () => ({ kind: "weave", data: { law: "bloom", realm: "heart" } }));
+  const statuses = [];
+  for (let i = 0; i < 6; i++) {
+    t.clock.now += 1000;
+    statuses.push((await call("POST", "/v1/events", batch)).status);
+  }
+  assert.deepEqual(statuses, [202, 202, 202, 202, 429, 429], `${DEVICE_EVENTS_A_DAY} a day, then no more`);
+  for (const [path, reason] of [["/v1/friends/invites", "too_many_open_invites"],
+                                ["/v1/challenges", "too_many_open_challenges"]]) {
+    for (let i = 0; i < MOST_OPEN; i++) {
+      t.clock.now += 1000;
+      assert.equal((await call("POST", path)).status, 201);
+    }
+    const past = await call("POST", path);
+    assert.deepEqual([past.status, (await past.json()).error], [409, reason]);
+  }
+  t.clock.now += 8 * 24 * 60 * 60 * 1000;
+  const later = t.service.session("gc:me");
+  const again = await t.handle(new Request("https://edge.example/v1/friends/invites", {
+    method: "POST", headers: { authorization: `Bearer ${later.token}` } }));
+  assert.equal(again.status, 201, "a lapsed invite frees its place");
+});
+
+test("SR-19: a day's unsubmitted Workshop plays and a player's open purchase intents have a ceiling too", async () => {
+  const { MOST_OPEN_PLAYS, Workshop } = await import("../src/workshop.mjs");
+  const { MOST_OPEN_INTENTS } = await import("../src/shop.mjs");
+  const { clockTicks } = await import("../src/service.mjs");
+  const { openPlan } = await import("./setup.mjs");
+  const items = Array.from({ length: 12 }, (_, i) => ({ id: `c${i}`, kind: "outfit", price: 100 }));
+  const t = server({ cosmetics: { items } });
+  const w = new Workshop(t.service);
+  const island = t.build.exampleIsland(true);
+  const cleared = t.build.record(island, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() });
+  const creator = t.service.session("gc:creator").account;
+  const { id } = w.publish(creator, island, cleared, { adjective: 1, noun: 9 });
+  const player = t.service.session("gc:player").account;
+  for (let i = 0; i < MOST_OPEN_PLAYS; i++) w.play(player, id);
+  assert.throws(() => w.play(player, id), (e) => e.reason === "too_many_open_plays");
+  t.clock.now += 24 * 60 * 60 * 1000 + 1;
+  assert.ok(w.play(player, id).token, "a day on, the old ones no longer count");
+
+  const buyer = t.service.session("gc:buyer").account;
+  for (let i = 0; i < MOST_OPEN_INTENTS; i++) t.service.shop.intent(buyer, `c${i}`);
+  assert.throws(() => t.service.shop.intent(buyer, "c11"), (e) => e.reason === "too_many_open_intents");
+  t.clock.now += 16 * 60 * 1000;
+  assert.ok(t.service.shop.intent(buyer, "c11").intent, "a lapsed intent frees its place");
+});

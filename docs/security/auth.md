@@ -201,4 +201,51 @@ confirm** this addition to §24.1's budget (the register is not edited here).
 
 ## Stopped here
 
-(Written at the end of the night.)
+At 04:45 UTC on 27 October 2026, on `claude/auth`.
+
+**Built and proven** (check_all green; server 443 tests, client 13 auth checks):
+
+- Sessions: an hour's access token, a rotating refresh token with reuse
+  detection (a reused one ends its family), 30-day idle and 180-day
+  absolute limits, key ids and a key ring for rotation, every MAC compared
+  in constant time, one primary-key row read a request for revocation.
+- Sign-out, sign-out everywhere, and every session ended by deletion, a
+  ban and an identity change; closed sessions deleted after seven days.
+- Platform proofs single-use: a Game Center salt and timestamp once, a
+  Google token's server nonce once; every rejection path tested with the
+  real verifiers. A proven Game Center key cannot be evicted by a caller
+  cycling Apple's key names (T12's SR-20).
+- The web deletion page: a nonce bound to a `__Host-` cookie, the web
+  client's token only, issued within five minutes, once; cross-site and
+  non-JSON posts refused; a strict CSP checked in Chromium (T12's SR-11).
+- Limits: the document's sign-in numbers, refresh and nonce included, with
+  the same answer whether or not an account exists.
+- The device: the access token in memory, the refresh token behind the
+  platform storage seam (memory only without a plugin), renewal on the
+  monotonic clock, one at a time, the nonce fetched for Google; a sign-out
+  that ends the session on the server or owes it, forgets every token,
+  parks the unsent queue under the account and rebuilds the app's state;
+  TLS pinning by project setting; no token in any log or file.
+- The account panel, from the UI kit, every state in words, both sign-outs
+  behind a confirm; stills in `docs/art/shots/auth/`.
+
+**Open:**
+
+- The native plugins: `RulebornSecureStore` (Keychain, Keystore),
+  `RulebornGameCenter`, `RulebornGoogleSignIn`. Their contracts are in
+  `client/features/auth/secure_store.gd` and `platform_identity.gd`; this
+  machine has no Android SDK or Xcode to build them.
+- No certificate is pinned until the production chain is known.
+- The register is not told of `server/load.json`'s new numbers.
+
+**For the owner to confirm:**
+
+- One billed row a session for refresh: engaged players 81.15 → 86.15
+  billed rows a day; $767 → $817 a month at a million monthly players.
+- Lifetimes: access one hour (the document's), refresh 30 days idle and
+  180 days absolute.
+- Which CA the client pins.
+- A sign-out keeps the age check and the first launch's answers on the
+  phone (device-level), while the queue is parked by account.
+- The account panel sits at the end of Settings (two lines in
+  `settings_screen.gd`) until Settings has an Account tab.
