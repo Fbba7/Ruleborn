@@ -109,8 +109,11 @@ static func friends(f: Dictionary, me: String) -> Dictionary:
 	for x: Dictionary in f.get("friends", []):
 		list.append({"account": str(x["account"]), "name": who(str(x["account"]), me)})
 	var feed: Array[String] = []
+	var feed_items: Array[Dictionary] = []
 	for e: Dictionary in f.get("feed", []):
 		var grade: Variant = e.get("grade")
+		feed_items.append({"grade": str(grade) if grade != null else "", "mode": str(e.get("mode", "raid")),
+			"raider": who(str(e["raider"]), me), "defender": who(str(e["defender"]), me)})
 		feed.append(Strings.t("FEED_" + str(e.get("mode", "raid")).to_upper() if Strings.rows().has(
 				"FEED_" + str(e.get("mode", "raid")).to_upper()) else "FEED_RAID",
 			[who(str(e["raider"]), me), who(str(e["defender"]), me),
@@ -123,7 +126,8 @@ static func friends(f: Dictionary, me: String) -> Dictionary:
 	return {
 		"error": str(f.get("error", "")), "busy": bool(f.get("busy", false)),
 		"friends": list, "none": list.is_empty(), "blocked": blocked,
-		"feed": feed,
+		"feed": feed, "feed_items": feed_items,
+		"invite_code": str(invite.get("invite", "")), "challenge_code": str(challenge.get("challenge", "")),
 		"invite": Strings.t("FRIENDS_INVITE_CODE", str(invite["invite"])) if invite.has("invite") else "",
 		"challenge": Strings.t("FRIENDS_CHALLENGE_CODE", str(challenge["challenge"]))
 			if challenge.has("challenge") else "",

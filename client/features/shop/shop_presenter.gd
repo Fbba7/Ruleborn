@@ -66,7 +66,9 @@ static func track(t: Dictionary) -> Dictionary:
 		rows.append({"tier": n, "state": state,
 			"text": Strings.t("TRACK_TIER", [n, reward(tier.get("free")),
 				(Strings.t("TRACK_AND_PREMIUM", premium) if premium != "" else "")]),
-			"premium_held": premium != "" and not bool(v.get("premium", false))})
+			"premium_held": premium != "" and not bool(v.get("premium", false)),
+			"free": reward(tier.get("free")), "free_mark": mark(tier.get("free")), "paid": premium,
+			"paid_mark": mark(tier.get("premium"))})
 	var can := next is Dictionary and stars >= int(next["cost"])
 	return {
 		"ready": true, "busy": bool(t.get("busy", false)), "error": str(t.get("error", "")),
@@ -81,7 +83,25 @@ static func track(t: Dictionary) -> Dictionary:
 		"season": int(v["season"]),
 		"rows": rows,
 		"claimed": _claimed_text(t.get("claimed", {})),
+		"stars_n": stars, "next_tier": int(next["tier"]) if next is Dictionary else 0,
+		"next_cost": int(next["cost"]) if next is Dictionary else 0, "claimed_n": claimed,
 	}
+
+
+## A reward's mark: [group, icon] from the design's set, or a resource.
+static func mark(r: Variant) -> Array:
+	if not (r is Dictionary) or (r as Dictionary).is_empty():
+		return []
+	var d: Dictionary = r
+	if d.has("essence"):
+		return ["coin", "essence"]
+	if d.has("pages"):
+		return ["currencies", "pages"]
+	if d.has("strayOffer"):
+		return ["season", "tierreward"]
+	if d.has("cosmetic"):
+		return ["shopcosmetics", str(d.get("kind", "")).replace("_", "")]
+	return []
 
 
 static func _claimed_text(c: Variant) -> String:
@@ -109,6 +129,16 @@ static func kind_of(id: String, catalogue: Array) -> String:
 	return ""
 
 
+## A cosmetic's name for its card's title: its catalogue words, else the
+## name its id ends in ("robe-aurora" is Aurora), as its kind is shown beside.
+static func cosmetic_title(id: String) -> String:
+	var key := "COSMETIC_" + id.to_upper().replace("-", "_")
+	if Strings.rows().has(key):
+		return Strings.t(key)
+	var tail := id.get_slice("-", 1) if id.contains("-") else id
+	return Strings.t("SCREEN_COSMETIC_TITLE", tail.replace("_", " ").capitalize())
+
+
 ## A cosmetic's name: its catalogue words if it has them, else its kind and id.
 static func cosmetic_name(id: String, kind: String) -> String:
 	var key := "COSMETIC_" + id.to_upper().replace("-", "_")
@@ -131,7 +161,7 @@ static func shop(s: Dictionary, purchases: StorePurchases) -> Dictionary:
 		if id in owned:
 			continue
 		items.append({"id": id, "kind": str(i.get("kind", "")), "name": cosmetic_name(id, str(i.get("kind", ""))),
-			"price": money(int(i.get("price", 0)), purchases.price(id)),
+			"title": cosmetic_title(id), "price": money(int(i.get("price", 0)), purchases.price(id)),
 			"product": str(i.get("product", id)), "gift": str(i.get("gift", "gift." + id))})
 	var mine: Array[Dictionary] = []
 	for id: Variant in owned:

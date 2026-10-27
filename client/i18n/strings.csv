@@ -1194,3 +1194,80 @@ ERR_SIGNED_OUT,you signed out on this phone,you signed out on this phone,você s
 ERR_PLATFORM_CANCELLED,the sign-in was closed before it finished,the sign-in was closed before it finished,o login foi fechado antes de terminar,o início de sessão foi fechado antes de terminar,die Anmeldung wurde vor dem Ende geschlossen,la connexion a été fermée avant la fin
 ERR_NO_PLATFORM_ACCOUNT,this phone is not signed in to Game Center or a Google account,this phone is not signed in to Game Center or a Google account,este celular não está conectado ao Game Center nem a uma conta Google,este telemóvel não tem sessão no Game Center nem numa conta Google,dieses Handy ist weder bei Game Center noch bei einem Google-Konto angemeldet,ce téléphone n’est connecté ni à Game Center ni à un compte Google
 AUTH_LOST_DEVICE,"If a phone is lost, also remove it from your Apple ID or Google account: signed in there, it could sign in again.","If a phone is lost, also remove it from your Apple ID or Google account: signed in there, it could sign in again.","Se um celular foi perdido, remova-o também do seu Apple ID ou da sua conta Google: conectado lá, ele poderia entrar de novo.","Se um telemóvel se perdeu, remove-o também do teu ID Apple ou da tua conta Google: com sessão lá, poderia voltar a entrar.","Ist ein Handy verloren, entferne es auch aus deiner Apple-ID oder deinem Google-Konto: dort angemeldet, könnte es sich wieder anmelden.","Si un téléphone est perdu, retire-le aussi de ton identifiant Apple ou de ton compte Google : connecté là, il pourrait se reconnecter."
+SCREEN_BACK,Back,Back,Voltar,Voltar,Zurück,Retour
+SCREEN_CHOSEN,chosen,chosen,escolhido,escolhido,gewählt,choisi
+NAV_ISLANDS,Islands,Islands,Ilhas,Ilhas,Inseln,Îles
+NAV_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
+NAV_HEIST,Heist,Heist,Assalto,Assalto,Raubzug,Casse
+NAV_CREW,Crew,Crew,Equipe,Equipa,Crew,Équipe
+NAV_FRIENDS,Friends,Friends,Amigos,Amigos,Freunde,Amis
+HUB_ALL_LAWS,All laws,All laws,Todas as leis,Todas as leis,Alle Gesetze,Toutes les lois
+HUB_HARMONY,Harmony,Harmony,Harmonia,Harmonia,Harmonie,Harmonie
+HUB_LAB,Lab,Lab,Laboratório,Laboratório,Labor,Labo
+HUB_ROSTER,Roster,Roster,Elenco,Elenco,Aufstellung,Effectif
+HUB_SAGES,Sages,Sages,Sábios,Sábios,Weise,Sages
+HUB_FORMS,Forms,Forms,Formas,Formas,Formen,Formes
+SCREEN_CODEX_RESTORED,%d of %d laws restored,%d of %d laws restored,%d de %d leis restauradas,%d de %d leis restauradas,%d von %d Gesetzen wiederhergestellt,%d lois restaurées sur %d
+SCREEN_CODEX_OF_LAWS,Codex of Laws,Codex of Laws,Códice das Leis,Códice das Leis,Kodex der Gesetze,Codex des lois
+SCREEN_CODEX_MET,%d of %d laws met,%d of %d laws met,%d de %d leis encontradas,%d de %d leis encontradas,%d von %d Gesetzen begegnet,%d lois rencontrées sur %d
+SCREEN_KEEPER_LEVEL,Keeper %d,Keeper %d,Guardião %d,Guardião %d,Hüter %d,Gardien %d
+SCREEN_SPIRE_LEVEL,Spire %d,Spire %d,Torre %d,Torre %d,Turm %d,Flèche %d
+SCREEN_ALL,All,All,Todas,Todas,Alle,Toutes
+SCREEN_FILTER_SCHOOL,Show only %s,Show only %s,Mostrar só %s,Mostrar só %s,Nur %s zeigen,Afficher seulement %s
+SCREEN_TIER,Tier %s,Tier %s,Nível %s,Nível %s,Stufe %s,Rang %s
+SCREEN_TIER_MARK,%s,%s,%s,%s,%s,%s
+SCREEN_SLOT_EMPTY,Empty,Empty,Vazio,Vazio,Leer,Vide
+SCREEN_SLOT_N,Slot %d,Slot %d,Espaço %d,Espaço %d,Platz %d,Emplacement %d
+SCREEN_SLOT_RESTING,Resting,Resting,Descansando,A descansar,Ruht,Au repos
+SCREEN_SLOT_LOCKED,Locked,Locked,Bloqueado,Bloqueado,Gesperrt,Verrouillé
+SCREEN_CHAPTER,Ch. %d,Ch. %d,Cap. %d,Cap. %d,Kap. %d,Ch. %d
+SCREEN_NOT_MET,Not met,Not met,Não vista,Não vista,Unbekannt,Inconnue
+SCREEN_WEAKNESS,Weak against,Weak against,Fraca contra,Fraca contra,Schwach gegen,Faible contre
+SCREEN_NOT_RESTORED,Not restored,Not restored,Não restaurada,Não restaurada,Nicht wiederhergestellt,Non restaurée
+SCREEN_POINTS,%s pts,%s pts,%s pts,%s pts,%s Pkt.,%s pts
+SCREEN_LAB_LEVEL,Lab level %d,Lab level %d,Laboratório nível %d,Laboratório nível %d,Labor Stufe %d,Labo niveau %d
+SCREEN_LAB_REMAINING,"Still to find, by school","Still to find, by school","Ainda por encontrar, por escola","Ainda por encontrar, por escola","Noch zu finden, nach Schule","Encore à trouver, par école"
+SCREEN_COMBINATIONS,What sounds here,What sounds here,O que soa aqui,O que soa aqui,Was hier klingt,Ce qui sonne ici
+SCREEN_CROWNED,Crowned,Crowned,Coroada,Coroada,Gekrönt,Couronnée
+SCREEN_FREE_LANE,FREE,FREE,GRÁTIS,GRÁTIS,GRATIS,GRATUIT
+SCREEN_STARPASS_LANE,STARPASS,STARPASS,STARPASS,STARPASS,STARPASS,STARPASS
+SCREEN_TIERS_CLAIMED,%d of %d tiers claimed,%d of %d tiers claimed,%d de %d níveis resgatados,%d de %d níveis resgatados,%d von %d Stufen abgeholt,%d paliers sur %d récupérés
+SCREEN_SHOP_FOR_SALE,For sale,For sale,À venda,À venda,Im Angebot,En vente
+SCREEN_SHOP_OWNED,Yours,Yours,Seus,Teus,Deine,À toi
+SCREEN_SHOP_SPENT,Spending this month,Spending this month,Gastos deste mês,Gastos deste mês,Ausgaben diesen Monat,Dépenses du mois
+SCREEN_SETTINGS_SOUND,Sound,Sound,Som,Som,Ton,Son
+SCREEN_SETTINGS_ACCESS,Access,Access,Acesso,Acesso,Zugang,Accès
+SCREEN_SETTINGS_PLAY,Play,Play,Jogo,Jogo,Spiel,Jeu
+SCREEN_HELD,Held,Held,Defendidas,Defendidas,Gehalten,Tenues
+SCREEN_LEAKED,Leaked,Leaked,Vazadas,Vazadas,Durchbrochen,Percées
+SCREEN_SHOW_REALM,Show %s above,Show %s above,Mostrar %s acima,Mostrar %s acima,%s oben zeigen,Montrer %s en haut
+SCREEN_FRIENDS_ADD,Play with more friends,Play with more friends,Jogue com mais amigos,Joga com mais amigos,Mit mehr Freunden spielen,Jouer avec plus d’amis
+SCREEN_SHARE_CHALLENGE,Your island as a challenge,Your island as a challenge,Sua ilha como desafio,A tua ilha como desafio,Deine Insel als Herausforderung,Ton île en défi
+SCREEN_SHARE_INVITE,Invite a friend,Invite a friend,Convide um amigo,Convida um amigo,Lade einen Freund ein,Invite un ami
+SCREEN_PLAYS,Cleared,Cleared,Concluídas,Concluídas,Geschafft,Réussies
+SCREEN_REMIXES,Remixes,Remixes,Remixes,Remixes,Remixe,Remix
+SCREEN_RATE_FUN,Fun,Fun,Diversão,Diversão,Spaß,Fun
+SCREEN_RATE_CLEVERNESS,Clever,Clever,Engenho,Engenho,Klug,Malin
+SCREEN_RATE_FAIRNESS,Fair,Fair,Justa,Justa,Fair,Juste
+SCREEN_MILESTONES,Milestones %s,Milestones %s,Marcos %s,Marcos %s,Meilensteine %s,Paliers %s
+SCREEN_MASTERY,Mastery %d/%d,Mastery %d/%d,Maestria %d/%d,Mestria %d/%d,Meisterschaft %d/%d,Maîtrise %d/%d
+SCREEN_WEAVE,Weave,Weave,Tecer,Tecer,Weben,Tisser
+SCREEN_PAIR_IN_LAB,Pair it in the Lab,Pair it in the Lab,Combinar no Laboratório,Combinar no Laboratório,Im Labor paaren,Associer au Labo
+SCREEN_WEAVE_INTO,Weave into a realm,Weave into a realm,Tecer em um reino,Tecer num reino,In ein Reich weben,Tisser dans un royaume
+SCREEN_TAGLINE,Your islands. Your rules. Their treasure.,Your islands. Your rules. Their treasure.,Suas ilhas. Suas regras. O tesouro deles.,As tuas ilhas. As tuas regras. O tesouro deles.,Deine Inseln. Deine Regeln. Ihr Schatz.,Tes îles. Tes règles. Leur trésor.
+SCREEN_COSMETIC_TITLE,%s,%s,%s,%s,%s,%s
+SCREEN_HEISTS,Heists,Heists,Assaltos,Assaltos,Raubzüge,Casses
+SCREEN_DEFENCE,Defence,Defense,Defesa,Defesa,Verteidigung,Défense
+SCREEN_FEED,Feed,Feed,Novidades,Novidades,Neuigkeiten,Fil
+SCREEN_TAB_CHALLENGE,Challenge,Challenge,Desafio,Desafio,Herausforderung,Défi
+SCREEN_TAB_INVITE,Invite,Invite,Convite,Convite,Einladen,Inviter
+SCREEN_COST,Cost,Cost,Custo,Custo,Kosten,Coût
+SCREEN_READY_IN,Ready in,Ready in,Pronta em,Pronta em,Fertig in,Prête dans
+SCREEN_CHOOSE,Choose %s,Choose %s,Escolher %s,Escolher %s,%s wählen,Choisir %s
+SCREEN_OPEN,Open,Open,Abrir,Abrir,Öffnen,Ouvrir
+SCREEN_STARPASS_LINE,Cosmetics only,Cosmetics only,Só cosméticos,Só cosméticos,Nur Kosmetik,Cosmétiques seulement
+SCREEN_PASS,Pass,Pass,Passe,Passe,Pass,Passe
+SCREEN_LEAGUE,League,League,Liga,Liga,Liga,Ligue
+SCREEN_FEATURED,Featured,Featured,Em destaque,Em destaque,Im Fokus,À la une
+SCREEN_SETTINGS_GAME,Game,Game,Jogo,Jogo,Spiel,Jeu
+SCREEN_OVERVIEW,Overview,Overview,Resumo,Resumo,Überblick,Aperçu

@@ -7,6 +7,8 @@ extends Control
 var controller: ShareController
 var body: VBoxContainer
 var status_label: Label
+## The tab on show, as the design's strip: "challenge" or "invite".
+var tab_shown := "challenge"
 
 
 func _ready() -> void:
@@ -23,14 +25,12 @@ func _on_changed(slice: StringName) -> void:
 
 
 func _build() -> void:
-	var column := UI.frame(self)
-	column.add_child(UI.title(Strings.t("SHARE_TITLE")))
+	var column := ScreenKit.frame(self)
+	column.add_child(ScreenNav.header(Strings.t("SHARE_TITLE")))
 	status_label = UI.status("info", "")
-	column.add_child(UI.plate(status_label))
+	column.add_child(ScreenParts.status_plate(status_label))
 	body = UI.scroll(column)
-	var actions := UI.row(-1.0, true)
-	actions.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
-	column.add_child(UI.narrow(actions))
+	column.add_child(ScreenNav.dock(&"home"))
 
 
 func _refresh() -> void:
@@ -41,28 +41,93 @@ func _refresh() -> void:
 		UI.set_status(status_label, "alarm", s["error"])
 	else:
 		UI.set_status(status_label, "success" if str(s.get("copied", "")) != "" else "info", str(s.get("copied", "")))
+	ScreenParts.show_status(status_label)
 	for child in body.get_children():
 		body.remove_child(child)
 		child.queue_free()
+	body.add_child(ScreenParts.segmented([
+		{"text": Strings.t("SCREEN_TAB_CHALLENGE"), "key": "challenge", "on": tab_shown == "challenge",
+			"icon": "screens/realm"},
+		{"text": Strings.t("SCREEN_TAB_INVITE"), "key": "invite", "on": tab_shown == "invite",
+			"icon": "social/invite"}],
+		func(key: String) -> void:
+			tab_shown = key
+			_refresh()))
 	var link := VBoxContainer.new()
-	var text := UI.label(s["link"], UI.TEXT_POINTS, true)
+	link.add_theme_constant_override("separation", UI.px(8))
+	link.add_child(_title("screens", "realm", Strings.t("SCREEN_SHARE_CHALLENGE")))
+	var text := ScreenKit.text(s["link"], 15.0, "words", "card_lit", false, true)
 	text.set_meta("link", true)
-	link.add_child(text)
-	link.add_child(RosterScreen.offer(s["make"], s["busy"], controller.make_link))
+	link.add_child(ScreenKit.panel("parchment", text, 14.0, 10.0))
+	text.add_theme_color_override("font_color", ScreenKit.ink("parchment"))
+	var pair: Array = [_offer(s["make"], s["busy"], controller.make_link, "gold")]
 	if not (s["copy"] as Dictionary).is_empty():
-		link.add_child(RosterScreen.offer(s["copy"], s["busy"], controller.copy))
-	body.add_child(UI.plate(link))
+		pair.append(_offer(s["copy"], s["busy"], controller.copy, "leather"))
+	link.add_child(_pair(pair))
+	# Both built, the one chosen shown.
+	var link_card := ScreenKit.panel("card_lit", link, 18.0, 12.0)
+	link_card.visible = tab_shown == "challenge"
+	body.add_child(link_card)
 	var invite := VBoxContainer.new()
+	invite.add_theme_constant_override("separation", UI.px(8))
 	invite.set_meta("section", "invite")
-	invite.add_child(UI.label(s["gift"], UI.TEXT_POINTS, true))
+	invite.add_child(_title("social", "invite", Strings.t("SCREEN_SHARE_INVITE")))
+	var gift := HBoxContainer.new()
+	gift.add_theme_constant_override("separation", UI.px(10))
+	gift.add_child(ScreenKit.icon("shopcosmetics", "gift", 44.0))
+	var words := ScreenKit.text(s["gift"], 15.0, "words", "card", false, true)
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	gift.add_child(words)
+	invite.add_child(gift)
 	if s["invitation"] != "":
-		invite.add_child(UI.label(s["invitation"], UI.TEXT_POINTS, true))
-	invite.add_child(RosterScreen.offer(s["invite"], s["busy"], controller.make_invite))
+		var said := ScreenKit.text(s["invitation"], 15.0, "words", "parchment", false, true)
+		invite.add_child(ScreenKit.panel("parchment", said, 14.0, 10.0))
+	var pair2: Array = [_offer(s["invite"], s["busy"], controller.make_invite, "gold")]
 	if not (s["copy_invite"] as Dictionary).is_empty():
-		invite.add_child(RosterScreen.offer(s["copy_invite"], s["busy"], controller.copy.bind("invite")))
-	body.add_child(UI.plate(invite))
+		pair2.append(_offer(s["copy_invite"], s["busy"], controller.copy.bind("invite"), "leather"))
+	invite.add_child(_pair(pair2))
+	var invite_card := ScreenKit.panel("card", invite, 18.0, 12.0)
+	invite_card.visible = tab_shown == "invite"
+	body.add_child(invite_card)
 	var limits := VBoxContainer.new()
-	limits.add_child(UI.label(Strings.t("SHARE_LIMITS"), UI.TEXT_POINTS, true))
+	limits.add_theme_constant_override("separation", UI.px(6))
+	limits.add_child(_title("settingsandwellbeing", "parentcontrols", Strings.t("SHARE_LIMITS")))
 	for line: String in s["limits"]:
-		limits.add_child(UI.label(line, UI.TEXT_POINTS, true))
-	body.add_child(UI.plate(limits))
+		var r := HBoxContainer.new()
+		r.add_theme_constant_override("separation", UI.px(8))
+		r.add_child(ScreenKit.icon("generalui", "info", 22.0))
+		var l := ScreenKit.text(line, 15.0, "words", "card", true, true)
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		r.add_child(l)
+		limits.add_child(r)
+	body.add_child(ScreenKit.panel("card", limits, 18.0, 12.0))
+
+
+## A card's buttons side by side in equal shares, their words wrapping;
+## stacked at large text.
+static func _pair(buttons: Array) -> Control:
+	for b: Button in buttons:
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		b.custom_minimum_size.x = UI.px(96)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return ScreenParts.columns(buttons, 8.0)
+
+
+## A card's heading: its icon and its name in Marcellus.
+func _title(group: String, icon: String, words: String) -> Control:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	row.add_child(ScreenKit.icon(group, icon, 34.0))
+	var t := ScreenKit.text(words, 20.0, "name", "card", false, true)
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(t)
+	return row
+
+
+static func _offer(o: Dictionary, busy: bool, pressed: Callable, material: String) -> Button:
+	var b := ScreenKit.button(o["action"], pressed, material, o["spoken"], 14.0)
+	b.disabled = busy or not o["can"]
+	b.set_meta("key", o["key"])
+	b.set_meta("item", o["item"])
+	return b

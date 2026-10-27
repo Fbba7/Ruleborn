@@ -21,6 +21,8 @@ static func screen(slice: Dictionary) -> Dictionary:
 	for r: Dictionary in v.get("realms", []):
 		realms.append(realm(r))
 	out["realms"] = realms
+	out["percent"] = str(roundi(float(st.get("strain", 0.0)) * 100.0)) + "%"
+	out["band"] = int(st.get("band", 0))
 	return out
 
 
@@ -44,19 +46,24 @@ static func realm(r: Dictionary) -> Dictionary:
 		law_lines.append(Strings.t("HARMONY_LAW_CROWNED" if l.get("crowned", false) else "HARMONY_LAW",
 			[Strings.term("LAW", str(l["law"])), notes(l.get("notes", []))]))
 	var lines: Array[String] = []
+	var kinds: Array[Dictionary] = []
 	for h: Dictionary in r.get("harmonies", []):
+		kinds.append({"kind": "harmony", "pct": -percent(float(h["factor"]))})
 		lines.append(Strings.t("HARMONY_HARMONY", [Strings.term("NOTE", str(h["note"])), laws(h["laws"]),
 			percent(float(h["factor"]))]))
 	for c: Dictionary in r.get("clashes", []):
+		kinds.append({"kind": "dissonance", "pct": percent(float(c["factor"]))})
 		var pair: Array = c["notes"]
 		lines.append(Strings.t("HARMONY_CLASH", [Strings.term("NOTE", str(pair[0])), Strings.term("NOTE", str(pair[1])),
 			laws(c["laws"]), percent(float(c["factor"]))]))
 	for x: Dictionary in r.get("resonances", []):
 		var n := percent(float(x["factor"]))
+		kinds.append({"kind": "resonance", "pct": -n})
 		lines.append(Strings.t("HARMONY_RESONANCE", [str(x["name"]), laws(x["laws"]), n]) if x.get("name") is String
 			else Strings.t("HARMONY_RESONANCE_UNNAMED", [laws(x["laws"]), n]))
 	for c: Dictionary in r.get("chords", []):
 		var n := percent(float(c["factor"]))
+		kinds.append({"kind": "chord", "pct": -n})
 		lines.append(Strings.t("HARMONY_CHORD", [str(c["name"]), notes(c["notes"]), laws(c["laws"]), n])
 			if c.get("name") is String
 			else Strings.t("HARMONY_CHORD_UNNAMED", [notes(c["notes"]), laws(c["laws"]), n]))
@@ -64,5 +71,9 @@ static func realm(r: Dictionary) -> Dictionary:
 		law_lines.append(Strings.t("HARMONY_EMPTY"))
 	elif lines.is_empty():
 		lines.append(Strings.t("HARMONY_NONE"))
+	var shown: Array[Dictionary] = []
+	for l: Dictionary in r.get("laws", []):
+		shown.append({"law": str(l["law"]), "name": Strings.term("LAW", str(l["law"])),
+			"crowned": bool(l.get("crowned", false)), "notes": l.get("notes", [])})
 	return {"realm": r["realm"], "title": UniversePresenter.realm_name(str(r.get("type", ""))), "laws": law_lines,
-		"lines": lines}
+		"lines": lines, "kinds": kinds, "shown": shown, "type": str(r.get("type", ""))}
