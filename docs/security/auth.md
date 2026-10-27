@@ -319,7 +319,7 @@ confirm** this addition to §24.1's budget (the register is not edited here).
 
 ## Stopped here
 
-At 18:30 UTC on 27 October 2026 (wave 5), on `claude/auth`.
+At 23:00 UTC on 27 October 2026 (wave 5), on `claude/auth`.
 
 **Built this wave and proven** (server `auth_devices.test.mjs`, 10 tests;
 client `auth_tests.gd`, 18 checks with the round trip against the server):
@@ -333,9 +333,12 @@ client `auth_tests.gd`, 18 checks with the round trip against the server):
   the platform identity itself, and the panel says so.
 - Limits on every session path, tabled above; the device's renewal
   backs off (2 s doubling to 5 minutes, jittered; a 429's Retry-After).
-- The panel on Settings' Account tab in T10's Settings pieces; stills in
-  `docs/art/shots/auth/` (signed_in, linkable, confirm, device,
-  signed_out, failed).
+- The panel on Settings' Account tab in T10's Settings pieces, devices and
+  ways to sign in each grouped in one card as the Settings still draws its
+  rows; held by a test to the phone frame and 48-point controls in every
+  language; stills in `docs/art/shots/auth/` (signed_in, linkable,
+  confirm, device, signed_out, failed).
+- The country in the player's language (`client/i18n/countries.csv`).
 - Refresh's billed row is one switch (`RULEBORN_REFRESH_ROTATE_HOURS`).
 
 **Open:**
@@ -359,4 +362,5 @@ client `auth_tests.gd`, 18 checks with the round trip against the server):
   columns and `linked_identities` in `server/src/db.mjs`, the place header
   in `server/src/main.mjs`, and Apple's "Coarse Location" in
   `tools/privacy_manifest.py` (the iOS privacy manifest written from it),
-  and `countries.csv` in `client/scripts/strings.gd`'s catalogue list.
+  `countries.csv` in `client/scripts/strings.gd`'s catalogue list, and
+  `tools/auth_countries.py`'s line in `README.md`.
