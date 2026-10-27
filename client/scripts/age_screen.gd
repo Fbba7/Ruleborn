@@ -74,7 +74,7 @@ static func _lineup() -> Control:
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", -UI.px(28))
-	for k: Array in [["emberling", 120.0], ["mossbear", 150.0], ["rootrunner", 120.0]]:
+	for k: Array in [["emberling", 108.0], ["mossbear", 136.0], ["rootrunner", 108.0]]:
 		var face := TextureRect.new()
 		face.texture = Portrait.of(str(k[0]))
 		face.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -83,6 +83,6 @@ static func _lineup() -> Control:
 		face.size_flags_vertical = Control.SIZE_SHRINK_END
 		face.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		# The larger one in front of the two beside it.
-		face.z_index = 1 if float(k[1]) > 120.0 else 0
+		face.z_index = 1 if float(k[1]) > 108.0 else 0
 		row.add_child(face)
 	return row

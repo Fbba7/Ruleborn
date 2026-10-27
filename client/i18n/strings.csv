@@ -1316,6 +1316,7 @@ SCREEN_SLOT_N,Slot %d,Slot %d,Espaço %d,Espaço %d,Platz %d,Emplacement %d
 SCREEN_SLOT_RESTING,Resting,Resting,Descansando,A descansar,Ruht,Au repos
 SCREEN_SLOT_LOCKED,Locked,Locked,Bloqueado,Bloqueado,Gesperrt,Verrouillé
 SCREEN_CHAPTER,Ch. %d,Ch. %d,Cap. %d,Cap. %d,Kap. %d,Ch. %d
+SCREEN_CODE,%s,%s,%s,%s,%s,%s
 SCREEN_NOT_MET,Not met,Not met,Não vista,Não vista,Unbekannt,Inconnue
 SCREEN_WEAKNESS,Weak against,Weak against,Fraca contra,Fraca contra,Schwach gegen,Faible contre
 SCREEN_NOT_RESTORED,Not restored,Not restored,Não restaurada,Não restaurada,Nicht wiederhergestellt,Non restaurée

@@ -116,7 +116,8 @@ func _poster(code: String) -> Control:
 	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(mark)
 	# Inked at 12% of its size, so §21.8 measures it against its outline.
-	var big := ScreenKit.inked(ScreenKit.text(code if code != "" else "—", 34.0, "number", "card_lit"), 4.2)
+	var shown := Strings.t("SCREEN_CODE", code) if code != "" else "—"
+	var big := ScreenKit.inked(ScreenKit.text(shown, 34.0, "number", "card_lit"), 4.2)
 	big.add_theme_color_override("font_color", Tokens.color("gold_top"))
 	big.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	big.accessibility_name = Strings.t("SHARE_MESSAGE", code) if code != "" else Strings.t("SHARE_NO_LINK")

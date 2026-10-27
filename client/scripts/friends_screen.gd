@@ -214,7 +214,7 @@ func _code(f: Dictionary) -> Control:
 	box.add_theme_constant_override("separation", UI.px(2))
 	var kind: String = f["last"]
 	box.add_child(ScreenKit.text(f[kind], 13.0, "words", "parchment", true, true))
-	var code := ScreenKit.text(str(f[kind + "_code"]).to_upper(), 30.0, "number", "parchment")
+	var code := ScreenKit.text(Strings.t("SCREEN_CODE", str(f[kind + "_code"]).to_upper()), 30.0, "number", "parchment")
 	code.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(code)
 	return ScreenKit.panel("parchment", box, 16.0, 12.0)
