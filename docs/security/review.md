@@ -600,7 +600,7 @@ What was tried and found sound, so the next reader need not try it again.
 
 ## Stopped here
 
-Twenty findings: one High, eleven Medium, eight Low.
+Twenty findings: one High, eight Medium, eleven Low.
 
 - **Fixed (12):** SR-01 (High); SR-02, SR-03, SR-07, SR-17 and SR-19
   (Medium); SR-04, SR-05, SR-06, SR-08, SR-13 and SR-18 (Low). Each has a
