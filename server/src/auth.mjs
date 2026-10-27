@@ -207,7 +207,7 @@ export class Auth {
    * The account's devices signed in now, newest use first: each one's kind
    * and model as it named them, the platform that signed it in, the
    * country it was last seen in, and when — to the hour, as a refresh
-   * records it, and to the day for when it signed in. `session` marks the
+   * records it, and to the day for when it signed in; `idleHours` since. `session` marks the
    * asking device. Nothing here is an address, and no id but the
    * session's, which only its own account can act on.
    */
@@ -222,6 +222,9 @@ export class Auth {
         model: s.model ?? null, place: s.place ?? null,
         signedInAt: s.created_at - (s.created_at % DAY_MS),
         lastSeenAt: s.id === session ? now - (now % HOUR_MS) : s.used_at - (s.used_at % HOUR_MS),
+        // Whole hours since, on the server's clock: what the device words
+        // ("3 days ago") without trusting its own.
+        idleHours: s.id === session ? 0 : Math.floor((now - s.used_at) / HOUR_MS),
       }));
   }
 

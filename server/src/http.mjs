@@ -8,7 +8,8 @@
 //   POST /v1/session/end         {"everywhere"?, "others"?, "device"?, "refreshToken"?} → {ended}
 //   GET  /v1/session                                         → {account, devices}
 //   GET  /v1/session/devices                                 → the devices list (auth_http.mjs)
-//   POST /v1/session/link|unlink {"current", …}              → another platform's identity (auth_http.mjs)
+//   POST /v1/session/link        {"current", "credential"}  → another platform's identity added (auth_http.mjs)
+//   POST /v1/session/unlink      {"current", "platform"}    → that platform's link removed
 //   PUT  /v1/islands/:realm      island bundle bytes         → {bundle}; heart or outer-1 … outer-6
 //   GET  /v1/bundles/:hash       — immutable, cached a year  → bundle bytes
 //   POST /v1/leases              {"bundle": hash, "owner"?, "trace"?, "mode"?, "challenge"?, "universe"?} → the lease

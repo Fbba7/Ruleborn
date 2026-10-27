@@ -45,7 +45,8 @@ at the code and the test that prove it.
 | T8 | **Downgrade** — an old token format, `alg: none`, HTTP, a stubbed verifier in production | Only the current token version is read. JWT `alg` is pinned to RS256. The server refuses to start with real stores and stubbed sign-in (`main.mjs`). The client refuses a server reached in the clear. |
 | T9 | **Lost or stolen device** | "Sign out everywhere" from any other device ends every session at once. The refresh token is in Keychain/Keystore, bound to the device (not in iCloud backups: `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`; Android Keystore-wrapped). Deleting the account or a ban ends every session. |
 | T10 | **Shared device** — the next person picks up a signed-out phone | Sign-out ends the session on the server first, then clears the access token, the refresh token, every cached private state, and parks the outbox under the account it belongs to (never sent as someone else, never lost). |
-| T11 | **Account takeover through a platform switch** — a second identity attached to someone else's account | An account has exactly one platform identity; there is no linking route. Any future change of identity must go through `Auth.identityChanged`, which ends every session of that account. A proof only ever names `gc:` or `gp:` identities from its own verifier; a Google token cannot sign into a `gc:` account, and the web deletion page takes only `gp:`. |
+| T11 | **Account takeover through a platform switch** — a thief's identity attached to someone else's account, to keep it after the stolen token dies | An account has the identity it was made with and at most one linked identity of the other platform (`linked_identities`). Linking needs a live session **and** two fresh, single-use proofs in the same request: one of an identity the account already signs in with (step-up) and one of the identity added — a stolen access token alone links nothing. An identity that has an account of its own, or a ban, is never linked (no merging). Unlinking needs a fresh proof of the identity that stays and ends every session the removed one signed in (`sessions.via`). A ban bans the linked identity too (`Auth.endAll(…, "banned")`); a deletion erases the link. The web deletion page takes only `gp:`, made-with or linked. |
+| T16 | **A session left on a device the player no longer has** — sold, lent, lost | The devices list shows every live session: the device's kind and model as it named them, the country the edge last saw it in, when it was last used (to the hour), its platform. Any one is ended from any other device (`{"device": id}`), or every other at once (`{"others": true}`); an id of another account ends nothing and answers the same. |
 | T12 | **Clock skew** — a phone's clock wrong by minutes or days | The server never trusts the device's clock: lifetimes are checked against the server's own. The client is told `expiresIn` (seconds) rather than an absolute time, refreshes a minute early, and on `session_refused` refreshes once anyway. Google tokens get five minutes of skew either way; Game Center's five-minute window is symmetric. |
 | T13 | **CSRF on the web deletion page** | The page asks the server for a nonce (stored in an `HttpOnly; Secure; SameSite=Strict` cookie, double-submitted), gives it to Google Identity Services, and the server requires the ID token's `nonce` to match the cookie and to be unused. The POST must carry `Content-Type: application/json` and an `Origin` that is the server's own. |
 | T14 | **Secrets in logs** | The server logs a route's first two segments only (`routeOf`), never a header or body; the client's action log does the same; tests assert both. |
@@ -76,10 +77,57 @@ without OAuth's ceremony (one first-party client).
 
 ### Sign-out
 
-- `POST /v1/session/end` ends this session. `POST /v1/session/end {"everywhere": true}`
-  ends every session of the account. Both answer 200 when already ended
-  (idempotent), so a retried sign-out is harmless.
+- `POST /v1/session/end` ends this session. `{"everywhere": true}` ends
+  every session of the account; `{"others": true}` every one but this;
+  `{"device": id}` one from the devices list. All answer 200 when already
+  ended (idempotent), so a retried sign-out is harmless. Without a live
+  access token only this session or every one can be ended, proven by the
+  refresh token.
 - Deletion, a ban and an identity change end every session (`Auth.endAll`).
+- An access token never outlives its session's 180 days: one issued in the
+  last hour lasts only to the end of them.
+
+### Devices list (`GET /v1/session/devices`)
+
+**Choice** (the market's: Google, Apple, Discord, Steam): each live
+session with `device` (a kind from a fixed list: iPhone, iPad, Android
+phone or tablet, PC, other), `model` (what the system calls it, at most 32
+plain characters), `via` (`gc` or `gp`, never the identity), `place`, the
+day it signed in, the hour it was last used and `idleHours` on the
+server's clock; this device first. Also `identities`: which platforms sign
+in to the account.
+
+- **Place** is a country code (ISO 3166-1) from a header the edge sets
+  from the address (`RULEBORN_PLACE_HEADER`, Cloudflare's `cf-ipcountry`),
+  kept on the session at sign-in and refreshed with each refresh, in the
+  same write. The address itself is never read for it or stored anywhere
+  (the test scans the rows for the addresses it signed in from). Declared in
+  `server/privacy.json` as approximate location (App Store "Coarse
+  Location", Play "Approximate location"), for security, erased with the
+  account, deleted seven days after the session ends. Unset header, no
+  place. The phone words the code with the engine's country names.
+- **Last used** is a refresh's `used_at`: no extra write, accurate to the
+  hour, which is all the list shows.
+- Nothing the device sends can name its player: the kind is from a list,
+  the model is held to plain characters, and neither is required.
+
+### One account on iPhone, iPad and Android (`POST /v1/session/link`, `/unlink`)
+
+§24.8 names Game Center on iPhone and Google on Android, and the design
+promises "One account across iPhone, iPad, Android and later PC, with
+platform sign-in". iPhone and iPad share Game Center already; the move to
+Android needs the account to also sign in with Google. Google's sign-in
+runs on iPhone, so an iPhone can add it (`{"current": <Game Center proof>,
+"credential": <Google proof>}`); afterwards the Android phone signs in to
+the same account. An Android phone has no Game Center, so the way back is
+the same link, made on the iPhone: the panel offers a platform only where
+the device has its plugin. No account is ever merged into another.
+
+**Recovery.** No password, so nothing to recover: a new or reset phone
+signed in to the same Apple ID or Google account signs in to the same
+account (the panel says so). The account follows the platform identity;
+if that identity itself is lost, Apple's and Google's own recovery are the
+route, and the support contact (§20.11) for anything else.
 
 ### Platform proofs (`server/src/auth_proofs.mjs`)
 
@@ -125,6 +173,27 @@ IPv6). A limit answers `429 too_many_requests` with `Retry-After` and is the
 same whether or not the account exists (`auth_http.test.mjs`). A refresh
 failure counts as a failed sign-in; nonce requests are refused while an
 address is held.
+
+Every session path, and its bucket (`auth_devices.test.mjs` "every session
+path is limited"):
+
+| Path | Held by |
+|---|---|
+| `POST /v1/session` | the address's failures, then the identity proven |
+| `POST /v1/session/nonce` | the address's failures (signed, never stored: nothing to fill) |
+| `POST /v1/session/refresh` | the address's failures, then the session's sign-ins |
+| `POST /v1/session/end` with a Bearer | the account's calls |
+| `POST /v1/session/end` with a refresh token | the address's failures, then the session's sign-ins |
+| `GET /v1/session`, `GET /v1/session/devices` | the account's calls |
+| `POST /v1/session/link`, `/unlink` | the account's calls, then each proof as a sign-in: the address's failures and the identity it proves |
+| `POST /v1/account/delete` (web) | the address's failures, then the identity proven |
+
+**Back-off on the device** (`AuthSession`): a renewal the server never
+decided (unreachable, a 5xx) is not tried again at once — the next
+automatic one waits 2 s, then 4, 8 … at most 5 minutes, at half to all of
+it (jitter, so phones that lost the server together do not return
+together); the player's own tap skips that wait. A 429 waits the server's
+`Retry-After`, whoever asks. A decision (refused, signed out) clears it.
 
 ### On the device (`client/features/auth/`)
 
@@ -177,8 +246,14 @@ to remove a lost phone from their Apple ID or Google account.
 first launch, signing in, signed in (and on how many devices), offline,
 failed with the reason in words, signed out. Sign out and Sign out
 everywhere each confirm in `KitPanels.dialog` with the safe answer focused.
-**Shared-file edit:** two lines in `client/scripts/settings_screen.gd` add the
-panel to the Settings list (there is no Account tab yet; T10 can move it).
+**Shared-file edit:** a few lines in `client/scripts/settings_screen.gd`
+(T10's) add the design's Account tab and put the panel on it. The panel is
+built from the same pieces as the rest of Settings (`ScreenParts.section`,
+`ScreenParts.item`, `ScreenKit.button`), as the Settings still draws them:
+the status card with the account's mark and its action at the end; the
+signed-in devices, each a row with its own Sign out (this one marked "This
+device"); Sign out every other device and Sign out everywhere; the ways to
+sign in, with the other platform offered; the recovery line.
 
 ### Writes
 

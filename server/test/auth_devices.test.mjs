@@ -71,9 +71,10 @@ test("the devices list: each signed-in device's kind, model, platform, country a
   const tabletAt = t0 + 3 * HOUR + 17 * 60 * 1000;
   assert.deepEqual(list.body.devices, [
     { id: list.body.devices[0].id, current: true, via: "gc", device: "iphone", model: "iPhone 15", place: "BR",
-      signedInAt: t0 - (t0 % DAY), lastSeenAt: now - (now % HOUR) },
+      signedInAt: t0 - (t0 % DAY), lastSeenAt: now - (now % HOUR), idleHours: 0 },
     { id: list.body.devices[1].id, current: false, via: "gc", device: "ipad", model: "iPad Air", place: "ES",
-      signedInAt: tabletAt - (tabletAt % DAY), lastSeenAt: tabletAt - (tabletAt % HOUR) },
+      signedInAt: tabletAt - (tabletAt % DAY), lastSeenAt: tabletAt - (tabletAt % HOUR),
+      idleHours: Math.floor((now - tabletAt) / HOUR) },
   ], "this device first, then by last use; bob's is not here");
   assert.ok(tablet.token);
   assert.deepEqual(list.body.identities, [{ platform: "gc", primary: true, linkedAt: null }]);
