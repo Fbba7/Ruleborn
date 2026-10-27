@@ -97,7 +97,7 @@ func _refresh() -> void:
 		_rating_panel(slice, w["busy"])
 	body.add_child(ScreenParts.section(w["title"], str((w["items"] as Array).size())))
 	if w["ladder"] != "":
-		body.add_child(ScreenParts.item("leagues", "star", w["ladder"], "", null, "card_lit"))
+		body.add_child(_ladder(w["ladder"], w["rungs"]))
 	if w["empty"]:
 		body.add_child(ScreenParts.empty("screens", "islandworkshop",
 			Strings.t("WORKSHOP_EMPTY_" + str(w["list"]).to_upper())))
@@ -196,6 +196,48 @@ func _card(item: Dictionary, busy: bool) -> Control:
 	if safety.get_child_count() > 0:
 		box.add_child(safety)
 	return ScreenKit.panel("card", box, 18.0, 10.0)
+
+
+## The creator ladder as the design's card: the four levels on a gold line,
+## the one reached lit, and the counts that climb it; said whole in words.
+func _ladder(said: String, r: Dictionary) -> Control:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UI.px(8))
+	# The discs on their line, then the names in columns of the same width,
+	# so a name never breaks inside a word.
+	var rail := HBoxContainer.new()
+	rail.add_theme_constant_override("separation", 0)
+	var names := GridContainer.new()
+	names.columns = (r["steps"] as Array).size() if Settings.text_scale <= 125 else 2
+	names.add_theme_constant_override("h_separation", UI.px(4))
+	var i := 0
+	for step: Dictionary in r["steps"]:
+		if i > 0:
+			var line := ScreenThread.make(UI.px(18), bool(step["reached"]))
+			line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			rail.add_child(line)
+		var disc := ScreenKit.panel("gold" if step["reached"] else "well",
+			ScreenKit.icon("leagues", "star", 30.0 if step["here"] else 22.0), -1.0, 6.0)
+		disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		rail.add_child(disc)
+		var name := ScreenKit.text(step["name"], 13.0, "words", "card_lit", not step["here"], true)
+		name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		names.add_child(name)
+		i += 1
+	rail.visible = Settings.text_scale <= 125
+	box.add_child(rail)
+	box.add_child(names)
+	var counts := ScreenParts.flow(4.0)
+	counts.add_child(ScreenParts.pill("%s %s" % [r["completions"], Strings.t("SCREEN_PLAYS")], "well", "heistoutcomes",
+		"clean"))
+	counts.add_child(ScreenParts.pill("%s %s" % [r["featured"], Strings.t("WORKSHOP_FEATURED")], "well", "hud",
+		"star"))
+	box.add_child(counts)
+	var card := ScreenKit.panel("card_lit", box, 18.0, 12.0)
+	card.tooltip_text = said
+	rail.accessibility_name = said
+	return card
 
 
 ## The island's cover, as the design's card heads it: its name over a lit
