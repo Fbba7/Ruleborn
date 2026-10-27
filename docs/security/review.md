@@ -562,6 +562,15 @@ read, so the next reader need not.
   (`open_challenge`, blocks, friends, constellations, Workshop items) is
   `uri_encode`d, so a pasted "code" like `../account` stays one segment
   (`..%2Faccount`); the rest are the server's own tokens and hashes.
+- **The outbox at rest, re-read.** Its receipts, lease tokens and replays
+  are plain JSON in `user://`: off Android's backups
+  (`user_data_backup/allow=false`), and on iPhone neither in the Files app
+  nor in iTunes sharing (`user_data/accessible_from_files_app` and
+  `…_itunes_sharing` false), though in the device's own encrypted backup.
+  What a copy gives: a lease token (single-use, bound to its account, gone
+  in a day), a replay (the player's own heist) and a receipt (granted once,
+  to its first account: "Checked and held"). Nothing in it signs anyone
+  in, so plain storage stays.
 - **Redirects:** none followed (SR-27).
 - **TLS, measured** in the 4.7.2 engine headless against local HTTPS
   servers: a certificate from an authority the device does not trust is
