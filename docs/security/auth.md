@@ -189,6 +189,16 @@ rewritten: one billed row a session, engaged players 81.15 → 86.15 billed
 rows a day, $767 → $817 a month at a million monthly players. **Owner to
 confirm** this addition to §24.1's budget (the register is not edited here).
 
+## Checked by hand
+
+- G39's page served by the real handler and loaded in Chromium (Playwright):
+  its own script runs under its Content-Security-Policy, the nonce is in
+  `data-nonce`, and the page itself raises no CSP violation. Google's script
+  could not be fetched from the sandbox, so the button's own rendering was
+  not seen here (T12 checked it in Chromium against the same sources).
+- `main.mjs` started with `RULEBORN_TOKEN_KEYS="k7:…,k6:…"` signs tokens
+  `a1.k7.…`; a key shorter than 32 characters stops it at start.
+
 ## Stopped here
 
 (Written at the end of the night.)
