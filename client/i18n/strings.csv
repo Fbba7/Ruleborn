@@ -1408,6 +1408,9 @@ SCREEN_SLOT_RESTING,Resting,Resting,Descansando,A descansar,Ruht,Au repos
 SCREEN_SLOT_LOCKED,Locked,Locked,Bloqueado,Bloqueado,Gesperrt,Verrouillé
 SCREEN_CHAPTER,Ch. %d,Ch. %d,Cap. %d,Cap. %d,Kap. %d,Ch. %d
 SCREEN_TEXT_A,A,A,A,A,A,A
+SCREEN_LAW_OF,Law %d of %d,Law %d of %d,Lei %d de %d,Lei %d de %d,Gesetz %d von %d,Loi %d sur %d
+SCREEN_LAW_PREVIOUS,"Previous law, %s","Previous law, %s","Lei anterior, %s","Lei anterior, %s","Vorheriges Gesetz, %s","Loi précédente, %s"
+SCREEN_LAW_NEXT,"Next law, %s","Next law, %s","Próxima lei, %s","Lei seguinte, %s","Nächstes Gesetz, %s","Loi suivante, %s"
 SCREEN_TRY_AGAIN,Try again,Try again,Tentar de novo,Tentar outra vez,Erneut versuchen,Réessayer
 SCREEN_CODE,%s,%s,%s,%s,%s,%s
 SCREEN_NOT_MET,Not met,Not met,Não vista,Não vista,Unbekannt,Inconnue

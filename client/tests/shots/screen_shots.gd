@@ -8,6 +8,9 @@ static func params(name: String) -> Dictionary:
 	match name:
 		"law":
 			return {"law": "bloom"}
+		"workshop":
+			# RATE=1: opened from a play's result, to rate the island played.
+			return {"rate": true} if OS.get_environment("RATE") == "1" else {}
 	return {}
 
 
@@ -64,3 +67,5 @@ static func fill(name: String, store: Store) -> void:
 					"withdrawn": false, "removed": null}
 			store.dispatch(&"workshop_listed", {"list": "new", "items": [island.call("i1", "Quiet Harbour", 3, true, null),
 				island.call("i2", "Glass Maze", 4, false, "i1"), island.call("i3", "Ember Steps", 2, false, null)]})
+			if OS.get_environment("RATE") == "1":
+				store.dispatch(&"workshop_playing", {"item": island.call("i1", "Quiet Harbour", 3, true, null)})
