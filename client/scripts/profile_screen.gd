@@ -5,6 +5,10 @@ extends Control
 ## badges and the titles mastery gives, the battle log with its replays, and
 ## §20.2's visibility switch, locked private for 13 to 15.
 
+## Each outcome's colour, down the edge of its row in the log.
+const GRADE_COLOUR := {"clean": Color("#3FBF7F"), "loud": Color("#F2A03C"), "partial": Color("#3CC6D8"),
+	"foiled": Color("#E2536B")}
+
 var controller: ProfileController
 ## The tab on show: "overview" or "log".
 var tab_shown := "overview"
@@ -263,14 +267,36 @@ func _battle(e: Dictionary, busy: bool) -> Control:
 	var right: Control = null
 	if not (e["watch"] as Dictionary).is_empty():
 		var w: Dictionary = e["watch"]
-		var b := ScreenKit.button(w["action"], App.services.defences_flow.watch.bind(e["raid"]), "gold", w["spoken"],
-			14.0)
+		var b := ScreenKit.button(w["action"], App.services.defences_flow.watch.bind(e["raid"]), "leather",
+			w["spoken"], 14.0)
 		b.disabled = busy
 		b.set_meta("key", w["key"])
 		b.set_meta("item", w["item"])
 		right = b
-	var row := ScreenParts.item("heistoutcomes", e["grade"], e["text"], "", right)
-	for l: Label in row.find_children("*", "Label", true, false):
-		l.set_meta("heist", e["heist"])
-		break
-	return row
+	# The design's log row: a stripe in the outcome's colour down its edge,
+	# the outcome's mark, the heist in words with its outcome's pill.
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(10))
+	var stripe := ColorRect.new()
+	stripe.color = GRADE_COLOUR.get(str(e["grade"]), Color("#8A7AA8"))
+	stripe.custom_minimum_size.x = UI.px(5)
+	stripe.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(stripe)
+	var mark := ScreenKit.icon("heistoutcomes", e["grade"], 34.0)
+	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(mark)
+	var col := VBoxContainer.new()
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	col.add_theme_constant_override("separation", UI.px(4))
+	var words := ScreenKit.text(e["text"], 15.0, "words", "card", false, true)
+	words.set_meta("heist", e["heist"])
+	col.add_child(words)
+	var pill := ScreenParts.pill(Strings.term("GRADE", str(e["grade"])), "well", "", "", 13.0)
+	pill.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	col.add_child(pill)
+	row.add_child(col)
+	if right != null:
+		right.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(right)
+	return ScreenKit.panel("card", row, 16.0, 10.0)
