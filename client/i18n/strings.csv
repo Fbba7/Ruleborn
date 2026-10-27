@@ -1396,9 +1396,13 @@ HOME_GOAL_KEEPER,%s experience to go · Keeper %d,%s experience to go · Keeper 
 HOME_GOAL_TRACK,%s stars to go · tier %d,%s stars to go · tier %d,faltam %s estrelas · nível %d,faltam %s estrelas · nível %d,noch %s Sterne · Stufe %d,encore %s étoiles · palier %d
 HOME_RAIDED_ONE,Raided once while you were away,Raided once while you were away,Assaltado uma vez enquanto você estava fora,Assaltado uma vez enquanto estavas fora,"Einmal überfallen, während du weg warst",Pillé une fois pendant ton absence
 HOME_RAIDED,Raided %d times while you were away,Raided %d times while you were away,Assaltado %d vezes enquanto você estava fora,Assaltado %d vezes enquanto estavas fora,"%d-mal überfallen, während du weg warst",Pillé %d fois pendant ton absence
+HOME_RAID_TITLE_ONE,Raided once,Raided once,Assaltado uma vez,Assaltado uma vez,Einmal überfallen,Pillé une fois
+HOME_RAID_TITLE,Raided %d times,Raided %d times,Assaltado %d vezes,Assaltado %d vezes,%d-mal überfallen,Pillé %d fois
+HOME_RAID_LINE,See how your defence held,See how your defense held,Veja como sua defesa resistiu,Vê como a tua defesa resistiu,"Sieh, wie deine Verteidigung hielt",Vois comment ta défense a tenu
 HOME_RAIDED_SEE,See,See,Ver,Ver,Ansehen,Voir
 HOME_RAIDED_CLOSE,Dismiss,Dismiss,Dispensar,Dispensar,Schließen,Fermer
 HOME_COLLECT,Collect all,Collect all,Coletar tudo,Recolher tudo,Alles einsammeln,Tout récolter
+HOME_COLLECT_AMOUNT,Collect %s,Collect %s,Coletar %s,Recolher %s,%s einsammeln,Récolter %s
 HOME_COLLECT_SPOKEN,Collect all: %s waiting,Collect all: %s waiting,Coletar tudo: %s esperando,Recolher tudo: %s à espera,Alles einsammeln: %s bereit,Tout récolter : %s en attente
 LANDING_FAULT_NAME,Fault,Fault,Falha,Falha,Riss,Faille
 LANDING_EDGE_NAME,%s edge,%s edge,Borda %s,Orla %s,Rand %s,Bord %s

@@ -492,6 +492,11 @@ func _build_links(glows: UniversePaint, light: UniversePaint, flow: UniversePain
 			statics.add_child(mi)
 		if link.kind == "rift" and link.open:
 			_streams.append({"path": link.stream(), "colour": ib.school})
+		elif link.open:
+			# A few lights walking each open link: lanterns over a bridge,
+			# glints down a chute, so the links read as travelled.
+			_streams.append({"path": link.walk(), "colour": LinkBuilder.WATER if link.kind == "chute"
+				else LinkBuilder.LAMP, "lights": 3})
 
 
 ## §5.4's faults: a crack of light across each faulted outer realm, and a

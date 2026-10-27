@@ -45,11 +45,16 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 		# The fault's mark over its realm, whose name is on the realm's own pin.
 		plate.add_child(_with_icon("band_fault", _words("ϟ", Palette.ON_ALARM)))
 		_pins.append({"node": plate, "realm": str(f), "lift": 3.5, "zooms": [0, 1, 2], "rank": 0})
+	# Home says the raids and what is ready in its own interface (the raid
+	# notice, Collect), so over its whole universe only the realms are named,
+	# as the designs' home names them.
+	var quiet := bool(extras.get("quiet", false))
 	var raids := int(extras.get("raids", 0))
 	if raids > 0:
 		var plate := _plate(Palette.ALARM_FILL, Palette.ALARM_FILL)
 		plate.add_child(_with_icon("alert_raided", _words("! %d" % raids, Palette.ON_ALARM)))
-		_pins.append({"node": plate, "realm": "heart", "lift": 6.0, "zooms": [0, 1, 2], "rank": 0})
+		_pins.append({"node": plate, "realm": "heart", "lift": 6.0, "zooms": [1, 2] if quiet else [0, 1, 2],
+			"rank": 0})
 	for p: Dictionary in extras.get("producers", []):
 		var kind := str(p.get("kind", ""))
 		var stored := int(p.get("stored", 0))
@@ -66,7 +71,7 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 		# Over the whole universe only a full producer is pinned, as the
 		# designs pin a realm's label only once it is nearly full.
 		_pins.append({"node": plate, "realm": str(p.get("realm", "")), "building": kind, "lift": 0.0,
-			"zooms": [0, 1, 2] if full else [1, 2], "rank": 2})
+			"zooms": [0, 1, 2] if full and not quiet else [1, 2], "rank": 2})
 	# A gold arrow over each building the server says can be raised now: a
 	# price met and nothing in the way (§10.2's `next`, unblocked).
 	for r: Dictionary in universe.get("realms", []):
@@ -118,15 +123,22 @@ func _realm_pin(id: String, title: String, level: int, school: Color, key: Strin
 	box.shadow_color = Color(0.04, 0.02, 0.03, 0.55)
 	box.shadow_size = 0
 	box.shadow_offset = Vector2(0, UI.px(3))
+	box.content_margin_left = UI.px(4)
+	box.content_margin_right = UI.px(4)
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation", UI.px(5))
+	row.add_theme_constant_override("separation", UI.px(4))
 	row.add_child(_icon("realm_" + key))
 	var name := _words(title, BROWN_INK)
 	name.add_theme_font_override("font", Tokens.font("title"))
-	name.add_theme_font_size_override("font_size", UI.text_px(POINTS + 1.0))
+	name.add_theme_font_size_override("font_size", UI.text_px(POINTS - 1.0))
 	row.add_child(name)
 	var badge := _plate(BROWN_INK, BROWN_INK, true)
+	var disc := badge.get_theme_stylebox("panel") as StyleBoxFlat
+	disc.content_margin_left = UI.px(5)
+	disc.content_margin_right = UI.px(5)
+	disc.content_margin_top = 0
+	disc.content_margin_bottom = 0
 	badge.add_child(_words(str(level), PARCHMENT))
 	row.add_child(badge)
 	plate.add_child(row)
