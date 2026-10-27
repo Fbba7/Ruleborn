@@ -78,6 +78,20 @@ Stills: `docs/art/shots/ui-screens/w4a-<screen>.png`, the design's still on the 
 | 6 First launch | a small icon and a plain title | the gold logo, the serif line under it, the universe's mark; at large text the mark gives way to the question |
 | 7 Shop | cards titled "sage robe (robe-aurora)" | titled by the name ("Aurora"), the kind on its pill |
 | 8 Workshop | five equal buttons per island | Play and Remix share the card's main row; why, report and block beneath |
+| 9 Harmony | no way to choose the realm sounding but its card | the design's realm strip over the preview, the chosen realm's card first |
+| 10 Profile | heists as a split bar and three narrow tiles | the design's two cards, Heists and Defence, each a ring of its share with its counts |
+| 11 Season | dark empty boxes where a lane gives nothing; nodes unjoined | open road there; a gold line through the nodes, solid to the next tier |
+| 12 Friends | faces, then every friend with Remove, then the feed as plain rows | faces, then Feed and Friends tabs; the week's raids as cream cards with their outcome on a disc |
+| 13 Codex | chapter title thin and hollow on gold; (tried three cards a row: German rank words do not fit 84 points, reverted) | a gold drop under the title |
+| 14 Share and the dock | Challenge and Invite stacked; dock buttons small and centred | tab strip, one card shown; a one-line dock's actions take the width left |
+
+High contrast (`HC=1` in the shot script) checked on Codex, Weaving, Law, Lab, Shop, Season, Profile and Friends: every surface keeps its edge; nothing found to fix.
+
+## Shared files touched this wave (for T9 and the integrator)
+
+- `README.md`: conflict markers left by an earlier merge of the kit in the tools listing (around `ui/`) hid the rest of the listing from `check_docs_consistency.py`. Resolved, keeping the `ui/` row.
+- `tools/completion.py`: the roadmap's accessibility proof named the contrast test by its old wording; it now names it as `a11y_tests.gd` does ("…the realm's marks on their halo and every material's words on the stops they sit on included…"). T9's branch has the same stale line.
+- For T9: the chosen tab's word in `KitTabs.choose` needs a stroke of 12% of its size for §21.8 to count it (this track sets it in `ScreenNav.bar`).
 
 ## Still worse than the design
 
