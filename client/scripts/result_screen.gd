@@ -414,6 +414,8 @@ func _process(delta: float) -> void:
 		# once).
 		var shown := _haul if Settings.reduced_motion else int(_haul * clampf((_clock - 0.6) / 1.0, 0.0, 1.0))
 		haul_label.text = "+%d" % shown
+	if reward_row != null and reward_row.visible:
+		_count_rewards(1.0 if Settings.reduced_motion else clampf((_clock - 0.6) / 1.0, 0.0, 1.0))
 	for c in find_children("*", "FxDraw", true, false):
 		(c as FxDraw).queue_redraw()
 
@@ -521,9 +523,8 @@ func _show_rewards(v: Dictionary) -> void:
 	haul_tile.visible = false
 	counter = reward_row
 	for kind: String in reward_labels:
-		var n := int(v.get(kind, 0))
-		(reward_labels[kind] as Label).text = ("+" if n >= 0 else "") + ShopPresenter.grouped(n) if n >= 0 \
-			else "-" + ShopPresenter.grouped(-n)
+		(reward_labels[kind] as Label).set_meta("to", int(v.get(kind, 0)))
+	_count_rewards(1.0)
 	var fee := int(v["fee"])
 	var back := int(v.get("fee_returned", 0))
 	fee_label.text = Strings.t("RESULT_FEE_RETURNED", ShopPresenter.grouped(fee)) if back >= fee \
@@ -539,6 +540,15 @@ static func idle_crew() -> int:
 	if not view.has("characters"):
 		return -1
 	return (view["characters"] as Array).filter(func(c: Dictionary) -> bool: return str(c["state"]) == "idle").size()
+
+
+## The reward tiles' numbers at `share` of the way up from nothing, signed
+## and grouped.
+func _count_rewards(share: float) -> void:
+	for kind: String in reward_labels:
+		var l: Label = reward_labels[kind]
+		var n := int(int(l.get_meta("to", 0)) * share)
+		l.text = ("+" if n >= 0 else "-") + ShopPresenter.grouped(absi(n))
 
 
 ## A result button in the heist's skin.
