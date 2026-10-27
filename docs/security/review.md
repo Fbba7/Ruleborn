@@ -479,6 +479,7 @@ Each track's branch, read as it was pushed, from d2343591.
 
 | Branch | Commits read | What it touches | Verdict |
 | --- | --- | --- | --- |
+| `claude/3d-character-screens` | `316ea57`, `2c09fbe` | the character screens (Forms, roster, Sage hall), portraits and the first launch's stage | no finding: layout and rendering; environment read only by the screenshot tools under `tests/shots`, which the export leaves out (`exclude_filter="tests/*"`) |
 | `claude/3d-characters-2` | `72c5966`, `51ea7ea` | busts for the heist's crew row and the Sage disc (`creature_bust*.gd`, `creature_model.gd`, `world_view.gd`) | no finding: rendering only, no network, file, link or loaded data; environment read only by its screenshot tool under `tests/shots` |
 
 ## Configuration against the market standard
@@ -772,6 +773,15 @@ a short list of revoked ids) is what makes sign-out mean it.
 
 Each was looked at and judged not worth a change now; each is one line to
 pick up later.
+
+- **Deletion in the game takes the access token alone.** `DELETE
+  /v1/account` (and `PUT /v1/age` to under 13) ends the account on the
+  session's token, with no fresh proof; ASVS V3.7 asks a sensitive action
+  to re-authenticate. The token lives an hour, is never logged, never in a
+  URL and never followed through a redirect (SR-27), and the web page
+  already asks for a fresh Google proof (SR-11). Asking the device for a
+  silent platform proof with the deletion is T11's to weigh against the
+  §20.5 rule that deletion be easy.
 
 - **A crew by role skips resting.** After SR-02 a replay with no manifest
   (`RBH1`, `RBH2`) still plays §11.1's crew by role with no roster named,
