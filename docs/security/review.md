@@ -507,7 +507,7 @@ Each track's branch, read as it was pushed, from d2343591.
 
 | Branch | Commits read | What it touches | Verdict |
 | --- | --- | --- | --- |
-| second pushes, to 19:47 | `3d-characters-2` `cf97c52`, `3d-screens-world` `bc595b1`, `3d-universe` `04c5785`, `auth` `0841c20`, `ui-kit` `af7911c` | busts, the realm screens and their stages, the universe's badge, pins and purse, the account panel's layout, kit cards and layout | no finding: layout and drawing; no network, file, link, loaded data or native code; `auth` touched only `auth_panel.gd` |
+| second pushes, to 19:51 | `3d-kit` `0ad09e6`, `3d-characters-2` `cf97c52`, `3d-screens-world` `bc595b1`, `3d-universe` `04c5785`, `auth` `0841c20`, `ui-kit` `af7911c` | busts, the realm screens and their stages, the universe's badge, pins and purse, the account panel's layout, kit cards and layout | no finding: layout and drawing; no network, file, link, loaded data or native code; `auth` touched only `auth_panel.gd` |
 | `claude/ui-screens` | 20 commits, `1573493` to `45a4a1e` | the age screen's line-up, the share card, settings and the account panel's layout, the Shop, Codex, Lab, Harmony, Weaving, Workshop and track screens | no finding: layout and words; environment read only by `tests/shots`. Not security, for the screens' owner: the share card now shows the challenge code upper-cased (`share_presenter.gd`), while codes are lower-case hex matched exactly (`friends.mjs` `opened`); the copied message keeps the real code, but when a screen takes a typed code it must lower-case it, or the server should |
 | `claude/3d-screens` | `09d494c`, `ee298de`, `aba6273`, `c5ed1c1` | the heist screen and its hand, the HUD, the result; three new native accessors in `client/ext/src/lib.rs` (a member's kind and uses, the Sage, the casts) | no finding. The accessors read a replay's world, which a crafted replay shapes (SR-08), so each index was traced: the Sage is set only through `SAGES.get` (`crew_from`), every Sage has exactly three powers (`[(Power, u8); 3]`, as `uses: [u8; 3]`), casts are at most `MAX_CASTS` = 2 and checked against the law table when the manifest is read, and the new code looks them up with `get`. Environment read only by `tests/shots` |
 | `claude/auth` | `f536fc2`, `82fe4d9`, `777f2a8`, `6ac2347` | the devices list, ending one device or every other, linking a second platform's identity, refresh rotation as a switch, the account panel | merged here, conflicts resolved, 462 server tests green. Linking is sound: both proofs fresh and single-use, one identity a platform, never one with an account or a ban, no merging, a ban covering linked identities through the one ban path (`workshop.mjs` → `endAll("banned")`), deletion forgetting them, unlinking proven by the identity that stays. Two new paths repeated SR-24 and SR-28 and are fixed with them: "every other device" and ending another device from the list took a dead access token; sign-out by refresh token spent the session's bucket before the token was proven |
@@ -901,6 +901,15 @@ What was tried and found sound, so the next reader need not try it again.
   arrays, prototype keys, every field an object, a list or `1e300`, offline
   actions and telemetry of every wrong shape): 7,771 calls, no answer a 500
   from the server's code (one came from the test harness's own helper).
+- **Fuzzing the edge again, on wave 5's tree** (T11's routes merged): all
+  125 routes `http.mjs` and `auth_http.mjs` list, each id slot filled with
+  fifteen hostile values and each body with seventeen (the earlier ones,
+  plus wrong-typed `everywhere`, `others` and `device`, a `device` of
+  `1e300` and 2^53, proofs of the wrong shape for link and unlink, and a
+  device description of objects and lists), as the caller, another account
+  and nobody: 23,625 calls, no 500 and nothing thrown (the only 5xx are the
+  deliberate `503 not_configured` of Apple's notifications and the
+  deletion page in a harness that configures neither).
 - **SQL.** Every statement binds its values; the few built with `${…}` put
   in constants or column names from the code, never a caller's string.
 - **Storage paths.** `store.mjs` takes only 64 hex characters as a key.
