@@ -38,6 +38,7 @@ decision).
 | SR-10 | Low | server | A minor's monthly cap holds only on the client's word | needs the owner |
 | SR-14 | Low | server | A crew is anyone's who holds its invite, a 13-to-15's too | needs the owner |
 | SR-11 | Low | server | The ID token that signs in also deletes the account, at once | sent to T11 |
+| SR-20 | Low | server | A caller can keep Game Center sign-in failing | sent to T11 |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -430,6 +431,26 @@ decision).
   in at `POST /v1/session` and deletes the account at
   `POST /v1/account/delete`. It pins the behaviour as it stands; the fix
   turns it round.
+- **Status:** sent to T11, who owns sign-in.
+
+### SR-20 — A caller can keep Game Center sign-in failing (Low)
+
+- **Where:** `server/src/stores.mjs` `GameCenter.prepare`.
+- **What:** a Game Center key is fetched from Apple at most one new URL a
+  second, for the whole server, into a cache of eight. A caller who names
+  key URLs Apple serves — `gc-prod-N.cer`, Apple's own names — has each one
+  fetched and kept, so nine of them push out the key players sign in with;
+  the next player's sign-in then needs a fetch, and the caller, naming one
+  a second, keeps taking the one slot. Game Center sign-in fails for as
+  long as they keep it up. A key in use stays at the back of the cache
+  while players keep signing in, so it takes a quiet hour, and it needs
+  Apple to serve nine or more names: likely, not verified from here.
+- **Test:** `server/test/security_t11.test.mjs` (SR-20), with the fetch
+  standing in for Apple serving every name.
+- **Suggested:** keep the fetch slot for a credential that carries a
+  signature, a player id and a fresh timestamp (the shape of a real one),
+  hold names fetched but never used to sign anything outside the cache of
+  keys in use, or let one caller's address fetch only one new name a minute.
 - **Status:** sent to T11, who owns sign-in.
 
 ### For T11: what sign-out has to do
