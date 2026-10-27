@@ -181,7 +181,9 @@ func _road(rows: Array, premium: bool) -> Control:
 		if r["state"] == "next":
 			at = int(r["tier"])
 	# Open at the next tier, as the design does.
-	row.ready.connect(func() -> void: row.set_deferred("offset", maxf(0.0, (at - 2) * UI.px(112))))
+	# Two tiers before it on show, or one where large text leaves room for two.
+	var before := 2 if Settings.text_scale <= 125 else 1
+	row.ready.connect(func() -> void: row.set_deferred("offset", maxf(0.0, (at - before) * UI.px(_column() + 8.0))))
 	return row
 
 
@@ -192,7 +194,7 @@ func _tier_row(row: Dictionary, premium: bool) -> Control:
 	var state := str(row["state"])
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", UI.px(8))
-	col.custom_minimum_size.x = UI.px(104)
+	col.custom_minimum_size.x = UI.px(_column())
 	col.add_child(_reward(row["paid"], row["paid_mark"], state, not premium and row["paid"] != ""))
 	var node := ScreenKit.text(str(int(row["tier"])), 17.0, "number", "gold" if state != "later" else "well")
 	node.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -212,6 +214,11 @@ func _tier_row(row: Dictionary, premium: bool) -> Control:
 	col.add_child(_reward(row["free"], row["free_mark"], state, false))
 	col.tooltip_text = row["text"]
 	return col
+
+
+## A tier's width on the road, in points: wider at large text.
+static func _column() -> float:
+	return 104.0 if Settings.text_scale <= 125 else 150.0
 
 
 ## A reward card: its mark over its words, a tick once claimed, a lock
