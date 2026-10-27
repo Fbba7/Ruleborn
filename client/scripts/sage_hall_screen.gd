@@ -128,6 +128,15 @@ func _refresh() -> void:
 	if not shown.is_empty():
 		_stand(shown, h["sages"])
 		_hero(shown)
+		# The design's guard choice for the chosen Sage, wide under its card;
+		# each tile below keeps its own.
+		var o: Dictionary = shown["button"]
+		var guard := UI.button(o["action"], controller.station.bind(o["sage"]), false, Color(), o["spoken"])
+		StageHeroMaterial.button(guard, "tab")
+		guard.disabled = busy or not o["can"]
+		guard.set_meta("item", "hero_guard")
+		guard.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cards.add_child(guard)
 		cards.add_child(_powers(shown))
 	var count := StageHeroKit.kicker(Strings.t("CREW_HUB_SAGES"))
 	cards.add_child(count)
