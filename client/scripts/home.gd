@@ -52,6 +52,9 @@ var _top: Control
 ## The two edges of side buttons.
 var _edges: Array[Control] = []
 var _foot: HFlowContainer
+## Where the side buttons are drawn, all four in one pass.
+var _side_layer: Control
+var _sides_at := Vector2.INF
 ## Each side button's badge as last drawn, so a button is rebuilt only when
 ## its badge changes.
 var _badges := {}
@@ -119,6 +122,22 @@ func _ready() -> void:
 	notice.dismissed.connect(_dismiss)
 	column.add_child(notice)
 	_build_tabs({})
+	# The side buttons drawn together over the column (`UniverseSide.draw_all`).
+	_side_layer = Control.new()
+	_side_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_side_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_side_layer.draw.connect(func() -> void:
+		var list: Array[UniverseSide] = []
+		for holder: Control in sides.values():
+			for b: Node in holder.get_children():
+				if b is UniverseSide:
+					list.append(b)
+		UniverseSide.draw_all(_side_layer, list))
+	add_child(_side_layer)
+	for holder: Control in sides.values():
+		for b: Node in holder.get_children():
+			(b as Control).draw.connect(_side_layer.queue_redraw)
+			(b as Control).item_rect_changed.connect(_side_layer.queue_redraw)
 	menu = UniverseMenu.make(PLACES, WORDS)
 	menu.picked.connect(func(route: StringName) -> void: App.services.router.go(route))
 	add_child(menu)
@@ -212,6 +231,10 @@ func _side(holder: CenterContainer, badge: String) -> void:
 	var action := UniverseSide.make(s[1], Strings.t(s[2]), badge)
 	action.pressed.connect(func() -> void: App.services.router.go(route))
 	action.set_meta("frequent", false)
+	if _side_layer != null:
+		action.draw.connect(_side_layer.queue_redraw)
+		action.item_rect_changed.connect(_side_layer.queue_redraw)
+		_side_layer.queue_redraw()
 	holder.add_child(action)
 
 
@@ -305,6 +328,18 @@ func _on_realm(id: String) -> void:
 		App.services.realm_flow.open(id)
 		return
 	_close = id if world.zoom == 2 else ""
+
+
+## The side buttons' layer follows them wherever their containers move them.
+func _process(_delta: float) -> void:
+	if _side_layer == null:
+		return
+	var at := Vector2.ZERO
+	for holder: Control in sides.values():
+		at += holder.global_position * (1.0 if holder.is_visible_in_tree() else 0.5)
+	if at != _sides_at:
+		_sides_at = at
+		_side_layer.queue_redraw()
 
 
 ## The universe framed into the whole room between the resources and the

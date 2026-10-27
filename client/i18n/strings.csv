@@ -531,6 +531,7 @@ UNIVERSE_PRICE,"%s, %s Starlight","%s, %s Starlight","%s, %s de Luz Estelar","%s
 UNIVERSE_BLOCKED,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s
 UNIVERSE_SPOKEN,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s
 UNIVERSE_NEEDS_KEEPER,Needs Keeper %d,Needs Keeper %d,Precisa de Guardião %d,Requer Guardião %d,Braucht Hüter %d,Requiert Gardien %d
+HOME_OPENS_KEEPER,Opens at Keeper %d,Opens at Keeper %d,Abre no Guardião %d,Abre no Guardião %d,Öffnet bei Hüter %d,S'ouvre au Gardien %d
 UNIVERSE_NEEDS_SPIRE,Needs the Spire at level %d,Needs the Spire at level %d,Precisa da Torre no nível %d,Requer a Torre no nível %d,Braucht Turm auf Level %d,Requiert la Tour au niveau %d
 UNIVERSE_NEEDS_STARLIGHT,Needs %s Starlight,Needs %s Starlight,Precisa de %s de Luz Estelar,Requer %s de Luz Estelar,Braucht %s Sternenlicht,Requiert %s Lumière stellaire
 UNIVERSE_CONFIRM,Tap again to spend %s Starlight,Tap again to spend %s Starlight,Toque de novo para gastar %s de Luz Estelar,Toca de novo para gastar %s de Luz Estelar,"Nochmal tippen, um %s Sternenlicht auszugeben",Touche encore pour dépenser %s Lumière stellaire

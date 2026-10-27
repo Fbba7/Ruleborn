@@ -22,6 +22,7 @@ var bounds := AABB()
 var _skiffs: Array[Dictionary] = []
 var _streams: Array[Dictionary] = []
 var _sparks: MultiMeshInstance3D
+var _fleet: MultiMeshInstance3D
 var _comets: Array[Dictionary] = []
 var _debris: MultiMeshInstance3D
 var _orbits: Array[Dictionary] = []
@@ -55,15 +56,23 @@ func _skiffs_build() -> void:
 		if route.is_empty() and i >= 2:
 			continue
 		var school: Color = route.get("school", Palette.SPIRIT)
-		var mi := MeshInstance3D.new()
-		mi.mesh = SkiffBuilder.mesh(school)
-		mi.material_override = UniverseView._material(true)
-		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		mi.scale = Vector3.ONE * 1.1
-		parent.add_child(mi)
-		triangles += (mi.mesh as ArrayMesh).surface_get_array_len(0) / 3 if mi.mesh != null else 0
-		_skiffs.append({"node": mi, "route": route, "phase": i * 0.37, "speed": 0.06 + 0.015 * i,
+		_skiffs.append({"index": _skiffs.size(), "route": route, "phase": i * 0.37, "speed": 0.06 + 0.015 * i,
 			"wake": [] as Array[Vector3], "colour": school})
+	if _skiffs.is_empty():
+		return
+	# One layer of instances, outlined, for every skiff: two draw calls, not
+	# two a skiff (§21.3). They share the first one's sail stripe.
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.mesh = SkiffBuilder.mesh(_skiffs[0]["colour"])
+	mm.instance_count = _skiffs.size()
+	_fleet = MultiMeshInstance3D.new()
+	_fleet.multimesh = mm
+	_fleet.material_override = UniverseView._material(true)
+	_fleet.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_fleet.extra_cull_margin = 400.0
+	parent.add_child(_fleet)
+	triangles += _skiffs.size() * ((mm.mesh as ArrayMesh).surface_get_array_len(0) / 3)
 
 
 ## Rocks drifting round each island, a few with a tree on top (the design's
@@ -152,14 +161,16 @@ func fly(now: float) -> void:
 	var mm := _sparks.multimesh
 	var i := 0
 	for s: Dictionary in _skiffs:
-		var node: MeshInstance3D = s["node"]
+
 		var t := 0.3 + float(s["phase"]) if still else time * float(s["speed"]) + float(s["phase"])
 		var p := _skiff_at(s, t)
 		var ahead := _skiff_at(s, t + 0.01)
-		node.position = p
 		var d := ahead - p
+		var turn := Vector3.ZERO
 		if d.length() > 0.0001:
-			node.rotation = Vector3(sin(time * 1.3 + float(s["phase"]) * 9.0) * 0.06, atan2(-d.z, d.x), d.y * 0.4)
+			turn = Vector3(sin(time * 1.3 + float(s["phase"]) * 9.0) * 0.06, atan2(-d.z, d.x), d.y * 0.4)
+		_fleet.multimesh.set_instance_transform(int(s["index"]),
+			Transform3D(Basis.from_euler(turn).scaled(Vector3.ONE * 1.1), p))
 		var wake: Array[Vector3] = s["wake"]
 		if still:
 			wake.clear()

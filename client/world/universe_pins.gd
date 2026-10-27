@@ -90,19 +90,35 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 		_pins.append({"node": plate, "realm": "heart", "back": true, "zooms": [0, 1], "rank": 1})
 	var open: Variant = universe.get("open")
 	if open is Dictionary and not ((open as Dictionary).get("types", []) as Array).is_empty():
-		var plate := _plate(Color(Palette.INK, 0.8), Palette.STONE)
+		# Locked, as the designs' "Opens at Keeper 28" on a dark pill with a
+		# lock; open to buy, its name after a plus.
+		var plate := _plate(Color("#100A22", 0.94), Color("#C8BEE6", 0.5), false, 1.5, Color(0, 0, 0, 0.45), 3.0)
 		var name := UniversePresenter.realm_name(str((open as Dictionary)["types"][0]))
-		plate.add_child(_words("+ " + name, Palette.PAPER))
+		var needs: Dictionary = (open as Dictionary).get("needs", {})
+		match str((open as Dictionary).get("blocked", "")):
+			"keeper_level":
+				plate.add_child(_with_mark("generalui/lock", _words(Strings.t("HOME_OPENS_KEEPER",
+					int(needs.get("keeper", 0))), Palette.PAPER)))
+			"spire_level":
+				plate.add_child(_with_mark("generalui/lock", _words(Strings.t("UNIVERSE_NEEDS_SPIRE",
+					int(needs.get("spire", 0))), Palette.PAPER)))
+			_:
+				plate.add_child(_words("+ " + name, Palette.PAPER))
 		plate.mouse_filter = Control.MOUSE_FILTER_STOP
 		plate.gui_input.connect(func(e: InputEvent) -> void:
 			if _tapped(e):
 				view.next_chosen.emit())
-		_pins.append({"node": plate, "realm": "next:0", "lift": 1.0, "zooms": [0], "rank": 1})
+		_pins.append({"node": plate, "realm": "next:0", "rim": true, "zooms": [0], "rank": 1})
 	# Each link's kind, at its middle (the design's link icons, :1167).
+	# Drawn by the pins in one run (`_draw`): a paper disc each, then the icons.
 	for l: Dictionary in view.links:
-		var plate := _plate(Palette.PAPER, Palette.INK, true)
-		plate.add_child(_icon("link_" + str(l["kind"])))
-		_pins.append({"node": plate, "at": l["mid"], "zooms": [1, 2], "rank": 3})
+		var mark := Control.new()
+		mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var d := UI.text_px(POINTS) * 1.35 + UI.px(8)
+		mark.custom_minimum_size = Vector2(d, d)
+		mark.size = mark.custom_minimum_size
+		mark.set_meta("link", load("res://world/universe_icons/link_%s.svg" % str(l["kind"])))
+		_pins.append({"node": mark, "at": l["mid"], "zooms": [1, 2], "rank": 3})
 	# The most urgent first: a pin that would cover one before it waits.
 	_pins.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a["rank"]) < int(b["rank"]))
 	for p: Dictionary in _pins:
@@ -181,12 +197,34 @@ func _draw() -> void:
 	for node: Control in plates:
 		var r: Rect2 = parts.call(node, 0)
 		draw_texture_rect(node.get_child(0).get_child(0).get_meta("icon"), r, false)
+	_draw_links()
 	var font := UI.bold_font()
 	var px := UI.text_px(POINTS)
 	for node: Control in plates:
 		var r: Rect2 = parts.call(node, 2)
 		draw_string(font, Vector2(r.position.x, r.get_center().y + font.get_ascent(px) * 0.36),
 			str(node.get_child(0).get_child(2).get_meta("digits")), HORIZONTAL_ALIGNMENT_CENTER, r.size.x, px, PARCHMENT)
+
+
+## Each link's kind at its middle: paper discs in one run, then the icons
+## sorted by kind, so the links cost a draw call a kind.
+func _draw_links() -> void:
+	var marks: Array[Control] = []
+	for p: Dictionary in _pins:
+		var node: Control = p["node"]
+		if node.visible and node.has_meta("link") and not node.is_queued_for_deletion():
+			marks.append(node)
+	if marks.is_empty():
+		return
+	marks.sort_custom(func(a: Control, b: Control) -> bool:
+		return (a.get_meta("link") as Texture2D).get_rid().get_id() < (b.get_meta("link") as Texture2D).get_rid().get_id())
+	for node: Control in marks:
+		UniverseHud.ball(self, node.position + node.size * 0.5, node.size.x * 0.5, [Palette.PAPER, Palette.PAPER,
+			Palette.PAPER.darkened(0.1)], Color(), true)
+	for node: Control in marks:
+		var s := node.size.x - UI.px(10)
+		draw_texture_rect(node.get_meta("link"), Rect2(node.position + (node.size - Vector2(s, s)) * 0.5,
+			Vector2(s, s)), false)
 
 
 ## A finger or the mouse lifted off a pin.
@@ -205,6 +243,22 @@ static func _icon(name: String) -> TextureRect:
 	t.custom_minimum_size = Vector2.ONE * UI.text_px(POINTS) * 1.35
 	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return t
+
+
+## Words led by one of the kit's icons (`Icons`).
+static func _with_mark(name: String, words: Label) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", UI.px(6))
+	var t := TextureRect.new()
+	t.texture = Icons.texture(name)
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	t.custom_minimum_size = Vector2.ONE * UI.text_px(POINTS)
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(t)
+	row.add_child(words)
+	return row
 
 
 ## Words led by an icon.
@@ -287,7 +341,7 @@ func follow() -> void:
 		if not shown:
 			continue
 		var at := isl.at + Vector3(0, float(p.get("lift", 0.0)), 0)
-		if p.get("front", false) and view.zoom == 0:
+		if (p.get("front", false) or p.get("rim", false)) and view.zoom == 0:
 			# Over the whole universe a realm's name floats over its far rim,
 			# as the designs label their islands.
 			# The Heart's over its spire.
