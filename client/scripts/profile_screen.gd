@@ -296,7 +296,16 @@ func _battle(e: Dictionary, busy: bool) -> Control:
 	pill.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	col.add_child(pill)
 	row.add_child(col)
-	if right != null:
-		right.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if right == null:
+		return ScreenKit.panel("card", row, 16.0, 10.0)
+	right.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	# Beside the words; under them at large text, where both do not fit.
+	if Settings.text_scale <= 125:
 		row.add_child(right)
-	return ScreenKit.panel("card", row, 16.0, 10.0)
+		return ScreenKit.panel("card", row, 16.0, 10.0)
+	(right as Button).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var stack := VBoxContainer.new()
+	stack.add_theme_constant_override("separation", UI.px(8))
+	stack.add_child(row)
+	stack.add_child(right)
+	return ScreenKit.panel("card", stack, 16.0, 10.0)
