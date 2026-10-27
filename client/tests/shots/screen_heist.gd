@@ -123,6 +123,11 @@ func _go() -> void:
 		if not guards[i]["down"]:
 			view.anchors.say(i, str(guards[i]["state"]))
 			view.anchors.speech.get(i, {})["t"] = 0.6
+			# POP: a blow's number rising from each speaking guard, to judge
+			# the two side by side.
+			if OS.get_environment("POP") != "":
+				view.anchors.pop(view._guards[i].position + Vector3(0, 1.0, 0), "-12", FxSkin.ALARM)
+				view.anchors.pops[-1]["t"] = 0.25
 	await process_frame
 	await RenderingServer.frame_post_draw
 	# §21.3's budgets, as the renderer counted the frame.

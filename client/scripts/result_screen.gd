@@ -121,21 +121,22 @@ func _ready() -> void:
 	haul_tile = UI.panel("parchment")
 	haul_tile.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	haul_tile.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	var tile := HBoxContainer.new()
+	# As the designs' reward tiles: the icon over the number over its name,
+	# on cream rimmed in gold.
+	haul_tile.custom_minimum_size.x = UI.px(118)
+	HeistHud._gold_rim(haul_tile)
+	var tile := VBoxContainer.new()
 	tile.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	tile.add_theme_constant_override("separation", UI.px(10))
-	tile.add_child(Icons.view("resources/starlight", 34.0))
-	var tile_words := VBoxContainer.new()
-	tile_words.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	tile_words.add_theme_constant_override("separation", 0)
-	haul_label = FxSkin.label("", 26.0, "parchment")
+	tile.add_theme_constant_override("separation", 0)
+	tile.alignment = BoxContainer.ALIGNMENT_CENTER
+	var icon := Icons.view("resources/starlight", 30.0)
+	icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	tile.add_child(icon)
+	haul_label = FxSkin.label("", 24.0, "parchment")
 	haul_label.add_theme_font_override("font", FxSkin.figures())
-	haul_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	tile_words.add_child(haul_label)
+	tile.add_child(haul_label)
 	var loot_word := FxSkin.label(Strings.t("RESULT_LOOT"), 14.0, "parchment")
-	loot_word.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	tile_words.add_child(loot_word)
-	tile.add_child(tile_words)
+	tile.add_child(loot_word)
 	haul_tile.add_child(tile)
 	box.add_child(haul_tile)
 	counter = haul_tile
@@ -144,7 +145,11 @@ func _ready() -> void:
 	page.add_child(card)
 	# §12.13: the moment that decided it, with its replay a tap away.
 	moment_card = UI.panel("card")
-	var moment := HBoxContainer.new()
+	# The play button beside the words; over them with large text, so the
+	# words keep the card's width.
+	var moment: BoxContainer = HBoxContainer.new()
+	if Settings.text_scale > 100:
+		moment = VBoxContainer.new()
 	moment.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	moment.add_theme_constant_override("separation", UI.px(10))
 	var words := VBoxContainer.new()
@@ -163,6 +168,7 @@ func _ready() -> void:
 	var watch := UI.action("", _watch_moment, "leather", Strings.t("RESULT_WATCH"))
 	watch.custom_minimum_size = Vector2(UI.px(60), UI.px(60))
 	watch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	watch.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	UI.dress(watch, "leather", 14.0)
 	var watch_box := VBoxContainer.new()
 	watch_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
