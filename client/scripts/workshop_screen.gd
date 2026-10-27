@@ -284,7 +284,8 @@ func _publish_panel(slice: Dictionary, busy: bool) -> void:
 	if not p["can"]:
 		return
 	var box := VBoxContainer.new()
-	box.add_child(ScreenKit.text(Strings.t("WORKSHOP_PUBLISH_TITLE"), 15.0, "words", "card", false, true))
+	box.add_theme_constant_override("separation", UI.px(8))
+	box.add_child(ScreenKit.text(Strings.t("WORKSHOP_PUBLISH_TITLE"), 20.0, "name", "card_lit", false, true))
 	if p["remix"] != "":
 		box.add_child(ScreenKit.text(p["remix"], 15.0, "words", "card", false, true))
 	if not p["named"]:
@@ -299,7 +300,11 @@ func _publish_panel(slice: Dictionary, busy: bool) -> void:
 		body.add_child(ScreenKit.panel("card", box, 18.0, 12.0))
 		return
 	var words: Dictionary = slice["words"]
-	box.add_child(ScreenKit.text(Strings.t("WORKSHOP_NAME", p["name"]), 15.0, "words", "card", false, true))
+	# The name it would go out under, large on parchment, as the design's
+	# draft card names its island.
+	var named := ScreenKit.text(Strings.t("WORKSHOP_NAME", p["name"]), 20.0, "name", "parchment", false, true)
+	named.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(ScreenKit.panel("parchment", named, 14.0, 10.0))
 	var r := UI.row(6.0)
 	r.add_child(_act("adjective", Strings.t("SOCIAL_OTHER_ADJECTIVE"), func() -> void:
 		adjective = (adjective + 1) % maxi(1, (words.get("adjectives", []) as Array).size())
@@ -310,7 +315,7 @@ func _publish_panel(slice: Dictionary, busy: bool) -> void:
 	r.add_child(_act("publish", Strings.t("WORKSHOP_PUBLISH"), _publish, busy,
 		Strings.t("WORKSHOP_PUBLISH_NAMED", p["name"]), true))
 	box.add_child(r)
-	body.add_child(ScreenKit.panel("card", box, 18.0, 12.0))
+	body.add_child(ScreenKit.panel("card_lit", box, 18.0, 12.0))
 
 
 func _publish() -> void:
