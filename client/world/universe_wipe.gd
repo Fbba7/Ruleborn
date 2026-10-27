@@ -47,7 +47,7 @@ func _draw() -> void:
 		var gone := s.x * 0.5 + side * (s.x * 0.5 + r * 1.6)
 		# Rows roll in one after another, the middle first.
 		var lag := absf(row - (ROWS - 1) * 0.5) / ROWS * 0.5
-		var f := clampf((e - lag) / (1.0 - lag), 0.0, 1.0) if e < 1.0 else 1.0
+		var f := clampf((e - lag) / (1.0 - lag), 0.0, 1.0) if amount < 1.0 else 1.0
 		var x := lerpf(gone, rest, sqrt(f))
 		_bank(Vector2(x, y), r, side, ink)
 

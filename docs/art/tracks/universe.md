@@ -415,3 +415,32 @@ settings survive home's `Settings.restore()`.
   name's own width (it had hidden the other tabs' names at 100%: "FRIENDS" is 164 px in 174, and a margin of
   my own had called it cut). Still: `r37_fit_compare_01.png` (design, ours, design raid, ours raid, ours in
   German at 200% on a 9:16 phone).
+- Round 38: the three worst were FULL dropped from the resource row at 100% (the kit pill's right padding: 995
+  of 984 px), realm labels under the side buttons at 150% (in Portuguese "TEMPORADA" and "DEFESA" cover
+  Skyfield and Crystalline), and the boxed tab bar (T9's). Fixed the first two: the purse's pills take 6
+  points at the right, not 10, and 4 between, so "FULL 142.0k" sits in its third; a realm label keeps to the
+  gap between the side buttons on its row, or steps below them, and hides where there is no free place
+  (`UniversePins._place`); the side buttons' rectangles are re-read whenever they move (they had been read
+  as the column sorted, before the buttons inside it had theirs).
+- Round 39, motion (§21.8: easing out, no overshoot): the swoop eases out (cubic) where it had eased in and
+  out; the cloud wipe is held fully shut for the middle 40% of a swoop between realms (it had been shut
+  only at the instant of the jump, where a frame either side could show gaps between the banks and the
+  world changing behind them). Reduced motion still cuts.
+
+## Stopped here (fourth session, 03:50 UTC)
+
+- Done: merged main (1e8619b) and the UI kit (502b5a0); home fits every phone shape, text size and language,
+  with a test that fills home with the widest amounts and checks every control lies inside the screen
+  (it would have caught the clipped right edge); rounds 37–39 against the design (compact amounts, FULL
+  in the row, 48-point side buttons, realm labels clear of the side buttons, ease-out swoop, wipe held
+  shut through the jump). Two one-line fixes outside my files that every branch needed (weaving test's
+  High Tide date, completion's contrast proof name). Full `check_all` passed on cd3ac6e.
+- Still worse than the design: the tab bar is boxed, not edge to edge (T9's `KitTabs`), and its names
+  truncate at large text (home hides them); the side balls are 48 points where the design's are about 36
+  (the kit draws the disc at the full hit area); Collect shows no amount; at 150–200% text some realm
+  labels hide for want of room; the strain pill's high-contrast outline is not drawn.
+- Next: re-measure triangles at every zoom after this wave's merge; a kit hook for a smaller disc over a
+  48-point hit area; Collect with its compact amount; a still of the swoop's frames.
+- Container restarts this session lost two check runs; the environment needed `rustup target add
+  wasm32-unknown-unknown`, `pip install gdtoolkit==4.*` and `pip install playwright==1.63.0` (to match the
+  pre-installed Chromium) before `check_all` could run.

@@ -93,6 +93,8 @@ func _ready() -> void:
 	middle.add_child(_edges[1])
 	column.add_child(middle)
 	column.pre_sort_children.connect(_fit_edges.bind(column, middle))
+	for edge: Control in _edges:
+		edge.item_rect_changed.connect(_frame_world, CONNECT_DEFERRED)
 	# The foot over the world, just above the tabs: the goal and Collect side
 	# by side; the raid notice in their place while it shows, as the designs
 	# raise their raid banner over Collect.
@@ -191,6 +193,9 @@ func _edge(which: Array) -> VBoxContainer:
 		holder.set_meta("side", s)
 		edge.add_child(holder)
 		sides[s[0]] = holder
+		# The pins keep clear of where the button is now, not where it was
+		# when the column last sorted.
+		holder.item_rect_changed.connect(_frame_world, CONNECT_DEFERRED)
 		_side(holder, "")
 	return edge
 
