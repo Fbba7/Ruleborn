@@ -23,11 +23,13 @@ decision).
 | SR-02 | Medium | server | A heist's crew manifest was unchecked when the crew went unnamed | fixed |
 | SR-03 | Medium | server | Every offer and Observatory view read the whole game's islands | fixed |
 | SR-07 | Medium | server, sim | One trap in the simulation stopped its rules version until a restart | fixed |
+| SR-17 | Medium | server | The hold queue stalled the server and could be filled by one player | fixed |
 | SR-04 | Low | server web | The web pages had no CSP, nosniff or referrer policy | fixed |
 | SR-05 | Low | server | A block did not hide a player's profile | fixed |
 | SR-06 | Low | client | The cleartext guard let a userinfo hide the host; the terms link could leave the server | fixed |
 | SR-08 | Low | client, sim | A crafted replay could abort or freeze the app | fixed |
 | SR-13 | Low | server | "constructor" and its like were taken as law ids | fixed |
+| SR-18 | Low | server | A 13-to-15 could play any Workshop island by its id | fixed |
 | SR-12 | Medium | server | The Island Fund pays one player's replays as if each were a new player | needs the owner |
 | SR-15 | Medium | server | An island's exposed loot is the bundle's word (register D60) | needs the owner |
 | SR-16 | Medium | server | An island's laws and guards are the bundle's word (register G60, G61) | needs the owner |
@@ -230,6 +232,46 @@ decision).
   these names is refused 400 `no_such_law` or `malformed_body`.
 - **Status:** fixed.
 
+### SR-17 — The hold queue stalled the server and could be filled by one player (Medium)
+
+- **Where:** `server/src/holds.mjs` `work`, scheduled by `server/src/main.mjs`.
+- **What:** every island published queues §13.3's 800 raids of the
+  reference crew, and the server worked the oldest measurement forty raids
+  at a time, every five seconds. Measured here, forty raids are 1.3 to 1.9
+  seconds of the one thread: while anything is queued, every request waits
+  up to two seconds, a quarter to a third of the time. And the queue drains
+  one island every 100 seconds, while one account publishing a new island
+  each 20 seconds (its simulation bucket) adds five: oldest-first, every
+  other player's island waited behind all of them, its hold *"measuring…"*
+  and its rating the prior, for as long as the account kept on.
+- **Test:** `server/test/security_limits.test.mjs` (SR-17).
+- **Fix:** only a bundle some player's island now is gets measured (a
+  superseded one waits, and is measured if published again), and owners
+  take turns, each owner's oldest first, so one player has at most their
+  seven realms in the queue and goes no further ahead than anyone else.
+  The next measurement is chosen once, when the last one lands, and the
+  index `islands_by_bundle` keeps that and the lease's holder lookup off a
+  full scan. `main.mjs` plays two raids every quarter second: the same
+  eight raids a second, a tenth of a second at a time. Three things are
+  unchanged: the 800 raids, the cost of a measurement, and the result
+  (`holds.test.mjs`: in parts as in one call). The measurement still costs
+  about a third of one core while anything is queued; moving it off the
+  request thread (a worker) is the deployment's next step.
+- **Status:** fixed.
+
+### SR-18 — A 13-to-15 could play any Workshop island by its id (Low)
+
+- **Where:** `server/src/workshop.mjs` `play` and `remix`.
+- **What:** §20.7 gives 13 to 15 *"Curated lists only"* for browsing the
+  Workshop. `browse` held it, but `play` and `remix` took any listed item's
+  id, and ids reach a player from more than the lists: a featured remix
+  names its original (`remixOf`), which nobody curated.
+- **Test:** `server/test/security_age.test.mjs` (SR-18).
+- **Fix:** a 13-to-15 plays and remixes only an island a person featured, or
+  their own, else 403 `curated_lists_only` (the code `browse` already
+  answers, with its words on the client). Reporting is never held back.
+- **Status:** fixed.
+
 ## Needs the owner
 
 ### SR-09 — The public target lists carry every island's raw rating (Low)
@@ -354,8 +396,58 @@ decision).
   the page passes a server-issued nonce through GSI and the server requires
   it in the token, or the deletion takes only the web client id's tokens
   and a recent `iat`.
-- **Status:** sent to T11, who owns sign-in; no test here, since the change
-  is a decision about the token, not a defect a test can pin.
+- **Test:** `server/test/security_t11.test.mjs` (SR-11), with the real
+  `GoogleSignIn`: one ID token minted for the Android client signs the game
+  in at `POST /v1/session` and deletes the account at
+  `POST /v1/account/delete`. It pins the behaviour as it stands; the fix
+  turns it round.
+- **Status:** sent to T11, who owns sign-in.
+
+### For T11: what sign-out has to do
+
+Not a finding yet, since sign-out is T11's to build: a session token
+(`tokens.mjs`) is checked by its signature and expiry alone, and the account
+row only for deletion and bans, so nothing today can end one before its hour.
+A sign-out that only forgets the token on the phone leaves it good on the
+server; a server-side revocation (a per-account generation in the token, or
+a short list of revoked ids) is what makes sign-out mean it.
+
+## Left as they are (Info)
+
+Each was looked at and judged not worth a change now; each is one line to
+pick up later.
+
+- **A crew by role skips resting.** After SR-02 a replay with no manifest
+  (`RBH1`, `RBH2`) still plays §11.1's crew by role with no roster named,
+  so no character rests after it. It plays no kind's ability, so it is the
+  weaker crew; requiring every replay to name its crew would retire the
+  older formats.
+- **Simulation time on the request thread.** A heist's re-simulation is 30
+  to 90 ms of the one thread; G44's six at once an account bounds one
+  caller, not many. §24.1's edge isolates are what scale it.
+- **Hourly target lists.** `targetLists` reads every island and its owner's
+  Renown in one go, once an hour, on the request thread: honest load, not a
+  caller's, but it grows with the game.
+- **Unsigned reads.** `GET /v1/bundles/:hash` takes no session and no
+  bucket, as §24.8's static files must; each miss is one indexed read and a
+  file check, and the edge caches the hits.
+- **Leases.** One lease a target a raider at a time (§24.13), but a raider
+  may hold one on every island; unplayed ones are deleted seven days after
+  they lapse (G38). Bounded by the game's islands, not by the caller.
+- **A profile's record** reads all of a player's heists each time it is
+  shown: slow for a heavy player, within the call bucket.
+- **Unsubmitted Workshop plays.** `POST /v1/workshop/:id/play` writes a
+  row naming the player that never expires, and `privacy.json` keeps every
+  play as a record (F43). A play never submitted is the Workshop's
+  unplayed lease, which §20.5 deletes seven days after it closes; it never
+  closes, since a play has no expiry. Giving plays a lease's day, and
+  deleting the unsubmitted ones with `expireLapsed`, is the owner's call.
+- **The client's outbox** keeps receipts, lease tokens and replays as plain
+  JSON in the app's sandbox (`user://`); Android backups are off. The
+  session token is never written.
+- **`tools/art`** loads Playwright from the machine's global install
+  (`PLAYWRIGHT_MODULE`), outside its lockfile, and its loopback file server
+  checks paths by prefix: tools for the developer's machine, not shipped.
 
 ## Checked and held
 
@@ -418,3 +510,27 @@ What was tried and found sound, so the next reader need not try it again.
   key stores: the only private keys are the Apple test chain under
   `server/test/fixtures/apple/`, generated by its `make.sh` and named as
   test CAs; production roots come only from the environment.
+
+## How it was checked
+
+- `bash client/build.sh` ran once. `bash tools/check_all.sh` was run after
+  each batch of fixes; in this container it cannot print "All checks
+  passed" for three reasons, none of them this branch's:
+  - **`gdlint` is not installed**, and installing gdtoolkit was refused. The
+    runs used a stand-in that only reports it is missing; the GDScript this
+    branch changes was checked by hand against gdlint's line length, and
+    adds no public method.
+  - **One client test fails on this date:** *"against the server: Weaving
+    offers the starting laws at the simulation's prices …"*. This week's era
+    is High Tide (*"Slow rivers costs no stability"*), so Slow rivers is
+    priced 0 and the test's `priced > 0` fails. It fails the same way on
+    the base commit `1e8619b`; it is not a security matter, and it will fail
+    on every branch until the era turns on 2 November.
+  - **Python's `playwright` is not installed**, so
+    `tools/check_prototype_conformance.py` cannot run.
+  Every other step was run, including those after the client's (by hand,
+  from the line after each failure), and passed: the simulation's gate,
+  all of the server's tests, the client's other 339, the export check, and
+  the docs, audit and roadmap builds, which end in "All checks passed."
+- Each finding's test was run against the code before its fix and failed,
+  then passed after it.
