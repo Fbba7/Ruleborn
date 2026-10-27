@@ -393,11 +393,18 @@ static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "
 ## design's assign icon, named for a screen reader with where it sends, its
 ## words kept as `words`; dimmed, and saying why, when it cannot.
 static func _send_button(o: Dictionary, busy: bool, send: Callable) -> Button:
+	return disc_button(o, busy, send, "realmactions/assignworker")
+
+
+## A change's one-tap button on a card as a round gold disc with `icon`,
+## named for a screen reader with what it does (or why it waits), its words
+## kept as `words`; the Sage hall's tiles take it too.
+static func disc_button(o: Dictionary, busy: bool, send: Callable, icon: String) -> Button:
 	# A plain gold disc in flat boxes, not the kit's shader box: a dozen of
 	# them on the grid stay inside §21.3's draw calls.
 	var b := Button.new()
-	b.accessibility_name = str(o["spoken"]) if o["why"] == "" else "%s: %s" % [o["action"], o["why"]]
-	b.icon = Icons.texture("realmactions/assignworker")
+	b.accessibility_name = str(o["spoken"]) if str(o.get("why", "")) == "" else "%s: %s" % [o["action"], o["why"]]
+	b.icon = Icons.texture(icon)
 	b.custom_minimum_size = Vector2.ONE * UI.px(48)
 	b.size_flags_horizontal = Control.SIZE_SHRINK_END
 	b.size_flags_vertical = Control.SIZE_SHRINK_END

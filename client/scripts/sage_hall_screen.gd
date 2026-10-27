@@ -370,8 +370,8 @@ func _tile(s: Dictionary, busy: bool, shown: bool) -> Control:
 		StageHeroSkin.pin(tile, StageHeroSkin.badge(str(RosterPresenter.MARK["guarding"]), Palette.MATTER.darkened(0.45),
 			16.0), Control.PRESET_TOP_LEFT)
 	v.add_child(tile)
-	var name := StageHeroKit.words(s["name"], 16.0, StageHeroSkin.LIGHT)
-	StageHeroSkin.named(name)
+	var name := StageHeroKit.words(s["name"], 14.0, StageHeroSkin.LIGHT if s["unlocked"] else StageHeroSkin.LIGHT_SOFT)
+	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	name.custom_minimum_size.x = UI.px(60)
 	v.add_child(name)
@@ -382,13 +382,12 @@ func _tile(s: Dictionary, busy: bool, shown: bool) -> Control:
 		lock.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		lock.custom_minimum_size.x = UI.px(40)
 		v.add_child(lock)
+	# The guard choice as the design's small disc on the picture's corner: a
+	# shield to put it on guard, the way home to take it off.
 	var o: Dictionary = s["button"]
-	var b := UI.button(o["action"], controller.station.bind(o["sage"]), false, Color(), o["spoken"])
-	StageHeroMaterial.button(b, "gold" if s["unlocked"] and not s["guarding"] else "leather")
-	b.disabled = busy or not o["can"]
-	b.set_meta("key", o["key"])
-	b.set_meta("item", o["item"])
-	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	v.add_child(b)
+	var icon := "hud/shield" if s["unlocked"] else "generalui/lock"
+	var b := RosterScreen.disc_button(o, busy, controller.station.bind(o["sage"]),
+		"generalui/back" if s["guarding"] else icon)
+	StageHeroSkin.pin(tile, b, Control.PRESET_TOP_RIGHT)
 	StageHeroSkin.cap_buttons(v, UI.px(80))
 	return StageHeroMaterial.panel("rim" if shown else "card", v, 14.0, 4.0)
