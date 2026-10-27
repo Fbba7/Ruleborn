@@ -51,6 +51,18 @@ static func _citadel(b: BuildingKit) -> void:
 	for k in 3:
 		b.box(0.5 - 0.08 * k, 0.1, 0.16, b.stone2, 0, 0.05 + 0.1 * k, 1.0 - 0.1 * k)
 	b.door(0, 0.3, 0.7, 0, 1.2)
+	# A balustrade round the terrace's edge, open at the steps, and urns of
+	# flowers by them: close-up detail, left out at the mid detail.
+	for k in 16:
+		var a := TAU * (k + 0.5) / 16.0
+		if absf(wrapf(a - PI / 2.0, -PI, PI)) < 0.3:
+			continue
+		b.fine(0.035, 0.12, 0.035, b.stone, cos(a) * 0.78, 0.36, sin(a) * 0.78)
+	if not b.lighter:
+		b.d.torus(b.place(0, 0.43, 0), 0.78 * b.unit, 0.018 * b.unit, b.stone2, 24, 4)
+		for x: float in [-0.3, 0.3]:
+			b.cyl(0.06, 0.045, 0.1, b.stone2, x, 0.3, 0.86, 8)
+			b.ball(0.06, Color("#F7A6DA"), x, 0.43, 0.86, 0.8, 3, 6)
 	# The Spire.
 	b.cyl(0.62, 0.7, 0.6, b.stone, 0, 0.3, 0, 8)
 	for i in 4:
