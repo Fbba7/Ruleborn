@@ -129,24 +129,28 @@ void fragment() {
 		float wob = (vnoise(p * 5.0) - 0.5) * 0.05;
 		float d = best + wob;
 		float off_path = 1.0 - smoothstep(0.4, 0.46, path);
-		float rim = 1.0 - smoothstep(0.2, 0.3, d);
-		float earth = 1.0 - smoothstep(0.15, 0.18, d);
+		float rim = 1.0 - smoothstep(0.28, 0.38, d);
+		float earth = 1.0 - smoothstep(0.23, 0.26, d);
 		c = mix(c, c * 0.84, rim * (1.0 - earth) * grassy);
 		vec3 dirt = lane_earth.rgb * (0.86 + 0.14 * vnoise(p * 6.0));
 		c = mix(c, dirt, earth * off_path * (1.0 - cliff));
-		// The stones: one every 0.3 m, each nudged aside and turned a little.
-		float step_len = 0.33;
-		float k = floor(along / step_len);
-		float h1 = hash(vec2(k, which));
-		vec2 q = vec2(fract(along / step_len) - 0.5 + (h1 - 0.5) * 0.15, 0.0) * step_len;
-		q.y = side - (hash(vec2(which, k + 3.1)) - 0.5) * 0.07;
-		vec2 e = q / vec2(0.14, 0.115 + 0.02 * h1);
+		// The stones, as the design's pebble lanes (02-heist): two rows of
+		// round stones laid staggered, one every 0.3 m in each row, each
+		// nudged aside a little.
+		float step_len = 0.3;
+		float row = step(0.0, side);
+		float shift = along / step_len + row * 0.5;
+		float k = floor(shift);
+		float h1 = hash(vec2(k + row * 31.0, which));
+		vec2 q = vec2(fract(shift) - 0.5 + (h1 - 0.5) * 0.12, 0.0) * step_len;
+		q.y = side - (row * 2.0 - 1.0) * 0.105 - (hash(vec2(which, k + 3.1 + row * 7.0)) - 0.5) * 0.05;
+		vec2 e = q / vec2(0.135, 0.105 + 0.02 * h1);
 		float r = length(e);
-		float stone_in = 1.0 - smoothstep(0.86, 1.0, r);
+		float stone_in = (1.0 - smoothstep(0.86, 1.0, r)) * (1.0 - smoothstep(0.24, 0.27, abs(side)));
 		float lit = clamp(0.5 - e.y * 0.35 + 0.35 * (1.0 - r), 0.0, 1.0);
 		vec3 slab = mix(cobble.rgb, lane_earth.rgb, 0.3) * (0.92 + 0.12 * h1) * mix(0.84, 1.12, lit);
 		float shade = (1.0 - smoothstep(0.95, 1.18, r)) * (1.0 - stone_in);
-		float on_lane = off_path * (1.0 - cliff) * step(best, 0.3);
+		float on_lane = off_path * (1.0 - cliff) * step(best, 0.32);
 		c = mix(c, c * 0.72, shade * on_lane * 0.6);
 		c = mix(c, slab, stone_in * on_lane);
 		grassy *= 1.0 - max(earth, stone_in * on_lane);
