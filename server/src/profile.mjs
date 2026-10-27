@@ -193,6 +193,9 @@ export class Profile {
     const a = this.db.prepare("SELECT age_band, profile_public, deleted_at, banned_at FROM accounts WHERE id = ?")
       .get(account);
     if (!a || a.deleted_at || a.banned_at) throw new Refused(404, "no_such_account");
+    // §17.8: across a block either way, each disappears from the other's
+    // view, so the profile is no account at all, as the other routes say.
+    if (this.service.safety.between(viewer, account)) throw new Refused(404, "no_such_account");
     if (a.age_band === "13-15" || !a.profile_public) throw new Refused(403, "profile_private");
     return this.view(account, { own: false });
   }

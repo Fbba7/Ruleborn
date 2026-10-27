@@ -91,6 +91,9 @@ func _layout() -> void:
 		r.add_child(_tag(UI.button(Strings.t(toggle[1] + ("_ON" if on else "_OFF")), flip.bind(toggle[0])), toggle[0]))
 		list.add_child(r)
 
+	# The account: signing in and out (scripts/auth_panel.gd).
+	list.add_child(AuthPanel.new())
+
 	var back := UI.row(-1.0, true)
 	back.add_child(UI.button(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), true))
 	column.add_child(UI.narrow(back))

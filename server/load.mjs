@@ -128,8 +128,12 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
   // The population: established players, each with an island of its own.
   const accounts = [];
   const bundles = [];
+  // The device signs in once and then refreshes its session when its hour
+  // is up, as the client does (docs/security/auth.md).
+  const refresh = [];
   for (let i = 0; i < players; i++) {
-    const { account } = service.session(`gc:load-${i}`);
+    const { account, refreshToken } = service.session(`gc:load-${i}`);
+    refresh.push(refreshToken);
     db.prepare("UPDATE accounts SET created_at = ? WHERE id = ?").run(T0 - 4 * DAY, account);
     const island = build.exampleIsland(i % 2 === 0);
     island[5] = 1 + (Math.floor(i / 2) % 10);              // Vault level: a distinct island each
@@ -152,7 +156,7 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
     for (let s = 0; s < sessions; s++) {
       clock.now = T0 + d * DAY + s * 3 * 60 * 60 * 1000;
       for (let i = 0; i < players; i++) {
-        count("session", () => service.session(`gc:load-${i}`));
+        count("session", () => { refresh[i] = service.auth.refresh(refresh[i]).refreshToken; });
         count("telemetry batch", () => service.telemetry.batch(accounts[i], [
           { kind: "session_start", data: {} },
           { kind: "session_end", data: { seconds: 300, crashed: false } },

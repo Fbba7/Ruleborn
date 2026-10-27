@@ -29,6 +29,9 @@ import { lawsOf } from "./telemetry.mjs";
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 const LAWS = JSON.parse(readFileSync(new URL("../../content/laws.json", import.meta.url), "utf8"));
 const BY_ID = Object.fromEntries(LAWS.map((l) => [l.id, l]));
+/** Whether `law` is one of the laws: its own key, never one every object
+ *  answers to, such as "constructor" (SR-13). */
+const isLaw = (law) => typeof law === "string" && Object.hasOwn(BY_ID, law);
 const RANKS = ["Common", "Uncommon", "Rare", "Deep"];
 
 /** §7.6's restoration price for a law, by its rank. */
@@ -103,7 +106,7 @@ export class Codex {
 
   /** `n` pages of `law`, the law met if it was not. */
   add(account, law, n, now) {
-    if (!BY_ID[law] || n <= 0) return;
+    if (!isLaw(law) || n <= 0) return;
     this.db.prepare(`INSERT INTO codex (owner, law, pages, met_at) VALUES (?, ?, ?, ?)
                      ON CONFLICT (owner, law) DO UPDATE SET pages = pages + excluded.pages`)
       .run(account, law, n, now);
@@ -122,7 +125,7 @@ export class Codex {
       this.add(account, law, n, now);
       if (account === raider) given[law] = (given[law] ?? 0) + n;
     };
-    const crossed = lawsOf(this.service.store.get(lease.bundle)).filter((law) => BY_ID[law]);
+    const crossed = lawsOf(this.service.store.get(lease.bundle)).filter(isLaw);
     for (const law of crossed) {
       if (!this.row(raider, law)) give(raider, law, facts.MEET_PAGES);
     }
@@ -184,7 +187,7 @@ export class Codex {
         if (done.law !== law) throw new Refused(409, "already_studied");
         return { studied: law, repeated: true, codex: this.view(account) };
       }
-      if (!lawsOf(this.service.store.get(h.bundle)).includes(law) || !BY_ID[law]) {
+      if (!lawsOf(this.service.store.get(h.bundle)).includes(law) || !isLaw(law)) {
         throw new Refused(409, "law_not_crossed");
       }
       const grade = JSON.parse(h.outcome).verdict?.grade;
@@ -206,7 +209,7 @@ export class Codex {
 
   /** §7.6: the law the floor's page goes to, and the Lab's. */
   workOn(account, law) {
-    if (law !== null && !BY_ID[law]) throw new Refused(400, "no_such_law");
+    if (law !== null && !isLaw(law)) throw new Refused(400, "no_such_law");
     return transaction(this.db, () => {
       this.ensure(account, this.service.now());
       this.db.prepare("UPDATE accounts SET working_on = ? WHERE id = ?").run(law, account);
@@ -225,7 +228,7 @@ export class Codex {
   /** §7.6: `law` restored at tier I for its rank's pages, and §14.2's
    *  experience for it: 60 + 10 × the Keeper's level. */
   restore(account, law) {
-    if (!BY_ID[law]) throw new Refused(400, "no_such_law");
+    if (!isLaw(law)) throw new Refused(400, "no_such_law");
     const now = this.service.now();
     return transaction(this.db, () => {
       this.ensure(account, now);
@@ -246,7 +249,7 @@ export class Codex {
   /** §7.6: a restored law raised to tier `to`, II or III, for its pages, its
    *  Aether and the Spire level it needs. */
   tier(account, law, to) {
-    if (!BY_ID[law]) throw new Refused(400, "no_such_law");
+    if (!isLaw(law)) throw new Refused(400, "no_such_law");
     if (to !== 2 && to !== 3) throw new Refused(400, "malformed_body");
     const now = this.service.now();
     return transaction(this.db, () => {
