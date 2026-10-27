@@ -9,6 +9,9 @@ extends Control
 
 ## The crew roles an outfit is worn by (content/roles.json's ids, G28).
 const ROLES := ["scout", "breaker", "carrier", "warden", "mender"]
+## Each kind's stage, edged in its colour as the design's cards are.
+const STAGES := {"realm_skin": "reward_pink", "sky_theme": "reward_sky", "law_visual": "reward_sky",
+	"outfit": "reward_green", "bridge_style": "reward_green", "emote": "reward_gold", "sage_robe": "reward_gold"}
 
 var controller: ShopController
 var body: VBoxContainer
@@ -113,8 +116,7 @@ func _refresh() -> void:
 			_refresh()))
 		for k: String in kinds:
 			# A chip leads with a capital, as the design's filters do.
-			var kind_words := Strings.term("KIND", k)
-			kind_words = kind_words.left(1).to_upper() + kind_words.substr(1)
+			var kind_words := _capital(Strings.term("KIND", k))
 			chips.add_child(ScreenParts.chip(kind_words, _kind == k, func() -> void:
 				_kind = k
 				_refresh(), "shopcosmetics", k.replace("_", "")))
@@ -161,7 +163,7 @@ func _featured(item: Dictionary, busy: bool, friend: Dictionary) -> Control:
 	var name := ScreenKit.text(item.get("title", item["name"]), 26.0, "name", "card", false, true)
 	name.tooltip_text = Strings.t("SHOP_ITEM", [item["name"], item["price"]])
 	words.add_child(name)
-	words.add_child(ScreenParts.pill(Strings.term("KIND", str(item["kind"])), "well", "shopcosmetics",
+	words.add_child(ScreenParts.pill(_capital(Strings.term("KIND", str(item["kind"]))), "well", "shopcosmetics",
 		str(item["kind"]).replace("_", "")))
 	top.add_child(words)
 	var art := ScreenKit.icon("shopcosmetics", str(item["kind"]).replace("_", ""), 104.0)
@@ -185,20 +187,26 @@ func _featured(item: Dictionary, busy: bool, friend: Dictionary) -> Control:
 	return ScreenKit.panel("frame_gold", ScreenKit.panel("card", box, 18.0, 12.0), 22.0, 5.0)
 
 
-## A cosmetic for sale as the design's card: its kind's art on a lit stage,
-## its name and kind, the price on its Buy button, and Give for a friend.
+## A kind's name leading with a capital, as the design's labels do.
+static func _capital(words: String) -> String:
+	return words.left(1).to_upper() + words.substr(1)
+
+
+## A cosmetic for sale as the design's card: its kind's art on a stage
+## edged in its kind's colour, its name and kind, the price on its Buy
+## button, and Give for a friend.
 func _for_sale(item: Dictionary, busy: bool, friend: Dictionary) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", UI.px(6))
 	var art := ScreenKit.icon("shopcosmetics", str(item["kind"]).replace("_", ""), 84.0)
 	art.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	var stage := ScreenKit.panel("well", art, 14.0, 10.0)
+	var stage := ScreenKit.panel(STAGES.get(str(item["kind"]), "reward_gold"), art, 14.0, 10.0)
 	box.add_child(stage)
 	var name := ScreenKit.text(item.get("title", item["name"]), 15.0, "words", "card_lit", false, true)
 	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name.tooltip_text = Strings.t("SHOP_ITEM", [item["name"], item["price"]])
 	box.add_child(name)
-	var kind := ScreenParts.pill(Strings.term("KIND", str(item["kind"])), "well")
+	var kind := ScreenParts.pill(_capital(Strings.term("KIND", str(item["kind"]))), "well")
 	kind.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	box.add_child(kind)
 	var buy := ScreenKit.button(item["price"], controller.buy.bind(item["id"]), "gold",
