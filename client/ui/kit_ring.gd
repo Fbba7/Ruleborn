@@ -47,14 +47,17 @@ func _draw() -> void:
 		_heavy(c, r, ink, gold)
 		return
 	var line := maxf(2.0, r * (0.2 if band != Color() else 0.14))
-	draw_circle(c, r, ink, true, -1.0, true)
-	draw_circle(c, r - line * 0.5, band if band != Color() else Tokens.color("card_top"), true, -1.0, true)
+	# Everything round the picture in two arrays of triangles, one under it
+	# and one over: three draw calls with the picture, not eight.
+	var under := KitTris.new()
+	under.disc(c, r, ink)
+	under.disc(c, r - line * 0.5, band if band != Color() else Tokens.color("card_top"))
+	var inner := r - line * 1.2
 	if ground != Color():
-		var inner_r := r - line * 1.2
-		draw_circle(c, inner_r, ground.darkened(0.25), true, -1.0, true)
-		draw_circle(c + Vector2(0, -inner_r * 0.2), inner_r * 0.78, ground.lightened(0.18), true, -1.0, true)
+		under.disc(c, inner, ground.darkened(0.25))
+		under.disc(c + Vector2(0, -inner * 0.2), inner * 0.78, ground.lightened(0.18))
+	under.draw_on(get_canvas_item())
 	if picture != null:
-		var inner := r - line * 1.2
 		# The picture cut round: a polygon of the circle, textured.
 		var points := PackedVector2Array()
 		var uvs := PackedVector2Array()
@@ -64,14 +67,17 @@ func _draw() -> void:
 			points.append(c + d * inner)
 			uvs.append(focus + d * 0.5 / zoom)
 		draw_colored_polygon(points, Color.WHITE, uvs, picture)
+	var over := KitTris.new()
 	if band != Color():
 		# A gold line inside the leather band, as the designs edge a portrait.
-		draw_arc(c, r - line * 1.15, 0.0, TAU, 64, Tokens.color("gold"), maxf(1.0, UI.px(0.8)), true)
+		var w := maxf(1.0, UI.px(0.8))
+		over.ring(c, r - line * 1.15 - w * 0.5, r - line * 1.15 + w * 0.5, Tokens.color("gold"))
 	else:
-		draw_arc(c, r - line * 0.5, 0.0, TAU, 64, Color(Tokens.color("text_on_night_2"), 0.25), line, true)
+		over.ring(c, r - line, r, Color(Tokens.color("text_on_night_2"), 0.25))
+	over.ring(c, r - maxf(1.5, UI.px(0.7)), r, ink)
+	over.draw_on(get_canvas_item())
 	if fraction > 0.0:
 		draw_arc(c, r - line * 0.5, -PI * 0.5, -PI * 0.5 + TAU * fraction, 64, gold, line, true)
-	draw_arc(c, r, 0.0, TAU, 64, ink, maxf(1.5, UI.px(0.7)), true)
 
 
 func _heavy(c: Vector2, r: float, ink: Color, gold: Color) -> void:

@@ -23,7 +23,8 @@ Merge this branch, then:
   - `KitRing`: a round picture in an XP ring, a pip, or (`heavy`) a dial.
   - Sliders (`HSlider`) and scroll bars are themed.
   - `Motion.screen_in(screen)` is the design's 160 ms screen fade from 0.985; the router could call it on each screen it shows (`client/app/router.gd` is the integrator's; not hooked, because other tracks' shot scripts settle in a few frames and would catch screens mid-fade).
-- **Your own skins:** a control a script dresses in its own `StyleBoxFlat` with a fill keeps that look (the kit's box steps aside), and a label on such a light panel turns to ink by itself. So nothing breaks, but `FxSkin`, `StageHeroSkin` and `OverlaySheet.key` can now be replaced by the kit's materials.
+- **Your own skins:** a control a script dresses in its own `StyleBoxFlat` with a fill keeps that look (the kit's box steps aside), and a label on such a light panel turns to ink by itself. Since wave 5, `FxSkin.panel`/`style_button`, `StageHeroSkin.plate`/`button`, `OverlaySheet.dress`/`key` and `OverlayHud.badge` draw through the kit (`KitSkin.panel(p, kind)`, `KitSkin.button(b, kind)`, `KitStatus.badge(text, look, points)`), so those screens already share its look.
+- **Wave 5 additions:** `KitControls.icon_button(..., disc_points)` and `round_action(..., disc_points)` draw a disc smaller than the 48-point hit area (`KitControls.small_disc(b, points)`; `RbBox.inset` underneath); `KitTabs.face(id, texture)` puts a screen's own character or object on its chosen tab, larger and rising out of it; `KitPanels.album(school, title, kicker, count, body)` is the Codex's chapter band sitting square (`RbBox.foot_points`) on its cream album; `KitHud.loot(rows, carried, mark, words)` is the heist's Room/Left panel with its load bar and aim tick; `KitHud.sage(picture, name, words, pressed)` the Sage's gold-ringed portrait over Cast; `KitHud.crew(..., school)` a crew key on its school's ground in a leather ring, uses as diamonds on a tag; `KitRing.band`, `ground`, `zoom`, `focus`. `AUDIT=1` on `client/tests/shots/ui_screen.gd` lists where a screen draws past the kit (`UiAudit`).
 
 ## Done
 
@@ -162,3 +163,30 @@ Components (tab bar, header with back, segmented hub, resource pills, chips, bad
 - Not folded in yet: T5's `FxSkin`, T6's `OverlayHud.badge` and `OverlaySheet`, T7's `StageHeroSkin`.
 
 **Next**: fold those in (OverlayHud.badge as KitStatus.badge with a look, StageHeroSkin's card as the `ability`/`card_gold` materials); a cream album panel under the chapter band (`KitPanels.album`); the chosen tab's face hook; draw KitRail's discs as one fan per disc to cut its draw calls; judge the remaining stills (05 Weaving, 08 Observatory, 14 Lab, 18 Shop, 27 Friends) beside kit pages.
+
+## Wave 5 (from 17:50 UTC, 27 October)
+
+Main (d2343591) merged clean.
+
+**Done**
+- **Tab names never cut** (T4's report). `KitTabs._fit` measures every name against its tab: where any tab not chosen would cut its word, they all show their icons alone (still named aloud); the chosen tab widens, up to three times a tab while the others keep their 54 points, to hold its whole word, and where even that cannot (200% in English, "FRIENDS") its word takes the largest size that fits, never under its 100% size. At 100% all five names show (the old 125% switch is gone). The chosen word's stroke is 13% of its drawn size at any text size. Icons not chosen are 36 points (from 30), nearer the design's. Test: "the tab bar shows every name whole at 100% text...".
+- **Small disc** (T4's hook): `round_action(icon, words, call, false, 48, badge, tone, 36)` draws the designs' 36-point ball centred in a 48-point hit area, the plate and badge following the disc. Test: "a round action can draw its disc smaller than its hit area...".
+- **The chosen tab's face**: `tabs.face("crew", Portrait.of("skyskipper"))`: 62 points, its head above the tile (sheet page 7).
+- **Folded in**: `KitSkin` maps the other tracks' surface names (glass, card, parchment, leather, gold, alarm, night) to the kit's materials; `FxSkin.panel` and `style_button` (T5), `StageHeroSkin.plate` and `button` (T7), `OverlaySheet.dress`'s panels and `key` (T6) call it, and `OverlayHud.badge` is `KitStatus.badge(text, look, points)`. A few lines in each of those files, marked "Drawn by T9's kit".
+- **`KitPanels.album`** (13 Codex): the band square at its foot on a cream album with an ink edge (sheet page 5).
+- **KitRail** draws its rail and discs as one triangle array (`RenderingServer.canvas_item_add_triangle_array`), feathered a pixel: page 11 went from 63 to 41 draw calls, the picture unchanged.
+- **Heist pieces for T5** (the integrator's verdict: plain-face crew, no Sage, "Left ?" with no load bar): `KitHud.loot`, `KitHud.sage`, and `KitHud.crew` on the school's ground (sheet page 9 beside 02-heist).
+
+**Consistency pass: where screens pass the kit by or differ from the design system**
+
+`AUDIT=1` over all 33 screens on their samples found own fills only on the heist and replay (three `#FFFBF0` panels in the laws column); every other screen's boxes and faces are the kit's. What remains is arrangement, which is each screen's:
+
+| Owner | Screen | Item |
+|---|---|---|
+| T5 | heist, replay | Use `KitHud.crew(picture, name, health, uses, call, school)` for the crew (the design's school grounds and diamonds), `KitHud.sage` for the Sage and Cast above Get out, `KitHud.loot(rows, carried, 0.8, "Load to 80%")` for Room/Left (no "?": the load bar is the design's); the three parchment panels in the laws column as `KitCards.law_chip`. Heist is at 141 draw calls and replay at 147 on `ui_screen.gd`: little room under 150. |
+| T6 | realm | Round actions' plates in capitals (`round_action` does it; the realm's own keys say "Map"); the design's MAP and BUILD are 72-point discs low in the corners and WEAVE above MAP. |
+| T7 | roster | Filters as `KitControls.chip(words, on, call, count, dot)` (the design's dot and count pill), not "○ free · 8" in the words; give the Crew tab Pip's face (`tabs.face`). |
+| T10 | codex | Chapters as `KitPanels.album(...)` around their cards. |
+| T10 | settings | The design has four segments (Wellbeing, Game, Access, Account); the screen has two. |
+| T4 | home | Side balls through `disc_points` 36 at 48-point hit areas; drop `_fit_tab_words` (the kit does it). |
+| all | screens with a title | The design's sub-screen header (`KitNav.top_bar`) puts back at the top; §21.1's thumb rule keeps it at the foot (finding H, the owner's). |
