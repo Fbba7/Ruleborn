@@ -15,6 +15,12 @@ func view() -> Result:
 	return await api.get_json("/v1/home")
 
 
+## §9.3: what a producer of `kind` in `realm` holds, paid in; the answer
+## carries what was collected and the home after it.
+func collect(realm: String, kind: String) -> Result:
+	return await api.post_json("/v1/home/collect", {"realm": realm, "kind": kind})
+
+
 ## §5.8, §11.6: character `id` set to work at building `n` of `kind` in
 ## `realm`, a producer's slot or a Guardian Post. A retry of one already made
 ## is answered as made.

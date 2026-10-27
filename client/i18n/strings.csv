@@ -1370,3 +1370,28 @@ PLAN_VALUE_LOAD,%d%%,%d%%,%d%%,%d%%,%d%%,%d%%
 OBS_PREV_CARD,Previous target,Previous target,Alvo anterior,Alvo anterior,Vorheriges Ziel,Cible précédente
 OBS_NEXT_CARD,Next target,Next target,Próximo alvo,Alvo seguinte,Nächstes Ziel,Cible suivante
 OBS_PAGE,Target %d of %d,Target %d of %d,Alvo %d de %d,Alvo %d de %d,Ziel %d von %d,Cible %d sur %d
+HOME_SIDE_DEFENCE,Defence,Defense,Defesa,Defesa,Abwehr,Défense
+HOME_SIDE_LAB,Lab,Lab,Lab,Lab,Labor,Labo
+HOME_SIDE_SEASON,Season,Season,Temporada,Temporada,Saison,Saison
+HOME_SIDE_SHOP,Shop,Shop,Loja,Loja,Shop,Boutique
+HOME_STRAIN_SPOKEN,"Strain: %s, %d%%","Strain: %s, %d%%","Tensão: %s, %d%%","Tensão: %s, %d%%","Spannung: %s, %d%%","Tension : %s, %d%%"
+HOME_PURSE,Your resources,Your resources,Seus recursos,Os teus recursos,Deine Ressourcen,Tes ressources
+HOME_PURSE_SPOKEN,"%s: %s held, %s ready to collect","%s: %s held, %s ready to collect","%s: %s guardados, %s prontos para coletar","%s: %s guardados, %s prontos a recolher","%s: %s gelagert, %s bereit zum Einsammeln","%s : %s en réserve, %s prêts à récolter"
+HOME_RES_STARLIGHT,Starlight,Starlight,Luz Estelar,Luz Estelar,Sternenlicht,Lumière stellaire
+HOME_RES_AETHER,Aether,Aether,Aether,Aether,Aether,Aether
+HOME_RES_ESSENCE,Essence,Essence,Essência,Essência,Essenz,Essence
+HOME_UNKNOWN,not yet known,not yet known,ainda não sabido,ainda não sabido,noch nicht bekannt,pas encore connu
+HOME_AMOUNT_THOUSANDS,%sk,%sk,%s mil,%s mil,%s Tsd.,%s k
+HOME_AMOUNT_MILLIONS,%sM,%sM,%s mi,%s M,%s Mio.,%s M
+HOME_BADGE_SPOKEN,"%s, %s new","%s, %s new","%s, %s novos","%s, %s novos","%s, %s neu","%s, %s nouveaux"
+HOME_MENU,Every screen,Every screen,Todas as telas,Todos os ecrãs,Alle Bildschirme,Tous les écrans
+HOME_MENU_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
+HOME_GOAL_SPOKEN,Nearest goal: %s,Nearest goal: %s,Meta mais próxima: %s,Objetivo mais próximo: %s,Nächstes Ziel: %s,Objectif le plus proche : %s
+HOME_GOAL_KEEPER,%s experience to go · Keeper %d,%s experience to go · Keeper %d,faltam %s de experiência · Guardião %d,faltam %s de experiência · Guardião %d,noch %s EP · Hüter %d,encore %s d'expérience · Gardien %d
+HOME_GOAL_TRACK,%s stars to go · tier %d,%s stars to go · tier %d,faltam %s estrelas · nível %d,faltam %s estrelas · nível %d,noch %s Sterne · Stufe %d,encore %s étoiles · palier %d
+HOME_RAIDED_ONE,Raided once while you were away,Raided once while you were away,Assaltado uma vez enquanto você estava fora,Assaltado uma vez enquanto estavas fora,"Einmal überfallen, während du weg warst",Pillé une fois pendant ton absence
+HOME_RAIDED,Raided %d times while you were away,Raided %d times while you were away,Assaltado %d vezes enquanto você estava fora,Assaltado %d vezes enquanto estavas fora,"%d-mal überfallen, während du weg warst",Pillé %d fois pendant ton absence
+HOME_RAIDED_SEE,See,See,Ver,Ver,Ansehen,Voir
+HOME_RAIDED_CLOSE,Dismiss,Dismiss,Dispensar,Dispensar,Schließen,Fermer
+HOME_COLLECT,Collect all,Collect all,Coletar tudo,Recolher tudo,Alles einsammeln,Tout récolter
+HOME_COLLECT_SPOKEN,Collect all: %s waiting,Collect all: %s waiting,Coletar tudo: %s esperando,Recolher tudo: %s à espera,Alles einsammeln: %s bereit,Tout récolter : %s en attente

@@ -25,6 +25,9 @@ func run() -> void:
 	await _people()
 	await _lazy()
 	await _home()
+	await _fits()
+	_hud()
+	await _collect()
 
 
 func _layout() -> void:
@@ -209,6 +212,13 @@ func _people() -> void:
 	for c in people.get_children():
 		if not c.is_queued_for_deletion():
 			kinds.append(str(c.name))
+	view.focus_realm("outer-2", 2)
+	await tree.process_frame
+	var outer: Array[String] = []
+	for c in people.get_children():
+		if not c.is_queued_for_deletion():
+			outer.append(str(c.name))
+	outer.sort()
 	var where := [UniverseCrowd.realm_of({"state": "working", "home": "spire",
 			"work": {"realm": "outer-2", "kind": "garden", "n": 1}}),
 		UniverseCrowd.realm_of({"state": "idle", "home": "spire", "work": null}),
@@ -225,12 +235,12 @@ func _people() -> void:
 	heading.gui_input.emit(lift)
 	var swooped := view.focus_id == "outer-4" and view.zoom == 1
 	Settings.reduced_motion = false
-	check.call("the realm seen close shows the player's own characters the home view puts there, one at most, and "
-			+ "none from afar; a character is where it works, else at home (the Spire is the Heart); a realm's "
-			+ "heading in a word list swoops the map to it (23.2, 14.1)",
-		far == 0 and kinds.size() == 1 and kinds.has("featherkin")
+	check.call("the realm seen close shows the player's own characters the home view puts there, two at most on "
+			+ "an outer realm and one on the Heart, and none from afar; a character is where it works, else at home "
+			+ "(the Spire is the Heart); a realm's heading in a word list swoops the map to it (23.2, 14.1)",
+		far == 0 and kinds == ["featherkin"] and outer == ["bloomling", "tidewalker"]
 			and where == ["outer-2", "heart", "outer-3"] and swooped and heading.get_child(1) == title,
-		"far %d kinds %s where %s swooped %s" % [far, kinds, where, swooped])
+		"far %d kinds %s outer %s where %s swooped %s" % [far, kinds, outer, where, swooped])
 	view.queue_free()
 	await tree.process_frame
 
@@ -256,13 +266,16 @@ func _lazy() -> void:
 	var shown: bool = (view._close["outer-2"] as Node3D).visible and not (view._rocks["outer-2"] as Node3D).visible
 	view.focus_realm("heart", 2)
 	view._process(0.01)
-	var heart_rock: bool = (view._rocks["heart"] as Node3D).visible and not view._close.has("heart")
+	# The Heart too is T2's island seen close, without its own tufts.
+	var heart: Node3D = view._close.get("heart")
+	var heart_close: bool = heart != null and heart.visible and not (view._rocks["heart"] as Node3D).visible \
+		and not heart.get_children().any(func(c: Node) -> bool: return str(c.name).begins_with("Scatter"))
 	Settings.reduced_motion = false
 	check.call("from afar no realm's detailed buildings or close island are made; coming to a realm makes its "
 			+ "buildings, resting there makes its island as seen close, and the close-up shows it in place of the "
-			+ "map's rock; the Heart keeps its rock (21.3)",
-		empty and none_close and built and ready and shown and heart_rock,
-		"empty %s none %s built %s ready %s shown %s heart %s" % [empty, none_close, built, ready, shown, heart_rock])
+			+ "map's rock; the Heart's close-up is its island too, its tufts left to its buildings (21.3)",
+		empty and none_close and built and ready and shown and heart_close,
+		"empty %s none %s built %s ready %s shown %s heart %s" % [empty, none_close, built, ready, shown, heart_close])
 	view.queue_free()
 	await tree.process_frame
 
@@ -274,13 +287,132 @@ func _home() -> void:
 	var places := []
 	for b: Button in home.find_children("*", "Button", true, false):
 		places.append(b.text)
-	var every := Home.PLACES.all(func(r: StringName) -> bool: return places.has(Strings.t(Home.WORDS[r])) \
-		or r == &"defences")
+	var every := Home.PLACES.all(func(r: StringName) -> bool: return places.has(Strings.t(Home.WORDS[r])))
+	var tabs: Array = home.tabs.buttons.keys()
+	var sides: Array = home.sides.keys()
 	var drawn := home.world != null and home.world.islands.has("heart") and home.world.islands.size() == 5
 	var said := str(home.world.accessibility_description)
 	home.queue_free()
 	await tree.process_frame
-	check.call("home draws the universe behind it, keeps every place in its menu and the Heist button, and reads "
-			+ "the universe aloud (23.2, 21.8, 20.8)",
-		every and places.has(Strings.t("HOME_PLAY")) and drawn and said.contains(Strings.t("UNIVERSE_HEART_TITLE", 6)),
-		"%s drawn %s said %s" % [places, drawn, said])
+	check.call("home draws the universe behind it, keeps every place in its menu, five tabs with the Heist in the "
+			+ "centre and side buttons down both edges, and reads the universe aloud (23.2, 21.8, 20.8)",
+		every and tabs == ["islands", "laws", "heist", "crew", "friends"] and sides.size() == 4 and drawn
+			and said.contains(Strings.t("UNIVERSE_HEART_TITLE", 6)),
+		"%s tabs %s sides %s drawn %s said %s" % [places, tabs, sides, drawn, said])
+
+
+## Home's interface reads only what the slices hold: the nearest goal is the
+## one closest to done, said as what is left (14.8); the resource row takes
+## each amount from the slice that holds it, a dash where none does, and sums
+## each resource's producers (9.3).
+func _hud() -> void:
+	var keeper := {"view": {"level": 14, "xp": 1240, "toNext": 2000}}
+	var track := {"view": {"season": 2, "stars": 1130, "next": {"tier": 7, "cost": 1200}}}
+	var both := UniverseGoal.goals(keeper, track)
+	var only := UniverseGoal.goals(keeper, {})
+	var top := UniverseGoal.goals({"view": {"level": 30, "xp": 5, "toNext": null}}, {})
+	var goals_ok: bool = both.size() == 2 and both[0]["route"] == &"track" \
+		and both[0]["text"] == Strings.t("HOME_GOAL_TRACK", ["70", 7]) \
+		and only.size() == 1 and only[0]["text"] == Strings.t("HOME_GOAL_KEEPER", ["760", 15]) and top.is_empty()
+	var store := Store.new()
+	UniverseState.register(store)
+	RosterState.register(store)
+	ShopState.register(store)
+	CodexState.register(store)
+	var unknown := UniverseStore.purse(store)
+	store.dispatch(&"wallet_loaded", {"balance": {"starlight": 900, "essence": 40}})
+	store.dispatch(&"roster_loaded", {"view": {"producers": [{"kind": "star_well", "stored": 30, "holds": 100},
+		{"kind": "star_well", "stored": 70, "holds": 100}, {"kind": "garden", "stored": 5, "holds": 50}]}})
+	var known := UniverseStore.purse(store)
+	var purse_ok: bool = int(unknown["starlight"]["amount"]) == -1 and int(unknown["aether"]["amount"]) == -1 \
+		and int(known["starlight"]["amount"]) == 900 and int(known["essence"]["amount"]) == 40 \
+		and int(known["aether"]["amount"]) == -1 and int(known["starlight"]["ready"]) == 100 \
+		and int(known["starlight"]["holds"]) == 200 and int(known["essence"]["ready"]) == 5
+	check.call("home's nearest goal is the one closest to done, said as what is left, and its resource row shows "
+			+ "only what the slices hold, each resource's producers summed (14.8, 9.3)", goals_ok and purse_ok,
+		"%s %s | %s %s" % [both, only, unknown, known])
+
+
+## Home's Collect: every producer that holds something is collected, one
+## call each, the home each answer brings kept, the wallet asked after; what
+## was paid comes back by resource (9.3).
+func _collect() -> void:
+	var transport := FakeTransport.new()
+	var s := Fixtures.answered(Services.build(tree.root, "https://edge.example", transport,
+		"user://outbox-collect-test.json"))
+	s.api.token = "t"
+	var producers := [{"kind": "star_well", "realm": "heart", "stored": 320, "holds": 320},
+		{"kind": "garden", "realm": "outer-4", "stored": 0, "holds": 200},
+		{"kind": "aether_spring", "realm": "outer-2", "stored": 40, "holds": 140}]
+	s.store.dispatch(&"roster_loaded", {"view": {"producers": producers}})
+	var after := {"producers": [{"kind": "star_well", "realm": "heart", "stored": 0, "holds": 320}]}
+	transport.on("POST /v1/home/collect", {"collected": {"resource": "starlight", "made": 320, "kept": 0,
+		"paid": 320}, "home": after})
+	transport.on("GET /v1/balance", {"starlight": 1320, "essence": 5})
+	var paid: Dictionary = await s.roster_flow.collect_all()
+	var routes := transport.calls.map(func(c: Dictionary) -> String: return str(c["route"]))
+	var kept: Array = s.store.get_slice(RosterState.ROSTER)["view"]["producers"]
+	check.call("home's Collect collects every producer that holds something, keeps the home each answer brings, "
+			+ "and asks the wallet afresh (9.3)",
+		routes.count("POST /v1/home/collect") == 2 and routes.has("GET /v1/balance") and int(paid["starlight"]) == 640
+			and int(kept[0]["stored"]) == 0,
+		"%s %s %s" % [routes, paid, kept])
+	s.close()
+
+
+## Home fits the phone (§21.1, §20.8): with every amount at its widest, in
+## every language, at 9:19.5 and 9:16 and with text at 100%, 150% and 200%,
+## every control it shows lies inside the screen, the top row, the side
+## buttons, the resource row and the tabs included, and nothing asks for more
+## width than the screen has.
+func _fits() -> void:
+	var bad := []
+	var was := tree.root.size
+	# Its own services, so the widest amounts never reach the other tests.
+	var kept: Services = App.services
+	App.services = Fixtures.answered(Services.build(tree.root, "", null, "user://outbox-fit-test.json"))
+	for tall: int in [1170, 960]:
+		tree.root.size = Vector2i(540, tall)
+		await tree.process_frame
+		tree.root.size = Vector2i(540, tall)
+		await tree.process_frame
+		for scale: int in [100, 150, 200]:
+			Settings.text_scale = scale
+			for locale: String in Strings.LOCALES:
+				Strings.set_locale(locale)
+				UniverseSample.fill(App.services.store, 6, 2, true)
+				var home: Home = await mount.call("home")
+				home.set_process(false)
+				await tree.process_frame
+				await tree.process_frame
+				for p: String in outside(home):
+					bad.append("%d:%d %d%% %s: %s" % [540, tall, scale, locale, p])
+				home.queue_free()
+				await tree.process_frame
+	Settings.text_scale = 100
+	Strings.set_locale("en")
+	tree.root.size = was
+	App.services.close()
+	App.services = kept
+	check.call("home fits the phone with every amount at its widest, in every language, at 9:19.5 and 9:16 and "
+			+ "with text at 100%, 150% and 200%: every control inside the screen (21.1, 20.8)",
+		bad.is_empty(), "; ".join(bad.slice(0, 12)))
+
+
+## What on a screen lies outside it, or asks for more width than it has.
+static func outside(screen: Control) -> Array[String]:
+	var frame := screen.get_viewport_rect()
+	var out: Array[String] = []
+	if frame.size.y <= frame.size.x:
+		out.append("the frame is %s, not portrait" % frame.size)
+	for c: Control in screen.find_children("*", "Control", true, false):
+		if not c.is_visible_in_tree() or c.size.x <= 0.0 or c is UniverseMenu or c.get_parent() is UniverseMenu:
+			continue
+		var r := c.get_global_rect()
+		if r.position.x < frame.position.x - 1.0 or r.end.x > frame.end.x + 1.0 \
+				or r.position.y < frame.position.y - 1.0 or r.end.y > frame.end.y + 1.0:
+			var said: String = str(c.get("text")) if c.get("text") != null else c.get_class()
+			out.append("%s (%s) at %s" % [c.name, said.replace("\n", " "), r])
+		if out.size() > 6:
+			break
+	return out

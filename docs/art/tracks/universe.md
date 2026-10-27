@@ -237,3 +237,181 @@ Stopped at the integrator's request (2026-10-20).
   near the 40,000 ceiling.
 - Next: run `check_all` on the last commit; a lighter T2 scatter for the close-up would make room for the
   Heart's T2 meadow and a second character.
+
+## Third session (2026-10-21): the home screen as the design's 01 Universe map
+
+The target is the design's home (`art/design/stills/screens/01-*.png` once the integrator lands it; until
+then `docs/analysis/screens-v3/screens-home-realm-shell.md` §1.1 and §2.2) and §21.8's home layout.
+
+- Round 30 (the starting point): home was a Keeper bar across the top, a scrolling grid of 21 menu tiles over
+  the bottom half of the world, a large "Play a heist" button, and the camera on the Heart.
+  Still: `r30_before_home.png`.
+- Round 31: home rebuilt in the design's arrangement (§21.8), the world opening on the whole universe:
+  - top left, the Keeper badge (`UniverseBadge`): an emblem in a ring whose gold arc is the way to the next
+    level, the level on a gold disc, "Keeper 14" in Marcellus, Renown on a glass chip with the design's gem;
+    it opens the menu of every screen (`UniverseMenu`, the design's portrait menu), so all 21 places stay one
+    tap away;
+  - top right, strain on a glass pill (`UniverseStrain`): the band's colour dot, "74% · Steady"; it opens the
+    weaving;
+  - a full-width row of the three resources (`UniversePurse`): the design's own icons, the amount held, a line
+    along the foot that fills as that resource's producers fill, FULL in words when they are nearly full; an
+    amount no slice holds is a dash (the server gives no Aether to the wallet yet; the codex's view has it);
+  - side buttons down both edges (`UniverseSide`): leather balls with a bronze rim, the design's icons, a plate
+    with the name, red count badges (Defence's unseen raids, Season's "!" when a tier can be claimed);
+  - the nearest goal above the tabs (`UniverseGoal`, §14.8): whichever goal the store holds is nearest to done
+    (the Keeper's next level, the season track's next tier), said as what is left;
+  - five tabs (`UniverseTabs`, `UniverseTab`): Islands (raised on the design's periwinkle disc), Laws, the Heist
+    as a larger gold ball in the centre, Crew, Friends; a count badge on Islands for full producers. Heist
+    plays a heist as the old button did.
+  - the world: the whole universe at once (§23.2), the column drawn tighter (rows at 28 and 54 m, not 33 and
+    63), each island's pin its level and name; only a full producer is pinned at that zoom; the fault's pin a
+    mark over its realm; pins kept between the side buttons and stepped clear of each other rather than
+    dropped; strain is the HUD's, so the Heart carries no strain pin on home.
+  Still: `r31_home.png`. Budget at the home camera: 32,162 triangles, 83 draw calls.
+- Drawn in code (`UniverseHud`): §21.8's dark glass (#140A16 at 78%), leather, gold, ink outlines #1A0C14,
+  light words #F3EEFF, secondary #B8A8D8, Manrope 800 for words and numbers, Lilita One for the level,
+  Marcellus for the Keeper's name (the fonts T5 and T7 brought). High contrast makes the glass opaque with
+  3-point outlines. Every control is 48 points or more; the badge and the strain pill are marked infrequent
+  (`set_meta("frequent", false)`), which §21.1 allows in the top band, and the check in `tests/run.gd` now
+  reads (a two-line hook, see below).
+- Found: a texture first loaded inside `_draw` draws as a white square under the Compatibility renderer;
+  load icons when the control is set up (`UniverseHud.icon`'s note).
+
+### The tab bar, for T9 (UI kit) and T10 (app shell)
+
+Update (round 34): home now uses T9's `KitTabs` (merged from `claude/ui-kit`), its resource pills and its round
+actions; what follows is what home asks of whichever bar the shell settles on.
+
+Home draws its own five tabs (`client/world/universe_tabs.gd`) until the app shell's tab bar lands. What home
+needs from the shared one, so it can be swapped in with no change to the screen's look:
+
+- five tabs in this order, keys `islands`, `laws`, `heist`, `crew`, `friends`, the Heist in the centre drawn
+  larger (a gold ball above the bar), the active tab raised on the periwinkle disc with a larger name;
+- `set_badge(key, text)` for a count or a glyph ("" for none), each badge said in words;
+- a `chosen(key)` signal; home answers `islands` by showing the whole universe, `heist` by playing a heist
+  (as the old "Play a heist" button did), and routes `laws` → `codex`, `crew` → `roster`,
+  `friends` → `friends` (`Home.TAB_ROUTES`);
+- the bar's height: 52 points plus a 13-point name; its background runs under the home indicator and its
+  tabs sit inside the safe area and clear of the corners (84% of the width).
+
+When the shell's bar exists, home stops adding its own (`Home.tabs`) and listens to the shell's.
+- Round 32: a night tint (screen-space gradients, not a pass) behind the top HUD and the tabs so their words
+  read over any island; the raid notice (`UniverseNotice`, the design's raid banner): "Raided 2 times while
+  you were away", See (the defence log) and a dismiss; it stays until dismissed (§21.8) and returns only when
+  more raids come. Still: `r32_home_notice.png`.
+- Round 33: the cloud wipe (`UniverseWipe`, out of `universe_view.gd`): banks of four puffs each, violet
+  underneath and cream on top, edged in ink only on the outside, rolling in row after row from the middle
+  out, with a faint night veil; shut, they overlap so the jump is hidden. Reduced motion still cuts.
+  Still: `r33_wipe_half_and_shut.png`; shot `tests/shots/universe_wipe.gd` (AMOUNT).
+- Round 34, on T9's UI kit (merged): home's tabs are the kit's `KitTabs`, its resource row the kit's resource
+  pills (`KitStatus.resource`, inside `UniversePurse`), its side buttons the kit's round actions with cream
+  plates (`KitControls.round_action`; the design's own icons from the kit's set); my own drawn tabs and side
+  buttons are gone. The Keeper badge, the strain pill and the goal stay home's, as the kit's are not tappable.
+  The close-up: every realm, the Heart included, is T2's lighter island (`WorldLook.Detail.LIGHT`); the
+  Heart's own tufts and the kit's fine parts give way to its buildings; an outer realm shows two of the
+  player's characters, standing in front of the building they work or out on the meadow; the sky keeps its
+  scale at every zoom (`sky_scale`), where its dust had swelled into blocks in a close-up.
+  Budget (drawn in view, `universe_zoom.gd`): whole universe 32,162 triangles, 83 draw calls; realm zoom
+  16,400–38,900; close-ups: the Heart 39,068 (one character), Tidehold 35,700 (two), others 25,000–26,000.
+  Stills: `r34_home_on_kit.png`, `r34_zoom2_heart_meadow.png`, `r34_zoom2_tidehold_two.png`.
+- Round 35, judged against the design's own home (`art/design/stills/screens/01-universe-map.png` and
+  `01-universe-map-raid.png`, landed at 00:58). The three worst differences were: the world squeezed into the
+  top half by the notice, Collect and the goal stacked over it; dark island labels where the design's are
+  parchment; the goal a heavy two-line card. Fixed:
+  - the universe in the design's 2-3-2 (`UniverseLayout.SLOTS`: two above the Heart, one either side, two
+    below), framed to the islands' rims and down to the tabs, so it fills the screen's width as the design's
+    does; the goal, Collect and the raid notice float over its foot, as the design's Collect and raid banner;
+  - each realm's label the design's parchment plate edged in ink: its icon, its name in Marcellus in brown
+    ink, its level on a dark disc, floating over the island's far rim at the whole-universe zoom;
+  - pins keep clear of the side buttons' own rectangles and inside the screen's edges;
+  - the goal one line on a glass pill beside Collect;
+  - the side buttons high on each edge beside the top row, as the design places them (marked infrequent, so
+    §21.1's thumb zone does not bind them; they keep 48 points and stay out of the corners);
+  - the shot's sample universe a mid-game one in the design's order (Skyfield, Crystalline, Tidehold,
+    Verdant, Emberreach, Lantern Vale), five or six buildings a realm, linked between neighbours as the
+    design links them.
+  Budget at the home camera: 35,895 triangles, 83 draw calls.
+  Stills: `r35_compare_01_universe_map.png`, `r35_compare_01_raid.png` (ours left, the design right, grayscale
+  thumbnails beneath).
+- Round 36: the citadel drawn 1.85× over the whole universe (1.35× at the realm zooms), so the Heart reads
+  first from afar as the design's home draws it; the Heart's label floats over its spire.
+
+### Hooks in other tracks' files (third session)
+
+- `client/tests/run.gd`: the thumb-zone check skips a control marked `set_meta("frequent", false)` (§21.1:
+  the thumb zone binds frequently used controls); the 48-point, safe-area and corner rules still hold.
+- `client/tests/keeper_tests.gd`: home's Keeper check reads the badge (`UniverseBadge`) instead of the old
+  label.
+- `client/data/repositories/home_repository.gd`: `collect(realm, kind)` (`POST /v1/home/collect`, 3 lines).
+- `client/features/roster/roster_controller.gd`: `collect_all()`, every producer that holds something
+  collected and the wallet asked afresh (about 20 lines; tested in `universe_view_tests.gd`).
+- `client/i18n/strings.csv`: home's rows (`HOME_SIDE_*`, `HOME_STRAIN_SPOKEN`, `HOME_PURSE*`, `HOME_RES_*`,
+  `HOME_BADGE_SPOKEN`, `HOME_MENU*`, `HOME_GOAL_*`, `HOME_RAIDED*`, `HOME_COLLECT*`, `HOME_UNKNOWN`).
+
+### For T9 and T10
+
+- `KitTabs`' chosen tab's name has a 1.5-pixel outline (`UI.px(1.5)`, 1.33 points), under §21.8's 1.5 points,
+  so the contrast check measures it against the periwinkle and finds 4.49:1; home widens it after building
+  the bar. A wider outline in `KitTabs.choose` would fix it everywhere.
+- The design's tab bar runs edge to edge with the chosen tab a large raised tile; `KitTabs` is a boxed bar.
+
+## Fourth session (2026-10-26, wave four): home fits every phone, then rounds against the design
+
+Merged `claude/videogame-project-analysis-ewkkk2` (1e8619b) and `claude/ui-kit` (502b5a0). The only conflict
+was `client/i18n/strings.csv` (both sides kept; the kit rows the two merges both brought, `KIT_TAB_*`,
+`KIT_BACK`, `KIT_CLOSE`, `KIT_FULL`, `KIT_TAB_BADGE`, kept once).
+
+### Why the merged home was cut off at the right, and why the tests missed it
+
+Every container in home's column grows to its widest child's minimum, so one row too wide pushes the whole
+column (and every row in it) past the screen's right edge. The resource row was that row: three kit pills,
+each as wide as "FULL 142,050", needed 1,096 px of a 984-px column. The client's width checks mount home with
+an empty store, where every amount is a dash, so nothing was ever wide.
+
+Now (`universe_view_tests.gd`, "home fits the phone ..."): home is filled with the widest amounts (seven
+figures, every producer full, Keeper 99, Renown 99,999; `UniverseSample.fill(store, ..., most = true)`) in its
+own services, at 9:19.5 and 9:16, text at 100%, 150% and 200%, in all six catalogue columns; every visible
+control must lie inside the screen and the frame must be portrait (a headless window needs a frame after
+`root.size` before it takes; the first try measured a square window and passed for nothing).
+
+What changed so it fits:
+- the resource row (`UniversePurse`) is a flow: where the three pills will not sit on one line with Full in
+  words, the word gives way first (the line still shows full; it is still said), then the row wraps;
+- amounts past 10,000 are shown as the designs show them, "142.0k", "9.9M" (`UniverseHud.compact`, cut
+  down, never rounded up; `HOME_AMOUNT_THOUSANDS`/`_MILLIONS`); said in full;
+- the top row is a flow: strain stacks its number over the band where one line will not fit beside the
+  badge, and takes a line of its own where even that will not (`UniverseStrain.fit`); it answers taps only
+  on its pill (`_has_point`), not the row's spare width; its padding grows with the dot, which large text
+  grows (it had drawn words past its own right edge);
+- the Keeper badge moves its name and Renown chip clear of the level disc, which large text grows over them;
+- the raid notice, at 150% and more, gives its words the card's width with the mark, See and close beneath;
+- the side buttons give way when the column has no height for them (200% text on a 9:16 phone): every
+  place they lead to is on the badge's menu, and the raids are on the notice;
+- tab names that large text would cut short ("ISLA", "GESET") show as icons alone, the chosen tab keeping
+  its name if it fits; each tab is still named aloud. A workaround for `KitTabs` in `home.gd` (see T9 below).
+
+Shot `tests/shots/universe_home.gd` now takes LOCALE, CONTRAST, TALL (960 for 9:16) and MOST, and its
+settings survive home's `Settings.restore()`.
+
+### Hook in another track's file (fourth session)
+
+- `client/tests/weaving_tests.gd` (4 lines): "Weaving offers the starting laws ..." failed on every branch,
+  main included: today's era is High Tide, under which the simulation prices Slow rivers at nothing
+  (`sim/src/stability.rs`), the server recommends it first, and the test demanded a price above 0. The test
+  now accepts a free first law only when its points are 0 as well; the rest of the check is unchanged.
+
+### For T9
+
+- `KitTabs`: at 150% and 200% text the five names do not fit and are cut to fragments (`clip_text` with an
+  ellipsis that rarely shows). Home hides the other tabs' names when any would be cut; the kit doing so
+  (or a two-line name) would fix every screen with tabs.
+- `KitStatus.resource`: the pill's padding is wide enough that "FULL 142.0k" does not fit a third of the
+  phone at 100% text, where the design fits "FULL 61.0k"; home drops the word rather than run off.
+- `tools/completion.py` (1 line, fourth session): the kit lengthened the contrast test's name ("... and every
+  material's words on the stops they sit on included ..."); the proof still named the old one, so
+  check_all failed on the kit's own branch and every branch carrying it. The proof now names the test as it is.
+- Round 37 (after the green push at 00:12, f8e4918): the resource row in the designs' short amounts
+  ("142.0k"), side buttons at the 48-point minimum (from 52), and the tab-name fit measured against each
+  name's own width (it had hidden the other tabs' names at 100%: "FRIENDS" is 164 px in 174, and a margin of
+  my own had called it cut). Still: `r37_fit_compare_01.png` (design, ours, design raid, ours raid, ours in
+  German at 200% on a 9:16 phone).
