@@ -1427,3 +1427,9 @@ HEIST_CAST_USED,used,used,usado,usado,verbraucht,utilisé
 HEIST_CAST_PLACE,4 tiles for 10 s,4 tiles for 10 s,4 casas por 10 s,4 casas durante 10 s,4 Felder für 10 s,4 cases pendant 10 s
 HEIST_WHEEL_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
 HUD_LOAD_TO,Load to %d%%,Load to %d%%,Carregar até %d%%,Carregar até %d%%,Laden bis %d %%,Charger à %d %%
+RESULT_STARLIGHT,Starlight,Starlight,Luz-estelar,Luz-estelar,Sternenlicht,Lumière d'étoile
+RESULT_ESSENCE,Essence,Essence,Essência,Essência,Essenz,Essence
+RESULT_RENOWN,Renown,Renown,Renome,Renome,Ruhm,Renommée
+RESULT_FEE_RETURNED,Entry fee %s returned,Entry fee %s returned,Taxa de entrada de %s devolvida,Taxa de entrada de %s devolvida,Eintrittsgebühr %s erstattet,Droit d'entrée de %s rendu
+RESULT_FEE_HALF,"Entry fee %s, %s returned","Entry fee %s, %s returned","Taxa de entrada de %s, %s devolvidos","Taxa de entrada de %s, %s devolvidos","Eintrittsgebühr %s, %s erstattet","Droit d'entrée de %s, %s rendus"
+RESULT_FEE_PAID,Entry fee %s paid to the defender,Entry fee %s paid to the defender,Taxa de entrada de %s paga ao defensor,Taxa de entrada de %s paga ao defensor,Eintrittsgebühr %s an den Verteidiger gezahlt,Droit d'entrée de %s payé au défenseur
