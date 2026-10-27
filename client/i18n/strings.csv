@@ -696,6 +696,10 @@ SAGE_FAILED,The Sages did not change: %s,The Sages did not change: %s,Os Sábios
 SAGE_KICK_POWERS,Heist powers,Heist powers,Poderes no assalto,Poderes no assalto,Kräfte im Raubzug,Pouvoirs de casse
 SAGE_KICK_HOME,At home,At home,Em casa,Em casa,Zu Hause,À la maison
 SAGE_KICK_GUARD,On guard,On guard,De guarda,De guarda,Auf Wache,De garde
+SAGE_HEIST_SAGE,Heist Sage,Heist Sage,Sábio de assalto,Sábio de assalto,Raubzug-Weiser,Sage de casse
+SAGE_ON_HEISTS,On heists,On heists,Em assaltos,Em assaltos,Auf Raubzug,En casse
+SAGE_JOINS,Joins every heist with your crew,Joins every heist with your crew,Vai a todos os assaltos com a sua equipe,Vai a todos os assaltos com a tua equipa,Geht mit deiner Crew auf jeden Raubzug,Part en casse avec ton équipe à chaque fois
+SAGE_LINE,%s Sage · %d powers,%s Sage · %d powers,Sábio de %s · %d poderes,Sábio de %s · %d poderes,%s-Weiser · %d Kräfte,Sage (%s) · %d pouvoirs
 ERR_SAGE_LOCKED,that Sage is not unlocked yet,that Sage is not unlocked yet,esse Sábio ainda não foi desbloqueado,esse Sábio ainda não foi desbloqueado,dieser Weise ist noch nicht freigeschaltet,ce Sage n'est pas encore débloqué
 ERR_NO_SUCH_SAGE,there is no such Sage,there is no such Sage,esse Sábio não existe,esse Sábio não existe,diesen Weisen gibt es nicht,ce Sage n'existe pas
 HOME_FORMS,Forms album,Forms album,Álbum de formas,Álbum de formas,Formenalbum,Album des formes
@@ -716,6 +720,17 @@ FORMS_SAIL_DONE,✓ %s in every kind: skiff sail unlocked,✓ %s in every kind: 
 FORMS_SAILS_TITLE,Skiff sails,Skiff sails,Velas de esquife,Velas de esquife,Bootssegel,Voiles d'esquif
 FORMS_FAILED,The album could not be read: %s,The album could not be read: %s,Não foi possível ler o álbum: %s,Não foi possível ler o álbum: %s,Das Album konnte nicht gelesen werden: %s,Impossible de lire l'album : %s
 FORMS_FORM,%s · %s,%s · %s,%s · %s,%s · %s,%s · %s,%s · %s
+FORMS_FORM_NAME,%s %s,%s %s,%s %s,%s %s,%s %s,%s %s
+FORMS_NOT_HATCHED,Not yet hatched,Not yet hatched,Ainda não chocada,Ainda não chocada,Noch nicht geschlüpft,Pas encore éclose
+FORMS_KIND_LINE,%s · %s form,%s · %s form,%s · forma %s,%s · forma %s,%s · %s-Form,%s · forme %s
+FORMS_COUNT_OF,%d / %d forms of %s,%d / %d forms of %s,%d / %d formas de %s,%d / %d formas de %s,%d / %d Formen von %s,%d / %d formes de %s
+FORMS_FIND_NURSERY,Find a %s,Find a %s,Achar um %s,Encontrar um %s,%s suchen,Trouver une %s
+FORMS_OUTFIT_LABEL,Outfit,Outfit,Traje,Traje,Outfit,Tenue
+FORMS_OUTFIT_COUNT,%d / %d forms,%d / %d forms,%d / %d formas,%d / %d formas,%d / %d Formen,%d / %d formes
+FORMS_FILTER_ALL,All,All,Todas,Todas,Alle,Toutes
+FORMS_FILTER_OUTFITS,Outfits,Outfits,Trajes,Trajes,Outfits,Tenues
+FORMS_FILTER_MISSING,Missing,Missing,Faltando,Em falta,Fehlend,Manquantes
+FORMS_FILTER_SPOKEN,Show %s: %d kinds,Show %s: %d kinds,Mostrar %s: %d espécies,Mostrar %s: %d espécies,%s zeigen: %d Arten,Afficher %s : %d espèces
 HOME_HATCH,Hatch,Hatch,Chocar,Chocar,Ausbrüten,Faire éclore
 HATCH_TITLE,Hatch,Hatch,Chocar,Chocar,Ausbrüten,Faire éclore
 HATCH_HEADER,Each birth costs %s Essence; you have %s,Each birth costs %s Essence; you have %s,Cada nascimento custa %s de Essência; você tem %s,Cada nascimento custa %s de Essência; tens %s,Jede Geburt kostet %s Essenz; du hast %s,Chaque naissance coûte %s d'Essence ; tu en as %s

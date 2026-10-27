@@ -55,6 +55,7 @@
   "a play refused for the terms of use shows the terms to read and accept; accepting sends the version shown, and the gate closes once the server has it (§20.11)": "passed",
   "a player aged 13 to 15, refused the top list, is shown the featured list and offered only it and their own islands, with no failure shown (§20.7)": "passed",
   "a player can raid their own island from the builder: the heist plays it, the server's check judges it, and the result leads back": "passed",
+  "a portrait for a round frame is head and shoulders, centred on the face and cached by kind and form, and a crew record finds its own (21.3, 21.8)": "passed",
   "a portrait is made once a kind and look and shared, cut square from the top of what is drawn, a stray glint left out (21.3)": "passed",
   "a pressed button squashes slightly and sinks onto its drop within 250 ms, easing out, and back; under reduced motion the change is immediate (§21.8, §20.8)": "passed",
   "a purchase asks the server first, then the store with the server's intent, then sends the store's receipt through the outbox; a gift names its friend (F41, §20.2, §24.12)": "passed",
