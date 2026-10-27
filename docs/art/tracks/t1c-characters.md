@@ -277,6 +277,13 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
    glare. Metal sky and a hotter core (the belly still glows warm).
 7. Install: relief 256 against 128 in the hero view, no visible change.
 8. All 24 portraits: Prism Mite too saturated; pastel.
+9. Each kind's sheen colour from its design module (`sheen` in the
+   manifest; `FACTS_ONLY=1 node tools/art/export.mjs` reads the modules'
+   facts again without an export). Scored against the 24 portraits by a
+   colour histogram: neutral overall (Rambler and Prism Mite closer,
+   Quarryback a little further; the Emberling keeps the warm white).
+10. Paint at 256² for the smallest kinds: rejected, the hero view's irises
+    lose their striations; the paint stays 512².
 
 ### Stills (`docs/art/shots/t1c/`, this session)
 
@@ -322,7 +329,22 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
 
 - T5: `set_night`, `readable_scale` for guards, and keeping the crew out of
   the guards' rings in the heist shot.
-- A per-kind sheen colour for every kind from the design's `def.sheen` in
-  the manifest (only the Golem has its own now), at the next full export.
-- Paint atlas: 512² is now two thirds of the install; a 384² atlas for the
-  smallest kinds (texels per unit over 500) would save about 1.5 MB.
+- Paint atlas: 512² is now most of the install. Downscaling it on import
+  costs the eyes; a smaller atlas would need the export to pack the eyes'
+  charts larger (more texels for the face, fewer for the back).
+- Bloomling's petals: a darker base toward magenta, as the design's
+  vertex colours run (#B0184E at the base to #FFB0CC at the tip).
+
+## Stopped here (fourth session, about 00:45 UTC)
+
+- **Checked:** `tools/check_all.sh` on this work: the simulation (326/326),
+  the server (393/393) and the client (339 of 340) pass, and every stage
+  after the client passes up to `check_dependencies`. Two failures are not
+  the characters': the Weaving-against-the-server client test (fails the
+  same on the base commit 1e8619b in this container) and
+  `check_dependencies`, whose proofs name tests missing from the committed
+  `client/status.json` (the integrator's file).
+- **Container setup this needed:** `rustup target add wasm32-unknown-unknown`,
+  `pip install gdtoolkit==4.*`, and `pip install playwright==1.63.0` (the
+  version whose browser is under /opt/pw-browsers).
+- **Still worse and next:** see the two sections above.
