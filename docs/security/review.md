@@ -1452,28 +1452,38 @@ index e404b41..67b99e4 100644
 
 ## Stopped here
 
-Twenty findings: one High, eight Medium, eleven Low.
+Wave 5, stopped at about 23:20 UTC on 27 October. Twenty-nine findings in
+all: one High, eleven Medium, seventeen Low.
 
-- **Fixed (12):** SR-01 (High); SR-02, SR-03, SR-07, SR-17 and SR-19
-  (Medium); SR-04, SR-05, SR-06, SR-08, SR-13 and SR-18 (Low). Each has a
-  test that failed before its fix and passes after.
-- **Needs the owner (6):** SR-12, SR-15 and SR-16 (Medium); SR-09, SR-10
-  and SR-14 (Low). Each test pins the behaviour as it stands; the decision
-  turns it round. SR-15 and SR-16 are the register's D60, G60 and G61,
-  open with the build left. The others are the build against a rule
-  (§12.15, §20.2, §17.7 with §20.7) or a rule without its number (§18.9's
-  cap), so no new register item was added: the register tracks the
-  document, and these are written up here with their choices.
-- **Sent to T11 (2):** SR-11, which T11 has fixed on `claude/auth`
-  (`11a8e3c`), and SR-20, still open, its test in
-  `server/test/security_t11.test.mjs`; and a note on what sign-out has to
-  do, which T11's sessions now answer (`POST /v1/session/end`, refresh
-  tokens). A trial merge of the two branches passes all 442 server tests.
+- **Fixed (21):** wave 4's twelve, plus this wave's nine, each with a test
+  that failed before its fix: SR-21, SR-25 and SR-28 (Medium: the web
+  deletion page refused every browser once deployed; one captured Game
+  Center proof signed in again with its salt respelled; made-up refresh
+  tokens held every player's renewal back), and SR-22, SR-23, SR-24, SR-26,
+  SR-27 and SR-29 (Low). SR-11 and SR-20 were fixed by T11.
+- **Needs the owner (6):** SR-09, SR-10, SR-12, SR-14, SR-15, SR-16, each
+  now a patch with its test turned round ("Ready to say yes to" and the
+  appendix): one word each.
+- **For the integrator:** this branch carries `claude/auth`'s wave 5 with
+  the conflicts resolved (`auth.mjs`, `auth_http.mjs`) and SR-24 and SR-28
+  held on its new paths; merge it after or instead of `claude/auth`'s
+  `0841c20`. SR-29: a server deployed with neither Game Center nor Google
+  configured now starts only with `RULEBORN_STUB_SIGNIN=1`.
+- **For T11:** SR-24, SR-25 and SR-28 changed its files (a few lines each);
+  session ids are sequential, not the 128-bit auth.md says; the Android
+  store's library is deprecated; deletion in the game takes the access
+  token alone (all in "Left as they are" or under SR-24).
+- **Read this wave:** every push of all nine other branches up to 22:53
+  (the table "Wave 5's diffs"); the server fuzzed again (125 routes, 23,625
+  calls) and the native extension with its new accessors; redirects and TLS
+  measured in the engine; the configuration against the market standard.
 
-Not reviewed in depth: the client's screens' layout code, beyond what they
-open, run, load, render as rich text or log; `tools/` beyond its supply
-chain; the design document's own security statements against each other.
+How it was checked this wave: `tools/check_all.sh` with two steps left out,
+since their tools are not in this container — `gdlint` and
+`tools/check_prototype_conformance.py` (Python `playwright`). Every other
+step ran on the final tree and passed, ending "All checks passed."
 
-What would be done next: SR-15 and SR-16 with the economy build (TC.12);
-the hold measurement off the request thread; a cap on realm snapshots like
-the Workshop's quota; and the client's event queue.
+What would be done next: the owner's six; the session id made random
+(T11); a deep-link design review when TD.23 builds them; the hold
+measurement off the request thread and a cap on realm snapshots (wave 4's
+list).
