@@ -186,10 +186,10 @@ func _stand(s: Dictionary, sages: Array) -> void:
 	if ids.size() > 1:
 		for step: int in [-1, 1]:
 			var to: Dictionary = sages[posmod(at + step, ids.size())]
-			var b := StageHeroKit.arrow(step < 0, Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT",
+			var b := StageHeroKit.small_arrow(step < 0, Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT",
 				str(to["name"])), _choose.bind(str(to["id"])))
 			b.set_meta("item", "step:%d" % step)
-			StageHeroSkin.on_stage(over, b, Control.PRESET_BOTTOM_LEFT if step < 0 else Control.PRESET_BOTTOM_RIGHT)
+			StageHeroSkin.on_stage(over, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
 
 
 ## The design's pair under the hero card: on heists or on guard, the one

@@ -219,10 +219,10 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 			for x: Dictionary in rows:
 				if int(x["id"]) == to:
 					name = str(x["name"])
-			var b := StageHeroKit.arrow(step < 0, Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT",
+			var b := StageHeroKit.small_arrow(step < 0, Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT",
 				name), _choose.bind(to))
 			b.set_meta("item", "step:%d" % step)
-			StageHeroSkin.on_stage(over, b, Control.PRESET_BOTTOM_LEFT if step < 0 else Control.PRESET_BOTTOM_RIGHT)
+			StageHeroSkin.on_stage(over, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
 	var state := StageHeroKit.chip(str(row.get("line", "")), "glass", "characterstates/" + str(row.get("state", "")))
 	state.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	hero_info.add_child(state)
@@ -244,7 +244,23 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 	var role_name := StageHeroKit.kicker(Strings.term("ROLE", str(c.get("role", ""))))
 	role_name.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	role.add_child(role_name)
-	hero_info.add_child(role)
+	# Its health beside its role, as the design's: the simulation's number.
+	var numbers: Dictionary = RulebornReplay.role_numbers().get(str(c.get("role", "")), {})
+	var health := int(numbers.get("health", -1))
+	var placed := false
+	if health >= 0:
+		var heart := StageHeroKit.chip("%d" % health, "card", "♥")
+		heart.accessibility_name = Strings.t("CHARACTER_STAT_SPOKEN", [Strings.t("CHARACTER_STAT_HEALTH"), str(health)])
+		heart.size_flags_horizontal = Control.SIZE_SHRINK_END
+		# Its own line when the column is narrow (a long language).
+		var line := HFlowContainer.new()
+		line.add_theme_constant_override("h_separation", UI.px(6))
+		line.add_child(role)
+		line.add_child(heart)
+		hero_info.add_child(line)
+		placed = true
+	if not placed:
+		hero_info.add_child(role)
 	var top := maxi(1, int(c.get("top", 1)))
 	hero_info.add_child(StageHeroBar.make(float(c.get("level", 1)) / float(top), Color("#3FBF7F"), "", 12.0))
 	hero_info.add_child(StageHeroKit.para(Strings.t("CHARACTER_LEVEL_OF", [int(c.get("level", 1)), top]), 14.0,
