@@ -27,6 +27,9 @@ var cards: VBoxContainer
 var form_note := ""
 ## The kind the hero stage shows; the first in the album when none is chosen.
 var chosen := ""
+## Which kinds the album shows, as the design's pills: "" all, "outfits"
+## those whose outfit is unlocked, "missing" those with a form not hatched.
+var shelf := ""
 
 
 func _ready() -> void:
@@ -81,7 +84,13 @@ func _build() -> void:
 	cards = VBoxContainer.new()
 	cards.add_theme_constant_override("separation", UI.px(10))
 	body.add_child(RosterScreen.padded(cards))
-	toggle = StageHeroMaterial.button(UI.button(Strings.t("FORMS_SHOW_MINE"), _toggle), "gold")
+	# A pill like the shelves it stands beside, gold so it reads as the
+	# album's own switch.
+	toggle = StageHeroMaterial.button(UI.button(Strings.t("FORMS_SHOW_MINE"), _toggle), "gold", 12.0)
+	toggle.add_theme_font_size_override("font_size", UI.text_px(14))
+	toggle.set_meta("points", 14.0)
+	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+		toggle.add_theme_stylebox_override(state, UI.clear_box(6, 4))
 	UI.fit_to(toggle, [Strings.t("FORMS_SHOW_ALL")])
 	column.add_child(StageHeroKit.tab_bar())
 
@@ -121,13 +130,16 @@ func _refresh() -> void:
 	var k := _chosen(kinds)
 	_stand(k)
 	_hero(k, outfits.get(k.get("kind", ""), {}))
+	cards.add_child(_errands(k, outfits.get(k.get("kind", ""), {})))
+	cards.add_child(_shelves(kinds, outfits))
 	cards.add_child(_count(slice))
 	var grid := GridContainer.new()
 	grid.columns = 1 if Settings.text_scale > 150 else (2 if Settings.text_scale > 100 else 3)
 	grid.add_theme_constant_override("h_separation", UI.px(8))
 	grid.add_theme_constant_override("v_separation", UI.px(8))
 	for each: Dictionary in kinds:
-		grid.add_child(_tile(each, outfits.get(each["kind"], {})))
+		if _on_shelf(each, outfits.get(each["kind"], {}), shelf):
+			grid.add_child(_tile(each, outfits.get(each["kind"], {})))
 	cards.add_child(grid)
 	# The chosen kind's forms and outfit under the album, as the design's
 	# hero card leads to them.
@@ -138,8 +150,73 @@ func _refresh() -> void:
 	cards.add_child(_sails(a["sails"], (slice.get("view", {}) as Dictionary).get("sails", [])))
 
 
-## The design's count line: the album's kicker, the forms hatched, each
-## note's count beside its icon, and Show mine.
+## Under the hero card, as the design's: the way to a Nursery, and the
+## chosen kind's outfit with how many of its forms are hatched.
+func _errands(k: Dictionary, o: Dictionary) -> Control:
+	var row: BoxContainer = HBoxContainer.new()
+	if Settings.text_scale > 125:
+		row = VBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	var find := UI.button(Strings.t("FORMS_FIND_NURSERY", UniversePresenter.building_name("nursery")),
+		func() -> void: App.services.router.go(&"hatch"))
+	StageHeroMaterial.button(find, "tab")
+	find.icon = Icons.texture("buildings/nursery") if Icons.has("buildings/nursery") else null
+	find.add_theme_constant_override("icon_max_width", UI.px(28))
+	find.set_meta("item", "find_nursery")
+	find.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(find)
+	if not k.is_empty() and not o.is_empty():
+		var v := VBoxContainer.new()
+		v.add_theme_constant_override("separation", 0)
+		v.add_child(StageHeroKit.kicker(Strings.t("FORMS_OUTFIT_LABEL")))
+		v.add_child(StageHeroKit.para(Strings.t("FORMS_OUTFIT_COUNT", [int(o["have"]), int(o["of"])]), 14.0))
+		var card := StageHeroMaterial.panel("rim" if int(o["have"]) >= int(o["of"]) else "card", v, 14.0, 8.0)
+		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		card.accessibility_name = str(k["outfit"])
+		row.add_child(card)
+	return row
+
+
+## The design's pills over the album: All, Outfits and Missing, each with
+## how many kinds it shows; the chosen one on the tab material.
+func _shelves(kinds: Array, outfits: Dictionary) -> Control:
+	var flow := HFlowContainer.new()
+	flow.add_theme_constant_override("h_separation", UI.px(6))
+	flow.add_theme_constant_override("v_separation", UI.px(6))
+	for which: String in ["", "outfits", "missing"]:
+		var n := kinds.filter(func(each: Dictionary) -> bool:
+			return _on_shelf(each, outfits.get(each["kind"], {}), which)).size()
+		var word := Strings.t("FORMS_FILTER_" + ("ALL" if which == "" else which.to_upper()))
+		var b := UI.button("%s · %d" % [word, n], func() -> void:
+			shelf = which
+			_refresh(), false, Color(), Strings.t("FORMS_FILTER_SPOKEN", [word, n]))
+		b.toggle_mode = true
+		b.button_pressed = shelf == which
+		b.set_meta("item", "shelf:" + which)
+		StageHeroMaterial.button(b, "tab" if shelf == which else "card", 12.0)
+		b.add_theme_font_size_override("font_size", UI.text_px(14))
+		b.set_meta("points", 14.0)
+		for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+			b.add_theme_stylebox_override(state, UI.clear_box(6, 4))
+		UI.fit(b)
+		flow.add_child(b)
+	# Show mine beside them: the server's own list of what the player has.
+	flow.add_child(toggle)
+	return flow
+
+
+## Whether a kind is on the album's `which` shelf (_shelves).
+static func _on_shelf(k: Dictionary, o: Dictionary, which: String) -> bool:
+	match which:
+		"outfits":
+			return not o.is_empty() and int(o["have"]) >= int(o["of"])
+		"missing":
+			return (k["forms"] as Array).any(func(f: Dictionary) -> bool: return int(f["owned"]) == 0)
+	return true
+
+
+## The design's count line: the album's kicker, the forms hatched, and
+## each note's count beside its icon.
 func _count(slice: Dictionary) -> Control:
 	var line := HFlowContainer.new()
 	line.add_theme_constant_override("h_separation", UI.px(10))
@@ -163,7 +240,6 @@ func _count(slice: Dictionary) -> Control:
 		each.accessibility_name = "%s: %d" % [FormsPresenter.note_name(note), int(had.get(note, 0))]
 		each.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		line.add_child(each)
-	line.add_child(toggle)
 	return line
 
 
