@@ -84,6 +84,8 @@ func _build() -> void:
 	stage = StageHero.new()
 	stage.custom_minimum_size = Vector2(0, UI.px(Tokens.number("size", "safe_top_points") + 245.0))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Clear of the place and state chips over the stage's top.
+	stage.headroom = 0.08
 	body.add_child(stage)
 	# The name on a gold-rimmed plate at the stage's foot, as the design's.
 	title_label = UI.title("")
