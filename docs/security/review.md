@@ -396,8 +396,12 @@ decision).
   the page passes a server-issued nonce through GSI and the server requires
   it in the token, or the deletion takes only the web client id's tokens
   and a recent `iat`.
-- **Status:** sent to T11, who owns sign-in; no test here, since the change
-  is a decision about the token, not a defect a test can pin.
+- **Test:** `server/test/security_t11.test.mjs` (SR-11), with the real
+  `GoogleSignIn`: one ID token minted for the Android client signs the game
+  in at `POST /v1/session` and deletes the account at
+  `POST /v1/account/delete`. It pins the behaviour as it stands; the fix
+  turns it round.
+- **Status:** sent to T11, who owns sign-in.
 
 ## Left as they are (Info)
 
