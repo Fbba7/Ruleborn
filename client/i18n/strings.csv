@@ -1231,6 +1231,8 @@ SCREEN_COSMETIC_TITLE,%s,%s,%s,%s,%s,%s
 SCREEN_HEISTS,Heists,Heists,Assaltos,Assaltos,Raubzüge,Casses
 SCREEN_DEFENCE,Defence,Defense,Defesa,Defesa,Verteidigung,Défense
 SCREEN_FEED,Feed,Feed,Novidades,Novidades,Neuigkeiten,Fil
+SCREEN_TAB_CHALLENGE,Challenge,Challenge,Desafio,Desafio,Herausforderung,Défi
+SCREEN_TAB_INVITE,Invite,Invite,Convite,Convite,Einladen,Inviter
 SCREEN_COST,Cost,Cost,Custo,Custo,Kosten,Coût
 SCREEN_READY_IN,Ready in,Ready in,Pronta em,Pronta em,Fertig in,Prête dans
 SCREEN_CHOOSE,Choose %s,Choose %s,Escolher %s,Escolher %s,%s wählen,Choisir %s

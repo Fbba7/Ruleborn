@@ -7,6 +7,8 @@ extends Control
 var controller: ShareController
 var body: VBoxContainer
 var status_label: Label
+## The tab on show, as the design's strip: "challenge" or "invite".
+var tab_shown := "challenge"
 
 
 func _ready() -> void:
@@ -43,6 +45,12 @@ func _refresh() -> void:
 	for child in body.get_children():
 		body.remove_child(child)
 		child.queue_free()
+	body.add_child(ScreenParts.segmented([
+		{"text": Strings.t("SCREEN_TAB_CHALLENGE"), "key": "challenge", "on": tab_shown == "challenge"},
+		{"text": Strings.t("SCREEN_TAB_INVITE"), "key": "invite", "on": tab_shown == "invite"}],
+		func(key: String) -> void:
+			tab_shown = key
+			_refresh()))
 	var link := VBoxContainer.new()
 	link.add_theme_constant_override("separation", UI.px(8))
 	link.add_child(_title("screens", "realm", Strings.t("SCREEN_SHARE_CHALLENGE")))
@@ -50,12 +58,14 @@ func _refresh() -> void:
 	text.set_meta("link", true)
 	link.add_child(ScreenKit.panel("parchment", text, 14.0, 10.0))
 	text.add_theme_color_override("font_color", ScreenKit.ink("parchment"))
-	var row := UI.row(8.0)
-	row.add_child(_offer(s["make"], s["busy"], controller.make_link, "gold"))
+	var pair: Array = [_offer(s["make"], s["busy"], controller.make_link, "gold")]
 	if not (s["copy"] as Dictionary).is_empty():
-		row.add_child(_offer(s["copy"], s["busy"], controller.copy, "leather"))
-	link.add_child(row)
-	body.add_child(ScreenKit.panel("card_lit", link, 18.0, 12.0))
+		pair.append(_offer(s["copy"], s["busy"], controller.copy, "leather"))
+	link.add_child(_pair(pair))
+	# Both built, the one chosen shown.
+	var link_card := ScreenKit.panel("card_lit", link, 18.0, 12.0)
+	link_card.visible = tab_shown == "challenge"
+	body.add_child(link_card)
 	var invite := VBoxContainer.new()
 	invite.add_theme_constant_override("separation", UI.px(8))
 	invite.set_meta("section", "invite")
@@ -70,12 +80,13 @@ func _refresh() -> void:
 	if s["invitation"] != "":
 		var said := ScreenKit.text(s["invitation"], 15.0, "words", "parchment", false, true)
 		invite.add_child(ScreenKit.panel("parchment", said, 14.0, 10.0))
-	var row2 := UI.row(8.0)
-	row2.add_child(_offer(s["invite"], s["busy"], controller.make_invite, "gold"))
+	var pair2: Array = [_offer(s["invite"], s["busy"], controller.make_invite, "gold")]
 	if not (s["copy_invite"] as Dictionary).is_empty():
-		row2.add_child(_offer(s["copy_invite"], s["busy"], controller.copy.bind("invite"), "leather"))
-	invite.add_child(row2)
-	body.add_child(ScreenKit.panel("card", invite, 18.0, 12.0))
+		pair2.append(_offer(s["copy_invite"], s["busy"], controller.copy.bind("invite"), "leather"))
+	invite.add_child(_pair(pair2))
+	var invite_card := ScreenKit.panel("card", invite, 18.0, 12.0)
+	invite_card.visible = tab_shown == "invite"
+	body.add_child(invite_card)
 	var limits := VBoxContainer.new()
 	limits.add_theme_constant_override("separation", UI.px(6))
 	limits.add_child(_title("settingsandwellbeing", "parentcontrols", Strings.t("SHARE_LIMITS")))
@@ -88,6 +99,16 @@ func _refresh() -> void:
 		r.add_child(l)
 		limits.add_child(r)
 	body.add_child(ScreenKit.panel("card", limits, 18.0, 12.0))
+
+
+## A card's buttons side by side in equal shares, their words wrapping;
+## stacked at large text.
+static func _pair(buttons: Array) -> Control:
+	for b: Button in buttons:
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		b.custom_minimum_size.x = UI.px(96)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return ScreenParts.columns(buttons, 8.0)
 
 
 ## A card's heading: its icon and its name in Marcellus.
