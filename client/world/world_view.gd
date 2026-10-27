@@ -229,15 +229,11 @@ func _light_figures() -> void:
 	var night := hour >= 19 or hour < 6
 	for actor: Node3D in _crew:
 		var figure := actor.get_node_or_null("Rig/Figure")
-		if figure != null and figure.has_method("material"):
-			var m := figure.call("material") as ShaderMaterial
-			if m != null:
-				# By day a rim in the member's role colour, so the crew stands
-				# off painted grass and reads as the player's own.
-				var role: Color = Palette.ROLE.get(str(actor.get_meta("role", "")), Color(0.62, 0.83, 1.0))
-				m.set_shader_parameter("rim_strength", 1.6 if night else 0.9)
-				m.set_shader_parameter("lift", 0.85 if night else 0.55)
-				m.set_shader_parameter("rim_colour", Color("#FFD89A") if night else role.lightened(0.35))
+		if figure != null and figure.has_method("set_night"):
+			# A rim in the member's role colour, so the crew stands off painted
+			# grass and reads as the player's own; T1's model keeps its sheen.
+			var role: Color = Palette.ROLE.get(str(actor.get_meta("role", "")), Color(0.62, 0.83, 1.0))
+			figure.call("set_night", night, role.lightened(0.35))
 
 
 static func material(shader: Shader, outlined := false) -> ShaderMaterial:

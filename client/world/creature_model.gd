@@ -103,6 +103,8 @@ var _outline: ShaderMaterial
 var _gear: Dictionary = {}
 var _fur := 0
 var _lift := 0.5
+## The crew's role colour for the rim, when set_night gives one.
+var _side := Color(0, 0, 0, 0)
 
 
 ## A new model of `kind_name`, playing its idle; null for an unknown kind.
@@ -241,9 +243,12 @@ func set_guard(on: bool) -> void:
 
 ## By night (§21.2: "lanterns and glows carry the realm") a stronger, warmer
 ## rim and a paler sheen, so the figure reads against the dark ground; the
-## kind's own sheen and the guard's red rim are kept under it.
-func set_night(on: bool) -> void:
+## kind's own sheen and the guard's red rim are kept under it. `side`, when
+## given, is the rim of the player's own side (a crew member's role colour),
+## so the crew read as theirs against painted grass by day.
+func set_night(on: bool, side := Color(0, 0, 0, 0)) -> void:
 	night = on
+	_side = side
 	_material.set_shader_parameter("rim_strength", NIGHT_RIM if on else DAY_RIM)
 	_body_param("lift", minf(1.0, _lift * (1.7 if on else 1.0)) * (0.25 if form == &"hush" else 1.0))
 	_material.set_shader_parameter("rim_colour", _rim())
@@ -472,7 +477,7 @@ func _ink() -> void:
 
 # The rim's colour: the kind's, the guard's red, warmed toward lamplight by night.
 func _rim() -> Color:
-	var c := GUARD_RIM if guard else Color(str(info.get("rim", "#9FD4FF")))
+	var c := GUARD_RIM if guard else (_side if _side.a > 0.0 else Color(str(info.get("rim", "#9FD4FF"))))
 	return c.lerp(NIGHT_RIM_COLOUR, 0.6) if night else c
 
 

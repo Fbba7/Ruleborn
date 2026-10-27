@@ -117,14 +117,21 @@ func _model() -> void:
 	c.set_night(true)
 	var red_at_night: bool = (c.material().get_shader_parameter("rim_colour") as Color).r > 0.9 \
 		and c.material().get_shader_parameter("far_rim_colour") == CreatureModel.GUARD_RIM
+	c.set_night(false, Color.GREEN)
+	var guard_kept := (c.material().get_shader_parameter("rim_colour") as Color).is_equal_approx(CreatureModel.GUARD_RIM)
 	c.set_night(false)
 	check.call("characters: a guard's red rim holds by night and small on screen, so it is told from the crew (21.6)",
-		red_at_night)
+		red_at_night and guard_kept)
 	c.set_guard(false)
 	await tree.process_frame
 	check.call("characters: as a guard a ruleborn wears a sash and carries a lantern on a crook over its head, on its "
 		+ "own bones, and takes them off (21.6)", sash and over_head and chest.get_node_or_null("lantern") == null,
 		"sash %s, lantern top %.2f over head %s" % [sash, top, over_head])
+	c.set_night(false, Color.GREEN)
+	var side_rim := (c.material().get_shader_parameter("rim_colour") as Color).is_equal_approx(Color.GREEN)
+	c.set_night(false)
+	check.call("characters: a crew member's rim takes its side's colour by day",
+		side_rim)
 	c.set_hero(true)
 	var hero := float(c.material().get_shader_parameter("hero")) == 1.0
 	c.set_hero(false)
@@ -133,6 +140,34 @@ func _model() -> void:
 	host.queue_free()
 	_patterns()
 	_looks()
+	_busts()
+
+
+# The heist's crew row and Sage disc (02-heist.png): a bust of every ruleborn
+# and Sage, framed on its head and chest, cut round, kept once.
+func _busts() -> void:
+	var unframed: Array[String] = []
+	for k: String in RULEBORN + ["archivist", "tinkerer", "gardener", "wanderer", "chronicler", "lamplighter"]:
+		var names: Array[String] = []
+		for s: Dictionary in (CreatureModel.manifest()[k] as Dictionary).get("sockets", []):
+			names.append(str(s.get("name", "")))
+		if not (names.has("head_top") and names.has("chest")):
+			unframed.append(k)
+	var t := CreatureBust.of("glass_golem", "guard", Color.ORANGE)
+	var kept := CreatureBust.of("glassgolem", "guard", Color.ORANGE) == t and CreatureBust.of("glassgolem") != t
+	check.call("characters: every ruleborn's and Sage's bust is framed on its head and chest, one texture per kind, "
+		+ "form and ground", unframed.is_empty() and kept and t.get_width() == CreatureBust.SIZE,
+		"unframed: %s" % [unframed])
+	var drawn := Image.create_empty(64, 64, false, Image.FORMAT_RGBA8)
+	drawn.fill(Color(0.2, 0.4, 0.9, 0.0))
+	drawn.fill_rect(Rect2i(24, 16, 16, 40), Color(0.9, 0.2, 0.2, 1.0))
+	var studio: GDScript = load("res://world/creature_bust_studio.gd")
+	var lit: Image = studio.call("round_cut", drawn.duplicate(), Color.ORANGE)
+	var clear: Image = studio.call("round_cut", drawn, Color.TRANSPARENT)
+	var mid := CreatureBust.SIZE / 2
+	check.call("characters: a bust is cut round, the figure over its lit ground, or clear behind it",
+		lit.get_pixel(0, 0).a == 0.0 and lit.get_pixel(mid, 8).a == 1.0 and lit.get_pixel(mid, 8).g > 0.5
+		and clear.get_pixel(mid, 8).a == 0.0 and clear.get_pixel(mid, mid).r > 0.8)
 
 
 # §21.6: a form "changes a ruleborn's pattern, glow and one accessory": each
