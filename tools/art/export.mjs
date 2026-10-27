@@ -55,7 +55,10 @@ function moduleFacts(file) {
 		const k = f('emissiveIntensity') || 1;
 		surface.emit = [0, 2, 4].map((i) => round(lin(em[1].slice(i, i + 2)) * k, 4));
 	}
-	return { rim: rim ? '#' + rim[1].toUpperCase() : '#9FD4FF', glow: num(/vcGlow:([\d.]+)/) || 0, fur: furFacts, surface };
+	// The hero pages' sheen colour, the module's own (in its def, not a part's material).
+	const sheen = src.match(/const def=\{[^\n]*?sheen:0x([0-9A-Fa-f]{6})/);
+	return { rim: rim ? '#' + rim[1].toUpperCase() : '#9FD4FF', sheen: sheen ? '#' + sheen[1].toUpperCase() : undefined,
+		glow: num(/vcGlow:([\d.]+)/) || 0, fur: furFacts, surface };
 }
 
 function seedScript(kind) {
@@ -252,6 +255,23 @@ async function main() {
 		fs.writeFileSync(manPath, JSON.stringify(manifest, null, '\t') + '\n');
 		return;
 	}
+	if (process.env.FACTS_ONLY) {
+		// Only read the modules' facts (rim, sheen, glow, surface, fur) into the manifest again.
+		const manPath = path.join(outDir, 'manifest.json');
+		const manifest = JSON.parse(fs.readFileSync(manPath, 'utf8'));
+		for (const k of want.length ? want : Object.keys(manifest.kinds)) {
+			if (!KINDS[k]) continue;
+			const facts = moduleFacts(KINDS[k].module);
+			const e = manifest.kinds[k];
+			const kept = Object.assign({}, e);
+			const order = Object.keys(e);
+			order.splice(order.indexOf('rim') + 1, 0, 'sheen');
+			Object.assign(kept, facts);
+			manifest.kinds[k] = Object.fromEntries([...new Set(order)].filter((x) => kept[x] !== undefined).map((x) => [x, kept[x]]));
+		}
+		fs.writeFileSync(manPath, JSON.stringify(manifest, null, '\t') + '\n');
+		return;
+	}
 	if (process.env.IMPORT_ONLY) {
 		// Only rewrite the scenes' import settings (no export).
 		for (const k of want.length ? want : Object.keys(KINDS)) sceneImport(path.join(outDir, `${k}.glb`));
@@ -324,6 +344,7 @@ async function main() {
 				expressions: info.expressions,
 				sockets: info.sockets,
 				rim: facts.rim,
+				sheen: facts.sheen,
 				glow: facts.glow,
 				surface: facts.surface,
 				fur: facts.fur,
