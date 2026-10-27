@@ -689,6 +689,15 @@
       ]
     },
     {
+      "name": "Rehearsal crews",
+      "section": "13",
+      "task": "D66",
+      "what": "§13's three rehearsal crews as policies in the simulation (sim/src/reference.rs `Style`, `rehearse`), each the reference crew's code with one difference: cautious keeps its route and waits while a guard could see its next tile, and never runs; greedy loads the bag full and does not watch the clock; fast takes the shortest walk and runs, never planning round what it sees. A rehearsal is a replay like any other, verified as one; the client plays it back and shows its route and report.",
+      "tests": [
+        "a_rehearsal_crew_plays_its_style_on_the_same_simulation"
+      ]
+    },
+    {
       "name": "Universes",
       "section": "5.4",
       "task": "D71",

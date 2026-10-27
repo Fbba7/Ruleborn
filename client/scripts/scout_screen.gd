@@ -17,7 +17,10 @@ var scout: StageScout
 var _sheet: ScrollContainer
 var _keys: Control
 var _top: Control
-var _heading: PanelContainer
+## The report's tabs, as the design's: what is to be had, and what stands
+## in the way.
+var _tab := "loot"
+var _tabs: VBoxContainer
 var _dock: HFlowContainer
 var _drawn_key := ""
 
@@ -40,17 +43,15 @@ func _build() -> void:
 	view = StageScreen.mount(self, column)
 	view.fill = 1.12
 	scout = StageScout.new(view)
-	var top := HBoxContainer.new()
-	top.add_theme_constant_override("separation", UI.px(8))
-	_heading = OverlayHud.heading(Strings.t("SCOUT_TITLE"), "")
-	top.add_child(_heading)
-	_top = top
-	column.add_child(top)
+	_top = OverlayTop.bar(func() -> void: App.services.router.go(&"observatory"), Strings.t("SCOUT_TITLE"), "")
+	column.add_child(_top)
 	status_label = UI.status("info", "")
 	status_label.add_theme_font_size_override("font_size", UI.text_px(13))
 	status_label.set_meta("points", 13.0)
 	column.add_child(UI.plate(status_label, "glass"))
 	StageScreen.window(column, 1.3)
+	_tabs = VBoxContainer.new()
+	column.add_child(_tabs)
 	var s := ScrollContainer.new()
 	s.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	s.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -64,6 +65,8 @@ func _build() -> void:
 	column.add_child(s)
 	_sheet = StageScreen.sheet(body, 1.0)
 	_keys = StageScreen.handle(column, _sheet)
+	# The tabs sit on the sheet, under its fold key.
+	column.move_child(_tabs, s.get_index())
 	_dock = HFlowContainer.new()
 	_dock.alignment = FlowContainer.ALIGNMENT_CENTER
 	_dock.add_theme_constant_override("h_separation", UI.px(12))
@@ -78,16 +81,23 @@ func _refresh() -> void:
 	for child: Node in body.get_children():
 		body.remove_child(child)
 		child.queue_free()
-	for child: Node in _dock.get_children():
-		child.queue_free()
-	_dock.add_child(OverlayHud.back_key(func() -> void: App.services.router.go(&"observatory")))
+	for holder: Node in [_dock, _tabs]:
+		for child: Node in holder.get_children():
+			child.queue_free()
 	if not s["ready"]:
 		UI.set_status(status_label, "info", Strings.t("SCOUT_NONE_CHOSEN"))
 		(status_label.get_parent() as Control).visible = true
 		return
 	UI.set_status(status_label, "info", s["protected"])
 	(status_label.get_parent() as Control).visible = status_label.text != ""
-	(_heading.find_child("Title", true, false) as Label).text = s["title"]
+	(_top.find_child("Title", true, false) as Label).text = s["title"]
+	var tabs := OverlayTop.tabs(["loot", "threats"], [Strings.t("SCOUT_TAB_LOOT"), Strings.t("SCOUT_TAB_THREATS")],
+		_tab, func(id: String) -> void:
+			_tab = id
+			_refresh.call_deferred())
+	tabs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_tabs.add_child(tabs)
+	var threats := _tab == "threats"
 	var card: Dictionary = s["card"]
 	var realm: Dictionary = card.get("realm", {})
 	var lines: Array = s["lines"]
@@ -107,11 +117,13 @@ func _refresh() -> void:
 	counts.add_child(OverlayHud.pill("hud/shield", str(ObservatoryPresenter.total(realm.get("wards", {}))),
 		lines[3], "card"))
 	hero.add_child(counts)
+	hero.visible = not threats
 	body.add_child(hero)
 	var sec := OverlayHud.section("island", lines[0])
 	var row := OverlayHud.pills_of(sec)
 	for p: Control in OverlayFacts.universe(card, s["facts"], false):
 		row.add_child(p)
+	sec.visible = not threats
 	body.add_child(sec)
 	sec = OverlayHud.section("laws", lines[1])
 	row = OverlayHud.pills_of(sec)
@@ -120,16 +132,19 @@ func _refresh() -> void:
 		laws.append(OverlayHud.pill("generalui/cancel", "0", lines[1]))
 	for p: Control in laws:
 		row.add_child(p)
+	sec.visible = threats
 	body.add_child(sec)
 	sec = OverlayHud.section("defence", "%s · %s" % [lines[2], lines[3]])
 	row = OverlayHud.pills_of(sec)
 	for p: Control in OverlayFacts.defence(realm):
 		row.add_child(p)
+	sec.visible = threats
 	body.add_child(sec)
 	# What a scout cannot know (§12.4), behind its padlock.
 	var hidden := OverlayHud.pill("generalui/lock", lines[5], lines[5], "track")
 	(hidden.find_child("Words", true, false) as Label).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	(hidden.find_child("Words", true, false) as Label).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hidden.visible = threats
 	body.add_child(hidden)
 	var o: Dictionary = s["raid"]
 	var raid := OverlayHud.main_key(Strings.t("SCOUT_PLAN_KEY"), ObservatoryPresenter.fee(card),
@@ -137,6 +152,7 @@ func _refresh() -> void:
 	raid.disabled = not o["can"]
 	raid.set_meta("key", o["key"])
 	raid.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	raid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_dock.add_child(raid)
 	_draw_world(card)
 

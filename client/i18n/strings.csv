@@ -879,6 +879,8 @@ OBS_SCOUT_SPOKEN,Scout %s,Scout %s,Espiar %s,Espiar %s,%s auskundschaften,Reconn
 OBS_REFRESH,New targets for %s Aether,New targets for %s Aether,Novos alvos por %s de Aether,Novos alvos por %s de Aether,Neue Ziele für %s Aether,Nouvelles cibles pour %s d'Aether
 OBS_FAILED,The Observatory did not answer: %s,The Observatory did not answer: %s,O Observatório não respondeu: %s,O Observatório não respondeu: %s,Das Observatorium hat nicht geantwortet: %s,L'Observatoire n'a pas répondu : %s
 SCOUT_TITLE,Scout report,Scout report,Relatório de espionagem,Relatório de espionagem,Späherbericht,Rapport de reconnaissance
+SCOUT_TAB_LOOT,Loot,Loot,Saque,Saque,Beute,Butin
+SCOUT_TAB_THREATS,Threats,Threats,Ameaças,Ameaças,Gefahren,Menaces
 SCOUT_NONE_CHOSEN,Choose a target in the Observatory,Choose a target in the Observatory,Escolha um alvo no Observatório,Escolhe um alvo no Observatório,Wähle ein Ziel im Observatorium,Choisis une cible dans l'Observatoire
 SCOUT_REALM,%s · realm level %d · Vault level %d,%s · realm level %d · Vault level %d,%s · reino nível %d · Cofre nível %d,%s · reino nível %d · Cofre nível %d,%s · Reichslevel %d · Tresor-Level %d,%s · royaume niveau %d · Coffre niveau %d
 SCOUT_OUTER,An outer realm,An outer realm,Um reino exterior,Um reino exterior,Ein äußeres Reich,Un royaume extérieur
@@ -1215,6 +1217,38 @@ DEFENCES_PYLON,%s pylon,%s pylon,pilar de %s,pilar de %s,%s-Pylon,pylône de %s
 DEFENCES_STAT_HELD,Held,Held,Seguradas,Seguradas,Gehalten,Tenues
 DEFENCES_STAT_LEAKED,Leaked,Leaked,Vazadas,Vazadas,Durchgelassen,Percées
 DEFENCES_STAT_PARTIAL,Partial,Partial,Parciais,Parciais,Teilweise,Partielles
+REHEARSE_TAB,Rehearse,Rehearse,Ensaiar,Ensaiar,Proben,Répéter
+DEFENCES_TAB_LOG,Defence log,Defense log,Registro de defesa,Registo de defesa,Verteidigungslog,Journal de défense
+REHEARSE_REPLAY_CAUTIOUS,Replay · cautious crew,Replay · cautious crew,Replay · equipe cautelosa,Repetição · equipa cautelosa,Wiederholung · vorsichtige Crew,Replay · équipe prudente
+REHEARSE_REPLAY_GREEDY,Replay · greedy crew,Replay · greedy crew,Replay · equipe gananciosa,Repetição · equipa gananciosa,Wiederholung · gierige Crew,Replay · équipe avide
+REHEARSE_REPLAY_FAST,Replay · fast crew,Replay · fast crew,Replay · equipe rápida,Repetição · equipa rápida,Wiederholung · schnelle Crew,Replay · équipe rapide
+REHEARSE_STYLE_CAUTIOUS,Cautious,Cautious,Cautelosa,Cautelosa,Vorsichtig,Prudente
+REHEARSE_STYLE_CAUTIOUS_LINE,"Waits for gaps, never runs","Waits for gaps, never runs","Espera brechas, nunca corre","Espera por aberturas, nunca corre","Wartet auf Lücken, rennt nie","Attend les failles, ne court jamais"
+REHEARSE_STYLE_GREEDY,Greedy,Greedy,Gananciosa,Gananciosa,Gierig,Avide
+REHEARSE_STYLE_GREEDY_LINE,Loads until the bag is full,Loads until the bag is full,Carrega até a bolsa encher,Carrega até o saco encher,"Lädt, bis der Sack voll ist",Charge jusqu'à remplir le sac
+REHEARSE_STYLE_FAST,Fast,Fast,Rápida,Rápida,Schnell,Rapide
+REHEARSE_STYLE_FAST_LINE,Runs the shortest route,Runs the shortest route,Corre pela rota mais curta,Corre pela rota mais curta,Rennt den kürzesten Weg,Court par le plus court chemin
+REHEARSE_RESULT,Result,Result,Resultado,Resultado,Ergebnis,Résultat
+REHEARSE_TIME,Time,Time,Tempo,Tempo,Zeit,Temps
+REHEARSE_SEEN,Times seen,Times seen,Vezes vista,Vezes vista,Mal gesehen,Fois vue
+REHEARSE_CARRIED,Carried out,Carried out,Levado,Levado,Hinausgetragen,Emporté
+REHEARSE_RUN,Run rehearsal,Run rehearsal,Fazer ensaio,Fazer ensaio,Probe starten,Lancer l'essai
+REHEARSE_RUN_LINE,Free · unlimited · no rewards,Free · unlimited · no rewards,Grátis · ilimitado · sem recompensas,Grátis · ilimitado · sem recompensas,Kostenlos · unbegrenzt · keine Belohnung,Gratuit · illimité · sans récompense
+REHEARSE_LEGEND_SEEN,seen,seen,vista,vista,gesehen,vue
+REHEARSE_LEGEND_SIGHT,guard sight,guard sight,visão do guarda,visão do guarda,Wächterblick,vue des gardes
+REHEARSE_LEGEND_VAULT,Vault,Vault,Cofre,Cofre,Tresor,Coffre
+REHEARSE_GRADE_CLEAN,Escaped quietly,Escaped quietly,Escapou em silêncio,Escapou em silêncio,Leise entkommen,Échappée en silence
+REHEARSE_GRADE_LOUD,Escaped loudly,Escaped loudly,Escapou com alarde,Escapou com alarido,Laut entkommen,Échappée avec fracas
+REHEARSE_GRADE_PARTIAL,Some got out,Some got out,Alguns saíram,Alguns saíram,Einige kamen raus,Certains sont sortis
+REHEARSE_GRADE_FOILED,Held: none got out,Held: none got out,Resistiu: ninguém saiu,Resistiu: ninguém saiu,Gehalten: niemand kam raus,Tenu : personne n'est sorti
+REHEARSE_PLAYING,The crew is on your island…,The crew is on your island…,A equipe está na sua ilha…,A equipa está na tua ilha…,Die Crew ist auf deiner Insel …,L'équipe est sur votre île…
+REHEARSE_NONE,Pick a crew and run it against your island,Pick a crew and run it against your island,Escolha uma equipe e mande-a contra sua ilha,Escolhe uma equipa e manda-a contra a tua ilha,Wähle eine Crew und schick sie gegen deine Insel,Choisissez une équipe et lancez-la contre votre île
+DEFENCES_TAG_HELD,Held,Held,Resistiu,Resistiu,Gehalten,Tenu
+DEFENCES_TAG_OUT,Got out,Got out,Escaparam,Escaparam,Entkommen,Sortis
+DEFENCES_HELD_THEM,held them %s,held them %s,segurou-os %s,segurou-os %s,hielt sie %s auf,les a tenus %s
+DEFENCES_CAUGHT_OF,caught %d of %d,caught %d of %d,capturou %d de %d,capturou %d de %d,%d von %d gefasst,%d sur %d capturés
+DEFENCES_DENIED_SHORT,Denied %s,Denied %s,Negado %s,Negado %s,Verhindert %s,Refusé %s
+DEFENCES_REPORT_KEY,Report ›,Report ›,Relatório ›,Relatório ›,Bericht ›,Rapport ›
 OBS_DEPTH,Up to %d realms to the Heart,Up to %d realms to the Heart,Até %d reinos até o Coração,Até %d reinos até ao Coração,Bis zu %d Reiche bis zum Herzen,Jusqu'à %d royaumes jusqu'au Cœur
 OBS_FAULTS_FROM,Faults open from %s,Faults open from %s,Falhas abertas a partir de %s,Falhas abertas a partir de %s,Risse öffnen sich von %s aus,Failles ouvertes depuis %s
 OBS_OUTER_REALM,outer realm %d,outer realm %d,reino exterior %d,reino exterior %d,Außenreich %d,royaume extérieur %d
@@ -1237,6 +1271,7 @@ CUR_TAB_POSTS,Posts,Posts,Postos,Postos,Posten,Postes
 CUR_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
 CUR_TAB_NAME,Name,Name,Nome,Nome,Name,Nom
 CUR_KICKER,Your defence,Your defense,Sua defesa,A tua defesa,Deine Abwehr,Ta défense
+CUR_TEST_RUN,Test run,Test run,Testar,Testar,Testlauf,Essai
 ERR_FUND_ADULTS_ONLY,the Island Fund is open from 18,the Island Fund is open from 18,o Island Fund é aberto a partir dos 18,o Island Fund está aberto a partir dos 18,der Island Fund ist ab 18 offen,l'Island Fund est ouvert dès 18 ans
 LANDING_REALM_ONE,"In %s, one link from the Heart","In %s, one link from the Heart","Em %s, a uma ligação do Coração","Em %s, a uma ligação do Coração","In %s, eine Verbindung vom Herzen","Dans %s, à un lien du Cœur"
 LANDING_REALM_MANY,"In %s, %d links from the Heart","In %s, %d links from the Heart","Em %s, a %d ligações do Coração","Em %s, a %d ligações do Coração","In %s, %d Verbindungen vom Herzen","Dans %s, à %d liens du Cœur"
@@ -1481,3 +1516,10 @@ RESULT_RENOWN,Renown,Renown,Renome,Renome,Ruhm,Renommée
 RESULT_FEE_RETURNED,Entry fee %s returned,Entry fee %s returned,Taxa de entrada de %s devolvida,Taxa de entrada de %s devolvida,Eintrittsgebühr %s erstattet,Droit d'entrée de %s rendu
 RESULT_FEE_HALF,"Entry fee %s, %s returned","Entry fee %s, %s returned","Taxa de entrada de %s, %s devolvidos","Taxa de entrada de %s, %s devolvidos","Eintrittsgebühr %s, %s erstattet","Droit d'entrée de %s, %s rendus"
 RESULT_FEE_PAID,Entry fee %s paid to the defender,Entry fee %s paid to the defender,Taxa de entrada de %s paga ao defensor,Taxa de entrada de %s paga ao defensor,Eintrittsgebühr %s an den Verteidiger gezahlt,Droit d'entrée de %s payé au défenseur
+LANDING_DECK,Landings,Landings,Desembarques,Desembarques,Landungen,Débarquements
+LANDING_DECK_HINT,Tap a card to see its island,Tap a card to see its island,Toque num cartão para ver a ilha,Toca num cartão para ver a ilha,Tippe auf eine Karte für ihre Insel,Touchez une carte pour voir son île
+LANDING_DECK_FAULT,"Through a fault, straight to the Heart","Through a fault, straight to the Heart","Por uma falha, direto ao Coração","Por uma falha, direto ao Coração",Durch einen Riss direkt zum Herzen,"Par une faille, droit au Cœur"
+LANDING_DECK_SPOTS,%d spots · %d covered,%d spots · %d covered,%d pontos · %d cobertos,%d pontos · %d cobertos,%d Stellen · %d gedeckt,%d points · %d couverts
+LANDING_DECK_HOPS,%d hops to the Vault · %d spots,%d hops to the Vault · %d spots,%d saltos até o Cofre · %d pontos,%d saltos até ao Cofre · %d pontos,%d Sprünge zum Tresor · %d Stellen,%d sauts jusqu'au Coffre · %d points
+LANDING_DECK_HOP,1 hop to the Vault · %d spots,1 hop to the Vault · %d spots,1 salto até o Cofre · %d pontos,1 salto até ao Cofre · %d pontos,1 Sprung zum Tresor · %d Stellen,1 saut jusqu'au Coffre · %d points
+LANDING_DECK_ISLAND,This island,This island,Esta ilha,Esta ilha,Diese Insel,Cette île

@@ -6335,6 +6335,38 @@ fn a_hold_is_counted_over_the_reference_crews_raids_their_landings_drawn_from_th
 }
 
 #[test]
+fn a_rehearsal_crew_plays_its_style_on_the_same_simulation() {
+    // §13: "Cautious waits whenever a guard could see its next tile and
+    // never runs; greedy loads until the bag is full, whatever the clock;
+    // fast takes the shortest route and runs. Each is a policy in the
+    // simulation, run on the same code as real heists."
+    use crate::island::Island;
+    use crate::reference::{rehearse, Style};
+    use crate::replay::Kind;
+    let island = Island::example();
+    assert_eq!(Style::from_u8(3), Some(Style::Fast));
+    assert_eq!(Style::from_u8(4), None);
+    let gaits = |h: &crate::replay::Heist| -> Vec<i16> {
+        h.commands.iter().filter(|c| c.kind == Kind::Gait).map(|c| c.x).collect()
+    };
+    let loads = |h: &crate::replay::Heist| -> Vec<i16> {
+        h.commands.iter().filter(|c| c.kind == Kind::Load).map(|c| c.x).collect()
+    };
+    let mut grades = std::collections::BTreeSet::new();
+    for (style, gait) in [(Style::Cautious, 1), (Style::Greedy, 1), (Style::Fast, 2)] {
+        let heist = rehearse(&island, 1, 4_500, 3, style);
+        assert!(gaits(&heist).iter().all(|&g| g == gait), "{style:?} keeps its gait");
+        if style == Style::Greedy {
+            assert!(loads(&heist).iter().all(|&l| l == 100), "the greedy crew fills the bag");
+        }
+        let outcome = crate::verify_on(&island, &heist).expect("a rehearsal is a replay like any other");
+        assert_eq!(rehearse(&island, 1, 4_500, 3, style).commands, heist.commands, "one seed, one rehearsal");
+        grades.insert(format!("{:?} {}", outcome.grade, outcome.banked));
+    }
+    assert_eq!(grades.len(), 3, "three styles, three heists: {grades:?}");
+}
+
+#[test]
 fn a_universe_bundle_is_its_realms_in_order_and_its_links_and_decodes_only_what_it_encodes() {
     // §5.3, D71: a universe travels as RBU1, addressed by its SHA-256.
     use crate::universe::{LinkKind, Universe, MAGIC};
