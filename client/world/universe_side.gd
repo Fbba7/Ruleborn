@@ -63,14 +63,13 @@ func _draw() -> void:
 	var c := Vector2(size.x * 0.5, hit * 0.5)
 	if is_pressed():
 		c.y += UI.px(2.0)
-	UniverseHud.drop(self, c, r)
-	UniverseHud.ball(self, c, r, UniverseHud.LEATHER, UniverseHud.LEATHER_RIM)
+	UniverseHud.ball(self, c, r, UniverseHud.LEATHER, UniverseHud.LEATHER_RIM, true, true)
 	if _tex != null:
 		var s := r * 1.05
 		draw_texture_rect(_tex, Rect2(c - Vector2(s, s) * 0.5, Vector2(s, s)), false)
 	var ps := _plate_size()
 	var plate := Rect2(Vector2((size.x - ps.x) * 0.5, c.y + r - UI.px(OVERLAP_POINTS)), ps)
-	UniverseHud.plate(Color("#2A1622"), UI.px(6)).draw(ci, plate)
+	UniverseHud.baked_plate(Color("#2A1622"), UI.px(6)).draw(ci, plate)
 	var font := UniverseHud.words_font()
 	var px := _px()
 	draw_string(font, Vector2(plate.position.x, plate.get_center().y + font.get_ascent(px) * 0.36), words,

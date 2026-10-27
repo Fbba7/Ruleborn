@@ -39,8 +39,42 @@ func _go() -> void:
 		screen.world.show_whole()
 	for i in maxi(4, int(float(env.call("TIME", "1.5")) * 30.0)):
 		await process_frame
+	# HIDE: "world" or "ui", to read what each costs of the frame's budget.
+	match env.call("HIDE", ""):
+		"world":
+			screen.world.visible = false
+		"ui":
+			for c: Node in screen.get_children():
+				if c is CanvasItem and c != screen.world:
+					(c as CanvasItem).visible = false
+			screen.world.pins.visible = false
+	await process_frame
 	await RenderingServer.frame_post_draw
-	print("triangles ", screen.world.triangles, " draw calls ", screen.world.draw_calls())
+	# PROBE: the frame's draw calls with each part of the interface hidden in turn.
+	if env.call("PROBE", "") != "":
+		var calls := func() -> int: return RenderingServer.get_rendering_info(
+			RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
+		var whole: int = calls.call()
+		var parts: Array[CanvasItem] = []
+		for c: Node in screen.find_children("*", "CanvasItem", true, false):
+			var item := c as CanvasItem
+			if item.is_visible_in_tree() and item.get_parent() is Container and item.get_parent().get_parent() is Container:
+				parts.append(item)
+		parts.append(screen.world.pins)
+		# Faded out, not hidden, so nothing else moves into its place.
+		for item: CanvasItem in parts:
+			item.modulate.a = 0.0
+			await process_frame
+			await RenderingServer.frame_post_draw
+			var n: int = whole - calls.call()
+			if n >= 4:
+				print("  %d %s (%s)" % [n, item.name, item.get_class()])
+			item.modulate.a = 1.0
+		await process_frame
+		await RenderingServer.frame_post_draw
+	print("triangles ", screen.world.triangles, " draw calls ", screen.world.draw_calls(), " frame ",
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME), " prims ",
+		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME), " calls")
 	root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()

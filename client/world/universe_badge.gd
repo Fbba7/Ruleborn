@@ -85,18 +85,18 @@ func _draw() -> void:
 	var pressed := is_pressed()
 	if pressed:
 		c.y += UI.px(1.5)
-	UniverseHud.drop(self, c, r)
-	# The ring: night inside, the way to the next level as a gold arc.
-	draw_circle(c, r, UniverseHud.CARD[1], true, -1.0, true)
-	draw_arc(c, r - UI.px(3.5), 0.0, TAU, 64, Color(UniverseHud.DEEP_INK, 0.9), UI.px(5), true)
+	# The ring: night inside, outlined in ink on its drop (one baked ball),
+	# the way to the next level as a gold arc on a dark track.
+	var night: Color = UniverseHud.CARD[1]
+	UniverseHud.ball(self, c, r, [night, night, night], Color(), true, true)
+	draw_arc(c, r - UI.px(3.5), 0.0, TAU, 64, Color(UniverseHud.DEEP_INK, 0.9), UI.px(5))
 	if share > 0.0:
-		draw_arc(c, r - UI.px(3.5), -PI * 0.5, -PI * 0.5 + TAU * share, 64, UniverseHud.GOLD[1], UI.px(5), true)
+		draw_arc(c, r - UI.px(3.5), -PI * 0.5, -PI * 0.5 + TAU * share, 64, UniverseHud.GOLD[1], UI.px(5))
 	UniverseHud.ball(self, c, r - UI.px(7.5), [Color("#B9A6F2"), Color("#6A52C8"), Color("#2E1F6E")], Color(), false)
 	var face := _face
 	if face != null:
 		var s := (r - UI.px(8)) * 1.35
 		draw_texture_rect(face, Rect2(c - Vector2(s, s) * 0.5, Vector2(s, s)), false)
-	draw_arc(c, r, 0.0, TAU, 64, UniverseHud.INK_LINE, UniverseHud.outline_px(), true)
 	# The level on a gold disc at the ring's foot.
 	var lc := c + Vector2(r * 0.72, r * 0.72)
 	var lr := _disc()
@@ -116,7 +116,9 @@ func _draw() -> void:
 		var w := words.get_string_size(renown, HORIZONTAL_ALIGNMENT_LEFT, -1, _chip_px()).x
 		var h := _chip_px() * 1.5
 		var chip := Rect2(Vector2(x + UI.px(8) + _gem_out(), top + UI.px(7)), Vector2(w + UI.px(26), h))
-		UniverseHud.glass(h * 0.5).draw(get_canvas_item(), chip)
+		var glass := UniverseHud.glass(h * 0.5)
+		UniverseHud.baked_box(glass.bg_color, glass.border_color, glass.border_width_left, h * 0.5,
+			Color(0, 0, 0, 0.35), UI.px(2)).draw(get_canvas_item(), chip)
 		var gem := _gem
 		var g := h * 1.15
 		if gem != null:

@@ -23,16 +23,16 @@ var close_button: Button
 
 
 func _init() -> void:
-	var box := UniverseHud.plate(Color("#2C1028") if Settings.high_contrast else Color(0.2, 0.07, 0.16, 0.96),
-		UI.px(16))
-	box.border_color = UniverseHud.ALARM if Settings.high_contrast else Color(UniverseHud.ALARM, 0.6)
-	box.set_border_width_all(UI.px(3.0) if Settings.high_contrast else maxi(2, UI.px(1.5)))
-	box.shadow_color = Color(0, 0, 0, 0.5)
-	box.shadow_size = UI.px(10)
-	box.shadow_offset = Vector2(0, UI.px(6))
+	# Baked (UniverseHud.baked_box): the card is one draw call (§21.3).
+	var fill := Color("#2C1028") if Settings.high_contrast else Color(0.2, 0.07, 0.16, 0.96)
+	var edge := UniverseHud.ALARM if Settings.high_contrast else Color(UniverseHud.ALARM, 0.6)
+	var rim_w := UI.px(3.0) if Settings.high_contrast else maxi(2, UI.px(1.5))
+	var box := UniverseHud.baked_box(fill, edge, rim_w, UI.px(16), Color(0, 0, 0, 0.5), UI.px(4)).duplicate() \
+		as StyleBoxTexture
 	box.set_content_margin_all(UI.px(6))
 	box.content_margin_left = UI.px(8)
 	add_theme_stylebox_override("panel", box)
+	set_meta("behind", [fill])
 	var large := Settings.text_scale >= 150
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
@@ -73,7 +73,7 @@ func _init() -> void:
 	for colour: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
 			"font_disabled_color"]:
 		close_button.add_theme_color_override(colour, ROSE)
-	close_button.set_meta("text_bg", [box.bg_color])
+	close_button.set_meta("text_bg", [fill])
 	row.add_child(close_button)
 
 
@@ -91,24 +91,10 @@ func show_raids(unseen: int) -> void:
 
 ## The heist's mark on the design's red disc, ringed in rose.
 static func _mark() -> Control:
-	var disc := PanelContainer.new()
-	var b := StyleBoxFlat.new()
-	b.bg_color = Color("#B8304E")
-	b.border_color = ROSE
-	b.set_border_width_all(maxi(2, UI.px(1.5)))
-	b.set_corner_radius_all(UI.px(20))
-	b.set_content_margin_all(UI.px(6))
-	b.anti_aliasing = true
-	disc.add_theme_stylebox_override("panel", b)
+	var disc := MarkDisc.new()
+	disc.custom_minimum_size = Vector2.ONE * UI.px(34)
 	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	disc.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var mark := TextureRect.new()
-	mark.texture = Icons.texture("screens/heist")
-	mark.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	mark.custom_minimum_size = Vector2.ONE * UI.px(22)
-	mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	disc.add_child(mark)
 	return disc
 
 
@@ -126,3 +112,18 @@ static func _label(points: float, colour: Color, wraps: bool) -> Label:
 		l.clip_text = true
 		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	return l
+
+
+## The heist's mark on the design's red disc, ringed in rose: a baked ball
+## and the icon, two draw calls.
+class MarkDisc:
+	extends Control
+
+	var _tex: Texture2D = Icons.texture("screens/heist")
+
+	func _draw() -> void:
+		var r := size.y * 0.5
+		var c := size * 0.5
+		UniverseHud.ball(self, c, r, [Color("#F07A8C"), Color("#B8304E"), Color("#8A2440")], ROSE, false)
+		var s := r * 1.3
+		draw_texture_rect(_tex, Rect2(c - Vector2(s, s) * 0.5, Vector2(s, s)), false)
