@@ -23,6 +23,9 @@ static func badge(text: String, look := "badge", points := 13.0) -> PanelContain
 	p.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var l := UI.label(text, points)
 	l.name = "Words"
+	# A count grows with the text to half again its size, no further: at 200%
+	# it would cover the icon it counts for (it is also said aloud).
+	l.add_theme_font_size_override("font_size", mini(UI.text_px(points), UI.px(points * 1.5)))
 	l.add_theme_font_override("font", UI.bold_font() if look == "badge" else Tokens.font("display"))
 	l.add_theme_color_override("font_color", Tokens.color("on_alarm") if look == "badge" else box.spec["text"])
 	if look == "badge" or box.spec["family"] == "dark":

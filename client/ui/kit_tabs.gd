@@ -22,6 +22,8 @@ const TABS := [
 ]
 ## How far the chosen tab rises above the bar, in points.
 const RISE := 18.0
+## The room kept between the chosen tab's word and its rim, in points.
+const RIM := 12.0
 ## How large a face given to the chosen tab stands, in points.
 const FACE := 62.0
 ## The widest the chosen tab may grow, against a tab not chosen, to show its
@@ -88,7 +90,8 @@ func _tab(tab: Array, badge: int) -> Button:
 	var b := UI.action("", func() -> void: _pick(id), "tab", words if badge == 0 else Strings.t(
 		"KIT_TAB_BADGE", [words, badge]))
 	b.name = "Tab_" + id
-	b.custom_minimum_size = Vector2(UI.px(54), UI.px(Tokens.number("size", "tab_height")))
+	# §21.1's 48 points: the share past it goes to the chosen tab's word at large text.
+	b.custom_minimum_size = Vector2(UI.px(UI.CONTROL_POINTS), UI.px(Tokens.number("size", "tab_height")))
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.size_flags_vertical = Control.SIZE_SHRINK_END
 	b.set_meta("tab", id)
@@ -119,6 +122,7 @@ func _tab(tab: Array, badge: int) -> Button:
 		tag.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 		b.add_child(tag)
 	buttons[id] = b
+	b.resized.connect(_fit, CONNECT_DEFERRED)
 	_icons[id] = icon
 	_plain[id] = icon.texture
 	_labels[id] = l
@@ -217,10 +221,14 @@ func _fit() -> void:
 	var width := row.size.x - dividers
 	var others := float(buttons.size() - 1)
 	var grow := Tokens.number("size", "tab_active_grow")
-	var need := _need(_labels[active])
+	# Measured at its full size, whatever an earlier pass shrank it to.
+	var label: Label = _labels[active]
+	var full := UI.text_px(15)
+	label.add_theme_font_size_override("font_size", full)
+	var need := _need(label) + UI.px(RIM)
 	if need < width:
 		grow = maxf(grow, others * need / (width - need))
-	# The others keep their own least width (54 points, over §21.1's 48).
+	# The others keep their own least width (§21.1's 48 points).
 	var least := 0.0
 	for k: String in buttons:
 		if k != active:
@@ -230,12 +238,16 @@ func _fit() -> void:
 	# Where even the widest tile cannot hold the word at the chosen text size
 	# (200% in English), it takes the largest size that fits, never under
 	# its own at 100%; the screen's title says the name at full size.
-	var label: Label = _labels[active]
-	var full := UI.text_px(15)
-	label.add_theme_font_size_override("font_size", full)
-	var room := width * most / (others + most)
-	if grow > most:
-		var at := floori(full * (room - label.get_theme_constant("outline_size")) / maxf(need, 1.0))
+	# Inside the chosen tile's gold rim, not touching it.
+	var ratio := chosen.size_flags_stretch_ratio
+	var room := width * ratio / (others + ratio) - UI.px(RIM)
+	# The tile as laid out, once it has been (the bar gives minimums first).
+	if chosen.size.x > 0.0:
+		room = minf(room, chosen.size.x - UI.px(RIM))
+	var stroke := label.get_theme_constant("outline_size")
+	var word := _need(label) - stroke
+	if word + stroke > room:
+		var at := floori(full * (room - stroke) / maxf(word, 1.0))
 		label.add_theme_font_size_override("font_size", clampi(at, UI.px(15), full))
 	label.visible = _need(label) <= room + 0.5
 	# The others' width once the chosen one has grown.
