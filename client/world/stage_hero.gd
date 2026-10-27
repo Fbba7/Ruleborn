@@ -578,8 +578,10 @@ func _frame_welcome() -> void:
 		var side := float(i) - (tables.size() - 1) / 2.0
 		tables[i].position = Vector3(side * 0.42, 0.0, 0.9 - absf(side) * 0.9)
 	var aspect := maxf(0.2, size.x / maxf(1.0, size.y)) if size.y > 0.0 else 0.5
-	# Far enough that the row fills the width, whatever the phone's shape.
-	var dist := 1.45 / (2.0 * tan(deg_to_rad(FOV) * 0.5) * aspect)
+	# Far enough that the row fills the width, whatever the phone's shape,
+	# and never so close that a short stage (a later beat) loses the
+	# universe above them: the frame is at least 2.5 m tall at the party.
+	var dist := maxf(1.45 / aspect, 2.5) / (2.0 * tan(deg_to_rad(FOV) * 0.5))
 	var eye := Vector3(0.0, 0.62, dist)
 	camera.transform = Transform3D(Basis.looking_at(Vector3(0.0, 2.2, -9.0) - eye, Vector3.UP), eye)
 
