@@ -275,9 +275,16 @@ func _newborn(n: Dictionary, busy: bool) -> Control:
 		box.add_child(named)
 	if n["naming"]:
 		var words: Dictionary = App.services.store.get_slice(WorkshopState.WORKSHOP)["words"]
-		var r := UI.row()
-		r.add_child(_word("adjective", Strings.t("SOCIAL_OTHER_ADJECTIVE"), (words.get("adjectives", []) as Array).size()))
-		r.add_child(_word("noun", Strings.t("SOCIAL_OTHER_NOUN"), (words.get("nouns", []) as Array).size()))
+		# The two word buttons side by side, sharing the card's width.
+		var r := HBoxContainer.new()
+		r.add_theme_constant_override("separation", UI.px(8))
+		for each: Button in [_word("adjective", Strings.t("SOCIAL_OTHER_ADJECTIVE"),
+				(words.get("adjectives", []) as Array).size()),
+				_word("noun", Strings.t("SOCIAL_OTHER_NOUN"), (words.get("nouns", []) as Array).size())]:
+			each.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			each.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			each.custom_minimum_size.x = UI.px(60)
+			r.add_child(each)
 		box.add_child(r)
 		var a: Dictionary = n["give"]["args"]
 		var give := RosterScreen.offer(n["give"], busy, controller.name_character.bind(int(a["id"]),
