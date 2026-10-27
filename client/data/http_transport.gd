@@ -41,6 +41,9 @@ func send(method: HTTPClient.Method, url: String, headers: PackedStringArray,
 		body: PackedByteArray) -> Dictionary:
 	var request := HTTPRequest.new()
 	request.timeout = TIMEOUT_SECONDS
+	# The server never redirects, and Godot would send the token on to
+	# wherever a redirect points, in the clear too (T12's SR-27).
+	request.max_redirects = 0
 	if pins() != null:
 		request.set_tls_options(pins())
 	add_child(request)

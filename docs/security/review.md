@@ -45,6 +45,7 @@ decision).
 | SR-24 | Low | server | A dead token could still sign a player out everywhere | fixed |
 | SR-25 | Medium | server | One captured Game Center proof signed in again with its salt respelled | fixed |
 | SR-26 | Low | build | Godot and its export templates were run and shipped unchecked | fixed |
+| SR-27 | Low | client | A redirect carried the session token to another host, in the clear | fixed |
 
 ### SR-01 — Any player could loosen their own age band (High)
 
@@ -422,6 +423,30 @@ decision).
   download; the templates' pin is checked to come before their unpacking.
   It failed before the fix.
 
+### SR-27 — A redirect carried the session token to another host, in the clear (Low)
+
+- **Where:** `client/data/http_transport.gd` `send`, every call the client
+  makes.
+- **What:** Godot's `HTTPRequest` follows up to eight redirects by default
+  and sends every header again to wherever one points. Measured with the
+  4.7.2 engine headless: a request to `127.0.0.1:18901` carrying
+  `Authorization: Bearer SECRET` was answered `302` to
+  `http://localhost:18902/landed`, and the second host received
+  `Authorization: Bearer SECRET`. The client's cleartext guard (SR-06)
+  checks only the base URL. So any redirect in front of the server — a
+  proxy or edge rule, a moved domain, a captive portal on a phone that
+  trusts it — hands the session token on, over plain HTTP too. Low: the
+  server itself never redirects.
+- **Fix:** `request.max_redirects = 0`. Measured again: Godot answers
+  `RESULT_REDIRECT_LIMIT_REACHED` (12) with the `302`, nothing reaches the
+  second host, and the transport reports the call as unreachable, as for
+  any network failure. 1 line.
+- **Test:** `server/test/security_client.test.mjs` (SR-27) holds the
+  transport to the setting, made before every request is sent, and checks
+  no other client script makes a request of its own. The engine's
+  behaviour was measured outside the suite, since the server's tests do not
+  run Godot. It failed before the fix.
+
 ## Configuration against the market standard
 
 Read against OWASP's Secure Headers and ASVS 4 (V3, V8, V14) and what a
@@ -467,6 +492,7 @@ read, so the next reader need not.
   (`open_challenge`, blocks, friends, constellations, Workshop items) is
   `uri_encode`d, so a pasted "code" like `../account` stays one segment
   (`..%2Faccount`); the rest are the server's own tokens and hashes.
+- **Redirects:** none followed (SR-27).
 - **TLS:** the platform's authorities with the host checked; a build may pin
   (`ruleborn/tls_pins`, `HttpTransport.pinned`), and none does yet. Pinning
   is optional at the market standard for a game (MASVS-NETWORK-2); if the
