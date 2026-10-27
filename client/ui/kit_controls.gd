@@ -16,7 +16,10 @@ static func chip(text: String, on: bool, pressed: Callable, count := "", dot := 
 	if dot.a > 0.0 or count != "":
 		var pad := UI.clear_box(9, 4)
 		pad.content_margin_left = UI.px(9 + (16 if dot.a > 0.0 else 0))
-		pad.content_margin_right = UI.px(9 + (30 if count != "" else 0))
+		# Room for the count's disc at the chip's end, as wide as its figures
+		# are at the player's text size.
+		var disc := UI.text_px(13) * 0.62 * count.length() + UI.px(16)
+		pad.content_margin_right = UI.px(9) + (disc if count != "" else 0.0)
 		for state: String in ["normal", "hover", "pressed", "focus", "disabled", "hover_pressed"]:
 			b.add_theme_stylebox_override(state, pad)
 		b.custom_minimum_size.x = 0
@@ -54,7 +57,10 @@ static func chip(text: String, on: bool, pressed: Callable, count := "", dot := 
 static func action2(text: String, line: String, pressed: Callable, look := "gold", icon := "") -> Button:
 	var b := UI.action("", pressed, look, "%s, %s" % [text, line] if line != "" else text)
 	b.name = "Action"
-	b.custom_minimum_size = Vector2(UI.px(120), UI.px(56))
+	# Its words are drawn inside it, not laid out by it, so its height is
+	# their two lines at the player's text size.
+	var lines := UI.text_px(16) + (UI.text_px(13) if line != "" else 0)
+	b.custom_minimum_size = Vector2(UI.px(120), maxf(UI.px(56), lines * 1.3 + UI.px(12)))
 	var v := VBoxContainer.new()
 	v.set_anchors_preset(Control.PRESET_FULL_RECT)
 	v.alignment = BoxContainer.ALIGNMENT_CENTER

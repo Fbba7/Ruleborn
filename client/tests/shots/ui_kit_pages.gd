@@ -98,8 +98,8 @@ static func _controls(column: VBoxContainer) -> void:
 
 static func _status(column: VBoxContainer) -> void:
 	column.add_child(KitNav.header("Status", "Pieces"))
-	var res := HBoxContainer.new()
-	res.add_theme_constant_override("separation", UI.px(6))
+	# A flow, so at large text the pills take a second line, not the phone's edge.
+	var res := KitLayout.flow(6)
 	for r: Array in [["resources/starlight", "12,480", 0.62, Tokens.color("starlight")],
 			["resources/aether", "3,105", 0.95, Tokens.color("aether")],
 			["resources/essence", "840", 0.2, Tokens.color("essence")]]:
@@ -144,8 +144,8 @@ static func _home(column: VBoxContainer) -> void:
 	strain.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	top.add_child(strain)
 	column.add_child(top)
-	var res := HBoxContainer.new()
-	res.add_theme_constant_override("separation", UI.px(6))
+	# A flow, so at large text the pills take a second line, not the phone's edge.
+	var res := KitLayout.flow(6)
 	for r: Array in [["resources/starlight", "12,480", 0.62, Tokens.color("starlight")],
 			["resources/aether", "3,105", 0.95, Tokens.color("aether")],
 			["resources/essence", "840", 0.2, Tokens.color("essence")]]:
