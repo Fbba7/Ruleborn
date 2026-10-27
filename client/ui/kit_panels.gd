@@ -152,11 +152,11 @@ static func locked(icon: String, title: String, value: String, why: String) -> C
 	return r
 
 
-## A chapter's band (the Codex's school albums): gold, the school's mark in
-## a dark disc, the title in Marcellus over a kicker, and a count on a pill
-## at its end.
+## A chapter's band (the Codex's school albums): in its school's colours,
+## the school's mark in a disc, the title in Marcellus over a kicker, both
+## stroked in ink, and a count on a dark pill at its end.
 static func chapter(school: String, title: String, kicker: String, count: String) -> PanelContainer:
-	var p := UI.panel("chapter")
+	var p := UI.panel("chapter_" + school)
 	p.name = "Chapter"
 	var band := HBoxContainer.new()
 	band.add_theme_constant_override("separation", UI.px(10))
@@ -182,7 +182,7 @@ static func chapter(school: String, title: String, kicker: String, count: String
 	k.set_meta("bold", true)
 	words.add_child(k)
 	band.add_child(words)
-	var c := KitStatus.pill(count, "", "parchment")
+	var c := KitStatus.pill(count, "", "track")
 	c.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	band.add_child(c)
 	p.add_child(band)

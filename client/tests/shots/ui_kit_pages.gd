@@ -195,22 +195,19 @@ static func _cards(column: VBoxContainer) -> void:
 	column.add_child(KitControls.search("Search laws"))
 	column.add_child(KitPanels.chapter("motion", "Motion", "Chapter I", "3 of 4 restored"))
 	var grid := GridContainer.new()
-	grid.columns = 2
-	grid.add_theme_constant_override("h_separation", UI.px(14))
-	grid.add_theme_constant_override("v_separation", UI.px(14))
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", UI.px(8))
+	grid.add_theme_constant_override("v_separation", UI.px(8))
 	for c: Array in [["laws/bounce", "Bounce", "motion", "common", ""],
-			["laws/stillness", "Stillness", "time", "uncommon", "II"],
-			["laws/brittlestone", "Brittle Stone", "matter", "rare", ""],
-			["laws/soullanterns", "Soul Lanterns", "spirit", "deep", ""]]:
+			["laws/halfgravity", "Half gravity", "motion", "uncommon", "II"],
+			["laws/frictionless", "Frictionless", "motion", "rare", ""]]:
 		var icon: String = c[0] if Icons.has(c[0]) else "laws/bounce"
-		grid.add_child(KitCards.law_card(icon, c[1], c[2], c[3], c[4], 150, str(12 + grid.get_child_count() * 4)))
+		grid.add_child(KitCards.law_card(icon, c[1], c[2], c[3], c[4], 102, str(12 + grid.get_child_count() * 4)))
 	var centre := CenterContainer.new()
 	centre.add_child(grid)
 	column.add_child(centre)
-	var schools := UI.row(6)
-	for school: String in Tokens.schools():
-		schools.add_child(KitCards.school_chip(school))
-	column.add_child(schools)
+	column.add_child(KitPanels.chapter("matter", "Matter", "Chapter II", "1 of 4 restored"))
+	column.add_child(KitPanels.chapter("time", "Time", "Chapter III", "2 of 4 restored"))
 
 
 ## The design's Settings and wellbeing screen (19-settings-and-wellbeing.png)
