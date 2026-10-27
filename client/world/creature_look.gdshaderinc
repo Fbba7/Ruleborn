@@ -36,6 +36,7 @@ uniform float paint_mid = 0.4;
 // portraits' sheen turns Bloomling's crimson petals pink, not the paler body.
 uniform float pastel : hint_range(0.0, 1.0) = 0.0;
 uniform vec4 pastel_colour : source_color = vec4(1.0);
+uniform float pastel_by_value : hint_range(0.0, 1.0) = 1.0;
 // The world's noon sun clips warm paint's red (Featherkin's gold went
 // orange-pink): characters take it a little softer.
 uniform float exposure : hint_range(0.5, 1.5) = 0.8;
@@ -270,7 +271,9 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 	}
 	if (pastel > 0.0) {
 		float sat = (max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b))) / max(0.02, max(c.r, max(c.g, c.b)));
-		c = mix(c, pastel_colour.rgb, pastel * smoothstep(0.35, 0.85, sat));
+		// Light paint pales most, so a petal's deep base stays deep under its pale tip.
+		float pv = dot(c, vec3(0.299, 0.587, 0.114));
+		c = mix(c, pastel_colour.rgb, pastel * smoothstep(0.35, 0.85, sat) * mix(1.0, smoothstep(0.1, 0.5, pv), pastel_by_value));
 	}
 	vec3 col = c;
 	vec2 pat = vec2(0.0);
