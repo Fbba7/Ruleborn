@@ -18,6 +18,7 @@
   "SR-08: a defender is served the replays of raids that were played, never a refused submission's bytes": "passed",
   "SR-09 (needs the owner): a target list names every island's raw rating, which 12.15 says is never shown": "passed",
   "SR-10 (needs the owner): a 13-to-15's receipts with no intent are granted past the month's cap": "passed",
+  "SR-11 (sent to T11): the ID token the game signs in with also deletes the account from the web": "passed",
   "SR-12 (needs the owner): one player replaying one island is credited every play's time": "passed",
   "SR-13: a name every object answers to is no law": "passed",
   "SR-14 (needs the owner): a 13-to-15 joins a crew of strangers with its invite": "passed",
