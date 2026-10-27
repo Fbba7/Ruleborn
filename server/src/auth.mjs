@@ -158,7 +158,7 @@ export class Auth {
    * copied it — and ends the session for both. Anything else is refused and
    * changes nothing, so a guess cannot end someone's session.
    */
-  refresh(token, now = this.service.now(), { place = null } = {}) {
+  refresh(token, now = this.service.now(), { place = null, admit = () => {} } = {}) {
     const peek = peekRefresh(token);
     if (!peek) throw refused();
     // A reuse ends the family in its own transaction, kept though the
@@ -169,6 +169,7 @@ export class Auth {
                 a.deleted_at, a.banned_at
            FROM sessions s JOIN accounts a ON a.id = s.account WHERE s.id = ?`).get(peek.session);
       if (!s || !refreshSigned(this.keys, token, s.salt)) throw refused();
+      admit();
       if (s.deleted_at || s.banned_at || s.ended_at !== null) throw refused();
       if (peek.generation !== s.generation) {
         if (peek.generation < s.generation) this.#end("id", s.id, "reused", now);
@@ -201,6 +202,9 @@ export class Auth {
   signOut(token, { everywhere = false, others = false, device = null } = {}) {
     const t = this.holder(token);
     const now = this.service.now();
+    // Any sign-out beyond this device's own takes a live session: a token
+    // whose session is over ends nothing more (T12's SR-24).
+    if (everywhere || others || (device !== null && device !== t.session)) this.account(token);
     if (everywhere) return this.endAll(t.account, "everywhere", now);
     if (others) {
       return Number(this.db.prepare(
@@ -353,12 +357,18 @@ export class Auth {
   /** The session a refresh token names, ended, without rotating it: a
    *  device signing out with an access token past its hour. Refused as any
    *  refresh is if the token is not this server's for that session. */
-  signOutWith(refreshToken, { everywhere = false } = {}) {
+  signOutWith(refreshToken, { everywhere = false, admit = () => {} } = {}) {
     const peek = peekRefresh(refreshToken);
-    const s = peek && this.db.prepare("SELECT id, account, salt FROM sessions WHERE id = ?").get(peek.session);
+    const s = peek && this.db.prepare(
+      "SELECT id, account, salt, generation, ended_at FROM sessions WHERE id = ?").get(peek.session);
     if (!s || !refreshSigned(this.keys, refreshToken, s.salt)) throw refused();
+    admit();
     const now = this.service.now();
-    if (everywhere) return this.endAll(s.account, "everywhere", now);
+    if (everywhere) {
+      // Only the session's current token, while it lives (T12's SR-24).
+      if (s.ended_at !== null || peek.generation !== s.generation) throw refused();
+      return this.endAll(s.account, "everywhere", now);
+    }
     return this.#end("id", s.id, "signed_out", now);
   }
 

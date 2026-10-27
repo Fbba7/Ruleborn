@@ -378,6 +378,9 @@ export function handler(service, { webClientId = null, appleNotifications = null
     // No answer is sniffed into another type: a bundle or a replay's bytes
     // are never run as a page (SR-04).
     response.headers.set("x-content-type-options", "nosniff");
+    // An answer that says nothing of caching is a player's own: no cache
+    // keeps it (T12's SR-22). Bundles, lists and pages say their own.
+    if (!response.headers.has("cache-control")) response.headers.set("cache-control", "no-store");
     return response;
   };
   async function answer(request) {

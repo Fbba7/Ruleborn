@@ -89,9 +89,10 @@ export async function sessionRoute(service, request, parts, { signIn, limit, rea
       const peek = peekRefresh(refreshToken);
       if (!peek) throw new Refused(401, "session_refused");
       // §24.1's sign-ins an account, held by the session the token names
-      // before anything is read.
-      admit(`session:${peek.session}`);
-      return answer(service.auth.refresh(refreshToken, service.now(), { place }));
+      // once the token is proven: a made-up one naming someone's session
+      // spends nothing of theirs (T12's SR-28).
+      return answer(service.auth.refresh(refreshToken, service.now(),
+                                         { place, admit: () => admit(`session:${peek.session}`) }));
     });
   }
   if (m === "POST" && verb === "end") {
@@ -107,12 +108,12 @@ export async function sessionRoute(service, request, parts, { signIn, limit, rea
     }
     if (others || device !== null) throw new Refused(401, "session_refused");
     // An access token past its hour: the refresh token proves the session,
-    // held to its session's sign-ins as a refresh is.
+    // held to its session's sign-ins as a refresh is, once proven (SR-28).
     return signIn(async (admit) => {
       const peek = peekRefresh(refreshToken);
       if (!peek) throw new Refused(401, "session_refused");
-      admit(`session:${peek.session}`);
-      return answer({ ended: service.auth.signOutWith(refreshToken, { everywhere }) });
+      return answer({ ended: service.auth.signOutWith(refreshToken,
+                                                      { everywhere, admit: () => admit(`session:${peek.session}`) }) });
     });
   }
   if (m === "GET" && !verb) {
@@ -191,10 +192,14 @@ export function deletePage(service, webClientId) {
  * a body that is not JSON (which no form can send without CORS's leave).
  */
 export async function deleteByGoogle(service, request, { signIn, read, webClientId = null }) {
-  const own = new URL(request.url).origin;
+  // The host the browser addressed is the Host the proxy passed on: the
+  // listener rebuilds every URL on localhost (main.mjs), so the URL's own
+  // origin is never the page's (T12's SR-21).
+  const own = request.headers.get("host") ?? new URL(request.url).host;
   const origin = request.headers.get("origin");
   const site = request.headers.get("sec-fetch-site");
-  if ((origin !== null && origin !== own) || (site !== null && !["same-origin", "none"].includes(site))) {
+  if ((origin !== null && URL.parse(origin)?.host !== own)
+      || (site !== null && !["same-origin", "none"].includes(site))) {
     throw new Refused(403, "cross_site");
   }
   if (!(request.headers.get("content-type") ?? "").toLowerCase().startsWith("application/json")) {

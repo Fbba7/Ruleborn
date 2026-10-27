@@ -41,11 +41,12 @@
 // purchases pay too, as a test deployment may. With neither Game Center's
 // roots nor Google's client ids, sign-in is stubbed — a credential is taken
 // as the identity it names — and a store not configured refuses every
-// receipt; do not expose that to a network.
+// receipt; it starts so only when RULEBORN_STUB_SIGNIN=1 says it is a local
+// or test server (T12's SR-29).
 
 import { createServer } from "node:http";
 import { X509Certificate, createPublicKey, randomBytes } from "node:crypto";
-import { existsSync, linkSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, linkSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -130,9 +131,11 @@ const playPurchases = playAccount
 // Each proof single-use: a Game Center salt once, a Google token's nonce once
 // (auth_proofs.mjs).
 const platforms = platformProofs({ gameCenter, google });
-if ((storeKit || play) && platforms.stubbed && process.env.RULEBORN_STUB_SIGNIN !== "1") {
-  throw new Error("a store's receipts would pay out with sign-in stubbed: set RULEBORN_GAMECENTER_ROOTS "
-                  + "or RULEBORN_GOOGLE_CLIENT_IDS, or RULEBORN_STUB_SIGNIN=1 for a test deployment");
+// And never stubbed by omission: a server deployed with its platforms'
+// settings forgotten would let anyone in as anyone (T12's SR-29).
+if (platforms.stubbed && process.env.RULEBORN_STUB_SIGNIN !== "1") {
+  throw new Error(`sign-in would be stubbed${storeKit || play ? " beside a store's receipts" : ""}: set `
+                  + "RULEBORN_GAMECENTER_ROOTS or RULEBORN_GOOGLE_CLIENT_IDS, or RULEBORN_STUB_SIGNIN=1 for a local or test server");
 }
 
 // D70: the edge's cache of an under-13 player's bundles, purged on their
@@ -147,7 +150,10 @@ if (edgeVars.some(Boolean) && !edgeVars.every(Boolean)) {
 const edge = edgeVars.every(Boolean)
   ? new CloudflarePurge({ zone: edgeVars[0], token: edgeVars[1], origin: edgeVars[2] }) : null;
 
-mkdirSync(data, { recursive: true });
+// The database names every player: no other user on the machine reads it
+// (T12's SR-23).
+mkdirSync(data, { recursive: true, mode: 0o700 });
+chmodSync(data, 0o700);
 // A key shorter than this signs nothing: an empty one, from a file a crash
 // left before it was written, would let anyone make any session token.
 const SECRET_MIN = 32;

@@ -17,6 +17,11 @@ if [ ! -x "$godot" ]; then
   url="https://github.com/godotengine/godot/releases/download/${version}/Godot_v${version}_linux.x86_64.zip"
   echo "fetching Godot ${version}"
   curl -sSL --fail -o "$godot.zip" "$url"
+  # Godot's own SHA512-SUMS.txt for this release: a swapped download is
+  # refused before it is unpacked (T12's SR-26).
+  python3 -c "import hashlib, sys; sys.exit(hashlib.sha512(open(sys.argv[1], 'rb').read()).hexdigest() != sys.argv[2])" \
+    "$godot.zip" 9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467edd56ed84fcdcbdd44354bf613bdbb4e5d2913e925850368e150c59ed54c65 \
+    || { rm -f "$godot.zip"; echo "Godot's download does not match its pinned sum" >&2; exit 1; }
   python3 -c "import sys, zipfile; zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])" \
     "$godot.zip" "$(dirname "$godot")"
   rm "$godot.zip"
