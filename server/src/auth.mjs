@@ -82,10 +82,16 @@ export const platformOf = (identity) => {
 const refused = () => new Refused(401, "session_refused");
 
 export class Auth {
-  /** `keys` is the token key ring (tokens.mjs keyring). */
-  constructor(service, keys) {
+  /** `keys` is the token key ring (tokens.mjs keyring). `rotateMs` is how
+   *  long a refresh token is kept before a refresh rotates it: 0, the
+   *  default, rotates it on every refresh — one written row a session an
+   *  hour. Longer writes once in that span: within it a refresh answers a
+   *  new access token and the same refresh token, writing nothing (the
+   *  owner's decision on refresh's billed row, docs/security/auth.md). */
+  constructor(service, keys, { rotateMs = 0 } = {}) {
     this.service = service;
     this.keys = keys;
+    this.rotateMs = rotateMs;
   }
 
   get db() {
@@ -169,6 +175,10 @@ export class Auth {
         return null;
       }
       if (now - s.used_at > IDLE_MS || now - s.created_at >= ABSOLUTE_MS) return null;
+      // Rotated less often, when the owner chose so: inside the span the
+      // same refresh token stands, and nothing is written; its last use and
+      // place are as old as the span at most.
+      if (this.rotateMs > 0 && now - s.used_at < this.rotateMs) return this.#tokens(s, now);
       const next = s.generation + 1;
       // The same write records where it was last seen (the devices list):
       // a country, kept as it was when the edge names none.

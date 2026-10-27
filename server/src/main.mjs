@@ -175,12 +175,24 @@ function secret() {
   return key;
 }
 
+function rotateHours() {
+  const h = Number(process.env.RULEBORN_REFRESH_ROTATE_HOURS ?? 0);
+  if (!Number.isInteger(h) || h < 0 || h > 24 * 30) {
+    throw new Error("RULEBORN_REFRESH_ROTATE_HOURS is a whole number of hours, 0 to 720");
+  }
+  return h;
+}
+
 const service = new Service({
   db: open(join(data, "ruleborn.sqlite")),
   store: new Store(join(data, "bundles")),
   builds: Builds.load([join(root, "sim/target/wasm32-unknown-unknown/release/ruleborn_sim.wasm")]),
   secret: secret(),
   tokenKeys: process.env.RULEBORN_TOKEN_KEYS ?? "",
+  // The owner's decision on refresh's billed row (docs/security/auth.md):
+  // RULEBORN_REFRESH_ROTATE_HOURS, unset or 0, rotates the refresh token on
+  // every refresh (one row a session an hour); 24 rotates it once a day.
+  refreshRotateMs: rotateHours() * 60 * 60 * 1000,
   verifyPlatform: platforms.verify,
   preparePlatform: platforms.prepare,
   verifyReceipt: receipts({ appStore: storeKit ? { roots: storeKitRoots, bundleId, sandbox } : null, play }),

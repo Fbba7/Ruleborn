@@ -278,3 +278,30 @@ test("every session path is limited: devices, ending one or others, linking, unl
                    { status: 200, body: { ended: 1 } });
   assert.ok(h3);
 });
+
+test("rotating the refresh token once a day writes once a day, and a copy is still caught at the next rotation", () => {
+  const t = server({ refreshRotateMs: DAY });
+  const s = t.service.session("gc:alice");
+  const writes = () => t.service.db.prepare("SELECT generation, used_at FROM sessions WHERE id = 1").get();
+  const before = writes();
+  let r = s;
+  for (let hour = 1; hour < 24; hour++) {
+    t.clock.now += HOUR;
+    r = t.service.auth.refresh(r.refreshToken, t.clock.now, { place: "PT" });
+    assert.equal(r.refreshToken, s.refreshToken, `hour ${hour}: the same refresh token stands`);
+    assert.equal(t.service.account(r.token), s.account, "with a new access token");
+  }
+  assert.deepEqual(writes(), before, "nothing written inside the day");
+  t.clock.now += HOUR;
+  const rotated = t.service.auth.refresh(r.refreshToken);
+  assert.notEqual(rotated.refreshToken, s.refreshToken);
+  assert.equal(writes().generation, 1);
+  // The old token, used once more after the rotation, ends the family.
+  refusal(() => t.service.auth.refresh(s.refreshToken), 401, "session_refused");
+  refusal(() => t.service.auth.refresh(rotated.refreshToken), 401, "session_refused");
+  // The default rotates on every refresh.
+  const d = server();
+  const a = d.service.session("gc:bob");
+  d.clock.now += HOUR;
+  assert.notEqual(d.service.auth.refresh(a.refreshToken).refreshToken, a.refreshToken);
+});
