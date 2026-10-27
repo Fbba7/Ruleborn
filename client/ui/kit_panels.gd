@@ -47,7 +47,13 @@ static func row(icon: String, title: String, line := "", trailing: Control = nul
 	content.add_child(words)
 	if trailing != null:
 		trailing.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		content.add_child(trailing)
+		# At large text a wide control at the end would leave the title a
+		# letter a line: it goes under the words instead.
+		if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO and trailing.get_combined_minimum_size().x > UI.px(64):
+			trailing.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+			words.add_child(trailing)
+		else:
+			content.add_child(trailing)
 	# The button under the words, so a control at the row's end keeps its
 	# own taps.
 	if pressed.is_valid():

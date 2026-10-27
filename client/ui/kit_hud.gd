@@ -140,7 +140,9 @@ static func dial(number: String, unit: String, fraction: float, points := 112.0)
 	ring.name = "Dial"
 	ring.heavy = true
 	ring.fraction = clampf(fraction, 0.0, 1.0)
-	ring.custom_minimum_size = Vector2.ONE * UI.px(points)
+	# Larger with the text, up to a third again, so its words stay inside.
+	var side := points * clampf(Settings.text_scale / 100.0, 1.0, 1.35)
+	ring.custom_minimum_size = Vector2.ONE * UI.px(side)
 	ring.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var v := VBoxContainer.new()
 	v.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -155,6 +157,10 @@ static func dial(number: String, unit: String, fraction: float, points := 112.0)
 	u.add_theme_font_override("font", Tokens.font("ui", 800))
 	u.uppercase = true
 	u.set_meta("bold", true)
+	u.autowrap_mode = TextServer.AUTOWRAP_WORD
+	u.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	u.custom_minimum_size.x = UI.px(side * 0.62)
+	u.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(u)
 	ring.add_child(v)
 	return ring

@@ -192,6 +192,6 @@ Main (d2343591) merged clean.
 | T10 | shop | Category chips as a `KitLayout.strip` (the design's one sideways row); the design's featured set and daily picks are tall picture cards with a ribbon tag. |
 | T10 | friends | The friends row as `KitSocial.avatar`s in a strip, the feed as `KitSocial.feed_row`s; the design leads with a "Friendly raid" card and Feed / Friends / Invite segments. |
 | T10 | weaving | Cost, strain and ready-in as `KitStatus.stat` tiles; the deck as a `KitLayout.strip` of law cards; the call as `KitControls.action2` (its two lines). |
-| T10 | settings | The design has four segments (Wellbeing, Game, Access, Account); the screen has two. |
+| T10 | settings | The design has four segments (Wellbeing, Game, Access, Account); the screen has two. At 200% text "Language" stands a letter a line beside "English (UK)" (`ScreenParts.item` keeps a wide control beside the title): `KitPanels.row` puts it under the words above 125%. |
 | T4 | home | Side balls through `disc_points` 36 at 48-point hit areas; drop `_fit_tab_words` (the kit does it). |
 | all | screens with a title | The design's sub-screen header (`KitNav.top_bar`) puts back at the top; §21.1's thumb rule keeps it at the foot (finding H, the owner's). |
