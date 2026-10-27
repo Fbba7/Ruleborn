@@ -200,3 +200,17 @@ Main (d2343591) merged clean.
 | T10 | settings | The design has four segments (Wellbeing, Game, Access, Account); the screen has two. At 200% text "Language" stands a letter a line beside "English (UK)" (`ScreenParts.item` keeps a wide control beside the title): `KitPanels.row` puts it under the words above 125%. |
 | T4 | home | Side balls through `disc_points` 36 at 48-point hit areas; drop `_fit_tab_words` and the purse's own padding (the kit does both). |
 | all | screens with a title | The design's sub-screen header (`KitNav.top_bar`) puts back at the top; §21.1's thumb rule keeps it at the foot (finding H, the owner's). |
+
+## Stopped here (wave 5, 23:00 UTC)
+
+**Pushed**: everything above through the sash and these notes; check_all passed on af7911c, 8027efc and this commit. The session's worker restarted three times between 20:20 and 22:50 UTC and the work in that gap was lost to waiting, not to code.
+
+**Hooks outside the kit** (a few lines each, marked "Drawn by T9's kit"): `client/world/fx_skin.gd` (`panel`, `style_button`, T5), `client/world/stage_hero_skin.gd` (`plate`, `button`, T7), `client/world/overlay_sheet.gd` (`dress`, `key`, T6), `client/world/overlay_hud.gd` (`badge`, T6).
+
+**Still worse than the design**:
+- Type is larger than the design's (§21.8's 13-point floor): law cards three to a row where the design's go four, chips and tags wider.
+- The tab bar still sits 20 points above the foot (§21.1's corner rule).
+- At 200% text the round actions' plates ("DEFENCE") grow over the realm labels on home; the kit does not cap them, since they are words a player reads.
+- The screens have not yet taken up this wave's pieces: the table above says which piece goes where (T5's crew, Sage and loot; T10's albums, strips and feed rows; T4's small discs).
+
+**Next**: when screens adopt the pieces, re-run `AUDIT=1` and the design comparisons; a tinted difficulty tile (the Observatory's Easy / Medium / Hard); the gem icon inside a price pill.
