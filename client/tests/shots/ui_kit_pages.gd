@@ -359,9 +359,9 @@ static func _heist(column: VBoxContainer) -> void:
 	column.add_child(KitStatus.pill("Tap crew, then ground · hold to sneak or run"))
 	var foot := HBoxContainer.new()
 	foot.add_theme_constant_override("separation", UI.px(4))
-	for c: Array in [["crewroles/scout", "Pip", 1.0, 2], ["crewroles/carrier", "Mo", 0.7, 1],
-			["crewroles/breaker", "Bramble", 0.4, 0]]:
-		foot.add_child(KitHud.crew(Icons.texture(c[0]), c[1], c[2], c[3], func() -> void: pass))
+	for c: Array in [["skyskipper", "Pip", 1.0, 2], ["tidewalker", "Mo", 0.7, 1],
+			["mossbear", "Bramble", 0.4, 0]]:
+		foot.add_child(KitHud.crew(Portrait.of(str(c[0])), c[1], c[2], c[3], func() -> void: pass))
 	foot.add_child(UI.grow())
 	(foot.get_child(foot.get_child_count() - 1) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	foot.add_child(KitControls.big_action("heistcontrols/getout", "Get out", func() -> void: pass))
