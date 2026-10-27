@@ -128,7 +128,7 @@ func _refresh() -> void:
 	(_heading.find_child("Title", true, false) as Label).text = str(c["name"])
 	_heading.accessibility_description = c["origin"]
 	if c["hold"] != "":
-		_facts.add_child(OverlayHud.pill("realmactions/defence", "", c["hold"]))
+		_facts.add_child(_hold(c["hold"]))
 	# A post picked (on the island or by its key) brings up its dial.
 	var dialled := not (c["dial"] as Array).is_empty()
 	if dialled and not _dialled:
@@ -154,6 +154,44 @@ func _refresh() -> void:
 			if b.get_meta("item", "") == focus_item and b.is_visible_in_tree():
 				b.grab_focus.call_deferred()
 				break
+
+
+## §13.3's hold as the design's strip: the shield, "HOLDS" over the share
+## of the reference crew's raids it held, and a bar of it; measuring, its
+## words alone. The server's measurement, never an estimate.
+func _hold(words: String) -> Control:
+	var h: Variant = (App.services.store.get_slice(CurationState.CURATION).get("view", {}) as Dictionary).get("hold")
+	if not (h is Dictionary) or str((h as Dictionary).get("status", "")) == "measuring":
+		return OverlayHud.pill("realmactions/defence", "", words)
+	var share := float(h.get("held", 0)) / maxf(1.0, float(h.get("raids", 0)))
+	var strip := UI.panel("plate_dark")
+	strip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	strip.accessibility_name = words
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(10))
+	var medal := OverlayHud.medallion("realmactions/defence", -1, 40.0)
+	medal.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(medal)
+	var names := VBoxContainer.new()
+	names.add_theme_constant_override("separation", 0)
+	var k := UI.label(Strings.t("CUR_HOLDS").to_upper(), 13.0)
+	k.theme_type_variation = "Kicker"
+	k.set_meta("bold", true)
+	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	names.add_child(k)
+	var n := UI.label("%d%%" % roundi(100.0 * share), 24.0)
+	n.add_theme_font_override("font", Tokens.font("display"))
+	n.set_meta("bold", true)
+	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	names.add_child(n)
+	row.add_child(names)
+	var bar := KitStatus.progress(share, 1.0, "%d / %d" % [int(h.get("held", 0)), int(h.get("raids", 0))],
+		Tokens.color("success_light"))
+	bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(bar)
+	strip.add_child(row)
+	return strip
 
 
 ## A presenter's offer as a key in `look`, with `icon`, its words `text`
