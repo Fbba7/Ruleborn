@@ -879,6 +879,8 @@ OBS_SCOUT_SPOKEN,Scout %s,Scout %s,Espiar %s,Espiar %s,%s auskundschaften,Reconn
 OBS_REFRESH,New targets for %s Aether,New targets for %s Aether,Novos alvos por %s de Aether,Novos alvos por %s de Aether,Neue Ziele für %s Aether,Nouvelles cibles pour %s d'Aether
 OBS_FAILED,The Observatory did not answer: %s,The Observatory did not answer: %s,O Observatório não respondeu: %s,O Observatório não respondeu: %s,Das Observatorium hat nicht geantwortet: %s,L'Observatoire n'a pas répondu : %s
 SCOUT_TITLE,Scout report,Scout report,Relatório de espionagem,Relatório de espionagem,Späherbericht,Rapport de reconnaissance
+SCOUT_TAB_LOOT,Loot,Loot,Saque,Saque,Beute,Butin
+SCOUT_TAB_THREATS,Threats,Threats,Ameaças,Ameaças,Gefahren,Menaces
 SCOUT_NONE_CHOSEN,Choose a target in the Observatory,Choose a target in the Observatory,Escolha um alvo no Observatório,Escolhe um alvo no Observatório,Wähle ein Ziel im Observatorium,Choisis une cible dans l'Observatoire
 SCOUT_REALM,%s · realm level %d · Vault level %d,%s · realm level %d · Vault level %d,%s · reino nível %d · Cofre nível %d,%s · reino nível %d · Cofre nível %d,%s · Reichslevel %d · Tresor-Level %d,%s · royaume niveau %d · Coffre niveau %d
 SCOUT_OUTER,An outer realm,An outer realm,Um reino exterior,Um reino exterior,Ein äußeres Reich,Un royaume extérieur
@@ -1269,6 +1271,7 @@ CUR_TAB_POSTS,Posts,Posts,Postos,Postos,Posten,Postes
 CUR_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
 CUR_TAB_NAME,Name,Name,Nome,Nome,Name,Nom
 CUR_KICKER,Your defence,Your defense,Sua defesa,A tua defesa,Deine Abwehr,Ta défense
+CUR_TEST_RUN,Test run,Test run,Testar,Testar,Testlauf,Essai
 ERR_FUND_ADULTS_ONLY,the Island Fund is open from 18,the Island Fund is open from 18,o Island Fund é aberto a partir dos 18,o Island Fund está aberto a partir dos 18,der Island Fund ist ab 18 offen,l'Island Fund est ouvert dès 18 ans
 LANDING_REALM_ONE,"In %s, one link from the Heart","In %s, one link from the Heart","Em %s, a uma ligação do Coração","Em %s, a uma ligação do Coração","In %s, eine Verbindung vom Herzen","Dans %s, à un lien du Cœur"
 LANDING_REALM_MANY,"In %s, %d links from the Heart","In %s, %d links from the Heart","Em %s, a %d ligações do Coração","Em %s, a %d ligações do Coração","In %s, %d Verbindungen vom Herzen","Dans %s, à %d liens du Cœur"

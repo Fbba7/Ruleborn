@@ -21,7 +21,6 @@ var _sheet: ScrollContainer
 var _keys: Control
 var _top: Control
 var _drawn_key := ""
-var _heading: PanelContainer
 var _tabs: HBoxContainer
 var _dock: HBoxContainer
 var _tab := "plan"
@@ -47,9 +46,8 @@ func _build() -> void:
 	view = StageScreen.mount(self, column)
 	view.fill = 1.0
 	plan = StagePlan.new(view)
-	_heading = OverlayHud.heading(Strings.t("PLAN_TITLE"), "")
-	header_label = _heading.find_child("Title", true, false) as Label
-	_top = _heading
+	_top = OverlayTop.bar(func() -> void: App.services.router.go(&"scout"), Strings.t("PLAN_TITLE"), "")
+	header_label = _top.find_child("Title", true, false) as Label
 	column.add_child(_top)
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label, "glass"))
@@ -93,13 +91,16 @@ func _refresh() -> void:
 		for child: Node in holder.get_children():
 			holder.remove_child(child)
 			child.queue_free()
-	_dock.add_child(OverlayHud.back_key(func() -> void: App.services.router.go(&"scout")))
 	if not p["ready"]:
 		return
 	var card: Dictionary = store.get_slice(PlannerState.PLANNER).get("target", {})
-	_tab_key("plan", Strings.t("PLAN_TAB_PLAN"))
 	var v := _values(store.get_slice(PlannerState.PLANNER), store.get_slice(KeeperState.KEEPER))
-	_tab_key("crew", "%s %s" % [Strings.t("PLAN_TAB_CREW"), v["crew"]])
+	var tabs := OverlayTop.tabs(["plan", "crew"], [Strings.t("PLAN_TAB_PLAN"),
+		"%s %s" % [Strings.t("PLAN_TAB_CREW"), v["crew"]]], _tab, func(id: String) -> void:
+			_tab = id
+			_refresh.call_deferred())
+	tabs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_tabs.add_child(tabs)
 	# Both tabs are built, the chosen one shown.
 	_plan_tab(p, card, v)
 	_crew_tab(p)
@@ -112,6 +113,7 @@ func _refresh() -> void:
 	start.disabled = not o["can"]
 	start.set_meta("key", o["key"])
 	start.set_meta("item", o["item"])
+	start.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_dock.add_child(start)
 	if p["protected"] != "":
 		var note := OverlayHud.pill("hud/shield", p["protected"], p["protected"], "track")
@@ -125,17 +127,6 @@ func _refresh() -> void:
 			if b.get_meta("item", "") == focus_item and b.is_visible_in_tree():
 				b.grab_focus.call_deferred()
 				break
-
-
-func _tab_key(id: String, words: String) -> void:
-	var b := UI.action(words, func() -> void:
-		_tab = id
-		_refresh(), "tab_active" if _tab == id else "tab")
-	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	b.icon = Icons.texture("planningactions/plan" if id == "plan" else "hud/crew")
-	b.add_theme_constant_override("icon_max_width", UI.px(20))
-	b.set_meta("tab", id)
-	_tabs.add_child(b)
 
 
 ## The plan as the design's parchment table: each row a name and its value,
