@@ -69,7 +69,16 @@ def rows() -> list[tuple[str, str]]:
     # traits, each with what it does. The card's words are its one home.
     for k in load("ruleborn.json"):
         out += [(f"RULEBORN_{k['id'].upper()}", k["name"]), (f"ABILITY_{k['id'].upper()}", k["ability"]),
-                (f"BEST_AT_{k['id'].upper()}", k["best_at"])]
+                (f"BEST_AT_{k['id'].upper()}", k["best_at"]), (f"RESISTS_{k['id'].upper()}", k["resists"])]
+        # The same ability cut for the Character screen's ability card: what it
+        # does, and its uses as the card's tag ("Two uses a heist").
+        does, uses = k["ability"].rsplit(". ", 1)
+        assert uses.endswith("a heist"), f"{k['id']}'s ability ends without its uses"
+        does = re.sub(r" \(\d+\.\d+\)", "", does)
+        out += [(f"ABILITY_DOES_{k['id'].upper()}", does + "."), (f"ABILITY_USES_{k['id'].upper()}", uses)]
+    # §11.1's roles: what each does on a heist (its numbers are the
+    # simulation's, RulebornReplay.role_numbers).
+    out += [(f"ROLE_JOB_{r['id'].upper()}", r["job"]) for r in load("roles.json")]
     for t in load("traits.json"):
         out += [(f"TRAIT_{t['id'].upper()}", t["name"]), (f"TRAIT_EFFECT_{t['id'].upper()}", t["effect"])]
     # §11.7's Sages: each one's name, heist powers, at-home effect, and what
@@ -79,6 +88,16 @@ def rows() -> list[tuple[str, str]]:
         out += [(f"SAGE_{key}", sg["name"]), (f"SAGE_POWERS_{key}", sg["heist_powers"]),
                 (f"SAGE_HOME_{key}", sg["at_home"])]
         out += [(f"SAGE_LEVEL_{lv}_{key}", text) for lv, text in sg["levels"].items()]
+        # The same card cut into its parts, for the hall's chips: each power's
+        # name, what it does and its uses ("Suspend", "switch off one law …",
+        # "1 use"); and the at-home effect apart from the on-guard one.
+        powers = re.findall(r"([A-Z][\w ]*?): (.*?) \(([^;)]*)[^)]*\)\.", sg["heist_powers"])
+        assert len(powers) == 3, f"{sg['id']}'s powers do not read as three"
+        for i, (name, does, uses) in enumerate(powers, 1):
+            out += [(f"SAGE_POWER_{key}_{i}", name), (f"SAGE_POWER_DOES_{key}_{i}", does),
+                    (f"SAGE_POWER_USES_{key}_{i}", uses)]
+        home, guard = sg["at_home"].split(" On guard: ")
+        out += [(f"SAGE_HOME_ONLY_{key}", home), (f"SAGE_GUARD_{key}", guard)]
     # §11.10's forms: each note's look and quirk, the same for every kind
     # (one per note, or the content disagrees with itself), and each note's
     # symbol (§8), for the Forms album (§23.2).

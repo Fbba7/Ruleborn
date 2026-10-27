@@ -8,6 +8,11 @@ func _initialize() -> void:
 
 func _go() -> void:
 	root.size = Vector2i(1080, 2340)
+	# TEXT=200 and HC=1 render §20.8's larger text and high contrast.
+	if OS.get_environment("TEXT") != "":
+		Settings.text_scale = int(OS.get_environment("TEXT"))
+	Settings.high_contrast = OS.get_environment("HC") != ""
+	Settings.apply()
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	var screen: HatchScreen = load("res://scenes/hatch.tscn").instantiate()
 	root.add_child(screen)
@@ -35,6 +40,9 @@ func _go() -> void:
 		(screen.body.get_parent() as ScrollContainer).scroll_vertical = int(OS.get_environment("SCROLL"))
 	screen.stage.at_time(1.5)
 	await RenderingServer.frame_post_draw
+	# §21.3's budget, as RenderingServer counts the frame.
+	print("draw calls ", RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+		", primitives ", RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME))
 	root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()

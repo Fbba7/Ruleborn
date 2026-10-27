@@ -6,15 +6,18 @@ extends RefCounted
 ## the rest; Lilita One for numbers that do not change, Marcellus for names.
 ## The words are the screens' own; this only dresses them.
 
-## §21.2: "Menus stand on a night backdrop (#171046 to #2C3AA8)".
-const NIGHT_TOP := Color("#171046")
-const NIGHT_BOTTOM := Color("#2C3AA8")
+## §21.2: "Menus stand on a night backdrop (#171046 to #2C3AA8)", taken at
+## its deep end, as the design's sub-screens take it (#2E1F5E to #140C30):
+## the page starts at the hero stage's foot (StageHeroBackdrop.NIGHT_FOOT),
+## so stage and page are one night, and lifts toward §21.2's violet below.
+const NIGHT_TOP := Color("#140C30")
+const NIGHT_BOTTOM := Color("#1A1240")
 ## §21.8: "a violet card from #261A4C to #1A1134 … with light text #F3EEFF".
 const CARD := Color("#241848")
 const CARD_EDGE := Color("#3A2A6E")
 const LIGHT := Color("#F3EEFF")
 ## §21.8: secondary words on a dark surface are no darker than #B8A8D8.
-const LIGHT_SOFT := Color("#C9BCE8")
+const LIGHT_SOFT := Color("#DCD2F2")
 ## §21.8: "Parchment: #FFFBF0 to #F1E3C4 with brown ink #2A1A10".
 const PARCHMENT := Color("#F8EEDA")
 const PARCHMENT_EDGE := Color("#E6D3AC")
@@ -26,6 +29,7 @@ const LEATHER := Color("#7A4E36")
 const GOLD := Color("#F2B43C")
 
 static var _numbers: FontFile = null
+static var _tile_shader: Shader = preload("res://world/portrait_tile.gdshader")
 static var _names: FontFile = null
 
 
@@ -34,6 +38,8 @@ static func night(screen: Control) -> void:
 	var sky := screen.get_node_or_null("Sky") as TextureRect
 	if sky == null:
 		return
+	# What words drawn straight on the night sit on, for the contrast checks.
+	screen.set_meta("behind", [NIGHT_TOP, NIGHT_BOTTOM] as Array[Color])
 	var gradient := Gradient.new()
 	gradient.set_color(0, NIGHT_TOP)
 	gradient.set_color(1, NIGHT_BOTTOM)
@@ -103,6 +109,8 @@ static func badge(text: String, fill: Color, points := 18.0) -> PanelContainer:
 	l.add_theme_font_override("font", numbers_font())
 	l.add_theme_color_override("font_color", LIGHT if fill.get_luminance() < 0.5 else BROWN)
 	l.set_meta("own_ink", true)
+	# Lilita One is a display face, as heavy as a bold (§21.8).
+	l.set_meta("bold", true)
 	l.add_theme_color_override("font_outline_color", OUTLINE)
 	l.add_theme_constant_override("outline_size", UI.px(1))
 	var p := PanelContainer.new()
@@ -202,44 +210,34 @@ static func names_font() -> Font:
 static func portrait_tile(kind: String, look := "", side_points := 104.0) -> PanelContainer:
 	var school := StageHeroFigure.school(StageHeroFigure.key(kind))
 	var main: Color = Palette.SCHOOL.get(school, Palette.MOTION)
-	# The tile: an outer holder that badges pin to, and inside it a rounded,
-	# clipped frame with the ground and the portrait, so badges stay unclipped.
+	# The tile: an outer holder that badges pin to, and in it one quad that
+	# draws the ground's glow, the portrait and the rounded ink edge
+	# (portrait_tile.gdshader), so badges stay unclipped and a grid of tiles
+	# costs a draw call a tile.
 	var tile := PanelContainer.new()
 	tile.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	var holder := Control.new()
 	holder.custom_minimum_size = Vector2(UI.px(48), UI.px(side_points))
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	tile.add_child(holder)
-	var frame := Panel.new()
-	var b := box(main.darkened(0.35), 12.0, false)
-	frame.add_theme_stylebox_override("panel", b)
-	frame.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
-	frame.set_anchors_preset(Control.PRESET_FULL_RECT)
-	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	holder.add_child(frame)
-	var glow := TextureRect.new()
-	var tex := GradientTexture2D.new()
-	tex.fill = GradientTexture2D.FILL_RADIAL
-	tex.fill_from = Vector2(0.5, 0.42)
-	tex.fill_to = Vector2(1.05, 0.42)
-	var grad := Gradient.new()
-	grad.set_color(0, main.lightened(0.35) if look != "shadow" else Color("#5A4A8A"))
-	grad.set_color(1, main.darkened(0.3) if look != "shadow" else Color("#2A1E52"))
-	tex.gradient = grad
-	glow.texture = tex
-	glow.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	glow.stretch_mode = TextureRect.STRETCH_SCALE
-	glow.set_anchors_preset(Control.PRESET_FULL_RECT)
-	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	frame.add_child(glow)
 	var picture := TextureRect.new()
 	picture.texture = Portrait.of(kind, look)
 	picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	picture.set_anchors_preset(Control.PRESET_FULL_RECT)
 	picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	picture.name = "Portrait"
-	frame.add_child(picture)
+	var m := ShaderMaterial.new()
+	m.shader = _tile_shader
+	var shadow := look == "shadow"
+	m.set_shader_parameter("glow_in", Color("#5A4A8A") if shadow else main.lightened(0.35))
+	m.set_shader_parameter("glow_out", Color("#2A1E52") if shadow else main.darkened(0.3))
+	m.set_shader_parameter("line_color", OUTLINE)
+	m.set_shader_parameter("radius", float(UI.px(12)))
+	m.set_shader_parameter("line_w", float(edge_px()))
+	picture.material = m
+	picture.resized.connect(func() -> void: m.set_shader_parameter("px_size", picture.size))
+	holder.add_child(picture)
 	tile.set_meta("kind", kind)
 	return tile
 

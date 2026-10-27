@@ -637,7 +637,38 @@ CHARACTER_NEXT,"Next character, %s","Next character, %s","Próximo personagem, %
 CHARACTER_RAISED,Now level %d,Now level %d,Agora no nível %d,Agora no nível %d,Jetzt Stufe %d,Désormais niveau %d
 CHARACTER_WOKEN,Back from rest,Back from rest,De volta do descanso,De volta do descanso,Zurück von der Rast,De retour du repos
 CHARACTER_MISSING,This character is not in the roster,This character is not in the roster,Este personagem não está no plantel,Esta personagem não está no plantel,Diese Figur ist nicht in der Aufstellung,Ce personnage n'est pas dans l'effectif
+CHARACTER_TAB_HEIST,Heist,Heist,Assalto,Assalto,Raubzug,Casse
+CHARACTER_TAB_STATS,Stats,Stats,Atributos,Atributos,Werte,Stats
+CHARACTER_TAB_COMPARE,Compare,Compare,Comparar,Comparar,Vergleich,Comparer
+CHARACTER_KICK_ABILITY,Ability,Ability,Habilidade,Habilidade,Fähigkeit,Capacité
+CHARACTER_KICK_ROLE,Role,Role,Função,Função,Rolle,Rôle
+CHARACTER_KICK_RESISTS,Resists,Resists,Resiste,Resiste,Widersteht,Résiste
+CHARACTER_KICK_BEST,Best at,Best at,Melhor em,Melhor em,Am besten,Doué pour
+CHARACTER_KICK_TRAITS,Traits,Traits,Traços,Traços,Eigenschaften,Traits
+CHARACTER_KICK_FORMS,Forms,Forms,Formas,Formas,Formen,Formes
+CHARACTER_STAT_HEALTH,Health,Health,Vida,Vida,Leben,Vie
+CHARACTER_STAT_SPEED,Speed,Speed,Velocidade,Velocidade,Tempo,Vitesse
+CHARACTER_STAT_POWER,Power,Power,Força,Força,Kraft,Puissance
+CHARACTER_STAT_CARRY,Carry,Carry,Carga,Carga,Tragen,Charge
+CHARACTER_STATS_NOTE,Every %s has these numbers on a heist,Every %s has these numbers on a heist,Todo %s tem estes números num assalto,Todo o %s tem estes números num assalto,Jeder %s hat diese Werte im Raubzug,Chaque %s a ces valeurs en casse
+CHARACTER_STAT_SPOKEN,%s: %s,%s: %s,%s: %s,%s: %s,%s: %s,%s : %s
+CHARACTER_COMPARE_WITH,Compare with %s,Compare with %s,Comparar com %s,Comparar com %s,Mit %s vergleichen,Comparer avec %s
+CHARACTER_COMPARE_NONE,No one else to compare with yet,No one else to compare with yet,Ainda não há com quem comparar,Ainda não há com quem comparar,Noch niemand zum Vergleichen,Personne à comparer pour l'instant
+CHARACTER_LEVEL_SHORT,LV,LV,NV,NV,ST,NV
+CHARACTER_LEVEL_OF,Level %d of %d,Level %d of %d,Nível %d de %d,Nível %d de %d,Stufe %d von %d,Niveau %d sur %d
+CHARACTER_COUNT,%d / %d,%d / %d,%d / %d,%d / %d,%d / %d,%d / %d
+CHARACTER_UPGRADE,Level up,Level up,Subir de nível,Subir de nível,Aufsteigen,Monter
+CHARACTER_UPGRADE_LINE,Level %d → %d,Level %d → %d,Nível %d → %d,Nível %d → %d,Stufe %d → %d,Niveau %d → %d
+CHARACTER_KICK_HEALTH,Health,Health,Vida,Vida,Leben,Vie
 ROSTER_SEND_WORK,Send to work,Send to work,Mandar trabalhar,Mandar trabalhar,Zur Arbeit schicken,Envoyer au travail
+ROSTER_ALL,All,All,Todos,Todos,Alle,Tous
+ROSTER_FILTER,%s · %d,%s · %d,%s · %d,%s · %d,%s · %d,%s · %d
+ROSTER_FILTER_SPOKEN,Show %s: %d,Show %s: %d,Mostrar %s: %d,Mostrar %s: %d,%s zeigen: %d,Afficher %s : %d
+ROSTER_DETAILS,Details,Details,Detalhes,Detalhes,Details,Détails
+CREW_HUB_ROSTER,Roster,Roster,Plantel,Plantel,Aufstellung,Effectif
+CREW_HUB_SAGES,Sages,Sages,Sábios,Sábios,Weise,Sages
+CREW_HUB_FORMS,Forms,Forms,Formas,Formas,Formen,Formes
+ROSTER_COLLECTION,Collection,Collection,Coleção,Coleção,Sammlung,Collection
 HOME_SAGES,Sage hall,Sage hall,Salão dos Sábios,Salão dos Sábios,Halle der Weisen,Salle des Sages
 SAGE_TITLE,Sage hall,Sage hall,Salão dos Sábios,Salão dos Sábios,Halle der Weisen,Salle des Sages
 SAGE_HEADER,"Your Sages are at level %d, the Keeper's","Your Sages are at level %d, the Keeper's","Seus Sábios estão no nível %d, o do Guardião","Os teus Sábios estão no nível %d, o do Guardião","Deine Weisen sind auf Stufe %d, der des Hüters","Tes Sages sont au niveau %d, celui du Gardien"
@@ -657,6 +688,9 @@ SAGE_STAYS,A Sage on guard stays home from heists,A Sage on guard stays home fro
 SAGE_NONE_ON_GUARD,No Sage is on guard,No Sage is on guard,Nenhum Sábio está de guarda,Nenhum Sábio está de guarda,Kein Weiser hält Wache,Aucun Sage n'est de garde
 SAGE_STATIONED,%s is on guard at the Heart,%s is on guard at the Heart,%s está de guarda no Coração,%s está de guarda no Coração,%s hält Wache im Herzen,%s est de garde au Cœur
 SAGE_FAILED,The Sages did not change: %s,The Sages did not change: %s,Os Sábios não mudaram: %s,Os Sábios não mudaram: %s,Die Weisen haben sich nicht geändert: %s,Les Sages n'ont pas changé : %s
+SAGE_KICK_POWERS,Heist powers,Heist powers,Poderes no assalto,Poderes no assalto,Kräfte im Raubzug,Pouvoirs de casse
+SAGE_KICK_HOME,At home,At home,Em casa,Em casa,Zu Hause,À la maison
+SAGE_KICK_GUARD,On guard,On guard,De guarda,De guarda,Auf Wache,De garde
 ERR_SAGE_LOCKED,that Sage is not unlocked yet,that Sage is not unlocked yet,esse Sábio ainda não foi desbloqueado,esse Sábio ainda não foi desbloqueado,dieser Weise ist noch nicht freigeschaltet,ce Sage n'est pas encore débloqué
 ERR_NO_SUCH_SAGE,there is no such Sage,there is no such Sage,esse Sábio não existe,esse Sábio não existe,diesen Weisen gibt es nicht,ce Sage n'existe pas
 HOME_FORMS,Forms album,Forms album,Álbum de formas,Álbum de formas,Formenalbum,Album des formes
@@ -1069,6 +1103,8 @@ SHARE_LIMIT_CLIP_NO,Clips stay in the game,Clips stay in the game,Clipes ficam n
 SHARE_LIMIT_CLIP_CONFIRM,A clip leaves the game only after you confirm,A clip leaves the game only after you confirm,Um clipe só sai do jogo depois que você confirmar,Um clipe só sai do jogo depois de confirmares,Ein Clip verlässt das Spiel erst nach deiner Bestätigung,Un clip ne quitte le jeu qu'après ta confirmation
 SHARE_LIMIT_CLIP_YES,Clips can be shared anywhere,Clips can be shared anywhere,Clipes podem ser compartilhados em qualquer lugar,Os clipes podem ser partilhados em qualquer lado,Clips können überall geteilt werden,Les clips peuvent être partagés partout
 FIRST_TITLE,Welcome to Ruleborn,Welcome to Ruleborn,Bem-vindo ao Ruleborn,Bem-vindo ao Ruleborn,Willkommen bei Ruleborn,Bienvenue dans Ruleborn
+FIRST_LOGO,Ruleborn,Ruleborn,Ruleborn,Ruleborn,Ruleborn,Ruleborn
+FIRST_TAGLINE,Your islands. Your rules. Their treasure.,Your islands. Your rules. Their treasure.,Suas ilhas. Suas regras. O tesouro deles.,As tuas ilhas. As tuas regras. O tesouro deles.,Deine Inseln. Deine Regeln. Ihr Schatz.,Tes îles. Tes règles. Leur trésor.
 FIRST_FAILED,The game could not reach the server: %s,The game could not reach the server: %s,O jogo não alcançou o servidor: %s,O jogo não chegou ao servidor: %s,Das Spiel erreichte den Server nicht: %s,Le jeu n'a pas joint le serveur : %s
 FIRST_BEGIN,Begin,Begin,Começar,Começar,Los geht's,Commencer
 FIRST_GO_ON,Go on,Go on,Continuar,Continuar,Weiter,Continuer

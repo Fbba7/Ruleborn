@@ -104,6 +104,13 @@ func _backgrounds(c: Control) -> Array[Color]:
 	var fills: Array[Color] = []
 	var n: Node = c
 	while n != null and fills.is_empty():
+		# A fill a style box cannot say — a gradient material — says what its
+		# words sit on itself (StageHeroMaterial).
+		if n.has_meta("behind"):
+			for f: Color in n.get_meta("behind"):
+				fills.append(f)
+			n = n.get_parent()
+			continue
 		# A box the kit drew says what its words sit on; a control another
 		# script has dressed in a fill of its own is read from that fill.
 		if n.has_meta("text_bg") and not _own_fill(n):
