@@ -149,12 +149,27 @@ func _chamber(c: Dictionary, busy: bool) -> Control:
 	box.add_child(bench)
 	if c.get("unstable", false):
 		box.add_child(ScreenParts.pill(Strings.t("LAB_UNSTABLE"), "red", "hud", "warning", 13.0, "words", true))
+	# The last result's lines together on one well, a find first and lit.
+	var said := VBoxContainer.new()
+	said.add_theme_constant_override("separation", UI.px(4))
+	var found := str(c.get("found", ""))
 	for line: String in c["lines"]:
 		if line == Strings.t("LAB_UNSTABLE") or c.has("running") and line == c["lines"][0]:
 			continue
-		var found := str(c.get("found", ""))
-		box.add_child(ScreenParts.pill(line, "green" if found != "" and line == c["lines"][0] else "well",
-			"harmony", "resonance" if found != "" else "signature", 13.0, "words", true))
+		var lit: bool = found != "" and line == c["lines"][0]
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", UI.px(8))
+		var mark := ScreenKit.icon("harmony", "resonance" if lit else "signature", 20.0)
+		mark.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		row.add_child(mark)
+		var words := ScreenKit.text(line, 13.0, "words", "well", not lit, true)
+		if lit:
+			words.add_theme_color_override("font_color", Tokens.color("success_text_on_night"))
+		words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(words)
+		said.add_child(row)
+	if said.get_child_count() > 0:
+		box.add_child(ScreenKit.panel("well", said, 12.0, 8.0))
 	if not (c["run"] as Dictionary).is_empty():
 		var shown: Dictionary = (c["run"] as Dictionary).duplicate()
 		if confirm == shown["key"]:
