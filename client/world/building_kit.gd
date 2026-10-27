@@ -698,25 +698,35 @@ func _garden() -> void:
 				stop()
 	if tier >= 1:
 		# The greenhouse: white frame, pale glass.
-		var pane := Color("#D8F4EC")
+		var pane := Color("#E6FBF4")
 		for z: float in [-0.29, 0.29]:
 			glass.box(place(0, 0.37, z), Vector3(0.82, 0.34, 0.01) * unit, pane)
 			glass.gable(Transform3D(Basis(), at(0, 0.54, z)), 0.82 * unit, 0.26 * unit, 0.01 * unit, pane)
 		for x: float in [-0.41, 0.41]:
 			glass.box(place(x, 0.37, 0), Vector3(0.01, 0.34, 0.58) * unit, pane)
-		var fr := Color("#F6F2E8") if tier == 1 else KitStyle.GOLD
+		# A bold white frame, as the design's greenhouse reads by its grid of
+		# glazing bars: posts round all four walls, a rail at mid height and
+		# rafters over the roof.
+		var fr := Color("#FFFBF2") if tier == 1 else KitStyle.GOLD
+		var bar := 0.032
 		for i in 5:
 			var x := -0.41 + i * 0.205
 			for z: float in [-0.29, 0.29]:
-				box(0.022, 0.34, 0.022, fr, x, 0.37, z)
+				box(bar, 0.34, bar, fr, x, 0.37, z)
+		for z: float in [-0.145, 0.0, 0.145]:
+			for x: float in [-0.41, 0.41]:
+				box(bar, 0.34, bar, fr, x, 0.37, z)
 		for z: float in [-0.29, 0.29]:
-			box(0.84, 0.022, 0.022, fr, 0, 0.54, z)
-		box(0.022, 0.022, 0.6, fr, 0, 0.8, 0)
+			box(0.84, bar, bar, fr, 0, 0.53, z)
+			if not lighter:
+				fine(0.84, 0.02, 0.02, fr, 0, 0.37, z)
+		box(bar, bar, 0.62, fr, 0, 0.8, 0)
 		for s: float in [-1.0, 1.0]:
 			glass.rbox(Transform3D(Basis(Vector3.BACK, -s * 0.56), at(s * 0.205, 0.67, 0)),
 				Vector3(0.48, 0.015, 0.6) * unit, pane, 0.005)
-			d.box(Transform3D(Basis(Vector3.BACK, -s * 0.56), at(s * 0.205, 0.68, 0.29)),
-				Vector3(0.48, 0.024, 0.024) * unit, fr)
+			for z: float in ([-0.29, 0.0, 0.29] if not lighter else [-0.29, 0.29]):
+				d.box(Transform3D(Basis(Vector3.BACK, -s * 0.56), at(s * 0.205, 0.68, z)),
+					Vector3(0.48, bar, bar) * unit, fr)
 		top = 0.85
 	else:
 		top = 0.5
