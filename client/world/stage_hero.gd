@@ -290,7 +290,7 @@ static func bounds(figure: Node3D) -> AABB:
 static func shade(figure: Node3D) -> void:
 	var m := StandardMaterial3D.new()
 	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.albedo_color = Color("#2A1E52")
+	m.albedo_color = Color("#0E0A22")
 	for mi: MeshInstance3D in figure.find_children("*", "MeshInstance3D", true, false):
 		# A ground shadow stays a shadow, not a dark plate.
 		if mi.get_aabb().size.y < 0.02:

@@ -230,8 +230,8 @@ static func portrait_tile(kind: String, look := "", side_points := 104.0) -> Pan
 	var m := ShaderMaterial.new()
 	m.shader = _tile_shader
 	var shadow := look == "shadow"
-	m.set_shader_parameter("glow_in", Color("#5A4A8A") if shadow else main.lightened(0.35))
-	m.set_shader_parameter("glow_out", Color("#2A1E52") if shadow else main.darkened(0.3))
+	m.set_shader_parameter("glow_in", Color("#7A6AB8") if shadow else main.lightened(0.35))
+	m.set_shader_parameter("glow_out", Color("#3A2A6A") if shadow else main.darkened(0.3))
 	m.set_shader_parameter("line_color", OUTLINE)
 	m.set_shader_parameter("radius", float(UI.px(12)))
 	m.set_shader_parameter("line_w", float(edge_px()))
