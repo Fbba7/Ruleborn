@@ -106,3 +106,28 @@ test("SR-19: a day's device events, open invites and open challenge links each h
     method: "POST", headers: { authorization: `Bearer ${later.token}` } }));
   assert.equal(again.status, 201, "a lapsed invite frees its place");
 });
+
+test("SR-19: a day's unsubmitted Workshop plays and a player's open purchase intents have a ceiling too", async () => {
+  const { MOST_OPEN_PLAYS, Workshop } = await import("../src/workshop.mjs");
+  const { MOST_OPEN_INTENTS } = await import("../src/shop.mjs");
+  const { clockTicks } = await import("../src/service.mjs");
+  const { openPlan } = await import("./setup.mjs");
+  const items = Array.from({ length: 12 }, (_, i) => ({ id: `c${i}`, kind: "outfit", price: 100 }));
+  const t = server({ cosmetics: { items } });
+  const w = new Workshop(t.service);
+  const island = t.build.exampleIsland(true);
+  const cleared = t.build.record(island, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() });
+  const creator = t.service.session("gc:creator").account;
+  const { id } = w.publish(creator, island, cleared, { adjective: 1, noun: 9 });
+  const player = t.service.session("gc:player").account;
+  for (let i = 0; i < MOST_OPEN_PLAYS; i++) w.play(player, id);
+  assert.throws(() => w.play(player, id), (e) => e.reason === "too_many_open_plays");
+  t.clock.now += 24 * 60 * 60 * 1000 + 1;
+  assert.ok(w.play(player, id).token, "a day on, the old ones no longer count");
+
+  const buyer = t.service.session("gc:buyer").account;
+  for (let i = 0; i < MOST_OPEN_INTENTS; i++) t.service.shop.intent(buyer, `c${i}`);
+  assert.throws(() => t.service.shop.intent(buyer, "c11"), (e) => e.reason === "too_many_open_intents");
+  t.clock.now += 16 * 60 * 1000;
+  assert.ok(t.service.shop.intent(buyer, "c11").intent, "a lapsed intent frees its place");
+});

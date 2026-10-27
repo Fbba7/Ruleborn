@@ -277,7 +277,8 @@ decision).
 
 - **Where:** `server/src/telemetry.mjs` `batch` (`POST /v1/events`),
   `server/src/friends.mjs` `invite` and `challenge`
-  (`POST /v1/friends/invites`, `POST /v1/challenges`).
+  (`POST /v1/friends/invites`, `POST /v1/challenges`),
+  `server/src/workshop.mjs` `play`, `server/src/shop.mjs` `intent`.
 - **What:** G44's call bucket, two a second, was the only bound on what one
   account writes. A batch of device events holds up to 100, and only three
   kinds (sessions and the "worth" rating) had a daily count: `weave` and
@@ -291,8 +292,13 @@ decision).
   comment fits in one or two rows — and past it a batch is refused 429
   `too_many_events`. A player holds at most 50 open invites and 50 open
   challenge links (`MOST_OPEN`), as `safety.mjs` holds blocks to 500;
-  past them 409, and a used or lapsed one frees its place. The client has
-  the words for all three. No honest player reaches any of them.
+  past them 409, and a used or lapsed one frees its place. The same holds
+  for the two other rows a call writes without a bound: a Workshop play
+  (`POST /v1/workshop/:id/play`, kept for good) — at most
+  `MOST_OPEN_PLAYS`, 50, unsubmitted from the last day — and a purchase
+  intent, which only a minor's cap bounded — at most `MOST_OPEN_INTENTS`,
+  10, open at once. The client has the words for all five refusals. No
+  honest player reaches any of them.
 - **Status:** fixed.
 
 ## Needs the owner
@@ -454,6 +460,11 @@ pick up later.
 - **Unsigned reads.** `GET /v1/bundles/:hash` takes no session and no
   bucket, as §24.8's static files must; each miss is one indexed read and a
   file check, and the edge caches the hits.
+- **Snapshots.** Every island published is a snapshot kept for good
+  (§24.8), and its bytes in the store; the simulation bucket (one every 20
+  seconds) is the only bound, about 4 MB a day an account at the most.
+  §20.12's quota bounds the Workshop's islands, not a realm's; a quota of
+  the same kind for realms is the owner's call.
 - **Leases.** One lease a target a raider at a time (§24.13), but a raider
   may hold one on every island; unplayed ones are deleted seven days after
   they lapse (G38). Bounded by the game's islands, not by the caller.
