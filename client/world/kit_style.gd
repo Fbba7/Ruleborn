@@ -18,7 +18,7 @@ const REALMS := {
 		"accent": "#F07A3C", "tree": "pine"},
 	"verdant": {"wall": "#E8D2A8", "roof": "#B5533C", "stone": "#E6DCCB", "stone2": "#B9AE9C", "accent": "#5CC46A",
 		"tree": "round"},
-	"lanternvale": {"wall": "#6A5A78", "roof": "#4B3C8A", "stone": "#C4BCD8", "stone2": "#8E86A8",
+	"lanternvale": {"wall": "#C2B2D6", "roof": "#4B3C8A", "stone": "#C4BCD8", "stone2": "#8E86A8",
 		"accent": "#F2B43C", "tree": "willow"},
 }
 ## The timber, iron, gold and window light every realm shares (the

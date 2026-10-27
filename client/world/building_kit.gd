@@ -62,7 +62,12 @@ var lighter := false
 
 ## The materials of a level's look: walls, roof, trim.
 static func look(lvl: int, colours: Dictionary) -> Array[Color]:
-	var s := KitStyle.of(KitStyle.realm_of(colours))
+	var realm := KitStyle.realm_of(colours)
+	var s := KitStyle.of(realm)
+	if realm == "lanternvale":
+		# The night realm's plaster holds a little of its lamplight, as its
+		# land still draws the houses glowing warm in the dark.
+		s["wall"] = KitStyle.lit((s["wall"] as Color).lerp(Color("#FFD8B0"), 0.25), 0.18)
 	if lvl >= 7:
 		return [Color("#ECE6FF"), (s["roof"] as Color).lerp(Color("#8C6CF0"), 0.35).lightened(0.1), KitStyle.GOLD]
 	if lvl >= 4:
