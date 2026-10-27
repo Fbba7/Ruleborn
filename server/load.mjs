@@ -135,8 +135,14 @@ export function reads(db) {
   };
   // Every table a FROM or a JOIN names (the schema's one comma join, the
   // events view's, joins a table-valued function).
-  const rewrite = (sql) => sql.replace(/\b(FROM|JOIN)(\s+)(\w+)\b(?!\s*\()/gi,
-    (all, kw, sp, name) => (counted(name) ? `${kw}${sp}__r_${name}` : all));
+  // A table named without an alias keeps its name as the view's, so the
+  // statement's `t.column`s still name it.
+  const KEYWORDS = /^(WHERE|JOIN|ON|LEFT|INNER|CROSS|NATURAL|OUTER|ORDER|GROUP|HAVING|LIMIT|UNION|EXCEPT|INTERSECT|WINDOW|SET|USING|INDEXED|NOT|RETURNING)$/i;
+  const rewrite = (sql) => sql.replace(/\b(FROM|JOIN)(\s+)(\w+)\b(?!\s*\()/gi, (all, kw, sp, name, at) => {
+    if (!counted(name)) return all;
+    const next = /^\s+(?:AS\s+)?(\w+)/i.exec(sql.slice(at + all.length));
+    return `${kw}${sp}__r_${name}${next && !KEYWORDS.test(next[1]) ? "" : ` AS ${name}`}`;
+  });
   // Made before any transaction, which a rollback would take them back with.
   for (const r of prepare("SELECT name FROM main.sqlite_master WHERE type IN ('table', 'view') AND name NOT LIKE 'sqlite_%'").all()) {
     counted(r.name);
@@ -157,7 +163,7 @@ export function reads(db) {
     } else if ((m = /^(UPDATE)\s+(?:OR\s+\w+\s+)?(\w+)\s+SET\b/i.exec(s)) || (m = /^(DELETE)\s+FROM\s+(\w+)/i.exec(s))) {
       const where = /\bWHERE\b/i.exec(s);
       if (counted(m[2])) {
-        read = { sql: `SELECT 1 FROM __r_${m[2]}${where ? ` ${rewrite(s.slice(where.index))}` : ""}`,
+        read = { sql: `SELECT 1 FROM __r_${m[2]} AS ${m[2]}${where ? ` ${rewrite(s.slice(where.index))}` : ""}`,
                  skip: where && !numbered ? before(where.index) : 0 };
       }
     } else if ((m = /^INSERT\b[\s\S]*?\)\s*(SELECT\b[\s\S]*)$/i.exec(s))) {
@@ -181,6 +187,20 @@ export function reads(db) {
     p.st.all(...a);
     count.rows += seen;
     count.bySql.set(sql, (count.bySql.get(sql) ?? 0) + seen);
+  };
+  /** A statement's query plan and its counted copy's, each loop as its
+   *  access alone (the table's name or alias aside): the same loops on the
+   *  same indexes, or the count is not of what D1 would run. */
+  count.plans = (sql, args = []) => {
+    const p = plan(sql);
+    if (!p) return null;
+    const loops = (st, a) => st.all(...a).map((r) => r.detail
+      .replace(/^(SCAN|SEARCH) (?:main\.)?\w+(?: AS \w+)?/, "$1 _")
+      .replace(/^(CORRELATED )?(SCALAR|LIST) SUBQUERY \d+/, "$1$2 SUBQUERY"));
+    const head = s => /^(SELECT|WITH)\b/i.test(s.trim());
+    const a = args.slice(p.skip);
+    return { statement: head(sql) ? loops(prepare(`EXPLAIN QUERY PLAN ${sql}`), args) : null,
+             counted: loops(prepare(`EXPLAIN QUERY PLAN ${p.sql}`), a) };
   };
   db.prepare = (sql) => {
     const st = prepare(sql);
@@ -260,6 +280,7 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
   read.bySql.clear();
 
   const [sessions, heists] = ARCHETYPES[archetype];
+  const readsByDay = [];
   const cpu = [];
   const baseline = changes();
   for (let d = 0; d < days; d++) {
@@ -287,6 +308,9 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
         cpu.push(Number(process.hrtime.bigint() - t0) / 1e6);
       }
     }
+    // A player's reads by the day: what grows with the history read.
+    const played = Object.entries(rowsRead).reduce((a, [k, v]) => a + (k.includes("(x24)") || k.includes("compaction") ? 0 : v), 0);
+    readsByDay.push(+((played - readsByDay.reduce((a, v) => a + v * players, 0)) / players).toFixed(1));
     clock.now = T0 + d * DAY + 23 * 60 * 60 * 1000;
     // The periodic jobs, amortised over the day's players: 24 target-list
     // runs a day (hourly, as the owner decided, G21), one telemetry compaction.
@@ -324,12 +348,18 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
     readsPerPlayerDay: +(readTotal / playerDays).toFixed(1),
     readsPerHeist: +((rowsRead["heist: validate and grant"] + rowsRead.lease) / (playerDays * heists)).toFixed(1),
     readsByOperation: Object.fromEntries(readPerPlayer.map(([k, v]) => [k, +(v / playerDays).toFixed(1)])),
+    readsPerPlayerByDay: readsByDay,
     periodicReadsADayAnIsland: Object.fromEntries(PERIODIC.map((k) => [k, +((rowsRead[k] ?? 0) / days / players).toFixed(1)])),
     // The statements that read the most, a player a day: where a cut is.
     readsBySql: [...read.bySql].sort((a, b) => b[1] - a[1]).slice(0, Number(process.env.LOAD_SQL_TOP ?? 12))
       .map(([sql, n]) => [+(n / playerDays).toFixed(1), sql.replace(/\s+/g, " ").trim().slice(0, 160)]),
   };
 }
+
+/** §24.1's reads budget, "2,500 row reads per active player per day", and
+ *  §28.3's D1 source: the free plan's 5 million row reads a day; the paid
+ *  plan's 25 billion a month included, then $0.001 a million. */
+export const READS = { budget: 2_500, freeDay: 5_000_000, paidMonth: 25e9, pricePerMillion: 0.001 };
 
 /** What the measurements do to §24.1's budget and cost table. */
 export function against(result) {
@@ -349,7 +379,27 @@ export function against(result) {
     // player's: an engaged population is the ceiling, a casual one the floor.
     paidDollarsAMonth: Object.fromEntries([1_000, 10_000, 100_000, 1_000_000].map((p) =>
       [p, +(5 + Math.max(0, monthly(p) - included) / 1e6 * price).toFixed(0)])),
+    // Reads: the day's players' requests, and the periodic jobs' reads of
+    // every island, an island each monthly player (the lists hold them all).
+    readBudget: READS.budget,
+    readsOverBudget: +(result.readsPerPlayerDay / READS.budget).toFixed(2),
+    freePlanReadsPlayersADay: Math.floor(READS.freeDay / readsADay(result, 1)),
+    readDollarsAMonth: Object.fromEntries([1_000, 10_000, 100_000, 1_000_000].map((p) =>
+      [p, +(Math.max(0, readsAMonth(result, p) - READS.paidMonth) / 1e6 * READS.pricePerMillion).toFixed(2)])),
   };
+}
+
+/** Rows read a day a daily player brings: their own, and the periodic
+ *  jobs' over the `islandsADailyPlayer` islands each stands for. */
+function readsADay(result, islandsADailyPlayer) {
+  const periodic = Object.values(result.periodicReadsADayAnIsland).reduce((a, v) => a + v, 0);
+  return result.readsPerPlayerDay + periodic * islandsADailyPlayer;
+}
+
+/** Rows read a month at `players` monthly players, a third playing a day. */
+export function readsAMonth(result, players) {
+  const [dn, dd] = facts.DAILY_SHARE;
+  return (players * dn / dd) * readsADay(result, dd / dn) * 30;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
@@ -387,6 +437,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
                   `${r.validationMs.max}); the free plan allows ${r.against.freeCpuMs} ms a request`);
       console.log(`  the free plan's daily writes carry ${r.against.freePlanPlayersADay} such players a day`);
       console.log(`  paid plan, a third of monthly players playing a day (§25.1): ${JSON.stringify(r.against.paidDollarsAMonth)} dollars a month`);
+      console.log(`  ${r.readsPerPlayerDay} rows read a player a day (by day ${r.readsPerPlayerByDay.join(", ")}), ` +
+                  `against §24.1's ${r.against.readBudget}; and the periodic jobs read ` +
+                  `${JSON.stringify(r.periodicReadsADayAnIsland)} a day an island`);
+      for (const [k, v] of Object.entries(r.readsByOperation)) console.log(`    ${String(v).padStart(7)}  ${k}`);
+      console.log(`  reads past the paid plan's 25 billion: ${JSON.stringify(r.against.readDollarsAMonth)} dollars a month`);
     }
   }
 }
