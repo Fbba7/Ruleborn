@@ -175,8 +175,8 @@ func _text_card() -> Control:
 	var size_name := Strings.t("SETTINGS_TEXT_SIZE", Settings.text_scale)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
-	var smaller := _tag(ScreenKit.button("A", text_step.bind(-1), "leather", Strings.t("SETTINGS_SMALLER", size_name),
-		14.0), "text-")
+	var smaller := _tag(ScreenKit.button(Strings.t("SCREEN_TEXT_A"), text_step.bind(-1), "leather",
+		Strings.t("SETTINGS_SMALLER", size_name), 14.0), "text-")
 	smaller.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(smaller)
 	var mid := VBoxContainer.new()
@@ -195,8 +195,8 @@ func _text_card() -> Control:
 		dots.add_child(dot)
 	mid.add_child(dots)
 	row.add_child(mid)
-	var larger := _tag(ScreenKit.button("A", text_step.bind(1), "leather", Strings.t("SETTINGS_LARGER", size_name),
-		14.0), "text+")
+	var larger := _tag(ScreenKit.button(Strings.t("SCREEN_TEXT_A"), text_step.bind(1), "leather",
+		Strings.t("SETTINGS_LARGER", size_name), 14.0), "text+")
 	larger.add_theme_font_size_override("font_size", UI.text_px(26))
 	larger.set_meta("points", 26.0)
 	larger.size_flags_vertical = Control.SIZE_SHRINK_CENTER
