@@ -559,7 +559,10 @@ What was tried and found sound, so the next reader need not try it again.
   logged by code and route, never a token; nothing is loaded or run from
   downloaded data (`load()` takes `res://` only; no `str_to_var`,
   `Expression` or resource packs); TLS is the platform's, with no unsafe
-  options; Android backups are off.
+  options; Android backups are off. The screens render no rich text (no
+  `RichTextLabel`, so no BBCode links to click), draw only images they
+  generate themselves, open only the terms link (SR-06), and read the
+  environment only on the desktop (`RULEBORN_SERVER`, `RULEBORN_CREDENTIAL`).
 - **Supply chain.** The server has no dependencies. `tools/art` pins exact
   versions with a lockfile of nine registry packages, each with its
   integrity hash and no install script; `npm audit` finds nothing. The Rust
@@ -616,10 +619,10 @@ Twenty findings: one High, eight Medium, eleven Low.
   `server/test/security_t11.test.mjs`, and a note on what sign-out has to
   do. T11's branch was not on the remote when this was written.
 
-Not reviewed in depth: the client's screens (`client/scripts/*_screen.gd`,
-`client/ui/**`, `client/world/**`) beyond what they open, run or log;
-`tools/` beyond its supply chain; the design document's own security
-statements against each other.
+Not reviewed in depth: the client's screens' layout code, beyond what they
+open, run, load, render as rich text or log; `tools/` beyond its supply
+chain; the Rust crates' advisories (`cargo audit` could not run); the design
+document's own security statements against each other.
 
 What would be done next: SR-15 and SR-16 with the economy build (TC.12);
 the hold measurement off the request thread; a cap on realm snapshots like
