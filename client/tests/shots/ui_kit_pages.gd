@@ -27,6 +27,8 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_character(column)
 		12:
 			_friends(column)
+		13:
+			_log(column)
 		_:
 			_season(column)
 
@@ -483,3 +485,17 @@ static func _friends(column: VBoxContainer) -> void:
 	column.add_child(KitSocial.feed_row(Portrait.of("tidewalker"), "AI", "Aiko", "Hatched", "", "3 h",
 		"Hatched a Spark Emberling. It was born swift, a body trait."))
 
+
+## The design's Defence log (16-rehearsal-and-defence-log-defence-log.png).
+static func _log(column: VBoxContainer) -> void:
+	column.add_child(KitNav.segmented(["Rehearse", "Defence log"], 1, func(_i: int) -> void: pass))
+	column.add_child(KitLayout.columns([KitStatus.stat("5", "Raids this week"), KitStatus.stat("4", "Held"),
+		KitStatus.stat("2", "Trace ready")], 6))
+	column.add_child(KitPanels.notice("alarm", "", "A crew is in Tidehold now",
+		"The raider's name shows when the raid ends", "", func() -> void: pass))
+	column.add_child(KitSocial.log_row(Portrait.of("lantern_wisp"), "MA", "Marta", "Held", "success",
+		"2 h ago · held them 2:31", "Denied 3,300", "success", "Report", func() -> void: pass))
+	column.add_child(KitSocial.log_row(null, "KO", "Kofi", "Got out", "warn", "Yesterday · out via Lantern Vale",
+		"You lost nothing", "info", "Report", func() -> void: pass))
+	column.add_child(KitSocial.log_row(null, "TO", "Tomas", "Friendly", "violet", "2 days ago · caught twice",
+		"+2 pages", "success", "Report", func() -> void: pass))

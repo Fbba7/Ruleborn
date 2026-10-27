@@ -223,6 +223,8 @@ func _pieces() -> void:
 			KitSocial.avatar(null, "KO", "Kofi", "Raiding", "alarm", none),
 			KitSocial.feed_row(null, "LE", "Lea", "Challenge", "gold", "40 min", "Sent you her Lantern Vale.", picture,
 				"Play", none),
+			KitSocial.log_row(null, "MA", "Marta", "Held", "success", "2 h ago · held them 2:31", "Denied 3,300",
+				"success", "Report", none),
 			KitCards.album_card("laws/bounce", "Brittle stone", "matter", "common", "In Skyfield", "10"),
 			KitCards.product(picture, "Emote", "Tip of the Hat", "120", none),
 			KitPanels.album("motion", "Motion", "Chapter I", "3 of 4", Control.new()),
@@ -245,5 +247,6 @@ func _pieces() -> void:
 		screen.queue_free()
 		await tree.process_frame
 	Settings.text_scale = was
-	check.call("the loot panel, Sage, crew key, friend, feed row, album card, product and album meet 48 points and "
-			+ "13 points and stay on the screen at 200% text (§21.1, §21.8, §20.8)", bad.is_empty(), "; ".join(bad))
+	check.call("the loot panel, Sage, crew key, friend, feed row, log row, album card, product and album meet 48 "
+			+ "points and 13 points and stay on the screen at 200% text (§21.1, §21.8, §20.8)", bad.is_empty(),
+		"; ".join(bad))

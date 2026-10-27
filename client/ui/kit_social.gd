@@ -40,20 +40,24 @@ static func avatar(picture: Texture2D, initials: String, name: String, status :=
 	return v
 
 
-## A small dark tag with a dot of `tone` before its words in capitals (the
-## designs' RAIDING, ESCAPED, CHALLENGE).
+## A small tag with its words in capitals (the designs' RAIDING, HELD,
+## CHALLENGE): filled for "success", "warn", "violet" and "alarm", otherwise
+## dark with a dot of `tone` (a colour token) before its words.
 static func tag(words: String, tone := "") -> PanelContainer:
 	var p := PanelContainer.new()
 	p.name = "Tag"
 	p.add_theme_stylebox_override("panel", UI.clear_box(5, 0))
-	UI.dress(p, "tag_dark", 999)
+	# A tone with a filled tag of its own (HELD, GOT OUT, FRIENDLY) is
+	# filled; any other is a dark tag led by a dot of it.
+	var filled := Tokens.materials().has("tag_" + tone)
+	UI.dress(p, "tag_" + tone if filled else "tag_dark", 999)
 	p.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	p.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(4))
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	if tone != "":
+	if tone != "" and not filled:
 		var dot := KitRing.new()
 		dot.dot = true
 		dot.fraction = 1.0
@@ -136,11 +140,54 @@ static func feed_row(picture: Texture2D, initials: String, name: String, tag_wor
 	return p
 
 
+## A defence log row (16 Defence log): who, a filled tag, when and what
+## happened on the left; the result on the right in its tone's words
+## ("Denied 3,300", green; "You lost nothing") over a link ("Report ›").
+static func log_row(picture: Texture2D, initials: String, name: String, tag_words: String, tone: String,
+		line: String, result: String, result_kind: String, link: String, pressed := Callable()) -> PanelContainer:
+	var p := feed_row(picture, initials, name, tag_words, tone, "", line)
+	p.name = "LogRow"
+	var row := p.get_child(0) as HBoxContainer
+	var end := VBoxContainer.new()
+	# The link's 48-point hit area overlaps the result a little, as the
+	# design sets them close.
+	end.add_theme_constant_override("separation", -UI.px(10))
+	end.alignment = BoxContainer.ALIGNMENT_CENTER
+	# Led by its status's glyph, so the outcome never rests on its colour.
+	var r := UI.status(result_kind, result, false)
+	r.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	end.add_child(r)
+	if link != "":
+		end.add_child(text_link(link + " ›", pressed, "%s: %s" % [link, name]))
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		end.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		r.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		(row.get_child(1) as VBoxContainer).add_child(end)
+	else:
+		row.add_child(end)
+	return p
+
+
+## Words that act, on parchment, as the designs' "Report ›": no box, bold
+## words in the parchment's second ink, a 48-point hit area (§21.1).
+static func text_link(words: String, pressed: Callable, spoken := "") -> Button:
+	var b := UI.action(words, pressed, "parchment", spoken if spoken != "" else words)
+	b.name = "Link"
+	var box := RbBox.of(b)
+	box.visible = false
+	b.custom_minimum_size = Vector2.ONE * UI.px(UI.CONTROL_POINTS)
+	b.alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	b.size_flags_horizontal = Control.SIZE_SHRINK_END
+	for state: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		b.add_theme_color_override(state, Tokens.color("parchment_text_2"))
+	return b
+
+
 static func _face(picture: Texture2D, initials: String, points: float, tone: String) -> Control:
 	var ring := KitRing.new()
 	ring.name = "Face"
 	ring.picture = picture
-	ring.band = Tokens.color(tone) if tone != "" else Tokens.color("gold")
+	ring.band = _tone(tone)
 	ring.ground = Tokens.paint("#4A3A9A")
 	ring.zoom = 1.2
 	ring.focus = Vector2(0.5, 0.42)
@@ -168,3 +215,13 @@ static func _secondary(words: String) -> Label:
 	var s := UI.label(words, 13)
 	s.theme_type_variation = "Secondary"
 	return s
+
+
+## A tone's colour: a colour token, or the violet tags' own.
+static func _tone(tone: String) -> Color:
+	if tone == "":
+		return Tokens.color("gold")
+	if tone == "violet":
+		return Tokens.paint("#6A55D0")
+	return Tokens.color(tone)
+
