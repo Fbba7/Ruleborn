@@ -7,8 +7,11 @@ only then mint what it earned.
 
     node --no-warnings --test server/test/*.test.mjs   # the tests (build sim/ first)
     node --no-warnings server/load.mjs                 # the load test, against §24.1's budget
-    RULEBORN_STUB_SIGNIN=1 node server/src/main.mjs                 # run it locally, on 127.0.0.1:8787
-    RULEBORN_STUB_SIGNIN=1 node server/src/main.mjs 8787 --example  # and publish the example island to raid
+    RULEBORN_STUB_SIGNIN=1 node --no-warnings server/src/main.mjs                 # run it locally, on 127.0.0.1:8787
+    RULEBORN_STUB_SIGNIN=1 node --no-warnings server/src/main.mjs 8787 --example  # and publish the example island to raid
+
+Configuration, the load test and the generated inputs:
+[`docs/guides/server.md`](../docs/guides/server.md).
 
 It needs Node 22.5 or later and nothing else — no packages. The simulation is
 `sim/`'s WebAssembly build (`bash sim/run_spike.sh` builds it), and SQLite is

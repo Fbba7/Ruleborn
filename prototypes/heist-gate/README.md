@@ -2,6 +2,14 @@
 
 **Live link:** https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E
 
+> **Superseded.** v3.0 of the design document removed both pre-code tests and
+> replaced them with §19.27's simulation harnesses
+> ([`tools/heist_harness/`](../../tools/heist_harness/README.md)). This
+> prototype stays published because it is the only artefact here that can
+> answer the question §19.27 says simulation cannot: whether a delegated crew
+> feels like playing or watching. The rest of this page is as written before
+> v3.0.
+
 A throwaway, single-file browser build that runs the two tests the design
 document puts before any code is written. It is not a slice of the real game and
 should never become one — the real client is Godot with a Rust simulation core

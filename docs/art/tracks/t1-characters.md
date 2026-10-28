@@ -1,5 +1,10 @@
 # T1 Characters
 
+> T1's first session. The track continued in
+> [`t1b-characters.md`](t1b-characters.md) and then
+> [`t1c-characters.md`](t1c-characters.md) (sessions 3 to 5), which is the latest;
+> the "Next" steps below are as they stood when this session ended.
+
 Every character is the design's own sculpt (`art/design/creatures/`), exported
 by the design's own code into Godot, rigged, animated, within §21.3's budget,
 and drawn in the game's toon look.

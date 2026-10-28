@@ -325,13 +325,9 @@ among them:
   island from it — the heist plays that island, the server's check judges the
   replay, and the result leads back to the builder.
 
-To look at it without a desktop, `tests/screenshot.gd` renders a still under a
-virtual display:
-
-```bash
-xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.7.2-stable_linux.x86_64 \
-    --path client --rendering-driver opengl3 -s res://tests/screenshot.gd -- out.png planned-clean 20
-```
+To look at it without a desktop, render a still under a virtual display with
+`tools/render/shoot.sh` (or the older `tests/screenshot.gd`); both are in
+[`docs/guides/client.md`](../docs/guides/client.md#rendering-a-still).
 
 ## Not yet
 

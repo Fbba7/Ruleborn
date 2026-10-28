@@ -90,6 +90,14 @@ kept, and made findable.
   where the current state lives.
 - `docs/art/3d-program.md`: the waves' prose brought up to date; T13 to T16
   added to the track table; a pointer to the agent-program guide.
+- `prototypes/heist-gate/README.md`: a "Superseded" banner (v3.0 removed the
+  pre-code tests); the page below it unchanged.
+- Track notes `t1-characters.md`, `t1b-characters.md`, `t1c-characters.md`,
+  `t8.md`: a one-paragraph banner on each saying which session it is, where
+  the track continued, and (T8) where its files went. The notes themselves
+  are unchanged.
+- `docs/README.md` gains a "Words" table for the repository's own terms,
+  pointing to the design document's glossary (§29.2) for the game's.
 - `docs/progress/T10.md`: a doubled comma.
 - Progress files: titles made one shape (`# T<n> <name>: progress`) in T1, T11,
   T12 and T13, and T4's table header capitalised like the others. The six-line
@@ -148,8 +156,11 @@ files; their outputs are checked by `check_all.sh`), and the golden replays'
 7. **Track notes naming.** Renaming the notes to one scheme (`docs/art/tracks/T<n>-<name>.md`)
    would help, but would break links in commits and register items. Left as
    is, with a map in the agent-program guide. Rename?
-8. **T2 Look** has no progress file and its notes stop at a wave-3 round with
-   no "Stopped here". Is the track closed?
+8. **T2 Look** has no progress file and its notes stop at a wave-3 round, with
+   no "Stopped here" for that session. Is the track closed?
+9. **`fe-base.log`** at the repository root is a tracked client test log
+   (one line, "tests: 23 of 23 passed"), committed with a UI-kit change. It
+   looks like a stray; delete it? Not touched, since it is not documentation.
 
 ## Log
 
@@ -159,3 +170,7 @@ files; their outputs are checked by `check_all.sh`), and the golden replays'
 - 16:55 UTC: first push, check_all green.
 - 17:10 UTC: every documented command run (above); Playwright prerequisite
   added; folder maps for track notes and stills; progress-file titles.
+- 17:40 UTC: an independent newcomer's read of the new docs: three small
+  errors fixed (the strings `--check` claim, a missing refused variable, the
+  analysis steps' flags), the design sources' precedence said in the README,
+  duplicate screenshot instructions folded into the client guide.

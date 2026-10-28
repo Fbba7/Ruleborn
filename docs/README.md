@@ -12,6 +12,25 @@ If you are new, read in this order: the [README](../README.md),
 [architecture.md](architecture.md), then the guide for the part you will work
 on.
 
+## Words
+
+The game's own vocabulary (Keeper, ruleborn, Sage, law, note, resonance,
+chord, realm, Vault …) is defined in the design document's glossary, §29.2;
+it is not repeated here. The repository's own words:
+
+| Word | Meaning |
+|---|---|
+| Register item | An entry in the audit register (`tools/audit_register.py`): C contradiction, G gap, F quantitative finding, D deviation (a change to the plan), Q decision |
+| OPEN | A design-document check that fails while its register item is open: reported, but not a build failure |
+| TD.n, T3.1 … | Task ids on the roadmap (`tools/roadmap.py`) |
+| SR-n | A finding of the security review ([`security/review.md`](security/review.md)) |
+| Lease | The server's permission to raid one target: seed, token, clock, rules version, expiry |
+| Rules version | A digest of the law table and of what the build does with the golden heists (`sim::rules_version`); a replay names the one it was played under |
+| Golden replay | A heist recorded once and committed (`sim/golden/`), re-simulated on every build |
+| Track, wave, deploy | An agent's line of work on its own branch; a stretch of parallel work; a round of the integrator's merges ([agent-program.md](guides/agent-program.md)) |
+| Integrator | The agent that owns the main branch and merges the tracks |
+| Still | A PNG rendered from the client and compared with the design's |
+
 ## Start here
 
 | Document | What it is | Owner |

@@ -10,7 +10,7 @@ client is and how its layers fit is in
 
 | Tool | Why | How to get it |
 |---|---|---|
-| Rust (stable) and `cargo` | `client/ext/`, the simulation as a GDExtension | rustup |
+| Rust stable (1.82 or later) and `cargo` | `client/ext/`, the simulation as a GDExtension | rustup |
 | Godot 4.7.2-stable (Linux x86-64) | the engine | `client/build.sh` fetches it into `~/.cache/ruleborn/` and checks its SHA-512; or set `RULEBORN_GODOT` to your own binary |
 | Node 22.5 or later | the online test starts `server/` | nodejs.org |
 | `gdlint` (gdtoolkit 4) | GDScript lint, run by `check_all.sh` | `pip install "gdtoolkit==4.*"` |
@@ -123,7 +123,9 @@ Non-English content names hold the English text for now.
 To add a string: add a row to `strings.csv` with every column filled (or the
 English copied where no translation exists yet), run
 `python3 tools/english_us.py`, and use the key from the script. Each of the
-four generators has a `--check` mode, which `check_all.sh` runs. The tests
+four generators has a `--check` mode; `check_all.sh` runs it for
+`client_strings.py`, `english_us.py` and `native_strings.py`, but not for
+`auth_countries.py`, so run that one yourself after changing it. The tests
 check every key a script asks for is in every language with the same
 placeholders, and render every screen in a pseudo-locale that wraps every
 catalogue string, so a word typed into a script shows up unwrapped.
