@@ -24,7 +24,16 @@ Merge this branch, then:
   - Sliders (`HSlider`) and scroll bars are themed.
   - `Motion.screen_in(screen)` is the design's 160 ms screen fade from 0.985; the router could call it on each screen it shows (`client/app/router.gd` is the integrator's; not hooked, because other tracks' shot scripts settle in a few frames and would catch screens mid-fade).
 - **Your own skins:** a control a script dresses in its own `StyleBoxFlat` with a fill keeps that look (the kit's box steps aside), and a label on such a light panel turns to ink by itself. Since wave 5, `FxSkin.panel`/`style_button`, `StageHeroSkin.plate`/`button`, `OverlaySheet.dress`/`key` and `OverlayHud.badge` draw through the kit (`KitSkin.panel(p, kind)`, `KitSkin.button(b, kind)`, `KitStatus.badge(text, look, points)`), so those screens already share its look.
-- **Wave 5 additions:** `KitControls.icon_button(..., disc_points)` and `round_action(..., disc_points)` draw a disc smaller than the 48-point hit area (`KitControls.small_disc(b, points)`; `RbBox.inset` underneath); `KitTabs.face(id, texture)` puts a screen's own character or object on its chosen tab, larger and rising out of it; `KitPanels.album(school, title, kicker, count, body)` is the Codex's chapter band sitting square (`RbBox.foot_points`) on its cream album; `KitHud.loot(rows, carried, mark, words)` is the heist's Room/Left panel with its load bar and aim tick; `KitHud.sage(picture, name, words, pressed)` the Sage's gold-ringed portrait over Cast; `KitHud.crew(..., school)` a crew key on its school's ground in a leather ring, uses as diamonds on a tag; `KitRing.band`, `ground`, `zoom`, `focus`. `AUDIT=1` on `client/tests/shots/ui_screen.gd` lists where a screen draws past the kit (`UiAudit`).
+- **Wave 5 additions** (sheet pages 4-14 show each in use):
+  - Controls: `KitControls.round_action(..., disc_points)` and `icon_button(..., disc_points)` (a 36-point disc in a 48-point hit area; `small_disc(b, points)`), `tile(title, line, school, call)` (Easy / Medium / Hard).
+  - Tabs: the design's own five icons; `tabs.face(id, texture)` puts a screen's character on its chosen tab; names show whole or not at all at any text size (drop your own fitting code).
+  - Heist: `KitHud.crew(picture, name, health, uses, call, school)`, `KitHud.sage(picture, name, words, call)`, `KitHud.loot(rows, carried, mark, words)`, `KitStatus.hint(text)`.
+  - People: `KitSocial.avatar(picture, initials, name, status, tone, call)`, `tag(words, tone)` (filled for "success", "warn", "violet", "alarm"), `feed_row(...)`, `log_row(...)`, `text_link(words, call)`.
+  - Cards and panels: `KitPanels.album(school, title, kicker, count, body)`, `KitCards.album_card(...)`, `KitCards.product(picture, tag, title, price, call, look, points, icon)`, `KitStatus.sash(text)`, `KitChart.make(values, rules, from, to, spoken)`.
+  - Layout: `KitLayout.strip(separation)` (a row that scrolls sideways; add to its child "Row").
+  - Skins: `KitSkin.panel(p, kind)` and `KitSkin.button(b, kind)` (FxSkin, StageHeroSkin and OverlaySheet already call them).
+  - Lower level: `RbBox.inset`, `RbBox.foot_points`, `KitRing.band` / `ground` / `zoom` / `focus`, `KitTris` (discs, rings and bars in one draw call).
+  - `AUDIT=1` on `client/tests/shots/ui_screen.gd` lists where a screen draws past the kit (`UiAudit`).
 
 ## Done
 
