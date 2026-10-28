@@ -77,7 +77,12 @@ kept, and made findable.
   features), the landing picker, target choice, settings, the three
   catalogues, the UI kit, the 3D drawing, the test runner's suites, the "Not
   yet" list (landing picker, fonts and law banner removed; sign-in updated),
-  the Layout block.
+  the Layout block; then, after a second sweep against the code, Home (the 3D
+  universe with the designs' layout, not a Keeper bar over a list), the
+  heist's controls (held taps for Stop and the drops, the gait menu, Get out
+  in the hand), the Vault's load target, held controls and camera buttons,
+  the guard marks, the replay's speeds, the phone's three notices, Settings'
+  switches and tabs, and which catalogue is still English-only.
 - `sim/README.md`: abilities, Sage powers and island generation are built
   (marked as later than the text around them); Layout gains `run_spike.sh`,
   `stability_cases.json`, `Cargo.toml`.
@@ -161,6 +166,13 @@ files; their outputs are checked by `check_all.sh`), and the golden replays'
 9. **`fe-base.log`** at the repository root is a tracked client test log
    (one line, "tests: 23 of 23 passed"), committed with a UI-kit change. It
    looks like a stray; delete it? Not touched, since it is not documentation.
+10. **Reduced motion and flashing** (found while correcting the client
+   README; a code matter, so not changed here): reduced motion stops the
+   view's shake on a rising alarm, but not the screen edge's flash
+   (`client/world/fx_anchors.gd`, the `flash` term is added whatever `calm`
+   is), and Harmony's preview flashes up to twice a second
+   (`client/world/law_fx_harmony.gd`). The client README used to say
+   "nothing flashes or shakes". Worth a ticket for the heist track?
 
 ## Log
 
@@ -174,3 +186,5 @@ files; their outputs are checked by `check_all.sh`), and the golden replays'
   errors fixed (the strings `--check` claim, a missing refused variable, the
   analysis steps' flags), the design sources' precedence said in the README,
   duplicate screenshot instructions folded into the client guide.
+- 18:15 UTC: a second sweep of the client README against the code (nine
+  statements corrected; one accessibility gap found, question 10).
