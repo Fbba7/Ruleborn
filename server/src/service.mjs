@@ -749,7 +749,9 @@ export class Service {
         // §7.6: the laws met, the pylons' pages and the floor (codex.mjs).
         this.codex.afterHeist(lease, decision.verdict, now, decision.cast?.laws ?? []);
         // §11.6: the crew away and resting, each by its outcome (home.mjs).
-        if (decision.crew) this.home.rest(lease.attacker, decision.crew, decision.verdict, decision.heistMs, now);
+        if (decision.crew) {
+          outcome.rest = this.home.rest(lease.attacker, decision.crew, decision.verdict, decision.heistMs, now);
+        }
         this.db.prepare("UPDATE heists SET validated = 1, outcome = ? WHERE token = ?")
           .run(JSON.stringify(outcome), lease.token);
       }

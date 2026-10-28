@@ -510,6 +510,11 @@ func _show_rewards(v: Dictionary) -> void:
 		else (Strings.t("RESULT_FEE_PAID", ShopPresenter.grouped(fee)) if back <= 0
 		else Strings.t("RESULT_FEE_HALF", [ShopPresenter.grouped(fee), ShopPresenter.grouped(back)]))
 	fee_label.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT if back > 0 else FxSkin.ALARM_ON_DARK)
+	# §11.6: the crew home, resting as long as the server set (the design's
+	# "What you kept").
+	var rest: Variant = v.get("rest")
+	if rest is Dictionary and int(rest.get("crew", 0)) > 0:
+		fee_label.text += "\n" + Strings.t("RESULT_CREW_RESTING", [int(rest["crew"]), int(rest.get("minutes", 0))])
 
 
 ## How many of the roster's characters are idle, ready for the next raid;

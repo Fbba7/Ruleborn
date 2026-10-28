@@ -369,6 +369,8 @@ static func settled(r: Result, local: Dictionary) -> Dictionary:
 		"starlight": int(out["haul"].get("starlight", 0)), "essence": int(out["haul"].get("essence", 0)),
 		"renown": int((out.get("renown", {}) as Dictionary).get("raider", 0)),
 		"fee_returned": int(out.get("feeReturned", 0)),
+		# §11.6: the crew home and resting, as the server set it.
+		"rest": out.get("rest", {}),
 		"keeper": null if out.get("repeated", false) else out.get("keeper"),
 		# §17.6: an invited friend's first heist brings both the gift.
 		"gift": out.get("inviteGift") is Dictionary}

@@ -1440,3 +1440,4 @@ RESULT_STUDY,Study one law you crossed,Study one law you crossed,Estude uma lei 
 RESULT_STUDIED,+%d pages,+%d pages,+%d páginas,+%d páginas,+%d Seiten,+%d pages
 RESULT_STUDY_FAILED,Not studied: %s,Not studied: %s,Não estudada: %s,Não estudada: %s,Nicht studiert: %s,Non étudiée : %s
 RESULT_KEEPER_REALM,%s's realm,%s's realm,Reino de %s,Reino de %s,Reich von %s,Royaume de %s
+RESULT_CREW_RESTING,"Your crew of %d is home, resting up to %d min","Your crew of %d is home, resting up to %d min",Sua equipe de %d voltou e descansa até %d min,A tua equipa de %d voltou e descansa até %d min,Deine %d-köpfige Crew ist zu Hause und ruht bis zu %d Min.,Votre équipe de %d est rentrée et se repose jusqu'à %d min
