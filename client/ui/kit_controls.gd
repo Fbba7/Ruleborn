@@ -117,6 +117,21 @@ static func small_disc(b: Button, disc_points: float) -> void:
 	hit.call()
 
 
+## A choice of how hard (08 Observatory's Easy, Medium, Hard): a dark tile
+## edged in a school's colour (`school`: "life" green, "motion" gold,
+## "energy" red-orange), its title over a line; the title says the level,
+## so the colour never stands alone.
+static func tile(title: String, line: String, school: String, pressed: Callable) -> Button:
+	var b := action2(title, line, pressed, "ring_" + school)
+	b.name = "Tile"
+	b.custom_minimum_size.x = UI.px(96)
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var box := RbBox.of(b)
+	box.radius_points = 14.0
+	box.set_look(box.look)
+	return b
+
+
 ## A chip turned on or off; "on" is said in the gold, the heavier edge and
 ## to a screen reader.
 static func set_chip(b: Button, on: bool) -> void:
