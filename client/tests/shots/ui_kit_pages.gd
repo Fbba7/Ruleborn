@@ -607,3 +607,11 @@ static func _stat_tiles(column: VBoxContainer) -> void:
 	stats.add_child(KitCards.stat("crewroles/carrier", "Carry", "10", "Max", 10, 10))
 	stats.add_child(KitCards.stat("crewroles/breaker", "Grit", "6", "+1", 6, 10, 1))
 	column.add_child(stats)
+	var tokens := HBoxContainer.new()
+	tokens.add_theme_constant_override("separation", UI.px(10))
+	tokens.add_child(KitControls.token("lawnotes/hush", "Hush form, hatched", true, false, func() -> void: pass, 56))
+	tokens.add_child(KitControls.token("lawnotes/spark", "Spark form, hatched", true, false, func() -> void: pass, 56))
+	tokens.add_child(KitControls.token("lawnotes/echo", "Echo form, not yet hatched", false, true, func() -> void: pass,
+		56))
+	column.add_child(tokens)
+
