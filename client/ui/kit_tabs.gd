@@ -119,7 +119,9 @@ func _tab(tab: Array, badge: int) -> Button:
 	if badge > 0:
 		var tag := KitStatus.badge(str(badge))
 		tag.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-		tag.position = Vector2(-UI.px(6), -UI.px(2))
+		# Raised by however much large text has grown it, so it sits over the
+		# tab's top edge, not over its icon.
+		tag.position = Vector2(-UI.px(6), -UI.px(2) - (UI.text_px(13) - UI.px(13)))
 		tag.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 		b.add_child(tag)
 	buttons[id] = b
