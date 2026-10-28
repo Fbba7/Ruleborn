@@ -153,6 +153,9 @@ func _refresh() -> void:
 		"icon": "leagues/ember"}], func(key: String) -> void:
 			if key == "league":
 				App.services.router.go(&"social")))
+	var crown := _crown(t["rows"])
+	if crown != null:
+		body.add_child(crown)
 	body.add_child(ScreenKit.panel("card_lit", _strip, 18.0, 12.0))
 	var share := float(t["stars_n"]) / maxf(float(t["next_cost"]), 1.0)
 	body.add_child(_road(t["rows"], bool(t["premium"]), int(t["claimed_n"]), share))
@@ -224,6 +227,46 @@ func _road(rows: Array, premium: bool, claimed: int, share: float) -> Control:
 	var before := 2 if Settings.text_scale <= 125 else 1
 	row.ready.connect(func() -> void: row.set_deferred("offset", maxf(0.0, (at - before) * UI.px(_column() + 8.0))))
 	return whole
+
+
+## The season's crowning reward, as the design heads its track: its lane
+## and tier on a pill, its name large, its mark; none for an empty road.
+func _crown(rows: Array) -> Control:
+	if rows.is_empty():
+		return null
+	var last: Dictionary = rows[-1]
+	var paid := str(last["paid"]) != ""
+	var words: String = last["paid"] if paid else last["free"]
+	if words == "":
+		return null
+	var mark_of: Array = last["paid_mark"] if paid else last["free_mark"]
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(12))
+	var col := VBoxContainer.new()
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	col.add_theme_constant_override("separation", UI.px(4))
+	var lane := ScreenParts.pill("%s · %s" % [Strings.t("SCREEN_STARPASS_LANE" if paid else "SCREEN_FREE_LANE"),
+		Strings.t("SCREEN_TIER", str(last["tier"]))], "glass", "season", "premiumtrack" if paid else "tierreward",
+		13.0, "words", Settings.text_scale > 125)
+	if Settings.text_scale <= 125:
+		lane.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	col.add_child(lane)
+	var name := ScreenKit.inked(ScreenKit.text(words.left(1).to_upper() + words.substr(1), 22.0, "number",
+		"card_lit", false, true), 2.7)
+	col.add_child(name)
+	row.add_child(col)
+	if mark_of.size() == 2:
+		var big: Control
+		if mark_of[0] == "coin":
+			big = ScreenCoin.make(str(mark_of[1]), 56.0)
+		else:
+			big = ScreenKit.icon(str(mark_of[0]), str(mark_of[1]), 64.0)
+		big.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(big)
+	var card := ScreenKit.panel("card_lit", row, 18.0, 10.0)
+	card.tooltip_text = last["text"]
+	return card
 
 
 ## A tier's width on the road, in points: wider at large text.
