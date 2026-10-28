@@ -155,6 +155,12 @@ Stills: `docs/art/shots/ui-screens/w5-<screen>.png`, the design's still on the l
 | 19 League | the league's card a crest beside three lines | the profile's card: the place, Renown large in gold, the crest, the bar to the next league |
 | 20 Workshop's rating | three centred rows of − words + at uneven widths | each aspect's words over five pips, − and + at its right, Send across the lit card |
 | 21 Workshop's publish | the name it goes out under as a plain line | the panel lit and titled, the name large on parchment |
+| 22 Law card | no way to the next law but back to the Codex | ‹ and › to the law met before and after, its place among them ("Law 5 of 6") |
+| 23 Lab | a chamber's last result as three separate pills | one well, a find first in green |
+| 24 Workshop's own list | the creator ladder as one sentence | the design's rail: four levels, the one reached lit, its counts beneath |
+| 25 Season | reward words in lower case ("a realm skin") | each leads with a capital |
+| 26 Every screen at 200% again | Share's kicker one letter a line; Settings' Language one letter a line; Harmony's stage cards covering the realm | the kicker takes the card's width; the language under its name; the stage shows the marks alone |
+| 27 Weaving | Take out as large as the weave | 13 points under its slot |
 | 12 Large text and contrast | Harmony's Sounding pill at 12 points, its band 1151 px wide at 200%; the share card's dash 3.7:1 on the bright material; Workshop's remix tag squeezed narrow | 13 points and under the name at large text; the share card on the lit card, inked at 12%; the remix tag on its own line |
 
 Every changed screen checked at 150% and 200% in six languages and in high contrast by `A11yTests` (the fast runner below); grayscale thumbnails of Harmony and Workshop compared.
@@ -171,11 +177,11 @@ Harmony 137 (was 162; the stage alone without the laws' cards 118), Weaving 124 
 
 ## Stopped here (wave 5)
 
-About 23:20 UTC. Main had not moved since d2343591; `check_all` prints "All checks passed" on the pushed head. 21 rounds this wave, listed above; stills `docs/art/shots/ui-screens/w5-*.png`.
+About 23:20 UTC, then continued to 06:00 (the owner's extension). Main had not moved since d2343591; `check_all` prints "All checks passed" on the pushed head. 27 rounds this wave, listed above; stills `docs/art/shots/ui-screens/w5-*.png`.
 
 The fast runner, `client/tests/_mine.gd` (kept out of git): `ONLY=<screens>` runs `A11yTests` over those screens (contrast in both modes, 150% and 200% in six languages); `FILES=<tests>` runs test files taking `(tree, check, mount, url)`, `FILES3=` those taking `(tree, check, url)`. It skips run.gd's catalogue and corner checks; the full client suite (`python3 client/status.py`) covers them.
 
-Shot script switches added this wave: `TAB=<tab>` (Settings, Friends, Profile), `AUTH=signed_in`, `EMPTY=1` (before the state comes), `RATE=1` (Workshop's rating).
+Shot script switches added this wave: `TAB=<tab>` (Settings, Friends, Profile), `AUTH=signed_in`, `EMPTY=1` (before the state comes), `RATE=1` (Workshop's rating), `LIST=mine` (Workshop's own list). The 200% check in `A11yTests` does not catch a wrapping label squeezed to one glyph a line (Share's kicker, Settings' language passed it): look at the stills.
 
 Still worse than the design, in order of how much a first-time player would notice:
 1. Art the design has and the game does not: the Shop's featured set and daily picks, the Lab's test realm, friends' portraits (the server keeps no avatar).

@@ -253,7 +253,8 @@ func _reward(words: String, mark: Array, state: String, locked: bool) -> Control
 		else:
 			top.add_child(ScreenKit.icon(str(mark[0]), str(mark[1]), 44.0))
 	col.add_child(top)
-	var l := ScreenKit.text(words, 13.0, "words", material, false, true)
+	# A card's words lead with a capital, as the design's tiles do.
+	var l := ScreenKit.text(words.left(1).to_upper() + words.substr(1), 13.0, "words", material, false, true)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(l)
 	if state == "claimed":
