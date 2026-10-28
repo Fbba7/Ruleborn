@@ -482,9 +482,12 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   pale face disc; the tone 0.5 and a blue-cutting tint had washed both into
   the gold. Tone 0.15 and a near-neutral tint bring them back, and its
   colour is closer too (0.04 to 0.03; `w5_featherkin_belly.png`).
+- **Round 20:** Lantern Wisp's tone 0.65 to 0.3 (0.05 to 0.01) and Soul
+  Mender's tint warmer (0.07 to 0.03). Every kind is now within 0.05 of its
+  portrait; sum over the 24 0.85 to 0.76.
 - **Still worse than the design:** Featherkin's knit reads smooth (the
-  relief is 128 texels); Lantern
-  Wisp's face is still pinker than the design's cream.
+  relief is 128 texels); Lantern Wisp's face is still pinker than the
+  design's cream.
 - **Readability measured (round 15):** each ruleborn alone on the heist's
   painted grass, in grayscale: the share of a figure's pixels within 18
   levels of the grass under it is 8–13% for Skyskipper, Featherkin and
