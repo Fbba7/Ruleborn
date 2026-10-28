@@ -22,7 +22,7 @@ bash tools/check_all.sh > /tmp/check.log 2>&1; echo "exit $?" >> /tmp/check.log
 | Tool | For |
 |---|---|
 | Python 3.10 or later (run here on 3.13) | most steps |
-| Rust stable with the `wasm32-unknown-unknown`, `aarch64-linux-android` and `aarch64-apple-ios` targets | the simulation, the client's extension and `client/export.sh check` |
+| Rust stable (1.82 or later, for `#[unsafe(no_mangle)]`) with the `wasm32-unknown-unknown`, `aarch64-linux-android` and `aarch64-apple-ios` targets | the simulation, the client's extension and `client/export.sh check` |
 | Node 22.5 or later | the server, its load check, the WebAssembly spike |
 | Godot 4.7.2 | fetched by `client/build.sh` on first use into `~/.cache/ruleborn/` |
 | `gdlint` (`pip install "gdtoolkit==4.*"`) | the client's lint step |
@@ -72,16 +72,16 @@ its own with the command shown.
 | Content tables | `python3 tools/validate_content.py` (and `--self-test`) | `content/` disagreeing with the document, beyond open register items |
 | Generated docs | `python3 tools/generate_docs.py --check` | `docs/design/generated/` out of date with `content/` |
 | The register's edits | `python3 tools/check_edits.py` (and `--self-test`) | a drafted edit quoting a sentence the document does not have, or has twice |
-| Analysis tools | `note_rebalance.py`, `law_ranks.py`, `decision_support.py`, `law_effects.py`, `ability_text.py` self-tests | |
+| Analysis tools | `python3 tools/note_rebalance.py`; `--self-test` of `law_ranks.py`, `law_effects.py`, `ability_text.py`; `decision_support.py` with and without `--self-test` | |
 | Economy model and heist harness | `python3 -m tools.economy_model.test_economy_model`, `python3 -m tools.heist_harness.test_harness` | |
 | Generator settings | `python3 -m tools.generator_settings --self-test`, `post_ladder`, `ward_budget` | |
 | The prototype | `python3 tools/build_prototype.py --check` (and `--self-test`), `build_stamp.py --self-test`, `check_prototype_conformance.py` | the published prototype out of date or off its rules |
 | Dependency graph | `python3 tools/check_dependencies.py --write` | a cycle or dangling dependency; rewrites `docs/design/dependencies.md` |
-| Register freshness | `python3 tools/check_findings_fresh.py` | |
+| Register freshness | `python3 tools/check_findings_fresh.py` (and `--self-test`) | |
 | Scope cut | `python3 tools/scope_cut.py --self-test` | |
 | Unread fields | `python3 tools/check_unread_fields.py` | a field the harness computes and nothing reads |
 | **This repository's own documents** | `python3 tools/check_docs_consistency.py` (and `--self-test`) | see below |
-| Audit register | `python3 tools/build_audit.py`, `python3 tools/check_audit_ui.py` | rewrites `docs/audit/index.html`; fails on an inconsistent register |
+| Audit register | `python3 tools/build_audit.py`, `python3 tools/check_audit_ui.py` (and `--self-test`) | rewrites `docs/audit/index.html`; fails on an inconsistent register |
 | Roadmap | `python3 tools/completion.py --self-test`, `python3 tools/build_roadmap.py` | rewrites `docs/roadmap/index.html`; refuses a roadmap that contradicts itself |
 
 Several steps **rewrite generated files** (`sim/status.json`,

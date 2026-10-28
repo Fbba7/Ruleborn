@@ -79,22 +79,27 @@ screen by `tests/a11y_tests.gd`:
   (`ui/colour_check.gd`). The six school colours are simulated for the three
   common forms of colour blindness and must stay apart, and each school has a
   shape. Nothing is carried by colour alone: a ward is drawn as its school's
-  shape, a guard's state has a mark (? ?? ??? !), a crew member has its
+  shape, a guard's state has a mark over it (? and !), a crew member has its
   role's letters, a status leads with a glyph (✓ ! ⓘ …), the chosen crew
   member is said in words. §21.8's alarm red and success green are too light
   to carry words at 4.5:1, so words in them use deeper shades (D72).
 - *Hearing.* Nothing is carried by sound: the client has no sounds yet, and
   every cue it has is visual, with a haptic form (§21.8's four patterns, in
   `app/haptics.gd`). Three volumes, music apart from alerts.
-- *Moving.* One finger. The one held control, Weave, is held for the
-  player's hold time (Settings, half a second to three, one to start) or
-  tapped twice instead. The hand's controls mirror for left-handed play. A rehearsal —
+- *Moving.* One finger. Held controls (Weave, and the held taps on the
+  heist's world that open Stop, Drop and the gaits) wait for the player's
+  hold time (Settings, half a second to three, one to start); Weave can be
+  tapped twice instead. "Camera buttons" in Settings adds rotate and zoom
+  buttons, so nothing needs two fingers. The hand's controls mirror for left-handed play. A rehearsal —
   the player's own island, raided from the builder — pauses at any time and
   runs at 75% on request.
 - *Understanding.* Banners lead with their glyph and stay until dismissed if
   the player chooses.
-- *Comfort.* Reduced motion, on at first launch if the phone's setting is;
-  nothing flashes or shakes.
+- *Comfort.* Reduced motion, on at first launch if the phone's setting is.
+  It stops the view's shake when the alarm rises or a guard is knocked out;
+  the screen edge's flash on a rising alarm is not yet turned off by it
+  (`world/fx_anchors.gd`), and Harmony's preview flashes up to twice a
+  second (`world/law_fx_harmony.gd`).
 - *Screen readers.* Godot 4.7's AccessKit support (its live regions on `AccessibilityServer`): every control has a name
   in words (a symbol button says what it does), banners announce themselves,
   and the realm is described in words.
@@ -130,8 +135,9 @@ band.
 the app's life on the phone (`app/app_lifetime.gd`). Each time it comes to
 the foreground a session starts; at the third the push permission is asked,
 once. With an account, the device tells the server its time zone and push
-token (G34), sends its session events, and sets the storage-full notice for
-the first producer to fill, moved to the end of the player's night
+token (G34), sends its session events, and sets the phone's own notices — storage full for the first producer to
+fill, a crew rested, an experiment finished — each moved out of the player's
+night
 (`data/device_notices.gd`). A session the app never closed is ended at the
 next launch, marked crashed; events wait on the phone while offline. The
 phone draws a notification from its own string tables, written from
@@ -139,10 +145,15 @@ phone draws a notification from its own string tables, written from
 notification plugins sit behind `app/local_notifier.gd`, and a test uses
 `FakeLocalNotifier`.
 
-**Home.** The Keeper bar (§14.2): the level, ten pips filled by the share
-of the way to the next and the numbers, as the server keeps them, moved by
-each raid's answer — the result screen says what the raid earned. Play a heist, fixed at the bottom where the thumb rests, and every
-other screen in a list that scrolls at large text.
+**Home** (`scripts/home.gd`; §23.2: "See every realm and link at once").
+Where the app opens once the age check has answered: the player's universe
+in 3D behind everything, and over it §21.8's home layout as the designs
+arrange it — the Keeper's level and Renown at the top left, strain at the
+top right, the resources with their bars in a row beneath, side buttons
+down both edges, and §14.8's nearest goal above five tabs with the Heist in
+the centre. Every other screen is on the menu the Keeper badge opens. (When
+this section was first written, home was a Keeper bar over a list of
+screens.)
 
 **The season track** (`scenes/track.tscn`, §18.2, §18.8). Stars in hand, the
 next tier and its price, a claim, and all fifty tiers with what the free and
@@ -205,10 +216,12 @@ command stamped with the tick it was made (§24.10: *"a move or an ability with
 its tick, crew member and target"*). A tap is read by what is on the tile, and
 is always the one command the player chose (§12.18): a crew member is selected;
 a guard is attacked, or dragged if it is down; the Vault is cracked, or loaded
-to full once open; a pylon is broken; a live ward is disarmed; anything else is
-walked to. The buttons cycle the selected member's gait (walk, crouch, run),
-halt it, drop half its loot, and — Get out — call the skiff (§5.4) to the next
-tile tapped. The crew lands (§5.4) where the player chooses on the landing picker
+to the planner's load target once open (to full with no plan); a pylon is broken; a live ward is disarmed; anything else is
+walked to. A held tap on a crew member offers Stop, Drop half and Drop all
+(`scripts/heist_screen.gd`); a held tap on the ground offers Crouch, Walk and
+Run, and a small gait button beside the hint steps the gait. Get out — the red
+square at the bottom right (`scripts/heist_hand.gd`) — calls the skiff (§5.4)
+to the next tile tapped. The crew lands (§5.4) where the player chooses on the landing picker
 (`world/overlay_landing.gd`, `world/overlay_landing_deck.gd`,
 `features/heist/landing_presenter.gd`); the Sage, its powers and the casts
 are at the bottom right. When the clock runs
@@ -227,8 +240,9 @@ and — from the server — what it minted and the fee: a replay the re-simulati
 refuses pays nothing (§24.12). Watch it, play again, or go home.
 
 **The replay screen** (`scenes/replay_screen.tscn`). The heist just played,
-then the golden replays, each re-simulated one tick at a time through
-`RulebornReplay` and drawn after each tick. Every second it compares its own
+then the golden replays, each re-simulated through `RulebornReplay` at 1, 2, 4 or 8 times speed
+(2 to start), every tick owed in a frame run before the frame is drawn; from
+the defence log it opens a raid on the player's island. Every second it compares its own
 checksum with the one the replay carries (§24.10) and says on screen whether it
 still matches — so a phone that drifted from the server would show it, not
 quietly play a different heist. Tap a guard to see what its cone reaches, drawn
@@ -237,8 +251,9 @@ sight rule, not from a second copy of it here.
 
 **Settings** (`scenes/settings.tscn`). §20.6's language, a volume each for
 music, effects and alerts, reduced motion, haptics, text size, high contrast,
-left-handed controls, the hold time and the rehearsal's pace
-(`scripts/settings.gd`), and the Account tab (sign-in, devices, sign-out;
+left-handed controls, banners that stay, camera buttons, the hold time and
+the rehearsal's pace (`scripts/settings.gd`), on three tabs — Game, Access
+and Account (the last: sign-in, devices, sign-out;
 [`docs/security/auth.md`](../docs/security/auth.md)). Each change is applied
 and saved to `user://settings.cfg` as it is made, and read back on the next
 launch; a first launch starts in the phone's language. The volumes are three
@@ -251,8 +266,9 @@ read by `ui/motion.gd` and the 3D views; haptics play through
 resonances, chords, wards and ground — from `i18n/content.csv`, which
 `tools/client_strings.py` writes from `content/` so each name keeps one home,
 or — for country names on the account panel — from `i18n/countries.csv`,
-which `tools/auth_countries.py` writes;
-every column but English holds the English names until §26.9's read-aloud.
+which `tools/auth_countries.py` writes, translated;
+in `content.csv` every column but English holds the English names until
+§26.9's read-aloud.
 All three reach the screens — one row a key, one column a language — through
 `scripts/strings.gd`, so a language is a column and adding one touches no
 other script. The languages are §20.6's English and Brazilian Portuguese and
@@ -325,13 +341,9 @@ among them:
   island from it — the heist plays that island, the server's check judges the
   replay, and the result leads back to the builder.
 
-To look at it without a desktop, `tests/screenshot.gd` renders a still under a
-virtual display:
-
-```bash
-xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.7.2-stable_linux.x86_64 \
-    --path client --rendering-driver opengl3 -s res://tests/screenshot.gd -- out.png planned-clean 20
-```
+To look at it without a desktop, render a still under a virtual display with
+`tools/render/shoot.sh` (or the older `tests/screenshot.gd`); both are in
+[`docs/guides/client.md`](../docs/guides/client.md#rendering-a-still).
 
 ## Not yet
 

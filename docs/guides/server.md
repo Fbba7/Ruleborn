@@ -91,13 +91,17 @@ development default except what a real deployment needs.
 | `RULEBORN_STUB_SIGNIN` | `1` accepts a stand-in sign-in (development only) |
 | `RULEBORN_GOOGLE_CLIENT_IDS`, `RULEBORN_GOOGLE_WEB_CLIENT_ID` | Google sign-in, and the web deletion page's |
 | `RULEBORN_BUNDLE_ID`, `RULEBORN_GAMECENTER_ROOTS`, `RULEBORN_STOREKIT_ROOTS`, `RULEBORN_APPLE_SANDBOX` | Game Center and StoreKit proofs |
+| `RULEBORN_APPLE_ROOTS` | refused: the server will not start while it is set; it was split into the two variables above |
 | `RULEBORN_PLAY_PACKAGE`, `RULEBORN_PLAY_LICENCE_KEY`, `RULEBORN_PLAY_SERVICE_ACCOUNT`, `RULEBORN_PLAY_TEST` | Google Play purchases |
 | `RULEBORN_CF_ZONE`, `RULEBORN_CF_PURGE_TOKEN`, `RULEBORN_PUBLIC_ORIGIN` | purging deleted bundles from the edge cache |
 | `RULEBORN_FCM_SERVICE_ACCOUNT`, `RULEBORN_FCM_PROJECT` | push notifications through Firebase Cloud Messaging |
 | `RULEBORN_CONTACT` | the contact shown on the stores' pages |
 | `RULEBORN_PEER_HEADER`, `RULEBORN_PLACE_HEADER` | which request headers carry the caller's address and country behind a proxy |
 
-The meaning of each is in the module that reads it; `main.mjs` names them.
+All are read in `server/src/main.mjs`; what each one does is explained where
+[`server/README.md`](../../server/README.md) describes its area ("The stores'
+proofs", "Replays and notifications", "Deleting an account", "How fast a
+caller may ask") and, for sign-in, in [`docs/security/auth.md`](../security/auth.md).
 This table lists the names only and is not a deployment guide: **no production
 deployment is described in this repository**: where and how the server is
 to be deployed (the design names edge functions over a managed serverless

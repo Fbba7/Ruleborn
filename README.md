@@ -10,7 +10,8 @@ Native mobile (iPhone and Android), Godot 4.7.2-stable with godot-rust v0.5.5 on
 
 **New here?** Read [The design in one page](#the-design-in-one-page), then
 [`docs/architecture.md`](docs/architecture.md), then the
-[documentation index](docs/README.md).
+[documentation index](docs/README.md). The game's vocabulary is the design
+document's glossary (§29.2); the repository's own words are in the index.
 
 ## Contents
 
@@ -65,7 +66,7 @@ How the three programs fit together, and how a heist flows through them:
 
 ## Quick start
 
-You need Python 3.10+ (tested on 3.13), Rust stable, Node 22.5+ and, for the client, Linux
+You need Python 3.10+ (tested on 3.13), Rust stable (1.82 or later), Node 22.5+ and, for the client, Linux
 x86-64 (Godot is fetched for you). Once:
 
 ```bash
@@ -158,13 +159,18 @@ How the register, the brief and the roadmap work and how to change them:
 
 ## Key documents
 
+Four sources describe the design. **The design document wins**: Screens v3 is
+its visual reference and loses on every rule (§23.5); the specification is a
+proposal until the document adopts it; the analysis is an archive of the v2.3
+reading.
+
 | Document | What it is |
 |---|---|
 | [`docs/README.md`](docs/README.md) | Every document in the repository, one line each, with its owner |
 | [`docs/architecture.md`](docs/architecture.md) | Client, simulation and server; a heist end to end; what is authoritative where |
 | [`docs/status.md`](docs/status.md) | Where the project stands, and its history version by version |
 | [`docs/design/ruleborn-game-design-v3.7.html`](docs/design/ruleborn-game-design-v3.7.html) | The design document (text: [`.txt`](docs/design/ruleborn-game-design-v3.7.txt)) |
-| [`docs/design/spec/README.md`](docs/design/spec/README.md) | The drafted specification, one file per system |
+| [`docs/design/spec/README.md`](docs/design/spec/README.md) | The drafted specification, one file per system, proposed until the document adopts it |
 | [`docs/art/3d-program.md`](docs/art/3d-program.md) | The 3D and interface program: the bar, the look, the tracks |
 | [`docs/guides/agent-program.md`](docs/guides/agent-program.md) | How the agent tracks work: branches, ownership, progress files, deploys |
 | [`docs/security/review.md`](docs/security/review.md), [`docs/security/auth.md`](docs/security/auth.md) | The security review, and sign-in's threat model and design |

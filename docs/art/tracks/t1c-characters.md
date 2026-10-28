@@ -1,5 +1,9 @@
 # T1c Characters (third session on the characters track)
 
+> T1's third to fifth sessions: the latest notes for the characters track.
+> Its wave-5 stills are in `docs/art/shots/t1d/`; its progress file is
+> [`docs/progress/T1.md`](../../progress/T1.md).
+
 Takes over T1 and T1b (`t1-characters.md`, `t1b-characters.md`): the export
 harness, `CreatureModel`, its material, forms and guard form.
 

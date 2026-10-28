@@ -1,5 +1,8 @@
 # T1b Characters (second agent on the characters track)
 
+> T1's second session. The track continued in
+> [`t1c-characters.md`](t1c-characters.md) (sessions 3 to 5), which is the latest.
+
 Takes over T1's work (`docs/art/tracks/t1-characters.md`): the export
 harness, `CreatureModel`, its material, forms and guard form.
 
