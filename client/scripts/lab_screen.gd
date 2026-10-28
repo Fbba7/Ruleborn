@@ -76,8 +76,13 @@ func _refresh() -> void:
 	if l.has("level"):
 		tags.add_child(ScreenParts.pill(Strings.t("SCREEN_LAB_LEVEL", int(l["level"])), "glass", "buildings",
 			"resonancelab"))
+	# The level and each experiment's price on one line while they fit.
+	if str(l.get("terms", "")) != "" and Settings.text_scale <= 125:
+		tags.add_child(ScreenParts.pill(l["terms"], "glass", "generalui", "timer", 13.0))
 	body.add_child(tags)
 	for key: String in ["terms", "none", "chords"]:
+		if key == "terms" and Settings.text_scale <= 125:
+			continue
 		if str(l.get(key, "")) != "":
 			body.add_child(ScreenParts.pill(l[key], "glass", "generalui", "timer" if key == "terms" else "info",
 				13.0, "words", true))
