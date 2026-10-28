@@ -899,18 +899,25 @@ export class Service {
     // The stars ride each player's ledger row when the heist books one; a
     // player it books none earns theirs in a season-stars row (track.mjs).
     const stars = !scores ? none : this.track.settle(lease, verdict, season, now, { echo: nobody, book: false });
-    for (const [who, account, reason] of [["raider", attacker, "a heist: fee, haul, fee returned and casts (9.4, 9.6, 12.5)"],
-                                          ["defender", lease.defender, "a foiled raid: fee and defence share (9.4, 12.9)"]]) {
-      const m = { ...moved[who], stars: stars[who] };
-      if (m.starlight || m.essence || m.aether || m.paid) this.mint(account, m, reason, lease.token, now, season);
-      else if (m.stars) this.track.book(season, account, m.stars, `${who === "raider" ? "heist" : "defence"}, ${verdict.grade} (18.2)`, lease.token, now);
-    }
     // Only the raider's first ten matchmade heists of the week move Renown
     // (F40); whether this one counted is kept on its outcome, since a foiled
     // raider at its floor books no Renown line to count by.
     const renownCounted = !nobody && scores
       && this.renownHeistsThisWeek(attacker, now) < RENOWN_HEISTS_A_WEEK;
     const renown = renownCounted ? this.seasons.settle(lease, verdict, now) : none;
+    // One ledger row a player: what the heist moved of each of §9.1's
+    // currencies it moves — Starlight, Essence, Aether, Renown, season
+    // stars — where Renown and stars were a row each of their own (§24.1's
+    // writes). The outcome keeps the lines.
+    for (const [who, account, reason] of [
+      ["raider", attacker, "a heist: fee, haul, fee returned, casts, Renown and stars (9.4, 9.6, 12.5, 12.9, 18.2)"],
+      ["defender", lease.defender, "a raid on their island: fee, defence share, Renown and stars (9.4, 12.9, 18.2)"]]) {
+      const m = { ...moved[who], stars: stars[who], renown: renown[who] };
+      if (m.starlight || m.essence || m.aether || m.paid || m.stars || m.renown) {
+        this.mint(account, m, reason, lease.token, now, season);
+      }
+    }
+    if (renownCounted) this.seasons.reached(lease, now);
     // §13: "The defender is notified afterwards and can watch the replay."
     if (!nobody) this.notifications.raided(lease, verdict, now);
     // An echo rates the raider against its island and leaves the island's
@@ -1052,11 +1059,12 @@ export class Service {
   totals(account) {
     const last = this.db.prepare(
       `SELECT starlight_total AS starlight, essence_total AS essence, aether_total AS aether, at,
-              season, stars_total AS stars FROM ledger
+              season, stars_total AS stars, renown_total AS renown FROM ledger
         WHERE account = ? ORDER BY at DESC, id DESC LIMIT 1`).get(account);
-    if (!last) return { starlight: 0, essence: 0, aether: 0, at: null, season: null, stars: 0 };
-    // The stars a row carries are its season's; none rode a row before them.
-    const stars = { season: last.season, stars: Number(last.stars ?? 0) };
+    if (!last) return { starlight: 0, essence: 0, aether: 0, at: null, season: null, stars: 0, renown: 0 };
+    // The stars and Renown a row carries are its season's; none rode a row
+    // before them.
+    const stars = { season: last.season, stars: Number(last.stars ?? 0), renown: Number(last.renown ?? 0) };
     if (last.starlight === null) {
       const r = this.db.prepare(
         `SELECT COALESCE(SUM(starlight), 0) AS starlight, COALESCE(SUM(essence), 0) AS essence,
@@ -1085,16 +1093,29 @@ export class Service {
    * last writer's books at the last row's time instead (§24.12's server
    * clock, the only one).
    */
-  mint(account, { starlight = 0, essence = 0, aether = 0, paid = 0, stars = 0 }, reason, heist, now,
+  mint(account, { starlight = 0, essence = 0, aether = 0, paid = 0, stars = 0, renown = 0 }, reason, heist, now,
        season = this.seasons.current(now).id) {
     const t = this.totals(account);
+    const same = t.season === season;
     this.db.prepare(
       `INSERT INTO ledger (account, starlight, essence, aether, paid, reason, heist, at,
-                           starlight_total, essence_total, aether_total, season, stars, stars_total)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+                           starlight_total, essence_total, aether_total, season, stars, stars_total,
+                           renown, renown_total)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
       .run(account, starlight, essence, aether, paid, reason, heist, Math.max(now, t.at ?? now),
            t.starlight + starlight, t.essence + essence, t.aether + aether,
-           season, stars, (t.season === season ? t.stars : 0) + stars);
+           season, stars, (same ? t.stars : 0) + stars, renown, (same ? t.renown : 0) + renown);
+  }
+
+  /** The season stars or Renown (`what`) a player's ledger rows have carried
+   *  in `season`: the newest row's total, if it is that season's; for an
+   *  earlier season, its rows summed. */
+  carried(account, season, what) {
+    const t = this.totals(account);
+    if (t.season === null || t.season < season) return 0;
+    if (t.season === season) return t[what];
+    return Number(this.db.prepare(
+      `SELECT COALESCE(SUM(${what}), 0) AS n FROM ledger WHERE account = ? AND season = ?`).get(account, season).n);
   }
 
   /** One ledger row outside a heist: a track tier, a defence share. */

@@ -1027,7 +1027,7 @@
    }
   },
   "ledger": {
-   "about": "Every movement of Starlight, Essence and Aether, the game's earned resources, append-only (§24.12), one row a player an event; nothing in it is bought (F41).",
+   "about": "Every movement of §9.1's earned currencies: Starlight, Essence and Aether, and the Renown and season stars a heist moves, append-only (§24.12), one row a player an event; nothing in it is bought (F41).",
    "purposes": [
     "functionality",
     "security"
@@ -1090,6 +1090,14 @@
     "stars_total": {
      "type": "gameplay",
      "holds": "the season's stars carried on the player's rows to this one, summed"
+    },
+    "renown": {
+     "type": "gameplay",
+     "holds": "the Renown the heist moved for the player (§12.9)"
+    },
+    "renown_total": {
+     "type": "gameplay",
+     "holds": "the season's Renown carried on the player's rows to this one, summed"
     }
    }
   },

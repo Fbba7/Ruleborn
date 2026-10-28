@@ -250,17 +250,25 @@ export class Matchmaking {
       `SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin, s.band,
               a.keeper_level, a.created_at, a.seeded, a.deleted_at, r.rating, r.deviation, st.start,
               (SELECT n.total FROM renown n WHERE n.season = :season AND n.account = i.owner
-                ORDER BY n.id DESC LIMIT 1) AS moved
+                ORDER BY n.id DESC LIMIT 1) AS booked,
+              (SELECT json_array(g.season, g.renown_total) FROM ledger g WHERE g.account = i.owner
+                ORDER BY g.at DESC, g.id DESC LIMIT 1) AS carried
          FROM islands i JOIN snapshots s ON s.bundle = i.bundle JOIN accounts a ON a.id = i.owner
          LEFT JOIN ratings r ON r.kind = 'island' AND r.key = i.owner || '/' || i.realm
          LEFT JOIN standings st ON st.season = :season AND st.account = i.owner
         WHERE a.banned_at IS NULL ORDER BY s.bundle, i.owner`).all({ season });
     const seasons = this.service.seasons;
     // A protected island is nobody's target, and its Renown is not asked for.
+    // Its owner's Renown: their standing's start, their Renown rows' newest
+    // total, and what their newest ledger row carries this season (seasons.moved).
+    const carried = (r) => {
+      const [at, total] = r.carried ? JSON.parse(r.carried) : [null, 0];
+      return at === null || at < season ? 0 : at === season ? total ?? 0 : this.service.carried(r.owner, season, "renown");
+    };
     return rows.map((r) => {
       const shielded = this.shielded(r.owner, now, r);
       return { ...r, shielded, renown: shielded ? null : r.start === null ? seasons.league(r.owner, now).renown
-        : r.start + (r.moved ?? seasons.moved(r.owner, season)) };
+        : r.start + (r.booked ?? seasons.booked(r.owner, season)) + carried(r) };
     });
   }
 

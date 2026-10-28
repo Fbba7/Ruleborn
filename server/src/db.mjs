@@ -431,7 +431,13 @@ CREATE TABLE IF NOT EXISTS ledger (
   season          INTEGER,
   stars           INTEGER NOT NULL DEFAULT 0,
   stars_total     INTEGER,
-  CHECK (starlight != 0 OR essence != 0 OR aether != 0 OR paid != 0)
+  -- §12.9's Renown the heist moved for the player, and the season's to this
+  -- row, as the stars are: both are §9.1's currencies, booked on the one
+  -- row a heist writes a player. The Renown and season-stars tables keep
+  -- their rows, and a tier bought; nothing else is written to them.
+  renown          INTEGER NOT NULL DEFAULT 0,
+  renown_total    INTEGER,
+  CHECK (starlight != 0 OR essence != 0 OR aether != 0 OR paid != 0 OR stars != 0 OR renown != 0)
 );
 CREATE INDEX IF NOT EXISTS ledger_by_account ON ledger (account, at);
 CREATE TRIGGER IF NOT EXISTS ledger_append_only_update BEFORE UPDATE ON ledger
@@ -1057,6 +1063,8 @@ const ADDED = [
   ["ledger", "season", "INTEGER"],
   ["ledger", "stars", "INTEGER NOT NULL DEFAULT 0"],
   ["ledger", "stars_total", "INTEGER"],
+  ["ledger", "renown", "INTEGER NOT NULL DEFAULT 0"],
+  ["ledger", "renown_total", "INTEGER"],
   ["renown", "total", "INTEGER"],
   ["season_stars", "total", "INTEGER"],
 ];
@@ -1124,7 +1132,9 @@ function linked(db) {
   const moved = [];
   for (const table of UNLINKED) {
     const t = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?").get(table);
-    if (!t || !/REFERENCES heists/.test(t.sql)) continue;
+    // The ledger is made again for its check, too: a row may move Renown or
+    // stars alone.
+    if (!t || !(/REFERENCES heists/.test(t.sql) || (table === "ledger" && !/renown != 0/.test(t.sql)))) continue;
     for (const r of db.prepare(
       "SELECT type, name FROM sqlite_master WHERE tbl_name = ? AND type IN ('index', 'trigger') AND sql IS NOT NULL").all(table)) {
       db.exec(`DROP ${r.type.toUpperCase()} ${r.name}`);

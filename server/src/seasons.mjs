@@ -111,11 +111,18 @@ export class Seasons {
     return s.start + this.moved(account, season);
   }
 
-  /** What a player's Renown rows have moved this season: their newest row's
-   *  running total, one row read (§24.8's running total, kept on the rows
-   *  themselves, so it costs no row written). A newest row older than the
-   *  totals is summed with the rest, and the next row carries it on. */
+  /** What a player's Renown has moved this season (§24.8's running total,
+   *  kept on the rows themselves, so it costs no row written): the Renown a
+   *  heist moves rides the player's ledger row (§9.1 counts it a currency;
+   *  service.mint), whose newest row carries the season's total; and the
+   *  Renown rows written before that, their newest row's total. */
   moved(account, season) {
+    return this.booked(account, season) + this.service.carried(account, season, "renown");
+  }
+
+  /** The Renown rows' own: their newest running total, or their sum, for a
+   *  newest row older than the totals. */
+  booked(account, season) {
     const last = this.db.prepare(
       "SELECT total FROM renown WHERE season = ? AND account = ? ORDER BY id DESC LIMIT 1").get(season, account);
     if (!last) return 0;
@@ -132,7 +139,8 @@ export class Seasons {
   }
 
   /**
-   * §12.9's Renown for one settled heist, booked in the grant's transaction.
+   * §12.9's Renown for one settled heist, booked on the two players' ledger
+   * rows by the grant, in its transaction (service.grant), then `reached`.
    * Renown moves between the two; it is minted only where a floor stops a
    * loss (F40): a defender at their floor loses nothing, and the raider still
    * gains. A foiled raider loses a flat 8, as far as their floor, and "the
@@ -154,19 +162,21 @@ export class Seasons {
       gain = Math.round(cleanRenown(r, d) * facts.RENOWN_OUTCOME[verdict.grade]);
       loss = Math.min(gain, Math.max(0, d - this.floorOf(defender)));
     }
-    const book = (account, amount, reason) => this.db.prepare(
-      "INSERT INTO renown (season, account, amount, reason, heist, at, total) VALUES (?, ?, ?, ?, ?, ?, ?)")
-      .run(season, account, amount, reason, lease.token, now, this.moved(account, season) + amount);
-    if (gain !== 0) book(lease.attacker, gain, `heist, ${verdict.grade} (12.9)`);
-    if (loss !== 0) book(lease.defender, -loss, `defended, ${verdict.grade} (12.9)`);
-    for (const [account, s] of [[lease.attacker, raider], [lease.defender, defender]]) {
+    // `|| 0`: a loss of nothing is 0, not JavaScript's −0.
+    return { raider: gain || 0, defender: -loss || 0 };
+  }
+
+  /** Once a heist's Renown is booked: a player it took to Ember has reached
+   *  it, and can no longer fall below it. */
+  reached(lease, now) {
+    const season = this.current(now).id;
+    for (const account of [lease.attacker, lease.defender]) {
+      const s = this.standing(account, season);
       if (!s.ember && this.renownIn(account, season, s) >= BOUNDS.leagues.Ember) {
         this.db.prepare("UPDATE standings SET ember = 1 WHERE season = ? AND account = ?")
           .run(season, account);
       }
     }
-    // `|| 0`: a loss of nothing is 0, not JavaScript's −0.
-    return { raider: gain || 0, defender: -loss || 0 };
   }
 
   /** Where a player stands this season: Renown, league, division, and the

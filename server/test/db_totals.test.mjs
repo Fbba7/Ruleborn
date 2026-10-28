@@ -61,7 +61,9 @@ function agree(t, account) {
     }
   }
   const season = t.service.seasons.current().id;
+  // A heist's Renown rides its ledger row, as its stars do (service.mint).
   const renown = db.prepare("SELECT COALESCE(SUM(amount), 0) AS n FROM renown WHERE season = ? AND account = ?")
+    .get(season, account).n + db.prepare("SELECT COALESCE(SUM(renown), 0) AS n FROM ledger WHERE season = ? AND account = ?")
     .get(season, account).n;
   assert.equal(t.service.seasons.league(account).renown, t.service.seasons.standing(account, season).start + renown);
   // A heist's stars ride its ledger row when it books one (service.mint):
@@ -74,8 +76,9 @@ function agree(t, account) {
   const by = new Map();
   for (const r of rows) {
     if (r.season === null) continue;
-    by.set(r.season, (by.get(r.season) ?? 0) + r.stars);
-    assert.equal(r.stars_total, by.get(r.season), `ledger stars to row ${r.id}`);
+    const [st, rn] = by.get(r.season) ?? [0, 0];
+    by.set(r.season, [st + r.stars, rn + r.renown]);
+    assert.deepEqual([r.stars_total, r.renown_total], by.get(r.season), `ledger stars and Renown to row ${r.id}`);
   }
 }
 
@@ -92,13 +95,28 @@ test("every balance, Renown and stars total is its rows summed, through heists, 
     try { t.service.track.claim(who); } catch { /* not enough stars yet */ }
     try { t.service.track.claim(who); } catch { /* not enough stars yet */ }
   }
-  assert.ok(t.service.db.prepare("SELECT COUNT(*) AS n FROM renown").get().n > 0, "Renown moved");
-  assert.ok(t.service.db.prepare("SELECT COUNT(*) AS n FROM season_stars").get().n > 0, "stars were earned");
+  assert.ok(t.service.db.prepare("SELECT COUNT(*) AS n FROM ledger WHERE renown != 0").get().n > 0, "Renown moved");
+  assert.ok(t.service.db.prepare("SELECT COUNT(*) AS n FROM ledger WHERE stars != 0").get().n > 0, "stars were earned");
   agree(t, t.raider.account);
   agree(t, t.defender.account);
   // Totals are written with each row, never after: the ledger is still append-only.
   assert.throws(() => t.service.db.prepare("UPDATE ledger SET starlight_total = 0").run(), /append-only/);
-  assert.throws(() => t.service.db.prepare("UPDATE renown SET total = 0").run(), /record of heists/);
+  assert.throws(() => t.service.db.prepare("UPDATE ledger SET renown_total = 0").run(), /append-only/);
+});
+
+test("the target lists and the candidates carry each owner's Renown as their league has it (12.22)", () => {
+  const t = rivals();
+  for (let d = 0; d < 4; d++) {
+    t.raid(t.raider.account, t.bundle, d % 2 ? greedy() : openPlan());
+    t.raid(t.defender.account, t.back, openPlan());
+    t.clock.now += DAY + 3_600_000;
+  }
+  const league = (who) => t.service.seasons.league(who).renown;
+  assert.ok(league(t.raider.account) !== 0 || league(t.defender.account) !== 0, "Renown moved");
+  const index = t.service.targetLists();
+  const listed = Object.values(index).flatMap((key) => JSON.parse(new TextDecoder().decode(t.service.bundle(key))).candidates);
+  for (const c of listed) assert.equal(c.renown, league(c.owner), c.owner);
+  for (const c of t.service.matchmaking.candidates().filter((x) => !x.echo)) assert.equal(c.renown, league(c.owner), c.owner);
 });
 
 test("a clock a moment behind books after the newest row, and every balance still sums (24.12)", () => {
@@ -128,8 +146,8 @@ test("the server writes a ledger, Renown or stars row only with its totals", () 
 /** `table` made again without `column`, its rows, indexes and triggers as
  *  they were: SQLite's DROP COLUMN cannot take a column a comment comes
  *  before when it is the table's last. */
-function without(db, table, column) {
-  const lines = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?").get(table).sql.split("\n");
+function without(db, table, column, edit = (sql) => sql) {
+  const lines = edit(db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?").get(table).sql).split("\n");
   const at = lines.findIndex((l) => new RegExp(`^\\s*${column}\\s`).test(l));
   let from = at;
   while (from > 0 && /^\s*--/.test(lines[from - 1])) from--;
@@ -178,13 +196,23 @@ test("a database from before the totals opens with every row as it was, and its 
     old.exec(`INSERT INTO ratings (kind, key, rating, deviation, volatility, games, updated_at)
                 SELECT 'raider', id, raider_rating, raider_deviation, raider_volatility, raider_games, 0
                   FROM accounts WHERE raider_rating IS NOT NULL;`);
-    for (const column of ["aether_total", "essence_total", "starlight_total"]) without(old, "ledger", column);
+    // The ledger's check as it was, a row moving a currency the ledger then held.
+    const check = (sql) => sql.replace(" OR stars != 0 OR renown != 0)", ")");
+    for (const column of ["renown_total", "renown", "stars_total", "stars", "season", "aether_total", "essence_total",
+                          "starlight_total"]) {
+      without(old, "ledger", column, check);
+    }
     for (const [table, column] of [["heists", "defender"], ["accounts", "raider_games"], ["accounts", "raider_volatility"],
                                    ["accounts", "raider_deviation"], ["accounts", "raider_rating"], ["accounts", "raids"],
-                                   ["renown", "total"], ["season_stars", "total"], ["ledger", "stars_total"],
-                                   ["ledger", "stars"], ["ledger", "season"]]) {
+                                   ["renown", "total"], ["season_stars", "total"]]) {
       without(old, table, column);
     }
+    // Renown and stars as the old server booked them, a row each.
+    const season = old.prepare("SELECT MAX(id) AS id FROM seasons").get().id;
+    old.prepare("INSERT INTO renown (season, account, amount, reason, heist, at) VALUES (?, ?, 30, 'heist, clean (12.9)', NULL, ?)")
+      .run(season, t.raider.account, t.clock.now - 1);
+    old.prepare("INSERT INTO season_stars (season, account, amount, reason, heist, at) VALUES (?, ?, 12, 'heist, clean (18.2)', NULL, ?)")
+      .run(season, t.raider.account, t.clock.now - 1);
     const before = {
       ledger: old.prepare("SELECT id, account, starlight, essence, aether, paid, reason, heist, at FROM ledger ORDER BY id").all(),
       renown: old.prepare("SELECT id, season, account, amount, reason, heist, at FROM renown ORDER BY id").all(),

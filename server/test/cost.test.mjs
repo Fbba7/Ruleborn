@@ -145,12 +145,14 @@ test("a player's sign-ins of a day are one event, and the day's other events joi
 // stars both ways, a rating each, the defender's share and notification —
 // billed 28.25 rows with its lease under the ledger a row a line, a lease
 // written again as it settled, and the heist written after its children;
-// 23.75 once those went. Now 21: the lease and the heist each keyed by its
-// token without a rowid (one index entry fewer each), and the heist written
-// once, not written and then marked validated — less the index entries the
-// reads need, a heist's defender and a player's waiting raids (db.mjs). The
-// ceiling holds the saving.
-test("a scoring heist and its lease bill at most 21 rows, index entries counted, as D1 bills them (24.1, F47)", () => {
+// 23.75 once those went. Now 15: the lease and the heist each keyed by its
+// token without a rowid (one index entry fewer each); the heist written
+// once, not written and then marked validated; its Renown and stars on the
+// ledger row it books each player, not rows of their own; the raider's
+// rating on the account row the experience writes — less the index entries
+// the reads need, a heist's defender and a player's waiting raids (db.mjs).
+// The ceiling holds the saving.
+test("a scoring heist and its lease bill at most 15 rows, index entries counted, as D1 bills them (24.1, F47)", () => {
   const t = twoPlayers();
   // A player's first heist also writes, once, the universe's start and the
   // roster it brings home (§11.5's two strays, home.mjs): a player's cost,
@@ -165,7 +167,7 @@ test("a scoring heist and its lease bill at most 21 rows, index entries counted,
     t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: i % 2 ? greedy() : openPlan() }));
     t.clock.now += 2 * 24 * 60 * 60 * 1000;
   }
-  assert.ok(bill.rows / cycles <= 21, `${bill.rows / cycles} billed rows a lease and heist`);
+  assert.ok(bill.rows / cycles <= 15, `${bill.rows / cycles} billed rows a lease and heist`);
 });
 
 test("a ledger of a row a currency is rebuilt as a row an event, its hauls and shares still counted to the caps", () => {

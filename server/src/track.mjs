@@ -84,12 +84,7 @@ export class Track {
    *  their newest row's total, if it is this season's. */
   stars(account, season = this.seasons.current().id) {
     const own = this.own(account, season);
-    const t = this.service.totals(account);
-    const rode = t.season === null ? 0 : t.season === season ? t.stars
-      : t.season > season ? Number(this.db.prepare(
-        "SELECT COALESCE(SUM(stars), 0) AS n FROM ledger WHERE account = ? AND season = ?").get(account, season).n)
-      : 0;
-    return own + rode;
+    return own + this.service.carried(account, season, "stars");
   }
 
   /** The season-stars rows' own: their newest running total, or, before
