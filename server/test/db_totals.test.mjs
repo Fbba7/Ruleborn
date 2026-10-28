@@ -125,12 +125,23 @@ test("the server writes a ledger, Renown or stars row only with its totals", () 
   }
 });
 
-/** `table` made again without its last column `column`, its rows, indexes
- *  and triggers as they were: a column's comment before it keeps SQLite's
- *  DROP COLUMN from taking it. */
+/** `table` made again without `column`, its rows, indexes and triggers as
+ *  they were: SQLite's DROP COLUMN cannot take a column a comment comes
+ *  before when it is the table's last. */
 function without(db, table, column) {
-  const made = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?").get(table).sql
-    .replace(new RegExp(`,\\s*(?:--[^\\n]*\\n\\s*)*${column}\\b[^\\n]*\\n`), "\n");
+  const lines = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?").get(table).sql.split("\n");
+  const at = lines.findIndex((l) => new RegExp(`^\\s*${column}\\s`).test(l));
+  let from = at;
+  while (from > 0 && /^\s*--/.test(lines[from - 1])) from--;
+  lines.splice(from, at - from + 1);
+  // The column before a closing parenthesis keeps no comma.
+  const close = lines.findIndex((l, i) => i >= from && /^\s*\)/.test(l));
+  if (close === from) {
+    let prev = from - 1;
+    while (/^\s*--/.test(lines[prev])) prev--;
+    lines[prev] = lines[prev].replace(/,\s*$/, "");
+  }
+  const made = lines.join("\n");
   const others = db.prepare("SELECT sql FROM sqlite_master WHERE tbl_name = ? AND type IN ('index', 'trigger') AND sql IS NOT NULL")
     .all(table).map((r) => r.sql).filter((sql) => !new RegExp(`\\b${column}\\b`).test(sql));
   const columns = db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name).filter((c) => c !== column);
@@ -162,17 +173,26 @@ test("a database from before the totals opens with every row as it was, and its 
                        strftime('%Y-%m-%d', json_extract(e.value, '$.at') / 1000, 'unixepoch') AS day
                   FROM event_batches b, json_each(b.events) e;
 
-              ALTER TABLE ledger DROP COLUMN starlight_total; ALTER TABLE ledger DROP COLUMN essence_total;
-              ALTER TABLE ledger DROP COLUMN aether_total;`);
-    for (const [table, column] of [["heists", "defender"], ["accounts", "raids"], ["renown", "total"],
-                                   ["season_stars", "total"]]) {
+              `);
+    // The totals, and a raider's rating where it was, in the ratings table.
+    old.exec(`INSERT INTO ratings (kind, key, rating, deviation, volatility, games, updated_at)
+                SELECT 'raider', id, raider_rating, raider_deviation, raider_volatility, raider_games, 0
+                  FROM accounts WHERE raider_rating IS NOT NULL;`);
+    for (const column of ["aether_total", "essence_total", "starlight_total"]) without(old, "ledger", column);
+    for (const [table, column] of [["heists", "defender"], ["accounts", "raider_games"], ["accounts", "raider_volatility"],
+                                   ["accounts", "raider_deviation"], ["accounts", "raider_rating"], ["accounts", "raids"],
+                                   ["renown", "total"], ["season_stars", "total"], ["ledger", "stars_total"],
+                                   ["ledger", "stars"], ["ledger", "season"]]) {
       without(old, table, column);
     }
     const before = {
       ledger: old.prepare("SELECT id, account, starlight, essence, aether, paid, reason, heist, at FROM ledger ORDER BY id").all(),
       renown: old.prepare("SELECT id, season, account, amount, reason, heist, at FROM renown ORDER BY id").all(),
       heists: old.prepare("SELECT COUNT(*) AS n FROM heists").get().n,
+      raiders: old.prepare("SELECT key, rating, deviation, volatility, games FROM ratings WHERE kind = 'raider' ORDER BY key").all()
+        .map((r) => ({ ...r })),
     };
+    assert.ok(before.raiders.length > 0);
     old.close();
     const db = open(path);
     assert.deepEqual(db.prepare("SELECT id, account, starlight, essence, aether, paid, reason, heist, at FROM ledger ORDER BY id").all(),
@@ -180,6 +200,11 @@ test("a database from before the totals opens with every row as it was, and its 
     assert.deepEqual(db.prepare("SELECT id, season, account, amount, reason, heist, at FROM renown ORDER BY id").all(),
                      before.renown, "every Renown row as it was");
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM ledger WHERE starlight_total IS NOT NULL").get().n, 0);
+    // A raider's rating moved to their row, the same numbers, none left behind.
+    assert.deepEqual(db.prepare(`SELECT id AS key, raider_rating AS rating, raider_deviation AS deviation,
+                                        raider_volatility AS volatility, raider_games AS games FROM accounts
+                                  WHERE raider_rating IS NOT NULL ORDER BY id`).all().map((r) => ({ ...r })), before.raiders);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM ratings WHERE kind = 'raider'").get().n, 0);
     // Each heist names its lease's defender, as the lease does.
     assert.equal(db.prepare(`SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
                               WHERE h.defender = l.defender`).get().n, before.heists);

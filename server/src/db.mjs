@@ -76,7 +76,14 @@ CREATE TABLE IF NOT EXISTS accounts (
   -- How many validated raids the player has played (§7.6's floor counts
   -- them), written in the UPDATE each heist already makes of the row; null
   -- until the first after it was added, which counts the heists once.
-  raids             INTEGER
+  raids             INTEGER,
+  -- §12.22's Glicko-2 rating of the player as a raider, kept on their row so
+  -- a heist writes it with the experience it earns, in one UPDATE; null
+  -- until their first rated heist (matchmaking.raiderRating).
+  raider_rating     REAL,
+  raider_deviation  REAL,
+  raider_volatility REAL,
+  raider_games      INTEGER
 );
 
 -- §24.8: "Owner, the hash of the current bundle, when it changed." One row a
@@ -1035,6 +1042,10 @@ const ADDED = [
   ["codex", "crossed_at", "INTEGER"],
   // The reads' running totals and keys (§24.1; docs/server/db-cost.md).
   ["accounts", "raids", "INTEGER"],
+  ["accounts", "raider_rating", "REAL"],
+  ["accounts", "raider_deviation", "REAL"],
+  ["accounts", "raider_volatility", "REAL"],
+  ["accounts", "raider_games", "INTEGER"],
   ["heists", "defender", "TEXT REFERENCES accounts(id)"],
   ["ledger", "starlight_total", "INTEGER"],
   ["ledger", "essence_total", "INTEGER"],
@@ -1193,6 +1204,14 @@ export function open(path = ":memory:") {
     if (keyed.length) {
       const broken = db.prepare("PRAGMA foreign_key_check").all();
       if (broken.length) throw new Error(`moving ${keyed} left ${broken.length} rows' foreign keys broken`);
+    }
+    // A raider's rating moves from the ratings table to their row, as the
+    // columns arrive: the same numbers, and no second copy left to go stale.
+    if (added.has("accounts.raider_rating")) {
+      db.exec(`UPDATE accounts SET (raider_rating, raider_deviation, raider_volatility, raider_games) =
+                 (SELECT rating, deviation, volatility, games FROM ratings r WHERE r.kind = 'raider' AND r.key = accounts.id)
+                WHERE id IN (SELECT key FROM ratings WHERE kind = 'raider');
+               DELETE FROM ratings WHERE kind = 'raider';`);
     }
     // The heists played before they named their defender take their lease's,
     // once, as the column arrives.

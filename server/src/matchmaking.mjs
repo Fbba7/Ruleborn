@@ -92,8 +92,23 @@ export class Matchmaking {
     return r ? { rating: r.rating, deviation: r.deviation, volatility: r.volatility, games: r.games } : null;
   }
 
+  /** A raider's rating: on their account row, written with the heist's
+   *  experience (service.grant); before that, their ratings row; else the
+   *  prior. */
   raiderRating(account) {
+    const a = this.db.prepare(
+      "SELECT raider_rating, raider_deviation, raider_volatility, raider_games FROM accounts WHERE id = ?").get(account);
+    if (a && a.raider_rating !== null) {
+      return { rating: a.raider_rating, deviation: a.raider_deviation, volatility: a.raider_volatility,
+               games: a.raider_games };
+    }
     return this.rating("raider", account) ?? { ...fresh(), games: 0 };
+  }
+
+  /** The account row's columns for a raider's rating `r`. */
+  static raiderColumns(r) {
+    return { raider_rating: r.rating, raider_deviation: r.deviation, raider_volatility: r.volatility,
+             raider_games: r.games };
   }
 
   islandKey(owner, realm) { return `${owner}/${realm}`; }
@@ -125,7 +140,7 @@ export class Matchmaking {
   /** One validated heist, its own rating period for both sides: the raider
    *  scores 1 unless foiled (G30). An echo rates the raider only, against
    *  the island's rating as it stands. */
-  settle(lease, realm, verdict, now, { raiderOnly = false } = {}) {
+  settle(lease, realm, verdict, now, { raiderOnly = false, keep = null } = {}) {
     // An island published before there were ratings enters at its prior.
     const island = this.islandRating(lease.defender, realm) ?? { ...prior(this.db.prepare(
       "SELECT realm_level FROM snapshots WHERE bundle = ?").get(lease.bundle).realm_level), games: 0 };
@@ -133,7 +148,15 @@ export class Matchmaking {
     const score = verdict.grade === "foiled" ? 0 : 1;
     const r = update(raider, [{ opponent: island, score }]);
     const i = update(island, [{ opponent: raider, score: 1 - score }]);
-    this.store("raider", lease.attacker, { ...r, games: raider.games + 1 }, now);
+    // The raider's, on their account row: into `keep`, for the grant to write
+    // with the rest of the row, or written here.
+    const next = { ...r, games: raider.games + 1 };
+    if (keep) keep.raider = next;
+    else {
+      const c = Matchmaking.raiderColumns(next);
+      this.db.prepare(`UPDATE accounts SET ${Object.keys(c).map((k) => `${k} = ?`).join(", ")} WHERE id = ?`)
+        .run(...Object.values(c), lease.attacker);
+    }
     if (raiderOnly) return { raider: Math.round(r.rating), island: Math.round(island.rating) };
     this.store("island", this.islandKey(lease.defender, realm), { ...i, games: island.games + 1 }, now);
     return { raider: Math.round(r.rating), island: Math.round(i.rating) };

@@ -850,9 +850,6 @@ export class Service {
     // the count rides in the UPDATE the experience already makes of their
     // row, so it costs no row written, and reading it costs one.
     const raids = friendly ? null : this.raidsPlayed(attacker) + 1;
-    const keeper = friendly || overWeek ? null
-      : this.keeper.award(attacker, heistExperience(raiderLevel, verdict.grade === "foiled"), { raids });
-    if (raids !== null && !keeper) this.db.prepare("UPDATE accounts SET raids = ? WHERE id = ?").run(raids, attacker);
     // §13.2's "haul denied" (TD.39, G31): the clean haul a full bag would
     // make on this island less the clean haul of what the raider banked, both
     // priced as §9.4 prices a crew's unbanked load — before fatigue and caps.
@@ -918,8 +915,20 @@ export class Service {
     if (!nobody) this.notifications.raided(lease, verdict, now);
     // An echo rates the raider against its island and leaves the island's
     // rating alone (G30); an island whose owner is gone rates nobody.
+    const rated = {};
     const rating = friendly || gone ? null
-      : this.matchmaking.settle(lease, snapshot.realm, verdict, now, { raiderOnly: Boolean(lease.echo) });
+      : this.matchmaking.settle(lease, snapshot.realm, verdict, now, { raiderOnly: Boolean(lease.echo), keep: rated });
+    // The raider's row, written once: the experience, the raids played and
+    // the rating, which were three writes of it (§24.1's writes). The
+    // experience is earned at the level the raid was played at, read above.
+    const also = { ...(raids !== null ? { raids } : {}),
+                   ...(rated.raider ? Matchmaking.raiderColumns(rated.raider) : {}) };
+    const keeper = friendly || overWeek ? null
+      : this.keeper.award(attacker, heistExperience(raiderLevel, verdict.grade === "foiled"), also);
+    if (!keeper && Object.keys(also).length) {
+      this.db.prepare(`UPDATE accounts SET ${Object.keys(also).map((k) => `${k} = ?`).join(", ")} WHERE id = ?`)
+        .run(...Object.values(also), attacker);
+    }
     // "the friend earns a page for every raider their guards catch": pages
     // are the device's, so the outcome is their record (D64).
     const friendPages = friendly ? verdict.caught : undefined;

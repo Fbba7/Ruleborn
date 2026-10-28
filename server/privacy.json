@@ -340,6 +340,26 @@
     "raids": {
      "type": "gameplay",
      "holds": "how many validated raids the player has played, which the bad-luck floor's page counts (§7.6)"
+    },
+    "raider_rating": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "the player's Glicko-2 rating as a raider (§12.22)"
+    },
+    "raider_deviation": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "its deviation"
+    },
+    "raider_volatility": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "its volatility"
+    },
+    "raider_games": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "the heists that rated them"
     }
    }
   },
