@@ -167,7 +167,7 @@ func build() -> void:
 				# The Heart's Spire stands on its clock dial (KitDial).
 				var a := centre(Vector2i(fp[1], fp[2]))
 				var mid := Vector3(a.x + (side - 1) / 2.0, a.y, a.z + (side - 1) / 2.0)
-				_dial = Vector4(mid.x, mid.z, KitDial.radius(side), 1.0)
+				_dial = Vector4(mid.x, mid.z, KitDial.radius(side, detail), 1.0)
 				KitDial.build(hero, prop, mid, _dial.z)
 			else:
 				kg.plazas.append([Vector2(fp[1], fp[2]) + Vector2(side, side) / 2.0, side / 2.0 + 0.9])
