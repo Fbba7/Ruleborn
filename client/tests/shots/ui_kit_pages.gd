@@ -31,6 +31,8 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_log(column)
 		14:
 			_stats(column)
+		15:
+			_tray(column)
 		_:
 			_season(column)
 
@@ -525,3 +527,34 @@ static func _stats(column: VBoxContainer) -> void:
 		"Renown 1,460 today, up 201 in 30 days"))
 	renown.add_child(rv)
 	column.add_child(renown)
+
+
+## The design's build tray (04-realm-view-build-tray.png): a parchment sheet
+## with the light segments and chips and the building cards.
+static func _tray(column: VBoxContainer) -> void:
+	column.add_child(UI.grow())
+	var sheet := KitPanels.sheet("", "sheet_parchment")
+	var body: VBoxContainer = sheet.get_meta("body")
+	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", UI.px(8))
+	var segs := KitNav.segmented(["Build", "Terrain", "Defence"], 0, func(_i: int) -> void: pass, true)
+	segs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(segs)
+	head.add_child(KitControls.icon_button("generalui/close", "Close", func() -> void: pass, "parchment"))
+	body.add_child(head)
+	var chips := KitLayout.strip(6)
+	var row := chips.get_node("Row") as HBoxContainer
+	for c: Array in [["Economy", true], ["Homes", false], ["Arcane", false]]:
+		row.add_child(KitControls.chip(c[0], c[1], func() -> void: pass, "", Color(0, 0, 0, 0), true))
+	body.add_child(chips)
+	var cards := KitLayout.strip(8)
+	var card_row := cards.get_node("Row") as HBoxContainer
+	for b: Array in [["resources/starlight", "Star Well", "Makes Starlight.", "1,200", "3 / 4"],
+			["resources/aether", "Aether Loom", "Spins Aether for weaving.", "900", "2 / 3"],
+			["resources/essence", "Essence Garden", "Grows Essence for births.", "800", "2 / 4"]]:
+		var icon: String = b[0] if Icons.has(b[0]) else "realmactions/build"
+		card_row.add_child(KitCards.build_card(icon, b[1], b[2], "resources/starlight", b[3], b[4],
+			func() -> void: pass))
+	body.add_child(cards)
+	column.add_child(sheet)
+

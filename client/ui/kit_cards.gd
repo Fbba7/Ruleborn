@@ -182,6 +182,58 @@ static func product(picture: Texture2D, tag: String, title: String, price: Strin
 	return card
 
 
+## A building to place (04 Realm view's build tray): a cream card with the
+## building's mark on a dark disc ringed in gold, its name, what it does,
+## its price with the currency's icon, and how many stand of how many may
+## ("3 / 4"). The whole card is one control (`pressed`).
+static func build_card(icon: String, title: String, line: String, price_icon: String, price: String, count: String,
+		pressed: Callable, points := 92.0) -> PanelContainer:
+	var card := UI.panel("parchment")
+	card.name = "BuildCard"
+	card.custom_minimum_size.x = UI.px(points)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(3))
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var disc := PanelContainer.new()
+	disc.add_theme_stylebox_override("panel", UI.clear_box(6, 6))
+	UI.dress(disc, "leather", 999)
+	disc.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	disc.add_child(Icons.view(icon, 30))
+	v.add_child(disc)
+	# Words wrap at the card's own width, so three cards share the tray.
+	var room := UI.px(points - 20.0)
+	var t := UI.label(title, 15, true)
+	t.theme_type_variation = "BodyBold"
+	t.set_meta("bold", true)
+	t.custom_minimum_size.x = room
+	v.add_child(t)
+	if line != "":
+		var l := UI.label(line, 13, true)
+		l.theme_type_variation = "Secondary"
+		l.custom_minimum_size.x = room
+		v.add_child(l)
+	var cost := HBoxContainer.new()
+	cost.alignment = BoxContainer.ALIGNMENT_CENTER
+	cost.add_theme_constant_override("separation", UI.px(4))
+	if price_icon != "":
+		cost.add_child(Icons.view(price_icon, 18))
+	var p := UI.label(price, 16)
+	p.theme_type_variation = "Number"
+	p.set_meta("bold", true)
+	cost.add_child(p)
+	v.add_child(cost)
+	if count != "":
+		var c := UI.label(count, 13)
+		c.theme_type_variation = "Kicker"
+		c.set_meta("bold", true)
+		v.add_child(c)
+	card.add_child(v)
+	if pressed.is_valid():
+		KitLayout.tap(card, pressed, "%s, %s, %s" % [title, price, count] if count != "" else "%s, %s" % [title, price])
+	return card
+
+
 ## The largest size from 15 points down to §21.8's 13 at which the name's
 ## longest word fits `room` points, so it wraps between words, not in one.
 static func _fit(title: String, room: float) -> float:
