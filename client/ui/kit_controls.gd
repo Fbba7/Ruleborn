@@ -145,7 +145,7 @@ static func token(icon: String, spoken: String, owned: bool, chosen: bool, press
 	RbBox.of(b).set_chosen(chosen)
 	b.set_meta("chosen", chosen)
 	if owned:
-		var tick := KitStatus.badge("✓", "tag_success", 12.0)
+		var tick := KitStatus.badge("✓", "tag_success", 13.0)
 		# On the disc's lower right shoulder, over its edge.
 		tick.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 		tick.grow_horizontal = Control.GROW_DIRECTION_BEGIN
