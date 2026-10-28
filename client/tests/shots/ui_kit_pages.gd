@@ -575,6 +575,17 @@ static func _tray(column: VBoxContainer) -> void:
 
 ## The design's quests (17-season-quests.png).
 static func _quests(column: VBoxContainer) -> void:
+	var week := UI.panel("parchment")
+	var wv := VBoxContainer.new()
+	wv.add_theme_constant_override("separation", UI.px(6))
+	var head := UI.label("Weekly streak", 18)
+	head.theme_type_variation = "BodyBold"
+	head.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	wv.add_child(head)
+	wv.add_child(KitHud.streak(["M", "T", "W", "T", "F", "S"], 4, 4, "alerts/seasonreward", "+100",
+		["kept", "today", "to come"]))
+	week.add_child(wv)
+	column.add_child(week)
 	column.add_child(KitPanels.section("Daily"))
 	var none := func() -> void: pass
 	column.add_child(KitPanels.quest("realmactions/collect", "Collect from 3 Star Wells", 2, 3, "+40",

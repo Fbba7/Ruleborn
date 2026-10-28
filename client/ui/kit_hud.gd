@@ -166,6 +166,52 @@ static func dial(number: String, unit: String, fraction: float, points := 112.0)
 	return ring
 
 
+## A weekly streak (17 Season's quests): a tile a day, kept days gold with a
+## tick, today cream ringed in gold with its letter, days to come pale with
+## theirs, and the week's reward last on a violet tile with its amount.
+## `kept` days are done of `letters`; `today` is the index of today. Each
+## tile says its day and state aloud (`spoken`: [kept, today, later] words).
+static func streak(letters: Array, kept: int, today: int, reward_icon: String, reward: String,
+		spoken: Array) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.name = "Streak"
+	row.add_theme_constant_override("separation", UI.px(5))
+	for i: int in letters.size():
+		var look := "day_done" if i < kept else ("day_today" if i == today else "day_later")
+		var tile := PanelContainer.new()
+		tile.add_theme_stylebox_override("panel", UI.clear_box(2, 2))
+		UI.dress(tile, look, 12)
+		tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		tile.custom_minimum_size = Vector2(UI.px(36), UI.px(44))
+		tile.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tile.accessibility_name = "%s, %s" % [letters[i], spoken[0 if i < kept else (1 if i == today else 2)]]
+		var l := UI.label("✓" if i < kept else str(letters[i]), 16)
+		l.add_theme_font_override("font", UI.bold_font())
+		l.set_meta("bold", true)
+		l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		tile.add_child(l)
+		row.add_child(tile)
+	var prize := PanelContainer.new()
+	prize.add_theme_stylebox_override("panel", UI.clear_box(2, 2))
+	UI.dress(prize, "round_violet", 12)
+	prize.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	prize.custom_minimum_size = Vector2(UI.px(40), UI.px(44))
+	prize.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var v := VBoxContainer.new()
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", -UI.px(2))
+	var art := Icons.view(reward_icon, 22)
+	art.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	v.add_child(art)
+	var amount := UI.label(reward, 13)
+	amount.add_theme_font_override("font", UI.bold_font())
+	amount.set_meta("bold", true)
+	v.add_child(amount)
+	prize.add_child(v)
+	row.add_child(prize)
+	return row
+
+
 ## A week's bars (the play-time card): one bar a day, its height its share
 ## of the most, today's in gold and the rest violet, each day's letter
 ## under it and its minutes in its spoken name (§20.8: the numbers are read).
