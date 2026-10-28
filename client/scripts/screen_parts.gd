@@ -76,8 +76,10 @@ static func badge(words: String) -> PanelContainer:
 ## A gold segmented control (T9's): options are {text, key, on}; `pressed`
 ## is called with the chosen option's key.
 static func segmented(options: Array, pressed: Callable) -> Control:
-	# At large text the strip's words do not fit side by side: chips wrap.
-	if Settings.text_scale > 125:
+	# At large text, or where a segment's word would be cut short (Portuguese
+	# "Mais concluídas" in four), the strip's words do not fit side by side:
+	# chips wrap.
+	if Settings.text_scale > 125 or not _fits_strip(options):
 		var row := flow(6.0)
 		for o: Dictionary in options:
 			row.add_child(chip(str(o["text"]), bool(o.get("on", false)), pressed.bind(o["key"])))
@@ -94,6 +96,18 @@ static func segmented(options: Array, pressed: Callable) -> Control:
 		if (options[i] as Dictionary).get("on", false):
 			chosen = i
 	return KitNav.segmented(words, chosen, func(i: int) -> void: pressed.call((options[i] as Dictionary)["key"]))
+
+
+## Whether every option's words fit its share of the frame's width in the
+## strip's 13-point words, with a segment's margins.
+static func _fits_strip(options: Array) -> bool:
+	var share := (360.0 - 2.0 * Tokens.number("size", "safe_side_points") - 8.0) / maxf(1.0, options.size())
+	var font := ScreenKit.font("words")
+	for o: Dictionary in options:
+		var wide := font.get_string_size(str(o["text"]), HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(13)).x / UI.px(1)
+		if wide + 4.0 > share:
+			return false
+	return true
 
 
 ## A section's heading: a short kicker in capitals in gold, and an optional
