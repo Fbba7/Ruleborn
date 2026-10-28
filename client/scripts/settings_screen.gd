@@ -111,6 +111,7 @@ func _layout() -> void:
 
 	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_ACCESS")))
 	access.add_child(_text_card())
+	access.add_child(_shapes())
 	# The design's "Seeing and comfort": the switches as rows of one card.
 	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_COMFORT")))
 	var comfort := VBoxContainer.new()
@@ -246,6 +247,39 @@ func _text_card() -> Control:
 	box.add_theme_constant_override("separation", UI.px(12))
 	box.add_child(row)
 	box.add_child(ScreenKit.panel("parchment", sample, 14.0, 10.0))
+	return ScreenKit.panel("card", box, 18.0, 12.0)
+
+
+## The design's colour-blind card, as the game has it: no mode to choose,
+## since each school keeps its own shape in every light (§20.8); the six
+## marks with their names, and that said.
+func _shapes() -> Control:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UI.px(8))
+	var grid := GridContainer.new()
+	grid.add_theme_constant_override("h_separation", UI.px(4))
+	grid.add_theme_constant_override("v_separation", UI.px(8))
+	var schools := ["time", "motion", "matter", "energy", "life", "spirit"]
+	# Six a row where every name fits a sixth of the card; three where one
+	# does not (Portuguese "Movimento", French "Mouvement") or at large text.
+	var widest := 0.0
+	for school: String in schools:
+		widest = maxf(widest, ScreenKit.font("words").get_string_size(Strings.t("SCHOOL_" + school.to_upper()),
+			HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(13)).x)
+	grid.columns = 6 if widest + UI.px(4) <= UI.px((360.0 - 32.0 - 24.0) / 6.0) else 3
+	for school: String in schools:
+		var col := VBoxContainer.new()
+		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		col.add_theme_constant_override("separation", UI.px(2))
+		var coin := ScreenCoin.make("school:" + school, 32.0)
+		coin.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		col.add_child(coin)
+		var name := ScreenKit.text(Strings.t("SCHOOL_" + school.to_upper()), 13.0, "words", "card", true)
+		name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		col.add_child(name)
+		grid.add_child(col)
+	box.add_child(grid)
+	box.add_child(ScreenKit.text(Strings.t("SCREEN_SETTINGS_SHAPES"), 13.0, "body", "card", true, true))
 	return ScreenKit.panel("card", box, 18.0, 12.0)
 
 

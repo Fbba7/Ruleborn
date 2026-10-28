@@ -1416,6 +1416,7 @@ SCREEN_SLOT_RESTING,Resting,Resting,Descansando,A descansar,Ruht,Au repos
 SCREEN_SLOT_LOCKED,Locked,Locked,Bloqueado,Bloqueado,Gesperrt,Verrouillé
 SCREEN_CHAPTER,Ch. %d,Ch. %d,Cap. %d,Cap. %d,Kap. %d,Ch. %d
 SCREEN_TEXT_A,A,A,A,A,A,A
+SCREEN_SETTINGS_SHAPES,"Each school keeps its own shape in every mode, so no colour is needed to tell them apart.","Each school keeps its own shape in every mode, so no color is needed to tell them apart.","Cada escola mantém sua forma em todos os modos, então nenhuma cor é necessária para distingui-las.","Cada escola mantém a sua forma em todos os modos, por isso nenhuma cor é precisa para as distinguir.","Jede Schule behält in jedem Modus ihre eigene Form, Farbe braucht es zum Unterscheiden nicht.",Chaque école garde sa forme dans tous les modes : aucune couleur n'est nécessaire pour les distinguer.
 SCREEN_AGO_MINUTES,%d min ago,%d min ago,há %d min,há %d min,vor %d Min.,il y a %d min
 SCREEN_AGO_HOURS,%d h ago,%d h ago,há %d h,há %d h,vor %d Std.,il y a %d h
 SCREEN_AGO_DAYS,%d d ago,%d d ago,há %d d,há %d d,vor %d T.,il y a %d j
