@@ -577,6 +577,20 @@ func _study(law: String) -> void:
 				if answer.ok else Errors.message("RESULT_STUDY_FAILED", answer.code)]
 
 
+## The raided Keeper's name (G58, §12.4's free fact), from the target card
+## the planner opened on when it is this heist's, in the word lists' words;
+## "" for a heist with none (a rehearsal, a generated target).
+static func keeper_name() -> String:
+	var store := App.services.store
+	var card: Dictionary = store.get_slice(PlannerState.PLANNER).get("target", {})
+	var raided: Dictionary = store.get_slice(AppState.HEIST).get("target", {})
+	var named: Variant = card.get("keeper_name")
+	if not named is Dictionary or str(card.get("bundle", "")) != str(raided.get("bundle", "-")):
+		return ""
+	var words: Dictionary = store.get_slice(ObservatoryState.OBSERVATORY).get("words", {})
+	return SocialPresenter.word_name(words, int(named["adjective"]), int(named["noun"]))
+
+
 ## A result button in the heist's skin.
 func _button(words: String, call: Callable, kind := "leather") -> Button:
 	var b := UI.button(words, call)
@@ -681,6 +695,9 @@ func _show_outcome(v: Dictionary) -> void:
 		[row[1], row[2]])
 	var seconds := _ticks / RulebornReplay.ticks_per_second()
 	subline_label.text = Strings.t("RESULT_SUBLINE", [seconds / 60, seconds % 60, _peak])
+	var keeper := keeper_name()
+	if keeper != "":
+		subline_label.text = Strings.t("RESULT_KEEPER_REALM", keeper) + " · " + subline_label.text
 	subline_label.visible = _ticks > 0
 	var m := _moment()
 	moment_card.visible = _ticks > 0

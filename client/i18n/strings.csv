@@ -1439,3 +1439,4 @@ HEIST_AIM_HAND,Tap the world where %s goes · tap its button again to put it awa
 RESULT_STUDY,Study one law you crossed,Study one law you crossed,Estude uma lei que você atravessou,Estuda uma lei que atravessaste,"Studiere ein Gesetz, das du durchquert hast",Étudiez une loi traversée
 RESULT_STUDIED,+%d pages,+%d pages,+%d páginas,+%d páginas,+%d Seiten,+%d pages
 RESULT_STUDY_FAILED,Not studied: %s,Not studied: %s,Não estudada: %s,Não estudada: %s,Nicht studiert: %s,Non étudiée : %s
+RESULT_KEEPER_REALM,%s's realm,%s's realm,Reino de %s,Reino de %s,Reich von %s,Royaume de %s
