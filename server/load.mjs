@@ -13,7 +13,8 @@
 // Renown, stars, rating and event a heist books — and measures what the
 // budget is about: rows written per player per day, by what wrote them, and
 // the CPU a re-simulation takes, against the free plan's 10 ms a request.
-// Rows read are not measured: SQLite does not count them as D1 bills them.
+// Rows read are measured as D1 bills them, rows scanned (reads(), below), by
+// request and by statement, against §24.1's 2,500 a player a day.
 // Rows written are measured twice: as SQLite changes them, and as D1 bills
 // them — "Indexes will add an additional written row when writes include the
 // indexed column" — each changed row and every index entry its write
@@ -23,7 +24,8 @@
 // Writes are deterministic (the clock and the random source are the tests');
 // CPU time is this machine's. --write records both in server/load.json, and
 // --check fails if the writes have moved since, so a change that adds a write
-// to every heist is seen when it is made.
+// to every heist is seen when it is made; or if a player's day reads a tenth
+// more rows, or a request reads a table whole that did not.
 
 import { readFileSync, writeFileSync } from "node:fs";
 
@@ -476,8 +478,25 @@ if (import.meta.url === `file://${process.argv[1]}`) {
                     "Run node server/load.mjs --write, and say why in the register.");
       process.exit(1);
     }
+    // Reads move with every query, so they are held to a margin, and to no
+    // request reading a table whole that did not before.
+    for (const r of report) {
+      const was = kept.find((k) => k.archetype === r.archetype);
+      if (was?.readsPerPlayerDay !== undefined && r.readsPerPlayerDay > was.readsPerPlayerDay * 1.1) {
+        console.error(`${r.archetype} reads ${r.readsPerPlayerDay} rows a day, over load.json's ` +
+                      `${was.readsPerPlayerDay} by more than a tenth: see readsBySql, then --write.`);
+        process.exit(1);
+      }
+      const whole = new Set((was?.scans ?? []).map((x) => `${x.op}/${x.table}`));
+      const added = r.scans.filter((x) => !whole.has(`${x.op}/${x.table}`));
+      if (was?.scans && added.length) {
+        console.error(`${r.archetype}: a request now reads a table whole: ${JSON.stringify(added)}`);
+        process.exit(1);
+      }
+    }
     console.log(`server/load.json matches: ${report.map((r) => `${r.archetype} ${r.billedRowsPerPlayerDay}`).join(", ")} ` +
-                `billed rows a player a day; written ${report.map((r) => `${r.archetype} ${r.writesPerPlayerDay}`).join(", ")}, ` +
+                `billed rows and ${report.map((r) => `${r.readsPerPlayerDay}`).join(", ")} rows read a player a day; ` +
+                `written ${report.map((r) => `${r.archetype} ${r.writesPerPlayerDay}`).join(", ")}, ` +
                 `against §24.1's ${report.map((r) => facts.WRITE_BUDGET[r.archetype]).join(", ")}`);
     process.exit(0);
   }

@@ -23,8 +23,8 @@ was (commit `f8adf28`) under the same load test; "after" is this branch.
 | Rows written as SQLite counts them, before / after | 52.1 / 42.2 | 28.2 / 23.2 | 13.8 / 11.5 |
 | Rows read, before (day 3) | 7,261 | 2,639 | 938 |
 | Rows read, before, by day 14 | 60,216 | 16,118 | 3,960 |
-| Rows read, after (day 3) | **924** | **339** | **132** |
-| Target lists, rows read a day an island, before / after | 170 / 123 | 170 / 123 | 170 / 123 |
+| Rows read, after (day 3) | **950** | **357** | **145** |
+| Target lists, rows read a day an island, before / after | 170 / 147 | 170 / 147 | 170 / 147 |
 
 A player's first heist, once in all (its roster and Codex): 37.2 billed rows
 before, 34.2 after.
@@ -34,12 +34,15 @@ session reads (the Observatory before each heist, the raid badge each session,
 the defence log once a day), and each player's first heist a week before the
 measured days, as the harness already treated a player's first session.
 Billed writes fall 20% engaged, 19% regular and 18% casual against the same
-load; 28%, 30% and 37% against the old `load.json`. Reads fall 87%, and stop
-growing with a player's history: before, an engaged player read 3,878 rows on
-day 1, 10,684 on day 3 and 60,216 on day 14, as the raid badge, the defence
-log and the Trace read every lease ever issued; after, the day's reads are
-609, 952 and 1,211 on days 1 to 3, the week's raids filling up, and the
-14-day run holds there (numbers below, "Growth").
+load; 28%, 30% and 37% against the old `load.json`. A heist that scores
+everything for both players (`cost.test.mjs`) bills 15 rows with its lease,
+from 23.75: the load test's drawn crews are mostly foiled at Renown's floor,
+so the Renown fold below shows only there. Reads fall 87%, 86% and 85%, and
+stop growing with a player's history: before, an engaged player read 3,878
+rows on day 1, 10,684 on day 3 and 60,216 on day 14, as the raid badge, the
+defence log and the Trace read every lease ever issued; after, 667, 977 and
+1,205 on days 1 to 3, the week's raids filling up, and the 14-day run rises
+and falls with the week (numbers below, "Growth").
 
 ### What it costs a month
 
@@ -53,7 +56,7 @@ monthly player (§28.3's D1 source).
 | --- | ---: | ---: | ---: |
 | Writes a month, engaged before → after | 0.8M → 0.6M | 7.7M → 6.2M | 775M → 617M |
 | Writes a month, casual before → after | 0.2M → 0.2M | 2.1M → 1.7M | 212M → 175M |
-| Reads a month, engaged before (day 3) → after | 0.08B → 0.01B | 0.8B → 0.1B | 78B → 13B |
+| Reads a month, engaged before (day 3) → after | 0.08B → 0.01B | 0.8B → 0.1B | 78B → 14B |
 | **Cost a month, engaged**, before → after | $5 → $5 | $5 → $5 | **$783 → $572** |
 | **Cost a month, regular**, before → after | $5 → $5 | $5 → $5 | **$380 → $293** |
 | **Cost a month, casual**, before → after | $5 → $5 | $5 → $5 | **$167 → $130** |
@@ -61,7 +64,7 @@ monthly player (§28.3's D1 source).
 At a million monthly players the before figures are writes ($730, $373,
 $167) and reads at a player's third day ($53, $7, $0); by a player's
 fourteenth day the reads alone were $582, $141 and $20 a month and rising.
-After, every population's reads sit inside the 25 billion included. Against
+After, every archetype's reads sit inside the 25 billion included. Against
 the old `load.json`'s $817 at a million engaged players, the after figure is
 $572; §24.1's table says "about $60 to $615".
 
@@ -69,7 +72,7 @@ $572; §24.1's table says "about $60 to $615".
 from the first heist for validation's CPU. On the free plan's limits alone
 (5 million reads and 100,000 writes a day), the after figures carry 1,619
 engaged or 5,724 casual daily players on writes, where before they carried
-1,290 and 4,708.
+1,290 and 4,708; reads carry 4,561 and 17,170.
 
 ### What the 60-player test cannot show
 
@@ -123,20 +126,20 @@ Engaged billed rows a day, against the same load test (77.49 before):
 | --- | ---: | --- | --- |
 | Leases and heists keyed by their token without a rowid: the key's index is the table, one entry fewer a lease and a heist | −8.0 | §24.13's one lease a target: the newest lease is the last issued, as a lease is never issued at the moment of the one before | `db_keyed.test.mjs` |
 | A heist's row written once, last, validated and with its outcome, not written and then marked: the ledger's, Renown's and the stars' rows name the heist plainly, so a parent written after them has no table to search | −4.0 | Fee and reward in one transaction (§24.13); the ledger append-only | `cost.test.mjs` |
-| A heist's season stars ride the ledger row the heist books for that player; a player it books none gets a season-stars row, as do tiers bought | −3.7 | Stars as events, reset each season (§18.2); the ledger's own rows unchanged | `db_writes.test.mjs`, `db_totals.test.mjs` |
+| A heist's season stars and Renown ride the one ledger row the heist books each player: both are §9.1's currencies, and a heist that moves only them books a ledger row of them alone; the season-stars table keeps tiers bought | −3.7 (and −4 a scoring heist) | Stars and Renown as append-only events, reset and pulled back each season (§18.2, §12.9); Ember's floor | `db_writes.test.mjs`, `db_totals.test.mjs`, `cost.test.mjs` |
 | The raider's Glicko-2 state on their account row, written in the UPDATE the heist's Keeper experience already makes, with the raids count | −4.0 | A heist is its own rating period (§12.22); a deletion clears it | `db_writes.test.mjs` |
 | A defence log read with no raid new since the last read writes nothing | small | The raid badge's count unchanged | `db_writes.test.mjs` |
 | Added for the reads: a heist's defender (`heists_by_defender`) | +4.0 | | |
 | Added for the reads: a player's waiting raids (`notifications_waiting`, partial): its entry written with the day's first raid and taken away when the message goes | +2 a raided player's day (the load test sends no notifications, so shows none of it) | | |
 
 Per heist with its lease, the scoring heist `cost.test.mjs` plays now bills
-21 rows (23.75 before), and its ceiling is lowered to 21.
+15 rows (23.75 before), and its ceiling is lowered to 15.
 
 ## The read cuts
 
 | Change | What it read | What it reads |
 | --- | --- | --- |
-| Running totals written with each ledger, Renown and season-stars row (a cache the rows rebuild: each total is the sum of the rows to it) | every row the player was ever booked, for each balance; every Renown or stars row of the season | the newest row |
+| Running totals written with each ledger, Renown and season-stars row (a cache the rows rebuild: each total is the sum of the rows to it) — §24.8's running Renown total, kept on the rows rather than on the standing, so it costs no row written | every row the player was ever booked, for each balance; every Renown or stars row of the season | the newest row |
 | `heists.defender` and `heists_by_defender (defender, submitted_at)` | every lease ever issued, for the raid badge, the defence log, the Trace, the Profile's raids | that player's raids in the range |
 | The raid badge counts the raids since the log was read | the season's every raid and report, five times a day | the new raids |
 | The week's raids and Renown heists counted from Monday's `day`, which `heists_by_attacker` holds | every heist the raider played | the week's |
@@ -147,7 +150,7 @@ Per heist with its lease, the scoring heist `cost.test.mjs` plays now bills
 | A Trace's lease by the robbery it answers (`leases_by_trace`, partial: only Trace leases write it) | every lease, for each robbery checked | one entry |
 | The candidates' staleness from three index rows (`islands_by_change`, `accounts_banned`, `accounts_deleted`; the last two partial, written only on a ban or a deletion) | every island and every account twice, on each Observatory view | three rows |
 | The echoes from the last 14 days' snapshots (`snapshots_by_published`) | every snapshot ever published | 14 days' |
-| The candidates and the target lists read every island in one joined query: its snapshot, owner, rating, standing and newest Renown row | seven reads an island and every Renown row of its owner's season | six rows an island |
+| The candidates and the target lists read every island in one joined query: its snapshot, owner, rating, standing, newest Renown row and newest ledger row | seven reads an island and every Renown row of its owner's season | six rows an island |
 | The Observatory reads the raider's week and Starlight once for all its cards | each card's | once |
 | The raider's recent raids read newest day first | every raid the raider played, sorted | the last days' |
 
@@ -171,10 +174,18 @@ transaction:
   off for the move, as SQLite needs to make again a table others name, and
   every key is checked before it commits.
 - Indexes made; the events view made again with each batch's start.
+- Its cost, once: every row of those five tables written again, and an entry
+  for each in each new index; on a database the size of a soft launch's, a
+  few dollars of writes at most.
 
 `db_totals.test.mjs` and `db_keyed.test.mjs` open a database as the old
 server left it and check every row's columns, the balances, the defence log,
-the foreign keys and the append-only triggers, then play on it.
+the foreign keys and the append-only triggers, then play on it. And once by
+hand, a database the old server itself wrote (commit `f8adf28`: two players
+raiding each other for five days, books, tier claims, a lease held), opened
+by this one: every balance, the Aether, both players' Renown and stars and
+the defence log read the same; every foreign key holds; the held lease is
+handed back; and a raid played on it books totals that carry the old rows.
 
 ## Owner options (each changes a rule; none is made)
 
@@ -216,8 +227,8 @@ the foreign keys and the append-only triggers, then play on it.
    thousandth of the price, if one compaction query that size runs on the
    edge platform.
 7. **§24.1's five writes.** After these cuts an engaged day bills 62 rows:
-   heists 12, telemetry 11, leases 8, ledger 7, sessions 5, the account row 5,
-   notifications 4, ratings 4, stars 4, the Codex 1. Five a
+   heists 12, the ledger 12, telemetry 11, leases 8, sessions 5, the account
+   row 5, notifications 4, ratings 4, the Codex 1. Five a
    day would need every heist's records folded into one row and the ratings
    moved to a daily period (options 2 and 3), as `docs/decisions/brief.json`
    costs it.
