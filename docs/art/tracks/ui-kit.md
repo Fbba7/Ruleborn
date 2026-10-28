@@ -231,7 +231,7 @@ Main (d2343591) merged clean.
 
 ## Stopped here (wave 5, extended to 06:00 UTC)
 
-**Pushed and green**: everything above through round 19. check_all passed on each push (the last at the head of this section's commit); the wave's first stop at 23:00 was extended by the owner, and the session merged main twice more (23:30 and 01:30).
+**Pushed and green**: everything above through round 20. check_all passed on each push (the last at the head of this section's commit); the wave's first stop at 23:00 was extended by the owner, and the session merged main twice more (23:30 and 01:30).
 
 **Hooks outside the kit** (a few lines each, marked "Drawn by T9's kit"): `client/world/fx_skin.gd` (`panel`, `style_button`, T5), `client/world/stage_hero_skin.gd` (`plate`, `button`, T7), `client/world/overlay_sheet.gd` (`dress`, `key`, T6), `client/world/overlay_hud.gd` (`badge`, T6). `tools/ui/export_icons.mjs` (the kit's own) now also takes the design's tab icons.
 
@@ -244,4 +244,4 @@ Main (d2343591) merged clean.
 - Most of this wave's pieces wait for their screens (the owners' table above); T5's heist reached the design's crew, Sage and load bar on its own.
 - Dense screens stay near the draw-call budget (heist 141, replay 137, harmony 137 on `ui_screen.gd`): each kit box is its own draw call; `KitTris` folds a control's discs into one, but boxes with different materials cannot batch.
 
-**Next**: as screens adopt the pieces, `AUDIT=1` and the comparisons again; the hero card's portrait arrows (25) are the stills' last piece without a kit form.
+**Next**: as screens adopt the pieces, `AUDIT=1` and the comparisons again. Every piece in the 40 stills now has a kit form (the hero card's arrows are `KitControls.icon_button`, as `stage_hero_kit.gd` already draws them); what is left is each screen's arrangement, in the owners' table.
