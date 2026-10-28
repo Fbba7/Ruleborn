@@ -226,7 +226,7 @@ files; their outputs are checked by `check_all.sh`), and the golden replays'
 ## Stopped here
 
 Stopped first at about 19:05 UTC; resumed on the integrator's check-in to
-check the security and cost reports (above); stopped again at about 19:40 UTC on 28 October 2026, every deliverable pushed to
+check the security and cost reports (above); then added a troubleshooting table to the checks guide on the next check-in; stopped at about 20:00 UTC on 28 October 2026, every deliverable pushed to
 `claude/docs` with `bash tools/check_all.sh` ending "All checks passed".
 
 - **Done:** the README, the index (`docs/README.md`), the architecture
@@ -241,3 +241,5 @@ check the security and cost reports (above); stopped again at about 19:40 UTC on
 - **Waiting on the owner:** the eleven questions above.
 - 19:10 UTC: resumed; the security and cost reports checked against the
   code (dated notes, two rounding slips, question 11).
+- 19:35 UTC: on the next check-in, a "When it fails" table in
+  `docs/guides/checks.md`, from the failures met setting this machine up.
