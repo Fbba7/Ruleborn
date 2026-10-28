@@ -95,6 +95,38 @@ kept, and made findable.
   T12 and T13, and T4's table header capitalised like the others. The six-line
   header was already the same in all of them.
 
+## Commands checked by running them
+
+Every command the README and the guides give was run on this branch on 28
+October 2026, in a Linux x86-64 container with Python 3.13, Node 22 and Rust
+stable:
+
+- `bash tools/check_all.sh`: "All checks passed", after installing what it
+  needs and the guides now list (the `wasm32-unknown-unknown` and both phone
+  targets, gdtoolkit 4, and Python Playwright for the prototype check; without
+  Playwright the run fails at `check_prototype_conformance.py`).
+- Simulation: `bash sim/run_spike.sh`; `cargo test --release <name>`; the
+  three examples; `content_gate.py`; `build_laws.py --check`.
+- Server: `node --no-warnings --test server/test/*.test.mjs` (482 pass);
+  `npm test`; `server/status.py`; `main.mjs 8787 --example` with stubbed
+  sign-in (serves a session), and without it (refuses to start, as
+  documented); `load.mjs --players 20 --days 1`; `load.mjs --check`;
+  `privacy.mjs`; `league_model.py --json` and `design_facts.py --json` (both
+  identical to the committed JSON).
+- Client: `client/build.sh`; `client/status.py`; `tests/run.gd` run directly
+  against a local server (385 ok, none failed); `export.sh check`; gdlint;
+  `tools/render/shoot.sh` with `heist_shot.gd`, and with `screen_meta.gd` at
+  `SCREEN=settings TEXT=200 HC=1 LOCALE=de`; the older `tests/screenshot.gd`
+  route.
+- Design tools: `check_document.py`, `version_diff.py` (and `--items`),
+  `decision_support.py`, `python3 -m tools.economy_model`,
+  `python3 -m tools.heist_harness`, `privacy_manifest.py --check`.
+
+Not run: `client/export.sh android` and `ios` (no Android SDK or Mac here),
+`extract_content.py` and `extract_design_doc.py` (they rewrite committed
+files; their outputs are checked by `check_all.sh`), and the golden replays'
+`--write` (a deliberate decision each time, per its own docstring).
+
 ## Questions for the owner
 
 1. **Deploys.** Tracks speak of "deploy 2" and "deploy 3"; the history shows
@@ -124,3 +156,6 @@ kept, and made findable.
 - 16:15 UTC: survey; three parallel read-only audits of the client, server and
   sim READMEs and of the docs tree.
 - 16:30 UTC: guides, architecture, index, README, status page, corrections.
+- 16:55 UTC: first push, check_all green.
+- 17:10 UTC: every documented command run (above); Playwright prerequisite
+  added; folder maps for track notes and stills; progress-file titles.

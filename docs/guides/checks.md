@@ -26,12 +26,22 @@ bash tools/check_all.sh > /tmp/check.log 2>&1; echo "exit $?" >> /tmp/check.log
 | Node 22.5 or later | the server, its load check, the WebAssembly spike |
 | Godot 4.7.2 | fetched by `client/build.sh` on first use into `~/.cache/ruleborn/` |
 | `gdlint` (`pip install "gdtoolkit==4.*"`) | the client's lint step |
+| Python Playwright with a Chromium | the prototype's conformance check (`tools/check_prototype_conformance.py`) |
 | network access to github.com, once | Godot's download |
 
 ```bash
 rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios
 pip install "gdtoolkit==4.*"
+pip install playwright && python3 -m playwright install chromium
 ```
+
+In a cloud container with Chromium already under `/opt/pw-browsers/`, install
+the Python Playwright whose version matches that browser instead (the
+container's Node Playwright reports it:
+`node -e "console.log(require('playwright/package.json').version)"`), and skip
+the `install chromium` step: Playwright finds the browser through
+`PLAYWRIGHT_BROWSERS_PATH`. A mismatched version fails with "Executable
+doesn't exist".
 
 ## Known contradictions do not fail it
 

@@ -71,6 +71,7 @@ x86-64 (Godot is fetched for you). Once:
 ```bash
 rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios
 pip install "gdtoolkit==4.*"     # gdlint, for the client's lint
+pip install playwright && python3 -m playwright install chromium   # the prototype check
 ```
 
 **Simulation** — build natively and for WebAssembly, run every test and the

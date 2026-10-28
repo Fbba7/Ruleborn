@@ -18,6 +18,10 @@ so here is which is whose:
 | [`ui-kit.md`](ui-kit.md) | T9 UI kit |
 | [`ui-screens.md`](ui-screens.md) | T10 Screens |
 
+Every file is in time order and every stop is headed `## Stopped here`, with
+the session, wave or time in brackets; **the last one in a file is the
+latest**, and is where to start reading when picking a track up.
+
 T11 to T14 keep their notes beside their subject:
 [`docs/security/auth.md`](../../security/auth.md) (T11),
 [`docs/security/review.md`](../../security/review.md) (T12),

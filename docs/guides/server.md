@@ -29,6 +29,10 @@ example island so a fresh database has something to lease. Data goes to
 `server/.data/` unless `RULEBORN_DATA` says otherwise; delete it for a fresh
 start.
 
+On start it prints the address, the rules version it holds, and a warning for
+each protection a missing setting turns off (for example, without
+`RULEBORN_PEER_HEADER` failed sign-ins are not limited by address).
+
 `RULEBORN_STUB_SIGNIN=1` accepts a stand-in sign-in credential, which is what
 a desktop client sends (it has no Game Center or Play Games). Without it, and
 without any platform configured, the server refuses to start (security
@@ -64,7 +68,8 @@ node --no-warnings server/load.mjs --write   # and records it in server/load.jso
 node --no-warnings server/load.mjs --check   # what check_all.sh runs: fails if writes or reads moved since load.json
 ```
 
-It plays a population of simulated players (`--players N`, `--days D`)
+It plays a population of simulated players (`--players N`, `--days D`;
+`node --no-warnings server/load.mjs --players 20 --days 1` is a quick run)
 through the real service and the simulation's WebAssembly build, and counts
 rows read and written as the database bills them, and the CPU a
 re-simulation takes. Writes are deterministic; CPU time is the machine's. `server/load.json` is the
