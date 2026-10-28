@@ -85,7 +85,14 @@ kept, and made findable.
   switches and tabs, and which catalogue is still English-only.
 - `sim/README.md`: abilities, Sage powers and island generation are built
   (marked as later than the text around them); Layout gains `run_spike.sh`,
-  `stability_cases.json`, `Cargo.toml`.
+  `stability_cases.json`, `Cargo.toml`; then, after a sweep against the code,
+  the longest golden's size (1,269 bytes, five goldens), the fixture's two
+  publishing failures under v3.7's limits, the Lantern Glare's own reach (4 m,
+  8 m from alarm level 4), disarming (15 s on the tile, not "3 s + 1 s a
+  level"), and the content gate's coverage and self-test (323 values,
+  fourteen planted faults). The doc comment on `Island::fixture`
+  (`sim/src/island.rs`) still says level 5 "allows three" posts; it is code,
+  left for the simulation's owner.
 - `server/README.md`: Layout gains the sign-in modules, `status.py`,
   `package.json`, `ratings.json`, `web/terms.md`; the curation section no
   longer calls the hold unbuilt.
@@ -198,5 +205,24 @@ files; their outputs are checked by `check_all.sh`), and the golden replays'
   duplicate screenshot instructions folded into the client guide.
 - 18:15 UTC: a second sweep of the client README against the code (nine
   statements corrected; one accessibility gap found, question 10).
-- 18:50 UTC: a sweep of the server README against the code (eight
+- 18:25 UTC: a sweep of the server README against the code (eight
   statements corrected).
+- 18:45 UTC: a sweep of the sim README against the code (six statements
+  corrected).
+
+## Stopped here
+
+Stopped at about 19:15 UTC on 28 October 2026, every deliverable pushed to
+`claude/docs` with `bash tools/check_all.sh` ending "All checks passed".
+
+- **Done:** the README, the index (`docs/README.md`), the architecture
+  overview, six guides, `docs/status.md`, folder maps for track notes and
+  stills, and the client, server and sim READMEs swept against the code.
+  Every command the README and guides give was run.
+- **Not done, for whoever picks this up:** the track notes themselves are
+  mapped and bannered but not swept for stale statements (they are history,
+  each with its own "Stopped here"); `docs/security/review.md`,
+  `docs/security/auth.md` and `docs/server/db-cost.md` were linked and
+  indexed but not re-checked against the code; three code comments named
+  above still say old things.
+- **Waiting on the owner:** the ten questions above.
