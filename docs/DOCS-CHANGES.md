@@ -89,6 +89,16 @@ kept, and made findable.
 - `server/README.md`: Layout gains the sign-in modules, `status.py`,
   `package.json`, `ratings.json`, `web/terms.md`; the curation section no
   longer calls the hold unbuilt.
+- `server/README.md`, after a sweep against the code: the one-lease rule is
+  kept by the issuing transaction, not an index; balances, Renown and season
+  stars are carried as running totals on the ledger since the cost work; the
+  ledger holds Aether too; the load figure (about 62 billed rows for an
+  engaged day, against a budget of 46); the privacy declaration's size (411
+  columns in 61 tables); which sign-in routes are rate-limited and how
+  sessions renew; `RULEBORN_TOKEN_KEYS`. Two code comments say the same old
+  things (`server/src/db.mjs` on the leases table's "partial unique index",
+  `server/src/limits.mjs` on keeping a session "for the hour"); they are
+  code, so they are left for the server's owner.
 - `docs/analysis/README.md`: marked as the v2.3 archive, with pointers; its
   extract command fixed; a bare `spec/economy.md` given its full path.
 - `docs/design/spec/README.md`: says its adoption history stops at v3.1 and
@@ -188,3 +198,5 @@ files; their outputs are checked by `check_all.sh`), and the golden replays'
   duplicate screenshot instructions folded into the client guide.
 - 18:15 UTC: a second sweep of the client README against the code (nine
   statements corrected; one accessibility gap found, question 10).
+- 18:50 UTC: a sweep of the server README against the code (eight
+  statements corrected).

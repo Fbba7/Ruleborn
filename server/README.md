@@ -21,7 +21,7 @@ It needs Node 22.5 or later and nothing else — no packages. The simulation is
 
 | §24.12 | Here |
 | --- | --- |
-| **Lease** — "a target snapshot, a seed, a single-use token and an expiry a day away. Nothing is created yet." | `Service.lease`. §24.13's "one lease per target per player at a time" is a partial unique index, so the database holds it rather than the code. The clock is §5.4's, from `facts.json`. |
+| **Lease** — "a target snapshot, a seed, a single-use token and an expiry a day away. Nothing is created yet." | `Service.lease`. §24.13's "one lease per target per player at a time" is kept by the issuing transaction (see "Under load"). The clock is §5.4's, from `facts.json`. |
 | **Play**, **Queue** | On the device: `sim/`'s same library records the replay (`rb_record`). |
 | **Validate** — "re-simulates, compares, and checks the token, the expiry and the caps" | `Service.submit`: the token is bound to the attacker; the replay's header must name the leased snapshot, seed and clock; it is re-simulated by the build its rules version names; every second's checksum is compared. |
 | **Grant** — "only then is the haul minted, into an append-only ledger" | `Service.grant`, in one transaction with the heist row: the entry fee (§9.4), the haul (§9.6), the fee returned after a clean, loud or partial heist (C41), and the fee paid to the defender after a foiled one (§12.9, G37). |
@@ -35,9 +35,12 @@ and is flagged for review, never banned; an expired lease pays nothing.
 §24.8's tables, in `src/db.mjs`: `accounts`, `islands`, `snapshots`, `heists`,
 plus `leases` and the `ledger`. `snapshots` and `ledger` refuse `UPDATE` and
 `DELETE` by trigger — "never edited" and "append-only" are properties of the
-schema, not of the code that happens to use it. Balances are sums over the
+schema, not of the code that happens to use it. Balances come from the
 ledger (§24.12: "currency is a ledger of minting events rather than a number
-that gets overwritten").
+that gets overwritten"): each row carries running totals (`starlight_total`,
+`essence_total`, `aether_total`, `stars_total`, `renown_total`) and a balance
+is read from a player's newest row, a cut from
+[`docs/server/db-cost.md`](../docs/server/db-cost.md).
 
 Islands are stored by the SHA-256 of their bytes (`src/store.mjs`), and the
 store requires Node's SHA-256 and the simulation's to agree on every one — so
@@ -186,7 +189,9 @@ transaction as the grant:
   Renown) ÷ 1,000), kept between 8 and 40", times the outcome; the defender
   loses the mirror amount. A foiled heist costs the raider a flat 8, and the
   defender gains what the raider lost. Renown is an append-only table by
-  trigger, like the ledger, and a player's Renown is a sum over it.
+  trigger, like the ledger; the Renown a heist moves is written on the
+  heist's ledger rows (`renown_total`), and a player's Renown is the two
+  together (`seasons.mjs`).
 - **Floors.** "Nobody can drop out of Dust or Ember": a loss stops at Dust's
   floor, or at Ember's once reached. So Renown only moves between players,
   and is minted only where a floor stops a loss — register **F40**, which
@@ -214,7 +219,9 @@ transaction as the grant:
 
 `src/track.mjs` is §18.2's season track and §18.8's rules for it:
 
-- **Stars.** Each heist earns season stars in the grant's transaction: the
+- **Stars.** Each heist earns season stars in the grant's transaction, written
+  on the ledger rows the heist writes (the season-stars table holds tier
+  purchases): the
   raider ten times §12.9's outcome, the defender the rest of ten. Stars are
   spent on tiers, and a season's unspent stars are gone when it ends (§9.1's
   "reset each season").
@@ -234,8 +241,8 @@ there is no currency.
 - **Everything is priced in money.** Each cosmetic in `src/cosmetics.json` and
   each season's premium track is its own store product at its euro price,
   which the track's view names (`premiumProduct`, `premiumPrice`) for the shop;
-  there is no balance and there are no packs, and the ledger holds Starlight
-  and Essence only. A purchase is two steps: an intent, refused if it would
+  there is no balance and there are no packs; the ledger's currencies are
+  Starlight, Essence and Aether, beside the stars and Renown it also carries. A purchase is two steps: an intent, refused if it would
   take a minor past the month's cap (€25 at 13 to 15, €50 at 16 and 17) and
   held for a quarter of an hour; then the store's receipt, granted once per
   store transaction. Adults get §20.2's monthly spending summary, refunds
@@ -273,7 +280,9 @@ when opened: what was paid stays in `purchases`, the record of money.
 about any one player. Apple's, each against its own pinned roots:
 
 - **Game Center sign-in.** §24.8: "Platform identity is exchanged for a
-  short-lived signed token." The device's identity-verification signature
+  short-lived signed token." (Since the sign-in track, the exchange answers with a
+  short-lived access token and a rotating refresh token; see
+  [`docs/security/auth.md`](../docs/security/auth.md).) The device's identity-verification signature
   covers the player, the app, a timestamp and a salt; the key is in a
   certificate issued to Apple Inc., fetched only from Game Center's key hosts
   and names (the one network call, made and cached by `preparePlatform`
@@ -334,7 +343,12 @@ is the key session tokens are signed with and telemetry's pseudonyms made
 under; unset, one is made on the first start and kept in the data directory
 as `secret`, so a restart neither signs everyone out nor leaves a player's
 earlier telemetry where their deletion cannot find it; a key shorter than
-32 characters is refused. `RULEBORN_DELETIONS`
+32 characters is refused. `RULEBORN_TOKEN_KEYS`, when set, is a
+comma-separated list of `kid:key` pairs the tokens are signed with instead
+(the first signs, every one is accepted, so a key rotates by putting a new
+one first); `RULEBORN_REFRESH_ROTATE_HOURS` and the rest of the settings are
+listed in [`docs/guides/server.md`](../docs/guides/server.md#configuration).
+`RULEBORN_DELETIONS`
 names the deletion journal (below). The tests use a
 stand-in chain in `test/fixtures/apple/` (its `make.sh` regenerates it). The
 readings are **G32**; Google Play's side is **D67**; and building this found
@@ -429,7 +443,9 @@ keeps them and `bash tools/check_all.sh` fails if a change moves them
 (`--write` records a new baseline). It counts rows twice: as SQLite changes
 them, and as D1 bills them, each index entry a write touches being a row
 written too (`billed`), and prices the plans from the billed count. What it
-measured — an engaged day bills about 72 rows against §24.1's five, and a
+measured — an engaged day now bills about 62 rows (`load.json`), against the
+document's write budget for an engaged player of 46 (`WRITE_BUDGET` in
+`src/facts.json`; the first measurement was against "five"), and a
 re-simulation takes about 15 ms against the free plan's 10 — is register
 **F47**; its readings are **G33**. What was cut to get there, each held by
 `test/cost.test.mjs`:
@@ -542,7 +558,7 @@ any Apple device.
 
 ## What the server stores, and the stores' declarations
 
-`privacy.json` declares every column of every table — 262 in 43 — with the
+`privacy.json` declares every column of every table — 411 in 61 on 28 October 2026 — with the
 store data type it is, why it is kept, how long, and what an account's
 deletion does to it; `src/privacy.mjs` checks it against the schema the
 server actually opens and writes `declarations.md` from it: the answers to
@@ -609,9 +625,13 @@ tries again later (G44).
 - **Simulations**, by account: a replay re-simulated, or an island or
   Workshop entry checked. Six at once, then one every 20 seconds.
 - **Sign-ins**, by the account the credential proves, before anything is
-  read: `POST /v1/session` and G39's deletion without the app. Ten at once,
-  then one every 10 seconds. The app keeps its session for the hour it lasts
-  rather than signing in for every heist.
+  read: `POST /v1/session` and its `nonce`, `end` (without an access
+  token), `link` and `unlink` routes, and G39's deletion without the app;
+  `refresh` is counted by the session rather than the account (SR-28). Ten
+  at once, then one every 10 seconds. The app keeps its session — an access
+  token renewed by a rotating refresh token
+  ([`docs/security/auth.md`](../docs/security/auth.md)) — rather than signing
+  in for every heist.
 - **Failed sign-ins**, by address: twenty at once, then one every 3 seconds.
   An IPv6 address counts by its /64. Only failures are counted, so players
   who share an address are never held by each other's sign-ins. The address
