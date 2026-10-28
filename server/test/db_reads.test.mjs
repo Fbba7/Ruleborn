@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { open } from "../src/db.mjs";
-import { reads } from "../load.mjs";
+import { reads, run } from "../load.mjs";
 import { openPlan, play, twoPlayers } from "./setup.mjs";
 
 /** A table of 1,000 rows in ten groups of 100, indexed by group and n. */
@@ -106,4 +106,46 @@ test("every statement a heist and a target-list rebuild run is counted on its ow
   }
   assert.ok(compared > 50, `${compared} statements compared`);
   assert.ok(count.rows > 0);
+});
+
+test("no request a session makes reads a table whole, but the candidates' rebuild of every island (24.8)", () => {
+  // The load test's day: sessions, telemetry, the raid badge and log, the
+  // Observatory, leases and heists. The one whole read left is matchmaking's
+  // candidates, made again a minute at most (SR-03), whose cost and the
+  // option of the hourly list are in docs/server/db-cost.md.
+  const r = run({ players: 12, days: 2, archetype: "engaged" });
+  const scans = r.scans.filter((s) => !(s.op === "observatory" && s.table === "islands"));
+  assert.deepEqual(scans, [], JSON.stringify(scans));
+  assert.ok(r.readsPerPlayerDay > 0);
+});
+
+test("the reads that were whole tables search an index now", () => {
+  const db = open();
+  const plan = (sql) => db.prepare(`EXPLAIN QUERY PLAN ${sql}`).all().map((r) => r.detail).join("; ");
+  const cases = [
+    // A player's waiting raids, which every raid on them joins.
+    ["SELECT * FROM notifications WHERE account = ? AND kind = 'raided' AND sent_at IS NULL", /notifications_waiting/],
+    // The raids on a player: the defence log, the badge, the Trace.
+    [`SELECT COUNT(*) FROM heists h JOIN leases l ON l.token = h.token
+       WHERE h.defender = ? AND h.submitted_at >= ? AND h.validated = 1`, /heists_by_defender/],
+    // A robbery traced once.
+    ["SELECT 1 FROM leases t WHERE t.trace_of = ?", /leases_by_trace/],
+    // The week's raids, from Monday's day.
+    ["SELECT COUNT(*) FROM heists WHERE attacker = ? AND day >= ? AND validated = 1", /heists_by_attacker \(attacker=\? AND day>\?\)/],
+    // A balance, Renown and stars: the newest row.
+    ["SELECT starlight_total FROM ledger WHERE account = ? ORDER BY at DESC, id DESC LIMIT 1", /ledger_by_account/],
+    ["SELECT total FROM renown WHERE season = ? AND account = ? ORDER BY id DESC LIMIT 1", /renown_by_account/],
+    // A player's events of a day.
+    ["SELECT 1 FROM events WHERE who = ? AND started >= ? AND kind = ? AND day = ? LIMIT 1", /event_batches_by_who_at \(who=\? AND at>\?\)/],
+    // The candidates' staleness: three index rows.
+    ["SELECT MAX(changed_at) FROM islands", /COVERING INDEX islands_by_change/],
+    ["SELECT MAX(banned_at) FROM accounts WHERE banned_at IS NOT NULL", /accounts_banned/],
+    // The last 14 days' snapshots, for the echoes.
+    ["SELECT bundle FROM snapshots WHERE published_at > ? ORDER BY +bundle", /snapshots_by_published/],
+  ];
+  for (const [sql, index] of cases) {
+    const p = plan(sql);
+    assert.match(p, index, sql);
+    assert.doesNotMatch(p, /(^|; )SCAN (?!CONSTANT|\w+ VIRTUAL TABLE)/, sql);
+  }
 });

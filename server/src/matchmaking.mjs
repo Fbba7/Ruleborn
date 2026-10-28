@@ -266,13 +266,15 @@ export class Matchmaking {
 
   fresh(now) {
     const live = this.live(now).filter((r) => r.deleted_at === null);
+    // The last 14 days' snapshots, by snapshots_by_published, then sorted:
+    // ordered by the snapshot's key, the planner would read every snapshot.
     const echoes = this.db.prepare(
       `SELECT s.bundle, s.owner, s.realm, s.realm_level, a.keeper_level, s.origin
          FROM snapshots s JOIN accounts a ON a.id = s.owner
         WHERE s.published_at > ? AND a.banned_at IS NULL AND a.deleted_at IS NULL
           AND s.owner != ?
           AND NOT EXISTS (SELECT 1 FROM islands i WHERE i.bundle = s.bundle)
-        ORDER BY s.bundle`).all(now - facts.ECHO_DAYS * DAY_MS, GENERATOR);
+        ORDER BY +s.bundle`).all(now - facts.ECHO_DAYS * DAY_MS, GENERATOR);
     // A bundle never changes (§24.8), so its chapter is worked out once.
     const chapter = (bundle) => {
       if (!this.chapters.has(bundle)) this.chapters.set(bundle, chapterOf(lawsOf(this.service.store.get(bundle))));

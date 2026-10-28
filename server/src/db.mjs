@@ -286,6 +286,10 @@ CREATE TABLE IF NOT EXISTS snapshots (
   published_at INTEGER NOT NULL,
   origin       TEXT
 );
+-- The snapshots of the last 14 days, which §12.3's echoes are drawn from
+-- (matchmaking.fresh): read by when each was published, where every
+-- snapshot ever published was read. Written once, as the row is.
+CREATE INDEX IF NOT EXISTS snapshots_by_published ON snapshots (published_at);
 CREATE TRIGGER IF NOT EXISTS snapshots_never_edited BEFORE UPDATE ON snapshots
   BEGIN SELECT RAISE(ABORT, 'snapshots are never edited (24.8)'); END;
 CREATE TRIGGER IF NOT EXISTS snapshots_never_deleted BEFORE DELETE ON snapshots
