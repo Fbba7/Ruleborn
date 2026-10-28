@@ -19,6 +19,9 @@ const BELLS := 6
 ## the leather at §21.10's level.
 const SOFT_INK := Color("#E2DAF8")
 
+## Each law icon measured dark or not (dark_icon).
+static var _dark := {}
+
 var clock_label: Label
 var alarm_label: Label
 ## The loot panel's two numbers (§21.8, 12.19): what the bags can still
@@ -300,9 +303,14 @@ func _show_laws(r: RulebornReplay) -> void:
 		chip.add_theme_constant_override("separation", UI.px(3))
 		var school := str(p.get("school", ""))
 		var icon := "laws/" + str(p.get("law", "")).replace("_", "")
-		if Icons.has(icon):
-			# The law's own icon from the designs, on a light disc so a dark
-			# one (Glowing dark) reads on the leather.
+		if Icons.has(icon) and not dark_icon(icon):
+			# The law's own icon straight on the chip, as the design's.
+			var bare := Icons.view(icon, 24.0)
+			bare.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			chip.add_child(bare)
+		elif Icons.has(icon):
+			# A dark icon (Glowing dark) on a light disc, so it reads on the
+			# leather.
 			var disc := PanelContainer.new()
 			disc.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			var ring := StyleBoxFlat.new()
@@ -327,6 +335,27 @@ func _show_laws(r: RulebornReplay) -> void:
 		plate.add_child(chip)
 		laws_box.add_child(plate)
 	(laws_box.get_parent() as Control).visible = not laws.is_empty()
+
+
+## Whether an icon is mostly dark ink, which needs a light disc behind it
+## on the leather: its drawn pixels' mean lightness, measured once.
+static func dark_icon(icon: String) -> bool:
+	if _dark.has(icon):
+		return _dark[icon]
+	var image := Icons.texture(icon).get_image()
+	var light := 0.0
+	var drawn := 0.0
+	if image != null:
+		var small := image.duplicate() as Image
+		small.decompress()
+		small.resize(16, 16)
+		for y in 16:
+			for x in 16:
+				var c := small.get_pixel(x, y)
+				light += c.get_luminance() * c.a
+				drawn += c.a
+	_dark[icon] = drawn > 0.0 and light / drawn < 0.3
+	return _dark[icon]
 
 
 ## §21.8: "rewards fly into their counter": coins from a point on the screen
