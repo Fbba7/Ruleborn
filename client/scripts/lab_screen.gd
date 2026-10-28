@@ -206,11 +206,20 @@ func _sphere(o: Dictionary, busy: bool) -> Control:
 	b.disabled = busy or not o["can"]
 	b.set_meta("key", o["key"])
 	b.set_meta("item", o["item"])
-	var right := VBoxContainer.new()
-	right.add_child(b)
+	# Its button under the title, so neither squeezes the other's words.
+	var item := ScreenParts.item("harmony", "chord", Strings.t("LAB_SPHERE_TITLE"))
+	var head := item.get_child(item.get_child_count() - 1)
+	item.remove_child(head)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", UI.px(8))
+	col.add_child(head)
+	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.add_child(b)
 	if o["why"] != "":
-		right.add_child(ScreenKit.text(o["why"], 13.0, "words", "card", true, true))
-	return ScreenParts.item("harmony", "chord", Strings.t("LAB_SPHERE_TITLE"), "", right)
+		col.add_child(ScreenKit.text(o["why"], 13.0, "words", "card", true, true))
+	item.add_child(col)
+	return item
 
 
 ## The design's resonance grid: one numbered tile for each the Lab has
