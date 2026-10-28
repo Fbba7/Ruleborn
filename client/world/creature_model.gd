@@ -52,7 +52,7 @@ const FORM_PATTERN := {
 ## Each kind's sheen colour is its design's, from the manifest. Judged beside
 ## each portrait.
 const LOOK := {
-	"featherkin": {"tone": 0.5, "paint_tint": Vector3(1.0, 1.05, 0.62)},
+	"featherkin": {"tone": 0.15, "paint_tint": Vector3(0.94, 1.03, 1.12)},
 	"glassgolem": {"tone": 0.15, "paint_tint": Vector3(1.12, 1.08, 1.02), "paint_contrast": 0.35, "paint_mid": 0.5,
 		"flatten": 0.5, "hero_sheen": 0.2, "gear_tint": Vector3(2.5, 2.4, 2.55)},
 	"bloomling": {"pastel": 0.45, "pastel_colour": Color(0.88, 0.74, 1.0), "paint_tint": Vector3(1.0, 0.98, 0.84),

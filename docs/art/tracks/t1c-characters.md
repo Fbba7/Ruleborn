@@ -478,8 +478,12 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   about 10% (the hero light), Gardener and Chronicler darker. Featherkin's
   tone lower and yellower made it 0.14 off: its portrait's white belly is
   missing from our paint, not its tint, so the tint stays.
-- **Still worse than the design:** Featherkin's knit reads smooth and its
-  belly is cream, not white; Lantern
+- **Round 19, Featherkin:** the paint has the white chevroned belly and the
+  pale face disc; the tone 0.5 and a blue-cutting tint had washed both into
+  the gold. Tone 0.15 and a near-neutral tint bring them back, and its
+  colour is closer too (0.04 to 0.03; `w5_featherkin_belly.png`).
+- **Still worse than the design:** Featherkin's knit reads smooth (the
+  relief is 128 texels); Lantern
   Wisp's face is still pinker than the design's cream.
 - **Readability measured (round 15):** each ruleborn alone on the heist's
   painted grass, in grayscale: the share of a figure's pixels within 18
