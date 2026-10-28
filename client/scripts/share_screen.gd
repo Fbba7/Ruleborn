@@ -113,8 +113,12 @@ func _poster(code: String) -> Control:
 	col.add_theme_constant_override("separation", UI.px(6))
 	var kicker := ScreenParts.pill(Strings.t("SCREEN_SHARE_CHALLENGE"), "glass", "screens", "realm", 13.0, "words",
 		true)
-	# Centred while it fits; the card's width at large text, where it wraps.
-	kicker.size_flags_horizontal = Control.SIZE_SHRINK_CENTER if Settings.text_scale <= 125 else Control.SIZE_FILL
+	# The card's width, its words centred: a wrapping pill shrunk to its
+	# words would break them a letter a line (French at any size).
+	kicker.size_flags_horizontal = Control.SIZE_FILL
+	for l: Label in kicker.find_children("*", "Label", true, false):
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	col.add_child(kicker)
 	var mark := ScreenKit.icon("screens", "islandworkshop", 96.0)
 	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER

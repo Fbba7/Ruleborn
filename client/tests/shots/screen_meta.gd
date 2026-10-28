@@ -67,6 +67,13 @@ func _go() -> void:
 			for k: Node in c.find_children("*", "Control", true, false):
 				if (k as Control).get_combined_minimum_size().x > 200:
 					print("  ", k.name, " ", k.get_class(), " ", (k as Control).get_combined_minimum_size())
+	# NARROW=1: names a wrapping label squeezed to a glyph or two a line.
+	if OS.get_environment("NARROW") != "":
+		for l: Label in screen.find_children("*", "Label", true, false):
+			if l.is_visible_in_tree() and l.autowrap_mode != TextServer.AUTOWRAP_OFF and l.text.length() > 4 \
+					and l.size.x > 0.0 and l.size.x < l.get_theme_font_size("font_size") * 2.2 \
+					and l.get_line_count() > 2:
+				print("NARROW ", l.text.replace("\n", " "), " ", l.size.x)
 	if OS.get_environment("WIDE") != "":
 		for c: Control in screen.find_children("*", "Control", true, false):
 			if c.get_combined_minimum_size().x > 1000:

@@ -8,9 +8,12 @@ class_name KitControls
 ## A chip: glass when off, gold when on. It is a control, so it is 48 points
 ## tall (§21.1), not the designs' 30. A `dot` in a state's colour leads its
 ## words and a `count` follows them on a dark disc (the Roster's filters).
-static func chip(text: String, on: bool, pressed: Callable, count := "", dot := Color(0, 0, 0, 0)) -> Button:
-	var b := UI.action(text, pressed, "chip_on" if on else "chip")
+static func chip(text: String, on: bool, pressed: Callable, count := "", dot := Color(0, 0, 0, 0),
+		light := false) -> Button:
+	var b := UI.action(text, pressed, ("chip_on" if on else "chip") + ("_light" if light else ""))
 	b.name = "Chip"
+	# On parchment (`light`): cream, the chosen one dark leather.
+	b.set_meta("chip_light", light)
 	b.custom_minimum_size.y = UI.px(Tokens.number("size", "chip_height"))
 	set_chip(b, on)
 	if dot.a > 0.0 or count != "":
@@ -135,7 +138,7 @@ static func tile(title: String, line: String, school: String, pressed: Callable)
 ## A chip turned on or off; "on" is said in the gold, the heavier edge and
 ## to a screen reader.
 static func set_chip(b: Button, on: bool) -> void:
-	UI.set_look(b, "chip_on" if on else "chip")
+	UI.set_look(b, ("chip_on" if on else "chip") + ("_light" if b.get_meta("chip_light", false) else ""))
 	b.toggle_mode = true
 	b.set_pressed_no_signal(on)
 	b.set_meta("chosen", on)

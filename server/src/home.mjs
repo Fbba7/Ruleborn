@@ -649,15 +649,21 @@ export class Home {
   rest(account, ids, verdict, heistMs, now) {
     this.settleAll(account, now);
     const built = this.universe.buildings(account);
+    // What the result says (§12.9): how many came home and the longest rest.
+    const rested = { crew: 0, minutes: 0 };
     ids.forEach((id, i) => {
       const c = this.characters(account).find((x) => x.id === id);
       if (!c) return;
       const hearth = c.home === "spire" ? 0
         : built.find((b) => b.realm === c.home && b.kind === "hearth")?.level ?? 0;
       const out = verdict.outMask == null ? verdict.grade !== "foiled" : Boolean(verdict.outMask & (1 << i));
-      const until = now + heistMs + Math.round(restMinutes(verdict.grade, out, c.traits, hearth) * MINUTE);
+      const minutes = restMinutes(verdict.grade, out, c.traits, hearth);
+      const until = now + heistMs + Math.round(minutes * MINUTE);
       this.db.prepare("UPDATE characters SET away_from = ?, away_until = ? WHERE id = ?").run(now, until, id);
+      rested.crew += 1;
+      rested.minutes = Math.max(rested.minutes, Math.ceil(minutes));
     });
+    return rested;
   }
 
   /** §11.6: "Waking early costs 2 Essence per level per minute left": a
