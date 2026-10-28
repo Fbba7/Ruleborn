@@ -74,7 +74,7 @@ static func _lineup() -> Control:
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", -UI.px(28))
-	for k: Array in [["emberling", 108.0], ["mossbear", 136.0], ["rootrunner", 108.0]]:
+	for k: Array in [["emberling", 108.0], ["featherkin", 136.0], ["stormhound", 108.0]]:
 		var face := TextureRect.new()
 		face.texture = Portrait.of(str(k[0]))
 		face.expand_mode = TextureRect.EXPAND_IGNORE_SIZE

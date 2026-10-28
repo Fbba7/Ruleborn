@@ -152,9 +152,16 @@ func _crew(g: Dictionary) -> Control:
 	for m: String in g["crew_members"]:
 		box.add_child(_member(m))
 	if g["crew_invite"] != "":
-		var code := ScreenKit.text(Strings.t("SOCIAL_CREW_INVITE", g["crew_invite"]), 17.0, "words", "parchment", false,
-			true)
-		box.add_child(ScreenKit.panel("parchment", code, 14.0, 10.0))
+		# The invite large on parchment, as Friends shows a code to read out.
+		var said := VBoxContainer.new()
+		said.add_theme_constant_override("separation", UI.px(2))
+		said.add_child(ScreenKit.text(Strings.t("SOCIAL_CREW_INVITE", g["crew_invite"]), 13.0, "words", "parchment",
+			true, true))
+		var code := ScreenKit.text(Strings.t("SCREEN_CODE", str(g["crew_invite"]).to_upper()), 30.0, "number",
+			"parchment")
+		code.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		said.add_child(code)
+		box.add_child(ScreenKit.panel("parchment", said, 14.0, 10.0))
 	var crew := UI.row(6.0)
 	if g["in_crew"]:
 		crew.add_child(ScreenKit.button(Strings.t("SOCIAL_LEAVE_CREW"), controller.leave_crew, "leather", "", 14.0))

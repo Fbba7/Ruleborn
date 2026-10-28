@@ -9,6 +9,13 @@ extends Control
 const GRADE_COLOUR := {"clean": Color("#3FBF7F"), "loud": Color("#F2A03C"), "partial": Color("#3CC6D8"),
 	"foiled": Color("#E2536B")}
 
+## Each record's mark on its tile.
+const RECORD_MARKS := {"fastest_escape": ["heiststatus", "clock"], "fewest_alarms": ["heiststatus", "alarm"],
+	"most_guards_slept_past": ["heiststatus", "asleep"], "fewest_caught": ["heiststatus", "knockedout"],
+	"most_realms": ["screens", "universe"], "biggest_haul": ["heiststatus", "lootbag"],
+	"longest_defence": ["alerts", "defencewon"], "favourite_edge": ["heiststatus", "visioncone"],
+	"favourite_law": ["screens", "lawcodex"], "minutes_a_day": ["settingsandwellbeing", "playtimereminder"]}
+
 var controller: ProfileController
 ## The tab on show: "overview" or "log".
 var tab_shown := "overview"
@@ -229,8 +236,18 @@ func _records(tiles: Array) -> Control:
 	for t: Dictionary in tiles:
 		var col := VBoxContainer.new()
 		col.add_theme_constant_override("separation", 0)
+		# The record's mark beside its figure, as the design's stat tiles.
+		var top := HBoxContainer.new()
+		top.add_theme_constant_override("separation", UI.px(6))
+		var mark_of: Array = RECORD_MARKS.get(str(t["id"]), ["generalui", "info"])
+		var mark := ScreenKit.icon(str(mark_of[0]), str(mark_of[1]), 22.0)
+		mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		if not t["kept"]:
+			mark.modulate.a = 0.5
+		top.add_child(mark)
 		var v := ScreenKit.text(t["value"], 20.0, "number", "card", not t["kept"])
-		col.add_child(v)
+		top.add_child(v)
+		col.add_child(top)
 		var n := ScreenKit.text(t["name"], 13.0, "words", "card", true, true)
 		n.tooltip_text = t["text"]
 		col.add_child(n)
@@ -264,7 +281,14 @@ func _badges(p: Dictionary) -> Control:
 		words.add_child(bar)
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", UI.px(8))
-		row.add_child(ScreenKit.icon("hud", "star", 30.0))
+		# The badge's medal in its grade's frame; a dim star until earned.
+		var star := ScreenKit.icon("hud", "star", 26.0)
+		if grade == "":
+			star.modulate.a = 0.45
+		var medal := ScreenKit.panel({"gold": "goldframe", "silver": "silver", "bronze": "oak"}.get(grade, "well"),
+			star, -1.0, 7.0)
+		medal.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(medal)
 		row.add_child(words)
 		row.add_child(tag)
 		box.add_child(ScreenKit.panel("card", row, 14.0, 8.0))
