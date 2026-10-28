@@ -38,7 +38,7 @@ def start_server() -> tuple[subprocess.Popen, str, tempfile.TemporaryDirectory]:
     data = tempfile.TemporaryDirectory()
     proc = subprocess.Popen(["node", "--no-warnings", str(ROOT / "server/src/main.mjs"),
                              str(port), "--example"],
-                            env={**os.environ, "RULEBORN_DATA": data.name},
+                            env={**os.environ, "RULEBORN_DATA": data.name, "RULEBORN_STUB_SIGNIN": "1"},
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     for line in proc.stdout:
         if "ruleborn server on" in line:

@@ -94,9 +94,10 @@ function seal(ring, kind, fields, extra = "") {
   return `${body}.${mac(ring.keys[ring.current], `${body}|${extra}`)}`;
 }
 
-export function issueAccess(ring, { account, session }, now) {
+/** An access token, good until `until` (an hour from `now` at most). */
+export function issueAccess(ring, { account, session }, now, until = now + SESSION_MS) {
   if (!HEX.test(account) || !INT.test(String(session))) throw new Error("an account is hex, a session a number");
-  const expires = now + SESSION_MS;
+  const expires = Math.min(until, now + SESSION_MS);
   return { token: seal(ring, "a1", [account, session, expires]), expires };
 }
 

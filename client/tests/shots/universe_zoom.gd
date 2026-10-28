@@ -34,6 +34,34 @@ func _initialize() -> void:
 		" rendered ",
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME), " prims ",
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME), " calls")
+	# The engine's own count by pass: the main pass, the sun's shadow, the 2D.
+	var vp := view.camera.get_viewport().get_viewport_rid()
+	var info := func(type: RenderingServer.ViewportRenderInfoType, what: RenderingServer.ViewportRenderInfo) -> int:
+		return RenderingServer.viewport_get_render_info(vp, type, what)
+	print("main ", info.call(RenderingServer.VIEWPORT_RENDER_INFO_TYPE_VISIBLE,
+			RenderingServer.VIEWPORT_RENDER_INFO_DRAW_CALLS_IN_FRAME), " calls ",
+		info.call(RenderingServer.VIEWPORT_RENDER_INFO_TYPE_VISIBLE,
+			RenderingServer.VIEWPORT_RENDER_INFO_PRIMITIVES_IN_FRAME),
+		" prims; shadow ", info.call(RenderingServer.VIEWPORT_RENDER_INFO_TYPE_SHADOW,
+			RenderingServer.VIEWPORT_RENDER_INFO_DRAW_CALLS_IN_FRAME), " calls ",
+		info.call(RenderingServer.VIEWPORT_RENDER_INFO_TYPE_SHADOW,
+			RenderingServer.VIEWPORT_RENDER_INFO_PRIMITIVES_IN_FRAME),
+		" prims; 2D ", info.call(RenderingServer.VIEWPORT_RENDER_INFO_TYPE_CANVAS,
+			RenderingServer.VIEWPORT_RENDER_INFO_DRAW_CALLS_IN_FRAME), " calls")
+	# PROBE: every mesh on show, by its parent, with what it draws.
+	if env.call("PROBE", "") != "":
+		var tally := {}
+		for node in view.world.find_children("*", "GeometryInstance3D", true, false):
+			var g := node as GeometryInstance3D
+			if not g.is_visible_in_tree():
+				continue
+			var m := g.material_override as ShaderMaterial
+			var key := "%s %s shadow=%s outline=%s tris=%d" % [view.world.get_path_to(g), g.get_class(),
+				g.cast_shadow != 0, m != null and m.next_pass != null, UniverseBudget.count(g)]
+			tally[key] = int(tally.get(key, 0)) + 1
+		var out := FileAccess.open(env.call("PROBE", ""), FileAccess.WRITE)
+		for key: String in tally:
+			out.store_line("%d %s" % [tally[key], key])
 	var img := root.get_texture().get_image()
 	img.save_png(OS.get_environment("SHOT"))
 	print("saved ", img.get_size())

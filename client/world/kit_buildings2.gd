@@ -73,10 +73,11 @@ static func _citadel(b: BuildingKit) -> void:
 			b.box(0.02, 0.2, 0.12, KitStyle.lit(Color("#FFE7F4"), 0.5), cos(w) * 0.66, 0.62, sin(w) * 0.66, -w)
 	b.cyl(0.66, 0.66, 0.06, acc, 0, 0.9, 0, 8)
 	var body := Color("#F4EEF8") if b.tier > 0 else b.stone.lightened(0.1)
-	b.cyl(0.36, 0.3, 1.4, body, 0, 0.96, 0, 8)
+	# The shaft broad at its foot, as the design's (:848).
+	b.cyl(0.46, 0.36, 1.4, body, 0, 0.96, 0, 8)
 	for i in 4:
 		var q := i * PI / 2.0
-		b.box(0.02, 0.34, 0.08, KitStyle.lit(Color("#FFE7F4"), 0.5), cos(q) * 0.33, 1.6, sin(q) * 0.33, -q)
+		b.box(0.02, 0.34, 0.08, KitStyle.lit(Color("#FFE7F4"), 0.5), cos(q) * 0.41, 1.6, sin(q) * 0.41, -q)
 	b.cyl(0.52, 0.44, 0.08, roof, 0, 2.36, 0, 8)
 	b.cyl(0.3, 0.26, 0.5, body, 0, 2.44, 0, 8)
 	for i in (0 if b.lighter else 4):
@@ -119,7 +120,10 @@ static func _vault(b: BuildingKit) -> void:
 		for z: float in [-0.37, 0.37]:
 			b.box(0.13, 0.5, 0.13, b.stone2, x, 0.35, z)
 	b.box(0.96, 0.05, 0.8, KitStyle.GOLD, 0, 0.62, 0)
-	b.g.ball(Geo.place(b.at(0, 0.62, 0), 0.0, Vector3(1, 0.8, 0.88)), 0.42 * b.unit, Color("#D9A441"), 5, 12, true)
+	# The dome is the realm's roof, as the design's Vault wears it (:744,
+	# 02-heist), and as the heist's own Vault (PieceKit.vault).
+	b.g.ball(Geo.place(b.at(0, 0.62, 0), 0.0, Vector3(1, 0.8, 0.88)), 0.42 * b.unit, Color(b.style["roof"]), 5, 12,
+		true)
 	for k in 8:
 		var a := TAU * k / 8.0
 		b.ball(0.025, KitStyle.lit(Color("#FFF1C4"), 0.6), cos(a) * 0.4, 0.66, sin(a) * 0.35, 1.0, 2, 4)

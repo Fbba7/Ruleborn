@@ -23,7 +23,8 @@ Merge this branch, then:
   - `KitRing`: a round picture in an XP ring, a pip, or (`heavy`) a dial.
   - Sliders (`HSlider`) and scroll bars are themed.
   - `Motion.screen_in(screen)` is the design's 160 ms screen fade from 0.985; the router could call it on each screen it shows (`client/app/router.gd` is the integrator's; not hooked, because other tracks' shot scripts settle in a few frames and would catch screens mid-fade).
-- **Your own skins:** a control a script dresses in its own `StyleBoxFlat` with a fill keeps that look (the kit's box steps aside), and a label on such a light panel turns to ink by itself. So nothing breaks, but `FxSkin`, `StageHeroSkin` and `OverlaySheet.key` can now be replaced by the kit's materials.
+- **Your own skins:** a control a script dresses in its own `StyleBoxFlat` with a fill keeps that look (the kit's box steps aside), and a label on such a light panel turns to ink by itself. Since wave 5, `FxSkin.panel`/`style_button`, `StageHeroSkin.plate`/`button`, `OverlaySheet.dress`/`key` and `OverlayHud.badge` draw through the kit (`KitSkin.panel(p, kind)`, `KitSkin.button(b, kind)`, `KitStatus.badge(text, look, points)`), so those screens already share its look.
+- **Wave 5 additions:** `KitControls.icon_button(..., disc_points)` and `round_action(..., disc_points)` draw a disc smaller than the 48-point hit area (`KitControls.small_disc(b, points)`; `RbBox.inset` underneath); `KitTabs.face(id, texture)` puts a screen's own character or object on its chosen tab, larger and rising out of it; `KitPanels.album(school, title, kicker, count, body)` is the Codex's chapter band sitting square (`RbBox.foot_points`) on its cream album; `KitHud.loot(rows, carried, mark, words)` is the heist's Room/Left panel with its load bar and aim tick; `KitHud.sage(picture, name, words, pressed)` the Sage's gold-ringed portrait over Cast; `KitHud.crew(..., school)` a crew key on its school's ground in a leather ring, uses as diamonds on a tag; `KitRing.band`, `ground`, `zoom`, `focus`. `AUDIT=1` on `client/tests/shots/ui_screen.gd` lists where a screen draws past the kit (`UiAudit`).
 
 ## Done
 
@@ -162,3 +163,54 @@ Components (tab bar, header with back, segmented hub, resource pills, chips, bad
 - Not folded in yet: T5's `FxSkin`, T6's `OverlayHud.badge` and `OverlaySheet`, T7's `StageHeroSkin`.
 
 **Next**: fold those in (OverlayHud.badge as KitStatus.badge with a look, StageHeroSkin's card as the `ability`/`card_gold` materials); a cream album panel under the chapter band (`KitPanels.album`); the chosen tab's face hook; draw KitRail's discs as one fan per disc to cut its draw calls; judge the remaining stills (05 Weaving, 08 Observatory, 14 Lab, 18 Shop, 27 Friends) beside kit pages.
+
+## Wave 5 (from 17:50 UTC, 27 October)
+
+Main (d2343591) merged clean.
+
+**Done**
+- **Tab names never cut** (T4's report). `KitTabs._fit` measures every name against its tab: where any tab not chosen would cut its word, they all show their icons alone (still named aloud); the chosen tab widens, up to three times a tab while the others keep their 54 points, to hold its whole word, and where even that cannot (200% in English, "FRIENDS") its word takes the largest size that fits, never under its 100% size. At 100% all five names show (the old 125% switch is gone). The chosen word's stroke is 13% of its drawn size at any text size. Icons not chosen are 36 points (from 30), nearer the design's. Test: "the tab bar shows every name whole at 100% text...".
+- **Small disc** (T4's hook): `round_action(icon, words, call, false, 48, badge, tone, 36)` draws the designs' 36-point ball centred in a 48-point hit area, the plate and badge following the disc. Test: "a round action can draw its disc smaller than its hit area...".
+- **The chosen tab's face**: `tabs.face("crew", Portrait.of("skyskipper"))`: 62 points, its head above the tile (sheet page 7).
+- **Folded in**: `KitSkin` maps the other tracks' surface names (glass, card, parchment, leather, gold, alarm, night) to the kit's materials; `FxSkin.panel` and `style_button` (T5), `StageHeroSkin.plate` and `button` (T7), `OverlaySheet.dress`'s panels and `key` (T6) call it, and `OverlayHud.badge` is `KitStatus.badge(text, look, points)`. A few lines in each of those files, marked "Drawn by T9's kit".
+- **`KitPanels.album`** (13 Codex): the band square at its foot on a cream album with an ink edge (sheet page 5).
+- **KitRail** draws its rail and discs as one triangle array (`RenderingServer.canvas_item_add_triangle_array`), feathered a pixel: page 11 went from 63 to 41 draw calls, the picture unchanged.
+- **Heist pieces for T5** (the integrator's verdict: plain-face crew, no Sage, "Left ?" with no load bar): `KitHud.loot`, `KitHud.sage`, and `KitHud.crew` on the school's ground (sheet page 9 beside 02-heist). `KitRing` draws its discs and rings through `KitTris` (one triangle array under the picture, one over): the heist page went from 145 to 85 draw calls.
+- **People and shop pieces** (27 Friends, 18 Shop): `KitSocial.avatar` (portrait or initials in a ring, name, a status tag with a dot of its tone), `KitSocial.tag`, `KitSocial.feed_row` (parchment row: who, tag, when, what happened, a picture over Watch or Play, which goes under the words at large text); `KitLayout.strip` (a row that scrolls sideways, the designs' filter chips and decks); `KitCards.album_card` (13 Codex: the cream foot with name, rank in words and "In Skyfield"). Sheet pages 5 and 12.
+- Stills: `vs-design-heist-w5r3.png`, `vs-design-codex-w5r4.png`, `vs-design-friends-w5r5.png`, `tabs-text-and-rail-w5r2.png` (the design's bar, then the kit's at 100, 150 and 200% text, then the rail before and after).
+
+- **Rounds 6-9** (judged at 200% text and in high contrast): high contrast's 3-point outline swallowed every bar under 15 points tall (the load bar, health bars and storage lines drew as solid ink): an outline is now never more than a fifth of its box's smaller side. At 200% the kit's own Settings page cut its segments ("Wellb", "Acces"), spilled the dial's "MIN TODAY" past its ring and ran the top bar off the phone: segments now go two to a line with their words whole above 125%, the dial grows up to a third and wraps its unit, the top bar's pill goes under its title, and `KitPanels.row` puts a wide end control under its words (`settings-100-200-w5r8.png`). The chosen tab's word keeps 12 points inside its rim, the others give it room down to 48 points, and counts on badges grow to 150% text, no further, so at 200% they no longer cover the icons they count for. `KitCards.product` (18 Shop's picture cards). `KitStatus.sash(text)` (08 Observatory's gold band across a card's corner, the corner as large as its words need). The resource pill takes 6 points at its end (T4's measure). Test: "the loot panel, Sage, crew key, friend, feed row, album card, product and album meet 48 points and 13 points and stay on the screen at 200% text".
+
+**Consistency pass: where screens pass the kit by or differ from the design system**
+
+`AUDIT=1` over all 33 screens on their samples found own fills only on the heist and replay (three `#FFFBF0` panels in the laws column); every other screen's boxes and faces are the kit's. What remains is arrangement, which is each screen's:
+
+| Owner | Screen | Item |
+|---|---|---|
+| T5 | result | The design adds the entry fee returned, the Archivist's "try this" under the moment, and "Study one law you crossed" (three law tiles, +2 pages each); the world's particles run over the title. |
+| T5 | heist, replay | Use `KitHud.crew(picture, name, health, uses, call, school)` for the crew (the design's school grounds and diamonds), `KitHud.sage` for the Sage and Cast above Get out, `KitHud.loot(rows, carried, 0.8, "Load to 80%")` for Room/Left (no "?": the load bar is the design's); the three parchment panels in the laws column as `KitCards.law_chip`. Heist is at 141 draw calls and replay at 147 on `ui_screen.gd`: little room under 150. |
+| T6 | realm | Round actions' plates in capitals (`round_action` does it; the realm's own keys say "Map"); the design's MAP and BUILD are 72-point discs low in the corners and WEAVE above MAP. |
+| T6 | observatory | The design keeps the tab bar (Heist chosen), puts the trace on a corner sash (`KitStatus.sash("Trace · 24 h")`), the target's Keeper on a portrait ring over the card's edge, and "Drifting ruins" as three tinted tiles (Easy, Medium, Hard) under the deck. |
+| T7 | roster | Filters as `KitControls.chip(words, on, call, count, dot)` (the design's dot and count pill), not "○ free · 8" in the words; give the Crew tab Pip's face (`tabs.face`). |
+| T10 | codex | Chapters as `KitPanels.album(...)` around `KitCards.album_card`s; the school filters as one `KitLayout.strip` row (they wrap to two lines now). |
+| T10 | lab | The design's Lab is one "test realm" card (two large law discs linked across a small island, the result line, a gold RUN THE TEST), a strip of law tiles, and the resonances as a four-column grid of numbered tiles with their timers; the screen shows chambers instead. |
+| T10 | shop | Category chips as a `KitLayout.strip` (the design's one sideways row); the design's featured set and daily picks are tall picture cards with a ribbon tag. |
+| T10 | friends | The friends row as `KitSocial.avatar`s in a strip, the feed as `KitSocial.feed_row`s; the design leads with a "Friendly raid" card and Feed / Friends / Invite segments. |
+| T10 | weaving | Cost, strain and ready-in as `KitStatus.stat` tiles; the deck as a `KitLayout.strip` of law cards; the call as `KitControls.action2` (its two lines). |
+| T10 | settings | The design has four segments (Wellbeing, Game, Access, Account); the screen has two. At 200% text "Language" stands a letter a line beside "English (UK)" (`ScreenParts.item` keeps a wide control beside the title): `KitPanels.row` puts it under the words above 125%. |
+| T4 | home | Side balls through `disc_points` 36 at 48-point hit areas; drop `_fit_tab_words` and the purse's own padding (the kit does both). |
+| all | screens with a title | The design's sub-screen header (`KitNav.top_bar`) puts back at the top; §21.1's thumb rule keeps it at the foot (finding H, the owner's). |
+
+## Stopped here (wave 5, 23:00 UTC)
+
+**Pushed**: everything above through the sash and these notes; check_all passed on af7911c, 8027efc and this commit. The session's worker restarted three times between 20:20 and 22:50 UTC and the work in that gap was lost to waiting, not to code.
+
+**Hooks outside the kit** (a few lines each, marked "Drawn by T9's kit"): `client/world/fx_skin.gd` (`panel`, `style_button`, T5), `client/world/stage_hero_skin.gd` (`plate`, `button`, T7), `client/world/overlay_sheet.gd` (`dress`, `key`, T6), `client/world/overlay_hud.gd` (`badge`, T6).
+
+**Still worse than the design**:
+- Type is larger than the design's (§21.8's 13-point floor): law cards three to a row where the design's go four, chips and tags wider.
+- The tab bar still sits 20 points above the foot (§21.1's corner rule).
+- At 200% text the round actions' plates ("DEFENCE") grow over the realm labels on home; the kit does not cap them, since they are words a player reads.
+- The screens have not yet taken up this wave's pieces: the table above says which piece goes where (T5's crew, Sage and loot; T10's albums, strips and feed rows; T4's small discs).
+
+**Next**: when screens adopt the pieces, re-run `AUDIT=1` and the design comparisons; a tinted difficulty tile (the Observatory's Easy / Medium / Hard); the gem icon inside a price pill.

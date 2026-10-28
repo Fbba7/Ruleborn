@@ -25,10 +25,10 @@ var _sheet: ScrollContainer
 var _keys: Control
 var _top: Control
 var _drawn_key := ""
-var _heading: PanelContainer
+var _heading: HBoxContainer
 var _facts: HFlowContainer
 var _save_row: HFlowContainer
-var _tabs: HFlowContainer
+var _tabs: VBoxContainer
 ## The chosen tab of the tray, and the tabs the last refresh filled.
 var _tab := ""
 var _tab_names: Array[String] = []
@@ -57,12 +57,10 @@ func _build() -> void:
 	defence = OverlayDefence.new(view)
 	var top := VBoxContainer.new()
 	top.add_theme_constant_override("separation", UI.px(6))
-	var line := HBoxContainer.new()
-	line.add_theme_constant_override("separation", UI.px(8))
-	_heading = OverlayHud.heading(Strings.t("CUR_KICKER"), Strings.t("CUR_TITLE"))
+	_heading = OverlayTop.bar(func() -> void: App.services.router.go(&"map"), Strings.t("CUR_KICKER"),
+		Strings.t("CUR_TITLE"))
 	header_label = _heading.find_child("Kicker", true, false) as Label
-	line.add_child(_heading)
-	top.add_child(line)
+	top.add_child(_heading)
 	_facts = HFlowContainer.new()
 	_facts.add_theme_constant_override("h_separation", UI.px(5))
 	_facts.add_theme_constant_override("v_separation", UI.px(5))
@@ -71,11 +69,9 @@ func _build() -> void:
 	column.add_child(top)
 	status_label = UI.status("info", "")
 	column.add_child(UI.plate(status_label, "glass"))
-	StageScreen.window(column, 1.2)
-	# A flow, so at §20.8's large text the tabs take two rows, not the phone.
-	_tabs = HFlowContainer.new()
-	_tabs.add_theme_constant_override("h_separation", UI.px(4))
-	_tabs.add_theme_constant_override("v_separation", UI.px(4))
+	StageScreen.window(column, 1.0)
+	# The design's segmented tray tabs; their words wrap at large text.
+	_tabs = VBoxContainer.new()
 	column.add_child(_tabs)
 	var scroller := ScrollContainer.new()
 	scroller.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -88,7 +84,7 @@ func _build() -> void:
 	glass.add_child(body)
 	scroller.add_child(glass)
 	column.add_child(scroller)
-	_sheet = StageScreen.sheet(body, 0.62)
+	_sheet = StageScreen.sheet(body, 0.85)
 	_keys = StageScreen.handle(column, _sheet)
 	column.remove_child(_tabs)
 	column.add_child(_tabs)
@@ -121,15 +117,18 @@ func _refresh() -> void:
 		for child: Node in holder.get_children():
 			holder.remove_child(child)
 			child.queue_free()
-	_save_row.add_child(OverlayHud.key("screens/universe", Strings.t("RV_KEY_MAP"),
-		func() -> void: App.services.router.go(&"map")))
+	# §13's rehearsal: the draft as it stands, against a simulated crew.
+	_save_row.add_child(KitControls.round_action("planningactions/rehearse", Strings.t("CUR_TEST_RUN"),
+		func() -> void:
+			DefencesScreen.tab = 0
+			App.services.router.go(&"defences")))
 	if not c["ready"]:
 		return
 	var busy: bool = c["busy"] != ""
 	(_heading.find_child("Title", true, false) as Label).text = str(c["name"])
 	_heading.accessibility_description = c["origin"]
 	if c["hold"] != "":
-		_facts.add_child(OverlayHud.pill("realmactions/defence", "", c["hold"]))
+		_facts.add_child(_hold(c["hold"]))
 	# A post picked (on the island or by its key) brings up its dial.
 	var dialled := not (c["dial"] as Array).is_empty()
 	if dialled and not _dialled:
@@ -155,6 +154,44 @@ func _refresh() -> void:
 			if b.get_meta("item", "") == focus_item and b.is_visible_in_tree():
 				b.grab_focus.call_deferred()
 				break
+
+
+## §13.3's hold as the design's strip: the shield, "HOLDS" over the share
+## of the reference crew's raids it held, and a bar of it; measuring, its
+## words alone. The server's measurement, never an estimate.
+func _hold(words: String) -> Control:
+	var h: Variant = (App.services.store.get_slice(CurationState.CURATION).get("view", {}) as Dictionary).get("hold")
+	if not (h is Dictionary) or str((h as Dictionary).get("status", "")) == "measuring":
+		return OverlayHud.pill("realmactions/defence", "", words)
+	var share := float(h.get("held", 0)) / maxf(1.0, float(h.get("raids", 0)))
+	var strip := UI.panel("plate_dark")
+	strip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	strip.accessibility_name = words
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(10))
+	var medal := OverlayHud.medallion("realmactions/defence", -1, 40.0)
+	medal.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(medal)
+	var names := VBoxContainer.new()
+	names.add_theme_constant_override("separation", 0)
+	var k := UI.label(Strings.t("CUR_HOLDS").to_upper(), 13.0)
+	k.theme_type_variation = "Kicker"
+	k.set_meta("bold", true)
+	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	names.add_child(k)
+	var n := UI.label("%d%%" % roundi(100.0 * share), 24.0)
+	n.add_theme_font_override("font", Tokens.font("display"))
+	n.set_meta("bold", true)
+	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	names.add_child(n)
+	row.add_child(names)
+	var bar := KitStatus.progress(share, 1.0, "%d / %d" % [int(h.get("held", 0)), int(h.get("raids", 0))],
+		Tokens.color("success_light"))
+	bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(bar)
+	strip.add_child(row)
+	return strip
 
 
 ## A presenter's offer as a key in `look`, with `icon`, its words `text`
@@ -271,15 +308,14 @@ func _naming(n: Dictionary, busy: bool) -> void:
 func _show_tab() -> void:
 	if not _tab_names.has(_tab):
 		_tab = _tab_names[0] if not _tab_names.is_empty() else ""
-	for t: String in TABS:
-		if not _tab_names.has(t):
-			continue
-		var b := UI.action(Strings.t("CUR_TAB_" + t.to_upper()), func() -> void:
-			_tab = t
-			_refresh(), "tab_active" if t == _tab else "tab")
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.set_meta("tab", t)
-		_tabs.add_child(b)
+	var ids: Array = TABS.filter(func(t: String) -> bool: return _tab_names.has(t))
+	if not ids.is_empty():
+		var tabs := OverlayTop.tabs(ids, ids.map(func(t: String) -> String: return Strings.t("CUR_TAB_" + t.to_upper())),
+			_tab, func(id: String) -> void:
+				_tab = id
+				_refresh.call_deferred())
+		tabs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_tabs.add_child(tabs)
 	for holder: Node in body.get_children():
 		var box := holder.get_child(0) if holder.get_child_count() > 0 else null
 		if box != null and box.has_meta("tab"):

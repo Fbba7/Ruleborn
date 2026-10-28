@@ -32,9 +32,14 @@ func run() -> void:
 	await _sign_out_clears_everything()
 	await _sign_out_offline_is_owed()
 	await _signed_back_in_gets_the_queue_back()
+	await _backs_off()
+	await _devices_and_their_sign_outs()
+	await _links_with_both_proofs()
 	_words()
+	_device_words()
 	_pinning()
 	await _panel()
+	await _account_tab()
 	if server_url != "":
 		await _against_server()
 
@@ -56,6 +61,12 @@ func _fake(name: String) -> Array:
 		"refreshToken": REFRESH_2})
 	transport.on("POST /v1/session/end", {"ended": 1})
 	transport.on("GET /v1/session", {"account": "acc1", "devices": 2})
+	transport.on("GET /v1/session/devices", {"devices": [
+		{"id": 7, "current": true, "via": "gc", "device": "iphone", "model": "iPhone 15", "place": "PT", "idleHours": 0},
+		{"id": 3, "current": false, "via": "gp", "device": "android_phone", "model": null, "place": null,
+			"idleHours": 50}],
+		"identities": [{"platform": "gc", "primary": true, "linkedAt": null},
+			{"platform": "gp", "primary": false, "linkedAt": 0}]})
 	transport.on("PUT /v1/age", {"ageBand": "18+"})
 	transport.on("GET /v1/balance", {"starlight": 1, "essence": 2})
 	return [s, transport, vault, platform]
@@ -155,13 +166,148 @@ func _refused_refresh_asks_the_platform() -> void:
 	var down := await s.auth.ensure(true)
 	var kept := vault.read(AuthSession.REFRESH_KEY)
 	t.then("POST /v1/session/refresh", [[{"error": "session_refused"}, 401]])
-	var r := await s.auth.ensure(true)
+	# The player's tap: an automatic renewal now would wait out its back-off.
+	var r := await s.auth.ensure(true, true)
 	check.call("a refresh the server never decided keeps its token for the next try; a refused one is "
 			+ "forgotten and the platform asked again, silently",
 		not down.ok and kept == "r1.k0.7.3.SPENT" and r.ok and platform.asked.size() == 1
 			and s.api.token == ACCESS and vault.read(AuthSession.REFRESH_KEY) == REFRESH,
 		"%s %s %s" % [down, r, platform.asked])
 	s.close()
+
+
+## The body a call sent, as JSON.
+func _sent(call: Dictionary) -> Dictionary:
+	var v: Variant = JSON.parse_string((call["body"] as PackedByteArray).get_string_from_utf8())
+	return v if v is Dictionary else {}
+
+
+func _backs_off() -> void:
+	var f := _fake("backoff")
+	var s: Services = f[0]
+	var t: FakeTransport = f[1]
+	var vault: FakeSecureStore = f[2]
+	s.auth.jitter = func() -> float: return 0.999
+	vault.write(AuthSession.REFRESH_KEY, REFRESH)
+	t.on("POST /v1/session/refresh", {"error": "internal"}, 503)
+	var waits: Array[int] = []
+	for _i: int in 9:
+		await s.auth.ensure(true, true)
+		waits.append(s.auth.held_ms())
+	t.calls.clear()
+	var auto := await s.auth.ensure(true)
+	var quiet := t.calls.is_empty() and not auto.ok and auto.code == "internal"
+	var doubling := waits[0] in range(1900, 2001) and waits[1] in range(3900, 4001) and waits[2] in range(7900, 8001)
+	var capped := waits[8] in range(299000, 300001) and waits[7] in range(255000, 256001)
+	t.on("POST /v1/session/refresh", {"error": "too_many_requests", "retryAfter": 30}, 429)
+	await s.auth.ensure(true, true)
+	t.calls.clear()
+	var tapped := await s.auth.ensure(true, true)
+	var server_held := (t.calls.is_empty() and tapped.code == "too_many_requests"
+		and int(tapped.detail.get("retryAfter", 0)) in range(29, 31))
+	check.call("a renewal the server never decided waits 2 s, 4 s, 8 s … at most 5 minutes before the next "
+			+ "automatic try, and asks nothing meanwhile; one the server held back waits its Retry-After, "
+			+ "even when the player taps",
+		doubling and capped and quiet and server_held, "%s quiet=%s held=%s" % [waits, quiet, tapped])
+	s.close()
+
+
+func _devices_and_their_sign_outs() -> void:
+	var f := _fake("devices")
+	var s: Services = f[0]
+	var t: FakeTransport = f[1]
+	await s.auth_flow.sign_in()
+	var signed := _sent(t.calls[t.calls.find_custom(func(c: Dictionary) -> bool:
+		return c["route"] == "POST /v1/session")])
+	var said: Dictionary = signed.get("device", {})
+	var slice: Dictionary = s.store.get_slice(AuthState.AUTH)
+	var listed := (slice["list"] as Array).size() == 2 and int(slice["devices"]) == 2
+	t.calls.clear()
+	await s.auth_flow.end_device(3)
+	var one := _sent(t.calls[0])
+	t.calls.clear()
+	await s.auth_flow.sign_out_others()
+	var others := _sent(t.calls[0])
+	var asked_again := _routes(t).has("GET /v1/session/devices")
+	check.call("a sign-in names the device's kind and model and nothing else; the account's devices are listed; "
+			+ "one other device, or every other, is signed out by the server and the list asked again",
+		str(said.get("kind", "")) in AuthSession.DEVICE_KINDS and said.keys().size() == 2
+			and str(said.get("model", "")).length() <= 32 and listed and int(one.get("device", 0)) == 3 and one.size() == 1
+			and others == {"others": true} and asked_again and s.auth.fresh(),
+		"%s %s %s %s" % [said, listed, one, others])
+	s.close()
+
+
+func _links_with_both_proofs() -> void:
+	var f := _fake("link")
+	var s: Services = f[0]
+	var t: FakeTransport = f[1]
+	var platform: FakePlatformIdentity = f[3]
+	platform.available = ["gc", "gp"] as Array[String]
+	platform.answers = {"gp": "gp:test-player"}
+	t.on("POST /v1/session/nonce", {"nonce": "n1.k0.abc.123.MAC", "expiresIn": 300})
+	t.on("POST /v1/session/link", {"identities": []})
+	t.on("POST /v1/session/unlink", {"identities": []})
+	await s.auth_flow.sign_in()
+	t.calls.clear()
+	var r := await s.auth_flow.link("gp")
+	var routes := _routes(t)
+	var body := _sent(t.calls[routes.find("POST /v1/session/link")])
+	var linked := (r.ok and body == {"current": "gc:test-player", "credential": "gp:test-player"}
+		and routes.slice(0, 2) == ["POST /v1/session/nonce", "POST /v1/session/link"]
+		and platform.asked.has("n1.k0.abc.123.MAC")
+		and str(s.store.get_slice(AuthState.AUTH)["notice"]) == Strings.t("AUTH_LINKED", "Google"))
+	t.calls.clear()
+	await s.auth_flow.unlink("gp")
+	var gone := _sent(t.calls[_routes(t).find("POST /v1/session/unlink")]) == {"current": "gc:test-player",
+		"platform": "gp"}
+	t.on("POST /v1/session/link", {"error": "identity_in_use"}, 409)
+	var refused := await s.auth_flow.link("gp")
+	var told := (str(s.store.get_slice(AuthState.AUTH)["notice"]) == Errors.message("AUTH_ACTION_FAILED",
+		"identity_in_use") and bool(s.store.get_slice(AuthState.AUTH)["failed"]))
+	platform.available = ["gc"] as Array[String]
+	t.calls.clear()
+	var cannot := await s.auth_flow.link("gp")
+	check.call("linking Google sends a fresh proof of the platform this device signs in with beside the new one, "
+			+ "the new one carrying the server's nonce; removing it is vouched for the same way; a refusal is "
+			+ "told in words, and a platform this device cannot prove asks the server nothing",
+		linked and gone and not refused.ok and told and cannot.code == "no_platform"
+			and not _routes(t).has("POST /v1/session/link"),
+		"%s %s %s %s %s" % [r, body, routes, gone, cannot])
+	s.close()
+
+
+func _device_words() -> void:
+	var row := AuthPresenter.device_row({"id": 3, "current": false, "via": "gp", "device": "android_phone",
+		"model": null, "place": "ES", "idleHours": 5 * 24 + 3})
+	var mine := AuthPresenter.device_row({"id": 7, "current": true, "via": "gc", "device": "iphone",
+		"model": "iPhone 15", "place": null, "idleHours": 0})
+	var slice := {"identities": [{"platform": "gc", "primary": true}], "platforms": ["gc", "gp"]}
+	var offered := AuthPresenter.methods(slice, "gc")
+	var both := {"identities": [{"platform": "gc", "primary": true}, {"platform": "gp", "primary": false}],
+		"platforms": ["gc", "gp"]}
+	var on_iphone := AuthPresenter.methods(both, "gc")
+	var on_android := AuthPresenter.methods(both, "gp")
+	Strings.set_locale("pt_BR")
+	var in_portuguese := AuthPresenter.place("ES")
+	Strings.set_locale("de")
+	var in_german := AuthPresenter.place("es")
+	Strings.set_locale("en")
+	check.call("a device is named by its model, else its kind in words, then when it was last used on the "
+			+ "server's clock, its country in the player's language (never an address) and its platform; the other platform "
+			+ "is offered to add, and a link is removable only from a device that signs in the other way",
+		row["title"] == Strings.t("AUTH_KIND_ANDROID_PHONE") and str(row["line"]).contains(Strings.t("AUTH_SEEN_DAYS", 5))
+			and str(row["line"]).contains("Spain") and str(row["line"]).contains("Google")
+			and in_portuguese == "Espanha" and in_german == "Spanien" and AuthPresenter.place("ZZZ") == Strings.t(
+				"AUTH_PLACE_UNKNOWN")
+			and mine["title"] == "iPhone 15" and str(mine["spoken"]).contains(Strings.t("AUTH_THIS_DEVICE"))
+			and not str(mine["line"]).contains(Strings.t("AUTH_SEEN_NOW"))
+			and str(mine["line"]).contains(Strings.t("AUTH_PLACE_UNKNOWN"))
+			and AuthPresenter.seen(0) == Strings.t("AUTH_SEEN_NOW") and AuthPresenter.seen(5) == Strings.t("AUTH_SEEN_HOURS", 5)
+			and AuthPresenter.seen(30) == Strings.t("AUTH_SEEN_DAY")
+			and offered.size() == 2 and offered[1]["action"] == "link" and offered[1]["platform"] == "gp"
+			and on_iphone.size() == 2 and on_iphone[1]["action"] == "unlink" and on_android[1]["action"] == "",
+		"%s | %s | %s | %s" % [row, mine, offered, on_android])
 
 
 func _google_nonce() -> void:
@@ -339,6 +485,30 @@ func _panel() -> void:
 			+ "dialog whose safe answer is the one focused; cancelled, nothing is signed out",
 		shown and asked and safe_focused and closed and s.auth.fresh() and not s.auth.signed_out(),
 		"%s asked=%s focused=%s closed=%s" % [buttons.keys(), asked, safe_focused, closed])
+	# The devices: every other one has its own sign-out, which asks first.
+	var ends := panel.find_children("*", "Button", true, false).filter(func(b: Button) -> bool:
+		return b.get_meta("auth", "") == "end_device")
+	var t: FakeTransport = f[1]
+	t.calls.clear()
+	if not ends.is_empty():
+		(ends[0] as Button).pressed.emit()
+	for _i: int in 3:
+		await tree.process_frame
+	var asks := screen.find_child("Dialog", true, false)
+	var no: Button = null
+	if asks != null:
+		for b: Button in asks.find_children("*", "Button", true, false):
+			if b.get_meta("auth", "") == "cancel":
+				no = b
+	var focused := no != null and no.has_focus()
+	if no != null:
+		no.pressed.emit()
+	await tree.process_frame
+	check.call("the panel lists each signed-in device, every one but this with its own sign-out, and sign out "
+			+ "every other device; ending one asks first, safe answer focused, and asks the server nothing then",
+		ends.size() == 1 and buttons.has("sign_out_others") and focused and not _routes(t).has("POST /v1/session/end")
+			and panel.find_child("Devices", true, false) != null,
+		"ends=%d focused=%s %s" % [ends.size(), focused, _routes(t)])
 	screen.queue_free()
 	App.services = held
 	s.close()
@@ -373,4 +543,51 @@ func _against_server() -> void:
 		r.ok and first != "" and refresh.begins_with("r1.") and b.ok and rotated != refresh and second != first
 			and told.ok and after.code == "session_refused",
 		"%s %s %s %s" % [r, b, told, after])
+	s.close()
+
+
+## Settings' Account tab, as the player opens it: the real screen on a
+## phone's portrait frame, in each language (Portuguese runs longest), with
+## three devices and Google linked. The screen-wide sweeps mount Settings
+## on its first tab, so this one holds the Account tab to the same rules.
+func _account_tab() -> void:
+	var f := _fake("tab")
+	var s: Services = f[0]
+	var platform: FakePlatformIdentity = f[3]
+	platform.available = ["gc", "gp"] as Array[String]
+	var held := App.services
+	var size := tree.root.size
+	App.services = s
+	await s.auth_flow.sign_in()
+	tree.root.size = Vector2i(540, 1170)
+	var point := UI.PX_PER_POINT
+	var problems: Array[String] = []
+	for locale: String in Strings.LOCALES:
+		Strings.set_locale(locale)
+		var screen: SettingsScreen = (load("res://scenes/settings.tscn") as PackedScene).instantiate()
+		screen.tab_shown = "account"
+		tree.root.add_child(screen)
+		for _i: int in 3:
+			await tree.process_frame
+		var frame := screen.get_viewport_rect().size
+		var panel := screen.find_child("AuthPanel", true, false) as AuthPanel
+		if panel == null or not panel.is_visible_in_tree():
+			problems.append("%s: no Account tab" % locale)
+		for c: Control in screen.find_children("*", "Control", true, false):
+			if c.get_combined_minimum_size().x > frame.x:
+				problems.append("%s: %s asks for %d px of %d" % [locale, c.name, c.get_combined_minimum_size().x,
+					frame.x])
+				break
+		for b: Button in (panel.find_children("*", "Button", true, false) if panel != null else []):
+			var r := b.get_global_rect()
+			if b.is_visible_in_tree() and (minf(r.size.x, r.size.y) < 48 * point - 0.5 or r.end.x > frame.x):
+				problems.append("%s: %s is %s at %s" % [locale, b.text, r.size, r.position])
+		screen.queue_free()
+		await tree.process_frame
+	Strings.set_locale("en")
+	tree.root.size = size
+	check.call("Settings' Account tab holds the panel, and in every language nothing on it is wider than a "
+			+ "phone's frame and every control is at least 48 points and on the screen",
+		problems.is_empty(), "; ".join(problems))
+	App.services = held
 	s.close()

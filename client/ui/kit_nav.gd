@@ -47,8 +47,17 @@ static func segmented(options: Array, chosen: int, picked: Callable) -> PanelCon
 	p.name = "Segments"
 	p.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
 	UI.dress(p, "seg_track")
-	var row := HBoxContainer.new()
+	# At large text more than two segments go two to a line, so each word
+	# stays whole ("Wellbeing", not "Wellb") rather than cut.
+	var large := Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO and options.size() > 2
+	var row: Container = HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(2))
+	if large:
+		var grid := GridContainer.new()
+		grid.columns = 2
+		grid.add_theme_constant_override("h_separation", UI.px(2))
+		grid.add_theme_constant_override("v_separation", UI.px(2))
+		row = grid
 	p.add_child(row)
 	var buttons: Array[Button] = []
 	for i: int in options.size():
@@ -61,7 +70,8 @@ static func segmented(options: Array, chosen: int, picked: Callable) -> PanelCon
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.custom_minimum_size.x = UI.px(UI.CONTROL_POINTS)
 		if option is Array:
-			b.custom_minimum_size.y = UI.px(56)
+			# The icon over a line of words at any text size.
+			b.custom_minimum_size.y = maxf(UI.px(56), UI.px(34) + UI.text_px(13) * 1.4)
 			var v := VBoxContainer.new()
 			v.set_anchors_preset(Control.PRESET_FULL_RECT)
 			v.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -72,8 +82,9 @@ static func segmented(options: Array, chosen: int, picked: Callable) -> PanelCon
 			# capitals do not fit a quarter of the strip at 13.
 			var l := UI.label(words, 13)
 			l.theme_type_variation = "Tab"
-			l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-			l.clip_text = true
+			if not large:
+				l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+				l.clip_text = true
 			l.set_meta("bold", true)
 			l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			v.add_child(l)
@@ -116,7 +127,17 @@ static func top_bar(title: String, back_call: Callable, chip := "") -> HBoxConta
 	if chip != "":
 		var c := KitStatus.pill(chip)
 		c.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(c)
+		# At large text the pill goes under the title, not past the phone.
+		if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+			var words := VBoxContainer.new()
+			words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			row.remove_child(t)
+			words.add_child(t)
+			c.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+			words.add_child(c)
+			row.add_child(words)
+		else:
+			row.add_child(c)
 	return row
 
 

@@ -54,7 +54,9 @@ export function platformProofs({ gameCenter = null, google = null } = {}) {
       if (!once) return null;
       if (identity.startsWith("gc:")) {
         const { playerId, salt, timestamp } = credential;
-        const key = `gc|${playerId}|${salt}|${timestamp}`;
+        // By the salt's bytes, as Apple signed them: base64 has many
+        // spellings of one salt (T12's SR-25).
+        const key = `gc|${playerId}|${Buffer.from(String(salt ?? ""), "base64").toString("base64")}|${timestamp}`;
         return once.spend(key, timestamp + GAME_CENTER_FRESH_MS) ? identity : null;
       }
       if (identity.startsWith("gp:")) {

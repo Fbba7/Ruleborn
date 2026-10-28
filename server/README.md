@@ -7,8 +7,8 @@ only then mint what it earned.
 
     node --no-warnings --test server/test/*.test.mjs   # the tests (build sim/ first)
     node --no-warnings server/load.mjs                 # the load test, against §24.1's budget
-    node server/src/main.mjs                           # run it locally, on 127.0.0.1:8787
-    node server/src/main.mjs 8787 --example            # and publish the example island to raid
+    RULEBORN_STUB_SIGNIN=1 node server/src/main.mjs                 # run it locally, on 127.0.0.1:8787
+    RULEBORN_STUB_SIGNIN=1 node server/src/main.mjs 8787 --example  # and publish the example island to raid
 
 It needs Node 22.5 or later and nothing else — no packages. The simulation is
 `sim/`'s WebAssembly build (`bash sim/run_spike.sh` builds it), and SQLite is
@@ -323,8 +323,8 @@ for licence testers' purchases. It refuses to start
 with either store's receipts and neither platform's sign-in — a server that
 takes money must not take any credential as an identity — unless
 `RULEBORN_STUB_SIGNIN=1` says it is a test. With no platform at all, it
-takes any credential as the identity it names, refuses every receipt, and
-must not face a network.
+takes any credential as the identity it names and refuses every receipt, so
+it starts only with `RULEBORN_STUB_SIGNIN=1`, and must not face a network.
 `RULEBORN_DATA` moves its database and bundles out of `server/.data/`, which
 is how `client/status.py` gives each test run a fresh one. `RULEBORN_SECRET`
 is the key session tokens are signed with and telemetry's pseudonyms made

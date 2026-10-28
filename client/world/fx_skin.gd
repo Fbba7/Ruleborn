@@ -124,8 +124,9 @@ static func panel(kind := "glass", radius_points := 14.0, pad_points := 8.0) -> 
 		_:
 			box = glass(radius_points, pad_points)
 	p.add_theme_stylebox_override("panel", box)
+	# Drawn by T9's kit (its padding kept): one look on every screen.
+	KitSkin.panel(p, kind, radius_points)
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	p.set_meta("surface", kind)
 	return p
 
 
@@ -147,47 +148,10 @@ static func label(text: String, points: float, on := "glass", big := false) -> L
 ## action), "alarm" (leaving) or "parchment". Its words keep §21.8's contrast
 ## on its fill in every state; a press squashes it a little (§21.8).
 static func style_button(b: Button, kind := "leather", radius_points := 16.0) -> void:
-	var fill := LEATHER
-	var ink := ON_DARK
-	match kind:
-		"gold":
-			fill = GOLD
-			ink = INK_LINE
-		"alarm":
-			fill = ALARM_DEEP
-			ink = ON_DARK
-		"parchment":
-			fill = PARCH_TOP
-			ink = PARCH_INK
-		"card":
-			fill = CARD_TOP
-	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
-		var box := _box(fill, radius_points, 6.0)
-		if state == "pressed":
-			# Pressed lightens, so the words keep their contrast.
-			box.bg_color = fill.lightened(0.12)
-			box.shadow_offset = Vector2.ZERO
-		elif state == "hover":
-			box.bg_color = fill.lightened(0.04)
-		elif state == "focus":
-			box.border_color = ON_DARK if kind in ["leather", "alarm", "card"] else INK_LINE
-			box.set_border_width_all(UI.px(_outline_points() + 1.0))
-		elif state == "disabled":
-			box.bg_color = Color(fill.darkened(0.3), 0.9)
-		b.add_theme_stylebox_override(state, box)
-	for colour: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
-			"font_disabled_color"]:
-		b.add_theme_color_override(colour, ink)
-	b.add_theme_color_override("font_outline_color", INK_LINE)
+	# Drawn by T9's kit in the matching material (`KitSkin`): its box, words,
+	# press and contrast are the kit's, as on every other screen.
+	KitSkin.button(b, kind, radius_points)
 	b.add_theme_font_override("font", words())
-	b.set_meta("surface", kind)
-	if not b.has_meta("gloss"):
-		var g := FxGloss.new()
-		g.radius = UI.px(radius_points)
-		b.add_child(g)
-		b.set_meta("gloss", true)
-		b.button_down.connect(func() -> void: b.pivot_offset = b.size / 2.0; b.scale = Vector2(1.04, 0.94))
-		b.button_up.connect(func() -> void: b.scale = Vector2.ONE)
 
 
 ## The HUD's frame over a full-screen world (§21.1's safe areas): a column at

@@ -14,6 +14,13 @@ extends RefCounted
 ##   with the server's nonce first where the platform's proof carries one;
 ## - one renewal at a time: calls that find the session stale meanwhile wait
 ##   for it, so two refreshes never race and look like a stolen token;
+## - a renewal the server never decided (unreachable, failing) is not
+##   tried again at once: the next automatic one waits 2 s, then 4, 8 …
+##   up to 5 minutes, with jitter so phones that lost the server together
+##   do not return together; one the server held back waits the seconds
+##   it named, whoever asks. The player's own tap skips the first wait only;
+## - a sign-in names the device's kind and model, for the account's devices
+##   list (never anything that names the player);
 ## - signed out: nothing renews, and no call signs in again by itself, until
 ##   the player chooses to sign in. A sign-out the server could not hear
 ##   (offline) is remembered, its refresh token kept only to end it, and
@@ -30,6 +37,11 @@ const REVOKE_KEY := "ruleborn.session.revoke"
 const EARLY_MS := 60 * 1000
 ## The server's hour, if an answer leaves it out.
 const DEFAULT_SECONDS := 3600
+## The first and the longest wait after a renewal that could not be made.
+const BACKOFF_FIRST_MS := 2000
+const BACKOFF_MOST_MS := 5 * 60 * 1000
+## The kinds the server's devices list words (auth.mjs DEVICES).
+const DEVICE_KINDS := ["iphone", "ipad", "android_phone", "android_tablet", "pc", "other"]
 
 var api: Api
 var vault: SecureStore
@@ -43,8 +55,16 @@ var account := ""
 ## secret (an opaque id), so a sign-out made offline still parks the queue
 ## under the right account (AuthController).
 var last_account := ""
+## A number in [0, 1) for the jitter; a test makes it fixed.
+var jitter: Callable = func() -> float: return randf()
 var _signed_out := false
 var _busy := false
+## The wait after a failed renewal, doubling; when it is over, on the
+## monotonic clock; and whether the server set it (Retry-After).
+var _backoff_ms := 0
+var _held_until := 0
+var _held_by_server := false
+var _held_code := ""
 
 
 func _init(a: Api, v: SecureStore, p: PlatformIdentity, file := FILE) -> void:
@@ -78,11 +98,13 @@ func remembered() -> bool:
 ## The session: the token held while fresh; else the refresh token spent for
 ## a new pair; else the platform's proof exchanged for one. `force` renews
 ## whatever is held: the server refused it. Signed out, a failure.
-func ensure(force := false) -> Result:
+func ensure(force := false, player := false) -> Result:
 	if _signed_out:
 		return Result.failure("signed_out")
 	if not force and fresh():
 		return Result.success({"account": account})
+	if held_ms() > 0 and (_held_by_server or not player):
+		return Result.failure(_held_code, {"retryAfter": ceili(held_ms() / 1000.0)})
 	if _busy:
 		var waited: Array = [null]
 		var done := func(r: Result) -> void: waited[0] = r
@@ -92,9 +114,35 @@ func ensure(force := false) -> Result:
 		return waited[0]
 	_busy = true
 	var out := await _renew(force)
+	_after(out)
 	_busy = false
 	renewed.emit(out)
 	return out
+
+
+## How long, in milliseconds, before a renewal is tried again: 0 when it
+## may be now.
+func held_ms() -> int:
+	return maxi(0, _held_until - Time.get_ticks_msec())
+
+
+## The wait a renewal's answer sets: none after a success or a decision
+## (a refusal the platform answers); the server's own when it held this
+## back; else the next of 2 s, 4 s … 5 minutes, at half to all of it.
+func _after(out: Result) -> void:
+	if out.ok or not Outbox.transient(out) or out.code == "session_refused":
+		_backoff_ms = 0
+		_held_until = 0
+		_held_by_server = false
+		return
+	_held_code = out.code
+	if out.code == "too_many_requests":
+		_held_by_server = true
+		_held_until = Time.get_ticks_msec() + maxi(1, int(out.detail.get("retryAfter", 1))) * 1000
+		return
+	_held_by_server = false
+	_backoff_ms = BACKOFF_FIRST_MS if _backoff_ms == 0 else mini(_backoff_ms * 2, BACKOFF_MOST_MS)
+	_held_until = Time.get_ticks_msec() + int(_backoff_ms * (0.5 + 0.5 * float(jitter.call())))
 
 
 ## The player chose to sign in: on the first launch, after signing out, or
@@ -102,7 +150,7 @@ func ensure(force := false) -> Result:
 func sign_in() -> Result:
 	_signed_out = false
 	_write()
-	return await ensure(true)
+	return await ensure(true, true)
 
 
 ## This device signed out — or every device, with `everywhere`. The server is
@@ -157,17 +205,74 @@ func _renew(force: bool) -> Result:
 
 
 func _with_platform() -> Result:
+	var proof := await prove(platform.primary())
+	if not proof.ok:
+		return proof
+	var r := await api.post_json("/v1/session", {"credential": proof.value, "device": device()})
+	return _adopt(r.value) if r.ok else r
+
+
+## A fresh proof of `which` platform, with the server's nonce first where
+## it carries one: each is taken once.
+func prove(which: String) -> Result:
 	var nonce := ""
-	if platform.needs_nonce():
+	if platform.needs_nonce_for(which):
 		var n := await api.post_json("/v1/session/nonce", {})
 		if not n.ok:
 			return n
 		nonce = str((n.value as Dictionary).get("nonce", ""))
-	var proof := await platform.credential(nonce)
-	if not proof.ok:
-		return proof
-	var r := await api.post_json("/v1/session", {"credential": proof.value})
-	return _adopt(r.value) if r.ok else r
+	return await platform.credential_for(which, nonce)
+
+
+## `adding`'s identity linked to this account, which a fresh proof of the
+## platform this device signs in with vouches for (auth.mjs link): a stolen
+## access token alone links nothing. Answers the account's identities.
+func link(adding: String) -> Result:
+	return await _step_up("/v1/session/link", adding)
+
+
+## `which` platform's link removed, vouched for by the platform that stays.
+func unlink(which: String) -> Result:
+	return await _step_up("/v1/session/unlink", which)
+
+
+func _step_up(route: String, which: String) -> Result:
+	var live := await ensure()
+	if not live.ok:
+		return live
+	var current := await prove(platform.primary())
+	if not current.ok:
+		return current
+	var body := {"current": current.value}
+	if route.ends_with("/link"):
+		var adding := await prove(which)
+		if not adding.ok:
+			return adding
+		body["credential"] = adding.value
+	else:
+		body["platform"] = which
+	return await api.post_json(route, body)
+
+
+## What this device says it is, for its account's devices list: a kind
+## from DEVICE_KINDS and its model as the system names it. Nothing that
+## names the player, and no identifier.
+static func device() -> Dictionary:
+	var model := OS.get_model_name()
+	var kind := "other"
+	match OS.get_name():
+		"iOS":
+			kind = "ipad" if model.begins_with("iPad") else "iphone"
+		"Android":
+			# Three and a half inches across the short side: past it, a tablet.
+			var dpi := maxf(float(DisplayServer.screen_get_dpi()), 1.0)
+			var short := float(mini(DisplayServer.screen_get_size().x, DisplayServer.screen_get_size().y))
+			kind = "android_tablet" if short / dpi >= 3.5 else "android_phone"
+		"Windows", "macOS", "Linux", "FreeBSD":
+			kind = "pc"
+	if model == "GenericDevice":
+		model = ""
+	return {"kind": kind, "model": model.left(32)}
 
 
 func _adopt(answer: Variant) -> Result:

@@ -106,6 +106,8 @@ export class Service {
    * proof single-use (auth_proofs.mjs). `tokenKeys` is a list of
    * `kid:secret` pairs the session tokens are signed with, the first
    * signing; without it, one key made from `secret` (tokens.mjs keyring).
+   * `refreshRotateMs` is how long a refresh token stands before a refresh
+   * rotates it (auth.mjs; 0, every refresh).
    */
   /**
    * `replays` is the private store the submitted replays are kept in (§24.3)
@@ -132,11 +134,12 @@ export class Service {
                 random = randomBytes, seasonStart = 0, verifyReceipt = () => null,
                 settleReceipt = async () => ({ ok: true }),
                 cosmetics = undefined, preparePlatform = async () => {}, replays = new Store(),
-                firstBand = "13-15", deletions = new Journal(), edge = null, tokenKeys = "" }) {
+                firstBand = "13-15", deletions = new Journal(), edge = null, tokenKeys = "",
+                refreshRotateMs = 0 }) {
     if (!["13-15", "16-17", "18+"].includes(firstBand)) throw new Error(`no age band ${firstBand}`);
     Object.assign(this, { db, store, builds, secret, verifyPlatform, now, random, verifyReceipt,
                           preparePlatform, replays, firstBand, deletions, edge });
-    this.auth = new Auth(this, keyring(secret, tokenKeys));
+    this.auth = new Auth(this, keyring(secret, tokenKeys), { rotateMs: refreshRotateMs });
     this.seasons = new Seasons(this, seasonStart);
     this.track = new Track(this);
     this.telemetry = new Telemetry(this);
@@ -166,7 +169,7 @@ export class Service {
 
   /** `admit(identity)` is asked once the credential is proven and before
    *  anything is read: the edge's limit on sign-ins an account (G44). */
-  session(credential, { admit = null } = {}) {
+  session(credential, { admit = null, device = null, place = null } = {}) {
     const identity = this.auth.prove(credential);
     if (!identity) throw new Refused(401, "platform_identity_refused");
     admit?.(identity);
@@ -176,8 +179,8 @@ export class Service {
     if (this.db.prepare("SELECT 1 FROM bans WHERE identity = ?").get(identity)) {
       throw new Refused(403, "banned");
     }
-    let row = this.db.prepare("SELECT id, banned_at FROM accounts WHERE platform_identity = ?")
-      .get(identity);
+    // The account made with it, or the one it is linked to (auth.mjs link).
+    let row = this.auth.accountOf(identity);
     if (row?.banned_at) throw new Refused(403, "banned");
     if (!row) {
       // §20.1's age check comes first on the device; until it has answered,
@@ -196,7 +199,7 @@ export class Service {
     this.telemetry.once(row.id, "sign_in", now);
     // A new session every sign-in, its id the server's (auth.mjs): a token
     // pair, `{account, token, expiresIn, refreshToken}`.
-    return this.auth.start(row.id, now);
+    return this.auth.start(row.id, now, { via: identity, device, place });
   }
 
   /** The account a token was issued to, from its signature alone: what the

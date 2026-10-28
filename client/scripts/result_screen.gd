@@ -10,6 +10,11 @@ extends Control
 const OUTCOME := {"Clean": ["RESULT_CONDITION_CLEAN", "1.0", "1.0"], "Loud": ["RESULT_CONDITION_LOUD", "0.7", "0.8"],
 	"Partial": ["RESULT_CONDITION_PARTIAL", "0.4", "0.5"], "Foiled": ["RESULT_CONDITION_FOILED", "0", "0"]}
 
+## How long the coins fly home, in seconds, before the page rests.
+const FLIGHT_SECONDS := 2.2
+## The design's reward tiles, in its order, each rimmed in its colour.
+const REWARDS := [["starlight", "#F2B43C"], ["essence", "#3FBF7F"], ["renown", "#E06AC4"]]
+
 var kicker_label: Label
 var grade_label: Label
 ## §12.9's condition under the outcome, and its multipliers on a chip.
@@ -21,6 +26,11 @@ var subline_label: Label
 var moment_when: Label
 var moment_label: Label
 var moment_card: PanelContainer
+## The design's three reward tiles (Starlight, Essence, Renown), shown when
+## the server's answer carries the split, and the entry fee's line.
+var reward_row: BoxContainer
+var reward_labels := {}
+var fee_label: Label
 ## The haul's tile and its number, counting up.
 var haul_tile: PanelContainer
 var haul_label: Label
@@ -58,10 +68,12 @@ func _ready() -> void:
 	var backdrop := FxDraw.new(_draw_rays)
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(backdrop)
-	var column := FxSkin.frame(self)[1]
+	var columns := FxSkin.frame(self)
+	var column := columns[1]
+	# The page hangs from the top, as the design's, over the bottom bar.
 	# With large text the page is taller than the phone: it scrolls under the
 	# safe top, over the bottom bar that stays where the thumb is.
-	var page := column
+	var page: VBoxContainer = columns[0]
 	if Settings.text_scale > 100:
 		var safe := column.get_parent() as MarginContainer
 		safe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -140,6 +152,22 @@ func _ready() -> void:
 	haul_tile.add_child(tile)
 	box.add_child(haul_tile)
 	counter = haul_tile
+	reward_row = HBoxContainer.new()
+	# With §20.8's large text the tiles stand one above another.
+	if Settings.text_scale > 100:
+		reward_row = VBoxContainer.new()
+	reward_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	reward_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	reward_row.add_theme_constant_override("separation", UI.px(8))
+	for r: Array in REWARDS:
+		reward_row.add_child(_reward_tile(str(r[0]), Color(str(r[1]))))
+	reward_row.visible = false
+	box.add_child(reward_row)
+	fee_label = FxSkin.label("", 14.0)
+	fee_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	fee_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	fee_label.visible = false
+	box.add_child(fee_label)
 	box.add_child(detail_label)
 	box.add_child(check_label)
 	page.add_child(card)
@@ -169,6 +197,9 @@ func _ready() -> void:
 	watch.custom_minimum_size = Vector2(UI.px(60), UI.px(60))
 	watch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	watch.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	# Watching the moment is occasional, not one of the hand's frequent
+	# controls §21.1's thumb zone binds; it stays with its words.
+	watch.set_meta("frequent", false)
 	UI.dress(watch, "leather", 14.0)
 	var watch_box := VBoxContainer.new()
 	watch_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -191,7 +222,7 @@ func _ready() -> void:
 	var paid := VBoxContainer.new()
 	paid.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	paid.add_theme_constant_override("separation", UI.px(4))
-	for c: Control in [haul_tile, detail_label, check_label]:
+	for c: Control in [haul_tile, reward_row, fee_label, detail_label, check_label]:
 		c.reparent(paid)
 	page.add_child(paid)
 	var play: Dictionary = heist["workshop"]
@@ -226,10 +257,19 @@ func _ready() -> void:
 		actions.add_child(UI.action(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"),
 			"leather"))
 		var foiled := str((heist["verdict"] as Dictionary).get("grade", "")) == "Foiled"
-		var again := UI.action(Strings.t("RESULT_AGAIN").to_upper(), func() -> void:
+		# The design's "Raid again", with how many of the roster are idle to
+		# go (the roster's states) when it is known.
+		var idle := idle_crew()
+		var again_words := Strings.t("RESULT_RAID_AGAIN").to_upper()
+		if idle >= 0:
+			again_words += "\n" + Strings.t("RESULT_IDLE_CREW", idle)
+		var again := UI.action(again_words, func() -> void:
 			App.services.store.dispatch(&"heist_started", {})
 			App.services.router.go(&"heist"), "red" if foiled else "gold")
 		again.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		# Its words wrap rather than outgrow the phone with large text.
+		again.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		again.custom_minimum_size.x = UI.px(UI.CONTROL_POINTS)
 		actions.add_child(again)
 	column.add_child(actions if plain else UI.narrow(actions))
 	column.add_child(FxSkin.corner_clear())
@@ -263,6 +303,9 @@ func _build_world(heist: Dictionary) -> void:
 	world_view.pitch = WorldView.HOME_PITCH
 	world_view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	world_view.anchor_bottom = 0.56
+	# Under the title's rays, as the design's page: the island a quiet
+	# backdrop, so the outcome reads first.
+	world_view.modulate = Color(0.5, 0.45, 0.65)
 	world_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(world_view)
 	world_view.show_replay(r)
@@ -339,7 +382,9 @@ func _draw_rays(ci: Control) -> void:
 ## arc into the card, a few at a time, for as long as there is loot to bring
 ## home; reduced motion shows them resting in the card instead.
 func _draw_flight(ci: Control) -> void:
-	if _haul <= 0 or counter == null:
+	# The coins fly while the count rises, then rest: the page settles as
+	# the design's does.
+	if _haul <= 0 or counter == null or _clock > FLIGHT_SECONDS:
 		return
 	var to := counter.get_global_rect().get_center() - ci.get_global_rect().position
 	to.x -= UI.px(24)
@@ -369,6 +414,8 @@ func _process(delta: float) -> void:
 		# once).
 		var shown := _haul if Settings.reduced_motion else int(_haul * clampf((_clock - 0.6) / 1.0, 0.0, 1.0))
 		haul_label.text = "+%d" % shown
+	if reward_row != null and reward_row.visible:
+		_count_rewards(1.0 if Settings.reduced_motion else clampf((_clock - 0.6) / 1.0, 0.0, 1.0))
 	for c in find_children("*", "FxDraw", true, false):
 		(c as FxDraw).queue_redraw()
 
@@ -435,6 +482,75 @@ func _draw_crew(ci: Control) -> void:
 					FxPen.arc(ci, c, r, 0.0, TAU, 32, ring, UI.px(2.5))
 
 
+## One of the design's reward tiles: the resource's icon over its number
+## over its name, on cream rimmed in its colour; its number's label is kept
+## by name.
+func _reward_tile(kind: String, rim: Color) -> PanelContainer:
+	var t := UI.panel("parchment")
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var box := RbBox.of(t)
+	if box != null and box.material is ShaderMaterial:
+		(box.material as ShaderMaterial).set_shader_parameter("rim_color", rim)
+		(box.material as ShaderMaterial).set_shader_parameter("rim_w", UI.px(3.5))
+	var v := VBoxContainer.new()
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_theme_constant_override("separation", 0)
+	var icon := Icons.view("resources/" + kind, 30.0)
+	icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	v.add_child(icon)
+	var n := FxSkin.label("", 22.0, "parchment")
+	n.add_theme_font_override("font", FxSkin.figures())
+	v.add_child(n)
+	v.add_child(FxSkin.label(Strings.t("RESULT_" + kind.to_upper()), 14.0, "parchment"))
+	t.add_child(v)
+	reward_labels[kind] = n
+	return t
+
+
+## The server's split on the three tiles and the entry fee's line; the one
+## haul tile when the answer has none (the phone's own check, a Workshop
+## play).
+func _show_rewards(v: Dictionary) -> void:
+	var split: bool = v.get("ok", false) and v.has("starlight") and not v.get("workshop", false)
+	# Foiled pays nothing: the chip says the Renown lost, and no tiles stand
+	# (the design's foiled page).
+	var paid := split and str(v.get("grade", "")) != "Foiled"
+	reward_row.visible = paid
+	fee_label.visible = split and int(v.get("fee", 0)) > 0
+	if not split:
+		return
+	haul_tile.visible = false
+	counter = reward_row
+	for kind: String in reward_labels:
+		(reward_labels[kind] as Label).set_meta("to", int(v.get(kind, 0)))
+	_count_rewards(1.0)
+	var fee := int(v["fee"])
+	var back := int(v.get("fee_returned", 0))
+	fee_label.text = Strings.t("RESULT_FEE_RETURNED", ShopPresenter.grouped(fee)) if back >= fee \
+		else (Strings.t("RESULT_FEE_PAID", ShopPresenter.grouped(fee)) if back <= 0
+		else Strings.t("RESULT_FEE_HALF", [ShopPresenter.grouped(fee), ShopPresenter.grouped(back)]))
+	fee_label.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT if back > 0 else FxSkin.ALARM_ON_DARK)
+
+
+## How many of the roster's characters are idle, ready for the next raid;
+## -1 when the roster has not been read.
+static func idle_crew() -> int:
+	var view: Dictionary = App.services.store.get_slice(RosterState.ROSTER).get("view", {})
+	if not view.has("characters"):
+		return -1
+	return (view["characters"] as Array).filter(func(c: Dictionary) -> bool: return str(c["state"]) == "idle").size()
+
+
+## The reward tiles' numbers at `share` of the way up from nothing, signed
+## and grouped.
+func _count_rewards(share: float) -> void:
+	for kind: String in reward_labels:
+		var l: Label = reward_labels[kind]
+		var n := int(int(l.get_meta("to", 0)) * share)
+		l.text = ("+" if n >= 0 else "-") + ShopPresenter.grouped(absi(n))
+
+
 ## A result button in the heist's skin.
 func _button(words: String, call: Callable, kind := "leather") -> Button:
 	var b := UI.button(words, call)
@@ -462,6 +578,7 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 	_verdict = v
 	var by_server: bool = v.get("server", false)
 	_show_outcome(v)
+	_show_rewards(v)
 	if v.get("ok", false):
 		grade_label.text = Strings.term("GRADE", str(v["grade"]))
 		if v.get("workshop", false):
@@ -477,18 +594,23 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 			detail_label.text = Strings.t("RESULT_BANKED", int(v["banked"]))
 			check_label.text = Strings.t("RESULT_CONFIRMING", replay_bytes)
 		elif by_server:
-			detail_label.text = Strings.t("RESULT_BANKED_SERVER", [int(v["banked"]), int(v["haul"]), int(v["fee"])])
+			# The split's tiles say what was minted; without one, the line does.
+			var lines := PackedStringArray()
+			if not v.has("starlight"):
+				lines.append(Strings.t("RESULT_BANKED_SERVER", [int(v["banked"]), int(v["haul"]), int(v["fee"])]))
 			var keeper := KeeperPresenter.earned(v.get("keeper"))
 			if keeper != "":
-				detail_label.text += "\n" + keeper
+				lines.append(keeper)
 			if v.get("gift", false):
-				detail_label.text += "\n" + Strings.t("RESULT_INVITE_GIFT")
+				lines.append(Strings.t("RESULT_INVITE_GIFT"))
+			detail_label.text = "\n".join(lines)
 			check_label.text = Strings.t("RESULT_ACCEPTED_SERVER", replay_bytes)
 		else:
 			detail_label.text = Strings.t("RESULT_BANKED", int(v["banked"]))
 			check_label.text = Strings.t("RESULT_ACCEPTED_LOCAL", replay_bytes)
 		# The haul's count on the rule already says what was banked.
-		detail_label.visible = detail_label.text != Strings.t("RESULT_BANKED", int(v["banked"]))
+		detail_label.visible = detail_label.text != Strings.t("RESULT_BANKED", int(v["banked"])) \
+			and detail_label.text != ""
 		UI.set_status(check_label, "confirming" if v.get("confirming", false) else "success", check_label.text)
 	else:
 		grade_label.text = Strings.t("RESULT_NOT_ACCEPTED")

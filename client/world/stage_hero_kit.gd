@@ -131,7 +131,9 @@ static func tabs(names: Array, chosen: int, pick: Callable, icons: Array = []) -
 		row.add_theme_constant_override("h_separation", UI.px(4))
 		row.add_theme_constant_override("v_separation", UI.px(4))
 	for i: int in names.size():
-		var b := UI.action(str(names[i]), pick.bind(i), "chip_on" if i == chosen else "chip")
+		# The kit's segmented control, as the design's: the chosen segment a
+		# gold tab inside the track, the rest words on the track.
+		var b := UI.action(str(names[i]), pick.bind(i), "seg_on" if i == chosen else "seg")
 		b.add_theme_font_size_override("font_size", UI.text_px(15))
 		b.set_meta("points", 15.0)
 		for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
@@ -147,7 +149,8 @@ static func tabs(names: Array, chosen: int, pick: Callable, icons: Array = []) -
 		b.set_meta("chosen", i == chosen)
 		b.accessibility_name = Strings.t("WORKSHOP_TAB_SHOWN" if i == chosen else "WORKSHOP_TAB_SHOW", str(names[i]))
 		row.add_child(b)
-	var p := StageHeroMaterial.panel("well", row, 18.0, 4.0)
+	var p := StageHeroMaterial.panel("well", row, 14.0, 4.0)
+	UI.dress(p, "seg_track", 14.0)
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	return p
 
@@ -169,6 +172,35 @@ static func grid(cells: Array, screen: Control) -> GridContainer:
 ## arrow icon, named for a screen reader.
 static func arrow(back: bool, spoken: String, go: Callable) -> Button:
 	return KitControls.icon_button("hud/prev" if back else "hud/next", spoken, go, "leather", 48.0)
+
+
+## The design's small gold arrow on a hero card: a 30-point gold disc with a
+## dark chevron, drawn inside §21.1's 48-point target, so the arrows sit at
+## the picture's sides without hiding the character. Flat boxes: no shader.
+static func small_arrow(back: bool, spoken: String, go: Callable) -> Button:
+	var b := Button.new()
+	b.text = "‹" if back else "›"
+	b.accessibility_name = spoken
+	b.custom_minimum_size = Vector2.ONE * UI.px(48)
+	b.add_theme_font_override("font", UI.bold_font())
+	b.add_theme_font_size_override("font_size", UI.px(26))
+	b.set_meta("bold", true)
+	b.set_meta("own_ink", true)
+	for c: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		b.add_theme_color_override(c, StageHeroSkin.BROWN)
+	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+		var disc := StyleBoxFlat.new()
+		disc.set_expand_margin_all(-UI.px(9))
+		disc.bg_color = Color("#F2C870") if state != "pressed" else Color("#FBE6B0")
+		disc.border_color = StageHeroSkin.OUTLINE if state != "focus" else Color("#FFF3CC")
+		disc.set_border_width_all(UI.px(2 if state != "focus" else 3))
+		disc.set_corner_radius_all(UI.px(99))
+		disc.content_margin_bottom = UI.px(4)
+		b.add_theme_stylebox_override(state, disc)
+	b.set_meta("behind", [Color("#F2C870")] as Array[Color])
+	b.pressed.connect(func() -> void: Haptics.play("tap"))
+	b.pressed.connect(go)
+	return b
 
 
 ## A character's name plate: the name in Marcellus, light, edged in ink; and
@@ -209,7 +241,9 @@ static func level_row(level: int, top: int, health := -1) -> Control:
 	var v := VBoxContainer.new()
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	v.custom_minimum_size.x = UI.px(110)
+	# Wide enough at large text for its words on one line; the health chip
+	# then flows under it.
+	v.custom_minimum_size.x = UI.px(110 if Settings.text_scale <= 125 else 190)
 	v.add_theme_constant_override("separation", UI.px(4))
 	# The design's segmented bar: a green segment for each level reached on
 	# a dark track, the words inside it edged in ink.
@@ -243,10 +277,15 @@ static func level_row(level: int, top: int, health := -1) -> Control:
 	said.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	said.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	said.custom_minimum_size.x = UI.px(60)
-	stack.add_child(said)
 	track.add_child(stack)
 	track.set_meta("behind", [well.bg_color] as Array[Color])
 	v.add_child(track)
+	# At large text the words go under the bar, where they have the width;
+	# inside it they would break a line between every word.
+	if Settings.text_scale > 125:
+		v.add_child(said)
+	else:
+		stack.add_child(said)
 	row.add_child(v)
 	if health >= 0:
 		var heart := chip("%d" % health, "card", "♥")

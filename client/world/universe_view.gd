@@ -103,6 +103,8 @@ var _press_at := Vector2.ZERO
 var _press_ms := 0
 var _spinners: Array[Dictionary] = []
 var _streams: Array[Dictionary] = []
+## The whole universe's merged meshes (`UniverseWhole`), shown at zoom 0.
+var _whole: Array[MeshInstance3D] = []
 var _flight: UniverseFlight
 var _crowd: UniverseCrowd
 var _lods := {}
@@ -250,6 +252,8 @@ func _build() -> void:
 		maxf(60.0, _bounds.size.z * 0.6))
 	_flight = UniverseFlight.new(movers, islands, _view, _bounds, _streams)
 	triangles += _flight.triangles
+	_whole = UniverseWhole.build(statics)
+	_show_lods()
 
 
 ## An island's own rock, ground and dressing on a node of its own, so a
@@ -265,10 +269,12 @@ func _rock(id: String, island: UniverseIsland, glows: UniversePaint, light: Univ
 	statics.add_child(node)
 	var shade := ShaderMaterial.new()
 	shade.shader = _shade
-	for part: Array in [[body.mesh(), _material()], [hero.mesh(), _material(true)], [island.shades.mesh(), shade]]:
+	for part: Array in [[body.mesh(), _material(), "whole_body"], [hero.mesh(), _material(true), "whole_hero"],
+			[island.shades.mesh(), shade, "whole_shades"]]:
 		if part[0] == null:
 			continue
 		var mi := MeshInstance3D.new()
+		mi.set_meta(part[2], true)
 		mi.mesh = part[0]
 		mi.material_override = part[1]
 		node.add_child(mi)
@@ -354,6 +360,7 @@ func _build_lods() -> void:
 		far.mesh = isl.far.mesh()
 		far.material_override = _material(true)
 		far.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		far.set_meta("whole_far", true)
 		node.add_child(far)
 		triangles += isl.far.triangles
 		_lods[id] = [near, far]
@@ -393,6 +400,13 @@ func _show_lods() -> void:
 		if fine != null:
 			fine.visible = zoom == 2 and id != "heart"
 	_show_close()
+	UniverseWhole.show(statics, _whole, zoom == 0)
+	# Only the realm the camera is on casts the sun's shadow: its neighbours'
+	# fall out of frame or too small to see, and each caster is drawn again.
+	for id: String in _rocks:
+		for mi: Node in (_rocks[id] as Node3D).get_children():
+			(mi as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON \
+				if id == focus_id else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# The citadel larger over the whole universe, so the Heart reads first
 	# from afar as the designs' home draws it; life-sized for the realm zooms.
 	var citadel := statics.get_node_or_null("Citadel") as Node3D
@@ -489,9 +503,15 @@ func _build_links(glows: UniversePaint, light: UniversePaint, flow: UniversePain
 			mi.mesh = own.mesh()
 			mi.material_override = _material(true)
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mi.set_meta("whole_link", true)
 			statics.add_child(mi)
 		if link.kind == "rift" and link.open:
 			_streams.append({"path": link.stream(), "colour": ib.school})
+		elif link.open:
+			# A few lights walking each open link: lanterns over a bridge,
+			# glints down a chute, so the links read as travelled.
+			_streams.append({"path": link.walk(), "colour": LinkBuilder.WATER if link.kind == "chute"
+				else LinkBuilder.LAMP, "lights": 3})
 
 
 ## §5.4's faults: a crack of light across each faulted outer realm, and a
@@ -607,6 +627,12 @@ func _build_heart_rings() -> void:
 
 func _process(delta: float) -> void:
 	_time += delta
+	# Over the whole universe the islands are too small for the sun's shadow
+	# to show, and its pass would draw every caster again (§21.3: under 150
+	# draw calls on screen); it returns as the camera closes in.
+	var shadows := zoom > 0 or _swoop < 1.0
+	if sun.shadow_enabled != shadows:
+		sun.shadow_enabled = shadows
 	_read_tilt(delta)
 	if _swoop < 1.0:
 		_swoop = minf(1.0, _swoop + delta * 1000.0 / maxf(1.0, UI.motion_ms(SWOOP_MS)))

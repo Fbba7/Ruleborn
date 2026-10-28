@@ -52,9 +52,14 @@ func _build() -> void:
 	thumbs = StageThumbs.new()
 	add_child(thumbs)
 	thumbs.drawn.connect(_on_drawn)
-	var heading := OverlayHud.heading("", Strings.t("OBS_TITLE"))
+	var heading := OverlayTop.bar(func() -> void: App.services.router.go(&"home"), "", Strings.t("OBS_TITLE"))
 	header_label = heading.find_child("Kicker", true, false) as Label
 	(heading.find_child("Title", true, false) as Label).add_theme_font_size_override("font_size", UI.text_px(26))
+	# New targets on the heading's right, as the design's refresh chip: not
+	# a key the player reaches for often.
+	_dock = HFlowContainer.new()
+	_dock.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	heading.add_child(_dock)
 	column.add_child(heading)
 	status_label = UI.status("info", "")
 	status_label.add_theme_font_size_override("font_size", UI.text_px(13))
@@ -83,11 +88,6 @@ func _build() -> void:
 	_pager.alignment = BoxContainer.ALIGNMENT_CENTER
 	_pager.add_theme_constant_override("separation", UI.px(14))
 	column.add_child(_pager)
-	_dock = HFlowContainer.new()
-	_dock.alignment = FlowContainer.ALIGNMENT_CENTER
-	_dock.add_theme_constant_override("h_separation", UI.px(12))
-	_dock.add_theme_constant_override("v_separation", UI.px(8))
-	column.add_child(_dock)
 	StageScreen.corner_gap(column)
 
 
@@ -108,7 +108,6 @@ func _refresh() -> void:
 			holder.remove_child(child)
 			child.queue_free()
 	_cards.clear()
-	_dock.add_child(OverlayHud.back_key(func() -> void: App.services.router.go(&"home")))
 	if not o["ready"]:
 		return
 	var busy: bool = o["busy"] != ""
@@ -134,7 +133,11 @@ func _refresh() -> void:
 			words.add_theme_font_size_override("font_size", UI.text_px(13))
 			_notes.add_child(p)
 	var r: Dictionary = o["refresh"]
-	var b := UI.action(r["action"], controller.refresh, "leather", r["spoken"])
+	var view: Dictionary = App.services.store.get_slice(ObservatoryState.OBSERVATORY).get("view", {})
+	var cost := ShopPresenter.grouped(int((view.get("refresh", {}) as Dictionary).get("aether", 0)))
+	# The chip says its price beside the refresh mark; its words are spoken.
+	var b := UI.action("↻ " + cost, controller.refresh, "leather", r["spoken"])
+	b.set_meta("frequent", false)
 	b.disabled = busy or not r["can"]
 	b.set_meta("key", r["key"])
 	b.set_meta("item", r["item"])

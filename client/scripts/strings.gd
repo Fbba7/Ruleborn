@@ -10,9 +10,10 @@ class_name Strings
 ## pseudo-locale in the tests wraps every catalogue string, so a word typed
 ## into a script shows up unwrapped and fails.
 
-## The client's own words, and the content's names (law, note, resonance,
-## chord, ward, ground), which tools/client_strings.py writes from content/.
-const CATALOGUES := ["res://i18n/strings.csv", "res://i18n/content.csv"]
+## The client's own words, the content's names (law, note, resonance,
+## chord, ward, ground), which tools/client_strings.py writes from content/,
+## and the countries' names, which tools/auth_countries.py writes.
+const CATALOGUES := ["res://i18n/strings.csv", "res://i18n/content.csv", "res://i18n/countries.csv"]
 const LOCALES := ["en", "en_US", "pt_BR", "pt_PT", "de", "fr"]
 
 static var _loaded := false

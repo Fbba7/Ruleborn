@@ -53,15 +53,21 @@ const FORM_PATTERN := {
 ## each portrait.
 const LOOK := {
 	"featherkin": {"tone": 0.5, "paint_tint": Vector3(1.0, 1.05, 0.62)},
-	"glassgolem": {"tone": 0.3, "paint_tint": Vector3(1.12, 1.08, 1.02), "paint_contrast": 0.35, "paint_mid": 0.5,
-		"flatten": 0.5, "hero_sheen": 0.2},
-	"bloomling": {"pastel": 0.45, "pastel_colour": Color(0.88, 0.74, 1.0), "paint_tint": Vector3(0.95, 1.02, 0.84)},
-	"emberling": {"tone": 0.1, "body_gloss": 0.05, "glow_vc": 0.6, "hot_core": 0.85, "sheen": Color(1.0, 0.95, 0.84)},
+	"glassgolem": {"tone": 0.15, "paint_tint": Vector3(1.12, 1.08, 1.02), "paint_contrast": 0.35, "paint_mid": 0.5,
+		"flatten": 0.5, "hero_sheen": 0.2, "gear_tint": Vector3(2.5, 2.4, 2.55)},
+	"bloomling": {"pastel": 0.45, "pastel_colour": Color(0.88, 0.74, 1.0), "paint_tint": Vector3(1.0, 0.98, 0.84),
+		"red_tint": Vector3(0.84, 1.4, 1.3)},
+	"emberling": {"tone": 0.1, "body_gloss": 0.05, "glow_vc": 0.6, "glow_from": 0.4, "glow_to": 0.75, "hot_core": 0.85,
+		"sheen": Color(1.0, 0.95, 0.84)},
 	"prismmite": {"pastel": 0.35, "pastel_colour": Color(0.94, 0.9, 1.0)},
 	"rambler": {"tone": 0.08},
+	"quarryback": {"tone": 0.1},
+	"lamplighter": {"paint_tint": Vector3(1.06, 1.0, 0.84)},
+	"stillwatch": {"paint_tint": Vector3(1.03, 1.02, 0.95)},
 	"mossbear": {"paint_tint": Vector3(0.9, 1.02, 0.9)},
-	"lanternwisp": {"tone": 0.55},
-	"soulmender": {"tone": 0.4},
+	"lanternwisp": {"tone": 0.65, "paint_tint": Vector3(1.0, 1.1, 0.84)},
+	"soulmender": {"tone": 0.4, "paint_tint": Vector3(1.0, 1.06, 0.9), "pastel": 0.65,
+		"pastel_colour": Color(1.0, 0.86, 0.97), "pastel_by_value": 0.75},
 }
 ## The rim's strength by day and by night, and night's lamplit rim colour.
 const DAY_RIM := 0.38
@@ -103,6 +109,8 @@ var _outline: ShaderMaterial
 var _gear: Dictionary = {}
 var _fur := 0
 var _lift := 0.5
+## The crew's role colour for the rim, when set_night gives one.
+var _side := Color(0, 0, 0, 0)
 
 
 ## A new model of `kind_name`, playing its idle; null for an unknown kind.
@@ -241,9 +249,12 @@ func set_guard(on: bool) -> void:
 
 ## By night (§21.2: "lanterns and glows carry the realm") a stronger, warmer
 ## rim and a paler sheen, so the figure reads against the dark ground; the
-## kind's own sheen and the guard's red rim are kept under it.
-func set_night(on: bool) -> void:
+## kind's own sheen and the guard's red rim are kept under it. `side`, when
+## given, is the rim of the player's own side (a crew member's role colour),
+## so the crew read as theirs against painted grass by day.
+func set_night(on: bool, side := Color(0, 0, 0, 0)) -> void:
 	night = on
+	_side = side
 	_material.set_shader_parameter("rim_strength", NIGHT_RIM if on else DAY_RIM)
 	_body_param("lift", minf(1.0, _lift * (1.7 if on else 1.0)) * (0.25 if form == &"hush" else 1.0))
 	_material.set_shader_parameter("rim_colour", _rim())
@@ -472,7 +483,7 @@ func _ink() -> void:
 
 # The rim's colour: the kind's, the guard's red, warmed toward lamplight by night.
 func _rim() -> Color:
-	var c := GUARD_RIM if guard else Color(str(info.get("rim", "#9FD4FF")))
+	var c := GUARD_RIM if guard else (_side if _side.a > 0.0 else Color(str(info.get("rim", "#9FD4FF"))))
 	return c.lerp(NIGHT_RIM_COLOUR, 0.6) if night else c
 
 

@@ -104,6 +104,19 @@ static func action2(text: String, line: String, pressed: Callable, look := "gold
 	return b
 
 
+## Dresses round button `b` as a disc `disc_points` across, centred in
+## its hit area, which keeps its size; the disc grows with the button when
+## `disc_points` is the button's own size or more.
+static func small_disc(b: Button, disc_points: float) -> void:
+	var box := RbBox.dress(b, str(b.get_meta("rb_material", "leather")), 999)
+	var hit := func() -> void:
+		box.inset = maxf(0.0, (minf(b.size.x, b.size.y) - UI.px(disc_points)) * 0.5)
+	b.set_meta("disc_points", disc_points)
+	if not b.resized.is_connected(hit):
+		b.resized.connect(hit)
+	hit.call()
+
+
 ## A chip turned on or off; "on" is said in the gold, the heavier edge and
 ## to a screen reader.
 static func set_chip(b: Button, on: bool) -> void:
@@ -114,15 +127,19 @@ static func set_chip(b: Button, on: bool) -> void:
 
 
 ## A round button with an icon (the back arrow, a close cross), named for a
-## screen reader.
+## screen reader. `disc_points` draws the disc smaller than the button (the
+## designs' 36-point side balls) while the hit area stays `points`, never
+## under §21.1's 48.
 static func icon_button(icon: String, spoken: String, pressed: Callable, look := "leather", points := 48.0,
-		icon_points := -1.0) -> Button:
+		icon_points := -1.0, disc_points := -1.0) -> Button:
 	var b := UI.action("", pressed, look, spoken)
 	b.name = "IconButton"
-	b.custom_minimum_size = Vector2.ONE * UI.px(maxf(points, UI.CONTROL_POINTS))
+	var hit := maxf(points, UI.CONTROL_POINTS)
+	b.custom_minimum_size = Vector2.ONE * UI.px(hit)
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	RbBox.dress(b, look, 999)
-	var shown := icon_points if icon_points > 0.0 else points * 0.5
+	var disc := disc_points if disc_points > 0.0 else points
+	small_disc(b, disc)
+	var shown := icon_points if icon_points > 0.0 else disc * 0.5
 	var i := Icons.view(icon, shown)
 	# Centred at its size, however large the button grows.
 	i.set_anchors_preset(Control.PRESET_CENTER)
@@ -139,20 +156,24 @@ static func icon_button(icon: String, spoken: String, pressed: Callable, look :=
 ## "sky") in a gold ring on a dark plate, or, as the main one, gold on a
 ## leather plate; a badge's words ("1 free") ride its top right.
 static func round_action(icon: String, words: String, pressed: Callable, main := false, points := 60.0,
-		badge := "", tone := "leather") -> VBoxContainer:
+		badge := "", tone := "leather", disc_points := -1.0) -> VBoxContainer:
 	var v := VBoxContainer.new()
 	v.name = "RoundAction"
-	v.add_theme_constant_override("separation", -UI.px(12))
+	var hit := maxf(points, UI.CONTROL_POINTS)
+	var disc := disc_points if disc_points > 0.0 else hit
+	# The plate overlaps the disc's foot, not the hit area's.
+	v.add_theme_constant_override("separation", -UI.px(minf(12.0, disc * 0.23) + (hit - disc) * 0.5))
 	v.alignment = BoxContainer.ALIGNMENT_CENTER
 	var look := "gold_round" if main else ("leather" if tone == "leather" else "round_" + tone)
-	var b := icon_button(icon, words, pressed, look, points, points * 0.55)
+	var b := icon_button(icon, words, pressed, look, points, disc * 0.55, disc)
 	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(b)
 	if badge != "":
 		var tag := KitStatus.badge(badge)
 		tag.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 		tag.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-		tag.position = Vector2(UI.px(2), -UI.px(4))
+		# On the disc's shoulder, wherever the disc sits in its hit area.
+		tag.position = Vector2(UI.px(2 - (hit - disc) * 0.5), -UI.px(4 - (hit - disc) * 0.5))
 		b.add_child(tag)
 	var plate := KitStatus.plate(words)
 	UI.dress(plate, "plate_leather" if main or tone == "leather" else "plate_dark")

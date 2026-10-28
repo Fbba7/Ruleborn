@@ -444,3 +444,110 @@ settings survive home's `Settings.restore()`.
 - Container restarts this session lost two check runs; the environment needed `rustup target add
   wasm32-unknown-unknown`, `pip install gdtoolkit==4.*` and `pip install playwright==1.63.0` (to match the
   pre-installed Chromium) before `check_all` could run.
+
+## Fifth session (2026-10-27, wave five): home past the design
+
+Merged `claude/videogame-project-analysis-ewkkk2` (d2343591) cleanly.
+
+### Rounds
+
+- Round 40, the foot and the edges. Three worst: Collect a big "Collect all" button beside a goal pill where
+  the design has one gold "COLLECT 3.4k" pill; side balls at the kit's full 48-point disc with wide plates;
+  the raid card a three-line box ("Raided 2 times while you were away", See, ×) where the design has one
+  bold line over a rose line with a gold TRACE. Fixed: `UniverseCollect` (what every producer holds
+  together, short from 1,000 on, `UniverseHud.compact(n, 1000)`; the goal shows only while nothing waits);
+  `UniverseSide` (a 42-point leather ball drawn inside the 48-point hit area, the name on a small plate over
+  its foot, the badge on its shoulder); `UniverseNotice` restyled (heist mark on a red disc, "Raided 2
+  times" over "See how your defence held", gold SEE, a rose ×; one line each, cut with an ellipsis and
+  said whole; wrapped at 150% text and more). New strings `HOME_COLLECT_AMOUNT`, `HOME_RAID_TITLE(_ONE)`,
+  `HOME_RAID_LINE`.
+- Round 41, the world's words. Three worst: realm labels a third larger than the design's; "+320" ready
+  pins and the "! 2" raid pin over the whole universe, which the design leaves to Collect and the banner;
+  Crystalline's label pushed under Skyfield's. Fixed the first two: labels a point smaller with tighter
+  plates, and home passes `quiet` so ready amounts and raids are pinned only from zoom 1. The third is
+  better (labels narrower) but not gone.
+- Round 42, life (§21.8 motion, §20.8 reduced motion). Lights walk every open link (lanterns over bridges,
+  glints down chutes) in the sparks layer the skiffs already use, no new draw call; the raid banner and
+  Collect arrive by `Motion.pop` (grow from 92% and fade, easing out); under reduced motion the skiffs moor
+  part way along their links with no wake, the links' lights stand still, the comets go and the debris
+  stops (they had all kept moving).
+- Round 43, the budget, measured honestly. The engine's own count of the home frame
+  (`RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME`, every pass, 2D included) was 454: §21.3 says under 150 on
+  screen. My own counter (meshes plus outline passes) had said 83, and the first side balls had made it
+  worse (39 calls each: fourteen anti-aliased circles a ball). Cut to 142:
+  - `UniverseHud.ball` bakes each ball (size, ramp, rim, ink, drop) into a texture once: one draw call;
+    `baked_box`/`baked_plate`/`gold_pill` bake rounded plates and the gold pill into nine-slice boxes;
+    the badge, strain pill, side buttons, Collect and raid card use them;
+  - the realm labels' plates, discs, icons and levels are drawn by `UniversePins._draw` in one run of each
+    kind across all seven labels (only the names stay `Label`s), 38 calls to 14;
+  - over the whole universe `UniverseWhole` draws every island's rock, dressing, shades and far buildings
+    and every fixed link as five merged meshes (one per material), the per-island meshes hidden: the 3D
+    from 84 calls to 40, the same triangles and the same picture (pixel difference 0.8 of 255 on average);
+  - no sun shadow at zoom 0, where the islands are too small to show one; it returns from zoom 1.
+
+### Budgets (§21.3), measured 2026-10-27 on this build, 540 × 1170 window
+
+Home, engine count of the whole frame: 142 draw calls (148 with the raid banner; 133 at 200% text; 137 in
+German at 150%; 140 at 200% and high contrast on a 9:16 phone). Of those the 3D is 40 and the kit's tab
+bar 28, the resource row 19.
+
+The map alone (`tests/shots/universe_zoom.gd`, which now prints the engine's main and shadow passes, and
+with PROBE=<file> every mesh on show):
+
+| view | triangles drawn | engine main pass | note |
+|---|---:|---:|---|
+| whole universe (zoom 0) | 34,647 | merged: 40 calls with home | no shadow pass |
+| the Heart, zoom 1 | 33,010 | 81 calls, 53,709 primitives | shadow 15,556 primitives |
+| the Heart, close-up | 29,493 | 54 calls | |
+| an outer realm, zoom 1 | 23,812 | 54 calls | |
+| an outer realm, close-up | 18,024–25,229 | 50–54 calls | |
+
+Primitives exceed triangles because the ink outline is a second pass over the outlined meshes; triangles
+are counted once, as §21.3 counts them. Every zoom is inside 25,000–40,000 or under it.
+
+### Hooks and asks
+
+- For T9 (asked here; no channel reached them this session): a kit round action whose disc is drawn
+  smaller than its 48-point hit area (`KitControls.round_action(..., disc_points)`), and the kit's own
+  pills baked or batched: the tab bar is 28 draw calls of home's 150 and the three resource pills 19.
+- Round 44: realm labels slipped under the side plates at 200% text (the last step that keeps labels off
+  each other moved them back onto the buttons) and under Collect. Labels now never step onto the screen's
+  own controls, and a control across the middle (Collect, the goal, the raid card) lifts a label above it.
+- Round 45: the resource row as the design's: 30-point dark pills with a faint gold rim, the icon on a night
+  disc, the amount at the right, FULL in gold just before it, a 3-point line in the resource's colour along
+  the foot (easing to its share). Drawn by `UniversePurse._draw` in one run of each kind: 19 calls to 9.
+- Round 46: the Keeper badge as the design's: the level on a gold pill across the ring's foot (it was a
+  ball at the side, which large text pushed into the name), Renown on a night chip edged in rose.
+  Stills: `docs/art/shots/universe/w5_r46_home_vs_design.png` (design, ours, design raid, ours raid) and
+  `w5_r46_gray_thumbs.png`. Home now 132 draw calls (138 with the raid card).
+- Round 47, the locked realm. The design hangs the next realm as a whole island, dimmed, under a dark pill
+  with a lock, "Opens at Keeper 28"; ours was a faint ring of mist under "+ Lantern Vale". Now a realm
+  still to open is drawn whole (rock, meadow, trees; no buildings), its palette greyed and dimmed toward
+  the night, with its mist ring; its pin is the design's lock pill when the server says it is blocked by
+  the Keeper level (`HOME_OPENS_KEEPER`) or the Spire (`UNIVERSE_NEEDS_SPIRE`), and "+ name" when it can
+  be bought, placed over the island's far rim like the realm labels. The shot sample's next realm is now
+  blocked at Keeper 28, as the design shows it.
+- Round 48, the realm zooms' budget. Home at the Heart's zoom 1 was 180 draw calls. Only the realm the
+  camera is on casts the sun's shadow; the skiffs are one instance layer (they share the first one's sail
+  stripe); the links' kind marks and the four side buttons are drawn in batched runs (`UniversePins
+  ._draw_links`, `UniverseSide.draw_all` on a layer over the column, redrawn when the buttons move).
+  Home now: zoom 0 115 calls (raid card 120, 200% text on 9:16 99); the Heart 146 at zoom 1 and 136
+  close; an outer realm 134–136.
+
+## Stopped here (fifth session, 22:55 UTC)
+
+- Done and pushed green (76628df, full `check_all` passed): the design's "COLLECT 3.4k" pill; 42-point
+  side balls inside 48-point hit areas; the raid banner as the design's; realm labels as the design's and
+  clear of every control at 100–200% text; the slim resource row; the badge's gold level pill; the locked
+  realm; lights on the links and reduced-motion forms for everything that flies; home under 150 draw calls
+  at every zoom, measured with the engine's own count (it had been 454).
+- Still worse than the design: outer islands sparse (buildings clustered in the middle, small from afar;
+  the far building look is T3's `KitMap`, the spots and scale mine: `RINGS`, `_far_building`); the tab
+  bar boxed and 28 draw calls (T9's `KitTabs`); the defence ball shows its name where the design shows the
+  shield's time (no client data for it); the raid card says "Raided 2 times" where the design names the
+  raider, realm and what was kept (the badge route gives only a count; the log, which has it, marks raids
+  seen when read).
+- Next: spread outer buildings to the 0.5 and 0.72 rings and draw them larger from afar; the universe and
+  map screens in the kit's style; a still of the banner's arrival (shots start too late to catch it).
+- `universe_view.gd` is at 997 lines: move code out (to `UniverseWhole` or a new file) before adding any.
+- The session paused for about three hours (20:15–22:50 UTC); nothing was lost.

@@ -18,6 +18,22 @@ static func flow(separation := 6.0) -> HFlowContainer:
 	return r
 
 
+## A row of pieces that runs past the phone's edge and scrolls sideways
+## (the designs' filter chips, a deck of cards): its row is the child named
+## "Row". It never wraps, so large text makes it longer, not taller.
+static func strip(separation := 6.0) -> ScrollContainer:
+	var s := ScrollContainer.new()
+	s.name = "Strip"
+	s.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	s.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	s.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var r := HBoxContainer.new()
+	r.name = "Row"
+	r.add_theme_constant_override("separation", UI.px(separation))
+	s.add_child(r)
+	return s
+
+
 ## `children` side by side, each an equal share; stacked at large text,
 ## where side by side they would not fit.
 static func columns(children: Array, separation := 8.0) -> BoxContainer:

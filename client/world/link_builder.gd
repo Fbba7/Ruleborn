@@ -230,3 +230,16 @@ func stream() -> Array[Vector3]:
 		var u := k / 24.0
 		out.append(_at(Vector3(u * length, y_at(u, 1.6 * K) + 0.9 * K, 0)))
 	return out
+
+
+## The deck's line a little above it, end to end, in the world: where the map
+## runs its lantern lights over a bridge or the water's glints down a chute.
+func walk() -> Array[Vector3]:
+	var sag := {"stone_bridge": length * 0.06, "rope_bridge": -length * 0.07, "chute": length * 0.1}.get(kind, 0.0) \
+		as float
+	var out: Array[Vector3] = []
+	for k in 17:
+		var u := k / 16.0
+		var drop := u * 0.6 * K - 0.35 * K if kind == "chute" else -0.45 * K
+		out.append(_at(Vector3(u * length, y_at(u, sag) - drop, 0)))
+	return out

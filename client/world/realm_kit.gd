@@ -70,6 +70,8 @@ var water := Geo.new()
 var lava := Geo.new()
 ## The worn trails, kept for the ground shader (`instances`).
 var _lanes: Array = []
+## The Heart's clock dial for the ground shader: centre xz, radius, on.
+var _dial := Vector4.ZERO
 
 
 func _init(r: RulebornReplay, colours: Dictionary) -> void:
@@ -158,11 +160,18 @@ func build() -> void:
 	kg.scatter = scatter
 	if island_seed != 0:
 		kg.island = IslandBuilder.new(size, island_seed, palette)
-	kg.trails = _trails(footprints)
 	for fp: Array in footprints:
 		if fp[0] == "keeper_s_spire":
-			var side: float = fp[3]
-			kg.plazas.append([Vector2(fp[1], fp[2]) + Vector2(side, side) / 2.0, side / 2.0 + 0.9])
+			var side: int = fp[3]
+			if realm == "heart":
+				# The Heart's Spire stands on its clock dial (KitDial).
+				var a := centre(Vector2i(fp[1], fp[2]))
+				var mid := Vector3(a.x + (side - 1) / 2.0, a.y, a.z + (side - 1) / 2.0)
+				_dial = Vector4(mid.x, mid.z, KitDial.radius(side), 1.0)
+				KitDial.build(hero, prop, mid, _dial.z)
+			else:
+				kg.plazas.append([Vector2(fp[1], fp[2]) + Vector2(side, side) / 2.0, side / 2.0 + 0.9])
+	kg.trails = _trails(footprints)
 	_lanes = kg.trails
 	for i in features.size():
 		if features[i] in WATER_TINT:
@@ -207,6 +216,12 @@ func _trails(footprints: Array) -> Array:
 	if inside(vault_at):
 		stops.append(Vector2(vault_at) + Vector2(0.5, 0.5))
 	var out: Array = []
+	# The Heart's lanes also spread from its dial (`_spokes`), so each lane
+	# takes fewer bends to fit the ground shader's KitGround.LANES.
+	var bends := 4
+	if _dial.w > 0.0:
+		out = _spokes(stops)
+		bends = 2
 	if stops.size() < 2:
 		return out
 	var joined: Array[int] = [0]
@@ -228,9 +243,31 @@ func _trails(footprints: Array) -> Array:
 		var b2 := stops[pair.y]
 		var corner := Vector2(b2.x, a2.y)
 		var prev := a2
-		for k in range(1, 5):
-			var t := k / 4.0
+		for k in range(1, bends + 1):
+			var t := float(k) / bends
 			var p := a2.lerp(corner, t).lerp(corner.lerp(b2, t), t)
+			out.append([prev, p])
+			prev = p
+	return out
+
+
+## The Heart's lanes, as its design draws them round the dial: one from
+## every door (`stops`, the Spire's among them) to the dial's rim, bending a
+## little on the way, so the town reads as lanes spreading from its plaza.
+func _spokes(stops: Array[Vector2]) -> Array:
+	var out: Array = []
+	var hub := Vector2(_dial.x, _dial.y) + Vector2(size) / 2.0
+	for st: Vector2 in stops:
+		var away := st - hub
+		if away.length() <= _dial.z + 0.2:
+			continue
+		var rim := hub + away.normalized() * (_dial.z - 0.1)
+		var bend := (rim + st) / 2.0 + Vector2(-away.y, away.x).normalized() * 0.35 * (
+			1.0 if int(st.x + st.y) % 2 == 0 else -1.0)
+		var prev := st
+		for k in range(1, 3):
+			var t := k / 2.0
+			var p := st.lerp(bend, t).lerp(bend.lerp(rim, t), t)
 			out.append([prev, p])
 			prev = p
 	return out
@@ -343,12 +380,13 @@ func instances() -> Array[MeshInstance3D]:
 	ground_mat.set_shader_parameter("grid_half", Vector2(size) / 2.0 + Vector2(0.001, 0.001))
 	# Other realms' paths are their stone and dirt toward sand, as the design's land
 	# stills; §21.4: the Heart's are "cream flagstones", warmed to the design's
-	# rose-cream (04-realm-view).
+	# dusty rose pebbles (02-heist's lanes draw #C79092 in the light).
 	var cobble: Color = KitGround.earth(palette).lightened(0.18).lerp(Color("#F0DCC0"), 0.4) if realm != "heart" \
-		else Color("#FFE2D6")
+		else Color("#F0B8B2")
 	ground_mat.set_shader_parameter("cobble", cobble)
 	ground_mat.set_shader_parameter("mortar", (palette["soil"] as Color).lerp(cobble, 0.65))
 	ground_mat.set_shader_parameter("pebble", (palette["rock"] as Color).lightened(0.25))
+	ground_mat.set_shader_parameter("dial", _dial)
 	# The realm's marks over its meadow (T2's), continued over the grid.
 	var marks := LookPaint.deco(realm)
 	if marks != null:

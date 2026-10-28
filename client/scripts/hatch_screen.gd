@@ -15,6 +15,9 @@ var header_label: Label
 var status_label: Label
 var stage: StageHero
 var cards: VBoxContainer
+## The lowest row: the way back, and the first Nursery's Hatch beside it,
+## in thumb reach as the design's main actions are.
+var actions: HBoxContainer
 ## The spend tapped once, by its key: the next tap on it spends.
 var confirm := ""
 ## The name the word lists offer the newborn, as indices.
@@ -48,7 +51,9 @@ func _build() -> void:
 	body = UI.scroll(column)
 	body.add_theme_constant_override("separation", UI.px(10))
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(0, UI.px(Tokens.number("size", "safe_top_points") + 250.0))
+	stage.custom_minimum_size = Vector2(0, UI.px(Tokens.number("size", "safe_top_points") + 220.0))
+	stage.headroom = 0.32
+	stage.plinth_edge = Palette.SPIRIT.lightened(0.2)
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(stage)
 	header_label = StageHeroKit.words("", 15.0, StageHeroSkin.LIGHT)
@@ -59,7 +64,8 @@ func _build() -> void:
 	body.add_child(RosterScreen.padded(cards))
 	# Back home: the kit's round back button, named for a screen reader, in
 	# the lowest row, which stands above the corners' band (§21.1).
-	var actions := HBoxContainer.new()
+	actions = HBoxContainer.new()
+	actions.add_theme_constant_override("separation", UI.px(8))
 	actions.add_child(KitControls.icon_button("generalui/back", Strings.t("COMMON_HOME"),
 		func() -> void: App.services.router.go(&"home"), "leather", 56.0))
 	var lift := MarginContainer.new()
@@ -90,6 +96,10 @@ func _refresh() -> void:
 		if c.get_index() > 0:
 			cards.remove_child(c)
 			c.queue_free()
+	for c in actions.get_children():
+		if c.get_index() > 0:
+			actions.remove_child(c)
+			c.queue_free()
 	stage.visible = h["ready"]
 	if not h["ready"]:
 		return
@@ -97,13 +107,23 @@ func _refresh() -> void:
 	var busy: bool = h["busy"] != ""
 	if not (h["newborn"] as Dictionary).is_empty():
 		cards.add_child(_newborn(h["newborn"], busy))
+	# While a newborn waits for its name, naming it is the lowest row's
+	# action; else the first Nursery's Hatch is.
+	var naming := actions.get_child_count() > 1
 	if h["none"] != "":
 		cards.add_child(StageHeroKit.card("", StageHeroKit.para(h["none"], 16.0)))
 	var raw := {}
 	for n: Dictionary in (slice.get("view", {}) as Dictionary).get("nurseries", []):
 		raw[str(n["realm"])] = n
 	for n: Dictionary in h["nurseries"]:
-		cards.add_child(_nursery(n, raw.get(n["realm"], {}), busy))
+		var first := actions.get_child_count() == 1 and not naming
+		cards.add_child(_nursery(n, raw.get(n["realm"], {}), busy, not first))
+		if first:
+			var go := _spend(n["button"], busy, "gold")
+			go.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			for b: Button in go.find_children("*", "Button", true, false):
+				b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			actions.add_child(go)
 	if not (h["strays"] as Array).is_empty():
 		var title := StageHeroKit.words(Strings.t("HATCH_STRAYS"), 20.0, Color("#FFE6A0"))
 		StageHeroSkin.named(title)
@@ -125,8 +145,9 @@ func _refresh() -> void:
 
 ## A Nursery's card: its name, its births ready as eggs of the three it
 ## holds and when the next comes; what may hatch, each kind's portrait beside
-## its odds on a bar; the form's odds on chips; and the hatch button.
-func _nursery(n: Dictionary, raw: Dictionary, busy: bool) -> Control:
+## its odds on a bar; the form's odds on chips; and the hatch button, which
+## for the first Nursery stands in the lowest row instead.
+func _nursery(n: Dictionary, raw: Dictionary, busy: bool, with_button := true) -> Control:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(8))
 	var title := StageHeroKit.words(n["title"], 20.0, StageHeroSkin.LIGHT)
@@ -176,7 +197,8 @@ func _nursery(n: Dictionary, raw: Dictionary, busy: bool) -> Control:
 				HatchPresenter.percent(float(f["odds"]))]), "#" + colour.darkened(0.45).to_html(false),
 				"lawnotes/" + note))
 	v.add_child(forms)
-	v.add_child(_spend(n["button"], busy, "gold"))
+	if with_button:
+		v.add_child(_spend(n["button"], busy, "gold"))
 	return StageHeroKit.card("", v)
 
 
@@ -228,7 +250,7 @@ func _stand(slice: Dictionary, born: Dictionary) -> void:
 		return
 	var was_egg := str(stage.get_meta("showing", "egg")).begins_with("egg")
 	stage.set_meta("showing", key)
-	stage.show_kinds([kind], [form])
+	stage.show_kinds([kind], [form], "plinth")
 	if kind != "egg" and was_egg:
 		stage.reveal()
 
@@ -253,16 +275,27 @@ func _newborn(n: Dictionary, busy: bool) -> Control:
 		box.add_child(named)
 	if n["naming"]:
 		var words: Dictionary = App.services.store.get_slice(WorkshopState.WORKSHOP)["words"]
-		var r := UI.row()
-		r.add_child(_word("adjective", Strings.t("SOCIAL_OTHER_ADJECTIVE"), (words.get("adjectives", []) as Array).size()))
-		r.add_child(_word("noun", Strings.t("SOCIAL_OTHER_NOUN"), (words.get("nouns", []) as Array).size()))
+		# The two word buttons side by side, sharing the card's width.
+		var r := HBoxContainer.new()
+		r.add_theme_constant_override("separation", UI.px(8))
+		for each: Button in [_word("adjective", Strings.t("SOCIAL_OTHER_ADJECTIVE"),
+				(words.get("adjectives", []) as Array).size()),
+				_word("noun", Strings.t("SOCIAL_OTHER_NOUN"), (words.get("nouns", []) as Array).size())]:
+			each.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			each.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			each.custom_minimum_size.x = UI.px(60)
+			r.add_child(each)
 		box.add_child(r)
 		var a: Dictionary = n["give"]["args"]
 		var give := RosterScreen.offer(n["give"], busy, controller.name_character.bind(int(a["id"]),
 			int(a["adjective"]), int(a["noun"])))
 		for b: Button in give.find_children("*", "Button", true, false):
 			StageHeroMaterial.button(b, "gold")
-		box.add_child(give)
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		give.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		for l: Label in give.find_children("*", "Label", true, false):
+			l.add_theme_color_override("font_color", StageHeroSkin.LIGHT)
+		actions.add_child(give)
 	return StageHeroKit.card("", box, "card")
 
 

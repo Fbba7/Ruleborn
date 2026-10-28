@@ -136,6 +136,8 @@ HOME_WORKSHOP,Workshop,Workshop,Oficina,Oficina,Werkstatt,Atelier
 BUILDER_TITLE,"Your island, realm level %d","Your island, realm level %d","Sua ilha, reino nível %d","A tua ilha, nível de reino %d","Deine Insel, Reichslevel %d","Ton île, royaume niveau %d"
 BUILDER_HINT,Tap the realm to place what is chosen below,Tap the realm to place what is chosen below,Toque no reino para pôr o que está escolhido abaixo,Toca no reino para colocar o que está escolhido abaixo,"Tippe ins Reich, um das unten Gewählte zu platzieren",Touche le royaume pour placer la sélection ci-dessous
 BUILDER_TOOL_GROUND,Ground,Ground,Terreno,Terreno,Boden,Sol
+BUILDER_CARD_MOVEMENT,Movement,Movement,Movimento,Movimento,Bewegung,Déplacement
+BUILDER_CARD_SIGHT,Guard sight,Guard sight,Visão dos guardas,Visão dos guardas,Wächterblick,Vue des gardes
 BUILDER_TOOL_WARD,Ward,Ward,Proteção,Proteção,Siegel,Protection
 BUILDER_TOOL_GUARD,Guard,Guard,Guarda,Guarda,Wache,Garde
 BUILDER_TOOL_LAW,Law,Law,Lei,Lei,Gesetz,Loi
@@ -529,6 +531,7 @@ UNIVERSE_PRICE,"%s, %s Starlight","%s, %s Starlight","%s, %s de Luz Estelar","%s
 UNIVERSE_BLOCKED,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s
 UNIVERSE_SPOKEN,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s
 UNIVERSE_NEEDS_KEEPER,Needs Keeper %d,Needs Keeper %d,Precisa de Guardião %d,Requer Guardião %d,Braucht Hüter %d,Requiert Gardien %d
+HOME_OPENS_KEEPER,Opens at Keeper %d,Opens at Keeper %d,Abre no Guardião %d,Abre no Guardião %d,Öffnet bei Hüter %d,S'ouvre au Gardien %d
 UNIVERSE_NEEDS_SPIRE,Needs the Spire at level %d,Needs the Spire at level %d,Precisa da Torre no nível %d,Requer a Torre no nível %d,Braucht Turm auf Level %d,Requiert la Tour au niveau %d
 UNIVERSE_NEEDS_STARLIGHT,Needs %s Starlight,Needs %s Starlight,Precisa de %s de Luz Estelar,Requer %s de Luz Estelar,Braucht %s Sternenlicht,Requiert %s Lumière stellaire
 UNIVERSE_CONFIRM,Tap again to spend %s Starlight,Tap again to spend %s Starlight,Toque de novo para gastar %s de Luz Estelar,Toca de novo para gastar %s de Luz Estelar,"Nochmal tippen, um %s Sternenlicht auszugeben",Touche encore pour dépenser %s Lumière stellaire
@@ -696,6 +699,10 @@ SAGE_FAILED,The Sages did not change: %s,The Sages did not change: %s,Os Sábios
 SAGE_KICK_POWERS,Heist powers,Heist powers,Poderes no assalto,Poderes no assalto,Kräfte im Raubzug,Pouvoirs de casse
 SAGE_KICK_HOME,At home,At home,Em casa,Em casa,Zu Hause,À la maison
 SAGE_KICK_GUARD,On guard,On guard,De guarda,De guarda,Auf Wache,De garde
+SAGE_HEIST_SAGE,Heist Sage,Heist Sage,Sábio de assalto,Sábio de assalto,Raubzug-Weiser,Sage de casse
+SAGE_ON_HEISTS,On heists,On heists,Em assaltos,Em assaltos,Auf Raubzug,En casse
+SAGE_JOINS,Joins every heist with your crew,Joins every heist with your crew,Vai a todos os assaltos com a sua equipe,Vai a todos os assaltos com a tua equipa,Geht mit deiner Crew auf jeden Raubzug,Part en casse avec ton équipe à chaque fois
+SAGE_LINE,%s Sage · %d powers,%s Sage · %d powers,Sábio de %s · %d poderes,Sábio de %s · %d poderes,%s-Weiser · %d Kräfte,Sage (%s) · %d pouvoirs
 ERR_SAGE_LOCKED,that Sage is not unlocked yet,that Sage is not unlocked yet,esse Sábio ainda não foi desbloqueado,esse Sábio ainda não foi desbloqueado,dieser Weise ist noch nicht freigeschaltet,ce Sage n'est pas encore débloqué
 ERR_NO_SUCH_SAGE,there is no such Sage,there is no such Sage,esse Sábio não existe,esse Sábio não existe,diesen Weisen gibt es nicht,ce Sage n'existe pas
 HOME_FORMS,Forms album,Forms album,Álbum de formas,Álbum de formas,Formenalbum,Album des formes
@@ -716,6 +723,19 @@ FORMS_SAIL_DONE,✓ %s in every kind: skiff sail unlocked,✓ %s in every kind: 
 FORMS_SAILS_TITLE,Skiff sails,Skiff sails,Velas de esquife,Velas de esquife,Bootssegel,Voiles d'esquif
 FORMS_FAILED,The album could not be read: %s,The album could not be read: %s,Não foi possível ler o álbum: %s,Não foi possível ler o álbum: %s,Das Album konnte nicht gelesen werden: %s,Impossible de lire l'album : %s
 FORMS_FORM,%s · %s,%s · %s,%s · %s,%s · %s,%s · %s,%s · %s
+FORMS_FORM_NAME,%s %s,%s %s,%s %s,%s %s,%s %s,%s %s
+FORMS_NOT_HATCHED,Not yet hatched,Not yet hatched,Ainda não chocada,Ainda não chocada,Noch nicht geschlüpft,Pas encore éclose
+FORMS_KIND_LINE,%s · %s form,%s · %s form,%s · forma %s,%s · forma %s,%s · %s-Form,%s · forme %s
+FORMS_COUNT_OF,%d / %d forms of %s,%d / %d forms of %s,%d / %d formas de %s,%d / %d formas de %s,%d / %d Formen von %s,%d / %d formes de %s
+FORMS_FIND_NURSERY,Find a %s,Find a %s,Achar um %s,Encontrar um %s,%s suchen,Trouver une %s
+FORMS_OUTFIT_LABEL,Outfit,Outfit,Traje,Traje,Outfit,Tenue
+FORMS_OUTFIT_COUNT,%d / %d forms,%d / %d forms,%d / %d formas,%d / %d formas,%d / %d Formen,%d / %d formes
+FORMS_FILTER_ALL,All,All,Todas,Todas,Alle,Toutes
+FORMS_FILTER_OUTFITS,Outfits,Outfits,Trajes,Trajes,Outfits,Tenues
+FORMS_FILTER_MISSING,Missing,Missing,Faltando,Em falta,Fehlend,Manquantes
+FORMS_FILTER_SPOKEN,Show %s: %d kinds,Show %s: %d kinds,Mostrar %s: %d espécies,Mostrar %s: %d espécies,%s zeigen: %d Arten,Afficher %s : %d espèces
+FORMS_PREVIOUS,"Previous kind, %s","Previous kind, %s","Espécie anterior, %s","Espécie anterior, %s","Vorherige Art, %s","Espèce précédente, %s"
+FORMS_NEXT,"Next kind, %s","Next kind, %s","Próxima espécie, %s","Espécie seguinte, %s","Nächste Art, %s","Espèce suivante, %s"
 HOME_HATCH,Hatch,Hatch,Chocar,Chocar,Ausbrüten,Faire éclore
 HATCH_TITLE,Hatch,Hatch,Chocar,Chocar,Ausbrüten,Faire éclore
 HATCH_HEADER,Each birth costs %s Essence; you have %s,Each birth costs %s Essence; you have %s,Cada nascimento custa %s de Essência; você tem %s,Cada nascimento custa %s de Essência; tens %s,Jede Geburt kostet %s Essenz; du hast %s,Chaque naissance coûte %s d'Essence ; tu en as %s
@@ -879,6 +899,8 @@ OBS_SCOUT_SPOKEN,Scout %s,Scout %s,Espiar %s,Espiar %s,%s auskundschaften,Reconn
 OBS_REFRESH,New targets for %s Aether,New targets for %s Aether,Novos alvos por %s de Aether,Novos alvos por %s de Aether,Neue Ziele für %s Aether,Nouvelles cibles pour %s d'Aether
 OBS_FAILED,The Observatory did not answer: %s,The Observatory did not answer: %s,O Observatório não respondeu: %s,O Observatório não respondeu: %s,Das Observatorium hat nicht geantwortet: %s,L'Observatoire n'a pas répondu : %s
 SCOUT_TITLE,Scout report,Scout report,Relatório de espionagem,Relatório de espionagem,Späherbericht,Rapport de reconnaissance
+SCOUT_TAB_LOOT,Loot,Loot,Saque,Saque,Beute,Butin
+SCOUT_TAB_THREATS,Threats,Threats,Ameaças,Ameaças,Gefahren,Menaces
 SCOUT_NONE_CHOSEN,Choose a target in the Observatory,Choose a target in the Observatory,Escolha um alvo no Observatório,Escolhe um alvo no Observatório,Wähle ein Ziel im Observatorium,Choisis une cible dans l'Observatoire
 SCOUT_REALM,%s · realm level %d · Vault level %d,%s · realm level %d · Vault level %d,%s · reino nível %d · Cofre nível %d,%s · reino nível %d · Cofre nível %d,%s · Reichslevel %d · Tresor-Level %d,%s · royaume niveau %d · Coffre niveau %d
 SCOUT_OUTER,An outer realm,An outer realm,Um reino exterior,Um reino exterior,Ein äußeres Reich,Un royaume extérieur
@@ -1215,6 +1237,40 @@ DEFENCES_PYLON,%s pylon,%s pylon,pilar de %s,pilar de %s,%s-Pylon,pylône de %s
 DEFENCES_STAT_HELD,Held,Held,Seguradas,Seguradas,Gehalten,Tenues
 DEFENCES_STAT_LEAKED,Leaked,Leaked,Vazadas,Vazadas,Durchgelassen,Percées
 DEFENCES_STAT_PARTIAL,Partial,Partial,Parciais,Parciais,Teilweise,Partielles
+DEFENCES_STAT_RAIDS,Raids this season,Raids this season,Assaltos na temporada,Assaltos na temporada,Raubzüge der Saison,Raids de la saison
+DEFENCES_STAT_TRACE,Trace ready,Trace ready,Rastro pronto,Rasto pronto,Spur bereit,Piste prête
+REHEARSE_TAB,Rehearse,Rehearse,Ensaiar,Ensaiar,Proben,Répéter
+DEFENCES_TAB_LOG,Defence log,Defense log,Registro de defesa,Registo de defesa,Verteidigungslog,Journal de défense
+REHEARSE_REPLAY_CAUTIOUS,Replay · cautious crew,Replay · cautious crew,Replay · equipe cautelosa,Repetição · equipa cautelosa,Wiederholung · vorsichtige Crew,Replay · équipe prudente
+REHEARSE_REPLAY_GREEDY,Replay · greedy crew,Replay · greedy crew,Replay · equipe gananciosa,Repetição · equipa gananciosa,Wiederholung · gierige Crew,Replay · équipe avide
+REHEARSE_REPLAY_FAST,Replay · fast crew,Replay · fast crew,Replay · equipe rápida,Repetição · equipa rápida,Wiederholung · schnelle Crew,Replay · équipe rapide
+REHEARSE_STYLE_CAUTIOUS,Cautious,Cautious,Cautelosa,Cautelosa,Vorsichtig,Prudente
+REHEARSE_STYLE_CAUTIOUS_LINE,"Waits for gaps, never runs","Waits for gaps, never runs","Espera brechas, nunca corre","Espera por aberturas, nunca corre","Wartet auf Lücken, rennt nie","Attend les failles, ne court jamais"
+REHEARSE_STYLE_GREEDY,Greedy,Greedy,Gananciosa,Gananciosa,Gierig,Avide
+REHEARSE_STYLE_GREEDY_LINE,Loads until the bag is full,Loads until the bag is full,Carrega até a bolsa encher,Carrega até o saco encher,"Lädt, bis der Sack voll ist",Charge jusqu'à remplir le sac
+REHEARSE_STYLE_FAST,Fast,Fast,Rápida,Rápida,Schnell,Rapide
+REHEARSE_STYLE_FAST_LINE,Runs the shortest route,Runs the shortest route,Corre pela rota mais curta,Corre pela rota mais curta,Rennt den kürzesten Weg,Court par le plus court chemin
+REHEARSE_RESULT,Result,Result,Resultado,Resultado,Ergebnis,Résultat
+REHEARSE_TIME,Time,Time,Tempo,Tempo,Zeit,Temps
+REHEARSE_SEEN,Times seen,Times seen,Vezes vista,Vezes vista,Mal gesehen,Fois vue
+REHEARSE_CARRIED,Carried out,Carried out,Levado,Levado,Hinausgetragen,Emporté
+REHEARSE_RUN,Run rehearsal,Run rehearsal,Fazer ensaio,Fazer ensaio,Probe starten,Lancer l'essai
+REHEARSE_RUN_LINE,Free · unlimited · no rewards,Free · unlimited · no rewards,Grátis · ilimitado · sem recompensas,Grátis · ilimitado · sem recompensas,Kostenlos · unbegrenzt · keine Belohnung,Gratuit · illimité · sans récompense
+REHEARSE_LEGEND_SEEN,seen,seen,vista,vista,gesehen,vue
+REHEARSE_LEGEND_SIGHT,guard sight,guard sight,visão do guarda,visão do guarda,Wächterblick,vue des gardes
+REHEARSE_LEGEND_VAULT,Vault,Vault,Cofre,Cofre,Tresor,Coffre
+REHEARSE_GRADE_CLEAN,Escaped quietly,Escaped quietly,Escapou em silêncio,Escapou em silêncio,Leise entkommen,Échappée en silence
+REHEARSE_GRADE_LOUD,Escaped loudly,Escaped loudly,Escapou com alarde,Escapou com alarido,Laut entkommen,Échappée avec fracas
+REHEARSE_GRADE_PARTIAL,Some got out,Some got out,Alguns saíram,Alguns saíram,Einige kamen raus,Certains sont sortis
+REHEARSE_GRADE_FOILED,Held: none got out,Held: none got out,Resistiu: ninguém saiu,Resistiu: ninguém saiu,Gehalten: niemand kam raus,Tenu : personne n'est sorti
+REHEARSE_PLAYING,The crew is on your island…,The crew is on your island…,A equipe está na sua ilha…,A equipa está na tua ilha…,Die Crew ist auf deiner Insel …,L'équipe est sur votre île…
+REHEARSE_NONE,Pick a crew and run it against your island,Pick a crew and run it against your island,Escolha uma equipe e mande-a contra sua ilha,Escolhe uma equipa e manda-a contra a tua ilha,Wähle eine Crew und schick sie gegen deine Insel,Choisissez une équipe et lancez-la contre votre île
+DEFENCES_TAG_HELD,Held,Held,Resistiu,Resistiu,Gehalten,Tenu
+DEFENCES_TAG_OUT,Got out,Got out,Escaparam,Escaparam,Entkommen,Sortis
+DEFENCES_HELD_THEM,held them %s,held them %s,segurou-os %s,segurou-os %s,hielt sie %s auf,les a tenus %s
+DEFENCES_CAUGHT_OF,caught %d of %d,caught %d of %d,capturou %d de %d,capturou %d de %d,%d von %d gefasst,%d sur %d capturés
+DEFENCES_DENIED_SHORT,Denied %s,Denied %s,Negado %s,Negado %s,Verhindert %s,Refusé %s
+DEFENCES_REPORT_KEY,Report ›,Report ›,Relatório ›,Relatório ›,Bericht ›,Rapport ›
 OBS_DEPTH,Up to %d realms to the Heart,Up to %d realms to the Heart,Até %d reinos até o Coração,Até %d reinos até ao Coração,Bis zu %d Reiche bis zum Herzen,Jusqu'à %d royaumes jusqu'au Cœur
 OBS_FAULTS_FROM,Faults open from %s,Faults open from %s,Falhas abertas a partir de %s,Falhas abertas a partir de %s,Risse öffnen sich von %s aus,Failles ouvertes depuis %s
 OBS_OUTER_REALM,outer realm %d,outer realm %d,reino exterior %d,reino exterior %d,Außenreich %d,royaume extérieur %d
@@ -1237,6 +1293,8 @@ CUR_TAB_POSTS,Posts,Posts,Postos,Postos,Posten,Postes
 CUR_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
 CUR_TAB_NAME,Name,Name,Nome,Nome,Name,Nom
 CUR_KICKER,Your defence,Your defense,Sua defesa,A tua defesa,Deine Abwehr,Ta défense
+CUR_TEST_RUN,Test run,Test run,Testar,Testar,Testlauf,Essai
+CUR_HOLDS,Holds,Holds,Resiste,Resiste,Hält,Tient
 ERR_FUND_ADULTS_ONLY,the Island Fund is open from 18,the Island Fund is open from 18,o Island Fund é aberto a partir dos 18,o Island Fund está aberto a partir dos 18,der Island Fund ist ab 18 offen,l'Island Fund est ouvert dès 18 ans
 LANDING_REALM_ONE,"In %s, one link from the Heart","In %s, one link from the Heart","Em %s, a uma ligação do Coração","Em %s, a uma ligação do Coração","In %s, eine Verbindung vom Herzen","Dans %s, à un lien du Cœur"
 LANDING_REALM_MANY,"In %s, %d links from the Heart","In %s, %d links from the Heart","Em %s, a %d ligações do Coração","Em %s, a %d ligações do Coração","In %s, %d Verbindungen vom Herzen","Dans %s, à %d liens du Cœur"
@@ -1289,6 +1347,47 @@ ERR_SIGNED_OUT,you signed out on this phone,you signed out on this phone,você s
 ERR_PLATFORM_CANCELLED,the sign-in was closed before it finished,the sign-in was closed before it finished,o login foi fechado antes de terminar,o início de sessão foi fechado antes de terminar,die Anmeldung wurde vor dem Ende geschlossen,la connexion a été fermée avant la fin
 ERR_NO_PLATFORM_ACCOUNT,this phone is not signed in to Game Center or a Google account,this phone is not signed in to Game Center or a Google account,este celular não está conectado ao Game Center nem a uma conta Google,este telemóvel não tem sessão no Game Center nem numa conta Google,dieses Handy ist weder bei Game Center noch bei einem Google-Konto angemeldet,ce téléphone n’est connecté ni à Game Center ni à un compte Google
 AUTH_LOST_DEVICE,"If a phone is lost, also remove it from your Apple ID or Google account: signed in there, it could sign in again.","If a phone is lost, also remove it from your Apple ID or Google account: signed in there, it could sign in again.","Se um celular foi perdido, remova-o também do seu Apple ID ou da sua conta Google: conectado lá, ele poderia entrar de novo.","Se um telemóvel se perdeu, remove-o também do teu ID Apple ou da tua conta Google: com sessão lá, poderia voltar a entrar.","Ist ein Handy verloren, entferne es auch aus deiner Apple-ID oder deinem Google-Konto: dort angemeldet, könnte es sich wieder anmelden.","Si un téléphone est perdu, retire-le aussi de ton identifiant Apple ou de ton compte Google : connecté là, il pourrait se reconnecter."
+ERR_IDENTITY_IN_USE,"that account already has a game of its own, so it cannot be added to this one","that account already has a game of its own, so it cannot be added to this one",esse login já tem um jogo próprio e não pode ser adicionado a esta conta,esse início de sessão já tem um jogo próprio e não pode ser adicionado a esta conta,dieses Konto hat schon ein eigenes Spiel und kann nicht hinzugefügt werden,ce compte a déjà sa propre partie et ne peut pas être ajouté à celui-ci
+ERR_PLATFORM_LINKED,this account already signs in that way,this account already signs in that way,esta conta já entra dessa forma,esta conta já inicia sessão dessa forma,dieses Konto meldet sich schon so an,ce compte se connecte déjà de cette façon
+ERR_NOT_LINKED,that sign-in is not one this device can remove,that sign-in is not one this device can remove,esse login não pode ser removido neste aparelho,esse início de sessão não pode ser removido neste dispositivo,diese Anmeldung kann auf diesem Gerät nicht entfernt werden,cette connexion ne peut pas être retirée sur cet appareil
+ERR_NO_PLATFORM,this device cannot sign in that way,this device cannot sign in that way,este aparelho não pode entrar dessa forma,este dispositivo não pode iniciar sessão dessa forma,dieses Gerät kann sich so nicht anmelden,cet appareil ne peut pas se connecter de cette façon
+AUTH_TAB,Account,Account,Conta,Conta,Konto,Compte
+AUTH_WITH_GC,With Game Center,With Game Center,Com o Game Center,Com o Game Center,Mit Game Center,Avec Game Center
+AUTH_WITH_GP,With your Google account,With your Google account,Com sua conta Google,Com a tua conta Google,Mit deinem Google-Konto,Avec votre compte Google
+AUTH_DEVICES_TITLE,Signed-in devices,Signed-in devices,Aparelhos conectados,Dispositivos com sessão iniciada,Angemeldete Geräte,Appareils connectés
+AUTH_KIND_IPHONE,iPhone,iPhone,iPhone,iPhone,iPhone,iPhone
+AUTH_KIND_IPAD,iPad,iPad,iPad,iPad,iPad,iPad
+AUTH_KIND_ANDROID_PHONE,Android phone,Android phone,Celular Android,Telemóvel Android,Android-Handy,Téléphone Android
+AUTH_KIND_ANDROID_TABLET,Android tablet,Android tablet,Tablet Android,Tablet Android,Android-Tablet,Tablette Android
+AUTH_KIND_PC,Computer,Computer,Computador,Computador,Computer,Ordinateur
+AUTH_KIND_OTHER,Device,Device,Aparelho,Dispositivo,Gerät,Appareil
+AUTH_THIS_DEVICE,This device,This device,Este aparelho,Este dispositivo,Dieses Gerät,Cet appareil
+AUTH_SEEN_NOW,Used in the last hour,Used in the last hour,Usado na última hora,Usado na última hora,In der letzten Stunde benutzt,Utilisé dans la dernière heure
+AUTH_SEEN_HOURS,Last used %d hours ago,Last used %d hours ago,Usado pela última vez há %d horas,Usado pela última vez há %d horas,Zuletzt vor %d Stunden benutzt,Utilisé pour la dernière fois il y a %d heures
+AUTH_SEEN_DAY,Last used yesterday,Last used yesterday,Usado pela última vez ontem,Usado pela última vez ontem,Zuletzt gestern benutzt,Utilisé pour la dernière fois hier
+AUTH_SEEN_DAYS,Last used %d days ago,Last used %d days ago,Usado pela última vez há %d dias,Usado pela última vez há %d dias,Zuletzt vor %d Tagen benutzt,Utilisé pour la dernière fois il y a %d jours
+AUTH_PLACE_UNKNOWN,Place not known,Place not known,Local desconhecido,Local desconhecido,Ort unbekannt,Lieu inconnu
+AUTH_VIA_GC,Game Center,Game Center,Game Center,Game Center,Game Center,Game Center
+AUTH_VIA_GP,Google,Google,Google,Google,Google,Google
+AUTH_SIGN_OUT_OTHERS,Sign out every other device,Sign out every other device,Sair em todos os outros aparelhos,Terminar sessão nos outros dispositivos,Alle anderen Geräte abmelden,Déconnecter tous les autres appareils
+AUTH_CONFIRM_DEVICE_WORDS,%s is signed out at once. It can sign in again only with its own Game Center or Google account.,%s is signed out at once. It can sign in again only with its own Game Center or Google account.,%s sai na hora. Só pode entrar de novo com o próprio Game Center ou conta Google.,%s termina a sessão de imediato. Só pode voltar a entrar com o seu Game Center ou conta Google.,%s wird sofort abgemeldet. Es kann sich nur mit seinem eigenen Game Center oder Google-Konto wieder anmelden.,%s est déconnecté tout de suite. Il ne peut se reconnecter qu’avec son propre Game Center ou compte Google.
+AUTH_CONFIRM_OTHERS_WORDS,Every other phone and tablet signed in to this account is signed out at once. This one stays signed in.,Every other phone and tablet signed in to this account is signed out at once. This one stays signed in.,Todos os outros celulares e tablets conectados a esta conta saem na hora. Este continua conectado.,Todos os outros telemóveis e tablets com sessão nesta conta terminam a sessão de imediato. Este mantém a sessão.,Alle anderen Handys und Tablets dieses Kontos werden sofort abgemeldet. Dieses bleibt angemeldet.,Tous les autres téléphones et tablettes connectés à ce compte sont déconnectés tout de suite. Celui-ci reste connecté.
+AUTH_METHODS_TITLE,Ways to sign in,Ways to sign in,Formas de entrar,Formas de iniciar sessão,Anmeldewege,Façons de se connecter
+AUTH_METHOD_PRIMARY,Your account was made with it,Your account was made with it,Sua conta foi criada com ele,A tua conta foi criada com ele,Dein Konto wurde damit erstellt,Votre compte a été créé avec
+AUTH_METHOD_LINKED,Also signs in to this account,Also signs in to this account,Também entra nesta conta,Também inicia sessão nesta conta,Meldet sich auch bei diesem Konto an,Se connecte aussi à ce compte
+AUTH_LINK_GP,Add your Google account,Add your Google account,Adicionar sua conta Google,Adicionar a tua conta Google,Google-Konto hinzufügen,Ajouter votre compte Google
+AUTH_LINK_GP_LINE,Then play this same account on an Android phone or tablet.,Then play this same account on an Android phone or tablet.,Assim você joga esta mesma conta num celular ou tablet Android.,Assim jogas esta mesma conta num telemóvel ou tablet Android.,Dann spielst du dieses Konto auch auf einem Android-Handy oder -Tablet.,Vous jouerez alors ce même compte sur un téléphone ou une tablette Android.
+AUTH_LINK_GC,Add Game Center,Add Game Center,Adicionar o Game Center,Adicionar o Game Center,Game Center hinzufügen,Ajouter Game Center
+AUTH_LINK_GC_LINE,Then play this same account on an iPhone or iPad.,Then play this same account on an iPhone or iPad.,Assim você joga esta mesma conta num iPhone ou iPad.,Assim jogas esta mesma conta num iPhone ou iPad.,Dann spielst du dieses Konto auch auf einem iPhone oder iPad.,Vous jouerez alors ce même compte sur un iPhone ou un iPad.
+AUTH_LINK,Add,Add,Adicionar,Adicionar,Hinzufügen,Ajouter
+AUTH_UNLINK,Remove,Remove,Remover,Remover,Entfernen,Retirer
+AUTH_KEEP,Keep it,Keep it,Manter,Manter,Behalten,Garder
+AUTH_CONFIRM_UNLINK_TITLE,Remove %s?,Remove %s?,Remover %s?,Remover %s?,%s entfernen?,Retirer %s ?
+AUTH_CONFIRM_UNLINK_WORDS,"It no longer signs in to this account, and every device signed in with it is signed out.","It no longer signs in to this account, and every device signed in with it is signed out.","Ele deixa de entrar nesta conta, e todo aparelho conectado com ele sai.","Deixa de iniciar sessão nesta conta, e todos os dispositivos com sessão por ele terminam a sessão.","Es meldet sich nicht mehr bei diesem Konto an, und jedes damit angemeldete Gerät wird abgemeldet.","Il ne se connecte plus à ce compte, et chaque appareil connecté avec lui est déconnecté."
+AUTH_LINKED,%s now signs in to this account too.,%s now signs in to this account too.,%s agora também entra nesta conta.,%s agora também inicia sessão nesta conta.,%s meldet sich jetzt auch bei diesem Konto an.,%s se connecte maintenant aussi à ce compte.
+AUTH_UNLINKED,%s no longer signs in to this account.,%s no longer signs in to this account.,%s não entra mais nesta conta.,%s já não inicia sessão nesta conta.,%s meldet sich nicht mehr bei diesem Konto an.,%s ne se connecte plus à ce compte.
+AUTH_ACTION_FAILED,Could not change that: %s,Could not change that: %s,Não foi possível mudar isso: %s,Não foi possível alterar isso: %s,Das ließ sich nicht ändern: %s,Impossible de modifier cela : %s
+AUTH_RECOVERY,"New phone? Sign in on it with the same Apple ID or Google account, and your account comes with you. No password, no code to keep.","New phone? Sign in on it with the same Apple ID or Google account, and your account comes with you. No password, no code to keep.","Celular novo? Entre nele com o mesmo Apple ID ou conta Google, e sua conta vem junto. Sem senha, sem código para guardar.","Telemóvel novo? Inicia sessão nele com o mesmo Apple ID ou conta Google, e a tua conta vem contigo. Sem palavra-passe, sem código para guardar.","Neues Handy? Melde dich dort mit derselben Apple-ID oder demselben Google-Konto an, und dein Konto kommt mit. Kein Passwort, kein Code zum Aufheben.","Nouveau téléphone ? Connectez-vous avec le même identifiant Apple ou compte Google, et votre compte vous suit. Pas de mot de passe, pas de code à garder."
 SCREEN_BACK,Back,Back,Voltar,Voltar,Zurück,Retour
 SCREEN_CHOSEN,chosen,chosen,escolhido,escolhido,gewählt,choisi
 NAV_ISLANDS,Islands,Islands,Ilhas,Ilhas,Inseln,Îles
@@ -1410,9 +1509,13 @@ HOME_GOAL_KEEPER,%s experience to go · Keeper %d,%s experience to go · Keeper 
 HOME_GOAL_TRACK,%s stars to go · tier %d,%s stars to go · tier %d,faltam %s estrelas · nível %d,faltam %s estrelas · nível %d,noch %s Sterne · Stufe %d,encore %s étoiles · palier %d
 HOME_RAIDED_ONE,Raided once while you were away,Raided once while you were away,Assaltado uma vez enquanto você estava fora,Assaltado uma vez enquanto estavas fora,"Einmal überfallen, während du weg warst",Pillé une fois pendant ton absence
 HOME_RAIDED,Raided %d times while you were away,Raided %d times while you were away,Assaltado %d vezes enquanto você estava fora,Assaltado %d vezes enquanto estavas fora,"%d-mal überfallen, während du weg warst",Pillé %d fois pendant ton absence
+HOME_RAID_TITLE_ONE,Raided once,Raided once,Assaltado uma vez,Assaltado uma vez,Einmal überfallen,Pillé une fois
+HOME_RAID_TITLE,Raided %d times,Raided %d times,Assaltado %d vezes,Assaltado %d vezes,%d-mal überfallen,Pillé %d fois
+HOME_RAID_LINE,See how your defence held,See how your defense held,Veja como sua defesa resistiu,Vê como a tua defesa resistiu,"Sieh, wie deine Verteidigung hielt",Vois comment ta défense a tenu
 HOME_RAIDED_SEE,See,See,Ver,Ver,Ansehen,Voir
 HOME_RAIDED_CLOSE,Dismiss,Dismiss,Dispensar,Dispensar,Schließen,Fermer
 HOME_COLLECT,Collect all,Collect all,Coletar tudo,Recolher tudo,Alles einsammeln,Tout récolter
+HOME_COLLECT_AMOUNT,Collect %s,Collect %s,Coletar %s,Recolher %s,%s einsammeln,Récolter %s
 HOME_COLLECT_SPOKEN,Collect all: %s waiting,Collect all: %s waiting,Coletar tudo: %s esperando,Recolher tudo: %s à espera,Alles einsammeln: %s bereit,Tout récolter : %s en attente
 LANDING_FAULT_NAME,Fault,Fault,Falha,Falha,Riss,Faille
 LANDING_EDGE_NAME,%s edge,%s edge,Borda %s,Orla %s,Rand %s,Bord %s
@@ -1423,3 +1526,36 @@ LANDING_SILENT,Silent,Silent,Silencioso,Silencioso,Lautlos,Silencieux
 LANDING_HEARD_TILES,%d tiles,%d tiles,%d casas,%d casas,%d Felder,%d cases
 LANDING_TILE_NOISE,Noise,Noise,Ruído,Ruído,Lärm,Bruit
 LANDING_TILE_CLOCK,Clock,Clock,Relógio,Relógio,Uhr,Horloge
+HEIST_HINT_SHORT,"Tap crew, then ground · hold to sneak or run","Tap crew, then ground · hold to sneak or run","Toque na equipe, depois no chão · segure para se esgueirar ou correr","Toca na equipa, depois no chão · mantém premido para te esgueirares ou correres","Tippe auf die Crew, dann auf den Boden · halte zum Schleichen oder Rennen","Touchez l'équipe, puis le sol · maintenez pour vous faufiler ou courir"
+HEIST_AIM,Tap the world where %s goes · tap the portrait again to put it away,Tap the world where %s goes · tap the portrait again to put it away,Toque no mundo onde vai %s · toque de novo no retrato para cancelar,Toca no mundo onde vai %s · toca de novo no retrato para cancelar,"Tippe in die Welt, wohin %s soll · tippe das Porträt erneut zum Abbrechen",Touchez le monde où va %s · touchez de nouveau le portrait pour annuler
+HEIST_STOP,Stop,Stop,Parar,Parar,Anhalten,Arrêter
+HEIST_DROP_HALF,Drop half,Drop half,Largar metade,Largar metade,Hälfte ablegen,Lâcher la moitié
+HEIST_DROP_ALL,Drop all,Drop all,Largar tudo,Largar tudo,Alles ablegen,Tout lâcher
+HEIST_USES_LEFT,%d left,%d left,restam %d,restam %d,noch %d,%d restants
+HEIST_NONE_LEFT,none left,none left,nenhum restante,nenhum restante,keiner mehr,plus aucun
+HEIST_COOLING,ready in %d s,ready in %d s,pronto em %d s,pronto em %d s,bereit in %d s,prêt dans %d s
+HEIST_SAGE,Sage,Sage,Sábio,Sábio,Weiser,Sage
+HEIST_SAGE_NAMED,"%s, the Sage: open its powers","%s, the Sage: open its powers","%s, o Sábio: abrir seus poderes","%s, o Sábio: abrir os seus poderes","%s, der Weise: Kräfte öffnen","%s, le Sage : ouvrir ses pouvoirs"
+HEIST_SAGE_COOLING,"%s, the Sage: ready in %d s","%s, the Sage: ready in %d s","%s, o Sábio: pronto em %d s","%s, o Sábio: pronto em %d s","%s, der Weise: bereit in %d s","%s, le Sage : prêt dans %d s"
+HEIST_CAST,Cast,Cast,Lançar,Lançar,Wirken,Lancer
+HEIST_NO_CASTS,No casts,No casts,Sem lançamentos,Sem lançamentos,Keine Zauber,Aucun sort
+HEIST_NO_CASTS_WHY,This heist carries no casts: the planner adds them,This heist carries no casts: the planner adds them,Este assalto não leva lançamentos: o planejador os adiciona,Este assalto não leva lançamentos: o planeador adiciona-os,Dieser Raubzug hat keine Zauber: der Planer fügt sie hinzu,Ce casse n'emporte aucun sort : le plan les ajoute
+HEIST_CAST_USED,used,used,usado,usado,verbraucht,utilisé
+HEIST_CAST_PLACE,4 tiles for 10 s,4 tiles for 10 s,4 casas por 10 s,4 casas durante 10 s,4 Felder für 10 s,4 cases pendant 10 s
+HEIST_WHEEL_CLOSE,Close,Close,Fechar,Fechar,Schließen,Fermer
+HUD_LOAD_TO,Load to %d%%,Load to %d%%,Carregar até %d%%,Carregar até %d%%,Laden bis %d %%,Charger à %d %%
+RESULT_STARLIGHT,Starlight,Starlight,Luz-estelar,Luz-estelar,Sternenlicht,Lumière d'étoile
+RESULT_ESSENCE,Essence,Essence,Essência,Essência,Essenz,Essence
+RESULT_RENOWN,Renown,Renown,Renome,Renome,Ruhm,Renommée
+RESULT_FEE_RETURNED,Entry fee %s returned,Entry fee %s returned,Taxa de entrada de %s devolvida,Taxa de entrada de %s devolvida,Eintrittsgebühr %s erstattet,Droit d'entrée de %s rendu
+RESULT_FEE_HALF,"Entry fee %s, %s returned","Entry fee %s, %s returned","Taxa de entrada de %s, %s devolvidos","Taxa de entrada de %s, %s devolvidos","Eintrittsgebühr %s, %s erstattet","Droit d'entrée de %s, %s rendus"
+RESULT_FEE_PAID,Entry fee %s paid to the defender,Entry fee %s paid to the defender,Taxa de entrada de %s paga ao defensor,Taxa de entrada de %s paga ao defensor,Eintrittsgebühr %s an den Verteidiger gezahlt,Droit d'entrée de %s payé au défenseur
+LANDING_DECK,Landings,Landings,Desembarques,Desembarques,Landungen,Débarquements
+LANDING_DECK_HINT,Tap a card to see its island,Tap a card to see its island,Toque num cartão para ver a ilha,Toca num cartão para ver a ilha,Tippe auf eine Karte für ihre Insel,Touchez une carte pour voir son île
+LANDING_DECK_FAULT,"Through a fault, straight to the Heart","Through a fault, straight to the Heart","Por uma falha, direto ao Coração","Por uma falha, direto ao Coração",Durch einen Riss direkt zum Herzen,"Par une faille, droit au Cœur"
+LANDING_DECK_SPOTS,%d spots · %d covered,%d spots · %d covered,%d pontos · %d cobertos,%d pontos · %d cobertos,%d Stellen · %d gedeckt,%d points · %d couverts
+LANDING_DECK_HOPS,%d hops to the Vault · %d spots,%d hops to the Vault · %d spots,%d saltos até o Cofre · %d pontos,%d saltos até ao Cofre · %d pontos,%d Sprünge zum Tresor · %d Stellen,%d sauts jusqu'au Coffre · %d points
+LANDING_DECK_HOP,1 hop to the Vault · %d spots,1 hop to the Vault · %d spots,1 salto até o Cofre · %d pontos,1 salto até ao Cofre · %d pontos,1 Sprung zum Tresor · %d Stellen,1 saut jusqu'au Coffre · %d points
+LANDING_DECK_ISLAND,This island,This island,Esta ilha,Esta ilha,Diese Insel,Cette île
+RESULT_RAID_AGAIN,Raid again,Raid again,Assaltar de novo,Assaltar outra vez,Erneut rauben,Repartir en casse
+RESULT_IDLE_CREW,Idle crew of %d ready,Idle crew of %d ready,%d da equipe livres e prontos,%d da equipa livres e prontos,%d freie Crew bereit,%d membres libres prêts

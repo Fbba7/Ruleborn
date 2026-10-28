@@ -20,7 +20,7 @@ extends Control
 ## drops the movement (§20.8).
 
 ## How long a pop-up rises, in seconds.
-const POP_SECONDS := 1.1
+const POP_SECONDS := 0.8
 const STATE_FILL := {"Unaware": Color("#FFFFFF"), "Returning": Color("#FFFFFF"), "Suspicious": Color("#FFD34A"),
 	"Investigating": Color("#FFB03A"), "Searching": Color("#FF8A3A"), "Alerted": Color("#E2536B")}
 const OFF := Vector2(-99999, -99999)
@@ -28,7 +28,7 @@ const OFF := Vector2(-99999, -99999)
 const AWARE_FILL := {"Unaware": 0.0, "Returning": 0.15, "Suspicious": 0.35, "Investigating": 0.6, "Searching": 0.8,
 	"Alerted": 1.0}
 ## How long a guard's words stay over it, in seconds.
-const SAY_SECONDS := 2.4
+const SAY_SECONDS := 2.0
 ## §12.16's guard speech, by the state a guard has just come to.
 const SAYS := {"Suspicious": "GUARD_SAY_SUSPICIOUS", "Investigating": "GUARD_SAY_INVESTIGATING",
 	"Alerted": "GUARD_SAY_ALERTED", "Returning": "GUARD_SAY_RETURNING"}
@@ -52,6 +52,8 @@ var vault_shown := true
 ## What each guard is saying: guard index -> {text: String, t: float}.
 var speech := {}
 var _time := 0.0
+## Where the VAULT tag stands this frame, so a guard's words stay off it.
+var _vault_plate := Rect2()
 ## Each figure's most health seen, its bar's whole.
 var _most := {}
 
@@ -130,6 +132,7 @@ func _paint() -> void:
 	_draw_edge(calm)
 	_draw_pylons(replay, m)
 	_draw_pick(m, calm)
+	_vault_plate = Rect2()
 	if vault_shown:
 		_draw_vault(replay, m)
 	_draw_guards(replay, m, calm)
@@ -247,17 +250,20 @@ func _draw_vault(replay: RulebornReplay, m: float) -> void:
 	var w := font.get_string_size(words, HORIZONTAL_ALIGNMENT_CENTER, -1, px).x + px
 	var open: bool = v.get("open", false)
 	var plate := Rect2(at - Vector2(w * 0.5, px * 0.8), Vector2(w, px * 1.25))
+	_vault_plate = plate
+	# The design's tag: a gold plate with ink words; once open, cream rimmed
+	# in green, its cracking bar gone.
 	var box := StyleBoxFlat.new()
-	box.bg_color = FxSkin.GOLD if open else FxSkin.CARD_TOP
-	box.border_color = FxSkin.INK_LINE
-	box.set_border_width_all(maxi(2, int(px * 0.09)))
+	box.bg_color = FxSkin.PARCH_TOP if open else FxSkin.GOLD
+	box.border_color = FxSkin.SUCCESS.darkened(0.3) if open else FxSkin.INK_LINE
+	box.set_border_width_all(maxi(2, int(px * (0.14 if open else 0.09))))
 	box.set_corner_radius_all(int(px * 0.4))
 	box.shadow_color = Color(0, 0, 0, 0.3)
 	box.shadow_size = 4
 	box.shadow_offset = Vector2(0, 3)
 	FxPen.style_box(self, box, plate)
 	FxPen.string(self, font, Vector2(plate.position.x, plate.position.y + px * 0.98), words, HORIZONTAL_ALIGNMENT_CENTER,
-		plate.size.x, px, FxSkin.PARCH_INK if open else FxSkin.GOLD)
+		plate.size.x, px, FxSkin.PARCH_INK)
 	var health := int(v.get("health", 0))
 	_most["vault"] = maxi(int(_most.get("vault", 0)), health)
 	var whole := int(_most["vault"])
@@ -400,14 +406,17 @@ func say(guard: int, state: String) -> void:
 		speech[guard] = {"text": Strings.t(SAYS[state]), "t": 0.0, "alarm": state == "Alerted"}
 
 
-## Each guard's words on a parchment bubble beside its head, its tail to the
+## A guard's words on a parchment bubble beside its head, its tail to the
 ## guard's mouth, popping in and fading (reduced motion: shown, then gone).
+## One callout at a time, as the design keeps the middle calm: the most
+## urgent state said, the newest of those; the others' pips still say
+## theirs.
 func _draw_speech(replay: RulebornReplay, m: float, calm: bool) -> void:
 	var nodes: Array[Node3D] = view._guards
 	var font := FxSkin.words()
-	var px := int(clampf(m * 0.4, 40.0, 54.0))
+	var px := int(clampf(m * 0.36, 34.0, 46.0))
 	var placed: Array[Rect2] = []
-	for i: int in speech:
+	for i: int in _speaker():
 		if i >= nodes.size() or i >= replay.guards().size():
 			continue
 		var head := _on_screen(nodes[i].position + Vector3(0, float(nodes[i].get_meta("head", 1.2)), 0))
@@ -427,6 +436,9 @@ func _draw_speech(replay: RulebornReplay, m: float, calm: bool) -> void:
 		for r: Rect2 in _pop_rects(m, calm):
 			if box.grow(px * 0.2).intersects(r):
 				box.position.y = r.position.y - size.y - px * 0.2
+		# Above the VAULT tag, never across it.
+		if _vault_plate.has_area() and box.grow(px * 0.1).intersects(_vault_plate):
+			box.position.y = _vault_plate.position.y - size.y - px * 0.2
 		# And over another guard's words said nearby, rather than across them.
 		for other: Rect2 in placed:
 			if box.grow(px * 0.1).intersects(other):
@@ -454,6 +466,29 @@ func _draw_speech(replay: RulebornReplay, m: float, calm: bool) -> void:
 				HORIZONTAL_ALIGNMENT_CENTER, box.size.x, px, Color(ink, a))
 
 
+## Which guard's words are on show: the most urgent state said (an alert
+## first), the newest of those; none when none is speaking.
+func _speaker() -> Array[int]:
+	var best := -1
+	var rank := -1
+	var age := 0.0
+	for i: int in speech:
+		var calm_words := str(speech[i]["text"]) == Strings.t(SAYS["Returning"])
+		var r := 2 if speech[i].get("alarm", false) else (0 if calm_words else 1)
+		var t := float(speech[i]["t"])
+		if r > rank or (r == rank and t < age):
+			best = i
+			rank = r
+			age = t
+	return [] if best < 0 else [best]
+
+
+## A rising number's size in pixels: small, a figure's head or so (§21.8's
+## calm middle).
+static func _pop_px(m: float) -> float:
+	return clampf(m * 0.36, 26.0, 46.0)
+
+
 ## A triangle grown outward by `by` pixels round its middle: its ink edge.
 static func _grown(tri: PackedVector2Array, by: float) -> PackedVector2Array:
 	var mid := (tri[0] + tri[1] + tri[2]) / 3.0
@@ -472,9 +507,10 @@ func _pop_rects(m: float, calm: bool) -> Array[Rect2]:
 		var at := _on_screen(p["at"])
 		if at == OFF:
 			continue
-		var px := clampf(m * 0.5, 30.0, 72.0) * 1.25
+		var px := _pop_px(m) * 1.2
 		var w := font.get_string_size(str(p["text"]), HORIZONTAL_ALIGNMENT_LEFT, -1, int(px)).x + px
-		var rise := 0.0 if calm else m * 1.1
+		var rise := 0.0 if calm else m * 0.6
+		at += Vector2(m * 0.55, -m * 0.2)
 		out.append(Rect2(at + Vector2(-w * 0.5, -rise - px), Vector2(w, rise + px * 1.3)))
 	return out
 
@@ -486,10 +522,11 @@ func _draw_pops(m: float, calm: bool) -> void:
 		var at := _on_screen(p["at"])
 		if at == OFF:
 			continue
-		var rise := 0.0 if calm else t * m * 1.1
-		var px := int(clampf(m * 0.5, 30.0, 72.0) * (1.0 + (0.0 if calm else 0.25 * maxf(0.0, 1.0 - t * 4.0))))
-		var a := 1.0 if t < 0.65 else 1.0 - (t - 0.65) / 0.35
-		var pos := at + Vector2(0, -rise)
+		var rise := 0.0 if calm else t * m * 0.6
+		var px := int(_pop_px(m) * (1.0 + (0.0 if calm else 0.2 * maxf(0.0, 1.0 - t * 4.0))))
+		var a := 1.0 if t < 0.55 else 1.0 - (t - 0.55) / 0.45
+		# Beside the figure, never over it: up and to its right.
+		var pos := at + Vector2(m * 0.55, -m * 0.2 - rise)
 		var words := str(p["text"])
 		var w := font.get_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
 		var icon := str(p["icon"])

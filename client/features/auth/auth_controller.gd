@@ -64,11 +64,53 @@ func sign_in() -> Result:
 	return r
 
 
-## How many devices are signed in to this account (the panel's line).
+## The account's devices and ways to sign in (the panel's lists): each
+## device's kind, model, country and last use, and which platforms sign in
+## to it, with the one this device could add.
 func devices() -> Result:
-	var r := await services.api.get_json("/v1/session")
+	var r := await services.api.get_json("/v1/session/devices")
 	if r.ok:
-		services.store.dispatch(&"auth_devices", {"devices": int(r.value.get("devices", 0))})
+		var v: Dictionary = r.value
+		var list: Array = v.get("devices", [])
+		var identities: Array = v.get("identities", [])
+		services.store.dispatch(&"auth_devices", {"devices": list.size(), "list": list,
+			"identities": identities, "platforms": services.auth.platform.platforms()})
+	return r
+
+
+## One other device of the list signed out, by its id in the server's list
+## (this one signs out with sign_out, which also parks what waits).
+func end_device(id: int) -> Result:
+	var r := await services.api.post_json("/v1/session/end", {"device": id})
+	return await _done(r, "")
+
+
+## Every other device of this account signed out; this one stays.
+func sign_out_others() -> Result:
+	var r := await services.api.post_json("/v1/session/end", {"others": true})
+	return await _done(r, "")
+
+
+## Another platform's identity linked to this account (AuthSession.link).
+func link(platform: String) -> Result:
+	return await _done(await services.auth.link(platform), "AUTH_LINKED", platform)
+
+
+## A linked platform removed (AuthSession.unlink).
+func unlink(platform: String) -> Result:
+	return await _done(await services.auth.unlink(platform), "AUTH_UNLINKED", platform)
+
+
+## The panel told how an account change went — `said` with the platform's
+## name, or the failure in words — and its lists asked again.
+func _done(r: Result, said: String, platform := "") -> Result:
+	var words := ""
+	if not r.ok:
+		words = Errors.message("AUTH_ACTION_FAILED", r.code)
+	elif said != "":
+		words = Strings.t(said, AuthPresenter.platform_name(platform))
+	services.store.dispatch(&"auth_notice", {"notice": words, "failed": not r.ok})
+	await devices()
 	return r
 
 

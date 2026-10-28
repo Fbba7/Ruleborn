@@ -106,6 +106,8 @@ func _layout() -> void:
 
 	game.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_PLAY")))
 	game.add_child(_toggle("slow_rehearsals", "SETTINGS_SLOW_REHEARSALS", "playtimereminder"))
+	# The account: signing in and out, devices, ways to sign in (auth_panel.gd, T11).
+	account.add_child(AuthPanel.new())
 
 	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_ACCESS")))
 	access.add_child(_text_card())
@@ -126,9 +128,7 @@ func _layout() -> void:
 			comfort.add_child(_divider())
 		comfort.add_child(_toggle(toggle[0], toggle[1], toggle[2], true))
 	access.add_child(ScreenKit.panel("card", comfort, 18.0, 4.0))
-	# The account: signing in and out (scripts/auth_panel.gd, T11), in this
-	# screen's look (ScreenAccount).
-	account.add_child(ScreenAccount.card(AuthPanel.new()))
+	# The profile row and the privacy note under T11's panel (ScreenAccount).
 	account.add_child(ScreenAccount.profile_row())
 	account.add_child(ScreenAccount.privacy_note())
 	column.add_child(ScreenNav.dock(&"home"))

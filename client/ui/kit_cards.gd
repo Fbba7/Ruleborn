@@ -87,6 +87,98 @@ static func law_card(icon: String, title: String, school: String, rarity: String
 	return card
 
 
+## A law in a Codex album (13-law-codex.png): its rank's frame round its
+## school's window (number on a disc, tier in the corner, as `law_card`),
+## then a cream foot with its name, its rank in words, and where it lives on
+## a leather plate ("In Skyfield"); "" leaves the plate off.
+static func album_card(icon: String, title: String, school: String, rarity: String, where := "", number := "",
+		tier := "", points := 96.0) -> PanelContainer:
+	var card := law_card(icon, title, school, rarity, tier, points, number)
+	card.name = "AlbumCard"
+	var v := card.get_child(0) as VBoxContainer
+	# The foot replaces law_card's name plate and mark.
+	for i: int in [2, 1]:
+		var old := v.get_child(i)
+		v.remove_child(old)
+		old.queue_free()
+	var foot := PanelContainer.new()
+	foot.name = "Foot"
+	foot.add_theme_stylebox_override("panel", UI.clear_box(3, 4))
+	UI.dress(foot, "parchment", 10)
+	foot.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var words := VBoxContainer.new()
+	words.add_theme_constant_override("separation", UI.px(2))
+	words.alignment = BoxContainer.ALIGNMENT_CENTER
+	words.add_child(_name(title, _fit(title, points - 18.0)))
+	var rank := UI.label(Strings.t("LAW_RANK_" + rarity.to_upper()), 13)
+	rank.theme_type_variation = "Kicker"
+	rank.uppercase = true
+	rank.set_meta("bold", true)
+	words.add_child(rank)
+	if where != "":
+		var at := KitStatus.plate(where)
+		UI.dress(at, "plate_leather")
+		at.size_flags_horizontal = Control.SIZE_FILL
+		# A long place wraps inside the card rather than widening it.
+		at.add_theme_stylebox_override("panel", UI.clear_box(3, 1))
+		var l := at.get_child(0) as Label
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		words.add_child(at)
+	foot.add_child(words)
+	v.add_child(foot)
+	return card
+
+
+## Something for sale (18-shop.png's daily picks): a gold-edged card, its
+## picture filling the top with a dark ribbon tag in its corner ("EMOTE"),
+## its name, and its price on a pill that buys it: violet for a price in
+## gems (`look` "round_violet"), gold for money ("gold").
+static func product(picture: Texture2D, tag: String, title: String, price: String, pressed: Callable,
+		look := "round_violet", points := 128.0) -> PanelContainer:
+	var card := PanelContainer.new()
+	card.name = "Product"
+	card.add_theme_stylebox_override("panel", UI.clear_box(7, 6))
+	UI.dress(card, "card_gold")
+	card.custom_minimum_size.x = UI.px(points)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", UI.px(6))
+	var stage := PanelContainer.new()
+	stage.name = "Picture"
+	stage.add_theme_stylebox_override("panel", UI.clear_box(0, 0))
+	UI.dress(stage, "well", 12)
+	stage.custom_minimum_size.y = UI.px(points * 0.9)
+	stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var art := TextureRect.new()
+	art.texture = picture
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stage.add_child(art)
+	if tag != "":
+		var corner := Control.new()
+		corner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var ribbon := KitStatus.plate(tag)
+		UI.dress(ribbon, "tag_dark")
+		var words := ribbon.get_child(0) as Label
+		words.theme_type_variation = "Kicker"
+		words.uppercase = true
+		ribbon.position = Vector2(UI.px(4), UI.px(4))
+		corner.add_child(ribbon)
+		stage.add_child(corner)
+	v.add_child(stage)
+	var name_label := UI.label(title, 15, true)
+	name_label.theme_type_variation = "BodyBold"
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	name_label.set_meta("bold", true)
+	v.add_child(name_label)
+	var buy := UI.action(price, pressed, look, "%s, %s" % [title, price])
+	buy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	v.add_child(buy)
+	card.add_child(v)
+	return card
+
+
 ## The largest size from 15 points down to §21.8's 13 at which the name's
 ## longest word fits `room` points, so it wraps between words, not in one.
 static func _fit(title: String, room: float) -> float:

@@ -23,6 +23,14 @@ var alarm_label: Label
 var room_label: Label
 var left_label: Label
 var loot_panel: PanelContainer
+## "Load to N%" under the bar (§12.5's load target).
+var load_label: Label
+## §12.5's load target the screen gives, and the target card's rough loot
+## estimate (12.4), -1 when the heist has none: "Left" says it until the
+## Vault opens, and "?" without one. No load target (a replay) shows no
+## "Load to" and no tick.
+var load_target := -1
+var estimate := -1
 ## Across a universe, the realm the crew is in and how many it has yet to
 ## cross to the Heart (§5.4).
 var realm_label: Label
@@ -126,25 +134,21 @@ func _init() -> void:
 	var right_box := VBoxContainer.new()
 	right_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	right_box.add_theme_constant_override("separation", UI.px(3))
-	right_box.custom_minimum_size.x = UI.px(82)
+	right_box.custom_minimum_size.x = UI.px(84)
 	# A row each: its name, and the number at the row's end.
-	room_label = _stat(right_box, Strings.t("HUD_ROOM"), large)
-	left_label = _stat(right_box, Strings.t("HUD_LEFT"), large)
-	# The bags' fill and the Vault's cracking as bars, each beside the
-	# designs' icon for it.
-	var bars := HBoxContainer.new()
-	bars.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bars.add_theme_constant_override("separation", UI.px(3))
-	var icons := VBoxContainer.new()
-	icons.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	icons.add_theme_constant_override("separation", 0)
-	icons.add_child(Icons.view("heiststatus/lootbag", 13.0))
-	icons.add_child(Icons.view("heiststatus/vaultprogress", 13.0))
-	bars.add_child(icons)
-	loot_bars = FxDraw.new(_draw_bars, Vector2(UI.px(64), UI.px(26)))
+	room_label = _stat(right_box, Strings.t("HUD_ROOM"), true)
+	left_label = _stat(right_box, Strings.t("HUD_LEFT"), true)
+	# The design's slim bar: the bags' fill with a white tick at the load
+	# target, "Load to N%" under it; while the Vault is shut its cracking
+	# as a thinner bar beside a lock, so its progress is always on screen.
+	loot_bars = FxDraw.new(_draw_bars, Vector2(UI.px(56), UI.px(16)))
 	loot_bars.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bars.add_child(loot_bars)
-	right_box.add_child(bars)
+	right_box.add_child(loot_bars)
+	load_label = FxSkin.label("", 13.0)
+	load_label.add_theme_color_override("font_color", FxSkin.PARCH_BOTTOM)
+	load_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	load_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	right_box.add_child(load_label)
 	right.add_child(right_box)
 	right_side.add_child(right)
 	realm_label = FxSkin.label("", 14.0)
@@ -165,13 +169,13 @@ func _stat(box: VBoxContainer, title: String, whole := false) -> Label:
 	if whole:
 		row = HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation" if whole else "h_separation", UI.px(6))
+	row.add_theme_constant_override("separation" if whole else "h_separation", UI.px(3))
 	var name_label := FxSkin.label(title, 14.0)
 	name_label.add_theme_color_override("font_color", FxSkin.PARCH_BOTTOM)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(name_label)
-	var number := FxSkin.label("", 18.0)
+	var number := FxSkin.label("", 16.0)
 	number.add_theme_font_override("font", FxSkin.figures())
 	number.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	number.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -253,10 +257,13 @@ func show_state(r: RulebornReplay) -> void:
 		carry += int(m["carry"])
 	var v := r.vault()
 	_open = bool(v.get("open", false))
-	room_label.text = str(carry - carried)
-	left_label.text = str(int(v.get("exposed", 0))) if _open else "?"
-	loot_panel.accessibility_name = "%s %s, %s %s" % [Strings.t("HUD_ROOM"), room_label.text, Strings.t("HUD_LEFT"),
-		left_label.text]
+	room_label.text = ShopPresenter.grouped(carry - carried)
+	left_label.text = ShopPresenter.grouped(int(v.get("exposed", 0))) if _open \
+		else ("~" + ShopPresenter.grouped(estimate) if estimate >= 0 else "?")
+	load_label.text = Strings.t("HUD_LOAD_TO", load_target) if load_target >= 0 else ""
+	load_label.visible = load_target >= 0
+	loot_panel.accessibility_name = "%s %s, %s %s, %s" % [Strings.t("HUD_ROOM"), room_label.text,
+		Strings.t("HUD_LEFT"), left_label.text, load_label.text]
 	_bags = float(carried) / maxf(1.0, float(carry))
 	var health := int(v.get("health", 0))
 	if _vault_full < 0 or health > _vault_full:
@@ -388,11 +395,14 @@ func _draw_meter(ci: Control) -> void:
 ## The bags' fill and the Vault's cracking: the bars say which binds first
 ## without a word (§12.19).
 func _draw_bars(ci: Control) -> void:
-	var h := ci.size.y * 0.36
-	var gap := (ci.size.y * 0.5 - h) * 0.5
-	FxIcons.bar(ci, Rect2(Vector2(0, gap), Vector2(ci.size.x, h)), _bags, FxSkin.GOLD)
-	FxIcons.bar(ci, Rect2(Vector2(0, ci.size.y * 0.5 + gap), Vector2(ci.size.x, h)), _cracked,
-		FxSkin.SUCCESS if _open else Color("#9B8CF0"))
+	var h := UI.px(7)
+	var bags := Rect2(Vector2(0, UI.px(2)), Vector2(ci.size.x, h))
+	FxIcons.bar(ci, bags, _bags, FxSkin.GOLD, load_target / 100.0 if load_target >= 0 else -1.0)
+	if not _open:
+		var lock := Vector2(UI.px(5), bags.end.y + UI.px(5))
+		FxPen.circle(ci, lock, UI.px(3.5), Color("#9B8CF0"))
+		FxIcons.bar(ci, Rect2(Vector2(UI.px(11), bags.end.y + UI.px(3)), Vector2(ci.size.x - UI.px(11), UI.px(4))),
+			_cracked, Color("#9B8CF0"))
 
 
 ## The realm the crew is in across a universe, in words; "" for a heist of

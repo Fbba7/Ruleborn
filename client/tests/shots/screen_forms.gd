@@ -15,7 +15,7 @@ func _go() -> void:
 	var screen: FormsScreen = load("res://scenes/forms.tscn").instantiate()
 	root.add_child(screen)
 	await process_frame
-	App.services.store.dispatch(&"forms_loaded", {"view": FormsTests.sample()})
+	App.services.store.dispatch(&"forms_loaded", {"view": album()})
 	for i in 60:
 		await process_frame
 		if Portrait.settled() and i > 6:
@@ -33,3 +33,18 @@ func _go() -> void:
 	root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()
+
+
+## The album as the server sends it: every kind's three forms (§11.10's 54),
+## FormsTests' sample first, a few more hatched, the rest still missing.
+static func album() -> Dictionary:
+	var v := FormsTests.sample()
+	var forms: Array = v["forms"]
+	var have := {"skyskipper": [1, 1, 0], "rambler": [1, 0, 0], "glass_golem": [0, 1, 0], "bloomling": [2, 1, 1]}
+	for kind: String in StageHeroFigure.KINDS:
+		if kind in ["featherkin", "mossbear"] or str(StageHeroFigure.KINDS[kind][1]) == "":
+			continue
+		var owned: Array = have.get(kind, [0, 0, 0])
+		for i in 3:
+			forms.append({"kind": kind, "note": ["hush", "spark", "echo"][i], "owned": owned[i]})
+	return v

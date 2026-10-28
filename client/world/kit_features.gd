@@ -317,6 +317,10 @@ func _boulder(t: Vector2i, c: Vector3, j: float, rock: Color) -> void:
 ## Crystalline; ember grass in Emberreach; berried in Verdant.
 func _bush(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
 	var prop := kit.prop
+	if kit.realm == "heart" and RealmKit.jitter(t, 24) > 0.3:
+		# Most of the Heart's bushes are in blossom, as its trees.
+		plant = Color("#F7A8D2")
+		_petals(t, c, 4, 0.45)
 	prop.moving(Geo.Anim.SWAY, c)
 	match kit.realm:
 		"skyfield":
@@ -533,6 +537,10 @@ func _tree(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
 	var hero := kit.hero
 	var bark := KitStyle.WOOD.lightened(0.05)
 	var kind: String = style["tree"]
+	if kit.realm == "heart":
+		# The Heart's trees are in blossom, pink puffs over the meadow, as the
+		# design's heist draws them (02-heist).
+		plant = Color("#F49CCB").lerp(plant, 0.08 * RealmKit.jitter(t, 23))
 	var tall := (0.9 + 0.25 * RealmKit.jitter(t, 21)) * (1.25 if kit.realm == "verdant" else 1.0)
 	hero.moving(Geo.Anim.SWAY, c)
 	match kind:
@@ -591,12 +599,25 @@ func _tree(t: Vector2i, c: Vector3, j: float, plant: Color) -> void:
 				hero.ball(Geo.place(c + Vector3(-0.18, 1.12 * tall, -0.09) * Vector3(crown, 1, crown), j),
 					0.27 * crown, plant.lightened(0.02), 4, 8)
 			if kit.realm == "verdant" or kit.realm == "heart":
-				var fruit: Color = Color("#E2536B") if kit.realm == "verdant" else Color("#F7A6DA")
+				var fruit: Color = Color("#E2536B") if kit.realm == "verdant" else Color("#FFE0F0")
 				for k in 4:
 					var a := TAU * k / 4.0 + j * 3.0
 					hero.ball(Geo.place(c + Vector3(cos(a) * 0.42, (0.8 + 0.12 * (k % 2)) * tall, sin(a) * 0.42)), 0.045,
 						fruit, 2, 5)
 	hero.moving(Geo.Anim.NONE, Vector3.ZERO)
+	if kit.realm == "heart":
+		_petals(t, c, 8, 0.65)
+
+
+## Fallen petals round a tree or bush in blossom: small pink ovals on the
+## grass, as the design's Heart is strewn with them (02-heist).
+func _petals(t: Vector2i, c: Vector3, n: int, reach: float) -> void:
+	for k in n:
+		var a := TAU * RealmKit.jitter(t, 40 + k)
+		var r := reach * (0.35 + 0.65 * RealmKit.jitter(t, 50 + k))
+		var at := c + Vector3(cos(a) * r, 0.012, sin(a) * r)
+		kit.prop.ring(Geo.place(at, a * 1.7, Vector3(1, 1, 0.55)), 0.0, 0.055, Color("#F7B4D6").darkened(
+			0.08 * (k % 3)), 6)
 
 
 ## A statue by realm on its plinth: a figure holding up an orb; in

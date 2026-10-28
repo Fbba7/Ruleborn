@@ -172,20 +172,8 @@ static func tag(icon: String, text: String, look := "glass") -> PanelContainer:
 ## A small round badge with a number, for a level or a count: gold unless
 ## `look` says otherwise.
 static func badge(text: String, look := "gold_round", points := 14.0) -> PanelContainer:
-	var p := PanelContainer.new()
-	p.add_theme_stylebox_override("panel", UI.clear_box(5, 0))
-	UI.dress(p, look, 99.0)
-	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var l := UI.label(text, points)
-	# The display face is a heavy one: read as bold text (§21.8).
-	l.add_theme_font_override("font", Tokens.font("display"))
-	l.set_meta("bold", true)
-	l.name = "Words"
-	p.add_child(l)
-	p.custom_minimum_size = Vector2.ONE * UI.px(points + 10.0)
-	p.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	p.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	return p
+	# T9's kit draws it (`KitStatus.badge`), as every screen's badges.
+	return KitStatus.badge(text, look, points)
 
 
 ## The realm's medallion: its realm's mark on a gold round, its level on a
