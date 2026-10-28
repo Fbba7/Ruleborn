@@ -6,10 +6,10 @@ T16 read `report.md` as a sceptical reviewer who must run its plan tomorrow, che
 
 ## Summary
 
-- 46 findings: 13 inconsistencies in numbers or references, 21 missing parts of the plan, 12 places where the plan broke or bent a rule of the design document or the repository.
-- All are resolved in `report.md`. Ten decisions need the owner (D1–D10). Outside T16's files, five changes are needed now and three more if the owner chooses them (X1–X8).
+- 62 findings in two rounds. The first round (R1–R46): 13 inconsistencies in numbers or references, 21 missing parts of the plan, 12 places where the plan broke or bent a rule of the design document or the repository. The second round, on the owner's request to specify the kit and test building against buying (R47–R62, section 5).
+- All are resolved in `report.md`, `kit-spec.md` and `build-or-buy.md`. Twelve decisions need the owner (D1–D12). Outside T16's files: X1–X3 are done by the integrator; X4, X8 and X12 are needed now; X5–X7 and X11 only if the owner chooses them.
 - **The two that change the picture most:**
-  - **The plan costs 144 agent-hours, not "about 80".** T14's steps summed to 81 and left the screens uncosted (R14).
+  - **The plan costs 158 agent-hours, not "about 80".** T14's steps summed to 81 and left the screens uncosted (R14, 144 hours); the full kit adds 14 (R60).
   - **The ceilings were shares of Clash level, labelled "of the bar".** The plan reaches 3.75–4.25 out of 5: 75–85% of Clash level, 54–61% of the owner's bar, not 75–85% of the bar (R5).
 
 ## Measured by T16 on this container
@@ -35,7 +35,7 @@ T16 read `report.md` as a sceptical reviewer who must run its plan tomorrow, che
 | R7 | Section 5.2 | "A perfect port would gain about 0.2." 2.36 − 2.21 = 0.15 | About 0.15 |
 | R8 | Section 3 | The steps sum to 81 hours; the text says "about 80" without showing the sum | Section 3.7 shows the sum and the new total |
 | R9 | Section 6, row C | "About 10 to set up, then about 1 hour a review round"; section 3 gives AD "about 8 agent-hours over the wave". The two cannot both hold | AD: 6 to set up and 14 of reviews, 20 in all, counted review by review (section 3.2) |
-| R10 | Section 6, row D | "About 60 of A's 80 hours are its work" | The AI artists' work is 64 of 144 (AIA 36, AIA-2 28) |
+| R10 | Section 6, row D | "About 60 of A's 80 hours are its work" | The AI artists' work is 64 of 144 (AIA 36, AIA-2 28); after the kit spec, 70 of 158 (AIA 42, AIA-2 28; R60) |
 | R11 | Sections 3 and 9.1 | Section 3's style board lists four materials (enamel, gold, wood, glass); section 9.1 lists five (with parchment) | Five, in both |
 | R12 | Section 7 | 137 draw calls for the deployed HUD; T16 measured 136 on the same frame. T9's notes give 141 for the heist on another shot script (`ui_screen.gd`) | Noted in section 7. Section 10.1 sets one method for every screen. |
 | R13 | Section 9.4, item 2 | "Blocks anything below 3.5 on qualities 1–3", which cannot apply to icons (no type) or motion (none of 1–3 apply) | Thresholds per asset class (section 3.5) |
@@ -44,9 +44,9 @@ T16 read `report.md` as a sceptical reviewer who must run its plan tomorrow, che
 
 | # | Where | Found | Resolved |
 |---|---|---|---|
-| R14 | Section 3, step 7 | The screen tracks are not costed. The "80 agent-hours" covers art and pipeline only | Costed: S1 14, S2 8, S3 14 (36). Total 144, plus up to 20 of re-work. **OWNER: D1** |
+| R14 | Section 3, step 7 | The screen tracks are not costed. The "80 agent-hours" covers art and pipeline only | Costed: S1 14, S2 8, S3 14 (36). Total 144 (158 after the kit spec, R60), plus up to 20 of re-work. **OWNER: D1** |
 | R15 | Section 3 | K1 is "an engineering track" with no agent; the screen tracks have no agents. Every interface track has stopped | Seven named agents with branches (section 3.1) |
-| R16 | Section 3 | AIA's 61 hours run in series and would take about five days alone | Icons split to a second artist, AIA-2, on the same studio; consistency is enforced by the one studio, palette and outline rule. AIA's critical path is 36 hours. |
+| R16 | Section 3 | AIA's 61 hours run in series and would take about five days alone | Icons split to a second artist, AIA-2, on the same studio; consistency is enforced by the one studio, palette and outline rule. AIA's critical path is 36 hours (42 after the kit spec, R60). |
 | R17 | Section 3 | No inputs or outputs: no files or paths for any step | Each step lists what it reads and writes (section 3.2) |
 | R18 | Section 3 | No file ownership for the new tracks; the bake output and the kit would collide in `client/ui/` | Ownership table (section 3.1): AIA owns `art/ui/` and `client/ui/art/` (written only by the bake); K1 owns the bake and the rest of `client/ui/`. **T15/INT: X1** |
 | R19 | Section 3 | No dependencies or order beyond "in this order" and "in parallel" | Each step says what it waits for; section 3.3 is the day-by-day schedule |
@@ -109,7 +109,7 @@ T16 edits only `docs/art/ui-quality/**` and `docs/progress/T16.md`. These are fo
 
 **X6. If the owner chooses D3 (a)**: in §21.8's Motion row, "150 to 250 milliseconds, easing out, for every interface movement: the designs' movements are kept and timed to it, without overshoot" becomes "150 to 250 milliseconds, easing out, for every interface movement: the designs' movements are kept and timed to it, without overshoot, except a button's release and a reward's reveal, which may overshoot and settle within 350 milliseconds".
 
-**X7. If the owner chooses D4 (a)**: in §21.8's Type row, after "Marcellus for titles and law names.", add "Over baked art, labels may be Lilita One with an ink outline, and a number that changes may be drawn in baked numerals of fixed width."
+**X7. If the owner chooses D4 (a)**: in §21.8's Type row, after "Marcellus for titles and law names.", add "Over baked art, labels may be Lilita One with an ink outline, and a number that changes may be drawn in baked numerals of fixed width." If the owner picks Titan One at the style board instead, the sentence names it, and the licence paragraph of §21.11 adds it beside the three typefaces.
 
 **X8. For the integrator: the heist's primitives.** The proof's frame prints 87,102 primitives with the new HUD and 96,333 with the deployed one. §21.3 allows about 60,000 triangles in a heist. Most of this is the world, not the interface; whoever owns the world should measure the world alone.
 
@@ -117,13 +117,45 @@ T16 edits only `docs/art/ui-quality/**` and `docs/progress/T16.md`. These are fo
 
 **X10. For whoever sets up the next agents' containers:** check_all needed three things this container lacked: Rust's `wasm32-unknown-unknown` target, `gdlint` (gdtoolkit 4), and Python's `playwright` at 1.63.0 to match the installed Chromium. T16 installed them locally; nothing in the repository changed. The UI wave's agents will need all three.
 
+**X11. If the owner chooses D11 (a)** (the owner, through whoever edits the design document): in §21.11's table, after the "Sound, if any is not generated" row, add a row: "Particle and texture sprites | A public-domain dedication (CC0) only, as raw material: recoloured and baked through the game's own pipeline, and listed in the art ledger. Never a whole interface kit, an icon or a character."
+
+**X12. `docs/art/3d-program.md`, the AD row** (T15 or the integrator). The kit spec gives AD one more file. The row becomes:
+
+| Track | Branch | Owns (new files allowed under these) | Delivers |
+|---|---|---|---|
+| AD Art director | `claude/ui-ad` | `docs/art/ui-quality/gate/**`, `docs/art/ui-quality/kit-spec.md`, `tools/ui_gate/**` | The rubric, the reference sheet and a published score for every piece of interface art before it merges (`docs/art/ui-quality/report.md` section 3.5); keeps the kit spec and answers component requests (`kit-spec.md` section 7). Never authors. |
+
+The other six rows stand as the integrator added them. K1's row already covers the catalogue shot (`client/tests/shots/ui_*.gd`) and `tools/ui_bake/check_screens.py`; K1's catalogue stills go to `docs/art/shots/ui-bake/`, as every track's stills go to `docs/art/shots/<track>/`.
+
+## 5. Second round: the kit, and build or buy
+
+The owner asked for the kit to be specified in full and for the plan's assumption, that the AI artists make every piece of art from scratch, to be tested against existing kits and assets. The results are `kit-spec.md` and `build-or-buy.md`, folded into the report.
+
+| # | Where | Found | Resolved |
+|---|---|---|---|
+| R47 | Report section 3 | The plan assumed every piece of art is authored from scratch, without checking what exists | Tested in `build-or-buy.md`: the assumption holds. Nothing adoptable supplies Ruleborn's identity, characters or icons; the closest kits look like other games; the best adoption (CC0 particles) saves 3 hours. **OWNER: D11** |
+| R48 | §21.11 | The plan never said that §21.11 forbids outside art, paid or free ("Nothing in this game is paid for"; everything but fonts, sound and code is "made for this game") | Section 10.6 and `build-or-buy.md` section 1; buying is **OWNER: D12**, not recommended |
+| R49 | Report step 5 | The kit was about ten named parts ("frames, buttons, bars, rings, ribbons, badges, numerals"). The five screens and the menus need 47 components | `kit-spec.md` section 4 |
+| R50 | Today's kit | 108 materials in `tokens.json`, against the rubric's quality 11 (at most 4 button styles, 3 frames, 1 ribbon, 1 badge, 1 currency pill) | 35 skins, with every material mapped (`kit-spec.md` section 8.2) |
+| R51 | Report section 3 | Only "pressed faces" were planned; no other state | Nine states defined once, and a matrix per component (`kit-spec.md` sections 3 and 4) |
+| R52 | The owner's list; §21.8 | Toasts were asked for, but §21.8 says an informative notice is "never a toast that clears itself" | No toast component; the banner (K29) is the only notice |
+| R53 | The owner's list; §20.8 | Tooltips need hover, which a phone lacks, or a long press, which §20.8 rules out without a two-tap form | An info popover opened by a tap on a 48-point (i) control (K30) |
+| R54 | Report section 3 | No plan for a slider (needed for §20.8's separate volumes), a toggle, a text field, a spinner, an empty state or an info popover | K05, K06, K11, K34, K35, K30, with skins |
+| R55 | T10's layer | `ScreenParts` duplicates kit parts (pill, chip, badge, segmented control, section, stat, row, resource, status plate, empty state): two component systems | Mapped to the kit's components and replaced after this wave; `ScreenBox` dropped once S3 routes `ScreenKit` through `KitSkin` (`kit-spec.md` section 8.1) |
+| R56 | Report section 3 | No governance: any screen could add chrome of its own, which is how the client reached 383 `draw_*` and `FxPen` calls | Requests through AD; reuse first; a check in check_all that refuses new local chrome (`kit-spec.md` section 7) |
+| R57 | Report section 3 | No single view of the kit for AD to score | The catalogue sheet, with a coverage test (`kit-spec.md` section 6.4) |
+| R58 | Section 7; `bake_hud.js` | The proof's numerals are four finishes (gold, white, timer, timer red; the bake's comment says three, counting the timer once) and lack the full stop, minus and question mark that section 10.4 needs | The full set is in `kit-spec.md` section 2.2's T3; K1 adds the missing marks |
+| R59 | Ownership | Nobody owned the kit spec after this wave | AD keeps it. **T15/INT: X12** (the AD row) |
+| R60 | Report sections 3.3 and 3.7 | The kit spec adds work: AIA's kit art 10 → 16 hours, K1 24 → 31, AD 20 → 21 | 158 hours (155 with D11); still six days. AIA's kit art spans days 3–4 and motion days 4–5; K1's families switch on across days 3–4. **OWNER: D1** |
+| R61 | `build-or-buy.md` 2.6 | Spine and Rive were the obvious tools for UI animation | Spine's Godot runtime is official but not permissively licensed ($69–439 a seat, §21.11's code rule); Rive has no official Godot runtime (a community alpha with macOS builds only). Neither adopted |
+| R62 | `tokens.json`; §21.8 | A bar filling to a new value takes 450 ms, past §21.8's 150–250 for "every interface movement"; the token calls it "a value changing, not a transition" | Kept as T9 set it; the owner confirms the reading inside D3 |
+
 ## Stopped here
 
-T16 stopped at about 18:30 UTC on 28 October, with the revised report, this log and `docs/progress/T16.md` pushed green on `claude/ui-plan`.
+T16 first stopped at about 18:30 UTC on 28 October. On the owner's new task, T16 resumed at 21:30 UTC, specified the kit (`kit-spec.md`), tested building against buying (`build-or-buy.md`), folded both into the report and this log, and stopped again with everything pushed green on `claude/ui-plan`.
 
-**Fixed:** 46 findings (R1–R46). The plan now has a one-page summary, seven named agents with their files, ten steps with inputs, outputs, waits, pass marks and hours, a six-day schedule, four owner gates, what happens when the gate fails, a wave target, budgets, accessibility, motion, languages, variants, licences, versioning, checks, migration, sound, risks and ten owner decisions. Every number was re-derived; T14's bakes and the proof's draw calls were re-run.
+**Done:** 62 findings (R1–R62), all resolved. The plan has a one-page summary, seven agents with their files, ten steps with inputs, outputs, waits, pass marks and hours, a six-day schedule, four owner gates, a full kit spec, a build-or-buy answer, budgets, rules, risks and twelve owner decisions.
 
-**Still needs the owner:** D1 (the plan at 144 agent-hours, not about 80) before anything starts; D2–D5 at the times in section 12; D6–D10 have defaults.
+**Still needs the owner:** D1 (158 agent-hours) before anything starts; D2–D5 and D11 at the times in report section 12; D6–D10 and D12 have defaults.
 
-**Still needs others:** X1–X4 and X8 now (T15 and the integrator); X5–X7 only if the owner chooses them; X10 for container set-up.
-
+**Still needs others:** X4, X8 and X12 (T15 or the integrator); X5–X7 and X11 only if the owner chooses them; X10 for container set-up.

@@ -2,21 +2,22 @@
 
 The owner says the interface is "not even 30% there". The agents' progress files say 80–90%, and the integrator says "about halfway". This report finds out which reading is right and why. It also says what to do next and shows a proof.
 
-T14 wrote the research (sections 1, 2, 4, 5, 7 and 9). T16 reviewed the plan as the agents who must run it tomorrow would: T16 rewrote the plan (the plan at a glance, sections 3, 6, 10, 11 and 12) and corrected numbers and rules in sections 1, 4, 5, 7 and 9. Every change, and why, is in `plan-review.md` in this folder.
+T14 wrote the research (sections 1, 2, 4, 5, 7 and 9). T16 reviewed the plan as the agents who must run it tomorrow would: T16 rewrote the plan (the plan at a glance, sections 3, 6, 10, 11 and 12) and corrected numbers and rules in sections 1, 4, 5, 7 and 9. At the owner's request T16 then specified the kit in full (`kit-spec.md`) and tested buying against building (`build-or-buy.md`). Every change, and why, is in `plan-review.md` in this folder.
 
 Everything here was measured or rendered from the deployed head (`dd326ca8`). Images are in this folder. Tools are in `tools/ui_research/`.
 
 ## Plan at a glance
 
-**What the owner decides first (section 12).** Five decisions are needed before day 1 or at the gate named. The plan runs on safe defaults for the rest.
+**What the owner decides first (section 12).** Six decisions are needed before day 1 or at the time named. The plan runs on safe defaults for the rest.
 
 | # | Decision | When | Default if not decided |
 |---|---|---|---|
-| D1 | Approve the plan: 7 agents, 144 agent-hours, plus up to 20 for re-work | Before day 1 | Nothing starts |
+| D1 | Approve the plan: 7 agents, 158 agent-hours, plus up to 20 for re-work | Before day 1 | Nothing starts |
 | D2 | Make the approved key frames the visual reference in place of Screens v3 (a change to §23.5) | At gate G2, day 2 | Key frames are targets only; Screens v3 stays the reference for layout and icons |
 | D3 | Allow overshoot on presses and reward reveals (a change to §21.8's motion rule) | Before day 4 | §21.8 as written: 150–250 ms, easing out, no overshoot |
 | D4 | Allow a display face and baked numerals for labels and changing numbers on art (a change to §21.8's type rule) | At G1, end of day 1 | §21.8 as written: Manrope for labels and changing numbers |
 | D5 | Allow object icons rendered with physically based light (gold, gems, glass), as interface art | Before day 2 | Character and building icons start first, in the toon look |
+| D11 | Allow CC0 particle sprites as raw material for the reward sequence (a change to §21.11); saves 3 hours | Before day 4 | §21.11 as written: AIA makes them |
 
 **The wave's target (section 3.6).** Each of the five key screens (home, heist, result, character, settings) scores at least **3.5 out of 5** on the 14-quality rubric, up from 2.2 today. That is 70% of Clash level and about **50% of the owner's bar**. The plan's honest ceiling is 3.75–4.25 out of 5: 75–85% of Clash level, 54–61% of the bar (section 6). The rest of the bar needs a later wave.
 
@@ -24,14 +25,14 @@ Everything here was measured or rendered from the deployed head (`dd326ca8`). Im
 
 | Agent | Role | Hours |
 |---|---|---|
-| AD | Art director. Scores everything against the rubric. Never authors. | 20 |
-| AIA | AI UI artist. Style board, key frames, kit art, motion art. | 36 |
+| AD | Art director. Scores everything against the rubric; keeps the kit spec. Never authors. | 21 |
+| AIA | AI UI artist. Style board, key frames, the kit's 35 skins, motion art. | 42 |
 | AIA-2 | A second AI UI artist on the same studio. The 60 most-seen icons. | 28 |
-| K1 | Bake pipeline and the texture-backed kit (engineering). | 24 |
+| K1 | Bake pipeline and the texture-backed kit, with its catalogue sheet (engineering). | 31 |
 | S1 | Heist and result screens onto the new kit, with the reward sequence. | 14 |
 | S2 | Home screen onto the new kit. | 8 |
 | S3 | Character and settings screens; routes the menu screens' own kit through the new one. | 14 |
-| | **Total** (T14's plan said about 80; section 3.7 shows the difference) | **144** |
+| | **Total** (T14's plan said about 80; section 3.7 shows the difference) | **158** |
 
 **The phases** (about 12 agent-hours a day for each agent; section 3.3 has the day-by-day schedule).
 
@@ -40,12 +41,16 @@ Everything here was measured or rendered from the deployed head (`dd326ca8`). Im
 | 0 | | **G0:** approve the plan and decide D1 |
 | 1 | AD sets up the gate. AIA makes the style board. K1 builds the pipeline. | **G1:** approve the style board (about 15 minutes) |
 | 2 | AIA makes five key frames. AIA-2 starts icons. K1 finishes the pipeline. | **G2:** approve the key frames; decide D2 (about 30 minutes) |
-| 3 | AIA makes kit art. K1 switches the kit's materials to textures, one family at a time. | |
-| 4 | AIA makes motion art. AIA-2 finishes icons. S2 and S3 move their screens. S1 starts the heist. | |
-| 5 | S1 moves the result screen with the reward sequence. AD scores every screen. | |
+| 3 | AIA makes the kit's skins. K1 renders the catalogue and starts switching the kit's materials to textures, one family at a time. | |
+| 4 | AIA finishes the skins and starts motion art. K1 switches the remaining families. AIA-2 finishes icons. S2 and S3 move their screens. S1 starts the heist. | |
+| 5 | AIA finishes motion art. S1 moves the result screen with the reward sequence. AD scores every screen. | |
 | 6 | Re-work reserve. AD's final scores. | **G3:** accept the wave (about 30 minutes) |
 
 **The gate (section 3.5).** AD scores every piece before it merges: 0–5 per quality, at phone size, at 48 points and in grayscale, with a frame strip for anything that moves. A piece merges only if it meets its class's thresholds and no score drops. A piece that fails twice goes to the owner with options. Every score is published in `docs/art/ui-quality/gate/scores.md` beside its image.
+
+**The kit ([kit-spec.md](kit-spec.md)).** 47 components in 35 baked skins (today: 108 materials), each with its states (normal, pressed, disabled, selected, locked, attention, loading, high contrast, reduced motion), one set of tokens, names and files, a catalogue sheet AD scores, rules for adding a component, and what happens to every part of today's kit.
+
+**Build or buy ([build-or-buy.md](build-or-buy.md)).** Build. §21.11 allows outside fonts (OFL) and code (permissive) but no outside art, paid or free. Nothing on the market supplies Ruleborn's identity, characters or icons, and the kits that come closest look like other games. The one adoption worth asking for is CC0 particle sprites, which saves 3 hours (decision D11). No purchase is recommended (D12).
 
 **Rules the plan keeps (section 10).** Under §21.3's 150 draw calls on every screen, at 100% and 200% text and in high contrast. 48-point targets and 13-point text at 200%. Contrast in normal and high-contrast mode. A reduced form for every motion. Words stay live text from the strings tables, in English and Brazilian Portuguese. Pinned tools, and bakes that rebuild byte for byte. A switch per material family, so no screen is ever half-moved.
 
@@ -129,7 +134,7 @@ Every track that built the interface has stopped, so the wave needs new agents. 
 
 | Agent | Branch | Owns | Takes over from |
 |---|---|---|---|
-| AD, art director | `claude/ui-ad` | `docs/art/ui-quality/gate/**`, `tools/ui_gate/**` | (new) |
+| AD, art director | `claude/ui-ad` | `docs/art/ui-quality/gate/**`, `docs/art/ui-quality/kit-spec.md`, `tools/ui_gate/**` | (new) |
 | AIA, AI UI artist | `claude/ui-artist` | `art/ui/**` except `art/ui/icons/`; `client/ui/art/**` (written only by the bake) | (new) |
 | AIA-2, AI UI artist for icons | `claude/ui-artist-icons` | `art/ui/icons/**`, `client/tests/shots/icon_*.gd` | (new) |
 | K1, bake pipeline and kit | `claude/ui-bake` | `tools/ui_bake/**`, `tools/ui_research/**`, `client/prototypes/ui_quality/**`, `client/tests/shots/uiq_*.gd`, and T9's files: `client/scripts/ui.gd`, `client/ui/**` except `client/ui/art/`, `tools/ui/`, `client/tests/ui_kit_tests.gd`, `client/tests/a11y_tests.gd`, `client/tests/shots/ui_*.gd` | T9 (UI kit), T14 (the proof) |
@@ -141,7 +146,7 @@ Two notes on files:
 - **The bake writes into AIA's folder.** K1 owns the bake scripts; AIA owns the art sources in `art/ui/` and the baked results in `client/ui/art/`. Only the bake writes there, so the two never edit the same file. `art/` is outside the Godot project, so sources are never imported or shipped.
 - **Character icons need T7's portrait studio** (`client/world/portrait*.gd`), read only, through AIA-2's own shot scripts (section 10.6).
 
-`docs/art/3d-program.md`'s track table needs these rows; the exact text is in `plan-review.md` for T15 or the integrator.
+`docs/art/3d-program.md`'s track table has these rows (the integrator added them from `plan-review.md` X1). One row changes with the kit spec: AD also keeps `kit-spec.md`. The new row is in `plan-review.md` X12.
 
 ### 3.2 The steps
 
@@ -174,12 +179,14 @@ Each step lists its owner, what it reads and writes, what it waits for, how AD's
 - Gate: AD scores all 14 qualities on each key frame.
 - **Owner gate G2**, with decision D2.
 
-**Step 4. K1 builds the bake pipeline and the texture-backed kit.** Owner: K1. 24 hours. Days 1–3. Waits for nothing to start; switches material families on as AIA's kit art passes the gate (day 3).
-- Reads: `tools/ui_research/` (`bake_hud.js`, `bake_icons.js`, `pack_atlas.py`), `client/prototypes/ui_quality/`, `client/ui/kit_skin.gd`, T9's notes (`docs/art/tracks/ui-kit.md`).
+**Step 4. K1 builds the bake pipeline and the texture-backed kit.** Owner: K1. 31 hours. Days 1–4. Waits for nothing to start; switches material families on as AIA's kit art passes the gate (days 3–4).
+- Reads: `kit-spec.md`; `tools/ui_research/` (`bake_hud.js`, `bake_icons.js`, `pack_atlas.py`), `client/prototypes/ui_quality/`, `client/ui/kit_skin.gd`, T9's notes (`docs/art/tracks/ui-kit.md`).
 - Writes:
   - `tools/ui_bake/`: one bake for every family. `bake.js <family>` renders the sources in `art/ui/` and packs atlases with a manifest of regions and 9-slice margins. `--check` compares the sources' hash with the manifest's in seconds.
   - `client/ui/art/`: written only by the bake: `<family>.webp`, `<family>_hc.webp` and `<family>.json`.
-  - `KitSkin`: texture-backed materials behind a switch per material family, with the code-drawn box as the fallback (section 10.9).
+  - `KitSkin`: texture-backed materials behind a switch per material family, with the code-drawn box as the fallback (section 10.9); today's 108 materials mapped onto the kit's 35 skins (`kit-spec.md` section 8.2).
+  - The catalogue sheet, `client/tests/shots/ui_kit_catalogue.gd`: every component in every state, normal and high contrast, at 100% and 200% text, in both languages, with a test that it covers the inventory (`kit-spec.md` section 6.4).
+  - `tools/ui_bake/check_screens.py` in check_all: screens may not add chrome of their own (`kit-spec.md` section 7).
   - Labels in their own z layer above the art, so art and words batch apart (section 7's rule 2).
   - Frames sized from their words, so 200% text works (the proof did not do this).
   - Baked numerals with a fixed advance, and the separators of both launch languages (section 10.4).
@@ -188,10 +195,10 @@ Each step lists its owner, what it reads and writes, what it waits for, how AD's
   - The fonts' licence ledger rows for anything new (section 10.6).
 - Done when: section 10's checks pass; the heist proof runs on the kit at 147 draw calls or fewer; and the prototype in `client/prototypes/ui_quality/` is no longer read by anything, then deleted.
 
-**Step 5. AIA makes the kit art.** Owner: AIA. 10 hours. Day 3. Waits for G1 and for K1's pipeline (end of day 2).
-- Reads: the board and the key frames; T9's list of materials in `client/ui/tokens.json`.
-- Writes: `art/ui/kit/*.svg`: frames and panels as 9-slices, buttons with pressed faces, bars, rings, ribbons, badges, and numerals in four finishes. Each comes with its high-contrast twin.
-- Gate: AD scores the kit sheet page at phone size (`client/tests/shots/ui_kit_sheet.gd`) on qualities 1, 2, 8, 11 and 13. K1's tests must pass for contrast in both modes.
+**Step 5. AIA makes the kit art.** Owner: AIA. 16 hours. Days 3–4. Waits for G1 and for K1's pipeline (end of day 2).
+- Reads: the board and the key frames; `kit-spec.md` (the 47 components, their states and the 35 skins).
+- Writes: `art/ui/kit/<skin>/<shape>.svg`: the 35 skins with a face per state (normal, pressed, disabled, locked), the overlays (selected rim, lock, attention badge, spinner), and numerals in four finishes with the full set of marks. Each comes with its high-contrast twin.
+- Gate: AD scores the catalogue sheet (`kit-spec.md` section 6.4) at phone size on qualities 1, 2, 8, 11 and 13. K1's tests must pass for contrast in both modes and for the catalogue's coverage.
 
 **Step 6. AIA-2 makes the icons.** Owner: AIA-2. 28 hours. Days 2–4. Waits for G1; object icons also wait for D5.
 - Reads: the board, `art/ui/palette.json`, the studio in `tools/ui_research/icons.html`, the 43 models in `client/art/creatures/`, T7's portrait studio.
@@ -200,7 +207,7 @@ Each step lists its owner, what it reads and writes, what it waits for, how AD's
 - Batches: four batches of 15, each scored by AD before the next, in the order the screens need them: heist controls and currencies first. Until D5 is decided, character and building icons go first.
 - Gate: at 48 and 96 points and in grayscale, qualities 1, 3, 8, 10, 11 and 13; each icon reads as a dark shape at 32 points (`docs/art/3d-program.md`'s silhouette rule).
 
-**Step 7. AIA makes the juice and motion art.** Owner: AIA. 10 hours. Day 4. Waits for step 5 and decision D3.
+**Step 7. AIA makes the juice and motion art.** Owner: AIA. 10 hours (7 if the owner allows CC0 particle sprites, D11). Days 4–5. Waits for step 5 and decision D3.
 - Writes: `art/ui/motion/` (burst, sparkle, shine and coin sprites) baked to `client/ui/art/motion.webp`, and `art/ui/motion/curves.json` (every curve's times and easing). K1 reads the curves in the kit's `Motion` (today's `UiqJuice` is the pattern).
 - Covers: the result screen's reward sequence (anticipation, burst, reveal, coins flying to their counter, the counter rolling and pulsing), a press with squash and recovery, and an idle shine on primary buttons.
 - Each motion has its reduced form (section 10.3).
@@ -217,7 +224,7 @@ Each step lists its owner, what it reads and writes, what it waits for, how AD's
 - The menu screens draw through T10's own layer (`ScreenKit`, `ScreenBox` in `client/scripts/screen_*.gd`), not `KitSkin`, so they would not inherit the new kit. S3 routes `ScreenKit`'s materials through `KitSkin` (4 of its 14 hours), so every menu screen inherits it.
 - Same outputs and gate as step 8.
 
-**AD's reviews through the wave.** Owner: AD. 14 hours: the board (1), key frames (2), kit art (2), four icon batches (2), motion (1), five screens (5), the final scores (1).
+**AD's reviews through the wave.** Owner: AD. 15 hours: the board (1), key frames (2), kit art and its catalogue (3), four icon batches (2), motion (1), five screens (5), the final scores (1). AD also answers component requests (`kit-spec.md` section 7) inside these hours.
 
 ### 3.3 Schedule
 
@@ -227,19 +234,19 @@ Each agent works about 12 hours a day. Agents in the same row run in parallel.
 |---|---|---|---|---|---|---|---|---|
 | 0 | | | | | | | | G0: the plan, D1 |
 | 1 | Set-up (6); scores the board (1) | Style board (6) | | Pipeline (12) | | | | G1 at day's end; D4 |
-| 2 | Scores key frames (2) | Key frames (10) | Character route (3); batch 1 (6) | Pipeline (8) | | | | G2 at day's end; D2; D5 |
-| 3 | Kit art (2); icon batch 1 (0.5) | Kit art (10) | Batches 2 and 3 (12) | Families switched on (4) | | | | |
-| 4 | Icon batches 2–4 (1.5); motion (1) | Motion art (10) | Batch 4 (7) | | Heist (6) | Home (8) | Character, settings, menu kit (12) | D3 |
-| 5 | Five screens (5) | Re-work | Re-work | Re-work | Result (8) | Re-work | Finish (2) | |
+| 2 | Scores key frames (2) | Key frames (10) | Character route (3); batch 1 (6) | Pipeline (12) | | | | G2 at day's end; D2; D5 |
+| 3 | Kit batch 1 (1); icon batch 1 (0.5) | Kit art (12) | Batches 2 and 3 (12) | Catalogue; first families switched on (4) | | | | |
+| 4 | Kit batch 2 and catalogue (2); icon batches 2–4 (1.5) | Kit art (4); motion art (8) | Batch 4 (7) | Remaining families switched on (3) | Heist (6) | Home (8) | Character, settings, menu kit (12) | D3 |
+| 5 | Motion (1); five screens (5) | Motion art (2); re-work | Re-work | Re-work | Result (8) | Re-work | Finish (2) | |
 | 6 | Final scores (1) | Re-work reserve | | | | | | G3 |
 
-The critical path is AIA's 36 hours plus the waits at G1 and G2. A gate that waits overnight moves every later day by one. While AIA waits at a gate, it starts the next step at risk on its own branch and merges nothing until the gate passes.
+The critical path is AIA's 42 hours plus the waits at G1 and G2. A gate that waits overnight moves every later day by one. While AIA waits at a gate, it starts the next step at risk on its own branch and merges nothing until the gate passes.
 
 ### 3.4 The owner's decision points
 
 | Gate | When | What the owner sees | What the owner decides |
 |---|---|---|---|
-| G0 | Before day 1 | This plan at a glance, section 12 | D1; D7–D10 (or accept their defaults); any of D2–D5 now if wanted |
+| G0 | Before day 1 | This plan at a glance, section 12 | D1; D7–D10 and D12 (or accept their defaults); any of D2–D5 and D11 now if wanted |
 | G1 | End of day 1 | `art/ui/board/board.png` beside today's heist and the design's, with its type treatments both ways (§21.8 as written, and D4); AD's scores in `gate/scores.md` | Approve, or redirect with notes; decide D4. Nothing past step 2 merges without it. |
 | G2 | End of day 2 | The five key frames beside today's screens and the design's stills, at phone size and in grayscale, at 200% text and in high contrast; AD's 14 scores per frame | Approve each key frame or send it back; decide D2 |
 | G3 | Day 6 | The five screens before and after; frame strips of the reward sequence and the press, full and reduced; draw calls and texture memory per screen; AD's final table | Accept the wave, or name what must be re-worked |
@@ -275,21 +282,21 @@ The wave is accepted at G3 when each of the five screens scores **at least 3.5 o
 
 ### 3.7 Hours, against T14's estimate
 
-T14's steps summed to 81 hours ("about 80"). This plan is 144.
+T14's steps summed to 81 hours ("about 80"). T16's first revision made it 144. Specifying the kit fully (`kit-spec.md`) makes it **158**.
 
-| Step | T14 | This plan | Why it changed |
-|---|---|---|---|
-| AD | 8 | 20 | Set-up (6) and one review per board, key-frame set, kit batch, icon batch, motion set and screen (14) |
-| Style board | 6 | 6 | |
-| Key frames | 10 | 10 | |
-| Pipeline and kit (K1) | 12 | 24 | Adds the checks and tests, the switch per family, frames sized from words for 200% text, numerals with both languages' separators, and retiring the prototype |
-| Kit art | 10 | 10 | |
-| Icons | 25 | 28 | Adds the character route through Godot's toon portrait studio (§21.3) |
-| Juice and motion | 10 | 10 | |
-| Screens | not costed | 36 | Five screens (32) and routing the menu screens' own kit through the new one (4) |
-| **Total** | **81** | **144** | Plus a reserve of up to 20 hours for re-work after failed gates |
+| Step | T14 | First revision | This plan | Why it changed |
+|---|---|---|---|---|
+| AD | 8 | 20 | 21 | Set-up (6) and one review per board, key-frame set, kit batch, icon batch, motion set and screen (14); the catalogue sheet (1) |
+| Style board | 6 | 6 | 6 | |
+| Key frames | 10 | 10 | 10 | |
+| Pipeline and kit (K1) | 12 | 24 | 31 | The checks and tests, the switch per family, frames sized from words for 200% text, numerals with both languages' marks, retiring the prototype (to 24); then mapping 108 materials onto 35 skins (3), the catalogue sheet and its coverage test (3), the screens' chrome check (1) |
+| Kit art | 10 | 10 | 16 | T14's list named about 10 parts; the kit spec has 47 components in 35 skins, each with its state faces and twins |
+| Icons | 25 | 28 | 28 | The character route through Godot's toon portrait studio (§21.3) |
+| Juice and motion | 10 | 10 | 10 | 7 if the owner allows CC0 particle sprites (D11, `build-or-buy.md`) |
+| Screens | not costed | 36 | 36 | Five screens (32) and routing the menu screens' own kit through the new one (4) |
+| **Total** | **81** | **144** | **158** | 155 with D11. Plus a reserve of up to 20 hours for re-work after failed gates |
 
-The AI artists' share is 64 hours (AIA 36, AIA-2 28). The earlier plan was 50–60 agent-hours plus a human artist's contract.
+The AI artists' share is 70 hours (AIA 42, AIA-2 28). The earlier plan was 50–60 agent-hours plus a human artist's contract.
 
 ## 4. Benchmark: 14 checkable qualities
 
@@ -425,10 +432,11 @@ Ceilings are scores out of 5 on the rubric, where 5 is Clash level, with the sha
 
 | Rank | Option | Ceiling | Cost (agent-hours) | Risk | Fit with Godot Compatibility and §21.3 |
 |---|---|---|---|---|---|
-| 1 | **A + D. An authored-asset pipeline, authored by an AI UI artist.** UI art authored as SVG/HTML (from the design's own sources) and as three.js scenes, baked offline in headless Chromium into atlases: 9-slices, sprites and baked numerals; icons rendered from 3D and finished in 2D. Scored by C. | 3.75–4.25: 75–85% of Clash level, 54–61% of the bar (section 9.4) | 144 (section 3.7): the AI artists 64, the pipeline and kit 24, the screens 36, the gate 20 | Agent-authored art can be generic without key frames and a reviewer, which is why C goes with it. Texture memory: a 1024² atlas is 4 MiB of video memory uncompressed (section 10.1). High contrast needs its own bake. | Good. Textured quads are cheaper per pixel than `rb_box`'s signed-distance shader. One atlas batches. The proof is at 147 calls (section 7). No post-processing. Words stay live, so the strings tables and text scale still work. |
-| – | A alone: the same pipeline with an engineer choosing the look and no artist role | 3.5–4.0: 70–80% of Clash level, 50–57% of the bar | about 80 (K1 24, the screens 36, the gate 20): no style board, key frames or rendered icons | The look is tuned by an engineer, without a board the owner approves | Same as A + D |
+| 1 | **A + D. An authored-asset pipeline, authored by an AI UI artist.** UI art authored as SVG/HTML (from the design's own sources) and as three.js scenes, baked offline in headless Chromium into atlases: 9-slices, sprites and baked numerals; icons rendered from 3D and finished in 2D. Scored by C. | 3.75–4.25: 75–85% of Clash level, 54–61% of the bar (section 9.4) | 158 (section 3.7): the AI artists 70, the pipeline and kit 31, the screens 36, the gate 21; 155 with CC0 particles (D11) | Agent-authored art can be generic without key frames and a reviewer, which is why C goes with it. Texture memory: a 1024² atlas is 4 MiB of video memory uncompressed (section 10.1). High contrast needs its own bake. | Good. Textured quads are cheaper per pixel than `rb_box`'s signed-distance shader. One atlas batches. The proof is at 147 calls (section 7). No post-processing. Words stay live, so the strings tables and text scale still work. |
+| – | A alone: the same pipeline with an engineer choosing the look and no artist role | 3.5–4.0: 70–80% of Clash level, 50–57% of the bar | about 90 (K1 31, the screens 36, the gate 21): no style board, key frames or rendered icons | The look is tuned by an engineer, without a board the owner approves | Same as A + D |
 | 2 | **C. Process: a standing art director, the rubric and a quality gate.** Goes with A + D; it is not an alternative to it. | No pixels by itself; +0.25–0.5 from better choices | 20 in this plan: 6 to set up, then about 1 hour a review (section 3.2) | Low. A gate that only checks itself; the owner calibrates the reviewer at G2. | Neutral |
 | 3 | **B. A much stronger shader and material system.** Grain, a lit bevel from the signed distance, gradient text through a canvas shader, glow | 2.25–2.75: 45–55% of Clash level, 32–39% of the bar | 25–35, plus the screens | Per-pixel cost on low-end phones (every panel pays for noise and lighting each frame). GLSL ES 3.0 limits. Icons and type stay as they are. Each look is still tuned by numbers rather than drawn. | Medium. Fill rate rather than draw calls is the risk. §21.3 forbids full-screen post-processing, so glow and bloom must stay per item. |
+| 4 | **E. Adopt existing kits.** A commercial casual kit's buttons and frames, CC0 particles, an icon pack (`build-or-buy.md`) | 3.0–3.5 at best: the kits' materials reach 3–3.5, but their look is shared with other games, which caps quality 14 (one idea) and the owner's "three times v3" | 150 with A + D: saves about 8 hours | §21.11 forbids outside art, paid or free, so it needs the design document changed (D11) and a purchase (D12). Kits have no sources, so no high-contrast twins, school tints or rebuilds from code. Icon packs need attribution, which §21.11 rules out | The PNGs atlas and 9-slice well; Unity prefabs and effects do not carry over |
 
 The owner has chosen an AI UI artist over a human one (D, section 9). It turns A from "an engineer's pipeline" into an art track with an author. What it still cannot reach on its own, and how the gate covers that, is in section 9.4.
 
@@ -635,7 +643,7 @@ The phones: the reference device is a mid-range 4 GB Android at 60 frames a seco
 |---|---|---|
 | Draw calls | Under 150 on every screen, with its world behind it, at 100% and 200% text and in high contrast (§21.3) | `RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME` in each screen's shot script, which prints "budget: N draw calls" as `uiq_heist_hud.gd` does. One method for every screen. |
 | Triangles | The interface adds at most 2,000 triangles a screen (a 9-slice is 18). §21.3's triangle budgets are the world's, and the interface must not eat into them. | The same shot, with and without the interface |
-| Atlas size | 1024² for a screen family; 2048² at most, the largest size the OpenGL ES 3.0 standard guarantees on every phone | The bake refuses a larger atlas |
+| Atlas size | 1024² for a screen family (the kit itself takes two, `kit-spec.md` section 8.2); 2048² at most, the largest size the OpenGL ES 3.0 standard guarantees on every phone | The bake refuses a larger atlas |
 | Texture memory | At most 24 MiB of interface textures resident on any screen. A 1024² atlas is 4 MiB uncompressed (lossless, no mipmaps, as the proof imports it). The high-contrast atlas replaces the normal one; it is never loaded beside it. | Godot's texture-memory monitor in each screen's shot |
 | Install size | All interface atlases, normal and high contrast, at most 8 MB in the exported pack (lossless WebP; the proof's two atlases are 610 KB together) | The bake prints the total; `client/export.sh check` reads the pack |
 
@@ -691,7 +699,7 @@ No glint, sparkle or shine flashes more than three times a second (§20.8). Scre
 
 - **Made, not licensed (§21.11).** Every pixel is made by code in this repository, and the sources are kept in the repository beside the bakes (they are not shipped), so the art is "made for this game". The build tools (three.js 0.184.0 under the MIT licence, Playwright 1.63.0 and its Chromium under Apache 2.0 and BSD) are permissive and are not shipped. K1 records them in a tools ledger beside the fonts' ledger.
 - **Fonts.** The three faces are under the Open Font Licence with their texts shipped (`client/ui/fonts/LEDGER.md`). Baked numerals are pictures drawn with Lilita One, not font files, and the ledger says so in a new row.
-- **No outside art.** No image comes from outside: no stock, no generated image, no game art. The benchmark panels in the audit images are written descriptions.
+- **No outside art.** No image comes from outside: no stock, no generated image, no game art, no bought or CC0 kit (§21.11; `build-or-buy.md`). The benchmark panels in the audit images are written descriptions. If the owner allows CC0 particle sprites (D11), K1 adds `client/ui/art/LEDGER.md` in the fonts' ledger's pattern, and the downloaded files stay out of the repository.
 - **Characters in the toon look (§21.3).** "Characters are not drawn in a physically based material; their portraits are rendered from the imported models in this look." The proof's Pip badge was lit in three.js's physically based studio, which breaks this. In the plan, character, Sage and building icons are rendered through Godot's portrait studio in the toon look, then finished in 2D. That is AIA-2's 3 hours of set-up.
 - **Objects.** Whether gold, gems and glass may be lit physically, as interface art, is decision D5. §21.3 asks for "one toon look for everything"; §21.8 asks icons for "the designs' volume: a three-stop gradient, a gloss and a soft drop shadow". The proof's icons use a hard ink drop; the plan uses §21.8's soft drop.
 - **Icons** keep §21.8's 2-point outline at the size shown, and are drawn to read on its 24-point grid.
@@ -751,25 +759,28 @@ Whether to add a sound track now is decision D7 (section 12).
 | The renderer's known faults (section 7's findings) | A white square in place of a ring; the shot aborts after writing | Textured polygons in their own canvas items; shots check that the PNG was written |
 | Usage limits pause an agent | A gate or merge waits | Each agent schedules its own resume and pushes green at least hourly |
 | Brazilian Portuguese runs longer | Words overflow frames | Frames sized from their words; every key frame and screen checked in both languages |
+| The kit grows back into many looks | Rubric quality 11 falls; texture memory grows | Requests go through AD; reuse first; the limits in `kit-spec.md` section 7; the screens' chrome check refuses local chrome |
 
 ## 12. Owner decisions
 
-The first five are in the plan at a glance. Each has a default, so the wave never stops for an answer it does not yet need.
+D1–D5 and D11 are in the plan at a glance; D11 and D12 come from `build-or-buy.md`. Each has a default, so the wave never stops for an answer it does not yet need.
 
 | # | Decision | Why it is needed | Options | Default | When |
 |---|---|---|---|---|---|
-| D1 | Approve the plan | 144 agent-hours and seven agents, not "about 80" (section 3.7) | Approve; approve a smaller scope (for example A alone, about 80 hours); reject | Nothing starts | Before day 1 |
+| D1 | Approve the plan | 158 agent-hours and seven agents, not "about 80" (section 3.7) | Approve; approve a smaller scope (for example A alone, about 90 hours); reject | Nothing starts | Before day 1 |
 | D2 | The approved key frames become the visual reference | §23.5: "The designs carry the look: layout, art, motion, the models and the icons." Key frames that replace Screens v3 need that sentence changed | (a) Change §23.5 so approved key frames carry the look where they differ from the designs; (b) keep §23.5, key frames are targets only | (b): key frames keep the designs' layouts and icons' shapes, and push material, type and light | At G2, day 2 |
-| D3 | Overshoot on presses and reward reveals | §21.8: "150 to 250 milliseconds, easing out ... without overshoot". Clash-level juice overshoots | (a) Change §21.8 to allow overshoot on presses and reward reveals, at most 350 ms, with the reduced form unchanged; (b) keep §21.8 | (b) | Before day 4 |
-| D4 | A display face for labels and changing numbers on art | §21.8 gives labels and changing numbers to Manrope. The proof's labels are Lilita One and its loot count is baked numerals | (a) Change §21.8 to allow Lilita One for labels on art, and baked numerals with a fixed advance for changing numbers; (b) keep §21.8 | (b): labels in Manrope with an ink outline; baked numerals only for numbers that do not change | At G1, end of day 1 |
+| D3 | Overshoot on presses and reward reveals | §21.8: "150 to 250 milliseconds, easing out ... without overshoot". Clash-level juice overshoots | (a) Change §21.8 to allow overshoot on presses and reward reveals, at most 350 ms, with the reduced form unchanged; (b) keep §21.8. Either way, confirm that a bar filling to a new value (450 ms in `tokens.json`) is a value changing, not a movement | (b) | Before day 4 |
+| D4 | A display face for labels and changing numbers on art | §21.8 gives labels and changing numbers to Manrope. The proof's labels are Lilita One and its loot count is baked numerals | (a) Change §21.8 to allow Lilita One (or Titan One, an OFL face to compare on the board, `build-or-buy.md`) for labels on art, and baked numerals with a fixed advance for changing numbers; (b) keep §21.8 | (b): labels in Manrope with an ink outline; baked numerals only for numbers that do not change | At G1, end of day 1 |
 | D5 | Object icons lit physically | §21.3 asks for "one toon look for everything"; the proof's gold, gem and chest are lit physically (section 10.6) | (a) Allow it for interface icons of objects, never characters; (b) every icon in the toon look | Character and building icons start first; object icons wait | Before day 2 |
 | D6 | How many icons | §21.9 counts about 390 interface icons, "as Screens v3 draws them". The plan re-authors the 60 most-seen; the other 330 or so stay flat, so two styles show side by side | (a) 60 now, the rest in a later wave (about 140 hours at the same rate); (b) 60 now, and give the rest the new outline and glint rules only; (c) all now | (a) | At G3 |
 | D7 | Sound | The rubric's qualities 4 and 5 ask for sound; the client has none (section 10.10) | (a) No sound this wave, events ready for it; (b) add a sound track | (a) | At G0 |
 | D8 | Texture and install budgets | The design document sets none (section 10.1) | Approve 24 MiB resident and 8 MB installed, or set others | The proposed numbers | At G0 |
 | D9 | What check_all runs | The full rebake and the screen budgets would add about 15 minutes (section 10.8) | (a) In check_all; (b) before every push and at every merge | (b) | At G0 |
 | D10 | The wave's target | 3.5 out of 5 is about half the owner's bar (section 3.6) | Accept 3.5; ask for more (and more hours) | 3.5 | At G0 |
+| D11 | CC0 particle sprites as raw material | §21.11: outside art is not allowed; only fonts (OFL), sound (public domain) and code (permissive) may come from outside. CC0 particles would save 3 hours of motion art (`build-or-buy.md`) | (a) Add to §21.11: "Particle and texture sprites under a public-domain dedication (CC0), as raw material only, recoloured and baked through the game's own pipeline and listed in the art ledger"; (b) keep §21.11 | (b): AIA makes them (10 hours, not 7) | Before day 4 |
+| D12 | Buying anything | §21.11: "Nothing in this game is paid for." `build-or-buy.md` recommends no purchase. If the owner wants one anyway: a casual UI kit (Layer Lab "GUI Pro – Casual Game", $39.99), Spine (Essential $99, on sale at $69 when checked; Professional $439, on sale at $369) | Buy nothing; or name the item, which also needs §21.11 changed | Buy nothing | At G0 |
 
-What D2, D3 and D4 would change in the design document is written out in `plan-review.md`. Neither T16 nor any agent in this plan edits the design document.
+What D2, D3, D4 and D11 would change in the design document is written out in `plan-review.md`. Neither T16 nor any agent in this plan edits the design document.
 
 ## T14 stopped here
 
