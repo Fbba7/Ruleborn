@@ -198,7 +198,20 @@ func _friends_tab(f: Dictionary) -> void:
 	for x: Dictionary in f["blocked"]:
 		var unblock := ScreenKit.button(Strings.t("FRIENDS_UNBLOCK"), controller.unblock.bind(x["account"]), "leather",
 			Strings.t("FRIENDS_UNBLOCK_NAMED", x["name"]), 14.0)
-		body.add_child(ScreenParts.item("social", "block", x["name"], "", unblock))
+		# Beside the name; under it at large text, where both do not fit.
+		if Settings.text_scale <= 125:
+			body.add_child(ScreenParts.item("social", "block", x["name"], "", unblock))
+			continue
+		var item := ScreenParts.item("social", "block", x["name"])
+		var head := item.get_child(item.get_child_count() - 1)
+		item.remove_child(head)
+		var col := VBoxContainer.new()
+		col.add_theme_constant_override("separation", UI.px(8))
+		col.add_child(head)
+		unblock.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		col.add_child(unblock)
+		item.add_child(col)
+		body.add_child(item)
 
 
 ## The friends at the top as the design's strip: a round portrait each, the
