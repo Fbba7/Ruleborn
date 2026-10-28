@@ -70,8 +70,23 @@ func _layout() -> void:
 	access.visible = tab_shown == "access"
 	account.visible = tab_shown == "account"
 	var lang := ScreenKit.button(Strings.t("LANGUAGE_" + Settings.locale), next_language, "cream", "", 14.0)
-	game.add_child(ScreenParts.item("settingsandwellbeing", "language", Strings.t("SETTINGS_LANGUAGE"), "",
-		_tag(lang, "language")))
+	_tag(lang, "language")
+	# The language beside its name; under it at large text, where both do not
+	# fit one line.
+	if Settings.text_scale <= 125:
+		game.add_child(ScreenParts.item("settingsandwellbeing", "language", Strings.t("SETTINGS_LANGUAGE"), "", lang))
+	else:
+		var item := ScreenParts.item("settingsandwellbeing", "language", Strings.t("SETTINGS_LANGUAGE"))
+		lang.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		lang.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var stack := VBoxContainer.new()
+		stack.add_theme_constant_override("separation", UI.px(8))
+		var row := item.get_child(item.get_child_count() - 1)
+		item.remove_child(row)
+		stack.add_child(row)
+		stack.add_child(lang)
+		item.add_child(stack)
+		game.add_child(item)
 
 	game.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_SOUND")))
 	var icons := {"music": "music", "effects": "effectsvolume", "alerts": "notifications"}
