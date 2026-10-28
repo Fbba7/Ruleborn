@@ -617,6 +617,13 @@ item's own pin, which the fix turns round. Each is the owner's one word:
 its patch, with its test turned round, is in the appendix ("the six owner
 fixes as patches") and applies with `git apply`.
 
+> **Note (T15, 28 October 2026, 19:10 UTC):** on the current main branch,
+> five of the six patches still pass `git apply --check`; **SR-09's no
+> longer applies**, because `Service.targetLists` (`server/src/service.mjs`)
+> was rewritten after this review (it now reads `matchmaking.live` rows). The
+> finding stands (the lists still carry each island's rating); the patch needs
+> rebasing before the owner's yes can be applied.
+
 | Id | Recommend | Size | Breaks | Cost to honest players |
 | --- | --- | --- | --- | --- |
 | SR-09 | Drop `rating` and `deviation` from the target lists | 4 lines, `service.mjs` | 1 test's assertion (`matchmaking.test.mjs`) | none: the device never reads them; `GET /v1/offer` runs §12.22 |
@@ -784,8 +791,10 @@ The designs, and the test each turns round (`server/test/security_owner.test.mjs
   minted for the Android client signed the game in and deleted the
   account); T11's fix carries its own test, `server/test/auth_http.test.mjs`
   (*"a web deletion needs a fresh Google token for the web client that
-  carries this browser's nonce …"*), and the pin here was retired, since its
+  carries this browser's nonce …"*), and the pin here was to be retired, since its
   harness wires Google in below T11's new check and would pass either way.
+  (Note, T15: the pin is still in the suite, renamed as fixed:
+  `server/test/security_t11.test.mjs`, "SR-11 (T11, fixed) …".)
 - **Status:** fixed by T11 on `claude/auth` (`11a8e3c`): the deletion takes
   only a token for the web client id, issued within five minutes, carrying
   the page's nonce from its cookie, sent same-origin as JSON. A trial merge
@@ -809,9 +818,16 @@ The designs, and the test each turns round (`server/test/security_owner.test.mjs
   signature, a player id and a fresh timestamp (the shape of a real one),
   hold names fetched but never used to sign anything outside the cache of
   keys in use, or let one caller's address fetch only one new name a minute.
-- **Status:** sent to T11, who owns sign-in.
+- **Status:** sent to T11, who owns sign-in. Since fixed by T11: the
+  summary table above says so, `server/src/stores.mjs` carries the fix, and
+  the pin is now "SR-20 (T11, fixed) …" in
+  `server/test/security_t11.test.mjs` (note added by T15).
 
 ### For T11: what sign-out has to do
+
+> Since built by T11 (`Auth.signOut` in `server/src/auth.mjs`; pinned by
+> "Sign-out (T11, built) …" in `server/test/security_t11.test.mjs`). Kept
+> as written, for the record (note added by T15).
 
 Not a finding yet, since sign-out is T11's to build: a session token
 (`tokens.mjs`) is checked by its signature and expiry alone, and the account

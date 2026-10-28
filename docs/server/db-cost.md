@@ -24,7 +24,7 @@ was (commit `f8adf28`) under the same load test; "after" is this branch.
 | Rows read, before (day 3) | 7,261 | 2,639 | 938 |
 | Rows read, before, by day 14 | 60,216 | 16,118 | 3,960 |
 | Rows read, after (day 3) | **950** | **357** | **145** |
-| Target lists, rows read a day an island, before / after | 170 / 147 | 170 / 147 | 170 / 147 |
+| Target lists, rows read a day an island, before / after | 170 / 146 | 170 / 146 | 170 / 146 |
 
 A player's first heist, once in all (its roster and Codex): 37.2 billed rows
 before, 34.2 after.
@@ -115,7 +115,7 @@ old or when an island changes (SR-03); it is owner option 1 below.
   `readsPerPlayerByDay`, `readsByOperation`, `periodicReadsADayAnIsland`,
   `readsBySql` (the statements that read most), `scans`, `billedByTable` and
   `firstHeist`; `against` adds the reads budget (§24.1's 2,500 a player a
-  day: 0.37, 0.14 and 0.05 of it after) and the reads' dollars a month.
+  day: 0.38, 0.14 and 0.06 of it after) and the reads' dollars a month.
   `--check` still fails when the writes move.
 
 ## The write cuts
