@@ -84,8 +84,9 @@ static func action2(text: String, line: String, pressed: Callable, look := "gold
 	t.add_theme_font_override("font", UI.bold_font())
 	t.add_theme_color_override("font_color", box.spec["text"])
 	t.set_meta("bold", true)
-	# A gold call to action is set in the designs' tracked capitals.
-	if look == "gold":
+	# A gold or green call to action is set in the designs' tracked capitals
+	# (RAID AGAIN, CLAIM, UPGRADE).
+	if look in ["gold", "green"]:
 		t.uppercase = true
 		t.add_theme_font_override("font", Tokens.font("ui", 800, false, UI.px(1)))
 	if box.spec.has("text_outline"):
@@ -132,6 +133,28 @@ static func tile(title: String, line: String, school: String, pressed: Callable)
 	var box := RbBox.of(b)
 	box.radius_points = 14.0
 	box.set_look(box.look)
+	return b
+
+
+## A round token (25 Forms' notes, a set's pieces): its mark on a disc,
+## gold-edged when `chosen`, with a green check on its shoulder when `owned`
+## (said in `spoken` too, so the check is never alone, §20.8).
+static func token(icon: String, spoken: String, owned: bool, chosen: bool, pressed: Callable, points := 48.0) -> Button:
+	var b := icon_button(icon, spoken, pressed, "leather", points, points * 0.6)
+	b.name = "Token"
+	RbBox.of(b).set_chosen(chosen)
+	b.set_meta("chosen", chosen)
+	if owned:
+		var tick := KitStatus.badge("✓", "tag_success", 13.0)
+		# On the disc's lower right shoulder, over its edge.
+		tick.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+		tick.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		tick.grow_vertical = Control.GROW_DIRECTION_BEGIN
+		tick.offset_right = UI.px(3)
+		tick.offset_bottom = UI.px(3)
+		tick.offset_left = tick.offset_right
+		tick.offset_top = tick.offset_bottom
+		b.add_child(tick)
 	return b
 
 

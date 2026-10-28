@@ -150,7 +150,10 @@ func _icons() -> void:
 func _tab_words() -> void:
 	var bad := []
 	var was := Settings.text_scale
-	for scale: int in [100, 150, 200]:
+	var locale := TranslationServer.get_locale()
+	for case: Array in [[100, "en"], [150, "en"], [200, "en"], [100, "de"], [150, "pt_BR"], [200, "de"]]:
+		var scale: int = case[0]
+		Strings.set_locale(str(case[1]))
 		Settings.text_scale = scale
 		var screen := Control.new()
 		screen.size = Vector2(1080, 2340)
@@ -169,18 +172,20 @@ func _tab_words() -> void:
 			var l: Label = tabs._labels[id]
 			if l.is_visible_in_tree() and tabs._need(l) > l.size.x + 1.0:
 				bad.append("%d%% %s cut (%.0f in %.0f)" % [scale, id, tabs._need(l), l.size.x])
-			if scale == 100 and not l.is_visible_in_tree():
+			if scale == 100 and case[1] == "en" and not l.is_visible_in_tree():
 				bad.append("100%% %s hidden" % id)
 		var chosen: Label = tabs._labels["friends"]
 		if not chosen.is_visible_in_tree():
-			bad.append("%d%% the chosen tab's word hidden" % scale)
+			bad.append("%d%% %s the chosen tab's word hidden" % [scale, case[1]])
 		elif chosen.get_theme_font_size("font_size") < mini(UI.text_px(15), UI.px(15) * 3 / 2):
-			bad.append("%d%% the chosen tab's word under 150%%" % scale)
+			bad.append("%d%% %s the chosen tab's word under 150%%" % [scale, case[1]])
 		screen.queue_free()
 		await tree.process_frame
 	Settings.text_scale = was
+	Strings.set_locale(locale)
 	check.call("the tab bar shows every name whole at 100% text, and at 150% and 200% each name whole or not at all, "
-			+ "the chosen tab's kept at 150% or more, every tab on the screen (§20.8, §21.8)", bad.is_empty(), "; ".join(bad))
+			+ "the chosen tab's kept at 150% or more, every tab on the screen, in English, German and Portuguese "
+			+ "(§20.8, §21.8, §20.6)", bad.is_empty(), "; ".join(bad))
 
 
 func _small_disc() -> void:
@@ -229,6 +234,13 @@ func _pieces() -> void:
 			KitCards.product(picture, "Emote", "Tip of the Hat", "120", none, "round_violet", 128.0, "resources/renown"),
 			KitControls.tile("Medium", "Glass", "motion", none),
 			KitStatus.hint("Tap crew, then ground · hold ground to sneak or run"),
+			KitPanels.quest("screens/heist", "Rehearse your defence", 0, 1, "+30", "currencies/seasonstars", "Claim", none,
+				"Swap", none),
+			KitCards.law_disc("laws/sleepwalk", "Sleepwalk", "spirit"),
+			KitCards.stat("crewroles/scout", "Stealth", "6", "+1", 6, 10, 1),
+			KitControls.token("lawnotes/hush", "Hush form, hatched", true, false, none),
+			KitCards.build_card("resources/starlight", "Star Well", "Makes Starlight.", "resources/starlight", "1,200",
+				"3 / 4", none),
 			KitPanels.album("motion", "Motion", "Chapter I", "3 of 4", Control.new()),
 		]
 		for piece: Control in pieces:
@@ -252,6 +264,6 @@ func _pieces() -> void:
 		screen.queue_free()
 		await tree.process_frame
 	Settings.text_scale = was
-	check.call("the loot panel, Sage, crew key, friend, feed row, log row, album card, product, tile and album meet 48 "
-			+ "points and 13 points and stay on the screen at 200% text (§21.1, §21.8, §20.8)", bad.is_empty(),
-		"; ".join(bad))
+	check.call("this wave's pieces (loot, Sage, crew key, friend, feed and log rows, cards, tile, hint, quest, "
+			+ "album) meet 48 points and 13 points and stay on the screen at 200% text (§21.1, §21.8, §20.8)",
+		bad.is_empty(), "; ".join(bad))

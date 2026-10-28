@@ -33,6 +33,10 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_stats(column)
 		15:
 			_tray(column)
+		16:
+			_quests(column)
+		17:
+			_stat_tiles(column)
 		_:
 			_season(column)
 
@@ -567,4 +571,47 @@ static func _tray(column: VBoxContainer) -> void:
 			func() -> void: pass))
 	body.add_child(cards)
 	column.add_child(sheet)
+
+
+## The design's quests (17-season-quests.png).
+static func _quests(column: VBoxContainer) -> void:
+	column.add_child(KitPanels.section("Daily"))
+	var none := func() -> void: pass
+	column.add_child(KitPanels.quest("realmactions/collect", "Collect from 3 Star Wells", 2, 3, "+40",
+		"currencies/seasonstars", "Claim", none, "Swap", none))
+	column.add_child(KitPanels.quest("screens/heist", "Finish a heist", 1, 1, "+40", "currencies/seasonstars",
+		"Claim", none))
+	column.add_child(KitPanels.quest("planningactions/rehearse", "Rehearse your defence", 0, 1, "+30",
+		"currencies/seasonstars", "Claim", none, "Swap", none))
+	column.add_child(KitPanels.section("Season"))
+	column.add_child(KitPanels.quest("screens/resonancelab", "Run 4 Lab tests", 1, 4, "+150", "currencies/seasonstars",
+		"Claim", none))
+	var lab := HBoxContainer.new()
+	lab.alignment = BoxContainer.ALIGNMENT_CENTER
+	lab.add_theme_constant_override("separation", UI.px(40))
+	lab.add_child(KitCards.law_disc("laws/stillness" if Icons.has("laws/stillness") else "laws/bounce", "Stillness",
+		"time"))
+	lab.add_child(KitCards.law_disc("laws/sleepwalk", "Sleepwalk", "spirit"))
+	column.add_child(lab)
+
+
+## The design's Character stats (11-character-stats.png).
+static func _stat_tiles(column: VBoxContainer) -> void:
+	var stats := GridContainer.new()
+	stats.columns = KitLayout.grid_columns(2)
+	stats.add_theme_constant_override("h_separation", UI.px(8))
+	stats.add_theme_constant_override("v_separation", UI.px(8))
+	stats.add_child(KitCards.stat("crewroles/runner" if Icons.has("crewroles/runner") else "hud/star", "Speed", "9", "+1",
+		9, 10, 1))
+	stats.add_child(KitCards.stat("crewroles/scout", "Stealth", "6", "+1", 6, 10, 1))
+	stats.add_child(KitCards.stat("crewroles/carrier", "Carry", "10", "Max", 10, 10))
+	stats.add_child(KitCards.stat("crewroles/breaker", "Grit", "6", "+1", 6, 10, 1))
+	column.add_child(stats)
+	var tokens := HBoxContainer.new()
+	tokens.add_theme_constant_override("separation", UI.px(10))
+	tokens.add_child(KitControls.token("lawnotes/hush", "Hush form, hatched", true, false, func() -> void: pass, 56))
+	tokens.add_child(KitControls.token("lawnotes/spark", "Spark form, hatched", true, false, func() -> void: pass, 56))
+	tokens.add_child(KitControls.token("lawnotes/echo", "Echo form, not yet hatched", false, true, func() -> void: pass,
+		56))
+	column.add_child(tokens)
 

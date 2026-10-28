@@ -236,6 +236,99 @@ static func build_card(icon: String, title: String, line: String, price_icon: St
 	return card
 
 
+## A law as a medallion (14 Resonance Lab's Stillness and Sleepwalk): its
+## mark on a disc in its school's colours, in a gold ring,
+## its name stroked under it. `points` is the disc's size.
+static func law_disc(icon: String, title: String, school: String, points := 84.0) -> VBoxContainer:
+	var v := VBoxContainer.new()
+	v.name = "LawDisc"
+	v.add_theme_constant_override("separation", UI.px(2))
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var ring := PanelContainer.new()
+	ring.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
+	UI.dress(ring, "gold_round", 999)
+	ring.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var disc := CenterContainer.new()
+	disc.custom_minimum_size = Vector2.ONE * UI.px(points - 8.0)
+	disc.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	UI.dress(disc, "window_" + school, 999)
+	disc.add_child(Icons.view(icon, points * 0.55))
+	ring.add_child(disc)
+	v.add_child(ring)
+	var n := UI.label(title, 14)
+	n.add_theme_font_override("font", UI.bold_font())
+	n.add_theme_color_override("font_color", Tokens.color("cream"))
+	n.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	n.add_theme_constant_override("outline_size", UI.px(2))
+	n.set_meta("bold", true)
+	v.add_child(n)
+	return v
+
+
+## A character's stat (11 Character's Stats): its mark on a disc, its name
+## in capitals, its value large with what the next level adds on a green
+## chip ("+1", `gain`; "" for none), and `of` pips under it, `filled` gold and
+## the next level's in green. The value is written, so the pips only repeat
+## it (§20.8).
+static func stat(icon: String, kicker: String, value: String, gain: String, filled: int, of: int,
+		next := 0) -> PanelContainer:
+	var p := UI.panel("fact")
+	p.name = "Stat"
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	var disc := PanelContainer.new()
+	disc.add_theme_stylebox_override("panel", UI.clear_box(5, 5))
+	UI.dress(disc, "plate_dark", 999)
+	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	disc.add_child(Icons.view(icon, 24))
+	row.add_child(disc)
+	var v := VBoxContainer.new()
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	v.add_theme_constant_override("separation", UI.px(1))
+	var k := UI.label(kicker, 13)
+	k.theme_type_variation = "Kicker"
+	k.uppercase = true
+	k.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	k.set_meta("bold", true)
+	v.add_child(k)
+	var line := HBoxContainer.new()
+	line.add_theme_constant_override("separation", UI.px(6))
+	var n := UI.label(value, 26)
+	n.add_theme_font_override("font", Tokens.font("ui", 800, true))
+	n.set_meta("bold", true)
+	line.add_child(n)
+	# A gain ("+1") on a green chip; a word ("Max") plain beside the value.
+	if gain.begins_with("+"):
+		var g := KitStatus.plate(gain)
+		UI.dress(g, "tag_success")
+		g.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		line.add_child(g)
+	elif gain != "":
+		var w := UI.label(gain, 13)
+		w.theme_type_variation = "Kicker"
+		w.uppercase = true
+		w.set_meta("bold", true)
+		w.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		line.add_child(w)
+	v.add_child(line)
+	row.add_child(v)
+	# The pips run the tile's whole width under the mark and the words.
+	var whole := VBoxContainer.new()
+	whole.add_theme_constant_override("separation", UI.px(6))
+	whole.add_child(row)
+	var pips := _Pips.new()
+	pips.filled = filled
+	pips.next = next
+	pips.of = of
+	pips.custom_minimum_size = Vector2(UI.px(80), UI.px(6))
+	pips.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	whole.add_child(pips)
+	p.add_child(whole)
+	return p
+
+
 ## The largest size from 15 points down to §21.8's 13 at which the name's
 ## longest word fits `room` points, so it wraps between words, not in one.
 static func _fit(title: String, room: float) -> float:
@@ -514,3 +607,27 @@ static func ability(icon: String, school: String, kicker: String, tag: String, t
 	row.add_child(v)
 	p.add_child(row)
 	return p
+
+
+## A row of pips (a stat's level): gold up to `filled`, green for the next
+## level's `next`, the rest pale, all in one draw call.
+class _Pips:
+	extends Control
+	var filled := 0
+	var next := 0
+	var of := 10
+
+	func _draw() -> void:
+		var t := KitTris.new()
+		var gap := maxf(1.0, UI.px(1.5))
+		var w := (size.x - gap * (of - 1)) / float(maxi(of, 1))
+		var h := size.y
+		for i: int in of:
+			var colour := Tokens.color("gold") if i < filled else (Tokens.color("success") if i < filled + next
+				else Tokens.paint("#D9C9A6"))
+			var x := i * (w + gap)
+			t.bar(Vector2(x + h * 0.5, h * 0.5), maxf(w - h, 0.0), h, colour)
+			t.disc(Vector2(x + h * 0.5, h * 0.5), h * 0.5, colour)
+			t.disc(Vector2(x + w - h * 0.5, h * 0.5), h * 0.5, colour)
+		t.draw_on(get_canvas_item())
+
