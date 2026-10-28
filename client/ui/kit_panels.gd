@@ -236,7 +236,9 @@ static func quest(icon: String, title: String, done: int, of: int, reward: Strin
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	t.set_meta("bold", true)
 	mid.add_child(t)
-	var bar := KitBar.make(float(done) / maxf(of, 1), Tokens.color("success") if finished else Color(), 18)
+	# Tall enough for its count at the player's text size.
+	var tall := maxf(18.0, UI.text_px(13) / UI.PX_PER_POINT * 1.3)
+	var bar := KitBar.make(float(done) / maxf(of, 1), Tokens.color("success") if finished else Color(), tall)
 	# A light track on parchment.
 	RbBox.dress(bar, "bar_track_light")
 	var count := UI.label("%d / %d" % [done, of], 13)
