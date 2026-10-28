@@ -102,10 +102,11 @@ export class Defences {
     const now = this.service.now();
     const seen = this.db.prepare("SELECT defences_seen_at FROM accounts WHERE id = ?").get(account)?.defences_seen_at ?? 0;
     const season = this.service.seasons.current(now);
+    // One bound, the later of the two, so the index's range is it.
     return { unseen: this.db.prepare(
       `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
-        WHERE h.defender = ? AND h.submitted_at >= ? AND h.submitted_at > ? AND h.validated = 1 AND ${RAIDED}`)
-      .get(account, season.starts_at, seen).n };
+        WHERE h.defender = ? AND h.submitted_at >= ? AND h.validated = 1 AND ${RAIDED}`)
+      .get(account, Math.max(season.starts_at, seen + 1)).n };
   }
 
   /** The raider's island a Trace leases: their Heart, else any realm. */
