@@ -80,7 +80,9 @@ static func segmented(options: Array, chosen: int, picked: Callable, light := fa
 		for word: String in words.split(" "):
 			longest = maxf(longest, UI.bold_font().get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1,
 				UI.text_px(UI.TEXT_POINTS)).x)
-		var share := UI.px((PHONE_POINTS - 2.0 * Tokens.number("size", "safe_side_points") - 16.0)
+		# The phone less its margins and room for a sheet's padding or a
+		# close button beside the strip.
+		var share := UI.px((PHONE_POINTS - 2.0 * Tokens.number("size", "safe_side_points") - (24.0 if large else 64.0))
 			/ float(options.size() if not large else 2))
 		var whole := longest + UI.px(22) <= share
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD if whole else TextServer.AUTOWRAP_WORD_SMART

@@ -188,6 +188,8 @@ static func product(picture: Texture2D, tag: String, title: String, price: Strin
 ## ("3 / 4"). The whole card is one control (`pressed`).
 static func build_card(icon: String, title: String, line: String, price_icon: String, price: String, count: String,
 		pressed: Callable, points := 92.0) -> PanelContainer:
+	# Wider with the text (the tray scrolls sideways), so no word breaks.
+	points *= clampf(Settings.text_scale / 100.0, 1.0, 1.7)
 	var card := UI.panel("parchment")
 	card.name = "BuildCard"
 	card.custom_minimum_size.x = UI.px(points)

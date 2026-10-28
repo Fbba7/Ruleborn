@@ -535,12 +535,22 @@ static func _tray(column: VBoxContainer) -> void:
 	column.add_child(UI.grow())
 	var sheet := KitPanels.sheet("", "sheet_parchment")
 	var body: VBoxContainer = sheet.get_meta("body")
-	var head := HBoxContainer.new()
+	# Side by side, the close button over the segments at large text.
+	var head: BoxContainer = HBoxContainer.new()
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		head = VBoxContainer.new()
+		head.alignment = BoxContainer.ALIGNMENT_END
 	head.add_theme_constant_override("separation", UI.px(8))
 	var segs := KitNav.segmented(["Build", "Terrain", "Defence"], 0, func(_i: int) -> void: pass, true)
 	segs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	head.add_child(segs)
-	head.add_child(KitControls.icon_button("generalui/close", "Close", func() -> void: pass, "parchment"))
+	var close := KitControls.icon_button("generalui/close", "Close", func() -> void: pass, "parchment")
+	close.size_flags_horizontal = Control.SIZE_SHRINK_END
+	if head is VBoxContainer:
+		head.add_child(close)
+		head.add_child(segs)
+	else:
+		head.add_child(segs)
+		head.add_child(close)
 	body.add_child(head)
 	var chips := KitLayout.strip(6)
 	var row := chips.get_node("Row") as HBoxContainer
