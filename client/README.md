@@ -32,12 +32,12 @@ repositories in front of the network), in Godot's own terms:
 | The outbox | `data/outbox.gd` | §24.12's queue: a heist's or a Workshop play's replay, and a store receipt, kept until the server has answered | headless: offline, a restart, a refusal, a 5xx |
 | The API and transport | `data/api.gd`, `data/*_transport.gd` | HTTPS only, a bearer token, the server's refusal reason as the failure code | headless |
 | Services | `app/services.gd`, `app/app.gd` | Build everything once (the composition root); a test builds its own with fakes | by every test |
-| The look | `ui/tokens.json`, `ui/tokens.gd`, `scripts/ui.gd`, `scripts/palette.gd` | Every colour, size and timing, cited; the components built from them | the token check |
+| The look | `ui/tokens.json`, `ui/tokens.gd`, `ui/kit_*.gd`, `scripts/ui.gd`, `scripts/palette.gd` | Every colour, size and timing, cited; the components built from them | the token check |
 | The world | `world/` | The realm in 3D from the simulation's own state: the island round its grid, the realm kit's ground and features, the figures, the selected guard's sight, §21.3's one toon look | headless: every figure on its tile, picking, materials, budgets (`tests/world_tests.gd`) |
 
-**Where the design lands.** Claude Design's tokens replace `ui/tokens.json`
-and its components replace `scripts/ui.gd`'s; no screen names a colour or a
-size of its own.
+**Where the design lands.** Screens v3's design system is in `ui/`: its
+tokens in `ui/tokens.json` and its components in the kit (`ui/kit_*.gd`),
+which `scripts/ui.gd` fronts; no screen names a colour or a size of its own.
 
 **Finding a defect.** Every failure is one code — the server's own refusal
 reason, or the client's (`unreachable`, `timeout`, `malformed_response`) —
@@ -106,7 +106,15 @@ order, the vibrator's patterns — is the device matrix's (§26.8).
 
 ## What is here
 
-Twelve screens, opened from `scenes/home.tscn`:
+Thirty-three screens, each a scene in `scenes/` routed by `app/router.gd`;
+the app opens on `scenes/home.tscn`. The twelve built first are described
+below. The rest (universe and map, realm, scout, Observatory, planner,
+curation and defences, Weaving, law, Codex, Harmony, Lab, roster,
+character, Sage hall, Forms, Hatch, first launch, profile, share) were built
+by the 3D and interface tracks to the Screens v3 designs; each track's notes
+in [`docs/art/tracks/`](../docs/art/tracks/kit.md) say what each screen does
+and how far it is from its design (the map of tracks to notes is
+[`docs/guides/agent-program.md`](../docs/guides/agent-program.md#tracks)).
 
 **The age check** (`scenes/age.tscn`, §20.1). At first launch, before
 anything else: the platform is asked for the player's age band, and — its
@@ -186,9 +194,8 @@ harmonies, clashes, resonances and chords) is named as they are woven. The
 realm is drawn by the heist's own view, from a heist started on the island, so
 what the builder shows is what a raider meets. Raid it plays the island on the
 heist screen, offline, and the result leads back to the builder; the island is
-kept on the phone. The ground offered is the thirty-two of §6.2's thirty-nine
-features the simulation models (`ext/src/island.rs` `GROUND`, in the island's
-own codes) — from rock pillars and fog banks to hedges, lantern posts, ponds,
+kept on the phone. The ground offered is all thirty-nine of §6.2's features
+(`ext/src/island.rs` `GROUND`, in the island's own codes) — from rock pillars and fog banks to hedges, lantern posts, ponds,
 bell posts and pits, and raised ground with the cliff edges it makes — and the
 laws are §7.10's launch twenty-four.
 
@@ -201,14 +208,16 @@ a guard is attacked, or dragged if it is down; the Vault is cracked, or loaded
 to full once open; a pylon is broken; a live ward is disarmed; anything else is
 walked to. The buttons cycle the selected member's gait (walk, crouch, run),
 halt it, drop half its loot, and — Get out — call the skiff (§5.4) to the next
-tile tapped. Of the simulation's thirteen command kinds, every one but the landing and
-the ability has a control (the ability portraits are the heist screen's, TD.17);
-the crew lands (§5.4) before the first step on an edge tile it can walk to the
-Vault from, chosen by the heist's seed, until there is a landing picker. When the clock runs
+tile tapped. The crew lands (§5.4) where the player chooses on the landing picker
+(`world/overlay_landing.gd`, `world/overlay_landing_deck.gd`,
+`features/heist/landing_presenter.gd`); the Sage, its powers and the casts
+are at the bottom right. When the clock runs
 out the command log is written down as the replay a device queues (§24.12) and
 checked. With a server (`RULEBORN_SERVER`, or the project setting
-`ruleborn/server_url`) the screen signs in, takes the first island in §24.8's
-target lists that is not the player's own, leases it and plays it, and the
+`ruleborn/server_url`) the screen signs in, leases the target the player chose (from the
+Observatory, the scout or the planner; with none chosen, the first island in
+§24.8's target lists that is not the player's own,
+`HeistRepository.first_target`) and plays it, and the
 replay is submitted to `server/`, which re-simulates it and settles the fee and
 the haul (§24.12). Without one it plays the fixture realm on a fixed seed and
 checks the replay with the same function on the phone.
@@ -227,21 +236,24 @@ tile by tile with sharp edges (§21.12); the tiles come from the simulation's ow
 sight rule, not from a second copy of it here.
 
 **Settings** (`scenes/settings.tscn`). §20.6's language, a volume each for
-music, effects and alerts, reduced motion and haptics. Each change is applied
+music, effects and alerts, reduced motion, haptics, text size, high contrast,
+left-handed controls, the hold time and the rehearsal's pace
+(`scripts/settings.gd`), and the Account tab (sign-in, devices, sign-out;
+[`docs/security/auth.md`](../docs/security/auth.md)). Each change is applied
 and saved to `user://settings.cfg` as it is made, and read back on the next
 launch; a first launch starts in the phone's language. The volumes are three
-audio buses, so an alarm is never silenced with the music. Reduced motion and
-haptics are kept but change nothing yet: the client has no swoops, particles
-or vibration for them to turn off. Text size, left-handed controls and high
-contrast wait for the accessibility pass rather than being offered before they
-work.
+audio buses, so an alarm is never silenced with the music. Reduced motion is
+read by `ui/motion.gd` and the 3D views; haptics play through
+`app/haptics.gd`; what the rest do is under "Accessibility" above.
 
 **Words.** No screen holds text of its own. Every word comes from
 `i18n/strings.csv`, or — for the content's own names, laws, notes,
 resonances, chords, wards and ground — from `i18n/content.csv`, which
-`tools/client_strings.py` writes from `content/` so each name keeps one home;
+`tools/client_strings.py` writes from `content/` so each name keeps one home,
+or — for country names on the account panel — from `i18n/countries.csv`,
+which `tools/auth_countries.py` writes;
 every column but English holds the English names until §26.9's read-aloud.
-Both reach the screens — one row a key, one column a language — through
+All three reach the screens — one row a key, one column a language — through
 `scripts/strings.gd`, so a language is a column and adding one touches no
 other script. The languages are §20.6's English and Brazilian Portuguese and
 the four the owner added (D99): `en` is British English as the document writes
@@ -252,21 +264,32 @@ Portuguese does. A new player starts in the phone's language
 (`Strings.locale_for`): Brazil's Portuguese or Portugal's, the United States'
 English or Britain's, German, French, and British English for any other.
 
-Every screen is built from `scripts/ui.gd`, so §21.1 and §21.8 are applied in
-one place: a 9:19.5 portrait frame, the clock and alarm at the top centre and
+Every screen is built from the UI kit (`ui/kit_*.gd`, the `rb_box` shader, the
+theme, the icons and `ui/motion.gd`, with `scripts/ui.gd` in front of it;
+[`docs/art/tracks/ui-kit.md`](../docs/art/tracks/ui-kit.md)), so §21.1 and
+§21.8 are applied in one place: a 9:19.5 portrait frame, the clock and alarm at the top centre and
 loot at the top right, every control at least 48 points and in the lower
 two-thirds, nothing in a corner or within 44 points of the notch or the home
 bar. The colours are §21.2's and §21.8's, named once in `scripts/palette.gd`.
 
-The drawing is flat and top-down. §21.1's diorama — a 35° orthographic camera,
-toon shading, ink outlines — is the art pass, not this; what this proves is the
-part that has to be right before any art: the phone runs the server's rules,
-and what the player does is what the server re-plays.
+The realm is drawn in 3D by `world/` (`WorldView`): the island, the realm
+kit's ground, features and buildings, the characters exported from the
+design's own sculpts (`art/creatures/*.glb`), toon shading with ink outlines,
+a 35° camera at home and a closer 50° follow camera in a heist. It draws only
+what the simulation gives it. Its look and budgets are the 3D program's
+([`docs/art/3d-program.md`](../docs/art/3d-program.md)). Underneath, what the
+first build proved still holds: the phone runs the server's rules, and what the
+player does is what the server re-plays.
 
 ## Tests
 
 `tests/run.gd`, headless, as TAP; `status.py` writes the results to
-`status.json`, which [`tools/completion.py`](../tools/completion.py) reads:
+`status.json`, which [`tools/completion.py`](../tools/completion.py) reads.
+The runner calls about forty suites (`tests/*_tests.gd`) by class name in a
+fixed order, so a new suite is added to `run.gd` by hand; it also checks that
+every script compiles. How to run them, render stills, and check budgets:
+[`docs/guides/client.md`](../docs/guides/client.md). The first checks, still
+among them:
 
 - the client's rules version is the one every golden replay names;
 - every golden replay re-simulates with every second agreeing with its
@@ -325,41 +348,51 @@ xvfb-run -s "-screen 0 1080x2340x24" ~/.cache/ruleborn/Godot_v4.7.2-stable_linux
   gate after that.
 - **Sign-in.** The server's sign-in takes a platform credential; a desktop
   build has no Game Center or Play Games, so it sends a stand-in the local
-  server accepts. §12.22's target choice is not built either: the client takes
-  the first island in the lists that is not its own.
-- **The landing picker.** §21's Landing screen — every outer realm's edge,
-  what guards would hear, and the clock for each choice — is not built; the
-  heist screen lands the crew itself (see above), and nothing draws the crew
-  until it has landed.
-- **Fonts.** §21.8 names Baloo 2 and Marcellus; the client uses Godot's default
-  font until they are added.
-- **The law banner.** §21.8 puts the realm's laws at the top left of the heist
-  layout. A woven law already changes what is drawn — a law that halves sight
-  halves the cone — but the screen does not yet name it.
+  server accepts (`RULEBORN_STUB_SIGNIN=1`); the native Game Center and Play
+  Games plugins wait on a machine with Xcode and the Android SDK
+  ([`docs/security/auth.md`](../docs/security/auth.md)).
 
 ## Layout
 
     project.godot           portrait, 1080 × 2340, the compatibility renderer;
                             GDScript warnings are errors (every declaration typed)
+    gdlintrc                gdlint's rules for this project (check_all.sh runs it)
     ruleborn.gdextension    loads bin/libruleborn_godot.so, and each phone's arm64 build
     export_presets.cfg      the Android and iPhone exports; export.sh builds them,
                             pack_check.py checks what the pack carries
-    ext/                    the extension: RulebornReplay and RulebornIsland, over sim/
+    ext/                    the extension over sim/: RulebornReplay, RulebornIsland,
+                            RulebornStability
     app/                    the composition root, the store's slices, the router
+                            (every screen's route), haptics, the app's lifetime
     core/                   Result, the store, the action log, failure words
     data/                   the API, transports, repositories, the outbox
-    features/<feature>/     each area's state, controller and presenter: heist,
-                            shop, social, workshop
-    ui/tokens.json          the design tokens, each cited
-    i18n/strings.csv        every word on screen, a column a language
-    scenes/                 the screens: home, heist, result, replay, settings,
-                            builder, track, shop, social, friends, workshop, age
+    features/<feature>/     each area's controllers and presenters, one folder an
+                            area: auth, codex, curation, defences, first, forms,
+                            harmony, hatch, heist, keeper, lab, law, map,
+                            observatory, planner, profile, realm, roster, sages,
+                            share, shop, social, universe, weaving, workshop
+    ui/                     the UI kit: tokens.json (each token cited), kit_*.gd
+                            components, the rb_box shader, theme, icons/, fonts/
+                            (with LEDGER.md), motion, colour_check.gd
+    i18n/                   strings.csv (every word on screen, a column a
+                            language), content.csv and countries.csv (generated)
+    platform/               notifications.csv and the phones' own string tables
+                            written from it (ios/*.lproj, android/res/values*)
+    art/creatures/          the characters as .glb, exported from the design's
+                            sculpts by tools/art/
+    scenes/                 the 33 screens, one scene each
     world/                  the realm in 3D: WorldView (a RealmView), the island
-                            builder, the realm kit, the figures, the toon shaders
-    scripts/                the screens, the realm view and heads-up display,
-                            the shared UI pieces, the palette, the string catalogue,
-                            the saved settings
-    tests/run.gd            headless tests, TAP; tests/core_tests.gd, the layers'
+                            builder, the realm kit, the figures, overlays and
+                            stages, the toon and outline shaders
+    scripts/                the screens' scripts, the realm view and heads-up
+                            display, the palette, the string catalogue, the saved
+                            settings
+    prototypes/ui_quality/  T14's heist HUD proof on authored art; no game screen
+                            uses it (docs/art/ui-quality/report.md)
+    tests/run.gd            headless tests, TAP; it calls every tests/*_tests.gd
+                            suite by name
+    tests/shots/            shot scripts for tools/render/shoot.sh, one per
+                            screen or subject
     tests/screenshot.gd     a still, under a virtual display (Xvfb and Mesa's
                             software OpenGL render the world)
     build.sh, status.py     build, test, write status.json

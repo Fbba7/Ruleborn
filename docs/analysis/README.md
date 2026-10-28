@@ -1,5 +1,12 @@
 # Design analysis — Ruleborn
 
+> **An archive.** This analysis read v2.3 of the design document and uses
+> v2.3's section numbers; the document is now at v3.7. Its findings live on,
+> with their current state, in the audit register (see
+> [`docs/guides/design-tools.md`](../guides/design-tools.md)). For the current
+> state of the project read [`docs/status.md`](../status.md); for the
+> current commands, the design-tools guide.
+
 A deep read of `docs/design/ruleborn-game-design-v2.3.html`: 30 sections,
 ~85,600 words, 330 headings, 123 graded references, 12 commissioned evidence
 reviews.
@@ -18,12 +25,12 @@ https://claude.ai/artifact/Yb1WxZ2eJCCbByitnd7fJf.
 | [06-build-readiness.md](06-build-readiness.md) | What is buildable today, what's blocked, the technical bet assessed, and an independent scope and risk read |
 | [07-recommended-next-steps.md](07-recommended-next-steps.md) | Ordered actions, the two decisive gates first |
 
-## Reproducing the findings
+## Reproducing the findings (as of v3.1)
 
 ```bash
 # regenerate the greppable text from the HTML export
 python3 tools/extract_design_doc.py \
-    docs/design/ruleborn-game-design-v2.3.html \
+    docs/design/ruleborn-game-design-v3.1.html \
     docs/design/ruleborn-game-design-v3.1.txt
 
 # re-run every document check, v3.1's and this repository's, in one verdict
@@ -40,7 +47,7 @@ which neither of the two checkers it replaces could be. Three checks retired whe
 v3.1 fixed what they were about: the detection model, the ambush floor, and the
 roster's disagreement about roles. The economy model's twenty-eight tests assert both that it still reproduces the
 document where the document is self-consistent, that findings F1–F3 still hold,
-and that the payout peg proposed in `spec/economy.md` behaves as that page
+and that the payout peg proposed in `docs/design/spec/economy.md` behaves as that page
 claims. Run both against any later version of the document to see what stands.
 
 ## Method and limits

@@ -1,0 +1,126 @@
+# Documentation changes (T15)
+
+What the documentation pass of 28 October 2026 changed, and why. The goal:
+someone new lands on the README and finds quickly what the game is, how the
+repository is organised, how to build, run and test each part, how the agent
+program works, and where every important document lives. No history was
+deleted: track notes, decision records and the old README's narrative are all
+kept, and made findable.
+
+## Survey: what was wrong
+
+- **The README was a status log.** About 180 of its 406 lines were the history
+  of each design version, so the repository map, a quick start and the key
+  links were missing or far down. There was no build or run command for the
+  client, server or simulation at the top level.
+- **No index of the documents**, no architecture overview, and no guide to the
+  agent program (tracks, branches, progress files, deploys) beyond the 3D
+  program's track table, which stopped at T12.
+- **The client README was out of date** in a dozen places: "twelve screens"
+  (there are 33), fonts "not added" (three ship), the landing picker and the
+  law banner "not built" (both are), "the drawing is flat and top-down" (it is
+  3D), settings that "change nothing yet" (they do), a Layout block missing
+  `ui/`, `platform/`, `art/`, `prototypes/`, and twenty of the 25 feature
+  folders.
+- **The sim README** said three abilities, four Sage powers and island
+  generation were not built; the code builds all of them.
+- **The server README's** Layout lacked the three sign-in modules and five
+  other files, and one line called the hold unmeasured though another section
+  describes measuring it.
+- **The analysis README** told readers to extract v2.3's HTML into v3.1's text
+  file, and did not say it is an archive of the v2.3 reading.
+- **The spec index** stops its adoption history at v3.1 without saying so.
+- **The 3D program** still described the third wave as the latest and the
+  second as still to come, and its track table lacked T13 and T14.
+- **Track notes are hard to map**: file names mix numbers and subjects
+  (`T6.md`, `kit.md`), T1's notes are split across three files, T11 to T14
+  keep theirs outside `docs/art/tracks/`, and progress files cite stills by
+  bare file name.
+- **Generated files** (checked, left alone): `docs/audit/index.html`,
+  `docs/decisions/index.html`, `docs/roadmap/index.html` (from
+  `tools/build_audit.py`, `build_brief.py`, `build_roadmap.py`),
+  `docs/design/dependencies.md` (`tools/check_dependencies.py`),
+  `docs/design/generated/*.md` (`tools/generate_docs.py`),
+  `server/declarations.md` (`server/src/privacy.mjs`), and the three
+  `status.json` files. None of their sources needed a change for this pass.
+
+## What changed
+
+### New
+
+| File | Why |
+|---|---|
+| [`docs/README.md`](README.md) | The index: every document, one line each, with who owns it |
+| [`docs/architecture.md`](architecture.md) | The three parts, the shared simulation, a heist from lease to grant, what is authoritative where, pointers to security and cost |
+| [`docs/status.md`](status.md) | A dated summary of where things stand, then the README's old status narrative, moved unchanged under "History, as written at each version", with the register, decisions, roadmap and prototype sections |
+| [`docs/guides/checks.md`](guides/checks.md) | `check_all.sh` step by step, its prerequisites, and the rules `check_docs_consistency.py` enforces on Markdown |
+| [`docs/guides/client.md`](guides/client.md) | Build, test, lint, store builds, rendering stills, strings and localisation, accessibility checks, budgets |
+| [`docs/guides/server.md`](guides/server.md) | Run, test, load test, configuration variables, generated inputs |
+| [`docs/guides/simulation.md`](guides/simulation.md) | Build, test, changing a rule, goldens, generated files, examples |
+| [`docs/guides/design-tools.md`](guides/design-tools.md) | The design document, register, brief, roadmap, content and spec; the old README's tool commands |
+| [`docs/guides/agent-program.md`](guides/agent-program.md) | Tracks with branch, notes, progress and stills folders; rules; progress-file format; waves and deploys |
+| [`docs/progress/T15.md`](progress/T15.md) | This track's progress |
+| [`docs/art/tracks/README.md`](art/tracks/README.md), [`docs/art/shots/README.md`](art/shots/README.md) | A map in each folder of which file or folder belongs to which track, where people look first |
+
+### Rewritten
+
+- **`README.md`**: a few lines on the game, a contents list, a one-line
+  status with the checked "Can the drawing start?" table, a repository map, a
+  quick start for each part, how `check_all.sh` works, the four live pages,
+  key documents, the design in one page (kept), and the layout. The tools
+  listing that `check_docs_consistency.py` checks is kept whole, now grouped
+  by purpose with comment lines. The long narrative moved to `docs/status.md`.
+
+### Corrected
+
+- `client/README.md`: the screen count, the builder's ground (all 39
+  features), the landing picker, target choice, settings, the three
+  catalogues, the UI kit, the 3D drawing, the test runner's suites, the "Not
+  yet" list (landing picker, fonts and law banner removed; sign-in updated),
+  the Layout block.
+- `sim/README.md`: abilities, Sage powers and island generation are built
+  (marked as later than the text around them); Layout gains `run_spike.sh`,
+  `stability_cases.json`, `Cargo.toml`.
+- `server/README.md`: Layout gains the sign-in modules, `status.py`,
+  `package.json`, `ratings.json`, `web/terms.md`; the curation section no
+  longer calls the hold unbuilt.
+- `docs/analysis/README.md`: marked as the v2.3 archive, with pointers; its
+  extract command fixed; a bare `spec/economy.md` given its full path.
+- `docs/design/spec/README.md`: says its adoption history stops at v3.1 and
+  where the current state lives.
+- `docs/art/3d-program.md`: the waves' prose brought up to date; T13 to T16
+  added to the track table; a pointer to the agent-program guide.
+- `docs/progress/T10.md`: a doubled comma.
+- Progress files: titles made one shape (`# T<n> <name>: progress`) in T1, T11,
+  T12 and T13, and T4's table header capitalised like the others. The six-line
+  header was already the same in all of them.
+
+## Questions for the owner
+
+1. **Deploys.** Tracks speak of "deploy 2" and "deploy 3"; the history shows
+   integration branches `int14` to `int18`. How do the two numberings map,
+   and does anything happen to main after a merge beyond the checks?
+2. **Production.** Where and how will the server be deployed? Nothing in the
+   repository describes it; `db-cost.md` measures against Cloudflare D1's
+   billing, which suggests the target.
+3. **T16's branch** is not recorded anywhere in the repository.
+4. **Owners of single-commit files.** Many documents have one imported commit
+   in their history; the owners in [`docs/README.md`](README.md) are inferred
+   from their content.
+5. **Register id D64** is used in `server/README.md` both for the season
+   track's unbuilt part and for family approval; one of the two is probably
+   another id. Not changed, since the register is not this track's.
+6. **File ownership overlaps** in the track notes (`client/tests/shots/screen_*.gd`
+   claimed by T6, T7 and T10; T8's notes still claiming screens the program
+   table gives T10). The guide says the program table wins; is that right?
+7. **Track notes naming.** Renaming the notes to one scheme (`docs/art/tracks/T<n>-<name>.md`)
+   would help, but would break links in commits and register items. Left as
+   is, with a map in the agent-program guide. Rename?
+8. **T2 Look** has no progress file and its notes stop at a wave-3 round with
+   no "Stopped here". Is the track closed?
+
+## Log
+
+- 16:15 UTC: survey; three parallel read-only audits of the client, server and
+  sim READMEs and of the docs tree.
+- 16:30 UTC: guides, architecture, index, README, status page, corrections.

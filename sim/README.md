@@ -264,7 +264,8 @@ later subsystem cannot reuse one.
 `the_seed_cannot_change_what_a_guard_does` holds this in place: the same
 commands on seed 1 and seed 2^64-1 must give the same checksum every tick for
 3,000 ticks. The seed still travels in the replay header, for the systems
-§24.7 does give dice to — loot and island generation, not built — and for §8,
+§24.7 does give dice to — loot and island generation (island generation is
+built since: `rb_generate` and `rb_curated` in `ffi.rs`) — and for §8,
 the one place the document asks for chance inside a heist: a dissonance's
 gusts, flicker and déjà vu, Fair lights' illusions and Quicksand's pits draw
 from their own stream, `Stream::Laws`, seeded from the replay, and draw
@@ -542,9 +543,10 @@ laid from. Their numbers are read out of `content/ruleborn.json`'s own
 sentences by `content_gate.py`, the table's rows held to its ids, roles, sizes
 and fliers. The root's half damage and the link's sharing are applied to what
 each crew member lost since the last share, before knockouts are settled, so
-every source of damage passes through them. The other three wait on what they
-act on (`Ability::built`), and what the document leaves open about all of
-them is register G77 and G81.
+every source of damage passes through them. The other three waited on what
+they act on when this was written; all eighteen are built now
+(`Ability::built` returns true for every one, `src/ruleborn.rs`). What the
+document leaves open about them is register G77 and G81.
 
 The Sage (§11.7) comes with the manifest. The Sage command (13 on the wire)
 names a power in the crew-member nibble and a tile; after any power the Sage
@@ -554,7 +556,9 @@ Archivist's Suspend, Reveal and Recall, the Tinkerer's Jam and Plank, the
 Gardener's Renew and Decoy, and the Wanderer's Tailwind. Vine bridge waits for
 a command that names two points, Rift for universes of several realms, Invert for a rule on which
 parameters have an opposite, and Copy for a law that applies around the crew
-rather than over the realm (`Power::built`).
+rather than over the realm (`Power::built`). That was the state when this
+was written; all twelve are built now (`Power::built` returns true for every
+one, `src/ruleborn.rs`).
 
 ## The event log
 
@@ -708,6 +712,10 @@ a test that does not exist, so the band cannot drift from the code.
     content_gate.py   the simulation's numbers against content/ and design_facts
     build_laws.py     writes src/laws_table.rs; --check compares it
     status.py         runs every gate, writes status.json
+    run_spike.sh      runs status.py: the one command for every gate
+    stability_cases.json  TD.14's stability cases, priced again by the server's and
+                      the client's tests (STABILITY_CASES=write cargo test stability_cases)
+    Cargo.toml        the crate: no dependencies, overflow checks in release
     systems.json      which tests prove which system, for the audit page
     examples/         where_diverge: which second each golden parts company at;
                       planned: the planned heist second by second;

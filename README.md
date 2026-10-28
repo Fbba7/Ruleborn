@@ -8,9 +8,27 @@ creatures to rob other players' islands by outsmarting theirs.
 
 Native mobile (iPhone and Android), Godot 4.7.2-stable with godot-rust v0.5.5 on its 4.7 API (§24, TD.1), rated 13+, cosmetic-only monetisation.
 
+**New here?** Read [The design in one page](#the-design-in-one-page), then
+[`docs/architecture.md`](docs/architecture.md), then the
+[documentation index](docs/README.md).
+
+## Contents
+
+- [Status](#status)
+- [Repository map](#repository-map)
+- [Quick start](#quick-start)
+- [The checks](#the-checks)
+- [Live pages](#live-pages)
+- [Key documents](#key-documents)
+- [The design in one page](#the-design-in-one-page)
+- [Repository layout](#repository-layout)
+
 ## Status
 
-**Pre-production — design document at v3.7, every recorded decision written in, the screens and characters designed (Screens v3); the simulation core, the server and the client have started.**
+**Pre-production — design document at v3.7, every recorded decision written in, the screens and characters designed (Screens v3); the simulation core, the server and the client are built far enough to play a heist end to end, and the 3D and interface program has run five waves.**
+
+The full account, part by part and version by version, is
+[`docs/status.md`](docs/status.md).
 
 ### Can the drawing start?
 
@@ -25,246 +43,133 @@ a band at the top.
 | **Screens** | Ready | — |
 | **Characters** | Ready | — |
 
-**Ready means hand it over.** Until then the verdict says who is holding it: a
-decision only you can make, evidence nobody here can produce, or drafting that is
-still mine to do. v3.4 settled the screens' last gate (C37: the scout shows no
-patrol positions), and handed the realms' one to this repository: §32.9's full
-economy re-run. That run is done, so the realms now wait on the document taking
-its tables.
+This table is checked against the register by
+`tools/check_docs_consistency.py`; what each verdict means is in
+[`docs/status.md`](docs/status.md#history-as-written-at-each-version).
 
-**v3.7 writes every decision in.** The owner's 47 recorded answers are now in
-the document (§32.8 lists them), and each of the 46 decisions still open takes
-the option its brief recommended — settled by the document's own rule, not
-answered by the owner, and the brief shows the two apart. Its balance pass
-changes the game: wards 8, 8, 6, 2 and 0 by realm level on 1, 1, 2, 1 and 1
-posts, with guards at realm levels 1 to 3 tuned by §12.17's realm's watch, now
-built in the simulation and the harness (every level holds 30 to 45% in the
-harness); one raider-success band of 55 to 70%; raw replays kept 90 days; and a
-write budget per kind of player. Read item by item by six readers, v3.7 closes
-87 of the 139 items open against v3.6, settles the document under 42 more whose
-build remains, and partly settles ten; reading it against itself and the build
-found 25 new items, almost all with their edit drafted (roadmap TD.75), and one,
-C58, that the re-run figures it quotes match no single run (TD.72).
+## Repository map
 
-**v3.6 records the owner's designs.** Screens v3, made in Claude Design, holds
-28 designed screens, 43 character and creature sheets with 3D models and 393
-icons, and §23.5 makes it the visual reference with the document winning on every
-rule. v3.5 moved the engine pin to Godot 4.7.2 (measured here: the client passes
-all its tests on 4.7.2 after one change). Read screen by screen against v3.6 and
-the build by twelve readers, each finding tried by an adversarial verifier, the
-designs depart from a rule or the build in about 190 places §23.5 does not list
-(the register's v3.6 layer, and
-[`docs/analysis/screens-v3/`](docs/analysis/screens-v3/README.md)); the plan to
-build them is the roadmap's stage SD. The owner then handed over the design
-itself, and reading it against the repository added four register items, four
-decisions and two tasks in stage SD; folding it in found two more items, v3.6
-against itself, each a decision
-([`docs/analysis/screens-v3/handoff/`](docs/analysis/screens-v3/handoff/README.md)).
-v3.6 itself answers none of the 70 items open against v3.4, narrows G28 and F37,
-and reopens C11.
+| Path | What it is | Start with |
+|---|---|---|
+| `sim/` | The heist simulation in Rust: deterministic fixed point, no dependencies, the same code on the phone and (as WebAssembly) on the server | [`sim/README.md`](sim/README.md) |
+| `server/` | The backend on Node 22.5+: lease, re-simulate, grant, and the meta-game (accounts, seasons, shop, Workshop, friends …) | [`server/README.md`](server/README.md) |
+| `client/` | The game in Godot 4.7.2 (GDScript), with `sim/` linked in as a Rust GDExtension (`client/ext/`) | [`client/README.md`](client/README.md) |
+| `content/` | The design's content tables as JSON, extracted from the document and validated against it | [`content/README.md`](content/README.md) |
+| `tools/` | Checks over the design document, the register and page generators, models, string generators, art export | [the tools listing](#repository-layout) |
+| `docs/` | Design document, analysis, specification, art program, progress, security, cost | [`docs/README.md`](docs/README.md) |
+| `art/design/` | The Screens v3 design's own 3D sources and its target stills | [`art/design/README.md`](art/design/README.md) |
+| `prototypes/heist-gate/` | A superseded browser prototype of the two pre-code gates, still published | [`prototypes/heist-gate/README.md`](prototypes/heist-gate/README.md) |
 
-Seven versions have now answered the audit. **199 of 329 register items are fixed**,
-in the document itself or, for D71, by the build; the latest 87 by v3.7. 86 are
-still open: 48 of the 139 open against v3.6 (38 waiting on the build, ten partly
-done with their edits drafted) and 38 of the 39 found reading v3.7 or building
-against it.
+How the three programs fit together, and how a heist flows through them:
+[`docs/architecture.md`](docs/architecture.md).
 
-v3.4 answers the seventeen items open against v3.3, and fifteen close. Each was
-checked by section and line, not taken from its own list. The two that do not
-(C19, C35) wait on the same economy re-run. Its two rule changes are ported to
-`sim/` and the harness: cracking calls only the guards within 5 m of the Vault
-by the walking path, and a ward ignores the crew member disarming it.
+## Quick start
 
-Running the sweep v3.4 names for the crack's reach found **F35**: the rule cannot
-choose a reach, because with no call at all the depth gate already fails from
-two realms up and every realm level holds far above its band — and against the
-no-call baseline, the 5 m shipped takes the optimal crew's lead over the
-careless one from +42 points to +4 (n=200). The design hears every hit within
-5 m anyway, so the question is really whether cracking is heard at all. Porting
-also found **G18** (a ward ignores its disarmer on the tile, not on the walk
-into a Well's or a Glare's reach), **C40** (a sentence §31.3's own change made
-false) and **D59**, the harness's own: its optimal crew was disarming what v3.3
-made a fifteen-second job and playing below the competent crew.
+You need Python 3.10+ (tested on 3.13), Rust stable, Node 22.5+ and, for the client, Linux
+x86-64 (Godot is fetched for you). Once:
 
-Still open from v3.3, and not in v3.4's list because they came after its
-snapshot: **F33** (one Lantern Glare outweighs a realm of other wards), **F34**
-(§13.2's hold table was measured at one guard post; at §5.2's posts realms 3 to
-5 hold 91 to 99.5%) and **G17** (four settlement terms the server needs).
-
-**The full economy re-run is done** (T2.6), at
-[`docs/design/generated/pacing.md`](docs/design/generated/pacing.md): §9.3,
-§10.2's day columns, all 40 Keeper levels, §14.3's milestones, §5.2's realm
-levels and §5.5's capacities, each at both edges of §9.6's band. The model was
-first ported to v3.3's raid pay (D58, done), and then **reviewed
-adversarially**: each claim attacked by one agent and re-checked by an
-independent judge. Every number reproduced, but several rested on choices the
-document never makes, so the run was rebuilt on what the review found — the
-document's storage caps, entry fee, strays, school-only bonuses and Codex
-chapters are in it now — and every open choice is printed beside the tables
-with what the alternative moves.
-
-The curve is much slower than the tables it replaces: an engaged player reaches
-Keeper 40 on day 349–357 (the target curve says 179) and has everything built
-on day 699–719 (§14.3 says 378). The findings:
-
-- **G22** — §14.1 names no staffing order, no realm order and no rule on
-  staffing posts, and each moves the tables by months (Keeper 40 anywhere from
-  day 337 to 385 on realm order alone).
-- **F38** — strays fill the roster as fast as homes are built, so §9.5's rule
-  has no birth rate to set.
-- **F39** — the entry fee is 2% of what a player holds, so a player saving for
-  the Spire, as §14.1 says, pays about eight times more in fees than raids
-  bring.
-- **F36** — run on the model's roster the raid-worth check fails 2,400, but the
-  base it needs depends on those same open choices.
-- **F37** — a player who never raids stops levelling below Keeper 12, so never
-  reaches the full Codex §14.4 prices for them.
-- **C41**, **C42** — the fee's return and the stray rate are each stated two
-  ways; **G19** — the Heart has no ward or post count.
-
-The backend has started (T3.3). An island is now a content-addressed bundle
-that the simulation loads and checks against §5.2 and §6.1. A replay pins the
-island's hash and a rules version the build computes from its own behaviour.
-[`server/`](server/README.md) is §24.12's lease, validate and grant as edge
-functions over §24.8's tables: it re-simulates each heist in the same
-WebAssembly build, settles the entry fee and §9.6's haul in one transaction,
-and never pays a retry twice. It enforces §9.6's three caps (a raid, a day and a
-week), and building them found **G20**: the caps do not say which unit they are
-in, and under the server's reading no player type §14.1 models ever reaches one.
-The review also found **D60**: a bundle's Vault level and exposed loot are the
-client's word until the economy is server-side. Target lists are §24.8's static files, one a band (**G21**:
-neither the band nor how often a list is rebuilt is defined). And the 54
-law-shaped forms of §11.10 are now validated content.
-
-The frontend has started (T3.4). [`client/`](client/README.md) is a Godot 4.7.2
-project with `sim/` linked in as a Rust GDExtension, as §24.7 plans. A heist
-can be played on it — every tap becomes a command stamped with its tick,
-recorded as the replay a device queues and checked as the server checks it —
-and watched: the replay screen re-simulates a heist a tick at a time and every
-second checks its own checksum against the replay's. All five golden replays
-agree at every second, so the client runs the server's rules, not a copy of
-them. Against `server/` the loop is whole: the client leases a target from the
-lists, plays it, submits, and the server re-simulates the replay and pays. It is
-a desktop build for now; the phone builds are §24.7's spike. The look is a
-stand-in: the diorama of §21 is the art pass.
-
-v3.0 also changed the
-plan: both pre-code player tests are gone, replaced by the simulation harnesses
-in §19.27, and the build-willingness risk is designed out rather than measured
-(§13.3).
-
-v3.1 changed the plan less than its size suggests and changed how much of the
-document can be trusted more. It adds §31 — a build checker, constants pinned
-in data, generated blocks hashed — and closes four numbering holes v3.0 left.
-It is the first version whose fixes were checked here rather than taken from
-its own list, and the checking is what found F24 and F25, neither of which
-that list mentions.
-
-What v3.0 did not finish is the same shape as what it fixed: four of those six
-fixes left a stale copy standing, and §29.1 — the formulas appendix — still
-tabulates the detection model §12.8 deleted, citing §12.8 as its source. See
-[`docs/design/generated/v3-response.md`](docs/design/generated/v3-response.md),
-which is generated from the register so it cannot drift.
-
-Live progress: **https://claude.ai/artifact/Yb1WxZ2eJCCbByitnd7fJf** — every
-stage, what finishes it, and who it is waiting on, generated from
-[`tools/roadmap.py`](tools/roadmap.py) with progress computed from the audit
-register rather than claimed. At its top are two numbers, to two decimals: how
-close the app is to built on the **backend** and on the **frontend**, weighed by
-§26.8's own cost of each build phase and counted only through passing tests
-([`tools/completion.py`](tools/completion.py)).
-
-The game is fully designed in `docs/design/`. The first step was a deep analysis
-of that design, which is in `docs/analysis/`.
-
-Nothing should be built until the stage 0–3 work in
-[`docs/analysis/07-recommended-next-steps.md`](docs/analysis/07-recommended-next-steps.md)
-is done. In short:
-
-0. The §19.27 harnesses — **built** ([`tools/heist_harness/`](tools/heist_harness/README.md)).
-   Three of §19.27's four thresholds pass; the fourth, and two other findings,
-   are F7–F9. The browser prototype
-   ([`prototypes/heist-gate/`](prototypes/heist-gate/README.md)) is superseded
-   but stays published: it is the only artefact here that can answer the question
-   §19.27 says simulation cannot
-1. Finish the fixes v3.0 started — retiring the superseded copies is the work,
-   not restating the decisions
-2. ~~Rebuild the economy model~~ — **done**, `tools/economy_model/`
-3. The determinism spike — **two of four targets done** ([`sim/`](sim/README.md)): native x86-64 and WebAssembly agree bit for bit over a 240-second heist at five seeds, and on the validator's verdict. A real iPhone and a real Android are the rest of the gate. The server that runs the WebAssembly half is started ([`server/`](server/README.md), T3.3)
-4. A launch-scope decision
-
-## Repository layout
-
+```bash
+rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios
+pip install "gdtoolkit==4.*"     # gdlint, for the client's lint
 ```
-docs/
-  design/     the design document at v3.7, with every earlier version beside it, plus greppable extracts
-  analysis/   the deep analysis of that document — start here
-content/       the twelve content tables as data, plus the reconciled detection spec
-docs/design/spec/   the reconciled specification, one file per system
-docs/design/dependencies.md  what has to be settled before what, generated
-docs/audit/    the generated audit register page
-docs/roadmap/  the generated roadmap page
-docs/art/      the 3D program: the plan, each track's notes and the stills it was judged by
-art/design/    the Screens v3 design's own 3D sources (sculpts, rigs, diorama) and its target stills
-prototypes/
-  heist-gate/  a throwaway browser build that runs both pre-code gates
-sim/            the heist simulation core in Rust: determinism spike (T3.1), replays (T3.2), pathfinding, sight, noise, guard states, island bundles and the validator (T3.3)
-server/         the edge functions of §24.1: lease, validate, grant, over §24.8's tables (T3.3)
-client/         the Godot 4.7.2 client, with sim/ as a GDExtension: the replay screen (T3.4)
-tools/
-  extract_design_doc.py           HTML -> greppable text
-  check_document.py               every check over the document, in one verdict
-  check_design_consistency.py     the design half, which check_document.py runs
-  vendor/                         v3.1's own checker, kept unmodified to diff against
-  art/                            the design's creature modules -> client/art/creatures/*.glb (node tools/art/export.mjs)
-  ui/                             the design's icons -> client/ui/icons/ (SVG and PNG with a manifest; node tools/ui/export_icons.mjs)
-  ui_research/                    T14's UI quality research: authored HUD art baked in headless Chromium into one atlas (node tools/ui_research/bake_hud.js), the AI UI artist's icons rendered in three.js (bake_icons.js), side-by-sides (compare.py); docs/art/ui-quality/report.md
-  extract_content.py              design document -> content/*.json
-  validate_content.py             schema and cross-reference checks on content/
-  compare_module.py               the prototype's data module against content/, by hash, read as text
-  generate_docs.py                content/ -> the design document's summary tables
-  check_docs_consistency.py       this repository's own documents, against each other
-  decision_support.py             prices the decisions that are the owner's
-  audit_register.py               the audit register, as data
-  build_audit.py                  renders the register to docs/audit/index.html
-  check_audit_ui.py               the audit page's tabs, bars and chips, against the register
-  build_brief.py                  the owner's decision brief to docs/decisions/index.html; --check
-  check_edits.py                  every drafted edit quotes the document correctly
-  check_dependencies.py           the ordering between items; writes dependencies.md
-  check_findings_fresh.py         which register numbers can be shown to be current
-  scope_cut.py                    costs a launch-scope cut by engine work
-  build_stamp.py                  one build stamp for every published page
-  law_effects.py                  classifies all 48 laws against the rule sheet
-  note_rebalance.py               the note rebalance §8.8 says is already done
-  roadmap.py                      the roadmap, as data
-  build_roadmap.py                renders it, computing progress from the register
-  client_strings.py               writes client/i18n/content.csv, the content's names, from content/
-  auth_countries.py               writes client/i18n/countries.csv, every country's name in the game's languages
-  native_strings.py               writes the phones' notification tables, iOS and Android, from client/platform/notifications.csv
-  english_us.py                   writes US English from British English by a spelling table, in the catalogues and the island words
-  client_contract.py              the client's server routes and failure words, checked against server/src/http.mjs
-  privacy_manifest.py             writes the iPhone build's privacy manifest from server/privacy.json
-  league_model.py                 fits the league boundaries to §14.7's shares; writes server/src/leagues.json
-  completion.py                   how close the app is to built, backend and frontend, from §26.8's costs and passing proofs
-  parse_gate_results.py           scores the gates from testers' result codes
-  build_prototype.py              renders the throwaway browser build of the two pre-code gates
-  check_prototype_conformance.py  the prototype implements the rules it claims to
-  economy_model/                  the day-by-day model §24 references but omits
-  heist_harness/                  §19.27's simulation harnesses, built in v3.0's plan
-  generator_settings.py           sweeps the generator against both bands the document sets
-  post_ladder.py                  whether a steeper guard-post ladder closes F26's gap or moves it
-  ward_budget.py                  whether F26's ward budget lands every realm in both bands
-  law_ranks.py                    prices C3's three rank splits, and tests §7.9's rule against the sheets
-  ability_text.py                 C6's 18 ability pairs: which differ by how much, and which by what they do
-  check_unread_fields.py          every field the harness computes is read somewhere
-  design_doc.py                   which design document every check reads, in one place
-  design_facts.py                 the facts the document states, for the tools that read them
-  mutation_gate.py                §31.5's fifteen breakages, and the same defects said differently
-  twice_stated.py                 facts the document states in more than one section
-  inventory_homes.py              every section stating a launch-inventory count, and what checks it
-  version_diff.py                 what one version of the document changed, section by section
-  render/                         renders a still from the Godot client on a machine with no screen
+
+**Simulation** — build natively and for WebAssembly, run every test and the
+golden replays, compare the two builds:
+
+```bash
+bash sim/run_spike.sh
 ```
+
+**Server** — needs the WebAssembly build above:
+
+```bash
+node --no-warnings --test server/test/*.test.mjs                  # the tests
+RULEBORN_STUB_SIGNIN=1 node --no-warnings server/src/main.mjs 8787 --example   # run it on 127.0.0.1:8787
+```
+
+**Client** — fetches Godot 4.7.2 once into `~/.cache/ruleborn/`:
+
+```bash
+bash client/build.sh        # the extension, the golden replays, Godot's import cache
+python3 client/status.py    # every client test, headless, against a fresh local server
+bash tools/render/shoot.sh client/tests/shots/heist_shot.gd heist.png   # a still, with no screen
+```
+
+To look at it on a desktop, open `client/` in Godot 4.7.2 after building.
+
+**Everything** — the gate every push is held to (about 25 minutes):
+
+```bash
+bash tools/check_all.sh
+```
+
+The per-part guides go further: [client](docs/guides/client.md),
+[server](docs/guides/server.md), [simulation](docs/guides/simulation.md).
+
+## The checks
+
+`tools/check_all.sh` runs every check in the repository in dependency order,
+stops at the first failure, and ends with `All checks passed.` It covers, in
+order: the design document's own consistency; the simulation (tests, goldens,
+native against WebAssembly); the server (tests, load budget, privacy
+declarations); the client (string catalogues, the client–server contract,
+gdlint, every headless test, the phone builds compiling); the content tables;
+the models and analysis tools; this repository's own documents
+(`tools/check_docs_consistency.py`); and finally the audit and roadmap pages,
+which it regenerates.
+
+A known contradiction in the design document is not a failure: it is work not
+yet done, tracked as an open register item, and reported **OPEN**. A failure
+with no open item behind it, or a regression of an item marked fixed, breaks
+the build.
+
+Every step, the command to run it alone, and the rules the documentation
+check holds Markdown to: [`docs/guides/checks.md`](docs/guides/checks.md).
+
+## Live pages
+
+Four pages are published from this repository. Each is generated; never edit
+the HTML by hand.
+
+The **audit register**: every change to the plan and everything still to fix
+in the design document, with the edits to make —
+**https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
+(source `tools/audit_register.py`, built by `tools/build_audit.py` into
+`docs/audit/index.html`).
+
+The **decision brief**: every item only the owner can settle, in the order to
+decide them — **https://claude.ai/artifact/YZcD1uH5xtpFznqncRpt8g**
+(source `docs/decisions/brief.json`, built by `tools/build_brief.py` into
+`docs/decisions/index.html`).
+
+The **roadmap**: every stage of the build, what finishes it, who it waits on,
+and progress computed from the register and passing tests —
+**https://claude.ai/artifact/Yb1WxZ2eJCCbByitnd7fJf**
+(source `tools/roadmap.py`, built by `tools/build_roadmap.py` into
+`docs/roadmap/index.html`).
+
+The **heist-gate prototype**, superseded but still published —
+**https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E**
+([`prototypes/heist-gate/README.md`](prototypes/heist-gate/README.md)).
+
+How the register, the brief and the roadmap work and how to change them:
+[`docs/guides/design-tools.md`](docs/guides/design-tools.md).
+
+## Key documents
+
+| Document | What it is |
+|---|---|
+| [`docs/README.md`](docs/README.md) | Every document in the repository, one line each, with its owner |
+| [`docs/architecture.md`](docs/architecture.md) | Client, simulation and server; a heist end to end; what is authoritative where |
+| [`docs/status.md`](docs/status.md) | Where the project stands, and its history version by version |
+| [`docs/design/ruleborn-game-design-v3.7.html`](docs/design/ruleborn-game-design-v3.7.html) | The design document (text: [`.txt`](docs/design/ruleborn-game-design-v3.7.txt)) |
+| [`docs/design/spec/README.md`](docs/design/spec/README.md) | The drafted specification, one file per system |
+| [`docs/art/3d-program.md`](docs/art/3d-program.md) | The 3D and interface program: the bar, the look, the tracks |
+| [`docs/guides/agent-program.md`](docs/guides/agent-program.md) | How the agent tracks work: branches, ownership, progress files, deploys |
+| [`docs/security/review.md`](docs/security/review.md), [`docs/security/auth.md`](docs/security/auth.md) | The security review, and sign-in's threat model and design |
+| [`docs/server/db-cost.md`](docs/server/db-cost.md) | What the database costs, and what was cut |
+| [`docs/art/ui-quality/report.md`](docs/art/ui-quality/report.md) | Why the interface is not premium yet, and the plan |
+| [`docs/DOCS-CHANGES.md`](docs/DOCS-CHANGES.md) | What the documentation pass changed, and its open questions |
 
 ## The design in one page
 
@@ -298,109 +203,90 @@ cannot creep back in.
 
 Full detail: [`docs/design/ruleborn-game-design-v3.7.html`](docs/design/ruleborn-game-design-v3.7.html).
 
-## Checks
+## Repository layout
 
-```bash
-./tools/check_all.sh
+```
+sim/            the heist simulation core in Rust (see sim/README.md's Layout)
+server/         the edge functions of §24.1 over §24.8's tables (see server/README.md's Layout)
+client/         the Godot 4.7.2 client, with sim/ as a GDExtension (see client/README.md's Layout)
+content/        the content tables as data, plus the reconciled detection spec
+art/design/     the Screens v3 design's own 3D sources (sculpts, rigs, diorama) and its target stills
+prototypes/
+  heist-gate/   a superseded browser build that runs both pre-code gates
+docs/
+  README.md     the index of every document
+  architecture.md, status.md, guides/   how it fits, where it stands, how to work on it
+  design/       the design document at v3.7, every earlier version, extracts, spec/, generated/, dependencies.md
+  analysis/     the deep analysis of the design (v2.3), and screens-v3/, the Screens v3 reading
+  audit/        the generated audit register page
+  decisions/    the owner's decision brief and answers, and its generated page
+  roadmap/      the generated roadmap page
+  art/          the 3D and interface program, each track's notes, its stills, the UI quality report
+  progress/     each agent track's progress file
+  security/     the security review and sign-in's design
+  server/       the database's cost
+tools/
+  # the design document
+  design_doc.py                   which design document every check reads, in one place
+  design_facts.py                 the facts the document states, for the tools that read them
+  extract_design_doc.py           HTML -> greppable text
+  check_document.py               every check over the document, in one verdict
+  check_design_consistency.py     the design half, which check_document.py runs
+  vendor/                         v3.1's own checker, kept unmodified to diff against
+  mutation_gate.py                §31.5's fifteen breakages, and the same defects said differently
+  twice_stated.py                 facts the document states in more than one section
+  inventory_homes.py              every section stating a launch-inventory count, and what checks it
+  version_diff.py                 what one version of the document changed, section by section
+  # content tables
+  extract_content.py              design document -> content/*.json
+  validate_content.py             schema and cross-reference checks on content/
+  generate_docs.py                content/ -> the design document's summary tables
+  compare_module.py               the prototype's data module against content/, by hash, read as text
+  # the register, the brief, the roadmap and this repository's documents
+  audit_register.py               the audit register, as data
+  build_audit.py                  renders the register to docs/audit/index.html
+  check_audit_ui.py               the audit page's tabs, bars and chips, against the register
+  check_edits.py                  every drafted edit quotes the document correctly
+  check_dependencies.py           the ordering between items; writes dependencies.md
+  check_findings_fresh.py         which register numbers can be shown to be current
+  decision_support.py             prices the decisions that are the owner's
+  build_brief.py                  the owner's decision brief to docs/decisions/index.html; --check
+  roadmap.py                      the roadmap, as data
+  build_roadmap.py                renders it, computing progress from the register
+  completion.py                   how close the app is to built, backend and frontend, from §26.8's costs and passing proofs
+  build_stamp.py                  one build stamp for every published page
+  check_docs_consistency.py       this repository's own documents, against each other
+  # models and analyses
+  economy_model/                  the day-by-day model §24 references but omits
+  heist_harness/                  §19.27's simulation harnesses, built in v3.0's plan
+  check_unread_fields.py          every field the harness computes is read somewhere
+  generator_settings.py           sweeps the generator against both bands the document sets
+  post_ladder.py                  whether a steeper guard-post ladder closes F26's gap or moves it
+  ward_budget.py                  whether F26's ward budget lands every realm in both bands
+  law_ranks.py                    prices C3's three rank splits, and tests §7.9's rule against the sheets
+  law_effects.py                  classifies all 48 laws against the rule sheet
+  ability_text.py                 C6's 18 ability pairs: which differ by how much, and which by what they do
+  note_rebalance.py               the note rebalance §8.8 says is already done
+  scope_cut.py                    costs a launch-scope cut by engine work
+  league_model.py                 fits the league boundaries to §14.7's shares; writes server/src/leagues.json
+  # the client and server's generated inputs
+  client_strings.py               writes client/i18n/content.csv, the content's names, from content/
+  auth_countries.py               writes client/i18n/countries.csv, every country's name in the game's languages
+  native_strings.py               writes the phones' notification tables, iOS and Android, from client/platform/notifications.csv
+  english_us.py                   writes US English from British English by a spelling table, in the catalogues and the island words
+  client_contract.py              the client's server routes and failure words, checked against server/src/http.mjs
+  privacy_manifest.py             writes the iPhone preset's privacy options from server/privacy.json
+  # art and rendering
+  art/                            the design's creature modules -> client/art/creatures/*.glb (node tools/art/export.mjs)
+  ui/                             the design's icons -> client/ui/icons/ (SVG and PNG with a manifest; node tools/ui/export_icons.mjs)
+  ui_research/                    T14's UI quality research: authored HUD art baked in headless Chromium into one atlas (node tools/ui_research/bake_hud.js), the AI UI artist's icons rendered in three.js (bake_icons.js), side-by-sides (compare.py); docs/art/ui-quality/report.md
+  render/                         renders a still from the Godot client on a machine with no screen
+  # the superseded prototype
+  parse_gate_results.py           scores the gates from testers' result codes
+  build_prototype.py              renders the throwaway browser build of the two pre-code gates
+  check_prototype_conformance.py  the prototype implements the rules it claims to
 ```
 
-Runs every check in dependency order. Non-zero exit means something is wrong;
-known contradictions in the design document are reported but do not fail, and
-that list shrinks as the document is reconciled.
-
-## Tools
-
-```bash
-# regenerate the greppable text extract from the HTML design document
-python3 tools/extract_design_doc.py \
-    docs/design/ruleborn-game-design-v3.7.html \
-    docs/design/ruleborn-game-design-v3.7.txt
-
-# machine-check the design document: v3.1's own checks and this repository's,
-# in one verdict. Failures tracked by an open register item do not break the build.
-python3 tools/check_document.py
-python3 tools/check_document.py --coverage    # every v3.1 check is still covered
-python3 tools/check_document.py --self-test   # the derived checks catch what a phrase ban cannot
-
-# economy model: reports and tests
-python3 -m tools.economy_model
-python3 -m tools.economy_model.test_economy_model
-
-# run §19.27's harnesses: tension, depth, defence balance, attribution
-python3 -m tools.heist_harness
-python3 -m tools.heist_harness.test_harness
-
-# score the two pre-code gates from testers' result codes (superseded in v3.0)
-python3 tools/parse_gate_results.py results.txt
-
-# price the open decisions
-python3 tools/decision_support.py
-
-# rebuild the audit register page after changing an item's status
-python3 tools/build_audit.py
-
-# content tables: extract from the document, then validate
-python3 tools/extract_content.py
-python3 tools/validate_content.py
-# the prototype's data module against content/ (the module is not kept here)
-python3 -I tools/compare_module.py PATH/TO/ruleborn-data.js
-```
-
-## The audit register
-
-Everything that changed about the plan and everything still to fix in the design
-document, as 329 tracked items with section references and status:
-**https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
-
-Each item carries **the edits to make in the document**: the section to open,
-the sentence as it stands today, and what to put there. 245 are drafted across 111
-items, and every quoted sentence is checked against v3.7 by
-`python3 tools/check_edits.py`, which fails the build if one is not there or
-appears twice — because an edit naming a sentence nobody wrote is worse than no
-edit at all.
-
-The register lives in `tools/audit_register.py`; the page is generated by
-`python3 tools/build_audit.py`. Change an item's status in the register and
-rebuild — never edit the generated HTML.
-
-## Decisions
-
-Every register item that only the owner could settle, as a question with its
-options, their numbers, what the build does today and a recommendation, in
-the order to decide them: **https://claude.ai/artifact/YZcD1uH5xtpFznqncRpt8g**
-
-**47 are answered** (25–26 September 2026): eight picked on the page, one in
-the owner's own words, the rest accepted as recommended; v3.7 writes all of them
-in. **46 are settled by v3.7**, which takes the option each brief recommended:
-the page shows them apart from the owner's answers, with where v3.7 wrote each,
-and each can still be overruled there. **None is open.** The answers are on the page and in
-`docs/decisions/answers.json`, with where each one's build change stands; the
-audit shows a decided item as waiting on that build change, then on the
-document. A new decision is picked on the page, where it is saved, and Claude
-reads it back and turns it into a register, document or build change. The brief is
-`docs/decisions/brief.json`, drafted, checked from two sides and merged by a
-multi-agent pass; `python3 tools/build_brief.py` writes the page, and its
-`--check` (run by `tools/check_all.sh`) fails if a quote stops matching the
-document, a recommendation names no option, or an open decision has no entry.
-
-## The roadmap
-
-Every stage of the build, what finishes it, and who it is waiting on:
-**https://claude.ai/artifact/Yb1WxZ2eJCCbByitnd7fJf**
-
-It reads from the register, so the two pages cannot disagree. Two things on it
-are deliberate: **drafted is not signed off** — the two bars are separate
-colours for that reason, and the design document itself is still untouched — and
-**"waiting on you" is at the top**, because the most useful thing a roadmap can
-say is which items nobody else can move.
-
-The roadmap lives in `tools/roadmap.py`; the page is generated by
-`python3 tools/build_roadmap.py`, which refuses to build a roadmap that
-contradicts itself. See [`docs/roadmap/README.md`](docs/roadmap/README.md).
-
-## The prototype
-
-A playable four-minute test of the two riskiest premises is published at
-**https://claude.ai/artifact/3jW7Zg1rTrzR6CF3cEVp2E** — see
-[`prototypes/heist-gate/README.md`](prototypes/heist-gate/README.md) for how to
-run it, who to send it to, and how to read the results.
+The commands for the design-side tools (extracting the document, the
+economy model, the harness, the register) are in
+[`docs/guides/design-tools.md`](docs/guides/design-tools.md).
