@@ -31,6 +31,9 @@ var moment_card: PanelContainer
 var reward_row: BoxContainer
 var reward_labels := {}
 var fee_label: Label
+## §7.6's study card: one law the crew crossed, studied once for the pages
+## the server gives.
+var study_card: PanelContainer
 ## The haul's tile and its number, counting up.
 var haul_tile: PanelContainer
 var haul_label: Label
@@ -43,6 +46,8 @@ var world_view: WorldView
 var flight: FxDraw
 ## The haul's number on the card, where the coins land.
 var counter: Control
+## The laws the crew crossed, from the replay's pylons, for the study card.
+var _crossed: Array[String] = []
 var _haul := 0
 ## The replay's moments (ReplayScreen.moments), its length in ticks, its
 ## alarm's peak and the crew as it ended.
@@ -211,10 +216,6 @@ func _ready() -> void:
 	watch.add_child(watch_box)
 	moment.add_child(watch)
 	moment.add_child(words)
-	# The crew as it ended, under the words, so they keep the card's width.
-	var faces := FxDraw.new(_draw_crew, Vector2(UI.px(30) * 5.0, UI.px(40)))
-	faces.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	words.add_child(faces)
 	moment_card.add_child(moment)
 	moment_card.visible = false
 	page.add_child(moment_card)
@@ -225,6 +226,9 @@ func _ready() -> void:
 	for c: Control in [haul_tile, reward_row, fee_label, detail_label, check_label]:
 		c.reparent(paid)
 	page.add_child(paid)
+	# The design's order: what it paid, then the law to study.
+	study_card = _study_card()
+	page.add_child(study_card)
 	var play: Dictionary = heist["workshop"]
 	var plain: bool = not heist["testing"] and play.is_empty()
 	# The plain result's bottom bar is one row, Home and the wide next raid;
@@ -294,6 +298,9 @@ func _build_world(heist: Dictionary) -> void:
 		add_child(sky)
 		return
 	_moments = ReplayScreen.moments(bytes, heist.get("island", PackedByteArray()))
+	for p: Dictionary in r.pylons():
+		if not _crossed.has(str(p["law"])):
+			_crossed.append(str(p["law"]))
 	while r.step():
 		_peak = maxi(_peak, r.alarm())
 	_ticks = r.tick()
@@ -313,6 +320,10 @@ func _build_world(heist: Dictionary) -> void:
 	world_view.describe()
 	# The island as a diorama: no bars or marks over it.
 	world_view.anchors.visible = false
+	# A quiet backdrop: the guards stay out of it, the crew's island and
+	# skiff are the picture (and §21.3's draw calls go to the page).
+	for g: Node3D in world_view._guards:
+		g.visible = false
 	# A heist that paid: the crew that got away celebrates on the island,
 	# where character models stand in for them.
 	var v0: Dictionary = heist["verdict"]
@@ -450,38 +461,6 @@ func _moment_words(m: Dictionary) -> String:
 	return Strings.t("RESULT_MOMENT_CLOCK")
 
 
-## The crew as the heist ended, a face each: ringed green when it got out,
-## greyed with a red ring when it was caught.
-func _draw_crew(ci: Control) -> void:
-	var n := _crew_end.size()
-	if n == 0:
-		return
-	var r := minf(ci.size.y * 0.42, ci.size.x / (n * 2.1))
-	# Discs, then faces, then rings: each pass one draw.
-	for step in 3:
-		for i in n:
-			var m: Dictionary = _crew_end[i]
-			var c := Vector2(ci.size.x - r * 1.05 - (n - 1 - i) * r * 1.7, ci.size.y * 0.5)
-			var caught := str(m["standing"]) == "Caught"
-			var role := str(m["role"])
-			var picture: Texture2D = Portrait.of(String(Cast.KIND[role])) if Cast.KIND.has(role) else null
-			match step:
-				0:
-					FxPen.circle(ci, c, r + UI.px(1.5), FxSkin.INK_LINE)
-					FxPen.circle(ci, c, r, Color(Palette.ROLE.get(role, Palette.STONE)).darkened(0.6 if caught else 0.25))
-					if picture == null:
-						FxIcons.face(ci, c + Vector2(0, r * 0.1), r * 0.6, Palette.ROLE.get(role, Palette.STONE), role,
-							caught)
-				1:
-					if picture != null:
-						FxPen.texture_rect(ci, picture, Rect2(c - Vector2(r, r) * 0.9, Vector2(r, r) * 1.8), false,
-							Color(0.5, 0.5, 0.55) if caught else Color.WHITE)
-				2:
-					var out := str(m["standing"]) == "Out"
-					var ring := FxSkin.ALARM if caught else (FxSkin.SUCCESS if out else FxSkin.ON_DARK_SOFT)
-					FxPen.arc(ci, c, r, 0.0, TAU, 32, ring, UI.px(2.5))
-
-
 ## One of the design's reward tiles: the resource's icon over its number
 ## over its name, on cream rimmed in its colour; its number's label is kept
 ## by name.
@@ -551,6 +530,53 @@ func _count_rewards(share: float) -> void:
 		l.text = ("+" if n >= 0 else "-") + ShopPresenter.grouped(absi(n))
 
 
+## §7.6's study, as the design's card: "Study one law you crossed" over a
+## tile a law the crew crossed; a tap studies it, once, and the tile says the
+## pages the server gave. Shown for a heist the server settled.
+func _study_card() -> PanelContainer:
+	var card := UI.panel("parchment")
+	card.visible = false
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UI.px(6))
+	var title := FxSkin.label(Strings.t("RESULT_STUDY"), 15.0, "parchment")
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	box.add_child(title)
+	var row := UI.row(6.0, true)
+	for law: String in _crossed:
+		var b := UI.action(Strings.term("LAW", law), func() -> void: _study(law), "parchment", Strings.term("LAW", law))
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		b.custom_minimum_size = Vector2(UI.px(96), UI.px(64))
+		var icon := "laws/" + law.replace("_", "")
+		if Icons.has(icon):
+			b.icon = Icons.texture(icon)
+			b.expand_icon = false
+			b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
+			b.add_theme_constant_override("icon_max_width", UI.px(28))
+		b.set_meta("law", law)
+		row.add_child(b)
+	box.add_child(row)
+	card.add_child(box)
+	return card
+
+
+## Studies `law` on this heist, and says what the server answered: the pages
+## given, on its tile; the others closed, as one heist allows one study.
+func _study(law: String) -> void:
+	var token := str(_verdict.get("token", ""))
+	if token == "":
+		return
+	var answer: Result = await App.services.codex.study(token, law)
+	if not is_inside_tree():
+		return
+	for b: Button in study_card.find_children("*", "Button", true, false):
+		b.disabled = true
+		if str(b.get_meta("law", "")) == law:
+			b.text = "%s\n%s" % [Strings.term("LAW", law), Strings.t("RESULT_STUDIED", int(answer.value.get("pages", 0)))
+				if answer.ok else Errors.message("RESULT_STUDY_FAILED", answer.code)]
+
+
 ## A result button in the heist's skin.
 func _button(words: String, call: Callable, kind := "leather") -> Button:
 	var b := UI.button(words, call)
@@ -579,6 +605,10 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 	var by_server: bool = v.get("server", false)
 	_show_outcome(v)
 	_show_rewards(v)
+	# §7.6: a heist the server settled may study one law it crossed.
+	if study_card != null:
+		study_card.visible = v.get("ok", false) and v.get("server", false) and str(v.get("token", "")) != "" \
+			and not _crossed.is_empty() and not v.get("confirming", false)
 	if v.get("ok", false):
 		grade_label.text = Strings.term("GRADE", str(v["grade"]))
 		if v.get("workshop", false):

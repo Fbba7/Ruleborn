@@ -1436,3 +1436,6 @@ RESULT_FEE_PAID,Entry fee %s paid to the defender,Entry fee %s paid to the defen
 RESULT_RAID_AGAIN,Raid again,Raid again,Assaltar de novo,Assaltar outra vez,Erneut rauben,Repartir en casse
 RESULT_IDLE_CREW,Idle crew of %d ready,Idle crew of %d ready,%d da equipe livres e prontos,%d da equipa livres e prontos,%d freie Crew bereit,%d membres libres prêts
 HEIST_AIM_HAND,Tap the world where %s goes · tap its button again to put it away,Tap the world where %s goes · tap its button again to put it away,Toque no mundo onde vai %s · toque de novo no botão para cancelar,Toca no mundo onde vai %s · toca de novo no botão para cancelar,"Tippe in die Welt, wohin %s soll · tippe die Taste erneut zum Abbrechen",Touchez le monde où va %s · touchez de nouveau le bouton pour annuler
+RESULT_STUDY,Study one law you crossed,Study one law you crossed,Estude uma lei que você atravessou,Estuda uma lei que atravessaste,"Studiere ein Gesetz, das du durchquert hast",Étudiez une loi traversée
+RESULT_STUDIED,+%d pages,+%d pages,+%d páginas,+%d páginas,+%d Seiten,+%d pages
+RESULT_STUDY_FAILED,Not studied: %s,Not studied: %s,Não estudada: %s,Não estudada: %s,Nicht studiert: %s,Non étudiée : %s
