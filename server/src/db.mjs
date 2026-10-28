@@ -398,9 +398,11 @@ CREATE TABLE IF NOT EXISTS ledger (
   aether    INTEGER NOT NULL DEFAULT 0,
   paid      INTEGER NOT NULL DEFAULT 0,
   reason    TEXT NOT NULL,
-  -- Deferred: the heist row and its ledger rows are written in one
-  -- transaction, and the heist's outcome includes what the ledger booked.
-  heist     TEXT REFERENCES heists(token) DEFERRABLE INITIALLY DEFERRED,
+  -- The heist that booked it, written in the heist's transaction. Not a
+  -- foreign key: the heist's row is written last, once, with the outcome
+  -- that includes what the ledger booked, and a key to it would have SQLite
+  -- search the whole table for the rows it settles (§24.1's reads).
+  heist     TEXT,
   at        INTEGER NOT NULL,
   -- The player's balances with this row, each a running total
   -- written with the row, never after, so a balance is the newest row's and
@@ -526,7 +528,8 @@ CREATE TABLE IF NOT EXISTS renown (
   account TEXT NOT NULL REFERENCES accounts(id),
   amount  INTEGER NOT NULL,
   reason  TEXT NOT NULL,
-  heist   TEXT REFERENCES heists(token) DEFERRABLE INITIALLY DEFERRED,
+  -- The heist that moved it, as the ledger's rows name theirs.
+  heist   TEXT,
   at      INTEGER NOT NULL,
   -- The season's amounts to this row's, summed: written with the row, so
   -- a player's Renown is their newest row's and its start (§24.8's running
@@ -608,7 +611,8 @@ CREATE TABLE IF NOT EXISTS season_stars (
   account TEXT NOT NULL REFERENCES accounts(id),
   amount  INTEGER NOT NULL,
   reason  TEXT NOT NULL,
-  heist   TEXT REFERENCES heists(token) DEFERRABLE INITIALLY DEFERRED,
+  -- The heist that moved it, as the ledger's rows name theirs.
+  heist   TEXT,
   at      INTEGER NOT NULL,
   -- The season's stars to this row's, summed, as Renown's total is.
   total   INTEGER
@@ -1072,13 +1076,37 @@ function withRowid(db) {
   return moved;
 }
 
-/** Every row of each table `withRowid` moved, as it was, into its new table. */
+/** Every row of each table `withRowid` or `linked` moved, as it was, into its
+ *  new table: each column they share. */
 function pour(db, moved) {
   for (const table of moved) {
-    const columns = db.prepare(`PRAGMA table_info(${table}_with_rowid)`).all().map((c) => c.name).join(", ");
+    const now = new Set(db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name));
+    const columns = db.prepare(`PRAGMA table_info(${table}_with_rowid)`).all().map((c) => c.name)
+      .filter((c) => now.has(c)).join(", ");
     db.exec(`INSERT INTO ${table} (${columns}) SELECT ${columns} FROM ${table}_with_rowid ORDER BY rowid;
              DROP TABLE ${table}_with_rowid;`);
   }
+}
+
+/** The records a heist books, made when they named it by a foreign key: moved
+ *  aside, their indexes and triggers dropped to be made again, and poured
+ *  into tables that name it plainly (`pour`). Nothing names them by a key,
+ *  so they move with the keys on. */
+const UNLINKED = ["ledger", "renown", "season_stars"];
+
+function linked(db) {
+  const moved = [];
+  for (const table of UNLINKED) {
+    const t = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?").get(table);
+    if (!t || !/REFERENCES heists/.test(t.sql)) continue;
+    for (const r of db.prepare(
+      "SELECT type, name FROM sqlite_master WHERE tbl_name = ? AND type IN ('index', 'trigger') AND sql IS NOT NULL").all(table)) {
+      db.exec(`DROP ${r.type.toUpperCase()} ${r.name}`);
+    }
+    db.exec(`ALTER TABLE ${table} RENAME TO ${table}_with_rowid`);
+    moved.push(table);
+  }
+  return moved;
 }
 
 /** A ledger made before Aether (§9.3's Aether Springs) is rebuilt with the
@@ -1140,6 +1168,7 @@ export function open(path = ":memory:") {
     const keyed = withRowid(db);
     const rebuilt = ledgerByCurrency(db);
     const aethered = ledgerWithoutAether(db);
+    const unlinked = linked(db);
     // Telemetry written before batching, a row an event: moved aside, and
     // poured into batches of one once the schema stands.
     const unbatched = db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'events'").get();
@@ -1149,6 +1178,7 @@ export function open(path = ":memory:") {
     }
     db.exec(SCHEMA);
     pour(db, keyed);
+    pour(db, unlinked);
     if (keyed.length) {
       const broken = db.prepare("PRAGMA foreign_key_check").all();
       if (broken.length) throw new Error(`moving ${keyed} left ${broken.length} rows' foreign keys broken`);

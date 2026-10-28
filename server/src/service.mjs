@@ -714,20 +714,11 @@ export class Service {
       const n = replay.length;
       const stateHash = decision.validated
         ? Buffer.from(replay.subarray(n - 4, n)).toString("hex") : null;
-      // The heist row goes in before what it pays: the ledger's, Renown's and
-      // the season stars' rows name it by a deferred foreign key, and a
-      // parent written after its children makes SQLite search each child
-      // table whole for the rows it settles — every heist ever played, read
-      // on every heist. Written first, as not yet validated, it is counted
-      // by none of the day's and week's queries grant makes (all read
-      // validated heists), and it is never seen outside this transaction.
-      this.db.prepare(
-        `INSERT INTO heists (token, attacker, bundle, seed, log_hash, state_hash, validated,
-                             outcome, review, grace, submitted_at, day, defender)
-         VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?)`)
-        .run(lease.token, lease.attacker, lease.bundle, lease.seed, logHash, stateHash,
-             JSON.stringify(outcome), decision.review ? 1 : 0, decision.grace ? 1 : 0, now, day(now),
-             lease.defender);
+      // The heist row goes in last, once, validated and with its outcome:
+      // until then it is counted by none of the day's and week's queries the
+      // grant makes. The rows it pays name it plainly, not by a foreign key,
+      // so a parent written after its children has no table to search
+      // (db.mjs; §24.1's writes, one row the fewer than written and marked).
       if (decision.validated) {
         Object.assign(outcome, this.grant(lease, decision.verdict, now, decision.cast),
                       { grace: decision.grace },
@@ -757,9 +748,14 @@ export class Service {
         this.codex.afterHeist(lease, decision.verdict, now, decision.cast?.laws ?? []);
         // §11.6: the crew away and resting, each by its outcome (home.mjs).
         if (decision.crew) this.home.rest(lease.attacker, decision.crew, decision.verdict, decision.heistMs, now);
-        this.db.prepare("UPDATE heists SET validated = 1, outcome = ? WHERE token = ?")
-          .run(JSON.stringify(outcome), lease.token);
       }
+      this.db.prepare(
+        `INSERT INTO heists (token, attacker, bundle, seed, log_hash, state_hash, validated,
+                             outcome, review, grace, submitted_at, day, defender)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+        .run(lease.token, lease.attacker, lease.bundle, lease.seed, logHash, stateHash, decision.validated ? 1 : 0,
+             JSON.stringify(outcome), decision.review ? 1 : 0, decision.grace ? 1 : 0, now, day(now),
+             lease.defender);
       // §24's analytics: a heist's "outcome, laws crossed, crew".
       this.telemetry.record(lease.attacker, "heist", decision.validated
         ? { validated: true, grade: decision.verdict.grade, crew: decision.verdict.crew,

@@ -43,7 +43,7 @@ test("the newest lease on a target is the last issued, at one moment or with the
   assert.equal(t.service.lease(t.raider.account, t.bundle).token, third.token, "and handed back");
 });
 
-test("a database whose leases and heists have rowids is moved to tables keyed by token, every row as it was", () => {
+test("a database whose leases and heists have rowids, and whose records name a heist by a key, is moved, every row as it was", () => {
   const dir = mkdtempSync(join(tmpdir(), "ruleborn-"));
   const path = join(dir, "old.db");
   try {
@@ -65,8 +65,20 @@ test("a database whose leases and heists have rowids is moved to tables keyed by
                 INSERT INTO ${table} SELECT * FROM ${table}_keyed; DROP TABLE ${table}_keyed; ${others.join(";\n")};`);
       assert.equal(old.prepare("SELECT wr FROM pragma_table_list WHERE name = ?").get(table).wr, 0);
     }
-    const rows = (db, table) => db.prepare(`SELECT * FROM ${table} ORDER BY token`).all().map((r) => ({ ...r }));
-    const before = { leases: rows(old, "leases"), heists: rows(old, "heists") };
+    // And the records a heist books, naming it by a deferred foreign key.
+    for (const table of ["ledger", "renown", "season_stars"]) {
+      const sql = old.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?").get(table).sql;
+      const others = old.prepare(
+        "SELECT sql FROM sqlite_master WHERE tbl_name = ? AND type IN ('index', 'trigger') AND sql IS NOT NULL").all(table)
+        .map((r) => r.sql);
+      const keyed = sql.replace(/\bheist(\s+)TEXT,/, "heist$1TEXT REFERENCES heists(token) DEFERRABLE INITIALLY DEFERRED,");
+      assert.notEqual(keyed, sql, table);
+      old.exec(`ALTER TABLE ${table} RENAME TO ${table}_keyed; ${keyed};
+                INSERT INTO ${table} SELECT * FROM ${table}_keyed; DROP TABLE ${table}_keyed; ${others.join(";\n")};`);
+    }
+    const rows = (db, table, by = "token") => db.prepare(`SELECT * FROM ${table} ORDER BY ${by}`).all().map((r) => ({ ...r }));
+    const before = { leases: rows(old, "leases"), heists: rows(old, "heists"), ledger: rows(old, "ledger", "id"),
+                     renown: rows(old, "renown", "id"), season_stars: rows(old, "season_stars", "id") };
     old.close();
 
     const db = open(path);
@@ -74,6 +86,12 @@ test("a database whose leases and heists have rowids is moved to tables keyed by
       assert.equal(db.prepare("SELECT wr FROM pragma_table_list WHERE name = ?").get(table).wr, 1, table);
       assert.deepEqual(rows(db, table), before[table], `every ${table} row as it was`);
     }
+    for (const table of ["ledger", "renown", "season_stars"]) {
+      assert.deepEqual(rows(db, table, "id"), before[table], `every ${table} row as it was`);
+      assert.ok(!db.prepare(`PRAGMA foreign_key_list(${table})`).all().some((k) => k.table === "heists"), table);
+    }
+    assert.throws(() => db.prepare("DELETE FROM ledger").run(), /append-only/, "and still append-only");
+    assert.throws(() => db.prepare("UPDATE season_stars SET amount = 0").run(), /a record/);
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM sqlite_master WHERE name LIKE '%_with_rowid'").get().n, 0);
     assert.deepEqual(db.prepare("PRAGMA foreign_key_check").all(), [], "every row's foreign keys still hold");
     assert.equal(db.prepare("PRAGMA foreign_keys").get().foreign_keys, 1, "and are on again");

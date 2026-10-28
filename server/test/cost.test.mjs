@@ -40,22 +40,26 @@ function writes(t, fn) {
   return seen;
 }
 
-test("a heist's row is written before the rows that name it, so none of their tables is read whole (F47)", () => {
-  // The ledger's, Renown's and the stars' rows name the heist by a deferred
-  // foreign key; a heist row written after them makes SQLite search each of
-  // those tables, every heist ever played, for the rows it settles.
+test("a heist's row is written once, after the rows it pays, and no table it pays is searched for it (F47)", () => {
+  // The ledger's, Renown's and the stars' rows name the heist plainly: had
+  // they a foreign key to it, the heist's row written after them would make
+  // SQLite search each of those tables, every heist ever played, for the
+  // rows it settles; written first, it was written twice, then marked.
   const t = twoPlayers();
+  const db = t.service.db;
+  for (const table of ["ledger", "renown", "season_stars"]) {
+    assert.ok(!db.prepare(`PRAGMA foreign_key_list(${table})`).all().some((k) => k.table === "heists"), table);
+  }
   const lease = t.service.lease(t.raider.account, t.bundle);
   const replay = play(t, lease, { plan: openPlan() });
   const order = writes(t, () => t.service.submit(t.raider.account, lease.token, replay));
-  const first = order.indexOf("INSERT heists");
-  assert.ok(first >= 0, order.join(", "));
+  assert.deepEqual(order.filter((w) => w.endsWith(" heists")), ["INSERT heists"], order.join(", "));
+  const at = order.indexOf("INSERT heists");
   for (const child of ["INSERT ledger", "INSERT renown", "INSERT season_stars"]) {
-    const at = order.indexOf(child);
-    assert.ok(at === -1 || at > first, `${child} before the heist: ${order.join(", ")}`);
+    assert.ok(order.indexOf(child) < at, `${child} after the heist: ${order.join(", ")}`);
   }
   // And the heist it settles is validated, with its outcome, once it is done.
-  const row = t.service.db.prepare("SELECT validated, outcome FROM heists WHERE token = ?").get(lease.token);
+  const row = db.prepare("SELECT validated, outcome FROM heists WHERE token = ?").get(lease.token);
   assert.equal(row.validated, 1);
   assert.equal(JSON.parse(row.outcome).verdict.grade, "clean");
 });
@@ -139,10 +143,14 @@ test("a player's sign-ins of a day are one event, and the day's other events joi
 
 // A heist between two players that scores everything — the haul, Renown and
 // stars both ways, a rating each, the defender's share and notification —
-// bills 28.25 rows with its lease under the ledger a row a line, a lease
+// billed 28.25 rows with its lease under the ledger a row a line, a lease
 // written again as it settled, and the heist written after its children;
-// 23.75 now. The ceiling holds the saving.
-test("a scoring heist and its lease bill at most 24 rows, index entries counted, as D1 bills them (24.1, F47)", () => {
+// 23.75 once those went. Now 21: the lease and the heist each keyed by its
+// token without a rowid (one index entry fewer each), and the heist written
+// once, not written and then marked validated — less the index entries the
+// reads need, a heist's defender and a player's waiting raids (db.mjs). The
+// ceiling holds the saving.
+test("a scoring heist and its lease bill at most 21 rows, index entries counted, as D1 bills them (24.1, F47)", () => {
   const t = twoPlayers();
   // A player's first heist also writes, once, the universe's start and the
   // roster it brings home (§11.5's two strays, home.mjs): a player's cost,
@@ -157,7 +165,7 @@ test("a scoring heist and its lease bill at most 24 rows, index entries counted,
     t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: i % 2 ? greedy() : openPlan() }));
     t.clock.now += 2 * 24 * 60 * 60 * 1000;
   }
-  assert.ok(bill.rows / cycles <= 24, `${bill.rows / cycles} billed rows a lease and heist`);
+  assert.ok(bill.rows / cycles <= 21, `${bill.rows / cycles} billed rows a lease and heist`);
 });
 
 test("a ledger of a row a currency is rebuilt as a row an event, its hauls and shares still counted to the caps", () => {

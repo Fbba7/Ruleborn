@@ -5,12 +5,12 @@
   "days": 3,
   "heistsPerDay": 4,
   "sessionsPerDay": 5,
-  "writesPerPlayerDay": 52.12,
+  "writesPerPlayerDay": 48.12,
   "periodicWritesADay": {
    "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 10.11,
+  "writesPerHeist": 9.11,
   "byOperation": {
    "session": 5.67,
    "telemetry batch": 5,
@@ -18,10 +18,10 @@
    "defence log": 1,
    "observatory": 0,
    "lease": 4,
-   "heist: validate and grant": 36.46
+   "heist: validate and grant": 32.46
   },
-  "billedRowsPerPlayerDay": 73.49,
-  "billedPerHeist": 15.12,
+  "billedRowsPerPlayerDay": 69.49,
+  "billedPerHeist": 14.12,
   "billedByOperation": {
    "session": 7,
    "telemetry batch": 5,
@@ -29,19 +29,19 @@
    "defence log": 1,
    "observatory": 0,
    "lease": 8,
-   "heist: validate and grant": 52.49
+   "heist: validate and grant": 48.49
   },
   "validationMs": {
-   "p50": 14.9,
-   "p95": 27.3,
-   "max": 38.8
+   "p50": 14.2,
+   "p95": 23.9,
+   "max": 35.1
   },
   "firstHeist": {
-   "rows": 37.2,
-   "read": 125
+   "rows": 36.2,
+   "read": 117
   },
   "billedByTable": {
-   "heists": 16,
+   "heists": 12,
    "event_batches": 11,
    "leases": 8,
    "season_stars": 8,
@@ -53,8 +53,8 @@
    "codex": 1.08,
    "target_lists": 0.4
   },
-  "readsPerPlayerDay": 953.7,
-  "readsPerHeist": 112.7,
+  "readsPerPlayerDay": 925.7,
+  "readsPerHeist": 105.7,
   "readsByOperation": {
    "session": 19.3,
    "telemetry batch": 30,
@@ -62,12 +62,12 @@
    "defence log": 40.8,
    "observatory": 357.7,
    "lease": 93.7,
-   "heist: validate and grant": 357
+   "heist: validate and grant": 329
   },
   "readsPerPlayerByDay": [
-   638.7,
-   982.1,
-   1240.3
+   610.7,
+   954.1,
+   1212.3
   ],
   "periodicReadsADayAnIsland": {
    "target lists (x24)": 121.6,
@@ -93,16 +93,16 @@
     "SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin, s.band, a.keeper_level, a.created_at, a.seeded, a.deleted_at, r.rating, r."
    ],
    [
-    136,
+    132,
     "SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token WHERE h.attacker = ? AND h.day >= ? AND h.validated = 1 AND l.mode = 'raid'"
-   ],
-   [
-    70,
-    "SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND day >= ? AND validated = 1 AND json_extract(outcome, '$.renownCounted') = 1"
    ],
    [
     67.9,
     "SELECT h.token FROM heists h JOIN leases l ON l.token = h.token WHERE h.attacker = ? AND h.defender = ? AND h.validated = 1 AND l.mode = 'raid' AND l.echo = 0 A"
+   ],
+   [
+    66,
+    "SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND day >= ? AND validated = 1 AND json_extract(outcome, '$.renownCounted') = 1"
    ],
    [
     53.2,
@@ -117,16 +117,16 @@
     "SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token WHERE h.defender = ? AND h.submitted_at >= ? AND h.submitted_at > ? AND h.validated = 1 AN"
    ],
    [
-    30,
-    "SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND validated = 1"
-   ],
-   [
     28,
     "SELECT keeper_level FROM accounts WHERE id = ?"
    ],
    [
     27.1,
     "SELECT DISTINCT h.attacker FROM heists h JOIN leases l ON l.token = h.token WHERE h.defender = ? AND h.submitted_at > ? ORDER BY h.submitted_at DESC"
+   ],
+   [
+    26,
+    "SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND validated = 1"
    ],
    [
     24,
@@ -139,19 +139,19 @@
   ],
   "against": {
    "budget": 46,
-   "overBudget": 1.1,
+   "overBudget": 1,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 1360,
+   "freePlanPlayersADay": 1439,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
-    "100000": 28,
-    "1000000": 690
+    "100000": 24,
+    "1000000": 650
    },
    "readBudget": 2500,
-   "readsOverBudget": 0.38,
-   "freePlanReadsPlayersADay": 4645,
+   "readsOverBudget": 0.37,
+   "freePlanReadsPlayersADay": 4769,
    "readDollarsAMonth": {
     "1000": 0,
     "10000": 0,
@@ -166,12 +166,12 @@
   "days": 3,
   "heistsPerDay": 2,
   "sessionsPerDay": 3,
-  "writesPerPlayerDay": 28.16,
+  "writesPerPlayerDay": 26.16,
   "periodicWritesADay": {
    "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 10.25,
+  "writesPerHeist": 9.25,
   "byOperation": {
    "session": 3.67,
    "telemetry batch": 3,
@@ -179,10 +179,10 @@
    "defence log": 1,
    "observatory": 0,
    "lease": 2,
-   "heist: validate and grant": 18.49
+   "heist: validate and grant": 16.49
   },
-  "billedRowsPerPlayerDay": 39.79,
-  "billedPerHeist": 15.39,
+  "billedRowsPerPlayerDay": 37.79,
+  "billedPerHeist": 14.39,
   "billedByOperation": {
    "session": 5,
    "telemetry batch": 3,
@@ -190,20 +190,20 @@
    "defence log": 1,
    "observatory": 0,
    "lease": 4,
-   "heist: validate and grant": 26.79
+   "heist: validate and grant": 24.79
   },
   "validationMs": {
-   "p50": 17.3,
-   "p95": 29.6,
-   "max": 40
+   "p50": 13.4,
+   "p95": 23.8,
+   "max": 35.4
   },
   "firstHeist": {
-   "rows": 37.2,
-   "read": 125
+   "rows": 36.2,
+   "read": 117
   },
   "billedByTable": {
-   "heists": 8,
    "event_batches": 7,
+   "heists": 6,
    "leases": 4,
    "season_stars": 4,
    "ratings": 4,
@@ -214,8 +214,8 @@
    "codex": 0.87,
    "target_lists": 0.4
   },
-  "readsPerPlayerDay": 353.7,
-  "readsPerHeist": 80.1,
+  "readsPerPlayerDay": 339.7,
+  "readsPerHeist": 73.1,
   "readsByOperation": {
    "session": 11.3,
    "telemetry batch": 18,
@@ -223,12 +223,12 @@
    "defence log": 20.2,
    "observatory": 123.6,
    "lease": 28.7,
-   "heist: validate and grant": 131.4
+   "heist: validate and grant": 117.5
   },
   "readsPerPlayerByDay": [
-   268.7,
-   357.9,
-   434.6
+   254.7,
+   343.9,
+   420.6
   ],
   "periodicReadsADayAnIsland": {
    "target lists (x24)": 121.6,
@@ -254,11 +254,11 @@
     "SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin, s.band, a.keeper_level, a.created_at, a.seeded, a.deleted_at, r.rating, r."
    ],
    [
-    32,
+    30,
     "SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token WHERE h.attacker = ? AND h.day >= ? AND h.validated = 1 AND l.mode = 'raid'"
    ],
    [
-    17,
+    15,
     "SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND day >= ? AND validated = 1 AND json_extract(outcome, '$.renownCounted') = 1"
    ],
    [
@@ -300,19 +300,19 @@
   ],
   "against": {
    "budget": 24,
-   "overBudget": 1.2,
+   "overBudget": 1.1,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 2513,
+   "freePlanPlayersADay": 2646,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
     "100000": 5,
-    "1000000": 353
+    "1000000": 333
    },
    "readBudget": 2500,
    "readsOverBudget": 0.14,
-   "freePlanReadsPlayersADay": 10497,
+   "freePlanReadsPlayersADay": 10815,
    "readDollarsAMonth": {
     "1000": 0,
     "10000": 0,
@@ -327,12 +327,12 @@
   "days": 3,
   "heistsPerDay": 1,
   "sessionsPerDay": 1,
-  "writesPerPlayerDay": 13.84,
+  "writesPerPlayerDay": 12.84,
   "periodicWritesADay": {
    "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 10.18,
+  "writesPerHeist": 9.18,
   "byOperation": {
    "session": 1.67,
    "telemetry batch": 1,
@@ -340,10 +340,10 @@
    "defence log": 1,
    "observatory": 0,
    "lease": 1,
-   "heist: validate and grant": 9.18
+   "heist: validate and grant": 8.18
   },
-  "billedRowsPerPlayerDay": 20.24,
-  "billedPerHeist": 15.24,
+  "billedRowsPerPlayerDay": 19.24,
+  "billedPerHeist": 14.24,
   "billedByOperation": {
    "session": 3,
    "telemetry batch": 1,
@@ -351,20 +351,20 @@
    "defence log": 1,
    "observatory": 0,
    "lease": 2,
-   "heist: validate and grant": 13.24
+   "heist: validate and grant": 12.24
   },
   "validationMs": {
-   "p50": 15.3,
-   "p95": 26,
-   "max": 32.5
+   "p50": 15.5,
+   "p95": 27.5,
+   "max": 34.3
   },
   "firstHeist": {
-   "rows": 37.2,
-   "read": 125
+   "rows": 36.2,
+   "read": 117
   },
   "billedByTable": {
    "event_batches": 4,
-   "heists": 4,
+   "heists": 3,
    "accounts": 2,
    "leases": 2,
    "season_stars": 2,
@@ -375,8 +375,8 @@
    "codex": 0.78,
    "target_lists": 0.4
   },
-  "readsPerPlayerDay": 139,
-  "readsPerHeist": 62.1,
+  "readsPerPlayerDay": 132,
+  "readsPerHeist": 55.1,
   "readsByOperation": {
    "session": 3.3,
    "telemetry batch": 6,
@@ -384,12 +384,12 @@
    "defence log": 12.8,
    "observatory": 49.8,
    "lease": 9.8,
-   "heist: validate and grant": 52.4
+   "heist: validate and grant": 45.4
   },
   "readsPerPlayerByDay": [
-   118.8,
-   137.8,
-   160.3
+   111.8,
+   130.8,
+   153.3
   ],
   "periodicReadsADayAnIsland": {
    "target lists (x24)": 121.6,
@@ -423,16 +423,16 @@
     "SELECT keeper_level FROM accounts WHERE id = ?"
    ],
    [
-    7,
-    "SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token WHERE h.attacker = ? AND h.day >= ? AND h.validated = 1 AND l.mode = 'raid'"
-   ],
-   [
     6.4,
     "SELECT * FROM seasons WHERE id = ?"
    ],
    [
     6,
     "SELECT MAX(level) AS l FROM buildings WHERE owner = ? AND kind = 'observatory'"
+   ],
+   [
+    6,
+    "SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token WHERE h.attacker = ? AND h.day >= ? AND h.validated = 1 AND l.mode = 'raid'"
    ],
    [
     5,
@@ -448,32 +448,32 @@
    ],
    [
     4,
-    "SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND day >= ? AND validated = 1 AND json_extract(outcome, '$.renownCounted') = 1"
-   ],
-   [
-    4,
     "SELECT vault_level FROM snapshots WHERE bundle = ?"
    ],
    [
     4,
     "SELECT s.vault_level FROM islands i JOIN snapshots s ON s.bundle = i.bundle WHERE i.owner = ? AND i.realm = 'heart'"
+   ],
+   [
+    4,
+    "SELECT 1 FROM characters WHERE owner = ? AND via = 'stray' LIMIT 1"
    ]
   ],
   "against": {
    "budget": 11,
-   "overBudget": 1.3,
+   "overBudget": 1.2,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 4940,
+   "freePlanPlayersADay": 5197,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
     "100000": 5,
-    "1000000": 157
+    "1000000": 147
    },
    "readBudget": 2500,
-   "readsOverBudget": 0.06,
-   "freePlanReadsPlayersADay": 19113,
+   "readsOverBudget": 0.05,
+   "freePlanReadsPlayersADay": 19638,
    "readDollarsAMonth": {
     "1000": 0,
     "10000": 0,
