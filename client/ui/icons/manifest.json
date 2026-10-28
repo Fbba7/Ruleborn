@@ -371,6 +371,11 @@
   "resources/starlight": "res://ui/icons/png/resources/starlight.png",
   "resources/aether": "res://ui/icons/png/resources/aether.png",
   "resources/essence": "res://ui/icons/png/resources/essence.png",
-  "resources/renown": "res://ui/icons/png/resources/renown.png"
+  "resources/renown": "res://ui/icons/png/resources/renown.png",
+  "tabs/islands": "res://ui/icons/png/tabs/islands.png",
+  "tabs/codex": "res://ui/icons/png/tabs/codex.png",
+  "tabs/heist": "res://ui/icons/png/tabs/heist.png",
+  "tabs/crew": "res://ui/icons/png/tabs/crew.png",
+  "tabs/friends": "res://ui/icons/png/tabs/friends.png"
  }
 }

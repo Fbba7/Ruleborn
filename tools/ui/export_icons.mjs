@@ -16,7 +16,12 @@
 //
 // and listed in client/ui/icons/manifest.json, which ui/icons.gd reads. The
 // modules are read, never edited; one line is added to the copy loaded into
-// the page so its private group table can be listed.
+// the page so its private group table can be listed. The tab bar's five
+// icons (`tabs/<id>`) are the inline SVGs of art/design/screens/
+// RulebornMeta.dc.html's tab bar.
+//
+//   node tools/ui/export_icons.mjs --groups tabs   writes those groups only,
+//                                                  keeping every other icon
 import fs from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
@@ -33,6 +38,7 @@ const arg = (name, fallback) => {
   return i > 0 ? process.argv[i + 1] : fallback;
 };
 const SIZE = Number(arg('--size', 144));
+const only = arg('--groups', '') ? new Set(arg('--groups', '').split(',')) : null;
 const design = path.join(root, 'art/design/diorama');
 const out = path.join(root, 'client/ui/icons');
 
@@ -55,8 +61,20 @@ await page.addScriptTag({ content: marks });
 await page.addScriptTag({ content: rbicons });
 await page.waitForFunction(() => window.RBI && window.RBI.__law);
 
+// The tab bar's icons, inline in the screens' markup.
+const meta = fs.readFileSync(path.join(root, 'art/design/screens/RulebornMeta.dc.html'), 'utf8');
+const tabs = [];
+for (const id of ['islands', 'codex', 'heist', 'crew', 'friends']) {
+  const at = meta.indexOf(`tabs.${id}I }}">`);
+  if (at < 0) throw new Error(`RulebornMeta.dc.html changed shape: no ${id} tab icon`);
+  const a = meta.indexOf('<svg', at);
+  let svg = meta.slice(a, meta.indexOf('</svg>', a) + 6);
+  if (!svg.includes('xmlns=')) svg = svg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+  tabs.push(['tabs', id, 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg)]);
+}
+
 // Every icon as [group, name, data URL].
-const list = await page.evaluate(() => {
+const found = await page.evaluate(() => {
   const all = [];
   const G = window.__RBI_GROUPS;
   for (const g of Object.keys(G).sort()) {
@@ -70,6 +88,7 @@ const list = await page.evaluate(() => {
   }
   return all.filter((x) => typeof x[2] === 'string' && x[2].startsWith('data:image/svg+xml'));
 });
+const list = found.concat(tabs).filter((x) => !only || only.has(x[0]));
 
 // Rasterise each in the page: an <img> of the SVG drawn into a canvas.
 const pngs = await page.evaluate(async ([items, size]) => {
@@ -88,11 +107,20 @@ const pngs = await page.evaluate(async ([items, size]) => {
 }, [list, SIZE]);
 await browser.close();
 
-fs.rmSync(path.join(out, 'svg'), { recursive: true, force: true });
-fs.rmSync(path.join(out, 'png'), { recursive: true, force: true });
+const manifest = { _what: 'Written by tools/ui/export_icons.mjs from art/design/diorama/: every interface icon, by group/name.', size: SIZE, icons: {} };
+if (only) {
+  // Only the groups asked for are written; the rest stay as they are.
+  Object.assign(manifest.icons, JSON.parse(fs.readFileSync(path.join(out, 'manifest.json'), 'utf8')).icons);
+  for (const g of only) {
+    fs.rmSync(path.join(out, 'svg', g), { recursive: true, force: true });
+    fs.rmSync(path.join(out, 'png', g), { recursive: true, force: true });
+  }
+} else {
+  fs.rmSync(path.join(out, 'svg'), { recursive: true, force: true });
+  fs.rmSync(path.join(out, 'png'), { recursive: true, force: true });
+}
 fs.mkdirSync(path.join(out, 'svg'), { recursive: true });
 fs.writeFileSync(path.join(out, 'svg', '.gdignore'), '');
-const manifest = { _what: 'Written by tools/ui/export_icons.mjs from art/design/diorama/: every interface icon, by group/name.', size: SIZE, icons: {} };
 const seen = new Set();
 for (let i = 0; i < list.length; i++) {
   const [g, n, url] = list[i];
@@ -108,6 +136,8 @@ for (let i = 0; i < list.length; i++) {
   manifest.icons[key] = `res://ui/icons/png/${g}/${n}.png`;
 }
 fs.writeFileSync(path.join(out, 'manifest.json'), JSON.stringify(manifest, null, 1) + '\n');
-const packed = spawnSync('python3', [path.join(here, 'pack_icons.py'), path.join(out, 'png')], { stdio: 'inherit' });
+const folders = only ? [...only].map((g) => path.join(out, 'png', g)) : [path.join(out, 'png')];
+const packed = folders.map((f) => spawnSync('python3', [path.join(here, 'pack_icons.py'), f], { stdio: 'inherit' }))
+  .find((r) => r.status !== 0) || { status: 0 };
 if (packed.status !== 0) throw new Error('pack_icons.py failed');
 console.log(`wrote ${seen.size} icons at ${SIZE} px to ${path.relative(root, out)}`);
