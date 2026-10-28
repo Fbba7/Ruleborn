@@ -228,6 +228,7 @@ func _pieces() -> void:
 			KitCards.album_card("laws/bounce", "Brittle stone", "matter", "common", "In Skyfield", "10"),
 			KitCards.product(picture, "Emote", "Tip of the Hat", "120", none, "round_violet", 128.0, "resources/renown"),
 			KitControls.tile("Medium", "Glass", "motion", none),
+			KitStatus.hint("Tap crew, then ground · hold ground to sneak or run"),
 			KitPanels.album("motion", "Motion", "Chapter I", "3 of 4", Control.new()),
 		]
 		for piece: Control in pieces:

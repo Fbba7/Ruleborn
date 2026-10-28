@@ -62,6 +62,25 @@ static func pill(text: String, icon := "", look := "glass", widest := 300.0) -> 
 	return p
 
 
+## A hint over the world (02-heist.png's "Tap crew, then ground · hold
+## ground to sneak or run"): dark glass, its words whole and centred,
+## wrapping onto a second line rather than ending in an ellipsis.
+static func hint(text: String) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.name = "Hint"
+	p.add_theme_stylebox_override("panel", UI.clear_box(14, 5))
+	UI.dress(p, "glass", 14)
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var l := UI.label(text, 15, true)
+	l.name = "Words"
+	l.theme_type_variation = "LabelText"
+	l.set_meta("bold", true)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	p.add_child(l)
+	return p
+
+
 ## A pill's new words, ellipsised past its widest.
 static func set_pill(p: PanelContainer, text: String) -> void:
 	var l := p.find_child("Words", true, false) as Label

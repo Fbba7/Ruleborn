@@ -378,7 +378,7 @@ static func _heist(column: VBoxContainer) -> void:
 	top.add_child(KitHud.loot([["Room", "1,840"], ["Left", "2,600"]], 0.62, 0.8, "Load to 80%"))
 	column.add_child(top)
 	column.add_child(UI.grow())
-	column.add_child(KitStatus.pill("Tap crew, then ground · hold to sneak or run"))
+	column.add_child(KitStatus.hint("Tap crew, then ground · hold ground to sneak or run"))
 	var foot := HBoxContainer.new()
 	foot.add_theme_constant_override("separation", UI.px(4))
 	var crew := HBoxContainer.new()
