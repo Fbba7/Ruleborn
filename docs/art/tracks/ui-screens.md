@@ -178,6 +178,7 @@ Stills: `docs/art/shots/ui-screens/w5-<screen>.png`, the design's still on the l
 | 42 Friends' feed | no time on a heist | how long ago, from the server's own `at` for it |
 | 43 After the third merge | (sweep) | `NARROW=1` over 14 screens × 4 locales × 2 sizes: nothing squeezed |
 | 44 Settings' Access | no colour-blind card | the design's card as the game has it: no mode to pick, each school's mark and name (six a row, fewer where names run long or at 200%) and that shape alone tells them apart |
+| 45 Friends' list | each friend a framed card with a large Remove | rows of one card, Remove quiet at each row's end |
 | 12 Large text and contrast | Harmony's Sounding pill at 12 points, its band 1151 px wide at 200%; the share card's dash 3.7:1 on the bright material; Workshop's remix tag squeezed narrow | 13 points and under the name at large text; the share card on the lit card, inked at 12%; the remix tag on its own line |
 
 Every changed screen checked at 150% and 200% in six languages and in high contrast by `A11yTests` (the fast runner below); grayscale thumbnails of Harmony and Workshop compared.
@@ -194,7 +195,7 @@ Harmony 137 (was 162; the stage alone without the laws' cards 118), Weaving 124 
 
 ## Stopped here (wave 5)
 
-About 23:20 UTC, then continued to 06:00 (the owner's extension). Deploys 2 and 3 and main at 3135289 merged in; `check_all` prints "All checks passed" on the pushed head. 44 rounds this wave, listed above; stills `docs/art/shots/ui-screens/w5-*.png`.
+Stopped about 04:30 UTC on 28 October (the owner extended the wave to 06:00). Deploys 2 and 3 and main at 3135289 merged in; `check_all` prints "All checks passed" on the pushed head. 45 rounds this wave, listed above; stills `docs/art/shots/ui-screens/w5-*.png`.
 
 The fast runner, `client/tests/_mine.gd` (kept out of git): `ONLY=<screens>` runs `A11yTests` over those screens (contrast in both modes, 150% and 200% in six languages); `FILES=<tests>` runs test files taking `(tree, check, mount, url)`, `FILES3=` those taking `(tree, check, url)`. It skips run.gd's catalogue and corner checks; the full client suite (`python3 client/status.py`) covers them.
 
