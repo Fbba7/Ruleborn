@@ -218,7 +218,7 @@ tools/
   vendor/                         v3.1's own checker, kept unmodified to diff against
   art/                            the design's creature modules -> client/art/creatures/*.glb (node tools/art/export.mjs)
   ui/                             the design's icons -> client/ui/icons/ (SVG and PNG with a manifest; node tools/ui/export_icons.mjs)
-  ui_research/                    T14's UI quality research: authored HUD art baked in headless Chromium into one atlas (node tools/ui_research/bake_hud.js), side-by-sides (compare.py); docs/art/ui-quality/report.md
+  ui_research/                    T14's UI quality research: authored HUD art baked in headless Chromium into one atlas (node tools/ui_research/bake_hud.js), the AI UI artist's icons rendered in three.js (bake_icons.js), side-by-sides (compare.py); docs/art/ui-quality/report.md
   extract_content.py              design document -> content/*.json
   validate_content.py             schema and cross-reference checks on content/
   compare_module.py               the prototype's data module against content/, by hash, read as text

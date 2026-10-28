@@ -60,36 +60,52 @@ Five waves of this converged on v3 parity, which is where the method stops.
 
 ## 3. Recommendation and next-wave plan
 
-**Recommended: Option A, an authored-asset pipeline, plus Option C, an art-director gate. Start Option D, a human artist, for the last step as soon as the owner can.** The ranked options with costs are in section 6.
+**Recommended:**
+- **Option A, an authored-asset pipeline**, made by Option D, a standing **AI UI artist** agent (section 9). The owner chose this over a human artist.
+- **Option C, an art-director gate**, scoring the AI artist's work.
 
-The proof (section 7) shows that A works in this engine, within budget, and is much richer than code-drawn chrome:
-- the heist HUD rebuilt from art baked offline in headless Chromium (lit bevels, grain, studs, painted icons, numerals with stroke, drop and gradient);
-- one 1024² atlas;
-- 147 draw calls against 137 today, under §21.3's 150;
-- every word still live text from the strings tables.
+The ranked options with costs are in section 6.
 
-The next wave, in this order:
+The two proofs show that this works in this engine, within budget, and is much richer than code-drawn chrome:
+- **The heist HUD (section 7):**
+  - rebuilt from art baked offline in headless Chromium: lit bevels, grain, studs, painted icons, numerals with stroke, drop and gradient;
+  - one 1024² atlas;
+  - 147 draw calls against 137 today, under §21.3's 150;
+  - every word still live text from the strings tables.
+- **The reward icons (section 9):** Starlight, Essence and Renown, plus a chest and a crew badge from Pip's own model, modelled and lit in three.js and finished in 2D at 256 px. Icons are the asset class this report first said needed a human hand. They score 3.7 out of 5 on the rubric's icon qualities, against 2.2 for today's.
 
-1. **AD, a standing art director** (a reviewer, not an author). Owns the 14-quality rubric in section 4 and a reference sheet of described benchmark screens.
-   - Scores every still a track proposes to merge: 0–5 per quality, at phone size, plus a frame strip for anything that moves.
-   - A screen merges only if its score does not drop and qualities 1–3 reach at least 3.5.
+The next wave, in this order. **AIA** is the AI UI artist, a standing agent that authors all UI art (section 9.1).
+
+1. **AD, a standing art director** (about 8 agent-hours over the wave). A reviewer, never an author.
+   - Owns the 14-quality rubric in section 4 and a reference sheet of described benchmark screens.
+   - Scores every piece AIA proposes, before anything is merged:
+     - 0–5 per quality, at phone size;
+     - the icon set at 48 px and in grayscale;
+     - a frame strip for anything that moves.
+   - A piece merges only if its score does not drop. Qualities 1–3 must reach at least 3.5.
    - Publishes the scores, so "progress" means quality.
-2. **K2, key frames first** (day 1, about 8 agent-hours). Author a premium target still for each of the five screens as HTML/SVG, starting from the design's own HTML and pushing material, type, icon and hierarchy to the bar. The owner approves or redirects them. They replace v3 as the reference.
-3. **K1, the bake pipeline and kit** (in parallel, about 12 hours).
-   - Generalise `tools/ui_research/bake_hud.js` and `pack_atlas.py` into the kit's pipeline: frames, buttons with their pressed faces, bars, rings and numerals in four finishes, packed into atlases.
-   - Variants for high contrast (§20.8) and for each school colour.
-   - Lilita One as a multichannel distance field, so all sizes and outlines share one texture.
+2. **AIA: style board, then key frames** (day 1, about 16 hours).
+   - **Style board** (about 6 hours): one board with the material set (enamel, gold, wood, glass), the type treatments, the outline and glint rules, the studio light, and four hero icons.
+   - **Key frames** (about 10 hours): a premium target still for each of the five screens as HTML/SVG, built from the design's own HTML and pushed to the bar.
+   - The owner approves or redirects the board and the key frames. They replace v3 as the reference.
+3. **K1, the bake pipeline and kit** (in parallel, about 12 hours, an engineering track).
+   - Generalise `bake_hud.js`, `bake_icons.js` and `pack_atlas.py` into the kit's pipeline, packed into atlases.
+   - High-contrast (§20.8) and school-colour variants as extra bakes.
+   - Lilita One as a multichannel distance field.
    - `KitSkin` looks backed by textures, so every screen inherits them.
-4. **K3, icons** (about 12 hours). Re-author the 60 most-seen icons (currencies, rewards, heist controls, nav) at 256 px in the painted style: dark outline, three tones, a specular highlight. Render currencies and rewards from the existing `.glb` models through three.js in headless Chromium, then paint over in SVG.
-5. **K4, juice and motion** (about 10 hours). The result screen's reward sequence:
-   - an anticipation beat, a burst, then the reward scaling in with overshoot;
-   - coins flying in arcs to their counters, the counters rolling up and pulsing;
-   - an idle shine on primary buttons and a press squash with recovery.
+4. **AIA: kit art** (about 10 hours). Frames, buttons with their pressed faces, bars, rings, ribbons and numerals in four finishes, to the approved board.
+5. **AIA: icons** (about 25 hours). Re-author the 60 most-seen icons (currencies, rewards, heist controls, nav) the section 9.2 way, about 25 minutes an icon once the studio is set up:
+   - modelled and lit in three.js;
+   - characters and buildings from their `.glb` models;
+   - finished in 2D.
+6. **AIA: juice and motion** (about 10 hours).
+   - The result screen's reward sequence: anticipation, burst, overshoot, coins flying in arcs, counters rolling and pulsing.
+   - An idle shine on primary buttons, and a press squash with recovery.
+   - Burst and sparkle sprites baked like the icons.
+   - Judged from frame strips.
+7. **The screen tracks** then move their screens onto the new kit, judged by AD.
 
-   Judged from frame strips.
-6. **The screen tracks** then move their screens onto the new kit, judged by AD.
-
-These estimates total about 50–60 agent-hours, with AD running throughout.
+These estimates total about 80 agent-hours, with AD running throughout. The earlier plan was 50–60 agent-hours plus a human artist's contract. The extra hours are AIA doing what the artist would have done.
 
 ## 4. Benchmark: 14 checkable qualities
 
@@ -214,12 +230,12 @@ A perfect port would gain about 0.2. The gap from the bar is in the target, not 
 
 | Rank | Option | Ceiling (of the bar) | Cost (agent-hours) | Risk | Fit with Godot Compatibility and §21.3 |
 |---|---|---|---|---|---|
-| 1 | **A. Authored-asset pipeline.** UI art authored as SVG/HTML (from the design's own sources), baked offline in headless Chromium into atlases; 9-slices, sprites and baked numerals; icons painted, or rendered from the `.glb` models | 70–80% with agents alone; a human pass lifts the top | 50–60 (K1–K4 in section 3) | Agent-authored art can still be generic without key frames and a reviewer, which is why C goes with it. Texture memory: one 1024² atlas a screen family, about 4 MB of video memory uncompressed. High contrast needs its own bake. | Good. Textured quads are cheaper per pixel than `rb_box`'s signed-distance shader. One atlas batches. The proof is at 147 calls (section 7). No post-processing. Words stay live, so the strings tables and text scale still work. |
+| 1 | **A. Authored-asset pipeline.** UI art authored as SVG/HTML (from the design's own sources), baked offline in headless Chromium into atlases; 9-slices, sprites and baked numerals; icons painted, or rendered from the `.glb` models | 70–80% as an engineering pipeline alone; 75–85% with D as its author | about 80 with D (section 3) | Agent-authored art can still be generic without key frames and a reviewer, which is why C goes with it. Texture memory: one 1024² atlas a screen family, about 4 MB of video memory uncompressed. High contrast needs its own bake. | Good. Textured quads are cheaper per pixel than `rb_box`'s signed-distance shader. One atlas batches. The proof is at 147 calls (section 7). No post-processing. Words stay live, so the strings tables and text scale still work. |
+| 1 (with A) | **D. An AI UI artist agent** (section 9). A standing agent that owns all UI art: it models, lights and finishes icons; authors frames, buttons and key frames; bakes motion sprites; scored by C | 75–85% (section 9.4) | about 60 of A's 80 hours are its work | Taste and novelty: shapes from primitives, no painterly brushwork, no image generation here. Covered by the owner approving its style board and key frames, and by AD's gate. | Same as A: everything it makes is baked into atlases; nothing new runs on the phone. |
 | 2 | **C. Process: a standing art director, the rubric and a quality gate** | No pixels by itself; +5–10 points from better choices | about 10 to set up, then about 1 hour a review round | Low. A gate that only checks itself; the owner must calibrate the reviewer on the key frames. | Neutral |
 | 3 | **B. A much stronger shader and material system.** Grain, a lit bevel from the signed distance, gradient text through a canvas shader, glow | 45–55% | 25–35 | Per-pixel cost on low-end phones (every panel pays for noise and lighting each frame). GLSL ES 3.0 limits. Icons and type stay as they are. Each look is still tuned by numbers rather than drawn. | Medium. Fill-rate rather than draw calls is the risk. §21.3 forbids full-screen post-processing, so glow and bloom must stay per item. |
-| — | **D. A human UI artist** (2–4 weeks) | 90–100%+ | Not agent-hours: a contract. Agents integrate (about 10 hours). | Hiring and briefing time. | Same pipeline as A: the artist delivers layered sources and the bake and atlas take them. |
 
-Said plainly: the last stretch to "better than Clash" needs a human artist. That means painted icons with personality, hand-lettered titles, the logo, and motion design in Spine or Animate. The benchmarks are made by teams of UI artists [S1, S13]. A gets the game most of the way and gives an artist a pipeline that drops straight in.
+The owner has chosen an AI UI artist over a human one (D, section 9). It turns A from "an engineer's pipeline" into an art track with an author. What it still cannot reach on its own, and how the gate covers that, is in section 9.4.
 
 ## 7. Proof: the heist HUD on authored art
 
@@ -277,7 +293,7 @@ These are the curves a screen would tween along. A still strip is how the art di
 **What it does not show.**
 - An idle shine sweep, and sound.
 - 200% text: the 9-slices stretch, but the prototype lays the HUD out at fixed sizes. A kit version would size its frames from the words, as the kit's boxes do now.
-- An artist's hand: the icons are competent vector paintings, not CR-grade renders.
+- Rendered icons: the HUD's icons are vector paintings. Section 9 shows the rendered route the AI UI artist would use.
 
 Against the rubric, the heist goes from 1.5–2 to about 3.5 on qualities 1–3. On qualities 1–3, that is roughly what one agent day of option A buys.
 
@@ -287,7 +303,7 @@ Against the rubric, the heist goes from 1.5–2 to about 3.5 on qualities 1–3.
 
 ## 8. Files
 
-- `docs/art/ui-quality/`: this report, the audit and proof images.
+- `docs/art/ui-quality/`: this report, the audit and proof images, and `ai-artist-icons.png`.
 - `tools/ui_research/`:
   - `bake_hud.js`: the bake;
   - `pack_atlas.py`: the atlas;
@@ -295,7 +311,11 @@ Against the rubric, the heist goes from 1.5–2 to about 3.5 on qualities 1–3.
 - `client/prototypes/ui_quality/`: `uiq_art.gd`, `uiq_hud.gd`, `uiq_medal.gd` and `art/`.
 - `client/prototypes/ui_quality/uiq_juice.gd`: the motion curves.
 - `client/tests/shots/uiq_motion.gd`: the motion strip.
-- `client/tests/shots/uiq_heist_hud.gd`: the before and after shots. `OLD=1` gives the before; `HIDE=pause_button,hud,actions_band` gives a fair draw count.
+- `client/tests/shots/uiq_heist_hud.gd`: the before and after shots.
+- `tools/ui_research/icons.html` and `bake_icons.js`: the AI UI artist's icons. Run `npm ci` in `tools/ui_research/` once for three.js.
+- `tools/ui_research/icons_compare.py`: the icon sheet.
+- `client/prototypes/ui_quality/icons/`: the five icons at 256 px.
+- `docs/art/ui-quality/crew-today-crop.png`: today's portrait, for the sheet. `OLD=1` gives the before; `HIDE=pause_button,hud,actions_band` gives a fair draw count.
 
 To reproduce:
 ```
@@ -305,6 +325,108 @@ MANIFEST=1 CAST=1 MOMENT=vault ESTIMATE=2600 HIDE=pause_button,hud,actions_band 
 OLD=1 MANIFEST=1 CAST=1 MOMENT=vault ESTIMATE=2600 HIDE=pause_button \
   bash tools/render/shoot.sh client/tests/shots/uiq_heist_hud.gd before.png
 ```
+
+## 9. The AI UI artist
+
+The owner wants an AI UI artist in place of a human one. This section defines the role, says how it makes art with what this environment really has, proves it on the asset class this report first said needed a human hand, and says where it still falls short.
+
+### 9.1 The role
+
+The AI UI artist (AIA) is a standing agent that **owns the look of every pixel of interface that is not live text or the 3D world**. Its outputs:
+- **The style board:** materials (enamel, gold, wood, glass, parchment), type treatments, the outline and glint rules, the studio light, and the hero icons. The owner approves it.
+- **Key frames:** a target still for each screen, which becomes the reference.
+- **Kit art:** frames and panels as 9-slices, buttons with their pressed faces, bars, rings, ribbons, badges, and baked numerals in finishes.
+- **Icons:** currencies, rewards, chests, controls and nav, rendered and finished at 256 px.
+- **Motion art:** bursts, sparkles, shine sweeps and coin sprites, plus the timing curves screens tween along (`UiqJuice` is the pattern).
+
+How this differs from the code-drawn chrome the report rejects:
+- **Drawn once, offline:** its art is authored and baked into atlases, not drawn every frame by GDScript and one shader.
+- **No per-pixel cost on the phone:** it can afford real lighting, reflections, grain and blur, because the phone only shows the result.
+- **Judged as art, not as numbers:** AD scores each piece against the rubric before it ships.
+
+It does not own layout, behaviour or text. Screens and the kit stay engineering tracks that take its art.
+
+### 9.2 The method, with what this environment has
+
+What was checked:
+- **Image generation: none.** No image-generation tool is connected to this environment, so nothing here is generated from a prompt. Every pixel comes from geometry, light and paint written as code.
+- **Blender: not installed.**
+
+What is available and used:
+- **Headless Chromium** (Playwright) with WebGL through SwiftShader.
+- **three.js 0.184**, from npm, with physically based materials, an environment map for reflections (`RoomEnvironment`), and tone mapping.
+- **SVG and HTML/CSS**, including filters: lit bevels, turbulence grain, blur.
+- **Canvas 2D compositing.**
+- **Godot's own renderer** (its portrait studio already renders the characters).
+- **The 43 character `.glb` models** in `client/art/creatures/`.
+
+The icon pipeline, as `tools/ui_research/icons.html` and `bake_icons.js` run it:
+1. **Model.** Build the object from geometry: an extruded star with a deep rounded bevel; a lathed drop; a faceted brilliant cut; a chest from rounded boxes, half-cylinders and a painted plank texture (a canvas drawn in code: seams and grain strokes). Characters would come from their `.glb` models.
+2. **Light.** One studio for every icon, so the set is consistent by construction:
+   - a warm key from the top left;
+   - a coloured rim from behind on the right;
+   - a soft fill from below;
+   - the room's reflections.
+
+   Materials are physically based: gold metal with clearcoat, glassy liquid, a faceted gem with iridescence, and wood.
+3. **Render** at 640 px on a transparent ground.
+4. **Finish in 2D,** the painter's pass:
+   - a soft glow of the icon's colour;
+   - a hard ink drop shadow;
+   - an ink outline grown from the silhouette, in a dark of the icon's own hue;
+   - a painted inner light kept to the shape;
+   - four-pointed glints where the key catches.
+5. **Downsample** to 256 px.
+
+The same studio, outline and glint rules apply to every icon, so a set of 60 stays one family.
+
+### 9.3 The proof: reward icons the AI-artist way
+
+`ai-artist-icons.png` shows Starlight, Essence, Renown, a chest and a crew badge. Each column has four rows:
+- the client's icon today (the design's own, exported at 144 px);
+- the icon as the design's result screen draws it;
+- the AI UI artist's, at 256 px;
+- both at phone size, on the design's reward tile at 96 px and alone at 48 px.
+
+Ruleborn has no chest, so the chest stands beside the loot bag, the game's nearest reward container.
+
+The crew badge is **Pip**, rendered from the character's own model (`skyskipper.glb`, with its painted textures) and standing out of a gold ring. It is shown against today's heist portrait and the design's. It proves the route for every character, Sage and building icon, from the 43 models the game already has. Each icon took 10–30 minutes of modelling and two or three rounds of looking at the render and correcting it:
+- the first renders were muddy until the tone mapping was changed;
+- the gem first read too small at phone size;
+- the chest's straps were rotated wrongly.
+
+Scored on the rubric's qualities that apply to icons (5 is Clash level):
+
+| # | Quality | Today and design (same icons) | AI UI artist |
+|---|---|---|---|
+| 1 | Layered materials | 1.5: flat fills with banded gradients | 4: metal, clearcoat, liquid, facets, wood under gold |
+| 3 | Painted or rendered icons | 2: outline and one highlight dash, no form | 4: real form, top-left key, rim light, speculars, ink outline |
+| 8 | Colour and value | 2.5 | 3.5: a wider value range; the gem's lighter facets read a little less at 48 px |
+| 10 | Readable at phone scale | 3.5 | 3.5: the star and drop read better at 48 px, the gem slightly worse |
+| 11 | One component system | 3: same outline | 4: one studio, one outline rule, one glint rule, by construction |
+| 13 | Light | 1.5: none consistent | 4: one light direction across the set |
+| 14 | One idea | 1.5 | 3: "treasure toys" begins to read; it needs the owner's style board |
+| | **Mean** | **2.2** | **3.7** |
+
+The other seven qualities (type, press, juice, hierarchy, motion, character, HUD) are screen-level and do not apply to an icon. The crew badge adds to character presence (quality 9), which scores 1.9 across our screens.
+
+The scores are mine. The comparison is in the image, so the owner can check them by eye.
+
+What 5 would need is in section 9.4.
+
+### 9.4 The honest ceiling
+
+With AD's gate and the owner's approvals, the AI UI artist is likely to reach **75–85% of the bar**. It falls short in these places:
+- **Charm and invention.** Its shapes come from primitives and code. A Clash gem has exaggerated, characterful facets and painted colour shifts that a person invented. The AI artist's gem is correct, not memorable. Mascots, the logo and hand-lettered titles are where this shows most.
+- **Painterly texture.** With no image-generation tool here, there are no brushstrokes. Texture is procedural (grain, planks, noise), which reads as clean 3D rather than painted.
+- **Taste across a whole set.** The AI artist sees each render and corrects it (every fix in section 9.3 came from looking). But it judges one piece at a time, and drifts unless held to a reference.
+- **Frame-by-frame effects.** Bursts and particles can be baked from procedural shapes. Hand-timed effect animation, the Spine or Animate kind, is beyond it.
+
+How the plan covers those:
+1. **The owner approves the style board and the five key frames** before production. Invention is concentrated where a human eye decides once, and the AI artist then executes the approved look at volume, where it is strong.
+2. **AD scores every piece** on the rubric, at 48 px and in grayscale, against the approved board, and blocks anything below 3.5 on qualities 1–3. That stops drift.
+3. **Consistency is enforced in code:** one studio, one outline, one glint, one palette file. The set cannot quietly diverge.
+4. **If an image-generation tool is connected later,** it slots in at step 4 of section 9.2 as a texture and paint-over source, under the same gate. That is the most direct way past the painterly limit.
 
 ## Stopped here
 
@@ -316,9 +438,13 @@ T14 stopped at the wave's end with all four deliverables pushed and green on `cl
 - the ranked options and the next-wave plan (sections 3 and 6);
 - the proof (section 7): the heist HUD on authored art, its motion strip and its high-contrast bake, at 147 draw calls.
 
+**After the owner's revision:**
+- the AI UI artist replaces the human artist in the plan (sections 3, 6 and 9);
+- four reward icons and a crew badge from Pip's own model prove the method: 3.7 against 2.2 on the icon qualities.
+
 **Not done, for whoever takes this up:**
 - the proof at §20.8's 200% text, which needs frames sized from their words;
 - an idle shine sweep;
 - the benchmark's sources read in full rather than through search summaries: this container could not open supercell.com, adobe.com or funovus.com.
 
-The bake (`tools/ui_research/bake_hud.js`, `pack_atlas.py`) is the starting point for K1 in section 3.
+The bakes (`tools/ui_research/bake_hud.js`, `bake_icons.js`, `pack_atlas.py`) are the starting point for K1 and the AI UI artist in section 3.

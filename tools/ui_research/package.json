@@ -1,0 +1,8 @@
+{
+  "name": "ruleborn-ui-research",
+  "private": true,
+  "description": "T14's UI research bakes: three.js for the AI UI artist's rendered icons, run headless in Chromium.",
+  "dependencies": {
+    "three": "0.184.0"
+  }
+}
