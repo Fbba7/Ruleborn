@@ -266,7 +266,10 @@ func _shapes() -> Control:
 	for school: String in schools:
 		widest = maxf(widest, ScreenKit.font("words").get_string_size(Strings.t("SCHOOL_" + school.to_upper()),
 			HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(13)).x)
-	grid.columns = 6 if widest + UI.px(4) <= UI.px((360.0 - 32.0 - 24.0) / 6.0) else 3
+	var room := UI.px(360.0 - 32.0 - 24.0)
+	grid.columns = 6
+	while grid.columns > 1 and widest * grid.columns + UI.px(4) * (grid.columns - 1) > room:
+		grid.columns = 3 if grid.columns == 6 else (2 if grid.columns == 3 else 1)
 	for school: String in schools:
 		var col := VBoxContainer.new()
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
