@@ -229,16 +229,19 @@ Main (d2343591) merged clean.
 | T4 | home | Side balls through `disc_points` 36 at 48-point hit areas; drop `_fit_tab_words` and the purse's own padding (the kit does both). |
 | all | screens with a title | The design's sub-screen header (`KitNav.top_bar`) puts back at the top; §21.1's thumb rule keeps it at the foot (finding H, the owner's). |
 
-## Stopped here (wave 5, 23:00 UTC)
+## Stopped here (wave 5, extended to 06:00 UTC)
 
-**Pushed**: everything above through the sash and these notes; check_all passed on af7911c, 8027efc and this commit. The session's worker restarted three times between 20:20 and 22:50 UTC and the work in that gap was lost to waiting, not to code.
+**Pushed and green**: everything above through round 19. check_all passed on each push (the last at the head of this section's commit); the wave's first stop at 23:00 was extended by the owner, and the session merged main twice more (23:30 and 01:30).
 
-**Hooks outside the kit** (a few lines each, marked "Drawn by T9's kit"): `client/world/fx_skin.gd` (`panel`, `style_button`, T5), `client/world/stage_hero_skin.gd` (`plate`, `button`, T7), `client/world/overlay_sheet.gd` (`dress`, `key`, T6), `client/world/overlay_hud.gd` (`badge`, T6).
+**Hooks outside the kit** (a few lines each, marked "Drawn by T9's kit"): `client/world/fx_skin.gd` (`panel`, `style_button`, T5), `client/world/stage_hero_skin.gd` (`plate`, `button`, T7), `client/world/overlay_sheet.gd` (`dress`, `key`, T6), `client/world/overlay_hud.gd` (`badge`, T6). `tools/ui/export_icons.mjs` (the kit's own) now also takes the design's tab icons.
+
+**A mistake of mine, taken back**: in round 9 the kit capped badge counts at 150% text so they would not cover their icons; that broke §20.8's 200% for their words. Round 19's pieces test caught it; the cap is gone and the tab badges rise instead.
 
 **Still worse than the design**:
-- Type is larger than the design's (§21.8's 13-point floor): law cards three to a row where the design's go four, chips and tags wider.
+- Type is larger than the design's (§21.8's 13-point floor): law cards three to a row where the design's go four, chips and tags wider, the build tray's cards narrower in their words.
 - The tab bar still sits 20 points above the foot (§21.1's corner rule).
-- At 200% text the round actions' plates ("DEFENCE") grow over the realm labels on home; the kit does not cap them, since they are words a player reads.
-- The screens have not yet taken up this wave's pieces: the table above says which piece goes where (T5's crew, Sage and loot; T10's albums, strips and feed rows; T4's small discs).
+- At 200% text the round actions' plates on home ("DEFENCE") grow over the realm labels; they are words a player reads, so the kit does not cap them.
+- Most of this wave's pieces wait for their screens (the owners' table above); T5's heist reached the design's crew, Sage and load bar on its own.
+- Dense screens stay near the draw-call budget (heist 141, replay 137, harmony 137 on `ui_screen.gd`): each kit box is its own draw call; `KitTris` folds a control's discs into one, but boxes with different materials cannot batch.
 
-**Next**: when screens adopt the pieces, re-run `AUDIT=1` and the design comparisons; a tinted difficulty tile (the Observatory's Easy / Medium / Hard); the gem icon inside a price pill.
+**Next**: as screens adopt the pieces, `AUDIT=1` and the comparisons again; the design's weekly streak tiles (17) and the hero card's portrait arrows (25) are the stills' last pieces without a kit form.
