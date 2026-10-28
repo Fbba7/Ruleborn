@@ -456,15 +456,14 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
 - **For T5:** the Sage disc (`CreatureBust.of(sage, "", ground)`) once the
   simulation gives a heist its Sage; guards at `readable_scale()`; keep the
   crew out of the guards' rings in `heist_shot.gd`.
-- **Still worse than the design:** white flecks on Quarryback's shell and
-  Mossbear's stones. Traced (after the stop, round 14): they are body faces
-  (an accessory-red debug pass leaves them white), not holes (an ink-green
-  pass shows no ink through them), not faces the decimation folded (dropping
-  the 76 faces wound against the sculpt's normals keeps every fleck), and
-  not lift, sheen, relief or exposure. A UV debug pass puts most of them at
-  the atlas's left edge (u near 0), outside every chart, where the bake
-  paints nothing of theirs: the next step is `unwrap`/`pack` in
-  `tools/art/harness.js` for faces whose projection is near edge-on; Featherkin's knit reads smooth; Lantern
+- **Fixed after the stop (round 16):** the white flecks on Quarryback's
+  shell and Mossbear's stones were the rim: the light mesh's smooth normals
+  turn to the edge across plates and stones on faces that look straight at
+  the eye (rim strength 0 removed them; not the paint, holes or folds).
+  The rim and the hero sheen now fade where the drawn face itself (its
+  screen-derivative normal, `face_on`) faces the eye; silhouettes keep
+  both (`w5_quarryback_flecks_before_after.png`).
+- **Still worse than the design:** Featherkin's knit reads smooth; Lantern
   Wisp's cream face reads pink; petals are flat where the design's pale
   toward the tip.
 - **Readability measured (round 15):** each ruleborn alone on the heist's
