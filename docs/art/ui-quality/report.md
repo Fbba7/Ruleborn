@@ -305,3 +305,20 @@ MANIFEST=1 CAST=1 MOMENT=vault ESTIMATE=2600 HIDE=pause_button,hud,actions_band 
 OLD=1 MANIFEST=1 CAST=1 MOMENT=vault ESTIMATE=2600 HIDE=pause_button \
   bash tools/render/shoot.sh client/tests/shots/uiq_heist_hud.gd before.png
 ```
+
+## Stopped here
+
+T14 stopped at the wave's end with all four deliverables pushed and green on `claude/ui-research`.
+
+**Done:**
+- the benchmark (section 4);
+- the audit with five side-by-sides and the design's own scores (section 5);
+- the ranked options and the next-wave plan (sections 3 and 6);
+- the proof (section 7): the heist HUD on authored art, its motion strip and its high-contrast bake, at 147 draw calls.
+
+**Not done, for whoever takes this up:**
+- the proof at §20.8's 200% text, which needs frames sized from their words;
+- an idle shine sweep;
+- the benchmark's sources read in full rather than through search summaries: this container could not open supercell.com, adobe.com or funovus.com.
+
+The bake (`tools/ui_research/bake_hud.js`, `pack_atlas.py`) is the starting point for K1 in section 3.
