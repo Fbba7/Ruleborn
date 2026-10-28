@@ -252,5 +252,11 @@ A 14-day run, the same 60 players (`node server/load.mjs --days 14`):
 | --- | ---: | ---: | ---: |
 | Before, mean of 14 days | 30,535 | 8,529 | 2,294 |
 | Before, day 14 | 60,216 | 16,118 | 3,960 |
-| After, mean of 14 days | AFTER14_E | AFTER14_R | AFTER14_C |
-| After, day 14 | AFTER14D_E | AFTER14D_R | AFTER14D_C |
+| After, mean of 14 days | 1,420 | 519 | 197 |
+| After, day 14 | 1,410 | 560 | 224 |
+
+After, a day's reads rise through the week (its raids and its caps are
+counted from Monday) and through the season (the defence log shows its
+raids), and fall back when either begins: bounded by the week and the
+season, not by the player's history. Billed writes over the 14 days: 62.8,
+34.5 and 17.9 a day.
