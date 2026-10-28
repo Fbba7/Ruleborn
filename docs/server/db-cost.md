@@ -260,3 +260,14 @@ counted from Monday) and through the season (the defence log shows its
 raids), and fall back when either begins: bounded by the week and the
 season, not by the player's history. Billed writes over the 14 days: 62.8,
 34.5 and 17.9 a day.
+
+## Stopped here
+
+28 October, 01:35 UTC, on `claude/db-cost`, check_all passing ("All checks
+passed") on `cc63c75`. Done: rows read measured and in `load.json`, with
+`--check` holding them; billed writes −20% engaged on the same load, a
+scoring heist 23.75 → 15 rows; reads −87% and no longer growing with
+history; every schema change with its migration and tests. Not done, by
+design: the seven owner options above. To confirm on the edge run before
+soft launch: that D1 bills a table without a rowid one row an insert, and
+whether it bills `sqlite_sequence` (option 5).
