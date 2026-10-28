@@ -72,7 +72,18 @@ CREATE TABLE IF NOT EXISTS accounts (
   -- §13.1's seeded islands: the game's own, "stocked with designed islands
   -- from the start", and no new player to protect (matchmaking.mjs).
   seeded            INTEGER NOT NULL DEFAULT 0,
-  fund_opt_in       INTEGER NOT NULL DEFAULT 0
+  fund_opt_in       INTEGER NOT NULL DEFAULT 0,
+  -- How many validated raids the player has played (§7.6's floor counts
+  -- them), written in the UPDATE each heist already makes of the row; null
+  -- until the first after it was added, which counts the heists once.
+  raids             INTEGER,
+  -- §12.22's Glicko-2 rating of the player as a raider, kept on their row so
+  -- a heist writes it with the experience it earns, in one UPDATE; null
+  -- until their first rated heist (matchmaking.raiderRating).
+  raider_rating     REAL,
+  raider_deviation  REAL,
+  raider_volatility REAL,
+  raider_games      INTEGER
 );
 
 -- §24.8: "Owner, the hash of the current bundle, when it changed." One row a
@@ -91,6 +102,13 @@ CREATE TABLE IF NOT EXISTS islands (
 );
 -- Who holds a bundle: the lease's holders, and the hold queue's turns.
 CREATE INDEX IF NOT EXISTS islands_by_bundle ON islands (bundle);
+-- The newest change to any island, and the newest ban and deletion: what
+-- tells matchmaking its candidates are stale (matchmaking.candidates), one
+-- row each to read where each read every island or account. A ban and a
+-- deletion are rare, and only they write their partial index.
+CREATE INDEX IF NOT EXISTS islands_by_change ON islands (changed_at);
+CREATE INDEX IF NOT EXISTS accounts_banned ON accounts (banned_at) WHERE banned_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS accounts_deleted ON accounts (deleted_at) WHERE deleted_at IS NOT NULL;
 
 -- §20.11: "a way to block another player". The blocker's list (safety.mjs).
 CREATE TABLE IF NOT EXISTS blocks (
@@ -268,6 +286,10 @@ CREATE TABLE IF NOT EXISTS snapshots (
   published_at INTEGER NOT NULL,
   origin       TEXT
 );
+-- The snapshots of the last 14 days, which §12.3's echoes are drawn from
+-- (matchmaking.fresh): read by when each was published, where every
+-- snapshot ever published was read. Written once, as the row is.
+CREATE INDEX IF NOT EXISTS snapshots_by_published ON snapshots (published_at);
 CREATE TRIGGER IF NOT EXISTS snapshots_never_edited BEFORE UPDATE ON snapshots
   BEGIN SELECT RAISE(ABORT, 'snapshots are never edited (24.8)'); END;
 CREATE TRIGGER IF NOT EXISTS snapshots_never_deleted BEFORE DELETE ON snapshots
@@ -303,11 +325,19 @@ CREATE TABLE IF NOT EXISTS leases (
   -- §5.4: the universe a heist across the defender's realms crosses, its
   -- RBU1 bundle's hash (crossings.mjs); null for the Heart alone.
   universe    TEXT
-);
+) WITHOUT ROWID;
 -- §24.13's one lease a target is kept by the issuing transaction, which
 -- hands back the newest lease the attacker holds on it with no heist; a
 -- lease is settled by its heist row, so settling one writes nothing more.
+-- Keyed by its token alone, without a rowid: the token's index is the
+-- table, so a lease writes its row and this index's entry, not a third
+-- (§24.1's writes). A lease is never issued at the same moment as the one
+-- before it on its target (service.issue), so the newest is the latest.
 CREATE INDEX IF NOT EXISTS leases_by_target ON leases (attacker, bundle, issued_at);
+-- A Trace's lease, by the robbery it answers: a robbery is traced once
+-- (matchmaking.traceable). Only a Trace's lease is in it, so no other
+-- lease writes it.
+CREATE INDEX IF NOT EXISTS leases_by_trace ON leases (trace_of) WHERE trace_of IS NOT NULL;
 
 -- §24.8: "Attacker, target bundle hash, seed, hash of the input log,
 -- resulting state hash, whether validated." One row a submitted lease: the
@@ -328,12 +358,22 @@ CREATE TABLE IF NOT EXISTS heists (
   day          TEXT NOT NULL,
   -- §24.3: the replay itself is kept "30 to 90 days", then deleted; the row
   -- and its hashes stay.
-  replay_gone  INTEGER NOT NULL DEFAULT 0
-);
+  replay_gone  INTEGER NOT NULL DEFAULT 0,
+  -- Whose island it raided, as its lease names them: the defence log, the
+  -- raid badge and the Trace read a player's raids by it, each a range of
+  -- its index where they read every lease ever issued (§24.1's reads).
+  defender     TEXT REFERENCES accounts(id)
+) WITHOUT ROWID;
+-- Keyed by its token alone, as a lease is: one index entry the fewer.
 -- A player's heists by day: every count of the day's and week's heists
 -- reads through it. Whether a heist was validated is not in it, so marking
 -- one validated as it settles (service.settle) touches no index entry.
 CREATE INDEX IF NOT EXISTS heists_by_attacker ON heists (attacker, day);
+CREATE INDEX IF NOT EXISTS heists_by_defender ON heists (defender, submitted_at);
+-- A heist row written without its defender (one the server did not write)
+-- takes its lease's, so no raid is missing from a defender's reads.
+CREATE TRIGGER IF NOT EXISTS heists_defender_named AFTER INSERT ON heists WHEN NEW.defender IS NULL
+  BEGIN UPDATE heists SET defender = (SELECT defender FROM leases WHERE token = NEW.token) WHERE token = NEW.token; END;
 
 -- §24.8: "Target selection is a file, not a query. Candidate lists per
 -- difficulty band are generated periodically as static objects". The lists
@@ -369,11 +409,35 @@ CREATE TABLE IF NOT EXISTS ledger (
   aether    INTEGER NOT NULL DEFAULT 0,
   paid      INTEGER NOT NULL DEFAULT 0,
   reason    TEXT NOT NULL,
-  -- Deferred: the heist row and its ledger rows are written in one
-  -- transaction, and the heist's outcome includes what the ledger booked.
-  heist     TEXT REFERENCES heists(token) DEFERRABLE INITIALLY DEFERRED,
+  -- The heist that booked it, written in the heist's transaction. Not a
+  -- foreign key: the heist's row is written last, once, with the outcome
+  -- that includes what the ledger booked, and a key to it would have SQLite
+  -- search the whole table for the rows it settles (§24.1's reads).
+  heist     TEXT,
   at        INTEGER NOT NULL,
-  CHECK (starlight != 0 OR essence != 0 OR aether != 0 OR paid != 0)
+  -- The player's balances with this row, each a running total
+  -- written with the row, never after, so a balance is the newest row's and
+  -- not every row summed (§24.1's reads). The rows rebuild it: each total is
+  -- the sum of the rows to its own (balances(), and db_totals.test.mjs).
+  -- Null on a row written before the totals were kept.
+  starlight_total INTEGER,
+  essence_total   INTEGER,
+  aether_total    INTEGER,
+  -- §18.2's season stars a heist earned the player, riding the row the heist
+  -- books them anyway (one row and its index entry the fewer, §24.1); and
+  -- the stars the season's rows have carried to this one, for its season,
+  -- as season_stars' own total (track.mjs stars). Stars with no row of the
+  -- ledger's to ride, and tiers bought, are season_stars rows.
+  season          INTEGER,
+  stars           INTEGER NOT NULL DEFAULT 0,
+  stars_total     INTEGER,
+  -- §12.9's Renown the heist moved for the player, and the season's to this
+  -- row, as the stars are: both are §9.1's currencies, booked on the one
+  -- row a heist writes a player. The Renown and season-stars tables keep
+  -- their rows, and a tier bought; nothing else is written to them.
+  renown          INTEGER NOT NULL DEFAULT 0,
+  renown_total    INTEGER,
+  CHECK (starlight != 0 OR essence != 0 OR aether != 0 OR paid != 0 OR stars != 0 OR renown != 0)
 );
 CREATE INDEX IF NOT EXISTS ledger_by_account ON ledger (account, at);
 CREATE TRIGGER IF NOT EXISTS ledger_append_only_update BEFORE UPDATE ON ledger
@@ -489,8 +553,13 @@ CREATE TABLE IF NOT EXISTS renown (
   account TEXT NOT NULL REFERENCES accounts(id),
   amount  INTEGER NOT NULL,
   reason  TEXT NOT NULL,
-  heist   TEXT REFERENCES heists(token) DEFERRABLE INITIALLY DEFERRED,
-  at      INTEGER NOT NULL
+  -- The heist that moved it, as the ledger's rows name theirs.
+  heist   TEXT,
+  at      INTEGER NOT NULL,
+  -- The season's amounts to this row's, summed: written with the row, so
+  -- a player's Renown is their newest row's and its start (§24.8's running
+  -- total, with no row written beside it). Null before it was kept.
+  total   INTEGER
 );
 CREATE INDEX IF NOT EXISTS renown_by_account ON renown (season, account);
 CREATE TRIGGER IF NOT EXISTS renown_append_only_update BEFORE UPDATE ON renown
@@ -567,8 +636,11 @@ CREATE TABLE IF NOT EXISTS season_stars (
   account TEXT NOT NULL REFERENCES accounts(id),
   amount  INTEGER NOT NULL,
   reason  TEXT NOT NULL,
-  heist   TEXT REFERENCES heists(token) DEFERRABLE INITIALLY DEFERRED,
-  at      INTEGER NOT NULL
+  -- The heist that moved it, as the ledger's rows name theirs.
+  heist   TEXT,
+  at      INTEGER NOT NULL,
+  -- The season's stars to this row's, summed, as Renown's total is.
+  total   INTEGER
 );
 CREATE INDEX IF NOT EXISTS season_stars_by_account ON season_stars (season, account);
 CREATE TRIGGER IF NOT EXISTS season_stars_append_only_update BEFORE UPDATE ON season_stars
@@ -730,6 +802,9 @@ CREATE TABLE IF NOT EXISTS notifications (
   attempts INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS notifications_due ON notifications (sent_at, due_at);
+-- A player's raids waiting for the day's message, which each raid on them
+-- joins: found by its player, where every unsent notification was read.
+CREATE INDEX IF NOT EXISTS notifications_waiting ON notifications (account) WHERE kind = 'raided' AND sent_at IS NULL;
 
 -- §13.1's rule, season by season: the defence reward's share of what a
 -- foiled crew carried, and the weekly measure that set it (seasons.mjs).
@@ -854,9 +929,12 @@ CREATE TABLE IF NOT EXISTS event_batches (
   events TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS event_batches_by_day ON event_batches (day);
-CREATE INDEX IF NOT EXISTS event_batches_by_who ON event_batches (who);
+-- A player's batches by when each was started: a day's events are in the
+-- batches started since it began, as a batch is appended to only on the
+-- day it was started (telemetry.write). The append never sets at.
+CREATE INDEX IF NOT EXISTS event_batches_by_who_at ON event_batches (who, at);
 CREATE VIEW IF NOT EXISTS events AS
-  SELECT b.id AS batch, b.who, json_extract(e.value, '$.kind') AS kind,
+  SELECT b.id AS batch, b.who, b.at AS started, json_extract(e.value, '$.kind') AS kind,
          json_extract(e.value, '$.data') AS data, json_extract(e.value, '$.at') AS at,
          strftime('%Y-%m-%d', json_extract(e.value, '$.at') / 1000, 'unixepoch') AS day
     FROM event_batches b, json_each(b.events) e;
@@ -972,6 +1050,23 @@ const ADDED = [
   // §18.5's mastery steps (codex.mjs).
   ["codex", "woven_at", "INTEGER"],
   ["codex", "crossed_at", "INTEGER"],
+  // The reads' running totals and keys (§24.1; docs/server/db-cost.md).
+  ["accounts", "raids", "INTEGER"],
+  ["accounts", "raider_rating", "REAL"],
+  ["accounts", "raider_deviation", "REAL"],
+  ["accounts", "raider_volatility", "REAL"],
+  ["accounts", "raider_games", "INTEGER"],
+  ["heists", "defender", "TEXT REFERENCES accounts(id)"],
+  ["ledger", "starlight_total", "INTEGER"],
+  ["ledger", "essence_total", "INTEGER"],
+  ["ledger", "aether_total", "INTEGER"],
+  ["ledger", "season", "INTEGER"],
+  ["ledger", "stars", "INTEGER NOT NULL DEFAULT 0"],
+  ["ledger", "stars_total", "INTEGER"],
+  ["ledger", "renown", "INTEGER NOT NULL DEFAULT 0"],
+  ["ledger", "renown_total", "INTEGER"],
+  ["renown", "total", "INTEGER"],
+  ["season_stars", "total", "INTEGER"],
 ];
 
 /** A ledger of a row a currency — and one made while there was Starglass —
@@ -991,6 +1086,65 @@ function ledgerByCurrency(db) {
   return true;
 }
 
+/** The tables keyed by a token alone, made without a rowid (§24.1's writes):
+ *  a table made with one is moved aside, its indexes and triggers dropped
+ *  to be made again by the schema, and poured into the new one once it
+ *  stands (`pour`). Moved with the foreign keys off and the legacy rename,
+ *  so the tables that name it by a foreign key still name the new one;
+ *  leases before heists, as a heist names its lease. */
+const KEYED = ["leases", "heists"];
+
+function withRowid(db) {
+  const moved = [];
+  for (const table of KEYED) {
+    const t = db.prepare("SELECT wr FROM pragma_table_list WHERE schema = 'main' AND name = ?").get(table);
+    if (!t || t.wr) continue;
+    for (const r of db.prepare(
+      "SELECT type, name FROM sqlite_master WHERE tbl_name = ? AND type IN ('index', 'trigger') AND sql IS NOT NULL").all(table)) {
+      db.exec(`DROP ${r.type.toUpperCase()} ${r.name}`);
+    }
+    db.exec(`PRAGMA legacy_alter_table = ON; ALTER TABLE ${table} RENAME TO ${table}_with_rowid;
+             PRAGMA legacy_alter_table = OFF;`);
+    moved.push(table);
+  }
+  return moved;
+}
+
+/** Every row of each table `withRowid` or `linked` moved, as it was, into its
+ *  new table: each column they share. */
+function pour(db, moved) {
+  for (const table of moved) {
+    const now = new Set(db.prepare(`PRAGMA table_info(${table})`).all().map((c) => c.name));
+    const columns = db.prepare(`PRAGMA table_info(${table}_with_rowid)`).all().map((c) => c.name)
+      .filter((c) => now.has(c)).join(", ");
+    db.exec(`INSERT INTO ${table} (${columns}) SELECT ${columns} FROM ${table}_with_rowid ORDER BY rowid;
+             DROP TABLE ${table}_with_rowid;`);
+  }
+}
+
+/** The records a heist books, made when they named it by a foreign key: moved
+ *  aside, their indexes and triggers dropped to be made again, and poured
+ *  into tables that name it plainly (`pour`). Nothing names them by a key,
+ *  so they move with the keys on. */
+const UNLINKED = ["ledger", "renown", "season_stars"];
+
+function linked(db) {
+  const moved = [];
+  for (const table of UNLINKED) {
+    const t = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?").get(table);
+    // The ledger is made again for its check, too: a row may move Renown or
+    // stars alone.
+    if (!t || !(/REFERENCES heists/.test(t.sql) || (table === "ledger" && !/renown != 0/.test(t.sql)))) continue;
+    for (const r of db.prepare(
+      "SELECT type, name FROM sqlite_master WHERE tbl_name = ? AND type IN ('index', 'trigger') AND sql IS NOT NULL").all(table)) {
+      db.exec(`DROP ${r.type.toUpperCase()} ${r.name}`);
+    }
+    db.exec(`ALTER TABLE ${table} RENAME TO ${table}_with_rowid`);
+    moved.push(table);
+  }
+  return moved;
+}
+
 /** A ledger made before Aether (§9.3's Aether Springs) is rebuilt with the
  *  column, each row moving as it was: its check names the currencies, and
  *  SQLite cannot change a check in place. */
@@ -1006,8 +1160,13 @@ function ledgerWithoutAether(db) {
 
 export function open(path = ":memory:") {
   const db = new DatabaseSync(path);
-  // Set here, as SCHEMA's own pragma does nothing inside a transaction.
-  db.exec("PRAGMA foreign_keys = ON");
+  // Set here, as SCHEMA's own pragma does nothing inside a transaction. A
+  // table the others name by a foreign key is made again with the keys off
+  // (withRowid), which SQLite allows only outside a transaction; they are
+  // checked, every one, before the move commits.
+  const rekeying = KEYED.some((table) => db.prepare(
+    "SELECT 1 FROM pragma_table_list WHERE schema = 'main' AND name = ? AND wr = 0").get(table));
+  db.exec(`PRAGMA foreign_keys = ${rekeying ? "OFF" : "ON"}`);
   // The one-time migrations and the schema in one transaction (SQLite's DDL
   // is transactional): an upgrade stopped part-way — a crash, a lock, a copy
   // that throws — leaves the old shape whole to be migrated on the next
@@ -1017,10 +1176,20 @@ export function open(path = ":memory:") {
     // schema's indexes and triggers are checked against it.
     const has = (table) => db.prepare(
       "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?").get(table);
+    const added = new Set();
     for (const [table, column, type] of ADDED) {
       if (has(table) && !db.prepare(`PRAGMA table_info(${table})`).all().some((c) => c.name === column)) {
         db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+        added.add(`${table}.${column}`);
       }
+    }
+    // A player's batches were indexed by player alone; now by when each was
+    // started too.
+    db.exec("DROP INDEX IF EXISTS event_batches_by_who");
+    // The events view, made again as the schema has it (it holds no rows):
+    // it now says when each event's batch was started.
+    if (db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'view' AND name = 'events' AND sql NOT LIKE '%started%'").get()) {
+      db.exec("DROP VIEW events");
     }
     // A lease's state was written when its heist settled; now its heist row
     // says so, and the index that read the state goes before the column.
@@ -1032,8 +1201,10 @@ export function open(path = ":memory:") {
         db.exec(`ALTER TABLE ${table} DROP COLUMN ${column}`);
       }
     }
+    const keyed = withRowid(db);
     const rebuilt = ledgerByCurrency(db);
     const aethered = ledgerWithoutAether(db);
+    const unlinked = linked(db);
     // Telemetry written before batching, a row an event: moved aside, and
     // poured into batches of one once the schema stands.
     const unbatched = db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'events'").get();
@@ -1042,6 +1213,26 @@ export function open(path = ":memory:") {
                ALTER TABLE events RENAME TO events_before_batches;`);
     }
     db.exec(SCHEMA);
+    pour(db, keyed);
+    pour(db, unlinked);
+    if (keyed.length) {
+      const broken = db.prepare("PRAGMA foreign_key_check").all();
+      if (broken.length) throw new Error(`moving ${keyed} left ${broken.length} rows' foreign keys broken`);
+    }
+    // A raider's rating moves from the ratings table to their row, as the
+    // columns arrive: the same numbers, and no second copy left to go stale.
+    if (added.has("accounts.raider_rating")) {
+      db.exec(`UPDATE accounts SET (raider_rating, raider_deviation, raider_volatility, raider_games) =
+                 (SELECT rating, deviation, volatility, games FROM ratings r WHERE r.kind = 'raider' AND r.key = accounts.id)
+                WHERE id IN (SELECT key FROM ratings WHERE kind = 'raider');
+               DELETE FROM ratings WHERE kind = 'raider';`);
+    }
+    // The heists played before they named their defender take their lease's,
+    // once, as the column arrives.
+    if (added.has("heists.defender")) {
+      db.exec(`UPDATE heists SET defender = (SELECT l.defender FROM leases l WHERE l.token = heists.token)
+                WHERE defender IS NULL`);
+    }
     if (unbatched) {
       db.exec(`INSERT INTO event_batches (who, at, day, events)
                  SELECT who, at, day, json_array(json_object('kind', kind, 'data', json(data), 'at', at))
@@ -1078,6 +1269,7 @@ export function open(path = ":memory:") {
                DROP TABLE ledger_by_currency;`);
     }
   });
+  if (rekeying) db.exec("PRAGMA foreign_keys = ON");
   return db;
 }
 

@@ -228,6 +228,7 @@ func _pieces() -> void:
 			KitCards.album_card("laws/bounce", "Brittle stone", "matter", "common", "In Skyfield", "10"),
 			KitCards.product(picture, "Emote", "Tip of the Hat", "120", none, "round_violet", 128.0, "resources/renown"),
 			KitControls.tile("Medium", "Glass", "motion", none),
+			KitStatus.hint("Tap crew, then ground · hold ground to sneak or run"),
 			KitPanels.album("motion", "Motion", "Chapter I", "3 of 4", Control.new()),
 		]
 		for piece: Control in pieces:
@@ -243,8 +244,11 @@ func _pieces() -> void:
 			for l: Node in piece.find_children("*", "Label", true, false):
 				if (l as Label).get_theme_font_size("font_size") < UI.text_px(13) - 0.5 and (l as Label).text != "":
 					bad.append("%d%% %s '%s' small" % [scale, piece.name, (l as Label).text])
-			if piece.get_global_rect().end.x > screen.size.x + 0.5:
-				bad.append("%d%% %s past the screen's edge" % [scale, piece.name])
+			# Its least width inside the phone's side margins: a piece that
+			# asks for more pushes the whole column past the edge.
+			var room := screen.size.x - 2.0 * UI.px(Tokens.number("size", "safe_side_points"))
+			if piece.get_global_rect().end.x > screen.size.x + 0.5 or piece.get_combined_minimum_size().x > room + 0.5:
+				bad.append("%d%% %s wider than the phone (%.0f)" % [scale, piece.name, piece.get_combined_minimum_size().x])
 		screen.queue_free()
 		await tree.process_frame
 	Settings.text_scale = was

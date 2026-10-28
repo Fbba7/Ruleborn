@@ -49,6 +49,7 @@ void fragment() {
 	relief_n = normalize(TANGENT * nt.x + BINORMAL * nt.y * binormal_sign + NORMAL * nt.z);
 	far_mix = creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE);
 	n_up = dot(NORMAL, normalize((VIEW_MATRIX * vec4(0.0, 1.0, 0.0, 0.0)).xyz));
+	face_on = 0.0;
 	creature_surface(c, true, 0.0, 0.0, UV, local_pos, NORMAL, VIEW, far_mix, ALBEDO, EMISSION);
 	gloss_band = 0.0;
 }

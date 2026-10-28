@@ -44,7 +44,7 @@ export class Defences {
       `SELECT h.token, h.bundle, h.attacker, h.submitted_at, h.outcome, h.replay_gone, a.keeper_level, s.realm_level
          FROM heists h JOIN leases l ON l.token = h.token JOIN accounts a ON a.id = h.attacker
          JOIN snapshots s ON s.bundle = h.bundle
-        WHERE l.defender = ? AND h.validated = 1 AND ${RAIDED} AND h.submitted_at >= ?
+        WHERE h.defender = ? AND h.submitted_at >= ? AND h.validated = 1 AND ${RAIDED}
         ORDER BY h.submitted_at DESC, h.token`).all(account, season.starts_at);
   }
 
@@ -88,14 +88,25 @@ export class Defences {
   show(account) {
     const now = this.service.now();
     const v = this.view(account, now);
-    this.db.prepare("UPDATE accounts SET defences_seen_at = ? WHERE id = ?").run(now, account);
+    // With no raid new since the last read, moving the mark would change no
+    // count it makes: a write that says nothing (§24.1's writes).
+    if (v.unseen) this.db.prepare("UPDATE accounts SET defences_seen_at = ? WHERE id = ?").run(now, account);
     return v;
   }
 
   /** The raid badge: how many raids on the player are new since the log
    *  was last read. */
   badge(account) {
-    return { unseen: this.view(account).unseen };
+    // The raids since the log was read, this season: the badge reads those,
+    // not the season's every raid and report (§24.1's reads).
+    const now = this.service.now();
+    const seen = this.db.prepare("SELECT defences_seen_at FROM accounts WHERE id = ?").get(account)?.defences_seen_at ?? 0;
+    const season = this.service.seasons.current(now);
+    // One bound, the later of the two, so the index's range is it.
+    return { unseen: this.db.prepare(
+      `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
+        WHERE h.defender = ? AND h.submitted_at >= ? AND h.validated = 1 AND ${RAIDED}`)
+      .get(account, Math.max(season.starts_at, seen + 1)).n };
   }
 
   /** The raider's island a Trace leases: their Heart, else any realm. */

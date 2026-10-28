@@ -336,6 +336,30 @@
     "fund_opt_in": {
      "type": "gameplay",
      "holds": "whether the creator opted in to the Island Fund (18.9)"
+    },
+    "raids": {
+     "type": "gameplay",
+     "holds": "how many validated raids the player has played, which the bad-luck floor's page counts (§7.6)"
+    },
+    "raider_rating": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "the player's Glicko-2 rating as a raider (§12.22)"
+    },
+    "raider_deviation": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "its deviation"
+    },
+    "raider_volatility": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "its volatility"
+    },
+    "raider_games": {
+     "type": "gameplay",
+     "deletion": "cleared",
+     "holds": "the heists that rated them"
     }
    }
   },
@@ -994,11 +1018,16 @@
       "days": 90,
       "by": "expireReplays"
      }
+    },
+    "defender": {
+     "type": "user-id",
+     "names": "account",
+     "holds": "whose island the heist raided, as its lease names them"
     }
    }
   },
   "ledger": {
-   "about": "Every movement of Starlight, Essence and Aether, the game's earned resources, append-only (§24.12), one row a player an event; nothing in it is bought (F41).",
+   "about": "Every movement of §9.1's earned currencies: Starlight, Essence and Aether, and the Renown and season stars a heist moves, append-only (§24.12), one row a player an event; nothing in it is bought (F41).",
    "purposes": [
     "functionality",
     "security"
@@ -1037,6 +1066,38 @@
     },
     "at": {
      "type": "gameplay"
+    },
+    "starlight_total": {
+     "type": "gameplay",
+     "holds": "the player's balance with this row, the rows to it summed"
+    },
+    "essence_total": {
+     "type": "gameplay",
+     "holds": "the player's balance with this row, the rows to it summed"
+    },
+    "aether_total": {
+     "type": "gameplay",
+     "holds": "the player's balance with this row, the rows to it summed"
+    },
+    "season": {
+     "type": "gameplay",
+     "holds": "the season of the stars the row carries"
+    },
+    "stars": {
+     "type": "gameplay",
+     "holds": "the season stars the heist earned, carried on its row (§18.2)"
+    },
+    "stars_total": {
+     "type": "gameplay",
+     "holds": "the season's stars carried on the player's rows to this one, summed"
+    },
+    "renown": {
+     "type": "gameplay",
+     "holds": "the Renown the heist moved for the player (§12.9)"
+    },
+    "renown_total": {
+     "type": "gameplay",
+     "holds": "the season's Renown carried on the player's rows to this one, summed"
     }
    }
   },
@@ -1454,6 +1515,10 @@
     },
     "at": {
      "type": "gameplay"
+    },
+    "total": {
+     "type": "gameplay",
+     "holds": "the season's Renown moves to this row, summed"
     }
    }
   },
@@ -1489,6 +1554,10 @@
     },
     "at": {
      "type": "gameplay"
+    },
+    "total": {
+     "type": "gameplay",
+     "holds": "the season's stars to this row, summed"
     }
    }
   },

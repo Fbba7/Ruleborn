@@ -12,13 +12,14 @@ extends MarginContainer
 
 signal picked(id: String)
 
-## [id, icon, label key], in the bar's order.
+## [id, icon, label key], in the bar's order: the design's own tab icons
+## (tools/ui/export_icons.mjs takes them from its tab bar).
 const TABS := [
-	["islands", "screens/universe", "KIT_TAB_ISLANDS"],
-	["laws", "screens/lawcodex", "KIT_TAB_LAWS"],
-	["heist", "screens/heist", "KIT_TAB_HEIST"],
-	["crew", "screens/roster", "KIT_TAB_CREW"],
-	["friends", "screens/friendslist", "KIT_TAB_FRIENDS"],
+	["islands", "tabs/islands", "KIT_TAB_ISLANDS"],
+	["laws", "tabs/codex", "KIT_TAB_LAWS"],
+	["heist", "tabs/heist", "KIT_TAB_HEIST"],
+	["crew", "tabs/crew", "KIT_TAB_CREW"],
+	["friends", "tabs/friends", "KIT_TAB_FRIENDS"],
 ]
 ## How far the chosen tab rises above the bar, in points.
 const RISE := 18.0
@@ -175,10 +176,11 @@ func choose(id: String, animate := true) -> void:
 		else:
 			label.remove_theme_color_override("font_color")
 		var icon: TextureRect = _icons[k]
-		# A face the screen gave its tab (Pip on Crew) stands larger, its head
-		# above the tile's top edge, as the designs draw it (13, 10).
-		var faced := on and _faces.has(k)
-		icon.texture = (_faces[k] if faced else _plain[k]) as Texture2D
+		# The chosen tab's picture stands large, its top above the tile, as
+		# every design still draws it: its face if the screen gave one, else
+		# its own icon.
+		var faced := on
+		icon.texture = (_faces[k] if on and _faces.has(k) else _plain[k]) as Texture2D
 		icon.custom_minimum_size = Vector2.ONE * UI.px(FACE if faced else (46.0 if on else 36.0))
 		(icon.get_parent() as Control).offset_top = -float(UI.px(FACE - 46.0)) if faced else 0.0
 		if _bobs.has(k):

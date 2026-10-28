@@ -98,7 +98,7 @@ export class Profile {
     return this.db.prepare(
       `SELECT h.outcome, s.realm_level FROM heists h JOIN leases l ON l.token = h.token
          JOIN snapshots s ON s.bundle = h.bundle
-        WHERE l.defender = ? AND h.validated = 1 AND l.mode = 'raid' AND l.echo = 0`).all(account)
+        WHERE h.defender = ? AND h.validated = 1 AND l.mode = 'raid' AND l.echo = 0`).all(account)
       .map((r) => ({ ...JSON.parse(r.outcome), side: 9 + r.realm_level }));
   }
 
