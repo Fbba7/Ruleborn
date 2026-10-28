@@ -1416,6 +1416,9 @@ SCREEN_SLOT_RESTING,Resting,Resting,Descansando,A descansar,Ruht,Au repos
 SCREEN_SLOT_LOCKED,Locked,Locked,Bloqueado,Bloqueado,Gesperrt,Verrouillé
 SCREEN_CHAPTER,Ch. %d,Ch. %d,Cap. %d,Cap. %d,Kap. %d,Ch. %d
 SCREEN_TEXT_A,A,A,A,A,A,A
+SCREEN_AGO_MINUTES,%d min ago,%d min ago,há %d min,há %d min,vor %d Min.,il y a %d min
+SCREEN_AGO_HOURS,%d h ago,%d h ago,há %d h,há %d h,vor %d Std.,il y a %d h
+SCREEN_AGO_DAYS,%d d ago,%d d ago,há %d d,há %d d,vor %d T.,il y a %d j
 SCREEN_SETTINGS_COMFORT,Seeing and comfort,Seeing and comfort,Visão e conforto,Visão e conforto,Sehen und Komfort,Vue et confort
 SCREEN_SETTINGS_PACE,Controls and pace,Controls and pace,Controles e ritmo,Controlos e ritmo,Steuerung und Tempo,Commandes et rythme
 SCREEN_KIND_HARMONY,Harmony,Harmony,Harmonia,Harmonia,Harmonie,Harmonie

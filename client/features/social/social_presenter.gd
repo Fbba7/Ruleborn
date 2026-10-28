@@ -53,6 +53,19 @@ static func who(account: String, me: String) -> String:
 	return Strings.t("SOCIAL_KEEPER", account.left(4).to_upper())
 
 
+## How long ago a moment at `at_ms` was, from `now_ms`: "5 min ago", "3 h
+## ago", "2 d ago"; "" for none.
+static func ago(at_ms: int, now_ms: int) -> String:
+	if at_ms <= 0:
+		return ""
+	var minutes := maxi(1, floori((now_ms - at_ms) / 60000.0))
+	if minutes < 60:
+		return Strings.t("SCREEN_AGO_MINUTES", minutes)
+	if minutes < 24 * 60:
+		return Strings.t("SCREEN_AGO_HOURS", minutes / 60)
+	return Strings.t("SCREEN_AGO_DAYS", minutes / (24 * 60))
+
+
 ## §18.1: the league and division, Renown, and how far to the next league.
 static func league(l: Dictionary) -> Dictionary:
 	var v: Dictionary = l.get("view", {})
@@ -114,7 +127,8 @@ static func friends(f: Dictionary, me: String) -> Dictionary:
 	for e: Dictionary in f.get("feed", []):
 		var grade: Variant = e.get("grade")
 		feed_items.append({"grade": str(grade) if grade != null else "", "mode": str(e.get("mode", "raid")),
-			"raider": who(str(e["raider"]), me), "defender": who(str(e["defender"]), me)})
+			"raider": who(str(e["raider"]), me), "defender": who(str(e["defender"]), me),
+			"at": int(e["at"]) if e.get("at") != null else 0})
 		feed.append(Strings.t("FEED_" + str(e.get("mode", "raid")).to_upper() if Strings.rows().has(
 				"FEED_" + str(e.get("mode", "raid")).to_upper()) else "FEED_RAID",
 			[who(str(e["raider"]), me), who(str(e["defender"]), me),

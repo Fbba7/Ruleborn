@@ -46,7 +46,8 @@ static func fill(name: String, store: Store) -> void:
 		"friends":
 			store.dispatch(&"friends_loaded", {"friends": [{"account": "kofi1234"}, {"account": "mira5678"},
 				{"account": "juno9012"}],
-				"feed": [{"raider": "kofi1234", "defender": "mira5678", "grade": "clean", "mode": "raid"},
+				"feed": [{"raider": "kofi1234", "defender": "mira5678", "grade": "clean", "mode": "raid",
+					"at": int(Time.get_unix_time_from_system() * 1000) - 12 * 60000},
 					{"raider": "juno9012", "defender": "kofi1234", "grade": "foiled", "mode": "raid"},
 					{"raider": "mira5678", "defender": "juno9012", "grade": "loud", "mode": "raid"}],
 				"blocked": [{"account": "zzzz0000"}]})

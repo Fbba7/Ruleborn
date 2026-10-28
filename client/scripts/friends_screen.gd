@@ -8,6 +8,7 @@ extends Control
 const GRADE_LOOK := {"clean": "green", "loud": "gold", "partial": "well", "foiled": "red"}
 
 var controller: SocialController
+var clock: Callable = func() -> int: return int(Time.get_unix_time_from_system() * 1000)
 var body: VBoxContainer
 var status_label: Label
 var code_field: LineEdit
@@ -154,11 +155,15 @@ func _feed_tab(f: Dictionary) -> void:
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		col.add_theme_constant_override("separation", UI.px(2))
 		var head := ScreenParts.flow(6.0)
-		head.add_child(ScreenKit.text(str(item.get("raider", "")), 16.0, "number", "parchment"))
+		var who := ScreenKit.text(str(item.get("raider", "")), 16.0, "number", "parchment")
+		head.add_child(who)
 		if grade != "":
 			var pill := ScreenParts.pill(Strings.term("GRADE", grade), GRADE_LOOK.get(grade, "well"), "", "", 13.0)
 			pill.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 			head.add_child(pill)
+		var when := SocialPresenter.ago(int(item.get("at", 0)), clock.call())
+		if when != "":
+			head.add_child(ScreenKit.text(when, 13.0, "words", "parchment", true))
 		col.add_child(head)
 		var words := ScreenKit.text(line, 14.0, "body", "parchment", false, true)
 		words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
