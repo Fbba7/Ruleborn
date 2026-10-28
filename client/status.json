@@ -321,6 +321,7 @@
   "the league, groups and friends reducers keep what they had when a call fails, name the failure, read a null group as none, and the friends screen shows the latest outcome, not an older one": "passed",
   "the load target steps from 50 to 100% in tens, and a protected Keeper's Start says raiding a player ends it (12.3, 12.5)": "passed",
   "the log fetches each reported raid's island once, by its bundle, and its report names the places on it (13.2, 24.8)": "passed",
+  "the loot panel, Sage, crew key, friend, feed row, album card, product and album meet 48 points and 13 points and stay on the screen at 200% text (§21.1, §21.8, §20.8)": "passed",
   "the map asks the server for the weaving view, the home, the wallet and the raid badge, and draws from them (23.2)": "passed",
   "the map draws every realm the server names and only those, the next realm to open as mist, a rope bridge on a node of its own so it sways, all four kinds of link, and is not built again for the same universe; seven realms stay inside 21.3's 40,000 triangles in view and 150 draw calls, from afar and at each realm's two zooms (23.2, 5.3, 21.3)": "passed",
   "the map shows the resources held and what each producer has ready, and alerts the player can act on: new raids and a full producer (9.3, 14.6, 23.2)": "passed",
