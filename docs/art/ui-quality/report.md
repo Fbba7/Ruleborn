@@ -670,7 +670,7 @@ Every motion has a reduced form (§20.8), shown in its frame strip at the gate:
 | Idle shine on primary buttons | A sweep | None |
 | Screen change | Its transition | A cross-fade |
 
-No glint, sparkle or shine flashes more than three times a second (§20.8). Screen shake stays under 4 pixels and can be switched off.
+No glint, sparkle or shine flashes more than three times a second (§20.8). Screen shake is never above 4 pixels (§21.8) and can be switched off (§20.8).
 
 ### 10.4 Words, languages and numerals
 
@@ -689,7 +689,7 @@ No glint, sparkle or shine flashes more than three times a second (§20.8). Scre
 
 ### 10.6 Licences and the design document's art rules (§21.11, §21.3, §21.8)
 
-- **Made, not licensed (§21.11).** Every pixel is made by code in this repository, and the sources ship beside the bakes, so the art is "made for this game". The build tools (three.js 0.184.0 under the MIT licence, Playwright 1.63.0 and its Chromium under Apache 2.0 and BSD) are permissive and are not shipped. K1 records them in a tools ledger beside the fonts' ledger.
+- **Made, not licensed (§21.11).** Every pixel is made by code in this repository, and the sources are kept in the repository beside the bakes (they are not shipped), so the art is "made for this game". The build tools (three.js 0.184.0 under the MIT licence, Playwright 1.63.0 and its Chromium under Apache 2.0 and BSD) are permissive and are not shipped. K1 records them in a tools ledger beside the fonts' ledger.
 - **Fonts.** The three faces are under the Open Font Licence with their texts shipped (`client/ui/fonts/LEDGER.md`). Baked numerals are pictures drawn with Lilita One, not font files, and the ledger says so in a new row.
 - **No outside art.** No image comes from outside: no stock, no generated image, no game art. The benchmark panels in the audit images are written descriptions.
 - **Characters in the toon look (§21.3).** "Characters are not drawn in a physically based material; their portraits are rendered from the imported models in this look." The proof's Pip badge was lit in three.js's physically based studio, which breaks this. In the plan, character, Sage and building icons are rendered through Godot's portrait studio in the toon look, then finished in 2D. That is AIA-2's 3 hours of set-up.
