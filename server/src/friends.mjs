@@ -92,9 +92,9 @@ export class Friends {
    *  Called inside settlement's transaction, before the heist being settled
    *  is marked validated; answers the gift, or null. */
   firstHeist(account, now = this.now()) {
-    const before = this.db.prepare("SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND validated = 1")
-      .get(account).n;
-    if (before !== 0) return null;
+    // Whether there is one, not how many: the first row ends the read.
+    const before = this.db.prepare("SELECT 1 FROM heists WHERE attacker = ? AND validated = 1 LIMIT 1").get(account);
+    if (before) return null;
     const rows = this.db.prepare(
       `SELECT a, b, invited_by FROM friends
         WHERE (a = ? OR b = ?) AND invited_by IS NOT NULL AND invited_by != ? AND gift_at IS NULL`)

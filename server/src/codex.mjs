@@ -142,10 +142,8 @@ export class Codex {
     }
     if (pays(lease.mode)) {
       for (const law of brokenLaws(verdict.broken ?? 0)) give(raider, law, 1);
-      const heists = this.db.prepare(
-        `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
-          WHERE h.attacker = ? AND h.validated = 1 AND l.mode NOT IN ('friendly', 'challenge')`)
-        .get(raider).n + 1;                       // this one is not marked validated yet
+      // This one counted: the grant has written it (service.raidsPlayed).
+      const heists = this.service.raidsPlayed(raider);
       const working = this.db.prepare("SELECT working_on FROM accounts WHERE id = ?").get(raider).working_on;
       if (heists % facts.FLOOR_HEISTS === 0 && working) give(raider, working, 1);
     }

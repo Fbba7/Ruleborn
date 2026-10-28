@@ -90,6 +90,12 @@ const valid = {
 };
 
 const day = (ms) => new Date(ms).toISOString().slice(0, 10);
+/** Midnight UTC at the start of the day `d` (a date or a time) falls in. A
+ *  day's events are in the batches started since it: a batch is appended to
+ *  only on the day it was started, and an event is never dated after it is
+ *  written. So a player's day reads that day's batches and the few started
+ *  after, by event_batches_by_who_at, not their 90 days of them (§24.1). */
+const since = (d) => (typeof d === "string" ? Date.parse(`${d}T00:00:00Z`) : d - (d % DAY_MS));
 const plus = (d, n) => day(Date.parse(d) + n * DAY_MS);
 
 /** The laws an island weaves, read from its bundle (sim/src/island.rs's
@@ -128,8 +134,9 @@ export class Telemetry {
 
   /** An event the server records once a player a day, if not yet today. */
   once(account, kind, at = this.service.now()) {
-    const seen = this.db.prepare("SELECT 1 FROM events WHERE who = ? AND kind = ? AND day = ? LIMIT 1")
-      .get(this.pseudonym(account), kind, day(at));
+    const seen = this.db.prepare(
+      "SELECT 1 FROM events WHERE who = ? AND started >= ? AND kind = ? AND day = ? LIMIT 1")
+      .get(this.pseudonym(account), since(at), kind, day(at));
     if (!seen) this.record(account, kind, {}, at);
   }
 
@@ -213,27 +220,30 @@ export class Telemetry {
     const who = this.pseudonym(account);
     const surveys = rows.filter((r) => r.kind === "survey");
     if (surveys.length > 1 || (surveys.length && this.db.prepare(
-      "SELECT 1 FROM events WHERE who = ? AND kind = 'survey' AND at > ?").get(who, now - SURVEY_GAP_MS))) {
+      "SELECT 1 FROM events WHERE who = ? AND started >= ? AND kind = 'survey' AND at > ?")
+      .get(who, since(now - SURVEY_GAP_MS), now - SURVEY_GAP_MS))) {
       throw new Refused(429, "survey_once_a_quarter");
     }
     // Each event counts against its own day, as report() reads it.
-    const sent = this.db.prepare("SELECT COUNT(*) AS n FROM events WHERE who = ? AND kind = ? AND day = ?");
+    const sent = this.db.prepare(
+      "SELECT COUNT(*) AS n FROM events WHERE who = ? AND started >= ? AND kind = ? AND day = ?");
     for (const [kind, most, reason] of [["worth", WORTH_A_DAY, "worth_too_often"],
                                         ["session_start", SESSION_ENDS_A_DAY, "too_many_session_starts"],
                                         ["session_end", SESSION_ENDS_A_DAY, "too_many_session_ends"]]) {
       const days = {};
       for (const r of rows) if (r.kind === kind) days[day(r.at)] = (days[day(r.at)] ?? 0) + 1;
       for (const [d, n] of Object.entries(days)) {
-        if (n + Number(sent.get(who, kind, d).n) > most) throw new Refused(429, reason, { most });
+        if (n + Number(sent.get(who, since(d), kind, d).n) > most) throw new Refused(429, reason, { most });
       }
     }
     const kinds = Object.keys(DEVICE_EVENTS);
     const all = this.db.prepare(
-      `SELECT COUNT(*) AS n FROM events WHERE who = ? AND day = ? AND kind IN (${kinds.map(() => "?").join(", ")})`);
+      `SELECT COUNT(*) AS n FROM events WHERE who = ? AND started >= ? AND day = ?
+          AND kind IN (${kinds.map(() => "?").join(", ")})`);
     const days = {};
     for (const r of rows) days[day(r.at)] = (days[day(r.at)] ?? 0) + 1;
     for (const [d, n] of Object.entries(days)) {
-      if (n + Number(all.get(who, d, ...kinds).n) > DEVICE_EVENTS_A_DAY) {
+      if (n + Number(all.get(who, since(d), d, ...kinds).n) > DEVICE_EVENTS_A_DAY) {
         throw new Refused(429, "too_many_events", { most: DEVICE_EVENTS_A_DAY });
       }
     }
@@ -289,8 +299,9 @@ export class Telemetry {
    *  how many of them had a session on their day 1, 7, 30 and 60. */
   cohort(d) {
     const who = this.db.prepare("SELECT who FROM first_seen WHERE day = ?").all(d).map((r) => r.who);
-    const played = this.db.prepare("SELECT 1 FROM events WHERE who = ? AND kind = 'session_start' AND day = ?");
-    const back = (n) => who.filter((w) => played.get(w, plus(d, n))).length;
+    const played = this.db.prepare(
+      "SELECT 1 FROM events WHERE who = ? AND started >= ? AND kind = 'session_start' AND day = ?");
+    const back = (n) => who.filter((w) => played.get(w, since(plus(d, n)), plus(d, n))).length;
     return { players: who.length, day1: back(1), day7: back(7), day30: back(30), day60: back(60) };
   }
 
@@ -300,8 +311,8 @@ export class Telemetry {
    *  so a player who declines is not asked again until the quarter is out. */
   surveyDue(account, now = this.service.now()) {
     const asked = this.db.prepare(
-      "SELECT 1 FROM events WHERE who = ? AND kind IN ('survey', 'survey_offered') AND at > ?")
-      .get(this.pseudonym(account), now - SURVEY_GAP_MS);
+      "SELECT 1 FROM events WHERE who = ? AND started >= ? AND kind IN ('survey', 'survey_offered') AND at > ?")
+      .get(this.pseudonym(account), since(now - SURVEY_GAP_MS), now - SURVEY_GAP_MS);
     if (asked) return false;
     this.record(account, "survey_offered", {}, now);
     return true;
