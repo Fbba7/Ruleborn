@@ -10,7 +10,8 @@ extends SceneTree
 ## Settings' turn and zoom buttons, CONTRAST high contrast, LEFT left-handed
 ## play, TEXT a text size (150, 200), NAMES the names a long press shows,
 ## MANIFEST the design's planned crew of five with a Sage and a cast, and
-## ESTIMATE a target card's rough loot estimate, WHEEL "sage" or "cast" a
+## ESTIMATE a target card's rough loot estimate, FRAME_H the frame's height (1920 for
+## 9:16), WHEEL "sage" or "cast" a
 ## wheel open.
 
 const LawShot := preload("res://tests/shots/law_heist.gd")
@@ -31,7 +32,7 @@ func _go() -> void:
 	# A phone's frame of its own, so the still is 1080 by 2340 whatever the
 	# window does.
 	var frame := SubViewport.new()
-	frame.size = Vector2i(1080, 2340)
+	frame.size = Vector2i(1080, int(OS.get_environment("FRAME_H")) if OS.get_environment("FRAME_H") != "" else 2340)
 	frame.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	root.add_child(frame)
 	App.services = Fixtures.answered(Services.build(frame, "", null, "user://outbox-shot.json"))
