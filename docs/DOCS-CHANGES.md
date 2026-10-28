@@ -85,7 +85,14 @@ kept, and made findable.
   switches and tabs, and which catalogue is still English-only.
 - `sim/README.md`: abilities, Sage powers and island generation are built
   (marked as later than the text around them); Layout gains `run_spike.sh`,
-  `stability_cases.json`, `Cargo.toml`.
+  `stability_cases.json`, `Cargo.toml`; then, after a sweep against the code,
+  the longest golden's size (1,269 bytes, five goldens), the fixture's two
+  publishing failures under v3.7's limits, the Lantern Glare's own reach (4 m,
+  8 m from alarm level 4), disarming (15 s on the tile, not "3 s + 1 s a
+  level"), and the content gate's coverage and self-test (323 values,
+  fourteen planted faults). The doc comment on `Island::fixture`
+  (`sim/src/island.rs`) still says level 5 "allows three" posts; it is code,
+  left for the simulation's owner.
 - `server/README.md`: Layout gains the sign-in modules, `status.py`,
   `package.json`, `ratings.json`, `web/terms.md`; the curation section no
   longer calls the hold unbuilt.
@@ -99,6 +106,14 @@ kept, and made findable.
   things (`server/src/db.mjs` on the leases table's "partial unique index",
   `server/src/limits.mjs` on keeping a session "for the hour"); they are
   code, so they are left for the server's owner.
+- `docs/security/review.md`, `docs/security/auth.md`, `docs/server/db-cost.md`
+  (resumed after the first stop): checked against the code. Dated notes were
+  added rather than rewriting the reports: SR-09's patch no longer applies;
+  SR-11's pin is still in the suite; SR-20 and sign-out are now built by T11;
+  auth.md's lapsed-session job is `Auth.expire()`, session ids are row ids,
+  the stub refusal is stricter than it said, and its row and dollar figures
+  predate the cost work. Two rounding slips in db-cost.md fixed (146 target-list
+  reads, 0.38 and 0.06 of the reads budget).
 - `docs/analysis/README.md`: marked as the v2.3 archive, with pointers; its
   extract command fixed; a bare `spec/economy.md` given its full path.
 - `docs/design/spec/README.md`: says its adoption history stops at v3.1 and
@@ -183,6 +198,11 @@ files; their outputs are checked by `check_all.sh`), and the golden replays'
    is), and Harmony's preview flashes up to twice a second
    (`client/world/law_fx_harmony.gd`). The client README used to say
    "nothing flashes or shakes". Worth a ticket for the heist track?
+11. **SR-09's patch needs rebasing.** The security review's appendix says
+   each of the six owner fixes applies with `git apply`; on today's main,
+   SR-09's (no ratings on the target lists) no longer does, because
+   `Service.targetLists` was rewritten. The other five still apply. Saying
+   yes to SR-09 now needs someone to redo its patch.
 
 ## Log
 
@@ -198,5 +218,28 @@ files; their outputs are checked by `check_all.sh`), and the golden replays'
   duplicate screenshot instructions folded into the client guide.
 - 18:15 UTC: a second sweep of the client README against the code (nine
   statements corrected; one accessibility gap found, question 10).
-- 18:50 UTC: a sweep of the server README against the code (eight
+- 18:25 UTC: a sweep of the server README against the code (eight
   statements corrected).
+- 18:45 UTC: a sweep of the sim README against the code (six statements
+  corrected).
+
+## Stopped here
+
+Stopped first at about 19:05 UTC; resumed on the integrator's check-in to
+check the security and cost reports (above); then added a troubleshooting table to the checks guide on the next check-in; stopped at about 20:00 UTC on 28 October 2026, every deliverable pushed to
+`claude/docs` with `bash tools/check_all.sh` ending "All checks passed".
+
+- **Done:** the README, the index (`docs/README.md`), the architecture
+  overview, six guides, `docs/status.md`, folder maps for track notes and
+  stills, and the client, server and sim READMEs swept against the code.
+  Every command the README and guides give was run.
+- **Not done, for whoever picks this up:** the track notes themselves are
+  mapped and bannered but not swept for stale statements (they are history,
+  each with its own "Stopped here"); the security review's test counts (445,
+  448, 462, 442 in different places) were not re-run; three code comments
+  named above still say old things.
+- **Waiting on the owner:** the eleven questions above.
+- 19:10 UTC: resumed; the security and cost reports checked against the
+  code (dated notes, two rounding slips, question 11).
+- 19:35 UTC: on the next check-in, a "When it fails" table in
+  `docs/guides/checks.md`, from the failures met setting this machine up.

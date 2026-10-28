@@ -40,9 +40,9 @@ at the code and the test that prove it.
 | T3 | **Replay of a platform proof** — a captured Game Center signature or Google ID token sent again | Game Center: at most five minutes old, and each (player, salt, timestamp) accepted once inside that window. Google: `nonce` must be a server-issued, single-use, five-minute nonce; the same token is refused the second time. |
 | T4 | **Forgery** — a made-up access or refresh token, a made-up platform proof | HMAC-SHA256 over every field with a server key; constant-time comparison; a key id in the token. Game Center's key fetched only from `static.gc.apple.com`/`sandbox.gc.apple.com` over HTTPS with no redirects, chained to a pinned root, Apple's organisation in the subject, the bundle id. Google: RS256 against Google's published keys (cached, refetched on an unknown `kid`, rate-limited), `iss`, `aud` among the app's client ids, `exp`/`iat` with five minutes of skew, `sub` numeric. `alg` is pinned (no `none`, no HS256 confusion). |
 | T5 | **Session fixation** — an attacker plants a session id the victim then signs into | The server makes every session id itself, at sign-in, from a CSPRNG; a client never names one. A sign-in always makes a new session; the device throws away any session it held before. |
-| T6 | **Brute force** — guessing tokens, hammering sign-in | 128-bit session ids, 256-bit MACs. The document's limits per account (sign-ins) and per address (failures only). Refresh is held to the same account bucket as sign-in. |
+| T6 | **Brute force** — guessing tokens, hammering sign-in | 256-bit MACs over every token; session ids are sequential row ids, not secrets, so a guessed id gains nothing (the security review's note under SR-24). The document's limits per account (sign-ins) and per address (failures only). Refresh is held to the same account bucket as sign-in. |
 | T7 | **Enumeration** — learning whether an identity has an account | A refused credential, a revoked session, an expired session and a forged token all answer the same `session_refused` / `platform_identity_refused`, and the same status. A limit answers 429 whether or not the account exists, and an address is held back on failures before any account is read. Sign-in makes an account for a new identity, so "exists" is never a different answer. |
-| T8 | **Downgrade** — an old token format, `alg: none`, HTTP, a stubbed verifier in production | Only the current token version is read. JWT `alg` is pinned to RS256. The server refuses to start with real stores and stubbed sign-in (`main.mjs`). The client refuses a server reached in the clear. |
+| T8 | **Downgrade** — an old token format, `alg: none`, HTTP, a stubbed verifier in production | Only the current token version is read. JWT `alg` is pinned to RS256. The server refuses to start with stubbed sign-in, stores or not, unless `RULEBORN_STUB_SIGNIN=1` asks for it (`main.mjs`, SR-29). The client refuses a server reached in the clear. |
 | T9 | **Lost or stolen device** | "Sign out everywhere" from any other device ends every session at once. The refresh token is in Keychain/Keystore, bound to the device (not in iCloud backups: `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`; Android Keystore-wrapped). Deleting the account or a ban ends every session. |
 | T10 | **Shared device** — the next person picks up a signed-out phone | Sign-out ends the session on the server first, then clears the access token, the refresh token, every cached private state, and parks the outbox under the account it belongs to (never sent as someone else, never lost). |
 | T11 | **Account takeover through a platform switch** — a thief's identity attached to someone else's account, to keep it after the stolen token dies | An account has the identity it was made with and at most one linked identity of the other platform (`linked_identities`). Linking needs a live session **and** two fresh, single-use proofs in the same request: one of an identity the account already signs in with (step-up) and one of the identity added — a stolen access token alone links nothing. An identity that has an account of its own, or a ban, is never linked (no merging). Unlinking needs a fresh proof of the identity that stays and ends every session the removed one signed in (`sessions.via`). A ban bans the linked identity too (`Auth.endAll(…, "banned")`); a deletion erases the link. The web deletion page takes only `gp:`, made-with or linked. |
@@ -72,8 +72,9 @@ without OAuth's ceremony (one first-party client).
   token of it refused.
 - Lifetimes: access one hour; refresh 30 days idle, 180 days absolute.
   **Choice** (the market's usual range for a game).
-- Sessions closed or lapsed are deleted seven days after (§20.5's rule) by the
-  daily `expireLapsed` job.
+- Sessions closed or lapsed are deleted seven days after (§20.5's rule) by
+  `Auth.expire()` (`server/src/auth.mjs`), which the server runs on its
+  daily timer beside `expireLapsed`.
 
 ### Sign-out
 
@@ -306,6 +307,12 @@ once and refreshing when its hour is up — and `server/load.json` is
 rewritten: one billed row a session, engaged players 81.15 → 86.15 billed
 rows a day, $767 → $817 a month at a million monthly players. **Owner to
 confirm** this addition to §24.1's budget (the register is not edited here).
+
+> **Note (T15, 28 October 2026):** these figures predate the database-cost
+> work. `server/load.json` now reads 61.74 billed rows a day for an engaged
+> player and $572 a month at a million
+> ([`docs/server/db-cost.md`](../server/db-cost.md)); the once-a-day rotation
+> has not been re-measured since.
 
 ## Checked by hand
 

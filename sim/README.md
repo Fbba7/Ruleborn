@@ -75,8 +75,8 @@ well — a collision would have to land on the first second that differs, at one
 chance in four billion.
 
 Measured, with the command log the fixture draws: a 240-second heist with a
-crew of five is **1,215 bytes**, and the longest of the four goldens is 1,215
-of 2,048.
+crew of five is **1,269 bytes** (`golden/long-crew5.rbh` on 28 October 2026),
+the longest of the five goldens, against 2,048.
 
 ## Golden replays
 
@@ -114,7 +114,8 @@ island was a placeholder and every heist ran on the one fixture realm. Now:
   law slots for the realm level, one thing a tile, an open edge tile to land
   on and at least half of each side open (F51, decided), and §6.1's route to
   the Vault from some open edge tile with every Crystal Wall standing. The fixture
-  fails one of them on purpose — five posts where realm level 5 has three —
+  fails two of them on purpose — too many wards and too many posts for realm
+  level 5, which under v3.7 allows no wards and one post (`tests.rs`) —
   and `Island::example()` is a legal realm-3 Heart for the server's tests.
 - **Buildings on the grid** (§10.1, TD.36): an island may end with a list of
   buildings, each a code from `BUILDING_CODES` and its footprint's north-west
@@ -584,9 +585,9 @@ drafted resolution), which gives each ward one of three kinds:
   - A Gravity Well pulls everyone within 3 tiles to its centre and holds them
     2 seconds. Their route is recomputed from there to the tile they were sent
     to: the order was the tile, not the path.
-  - A Lantern Glare shows the crew for 5 seconds to every guard within the
-    alarm's spread reach of it, 4 m (F33, decided; §10.3 says "every guard
-    in the realm"), and blinds the crew for 2. Each Glare holds its own
+  - A Lantern Glare shows the crew for 5 seconds to every guard within 4 m
+    of it, 8 m from alarm level 4 (F33, decided; v3.7's §10.3), a reach of its
+    own that the laws widening the alarm leave alone (F52), and blinds the crew for 2. Each Glare holds its own
     reveal, so a second one firing does not take the first's away.
   - Under Delay, a guard's rise to Suspicious, Investigating or Alerted —
     on its own suspicion, a lure, or the alarm's spread — lands its delay
@@ -594,8 +595,9 @@ drafted resolution), which gives each ward one of three kinds:
     before Delay's pylon breaks still lands at its tick. A regrow time takes
     the shortest applied (G24).
 
-A ward can be disarmed from beside it: 3 s + 1 s a level, silent, cancelled
-by moving, and never reset. Or it can be smashed, loudly, with Breakers
+A ward can be disarmed by standing on its tile for 15 s at every level
+(`DISARM_TICKS`, v3.3's rule; stepping off starts it again, as described
+below). Or it can be smashed, loudly, with Breakers
 doubled.
 
 The document's numbers are read out of `content/wards.json`'s own sentences
@@ -656,16 +658,20 @@ result is decided. Two copies of one fact drift, and they had: the first
 fixture had the Scout's zones at **half** §12.17's size — 1, 2 and 3 metres for
 2, 4 and 6 — and nothing noticed until the guard work reread §12.17 by hand.
 
-`content_gate.py` compares the 98 values the simulation carries against
-`detection.json`, `roles.json` and — for the §12.6, §12.19, §12.20 and §5.4
+`content_gate.py` compares the values the simulation carries (323 on 28
+October 2026; it prints the count) against `detection.json`, `roles.json`,
+`wards.json`, `law_effects.json`, `ruleborn.json`, `terrain.json`,
+`buildings.json` and — for the §12.6, §12.19, §12.20 and §5.4
 numbers that have no content file — `tools/design_facts.py`, which is now
 their one home; the Python harness imports them from there. It walks every number in both files, and
 each has to be compared, named as not modelled yet, or named as derived from
 one that is. Anything else fails the gate. The first version only *said* this,
 and the peripheral modifier sat in the file neither compared nor listed. The
-self-test plants seven faults and must catch all seven: the halved Scout, a
-moved state floor, a deleted role, a wrong multiplier, a slow Scout, an
-uncompared number and a deleted test.
+self-test began with seven planted faults and now plants fourteen, and must
+catch all of them: the halved Scout, a moved state floor, a deleted role, a
+wrong multiplier, a slow takedown, a slow Scout, a weak Warden, an uncompared
+number, a deleted test, a drifted design fact, a hand-edited law table, an
+unread rule-sheet parameter, a resized kind and a drifted ability number.
 
 ## How progress is reported
 

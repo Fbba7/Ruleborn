@@ -118,3 +118,20 @@ the rules it enforces:
   URL everywhere.
 - **The document's current version** is named correctly wherever prose says
   "the design document at vX.Y".
+
+## When it fails
+
+The failures a fresh machine meets first:
+
+| What you see | Why | Fix |
+|---|---|---|
+| `error[E0463]` … `failed: cargo build --release --quiet --target wasm32-unknown-unknown`, in the simulation step | the WebAssembly target is not installed | `rustup target add wasm32-unknown-unknown` |
+| `gdlint: command not found`, in the client step | gdtoolkit is not installed | `pip install "gdtoolkit==4.*"` |
+| `ModuleNotFoundError: No module named 'playwright'`, at `check_prototype_conformance.py` | Python Playwright is not installed | see "What it needs" above |
+| `BrowserType.launch: Executable doesn't exist at …`, at the same step | the Python Playwright's version does not match the installed Chromium | install the matching version, or `python3 -m playwright install chromium` |
+| `sign-in would be stubbed …` when starting the server by hand | no platform sign-in is configured (SR-29) | set `RULEBORN_STUB_SIGNIN=1` for local work |
+| `check_docs_consistency.py` failing after a docs edit | a broken link, a count or citation it checks, or a new file in `tools/` not in the README's listing | the message names the file and line; see the rules above |
+
+A step's own output names what failed; run that step alone with the command
+in the table of steps to iterate quickly, then run the whole script again
+before pushing.
