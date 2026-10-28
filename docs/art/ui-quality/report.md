@@ -23,12 +23,12 @@ So "about 30% of the bar" is a fair figure.
 
 The agents' 80–90% is not a quality measure. It counts finished deliverables against a list. Their "vs design" rounds measure how closely a still matches the design's layout. On that test they do well: our screens now match the design closely (`audit-*.png`).
 
-**Matching the design cannot reach the bar.** Screens v3 itself scores about 2.5 out of 5 on the same rubric (section 5.2):
+**Matching the design cannot reach the bar.** Screens v3 itself scores 2.4 out of 5 on the same rubric (section 5.2):
 - a dark-violet web-panel look, with rims of 1.5 px at 35–50% opacity;
 - most text in Manrope at 10–11 pt with no stroke;
 - dark on dark, about one step of value apart.
 
-A perfect port of v3 lands near 50% of Clash level. "Three times v3" is not a direction you can polish toward. It needs a different target and a different way of making pixels.
+A perfect port of v3 lands near 48% of Clash level. "Three times v3" is not a direction you can polish toward. It needs a different target and a different way of making pixels.
 
 ## 2. Root causes
 
@@ -193,7 +193,22 @@ What we already do well, and should keep:
 
 ### 5.2 The design scored the same way
 
-Screens v3 (stills in `art/design/stills/screens/`) scores about 2.5 out of 5. Our port reaches roughly 2.2 because some of v3 is not carried over: the extra laws chip, the result's study card and some gloss. A perfect port gains about 0.3. The gap from the bar is in the target, not the port.
+Screens v3's five matching stills (`art/design/stills/screens/` 01, 02, 07, 11 and 19), scored as one set:
+
+| # | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | Mean |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Screens v3 | 2.5 | 2 | 2.5 | 2.5 | 2 | 2.5 | 2.5 | 2.5 | 2 | 2 | 2 | 3 | 3 | 2 | 2.4 |
+
+Where v3 sits above us:
+- a little more gloss;
+- its CSS press states and 86 keyframe animations (from `design-system.md`, section 5.1);
+- the result's study card.
+
+Where it sits below us:
+- text at 10–11 pt, under §21.8's floor (row 10);
+- 852 colours and 402 shadows, where we have a token system (row 11).
+
+A perfect port would gain about 0.2. The gap from the bar is in the target, not in the port.
 
 ## 6. The way forward: options, ranked
 
