@@ -281,7 +281,14 @@ func _badges(p: Dictionary) -> Control:
 		words.add_child(bar)
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", UI.px(8))
-		row.add_child(ScreenKit.icon("hud", "star", 30.0))
+		# The badge's medal in its grade's frame; a dim star until earned.
+		var star := ScreenKit.icon("hud", "star", 26.0)
+		if grade == "":
+			star.modulate.a = 0.45
+		var medal := ScreenKit.panel({"gold": "goldframe", "silver": "silver", "bronze": "oak"}.get(grade, "well"),
+			star, -1.0, 7.0)
+		medal.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(medal)
 		row.add_child(words)
 		row.add_child(tag)
 		box.add_child(ScreenKit.panel("card", row, 14.0, 8.0))
