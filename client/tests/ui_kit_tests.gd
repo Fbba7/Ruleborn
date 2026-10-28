@@ -239,6 +239,7 @@ func _pieces() -> void:
 			KitCards.law_disc("laws/sleepwalk", "Sleepwalk", "spirit"),
 			KitCards.stat("crewroles/scout", "Stealth", "6", "+1", 6, 10, 1),
 			KitControls.token("lawnotes/hush", "Hush form, hatched", true, false, none),
+			KitHud.streak(["M", "T", "W", "T", "F", "S"], 4, 4, "alerts/seasonreward", "+100", ["kept", "today", "later"]),
 			KitCards.build_card("resources/starlight", "Star Well", "Makes Starlight.", "resources/starlight", "1,200",
 				"3 / 4", none),
 			KitPanels.album("motion", "Motion", "Chapter I", "3 of 4", Control.new()),
