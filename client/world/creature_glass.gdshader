@@ -28,6 +28,7 @@ void fragment() {
 	relief_n = NORMAL;
 	far_mix = creature_far(PROJECTION_MATRIX, VERTEX, VIEWPORT_SIZE);
 	n_up = dot(NORMAL, normalize((VIEW_MATRIX * vec4(0.0, 1.0, 0.0, 0.0)).xyz));
+	face_on = 0.0;
 	creature_surface(c, body, 0.0, emit, UV, local_pos, NORMAL, VIEW, far_mix, ALBEDO, EMISSION);
 	gloss_band = body ? 0.0 : flags.x / 0.45;
 	float fr = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 2.0);

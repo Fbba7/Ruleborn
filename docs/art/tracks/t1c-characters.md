@@ -456,17 +456,31 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
 - **For T5:** the Sage disc (`CreatureBust.of(sage, "", ground)`) once the
   simulation gives a heist its Sage; guards at `readable_scale()`; keep the
   crew out of the guards' rings in `heist_shot.gd`.
-- **Still worse than the design:** white flecks on Quarryback's shell and
-  Mossbear's stones. Traced (after the stop, round 14): they are body faces
-  (an accessory-red debug pass leaves them white), not holes (an ink-green
-  pass shows no ink through them), not faces the decimation folded (dropping
-  the 76 faces wound against the sculpt's normals keeps every fleck), and
-  not lift, sheen, relief or exposure. A UV debug pass puts most of them at
-  the atlas's left edge (u near 0), outside every chart, where the bake
-  paints nothing of theirs: the next step is `unwrap`/`pack` in
-  `tools/art/harness.js` for faces whose projection is near edge-on; Featherkin's knit reads smooth; Lantern
-  Wisp's cream face reads pink; petals are flat where the design's pale
-  toward the tip.
+- **Fixed after the stop (round 16):** the white flecks on Quarryback's
+  shell and Mossbear's stones were the rim: the light mesh's smooth normals
+  turn to the edge across plates and stones on faces that look straight at
+  the eye (rim strength 0 removed them; not the paint, holes or folds).
+  The rim and the hero sheen now fade where the drawn face itself (its
+  screen-derivative normal, `face_on`) faces the eye; silhouettes keep
+  both (`w5_quarryback_flecks_before_after.png`).
+- **Round 17:** a double-sided sheet (petal, wing, leaf) carries the
+  export's own glow of 0.3 so its back never reads black, and the shader's
+  hot core took it as a flame: Bloomling's petals burned toward yellow and
+  read coral and flat. Only a real glow (over 0.3) burns hot now; the petals
+  keep the design's deep base under a pink tip
+  (`w5_sheets_keep_their_paint.png`). Lantern Wisp's light paint paler
+  toward cream, as its lit core makes the design's face.
+- **Colour, measured (round 18):** `tools/art/colour.py` over
+  `creature_colour.gd`'s means sets each of the 24 busts beside its design
+  portrait, each over its own lightness. Every kind is now within 0.07 of
+  its portrait in every channel (sum 0.85; Soul Mender 0.07 the most,
+  Stillwatch and Echoplate 0.00). Ours are lighter than the portraits by
+  about 10% (the hero light), Gardener and Chronicler darker. Featherkin's
+  tone lower and yellower made it 0.14 off: its portrait's white belly is
+  missing from our paint, not its tint, so the tint stays.
+- **Still worse than the design:** Featherkin's knit reads smooth and its
+  belly is cream, not white; Lantern
+  Wisp's face is still pinker than the design's cream.
 - **Readability measured (round 15):** each ruleborn alone on the heist's
   painted grass, in grayscale: the share of a figure's pixels within 18
   levels of the grass under it is 8–13% for Skyskipper, Featherkin and
