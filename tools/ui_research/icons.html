@@ -1,0 +1,291 @@
+<!doctype html>
+<!-- T14's AI UI artist: three reward icons rendered from 3D and finished in
+     2D, as the benchmark's studios make theirs (report section 9). Loaded by
+     bake_icons.js over a local server; window.bake(name) returns a PNG data
+     URL at 256 px. -->
+<html><head><meta charset="utf-8">
+<script type="importmap">
+{ "imports": {
+  "three": "/tools/ui_research/node_modules/three/build/three.module.js",
+  "three/addons/": "/tools/ui_research/node_modules/three/examples/jsm/"
+} }
+</script>
+</head><body style="margin:0;background:transparent">
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const R = 640;
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setSize(R, R);
+renderer.setPixelRatio(1);
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.toneMappingExposure = 0.95;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.setClearColor(0x000000, 0);
+const pmrem = new THREE.PMREMGenerator(renderer);
+const room = pmrem.fromScene(new RoomEnvironment(), 0.03).texture;
+
+// The studio: a warm key from the top left, a cool rim behind on the right,
+// a soft fill from below, the room for reflections.
+function studio(rim = 0xBFD8FF) {
+  const scene = new THREE.Scene();
+  scene.environment = room;
+  const key = new THREE.DirectionalLight(0xFFF1D6, 2.6);
+  key.position.set(-3, 4, 5);
+  const back = new THREE.DirectionalLight(rim, 3.2);
+  back.position.set(4, 2, -4);
+  const fill = new THREE.HemisphereLight(0xFFFFFF, 0x3A2066, 0.6);
+  scene.add(key, back, fill);
+  return scene;
+}
+
+function camera() {
+  const c = new THREE.PerspectiveCamera(24, 1, 0.1, 100);
+  c.position.set(0, 0, 7.8);
+  c.lookAt(0, 0, 0);
+  return c;
+}
+
+// A four-pointed star with concave, curved sides, puffed by a deep bevel.
+function starShape(tip, waist) {
+  const s = new THREE.Shape();
+  for (let i = 0; i < 4; i++) {
+    const a = Math.PI / 2 - i * Math.PI / 2;
+    const b = a - Math.PI / 4;
+    const n = a - Math.PI / 2;
+    const p = [Math.cos(a) * tip, Math.sin(a) * tip];
+    if (i === 0) s.moveTo(p[0], p[1]);
+    s.quadraticCurveTo(Math.cos(b) * waist, Math.sin(b) * waist, Math.cos(n) * tip, Math.sin(n) * tip);
+  }
+  return s;
+}
+
+function star(size, gold) {
+  const g = new THREE.ExtrudeGeometry(starShape(size, size * 0.2), {
+    depth: size * 0.02, bevelEnabled: true, bevelThickness: size * 0.36, bevelSize: size * 0.15,
+    bevelSegments: 10, curveSegments: 48 });
+  g.center();
+  g.computeVertexNormals();
+  return new THREE.Mesh(g, gold);
+}
+
+const SCENES = {
+  starlight() {
+    const scene = studio(0xFFE6B0);
+    const gold = new THREE.MeshPhysicalMaterial({ color: 0xFFC21A, metalness: 0.75, roughness: 0.28,
+      clearcoat: 1, clearcoatRoughness: 0.1, envMapIntensity: 1.0, emissive: 0xB85A00, emissiveIntensity: 0.3 });
+    const big = star(0.98, gold);
+    big.rotation.set(-0.22, 0.38, 0.08);
+    big.position.set(-0.22, 0.16, 0);
+    const small = star(0.4, gold);
+    small.rotation.set(0.2, -0.5, 0.3);
+    small.position.set(0.88, -0.84, 0.4);
+    scene.add(big, small);
+    return { scene, ink: '#4A2606', glints: [[0.36, 0.3, 1.0], [0.7, 0.71, 0.5]], glow: 'rgba(255,214,90,0.55)',
+      light: [0.42, 0.36, 0.3, 'rgba(255,240,170,0.35)'] };
+  },
+  essence() {
+    const scene = studio(0xC8FFE0);
+    // A drop: a lathe from the point at the top to the round foot.
+    const pts = [];
+    for (let i = 0; i <= 48; i++) {
+      const t = i / 48;
+      const y = 1.32 - t * 2.42;
+      const r = t < 0.62 ? Math.pow(t / 0.62, 0.78) * 0.86 : Math.sqrt(Math.max(0, 1 - Math.pow((t - 0.62) / 0.38, 2))) * 0.86;
+      pts.push(new THREE.Vector2(Math.max(r, 0.0001), y));
+    }
+    const shell = new THREE.Mesh(new THREE.LatheGeometry(pts, 96), new THREE.MeshPhysicalMaterial({
+      color: 0x0A9A44, metalness: 0, roughness: 0.07, clearcoat: 1, clearcoatRoughness: 0.03,
+      envMapIntensity: 0.75, emissive: 0x03381A, emissiveIntensity: 0.5 }));
+    const drop = new THREE.Group();
+    drop.add(shell);
+    drop.rotation.set(0.12, 0, -0.12);
+    scene.add(drop);
+    // The essence's own light, low inside the liquid, painted after.
+    return { scene, ink: '#06301A', glints: [[0.41, 0.38, 0.9]], glow: 'rgba(80,240,150,0.5)',
+      light: [0.5, 0.64, 0.2, 'rgba(170,255,200,0.75)'] };
+  },
+  renown() {
+    const scene = studio(0xFFD0F0);
+    // A brilliant cut: table, crown and pavilion as a faceted lathe.
+    const prof = [new THREE.Vector2(0.0001, 0.6), new THREE.Vector2(0.62, 0.6), new THREE.Vector2(1.05, 0.22),
+      new THREE.Vector2(1.08, 0.12), new THREE.Vector2(0.0001, -1.05)];
+    const g = new THREE.LatheGeometry(prof, 10);
+    const gem = new THREE.Mesh(g.toNonIndexed(), new THREE.MeshPhysicalMaterial({
+      color: 0xD00C6C, metalness: 0.05, roughness: 0.1, clearcoat: 1, clearcoatRoughness: 0.02,
+      flatShading: true, envMapIntensity: 1.0, emissive: 0x4A0026, emissiveIntensity: 0.35,
+      iridescence: 0.25, iridescenceIOR: 1.6 }));
+    gem.geometry.computeVertexNormals();
+    gem.rotation.set(0.22, 0.3, 0);
+    gem.scale.setScalar(1.15);
+    scene.add(gem);
+    return { scene, ink: '#40061F', glints: [[0.38, 0.33, 1.0], [0.63, 0.43, 0.5]], glow: 'rgba(255,110,190,0.5)',
+      light: [0.46, 0.46, 0.34, 'rgba(255,190,230,0.22)'] };
+  },
+  chest() {
+    const scene = studio(0xFFE0B0);
+    // Planks painted on a canvas: warm wood, dark seams, grain strokes.
+    const t = canvas(512);
+    const w = t.getContext('2d');
+    for (let i = 0; i < 4; i++) {
+      w.fillStyle = ['#9A4A18', '#8A4014', '#A0521E', '#8E4416'][i];
+      w.fillRect(0, i * 128, 512, 128);
+      w.fillStyle = '#4A1E08';
+      w.fillRect(0, i * 128, 512, 9);
+      w.strokeStyle = 'rgba(80,30,8,0.35)';
+      w.lineWidth = 3;
+      for (let k = 0; k < 5; k++) {
+        const y = i * 128 + 24 + k * 20 + Math.sin(i * 7 + k) * 6;
+        w.beginPath(); w.moveTo(0, y);
+        w.bezierCurveTo(170, y - 8, 340, y + 10, 512, y - 4); w.stroke();
+      }
+    }
+    const tex = new THREE.CanvasTexture(t);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const wood = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.62, envMapIntensity: 0.6 });
+    const gold = new THREE.MeshPhysicalMaterial({ color: 0xFFC21A, metalness: 0.8, roughness: 0.25,
+      clearcoat: 1, envMapIntensity: 1.1, emissive: 0xB85A00, emissiveIntensity: 0.3 });
+    const dark = new THREE.MeshStandardMaterial({ color: 0x1A0C14, roughness: 0.5 });
+    const g = new THREE.Group();
+    const base = new THREE.Mesh(new RoundedBoxGeometry(2.2, 1.05, 1.4, 4, 0.1), wood);
+    base.position.y = -0.42;
+    const lid = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 2.2, 48, 1, false, 0, Math.PI), wood);
+    // Its axis along x, the half-round up.
+    lid.rotation.z = Math.PI / 2;
+    lid.position.y = 0.1;
+    g.add(base, lid);
+    // Gold: the rim where lid meets base, two straps over both, corners.
+    const rim = new THREE.Mesh(new RoundedBoxGeometry(2.32, 0.2, 1.52, 3, 0.06), gold);
+    rim.position.y = 0.08;
+    g.add(rim);
+    for (const x of [-0.68, 0.68]) {
+      const strap = new THREE.Mesh(new RoundedBoxGeometry(0.24, 1.08, 1.5, 3, 0.05), gold);
+      strap.position.set(x, -0.42, 0);
+      const arch = new THREE.Mesh(new THREE.CylinderGeometry(0.76, 0.76, 0.24, 48, 1, false, 0, Math.PI), gold);
+      arch.rotation.z = Math.PI / 2;
+      arch.position.set(x, 0.1, 0);
+      g.add(strap, arch);
+    }
+    for (const x of [-1.08, 1.08]) for (const z of [-0.68, 0.68]) {
+      const cap = new THREE.Mesh(new RoundedBoxGeometry(0.2, 0.24, 0.2, 2, 0.05), gold);
+      cap.position.set(x, -0.86, z);
+      g.add(cap);
+    }
+    // The lock: a gold plate with a dark keyhole, on the front.
+    const plate = new THREE.Mesh(new RoundedBoxGeometry(0.52, 0.62, 0.16, 3, 0.07), gold);
+    plate.position.set(0, -0.12, 0.76);
+    const hole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.05, 24), dark);
+    hole.rotation.x = Math.PI / 2;
+    hole.position.set(0, -0.06, 0.85);
+    const slot = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.16, 0.05), dark);
+    slot.position.set(0, -0.17, 0.85);
+    g.add(plate, hole, slot);
+    g.rotation.set(0.32, -0.5, 0);
+    g.scale.setScalar(0.92);
+    g.position.y = 0.08;
+    scene.add(g);
+    return { scene, ink: '#2A1006', glints: [[0.42, 0.52, 0.8], [0.3, 0.35, 0.45]], glow: 'rgba(255,200,90,0.5)',
+      light: [0.5, 0.3, 0.3, 'rgba(255,230,170,0.2)'] };
+  },
+  // A crew member from the character's own model (T1's export), framed as a
+  // bust on a lit disc of its school's colour: the crew-icon route.
+  async pip() {
+    const scene = studio(0xFFE0A0);
+    const gltf = await new GLTFLoader().loadAsync('/client/art/creatures/skyskipper.glb');
+    const model = gltf.scene;
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const k = 3.0 / size.y;
+    model.scale.setScalar(k);
+    const c = box.getCenter(new THREE.Vector3()).multiplyScalar(k);
+    model.position.set(-c.x, -c.y - 0.02, -c.z + 0.3);
+    model.rotation.y = 0.35;
+    const disc = new THREE.Mesh(new THREE.CircleGeometry(1.45, 96), new THREE.MeshStandardMaterial({
+      color: 0x3FBF7F, roughness: 0.5, emissive: 0x1A6A40, emissiveIntensity: 0.35 }));
+    disc.position.z = -1.2;
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.48, 0.13, 24, 128), new THREE.MeshPhysicalMaterial({
+      color: 0xFFC21A, metalness: 0.8, roughness: 0.25, clearcoat: 1, emissive: 0xB85A00, emissiveIntensity: 0.3 }));
+    ring.position.z = -1.1;
+    scene.add(disc, ring, model);
+    return { scene, ink: '#1A0C14', glints: [[0.3, 0.26, 0.6]], glow: 'rgba(120,230,170,0.45)',
+      light: [0.5, 0.4, 0.3, 'rgba(255,240,200,0.12)'] };
+  },
+};
+
+// A four-pointed glint, the sparkle a painter adds last.
+function glint(ctx, x, y, s) {
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const g = ctx.createRadialGradient(x, y, 0, x, y, s * 0.5);
+  g.addColorStop(0, 'rgba(255,255,255,0.9)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(x, y, s * 0.5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.beginPath();
+  ctx.moveTo(x, y - s); ctx.quadraticCurveTo(x, y, x + s * 0.7, y);
+  ctx.quadraticCurveTo(x, y, x, y + s); ctx.quadraticCurveTo(x, y, x - s * 0.7, y);
+  ctx.quadraticCurveTo(x, y, x, y - s);
+  ctx.fill();
+  ctx.restore();
+}
+
+function canvas(n) {
+  const c = document.createElement('canvas');
+  c.width = c.height = n;
+  return c;
+}
+
+// The render's silhouette in one colour.
+function silhouette(src, colour) {
+  const c = canvas(src.width);
+  const x = c.getContext('2d');
+  x.drawImage(src, 0, 0);
+  x.globalCompositeOperation = 'source-in';
+  x.fillStyle = colour;
+  x.fillRect(0, 0, c.width, c.height);
+  return c;
+}
+
+window.bake = async (name) => {
+  const { scene, ink, glints, glow, light } = await SCENES[name]();
+  renderer.render(scene, camera());
+  const shot = renderer.domElement;
+  const out = canvas(R);
+  const x = out.getContext('2d');
+  const sil = silhouette(shot, ink);
+  // A soft glow of its colour behind, then a hard ink drop under it.
+  x.save(); x.filter = 'blur(22px)'; x.globalAlpha = 0.9;
+  x.drawImage(silhouette(shot, glow), 0, 0); x.restore();
+  x.save(); x.filter = 'blur(3px)'; x.globalAlpha = 0.85;
+  x.drawImage(sil, 0, 16); x.restore();
+  // The ink outline: the silhouette grown by 11 px all round.
+  for (let i = 0; i < 32; i++) {
+    const a = i / 32 * Math.PI * 2;
+    x.drawImage(sil, Math.cos(a) * 14, Math.sin(a) * 14);
+  }
+  // The render with a painted light inside it, kept to its own shape.
+  const lit = canvas(R);
+  const l = lit.getContext('2d');
+  l.drawImage(shot, 0, 0);
+  l.globalCompositeOperation = 'source-atop';
+  const [lx, ly, lr, lc] = light;
+  const g = l.createRadialGradient(lx * R, ly * R, 0, lx * R, ly * R, lr * R);
+  g.addColorStop(0, lc);
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  l.fillStyle = g;
+  l.fillRect(0, 0, R, R);
+  x.drawImage(lit, 0, 0);
+  // The glints a painter adds last, where the key light catches.
+  for (const [gx, gy, k] of glints) glint(x, gx * R, gy * R, 46 * k);
+  const small = canvas(256);
+  const s = small.getContext('2d');
+  s.imageSmoothingQuality = 'high';
+  s.drawImage(out, 0, 0, 256, 256);
+  return small.toDataURL('image/png');
+};
+window.ready = true;
+</script></body></html>
