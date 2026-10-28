@@ -8,7 +8,7 @@ Everything here was measured or rendered from the deployed head (`dd326ca8`). Im
 
 **The owner is right. Against the owner's bar we are at about 30%.**
 
-I scored our five most important screens (home, heist, result, character and settings) against 14 checkable qualities of premium mobile UI (section 4). The score is 2.1 out of 5, with 5 meaning Clash Royale or Brawl Stars level. That is 41% of Clash level. The owner's bar is *above* Clash, and three times Screens v3. The qualities that most separate premium from competent score lowest:
+I scored our five most important screens (home, heist, result, character and settings) against 14 checkable qualities of premium mobile UI (section 4). The mean is 2.2 out of 5, with 5 meaning Clash Royale or Brawl Stars level. It falls to 2.1, or 41% of Clash level, when the six qualities that most separate premium from competent count double. The owner's bar is *above* Clash, and three times Screens v3. Those six score lowest:
 
 | Quality | Score (out of 5) |
 |---|---|
@@ -36,7 +36,7 @@ A perfect port of v3 lands near 50% of Clash level. "Three times v3" is not a di
 
 **Production pipeline (how pixels get made).** Every piece of chrome is drawn by code at run time:
 - 383 `draw_*` and `FxPen` calls in the client;
-- one 40-uniform `rb_box` shader for every panel and button;
+- one 33-uniform `rb_box` shader for every panel and button;
 - the pips' digits drawn as seven-segment line strokes (`fx_portrait.gd` `SEGMENTS`).
 
 The only authored raster UI in the client is the design's own icon set, exported flat at 144 px (370 PNGs). Studios at the bar make their UI as authored raster art (section 4.2):
@@ -222,6 +222,7 @@ It is drawn over the same heist moment as the deployed screen, with the same dat
 - `proof-heist-top.png` and `proof-heist-bottom.png`: detail crops.
 - `proof-atlas.png`: the whole atlas.
 - `proof-motion.png`: the press and the coin flight as frames.
+- `proof-high-contrast.png`: before and after with high contrast on.
 
 **How it is made.**
 - `tools/ui_research/bake_hud.js` draws 75 pieces as SVG in headless Chromium:
@@ -230,7 +231,7 @@ It is drawn over the same heist moment as the deployed screen, with the same dat
   - buttons with a thick lip and a sunk pressed face;
   - painted icons (the door, the wand, the bag, three bell states, gems);
   - numerals in four finishes, each with a gradient fill, a thick ink stroke and a hard drop.
-- `tools/ui_research/pack_atlas.py` packs them into one 1024² atlas (lossless WebP, 366 KB) with a manifest of regions and 9-slice margins.
+- `tools/ui_research/pack_atlas.py` packs them into one 1024² atlas (lossless WebP, 366 KB; a high-contrast twin of 244 KB) with a manifest of regions and 9-slice margins.
 - In Godot (`client/prototypes/ui_quality/`):
   - `UiqArt` turns the manifest into `NinePatchRect`s, `AtlasTexture` sprites and glyph rows;
   - `UiqHud` lays out the HUD;
@@ -250,6 +251,8 @@ Getting there taught three rules the kit will need:
 - Buttons look pressable.
 - Every icon has an outline and a highlight.
 
+**High contrast (§20.8).** The bake runs twice: the same pieces in the same places, the second time on near-black enamel with no grain and a fainter gloss. That gives `atlas_hc.webp` (244 KB), which `UiqArt` loads when the setting is on. It is shown in `proof-high-contrast.png` against the deployed HUD in high contrast, and still costs 147 draw calls. An accessibility variant is one more bake, not a second set of drawing code.
+
 **Motion.** `proof-motion.png` (`tests/shots/uiq_motion.gd`, curves in `UiqJuice`) shows five moments:
 - Top: Get out pressed and let go. It sinks onto its lip and squashes to 92%, then springs back past its size with a back-ease and settles, all within 0.4 s.
 - Below: coins fly in a stagger along an arc into the loot panel's bag. The number rolls up as each lands and the panel pulses. The lower row's columns are fractions of the flight, not the stamped times.
@@ -258,7 +261,7 @@ These are the curves a screen would tween along. A still strip is how the art di
 
 **What it does not show.**
 - An idle shine sweep, and sound.
-- High contrast and 200% text: the 9-slices scale, but they are not bake-tested.
+- 200% text: the 9-slices stretch, but the prototype lays the HUD out at fixed sizes. A kit version would size its frames from the words, as the kit's boxes do now.
 - An artist's hand: the icons are competent vector paintings, not CR-grade renders.
 
 Against the rubric, the heist goes from 1.5–2 to about 3.5 on qualities 1–3. On qualities 1–3, that is roughly what one agent day of option A buys.

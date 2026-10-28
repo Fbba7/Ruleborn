@@ -1,10 +1,10 @@
 """Pack bake_hud.js's pieces into one atlas (T14's proof), so the HUD draws
 from one texture and Godot batches it.
 
-    python3 tools/ui_research/pack_atlas.py PIECES_DIR OUT_DIR
+    python3 tools/ui_research/pack_atlas.py PIECES_DIR OUT_DIR [NAME]
 
 PIECES_DIR holds one PNG a piece and pieces.json ({name: {slice}}); OUT_DIR
-gets atlas.webp (lossless: the repository keeps images under 400 KB, which a
+gets NAME.webp (atlas by default; lossless: the repository keeps images under 400 KB, which a
 PNG of this atlas is not) and manifest.json ({name: {x, y, w, h, slice}}). Shelves,
 tallest first, 2 px apart, 1024 wide.
 """
@@ -18,7 +18,7 @@ WIDTH = 1024
 PAD = 2
 
 
-def main(src, out):
+def main(src, out, name="atlas"):
     meta = json.load(open(os.path.join(src, "pieces.json")))
     images = {n: Image.open(os.path.join(src, n + ".png")).convert("RGBA") for n in meta}
     order = sorted(images, key=lambda n: (-images[n].height, n))
@@ -45,12 +45,12 @@ def main(src, out):
         w, h = images[n].size
         manifest[n] = {"x": px, "y": py, "w": w, "h": h, "slice": meta[n].get("slice")}
     os.makedirs(out, exist_ok=True)
-    atlas.save(os.path.join(out, "atlas.webp"), lossless=True, method=6)
+    atlas.save(os.path.join(out, name + ".webp"), lossless=True, method=6)
     with open(os.path.join(out, "manifest.json"), "w") as f:
         json.dump(manifest, f, indent=1, sort_keys=True)
         f.write("\n")
-    print(f"packed {len(manifest)} pieces into atlas.webp ({WIDTH}x{height})")
+    print(f"packed {len(manifest)} pieces into {name}.webp ({WIDTH}x{height})")
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    main(*sys.argv[1:4])

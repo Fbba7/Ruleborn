@@ -23,7 +23,9 @@ static var _font: Font
 static func region(name: String) -> Rect2:
 	if _manifest.is_empty():
 		_manifest = JSON.parse_string(FileAccess.get_file_as_string(DIR + "manifest.json"))
-		_atlas = load(DIR + "atlas.webp") as Texture2D
+		# §20.8's high contrast: the same pieces in the same places, baked on a
+		# near-black ground without grain.
+		_atlas = load(DIR + ("atlas_hc.webp" if Settings.high_contrast else "atlas.webp")) as Texture2D
 	var p: Dictionary = _manifest.get(name, {})
 	return Rect2(float(p.get("x", 0)), float(p.get("y", 0)), float(p.get("w", 1)), float(p.get("h", 1)))
 

@@ -324,12 +324,24 @@ for (const [style, size, fill] of [['timer', 104, 'whiteText'], ['timer_red', 10
   }
 }
 
-function page() {
+// High contrast (§20.8): the same pieces in the same places, the enamel near
+// black, no grain and a fainter gloss, so words and numbers stand on a flat
+// dark ground. Baked as a second atlas the HUD swaps to.
+function defsFor(hc) {
+  if (!hc) return defs;
+  return defs
+    .replace('<stop offset="0" stop-color="#5A3790"/><stop offset="0.5" stop-color="#3A2066"/><stop offset="1" stop-color="#261341"/>',
+      '<stop offset="0" stop-color="#1A1024"/><stop offset="0.5" stop-color="#0E0814"/><stop offset="1" stop-color="#08040C"/>')
+    .replace('0 0 0 0.5 -0.18', '0 0 0 0 0')
+    .replace('stop-color="#FFFFFF" stop-opacity="0.34"', 'stop-color="#FFFFFF" stop-opacity="0.12"');
+}
+
+function page(hc) {
   let html = `<!doctype html><html><head><meta charset="utf-8"><style>
     @font-face { font-family: Lilita; src: url('${lilita}'); }
     body { margin: 0; background: transparent; }
     .p { display: inline-block; margin: 0; line-height: 0; }
-  </style></head><body><svg width="0" height="0" style="position:absolute"><defs>${defs}</defs></svg>`;
+  </style></head><body><svg width="0" height="0" style="position:absolute"><defs>${defsFor(hc)}</defs></svg>`;
   for (const p of pieces) {
     html += `<div class="p" id="${p.name}"><svg xmlns="http://www.w3.org/2000/svg" width="${p.w}" height="${p.h}"
       viewBox="0 0 ${p.w} ${p.h}">${p.body}</svg></div>`;
@@ -338,22 +350,25 @@ function page() {
 }
 
 (async () => {
-  const pieceDir = fs.mkdtempSync(path.join(os.tmpdir(), 'uiq-pieces-'));
   const browser = await chromium.launch();
-  const tab = await browser.newPage({ viewport: { width: 1200, height: 900 }, deviceScaleFactor: 1 });
-  const file = path.join(pieceDir, 'sheet.html');
-  fs.writeFileSync(file, page());
-  await tab.goto('file://' + file);
-  await tab.evaluate(() => document.fonts.ready);
-  const meta = {};
-  for (const p of pieces) {
-    await tab.locator('#' + p.name).screenshot({ path: path.join(pieceDir, p.name + '.png'), omitBackground: true });
-    meta[p.name] = { slice: p.slice || null };
+  fs.mkdirSync(out, { recursive: true });
+  for (const [hc, name] of [[false, 'atlas'], [true, 'atlas_hc']]) {
+    const pieceDir = fs.mkdtempSync(path.join(os.tmpdir(), 'uiq-pieces-'));
+    const tab = await browser.newPage({ viewport: { width: 1200, height: 900 }, deviceScaleFactor: 1 });
+    const file = path.join(pieceDir, 'sheet.html');
+    fs.writeFileSync(file, page(hc));
+    await tab.goto('file://' + file);
+    await tab.evaluate(() => document.fonts.ready);
+    const meta = {};
+    for (const p of pieces) {
+      await tab.locator('#' + p.name).screenshot({ path: path.join(pieceDir, p.name + '.png'), omitBackground: true });
+      meta[p.name] = { slice: p.slice || null };
+    }
+    await tab.close();
+    fs.writeFileSync(path.join(pieceDir, 'pieces.json'), JSON.stringify(meta));
+    process.stdout.write(execFileSync('python3', [path.join(__dirname, 'pack_atlas.py'), pieceDir, out, name]));
+    fs.rmSync(pieceDir, { recursive: true });
   }
   await browser.close();
-  fs.writeFileSync(path.join(pieceDir, 'pieces.json'), JSON.stringify(meta));
-  fs.mkdirSync(out, { recursive: true });
-  process.stdout.write(execFileSync('python3', [path.join(__dirname, 'pack_atlas.py'), pieceDir, out]));
-  fs.rmSync(pieceDir, { recursive: true });
-  console.log(`baked ${pieces.length} pieces into ${path.relative(root, out)}`);
+  console.log(`baked ${pieces.length} pieces twice into ${path.relative(root, out)}`);
 })();
