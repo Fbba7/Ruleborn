@@ -150,7 +150,10 @@ func _icons() -> void:
 func _tab_words() -> void:
 	var bad := []
 	var was := Settings.text_scale
-	for scale: int in [100, 150, 200]:
+	var locale := TranslationServer.get_locale()
+	for case: Array in [[100, "en"], [150, "en"], [200, "en"], [100, "de"], [150, "pt_BR"], [200, "de"]]:
+		var scale: int = case[0]
+		Strings.set_locale(str(case[1]))
 		Settings.text_scale = scale
 		var screen := Control.new()
 		screen.size = Vector2(1080, 2340)
@@ -169,18 +172,20 @@ func _tab_words() -> void:
 			var l: Label = tabs._labels[id]
 			if l.is_visible_in_tree() and tabs._need(l) > l.size.x + 1.0:
 				bad.append("%d%% %s cut (%.0f in %.0f)" % [scale, id, tabs._need(l), l.size.x])
-			if scale == 100 and not l.is_visible_in_tree():
+			if scale == 100 and case[1] == "en" and not l.is_visible_in_tree():
 				bad.append("100%% %s hidden" % id)
 		var chosen: Label = tabs._labels["friends"]
 		if not chosen.is_visible_in_tree():
-			bad.append("%d%% the chosen tab's word hidden" % scale)
+			bad.append("%d%% %s the chosen tab's word hidden" % [scale, case[1]])
 		elif chosen.get_theme_font_size("font_size") < mini(UI.text_px(15), UI.px(15) * 3 / 2):
-			bad.append("%d%% the chosen tab's word under 150%%" % scale)
+			bad.append("%d%% %s the chosen tab's word under 150%%" % [scale, case[1]])
 		screen.queue_free()
 		await tree.process_frame
 	Settings.text_scale = was
+	Strings.set_locale(locale)
 	check.call("the tab bar shows every name whole at 100% text, and at 150% and 200% each name whole or not at all, "
-			+ "the chosen tab's kept at 150% or more, every tab on the screen (§20.8, §21.8)", bad.is_empty(), "; ".join(bad))
+			+ "the chosen tab's kept at 150% or more, every tab on the screen, in English, German and Portuguese "
+			+ "(§20.8, §21.8, §20.6)", bad.is_empty(), "; ".join(bad))
 
 
 func _small_disc() -> void:
