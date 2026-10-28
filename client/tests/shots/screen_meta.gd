@@ -18,6 +18,9 @@ func _go() -> void:
 		Settings.apply()
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	App.services.router.change = func(_path: String) -> void: pass
+	# ME=<account>: signed in as that account.
+	if OS.get_environment("ME") != "":
+		App.services.store.dispatch(&"signed_in", {"account": OS.get_environment("ME")})
 	App.services.store.dispatch(&"navigated", {"name": StringName(name), "params": ScreenShots.params(name)})
 	var screen: Control = load(Router.ROUTES[StringName(name)]).instantiate()
 	root.add_child(screen)
