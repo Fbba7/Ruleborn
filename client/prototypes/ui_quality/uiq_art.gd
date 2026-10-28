@@ -3,9 +3,9 @@ extends RefCounted
 ## T14's proof (docs/art/ui-quality/report.md): the heist HUD's authored art,
 ## baked offline by tools/ui_research/bake_hud.js into one atlas. Frames are
 ## 9-slices, icons and buttons sprites, numerals one picture a glyph in four
-## finishes; words stay live text, set in Lilita One with an ink outline and
-## a hard drop. One texture, so the HUD batches. A prototype only: no screen
-## of the game uses it.
+## finishes; words stay live text, set in Lilita One in an ink outline. One
+## texture (a second for high contrast), so the HUD batches. A prototype only:
+## no screen of the game uses it.
 
 const DIR := "res://prototypes/ui_quality/art/"
 const INK := Color("#1A0C14")
