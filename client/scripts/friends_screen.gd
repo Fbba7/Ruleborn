@@ -175,10 +175,24 @@ func _feed_tab(f: Dictionary) -> void:
 
 ## Each friend with Remove, then the players blocked, each to unblock.
 func _friends_tab(f: Dictionary) -> void:
+	# The friends as rows of one card; Remove quiet at each row's end.
+	var list := VBoxContainer.new()
+	list.add_theme_constant_override("separation", 0)
 	for x: Dictionary in f["friends"]:
-		var remove := ScreenKit.button(Strings.t("FRIENDS_REMOVE"), controller.remove.bind(x["account"]), "leather",
+		var remove := ScreenKit.button(Strings.t("FRIENDS_REMOVE"), controller.remove.bind(x["account"]), "ghost",
 			Strings.t("FRIENDS_REMOVE_NAMED", x["name"]), 14.0)
-		body.add_child(_person(x["name"], remove))
+		remove.add_theme_font_size_override("font_size", UI.text_px(13))
+		remove.set_meta("points", 13.0)
+		UI.fit(remove)
+		if list.get_child_count() > 0:
+			var line := ColorRect.new()
+			line.color = Color(1, 1, 1, 0.08)
+			line.custom_minimum_size.y = maxf(1.0, UI.px(1))
+			line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			list.add_child(line)
+		list.add_child(_person(x["name"], remove))
+	if list.get_child_count() > 0:
+		body.add_child(ScreenKit.panel("card", list, 18.0, 4.0))
 	if not f["blocked"].is_empty():
 		body.add_child(ScreenParts.section(Strings.t("FRIENDS_BLOCKED")))
 	for x: Dictionary in f["blocked"]:
@@ -204,7 +218,7 @@ func _strip(friends: Array) -> Control:
 	return row
 
 
-## A friend's row: their portrait and name, and what can be done.
+## A friend's row of the card: their portrait and name, and what can be done.
 func _person(name: String, right: Control) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(10))
@@ -213,8 +227,13 @@ func _person(name: String, right: Control) -> Control:
 	n.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	n.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	row.add_child(n)
+	right.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(right)
-	return ScreenKit.panel("card", row, 16.0, 8.0)
+	var pad := MarginContainer.new()
+	for side: String in ["left", "right", "top", "bottom"]:
+		pad.add_theme_constant_override("margin_" + side, UI.px(8))
+	pad.add_child(row)
+	return pad
 
 
 ## A code just made, large on parchment, to read out or copy.

@@ -33,6 +33,9 @@ func _go() -> void:
 	# TAB: a screen's tab on show (Settings' "account").
 	if (OS.get_environment("TAB") != "" or name == "settings") and "tab_shown" in screen:
 		# Settings restores the saved settings on opening: the shot's again.
+		if OS.get_environment("LOCALE") != "":
+			Settings.locale = OS.get_environment("LOCALE")
+			Strings.set_locale(Settings.locale)
 		if OS.get_environment("TEXT") != "":
 			Settings.text_scale = int(OS.get_environment("TEXT"))
 		if OS.get_environment("HC") == "1":
