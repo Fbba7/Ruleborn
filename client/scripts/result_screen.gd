@@ -31,6 +31,8 @@ var moment_card: PanelContainer
 var reward_row: BoxContainer
 var reward_labels := {}
 var fee_label: Label
+## §11.6: the crew home and how long it rests, as the server set it.
+var rest_label: Label
 ## §7.6's study card: one law the crew crossed, studied once for the pages
 ## the server gives.
 var study_card: PanelContainer
@@ -173,6 +175,12 @@ func _ready() -> void:
 	fee_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	fee_label.visible = false
 	box.add_child(fee_label)
+	rest_label = FxSkin.label("", 14.0)
+	rest_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	rest_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	rest_label.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT)
+	rest_label.visible = false
+	box.add_child(rest_label)
 	box.add_child(detail_label)
 	box.add_child(check_label)
 	page.add_child(card)
@@ -223,7 +231,7 @@ func _ready() -> void:
 	var paid := VBoxContainer.new()
 	paid.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	paid.add_theme_constant_override("separation", UI.px(4))
-	for c: Control in [haul_tile, reward_row, fee_label, detail_label, check_label]:
+	for c: Control in [haul_tile, reward_row, fee_label, rest_label, detail_label, check_label]:
 		c.reparent(paid)
 	page.add_child(paid)
 	# The design's order: what it paid, then the law to study.
@@ -513,8 +521,9 @@ func _show_rewards(v: Dictionary) -> void:
 	# §11.6: the crew home, resting as long as the server set (the design's
 	# "What you kept").
 	var rest: Variant = v.get("rest")
-	if rest is Dictionary and int(rest.get("crew", 0)) > 0:
-		fee_label.text += "\n" + Strings.t("RESULT_CREW_RESTING", [int(rest["crew"]), int(rest.get("minutes", 0))])
+	rest_label.visible = rest is Dictionary and int(rest.get("crew", 0)) > 0
+	if rest_label.visible:
+		rest_label.text = Strings.t("RESULT_CREW_RESTING", [int(rest["crew"]), int(rest.get("minutes", 0))])
 
 
 ## How many of the roster's characters are idle, ready for the next raid;
