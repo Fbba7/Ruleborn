@@ -153,7 +153,8 @@ func _refresh() -> void:
 		"icon": "leagues/ember"}], func(key: String) -> void:
 			if key == "league":
 				App.services.router.go(&"social")))
-	var crown := _crown(t["rows"])
+	# At large text the road itself comes first; its last tier says the same.
+	var crown := _crown(t["rows"]) if Settings.text_scale <= 125 else null
 	if crown != null:
 		body.add_child(crown)
 	body.add_child(ScreenKit.panel("card_lit", _strip, 18.0, 12.0))
@@ -248,9 +249,8 @@ func _crown(rows: Array) -> Control:
 	col.add_theme_constant_override("separation", UI.px(4))
 	var lane := ScreenParts.pill("%s · %s" % [Strings.t("SCREEN_STARPASS_LANE" if paid else "SCREEN_FREE_LANE"),
 		Strings.t("SCREEN_TIER", str(last["tier"]))], "glass", "season", "premiumtrack" if paid else "tierreward",
-		13.0, "words", Settings.text_scale > 125)
-	if Settings.text_scale <= 125:
-		lane.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		13.0)
+	lane.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	col.add_child(lane)
 	var name := ScreenKit.inked(ScreenKit.text(words.left(1).to_upper() + words.substr(1), 22.0, "number",
 		"card_lit", false, true), 2.7)
