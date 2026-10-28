@@ -470,7 +470,16 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   keep the design's deep base under a pink tip
   (`w5_sheets_keep_their_paint.png`). Lantern Wisp's light paint paler
   toward cream, as its lit core makes the design's face.
-- **Still worse than the design:** Featherkin's knit reads smooth; Lantern
+- **Colour, measured (round 18):** `tools/art/colour.py` over
+  `creature_colour.gd`'s means sets each of the 24 busts beside its design
+  portrait, each over its own lightness. Every kind is now within 0.07 of
+  its portrait in every channel (sum 0.85; Soul Mender 0.07 the most,
+  Stillwatch and Echoplate 0.00). Ours are lighter than the portraits by
+  about 10% (the hero light), Gardener and Chronicler darker. Featherkin's
+  tone lower and yellower made it 0.14 off: its portrait's white belly is
+  missing from our paint, not its tint, so the tint stays.
+- **Still worse than the design:** Featherkin's knit reads smooth and its
+  belly is cream, not white; Lantern
   Wisp's face is still pinker than the design's cream.
 - **Readability measured (round 15):** each ruleborn alone on the heist's
   painted grass, in grayscale: the share of a figure's pixels within 18
