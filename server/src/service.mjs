@@ -496,7 +496,7 @@ export class Service {
       // still submittable, with the day's grace (G17), but not handed back.
       // One row read, and one heist key, however long the history (F47).
       const newest = this.db.prepare(
-        "SELECT * FROM leases WHERE attacker = ? AND bundle = ? ORDER BY issued_at DESC, rowid DESC LIMIT 1")
+        "SELECT * FROM leases WHERE attacker = ? AND bundle = ? ORDER BY issued_at DESC LIMIT 1")
         .get(attacker, bundle);
       const held = newest && newest.expires_at > now
         && !this.db.prepare("SELECT 1 FROM heists WHERE token = ?").get(newest.token) ? newest : null;
@@ -530,7 +530,10 @@ export class Service {
         seed: this.random(8).readBigUInt64LE(0).toString(),
         ticks: clockTicks(0) + era.seconds * TICKS_PER_SECOND,
         rules: this.builds.current.rulesVersion,
-        issued_at: now,
+        // Never at the moment the newest was issued, nor before it: the
+        // newest by its time is the last issued, which a lease table keyed
+        // by its token alone has no rowid to tell (db.mjs).
+        issued_at: newest ? Math.max(now, newest.issued_at + 1) : now,
         expires_at: now + LEASE_MS,
         echo: echo ? 1 : 0,
         trace_of: traceOf,

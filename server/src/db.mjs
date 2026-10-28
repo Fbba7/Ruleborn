@@ -314,10 +314,14 @@ CREATE TABLE IF NOT EXISTS leases (
   -- §5.4: the universe a heist across the defender's realms crosses, its
   -- RBU1 bundle's hash (crossings.mjs); null for the Heart alone.
   universe    TEXT
-);
+) WITHOUT ROWID;
 -- §24.13's one lease a target is kept by the issuing transaction, which
 -- hands back the newest lease the attacker holds on it with no heist; a
 -- lease is settled by its heist row, so settling one writes nothing more.
+-- Keyed by its token alone, without a rowid: the token's index is the
+-- table, so a lease writes its row and this index's entry, not a third
+-- (§24.1's writes). A lease is never issued at the same moment as the one
+-- before it on its target (service.issue), so the newest is the latest.
 CREATE INDEX IF NOT EXISTS leases_by_target ON leases (attacker, bundle, issued_at);
 -- A Trace's lease, by the robbery it answers: a robbery is traced once
 -- (matchmaking.traceable). Only a Trace's lease is in it, so no other
@@ -348,7 +352,8 @@ CREATE TABLE IF NOT EXISTS heists (
   -- raid badge and the Trace read a player's raids by it, each a range of
   -- its index where they read every lease ever issued (§24.1's reads).
   defender     TEXT REFERENCES accounts(id)
-);
+) WITHOUT ROWID;
+-- Keyed by its token alone, as a lease is: one index entry the fewer.
 -- A player's heists by day: every count of the day's and week's heists
 -- reads through it. Whether a heist was validated is not in it, so marking
 -- one validated as it settles (service.settle) touches no index entry.
@@ -1043,6 +1048,39 @@ function ledgerByCurrency(db) {
   return true;
 }
 
+/** The tables keyed by a token alone, made without a rowid (§24.1's writes):
+ *  a table made with one is moved aside, its indexes and triggers dropped
+ *  to be made again by the schema, and poured into the new one once it
+ *  stands (`pour`). Moved with the foreign keys off and the legacy rename,
+ *  so the tables that name it by a foreign key still name the new one;
+ *  leases before heists, as a heist names its lease. */
+const KEYED = ["leases", "heists"];
+
+function withRowid(db) {
+  const moved = [];
+  for (const table of KEYED) {
+    const t = db.prepare("SELECT wr FROM pragma_table_list WHERE schema = 'main' AND name = ?").get(table);
+    if (!t || t.wr) continue;
+    for (const r of db.prepare(
+      "SELECT type, name FROM sqlite_master WHERE tbl_name = ? AND type IN ('index', 'trigger') AND sql IS NOT NULL").all(table)) {
+      db.exec(`DROP ${r.type.toUpperCase()} ${r.name}`);
+    }
+    db.exec(`PRAGMA legacy_alter_table = ON; ALTER TABLE ${table} RENAME TO ${table}_with_rowid;
+             PRAGMA legacy_alter_table = OFF;`);
+    moved.push(table);
+  }
+  return moved;
+}
+
+/** Every row of each table `withRowid` moved, as it was, into its new table. */
+function pour(db, moved) {
+  for (const table of moved) {
+    const columns = db.prepare(`PRAGMA table_info(${table}_with_rowid)`).all().map((c) => c.name).join(", ");
+    db.exec(`INSERT INTO ${table} (${columns}) SELECT ${columns} FROM ${table}_with_rowid ORDER BY rowid;
+             DROP TABLE ${table}_with_rowid;`);
+  }
+}
+
 /** A ledger made before Aether (§9.3's Aether Springs) is rebuilt with the
  *  column, each row moving as it was: its check names the currencies, and
  *  SQLite cannot change a check in place. */
@@ -1058,8 +1096,13 @@ function ledgerWithoutAether(db) {
 
 export function open(path = ":memory:") {
   const db = new DatabaseSync(path);
-  // Set here, as SCHEMA's own pragma does nothing inside a transaction.
-  db.exec("PRAGMA foreign_keys = ON");
+  // Set here, as SCHEMA's own pragma does nothing inside a transaction. A
+  // table the others name by a foreign key is made again with the keys off
+  // (withRowid), which SQLite allows only outside a transaction; they are
+  // checked, every one, before the move commits.
+  const rekeying = KEYED.some((table) => db.prepare(
+    "SELECT 1 FROM pragma_table_list WHERE schema = 'main' AND name = ? AND wr = 0").get(table));
+  db.exec(`PRAGMA foreign_keys = ${rekeying ? "OFF" : "ON"}`);
   // The one-time migrations and the schema in one transaction (SQLite's DDL
   // is transactional): an upgrade stopped part-way — a crash, a lock, a copy
   // that throws — leaves the old shape whole to be migrated on the next
@@ -1094,6 +1137,7 @@ export function open(path = ":memory:") {
         db.exec(`ALTER TABLE ${table} DROP COLUMN ${column}`);
       }
     }
+    const keyed = withRowid(db);
     const rebuilt = ledgerByCurrency(db);
     const aethered = ledgerWithoutAether(db);
     // Telemetry written before batching, a row an event: moved aside, and
@@ -1104,6 +1148,11 @@ export function open(path = ":memory:") {
                ALTER TABLE events RENAME TO events_before_batches;`);
     }
     db.exec(SCHEMA);
+    pour(db, keyed);
+    if (keyed.length) {
+      const broken = db.prepare("PRAGMA foreign_key_check").all();
+      if (broken.length) throw new Error(`moving ${keyed} left ${broken.length} rows' foreign keys broken`);
+    }
     // The heists played before they named their defender take their lease's,
     // once, as the column arrives.
     if (added.has("heists.defender")) {
@@ -1146,6 +1195,7 @@ export function open(path = ":memory:") {
                DROP TABLE ledger_by_currency;`);
     }
   });
+  if (rekeying) db.exec("PRAGMA foreign_keys = ON");
   return db;
 }
 

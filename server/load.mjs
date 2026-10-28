@@ -48,19 +48,21 @@ const arg = (name, fallback) => {
  * Wraps `db` so each write statement adds what D1 would bill for it: every
  * row it changed, and for each, an entry in every index an insert or delete
  * writes, or in each index an update's SET columns belong to (a table's text
- * primary key is an index too). An upsert is an insert when it made a row
+ * primary key is an index too, unless the table is made without a rowid,
+ * when the key's index is the table). An upsert is an insert when it made a row
  * (the connection's last insert rowid moved) and otherwise an update of the
  * columns its DO UPDATE sets. A partial index holds only the rows its WHERE
- * takes: an inserted row writes it if it is one of them, an update if it
- * sets a column the index holds or chooses by, and a delete is counted as if
- * every row it took were in it. Returns the running count.
+ * takes: an insert or a delete writes the entries it adds or takes away
+ * (counted before and after it), an update if it sets a column the index
+ * holds or chooses by. Returns the running count.
  */
 export function billed(db) {
   const prepare = db.prepare.bind(db);
   const indexes = new Map();
   const of = (table) => {
     if (!indexes.has(table)) {
-      indexes.set(table, prepare(`PRAGMA index_list(${table})`).all().map((i) => {
+      const wr = prepare("SELECT wr FROM pragma_table_list WHERE schema = 'main' AND name = ?").get(table)?.wr;
+      indexes.set(table, prepare(`PRAGMA index_list(${table})`).all().filter((i) => !(wr && i.origin === "pk")).map((i) => {
         const cols = prepare(`PRAGMA index_info(${i.name})`).all().map((c) => c.name);
         const sql = i.partial ? prepare("SELECT sql FROM sqlite_master WHERE name = ?").get(i.name).sql : null;
         const where = sql ? /\bWHERE\b([\s\S]*)$/i.exec(sql)[1] : null;
@@ -84,12 +86,8 @@ export function billed(db) {
     const upsert = /ON CONFLICT .*? DO UPDATE SET (.*?)(?: WHERE .*)?$/i.exec(s);
     if ((m = /^INSERT (?:OR \w+ )?INTO (\w+)/i.exec(s)) || (m = /^DELETE FROM (\w+)/i.exec(s))) {
       table = m[1];
-      const insert = /^INSERT/i.test(s);
-      // An inserted row is in a partial index if the index's WHERE takes it.
-      const holds = (i, rowid) => !i.where || !insert || rowid === null
-        || Boolean(prepare(`SELECT 1 FROM ${table} WHERE rowid = ? AND (${i.where})`).get(rowid));
-      per = (inserted, rowid) => (upsert && !inserted ? updating(table, upsert[1])
-        : 1 + of(table).filter((i) => holds(i, rowid)).length);
+      per = (inserted) => (upsert && !inserted ? updating(table, upsert[1])
+        : 1 + of(table).filter((i) => !i.where).length);
     } else if ((m = /^UPDATE (\w+) SET (.*?) WHERE/i.exec(s))) {
       table = m[1];
       const set = m[2];
@@ -100,9 +98,14 @@ export function billed(db) {
       const rowid = () => prepare("SELECT last_insert_rowid() AS r").get().r;
       st.run = (...a) => {
         const before = upsert ? rowid() : null;
+        // The rows of each partial index, before and after an insert or a delete.
+        const partial = /^(INSERT|DELETE)/i.test(s) ? of(table).filter((i) => i.where) : [];
+        const entries = () => partial.map((i) => Number(prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE ${i.where}`).get().n));
+        const was = entries();
         const r = run(...a);
-        const after = r.changes ? rowid() : null;
-        const n = Number(r.changes) * per(upsert ? after !== before : true, Number(r.changes) === 1 ? after : null);
+        const inserted = upsert ? rowid() !== before : true;
+        let n = Number(r.changes) * per(inserted);
+        if (!upsert || inserted) n += entries().reduce((sum, e, k) => sum + Math.abs(e - was[k]), 0);
         count.rows += n;
         if (n) count.byTable.set(table, (count.byTable.get(table) ?? 0) + n);
         return r;
@@ -141,7 +144,11 @@ export function reads(db) {
     if (!row) return false;
     tables.add(name);
     if (row.type === "table") {
-      db.exec(`CREATE TEMP VIEW IF NOT EXISTS __r_${name} AS SELECT rowid AS rowid, * FROM main.${name} WHERE __seen(rowid)`);
+      // A table made without a rowid is counted by its key's first column.
+      const wr = prepare("SELECT wr FROM pragma_table_list WHERE schema = 'main' AND name = ?").get(name)?.wr;
+      const key = wr ? prepare(`PRAGMA table_info(${name})`).all().find((c) => c.pk === 1).name : "rowid";
+      db.exec(wr ? `CREATE TEMP VIEW IF NOT EXISTS __r_${name} AS SELECT * FROM main.${name} WHERE __seen(${key})`
+        : `CREATE TEMP VIEW IF NOT EXISTS __r_${name} AS SELECT rowid AS rowid, * FROM main.${name} WHERE __seen(rowid)`);
     } else {
       views.set(name, row.sql);
       const body = row.sql.replace(/^[\s\S]*?\bAS\b/i, "");
@@ -286,7 +293,7 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
   for (let i = 0; i < players; i++) {
     const { account, refreshToken } = service.session(`gc:load-${i}`);
     refresh.push(refreshToken);
-    db.prepare("UPDATE accounts SET created_at = ? WHERE id = ?").run(T0 - 4 * DAY, account);
+    db.prepare("UPDATE accounts SET created_at = ? WHERE id = ?").run(T0 - 11 * DAY, account);
     const island = build.exampleIsland(i % 2 === 0);
     island[5] = 1 + (Math.floor(i / 2) % 10);              // Vault level: a distinct island each
     island[6] = i & 255;                                   // and a distinct exposure
@@ -297,6 +304,21 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
     service.telemetry.batch(account, [{ kind: "session_start", data: {} }]);
     accounts.push(account);
   }
+  // And their first heist, a week before: it brings the roster home and
+  // opens the Codex, rows a player writes once (home.firstStrays, the laws
+  // first met), not each day. Counted apart, as what a player's first heist
+  // writes beside any heist's.
+  clock.now = T0 - 7 * DAY;
+  const firstHeist = { rows: bill.rows, read: read.rows };
+  for (let i = 0; i < players; i++) {
+    const lease = service.lease(accounts[i], bundles[(i + 1) % players]);
+    const era = ERAS.find((e) => e.id === lease.era)?.wire ?? 0;
+    service.submit(accounts[i], lease.token, build.recordDrawn(service.bundle(lease.bundle),
+      { seed: BigInt(lease.seed), ticks: lease.ticks, crew: 3, era }));
+  }
+  firstHeist.rows = +((bill.rows - firstHeist.rows) / players).toFixed(2);
+  firstHeist.read = +((read.rows - firstHeist.read) / players).toFixed(1);
+  clock.now = T0;
   service.targetLists();
   for (const k of Object.keys(writes)) delete writes[k];
   for (const k of Object.keys(bills)) delete bills[k];
@@ -371,6 +393,8 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
     billedPerHeist: +((bills["heist: validate and grant"] + bills.lease) / (playerDays * heists)).toFixed(2),
     billedByOperation: Object.fromEntries(billedPerPlayer.map(([k, v]) => [k, +(v / playerDays).toFixed(2)])),
     validationMs: { p50: +pct(0.5).toFixed(1), p95: +pct(0.95).toFixed(1), max: +cpu[cpu.length - 1].toFixed(1) },
+    // A player's first heist, billed rows and rows read, once in all.
+    firstHeist,
     // Where the billed rows go, a player a day, the periodic jobs' included.
     billedByTable: Object.fromEntries([...bill.byTable].sort((a, b) => b[1] - a[1])
       .map(([k, v]) => [k, +(v / playerDays).toFixed(2)])),

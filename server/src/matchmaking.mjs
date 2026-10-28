@@ -146,7 +146,7 @@ export class Matchmaking {
     const rows = this.db.prepare(
       `SELECT h.outcome FROM heists h JOIN leases l ON l.token = h.token
         WHERE h.attacker = ? AND h.validated = 1 AND l.mode = 'raid'
-        ORDER BY h.day DESC, h.submitted_at DESC, h.rowid DESC LIMIT ?`).all(account, RECENT);
+        ORDER BY h.day DESC, h.submitted_at DESC, h.token DESC LIMIT ?`).all(account, RECENT);
     if (rows.length === 0) {
       const [lo, hi] = successBand(1, "authored");
       return (lo + hi) / 2;

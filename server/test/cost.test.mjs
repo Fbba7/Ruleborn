@@ -109,7 +109,7 @@ test("finding the lease a player holds on a target reads its newest lease, howev
     heist.run({ token: `old${i}`, from: played.token });
   }
   const plan = db.prepare("EXPLAIN QUERY PLAN SELECT * FROM leases WHERE attacker = ? AND bundle = ? "
-    + "ORDER BY issued_at DESC, rowid DESC LIMIT 1").all("a", "b").map((r) => r.detail).join("; ");
+    + "ORDER BY issued_at DESC LIMIT 1").all("a", "b").map((r) => r.detail).join("; ");
   assert.match(plan, /leases_by_target/);
   assert.doesNotMatch(plan, /TEMP B-TREE/, "read newest first from the index, and stopped at one");
   const reads = [];
