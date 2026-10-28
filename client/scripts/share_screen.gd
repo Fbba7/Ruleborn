@@ -110,7 +110,8 @@ func _poster(code: String) -> Control:
 	col.add_theme_constant_override("separation", UI.px(6))
 	var kicker := ScreenParts.pill(Strings.t("SCREEN_SHARE_CHALLENGE"), "glass", "screens", "realm", 13.0, "words",
 		true)
-	kicker.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	# Centred while it fits; the card's width at large text, where it wraps.
+	kicker.size_flags_horizontal = Control.SIZE_SHRINK_CENTER if Settings.text_scale <= 125 else Control.SIZE_FILL
 	col.add_child(kicker)
 	var mark := ScreenKit.icon("screens", "islandworkshop", 96.0)
 	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER

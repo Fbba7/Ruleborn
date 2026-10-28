@@ -254,9 +254,12 @@ func _card(law: String, notes: Array) -> Control:
 	var mark := ScreenKit.icon("laws", law, 34.0)
 	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(mark)
-	var name := ScreenKit.text(Strings.term("LAW", law), 13.0, "words", "parchment")
-	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	col.add_child(name)
+	# Its name while the cards leave the realm in sight; at large text the
+	# realm's card below names it, and the stage shows the marks alone.
+	if Settings.text_scale <= 125:
+		var name := ScreenKit.text(Strings.term("LAW", law), 13.0, "words", "parchment")
+		name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		col.add_child(name)
 	if not notes.is_empty():
 		var row := HBoxContainer.new()
 		row.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -266,7 +269,7 @@ func _card(law: String, notes: Array) -> Control:
 		col.add_child(row)
 	var card := ScreenKit.panel("parchment", col, 14.0, 8.0)
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	card.custom_minimum_size.x = UI.px(88)
+	card.custom_minimum_size.x = UI.px(88 if Settings.text_scale <= 125 else 56)
 	return card
 
 

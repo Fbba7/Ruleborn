@@ -150,6 +150,9 @@ func _go() -> void:
 		screen.hand._open_sage()
 	elif OS.get_environment("WHEEL") == "cast":
 		screen.hand._open_casts()
+	elif OS.get_environment("WHEEL") == "aim":
+		# A cast chosen and waiting for its place on the world.
+		screen._aim(HeistController.Kind.CAST, 0, "Glowing dark")
 	await process_frame
 	# HIDE: parts of the screen left out, to weigh each one's draw calls.
 	for part: String in OS.get_environment("HIDE").split(",", false):

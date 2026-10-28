@@ -4,6 +4,8 @@ extends RefCounted
 
 ## The lists, and the player's own.
 const LISTS := ["top", "new", "featured", "mine"]
+## The creator levels, in the order they are reached (18.7).
+const LADDER := ["builder", "wright", "architect", "loremaker"]
 
 
 ## An island as a card: its name, realm level, completions and ratings, who
@@ -55,7 +57,19 @@ static func screen(w: Dictionary, me: String) -> Dictionary:
 		"busy": bool(w.get("busy", false)), "said": said(w),
 		"empty": items.is_empty() and bool(w.get("loaded", false)) and not w.get("busy", false),
 		"title": Strings.t("WORKSHOP_LIST_" + list.to_upper()),
-		"ladder": _ladder(ladder) if list == "mine" and not ladder.is_empty() else ""}
+		"ladder": _ladder(ladder) if list == "mine" and not ladder.is_empty() else "",
+		"rungs": _rungs(ladder)}
+
+
+## The creator ladder as the design draws it: each level with whether it is
+## reached, and the counts that climb it.
+static func _rungs(l: Dictionary) -> Dictionary:
+	var level: Variant = l.get("level")
+	var at := LADDER.find(str(level)) if level != null else -1
+	var steps: Array[Dictionary] = []
+	for i: int in LADDER.size():
+		steps.append({"name": Strings.term("CREATOR", LADDER[i]), "reached": i <= at, "here": i == at})
+	return {"steps": steps, "completions": _number(l.get("completions", 0)), "featured": _number(l.get("featured", 0))}
 
 
 ## What the last action came to, in the player's words.

@@ -27,6 +27,10 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_character(column)
 		12:
 			_friends(column)
+		13:
+			_log(column)
+		14:
+			_stats(column)
 		_:
 			_season(column)
 
@@ -201,7 +205,7 @@ static func _cards(column: VBoxContainer) -> void:
 	column.add_child(filters)
 	column.add_child(KitControls.search("Search laws"))
 	var grid := GridContainer.new()
-	grid.columns = 3
+	grid.columns = KitLayout.grid_columns(3)
 	grid.add_theme_constant_override("h_separation", UI.px(8))
 	grid.add_theme_constant_override("v_separation", UI.px(8))
 	for c: Array in [["laws/bounce", "Bounce", "motion", "common", ""],
@@ -212,9 +216,11 @@ static func _cards(column: VBoxContainer) -> void:
 	var centre := CenterContainer.new()
 	centre.add_child(grid)
 	column.add_child(KitPanels.album("motion", "Motion", "Chapter I", "3 of 4 restored", centre))
-	var more := HBoxContainer.new()
-	more.alignment = BoxContainer.ALIGNMENT_CENTER
-	more.add_theme_constant_override("separation", UI.px(8))
+	# A column fewer as large text widens the cards (KitLayout.grid_columns).
+	var more := GridContainer.new()
+	more.columns = KitLayout.grid_columns(3)
+	more.add_theme_constant_override("h_separation", UI.px(8))
+	more.add_theme_constant_override("v_separation", UI.px(8))
 	more.add_child(KitCards.album_card("laws/bounce", "Brittle stone", "matter", "common", "In Skyfield", "10"))
 	more.add_child(KitCards.album_card("laws/frictionless", "Glass", "matter", "rare", "In Emberreach", "12", "I"))
 	more.add_child(KitCards.album_card("laws/halfgravity", "Inward pull", "matter", "deep", "", "22"))
@@ -461,7 +467,8 @@ static func _friends(column: VBoxContainer) -> void:
 	var pick_row := picks.get_node("Row") as HBoxContainer
 	for p: Array in [["archivist", "Emote", "Tip of the Hat", "120"], ["tidewalker", "Outfit", "Tide Raincoat", "160"],
 			["lantern_wisp", "Bridge style", "Living Vines", "240"]]:
-		var card := KitCards.product(Portrait.of(str(p[0])), p[1], p[2], p[3], func() -> void: pass)
+		var card := KitCards.product(Portrait.of(str(p[0])), p[1], p[2], p[3], func() -> void: pass, "round_violet",
+			128.0, "resources/renown")
 		if pick_row.get_child_count() == 0:
 			card.add_child(KitStatus.sash("Trace · 24 h"))
 		pick_row.add_child(card)
@@ -483,3 +490,38 @@ static func _friends(column: VBoxContainer) -> void:
 	column.add_child(KitSocial.feed_row(Portrait.of("tidewalker"), "AI", "Aiko", "Hatched", "", "3 h",
 		"Hatched a Spark Emberling. It was born swift, a body trait."))
 
+
+## The design's Defence log (16-rehearsal-and-defence-log-defence-log.png).
+static func _log(column: VBoxContainer) -> void:
+	column.add_child(KitNav.segmented(["Rehearse", "Defence log"], 1, func(_i: int) -> void: pass))
+	column.add_child(KitLayout.columns([KitStatus.stat("5", "Raids this week"), KitStatus.stat("4", "Held"),
+		KitStatus.stat("2", "Trace ready")], 6))
+	column.add_child(KitLayout.columns([KitControls.tile("Easy", "Slow rivers", "life", func() -> void: pass),
+		KitControls.tile("Medium", "Glass", "motion", func() -> void: pass),
+		KitControls.tile("Hard", "Haste", "energy", func() -> void: pass)], 6))
+	column.add_child(KitPanels.notice("alarm", "", "A crew is in Tidehold now",
+		"The raider's name shows when the raid ends", "", func() -> void: pass))
+	column.add_child(KitSocial.log_row(Portrait.of("lantern_wisp"), "MA", "Marta", "Held", "success",
+		"2 h ago · held them 2:31", "Denied 3,300", "success", "Report", func() -> void: pass))
+	column.add_child(KitSocial.log_row(null, "KO", "Kofi", "Got out", "warn", "Yesterday · out via Lantern Vale",
+		"You lost nothing", "info", "Report", func() -> void: pass))
+	column.add_child(KitSocial.log_row(null, "TO", "Tomas", "Friendly", "violet", "2 days ago · caught twice",
+		"+2 pages", "success", "Report", func() -> void: pass))
+
+
+## The design's Player stats chart (19b-player-stats.png).
+static func _stats(column: VBoxContainer) -> void:
+	column.add_child(KitPanels.section("Renown"))
+	var renown := UI.panel("card")
+	var rv := VBoxContainer.new()
+	var head := KitLayout.flow(8)
+	var big := UI.label("1,460", 30)
+	big.theme_type_variation = "Display"
+	head.add_child(big)
+	head.add_child(UI.status("success", "+11", false))
+	rv.add_child(head)
+	rv.add_child(KitChart.make([1260, 1270, 1262, 1290, 1300, 1295, 1330, 1350, 1345, 1372, 1390, 1380, 1405, 1420, 1410,
+		1430, 1445, 1460], [[1450, "1,450"], [1350, "1,350"], [1250, "1,250"]], "Sep 28", "Today",
+		"Renown 1,460 today, up 201 in 30 days"))
+	renown.add_child(rv)
+	column.add_child(renown)
