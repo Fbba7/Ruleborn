@@ -61,6 +61,7 @@ func picture(card: Dictionary) -> Texture2D:
 		_queue.append(card)
 	if not _busy:
 		_busy = true
+		view.viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 		_next.call_deferred()
 	return null
 
@@ -72,6 +73,8 @@ static func key_of(card: Dictionary) -> String:
 func _next() -> void:
 	if _queue.is_empty() or not is_inside_tree():
 		_busy = false
+		# Nothing left to draw: the offscreen world stops drawing (§21.3).
+		view.viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 		return
 	_busy = true
 	var card: Dictionary = _queue.pop_front()

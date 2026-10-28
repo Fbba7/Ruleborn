@@ -1,10 +1,14 @@
 // The session's routes, and the web deletion page's sign-in (docs/security/auth.md).
 //
-//   POST /v1/session          {"credential"}                 → {account, token, expiresIn, refreshToken}
+//   POST /v1/session          {"credential", "device"?}      → {account, token, expiresIn, refreshToken}
 //   POST /v1/session/nonce                                   → {nonce, expiresIn}: for a Google ID token to carry
 //   POST /v1/session/refresh  {"refreshToken"}               → a new pair; the one sent is spent
-//   POST /v1/session/end      {"everywhere"?, "refreshToken"?} → {ended}: this session, or every one
+//   POST /v1/session/end      {"everywhere"?, "others"?, "device"?, "refreshToken"?}
+//                                                            → {ended}: this session, one, every other, or all
 //   GET  /v1/session                                         → {account, devices}: sessions live
+//   GET  /v1/session/devices                                 → {devices: […], identities: […]}
+//   POST /v1/session/link     {"current", "credential"}      → {identities}: another platform's identity added
+//   POST /v1/session/unlink   {"current", "platform"}        → {identities}: that platform's link removed
 //   GET  /account/delete                                     → G39's page, with a nonce in a cookie
 //   POST /v1/account/delete   {"idToken", "withdrawIslands"} → the account deleted (§20.5, §20.11)
 //
@@ -15,6 +19,7 @@
 import { readFileSync } from "node:fs";
 
 import { deleteAccount } from "./accounts.mjs";
+import { PLATFORMS } from "./auth.mjs";
 import { PAGE_HEADERS, hashOf } from "./pages.mjs";
 import { Refused } from "./refused.mjs";
 import { NONCE_MS, peekRefresh } from "./tokens.mjs";
@@ -45,20 +50,33 @@ export function cookie(request, name) {
   return null;
 }
 
+/** The account and session a Bearer token is good for, its account's
+ *  calls limited first by the token's signature alone (G44). */
+function signedIn(service, request, limit) {
+  const token = bearer(request);
+  const t = service.auth.holder(token);
+  limit("calls", t.account);
+  return { token, account: service.account(token), session: t.session };
+}
+
 /**
  * `/v1/session…`. `signIn(proceed)` is the edge's gate on sign-ins (an
  * address held back after failures, an account's sign-ins limited, a
  * failure counted), `limit(kind, key)` its buckets, `read(request)` a
- * JSON body and `optional(request)` one that may be absent.
+ * JSON body and `optional(request)` one that may be absent. `place` is the
+ * country the edge says the request came from, or null (auth.mjs placeOf).
  */
-export async function sessionRoute(service, request, parts, { signIn, limit, read, optional }) {
+export async function sessionRoute(service, request, parts, { signIn, limit, read, optional, place = null }) {
   const m = request.method;
   const [, , verb] = parts;
   if (m === "POST" && !verb) {
     return signIn(async (admit) => {
-      const { credential } = await read(request);
+      const { credential, device = null } = await read(request);
+      if (device !== null && (typeof device !== "object" || Array.isArray(device))) {
+        throw new Refused(400, "malformed_body");
+      }
       await service.preparePlatform(credential);
-      return answer(service.session(credential, { admit }));
+      return answer(service.session(credential, { admit, device, place }));
     });
   }
   if (m === "POST" && verb === "nonce") {
@@ -71,27 +89,63 @@ export async function sessionRoute(service, request, parts, { signIn, limit, rea
       const peek = peekRefresh(refreshToken);
       if (!peek) throw new Refused(401, "session_refused");
       // §24.1's sign-ins an account, held by the session the token names
-      // before anything is read.
-      admit(`session:${peek.session}`);
-      return answer(service.auth.refresh(refreshToken));
+      // once the token is proven: a made-up one naming someone's session
+      // spends nothing of theirs (T12's SR-28).
+      return answer(service.auth.refresh(refreshToken, service.now(),
+                                         { place, admit: () => admit(`session:${peek.session}`) }));
     });
   }
   if (m === "POST" && verb === "end") {
-    const { everywhere = false, refreshToken = null } = await optional(request);
-    if (typeof everywhere !== "boolean") throw new Refused(400, "malformed_body");
+    const { everywhere = false, others = false, device = null, refreshToken = null } = await optional(request);
+    if (typeof everywhere !== "boolean" || typeof others !== "boolean"
+        || (device !== null && !(Number.isSafeInteger(device) && device > 0))) {
+      throw new Refused(400, "malformed_body");
+    }
     const token = bearer(request);
     if (token) {
       limit("calls", service.auth.holder(token).account);
-      return answer({ ended: service.auth.signOut(token, { everywhere }) });
+      return answer({ ended: service.auth.signOut(token, { everywhere, others, device }) });
     }
-    // An access token past its hour: the refresh token proves the session.
-    return signIn(async () => answer({ ended: service.auth.signOutWith(refreshToken, { everywhere }) }));
+    if (others || device !== null) throw new Refused(401, "session_refused");
+    // An access token past its hour: the refresh token proves the session,
+    // held to its session's sign-ins as a refresh is, once proven (SR-28).
+    return signIn(async (admit) => {
+      const peek = peekRefresh(refreshToken);
+      if (!peek) throw new Refused(401, "session_refused");
+      return answer({ ended: service.auth.signOutWith(refreshToken,
+                                                      { everywhere, admit: () => admit(`session:${peek.session}`) }) });
+    });
   }
   if (m === "GET" && !verb) {
-    const token = bearer(request);
-    limit("calls", service.auth.holder(token).account);
-    const account = service.account(token);
+    const { account } = signedIn(service, request, limit);
     return answer({ account, devices: service.auth.live(account) });
+  }
+  if (m === "GET" && verb === "devices") {
+    const { account, session } = signedIn(service, request, limit);
+    return answer({ devices: service.auth.devices(account, session),
+                    identities: service.auth.identities(account) });
+  }
+  if (m === "POST" && (verb === "link" || verb === "unlink")) {
+    const { account, session } = signedIn(service, request, limit);
+    // Each proof is a sign-in as the limits count them: held by address
+    // after failures, and by the identity it proves.
+    return signIn(async (admit) => {
+      const body = await read(request);
+      const proven = async (credential) => {
+        await service.preparePlatform(credential);
+        const identity = service.auth.prove(credential);
+        if (!identity) throw new Refused(401, "platform_identity_refused");
+        admit(identity);
+        return identity;
+      };
+      const current = await proven(body.current);
+      if (verb === "link") {
+        const adding = await proven(body.credential);
+        return answer({ identities: service.auth.link(account, current, adding) });
+      }
+      if (!PLATFORMS.includes(body.platform)) throw new Refused(400, "malformed_body");
+      return answer({ identities: service.auth.unlink(account, session, current, body.platform) });
+    });
   }
   return answer({ error: "no_such_route" }, 404);
 }
@@ -138,10 +192,14 @@ export function deletePage(service, webClientId) {
  * a body that is not JSON (which no form can send without CORS's leave).
  */
 export async function deleteByGoogle(service, request, { signIn, read, webClientId = null }) {
-  const own = new URL(request.url).origin;
+  // The host the browser addressed is the Host the proxy passed on: the
+  // listener rebuilds every URL on localhost (main.mjs), so the URL's own
+  // origin is never the page's (T12's SR-21).
+  const own = request.headers.get("host") ?? new URL(request.url).host;
   const origin = request.headers.get("origin");
   const site = request.headers.get("sec-fetch-site");
-  if ((origin !== null && origin !== own) || (site !== null && !["same-origin", "none"].includes(site))) {
+  if ((origin !== null && URL.parse(origin)?.host !== own)
+      || (site !== null && !["same-origin", "none"].includes(site))) {
     throw new Refused(403, "cross_site");
   }
   if (!(request.headers.get("content-type") ?? "").toLowerCase().startsWith("application/json")) {
@@ -161,7 +219,8 @@ export async function deleteByGoogle(service, request, { signIn, read, webClient
       throw new Refused(401, "google_identity_refused");
     }
     admit(identity);
-    const row = service.db.prepare("SELECT id FROM accounts WHERE platform_identity = ?").get(identity);
+    // The account made with it, or one it was linked to (auth.mjs).
+    const row = service.auth.accountOf(identity);
     if (!row) throw new Refused(404, "no_such_account");
     const done = answer({ deleted: true, reason: deleteAccount(service, row.id, "requested",
                                                                { withdraw: withdrawIslands }).reason });

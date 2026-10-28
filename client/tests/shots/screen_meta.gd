@@ -22,9 +22,29 @@ func _go() -> void:
 	var screen: Control = load(Router.ROUTES[StringName(name)]).instantiate()
 	root.add_child(screen)
 	await process_frame
-	ScreenShots.fill(name, App.services.store)
+	# EMPTY=1: the screen before its state comes, as a first open shows it.
+	if OS.get_environment("EMPTY") != "1":
+		ScreenShots.fill(name, App.services.store)
 	for i in 8:
 		await process_frame
+	# TAB: a screen's tab on show (Settings' "account").
+	if OS.get_environment("TAB") != "" and "tab_shown" in screen:
+		# Settings restores the saved settings on opening: the shot's again.
+		if OS.get_environment("TEXT") != "":
+			Settings.text_scale = int(OS.get_environment("TEXT"))
+		if OS.get_environment("HC") == "1":
+			Settings.high_contrast = true
+			Settings.apply()
+		screen.set("tab_shown", OS.get_environment("TAB"))
+		screen.call("_refresh" if screen.has_method("_refresh") else "_build")
+		for i in 4:
+			await process_frame
+	# AUTH: the account's sign-in state ("signed_in", "failed", "offline").
+	if OS.get_environment("AUTH") != "":
+		App.services.store.dispatch(&"auth_status", {"status": OS.get_environment("AUTH"), "reason": "network"})
+		App.services.store.dispatch(&"auth_devices", {"devices": 2})
+		for i in 3:
+			await process_frame
 	if OS.get_environment("SCROLL") != "":
 		for s: ScrollContainer in screen.find_children("*", "ScrollContainer", true, false):
 			s.scroll_vertical = int(OS.get_environment("SCROLL"))

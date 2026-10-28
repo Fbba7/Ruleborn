@@ -70,7 +70,9 @@ func _build() -> void:
 	column.add_child(ScreenParts.status_plate(status_label))
 	body = UI.scroll(column)
 	# In the scroll, so large text never pushes the buttons off the phone.
-	preview = LawFxPreview.new()
+	var stage := ScreenHarmonyStage.new()
+	stage.walking = true
+	preview = stage
 	preview.custom_minimum_size.y = UI.px(132)
 	preview.visible = false
 	_stage = MarginContainer.new()

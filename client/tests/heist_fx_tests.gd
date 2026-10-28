@@ -43,6 +43,7 @@ func run() -> void:
 	await tree.process_frame
 	await _models(replay)
 	await _entry_card()
+	_planned()
 
 
 func _hud(replay: RulebornReplay) -> void:
@@ -126,7 +127,7 @@ func _camera(view: WorldView, replay: RulebornReplay) -> void:
 	var picks := view.tile_at(view.screen_at(Vector2i(replay.crew()[0]["at"]))) == Vector2i(replay.crew()[0]["at"])
 	view.follow = []
 	view.set_zoom(1)
-	check.call("the heist's camera follows the crew at 50 degrees showing about 12 tiles across (10.5 on its width), "
+	check.call("the heist's camera follows the crew at 50 degrees showing about 12 tiles across (15 metres on its width), "
 			+ "seven close up and the whole realm zoomed out, and a tap still picks the tile drawn under it (21.1)",
 		is_equal_approx(across, WorldView.FOLLOW_TILES) and is_equal_approx(close, WorldView.CLOSE_TILES)
 			and whole > across and framed and picks, "%.2f %.2f %.2f %s %s" % [across, close, whole, framed, picks])
@@ -366,3 +367,42 @@ func _speech(view: WorldView) -> void:
 	view.anchors.tick(FxAnchors.SAY_SECONDS + 0.1)
 	check.call("a guard says what it has come to over its head, then falls quiet (12.16)",
 		quiet and said and view.anchors.speech.is_empty(), "%s %s %s" % [quiet, said, view.anchors.speech])
+
+
+## §12.5's planned crew as the heist's HUD reads it from the simulation: each
+## member's kind and ability uses (the portraits), the Sage's powers and the
+## casts carried (the Sage's disc and Cast); a power and a cast given at a
+## tile spend what the simulation says they spend.
+func _planned() -> void:
+	var law := Array(RulebornStability.law_ids()).find("glowing_dark")
+	var plan := PackedByteArray()
+	for k: int in [1, 6, 4, 3, 9]:
+		plan.append_array(PackedByteArray([k, 0, 3, 0]))
+	plan.append_array(PackedByteArray([1, 1, law]))
+	var r := RulebornReplay.new()
+	var started := r.start_planned("7", 4500, 5, plan, WorldTests.island())
+	var s: Vector2i = r.reaching()[0]
+	r.give(0, HeistController.Kind.LAND, s.x * 256 + 128, s.y * 256 + 128)
+	for i in 30:
+		r.step()
+	var kinds := r.crew().map(func(m: Dictionary) -> String: return str(m["kind"]))
+	var uses := r.crew().map(func(m: Dictionary) -> int: return int(m["uses"]))
+	var sage := r.sage()
+	var powers: Array = sage.get("powers", [])
+	var left := powers.map(func(p: Dictionary) -> int: return int(p["uses"]))
+	var casts := r.casts()
+	var at: Vector2 = r.crew()[0]["at"]
+	r.give(1, HeistController.Kind.SAGE, int(at.x) * 256 + 128, int(at.y) * 256 + 128)
+	r.give(0, HeistController.Kind.CAST, int(at.x) * 256 + 128, int(at.y) * 256 + 128)
+	for i in 3:
+		r.step()
+	var after: Array = (r.sage().get("powers", []) as Array).map(func(p: Dictionary) -> int: return int(p["uses"]))
+	var cooling := int(r.sage().get("cooling_until", 0)) > r.tick()
+	var cast_used := not r.casts().is_empty() and bool(r.casts()[0]["used"])
+	check.call("a planned crew's portraits, Sage and Cast read the simulation: each member's kind and two ability "
+			+ "uses, the Archivist's three powers, the cast carried; a power and a cast given spend a use (21.8, 12.7)",
+		started and kinds == ["skyskipper", "tidewalker", "quarryback", "glass_golem", "emberling"]
+			and uses == [2, 2, 2, 2, 2] and str(sage.get("id", "")) == "the_archivist" and left == [1, 2, 1]
+			and casts.size() == 1 and str(casts[0]["law"]) == "glowing_dark" and not bool(casts[0]["used"])
+			and after == [1, 1, 1] and cooling and cast_used,
+		"%s %s %s %s %s %s %s %s" % [started, kinds, uses, sage.get("id"), left, casts, after, [cooling, cast_used]])

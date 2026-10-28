@@ -52,6 +52,22 @@ static func card(l: Dictionary) -> Dictionary:
 
 ## The card for `law` from the Codex the store holds — its laws, or a met law
 ## of an album — or {} if it is not met.
+## Where a law stands among the laws met, in the Codex's order: its place,
+## how many, and the laws before and after it (round the ends).
+static func neighbours(codex: Dictionary, law: String) -> Dictionary:
+	var v: Dictionary = codex.get("view", {})
+	var ids: Array[String] = []
+	for a: Dictionary in v.get("albums", []):
+		for l: Dictionary in a.get("laws", []):
+			if l.get("known", false) and not ids.has(str(l["law"])):
+				ids.append(str(l["law"]))
+	var at := ids.find(law)
+	if at < 0 or ids.size() < 2:
+		return {}
+	return {"at": at + 1, "of": ids.size(), "prev": ids[(at - 1 + ids.size()) % ids.size()],
+		"next": ids[(at + 1) % ids.size()]}
+
+
 static func from_codex(codex: Dictionary, law: String) -> Dictionary:
 	var v: Dictionary = codex.get("view", {})
 	var met: Array = (v.get("laws", []) as Array).duplicate()

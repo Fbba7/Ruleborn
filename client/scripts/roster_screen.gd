@@ -76,9 +76,9 @@ func _build() -> void:
 		hero = VBoxContainer.new()
 	hero.add_theme_constant_override("separation", UI.px(8))
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(UI.px(150), UI.px(160))
+	stage.custom_minimum_size = Vector2(UI.px(150), UI.px(176))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	stage.size_flags_stretch_ratio = 0.9
+	stage.size_flags_stretch_ratio = 1.15
 	hero.add_child(stage)
 	hero_info = VBoxContainer.new()
 	hero_info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -194,7 +194,7 @@ func _refresh() -> void:
 func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 	var kind := str(c.get("kind", ""))
 	if str(stage.get_meta("showing", "")) != kind:
-		stage.show_kinds([kind])
+		stage.show_kinds([kind], [], "plinth")
 		stage.set_meta("showing", kind)
 	for n in stage.get_children():
 		if n.has_meta("words"):
@@ -219,10 +219,10 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 			for x: Dictionary in rows:
 				if int(x["id"]) == to:
 					name = str(x["name"])
-			var b := StageHeroKit.arrow(step < 0, Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT",
+			var b := StageHeroKit.small_arrow(step < 0, Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT",
 				name), _choose.bind(to))
 			b.set_meta("item", "step:%d" % step)
-			StageHeroSkin.on_stage(over, b, Control.PRESET_BOTTOM_LEFT if step < 0 else Control.PRESET_BOTTOM_RIGHT)
+			StageHeroSkin.on_stage(over, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
 	var state := StageHeroKit.chip(str(row.get("line", "")), "glass", "characterstates/" + str(row.get("state", "")))
 	state.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	hero_info.add_child(state)
@@ -244,7 +244,23 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 	var role_name := StageHeroKit.kicker(Strings.term("ROLE", str(c.get("role", ""))))
 	role_name.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	role.add_child(role_name)
-	hero_info.add_child(role)
+	# Its health beside its role, as the design's: the simulation's number.
+	var numbers: Dictionary = RulebornReplay.role_numbers().get(str(c.get("role", "")), {})
+	var health := int(numbers.get("health", -1))
+	var placed := false
+	if health >= 0:
+		var heart := StageHeroKit.chip("%d" % health, "card", "♥")
+		heart.accessibility_name = Strings.t("CHARACTER_STAT_SPOKEN", [Strings.t("CHARACTER_STAT_HEALTH"), str(health)])
+		heart.size_flags_horizontal = Control.SIZE_SHRINK_END
+		# Its own line when the column is narrow (a long language).
+		var line := HFlowContainer.new()
+		line.add_theme_constant_override("h_separation", UI.px(6))
+		line.add_child(role)
+		line.add_child(heart)
+		hero_info.add_child(line)
+		placed = true
+	if not placed:
+		hero_info.add_child(role)
 	var top := maxi(1, int(c.get("top", 1)))
 	hero_info.add_child(StageHeroBar.make(float(c.get("level", 1)) / float(top), Color("#3FBF7F"), "", 12.0))
 	hero_info.add_child(StageHeroKit.para(Strings.t("CHARACTER_LEVEL_OF", [int(c.get("level", 1)), top]), 14.0,
@@ -270,7 +286,8 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 
 
 ## A chip a state, with how many are in it, that shows only those; "All"
-## first. The chosen one on the tab material.
+## first. The chosen one on the tab material. They wrap rather than scroll
+## sideways, so none is ever off the screen (§21.1).
 func _filters(rows: Array) -> Control:
 	var counts := {}
 	for row: Dictionary in rows:
@@ -347,6 +364,8 @@ static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "
 		App.services.router.go(&"character", {"id": row["id"]}), false, Color(), row["spoken"])
 	open.set_meta("item", "open:%d" % row["id"])
 	StageHeroSkin.flat(open, 15.0)
+	# The design's card names: the bold face, small, on the dark strip.
+	open.add_theme_font_override("font", UI.bold_font())
 	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
 		var flat := open.get_theme_stylebox(state) as StyleBoxFlat
 		flat.bg_color = Color("#1E1440") if state != "pressed" else Color("#3A2A6A")
@@ -360,10 +379,12 @@ static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "
 	var line := state_line(row)
 	line.alignment = BoxContainer.ALIGNMENT_CENTER
 	for l: Label in line.find_children("*", "Label", true, false):
-		l.add_theme_color_override("font_color", StageHeroSkin.LIGHT)
+		l.add_theme_color_override("font_color", StageHeroSkin.LIGHT_SOFT)
 		l.set_meta("points", 13.0)
 		l.add_theme_font_size_override("font_size", UI.text_px(13))
-		l.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	for r: ColorRect in line.find_children("*", "ColorRect", true, false):
+		r.custom_minimum_size = Vector2.ONE * UI.px(10)
 	var foot := MarginContainer.new()
 	foot.add_theme_constant_override("margin_bottom", UI.px(6))
 	foot.add_child(line)
@@ -388,11 +409,18 @@ static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "
 ## design's assign icon, named for a screen reader with where it sends, its
 ## words kept as `words`; dimmed, and saying why, when it cannot.
 static func _send_button(o: Dictionary, busy: bool, send: Callable) -> Button:
+	return disc_button(o, busy, send, "realmactions/assignworker")
+
+
+## A change's one-tap button on a card as a round gold disc with `icon`,
+## named for a screen reader with what it does (or why it waits), its words
+## kept as `words`; the Sage hall's tiles take it too.
+static func disc_button(o: Dictionary, busy: bool, send: Callable, icon: String) -> Button:
 	# A plain gold disc in flat boxes, not the kit's shader box: a dozen of
 	# them on the grid stay inside §21.3's draw calls.
 	var b := Button.new()
-	b.accessibility_name = str(o["spoken"]) if o["why"] == "" else "%s: %s" % [o["action"], o["why"]]
-	b.icon = Icons.texture("realmactions/assignworker")
+	b.accessibility_name = str(o["spoken"]) if str(o.get("why", "")) == "" else "%s: %s" % [o["action"], o["why"]]
+	b.icon = Icons.texture(icon)
 	b.custom_minimum_size = Vector2.ONE * UI.px(48)
 	b.size_flags_horizontal = Control.SIZE_SHRINK_END
 	b.size_flags_vertical = Control.SIZE_SHRINK_END

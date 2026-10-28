@@ -41,7 +41,7 @@ static func view(outer := 6) -> Dictionary:
 	var open: Variant = null
 	if outer < types.size():
 		open = {"realm": "outer-%d" % (outer + 1), "types": [types[outer]], "cost": 2000,
-			"needs": {"keeper": 6, "spire": 1}, "blocked": null}
+			"needs": {"keeper": 28, "spire": 1}, "blocked": "keeper_level"}
 	return {"keeper": 14, "spire": 4, "starlight": 12650, "realms": realms, "links": links, "open": open,
 		"faults": ["outer-5"] if outer >= 5 else [], "depth": {}, "deepest": 2}
 

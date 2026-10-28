@@ -358,3 +358,109 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   version whose browser is under /opt/pw-browsers).
 - **Still worse and next:** the two sections above, and the Emberling's
   belly (round 14).
+
+## Fifth session (wave 5)
+
+### For T5 (the heist): one call for a portrait
+
+- **`CreatureBust.of(kind, form := "", ground := Color(0, 0, 0, 0)) -> Texture2D`**
+  (`client/world/creature_bust.gd`). `kind` as the content or the export
+  writes it ("glass_golem" or "glassgolem"); `form` is "", "hush", "spark",
+  "echo" or "guard". The bust is head and body to the hips for a ruleborn
+  (02-heist.png's crew row), head and shoulders with the staff's lamp above
+  for a Sage (its Sage disc), 192 px square, cut round. With `ground` it
+  stands on a lit disc of that colour (lighter at the middle, deeper at the
+  rim, as the design's discs); without one it is clear behind. Draw it at
+  the disc's diameter. `CreatureBust.drawn(texture)` says when the picture
+  has filled in; `settled()` when every bust asked for has.
+- **Hooked in already (a few lines each, T5's files):** `FxPortrait` asks for
+  the role's kind's bust on the role's colour and draws it at the disc's
+  size; `WorldView._light_figures` calls `set_night(night, role colour)`
+  instead of writing the crew's material, so each kind keeps its own sheen.
+- **The Sage disc:** `CreatureBust.of("archivist", "", Color("#3A2A8C"))`
+  (or the Sage the player brought) is ready for it.
+
+### Rounds (wave 5)
+
+1. Busts framed on `head_top` alone filled the disc with a face; the
+   design's crew row shows head and body to the hips. Now at least 0.8 of
+   the height from the head's top down, a Sage 0.66 with air above.
+2. The ink outline read as a dark seam inside a 54-point disc; the design's
+   portraits have none. Busts drop it (a guard keeps its crimson ink).
+3. The owl, the Golem, Quarryback, Mossbear and Rambler are mostly head and
+   back: their own framing (`FRAME`). Sages stand left with the staff's
+   lamp at the right, as the design's Sage disc.
+4. The heist's crew rim wrote `rim_strength`, `lift` and `rim_colour` over
+   each kind's own: `set_night(night, side)` now takes the role colour.
+5. Emberling's belly glare: the body glow (`glow_vc`) lit every paint whose
+   red ran 0.3 over its blue, the tan belly (about 0.43) as much as the
+   cracks. `glow_from`/`glow_to` (0.4–0.75 for Emberling) keep the cracks
+   glowing and the belly paint.
+6. Golem bracers: the granite read as dark iron. `gear_tint` lifts mid-valued
+   accessory paint (stone, not the iron bands or the glowing hex).
+7. Bloomling's petals read coral: `red_tint` takes red-over-green paint
+   toward the design's pink (petal 248,128,156 against the portrait's
+   241,154,178; was 255,105,120 at its deepest).
+8. Heist ink: `far_width` 2.4 to 1.8. At 1080 px the thick line made ragged
+   black blobs of the crew; at 1.8 they read as toys and still stand off the
+   grass in grayscale (`w5_heist_ink_before_after.png`).
+
+9. Every kind against its portrait, measured: the mean colour of each bust
+   over its luminance, beside the design portrait's. The hero light's lilac
+   fill made every kind bluer than the design's; the bust studio's fill is
+   now part way to warm grey and its light 0.88 (the sum of the eighteen
+   ruleborn's largest channel differences 1.03 to 0.81).
+10. Soul Mender's wings read violet where the design's are pale pink: a
+    pastel toward pink that spares dark paint (the eyes) and a warmer tint.
+    Lantern Wisp warmer and paler; Glass Golem's tone 0.3 to 0.15 (its
+    violet 0.94/0.77/1.31 against 0.94/0.74/1.31).
+
+11. The heist's crew were three motion kinds (Featherkin, Rambler,
+    Skyskipper): three cream-and-gold figures that merged on the grass and
+    in their portraits. `Cast.KIND` (the integrator's, a few lines) now takes
+    02-heist.png's own crew where it shows one (Emberling, Tidewalker,
+    Mossbear) and Featherkin and Soul Mender for Scout and Mender: five
+    schools, five colours, read apart at a glance and in grayscale (a test
+    holds the five schools). Draw calls: heist 128, long-crew5's result 149;
+    Featherkin and Mossbear are one surface each, and a crew of two-surface
+    kinds would make the result 150.
+12. Quarryback's tone 0.1 and Stillwatch a warmer tint, measured as in
+    round 9 (Stillwatch 0.96/0.99/1.05 against 0.95/1.00/1.05).
+13. The six Sages measured the same way: five within 0.04; Lamplighter read
+    grey-blue (0.10 off) and takes a warm tint (now 1.25/0.94/0.81 against
+    1.28/0.95/0.77). Bloomling's body warmer (1.10/1.04/0.87 against
+    1.12/1.00/0.89).
+
+### Stills (`docs/art/shots/t1d/`)
+
+- `w5_busts.png`, `w5_busts_guard.png`: every ruleborn's and Sage's bust on
+  its school's disc, own form and guard form.
+- `w5_busts_vs_design.png`: 02-heist.png's five crew discs and Sage disc
+  over ours, with grayscale thumbnails.
+- `w5_heist_busts.png`: the heist (`screen_heist.gd`, MOMENT=sneak) with the
+  busts in the crew row.
+- `w5_colour_golem_ember_bloom.png`: Golem and Emberling, design beside ours;
+  Bloomling beneath.
+- `w5_heist_ink_before_after.png`: the crew at the heist camera, thick ink
+  against 1.8.
+- `w5_heist_crew_before_after.png`, `w5_heist_crew.png`: the crew at the
+  Vault, three motion kinds against the new cast, with grayscale.
+- `w5_portraits_vs_design.png`: the 24 design portraits, each over ours in
+  the hero view.
+
+## Stopped here (fifth session, 23:40 UTC)
+
+- **Last pushed:** the branch head; check_all passed on it. Outside T1's
+  files, a few lines each: `FxPortrait` (busts), `WorldView._light_figures`
+  (`set_night`), `Cast.KIND` (the five-school crew).
+- **For T5:** the Sage disc (`CreatureBust.of(sage, "", ground)`) once the
+  simulation gives a heist its Sage; guards at `readable_scale()`; keep the
+  crew out of the guards' rings in `heist_shot.gd`.
+- **Still worse than the design:** white flecks on Quarryback's shell and
+  Mossbear's stones (in the geometry or paint, not the light: lift, sheen
+  and relief at 0 keep them); Featherkin's knit reads smooth; Lantern
+  Wisp's cream face reads pink; petals are flat where the design's pale
+  toward the tip.
+- **Container setup:** as the fourth session; a worktree at `../rb-exp`
+  (with `client/bin`, `client/goldens` and `client/.godot` copied) let
+  renders run while check_all held the main tree.

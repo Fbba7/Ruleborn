@@ -12,6 +12,9 @@ shader_type canvas_item;
 uniform vec2 box_size = vec2(100.0, 50.0);
 uniform float reach = 0.0;
 uniform float radius = 16.0;
+// The two lower corners' radius, when not negative (a band whose foot sits
+// square on the panel under it).
+uniform float radius_foot = -1.0;
 // How far the body has sunk onto its drop (a press), in pixels.
 uniform float body_y = 0.0;
 
@@ -55,6 +58,9 @@ uniform float rays_count = 18.0;
 uniform vec4 stripes_color : source_color = vec4(0.0);
 
 float sd_box(vec2 p, vec2 b, float r) {
+	if (radius_foot >= 0.0 && p.y > 0.0) {
+		r = max(r - radius + radius_foot, 0.0);
+	}
 	r = min(r, min(b.x, b.y));
 	vec2 q = abs(p) - b + r;
 	return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;

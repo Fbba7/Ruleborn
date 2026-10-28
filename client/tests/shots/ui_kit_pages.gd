@@ -25,6 +25,8 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_heist(column)
 		10:
 			_character(column)
+		12:
+			_friends(column)
 		_:
 			_season(column)
 
@@ -165,15 +167,18 @@ static func _home(column: VBoxContainer) -> void:
 	sides.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var left := VBoxContainer.new()
 	left.alignment = BoxContainer.ALIGNMENT_CENTER
-	left.add_child(KitControls.round_action("hud/crew", "Crew", func() -> void: pass, false, 52))
-	left.add_child(KitControls.round_action("alerts/newtargets", "Raid", func() -> void: pass, false, 52, "4"))
+	# The designs' 36-point balls over §21.1's 48-point hit areas.
+	left.add_child(KitControls.round_action("hud/crew", "Crew", func() -> void: pass, false, 48, "", "leather", 36))
+	left.add_child(KitControls.round_action("alerts/newtargets", "Raid", func() -> void: pass, false, 48, "4",
+		"leather", 36))
 	sides.add_child(left)
 	sides.add_child(UI.grow())
 	(sides.get_child(1) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var right := VBoxContainer.new()
 	right.alignment = BoxContainer.ALIGNMENT_CENTER
-	right.add_child(KitControls.round_action("screens/shop", "Shop", func() -> void: pass, false, 52))
-	right.add_child(KitControls.round_action("screens/season", "Season", func() -> void: pass, false, 52))
+	right.add_child(KitControls.round_action("screens/shop", "Shop", func() -> void: pass, false, 48, "", "leather", 36))
+	right.add_child(KitControls.round_action("screens/season", "Season", func() -> void: pass, false, 48, "",
+		"leather", 36))
 	sides.add_child(right)
 	column.add_child(sides)
 	var collect := UI.row()
@@ -187,13 +192,14 @@ static func _home(column: VBoxContainer) -> void:
 static func _cards(column: VBoxContainer) -> void:
 	column.add_child(KitNav.segmented([["All laws", "screens/lawcodex"], ["Harmony", "screens/harmonyview"],
 		["Lab", "screens/resonancelab"]], 0, func(_i: int) -> void: pass))
-	var filters := UI.row(4)
-	filters.add_child(KitControls.chip("All 18 / 24", true, func() -> void: pass))
+	# One row that scrolls sideways, as the design's, rather than two.
+	var filters := KitLayout.strip(4)
+	var row := filters.get_node("Row") as HBoxContainer
+	row.add_child(KitControls.chip("All 18 / 24", true, func() -> void: pass))
 	for school: String in Tokens.schools():
-		filters.add_child(KitControls.school_button(school, school == "time", func() -> void: pass))
+		row.add_child(KitControls.school_button(school, school == "time", func() -> void: pass))
 	column.add_child(filters)
 	column.add_child(KitControls.search("Search laws"))
-	column.add_child(KitPanels.chapter("motion", "Motion", "Chapter I", "3 of 4 restored"))
 	var grid := GridContainer.new()
 	grid.columns = 3
 	grid.add_theme_constant_override("h_separation", UI.px(8))
@@ -205,9 +211,14 @@ static func _cards(column: VBoxContainer) -> void:
 		grid.add_child(KitCards.law_card(icon, c[1], c[2], c[3], c[4], 102, str(12 + grid.get_child_count() * 4)))
 	var centre := CenterContainer.new()
 	centre.add_child(grid)
-	column.add_child(centre)
-	column.add_child(KitPanels.chapter("matter", "Matter", "Chapter II", "1 of 4 restored"))
-	column.add_child(KitPanels.chapter("time", "Time", "Chapter III", "2 of 4 restored"))
+	column.add_child(KitPanels.album("motion", "Motion", "Chapter I", "3 of 4 restored", centre))
+	var more := HBoxContainer.new()
+	more.alignment = BoxContainer.ALIGNMENT_CENTER
+	more.add_theme_constant_override("separation", UI.px(8))
+	more.add_child(KitCards.album_card("laws/bounce", "Brittle stone", "matter", "common", "In Skyfield", "10"))
+	more.add_child(KitCards.album_card("laws/frictionless", "Glass", "matter", "rare", "In Emberreach", "12", "I"))
+	more.add_child(KitCards.album_card("laws/halfgravity", "Inward pull", "matter", "deep", "", "22"))
+	column.add_child(KitPanels.album("matter", "Matter", "Chapter II", "1 of 4 restored", more))
 
 
 ## The design's Settings and wellbeing screen (19-settings-and-wellbeing.png)
@@ -221,9 +232,8 @@ static func _settings(column: VBoxContainer) -> void:
 	var play := UI.panel("card_gold")
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(12))
-	var top := HBoxContainer.new()
-	top.add_theme_constant_override("separation", UI.px(12))
-	top.add_child(KitHud.dial("38", "min today", 1.0))
+	var dial := KitHud.dial("38", "min today", 1.0)
+	dial.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -236,13 +246,16 @@ static func _settings(column: VBoxContainer) -> void:
 	s.theme_type_variation = "Secondary"
 	s.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	words.add_child(s)
-	top.add_child(words)
+	# Side by side, stacked at large text (KitLayout.columns).
+	var top := KitLayout.columns([dial, words], 12)
+	dial.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(top)
 	var week := PanelContainer.new()
 	week.add_theme_stylebox_override("panel", UI.clear_box(10, 8))
 	UI.dress(week, "well")
 	var wv := VBoxContainer.new()
-	var head := HBoxContainer.new()
+	# A flow: at large text the total takes a line of its own.
+	var head := KitLayout.flow(8)
 	var k := UI.label("This week", 13)
 	k.theme_type_variation = "Kicker"
 	k.uppercase = true
@@ -308,7 +321,10 @@ static func _roster(column: VBoxContainer) -> void:
 			"crewroles/carrier", func() -> void: pass, c[1] == "Pip"))
 	column.add_child(grid)
 	column.add_child(UI.grow())
-	column.add_child(KitNav.tabs("crew", {"islands": 3, "laws": 1, "heist": 4, "friends": 3}))
+	var tabs := KitNav.tabs("crew", {"islands": 3, "laws": 1, "heist": 4, "friends": 3})
+	# Pip's face on the chosen tab, as 10-roster.png draws it.
+	tabs.face("crew", Portrait.of("skyskipper"))
+	column.add_child(tabs)
 
 
 ## The design's result and shop pieces (07-heist-result.png, 18-shop.png).
@@ -353,18 +369,26 @@ static func _heist(column: VBoxContainer) -> void:
 	mid.add_child(KitHud.clock("2:38"))
 	mid.add_child(KitHud.alarm(2, 6, "Alarm"))
 	top.add_child(mid)
-	top.add_child(KitHud.figures([["Room", "1,840"], ["Left", "2,600"]]))
+	top.add_child(KitHud.loot([["Room", "1,840"], ["Left", "2,600"]], 0.62, 0.8, "Load to 80%"))
 	column.add_child(top)
 	column.add_child(UI.grow())
 	column.add_child(KitStatus.pill("Tap crew, then ground · hold to sneak or run"))
 	var foot := HBoxContainer.new()
 	foot.add_theme_constant_override("separation", UI.px(4))
-	for c: Array in [["skyskipper", "Pip", 1.0, 2], ["tidewalker", "Mo", 0.7, 1],
-			["mossbear", "Bramble", 0.4, 0]]:
-		foot.add_child(KitHud.crew(Portrait.of(str(c[0])), c[1], c[2], c[3], func() -> void: pass))
+	var crew := HBoxContainer.new()
+	crew.add_theme_constant_override("separation", UI.px(2))
+	crew.size_flags_vertical = Control.SIZE_SHRINK_END
+	for c: Array in [["skyskipper", "Pip", 1.0, 2, "motion"], ["tidewalker", "Mo", 0.7, 1, "time"],
+			["mossbear", "Bramble", 0.4, 0, "life"], ["emberling", "Ash", 0.9, 2, "energy"]]:
+		crew.add_child(KitHud.crew(Portrait.of(str(c[0])), c[1], c[2], c[3], func() -> void: pass, c[4]))
+	foot.add_child(crew)
 	foot.add_child(UI.grow())
 	(foot.get_child(foot.get_child_count() - 1) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	foot.add_child(KitControls.big_action("heistcontrols/getout", "Get out", func() -> void: pass))
+	var right := VBoxContainer.new()
+	right.add_theme_constant_override("separation", UI.px(8))
+	right.add_child(KitHud.sage(Portrait.of("archivist"), "The Archivist", "Cast", func() -> void: pass))
+	right.add_child(KitControls.big_action("heistcontrols/getout", "Get out", func() -> void: pass))
+	foot.add_child(right)
 	column.add_child(foot)
 
 
@@ -422,3 +446,40 @@ static func _season(column: VBoxContainer) -> void:
 	row.add_child(KitCards.season_reward("Rare", "currencies/starglass", "1,200", Callable(), true))
 	column.add_child(KitRail.make(11, 3, 12, 0.68, "Tier 12, 340 of 500 to the next"))
 	column.add_child(row)
+
+
+## The design's Friends pieces (27-friends.png) and a chip strip that
+## scrolls sideways (18-shop.png).
+static func _friends(column: VBoxContainer) -> void:
+	var chips := KitLayout.strip(6)
+	var chip_row := chips.get_node("Row") as HBoxContainer
+	chip_row.add_child(KitControls.chip("All", true, func() -> void: pass))
+	for c: String in ["Realm skins", "Outfits", "Sage robes", "Emotes"]:
+		chip_row.add_child(KitControls.chip(c, false, func() -> void: pass))
+	column.add_child(chips)
+	var picks := KitLayout.strip(8)
+	var pick_row := picks.get_node("Row") as HBoxContainer
+	for p: Array in [["archivist", "Emote", "Tip of the Hat", "120"], ["tidewalker", "Outfit", "Tide Raincoat", "160"],
+			["lantern_wisp", "Bridge style", "Living Vines", "240"]]:
+		var card := KitCards.product(Portrait.of(str(p[0])), p[1], p[2], p[3], func() -> void: pass)
+		if pick_row.get_child_count() == 0:
+			card.add_child(KitStatus.sash("Trace · 24 h"))
+		pick_row.add_child(card)
+	column.add_child(picks)
+	var people := KitLayout.strip(10)
+	var people_row := people.get_node("Row") as HBoxContainer
+	for f: Array in [["mossbear", "Kofi", "Raiding", "alarm"], ["lantern_wisp", "Lea", "Workshop", "spirit"],
+			["glass_golem", "Tomas", "Home", "life"], ["tidewalker", "Aiko", "3 h ago", ""], ["", "Ines", "Yesterday", ""]]:
+		var picture: Texture2D = Portrait.of(str(f[0])) if f[0] != "" else null
+		people_row.add_child(KitSocial.avatar(picture, str(f[1]).left(2).to_upper(), f[1], f[2], f[3],
+			func() -> void: pass))
+	column.add_child(people)
+	column.add_child(KitSocial.feed_row(Portrait.of("mossbear"), "KO", "Kofi", "Escaped", "success", "12 min",
+		"Kofi's crew slipped through Ines's Glowing dark with 2,300 Starlight.", Icons.texture("screens/heist"),
+		"Watch", func() -> void: pass))
+	column.add_child(KitSocial.feed_row(null, "LE", "Lea", "Challenge", "gold", "40 min",
+		"Sent you her Lantern Vale to beat: Stillness and Echoes, 2:30 on the clock.", null, "Play",
+		func() -> void: pass))
+	column.add_child(KitSocial.feed_row(Portrait.of("tidewalker"), "AI", "Aiko", "Hatched", "", "3 h",
+		"Hatched a Spark Emberling. It was born swift, a body trait."))
+

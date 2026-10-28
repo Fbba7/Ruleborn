@@ -47,7 +47,13 @@ static func row(icon: String, title: String, line := "", trailing: Control = nul
 	content.add_child(words)
 	if trailing != null:
 		trailing.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		content.add_child(trailing)
+		# At large text a wide control at the end would leave the title a
+		# letter a line: it goes under the words instead.
+		if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO and trailing.get_combined_minimum_size().x > UI.px(64):
+			trailing.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+			words.add_child(trailing)
+		else:
+			content.add_child(trailing)
 	# The button under the words, so a control at the row's end keeps its
 	# own taps.
 	if pressed.is_valid():
@@ -174,6 +180,31 @@ static func chapter(school: String, title: String, kicker: String, count: String
 	c.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	band.add_child(c)
 	p.add_child(band)
+	return p
+
+
+## A chapter's album (the Codex, 13-law-codex.png): the school's band
+## sitting square on a cream panel that holds `body` (its law cards), one
+## piece edged in ink. The band is `chapter`'s; `body` is the screen's.
+static func album(school: String, title: String, kicker: String, count: String, body: Control) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.name = "Album"
+	p.add_theme_stylebox_override("panel", UI.clear_box(0, 0))
+	UI.dress(p, "album")
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 0)
+	var band := chapter(school, title, kicker, count)
+	# Square at its foot, on the cream, without its own drop.
+	var box := RbBox.of(band)
+	box.foot_points = 0.0
+	v.add_child(band)
+	var inner := MarginContainer.new()
+	inner.name = "Pages"
+	for side: String in ["margin_left", "margin_right", "margin_top", "margin_bottom"]:
+		inner.add_theme_constant_override(side, UI.px(10))
+	inner.add_child(body)
+	v.add_child(inner)
+	p.add_child(v)
 	return p
 
 

@@ -18,10 +18,11 @@ var clock_line: Label
 var realm_line: Label
 var across_line: Label
 var next_realm: Button
+## The deck of islands to land on.
+var deck: OverlayLandingDeck
 var _name: Label
 var _kicker: Label
 var _pill_holder: HBoxContainer
-var _tiles: HFlowContainer
 
 
 func _init(c: HeistController) -> void:
@@ -58,11 +59,11 @@ func _build_header() -> void:
 	title.add_theme_font_override("font", Tokens.font("display"))
 	title.set_meta("bold", true)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_ink(title)
+	ink(title)
 	header.add_child(title)
 	var hint := UI.label(Strings.t("LANDING_HINT"), 14.0, true)
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_ink(hint)
+	ink(hint)
 	header.add_child(hint)
 
 
@@ -83,12 +84,12 @@ func _build_hero(into: Container) -> void:
 	_name.set_meta("bold", true)
 	_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_name.add_theme_color_override("font_color", Tokens.color("gold"))
-	_ink(_name)
+	ink(_name)
 	names.add_child(_name)
 	_kicker = UI.label("", 13.0, true)
 	_kicker.theme_type_variation = "Kicker"
 	_kicker.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_ink(_kicker)
+	ink(_kicker)
 	names.add_child(_kicker)
 	hero.add_child(names)
 	_pill_holder = HBoxContainer.new()
@@ -115,28 +116,39 @@ func _build_words(into: Container) -> void:
 	into.add_child(glass)
 
 
-## The card of the spot on show, between the keys that turn to the spot
-## before and after; the next realm's key under it, across a universe.
+## The keys that turn to the spot before and after either side of the
+## words, then the deck: a card for each island (`OverlayLandingDeck`); the
+## next realm's key under it, across a universe.
 func _build_deck(into: Container) -> void:
-	var deck := HBoxContainer.new()
-	deck.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	deck.add_theme_constant_override("separation", UI.px(8))
-	deck.add_child(_turn(-1))
-	var card := UI.panel("parchment")
-	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_tiles = HFlowContainer.new()
-	_tiles.alignment = FlowContainer.ALIGNMENT_CENTER
-	_tiles.add_theme_constant_override("h_separation", UI.px(6))
-	_tiles.add_theme_constant_override("v_separation", UI.px(6))
-	card.add_child(_tiles)
-	deck.add_child(card)
-	deck.add_child(_turn(1))
-	into.add_child(deck)
+	var glass := into.get_child(into.get_child_count() - 1) as Control
+	var turns := HBoxContainer.new()
+	turns.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	turns.add_theme_constant_override("separation", UI.px(8))
+	into.remove_child(glass)
+	glass.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	turns.add_child(_turn(-1))
+	turns.add_child(glass)
+	turns.add_child(_turn(1))
+	into.add_child(turns)
+	deck = OverlayLandingDeck.new(controller)
+	# On the design's dark sheet.
+	var sheet := UI.panel("sheet")
+	sheet.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	sheet.add_child(deck)
+	deck.visibility_changed.connect(func() -> void: sheet.visible = deck.visible)
+	into.add_child(sheet)
 	next_realm = UI.action(Strings.t("LANDING_NEXT_REALM"), controller.next_realm, "leather")
 	next_realm.icon = Icons.texture("realms/theheart")
 	next_realm.add_theme_constant_override("icon_max_width", UI.px(20))
-	next_realm.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	into.add_child(next_realm)
+	next_realm.size_flags_horizontal = Control.SIZE_SHRINK_END
+	# In the deck's heading; at large text on a row of its own under it.
+	if Settings.text_scale >= 150:
+		next_realm.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		into.add_child(next_realm)
+	else:
+		deck.head.add_child(next_realm)
+	# Across a universe the next realm's key takes the hint's room.
+	next_realm.visibility_changed.connect(func() -> void: deck.hint.visible = not next_realm.visible)
 
 
 func _turn(step: int) -> Button:
@@ -204,46 +216,33 @@ func show_pick() -> void:
 	var fault: bool = m.get("fault", false)
 	var side: int = int(m["side"]) if m.has("side") else controller.world.size().x
 	var covered: bool = m.get("covered", false)
-	if fault:
-		_name.text = Strings.t("LANDING_FAULT_NAME")
-	else:
+	var edge := Strings.t("LANDING_FAULT_NAME")
+	if not fault:
 		var p := LandingPresenter.place(Vector2i(m["at"]), side)
-		_name.text = Strings.t("LANDING_EDGE_NAME", Strings.t("LANDING_" + str(p[0])))
+		edge = Strings.t("LANDING_EDGE_NAME", Strings.t("LANDING_" + str(p[0])))
+	_name.text = edge
 	_kicker.text = Strings.t("LANDING_SPOT_OF", [at + 1, marks.size()]).to_upper()
+	# Across a universe the realm is the name, as the design's ("Lantern
+	# Vale"), and the edge and spot its kicker.
+	if m.has("code"):
+		var realm := LandingPresenter.realm_name(int(m["code"]))
+		_name.text = realm.left(1).to_upper() + realm.substr(1)
+		_kicker.text = ("%s · %s" % [edge, _kicker.text]).to_upper()
 	for c: Node in _pill_holder.get_children():
 		c.queue_free()
 	_pill_holder.add_child(OverlayHud.badge(Strings.t("LANDING_PILL_COVERED" if covered else "LANDING_PILL_OPEN")
 		.to_upper(), "green_muted" if covered else "red", 15.0))
-	for c: Node in _tiles.get_children():
-		c.queue_free()
-	var seconds := int(m["ticks"]) / 30 if m.has("ticks") \
-		else controller.world.ticks() / RulebornReplay.ticks_per_second()
-	_tiles.add_child(_tile("heiststatus/heard", Strings.t("LANDING_SILENT") if covered
-		else Strings.t("LANDING_HEARD_TILES", controller.world.landing_reach()), Strings.t("LANDING_TILE_NOISE")))
-	_tiles.add_child(_tile("heiststatus/clock", "%d:%02d" % [seconds / 60, seconds % 60],
-		Strings.t("LANDING_TILE_CLOCK")))
-
-
-## A tile on the card: its mark, a value large, its name small.
-func _tile(icon: String, value: String, label: String) -> Control:
-	var tile := UI.panel("parchment")
-	tile.custom_minimum_size.x = UI.px(76)
-	tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 0)
-	box.add_child(Icons.view(icon, 22.0))
-	# Whole words: at large text a tile takes a line of its own instead.
-	var v := UI.label(value, 20.0)
-	v.add_theme_font_override("font", Tokens.font("display"))
-	v.set_meta("bold", true)
-	box.add_child(v)
-	var n := UI.label(label.to_upper(), 13.0)
-	box.add_child(n)
-	tile.add_child(box)
-	return tile
+	# The deck says each island's realm, links and spots: the glass keeps
+	# the realm and the spot on show.
+	across_line.visible = false
+	count_line.visible = false
+	# Across a universe the deck says how to choose: the hint gives it the
+	# room.
+	(header.get_child(1) as Control).visible = controller.universe.is_empty() and Settings.text_scale < 150
+	deck.show_pick()
 
 
 ## Words straight over the world, inked so they read over any island.
-static func _ink(l: Label) -> void:
+static func ink(l: Label) -> void:
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_deep"))
 	l.add_theme_constant_override("outline_size", UI.px(3))

@@ -22,6 +22,7 @@ static func item(i: Dictionary, me: String) -> Dictionary:
 	return {
 		"id": str(i["id"]), "mine": mine, "name": SocialPresenter.named(i.get("name", "")),
 		"title": Strings.t("WORKSHOP_ITEM", [SocialPresenter.named(i.get("name", "")), int(i.get("realmLevel", 1))]),
+		"level": Strings.t("BUILDER_LEVEL", int(i.get("realmLevel", 1))),
 		"stats": Strings.t("WORKSHOP_STATS", [_number(i.get("completions", 0)), _number(i.get("remixes", 0))]),
 		"ratings": Strings.t("WORKSHOP_RATINGS", [_one(r.get("fun")), _one(r.get("cleverness")),
 			_one(r.get("fairness")), _number(count)]) if count > 0 else Strings.t("WORKSHOP_UNRATED"),

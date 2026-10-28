@@ -1,5 +1,6 @@
 extends SceneTree
-## Defence curation over a dressed Heart, a post picked (tools/render/shoot.sh).
+## Defence curation over a dressed Heart, a post picked (tools/render/shoot.sh);
+## its hold as the server measured it (232 of 800 raids held).
 func _initialize() -> void:
 	_go()
 
@@ -9,6 +10,7 @@ func _go() -> void:
 	ShotKit.prepare()
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	var view := CurationTests.sample()
+	view["hold"] = {"status": "measured", "held": 232, "raids": 800}
 	App.services.store.dispatch(&"curation_loaded", {"view": view})
 	App.services.store.dispatch(&"curation_island", {"island": StageFixtures.island()})
 	App.services.store.dispatch(&"curation_words", {"words": FirstTests.words()})
@@ -18,5 +20,10 @@ func _go() -> void:
 	App.services.store.dispatch(&"curation_loaded", {"view": view})
 	App.services.store.dispatch(&"curation_island", {"island": StageFixtures.island()})
 	App.services.curation_flow.pick_post(Vector2i(7, 8))
+	# CTAB: another tab of the tray on show (layout, laws, name).
+	if OS.get_environment("CTAB") != "":
+		await process_frame
+		(screen as CurationScreen)._tab = OS.get_environment("CTAB")
+		(screen as CurationScreen)._refresh()
 	await ShotKit.settle(self, screen)
 	quit()

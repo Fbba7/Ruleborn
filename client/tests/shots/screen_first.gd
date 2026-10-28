@@ -20,6 +20,11 @@ func _go() -> void:
 	root.add_child(screen)
 	for i in 20:
 		await process_frame
+	# STEPS moves on that many beats (the protections, the name).
+	for i in int(OS.get_environment("STEPS")) if OS.get_environment("STEPS") != "" else 0:
+		await screen.controller.next()
+		for j in 4:
+			await process_frame
 	screen.stage.moving = false
 	screen.stage.at_time(2.0)
 	for i in 3:

@@ -31,7 +31,7 @@ GODOT_TYPE = {
     "Other Usage Data": "other_usage_data", "Product Interaction": "product_interaction",
     "Crash Data": "crash_data", "Other Data Types": "other_data_types",
     "Customer Support": "customer_support", "Performance Data": "performance_data",
-    "Other Diagnostic Data": "other_diagnostic_data",
+    "Other Diagnostic Data": "other_diagnostic_data", "Coarse Location": "coarse_location",
 }
 
 #: Godot's collection-purpose flags, in its order.

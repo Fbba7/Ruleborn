@@ -24,6 +24,17 @@
    "about": "the push token",
    "optional": true
   },
+  "coarse-location": {
+   "apple": [
+    "Location",
+    "Coarse Location"
+   ],
+   "google": [
+    "Location",
+    "Approximate location"
+   ],
+   "about": "the country a signed-in device was last seen in, for its devices list; never an address"
+  },
   "purchase-history": {
    "apple": [
     "Purchases",
@@ -1987,7 +1998,47 @@
     },
     "ended": {
      "type": "other-usage",
-     "holds": "why it ended: signed out, everywhere, reused, deleted, banned, identity"
+     "holds": "why it ended: signed out, everywhere, reused, deleted, banned, identity, device, others"
+    },
+    "via": {
+     "type": "other-usage",
+     "holds": "which platform signed it in: Game Center or Google, not the identity"
+    },
+    "device": {
+     "type": "other",
+     "holds": "the device's kind as it says: iPhone, iPad, Android phone or tablet, PC"
+    },
+    "model": {
+     "type": "other",
+     "holds": "the device's model as it names it, at most 32 plain characters, for the devices list"
+    },
+    "place": {
+     "type": "coarse-location",
+     "holds": "the country the edge saw it last in (ISO 3166 code), never the address"
+    }
+   }
+  },
+  "linked_identities": {
+   "about": "A second platform identity an account also signs in with, one of the other platform: one account across iPhone, iPad and Android (docs/security/auth.md).",
+   "purposes": [
+    "account",
+    "security"
+   ],
+   "keep": {
+    "for": "account"
+   },
+   "deletion": "erased",
+   "columns": {
+    "identity": {
+     "type": "user-id",
+     "holds": "the linked Game Center player id or Google account id"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    },
+    "linked_at": {
+     "type": "interaction"
     }
    }
   },

@@ -102,6 +102,7 @@ static func friends_loaded(s: Dictionary, p: Dictionary) -> Dictionary:
 	next["blocked"] = p.get("blocked", [])
 	next["busy"] = false
 	next["error"] = ""
+	next["loaded"] = true
 	return next
 
 

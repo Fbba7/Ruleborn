@@ -130,6 +130,13 @@ static func dome(f: float) -> float:
 func build(body: Geo, hero: Geo, glows: UniversePaint, light: UniversePaint, flow: UniversePaint,
 		buildings: Array) -> void:
 	if ghost:
+		# A realm still to open hangs where it will be, as the designs' locked
+		# realm does: its rock and meadow whole but dimmed toward the night,
+		# no buildings yet, and its ring of mist.
+		_dim()
+		_top(body)
+		_rock(body, hero)
+		_dress(hero, UniversePaint.new())
 		_ghost(glows, light)
 		return
 	_top(body)
@@ -574,6 +581,15 @@ func _spots() -> Array[Vector3]:
 			var a := turn + TAU * k / n + (0.5 / n if f > 0.5 else 0.0)
 			out.append(point(a, f) if f > 0.0 else at)
 	return out
+
+
+## The palette dimmed toward the night and greyed, for a realm not yet open.
+func _dim() -> void:
+	for k: String in palette:
+		if palette[k] is Color:
+			var c: Color = palette[k]
+			var grey := Color(c.get_luminance(), c.get_luminance(), c.get_luminance(), c.a)
+			palette[k] = c.lerp(grey, 0.3).lerp(Color("#1A1134"), 0.25)
 
 
 ## A realm still to open: a faint ring of mist where it will hang.
