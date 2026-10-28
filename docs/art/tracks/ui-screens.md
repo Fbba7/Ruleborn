@@ -173,13 +173,15 @@ Stills: `docs/art/shots/ui-screens/w5-<screen>.png`, the design's still on the l
 | 37 League | the crew's invite a plain line | large on parchment, as Friends shows a code |
 | 38 Profile's records | figures alone on plain tiles | each record's mark beside its figure, dimmed while no fact is kept |
 | 39 Profile's badges | every badge the same small star | the medal in its grade's frame, dim until earned |
+| 40 Settings' Access | switches and the hold under one heading | the design's sections: Seeing and comfort, then Controls and pace |
+| 41 First launch | a stone golem in the middle | the design's three: Emberling, Featherkin in front, Stormhound |
 | 12 Large text and contrast | Harmony's Sounding pill at 12 points, its band 1151 px wide at 200%; the share card's dash 3.7:1 on the bright material; Workshop's remix tag squeezed narrow | 13 points and under the name at large text; the share card on the lit card, inked at 12%; the remix tag on its own line |
 
 Every changed screen checked at 150% and 200% in six languages and in high contrast by `A11yTests` (the fast runner below); grayscale thumbnails of Harmony and Workshop compared.
 
 ## Hooks in other tracks' files, wave 5
 
-- `client/scripts/auth_panel.gd` (T11): `signal built`, emitted at the end of `_build`, so a host screen dresses the panel after each build. Two lines; behaviour, words and the confirm unchanged. **For T11:** the Account tab dresses the panel's own nodes (the heading beside a mark, the status plate on parchment, buttons in the screens' materials); if the panel's children change order or kind, `ScreenAccount.dress` needs the same change.
+- `client/scripts/auth_panel.gd` (T11): a `built` signal let the Account tab dress T11's panel. In deploy 2 T11 rebuilt the panel from this track's `ScreenParts` itself, so the hook and `ScreenAccount`'s dressing are gone; `ScreenAccount` keeps the Profile row and the no-tracking note under it.
 
 ## Draw calls, wave 5 (540 × 1170, `calls` line)
 
@@ -189,7 +191,7 @@ Harmony 137 (was 162; the stage alone without the laws' cards 118), Weaving 124 
 
 ## Stopped here (wave 5)
 
-About 23:20 UTC, then continued to 06:00 (the owner's extension). Deploys 2 and 3 merged in (00:55 and 02:20 UTC on 28 October); `check_all` prints "All checks passed" on the pushed head. 39 rounds this wave, listed above; stills `docs/art/shots/ui-screens/w5-*.png`.
+About 23:20 UTC, then continued to 06:00 (the owner's extension). Deploys 2 and 3 merged in (00:55 and 02:20 UTC on 28 October); `check_all` prints "All checks passed" on the pushed head. 41 rounds this wave, listed above; stills `docs/art/shots/ui-screens/w5-*.png`.
 
 The fast runner, `client/tests/_mine.gd` (kept out of git): `ONLY=<screens>` runs `A11yTests` over those screens (contrast in both modes, 150% and 200% in six languages); `FILES=<tests>` runs test files taking `(tree, check, mount, url)`, `FILES3=` those taking `(tree, check, url)`. It skips run.gd's catalogue and corner checks; the full client suite (`python3 client/status.py`) covers them.
 
