@@ -161,6 +161,13 @@ Stills: `docs/art/shots/ui-screens/w5-<screen>.png`, the design's still on the l
 | 25 Season | reward words in lower case ("a realm skin") | each leads with a capital |
 | 26 Every screen at 200% again | Share's kicker one letter a line; Settings' Language one letter a line; Harmony's stage cards covering the realm | the kicker takes the card's width; the language under its name; the stage shows the marks alone |
 | 27 Weaving | Take out as large as the weave | 13 points under its slot |
+| 28 Codex | the summary card four lines tall, the law worked on buried in it | the summary compact (ring, title, laws met, Keeper, Spire); the law worked on with its mark and the next chapter as the design's next-lead card |
+| 29 Shop | the featured card's kicker as plain gold words | the design's gold tag |
+| 30 Season | no crowning reward at the head of the track | the season's last reward headed large with its lane and tier (left out at large text, where the road comes first) |
+| 31 Lab | level and price on two lines | one line where they fit |
+| 32 Share's invite | "Invite a friend" said twice, the gift small | the gift large on a lit card with what both players get |
+| 33 Harmony | each combination a long sentence with its percentage at the edge | the design's combination card: its kind and its cost change on pills over its words |
+| 34 Profile | the card headed by level and league, no one named | the Keeper by name and face at its head, as friends see them (`ME=<account>` in the shot script) |
 | 12 Large text and contrast | Harmony's Sounding pill at 12 points, its band 1151 px wide at 200%; the share card's dash 3.7:1 on the bright material; Workshop's remix tag squeezed narrow | 13 points and under the name at large text; the share card on the lit card, inked at 12%; the remix tag on its own line |
 
 Every changed screen checked at 150% and 200% in six languages and in high contrast by `A11yTests` (the fast runner below); grayscale thumbnails of Harmony and Workshop compared.
@@ -177,7 +184,7 @@ Harmony 137 (was 162; the stage alone without the laws' cards 118), Weaving 124 
 
 ## Stopped here (wave 5)
 
-About 23:20 UTC, then continued to 06:00 (the owner's extension). Main had not moved since d2343591; `check_all` prints "All checks passed" on the pushed head. 27 rounds this wave, listed above; stills `docs/art/shots/ui-screens/w5-*.png`.
+About 23:20 UTC, then continued to 06:00 (the owner's extension). Main had not moved since d2343591; `check_all` prints "All checks passed" on the pushed head. 34 rounds this wave, listed above; stills `docs/art/shots/ui-screens/w5-*.png`.
 
 The fast runner, `client/tests/_mine.gd` (kept out of git): `ONLY=<screens>` runs `A11yTests` over those screens (contrast in both modes, 150% and 200% in six languages); `FILES=<tests>` runs test files taking `(tree, check, mount, url)`, `FILES3=` those taking `(tree, check, url)`. It skips run.gd's catalogue and corner checks; the full client suite (`python3 client/status.py`) covers them.
 
@@ -185,7 +192,11 @@ Shot script switches added this wave: `TAB=<tab>` (Settings, Friends, Profile), 
 
 Still worse than the design, in order of how much a first-time player would notice:
 1. Art the design has and the game does not: the Shop's featured set and daily picks, the Lab's test realm, friends' portraits (the server keeps no avatar).
-2. The Season track has no hero card for the season's crowning reward (tried; it pushed the road below the fold with the sample's plain words).
+2. The Season track's reward cards have no rank headers (the server sends no rank for a reward).
 3. Settings has no Wellbeing tab (the game keeps no play time).
 
 Next: T9's tab bar words at German lengths; a Season hero once rewards have names; the Lab's chambers shorter (the sphere buttons' words are what its test reads).
+
+## Draw calls after deploy 2 merged (00:55 UTC, 28 October)
+
+Main's new buildings brought Harmony back to 145. `ScreenHarmonyStage` now also builds its realm bare but for the laws woven (its own `island`, without the props the law card's preview sets out for signatures): 139. Weaving went back to T5's `LawFxPreview` with only the shadow pass off: 113 at the top, 133 scrolled. The rest: Codex 123, Law card 117, Lab 101, Workshop 90, Profile 75, Season 69 (T9's rail now batched), Friends 68, Shop 63, League 42, Settings 38, First launch 26, Share 25.

@@ -109,19 +109,29 @@ func _hero(p: Dictionary) -> Control:
 	# The design's identity card: the Keeper and the figure on the left, the
 	# league's crest on the right.
 	var top := HBoxContainer.new()
-	top.add_theme_constant_override("separation", UI.px(12))
+	top.add_theme_constant_override("separation", UI.px(10))
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.add_theme_constant_override("separation", UI.px(2))
 	words.alignment = BoxContainer.ALIGNMENT_CENTER
+	# The Keeper by name, as friends see them, over the level and league.
+	var me := str(App.services.store.get_slice(AppState.SESSION)["account"])
+	if me != "":
+		words.add_child(ScreenKit.text(SocialPresenter.who(me, ""), 22.0, "name", "card_lit", false, true))
 	words.add_child(ScreenKit.text(p["header"], 13.0, "words", "card_lit", true, true))
 	var big := ScreenKit.text(ShopPresenter.grouped(int(p["renown_n"])), 34.0, "number", "card_lit")
 	ScreenKit.inked(big, 1.5)
 	big.add_theme_color_override("font_color", Tokens.color("gold_top"))
 	words.add_child(big)
 	words.add_child(ScreenKit.text(p["renown"][0], 13.0, "words", "card_lit", true, true))
+	if me != "":
+		var face := ScreenParts.face(SocialPresenter.who(me, ""), 52.0)
+		face.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		top.add_child(face)
+		top.move_child(face, 0)
 	top.add_child(words)
-	var crest := ScreenKit.icon("leagues", p["league"], 72.0)
+	# Smaller beside the Keeper's face, so the words keep their lines.
+	var crest := ScreenKit.icon("leagues", p["league"], 56.0 if me != "" else 72.0)
 	crest.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	top.add_child(crest)
 	var box := VBoxContainer.new()

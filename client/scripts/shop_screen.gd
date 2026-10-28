@@ -157,8 +157,9 @@ func _featured(item: Dictionary, busy: bool, friend: Dictionary) -> Control:
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	words.add_theme_constant_override("separation", UI.px(4))
-	var kicker := ScreenKit.text(Strings.t("SCREEN_FEATURED").to_upper(), 13.0, "words", "card")
-	kicker.add_theme_color_override("font_color", Tokens.color("gold"))
+	# The design's gold tag over the name.
+	var kicker := ScreenParts.pill(Strings.t("SCREEN_FEATURED").to_upper(), "gold", "", "", 13.0)
+	kicker.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	words.add_child(kicker)
 	var name := ScreenKit.text(item.get("title", item["name"]), 26.0, "name", "card", false, true)
 	name.tooltip_text = Strings.t("SHOP_ITEM", [item["name"], item["price"]])

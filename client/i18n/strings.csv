@@ -1416,6 +1416,11 @@ SCREEN_SLOT_RESTING,Resting,Resting,Descansando,A descansar,Ruht,Au repos
 SCREEN_SLOT_LOCKED,Locked,Locked,Bloqueado,Bloqueado,Gesperrt,Verrouillé
 SCREEN_CHAPTER,Ch. %d,Ch. %d,Cap. %d,Cap. %d,Kap. %d,Ch. %d
 SCREEN_TEXT_A,A,A,A,A,A,A
+SCREEN_KIND_HARMONY,Harmony,Harmony,Harmonia,Harmonia,Harmonie,Harmonie
+SCREEN_KIND_DISSONANCE,Clash,Clash,Choque,Choque,Missklang,Dissonance
+SCREEN_KIND_RESONANCE,Resonance,Resonance,Ressonância,Ressonância,Resonanz,Résonance
+SCREEN_KIND_CHORD,Chord,Chord,Acorde,Acorde,Akkord,Accord
+SCREEN_NEXT_LEAD,Next lead,Next lead,Próxima pista,Próxima pista,Nächste Spur,Prochaine piste
 SCREEN_LAW_OF,Law %d of %d,Law %d of %d,Lei %d de %d,Lei %d de %d,Gesetz %d von %d,Loi %d sur %d
 SCREEN_LAW_PREVIOUS,"Previous law, %s","Previous law, %s","Lei anterior, %s","Lei anterior, %s","Vorheriges Gesetz, %s","Loi précédente, %s"
 SCREEN_LAW_NEXT,"Next law, %s","Next law, %s","Próxima lei, %s","Lei seguinte, %s","Nächstes Gesetz, %s","Loi suivante, %s"
@@ -1445,7 +1450,6 @@ SCREEN_LEAKED,Leaked,Leaked,Vazadas,Vazadas,Durchbrochen,Percées
 SCREEN_SHOW_REALM,Show %s above,Show %s above,Mostrar %s acima,Mostrar %s acima,%s oben zeigen,Montrer %s en haut
 SCREEN_FRIENDS_ADD,Play with more friends,Play with more friends,Jogue com mais amigos,Joga com mais amigos,Mit mehr Freunden spielen,Jouer avec plus d’amis
 SCREEN_SHARE_CHALLENGE,Your island as a challenge,Your island as a challenge,Sua ilha como desafio,A tua ilha como desafio,Deine Insel als Herausforderung,Ton île en défi
-SCREEN_SHARE_INVITE,Invite a friend,Invite a friend,Convide um amigo,Convida um amigo,Lade einen Freund ein,Invite un ami
 SCREEN_SHARE_TITLE,Share,Share,Compartilhar,Partilhar,Teilen,Partager
 SCREEN_PLAYS,Cleared,Cleared,Concluídas,Concluídas,Geschafft,Réussies
 SCREEN_PROFILE_RECORD,Heists and defence,Heists and defense,Assaltos e defesa,Assaltos e defesa,Raubzüge und Verteidigung,Casses et défense

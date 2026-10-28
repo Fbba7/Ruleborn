@@ -71,14 +71,17 @@ func _refresh() -> void:
 	var invite := VBoxContainer.new()
 	invite.add_theme_constant_override("separation", UI.px(8))
 	invite.set_meta("section", "invite")
-	invite.add_child(_title("social", "invite", Strings.t("SCREEN_SHARE_INVITE")))
-	var gift := HBoxContainer.new()
-	gift.add_theme_constant_override("separation", UI.px(10))
-	gift.add_child(ScreenKit.icon("shopcosmetics", "gift", 44.0))
-	var words := ScreenKit.text(s["gift"], 15.0, "words", "card", false, true)
-	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# The gift as the challenge's share card shows its island: large, with
+	# what both players get beneath.
+	var gift := VBoxContainer.new()
+	gift.add_theme_constant_override("separation", UI.px(6))
+	var mark := ScreenKit.icon("shopcosmetics", "gift", 96.0)
+	mark.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	gift.add_child(mark)
+	var words := ScreenKit.text(s["gift"], 15.0, "words", "card_lit", false, true)
+	words.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	gift.add_child(words)
-	invite.add_child(gift)
+	invite.add_child(ScreenKit.panel("card_lit", gift, 18.0, 14.0))
 	if s["invitation"] != "":
 		var said := ScreenKit.text(s["invitation"], 15.0, "words", "parchment", false, true)
 		invite.add_child(ScreenKit.panel("parchment", said, 14.0, 10.0))
