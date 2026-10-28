@@ -167,6 +167,7 @@ Stills: `docs/art/shots/ui-screens/w5-<screen>.png`, the design's still on the l
 | 31 Lab | level and price on two lines | one line where they fit |
 | 32 Share's invite | "Invite a friend" said twice, the gift small | the gift large on a lit card with what both players get |
 | 33 Harmony | each combination a long sentence with its percentage at the edge | the design's combination card: its kind and its cost change on pills over its words |
+| 34 Profile | the card headed by level and league, no one named | the Keeper by name and face at its head, as friends see them (`ME=<account>` in the shot script) |
 | 12 Large text and contrast | Harmony's Sounding pill at 12 points, its band 1151 px wide at 200%; the share card's dash 3.7:1 on the bright material; Workshop's remix tag squeezed narrow | 13 points and under the name at large text; the share card on the lit card, inked at 12%; the remix tag on its own line |
 
 Every changed screen checked at 150% and 200% in six languages and in high contrast by `A11yTests` (the fast runner below); grayscale thumbnails of Harmony and Workshop compared.
@@ -183,7 +184,7 @@ Harmony 137 (was 162; the stage alone without the laws' cards 118), Weaving 124 
 
 ## Stopped here (wave 5)
 
-About 23:20 UTC, then continued to 06:00 (the owner's extension). Main had not moved since d2343591; `check_all` prints "All checks passed" on the pushed head. 33 rounds this wave, listed above; stills `docs/art/shots/ui-screens/w5-*.png`.
+About 23:20 UTC, then continued to 06:00 (the owner's extension). Main had not moved since d2343591; `check_all` prints "All checks passed" on the pushed head. 34 rounds this wave, listed above; stills `docs/art/shots/ui-screens/w5-*.png`.
 
 The fast runner, `client/tests/_mine.gd` (kept out of git): `ONLY=<screens>` runs `A11yTests` over those screens (contrast in both modes, 150% and 200% in six languages); `FILES=<tests>` runs test files taking `(tree, check, mount, url)`, `FILES3=` those taking `(tree, check, url)`. It skips run.gd's catalogue and corner checks; the full client suite (`python3 client/status.py`) covers them.
 
