@@ -111,12 +111,8 @@ func _layout() -> void:
 
 	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_ACCESS")))
 	access.add_child(_text_card())
-	var hold_name := Strings.t("SETTINGS_HOLD", seconds(Settings.hold_ms))
-	var holds := Settings.hold_steps()
-	access.add_child(_stepper("remindertime", ScreenKit.text(hold_name, 15.0, "words", "card"), hold_step.bind(-1),
-		hold_step.bind(1), Strings.t("SETTINGS_SHORTER", hold_name), Strings.t("SETTINGS_LONGER", hold_name), "hold",
-		float(holds.find(Settings.hold_ms)) / float(maxi(holds.size() - 1, 1))))
 	# The design's "Seeing and comfort": the switches as rows of one card.
+	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_COMFORT")))
 	var comfort := VBoxContainer.new()
 	comfort.add_theme_constant_override("separation", 0)
 	for toggle: Array in [
@@ -128,6 +124,13 @@ func _layout() -> void:
 			comfort.add_child(_divider())
 		comfort.add_child(_toggle(toggle[0], toggle[1], toggle[2], true))
 	access.add_child(ScreenKit.panel("card", comfort, 18.0, 4.0))
+	# And "Controls and pace": how long a hold is.
+	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_PACE")))
+	var hold_name := Strings.t("SETTINGS_HOLD", seconds(Settings.hold_ms))
+	var holds := Settings.hold_steps()
+	access.add_child(_stepper("remindertime", ScreenKit.text(hold_name, 15.0, "words", "card"), hold_step.bind(-1),
+		hold_step.bind(1), Strings.t("SETTINGS_SHORTER", hold_name), Strings.t("SETTINGS_LONGER", hold_name), "hold",
+		float(holds.find(Settings.hold_ms)) / float(maxi(holds.size() - 1, 1))))
 	# The profile row and the privacy note under T11's panel (ScreenAccount).
 	account.add_child(ScreenAccount.profile_row())
 	account.add_child(ScreenAccount.privacy_note())
