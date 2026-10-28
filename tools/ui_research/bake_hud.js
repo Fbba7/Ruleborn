@@ -298,6 +298,11 @@ piece('icon_bag', 96, 96, icon_bag(48, 48, 84));
 piece('bell_off', 64, 64, icon_bell(32, 32, 54, false, false));
 piece('bell_amber', 64, 64, icon_bell(32, 32, 54, true, false));
 piece('bell_red', 64, 64, icon_bell(32, 32, 54, true, true));
+piece('coin', 64, 64, `<circle cx="32" cy="35" r="27" fill="${INK}"/>
+  <circle cx="32" cy="32" r="26" fill="#C97616" stroke="${INK}" stroke-width="5"/>
+  <circle cx="32" cy="30" r="21" fill="url(#gold)" filter="url(#bevel)"/>
+  <path d="M32,17 L35.5,26.5 L45,27 L37.5,33 L40,42.5 L32,37 L24,42.5 L26.5,33 L19,27 L28.5,26.5 Z" fill="#B86E1A" opacity="0.85"/>
+  <path d="M18,24 A16,16 0 0 1 30,14" stroke="#FFFBEA" stroke-width="4" stroke-linecap="round" fill="none"/>`);
 piece('pip', 40, 40, gem(20, 20, 34, ['#E8FFFF', '#7FE6FF', '#2C8FD0']));
 piece('pip_spent', 40, 40, gem(20, 20, 34, ['#5A4A70', '#3A2C50', '#241A34']));
 piece('tick', 26, 58, `<path d="M5,4 L21,4 L13,20 Z" fill="#FFF4C2" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
@@ -306,9 +311,14 @@ piece('tick', 26, 58, `<path d="M5,4 L21,4 L13,20 Z" fill="#FFF4C2" stroke="${IN
 // digits, which never need translating, are pictures).
 const GLYPHS = { '0': '0', '1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9',
   colon: ':', comma: ',', slash: '/', tilde: '~', percent: '%', plus: '+', x: '×' };
+// Each finish only the marks it shows: the clock's colon, the alarm's slash,
+// the loot's comma, tilde and plus.
+const MARKS = { timer: ['colon'], timer_red: ['colon'], gold: ['comma', 'tilde', 'plus', 'percent', 'x'],
+  white: ['slash', 'colon', 'comma', 'percent'] };
 for (const [style, size, fill] of [['timer', 104, 'whiteText'], ['timer_red', 104, 'redText'],
   ['gold', 62, 'goldText'], ['white', 50, 'whiteText']]) {
   for (const [k, ch] of Object.entries(GLYPHS)) {
+    if (!/^[0-9]$/.test(k) && !MARKS[style].includes(k)) continue;
     const h = Math.round(size * 1.35), w = Math.round(size * (ch === '1' ? 0.7 : ch === ':' || ch === ',' ? 0.45 : 0.8));
     piece(`num_${style}_${k}`, w, h, display(ch, w / 2, size * 1.0, size, fill));
   }

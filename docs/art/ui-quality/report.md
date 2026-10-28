@@ -221,15 +221,16 @@ It is drawn over the same heist moment as the deployed screen, with the same dat
 - `proof-heist-hud.png`: before, after and the design.
 - `proof-heist-top.png` and `proof-heist-bottom.png`: detail crops.
 - `proof-atlas.png`: the whole atlas.
+- `proof-motion.png`: the press and the coin flight as frames.
 
 **How it is made.**
-- `tools/ui_research/bake_hud.js` draws 91 pieces as SVG in headless Chromium:
+- `tools/ui_research/bake_hud.js` draws 75 pieces as SVG in headless Chromium:
   - lit gold bevels (`feSpecularLighting` on the rim's alpha);
   - enamel grain (`feTurbulence`), an inner shadow under the rim, a gloss band and studs;
   - buttons with a thick lip and a sunk pressed face;
   - painted icons (the door, the wand, the bag, three bell states, gems);
   - numerals in four finishes, each with a gradient fill, a thick ink stroke and a hard drop.
-- `tools/ui_research/pack_atlas.py` packs them into one 1024² atlas (lossless WebP, 390 KB) with a manifest of regions and 9-slice margins.
+- `tools/ui_research/pack_atlas.py` packs them into one 1024² atlas (lossless WebP, 366 KB) with a manifest of regions and 9-slice margins.
 - In Godot (`client/prototypes/ui_quality/`):
   - `UiqArt` turns the manifest into `NinePatchRect`s, `AtlasTexture` sprites and glyph rows;
   - `UiqHud` lays out the HUD;
@@ -249,8 +250,14 @@ Getting there taught three rules the kit will need:
 - Buttons look pressable.
 - Every icon has an outline and a highlight.
 
+**Motion.** `proof-motion.png` (`tests/shots/uiq_motion.gd`, curves in `UiqJuice`) shows five moments:
+- Top: Get out pressed and let go. It sinks onto its lip and squashes to 92%, then springs back past its size with a back-ease and settles, all within 0.4 s.
+- Below: coins fly in a stagger along an arc into the loot panel's bag. The number rolls up as each lands and the panel pulses. The lower row's columns are fractions of the flight, not the stamped times.
+
+These are the curves a screen would tween along. A still strip is how the art director would judge motion.
+
 **What it does not show.**
-- Motion: the press face exists, but there is no flight, no pulse and no shine.
+- An idle shine sweep, and sound.
 - High contrast and 200% text: the 9-slices scale, but they are not bake-tested.
 - An artist's hand: the icons are competent vector paintings, not CR-grade renders.
 
@@ -268,6 +275,8 @@ Against the rubric, the heist goes from 1.5–2 to about 3.5 on qualities 1–3.
   - `pack_atlas.py`: the atlas;
   - `compare.py`: the side-by-side images, kept under 400 KB.
 - `client/prototypes/ui_quality/`: `uiq_art.gd`, `uiq_hud.gd`, `uiq_medal.gd` and `art/`.
+- `client/prototypes/ui_quality/uiq_juice.gd`: the motion curves.
+- `client/tests/shots/uiq_motion.gd`: the motion strip.
 - `client/tests/shots/uiq_heist_hud.gd`: the before and after shots. `OLD=1` gives the before; `HIDE=pause_button,hud,actions_band` gives a fair draw count.
 
 To reproduce:
