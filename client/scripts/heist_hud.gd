@@ -15,6 +15,9 @@ extends VBoxContainer
 ## §21.8: the clock turns red in its last 30 seconds.
 const RED_SECONDS := 30
 const BELLS := 6
+## The loot panel's names: the design's soft lilac, light enough to read on
+## the leather at §21.10's level.
+const SOFT_INK := Color("#E2DAF8")
 
 var clock_label: Label
 var alarm_label: Label
@@ -145,7 +148,7 @@ func _init() -> void:
 	loot_bars.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right_box.add_child(loot_bars)
 	load_label = FxSkin.label("", 13.0)
-	load_label.add_theme_color_override("font_color", FxSkin.PARCH_BOTTOM)
+	load_label.add_theme_color_override("font_color", SOFT_INK)
 	load_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	load_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	right_box.add_child(load_label)
@@ -171,12 +174,14 @@ func _stat(box: VBoxContainer, title: String, whole := false) -> Label:
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_theme_constant_override("separation" if whole else "h_separation", UI.px(3))
 	var name_label := FxSkin.label(title, 14.0)
-	name_label.add_theme_color_override("font_color", FxSkin.PARCH_BOTTOM)
+	# The design's: the name in soft lilac, the number in warm cream.
+	name_label.add_theme_color_override("font_color", SOFT_INK)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(name_label)
 	var number := FxSkin.label("", 16.0)
 	number.add_theme_font_override("font", FxSkin.figures())
+	number.add_theme_color_override("font_color", FxSkin.PARCH_BOTTOM)
 	number.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	number.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(number)
