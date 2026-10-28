@@ -5,36 +5,36 @@
   "days": 3,
   "heistsPerDay": 4,
   "sessionsPerDay": 5,
-  "writesPerPlayerDay": 48.12,
+  "writesPerPlayerDay": 46.24,
   "periodicWritesADay": {
    "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 9.11,
+  "writesPerHeist": 8.65,
   "byOperation": {
    "session": 5.67,
    "telemetry batch": 5,
    "raid badge": 0,
-   "defence log": 1,
+   "defence log": 0.99,
    "observatory": 0,
    "lease": 4,
-   "heist: validate and grant": 32.46
+   "heist: validate and grant": 30.58
   },
-  "billedRowsPerPlayerDay": 69.49,
-  "billedPerHeist": 14.12,
+  "billedRowsPerPlayerDay": 65.74,
+  "billedPerHeist": 13.19,
   "billedByOperation": {
    "session": 7,
    "telemetry batch": 5,
    "raid badge": 0,
-   "defence log": 1,
+   "defence log": 0.99,
    "observatory": 0,
    "lease": 8,
-   "heist: validate and grant": 48.49
+   "heist: validate and grant": 44.75
   },
   "validationMs": {
-   "p50": 14.2,
-   "p95": 23.9,
-   "max": 35.1
+   "p50": 13.8,
+   "p95": 24.2,
+   "max": 36.3
   },
   "firstHeist": {
    "rows": 36.2,
@@ -44,30 +44,30 @@
    "heists": 12,
    "event_batches": 11,
    "leases": 8,
-   "season_stars": 8,
    "ratings": 8,
    "ledger": 7.41,
    "sessions": 5,
-   "accounts": 5,
+   "accounts": 4.99,
+   "season_stars": 4.26,
    "notifications": 4,
    "codex": 1.08,
    "target_lists": 0.4
   },
-  "readsPerPlayerDay": 925.7,
-  "readsPerHeist": 105.7,
+  "readsPerPlayerDay": 923.9,
+  "readsPerHeist": 105.2,
   "readsByOperation": {
    "session": 19.3,
    "telemetry batch": 30,
-   "raid badge": 55.1,
+   "raid badge": 55.2,
    "defence log": 40.8,
    "observatory": 357.7,
    "lease": 93.7,
-   "heist: validate and grant": 329
+   "heist: validate and grant": 327.1
   },
   "readsPerPlayerByDay": [
-   610.7,
-   954.1,
-   1212.3
+   608.9,
+   952.2,
+   1210.5
   ],
   "periodicReadsADayAnIsland": {
    "target lists (x24)": 121.6,
@@ -113,7 +113,7 @@
     "SELECT h.outcome FROM heists h JOIN leases l ON l.token = h.token WHERE h.attacker = ? AND h.validated = 1 AND l.mode = 'raid' ORDER BY h.day DESC, h.submitted_"
    ],
    [
-    45.1,
+    45.2,
     "SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token WHERE h.defender = ? AND h.submitted_at >= ? AND h.submitted_at > ? AND h.validated = 1 AN"
    ],
    [
@@ -142,16 +142,16 @@
    "overBudget": 1,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 1439,
+   "freePlanPlayersADay": 1521,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
-    "100000": 24,
-    "1000000": 650
+    "100000": 21,
+    "1000000": 612
    },
    "readBudget": 2500,
    "readsOverBudget": 0.37,
-   "freePlanReadsPlayersADay": 4769,
+   "freePlanReadsPlayersADay": 4777,
    "readDollarsAMonth": {
     "1000": 0,
     "10000": 0,
@@ -166,36 +166,36 @@
   "days": 3,
   "heistsPerDay": 2,
   "sessionsPerDay": 3,
-  "writesPerPlayerDay": 26.16,
+  "writesPerPlayerDay": 25.17,
   "periodicWritesADay": {
    "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 9.25,
+  "writesPerHeist": 8.75,
   "byOperation": {
    "session": 3.67,
    "telemetry batch": 3,
    "raid badge": 0,
-   "defence log": 1,
+   "defence log": 0.99,
    "observatory": 0,
    "lease": 2,
-   "heist: validate and grant": 16.49
+   "heist: validate and grant": 15.51
   },
-  "billedRowsPerPlayerDay": 37.79,
-  "billedPerHeist": 14.39,
+  "billedRowsPerPlayerDay": 35.81,
+  "billedPerHeist": 13.41,
   "billedByOperation": {
    "session": 5,
    "telemetry batch": 3,
    "raid badge": 0,
-   "defence log": 1,
+   "defence log": 0.99,
    "observatory": 0,
    "lease": 4,
-   "heist: validate and grant": 24.79
+   "heist: validate and grant": 22.81
   },
   "validationMs": {
-   "p50": 13.4,
-   "p95": 23.8,
-   "max": 35.4
+   "p50": 14.1,
+   "p95": 24.3,
+   "max": 36.1
   },
   "firstHeist": {
    "rows": 36.2,
@@ -205,17 +205,17 @@
    "event_batches": 7,
    "heists": 6,
    "leases": 4,
-   "season_stars": 4,
    "ratings": 4,
    "ledger": 3.92,
    "sessions": 3,
-   "accounts": 3,
+   "accounts": 2.99,
+   "season_stars": 2.02,
    "notifications": 2,
    "codex": 0.87,
    "target_lists": 0.4
   },
-  "readsPerPlayerDay": 339.7,
-  "readsPerHeist": 73.1,
+  "readsPerPlayerDay": 338.7,
+  "readsPerHeist": 72.6,
   "readsByOperation": {
    "session": 11.3,
    "telemetry batch": 18,
@@ -223,12 +223,12 @@
    "defence log": 20.2,
    "observatory": 123.6,
    "lease": 28.7,
-   "heist: validate and grant": 117.5
+   "heist: validate and grant": 116.5
   },
   "readsPerPlayerByDay": [
-   254.7,
-   343.9,
-   420.6
+   254.2,
+   342.6,
+   419.4
   ],
   "periodicReadsADayAnIsland": {
    "target lists (x24)": 121.6,
@@ -300,19 +300,19 @@
   ],
   "against": {
    "budget": 24,
-   "overBudget": 1.1,
+   "overBudget": 1,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 2646,
+   "freePlanPlayersADay": 2792,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
     "100000": 5,
-    "1000000": 333
+    "1000000": 313
    },
    "readBudget": 2500,
    "readsOverBudget": 0.14,
-   "freePlanReadsPlayersADay": 10815,
+   "freePlanReadsPlayersADay": 10838,
    "readDollarsAMonth": {
     "1000": 0,
     "10000": 0,
@@ -327,36 +327,36 @@
   "days": 3,
   "heistsPerDay": 1,
   "sessionsPerDay": 1,
-  "writesPerPlayerDay": 12.84,
+  "writesPerPlayerDay": 12.45,
   "periodicWritesADay": {
    "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 9.18,
+  "writesPerHeist": 8.81,
   "byOperation": {
    "session": 1.67,
    "telemetry batch": 1,
    "raid badge": 0,
-   "defence log": 1,
+   "defence log": 0.98,
    "observatory": 0,
    "lease": 1,
-   "heist: validate and grant": 8.18
+   "heist: validate and grant": 7.81
   },
-  "billedRowsPerPlayerDay": 19.24,
-  "billedPerHeist": 14.24,
+  "billedRowsPerPlayerDay": 18.47,
+  "billedPerHeist": 13.49,
   "billedByOperation": {
    "session": 3,
    "telemetry batch": 1,
    "raid badge": 0,
-   "defence log": 1,
+   "defence log": 0.98,
    "observatory": 0,
    "lease": 2,
-   "heist: validate and grant": 12.24
+   "heist: validate and grant": 11.49
   },
   "validationMs": {
-   "p50": 15.5,
-   "p95": 27.5,
-   "max": 34.3
+   "p50": 13.8,
+   "p95": 25.6,
+   "max": 29.1
   },
   "firstHeist": {
    "rows": 36.2,
@@ -365,18 +365,18 @@
   "billedByTable": {
    "event_batches": 4,
    "heists": 3,
-   "accounts": 2,
    "leases": 2,
-   "season_stars": 2,
    "ratings": 2,
+   "accounts": 1.98,
    "ledger": 1.46,
+   "season_stars": 1.26,
    "sessions": 1,
    "notifications": 1,
    "codex": 0.78,
    "target_lists": 0.4
   },
-  "readsPerPlayerDay": 132,
-  "readsPerHeist": 55.1,
+  "readsPerPlayerDay": 131.6,
+  "readsPerHeist": 54.8,
   "readsByOperation": {
    "session": 3.3,
    "telemetry batch": 6,
@@ -384,12 +384,12 @@
    "defence log": 12.8,
    "observatory": 49.8,
    "lease": 9.8,
-   "heist: validate and grant": 45.4
+   "heist: validate and grant": 45
   },
   "readsPerPlayerByDay": [
    111.8,
-   130.8,
-   153.3
+   130.2,
+   152.8
   ],
   "periodicReadsADayAnIsland": {
    "target lists (x24)": 121.6,
@@ -461,19 +461,19 @@
   ],
   "against": {
    "budget": 11,
-   "overBudget": 1.2,
+   "overBudget": 1.1,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 5197,
+   "freePlanPlayersADay": 5414,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
     "100000": 5,
-    "1000000": 147
+    "1000000": 140
    },
    "readBudget": 2500,
    "readsOverBudget": 0.05,
-   "freePlanReadsPlayersADay": 19638,
+   "freePlanReadsPlayersADay": 19669,
    "readDollarsAMonth": {
     "1000": 0,
     "10000": 0,

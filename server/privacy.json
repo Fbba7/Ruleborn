@@ -1058,6 +1058,18 @@
     "aether_total": {
      "type": "gameplay",
      "holds": "the player's balance with this row, the rows to it summed"
+    },
+    "season": {
+     "type": "gameplay",
+     "holds": "the season of the stars the row carries"
+    },
+    "stars": {
+     "type": "gameplay",
+     "holds": "the season stars the heist earned, carried on its row (§18.2)"
+    },
+    "stars_total": {
+     "type": "gameplay",
+     "holds": "the season's stars carried on the player's rows to this one, summed"
     }
    }
   },

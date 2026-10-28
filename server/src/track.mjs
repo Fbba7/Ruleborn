@@ -79,22 +79,34 @@ export class Track {
   }
 
   /** Stars in hand this season: earned, less spent. Last season's are gone.
-   *  The newest row's running total, as Renown's (seasons.mjs moved). */
+   *  The season-stars rows' newest running total, as Renown's (seasons.mjs
+   *  moved), and the stars that rode the player's ledger rows (service.mint):
+   *  their newest row's total, if it is this season's. */
   stars(account, season = this.seasons.current().id) {
+    const own = this.own(account, season);
+    const t = this.service.totals(account);
+    const rode = t.season === null ? 0 : t.season === season ? t.stars
+      : t.season > season ? Number(this.db.prepare(
+        "SELECT COALESCE(SUM(stars), 0) AS n FROM ledger WHERE account = ? AND season = ?").get(account, season).n)
+      : 0;
+    return own + rode;
+  }
+
+  /** The season-stars rows' own: their newest running total, or, before
+   *  the totals were kept, their sum. */
+  own(account, season) {
     const last = this.db.prepare(
       "SELECT total FROM season_stars WHERE season = ? AND account = ? ORDER BY id DESC LIMIT 1").get(season, account);
-    if (!last) return 0;
-    if (last.total !== null) return Number(last.total);
-    return Number(this.db.prepare(
+    return !last ? 0 : last.total !== null ? Number(last.total) : Number(this.db.prepare(
       "SELECT COALESCE(SUM(amount), 0) AS n FROM season_stars WHERE season = ? AND account = ?")
       .get(season, account).n);
   }
 
-  /** One season-stars row, with the season's total after it. */
+  /** One season-stars row, with the season's total of those rows after it. */
   book(season, account, amount, reason, heist, now) {
     this.db.prepare(
       "INSERT INTO season_stars (season, account, amount, reason, heist, at, total) VALUES (?, ?, ?, ?, ?, ?, ?)")
-      .run(season, account, amount, reason, heist, now, this.stars(account, season) + amount);
+      .run(season, account, amount, reason, heist, now, this.own(account, season) + amount);
   }
 
   /** A heist's stars, booked in the grant's transaction. An echo's owner
@@ -102,11 +114,14 @@ export class Track {
    *  season, so their tier price is fixed now if it is not yet: an echo raid
    *  opens their standing like any heist, and a season of them cannot wait
    *  out §18.8's catch-up to buy every tier at its floor. */
-  settle(lease, verdict, season, now, { echo = false } = {}) {
+  /** `book: false` books nothing: the grant puts the stars on the ledger
+   *  rows it writes, or books them here (service.grant). */
+  settle(lease, verdict, season, now, { echo = false, book = true } = {}) {
     const s = heistStars(verdict.grade);
     if (echo) s.defender = 0;
     this.seasons.standing(lease.attacker, season);
     if (s.defender) this.seasons.standing(lease.defender, season);
+    if (!book) return s;
     if (s.raider) this.book(season, lease.attacker, s.raider, `heist, ${verdict.grade} (18.2)`, lease.token, now);
     if (s.defender) this.book(season, lease.defender, s.defender, `defence, ${verdict.grade} (18.2)`, lease.token, now);
     return s;

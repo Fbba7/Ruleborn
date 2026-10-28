@@ -891,11 +891,6 @@ export class Service {
       book("defender", "essence", share.essence, true);
       defence = { percent, total: share.total, essence: share.essence, starlight: share.starlight };
     }
-    for (const [who, account, reason] of [["raider", attacker, "a heist: fee, haul, fee returned and casts (9.4, 9.6, 12.5)"],
-                                          ["defender", lease.defender, "a foiled raid: fee and defence share (9.4, 12.9)"]]) {
-      const m = moved[who];
-      if (m.starlight || m.essence || m.aether || m.paid) this.mint(account, m, reason, lease.token, now);
-    }
     // §12.9's Renown, §18.2's season stars and §12.22's ratings, in the same
     // transaction as the haul. An echo is nobody's defence: it moves no
     // Renown, earns its owner nothing and rates no island (G30).
@@ -903,16 +898,24 @@ export class Service {
     // §12.11: "The friend loses nothing", and a game among friends moves no
     // Renown, stars or ratings (F48). A pair's later heists of the day move
     // neither (G37).
+    const none = { raider: 0, defender: 0 };
+    // The stars ride each player's ledger row when the heist books one; a
+    // player it books none earns theirs in a season-stars row (track.mjs).
+    const stars = !scores ? none : this.track.settle(lease, verdict, season, now, { echo: nobody, book: false });
+    for (const [who, account, reason] of [["raider", attacker, "a heist: fee, haul, fee returned and casts (9.4, 9.6, 12.5)"],
+                                          ["defender", lease.defender, "a foiled raid: fee and defence share (9.4, 12.9)"]]) {
+      const m = { ...moved[who], stars: stars[who] };
+      if (m.starlight || m.essence || m.aether || m.paid) this.mint(account, m, reason, lease.token, now, season);
+      else if (m.stars) this.track.book(season, account, m.stars, `${who === "raider" ? "heist" : "defence"}, ${verdict.grade} (18.2)`, lease.token, now);
+    }
     // Only the raider's first ten matchmade heists of the week move Renown
     // (F40); whether this one counted is kept on its outcome, since a foiled
     // raider at its floor books no Renown line to count by.
-    const none = { raider: 0, defender: 0 };
     const renownCounted = !nobody && scores
       && this.renownHeistsThisWeek(attacker, now) < RENOWN_HEISTS_A_WEEK;
     const renown = renownCounted ? this.seasons.settle(lease, verdict, now) : none;
     // §13: "The defender is notified afterwards and can watch the replay."
     if (!nobody) this.notifications.raided(lease, verdict, now);
-    const stars = !scores ? none : this.track.settle(lease, verdict, season, now, { echo: nobody });
     // An echo rates the raider against its island and leaves the island's
     // rating alone (G30); an island whose owner is gone rates nobody.
     const rating = friendly || gone ? null
@@ -1039,16 +1042,20 @@ export class Service {
    */
   totals(account) {
     const last = this.db.prepare(
-      `SELECT starlight_total AS starlight, essence_total AS essence, aether_total AS aether, at FROM ledger
+      `SELECT starlight_total AS starlight, essence_total AS essence, aether_total AS aether, at,
+              season, stars_total AS stars FROM ledger
         WHERE account = ? ORDER BY at DESC, id DESC LIMIT 1`).get(account);
-    if (!last) return { starlight: 0, essence: 0, aether: 0, at: null };
+    if (!last) return { starlight: 0, essence: 0, aether: 0, at: null, season: null, stars: 0 };
+    // The stars a row carries are its season's; none rode a row before them.
+    const stars = { season: last.season, stars: Number(last.stars ?? 0) };
     if (last.starlight === null) {
       const r = this.db.prepare(
         `SELECT COALESCE(SUM(starlight), 0) AS starlight, COALESCE(SUM(essence), 0) AS essence,
                 COALESCE(SUM(aether), 0) AS aether FROM ledger WHERE account = ?`).get(account);
-      return { starlight: Number(r.starlight), essence: Number(r.essence), aether: Number(r.aether), at: last.at };
+      return { starlight: Number(r.starlight), essence: Number(r.essence), aether: Number(r.aether), at: last.at, ...stars };
     }
-    return { starlight: Number(last.starlight), essence: Number(last.essence), aether: Number(last.aether), at: last.at };
+    return { starlight: Number(last.starlight), essence: Number(last.essence), aether: Number(last.aether), at: last.at,
+             ...stars };
   }
 
   balance(account) {
@@ -1069,14 +1076,16 @@ export class Service {
    * last writer's books at the last row's time instead (§24.12's server
    * clock, the only one).
    */
-  mint(account, { starlight = 0, essence = 0, aether = 0, paid = 0 }, reason, heist, now) {
+  mint(account, { starlight = 0, essence = 0, aether = 0, paid = 0, stars = 0 }, reason, heist, now,
+       season = this.seasons.current(now).id) {
     const t = this.totals(account);
     this.db.prepare(
       `INSERT INTO ledger (account, starlight, essence, aether, paid, reason, heist, at,
-                           starlight_total, essence_total, aether_total)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+                           starlight_total, essence_total, aether_total, season, stars, stars_total)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
       .run(account, starlight, essence, aether, paid, reason, heist, Math.max(now, t.at ?? now),
-           t.starlight + starlight, t.essence + essence, t.aether + aether);
+           t.starlight + starlight, t.essence + essence, t.aether + aether,
+           season, stars, (t.season === season ? t.stars : 0) + stars);
   }
 
   /** One ledger row outside a heist: a track tier, a defence share. */

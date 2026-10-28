@@ -64,9 +64,19 @@ function agree(t, account) {
   const renown = db.prepare("SELECT COALESCE(SUM(amount), 0) AS n FROM renown WHERE season = ? AND account = ?")
     .get(season, account).n;
   assert.equal(t.service.seasons.league(account).renown, t.service.seasons.standing(account, season).start + renown);
+  // A heist's stars ride its ledger row when it books one (service.mint):
+  // the season's stars are both tables' rows, and each ledger row's total
+  // is its season's stars to it.
   const stars = db.prepare("SELECT COALESCE(SUM(amount), 0) AS n FROM season_stars WHERE season = ? AND account = ?")
+    .get(season, account).n + db.prepare("SELECT COALESCE(SUM(stars), 0) AS n FROM ledger WHERE season = ? AND account = ?")
     .get(season, account).n;
   assert.equal(t.service.track.stars(account), stars);
+  const by = new Map();
+  for (const r of rows) {
+    if (r.season === null) continue;
+    by.set(r.season, (by.get(r.season) ?? 0) + r.stars);
+    assert.equal(r.stars_total, by.get(r.season), `ledger stars to row ${r.id}`);
+  }
 }
 
 test("every balance, Renown and stars total is its rows summed, through heists, books and claims (24.12)", () => {

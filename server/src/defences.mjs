@@ -88,7 +88,9 @@ export class Defences {
   show(account) {
     const now = this.service.now();
     const v = this.view(account, now);
-    this.db.prepare("UPDATE accounts SET defences_seen_at = ? WHERE id = ?").run(now, account);
+    // With no raid new since the last read, moving the mark would change no
+    // count it makes: a write that says nothing (§24.1's writes).
+    if (v.unseen) this.db.prepare("UPDATE accounts SET defences_seen_at = ? WHERE id = ?").run(now, account);
     return v;
   }
 

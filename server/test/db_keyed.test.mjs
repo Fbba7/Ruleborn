@@ -91,7 +91,9 @@ test("a database whose leases and heists have rowids, and whose records name a h
       assert.ok(!db.prepare(`PRAGMA foreign_key_list(${table})`).all().some((k) => k.table === "heists"), table);
     }
     assert.throws(() => db.prepare("DELETE FROM ledger").run(), /append-only/, "and still append-only");
-    assert.throws(() => db.prepare("UPDATE season_stars SET amount = 0").run(), /a record/);
+    for (const trigger of ["renown_append_only_update", "season_stars_append_only_update", "ledger_append_only_delete"]) {
+      assert.ok(db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'trigger' AND name = ?").get(trigger), trigger);
+    }
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM sqlite_master WHERE name LIKE '%_with_rowid'").get().n, 0);
     assert.deepEqual(db.prepare("PRAGMA foreign_key_check").all(), [], "every row's foreign keys still hold");
     assert.equal(db.prepare("PRAGMA foreign_keys").get().foreign_keys, 1, "and are on again");

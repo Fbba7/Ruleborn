@@ -412,6 +412,14 @@ CREATE TABLE IF NOT EXISTS ledger (
   starlight_total INTEGER,
   essence_total   INTEGER,
   aether_total    INTEGER,
+  -- §18.2's season stars a heist earned the player, riding the row the heist
+  -- books them anyway (one row and its index entry the fewer, §24.1); and
+  -- the stars the season's rows have carried to this one, for its season,
+  -- as season_stars' own total (track.mjs stars). Stars with no row of the
+  -- ledger's to ride, and tiers bought, are season_stars rows.
+  season          INTEGER,
+  stars           INTEGER NOT NULL DEFAULT 0,
+  stars_total     INTEGER,
   CHECK (starlight != 0 OR essence != 0 OR aether != 0 OR paid != 0)
 );
 CREATE INDEX IF NOT EXISTS ledger_by_account ON ledger (account, at);
@@ -1031,6 +1039,9 @@ const ADDED = [
   ["ledger", "starlight_total", "INTEGER"],
   ["ledger", "essence_total", "INTEGER"],
   ["ledger", "aether_total", "INTEGER"],
+  ["ledger", "season", "INTEGER"],
+  ["ledger", "stars", "INTEGER NOT NULL DEFAULT 0"],
+  ["ledger", "stars_total", "INTEGER"],
   ["renown", "total", "INTEGER"],
   ["season_stars", "total", "INTEGER"],
 ];
