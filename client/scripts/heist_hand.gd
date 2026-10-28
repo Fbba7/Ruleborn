@@ -15,6 +15,8 @@ extends BoxContainer
 ## A power or a cast chosen from a wheel: `kind` is the command (13 Sage,
 ## 14 Cast), `index` the power or the cast, `words` what it is called.
 signal chosen(kind: int, index: int, words: String)
+## A second tap on the Sage or on Cast while its choice waits: put it away.
+signal put_away
 
 const SAGE_KIND := 13
 const CAST_KIND := 14
@@ -24,6 +26,9 @@ var cast_button: Button
 var go_button: Button
 ## Where a wheel opens: the screen, over everything.
 var host: Control
+## The command a wheel's choice waits to be aimed with (SAGE_KIND, CAST_KIND),
+## 0 when none: its button glows until the tap on the world.
+var armed := 0
 ## The wheel while it is open (a full-screen scrim holding the card).
 var wheel: Control
 var _sage := {}
@@ -82,6 +87,13 @@ func show_state(sage: Dictionary, casts: Array, tick: int) -> void:
 	var open := casts.any(func(c: Dictionary) -> bool: return not c.get("used", false))
 	var said := Strings.t("HEIST_CAST") if not casts.is_empty() else Strings.t("HEIST_NO_CASTS")
 	cast_button.accessibility_name = said
+	# A cast waiting for its place is rimmed in white.
+	var box := RbBox.of(cast_button)
+	if box != null and box.material is ShaderMaterial:
+		var mat := box.material as ShaderMaterial
+		if not cast_button.has_meta("rim"):
+			cast_button.set_meta("rim", mat.get_shader_parameter("rim_color"))
+		mat.set_shader_parameter("rim_color", Color.WHITE if armed == CAST_KIND else cast_button.get_meta("rim"))
 	if cast_button.has_meta("words"):
 		(cast_button.get_meta("words") as Label).text = said
 		# Nothing left to cast greys the wand, never the words (§21.10).
@@ -114,6 +126,8 @@ func _draw_sage(ci: Control) -> void:
 		FxPen.flush(ci)
 		ci.draw_colored_polygon(FxPortrait._disc(c, inner), Color.WHITE, FxPortrait._disc_uv(), _picture)
 	FxPen.arc(ci, c, r * 0.9, PI * 1.05, PI * 1.45, 10, Color(1, 1, 1, 0.35), UI.px(2))
+	if armed == SAGE_KIND:
+		FxPen.circle(ci, c, r * 1.02, Color(1, 1, 1, 0.9), false, UI.px(3))
 	if _cooling > 0.0:
 		var share := clampf(_cooling / 20.0, 0.0, 1.0)
 		var pts := PackedVector2Array([c])
@@ -130,6 +144,9 @@ func _draw_sage(ci: Control) -> void:
 
 
 func _open_sage() -> void:
+	if armed != 0:
+		put_away.emit()
+		return
 	if _sage.is_empty():
 		return
 	var rows: Array[Dictionary] = []
@@ -149,6 +166,9 @@ func _open_sage() -> void:
 
 
 func _open_casts() -> void:
+	if armed != 0:
+		put_away.emit()
+		return
 	var rows: Array[Dictionary] = []
 	for i in _casts.size():
 		var c: Dictionary = _casts[i]
