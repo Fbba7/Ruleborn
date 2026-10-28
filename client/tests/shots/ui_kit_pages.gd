@@ -35,6 +35,8 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_tray(column)
 		16:
 			_quests(column)
+		17:
+			_stat_tiles(column)
 		_:
 			_season(column)
 
@@ -592,3 +594,16 @@ static func _quests(column: VBoxContainer) -> void:
 	lab.add_child(KitCards.law_disc("laws/sleepwalk", "Sleepwalk", "spirit"))
 	column.add_child(lab)
 
+
+## The design's Character stats (11-character-stats.png).
+static func _stat_tiles(column: VBoxContainer) -> void:
+	var stats := GridContainer.new()
+	stats.columns = KitLayout.grid_columns(2)
+	stats.add_theme_constant_override("h_separation", UI.px(8))
+	stats.add_theme_constant_override("v_separation", UI.px(8))
+	stats.add_child(KitCards.stat("crewroles/runner" if Icons.has("crewroles/runner") else "hud/star", "Speed", "9", "+1",
+		9, 10, 1))
+	stats.add_child(KitCards.stat("crewroles/scout", "Stealth", "6", "+1", 6, 10, 1))
+	stats.add_child(KitCards.stat("crewroles/carrier", "Carry", "10", "Max", 10, 10))
+	stats.add_child(KitCards.stat("crewroles/breaker", "Grit", "6", "+1", 6, 10, 1))
+	column.add_child(stats)

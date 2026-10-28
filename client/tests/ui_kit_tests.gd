@@ -237,6 +237,7 @@ func _pieces() -> void:
 			KitPanels.quest("screens/heist", "Rehearse your defence", 0, 1, "+30", "currencies/seasonstars", "Claim", none,
 				"Swap", none),
 			KitCards.law_disc("laws/sleepwalk", "Sleepwalk", "spirit"),
+			KitCards.stat("crewroles/scout", "Stealth", "6", "+1", 6, 10, 1),
 			KitCards.build_card("resources/starlight", "Star Well", "Makes Starlight.", "resources/starlight", "1,200",
 				"3 / 4", none),
 			KitPanels.album("motion", "Motion", "Chapter I", "3 of 4", Control.new()),
