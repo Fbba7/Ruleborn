@@ -195,3 +195,7 @@ Still worse than the design, in order of how much a first-time player would noti
 3. Settings has no Wellbeing tab (the game keeps no play time).
 
 Next: T9's tab bar words at German lengths; a Season hero once rewards have names; the Lab's chambers shorter (the sphere buttons' words are what its test reads).
+
+## Draw calls after deploy 2 merged (00:55 UTC, 28 October)
+
+Main's new buildings brought Harmony back to 145. `ScreenHarmonyStage` now also builds its realm bare but for the laws woven (its own `island`, without the props the law card's preview sets out for signatures): 139. Weaving went back to T5's `LawFxPreview` with only the shadow pass off: 113 at the top, 133 scrolled. The rest: Codex 123, Law card 117, Lab 101, Workshop 90, Profile 75, Season 69 (T9's rail now batched), Friends 68, Shop 63, League 42, Settings 38, First launch 26, Share 25.
