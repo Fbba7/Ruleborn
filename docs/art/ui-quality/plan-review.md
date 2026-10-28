@@ -114,3 +114,16 @@ T16 edits only `docs/art/ui-quality/**` and `docs/progress/T16.md`. These are fo
 **X8. For the integrator: the heist's primitives.** The proof's frame prints 87,102 primitives with the new HUD and 96,333 with the deployed one. §21.3 allows about 60,000 triangles in a heist. Most of this is the world, not the interface; whoever owns the world should measure the world alone.
 
 **X9. Not changed, noted:** `docs/progress/T14.md` still says "about 80 agent-hours". It is T14's own file and records what T14 delivered; the plan's figure is now in `report.md`.
+
+**X10. For whoever sets up the next agents' containers:** check_all needed three things this container lacked: Rust's `wasm32-unknown-unknown` target, `gdlint` (gdtoolkit 4), and Python's `playwright` at 1.63.0 to match the installed Chromium. T16 installed them locally; nothing in the repository changed. The UI wave's agents will need all three.
+
+## Stopped here
+
+T16 stopped at about 18:30 UTC on 28 October, with the revised report, this log and `docs/progress/T16.md` pushed green on `claude/ui-plan`.
+
+**Fixed:** 46 findings (R1–R46). The plan now has a one-page summary, seven named agents with their files, ten steps with inputs, outputs, waits, pass marks and hours, a six-day schedule, four owner gates, what happens when the gate fails, a wave target, budgets, accessibility, motion, languages, variants, licences, versioning, checks, migration, sound, risks and ten owner decisions. Every number was re-derived; T14's bakes and the proof's draw calls were re-run.
+
+**Still needs the owner:** D1 (the plan at 144 agent-hours, not about 80) before anything starts; D2–D5 at the times in section 12; D6–D10 have defaults.
+
+**Still needs others:** X1–X4 and X8 now (T15 and the integrator); X5–X7 only if the owner chooses them; X10 for container set-up.
+
