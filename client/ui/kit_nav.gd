@@ -5,6 +5,9 @@ class_name KitNav
 ## lower two-thirds, so the header carries no button: the back button is
 ## made for the screen's lowest row.
 
+## The base frame's width in points (1080 pixels at 3 a point, tokens.json).
+const PHONE_POINTS := 360.0
+
 
 ## A screen's header: an optional kicker in capitals above its title in
 ## Marcellus, and the designs' gold rule with its diamond beneath.
@@ -42,11 +45,14 @@ static func back(pressed: Callable) -> Button:
 ## with a brown-gold edge, the chosen segment a gold tab inside it; an
 ## option is its words, or [words, icon] for an icon over them. `picked` is
 ## called with the chosen index.
-static func segmented(options: Array, chosen: int, picked: Callable) -> PanelContainer:
+static func segmented(options: Array, chosen: int, picked: Callable, light := false) -> PanelContainer:
 	var p := PanelContainer.new()
 	p.name = "Segments"
 	p.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
-	UI.dress(p, "seg_track")
+	# On parchment (`light`, the build tray): a deeper parchment track, the
+	# chosen segment dark leather with cream words.
+	var tail := "_light" if light else ""
+	UI.dress(p, "seg_track" + tail)
 	# At large text more than two segments go two to a line, so each word
 	# stays whole ("Wellbeing", not "Wellb") rather than cut.
 	var large := Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO and options.size() > 2
@@ -63,12 +69,24 @@ static func segmented(options: Array, chosen: int, picked: Callable) -> PanelCon
 	for i: int in options.size():
 		var option: Variant = options[i]
 		var words := str(option[0]) if option is Array else str(option)
-		var b := UI.action(words if not option is Array else "", func() -> void: pass, "seg", words)
+		var b := UI.action(words if not option is Array else "", func() -> void: pass, "seg" + tail, words)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		# At large text the words wrap inside their segment rather than
-		# widening the strip past the phone; each keeps 48 points.
-		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		b.custom_minimum_size.x = UI.px(UI.CONTROL_POINTS)
+		# At large text the words wrap inside their segment, between words
+		# only ("Defence", never "Defenc / e"); each keeps 48 points.
+		# As wide as its longest word, so no word is cut by its neighbours,
+		# up to its share of the phone; a word longer than that (German's
+		# "Verteidigungslog") may still break, rather than push the strip off.
+		var longest := 0.0
+		for word: String in words.split(" "):
+			longest = maxf(longest, UI.bold_font().get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				UI.text_px(UI.TEXT_POINTS)).x)
+		# The phone less its margins and room for a sheet's padding or a
+		# close button beside the strip.
+		var share := UI.px((PHONE_POINTS - 2.0 * Tokens.number("size", "safe_side_points") - (24.0 if large else 64.0))
+			/ float(options.size() if not large else 2))
+		var whole := longest + UI.px(22) <= share
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD if whole else TextServer.AUTOWRAP_WORD_SMART
+		b.custom_minimum_size.x = maxf(UI.px(UI.CONTROL_POINTS), minf(longest + UI.px(22), share))
 		if option is Array:
 			# The icon over a line of words at any text size.
 			b.custom_minimum_size.y = maxf(UI.px(56), UI.px(34) + UI.text_px(13) * 1.4)
@@ -93,11 +111,10 @@ static func segmented(options: Array, chosen: int, picked: Callable) -> PanelCon
 		row.add_child(b)
 	var choose := func(n: int) -> void:
 		for j: int in buttons.size():
-			UI.set_look(buttons[j], "seg_on" if j == n else "seg")
+			UI.set_look(buttons[j], ("seg_on" if j == n else "seg") + tail)
 			buttons[j].set_meta("chosen", j == n)
 			for l: Node in buttons[j].find_children("*", "Label", true, false):
-				(l as Label).add_theme_color_override("font_color", Tokens.color("text_on_gold" if j == n
-					else "text_on_night"))
+				(l as Label).add_theme_color_override("font_color", RbBox.of(buttons[j]).spec["text"])
 	for i: int in buttons.size():
 		buttons[i].pressed.connect(func() -> void:
 			choose.call(i)
