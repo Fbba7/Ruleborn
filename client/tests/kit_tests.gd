@@ -30,6 +30,7 @@ func run() -> void:
 	_signatures()
 	_map()
 	_hours()
+	_dial()
 
 
 static func _layers(kit: RealmKit) -> int:
@@ -323,3 +324,24 @@ func _hours() -> void:
 	root.free()
 	check.call("the builder's grid shows on the realm's ground when asked and goes again (T6's terrain editor)",
 		on == [1.0] and off == [0.0], "%s %s" % [on, off])
+
+
+## The Heart's clock dial (KitDial): a Heart with its Spire paints the dial
+## round it, wider on the heist's close camera than at the realm view's mid
+## detail, and lanes run from its rim to the doors.
+func _dial() -> void:
+	var dials: Array[Vector4] = []
+	var rims := 0
+	for det: int in [BuildingKit.FULL, BuildingKit.MID]:
+		var kit := lived_in(5, det)
+		var mat := kit.instances()[0].material_override as ShaderMaterial
+		var d: Vector4 = mat.get_shader_parameter("dial")
+		dials.append(d)
+		var hub := Vector2(d.x, d.y) + Vector2(kit.size) / 2.0
+		for seg: Array in kit._lanes:
+			if absf((seg[1] as Vector2).distance_to(hub) - d.z) < 0.2:
+				rims += 1
+	check.call("the Heart's Spire stands on a clock dial, wider on the heist's camera than in the realm view, with "
+			+ "lanes from its rim to the doors (21.4)",
+		dials[0].w == 1.0 and dials[1].w == 1.0 and dials[0].z > dials[1].z and dials[1].z > 2.0 and rims >= 4,
+		"%s, %d lanes reach the rim" % [dials, rims])

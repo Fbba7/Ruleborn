@@ -168,3 +168,13 @@ This wave's brief: the realm's buildings as 02-heist draws them. Rounds compare 
 ## Session five (wave extended to 06:00 UTC, from 23:23)
 
 - **Round 12, lanes round the dial (04-realm-view, 02-heist).** The design's Heart lanes spread from its plaza to every door; ours were a spanning tree whose Spire end lay under the dial. Now, in a realm with the dial, a lane runs from every door to the dial's rim (`RealmKit._spokes`, one bend), and the spanning tree between doors stays, each lane in two runs so both fit `KitGround.LANES`. The dial is found before the trails. Still `60-heart-lanes-to-dial.png`.
+- **Round 13, the dial in the realm view (04-realm-view).** The design draws its dial smaller round the Spire in the realm view than in the heist. At the mid detail (the realm view's and home camera's) the dial reaches 1.7 tiles past the Spire's half side (`KitDial.REACH_MID`; radius 3.2), 2.6 at full (heist). A kit test now holds the dial, its two sizes and the lanes from its rim (`KitTests._dial`).
+- **Round 14, the other realms against their land stills.** Crystalline, Tidehold and Lantern Vale at the heist camera read by their roofs, lit windows and pads as the land stills do; Lantern Vale's walls lifted further toward lamplight made no visible difference and were left as they were.
+- **Round 15, a house close up against 02-heist.** Same silhouette and parts: a steep magenta shingled gable with darker rows, a chimney, dark timber frame, magenta shutters and lit windows. Left as it is.
+
+## Stopped here (session five, 00:40 UTC on 28 October)
+
+- **Done:** rounds 1–15. Last code commit pushed and green: the dial's two sizes and its test (check_all "All checks passed", 00:33 UTC).
+- **Waiting on the owner:** (1) the Heart's wall ring; (2) the Vault's shape: §21.5's round dome (kept, in the realm's colours) or the stills' square block under a pyramid roof. Either is a small change in `KitSignature.build` or `PieceKit._vault_into`.
+- **For T5:** the heist test island (`law_heist.gd`'s `island`) has one house and no Spire, so the heist still shows none of the dial; a Heart island with its Spire (as `kit_realm.gd` with `HEIST=1`) would show it. At 200 % text the heist's HUD covers much of the realm.
+- **Next:** if the owner ties the dial to the Stillness law, give `RealmKit` the realm's laws beside `buildings`.

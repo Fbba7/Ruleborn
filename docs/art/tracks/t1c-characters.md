@@ -457,10 +457,24 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   simulation gives a heist its Sage; guards at `readable_scale()`; keep the
   crew out of the guards' rings in `heist_shot.gd`.
 - **Still worse than the design:** white flecks on Quarryback's shell and
-  Mossbear's stones (in the geometry or paint, not the light: lift, sheen
-  and relief at 0 keep them); Featherkin's knit reads smooth; Lantern
+  Mossbear's stones. Traced (after the stop, round 14): they are body faces
+  (an accessory-red debug pass leaves them white), not holes (an ink-green
+  pass shows no ink through them), not faces the decimation folded (dropping
+  the 76 faces wound against the sculpt's normals keeps every fleck), and
+  not lift, sheen, relief or exposure. A UV debug pass puts most of them at
+  the atlas's left edge (u near 0), outside every chart, where the bake
+  paints nothing of theirs: the next step is `unwrap`/`pack` in
+  `tools/art/harness.js` for faces whose projection is near edge-on; Featherkin's knit reads smooth; Lantern
   Wisp's cream face reads pink; petals are flat where the design's pale
   toward the tip.
-- **Container setup:** as the fourth session; a worktree at `../rb-exp`
+- **Readability measured (round 15):** each ruleborn alone on the heist's
+  painted grass, in grayscale: the share of a figure's pixels within 18
+  levels of the grass under it is 8–13% for Skyskipper, Featherkin and
+  Rambler, 20–33% for Soul Mender, Tidewalker, Lantern Wisp, Quarryback
+  and Hourkeeper. Those read by the ink; a far-only value step away from
+  the grass's value changed nothing measurable (the match is in the lit
+  result, not the paint) and was not kept.
+- **Container setup:** as the fourth session, plus `npm ci` in `tools/art`
+  for the export; a worktree at `../rb-exp`
   (with `client/bin`, `client/goldens` and `client/.godot` copied) let
   renders run while check_all held the main tree.
