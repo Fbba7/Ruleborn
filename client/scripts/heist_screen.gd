@@ -672,7 +672,10 @@ func _build_crew() -> void:
 	# With large text a rehearsal's pause stands at the end of the portraits,
 	# low in reach, rather than under the taller HUD.
 	if Settings.text_scale > 130 and pause_button != null:
-		pause_button.reparent(crew_node)
+		if pause_button.get_parent() != crew_node:
+			pause_button.reparent(crew_node)
+		# After the portraits, as the crew may have been drawn afresh.
+		crew_node.move_child(pause_button, -1)
 	_crew_key = _crew_shape(crew)
 
 
