@@ -229,6 +229,10 @@ func _pieces() -> void:
 			KitCards.product(picture, "Emote", "Tip of the Hat", "120", none, "round_violet", 128.0, "resources/renown"),
 			KitControls.tile("Medium", "Glass", "motion", none),
 			KitStatus.hint("Tap crew, then ground · hold ground to sneak or run"),
+			KitPanels.quest("screens/heist", "Rehearse your defence", 0, 1, "+30", "currencies/seasonstars", "Claim", none,
+				"Swap", none),
+			KitCards.build_card("resources/starlight", "Star Well", "Makes Starlight.", "resources/starlight", "1,200",
+				"3 / 4", none),
 			KitPanels.album("motion", "Motion", "Chapter I", "3 of 4", Control.new()),
 		]
 		for piece: Control in pieces:
@@ -252,6 +256,6 @@ func _pieces() -> void:
 		screen.queue_free()
 		await tree.process_frame
 	Settings.text_scale = was
-	check.call("the loot panel, Sage, crew key, friend, feed row, log row, album card, product, tile and album meet 48 "
-			+ "points and 13 points and stay on the screen at 200% text (§21.1, §21.8, §20.8)", bad.is_empty(),
-		"; ".join(bad))
+	check.call("this wave's pieces (loot, Sage, crew key, friend, feed and log rows, cards, tile, hint, quest, "
+			+ "album) meet 48 points and 13 points and stay on the screen at 200% text (§21.1, §21.8, §20.8)",
+		bad.is_empty(), "; ".join(bad))

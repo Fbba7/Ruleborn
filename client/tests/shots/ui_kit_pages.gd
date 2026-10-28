@@ -33,6 +33,8 @@ static func page(column: VBoxContainer, n: int) -> void:
 			_stats(column)
 		15:
 			_tray(column)
+		16:
+			_quests(column)
 		_:
 			_season(column)
 
@@ -567,4 +569,19 @@ static func _tray(column: VBoxContainer) -> void:
 			func() -> void: pass))
 	body.add_child(cards)
 	column.add_child(sheet)
+
+
+## The design's quests (17-season-quests.png).
+static func _quests(column: VBoxContainer) -> void:
+	column.add_child(KitPanels.section("Daily"))
+	var none := func() -> void: pass
+	column.add_child(KitPanels.quest("realmactions/collect", "Collect from 3 Star Wells", 2, 3, "+40",
+		"currencies/seasonstars", "Claim", none, "Swap", none))
+	column.add_child(KitPanels.quest("screens/heist", "Finish a heist", 1, 1, "+40", "currencies/seasonstars",
+		"Claim", none))
+	column.add_child(KitPanels.quest("planningactions/rehearse", "Rehearse your defence", 0, 1, "+30",
+		"currencies/seasonstars", "Claim", none, "Swap", none))
+	column.add_child(KitPanels.section("Season"))
+	column.add_child(KitPanels.quest("screens/resonancelab", "Run 4 Lab tests", 1, 4, "+150", "currencies/seasonstars",
+		"Claim", none))
 

@@ -84,8 +84,9 @@ static func action2(text: String, line: String, pressed: Callable, look := "gold
 	t.add_theme_font_override("font", UI.bold_font())
 	t.add_theme_color_override("font_color", box.spec["text"])
 	t.set_meta("bold", true)
-	# A gold call to action is set in the designs' tracked capitals.
-	if look == "gold":
+	# A gold or green call to action is set in the designs' tracked capitals
+	# (RAID AGAIN, CLAIM, UPGRADE).
+	if look in ["gold", "green"]:
 		t.uppercase = true
 		t.add_theme_font_override("font", Tokens.font("ui", 800, false, UI.px(1)))
 	if box.spec.has("text_outline"):

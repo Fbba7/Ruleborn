@@ -208,6 +208,84 @@ static func album(school: String, title: String, kicker: String, count: String, 
 	return p
 
 
+## A quest (17 Season's quests): its mark on a dark tile, its title, a bar
+## with "2 / 3" written inside it, and at its end the reward on a dark pill
+## with a small SWAP under it (`swap_words`, `swap`), or, once done, a green
+## CLAIM with the reward under its word (`claim_words`, `claim`), the card
+## ringed in green. The count is
+## written, so done never rests on the green (§20.8).
+static func quest(icon: String, title: String, done: int, of: int, reward: String, reward_icon: String,
+		claim_words: String, claim: Callable, swap_words := "", swap := Callable()) -> PanelContainer:
+	var finished := done >= of
+	var p := UI.panel("parchment_done" if finished else "parchment")
+	p.name = "Quest"
+	var strip := HBoxContainer.new()
+	strip.add_theme_constant_override("separation", UI.px(10))
+	var tile := PanelContainer.new()
+	tile.add_theme_stylebox_override("panel", UI.clear_box(6, 6))
+	UI.dress(tile, "plate_dark", 10)
+	tile.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	tile.add_child(Icons.view(icon, 28))
+	strip.add_child(tile)
+	var mid := VBoxContainer.new()
+	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	mid.alignment = BoxContainer.ALIGNMENT_CENTER
+	mid.add_theme_constant_override("separation", UI.px(4))
+	var t := UI.label(title, 15, true)
+	t.theme_type_variation = "BodyBold"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	t.set_meta("bold", true)
+	mid.add_child(t)
+	var bar := KitBar.make(float(done) / maxf(of, 1), Tokens.color("success") if finished else Color(), 18)
+	# A light track on parchment.
+	RbBox.dress(bar, "bar_track_light")
+	var count := UI.label("%d / %d" % [done, of], 13)
+	count.theme_type_variation = "Number"
+	count.set_meta("bold", true)
+	count.set_anchors_preset(Control.PRESET_FULL_RECT)
+	count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	# Where the count's middle sits on the fill: cream stroked in ink (read
+	# against its stroke, §21.8); on the light track: the parchment's ink.
+	if float(done) / maxf(of, 1) >= 0.5:
+		count.add_theme_color_override("font_color", Tokens.color("cream"))
+		count.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+		count.add_theme_constant_override("outline_size", maxi(UI.px(2.5), ceili(UI.text_px(13) * 0.2)))
+	else:
+		count.add_theme_color_override("font_color", Tokens.color("parchment_ink"))
+		count.add_theme_constant_override("outline_size", 0)
+	bar.add_child(count)
+	mid.add_child(bar)
+	strip.add_child(mid)
+	var end := VBoxContainer.new()
+	end.alignment = BoxContainer.ALIGNMENT_CENTER
+	end.add_theme_constant_override("separation", UI.px(4))
+	if finished:
+		end.add_child(KitControls.action2(claim_words, reward, claim, "green", ""))
+	else:
+		end.add_child(KitStatus.pill(reward, reward_icon, "plate_dark"))
+		if swap.is_valid():
+			# A small key, drawn inside its 48-point hit area (§21.1).
+			var s := UI.action(swap_words.to_upper(), swap, "chip_light", "%s: %s" % [swap_words, title])
+			s.add_theme_font_size_override("font_size", UI.text_px(13))
+			s.custom_minimum_size = Vector2(UI.px(UI.CONTROL_POINTS), UI.px(UI.CONTROL_POINTS))
+			# The chip is the words' height, inside the 48-point hit area.
+			var chip := RbBox.of(s)
+			chip.inset_top = UI.px(7)
+			chip.bleed = -UI.px(7)
+			for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+				s.add_theme_stylebox_override(state, UI.clear_box(12, 0))
+			s.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			end.add_child(s)
+	# At large text the end goes under the words.
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		end.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		mid.add_child(end)
+	else:
+		strip.add_child(end)
+	p.add_child(strip)
+	return p
+
+
 ## A notice with something to do about it (the designs' raid banner): its
 ## icon on a disc, a bold title over a secondary line, a gold action, and a
 ## close cross. It is a banner, so it stays until dismissed when the player
