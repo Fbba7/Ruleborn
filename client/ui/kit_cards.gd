@@ -236,6 +236,36 @@ static func build_card(icon: String, title: String, line: String, price_icon: St
 	return card
 
 
+## A law as a medallion (14 Resonance Lab's Stillness and Sleepwalk): its
+## mark on a disc in its school's colours, in a gold ring,
+## its name stroked under it. `points` is the disc's size.
+static func law_disc(icon: String, title: String, school: String, points := 84.0) -> VBoxContainer:
+	var v := VBoxContainer.new()
+	v.name = "LawDisc"
+	v.add_theme_constant_override("separation", UI.px(2))
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var ring := PanelContainer.new()
+	ring.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
+	UI.dress(ring, "gold_round", 999)
+	ring.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var disc := CenterContainer.new()
+	disc.custom_minimum_size = Vector2.ONE * UI.px(points - 8.0)
+	disc.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	UI.dress(disc, "window_" + school, 999)
+	disc.add_child(Icons.view(icon, points * 0.55))
+	ring.add_child(disc)
+	v.add_child(ring)
+	var n := UI.label(title, 14)
+	n.add_theme_font_override("font", UI.bold_font())
+	n.add_theme_color_override("font_color", Tokens.color("cream"))
+	n.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	n.add_theme_constant_override("outline_size", UI.px(2))
+	n.set_meta("bold", true)
+	v.add_child(n)
+	return v
+
+
 ## The largest size from 15 points down to §21.8's 13 at which the name's
 ## longest word fits `room` points, so it wraps between words, not in one.
 static func _fit(title: String, room: float) -> float:

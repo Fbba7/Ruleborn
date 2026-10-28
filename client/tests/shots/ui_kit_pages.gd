@@ -584,4 +584,11 @@ static func _quests(column: VBoxContainer) -> void:
 	column.add_child(KitPanels.section("Season"))
 	column.add_child(KitPanels.quest("screens/resonancelab", "Run 4 Lab tests", 1, 4, "+150", "currencies/seasonstars",
 		"Claim", none))
+	var lab := HBoxContainer.new()
+	lab.alignment = BoxContainer.ALIGNMENT_CENTER
+	lab.add_theme_constant_override("separation", UI.px(40))
+	lab.add_child(KitCards.law_disc("laws/stillness" if Icons.has("laws/stillness") else "laws/bounce", "Stillness",
+		"time"))
+	lab.add_child(KitCards.law_disc("laws/sleepwalk", "Sleepwalk", "spirit"))
+	column.add_child(lab)
 
