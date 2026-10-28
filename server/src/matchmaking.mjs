@@ -92,8 +92,23 @@ export class Matchmaking {
     return r ? { rating: r.rating, deviation: r.deviation, volatility: r.volatility, games: r.games } : null;
   }
 
+  /** A raider's rating: on their account row, written with the heist's
+   *  experience (service.grant); before that, their ratings row; else the
+   *  prior. */
   raiderRating(account) {
+    const a = this.db.prepare(
+      "SELECT raider_rating, raider_deviation, raider_volatility, raider_games FROM accounts WHERE id = ?").get(account);
+    if (a && a.raider_rating !== null) {
+      return { rating: a.raider_rating, deviation: a.raider_deviation, volatility: a.raider_volatility,
+               games: a.raider_games };
+    }
     return this.rating("raider", account) ?? { ...fresh(), games: 0 };
+  }
+
+  /** The account row's columns for a raider's rating `r`. */
+  static raiderColumns(r) {
+    return { raider_rating: r.rating, raider_deviation: r.deviation, raider_volatility: r.volatility,
+             raider_games: r.games };
   }
 
   islandKey(owner, realm) { return `${owner}/${realm}`; }
@@ -125,7 +140,7 @@ export class Matchmaking {
   /** One validated heist, its own rating period for both sides: the raider
    *  scores 1 unless foiled (G30). An echo rates the raider only, against
    *  the island's rating as it stands. */
-  settle(lease, realm, verdict, now, { raiderOnly = false } = {}) {
+  settle(lease, realm, verdict, now, { raiderOnly = false, keep = null } = {}) {
     // An island published before there were ratings enters at its prior.
     const island = this.islandRating(lease.defender, realm) ?? { ...prior(this.db.prepare(
       "SELECT realm_level FROM snapshots WHERE bundle = ?").get(lease.bundle).realm_level), games: 0 };
@@ -133,7 +148,15 @@ export class Matchmaking {
     const score = verdict.grade === "foiled" ? 0 : 1;
     const r = update(raider, [{ opponent: island, score }]);
     const i = update(island, [{ opponent: raider, score: 1 - score }]);
-    this.store("raider", lease.attacker, { ...r, games: raider.games + 1 }, now);
+    // The raider's, on their account row: into `keep`, for the grant to write
+    // with the rest of the row, or written here.
+    const next = { ...r, games: raider.games + 1 };
+    if (keep) keep.raider = next;
+    else {
+      const c = Matchmaking.raiderColumns(next);
+      this.db.prepare(`UPDATE accounts SET ${Object.keys(c).map((k) => `${k} = ?`).join(", ")} WHERE id = ?`)
+        .run(...Object.values(c), lease.attacker);
+    }
     if (raiderOnly) return { raider: Math.round(r.rating), island: Math.round(island.rating) };
     this.store("island", this.islandKey(lease.defender, realm), { ...i, games: island.games + 1 }, now);
     return { raider: Math.round(r.rating), island: Math.round(i.rating) };
@@ -146,7 +169,7 @@ export class Matchmaking {
     const rows = this.db.prepare(
       `SELECT h.outcome FROM heists h JOIN leases l ON l.token = h.token
         WHERE h.attacker = ? AND h.validated = 1 AND l.mode = 'raid'
-        ORDER BY h.submitted_at DESC, h.rowid DESC LIMIT ?`).all(account, RECENT);
+        ORDER BY h.day DESC, h.submitted_at DESC, h.token DESC LIMIT ?`).all(account, RECENT);
     if (rows.length === 0) {
       const [lo, hi] = successBand(1, "authored");
       return (lo + hi) / 2;
@@ -158,8 +181,8 @@ export class Matchmaking {
 
   /** "New players can't be raided by other players for their first 72
    *  hours, or until they raid a player themselves." */
-  shielded(account, now = this.service.now()) {
-    const a = this.db.prepare("SELECT created_at, seeded FROM accounts WHERE id = ?").get(account);
+  shielded(account, now = this.service.now(), a = null) {
+    a ??= this.db.prepare("SELECT created_at, seeded FROM accounts WHERE id = ?").get(account);
     if (!a || a.seeded || now - a.created_at >= facts.NEW_PLAYER_SHIELD_HOURS * HOUR_MS) return false;
     const raided = this.db.prepare(
       `SELECT 1 FROM heists h JOIN leases l ON l.token = h.token
@@ -173,7 +196,7 @@ export class Matchmaking {
   traceable(account, raider, now = this.service.now()) {
     return this.db.prepare(
       `SELECT h.token FROM heists h JOIN leases l ON l.token = h.token
-        WHERE h.attacker = ? AND l.defender = ? AND h.validated = 1 AND ${RAIDED}
+        WHERE h.attacker = ? AND h.defender = ? AND h.validated = 1 AND ${RAIDED}
           AND json_extract(h.outcome, '$.verdict.grade') != 'foiled'
           AND COALESCE(json_extract(h.outcome, '$.haul.cappedBy'), '') != 'week'
           AND h.submitted_at > ?
@@ -197,11 +220,14 @@ export class Matchmaking {
     // taken away or its owner banned or deleted, which a few aggregate
     // reads tell; what else moves in the meantime (a rating, Renown, a
     // shield running out) the lease checks again, or only orders the list.
+    // Each the newest of its kind, one index row apiece (db.mjs): an island
+    // goes only with its owner's deletion, so the newest deletion tells it.
     const seen = this.db.prepare(
-      `SELECT (SELECT COUNT(*) FROM islands) AS n, (SELECT MAX(changed_at) FROM islands) AS changed,
-              (SELECT MAX(banned_at) FROM accounts) AS banned, (SELECT MAX(deleted_at) FROM accounts) AS deleted`)
+      `SELECT (SELECT MAX(changed_at) FROM islands) AS changed,
+              (SELECT MAX(banned_at) FROM accounts WHERE banned_at IS NOT NULL) AS banned,
+              (SELECT MAX(deleted_at) FROM accounts WHERE deleted_at IS NOT NULL) AS deleted`)
       .get();
-    const key = `${this.publishes}:${seen.n}:${seen.changed}:${seen.banned}:${seen.deleted}`;
+    const key = `${this.publishes}:${seen.changed}:${seen.banned}:${seen.deleted}`;
     const m = this.made;
     if (m && m.key === key && now >= m.at && now - m.at < CANDIDATES_MS) return m.list;
     const list = this.fresh(now);
@@ -209,18 +235,54 @@ export class Matchmaking {
     return list;
   }
 
-  fresh(now) {
-    const live = this.db.prepare(
-      `SELECT s.bundle, i.owner, i.realm, s.realm_level, a.keeper_level, i.origin
+  /**
+   * Every current island of a player who is not banned, in one read: its
+   * snapshot, its owner's Keeper level and protection, its rating, and its
+   * owner's season Renown from their standing and newest Renown row (§24.8's
+   * running total) — six rows an island, where a read each took seven and
+   * every Renown row of the season. An unprotected owner with no standing
+   * yet this season is given one, as their Renown read always has
+   * (seasons.standing).
+   */
+  live(now) {
+    const season = this.service.seasons.current(now).id;
+    const rows = this.db.prepare(
+      `SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin, s.band,
+              a.keeper_level, a.created_at, a.seeded, a.deleted_at, r.rating, r.deviation, st.start,
+              (SELECT n.total FROM renown n WHERE n.season = :season AND n.account = i.owner
+                ORDER BY n.id DESC LIMIT 1) AS booked,
+              (SELECT json_array(g.season, g.renown_total) FROM ledger g WHERE g.account = i.owner
+                ORDER BY g.at DESC, g.id DESC LIMIT 1) AS carried
          FROM islands i JOIN snapshots s ON s.bundle = i.bundle JOIN accounts a ON a.id = i.owner
-        WHERE a.banned_at IS NULL AND a.deleted_at IS NULL ORDER BY s.bundle, i.owner`).all();
+         LEFT JOIN ratings r ON r.kind = 'island' AND r.key = i.owner || '/' || i.realm
+         LEFT JOIN standings st ON st.season = :season AND st.account = i.owner
+        WHERE a.banned_at IS NULL ORDER BY s.bundle, i.owner`).all({ season });
+    const seasons = this.service.seasons;
+    // A protected island is nobody's target, and its Renown is not asked for.
+    // Its owner's Renown: their standing's start, their Renown rows' newest
+    // total, and what their newest ledger row carries this season (seasons.moved).
+    const carried = (r) => {
+      const [at, total] = r.carried ? JSON.parse(r.carried) : [null, 0];
+      return at === null || at < season ? 0 : at === season ? total ?? 0 : this.service.carried(r.owner, season, "renown");
+    };
+    return rows.map((r) => {
+      const shielded = this.shielded(r.owner, now, r);
+      return { ...r, shielded, renown: shielded ? null : r.start === null ? seasons.league(r.owner, now).renown
+        : r.start + (r.booked ?? seasons.booked(r.owner, season)) + carried(r) };
+    });
+  }
+
+  fresh(now) {
+    const live = this.live(now).filter((r) => r.deleted_at === null);
+    // The last 14 days' snapshots, by snapshots_by_published, then sorted:
+    // ordered by the snapshot's key, the planner would read every snapshot.
     const echoes = this.db.prepare(
       `SELECT s.bundle, s.owner, s.realm, s.realm_level, a.keeper_level, s.origin
          FROM snapshots s JOIN accounts a ON a.id = s.owner
         WHERE s.published_at > ? AND a.banned_at IS NULL AND a.deleted_at IS NULL
           AND s.owner != ?
           AND NOT EXISTS (SELECT 1 FROM islands i WHERE i.bundle = s.bundle)
-        ORDER BY s.bundle`).all(now - facts.ECHO_DAYS * DAY_MS, GENERATOR);
+        ORDER BY +s.bundle`).all(now - facts.ECHO_DAYS * DAY_MS, GENERATOR);
     // A bundle never changes (§24.8), so its chapter is worked out once.
     const chapter = (bundle) => {
       if (!this.chapters.has(bundle)) this.chapters.set(bundle, chapterOf(lawsOf(this.service.store.get(bundle))));
@@ -229,16 +291,17 @@ export class Matchmaking {
     const view = (r, echo) => {
       // §13.3: a player's curated layout is judged as generated too.
       const origin = r.origin ?? (r.owner === GENERATOR ? "generated" : "authored");
-      const rating = this.islandRating(r.owner, r.realm) ?? prior(r.realm_level, origin);
+      const rating = (echo ? this.islandRating(r.owner, r.realm)
+        : r.rating === null ? null : { rating: r.rating, deviation: r.deviation }) ?? prior(r.realm_level, origin);
       return {
         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
-        keeperLevel: r.keeper_level, renown: this.service.seasons.league(r.owner, now).renown,
+        keeperLevel: r.keeper_level, renown: echo ? this.service.seasons.league(r.owner, now).renown : r.renown,
         rating: rating.rating, deviation: rating.deviation, echo, chapter: chapter(r.bundle),
         origin,
       };
     };
     return [
-      ...live.filter((r) => !this.shielded(r.owner, now)).map((r) => view(r, false)),
+      ...live.filter((r) => !r.shielded).map((r) => view(r, false)),
       // The protection covers a new player's echoes too (G30).
       ...echoes.filter((r) => !this.shielded(r.owner, now)).map((r) => view(r, true)),
     ];

@@ -45,6 +45,7 @@ void fragment() {
 	float emit = body ? 0.0 : flags.y;
 	far_mix = far;
 	n_up = dot(NORMAL, normalize((VIEW_MATRIX * vec4(0.0, 1.0, 0.0, 0.0)).xyz));
+	face_on = abs(dot(normalize(cross(dFdx(VERTEX), dFdy(VERTEX))), VIEW));
 	creature_surface(c, body, gloss, emit, UV, local_pos, NORMAL, VIEW, far, ALBEDO, EMISSION);
 	// The highlight band is a glint at 40 px, not a shape: it thins out far away.
 	gloss_band = gloss * (1.0 - far * 0.7);

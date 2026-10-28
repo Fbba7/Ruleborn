@@ -161,19 +161,22 @@ func _realm(r: Dictionary) -> Control:
 		if k < kinds.size():
 			var kind: Dictionary = kinds[k]
 			var mark := ScreenKit.icon("harmony", kind["kind"], 44.0 if on else 34.0)
-			mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			mark.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 			row.add_child(mark)
-			row.add_child(l)
+			# The design's combination card: what kind it is and what it does
+			# to cost on pills, then what it is in words.
+			var col := VBoxContainer.new()
+			col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			col.add_theme_constant_override("separation", UI.px(4))
+			var tags := ScreenParts.flow(4.0)
+			tags.add_child(ScreenParts.pill(Strings.t("SCREEN_KIND_" + str(kind["kind"]).to_upper()).to_upper(),
+				"gold", "", "", 13.0))
 			var pct := int(kind["pct"])
-			var tag := ScreenKit.text(("−%d%%" if pct < 0 else "+%d%%") % absi(pct), 17.0, "number", m)
-			if on:
-				tag.add_theme_color_override("font_color", Tokens.color("success_text") if pct < 0
-					else Tokens.color("alarm_text"))
-			else:
-				tag.add_theme_color_override("font_color", Tokens.color("success_text_on_night") if pct < 0
-					else Tokens.color("alarm_text_on_night"))
-			tag.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-			row.add_child(tag)
+			tags.add_child(ScreenParts.pill(("−%d%%" if pct < 0 else "+%d%%") % absi(pct), "green" if pct < 0 else "red",
+				"", "", 13.0))
+			col.add_child(tags)
+			col.add_child(l)
+			row.add_child(col)
 		else:
 			row.add_child(l)
 		box.add_child(row)

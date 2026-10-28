@@ -70,9 +70,7 @@ func _build() -> void:
 	column.add_child(ScreenParts.status_plate(status_label))
 	body = UI.scroll(column)
 	# In the scroll, so large text never pushes the buttons off the phone.
-	var stage := ScreenHarmonyStage.new()
-	stage.walking = true
-	preview = stage
+	preview = LawFxPreview.new()
 	preview.custom_minimum_size.y = UI.px(132)
 	preview.visible = false
 	_stage = MarginContainer.new()
@@ -469,3 +467,6 @@ func _preview(r: Dictionary) -> void:
 	preview.visible = not laws.is_empty()
 	if preview.visible:
 		preview.show_laws(laws, LawFxPreview.realm_type_of(shown))
+		# The realm as the law card shows it, less the shadow pass (§21.3:
+		# under 150 draw calls with the deck and the card on screen).
+		preview.view.sun.shadow_enabled = false

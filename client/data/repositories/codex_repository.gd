@@ -25,6 +25,12 @@ func tier(law: String, to: int) -> Result:
 	return await api.post_json("/v1/codex/tier", {"law": law, "to": to})
 
 
+## §7.6's study: one law the crew crossed on heist `token`, once. Answers
+## {studied, pages, codex}.
+func study(token: String, law: String) -> Result:
+	return await api.post_json("/v1/codex/study", {"heist": token, "law": law})
+
+
 ## §7.6: the law the eighth heist's page and the Lab's go to, or none.
 ## Answers the Codex itself.
 func work_on(law: Variant) -> Result:

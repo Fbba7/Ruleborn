@@ -26,6 +26,7 @@ static func screen(slice: Dictionary) -> Dictionary:
 	var working: Variant = v.get("working_on")
 	out["working"] = Strings.t("CODEX_WORKING", Strings.term("LAW", working)) if working is String \
 		else Strings.t("CODEX_WORKING_NONE")
+	out["working_law"] = str(working) if working is String else ""
 	var tracks := {}
 	for m: Dictionary in v.get("mastery", []):
 		tracks[m["school"]] = m

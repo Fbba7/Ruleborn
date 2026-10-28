@@ -78,11 +78,30 @@ export class Track {
     return Math.max(1, Math.round(TIER_STARS * Math.min(1, remainingMs / seasonMs)));
   }
 
-  /** Stars in hand this season: earned, less spent. Last season's are gone. */
+  /** Stars in hand this season: earned, less spent. Last season's are gone.
+   *  The season-stars rows' newest running total, as Renown's (seasons.mjs
+   *  moved), and the stars that rode the player's ledger rows (service.mint):
+   *  their newest row's total, if it is this season's. */
   stars(account, season = this.seasons.current().id) {
-    return Number(this.db.prepare(
+    const own = this.own(account, season);
+    return own + this.service.carried(account, season, "stars");
+  }
+
+  /** The season-stars rows' own: their newest running total, or, before
+   *  the totals were kept, their sum. */
+  own(account, season) {
+    const last = this.db.prepare(
+      "SELECT total FROM season_stars WHERE season = ? AND account = ? ORDER BY id DESC LIMIT 1").get(season, account);
+    return !last ? 0 : last.total !== null ? Number(last.total) : Number(this.db.prepare(
       "SELECT COALESCE(SUM(amount), 0) AS n FROM season_stars WHERE season = ? AND account = ?")
       .get(season, account).n);
+  }
+
+  /** One season-stars row, with the season's total of those rows after it. */
+  book(season, account, amount, reason, heist, now) {
+    this.db.prepare(
+      "INSERT INTO season_stars (season, account, amount, reason, heist, at, total) VALUES (?, ?, ?, ?, ?, ?, ?)")
+      .run(season, account, amount, reason, heist, now, this.own(account, season) + amount);
   }
 
   /** A heist's stars, booked in the grant's transaction. An echo's owner
@@ -90,15 +109,16 @@ export class Track {
    *  season, so their tier price is fixed now if it is not yet: an echo raid
    *  opens their standing like any heist, and a season of them cannot wait
    *  out §18.8's catch-up to buy every tier at its floor. */
-  settle(lease, verdict, season, now, { echo = false } = {}) {
+  /** `book: false` books nothing: the grant puts the stars on the ledger
+   *  rows it writes, or books them here (service.grant). */
+  settle(lease, verdict, season, now, { echo = false, book = true } = {}) {
     const s = heistStars(verdict.grade);
     if (echo) s.defender = 0;
     this.seasons.standing(lease.attacker, season);
     if (s.defender) this.seasons.standing(lease.defender, season);
-    const book = this.db.prepare(
-      "INSERT INTO season_stars (season, account, amount, reason, heist, at) VALUES (?, ?, ?, ?, ?, ?)");
-    if (s.raider) book.run(season, lease.attacker, s.raider, `heist, ${verdict.grade} (18.2)`, lease.token, now);
-    if (s.defender) book.run(season, lease.defender, s.defender, `defence, ${verdict.grade} (18.2)`, lease.token, now);
+    if (!book) return s;
+    if (s.raider) this.book(season, lease.attacker, s.raider, `heist, ${verdict.grade} (18.2)`, lease.token, now);
+    if (s.defender) this.book(season, lease.defender, s.defender, `defence, ${verdict.grade} (18.2)`, lease.token, now);
     return s;
   }
 
@@ -149,9 +169,7 @@ export class Track {
       }
       const { tier, cost } = v.next;
       if (cost) {
-        this.db.prepare(
-          "INSERT INTO season_stars (season, account, amount, reason, heist, at) VALUES (?, ?, ?, ?, NULL, ?)")
-          .run(v.current, account, -cost, `season ${season}, tier ${tier} (18.2)`, now);
+        this.book(v.current, account, -cost, `season ${season}, tier ${tier} (18.2)`, null, now);
       }
       const rewards = tierRewards(season, tier);
       const out = { season, tier, cost, free: this.grant(account, season, tier, "free", rewards.free, now) };

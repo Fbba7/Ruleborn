@@ -151,6 +151,11 @@ uniform float hero_image = 0.2;
 uniform float hero_sheen = 0.4;
 // The fragment's normal against the world's up (set in fragment()).
 varying float n_up;
+// How squarely the drawn face itself looks at the eye (its geometric normal,
+// from the screen derivatives), set by each shader's fragment before
+// creature_surface: a face turned to the eye is no silhouette, whatever its
+// smooth normal says, so it takes no rim. 0 where a shader does not know.
+varying float face_on;
 
 // How soft each of the ramp's step edges is, in N·L. Sharp steps on a light
 // mesh draw its polygons (a band edge runs straight across each triangle);
@@ -347,6 +352,9 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 	vec3 rim_col = mix(rim_colour.rgb, mix(echo_colour_note.rgb, vec3(1.0), 0.2), echo_form);
 	rim_col = mix(rim_col, mix(rim_col, far_rim_colour.rgb, 0.4), far);
 	fr = mix(fr, pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.0), far);
+	// A light mesh's smooth normals turn to the edge across a shell's plates
+	// or a pile of stones; read as rim there they were white flecks.
+	fr *= 1.0 - smoothstep(0.55, 0.85, face_on);
 	vec3 rim = rim_col * fr * side * 0.9 * rs * (1.0 - hush)
 		+ albedo * vec3(1.0, 0.55, 0.35) * wrap * fr * 0.6 * rs * (1.0 - hush);
 	rim += mix(hush_colour.rgb, vec3(0.75, 0.8, 1.0), 0.45) * soft * 0.55 * hush;
@@ -355,12 +363,15 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 	// design's flames run orange to yellow under bloom; here the face turned to
 	// the eye goes toward warm yellow-white, the edge keeps the paint's colour.
 	vec3 hot = mix(albedo, vec3(1.0, 0.86, 0.48), hot_core * smoothstep(0.2, 0.9, dot(n, v)));
-	emission = mix(albedo, hot, step(0.01, emit) * (body ? 0.0 : 1.0)) * glow + rim + stars + extra;
+	// A sheet's own glow (0.3, the export's light through a petal or a wing)
+	// is not a flame: it keeps its paint's colour, only a real glow burns hot.
+	emission = mix(albedo, hot, step(0.31, emit) * (body ? 0.0 : 1.0)) * glow + rim + stars + extra;
 	if (hero > 0.0) {
 		vec3 image = albedo * mix(hero_bounce.rgb * 0.55, hero_sky.rgb, smoothstep(-0.6, 0.8, n_up)) * hero_image;
 		float graze = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.2);
 		float pale = smoothstep(0.08, 0.5, dot(albedo, vec3(0.2126, 0.7152, 0.0722)));
 		vec3 sheen_col = mix(sheen.rgb, albedo, 0.35);
+		graze *= 1.0 - smoothstep(0.55, 0.85, face_on);
 		emission += (image + sheen_col * graze * hero_sheen * pale) * hero * (1.0 - hush * 0.6);
 	}
 	if (spark > 0.0) {

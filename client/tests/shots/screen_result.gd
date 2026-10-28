@@ -34,7 +34,8 @@ func _go() -> void:
 		# it, with the design's split (Starlight, Essence, Renown) and fee.
 		var paid := str(verdict.get("grade", "")) != "Foiled"
 		verdict.merge({"server": true, "haul": 3115, "fee": 2840, "fee_returned": 2840 if paid else 0,
-			"starlight": 2310 if paid else 0, "essence": 805 if paid else 0, "renown": 15 if paid else -8}, true)
+			"starlight": 2310 if paid else 0, "essence": 805 if paid else 0, "renown": 15 if paid else -8,
+			"token": "shot"}, true)
 	App.services.store.dispatch(&"heist_finished", {"replay": replay, "verdict": verdict})
 	var screen: Control = load("res://scenes/result_screen.tscn").instantiate()
 	frame.add_child(screen)

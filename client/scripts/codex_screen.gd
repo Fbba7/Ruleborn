@@ -78,6 +78,7 @@ func _refresh() -> void:
 	ScreenParts.set_resource(_aether, str(c["aether"]))
 	var busy: bool = c["busy"] != ""
 	body.add_child(_summary(c))
+	body.add_child(_lead(c))
 	body.add_child(_filters(c["albums"]))
 	for a: Dictionary in c["albums"]:
 		if school_filter == "" or school_filter == a["school"]:
@@ -89,8 +90,7 @@ func _refresh() -> void:
 				break
 
 
-## The ring of laws restored, the laws met, the Keeper and Spire, the next
-## chapter, and the law worked on.
+## The ring of laws restored, the laws met, the Keeper and Spire.
 func _summary(c: Dictionary) -> Control:
 	# The ring beside the words, or above them where large text needs the width.
 	var top: BoxContainer = VBoxContainer.new()
@@ -116,14 +116,30 @@ func _summary(c: Dictionary) -> Control:
 		"levelup"))
 	words.add_child(pills)
 	top.add_child(words)
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", UI.px(8))
-	box.add_child(top)
-	var chapter := ScreenParts.pill(c["chapter"], "well", "generalui", "lock", 13.0, "words", true)
-	box.add_child(chapter)
-	var working := ScreenKit.text(c["working"], 13.0, "body", "card_lit", true, true)
-	box.add_child(working)
-	return ScreenKit.panel("card_lit", box, 18.0, 12.0)
+	return ScreenKit.panel("card_lit", top, 18.0, 12.0)
+
+
+## The design's "next lead" card under the summary: the law worked on, its
+## mark, and when the next chapter opens.
+func _lead(c: Dictionary) -> Control:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(12))
+	var law := str(c.get("working_law", ""))
+	var mark := ScreenKit.icon("laws", law, 40.0) if law != "" else ScreenKit.icon("generalui", "lock", 32.0)
+	var disc := ScreenKit.panel("well", mark, 12.0, 6.0)
+	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(disc)
+	var words := VBoxContainer.new()
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.alignment = BoxContainer.ALIGNMENT_CENTER
+	words.add_theme_constant_override("separation", UI.px(2))
+	var kicker := ScreenKit.text(Strings.t("SCREEN_NEXT_LEAD").to_upper(), 13.0, "words", "card")
+	kicker.add_theme_color_override("font_color", Tokens.color("gold"))
+	words.add_child(kicker)
+	words.add_child(ScreenKit.text(c["working"], 15.0, "words", "card", false, true))
+	words.add_child(ScreenKit.text(c["chapter"], 13.0, "body", "card", true, true))
+	row.add_child(words)
+	return ScreenKit.panel("card", row, 18.0, 10.0)
 
 
 ## The design's filter strip: All with the restored count, then each

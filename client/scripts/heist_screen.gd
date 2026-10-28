@@ -281,6 +281,8 @@ func finish() -> void:
 		var plan: Dictionary = services.store.get_slice(AppState.HEIST).get("plan", {})
 		var answer := await services.heists.submit(str(lease["token"]), replay, plan.get("crew", []))
 		var settled := HeistController.settled(answer, local)
+		# The heist's token, which its one study names (§7.6).
+		settled["token"] = str(lease["token"])
 		services.store.dispatch(&"heist_verdict", settled)
 		# §14.2: the experience it earned moves the Keeper bar; an answer the
 		# server gave before is not news, so the bar is asked for afresh.
