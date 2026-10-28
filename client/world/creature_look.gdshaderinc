@@ -363,7 +363,9 @@ void creature_surface(vec3 c, bool body, float gloss, float emit, vec2 uv, vec3 
 	// design's flames run orange to yellow under bloom; here the face turned to
 	// the eye goes toward warm yellow-white, the edge keeps the paint's colour.
 	vec3 hot = mix(albedo, vec3(1.0, 0.86, 0.48), hot_core * smoothstep(0.2, 0.9, dot(n, v)));
-	emission = mix(albedo, hot, step(0.01, emit) * (body ? 0.0 : 1.0)) * glow + rim + stars + extra;
+	// A sheet's own glow (0.3, the export's light through a petal or a wing)
+	// is not a flame: it keeps its paint's colour, only a real glow burns hot.
+	emission = mix(albedo, hot, step(0.31, emit) * (body ? 0.0 : 1.0)) * glow + rim + stars + extra;
 	if (hero > 0.0) {
 		vec3 image = albedo * mix(hero_bounce.rgb * 0.55, hero_sky.rgb, smoothstep(-0.6, 0.8, n_up)) * hero_image;
 		float graze = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.2);

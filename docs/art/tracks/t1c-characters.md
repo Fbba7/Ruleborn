@@ -463,9 +463,15 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   The rim and the hero sheen now fade where the drawn face itself (its
   screen-derivative normal, `face_on`) faces the eye; silhouettes keep
   both (`w5_quarryback_flecks_before_after.png`).
+- **Round 17:** a double-sided sheet (petal, wing, leaf) carries the
+  export's own glow of 0.3 so its back never reads black, and the shader's
+  hot core took it as a flame: Bloomling's petals burned toward yellow and
+  read coral and flat. Only a real glow (over 0.3) burns hot now; the petals
+  keep the design's deep base under a pink tip
+  (`w5_sheets_keep_their_paint.png`). Lantern Wisp's light paint paler
+  toward cream, as its lit core makes the design's face.
 - **Still worse than the design:** Featherkin's knit reads smooth; Lantern
-  Wisp's cream face reads pink; petals are flat where the design's pale
-  toward the tip.
+  Wisp's face is still pinker than the design's cream.
 - **Readability measured (round 15):** each ruleborn alone on the heist's
   painted grass, in grayscale: the share of a figure's pixels within 18
   levels of the grass under it is 8–13% for Skyskipper, Featherkin and

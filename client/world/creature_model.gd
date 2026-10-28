@@ -65,7 +65,8 @@ const LOOK := {
 	"lamplighter": {"paint_tint": Vector3(1.06, 1.0, 0.84)},
 	"stillwatch": {"paint_tint": Vector3(1.03, 1.02, 0.95)},
 	"mossbear": {"paint_tint": Vector3(0.9, 1.02, 0.9)},
-	"lanternwisp": {"tone": 0.65, "paint_tint": Vector3(1.0, 1.1, 0.84)},
+	"lanternwisp": {"tone": 0.65, "paint_tint": Vector3(1.0, 1.1, 0.84), "pastel": 0.55,
+		"pastel_colour": Color(1.0, 0.88, 0.76), "pastel_by_value": 1.0},
 	"soulmender": {"tone": 0.4, "paint_tint": Vector3(1.0, 1.06, 0.9), "pastel": 0.65,
 		"pastel_colour": Color(1.0, 0.86, 0.97), "pastel_by_value": 0.75},
 }
