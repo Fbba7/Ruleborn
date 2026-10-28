@@ -136,15 +136,15 @@ func _init() -> void:
 	right_box.add_theme_constant_override("separation", UI.px(3))
 	right_box.custom_minimum_size.x = UI.px(84)
 	# A row each: its name, and the number at the row's end.
-	room_label = _stat(right_box, Strings.t("HUD_ROOM"), large)
-	left_label = _stat(right_box, Strings.t("HUD_LEFT"), large)
+	room_label = _stat(right_box, Strings.t("HUD_ROOM"), true)
+	left_label = _stat(right_box, Strings.t("HUD_LEFT"), true)
 	# The design's slim bar: the bags' fill with a white tick at the load
 	# target, "Load to N%" under it; while the Vault is shut its cracking
 	# as a thinner bar beside a lock, so its progress is always on screen.
 	loot_bars = FxDraw.new(_draw_bars, Vector2(UI.px(56), UI.px(16)))
 	loot_bars.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right_box.add_child(loot_bars)
-	load_label = FxSkin.label("", 14.0)
+	load_label = FxSkin.label("", 13.0)
 	load_label.add_theme_color_override("font_color", FxSkin.PARCH_BOTTOM)
 	load_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	load_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -169,13 +169,13 @@ func _stat(box: VBoxContainer, title: String, whole := false) -> Label:
 	if whole:
 		row = HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation" if whole else "h_separation", UI.px(6))
+	row.add_theme_constant_override("separation" if whole else "h_separation", UI.px(3))
 	var name_label := FxSkin.label(title, 14.0)
 	name_label.add_theme_color_override("font_color", FxSkin.PARCH_BOTTOM)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(name_label)
-	var number := FxSkin.label("", 18.0)
+	var number := FxSkin.label("", 16.0)
 	number.add_theme_font_override("font", FxSkin.figures())
 	number.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	number.size_flags_horizontal = Control.SIZE_EXPAND_FILL

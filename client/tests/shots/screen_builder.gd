@@ -1,6 +1,7 @@
 extends SceneTree
 ## The terrain editor over a dressed island, a ward's ghost under the
-## pointer and a refused tap in red (tools/render/shoot.sh).
+## pointer and a refused tap in red (tools/render/shoot.sh); KIND a ground
+## feature to choose after, so its card shows.
 func _initialize() -> void:
 	_go()
 
@@ -22,5 +23,10 @@ func _go() -> void:
 	screen.kind = 0
 	screen.tap_tile(Vector2i(6, 6))
 	screen.show_ghost(Vector2i(8, 11))
+	# KIND: a ground feature chosen, its card shown, as the design's still.
+	if OS.get_environment("KIND") != "":
+		screen.tool = BuilderScreen.Tool.GROUND
+		screen.kind = screen.kinds().find(OS.get_environment("KIND"))
+		screen._refresh()
 	await ShotKit.settle(self, screen)
 	quit()

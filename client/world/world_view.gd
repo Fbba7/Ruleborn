@@ -555,11 +555,16 @@ func _follow_point() -> Vector3:
 	return Vector3(clampf(at.x, -half.x + 1.5, half.x - 1.5), 0.3, clampf(at.z, -half.y + 1.5, half.y - 1.5))
 
 
-## `goal` held so a view `across` metres wide never looks past the realm's
-## ground: a realm narrower than the view stays whole and centred.
+## Where a view `across` metres wide looks to keep `goal` in it, as the
+## design frames the heist: the island stays centred while the crew is within
+## the middle of the view, and the view moves only as far as the crew goes
+## past it, never past the realm's ground.
 func _kept_on_island(goal: Vector3, across: float) -> Vector3:
 	var reach := maxf(0.0, (Vector2(_size).length() - across) * 0.5)
-	var flat := Vector2(goal.x, goal.z).limit_length(reach)
+	var flat := Vector2(goal.x, goal.z)
+	var slack := across * 0.3
+	flat = flat.normalized() * maxf(0.0, flat.length() - slack) if flat.length() > slack else Vector2.ZERO
+	flat = flat.limit_length(reach)
 	return Vector3(flat.x, goal.y, flat.y)
 
 

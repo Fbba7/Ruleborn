@@ -251,6 +251,120 @@ GROUND_CLIMBING_VINES,Climbing vines,Climbing vines,Climbing vines,Climbing vine
 GROUND_WATERFALL,Waterfall,Waterfall,Waterfall,Waterfall,Waterfall,Waterfall
 GROUND_RAPIDS,Rapids,Rapids,Rapids,Rapids,Rapids,Rapids
 GROUND_TUNNEL,Tunnel,Tunnel,Tunnel,Tunnel,Tunnel,Tunnel
+GROUND_MOVEMENT_RAISED_GROUND,"Heights 0 to 3; climbing a level needs a ramp, stairs, vines or a leap","Heights 0 to 3; climbing a level needs a ramp, stairs, vines or a leap","Heights 0 to 3; climbing a level needs a ramp, stairs, vines or a leap","Heights 0 to 3; climbing a level needs a ramp, stairs, vines or a leap","Heights 0 to 3; climbing a level needs a ramp, stairs, vines or a leap","Heights 0 to 3; climbing a level needs a ramp, stairs, vines or a leap"
+GROUND_SIGHT_RAISED_GROUND,Guards on higher ground see further,Guards on higher ground see further,Guards on higher ground see further,Guards on higher ground see further,Guards on higher ground see further,Guards on higher ground see further
+GROUND_POINTS_RAISED_GROUND,2 per tile per level,2 per tile per level,2 per tile per level,2 per tile per level,2 per tile per level,2 per tile per level
+GROUND_MOVEMENT_RAMP,Climb one level,Climb one level,Climb one level,Climb one level,Climb one level,Climb one level
+GROUND_SIGHT_RAMP,—,—,—,—,—,—
+GROUND_POINTS_RAMP,1,1,1,1,1,1
+GROUND_MOVEMENT_STAIRS,Climb one level 20% faster than a ramp,Climb one level 20% faster than a ramp,Climb one level 20% faster than a ramp,Climb one level 20% faster than a ramp,Climb one level 20% faster than a ramp,Climb one level 20% faster than a ramp
+GROUND_SIGHT_STAIRS,—,—,—,—,—,—
+GROUND_POINTS_STAIRS,1,1,1,1,1,1
+GROUND_MOVEMENT_PIT,Drops anyone to the level below,Drops anyone to the level below,Drops anyone to the level below,Drops anyone to the level below,Drops anyone to the level below,Drops anyone to the level below
+GROUND_SIGHT_PIT,—,—,—,—,—,—
+GROUND_POINTS_PIT,2,2,2,2,2,2
+GROUND_MOVEMENT_ARCH,Pass under,Pass under,Pass under,Pass under,Pass under,Pass under
+GROUND_SIGHT_ARCH,Blocks sight from above,Blocks sight from above,Blocks sight from above,Blocks sight from above,Blocks sight from above,Blocks sight from above
+GROUND_POINTS_ARCH,2,2,2,2,2,2
+GROUND_MOVEMENT_TUNNEL,A hidden path joining two points up to 6 tiles apart,A hidden path joining two points up to 6 tiles apart,A hidden path joining two points up to 6 tiles apart,A hidden path joining two points up to 6 tiles apart,A hidden path joining two points up to 6 tiles apart,A hidden path joining two points up to 6 tiles apart
+GROUND_SIGHT_TUNNEL,Nobody can see into it,Nobody can see into it,Nobody can see into it,Nobody can see into it,Nobody can see into it,Nobody can see into it
+GROUND_POINTS_TUNNEL,6,6,6,6,6,6
+GROUND_MOVEMENT_STEPPING_STONES,Floating stones; crossing needs leaps,Floating stones; crossing needs leaps,Floating stones; crossing needs leaps,Floating stones; crossing needs leaps,Floating stones; crossing needs leaps,Floating stones; crossing needs leaps
+GROUND_SIGHT_STEPPING_STONES,—,—,—,—,—,—
+GROUND_POINTS_STEPPING_STONES,2,2,2,2,2,2
+GROUND_MOVEMENT_STREAM,Wading is 20% slower,Wading is 20% slower,Wading is 20% slower,Wading is 20% slower,Wading is 20% slower,Wading is 20% slower
+GROUND_SIGHT_STREAM,—,—,—,—,—,—
+GROUND_POINTS_STREAM,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile
+GROUND_MOVEMENT_POND,Deep: only swimmers cross; everyone else goes round,Deep: only swimmers cross; everyone else goes round,Deep: only swimmers cross; everyone else goes round,Deep: only swimmers cross; everyone else goes round,Deep: only swimmers cross; everyone else goes round,Deep: only swimmers cross; everyone else goes round
+GROUND_SIGHT_POND,—,—,—,—,—,—
+GROUND_POINTS_POND,2 per tile,2 per tile,2 per tile,2 per tile,2 per tile,2 per tile
+GROUND_MOVEMENT_MARSH,40% slower; footprints stay for 10 seconds,40% slower; footprints stay for 10 seconds,40% slower; footprints stay for 10 seconds,40% slower; footprints stay for 10 seconds,40% slower; footprints stay for 10 seconds,40% slower; footprints stay for 10 seconds
+GROUND_SIGHT_MARSH,—,—,—,—,—,—
+GROUND_POINTS_MARSH,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile
+GROUND_MOVEMENT_WATERFALL,Walk behind it on a hidden ledge,Walk behind it on a hidden ledge,Walk behind it on a hidden ledge,Walk behind it on a hidden ledge,Walk behind it on a hidden ledge,Walk behind it on a hidden ledge
+GROUND_SIGHT_WATERFALL,Blocks sight,Blocks sight,Blocks sight,Blocks sight,Blocks sight,Blocks sight
+GROUND_POINTS_WATERFALL,3,3,3,3,3,3
+GROUND_MOVEMENT_RAPIDS,Pushes anyone 1 tile a second downstream,Pushes anyone 1 tile a second downstream,Pushes anyone 1 tile a second downstream,Pushes anyone 1 tile a second downstream,Pushes anyone 1 tile a second downstream,Pushes anyone 1 tile a second downstream
+GROUND_SIGHT_RAPIDS,—,—,—,—,—,—
+GROUND_POINTS_RAPIDS,2 per tile,2 per tile,2 per tile,2 per tile,2 per tile,2 per tile
+GROUND_MOVEMENT_ICE_SHEET,Slippery: stopping takes 1 tile,Slippery: stopping takes 1 tile,Slippery: stopping takes 1 tile,Slippery: stopping takes 1 tile,Slippery: stopping takes 1 tile,Slippery: stopping takes 1 tile
+GROUND_SIGHT_ICE_SHEET,—,—,—,—,—,—
+GROUND_POINTS_ICE_SHEET,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile
+GROUND_MOVEMENT_HOT_SPRING,"Heals 2% health a second while standing in it, for both sides","Heals 2% health a second while standing in it, for both sides","Heals 2% health a second while standing in it, for both sides","Heals 2% health a second while standing in it, for both sides","Heals 2% health a second while standing in it, for both sides","Heals 2% health a second while standing in it, for both sides"
+GROUND_SIGHT_HOT_SPRING,Steam hides anyone inside beyond 2 tiles,Steam hides anyone inside beyond 2 tiles,Steam hides anyone inside beyond 2 tiles,Steam hides anyone inside beyond 2 tiles,Steam hides anyone inside beyond 2 tiles,Steam hides anyone inside beyond 2 tiles
+GROUND_POINTS_HOT_SPRING,3,3,3,3,3,3
+GROUND_MOVEMENT_TALL_GRASS,—,—,—,—,—,—
+GROUND_SIGHT_TALL_GRASS,Hides a character standing still in it until a guard walks into the tile,Hides a character standing still in it until a guard walks into the tile,Hides a character standing still in it until a guard walks into the tile,Hides a character standing still in it until a guard walks into the tile,Hides a character standing still in it until a guard walks into the tile,Hides a character standing still in it until a guard walks into the tile
+GROUND_POINTS_TALL_GRASS,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile
+GROUND_MOVEMENT_BUSH,—,—,—,—,—,—
+GROUND_SIGHT_BUSH,Hides one still character completely,Hides one still character completely,Hides one still character completely,Hides one still character completely,Hides one still character completely,Hides one still character completely
+GROUND_POINTS_BUSH,1,1,1,1,1,1
+GROUND_MOVEMENT_HEDGE,Blocks; cut through in 3 seconds,Blocks; cut through in 3 seconds,Blocks; cut through in 3 seconds,Blocks; cut through in 3 seconds,Blocks; cut through in 3 seconds,Blocks; cut through in 3 seconds
+GROUND_SIGHT_HEDGE,Blocks sight,Blocks sight,Blocks sight,Blocks sight,Blocks sight,Blocks sight
+GROUND_POINTS_HEDGE,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile
+GROUND_MOVEMENT_TREE,Walk around,Walk around,Walk around,Walk around,Walk around,Walk around
+GROUND_SIGHT_TREE,Blocks sight in a line,Blocks sight in a line,Blocks sight in a line,Blocks sight in a line,Blocks sight in a line,Blocks sight in a line
+GROUND_POINTS_TREE,2,2,2,2,2,2
+GROUND_MOVEMENT_FLOWER_MEADOW,—,—,—,—,—,—
+GROUND_SIGHT_FLOWER_MEADOW,Shows footprints for 10 seconds,Shows footprints for 10 seconds,Shows footprints for 10 seconds,Shows footprints for 10 seconds,Shows footprints for 10 seconds,Shows footprints for 10 seconds
+GROUND_POINTS_FLOWER_MEADOW,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile
+GROUND_MOVEMENT_THICKET,30% slower,30% slower,30% slower,30% slower,30% slower,30% slower
+GROUND_SIGHT_THICKET,Hides anyone inside beyond 1 tile,Hides anyone inside beyond 1 tile,Hides anyone inside beyond 1 tile,Hides anyone inside beyond 1 tile,Hides anyone inside beyond 1 tile,Hides anyone inside beyond 1 tile
+GROUND_POINTS_THICKET,2 per tile,2 per tile,2 per tile,2 per tile,2 per tile,2 per tile
+GROUND_MOVEMENT_CLIMBING_VINES,Climb one level without a ramp,Climb one level without a ramp,Climb one level without a ramp,Climb one level without a ramp,Climb one level without a ramp,Climb one level without a ramp
+GROUND_SIGHT_CLIMBING_VINES,—,—,—,—,—,—
+GROUND_POINTS_CLIMBING_VINES,1,1,1,1,1,1
+GROUND_MOVEMENT_BOUNCE_MUSHROOM,"Launches anyone 3 tiles forward, noisily","Launches anyone 3 tiles forward, noisily","Launches anyone 3 tiles forward, noisily","Launches anyone 3 tiles forward, noisily","Launches anyone 3 tiles forward, noisily","Launches anyone 3 tiles forward, noisily"
+GROUND_SIGHT_BOUNCE_MUSHROOM,The landing can be heard 4 tiles away,The landing can be heard 4 tiles away,The landing can be heard 4 tiles away,The landing can be heard 4 tiles away,The landing can be heard 4 tiles away,The landing can be heard 4 tiles away
+GROUND_POINTS_BOUNCE_MUSHROOM,2,2,2,2,2,2
+GROUND_MOVEMENT_BOULDER,Blocks; a Breaker smashes it in about 6 seconds,Blocks; a Breaker smashes it in about 6 seconds,Blocks; a Breaker smashes it in about 6 seconds,Blocks; a Breaker smashes it in about 6 seconds,Blocks; a Breaker smashes it in about 6 seconds,Blocks; a Breaker smashes it in about 6 seconds
+GROUND_SIGHT_BOULDER,Blocks sight,Blocks sight,Blocks sight,Blocks sight,Blocks sight,Blocks sight
+GROUND_POINTS_BOULDER,2,2,2,2,2,2
+GROUND_MOVEMENT_GRAVEL_PATH,15% faster,15% faster,15% faster,15% faster,15% faster,15% faster
+GROUND_SIGHT_GRAVEL_PATH,Crunchy: louder underfoot,Crunchy: louder underfoot,Crunchy: louder underfoot,Crunchy: louder underfoot,Crunchy: louder underfoot,Crunchy: louder underfoot
+GROUND_POINTS_GRAVEL_PATH,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile
+GROUND_MOVEMENT_SCREE,Loose stones,Loose stones,Loose stones,Loose stones,Loose stones,Loose stones
+GROUND_SIGHT_SCREE,Guards within 4 tiles notice 25% faster,Guards within 4 tiles notice 25% faster,Guards within 4 tiles notice 25% faster,Guards within 4 tiles notice 25% faster,Guards within 4 tiles notice 25% faster,Guards within 4 tiles notice 25% faster
+GROUND_POINTS_SCREE,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile
+GROUND_MOVEMENT_ROCK_PILLAR,Blocks; can't be broken,Blocks; can't be broken,Blocks; can't be broken,Blocks; can't be broken,Blocks; can't be broken,Blocks; can't be broken
+GROUND_SIGHT_ROCK_PILLAR,Blocks sight,Blocks sight,Blocks sight,Blocks sight,Blocks sight,Blocks sight
+GROUND_POINTS_ROCK_PILLAR,3,3,3,3,3,3
+GROUND_MOVEMENT_CRYSTAL_OUTCROP,Blocks movement,Blocks movement,Blocks movement,Blocks movement,Blocks movement,Blocks movement
+GROUND_SIGHT_CRYSTAL_OUTCROP,"See-through; bends light, so lanterns reach 2 tiles further past it","See-through; bends light, so lanterns reach 2 tiles further past it","See-through; bends light, so lanterns reach 2 tiles further past it","See-through; bends light, so lanterns reach 2 tiles further past it","See-through; bends light, so lanterns reach 2 tiles further past it","See-through; bends light, so lanterns reach 2 tiles further past it"
+GROUND_POINTS_CRYSTAL_OUTCROP,2,2,2,2,2,2
+GROUND_MOVEMENT_LANTERN_POST,—,—,—,—,—,—
+GROUND_SIGHT_LANTERN_POST,Lights 3 tiles: nothing hides inside the light,Lights 3 tiles: nothing hides inside the light,Lights 3 tiles: nothing hides inside the light,Lights 3 tiles: nothing hides inside the light,Lights 3 tiles: nothing hides inside the light,Lights 3 tiles: nothing hides inside the light
+GROUND_POINTS_LANTERN_POST,1,1,1,1,1,1
+GROUND_MOVEMENT_SHADE_CANOPY,—,—,—,—,—,—
+GROUND_SIGHT_SHADE_CANOPY,Hides anyone beyond 3 tiles; blocks Sunburst,Hides anyone beyond 3 tiles; blocks Sunburst,Hides anyone beyond 3 tiles; blocks Sunburst,Hides anyone beyond 3 tiles; blocks Sunburst,Hides anyone beyond 3 tiles; blocks Sunburst,Hides anyone beyond 3 tiles; blocks Sunburst
+GROUND_POINTS_SHADE_CANOPY,1,1,1,1,1,1
+GROUND_MOVEMENT_FOG_BANK,—,—,—,—,—,—
+GROUND_SIGHT_FOG_BANK,Hides anyone inside and blocks sight through it,Hides anyone inside and blocks sight through it,Hides anyone inside and blocks sight through it,Hides anyone inside and blocks sight through it,Hides anyone inside and blocks sight through it,Hides anyone inside and blocks sight through it
+GROUND_POINTS_FOG_BANK,2 per tile,2 per tile,2 per tile,2 per tile,2 per tile,2 per tile
+GROUND_MOVEMENT_UPDRAFT_VENT,Lifts anyone one level; flyers two,Lifts anyone one level; flyers two,Lifts anyone one level; flyers two,Lifts anyone one level; flyers two,Lifts anyone one level; flyers two,Lifts anyone one level; flyers two
+GROUND_SIGHT_UPDRAFT_VENT,—,—,—,—,—,—
+GROUND_POINTS_UPDRAFT_VENT,3,3,3,3,3,3
+GROUND_MOVEMENT_EMBER_VENT,Bursts of flame every 8 seconds; hurts anyone on it,Bursts of flame every 8 seconds; hurts anyone on it,Bursts of flame every 8 seconds; hurts anyone on it,Bursts of flame every 8 seconds; hurts anyone on it,Bursts of flame every 8 seconds; hurts anyone on it,Bursts of flame every 8 seconds; hurts anyone on it
+GROUND_SIGHT_EMBER_VENT,Lights 2 tiles when it bursts,Lights 2 tiles when it bursts,Lights 2 tiles when it bursts,Lights 2 tiles when it bursts,Lights 2 tiles when it bursts,Lights 2 tiles when it bursts
+GROUND_POINTS_EMBER_VENT,2,2,2,2,2,2
+GROUND_MOVEMENT_LAVA_CRACK,Impassable line,Impassable line,Impassable line,Impassable line,Impassable line,Impassable line
+GROUND_SIGHT_LAVA_CRACK,Glows,Glows,Glows,Glows,Glows,Glows
+GROUND_POINTS_LAVA_CRACK,3,3,3,3,3,3
+GROUND_MOVEMENT_STATIC_STONE,Zaps anyone within 1 tile every 4 seconds,Zaps anyone within 1 tile every 4 seconds,Zaps anyone within 1 tile every 4 seconds,Zaps anyone within 1 tile every 4 seconds,Zaps anyone within 1 tile every 4 seconds,Zaps anyone within 1 tile every 4 seconds
+GROUND_SIGHT_STATIC_STONE,Crackles,Crackles,Crackles,Crackles,Crackles,Crackles
+GROUND_POINTS_STATIC_STONE,2,2,2,2,2,2
+GROUND_MOVEMENT_FENCE,Blocks walking; can be leapt,Blocks walking; can be leapt,Blocks walking; can be leapt,Blocks walking; can be leapt,Blocks walking; can be leapt,Blocks walking; can be leapt
+GROUND_SIGHT_FENCE,Doesn't block sight,Doesn't block sight,Doesn't block sight,Doesn't block sight,Doesn't block sight,Doesn't block sight
+GROUND_POINTS_FENCE,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile
+GROUND_MOVEMENT_STATUE,Blocks one tile,Blocks one tile,Blocks one tile,Blocks one tile,Blocks one tile,Blocks one tile
+GROUND_SIGHT_STATUE,Cover for one character,Cover for one character,Cover for one character,Cover for one character,Cover for one character,Cover for one character
+GROUND_POINTS_STATUE,1,1,1,1,1,1
+GROUND_MOVEMENT_RUIN_WALL,"Blocks, with gaps","Blocks, with gaps","Blocks, with gaps","Blocks, with gaps","Blocks, with gaps","Blocks, with gaps"
+GROUND_SIGHT_RUIN_WALL,Cover; blocks sight,Cover; blocks sight,Cover; blocks sight,Cover; blocks sight,Cover; blocks sight,Cover; blocks sight
+GROUND_POINTS_RUIN_WALL,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile,1 per tile
+GROUND_MOVEMENT_BELL_POST,Rings if bumped,Rings if bumped,Rings if bumped,Rings if bumped,Rings if bumped,Rings if bumped
+GROUND_SIGHT_BELL_POST,Raises the realm's alarm one level,Raises the realm's alarm one level,Raises the realm's alarm one level,Raises the realm's alarm one level,Raises the realm's alarm one level,Raises the realm's alarm one level
+GROUND_POINTS_BELL_POST,2,2,2,2,2,2
 BUILDING_KEEPER_S_SPIRE,Keeper's Spire,Keeper's Spire,Keeper's Spire,Keeper's Spire,Keeper's Spire,Keeper's Spire
 BUILDING_VAULT,Vault,Vault,Vault,Vault,Vault,Vault
 BUILDING_ANCHOR_STONE,Anchor Stone,Anchor Stone,Anchor Stone,Anchor Stone,Anchor Stone,Anchor Stone

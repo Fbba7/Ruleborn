@@ -415,6 +415,22 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
     Lantern Wisp warmer and paler; Glass Golem's tone 0.3 to 0.15 (its
     violet 0.94/0.77/1.31 against 0.94/0.74/1.31).
 
+11. The heist's crew were three motion kinds (Featherkin, Rambler,
+    Skyskipper): three cream-and-gold figures that merged on the grass and
+    in their portraits. `Cast.KIND` (the integrator's, a few lines) now takes
+    02-heist.png's own crew where it shows one (Emberling, Tidewalker,
+    Mossbear) and Featherkin and Soul Mender for Scout and Mender: five
+    schools, five colours, read apart at a glance and in grayscale (a test
+    holds the five schools). Draw calls: heist 128, long-crew5's result 149;
+    Featherkin and Mossbear are one surface each, and a crew of two-surface
+    kinds would make the result 150.
+12. Quarryback's tone 0.1 and Stillwatch a warmer tint, measured as in
+    round 9 (Stillwatch 0.96/0.99/1.05 against 0.95/1.00/1.05).
+13. The six Sages measured the same way: five within 0.04; Lamplighter read
+    grey-blue (0.10 off) and takes a warm tint (now 1.25/0.94/0.81 against
+    1.28/0.95/0.77). Bloomling's body warmer (1.10/1.04/0.87 against
+    1.12/1.00/0.89).
+
 ### Stills (`docs/art/shots/t1d/`)
 
 - `w5_busts.png`, `w5_busts_guard.png`: every ruleborn's and Sage's bust on
@@ -427,5 +443,38 @@ mesh (a Rambler without its clips imports at 125 KB of 171 KB).
   Bloomling beneath.
 - `w5_heist_ink_before_after.png`: the crew at the heist camera, thick ink
   against 1.8.
+- `w5_heist_crew_before_after.png`, `w5_heist_crew.png`: the crew at the
+  Vault, three motion kinds against the new cast, with grayscale.
 - `w5_portraits_vs_design.png`: the 24 design portraits, each over ours in
   the hero view.
+
+## Stopped here (fifth session, 23:40 UTC)
+
+- **Last pushed:** the branch head; check_all passed on it. Outside T1's
+  files, a few lines each: `FxPortrait` (busts), `WorldView._light_figures`
+  (`set_night`), `Cast.KIND` (the five-school crew).
+- **For T5:** the Sage disc (`CreatureBust.of(sage, "", ground)`) once the
+  simulation gives a heist its Sage; guards at `readable_scale()`; keep the
+  crew out of the guards' rings in `heist_shot.gd`.
+- **Still worse than the design:** white flecks on Quarryback's shell and
+  Mossbear's stones. Traced (after the stop, round 14): they are body faces
+  (an accessory-red debug pass leaves them white), not holes (an ink-green
+  pass shows no ink through them), not faces the decimation folded (dropping
+  the 76 faces wound against the sculpt's normals keeps every fleck), and
+  not lift, sheen, relief or exposure. A UV debug pass puts most of them at
+  the atlas's left edge (u near 0), outside every chart, where the bake
+  paints nothing of theirs: the next step is `unwrap`/`pack` in
+  `tools/art/harness.js` for faces whose projection is near edge-on; Featherkin's knit reads smooth; Lantern
+  Wisp's cream face reads pink; petals are flat where the design's pale
+  toward the tip.
+- **Readability measured (round 15):** each ruleborn alone on the heist's
+  painted grass, in grayscale: the share of a figure's pixels within 18
+  levels of the grass under it is 8–13% for Skyskipper, Featherkin and
+  Rambler, 20–33% for Soul Mender, Tidewalker, Lantern Wisp, Quarryback
+  and Hourkeeper. Those read by the ink; a far-only value step away from
+  the grass's value changed nothing measurable (the match is in the lit
+  result, not the paint) and was not kept.
+- **Container setup:** as the fourth session, plus `npm ci` in `tools/art`
+  for the export; a worktree at `../rb-exp`
+  (with `client/bin`, `client/goldens` and `client/.godot` copied) let
+  renders run while check_all held the main tree.

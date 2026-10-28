@@ -136,6 +136,8 @@ HOME_WORKSHOP,Workshop,Workshop,Oficina,Oficina,Werkstatt,Atelier
 BUILDER_TITLE,"Your island, realm level %d","Your island, realm level %d","Sua ilha, reino nível %d","A tua ilha, nível de reino %d","Deine Insel, Reichslevel %d","Ton île, royaume niveau %d"
 BUILDER_HINT,Tap the realm to place what is chosen below,Tap the realm to place what is chosen below,Toque no reino para pôr o que está escolhido abaixo,Toca no reino para colocar o que está escolhido abaixo,"Tippe ins Reich, um das unten Gewählte zu platzieren",Touche le royaume pour placer la sélection ci-dessous
 BUILDER_TOOL_GROUND,Ground,Ground,Terreno,Terreno,Boden,Sol
+BUILDER_CARD_MOVEMENT,Movement,Movement,Movimento,Movimento,Bewegung,Déplacement
+BUILDER_CARD_SIGHT,Guard sight,Guard sight,Visão dos guardas,Visão dos guardas,Wächterblick,Vue des gardes
 BUILDER_TOOL_WARD,Ward,Ward,Proteção,Proteção,Siegel,Protection
 BUILDER_TOOL_GUARD,Guard,Guard,Guarda,Guarda,Wache,Garde
 BUILDER_TOOL_LAW,Law,Law,Lei,Lei,Gesetz,Loi
@@ -529,6 +531,7 @@ UNIVERSE_PRICE,"%s, %s Starlight","%s, %s Starlight","%s, %s de Luz Estelar","%s
 UNIVERSE_BLOCKED,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s
 UNIVERSE_SPOKEN,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s,%s. %s
 UNIVERSE_NEEDS_KEEPER,Needs Keeper %d,Needs Keeper %d,Precisa de Guardião %d,Requer Guardião %d,Braucht Hüter %d,Requiert Gardien %d
+HOME_OPENS_KEEPER,Opens at Keeper %d,Opens at Keeper %d,Abre no Guardião %d,Abre no Guardião %d,Öffnet bei Hüter %d,S'ouvre au Gardien %d
 UNIVERSE_NEEDS_SPIRE,Needs the Spire at level %d,Needs the Spire at level %d,Precisa da Torre no nível %d,Requer a Torre no nível %d,Braucht Turm auf Level %d,Requiert la Tour au niveau %d
 UNIVERSE_NEEDS_STARLIGHT,Needs %s Starlight,Needs %s Starlight,Precisa de %s de Luz Estelar,Requer %s de Luz Estelar,Braucht %s Sternenlicht,Requiert %s Lumière stellaire
 UNIVERSE_CONFIRM,Tap again to spend %s Starlight,Tap again to spend %s Starlight,Toque de novo para gastar %s de Luz Estelar,Toca de novo para gastar %s de Luz Estelar,"Nochmal tippen, um %s Sternenlicht auszugeben",Touche encore pour dépenser %s Lumière stellaire
@@ -731,6 +734,8 @@ FORMS_FILTER_ALL,All,All,Todas,Todas,Alle,Toutes
 FORMS_FILTER_OUTFITS,Outfits,Outfits,Trajes,Trajes,Outfits,Tenues
 FORMS_FILTER_MISSING,Missing,Missing,Faltando,Em falta,Fehlend,Manquantes
 FORMS_FILTER_SPOKEN,Show %s: %d kinds,Show %s: %d kinds,Mostrar %s: %d espécies,Mostrar %s: %d espécies,%s zeigen: %d Arten,Afficher %s : %d espèces
+FORMS_PREVIOUS,"Previous kind, %s","Previous kind, %s","Espécie anterior, %s","Espécie anterior, %s","Vorherige Art, %s","Espèce précédente, %s"
+FORMS_NEXT,"Next kind, %s","Next kind, %s","Próxima espécie, %s","Espécie seguinte, %s","Nächste Art, %s","Espèce suivante, %s"
 HOME_HATCH,Hatch,Hatch,Chocar,Chocar,Ausbrüten,Faire éclore
 HATCH_TITLE,Hatch,Hatch,Chocar,Chocar,Ausbrüten,Faire éclore
 HATCH_HEADER,Each birth costs %s Essence; you have %s,Each birth costs %s Essence; you have %s,Cada nascimento custa %s de Essência; você tem %s,Cada nascimento custa %s de Essência; tens %s,Jede Geburt kostet %s Essenz; du hast %s,Chaque naissance coûte %s d'Essence ; tu en as %s
@@ -1232,6 +1237,8 @@ DEFENCES_PYLON,%s pylon,%s pylon,pilar de %s,pilar de %s,%s-Pylon,pylône de %s
 DEFENCES_STAT_HELD,Held,Held,Seguradas,Seguradas,Gehalten,Tenues
 DEFENCES_STAT_LEAKED,Leaked,Leaked,Vazadas,Vazadas,Durchgelassen,Percées
 DEFENCES_STAT_PARTIAL,Partial,Partial,Parciais,Parciais,Teilweise,Partielles
+DEFENCES_STAT_RAIDS,Raids this season,Raids this season,Assaltos na temporada,Assaltos na temporada,Raubzüge der Saison,Raids de la saison
+DEFENCES_STAT_TRACE,Trace ready,Trace ready,Rastro pronto,Rasto pronto,Spur bereit,Piste prête
 REHEARSE_TAB,Rehearse,Rehearse,Ensaiar,Ensaiar,Proben,Répéter
 DEFENCES_TAB_LOG,Defence log,Defense log,Registro de defesa,Registo de defesa,Verteidigungslog,Journal de défense
 REHEARSE_REPLAY_CAUTIOUS,Replay · cautious crew,Replay · cautious crew,Replay · equipe cautelosa,Repetição · equipa cautelosa,Wiederholung · vorsichtige Crew,Replay · équipe prudente
@@ -1287,6 +1294,7 @@ CUR_TAB_LAWS,Laws,Laws,Leis,Leis,Gesetze,Lois
 CUR_TAB_NAME,Name,Name,Nome,Nome,Name,Nom
 CUR_KICKER,Your defence,Your defense,Sua defesa,A tua defesa,Deine Abwehr,Ta défense
 CUR_TEST_RUN,Test run,Test run,Testar,Testar,Testlauf,Essai
+CUR_HOLDS,Holds,Holds,Resiste,Resiste,Hält,Tient
 ERR_FUND_ADULTS_ONLY,the Island Fund is open from 18,the Island Fund is open from 18,o Island Fund é aberto a partir dos 18,o Island Fund está aberto a partir dos 18,der Island Fund ist ab 18 offen,l'Island Fund est ouvert dès 18 ans
 LANDING_REALM_ONE,"In %s, one link from the Heart","In %s, one link from the Heart","Em %s, a uma ligação do Coração","Em %s, a uma ligação do Coração","In %s, eine Verbindung vom Herzen","Dans %s, à un lien du Cœur"
 LANDING_REALM_MANY,"In %s, %d links from the Heart","In %s, %d links from the Heart","Em %s, a %d ligações do Coração","Em %s, a %d ligações do Coração","In %s, %d Verbindungen vom Herzen","Dans %s, à %d liens du Cœur"
@@ -1408,6 +1416,9 @@ SCREEN_SLOT_RESTING,Resting,Resting,Descansando,A descansar,Ruht,Au repos
 SCREEN_SLOT_LOCKED,Locked,Locked,Bloqueado,Bloqueado,Gesperrt,Verrouillé
 SCREEN_CHAPTER,Ch. %d,Ch. %d,Cap. %d,Cap. %d,Kap. %d,Ch. %d
 SCREEN_TEXT_A,A,A,A,A,A,A
+SCREEN_LAW_OF,Law %d of %d,Law %d of %d,Lei %d de %d,Lei %d de %d,Gesetz %d von %d,Loi %d sur %d
+SCREEN_LAW_PREVIOUS,"Previous law, %s","Previous law, %s","Lei anterior, %s","Lei anterior, %s","Vorheriges Gesetz, %s","Loi précédente, %s"
+SCREEN_LAW_NEXT,"Next law, %s","Next law, %s","Próxima lei, %s","Lei seguinte, %s","Nächstes Gesetz, %s","Loi suivante, %s"
 SCREEN_TRY_AGAIN,Try again,Try again,Tentar de novo,Tentar outra vez,Erneut versuchen,Réessayer
 SCREEN_CODE,%s,%s,%s,%s,%s,%s
 SCREEN_NOT_MET,Not met,Not met,Não vista,Não vista,Unbekannt,Inconnue
@@ -1511,7 +1522,7 @@ LANDING_SILENT,Silent,Silent,Silencioso,Silencioso,Lautlos,Silencieux
 LANDING_HEARD_TILES,%d tiles,%d tiles,%d casas,%d casas,%d Felder,%d cases
 LANDING_TILE_NOISE,Noise,Noise,Ruído,Ruído,Lärm,Bruit
 LANDING_TILE_CLOCK,Clock,Clock,Relógio,Relógio,Uhr,Horloge
-HEIST_HINT_SHORT,"Tap crew, then ground · hold ground to sneak or run","Tap crew, then ground · hold ground to sneak or run","Toque na equipe, depois no chão · segure no chão para se esgueirar ou correr","Toca na equipa, depois no chão · mantém premido para te esgueirares ou correres","Tippe auf die Crew, dann auf den Boden · halte gedrückt zum Schleichen oder Rennen","Touchez l'équipe, puis le sol · maintenez pour vous faufiler ou courir"
+HEIST_HINT_SHORT,"Tap crew, then ground · hold to sneak or run","Tap crew, then ground · hold to sneak or run","Toque na equipe, depois no chão · segure para se esgueirar ou correr","Toca na equipa, depois no chão · mantém premido para te esgueirares ou correres","Tippe auf die Crew, dann auf den Boden · halte zum Schleichen oder Rennen","Touchez l'équipe, puis le sol · maintenez pour vous faufiler ou courir"
 HEIST_AIM,Tap the world where %s goes · tap the portrait again to put it away,Tap the world where %s goes · tap the portrait again to put it away,Toque no mundo onde vai %s · toque de novo no retrato para cancelar,Toca no mundo onde vai %s · toca de novo no retrato para cancelar,"Tippe in die Welt, wohin %s soll · tippe das Porträt erneut zum Abbrechen",Touchez le monde où va %s · touchez de nouveau le portrait pour annuler
 HEIST_STOP,Stop,Stop,Parar,Parar,Anhalten,Arrêter
 HEIST_DROP_HALF,Drop half,Drop half,Largar metade,Largar metade,Hälfte ablegen,Lâcher la moitié
@@ -1542,3 +1553,6 @@ LANDING_DECK_SPOTS,%d spots · %d covered,%d spots · %d covered,%d pontos · %d
 LANDING_DECK_HOPS,%d hops to the Vault · %d spots,%d hops to the Vault · %d spots,%d saltos até o Cofre · %d pontos,%d saltos até ao Cofre · %d pontos,%d Sprünge zum Tresor · %d Stellen,%d sauts jusqu'au Coffre · %d points
 LANDING_DECK_HOP,1 hop to the Vault · %d spots,1 hop to the Vault · %d spots,1 salto até o Cofre · %d pontos,1 salto até ao Cofre · %d pontos,1 Sprung zum Tresor · %d Stellen,1 saut jusqu'au Coffre · %d points
 LANDING_DECK_ISLAND,This island,This island,Esta ilha,Esta ilha,Diese Insel,Cette île
+RESULT_RAID_AGAIN,Raid again,Raid again,Assaltar de novo,Assaltar outra vez,Erneut rauben,Repartir en casse
+RESULT_IDLE_CREW,Idle crew of %d ready,Idle crew of %d ready,%d da equipe livres e prontos,%d da equipa livres e prontos,%d freie Crew bereit,%d membres libres prêts
+HEIST_AIM_HAND,Tap the world where %s goes · tap its button again to put it away,Tap the world where %s goes · tap its button again to put it away,Toque no mundo onde vai %s · toque de novo no botão para cancelar,Toca no mundo onde vai %s · toca de novo no botão para cancelar,"Tippe in die Welt, wohin %s soll · tippe die Taste erneut zum Abbrechen",Touchez le monde où va %s · touchez de nouveau le bouton pour annuler

@@ -39,6 +39,7 @@ func run() -> void:
 	_device_words()
 	_pinning()
 	await _panel()
+	await _account_tab()
 	if server_url != "":
 		await _against_server()
 
@@ -287,11 +288,18 @@ func _device_words() -> void:
 		"platforms": ["gc", "gp"]}
 	var on_iphone := AuthPresenter.methods(both, "gc")
 	var on_android := AuthPresenter.methods(both, "gp")
+	Strings.set_locale("pt_BR")
+	var in_portuguese := AuthPresenter.place("ES")
+	Strings.set_locale("de")
+	var in_german := AuthPresenter.place("es")
+	Strings.set_locale("en")
 	check.call("a device is named by its model, else its kind in words, then when it was last used on the "
-			+ "server's clock, its country in words (never an address) and its platform; the other platform "
+			+ "server's clock, its country in the player's language (never an address) and its platform; the other platform "
 			+ "is offered to add, and a link is removable only from a device that signs in the other way",
 		row["title"] == Strings.t("AUTH_KIND_ANDROID_PHONE") and str(row["line"]).contains(Strings.t("AUTH_SEEN_DAYS", 5))
 			and str(row["line"]).contains("Spain") and str(row["line"]).contains("Google")
+			and in_portuguese == "Espanha" and in_german == "Spanien" and AuthPresenter.place("ZZZ") == Strings.t(
+				"AUTH_PLACE_UNKNOWN")
 			and mine["title"] == "iPhone 15" and str(mine["spoken"]).contains(Strings.t("AUTH_THIS_DEVICE"))
 			and not str(mine["line"]).contains(Strings.t("AUTH_SEEN_NOW"))
 			and str(mine["line"]).contains(Strings.t("AUTH_PLACE_UNKNOWN"))
@@ -535,4 +543,51 @@ func _against_server() -> void:
 		r.ok and first != "" and refresh.begins_with("r1.") and b.ok and rotated != refresh and second != first
 			and told.ok and after.code == "session_refused",
 		"%s %s %s %s" % [r, b, told, after])
+	s.close()
+
+
+## Settings' Account tab, as the player opens it: the real screen on a
+## phone's portrait frame, in each language (Portuguese runs longest), with
+## three devices and Google linked. The screen-wide sweeps mount Settings
+## on its first tab, so this one holds the Account tab to the same rules.
+func _account_tab() -> void:
+	var f := _fake("tab")
+	var s: Services = f[0]
+	var platform: FakePlatformIdentity = f[3]
+	platform.available = ["gc", "gp"] as Array[String]
+	var held := App.services
+	var size := tree.root.size
+	App.services = s
+	await s.auth_flow.sign_in()
+	tree.root.size = Vector2i(540, 1170)
+	var point := UI.PX_PER_POINT
+	var problems: Array[String] = []
+	for locale: String in Strings.LOCALES:
+		Strings.set_locale(locale)
+		var screen: SettingsScreen = (load("res://scenes/settings.tscn") as PackedScene).instantiate()
+		screen.tab_shown = "account"
+		tree.root.add_child(screen)
+		for _i: int in 3:
+			await tree.process_frame
+		var frame := screen.get_viewport_rect().size
+		var panel := screen.find_child("AuthPanel", true, false) as AuthPanel
+		if panel == null or not panel.is_visible_in_tree():
+			problems.append("%s: no Account tab" % locale)
+		for c: Control in screen.find_children("*", "Control", true, false):
+			if c.get_combined_minimum_size().x > frame.x:
+				problems.append("%s: %s asks for %d px of %d" % [locale, c.name, c.get_combined_minimum_size().x,
+					frame.x])
+				break
+		for b: Button in (panel.find_children("*", "Button", true, false) if panel != null else []):
+			var r := b.get_global_rect()
+			if b.is_visible_in_tree() and (minf(r.size.x, r.size.y) < 48 * point - 0.5 or r.end.x > frame.x):
+				problems.append("%s: %s is %s at %s" % [locale, b.text, r.size, r.position])
+		screen.queue_free()
+		await tree.process_frame
+	Strings.set_locale("en")
+	tree.root.size = size
+	check.call("Settings' Account tab holds the panel, and in every language nothing on it is wider than a "
+			+ "phone's frame and every control is at least 48 points and on the screen",
+		problems.is_empty(), "; ".join(problems))
+	App.services = held
 	s.close()

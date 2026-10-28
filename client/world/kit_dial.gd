@@ -9,15 +9,20 @@ extends RefCounted
 ## it lies over.
 
 ## The dial's radius past the Spire's half side, in tiles: the design's dial
-## is about three times as wide as the Spire's terrace.
-const REACH := 2.0
+## is about three times as wide as the Spire's terrace (its inner ring of
+## wedges shows round the terrace).
+const REACH := 2.6
+## The same at the mid detail (the realm view and the home camera), where the
+## design draws its dial smaller round the Spire (04-realm-view).
+const REACH_MID := 1.7
 const CURB := Color("#B89AD0")
 const HAND := Color("#4A2A6A")
 
 
-## The radius of the dial round a Spire `side` tiles a side.
-static func radius(side: int) -> float:
-	return side / 2.0 + REACH
+## The radius of the dial round a Spire `side` tiles a side, at `detail`
+## (BuildingKit.FULL or MID).
+static func radius(side: int, detail := BuildingKit.FULL) -> float:
+	return side / 2.0 + (REACH_MID if detail == BuildingKit.MID else REACH)
 
 
 ## The curb (into `fine`, un-inked, so it reads lilac, not as a black line)

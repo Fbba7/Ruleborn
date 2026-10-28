@@ -12,5 +12,10 @@ func _go() -> void:
 	App.services.store.dispatch(&"observatory_chosen", {"bundle": "p1"})
 	var screen: Control = load("res://scenes/scout.tscn").instantiate()
 	root.add_child(screen)
+	# STAB: another tab on show.
+	if OS.get_environment("STAB") != "":
+		await process_frame
+		(screen as ScoutScreen)._tab = OS.get_environment("STAB")
+		(screen as ScoutScreen)._refresh()
 	await ShotKit.settle(self, screen)
 	quit()

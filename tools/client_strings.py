@@ -63,6 +63,11 @@ def rows() -> list[tuple[str, str]]:
     # Moss is a surface (§6.1, §12.17), not one of §6.2's features: its name
     # is an ordinary word, translated in strings.csv.
     out += [(f"GROUND_{g.upper()}", terrain[g]) for g in GROUND if g in terrain]
+    # The terrain editor's card for a feature (§23.2): how it changes movement
+    # and sight, and its points, section references dropped.
+    for t in (t for t in load("terrain.json") if t["id"] in GROUND):
+        out += [(f"GROUND_{part.upper()}_{t['id'].upper()}", re.sub(r" \([^)]*\d+\.\d+[^)]*\)", "", t[part]))
+                for part in ("movement", "sight", "points")]
     out += [(f"BUILDING_{b['id'].upper()}", b["name"]) for b in load("buildings.json")]
     # §11.11's character cards: each ruleborn's name, its ability and what
     # it is best at, as the Character screen shows them (§23.2); and §11.3's

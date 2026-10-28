@@ -520,3 +520,34 @@ are counted once, as §21.3 counts them. Every zoom is inside 25,000–40,000 or
   ball at the side, which large text pushed into the name), Renown on a night chip edged in rose.
   Stills: `docs/art/shots/universe/w5_r46_home_vs_design.png` (design, ours, design raid, ours raid) and
   `w5_r46_gray_thumbs.png`. Home now 132 draw calls (138 with the raid card).
+- Round 47, the locked realm. The design hangs the next realm as a whole island, dimmed, under a dark pill
+  with a lock, "Opens at Keeper 28"; ours was a faint ring of mist under "+ Lantern Vale". Now a realm
+  still to open is drawn whole (rock, meadow, trees; no buildings), its palette greyed and dimmed toward
+  the night, with its mist ring; its pin is the design's lock pill when the server says it is blocked by
+  the Keeper level (`HOME_OPENS_KEEPER`) or the Spire (`UNIVERSE_NEEDS_SPIRE`), and "+ name" when it can
+  be bought, placed over the island's far rim like the realm labels. The shot sample's next realm is now
+  blocked at Keeper 28, as the design shows it.
+- Round 48, the realm zooms' budget. Home at the Heart's zoom 1 was 180 draw calls. Only the realm the
+  camera is on casts the sun's shadow; the skiffs are one instance layer (they share the first one's sail
+  stripe); the links' kind marks and the four side buttons are drawn in batched runs (`UniversePins
+  ._draw_links`, `UniverseSide.draw_all` on a layer over the column, redrawn when the buttons move).
+  Home now: zoom 0 115 calls (raid card 120, 200% text on 9:16 99); the Heart 146 at zoom 1 and 136
+  close; an outer realm 134–136.
+
+## Stopped here (fifth session, 22:55 UTC)
+
+- Done and pushed green (76628df, full `check_all` passed): the design's "COLLECT 3.4k" pill; 42-point
+  side balls inside 48-point hit areas; the raid banner as the design's; realm labels as the design's and
+  clear of every control at 100–200% text; the slim resource row; the badge's gold level pill; the locked
+  realm; lights on the links and reduced-motion forms for everything that flies; home under 150 draw calls
+  at every zoom, measured with the engine's own count (it had been 454).
+- Still worse than the design: outer islands sparse (buildings clustered in the middle, small from afar;
+  the far building look is T3's `KitMap`, the spots and scale mine: `RINGS`, `_far_building`); the tab
+  bar boxed and 28 draw calls (T9's `KitTabs`); the defence ball shows its name where the design shows the
+  shield's time (no client data for it); the raid card says "Raided 2 times" where the design names the
+  raider, realm and what was kept (the badge route gives only a count; the log, which has it, marks raids
+  seen when read).
+- Next: spread outer buildings to the 0.5 and 0.72 rings and draw them larger from afar; the universe and
+  map screens in the kit's style; a still of the banner's arrival (shots start too late to catch it).
+- `universe_view.gd` is at 997 lines: move code out (to `UniverseWhole` or a new file) before adding any.
+- The session paused for about three hours (20:15–22:50 UTC); nothing was lost.

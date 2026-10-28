@@ -158,6 +158,11 @@ func _busts() -> void:
 	check.call("characters: every ruleborn's and Sage's bust is framed on its head and chest, one texture per kind, "
 		+ "form and ground", unframed.is_empty() and kept and t.get_width() == CreatureBust.SIZE,
 		"unframed: %s" % [unframed])
+	var schools := {}
+	for r: String in ["Scout", "Breaker", "Carrier", "Warden", "Mender"]:
+		schools[str((CreatureModel.manifest()[String(Cast.KIND[r])] as Dictionary).get("school", ""))] = r
+	check.call("characters: a heist crew's five roles are five kinds of five schools, so no two share a colour on the "
+		+ "grass or in the crew row (02-heist.png)", schools.size() == 5, "schools: %s" % [schools])
 	var drawn := Image.create_empty(64, 64, false, Image.FORMAT_RGBA8)
 	drawn.fill(Color(0.2, 0.4, 0.9, 0.0))
 	drawn.fill_rect(Rect2i(24, 16, 16, 40), Color(0.9, 0.2, 0.2, 1.0))

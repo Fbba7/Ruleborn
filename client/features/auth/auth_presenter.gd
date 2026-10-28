@@ -101,11 +101,15 @@ static func seen(hours: int) -> String:
 	return Strings.t("AUTH_SEEN_DAYS", hours / 24)
 
 
-## A country's ISO code in words, as the engine names it; unknown, said so.
+## A country's ISO code in words, in the player's language (countries.csv,
+## the CLDR's names: tools/auth_countries.py); a code it lacks, as the engine
+## names it; none, said so.
 static func place(code: Variant) -> String:
-	var c := str(code) if code != null else ""
+	var c := str(code).to_upper() if code != null else ""
 	if c.length() != 2:
 		return Strings.t("AUTH_PLACE_UNKNOWN")
+	if Strings.rows().has("COUNTRY_" + c):
+		return Strings.t("COUNTRY_" + c)
 	var named := TranslationServer.get_country_name(c)
 	return named if named != "" else Strings.t("AUTH_PLACE_UNKNOWN")
 

@@ -70,18 +70,39 @@ func _layout() -> void:
 	access.visible = tab_shown == "access"
 	account.visible = tab_shown == "account"
 	var lang := ScreenKit.button(Strings.t("LANGUAGE_" + Settings.locale), next_language, "cream", "", 14.0)
-	game.add_child(ScreenParts.item("settingsandwellbeing", "language", Strings.t("SETTINGS_LANGUAGE"), "",
-		_tag(lang, "language")))
+	_tag(lang, "language")
+	# The language beside its name; under it at large text, where both do not
+	# fit one line.
+	if Settings.text_scale <= 125:
+		game.add_child(ScreenParts.item("settingsandwellbeing", "language", Strings.t("SETTINGS_LANGUAGE"), "", lang))
+	else:
+		var item := ScreenParts.item("settingsandwellbeing", "language", Strings.t("SETTINGS_LANGUAGE"))
+		lang.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		lang.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var stack := VBoxContainer.new()
+		stack.add_theme_constant_override("separation", UI.px(8))
+		var row := item.get_child(item.get_child_count() - 1)
+		item.remove_child(row)
+		stack.add_child(row)
+		stack.add_child(lang)
+		item.add_child(stack)
+		game.add_child(item)
 
 	game.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_SOUND")))
 	var icons := {"music": "music", "effects": "effectsvolume", "alerts": "notifications"}
+	# The volumes as rows of one card, as the design groups a section.
+	var sound := VBoxContainer.new()
+	sound.add_theme_constant_override("separation", 0)
 	for bus: String in Settings.VOLUMES:
 		var name := Strings.t("SETTINGS_" + bus.to_upper(), Settings.volume[bus])
 		var l := ScreenKit.text(name, 15.0, "words", "card")
 		volume_labels[bus] = l
-		game.add_child(_stepper(icons.get(bus, "sound"), l, step.bind(bus, -1), step.bind(bus, 1),
+		if sound.get_child_count() > 0:
+			sound.add_child(_divider())
+		sound.add_child(_stepper(icons.get(bus, "sound"), l, step.bind(bus, -1), step.bind(bus, 1),
 			Strings.t("SETTINGS_QUIETER", name), Strings.t("SETTINGS_LOUDER", name), bus,
-			float(Settings.volume[bus]) / float(Settings.VOLUME_STEPS)))
+			float(Settings.volume[bus]) / float(Settings.VOLUME_STEPS), true))
+	game.add_child(ScreenKit.panel("card", sound, 18.0, 4.0))
 
 	game.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_PLAY")))
 	game.add_child(_toggle("slow_rehearsals", "SETTINGS_SLOW_REHEARSALS", "playtimereminder"))
@@ -116,7 +137,7 @@ func _layout() -> void:
 ## A setting with steps: its icon, its words over a bar of where it stands,
 ## and − and + either side.
 func _stepper(icon: String, words: Label, down: Callable, up: Callable, spoken_down: String, spoken_up: String,
-		tag: String, share: float) -> Control:
+		tag: String, share: float, in_card := false) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
 	row.add_child(ScreenKit.panel("well", ScreenKit.icon("settingsandwellbeing", icon, 26.0), -1.0, 4.0))
@@ -133,6 +154,12 @@ func _stepper(icon: String, words: Label, down: Callable, up: Callable, spoken_d
 		b.add_theme_font_size_override("font_size", UI.text_px(24))
 		b.set_meta("points", 24.0)
 		row.add_child(b)
+	if in_card:
+		var pad := MarginContainer.new()
+		for side: String in ["left", "right", "top", "bottom"]:
+			pad.add_theme_constant_override("margin_" + side, UI.px(8))
+		pad.add_child(row)
+		return pad
 	return ScreenKit.panel("card", row, 16.0, 8.0)
 
 

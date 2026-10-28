@@ -22,5 +22,10 @@ func _go() -> void:
 	root.add_child(screen)
 	await process_frame
 	store.dispatch(&"planner_opened", {"card": card})
+	# PTAB: another tab on show.
+	if OS.get_environment("PTAB") != "":
+		await process_frame
+		(screen as PlannerScreen)._tab = OS.get_environment("PTAB")
+		(screen as PlannerScreen)._refresh()
 	await ShotKit.settle(self, screen)
 	quit()

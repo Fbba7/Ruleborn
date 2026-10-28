@@ -113,10 +113,39 @@ func _refresh() -> void:
 	rule.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(ScreenKit.panel("parchment", rule, 14.0, 10.0))
 	box.add_child(_strip(c))
+	var ring := LawPresenter.neighbours(App.services.store.get_slice(CodexState.CODEX), law)
+	if not ring.is_empty():
+		_below.add_child(_steps(ring))
 	_below.add_child(_notes(c))
 	_below.add_child(_pages(c))
 	var weak := ScreenParts.item("hud", "warning", Strings.t("SCREEN_WEAKNESS"), c["weak"], null, "card")
 	_below.add_child(weak)
+
+
+## The design's way through the laws met: the one before, this law's place
+## among them, the one after.
+func _steps(ring: Dictionary) -> Control:
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", UI.px(12))
+	var before := Strings.term("LAW", str(ring["prev"]))
+	var after := Strings.term("LAW", str(ring["next"]))
+	var back := ScreenKit.button("‹", App.services.router.go.bind(&"law", {"law": ring["prev"]}), "leather",
+		Strings.t("SCREEN_LAW_PREVIOUS", before), -1.0)
+	back.set_meta("key", "law:prev")
+	var on := ScreenKit.button("›", App.services.router.go.bind(&"law", {"law": ring["next"]}), "leather",
+		Strings.t("SCREEN_LAW_NEXT", after), -1.0)
+	on.set_meta("key", "law:next")
+	for b: Button in [back, on]:
+		b.add_theme_font_size_override("font_size", UI.text_px(24))
+		b.set_meta("points", 24.0)
+	var place := ScreenKit.text(Strings.t("SCREEN_LAW_OF", [int(ring["at"]), int(ring["of"])]), 13.0, "words",
+		"card", true)
+	place.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(back)
+	row.add_child(place)
+	row.add_child(on)
+	return row
 
 
 ## The design's info strip at the card's foot, on parchment: the rank on

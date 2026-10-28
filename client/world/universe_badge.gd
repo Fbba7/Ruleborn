@@ -94,15 +94,10 @@ func _draw() -> void:
 	var lc := Vector2(c.x, c.y + r - UI.px(3))
 	var plate := Rect2(lc - tag * 0.5, tag)
 	UniverseHud.gold_pill(tag.y).draw(get_canvas_item(), plate)
-	var nf := UniverseHud.words_font()
-	var npx := UI.text_px(13.0)
-	draw_string(nf, Vector2(plate.position.x, lc.y + nf.get_ascent(npx) * 0.36), digits, HORIZONTAL_ALIGNMENT_CENTER,
-		plate.size.x, npx, Color("#1B1430"))
-	# The name, and Renown beneath it.
+	# Every shape first, then the words font by font, so the words batch.
 	var x := _text_x() + (c.x - r - UI.px(2))
 	var names := UniverseHud.names_font()
 	var top: float = c.y - UI.px(4) if renown != "" else c.y + names.get_ascent(_name_px()) * 0.35
-	UniverseHud.inked(self, names, Vector2(x, top), title, _name_px(), UniverseHud.WORDS)
 	if renown != "":
 		var words := UniverseHud.words_font()
 		var w := words.get_string_size(renown, HORIZONTAL_ALIGNMENT_LEFT, -1, _chip_px()).x
@@ -121,5 +116,10 @@ func _draw() -> void:
 		draw_string(words, Vector2(chip.position.x + UI.px(16), chip.position.y + h * 0.5
 			+ words.get_ascent(_chip_px()) * 0.36), renown, HORIZONTAL_ALIGNMENT_LEFT, -1, _chip_px(),
 			UniverseHud.WORDS)
+	var nf := UniverseHud.words_font()
+	var npx := UI.text_px(13.0)
+	draw_string(nf, Vector2(plate.position.x, lc.y + nf.get_ascent(npx) * 0.36), digits, HORIZONTAL_ALIGNMENT_CENTER,
+		plate.size.x, npx, Color("#1B1430"))
+	UniverseHud.inked(self, names, Vector2(x, top), title, _name_px(), UniverseHud.WORDS)
 	if has_focus():
 		draw_arc(c, r + UI.px(3), 0.0, TAU, 64, UniverseHud.WORDS, UI.px(2), true)

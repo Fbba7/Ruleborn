@@ -97,7 +97,7 @@ func _refresh() -> void:
 		_rating_panel(slice, w["busy"])
 	body.add_child(ScreenParts.section(w["title"], str((w["items"] as Array).size())))
 	if w["ladder"] != "":
-		body.add_child(ScreenParts.item("leagues", "star", w["ladder"], "", null, "card_lit"))
+		body.add_child(_ladder(w["ladder"], w["rungs"]))
 	if w["empty"]:
 		body.add_child(ScreenParts.empty("screens", "islandworkshop",
 			Strings.t("WORKSHOP_EMPTY_" + str(w["list"]).to_upper())))
@@ -198,6 +198,48 @@ func _card(item: Dictionary, busy: bool) -> Control:
 	return ScreenKit.panel("card", box, 18.0, 10.0)
 
 
+## The creator ladder as the design's card: the four levels on a gold line,
+## the one reached lit, and the counts that climb it; said whole in words.
+func _ladder(said: String, r: Dictionary) -> Control:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", UI.px(8))
+	# The discs on their line, then the names in columns of the same width,
+	# so a name never breaks inside a word.
+	var rail := HBoxContainer.new()
+	rail.add_theme_constant_override("separation", 0)
+	var names := GridContainer.new()
+	names.columns = (r["steps"] as Array).size() if Settings.text_scale <= 125 else 2
+	names.add_theme_constant_override("h_separation", UI.px(4))
+	var i := 0
+	for step: Dictionary in r["steps"]:
+		if i > 0:
+			var line := ScreenThread.make(UI.px(18), bool(step["reached"]))
+			line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			rail.add_child(line)
+		var disc := ScreenKit.panel("gold" if step["reached"] else "well",
+			ScreenKit.icon("leagues", "star", 30.0 if step["here"] else 22.0), -1.0, 6.0)
+		disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		rail.add_child(disc)
+		var name := ScreenKit.text(step["name"], 13.0, "words", "card_lit", not step["here"], true)
+		name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		names.add_child(name)
+		i += 1
+	rail.visible = Settings.text_scale <= 125
+	box.add_child(rail)
+	box.add_child(names)
+	var counts := ScreenParts.flow(4.0)
+	counts.add_child(ScreenParts.pill("%s %s" % [r["completions"], Strings.t("SCREEN_PLAYS")], "well", "heistoutcomes",
+		"clean"))
+	counts.add_child(ScreenParts.pill("%s %s" % [r["featured"], Strings.t("WORKSHOP_FEATURED")], "well", "hud",
+		"star"))
+	box.add_child(counts)
+	var card := ScreenKit.panel("card_lit", box, 18.0, 12.0)
+	card.tooltip_text = said
+	rail.accessibility_name = said
+	return card
+
+
 ## The island's cover, as the design's card heads it: its name over a lit
 ## band with the realm's mark, who made it, and its featured and remix tags.
 func _cover(item: Dictionary) -> Control:
@@ -284,7 +326,8 @@ func _publish_panel(slice: Dictionary, busy: bool) -> void:
 	if not p["can"]:
 		return
 	var box := VBoxContainer.new()
-	box.add_child(ScreenKit.text(Strings.t("WORKSHOP_PUBLISH_TITLE"), 15.0, "words", "card", false, true))
+	box.add_theme_constant_override("separation", UI.px(8))
+	box.add_child(ScreenKit.text(Strings.t("WORKSHOP_PUBLISH_TITLE"), 20.0, "name", "card_lit", false, true))
 	if p["remix"] != "":
 		box.add_child(ScreenKit.text(p["remix"], 15.0, "words", "card", false, true))
 	if not p["named"]:
@@ -299,7 +342,11 @@ func _publish_panel(slice: Dictionary, busy: bool) -> void:
 		body.add_child(ScreenKit.panel("card", box, 18.0, 12.0))
 		return
 	var words: Dictionary = slice["words"]
-	box.add_child(ScreenKit.text(Strings.t("WORKSHOP_NAME", p["name"]), 15.0, "words", "card", false, true))
+	# The name it would go out under, large on parchment, as the design's
+	# draft card names its island.
+	var named := ScreenKit.text(Strings.t("WORKSHOP_NAME", p["name"]), 20.0, "name", "parchment", false, true)
+	named.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(ScreenKit.panel("parchment", named, 14.0, 10.0))
 	var r := UI.row(6.0)
 	r.add_child(_act("adjective", Strings.t("SOCIAL_OTHER_ADJECTIVE"), func() -> void:
 		adjective = (adjective + 1) % maxi(1, (words.get("adjectives", []) as Array).size())
@@ -310,7 +357,7 @@ func _publish_panel(slice: Dictionary, busy: bool) -> void:
 	r.add_child(_act("publish", Strings.t("WORKSHOP_PUBLISH"), _publish, busy,
 		Strings.t("WORKSHOP_PUBLISH_NAMED", p["name"]), true))
 	box.add_child(r)
-	body.add_child(ScreenKit.panel("card", box, 18.0, 12.0))
+	body.add_child(ScreenKit.panel("card_lit", box, 18.0, 12.0))
 
 
 func _publish() -> void:
@@ -322,19 +369,38 @@ func _publish() -> void:
 func _rating_panel(slice: Dictionary, busy: bool) -> void:
 	var p := WorkshopPresenter.rating(slice, scores)
 	var box := VBoxContainer.new()
-	box.add_child(ScreenKit.text(Strings.t("WORKSHOP_RATE_TITLE", p["name"]), 15.0, "words", "card", false, true))
+	box.add_theme_constant_override("separation", UI.px(8))
+	box.add_child(ScreenKit.text(Strings.t("WORKSHOP_RATE_TITLE", p["name"]), 20.0, "name", "card_lit", false, true))
+	# Each aspect a row: its words over five pips, the score lit; − and +.
 	for aspect: String in ASPECTS:
-		var r := UI.row(6.0)
 		var said: String = p[aspect]
-		r.add_child(_act("lower:" + aspect, "−", _score.bind(aspect, -1), false, Strings.t("WORKSHOP_LOWER", said)))
-		r.add_child(ScreenKit.panel("track", ScreenKit.text(said, 15.0, "words", "well"), 14.0, 8.0))
-		r.add_child(_act("raise:" + aspect, "+", _score.bind(aspect, 1), false, Strings.t("WORKSHOP_HIGHER", said)))
-		box.add_child(r)
-	var send := UI.row(6.0)
-	send.add_child(_act("rate", Strings.t("WORKSHOP_SEND_RATING"), _send_rating.bind(p["id"]), busy,
-		Strings.t("WORKSHOP_SEND_RATING_NAMED", p["name"]), true))
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", UI.px(8))
+		var col := VBoxContainer.new()
+		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		col.alignment = BoxContainer.ALIGNMENT_CENTER
+		col.add_theme_constant_override("separation", UI.px(4))
+		col.add_child(ScreenKit.text(said, 15.0, "words", "card_lit", false, true))
+		var pips := HBoxContainer.new()
+		pips.add_theme_constant_override("separation", UI.px(4))
+		for i: int in 5:
+			var pip := ScreenKit.panel("gold" if i < int(scores[aspect]) else "well", null, -1.0, 0.0)
+			pip.custom_minimum_size = Vector2.ONE * UI.px(14)
+			pips.add_child(pip)
+		col.add_child(pips)
+		row.add_child(col)
+		for b: Button in [_act("lower:" + aspect, "−", _score.bind(aspect, -1), false, Strings.t("WORKSHOP_LOWER", said)),
+				_act("raise:" + aspect, "+", _score.bind(aspect, 1), false, Strings.t("WORKSHOP_HIGHER", said))]:
+			b.add_theme_font_size_override("font_size", UI.text_px(24))
+			b.set_meta("points", 24.0)
+			b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			row.add_child(b)
+		box.add_child(row)
+	var send := _act("rate", Strings.t("WORKSHOP_SEND_RATING"), _send_rating.bind(p["id"]), busy,
+		Strings.t("WORKSHOP_SEND_RATING_NAMED", p["name"]), true)
+	send.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_child(send)
-	body.add_child(ScreenKit.panel("card", box, 18.0, 12.0))
+	body.add_child(ScreenKit.panel("card_lit", box, 18.0, 12.0))
 
 
 ## The rating sent; the panel closes once the server has it, and stays, with
