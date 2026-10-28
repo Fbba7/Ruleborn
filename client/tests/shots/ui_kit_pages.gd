@@ -444,14 +444,14 @@ static func _season(column: VBoxContainer) -> void:
 	var line := UI.label("Your islands. Your rules. Their treasure.", 18, true)
 	column.add_child(line)
 	column.add_child(KitNav.top_bar("Held Breath", func() -> void: pass, "18 days"))
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", UI.px(8))
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	# A sideways strip, as the design's reward track (17-season.png).
+	var rewards := KitLayout.strip(8)
+	var row := rewards.get_node("Row") as HBoxContainer
 	row.add_child(KitCards.season_reward("Common", "currencies/starglass", "600", func() -> void: pass, false, "Claim"))
 	row.add_child(KitCards.season_reward("Common", "currencies/pages", "×2", func() -> void: pass, false, "Claim"))
 	row.add_child(KitCards.season_reward("Rare", "currencies/starglass", "1,200", Callable(), true))
 	column.add_child(KitRail.make(11, 3, 12, 0.68, "Tier 12, 340 of 500 to the next"))
-	column.add_child(row)
+	column.add_child(rewards)
 
 
 ## The design's Friends pieces (27-friends.png) and a chip strip that
