@@ -242,6 +242,11 @@ func _slot(s: Dictionary, busy: bool) -> Control:
 		b.disabled = busy or not out["can"]
 		b.set_meta("key", out["key"])
 		b.set_meta("item", out["item"])
+		# Quiet under its slot, as the design keeps the tapestry one band.
+		b.add_theme_font_size_override("font_size", UI.text_px(13))
+		b.set_meta("points", 13.0)
+		UI.fit(b)
+		b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		col.add_child(b)
 	return col
 
