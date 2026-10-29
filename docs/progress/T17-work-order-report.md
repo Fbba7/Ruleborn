@@ -7,9 +7,12 @@ the order's own format. The new page it recommended is
 [agent-protocol.md](../guides/agent-protocol.md); the backlog format is
 [backlog.example.json](backlog.example.json). No code was written.
 
-Late start: T17's session began at 22:06 UTC on 29 October 2026, after the
-12:00 UTC deadline its prompt set. The work was done anyway and is reported
-here (finding G-70).
+Deadline: T17's prompt said 12:00 UTC on 29 October, which had passed when
+the session started at 22:06 UTC. The integrator corrected it by scheduled
+message (fired 22:06 UTC, read 22:19 UTC): STOP_AT is 04:00 UTC on 30 October,
+with a target of a green, final push by 23:20 UTC on 29 October. The
+correction is acknowledged here and in [`T17.md`](T17.md). The earlier
+deadline is finding G-70.
 
 ## 1. Every gap and its outcome
 
@@ -230,11 +233,15 @@ the final commit is in T17's final message and in
 **G-70 · low · [text] · A prompt whose deadline has already passed**
 - Where: B "Time and stopping".
 - Problem: T17's prompt set a deadline (12:00 UTC on 29 October) that had
-  passed when the session started; nothing says what an agent does then.
+  passed when the session started. The correction arrived by scheduled
+  message, which T17 read 13 minutes after it fired; nothing in the brief
+  says what an agent does meanwhile.
 - Fix: the lead checks STOP_AT against `date -u` before starting a session;
-  an agent that finds its STOP_AT passed sends the lead a request.
-- Outcome: owner decision. T17 carried on because the owner commissioned the
-  work directly.
+  an agent that finds its STOP_AT already passed sends the lead a request
+  and keeps working until answered, under the brief's "deadline is unclear"
+  rule.
+- Outcome: covered for the agent by the existing rule; the lead's
+  pre-start check is an owner decision (default: the lead does it).
 
 **G-71 · low · [text] · `checks.md`'s background command lacks the marker**
 - Where: `checks.md` ("`echo "exit $?"`" into `/tmp/check.log`).

@@ -7,9 +7,9 @@
   "task_id": "T17-work-order",
   "task_state": "working",
   "claimed_at": "2026-10-29T22:06:00Z",
-  "lease_until": "2026-10-30T02:30:00Z",
-  "updated_at": "2026-10-29T23:30:00Z",
-  "expected_next_update_by": "2026-10-30T00:15:00Z",
+  "lease_until": "2026-10-30T01:20:00Z",
+  "updated_at": "2026-10-29T22:20:00Z",
+  "expected_next_update_by": "2026-10-29T23:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
@@ -18,8 +18,11 @@
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": null,
-  "acks": [],
+  "stop_at": "2026-10-30T04:00:00Z",
+  "acks": [
+    "deadline correction 2026-10-29T22:06Z",
+    "target 23:20Z 2026-10-29T22:07Z"
+  ],
   "requests": [
     {
       "id": "T17-R1",
@@ -30,7 +33,7 @@
         "docs/art/ui-quality/report.md"
       ],
       "blocking": false,
-      "created_at": "2026-10-29T23:30:00Z",
+      "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "agent-protocol.md's queue applies by the owner's work order; report.md keeps the older text until aligned",
       "escalate_to": "lead"
@@ -44,7 +47,7 @@
         "docs/art/ui-quality/report.md"
       ],
       "blocking": false,
-      "created_at": "2026-10-29T23:30:00Z",
+      "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "P3 stays proposed and unset; agents use the worktree runner and read logs themselves",
       "escalate_to": "lead"
@@ -58,7 +61,7 @@
         "docs/art/ui-quality/report.md"
       ],
       "blocking": false,
-      "created_at": "2026-10-29T23:30:00Z",
+      "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "P6 stays proposed and unset; the lead restarts paused sessions",
       "escalate_to": "lead"
@@ -72,7 +75,7 @@
         "docs/art/ui-quality/report.md"
       ],
       "blocking": false,
-      "created_at": "2026-10-29T23:30:00Z",
+      "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "The UI wave keeps its own split rule (splits to the owner); the protocol's verdict format is used in its folder",
       "escalate_to": "lead"
@@ -86,7 +89,7 @@
         "docs/art/ui-quality/report.md"
       ],
       "blocking": false,
-      "created_at": "2026-10-29T23:30:00Z",
+      "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "AD's flow reviews come from the 20-hour reserve",
       "escalate_to": "lead"
@@ -100,7 +103,7 @@
         "docs/art/ui-quality/report.md"
       ],
       "blocking": false,
-      "created_at": "2026-10-29T23:30:00Z",
+      "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "The program's figure and absence rule apply",
       "escalate_to": "lead"
@@ -114,7 +117,7 @@
         "docs/guides/checks.md"
       ],
       "blocking": false,
-      "created_at": "2026-10-29T23:30:00Z",
+      "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "agent-protocol.md's runner applies; checks.md keeps its command",
       "escalate_to": "lead"
@@ -128,7 +131,7 @@
         "docs/DOCS-CHANGES.md"
       ],
       "blocking": false,
-      "created_at": "2026-10-29T23:30:00Z",
+      "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "The README index rows record it",
       "escalate_to": "lead"
@@ -142,7 +145,7 @@
         "docs/progress/owner-inbox.md"
       ],
       "blocking": false,
-      "created_at": "2026-10-29T23:30:00Z",
+      "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "Defaults D-01 to D-14 in T17-work-order-report.md apply until answered",
       "escalate_to": "lead"
@@ -157,7 +160,7 @@
         ".gitignore"
       ],
       "blocking": false,
-      "created_at": "2026-10-29T23:30:00Z",
+      "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "The log stays; the worktree runner keeps new logs in /tmp",
       "escalate_to": "lead"
