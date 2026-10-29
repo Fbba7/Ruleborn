@@ -9,3 +9,6 @@ client/ext/target/
 # client/export.sh's store builds and its checks.
 build/
 client/export_presets.cfg.kept
+
+# Local logs (G-72)
+*.log
