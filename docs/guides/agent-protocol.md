@@ -110,7 +110,7 @@ One list of states is used in the backlog, the status files and every page.
 
 | task_state | Set by | When | Lease |
 |---|---|---|---|
-| `open` | lead or coordinator | created; lease expired; claim yielded | none |
+| `open` | lead or coordinator (an agent yielding a claim writes it in its own status) | created; lease expired; claim yielded | none |
 | `claimed` | agent | claim protocol done | runs (3 h, renewed by each *pushed* status commit) |
 | `working` | agent | first work commit | runs |
 | `ready` | agent | pre-check passed and gate passed at `ready_sha` | paused |
