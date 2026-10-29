@@ -1,6 +1,6 @@
 # T17: report on the work order to fix the operating model and the brief
 
-The owner's work order listed gaps G-01 to G-66 in
+The owner's [work order](T17-work-order.md) listed gaps G-01 to G-66 in
 [agent-program.md](../guides/agent-program.md) and
 [agent-brief.md](../guides/agent-brief.md). This is T17's report on it, in
 the order's own format. The new page it recommended is

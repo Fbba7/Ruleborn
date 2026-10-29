@@ -116,6 +116,7 @@ it is not repeated here. The repository's own words:
 | [`art/ui-quality/report.md`](art/ui-quality/report.md) | Why the interface is not premium yet, a benchmark, an audit, and the next-wave plan (plan v3), with the kit spec, build or buy and the review log beside it | T14; plan by T16 and T17 |
 | [`progress/`](progress/T5.md) | Each track's progress file: six-line header and deliverables table | each track |
 | [`progress/backlog.example.json`](progress/backlog.example.json) | An example of the backlog and claim format the lead keeps as `progress/backlog.json` | T17 |
+| [`progress/T17-work-order.md`](progress/T17-work-order.md) | The owner's work order to T17 on the operating model and the agent brief; its results are in `T17-work-order-report.md` | Owner |
 | [`progress/owner-inbox.md`](progress/owner-inbox.md) | Alerts and questions for the owner | Integrator |
 
 ## Security, cost and privacy
