@@ -28,6 +28,29 @@ Order of authority: (1) the design document; (2) the owner's decisions
 two conflict, send the lead a request and keep working on what does not
 conflict.
 
+## The work order's decisions
+
+The owner decided D-01 to D-14 of T17's work order on 29 October 2026
+([`T17-work-order-report.md`](../progress/T17-work-order-report.md) section
+3), with T17's defaults, recorded here as they now stand:
+
+| Decision | Answer |
+|---|---|
+| D-01 Where coordination data lives | Applied: on main; the lead's bookkeeping touches only `docs/progress/**` |
+| D-02 The lead's trigger | Approved: the lead's 30-minute scheduled cycle runs while a wave has agents building, and is armed when the next wave launches; the coordinator script (BT-01) later |
+| D-03 The owner channel | `docs/progress/owner-inbox.md` plus a direct message |
+| D-04 The judge at its usage limit | Gated merges pause for the affected qualities; scripted checks continue; the owner is alerted |
+| D-05 Builders at once | Three until merge throughput is measured, then the sizing rule |
+| D-06 Split verdicts | Three more samples; 4 or more fails of 6 is a fail, otherwise a pass reviewed on the next board |
+| D-07 The false-fail target | At most 20% |
+| D-08 Boards | After the merge; an objection creates a fix-or-revert task |
+| D-09 Settings | Compaction at 200k is set through `.claude/settings.json`; the `Stop` hook is not set |
+| D-10 Hotspot files | The lead's, changed only through its own backlog tasks |
+| D-11 Running hot | Drop to three builders when the share of the weekly limit used exceeds the share of the wave elapsed plus 10 points |
+| D-12 The owner's time | About 15–20 hours per two-week wave |
+| D-13 Status files in candidates | Not dropped |
+| D-14 Protecting main | Platform branch protection is not available from the agents' tools, so main is protected by rule: only the lead or the coordinator moves it, through the merge queue, after `check_all.sh` passes on the candidate |
+
 ## The model on one page
 
 - **One lead, a few builders, an independent gate.** A lead plans, keeps the
@@ -61,7 +84,7 @@ conflict.
 
 | Role | What it does | What it never does | Model |
 |---|---|---|---|
-| **Lead (integrator)** | Writes the wave's plan and backlog; seeds and refills the idle queue; runs the merge queue and is the only agent that moves main; restarts stalled, blocked and resynced agents; keeps acknowledgements and request deadlines; launches the gate and writes its verdicts; writes the owner's digests and alerts; keeps its own status file and handoff; owns every file no other agent owns, and the hotspot files (`project.godot`, autoload registries, export presets), which it changes only through its own backlog tasks, checked like any other | Builds features outside backlog tasks; judges quality; resolves another agent's conflicts by hand; approves its own integrated build as "good" (that would be self-assessment too) | Opus 5.5, medium effort; a fresh session per cycle, every 30 minutes on a scheduled task the owner enables |
+| **Lead (integrator)** | Writes the wave's plan and backlog; seeds and refills the idle queue; runs the merge queue and is the only agent that moves main; restarts stalled, blocked and resynced agents; keeps acknowledgements and request deadlines; launches the gate and writes its verdicts; writes the owner's digests and alerts; keeps its own status file and handoff; owns every file no other agent owns, and the hotspot files (`project.godot`, autoload registries, export presets), which it changes only through its own backlog tasks, checked like any other | Builds features outside backlog tasks; judges quality; resolves another agent's conflicts by hand; approves its own integrated build as "good" (that would be self-assessment too) | Opus 5.5, medium effort; a fresh session per cycle, every 30 minutes on a scheduled task (decision D-02) |
 | **Gate (independent reviewer)** | Checks work against agreed pass and fail criteria with read-only tools (`Read`, `Grep`, `Glob`), in short isolated runs launched by the lead; its final message is its verdict, which the launcher writes. Judges stills rendered by script from a shot list it does not choose. Runs in shadow mode for a quality until calibrated against the owner's labels | Edits the work it checks; sees the author's reasoning or notes; reports a score it was not asked for; pushes anything | A different model from the agents it checks (Fable 5.1 in the UI wave, if its calibration holds) |
 | **Art director (AD, in the UI wave)** | Writes the gate's pass and fail criteria, its golden set and its shot lists; at each phase end, reviews a board of end-to-end flows on the integrated build | Judges an item the gate has not yet seen; builds the work it sets criteria for | Opus 5.5 |
 | **AI artists (AIA and AIA-2, in the UI wave)** | Makers of art: AIA the kit and motion art, AIA-2 the icons (section 3.1 of `report.md`) | As makers | Opus 5.5 |
@@ -223,8 +246,8 @@ on restart; summaries passed from agent to agent lose detail (reported).
 | A track's notes, `docs/art/tracks/<track>.md` or the wave's equivalent | The agent | What was done, the evidence, what is still worse, "Stopped here" |
 | The owner's digest | The lead | Links to the backlog and status files, not paraphrases of them, and the metrics |
 
-**Where coordination data lives.** On main, beside the code (decision D-01,
-default): nothing shows that a session can push to a second branch, and
+**Where coordination data lives.** On main, beside the code (decision
+D-01): nothing shows that a session can push to a second branch, and
 every agent is told to push only to its own. Because readiness no longer
 depends on main's head (below), the lead's bookkeeping commits, which touch
 only `docs/progress/**`, never invalidate a ready change.
@@ -292,8 +315,7 @@ every other ready change back to re-check, and four changes ready at once
 took hours to drain while most re-checks were wasted (inference, worked in
 the protocol's example A). The proof that checks passed is now the
 integrator's own run on the candidate, not the maker's log. The UI wave's
-plan still states the older rule in its section 3.8; request T17-R1 asks for
-it to be aligned.
+plan now states this queue in its section 3.8 (request T17-R1, done).
 
 Until wave 5 the integrator instead merged every green head into a fresh
 integration branch each hour (merge commits titled
@@ -357,9 +379,8 @@ Every wave whose quality is a matter of judgement has an independent gate:
    never an absolute score on a scale. Each call is sampled three times:
    three passes pass, three fails fail. A split takes three more samples, and
    4 or more fails out of 6 is a fail; otherwise it passes and goes on the
-   next board (decision D-06, default, where the wave's plan sets no rule; the
-   UI wave's plan sends splits to the owner, and request T17-R4 asks it to
-   adopt D-06). An "Unknown" goes to the exceptions queue and, unanswered
+   next board (decision D-06; the UI wave's plan has adopted it in its
+   section 3.5). An "Unknown" goes to the exceptions queue and, unanswered
    after 24 hours, is treated as a split. If each sample fails with
    probability p, a split comes up 3p(1 − p) of the time: about half the
    calls for a borderline item, which is why splits must not all go to the
@@ -375,8 +396,8 @@ Every wave whose quality is a matter of judgement has an independent gate:
    with a one-line critique, in a phase 0 task. The judge is measured on a
    held-out third, on the three-sample decision, by its **catch rate** (the
    share of the owner's fails it fails) and its **false-fail rate** (the
-   share of the owner's passes it fails; at most 20% by default, decision
-   D-07). Raw agreement is not used, because a judge that passes everything
+   share of the owner's passes it fails; at most 20%, decision D-07). Raw
+   agreement is not used, because a judge that passes everything
    agrees with a mostly passing set. The wave's plan sets the targets and
    what happens when one is missed (for the UI wave, section 3.5 of
    `report.md`: a catch rate of at least 80% and at most 20% false blocks,
@@ -389,7 +410,7 @@ Every wave whose quality is a matter of judgement has an independent gate:
    is calibrated, and nothing merges on an uncalibrated verdict.
 7. **Boards come after the merge; audits re-gate.** A gate pass merges at
    once. Boards review merged work, and an objection creates a tier 1 task to
-   fix or revert (decision D-08, default). Weekly, and at the wave's end, the
+   fix or revert (decision D-08). Weekly, and at the wave's end, the
    owner labels a random sample of items the gate passed, mixed with a few it
    failed, without seeing the verdicts. A miss pauses default merges for that
    quality, and once the judge is recalibrated, every item of that quality
@@ -416,7 +437,7 @@ Every wave whose quality is a matter of judgement has an independent gate:
 12. **Capacity.** Gate calls count in the usage projection. If the judge's
     model reaches its own limit, gated merges pause for the affected
     qualities, the scripted checks continue, and the owner is alerted
-    (decision D-04, default). The judge is never switched to a model that
+    (decision D-04). The judge is never switched to a model that
     makers use.
 
 How an agent asks for a run, where verdicts are written and in what format
@@ -442,19 +463,21 @@ rubber-stamping (the research's evidence is secondary but consistent).
 | **Total** | | **about 15–20 h** |
 
 The total is inference from those counts (Appendix B.3 of the work order,
-decision D-12, default): about twice what the earlier table implied, and the
-golden sets sit on the critical path. The UI wave's plan estimates 4½–6¼
-hours for its six working days (section 3.4 of `report.md`); request T17-R6
-asks it to check its figure against this one.
+decision D-12): about twice what the earlier table implied, and the golden
+sets sit on the critical path. The UI wave's plan applies this table to its
+own counts (one golden set, five families, six working days, splits
+resampled) and gets about 5 to 6⅔ hours (section 3.4 of `report.md`,
+request T17-R6, done).
 
 Every question to the owner has a default and a time by which it is needed,
 and the wave goes on around an unanswered one. **If the owner is
 unavailable,** every default applies at its deadline. Only owner-only items
-pause: contract boards, golden sets and the D-decisions. The lead lists them
-in the inbox.
+pause: contract boards, golden sets, items of a quality in shadow mode, and
+any owner decision still open (none for the UI wave: D-01 to D-14 and the
+plan's D1–D14 are decided). The lead lists them in the inbox.
 
 **Alerts.** The lead writes every alert to `docs/progress/owner-inbox.md` and
-sends it to the owner directly (decision D-03, default). It alerts at once
+sends it to the owner directly (decision D-03). It alerts at once
 for a stall after one failed restart, a busy stall, a blocking request past
 `due` whose default needs the owner, main red for more than 30 minutes, a
 task blocked for more than 2 hours, the oldest ready task waiting more than 2
@@ -473,7 +496,7 @@ weekly limit of its own on Max plans. Anthropic publishes no token figure for
 either. So:
 
 1. **A cap.** Three building sessions at once until merge throughput is
-   measured (decision D-05, default), then as many as the sizing rule in
+   measured (decision D-05), then as many as the sizing rule in
    "Merging" allows, never more than the wave's plan (five in the UI wave),
    plus the lead and short gate runs.
 2. **Measure early.** `/usage` reports the whole account, not one session, so
@@ -482,11 +505,11 @@ either. So:
    after (inference). It works out the share of the weekly limit one
    agent-hour on each model uses, gate calls included, and projects the rest
    of the wave plus a 15–20% reserve for the lead and recovery. If it does
-   not fit, the owner chooses: wait for the weekly reset, enable usage
-   credits, or cut scope (the wave's plan names the default).
+   not fit, the wave's plan says what happens: wait for the weekly reset,
+   enable usage credits, or cut scope (the UI wave: cut scope, its D13 (c)).
 3. **Running hot.** When the share of the weekly limit used is more than the
    share of the wave elapsed plus 10 points, the lead drops to three builders
-   (decision D-11, default) and says so in the digest.
+   (decision D-11) and says so in the digest.
 4. **Tiers.** Every task has a tier. As headroom shrinks, the lead sends a
    tier-stop message: tier 3 (the idle queue, later batches, polish)
    checkpoints and stops first; tier 1 (the lead, contract owners, the gate,
@@ -563,11 +586,12 @@ about 3.5 times as much per tool call as one at 100k, and recalls less
   and `git log`, then runs the quick checks before new work, so it catches
   whatever the last session broke. The quick checks are defined in
   [agent-protocol.md](agent-protocol.md#terms).
-- **Compaction at 200k tokens** is proposed, not set (decision D-09):
-  `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, which accepts 100,000 to 1,000,000
-  (reported by the integrator from Claude Code's documentation). Until the
-  owner sets it, cloud sessions on 1M-context models compact at about 967k,
-  and fresh sessions per task are the only defence.
+- **Compaction at 200k tokens** is set (decision D-09):
+  `CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000` in the `"env"` block of
+  `.claude/settings.json`. It accepts 100,000 to 1,000,000 (reported by the
+  integrator from Claude Code's documentation). Without it, cloud sessions
+  on 1M-context models compact at about 967k. Fresh sessions per task stay
+  the first defence.
 - **Keep output out of the context.** Long runs write to a log file outside
   the repository; read the failures and the last lines. Look at images
   downscaled (about 960 pixels on the long edge) or through a subagent, with
@@ -576,7 +600,9 @@ about 3.5 times as much per tool call as one at 100k, and recalls less
   for wide searches.
 - **Memory is the repository.** Claude Code's own memory is local to a
   machine, so anything worth keeping is a committed file. `CLAUDE.md` files
-  stay short. This repository has no `.claude/` directory.
+  stay short. The repository's `.claude/` holds only the owner's settings
+  (`.claude/settings.json`) and the judge's subagent
+  (`.claude/agents/ui-judge.md`); agents do not change them.
 
 ## Failure recovery
 
@@ -631,21 +657,28 @@ a misread time.
    because the work "looks done".
 5. If the deadline is unclear, ask the lead in a request and keep working.
 
-**Hooks and settings, all proposed, not set** (decision D-09; the brief
-relies on none of them). The UI wave's plan proposes them in its section 3.9.
-The integrator checked them against Claude Code's documentation (reported):
+**Hooks and settings** (decision D-09 and the UI wave's D14, decided on 29
+October 2026). The UI wave's plan lists them, with what is set, in its
+section 3.9. The integrator checked them against Claude Code's
+documentation (reported):
 
-- a `Stop` hook that sends an agent back to work while its time is before
-  `stop_at` less 30 minutes; the harness overrides it after eight blocks in a
-  row;
-- filtering test output needs a `PostToolUse` hook that returns
+- compaction at 200k (`CLAUDE_CODE_AUTO_COMPACT_WINDOW=200000`) and the
+  retry watchdog (`CLAUDE_CODE_RETRY_WATCHDOG=1`) are set in the `"env"`
+  block of `.claude/settings.json`. The watchdog replaces the plan's first
+  P6, `autoContinueAtUsageLimit`, which does not apply to background or `-p`
+  sessions;
+- the judge's read-only subagent, `.claude/agents/ui-judge.md`, exists (P5);
+- filtering test output needs a `PostToolUse` hook on `Bash` that returns
   `hookSpecificOutput.updatedToolOutput`; a `PreToolUse` hook cannot filter
-  output, so the plan's P3 is wrong as written (request T17-R2);
-- `promptCacheTtl` is a real `settings.json` key, `"5m"` or `"1h"`;
-- `autoContinueAtUsageLimit` is real but not offered for `-p`, background or
-  API-key sessions; unattended runs use `CLAUDE_CODE_RETRY_WATCHDOG=1`, with
-  `CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`. So the plan's P6
-  likely does not apply to cloud agent sessions (request T17-R3).
+  output. The plan's P3 is approved in that form and is set once the lead's
+  script and its test exist (a lead build task);
+- the `Stop` hook (P4) is not set: sessions end by their status, and the
+  lead's scheduled cycle is the backstop. The harness would override such a
+  hook after eight blocks in a row;
+- `promptCacheTtl` (P2), a real `settings.json` key, `"5m"` or `"1h"`, is not
+  set: no usage credits are enabled.
+
+The brief relies on none of these: an agent follows the same rules by hand.
 
 ## Lessons from waves 4 and 5
 
@@ -655,11 +688,11 @@ The integrator checked them against Claude Code's documentation (reported):
 | Agents collided on shared files | One owner per file, by agent not role, globs for new files; generated files restored before commit; specialists and idle tasks held to their listed files; an ownership check on every candidate (planned: BT-02) | Closed once BT-02 exists; until then checked by hand |
 | A merge silently undid the database optimisation | A guard that encodes the intent (`node server/load.mjs --check`); main moves only to a candidate tested on the integrator's side; guards named in `done_when`; every guard and baseline has an owner | Closed |
 | One agent sat idle after finishing early | The backlog's idle queue; sessions end while ready or blocked, and the lead restarts them; `done` when no task is left | Closed |
-| Agents stopped early after misreading stop times | Absolute UTC deadlines with the local time beside them; `date -u`; the stop protocol, with the only two early-stop cases named; the last full check started by STOP_AT − 60 | Mostly closed: the Stop hook is only proposed |
+| Agents stopped early after misreading stop times | Absolute UTC deadlines with the local time beside them; `date -u`; the stop protocol, with the only two early-stop cases named; the last full check started by STOP_AT − 60 | Mostly closed: the Stop hook is not set (D-09); the stop protocol and the lead's cycle carry it |
 | Every agent stalled together at the shared usage limit | A cap of three until throughput is measured; a staggered measurement per model; gate calls in the projection; a threshold for dropping to three; tiers; no wasted re-checks | Closed, pending the first measurement |
 | Container restarts killed test runs and cost one session about two and a half hours | Checks on a separate worktree, logs outside the repository with a `DONE` marker; the lead restarts lost sessions; one setup script (planned: BT-09) | Closed once BT-09 exists |
-| A message sent through a disabled scheduled task never arrived | A message counts only when acknowledged in a pushed status; the lead's cycle is a scheduled task the owner enables and the lead checks daily; the lead has its own status file | Partly open: until BT-01 runs outside the lead, only the owner notices a dead lead (G-67 in T17's report) |
-| Sessions grew to 300k–400k tokens | A fresh session per task, ended at ready; output kept out of the context; compaction at 200k proposed | Mostly closed: the compaction setting is only proposed |
+| A message sent through a disabled scheduled task never arrived | A message counts only when acknowledged in a pushed status; the lead's cycle is a scheduled task, approved by the owner (D-02), that the lead checks daily; the lead has its own status file | Partly open: until BT-01 runs outside the lead, only the owner notices a dead lead (G-67 in T17's report) |
+| Sessions grew to 300k–400k tokens | A fresh session per task, ended at ready; output kept out of the context; compaction at 200k, set in `.claude/settings.json` | Closed |
 | The integrator merging every track each hour became the bottleneck | Merge, then test, on a scheduled cycle; batching; team size from merge throughput; mechanical duties moved to a coordinator script (planned: BT-01) | Closed for the queue; the coordinator is planned |
 | Containers lacked tools check_all needs (Rust's `wasm32-unknown-unknown` target, `gdlint`, Python's `playwright` 1.63.0) | The brief lists them; one pinned setup script with an owner (planned: BT-09) | Closed once BT-09 exists |
 
@@ -676,7 +709,7 @@ when picking a track up.
 **Starting a wave.** Phase 0 has a checklist (the roster and schedule, the
 environment script, the golden sets, the contracts, a backlog with
 `gate_items` and `model` on every task, baseline metrics, a test of the
-owner's alert channel, and the lead's scheduled cycle enabled), in
+owner's alert channel, and the lead's scheduled cycle armed), in
 [agent-protocol.md](agent-protocol.md#waves-start-metrics-and-close).
 
 **Measuring the model itself.** Each digest reports the merge lead time, the

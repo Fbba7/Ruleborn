@@ -23,11 +23,16 @@ Order of authority: (1) the design document; (2) the owner's decisions
 two conflict, send the lead a request and keep working on what does not
 conflict.
 
-One standing exception, by the owner's own work order to T17 (recorded in
-[`T17-work-order-report.md`](../progress/T17-work-order-report.md)): the
-UI wave's plan (section 3.8 of `report.md`) still says a ready branch must
-contain main's head. The queue on this page replaces that rule; request
-T17-R1 asks for the plan to be aligned.
+The UI wave's plan (section 3.8 of `report.md`) once said a ready branch
+must contain main's head. By the owner's own work order to T17 (recorded in
+[`T17-work-order-report.md`](../progress/T17-work-order-report.md)) the queue
+on this page replaced that rule, and the plan now states the queue (request
+T17-R1, done).
+
+The owner decided the work order's D-01 to D-14 on 29 October 2026, with
+T17's defaults. The answers, including D-02's cycle, D-09's settings and
+D-14's protection of main, are listed in
+[agent-program.md](agent-program.md#the-work-orders-decisions).
 
 ## Terms
 
@@ -84,14 +89,14 @@ reason, with the lead's approval, recorded beside the baseline.
 ### The schedule against the cap
 
 The cap is three building sessions at once until merge throughput is
-measured (decision D-05, default), then whatever the sizing rule below
+measured (decision D-05), then whatever the sizing rule below
 allows, never more than the wave plan's five. The lead and the gate's short
 runs are outside the cap.
 
 | Phase | Building at once | Who | When a slot frees |
 |---|---|---|---|
 | 0 | 3 | AD, AIA, K1 | none needed |
-| 1 | 3 until the check time is measured, then up to 4 | K1, AIA, S1 (the critical path) | AIA-2 |
+| 1 | 3 until the check time is measured, then up to 4 | K1, AIA, AIA-2 | S1 (the critical path), once the heist's kit families and icon batch 1 have merged (report step 7) |
 | 2 | 3, then up to 5 if the sizing rule allows | S1, AIA, S2 | S3, then AIA-2, then K1's request slot |
 | 3 | up to 5 | as the backlog assigns | the idle queue |
 
@@ -344,9 +349,9 @@ Start no full check after STOP_AT − (check minutes + 35); with today's
 4. **Results.** Three passes pass; three fails fail. A **split**, where the
    wave's plan sets no rule of its own, takes three more samples: 4 or more
    fails out of 6 is a fail, otherwise it passes and goes on the next board
-   (decision D-06, default). The UI wave's plan sends splits to the owner's
-   exceptions queue (section 3.5 of `report.md`); request T17-R4 asks it to
-   adopt D-06, since splits would otherwise swamp the owner. An **Unknown**
+   (decision D-06). The UI wave's plan has adopted it (section 3.5 of
+   `report.md`, request T17-R4, done), so splits do not swamp the owner. An
+   **Unknown**
    goes to the exceptions queue; unanswered after 24 hours, it is treated as
    a split.
 5. **Fails.** Each fail adds 1 to the task's `attempts`. The maker reads the
@@ -369,8 +374,8 @@ UI wave: step 1 and O3 in sections 3.3 and 3.4 of `report.md`).
 
 **Capacity.** Gate calls count in the usage projection. If the judge's model
 reaches its own usage limit, gated merges pause for the affected qualities,
-the scripted checks keep running, and the owner is alerted (decision D-04,
-default). The judge is never switched to a model that makers use.
+the scripted checks keep running, and the owner is alerted (decision D-04).
+The judge is never switched to a model that makers use.
 
 ## The merge queue
 
@@ -396,13 +401,18 @@ head.
 
 Main moves only to a candidate that passed on the integrator's side.
 
+**Main is protected by rule** (decision D-14). Platform branch protection is
+not available from the agents' tools, so nothing configures it. Only the lead
+or the coordinator moves main, through this queue, after `check_all.sh`
+passes on the candidate; every other agent pushes only to its own branch.
+
 **The candidate's checks** also include an ownership check: every changed
 path must match the task's `files` or an exception the lead granted (planned:
 backlog task BT-02; until then the lead compares
 `git diff --name-only <main>...<ready_sha>` with the globs by hand).
 
 **Bookkeeping commits.** Coordination data stays on main (decision D-01,
-default): no session is shown to push anywhere but its own branch, and
+applied): no session is shown to push anywhere but its own branch, and
 nothing in the repository configures a second branch (check V-04). The
 lead's bookkeeping commits touch only `docs/progress/**`, so they never
 invalidate a ready change: readiness no longer depends on main's head. If
@@ -426,8 +436,9 @@ not drop status files).
 | Planning; writing tasks; refilling the idle queue; digests; escalations; phase decisions | The lead (an LLM session) |
 
 Until BT-01 exists, the lead runs one cycle every 30 minutes as a scheduled
-task the owner has enabled (decision D-02, default). Each day the lead checks
-that the task is still enabled and reads its last run. The wake-up ban
+task (decision D-02, approved): it runs while a wave has agents building, and
+is armed when the next wave launches. Each day the lead checks that the task
+is still enabled and reads its last run. The wake-up ban
 applies to idle building sessions, not to the lead's scheduled cycle.
 
 What is known about the trigger (reported by the integrator from this
@@ -474,7 +485,7 @@ handoff. The lead stops any session whose `progress_marker` is unchanged for
 ## Alerts
 
 The lead writes each alert to `docs/progress/owner-inbox.md` and sends the
-owner a direct message (decision D-03, default). It alerts at once for:
+owner a direct message (decision D-03). It alerts at once for:
 
 - a stall past `expected_next_update_by`, after one restart has failed;
 - a busy-stall flag (`progress_marker` unchanged for 2 hours);
@@ -500,7 +511,7 @@ owner a direct message (decision D-03, default). It alerts at once for:
 - a backlog with `gate_items` and `model` on every task;
 - the baseline metrics below;
 - a test alert through the owner channel, acknowledged by the owner;
-- the lead's scheduled cycle, enabled by the owner.
+- the lead's scheduled cycle, armed (decision D-02).
 
 **Phase exit criteria** are commands, gate classes or owner sign-offs. The
 lead records them and does not judge them.

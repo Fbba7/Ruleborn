@@ -8,18 +8,18 @@ Everything here was measured or rendered from the deployed head (`dd326ca8`). Im
 
 ## Plan at a glance
 
-**What the owner decides, and when (section 12).** Each decision has a default, so the wave never stops for an answer it does not yet need.
+**What the owner decided (section 12).** The owner took every decision on 29 October 2026, so none waits on a checkpoint. The "When" and default columns are kept for the record.
 
-| # | Decision | When | Default if not decided |
-|---|---|---|---|
-| D1 | Approve plan v3: seven building roles, at most five at once, 164 agent-hours plus up to 20 for re-work; a lead and a judge beside them | O1, before phase 0 | Nothing starts |
-| D14 | The session settings P1–P6 (section 3.9), each with its exact value | O1 | Agents follow the same rules by hand; no setting is changed |
-| D4 | A display face and baked numerals for labels and changing numbers on art (a change to §21.8's type rule) | O2, in phase 0 | §21.8 as written: Manrope for labels and changing numbers |
-| D5 | Object icons rendered with physically based light (gold, gems, glass), as interface art | O2, in phase 0 | Character and building icons start first, in the toon look |
-| D2 | The key frames the owner labels "pass" become the visual reference in place of Screens v3 (a change to §23.5) | O3, end of phase 0 | Key frames are targets and golden references only; Screens v3 stays the reference for layout and icons |
-| D13 | What to do if the usage projection does not fit the weekly limit | End of phase 0 | Three builders at once, icon batches 3 and 4 deferred |
-| D3 | Overshoot on presses and reward reveals (a change to §21.8's motion rule) | Before phase 2 | §21.8 as written: 150–250 ms, easing out, no overshoot |
-| D11 | CC0 particle sprites as raw material for the reward sequence (a change to §21.11); saves 3 hours | Before phase 2 | §21.11 as written: AIA makes them |
+| # | Decision | When | Default if not decided | Decided (2026-10-29) |
+|---|---|---|---|---|
+| D1 | Approve plan v3: seven building roles, at most five at once, 164 agent-hours plus up to 20 for re-work; a lead and a judge beside them | O1, before phase 0 | Nothing starts | Approved: plan v3 as written, with T17's requests R1–R6 applied |
+| D14 | The session settings P1–P6 (section 3.9), each with its exact value | O1 | Agents follow the same rules by hand; no setting is changed | P1 and P5 set; P6 replaced by the retry watchdog, set; P3 approved as a `PostToolUse` hook, set once its script and test exist; P2 and P4 not set |
+| D4 | A display face and baked numerals for labels and changing numbers on art (a change to §21.8's type rule) | O2, in phase 0 | §21.8 as written: Manrope for labels and changing numbers | (b): §21.8 as written |
+| D5 | Object icons rendered with physically based light (gold, gems, glass), as interface art | O2, in phase 0 | Character and building icons start first, in the toon look | (b): every icon in the toon look |
+| D2 | The key frames the owner labels "pass" become the visual reference in place of Screens v3 (a change to §23.5) | O3, end of phase 0 | Key frames are targets and golden references only; Screens v3 stays the reference for layout and icons | (b): §23.5 as written; key frames are targets and golden references only |
+| D13 | What to do if the usage projection does not fit the weekly limit | End of phase 0 | Three builders at once, icon batches 3 and 4 deferred | (c), if the projection does not fit: three builders at once, icon batches 3–4 deferred |
+| D3 | Overshoot on presses and reward reveals (a change to §21.8's motion rule) | Before phase 2 | §21.8 as written: 150–250 ms, easing out, no overshoot | (b): §21.8 as written |
+| D11 | CC0 particle sprites as raw material for the reward sequence (a change to §21.11); saves 3 hours | Before phase 2 | §21.11 as written: AIA makes them | (b): §21.11 as written; AIA makes them |
 
 **The wave's target (section 3.6).** Each of the five key screens (home, heist, result, character, settings) passes the gate on every quality that applies to it, at 100% and 200% text and in high contrast, and its family board stands without the owner's objection. The bar is the owner's own pass and fail labels in the golden set, not an agent's score. On T14's 0–5 scale, where today is 2.2, that bar is estimated at about 3.5: 70% of Clash level and about 50% of the owner's bar. The plan's honest ceiling is 3.75–4.25 (section 6).
 
@@ -27,8 +27,8 @@ Everything here was measured or rendered from the deployed head (`dd326ca8`). Im
 
 | Agent | Role | Model | Hours |
 |---|---|---|---|
-| Lead | Integrator. Seeds and refills the backlog, runs the merge queue, watches status files, writes the owner's digests. Does not build or judge. | Opus 5.5, medium effort | Outside the total; about 16 |
-| AD | Art director. Turns the rubric into checks, builds the golden set, calibrates the judge. Phase 0 only. Never authors art. | Opus 5.5 | 9 |
+| Lead | Integrator. Seeds and refills the backlog, runs the merge queue, watches status files, launches the gate and writes its verdicts, writes the owner's digests. A fresh session every 30 minutes on its scheduled cycle. Does not build or judge. | Opus 5.5, medium effort | Outside the total; about 20, its cycle included |
+| AD | Art director. Turns the rubric into checks, builds the golden set, calibrates the judge in phase 0; at each later phase end, reviews end-to-end flows on the integrated build. Never authors art. | Opus 5.5 | 9, plus 3 for the flow reviews from the reserve |
 | Gate | The judge. Short read-only runs: one isolated check per visual quality, three samples each. | Fable 5.1; Opus 5.5 only if calibration shows it catches more | 16 |
 | AIA | AI UI artist: style board, key frames, kit art, motion art | Opus 5.5 | 42 |
 | AIA-2 | AI UI artist on the same studio: the 60 most-seen icons | Opus 5.5 | 28 |
@@ -36,7 +36,7 @@ Everything here was measured or rendered from the deployed head (`dd326ca8`). Im
 | S1 | Heist (the pilot screen) and result, with the reward sequence | Sonnet 5.5 | 14 |
 | S2 | Home | Sonnet 5.5 | 8 |
 | S3 | Character and settings; routes the menu screens' own kit through the new one | Sonnet 5.5 | 14 |
-| | **Total** (T16's plan: 158; section 3.7 has the differences) | | **164** (161 with D11), plus up to 20 of re-work |
+| | **Total** (T16's plan: 158; section 3.7 has the differences) | | **164** (D11 decided (b), so no CC0 saving), plus a reserve of up to 20 for re-work and AD's flow reviews |
 
 A screen that fails the gate twice moves to a fresh Opus 5.5 session; its hours come from the re-work reserve.
 
@@ -45,31 +45,32 @@ A screen that fails the gate twice moves to a fresh Opus 5.5 session; its hours 
 | Phase | Building at once | Agent-hours | Wall-clock | Exit |
 |---|---|---|---|---|
 | 0. Calibrate and freeze | 3: AD, AIA, K1 | 43 | about 22 h | Style board and kit contract approved and frozen (O2); key frames and golden set labelled (O3); the judge meets its catch-rate target; backlog seeded |
-| 1. Foundations | 4: K1, AIA, AIA-2, S1 (pilot heist) | 58 | about 18 h | Kit families and icon batches 1–2 pass the gate; the pilot heist passes the gate; board 1 (kit and heist) stands |
-| 2. Screens | 5: S1, S2, S3, AIA, AIA-2; K1 only in a slot that frees | 62 | about 19 h | Every screen passes the gate; the exceptions queue is empty; the first blind audit is done |
+| 1. Foundations | 3 until the check time is measured, then up to 4: K1, AIA, AIA-2, S1 (the pilot heist, once icon batch 1 has merged) | 58 | about 18 h | Kit families and icon batches 1–2 pass the gate; the pilot heist passes the gate; board 1 (kit and heist) stands |
+| 2. Screens | 3, then up to 5 if the sizing rule allows (section 3.8): S1, AIA, S2, then S3, AIA-2; K1 only in a slot that frees | 62 | about 19 h | Every screen passes the gate; the exceptions queue is empty; the first blind audit is done |
 | 3. Polish and harden | up to 5, from the reserve | 1, plus up to 20 | about 6 h | The owner's wave board stands; the second blind audit is done |
 
-About 65 wall-clock hours of agent work: six days at about 12 working hours a day, as before, if the owner answers O2, O3 and board 1 within the working day (board 1's default adds up to 24 hours). At three builders (D13) it is about 12 hours longer.
+About 65 wall-clock hours of agent work at four builders in phase 1 and five in phase 2: six days at about 12 working hours a day, as before, if the owner answers O2, O3 and board 1 within the working day (board 1's default adds up to 24 hours). If the sizing rule or D13 holds the team at three builders, it is about 12 hours longer.
 
-**The owner's time (section 3.4): about 4½ to 6¼ hours over the wave,** in place of approving items one by one.
+**The owner's time (section 3.4): about 5 to 6⅔ hours over the wave,** in place of approving items one by one.
 
 | When | What | Minutes |
 |---|---|---|
-| O1, before phase 0 | Approve the plan, the settings and the defaults (D1, D14, D7–D10, D12) | 20 |
-| O2, phase 0 | Approve the style board and the frozen kit contract (D4, D5) | 15 |
-| O3, end of phase 0 | Label the golden set, 30–60 items, pass or fail per quality with a one-line critique (D2) | 60–90, once |
-| O4, phases 1–3 | Five family boards; each merges after 24 hours unless you object | 70 in all |
+| O1, before phase 0 | Nothing left: D1, D14, D7–D10 and D12 were decided on 29 October 2026 | 0 |
+| O2, phase 0 | Approve the style board and the frozen kit contract (D4 and D5 are decided) | 15 |
+| O3, end of phase 0 | Label the golden set, 30–60 items, pass or fail per quality with a one-line critique (D2 is decided) | 60–90, once |
+| O4, phases 1–3 | Five family boards, with short recorded clips for motion and feel; each merges after 24 hours unless you object | 90 in all |
 | O5, daily | Clear the exceptions queue | 10–20 a day |
 | O6, end of phase 2 and wave end | Blind audit of 10–20 items the gate passed | 15–20 each |
-| O7, wave end | The wave board (D6) | 20 |
+| O7, wave end | The wave board (D6 is decided) | 20 |
+| Every 5 hours of clock time | Read the lead's digest; nothing to approve | 2 each: about 25 |
 
-**The gate (section 3.5).** Four checks in order of cost. (1) Scripted checks on every push: budgets, contrast, sizes, text scales, the kit's rules. (2) The judge, on a different model from the artists: one isolated pairwise check per static visual quality against the owner's labelled anchors, sampled three times; it blocks only on three fails out of three and sends split or "Unknown" verdicts to the owner's exceptions queue. (3) The merge queue's guards on the combined tree. (4) The owner's boards and blind audits, for what a still cannot show (presses, juice, motion) and to measure the judge. The judge may block nothing until it catches at least 80% of the owner's fails in the held-out third of the golden set. The 14-quality rubric stays as the vocabulary; section 3.5 says how each quality is checked.
+**The gate (section 3.5).** Four checks in order of cost. (1) Scripted checks on every push: budgets, contrast, sizes, text scales, the kit's rules. (2) The judge, on a different model from the artists: one isolated pairwise check per static visual quality against the owner's labelled anchors, sampled three times. Three fails fail and three passes pass; a split takes three more samples and fails on 4 or more fails of 6, otherwise it passes and goes on the next board; an "Unknown" goes to the owner's exceptions queue and, unanswered after 24 hours, is treated as a split. (3) The merge queue's guards on the combined tree. (4) The owner's boards and blind audits, for what a still cannot show (presses, juice, motion) and to measure the judge. Until the judge catches at least 80% of the owner's fails in the held-out third of the golden set on a quality, it runs in shadow mode on that quality: it records verdicts, and every item of that quality goes on an owner board before it merges. The 14-quality rubric stays as the vocabulary; section 3.5 says how each quality is checked.
 
-**Merging (section 3.8).** One change at a time, as soon as it is ready; the hourly cycle is only the longest wait. Each agent brings main into its own branch and resolves its own conflicts. Main only fast-forwards to a commit whose checks passed on exactly that tree, so the guards (the database's `node server/load.mjs --check`, and the UI's budget, contrast, draw-call and chrome guards) always run on what lands.
+**Merging (section 3.8).** Merge, then test. A change is ready when its pre-check passed on exactly its commit and the gate passed its items; its branch need not contain main's head. The lead merges ready changes one at a time onto a candidate taken from main's head, critical path first, runs the full checks and the guards there, and moves main only to a candidate that passed. A conflict or a failing candidate goes back to its author, who resolves it in its own branch. So the guards (the database's `node server/load.mjs --check`, and the UI's budget, contrast, draw-call and chrome guards) always run on what lands.
 
 **The kit ([kit-spec.md](kit-spec.md)).** 47 components in 35 baked skins (today: 108 materials), each with its states (normal, pressed, disabled, selected, locked, attention, loading, high contrast, reduced motion), one set of tokens, names and files, a catalogue sheet, rules for adding a component, and what happens to every part of today's kit. K1 owns it; it is frozen at the end of phase 0 and changes after that only through K1 with the lead's approval.
 
-**Build or buy ([build-or-buy.md](build-or-buy.md)).** Build. §21.11 allows outside fonts (OFL) and code (permissive) but no outside art, paid or free. Nothing on the market supplies Ruleborn's identity, characters or icons, and the kits that come closest look like other games. The one adoption worth asking for is CC0 particle sprites, which saves 3 hours (decision D11). No purchase is recommended (D12).
+**Build or buy ([build-or-buy.md](build-or-buy.md)).** Build. §21.11 allows outside fonts (OFL) and code (permissive) but no outside art, paid or free. Nothing on the market supplies Ruleborn's identity, characters or icons, and the kits that come closest look like other games. The one adoption worth asking for was CC0 particle sprites, which would save 3 hours (decision D11). No purchase is recommended (D12). The owner decided both: no CC0 sprites (D11 (b)) and buy nothing (D12).
 
 **Rules the plan keeps (section 10).** Under §21.3's 150 draw calls on every screen, at 100% and 200% text and in high contrast. 48-point targets and 13-point text at 200%. Contrast in normal and high-contrast mode. A reduced form for every motion. Words stay live text from the strings tables, in English and Brazilian Portuguese. Pinned tools, and bakes that rebuild byte for byte. A switch per material family, so no screen is ever half-moved.
 
@@ -153,9 +154,9 @@ Every track that built the interface has stopped, so the wave needs new agents. 
 
 | Agent | Model, and why | Branch | Owns | Takes over from |
 |---|---|---|---|---|
-| Lead | Opus 5.5, medium effort: triage and planning need judgement, but the merges are mechanical | main (`claude/videogame-project-analysis-ewkkk2`) | `docs/progress/backlog.json`, `docs/progress/requests.md`, the owner's digests, and every file no track owns | the integrator |
-| AD, art director | Opus 5.5: writing pass and fail criteria and choosing anchors is judgement work | `claude/ui-ad` | `docs/art/ui-quality/gate/**` except `gate/verdicts/`, `tools/ui_gate/**` | (new) |
-| Gate, the judge | Fable 5.1, a different model from the artists, which reduces self-preference; Opus 5.5 only if it catches more of the owner's fails on the held-out labels (section 3.5) | `claude/ui-gate` | `docs/art/ui-quality/gate/verdicts/**` | (new) |
+| Lead | Opus 5.5, medium effort: triage and planning need judgement, but the merges are mechanical. A fresh session every 30 minutes on its scheduled cycle | main (`claude/videogame-project-analysis-ewkkk2`) | `docs/progress/backlog.json`, `docs/progress/requests.md`, `docs/progress/owner-inbox.md`, the owner's digests, `docs/art/ui-quality/gate/verdicts/**` (it writes the gate's verdicts as the gate's launcher), and every file no track owns | the integrator |
+| AD, art director | Opus 5.5: writing pass and fail criteria and choosing anchors is judgement work; at each phase end, a short review of end-to-end flows on the integrated build (section 3.3) | `claude/ui-ad` | `docs/art/ui-quality/gate/**` except `gate/verdicts/`, `tools/ui_gate/**` | (new) |
+| Gate, the judge | Fable 5.1, a different model from the artists, which reduces self-preference; Opus 5.5 only if it catches more of the owner's fails on the held-out labels (section 3.5) | `claude/ui-gate` | none: it is read-only, and its final message is its verdict, which the lead writes | (new) |
 | AIA, AI UI artist | Opus 5.5: judgement-heavy visual work, where Sonnet trails | `claude/ui-artist` | `art/ui/**` except `art/ui/icons/`; `client/ui/art/**` (written only by the bake) | (new) |
 | AIA-2, AI UI artist for icons | Opus 5.5, as AIA | `claude/ui-artist-icons` | `art/ui/icons/**`, `client/tests/shots/icon_*.gd` | (new) |
 | K1, kit owner | Opus 5.5 for the contract and the component API (phases 0–1); a fresh Sonnet 5.5 session for requests and fixes against the frozen contract (phase 2) | `claude/ui-bake` | `docs/art/ui-quality/kit-spec.md`, `tools/ui_bake/**`, `tools/ui_research/**`, `client/prototypes/ui_quality/**`, `client/tests/shots/uiq_*.gd`, and T9's files: `client/scripts/ui.gd`, `client/ui/**` except `client/ui/art/`, `tools/ui/`, `client/tests/ui_kit_tests.gd`, `client/tests/a11y_tests.gd`, `client/tests/shots/ui_*.gd` | T9 (UI kit), T14 (the proof), AD (the kit spec) |
@@ -179,12 +180,12 @@ A phase starts only when every exit criterion of the one before is met and commi
 
 | Phase | Entry | Work | Building at once | Exit |
 |---|---|---|---|---|
-| 0. Calibrate and freeze | D1 approved at O1; backlog seeded by the lead | AD builds the gate and the golden set (step 1). AIA makes the style board (step 2), then the key frames (step 3). K1 freezes the kit contract and starts the pipeline (step 4). | 3 | The style board and kit contract v1 are approved (O2) and committed as frozen. The owner has labelled the golden set (O3). The judge meets its target on the held-out third, or each quality that misses is moved to the owner (section 3.5). The ownership map and backlog are committed. The usage projection is made (section 3.9) and D13 answered if needed. |
-| 1. Foundations | Phase 0's exit | K1 finishes the pipeline and the texture-backed kit (step 4). AIA makes the kit art (step 5). AIA-2 starts the icons (step 6). S1 builds the pilot heist from the kit alone (step 7). | 4 | The kit families the heist uses, and icon batches 1–2, pass the gate and are merged. The pilot heist passes the gate. Board 1 (kit and heist) stands: the owner let it stand, or 24 hours passed without an objection. This is the one board phase 2 waits for, because a contract or style error caught here is not copied into three screens. |
-| 2. Screens | Phase 1's exit; D3 and D11 answered or defaulted | AIA makes the motion art (step 8). S1 moves the result screen (step 9), S2 home (step 10), S3 character and settings (step 11). AIA-2 finishes the icons. K1 answers component requests in a slot that frees. | 5 | Every screen passes the gate at 100% and 200% text and in high contrast. Boards 2–5 are posted. The exceptions queue is empty. The first blind audit (O6) is done. |
+| 0. Calibrate and freeze | D1 approved (29 October 2026); backlog seeded by the lead | AD builds the gate and the golden set (step 1). AIA makes the style board (step 2), then the key frames (step 3). K1 freezes the kit contract and starts the pipeline (step 4). | 3 | The style board and kit contract v1 are approved (O2) and committed as frozen. The owner has labelled the golden set (O3). The judge meets its target on the held-out third, or each quality that misses is moved to the owner (section 3.5). The ownership map and backlog are committed. The usage projection is made (section 3.9), and D13's answer (c) applied if it does not fit. |
+| 1. Foundations | Phase 0's exit | K1 finishes the pipeline and the texture-backed kit (step 4). AIA makes the kit art (step 5). AIA-2 starts the icons (step 6). S1 builds the pilot heist from the kit alone (step 7). | 3 until the check time is measured, then up to 4 (section 3.8) | The kit families the heist uses, and icon batches 1–2, pass the gate and are merged. The pilot heist passes the gate. Board 1 (kit and heist) stands: the owner let it stand, or 24 hours passed without an objection. This is the one board phase 2 waits for, because a contract or style error caught here is not copied into three screens. |
+| 2. Screens | Phase 1's exit (D3 and D11 are decided: (b)) | AIA makes the motion art (step 8). S1 moves the result screen (step 9), S2 home (step 10), S3 character and settings (step 11). AIA-2 finishes the icons. K1 answers component requests in a slot that frees. | 3 (S1, AIA, S2), then up to 5 if the sizing rule allows (section 3.8): S3, then AIA-2, then K1's request slot | Every screen passes the gate at 100% and 200% text and in high contrast. Boards 2–5 are posted. The exceptions queue is empty. The first blind audit (O6) is done. |
 | 3. Polish and harden | Phase 2's exit | Re-work from the boards, the audit and the exceptions, from the 20-hour reserve (step 12) | up to 5 | No board has an open objection. The second blind audit is done. The owner's wave board (O7) stands. |
 
-**Concurrency.** At most five building sessions at once, plus the lead and short gate runs. Idle capacity is never a reason to raise the cap: an agent that finishes early takes a task from the backlog's idle queue (asset-import checks, tests, overflow sweeps in Brazilian Portuguese at 200% text, kit documentation) or stops. If usage runs hot, the cap drops to three (section 3.9).
+**Concurrency.** Three building sessions at once until merge throughput is measured (decision D-05 in `docs/guides/agent-program.md`), then as many as the sizing rule allows (section 3.8), never more than five, plus the lead and short gate runs. Phase 2's five builders hold only if the sizing rule allows them. Idle capacity is never a reason to raise the cap: an agent that finishes early takes a task from the backlog's idle queue (asset-import checks, tests, overflow sweeps in Brazilian Portuguese at 200% text, kit documentation) or stops. If usage runs hot, the cap drops to three (section 3.9).
 
 ### 3.3 The steps
 
@@ -205,7 +206,7 @@ Each step lists its owner, phase, what it reads and writes, what it waits for, h
 - Reads: §21.2 and §21.8 (colours, type, icons), this report's sections 4 and 9, `tools/ui_research/`.
 - Writes: `art/ui/board/board.html` and `board.png`. The board shows:
   - the material set (enamel, gold, wood, glass, parchment), dressing §21.8's surfaces (the violet card, dark glass, leather, parchment and gold) in §21.2's and §21.8's own colours: it adds grain, bevel, gloss and light, not new hues (new hues would need §21.8 changed, to be raised at O2);
-  - the type treatments, both under §21.8 as written and under decision D4, so the owner can choose at O2;
+  - the type treatments under §21.8 as written (the owner kept it: D4 (b));
   - the outline and glint rules and the studio light;
   - four hero icons;
   - the high-contrast form of each material.
@@ -242,11 +243,11 @@ Each step lists its owner, phase, what it reads and writes, what it waits for, h
 - Order: in two batches, the heist's families first, so the pilot can start.
 - Checked by: the scripted checks (every piece has its twin, contrast in both modes, the catalogue's coverage); the judge on the catalogue sheet at phone size, on qualities 1, 2, 8 and 13, against crops of the golden key frames and the approved board.
 
-**Step 6. AIA-2 makes the icons.** Owner: AIA-2. 28 hours: 16 in phase 1, 12 in phase 2. Waits for phase 0's exit; object icons also wait for D5.
+**Step 6. AIA-2 makes the icons.** Owner: AIA-2. 28 hours: 16 in phase 1, 12 in phase 2. Waits for phase 0's exit.
 - Reads: the board, `art/ui/palette.json`, the studio in `tools/ui_research/icons.html`, the 43 models in `client/art/creatures/`, T7's portrait studio.
 - Writes: `art/ui/icons/<name>.js` (one scene each), baked to `client/ui/art/icons_48.webp` (128 px per icon) and `icons_256.webp` (256 px, reward icons only).
-- Scope: the 60 most-seen icons (currencies, rewards, heist controls, nav), about 25 minutes an icon (25 hours), plus 3 hours to set up the character route through Godot's toon portrait studio (section 10.6, §21.3).
-- Batches: four batches of 15, each through the gate before the next, in the order the screens need them: heist controls and currencies first. Until D5 is decided, character and building icons go first. Batches 3 and 4 are the first work deferred if usage runs hot (D13).
+- Scope: the 60 most-seen icons (currencies, rewards, heist controls, nav), about 25 minutes an icon (25 hours), plus 3 hours to set up the toon route through Godot's toon portrait studio (section 10.6, §21.3). With D5 (b) the same route renders the object icons, so it needs no extra hours.
+- Batches: four batches of 15, each through the gate before the next, in the order the screens need them: heist controls and currencies first. Every icon, objects included, is in the toon look (D5 (b), §21.3). Batches 3 and 4 are the first work deferred if usage runs hot (D13 (c)).
 - Checked by: the scripted checks (the 2-point outline at the size shown; each icon reads as a dark shape at 32 points, `docs/art/3d-program.md`'s silhouette rule); the judge at 48 and 96 points and in grayscale, on qualities 1, 3, 8 and 13, against the golden icons.
 
 **Step 7. S1 builds the pilot heist.** Owner: S1. 6 hours. Phase 1. Waits for the heist's kit families and icon batch 1 to pass the gate and merge.
@@ -254,11 +255,11 @@ Each step lists its owner, phase, what it reads and writes, what it waits for, h
 - Writes: its screen files; `client/tests/shots/` stills before and after; its notes in `docs/art/tracks/`.
 - Checked by: the screen class in section 3.5; then **board 1** (the kit and the heist) at O4.
 
-**Step 8. AIA makes the juice and motion art.** Owner: AIA. 10 hours (7 if the owner allows CC0 particle sprites, D11). Phase 2. Waits for step 5 and decision D3.
+**Step 8. AIA makes the juice and motion art.** Owner: AIA. 10 hours: AIA makes the particle sprites (D11 (b)). Phase 2. Waits for step 5. The curves follow §21.8: 150–250 ms, easing out, no overshoot (D3 (b)).
 - Writes: `art/ui/motion/` (burst, sparkle, shine and coin sprites) baked to `client/ui/art/motion.webp`, and `art/ui/motion/curves.json` (every curve's times and easing). K1's kit `Motion` reads the curves (today's `UiqJuice` is the pattern).
 - Covers: the result screen's reward sequence (anticipation, burst, reveal, coins flying to their counter, the counter rolling and pulsing), a press with squash and recovery, and an idle shine on primary buttons.
 - Each motion has its reduced form (section 10.3).
-- Checked by: the scripted checks on timing, reduced forms and flashes (section 3.5); then the owner, from frame strips full and reduced, on **board 4** (result and motion). A still cannot show motion, so the judge does not block it.
+- Checked by: the scripted checks on timing, reduced forms and flashes (section 3.5); then the owner, from frame strips full and reduced and short recorded clips, on **board 4** (result and motion). A still cannot show motion, so the judge does not block it. The clips come from the same shot scripts as the frame strips, inside each step's hours; the owner spends about 5 minutes on each family's clips (section 3.4).
 
 **Step 9. S1 moves the result screen.** Owner: S1. 8 hours. Phase 2. Waits for the motion art (step 8); the layout on the kit can start before it.
 - Same outputs as step 7. Checked by: the screen class; board 4.
@@ -270,25 +271,32 @@ Each step lists its owner, phase, what it reads and writes, what it waits for, h
 - The menu screens draw through T10's own layer (`ScreenKit`, `ScreenBox` in `client/scripts/screen_*.gd`), not `KitSkin`, so they would not inherit the new kit. S3 routes `ScreenKit`'s materials through `KitSkin` (4 of its 14 hours), so every menu screen inherits it.
 - Same outputs as step 7. Checked by: the screen class; **board 5** (menus).
 
-**Step 12. Polish and harden.** Owners: as the backlog assigns, by file. Up to 20 hours of reserve. Phase 3. Re-work from the boards, the blind audit and the exceptions; escalations to Opus 5.5 come from here too.
+**Step 12. Polish and harden.** Owners: as the backlog assigns, by file. Up to 20 hours of reserve. Phase 3. Re-work from the boards, the blind audit and the exceptions; escalations to Opus 5.5 and AD's flow reviews (3 hours, below) come from here too.
 
-**The gate's runs through the wave.** Owner: the gate. 16 hours, in short read-only runs on the judge model: calibration (2, phase 0); the two kit-art batches, icon batches 1–2 and the pilot heist (5, phase 1); icon batches 3–4 and the other four screens with their second rounds (8, phase 2); the final re-checks (1, phase 3). Each run also writes the owner's exceptions packet. **Icon board 2** is posted when batch 4 passes.
+**The gate's runs through the wave.** Owner: the gate. 16 hours, in short read-only runs on the judge model: calibration (2, phase 0); the two kit-art batches, icon batches 1–2 and the pilot heist (5, phase 1); icon batches 3–4 and the other four screens with their second rounds (8, phase 2); the final re-checks (1, phase 3). The three extra samples for a split (section 3.5) come from these hours. The gate is read-only: from each run the lead, as its launcher, writes the verdicts and the owner's exceptions packet. **Icon board 2** is posted when batch 4 passes.
+
+**AD's flow reviews.** Owner: AD. About 1 hour at the end of each of phases 1, 2 and 3: 3 hours, from step 12's reserve. Isolated checks cannot see flows across screens, navigation, or drift from the kit, so AD reviews a board of end-to-end flows on the integrated build (`docs/guides/agent-program.md`, the gate's item 11). Findings become backlog tasks through the lead; navigation flows get scripted tests, each with a named owner in the backlog.
 
 ### 3.4 The owner's time
 
-The owner's time goes where review pays most: the plan, the contract, the labels every gate enforces, and samples. It does not go on a stream of approvals, which decay into rubber-stamping (the research's evidence on this is reported and secondary). In all, about 4½ to 6¼ hours over the wave's six working days, of which 1–2 hours are the daily exceptions.
+The owner's time goes where review pays most: the plan, the contract, the labels every gate enforces, and samples. It does not go on a stream of approvals, which decay into rubber-stamping (the research's evidence on this is reported and secondary). In all, about 5 to 6⅔ hours (300–400 minutes) over the wave's six working days, of which 1–2 hours are the daily exceptions. The decisions O1 was for were taken on 29 October 2026.
 
 | When | What the owner sees | What the owner does | Minutes | Default if the owner is away |
 |---|---|---|---|---|
-| O1, before phase 0 | This plan at a glance; section 12; the settings in section 3.9 | Decides D1 and D14; accepts or changes the defaults of D7–D10 and D12 | 20 | Nothing starts without D1 |
-| O2, phase 0, after step 2 | `art/ui/board/board.png` beside today's heist and the design's, with its type both ways; K1's frozen kit contract | Approves the board and the contract, or redirects with notes; decides D4 and D5 | 15 | Steps 3 and 4 wait; AD and K1 go on |
-| O3, end of phase 0 | `gate/golden/labels.md` and its images, the key frames among them | Labels each item pass or fail on each quality listed, with a one-line critique, including clear fails and borderline cases; decides D2 | 60–90, once | Phase 1 does not start: the judge cannot be calibrated without the labels |
-| O4, phases 1–3 | Five family boards: 1 kit and heist, 2 icons, 3 home, 4 result and motion, 5 character and settings. Each shows 5–10 items beside their golden references at phone size, frame strips for motion, and the gate's verdicts | Objects to an item, with a note, or lets the board stand | about 15 each, 10 for icons: 70 | **Merges after 24 hours unless the owner objects** (section 3.8) |
-| O5, daily | The exceptions queue (`gate/verdicts/exceptions.md`): split and "Unknown" verdicts, owner-checked qualities, pieces that failed twice with their three options | Decides each | 10–20 a day | Items wait; nothing in the queue merges |
+| O1, before phase 0 | Nothing: the decision is taken | D1, D14, D7–D10 and D12 were decided on 29 October 2026 (section 12) | 0 | Not needed |
+| O2, phase 0, after step 2 | `art/ui/board/board.png` beside today's heist and the design's, with its type both ways; K1's frozen kit contract | Approves the board and the contract, or redirects with notes (D4 and D5 are decided: (b)) | 15 | Steps 3 and 4 wait; AD and K1 go on |
+| O3, end of phase 0 | `gate/golden/labels.md` and its images, the key frames among them | Labels each item pass or fail on each quality listed, with a one-line critique, including clear fails and borderline cases (D2 is decided: (b)) | 60–90, once | Phase 1 does not start: the judge cannot be calibrated without the labels |
+| O4, phases 1–3 | Five family boards: 1 kit and heist, 2 icons, 3 home, 4 result and motion, 5 character and settings. Each shows 5–10 items beside their golden references at phone size, frame strips and short recorded clips for motion and feel, and the gate's verdicts | Objects to an item, with a note, or lets the board stand | about 15 each, 10 for icons, plus about 5 of clips on each board but the icons': 90 | **Merges after 24 hours unless the owner objects** (section 3.8) |
+| O5, daily | The exceptions queue (`gate/verdicts/exceptions.md`, written by the lead): "Unknown" verdicts, appeals, owner-checked qualities, pieces that failed twice with their three options. Splits are resampled (section 3.5) and do not come here | Decides each | 10–20 a day | An "Unknown" unanswered for 24 hours is treated as a split; the other items wait without blocking the rest |
 | O6, end of phase 2 and at wave end | 10–20 items the gate passed, mixed with 3–5 it failed, on the golden set's form, without the gate's verdicts | Labels them blind | 15–20 each | The second audit is a condition of phase 3's exit |
-| O7, wave end | The five screens before and after; the frame strips; draw calls and texture memory per screen; the counts of items passing the gate | Lets the wave stand or names what must be re-worked; decides D6 | 20 | The wave ends with the boards as they stand |
+| O7, wave end | The five screens before and after; the frame strips; draw calls and texture memory per screen; the counts of items passing the gate | Lets the wave stand or names what must be re-worked (D6 is decided: (a)) | 20 | The wave ends with the boards as they stand |
+| Every 5 hours of clock time | The lead's digest: the metrics, and links to the backlog and status files | Reads it; nothing to approve | 2 each: about 25 | Nothing waits on it |
 
 Default merges are safe only while the blind audits confirm the judge's catch rate (section 3.5).
+
+**Against the program's figure.** `docs/guides/agent-program.md` ("The owner's cadence") estimates about 15–20 hours for a two-week wave with 3–5 kinds of judged work, each with its own golden set, 8–12 families, and splits reaching the owner. This wave has one golden set across its asset classes, five families, six working days, and splits resampled instead of sent to the owner (D-06, section 3.5). The program's table applied to these counts gives the 5 to 6⅔ hours above. Both figures are inference. If the golden set needs a second sitting, or the exceptions run over 20 minutes a day, the lead gives the new figure in the digest.
+
+**If the owner is away.** Every default applies at its deadline, and the wave goes on around an unanswered question. Only owner-only items pause: the style board and kit contract (O2), the golden set's labels (O3), and items of a quality in shadow mode, which wait for their board (section 3.5). Every D-decision is already taken. The lead lists what is waiting in `docs/progress/owner-inbox.md`.
 
 ### 3.5 The gate
 
@@ -296,7 +304,7 @@ The gate replaces the 0–5 scores of T14 and T16's plan. LLM judges agree with 
 
 **The four checks, in order of cost.**
 1. **Scripted checks**, on every push and in the merge queue: draw calls, texture memory, atlas sizes and the install size (section 10.1); contrast in both modes over the baked art; 48-point targets and 13-point text at 100%, 150% and 200%; twins, hashes and coverage; the chrome count; timings and reduced forms. A scripted fail blocks.
-2. **The judge**, for the qualities a still can show. One isolated call per quality, on read-only tools (`Read`, `Grep`, `Glob`), with no access to the author's notes or reasoning. Each call sees the candidate and two anchors from the golden set for that quality and asset class: the weakest item the owner labelled pass, and the strongest the owner labelled fail. It answers PASS, FAIL or UNKNOWN for that one quality, names the region, and gives a one-line reason. The order of candidate and anchors is shuffled on each call. Each call is made three times. Three fails block, with the reason and a crop; three passes pass; anything else goes to the owner's exceptions queue.
+2. **The judge**, for the qualities a still can show. One isolated call per quality, on read-only tools (`Read`, `Grep`, `Glob`), with no access to the author's notes or reasoning. Each call sees the candidate and two anchors from the golden set for that quality and asset class: the weakest item the owner labelled pass, and the strongest the owner labelled fail. It answers PASS, FAIL or UNKNOWN for that one quality, names the region, and gives a one-line reason. The order of candidate and anchors is shuffled on each call. Each call is made three times. Three fails block, with the reason and a crop; three passes pass. A **split** takes three more samples: 4 or more fails out of 6 is a fail; otherwise it passes and goes on the next board (decision D-06 in `docs/guides/agent-program.md`). An **Unknown** goes to the owner's exceptions queue; unanswered after 24 hours, it is treated as a split.
 3. **The merge queue's guards** on the combined tree (section 3.8).
 4. **The owner**: the family boards for what a still cannot judge (presses, juice, motion, and the whole screen's idea), the daily exceptions, and the blind audits that measure the judge.
 
@@ -332,9 +340,9 @@ So the judge makes at most 8 isolated checks per screen (qualities 1, 2, 3, 6, 8
 | Motion | Timings, reduced forms, flashes, shake | none | Board 4 |
 | Screen | Section 10's checks and the scripted column above, at 100% and 200% text and in high contrast | 1, 2, 3, 6, 8, 9, 13, 14 | Its board |
 
-**Calibration.** The judge blocks nothing until it is calibrated.
+**Calibration.** The judge blocks nothing on a quality until it is calibrated on it. Until then it runs in **shadow mode** for that quality: it records verdicts, and every item of that quality goes on an owner board before it merges. The kit contract always gets the owner's approval (O2) before it merges, whatever the gate's state.
 1. **The golden set.** 30–60 items (step 1), labelled by the owner at O3, per quality, with a one-line critique. The labels are split by item into thirds, by asset class: a training third that AD reads to write the prompts, a development third to tune them, and a held-out third that is measured once per rubric version.
-2. **What is measured.** For each judged quality, on the held-out third: the **catch rate**, the share of the owner's fails that the judge fails three times out of three; the false-block rate, the share of the owner's passes it fails; and the share it sends to exceptions. Raw agreement is not used: a judge that passes everything agrees 90% of the time with a set that is 90% passes. Results are written as counts ("7 of 8 fails caught"), because the set is small.
+2. **What is measured.** For each judged quality, on the held-out third: the **catch rate**, the share of the owner's fails that the judge fails under the sampling rule above (three of three, or 4 or more of 6 after a split); the false-block rate, the share of the owner's passes it fails; and the share it sends to exceptions. Raw agreement is not used: a judge that passes everything agrees 90% of the time with a set that is 90% passes. Results are written as counts ("7 of 8 fails caught"), because the set is small.
 3. **The target.** A catch rate of at least 80% on every judged quality, with no more than 20% false blocks and no more than 30% sent to exceptions. The research sets no number; these are T17's choice, set high because judges are reported to catch only 30–60% of bad items. With 60 items and about five judged qualities each, the held-out third has about 100 labels and perhaps five fails per quality, so a quality's figure is rough: the weekly audit's fresh labels are the real test.
 4. **The judge model.** Fable 5.1 and Opus 5.5 are both run on the development third. Fable 5.1 is chosen unless Opus 5.5 catches more; then Opus 5.5 judges and the blind audit doubles in size, since the artists also run on Opus 5.5.
 5. **If a quality misses the target.** AD revises that quality's prompt against the training and development critiques, at most twice, and measures again. If it still misses, the other model is tried. If both miss, that quality becomes **owner-checked**: the judge's verdict on it is advisory and the quality goes on every board. The wave goes on.
@@ -342,7 +350,7 @@ So the judge makes at most 8 isolated checks per screen (qualities 1, 2, 3, 6, 8
 7. **Recalibration** also follows any change of judge model, any rubric edit (the rubric's version is logged, since the owner's bar moves as they see work), and any new asset class.
 
 **When a piece fails.**
-1. The gate writes `gate/verdicts/<item>-<round>.md`: which qualities failed and why, with a crop.
+1. The gate's final message is its verdict. The lead, as its launcher, writes it to `gate/verdicts/<task_id>/<sha>.json`, one object per item and quality in the format of `docs/guides/agent-protocol.md` ("The gate, step by step"): the samples, the result, the rubric version and the one-line critique naming the region, with the crop beside it. The gate itself writes nothing.
 2. The author re-works it. A second round is normal.
 3. **A screen that fails a second time** moves to a fresh Opus 5.5 session (section 3.1). **Art that fails a second time** goes to the exceptions queue with three options: accept it with the verdict noted, change the board so it passes, or keep the code-drawn kit's form for that piece. The wave goes on around it.
 4. A screen that fails stays on its current look. Its material families can still be switched on for other screens (section 10.9), because the switch is per family, not per screen.
@@ -351,7 +359,7 @@ So the judge makes at most 8 isolated checks per screen (qualities 1, 2, 3, 6, 8
 
 The wave is accepted at O7 when each of the five screens passes the gate on every quality that applies, at 100% and 200% text and in high contrast; no board has an open objection; the second blind audit found no miss left unfixed; and section 10's checks pass.
 
-The bar is the owner's: a screen passes a quality when the calibrated judge, or the owner for owner-checked qualities, finds it at least as good as the weakest item the owner labelled pass. On T14's 0–5 scale that bar is estimated at about 3.5, against 2.2 today: 70% of Clash level, about 50% of the owner's bar (7, section 1). That is an estimate for comparison, not a gate. The ceiling of this plan is 3.75–4.25 (section 6). The rest of the bar needs what section 9.4 says the AI artist lacks: invention, painterly texture and hand-timed effects.
+The bar is the owner's: a screen passes a quality when the calibrated judge, or the owner for owner-checked qualities, finds it at least as good as the weakest item the owner labelled pass. On T14's 0–5 scale that bar is estimated at about 3.5, against 2.2 today: 70% of Clash level, about 50% of the owner's bar (7, section 1). That is an estimate for comparison, not a gate. The owner accepted this bar: the one the owner's labels set at O3 (D10). The ceiling of this plan is 3.75–4.25 (section 6). The rest of the bar needs what section 9.4 says the AI artist lacks: invention, painterly texture and hand-timed effects.
 
 ### 3.7 Hours
 
@@ -365,9 +373,9 @@ T14's steps summed to 81 hours ("about 80"). T16 made it 144, then 158 with the 
 | Kit contract, pipeline and kit (K1) | 12 | 31 | 33 | Freezing the contract and the ownership map (1); the guard command and its budget records (1) |
 | Kit art | 10 | 16 | 16 | |
 | Icons | 25 | 28 | 28 | |
-| Juice and motion | 10 | 10 | 10 | 7 with D11 |
+| Juice and motion | 10 | 10 | 10 | D11 decided (b): AIA makes the particle sprites, so 10, not 7 |
 | Screens | not costed | 36 | 36 | Now on Sonnet 5.5; the risk that they take longer is carried by the reserve and the escalation rule |
-| **Total** | **81** | **158** | **164** | 161 with D11. Plus up to 20 hours of re-work, escalations included. The lead's time (about 16 hours) is outside the total |
+| **Total** | **81** | **158** | **164** | Plus a reserve of up to 20 hours for re-work, escalations and AD's flow reviews. The lead's time (about 20 hours, its 30-minute cycle included) is outside the total |
 
 **By phase:** 43, 58, 62 and 1, plus the reserve in phase 3.
 
@@ -383,14 +391,19 @@ T14's steps summed to 81 hours ("about 80"). T16 made it 144, then 158 with the 
 
 The AI artists' share is 70 hours (AIA 42, AIA-2 28).
 
+**Work added by the operating model, folded into existing hours.** Three kinds of work were not costed when the 164 was set. None of them changes the 164 or the reserve's 20:
+- **AD's flow reviews** at the end of phases 1, 2 and 3: about 1 hour each, 3 hours in all, taken from the 20-hour reserve, which leaves up to 17 for re-work and escalations.
+- **Motion clip boards:** the clips come from the shot scripts that already render the frame strips, inside steps 8–11's hours. The owner's 5 minutes per family are in section 3.4.
+- **The lead's 30-minute cycle:** about 130 cycles over about 65 wall-clock hours, each a fresh short session. The lead's estimate rises from about 16 to about 20 hours, which stays outside the total; the usage projection's 20% reserve for the lead and recovery (section 3.9) covers it.
+
 ### 3.8 Merging
 
-**One change at a time, as soon as it is ready.** The hourly cycle of earlier waves becomes the longest a ready change waits, not the only time merges happen.
+**Merge, then test, one change at a time.** The wave uses the merge queue of `docs/guides/agent-protocol.md` ("The merge queue"), which replaced the earlier rule that a ready branch must contain main's head. The lead takes the queue as far as it goes on each 30-minute cycle.
 
-1. **Ready.** A change is ready when its branch contains main's current head, `bash tools/check_all.sh` printed "All checks passed" on exactly that commit (its log ends in a `DONE exit=0` line), `tools/ui_bake/guard.sh` passed on it if the change touches the client or the art, and the gate passed every item it carries. The worker writes `ready` and the commit in its status file (`docs/guides/agent-program.md`).
-2. **The queue.** The lead takes ready changes in the order they became ready, one at a time, with the critical path first (the kit contract and shared art before screens; AIA's chain before the rest). If the ready commit contains main's head, the lead fast-forwards main to it: the tree that passed the checks is exactly the tree that lands. If main has moved, the lead marks the task `resync` in the backlog.
-3. **Conflicts are the worker's.** The worker brings main into its own branch (a merge, the repository's convention), resolves its own conflicts, re-runs the checks and marks ready again. A conflict in a file the worker does not own is never resolved by editing it: the worker stops that task and sends a request to the file's owner.
-4. **If the worker has stopped,** the lead merges its last ready commit with main on a temporary branch, runs the full checks there and fast-forwards main only if they pass. This is the hourly cycle, and the only time the lead merges by hand. If that merge conflicts, the lead resolves nothing: the task waits for its owner's next session.
+1. **Ready.** A change is ready when its pre-check passed on exactly its commit: `bash tools/check_all.sh`, run on a separate worktree of that commit, printed "All checks passed." and its log ends in a `DONE exit=0` line; `tools/ui_bake/guard.sh` passed on it if the change touches the client or the art; and the gate passed every item it carries. Its branch need not contain main's head. The worker writes `ready` and the commit in its status file (`docs/guides/agent-protocol.md`), writes its handoff and ends its session.
+2. **The queue.** The lead takes ready changes one at a time, the critical path first (the kit contract and shared art before screens; AIA's chain before the rest), then in the order they became ready. It merges each onto a local candidate taken from main's head, runs the full checks and the guards on the candidate, and fast-forwards main to the candidate only if they pass: the tree that passed the checks is exactly the tree that lands. When the oldest ready change has waited more than 2 hours, the lead may merge 2–3 into one candidate, and re-checks each alone if that candidate fails.
+3. **Conflicts and failures are the worker's.** A textual conflict or a failing candidate sends the task to `resync`, with the paths or the failing lines, and the lead restarts the worker from its handoff. The worker brings main into its own branch (a merge, the repository's convention), resolves its own conflicts, re-runs its pre-check and marks ready again. A conflict in a file the worker does not own is never resolved by editing it: the worker sends a request to the file's owner.
+4. **Bookkeeping resyncs nobody.** The lead's own commits touch only `docs/progress/**`, and readiness no longer depends on main's head, so they never send a ready change back. If only bookkeeping commits landed while a candidate's checks ran, the lead merges the candidate onto the new head and re-runs only the documentation check.
 5. **Default merges.** A family's pieces (kit art, icons, kit code) merge as soon as they pass, behind their family switch, so the screens can build on them. What players would see waits on its board: a family's switch-on commit and a screen's new layout merge 24 hours after the board is posted unless the owner objects. An objection keeps the switch off and makes the item a task for phase 3.
 
 **Guards on the combined tree.** Separate branches stop textual collisions, not semantic ones: two changes that pass alone can fail together, as the merge that undid the database optimisation did. Each guard encodes an intent, so a merge that breaks it fails:
@@ -401,39 +414,41 @@ The AI artists' share is 70 hours (AIA 42, AIA-2 28).
 | `node tools/ui_bake/bake.js --check` | Bakes match their sources; every piece has its twin; atlas sizes and the install total | check_all |
 | `python3 tools/ui_bake/check_screens.py` | No screen adds chrome of its own | check_all |
 | The client's kit and accessibility tests | 48-point targets and 13-point text at 200%; contrast over the baked art in both modes; the material switch's fallback | check_all (`client/status.py`) |
-| `tools/ui_bake/guard.sh` | Draw calls under 150 and no higher than recorded, texture memory at most 24 MiB, for the five screens at 100% and 200% text and in high contrast; the full rebake byte for byte | Every ready change that touches the client or the art, and the lead's hand merges; in check_all if the owner chooses D9 (a) |
+| `tools/ui_bake/guard.sh` | Draw calls under 150 and no higher than recorded, texture memory at most 24 MiB, for the five screens at 100% and 200% text and in high contrast; the full rebake byte for byte | The pre-check of every change that touches the client or the art, and every candidate; not in check_all (D9 (b)) |
 
-Because main only fast-forwards to a commit on which these passed, no merge can land a combination nobody tested.
+Because main only fast-forwards to a candidate on which these passed, no merge can land a combination nobody tested.
 
-**Requests.** An agent that needs a change in another agent's file writes a request in its own status file. The file's owner answers in its own files (K1 answers kit requests in `kit-spec.md` section 7), and the lead copies open requests into `docs/progress/requests.md` in each digest. Nothing is delivered until its recipient acknowledges it (`docs/guides/agent-program.md`).
+**How many builders the queue can take.** Builders running at once ≤ merges per hour × average task hours, where merges per hour ≈ 60 ÷ check minutes per candidate (`docs/guides/agent-protocol.md`, "The sizing rule"). If the oldest ready change waits more than 2 hours, the lead batches or lowers the cap. The cap is three until the lead has measured the real check time after phase 1 (decision D-05); phase 1's fourth builder and phase 2's fifth (section 3.2) start only if the rule allows them.
+
+**Requests.** An agent that needs a change in another agent's file writes a request in its own status file. The file's owner answers in its own files (K1 answers kit requests in `kit-spec.md` section 7), and the lead copies open requests into `docs/progress/requests.md` at each cycle. Nothing is delivered until its recipient acknowledges it (`docs/guides/agent-program.md`).
 
 ### 3.9 Sessions, tokens and usage
 
 Every request resends the whole conversation, so a session's cost per tool call grows with its context: one at 350k tokens costs about 3.5 times as much per call as one at 100k, and recalls less (the research's arithmetic at list prices; plan-limit units are not published). The rules:
 
 - **A fresh session at every phase boundary and every task boundary.** Before it ends, the agent rewrites the handoff section of its progress file: the last verified commit, what is done, what is half done, open hypotheses and the next step. The next session starts from the handoff, the backlog and `git log`, then runs the basic checks before new work. A session continues or compacts only when the next step depends on unwritten state, such as a live debugging hypothesis.
-- **An earlier compaction point:** 200k tokens (P1), not the 967k at which 1M-context models compact in cloud sessions.
+- **An earlier compaction point:** 200k tokens (P1, set), not the 967k at which 1M-context models compact in cloud sessions.
 - **Test output goes to files.** Long runs write to a log ending in a `DONE exit=<code>` line; the agent reads only the failures and the last lines. A restarted agent re-runs any run whose log lacks the marker.
 - **Stills for judging are downscaled where that does not hurt the judgement.** The judge sees whole screens at 960 pixels on the long edge (about 560 image tokens for a phone portrait, against about 3,300 at full size), and full-resolution crops for type, grain and small icons, which downscaling would hide. Builders look at their stills through a subagent or at the same size, and never keep more than a few images in their context.
 - **Never switch model inside a session.** Each model has its own cache, so a switch re-reads everything at full price. The same goes for toggling fast mode, adding or removing an MCP server, and `opusplan`. A different model means a fresh session with a handoff.
 - **Subagents for searches and log triage** run on Haiku 5.5 and stay under 100k tokens. They never give a gate verdict.
 
 **Usage.** Every session draws on one account's five-hour window and weekly limit; Fable 5.1 is reported to have its own weekly limit on Max plans, which is one more reason to put the judge on it.
-- At the end of phase 0 the lead reads `/usage`, works out the share of the weekly bar that one agent-hour on each model used, and projects phases 1–3 plus a 20% reserve for the lead and recovery. If it does not fit, the owner decides D13: wait for the weekly reset before phase 2, enable usage credits (then P2), or cut scope. The default is three builders at once with icon batches 3 and 4 deferred.
+- At the end of phase 0 the lead reads `/usage`, works out the share of the weekly bar that one agent-hour on each model used, and projects phases 1–3 plus a 20% reserve for the lead and recovery. If it does not fit, D13 is decided: (c), three builders at once with icon batches 3 and 4 deferred. No usage credits are enabled, so P2 is not set.
 - **Tiers.** As headroom shrinks, the idle queue checkpoints and stops first, then icon batches 3–4 and the second-round polish, then S2 and S3; the lead, K1, the gate, AIA and S1 (the critical path) stop last.
 - Heavy exploration is staggered: no two Opus 5.5 sessions start a new step in the same half hour.
 - Every agent commits and pushes after each verified step, so a limit pause costs time but no work. No `/loop`, check-ins or messages that wake an idle session to resend its whole context.
 
-**Settings proposed to the owner (D14).** T17 changed no setting or config file. Each of these is a proposal, with its exact value; the research labels the settings' behaviour as vendor documentation, which changes often, so the lead checks each against the current docs before applying it.
+**Settings (D14, decided on 29 October 2026).** The last column says what is set. P1 and P6 are set through the `"env"` block of `.claude/settings.json`; P5 is `.claude/agents/ui-judge.md`. The settings' behaviour is vendor documentation, which changes often, so the lead checks each against the current docs at each wave's start.
 
-| # | Setting | Exact value | Where | Why |
-|---|---|---|---|---|
-| P1 | `CLAUDE_CODE_AUTO_COMPACT_WINDOW` | `200000` | The cloud environment's environment variables, for every session of the wave | Compacts at 200k instead of about 967k |
-| P2 | `promptCacheTtl` | `"1h"` | `.claude/settings.json` | Only if usage credits are enabled (D13): on credits the main conversation otherwise drops to the 5-minute cache, and every 25-minute test wait becomes a full re-read |
-| P3 | A `PreToolUse` hook on `Bash` | `{"matcher": "Bash", "hooks": [{"type": "command", "command": "python3 tools/hooks/filter_tests.py"}]}` | `.claude/settings.json`; the script, written by the lead if approved, appends `> test-results/<commit>.log 2>&1; echo "DONE exit=$?"` and shows only `grep -A 5 -E '(FAIL\|ERROR\|error:)' \| head -100` and the last line to runs of `check_all.sh`, `status.py` and `cargo test` | A 10,000-line log costs hundreds of tokens, not tens of thousands |
-| P4 | A `Stop` hook | `{"hooks": [{"type": "command", "command": "python3 tools/hooks/stop_guard.py"}]}` | `.claude/settings.json`; the script exits 2 while the time is before the agent's `stop_at` less 30 minutes and its status is not `stopped`, `done` or `blocked` | Stops agents ending early on a misread time; the harness overrides it after eight blocks in a row |
-| P5 | The judge's subagent | `.claude/agents/ui-judge.md` with `tools: Read, Grep, Glob` and `model: inherit`; the gate's sessions are started on the judge model | `.claude/agents/` | Read-only enforced, not requested; one isolated context per check |
-| P6 | `autoContinueAtUsageLimit` | `true` | `.claude/settings.json` | A session paused at the limit continues at the reset; `send_later` stays the fallback |
+| # | Setting | Exact value | Where | Why | Decided |
+|---|---|---|---|---|---|
+| P1 | `CLAUDE_CODE_AUTO_COMPACT_WINDOW` | `200000` (it accepts 100000–1000000) | The `"env"` block of `.claude/settings.json`, so every session of the wave has it | Compacts at 200k instead of about 967k | Set |
+| P2 | `promptCacheTtl` | `"1h"` | `.claude/settings.json` | Only if usage credits are enabled (D13): on credits the main conversation otherwise drops to the 5-minute cache, and every 25-minute test wait becomes a full re-read | Not set: no usage credits are enabled (D13 (c)) |
+| P3 | A `PostToolUse` hook on `Bash` | `"PostToolUse": [{"matcher": "Bash", "hooks": [{"type": "command", "command": "python3 tools/hooks/filter_tests.py"}]}]` | `.claude/settings.json`'s `"hooks"`; the script reads the finished output of runs of `check_all.sh`, `status.py` and `cargo test` and returns `hookSpecificOutput.updatedToolOutput` holding only the last `== <check> ==` heading, `grep -A 5 -E '(FAIL\|ERROR\|error:\|panicked\|AssertionError)' \| head -100` and the last line. A `PreToolUse` hook cannot filter output | A 10,000-line output costs hundreds of tokens, not tens of thousands | Approved in this form; set once the lead's script and its test exist (a lead build task). Until then long runs use the worktree runner and agents read only their logs' failures and last lines |
+| P4 | A `Stop` hook | `{"hooks": [{"type": "command", "command": "python3 tools/hooks/stop_guard.py"}]}` | `.claude/settings.json`; the script exits 2 while the time is before the agent's `stop_at` less 30 minutes and its status is not `stopped`, `done` or `blocked` | Stops agents ending early on a misread time; the harness overrides it after eight blocks in a row | Not set: sessions end by their status, and the lead's 30-minute cycle is the backstop |
+| P5 | The judge's subagent | `.claude/agents/ui-judge.md` with `tools: Read, Grep, Glob` and `model: inherit`; the gate's sessions are started on the judge model | `.claude/agents/` | Read-only enforced, not requested; one isolated context per check | Set: the file exists |
+| P6 | `CLAUDE_CODE_RETRY_WATCHDOG` | `1` | The `"env"` block of `.claude/settings.json` | Replaces `autoContinueAtUsageLimit`, which does not apply to background or `-p` sessions, so it would not reach the wave's unattended sessions. The watchdog keeps such a session retrying through a usage-limit pause; its recheck interval is left at the default. The lead's restart stays the recovery plan | Set |
 
 ## 4. Benchmark: 14 checkable qualities
 
@@ -607,7 +622,7 @@ It is drawn over the same heist moment as the deployed screen, with the same dat
   - `UiqArt` turns the manifest into `NinePatchRect`s, `AtlasTexture` sprites and glyph rows;
   - `UiqHud` lays out the HUD;
   - `UiqMedal` draws a portrait.
-- Words stay live `Label`s (Lilita One, a multichannel distance field, one ink outline) from the strings tables (`HUD_*`, `HEIST_*`). §21.8 gives labels to Manrope; using Lilita One for them is decision D4 (section 12).
+- Words stay live `Label`s (Lilita One, a multichannel distance field, one ink outline) from the strings tables (`HUD_*`, `HEIST_*`). §21.8 gives labels to Manrope, and the owner kept that rule (D4 (b), section 12), so the kit's labels are Manrope with an ink outline.
 
 **Budget.** The same frame with nothing on top costs 77 draw calls. With the deployed HUD it costs 137; with this HUD, 147, under §21.3's 150. (T16 re-measured on 28 October: 147 with this HUD, 136 with the deployed one. Section 10.1 sets one method for every screen.)
 
@@ -625,7 +640,7 @@ Getting there taught three rules the kit will need:
 **High contrast (§20.8).** The bake runs twice: the same pieces in the same places, the second time on near-black enamel with no grain and a fainter gloss. That gives `atlas_hc.webp` (244 KB), which `UiqArt` loads when the setting is on. It is shown in `proof-high-contrast.png` against the deployed HUD in high contrast, and still costs 147 draw calls. An accessibility variant is one more bake, not a second set of drawing code.
 
 **Motion.** `proof-motion.png` (`tests/shots/uiq_motion.gd`, curves in `UiqJuice`) shows five moments:
-- Top: Get out pressed and let go. It sinks onto its lip and squashes to 92%, then springs back past its size with a back-ease and settles, all within 0.4 s. That breaks §21.8's motion rule (150–250 ms, no overshoot); the plan follows §21.8 unless the owner decides otherwise (D3, section 12).
+- Top: Get out pressed and let go. It sinks onto its lip and squashes to 92%, then springs back past its size with a back-ease and settles, all within 0.4 s. That breaks §21.8's motion rule (150–250 ms, no overshoot), which the owner kept (D3 (b), section 12).
 - Below: coins fly in a stagger along an arc into the loot panel's bag. The number rolls up as each lands and the panel pulses. The lower row's columns are fractions of the flight, not the stamped times.
 
 These are the curves a screen would tween along. A still strip is how the art director would judge motion.
@@ -790,7 +805,7 @@ The draw-call figure is tight. The proof's heist is at 147, three under the limi
 - portraits and other textured polygons stay in their own canvas items (section 7's findings);
 - a screen over 149 does not merge.
 
-The texture-memory and install-size numbers are new; the design document sets none. They are decision D8 (section 12).
+The texture-memory and install-size numbers are new; the design document sets none. The owner approved them (D8, section 12).
 
 The proof's frame also prints 87,102 primitives with the new HUD and 96,333 with the deployed one. Most of that is the world, and §21.3 allows about 60,000 triangles in a heist. This is the world tracks' question, not the interface's, and is passed to the integrator in `plan-review.md`.
 
@@ -804,7 +819,7 @@ The proof's frame also prints 87,102 primitives with the new HUD and 96,333 with
 
 ### 10.3 Motion and reduced motion (§20.8, §21.8)
 
-§21.8 sets every interface movement at 150–250 milliseconds, easing out, without overshoot, with a slight squash on press and rewards flying into their counter. The proof's press springs past its size and settles within 0.4 seconds, which breaks that rule. The plan follows §21.8 unless the owner decides D3 (section 12). The curves live in one file (`art/ui/motion/curves.json`), so either answer is a change of numbers, not of code.
+§21.8 sets every interface movement at 150–250 milliseconds, easing out, without overshoot, with a slight squash on press and rewards flying into their counter. The proof's press springs past its size and settles within 0.4 seconds, which breaks that rule. The owner kept §21.8 (D3 (b), section 12). The curves live in one file (`art/ui/motion/curves.json`), so either answer is a change of numbers, not of code.
 
 Every motion has a reduced form (§20.8), shown in its frame strip at the gate:
 
@@ -823,7 +838,7 @@ No glint, sparkle or shine flashes more than three times a second (§20.8). Scre
 - **Both launch languages.** English and Brazilian Portuguese (§20.6). Brazilian Portuguese runs longer, so frames are sized from their words, and every key frame and screen is checked in both. T9's tab bar is already tested in German and Portuguese.
 - **Numerals.** Baked numerals cover 0–9 and the marks numbers need: the comma and full stop (English writes 1,234 and Brazilian Portuguese 1.234), the colon, the slash, plus, minus, percent, the multiplication sign and the question mark (the heist's "Left ?", §21.8). Changing numbers use a fixed advance, which is the point of §21.8's tabular figures. Each language's formatting comes from the client's own number formatting, never from the art.
 - **Later languages.** §20.6 adds one locale a season after launch. Japanese, Korean and Chinese write numbers with these same digits, so the numerals hold. Their words need a fallback font, as today (`client/ui/fonts/LEDGER.md`).
-- **Type faces.** §21.8 gives Manrope to labels and to every number that changes, and Lilita One to large numbers that do not change. The proof uses Lilita One for its labels and baked display numerals for the loot count, which changes. The plan follows §21.8 unless the owner decides D4 (section 12). Lilita One as a multichannel distance field is an import setting on the unmodified font, so its licence is unaffected.
+- **Type faces.** §21.8 gives Manrope to labels and to every number that changes, and Lilita One to large numbers that do not change. The proof uses Lilita One for its labels and baked display numerals for the loot count, which changes. The owner kept §21.8 (D4 (b), section 12), so labels and changing numbers stay in Manrope. Lilita One as a multichannel distance field is an import setting on the unmodified font, so its licence is unaffected.
 
 ### 10.5 School colours and variants
 
@@ -836,9 +851,9 @@ No glint, sparkle or shine flashes more than three times a second (§20.8). Scre
 
 - **Made, not licensed (§21.11).** Every pixel is made by code in this repository, and the sources are kept in the repository beside the bakes (they are not shipped), so the art is "made for this game". The build tools (three.js 0.184.0 under the MIT licence, Playwright 1.63.0 and its Chromium under Apache 2.0 and BSD) are permissive and are not shipped. K1 records them in a tools ledger beside the fonts' ledger.
 - **Fonts.** The three faces are under the Open Font Licence with their texts shipped (`client/ui/fonts/LEDGER.md`). Baked numerals are pictures drawn with Lilita One, not font files, and the ledger says so in a new row.
-- **No outside art.** No image comes from outside: no stock, no generated image, no game art, no bought or CC0 kit (§21.11; `build-or-buy.md`). The benchmark panels in the audit images are written descriptions. If the owner allows CC0 particle sprites (D11), K1 adds `client/ui/art/LEDGER.md` in the fonts' ledger's pattern, and the downloaded files stay out of the repository.
+- **No outside art.** No image comes from outside: no stock, no generated image, no game art, no bought or CC0 kit (§21.11; `build-or-buy.md`). The benchmark panels in the audit images are written descriptions. The owner kept §21.11 (D11 (b)), so no CC0 particle sprites are used and AIA makes them.
 - **Characters in the toon look (§21.3).** "Characters are not drawn in a physically based material; their portraits are rendered from the imported models in this look." The proof's Pip badge was lit in three.js's physically based studio, which breaks this. In the plan, character, Sage and building icons are rendered through Godot's portrait studio in the toon look, then finished in 2D. That is AIA-2's 3 hours of set-up.
-- **Objects.** Whether gold, gems and glass may be lit physically, as interface art, is decision D5. §21.3 asks for "one toon look for everything"; §21.8 asks icons for "the designs' volume: a three-stop gradient, a gloss and a soft drop shadow". The proof's icons use a hard ink drop; the plan uses §21.8's soft drop.
+- **Objects.** The owner decided that every icon is in the toon look, objects included (D5 (b)): gold, gems and glass are not lit physically. §21.3 asks for "one toon look for everything"; §21.8 asks icons for "the designs' volume: a three-stop gradient, a gloss and a soft drop shadow". The proof's icons use a hard ink drop; the plan uses §21.8's soft drop.
 - **Icons** keep §21.8's 2-point outline at the size shown, and are drawn to read on its 24-point grid.
 
 ### 10.7 Versions and regeneration
@@ -856,10 +871,10 @@ check_all runs about 25 minutes today. The plan adds:
 |---|---|---|
 | `tools/ui_bake/bake.js --check`: every manifest's hash matches its sources; every piece has its high-contrast twin; regions inside the atlas; atlas sizes and the install total | check_all | seconds |
 | Client tests: texture-backed pieces at 48 points and 13 points at 200% text; contrast over the baked art in both modes; the material switch's fallback; numerals for both languages | `client/status.py` (check_all) | under a minute added |
-| Full rebake, byte for byte: under a minute for the kit, about 2 minutes for 60 icons (at the proof's rates) | `tools/ui_bake/guard.sh`, before every ready change that touches the client or the art, and in the lead's hand merges (section 3.8) | about 3 minutes |
+| Full rebake, byte for byte: under a minute for the kit, about 2 minutes for 60 icons (at the proof's rates) | `tools/ui_bake/guard.sh`, in the pre-check of every change that touches the client or the art, and on every candidate (section 3.8) | about 3 minutes |
 | Draw calls and texture memory for the five screens at 100% and 200% text and in high contrast: 15 shots at about 47 seconds each, warm (T16 measured one) | `tools/ui_bake/guard.sh`, as above | about 12 minutes |
 
-Putting the last two in check_all would add about 15 minutes to every run. Whether to is decision D9 (section 12). Until it is decided they run before a change is marked ready and in the lead's hand merges, and a failure blocks the change. Since main only fast-forwards to a commit they passed on (section 3.8), they always hold on the combined tree.
+Putting the last two in check_all would add about 15 minutes to every run. The owner decided against it (D9 (b), section 12): they run in the pre-check of every change that touches the client or the art, and on every candidate, and a failure blocks the change. Since main only fast-forwards to a candidate they passed on (section 3.8), they always hold on the combined tree.
 
 No test is skipped, disabled or loosened. Tests that check today's code-drawn look keep running until the switch is on everywhere (section 10.9).
 
@@ -879,7 +894,7 @@ The rubric's press feedback and reward juice ask for a sound per step (qualities
 - haptics already exist (`client/app/haptics.gd`, §21.8's light tap on buttons), and the motion calls them;
 - the owner judges qualities 4 and 5 without sound in this wave, and the boards say so.
 
-Whether to add a sound track now is decision D7 (section 12).
+The owner decided: no sound this wave, with the events ready for it (D7 (a), section 12).
 
 ## 11. Risks
 
@@ -890,40 +905,40 @@ Whether to add a sound track now is decision D7 (section 12).
 | The judge misses its target on a quality | That quality cannot block | Two prompt revisions, then the other model, then the quality is owner-checked on the boards; the wave goes on |
 | The golden set is too small to measure well | A catch rate of "4 of 5" says little | Results written as counts; the audits' labels join the set; recalibration on every rubric edit |
 | Sonnet 5.5 builds weaker screens than Opus 5.5 would | Second rounds and escalations | The pilot tests it in phase 1; two fails move a screen to a fresh Opus 5.5 session from the reserve |
-| The merge queue becomes the bottleneck | Ready changes wait on each other's 25-minute checks | Fewer than 40 changes over about 65 hours at five builders; the critical path goes first; the hourly hand merge is the longest wait |
+| The merge queue becomes the bottleneck | Ready changes wait on each other's 25-minute checks | Fewer than 40 changes over about 65 hours at five builders; the critical path goes first; the cap follows the sizing rule; changes are batched when the oldest waits more than 2 hours (section 3.8) |
 | Draw calls over 150 | A screen cannot merge | One atlas per family; words in their own layer; the check before every push; fall back to the code-drawn piece for the costliest part |
 | Texture memory on a 3 GB phone | Stutter or a crash on old phones | Two icon sizes (128 and 256 px); per-screen atlases loaded and freed; high contrast replaces, never adds; the 24 MiB check |
 | The owner is not available | O2 or O3 holds phase 0; board 1 can hold phase 2 for up to 24 hours; later boards stand by default | AIA works ahead at risk on its branch and merges nothing; K1 does not wait on O2; boards merge after 24 hours unless the owner objects; the exceptions queue waits without blocking the rest |
-| The motion and type rules stay as §21.8 says (D3, D4 not decided) | Qualities 2, 4, 5 and 7 cap lower | The plan works either way; the curves and type treatments are data, so a later decision is a change of numbers |
+| The motion and type rules stay as §21.8 says (D3 and D4 decided (b)) | Qualities 2, 4, 5 and 7 cap lower | The plan works either way; the curves and type treatments are data, so a later decision is a change of numbers |
 | A bake stops rebuilding byte for byte | Nobody can tell a real change from noise | Pinned tools; the manifest records versions; the full rebake runs before every push |
 | Nothing here runs on a real phone | Frame time on the reference device is unmeasured | Draw calls and texture memory are measured on the same renderer (Compatibility); frame time on the reference device is checked by the developer before release |
 | The renderer's known faults (section 7's findings) | A white square in place of a ring; the shot aborts after writing | Textured polygons in their own canvas items; shots check that the PNG was written |
-| Usage limits pause the wave | Every agent stalls together | The projection at the end of phase 0 (D13); tiers that stop the least critical first; a 20% reserve; a commit after every verified step; P6 and `send_later` to resume (section 3.9) |
+| Usage limits pause the wave | Every agent stalls together | The projection at the end of phase 0 (D13); tiers that stop the least critical first; a 20% reserve; a commit after every verified step; the retry watchdog (P6) and the lead's restarts to resume (section 3.9) |
 | Brazilian Portuguese runs longer | Words overflow frames | Frames sized from their words; every key frame and screen checked in both languages |
 | The kit grows back into many looks | Rubric quality 11 falls; texture memory grows | Requests go to K1, the kit's one owner; reuse first; the limits in `kit-spec.md` section 7; the screens' chrome check refuses local chrome |
 
 ## 12. Owner decisions
 
-D1–D5, D11, D13 and D14 are in the plan at a glance; D11 and D12 come from `build-or-buy.md`. Each has a default, so the wave never stops for an answer it does not yet need.
+D1–D5, D11, D13 and D14 are in the plan at a glance; D11 and D12 come from `build-or-buy.md`. The owner decided all fourteen on 29 October 2026; the last column records each answer. The defaults and checkpoints are kept for the record. Nothing in this section waits on the owner.
 
-| # | Decision | Why it is needed | Options | Default | When |
-|---|---|---|---|---|---|
-| D1 | Approve plan v3 | 164 agent-hours in four phases; seven building roles, at most five at once; a lead and a judge beside them (sections 3.1–3.7) | Approve; approve a smaller scope (for example A alone, about 94 hours); reject | Nothing starts | O1, before phase 0 |
-| D2 | The approved key frames become the visual reference | §23.5: "The designs carry the look: layout, art, motion, the models and the icons." Key frames that replace Screens v3 need that sentence changed | (a) Change §23.5 so approved key frames carry the look where they differ from the designs; (b) keep §23.5, key frames are targets only | (b): key frames keep the designs' layouts and icons' shapes, and push material, type and light | O3, end of phase 0 |
-| D3 | Overshoot on presses and reward reveals | §21.8: "150 to 250 milliseconds, easing out ... without overshoot". Clash-level juice overshoots | (a) Change §21.8 to allow overshoot on presses and reward reveals, at most 350 ms, with the reduced form unchanged; (b) keep §21.8. Either way, confirm that a bar filling to a new value (450 ms in `tokens.json`) is a value changing, not a movement | (b) | Before phase 2 |
-| D4 | A display face for labels and changing numbers on art | §21.8 gives labels and changing numbers to Manrope. The proof's labels are Lilita One and its loot count is baked numerals | (a) Change §21.8 to allow Lilita One (or Titan One, an OFL face to compare on the board, `build-or-buy.md`) for labels on art, and baked numerals with a fixed advance for changing numbers; (b) keep §21.8 | (b): labels in Manrope with an ink outline; baked numerals only for numbers that do not change | O2, in phase 0 |
-| D5 | Object icons lit physically | §21.3 asks for "one toon look for everything"; the proof's gold, gem and chest are lit physically (section 10.6) | (a) Allow it for interface icons of objects, never characters; (b) every icon in the toon look | Character and building icons start first; object icons wait | O2, in phase 0 |
-| D6 | How many icons | §21.9 counts about 390 interface icons, "as Screens v3 draws them". The plan re-authors the 60 most-seen; the other 330 or so stay flat, so two styles show side by side | (a) 60 now, the rest in a later wave (about 140 hours at the same rate); (b) 60 now, and give the rest the new outline and glint rules only; (c) all now | (a) | O7, wave end |
-| D7 | Sound | The rubric's qualities 4 and 5 ask for sound; the client has none (section 10.10) | (a) No sound this wave, events ready for it; (b) add a sound track | (a) | O1 |
-| D8 | Texture and install budgets | The design document sets none (section 10.1) | Approve 24 MiB resident and 8 MB installed, or set others | The proposed numbers | O1 |
-| D9 | What check_all runs | The full rebake and the screen budgets would add about 15 minutes (section 10.8) | (a) In check_all; (b) before a change is marked ready, and in the lead's hand merges (section 3.8) | (b) | O1 |
-| D10 | The wave's target | The gate's bar is the owner's own labels; on T14's scale it is estimated at about 3.5, about half the owner's bar (section 3.6) | Accept it; label a higher bar in the golden set, with more hours | The bar the owner's labels set at O3 | O1, confirmed at O3 |
-| D11 | CC0 particle sprites as raw material | §21.11: outside art is not allowed; only fonts (OFL), sound (public domain) and code (permissive) may come from outside. CC0 particles would save 3 hours of motion art (`build-or-buy.md`) | (a) Add to §21.11: "Particle and texture sprites under a public-domain dedication (CC0), as raw material only, recoloured and baked through the game's own pipeline and listed in the art ledger"; (b) keep §21.11 | (b): AIA makes them (10 hours, not 7) | Before phase 2 |
-| D12 | Buying anything | §21.11: "Nothing in this game is paid for." `build-or-buy.md` recommends no purchase. If the owner wants one anyway: a casual UI kit (Layer Lab "GUI Pro – Casual Game", $39.99), Spine (Essential $99, on sale at $69 when checked; Professional $439, on sale at $369) | Buy nothing; or name the item, which also needs §21.11 changed | Buy nothing | O1 |
-| D13 | If the usage projection does not fit | The weekly limit is close, and every session draws on it (section 3.9) | (a) Wait for the weekly reset before phase 2; (b) enable usage credits, with P2; (c) cut scope: three builders at once, icon batches 3–4 deferred | (c) | End of phase 0 |
-| D14 | The session settings | P1–P6 (section 3.9) change the environment and `.claude/settings.json`, which only the owner may approve | Approve each, or none | None applied: agents follow the rules by hand (fresh sessions, filtered output, no model switches) | O1 |
+| # | Decision | Why it is needed | Options | Default | When | Decided (2026-10-29) |
+|---|---|---|---|---|---|---|
+| D1 | Approve plan v3 | 164 agent-hours in four phases; seven building roles, at most five at once; a lead and a judge beside them (sections 3.1–3.7) | Approve; approve a smaller scope (for example A alone, about 94 hours); reject | Nothing starts | O1, before phase 0 | Approved: plan v3 as written, with T17's requests R1–R6 applied |
+| D2 | The approved key frames become the visual reference | §23.5: "The designs carry the look: layout, art, motion, the models and the icons." Key frames that replace Screens v3 need that sentence changed | (a) Change §23.5 so approved key frames carry the look where they differ from the designs; (b) keep §23.5, key frames are targets only | (b): key frames keep the designs' layouts and icons' shapes, and push material, type and light | O3, end of phase 0 | (b) |
+| D3 | Overshoot on presses and reward reveals | §21.8: "150 to 250 milliseconds, easing out ... without overshoot". Clash-level juice overshoots | (a) Change §21.8 to allow overshoot on presses and reward reveals, at most 350 ms, with the reduced form unchanged; (b) keep §21.8. Either way, confirm that a bar filling to a new value (450 ms in `tokens.json`) is a value changing, not a movement | (b) | Before phase 2 | (b) |
+| D4 | A display face for labels and changing numbers on art | §21.8 gives labels and changing numbers to Manrope. The proof's labels are Lilita One and its loot count is baked numerals | (a) Change §21.8 to allow Lilita One (or Titan One, an OFL face to compare on the board, `build-or-buy.md`) for labels on art, and baked numerals with a fixed advance for changing numbers; (b) keep §21.8 | (b): labels in Manrope with an ink outline; baked numerals only for numbers that do not change | O2, in phase 0 | (b) |
+| D5 | Object icons lit physically | §21.3 asks for "one toon look for everything"; the proof's gold, gem and chest are lit physically (section 10.6) | (a) Allow it for interface icons of objects, never characters; (b) every icon in the toon look | Character and building icons start first; object icons wait | O2, in phase 0 | (b): every icon in the toon look |
+| D6 | How many icons | §21.9 counts about 390 interface icons, "as Screens v3 draws them". The plan re-authors the 60 most-seen; the other 330 or so stay flat, so two styles show side by side | (a) 60 now, the rest in a later wave (about 140 hours at the same rate); (b) 60 now, and give the rest the new outline and glint rules only; (c) all now | (a) | O7, wave end | (a) |
+| D7 | Sound | The rubric's qualities 4 and 5 ask for sound; the client has none (section 10.10) | (a) No sound this wave, events ready for it; (b) add a sound track | (a) | O1 | (a) |
+| D8 | Texture and install budgets | The design document sets none (section 10.1) | Approve 24 MiB resident and 8 MB installed, or set others | The proposed numbers | O1 | The proposed numbers: 24 MiB resident, 8 MB installed |
+| D9 | What check_all runs | The full rebake and the screen budgets would add about 15 minutes (section 10.8) | (a) In check_all; (b) before a change is marked ready, and on every candidate (section 3.8) | (b) | O1 | (b) |
+| D10 | The wave's target | The gate's bar is the owner's own labels; on T14's scale it is estimated at about 3.5, about half the owner's bar (section 3.6) | Accept it; label a higher bar in the golden set, with more hours | The bar the owner's labels set at O3 | O1, confirmed at O3 | Accepted: the bar the owner's labels set at O3 |
+| D11 | CC0 particle sprites as raw material | §21.11: outside art is not allowed; only fonts (OFL), sound (public domain) and code (permissive) may come from outside. CC0 particles would save 3 hours of motion art (`build-or-buy.md`) | (a) Add to §21.11: "Particle and texture sprites under a public-domain dedication (CC0), as raw material only, recoloured and baked through the game's own pipeline and listed in the art ledger"; (b) keep §21.11 | (b): AIA makes them (10 hours, not 7) | Before phase 2 | (b) |
+| D12 | Buying anything | §21.11: "Nothing in this game is paid for." `build-or-buy.md` recommends no purchase. If the owner wants one anyway: a casual UI kit (Layer Lab "GUI Pro – Casual Game", $39.99), Spine (Essential $99, on sale at $69 when checked; Professional $439, on sale at $369) | Buy nothing; or name the item, which also needs §21.11 changed | Buy nothing | O1 | Buy nothing |
+| D13 | If the usage projection does not fit | The weekly limit is close, and every session draws on it (section 3.9) | (a) Wait for the weekly reset before phase 2; (b) enable usage credits, with P2; (c) cut scope: three builders at once, icon batches 3–4 deferred | (c) | End of phase 0 | (c), if the projection does not fit: three builders at once, icon batches 3–4 deferred |
+| D14 | The session settings | P1–P6 (section 3.9) change the environment and `.claude/settings.json`, which only the owner may approve | Approve each, or none | None applied: agents follow the rules by hand (fresh sessions, filtered output, no model switches) | O1 | P1 set. P2 not set: no usage credits (D13). P3 approved as a `PostToolUse` hook; set once the lead's script and its test exist (a lead build task). P4 not set: sessions end by their status, and the lead's 30-minute cycle is the backstop. P5 set: `.claude/agents/ui-judge.md` exists. P6 replaced by `CLAUDE_CODE_RETRY_WATCHDOG=1`, set |
 
-What D2, D3, D4 and D11 would change in the design document is written out in `plan-review.md`. Neither T16, T17 nor any agent in this plan edits the design document.
+What D2, D3, D4 and D11 would have changed in the design document is written out in `plan-review.md`. The owner chose (b) for all four, so this plan changes nothing in the design document. Neither T16, T17 nor any agent in this plan edits it.
 
 ## T14 stopped here
 

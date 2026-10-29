@@ -133,6 +133,47 @@ kept, and made findable.
   T12 and T13, and T4's table header capitalised like the others. The six-line
   header was already the same in all of them.
 
+## What changed on 29 October 2026: the operating model and the owner's decisions
+
+T17's work order rebuilt the operating model
+([`T17-work-order-report.md`](progress/T17-work-order-report.md)); the same
+day the owner closed every open decision. This entry records both (request
+T17-R8).
+
+### New
+
+| File | Why |
+|---|---|
+| [`docs/guides/agent-protocol.md`](guides/agent-protocol.md) | The exact protocol behind the program: the roster, the one list of task states, the status and request formats, the merge-then-test queue, the coordinator's cycle, the gate step by step, and four worked examples |
+| `.claude/settings.json` | The owner's settings: compaction at 200k tokens and the retry watchdog, in its `"env"` block (decision D-09; the UI wave's D14, P1 and P6) |
+| `.claude/agents/ui-judge.md` | The UI gate's read-only judge subagent (the UI wave's D14, P5) |
+
+### Rewritten
+
+- **`docs/guides/agent-program.md`**: rewritten under T17's work order, then
+  updated with the owner's answers to its decisions D-01 to D-14 (a table at
+  the top) and the settings as now set.
+- **`docs/guides/agent-brief.md`**: rewritten under T17's work order: a
+  prompt template, a section per role, starting a session, claiming, the
+  status file, requests and messages, the gate, "Ready, and after", "When
+  you're stuck", and time and stopping.
+
+### Corrected
+
+- `docs/guides/checks.md`: the background command now uses the worktree
+  runner, whose log ends with a `DONE exit=<code>` line (finding G-71,
+  request T17-R7); the quick checks are named; the ready rule follows the
+  merge queue.
+- `docs/art/ui-quality/report.md`: T17's requests R1–R6 applied (the merge
+  queue and the sizing rule, P3 as a `PostToolUse` hook, P6 replaced by the
+  retry watchdog, the split and shadow-mode rules, the operating model's
+  added hours folded into existing hours, the owner's time and absence rule),
+  and every decision D1–D14 marked decided.
+- `docs/guides/agent-protocol.md`: the decisions marked decided; main
+  protected by rule (D-14).
+- `fe-base.log` (question 9 below): removed, and `*.log` ignored (commit
+  618480ce, request T17-R10).
+
 ## Commands checked by running them
 
 Every command the README and the guides give was run on this branch on 28

@@ -7,15 +7,49 @@ bash tools/check_all.sh
 ```
 
 It ends with `All checks passed.` and exit status 0, or stops at the first
-failing step (`set -euo pipefail`) with a non-zero status. A track pushes for
-merging only when it ends green (see
-[agent-program.md](agent-program.md)). A full run takes about 25 minutes,
-most of it the client's headless tests; run it in the background with its
-output to a file:
+failing step (`set -euo pipefail`) with a non-zero status. An agent marks a
+task ready only when it ends green on the task's own commit (its pre-check),
+and the lead runs it again on the merge candidate before main moves (see
+[agent-program.md](agent-program.md#merging-the-queue-and-the-guards)). A
+full run takes about 25 minutes, most of it the client's headless tests.
+
+## Running it in the background: the worktree runner
+
+Run the full checks on a separate worktree of the exact commit, with the log
+outside the repository, so editing during the run cannot change what is
+tested and the log cannot be committed by accident. The log always ends with
+a `DONE exit=<code>` line
+([agent-protocol.md](agent-protocol.md#running-the-checks)):
 
 ```bash
-bash tools/check_all.sh > /tmp/check.log 2>&1; echo "exit $?" >> /tmp/check.log
+sha=$(git rev-parse HEAD); wt="/tmp/check-$sha"; log="/tmp/check-$sha.log"
+git worktree add --detach "$wt" "$sha"
+nohup setsid bash -c "cd '$wt' && bash tools/check_all.sh > '$log' 2>&1; echo \"DONE exit=\$? sha=$sha\" >> '$log'" >/dev/null 2>&1 &
 ```
+
+- **A run passed** only if its log ends `DONE exit=0` **and** contains
+  `All checks passed.` The failing step is the last heading in the log:
+  `grep '^== ' "$log" | tail -1; tail -20 "$log"`.
+- **A log without its `DONE` line** is a run that did not finish (a
+  container restart kills every running process). Re-run it; the re-run
+  belongs to the same task.
+- Remove the worktree afterwards: `git worktree remove "$wt"`.
+- Start no full run after STOP_AT − 60 minutes with today's 25-minute checks.
+
+## The quick checks
+
+While iterating, run the quick checks instead of the whole script, and at the
+start of every session
+([agent-protocol.md](agent-protocol.md#terms)):
+
+- `python3 tools/check_docs_consistency.py`, always;
+- plus the steps in the table below for the areas your files touch: for the
+  client, `python3 client/status.py`; for the server,
+  `python3 server/status.py`; for the simulation, `bash sim/run_spike.sh`;
+  for content, `python3 tools/validate_content.py`.
+
+The quick checks never stand in for the full checks before a task is marked
+ready.
 
 ## What it needs
 

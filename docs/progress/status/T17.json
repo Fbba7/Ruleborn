@@ -36,7 +36,10 @@
       "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "agent-protocol.md's queue applies by the owner's work order; report.md keeps the older text until aligned",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "Done: report.md section 3.8 states the merge-then-test queue, and section 3.2 holds phases 1 and 2 to the sizing rule (three builders until throughput is measured)",
+      "answered_at": "2026-10-29T23:30:00Z"
     },
     {
       "id": "T17-R2",
@@ -50,7 +53,10 @@
       "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "P3 stays proposed and unset; agents use the worktree runner and read logs themselves",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "Done: report.md section 3.9's P3 is a PostToolUse hook on Bash returning hookSpecificOutput.updatedToolOutput; approved, set once the lead's script and its test exist",
+      "answered_at": "2026-10-29T23:30:00Z"
     },
     {
       "id": "T17-R3",
@@ -64,7 +70,10 @@
       "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "P6 stays proposed and unset; the lead restarts paused sessions",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "Done: P6 is CLAUDE_CODE_RETRY_WATCHDOG=1, set in the env block of .claude/settings.json; P1's range 100000-1000000 is noted, and P1 is set there too",
+      "answered_at": "2026-10-29T23:30:00Z"
     },
     {
       "id": "T17-R4",
@@ -78,7 +87,10 @@
       "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "The UI wave keeps its own split rule (splits to the owner); the protocol's verdict format is used in its folder",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "Done: report.md section 3.5 adopts D-06 for splits, treats an Unknown unanswered for 24 hours as a split, has the lead write JSON verdicts at gate/verdicts/<task_id>/<sha>.json, and runs uncalibrated qualities in shadow mode",
+      "answered_at": "2026-10-29T23:30:00Z"
     },
     {
       "id": "T17-R5",
@@ -92,7 +104,10 @@
       "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "AD's flow reviews come from the 20-hour reserve",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "Done: folded into existing hours, 164 unchanged: AD's flow reviews take 3 hours of the 20-hour reserve, the motion clips come from steps 8-11's shot scripts, and the lead's estimate (outside the total) rises from about 16 to about 20 for its 30-minute cycle",
+      "answered_at": "2026-10-29T23:30:00Z"
     },
     {
       "id": "T17-R6",
@@ -106,7 +121,10 @@
       "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "The program's figure and absence rule apply",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "Done: report.md section 3.4 gives about 5 to 6 2/3 owner hours, checked against the program's 15-20, and states the absence rule",
+      "answered_at": "2026-10-29T23:30:00Z"
     },
     {
       "id": "T17-R7",
@@ -120,7 +138,10 @@
       "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "agent-protocol.md's runner applies; checks.md keeps its command",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "Done: checks.md documents the worktree runner with its DONE exit=<code> marker and names the quick checks",
+      "answered_at": "2026-10-29T23:30:00Z"
     },
     {
       "id": "T17-R8",
@@ -134,7 +155,10 @@
       "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "The README index rows record it",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "Done: DOCS-CHANGES.md has an entry for 29 October 2026 recording the new protocol page, the rewrites, the checks.md update, the report's decisions and the new .claude files",
+      "answered_at": "2026-10-29T23:30:00Z"
     },
     {
       "id": "T17-R9",
@@ -148,7 +172,10 @@
       "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "Defaults D-01 to D-14 in T17-work-order-report.md apply until answered",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "Closed by the lead on the owner's instruction with the decisions in agent-program.md ('The work order's decisions') and report.md section 12: the lead's cycle approved and armed at the next wave's launch (D-02), main protected by rule (D-14), settings decided (D-09, D14), channel confirmed (D-03)",
+      "answered_at": "2026-10-29T23:30:00Z"
     },
     {
       "id": "T17-R10",
@@ -163,7 +190,10 @@
       "created_at": "2026-10-29T22:20:00Z",
       "due": "2026-10-31T12:00:00Z",
       "default": "The log stays; the worktree runner keeps new logs in /tmp",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "Done in commit 618480ce: fe-base.log removed and *.log ignored",
+      "answered_at": "2026-10-29T23:30:00Z"
     }
   ],
   "answers": []

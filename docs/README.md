@@ -83,6 +83,7 @@ it is not repeated here. The repository's own words:
 | [`design/dependencies.md`](design/dependencies.md) | What has to be settled before what | generated (`tools/check_dependencies.py --write`) |
 | [`design/generated/`](design/generated/v3-response.md) | Summary tables (`formulas`, `laws`, `roster`), the economy re-run (`pacing`), and v3.0's response (`v3-response`) | generated (`tools/generate_docs.py`) |
 | `decisions/brief.json` | The owner's decision brief, as data | Integrator |
+| [`decisions/owner-decisions.md`](decisions/owner-decisions.md) | Every open owner decision, closed on 2026-10-29, with the build tasks that follow | Integrator |
 | `decisions/answers.json` | The owner's recorded answers | the owner |
 | `decisions/index.html`, `audit/index.html`, `roadmap/index.html` | The published pages | generated (`tools/build_brief.py`, `build_audit.py`, `build_roadmap.py`) |
 | [`roadmap/README.md`](roadmap/README.md) | How to read the roadmap and where its statuses come from | Integrator |
@@ -115,6 +116,7 @@ it is not repeated here. The repository's own words:
 | [`art/ui-quality/report.md`](art/ui-quality/report.md) | Why the interface is not premium yet, a benchmark, an audit, and the next-wave plan (plan v3), with the kit spec, build or buy and the review log beside it | T14; plan by T16 and T17 |
 | [`progress/`](progress/T5.md) | Each track's progress file: six-line header and deliverables table | each track |
 | [`progress/backlog.example.json`](progress/backlog.example.json) | An example of the backlog and claim format the lead keeps as `progress/backlog.json` | T17 |
+| [`progress/owner-inbox.md`](progress/owner-inbox.md) | Alerts and questions for the owner | Integrator |
 
 ## Security, cost and privacy
 
