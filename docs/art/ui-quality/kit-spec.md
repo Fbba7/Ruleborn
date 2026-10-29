@@ -1,6 +1,8 @@
-# The Ruleborn UI kit: specification (T16)
+# The Ruleborn UI kit: specification (T16; owner and freeze rules by T17)
 
 This is the kit the UI wave builds against: what the components are, the states each one has, the tokens they share, how they are named and laid out on disk, how a screen uses them, who may add one, and what happens to today's kit. The plan that builds it is `report.md` section 3. Where this page and the design document disagree, the design document wins (§23.5), and the disagreement is an owner decision in `report.md` section 12.
+
+**This page is the kit contract.** Its owner is K1, the kit's one owner (`report.md` section 3.1). Sections 2–6 are frozen as version 1 at the end of the wave's phase 0, when the owner approves them with the style board (O2), and before any screen is built. After the freeze, screens consume the kit read-only, and a change to these sections goes through K1, needs the lead's approval, gets a dated line in section 9 with a new version, and counts as delivered only when every agent that uses the kit has acknowledged it (`docs/guides/agent-program.md`).
 
 ## 1. Principles
 
@@ -224,7 +226,7 @@ Every component the five key screens (home, heist, result, character, settings) 
 
 | What | Where | Owner |
 |---|---|---|
-| This specification | `docs/art/ui-quality/kit-spec.md` | AD in the UI wave (`report.md` section 3.1) |
+| This specification | `docs/art/ui-quality/kit-spec.md` | K1 in the UI wave (`report.md` section 3.1) |
 | Tokens | `client/ui/tokens.json` | K1 |
 | Palette for the art | `art/ui/palette.json` (generated from the tokens by the bake) | AIA |
 | Skin sources | `art/ui/kit/<skin>/<shape>.svg` | AIA |
@@ -232,8 +234,8 @@ Every component the five key screens (home, heist, result, character, settings) 
 | Kit code | `client/ui/kit_*.gd`, `client/scripts/ui.gd`, `client/ui/kit_skin.gd` | K1 |
 | Catalogue shot | `client/tests/shots/ui_kit_catalogue.gd` | K1 |
 | Catalogue stills | `docs/art/shots/ui-bake/catalogue-*.png` | K1 |
-| Scores | `docs/art/ui-quality/gate/scores.md` | AD |
-| Component requests | `docs/art/ui-quality/gate/requests.md` | AD |
+| Gate verdicts | `docs/art/ui-quality/gate/verdicts/` | the gate |
+| Component requests | raised in the requesting agent's own status file; answered in section 7's request log | K1 |
 
 The palette is generated from `tokens.json`, so the colours have one home.
 
@@ -251,16 +253,21 @@ The palette is generated from `tokens.json`, so the colours have one home.
 - English and Brazilian Portuguese;
 - motion components as frame strips, full and reduced.
 
-Each page is one PNG in `docs/art/shots/ui-bake/` under 400 KB. AD scores the catalogue as the "Kit art" class (`report.md` section 3.5) and every page's pieces at phone size. A test checks that the catalogue covers the inventory: every (component, state) pair in section 4 has a piece in the manifest and a place on a page, in both atlases.
+Each page is one PNG in `docs/art/shots/ui-bake/` under 400 KB. The gate checks the catalogue as the "Kit art" class (`report.md` section 3.5), page by page at phone size. A test checks that the catalogue covers the inventory: every (component, state) pair in section 4 has a piece in the manifest and a place on a page, in both atlases.
 
 ## 7. Governance
 
-- **Who adds a component.** Only K1 (its code) and AIA (its art), and only on a request. A screen track that needs something writes a row in `gate/requests.md`: what it needs, on which screen, and why no component in section 4 fits.
-- **First, reuse.** AD answers each request within the day: use an existing component or variant (most requests end here), add a variant, or add a component.
+- **Who adds a component.** Only K1 (its code) and AIA (its art), and only on a request. A screen agent that needs something writes a request in its own status file (never in another agent's file): what it needs, on which screen, and why no component in section 4 fits.
+- **First, reuse.** K1 answers each request within the day, in the request log below: use an existing component or variant (most requests end here), add a variant, or add a component.
 - **A new component passes the gate** like kit art (`report.md` section 3.5) and also: it uses only tokens; it has every state section 3 gives its kind, and its high-contrast twin; it keeps rubric quality 11's counts (4 button styles, 3 frame families, 1 ribbon, 1 badge, 1 currency pill), or the owner approves going over; it appears on the catalogue sheet; and this page lists it.
 - **Changes to tokens** go through K1, and a change to a value the design document sets (a colour, a size floor, a timing) is an owner decision first.
 - **The check.** K1 adds `tools/ui_bake/check_screens.py` to check_all: the number of fill `StyleBoxFlat`s, chrome `draw_*` calls and chrome textures in `client/scripts/` and `client/world/` may not rise above its recorded count, and falls as screens move. Today's 383 `draw_*` and `FxPen` calls (`report.md` section 2) are the starting count, less the data drawing of section 4.5.
-- **This page changes** with a dated line in section 9, by its owner.
+- **This page changes** with a dated line in section 9, by K1. After the freeze, a change to sections 2–6 also needs the lead's approval and every consumer's acknowledgement (see the top of this page).
+
+**Request log.** One row per request: the date, who asked, what for, and K1's answer (reuse, a new variant or a new component).
+
+| Date | From | Request | Answer |
+|---|---|---|---|
 
 ## 8. Mapping today's kit onto this one
 
@@ -327,3 +334,4 @@ That is 35 skins, counting each rank frame and each of the tab bar's three, agai
 ## 9. Changes to this page
 
 - 28 October: written by T16 for the UI wave.
+- 29 October: T17 (plan v3) made K1 the owner, added the freeze at the end of phase 0, and moved component requests into the requesters' own status files with this page's request log.

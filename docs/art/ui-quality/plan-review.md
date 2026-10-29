@@ -1,6 +1,8 @@
-# Review of the next wave's UI plan (T16)
+# Review of the next wave's UI plan (T16; round 3 by T17)
 
 T16 read `report.md` as a sceptical reviewer who must run its plan tomorrow, checked it against the design document (`docs/design/ruleborn-game-design-v3.7.txt`), `docs/art/3d-program.md` and the stopped tracks' notes in `docs/art/tracks/`, and fixed it. This log lists every inconsistency and gap found, where it was, and how it was resolved.
+
+Rounds 1 and 2 are T16's. Round 3 (section 6) is T17's: plan v3, rebuilt on `docs/research/agent-team-operating-model.md`, with the places it does not follow the research.
 
 **Marks.** **OWNER** means the owner must decide; the report's section 12 has the options and the default. **T15/INT** means another document or file must change, which T16 may not edit; the exact change is in the last section, for T15 or the integrator.
 
@@ -8,7 +10,8 @@ T16 read `report.md` as a sceptical reviewer who must run its plan tomorrow, che
 
 - 62 findings in two rounds. The first round (R1–R46): 13 inconsistencies in numbers or references, 21 missing parts of the plan, 12 places where the plan broke or bent a rule of the design document or the repository. The second round, on the owner's request to specify the kit and test building against buying (R47–R62, section 5).
 - All are resolved in `report.md`, `kit-spec.md` and `build-or-buy.md`. Twelve decisions need the owner (D1–D12). Outside T16's files: X1–X3 are done by the integrator; X4, X8 and X12 are needed now; X5–X7 and X11 only if the owner chooses them.
-- **The two that change the picture most:**
+- **Round 3 (R63–R95, N1–N11, X13–X16):** plan v3. The gate is rebuilt from scripted checks, pairwise checks against the owner's golden set and the owner's boards, and calibrated on the owner's labels; at most five building agents in four phases; a merge queue; the owner's time in seven kinds of short sittings; session and token rules, with the settings as proposals. 164 agent-hours. Two decisions are new: D13 (usage) and D14 (settings).
+- **The two that changed the picture most in rounds 1 and 2:**
   - **The plan costs 158 agent-hours, not "about 80".** T14's steps summed to 81 and left the screens uncosted (R14, 144 hours); the full kit adds 14 (R60).
   - **The ceilings were shares of Clash level, labelled "of the bar".** The plan reaches 3.75–4.25 out of 5: 75–85% of Clash level, 54–61% of the owner's bar, not 75–85% of the bar (R5).
 
@@ -150,7 +153,88 @@ The owner asked for the kit to be specified in full and for the plan's assumptio
 | R61 | `build-or-buy.md` 2.6 | Spine and Rive were the obvious tools for UI animation | Spine's Godot runtime is official but not permissively licensed ($69–439 a seat, §21.11's code rule); Rive has no official Godot runtime (a community alpha with macOS builds only). Neither adopted |
 | R62 | `tokens.json`; §21.8 | A bar filling to a new value takes 450 ms, past §21.8's 150–250 for "every interface movement"; the token calls it "a value changing, not a transition" | Kept as T9 set it; the owner confirms the reading inside D3 |
 
-## Stopped here
+## 6. Third round: plan v3 on the research (T17)
+
+The owner asked for the plan to follow the research in `docs/research/agent-team-operating-model.md`, which ends with an operating model for this wave. T17 read it in full and changed the plan where it finds the design weak. The research labels its claims as measured, reported, vendor guidance, opinion or inference; the column "Basis" gives the label of the evidence each change rests on. Where the basis is opinion or inference, the change is a judgement, not a finding.
+
+**The changes**
+
+| # | Where | Found | Resolved | Basis |
+|---|---|---|---|---|
+| R63 | Report 3.5 | The gate scored every piece 0–5 per quality against thresholds. LLM judges are weakest at absolute scores: pairwise agreement with people is much higher than agreement on scales, scores bunch near the middle, and repeated scores of the same output often differ | Four checks: scripted checks; one isolated pairwise check per static visual quality against the owner's weakest-pass and strongest-fail anchors, sampled three times, blocking only on three fails, splits to the owner's exceptions; the merge queue's guards; the owner for what a still cannot show | Measured (via search summaries) |
+| R64 | Report 3.1, 3.5 | AD scored the artists' work with no model named, so it could be the artists' own model, and with no limit on its tools | The judge runs on Fable 5.1, a different model from the artists, read-only (`Read`, `Grep`, `Glob`), without the author's notes. Opus 5.5 judges only if it catches more on the held-out labels, and then the blind audit doubles | Measured (self-preference); vendor guidance (read-only reviewers) |
+| R65 | Report 3.4, 3.2 step 1 | AD was calibrated by re-scoring today's screens within 0.2 of T14's scores and by one owner score of one key frame within 0.5. Both measure agreement with another score, not whether the judge catches what the owner would fail | A golden set of 30–60 items labelled by the owner per quality (O3); thirds for training, development and held-out; the catch rate on the owner's fails as the measure, with a target (80%, at most 20% false blocks, at most 30% to exceptions), two prompt revisions, the other model, then owner-checked | Opinion and secondary (the method); the target is T17's |
+| R66 | Report 3.5 | Nothing checked the gate's passes after the wave started | Blind audits of 10–20 passes mixed with 3–5 fails, at the end of phase 2 and at wave end (O6); one miss pauses default merges for that quality until the judge is re-validated; the labels join the golden set | Inference |
+| R67 | Report 3.5 | Press, juice and motion (qualities 4, 5, 7) were scored from frame strips | Scripted checks for timings, reduced forms and flashes; the owner judges the strips on the boards. Static-screenshot judges overrate interaction | Measured (via search summary) |
+| R68 | Report 3.5 | The rubric's 14 qualities had no method under the new gate | Kept as the vocabulary, with a table of how each is checked: 10, 11 and 12 entirely by script; 1, 2, 3, 6, 8, 9, 13 and 14 judged (with scripted parts where they exist); 4, 5 and 7 by script and the owner. A table per asset class | Inference |
+| R69 | Report 3.3 (T16's schedule) | Seven agents ran at once on day 4 (AD, AIA, AIA-2, K1, S1, S2, S3) | At most five building sessions at once, plus the lead and short gate runs; three if usage runs hot (D13) | Vendor guidance (3–5 teammates); inference |
+| R70 | Report 3.2–3.3 | Days, not phases: the screens could start before the kit contract or any reference was fixed | Four phases with entry and exit criteria. The kit contract and the golden set are frozen in phase 0; one pilot screen in phase 1; three screens in parallel only in phase 2 | Reported and inference (contract first) |
+| R71 | Report 3.1; `kit-spec.md` 6.2 and 7 | Every screen track wrote rows into `gate/requests.md`, a file another agent owned, from its own branch: a shared file. AD owned the kit spec while K1 owned the kit | One owner per file, hotspot files named. K1 owns `kit-spec.md` (the contract) and answers requests in its request log; requests are raised in the requester's own status file | Vendor guidance |
+| R72 | Report 3.3 | Work was a schedule of named steps; nothing for an agent that finishes early, and no claims | Every step is backlog tasks with time-limited claims, and an idle queue (`docs/guides/agent-program.md`, `docs/progress/backlog.example.json`) | Reported |
+| R73 | Report 3.1 | No model per role | A model per role with its reason; never switched inside a session; the escalation rule (a screen that fails twice moves to a fresh Opus 5.5 session) | Vendor guidance and secondary benchmarks; inference |
+| R74 | Report 3.8; `docs/guides/agent-program.md` | The integrator merged every green head hourly into an integration branch and resolved what clashed | A merge queue: one change at a time, as soon as ready; main only fast-forwards to a commit whose checks passed on that tree; each worker resolves its own conflicts; the hourly hand merge is the longest wait and resolves nothing | Reported (an integrator agent became the bottleneck); inference |
+| R75 | Report 3.8, 10.8 | The UI budgets ran "at the integrator's merge run", and nothing named the guards against semantic conflicts | A guard table: the database's `node server/load.mjs --check`; the bake check; the chrome check; the client's contrast and size tests; `tools/ui_bake/guard.sh` for draw calls, texture memory and the rebake, against recorded counts. Fast-forward-only merging puts them on the combined tree | Documented practice; inference |
+| R76 | Report 3.4 | The owner approved items one by one (the board, each key frame, the wave) and calibrated AD | O1–O7: the plan, the board and contract, the golden set (60–90 minutes, once), five family boards with "merges after 24 hours unless you object", a daily exceptions queue, two blind audits, the wave board; minutes for each | Secondary (rubber-stamping); inference |
+| R77 | Report 3.8 | A default merge of everything after 24 hours would hold every screen behind the kit's board | Pieces merge as soon as they pass, behind their family switch; what players would see (a switch-on, a new layout) waits on its board's 24 hours. Phase 2 waits for board 1 only | Inference |
+| R78 | Report 3.9 | No rules for sessions or tokens | A fresh session at each phase and task boundary with a handoff; compaction at 200k; test output to files with a completion marker; stills at 960 pixels for judging with full-resolution crops where downscaling would hide the quality; no model switch inside a session; Haiku 5.5 subagents for searches | Vendor guidance; inference |
+| R79 | Report 3.9, 11 | Usage limits were met by "each agent schedules its own resume" | A projection from `/usage` at the end of phase 0 with a 20% reserve; tiers that stop the least critical first; staggering; a commit after every verified step; D13 | Inference |
+| R80 | Report 3.9, 12 | Settings were not discussed | Proposals P1–P6 with exact values, decided as D14. T17 changed no setting | Vendor guidance |
+| R81 | Report 3.7 | 158 hours | 164: AD and the gate 21 → 25, K1 31 → 33. By phase 43, 58, 62 and 1, plus up to 20 of re-work; the lead's about 16 outside | Step costs |
+| R82 | Report 3.3 (T16's schedule) | A six-day table | Phases in wall-clock hours: about 65, six working days as before; up to 24 more if board 1 waits for its default; about 12 more at three builders | Step costs |
+| R83 | Report 3.3, steps 3 and 1 | Key frames were scored by AD and approved by the owner at G2 | Key frames are made in phase 0 and labelled by the owner in the golden set: they become the references the pairwise gate compares against | Inference |
+| R84 | Report 3.3, step 7 | The heist was one of three screens built in parallel | The heist is the pilot, built from the kit alone in phase 1, before three screens copy any gap in the contract | Inference |
+| R85 | Report 3.6, D10 | The target was a mean of 3.5 out of 5 | Every applicable quality passes the calibrated gate and every board stands. On T14's scale the bar is estimated at about 3.5; that figure is for comparison, not a gate | Inference |
+| R86 | Report 12 | Decisions were timed by day and gate (G0–G3) | Timed by O1–O7 and phase; D13 (usage) and D14 (settings) added; D1 and D10 reworded | |
+| R87 | Report 11 | Risks assumed the scored gate | The judge agreeing with itself; missing its target; a golden set too small; weaker Sonnet screens; the merge queue as bottleneck; the owner away; usage | |
+
+**Consistency, read end to end after the changes**
+
+| # | Where | Found | Resolved |
+|---|---|---|---|
+| R88 | The research and the plan | The research calls its item checks G0–G3; the plan called its owner gates G0–G3 | Owner points are O1–O7 and the gate's checks are numbered 1–4 everywhere |
+| R89 | Report 6 | Costs of 158, about 90, 20 and 150 | 164, about 94, 25 and 156 |
+| R90 | Report 9.1, 9.4 | "AD scores every piece", "the owner approves the key frames" | The gate checks; the owner labels the key frames |
+| R91 | Report 10.2, 10.8, 10.9, 10.10 | "Before G3"; budgets "at the integrator's merge run"; a family switched on when it passed "AD's gate"; "AD scores qualities 4 and 5" | O7; `guard.sh` before a change is ready; the board's 24 hours added to switching on; the owner judges 4 and 5 |
+| R92 | `kit-spec.md` 6.2, 6.4, 7 | AD as owner of the spec, the scores and the requests | K1 owns the spec and the request log; the gate writes verdicts; a freeze rule at the top of the page |
+| R93 | `build-or-buy.md` 3, 4 | 158 and 155 hours; "day 5"; "K1's 31" | 164 and 161; phase 2; 33 |
+| R94 | Report 4, 5 and 9.3 | T14's 0–5 scores of today's screens, Screens v3 and the proof icons | Kept: they are T14's audit and explain the verdict, not a gate. The gate no longer produces scores |
+| R95 | `docs/art/3d-program.md`, "What done looks like" | Says interface stills are "scored by the art director on the 14-quality rubric" | **T15/INT: X14** |
+
+**Where plan v3 does not follow the research, and why**
+
+| # | The research says | Plan v3 | Why |
+|---|---|---|---|
+| N1 | Phases of 14, 43, 71 and 30 agent-hours (158) | 43, 58, 62 and 1, plus up to 20 of re-work (164) | The research calls its split its own allocation. Checked against the steps: its phase 0 has no board or key frames, but its own gate needs owner-approved golden screens before anything is judged, so 16 of AIA's hours move into phase 0 |
+| N2 | Artists 44, kit 26, screens 66, art director 22 | 70, 33, 36 and 25 | The plan's step costs: 60 icons at about 25 minutes, 35 skins with states and twins, five screens costed one by one. The risk that Sonnet 5.5 screens take longer is carried by the reserve and the escalation rule |
+| N3 | About 40 wall-clock hours at five builders | About 65 | AIA's 42 hours run in series (board, key frames, kit art, motion), and the result screen waits on the motion art. That chain, not the cap, sets the length |
+| N4 | The owner approves the plan, kit contract, ownership map and budget choice in one 20-minute sitting before phase 1 | O1 (the plan, 20 minutes, before phase 0) and O2 (the board and the frozen contract, 15 minutes, in phase 0); the budget choice is D13 at the end of phase 0 | Nothing may start before D1, and the key frames are built from the approved board, so the board's approval cannot wait for phase 1 |
+| N5 | Pairwise against golden screens; describe extreme anchors | The prompts describe the extreme anchors in words; the pictures shown are the boundary items (the weakest pass and the strongest fail) | The question is pass or fail at the owner's bar, so the pictures that decide it sit at the bar |
+| N6 | No catch-rate figure | 80% catch rate, at most 20% false blocks, at most 30% to exceptions | A gate needs a number. It is T17's opinion, set high because judges are reported to catch only 30–60% of bad items |
+| N7 | Workers rebase onto main | Workers bring main in by a merge | The repository's convention; a rebase of a pushed branch needs a force push. The point the research makes, that the agent holding the context resolves its own conflicts, is kept |
+| N8 | A "confident fail" blocks | Confident means three fails out of three samples | The research does not define it. Two of three goes to the owner: the queue costs minutes, a wrong block costs a re-work round |
+| N9 | Status in `status/<agent>.json`, handoffs in separate files | Status in `docs/progress/status/<agent>.json` on the agent's own branch; the handoff as a section of the agent's progress file | One fewer file per agent to keep in step; agents push only to their own branch, so the status file must live there |
+| N10 | A Stop hook, `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, cache TTL and output filters "every session runs with" | Proposals P1–P6 for the owner (D14), with the rules also written for agents to follow by hand | The owner's instruction: no agent changes settings or config files |
+| N11 | Interaction-dependent qualities to "captured-frame review or the owner" | The owner, from frame strips; the judge does not block them | No source measures judges on frame strips; the safe reading of the evidence is that a judge of stills overrates them |
+
+## 7. Changes outside T17's files (round 3)
+
+**X13. `docs/art/3d-program.md`, the track table** (T15 or the integrator). Plan v3 changes three rows and adds one; the other five UI rows (AIA, AIA-2, S1, S2, S3) stand.
+
+| Track | Branch | Owns (new files allowed under these) | Delivers |
+|---|---|---|---|
+| AD Art director | `claude/ui-ad` | `docs/art/ui-quality/gate/**` except `gate/verdicts/`, `tools/ui_gate/**` | Phase 0 only: the rubric as pass and fail criteria, the golden set for the owner to label, the judge's prompts and its calibration (`docs/art/ui-quality/report.md` section 3.5). Never authors art |
+| Gate The judge | `claude/ui-gate` | `docs/art/ui-quality/gate/verdicts/**` | Short read-only runs: a verdict per item and quality, three samples each, the owner's exceptions queue and the blind-audit samples (`report.md` section 3.5) |
+| K1 Kit owner, bake pipeline and kit (takes over T9) | `claude/ui-bake` | `docs/art/ui-quality/kit-spec.md`, `tools/ui_bake/**`, `tools/ui_research/**`, `client/prototypes/ui_quality/**`, `client/tests/shots/uiq_*.gd`, and T9's files except `client/ui/art/` | The kit contract (frozen at the end of phase 0) and its request log; the bake; the texture-backed kit behind a switch per material family; the UI guards (`tools/ui_bake/guard.sh`) |
+
+The rows' order: AD, Gate, AIA, AIA-2, K1, S1, S2, S3. The X12 row is replaced by AD's row above. Under the table, add: "The UI wave runs in phases with at most five of these building at once, and each row's model is in `docs/art/ui-quality/report.md` section 3.1."
+
+**X14. `docs/art/3d-program.md`, "What done looks like"** (T15 or the integrator). The X2 sentence becomes: "From the UI wave on, interface stills also pass the art director's gate (`docs/art/ui-quality/report.md` section 3.5): scripted checks, a calibrated judge comparing them with the owner's labelled golden set, and the owner's boards; a screen's target is its approved key frame where the owner has adopted one (section 12, D2)."
+
+**X15. The owner: D14.** P1–P6 in report section 3.9 are proposals only. If approved, the lead applies them (P1 in the environment's variables; P2–P6 in `.claude/settings.json` and `.claude/agents/`) and writes the two hook scripts they name.
+
+**X16. For whoever starts the wave's sessions.** X10 still holds: this container also lacked Rust's `wasm32-unknown-unknown` target, `gdlint` and Python's `playwright` 1.63.0; T17 installed them locally to run check_all. The judge's sessions are started on the judge model (Fable 5.1, or Opus 5.5 if calibration chooses it), the screen agents' on Sonnet 5.5, and nobody switches a session's model.
+
+## Stopped here (T16)
 
 T16 first stopped at about 18:30 UTC on 28 October. On the owner's new task, T16 resumed at 21:30 UTC, specified the kit (`kit-spec.md`), tested building against buying (`build-or-buy.md`), folded both into the report and this log, and stopped again with everything pushed green on `claude/ui-plan`.
 

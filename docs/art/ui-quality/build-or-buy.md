@@ -105,9 +105,9 @@ The plan's art hours, and what each candidate could replace:
 | Icons: 60 (AIA-2) | 28 | Nothing that fits: our characters, laws, schools and buildings are ours | 0–2 (a few generic items) | Icons from packs would clash with the rendered ones |
 | Motion art (AIA) | 10 | CC0 particle sprites (Kenney) | 2–3 | The sequence's timing, the coin and the counter are ours |
 | Display font | 0 | An OFL face (Titan One) under D4 | 0 | It costs nothing either way; it changes the look, not the hours |
-| Motion code (K1) | in K1's 31 | MIT juice addons | 0–1 | `Motion` already exists with reduced forms |
+| Motion code (K1) | in K1's 33 | MIT juice addons | 0–1 | `Motion` already exists with reduced forms |
 
-At best, adopting outside art saves about 3 hours with CC0 particles, or about 8 hours with a commercial kit as well, out of 158. The commercial kit's saving comes with the biggest cost in the rubric: quality 14, "one art-direction idea", and the owner's bar of "three times Screens v3".
+At best, adopting outside art saves about 3 hours with CC0 particles, or about 8 hours with a commercial kit as well, out of 164. The commercial kit's saving comes with the biggest cost in the rubric: quality 14, "one art-direction idea", and the owner's bar of "three times Screens v3".
 
 ## 4. Recommendation
 
@@ -121,8 +121,8 @@ At best, adopting outside art saves about 3 hours with CC0 particles, or about 8
 4. **Do not buy** a commercial kit, an icon pack or an effects pack, and do not adopt Spine or Rive. Spine's runtime licence is not permissive and costs $69–439 a seat; Rive has no official Godot runtime. If the owner wants to buy anyway, it is D12 with its price.
 
 **What this does to the plan.**
-- **Hours:** 158 without D11; 155 with it (motion art 10 → 7).
-- **Schedule:** unchanged; the saving falls on day 5, inside AIA's motion step.
+- **Hours:** 164 without D11; 161 with it (motion art 10 → 7), in plan v3.
+- **Schedule:** unchanged; the saving falls in phase 2, inside AIA's motion step.
 - **Ceiling:** unchanged at 3.75–4.25. Nothing adoptable raises it; a commercial kit would lower quality 14.
 - **Ledger:** with D11, K1 adds `client/ui/art/LEDGER.md`, in the pattern of the fonts' ledger: file, source, licence (CC0 1.0), link, SHA-256 of the downloaded file, and which baked pieces use it. The downloaded files stay outside the repository; only the baked results and the ledger are committed.
 
