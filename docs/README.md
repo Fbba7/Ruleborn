@@ -50,7 +50,8 @@ it is not repeated here. The repository's own words:
 | [`guides/simulation.md`](guides/simulation.md) | Building and testing `sim/`, changing a rule safely, the golden replays | T15 (docs) |
 | [`guides/design-tools.md`](guides/design-tools.md) | The design document, the audit register, the decision brief, the roadmap, content tables, and their commands | T15 (docs) |
 | [`guides/agent-program.md`](guides/agent-program.md) | The operating model for every wave: roles, the backlog and claims, files as the channel, the merge queue, the quality gate, the owner's cadence, usage, model routing, sessions, failure recovery, and the lessons of waves 4 and 5 | T15; rewritten by T17 |
-| [`guides/agent-brief.md`](guides/agent-brief.md) | The brief every agent reads first: hard rules, reporting, claiming work, session hygiene and the stop protocol | T17 |
+| [`guides/agent-brief.md`](guides/agent-brief.md) | The brief every agent reads first: the order of authority, the prompt template, hard rules, starting a session, the status file, reporting, claiming, the gate, ready, requests and messages, when you're stuck, stopping, and a section per role | T17 |
+| [`guides/agent-protocol.md`](guides/agent-protocol.md) | The exact protocol behind the operating model: the roster, the one list of task states, the status, request, message and verdict formats, the merge-then-test queue, the coordinator's and lead's duties, alerts, wave start and close, and four worked examples | T17 |
 | [`research/agent-team-operating-model.md`](research/agent-team-operating-model.md) | Research: how to organise and run the agent team (coordination, token cost, quality gates, operations), with sources | Integrator |
 
 ## The code's own READMEs

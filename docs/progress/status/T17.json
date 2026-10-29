@@ -1,0 +1,167 @@
+{
+  "agent": "T17",
+  "role": "specialist",
+  "branch": "claude/plan-v3",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "T17-work-order",
+  "task_state": "working",
+  "claimed_at": "2026-10-29T22:06:00Z",
+  "lease_until": "2026-10-30T02:30:00Z",
+  "updated_at": "2026-10-29T23:30:00Z",
+  "expected_next_update_by": "2026-10-30T00:15:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "Run bash tools/check_all.sh on the work-order commit"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": null,
+  "acks": [],
+  "requests": [
+    {
+      "id": "T17-R1",
+      "from": "T17",
+      "to": "lead",
+      "ask": "Section 3.8 of report.md, steps 1-4: replace 'its branch contains main's current head' and the resync-on-any-move rule with the merge-then-test queue of agent-protocol.md ('The merge queue'); in section 3.2, note that phase 2's five builders hold only if the sizing rule allows (decision D-05: three until merge throughput is measured).",
+      "files": [
+        "docs/art/ui-quality/report.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-29T23:30:00Z",
+      "due": "2026-10-31T12:00:00Z",
+      "default": "agent-protocol.md's queue applies by the owner's work order; report.md keeps the older text until aligned",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "T17-R2",
+      "from": "T17",
+      "to": "lead",
+      "ask": "Section 3.9 of report.md, P3: a PreToolUse hook cannot filter output. Make it a PostToolUse hook on Bash that returns hookSpecificOutput.updatedToolOutput (checked by the integrator against Claude Code's documentation).",
+      "files": [
+        "docs/art/ui-quality/report.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-29T23:30:00Z",
+      "due": "2026-10-31T12:00:00Z",
+      "default": "P3 stays proposed and unset; agents use the worktree runner and read logs themselves",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "T17-R3",
+      "from": "T17",
+      "to": "lead",
+      "ask": "Section 3.9 of report.md, P6: autoContinueAtUsageLimit is not offered for -p, background or API-key sessions, so it likely does not apply to cloud agent sessions. Propose CLAUDE_CODE_RETRY_WATCHDOG=1 with CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS for unattended runs. Note P1's accepted range, 100000-1000000.",
+      "files": [
+        "docs/art/ui-quality/report.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-29T23:30:00Z",
+      "due": "2026-10-31T12:00:00Z",
+      "default": "P6 stays proposed and unset; the lead restarts paused sessions",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "T17-R4",
+      "from": "T17",
+      "to": "lead",
+      "ask": "Section 3.5 of report.md: adopt D-06 for splits (three more samples; 4 or more fails of 6 is a fail, otherwise a pass reviewed on the next board) instead of sending every split to the exceptions queue; an Unknown unanswered for 24 hours is treated as a split; verdicts are JSON at gate/verdicts/<task_id>/<sha>.json, written by the lead as launcher since the gate is read-only (section 3.1 gives gate/verdicts/** to the Gate); uncalibrated qualities run in shadow mode.",
+      "files": [
+        "docs/art/ui-quality/report.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-29T23:30:00Z",
+      "due": "2026-10-31T12:00:00Z",
+      "default": "The UI wave keeps its own split rule (splits to the owner); the protocol's verdict format is used in its folder",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "T17-R5",
+      "from": "T17",
+      "to": "lead",
+      "ask": "Sections 3.1, 3.3 and 3.7 of report.md: add AD's short phase-end review of end-to-end flows on the integrated build (agent-program.md item 11 of the gate), the motion clip boards (about 5 minutes per family), and the lead's 30-minute scheduled cycle to the hours.",
+      "files": [
+        "docs/art/ui-quality/report.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-29T23:30:00Z",
+      "due": "2026-10-31T12:00:00Z",
+      "default": "AD's flow reviews come from the 20-hour reserve",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "T17-R6",
+      "from": "T17",
+      "to": "lead",
+      "ask": "Section 3.4 of report.md: check the owner's 4.5-6.25 hours against the recomputed 15-20 hours per two-week wave in agent-program.md ('The owner's cadence'), and add the rule for the owner's absence (defaults apply at their deadlines; only owner-only items pause).",
+      "files": [
+        "docs/art/ui-quality/report.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-29T23:30:00Z",
+      "due": "2026-10-31T12:00:00Z",
+      "default": "The program's figure and absence rule apply",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "T17-R7",
+      "from": "T17",
+      "to": "T15",
+      "ask": "checks.md: its background command writes 'exit N' to /tmp/check.log in the working tree being edited. Point it at the worktree runner with the 'DONE exit=' marker in agent-protocol.md ('Running the checks'), and name the quick checks defined in agent-protocol.md ('Terms').",
+      "files": [
+        "docs/guides/checks.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-29T23:30:00Z",
+      "due": "2026-10-31T12:00:00Z",
+      "default": "agent-protocol.md's runner applies; checks.md keeps its command",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "T17-R8",
+      "from": "T17",
+      "to": "T15",
+      "ask": "DOCS-CHANGES.md: record the new page docs/guides/agent-protocol.md and the rewrite of agent-program.md and agent-brief.md under T17's work order.",
+      "files": [
+        "docs/DOCS-CHANGES.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-29T23:30:00Z",
+      "due": "2026-10-31T12:00:00Z",
+      "default": "The README index rows record it",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "T17-R9",
+      "from": "T17",
+      "to": "owner",
+      "ask": "Owner actions the protocol needs: enable the lead's 30-minute scheduled cycle (D-02); protect main so only the lead or coordinator moves it, if the platform allows (D-14); approve or decline the settings proposed in section 3.9 of report.md (D-09); confirm the owner channel, owner-inbox.md plus a direct message (D-03).",
+      "files": [
+        "docs/progress/owner-inbox.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-29T23:30:00Z",
+      "due": "2026-10-31T12:00:00Z",
+      "default": "Defaults D-01 to D-14 in T17-work-order-report.md apply until answered",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "T17-R10",
+      "from": "T17",
+      "to": "lead",
+      "ask": "Remove the committed log fe-base.log (commit 5b864e6) and add *.log to .gitignore, so check logs cannot be committed by accident (finding G-72).",
+      "files": [
+        "fe-base.log",
+        ".gitignore"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-29T23:30:00Z",
+      "due": "2026-10-31T12:00:00Z",
+      "default": "The log stays; the worktree runner keeps new logs in /tmp",
+      "escalate_to": "lead"
+    }
+  ],
+  "answers": []
+}
