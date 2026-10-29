@@ -50,6 +50,7 @@ it is not repeated here. The repository's own words:
 | [`guides/simulation.md`](guides/simulation.md) | Building and testing `sim/`, changing a rule safely, the golden replays | T15 (docs) |
 | [`guides/design-tools.md`](guides/design-tools.md) | The design document, the audit register, the decision brief, the roadmap, content tables, and their commands | T15 (docs) |
 | [`guides/agent-program.md`](guides/agent-program.md) | Tracks, branches, ownership, progress files, waves and deploys | T15 (docs) |
+| [`research/agent-team-operating-model.md`](research/agent-team-operating-model.md) | Research: how to organise and run the agent team (coordination, token cost, quality gates, operations), with sources | Integrator |
 
 ## The code's own READMEs
 
