@@ -49,7 +49,8 @@ it is not repeated here. The repository's own words:
 | [`guides/server.md`](guides/server.md) | Running, testing and load-testing the server; its configuration; its generated inputs | T15 (docs) |
 | [`guides/simulation.md`](guides/simulation.md) | Building and testing `sim/`, changing a rule safely, the golden replays | T15 (docs) |
 | [`guides/design-tools.md`](guides/design-tools.md) | The design document, the audit register, the decision brief, the roadmap, content tables, and their commands | T15 (docs) |
-| [`guides/agent-program.md`](guides/agent-program.md) | Tracks, branches, ownership, progress files, waves and deploys | T15 (docs) |
+| [`guides/agent-program.md`](guides/agent-program.md) | The operating model for every wave: roles, the backlog and claims, files as the channel, the merge queue, the quality gate, the owner's cadence, usage, model routing, sessions, failure recovery, and the lessons of waves 4 and 5 | T15; rewritten by T17 |
+| [`guides/agent-brief.md`](guides/agent-brief.md) | The brief every agent reads first: hard rules, reporting, claiming work, session hygiene and the stop protocol | T17 |
 | [`research/agent-team-operating-model.md`](research/agent-team-operating-model.md) | Research: how to organise and run the agent team (coordination, token cost, quality gates, operations), with sources | Integrator |
 
 ## The code's own READMEs
@@ -110,8 +111,9 @@ it is not repeated here. The repository's own words:
 | [`art/3d-program.md`](art/3d-program.md) | The program: the quality bar, the look every track works to, the rules, the track table | Integrator |
 | [`art/tracks/README.md`](art/tracks/README.md) | Which track's notes are which file; the notes themselves say what was done, the stills, what is still worse than the design, and "Stopped here" | T15 (docs); each notes file its track |
 | [`art/shots/README.md`](art/shots/README.md) | Which stills folder is whose; each folder holds the stills a track judged its work by | T15 (docs); each folder its track |
-| [`art/ui-quality/report.md`](art/ui-quality/report.md) | Why the interface is not premium yet, a benchmark, an audit, and the next-wave plan | T14; under review by T16 |
+| [`art/ui-quality/report.md`](art/ui-quality/report.md) | Why the interface is not premium yet, a benchmark, an audit, and the next-wave plan (plan v3), with the kit spec, build or buy and the review log beside it | T14; plan by T16 and T17 |
 | [`progress/`](progress/T5.md) | Each track's progress file: six-line header and deliverables table | each track |
+| [`progress/backlog.example.json`](progress/backlog.example.json) | An example of the backlog and claim format the lead keeps as `progress/backlog.json` | T17 |
 
 ## Security, cost and privacy
 

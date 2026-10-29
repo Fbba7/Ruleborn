@@ -1,0 +1,84 @@
+{
+  "_comment": "An example of the backlog format (docs/guides/agent-program.md). Not live: the lead writes the real docs/progress/backlog.json on main. Tasks are from the UI wave's plan (docs/art/ui-quality/report.md section 3.3).",
+  "wave": "UI wave",
+  "phase": 1,
+  "updated_at": "2026-11-03T09:30:00Z",
+  "updated_by": "lead",
+  "stop_at": "2026-11-08T21:00:00Z",
+  "lease_hours": 3,
+  "status_every_minutes": 45,
+  "tasks": [
+    {
+      "id": "P0-K1-contract",
+      "title": "Freeze the kit contract (kit-spec.md sections 2-6, version 1) and the ownership map",
+      "phase": 0,
+      "role": "K1",
+      "files": ["docs/art/ui-quality/kit-spec.md"],
+      "deps": [],
+      "done_when": ["owner approval at O2", "python3 tools/check_docs_consistency.py"],
+      "estimate_h": 2,
+      "tier": 1,
+      "state": "merged",
+      "claim": null,
+      "ready_sha": "4d5e6f7",
+      "merged_sha": "4d5e6f7"
+    },
+    {
+      "id": "P1-AIA-kit-1",
+      "title": "Kit art, batch 1: the heist's families with their state faces and twins",
+      "phase": 1,
+      "role": "AIA",
+      "files": ["art/ui/kit/**", "client/ui/art/**"],
+      "deps": ["P0-K1-contract", "P1-K1-pipeline"],
+      "done_when": ["node tools/ui_bake/bake.js --check", "gate: Kit art", "bash tools/check_all.sh"],
+      "estimate_h": 8,
+      "tier": 1,
+      "state": "claimed",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-11-03T08:10:00Z",
+        "lease_until": "2026-11-03T12:05:00Z"
+      },
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-S1-pilot",
+      "title": "Pilot heist built from the kit alone",
+      "phase": 1,
+      "role": "S1",
+      "files": ["client/scripts/heist_screen.gd", "client/scripts/heist_hud.gd", "client/tests/shots/"],
+      "deps": ["P1-AIA-kit-1", "P1-AIA2-icons-1"],
+      "done_when": ["tools/ui_bake/guard.sh", "gate: Screen", "bash tools/check_all.sh", "board 1 stands"],
+      "estimate_h": 6,
+      "tier": 1,
+      "state": "open",
+      "claim": null,
+      "ready_sha": null,
+      "merged_sha": null
+    }
+  ],
+  "idle_queue": [
+    {
+      "id": "IQ-ptbr-overflow",
+      "title": "Sweep every merged screen at 200% text in Brazilian Portuguese; file overflows as requests to their owners",
+      "role": "any",
+      "files": ["docs/art/shots/<your-track>/"],
+      "estimate_h": 1,
+      "tier": 3,
+      "state": "open",
+      "claim": null
+    }
+  ],
+  "messages": [
+    {
+      "id": "M7",
+      "to": "S2",
+      "text": "Phase 2 starts at 12:00Z: claim P2-S2-home in a fresh session on Sonnet 5.5.",
+      "sent_at": "2026-11-03T09:30:00Z",
+      "ack_by": "2026-11-03T10:30:00Z",
+      "acked_at": null
+    }
+  ]
+}

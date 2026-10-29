@@ -276,7 +276,7 @@ Each step lists its owner, phase, what it reads and writes, what it waits for, h
 
 ### 3.4 The owner's time
 
-The owner's time goes where review pays most: the plan, the contract, the labels every gate enforces, and samples. It does not go on a stream of approvals, which decay into rubber-stamping (the research's evidence on this is reported and secondary). In all, about 4½ to 6¼ hours over the wave.
+The owner's time goes where review pays most: the plan, the contract, the labels every gate enforces, and samples. It does not go on a stream of approvals, which decay into rubber-stamping (the research's evidence on this is reported and secondary). In all, about 4½ to 6¼ hours over the wave's six working days, of which 1–2 hours are the daily exceptions.
 
 | When | What the owner sees | What the owner does | Minutes | Default if the owner is away |
 |---|---|---|---|---|
@@ -916,14 +916,14 @@ D1–D5, D11, D13 and D14 are in the plan at a glance; D11 and D12 come from `bu
 | D6 | How many icons | §21.9 counts about 390 interface icons, "as Screens v3 draws them". The plan re-authors the 60 most-seen; the other 330 or so stay flat, so two styles show side by side | (a) 60 now, the rest in a later wave (about 140 hours at the same rate); (b) 60 now, and give the rest the new outline and glint rules only; (c) all now | (a) | O7, wave end |
 | D7 | Sound | The rubric's qualities 4 and 5 ask for sound; the client has none (section 10.10) | (a) No sound this wave, events ready for it; (b) add a sound track | (a) | O1 |
 | D8 | Texture and install budgets | The design document sets none (section 10.1) | Approve 24 MiB resident and 8 MB installed, or set others | The proposed numbers | O1 |
-| D9 | What check_all runs | The full rebake and the screen budgets would add about 15 minutes (section 10.8) | (a) In check_all; (b) before every push and at every merge | (b) | O1 |
+| D9 | What check_all runs | The full rebake and the screen budgets would add about 15 minutes (section 10.8) | (a) In check_all; (b) before a change is marked ready, and in the lead's hand merges (section 3.8) | (b) | O1 |
 | D10 | The wave's target | The gate's bar is the owner's own labels; on T14's scale it is estimated at about 3.5, about half the owner's bar (section 3.6) | Accept it; label a higher bar in the golden set, with more hours | The bar the owner's labels set at O3 | O1, confirmed at O3 |
 | D11 | CC0 particle sprites as raw material | §21.11: outside art is not allowed; only fonts (OFL), sound (public domain) and code (permissive) may come from outside. CC0 particles would save 3 hours of motion art (`build-or-buy.md`) | (a) Add to §21.11: "Particle and texture sprites under a public-domain dedication (CC0), as raw material only, recoloured and baked through the game's own pipeline and listed in the art ledger"; (b) keep §21.11 | (b): AIA makes them (10 hours, not 7) | Before phase 2 |
 | D12 | Buying anything | §21.11: "Nothing in this game is paid for." `build-or-buy.md` recommends no purchase. If the owner wants one anyway: a casual UI kit (Layer Lab "GUI Pro – Casual Game", $39.99), Spine (Essential $99, on sale at $69 when checked; Professional $439, on sale at $369) | Buy nothing; or name the item, which also needs §21.11 changed | Buy nothing | O1 |
 | D13 | If the usage projection does not fit | The weekly limit is close, and every session draws on it (section 3.9) | (a) Wait for the weekly reset before phase 2; (b) enable usage credits, with P2; (c) cut scope: three builders at once, icon batches 3–4 deferred | (c) | End of phase 0 |
 | D14 | The session settings | P1–P6 (section 3.9) change the environment and `.claude/settings.json`, which only the owner may approve | Approve each, or none | None applied: agents follow the rules by hand (fresh sessions, filtered output, no model switches) | O1 |
 
-What D2, D3, D4 and D11 would change in the design document is written out in `plan-review.md`. Neither T16 nor any agent in this plan edits the design document.
+What D2, D3, D4 and D11 would change in the design document is written out in `plan-review.md`. Neither T16, T17 nor any agent in this plan edits the design document.
 
 ## T14 stopped here
 

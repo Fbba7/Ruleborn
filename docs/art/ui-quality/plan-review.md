@@ -9,7 +9,7 @@ Rounds 1 and 2 are T16's. Round 3 (section 6) is T17's: plan v3, rebuilt on `doc
 ## Summary
 
 - 62 findings in two rounds. The first round (R1–R46): 13 inconsistencies in numbers or references, 21 missing parts of the plan, 12 places where the plan broke or bent a rule of the design document or the repository. The second round, on the owner's request to specify the kit and test building against buying (R47–R62, section 5).
-- All are resolved in `report.md`, `kit-spec.md` and `build-or-buy.md`. Twelve decisions need the owner (D1–D12). Outside T16's files: X1–X3 are done by the integrator; X4, X8 and X12 are needed now; X5–X7 and X11 only if the owner chooses them.
+- All are resolved in `report.md`, `kit-spec.md` and `build-or-buy.md`. Twelve decisions need the owner (D1–D12). Outside T16's files: X1–X3 are done by the integrator; X4 and X8 are needed now, and X12 is replaced by round 3's X13; X5–X7 and X11 only if the owner chooses them.
 - **Round 3 (R63–R95, N1–N11, X13–X16):** plan v3. The gate is rebuilt from scripted checks, pairwise checks against the owner's golden set and the owner's boards, and calibrated on the owner's labels; at most five building agents in four phases; a merge queue; the owner's time in seven kinds of short sittings; session and token rules, with the settings as proposals. 164 agent-hours. Two decisions are new: D13 (usage) and D14 (settings).
 - **The two that changed the picture most in rounds 1 and 2:**
   - **The plan costs 158 agent-hours, not "about 80".** T14's steps summed to 81 and left the screens uncosted (R14, 144 hours); the full kit adds 14 (R60).
@@ -243,3 +243,14 @@ T16 first stopped at about 18:30 UTC on 28 October. On the owner's new task, T16
 **Still needs the owner:** D1 (158 agent-hours) before anything starts; D2–D5 and D11 at the times in report section 12; D6–D10 and D12 have defaults.
 
 **Still needs others:** X4, X8 and X12 (T15 or the integrator); X5–X7 and X11 only if the owner chooses them; X10 for container set-up.
+
+## Stopped here (T17)
+
+T17 stopped on 29 October with everything pushed green on `claude/plan-v3`.
+
+**Done:** plan v3 of the UI wave, rebuilt on the agent-team research: the gate (scripted checks, an isolated pairwise judge on Fable 5.1 sampled three times, the merge queue's guards, the owner), calibrated on a golden set of 30–60 owner labels with an 80% catch-rate target and blind audits; seven building roles in four phases with at most five at once; a model per role and the escalation rule; a fast-forward-only merge queue with guards on the combined tree; the owner's time in O1–O7 (about 4½ to 6¼ hours); session, token and usage rules with six settings proposed (P1–P6); 164 agent-hours (43, 58, 62 and 1 by phase, plus up to 20 of re-work), about 65 wall-clock hours. Logged as R63–R95, with N1–N11 where the plan does not follow the research. The operating model for every wave is `docs/guides/agent-program.md`; the brief is `docs/guides/agent-brief.md`; the backlog format is `docs/progress/backlog.example.json`.
+
+**Still needs the owner:** D1 and D14 at O1; D4 and D5 at O2; D2 at O3; D13 at the end of phase 0 if usage does not fit; D3 and D11 before phase 2. D6–D10 and D12 have defaults.
+
+**Still needs others:** X13 and X14 (T15 or the integrator); X15 if the owner approves D14; X16 for whoever starts the sessions.
+
