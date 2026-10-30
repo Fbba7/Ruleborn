@@ -3,24 +3,26 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P0-AIA-board-1",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-10-30T01:15:00Z",
   "lease_until": "2026-10-30T04:15:00Z",
-  "updated_at": "2026-10-30T01:45:00Z",
-  "expected_next_update_by": "2026-10-30T02:30:00Z",
-  "long_run": {
-    "log": "/tmp/check-aa11f0ef3edcc255a4879eea04d196b8a426d312.log",
-    "expected_end": "2026-10-30T02:15:00Z"
-  },
+  "updated_at": "2026-10-30T02:14:00Z",
+  "expected_next_update_by": "2026-10-30T02:59:00Z",
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "Record the pre-check of aa11f0e; if PASS mark P0-AIA-board-1 ready"
+    "last_green_sha": "aa11f0ef3edcc255a4879eea04d196b8a426d312",
+    "next_step": "Wait for the merge of P0-AIA-board-1; then take P0-AIA-board-2"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "aa11f0ef3edcc255a4879eea04d196b8a426d312",
+    "exit": 0,
+    "finished_at": "2026-10-30T02:10:33Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "aa11f0ef3edcc255a4879eea04d196b8a426d312",
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
