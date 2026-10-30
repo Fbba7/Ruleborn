@@ -1,0 +1,13 @@
+{
+  "families": {
+    "icons_256": {"dir": "icons", "kind": "scene", "px": 256, "width": 1024},
+    "icons_48": {"dir": "icons", "kind": "scene", "px": 128, "width": 1024},
+    "kit": {"dir": "kit", "kind": "svg", "px_per_point": 6, "width": 1024},
+    "motion": {"dir": "motion", "kind": "svg", "px_per_point": 6, "width": 1024}
+  },
+  "fonts": {
+    "Lilita One": "client/ui/fonts/lilita_one/LilitaOne-Regular.ttf",
+    "Manrope": "client/ui/fonts/manrope/Manrope-Variable.ttf",
+    "Marcellus": "client/ui/fonts/marcellus/Marcellus-Regular.ttf"
+  }
+}

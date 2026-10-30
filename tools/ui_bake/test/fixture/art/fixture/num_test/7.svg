@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="10" height="14" data-advance="9" data-hc="class">
+  <style>text { font-family: 'Lilita One'; font-size: 12px; fill: #F9C640; stroke: #1A0C14; stroke-width: 1; paint-order: stroke; }
+  .hc text { fill: #FFFFFF; stroke: #000000; }</style>
+  <text x="5" y="12" text-anchor="middle">7</text>
+</svg>
