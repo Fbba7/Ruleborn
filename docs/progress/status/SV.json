@@ -18,7 +18,12 @@
     "last_green_sha": null,
     "next_step": "record the pre-check at 85a6c76, run client suite, mark ready"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "85a6c767bc9b0d70720fa9ebe8a92fb996948b48",
+    "exit": 127,
+    "finished_at": "2026-10-30T22:12:43Z",
+    "summary": "== the client: the same simulation inside Godot, and its screen ==: tools/check_all.sh: line 55: gdlint: command not found"
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
