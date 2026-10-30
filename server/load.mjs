@@ -34,6 +34,7 @@ import { ERAS } from "./src/eras.mjs";
 import { Service } from "./src/service.mjs";
 import { Build, Builds } from "./src/sim.mjs";
 import { Store } from "./src/store.mjs";
+import { lawsOf } from "./src/telemetry.mjs";
 import { raiseTo } from "./src/universe.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./src/facts.json", import.meta.url), "utf8"));
@@ -300,6 +301,9 @@ export function run({ players = 60, days = 3, archetype = "engaged" } = {}) {
     island[5] = 1 + (Math.floor(i / 2) % 10);              // Vault level: a distinct island each
     island[6] = i & 255;                                   // and a distinct exposure
     raiseTo(db, account, "heart", island[4], island[5]);  // a universe built that far
+    lawsOf(island).forEach((law, n) => db.prepare(        // and the laws it runs woven (SR-16)
+      "INSERT INTO law_slots (owner, realm, slot, law, tier, ready_at, rests_until) VALUES (?, 'heart', ?, ?, 1, 0, 0)")
+      .run(account, n + 1, law));
     bundles.push(service.publish(account, island).bundle);
     // Established: their first session is long behind them, so the one
     // first_seen row each player ever writes is not counted as a day's.

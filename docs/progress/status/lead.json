@@ -1,10 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-30T00:30:00Z",
-  "expected_next_update_by": "2026-10-30T01:45:00Z",
-  "cycle": 0,
+  "updated_at": "2026-10-30T21:55:00Z",
+  "expected_next_update_by": "2026-10-30T23:10:00Z",
+  "cycle": 1,
   "merging": null,
-  "last_merged": {"task_id": "BT-02", "sha": "552e53ac"},
+  "last_merged": {
+    "task_id": "SV-B1-B6",
+    "sha": "1c7005fd"
+  },
   "alerts": [],
-  "next_step": "Launch phase 0's agents (AD, AIA, K1, SV); from cycle 1, merge the first ready task"
+  "next_step": "Read the status of K1 (P0-K1-bake-1), AD (P0-AD-sheet), AIA (P0-AIA-board-2) and SV (SV-B7-B9), started at 21:52Z; merge what is ready; restart any agent past its expected_next_update_by"
 }

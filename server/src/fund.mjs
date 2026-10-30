@@ -26,14 +26,18 @@
 // A quarter is closed once, after it ends, by the daily job: the payouts are
 // written then and never again (G-register). Not built, because §18.9 gives
 // no numbers for them: the share per hour that "falls in bands as a
-// creator's total rises", the floor for an island past 500 completions, and
-// the cap on one player's time on one island. Identity checks and paying the
-// money are outside the server.
+// creator's total rises" and the floor for an island past 500 completions.
+// One player's time on one island counts to an hour a quarter at most
+// (SR-12, the owner's number). Identity checks and paying the money are
+// outside the server.
 
 import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
+
+/** SR-12 (the owner's): at most an hour a quarter of one player's time on one island. */
+export const ONE_PLAYER_ONE_ISLAND_S = 3600;
 import { TICKS_PER_SECOND } from "./service.mjs";
 import { kin } from "./workshop.mjs";
 
@@ -100,16 +104,25 @@ export class Fund {
    *  on an island removed from the Workshop. */
   played(from, to) {
     const rows = this.db.prepare(
-      `SELECT p.player, p.ticks, p.outcome, i.creator, i.published_at FROM workshop_plays p
+      `SELECT p.player, p.item, p.ticks, p.outcome, i.creator, i.published_at FROM workshop_plays p
          JOIN workshop_items i ON i.id = p.item
         WHERE p.submitted_at >= ? AND p.submitted_at < ? AND i.removed_at IS NULL`).all(from, to);
-    const out = {};
+    // SR-12: one player's time on one island counts to at most
+    // ONE_PLAYER_ONE_ISLAND_S a quarter, cleared plays and uncleared alike.
+    const by = new Map();
     for (const r of rows) {
       const o = r.outcome ? JSON.parse(r.outcome) : null;
       if (!o?.validated || r.player === r.creator) continue;
       const seconds = Number.isInteger(o.report?.held) ? o.report.held : r.ticks / TICKS_PER_SECOND;
-      const weight = kin(this.db, r.player, r.creator, r.published_at) ? facts.KIN_COMPLETION_WEIGHT : 1;
-      out[r.creator] = (out[r.creator] ?? 0) + seconds * weight;
+      const key = `${r.player}\n${r.item}`;
+      const was = by.get(key);
+      if (was) was.seconds += seconds;
+      else by.set(key, { creator: r.creator, seconds, weight: kin(this.db, r.player, r.creator, r.published_at)
+        ? facts.KIN_COMPLETION_WEIGHT : 1 });
+    }
+    const out = {};
+    for (const { creator, seconds, weight } of by.values()) {
+      out[creator] = (out[creator] ?? 0) + Math.min(seconds, ONE_PLAYER_ONE_ISLAND_S) * weight;
     }
     return out;
   }
