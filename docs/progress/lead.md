@@ -37,6 +37,10 @@ clones the repository if it is missing; push notifications on):
 |---|---|---|
 | The lead's cycle | `trig_018vvUDvm2PkMuXrcJPQ9BiB` | hourly at :38 (the platform's minimum interval is an hour) |
 | The watchdog (G-67): alerts the owner if `status/lead.json` is stale or the cycle is disabled | `trig_01LatSpptvktXzQcEwYfn51A` | every 2 hours at :38 |
+| Restart AD | `trig_018WBkwVBocWr9kGbkrt1xs4` | only when fired |
+| Restart AIA | `trig_01WpPzWUnLmna8PDzUYDhQVj` | only when fired |
+| Restart K1 | `trig_01JFG1PbKiumCjB4f61JcyJE` | only when fired |
+| Restart SV | `trig_016TpQMGvejeoBKfyQNWPd6Y` | only when fired |
 
 Agent sessions (cloud sessions on the repository at main, tagged
 `ruleborn:ui-wave` and `ruleborn:<agent>`):
@@ -48,10 +52,12 @@ Agent sessions (cloud sessions on the repository at main, tagged
 | AIA | pending | `claude/ui-artist` | due 01:10Z |
 | SV | pending | `claude/server-decisions` | due 01:25Z |
 
-A restart (cycle step 6) is a new cloud session on the repository at main,
-with the agent's branch as its outcome branch, its model (Opus 5.5 for AD,
-AIA and K1; Sonnet 5.5 for SV), the same tags, and its prompt below
-unchanged: the session reads its handoff and status file to resume.
+A restart (cycle step 6) fires the agent's restart task with `fire_trigger`,
+passing the reason as text; a cycle's session cannot create sessions itself.
+The fired session attaches the repository with `add_repo` (push access),
+reads its handoff and status file on its branch, and resumes with the prompt
+below. Every scheduled session attaches the repository the same way, because
+scheduled tasks carry no repository of their own.
 
 ## The agents' prompts
 
