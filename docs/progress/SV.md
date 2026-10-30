@@ -21,6 +21,5 @@
 - Next step: record the pre-check, run `python3 client/status.py` (Godot may be missing here), mark ready.
 
 ## Tried and failed
-- 2026-10-30 `candidates()` still serving the Observatory with a longer window: SR-03's test pins a minute and DB-1 asks for the hour, so a second hourly cache replaced it.
 - 2026-10-30 first pre-check: failed the client contract (no string for the new crew refusal); fixed by answering `not_friends`. Second: gdlint missing in the container; installed per the brief.
 - 2026-10-30 `node --test test/` (a directory): fails to load; the package script `node --test test/*.test.mjs` is the way.
