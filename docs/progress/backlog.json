@@ -178,7 +178,10 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     },
     {
       "id": "P0-AD-golden",
@@ -277,7 +280,10 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     },
     {
       "id": "P0-K1-bake-2",
@@ -806,7 +812,10 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     },
     {
       "id": "BT-04b",
@@ -922,7 +931,10 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     },
     {
       "id": "BT-07",
@@ -978,7 +990,10 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     }
   ],
   "idle_queue": [
