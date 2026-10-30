@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-10-30T01:15:00Z",
   "lease_until": "2026-10-30T04:15:00Z",
-  "updated_at": "2026-10-30T01:23:00Z",
-  "expected_next_update_by": "2026-10-30T02:08:00Z",
+  "updated_at": "2026-10-30T01:40:00Z",
+  "expected_next_update_by": "2026-10-30T02:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
@@ -20,6 +20,35 @@
   "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "AIA-R1",
+      "from": "AIA",
+      "to": "lead",
+      "ask": "Add the style board's checks to tools/check_all.sh so they guard the board after it merges: node art/ui/board/build_tokens.mjs --check; node art/ui/board/check_board.mjs; node art/ui/board/check_board.mjs --self-test (about 20 seconds; needs only Node and the container's Playwright)",
+      "files": [
+        "tools/check_all.sh"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-30T01:40:00Z",
+      "due": "2026-10-31T01:40:00Z",
+      "default": "AIA runs the three commands before every ready mark and records their output in docs/progress/AIA.md",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R2",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Consider tokens for \u00a721.2's dusk (#6A4FC9 to #F29C7B) and night (#1A1433 to #3A2B6B) skies, which \u00a721.8 checks the HUD over; and note \u00a721.8's card runs to #1A1134 where card_bottom is #120A28",
+      "files": [
+        "client/ui/tokens.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-30T01:40:00Z",
+      "due": "2026-10-31T01:40:00Z",
+      "default": "The board keeps its own \u00a721.2 list in art/ui/board/build_tokens.mjs, checked against the design document, and uses card_bottom as the token has it",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }

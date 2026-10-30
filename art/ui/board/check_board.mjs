@@ -14,7 +14,7 @@
 //      no opacity; tabular figures on the number roles; and contrast of 4.5:1
 //      and APCA's level for its size and weight (client/ui/colour_check.gd's
 //      thresholds), against its ink outline when it has one of 1.5 points or
-//      more, else against the pixels behind it at their worst point.
+//      more, else against the pixels behind its letters at their worst point.
 //
 //   node art/ui/board/check_board.mjs [--out report.json]
 //   node art/ui/board/check_board.mjs --self-test   plants faults; each must fail
@@ -139,32 +139,60 @@ function checkFiles(html, tokensCss) {
   return fails;
 }
 
-// The distinct colours of a screenshot inside each list of rectangles,
-// decoded by the browser's own canvas.
-async function pixelsBehind(context, png, rectLists) {
+// The colours behind each word's letters. A pixel inside a word's boxes that
+// differs between `black` and `white` (the words drawn in each) is under a
+// letter. The letters are widened by RADIUS pixels for their antialiased
+// edge, and the colours of `ground` (the words gone) under them are what the
+// word is read against. The browser's own canvas decodes the screenshots.
+const RADIUS = 2;
+async function pixelsBehind(context, black, white, ground, rectLists) {
   const page = await context.newPage();
   try {
-    return await page.evaluate(async ([src, lists]) => {
-      const img = new Image();
-      img.src = src;
-      await img.decode();
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const g = canvas.getContext('2d', { willReadFrequently: true });
-      g.drawImage(img, 0, 0);
+    return await page.evaluate(async ([a, b, c, lists, radius]) => {
+      const read = async (src) => {
+        const img = new Image();
+        img.src = src;
+        await img.decode();
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const g = canvas.getContext('2d', { willReadFrequently: true });
+        g.drawImage(img, 0, 0);
+        return g.getImageData(0, 0, img.width, img.height);
+      };
+      const A = await read(a), K = await read(b), B = await read(c);
+      const W = Math.min(A.width, K.width, B.width), H = Math.min(A.height, K.height, B.height);
       return lists.map((rects) => {
         const seen = new Map();
         for (const [x, y, w, h] of rects) {
-          const x0 = Math.max(0, Math.ceil(x)), y0 = Math.max(0, Math.ceil(y));
-          const x1 = Math.min(img.width, Math.floor(x + w)), y1 = Math.min(img.height, Math.floor(y + h));
-          if (x1 <= x0 || y1 <= y0) continue;
-          const d = g.getImageData(x0, y0, x1 - x0, y1 - y0).data;
-          for (let i = 0; i < d.length; i += 4) seen.set((d[i] << 16) | (d[i + 1] << 8) | d[i + 2], [d[i], d[i + 1], d[i + 2]]);
+          const x0 = Math.max(0, Math.floor(x)), y0 = Math.max(0, Math.floor(y));
+          const x1 = Math.min(W, Math.ceil(x + w)), y1 = Math.min(H, Math.ceil(y + h));
+          const ink = new Uint8Array((x1 - x0) * (y1 - y0));
+          for (let py = y0; py < y1; py++) {
+            for (let px = x0; px < x1; px++) {
+              const i = (py * A.width + px) * 4;
+              const d = Math.abs(A.data[i] - K.data[i]) + Math.abs(A.data[i + 1] - K.data[i + 1]) + Math.abs(A.data[i + 2] - K.data[i + 2]);
+              if (d > 24) ink[(py - y0) * (x1 - x0) + (px - x0)] = 1;
+            }
+          }
+          for (let py = y0; py < y1; py++) {
+            for (let px = x0; px < x1; px++) {
+              let near = false;
+              for (let dy = -radius; dy <= radius && !near; dy++) {
+                for (let dx = -radius; dx <= radius && !near; dx++) {
+                  const qx = px + dx - x0, qy = py + dy - y0;
+                  if (qx >= 0 && qy >= 0 && qx < x1 - x0 && qy < y1 - y0 && ink[qy * (x1 - x0) + qx]) near = true;
+                }
+              }
+              if (!near) continue;
+              const i = (py * B.width + px) * 4;
+              seen.set((B.data[i] << 16) | (B.data[i + 1] << 8) | B.data[i + 2], [B.data[i], B.data[i + 1], B.data[i + 2]]);
+            }
+          }
         }
         return [...seen.values()];
       });
-    }, ['data:image/png;base64,' + png.toString('base64'), rectLists]);
+    }, [black, white, ground].map((png) => 'data:image/png;base64,' + png.toString('base64')).concat([rectLists, RADIUS]));
   } finally {
     await page.close();
   }
@@ -242,12 +270,31 @@ async function checkMode(page, mode, allowed, inject) {
     return out;
   });
 
-  // The pixels behind every word: hide the words, their outlines, shadows and
-  // fills, and photograph the page.
-  await page.addStyleTag({ content: '[data-check]{color:transparent!important;-webkit-text-stroke-color:transparent!important;text-shadow:none!important}[data-check]::after{content:none!important}' });
-  await page.waitForTimeout(50);
-  const shot = await page.screenshot({ fullPage: true });
-  const behind = await pixelsBehind(page.context(), shot, texts.map((t) => t.rects));
+  // The pixels behind every word's letters. The letters are found by drawing
+  // the words bare in black, then in white: a pixel that changes is under a
+  // letter, whatever the ground. The ground is photographed with the words
+  // gone. (These probe colours are drawn after the colour checks above.)
+  // Inline and important, so no rule of the page outranks the probe.
+  const probe = (colour) => page.evaluate((c) => {
+    if (!document.getElementById('check-probe')) {
+      const el = document.createElement('style');
+      el.id = 'check-probe';
+      el.textContent = '[data-check]::after{content:none!important}';
+      document.head.append(el);
+    }
+    for (const el of document.querySelectorAll('[data-check]')) {
+      el.style.setProperty('color', c, 'important');
+      el.style.setProperty('-webkit-text-stroke-color', 'transparent', 'important');
+      el.style.setProperty('text-shadow', 'none', 'important');
+    }
+  }, colour);
+  await probe('#000');
+  const black = await page.screenshot({ fullPage: true });
+  await probe('#fff');
+  const white = await page.screenshot({ fullPage: true });
+  await probe('transparent');
+  const ground = await page.screenshot({ fullPage: true });
+  const behind = await pixelsBehind(page.context(), black, white, ground, texts.map((t) => t.rects));
 
   for (const t of texts) {
     const name = `"${t.text}"`;
@@ -283,7 +330,7 @@ async function checkMode(page, mode, allowed, inject) {
       if (!near(oc, allowed)) fails.push({ kind: 'colour', what: `${name}: outline ${hex(oc)} is not a token colour` });
       for (const fg of fgs) measure(fg, oc);
     } else {
-      against = 'the pixels behind it, at their worst';
+      against = 'the pixels behind its letters, at their worst';
       if (outline > 0) fails.push({ kind: 'type', what: `${name}: an outline of ${outline} points is under 1.5, so it is measured against the ground` });
       const bgs = behind[texts.indexOf(t)];
       if (!bgs.length) fails.push({ kind: 'layout', what: `${name}: no pixels behind it to measure` });
