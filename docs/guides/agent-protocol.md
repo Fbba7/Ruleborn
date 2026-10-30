@@ -388,18 +388,20 @@ Start no full check after STOP_AT − (check minutes + 35); with today's
    writes its handoff and ends the session; the lead sets the task's `model`
    to Opus 5.5 and restarts it from the handoff.
 6. **Appeals.** An author may appeal one verdict per item, by request to the
-   owner's exceptions queue. An appeal does not add to `attempts`.
+   exceptions queue. An appeal does not add to `attempts`.
 7. **Carry-over.** A gate pass at `ready_sha` carries over to the candidate
    if the merge changed none of the task's `files` and none of the contract's
    files; otherwise the gate re-runs on the candidate before main moves.
 
 **Before calibration: shadow mode.** Until a quality meets its calibration
 target, the gate runs in shadow mode for it: it records verdicts, and every
-item of that quality goes on an owner board **before** merging. A contract
-(the kit) always gets an owner board before it merges, whatever the gate's
-state. The golden set the calibration needs is a phase 0 task, labelled by
-the owner from references, earlier waves' stills and outside examples (the
-UI wave: step 1 and O3 in sections 3.3 and 3.4 of `report.md`).
+item of that quality goes on a board **before** merging. A contract (the
+kit) always gets a board before it merges, whatever the gate's state. The
+golden set the calibration needs is a phase 0 task, labelled from
+references, earlier waves' stills and outside examples (the UI wave: step 1
+and O3 in sections 3.3 and 3.4 of `report.md`). In the UI wave, AD reviews
+the boards and labels the golden set, and nothing waits for the owner
+(section 3.4 of `report.md`, 30 October 2026).
 
 **Capacity.** Gate calls count in the usage projection. If the judge's model
 reaches its own usage limit, gated merges pause for the affected qualities,
@@ -478,6 +480,32 @@ are cron-style triggers on the owner's account, plus one-shot `send_later`
 messages; a disabled scheduled task delivered nothing; and a one-shot message
 counts as delivered only after checking that the target session is running.
 
+**Sessions and scheduled tasks** (since 30 October 2026). A scheduled task
+that starts a fresh session on each firing starts it with no repository
+checked out: on 30 October every lead and watchdog run stopped at the step
+that attached it and did nothing, and the restart tasks would have done the
+same. So no scheduled task in the program starts a session itself. Every
+session is created with the repository checked out at main and with its
+model set explicitly (Opus 5.5, or the roster's model), and the scheduled
+tasks fire into sessions that already exist:
+
+- **The launcher**, one long-lived session, takes the hourly scheduled task.
+  Each firing it reads `status/lead.json` on main and checks the previous
+  cycle's session; if that is still working it skips this hour, otherwise
+  it creates a fresh session for one lead cycle. Each cycle is still a
+  fresh session, and no state lives in the launcher.
+- **The lead's cycle** creates every agent session the same way: a fresh
+  session per task, with the agent's prompt and the roster's model, on
+  start and on every restart in step 6. It records each session in
+  `lead.md`, "The program's scheduled tasks and sessions".
+- **The watchdog**, a second long-lived session, takes the two-hourly
+  scheduled task. It reads `status/lead.json` and the hourly task's last
+  run; if the lead is stale, it creates one lead cycle session itself, so it
+  does not depend on the launcher, and writes the alert.
+
+A failed session is replaced, never resumed in place; its work is on its
+branch and in its handoff.
+
 **One cycle**, in order:
 
 1. `git fetch origin`; read every status file on the roster's branches.
@@ -491,7 +519,8 @@ counts as delivered only after checking that the target session is running.
 5. Take the merge queue as far as it goes in the cycle.
 6. Restart every agent whose `expected_next_update_by` has passed, whose
    task left `blocked` or went to `resync`, or whose message went
-   unacknowledged: a fresh session with the same prompt, which reads its
+   unacknowledged: a fresh session with the same prompt, created with the
+   repository checked out and the roster's model (above), which reads its
    handoff. `send_later` is an optimisation, never the recovery plan.
 7. Raise the alerts below; refill the idle queue; write `status/lead.json`
    and the lead's handoff; push.
@@ -520,16 +549,16 @@ coordinator. On a tie, the lower agent id wins (string order: `AD` before
 `prior_sha` on the task. The new claimant merges `prior_sha` before starting.
 The old claimant must not push further work for that task.
 
-**The lead's own status and failover.** Each cycle is a fresh session that
-starts from `status/lead.json` and the lead's handoff in
+**The lead's own status and failover.** Each cycle is a fresh session,
+created by the launcher, that starts from `status/lead.json` and the lead's handoff in
 `docs/progress/lead.md`, so no state lives only in one session.
 `status/lead.json` holds `agent` (`"lead"`), `updated_at`,
 `expected_next_update_by` (the next cycle + 15 minutes), `cycle` (a count),
 `merging` (the lock above, or `null`), `last_merged` (`{"task_id", "sha"}`),
 `alerts` (open alert ids) and `next_step`. A second scheduled task, the
-**watchdog**, runs every two hours in a fresh session: if
-`expected_next_update_by` has passed, it notifies the owner's phone, fires
-the lead's cycle once, and records the alert in the owner inbox. This closes
+**watchdog**, runs every two hours in its own session: if
+`expected_next_update_by` has passed, it notifies the owner's phone, starts
+one lead cycle session itself, and records the alert in the owner inbox. This closes
 finding G-67 in T17's report except when both scheduled tasks fail together;
 the owner's daily look at `status/lead.json` covers that.
 
@@ -561,7 +590,7 @@ owner a direct message (decision D-03). It alerts at once for:
 - the roster and its schedule;
 - the environment script (planned: backlog task BT-09; until then the
   brief's install lines);
-- the golden set task, and the owner's slot to label it;
+- the golden set task, and who labels it (the UI wave: AD at O3);
 - the contracts to freeze, each with `version` and `consumers`;
 - a backlog with `gate_items` and `model` on every task;
 - the baseline metrics below;
@@ -665,18 +694,20 @@ restart come earlier, step 4 would have re-run the check at once.
 
 ### D. Contract work is ready before the gate is calibrated
 
-1. Phase 0 has two tasks in parallel: the golden set (AD, labelled by the
-   owner at O3) and the kit contract (K1).
-2. The contract's `gate_items` is empty; its `done_when` has an owner
-   sign-off at O2. K1 marks it ready when its pre-check passes; the lead
-   checks the candidate and holds it until the owner approves the board at
-   O2, then merges it.
+1. Phase 0 has two tasks in parallel: the golden set (AD, labelled by AD
+   at O3, its held-out third again by a blind second session) and the kit
+   contract (K1).
+2. The contract's `gate_items` is empty. K1 marks it ready when its
+   pre-check passes, and the lead merges it like any task, so the work that
+   builds on it (the bake) can start. It takes effect when AD approves it
+   with the board at O2, whose `deps` include it; nothing consumes it before
+   phase 1. A redirect at O2 becomes a new contract task for K1.
 3. Phase 1 starts once the judge meets its target on the held-out third.
-   Each quality that misses stays in shadow mode, so its items go on an owner
+   Each quality that misses stays in shadow mode, so its items go on AD's
    board before they merge, until it meets the target or becomes
-   owner-checked.
+   owner-checked (checked by AD on the boards).
 
-**Ends:** the contract merges on the owner's approval; no item merges on an
+**Ends:** the contract takes effect on AD's approval; no item merges on an
 uncalibrated verdict, and nothing waits forever for one.
 
 ## Roles against the rules
@@ -688,7 +719,7 @@ Every rule applies to every role as below; the brief has a section per role.
 | 1 Your branch only | ✓ | ✓ | ✓ moves main by this protocol | ✓ pushes nothing | ✓ |
 | 2 Your files only | ✓ | ✓ contract changes by the four steps | ✓ hotspot edits are its own backlog tasks | ✓ reads only | ✓ only its task's files |
 | 6–7 Tests and green | ✓ | ✓ | ✓ on every candidate | ✓ not applicable: changes nothing | ✓ |
-| 8 Own assessment | ✓ the gate and checks decide | ✓ the owner's sign-off decides | ✓ approves no build as "good" | ✓ judges only others' work | ✓ |
+| 8 Own assessment | ✓ the gate and checks decide | ✓ the sign-off decides (AD's in the UI wave) | ✓ approves no build as "good" | ✓ judges only others' work | ✓ |
 | Taking work | ✓ takes the task the lead assigned | ✓ takes its assigned tasks like a maker | ✓ assigns, takes none | ✓ launched per request | ✓ takes its one assigned task |
 | One task per session | ✓ | ✓ | ✓ one cycle per session | ✓ one quality per run | ✓ |
 | Status every 45 min | ✓ | ✓ | ✓ every cycle, in `status/lead.json` | ✓ the launcher records each run | ✓ |
