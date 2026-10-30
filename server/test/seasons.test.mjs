@@ -209,6 +209,11 @@ test("a crew is four to eight, joined by its invite, and survives its founder le
   const [first, ...rest] = t.players;
   const crew = t.social.startCrew(first);
   assert.equal(crew.formed, false, "one Keeper is not yet a crew");
+  // SR-14: a crew is joined as a friend of one of its members.
+  const befriend = (x, y) => t.service.db.prepare("INSERT INTO friends (a, b, since, invited_by) VALUES (?, ?, 0, ?)")
+    .run(...[x, y].sort(), x);
+  for (const p of rest) befriend(p, first);
+  befriend(rest[7], rest[0]);                              // who is still there when the founder has left
   for (const p of rest.slice(0, 3)) t.social.joinCrew(p, crew.invite);
   assert.equal(t.social.crew(crew.id).formed, true, "four is");
   for (const p of rest.slice(3, 7)) t.social.joinCrew(p, crew.invite);

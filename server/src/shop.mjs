@@ -182,7 +182,8 @@ export class Shop {
    * retry is answered with the first grant. A receipt the store vouches for
    * is honoured even with no intent (a purchase restored on a new device, or
    * one approved later by a family): the money is already taken, and it is
-   * the buyer's own. A gift goes to the friend its intent names. A
+   * the buyer's own. A minor's with no intent that would pass the month's cap
+   * is refused (SR-10). A gift goes to the friend its intent names. A
    * transaction the store has already refunded is refused.
    */
   redeem(account, store, receipt, checked = null) {
@@ -203,6 +204,13 @@ export class Shop {
       if (i) {
         if (i.account !== account || i.product !== proof.product) throw new Refused(409, "intent_mismatch");
         this.db.prepare("UPDATE purchase_intents SET redeemed_at = ? WHERE id = ?").run(now, i.id);
+      } else {
+        // SR-10: a receipt with no intent never went past the cap's check, so
+        // a minor's is refused once it would take the month past §20.2's cap.
+        const left = this.allowance(account, now);
+        if (left !== null && p.price > left) {
+          throw new Refused(403, "monthly_cap", { left, cap: facts.SPENDING_CAPS_EUR[this.ageBand(account)] * 100 });
+        }
       }
       // A friend deleted since is owed nothing: the gift is the buyer's.
       const friend = i?.recipient && !this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?")
