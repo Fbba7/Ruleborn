@@ -3,17 +3,17 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P0-K1-bake-1",
-  "task_state": "blocked",
+  "task_state": "working",
   "claimed_at": "2026-10-30T21:55:00Z",
-  "lease_until": "2026-10-31T00:55:00Z",
-  "updated_at": "2026-10-30T22:30:00Z",
-  "expected_next_update_by": null,
+  "lease_until": "2026-10-31T01:45:00Z",
+  "updated_at": "2026-10-30T22:45:00Z",
+  "expected_next_update_by": "2026-10-30T23:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "4ab2368",
-    "next_step": "On K1-R2's answer: add the README line if granted, run the pre-check, record it, mark P0-K1-bake-1 ready"
+    "next_step": "Pre-check running on the README line (K1-R2 granted); record it and mark P0-K1-bake-1 ready"
   },
   "precheck": null,
   "gate_request": null,
