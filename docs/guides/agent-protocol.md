@@ -465,9 +465,10 @@ not drop status files).
 | Lease expiry; copying claims; acknowledgement and request deadlines; checking changes against ownership; stall flags; building and checking candidates; fast-forwarding main | Coordinator script (planned: BT-01, which calls BT-02's `tools/coord/owners.py` and BT-03's `tools/run_checks.sh`), on a trigger |
 | Planning; writing tasks; refilling the idle queue; digests; escalations; phase decisions | The lead (an LLM session) |
 
-Until BT-01 exists, the lead runs one cycle every 30 minutes as a scheduled
-task (decision D-02, approved): it runs while a wave has agents building, and
-is armed when the next wave launches. Each day the lead checks that the task
+Until BT-01 exists, the lead runs one cycle every hour as a scheduled task
+(decision D-02, approved): it runs while a wave has agents building, and is
+armed when the next wave launches. The plan was every 30 minutes; scheduled
+tasks cannot run more often than hourly, so the cycle is hourly. Each day the lead checks that the task
 is still enabled and reads its last run. The wake-up ban
 applies to idle building sessions, not to the lead's scheduled cycle.
 
@@ -495,8 +496,9 @@ counts as delivered only after checking that the target session is running.
 7. Raise the alerts below; refill the idle queue; write `status/lead.json`
    and the lead's handoff; push.
 
-**The merge lock.** A cycle can outlast the 30 minutes between cycles,
-because the candidate's checks take about 25. So before step 4 the lead reads
+**The merge lock.** A cycle can run into the next one, because the
+candidate's checks take about 25 minutes and a resync or a red run adds a
+second. So before step 4 the lead reads
 `merging` in `status/lead.json` on main:
 `{"candidate_sha", "task_ids", "started_at", "expires_at"}`, with
 `expires_at` = `started_at` + 2 × the check minutes + 10 (60 minutes today).
@@ -632,7 +634,7 @@ resync. No step depends on an agent noticing anything.
    `ready_sha`, sets `long_run` with `expected_end` at STOP_AT − 40, and
    pushes. Editing afterwards cannot change the tested tree.
 2. At STOP_AT − 40 a restart kills the run and the session.
-3. The lead's next cycle (within 30 minutes) finds `expected_end` passed
+3. The lead's next cycle (within the hour) finds `expected_end` passed
    with no new status and restarts the agent from its handoff.
 4. The fresh session runs the setup, finds the log without its `DONE` line,
    and checks the time: a 25-minute run cannot start after STOP_AT − 60. It
