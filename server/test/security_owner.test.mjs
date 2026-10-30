@@ -69,9 +69,9 @@ test("SR-14: a 13-to-15 joins a crew only as a friend of every member; an adult 
   t.service.db.prepare("UPDATE accounts SET age_band = '13-15' WHERE id = ?").run(minor);
   const crew = social.startCrew(stranger);
   assert.equal(t.service.friends.areFriends(minor, stranger), false);
-  assert.throws(() => social.joinCrew(minor, crew.invite), { reason: "crew_needs_a_friend" });
+  assert.throws(() => social.joinCrew(minor, crew.invite), { reason: "not_friends" });
   const adult = t.service.session("gc:adult").account;
-  assert.throws(() => social.joinCrew(adult, crew.invite), { reason: "crew_needs_a_friend" });
+  assert.throws(() => social.joinCrew(adult, crew.invite), { reason: "not_friends" });
   const [x, y] = [minor, stranger].sort();
   t.service.db.prepare("INSERT INTO friends (a, b, since, invited_by) VALUES (?, ?, 0, ?)").run(x, y, stranger);
   assert.equal(social.joinCrew(minor, crew.invite).members.length, 2);
@@ -83,7 +83,7 @@ test("SR-14: a 13-to-15 joins a crew only as a friend of every member; an adult 
   t.service.db.prepare("UPDATE accounts SET age_band = '13-15' WHERE id = ?").run(late);
   const [r, w] = [late, stranger].sort();
   t.service.db.prepare("INSERT INTO friends (a, b, since, invited_by) VALUES (?, ?, 0, ?)").run(r, w, stranger);
-  assert.throws(() => social.joinCrew(late, crew.invite), { reason: "crew_needs_a_friend" }, "a friend of one, not of all");
+  assert.throws(() => social.joinCrew(late, crew.invite), { reason: "not_friends" }, "a friend of one, not of all");
 });
 
 // SR-15 (register D60): §24.8 has a published island's exposed loot "come

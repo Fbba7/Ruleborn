@@ -11,8 +11,16 @@
   "updated_at": "2026-10-30T01:30:00Z",
   "expected_next_update_by": "2026-10-30T02:15:00Z",
   "long_run": null,
-  "progress_marker": {"last_green_sha": null, "next_step": "Build B1-B6 in server/src and change the six tests in security_owner.test.mjs"},
-  "precheck": null,
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "Build B1-B6 in server/src and change the six tests in security_owner.test.mjs"
+  },
+  "precheck": {
+    "sha": "b6161f984a48de314815b0bf6412be04e7558620",
+    "exit": 1,
+    "finished_at": "2026-10-30T01:37:47Z",
+    "summary": "== the client: the same simulation inside Godot, and its screen ==: client contract: 1 break(s)"
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",

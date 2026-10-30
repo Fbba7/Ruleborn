@@ -15,7 +15,7 @@
 
 ## Handoff
 - Last verified commit: see the status file's `precheck`.
-- Done: B1 target lists carry no `rating`/`deviation`; B2 `shop.redeem` refuses an intent-less receipt past the month's cap (`monthly_cap`); B3 `ONE_PLAYER_ONE_ISLAND_S = 3600` caps each player-island pair per quarter in `fund.played`; B4 `joinCrew` needs a friend or constellation-mate of one member, a friend of every member for a 13-to-15 (`crew_needs_a_friend`); B5 exposed loot clamped to 750 (`FULL_CREW_CARRY`) at publish; B6 `universe.problems` returns `law_not_woven` for a law not finished in the realm's slots (seeded accounts stay exempt). Guards (G60) are not built, as decided.
+- Done: B1 target lists carry no `rating`/`deviation`; B2 `shop.redeem` refuses an intent-less receipt past the month's cap (`monthly_cap`); B3 `ONE_PLAYER_ONE_ISLAND_S = 3600` caps each player-island pair per quarter in `fund.played`; B4 `joinCrew` needs a friend or constellation-mate of one member, a friend of every member for a 13-to-15 (`not_friends`); B5 exposed loot clamped to 750 (`FULL_CREW_CARRY`) at publish; B6 `universe.problems` returns `law_not_woven` for a law not finished in the realm's slots (seeded accounts stay exempt). Guards (G60) are not built, as decided.
 - Test support: `server/test/setup.mjs` weaves the laws of a bundle for tests not about SR-16; `server/load.mjs` does the same for its population (a file outside the task's list, changed by three lines because the publish rule broke it; no other agent owns it).
 - `client/tests/share_tests.gd` needed no change: its island has no laws and the example server's accounts are seeded. Godot is not installed in this container, so the client suite was not run here.
 - Next step: SV-B7-B9.

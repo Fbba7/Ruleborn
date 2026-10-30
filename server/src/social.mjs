@@ -232,7 +232,7 @@ export class Social {
       const friend = (m) => this.service.friends.areFriends(account, m);
       const welcome = minor ? members.every(friend)
         : !members.length || members.some((m) => friend(m) || this.sameConstellation(account, m));
-      if (!welcome) throw new Refused(403, "crew_needs_a_friend");
+      if (!welcome) throw new Refused(403, "not_friends");
       this.db.prepare("INSERT INTO crew_members (crew, account, joined_at) VALUES (?, ?, ?)")
         .run(c.id, account, this.now());
       return this.crew(c.id, account);
