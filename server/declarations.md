@@ -132,7 +132,7 @@ Erased: gone. Severed: kept, under an account id that no longer leads to anyone 
 | `ratings` | severed | erased — severed on a deletion; deleted for an under-13 player | good: a record (F43) |
 | `defence_shares` | kept | kept | good: not about a person |
 | `workshop_items` | severed | severed — listed with no creator shown, or withdrawn if the player asked; an under-13 player's islands are withdrawn and their bytes deleted | good: a record (F43) |
-| `workshop_plays` | severed | erased — severed on a deletion; deleted for an under-13 player | good: a record (F43) |
+| `workshop_plays` | severed | erased — severed on a deletion; deleted for an under-13 player | 1 days after issuing it unsubmitted, its lease's life; a submitted play is a record kept for good (F43), keyed by an id that leads to no one once the account is deleted (`expireLapsed`) |
 | `workshop_completions` | severed | erased — severed on a deletion; deleted for an under-13 player | good: a record (F43) |
 | `workshop_ratings` | severed | erased — severed on a deletion; deleted for an under-13 player | good: a record (F43) |
 | `workshop_remixes` | severed | erased — severed on a deletion; deleted for an under-13 player | good: a record (F43) |

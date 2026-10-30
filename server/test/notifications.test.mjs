@@ -272,3 +272,21 @@ test("a changed reminder moves the day's waiting raids, and a reminder takes eve
   t.clock.now = Date.UTC(2026, 8, 25, 8, 0);
   assert.deepEqual(await n.deliver(() => assert.fail("already told")), []);
 });
+
+test("the day's raids are listed by reference: a later raid on record writes nothing, and the message still names every one (DB-4)", async () => {
+  const t = twoPlayers(true);
+  const n = t.service.notifications;
+  n.set(t.defender.account, { pushToken: "device-9", timeZone: "UTC" });
+  t.clock.now = Date.UTC(2026, 8, 24, 12, 0);
+  const first = raid(t, true);
+  const rows = () => t.service.db.prepare("SELECT id, data FROM notifications WHERE kind = 'raided'").all();
+  const stored = rows();
+  t.clock.now += 3 * HOUR;
+  const second = raid(t, false);
+  assert.deepEqual(rows().map((r) => ({ ...r })), stored.map((r) => ({ ...r })), "the second raid wrote nothing");
+  t.clock.now = Date.UTC(2026, 8, 25, 8, 0);
+  const pushed = [];
+  await n.deliver((_, m) => pushed.push(m));
+  assert.deepEqual(pushed, [{ kind: "raided", heists: [
+    { heist: first.token, grade: "clean" }, { heist: second.token, grade: "foiled" }] }]);
+});
