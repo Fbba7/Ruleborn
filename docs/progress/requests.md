@@ -21,6 +21,33 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ## Answered (30 October 2026, by the lead)
 
+- **K1-R2** (from K1): list `tools/ui_bake/` in README.md's tools listing,
+  and wire the bake's checks into `tools/check_all.sh`. Already granted in
+  the answer to AD-R2 below: P0-K1-bake-1 has `README.md` as an exception
+  for that one line, so K1 adds the line it proposed on its own branch,
+  runs and records the pre-check and marks the task ready. `check_all.sh`
+  stays the lead's: it adds `node tools/ui_bake/bake.js --check` and
+  `node --test tools/ui_bake/test/bake.test.js` in the candidate that
+  merges P0-K1-bake-1 (as for K1-R1). The lead restarts K1 and AD this
+  cycle, since both were blocked on this answer.
+- **SV-1** (from SV): confirm the regenerated `server/load.json` (57.74
+  billed rows a day for an engaged player, was 61.74). Confirmed. Both it and
+  `server/declarations.md` are rebuilt by checks `tools/check_all.sh` runs
+  (`node server/load.mjs`, `node server/src/privacy.mjs`) from files the task
+  owns, so SV-B7-B9 now has them as exceptions. The lead updates the figure
+  quoted in `docs/decisions/owner-decisions.md` and `docs/security/auth.md`
+  in the candidate that merges SV-B7-B9, since it is only true once B8 lands.
+- **AD-R2** (from AD): list `tools/ui_gate/` in README.md's tools listing.
+  P0-AD-sheet now has `README.md` as an exception, for that one line
+  (`agent-protocol.md`, "The candidate's checks"); AD adds the line it
+  proposed on its own branch and re-runs the pre-check. The same exception
+  is on P0-K1-bake-1 for `tools/ui_bake/`, and on BT-04a, BT-06 and BT-08,
+  the first tasks to start `tools/gate/`, `tools/docs/` and `tools/build/`.
+- **AD-R3** (from AD): wire `python3 tools/ui_gate/sheet.py --self-test`
+  into `tools/check_all.sh`. Yes: the lead adds it, in its own section, in
+  the candidate that merges P0-AD-sheet, and a line for numpy under
+  `checks.md`'s "What it needs".
+
 - **K1-R1** (from K1): wire the bake's checks into `tools/check_all.sh`.
   Yes. The lead adds `node tools/ui_bake/bake.js --check` in the candidate
   that merges P0-K1-bake-1, and `python3 tools/ui_bake/check_screens.py` in

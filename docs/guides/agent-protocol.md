@@ -441,7 +441,11 @@ passes on the candidate; every other agent pushes only to its own branch.
 path must match the task's `files` or an exception the lead granted:
 `python3 tools/coord/owners.py diff <task_id> <main> <ready_sha>` (backlog
 task BT-02). `python3 tools/coord/owners.py claims` checks that the tasks
-being worked on at the same time have disjoint `files`.
+being worked on at the same time have disjoint `files`. A task whose `files`
+start a new folder under `tools/` has `README.md` as an exception, for that
+folder's one line in the tools listing and nothing else, because
+`tools/check_docs_consistency.py` fails until the folder is listed and the
+line cannot land on main before the folder does.
 
 **Bookkeeping commits.** Coordination data stays on main (decision D-01,
 applied): no session is shown to push anywhere but its own branch, and

@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-30T21:30:00Z",
+  "updated_at": "2026-10-30T22:45:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
@@ -140,8 +140,14 @@
       "estimate_h": 2,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-10-30T21:55:00Z",
+        "seen_at": "2026-10-30T22:06:16Z",
+        "lease_until": "2026-10-31T00:55:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
@@ -173,12 +179,21 @@
       "estimate_h": 3,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "blocked",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-10-30T21:53:00Z",
+        "seen_at": "2026-10-30T22:35:47Z",
+        "lease_until": "2026-10-31T00:53:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     },
     {
       "id": "P0-AD-golden",
@@ -272,12 +287,21 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "blocked",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-10-30T21:55:00Z",
+        "seen_at": "2026-10-30T22:28:55Z",
+        "lease_until": "2026-10-31T00:55:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     },
     {
       "id": "P0-K1-bake-2",
@@ -580,6 +604,10 @@
         "server/privacy.json",
         "docs/guides/server.md"
       ],
+      "exceptions": [
+        "server/load.json",
+        "server/declarations.md"
+      ],
       "deps": [
         "SV-B1-B6"
       ],
@@ -595,8 +623,14 @@
       "estimate_h": 4,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "SV",
+        "branch": "claude/server-decisions",
+        "claimed_at": "2026-10-30T21:55:00Z",
+        "seen_at": "2026-10-30T22:14:50Z",
+        "lease_until": "2026-10-31T00:55:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
@@ -806,7 +840,10 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     },
     {
       "id": "BT-04b",
@@ -922,7 +959,10 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     },
     {
       "id": "BT-07",
@@ -978,7 +1018,10 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     }
   ],
   "idle_queue": [

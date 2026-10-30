@@ -1,1 +1,13 @@
-{"agent":"lead","updated_at":"2026-10-30T22:00:00Z","expected_next_update_by":null,"cycle":0,"merging":null,"last_merged":{"task_id":"SV-B1-B6","sha":"1c7005fd"},"alerts":[],"next_step":"The launcher starts the first lead cycle session; that cycle starts K1, AD, AIA and SV"}
+{
+  "agent": "lead",
+  "updated_at": "2026-10-30T21:55:00Z",
+  "expected_next_update_by": "2026-10-30T23:10:00Z",
+  "cycle": 1,
+  "merging": null,
+  "last_merged": {
+    "task_id": "SV-B1-B6",
+    "sha": "1c7005fd"
+  },
+  "alerts": [],
+  "next_step": "Read the status of K1 (P0-K1-bake-1), AD (P0-AD-sheet), AIA (P0-AIA-board-2) and SV (SV-B7-B9), started at 21:52Z; merge what is ready; restart any agent past its expected_next_update_by"
+}
