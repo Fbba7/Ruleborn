@@ -190,8 +190,8 @@ const service = new Service({
   tokenKeys: process.env.RULEBORN_TOKEN_KEYS ?? "",
   // The owner's decision on refresh's billed row (docs/security/auth.md):
   // RULEBORN_REFRESH_ROTATE_HOURS, unset, rotates the refresh token once a
-  // day (24); 0 rotates it on every refresh (one row a session an hour).
-  refreshRotateMs: rotateHoursOf(process.env) * 60 * 60 * 1000,
+  // day (24; on every refresh under --example); 0 rotates it on every refresh (one row a session an hour).
+  refreshRotateMs: rotateHoursOf(process.env, { example: process.argv.includes("--example") }) * 60 * 60 * 1000,
   verifyPlatform: platforms.verify,
   preparePlatform: platforms.prepare,
   verifyReceipt: receipts({ appStore: storeKit ? { roots: storeKitRoots, bundleId, sandbox } : null, play }),

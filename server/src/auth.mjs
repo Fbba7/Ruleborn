@@ -70,8 +70,10 @@ export function deviceOf(d) {
  *  rotates once a day unless RULEBORN_REFRESH_ROTATE_HOURS says otherwise;
  *  0 rotates it on every refresh. Whole hours, 0 to 720. */
 export const ROTATE_HOURS_DEFAULT = 24;
-export function rotateHoursOf(env) {
-  const h = Number(env.RULEBORN_REFRESH_ROTATE_HOURS ?? ROTATE_HOURS_DEFAULT);
+export function rotateHoursOf(env, { example = false } = {}) {
+  // The example server (--example) is for trying the game and its tests: it
+  // rotates on every refresh, as the device's contract is written.
+  const h = Number(env.RULEBORN_REFRESH_ROTATE_HOURS ?? (example ? 0 : ROTATE_HOURS_DEFAULT));
   if (!Number.isInteger(h) || h < 0 || h > 24 * 30) {
     throw new Error("RULEBORN_REFRESH_ROTATE_HOURS is a whole number of hours, 0 to 720");
   }

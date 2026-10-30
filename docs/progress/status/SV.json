@@ -19,10 +19,10 @@
     "next_step": "record the pre-check at 85a6c76, run client suite, mark ready"
   },
   "precheck": {
-    "sha": "85a6c767bc9b0d70720fa9ebe8a92fb996948b48",
-    "exit": 127,
-    "finished_at": "2026-10-30T22:12:43Z",
-    "summary": "== the client: the same simulation inside Godot, and its screen ==: tools/check_all.sh: line 55: gdlint: command not found"
+    "sha": "a2287d5184e9dd82737bd879eadb6fd5fc77eded",
+    "exit": 1,
+    "finished_at": "2026-10-30T22:30:59Z",
+    "summary": "== the client: the same simulation inside Godot, and its screen ==:   FAILED: against the server: signed in with the platform, refreshed before the hour with the refresh token rotated, and signed out \u2014 the token refused at once after"
   },
   "gate_request": null,
   "ready_sha": null,

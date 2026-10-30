@@ -309,6 +309,7 @@ test("rotating the refresh token once a day writes once a day, and a copy is sti
 test("production rotates the refresh token once a day unless the host says otherwise (B9)", () => {
   assert.equal(ROTATE_HOURS_DEFAULT, 24);
   assert.equal(rotateHoursOf({}), 24);
+  assert.equal(rotateHoursOf({}, { example: true }), 0, "the example server rotates on every refresh");
   assert.equal(rotateHoursOf({ RULEBORN_REFRESH_ROTATE_HOURS: "0" }), 0, "0, every refresh");
   assert.equal(rotateHoursOf({ RULEBORN_REFRESH_ROTATE_HOURS: "72" }), 72);
   assert.throws(() => rotateHoursOf({ RULEBORN_REFRESH_ROTATE_HOURS: "721" }), /0 to 720/);

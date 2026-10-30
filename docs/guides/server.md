@@ -123,7 +123,7 @@ not written down here (a question for the owner, in
   writes it, a later one writes nothing, and the message reads the day's
   heists from `heists_by_defender` when it is sent.
 - **A refresh token** rotates only past 24 hours (`RULEBORN_REFRESH_ROTATE_HOURS`
-  unset is 24; 0 rotates it on every refresh); inside the span a refresh
+  unset is 24, or 0 under `--example`; 0 rotates it on every refresh); inside the span a refresh
   writes nothing.
 
 ## Generated files the server reads
