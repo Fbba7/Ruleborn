@@ -1,20 +1,20 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-30T23:25:00Z",
+  "updated_at": "2026-10-30T23:58:00Z",
   "expected_next_update_by": "2026-10-31T00:00:00Z",
   "cycle": 2,
   "merging": {
-    "candidate_sha": "4f0f94a2",
+    "candidate_sha": "fd2c9662",
     "task_ids": [
-      "P0-AIA-board-2",
-      "P0-K1-bake-1"
+      "P0-K1-bake-1",
+      "P0-AD-sheet"
     ],
-    "started_at": "2026-10-30T23:25:49Z",
-    "expires_at": "2026-10-31T00:25:49Z"
+    "started_at": "2026-10-30T23:58:00Z",
+    "expires_at": "2026-10-31T00:58:00Z"
   },
   "last_merged": {
-    "task_id": "SV-B1-B6",
-    "sha": "1c7005fd"
+    "task_id": "P0-AIA-board-2",
+    "sha": "95e204a1"
   },
   "alerts": [],
   "next_step": "Take ready tasks (expected: P0-AIA-board-2, SV-B7-B9, P0-K1-bake-1, P0-AD-sheet) through the merge queue with the promised check_all.sh lines; restart any agent past its expected_next_update_by"
