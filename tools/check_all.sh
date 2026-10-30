@@ -148,6 +148,12 @@ python3 tools/coord/owners.py --self-test
 if [ -f docs/progress/backlog.json ]; then python3 tools/coord/owners.py claims; fi
 
 echo
+echo "== the UI wave's style board: its tokens, contrast and colours (AIA-R1) =="
+node art/ui/board/build_tokens.mjs --check
+node art/ui/board/check_board.mjs
+node art/ui/board/check_board.mjs --self-test
+
+echo
 echo "== this repository's own documents agree with each other =="
 python3 tools/check_docs_consistency.py --self-test
 python3 tools/check_docs_consistency.py

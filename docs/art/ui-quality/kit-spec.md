@@ -1,40 +1,44 @@
 # The Ruleborn UI kit: specification (T16; owner and freeze rules by T17)
 
+**Contract:** version 1. Sections 2–6 are frozen, version 1, as written by K1 on 30 October 2026; the lead merges this page when its checks pass, and they take effect at AD's approval at O2 (`report.md` section 3.4) (`docs/guides/agent-protocol.md`, worked example D). **Owner:** K1. **Consumers:** S1, S2, S3 (the screens), AIA and AIA-2 (the art the bake reads), AD and the gate (the catalogue and the names), and the lead (the hotspot files and `tools/check_all.sh`).
+
 This is the kit the UI wave builds against: what the components are, the states each one has, the tokens they share, how they are named and laid out on disk, how a screen uses them, who may add one, and what happens to today's kit. The plan that builds it is `report.md` section 3. Where this page and the design document disagree, the design document wins (§23.5), and the disagreement is an owner decision in `report.md` section 12.
 
-**This page is the kit contract.** Its owner is K1, the kit's one owner (`report.md` section 3.1). Sections 2–6 are frozen as version 1 at the end of the wave's phase 0, when the owner approves them with the style board (O2), and before any screen is built. After the freeze, screens consume the kit read-only, and a change to these sections goes through K1, needs the lead's approval, gets a dated line in section 9 with a new version, and counts as delivered only when every agent that uses the kit has acknowledged it (`docs/guides/agent-program.md`).
+**This page is the kit contract.** Its owner is K1, the kit's one owner (`report.md` section 3.1). Sections 2–6 are frozen as version 1 at the end of the wave's phase 0, when AD approves them with the style board (O2, `report.md` section 3.4), and before any screen is built. After the freeze, screens consume the kit read-only, and a change to these sections goes through K1, needs the lead's approval, gets a dated line in section 9 with a new version, and counts as delivered only when every agent that uses the kit has acknowledged it (`docs/guides/agent-program.md`).
 
 ## 1. Principles
 
 1. **One kit for every screen.** No screen draws its own chrome. Every panel, button, bar, badge and frame comes from the kit. A screen that needs something new asks for it (section 7).
 2. **Art is baked, words are live.** Every surface is a baked picture from the kit's atlas: a 9-slice or a sprite. Every word is a live label from the strings tables, drawn in its own layer above the art (`report.md` section 10.4).
-3. **Few parts.** At most 4 button styles, 3 frame families, 1 ribbon, 1 badge and 1 currency pill (rubric quality 11). Today's kit has 108 materials; this kit has 35 skins (section 8.2).
+3. **Few parts.** At most 4 button styles, 3 frame families, 1 ribbon, 1 badge and 1 currency pill (rubric quality 11). Today's kit has 106 materials; this kit has 35 skins (section 8.2).
 4. **Every state is drawn.** Each component has its states as baked faces, not as tints computed at run time, so pressed, disabled and locked look made, not dimmed.
 5. **Every component has its high-contrast twin** and its reduced-motion form, or it does not ship.
 6. **One API.** Screens keep calling the kit's functions they call today (`KitControls.action`, `KitStatus.resource` and the rest); the kit changes underneath. No screen names an atlas region.
 
 ## 2. Tokens
 
-The tokens live in `client/ui/tokens.json` (K1's file), which already holds most of them. This section is the contract; the file is the one home of each value. Values here are quoted from it on 28 October; where the plan changes one, the change is marked.
+*Frozen, version 1.*
+
+The tokens live in `client/ui/tokens.json` (K1's file), which already holds most of them. This section is the contract; the file is the one home of each value. Values here are quoted from it on 30 October (checked by K1 at the freeze); where the plan changes one, the change is marked. If a value here and the file ever differ, the file is right and this table is corrected by a dated line in section 9.
 
 ### 2.1 Colour roles
 
 | Role | Token(s) today | Value | Rule |
 |---|---|---|---|
-| Ink (every outline) | `ink` | #1A0C14 | §21.8: each surface family outlined in ink |
-| Backdrop (menus) | `night_top` … `night_bottom` | #171046 to #2C3AA8 | §21.2: menus stand on a night backdrop |
-| Dark surface | `card_top`, `card_bottom` | #261A4C to #1A1134 | §21.8 |
+| Ink (every outline) | `ink_line`; `ink` and `ink_deep` for ink-coloured fills and icon strokes | #1A0C14; #221C3A; #120C2A | §21.8: each surface family outlined in ink |
+| Backdrop (menus) | `night_top`, `night_mid`, `night_bottom` | #2E1F5E, #140C30, #0A0620 | §21.2: menus stand on a night backdrop |
+| Dark surface | `card_top`, `card_bottom` | #261A4C to #120A28 | §21.8 |
 | Glass over the world | `glass` | #140A16 at 78% | §21.8; none in high contrast |
-| Leather (secondary buttons) | `leather_*` | from the design | §21.8 |
+| Leather (secondary buttons) | `leather_light`, `leather_mid`, `leather_dark`, `leather_rim`; words `text_on_leather` | #6A3E52, #3A2030, #1E1018, rim #B8741E; words #F6E6C8 | §21.8 |
 | Parchment surface | `parchment_top`, `parchment_bottom` | #FFFBF0 to #F1E3C4 | §21.8 |
-| Text on dark: primary, secondary, tertiary | `text_on_night`, `_2`, `_3` | #F3EEFF; secondary and tertiary no darker than #B8A8D8, tertiary bold | §21.8 |
-| Text on parchment | `paper`/`ink` pair | brown ink #2A1A10 | §21.8 |
-| Main action | `gold`, `gold_top`, `gold_bottom` | gold | §21.8: gold for main actions |
-| Alarm | `alarm_fill`, `alarm_text`, `on_alarm` | fill #E2536B; words #FF9AAA bold on dark, #9A1B32 bold on parchment; paper on #B3203A | §21.8 |
-| Success | `success`, `success_text` | fill #3FBF7F; words #3FBF7F on dark, #155A38 bold on parchment | §21.8 |
+| Text on dark: primary, secondary, tertiary | `text_on_night`, `text_on_night_2`, `text_on_night_3` | #F3EEFF, #E2D9F7, #B8A8D8 (no darker than #B8A8D8; tertiary bold) | §21.8 |
+| Text on parchment: primary, secondary, tertiary | `parchment_ink`, `parchment_text_2`, `parchment_text_3` | #2A1A10, #54392A, #8A5A1C | §21.8 |
+| Main action | `gold_top`, `gold`, `gold_bottom`, `gold_rim`; words `text_on_gold` | #F9DE9C, #E9B65C, #C88A35; words #1B1430 | §21.8: gold for main actions |
+| Alarm | `alarm`, `alarm_fill`, `alarm_text`, `alarm_text_on_night`, `on_alarm` | colour #E2536B; fill under words #B3203A with paper words (`on_alarm`, #FCFBFF); words #9A1B32 bold on parchment; words #FFB0BC bold on dark (`alarm_text_on_night`: lighter than §21.8's #FF9AAA, which falls under APCA Lc 60 on glass over the day sky) | §21.8 |
+| Success | `success`, `success_text`, `success_text_on_night` | fill #3FBF7F; words #8FF0A8 on dark, #155A38 bold on parchment | §21.8 |
 | School colours and shadows | `motion` … `spirit`, `*_shadow`, `*_light` | §21.2's six | One set, no palette switch (§20.8) |
-| Rank frames | `frame_oak`, `frame_silver`, `frame_gold`, `frame_prismatic` | gradients | The only rank ladder the kit draws |
-| Scrim | `scrim` | dark at the design's opacity | Modals dim the scene |
+| Rank frames | gradients `frame_oak`, `frame_silver`, `frame_gold`, `frame_prismatic` | gradients | The only rank ladder the kit draws |
+| Scrim | gradient `scrim` | #0A0620 at 70% to 85% | Modals dim the scene |
 | High contrast | `color_high_contrast.*` | 15 overrides | §21.8: opaque cards, 3-point outlines, secondary raised to primary, no glass |
 
 No word carries opacity (§21.8). No information is carried by colour alone (§20.8): every alarm, success, school and rank also has a shape or a word.
@@ -111,6 +115,8 @@ Overshoot is not used unless the owner decides D3. The reward sequence's own cur
 
 ## 3. States
 
+*Frozen, version 1.*
+
 Every state is defined once here; section 4 says which components have which.
 
 | State | Code | How it looks | Rules |
@@ -126,6 +132,8 @@ Every state is defined once here; section 4 says which components have which.
 | Reduced motion | RM | The component's reduced form (`report.md` section 10.3) | Every moving component has one |
 
 ## 4. Component inventory
+
+*Frozen, version 1.*
 
 Every component the five key screens (home, heist, result, character, settings) and the menus need, from today's kit (`client/ui/kit_*.gd`, `client/scripts/ui.gd`), T10's local layer (`client/scripts/screen_*.gd`), the heist proof and §21.8. "Today" names what draws it now. States use section 3's codes; HC applies to all.
 
@@ -207,6 +215,8 @@ Every component the five key screens (home, heist, result, character, settings) 
 
 ## 5. Anatomy: how a component is baked
 
+*Frozen, version 1.*
+
 - **Faces.** A component's face is a 9-slice (frames, panels, buttons, bars, pills) or a sprite (discs, pips, bells, icons). Each face is baked per state that changes its picture: normal, pressed, disabled, locked; selected and attention are overlays (a rim, a badge), so they combine with any face.
 - **Layers, bottom to top:** the face; the icon; overlays (selected rim, lock, attention badge); then, in their own z layer, the live words (`report.md` section 7's rule 2). Portraits and other textured polygons are separate canvas items.
 - **School variants** are one neutral face tinted by vertex colour, with the ink, gloss and outline in an untinted layer (`report.md` section 10.5).
@@ -214,6 +224,8 @@ Every component the five key screens (home, heist, result, character, settings) 
 - **Budget per component:** one draw call for its faces, batched with every other component in the same atlas, plus its words' layer.
 
 ## 6. Inside the kit: names, files and use
+
+*Frozen, version 1.*
 
 ### 6.1 Names
 
@@ -230,8 +242,10 @@ Every component the five key screens (home, heist, result, character, settings) 
 | Tokens | `client/ui/tokens.json` | K1 |
 | Palette for the art | `art/ui/palette.json` (generated from the tokens by the bake) | AIA |
 | Skin sources | `art/ui/kit/<skin>/<shape>.svg` | AIA |
-| Baked atlases and manifests | `client/ui/art/kit.webp`, `kit_hc.webp`, `kit.json` (written only by the bake) | AIA, through K1's bake |
+| Baked atlases and manifests | `client/ui/art/<family>.webp`, `<family>_hc.webp`, `<family>.json`: `kit`, `icons_48`, `icons_256`, `motion` (written only by the bake, section 6.6) | AIA, through K1's bake |
 | Kit code | `client/ui/kit_*.gd`, `client/scripts/ui.gd`, `client/ui/kit_skin.gd` | K1 |
+| The switch per skin | `client/ui/kit_families.json` (section 6.7) | K1 |
+| The bake, its guards and their baselines | `tools/ui_bake/**`, `tools/ui_bake/budgets.json` | K1 |
 | Catalogue shot | `client/tests/shots/ui_kit_catalogue.gd` | K1 |
 | Catalogue stills | `docs/art/shots/ui-bake/catalogue-*.png` | K1 |
 | Gate verdicts | `docs/art/ui-quality/gate/verdicts/` | the gate |
@@ -241,7 +255,7 @@ The palette is generated from `tokens.json`, so the colours have one home.
 
 ### 6.3 How a screen uses a component
 
-- Through the kit's function, with words as string keys and a spoken name: `KitControls.big_action("HEIST_GET_OUT", "door", on_press)`. The function picks the skin, the states, the words' layer and the reduced form.
+- Through the kit's function (section 6.5), with words from the strings tables (`Strings.t(key)`, never a literal) and a spoken name where the function takes one: `KitControls.big_action("door", Strings.t("HEIST_GET_OUT"), on_press)`. The function picks the skin, the states, the words' layer and the reduced form.
 - A screen may choose a variant ("primary", "danger") and a state ("disabled", with its reason key). It may not choose colours, radii, strokes or atlas regions.
 - A screen never adds a `StyleBoxFlat` with a fill, a `draw_*` call for chrome, or a texture of its own for chrome. K1's check (section 7) counts them and refuses an increase.
 
@@ -255,11 +269,92 @@ The palette is generated from `tokens.json`, so the colours have one home.
 
 Each page is one PNG in `docs/art/shots/ui-bake/` under 400 KB. The gate checks the catalogue as the "Kit art" class (`report.md` section 3.5), page by page at phone size. A test checks that the catalogue covers the inventory: every (component, state) pair in section 4 has a piece in the manifest and a place on a page, in both atlases.
 
+### 6.5 The functions screens call
+
+These are the kit's entry points, as they stand in the code on 30 October. A screen draws chrome only through them. Their names, parameter order and return types are frozen: within version 1 a function may gain a new optional parameter at the end, a new variant or look name, or a new function beside it (each a dated line in section 9), but nothing is renamed, reordered or removed. A parameter that is a look or a material name (`look`, `kind`, `tone`) takes the names of `tokens.json`'s materials or section 8.2's skins; the kit maps one onto the other (section 6.7).
+
+| Class (file) | Functions |
+|---|---|
+| `UI` (`client/scripts/ui.gd`) | `px`, `text_px`, `motion_ms`, `frame`, `scroll`, `field`, `label`, `title`, `status`, `set_status`, `plate`, `panel`, `dress`, `clear_box`, `root_theme`, `button`, `action`, `set_look`, `bold_font`, `fit`, `relabel`, `fit_to`, `set_outline`, `narrow`, `row`, `grow`, `banner`, `school_mark` |
+| `KitControls` | `chip`, `set_chip`, `action2`, `small_disc`, `tile`, `token`, `icon_button`, `round_action`, `toggle_row`, `school_button`, `search`, `big_action`, `upgrade` |
+| `KitNav` | `header`, `rule`, `back`, `segmented`, `top_bar`, `hero`, `celebrate`, `logo`, `tabs` |
+| `KitPanels` | `section`, `row`, `sheet`, `dialog`, `link`, `locked`, `chapter`, `album`, `quest`, `notice` |
+| `KitStatus` | `badge`, `pill`, `set_pill`, `hint`, `resource`, `set_resource`, `plate`, `progress`, `strain`, `island_label`, `tag`, `xp`, `stat`, `sash` |
+| `KitCards` | `school_chip`, `law_card`, `album_card`, `product`, `build_card`, `law_disc`, `stat`, `portrait`, `reward`, `law_chip`, `fact`, `season_reward`, `tone_ink`, `ability` |
+| `KitSocial` | `avatar`, `tag`, `feed_row`, `log_row`, `text_link` |
+| `KitHud` | `keeper`, `goal`, `pips`, `meter`, `clock`, `dial`, `streak`, `week`, `crew`, `alarm`, `figures`, `loot`, `sage` |
+| `KitTabs`, `KitSwitch`, `KitBar` | `make` |
+| `KitLayout` | `flow`, `strip`, `columns`, `grid_columns`, `grid`, `tap` (layout only: it draws nothing) |
+| `KitSkin` | `material`, `clear`, `panel`, `button` (for other tracks' skins: `FxSkin`, `OverlaySheet`, `StageHeroSkin`) |
+| `Motion` | `enter`, `cascade`, `pop`, `sheet_in`, `press`, `fill`, `bob`, `screen_in`, `glow` |
+| `Tokens` | `color`, `number`, `list`, `shape`, `schools`, `paint`, `gradient`, `gradient_shape`, `material`, `materials`, `type_role`, `type_roles`, `font` (values for words, layout and data drawing; never for chrome of a screen's own, section 6.3) |
+| `Icons` | `has`, `texture`, `names`, `view` |
+| Data drawing (section 4.5) | `KitChart.make`, `KitHex.make`, `KitRail.make`, and the `KitTris`, `KitTicks`, `KitRing` nodes |
+
+`RbTheme`, `RbBox` and `KitSkin`'s switch (section 6.7) are the kit's insides: screens do not call them, except `RbTheme.of` and `RbTheme.of_material`, which screens call today and keep until they move (section 8.1). The `Kit*` classes in `client/world/` (`KitStyle`, `KitGround`, `KitMap` and the rest) are the world's, not this kit's.
+
+### 6.6 The manifest's format
+
+Each bake family (`kit`, `icons_48`, `icons_256`, `motion`) is one atlas pair and one manifest in `client/ui/art/`: `<family>.webp`, `<family>_hc.webp` and `<family>.json`. The high-contrast atlas has the same size and the same layout as the normal one, so one manifest serves both and the kit swaps the texture, never the regions. The manifest is JSON, written only by `tools/ui_bake/bake.js`, with sorted keys and a final newline, so a rebake is byte for byte:
+
+```json
+{
+  "format": 1,
+  "family": "kit",
+  "sources_hash": "sha256:<64 hex digits>",
+  "atlas": {"normal": "kit.webp", "high_contrast": "kit_hc.webp", "width": 1024, "height": 1024},
+  "px_per_point": 6,
+  "pieces": {
+    "button_primary__capsule__normal": {"x": 2, "y": 2, "w": 132, "h": 66, "slice": {"l": 30, "t": 24, "r": 30, "b": 30}, "tint": false},
+    "disc_school__48__normal": {"x": 136, "y": 2, "w": 288, "h": 288, "slice": null, "tint": true},
+    "num_gold_7": {"x": 426, "y": 2, "w": 64, "h": 84, "slice": null, "tint": false, "advance": 58}
+  }
+}
+```
+
+| Field | Rule |
+|---|---|
+| `format` | The manifest format's version: 1. A new field is optional and does not change it; a removed or renamed one does |
+| `family` | The bake family; the file names follow it |
+| `sources_hash` | SHA-256 over the family's sources in `art/ui/` (each source's path relative to `art/ui/`, a zero byte, its bytes, a zero byte, in sorted path order) and the bake's own scripts. `bake.js --check` recomputes it and compares, without rendering |
+| `atlas` | The two textures, their size in pixels (each side a power of two, 2048 at most, section 10.1 of `report.md`) |
+| `px_per_point` | The pixels per point the pieces are baked at: the size they show at 200% text (section 5). The kit draws a piece at `UI.px(1) / px_per_point` of its pixel size, scaled with the text |
+| `pieces` | One entry per piece, named as section 6.1 says. `x`, `y`, `w`, `h` are its rectangle in pixels, the same in both atlases. `slice` is its 9-slice margins in pixels, or `null` for a sprite. `tint` is true for a neutral school piece the kit tints by vertex colour (section 5). `advance` is a numeral's fixed advance in pixels, on numerals only |
+
+Every piece in a manifest has its twin in the `_hc` atlas, so the bake refuses a source without its high-contrast form (section 3). The kit reads only this file and the two atlases: no screen reads them.
+
+### 6.7 The switch per skin
+
+Each of section 8.2's 35 skins has one switch, in `client/ui/kit_families.json`: `{"<skin>": false, ...}`, every skin off until its art passes the gate (section 10.9 of `report.md`). Off, every material that maps onto the skin draws as today, through the code-drawn box (`RbBox`). On, it draws from the `kit` atlas. A piece the manifest lacks falls back to the code-drawn box and is logged, so a screen is never blank. The kit maps a material onto its skin by section 8.2's table; screens never name a skin's switch, and turning one on changes every screen that uses it together. A skin is switched on by K1's commit to that file, after the lead records the gate's pass.
+
+### 6.8 The ownership map of the hotspot files
+
+`report.md` section 3.1 names the files many agents touch. Each has one owner; anyone else asks the owner by a request in their own status file (section 7).
+
+| Hotspot file | Owner | Note |
+|---|---|---|
+| `client/ui/tokens.json` | K1 | A value the design document sets changes only by owner decision first (section 7) |
+| `client/ui/rb_theme.gd` (the theme) | K1 | |
+| `client/ui/kit_skin.gd` (`KitSkin`) | K1 | |
+| `client/ui/kit_families.json` (the switches) | K1 | |
+| `client/scripts/ui.gd` and the rest of `client/ui/**` except `client/ui/art/**` | K1 | |
+| `client/ui/art/**` (atlases and manifests) | AIA | Written only by K1's bake; neither edits them by hand |
+| `art/ui/palette.json` | AIA | Generated from `tokens.json` by the bake; never edited by hand |
+| `art/ui/**` except `art/ui/icons/**` | AIA | |
+| `art/ui/icons/**` | AIA-2 | |
+| `tools/ui_bake/**`, its baselines in `tools/ui_bake/budgets.json` included | K1 | A baseline rises only by request to K1 with the lead's approval, recorded beside it |
+| `docs/art/ui-quality/gate/**` except `gate/verdicts/`, and `tools/ui_gate/**` | AD | |
+| `docs/art/ui-quality/gate/verdicts/**` | Lead | Written as the gate's launcher |
+| `client/project.godot`, the autoload registries, `client/export_presets.cfg` | Lead | |
+| `tools/check_all.sh` | Lead | A new check is wired in by request to the lead |
+| `client/i18n/strings.csv` | One owner at a time, named by the backlog's `strings_owner` (the lead on 30 October) | New keys are asked of that owner |
+| `docs/progress/backlog.json`, `requests.md`, `owner-inbox.md` | Lead | |
+
 ## 7. Governance
 
 - **Who adds a component.** Only K1 (its code) and AIA (its art), and only on a request. A screen agent that needs something writes a request in its own status file (never in another agent's file): what it needs, on which screen, and why no component in section 4 fits.
 - **First, reuse.** K1 answers each request within the day, in the request log below: use an existing component or variant (most requests end here), add a variant, or add a component.
-- **A new component passes the gate** like kit art (`report.md` section 3.5) and also: it uses only tokens; it has every state section 3 gives its kind, and its high-contrast twin; it keeps rubric quality 11's counts (4 button styles, 3 frame families, 1 ribbon, 1 badge, 1 currency pill), or the owner approves going over; it appears on the catalogue sheet; and this page lists it.
+- **A new component passes the gate** like kit art (`report.md` section 3.5) and also: it uses only tokens; it has every state section 3 gives its kind, and its high-contrast twin; it keeps rubric quality 11's counts (4 button styles, 3 frame families, 1 ribbon, 1 badge, 1 currency pill), or AD approves going over; it appears on the catalogue sheet; and this page lists it.
 - **Changes to tokens** go through K1, and a change to a value the design document sets (a colour, a size floor, a timing) is an owner decision first.
 - **The check.** K1 adds `tools/ui_bake/check_screens.py` to check_all: the number of fill `StyleBoxFlat`s, chrome `draw_*` calls and chrome textures in `client/scripts/` and `client/world/` may not rise above its recorded count, and falls as screens move. Today's 383 `draw_*` and `FxPen` calls (`report.md` section 2) are the starting count, less the data drawing of section 4.5.
 - **This page changes** with a dated line in section 9, by K1. After the freeze, a change to sections 2–6 also needs the lead's approval and every consumer's acknowledgement (see the top of this page).
@@ -275,7 +370,7 @@ Each page is one PNG in `docs/art/shots/ui-bake/` under 400 KB. The gate checks 
 
 | Today | What it is | Fate | Into |
 |---|---|---|---|
-| `tokens.json` | Colours, sizes, motion, type, 108 materials | Kept | Section 2; materials consolidated into 35 skins (8.2) |
+| `tokens.json` | Colours, sizes, motion, type, 106 materials | Kept | Section 2; materials consolidated into 35 skins (8.2) |
 | `RbBox`, `rb_box.gdshader` | The code-drawn box | Kept as the fallback, then dropped | Each material family's switch (`report.md` section 10.9); dropped when every family is on |
 | `RbTheme` | Godot themes per material | Re-skinned | Its styleboxes become texture-backed |
 | `KitSkin` | Maps surface names to materials | Kept and extended | The switch per family; skin lookup |
@@ -297,7 +392,7 @@ Each page is one PNG in `docs/art/shots/ui-bake/` under 400 KB. The gate checks 
 
 ### 8.2 Materials into skins
 
-Today's 108 materials become 35 baked skins. A material not listed is mapped by its family in the same way.
+Today's 106 materials become 35 baked skins. A material not listed is mapped by its family in the same way.
 
 | Skin | Today's materials |
 |---|---|
@@ -306,7 +401,7 @@ Today's 108 materials become 35 baked skins. A material not listed is mapped by 
 | `button_tertiary` | `ghost` |
 | `button_danger` | `red`, `banner_alarm`, `tag_alarm` |
 | `success` | `green`, `green_muted`, `banner_success`, `tag_success`, `reward_green` |
-| `panel_dark` | `card`, `card_selected`, `card_gold`, `album`, `fact`, `ability`, `plate`, `plate_dark` |
+| `panel_dark` | `card`, `card_selected`, `card_gold`, `album`, `fact`, `ability`, `plate`, `plate_dark`, `banner_info` |
 | `panel_glass` | `glass`, `field_glass`, `tag_dark` |
 | `panel_parchment` | `parchment`, `parchment_done`, `sheet_parchment` |
 | `well` | `well` |
@@ -335,3 +430,4 @@ That is 35 skins, counting each rank frame and each of the tab bar's three, agai
 
 - 28 October: written by T16 for the UI wave.
 - 29 October: T17 (plan v3) made K1 the owner, added the freeze at the end of phase 0, and moved component requests into the requesters' own status files with this page's request log.
+- 30 October: K1 checked sections 2–6 against `client/ui/tokens.json` and the kit's code and froze them as version 1. It corrected the colour rows to the file's values (ink, backdrop, dark surface, leather, text on dark and on parchment, gold, alarm, success, scrim), counted the materials (106, not 108; `banner_info` mapped to `panel_dark`), put section 6.3's example in `big_action`'s real order, and added sections 6.5 (the functions screens call), 6.6 (the manifest's format), 6.7 (the switch per skin) and 6.8 (the ownership map of the hotspot files).

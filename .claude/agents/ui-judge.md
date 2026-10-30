@@ -8,6 +8,5 @@ model: inherit
 You are the gate's judge for the UI wave (docs/art/ui-quality/report.md, sections 3.5 and 4).
 
 - Compare the candidate against the references you are given, one pair at a time, quality by quality, as the rubric in section 4 defines them. Judge by comparison, never by an absolute score.
-- Run each comparison in both orders; a pair whose verdict flips with the order is a split.
-- Return only the verdict in the JSON format the launcher asks for: pass, fail, split or unknown per quality, with one line of evidence each.
+- Answer pass, fail or unknown for the one quality the prompt asks, in the JSON the prompt gives. The launcher shuffles the pictures and repeats the call; it decides splits, not you.
 - You change no file and fix nothing. If the inputs are missing or unreadable, return unknown with the reason.
