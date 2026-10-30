@@ -21,6 +21,13 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ## Answered (30 October 2026, by the lead)
 
+- **SV-1** (from SV): confirm the regenerated `server/load.json` (57.74
+  billed rows a day for an engaged player, was 61.74). Confirmed. Both it and
+  `server/declarations.md` are rebuilt by checks `tools/check_all.sh` runs
+  (`node server/load.mjs`, `node server/src/privacy.mjs`) from files the task
+  owns, so SV-B7-B9 now has them as exceptions. The lead updates the figure
+  quoted in `docs/decisions/owner-decisions.md` and `docs/security/auth.md`
+  in the candidate that merges SV-B7-B9, since it is only true once B8 lands.
 - **AD-R2** (from AD): list `tools/ui_gate/` in README.md's tools listing.
   P0-AD-sheet now has `README.md` as an exception, for that one line
   (`agent-protocol.md`, "The candidate's checks"); AD adds the line it

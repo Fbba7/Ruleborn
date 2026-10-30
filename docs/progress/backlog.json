@@ -586,6 +586,10 @@
         "server/privacy.json",
         "docs/guides/server.md"
       ],
+      "exceptions": [
+        "server/load.json",
+        "server/declarations.md"
+      ],
       "deps": [
         "SV-B1-B6"
       ],
