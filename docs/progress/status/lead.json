@@ -7,7 +7,8 @@
     "candidate_sha": "fd2c9662",
     "task_ids": [
       "P0-K1-bake-1",
-      "P0-AD-sheet"
+      "P0-AD-sheet",
+      "SV-B7-B9"
     ],
     "started_at": "2026-10-30T23:58:00Z",
     "expires_at": "2026-10-31T00:58:00Z"

@@ -617,17 +617,17 @@
       "estimate_h": 4,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "SV",
         "branch": "claude/server-decisions",
         "claimed_at": "2026-10-30T21:55:00Z",
-        "seen_at": "2026-10-30T22:44:03Z",
+        "seen_at": "2026-10-30T23:24:24Z",
         "lease_until": "2026-10-31T00:55:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "89495cd0",
       "merged_sha": null
     },
     {
