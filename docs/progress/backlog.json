@@ -1,0 +1,977 @@
+{
+  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. Tasks with role 'owner' are the owner's reviews: the lead sets them merged when the owner answers. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
+  "wave": "UI wave",
+  "phase": 0,
+  "updated_at": "2026-10-30T00:30:00Z",
+  "updated_by": "lead",
+  "stop_at": "2026-11-06T21:00:00Z",
+  "lease_hours": 3,
+  "status_every_minutes": 45,
+  "check_minutes": 25,
+  "building_cap": 4,
+  "verdicts_dir": "docs/art/ui-quality/gate/verdicts/",
+  "agents": {
+    "AD": {
+      "branch": "claude/ui-ad",
+      "model": "Opus 5.5"
+    },
+    "AIA": {
+      "branch": "claude/ui-artist",
+      "model": "Opus 5.5"
+    },
+    "K1": {
+      "branch": "claude/ui-bake",
+      "model": "Opus 5.5"
+    },
+    "SV": {
+      "branch": "claude/server-decisions",
+      "model": "Sonnet 5.5"
+    }
+  },
+  "strings_owner": "lead",
+  "tasks": [
+    {
+      "id": "P0-K1-contract",
+      "title": "Freeze the kit contract: kit-spec.md sections 2-6 marked frozen, version 1 (tokens, states, the 47 components, names, the manifest's format, the functions screens call), with the ownership map of report.md section 3.1's hotspot files",
+      "phase": 0,
+      "role": "K1",
+      "model": "Opus 5.5",
+      "assigned_to": "K1",
+      "files": [
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "deps": [],
+      "done_when": [
+        "kit-spec.md sections 2-6 say 'frozen, version 1'",
+        "the ownership map names one owner per hotspot file",
+        "python3 tools/check_docs_consistency.py",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P0-AD-rubric",
+      "title": "Gate rubric version 1: the 14 qualities of report.md section 4 as pass and fail criteria, the design document's rules folded in (section 4.3), extreme anchors, the method per quality and asset class (section 3.5); one judge prompt per judged quality",
+      "phase": 0,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**"
+      ],
+      "deps": [],
+      "done_when": [
+        "docs/art/ui-quality/gate/rubric.md says version 1 and covers all 14 qualities",
+        "gate/prompts/<quality>.md for every judged quality",
+        "python3 tools/check_docs_consistency.py",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P0-AIA-board-1",
+      "title": "Style board, part 1: the material set (enamel, gold, wood, glass, parchment) dressing §21.8's surfaces in §21.2's and §21.8's own colours, and the type treatments under §21.8 as written (report.md section 3.3, step 2)",
+      "phase": 0,
+      "role": "AIA",
+      "model": "Opus 5.5",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/board/**"
+      ],
+      "deps": [],
+      "done_when": [
+        "art/ui/board/board.html renders the materials and type",
+        "contrast in both modes and colours from client/ui/tokens.json pass the scripted checks",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P0-AIA-board-2",
+      "title": "Style board, part 2: outline and glint rules, the studio light, four hero icons, the high-contrast form of each material; board.png at phone size for O2",
+      "phase": 0,
+      "role": "AIA",
+      "model": "Opus 5.5",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/board/**"
+      ],
+      "deps": [
+        "P0-AIA-board-1"
+      ],
+      "done_when": [
+        "art/ui/board/board.png committed",
+        "contrast in both modes and colours from the tokens pass the scripted checks",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P0-AD-sheet",
+      "title": "tools/ui_gate/: sheet.py (contact sheet at phone size, at 48 and 96 points and in grayscale, §21.10; frame strips; stills at 960 px on the long edge; full-resolution crops of named regions) and the image checks of report.md section 3.5 (value steps, the HUD's share of the screen, colour-blindness simulation), with tests",
+      "phase": 0,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P0-AD-rubric"
+      ],
+      "done_when": [
+        "python3 tools/ui_gate/sheet.py --self-test",
+        "the image checks have tests on a planted fail",
+        "wired into tools/check_all.sh by request to the lead",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P0-AD-golden",
+      "title": "Golden set, part 1: gate/golden/items.json and its images from what exists (today's five screens, Screens v3's five stills, T14's heist proof and five icons, the style board), with planted fails; gate/golden/labels.md, the owner's form",
+      "phase": 0,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**"
+      ],
+      "deps": [
+        "P0-AD-sheet",
+        "P0-AIA-board-2"
+      ],
+      "done_when": [
+        "30 or more items, at least a third expected to fail and a quarter borderline",
+        "labels.md has one row per item and quality",
+        "python3 tools/check_docs_consistency.py",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "O2",
+      "title": "The owner approves the style board and kit contract v1, or redirects with notes (report.md section 3.4)",
+      "phase": 0,
+      "role": "owner",
+      "model": null,
+      "assigned_to": "owner",
+      "files": [],
+      "deps": [
+        "P0-AIA-board-2",
+        "P0-K1-contract"
+      ],
+      "shows": [
+        "art/ui/board/board.png",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "state": "open",
+      "critical": true,
+      "default": "steps that wait for it wait; the others go on (report.md section 3.4)"
+    },
+    {
+      "id": "P0-K1-bake-1",
+      "title": "tools/ui_bake/ part 1: bake.js <family> renders art/ui/ sources and packs one atlas with a manifest of regions and 9-slice margins; --check compares the sources' hash with the manifest's in seconds; tests on a fixture family",
+      "phase": 0,
+      "role": "K1",
+      "model": "Opus 5.5",
+      "assigned_to": "K1",
+      "files": [
+        "tools/ui_bake/**"
+      ],
+      "deps": [
+        "P0-K1-contract"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "tests on a fixture family pass",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P0-K1-bake-2",
+      "title": "tools/ui_bake/ part 2: check_screens.py (screens add no chrome of their own, kit-spec.md section 7) and guard.sh (full rebake byte for byte; draw calls, texture memory and contrast against tools/ui_bake/budgets.json), with today's counts recorded",
+      "phase": 0,
+      "role": "K1",
+      "model": "Opus 5.5",
+      "assigned_to": "K1",
+      "files": [
+        "tools/ui_bake/**"
+      ],
+      "deps": [
+        "P0-K1-bake-1"
+      ],
+      "done_when": [
+        "bash tools/ui_bake/guard.sh passes on main and fails on a planted extra draw call",
+        "wired into tools/check_all.sh by request to the lead",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P0-K1-kitskin",
+      "title": "KitSkin texture-backed materials behind a switch per material family, code-drawn box as the fallback (report.md section 10.9); today's 108 materials mapped onto the kit's 35 skins (kit-spec.md section 8.2); every family off by default",
+      "phase": 0,
+      "role": "K1",
+      "model": "Opus 5.5",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/**",
+        "!client/ui/art/**",
+        "client/scripts/ui.gd",
+        "client/tests/ui_kit_tests.gd",
+        "client/tests/a11y_tests.gd",
+        "client/tests/shots/ui_*.gd"
+      ],
+      "deps": [
+        "P0-K1-bake-1"
+      ],
+      "done_when": [
+        "client/tests/ui_kit_tests.gd covers the switch and the fallback",
+        "every screen's stills unchanged with every family off",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P0-AIA-keyframes-1",
+      "title": "Key frames, part 1: home and heist at 1080 x 2340, each also at 200% text and in high contrast, on the approved board, keeping §21.8's arrangements, 48-point targets, 13-point text and live words in English and Brazilian Portuguese",
+      "phase": 0,
+      "role": "AIA",
+      "model": "Opus 5.5",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/keyframes/**"
+      ],
+      "deps": [
+        "O2"
+      ],
+      "done_when": [
+        "art/ui/keyframes/01-home and 02-heist .html and .png, three forms each",
+        "the scripted checks pass",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P0-AIA-keyframes-2",
+      "title": "Key frames, part 2: result and character, the same three forms each",
+      "phase": 0,
+      "role": "AIA",
+      "model": "Opus 5.5",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/keyframes/**"
+      ],
+      "deps": [
+        "P0-AIA-keyframes-1"
+      ],
+      "done_when": [
+        "the scripted checks pass",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P0-AIA-keyframes-3",
+      "title": "Key frames, part 3: settings, the same three forms; one contact sheet of all five",
+      "phase": 0,
+      "role": "AIA",
+      "model": "Opus 5.5",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/keyframes/**"
+      ],
+      "deps": [
+        "P0-AIA-keyframes-2"
+      ],
+      "done_when": [
+        "the scripted checks pass",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P0-AD-golden-2",
+      "title": "Golden set, part 2: the five key frames at 200% text and in high contrast, and planted fails copied from them (labels without stroke, a flattened material, a flat icon, one value step between control and ground); labels.md completed for O3",
+      "phase": 0,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**"
+      ],
+      "deps": [
+        "P0-AD-golden",
+        "P0-AIA-keyframes-3"
+      ],
+      "done_when": [
+        "30-60 items in all",
+        "labels.md ready for the owner",
+        "python3 tools/check_docs_consistency.py",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "O3",
+      "title": "The owner labels the golden set: each item pass or fail on each quality listed, with a one-line critique (report.md section 3.4)",
+      "phase": 0,
+      "role": "owner",
+      "model": null,
+      "assigned_to": "owner",
+      "files": [],
+      "deps": [
+        "P0-AD-golden-2"
+      ],
+      "shows": [
+        "docs/art/ui-quality/gate/golden/labels.md"
+      ],
+      "state": "open",
+      "critical": true,
+      "default": "steps that wait for it wait; the others go on (report.md section 3.4)"
+    },
+    {
+      "id": "P0-AD-calibrate",
+      "title": "Calibration: tools/ui_gate/calibrate.py (the split into thirds, catch rates per quality, the audit sample) and gate/calibration.md (the split, results per quality, the judge model chosen, the rubric version they hold for); the lead launches the gate runs",
+      "phase": 0,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "O3"
+      ],
+      "done_when": [
+        "the judge meets its target on the held-out third, or each quality that misses is listed as owner-checked",
+        "rubric and golden set committed as version 1",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "SV-B1-B6",
+      "title": "B1-B6: the six security decisions pinned in server/test/security_owner.test.mjs (SR-09, SR-10, SR-12, SR-14, SR-15, SR-16) built, and each test changed from 'needs the owner' to the decided behaviour",
+      "phase": 0,
+      "role": "SV",
+      "model": "Sonnet 5.5",
+      "assigned_to": "SV",
+      "files": [
+        "server/src/**",
+        "server/test/**",
+        "client/tests/share_tests.gd"
+      ],
+      "deps": [],
+      "done_when": [
+        "the six tests in server/test/security_owner.test.mjs assert the decided behaviour",
+        "python3 server/status.py",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "SV-B7-B9",
+      "title": "B7 workshop plays' one-day lease (expireLapsed deletes unsubmitted plays; the privacy register updated); B8 the Observatory served from the hourly target lists and the day's raids listed by reference (DB-1, DB-4); B9 refresh rotation only past 24 hours and skipped unchanged writes",
+      "phase": 0,
+      "role": "SV",
+      "model": "Sonnet 5.5",
+      "assigned_to": "SV",
+      "files": [
+        "server/src/**",
+        "server/test/**",
+        "server/privacy.json",
+        "docs/guides/server.md"
+      ],
+      "deps": [
+        "SV-B1-B6"
+      ],
+      "done_when": [
+        "tests for each",
+        "python3 server/status.py",
+        "node server/load.mjs --check",
+        "python3 tools/privacy_manifest.py --check",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "SV-B11-B12",
+      "title": "B11 family approval renumbered to the next free D number (D64 stays the season track's); B12 reduced motion never flashes the screen edge, Harmony's preview included",
+      "phase": 0,
+      "role": "SV",
+      "model": "Sonnet 5.5",
+      "assigned_to": "SV",
+      "files": [
+        "server/README.md",
+        "tools/audit_register.py",
+        "client/world/fx_anchors.gd",
+        "client/world/law_fx_harmony.gd",
+        "client/README.md",
+        "client/tests/a11y_motion_tests.gd"
+      ],
+      "deps": [
+        "SV-B7-B9"
+      ],
+      "done_when": [
+        "a client test that reduced motion draws no edge flash",
+        "python3 tools/build_audit.py",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "SV-B10",
+      "title": "B10 the client's certificate pin on the production certificate's authority, never the leaf: waits for the production host (owner-decisions.md); unassigned until it exists",
+      "phase": 0,
+      "role": "SV",
+      "model": "Sonnet 5.5",
+      "assigned_to": null,
+      "files": [
+        "client/data/http_transport.gd",
+        "client/data/tls_pins/**"
+      ],
+      "deps": [],
+      "done_when": [
+        "the client refuses a chain outside the pinned authority",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
+      "tier": 3,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "BT-03",
+      "title": "Check runner: separate worktree, log outside the repository, DONE marker, summary JSON",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Sonnet 5.5",
+      "assigned_to": "lead",
+      "files": [
+        "tools/run_checks.sh"
+      ],
+      "deps": [],
+      "done_when": [
+        "Survives the end of a tool call (check V-14 in T17's report)",
+        "Writes precheck into the status file",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": "552e53ac"
+    },
+    {
+      "id": "BT-02",
+      "title": "Ownership check: changed paths against the task's files; disjoint tasks in flight",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Sonnet 5.5",
+      "assigned_to": "lead",
+      "files": [
+        "tools/coord/owners.*"
+      ],
+      "deps": [],
+      "done_when": [
+        "Tests cover a glob match, an unowned path and an overlapping claim",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": "552e53ac"
+    },
+    {
+      "id": "BT-01a",
+      "title": "Coordinator, part 1: a dry-run cycle that reads every status file from origin, expires leases, copies states into the backlog, flags missed acknowledgements, request deadlines and stalls, and prints the actions",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Opus 5.5",
+      "assigned_to": "SP-bt-01",
+      "files": [
+        "tools/coord/**",
+        "!tools/coord/owners.*"
+      ],
+      "deps": [],
+      "done_when": [
+        "Unit tests on fixture branches pass",
+        "--dry-run prints actions without pushing",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "BT-01b",
+      "title": "Coordinator, part 2: the merge-then-test queue (owners.py diff, run_checks.sh on the candidate, the merge lock in status/lead.json, fast-forward) and the owner-inbox entries",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Opus 5.5",
+      "assigned_to": "SP-bt-01",
+      "files": [
+        "tools/coord/**",
+        "!tools/coord/owners.*"
+      ],
+      "deps": [
+        "BT-01a"
+      ],
+      "done_when": [
+        "Unit tests on fixture branches pass",
+        "A dry-run mode prints actions without pushing",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "BT-04a",
+      "title": "Gate shot renderer, part 1: the shot-list format and still rendering of a listed item at a given sha",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Sonnet 5.5",
+      "assigned_to": "SP-bt-04",
+      "files": [
+        "tools/gate/render.*",
+        "tools/gate/fixtures/**"
+      ],
+      "deps": [],
+      "done_when": [
+        "Renders a fixture item at a given sha",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "BT-04b",
+      "title": "Gate shot renderer, part 2: frame strips, 200% text and high-contrast variants, named crops",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Sonnet 5.5",
+      "assigned_to": "SP-bt-04",
+      "files": [
+        "tools/gate/render.*",
+        "tools/gate/fixtures/**"
+      ],
+      "deps": [
+        "BT-04a"
+      ],
+      "done_when": [
+        "Renders a fixture strip and crop",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "BT-05",
+      "title": "Gate launcher and verdict writer, with schema validation",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Sonnet 5.5",
+      "assigned_to": "SP-bt-05",
+      "files": [
+        "tools/gate/run.*",
+        "docs/progress/schema/verdict.json"
+      ],
+      "deps": [
+        "BT-04b"
+      ],
+      "done_when": [
+        "Writes valid verdict files",
+        "Counts attempts",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "BT-09",
+      "title": "Environment setup with pinned versions",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Sonnet 5.5",
+      "assigned_to": "SP-bt-09",
+      "files": [
+        "tools/setup_env.sh"
+      ],
+      "deps": [],
+      "done_when": [
+        "A fresh container passes check_all after only this script"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "BT-06",
+      "title": "Documentation consistency check: state names, schemas and examples across the brief, the program, the protocol and the example backlog",
+      "phase": 1,
+      "role": "specialist",
+      "model": "Sonnet 5.5",
+      "assigned_to": "SP-bt-06",
+      "files": [
+        "tools/docs/protocol_check.*",
+        "docs/progress/schema/**",
+        "!docs/progress/schema/verdict.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "Wired into check_all",
+        "Fails on any mismatch"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "BT-07",
+      "title": "Metrics report from coordination data",
+      "phase": 1,
+      "role": "specialist",
+      "model": "Sonnet 5.5",
+      "assigned_to": "SP-bt-07",
+      "files": [
+        "tools/coord/metrics.*"
+      ],
+      "deps": [
+        "BT-01b"
+      ],
+      "done_when": [
+        "Digest section generated",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "BT-08",
+      "title": "Per-screen string and route files merged by script",
+      "phase": 1,
+      "role": "specialist",
+      "model": "Sonnet 5.5",
+      "assigned_to": "SP-bt-08",
+      "files": [
+        "tools/build/merge_tables.*"
+      ],
+      "deps": [],
+      "done_when": [
+        "Generated tables match their sources",
+        "Check in check_all"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    }
+  ],
+  "idle_queue": [
+    {
+      "id": "IQ-import-check",
+      "title": "Check every tracked .import and .uid file matches its source after a clean import; file mismatches as requests to their owners",
+      "role": "any",
+      "model": "Sonnet 5.5",
+      "assigned_to": null,
+      "files": [
+        "docs/progress/<your-agent>.md"
+      ],
+      "estimate_h": 1,
+      "tier": 3,
+      "state": "open",
+      "claim": null
+    },
+    {
+      "id": "IQ-kit-docs",
+      "title": "Read kit-spec.md against client/ui/ and list every component the spec names and the code lacks, as a request to K1",
+      "role": "any",
+      "model": "Sonnet 5.5",
+      "assigned_to": null,
+      "files": [
+        "docs/progress/<your-agent>.md"
+      ],
+      "estimate_h": 1,
+      "tier": 3,
+      "state": "open",
+      "claim": null
+    }
+  ],
+  "messages": []
+}
