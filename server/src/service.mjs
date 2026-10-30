@@ -294,6 +294,8 @@ export class Service {
     // the same bytes share a snapshot, and each is a target of their own.
     // Every island with what the list carries, in one read (matchmaking.live).
     const rows = this.matchmaking.live(now);
+    // The Observatory is drawn from what these lists are made from (DB-1).
+    this.matchmaking.relist(now, rows);
     const bands = new Map();
     for (const r of rows) {
       // §12.3: a new player's island is nobody's target yet.
@@ -1010,7 +1012,9 @@ export class Service {
    * G38's rule for what closes without becoming a record: a purchase intent
    * that lapsed unredeemed, and a lease that expired unplayed, each deleted
    * CLOSED_KEEP_DAYS after it closed. A redeemed intent and a played lease
-   * are records (F43). Run daily; idempotent. Returns what went.
+   * are records (F43). A Workshop play is a lease of one day (LEASE_MS) and
+   * goes when it ends unsubmitted, with no week's grace: nothing was staked.
+   * Run daily; idempotent. Returns what went.
    */
   expireLapsed(now = this.now()) {
     const before = now - CLOSED_KEEP_DAYS * DAY_MS;
@@ -1024,6 +1028,8 @@ export class Service {
         // Unplayed is no heist, whatever its state: a lease that lapsed and
         // was closed when its target was leased again was never played.
         `DELETE FROM leases WHERE expires_at < ? AND token NOT IN (SELECT token FROM heists)`).run(before).changes),
+      plays: Number(this.db.prepare(
+        "DELETE FROM workshop_plays WHERE submitted_at IS NULL AND issued_at + ? < ?").run(LEASE_MS, now).changes),
     }));
   }
 

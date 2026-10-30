@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { ABSOLUTE_MS, deviceOf, placeOf } from "../src/auth.mjs";
+import { ABSOLUTE_MS, ROTATE_HOURS_DEFAULT, deviceOf, placeOf, rotateHoursOf } from "../src/auth.mjs";
 import { handler } from "../src/http.mjs";
 import { KINDS } from "../src/limits.mjs";
 import { Refused } from "../src/refused.mjs";
@@ -304,4 +304,13 @@ test("rotating the refresh token once a day writes once a day, and a copy is sti
   const a = d.service.session("gc:bob");
   d.clock.now += HOUR;
   assert.notEqual(d.service.auth.refresh(a.refreshToken).refreshToken, a.refreshToken);
+});
+
+test("production rotates the refresh token once a day unless the host says otherwise (B9)", () => {
+  assert.equal(ROTATE_HOURS_DEFAULT, 24);
+  assert.equal(rotateHoursOf({}), 24);
+  assert.equal(rotateHoursOf({ RULEBORN_REFRESH_ROTATE_HOURS: "0" }), 0, "0, every refresh");
+  assert.equal(rotateHoursOf({ RULEBORN_REFRESH_ROTATE_HOURS: "72" }), 72);
+  assert.throws(() => rotateHoursOf({ RULEBORN_REFRESH_ROTATE_HOURS: "721" }), /0 to 720/);
+  assert.throws(() => rotateHoursOf({ RULEBORN_REFRESH_ROTATE_HOURS: "1.5" }), /whole number/);
 });

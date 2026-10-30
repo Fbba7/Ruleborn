@@ -141,3 +141,27 @@ test("the Observatory and its refresh are served over HTTP (12.3)", async () => 
   assert.equal(refused.status, 409);
   assert.deepEqual(await refused.json(), { error: "not_enough_aether", cost: 50 });
 });
+
+test("the Observatory is drawn from the hourly lists: a new island appears within the hour, a banned owner and a republished island are brought up to date at the view (DB-1)", () => {
+  const t = twoPlayers(false);
+  keeper6(t);
+  const mm = t.service.matchmaking;
+  const bundles = () => t.service.observatory.view(t.raider.account).targets.map((c) => c.bundle);
+  assert.deepEqual(bundles(), [t.bundle]);
+  // A second player publishes: not on show until the lists are made again.
+  const other = t.service.session("gc:other");
+  established(t, other.account);
+  const theirs = t.service.publish(other.account, t.build.generate(5, 3)).bundle;
+  t.clock.now += HOUR - 1;
+  assert.ok(!bundles().includes(theirs), "inside the hour, the list stands");
+  // A republished island's card is its current snapshot, at once.
+  const again = t.service.publish(t.defender.account, t.build.generate(6, 3)).bundle;
+  assert.ok(bundles().includes(again) && !bundles().includes(t.bundle), "the card follows the island");
+  // A banned owner is out at the view.
+  t.service.db.prepare("UPDATE accounts SET banned_at = ? WHERE id = ?").run(t.clock.now, t.defender.account);
+  assert.ok(!bundles().some((b) => b === again), "a banned owner is taken out");
+  t.clock.now += 1;
+  t.service.db.prepare("UPDATE accounts SET banned_at = NULL WHERE id = ?").run(t.defender.account);
+  assert.ok(bundles().includes(theirs), "within the hour of the lists: the new island appears");
+  assert.equal(mm.hourly.at <= t.clock.now, true);
+});

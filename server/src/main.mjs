@@ -61,6 +61,7 @@ import { Builds } from "./sim.mjs";
 import { Store } from "./store.mjs";
 import { raiseTo } from "./universe.mjs";
 import { GOOGLE_KEYS_URL, GameCenter, GoogleSignIn, appStoreNotification, receipts } from "./stores.mjs";
+import { rotateHoursOf } from "./auth.mjs";
 import { platformProofs } from "./auth_proofs.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -181,14 +182,6 @@ function secret() {
   return key;
 }
 
-function rotateHours() {
-  const h = Number(process.env.RULEBORN_REFRESH_ROTATE_HOURS ?? 0);
-  if (!Number.isInteger(h) || h < 0 || h > 24 * 30) {
-    throw new Error("RULEBORN_REFRESH_ROTATE_HOURS is a whole number of hours, 0 to 720");
-  }
-  return h;
-}
-
 const service = new Service({
   db: open(join(data, "ruleborn.sqlite")),
   store: new Store(join(data, "bundles")),
@@ -196,9 +189,9 @@ const service = new Service({
   secret: secret(),
   tokenKeys: process.env.RULEBORN_TOKEN_KEYS ?? "",
   // The owner's decision on refresh's billed row (docs/security/auth.md):
-  // RULEBORN_REFRESH_ROTATE_HOURS, unset or 0, rotates the refresh token on
-  // every refresh (one row a session an hour); 24 rotates it once a day.
-  refreshRotateMs: rotateHours() * 60 * 60 * 1000,
+  // RULEBORN_REFRESH_ROTATE_HOURS, unset, rotates the refresh token once a
+  // day (24); 0 rotates it on every refresh (one row a session an hour).
+  refreshRotateMs: rotateHoursOf(process.env) * 60 * 60 * 1000,
   verifyPlatform: platforms.verify,
   preparePlatform: platforms.prepare,
   verifyReceipt: receipts({ appStore: storeKit ? { roots: storeKitRoots, bundleId, sandbox } : null, play }),

@@ -85,7 +85,7 @@ development default except what a real deployment needs.
 |---|---|
 | `RULEBORN_DATA` | where the database and island store live (default `server/.data/`) |
 | `RULEBORN_SECRET`, `RULEBORN_TOKEN_KEYS` | the keys that sign session tokens |
-| `RULEBORN_REFRESH_ROTATE_HOURS` | how often a refresh token rotates (an owner decision; see [`docs/progress/T11.md`](../progress/T11.md)) |
+| `RULEBORN_REFRESH_ROTATE_HOURS` | how often a refresh token rotates: 24 unless set, the owner's decision (B9); 0 rotates it on every refresh. Inside the span a refresh answers a new access token and writes nothing, so a session's `used_at` and country are up to that old |
 | `RULEBORN_SEASON_START` | the first season's start |
 | `RULEBORN_DELETIONS` | the account-deletion journal |
 | `RULEBORN_STUB_SIGNIN` | `1` accepts a stand-in sign-in (development only) |
@@ -108,6 +108,23 @@ to be deployed (the design names edge functions over a managed serverless
 SQL database, and the cost work measures against Cloudflare D1's billing) is
 not written down here (a question for the owner, in
 [`docs/DOCS-CHANGES.md`](../DOCS-CHANGES.md)).
+
+## What the daily and hourly jobs keep short (owner decisions B7 to B9)
+
+- **Workshop plays** are a lease of one day: `expireLapsed` deletes a play
+  still unsubmitted a day after it was issued (`server/privacy.json`,
+  `workshop_plays`); a submitted play is a record.
+- **The Observatory and `GET /v1/offer`** are drawn from the candidates the
+  hourly target lists were made from (`matchmaking.listed`), not rebuilt from
+  every island at each view: a new island appears within the hour. At the
+  view, a banned or deleted owner is taken out and a republished island's card
+  follows its current snapshot (`matchmaking.current`).
+- **A raid notification** lists the day's raids by reference: the first raid
+  writes it, a later one writes nothing, and the message reads the day's
+  heists from `heists_by_defender` when it is sent.
+- **A refresh token** rotates only past 24 hours (`RULEBORN_REFRESH_ROTATE_HOURS`
+  unset is 24; 0 rotates it on every refresh); inside the span a refresh
+  writes nothing.
 
 ## Generated files the server reads
 

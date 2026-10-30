@@ -66,6 +66,18 @@ export function deviceOf(d) {
   return { device: kind, model: model || null };
 }
 
+/** The owner's decision on refresh's billed row (B9): a refresh token
+ *  rotates once a day unless RULEBORN_REFRESH_ROTATE_HOURS says otherwise;
+ *  0 rotates it on every refresh. Whole hours, 0 to 720. */
+export const ROTATE_HOURS_DEFAULT = 24;
+export function rotateHoursOf(env) {
+  const h = Number(env.RULEBORN_REFRESH_ROTATE_HOURS ?? ROTATE_HOURS_DEFAULT);
+  if (!Number.isInteger(h) || h < 0 || h > 24 * 30) {
+    throw new Error("RULEBORN_REFRESH_ROTATE_HOURS is a whole number of hours, 0 to 720");
+  }
+  return h;
+}
+
 /** The country an edge header names (ISO 3166-1 alpha-2), or null: never
  *  the address, and not Cloudflare's "XX" (unknown) or "T1" (Tor). */
 export function placeOf(code) {
