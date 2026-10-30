@@ -3,26 +3,21 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P0-AD-rubric",
-  "task_state": "ready",
-  "claimed_at": "2026-10-30T01:00:00Z",
-  "lease_until": "2026-10-30T04:00:00Z",
-  "updated_at": "2026-10-30T01:46:00Z",
-  "expected_next_update_by": "2026-10-30T02:31:00Z",
+  "agent_state": "active",
+  "task_id": "P0-AD-sheet",
+  "task_state": "claimed",
+  "claimed_at": "2026-10-30T22:00:00Z",
+  "lease_until": "2026-10-31T01:00:00Z",
+  "updated_at": "2026-10-30T22:00:00Z",
+  "expected_next_update_by": "2026-10-30T22:45:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "334224ca2d4fc86506d9136fb35726c2da834ce8",
-    "next_step": "Wait for the lead to merge P0-AD-rubric; next session takes P0-AD-sheet"
+    "last_green_sha": null,
+    "next_step": "Write tools/ui_gate/ (colour, sheet.py, checks) with a self-test and planted fails"
   },
-  "precheck": {
-    "sha": "334224ca2d4fc86506d9136fb35726c2da834ce8",
-    "exit": 0,
-    "finished_at": "2026-10-30T01:44:46Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "334224ca2d4fc86506d9136fb35726c2da834ce8",
+  "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
