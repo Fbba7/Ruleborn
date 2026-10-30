@@ -3,17 +3,17 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P0-AD-sheet",
-  "task_state": "blocked",
+  "task_state": "working",
   "claimed_at": "2026-10-30T21:53:00Z",
-  "lease_until": "2026-10-31T00:53:00Z",
-  "updated_at": "2026-10-30T22:37:00Z",
-  "expected_next_update_by": null,
+  "lease_until": "2026-10-31T01:45:00Z",
+  "updated_at": "2026-10-30T22:45:00Z",
+  "expected_next_update_by": "2026-10-30T23:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "When AD-R2 is on main: merge main, run the pre-check, record it, mark P0-AD-sheet ready. Evidence so far: check_all PASS at 2026-10-30T22:35:22Z on a local, unpushed commit c0985d3 = 9281bc3 plus exactly AD-R2's README line"
+    "next_step": "AD-R2 answered (README exception): README line added; pre-check running, then record and mark ready"
   },
   "precheck": null,
   "gate_request": null,

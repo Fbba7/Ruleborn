@@ -289,6 +289,7 @@ tools/
   # art and rendering
   art/                            the design's creature modules -> client/art/creatures/*.glb (node tools/art/export.mjs)
   ui/                             the design's icons -> client/ui/icons/ (SVG and PNG with a manifest; node tools/ui/export_icons.mjs)
+  ui_gate/                        the UI wave gate's scripts: stills, contact sheets, frame strips, crops and colour-blindness sheets (python3 tools/ui_gate/sheet.py), the image checks (checks.py); docs/art/ui-quality/gate/shots.md
   ui_research/                    T14's UI quality research: authored HUD art baked in headless Chromium into one atlas (node tools/ui_research/bake_hud.js), the AI UI artist's icons rendered in three.js (bake_icons.js), side-by-sides (compare.py); docs/art/ui-quality/report.md
   render/                         renders a still from the Godot client on a machine with no screen
   # the superseded prototype
