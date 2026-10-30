@@ -3,17 +3,17 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P0-AD-sheet",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-10-30T21:53:00Z",
   "lease_until": "2026-10-31T01:45:00Z",
-  "updated_at": "2026-10-30T22:45:00Z",
-  "expected_next_update_by": "2026-10-30T23:30:00Z",
+  "updated_at": "2026-10-30T23:25:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "AD-R2 answered (README exception): README line added; pre-check running, then record and mark ready"
+    "last_green_sha": "f5e9571029f6ec13909c6bafd8f9a809feaf566d",
+    "next_step": "Lead merges P0-AD-sheet (adds the check_all.sh self-test line per AD-R3); then P0-AD-golden / O2 as their deps merge"
   },
   "precheck": {
     "sha": "f5e9571029f6ec13909c6bafd8f9a809feaf566d",
@@ -22,7 +22,7 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "f5e9571029f6ec13909c6bafd8f9a809feaf566d",
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
