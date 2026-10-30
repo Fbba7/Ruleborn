@@ -14,7 +14,12 @@
 //      no opacity; tabular figures on the number roles; and contrast of 4.5:1
 //      and APCA's level for its size and weight (client/ui/colour_check.gd's
 //      thresholds), against its ink outline when it has one of 1.5 points or
-//      more, else against the pixels behind its letters at their worst point.
+//      more, else against the pixels behind its letters at their worst point;
+//   5. studio.html, which renders the icons and the studio, names no colour
+//      of its own either: no literal, and every colour it names is a token;
+//   6. every hero icon in art/ keeps the outline rule: its silhouette is
+//      edged in ink_line (in high contrast, in the text colour around the
+//      ink) and the ink is as wide as the rule asks.
 //
 //   node art/ui/board/check_board.mjs [--out report.json]
 //   node art/ui/board/check_board.mjs --self-test   plants faults; each must fail
@@ -31,6 +36,9 @@ const { chromium } = require('playwright');
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..', '..', '..');
 const BOARD = join(here, 'board.html');
+const STUDIO = join(here, 'studio.html');
+const ART = join(here, 'art');
+export const ICONS = ['starlight', 'essence', 'law', 'loot'];
 
 // ---- colour arithmetic, as client/ui/colour_check.gd does it ----
 const MIN_RATIO = 4.5;
@@ -198,6 +206,89 @@ async function pixelsBehind(context, black, white, ground, rectLists) {
   }
 }
 
+
+// ---- 5: the studio's colours ----
+function checkStudio(code) {
+  const fails = [];
+  const tokens = JSON.parse(readFileSync(join(root, 'client/ui/tokens.json'), 'utf8')).color;
+  const body = code.replace(/<!--[\s\S]*?-->/g, '').replace(/\/\/.*$/gm, '');
+  for (const m of body.matchAll(/#[0-9A-Fa-f]{3,8}\b|\b0x[0-9A-Fa-f]{3,8}\b/g)) {
+    fails.push({ kind: 'literal', what: `a colour literal in studio.html: ${m[0]}` });
+  }
+  for (const m of body.matchAll(/(?<![-.#\w'])(?:white|black|red|green|blue|silver|gray|grey|orange|purple|pink|brown|yellow)(?![-\w])/g)) {
+    fails.push({ kind: 'literal', what: `a named colour in studio.html: ${m[0]}` });
+  }
+  // Every quoted name handed to the studio's colour functions, or set as a
+  // piece's light, glint, ink or drop, must be a colour token.
+  const names = new Set();
+  for (const fn of ['tok', 'rgba', 'gold', 'enamel', 'cloth', 'studio']) {
+    for (const inner of calls(body, fn)) for (const m of inner.matchAll(/'([a-z_]+)'/g)) names.add(m[1]);
+  }
+  for (const m of body.matchAll(/\b(?:colour|sky|ground|light|ink|keyline|drop|glint): '([a-z_]+)'/g)) names.add(m[1]);
+  for (const m of body.matchAll(/inner: \[[^\]]*'([a-z_]+)'/g)) names.add(m[1]);
+  for (const n of names) if (!tokens[n]) fails.push({ kind: 'colour', what: `studio.html names ${n}, which is not a colour of tokens.json` });
+  if (names.size < 10) fails.push({ kind: 'colour', what: `studio.html names only ${names.size} token colours; the check found too few to trust` });
+  return fails;
+}
+
+// ---- 6: the outline rule, read from the icons' pixels ----
+// The opaque silhouette (alpha 0.98 or more; the glow and the drop stay
+// under it) is walked: its edge pixels must be the outline's colour, and the
+// ink's area over the edge's length is the outline's mean width. The rule
+// (studio.html's RULES) is 2 points at 48, so 1/24 of the box; 3 points in
+// high contrast, inside a 1.5-point ring of the text colour.
+export async function checkIcons(context, files = null) {
+  const toks = JSON.parse(readFileSync(join(root, 'client/ui/tokens.json'), 'utf8')).color;
+  const col = (n) => hexRgb(toks[n].value.slice(0, 7));
+  const list = files ?? ICONS.flatMap((n) => [[n, 'normal'], [n, 'hc']]).map(([n, f]) => ({
+    name: n + (f === 'hc' ? '_hc' : ''), file: join(ART, n + (f === 'hc' ? '_hc' : '') + '.png'), form: f }));
+  const fails = [];
+  const page = await context.newPage();
+  try {
+    for (const it of list) {
+      let png;
+      try { png = readFileSync(it.file); } catch { fails.push({ kind: 'icon', what: `${it.name}: ${it.file} is missing; run bake_art.mjs` }); continue; }
+      const hc = it.form === 'hc';
+      const edgeColour = hc ? col('text_on_night') : col('ink_line');
+      const r = await page.evaluate(async ([src, ink, edge]) => {
+        const img = new Image();
+        img.src = src;
+        await img.decode();
+        const c = document.createElement('canvas');
+        c.width = img.width; c.height = img.height;
+        const g = c.getContext('2d', { willReadFrequently: true });
+        g.drawImage(img, 0, 0);
+        const W = c.width, H = c.height;
+        const { data } = g.getImageData(0, 0, W, H);
+        const at = (x, y) => (y * W + x) * 4;
+        const solid = (x, y) => x >= 0 && y >= 0 && x < W && y < H && data[at(x, y) + 3] >= 250;
+        const near = (i, rgb) => Math.abs(data[i] - rgb[0]) + Math.abs(data[i + 1] - rgb[1]) + Math.abs(data[i + 2] - rgb[2]) <= 48;
+        let edgeN = 0, edgeOk = 0, inkN = 0, corners = 0;
+        for (const [x, y] of [[0, 0], [W - 1, 0], [0, H - 1], [W - 1, H - 1]]) corners += data[at(x, y) + 3];
+        for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+          if (!solid(x, y)) continue;
+          const i = at(x, y);
+          if (near(i, ink)) inkN++;
+          if (solid(x - 1, y) && solid(x + 1, y) && solid(x, y - 1) && solid(x, y + 1)) continue;
+          edgeN++;
+          if (near(i, edge)) edgeOk++;
+        }
+        return { W, H, edgeN, edgeOk, inkN, corners };
+      }, ['data:image/png;base64,' + png.toString('base64'), col('ink_line'), edgeColour]);
+      const width = r.inkN / Math.max(1, r.edgeN);
+      const need = (hc ? 3 : 2) / 48 * r.W * 0.75;
+      if (r.W !== 256 || r.H !== 256) fails.push({ kind: 'icon', what: `${it.name}: ${r.W} x ${r.H}, not 256 x 256` });
+      if (r.corners > 0) fails.push({ kind: 'icon', what: `${it.name}: its corners are not transparent` });
+      if (r.edgeOk / Math.max(1, r.edgeN) < 0.9) fails.push({ kind: 'icon', what: `${it.name}: ${Math.round(100 * r.edgeOk / r.edgeN)}% of its edge is the outline's colour; the rule wants all of it` });
+      if (width < need) fails.push({ kind: 'icon', what: `${it.name}: the ink outline is ${width.toFixed(1)} px wide on average; the rule wants ${(need / 0.75).toFixed(1)}` });
+      it.result = { edge: +(r.edgeOk / r.edgeN).toFixed(3), ink_px: +width.toFixed(1) };
+    }
+  } finally {
+    await page.close();
+  }
+  return { fails, list };
+}
+
 // ---- 3 and 4: the page, in one mode ----
 const COLOUR_PROPS = ['color', 'backgroundColor', 'backgroundImage', 'borderTopColor', 'borderRightColor',
   'borderBottomColor', 'borderLeftColor', 'boxShadow', 'textShadow', 'outlineColor', 'webkitTextStrokeColor',
@@ -344,9 +435,10 @@ async function checkMode(page, mode, allowed, inject) {
   return { fails, rows };
 }
 
-export async function run({ inject = null, html = null, tokensCss = null } = {}) {
+export async function run({ inject = null, html = null, tokensCss = null, studio = null, icons = null } = {}) {
   const allowed = allowedColours();
   const fails = checkFiles(html ?? readFileSync(BOARD, 'utf8'), tokensCss ?? readFileSync(join(here, 'tokens.css'), 'utf8'));
+  fails.push(...checkStudio(studio ?? readFileSync(STUDIO, 'utf8')));
   const rows = [];
   const browser = await chromium.launch();
   try {
@@ -361,6 +453,9 @@ export async function run({ inject = null, html = null, tokensCss = null } = {})
       rows.push(...r.rows);
     }
     for (const e of errors) fails.push({ kind: 'page', what: e });
+    const ic = await checkIcons(context, icons);
+    fails.push(...ic.fails);
+    rows.push(...ic.list.map((i) => ({ mode: 'icon', text: i.name, ...i.result, ok: !ic.fails.some((f) => f.what.startsWith(i.name + ':')) })));
   } finally {
     await browser.close();
   }
@@ -370,6 +465,7 @@ export async function run({ inject = null, html = null, tokensCss = null } = {})
 async function selfTest() {
   const html = readFileSync(BOARD, 'utf8');
   const css = readFileSync(join(here, 'tokens.css'), 'utf8');
+  const studio = readFileSync(STUDIO, 'utf8');
   const cases = [
     ['a clean board passes', {}, null],
     ['a hue of its own fails', { inject: '#enamel .title{color:#123456!important}' }, 'colour'],
@@ -380,6 +476,10 @@ async function selfTest() {
     ['a colour literal in the page fails', { html: html.replace('.world { position: relative;', '.world { color: #FF00FF; position: relative;') }, 'literal'],
     ['a mix of two colours fails', { html: html.replace('--lit-none: color-mix(in srgb, var(--c-paper) 0%, transparent);', '--lit-none: color-mix(in srgb, var(--c-paper) 50%, var(--c-ink));') }, 'literal'],
     ['stale tokens.css fails', { tokensCss: css.replace('--c-gold: #E9B65C;', '--c-gold: #E9B65D;') }, 'tokens'],
+    ['a colour literal in the studio fails', { studio: studio.replace("metalness: 0.75,", "metalness: 0.75, sheen: 0xFF00FF,") }, 'literal'],
+    ['a studio colour that is not a token fails', { studio: studio.replace("studio('time_light')", "studio('time_glow')") }, 'colour'],
+    ['an icon without its outline fails', { icons: [{ name: 'finish_1', file: join(ART, 'finish_1.png'), form: 'normal' }] }, 'icon'],
+    ['an icon with a thin outline fails', { icons: [{ name: 'starlight as hc', file: join(ART, 'starlight.png'), form: 'hc' }] }, 'icon'],
   ];
   let bad = 0;
   for (const [what, opts, kind] of cases) {
@@ -399,9 +499,10 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     const { fails, rows } = await run();
     const outAt = process.argv.indexOf('--out');
     if (outAt > 0) writeFileSync(process.argv[outAt + 1], JSON.stringify({ rows, fails }, null, 1) + '\n');
-    const passed = rows.filter((r) => r.ok).length;
-    console.log(`words checked: ${rows.length} (${passed} pass) across the normal and high-contrast modes`);
-    for (const r of rows.filter((r) => !r.ok)) console.log(`  low: [${r.mode}] "${r.text}" ${r.ratio}:1 Lc ${r.lc} (needs ${r.lc_needed}) on ${r.worst_bg}`);
+    const words = rows.filter((r) => r.mode !== 'icon'), icons = rows.filter((r) => r.mode === 'icon');
+    console.log(`words checked: ${words.length} (${words.filter((r) => r.ok).length} pass) across the normal and high-contrast modes`);
+    console.log(`icons checked: ${icons.length} (${icons.filter((r) => r.ok).length} keep the outline rule): ${icons.map((r) => `${r.text} ${r.ink_px} px`).join(', ')}`);
+    for (const r of words.filter((r) => !r.ok)) console.log(`  low: [${r.mode}] "${r.text}" ${r.ratio}:1 Lc ${r.lc} (needs ${r.lc_needed}) on ${r.worst_bg}`);
     for (const f of fails) console.log(`FAIL ${f.kind}: ${f.what}`);
     if (fails.length) process.exit(1);
     console.log('style board checks passed');

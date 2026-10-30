@@ -1,0 +1,395 @@
+<!doctype html>
+<!-- The style board's studio (section 9.2 of docs/art/ui-quality/report.md):
+     one light for every rendered piece, the four hero icons modelled in
+     three.js, and the 2D finish that holds the outline and glint rules.
+     Every colour is a name in client/ui/tokens.json, read at load time;
+     check_board.mjs fails a colour literal here as it does in board.html.
+     Loaded by bake_art.mjs over a local server; window.bake(name, form)
+     returns PNG data URLs. -->
+<html><head><meta charset="utf-8">
+<script type="importmap">
+{ "imports": {
+  "three": "/tools/ui_research/node_modules/three/build/three.module.js",
+  "three/addons/": "/tools/ui_research/node_modules/three/examples/jsm/"
+} }
+</script>
+</head><body style="margin:0">
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+const TOKENS = await (await fetch('/client/ui/tokens.json')).json();
+// A colour token by name, following names that point at other names.
+function tok(name) {
+  let v = name;
+  for (let i = 0; i < 8 && !String(v).startsWith('#'); i++) v = TOKENS.color[v].value;
+  return String(v).slice(0, 7);
+}
+// The same colour as CSS, at an alpha: light and glow are token colours
+// faded, never new hues.
+function rgba(name, a) {
+  const h = tok(name);
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// ---- the studio light ----
+// One studio for every piece, so the set is one family by construction:
+//   key   the cream, from the top left and in front, the strongest;
+//   rim   the piece's own light colour, from behind on the right;
+//   fill  a sky of paper over a ground of the night, soft, from below;
+//   room  RoomEnvironment's reflections, for metal and gloss.
+const STUDIO = {
+  key: { colour: 'cream', at: [-3, 4, 5], power: 2.6 },
+  rim: { at: [4, 2, -4], power: 3.0 },
+  fill: { sky: 'paper', ground: 'night_bottom', power: 0.6 },
+};
+
+let renderer, room;
+function setup(w, h) {
+  if (!renderer) {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+    renderer.setPixelRatio(1);
+    renderer.toneMapping = THREE.NeutralToneMapping;
+    renderer.toneMappingExposure = 0.95;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.setClearColor(new THREE.Color(tok('drop')), 0);
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    room = pmrem.fromScene(new RoomEnvironment(), 0.03).texture;
+  }
+  renderer.setSize(w, h);
+}
+
+function studio(rim) {
+  const scene = new THREE.Scene();
+  scene.environment = room;
+  const key = new THREE.DirectionalLight(tok(STUDIO.key.colour), STUDIO.key.power);
+  key.position.set(...STUDIO.key.at);
+  const back = new THREE.DirectionalLight(tok(rim), STUDIO.rim.power);
+  back.position.set(...STUDIO.rim.at);
+  const fill = new THREE.HemisphereLight(tok(STUDIO.fill.sky), tok(STUDIO.fill.ground), STUDIO.fill.power);
+  scene.add(key, back, fill);
+  return scene;
+}
+
+function camera(aspect = 1) {
+  const c = new THREE.PerspectiveCamera(24, aspect, 0.1, 100);
+  c.position.set(0, 0, 7.8);
+  c.lookAt(0, 0, 0);
+  return c;
+}
+
+// The materials, each from tokens: struck gold, glazed enamel, leather.
+const gold = (face = 'starlight') => new THREE.MeshPhysicalMaterial({ color: tok(face), metalness: 0.75, roughness: 0.28,
+  clearcoat: 1, clearcoatRoughness: 0.1, emissive: tok('gold_bottom'), emissiveIntensity: 0.3 });
+const enamel = (face, deep) => new THREE.MeshPhysicalMaterial({ color: tok(face), metalness: 0, roughness: 0.32,
+  clearcoat: 1, clearcoatRoughness: 0.06, emissive: tok(deep), emissiveIntensity: 0.35 });
+const cloth = (face) => new THREE.MeshStandardMaterial({ color: tok(face), roughness: 0.86, metalness: 0 });
+
+// ---- the four hero icons ----
+function starShape(tip, waist) {
+  const s = new THREE.Shape();
+  for (let i = 0; i < 4; i++) {
+    const a = Math.PI / 2 - i * Math.PI / 2;
+    const b = a - Math.PI / 4;
+    const n = a - Math.PI / 2;
+    if (i === 0) s.moveTo(Math.cos(a) * tip, Math.sin(a) * tip);
+    s.quadraticCurveTo(Math.cos(b) * waist, Math.sin(b) * waist, Math.cos(n) * tip, Math.sin(n) * tip);
+  }
+  return s;
+}
+function puffed(shape, size, depth = 0.36) {
+  const g = new THREE.ExtrudeGeometry(shape, { depth: size * 0.02, bevelEnabled: true, bevelThickness: size * depth,
+    bevelSize: size * 0.15, bevelSegments: 10, curveSegments: 48 });
+  g.center();
+  g.computeVertexNormals();
+  return g;
+}
+
+// The hourglass, Time's shape (§7.2), as a law icon's frame: two bowls that
+// meet at a waist, with a cap above and below, every corner rounded.
+function hourglassShape() {
+  const s = new THREE.Shape();
+  const W = 1.0, H = 1.25, cap = 0.2, waist = 0.2, r = 0.12;
+  s.moveTo(-W + r, H);
+  s.lineTo(W - r, H); s.quadraticCurveTo(W, H, W, H - r);
+  s.lineTo(W, H - cap + r); s.quadraticCurveTo(W, H - cap, W - r * 1.4, H - cap - r * 0.6);
+  s.bezierCurveTo(0.55, 0.55, waist + 0.08, 0.12, waist, 0);
+  s.bezierCurveTo(waist + 0.08, -0.12, 0.55, -0.55, W - r * 1.4, -H + cap + r * 0.6);
+  s.quadraticCurveTo(W, -H + cap, W, -H + cap - r);
+  s.lineTo(W, -H + r); s.quadraticCurveTo(W, -H, W - r, -H);
+  s.lineTo(-W + r, -H); s.quadraticCurveTo(-W, -H, -W, -H + r);
+  s.lineTo(-W, -H + cap - r); s.quadraticCurveTo(-W, -H + cap, -W + r * 1.4, -H + cap + r * 0.6);
+  s.bezierCurveTo(-0.55, -0.55, -waist - 0.08, -0.12, -waist, 0);
+  s.bezierCurveTo(-waist - 0.08, 0.12, -0.55, 0.55, -W + r * 1.4, H - cap - r * 0.6);
+  s.quadraticCurveTo(-W, H - cap, -W, H - cap + r);
+  s.lineTo(-W, H - r); s.quadraticCurveTo(-W, H, -W + r, H);
+  return s;
+}
+// A tide: a band whose upper edge is one swell, for Tidemark.
+function waveShape() {
+  const s = new THREE.Shape();
+  const n = 40, w = 0.6;
+  s.moveTo(-w, -0.14);
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, x = -w + t * 2 * w;
+    s.lineTo(x, 0.1 + Math.sin(t * Math.PI * 3 - 0.9) * 0.09);
+  }
+  s.lineTo(w, -0.14);
+  for (let i = n; i >= 0; i--) {
+    const t = i / n, x = -w + t * 2 * w;
+    s.lineTo(x, -0.14);
+  }
+  return s;
+}
+
+const ICONS = {
+  // Starlight: building material from the Star Wells, struck in gold.
+  starlight() {
+    const scene = studio('gold_top');
+    const big = new THREE.Mesh(puffed(starShape(0.98, 0.2), 0.98), gold());
+    big.rotation.set(-0.22, 0.38, 0.08);
+    big.position.set(-0.2, 0.16, 0);
+    const small = new THREE.Mesh(puffed(starShape(0.4, 0.08), 0.4), gold());
+    small.rotation.set(0.2, -0.5, 0.3);
+    small.position.set(0.86, -0.82, 0.4);
+    scene.add(big, small);
+    return { scene, light: 'starlight', glints: [[0.37, 0.31, 1], [0.69, 0.7, 0.5]], inner: [0.42, 0.36, 0.3, 'gold_top', 0.35] };
+  },
+  // Essence: life for the ruleborn, a glassy drop of the essence green.
+  essence() {
+    const scene = studio('life_light');
+    const pts = [];
+    for (let i = 0; i <= 48; i++) {
+      const t = i / 48;
+      const y = 1.3 - t * 2.4;
+      const r = t < 0.62 ? Math.pow(t / 0.62, 0.78) * 0.86 : Math.sqrt(Math.max(0, 1 - Math.pow((t - 0.62) / 0.38, 2))) * 0.86;
+      pts.push(new THREE.Vector2(Math.max(r, 0.0001), y));
+    }
+    const drop = new THREE.Mesh(new THREE.LatheGeometry(pts, 96), new THREE.MeshPhysicalMaterial({
+      color: tok('essence'), metalness: 0, roughness: 0.07, clearcoat: 1, clearcoatRoughness: 0.03,
+      envMapIntensity: 0.75, emissive: tok('life_shadow'), emissiveIntensity: 0.5 }));
+    drop.rotation.set(0.12, 0, -0.12);
+    scene.add(drop);
+    return { scene, light: 'essence', glints: [[0.41, 0.38, 0.9]], inner: [0.5, 0.64, 0.2, 'life_light', 0.75] };
+  },
+  // A law of Time (Tidemark): the tide, raised in cream, on a frame of
+  // Time's own shape and colours, rimmed in gold.
+  law() {
+    const scene = studio('time_light');
+    const g = new THREE.Group();
+    const frame = new THREE.Mesh(puffed(hourglassShape(), 1.0, 0.22), enamel('time', 'time_shadow'));
+    const lip = new THREE.Mesh(new THREE.ExtrudeGeometry(hourglassShape(), { depth: 0.08, bevelEnabled: true,
+      bevelThickness: 0.06, bevelSize: 0.07, bevelSegments: 6, curveSegments: 48 }), gold('gold'));
+    lip.geometry.center();
+    lip.scale.set(1.06, 1.05, 1);
+    lip.position.z = -0.12;
+    const tide = new THREE.Mesh(puffed(waveShape(), 0.5, 0.18), enamel('cream', 'gold_bottom'));
+    tide.position.set(0, -0.7, 0.3);
+    const crest = tide.clone();
+    crest.scale.setScalar(0.6);
+    crest.position.set(0.02, 0.78, 0.28);
+    g.add(lip, frame, tide, crest);
+    g.rotation.set(-0.12, 0.36, 0.06);
+    g.scale.setScalar(0.92);
+    scene.add(g);
+    return { scene, light: 'time', glints: [[0.33, 0.24, 0.85], [0.61, 0.57, 0.45]], inner: [0.4, 0.3, 0.32, 'time_light', 0.3] };
+  },
+  // The loot bag: a cloth sack tied with a cord, full of Starlight coins.
+  loot() {
+    const scene = studio('gold_top');
+    const g = new THREE.Group();
+    const pts = [];
+    for (let i = 0; i <= 40; i++) {
+      const t = i / 40;
+      const y = -1.05 + t * 1.7;
+      // A round belly that slumps low, then gathers hard into the neck.
+      const r = t < 0.8 ? 1.12 * Math.sin(Math.PI * (0.06 + 0.66 * t / 0.8)) ** 0.55 * (1 - 0.22 * t) : 0.26 + (t - 0.8) * 0.3;
+      pts.push(new THREE.Vector2(Math.max(r, 0.0001), y));
+    }
+    const sackGeo = new THREE.LatheGeometry(pts, 96);
+    // Folds: the cord gathers the cloth into creases that run down the
+    // shoulders, and the coins inside push the belly out in lumps.
+    const p = sackGeo.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+      const a = Math.atan2(z, x);
+      const fold = 0.07 * Math.cos(a * 9) * Math.max(0, Math.min(1, (y + 0.1) / 0.6));
+      const lump = 0.045 * Math.sin(a * 4 + y * 3) * Math.max(0, 0.6 - Math.abs(y + 0.45));
+      const k = 1 + fold + lump;
+      p.setXYZ(i, x * k, y, z * k);
+    }
+    sackGeo.computeVertexNormals();
+    const sack = new THREE.Mesh(sackGeo, cloth('soil'));
+    // The gathered top: a frilled ring of cloth above the cord.
+    const neck = [];
+    for (let i = 0; i <= 16; i++) {
+      const t = i / 16;
+      neck.push(new THREE.Vector2(0.26 + t * t * 0.5, 0.62 + t * 0.3));
+    }
+    const frillGeo = new THREE.LatheGeometry(neck, 96);
+    const q = frillGeo.attributes.position;
+    for (let i = 0; i < q.count; i++) {
+      const x = q.getX(i), y = q.getY(i), z = q.getZ(i);
+      const a = Math.atan2(z, x);
+      const t = Math.max(0, (y - 0.62) / 0.3);
+      q.setXYZ(i, x * (1 + 0.16 * t * Math.cos(a * 7)), y + 0.06 * t * Math.sin(a * 7), z * (1 + 0.16 * t * Math.cos(a * 7)));
+    }
+    frillGeo.computeVertexNormals();
+    const frill = new THREE.Mesh(frillGeo, cloth('soil'));
+    frill.material.side = THREE.DoubleSide;
+    const cord = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.085, 16, 64), gold('gold_rim'));
+    cord.rotation.x = Math.PI / 2 - 0.1;
+    cord.position.y = 0.64;
+    g.add(sack, frill, cord);
+    const coinGeo = new THREE.CylinderGeometry(0.36, 0.36, 0.09, 48);
+    for (const [x, y, z, rx, rz] of [[-0.24, 0.98, 0.08, 1.2, 0.45], [0.26, 1.04, -0.06, 1.35, -0.5], [0.02, 1.14, 0.14, 0.75, 0.08]]) {
+      const coin = new THREE.Mesh(coinGeo, gold());
+      coin.position.set(x, y, z);
+      coin.rotation.set(rx, 0, rz);
+      g.add(coin);
+    }
+    // A Starlight star stitched on the front, in gold.
+    const badge = new THREE.Mesh(puffed(starShape(0.3, 0.07), 0.3, 0.2), gold());
+    badge.position.set(0.02, -0.38, 1.0);
+    badge.rotation.set(-0.1, 0, 0);
+    g.add(badge);
+    g.rotation.set(0.18, -0.35, -0.06);
+    g.position.y = -0.04;
+    g.scale.setScalar(1.02);
+    scene.add(g);
+    return { scene, light: 'starlight', glints: [[0.43, 0.24, 0.75], [0.3, 0.5, 0.45]], inner: [0.36, 0.5, 0.3, 'cream', 0.16] };
+  },
+};
+
+// ---- the outline and glint rules, as code ----
+// Outline: ink_line all round, OUTLINE of the icon's box: 2 points at the
+// smallest size a hero icon is shown (48), 4 at 96. High contrast thickens it
+// to 3 points at 48 and rings it with the text colour, for the night.
+// Glint: the cream four-pointed star where the key catches, on the upper
+// left of the form; at most two, the second half the first; none in high
+// contrast.
+const RULES = {
+  outline: 1 / 24, outlineHc: 3 / 48, keylineHc: 1.5 / 48, ink: 'ink_line', keyline: 'text_on_night',
+  drop: 'drop', glint: 'cream', glintMax: 2, glintSize: 0.075,
+};
+
+function canvas(w, h = w) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  return c;
+}
+function silhouette(src, colour) {
+  const c = canvas(src.width, src.height);
+  const x = c.getContext('2d');
+  x.drawImage(src, 0, 0);
+  x.globalCompositeOperation = 'source-in';
+  x.fillStyle = colour;
+  x.fillRect(0, 0, c.width, c.height);
+  return c;
+}
+// The silhouette grown by `r` pixels, drawn in one colour.
+function grow(x, sil, r) {
+  for (let i = 0; i < 48; i++) {
+    const a = i / 48 * Math.PI * 2;
+    x.drawImage(sil, Math.cos(a) * r, Math.sin(a) * r);
+  }
+  x.drawImage(sil, 0, 0);
+}
+function glint(ctx, x, y, s) {
+  ctx.save();
+  const halo = ctx.createRadialGradient(x, y, 0, x, y, s * 0.5);
+  halo.addColorStop(0, rgba(RULES.glint, 0.9));
+  halo.addColorStop(1, rgba(RULES.glint, 0));
+  ctx.fillStyle = halo;
+  ctx.beginPath(); ctx.arc(x, y, s * 0.5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = rgba(RULES.glint, 1);
+  ctx.beginPath();
+  ctx.moveTo(x, y - s); ctx.quadraticCurveTo(x, y, x + s * 0.7, y);
+  ctx.quadraticCurveTo(x, y, x, y + s); ctx.quadraticCurveTo(x, y, x - s * 0.7, y);
+  ctx.quadraticCurveTo(x, y, x, y - s);
+  ctx.fill();
+  ctx.restore();
+}
+
+const R = 640, OUT = 256;
+const png = (c, size = OUT) => {
+  const small = canvas(size, Math.round(size * c.height / c.width));
+  const s = small.getContext('2d');
+  s.imageSmoothingQuality = 'high';
+  s.drawImage(c, 0, 0, small.width, small.height);
+  return small.toDataURL('image/png');
+};
+
+// One icon in one form ('normal' or 'hc'). With stages, also the finish one
+// step at a time: the render, then glow and drop, then the outline, then
+// the inner light and glints.
+async function bakeIcon(name, form, stages) {
+  setup(R, R);
+  const { scene, light, glints, inner } = ICONS[name]();
+  renderer.render(scene, camera());
+  const shot = renderer.domElement;
+  const hc = form === 'hc';
+  const out = canvas(R);
+  const x = out.getContext('2d');
+  const steps = [];
+  const snap = () => { if (stages) steps.push(png(out)); };
+  const draw = (c) => { x.drawImage(c, 0, 0); };
+  // The icon sits inside its box with room for the outline and drop.
+  x.save(); x.translate(R * 0.06, R * 0.05); x.scale(0.88, 0.88);
+  if (stages) { draw(shot); snap(); x.clearRect(-R, -R, 3 * R, 3 * R); }
+  const ink = silhouette(shot, tok(RULES.ink));
+  const ow = (hc ? RULES.outlineHc : RULES.outline) * R / 0.88;
+  if (!hc) {
+    x.save(); x.filter = `blur(${R * 0.034}px)`; x.globalAlpha = 0.85;
+    draw(silhouette(shot, rgba(light, 0.6))); x.restore();
+    x.save(); x.filter = `blur(${R * 0.006}px)`; x.globalAlpha = 0.8;
+    x.translate(0, R * 0.028); grow(x, silhouette(shot, tok(RULES.drop)), ow); x.restore();
+  } else {
+    grow(x, silhouette(shot, tok(RULES.keyline)), ow + RULES.keylineHc * R / 0.88);
+  }
+  if (stages) { draw(shot); snap(); }
+  grow(x, ink, ow);
+  if (stages) { draw(shot); snap(); }
+  const lit = canvas(R);
+  const l = lit.getContext('2d');
+  l.drawImage(shot, 0, 0);
+  l.globalCompositeOperation = 'source-atop';
+  const [lx, ly, lr, lc, la] = inner;
+  const g = l.createRadialGradient(lx * R, ly * R, 0, lx * R, ly * R, lr * R);
+  g.addColorStop(0, rgba(lc, la));
+  g.addColorStop(1, rgba(lc, 0));
+  l.fillStyle = g;
+  l.fillRect(0, 0, R, R);
+  draw(lit);
+  if (!hc) for (const [gx, gy, k] of glints.slice(0, RULES.glintMax)) glint(x, gx * R, gy * R, RULES.glintSize * R * 1.3 * k);
+  x.restore();
+  if (stages) { snap(); return steps; }
+  return [png(out)];
+}
+
+// The studio's plate: three spheres, gold, enamel and leather, in the one
+// light, wide.
+async function bakeStudio() {
+  const W = 960, H = 400;
+  setup(W, H);
+  const scene = studio('gold_top');
+  const mats = [gold('gold'), enamel('card_top', 'card_lit_mid'), new THREE.MeshPhysicalMaterial({
+    color: tok('leather_light'), roughness: 0.55, clearcoat: 0.4, clearcoatRoughness: 0.4, emissive: tok('leather_dark'),
+    emissiveIntensity: 0.3 })];
+  mats.forEach((m, i) => {
+    const s = new THREE.Mesh(new THREE.SphereGeometry(0.78, 96, 64), m);
+    s.position.set((i - 1) * 1.85, 0, 0);
+    scene.add(s);
+  });
+  renderer.render(scene, camera(W / H));
+  const out = canvas(W, H);
+  out.getContext('2d').drawImage(renderer.domElement, 0, 0);
+  return [png(out, 480)];
+}
+
+window.bake = (name, form = 'normal', stages = false) => (name === 'studio' ? bakeStudio() : bakeIcon(name, form, stages));
+window.NAMES = Object.keys(ICONS);
+window.ready = true;
+</script></body></html>
