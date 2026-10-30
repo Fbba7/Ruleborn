@@ -1,13 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-30T21:55:00Z",
-  "expected_next_update_by": "2026-10-30T23:10:00Z",
-  "cycle": 1,
+  "updated_at": "2026-10-30T22:45:00Z",
+  "expected_next_update_by": "2026-10-31T00:00:00Z",
+  "cycle": 2,
   "merging": null,
   "last_merged": {
     "task_id": "SV-B1-B6",
     "sha": "1c7005fd"
   },
   "alerts": [],
-  "next_step": "Read the status of K1 (P0-K1-bake-1), AD (P0-AD-sheet), AIA (P0-AIA-board-2) and SV (SV-B7-B9), started at 21:52Z; merge what is ready; restart any agent past its expected_next_update_by"
+  "next_step": "Take ready tasks (expected: P0-AIA-board-2, SV-B7-B9, P0-K1-bake-1, P0-AD-sheet) through the merge queue with the promised check_all.sh lines; restart any agent past its expected_next_update_by"
 }

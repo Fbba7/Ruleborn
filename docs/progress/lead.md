@@ -60,8 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxo62zrxovKkkFLFbrX` (cycle 1,
-30 October 2026, 21:50Z).
+Latest lead cycle session: `session_01SNkKxpgxycAoWLmMgaYf2V` (cycle 2,
+30 October 2026, 22:39Z).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -74,10 +74,12 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| K1 | `session_01SNkKxq8CnHi34skP7kjhy5` | P0-K1-bake-1 | `claude/ui-bake` | 2026-10-30 21:52Z |
-| AD | `session_01SNkKxoCF3z5x8JQLKYJPYD` | P0-AD-sheet | `claude/ui-ad` | 2026-10-30 21:52Z |
+| K1 | `session_01SNkKxqS4p6oNGXrgf2HMJC` | P0-K1-bake-1 (restart: K1-R2 answered) | `claude/ui-bake` | 2026-10-30 22:41Z |
+| AD | `session_01SNkKxqWsnZkA94QgU4fUmT` | P0-AD-sheet (restart: AD-R2 answered) | `claude/ui-ad` | 2026-10-30 22:41Z |
 | AIA | `session_01SNkKxqs5iybVZtkaAz6tXt` | P0-AIA-board-2 | `claude/ui-artist` | 2026-10-30 21:52Z |
 | SV | `session_01SNkKxoTc2asTZD7Uigvf1m` | SV-B7-B9 | `claude/server-decisions` | 2026-10-30 21:52Z |
+| K1 | `session_01SNkKxq8CnHi34skP7kjhy5` (idle, replaced) | P0-K1-bake-1 | `claude/ui-bake` | 2026-10-30 21:52Z |
+| AD | `session_01SNkKxoCF3z5x8JQLKYJPYD` (idle, replaced) | P0-AD-sheet | `claude/ui-ad` | 2026-10-30 21:52Z |
 | K1 | `session_01SNkKxo9cYeD2q9TQAaj2Uj` (archived) | P0-K1-contract | `claude/ui-bake` | 2026-10-30 00:38Z |
 | AD | `session_01SNkKxqUsV3mCCyYnJyXexs` (archived) | P0-AD-rubric | `claude/ui-ad` | 2026-10-30 00:56Z |
 | AIA | `session_01SNkKxr7CHJ3iSQWWrN6UfP` (archived) | P0-AIA-board-1 | `claude/ui-artist` | 2026-10-30 01:11Z |
@@ -147,21 +149,24 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 1, 30 October 2026, about 21:52Z (session
-  `session_01SNkKxo62zrxovKkkFLFbrX`). No agent branch had work past its
-  merged task, so nothing was ready and nothing merged; the merge lock was
-  free and stays `null`; the audit and roadmap pages were not republished,
-  since main's code did not move. Requests K1-R1, AD-R1, AIA-R1 and AIA-R2
-  were already answered on main. Every earlier agent session was archived,
-  so the cycle started one session per agent on its next open task (table
-  above): K1 on P0-K1-bake-1, AD on P0-AD-sheet, AIA on P0-AIA-board-2, SV
-  on SV-B7-B9. `owners.py claims`: their files are disjoint. No alerts.
-- Next cycle: read the four branches' status files, record `seen_at` and
-  copy claims into the backlog, take any ready task through the queue, and
-  restart any agent past its `expected_next_update_by`.
-- Earlier (30 October, about 21:30Z): the lead merged P0-K1-contract,
-  P0-AD-rubric, P0-AIA-board-1 and SV-B1-B6 in one checked batch, answered
-  K1-R1, AD-R1 and AIA-R1, and moved the program onto the session design in
-  `agent-protocol.md`, "Sessions and scheduled tasks" (launcher and
-  watchdog sessions; the six old scheduled tasks retired). The first run's
-  failures and fixes are in the history of this file (commit `b675f5a`).
+- Cycle 2, 30 October 2026, about 22:40Z (session
+  `session_01SNkKxpgxycAoWLmMgaYf2V`). Read the four branches' status
+  files and copied their states, claims and `seen_at` into the backlog:
+  P0-K1-bake-1 and P0-AD-sheet `blocked`, P0-AIA-board-2 and SV-B7-B9
+  `working`. Nothing was ready, so the merge lock stayed `null`, nothing
+  merged and the audit and roadmap pages were not republished.
+  `owners.py claims`: disjoint. Answered K1-R2 in `requests.md` (the README
+  exception was already on P0-K1-bake-1 from AD-R2's answer). K1 and AD
+  were idle and blocked on answers now on main, so each got a fresh session
+  (table above). AIA (pre-check of `1a1afd2`, session still working) and SV
+  (session running; client suite) were left alone. No alerts.
+- Next cycle: expect P0-AIA-board-2, SV-B7-B9, P0-K1-bake-1 and
+  P0-AD-sheet to reach `ready`. Take them through the queue (critical path
+  first, batching allowed), adding in each candidate the `check_all.sh`
+  lines promised in K1-R1/K1-R2 and AD-R3, numpy under `checks.md`'s "What
+  it needs", and for SV-B7-B9 the load figure in `owner-decisions.md` and
+  `auth.md` (SV-1). Restart any agent past its `expected_next_update_by`.
+- Earlier: cycle 1 (21:52Z) found nothing ready and started one session
+  per agent; at about 21:30Z the lead merged P0-K1-contract, P0-AD-rubric,
+  P0-AIA-board-1 and SV-B1-B6 and moved the program onto the session design
+  in `agent-protocol.md`, "Sessions and scheduled tasks".
