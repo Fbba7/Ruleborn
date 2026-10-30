@@ -15,7 +15,12 @@
     "last_green_sha": null,
     "next_step": "AD-R2 answered (README exception): README line added; pre-check running, then record and mark ready"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "f5e9571029f6ec13909c6bafd8f9a809feaf566d",
+    "exit": 0,
+    "finished_at": "2026-10-30T23:20:33Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
