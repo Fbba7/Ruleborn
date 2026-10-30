@@ -159,6 +159,10 @@ node tools/ui_bake/bake.js --check
 node --test tools/ui_bake/test/bake.test.js
 
 echo
+echo "== the UI wave gate's sheets and image checks, with their planted fails (AD-R3) =="
+python3 tools/ui_gate/sheet.py --self-test
+
+echo
 echo "== this repository's own documents agree with each other =="
 python3 tools/check_docs_consistency.py --self-test
 python3 tools/check_docs_consistency.py
