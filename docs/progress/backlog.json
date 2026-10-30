@@ -196,39 +196,6 @@
       ]
     },
     {
-      "id": "P0-AD-golden",
-      "title": "Golden set, part 1: gate/golden/items.json and its images from what exists (today's five screens, Screens v3's five stills, T14's heist proof and five icons, the style board), with planted fails; gate/golden/labels.md, the owner's form",
-      "phase": 0,
-      "role": "AD",
-      "model": "Opus 5.5",
-      "assigned_to": "AD",
-      "files": [
-        "docs/art/ui-quality/gate/**",
-        "!docs/art/ui-quality/gate/verdicts/**"
-      ],
-      "deps": [
-        "P0-AD-sheet",
-        "P0-AIA-board-2"
-      ],
-      "done_when": [
-        "30 or more items, at least a third expected to fail and a quarter borderline",
-        "labels.md has one row per item and quality",
-        "python3 tools/check_docs_consistency.py",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 2,
-      "tier": 1,
-      "critical": true,
-      "state": "open",
-      "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
-    },
-    {
       "id": "O2",
       "title": "AD approves the style board and kit contract v1, or redirects with notes (report.md section 3.4)",
       "phase": 0,
@@ -263,6 +230,39 @@
       "ready_sha": null,
       "merged_sha": null,
       "default": "none: AD decides, and a redirect becomes a new task"
+    },
+    {
+      "id": "P0-AD-golden",
+      "title": "Golden set, part 1: gate/golden/items.json and its images from what exists (today's five screens, Screens v3's five stills, T14's heist proof and five icons, the style board), with planted fails; gate/golden/labels.md, the owner's form",
+      "phase": 0,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**"
+      ],
+      "deps": [
+        "P0-AD-sheet",
+        "P0-AIA-board-2"
+      ],
+      "done_when": [
+        "30 or more items, at least a third expected to fail and a quarter borderline",
+        "labels.md has one row per item and quality",
+        "python3 tools/check_docs_consistency.py",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
     },
     {
       "id": "P0-K1-bake-1",
