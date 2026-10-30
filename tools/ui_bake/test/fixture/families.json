@@ -1,0 +1,8 @@
+{
+  "families": {
+    "fixture": {"dir": "fixture", "kind": "svg", "px_per_point": 2, "width": 64}
+  },
+  "fonts": {
+    "Lilita One": "client/ui/fonts/lilita_one/LilitaOne-Regular.ttf"
+  }
+}
