@@ -57,8 +57,8 @@ every other session is created with `create_session`.
 
 | Scheduled task | ID | Fires into | Schedule (UTC) |
 |---|---|---|---|
-| The launcher: one fresh lead cycle session an hour, unless the last is still working | LAUNCHER_TRIG | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
-| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | WATCHDOG_TRIG | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
+| The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
+| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
 Latest lead cycle session: none yet; the launcher starts the first.
 
@@ -150,7 +150,11 @@ Your session was created with the repository checked out at main; work in that c
   (`report.md` section 3.4); O2 and O3 are AD's tasks in the backlog.
   AIA-R2 is on P0-K1-kitskin's `done_when`.
 - Restarted on the session design in `agent-protocol.md`, "Sessions and
-  scheduled tasks": RESTART_NOTE
+  scheduled tasks": the launcher and watchdog sessions were created on
+  30 October at about 21:47Z, with scheduled tasks
+  `trig_01DgVGTTmwREAb7sHz8oQkiP` (hourly at :38) and
+  `trig_015Lgi2ZssXBXPbzkCYqoKmL` (every 2 hours at :08). The six old
+  scheduled tasks are disabled and named "(retired)".
 - What went wrong in the first run (00:38Z to 09:15Z), and the fix:
   1. Every lead cycle and watchdog run ended in about 30 seconds with no
      commit. Cause: a scheduled task that starts its own session starts it
