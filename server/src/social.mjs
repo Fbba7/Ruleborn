@@ -222,7 +222,17 @@ export class Social {
     this.crew(c.id, account);
     return transaction(this.db, () => {
       const [, most] = facts.CREW_SIZE;
-      if (this.crew(c.id).members.length >= most) throw new Refused(409, "crew_full", { size: most });
+      const members = this.crew(c.id).members.map((m) => m.account);
+      if (members.length >= most) throw new Refused(409, "crew_full", { size: most });
+      // SR-14, the owner's rule: §17.7's "inside a constellation, or with
+      // friends across constellations" — a friend or constellation-mate of
+      // one member; for a 13-to-15 (§20.7's friends only), a friend of every
+      // member. A crew with nobody left in it is anyone's to start again.
+      const minor = this.db.prepare("SELECT age_band FROM accounts WHERE id = ?").get(account)?.age_band === "13-15";
+      const friend = (m) => this.service.friends.areFriends(account, m);
+      const welcome = minor ? members.every(friend)
+        : !members.length || members.some((m) => friend(m) || this.sameConstellation(account, m));
+      if (!welcome) throw new Refused(403, "not_friends");
       this.db.prepare("INSERT INTO crew_members (crew, account, joined_at) VALUES (?, ?, ?)")
         .run(c.id, account, this.now());
       return this.crew(c.id, account);

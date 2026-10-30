@@ -346,7 +346,7 @@ export class Universe {
    *  built, or its `buildings` ([{kind, x, y}]) not the realm's placed ones
    *  on their tiles. The game's own seeded islands answer to no universe
    *  (§13.1). */
-  problems(owner, realm, realmLevel, vaultLevel, buildings = []) {
+  problems(owner, realm, realmLevel, vaultLevel, buildings = [], laws = []) {
     if (this.db.prepare("SELECT seeded FROM accounts WHERE id = ?").get(owner)?.seeded) return [];
     const out = [];
     const r = this.realms(owner).find((x) => x.realm === realm);
@@ -357,6 +357,13 @@ export class Universe {
     const at = (b) => `${b.kind} ${b.x} ${b.y}`;
     const placed = this.buildings(owner).filter((b) => b.realm === realm && b.x != null).map(at).sort();
     if (placed.join() !== buildings.map(at).sort().join()) out.push("buildings_not_as_placed");
+    // SR-16 (the owner's): "a realm plays what its owner wove". A law the
+    // realm's slots have not finished weaving is refused; guards come with G60.
+    const now = this.service.now?.() ?? 0;
+    const woven = new Set(this.db.prepare(
+      "SELECT law FROM law_slots WHERE owner = ? AND realm = ? AND law IS NOT NULL AND ready_at <= ?")
+      .all(owner, realm, now).map((w) => w.law));
+    if (laws.some((l) => !woven.has(l))) out.push("law_not_woven");
     return out;
   }
 }

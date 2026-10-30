@@ -24,7 +24,7 @@ import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
 import { Refused } from "./refused.mjs";
-import { capHaul, defenceShare, entryFee, feeReturned, haul, RAIDS_A_WEEK, RENOWN_HEISTS_A_WEEK } from "./economy.mjs";
+import { capHaul, defenceShare, entryFee, feeReturned, FULL_CREW_CARRY, haul, RAIDS_A_WEEK, RENOWN_HEISTS_A_WEEK } from "./economy.mjs";
 import { byWire, eraAt } from "./eras.mjs";
 import { Friends } from "./friends.mjs";
 import { Matchmaking } from "./matchmaking.mjs";
@@ -68,6 +68,12 @@ export const TARGET_LISTS_MS = 60 * 60 * 1000;
 export const CLOSED_KEEP_DAYS = 7;
 
 /** §24.10: "Tick rate — 30 a second, fixed." */
+// SR-15 (the owner's, until D60 reads the ledger): §24.8 has a published
+// island's exposed loot come from the owner's own ledger, not the bundle's
+// word, so the word is clamped to §9.6's median richness, one full crew's
+// carry.
+const EXPOSED_CLAMP = FULL_CREW_CARRY;
+
 export const TICKS_PER_SECOND = 30;
 
 /**
@@ -232,7 +238,7 @@ export class Service {
     // And what the owner's universe has built: the realm open, its level,
     // the Vault (universe.mjs).
     const problems = [...read.problems, ...(realm === "heart" && bundle[4] !== HEART_LEVEL ? ["heart_level"] : []),
-                      ...this.universe.problems(owner, realm, bundle[4], bundle[5], build.buildings(bundle))];
+                      ...this.universe.problems(owner, realm, bundle[4], bundle[5], build.buildings(bundle), lawsOf(bundle))];
     if (problems.length) throw new Refused(422, "island_not_publishable", { problems });
     const key = this.store.put(bundle, read.digest);      // the two SHA-256s must agree
     const now = this.now();
@@ -242,7 +248,7 @@ export class Service {
         `INSERT OR IGNORE INTO snapshots
            (bundle, owner, realm, realm_level, vault_level, exposed, rules, published_at, origin)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-        .run(key, owner, realm, bundle[4], bundle[5], view.getUint32(6, true),
+        .run(key, owner, realm, bundle[4], bundle[5], Math.min(view.getUint32(6, true), EXPOSED_CLAMP),
              build.rulesVersion, now, origin);
       // §13.3: a curated layout keeps the seed it was drawn from and its
       // terrain's digest while it stays generated (curation.mjs).
@@ -295,13 +301,12 @@ export class Service {
       const band = r.band ?? `realm-level-${r.realm_level}`;
       if (!bands.has(band)) bands.set(band, []);
       // What §12.22's steps read, so the device can run `offer` on the list.
+      // Never a rating or a deviation: §12.15, "the raw numbers are never shown" (SR-09).
       bands.get(band).push({
         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
         vaultLevel: r.vault_level, exposed: r.exposed, keeperLevel: r.keeper_level,
         renown: r.renown,
         origin: r.origin ?? (r.owner === GENERATOR ? "generated" : "authored"),
-        rating: r.rating === null ? null : Math.round(r.rating),
-        deviation: r.rating === null ? null : Math.round(r.deviation),
       });
     }
     const index = {};

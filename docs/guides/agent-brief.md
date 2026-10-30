@@ -200,8 +200,8 @@ track's notes (what was done, the evidence, what is still worse, and
   `critique`.
 - **Fail twice** (`attempts` = 2): write your handoff, push and end the
   session. The lead escalates the task to Opus 5.5.
-- **Appeal** one verdict per item by request to the owner's exceptions
-  queue; it does not count as an attempt.
+- **Appeal** one verdict per item by request to the exceptions queue
+  (AD decides it); it does not count as an attempt.
 
 ## Ready, and after
 
@@ -299,9 +299,11 @@ and mark ready again.
   says: candidates, full checks on your side, then a fast-forward. Your
   bookkeeping commits touch only `docs/progress/**`.
 - Run [one cycle](agent-protocol.md#the-coordinator-and-the-lead-who-does-what)
-  per session, on the scheduled task the owner enabled; keep
-  `docs/progress/status/lead.json` and your handoff; check daily that the
-  scheduled task is enabled and read its last run.
+  per session; the launcher creates the session each hour
+  ([sessions and scheduled tasks](agent-protocol.md#the-coordinator-and-the-lead-who-does-what)).
+  Keep `docs/progress/status/lead.json` and your handoff; start agents'
+  sessions with `create_session`; check daily that the launcher's and the
+  watchdog's scheduled tasks are enabled and read their last runs.
 - You build nothing outside backlog tasks: edits to hotspot files are your
   own backlog tasks, checked like any other. You judge no quality and approve
   no build as "good".

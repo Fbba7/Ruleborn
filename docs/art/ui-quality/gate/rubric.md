@@ -30,7 +30,7 @@ a score: nothing here is rated 0 to 5.
 - **Clear pass** and **clear fail**: the extreme anchors, in words. Describing
   only the extremes works about as well as describing every level (section
   "LLM judges need pass/fail anchors" of `docs/research/agent-team-operating-model.md`).
-  Until the owner labels the golden set (O3), each anchor names a provisional
+  Until AD labels the golden set (O3, section 3.4 of `report.md`), each anchor names a provisional
   still from this repository; after O3, the anchors are the golden set's
   labelled items and these stills are only examples.
 - **Method**: who checks it, for each asset class, and what the judge sees.
@@ -79,7 +79,7 @@ What the judge checks for each asset class (section 3.5 of `report.md`):
 | Class | Scripted | Judged qualities | What the judge sees | Owner |
 |---|---|---|---|---|
 | Style board | contrast in both modes; colours from the tokens | none: no golden set yet | — | O2 |
-| Key frame | targets, text, contrast, live words | none: the owner labels them at O3 | — | O3 |
+| Key frame | targets, text, contrast, live words | none: AD labels them at O3 | — | O3 |
 | Kit art | twins, contrast in both modes, coverage, chrome count | 1, 2, 8, 13 | the catalogue sheet at phone size; full-resolution crops of three components | board 1 |
 | Icon | the 2-point outline at the size shown; a dark shape at 32 pt; sizes | 1, 3, 8, 13 | the icon sheet at 48 and 96 pt at native resolution, and its grayscale | board 2 |
 | Motion | timings, reduced forms, flashes, shake | none | — | board 4, from frame strips and clips |

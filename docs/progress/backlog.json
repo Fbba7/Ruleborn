@@ -1,8 +1,8 @@
 {
-  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. Tasks with role 'owner' are the owner's reviews: the lead sets them merged when the owner answers. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
+  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-30T00:30:00Z",
+  "updated_at": "2026-10-30T21:30:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
@@ -52,12 +52,12 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "407790db",
+      "merged_sha": "f4e7f6ac"
     },
     {
       "id": "P0-AD-rubric",
@@ -82,12 +82,12 @@
       "estimate_h": 3,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "334224c",
+      "merged_sha": "167ccf6c"
     },
     {
       "id": "P0-AIA-board-1",
@@ -110,12 +110,12 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "aa11f0e",
+      "merged_sha": "b6d0a3de"
     },
     {
       "id": "P0-AIA-board-2",
@@ -215,12 +215,14 @@
     },
     {
       "id": "O2",
-      "title": "The owner approves the style board and kit contract v1, or redirects with notes (report.md section 3.4)",
+      "title": "AD approves the style board and kit contract v1, or redirects with notes (report.md section 3.4)",
       "phase": 0,
-      "role": "owner",
-      "model": null,
-      "assigned_to": "owner",
-      "files": [],
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/approvals/O2.md"
+      ],
       "deps": [
         "P0-AIA-board-2",
         "P0-K1-contract"
@@ -229,9 +231,23 @@
         "art/ui/board/board.png",
         "docs/art/ui-quality/kit-spec.md"
       ],
-      "state": "open",
+      "done_when": [
+        "gate/approvals/O2.md says approve or redirect for art/ui/board/board.png and for kit-spec.md v1, each against §21.2, §21.8 and the rubric, with a note per point",
+        "a redirect is sent to the lead as a request naming the task it becomes (agent-protocol.md, worked example D)",
+        "python3 tools/check_docs_consistency.py"
+      ],
+      "estimate_h": 0.5,
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
       "critical": true,
-      "default": "steps that wait for it wait; the others go on (report.md section 3.4)"
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "default": "none: AD decides, and a redirect becomes a new task"
     },
     {
       "id": "P0-K1-bake-1",
@@ -314,6 +330,7 @@
       "done_when": [
         "client/tests/ui_kit_tests.gd covers the switch and the fallback",
         "every screen's stills unchanged with every family off",
+        "answers AIA-R2: tokens for §21.2's dusk and night skies in client/ui/tokens.json, and a note on §21.8's card bottom against card_bottom",
         "bash tools/check_all.sh"
       ],
       "gate_items": [],
@@ -433,7 +450,7 @@
       ],
       "done_when": [
         "30-60 items in all",
-        "labels.md ready for the owner",
+        "labels.md ready for O3",
         "python3 tools/check_docs_consistency.py",
         "bash tools/check_all.sh"
       ],
@@ -451,21 +468,39 @@
     },
     {
       "id": "O3",
-      "title": "The owner labels the golden set: each item pass or fail on each quality listed, with a one-line critique (report.md section 3.4)",
+      "title": "AD labels the golden set: each item pass or fail on each quality listed, with a one-line critique; a blind second labeller on the held-out third (report.md section 3.4)",
       "phase": 0,
-      "role": "owner",
-      "model": null,
-      "assigned_to": "owner",
-      "files": [],
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/golden/labels.md",
+        "docs/art/ui-quality/gate/golden/labels-blind.md"
+      ],
       "deps": [
         "P0-AD-golden-2"
       ],
       "shows": [
         "docs/art/ui-quality/gate/golden/labels.md"
       ],
-      "state": "open",
+      "done_when": [
+        "labels.md labels every item on every quality listed, pass or fail, with a one-line critique",
+        "labels-blind.md: the held-out third labelled by a fresh Opus 5.5 subagent given only gate/rubric.md and the items",
+        "where the two disagree on a quality, labels.md says fail on it",
+        "python3 tools/check_docs_consistency.py"
+      ],
+      "estimate_h": 2.5,
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
       "critical": true,
-      "default": "steps that wait for it wait; the others go on (report.md section 3.4)"
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "default": "none: AD decides; a disagreement is labelled fail"
     },
     {
       "id": "P0-AD-calibrate",
@@ -511,6 +546,9 @@
         "server/test/**",
         "client/tests/share_tests.gd"
       ],
+      "exceptions": [
+        "server/load.mjs"
+      ],
       "deps": [],
       "done_when": [
         "the six tests in server/test/security_owner.test.mjs assert the decided behaviour",
@@ -522,12 +560,12 @@
       "estimate_h": 4,
       "tier": 2,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "2f3c0dd",
+      "merged_sha": "1c7005fd"
     },
     {
       "id": "SV-B7-B9",
