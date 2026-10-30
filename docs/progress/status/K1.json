@@ -5,21 +5,39 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P0-K1-contract",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-10-30T00:40:00Z",
   "lease_until": "2026-10-30T03:40:00Z",
-  "updated_at": "2026-10-30T00:40:00Z",
-  "expected_next_update_by": "2026-10-30T01:25:00Z",
-  "long_run": null,
+  "updated_at": "2026-10-30T00:45:00Z",
+  "expected_next_update_by": "2026-10-30T01:30:00Z",
+  "long_run": {
+    "log": "/tmp/check-407790db73fdb0d676c0a9a653d954fd585b2349.log",
+    "expected_end": "2026-10-30T01:15:00Z"
+  },
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Check kit-spec.md sections 2-6 against client/ui/ and freeze them as version 1"
+    "next_step": "Record the pre-check of 407790d; mark P0-K1-contract ready (no gate items; merges after O2)"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "K1-R1",
+      "from": "K1",
+      "to": "lead",
+      "ask": "Wire the bake's contract checks into tools/check_all.sh once they exist on main: `node tools/ui_bake/bake.js --check` (from P0-K1-bake-1) and `bash tools/ui_bake/guard.sh` with `python3 tools/ui_bake/check_screens.py` (from P0-K1-bake-2). K1 will name the exact lines in its bake tasks' handoffs.",
+      "files": [
+        "tools/check_all.sh"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-30T00:45:00Z",
+      "due": "2026-11-02T21:00:00Z",
+      "default": "K1's bake tasks are checked by their own tests until the lead wires them in; the contract freeze needs no new check",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
