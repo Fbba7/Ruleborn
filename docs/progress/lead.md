@@ -60,7 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: none yet; the launcher starts the first.
+Latest lead cycle session: `session_01SNkKxo62zrxovKkkFLFbrX` (cycle 1,
+30 October 2026, 21:50Z).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -73,6 +74,10 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| K1 | `session_01SNkKxq8CnHi34skP7kjhy5` | P0-K1-bake-1 | `claude/ui-bake` | 2026-10-30 21:52Z |
+| AD | `session_01SNkKxoCF3z5x8JQLKYJPYD` | P0-AD-sheet | `claude/ui-ad` | 2026-10-30 21:52Z |
+| AIA | `session_01SNkKxqs5iybVZtkaAz6tXt` | P0-AIA-board-2 | `claude/ui-artist` | 2026-10-30 21:52Z |
+| SV | `session_01SNkKxoTc2asTZD7Uigvf1m` | SV-B7-B9 | `claude/server-decisions` | 2026-10-30 21:52Z |
 | K1 | `session_01SNkKxo9cYeD2q9TQAaj2Uj` (archived) | P0-K1-contract | `claude/ui-bake` | 2026-10-30 00:38Z |
 | AD | `session_01SNkKxqUsV3mCCyYnJyXexs` (archived) | P0-AD-rubric | `claude/ui-ad` | 2026-10-30 00:56Z |
 | AIA | `session_01SNkKxr7CHJ3iSQWWrN6UfP` (archived) | P0-AIA-board-1 | `claude/ui-artist` | 2026-10-30 01:11Z |
@@ -142,37 +147,21 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- 30 October 2026, about 21:30Z: the lead merged the four ready tasks by
-  hand in one batch, checked together on the candidate: P0-K1-contract,
-  P0-AD-rubric, P0-AIA-board-1 and SV-B1-B6 (SV's change to
-  `server/load.mjs` granted as an exception). Then the answers to K1-R1,
-  AD-R1 and AIA-R1, and the owner's steps O1–O7 handed to AD and the lead
-  (`report.md` section 3.4); O2 and O3 are AD's tasks in the backlog.
-  AIA-R2 is on P0-K1-kitskin's `done_when`.
-- Restarted on the session design in `agent-protocol.md`, "Sessions and
-  scheduled tasks": the launcher and watchdog sessions were created on
-  30 October at about 21:47Z, with scheduled tasks
-  `trig_01DgVGTTmwREAb7sHz8oQkiP` (hourly at :38) and
-  `trig_015Lgi2ZssXBXPbzkCYqoKmL` (every 2 hours at :08). The six old
-  scheduled tasks are disabled and named "(retired)".
-- What went wrong in the first run (00:38Z to 09:15Z), and the fix:
-  1. Every lead cycle and watchdog run ended in about 30 seconds with no
-     commit. Cause: a scheduled task that starts its own session starts it
-     with no repository, and the runs stopped at the step that attached it.
-     Fix: no scheduled task starts a session; both fire into long-lived
-     sessions created with the repository, and every other session is
-     created with `create_session`.
-  2. The watchdog shared the cycle's setup, so it failed with it. Fix: its
-     own session, and it starts a cycle itself instead of through the
-     launcher.
-  3. Every agent sat idle after its first task from about 02:20Z, because
-     only the lead could start the next session and the lead never ran.
-     Fix: the lead's cycle now runs, and it starts each agent's next session.
-  4. The scheduled runs had no model set and ran on the default. SV ran on
-     Sonnet 5.5, as the plan set. Fix: every session is created with its
-     model set.
-  5. K1 reported its contract as waiting for the owner at O2. Fix: the
-     contract merges on its checks and takes effect at AD's approval (O2);
-     no step waits for the owner.
-  6. SV did not run the client suite before marking ready. Fix: SV's prompt
-     now says to.
+- Cycle 1, 30 October 2026, about 21:52Z (session
+  `session_01SNkKxo62zrxovKkkFLFbrX`). No agent branch had work past its
+  merged task, so nothing was ready and nothing merged; the merge lock was
+  free and stays `null`; the audit and roadmap pages were not republished,
+  since main's code did not move. Requests K1-R1, AD-R1, AIA-R1 and AIA-R2
+  were already answered on main. Every earlier agent session was archived,
+  so the cycle started one session per agent on its next open task (table
+  above): K1 on P0-K1-bake-1, AD on P0-AD-sheet, AIA on P0-AIA-board-2, SV
+  on SV-B7-B9. `owners.py claims`: their files are disjoint. No alerts.
+- Next cycle: read the four branches' status files, record `seen_at` and
+  copy claims into the backlog, take any ready task through the queue, and
+  restart any agent past its `expected_next_update_by`.
+- Earlier (30 October, about 21:30Z): the lead merged P0-K1-contract,
+  P0-AD-rubric, P0-AIA-board-1 and SV-B1-B6 in one checked batch, answered
+  K1-R1, AD-R1 and AIA-R1, and moved the program onto the session design in
+  `agent-protocol.md`, "Sessions and scheduled tasks" (launcher and
+  watchdog sessions; the six old scheduled tasks retired). The first run's
+  failures and fixes are in the history of this file (commit `b675f5a`).
