@@ -21,6 +21,15 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ## Answered (30 October 2026, by the lead)
 
+- **K1-R2** (from K1): list `tools/ui_bake/` in README.md's tools listing,
+  and wire the bake's checks into `tools/check_all.sh`. Already granted in
+  the answer to AD-R2 below: P0-K1-bake-1 has `README.md` as an exception
+  for that one line, so K1 adds the line it proposed on its own branch,
+  runs and records the pre-check and marks the task ready. `check_all.sh`
+  stays the lead's: it adds `node tools/ui_bake/bake.js --check` and
+  `node --test tools/ui_bake/test/bake.test.js` in the candidate that
+  merges P0-K1-bake-1 (as for K1-R1). The lead restarts K1 and AD this
+  cycle, since both were blocked on this answer.
 - **SV-1** (from SV): confirm the regenerated `server/load.json` (57.74
   billed rows a day for an engaged player, was 61.74). Confirmed. Both it and
   `server/declarations.md` are rebuilt by checks `tools/check_all.sh` runs
