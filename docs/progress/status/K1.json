@@ -3,17 +3,17 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P0-K1-bake-1",
-  "task_state": "working",
+  "task_state": "blocked",
   "claimed_at": "2026-10-30T21:55:00Z",
   "lease_until": "2026-10-31T00:55:00Z",
-  "updated_at": "2026-10-30T22:35:00Z",
-  "expected_next_update_by": "2026-10-30T23:20:00Z",
+  "updated_at": "2026-10-30T22:30:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "Pre-check; the README.md tools listing needs tools/ui_bake/ (lead's file)"
+    "last_green_sha": "4ab2368",
+    "next_step": "On K1-R2's answer: add the README line if granted, run the pre-check, record it, mark P0-K1-bake-1 ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -22,17 +22,18 @@
   "acks": [],
   "requests": [
     {
-      "id": "K1-R1",
+      "id": "K1-R2",
       "from": "K1",
       "to": "lead",
-      "ask": "Wire the bake's contract checks into tools/check_all.sh once they exist on main: `node tools/ui_bake/bake.js --check` (from P0-K1-bake-1) and `bash tools/ui_bake/guard.sh` with `python3 tools/ui_bake/check_screens.py` (from P0-K1-bake-2). K1 will name the exact lines in its bake tasks' handoffs.",
+      "ask": "check_docs_consistency.py fails P0-K1-bake-1 because README.md's tools/ listing lacks tools/ui_bake/, and README.md is yours. Grant P0-K1-bake-1 an exception for README.md so K1 adds this one line before '  ui_research/', or add it yourself in the candidate:   ui_bake/                        the UI kit's bake (K1): node tools/ui_bake/bake.js <family> bakes art/ui/ into client/ui/art/ atlases and manifests; --check compares hashes; docs/art/ui-quality/kit-spec.md section 6.6 . Evidence that this is the only gap: the full checks on f316a1c (claude/ui-bake at 4ab2368 plus exactly that line, unpushed) passed at 2026-10-30T22:28:39Z (All checks passed., DONE exit=0). Also, per K1-R1, add to tools/check_all.sh: node tools/ui_bake/bake.js --check and node --test tools/ui_bake/test/bake.test.js.",
       "files": [
+        "README.md",
         "tools/check_all.sh"
       ],
-      "blocking": false,
-      "created_at": "2026-10-30T00:45:00Z",
-      "due": "2026-11-02T21:00:00Z",
-      "default": "K1's bake tasks are checked by their own tests until the lead wires them in; the contract freeze needs no new check",
+      "blocking": true,
+      "created_at": "2026-10-30T22:30:00Z",
+      "due": "2026-10-31T22:00:00Z",
+      "default": "The lead adds the line in the candidate that merges P0-K1-bake-1 and takes the f316a1c run as its pre-check evidence",
       "escalate_to": "lead"
     }
   ],
