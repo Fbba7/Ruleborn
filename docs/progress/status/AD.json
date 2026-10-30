@@ -1,0 +1,22 @@
+{
+  "agent": "AD",
+  "role": "AD",
+  "branch": "claude/ui-ad",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "P0-AD-rubric",
+  "task_state": "claimed",
+  "claimed_at": "2026-10-30T01:00:00Z",
+  "lease_until": "2026-10-30T04:00:00Z",
+  "updated_at": "2026-10-30T01:00:00Z",
+  "expected_next_update_by": "2026-10-30T01:45:00Z",
+  "long_run": null,
+  "progress_marker": {"last_green_sha": null, "next_step": "Read report.md sections 4, 5, 10 and the design document's §20.8, §21.8, §21.10; draft gate/rubric.md version 1"},
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-06T21:00:00Z",
+  "acks": [],
+  "requests": [],
+  "answers": []
+}
