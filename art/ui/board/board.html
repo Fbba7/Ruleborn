@@ -1,0 +1,586 @@
+<!doctype html>
+<!-- Ruleborn's interface style board, part 1: the material set and the type
+     treatments (section 3.3, step 2, of docs/art/ui-quality/report.md).
+     Every colour is a variable from tokens.css, which build_tokens.mjs writes
+     from client/ui/tokens.json; the board adds grain, bevel, gloss and light,
+     never a hue. One CSS pixel is one point. ?hc=1 shows the high-contrast
+     mode. check_board.mjs checks the colours and the contrast in both modes. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruleborn style board</title>
+<link rel="stylesheet" href="tokens.css">
+<script>
+  if (new URLSearchParams(location.search).has('hc')) document.documentElement.classList.add('hc');
+</script>
+<style>
+@font-face { font-family: "Manrope"; src: url("../../../client/ui/fonts/manrope/Manrope-Variable.ttf"); font-weight: 200 800; }
+@font-face { font-family: "Marcellus"; src: url("../../../client/ui/fonts/marcellus/Marcellus-Regular.ttf"); }
+@font-face { font-family: "Lilita One"; src: url("../../../client/ui/fonts/lilita_one/LilitaOne-Regular.ttf"); }
+
+/* The two modes. High contrast (§21.8): opaque cards, 3-point outlines,
+   secondary text raised to primary, no glass. */
+:root {
+  --line: 2px;
+  --ink: var(--c-ink-line);
+  --t1: var(--c-text-on-night);
+  --t2: var(--c-text-on-night-2);
+  --t3: var(--c-text-on-night-3);
+  --pt2: var(--c-parchment-text-2);
+  --backdrop: var(--g-night);
+  --backdrop-base: var(--c-night-bottom);
+  --card: var(--g-card);
+  --glass: var(--c-glass);
+  --grain: 1;
+  /* The studio light: one warm key from the top left. Light is the paper
+     white and dark is the drop black, each at an alpha, so light and shade
+     change value and never hue. */
+  --lit: color-mix(in srgb, var(--c-paper) 34%, transparent);
+  --lit-soft: color-mix(in srgb, var(--c-paper) 12%, transparent);
+  --lit-none: color-mix(in srgb, var(--c-paper) 0%, transparent);
+  --dark: color-mix(in srgb, var(--c-drop) 38%, transparent);
+  --dark-soft: color-mix(in srgb, var(--c-drop) 16%, transparent);
+}
+html.hc {
+  --line: 3px;
+  --t2: var(--hc-text-on-night-2);
+  --t3: var(--hc-text-on-night-3);
+  --pt2: var(--hc-parchment-text-2);
+  --backdrop: var(--hc-night-top);
+  --backdrop-base: var(--hc-night-top);
+  --card: var(--g-card-hc);
+  --glass: var(--hc-glass);
+  --grain: 0;
+}
+
+* { box-sizing: border-box; margin: 0; }
+html { background: var(--backdrop-base); }
+body {
+  min-height: 100vh;
+  padding: 24px 16px 48px;
+  background: var(--backdrop);
+  color: var(--t1);
+  font: 600 16px/1.4 "Manrope", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- the board's own layout ---------- */
+.masthead { max-width: 1128px; margin: 0 auto 24px; }
+.plates {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(328px, 360px));
+  justify-content: center;
+  gap: 32px 24px;
+  max-width: 1128px;
+  margin: 0 auto;
+}
+.plate { display: flex; flex-direction: column; gap: 14px; }
+.plate > header { display: flex; flex-direction: column; gap: 4px; }
+.recipe { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; }
+.recipe dt { font-weight: 800; color: var(--t1); }
+.recipe dd { color: var(--t2); }
+.note { color: var(--t2); font-size: 13px; }
+.row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+
+/* ---------- type roles (client/ui/tokens.json "type") ---------- */
+/* Small words take the secondary shade: §21.8's tertiary #B8A8D8 is its
+   darkest, and at 13 points bold it reads Lc 57-59 on the night, under 60. */
+.kicker { font: 800 13px/1.3 "Manrope"; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t2); }
+.caption { font: 600 13px/1.35 "Manrope"; }
+.label { font: 800 16px/1.3 "Manrope"; letter-spacing: 0.04em; }
+.body { font: 600 16px/1.45 "Manrope"; }
+.body-bold { font: 800 16px/1.45 "Manrope"; }
+.heading { font: 400 20px/1.2 "Marcellus"; text-shadow: 0 1.5px 0 var(--c-drop); }
+.title { font: 400 28px/1.15 "Marcellus"; text-shadow: 0 2px 0 var(--c-drop); }
+.hero { font: 400 34px/1.1 "Marcellus"; text-shadow: 0 2px 0 var(--c-drop); }
+.number { font: 800 16px/1.2 "Manrope"; font-variant-numeric: tabular-nums; }
+.number-m { font: 800 22px/1.1 "Manrope"; font-variant-numeric: tabular-nums; text-shadow: 0 1.5px 0 var(--c-drop); }
+.button-type { font: 800 16px/1 "Manrope"; letter-spacing: 0.06em; text-transform: uppercase; }
+/* Display words: Lilita One with an ink outline all round, measured against
+   the outline (§21.8). The stroke is drawn under the fill at twice the
+   outline, so the outline outside the letter is --o wide. */
+.display-s, .display, .display-xl {
+  font-family: "Lilita One"; font-weight: 400; line-height: 1;
+  -webkit-text-stroke: calc(var(--o) * 2) var(--ink);
+  paint-order: stroke fill;
+  stroke-linejoin: round;
+}
+.display-s { font-size: 18px; --o: 2px; text-shadow: 0 1.5px 0 var(--c-drop); }
+.display { font-size: 28px; --o: 3px; text-shadow: 0 2px 0 var(--c-drop); }
+.display-xl { font-size: 44px; --o: 4px; text-shadow: 0 3px 0 var(--c-drop); }
+.on-night-1 { color: var(--t1); }
+.on-night-2 { color: var(--t2); }
+.on-night-3 { color: var(--t3); }
+
+/* ---------- grain: SVG noise, drawn in a token colour at an alpha ---------- */
+.tex { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: inherit; pointer-events: none; opacity: var(--grain); }
+.glint { position: absolute; width: 18px; height: 18px; color: var(--c-cream); pointer-events: none; opacity: var(--grain); }
+
+/* ---------- 1. Enamel: the violet card ---------- */
+.enamel {
+  position: relative;
+  border-radius: var(--m-card-radius);
+  background: var(--card);
+  border: var(--line) solid var(--ink);
+  box-shadow:
+    inset 0 0 0 var(--m-card-line-w) var(--m-card-line),
+    inset 0 var(--m-card-highlight-w) 0 var(--lit-soft),
+    inset 0 -3px 0 var(--dark-soft),
+    0 var(--m-card-drop-w) 0 var(--m-card-drop),
+    0 var(--m-card-soft-y) var(--m-card-soft-blur) var(--m-card-soft);
+  padding: 16px;
+  overflow: hidden;
+  isolation: isolate;
+}
+/* Fired glaze: a soft lacquer over the top, and the key's hot spot. */
+.enamel::before {
+  content: ""; position: absolute; inset: 0 0 58% 0; z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c-paper) 9%, transparent), var(--lit-none));
+  opacity: var(--grain);
+}
+.enamel::after {
+  content: ""; position: absolute; left: -10%; top: -40%; width: 70%; height: 90%; z-index: -1;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--c-paper) 10%, transparent), var(--lit-none));
+  opacity: var(--grain);
+}
+.enamel.selected {
+  border-color: var(--m-card-selected-line);
+  box-shadow:
+    inset 0 0 0 var(--m-card-selected-rim-w) var(--m-card-selected-rim),
+    inset 0 var(--m-card-selected-highlight-w) 0 var(--m-card-selected-highlight),
+    0 var(--m-card-selected-drop-w) 0 var(--m-card-selected-drop),
+    0 0 var(--m-card-selected-glow-w) var(--m-card-selected-glow);
+}
+html.hc .enamel.selected { box-shadow: 0 var(--m-card-selected-drop-w) 0 var(--m-card-selected-drop); }
+.pips { display: flex; gap: 6px; align-items: center; }
+.pip { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); background: var(--g-school-time); box-shadow: inset 0 2px 0 var(--lit); }
+.pip.spent { background: transparent; border-color: var(--t3); box-shadow: none; }
+
+/* ---------- 2. Gold: main actions ---------- */
+.gold {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  min-width: 48px; min-height: 48px; padding: 0 24px 14px;
+  border-radius: var(--m-gold-radius);
+  border: var(--line) solid var(--m-gold-line);
+  background: var(--g-gold);
+  color: var(--c-text-on-gold);
+  box-shadow:
+    inset 0 var(--m-gold-highlight-w) 0 var(--m-gold-highlight),
+    inset 0 calc(var(--m-gold-shade-w) * -1) 0 var(--m-gold-shade),
+    inset 0 0 0 1.5px color-mix(in srgb, var(--c-gold-rim) 45%, transparent),
+    0 var(--m-gold-drop-w) 0 var(--m-gold-drop),
+    0 var(--m-gold-soft-y) var(--m-gold-soft-blur) var(--m-gold-soft);
+  overflow: hidden; isolation: isolate;
+}
+/* Brushed metal: fine horizontal hairlines, light and dark. */
+.gold::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: repeating-linear-gradient(180deg,
+    color-mix(in srgb, var(--c-paper) 7%, transparent) 0 1px,
+    var(--lit-none) 1px 2px,
+    color-mix(in srgb, var(--c-gold-drop) 3%, transparent) 2px 3px,
+    var(--lit-none) 3px 4px);
+  opacity: var(--grain);
+}
+/* The gloss: a white lacquer over the top 42%, at the material's 0.32. */
+.gold::after {
+  content: ""; position: absolute; left: 6px; right: 6px; top: 3px; height: 40%; z-index: -1;
+  border-radius: 12px 12px 40% 40% / 12px 12px 18px 18px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c-paper) 32%, transparent), color-mix(in srgb, var(--c-paper) 6%, transparent));
+}
+.gold.primary { height: 64px; min-width: 240px; font-size: 20px; padding-bottom: 14px; }
+.gold.pressed {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 2px 0 var(--dark-soft),
+    inset 0 0 0 1.5px color-mix(in srgb, var(--c-gold-rim) 45%, transparent),
+    0 1px 0 var(--m-gold-drop);
+}
+.gold.pressed::after { opacity: 0.5; }
+.gold-round {
+  position: relative; width: 60px; height: 60px; border-radius: 50%;
+  border: var(--line) solid var(--m-gold-round-line);
+  background: var(--g-gold-round);
+  box-shadow:
+    inset 0 0 0 var(--m-gold-round-rim-w) color-mix(in srgb, var(--m-gold-round-rim) 60%, transparent),
+    0 var(--m-gold-round-drop-w) 0 var(--m-gold-round-drop),
+    0 0 var(--m-gold-round-glow-w) var(--m-gold-round-glow);
+  display: grid; place-items: center;
+}
+.gold-round::after {
+  content: ""; position: absolute; left: 14%; right: 14%; top: 6%; height: 38%; border-radius: 50%;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c-paper) 45%, transparent), var(--lit-none));
+}
+.gold-coin { width: 26px; height: 26px; }
+
+/* ---------- 3. Wood and leather ---------- */
+.oak {
+  position: relative; padding: 10px; border-radius: 18px;
+  background: var(--g-frame-oak);
+  border: var(--line) solid var(--ink);
+  box-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--c-paper) 26%, transparent),
+    inset 0 -3px 0 var(--dark),
+    0 4px 0 var(--c-drop),
+    0 8px 16px color-mix(in srgb, var(--c-drop) 45%, transparent);
+  isolation: isolate;
+}
+.oak > .tex { z-index: -1; }
+.oak .well {
+  position: relative; border-radius: 10px; padding: 14px;
+  background: var(--g-leather);
+  border: var(--line) solid var(--ink);
+  box-shadow: inset 0 4px 8px var(--dark), inset 0 -1px 0 color-mix(in srgb, var(--c-paper) 18%, transparent);
+  display: flex; flex-direction: column; gap: 12px; align-items: center;
+}
+.plaque {
+  position: relative; padding: 8px 18px 10px; border-radius: 10px;
+  background: var(--g-frame-oak);
+  border: var(--line) solid var(--ink);
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--c-paper) 30%, transparent), inset 0 -2px 0 var(--dark), 0 3px 0 var(--c-drop);
+  color: var(--c-cream);
+  isolation: isolate; overflow: hidden;
+}
+.plaque > .tex { z-index: -1; }
+.leather {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  min-height: 52px; min-width: 160px; padding: 0 22px 2px;
+  border-radius: var(--m-leather-radius);
+  border: var(--m-leather-line-w) solid var(--m-leather-line);
+  background: var(--g-leather);
+  color: var(--c-text-on-leather);
+  box-shadow:
+    inset 0 0 0 var(--m-leather-rim-w) var(--m-leather-rim),
+    inset 0 var(--m-leather-highlight-w) 0 var(--m-leather-highlight),
+    0 var(--m-leather-drop-w) 0 var(--m-leather-drop),
+    0 var(--m-leather-soft-y) var(--m-leather-soft-blur) var(--m-leather-soft);
+  isolation: isolate; overflow: hidden;
+}
+html.hc .leather { border-width: var(--line); }
+.leather > .tex { z-index: -1; }
+/* Saddle stitching, inside the rim. */
+.leather::before {
+  content: ""; position: absolute; inset: 5px; border-radius: 11px; z-index: -1;
+  border: 1.5px dashed color-mix(in srgb, var(--c-cream) 38%, transparent);
+  opacity: var(--grain);
+}
+.leather::after {
+  content: ""; position: absolute; left: 8px; right: 8px; top: 3px; height: 42%; z-index: -1;
+  border-radius: 12px 12px 30% 30%;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c-paper) calc(var(--m-leather-gloss) * 100%), transparent), var(--lit-none));
+}
+
+/* ---------- 4. Glass: pills over the world ---------- */
+.world { position: relative; height: 84px; border-radius: 14px; overflow: hidden; border: var(--line) solid var(--ink); }
+.world.day { background: linear-gradient(180deg, var(--c-sky-top), var(--c-sky-bottom)); }
+.world.dusk { background: linear-gradient(180deg, var(--d-sky-dusk-top), var(--d-sky-dusk-bottom)); }
+.world.night { background: linear-gradient(180deg, var(--d-sky-night-top), var(--d-sky-night-bottom)); }
+html.hc .world.day { background: linear-gradient(180deg, var(--hc-sky-top), var(--hc-sky-bottom)); }
+.world .isle { position: absolute; bottom: -26px; width: 150px; height: 60px; border-radius: 50% 50% 0 0; background: var(--c-stone); box-shadow: inset 0 -16px 0 var(--c-soil); }
+.world .sky-tag { position: absolute; right: 10px; bottom: 8px; }
+.glass {
+  position: absolute; left: 14px; top: 16px; height: 48px;
+  display: inline-flex; align-items: center; gap: 12px; padding: 0 16px;
+  border-radius: var(--m-glass-radius);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  box-shadow:
+    inset 0 0 0 var(--m-glass-rim-w) var(--m-glass-rim),
+    inset 0 1px 0 color-mix(in srgb, var(--c-paper) 22%, transparent),
+    0 var(--m-glass-soft-y) var(--m-glass-soft-blur) var(--m-glass-soft);
+  overflow: hidden; isolation: isolate;
+}
+/* A sheen raked across from the key light, kept above the words. */
+.glass::before {
+  content: ""; position: absolute; left: -20%; top: -60%; width: 60%; height: 70%; z-index: -1;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--c-paper) 9%, transparent), var(--lit-none) 70%);
+  opacity: var(--grain);
+}
+html.hc .glass { -webkit-backdrop-filter: none; backdrop-filter: none; border: var(--line) solid var(--ink); box-shadow: none; }
+.glass .sep { width: 1.5px; align-self: stretch; margin: 12px 0; background: color-mix(in srgb, var(--c-gold) 45%, transparent); }
+
+/* ---------- 5. Parchment ---------- */
+.parchment {
+  position: relative; padding: 18px 18px 20px;
+  border-radius: var(--m-parchment-radius);
+  border: var(--line) solid var(--m-parchment-line);
+  background: var(--g-parchment);
+  color: var(--c-parchment-ink);
+  box-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--c-paper) 70%, transparent),
+    inset 0 -3px 0 color-mix(in srgb, var(--c-soil) 22%, transparent),
+    0 var(--m-parchment-drop-w) 0 var(--m-parchment-drop),
+    0 var(--m-parchment-soft-y) var(--m-parchment-soft-blur) var(--m-parchment-soft);
+  isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.parchment > .tex { z-index: -1; }
+/* Aged edges: the paper browns toward its rim. */
+.parchment::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+  background: radial-gradient(130% 120% at 30% 20%, var(--lit-none) 62%, color-mix(in srgb, var(--c-soil) 16%, transparent));
+  opacity: var(--grain);
+}
+.parchment .heading { text-shadow: none; }
+.parchment .secondary { color: var(--pt2); }
+.rule-line { height: 2px; background: color-mix(in srgb, var(--c-parchment-ink) 22%, transparent); border-radius: 1px; }
+.alarm-words { color: var(--c-alarm-text); font-weight: 800; }
+html.hc .alarm-words { color: var(--hc-alarm-text); }
+.success-words { color: var(--c-success-text); font-weight: 800; }
+html.hc .success-words { color: var(--hc-success-text); }
+
+/* ---------- type plate pieces ---------- */
+.spec { display: grid; grid-template-columns: 76px 1fr; gap: 6px 12px; align-items: baseline; }
+.spec > .kicker { padding-top: 2px; }
+/* A gradient fill inside the outline: the outline is drawn by the word, the
+   fill by a copy of it over the top, clipped to the letters. */
+.fill-gold { position: relative; color: transparent; }
+.fill-gold::after {
+  content: attr(data-text); position: absolute; left: 0; top: 0;
+  -webkit-text-stroke: 0; text-shadow: none;
+  background: linear-gradient(180deg, var(--c-cream) 20%, var(--c-gold-top) 55%, var(--c-gold) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.fill-cream { color: var(--c-cream); }
+.alarm-fill {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  min-height: 52px; padding: 0 22px 2px; border-radius: 16px;
+  background: var(--c-alarm-fill); color: var(--c-on-alarm);
+  border: var(--line) solid var(--ink);
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--c-paper) 22%, transparent), inset 0 -3px 0 var(--dark), 0 4px 0 var(--c-drop);
+}
+html.hc .alarm-fill { background: var(--hc-alarm-fill); }
+.red-on-dark { color: var(--c-alarm-text-on-night); font-weight: 800; }
+.green-on-dark { color: var(--c-success-text-on-night); font-weight: 800; }
+.school-band {
+  position: relative; display: flex; align-items: center; height: 64px; padding: 0 10px; border-radius: 14px;
+  background: var(--g-chapter-motion); border: var(--line) solid var(--ink);
+  box-shadow: inset 0 2px 0 var(--lit), 0 3px 0 var(--c-drop);
+}
+.law-plate {
+  padding: 6px 14px 8px; border-radius: 10px;
+  background: var(--g-plate-dark); border: var(--line) solid var(--ink);
+  box-shadow: inset 0 1.5px 0 var(--lit-soft);
+}
+.chevron { margin-left: auto; width: 34px; height: 34px; fill: none; stroke: var(--ink); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.tnum-demo { display: grid; grid-template-columns: auto auto; gap: 0 18px; justify-content: start; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Grain: noise turned into alpha, then filled with one token colour.
+         The noise sets how much of that colour shows, never which colour. -->
+    <filter id="grain-enamel" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.4 0 0 0 -0.62"/>
+      <feComponentTransfer result="noise"><feFuncA type="linear" slope="0.08"/></feComponentTransfer>
+      <feFlood style="flood-color: var(--c-paper)" result="ink"/>
+      <feComposite in="ink" in2="noise" operator="in"/>
+    </filter>
+    <filter id="grain-wood" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.015 0.42" numOctaves="3" seed="7"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  2.2 0 0 0 -0.85"/>
+      <feComponentTransfer result="noise"><feFuncA type="linear" slope="0.6"/></feComponentTransfer>
+      <feFlood style="flood-color: var(--c-oak-grain)" result="ink"/>
+      <feComposite in="ink" in2="noise" operator="in"/>
+    </filter>
+    <filter id="grain-leather" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="2" seed="11"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.6 0 0 0 -0.62"/>
+      <feComponentTransfer result="noise"><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+      <feFlood style="flood-color: var(--c-drop)" result="ink"/>
+      <feComposite in="ink" in2="noise" operator="in"/>
+    </filter>
+    <filter id="grain-parchment" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.11" numOctaves="4" seed="5"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.8 0 0 0 -0.75"/>
+      <feComponentTransfer result="noise"><feFuncA type="linear" slope="0.2"/></feComponentTransfer>
+      <feFlood style="flood-color: var(--c-soil)" result="ink"/>
+      <feComposite in="ink" in2="noise" operator="in"/>
+    </filter>
+    <!-- The glint: a four-pointed star where the key light catches. -->
+    <symbol id="glint" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12 0 C13 8 16 11 24 12 C16 13 13 16 12 24 C11 16 8 13 0 12 C8 11 11 8 12 0Z"/>
+    </symbol>
+    <symbol id="coin" viewBox="0 0 24 24">
+      <path fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round" d="M12 2 L14.6 8.6 L21.5 9 L16.2 13.4 L17.9 20.2 L12 16.4 L6.1 20.2 L7.8 13.4 L2.5 9 L9.4 8.6 Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="masthead stack">
+  <p class="kicker">Ruleborn interface · style board, part 1 of 2</p>
+  <h1 class="hero" data-check>Treasure toys, one light</h1>
+  <p class="body on-night-2" data-check style="max-width: 760px">Every surface is a crafted object a thief would pocket: fired enamel, struck gold, oiled oak, saddle leather, smoked glass and old parchment. One warm key light falls from the top left on all of them. The materials dress §21.8's own surfaces in §21.2's and §21.8's own colours: they add grain, bevel, gloss and light, never a hue.</p>
+  <p class="caption on-night-2" data-check style="font-weight: 800">Part 2 adds the outline and glint rules, the studio light's plate, four hero icons and each material's high-contrast form. Add ?hc=1 to the address to see high contrast.</p>
+</header>
+
+<main class="plates">
+
+  <!-- 1. Enamel -->
+  <section class="plate" id="enamel">
+    <header>
+      <p class="kicker" data-check>Material 1 · enamel</p>
+      <h2 class="heading" data-check>The violet card</h2>
+      <p class="note" data-check>Dresses §21.8's dark surface, the violet card from #261A4C down, as fired enamel: a glassy glaze, a hot spot where the key lands, a bevelled edge.</p>
+    </header>
+    <article class="enamel stack">
+      <svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-paper)" filter="url(#grain-enamel)"/></svg>
+      <svg class="glint" style="right: 14px; top: 6px" aria-hidden="true"><use href="#glint"/></svg>
+      <p class="kicker" data-check>Law 9 of 24 · Time</p>
+      <h3 class="title" data-check>Tidewright's Ledger</h3>
+      <p class="body on-night-2" data-check>Every vault door in this realm opens one beat late.</p>
+      <div class="row" style="justify-content: space-between">
+        <div class="pips"><span class="pip"></span><span class="pip spent"></span><span class="number" data-check>1 left</span></div>
+        <span class="caption on-night-2" data-check style="font-weight: 800">Rank II</span>
+      </div>
+    </article>
+    <article class="enamel selected row" style="justify-content: space-between">
+      <span class="label" data-check>Chosen for this heist</span>
+      <span class="number" data-check>3 / 4</span>
+    </article>
+    <dl class="recipe caption">
+      <dt data-check>Fill</dt><dd data-check>the card gradient, card_top to card_bottom</dd>
+      <dt data-check>Glaze</dt><dd data-check>paper at 9% over the top 42%; a 10% hot spot top left</dd>
+      <dt data-check>Bevel</dt><dd data-check>a lit 2-point lip on top, a dark 3-point foot</dd>
+      <dt data-check>Edge</dt><dd data-check>ink outline; card line inside; hard drop of 3</dd>
+    </dl>
+  </section>
+
+  <!-- 2. Gold -->
+  <section class="plate" id="gold">
+    <header>
+      <p class="kicker" data-check>Material 2 · gold</p>
+      <h2 class="heading" data-check>Main actions</h2>
+      <p class="note" data-check>Dresses §21.8's gold for main actions as struck, brushed metal on a thick lip. Words sit on its upper half, where the gold is lightest.</p>
+    </header>
+    <div class="stack" style="align-items: center; padding: 8px 0 4px">
+      <button class="gold primary button-type"><svg class="glint" style="left: 10px; top: 2px" aria-hidden="true"><use href="#glint"/></svg><span data-check>Start heist</span></button>
+      <div class="row" style="justify-content: center">
+        <button class="gold button-type"><span data-check>Claim</span></button>
+        <button class="gold pressed button-type"><span data-check>Pressed</span></button>
+        <span class="gold-round" aria-label="Starlight"><svg class="gold-coin" style="color: var(--c-gold-rim)" aria-hidden="true"><use href="#coin"/></svg></span>
+      </div>
+    </div>
+    <dl class="recipe caption">
+      <dt data-check>Fill</dt><dd data-check>gold_top, gold, gold_bottom</dd>
+      <dt data-check>Brushing</dt><dd data-check>hairlines of paper at 7% and gold drop at 3%</dd>
+      <dt data-check>Gloss</dt><dd data-check>the material's 0.32 over the top 40%</dd>
+      <dt data-check>Lip</dt><dd data-check>gold drop, 4 points; pressed sinks 3 onto it</dd>
+      <dt data-check>Words</dt><dd data-check>on the upper face, clear of gold_bottom</dd>
+    </dl>
+  </section>
+
+  <!-- 3. Wood and leather -->
+  <section class="plate" id="wood">
+    <header>
+      <p class="kicker" data-check>Material 3 · wood and leather</p>
+      <h2 class="heading" data-check>Frames and buttons</h2>
+      <p class="note" data-check>Oak, from §21.2's wood and the oak frame, holds things; §21.8's leather is what a hand presses. Grain runs along the plank; leather is pebbled and stitched.</p>
+    </header>
+    <div class="oak">
+      <svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-oak-grain)" filter="url(#grain-wood)"/></svg>
+      <div class="well">
+        <svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-drop)" filter="url(#grain-leather)"/></svg>
+        <span class="plaque"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-oak-grain)" filter="url(#grain-wood)"/></svg><span class="display-s fill-cream" data-check>THE WORKSHOP</span></span>
+        <button class="leather button-type"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-drop)" filter="url(#grain-leather)"/></svg><span data-check>Build</span></button>
+      </div>
+    </div>
+    <dl class="recipe caption">
+      <dt data-check>Oak</dt><dd data-check>the oak frame's four stops at 160°, oak grain streaked along it</dd>
+      <dt data-check>Leather</dt><dd data-check>the leather radial, lit at 28% from the top</dd>
+      <dt data-check>Craft</dt><dd data-check>cream stitching at 38%; Motion-shadow rim</dd>
+      <dt data-check>Edge</dt><dd data-check>ink outline; drop of 4 in the drop black</dd>
+    </dl>
+  </section>
+
+  <!-- 4. Glass -->
+  <section class="plate" id="glass">
+    <header>
+      <p class="kicker" data-check>Material 4 · glass</p>
+      <h2 class="heading" data-check>Pills over the world</h2>
+      <p class="note" data-check>Dresses §21.8's dark glass at 78% as smoked glass with a gold rim: the world blurs behind it and a sheen rakes across from the key. Checked over §21.2's three skies.</p>
+    </header>
+    <div class="world day"><span class="isle" style="left: 170px"></span>
+      <div class="glass"><span class="number-m" data-check>2:41</span><span class="sep"></span><span class="label" data-check>Loot 18 / 40</span></div>
+    </div>
+    <div class="world dusk"><span class="isle" style="left: 120px"></span>
+      <div class="glass"><span class="number-m" data-check>1:07</span><span class="sep"></span><span class="label red-on-dark" data-check>Alarm 3</span></div>
+    </div>
+    <div class="world night"><span class="isle" style="left: 200px"></span>
+      <div class="glass"><span class="number-m" data-check>0:12</span><span class="sep"></span><span class="label green-on-dark" data-check>Escape open</span></div>
+    </div>
+    <dl class="recipe caption">
+      <dt data-check>Body</dt><dd data-check>glass, #140A16 at 78%, a 6-point blur behind</dd>
+      <dt data-check>Rim</dt><dd data-check>gold at 45%; a paper catch-light along the top</dd>
+      <dt data-check>Sheen</dt><dd data-check>paper at 9%, raked from the top left</dd>
+    </dl>
+  </section>
+
+  <!-- 5. Parchment -->
+  <section class="plate" id="parchment">
+    <header>
+      <p class="kicker" data-check>Material 5 · parchment</p>
+      <h2 class="heading" data-check>Sheets with brown ink</h2>
+      <p class="note" data-check>Dresses §21.8's parchment, #FFFBF0 to #F1E3C4 with brown ink, as old paper: long fibres, edges browned with handling.</p>
+    </header>
+    <article class="parchment">
+      <svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-soil)" filter="url(#grain-parchment)"/></svg>
+      <p class="kicker secondary" data-check>Contract · Tide Vault</p>
+      <h3 class="heading" data-check>Lift the ledger before the tide</h3>
+      <p class="body" data-check>Bring two bags and a Time crew member. The vault door opens one beat late.</p>
+      <div class="rule-line"></div>
+      <p class="caption secondary" data-check style="font-weight: 800">Small words in the lighter brown are bold, as §21.8's tertiary text is.</p>
+      <div class="row" style="justify-content: space-between">
+        <span class="body alarm-words" data-check>Alarm at 3 bells</span>
+        <span class="body success-words" data-check>Escaped clean</span>
+      </div>
+    </article>
+    <dl class="recipe caption">
+      <dt data-check>Fill</dt><dd data-check>parchment_top to parchment_bottom</dd>
+      <dt data-check>Fibre</dt><dd data-check>soil-coloured fibres, long across the sheet</dd>
+      <dt data-check>Age</dt><dd data-check>soil at 16% toward the rim, lit at the top</dd>
+      <dt data-check>Edge</dt><dd data-check>ink outline; a brown drop of 3</dd>
+    </dl>
+  </section>
+
+  <!-- 6. Type -->
+  <section class="plate" id="type">
+    <header>
+      <p class="kicker" data-check>Type · §21.8 as written</p>
+      <h2 class="heading" data-check>Three faces, fixed roles</h2>
+      <p class="note" data-check>Marcellus for titles and law names; Manrope for labels, body and every number that changes, with tabular figures; Lilita One for big numbers that do not change, outlined in ink.</p>
+    </header>
+    <div class="spec">
+      <span class="kicker" data-check>Hero</span><span class="hero" data-check>Tidewright</span>
+      <span class="kicker" data-check>Title</span><span class="title" data-check>Your crew</span>
+      <span class="kicker" data-check>Heading</span><span class="heading" data-check>Realm of Tides</span>
+      <span class="kicker" data-check>Label</span><span class="label" data-check>Upgrade the vault</span>
+      <span class="kicker" data-check>Body</span><span class="body on-night-2" data-check>Sixteen points, never less.</span>
+      <span class="kicker" data-check>Caption</span><span class="caption on-night-2" data-check>Thirteen points is the floor.</span>
+      <span class="kicker" data-check>Number</span>
+      <span class="tnum-demo number-m"><span data-check>1,111</span><span data-check>08:41</span><span data-check>8,888</span><span data-check>11:11</span></span>
+      <span class="kicker" data-check>Display</span>
+      <span class="row" style="gap: 14px"><span class="display-xl fill-gold" data-text="×250" data-check>×250</span><span class="display fill-cream" data-check>LEVEL 12</span></span>
+    </div>
+    <div class="school-band"><span class="law-plate"><span class="heading" data-check>Sun-Step</span></span><svg class="chevron" viewBox="0 0 24 24" aria-label="Motion"><path d="M5 6 L12 12 L5 18 M12 6 L19 12 L12 18"/></svg></div>
+    <div class="row">
+      <span class="alarm-fill button-type"><span data-check>Get out</span></span>
+      <span class="stack" style="gap: 2px"><span class="body red-on-dark" data-check>Alarm 4 of 5</span><span class="body green-on-dark" data-check>Vault open</span></span>
+    </div>
+    <dl class="recipe caption">
+      <dt data-check>Floors</dt><dd data-check>body 16, nothing under 13; 900 is drawn at 800</dd>
+      <dt data-check>Outline</dt><dd data-check>display words: ink all round, 2–4 points, at least 1.5</dd>
+      <dt data-check>Drop</dt><dd data-check>a hard drop under titles and numbers; it never counts toward contrast</dd>
+      <dt data-check>Plate</dt><dd data-check>a law title on a light school colour sits on a dark plate; the school also shows its shape</dd>
+    </dl>
+  </section>
+
+</main>
+</body>
+</html>

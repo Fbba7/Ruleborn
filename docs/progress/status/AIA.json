@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P0-AIA-board-1",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-10-30T01:15:00Z",
   "lease_until": "2026-10-30T04:15:00Z",
-  "updated_at": "2026-10-30T01:15:00Z",
-  "expected_next_update_by": "2026-10-30T02:00:00Z",
+  "updated_at": "2026-10-30T01:23:00Z",
+  "expected_next_update_by": "2026-10-30T02:08:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Read report.md section 3.3 and \u00a721.2/\u00a721.8; build art/ui/board/board.html"
+    "next_step": "Review the render in both modes; README; quick checks; pre-check"
   },
   "precheck": null,
   "gate_request": null,
