@@ -1,6 +1,9 @@
 <!doctype html>
-<!-- Ruleborn's interface style board, part 1: the material set and the type
-     treatments (section 3.3, step 2, of docs/art/ui-quality/report.md).
+<!-- Ruleborn's interface style board (section 3.3, step 2, of
+     docs/art/ui-quality/report.md): the material set, the type treatments,
+     the studio light, the outline and glint rules, four hero icons and each
+     material's high-contrast form. The icons and the studio are baked by
+     bake_art.mjs from studio.html into art/.
      Every colour is a variable from tokens.css, which build_tokens.mjs writes
      from client/ui/tokens.json; the board adds grain, bevel, gloss and light,
      never a hue. One CSS pixel is one point. ?hc=1 shows the high-contrast
@@ -42,7 +45,7 @@
   --dark: color-mix(in srgb, var(--c-drop) 38%, transparent);
   --dark-soft: color-mix(in srgb, var(--c-drop) 16%, transparent);
 }
-html.hc {
+html.hc, .hcf {
   --line: 3px;
   --t2: var(--hc-text-on-night-2);
   --t3: var(--hc-text-on-night-3);
@@ -154,7 +157,7 @@ body {
     0 var(--m-card-selected-drop-w) 0 var(--m-card-selected-drop),
     0 0 var(--m-card-selected-glow-w) var(--m-card-selected-glow);
 }
-html.hc .enamel.selected { box-shadow: 0 var(--m-card-selected-drop-w) 0 var(--m-card-selected-drop); }
+:is(html.hc, .hcf) .enamel.selected { box-shadow: 0 var(--m-card-selected-drop-w) 0 var(--m-card-selected-drop); }
 .pips { display: flex; gap: 6px; align-items: center; }
 .pip { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); background: var(--g-school-time); box-shadow: inset 0 2px 0 var(--lit); }
 .pip.spent { background: transparent; border-color: var(--t3); box-shadow: none; }
@@ -267,7 +270,7 @@ html.hc .enamel.selected { box-shadow: 0 var(--m-card-selected-drop-w) 0 var(--m
     0 var(--m-leather-soft-y) var(--m-leather-soft-blur) var(--m-leather-soft);
   isolation: isolate; overflow: hidden;
 }
-html.hc .leather { border-width: var(--line); }
+:is(html.hc, .hcf) .leather { border-width: var(--line); }
 .leather > .tex { z-index: -1; }
 /* Saddle stitching, inside the rim. */
 .leather::before {
@@ -286,7 +289,7 @@ html.hc .leather { border-width: var(--line); }
 .world.day { background: linear-gradient(180deg, var(--c-sky-top), var(--c-sky-bottom)); }
 .world.dusk { background: linear-gradient(180deg, var(--d-sky-dusk-top), var(--d-sky-dusk-bottom)); }
 .world.night { background: linear-gradient(180deg, var(--d-sky-night-top), var(--d-sky-night-bottom)); }
-html.hc .world.day { background: linear-gradient(180deg, var(--hc-sky-top), var(--hc-sky-bottom)); }
+:is(html.hc, .hcf) .world.day { background: linear-gradient(180deg, var(--hc-sky-top), var(--hc-sky-bottom)); }
 .world .isle { position: absolute; bottom: -26px; width: 150px; height: 60px; border-radius: 50% 50% 0 0; background: var(--c-stone); box-shadow: inset 0 -16px 0 var(--c-soil); }
 .world .sky-tag { position: absolute; right: 10px; bottom: 8px; }
 .glass {
@@ -307,7 +310,7 @@ html.hc .world.day { background: linear-gradient(180deg, var(--hc-sky-top), var(
   background: linear-gradient(160deg, color-mix(in srgb, var(--c-paper) 9%, transparent), var(--lit-none) 70%);
   opacity: var(--grain);
 }
-html.hc .glass { -webkit-backdrop-filter: none; backdrop-filter: none; border: var(--line) solid var(--ink); box-shadow: none; }
+:is(html.hc, .hcf) .glass { -webkit-backdrop-filter: none; backdrop-filter: none; border: var(--line) solid var(--ink); box-shadow: none; }
 .glass .sep { width: 1.5px; align-self: stretch; margin: 12px 0; background: color-mix(in srgb, var(--c-gold) 45%, transparent); }
 
 /* ---------- 5. Parchment ---------- */
@@ -336,9 +339,9 @@ html.hc .glass { -webkit-backdrop-filter: none; backdrop-filter: none; border: v
 .parchment .secondary { color: var(--pt2); }
 .rule-line { height: 2px; background: color-mix(in srgb, var(--c-parchment-ink) 22%, transparent); border-radius: 1px; }
 .alarm-words { color: var(--c-alarm-text); font-weight: 800; }
-html.hc .alarm-words { color: var(--hc-alarm-text); }
+:is(html.hc, .hcf) .alarm-words { color: var(--hc-alarm-text); }
 .success-words { color: var(--c-success-text); font-weight: 800; }
-html.hc .success-words { color: var(--hc-success-text); }
+:is(html.hc, .hcf) .success-words { color: var(--hc-success-text); }
 
 /* ---------- type plate pieces ---------- */
 .spec { display: grid; grid-template-columns: 76px 1fr; gap: 6px 12px; align-items: baseline; }
@@ -360,7 +363,7 @@ html.hc .success-words { color: var(--hc-success-text); }
   border: var(--line) solid var(--ink);
   box-shadow: inset 0 2px 0 color-mix(in srgb, var(--c-paper) 22%, transparent), inset 0 -3px 0 var(--dark), 0 4px 0 var(--c-drop);
 }
-html.hc .alarm-fill { background: var(--hc-alarm-fill); }
+:is(html.hc, .hcf) .alarm-fill { background: var(--hc-alarm-fill); }
 .red-on-dark { color: var(--c-alarm-text-on-night); font-weight: 800; }
 .green-on-dark { color: var(--c-success-text-on-night); font-weight: 800; }
 .school-band {
@@ -375,6 +378,58 @@ html.hc .alarm-fill { background: var(--hc-alarm-fill); }
 }
 .chevron { margin-left: auto; width: 34px; height: 34px; fill: none; stroke: var(--ink); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
 .tnum-demo { display: grid; grid-template-columns: auto auto; gap: 0 18px; justify-content: start; }
+
+/* ---------- each material's high-contrast form (§21.8) ----------
+   Opaque, flat and outlined at 3 points; grain, glaze, gloss, sheen, blur
+   and glints go (--grain is 0). A dark surface on the night also takes a
+   1.5-point ring of the primary text colour outside its ink, so its edge
+   still reads where ink meets night. The hard drop stays: it says what is
+   raised and what can be pressed. */
+:is(html.hc, .hcf) .enamel {
+  box-shadow: 0 0 0 1.5px var(--c-text-on-night), 0 var(--m-card-drop-w) 0 var(--m-card-drop);
+}
+:is(html.hc, .hcf) .gold::after, :is(html.hc, .hcf) .leather::after, :is(html.hc, .hcf) .gold-round::after { opacity: 0; }
+:is(html.hc, .hcf) .gold {
+  background: var(--g-gold);
+  box-shadow: inset 0 calc(var(--lip) * -1) 0 color-mix(in srgb, var(--c-gold-bottom) 100%, transparent), 0 var(--m-gold-drop-w) 0 var(--m-gold-drop);
+}
+:is(html.hc, .hcf) .leather {
+  box-shadow: 0 0 0 1.5px var(--c-text-on-night), 0 var(--m-leather-drop-w) 0 var(--m-leather-drop);
+}
+:is(html.hc, .hcf) .oak, :is(html.hc, .hcf) .plaque {
+  box-shadow: 0 0 0 1.5px var(--c-text-on-night), 0 4px 0 var(--c-drop);
+}
+:is(html.hc, .hcf) .oak .well { box-shadow: none; }
+:is(html.hc, .hcf) .glass { box-shadow: 0 0 0 1.5px var(--c-text-on-night); }
+:is(html.hc, .hcf) .parchment {
+  box-shadow: 0 var(--m-parchment-drop-w) 0 var(--m-parchment-drop);
+}
+
+/* ---------- the studio light, the rules and the icons ---------- */
+.shot { display: block; width: 100%; border-radius: 14px; border: var(--line) solid var(--ink); background: var(--g-plate-dark); }
+.finish { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.finish figure { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.finish img { width: 100%; aspect-ratio: 1; }
+.icon-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.icon-row figure { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.i96 { width: 76px; height: 76px; }
+.i48 { width: 48px; height: 48px; }
+.gray img { filter: grayscale(1); }
+.ic-hc { display: none; }
+:is(html.hc, .hcf) .ic-n { display: none; }
+:is(html.hc, .hcf) .ic-hc { display: block; }
+.world.tall { height: 84px; }
+.world .glass.icons { gap: 8px; padding: 0 12px; }
+.pairs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; align-items: center; }
+.pairs > .hcf { background: var(--hc-night-top); border-radius: 12px; padding: 8px; display: flex; justify-content: center; }
+.pairs > .hcf.flush { padding: 0; background: none; }
+.pairs > .n { padding: 8px; display: flex; justify-content: center; }
+.pairs .world { width: 100%; height: 72px; }
+.pairs .world .glass { left: 8px; top: 10px; }
+.mini { padding: 10px 12px; }
+.mini.parchment { padding: 10px 12px; gap: 2px; }
+.gold.small { padding: 0 16px var(--lip); }
+.leather.small { min-width: 0; padding: 0 16px 2px; }
 </style>
 </head>
 <body>
@@ -422,10 +477,10 @@ html.hc .alarm-fill { background: var(--hc-alarm-fill); }
 </svg>
 
 <header class="masthead stack">
-  <p class="kicker">Ruleborn interface · style board, part 1 of 2</p>
+  <p class="kicker">Ruleborn interface · style board</p>
   <h1 class="hero" data-check>Treasure toys, one light</h1>
   <p class="body on-night-2" data-check style="max-width: 760px">Every surface is a crafted object a thief would pocket: fired enamel, struck gold, oiled oak, saddle leather, smoked glass and old parchment. One warm key light falls from the top left on all of them. The materials dress §21.8's own surfaces in §21.2's and §21.8's own colours: they add grain, bevel, gloss and light, never a hue.</p>
-  <p class="caption on-night-2" data-check style="font-weight: 800">Part 2 adds the outline and glint rules, the studio light's plate, four hero icons and each material's high-contrast form. Add ?hc=1 to the address to see high contrast.</p>
+  <p class="caption on-night-2" data-check style="font-weight: 800">Five materials, the type, the studio light, the outline and glint rules, four hero icons and each material's high-contrast form. Add ?hc=1 to the address to see the whole board in high contrast.</p>
 </header>
 
 <main class="plates">
@@ -586,6 +641,109 @@ html.hc .alarm-fill { background: var(--hc-alarm-fill); }
       <dt data-check>Outline</dt><dd data-check>display words: ink all round, 2–4 points, at least 1.5</dd>
       <dt data-check>Drop</dt><dd data-check>a hard drop under titles and numbers; it never counts toward contrast</dd>
       <dt data-check>Plate</dt><dd data-check>a law title on a light school colour sits on a dark plate; the school also shows its shape</dd>
+    </dl>
+  </section>
+
+  <!-- 7. The studio light -->
+  <section class="plate" id="light">
+    <header>
+      <p class="kicker" data-check>The studio light</p>
+      <h2 class="heading" data-check>One light on everything</h2>
+      <p class="note" data-check>Every rendered piece stands in one studio, so a set of sixty stays one family. Gold, enamel and leather here, in studio.html's light.</p>
+    </header>
+    <img class="shot" src="art/studio.png" alt="Three spheres, gold, violet enamel and leather, under the studio light">
+    <dl class="recipe caption">
+      <dt data-check>Key</dt><dd data-check>cream, from the top left and in front; the strongest</dd>
+      <dt data-check>Rim</dt><dd data-check>the piece's own light colour, from behind on the right</dd>
+      <dt data-check>Fill</dt><dd data-check>soft, from below: a paper sky over a ground of the night</dd>
+      <dt data-check>Room</dt><dd data-check>reflections for metal and gloss; neutral tone mapping</dd>
+      <dt data-check>Flat</dt><dd data-check>on panels the key is a lit top lip, a hot spot and the gloss on the upper left, and a shaded foot; drops fall straight down</dd>
+    </dl>
+  </section>
+
+  <!-- 8. The outline and glint rules -->
+  <section class="plate" id="rules">
+    <header>
+      <p class="kicker" data-check>Outline and glint</p>
+      <h2 class="heading" data-check>The finish, in order</h2>
+      <p class="note" data-check>The render, then its glow and drop, then the ink outline, then a painted inner light and the glints. The same four steps finish every icon.</p>
+    </header>
+    <div class="finish">
+      <figure><img src="art/finish_1.png" alt="The render"><figcaption class="caption" data-check>Render</figcaption></figure>
+      <figure><img src="art/finish_2.png" alt="With glow and drop"><figcaption class="caption" data-check>Glow</figcaption></figure>
+      <figure><img src="art/finish_3.png" alt="With the ink outline"><figcaption class="caption" data-check>Outline</figcaption></figure>
+      <figure><img src="art/finish_4.png" alt="With light and glints"><figcaption class="caption" data-check>Glints</figcaption></figure>
+    </div>
+    <dl class="recipe caption">
+      <dt data-check>Outline</dt><dd data-check>ink_line all round, never a colour of its own: 2 points on surfaces, 3 in high contrast; on an icon, 2 points at the smallest size it is shown</dd>
+      <dt data-check>Words</dt><dd data-check>display words outlined in ink, 2 to 4 points, never under 1.5</dd>
+      <dt data-check>Glint</dt><dd data-check>a cream four-pointed star where the key catches, on the upper left; one per object, two on a hero icon, the second half the first</dd>
+      <dt data-check>Never</dt><dd data-check>on words, on a control's label, or in high contrast</dd>
+    </dl>
+  </section>
+
+  <!-- 9. Four hero icons -->
+  <section class="plate" id="icons">
+    <header>
+      <p class="kicker" data-check>Four hero icons</p>
+      <h2 class="heading" data-check>Treasure you could pocket</h2>
+      <p class="note" data-check>Starlight, Essence, a law of Time in its hourglass frame, and the loot bag: modelled, lit in the studio and finished by the rules, at 256 pixels.</p>
+    </header>
+    <article class="enamel">
+      <div class="icon-row">
+        <figure><img class="i96 ic-n" src="art/starlight.png" alt="Starlight"><img class="i96 ic-hc" src="art/starlight_hc.png" alt=""><figcaption class="caption" data-check>Starlight</figcaption></figure>
+        <figure><img class="i96 ic-n" src="art/essence.png" alt="Essence"><img class="i96 ic-hc" src="art/essence_hc.png" alt=""><figcaption class="caption" data-check>Essence</figcaption></figure>
+        <figure><img class="i96 ic-n" src="art/law.png" alt="Tidemark, a law of Time"><img class="i96 ic-hc" src="art/law_hc.png" alt=""><figcaption class="caption" data-check>Tidemark</figcaption></figure>
+        <figure><img class="i96 ic-n" src="art/loot.png" alt="Loot"><img class="i96 ic-hc" src="art/loot_hc.png" alt=""><figcaption class="caption" data-check>Loot</figcaption></figure>
+      </div>
+    </article>
+    <div class="world day"><span class="isle" style="left: 210px"></span>
+      <div class="glass icons">
+        <img class="i48 ic-n" src="art/starlight.png" alt=""><img class="i48 ic-hc" src="art/starlight_hc.png" alt="">
+        <span class="number-m" data-check>840</span>
+        <img class="i48 ic-n" src="art/loot.png" alt=""><img class="i48 ic-hc" src="art/loot_hc.png" alt="">
+        <span class="number-m" data-check>2</span>
+      </div>
+    </div>
+    <div class="icon-row gray" aria-label="The same at 48 points in grey, for value">
+      <img class="i48 ic-n" src="art/starlight.png" alt=""><img class="i48 ic-hc" src="art/starlight_hc.png" alt="">
+      <img class="i48 ic-n" src="art/essence.png" alt=""><img class="i48 ic-hc" src="art/essence_hc.png" alt="">
+      <img class="i48 ic-n" src="art/law.png" alt=""><img class="i48 ic-hc" src="art/law_hc.png" alt="">
+      <img class="i48 ic-n" src="art/loot.png" alt=""><img class="i48 ic-hc" src="art/loot_hc.png" alt="">
+      <span class="caption on-night-2" data-check style="font-weight: 800">48 pt, grey</span>
+    </div>
+    <dl class="recipe caption">
+      <dt data-check>Model</dt><dd data-check>extruded and lathed forms, deep rounded bevels; base colours from the tokens</dd>
+      <dt data-check>School</dt><dd data-check>a law icon's frame is its school's shape (§21.8): Time's hourglass, in Time's colours</dd>
+      <dt data-check>Volume</dt><dd data-check>§21.8's three-stop gradient, gloss and soft drop, here rendered, not painted flat</dd>
+    </dl>
+  </section>
+
+  <!-- 10. High contrast -->
+  <section class="plate" id="high-contrast">
+    <header>
+      <p class="kicker" data-check>High contrast · §21.8</p>
+      <h2 class="heading" data-check>Each material, plain</h2>
+      <p class="note" data-check>Opaque, flat, outlined at 3 points, with no glass: grain, glaze, gloss, sheen, blur and glints go. Dark surfaces take a light ring outside the ink.</p>
+    </header>
+    <div class="pairs">
+      <span class="kicker" data-check style="text-align: center">Normal</span><span class="kicker" data-check style="text-align: center">High contrast</span>
+      <div class="n"><article class="enamel mini"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-paper)" filter="url(#grain-enamel)"/></svg><span class="label" data-check>Enamel</span></article></div>
+      <div class="hcf"><article class="enamel mini"><span class="label" data-check>Enamel</span></article></div>
+      <div class="n"><button class="gold small button-type"><span data-check>Gold</span></button></div>
+      <div class="hcf"><button class="gold small button-type"><span data-check>Gold</span></button></div>
+      <div class="n"><span class="oak"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-oak-grain)" filter="url(#grain-wood)"/></svg><button class="leather small button-type"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-drop)" filter="url(#grain-leather)"/></svg><span data-check>Leather</span></button></span></div>
+      <div class="hcf"><span class="oak"><button class="leather small button-type"><span data-check>Leather</span></button></span></div>
+      <div class="world day"><div class="glass"><span class="label" data-check>Glass</span></div></div>
+      <div class="hcf flush"><div class="world day"><div class="glass"><span class="label" data-check>Glass</span></div></div></div>
+      <div class="n"><article class="parchment mini"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-soil)" filter="url(#grain-parchment)"/></svg><span class="label" data-check>Parchment</span><span class="caption secondary" data-check style="font-weight: 800">lighter ink</span></article></div>
+      <div class="hcf"><article class="parchment mini"><span class="label" data-check>Parchment</span><span class="caption secondary" data-check style="font-weight: 800">raised ink</span></article></div>
+      <div class="n"><span class="icon-row"><img class="i48" src="art/starlight.png" alt=""><img class="i48" src="art/law.png" alt=""></span></div>
+      <div class="hcf"><span class="icon-row"><img class="i48" src="art/starlight_hc.png" alt=""><img class="i48" src="art/law_hc.png" alt=""></span></div>
+    </div>
+    <dl class="recipe caption">
+      <dt data-check>Icons</dt><dd data-check>no glow and no glints; the outline 3 points at 48, ringed in the text colour</dd>
+      <dt data-check>Gold</dt><dd data-check>the lip stays, as a flat band of gold_bottom: it still says "press me"</dd>
     </dl>
   </section>
 
