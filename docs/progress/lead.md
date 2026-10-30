@@ -50,7 +50,7 @@ Agent sessions (cloud sessions on the repository at main, tagged
 | K1 | `session_01SNkKxo9cYeD2q9TQAaj2Uj` | `claude/ui-bake` | 2026-10-30 00:38Z |
 | AD | `session_01SNkKxqUsV3mCCyYnJyXexs` | `claude/ui-ad` | 2026-10-30 00:56Z |
 | AIA | `session_01SNkKxr7CHJ3iSQWWrN6UfP` | `claude/ui-artist` | 2026-10-30 01:11Z |
-| SV | pending | `claude/server-decisions` | due 01:25Z |
+| SV | `session_01SNkKxo35ecgs4qmETmP1Ye` | `claude/server-decisions` | 2026-10-30 01:26Z |
 
 A restart (cycle step 6) fires the agent's restart task with `fire_trigger`,
 passing the reason as text; a cycle's session cannot create sessions itself.
