@@ -263,6 +263,9 @@ tools/
   completion.py                   how close the app is to built, backend and frontend, from §26.8's costs and passing proofs
   build_stamp.py                  one build stamp for every published page
   check_docs_consistency.py       this repository's own documents, against each other
+  # the agent program
+  run_checks.sh                   the full checks on a separate worktree of one commit, detached; start, wait, result, record
+  coord/                          the program's coordination tools: owners.py checks a change stays inside its task's files
   # models and analyses
   economy_model/                  the day-by-day model §24 references but omits
   heist_harness/                  §19.27's simulation harnesses, built in v3.0's plan

@@ -142,6 +142,12 @@ python3 tools/check_unread_fields.py --self-test
 python3 tools/check_unread_fields.py
 
 echo
+echo "== the agent program's check runner and ownership check =="
+bash tools/run_checks.sh --self-test
+python3 tools/coord/owners.py --self-test
+if [ -f docs/progress/backlog.json ]; then python3 tools/coord/owners.py claims; fi
+
+echo
 echo "== this repository's own documents agree with each other =="
 python3 tools/check_docs_consistency.py --self-test
 python3 tools/check_docs_consistency.py

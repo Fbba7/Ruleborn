@@ -186,20 +186,18 @@ lease, are defined once in
 [agent-protocol.md](agent-protocol.md#tasks-and-their-states). An agent's own
 state (`active`, `waiting`, `stopped`, `done`) is a separate field.
 
-**Claiming.** Agents push only to their own branches, so a claim is made in
-the agent's own status file and read by everyone else from their branches:
-
-1. `git fetch origin`, read main's backlog, and pick the first `open` task
-   your role may take whose `deps` are all `merged`; if none, take one from
-   the idle queue; if none, set `agent_state: done` and end the session.
-2. Look for a competing claim: read the other agents' status files from
-   their branches (`git show origin/<branch>:docs/progress/status/<agent>.json`).
-3. Write your status file with the task's id, `task_state: "claimed"`,
-   `claimed_at` and `lease_until` three hours later. Commit and push.
-4. Check again. "Earlier" means the earlier push as seen by the coordinator.
-   On a tie, the lower agent id wins. The loser writes `open` for the task and
-   picks again.
-5. The coordinator copies claims into the backlog at each cycle.
+**Taking work.** In the UI wave each role has one agent, so the lead assigns
+tasks (`assigned_to` in the backlog) and names the task in the agent's
+launch prompt; nobody races for work. The agent takes the first task
+assigned to it whose `deps` are all `merged`, writes its status file with the
+task's id, `task_state: "claimed"`, `claimed_at` and `lease_until` three
+hours later, and pushes. If none is assigned to it, it sets `agent_state:
+done` and ends the session, and the lead assigns more at its next cycle.
+The coordinator copies each agent's state and lease into the backlog at each
+cycle. Later waves, where several agents share a role, use the claim
+protocol in
+[agent-protocol.md](agent-protocol.md#taking-work-assignment-in-the-ui-wave):
+the earlier push wins, and on a tie the lower agent id.
 
 **Leases.** A claim lasts three hours. A lease is renewed only by a pushed
 status commit, timed from when the coordinator first sees it, and agents push
@@ -691,7 +689,7 @@ The brief relies on none of these: an agent follows the same rules by hand.
 | Agents stopped early after misreading stop times | Absolute UTC deadlines with the local time beside them; `date -u`; the stop protocol, with the only two early-stop cases named; the last full check started by STOP_AT − 60 | Mostly closed: the Stop hook is not set (D-09); the stop protocol and the lead's cycle carry it |
 | Every agent stalled together at the shared usage limit | A cap of three until throughput is measured; a staggered measurement per model; gate calls in the projection; a threshold for dropping to three; tiers; no wasted re-checks | Closed, pending the first measurement |
 | Container restarts killed test runs and cost one session about two and a half hours | Checks on a separate worktree, logs outside the repository with a `DONE` marker; the lead restarts lost sessions; one setup script (planned: BT-09) | Closed once BT-09 exists |
-| A message sent through a disabled scheduled task never arrived | A message counts only when acknowledged in a pushed status; the lead's cycle is a scheduled task, approved by the owner (D-02), that the lead checks daily; the lead has its own status file | Partly open: until BT-01 runs outside the lead, only the owner notices a dead lead (G-67 in T17's report) |
+| A message sent through a disabled scheduled task never arrived | A message counts only when acknowledged in a pushed status; the lead's cycle is a scheduled task, approved by the owner (D-02), that the lead checks daily; the lead has its own status file | Closed except when both scheduled tasks fail: a watchdog scheduled task alerts the owner and restarts the cycle when `status/lead.json` is stale (G-67 in T17's report) |
 | Sessions grew to 300k–400k tokens | A fresh session per task, ended at ready; output kept out of the context; compaction at 200k, set in `.claude/settings.json` | Closed |
 | The integrator merging every track each hour became the bottleneck | Merge, then test, on a scheduled cycle; batching; team size from merge throughput; mechanical duties moved to a coordinator script (planned: BT-01) | Closed for the queue; the coordinator is planned |
 | Containers lacked tools check_all needs (Rust's `wasm32-unknown-unknown` target, `gdlint`, Python's `playwright` 1.63.0) | The brief lists them; one pinned setup script with an owner (planned: BT-09) | Closed once BT-09 exists |

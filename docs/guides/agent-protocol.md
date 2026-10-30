@@ -70,6 +70,7 @@ by a role in general.
 | S1 | Maker: heist and result | `claude/ui-screens-heist` | Sonnet 5.5 | 1–2 | `client/scripts/heist_screen.gd`, `heist_hud.gd`, `result_screen.gd`, `replay_screen.gd`, `client/world/fx_*.gd` | 1 |
 | S2 | Maker: home | `claude/ui-screens-home` | Sonnet 5.5 | 2 | `client/scripts/home.gd` | 2 |
 | S3 | Maker: character, settings and the menu screens | `claude/ui-screens-meta` | Sonnet 5.5 | 2 | `client/scripts/character_screen.gd`, `client/scripts/screen_*.gd`, `client/scripts/settings_screen.gd`, `client/tests/shots/screen_*.gd` | 2 |
+| SV | Maker: the owner's server decisions B1–B12 ([owner-decisions.md](../decisions/owner-decisions.md#build-tasks)), outside the UI wave's three building slots by the owner's approval of 30 October 2026 | `claude/server-decisions` | Sonnet 5.5; a fresh Opus 5.5 session after a second failed pre-check | 0–1 | only the files its task lists: the lead's server files it assigns to it | 2 |
 | Specialists | One narrow job each | `claude/ui-spec-<job>` | chosen per job | as the backlog lists | only the files their task lists | 3 |
 
 **Shared things and their owners.** The string table
@@ -116,7 +117,7 @@ One list of states is used in the backlog, the status files and every page.
 | task_state | Set by | When | Lease |
 |---|---|---|---|
 | `open` | lead or coordinator (an agent yielding a claim writes it in its own status) | created; lease expired; claim yielded | none |
-| `claimed` | agent | claim protocol done | runs (3 h, renewed by each *pushed* status commit) |
+| `claimed` | agent | it started the task the lead assigned it, or (later waves) the claim protocol is done | runs (3 h, renewed by each *pushed* status commit) |
 | `working` | agent | first work commit | runs |
 | `ready` | agent | pre-check passed and gate passed at `ready_sha` | paused |
 | `resync` | coordinator | candidate has a textual conflict or fails checks | runs |
@@ -148,6 +149,7 @@ The backlog's format, with examples, is
 | Field | Meaning |
 |---|---|
 | `id`, `title`, `phase`, `role` | What the task is and which agent may take it |
+| `assigned_to` | The agent the lead assigned the task to (the UI wave), or `null` where agents claim (later waves) |
 | `model` | The model the task runs on, set by the lead from the routing table; escalation changes it |
 | `files` | The paths the task may change. Globs are allowed; a new file inside one of them belongs to the claimant. Tasks claimed at the same time have disjoint `files` |
 | `deps` | Task ids that must be `merged` first |
@@ -163,6 +165,28 @@ The backlog's format, with examples, is
 
 The order of the `tasks` array is priority: the first `open` task an agent
 may take is the one it takes.
+
+### Taking work: assignment in the UI wave
+
+In the UI wave each role has one agent, so **the lead assigns tasks** and
+agents do not race for them. The lead sets `assigned_to` on each task and
+names the task in the agent's launch prompt or in a message. An agent takes
+the first task in `tasks` order whose `assigned_to` is its own id, whose
+`state` is `open` (or `parked`, `resync` or `blocked` with its own branch as
+the work) and whose `deps` are all `merged`; it writes its status file with
+that `task_id` and `task_state: "claimed"`, `claimed_at` and `lease_until`
+three hours later, and pushes. It never takes a task assigned to someone
+else. If it has none, it sets `agent_state: "done"`, pushes and ends the
+session; the lead assigns more at its next cycle and starts a fresh
+session. Leases, `prior_sha` and the states work the same way as for a
+claim. The lead reassigns a task only after its lease lapses.
+
+**The claim protocol** is for later waves, where several agents share a
+role: the agent picks the first `open` task its role may take, writes the
+claim in its own status file, pushes and checks again; "earlier" is the
+earlier push as the coordinator sees it, and on a tie the lower agent id
+wins (string order: `AD` before `S1`). The loser writes `open` for it and
+picks again.
 
 ## The status file
 
@@ -295,30 +319,35 @@ Never re-run until green without recording it.
 
 The pre-check runs on a separate worktree of the exact commit, with its log
 outside the repository, so editing during the run cannot change what is
-tested and the log cannot be committed by accident:
+tested and the log cannot be committed by accident. `tools/run_checks.sh`
+(backlog task BT-03) does all of it:
 
 ```bash
-sha=$(git rev-parse HEAD); wt="/tmp/check-$sha"; log="/tmp/check-$sha.log"
-git worktree add --detach "$wt" "$sha"
-nohup setsid bash -c "cd '$wt' && bash tools/check_all.sh > '$log' 2>&1; echo \"DONE exit=\$? sha=$sha\" >> '$log'" >/dev/null 2>&1 &
+bash tools/run_checks.sh start            # checks HEAD; prints the log path
+bash tools/run_checks.sh wait <sha>       # blocks until DONE, then prints the result
+bash tools/run_checks.sh result <sha>     # PASS, FAIL or RUNNING, as JSON
+bash tools/run_checks.sh record <sha> <agent>   # writes precheck into your status file
 ```
+
+`start` adds a detached worktree at `/tmp/check-<sha>`, runs
+`bash tools/check_all.sh` there under `nohup setsid`, and appends
+`DONE exit=<code> sha=<sha>` to `/tmp/check-<sha>.log` when it ends. `wait`
+and `result` remove the worktree once the run is done.
 
 - **A run passed** only if its log ends `DONE exit=0` **and** contains
   `All checks passed.` `check_all.sh` runs under `set -euo pipefail`, prints
   a `== <check> ==` heading before each step and stops at the first failure,
-  so the failing step is the last heading in the log:
-  `grep '^== ' "$log" | tail -1; tail -20 "$log"`. A grep for `FAIL` or
-  `error:` is only a helper: it misses `panicked` and `AssertionError`.
-- **Background runs.** In this harness a job started with a plain `&` kept
-  running after the tool call ended (T17 checked it with `sleep`, and the
-  integrator saw a `check_all.sh` run finish that way), but a container
-  restart kills every running process. The harness also has a documented
-  background mode for long commands; use it where your harness offers it,
-  with the same worktree and log. Either way the `DONE` line is the only
-  proof the run finished (reported, by the integrator and T17).
-- Remove the worktree afterwards: `git worktree remove "$wt"`.
-- Planned: backlog task BT-03 replaces this with `tools/run_checks.sh`, which
-  also writes `precheck` into the status file.
+  so the failing step is the last heading in the log; `result` reports it
+  as `summary`. A grep for `FAIL` or `error:` is only a helper: it misses
+  `panicked` and `AssertionError`.
+- **Background runs.** In this harness a job started with `nohup setsid`
+  keeps running after the tool call ends (T17 checked it with `sleep`, and
+  the integrator saw a `check_all.sh` run finish that way), but a container
+  restart kills every running process. Run `wait` in the harness's
+  background mode (or under its monitor), never as a foreground sleep. The
+  `DONE` line is the only proof the run finished (reported, by the
+  integrator and T17).
+- `CHECK_CMD` overrides the command run, for the script's own tests only.
 
 Start no full check after STOP_AT − (check minutes + 35); with today's
 25-minute checks, that is STOP_AT − 60 minutes.
@@ -407,9 +436,10 @@ or the coordinator moves main, through this queue, after `check_all.sh`
 passes on the candidate; every other agent pushes only to its own branch.
 
 **The candidate's checks** also include an ownership check: every changed
-path must match the task's `files` or an exception the lead granted (planned:
-backlog task BT-02; until then the lead compares
-`git diff --name-only <main>...<ready_sha>` with the globs by hand).
+path must match the task's `files` or an exception the lead granted:
+`python3 tools/coord/owners.py diff <task_id> <main> <ready_sha>` (backlog
+task BT-02). `python3 tools/coord/owners.py claims` checks that the tasks
+being worked on at the same time have disjoint `files`.
 
 **Bookkeeping commits.** Coordination data stays on main (decision D-01,
 applied): no session is shown to push anywhere but its own branch, and
@@ -432,7 +462,7 @@ not drop status files).
 
 | Duty | Done by |
 |---|---|
-| Lease expiry; copying claims; acknowledgement and request deadlines; checking changes against ownership; stall flags; building and checking candidates; fast-forwarding main | Coordinator script (planned: BT-01, BT-02), on a trigger |
+| Lease expiry; copying claims; acknowledgement and request deadlines; checking changes against ownership; stall flags; building and checking candidates; fast-forwarding main | Coordinator script (planned: BT-01, which calls BT-02's `tools/coord/owners.py` and BT-03's `tools/run_checks.sh`), on a trigger |
 | Planning; writing tasks; refilling the idle queue; digests; escalations; phase decisions | The lead (an LLM session) |
 
 Until BT-01 exists, the lead runs one cycle every 30 minutes as a scheduled
@@ -452,7 +482,8 @@ counts as delivered only after checking that the target session is running.
 1. `git fetch origin`; read every status file on the roster's branches.
 2. Record `seen_at` for each new status push; expire lapsed leases (set
    `open`, record `prior_branch` and `prior_sha` if the old branch has work);
-   copy claims and break ties.
+   copy each agent's `task_state` into its task and its lease into `claim`;
+   assign the next tasks.
 3. Copy open requests into `requests.md`; apply defaults for requests past
    `due`; check acknowledgements against `ack_by`.
 4. Launch the gate for each `gate_request`; write the verdicts.
@@ -464,19 +495,41 @@ counts as delivered only after checking that the target session is running.
 7. Raise the alerts below; refill the idle queue; write `status/lead.json`
    and the lead's handoff; push.
 
-**Claims.** "Earlier" means the earlier push as seen by the coordinator. On a
-tie, the lower agent id wins (string order: `AD` before `S1`).
+**The merge lock.** A cycle can outlast the 30 minutes between cycles,
+because the candidate's checks take about 25. So before step 4 the lead reads
+`merging` in `status/lead.json` on main:
+`{"candidate_sha", "task_ids", "started_at", "expires_at"}`, with
+`expires_at` = `started_at` + 2 × the check minutes + 10 (60 minutes today).
+If it is set and has not expired, another cycle is merging: this cycle skips
+steps 4 and 5, does the bookkeeping steps and pushes only `docs/progress/**`.
+Otherwise the lead writes its own `merging`, pushes it before starting the
+checks, and clears it (`null`) when main has moved or the candidate failed.
+An expired lock means that cycle died: the lead clears it, notes it in the
+digest, and starts the merge again from main's head. The merging cycle
+treats the other cycle's bookkeeping commits as the queue already allows: it
+merges the candidate onto the new head and re-runs only the documentation
+check.
+
+**Claims** (later waves). "Earlier" means the earlier push as seen by the
+coordinator. On a tie, the lower agent id wins (string order: `AD` before
+`S1`).
 
 **Lapsed leases.** When a lease lapses, the lead records `prior_branch` and
 `prior_sha` on the task. The new claimant merges `prior_sha` before starting.
 The old claimant must not push further work for that task.
 
-**The lead's own status and failover.** The lead keeps `status/lead.json` and
-a handoff. If its status is 45 minutes stale, the owner is alerted. To fail
-over, the owner starts a fresh Opus 5.5 session with the lead prompt and the
-lead's handoff. Until BT-01 runs outside the lead's own session, nothing but
-the owner's daily look at `status/lead.json` and the scheduled task's last
-run notices a dead lead (finding G-67 in T17's report).
+**The lead's own status and failover.** Each cycle is a fresh session that
+starts from `status/lead.json` and the lead's handoff in
+`docs/progress/lead.md`, so no state lives only in one session.
+`status/lead.json` holds `agent` (`"lead"`), `updated_at`,
+`expected_next_update_by` (the next cycle + 15 minutes), `cycle` (a count),
+`merging` (the lock above, or `null`), `last_merged` (`{"task_id", "sha"}`),
+`alerts` (open alert ids) and `next_step`. A second scheduled task, the
+**watchdog**, runs every two hours in a fresh session: if
+`expected_next_update_by` has passed, it notifies the owner's phone, fires
+the lead's cycle once, and records the alert in the owner inbox. This closes
+finding G-67 in T17's report except when both scheduled tasks fail together;
+the owner's daily look at `status/lead.json` covers that.
 
 **Runaway sessions.** No session runs past 2 × its task's estimate without a
 handoff. The lead stops any session whose `progress_marker` is unchanged for
@@ -634,7 +687,7 @@ Every rule applies to every role as below; the brief has a section per role.
 | 2 Your files only | ✓ | ✓ contract changes by the four steps | ✓ hotspot edits are its own backlog tasks | ✓ reads only | ✓ only its task's files |
 | 6–7 Tests and green | ✓ | ✓ | ✓ on every candidate | ✓ not applicable: changes nothing | ✓ |
 | 8 Own assessment | ✓ the gate and checks decide | ✓ the owner's sign-off decides | ✓ approves no build as "good" | ✓ judges only others' work | ✓ |
-| Claiming | ✓ | ✓ claims its tasks like a maker | ✓ assigns, does not claim | ✓ launched per request | ✓ claims its one task |
+| Taking work | ✓ takes the task the lead assigned | ✓ takes its assigned tasks like a maker | ✓ assigns, takes none | ✓ launched per request | ✓ takes its one assigned task |
 | One task per session | ✓ | ✓ | ✓ one cycle per session | ✓ one quality per run | ✓ |
 | Status every 45 min | ✓ | ✓ | ✓ every cycle, in `status/lead.json` | ✓ the launcher records each run | ✓ |
 | Stop protocol | ✓ | ✓ | ✓ its own, below the others | ✓ runs end on their own | ✓ |

@@ -73,14 +73,15 @@ files are in [the roster](agent-protocol.md#the-roster).
    outside the repository ([running the checks](agent-protocol.md#running-the-checks)):
 
    ```bash
-   sha=$(git rev-parse HEAD); wt="/tmp/check-$sha"; log="/tmp/check-$sha.log"
-   git worktree add --detach "$wt" "$sha"
-   nohup setsid bash -c "cd '$wt' && bash tools/check_all.sh > '$log' 2>&1; echo \"DONE exit=\$? sha=$sha\" >> '$log'" >/dev/null 2>&1 &
+   bash tools/run_checks.sh start                  # prints the sha and log path
+   bash tools/run_checks.sh wait <sha>             # run this in the background
+   bash tools/run_checks.sh record <sha> <agent>   # writes precheck into your status file
    ```
 
-   It passed only if the log ends `DONE exit=0` and contains
-   `All checks passed.` On a failure the last `== ... ==` heading names the
-   step: `grep '^== ' "$log" | tail -1; tail -20 "$log"`. While iterating,
+   It passed only if `result` says `PASS`: the log ends `DONE exit=0` and
+   contains `All checks passed.` On a failure, its `summary` names the last
+   `== ... ==` heading, the failing step. Never wait with a foreground
+   `sleep`. While iterating,
    run the quick checks: `python3 tools/check_docs_consistency.py` plus the
    steps in [checks.md](checks.md) for what you touched. A commit titled
    `WIP` is a save point and is never merged; your last commit of a task
@@ -167,25 +168,23 @@ rewrite it. Evidence is a test, a commit, a still or a gate verdict. Your
 track's notes (what was done, the evidence, what is still worse, and
 "Stopped here") go where your prompt says.
 
-## Claiming work
+## Taking work
 
-([details](agent-protocol.md#tasks-and-their-states))
+([details](agent-protocol.md#taking-work-assignment-in-the-ui-wave))
 
 1. Read the backlog on main. Its `tasks` array is in priority order.
-2. Pick the first `open` task your role may take whose `deps` are all
-   `merged`. If there is none, take one from `idle_queue`. If there is none,
-   set `agent_state: done`, push and end the session: that is correct, not
-   an early stop.
-3. Read the other agents' claims from their branches:
-   `git show origin/<their-branch>:docs/progress/status/<agent>.json`.
-4. Write your status file (`task_id`, `task_state: "claimed"`, `claimed_at`,
-   `lease_until` three hours later); commit and push; check again. The
-   earlier push, as the lead sees it, wins; on a tie the lower agent id wins.
-   If you lose, write `open` for it and pick again.
-5. If the task has `prior_sha`, merge it first: it is the lapsed claimant's
+2. Take the first task whose `assigned_to` is your id, whose `state` is
+   `open` (or `parked`, `resync` or `blocked` on your own branch) and whose
+   `deps` are all `merged`. Your launch prompt names it. Never take a task
+   assigned to someone else. If none is yours, set `agent_state: done`,
+   push and end the session: that is correct, not an early stop. The lead
+   assigns more at its next cycle.
+3. Write your status file (`task_id`, `task_state: "claimed"`, `claimed_at`,
+   `lease_until` three hours later); commit and push.
+4. If the task has `prior_sha`, merge it first: it is the lapsed claimant's
    work.
-6. Set `task_state: working` at your first work commit.
-7. **One task per session**, of at most 4 hours. At 1.5 × the estimate, write
+5. Set `task_state: working` at your first work commit.
+6. **One task per session**, of at most 4 hours. At 1.5 × the estimate, write
    your handoff and send the lead a request to split the task.
 
 ## The gate
@@ -321,7 +320,7 @@ and mark ready again.
 
 ## If you own a contract
 
-- You claim your tasks like a maker. Freeze the contract with `version` and
+- You take your assigned tasks like a maker. Freeze the contract with `version` and
   `consumers` at its head. After the freeze, change it only through a
   request, the lead's approval, a message every consumer acknowledges, and a
   version bump; keep removed parts, marked deprecated, until the next phase.

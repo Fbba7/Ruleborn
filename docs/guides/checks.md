@@ -22,9 +22,9 @@ a `DONE exit=<code>` line
 ([agent-protocol.md](agent-protocol.md#running-the-checks)):
 
 ```bash
-sha=$(git rev-parse HEAD); wt="/tmp/check-$sha"; log="/tmp/check-$sha.log"
-git worktree add --detach "$wt" "$sha"
-nohup setsid bash -c "cd '$wt' && bash tools/check_all.sh > '$log' 2>&1; echo \"DONE exit=\$? sha=$sha\" >> '$log'" >/dev/null 2>&1 &
+bash tools/run_checks.sh start          # checks HEAD in /tmp/check-<sha>, logs to /tmp/check-<sha>.log
+bash tools/run_checks.sh wait <sha>     # in the background: blocks until DONE, prints the result
+bash tools/run_checks.sh result <sha>   # {"state": "PASS"|"FAIL"|"RUNNING", ...}
 ```
 
 - **A run passed** only if its log ends `DONE exit=0` **and** contains
@@ -33,7 +33,7 @@ nohup setsid bash -c "cd '$wt' && bash tools/check_all.sh > '$log' 2>&1; echo \"
 - **A log without its `DONE` line** is a run that did not finish (a
   container restart kills every running process). Re-run it; the re-run
   belongs to the same task.
-- Remove the worktree afterwards: `git worktree remove "$wt"`.
+- `wait` and `result` remove the worktree once the run has finished.
 - Start no full run after STOP_AT − 60 minutes with today's 25-minute checks.
 
 ## The quick checks
@@ -114,6 +114,7 @@ its own with the command shown.
 | Register freshness | `python3 tools/check_findings_fresh.py` (and `--self-test`) | |
 | Scope cut | `python3 tools/scope_cut.py --self-test` | |
 | Unread fields | `python3 tools/check_unread_fields.py` | a field the harness computes and nothing reads |
+| The agent program's tools | `bash tools/run_checks.sh --self-test`, `python3 tools/coord/owners.py --self-test`, `owners.py claims` when `docs/progress/backlog.json` exists | two tasks in flight whose files can meet |
 | **This repository's own documents** | `python3 tools/check_docs_consistency.py` (and `--self-test`) | see below |
 | Audit register | `python3 tools/build_audit.py`, `python3 tools/check_audit_ui.py` (and `--self-test`) | rewrites `docs/audit/index.html`; fails on an inconsistent register |
 | Roadmap | `python3 tools/completion.py --self-test`, `python3 tools/build_roadmap.py` | rewrites `docs/roadmap/index.html`; refuses a roadmap that contradicts itself |
