@@ -11,6 +11,7 @@ import { handler } from "../src/http.mjs";
 import { REALMS, Service } from "../src/service.mjs";
 import { Build, Builds } from "../src/sim.mjs";
 import { Store } from "../src/store.mjs";
+import { lawsOf } from "../src/telemetry.mjs";
 import { raiseTo } from "../src/universe.mjs";
 
 export const WASM = fileURLToPath(new URL(
@@ -28,6 +29,17 @@ export function simulation() {
 }
 
 export const T0 = Date.UTC(2026, 8, 23, 9, 0, 0);
+
+/** The laws a bundle runs, woven in the realm's slots: a test that is not
+ *  about SR-16 publishes as an owner who wove what the island runs. */
+function weave(db, owner, realm, bundle) {
+  let slot = 1 + db.prepare("SELECT COUNT(*) AS n FROM law_slots WHERE owner = ? AND realm = ?").get(owner, realm).n;
+  for (const law of lawsOf(bundle)) {
+    if (db.prepare("SELECT 1 FROM law_slots WHERE owner = ? AND realm = ? AND law = ?").get(owner, realm, law)) continue;
+    db.prepare("INSERT INTO law_slots (owner, realm, slot, law, tier, ready_at, rests_until) VALUES (?, ?, ?, ?, 1, 0, 0)")
+      .run(owner, realm, slot++, law);
+  }
+}
 
 /**
  * `strictUniverse`: publishing holds an island to what its owner's universe
@@ -68,7 +80,10 @@ export function server({ strictUniverse = false, strictTerms = false, ...options
   if (!strictUniverse) {
     const publish = service.publish.bind(service);
     service.publish = (owner, bundle, realm = "heart", options = {}) => {
-      if (REALMS.includes(realm) && bundle?.length > 5) raiseTo(service.db, owner, realm, bundle[4], bundle[5]);
+      if (REALMS.includes(realm) && bundle?.length > 5) {
+        raiseTo(service.db, owner, realm, bundle[4], bundle[5]);
+        weave(service.db, owner, realm, bundle);
+      }
       return publish(owner, bundle, realm, options);
     };
   }

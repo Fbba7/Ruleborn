@@ -275,7 +275,7 @@ test("the offer over HTTP: the caller's list, its middle in the band, and rating
   assert.deepEqual(body.targets.map((c) => c.bundle), [t.bundle]);
   const lists = t.service.targetLists();
   const list = JSON.parse(new TextDecoder().decode(t.service.bundle(Object.values(lists)[0])));
-  assert.equal(list.candidates[0].deviation, 350);
+  assert.equal("rating" in list.candidates[0] || "deviation" in list.candidates[0], false, "12.15: no raw rating on a list (SR-09)");
   assert.equal(list.candidates[0].origin, "authored");
 });
 
