@@ -8,12 +8,15 @@
   "task_state": "working",
   "claimed_at": "2026-10-30T21:55:00Z",
   "lease_until": "2026-10-31T00:55:00Z",
-  "updated_at": "2026-10-30T21:58:38Z",
-  "expected_next_update_by": "2026-10-30T22:43:38Z",
-  "long_run": null,
+  "updated_at": "2026-10-30T22:06:16Z",
+  "expected_next_update_by": "2026-10-30T22:51:16Z",
+  "long_run": {
+    "log": "/tmp/check-1a1afd20f7a4cb4b21d67aeb61714181762d62fc.log",
+    "expected_end": "2026-10-30T22:36:16Z"
+  },
   "progress_marker": {
     "last_green_sha": "aa11f0e",
-    "next_step": "Board plates: studio light, outline and glint rules, hero icons, high-contrast forms; board.png"
+    "next_step": "Record the pre-check of 1a1afd2; mark P0-AIA-board-2 ready (no gate items)"
   },
   "precheck": null,
   "gate_request": null,
