@@ -31,7 +31,8 @@ retries after 2, 4, 8 and 16 seconds.
 ## The program's scheduled tasks and sessions
 
 Scheduled tasks on the owner's account (each run is a fresh session that
-clones the repository if it is missing; push notifications on):
+clones the repository if it is missing; push notifications on). All six were
+disabled on 2026-10-30 at about 09:15Z, when the wave was stopped; see Now.
 
 | Task | ID | Schedule (UTC) |
 |---|---|---|
@@ -43,7 +44,8 @@ clones the repository if it is missing; push notifications on):
 | Restart SV | `trig_016TpQMGvejeoBKfyQNWPd6Y` | only when fired |
 
 Agent sessions (cloud sessions on the repository at main, tagged
-`ruleborn:ui-wave` and `ruleborn:<agent>`):
+`ruleborn:ui-wave` and `ruleborn:<agent>`; all four archived at the stop,
+their work pushed on their branches):
 
 | Agent | Session | Branch | Launched |
 |---|---|---|---|
@@ -123,7 +125,38 @@ Main is claude/videogame-project-analysis-ewkkk2; branch claude/server-decisions
 
 ## Now
 
-- Cycle 0: the backlog is seeded with phase 0 (AD, AIA, K1) and the server
-  decisions (SV); BT-02 and BT-03 are merged.
-- Next: launch the four agents, about 15 minutes apart; from cycle 1, take
-  the merge queue.
+- Stopped on 2026-10-30 at about 09:15Z, at the owner's request. All six
+  scheduled tasks are disabled and the four agent sessions are archived.
+  Nothing was merged after BT-03.
+- Ready on their branches, not merged (each needs check_all on main before
+  merging):
+
+  | Agent | Branch | Task | Ready at |
+  |---|---|---|---|
+  | K1 | `claude/ui-bake` | P0-K1-contract | `407790d` |
+  | AD | `claude/ui-ad` | P0-AD-rubric | `334224c` |
+  | AIA | `claude/ui-artist` | P0-AIA-board-1 | `aa11f0e` |
+  | SV | `claude/server-decisions` | SV-B1-B6 | `2f3c0dd` |
+
+- Open requests to the lead: K1-R1 and AIA-R1 (add their checks to
+  check_all), AD-R1 (the gate prompts govern over
+  `.claude/agents/ui-judge.md`), AIA-R2 (K1 to add dusk and night sky
+  tokens).
+- What went wrong, to fix before a restart:
+  1. The lead's cycle ran hourly from 01:38Z to 08:38Z, but each run ended
+     in about 30 seconds with no commit; its sessions show no repository
+     attached. Main never moved, so the four ready tasks were never merged
+     and no agent was restarted.
+  2. The watchdog failed the same way and never alerted, although
+     `status/lead.json` was stale from 01:45Z. It shares the cycle's setup,
+     so it is not an independent check.
+  3. Each agent session ran one task and stopped, and only the lead could
+     restart it, so every agent sat idle from about 02:20Z.
+  4. The scheduled runs and SV's session ran on the default model, not the
+     one the plan set.
+  5. K1 reported its contract as waiting for the owner's approval at O2,
+     against the rule that nothing is left to the owner.
+  6. SV did not run the client suite locally before marking its task ready.
+- Before a restart: run one cycle by hand and confirm it commits; give the
+  watchdog a check that does not depend on cloning; let agents take their
+  next task without the lead; set the model on every session and task.
