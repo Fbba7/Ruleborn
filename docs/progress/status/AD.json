@@ -5,18 +5,36 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P0-AD-rubric",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-10-30T01:00:00Z",
   "lease_until": "2026-10-30T04:00:00Z",
-  "updated_at": "2026-10-30T01:00:00Z",
-  "expected_next_update_by": "2026-10-30T01:45:00Z",
+  "updated_at": "2026-10-30T01:40:00Z",
+  "expected_next_update_by": "2026-10-30T02:25:00Z",
   "long_run": null,
-  "progress_marker": {"last_green_sha": null, "next_step": "Read report.md sections 4, 5, 10 and the design document's §20.8, §21.8, §21.10; draft gate/rubric.md version 1"},
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "Pre-check the rubric commit with tools/run_checks.sh, record it, mark P0-AD-rubric ready"
+  },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "AD-R1",
+      "from": "AD",
+      "to": "lead",
+      "ask": ".claude/agents/ui-judge.md (owner's settings, so proposed, not edited) says the judge runs each comparison in both orders and returns 'split' itself; section 3.5 of report.md and gate/prompts/ have the judge answer pass, fail or unknown per call, with the launcher making three shuffled calls and deciding splits. Proposed exact replacement for its bullets 2-3: '- Answer pass, fail or unknown for the one quality the prompt asks, in the JSON the prompt gives. The launcher shuffles the pictures and repeats the call; it decides splits, not you.'",
+      "files": [
+        ".claude/agents/ui-judge.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-30T01:40:00Z",
+      "due": "2026-11-01T12:00:00Z",
+      "default": "The prompt in gate/prompts/ is the more specific instruction and governs each gate call; ui-judge.md stays as it is",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
