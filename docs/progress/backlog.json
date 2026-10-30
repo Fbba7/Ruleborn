@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. Tasks with role 'owner' are the owner's reviews: the lead sets them merged when the owner answers. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-30T00:30:00Z",
+  "updated_at": "2026-10-30T21:30:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
@@ -52,12 +52,12 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "407790db",
+      "merged_sha": "f4e7f6ac"
     },
     {
       "id": "P0-AD-rubric",
@@ -82,12 +82,12 @@
       "estimate_h": 3,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "334224c",
+      "merged_sha": "167ccf6c"
     },
     {
       "id": "P0-AIA-board-1",
@@ -110,12 +110,12 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "aa11f0e",
+      "merged_sha": "b6d0a3de"
     },
     {
       "id": "P0-AIA-board-2",
@@ -511,6 +511,9 @@
         "server/test/**",
         "client/tests/share_tests.gd"
       ],
+      "exceptions": [
+        "server/load.mjs"
+      ],
       "deps": [],
       "done_when": [
         "the six tests in server/test/security_owner.test.mjs assert the decided behaviour",
@@ -522,12 +525,12 @@
       "estimate_h": 4,
       "tier": 2,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "2f3c0dd",
+      "merged_sha": "1c7005fd"
     },
     {
       "id": "SV-B7-B9",
