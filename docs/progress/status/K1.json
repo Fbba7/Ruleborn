@@ -3,24 +3,26 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P0-K1-contract",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-10-30T00:40:00Z",
   "lease_until": "2026-10-30T03:40:00Z",
-  "updated_at": "2026-10-30T00:45:00Z",
-  "expected_next_update_by": "2026-10-30T01:30:00Z",
-  "long_run": {
-    "log": "/tmp/check-407790db73fdb0d676c0a9a653d954fd585b2349.log",
-    "expected_end": "2026-10-30T01:15:00Z"
-  },
+  "updated_at": "2026-10-30T01:13:00Z",
+  "expected_next_update_by": "2026-10-30T01:58:00Z",
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "Record the pre-check of 407790d; mark P0-K1-contract ready (no gate items; merges after O2)"
+    "last_green_sha": "407790db73fdb0d676c0a9a653d954fd585b2349",
+    "next_step": "Wait for the lead to merge P0-K1-contract after O2; then take P0-K1-bake-1"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "407790db73fdb0d676c0a9a653d954fd585b2349",
+    "exit": 0,
+    "finished_at": "2026-10-30T01:11:48Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "407790db73fdb0d676c0a9a653d954fd585b2349",
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
