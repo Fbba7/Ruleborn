@@ -1,0 +1,25 @@
+{
+  "agent": "K1",
+  "role": "K1",
+  "branch": "claude/ui-bake",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "P0-K1-contract",
+  "task_state": "claimed",
+  "claimed_at": "2026-10-30T00:40:00Z",
+  "lease_until": "2026-10-30T03:40:00Z",
+  "updated_at": "2026-10-30T00:40:00Z",
+  "expected_next_update_by": "2026-10-30T01:25:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "Check kit-spec.md sections 2-6 against client/ui/ and freeze them as version 1"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-06T21:00:00Z",
+  "acks": [],
+  "requests": [],
+  "answers": []
+}
