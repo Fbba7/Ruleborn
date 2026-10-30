@@ -3,24 +3,26 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P0-AIA-board-2",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-10-30T21:55:00Z",
   "lease_until": "2026-10-31T00:55:00Z",
-  "updated_at": "2026-10-30T22:06:16Z",
-  "expected_next_update_by": "2026-10-30T22:51:16Z",
-  "long_run": {
-    "log": "/tmp/check-1a1afd20f7a4cb4b21d67aeb61714181762d62fc.log",
-    "expected_end": "2026-10-30T22:36:16Z"
-  },
+  "updated_at": "2026-10-30T22:40:39Z",
+  "expected_next_update_by": "2026-10-30T23:25:39Z",
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "aa11f0e",
-    "next_step": "Record the pre-check of 1a1afd2; mark P0-AIA-board-2 ready (no gate items)"
+    "last_green_sha": "1a1afd2",
+    "next_step": "Wait for the merge and for O2; then P0-AIA-keyframes-1"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "1a1afd20f7a4cb4b21d67aeb61714181762d62fc",
+    "exit": 0,
+    "finished_at": "2026-10-30T22:40:23Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "1a1afd2",
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [],
