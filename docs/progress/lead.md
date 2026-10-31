@@ -74,7 +74,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| K1 | `session_01SNkKxoiPGxkUFw8gAbm5vo` | P0-K1-kitskin | `claude/ui-bake` | 2026-10-31 03:41Z |
+| AD | `session_01SNkKxnCEmtyRg2DDynmLDX` (idle, done) | O2-2 | `claude/ui-ad` | 2026-10-31 05:55Z |
+| K1 | `session_01SNkKxoiPGxkUFw8gAbm5vo` (idle, done) | P0-K1-kitskin | `claude/ui-bake` | 2026-10-31 03:41Z |
 | AIA | `session_01SNkKxpN6fMr3qL58LFyGpB` | P0-AIA-keyframes-1 | `claude/ui-artist` | 2026-10-31 03:41Z |
 | K1 | `session_01SNkKxqyVvQxD3Cjbxg3UDD` (idle, done) | P0-K1-contract-2 | `claude/ui-bake` | 2026-10-31 01:41Z |
 | AIA | `session_01SNkKxr9KX9r2CU9dJRRN4u` (idle, done) | P0-AIA-board-3 | `claude/ui-artist` | 2026-10-31 01:41Z |
@@ -84,7 +85,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 | K1 | `session_01SNkKxqS4p6oNGXrgf2HMJC` (idle, done) | P0-K1-bake-1 (restart: K1-R2 answered) | `claude/ui-bake` | 2026-10-30 22:41Z |
 | AD | `session_01SNkKxqWsnZkA94QgU4fUmT` (idle, done) | P0-AD-sheet (restart: AD-R2 answered) | `claude/ui-ad` | 2026-10-30 22:41Z |
 | AIA | `session_01SNkKxqs5iybVZtkaAz6tXt` (idle, done) | P0-AIA-board-2 | `claude/ui-artist` | 2026-10-30 21:52Z |
-| SV | `session_01SNkKxq1HJVZM14B553NQx6` | SV-B11-B12 (restart: the last session found SV-B7-B9 unmerged) | `claude/server-decisions` | 2026-10-31 03:41Z |
+| SV | `session_01SNkKxq1HJVZM14B553NQx6` (idle, done) | SV-B11-B12 (restart: the last session found SV-B7-B9 unmerged) | `claude/server-decisions` | 2026-10-31 03:41Z |
 | SV | `session_01SNkKxpyzv8gcd4M9afzaPz` (idle, did not start) | SV-B11-B12 | `claude/server-decisions` | 2026-10-31 01:40Z |
 | SV | `session_01SNkKxoTc2asTZD7Uigvf1m` (idle, done) | SV-B7-B9 | `claude/server-decisions` | 2026-10-30 21:52Z |
 | K1 | `session_01SNkKxq8CnHi34skP7kjhy5` (idle, replaced) | P0-K1-bake-1 | `claude/ui-bake` | 2026-10-30 21:52Z |
@@ -169,11 +170,16 @@ Your session was created with the repository checked out at main; work in that c
   task waits on an unmerged dep (K1's P0-K1-tokens on O2-2, AIA's
   P0-AIA-keyframes-2 on -1, AD's P0-AD-golden-2 on P0-AIA-keyframes-3; SV
   has none).
-- Cycle 6 (from 04:38Z) merged P0-K1-kitskin (22c78e6f, after one re-run
-  for the import-cache flake, `flaky.md`) and is checking SV-B11-B12.
+- Cycle 6 (from 04:38Z, to 08:10Z) merged P0-K1-contract-2 (beb8573a),
+  P0-AIA-board-3 with P0-AD-golden (a38a3790), P0-K1-kitskin (22c78e6f,
+  after one re-run for the import-cache flake, `flaky.md`) and SV-B11-B12
+  (14c30355, check_all and the ui guard passed), started AD on O2-2, filed
+  K1-R5 as P0-K1-tokens and copied O2-2 `ready` at a392bcb. It released
+  the merge lock at 08:10Z.
 - Next: the queue in order, one candidate at a time (`flaky.md`):
-  SV-B11-B12 (in flight), then K1-R4's two register items and brief
-  entries, O2-2 (a392bcb), then P0-AIA-keyframes-1 (b760d6f1, with
+  K1-R4's two register items and brief entries (unblocked now that
+  SV-B11-B12's `tools/audit_register.py` is on main), O2-2 (a392bcb, a
+  document only: check_all, no ui guard), then P0-AIA-keyframes-1 (b760d6f1, with
   AIA-R3's two `check_all.sh` lines). After O2-2 merges, start K1 on
   P0-K1-tokens; after P0-AIA-keyframes-1 merges, start AIA on
   P0-AIA-keyframes-2.
