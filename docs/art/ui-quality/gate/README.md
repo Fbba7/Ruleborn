@@ -11,6 +11,7 @@ launcher.
 | [shots.md](shots.md) | The shot format (a still and its control rectangles), the image checks and the sheets of `tools/ui_gate/` | P0-AD-sheet |
 | `golden/` | The golden set: `items.json`, its images, and `labels.md`, the owner's form for O3 | P0-AD-golden, P0-AD-golden-2 |
 | `calibration.md` | The split into thirds, the catch rates per quality, the judge model chosen | P0-AD-calibrate |
+| [approvals/](approvals/O2.md) | AD's approvals in place of the owner (section 3.4 of `report.md`): `O2.md`, the style board and the kit contract | O2 |
 | `verdicts/` | The gate's verdicts, `<task_id>/<sha>.json`, and the exceptions queue | the lead |
 
 The scripts the gate uses (contact sheets, frame strips, crops, the image
