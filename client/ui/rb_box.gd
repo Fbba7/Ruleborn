@@ -6,7 +6,9 @@ extends Control
 ## its edges by the drop, shadow and glow, so the control keeps its own size,
 ## children and theme. A control another script has since dressed in a fill
 ## of its own (a StyleBoxFlat with colour) keeps that look: the box steps
-## aside.
+## aside. A material whose skin is switched on in ui/kit_families.json is
+## drawn from the kit's atlas instead (KitSkin), by a face of its own inside
+## the box, and the shader draws only where the atlas lacks the piece.
 
 const SHADER := preload("res://ui/rb_box.gdshader")
 
@@ -59,6 +61,8 @@ var press := 0.0:
 var _reach := 0.0
 var _line_px := 0.0
 var _shader := ShaderMaterial.new()
+var _face: Control = null
+var _faces: Dictionary = {}
 
 
 ## Dresses `control` in `look`, behind its own drawing and children, and
@@ -111,8 +115,8 @@ func _ready() -> void:
 		host.resized.connect(_shade)
 		# The host redraws when its state changes (pressed, disabled), and
 		# the box follows it.
-		host.draw.connect(queue_redraw)
-	item_rect_changed.connect(queue_redraw)
+		host.draw.connect(_redraw)
+	item_rect_changed.connect(_redraw)
 	_shade()
 
 
@@ -166,6 +170,13 @@ func set_look(material_name: String) -> void:
 	var rays: Array = spec.get("rays", [Color(0, 0, 0, 0), 18.0])
 	u.set_shader_parameter("rays_color", rays[0])
 	u.set_shader_parameter("rays_count", rays[1])
+	if _face == null and KitSkin.is_on(KitSkin.skin(material_name)):
+		_face = Control.new()
+		_face.name = "KitFace"
+		_face.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_face.focus_mode = Control.FOCUS_NONE
+		_face.draw.connect(_draw_face)
+		add_child(_face, false, Node.INTERNAL_MODE_FRONT)
 	_shade()
 
 
@@ -232,16 +243,74 @@ func _shade() -> void:
 	_shader.set_shader_parameter("radius", radius_px())
 	_shader.set_shader_parameter("radius_foot", foot_points * UI.PX_PER_POINT if foot_points >= 0.0 else -1.0)
 	_shader.set_shader_parameter("body_y", press * travel * 0.75)
+	_redraw()
+
+
+## The atlas piece the box is drawn from in the host's state, or empty
+## while the code-drawn box draws it (its skin off, or the piece missing).
+func piece() -> Dictionary:
+	if _face == null:
+		return {}
+	var state := "normal"
+	if host is Button:
+		var b := host as Button
+		state = "disabled" if b.disabled else ("pressed" if b.button_pressed or press > 0.5 else "normal")
+	return KitSkin.piece(look, state)
+
+
+func _redraw() -> void:
 	queue_redraw()
+	if _face != null:
+		_face.queue_redraw()
+
+
+## Whether the box draws at all: another script's own fill on this control
+## wins, and a box hidden while empty is not drawn.
+func _shown() -> bool:
+	var flat := _flat()
+	if flat != null and flat.bg_color.a > 0.01:
+		return false
+	return not (hide_empty and _empty())
+
+
+## The face from the atlas: a 9-slice stretched over the host, or a sprite,
+## drawn at the kit's scale; a school's neutral piece tinted by its fill.
+func _draw_face() -> void:
+	var p := piece()
+	if p.is_empty() or not _shown():
+		return
+	var tex := KitSkin.atlas()
+	var s := KitSkin.scale()
+	var r := quad().grow(-_reach)
+	var region := Rect2(float(p["x"]), float(p["y"]), float(p["w"]), float(p["h"]))
+	var hue := Color.WHITE
+	if bool(p.get("tint", false)):
+		hue = Tokens.gradient(str(spec["fill"])).sample(0.5)
+	_face.draw_set_transform(r.position, 0.0, Vector2(s, s))
+	var at := Rect2(Vector2.ZERO, r.size / s)
+	var slice: Variant = p.get("slice")
+	if slice is Dictionary:
+		var key := "%s:%s:%s" % [region, tex.get_instance_id(), hue.to_html()]
+		if not _faces.has(key):
+			var sb := StyleBoxTexture.new()
+			sb.texture = tex
+			sb.region_rect = region
+			sb.modulate_color = hue
+			sb.texture_margin_left = float(slice["l"])
+			sb.texture_margin_top = float(slice["t"])
+			sb.texture_margin_right = float(slice["r"])
+			sb.texture_margin_bottom = float(slice["b"])
+			_faces[key] = sb
+		_face.draw_style_box(_faces[key], at)
+	else:
+		_face.draw_texture_rect_region(tex, at, region, hue)
+	_face.draw_set_transform(Vector2.ZERO)
 
 
 func _draw() -> void:
 	# Another script's own fill on this control wins: its look is drawn, not
-	# both.
-	var flat := _flat()
-	if flat != null and flat.bg_color.a > 0.01:
-		return
-	if hide_empty and _empty():
+	# both; and a face from the atlas is drawn by the face.
+	if not _shown() or not piece().is_empty():
 		return
 	# A disabled control is faded, box and words (its words by the theme).
 	var faded := host is BaseButton and (host as BaseButton).disabled
