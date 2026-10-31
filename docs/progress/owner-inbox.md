@@ -4,6 +4,20 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-10-31 03:45Z: ready work waiting over 2 hours (lead, cycle 5)
+
+- **What:** P0-K1-bake-2 has been ready since 01:22Z. It is in the merge
+  queue now: cycle 4 (`session_01SNkKxrCAg6Y8R7Hovb2PPH`) holds the merge
+  lock on its candidate `48e0d156` until 04:37Z and is re-running
+  `guard.sh`. Behind it, three more are ready: P0-K1-contract-2 (36b797fd),
+  P0-AD-golden (7d8c4ed6) and P0-AIA-board-3 (e09807f3). The queue is slow
+  because full checks run one at a time (`flaky.md`, BT-10).
+- **Also:** the launcher started cycle 5 at 03:38Z while cycle 4 was still
+  working (its session reads idle between turns). Cycle 5 did only the
+  bookkeeping, as the lock requires, so nothing merged twice.
+- **Action:** none for the owner; the next cycle without a lock takes the
+  queue.
+
 ## 2026-10-31 00:10Z: watchdog alert, lead past its update time
 
 - **What was stale:** `status/lead.json` expected an update by 2026-10-31T00:00:00Z (last update 2026-10-30T23:58Z). The launcher is healthy: last run SUCCEEDED at 2026-10-30T23:38Z.
