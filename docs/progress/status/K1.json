@@ -3,23 +3,25 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P0-K1-tokens-2",
-  "task_state": "blocked",
+  "task_state": "working",
   "claimed_at": "2026-10-31T17:05:00Z",
-  "lease_until": "2026-10-31T20:05:00Z",
-  "updated_at": "2026-10-31T17:15:00Z",
-  "expected_next_update_by": null,
+  "lease_until": "2026-10-31T20:45:00Z",
+  "updated_at": "2026-10-31T17:45:00Z",
+  "expected_next_update_by": "2026-10-31T18:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "5864d65d",
-    "next_step": "on K1-R7, apply the patch in K1.md, run guard.sh and the pre-check, mark ready"
+    "next_step": "K1-R7 granted (cycle 14): apply the patch, guard.sh, pre-check, mark ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
-  "acks": [],
+  "acks": [
+    "M2"
+  ],
   "requests": [
     {
       "id": "K1-R3",
@@ -40,14 +42,14 @@
       "id": "K1-R4",
       "from": "K1",
       "to": "lead",
-      "ask": "P0-K1-contract-2 (AD-R5) leaves two of kit-spec.md section 2.1's values pending owner decisions, as O2.md allows. Please add two entries to the owner's decision brief (docs/decisions/brief.json, then python3 tools/build_brief.py --check), drafted in docs/progress/K1.md under 'Draft brief entries (K1-R4)': (1) success words on a dark surface: §21.8's #3FBF7F measures Lc 54-55 on the dark card (43 on the backdrop's #2C3AA8) against the Lc 60 bold words under 36 points need, and ink on the green fill Lc 57.5; options (a) lighter success words on dark, #8FF0A8, (b) keep §21.8: green words only at 36 points and over on the card, smaller ones as ink on the fill; recommend (a). (2) the menus' backdrop: the designs' sub-screens draw a radial (#2E1F5E, #140C30, #0A0620), §21.2 says '#171046 to #2C3AA8'; options (a) §21.2's linear values, (b) change §21.2 to the designs' radial; recommend (a). If brief.json is not the lead's to edit, forward this to its owner.",
+      "ask": "P0-K1-contract-2 (AD-R5) leaves two of kit-spec.md section 2.1's values pending owner decisions, as O2.md allows. Please add two entries to the owner's decision brief (docs/decisions/brief.json, then python3 tools/build_brief.py --check), drafted in docs/progress/K1.md under 'Draft brief entries (K1-R4)': (1) success words on a dark surface: \u00a721.8's #3FBF7F measures Lc 54-55 on the dark card (43 on the backdrop's #2C3AA8) against the Lc 60 bold words under 36 points need, and ink on the green fill Lc 57.5; options (a) lighter success words on dark, #8FF0A8, (b) keep \u00a721.8: green words only at 36 points and over on the card, smaller ones as ink on the fill; recommend (a). (2) the menus' backdrop: the designs' sub-screens draw a radial (#2E1F5E, #140C30, #0A0620), \u00a721.2 says '#171046 to #2C3AA8'; options (a) \u00a721.2's linear values, (b) change \u00a721.2 to the designs' radial; recommend (a). If brief.json is not the lead's to edit, forward this to its owner.",
       "files": [
         "docs/decisions/brief.json"
       ],
       "blocking": false,
       "created_at": "2026-10-31T02:15:00Z",
       "due": "2026-11-02T22:00:00Z",
-      "default": "No brief entry; kit-spec.md keeps both rows marked pending with O2.md's interim rulings (#3FBF7F at 36 points and over on the card, else ink on the green fill; §21.2's linear backdrop), and P0-K1-kitskin writes tokens.json to those interim values",
+      "default": "No brief entry; kit-spec.md keeps both rows marked pending with O2.md's interim rulings (#3FBF7F at 36 points and over on the card, else ink on the green fill; \u00a721.2's linear backdrop), and P0-K1-kitskin writes tokens.json to those interim values",
       "escalate_to": "lead"
     },
     {
