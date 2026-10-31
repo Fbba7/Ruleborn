@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T03:37:00Z",
-  "expected_next_update_by": "2026-10-31T04:52:00Z",
-  "cycle": 4,
+  "updated_at": "2026-10-31T03:50:00Z",
+  "expected_next_update_by": "2026-10-31T05:05:00Z",
+  "cycle": 5,
   "merging": {
     "candidate_sha": "48e0d156",
     "task_ids": [
@@ -16,5 +16,5 @@
     "sha": "fdd82b7c"
   },
   "alerts": [],
-  "next_step": "Cycle 4 (session_01SNkKxrCAg6Y8R7Hovb2PPH) merged O2; P0-K1-bake-2's candidate 48e0d156 passed check_all; guard.sh is re-running after the first run had no built client extension (client/build.sh) in its worktree"
+  "next_step": "Cycle 5 (session_01SNkKxqMduti4DaEuGWcwUo) ran under cycle 4's merge lock: bookkeeping only (three tasks ready, K1-R4 filed, K1, AIA and SV started). Next: after the lock clears, merge P0-K1-bake-2 (if not done), P0-K1-contract-2 with K1-R4's brief entries, P0-AIA-board-3, P0-AD-golden, one at a time; then start AD on O2-2"
 }
