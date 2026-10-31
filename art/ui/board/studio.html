@@ -16,7 +16,6 @@
 </head><body style="margin:0">
 <script type="module">
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 const TOKENS = await (await fetch('/client/ui/tokens.json')).json();
@@ -35,42 +34,43 @@ function rgba(name, a) {
 }
 
 // ---- the studio light ----
-// One studio for every piece, so the set is one family by construction:
-//   key   the cream, from the top left and in front, the strongest;
-//   rim   the piece's own light colour, from behind on the right;
-//   fill  a sky of paper over a ground of the night, soft, from below;
-//   room  RoomEnvironment's reflections, for metal and gloss.
+// One light for every piece, so the set is one family by construction, and
+// it is §21.3's one toon look, the world's own (client/world/toon_light.
+// gdshaderinc, mirrored here number for number): the diorama's ramp of four
+// steps, read by N·L remapped to [0, 1]; albedo saturated by 10%; shade that
+// falls toward violet, not toward black; a soft rim on the lit side, in the
+// piece's own light colour. No reflections, no metalness, no clear coat:
+// gold is gold because of its colour and its glint, as in the world.
+//   key   the cream, from the top left and in front: the ramp's light;
+//   fill  a little of the paper sky, so the darkest step is not dead;
+//   rim   the piece's light colour, at the world's rim strength and a half,
+//         since an icon has no world around it to edge it.
 const STUDIO = {
-  key: { colour: 'cream', at: [-3, 4, 5], power: 2.6 },
-  rim: { at: [4, 2, -4], power: 3.0 },
-  fill: { sky: 'paper', ground: 'night_bottom', power: 0.6 },
+  key: { colour: 'cream', at: [-3, 4, 5] },
+  fill: { sky: 'paper', power: 0.06 },
+  ramp: [62, 140, 215, 255],
+  shade: [0.55, 0.47, 0.82],
+  saturation: 1.1,
+  rim: 0.42,
 };
 
-let renderer, room;
+let renderer, rimNow;
 function setup(w, h) {
   if (!renderer) {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(1);
-    renderer.toneMapping = THREE.NeutralToneMapping;
-    renderer.toneMappingExposure = 0.95;
+    renderer.toneMapping = THREE.NoToneMapping;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setClearColor(new THREE.Color(tok('drop')), 0);
-    const pmrem = new THREE.PMREMGenerator(renderer);
-    room = pmrem.fromScene(new RoomEnvironment(), 0.03).texture;
   }
   renderer.setSize(w, h);
 }
 
+// A scene lit by the studio, its rim in the piece's light colour: every
+// material made after it takes that rim.
 function studio(rim) {
-  const scene = new THREE.Scene();
-  scene.environment = room;
-  const key = new THREE.DirectionalLight(tok(STUDIO.key.colour), STUDIO.key.power);
-  key.position.set(...STUDIO.key.at);
-  const back = new THREE.DirectionalLight(tok(rim), STUDIO.rim.power);
-  back.position.set(...STUDIO.rim.at);
-  const fill = new THREE.HemisphereLight(tok(STUDIO.fill.sky), tok(STUDIO.fill.ground), STUDIO.fill.power);
-  scene.add(key, back, fill);
-  return scene;
+  rimNow = rim;
+  return new THREE.Scene();
 }
 
 function camera(aspect = 1) {
@@ -80,12 +80,78 @@ function camera(aspect = 1) {
   return c;
 }
 
-// The materials, each from tokens: struck gold, glazed enamel, leather.
-const gold = (face = 'starlight') => new THREE.MeshPhysicalMaterial({ color: tok(face), metalness: 0.75, roughness: 0.28,
-  clearcoat: 1, clearcoatRoughness: 0.1, emissive: tok('gold_bottom'), emissiveIntensity: 0.3 });
-const enamel = (face, deep) => new THREE.MeshPhysicalMaterial({ color: tok(face), metalness: 0, roughness: 0.32,
-  clearcoat: 1, clearcoatRoughness: 0.06, emissive: tok(deep), emissiveIntensity: 0.35 });
-const cloth = (face) => new THREE.MeshStandardMaterial({ color: tok(face), roughness: 0.86, metalness: 0 });
+const TOON_VERTEX = `
+uniform vec3 keyAt;
+varying vec3 vNormal;
+varying vec3 vView;
+varying vec3 vKey;
+void main() {
+  vec4 at = modelViewMatrix * vec4(position, 1.0);
+  vNormal = normalize(normalMatrix * normal);
+  vView = -at.xyz;
+  vKey = normalize((viewMatrix * vec4(keyAt, 0.0)).xyz);
+  gl_Position = projectionMatrix * at;
+}`;
+const TOON_FRAGMENT = `
+uniform vec3 albedo;
+uniform vec3 keyColour;
+uniform vec3 fill;
+uniform vec3 rimColour;
+uniform vec3 shade;
+uniform vec4 ramp;
+uniform float saturation;
+uniform float rimStrength;
+varying vec3 vNormal;
+varying vec3 vView;
+varying vec3 vKey;
+vec3 saturated(vec3 c) {
+  float l = dot(c, vec3(0.299, 0.587, 0.114));
+  return clamp(mix(vec3(l), c, saturation), 0.0, 1.0);
+}
+float toonRamp(float ndl) {
+  float x = ndl * 0.5 + 0.5;
+  if (x < 0.25) return ramp.x;
+  if (x < 0.5) return ramp.y;
+  if (x < 0.75) return ramp.z;
+  return ramp.w;
+}
+void main() {
+  vec3 n = normalize(vNormal) * (gl_FrontFacing ? 1.0 : -1.0);
+  vec3 v = normalize(vView);
+  float ndl = dot(n, vKey);
+  float lit = toonRamp(ndl);
+  vec3 tint = mix(shade, vec3(1.0), lit);
+  vec3 c = saturated(albedo) * (keyColour * lit * tint + fill);
+  float rim = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 3.0) * step(0.0, ndl);
+  c += keyColour * rimColour * rim * rimStrength;
+  gl_FragColor = vec4(c, 1.0);
+  #include <colorspace_fragment>
+}`;
+
+// The one material: a token colour in the studio's toon light.
+function toon(face) {
+  const colour = (name) => new THREE.Color(tok(name));
+  return new THREE.ShaderMaterial({
+    vertexShader: TOON_VERTEX,
+    fragmentShader: TOON_FRAGMENT,
+    uniforms: {
+      albedo: { value: colour(face) },
+      keyColour: { value: colour(STUDIO.key.colour) },
+      keyAt: { value: new THREE.Vector3(...STUDIO.key.at).normalize() },
+      fill: { value: colour(STUDIO.fill.sky).multiplyScalar(STUDIO.fill.power) },
+      rimColour: { value: colour(rimNow) },
+      shade: { value: new THREE.Vector3(...STUDIO.shade) },
+      ramp: { value: new THREE.Vector4(...STUDIO.ramp.map((v) => v / 255)) },
+      saturation: { value: STUDIO.saturation },
+      rimStrength: { value: STUDIO.rim },
+    },
+  });
+}
+// The materials, each a token in the one light: struck gold, enamel and
+// cloth differ in colour only, as every material of the world does.
+const gold = (face = 'starlight') => toon(face);
+const enamel = (face) => toon(face);
+const cloth = (face) => toon(face);
 
 // ---- the four hero icons ----
 function starShape(tip, waist) {
@@ -157,7 +223,7 @@ const ICONS = {
     scene.add(big, small);
     return { scene, light: 'starlight', glints: [[0.37, 0.31, 1], [0.69, 0.7, 0.5]], inner: [0.42, 0.36, 0.3, 'gold_top', 0.35] };
   },
-  // Essence: life for the ruleborn, a glassy drop of the essence green.
+  // Essence: life for the ruleborn, a drop of the essence green.
   essence() {
     const scene = studio('life_light');
     const pts = [];
@@ -167,9 +233,7 @@ const ICONS = {
       const r = t < 0.62 ? Math.pow(t / 0.62, 0.78) * 0.86 : Math.sqrt(Math.max(0, 1 - Math.pow((t - 0.62) / 0.38, 2))) * 0.86;
       pts.push(new THREE.Vector2(Math.max(r, 0.0001), y));
     }
-    const drop = new THREE.Mesh(new THREE.LatheGeometry(pts, 96), new THREE.MeshPhysicalMaterial({
-      color: tok('essence'), metalness: 0, roughness: 0.07, clearcoat: 1, clearcoatRoughness: 0.03,
-      envMapIntensity: 0.75, emissive: tok('life_shadow'), emissiveIntensity: 0.5 }));
+    const drop = new THREE.Mesh(new THREE.LatheGeometry(pts, 96), toon('essence'));
     drop.rotation.set(0.12, 0, -0.12);
     scene.add(drop);
     return { scene, light: 'essence', glints: [[0.41, 0.38, 0.9]], inner: [0.5, 0.64, 0.2, 'life_light', 0.75] };
@@ -179,13 +243,13 @@ const ICONS = {
   law() {
     const scene = studio('time_light');
     const g = new THREE.Group();
-    const frame = new THREE.Mesh(puffed(hourglassShape(), 1.0, 0.22), enamel('time', 'time_shadow'));
+    const frame = new THREE.Mesh(puffed(hourglassShape(), 1.0, 0.22), enamel('time'));
     const lip = new THREE.Mesh(new THREE.ExtrudeGeometry(hourglassShape(), { depth: 0.08, bevelEnabled: true,
       bevelThickness: 0.06, bevelSize: 0.07, bevelSegments: 6, curveSegments: 48 }), gold('gold'));
     lip.geometry.center();
     lip.scale.set(1.06, 1.05, 1);
     lip.position.z = -0.12;
-    const tide = new THREE.Mesh(puffed(waveShape(), 0.5, 0.18), enamel('cream', 'gold_bottom'));
+    const tide = new THREE.Mesh(puffed(waveShape(), 0.5, 0.18), enamel('cream'));
     tide.position.set(0, -0.7, 0.3);
     const crest = tide.clone();
     crest.scale.setScalar(0.6);
@@ -375,9 +439,7 @@ async function bakeStudio() {
   const W = 960, H = 400;
   setup(W, H);
   const scene = studio('gold_top');
-  const mats = [gold('gold'), enamel('card_top', 'card_lit_mid'), new THREE.MeshPhysicalMaterial({
-    color: tok('leather_light'), roughness: 0.55, clearcoat: 0.4, clearcoatRoughness: 0.4, emissive: tok('leather_dark'),
-    emissiveIntensity: 0.3 })];
+  const mats = [gold('gold'), enamel('card_top'), cloth('leather_light')];
   mats.forEach((m, i) => {
     const s = new THREE.Mesh(new THREE.SphereGeometry(0.78, 96, 64), m);
     s.position.set((i - 1) * 1.85, 0, 0);
