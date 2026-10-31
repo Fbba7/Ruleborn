@@ -17,7 +17,7 @@ extends Control
 ## The alarm tints the screen's edge red, more as it rises, and flashes when a
 ## guard is alerted: a screen-space tint, never a full-screen pass, never over
 ## the middle where the play is (§21.3). Reduced motion keeps every mark and
-## drops the movement (§20.8).
+## drops the movement (§20.8), the edge's flash with it: the tint only rises.
 
 ## How long a pop-up rises, in seconds.
 const POP_SECONDS := 0.8
@@ -176,14 +176,21 @@ func _draw_frame() -> void:
 			Color(ink, a * 1.3))
 
 
+## How strongly the edge is tinted now: the alarm's steady share, plus a flash
+## that reduced motion leaves out and a slow pulse it leaves still.
+func edge_alpha(calm: bool) -> float:
+	var a := alarm_share * 0.32 + (0.0 if calm else flash * 0.4)
+	if a > 0.01 and not calm:
+		a *= 0.85 + 0.15 * sin(_time * TAU * 0.8)
+	return a
+
+
 func _draw_edge(calm: bool) -> void:
 	if view.follow.is_empty():
 		return
-	var a := alarm_share * 0.32 + flash * 0.4
+	var a := edge_alpha(calm)
 	if a <= 0.01:
 		return
-	if not calm:
-		a *= 0.85 + 0.15 * sin(_time * TAU * 0.8)
 	var band := minf(size.x, size.y) * (0.07 + 0.05 * alarm_share)
 	var red := Color(0.89, 0.2, 0.3)
 	var steps := 6
