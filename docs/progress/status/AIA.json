@@ -4,16 +4,16 @@
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P0-AIA-keyframes-2",
+  "task_id": "P0-AIA-keyframes-3",
   "task_state": "working",
-  "claimed_at": "2026-10-31T10:11:03Z",
-  "lease_until": "2026-10-31T13:11:03Z",
-  "updated_at": "2026-10-31T10:34:05Z",
-  "expected_next_update_by": "2026-10-31T11:19:05Z",
+  "claimed_at": "2026-10-31T12:29:54Z",
+  "lease_until": "2026-10-31T15:29:54Z",
+  "updated_at": "2026-10-31T12:52:01Z",
+  "expected_next_update_by": "2026-10-31T13:37:01Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "b760d6f1",
-    "next_step": "P0-AIA-keyframes-2: result and character built, all 24 stills pass; pre-check next"
+    "last_green_sha": "4fde22f9",
+    "next_step": "P0-AIA-keyframes-3: pre-check, then ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -22,5 +22,5 @@
   "acks": [],
   "requests": [],
   "answers": [],
-  "next_step": "P0-AIA-keyframes-2: result and character built, all 24 stills pass; pre-check next"
+  "next_step": "P0-AIA-keyframes-3: pre-check, then ready"
 }

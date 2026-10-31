@@ -1,6 +1,6 @@
 # AIA AI UI artist: progress
 
-- Status: Green: P0-AIA-keyframes-2 built; its pre-check runs next.
+- Status: Green: pre-check PASS at 4fde22f9 (2026-10-31T11:12:20Z); P0-AIA-keyframes-2 is ready.
 - Progress: 4 of 6 tasks merged; 0 items passed by the gate (the board has no gate items).
 - Done: P0-AIA-keyframes-2 built: result and character at 1080 x 2340 in three forms each, in English and Brazilian Portuguese, under the same scripted checks.
 - Next: P0-AIA-keyframes-3 (open): settings and the contact sheet.
@@ -13,11 +13,11 @@
 | P0-AIA-board-2: light, outline, glint, icons, high contrast, board.png | 2 | Merged (O2: approved in part) | `node art/ui/board/check_board.mjs` at 1a1afd2: 364 words pass in both modes, 8 icons keep the outline rule; `--self-test`: 13 planted faults each fail; `board.png`, `board_hc.png` |
 | P0-AIA-board-3: O2's redirect of B3, B4, B5, B11 | 3 | Merged (a38a3790) | `check_board.mjs`: 376 words pass in both modes, 8 icons keep the outline rule, 22 controls pass value-steps (ΔL* 22.1 or more); `--self-test`: 15 planted faults each fail; `board.png`, `board_hc.png` |
 | P0-AIA-keyframes-1: home and heist | 4 | Merged (fafc1a13) | `node art/ui/keyframes/check_keyframes.mjs`: 12 stills at 1080 x 2340 pass. Home: 18 controls, smallest touch area 48 points, 43 words (26 at 200%) all passing, worst 5.8:1 at 100%. Heist: 8 controls, 22 words, worst 5.7:1. All 12 shots pass value-steps. `--self-test`: 14 planted faults, each fails. `bash tools/check_all.sh`: all checks passed. |
-| P0-AIA-keyframes-2: result and character | 4 | Built; pre-check next | `node art/ui/keyframes/check_keyframes.mjs`: all 24 stills pass. Result: 5 controls, smallest touch area 56 points, 23 words (13 at 200%), worst 5.4:1. Character: 4 controls and the tab strip, smallest touch area 52 points, 28 words (15 at 200%), worst 6.87:1. All 24 shots pass value-steps. `--self-test`: each planted fault fails. |
+| P0-AIA-keyframes-2: result and character | 4 | Ready at 4fde22f9 (pre-check PASS) | `node art/ui/keyframes/check_keyframes.mjs`: all 24 stills pass. Result: 5 controls, smallest touch area 56 points, 23 words (13 at 200%), worst 5.4:1. Character: 4 controls and the tab strip, smallest touch area 52 points, 28 words (15 at 200%), worst 6.87:1. All 24 shots pass value-steps. `--self-test`: each planted fault fails. `bash tools/check_all.sh`: all checks passed. |
 | P0-AIA-keyframes-3: settings and the contact sheet | 2 | Open | |
 
 ## Handoff
-- Last verified commit: b760d6f1 (pre-check green, 2026-10-31T06:25:31Z). Requests AIA-R3 to AIA-R7 in the status file, each with a default.
+- Last verified commit: 4fde22f9 (pre-check green, 2026-10-31T11:12:20Z). Requests AIA-R3 to AIA-R7 in the status file, each with a default.
 - Done:
   - `art/ui/keyframes/` holds `01-home`, `02-heist`, `03-result` and `04-character` as `.html` with `.png` and `.shot.json` in all six forms each: as written, `_text200` and `_hc`, each also `_pt_BR`.
   - The result and character pages scroll: at 200% their still is the page's top, and what waits below the fold (`.below`) is neither drawn nor measured; `shoot_keyframes.mjs` leaves undrawn controls out of the shots.

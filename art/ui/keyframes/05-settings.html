@@ -1,0 +1,167 @@
+<!doctype html>
+<!-- Key frame 05, settings: the Access tab, in the game's words
+     (client/scripts/settings_screen.gd). Its title on a plate, the three
+     tabs with Access open, then §20.8's text size as the game's card: a
+     small A and a large A either side of the size in large figures over a
+     dot a step, and a law's card in the size chosen. Under it the six
+     schools' marks with their names, each keeping its shape in every mode,
+     then "Seeing and comfort": each switch a whole row, framed, its words
+     saying what it is set to. Fixed at the bottom: back home. The list
+     scrolls: at 100% the still ends on the first switches; at 200% text on
+     the law's card, read at the size chosen, with the marks and the
+     switches below the fold. The open tab keeps its word and the others
+     their icons and spoken names. ?lang=pt_BR, ?text=200 and ?hc=1 give its
+     other forms (in high contrast its switch reads on); shoot_keyframes.mjs
+     photographs them all. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Key frame 05 · Settings</title>
+<link rel="stylesheet" href="../board/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+body {
+  background-image:
+    radial-gradient(60% 26% at 50% 4%, color-mix(in srgb, var(--c-spirit-light) 26%, transparent), color-mix(in srgb, var(--c-spirit) 0%, transparent)),
+    var(--g-night);
+}
+html.hc body { background-image: none; background-color: var(--hc-night-top); }
+.screen.settings { padding: 6px 12px 6px; gap: 8px; }
+.set-page { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.set-page > * { flex: none; }
+
+/* The title, on its plate. */
+.set-head { display: flex; align-items: center; gap: 10px; padding: 6px 16px 8px; color: var(--c-cream); }
+.set-head .ico { width: calc(28px * var(--ts)); height: calc(28px * var(--ts)); }
+
+/* The tabs: one strip of parchment, the open tab on gold. */
+.set-tabs.parchment { flex-direction: row; gap: 4px; padding: 2px; border-radius: 16px; }
+.tab-btn {
+  flex: 1 1 0; min-width: 0; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 0 6px; border: 0; border-radius: 12px; color: var(--c-parchment-ink); font: inherit;
+}
+.tab-btn:not(.gold) { background: none; }
+.tab-btn.gold { --lip: 5px; padding: 0 6px var(--lip); min-height: 48px; color: var(--c-text-on-gold); }
+.tab-btn .ico { width: 24px; height: 24px; }
+.large .tab-btn:not(.gold) .button-type { display: none; }
+.large .tab-btn .ico { width: 32px; height: 32px; }
+.large .tab-btn.gold .ico { display: none; }
+.large .tab-btn.gold { flex: 2 1 0; }
+.large .tab-btn { min-height: 60px; }
+
+.section { padding: 2px 4px 0; color: var(--t1); }
+
+/* The text size: a small A and a large A (on gold) either side of the figure. */
+.text-card.enamel { display: flex; flex-direction: column; gap: 12px; padding: 14px 14px calc(14px + var(--foot)); color: var(--t1); }
+.size-row { display: flex; align-items: center; gap: 8px; }
+/* Gold, not the game's leather: leather on the card is one value step off it. */
+.size-a.gold { --lip: 6px; flex: none; min-width: 0; width: 64px; height: auto; min-height: 56px; padding: 0 0 var(--lip); color: var(--c-text-on-gold); }
+.size-a .a { position: relative; z-index: 1; }
+.size-a .a { font: 800 calc(14px * var(--ts))/1 "Manrope"; }
+.size-a.up .a { font-size: calc(26px * var(--ts)); }
+.large .size-a.gold { width: 76px; min-height: 76px; --lip: 8px; }
+.size-mid { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.fig { color: var(--c-cream); font-size: calc(34px * var(--ts)); }
+.dots { display: flex; gap: 5px; align-items: center; }
+.dots i { width: 9px; height: 9px; border-radius: 5px; background: var(--g-plate-dark); border: 1.5px solid var(--ink); }
+.dots i.at { width: 22px; background: var(--g-gold); }
+html:not(.large) .f200, .large .f100 { display: none; }
+.sample.parchment { flex-direction: row; align-items: center; gap: 10px; padding: 10px 14px 12px; }
+.sample .ico { width: 40px; height: 40px; }
+.sample .heading { color: var(--c-parchment-ink); }
+.sample .caption { font-weight: 600; }
+
+/* The schools' marks, six a row where every name fits; three where one does not. */
+.shapes.enamel { display: flex; flex-direction: column; gap: 8px; padding: 12px 12px calc(12px + var(--foot)); color: var(--t1); }
+.marks { display: grid; grid-template-columns: repeat(6, 1fr); column-gap: 4px; row-gap: 8px; }
+html[lang="pt-BR"] .marks, .large .marks { grid-template-columns: repeat(3, 1fr); }
+.mark { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.coin { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; border: 1.5px solid var(--ink); box-shadow: inset 0 2px 0 var(--lit); }
+.coin .ico { width: 24px; height: 24px; }
+.mark .caption { font-weight: 800; white-space: nowrap; }
+
+/* Seeing and comfort: each switch a whole row, framed on parchment. */
+.switch-row.parchment {
+  flex-direction: row; align-items: center; gap: 10px; min-height: 52px; padding: 6px 12px 8px; border-radius: 14px;
+  font: inherit; text-align: left; width: 100%;
+}
+.switch-row .ico { width: 28px; height: 28px; }
+.switch-row .label { flex: 1 1 auto; min-width: 0; color: var(--c-parchment-ink); font-weight: 700; }
+.sw { position: relative; flex: none; width: 46px; height: 28px; border-radius: 14px; background: var(--g-plate-dark); border: var(--line) solid var(--ink); }
+.sw::after { content: ""; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--c-cream); border: 1.5px solid var(--ink); }
+.sw.on { background: var(--c-green-bar); }
+.sw.on::after { left: auto; right: 3px; }
+/* High contrast reads on in its own form. */
+.c-on, .hc .c-off { display: none; }
+.hc .c-on { display: inline-block; }
+
+/* Back home. */
+.set-bottom { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 22px; }
+.back.parchment { flex: none; flex-direction: row; min-width: 120px; height: 56px; padding: 0 18px 2px 12px; align-items: center; justify-content: center; gap: 8px; border-radius: 16px; }
+.back .ico { width: 28px; height: 28px; }
+
+/* Below the fold: at 100% the switches after the first, in Portuguese
+   (whose marks take two rows) after the first; at 200% the marks and the
+   switches. */
+.below, html[lang="pt-BR"] .below-pt { display: none; }
+.large .below-l { display: none; }
+</style>
+</head>
+<body>
+<div class="screen settings">
+  <div class="set-page">
+    <div class="set-head law-plate info"><img class="ico" src="../../../client/ui/icons/png/generalui/settings.png" alt=""><span class="title" data-key="SETTINGS_TITLE" data-check></span></div>
+
+    <div class="row set-tabs parchment ctl-group" role="tablist">
+      <button class="tab-btn" type="button" role="tab" data-label="SCREEN_SETTINGS_GAME"><img class="ico" src="../../../client/ui/icons/png/generalui/settings.png" alt=""><span class="button-type" data-key="SCREEN_SETTINGS_GAME" data-check></span></button>
+      <button class="tab-btn gold" type="button" role="tab" data-label="SCREEN_SETTINGS_ACCESS" aria-selected="true"><img class="ico" src="../../../client/ui/icons/png/settingsandwellbeing/accessibility.png" alt=""><span class="button-type" data-key="SCREEN_SETTINGS_ACCESS" data-check></span></button>
+      <button class="tab-btn" type="button" role="tab" data-label="SCREEN_SETTINGS_ACCOUNT"><img class="ico" src="../../../client/ui/icons/png/settingsandwellbeing/account.png" alt=""><span class="button-type" data-key="SCREEN_SETTINGS_ACCOUNT" data-check></span></button>
+    </div>
+
+    <span class="heading section" data-key="SCREEN_SETTINGS_ACCESS" data-check></span>
+
+    <div class="text-card enamel">
+      <div class="size-row">
+        <button class="size-a gold ctl f100" type="button" data-label="SETTINGS_SMALLER" data-args="k:SETTINGS_TEXT_SIZE:100"><span class="a" data-key="SCREEN_TEXT_A" data-check></span></button>
+        <button class="size-a gold ctl f200" type="button" data-label="SETTINGS_SMALLER" data-args="k:SETTINGS_TEXT_SIZE:200"><span class="a" data-key="SCREEN_TEXT_A" data-check></span></button>
+        <span class="size-mid info">
+          <span class="display fig"><span class="f100"><span data-num="d:100"></span>%</span><span class="f200"><span data-num="d:200"></span>%</span></span>
+          <span class="dots"><i class="f100 at"></i><i class="f200"></i><i></i><i></i><i></i><i class="f200 at"></i><i class="f100"></i></span>
+        </span>
+        <button class="size-a up gold ctl f100" type="button" data-label="SETTINGS_LARGER" data-args="k:SETTINGS_TEXT_SIZE:100"><span class="a" data-key="SCREEN_TEXT_A" data-check></span></button>
+        <button class="size-a up gold ctl f200" type="button" data-label="SETTINGS_LARGER" data-args="k:SETTINGS_TEXT_SIZE:200"><span class="a" data-key="SCREEN_TEXT_A" data-check></span></button>
+      </div>
+      <div class="sample parchment info">
+        <img class="ico" src="../../../client/ui/icons/png/laws/stillness.png" alt="">
+        <span class="col grow"><span class="heading" data-key="LAW_STILLNESS" data-check></span><span class="caption" data-key="LAW_RULE_STILLNESS" data-check></span></span>
+      </div>
+    </div>
+
+    <div class="shapes enamel info below-l">
+      <div class="marks">
+        <span class="mark"><span class="coin" style="background: var(--g-school-time)"><img class="ico" src="../../../client/ui/icons/png/schools/time.png" alt=""></span><span class="caption" data-key="SCHOOL_TIME" data-check></span></span>
+        <span class="mark"><span class="coin" style="background: var(--g-school-motion)"><img class="ico" src="../../../client/ui/icons/png/schools/motion.png" alt=""></span><span class="caption" data-key="SCHOOL_MOTION" data-check></span></span>
+        <span class="mark"><span class="coin" style="background: var(--g-school-matter)"><img class="ico" src="../../../client/ui/icons/png/schools/matter.png" alt=""></span><span class="caption" data-key="SCHOOL_MATTER" data-check></span></span>
+        <span class="mark"><span class="coin" style="background: var(--g-school-energy)"><img class="ico" src="../../../client/ui/icons/png/schools/energy.png" alt=""></span><span class="caption" data-key="SCHOOL_ENERGY" data-check></span></span>
+        <span class="mark"><span class="coin" style="background: var(--g-school-life)"><img class="ico" src="../../../client/ui/icons/png/schools/life.png" alt=""></span><span class="caption" data-key="SCHOOL_LIFE" data-check></span></span>
+        <span class="mark"><span class="coin" style="background: var(--g-school-spirit)"><img class="ico" src="../../../client/ui/icons/png/schools/spirit.png" alt=""></span><span class="caption" data-key="SCHOOL_SPIRIT" data-check></span></span>
+      </div>
+      <span class="caption" data-key="SCREEN_SETTINGS_SHAPES" data-check></span>
+    </div>
+
+    <span class="heading section below-l" data-key="SCREEN_SETTINGS_COMFORT" data-check></span>
+    <button class="switch-row parchment ctl below-l" type="button"><img class="ico" src="../../../client/ui/icons/png/settingsandwellbeing/accessibility.png" alt=""><span class="label"><span class="c-off" data-key="SETTINGS_CONTRAST_OFF" data-check></span><span class="c-on" data-key="SETTINGS_CONTRAST_ON" data-check></span></span><span class="sw c-off"></span><span class="sw on c-on"></span></button>
+    <button class="switch-row parchment ctl below-l below-pt" type="button"><img class="ico" src="../../../client/ui/icons/png/settingsandwellbeing/reducedmotion.png" alt=""><span class="label" data-key="SETTINGS_MOTION_OFF" data-check></span><span class="sw"></span></button>
+    <button class="switch-row parchment ctl below" type="button"><img class="ico" src="../../../client/ui/icons/png/settingsandwellbeing/haptics.png" alt=""><span class="label" data-key="SETTINGS_HAPTICS_ON" data-check></span><span class="sw on"></span></button>
+    <button class="switch-row parchment ctl below" type="button"><img class="ico" src="../../../client/ui/icons/png/settingsandwellbeing/lefthanded.png" alt=""><span class="label" data-key="SETTINGS_LEFT_HANDED_OFF" data-check></span><span class="sw"></span></button>
+  </div>
+
+  <div class="set-bottom glass">
+    <button class="back parchment ctl" type="button" data-label="SCREEN_BACK"><img class="ico" src="../../../client/ui/icons/png/generalui/back.png" alt=""><span class="button-type" data-key="SCREEN_BACK" data-check></span></button>
+  </div>
+</div>
+<script src="words.js"></script>
+<script src="kit.js"></script>
+</body>
+</html>
