@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T13:45:00Z",
-  "expected_next_update_by": "2026-10-31T13:57:00Z",
-  "cycle": 10,
+  "updated_at": "2026-10-31T13:42:00Z",
+  "expected_next_update_by": "2026-10-31T15:00:00Z",
+  "cycle": 11,
   "merging": {
     "candidate_sha": "45328085",
     "task_ids": [
@@ -16,5 +16,5 @@
     "sha": "b8308788"
   },
   "alerts": [],
-  "next_step": "Cycle 10 did bookkeeping only (AIA's claim on P0-AIA-keyframes-3 copied; its session is working). The next cycle merges P0-AIA-keyframes-3 when ready, then starts AIA on P0-AIA-board-4; K1 waits on P0-AIA-board-4; AD waits on P0-AIA-keyframes-3."
+  "next_step": "Cycle 11 holds the merge lock on candidate 45328085 (P0-AIA-keyframes-3) while check_all and the ui guard run; AIA started on P0-AIA-board-4."
 }
