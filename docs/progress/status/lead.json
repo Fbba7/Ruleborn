@@ -1,13 +1,21 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-30T21:55:00Z",
-  "expected_next_update_by": "2026-10-30T23:10:00Z",
-  "cycle": 1,
-  "merging": null,
+  "updated_at": "2026-10-31T00:30:00Z",
+  "expected_next_update_by": "2026-10-31T01:45:00Z",
+  "cycle": 3,
+  "merging": {
+    "candidate_sha": "7dda0a33",
+    "task_ids": [
+      "P0-AD-sheet",
+      "SV-B7-B9"
+    ],
+    "started_at": "2026-10-31T00:30:00Z",
+    "expires_at": "2026-10-31T01:30:00Z"
+  },
   "last_merged": {
-    "task_id": "SV-B1-B6",
-    "sha": "1c7005fd"
+    "task_id": "P0-K1-bake-1",
+    "sha": "2b6870fe"
   },
   "alerts": [],
-  "next_step": "Read the status of K1 (P0-K1-bake-1), AD (P0-AD-sheet), AIA (P0-AIA-board-2) and SV (SV-B7-B9), started at 21:52Z; merge what is ready; restart any agent past its expected_next_update_by"
+  "next_step": "Cycle 3 (session_01SNkKxnFBPxodvMYivAg4oB) is merging P0-AD-sheet, then SV-B7-B9; then starts K1 and AD"
 }
