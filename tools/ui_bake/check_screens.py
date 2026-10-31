@@ -4,6 +4,7 @@
     python3 tools/ui_bake/check_screens.py            # compare with budgets.json
     python3 tools/ui_bake/check_screens.py --record   # lower the recorded counts
     python3 tools/ui_bake/check_screens.py --self-test
+    python3 tools/ui_bake/check_screens.py --root DIR  # another checkout's client/
 
 Counts, per file in client/scripts/ and client/world/, three kinds of chrome
 drawn outside the kit (client/ui/):
@@ -314,7 +315,10 @@ def count_file_text(text):
 def main(argv):
     if "--self-test" in argv:
         return self_test()
-    return run(ROOT, BUDGETS, "--record" in argv)
+    root = ROOT
+    if "--root" in argv:
+        root = os.path.abspath(argv[argv.index("--root") + 1])
+    return run(root, BUDGETS, "--record" in argv)
 
 
 if __name__ == "__main__":

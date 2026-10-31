@@ -11,14 +11,17 @@ extends RefCounted
 
 ## §21.8's floor for words, WCAG 2's ratio (ColourCheck.MIN_RATIO).
 const FLOOR := 4.5
-## The share of the pixels round a word's box that may sit below the floor:
-## the box's edge crosses outlines, icons and anti-aliasing, so the word is
-## judged at its tenth percentile, not at its single darkest pixel.
-const PERCENTILE := 0.1
+## Where in a word's box its contrast is read: the box's pixels sorted by
+## their contrast with the words' colour, at the median. The glyphs and their
+## anti-aliased edges cover well under half of a box and sort lowest, so the
+## median is the darkest-reading half of what is drawn behind them.
+const PERCENTILE := 0.5
 
 var _calls := 0
 var _renderer_bytes := 0
 var _words: Array[Dictionary] = []
+var _seen := 0
+var _skipped := 0
 var _images := {}
 var _textures := {}
 var _fonts := {}
@@ -30,6 +33,8 @@ func snap(tree: SceneTree) -> void:
 	_calls = RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME)
 	_renderer_bytes = int(Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED))
 	_words = []
+	_seen = 0
+	_skipped = 0
 	_images = {}
 	_textures = {}
 	_fonts = {}
@@ -47,8 +52,10 @@ func snap(tree: SceneTree) -> void:
 		if text.strip_edges() == "":
 			continue
 		_fonts[c.get_theme_font("font")] = true
+		_seen += 1
 		var word := _word(c)
 		if word.is_empty():
+			_skipped += 1
 			continue
 		var vp := c.get_viewport()
 		vps[vp.get_instance_id()] = vp
@@ -71,13 +78,14 @@ func report() -> void:
 		judged += 1
 		worst = minf(worst, ratio)
 		if ratio < FLOOR:
-			below.append("%s %.2f %s" % [w["path"], ratio, w["text"]])
+			below.append("%s %.2f %s %s" % [w["path"], ratio, w["text"], w.get("rect", "outline")])
 	var bytes := 0
 	var font_bytes := 0
 	var sizes := []
 	for t: Texture2D in _textures:
-		bytes += t.get_width() * t.get_height() * 4
-		sizes.append([t.get_width() * t.get_height() * 4, "%s %dx%d %s" % [t.get_class(), t.get_width(), t.get_height(), t.resource_path]])
+		var b := t.get_width() * t.get_height() * 4
+		bytes += b
+		sizes.append([b, "%s %dx%d %s" % [t.get_class(), t.get_width(), t.get_height(), t.resource_path]])
 	var files := {}
 	for f: Font in _fonts:
 		var file := _file(f)
@@ -95,6 +103,9 @@ func report() -> void:
 		"font_cache_bytes": font_bytes,
 		"renderer_texture_bytes": _renderer_bytes,
 		"words": judged,
+		"words_shown": _seen,
+		"words_skipped": _skipped,
+		"frames": _images.values().map(func(i: Image) -> String: return "%dx%d" % [i.get_width(), i.get_height()]),
 		"words_below": below.size(),
 		"worst_ratio": snappedf(worst, 0.01),
 		"below": below,
@@ -163,9 +174,13 @@ static func _font_bytes(file: FontFile) -> int:
 
 ## One word, as it is drawn: against its ink outline where §21.8 lets the
 ## outline count (at least 1.5 points or 12% of its size wide), else against
-## the pixels just inside the edge of its box, read from the frame later.
+## the pixels in its box, read from the frame later. Empty for a word too
+## faint to judge or not on screen.
 static func _word(c: Control) -> Dictionary:
-	var ink := c.get_theme_color("font_color") * _modulate(c)
+	var colour := "font_color"
+	if c is Button and (c as Button).button_pressed:
+		colour = "font_pressed_color"
+	var ink := c.get_theme_color(colour) * _modulate(c)
 	if ink.a < 0.5:
 		return {}
 	var size := c.get_theme_font_size("font_size")
@@ -174,8 +189,24 @@ static func _word(c: Control) -> Dictionary:
 		var o := c.get_theme_color("font_outline_color")
 		if o.a >= 0.9:
 			return {"ink": ink, "outline": o}
-	var xf := c.get_global_transform_with_canvas()
-	return {"ink": ink, "rect": Rect2(xf.origin, c.size * xf.get_scale())}
+	var rect := _pixels(c)
+	# A word scrolled out of its list is not on screen; one half out would be
+	# read against the list's edge.
+	var n := c.get_parent()
+	while n is Control:
+		if (n as Control).clip_contents:
+			var clip := _pixels(n as Control)
+			if clip.intersection(rect).get_area() < 0.9 * rect.get_area():
+				return {}
+		n = n.get_parent()
+	return {"ink": ink, "rect": rect}
+
+
+## A control's box in its viewport's pixels: a stretched window scales the
+## canvas.
+static func _pixels(c: Control) -> Rect2:
+	var xf := c.get_viewport().get_final_transform() * c.get_global_transform_with_canvas()
+	return Rect2(xf.origin, c.size * xf.get_scale())
 
 
 func _ratio(w: Dictionary) -> float:
@@ -185,22 +216,21 @@ func _ratio(w: Dictionary) -> float:
 	if image == null:
 		return -1.0
 	var r: Rect2 = (w["rect"] as Rect2).intersection(Rect2(Vector2.ZERO, image.get_size()))
-	if r.size.x < 4 or r.size.y < 4:
+	if r.size.x < 1 or r.size.y < 1:
 		return -1.0
 	var ink: Color = w["ink"]
 	var ratios: Array[float] = []
-	var x0 := int(r.position.x) + 1
-	var y0 := int(r.position.y) + 1
-	var x1 := int(r.end.x) - 2
-	var y1 := int(r.end.y) - 2
-	for x: int in range(x0, x1 + 1, 2):
-		ratios.append(ColourCheck.ratio(ink, image.get_pixel(x, y0)))
-		ratios.append(ColourCheck.ratio(ink, image.get_pixel(x, y1)))
-	for y: int in range(y0, y1 + 1, 2):
-		ratios.append(ColourCheck.ratio(ink, image.get_pixel(x0, y)))
-		ratios.append(ColourCheck.ratio(ink, image.get_pixel(x1, y)))
+	for y: int in range(int(r.position.y), int(r.end.y)):
+		for x: int in range(int(r.position.x), int(r.end.x)):
+			ratios.append(ColourCheck.ratio(ink, image.get_pixel(x, y)))
+	if ratios.is_empty():
+		return -1.0
 	ratios.sort()
 	return snappedf(ratios[int(ratios.size() * PERCENTILE)], 0.01)
+
+
+static func _inside(image: Image, x: int, y: int) -> bool:
+	return x >= 0 and y >= 0 and x < image.get_width() and y < image.get_height()
 
 
 ## What a node and every canvas item above it multiply its colours by.

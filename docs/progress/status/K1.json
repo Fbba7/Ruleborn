@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-10-31T00:35:00Z",
   "lease_until": "2026-10-31T03:35:00Z",
-  "updated_at": "2026-10-31T01:25:00Z",
-  "expected_next_update_by": "2026-10-31T02:10:00Z",
+  "updated_at": "2026-10-31T02:20:00Z",
+  "expected_next_update_by": "2026-10-31T03:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "052ecbf",
@@ -20,6 +20,22 @@
   "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "K1-R3",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P0-K1-bake-2 is in tools/ui_bake/. (1) As K1-R1 granted, in the candidate that merges it add to tools/check_all.sh: 'python3 tools/ui_bake/check_screens.py' and 'python3 tools/ui_bake/check_screens.py --self-test' (about a second together). (2) Run 'bash tools/ui_bake/guard.sh' in the merge queue beside check_all (D9 (b)); about 12 minutes; it needs Godot from client/build.sh, xvfb-run, Node and the container's Chromium, and prints 'ui guard: OK'. (3) report.md section 10.1 caps interface textures at 24 MiB. guard.sh counts the textures the screens' canvas items hold (at 4 bytes a pixel, as 10.1 counts an atlas): 1.3-4.5 MiB today. The fonts' glyph caches are real resident textures too and are 7-40 MiB a shot (the heist at 200% text: 40.5 MiB), so counting them would fail main today. Should they count in the 24 MiB (then the cap needs an owner decision, D8), or stay reported beside it?",
+      "files": [
+        "tools/check_all.sh",
+        "docs/art/ui-quality/report.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-31T02:20:00Z",
+      "due": "2026-11-01T22:00:00Z",
+      "default": "(1) and (2) as K1-R1 says; (3) glyph caches stay reported beside the 24 MiB, not counted in it, and guard.sh records them in each shot's log",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }

@@ -3,18 +3,20 @@
 (report.md sections 3.8 and 10.1), at 100% and 200% text and in high
 contrast: fifteen shots on the real renderer, against budgets.json ("shots").
 
-    python3 tools/ui_bake/budget_shots.py [--only home/100,...] [--record] [--plant]
+    python3 tools/ui_bake/budget_shots.py [--only home/100,...] [--record] [--plant draw|contrast]
 
 Each screen's own shot script (client/tests/shots/) is wrapped, in a scratch
 folder, by a script that extends it and snapshots each frame with
-measure.gd, so the shot is unchanged and its last frame is the one measured. A shot passes
-when its draw calls are under 150 and no higher than recorded, its texture
-interface textures (those its canvas items hold, at 4 bytes a pixel; the
-fonts' glyph caches are reported beside them) are at most 24 MiB, and no more of its words sit below 4.5:1 over the
+measure.gd, so the shot is unchanged and its last frame is the one measured.
+A shot passes when its draw calls are under 150 and no higher than
+recorded, its interface textures (those its canvas items hold, at 4 bytes a
+pixel; the fonts' glyph caches are reported beside them) are at most
+24 MiB, and no more of its words sit below 4.5:1 over the
 pixels behind them than recorded. --record writes today's figures when none
-is recorded, and afterwards only lowers them. --plant adds one extra draw
+is recorded, and afterwards only lowers them. --plant draw adds one extra draw
 call to every shot (a square with a material of its own), which the guard
-must refuse; guard.sh --self-test uses it. Logs and stills go to
+must refuse; --plant contrast adds grey words on a grey square instead,
+2:1 at most. guard.sh --self-test uses both. Logs and stills go to
 $UI_GUARD_LOGS (default: a folder under the system's temporary directory).
 """
 import json
@@ -46,13 +48,21 @@ func _initialize() -> void:
 	if OS.get_environment("GUARD_HC") != "":
 		Settings.high_contrast = true
 		Settings.apply()
-	if OS.get_environment("GUARD_PLANT") != "":
-		var plant := ColorRect.new()
-		plant.material = CanvasItemMaterial.new()
-		plant.color = Color(1, 0, 1)
-		plant.size = Vector2(8, 8)
-		plant.z_index = 4096
-		root.add_child(plant)
+	var plant := OS.get_environment("GUARD_PLANT")
+	if plant != "":
+		var square := ColorRect.new()
+		square.material = CanvasItemMaterial.new()
+		square.color = Color(0.5, 0.5, 0.5)
+		square.position = Vector2(40, 40)
+		square.size = Vector2(320, 90) if plant == "contrast" else Vector2(8, 8)
+		square.z_index = 4096
+		root.add_child(square)
+		if plant == "contrast":
+			var words := Label.new()
+			words.text = "PLANTED"
+			words.add_theme_color_override("font_color", Color(0.62, 0.62, 0.62))
+			words.position = Vector2(20, 10)
+			square.add_child(words)
 	super._initialize()
 
 
@@ -82,7 +92,7 @@ def keys(shots, only):
     return wanted
 
 
-def shoot(key, screen, scratch, logs, plant):
+def shoot(key, screen, scratch, logs, plant):  # plant: "", "draw" or "contrast"
     """Runs one wrapped shot; its measure, or None with the log's path."""
     name, mode = key.split("/")
     rel = screen["script"][len("client/"):]
@@ -100,7 +110,7 @@ def shoot(key, screen, scratch, logs, plant):
         env.update(screen.get("hc_env", {}))
         env["GUARD_HC"] = "1"
     if plant:
-        env["GUARD_PLANT"] = "1"
+        env["GUARD_PLANT"] = plant
     stem = key.replace("/", "-")
     env["SHOT"] = os.path.join(logs, stem + ".png")
     log = os.path.join(logs, stem + ".log")
@@ -134,7 +144,9 @@ def judge(key, got, recorded, limits):
 
 def main(argv):
     record = "--record" in argv
-    plant = "--plant" in argv
+    plant = argv[argv.index("--plant") + 1] if "--plant" in argv else ""
+    if plant not in ("", "draw", "contrast"):
+        raise SystemExit("budget_shots: --plant takes draw or contrast")
     only = ""
     if "--only" in argv:
         only = argv[argv.index("--only") + 1]
