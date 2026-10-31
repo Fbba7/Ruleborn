@@ -2,7 +2,8 @@ extends SceneTree
 ## Any screen by its scene name (SCREEN=settings), on the tests' answered
 ## fixtures, for judging the kit's look on real screens (tools/render/shoot.sh).
 ## HC=1 draws it in high contrast, TEXT=200 at that text size; AUDIT=1
-## lists where it draws past the kit (UiAudit).
+## lists where it draws past the kit (UiAudit); NO_WORLD=1 leaves the worlds'
+## 3D undrawn.
 
 
 func _initialize() -> void:
@@ -34,6 +35,11 @@ func _go() -> void:
 	ScreenShots.fill(scene, services.store)
 	for i: int in 12:
 		await process_frame
+	# NO_WORLD=1 leaves the worlds' 3D undrawn (their grass moves from one
+	# shot to the next), so two shots of the kit compare pixel for pixel.
+	if OS.get_environment("NO_WORLD") != "":
+		for w: Node in screen.find_children("*", "WorldView", true, false):
+			(w as WorldView).viewport.disable_3d = true
 	await ShotKit.settle(self, screen)
 	if OS.get_environment("AUDIT") != "":
 		for line: String in UiAudit.report(screen):
