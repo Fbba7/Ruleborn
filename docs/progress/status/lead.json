@@ -1,7 +1,7 @@
 {
   "agent": "lead",
   "updated_at": "2026-10-31T20:45:00Z",
-  "expected_next_update_by": "2026-10-31T22:00:00Z",
+  "expected_next_update_by": null,
   "cycle": 17,
   "merging": null,
   "last_merged": {

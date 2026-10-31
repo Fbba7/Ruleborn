@@ -4,6 +4,21 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-10-31 20:55Z: program paused by the owner
+
+- **What:** the owner asked to stop the program cleanly. The launcher
+  (`trig_01DgVGTTmwREAb7sHz8oQkiP`) and the watchdog
+  (`trig_015Lgi2ZssXBXPbzkCYqoKmL`) scheduled tasks are disabled, not
+  deleted. `expected_next_update_by` in `status/lead.json` is set to null,
+  which the watchdog reads as stopped on purpose. Main is at `2c6a82c5`
+  (lead cycle 17's handoff); nothing was left unpushed. No task was open
+  and startable: the remaining phase 0 gate runs wait for the 2 November
+  17:00Z usage reset.
+- **To resume:** re-enable both scheduled tasks. The next lead cycle sets
+  `expected_next_update_by` again.
+- **Still open for the owner:** C74 and C75 need "A/A"; message M1 to AIA
+  is past its `ack_by`.
+
 ## 2026-10-31 10:05Z: ready work waiting over 2 hours, and a lead container without the build tools (lead, cycle 8)
 
 - **What:** O2-2 (a392bcb, ready 06:37Z) and P0-AIA-keyframes-1
