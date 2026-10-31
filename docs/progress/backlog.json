@@ -943,6 +943,33 @@
       "merged_sha": null
     },
     {
+      "id": "BT-11",
+      "title": "client/build.sh fails when Godot's --import leaves the import cache incomplete, instead of running the tests on it (docs/progress/flaky.md)",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Sonnet 5.5",
+      "assigned_to": "lead",
+      "files": [
+        "client/build.sh"
+      ],
+      "deps": [],
+      "done_when": [
+        "a deleted file under client/.godot/imported/ makes client/build.sh fail, naming it",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
       "id": "BT-06",
       "title": "Documentation consistency check: state names, schemas and examples across the brief, the program, the protocol and the example backlog",
       "phase": 1,

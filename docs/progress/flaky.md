@@ -28,3 +28,21 @@ Tests that failed and then passed unchanged, each with its fix task
 - **Fix task:** BT-10 (backlog): `tools/run_checks.sh` gives each run its own
   `HOME` data directories (`XDG_DATA_HOME`, `XDG_CONFIG_HOME`), seeded with the
   Godot download, and a lock around the first download.
+
+### Godot's import can end incomplete, and `client/build.sh` does not notice
+
+- **Seen:** lead cycle 3, 31 October 2026, candidate `e152462d` (SV-B7-B9
+  onto main) run alone at 00:59Z: 363 of 371 client tests passed (385 run
+  on the same commit an hour earlier). The eight failures are the fonts, the
+  icons, the toon material, text at 150% and 200% and the 48-point controls,
+  and Godot's log has thousands of `Cannot open file
+  'res://.godot/imported/manrope_800.woff2-….fontdata'` and the same for
+  `lock.png-….ctex`: the import cache was missing files. The change is
+  server files and two documents, which Godot does not import. Re-run once
+  at 01:13Z (result in `lead.md`, "Now").
+- **Cause (likely):** `client/build.sh` runs `godot --headless --import`
+  with its output discarded and `|| true`, so an import that stops early
+  leaves a partial `client/.godot/` and the tests run anyway.
+- **Fix task:** BT-11 (backlog): `client/build.sh` checks that every
+  imported resource's cache file exists after `--import` and fails, naming
+  the first one missing, instead of running the tests on a partial cache.

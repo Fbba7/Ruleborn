@@ -19,6 +19,20 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   is K1's, so the lead has put it on P0-K1-kitskin's `done_when`. Default
   until then: the board keeps its own list in `art/ui/board/build_tokens.mjs`.
 
+## Done in cycle 3 (30–31 October 2026, by the lead)
+
+- **K1-R1, K1-R2**: `tools/check_all.sh` runs `node tools/ui_bake/bake.js
+  --check` and `node --test tools/ui_bake/test/bake.test.js` in their own
+  section, and `checks.md` lists them; merged with P0-K1-bake-1.
+- **AD-R2, AD-R3**: README.md lists `tools/ui_gate/` (with `tools/ui_bake/`;
+  the two lines met in one place and the lead joined them), and
+  `check_all.sh` runs `python3 tools/ui_gate/sheet.py --self-test`; Pillow
+  and numpy are under `checks.md`'s "What it needs". Merged with
+  P0-AD-sheet.
+- **SV-1**: `owner-decisions.md` and `auth.md` quote 57.74 billed rows a day
+  for an engaged player ($532 a month at a million) in the candidate that
+  merges SV-B7-B9.
+
 ## Answered (30 October 2026, by the lead)
 
 - **K1-R2** (from K1): list `tools/ui_bake/` in README.md's tools listing,
@@ -76,8 +90,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 The lead owns `tools/check_all.sh`, so wiring a new check into it is a request
 to the lead. One more is expected in phase 0:
 
-- **AD**, from P0-AD-sheet or P0-AD-calibrate: run the gate's own self-tests
-  (`tools/ui_gate/`) in `tools/check_all.sh`.
+- **K1**, from P0-K1-bake-2: `python3 tools/ui_bake/check_screens.py` in
+  `check_all.sh`, and `bash tools/ui_bake/guard.sh` beside it in the merge
+  queue (K1-R1's answer).
 
 ## Owner steps
 
