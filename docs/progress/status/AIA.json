@@ -3,29 +3,24 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P0-AIA-keyframes-3",
-  "task_state": "ready",
-  "claimed_at": "2026-10-31T12:29:54Z",
-  "lease_until": "2026-10-31T15:29:54Z",
-  "updated_at": "2026-10-31T13:34:30Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P0-AIA-board-4",
+  "task_state": "claimed",
+  "claimed_at": "2026-10-31T13:45:00Z",
+  "lease_until": "2026-10-31T16:45:00Z",
+  "updated_at": "2026-10-31T13:45:00Z",
+  "expected_next_update_by": "2026-10-31T14:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "5eec1b60",
-    "next_step": "P0-AIA-board-4: the style board's words for the revised kit tokens (K1-R6)"
+    "next_step": "P0-AIA-board-4: captions on #2C3AA8 and status words on fills"
   },
-  "precheck": {
-    "sha": "5eec1b6044c85118fa4496129066bcda151f224b",
-    "exit": 0,
-    "finished_at": "2026-10-31T13:33:57Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "5eec1b60",
+  "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [],
   "answers": [],
-  "next_step": "P0-AIA-board-4: the style board's words for the revised kit tokens (K1-R6)"
+  "next_step": "P0-AIA-board-4: captions on #2C3AA8 and status words on fills"
 }
