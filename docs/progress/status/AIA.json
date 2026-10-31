@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P0-AIA-keyframes-2",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-10-31T10:11:03Z",
   "lease_until": "2026-10-31T13:11:03Z",
-  "updated_at": "2026-10-31T10:11:03Z",
-  "expected_next_update_by": "2026-10-31T10:56:03Z",
+  "updated_at": "2026-10-31T10:19:17Z",
+  "expected_next_update_by": "2026-10-31T11:04:17Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "b760d6f1",
-    "next_step": "P0-AIA-keyframes-2: 03-result and 04-character in three forms each"
+    "next_step": "P0-AIA-keyframes-2: 03-result shot and passing; 04-character next"
   },
   "precheck": null,
   "gate_request": null,
@@ -22,5 +22,5 @@
   "acks": [],
   "requests": [],
   "answers": [],
-  "next_step": "P0-AIA-keyframes-2: 03-result and 04-character in three forms each"
+  "next_step": "P0-AIA-keyframes-2: 03-result shot and passing; 04-character next"
 }

@@ -39,7 +39,7 @@ import { FRAME, STILLS, href, ready } from './shoot_keyframes.mjs';
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const here = dirname(fileURLToPath(import.meta.url));
-const PAGES = ['01-home.html', '02-heist.html'];
+const PAGES = ['01-home.html', '02-heist.html', '03-result.html'];
 const SAFE = [44, 811];
 const MOST_IN_HEIST = 8;
 const PX = [1080, 2340];
