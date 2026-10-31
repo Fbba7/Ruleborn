@@ -173,16 +173,16 @@
 <div class="wrap">
   <header>
     <p class="eyebrow">Ruleborn &middot; the owner&rsquo;s decisions</p>
-    <h1>Your decisions, and what the document settled</h1>
+    <h1>Decisions waiting on you</h1>
     <p class="lede">Of these 93 decisions, you answered 47 on 25–26 September, and version 3.7 writes every one of those answers in, one row each in its §32.8. The other 46 you did not answer: v3.7 closes each by rule, not by asking — every decision still waiting takes the option its brief recommended — so each card below is marked settled by v3.7, with the option it wrote and where, and none is recorded as your answer. Nothing here waits on you. A settled card can still be overruled: answer it and the build takes your answer, as it takes every recorded answer before the document (§32.8). Five settled cards left one sentence still disagreeing (C55, F55, F56, G51, G57); the register drafts those edits, which are the document&#x27;s to take, not decisions.</p>
     <div class="summary">
-      <div><span class="n">93</span><span class="k">decisions</span></div>
+      <div><span class="n">95</span><span class="k">decisions</span></div>
       <div><span class="n" id="n-answered">47</span><span class="k">answered by you</span></div>
       <div><span class="n" id="n-settled">46</span><span class="k">settled by the document, not by you</span></div>
-      <div><span class="n" id="n-open">0</span><span class="k">open</span></div>
+      <div><span class="n" id="n-open">2</span><span class="k">open</span></div>
     </div>
     <div class="bar" aria-hidden="true"><span id="bar"></span></div>
-    <p class="notice" id="notice">3 design &middot; 55 significant &middot; 35 minor. Each card below is one register item, in the order to decide
+    <p class="notice" id="notice">3 design &middot; 55 significant &middot; 37 minor. Each card below is one register item, in the order to decide
       them. A card the document settled says what it wrote and where; its options are folded beneath, to
       overrule it. Pick an option and it is saved at once; add a note where the option needs a number or a
       condition. The register itself does not change until Claude reads your answers back.</p>
@@ -6767,6 +6767,112 @@ The honest cost of B is that the document must say plainly that a non-raider pla
         </div>
       </div>
       </details>
+    </article>
+    <article class="decision" id="C74" data-id="C74" data-tier="minor"
+             data-rec="A" data-quick="no" data-answered="no"
+             data-settled="" data-settled-as="">
+      <header class="dh">
+        <span class="step" title="Decide in this order">94</span>
+        <span class="did">C74</span>
+        <span class="tier t-minor">Minor</span>
+        <span class="topic">§21 Look and feel</span>
+        <span class="state" id="st-C74">Not answered</span>
+      </header>
+      <h3 class="q">May success words on a dark surface be a lighter green than §21.8&#x27;s #3FBF7F?</h3>
+      <p class="why">§21.8 says &#x27;success words keep #3FBF7F&#x27; on a dark surface, and also that contrast &#x27;meets 4.5:1, checked against a perceptual model as well&#x27;. #3FBF7F meets 4.5:1 on the dark card (6.7 to 7.6:1) but measures APCA Lc 54 to 55 there, 48 to 51 on glass over the day sky and 43 on the menus&#x27; backdrop at #2C3AA8, under the Lc 60 that bold words under 36 points need (client/ui/colour_check.gd); ink on the #3FBF7F fill measures Lc 57.5. As written, §21.8&#x27;s two sentences cannot both hold for small success words.</p>
+      <details class="today"><summary>What the build does today</summary><p>client/ui/tokens.json has #8FF0A8 for success words on dark (Lc 72 to 84). O2.md&#x27;s interim ruling, which kit-spec.md follows until you answer, uses #3FBF7F at 36 points and over on the card, else ink on the green fill.</p></details>
+      <fieldset class="opts" aria-label="Options for C74">
+        <label class="opt is-rec" for="o-C74-A">
+          <input type="radio" name="o-C74" id="o-C74-A" value="A" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">A</span>
+              <span class="ol">A lighter success green for words on dark (#8FF0A8)</span><span class="rec-tag">Recommended</span></span>
+            <span class="om">Success words on a dark surface are #8FF0A8; #3FBF7F stays the green of fills, rings and marks.</span>
+            <span class="oc">Green keeps its role on every size of word, and the words meet both of §21.8&#x27;s checks. Words and fills are two greens.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>#8FF0A8 measures Lc 72 to 84 on the dark surfaces.</dd></div><div class="od"><dt>Document edit</dt><dd>§21.8&#x27;s colours row: &#x27;success words keep #3FBF7F&#x27; becomes &#x27;success words are #8FF0A8&#x27;.</dd></div><div class="od"><dt>Build change</dt><dd>none: the kit&#x27;s tokens already hold #8FF0A8; P0-K1-tokens records it</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt" for="o-C74-B">
+          <input type="radio" name="o-C74" id="o-C74-B" value="B" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">B</span>
+              <span class="ol">Keep §21.8: #3FBF7F, at 36 points and over</span></span>
+            <span class="om">Green words appear only at 36 points and over on the dark card; smaller success words are ink on the green fill.</span>
+            <span class="oc">One green everywhere, as written. Small success messages lose green words; ink on the fill stays under Lc 60 (57.5), so the perceptual check is still not met there.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>#3FBF7F: Lc 54 to 55 on the card, 43 on the menus&#x27; backdrop.</dd></div><div class="od"><dt>Document edit</dt><dd>§21.8: say that success words under 36 points are ink on the green fill.</dd></div><div class="od"><dt>Build change</dt><dd>tokens.json&#x27;s success-on-dark value goes back to #3FBF7F, and the kit&#x27;s small success words move to the fill</dd></div></dl></details>
+          </span>
+        </label>
+      </fieldset>
+      <div class="recbox">
+        <p><span class="lab">Recommended: A, A lighter success green for words on dark (#8FF0A8)</span>
+          <span class="conf c-medium">medium confidence</span></p>
+        <p class="rr">It is the one option under which both of §21.8&#x27;s checks hold for every size of word, and the build already draws it. Choose B if one green across fills and words matters more.</p>
+        
+      </div>
+      <p class="also"><span class="lab">Also needed</span> Nothing. Drafted by K1 (K1-R4, docs/progress/K1.md).</p><p class="inter"><span class="lab">Weigh with</span> <a href="#C75">C75</a></p>
+      <details class="quotes"><summary>What the document says</summary><ul><li><span class="qs">&sect;21.8</span> <q>on a dark surface red words are #FF9AAA, bold, and success words keep #3FBF7F</q></li><li><span class="qs">&sect;21.8</span> <q>Contrast meets 4.5:1, checked against a perceptual model as well, because the standard formula overstates contrast on dark backgrounds.</q></li></ul></details>
+      <div class="notebox">
+        <label for="n-C74">Note for Claude (optional)</label>
+        <textarea id="n-C74" rows="2" placeholder="A number, a condition, or why" disabled></textarea>
+        <div class="nb">
+          <button type="button" class="btn save-note" data-id="C74" disabled>Save note</button>
+          <button type="button" class="btn ghost clear" data-id="C74" disabled>Clear answer</button>
+          <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#C74" target="_blank" rel="noopener">Register entry</a>
+        </div>
+      </div>
+    </article>
+    <article class="decision" id="C75" data-id="C75" data-tier="minor"
+             data-rec="A" data-quick="no" data-answered="no"
+             data-settled="" data-settled-as="">
+      <header class="dh">
+        <span class="step" title="Decide in this order">95</span>
+        <span class="did">C75</span>
+        <span class="tier t-minor">Minor</span>
+        <span class="topic">§21 Look and feel</span>
+        <span class="state" id="st-C75">Not answered</span>
+      </header>
+      <h3 class="q">Is the menus&#x27; night backdrop §21.2&#x27;s linear #171046 to #2C3AA8, or the designs&#x27; radial?</h3>
+      <p class="why">§21.2 has menus stand &#x27;on a night backdrop (#171046 to #2C3AA8)&#x27;. §23.5 lets the designs carry the look, and the designs&#x27; sub-screens draw radial-gradient(ellipse 90% 50% at 50% 0%, #2E1F5E, #140C30 55%, #0A0620) (15 uses, docs/analysis/screens-v3/data/tokens.proposed.json), which §21.2&#x27;s two values do not describe. The kit needs one backdrop, and words on it are measured against it.</p>
+      <details class="today"><summary>What the build does today</summary><p>client/ui/tokens.json and the client draw the designs&#x27; radial; kit-spec.md and O2.md&#x27;s interim ruling take §21.2&#x27;s linear values.</p></details>
+      <fieldset class="opts" aria-label="Options for C75">
+        <label class="opt is-rec" for="o-C75-A">
+          <input type="radio" name="o-C75" id="o-C75-A" value="A" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">A</span>
+              <span class="ol">§21.2&#x27;s linear values</span><span class="rec-tag">Recommended</span></span>
+            <span class="om">The menus stand on a linear gradient from #171046 to #2C3AA8.</span>
+            <span class="oc">No document change. The kit&#x27;s tokens move from the radial to §21.2&#x27;s values; words on it measure Lc 85 (text_on_night) at its lightest point.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Two stops, #171046 and #2C3AA8.</dd></div><div class="od"><dt>Build change</dt><dd>tokens.json&#x27;s night backdrop becomes §21.2&#x27;s linear values (P0-K1-tokens)</dd></div></dl></details>
+          </span>
+        </label>
+        <label class="opt" for="o-C75-B">
+          <input type="radio" name="o-C75" id="o-C75-B" value="B" disabled>
+          <span class="ob">
+            <span class="oh"><span class="ok">B</span>
+              <span class="ol">The designs&#x27; radial</span></span>
+            <span class="om">The menus stand on the designs&#x27; three-stop radial, #2E1F5E to #140C30 to #0A0620.</span>
+            <span class="oc">The build and the designs already agree; the document changes to match them.</span>
+            <details class="omore"><summary>Numbers and edits</summary><dl><div class="od"><dt>Numbers</dt><dd>Three stops: #2E1F5E, #140C30 at 55%, #0A0620.</dd></div><div class="od"><dt>Document edit</dt><dd>§21.2: &#x27;Menus stand on a night backdrop (#171046 to #2C3AA8)&#x27; becomes the designs&#x27; radial and its three colours.</dd></div></dl></details>
+          </span>
+        </label>
+      </fieldset>
+      <div class="recbox">
+        <p><span class="lab">Recommended: A, §21.2&#x27;s linear values</span>
+          <span class="conf c-medium">medium confidence</span></p>
+        <p class="rr">No document change, and words on it measure Lc 85 at its lightest point. Choose B to keep the designs&#x27; look, which the build draws today.</p>
+        
+      </div>
+      <p class="also"><span class="lab">Also needed</span> Nothing. Drafted by K1 (K1-R4, docs/progress/K1.md).</p><p class="inter"><span class="lab">Weigh with</span> <a href="#C74">C74</a></p>
+      <details class="quotes"><summary>What the document says</summary><ul><li><span class="qs">&sect;21.2</span> <q>Menus stand on a night backdrop (#171046 to #2C3AA8), so only the HUD over the world meets all three skies.</q></li></ul></details>
+      <div class="notebox">
+        <label for="n-C75">Note for Claude (optional)</label>
+        <textarea id="n-C75" rows="2" placeholder="A number, a condition, or why" disabled></textarea>
+        <div class="nb">
+          <button type="button" class="btn save-note" data-id="C75" disabled>Save note</button>
+          <button type="button" class="btn ghost clear" data-id="C75" disabled>Clear answer</button>
+          <a class="reg" href="https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN#C75" target="_blank" rel="noopener">Register entry</a>
+        </div>
+      </div>
     </article>
     <p class="empty" id="empty" hidden>Nothing in that filter.</p>
   </main>

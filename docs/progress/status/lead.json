@@ -1,20 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T10:10:00Z",
-  "expected_next_update_by": "2026-10-31T11:25:00Z",
-  "cycle": 8,
-  "merging": {
-    "candidate_sha": "pending",
-    "task_ids": [
-      "K1-R4"
-    ],
-    "started_at": "2026-10-31T10:10:00Z",
-    "expires_at": "2026-10-31T11:40:00Z"
-  },
+  "updated_at": "2026-10-31T17:01:00Z",
+  "expected_next_update_by": "2026-10-31T17:45:00Z",
+  "cycle": 12,
+  "merging": null,
   "last_merged": {
-    "task_id": "O2-2 + P0-AIA-keyframes-1",
-    "sha": "fafc1a13"
+    "task_id": "P0-AIA-board-4",
+    "sha": "f920b57b"
   },
   "alerts": [],
-  "next_step": "Cycle 8 merged O2-2 and P0-AIA-keyframes-1 (batch fafc1a13; check_all and the ui guard passed) and now checks K1-R4's register items C74 and C75 and their brief entries as the next candidate."
+  "next_step": "Cycle 13 merged P0-AD-golden-2 (520565f9) and is merging P0-AIA-board-4 (candidate f920b57b: check_all and the ui guard)."
 }

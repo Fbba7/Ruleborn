@@ -18,10 +18,11 @@
   html.style.setProperty('--ts', String(text / 100));
   const W = window.WORDS[lang];
 
-  // client/i18n: Strings.t's %s, %d and %%.
+  // client/i18n: Strings.t's %s, %d, %02d and %%.
   const sprintf = (f, args) => {
     let i = 0;
-    return f.replace(/%([sd%])/g, (_, c) => (c === '%' ? '%' : String(args[i++])));
+    return f.replace(/%(0\d)?([sd%])/g, (_, w, c) => (c === '%' ? '%'
+      : w ? String(args[i++]).padStart(Number(w.slice(1)), '0') : String(args[i++])));
   };
   // ShopPresenter.grouped and UniverseHud.compact.
   const grouped = (n) => {
@@ -37,13 +38,13 @@
     return sprintf(W[big ? 'HOME_AMOUNT_MILLIONS' : 'HOME_AMOUNT_THOUSANDS'], [t]);
   };
   // One argument: n:142050 grouped, c:142050 compact, c1000:3400 compact
-  // from 1,000, k:KEY a word, d:24 a whole number, s:text as written.
+  // from 1,000, k:KEY a word (k:KEY:100 with its own argument), d:24 a whole number, s:text as written.
   const arg = (a) => {
     const at = a.indexOf(':');
     const kind = a.slice(0, at), v = a.slice(at + 1);
     if (kind === 'n') return grouped(Number(v));
     if (kind.startsWith('c')) return compact(Number(v), kind.length > 1 ? Number(kind.slice(1)) : 10000);
-    if (kind === 'k') return W[v];
+    if (kind === 'k') { const [key, ...rest] = v.split(':'); return sprintf(W[key], rest); }
     if (kind === 'd') return String(Math.trunc(Number(v)));
     return v;
   };

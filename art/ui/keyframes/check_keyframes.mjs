@@ -1,6 +1,6 @@
-// The key frames' scripted checks. For home and heist, as written, with text
-// at 200% and in high contrast, each in English and Brazilian Portuguese
-// (shoot_keyframes.mjs's twelve stills), it checks that:
+// The key frames' scripted checks. For home, heist, result, character and settings, as
+// written, with text at 200% and in high contrast, each in English and
+// Brazilian Portuguese (shoot_keyframes.mjs's 30 stills), it checks that:
 //
 //   1. the pages and kit.css name no colour of their own: no colour literal,
 //      and color-mix only fades one variable toward transparent (the board's
@@ -22,8 +22,9 @@
 //      edge;
 //   8. the heist has no more than eight things to tap (§21.8);
 //   9. every control stands two value steps (ΔL* 20) off what it sits on:
-//      tools/ui_gate/checks.py value-steps on the twelve shots;
-//  10. every still is there at 1080 x 2340.
+//      tools/ui_gate/checks.py value-steps on the 30 shots;
+//  10. every still is there at 1080 x 2340, and the contact sheet of all
+//      thirty (contact_sheet.py) at its size.
 //
 //   node art/ui/keyframes/check_keyframes.mjs [--out report.json]
 //   node art/ui/keyframes/check_keyframes.mjs --self-test   plants faults; each must fail
@@ -39,10 +40,11 @@ import { FRAME, STILLS, href, ready } from './shoot_keyframes.mjs';
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const here = dirname(fileURLToPath(import.meta.url));
-const PAGES = ['01-home.html', '02-heist.html'];
+const PAGES = ['01-home.html', '02-heist.html', '03-result.html', '04-character.html', '05-settings.html'];
 const SAFE = [44, 811];
 const MOST_IN_HEIST = 8;
 const PX = [1080, 2340];
+const SHEET = [1882, 3085]; // contact_sheet.py's 30 stills, five rows of six
 
 // The size of a PNG, from its IHDR.
 function pngSize(file) {
@@ -127,7 +129,7 @@ async function checkLayout(page, still, inject, script) {
   return { fails, row };
 }
 
-export async function run({ inject = null, script = null, pages = null, kitCss = null, words = null, shots = null, stills = STILLS, pngs = null } = {}) {
+export async function run({ inject = null, script = null, pages = null, kitCss = null, words = null, shots = null, stills = STILLS, pngs = null, sheet = join(here, 'contact_sheet.png') } = {}) {
   const allowed = allowedColours();
   const tokensCss = readFileSync(join(here, '..', 'board', 'tokens.css'), 'utf8');
   const fails = [];
@@ -141,6 +143,10 @@ export async function run({ inject = null, script = null, pages = null, kitCss =
   for (const file of pngs ?? STILLS.map(([file]) => join(here, file))) {
     const size = existsSync(file) ? pngSize(file) : null;
     if (!size || size[0] !== PX[0] || size[1] !== PX[1]) fails.push({ kind: 'png', what: `${file.split('/').pop()} is ${size ? size.join(' x ') : 'missing'}, not ${PX.join(' x ')}` });
+  }
+  const sheetSize = existsSync(sheet) ? pngSize(sheet) : null;
+  if (!sheetSize || sheetSize[0] !== SHEET[0] || sheetSize[1] !== SHEET[1]) {
+    fails.push({ kind: 'sheet', what: `${sheet.split('/').pop()} is ${sheetSize ? sheetSize.join(' x ') : 'missing'}, not ${SHEET.join(' x ')}: run python3 art/ui/keyframes/contact_sheet.py` });
   }
 
   const rows = [];
@@ -184,7 +190,7 @@ async function selfTest() {
     ['clean key frames pass', {}, null],
     ['a hue of its own fails', { stills: home, inject: '.keeper .label{color:#123456!important}' }, 'colour'],
     ['a colour literal in kit.css fails', { stills: [], kitCss: kitCss.replace('.tab > .well {', '.tab > .well { color: #FF00FF;') }, 'literal'],
-    ['a colour literal in a page fails', { stills: [], pages: [pages[0].replace('<style>', '<style>\n.x { background: rgb(1, 2, 3); }'), pages[1]] }, 'literal'],
+    ['a colour literal in a page fails', { stills: [], pages: [pages[0].replace('<style>', '<style>\n.x { background: rgb(1, 2, 3); }'), ...pages.slice(1)] }, 'literal'],
     ['a word that is not the game\'s fails', { stills: [], words: words.replace('"Cast"', '"Fire"') }, 'words'],
     ['a word under 13 points fails', { stills: heist, inject: '.law-name{font-size:12px!important}' }, 'type'],
     ['a word that does not grow with the text fails', { stills: large, inject: '.keeper .label{font-size:16px!important}' }, 'type'],
@@ -195,6 +201,7 @@ async function selfTest() {
     ['a ninth thing to tap in the heist fails', { stills: heist, script: () => { const b = document.createElement('button'); b.className = 'ctl'; b.style.cssText = 'position:absolute;left:150px;top:400px;width:48px;height:48px'; document.querySelector('.screen').append(b); } }, 'count'],
     ['a control without its value step fails', { stills: [], shots: [flatShot()] }, 'value-steps'],
     ['a still of the wrong size fails', { stills: [], pngs: [join(here, 'art', 'archivist.png')] }, 'png'],
+    ['a contact sheet of the wrong size fails', { stills: [], sheet: join(here, '01-home.png') }, 'sheet'],
   ];
   let bad = 0;
   for (const [what, opts, kind] of cases) {

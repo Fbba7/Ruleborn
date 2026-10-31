@@ -18,10 +18,13 @@ How to fill it in:
 - Do not change the Item or Quality columns. `python3 tools/ui_gate/golden.py
   check` fails if the rows no longer match items.json.
 
-Who labels: at O3, AD labels every row. At P0-AD-calibrate, the set is split
-into thirds and a second labeller labels the held-out third blind. That
-labeller is a fresh subagent given only rubric.md and the held-out images. The
-two sets of labels are then compared row by row.
+Who labels: at O3, AD labels every row here. A fresh subagent, given only
+gate/rubric.md and the held-out images, labels the held-out third (the items
+with `third` 3 in items.json) blind, in labels-blind.md. The two sets of labels
+are then compared row by row. Where they disagree on a held-out row, the label
+here becomes `fail`, and the critique says what each labeller saw.
+P0-AD-calibrate uses the agreement on the held-out third to calibrate the
+judge.
 
 | Item | Quality | Label | Critique |
 |---|---|---|---|
@@ -171,14 +174,6 @@ two sets of labels are then compared row by row.
 | board-hc | 2. Display type |  |  |
 | board-hc | 8. Colour roles and value |  |  |
 | board-hc | 13. Light behind UI |  |  |
-| board-hc-enamel | 1. Layered materials |  |  |
-| board-hc-enamel | 2. Display type |  |  |
-| board-hc-enamel | 8. Colour roles and value |  |  |
-| board-hc-enamel | 13. Light behind UI |  |  |
-| board-hc-gold | 1. Layered materials |  |  |
-| board-hc-gold | 2. Display type |  |  |
-| board-hc-gold | 8. Colour roles and value |  |  |
-| board-hc-gold | 13. Light behind UI |  |  |
 | ai-starlight | 1. Layered materials |  |  |
 | ai-starlight | 3. Painted or rendered icons |  |  |
 | ai-starlight | 8. Colour roles and value |  |  |
@@ -187,10 +182,6 @@ two sets of labels are then compared row by row.
 | ai-essence | 3. Painted or rendered icons |  |  |
 | ai-essence | 8. Colour roles and value |  |  |
 | ai-essence | 13. Light behind UI |  |  |
-| ai-renown | 1. Layered materials |  |  |
-| ai-renown | 3. Painted or rendered icons |  |  |
-| ai-renown | 8. Colour roles and value |  |  |
-| ai-renown | 13. Light behind UI |  |  |
 | ai-chest | 1. Layered materials |  |  |
 | ai-chest | 3. Painted or rendered icons |  |  |
 | ai-chest | 8. Colour roles and value |  |  |
@@ -207,10 +198,6 @@ two sets of labels are then compared row by row.
 | today-icon-essence | 3. Painted or rendered icons |  |  |
 | today-icon-essence | 8. Colour roles and value |  |  |
 | today-icon-essence | 13. Light behind UI |  |  |
-| today-icon-renown | 1. Layered materials |  |  |
-| today-icon-renown | 3. Painted or rendered icons |  |  |
-| today-icon-renown | 8. Colour roles and value |  |  |
-| today-icon-renown | 13. Light behind UI |  |  |
 | today-icon-loot | 1. Layered materials |  |  |
 | today-icon-loot | 3. Painted or rendered icons |  |  |
 | today-icon-loot | 8. Colour roles and value |  |  |
@@ -263,3 +250,144 @@ two sets of labels are then compared row by row.
 | plant-type-hue | 2. Display type |  |  |
 | plant-type-hue | 8. Colour roles and value |  |  |
 | plant-type-hue | 13. Light behind UI |  |  |
+| kf-home | 1. Layered materials |  |  |
+| kf-home | 2. Display type |  |  |
+| kf-home | 3. Painted or rendered icons |  |  |
+| kf-home | 6. Hierarchy |  |  |
+| kf-home | 8. Colour roles and value |  |  |
+| kf-home | 9. Character presence |  |  |
+| kf-home | 13. Light behind UI |  |  |
+| kf-home | 14. One art-direction idea |  |  |
+| kf-home-text200 | 1. Layered materials |  |  |
+| kf-home-text200 | 2. Display type |  |  |
+| kf-home-text200 | 3. Painted or rendered icons |  |  |
+| kf-home-text200 | 6. Hierarchy |  |  |
+| kf-home-text200 | 8. Colour roles and value |  |  |
+| kf-home-text200 | 9. Character presence |  |  |
+| kf-home-text200 | 13. Light behind UI |  |  |
+| kf-home-text200 | 14. One art-direction idea |  |  |
+| kf-home-hc | 1. Layered materials |  |  |
+| kf-home-hc | 2. Display type |  |  |
+| kf-home-hc | 3. Painted or rendered icons |  |  |
+| kf-home-hc | 6. Hierarchy |  |  |
+| kf-home-hc | 8. Colour roles and value |  |  |
+| kf-home-hc | 9. Character presence |  |  |
+| kf-home-hc | 13. Light behind UI |  |  |
+| kf-home-hc | 14. One art-direction idea |  |  |
+| kf-heist | 1. Layered materials |  |  |
+| kf-heist | 2. Display type |  |  |
+| kf-heist | 3. Painted or rendered icons |  |  |
+| kf-heist | 6. Hierarchy |  |  |
+| kf-heist | 8. Colour roles and value |  |  |
+| kf-heist | 9. Character presence |  |  |
+| kf-heist | 13. Light behind UI |  |  |
+| kf-heist | 14. One art-direction idea |  |  |
+| kf-heist-text200 | 1. Layered materials |  |  |
+| kf-heist-text200 | 2. Display type |  |  |
+| kf-heist-text200 | 3. Painted or rendered icons |  |  |
+| kf-heist-text200 | 6. Hierarchy |  |  |
+| kf-heist-text200 | 8. Colour roles and value |  |  |
+| kf-heist-text200 | 9. Character presence |  |  |
+| kf-heist-text200 | 13. Light behind UI |  |  |
+| kf-heist-text200 | 14. One art-direction idea |  |  |
+| kf-heist-hc | 1. Layered materials |  |  |
+| kf-heist-hc | 2. Display type |  |  |
+| kf-heist-hc | 3. Painted or rendered icons |  |  |
+| kf-heist-hc | 6. Hierarchy |  |  |
+| kf-heist-hc | 8. Colour roles and value |  |  |
+| kf-heist-hc | 9. Character presence |  |  |
+| kf-heist-hc | 13. Light behind UI |  |  |
+| kf-heist-hc | 14. One art-direction idea |  |  |
+| kf-result | 1. Layered materials |  |  |
+| kf-result | 2. Display type |  |  |
+| kf-result | 3. Painted or rendered icons |  |  |
+| kf-result | 6. Hierarchy |  |  |
+| kf-result | 8. Colour roles and value |  |  |
+| kf-result | 9. Character presence |  |  |
+| kf-result | 13. Light behind UI |  |  |
+| kf-result | 14. One art-direction idea |  |  |
+| kf-result-text200 | 1. Layered materials |  |  |
+| kf-result-text200 | 2. Display type |  |  |
+| kf-result-text200 | 3. Painted or rendered icons |  |  |
+| kf-result-text200 | 6. Hierarchy |  |  |
+| kf-result-text200 | 8. Colour roles and value |  |  |
+| kf-result-text200 | 9. Character presence |  |  |
+| kf-result-text200 | 13. Light behind UI |  |  |
+| kf-result-text200 | 14. One art-direction idea |  |  |
+| kf-result-hc | 1. Layered materials |  |  |
+| kf-result-hc | 2. Display type |  |  |
+| kf-result-hc | 3. Painted or rendered icons |  |  |
+| kf-result-hc | 6. Hierarchy |  |  |
+| kf-result-hc | 8. Colour roles and value |  |  |
+| kf-result-hc | 9. Character presence |  |  |
+| kf-result-hc | 13. Light behind UI |  |  |
+| kf-result-hc | 14. One art-direction idea |  |  |
+| kf-character | 1. Layered materials |  |  |
+| kf-character | 2. Display type |  |  |
+| kf-character | 3. Painted or rendered icons |  |  |
+| kf-character | 6. Hierarchy |  |  |
+| kf-character | 8. Colour roles and value |  |  |
+| kf-character | 9. Character presence |  |  |
+| kf-character | 13. Light behind UI |  |  |
+| kf-character | 14. One art-direction idea |  |  |
+| kf-character-text200 | 1. Layered materials |  |  |
+| kf-character-text200 | 2. Display type |  |  |
+| kf-character-text200 | 3. Painted or rendered icons |  |  |
+| kf-character-text200 | 6. Hierarchy |  |  |
+| kf-character-text200 | 8. Colour roles and value |  |  |
+| kf-character-text200 | 9. Character presence |  |  |
+| kf-character-text200 | 13. Light behind UI |  |  |
+| kf-character-text200 | 14. One art-direction idea |  |  |
+| kf-character-hc | 1. Layered materials |  |  |
+| kf-character-hc | 2. Display type |  |  |
+| kf-character-hc | 3. Painted or rendered icons |  |  |
+| kf-character-hc | 6. Hierarchy |  |  |
+| kf-character-hc | 8. Colour roles and value |  |  |
+| kf-character-hc | 9. Character presence |  |  |
+| kf-character-hc | 13. Light behind UI |  |  |
+| kf-character-hc | 14. One art-direction idea |  |  |
+| kf-settings | 1. Layered materials |  |  |
+| kf-settings | 2. Display type |  |  |
+| kf-settings | 3. Painted or rendered icons |  |  |
+| kf-settings | 6. Hierarchy |  |  |
+| kf-settings | 8. Colour roles and value |  |  |
+| kf-settings | 13. Light behind UI |  |  |
+| kf-settings | 14. One art-direction idea |  |  |
+| kf-settings-text200 | 1. Layered materials |  |  |
+| kf-settings-text200 | 2. Display type |  |  |
+| kf-settings-text200 | 3. Painted or rendered icons |  |  |
+| kf-settings-text200 | 6. Hierarchy |  |  |
+| kf-settings-text200 | 8. Colour roles and value |  |  |
+| kf-settings-text200 | 13. Light behind UI |  |  |
+| kf-settings-text200 | 14. One art-direction idea |  |  |
+| kf-settings-hc | 1. Layered materials |  |  |
+| kf-settings-hc | 2. Display type |  |  |
+| kf-settings-hc | 3. Painted or rendered icons |  |  |
+| kf-settings-hc | 6. Hierarchy |  |  |
+| kf-settings-hc | 8. Colour roles and value |  |  |
+| kf-settings-hc | 13. Light behind UI |  |  |
+| kf-settings-hc | 14. One art-direction idea |  |  |
+| plant-kf-home-unstroked | 1. Layered materials |  |  |
+| plant-kf-home-unstroked | 2. Display type |  |  |
+| plant-kf-home-unstroked | 3. Painted or rendered icons |  |  |
+| plant-kf-home-unstroked | 6. Hierarchy |  |  |
+| plant-kf-home-unstroked | 8. Colour roles and value |  |  |
+| plant-kf-home-unstroked | 9. Character presence |  |  |
+| plant-kf-home-unstroked | 13. Light behind UI |  |  |
+| plant-kf-home-unstroked | 14. One art-direction idea |  |  |
+| plant-kf-result-flat | 1. Layered materials |  |  |
+| plant-kf-result-flat | 2. Display type |  |  |
+| plant-kf-result-flat | 8. Colour roles and value |  |  |
+| plant-kf-result-flat | 13. Light behind UI |  |  |
+| plant-kf-heist-icon-flat | 1. Layered materials |  |  |
+| plant-kf-heist-icon-flat | 3. Painted or rendered icons |  |  |
+| plant-kf-heist-icon-flat | 8. Colour roles and value |  |  |
+| plant-kf-heist-icon-flat | 13. Light behind UI |  |  |
+| plant-kf-heist-cast-sunk | 1. Layered materials |  |  |
+| plant-kf-heist-cast-sunk | 2. Display type |  |  |
+| plant-kf-heist-cast-sunk | 3. Painted or rendered icons |  |  |
+| plant-kf-heist-cast-sunk | 6. Hierarchy |  |  |
+| plant-kf-heist-cast-sunk | 8. Colour roles and value |  |  |
+| plant-kf-heist-cast-sunk | 9. Character presence |  |  |
+| plant-kf-heist-cast-sunk | 13. Light behind UI |  |  |
+| plant-kf-heist-cast-sunk | 14. One art-direction idea |  |  |

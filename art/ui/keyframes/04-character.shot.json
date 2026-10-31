@@ -1,0 +1,155 @@
+{
+ "image": "04-character.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 1,
+ "controls": [
+  {
+   "name": "chip 1: 2 / 5",
+   "rect": [
+    12,
+    50,
+    57.42,
+    32
+   ],
+   "interactive": false
+  },
+  {
+   "name": "chip 2: free",
+   "rect": [
+    298.77,
+    50,
+    79.23,
+    32
+   ],
+   "interactive": false
+  },
+  {
+   "name": "arrow 3: Previous character, Tidewalker",
+   "rect": [
+    12,
+    114,
+    52,
+    52
+   ]
+  },
+  {
+   "name": "arrow 4: Next character, Mossbear",
+   "rect": [
+    326,
+    114,
+    52,
+    52
+   ]
+  },
+  {
+   "name": "name-plate 5: Skyskipper",
+   "rect": [
+    110.96,
+    186.11,
+    168.08,
+    43.89
+   ],
+   "interactive": false
+  },
+  {
+   "name": "row 6: MOTION Skyskipper · Carrier",
+   "rect": [
+    12,
+    238,
+    366,
+    30
+   ],
+   "interactive": false
+  },
+  {
+   "name": "row 7: LV 4 Level 4 of 6 Health 90",
+   "rect": [
+    12,
+    276,
+    366,
+    64
+   ],
+   "interactive": false
+  },
+  {
+   "name": "row 8: HEIST STATS COMPARE",
+   "rect": [
+    12,
+    348,
+    366,
+    56
+   ]
+  },
+  {
+   "name": "ability 9: ABILITY TWO USES A HEIST Stuffs its satchel: loads at 60 a second ins",
+   "rect": [
+    22,
+    422,
+    346,
+    103.27
+   ],
+   "interactive": false
+  },
+  {
+   "name": "info-card 10: CARRIER Hauls loot; 15% slower when loaded",
+   "rect": [
+    22,
+    533.27,
+    169,
+    89.53
+   ],
+   "interactive": false
+  },
+  {
+   "name": "info-card 11: RESISTS Unbothered by Leapfrog's noise",
+   "rect": [
+    199,
+    533.27,
+    169,
+    89.53
+   ],
+   "interactive": false
+  },
+  {
+   "name": "info-card 12: TRAITS Swift · Hoarder",
+   "rect": [
+    22,
+    630.8,
+    169,
+    71.98
+   ],
+   "interactive": false
+  },
+  {
+   "name": "info-card 13: BEST AT Carrying, Star Wells",
+   "rect": [
+    199,
+    630.8,
+    169,
+    71.98
+   ],
+   "interactive": false
+  },
+  {
+   "name": "back 14: Roster",
+   "rect": [
+    22,
+    733,
+    60,
+    60
+   ]
+  },
+  {
+   "name": "up 15: Raise to level 5, 180 Essence",
+   "rect": [
+    92,
+    731,
+    276,
+    64
+   ]
+  }
+ ]
+}

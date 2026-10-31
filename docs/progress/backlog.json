@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-31T05:58:00Z",
+  "updated_at": "2026-10-31T14:27:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
@@ -465,12 +465,21 @@
       "estimate_h": 2,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-10-31T10:20:00Z",
+        "seen_at": "2026-10-31T11:45:00Z",
+        "lease_until": "2026-10-31T13:20:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "5864d65d",
+      "merged_sha": "b8308788",
+      "exceptions": [
+        "art/ui/board/tokens.css"
+      ]
     },
     {
       "phase": 0,
@@ -565,12 +574,18 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-10-31T10:11:03Z",
+        "seen_at": "2026-10-31T11:45:00Z",
+        "lease_until": "2026-10-31T13:11:03Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "4fde22f9",
+      "merged_sha": "b8308788"
     },
     {
       "id": "P0-AIA-keyframes-3",
@@ -594,6 +609,93 @@
       "estimate_h": 2,
       "tier": 1,
       "critical": true,
+      "state": "merged",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-10-31T12:29:54Z",
+        "seen_at": "2026-10-31T13:45:00Z",
+        "lease_until": "2026-10-31T15:29:54Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "5eec1b60",
+      "merged_sha": "d0dd8a36"
+    },
+    {
+      "id": "P0-AIA-board-4",
+      "title": "The style board's words for the revised kit tokens (K1-R6): the two regular-weight secondary captions drawn on #2C3AA8 made bold or set on a card, and the alarm words ('Alarm 3', 'Alarm 4 of 5') and success words ('Escape open', 'Vault open') set as ink on their fills, so they pass with kit-spec.md section 2.1's revised backdrop (#171046 to #2C3AA8), red words on dark (#FF9AAA) and success words (O2.md's interim ruling until C74 is decided); tokens.css stays generated",
+      "role": "AIA",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/board/**"
+      ],
+      "deps": [
+        "P0-K1-tokens"
+      ],
+      "done_when": [
+        "board.png and board_hc.png rebaked",
+        "node art/ui/board/check_board.mjs passes with the revised values tried in tokens.css",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 0,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-10-31T13:45:00Z",
+        "seen_at": "2026-10-31T16:20:00Z",
+        "lease_until": "2026-10-31T16:45:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "b83a0b4d",
+      "merged_sha": "f920b57b"
+    },
+    {
+      "id": "P0-K1-tokens-2",
+      "title": "Kit tokens, the rest of O2's redirect (K1-R6): write kit-spec.md section 2.1's revised backdrop (#171046 to #2C3AA8, linear, until C75 is decided), red words on dark (#FF9AAA) and success words on dark (O2.md's interim ruling until C74 is decided) into client/ui/tokens.json; the scrim's text_bg names its own #0A0620; status words below 36 points move onto their fills (rb_theme.gd status_colour; result, observatory, curation, lab and account screens, which no screen maker owns in phase 0); regenerate art/ui/board/tokens.css with build_tokens.mjs; record again the counts and stills they move, with a dated line in kit-spec.md section 9; success words below 36 points do not move onto the #3FBF7F fill, where no ink reaches Lc 60 (AIA-R8): they keep their icon and today's colour until C74 is decided or the success fill is darkened",
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/tokens.json",
+        "client/ui/tokens.gd",
+        "client/ui/rb_theme.gd",
+        "client/tests/ui_kit_tests.gd",
+        "client/tests/a11y_tests.gd",
+        "tools/ui_bake/budgets.json",
+        "docs/art/ui-quality/kit-spec.md",
+        "client/scripts/result_screen.gd",
+        "client/scripts/observatory_screen.gd",
+        "client/scripts/curation_screen.gd",
+        "client/scripts/lab_screen.gd",
+        "client/scripts/screen_account.gd"
+      ],
+      "exceptions": [
+        "art/ui/board/tokens.css"
+      ],
+      "deps": [
+        "P0-K1-tokens",
+        "P0-AIA-board-4"
+      ],
+      "done_when": [
+        "bash tools/ui_bake/guard.sh",
+        "python3 tools/check_docs_consistency.py",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "phase": 0,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
       "state": "open",
       "claim": null,
       "prior_branch": null,
@@ -627,12 +729,21 @@
       "estimate_h": 1,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-10-31T14:30:00Z",
+        "seen_at": "2026-10-31T15:40:00Z",
+        "lease_until": "2026-10-31T17:30:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "b6fce494",
+      "merged_sha": "520565f9",
+      "exceptions": [
+        "tools/ui_gate/golden.py"
+      ]
     },
     {
       "id": "O3",

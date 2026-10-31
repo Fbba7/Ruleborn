@@ -1,0 +1,104 @@
+{
+ "image": "05-settings_hc.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 1,
+ "controls": [
+  {
+   "name": "set-head 1: Settings",
+   "rect": [
+    12,
+    50,
+    366,
+    52.19
+   ],
+   "interactive": false
+  },
+  {
+   "name": "row 2: GAME ACCESS ACCOUNT",
+   "rect": [
+    12,
+    110.19,
+    366,
+    58
+   ]
+  },
+  {
+   "name": "size-a 3: Text 100%: smaller",
+   "rect": [
+    29,
+    227.19,
+    64,
+    56
+   ]
+  },
+  {
+   "name": "size-mid 5: 100%",
+   "rect": [
+    101,
+    230.69,
+    188,
+    49
+   ],
+   "interactive": false
+  },
+  {
+   "name": "size-a 6: Text 100%: larger",
+   "rect": [
+    297,
+    227.19,
+    64,
+    56
+   ]
+  },
+  {
+   "name": "sample 8: Stillness Anyone standing still for 1.5 seconds becomes invisible to g",
+   "rect": [
+    29,
+    295.19,
+    332,
+    89.09
+   ],
+   "interactive": false
+  },
+  {
+   "name": "shapes 9: Time Motion Matter Energy Life Spirit Each school keeps its own shape ",
+   "rect": [
+    12,
+    415.28,
+    366,
+    130.64
+   ],
+   "interactive": false
+  },
+  {
+   "name": "switch-row 10: High contrast: on",
+   "rect": [
+    12,
+    587.92,
+    366,
+    52
+   ]
+  },
+  {
+   "name": "switch-row 11: Motion: full",
+   "rect": [
+    12,
+    647.92,
+    366,
+    52
+   ]
+  },
+  {
+   "name": "back 14: Back",
+   "rect": [
+    25,
+    736,
+    120,
+    56
+   ]
+  }
+ ]
+}

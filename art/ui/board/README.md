@@ -22,6 +22,7 @@ at O2 with K1's kit contract; it is not judged by the gate.
 node art/ui/board/build_tokens.mjs            # after tokens.json changes
 node art/ui/board/check_board.mjs             # colours, contrast, value steps, both modes
 node art/ui/board/check_board.mjs --self-test
+node art/ui/board/check_board.mjs --revised   # with kit-spec.md section 2.1's revised values tried over tokens.css
 (cd tools/ui_research && npm ci)              # three.js, once, for the bake
 node art/ui/board/bake_art.mjs                # after studio.html or tokens change
 node art/ui/board/shoot_board.mjs             # after the board changes
@@ -48,6 +49,13 @@ colour shows, never which colour.
 | Wood and leather | leather for buttons; oak frames from §21.2's wood | `frame_oak`, `leather` | grain along the plank; pebbled leather, cream stitching inside the Motion-shadow rim; the well a leather button sits in is an oak floor lit by the key, two value steps above the leather |
 | Glass | dark glass at 78% over the world | `glass` | a 6-point blur of the world behind, the gold rim, a catch-light and a raked sheen |
 | Parchment | parchment with brown ink | `parchment` | long soil-coloured fibres, edges browned with handling |
+
+Status words ride on their fills, as O2.md's interim ruling 1 says: an
+alarm in paper on `alarm_fill`, a success in ink on §21.8's green. Ink on
+#3FBF7F reads Lc 58 at best, under the 60 bold words under 36 points need,
+so a success in words is set at 36 points. Secondary words on the bare
+backdrop are bold, because section 2.1 of `kit-spec.md` measures them at
+#2C3AA8, the backdrop's lightest point.
 
 Type keeps §21.8 as written (the owner kept it: D4 (b)): Marcellus for
 titles and law names, Manrope for labels, body text and every number that
