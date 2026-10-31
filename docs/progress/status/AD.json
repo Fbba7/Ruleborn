@@ -17,9 +17,9 @@
   },
   "precheck": {
     "sha": "7d8c4ed612e5115523aec859d83f7185f9202596",
-    "exit": 1,
-    "finished_at": "2026-10-31T01:52:02Z",
-    "summary": "== the simulation core (T3.1, T3.2, T5.5, line of sight): failed: cargo build --release --quiet --target wasm32-unknown-unknown"
+    "exit": 127,
+    "finished_at": "2026-10-31T01:55:45Z",
+    "summary": "== the client: the same simulation inside Godot, and its screen ==: tools/check_all.sh: line 55: gdlint: command not found"
   },
   "gate_request": null,
   "ready_sha": null,
