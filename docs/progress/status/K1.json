@@ -3,26 +3,21 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P0-K1-tokens",
-  "task_state": "ready",
-  "claimed_at": "2026-10-31T10:20:00Z",
-  "lease_until": "2026-10-31T13:20:00Z",
-  "updated_at": "2026-10-31T11:20:00Z",
-  "expected_next_update_by": "2026-11-01T22:00:00Z",
+  "agent_state": "active",
+  "task_id": "P0-K1-tokens-2",
+  "task_state": "claimed",
+  "claimed_at": "2026-10-31T17:05:00Z",
+  "lease_until": "2026-10-31T20:05:00Z",
+  "updated_at": "2026-10-31T17:05:00Z",
+  "expected_next_update_by": "2026-10-31T17:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "5864d65d",
-    "next_step": "the lead answers K1-R6 and merges P0-K1-tokens; P0-K1-tokens-2 when filed and its deps merge"
+    "next_step": "measure today's a11y and board results against the revised values"
   },
-  "precheck": {
-    "sha": "5864d65d81aa39436148e9cb26a08b88a9a8cba5",
-    "exit": 0,
-    "finished_at": "2026-10-31T11:13:41Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "5864d65d81aa39436148e9cb26a08b88a9a8cba5",
+  "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
