@@ -151,9 +151,10 @@ to primary, no glass. On the board, with `?hc=1` or inside a `.hcf` block:
    listed but not held to it) stands two value steps off what it sits on:
    `tools/ui_gate/checks.py value-steps` on the shot files, ΔL* 20 or more.
 
-Last run: 364 words, all passing in both modes; 8 icons keeping the outline
-rule (10.7-pixel rule: 11.9 to 12.8; high contrast's 16: 14.1 to 17.7); the
-self-test's thirteen planted faults each fail.
+Last run: 376 words, all passing in both modes; 8 icons keeping the outline
+rule (10.7-pixel rule: 12.0 to 12.9; high contrast's 16: 14.2 to 17.7); 22
+controls a value step or more off their ground (ΔL* 22.1 at least); the
+self-test's fifteen planted faults each fail.
 
 ## Found while making it, for O2
 
