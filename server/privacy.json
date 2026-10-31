@@ -1241,8 +1241,9 @@
     "functionality"
    ],
    "keep": {
-    "for": "record",
-    "why": "F43: kept for good, keyed by an id that leads to no one once the account is deleted"
+    "days": 1,
+    "after": "issuing it unsubmitted, its lease's life; a submitted play is a record kept for good (F43), keyed by an id that leads to no one once the account is deleted",
+    "by": "expireLapsed"
    },
    "deletion": "erased-under-13",
    "deletion_note": "severed on a deletion; deleted for an under-13 player",

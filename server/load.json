@@ -5,12 +5,12 @@
   "days": 3,
   "heistsPerDay": 4,
   "sessionsPerDay": 5,
-  "writesPerPlayerDay": 42.24,
+  "writesPerPlayerDay": 38.24,
   "periodicWritesADay": {
    "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 7.65,
+  "writesPerHeist": 6.65,
   "byOperation": {
    "session": 5.67,
    "telemetry batch": 5,
@@ -18,10 +18,10 @@
    "defence log": 0.99,
    "observatory": 0,
    "lease": 4,
-   "heist: validate and grant": 26.58
+   "heist: validate and grant": 22.58
   },
-  "billedRowsPerPlayerDay": 61.74,
-  "billedPerHeist": 12.19,
+  "billedRowsPerPlayerDay": 57.74,
+  "billedPerHeist": 11.19,
   "billedByOperation": {
    "session": 7,
    "telemetry batch": 5,
@@ -29,12 +29,12 @@
    "defence log": 0.99,
    "observatory": 0,
    "lease": 8,
-   "heist: validate and grant": 40.75
+   "heist: validate and grant": 36.75
   },
   "validationMs": {
-   "p50": 14.3,
-   "p95": 23.2,
-   "max": 32.4
+   "p50": 25.2,
+   "p95": 36.9,
+   "max": 59.2
   },
   "firstHeist": {
    "rows": 34.2,
@@ -47,26 +47,25 @@
    "leases": 8,
    "sessions": 5,
    "accounts": 4.99,
-   "notifications": 4,
    "ratings": 4,
    "codex": 1.08,
    "target_lists": 0.4
   },
-  "readsPerPlayerDay": 949.5,
+  "readsPerPlayerDay": 967.5,
   "readsPerHeist": 114.8,
   "readsByOperation": {
    "session": 19.3,
    "telemetry batch": 30,
    "raid badge": 33.2,
    "defence log": 40.8,
-   "observatory": 366.9,
+   "observatory": 384.9,
    "lease": 94.3,
    "heist: validate and grant": 364.9
   },
   "readsPerPlayerByDay": [
-   666.5,
-   977.3,
-   1204.7
+   680.5,
+   997.3,
+   1224.7
   ],
   "periodicReadsADayAnIsland": {
    "target lists (x24)": 145.6,
@@ -76,13 +75,13 @@
    {
     "op": "observatory",
     "table": "islands",
-    "rows": 24,
+    "rows": 22,
     "sql": "SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin, s.band, a.keeper_level, a.created_"
    }
   ],
   "readsBySql": [
    [
-    168,
+    166,
     "SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin, s.band, a.keeper_level, a.created_at, a.seeded, a.deleted_at, r.rating, r."
    ],
    [
@@ -132,19 +131,19 @@
   ],
   "against": {
    "budget": 46,
-   "overBudget": 0.9,
+   "overBudget": 0.8,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 1619,
+   "freePlanPlayersADay": 1731,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
-    "100000": 17,
-    "1000000": 572
+    "100000": 13,
+    "1000000": 532
    },
    "readBudget": 2500,
-   "readsOverBudget": 0.38,
-   "freePlanReadsPlayersADay": 4561,
+   "readsOverBudget": 0.39,
+   "freePlanReadsPlayersADay": 4487,
    "readDollarsAMonth": {
     "1000": 0,
     "10000": 0,
@@ -159,12 +158,12 @@
   "days": 3,
   "heistsPerDay": 2,
   "sessionsPerDay": 3,
-  "writesPerPlayerDay": 23.17,
+  "writesPerPlayerDay": 21.17,
   "periodicWritesADay": {
    "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 7.75,
+  "writesPerHeist": 6.75,
   "byOperation": {
    "session": 3.67,
    "telemetry batch": 3,
@@ -172,10 +171,10 @@
    "defence log": 0.99,
    "observatory": 0,
    "lease": 2,
-   "heist: validate and grant": 13.51
+   "heist: validate and grant": 11.51
   },
-  "billedRowsPerPlayerDay": 33.81,
-  "billedPerHeist": 12.41,
+  "billedRowsPerPlayerDay": 31.81,
+  "billedPerHeist": 11.41,
   "billedByOperation": {
    "session": 5,
    "telemetry batch": 3,
@@ -183,12 +182,12 @@
    "defence log": 0.99,
    "observatory": 0,
    "lease": 4,
-   "heist: validate and grant": 20.81
+   "heist: validate and grant": 18.81
   },
   "validationMs": {
-   "p50": 13.9,
-   "p95": 22.5,
-   "max": 33.4
+   "p50": 25.6,
+   "p95": 36.1,
+   "max": 57.2
   },
   "firstHeist": {
    "rows": 34.2,
@@ -201,26 +200,25 @@
    "leases": 4,
    "sessions": 3,
    "accounts": 2.99,
-   "notifications": 2,
    "ratings": 2,
    "codex": 0.87,
    "target_lists": 0.4
   },
-  "readsPerPlayerDay": 357,
+  "readsPerPlayerDay": 365,
   "readsPerHeist": 82.8,
   "readsByOperation": {
    "session": 11.3,
    "telemetry batch": 18,
    "raid badge": 13.1,
    "defence log": 20.2,
-   "observatory": 128.8,
+   "observatory": 136.8,
    "lease": 29.3,
    "heist: validate and grant": 136.2
   },
   "readsPerPlayerByDay": [
-   284.1,
-   359.4,
-   427.5
+   288.1,
+   369.3,
+   437.6
   ],
   "periodicReadsADayAnIsland": {
    "target lists (x24)": 145.6,
@@ -230,13 +228,13 @@
    {
     "op": "observatory",
     "table": "islands",
-    "rows": 12,
+    "rows": 10,
     "sql": "SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin, s.band, a.keeper_level, a.created_"
    }
   ],
   "readsBySql": [
    [
-    156,
+    154,
     "SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin, s.band, a.keeper_level, a.created_at, a.seeded, a.deleted_at, r.rating, r."
    ],
    [
@@ -286,19 +284,19 @@
   ],
   "against": {
    "budget": 24,
-   "overBudget": 1,
+   "overBudget": 0.9,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 2957,
+   "freePlanPlayersADay": 3143,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
     "100000": 5,
-    "1000000": 293
+    "1000000": 273
    },
    "readBudget": 2500,
-   "readsOverBudget": 0.14,
-   "freePlanReadsPlayersADay": 9928,
+   "readsOverBudget": 0.15,
+   "freePlanReadsPlayersADay": 9773,
    "readDollarsAMonth": {
     "1000": 0,
     "10000": 0,
@@ -313,12 +311,12 @@
   "days": 3,
   "heistsPerDay": 1,
   "sessionsPerDay": 1,
-  "writesPerPlayerDay": 11.45,
+  "writesPerPlayerDay": 10.45,
   "periodicWritesADay": {
    "target lists (x24)": 24,
    "telemetry compaction": 0
   },
-  "writesPerHeist": 7.81,
+  "writesPerHeist": 6.81,
   "byOperation": {
    "session": 1.67,
    "telemetry batch": 1,
@@ -326,10 +324,10 @@
    "defence log": 0.98,
    "observatory": 0,
    "lease": 1,
-   "heist: validate and grant": 6.81
+   "heist: validate and grant": 5.81
   },
-  "billedRowsPerPlayerDay": 17.47,
-  "billedPerHeist": 12.49,
+  "billedRowsPerPlayerDay": 16.47,
+  "billedPerHeist": 11.49,
   "billedByOperation": {
    "session": 3,
    "telemetry batch": 1,
@@ -337,12 +335,12 @@
    "defence log": 0.98,
    "observatory": 0,
    "lease": 2,
-   "heist: validate and grant": 10.49
+   "heist: validate and grant": 9.49
   },
   "validationMs": {
-   "p50": 14.2,
-   "p95": 21.1,
-   "max": 27.9
+   "p50": 24.8,
+   "p95": 34.7,
+   "max": 44.7
   },
   "firstHeist": {
    "rows": 34.2,
@@ -355,26 +353,25 @@
    "leases": 2,
    "accounts": 1.98,
    "sessions": 1,
-   "notifications": 1,
    "ratings": 1,
    "codex": 0.78,
    "target_lists": 0.4
   },
-  "readsPerPlayerDay": 144.6,
+  "readsPerPlayerDay": 147.6,
   "readsPerHeist": 65.6,
   "readsByOperation": {
    "session": 3.3,
    "telemetry batch": 6,
    "raid badge": 4,
    "defence log": 12.8,
-   "observatory": 52.9,
+   "observatory": 55.9,
    "lease": 10.3,
    "heist: validate and grant": 55.3
   },
   "readsPerPlayerByDay": [
-   127.8,
-   143.1,
-   162.9
+   126.8,
+   148.1,
+   167.9
   ],
   "periodicReadsADayAnIsland": {
    "target lists (x24)": 145.6,
@@ -384,13 +381,13 @@
    {
     "op": "observatory",
     "table": "islands",
-    "rows": 6,
+    "rows": 4,
     "sql": "SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin, s.band, a.keeper_level, a.created_"
    }
   ],
   "readsBySql": [
    [
-    150,
+    148,
     "SELECT s.bundle, i.owner, i.realm, s.realm_level, s.vault_level, s.exposed, i.origin, s.band, a.keeper_level, a.created_at, a.seeded, a.deleted_at, r.rating, r."
    ],
    [
@@ -440,19 +437,19 @@
   ],
   "against": {
    "budget": 11,
-   "overBudget": 1,
+   "overBudget": 0.9,
    "freeCpuMs": 10,
    "validationFitsFreePlan": false,
-   "freePlanPlayersADay": 5724,
+   "freePlanPlayersADay": 6071,
    "paidDollarsAMonth": {
     "1000": 5,
     "10000": 5,
     "100000": 5,
-    "1000000": 130
+    "1000000": 120
    },
    "readBudget": 2500,
    "readsOverBudget": 0.06,
-   "freePlanReadsPlayersADay": 17170,
+   "freePlanReadsPlayersADay": 16995,
    "readDollarsAMonth": {
     "1000": 0,
     "10000": 0,
