@@ -1,20 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T01:00:00Z",
-  "expected_next_update_by": "2026-10-31T02:15:00Z",
+  "updated_at": "2026-10-31T01:45:00Z",
+  "expected_next_update_by": "2026-10-31T03:00:00Z",
   "cycle": 3,
-  "merging": {
-    "candidate_sha": "e152462d",
-    "task_ids": [
-      "SV-B7-B9"
-    ],
-    "started_at": "2026-10-31T00:59:00Z",
-    "expires_at": "2026-10-31T01:59:00Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "P0-AD-sheet",
-    "sha": "7f9bf000"
+    "task_id": "SV-B7-B9",
+    "sha": "463ad9c2"
   },
   "alerts": [],
-  "next_step": "Cycle 3 (session_01SNkKxnFBPxodvMYivAg4oB) is merging P0-AD-sheet, then SV-B7-B9; then starts K1 and AD"
+  "next_step": "Take ready tasks through the queue one candidate at a time (flaky.md: concurrent runs share user://); expected: O2 (AD), P0-K1-bake-2 (K1), SV-B11-B12 (SV); after O2 merges, start AIA on P0-AIA-keyframes-1"
 }
