@@ -27,6 +27,11 @@
 //      the shots shoot_board.mjs writes beside them.
 //
 //   node art/ui/board/check_board.mjs [--out report.json]
+//   node art/ui/board/check_board.mjs --revised   tries kit-spec.md section
+//        2.1's revised values (REVISED below) over tokens.css before
+//        tokens.json takes them: the menus' backdrop §21.2's linear #171046 to
+//        #2C3AA8, red words on dark #FF9AAA and success words on dark #3FBF7F
+//        (O2.md's interim ruling 1); tokens.css on disk is left as generated
 //   node art/ui/board/check_board.mjs --self-test   plants faults; each must fail
 import { readFileSync, writeFileSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -45,6 +50,15 @@ const BOARD = join(here, 'board.html');
 const STUDIO = join(here, 'studio.html');
 const ART = join(here, 'art');
 export const ICONS = ['starlight', 'essence', 'law', 'loot'];
+
+// Section 2.1 of docs/art/ui-quality/kit-spec.md, revised for O2's redirect
+// K1, not yet in tokens.json (P0-K1-tokens-2 writes them).
+export const REVISED = {
+  'night-top': '#171046', 'night-mid': '#222577', 'night-bottom': '#2C3AA8',
+  'alarm-text-on-night': '#FF9AAA', 'success-text-on-night': '#3FBF7F',
+};
+export const revisedCss = () => ':root{' + Object.entries(REVISED).map(([k, v]) => `--c-${k}:${v};`).join('')
+  + '--g-night:linear-gradient(180deg,var(--c-night-top) 0%,var(--c-night-mid) 50%,var(--c-night-bottom) 100%);}';
 
 // ---- colour arithmetic, as client/ui/colour_check.gd does it ----
 const MIN_RATIO = 4.5;
@@ -469,8 +483,12 @@ export async function checkMode(page, mode, allowed, inject, href = null) {
   return { fails, rows };
 }
 
-export async function run({ inject = null, html = null, tokensCss = null, studio = null, icons = null, shots = null } = {}) {
+export async function run({ inject = null, html = null, tokensCss = null, studio = null, icons = null, shots = null, revised = false } = {}) {
   const allowed = allowedColours();
+  if (revised) {
+    for (const h of Object.values(REVISED)) if (!allowed.has(h)) allowed.set(h, 'kit-spec.md section 2.1, revised');
+    inject = revisedCss() + (inject ?? '');
+  }
   const fails = checkFiles(html ?? readFileSync(BOARD, 'utf8'), tokensCss ?? readFileSync(join(here, 'tokens.css'), 'utf8'));
   fails.push(...checkStudio(studio ?? readFileSync(STUDIO, 'utf8')));
   fails.push(...checkSteps(shots ?? SHOTS));
@@ -513,6 +531,8 @@ async function selfTest() {
     ['a clean board passes', {}, null],
     ['a hue of its own fails', { inject: '#enamel .title{color:#123456!important}' }, 'colour'],
     ['a low-contrast word fails', { inject: '#parchment .body{color:var(--c-stone)!important}' }, 'contrast'],
+    ['the revised values pass', { revised: true }, null],
+    ['a regular-weight caption on the revised backdrop fails', { revised: true, inject: '.recipe dd{font-weight:600!important}' }, 'contrast'],
     ['words at an opacity fail', { inject: '#gold .note{opacity:.7}' }, 'opacity'],
     ['a word under 13 points fails', { inject: '#type .caption{font-size:12px!important}' }, 'type'],
     ['an outline under 1.5 points is not measured against', { inject: '.display{--o:1px!important}' }, 'type'],
@@ -541,7 +561,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   if (process.argv.includes('--self-test')) {
     await selfTest();
   } else {
-    const { fails, rows } = await run();
+    const { fails, rows } = await run({ revised: process.argv.includes('--revised') });
     const outAt = process.argv.indexOf('--out');
     if (outAt > 0) writeFileSync(process.argv[outAt + 1], JSON.stringify({ rows, fails }, null, 1) + '\n');
     const words = rows.filter((r) => r.mode !== 'icon'), icons = rows.filter((r) => r.mode === 'icon');
@@ -550,6 +570,6 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     for (const r of words.filter((r) => !r.ok)) console.log(`  low: [${r.mode}] "${r.text}" ${r.ratio}:1 Lc ${r.lc} (needs ${r.lc_needed}) on ${r.worst_bg}`);
     for (const f of fails) console.log(`FAIL ${f.kind}: ${f.what}`);
     if (fails.length) process.exit(1);
-    console.log('style board checks passed');
+    console.log(`style board checks passed${process.argv.includes('--revised') ? ' with kit-spec.md section 2.1\'s revised values' : ''}`);
   }
 }

@@ -2,7 +2,7 @@
  "image": "board_hc.png",
  "frame_pt": [
   390,
-  5913
+  6070
  ],
  "text_scale": 1,
  "controls": [
@@ -64,7 +64,7 @@
    "name": "alarm-fill 7: GET OUT",
    "rect": [
     16,
-    3408.78,
+    3426.97,
     124,
     52
    ]
@@ -73,7 +73,7 @@
    "name": "gold 8: GOLD",
    "rect": [
     60.3,
-    5352.58,
+    5509.59,
     85.84,
     48
    ]
@@ -82,7 +82,7 @@
    "name": "gold 9: GOLD",
    "rect": [
     246.75,
-    5352.58,
+    5509.59,
     85.84,
     48
    ]
@@ -91,7 +91,7 @@
    "name": "leather 10: LEATHER",
    "rect": [
     46,
-    5448.58,
+    5605.59,
     114.45,
     52
    ]
@@ -100,7 +100,7 @@
    "name": "leather 11: LEATHER",
    "rect": [
     232.45,
-    5448.58,
+    5605.59,
     114.45,
     52
    ]
@@ -109,7 +109,7 @@
    "name": "glass 1: 2:41 Loot 18 / 40",
    "rect": [
     33,
-    2044.83,
+    2063.02,
     210.42,
     48
    ],
@@ -119,47 +119,77 @@
    "name": "glass 2: 1:07 Alarm 3",
    "rect": [
     33,
-    2142.83,
-    175.67,
+    2161.02,
+    201.67,
     48
    ],
    "interactive": false
   },
   {
-   "name": "glass 3: 0:12 Escape open",
+   "name": "status 3: Alarm 3",
    "rect": [
-    33,
-    2240.83,
-    218.61,
-    48
+    126.28,
+    2169.02,
+    89.39,
+    32
    ],
    "interactive": false
   },
   {
-   "name": "glass 4: 840 2",
+   "name": "status 4: Escape open",
    "rect": [
     33,
-    4843.56,
+    2257.02,
+    261.39,
+    52
+   ],
+   "interactive": false
+  },
+  {
+   "name": "status 5: Alarm 4 of 5",
+   "rect": [
+    156,
+    3436.97,
+    125,
+    32
+   ],
+   "interactive": false
+  },
+  {
+   "name": "status 6: Vault open",
+   "rect": [
+    16,
+    3492.97,
+    226.91,
+    52
+   ],
+   "interactive": false
+  },
+  {
+   "name": "glass 7: 840 2",
+   "rect": [
+    33,
+    5000.58,
     204.56,
     48
    ],
    "interactive": false
   },
   {
-   "name": "glass 5: Glass",
+   "name": "glass 8: Glass",
    "rect": [
     27,
-    5553.58,
+    5710.59,
     84.63,
     48
    ],
    "interactive": false
   },
   {
-   "name": "glass 6: Glass",
+   "name": "glass 9: Glass",
    "rect": [
     213.45,
-    5553.58,
+    5710.59,
     84.63,
     48
    ],
