@@ -19,6 +19,16 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   is K1's, so the lead has put it on P0-K1-kitskin's `done_when`. Default
   until then: the board keeps its own list in `art/ui/board/build_tokens.mjs`.
 
+## Answered in cycle 12 (31 October 2026, by the lead)
+
+- **AIA-R8** (from AIA, copy K1): answered with AIA's default. On
+  #3FBF7F even #000 ink reaches only Lc 58.2, so success words set as ink
+  on that fill are 36 points or more, as on the board. P0-K1-tokens-2's
+  title now says so: success words below 36 points do not move onto the
+  fill; they keep their icon and today's colour until the owner decides
+  C74 or K1 darkens the fill. This is further evidence for C74's
+  recommendation (a), #8FF0A8.
+
 ## Answered in cycle 9 (31 October 2026, by the lead)
 
 - **K1-R6** (from K1): answered with K1's default. (1)

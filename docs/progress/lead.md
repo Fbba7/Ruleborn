@@ -60,8 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxqVgqttiYVnfiHpr4r` (cycle 11,
-31 October 2026, from 13:39Z).
+Latest lead cycle session: `session_01SNkKxmrimqaqjF6fV9h1sX` (cycle 12,
+31 October 2026, from 14:39Z).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -164,25 +164,28 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 11, 31 October 2026, from 13:39Z (session
-  `session_01SNkKxqVgqttiYVnfiHpr4r`). Merged P0-AIA-keyframes-3
-  (`5eec1b60`) through candidate `45328085`: check_all passed (13:45Z to
-  14:18Z) and `tools/ui_bake/guard.sh` printed `ui guard: OK`; main moved
-  to `d0dd8a36` and the lock was released. The audit and roadmap pages
-  were not republished: neither file changed since cycle 9 published them.
-  Started AIA on P0-AIA-board-4 (`session_01SNkKxpFZ1uLvbaTsn7n9HE`,
-  13:41Z) and AD on P0-AD-golden-2 (`session_01SNkKxmwhuyTLjRXnCt5A2r`,
-  14:25Z). No new requests; no restarts; no alerts.
+- Cycle 12, 31 October 2026, from 14:39Z (session
+  `session_01SNkKxmrimqaqjF6fV9h1sX`). Bookkeeping only: nothing was
+  ready. AIA (P0-AIA-board-4) and AD (P0-AD-golden-2) are both running
+  their pre-checks (AIA past its 14:40Z expected update, but its session
+  is working, so no restart); both tasks set `claimed` with their leases.
+  Answered AIA-R8 with AIA's default and added it to P0-K1-tokens-2's
+  title (success words below 36 points stay off the #3FBF7F fill until
+  C74). No merges, no starts, no restarts, no alerts. The branches
+  `claude/ui-plan`, `claude/ui-research` and `claude/ui-screens` appeared
+  on the remote; none is on the roster, so the cycle ignored them.
 - Tools in a fresh container: `rustup target add wasm32-unknown-unknown
   aarch64-linux-android aarch64-apple-ios`, `pip install "gdtoolkit==4.*"
   "playwright==1.63.0"` (1.63.0 matches the container's Chromium build
   1243 in `/opt/pw-browsers`; a newer Python playwright cannot find a
   browser), then `bash client/build.sh` in the guard's worktree. check_all
   took about 33 minutes, the build and guard about 7.
-- Next: copy AIA's and AD's status files; merge P0-AIA-board-4 and
-  P0-AD-golden-2 when ready. Then K1 takes P0-K1-tokens-2 (waits on
-  P0-AIA-board-4), and AD O3 (waits on P0-AD-golden-2). SV has none.
-- Cycle 10 (12:39Z) did bookkeeping only. Cycle 9 (11:39Z) merged
+- Next: merge P0-AIA-board-4 and P0-AD-golden-2 when ready (one batch
+  candidate if both are). Then start K1 on P0-K1-tokens-2 (waits on
+  P0-AIA-board-4) and AD on O3 (waits on P0-AD-golden-2). SV has none.
+- Cycle 11 (13:39Z) merged P0-AIA-keyframes-3 (`d0dd8a36`) and started AIA
+  on P0-AIA-board-4 and AD on P0-AD-golden-2. Cycle 10 (12:39Z) did
+  bookkeeping only. Cycle 9 (11:39Z) merged
   P0-K1-tokens and P0-AIA-keyframes-2 (`b8308788`), answered K1-R6
   (P0-AIA-board-4 and P0-K1-tokens-2 filed) and started AIA on
   P0-AIA-keyframes-3. Cycle 8 (08:38Z) merged O2-2 and P0-AIA-keyframes-1

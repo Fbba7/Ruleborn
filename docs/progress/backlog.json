@@ -645,8 +645,14 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-10-31T13:45:00Z",
+        "seen_at": "2026-10-31T14:40:00Z",
+        "lease_until": "2026-10-31T16:45:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
@@ -654,7 +660,7 @@
     },
     {
       "id": "P0-K1-tokens-2",
-      "title": "Kit tokens, the rest of O2's redirect (K1-R6): write kit-spec.md section 2.1's revised backdrop (#171046 to #2C3AA8, linear, until C75 is decided), red words on dark (#FF9AAA) and success words on dark (O2.md's interim ruling until C74 is decided) into client/ui/tokens.json; the scrim's text_bg names its own #0A0620; status words below 36 points move onto their fills (rb_theme.gd status_colour; result, observatory, curation, lab and account screens, which no screen maker owns in phase 0); regenerate art/ui/board/tokens.css with build_tokens.mjs; record again the counts and stills they move, with a dated line in kit-spec.md section 9",
+      "title": "Kit tokens, the rest of O2's redirect (K1-R6): write kit-spec.md section 2.1's revised backdrop (#171046 to #2C3AA8, linear, until C75 is decided), red words on dark (#FF9AAA) and success words on dark (O2.md's interim ruling until C74 is decided) into client/ui/tokens.json; the scrim's text_bg names its own #0A0620; status words below 36 points move onto their fills (rb_theme.gd status_colour; result, observatory, curation, lab and account screens, which no screen maker owns in phase 0); regenerate art/ui/board/tokens.css with build_tokens.mjs; record again the counts and stills they move, with a dated line in kit-spec.md section 9; success words below 36 points do not move onto the #3FBF7F fill, where no ink reaches Lc 60 (AIA-R8): they keep their icon and today's colour until C74 is decided or the success fill is darkened",
       "role": "K1",
       "assigned_to": "K1",
       "files": [
@@ -723,8 +729,14 @@
       "estimate_h": 1,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-10-31T14:30:00Z",
+        "seen_at": "2026-10-31T14:40:00Z",
+        "lease_until": "2026-10-31T17:30:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
