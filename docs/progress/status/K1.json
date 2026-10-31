@@ -8,7 +8,7 @@
   "task_state": "blocked",
   "claimed_at": "2026-10-31T17:05:00Z",
   "lease_until": "2026-10-31T20:45:00Z",
-  "updated_at": "2026-10-31T18:35:00Z",
+  "updated_at": "2026-10-31T18:29:00Z",
   "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
@@ -122,7 +122,7 @@
         "art/ui/keyframes/03-result.html"
       ],
       "blocking": true,
-      "created_at": "2026-10-31T18:35:00Z",
+      "created_at": "2026-10-31T18:29:00Z",
       "due": "2026-11-01T12:00:00Z",
       "default": "granted as P0-K1-tokens-2's exception: K1 commits exactly the two-class change in K1.md's handoff (and any stills check_keyframes needs re-shot), re-runs the pre-check and marks ready",
       "escalate_to": "lead"
