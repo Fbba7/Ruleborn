@@ -8,9 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-10-31T00:35:00Z",
   "lease_until": "2026-10-31T03:35:00Z",
-  "updated_at": "2026-10-31T00:40:00Z",
-  "expected_next_update_by": "2026-10-31T01:25:00Z",
-  "long_run": null,
+  "updated_at": "2026-10-31T00:45:00Z",
+  "expected_next_update_by": "2026-10-31T02:10:00Z",
+  "long_run": {
+    "log": "/tmp/check-586cc5aba191a989d46f2c585beffb79f7cf3174.log",
+    "expected_end": "2026-10-31T01:15:00Z"
+  },
   "progress_marker": {
     "last_green_sha": "f5e9571029f6ec13909c6bafd8f9a809feaf566d",
     "next_step": "Pre-check the O2 commit, record it, mark O2 ready"
