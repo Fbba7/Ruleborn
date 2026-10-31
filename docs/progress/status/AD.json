@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "O2-2",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-10-31T05:58:00Z",
   "lease_until": "2026-10-31T08:58:00Z",
-  "updated_at": "2026-10-31T05:58:00Z",
-  "expected_next_update_by": "2026-10-31T06:43:00Z",
+  "updated_at": "2026-10-31T06:20:00Z",
+  "expected_next_update_by": "2026-10-31T07:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "7d8c4ed",
-    "next_step": "O2-2: review the rebaked board (B3, B4, B5, B11) and kit-spec (K1-K3)"
+    "next_step": "O2-2 written (approve all seven points); pre-check"
   },
   "precheck": {
     "sha": "7d8c4ed612e5115523aec859d83f7185f9202596",
