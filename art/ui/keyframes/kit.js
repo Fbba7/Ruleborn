@@ -18,10 +18,11 @@
   html.style.setProperty('--ts', String(text / 100));
   const W = window.WORDS[lang];
 
-  // client/i18n: Strings.t's %s, %d and %%.
+  // client/i18n: Strings.t's %s, %d, %02d and %%.
   const sprintf = (f, args) => {
     let i = 0;
-    return f.replace(/%([sd%])/g, (_, c) => (c === '%' ? '%' : String(args[i++])));
+    return f.replace(/%(0\d)?([sd%])/g, (_, w, c) => (c === '%' ? '%'
+      : w ? String(args[i++]).padStart(Number(w.slice(1)), '0') : String(args[i++])));
   };
   // ShopPresenter.grouped and UniverseHud.compact.
   const grouped = (n) => {

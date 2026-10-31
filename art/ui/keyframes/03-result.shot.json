@@ -1,0 +1,115 @@
+{
+ "image": "03-result.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 1,
+ "controls": [
+  {
+   "name": "outcome-head 1: HEIST COMPLETE Loud A guard alerted · everyone out Haul ×0.7 · R",
+   "rect": [
+    14,
+    52,
+    362,
+    157.63
+   ],
+   "interactive": false
+  },
+  {
+   "name": "watch 2: Watch it",
+   "rect": [
+    30,
+    233.63,
+    72,
+    72
+   ]
+  },
+  {
+   "name": "reward 3: 1,288 Starlight",
+   "rect": [
+    14,
+    335.63,
+    134.72,
+    115.55
+   ],
+   "interactive": false
+  },
+  {
+   "name": "reward 4: +46 Essence",
+   "rect": [
+    158.72,
+    335.63,
+    103.64,
+    115.55
+   ],
+   "interactive": false
+  },
+  {
+   "name": "reward 5: +12 Renown",
+   "rect": [
+    272.36,
+    335.63,
+    103.64,
+    115.55
+   ],
+   "interactive": false
+  },
+  {
+   "name": "caption 6: Entry fee 120 returned",
+   "rect": [
+    14,
+    461.17,
+    362,
+    17.55
+   ],
+   "interactive": false
+  },
+  {
+   "name": "law-paper 7: Sleepwalk",
+   "rect": [
+    28,
+    529.61,
+    162,
+    58.73
+   ]
+  },
+  {
+   "name": "law-paper 8: Glass",
+   "rect": [
+    200,
+    529.61,
+    162,
+    58.73
+   ]
+  },
+  {
+   "name": "rest 9: Your crew of 5 is home, resting up to 40 min",
+   "rect": [
+    14,
+    618.34,
+    362,
+    56
+   ],
+   "interactive": false
+  },
+  {
+   "name": "home-btn 10: Home",
+   "rect": [
+    24,
+    737,
+    118.92,
+    56
+   ]
+  },
+  {
+   "name": "again 11: Raid again",
+   "rect": [
+    152.92,
+    735,
+    213.08,
+    60
+   ]
+  }
+ ]
+}

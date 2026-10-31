@@ -1,0 +1,115 @@
+{
+ "image": "03-result_pt_BR.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 1,
+ "controls": [
+  {
+   "name": "outcome-head 1: ASSALTO CONCLUÍDO Barulhento Um guarda alertado · todos saíram S",
+   "rect": [
+    14,
+    52,
+    362,
+    157.63
+   ],
+   "interactive": false
+  },
+  {
+   "name": "watch 2: Assistir",
+   "rect": [
+    30,
+    233.63,
+    72,
+    72
+   ]
+  },
+  {
+   "name": "reward 3: 1.288 Luz-estelar",
+   "rect": [
+    14,
+    335.63,
+    134.72,
+    115.55
+   ],
+   "interactive": false
+  },
+  {
+   "name": "reward 4: +46 Essência",
+   "rect": [
+    158.72,
+    335.63,
+    103.64,
+    115.55
+   ],
+   "interactive": false
+  },
+  {
+   "name": "reward 5: +12 Renome",
+   "rect": [
+    272.36,
+    335.63,
+    103.64,
+    115.55
+   ],
+   "interactive": false
+  },
+  {
+   "name": "caption 6: Taxa de entrada de 120 devolvida",
+   "rect": [
+    14,
+    461.17,
+    362,
+    17.55
+   ],
+   "interactive": false
+  },
+  {
+   "name": "law-paper 7: Sleepwalk",
+   "rect": [
+    28,
+    529.61,
+    162,
+    58.73
+   ]
+  },
+  {
+   "name": "law-paper 8: Glass",
+   "rect": [
+    200,
+    529.61,
+    162,
+    58.73
+   ]
+  },
+  {
+   "name": "rest 9: Sua equipe de 5 voltou e descansa até 40 min",
+   "rect": [
+    14,
+    618.34,
+    362,
+    56
+   ],
+   "interactive": false
+  },
+  {
+   "name": "home-btn 10: Início",
+   "rect": [
+    24,
+    737,
+    123.7,
+    56
+   ]
+  },
+  {
+   "name": "again 11: Assaltar de novo",
+   "rect": [
+    157.7,
+    735,
+    208.3,
+    60
+   ]
+  }
+ ]
+}

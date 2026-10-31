@@ -1,6 +1,6 @@
-// The key frames' scripted checks. For home and heist, as written, with text
-// at 200% and in high contrast, each in English and Brazilian Portuguese
-// (shoot_keyframes.mjs's twelve stills), it checks that:
+// The key frames' scripted checks. For home, heist, result and character, as
+// written, with text at 200% and in high contrast, each in English and
+// Brazilian Portuguese (shoot_keyframes.mjs's 24 stills), it checks that:
 //
 //   1. the pages and kit.css name no colour of their own: no colour literal,
 //      and color-mix only fades one variable toward transparent (the board's
@@ -22,7 +22,7 @@
 //      edge;
 //   8. the heist has no more than eight things to tap (§21.8);
 //   9. every control stands two value steps (ΔL* 20) off what it sits on:
-//      tools/ui_gate/checks.py value-steps on the twelve shots;
+//      tools/ui_gate/checks.py value-steps on the 24 shots;
 //  10. every still is there at 1080 x 2340.
 //
 //   node art/ui/keyframes/check_keyframes.mjs [--out report.json]
@@ -39,7 +39,7 @@ import { FRAME, STILLS, href, ready } from './shoot_keyframes.mjs';
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const here = dirname(fileURLToPath(import.meta.url));
-const PAGES = ['01-home.html', '02-heist.html'];
+const PAGES = ['01-home.html', '02-heist.html', '03-result.html', '04-character.html'];
 const SAFE = [44, 811];
 const MOST_IN_HEIST = 8;
 const PX = [1080, 2340];
@@ -184,7 +184,7 @@ async function selfTest() {
     ['clean key frames pass', {}, null],
     ['a hue of its own fails', { stills: home, inject: '.keeper .label{color:#123456!important}' }, 'colour'],
     ['a colour literal in kit.css fails', { stills: [], kitCss: kitCss.replace('.tab > .well {', '.tab > .well { color: #FF00FF;') }, 'literal'],
-    ['a colour literal in a page fails', { stills: [], pages: [pages[0].replace('<style>', '<style>\n.x { background: rgb(1, 2, 3); }'), pages[1]] }, 'literal'],
+    ['a colour literal in a page fails', { stills: [], pages: [pages[0].replace('<style>', '<style>\n.x { background: rgb(1, 2, 3); }'), ...pages.slice(1)] }, 'literal'],
     ['a word that is not the game\'s fails', { stills: [], words: words.replace('"Cast"', '"Fire"') }, 'words'],
     ['a word under 13 points fails', { stills: heist, inject: '.law-name{font-size:12px!important}' }, 'type'],
     ['a word that does not grow with the text fails', { stills: large, inject: '.keeper .label{font-size:16px!important}' }, 'type'],

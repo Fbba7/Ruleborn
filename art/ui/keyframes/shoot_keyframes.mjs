@@ -3,13 +3,14 @@
 // (as written, text at 200%, high contrast), each in English and Brazilian
 // Portuguese:
 //
-//   01-home.png  01-home_text200.png  01-home_hc.png  and each _pt_BR
+//   01-home.png  01-home_text200.png  01-home_hc.png  and each _pt_BR,
+//   and so for 02-heist, 03-result and 04-character: 24 stills.
 //
 // Beside each still goes a shot (docs/art/ui-quality/gate/shots.md) with the
 // rectangle of every control, which check_keyframes.mjs hands to
 // tools/ui_gate/checks.py value-steps.
 //
-//   node art/ui/keyframes/shoot_keyframes.mjs
+//   node art/ui/keyframes/shoot_keyframes.mjs [page]   (one page, e.g. 04-character)
 import { writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -21,7 +22,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 
 export const FRAME = [390, 845];
 export const SCALE = 1080 / 390;
-export const PAGES = ['01-home', '02-heist'];
+export const PAGES = ['01-home', '02-heist', '03-result', '04-character'];
 export const FORMS = [['', ''], ['_text200', 'text=200'], ['_hc', 'hc=1']];
 export const LANGS = [['', 'en'], ['_pt_BR', 'pt_BR']];
 
@@ -33,7 +34,8 @@ export const href = (page, query) => pathToFileURL(join(here, `${page}.html`)).h
 
 // What a hand presses (.ctl, and a .ctl-group such as the tab bar, whose
 // tabs are its parts) and what only informs (.info). A control's rectangle
-// is what is drawn: its .face where it has one. The heist's interface stays
+// is what is drawn: its .face where it has one. What is not drawn (below
+// the fold at 200%) is left out. The heist's interface stays
 // on screen through the heist, so it is persistent.
 export async function controls(page) {
   return page.evaluate(() => {
@@ -42,7 +44,7 @@ export async function controls(page) {
     const r2 = (r) => [r.left, r.top, r.width, r.height].map((v) => Math.round(v * 100) / 100);
     const words = (el) => (el.getAttribute('aria-label') || el.innerText || '').trim().replace(/\s+/g, ' ');
     document.querySelectorAll('.ctl, .ctl-group, .info').forEach((el, i) => {
-      if (getComputedStyle(el).display === 'none') return;
+      if (!el.getClientRects().length) return;
       const info = el.classList.contains('info');
       const face = el.querySelector('.face') ?? el;
       out.push({ name: `${el.className.split(' ')[0]} ${i + 1}: ${words(el)}`.slice(0, 80),
@@ -66,7 +68,8 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     const errors = [];
     page.on('pageerror', (e) => errors.push(e.message));
     page.on('requestfailed', (r) => errors.push(`failed to load ${r.url()}`));
-    for (const [file, name, query, ts] of STILLS) {
+    const only = process.argv[2];
+    for (const [file, name, query, ts] of STILLS.filter(([, n]) => !only || n === only)) {
       await page.goto(href(name, query));
       await ready(page);
       await page.screenshot({ path: join(here, file) });

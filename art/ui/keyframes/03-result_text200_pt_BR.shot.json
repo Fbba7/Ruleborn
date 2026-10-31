@@ -1,0 +1,68 @@
+{
+ "image": "03-result_text200_pt_BR.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 2,
+ "controls": [
+  {
+   "name": "outcome-head 1: ASSALTO CONCLUÍDO Barulhento Um guarda alertado · todos saíram S",
+   "rect": [
+    14,
+    52,
+    362,
+    271.16
+   ],
+   "interactive": false
+  },
+  {
+   "name": "reward 3: 1.288 Luz-estelar",
+   "rect": [
+    14,
+    331.16,
+    362,
+    64
+   ],
+   "interactive": false
+  },
+  {
+   "name": "reward 4: +46 Essência",
+   "rect": [
+    14,
+    403.16,
+    362,
+    60
+   ],
+   "interactive": false
+  },
+  {
+   "name": "reward 5: +12 Renome",
+   "rect": [
+    14,
+    471.16,
+    362,
+    60
+   ],
+   "interactive": false
+  },
+  {
+   "name": "home-btn 10: Início",
+   "rect": [
+    24,
+    684.41,
+    64,
+    64
+   ]
+  },
+  {
+   "name": "again 11: Assaltar de novo",
+   "rect": [
+    98,
+    637.81,
+    268,
+    157.19
+   ]
+  }
+ ]
+}
