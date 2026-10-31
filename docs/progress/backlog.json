@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-31T05:16:00Z",
+  "updated_at": "2026-10-31T05:56:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
@@ -248,7 +248,7 @@
       "estimate_h": 2,
       "tier": 1,
       "critical": true,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "AD",
         "branch": "claude/ui-ad",
@@ -259,7 +259,7 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "7d8c4ed6",
-      "merged_sha": null,
+      "merged_sha": "a38a3790",
       "exceptions": [
         "tools/ui_gate/golden.py",
         "tools/ui_gate/sheet.py"
@@ -272,7 +272,7 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "working",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
@@ -440,7 +440,7 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "AIA",
         "branch": "claude/ui-artist",
@@ -451,7 +451,7 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "e09807f3",
-      "merged_sha": null,
+      "merged_sha": "a38a3790",
       "id": "P0-AIA-board-3",
       "title": "Style board, O2's redirect (gate/approvals/O2.md, points B3, B4, B5, B11; AD-R4): (1) re-render the four hero icons and the studio spheres in the toon look of §21.3 and D5 (b) (a four-step ramp, violet-tinted shadow, the rim kept; no MeshPhysicalMaterial metalness, clearcoat or RoomEnvironment reflections), keeping models, finish and rules; (2) the enamel card: a gloss band that reads at 1x over the top 30-45%, a dark hue-matched rim of 2-4 pt, a lip or foot of 3-8 pt; (3) the selected card: a gold rim, no outer glow; (4) the leather button at least two value steps (dL* >= 20, tools/ui_gate/checks.py value-steps) off its well, in both modes, by lighting the well, not changing leather's hue. O2.md is on claude/ui-ad at 586cc5a until O2 merges; the lead merges O2 first",
       "role": "AIA",
