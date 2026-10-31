@@ -3,21 +3,26 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P0-K1-tokens",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-10-31T10:20:00Z",
   "lease_until": "2026-10-31T13:20:00Z",
-  "updated_at": "2026-10-31T10:45:00Z",
-  "expected_next_update_by": "2026-10-31T11:30:00Z",
+  "updated_at": "2026-10-31T11:20:00Z",
+  "expected_next_update_by": "2026-11-01T22:00:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "2432031e",
-    "next_step": "guard.sh on card_bottom #1A1134, then the pre-check"
+    "last_green_sha": "5864d65d",
+    "next_step": "the lead answers K1-R6 and merges P0-K1-tokens; P0-K1-tokens-2 when filed and its deps merge"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "5864d65d81aa39436148e9cb26a08b88a9a8cba5",
+    "exit": 0,
+    "finished_at": "2026-10-31T11:13:41Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "5864d65d81aa39436148e9cb26a08b88a9a8cba5",
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
