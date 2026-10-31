@@ -71,10 +71,20 @@ static func role_font(role: String) -> Font:
 static func status_colour(status: String, family: String) -> Color:
 	match status:
 		"alarm":
-			return Tokens.color("alarm_text" if family == "light" else "alarm_text_on_night")
+			return Tokens.color("alarm_text" if family == "light" else "on_alarm")
 		"success":
 			return Tokens.color("success_text" if family == "light" else "success_text_on_night")
 	return Tokens.color("parchment_ink" if family == "light" else "text_on_night")
+
+
+## The fill a status's words are carried on, or none (alpha 0). On a dark
+## family alarm words are paper on alarm_fill: #FF9AAA misses Lc 60 on
+## glass, on the bare backdrop and on leather (kit-spec.md section 2.1).
+## Success words keep their own colour and glyph, on no fill (AIA-R8).
+static func status_fill(status: String, family: String) -> Color:
+	if status == "alarm" and family != "light":
+		return Tokens.color("alarm_fill")
+	return Color(0, 0, 0, 0)
 
 
 ## Gives a label the light family's theme when it lands on someone else's
@@ -170,6 +180,20 @@ static func _build(family: String) -> Theme:
 		th.set_type_variation(v, "Label")
 		th.set_color("font_color", v, status_colour(s, family))
 		th.set_font("font", v, role_font("body_bold"))
+		var fill := status_fill(s, family)
+		if fill.a > 0.0:
+			var box := StyleBoxFlat.new()
+			box.bg_color = fill
+			box.set_corner_radius_all(UI.px(Tokens.number("size", "radius_s")))
+			box.content_margin_left = UI.px(10)
+			box.content_margin_right = UI.px(10)
+			box.content_margin_top = UI.px(4)
+			box.content_margin_bottom = UI.px(4)
+			th.set_stylebox("normal", v, box)
+		else:
+			# Said outright, so a family on no fill never takes the fill of
+			# a dark family's theme round it.
+			th.set_stylebox("normal", v, StyleBoxEmpty.new())
 	_controls(th, text, light)
 	return th
 
