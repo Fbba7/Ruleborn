@@ -1,19 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T14:19:00Z",
+  "updated_at": "2026-10-31T14:27:00Z",
   "expected_next_update_by": "2026-10-31T15:30:00Z",
   "cycle": 11,
-  "merging": {
-    "candidate_sha": "45328085",
-    "task_ids": [
-      "P0-AIA-keyframes-3"
-    ],
-    "started_at": "2026-10-31T13:45:00Z",
-    "expires_at": "2026-10-31T15:15:00Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "P0-K1-tokens, P0-AIA-keyframes-2",
-    "sha": "b8308788"
+    "task_id": "P0-AIA-keyframes-3",
+    "sha": "d0dd8a36"
   },
   "alerts": [],
   "next_step": "Cycle 11: check_all passed on candidate 45328085 (P0-AIA-keyframes-3); merge lock renewed to 15:15Z for the ui guard."
