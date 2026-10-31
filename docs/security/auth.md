@@ -308,11 +308,12 @@ rewritten: one billed row a session, engaged players 81.15 → 86.15 billed
 rows a day, $767 → $817 a month at a million monthly players. **Owner to
 confirm** this addition to §24.1's budget (the register is not edited here).
 
-> **Note (T15, 28 October 2026):** these figures predate the database-cost
-> work. `server/load.json` now reads 61.74 billed rows a day for an engaged
-> player and $572 a month at a million
-> ([`docs/server/db-cost.md`](../server/db-cost.md)); the once-a-day rotation
-> has not been re-measured since.
+> **Note (T15, 28 October 2026; updated 30 October 2026 for B8):** these
+> figures predate the database-cost work
+> ([`docs/server/db-cost.md`](../server/db-cost.md)). Since B8 (SV-B7-B9),
+> `server/load.json` reads 57.74 billed rows a day for an engaged player and
+> $532 a month at a million (61.74 and $572 before it); the once-a-day
+> rotation has not been re-measured since.
 
 ## Checked by hand
 

@@ -30,7 +30,7 @@ test("SR-03: one making of the candidates serves every caller for a while, and a
     established(t, s.account);
     t.service.publish(s.account, t.build.generate(i + 1, 3));
   }
-  const me = t.service.session("gc:me");
+  let me = t.service.session("gc:me");
   const offer = async () => {
     const r = await t.handle(new Request("https://edge.example/v1/offer?size=3",
                                          { headers: { authorization: `Bearer ${me.token}` } }));
@@ -42,13 +42,17 @@ test("SR-03: one making of the candidates serves every caller for a while, and a
   assert.ok(again < 40, `a second offer read ${again} statements for 40 islands`);
   assert.deepEqual(await offer(), first);
 
-  // A new island is a candidate at once, and so, past the window, is any other change.
+  // A new island is a candidate at once, but the offer is drawn from the hourly lists (DB-1): it
+  // is in the offer's candidates within the hour, and any other change with it.
   const late = t.service.session("gc:late");
   established(t, late.account);
   t.service.publish(late.account, t.build.generate(99, 3));
   assert.ok(t.service.matchmaking.candidates().some((c) => c.owner === late.account));
-  t.clock.now += matchmaking.CANDIDATES_MS ?? 60_000;
-  assert.ok(await statements(t, offer) >= 40, "made again once the window has passed");
+  t.clock.now += matchmaking.CANDIDATES_MS;
+  assert.ok(await statements(t, offer) < 40, "a minute on, the offer is still the hour's");
+  t.clock.now += matchmaking.LISTED_MS;
+  me = t.service.session("gc:me");
+  assert.ok(await statements(t, offer) >= 40, "made again once the hour has passed");
 });
 
 // SR-17: every island published queued §13.3's 800 reference raids, worked

@@ -1,24 +1,25 @@
 # SV server decisions: progress
 
-- Status: Green on the server tests (482 of 482, `python3 server/status.py`); the full pre-check is recorded in the status file.
-- Progress: 0 of 3 tasks merged; SV-B1-B6 built, awaiting the pre-check and the lead's merge.
-- Done: B1 to B6 (SR-09, SR-10, SR-12, SR-14, SR-15, SR-16) in `server/src`, the six tests in `security_owner.test.mjs` changed to the decided behaviour.
-- Next: SV-B7-B9 once SV-B1-B6 merges, then SV-B11-B12.
+- Status: Green on the server tests (486 of 486, `python3 server/status.py`); the pre-check for SV-B7-B9 is running at 85a6c76.
+- Progress: 1 of 3 tasks merged (SV-B1-B6); SV-B7-B9 built, awaiting its pre-check.
+- Done: B7 (workshop plays lapse after a day), B8 (DB-1 Observatory and offer from the hourly lists, DB-4 raids listed by reference), B9 (refresh rotates daily by default).
+- Next: SV-B11-B12 once SV-B7-B9 merges.
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| SV-B1-B6 | 4 | built | `server/test/security_owner.test.mjs`, `python3 server/status.py` |
-| SV-B7-B9 | 4 | open (dep SV-B1-B6) | |
+| SV-B1-B6 | 4 | merged | `server/test/security_owner.test.mjs` |
+| SV-B7-B9 | 4 | working | `workshop.test.mjs` (B7), `observatory.test.mjs`, `security_limits.test.mjs`, `notifications.test.mjs` (B8), `auth_devices.test.mjs` (B9) |
 | SV-B11-B12 | 3 | open (dep SV-B7-B9) | |
 
 ## Handoff
-- Last verified commit: see the status file's `precheck`.
-- Done: B1 target lists carry no `rating`/`deviation`; B2 `shop.redeem` refuses an intent-less receipt past the month's cap (`monthly_cap`); B3 `ONE_PLAYER_ONE_ISLAND_S = 3600` caps each player-island pair per quarter in `fund.played`; B4 `joinCrew` needs a friend or constellation-mate of one member, a friend of every member for a 13-to-15 (`not_friends`); B5 exposed loot clamped to 750 (`FULL_CREW_CARRY`) at publish; B6 `universe.problems` returns `law_not_woven` for a law not finished in the realm's slots (seeded accounts stay exempt). Guards (G60) are not built, as decided.
-- Test support: `server/test/setup.mjs` weaves the laws of a bundle for tests not about SR-16; `server/load.mjs` does the same for its population (a file outside the task's list, changed by three lines because the publish rule broke it; no other agent owns it).
-- `client/tests/share_tests.gd` needed no change: its island has no laws and the example server's accounts are seeded. Godot is not installed in this container, so the client suite was not run here.
-- Next step: SV-B7-B9.
+- Last verified commit: 85a6c76 (server tests 486 of 486; pre-check pending)
+- Done: B7 `expireLapsed` also deletes Workshop plays unsubmitted a day after issue (`plays` in its result; `server/privacy.json` `workshop_plays` keep is 1 day, declarations regenerated). B8 `matchmaking.listed` serves the Observatory and `/v1/offer` from candidates made with the hourly target lists (`relist` in `targetLists`; `LISTED_MS` one hour), `matchmaking.current` brings the few shown cards up to date (banned or deleted owner out, republished island's card swapped). A raid notification writes once for the first raid and stores `since`; later real raids write nothing and `Notifications.raids` reads them from `heists_by_defender` at send. B9 `rotateHoursOf` in `auth.mjs` defaults `RULEBORN_REFRESH_ROTATE_HOURS` to 24; inside the span a refresh writes nothing (already so).
+- Changed expectations (decided behaviour, not regressions): `privacy.test.mjs` `expireLapsed` results gain `plays: 0`; `security_limits.test.mjs` SR-03 now expects the offer's candidates made again after an hour, not a minute.
+- `server/load.json` (a file outside this task's list) is regenerated: B8's DB-4 removes 4 written rows a day, so the model reads 57.74 billed rows a day engaged (was 61.74). Request SV-1 to the lead covers it; `docs/decisions/owner-decisions.md` still quotes 61.74.
+- Next step: record the pre-check, run `python3 client/status.py` (Godot may be missing here), mark ready.
 
 ## Tried and failed
+- 2026-10-30 first pre-check: failed the client contract (no string for the new crew refusal); fixed by answering `not_friends`. Second: gdlint missing in the container; installed per the brief.
 - 2026-10-30 `node --test test/` (a directory): fails to load; the package script `node --test test/*.test.mjs` is the way.

@@ -33,7 +33,7 @@ const [RENOWN_WINDOW, KEEPER_WINDOW] = facts.MATCH_WINDOW;
  *  a current island, not an echo, which "takes nothing from its owner", nor
  *  §12.11's friendly heist or §17.6's challenge ("the friend loses
  *  nothing"), nor §13.1's seeded islands, "the game's own" (G30). */
-const RAIDED = `l.mode = 'raid' AND l.echo = 0
+export const RAIDED = `l.mode = 'raid' AND l.echo = 0
   AND NOT EXISTS (SELECT 1 FROM accounts d WHERE d.id = l.defender AND d.seeded = 1)`;
 
 /**
@@ -75,6 +75,10 @@ export function prior(realmLevel, origin = "authored") {
 /** How long one making of the candidates serves every caller (SR-03). */
 export const CANDIDATES_MS = 60 * 1000;
 
+/** How long the Observatory's candidates stand: the hourly target lists'
+ *  life (service.TARGET_LISTS_MS), DB-1. */
+export const LISTED_MS = 60 * 60 * 1000;
+
 export class Matchmaking {
   constructor(service) {
     this.service = service;
@@ -82,6 +86,7 @@ export class Matchmaking {
     this.chapters = new Map();
     /** The last candidates made, and when and from what (`candidates`). */
     this.made = null;
+    this.hourly = null;
     this.publishes = 0;
   }
 
@@ -272,8 +277,52 @@ export class Matchmaking {
     });
   }
 
-  fresh(now) {
-    const live = this.live(now).filter((r) => r.deleted_at === null);
+  /**
+   * DB-1: the candidates the Observatory and the offer are drawn from — the
+   * ones the hourly target lists were made from, not a rebuild from every
+   * island at each view. A new island appears within the hour, as on the
+   * lists. `current` keeps what a view must not show stale.
+   */
+  listed(now = this.service.now()) {
+    const h = this.hourly;
+    if (h && now >= h.at && now - h.at < LISTED_MS) return h.list ??= this.fresh(now, h.live);
+    const list = this.fresh(now);
+    this.hourly = { at: now, list };
+    return list;
+  }
+
+  /** Made again with the target lists, from the rows they were made from;
+   *  worked out at the first view that needs them. */
+  relist(now, live) {
+    this.hourly = { at: now, list: null, live };
+  }
+
+  /**
+   * The few targets a view shows, brought up to date from a handful of
+   * rows: a banned or deleted owner's taken out, a republished island's
+   * card swapped to its current snapshot, an island since taken away
+   * dropped (DB-1). An echo is no one's current island, so only its owner is
+   * checked.
+   */
+  current(targets) {
+    const out = [];
+    for (const c of targets) {
+      const owner = this.db.prepare("SELECT banned_at, deleted_at FROM accounts WHERE id = ?").get(c.owner);
+      if (!owner || owner.banned_at !== null || owner.deleted_at !== null) continue;
+      if (c.echo || c.origin === "generated" && c.owner === GENERATOR) { out.push(c); continue; }
+      const island = this.db.prepare("SELECT bundle FROM islands WHERE owner = ? AND realm = ?").get(c.owner, c.realm);
+      if (!island) continue;
+      if (island.bundle === c.bundle) { out.push(c); continue; }
+      const snap = this.db.prepare("SELECT realm_level, vault_level, exposed FROM snapshots WHERE bundle = ?")
+        .get(island.bundle);
+      if (!snap) continue;
+      out.push({ ...c, bundle: island.bundle, realmLevel: snap.realm_level, vaultLevel: snap.vault_level, exposed: snap.exposed });
+    }
+    return out;
+  }
+
+  fresh(now, rows = this.live(now)) {
+    const live = rows.filter((r) => r.deleted_at === null);
     // The last 14 days' snapshots, by snapshots_by_published, then sorted:
     // ordered by the snapshot's key, the planner would read every snapshot.
     const echoes = this.db.prepare(

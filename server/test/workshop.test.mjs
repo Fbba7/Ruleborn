@@ -197,3 +197,25 @@ test("a sudden spike in completions is flagged for a person to review (18.7)", (
   t.w.resolve(person, queue[0].report, "dismiss");
   assert.equal(t.w.row(id).review, 0, "a person looked and let it stand");
 });
+
+test("a Workshop play is a lease of one day: expireLapsed deletes the unsubmitted ones, never a submitted one (B7)", () => {
+  const t = workshop();
+  const db = t.service.db;
+  const me = t.service.session("gc:creator").account;
+  db.prepare(`INSERT INTO workshop_items (id, creator, bundle, realm_level, name_adjective, name_noun, cleared_by,
+                                          bytes, published_at) VALUES ('i', ?, 'b', 3, 0, 0, 'r', 1, ?)`)
+    .run(me, t.clock.now);
+  const issued = t.clock.now;
+  const add = (token, submitted) => db.prepare(
+    `INSERT INTO workshop_plays (token, player, item, seed, ticks, issued_at, submitted_at, outcome)
+     VALUES (?, ?, 'i', '1', 1, ?, ?, ?)`).run(token, me, issued, submitted ? issued : null, submitted ? "{}" : null);
+  add("open", false);
+  add("done", true);
+  const left = () => db.prepare("SELECT token FROM workshop_plays ORDER BY token").all().map((r) => r.token);
+  t.clock.now = issued + 24 * HOUR;
+  assert.deepEqual(t.service.expireLapsed(), { intents: 0, leases: 0, plays: 0 }, "inside its day, kept");
+  t.clock.now += 1;
+  assert.equal(t.service.expireLapsed().plays, 1);
+  assert.deepEqual(left(), ["done"], "the submitted play is a record");
+  assert.equal(t.service.expireLapsed().plays, 0, "once");
+});
