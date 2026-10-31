@@ -426,12 +426,12 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "ready",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "2432031e",
-      "merged_sha": null,
+      "merged_sha": "22c78e6f",
       "exceptions": [
         "client/tests/shots/ui_kit_only.gd.uid",
         "docs/art/ui-quality/kit-spec.md"

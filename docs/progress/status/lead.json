@@ -1,19 +1,19 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T06:30:00Z",
-  "expected_next_update_by": "2026-10-31T07:45:00Z",
+  "updated_at": "2026-10-31T07:20:00Z",
+  "expected_next_update_by": "2026-10-31T08:35:00Z",
   "cycle": 5,
   "merging": {
-    "candidate_sha": "22c78e6f",
+    "candidate_sha": "14c30355",
     "task_ids": [
-      "P0-K1-kitskin"
+      "SV-B11-B12"
     ],
-    "started_at": "2026-10-31T06:30:00Z",
-    "expires_at": "2026-10-31T07:30:00Z"
+    "started_at": "2026-10-31T07:20:00Z",
+    "expires_at": "2026-10-31T08:20:00Z"
   },
   "last_merged": {
-    "task_id": "P0-AD-golden",
-    "sha": "a38a3790"
+    "task_id": "P0-K1-kitskin",
+    "sha": "22c78e6f"
   },
   "alerts": [],
   "next_step": "Cycle 6 (session_01SNkKxmymBxL2H7jxeLAz9D): the container restarted at about 06:05Z mid-run; re-checking P0-K1-kitskin's candidate 22c78e6f (check_all then guard.sh); SV-B11-B12 next"
