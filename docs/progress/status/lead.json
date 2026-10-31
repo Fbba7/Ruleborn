@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T12:42:00Z",
+  "updated_at": "2026-10-31T13:45:00Z",
   "expected_next_update_by": "2026-10-31T13:57:00Z",
   "cycle": 10,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "45328085",
+    "task_ids": [
+      "P0-AIA-keyframes-3"
+    ],
+    "started_at": "2026-10-31T13:45:00Z",
+    "expires_at": "2026-10-31T14:45:00Z"
+  },
   "last_merged": {
     "task_id": "P0-K1-tokens, P0-AIA-keyframes-2",
     "sha": "b8308788"
