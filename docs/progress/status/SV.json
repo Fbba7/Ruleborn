@@ -14,7 +14,12 @@
     "last_green_sha": null,
     "next_step": "record the pre-check, mark ready"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "dfbca6ed82d57d00eb4c1ebcd0c3ef9ac28092c7",
+    "exit": 1,
+    "finished_at": "2026-10-31T03:47:21Z",
+    "summary": "== the simulation core (T3.1, T3.2, T5.5, line of sight): failed: cargo build --release --quiet --target wasm32-unknown-unknown"
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
