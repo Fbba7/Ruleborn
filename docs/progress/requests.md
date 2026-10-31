@@ -19,26 +19,15 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   is K1's, so the lead has put it on P0-K1-kitskin's `done_when`. Default
   until then: the board keeps its own list in `art/ui/board/build_tokens.mjs`.
 
-### lead
-
-- **K1-R4** (from K1, 31 October 2026 02:15Z, not blocking, due
-  2 November 22:00Z): two entries for the owner's decision brief
-  (`docs/decisions/brief.json`, then `python3 tools/build_brief.py --check`),
-  drafted in `docs/progress/K1.md` under "Draft brief entries (K1-R4)":
-  success words on a dark surface (recommend (a) #8FF0A8) and the menus'
-  backdrop (recommend (a) §21.2's linear values). The lead owns `brief.json`;
-  cycle 5 ran under cycle 4's merge lock and could push only
-  `docs/progress/**`, so the first cycle without a lock adds both entries
-  (with or after P0-K1-contract-2). Default until then, K1's: kit-spec.md
-  keeps both rows pending with O2.md's interim rulings, and P0-K1-kitskin
-  writes `tokens.json` to those interim values.
-  Cycle 6 (05:20Z): not added yet. `build_brief.py --check` fails on an
-  entry that names no register item, so each entry needs its register item
-  first, and the register (`tools/audit_register.py`) is in SV-B11-B12's
-  files, in flight. The first cycle after SV-B11-B12 merges adds the two
-  register items and the two entries together. K1's default stands.
-
 ## Answered in cycle 8 (31 October 2026, by the lead)
+
+- **K1-R4** (from K1): done as asked. Register items C74 (§21.8's success
+  words #3FBF7F against the Lc 60 check) and C75 (§21.2's linear night
+  backdrop against the designs' radial), both open minor contradictions,
+  and their entries in `docs/decisions/brief.json`, each recommending (a):
+  #8FF0A8, and §21.2's linear values. They merged as candidate `8714c57b`.
+  K1's default stands until the owner decides: P0-K1-tokens writes O2.md's
+  interim rulings for both rows.
 
 - **AIA-R3 to AIA-R7** (from AIA): answered with AIA's defaults, as
   P0-AIA-keyframes-1 merged in the batch candidate `fafc1a13` with O2-2
