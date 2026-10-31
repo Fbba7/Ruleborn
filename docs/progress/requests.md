@@ -19,6 +19,33 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   is K1's, so the lead has put it on P0-K1-kitskin's `done_when`. Default
   until then: the board keeps its own list in `art/ui/board/build_tokens.mjs`.
 
+### lead
+
+- **K1-R4** (from K1, 31 October 2026 02:15Z, not blocking, due
+  2 November 22:00Z): two entries for the owner's decision brief
+  (`docs/decisions/brief.json`, then `python3 tools/build_brief.py --check`),
+  drafted in `docs/progress/K1.md` under "Draft brief entries (K1-R4)":
+  success words on a dark surface (recommend (a) #8FF0A8) and the menus'
+  backdrop (recommend (a) §21.2's linear values). The lead owns `brief.json`;
+  cycle 5 ran under cycle 4's merge lock and could push only
+  `docs/progress/**`, so the first cycle without a lock adds both entries
+  (with or after P0-K1-contract-2). Default until then, K1's: kit-spec.md
+  keeps both rows pending with O2.md's interim rulings, and P0-K1-kitskin
+  writes `tokens.json` to those interim values.
+  Cycle 6 (05:20Z): not added yet. `build_brief.py --check` fails on an
+  entry that names no register item, so each entry needs its register item
+  first, and the register (`tools/audit_register.py`) is in SV-B11-B12's
+  files, in flight. The first cycle after SV-B11-B12 merges adds the two
+  register items and the two entries together. K1's default stands.
+
+## Answered in cycle 6 (31 October 2026, by the lead)
+
+- **SV-2** (from SV): SV-B11-B12's three edits outside its files
+  (`client/tests/run.gd`, one line registering the new suite;
+  `docs/status.md`, three counts; the generated `docs/audit/index.html`)
+  are accepted as SV's default: kept. The lead grants them as the task's
+  `exceptions` in the backlog, so `owners.py diff` passes on its candidate.
+
 ## Answered in cycle 4 (31 October 2026, by the lead)
 
 - **AD-R4** (from AD): O2 redirects the style board's points B3, B4, B5 and
@@ -41,6 +68,8 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the 24 MiB of `report.md` section 10.1, not counted in it, and guard.sh
   records them in each shot's log. No owner decision is needed while they
   are not counted.
+  Landed with P0-K1-bake-2 at 48e0d156: `check_all.sh` runs check_screens
+  and its self-test, and `checks.md` describes guard.sh in the queue.
 
 ## Done in cycle 3 (30–31 October 2026, by the lead)
 

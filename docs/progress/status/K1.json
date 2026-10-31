@@ -4,16 +4,16 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P0-K1-bake-1",
-  "task_state": "working",
-  "claimed_at": "2026-10-30T21:55:00Z",
-  "lease_until": "2026-10-31T01:45:00Z",
-  "updated_at": "2026-10-30T22:45:00Z",
-  "expected_next_update_by": "2026-10-30T23:30:00Z",
+  "task_id": "P0-K1-contract-2",
+  "task_state": "claimed",
+  "claimed_at": "2026-10-31T01:45:00Z",
+  "lease_until": "2026-10-31T04:45:00Z",
+  "updated_at": "2026-10-31T01:45:00Z",
+  "expected_next_update_by": "2026-10-31T02:30:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "4ab2368",
-    "next_step": "Pre-check running on the README line (K1-R2 granted); record it and mark P0-K1-bake-1 ready"
+    "last_green_sha": "e97ef3a",
+    "next_step": "P0-K1-contract-2: kit-spec.md sections 2.1, 2.2 and K01 per O2's K1-K3"
   },
   "precheck": null,
   "gate_request": null,
@@ -22,18 +22,18 @@
   "acks": [],
   "requests": [
     {
-      "id": "K1-R2",
+      "id": "K1-R3",
       "from": "K1",
       "to": "lead",
-      "ask": "check_docs_consistency.py fails P0-K1-bake-1 because README.md's tools/ listing lacks tools/ui_bake/, and README.md is yours. Grant P0-K1-bake-1 an exception for README.md so K1 adds this one line before '  ui_research/', or add it yourself in the candidate:   ui_bake/                        the UI kit's bake (K1): node tools/ui_bake/bake.js <family> bakes art/ui/ into client/ui/art/ atlases and manifests; --check compares hashes; docs/art/ui-quality/kit-spec.md section 6.6 . Evidence that this is the only gap: the full checks on f316a1c (claude/ui-bake at 4ab2368 plus exactly that line, unpushed) passed at 2026-10-30T22:28:39Z (All checks passed., DONE exit=0). Also, per K1-R1, add to tools/check_all.sh: node tools/ui_bake/bake.js --check and node --test tools/ui_bake/test/bake.test.js.",
+      "ask": "P0-K1-bake-2 is in tools/ui_bake/. (1) As K1-R1 granted, in the candidate that merges it add to tools/check_all.sh: 'python3 tools/ui_bake/check_screens.py' and 'python3 tools/ui_bake/check_screens.py --self-test' (about a second together). (2) Run 'bash tools/ui_bake/guard.sh' in the merge queue beside check_all (D9 (b)); about 12 minutes; it needs Godot from client/build.sh, xvfb-run, Node and the container's Chromium, and prints 'ui guard: OK'. (3) report.md section 10.1 caps interface textures at 24 MiB. guard.sh counts the textures the screens' canvas items hold (at 4 bytes a pixel, as 10.1 counts an atlas): 1.3-4.5 MiB today. The fonts' glyph caches are real resident textures too and are 7-40 MiB a shot (the heist at 200% text: 40.5 MiB), so counting them would fail main today. Should they count in the 24 MiB (then the cap needs an owner decision, D8), or stay reported beside it?",
       "files": [
-        "README.md",
-        "tools/check_all.sh"
+        "tools/check_all.sh",
+        "docs/art/ui-quality/report.md"
       ],
-      "blocking": true,
-      "created_at": "2026-10-30T22:30:00Z",
-      "due": "2026-10-31T22:00:00Z",
-      "default": "The lead adds the line in the candidate that merges P0-K1-bake-1 and takes the f316a1c run as its pre-check evidence",
+      "blocking": false,
+      "created_at": "2026-10-31T00:50:00Z",
+      "due": "2026-11-01T22:00:00Z",
+      "default": "(1) and (2) as K1-R1 says; (3) glyph caches stay reported beside the 24 MiB, not counted in it, and guard.sh records them in each shot's log",
       "escalate_to": "lead"
     }
   ],

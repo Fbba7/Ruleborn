@@ -122,26 +122,38 @@ body {
 .glint { position: absolute; width: 18px; height: 18px; color: var(--c-cream); pointer-events: none; opacity: var(--grain); }
 
 /* ---------- 1. Enamel: the violet card ---------- */
+/* Fired enamel in a bezel (O2, B4): ink outside, a dark rim of the card's
+   own violet, a lit line, then the face; a gloss band across the top that
+   reads at 1x; a foot under a lit seam, as gold has its lip. */
 .enamel {
   position: relative;
+  --rim: 3px;
+  --foot: 6px;
   border-radius: var(--m-card-radius);
-  background: var(--card);
+  background:
+    linear-gradient(0deg,
+      var(--foot-face) 0 var(--foot),
+      var(--foot-seam) var(--foot) calc(var(--foot) + 1.5px),
+      var(--lit-none) calc(var(--foot) + 1.5px)),
+    var(--card);
+  --foot-face: var(--c-card-bottom);
+  --foot-seam: color-mix(in srgb, var(--c-paper) 30%, transparent);
   border: var(--line) solid var(--ink);
   box-shadow:
-    inset 0 0 0 var(--m-card-line-w) var(--m-card-line),
-    inset 0 var(--m-card-highlight-w) 0 var(--lit-soft),
-    inset 0 -3px 0 var(--dark-soft),
+    inset 0 0 0 var(--rim) var(--rim-c, var(--c-card-bottom)),
+    inset 0 0 0 calc(var(--rim) + 1.5px) var(--rim-line, var(--m-card-line)),
     0 var(--m-card-drop-w) 0 var(--m-card-drop),
     0 var(--m-card-soft-y) var(--m-card-soft-blur) var(--m-card-soft);
-  padding: 16px;
+  padding: 16px 16px calc(16px + var(--foot));
   overflow: hidden;
   isolation: isolate;
 }
-/* Fired glaze: a soft lacquer over the top, and the key's hot spot. */
+/* The gloss band: lacquer over the top 38%, strongest at the top and ending
+   on a clean curved edge, so it reads as a shape at phone size. */
 .enamel::before {
-  content: ""; position: absolute; inset: 0 0 58% 0; z-index: -1;
-  border-radius: inherit;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--c-paper) 9%, transparent), var(--lit-none));
+  content: ""; position: absolute; left: calc(var(--rim) + 4px); right: calc(var(--rim) + 4px); top: calc(var(--rim) + 2px); height: 38%; z-index: -1;
+  border-radius: 12px 12px 50% 50% / 12px 12px 14px 14px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c-paper) 20%, transparent), color-mix(in srgb, var(--c-paper) 8%, transparent));
   opacity: var(--grain);
 }
 .enamel::after {
@@ -149,15 +161,17 @@ body {
   background: radial-gradient(closest-side, color-mix(in srgb, var(--c-paper) 10%, transparent), var(--lit-none));
   opacity: var(--grain);
 }
+/* Selected (the kit's state S): a gold rim inside the ink and a gold foot,
+   on the raised face. No glow: the rim is a made thing. */
 .enamel.selected {
-  border-color: var(--m-card-selected-line);
-  box-shadow:
-    inset 0 0 0 var(--m-card-selected-rim-w) var(--m-card-selected-rim),
-    inset 0 var(--m-card-selected-highlight-w) 0 var(--m-card-selected-highlight),
-    0 var(--m-card-selected-drop-w) 0 var(--m-card-selected-drop),
-    0 0 var(--m-card-selected-glow-w) var(--m-card-selected-glow);
+  --card: linear-gradient(180deg, var(--c-card-lit-glow) 0%, var(--c-card-top) 100%);
+  --rim: 4px;
+  --foot: 8px;
+  --rim-c: var(--c-card-selected-rim);
+  --rim-line: var(--c-gold-rim);
+  --foot-face: var(--c-gold-bottom);
+  --foot-seam: var(--c-card-selected-rim);
 }
-:is(html.hc, .hcf) .enamel.selected { box-shadow: 0 var(--m-card-selected-drop-w) 0 var(--m-card-selected-drop); }
 .pips { display: flex; gap: 6px; align-items: center; }
 .pip { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); background: var(--g-school-time); box-shadow: inset 0 2px 0 var(--lit); }
 .pip.spent { background: transparent; border-color: var(--t3); box-shadow: none; }
@@ -240,13 +254,22 @@ body {
   isolation: isolate;
 }
 .oak > .tex { z-index: -1; }
+/* The well: a recess in the oak whose floor the key lights (O2, B3), in
+   §21.2's wood, so the leather that sits in it stands two value steps off
+   it; the shadow falls only under the well's top lip. */
 .oak .well {
   position: relative; border-radius: 10px; padding: 14px;
-  background: var(--g-leather);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--c-drop) 30%, transparent) 0, var(--lit-none) 12px),
+    radial-gradient(ellipse 90% 80% at 35% 35%, color-mix(in srgb, var(--c-paper) 20%, transparent), var(--lit-none)),
+    var(--c-wood);
   border: var(--line) solid var(--ink);
-  box-shadow: inset 0 4px 8px var(--dark), inset 0 -1px 0 color-mix(in srgb, var(--c-paper) 18%, transparent);
+  box-shadow: inset 0 3px 0 var(--dark-soft), inset 0 -1.5px 0 color-mix(in srgb, var(--c-paper) 26%, transparent);
   display: flex; flex-direction: column; gap: 12px; align-items: center;
+  isolation: isolate;
 }
+.oak .well > .tex { z-index: -1; }
+.oak .well.small { padding: 6px; border-radius: 8px; }
 .plaque {
   position: relative; padding: 8px 18px 10px; border-radius: 10px;
   background: var(--g-frame-oak);
@@ -386,7 +409,10 @@ body {
    still reads where ink meets night. The hard drop stays: it says what is
    raised and what can be pressed. */
 :is(html.hc, .hcf) .enamel {
-  box-shadow: 0 0 0 1.5px var(--c-text-on-night), 0 var(--m-card-drop-w) 0 var(--m-card-drop);
+  box-shadow:
+    inset 0 0 0 var(--rim) var(--rim-c, var(--c-card-bottom)),
+    inset 0 0 0 calc(var(--rim) + 1.5px) var(--rim-line, var(--m-card-line)),
+    0 0 0 1.5px var(--c-text-on-night), 0 var(--m-card-drop-w) 0 var(--m-card-drop);
 }
 :is(html.hc, .hcf) .gold::after, :is(html.hc, .hcf) .leather::after, :is(html.hc, .hcf) .gold-round::after { opacity: 0; }
 :is(html.hc, .hcf) .gold {
@@ -399,7 +425,8 @@ body {
 :is(html.hc, .hcf) .oak, :is(html.hc, .hcf) .plaque {
   box-shadow: 0 0 0 1.5px var(--c-text-on-night), 0 4px 0 var(--c-drop);
 }
-:is(html.hc, .hcf) .oak .well { box-shadow: none; }
+:is(html.hc, .hcf) .oak .well { box-shadow: none; background: var(--c-wood); }
+:is(html.hc, .hcf) .enamel.selected { --card: var(--c-card-lit-glow); }
 :is(html.hc, .hcf) .glass { box-shadow: 0 0 0 1.5px var(--c-text-on-night); }
 :is(html.hc, .hcf) .parchment {
   box-shadow: 0 var(--m-parchment-drop-w) 0 var(--m-parchment-drop);
@@ -430,6 +457,7 @@ body {
 .mini.parchment { padding: 10px 12px; gap: 2px; }
 .gold.small { padding: 0 16px var(--lip); }
 .leather.small { min-width: 0; padding: 0 16px 2px; }
+.pairs .oak { display: inline-block; }
 </style>
 </head>
 <body>
@@ -490,7 +518,7 @@ body {
     <header>
       <p class="kicker" data-check>Material 1 · enamel</p>
       <h2 class="heading" data-check>The violet card</h2>
-      <p class="note" data-check>Dresses §21.8's dark surface, the violet card from #261A4C down, as fired enamel: a glassy glaze, a hot spot where the key lands, a bevelled edge.</p>
+      <p class="note" data-check>Dresses §21.8's dark surface, the violet card from #261A4C down, as fired enamel: a gloss band across its top, a hot spot where the key lands, a dark rim and a foot. Chosen, it takes a gold rim and a gold foot, never a glow.</p>
     </header>
     <article class="enamel stack">
       <svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-paper)" filter="url(#grain-enamel)"/></svg>
@@ -509,9 +537,11 @@ body {
     </article>
     <dl class="recipe caption">
       <dt data-check>Fill</dt><dd data-check>the card gradient, card_top to card_bottom</dd>
-      <dt data-check>Glaze</dt><dd data-check>paper at 9% over the top 42%; a 10% hot spot top left</dd>
-      <dt data-check>Bevel</dt><dd data-check>a lit 2-point lip on top, a dark 3-point foot</dd>
-      <dt data-check>Edge</dt><dd data-check>ink outline; card line inside; hard drop of 3</dd>
+      <dt data-check>Glaze</dt><dd data-check>a band of paper, 20% fading to 8%, over the top 38%; a 10% hot spot top left</dd>
+      <dt data-check>Rim</dt><dd data-check>card_bottom, 3 points inside the edge, then the card line</dd>
+      <dt data-check>Foot</dt><dd data-check>card_bottom, 6 points, under a lit seam</dd>
+      <dt data-check>Chosen</dt><dd data-check>a 4-point gold rim and an 8-point gold foot; the face lifts to card_lit_glow</dd>
+      <dt data-check>Edge</dt><dd data-check>ink outline; hard drop of 3</dd>
     </dl>
   </section>
 
@@ -549,7 +579,7 @@ body {
     <div class="oak">
       <svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-oak-grain)" filter="url(#grain-wood)"/></svg>
       <div class="well">
-        <svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-drop)" filter="url(#grain-leather)"/></svg>
+        <svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-oak-grain)" filter="url(#grain-wood)"/></svg>
         <span class="plaque"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-oak-grain)" filter="url(#grain-wood)"/></svg><span class="display-s fill-cream" data-check>THE WORKSHOP</span></span>
         <button class="leather button-type"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-drop)" filter="url(#grain-leather)"/></svg><span data-check>Build</span></button>
       </div>
@@ -558,6 +588,7 @@ body {
       <dt data-check>Oak</dt><dd data-check>the oak frame's four stops at 160°, oak grain streaked along it</dd>
       <dt data-check>Leather</dt><dd data-check>the leather radial, lit at 28% from the top</dd>
       <dt data-check>Craft</dt><dd data-check>cream stitching at 38%; Motion-shadow rim</dd>
+      <dt data-check>Well</dt><dd data-check>oak floor lit by the key: two value steps under the leather</dd>
       <dt data-check>Edge</dt><dd data-check>ink outline; drop of 4 in the drop black</dd>
     </dl>
   </section>
@@ -649,14 +680,14 @@ body {
     <header>
       <p class="kicker" data-check>The studio light</p>
       <h2 class="heading" data-check>One light on everything</h2>
-      <p class="note" data-check>Every rendered piece stands in one studio, so a set of sixty stays one family. Gold, enamel and leather here, in studio.html's light.</p>
+      <p class="note" data-check>Every rendered piece stands in one studio, so a set of sixty stays one family. It is §21.3's toon look, the world's own: gold, enamel and leather here, in studio.html's light.</p>
     </header>
     <img class="shot" src="art/studio.png" alt="Three spheres, gold, violet enamel and leather, under the studio light">
     <dl class="recipe caption">
-      <dt data-check>Key</dt><dd data-check>cream, from the top left and in front; the strongest</dd>
-      <dt data-check>Rim</dt><dd data-check>the piece's own light colour, from behind on the right</dd>
-      <dt data-check>Fill</dt><dd data-check>soft, from below: a paper sky over a ground of the night</dd>
-      <dt data-check>Room</dt><dd data-check>reflections for metal and gloss; neutral tone mapping</dd>
+      <dt data-check>Key</dt><dd data-check>cream, from the top left and in front, read in four steps of 62, 140, 215 and 255</dd>
+      <dt data-check>Shade</dt><dd data-check>falls toward violet, never toward black; colours 10% more saturated</dd>
+      <dt data-check>Rim</dt><dd data-check>the piece's own light colour, soft, on the lit edge</dd>
+      <dt data-check>Fill</dt><dd data-check>a little of the paper sky</dd>
       <dt data-check>Flat</dt><dd data-check>on panels the key is a lit top lip, a hot spot and the gloss on the upper left, and a shaded foot; drops fall straight down</dd>
     </dl>
   </section>
@@ -732,8 +763,8 @@ body {
       <div class="hcf"><article class="enamel mini"><span class="label" data-check>Enamel</span></article></div>
       <div class="n"><button class="gold small button-type"><span data-check>Gold</span></button></div>
       <div class="hcf"><button class="gold small button-type"><span data-check>Gold</span></button></div>
-      <div class="n"><span class="oak"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-oak-grain)" filter="url(#grain-wood)"/></svg><button class="leather small button-type"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-drop)" filter="url(#grain-leather)"/></svg><span data-check>Leather</span></button></span></div>
-      <div class="hcf"><span class="oak"><button class="leather small button-type"><span data-check>Leather</span></button></span></div>
+      <div class="n"><span class="oak"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-oak-grain)" filter="url(#grain-wood)"/></svg><span class="well small"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-oak-grain)" filter="url(#grain-wood)"/></svg><button class="leather small button-type"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-drop)" filter="url(#grain-leather)"/></svg><span data-check>Leather</span></button></span></span></div>
+      <div class="hcf"><span class="oak"><span class="well small"><button class="leather small button-type"><span data-check>Leather</span></button></span></span></div>
       <div class="world day"><div class="glass"><span class="label" data-check>Glass</span></div></div>
       <div class="hcf flush"><div class="world day"><div class="glass"><span class="label" data-check>Glass</span></div></div></div>
       <div class="n"><article class="parchment mini"><svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-soil)" filter="url(#grain-parchment)"/></svg><span class="label" data-check>Parchment</span><span class="caption secondary" data-check style="font-weight: 800">lighter ink</span></article></div>

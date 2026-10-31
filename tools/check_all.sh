@@ -159,6 +159,11 @@ node tools/ui_bake/bake.js --check
 node --test tools/ui_bake/test/bake.test.js
 
 echo
+echo "== the UI kit's screens add no chrome of their own, and its planted fails (K1-R3) =="
+python3 tools/ui_bake/check_screens.py
+python3 tools/ui_bake/check_screens.py --self-test
+
+echo
 echo "== the UI wave gate's sheets and image checks, with their planted fails (AD-R3) =="
 python3 tools/ui_gate/sheet.py --self-test
 

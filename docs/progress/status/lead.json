@@ -1,13 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T01:50:00Z",
-  "expected_next_update_by": "2026-10-31T03:00:00Z",
-  "cycle": 3,
+  "updated_at": "2026-10-31T05:56:00Z",
+  "expected_next_update_by": "2026-10-31T07:03:00Z",
+  "cycle": 5,
   "merging": null,
   "last_merged": {
-    "task_id": "SV-B7-B9",
-    "sha": "463ad9c2"
+    "task_id": "P0-AD-golden",
+    "sha": "a38a3790"
   },
   "alerts": [],
-  "next_step": "Cycle 3 ended with the lock cleared; cycle 4 (session_01SNkKxrCAg6Y8R7Hovb2PPH) is running: O2 and P0-K1-bake-2 are ready, one candidate at a time (flaky.md); P0-AIA-board-3 is open for AIA"
+  "next_step": "Cycle 6 (session_01SNkKxmymBxL2H7jxeLAz9D): candidate a38a3790 (P0-AIA-board-3, P0-AD-golden) passed check_all at 05:46Z; guard.sh running"
 }
