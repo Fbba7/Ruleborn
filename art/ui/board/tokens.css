@@ -41,9 +41,9 @@
   --c-parchment-bottom: #F1E3C4;
   --c-parchment-text-2: #54392A;
   --c-parchment-text-3: #8A5A1C;
-  --c-night-top: #2E1F5E;
-  --c-night-mid: #140C30;
-  --c-night-bottom: #0A0620;
+  --c-night-top: #171046;
+  --c-night-mid: #222577;
+  --c-night-bottom: #2C3AA8;
   --c-card-top: #261A4C;
   --c-card-bottom: #1A1134;
   --c-glass: #140A16C7;
@@ -63,7 +63,7 @@
   --c-text-on-gold: #1B1430;
   --c-cream: #FFF3CC;
   --c-alarm-light: #FF8A9A;
-  --c-alarm-text-on-night: #FFB0BC;
+  --c-alarm-text-on-night: #FF9AAA;
   --c-success-light: #8FF0A8;
   --c-text-on-success: #0A3A20;
   --c-warn: #F2A03C;
@@ -111,7 +111,7 @@
   --hc-text-on-night-3: #F3EEFF;
   --hc-parchment-text-2: #2A1A10;
   --hc-night-top: #140C30;
-  --g-night: radial-gradient(circle at 50% 0%, var(--c-night-top) 0%, var(--c-night-mid) 55%, var(--c-night-bottom) 100%);
+  --g-night: linear-gradient(180deg, var(--c-night-top) 0%, var(--c-night-mid) 50%, var(--c-night-bottom) 100%);
   --g-phone-sky: linear-gradient(180deg, #171046 0%, #2A1A86 45%, #3A2AA6 80%, #2C3AA8 100%);
   --g-card: linear-gradient(180deg, var(--c-card-top) 0%, var(--c-card-bottom) 100%);
   --g-parchment: linear-gradient(180deg, var(--c-parchment-top) 0%, var(--c-parchment-bottom) 100%);
@@ -127,7 +127,7 @@
   --g-frame-prismatic: conic-gradient(from 200deg, #FF8AD0 0%, #FFD27A 20%, #8AF0C8 40%, #7AC4FF 60%, #C29AFF 80%, #FF8AD0 100%);
   --g-card-hover: linear-gradient(180deg, #2E2158 0%, #20163E 100%);
   --g-glass: linear-gradient(180deg, var(--c-glass) 0%, var(--c-glass) 100%);
-  --g-plain-night: linear-gradient(180deg, var(--c-card-bottom) 0%, var(--c-night-bottom) 100%);
+  --g-plain-night: linear-gradient(180deg, var(--c-card-bottom) 0%, #0A0620 100%);
   --g-card-hc: linear-gradient(180deg, #140C2A 0%, #140C2A 100%);
   --g-track: linear-gradient(180deg, #140A16 0%, #24142A 100%);
   --g-parchment-deep: linear-gradient(180deg, #FFFDF6 0%, #F6EAD0 50%, #EAD7AE 100%);
