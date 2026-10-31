@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-10-31T03:42:36Z",
   "lease_until": "2026-10-31T06:42:36Z",
-  "updated_at": "2026-10-31T04:11:13Z",
-  "expected_next_update_by": "2026-10-31T04:56:13Z",
+  "updated_at": "2026-10-31T04:22:21Z",
+  "expected_next_update_by": "2026-10-31T05:07:21Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e09807f",
-    "next_step": "Home key frame drafted (100% en, pt_BR, hc); fitting the 200% form's realm pins; next 02-heist, the shoot and check scripts"
+    "next_step": "Home and heist key frames drafted in all six forms (en, pt_BR; 100%, 200%, high contrast); next the shoot and check scripts"
   },
   "precheck": null,
   "gate_request": null,

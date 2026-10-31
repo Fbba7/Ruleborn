@@ -82,35 +82,67 @@
 
   // The realm pins stand where the game puts them (bake_home.gd PINS=1),
   // centred on their realm. Where large text makes one meet the interface
-  // or another pin, it moves down, then up, in 4-point steps to the nearest
-  // clear place, as the game's labels give way; where none is near, it keeps
-  // only its level, as the game's pin does over a small island
-  // (client/world/universe_pins.gd), and looks again.
+  // or another pin, it moves to the nearest clear place within 64 points, as
+  // the game's labels give way; where none is that near, it keeps only its
+  // level, as the game's pin does over a small island
+  // (client/world/universe_pins.gd), and takes the nearest clear place. If
+  // that leaves one with nowhere, every pin keeps only its level and they
+  // stand on the even grid that holds the most, each in the free cell
+  // nearest its realm.
   const settle = () => {
     const box = (el) => { const r = el.getBoundingClientRect(); return [r.left, r.top, r.right, r.bottom]; };
     const meets = (a, b) => a[0] < b[2] + 4 && b[0] < a[2] + 4 && a[1] < b[3] + 4 && b[1] < a[3] + 4;
-    const taken = [...document.querySelectorAll('.hud')].map(box);
+    const hud = [...document.querySelectorAll('.hud, .hud .plate, .hud .badge')].map(box);
     const pins = [...document.querySelectorAll('.pin')];
-    pins.sort((a, b) => a.dataset.at.split(',')[1] - b.dataset.at.split(',')[1]);
-    const near = (p, cx, cy) => {
+    const at = (p) => p.dataset.at.split(',').map(Number);
+    pins.sort((a, b) => at(a)[1] - at(b)[1]);
+    const put = (p, b) => { p.style.left = `${b[0]}px`; p.style.top = `${b[1]}px`; };
+    let taken = [...hud];
+    const near = (p, cx, cy, most) => {
       const w = p.offsetWidth, h = p.offsetHeight;
-      const x = Math.min(Math.max(cx - w / 2, 8), 390 - 8 - w);
-      for (let d = 0; d <= 400; d += 4) {
-        for (const y of [cy - h / 2 + d, cy - h / 2 - d]) {
+      let best = null, far = most * most;
+      for (let y = 44; y + h <= 811; y += 2) {
+        for (let x = 8; x + w <= 382; x += 2) {
+          const d = (x + w / 2 - cx) ** 2 + (y + h / 2 - cy) ** 2;
+          if (d > far) continue;
           const b = [x, y, x + w, y + h];
-          if (y >= 44 && y + h <= 811 && !taken.some((t) => meets(t, b))) return b;
+          if (!taken.some((t) => meets(t, b))) { best = b; far = d; }
         }
       }
-      return null;
+      return best;
     };
+    let room = true;
     for (const p of pins) {
-      const [cx, cy] = p.dataset.at.split(',').map(Number);
-      let best = near(p, cx, cy);
-      if (!best) { p.classList.add('small'); best = near(p, cx, cy); }
-      if (!best) throw new Error(`no room for the pin at ${p.dataset.at}`);
-      p.style.left = `${best[0]}px`;
-      p.style.top = `${best[1]}px`;
+      const [cx, cy] = at(p);
+      let best = near(p, cx, cy, 64);
+      if (!best) { p.classList.add('small'); best = near(p, cx, cy, 2000); }
+      if (!best) { room = false; break; }
+      put(p, best);
       taken.push(best);
+    }
+    if (room) return;
+    for (const p of pins) p.classList.add('small');
+    const w = Math.max(...pins.map((p) => p.offsetWidth)) + 4, h = Math.max(...pins.map((p) => p.offsetHeight)) + 4;
+    let cells = [];
+    for (let oy = 0; oy < h; oy += 2) {
+      for (let ox = 0; ox < w; ox += 2) {
+        const free = [];
+        for (let y = 44 + oy; y + h - 4 <= 811; y += h) {
+          for (let x = 8 + ox; x + w - 4 <= 382; x += w) {
+            const b = [x, y, x + w - 4, y + h - 4];
+            if (!hud.some((t) => meets(t, b))) free.push(b);
+          }
+        }
+        if (free.length > cells.length) cells = free;
+      }
+    }
+    if (cells.length < pins.length) throw new Error(`room for ${cells.length} of ${pins.length} pins`);
+    for (const p of pins) {
+      const [cx, cy] = at(p);
+      const d = (b) => ((b[0] + b[2]) / 2 - cx) ** 2 + ((b[1] + b[3]) / 2 - cy) ** 2;
+      const i = cells.reduce((m, b, j) => (d(b) < d(cells[m]) ? j : m), 0);
+      put(p, cells[i]);
+      cells.splice(i, 1);
     }
   };
   document.fonts.ready.then(() => { settle(); html.dataset.ready = '1'; });

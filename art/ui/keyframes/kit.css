@@ -518,14 +518,26 @@ body { position: relative; background-color: var(--c-night-bottom); background-s
 .pin.small { padding: 2px; }
 .pin.small > :not(.disc):not(.hit) { display: none; }
 
-/* ---------- home at large text ---------- */
+/* ---------- home at large text ----------
+   The head becomes a grid: the avatar and the Keeper, then the purse two by
+   two with the strain as its fourth pill, so the universe keeps its middle. */
 .keeper .label { white-space: nowrap; }
-.large .home-top { flex-wrap: wrap; }
-.large .strain { flex: 1 1 100%; flex-direction: row; align-items: center; gap: 12px; }
+.head { display: flex; flex-direction: column; }
+.large .head { display: grid; grid-template-columns: 60px 1fr 60px 1fr; gap: 6px; padding: 6px 12px 0; align-items: stretch; }
+.large .home-top, .large .res { display: contents; }
+.large .avatar { grid-area: 1 / 1; align-self: center; }
+.large .keeper { grid-area: 1 / 2 / 2 / 5; flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 12px; }
 .large .keeper .caption { display: none; }
-.large .res .glass { min-width: calc(50% - 3px); }
+.large .res .glass:nth-child(1) { grid-area: 2 / 1 / 3 / 3; }
+.large .res .glass:nth-child(2) { grid-area: 2 / 3 / 3 / 5; }
+.large .res .glass:nth-child(3) { grid-area: 3 / 1 / 4 / 3; }
+.large .strain { grid-area: 3 / 3 / 4 / 5; flex-direction: column; align-items: flex-start; gap: 0; padding: 6px 8px 6px; }
+.large .strain .ico { width: calc(20px * var(--ts)); height: calc(20px * var(--ts)); }
 .large .side:first-child .sb { align-items: flex-start; }
 .large .side:last-child .sb { align-items: flex-end; }
+/* The tabs' counts sit above their icons, clear of them. */
+.large .tab:not(.active) > img { width: 40px; height: 40px; }
+.large .tab .badge { top: -30px; right: calc(50% - 30px); }
 /* A pill's numbers never break; a row out of room wraps to the next. */
 .res .glass { flex: 1 1 auto; min-width: 0; padding: 6px 8px 8px; }
 .res .glass .row { gap: 5px; }
@@ -534,4 +546,103 @@ body { position: relative; background-color: var(--c-night-bottom); background-s
 /* Full sits on the pill's corner, as a badge does. */
 .res .glass { overflow: visible; }
 .res .tag { position: absolute; top: -9px; right: 6px; }
-.large .keeper { flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 12px; }
+/* At large text a pill's icon stands on its corner, as Full does on the
+   other, so the amount keeps the pill's whole width; Full moves under it. */
+.large .head { row-gap: 14px; }
+.large .res .glass, .large .strain { padding: 10px 8px 8px; }
+.large .res .ico, .large .strain .ico { position: absolute; top: -12px; left: -6px; width: 28px; height: 28px; }
+.large .res .row { flex-wrap: wrap; justify-content: flex-end; }
+.large .res .number, .large .strain .number { margin-right: auto; }
+.large .res .tag { position: static; }
+.large .res .ico, .large .strain .ico { box-sizing: border-box; width: 40px; height: 40px; padding: 4px; top: -16px; left: -8px; border-radius: 50%; background: var(--g-plate-dark); border: 1.5px solid var(--c-ink-line); }
+
+/* ---------- heist ----------
+   §21.8's arrangement in three columns at the top and the hand at the
+   bottom; the world between them stays clear. */
+.heist { justify-content: space-between; }
+.heist-top { display: grid; grid-template-columns: 1fr auto 1fr; gap: 6px; align-items: start; padding: 6px 8px 0; }
+.laws { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; min-width: 0; }
+/* "Laws here" in gold with an ink outline, as the game's (heist_hud.gd). */
+.laws-here { font: 800 calc(14px * var(--ts))/1.2 "Manrope"; color: var(--c-gold); -webkit-text-stroke: 6px var(--ink); paint-order: stroke fill; }
+.law-chip.leather { min-width: 0; min-height: 0; max-width: 100%; justify-content: flex-start; gap: 5px; padding: 4px 10px 5px 6px; border-radius: 12px; }
+.law-chip.leather::before { inset: 3px; border-radius: 9px; }
+.law-name { font: 400 calc(16px * var(--ts))/1.2 "Marcellus"; text-shadow: 0 1.5px 0 var(--c-drop); }
+.centre { display: flex; flex-direction: column; align-items: stretch; gap: 6px; }
+.clock.parchment { padding: 4px 14px 6px; align-items: center; border-radius: 14px; border-color: var(--c-gold-rim); }
+.clock-figures { font-size: calc(26px * var(--ts)); color: var(--c-cream); font-variant-numeric: tabular-nums; }
+.alarm.leather, .loot.leather { min-width: 0; min-height: 0; flex-direction: column; align-items: stretch; gap: 4px; padding: 6px 10px 8px; border-radius: 12px; }
+.alarm.leather::before, .loot.leather::before { inset: 3px; border-radius: 9px; }
+.alarm .row { justify-content: space-between; gap: 6px; }
+.alarm-name, .loot-name { color: var(--t2); font-weight: 800; white-space: nowrap; }
+:is(html.hc) .alarm-name, :is(html.hc) .loot-name { color: var(--t1); }
+/* The six bells: lit in amber to three and red from four (heist_hud.gd);
+   the count beside them carries the level. */
+.bells { display: flex; gap: 3px; }
+.bells > i { flex: 1 1 0; height: 8px; border-radius: 3px; background: var(--g-track); border: 1.5px solid var(--ink); }
+.bells > i.on { background: var(--c-warn); }
+.loot { justify-self: end; }
+.loot-row { display: flex; align-items: center; gap: 5px; }
+.loot-row .number { margin-left: auto; color: var(--c-cream); }
+.loot-row > .bar { flex: 1 1 auto; }
+.loot .ico { width: calc(18px * var(--ts)); height: calc(18px * var(--ts)); }
+/* The load target: a cream tick across the bags' bar. */
+.bar { position: relative; }
+.bar > b { position: absolute; top: -3px; bottom: -3px; left: var(--at); width: 3px; margin-left: -1.5px; background: var(--c-cream); border: 1px solid var(--ink); border-radius: 1px; }
+.loot > .bar { overflow: visible; }
+
+.heist-bottom { display: flex; flex-direction: column; gap: 8px; padding: 0 8px; }
+.hint { align-self: center; min-height: 0; padding: 6px 12px; text-align: center; }
+.hand { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; }
+.crew { position: relative; display: grid; grid-template-columns: repeat(3, 60px); gap: 8px 6px; padding-top: 26px; }
+.mate { display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 48px; }
+.mate .portrait { width: 56px; height: 56px; }
+.mate.chosen .portrait { box-shadow: 0 0 0 3px var(--c-card-selected-rim), 0 0 0 5px var(--ink); }
+.mate .pips { gap: 3px; padding: 0 6px 0 4px; border-radius: 999px; background: var(--g-plate-dark); border: 1.5px solid var(--ink); }
+.mate .pip { width: 12px; height: 12px; }
+.mate .pips .number { font-size: calc(13px * var(--ts)); line-height: 1.3; }
+.chosen-name { position: absolute; left: 0; top: 0; }
+.acts { display: flex; flex-direction: column; align-items: stretch; gap: 10px; width: 156px; }
+.sage { display: flex; align-items: center; gap: 8px; align-self: flex-end; }
+.sage .face { position: relative; display: block; }
+.sage .ring { width: 64px; height: 64px; padding: 4px; display: block; }
+.sage .portrait { width: 100%; height: 100%; border-radius: 50%; }
+/* The cooldown dial: the share still to wait, with its seconds. */
+.dial {
+  position: absolute; right: -8px; bottom: -6px; width: calc(30px * var(--ts)); height: calc(30px * var(--ts)); border-radius: 50%;
+  display: grid; place-items: center; border: 1.5px solid var(--ink);
+  background: radial-gradient(closest-side, var(--c-drop) 72%, transparent 73%), conic-gradient(var(--c-cream) var(--v), var(--c-drop) 0);
+  font: 800 calc(13px * var(--ts))/1 "Manrope"; font-variant-numeric: tabular-nums; color: var(--t1);
+}
+.sage { order: -1; flex-direction: row-reverse; }
+.cast.leather, .getout { min-width: 0; width: 100%; gap: 8px; font-family: "Manrope"; }
+.cast .button-type, .getout .button-type { white-space: nowrap; }
+/* Three columns as wide as their words, the space between them shared. */
+.heist-top { grid-template-columns: auto auto auto; justify-content: space-between; }
+.centre { width: calc(96px * var(--ts)); }
+.alarm .row { flex-wrap: wrap; justify-content: center; column-gap: 6px; row-gap: 0; }
+.loot-row .number { padding-left: 8px; }
+
+/* ---------- heist at large text ----------
+   As the game's above 130%: the loot under the law banner (heist_hud.gd),
+   the hand a row of plain word buttons over the portraits and the hint over
+   the hand (heist_hand.gd, heist_screen.gd). */
+.large .heist-top { grid-template-columns: 1fr auto; row-gap: 8px; }
+.large .laws { grid-area: 1 / 1; }
+.large .centre { grid-area: 1 / 2; width: auto; }
+.large .loot { grid-area: 2 / 1 / 3 / 3; justify-self: stretch; display: grid; grid-template-columns: 1fr 1fr; column-gap: 14px; row-gap: 4px; }
+.large .loot-row:not(:has(.bar)) { flex-direction: column; align-items: flex-start; gap: 0; }
+.large .loot-row .number { margin-left: 0; padding-left: 0; }
+.large .loot > :last-child { grid-column: 1 / 3; }
+.large .loot > .bar { align-self: center; }
+.large .law-chip .ico, .large .loot .ico { width: 24px; height: 24px; }
+.large .alarm .row { flex-direction: column; align-items: center; }
+.large .hand { flex-direction: column-reverse; align-items: stretch; }
+.large .crew { grid-template-columns: repeat(5, 1fr); padding-top: 0; gap: 6px; }
+.large .chosen-name, .large .sage .plate, .large .acts .ico { display: none; }
+.large .acts { width: auto; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+.large .sage { order: 0; margin-right: auto; }
+.large .cast.leather, .large .getout { width: auto; flex: 1 1 auto; padding: 0 10px 2px; }
+.large .mate .pip { width: 12px; height: 12px; }
+/* The dial's seconds grow with the text, so it stands beside the Sage. */
+.large .sage .face { display: flex; align-items: center; gap: 4px; }
+.large .dial { position: static; }
