@@ -60,8 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxnFBPxodvMYivAg4oB` (cycle 3,
-30 October 2026 23:22Z to 31 October 01:45Z).
+Latest lead cycle session: `session_01SNkKxrJgqsr595mqziZiHC` (cycle 7,
+31 October 2026, from 07:38Z).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -74,12 +74,19 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| K1 | `session_01SNkKxoCgMUfc9LdKPccMVL` | P0-K1-bake-2 | `claude/ui-bake` | 2026-10-31 00:29Z |
-| AD | `session_01SNkKxqyTwjQ4QFYuR3isqC` | O2 | `claude/ui-ad` | 2026-10-31 00:29Z |
+| AD | `session_01SNkKxnCEmtyRg2DDynmLDX` (idle, done) | O2-2 | `claude/ui-ad` | 2026-10-31 05:55Z |
+| K1 | `session_01SNkKxoiPGxkUFw8gAbm5vo` (idle, done) | P0-K1-kitskin | `claude/ui-bake` | 2026-10-31 03:41Z |
+| AIA | `session_01SNkKxpN6fMr3qL58LFyGpB` | P0-AIA-keyframes-1 | `claude/ui-artist` | 2026-10-31 03:41Z |
+| K1 | `session_01SNkKxqyVvQxD3Cjbxg3UDD` (idle, done) | P0-K1-contract-2 | `claude/ui-bake` | 2026-10-31 01:41Z |
+| AIA | `session_01SNkKxr9KX9r2CU9dJRRN4u` (idle, done) | P0-AIA-board-3 | `claude/ui-artist` | 2026-10-31 01:41Z |
+| AD | `session_01SNkKxoRUnSxVTboNzf92kH` (idle, done) | P0-AD-golden | `claude/ui-ad` | 2026-10-31 01:41Z |
+| K1 | `session_01SNkKxoCgMUfc9LdKPccMVL` (idle, done) | P0-K1-bake-2 | `claude/ui-bake` | 2026-10-31 00:29Z |
+| AD | `session_01SNkKxqyTwjQ4QFYuR3isqC` (idle, done) | O2 | `claude/ui-ad` | 2026-10-31 00:29Z |
 | K1 | `session_01SNkKxqS4p6oNGXrgf2HMJC` (idle, done) | P0-K1-bake-1 (restart: K1-R2 answered) | `claude/ui-bake` | 2026-10-30 22:41Z |
 | AD | `session_01SNkKxqWsnZkA94QgU4fUmT` (idle, done) | P0-AD-sheet (restart: AD-R2 answered) | `claude/ui-ad` | 2026-10-30 22:41Z |
 | AIA | `session_01SNkKxqs5iybVZtkaAz6tXt` (idle, done) | P0-AIA-board-2 | `claude/ui-artist` | 2026-10-30 21:52Z |
-| SV | `session_01SNkKxpyzv8gcd4M9afzaPz` | SV-B11-B12 | `claude/server-decisions` | 2026-10-31 01:40Z |
+| SV | `session_01SNkKxq1HJVZM14B553NQx6` (idle, done) | SV-B11-B12 (restart: the last session found SV-B7-B9 unmerged) | `claude/server-decisions` | 2026-10-31 03:41Z |
+| SV | `session_01SNkKxpyzv8gcd4M9afzaPz` (idle, did not start) | SV-B11-B12 | `claude/server-decisions` | 2026-10-31 01:40Z |
 | SV | `session_01SNkKxoTc2asTZD7Uigvf1m` (idle, done) | SV-B7-B9 | `claude/server-decisions` | 2026-10-30 21:52Z |
 | K1 | `session_01SNkKxq8CnHi34skP7kjhy5` (idle, replaced) | P0-K1-bake-1 | `claude/ui-bake` | 2026-10-30 21:52Z |
 | AD | `session_01SNkKxoCF3z5x8JQLKYJPYD` (idle, replaced) | P0-AD-sheet | `claude/ui-ad` | 2026-10-30 21:52Z |
@@ -98,7 +105,7 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: P0-AD-sheet, then P0-AD-golden, O2, P0-AD-golden-2, O3, P0-AD-calibrate as their deps merge (P0-AD-rubric is merged). O2 and O3 are yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+Tasks: P0-AD-golden, then O2-2, P0-AD-golden-2, O3, P0-AD-calibrate as their deps merge (P0-AD-rubric and P0-AD-sheet are merged; O2 is ready). O2, O2-2 and O3 are yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
 STOP_AT: 2026-11-06T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 0
 
@@ -113,7 +120,7 @@ You are agent AIA of the Ruleborn agent program (UI wave). Read docs/guides/agen
 Agent: AIA            Role: maker (AIA): kit art and motion art        Model: Opus 5.5
 Branch: claude/ui-artist
 Owned files: art/ui/** except art/ui/icons/**, docs/progress/AIA.md, docs/progress/status/AIA.json
-Tasks: P0-AIA-board-2, then P0-AIA-keyframes-1 to -3 as their deps merge (P0-AIA-board-1 is merged)
+Tasks: P0-AIA-board-3, then P0-AIA-keyframes-1 to -3 as their deps merge (P0-AIA-board-1 and -2 are merged)
 STOP_AT: 2026-11-06T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 0
 
@@ -128,7 +135,7 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: P0-K1-bake-1, then P0-K1-bake-2, P0-K1-kitskin as their deps merge (P0-K1-contract is merged)
+Tasks: P0-K1-contract-2, then P0-K1-kitskin as their deps merge (P0-K1-contract and P0-K1-bake-1 are merged; P0-K1-bake-2 is ready)
 STOP_AT: 2026-11-06T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 0
 
@@ -152,37 +159,32 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 3, 30 October 23:22Z to 31 October 01:45Z (session
-  `session_01SNkKxnFBPxodvMYivAg4oB`). Four tasks were ready and all four
-  merged, one candidate at a time, critical path first: P0-AIA-board-2
-  (`4f0f94a`), P0-K1-bake-1 (`fd2c966`, with K1-R1/K1-R2's two
-  `check_all.sh` lines and checks.md rows), P0-AD-sheet (`7dda0a3`, AD-R3's
-  self-test line, Pillow and numpy under "What it needs", and the README's
-  `ui_bake/` and `ui_gate/` lines joined where they met) and SV-B7-B9
-  (`e152462`, with SV-1's figure: 57.74 billed rows, $532 a month at a
-  million, in `owner-decisions.md` and `auth.md`). Main is `463ad9c2` plus
-  bookkeeping; the audit and roadmap pages are republished. `owners.py`:
-  every candidate inside its files, claims disjoint.
-- Recorded check failures, none in the changes: the container lacked the
-  wasm32 target (installed per the brief, re-run); two runs fetched Godot at
-  once (re-run); runs side by side shared Godot's `user://` and failed the
-  builder test (re-run alone, passed); and one run alone had Godot's import
-  stop early (re-run, passed). The last two are in `flaky.md` with fix tasks
-  BT-10 (`run_checks.sh`) and BT-11 (`client/build.sh`). **Run full checks
-  one at a time in a container** until BT-10 merges.
-- O2 moved ahead of P0-AD-golden in the backlog: it is half an hour and
-  unblocks AIA's key frames. Started K1 on P0-K1-bake-2, AD on O2 and SV on
-  SV-B11-B12 (table above). AIA had no open task when this cycle looked;
-  cycle 4 (`session_01SNkKxrCAg6Y8R7Hovb2PPH`, started 01:38Z while this
-  one merged, bookkeeping only under the lock) has since opened
-  P0-AIA-board-3 and found O2 and P0-K1-bake-2 ready, so it owns the next
-  starts. The watchdog's 00:10Z alert (this cycle not yet recorded in
-  `lead.md`) is answered in the inbox; no alerts open.
-- Next (cycle 4 now): take O2 and P0-K1-bake-2, then SV-B11-B12, through
-  the queue (for bake-2, `check_screens.py` into `check_all.sh` and
-  `guard.sh` beside it, per K1-R1). When O2 merges, start AIA on
-  P0-AIA-keyframes-1. Restart any agent past its `expected_next_update_by`.
-- Earlier: cycle 2 (22:40Z) found nothing ready and restarted K1 and AD on
-  their answered requests; cycle 1 (21:52Z) started one session per agent;
-  at about 21:30Z the lead merged P0-K1-contract, P0-AD-rubric,
-  P0-AIA-board-1 and SV-B1-B6.
+- Cycle 7, 31 October 2026, from 07:38Z (session
+  `session_01SNkKxrJgqsr595mqziZiHC`). Started while cycle 6
+  (`session_01SNkKxmymBxL2H7jxeLAz9D`) held the merge lock on
+  SV-B11-B12's candidate `14c30355` (until 08:20Z), so it did only the
+  bookkeeping and pushed only `docs/progress/**`. Copied the branches'
+  status files: P0-AIA-keyframes-1 `ready` at b760d6f1, with AIA-R3 to
+  AIA-R7 filed in `requests.md` for its merge. Alerted the ready queue
+  over 2 hours (`owner-inbox.md`). Started no agent: every agent's next
+  task waits on an unmerged dep (K1's P0-K1-tokens on O2-2, AIA's
+  P0-AIA-keyframes-2 on -1, AD's P0-AD-golden-2 on P0-AIA-keyframes-3; SV
+  has none).
+- Cycle 6 (from 04:38Z, to 08:10Z) merged P0-K1-contract-2 (beb8573a),
+  P0-AIA-board-3 with P0-AD-golden (a38a3790), P0-K1-kitskin (22c78e6f,
+  after one re-run for the import-cache flake, `flaky.md`) and SV-B11-B12
+  (14c30355, check_all and the ui guard passed), started AD on O2-2, filed
+  K1-R5 as P0-K1-tokens and copied O2-2 `ready` at a392bcb. It released
+  the merge lock at 08:10Z.
+- Next: the queue in order, one candidate at a time (`flaky.md`):
+  K1-R4's two register items and brief entries (unblocked now that
+  SV-B11-B12's `tools/audit_register.py` is on main), O2-2 (a392bcb, a
+  document only: check_all, no ui guard), then P0-AIA-keyframes-1 (b760d6f1, with
+  AIA-R3's two `check_all.sh` lines). After O2-2 merges, start K1 on
+  P0-K1-tokens; after P0-AIA-keyframes-1 merges, start AIA on
+  P0-AIA-keyframes-2.
+- Earlier: cycle 5 (03:38Z) did bookkeeping under cycle 4's lock and
+  started K1, AIA and SV; cycle 4 (01:38Z) merged O2 and P0-K1-bake-2;
+  cycle 3 (30 October 23:22Z to 31 October 01:50Z) merged P0-AIA-board-2,
+  P0-K1-bake-1, P0-AD-sheet and SV-B7-B9 and opened `flaky.md`; cycles 1
+  and 2 (30 October) started and restarted the agents.

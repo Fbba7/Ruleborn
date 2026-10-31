@@ -90,7 +90,7 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "G84", "G85", "G86", "G87", "G88", "D99"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "G84", "G85", "G86", "G87", "G88", "D99", "D100"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5834,7 +5834,7 @@ dict(id="D64", kind="deviation", severity="minor", status="open",
           "from discoveries and goals, which happen on the device and which the "
           "server cannot yet check; pages and strays, which the device holds, "
           "so a claimed tier is their only record; family approval for 13 to "
-          "15; and any cosmetic to sell \u2014 the catalogue is empty until a set "
+          "15 (D100); and any cosmetic to sell \u2014 the catalogue is empty until a set "
           "is authored. Found building them. Since the owner\u2019s answer to "
           "F41 nothing is sold for Starglass and there are no packs: the "
           "premium track and each cosmetic are store products, a gift is the "
@@ -9887,6 +9887,20 @@ dict(id="D99", kind="deviation", severity="significant", status="open",
          "drafted); keep §26.4’s demand test for the languages after these; have "
          "a native speaker read each drafted language."),
 
+dict(id="D100", kind="deviation", severity="minor", status="open",
+     title="Family approval for 13 to 15 is not built: the server holds a "
+           "minor to the monthly cap and nothing more",
+     refs=["20.2", "22.4"],
+     body="§20.2 caps a minor\u2019s spending each month and §22.4 gives the "
+          "approval words for minors only. The server holds the cap before the "
+          "store is asked (D64), but a parent\u2019s approval for 13 to 15, who "
+          "approves and how the server knows, is not built: the document gives no "
+          "flow for it. It was part of D64\u2019s unbuilt list until the owner "
+          "answered that D64 stays the season track\u2019s and family approval "
+          "takes the next free number.",
+     rec="Say in \u00a720.2 who approves a 13-to-15-year-old\u2019s spending and "
+         "how; then build the approval and the words the player sees."),
+
 dict(id="G88", kind="gap", severity="minor", status="open",
      title="§5.4’s faults have no tile and no clock of their own, §5.5’s "
            "“twice as often” has two readings, and a universe of the Heart "
@@ -11613,6 +11627,10 @@ V37 = {
     "written from British by a spelling table. Left: the document’s §20.6, "
     "§26.3 and §26.4 (drafted), the coined names in each language (the "
     "owner’s, §26.9), and a native speaker’s read of the drafted languages."),
+
+"D100": dict(status="open", left="build", note=
+    "Renumbered from D64 by the owner's answer to Q5: family approval for 13 "
+    "to 15 is not built, and the document gives no flow for it."),
 
 "G88": dict(status="open", left="document", note=
     "Found building faults and flicker into heists across a universe, after "
@@ -15090,6 +15108,12 @@ EDITS = {
          find="English and Brazilian Portuguese at launch.",
          replace="English, Portuguese, German and French at launch.",
          why="The demand test starts after the owner’s six. D99."),
+],
+"D100": [
+    dict(section="20.2", action="replace",
+         find="Family approval where set up; €25 a month cap",
+         replace="The store\u2019s family approval where the family has set it up (the game builds none of its own); €25 a month cap",
+         why="Whose approval 13 to 15 means. D100."),
 ],
 "G88": [
     dict(section="5.4", action="replace",

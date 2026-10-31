@@ -1031,7 +1031,7 @@ built — register **D63**.
   setting the notification URL in App Store Connect.
 - **§5.3's crossing speeds, a Stone bridge's ward and a Rope bridge's
   Snap** in a heist across a universe, which wait on a link's length (G87).
-- **Family approval** for 13 to 15 (D64).
+- **Family approval** for 13 to 15 (D100).
 - **Constellation chat, votes and anomalies** (D63).
 
 ## Layout

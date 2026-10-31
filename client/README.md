@@ -258,7 +258,10 @@ and Account (the last: sign-in, devices, sign-out;
 and saved to `user://settings.cfg` as it is made, and read back on the next
 launch; a first launch starts in the phone's language. The volumes are three
 audio buses, so an alarm is never silenced with the music. Reduced motion is
-read by `ui/motion.gd` and the 3D views; haptics play through
+read by `ui/motion.gd` and the 3D views, and it never flashes the screen's
+edge: the alarm's edge keeps its steady tint without the flash, and Harmony's
+flicker and unmaking previews draw no strobe or edge flicker
+(`tests/a11y_motion_tests.gd`); haptics play through
 `app/haptics.gd`; what the rest do is under "Accessibility" above.
 
 **Words.** No screen holds text of its own. Every word comes from

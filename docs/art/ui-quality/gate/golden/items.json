@@ -1,0 +1,1129 @@
+{
+ "version": 1,
+ "rubric_version": 1,
+ "note": "Built by python3 tools/ui_gate/golden.py build; see README.md beside this file.",
+ "items": [
+  {
+   "id": "today-home",
+   "class": "screen",
+   "title": "Today's home, rendered at dd326ca8",
+   "source": "docs/art/ui-quality/audit-home.png",
+   "crop": [
+    12,
+    44,
+    520,
+    1144
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "about fifteen equal pills and no primary action; small unstroked Manrope over a busy scene (section 5.1 of report.md)",
+   "image": "images/today-home.png"
+  },
+  {
+   "id": "today-heist",
+   "class": "screen",
+   "title": "Today's heist",
+   "source": "docs/art/ui-quality/audit-heist.png",
+   "crop": [
+    12,
+    44,
+    520,
+    1144
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "the strongest of today's screens: rendered busts, but a cream timer pill and unstroked words over the world",
+   "image": "images/today-heist.png"
+  },
+  {
+   "id": "today-result",
+   "class": "screen",
+   "title": "Today's result",
+   "source": "docs/art/ui-quality/audit-result.png",
+   "crop": [
+    12,
+    44,
+    520,
+    1144
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "the reward is one flat tile; prose and a replay line compete with it",
+   "image": "images/today-result.png"
+  },
+  {
+   "id": "today-character",
+   "class": "screen",
+   "title": "Today's character",
+   "source": "docs/art/ui-quality/audit-character.png",
+   "crop": [
+    12,
+    44,
+    520,
+    1144
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "the best material work today, a 3D character on a plinth and a stroked LEVEL UP; prose cards carry the rest",
+   "image": "images/today-character.png"
+  },
+  {
+   "id": "today-settings",
+   "class": "screen",
+   "title": "Today's settings",
+   "source": "docs/art/ui-quality/audit-settings.png",
+   "crop": [
+    12,
+    44,
+    520,
+    1144
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "an app's settings page in game colours: thin rows, small icons",
+   "image": "images/today-settings.png"
+  },
+  {
+   "id": "v3-home",
+   "class": "screen",
+   "title": "Screens v3: universe map",
+   "source": "art/design/stills/screens/01-universe-map.png",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "CSS materials, small Manrope, no single primary action (section 5.2)",
+   "image": "images/v3-home.png"
+  },
+  {
+   "id": "v3-heist",
+   "class": "screen",
+   "title": "Screens v3: heist",
+   "source": "art/design/stills/screens/02-heist.png",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "a web overlay's HUD over the world",
+   "image": "images/v3-heist.png"
+  },
+  {
+   "id": "v3-result",
+   "class": "screen",
+   "title": "Screens v3: heist result",
+   "source": "art/design/stills/screens/07-heist-result.png",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "the study card and reward tiles are v3's best; CSS gloss, text under §21.8's floor",
+   "image": "images/v3-result.png"
+  },
+  {
+   "id": "v3-character",
+   "class": "screen",
+   "title": "Screens v3: character",
+   "source": "art/design/stills/screens/11-character.png",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "the character on a plinth and a stroked UPGRADE; 10-11 pt text",
+   "image": "images/v3-character.png"
+  },
+  {
+   "id": "v3-settings",
+   "class": "screen",
+   "title": "Screens v3: settings and wellbeing",
+   "source": "art/design/stills/screens/19-settings-and-wellbeing.png",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "thin rows and text at 10-11 pt",
+   "image": "images/v3-settings.png"
+  },
+  {
+   "id": "t14-heist",
+   "class": "screen",
+   "title": "T14's heist proof, authored art",
+   "source": "docs/art/ui-quality/proof-heist-hud.png",
+   "crop": [
+    402,
+    44,
+    780,
+    864
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": true,
+   "why": "the HUD on baked art with stroked display words; one idea is not yet carried by the whole screen",
+   "image": "images/t14-heist.png"
+  },
+  {
+   "id": "t14-heist-hc",
+   "class": "screen",
+   "title": "T14's heist proof, high contrast",
+   "source": "docs/art/ui-quality/proof-high-contrast.png",
+   "crop": [
+    439,
+    44,
+    854,
+    944
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": true,
+   "why": "the high-contrast twin: plain materials by design (§21.8)",
+   "image": "images/t14-heist-hc.png"
+  },
+  {
+   "id": "t14-hud-top",
+   "class": "kit art",
+   "title": "T14's heist HUD, top, authored art",
+   "source": "docs/art/ui-quality/proof-heist-top.png",
+   "crop": [
+    975,
+    44,
+    1926,
+    374
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "lipped, glossed frames and stroked numbers",
+   "image": "images/t14-hud-top.png"
+  },
+  {
+   "id": "t14-hud-bottom",
+   "class": "kit art",
+   "title": "T14's heist HUD, bottom, authored art",
+   "source": "docs/art/ui-quality/proof-heist-bottom.png",
+   "crop": [
+    742,
+    44,
+    1460,
+    464
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "Cast and Get out as lit buttons, stroked names",
+   "image": "images/t14-hud-bottom.png"
+  },
+  {
+   "id": "today-hud-top",
+   "class": "kit art",
+   "title": "Today's heist HUD, top",
+   "source": "docs/art/ui-quality/proof-heist-top.png",
+   "crop": [
+    12,
+    44,
+    963,
+    374
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "a cream timer pill and unstroked Manrope",
+   "image": "images/today-hud-top.png"
+  },
+  {
+   "id": "today-hud-bottom",
+   "class": "kit art",
+   "title": "Today's heist HUD, bottom",
+   "source": "docs/art/ui-quality/proof-heist-bottom.png",
+   "crop": [
+    12,
+    44,
+    730,
+    464
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "unstroked names over the world; flat bars",
+   "image": "images/today-hud-bottom.png"
+  },
+  {
+   "id": "board-enamel",
+   "class": "kit art",
+   "title": "Style board: the violet card",
+   "source": "art/ui/board/board.png",
+   "crop": [
+    0,
+    788,
+    780,
+    1754
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": true,
+   "why": "O2 point B4: the gloss band does not read at 1x, so the card reads as a web card; B5: the selected card's glow",
+   "image": "images/board-enamel.png"
+  },
+  {
+   "id": "board-gold",
+   "class": "kit art",
+   "title": "Style board: gold main actions",
+   "source": "art/ui/board/board.png",
+   "crop": [
+    0,
+    1818,
+    780,
+    2602
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "struck gold on a thick lip, words on the light half",
+   "image": "images/board-gold.png"
+  },
+  {
+   "id": "board-wood",
+   "class": "kit art",
+   "title": "Style board: oak frame and leather button",
+   "source": "art/ui/board/board.png",
+   "crop": [
+    0,
+    2666,
+    780,
+    3446
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": true,
+   "why": "O2 point B11: the leather button sits 0.6 value steps off its well",
+   "image": "images/board-wood.png"
+  },
+  {
+   "id": "board-glass",
+   "class": "kit art",
+   "title": "Style board: glass pills over the skies",
+   "source": "art/ui/board/board.png",
+   "crop": [
+    0,
+    3510,
+    780,
+    4446
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "smoked glass with a gold rim, checked over three skies",
+   "image": "images/board-glass.png"
+  },
+  {
+   "id": "board-parchment",
+   "class": "kit art",
+   "title": "Style board: parchment sheet",
+   "source": "art/ui/board/board.png",
+   "crop": [
+    0,
+    4510,
+    780,
+    5404
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "parchment with brown ink, browned edges",
+   "image": "images/board-parchment.png"
+  },
+  {
+   "id": "board-type",
+   "class": "kit art",
+   "title": "Style board: the three faces",
+   "source": "art/ui/board/board.png",
+   "crop": [
+    0,
+    5468,
+    780,
+    6896
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "§21.8's faces as written, display words outlined",
+   "image": "images/board-type.png"
+  },
+  {
+   "id": "board-light",
+   "class": "kit art",
+   "title": "Style board: the studio spheres",
+   "source": "art/ui/board/board.png",
+   "crop": [
+    0,
+    6960,
+    780,
+    7928
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "O2 point B3: physically based metal and clearcoat reflections, not §21.3's toon light",
+   "image": "images/board-light.png"
+  },
+  {
+   "id": "board-icons",
+   "class": "icon",
+   "title": "Style board: four hero icons",
+   "source": "art/ui/board/board.png",
+   "crop": [
+    0,
+    8860,
+    780,
+    9928
+   ],
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "O2 point B3: rendered with metalness and room reflections against §21.3 and D5 (b); otherwise strong",
+   "image": "images/board-icons.png"
+  },
+  {
+   "id": "board-hc",
+   "class": "kit art",
+   "title": "Style board: each material, plain",
+   "source": "art/ui/board/board.png",
+   "crop": [
+    0,
+    9992,
+    780,
+    11436
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "the high-contrast forms O2 approved",
+   "image": "images/board-hc.png"
+  },
+  {
+   "id": "board-hc-enamel",
+   "class": "kit art",
+   "title": "Style board, high contrast: the violet card",
+   "source": "art/ui/board/board_hc.png",
+   "crop": [
+    0,
+    788,
+    780,
+    1762
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "opaque, flat, outlined at 3 points",
+   "image": "images/board-hc-enamel.png"
+  },
+  {
+   "id": "board-hc-gold",
+   "class": "kit art",
+   "title": "Style board, high contrast: gold main actions",
+   "source": "art/ui/board/board_hc.png",
+   "crop": [
+    0,
+    1826,
+    780,
+    2610
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "the lip kept as a flat band",
+   "image": "images/board-hc-gold.png"
+  },
+  {
+   "id": "ai-starlight",
+   "class": "icon",
+   "title": "AI artist's Starlight at 256 px",
+   "source": "docs/art/ui-quality/ai-artist-icons.png",
+   "crop": [
+    300,
+    505,
+    520,
+    725
+   ],
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "modelled star, lit, outlined",
+   "image": "images/ai-starlight.png"
+  },
+  {
+   "id": "ai-essence",
+   "class": "icon",
+   "title": "AI artist's Essence at 256 px",
+   "source": "docs/art/ui-quality/ai-artist-icons.png",
+   "crop": [
+    520,
+    505,
+    740,
+    725
+   ],
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "a lit drop with a glint",
+   "image": "images/ai-essence.png"
+  },
+  {
+   "id": "ai-renown",
+   "class": "icon",
+   "title": "AI artist's Renown at 256 px",
+   "source": "docs/art/ui-quality/ai-artist-icons.png",
+   "crop": [
+    740,
+    505,
+    960,
+    725
+   ],
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "a cut gem with facets in light",
+   "image": "images/ai-renown.png"
+  },
+  {
+   "id": "ai-chest",
+   "class": "icon",
+   "title": "AI artist's Chest at 256 px",
+   "source": "docs/art/ui-quality/ai-artist-icons.png",
+   "crop": [
+    965,
+    505,
+    1185,
+    725
+   ],
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": true,
+   "why": "the chest reads, but its wood is busy at 48 pt",
+   "image": "images/ai-chest.png"
+  },
+  {
+   "id": "ai-pip",
+   "class": "icon",
+   "title": "AI artist's Pip, crew portrait at 256 px",
+   "source": "docs/art/ui-quality/ai-artist-icons.png",
+   "crop": [
+    1180,
+    505,
+    1400,
+    725
+   ],
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "a rendered portrait in a gold ring",
+   "image": "images/ai-pip.png"
+  },
+  {
+   "id": "today-icon-starlight",
+   "class": "icon",
+   "title": "Today's Starlight icon",
+   "source": "docs/art/ui-quality/ai-artist-icons.png",
+   "crop": [
+    300,
+    55,
+    520,
+    275
+   ],
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "shaded but drawn as vector gradients; thin outline",
+   "image": "images/today-icon-starlight.png"
+  },
+  {
+   "id": "today-icon-essence",
+   "class": "icon",
+   "title": "Today's Essence icon",
+   "source": "docs/art/ui-quality/ai-artist-icons.png",
+   "crop": [
+    520,
+    55,
+    740,
+    275
+   ],
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "a gradient drop, no model",
+   "image": "images/today-icon-essence.png"
+  },
+  {
+   "id": "today-icon-renown",
+   "class": "icon",
+   "title": "Today's Renown icon",
+   "source": "docs/art/ui-quality/ai-artist-icons.png",
+   "crop": [
+    740,
+    55,
+    960,
+    275
+   ],
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "a flat-faceted gem",
+   "image": "images/today-icon-renown.png"
+  },
+  {
+   "id": "today-icon-loot",
+   "class": "icon",
+   "title": "Today's Loot bag icon",
+   "source": "docs/art/ui-quality/ai-artist-icons.png",
+   "crop": [
+    965,
+    55,
+    1185,
+    275
+   ],
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "a muddy bag that does not read as a shape",
+   "image": "images/today-icon-loot.png"
+  },
+  {
+   "id": "plant-gold-flat",
+   "class": "kit art",
+   "title": "Planted: gold main actions, flattened",
+   "source": "board-gold",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "flatten",
+    "breaks": 1,
+    "colours": 6
+   },
+   "expected": "fail",
+   "borderline": false,
+   "why": "cut to six flat colours: no brushing, gloss or soft drop",
+   "image": "images/plant-gold-flat.png"
+  },
+  {
+   "id": "plant-enamel-flat",
+   "class": "kit art",
+   "title": "Planted: violet card, flattened",
+   "source": "board-enamel",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "flatten",
+    "breaks": 1,
+    "colours": 6
+   },
+   "expected": "fail",
+   "borderline": false,
+   "why": "cut to six flat colours: no glaze or bevel",
+   "image": "images/plant-enamel-flat.png"
+  },
+  {
+   "id": "plant-hud-top-flat",
+   "class": "kit art",
+   "title": "Planted: HUD top, part flattened",
+   "source": "t14-hud-top",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "flatten",
+    "breaks": 1,
+    "colours": 16
+   },
+   "expected": "fail",
+   "borderline": true,
+   "why": "cut to sixteen colours: the lips stay, the gloss bands go",
+   "image": "images/plant-hud-top-flat.png"
+  },
+  {
+   "id": "plant-starlight-flat",
+   "class": "icon",
+   "title": "Planted: Starlight as a flat icon",
+   "source": "ai-starlight",
+   "crop": null,
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "flatten",
+    "breaks": 3,
+    "colours": 3
+   },
+   "expected": "fail",
+   "borderline": false,
+   "why": "three flat colours: a clip-art star",
+   "image": "images/plant-starlight-flat.png"
+  },
+  {
+   "id": "plant-essence-flat",
+   "class": "icon",
+   "title": "Planted: Essence as a flat icon",
+   "source": "ai-essence",
+   "crop": null,
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "flatten",
+    "breaks": 3,
+    "colours": 3
+   },
+   "expected": "fail",
+   "borderline": false,
+   "why": "three flat colours",
+   "image": "images/plant-essence-flat.png"
+  },
+  {
+   "id": "plant-heist-one-step",
+   "class": "screen",
+   "title": "Planted: heist proof at one value step",
+   "source": "t14-heist",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "low_value",
+    "breaks": 8,
+    "keep": 0.35
+   },
+   "expected": "fail",
+   "borderline": false,
+   "why": "value range at 35%: controls about one step off the world",
+   "image": "images/plant-heist-one-step.png"
+  },
+  {
+   "id": "plant-heist-dim",
+   "class": "screen",
+   "title": "Planted: heist proof with its values squeezed",
+   "source": "t14-heist",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "low_value",
+    "breaks": 8,
+    "keep": 0.6
+   },
+   "expected": "fail",
+   "borderline": true,
+   "why": "value range at 60%: under two steps on the dark buttons only",
+   "image": "images/plant-heist-dim.png"
+  },
+  {
+   "id": "plant-heist-unstroked",
+   "class": "screen",
+   "title": "Planted: heist proof with unstroked labels",
+   "source": "t14-heist",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "unstroked",
+    "breaks": 2,
+    "labels": [
+     [
+      40,
+      300,
+      16,
+      "Bramble · Carrier"
+     ],
+     [
+      150,
+      430,
+      16,
+      "Vault: 2 doors left"
+     ],
+     [
+      50,
+      560,
+      16,
+      "Guard route 3 · slow"
+     ]
+    ]
+   },
+   "expected": "fail",
+   "borderline": false,
+   "why": "three body-type labels with no outline over the world",
+   "image": "images/plant-heist-unstroked.png"
+  },
+  {
+   "id": "plant-type-hue",
+   "class": "kit art",
+   "title": "Planted: type plate with colour roles swapped",
+   "source": "board-type",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "hue_mirror",
+    "breaks": 8
+   },
+   "expected": "fail",
+   "borderline": false,
+   "why": "red and green swap; gold turns lime",
+   "image": "images/plant-type-hue.png"
+  }
+ ]
+}

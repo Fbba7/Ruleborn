@@ -5,7 +5,10 @@ extends RefCounted
 ## says what its words sit on; the three faces load with tabular figures
 ## where numbers change; every icon in the manifest loads; a button squashes
 ## when pressed and changes at once under reduced motion; and every control
-## the kit makes meets §21.1's 48 points.
+## the kit makes meets §21.1's 48 points. Every material maps onto one of the
+## kit's 35 skins, every skin's switch is off as shipped, a skin switched on
+## draws from the atlas, and a piece the atlas lacks falls back to the
+## code-drawn box (kit-spec.md sections 6.7 and 8.2).
 
 var tree: SceneTree
 var check: Callable
@@ -26,6 +29,9 @@ func run() -> void:
 	await _tab_words()
 	await _small_disc()
 	await _pieces()
+	_skins()
+	await _switch()
+	_skies()
 
 
 func _tokens() -> void:
@@ -268,3 +274,108 @@ func _pieces() -> void:
 	check.call("this wave's pieces (loot, Sage, crew key, friend, feed and log rows, cards, tile, hint, quest, "
 			+ "album) meet 48 points and 13 points and stay on the screen at 200% text (§21.1, §21.8, §20.8)",
 		bad.is_empty(), "; ".join(bad))
+
+
+func _skins() -> void:
+	var bad := []
+	for m: String in Tokens.materials():
+		if KitSkin.skin(m) == "" and m not in KitSkin.BACKDROP:
+			bad.append("%s maps onto no skin" % m)
+	var shipped: Variant = JSON.parse_string(FileAccess.get_file_as_string(KitSkin.FAMILIES_FILE))
+	var switches: Dictionary = shipped if shipped is Dictionary else {}
+	if KitSkin.SKINS.size() != 35:
+		bad.append("%d skins, not 35" % KitSkin.SKINS.size())
+	for k: String in KitSkin.SKINS:
+		if not switches.has(k):
+			bad.append("no switch for %s" % k)
+	for k: String in switches:
+		if not KitSkin.SKINS.has(k):
+			bad.append("a switch for no skin, %s" % k)
+		elif switches[k] != false:
+			bad.append("%s is switched on" % k)
+	check.call("every material maps onto one of the kit's 35 skins or the backdrop, and kit_families.json holds "
+			+ "one switch per skin, every one off (kit-spec.md sections 6.7, 8.2)", bad.is_empty(), "; ".join(bad))
+
+
+func _switch() -> void:
+	var bad := []
+	KitSkin.reset()
+	var screen := Control.new()
+	screen.size = Vector2(1080, 2340)
+	tree.root.add_child(screen)
+	# Off, as shipped: the code-drawn box, and no face from the atlas.
+	var off := PanelContainer.new()
+	off.custom_minimum_size = Vector2(300, 200)
+	screen.add_child(off)
+	var off_box := KitSkin.panel(off, "card")
+	if not off_box.piece().is_empty() or off_box.find_child("KitFace", true, false) != null:
+		bad.append("a skin switched off draws from the atlas")
+	if off_box.material == null or not off_box.material is ShaderMaterial:
+		bad.append("a skin switched off lost the code-drawn box's shader")
+	# On, with a small kit: the dark panel's box and the school disc.
+	var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
+	img.fill(Color.WHITE)
+	var normal := ImageTexture.create_from_image(img)
+	var high := ImageTexture.create_from_image(img)
+	KitSkin.use({"format": 1, "family": "kit", "px_per_point": 6, "pieces": {
+		"panel_dark__box__normal": {"x": 0, "y": 0, "w": 48, "h": 48, "slice": {"l": 12, "t": 12, "r": 12, "b": 12},
+			"tint": false},
+		"disc_school__box__normal": {"x": 48, "y": 0, "w": 16, "h": 16, "slice": null, "tint": true},
+	}}, normal, high)
+	KitSkin.switch("panel_dark", true)
+	KitSkin.switch("disc_school", true)
+	KitSkin.switch("button_primary", true)
+	var on := PanelContainer.new()
+	on.custom_minimum_size = Vector2(300, 200)
+	screen.add_child(on)
+	var on_box := KitSkin.panel(on, "card")
+	var disc := PanelContainer.new()
+	disc.custom_minimum_size = Vector2(96, 96)
+	screen.add_child(disc)
+	var disc_box := UI.dress(disc, "portrait_motion")
+	# A skin on whose piece the atlas lacks: a disabled dark button, and the
+	# gold, which this kit has no piece for at all.
+	var lame := Button.new()
+	lame.text = "Wait"
+	lame.disabled = true
+	screen.add_child(lame)
+	var lame_box := KitSkin.button(lame, "card")
+	var gold := Button.new()
+	gold.text = "Play"
+	screen.add_child(gold)
+	var gold_box := KitSkin.button(gold, "gold")
+	for i: int in 2:
+		await tree.process_frame
+	if on_box.piece().is_empty() or on_box.find_child("KitFace", true, false) == null:
+		bad.append("the dark panel switched on does not draw from the atlas")
+	if not bool(disc_box.piece().get("tint", false)):
+		bad.append("a school's portrait does not take the neutral, tinted disc")
+	if not off_box.piece().is_empty() or not off_box.find_child("KitFace", true, false) == null:
+		bad.append("switching a skin on changed a box dressed before it")
+	if not lame_box.piece().is_empty() or "panel_dark__card__disabled" not in KitSkin.missing:
+		bad.append("a missing disabled face is not drawn by the code-drawn box and logged")
+	if not gold_box.piece().is_empty() or "button_primary__gold__normal" not in KitSkin.missing:
+		bad.append("a skin the atlas has no piece for is not drawn by the code-drawn box and logged")
+	if KitSkin.missing.count("button_primary__gold__normal") != 1:
+		bad.append("a missing piece is logged more than once")
+	Tokens.high_contrast = true
+	if KitSkin.atlas() != high:
+		bad.append("high contrast does not take the _hc atlas")
+	Tokens.high_contrast = false
+	if KitSkin.atlas() != normal or not is_equal_approx(KitSkin.scale(), UI.PX_PER_POINT / 6.0):
+		bad.append("the atlas or its scale is wrong")
+	screen.queue_free()
+	KitSkin.reset()
+	await tree.process_frame
+	check.call("a skin switched on draws its materials from the kit's atlas (its _hc twin in high contrast) and one "
+			+ "switched off from the code-drawn box; a piece the atlas lacks falls back to the code-drawn box and "
+			+ "is logged once (kit-spec.md section 6.7)", bad.is_empty(), "; ".join(bad))
+
+
+func _skies() -> void:
+	var day := Tokens.sky("day")
+	var ok := day == [Tokens.color("sky_top"), Tokens.color("sky_bottom")] \
+		and Tokens.sky("dusk") == [Color("#6A4FC9"), Color("#F29C7B")] \
+		and Tokens.sky("night") == [Color("#1A1433"), Color("#3A2B6B")]
+	check.call("§21.2's day, dusk and night skies are tokens, top and bottom", ok,
+		"day %s, dusk %s, night %s" % [day, Tokens.sky("dusk"), Tokens.sky("night")])
