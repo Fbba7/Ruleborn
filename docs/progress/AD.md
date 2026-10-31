@@ -1,29 +1,29 @@
 # AD art director: progress
 
-- Status: Green: pre-check PASS at 7d8c4ed (2026-10-31T02:25:32Z); the last push holds the golden set part 1 (`gate/golden/`), ready.
-- Progress: 2 of 8 tasks merged (P0-AD-rubric, P0-AD-sheet); O2 ready (586cc5a); P0-AD-golden ready (7d8c4ed); 0 items passed by the gate (AD's tasks carry no gate items).
-- Done: P0-AD-rubric and P0-AD-sheet (merged); O2 (ready); P0-AD-golden: 45 items, 27 expected to fail, 16 borderline, 9 of them planted fails, and the labelling form `labels.md` (238 rows).
-- Next: O2-2 (waits for P0-AIA-board-3 and P0-K1-contract-2), then P0-AD-golden-2 (waits for P0-AIA-keyframes-3).
+- Status: pre-check of a392bcb running; the last push holds O2-2's decision, `gate/approvals/O2-2.md`; ready once it passes.
+- Progress: 4 of 8 tasks merged (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden); O2-2 written (a392bcb, pre-check running); 0 items passed by the gate (AD's tasks carry no gate items).
+- Done: P0-AD-rubric, P0-AD-sheet, O2 and P0-AD-golden (merged); O2-2: every redirected point approved (board B3, B4, B5, B11; contract K1-K3); the board and sections 2-6 of kit-spec.md are in effect.
+- Next: P0-AD-golden-2 (waits for P0-AIA-keyframes-3), then O3 and P0-AD-calibrate.
 - Blocked by: none.
-- Owner decision needed: none from AD. P0-K1-contract-2 may prepare decision brief entries for §21.2's menu backdrop and §21.8's red and green words on dark surfaces.
+- Owner decision needed: none from AD. Two rows of kit-spec.md section 2.1 (success words on dark; the menus' backdrop shape) stay pending the brief entries K1-R4 asked the lead for.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
 | P0-AD-rubric: rubric v1 and judge prompts | 3 | merged (167ccf6c) | `gate/rubric.md`, `gate/prompts/*.md`; pre-check PASS at 334224c, 2026-10-30T01:44:46Z (`All checks passed.`, `DONE exit=0`) |
 | P0-AD-sheet: `tools/ui_gate/sheet.py` and image checks | 3 | merged | pre-check PASS at f5e9571, 2026-10-30T23:20:33Z (`All checks passed.`, `DONE exit=0`); `python3 tools/ui_gate/sheet.py --self-test` passes (planted fails for value steps, HUD share and hierarchy); `gate/shots.md` |
-| O2: approve the board and kit contract | 0.5 | ready (586cc5a) | pre-check PASS at 586cc5a, 2026-10-31T01:04:30Z (`All checks passed.`, `DONE exit=0`); `gate/approvals/O2.md`; value steps measured with `tools/ui_gate/checks.py`; `check_docs_consistency.py` clean |
-| P0-AD-golden: golden set part 1 | 2 | ready (7d8c4ed) | pre-check PASS at 7d8c4ed, 2026-10-31T02:25:32Z (`All checks passed.`, `DONE exit=0`); `gate/golden/items.json`, `images/`, `labels.md`, `README.md`; `python3 tools/ui_gate/golden.py check` ("45 items, 238 label rows"), run by `sheet.py --self-test` in `check_all.sh` |
-| O2-2: re-approve the redirected points | 0.5 | open (waits for P0-AIA-board-3, P0-K1-contract-2) | |
+| O2: approve the board and kit contract | 0.5 | merged (fdd82b7c) | pre-check PASS at 586cc5a, 2026-10-31T01:04:30Z (`All checks passed.`, `DONE exit=0`); `gate/approvals/O2.md`; value steps measured with `tools/ui_gate/checks.py`; `check_docs_consistency.py` clean |
+| P0-AD-golden: golden set part 1 | 2 | merged (a38a3790) | pre-check PASS at 7d8c4ed, 2026-10-31T02:25:32Z (`All checks passed.`, `DONE exit=0`); `gate/golden/items.json`, `images/`, `labels.md`, `README.md`; `python3 tools/ui_gate/golden.py check` ("45 items, 238 label rows"), run by `sheet.py --self-test` in `check_all.sh` |
+| O2-2: re-approve the redirected points | 0.5 | working (a392bcb, pre-check running) | `gate/approvals/O2-2.md`; `checks.py value-steps` passes on all 11 controls of `board.png` and `board_hc.png` (BUILD ΔL* 26.6, was 6.2); every contrast figure in kit-spec.md's revised rows recomputed and matching; `check_docs_consistency.py` clean |
 | P0-AD-golden-2: golden set part 2 | 1 | open (waits for P0-AD-golden, P0-AIA-keyframes-3) | |
 | O3: label the golden set | 2.5 | open (waits for P0-AD-golden-2) | |
 | P0-AD-calibrate: calibration | 3 | open (waits for O3) | |
 
 ## Handoff
-- Last verified commit: 7d8c4ed (pre-check green, 2026-10-31T02:25:32Z).
-- Done: P0-AD-golden. `tools/ui_gate/golden.py` builds `gate/golden/images/` from `items.json` (sources cropped; planted fails made by flatten, low_value, hue_mirror and unstroked, each naming the quality it breaks), writes the empty form `labels.md` from `labels-head.md`, and checks items, images and form. Sources: the audit screenshots and "client today" icons (fail), the v3 stills (fail), the fourteen-quality proofs (pass), the O2 board plates (pass but light and icons; enamel and wood borderline after O2 B4 and B11), the AI artist icons (pass). Expectations and reasons are in items.json, not in the form, so O3's labels test them.
+- Last verified commit: a392bcb (pre-check, 2026-10-31; result in the status file's `precheck`).
+- Done: O2-2. Approved all seven redirected points: B3 (leather off a lit oak well, ΔL* 26.6), B4 (enamel gloss band over the top 38%, 3-pt rim, 6-pt foot), B5 (gold rim and foot, no glow), B11 (studio.html: one toon shader, four-step ramp, violet shade, no metalness or reflections); K1 (section 2.1 takes §21.2's and §21.8's values; success words on dark and the backdrop's radial stay pending owner decisions with O2's rulings 1 and 2), K2 (T2 over art, T0 with drop on calm surfaces), K3 (tertiary an inked plate). O2's interim rulings 3 and 4 end; 1 and 2 are now the contract's rows.
 - Half done: nothing.
-- Open hypotheses: the expected labels on the board items follow O2; when P0-AIA-board-3 rebakes board.png, the board items' crops (in pixels of board.png at 2x) may move and their images change, so P0-AD-golden-2 re-measures the plate rectangles and rebuilds (`golden.py build`; `golden.py check` catches a size change). The O2 hypotheses on quality 8's ring measure and rubric version 2 (quality 2's "gradient", quality 14's glass) still stand for P0-AD-calibrate.
-- Next step: P0-AD-golden is ready at 7d8c4ed. Next session: O2-2 if P0-AIA-board-3 and P0-K1-contract-2 have merged, else P0-AD-golden-2 once P0-AIA-keyframes-3 has merged.
+- Open hypotheses: the brief entries for the two pending rows are not in `brief.json` yet (the lead waits for SV-B11-B12's register items). The O2 hypotheses on quality 8's ring measure and rubric version 2 (quality 2's "gradient", quality 14's glass) still stand for P0-AD-calibrate.
+- Next step: P0-AD-golden-2 once P0-AIA-keyframes-3 merges: re-measure the board plates on the rebaked `board.png` (`golden.py build`, then `check`) and re-read the expected labels of the light, icon, enamel and wood items against O2-2.md.
 
 ## Tried and failed
 - 2026-10-30 first pre-check of f5e9571: failed at the wasm32 cargo build because this container lacked the wasm32-unknown-unknown target (setup step skipped); installed it and re-ran: PASS
