@@ -15,20 +15,20 @@ at O2 with K1's kit contract; it is not judged by the gate.
 | [`studio.html`](studio.html) | The studio: one light, the four hero icons modelled in three.js, and the 2D finish that holds the outline and glint rules. Every colour is a token name. |
 | [`bake_art.mjs`](bake_art.mjs) | Renders `studio.html` into `art/`: each icon at 256 pixels in the normal and the high-contrast form, the finish step by step, and the studio's spheres. |
 | [`art/`](art) | The baked pictures the board shows. Rebake after changing `studio.html` or the colour tokens. |
-| [`shoot_board.mjs`](shoot_board.mjs) | Photographs the board at phone size into `board.png` and `board_hc.png`. |
+| [`shoot_board.mjs`](shoot_board.mjs) | Photographs the board at phone size into `board.png` and `board_hc.png`, and writes beside each a shot file (`board.shot.json`, `board_hc.shot.json`) with every control's rectangle, for `tools/ui_gate/checks.py`. |
 | [`board.png`](board.png), [`board_hc.png`](board_hc.png) | The board at 390 points wide, 2 pixels a point, normal and high contrast: what the owner reviews at O2. |
 
 ```bash
 node art/ui/board/build_tokens.mjs            # after tokens.json changes
-node art/ui/board/check_board.mjs             # colours and contrast, both modes
+node art/ui/board/check_board.mjs             # colours, contrast, value steps, both modes
 node art/ui/board/check_board.mjs --self-test
 (cd tools/ui_research && npm ci)              # three.js, once, for the bake
 node art/ui/board/bake_art.mjs                # after studio.html or tokens change
 node art/ui/board/shoot_board.mjs             # after the board changes
 ```
 
-The checks need only Node and the container's Playwright with its
-Chromium; the bake also needs three.js 0.184 from `tools/ui_research/`. The board opens straight from disk: its fonts are the client's own,
+The checks need Node, the container's Playwright with its Chromium, and
+Python with Pillow and numpy for `tools/ui_gate/checks.py`; the bake also needs three.js 0.184 from `tools/ui_research/`. The board opens straight from disk: its fonts are the client's own,
 under `client/ui/fonts/`.
 
 ## The idea: treasure toys under one light
@@ -43,9 +43,9 @@ colour shows, never which colour.
 
 | Material | Dresses (§21.8) | Fill (tokens) | What it adds |
 |---|---|---|---|
-| Enamel | the violet card | `card` | a glaze over the top 42%, a hot spot where the key lands, a lit lip and a dark foot, faint speckle |
+| Enamel | the violet card | `card` | a gloss band over the top 38% that reads at phone size, a hot spot where the key lands, a 3-point rim of `card_bottom`, a 6-point foot under a lit seam, faint speckle; chosen, a 4-point gold rim and an 8-point gold foot, no glow |
 | Gold | gold for main actions | `gold` | brushed hairlines, the material's 0.32 gloss, a lip split from the face by a lit seam, a glint |
-| Wood and leather | leather for buttons; oak frames from §21.2's wood | `frame_oak`, `leather` | grain along the plank; pebbled leather, cream stitching inside the Motion-shadow rim |
+| Wood and leather | leather for buttons; oak frames from §21.2's wood | `frame_oak`, `leather` | grain along the plank; pebbled leather, cream stitching inside the Motion-shadow rim; the well a leather button sits in is an oak floor lit by the key, two value steps above the leather |
 | Glass | dark glass at 78% over the world | `glass` | a 6-point blur of the world behind, the gold rim, a catch-light and a raked sheen |
 | Parchment | parchment with brown ink | `parchment` | long soil-coloured fibres, edges browned with handling |
 
@@ -58,15 +58,22 @@ change, outlined in ink all round. The board shows each role of
 ## The studio light
 
 One studio lights every rendered piece, so a set of sixty icons stays one
-family by construction (section 9.2 of `report.md`). `studio.html` holds it
-as `STUDIO`:
+family by construction (section 9.2 of `report.md`). It is §21.3's one toon
+look, the world's own: `studio.html` mirrors `client/world/toon_light.gdshaderinc`
+number for number, as `STUDIO` and one shader material (D5 (b): every icon in
+the toon look).
 
-| Light | Colour | Where |
+| Part | What | Where it comes from |
 |---|---|---|
-| Key | `cream` | from the top left and in front; the strongest (2.6) |
-| Rim | the piece's own light (`gold_top`, `life_light`, `time_light`) | from behind on the right (3.0) |
-| Fill | a sky of `paper` over a ground of `night_bottom` | soft, from below (0.6) |
-| Room | three.js's `RoomEnvironment` | reflections for metal and gloss; neutral tone mapping |
+| Key | `cream`, from the top left and in front, read in the diorama's four steps (62, 140, 215, 255 of 255) by N·L remapped to [0, 1] | `toon_ramp` |
+| Shade | falls toward violet (0.55, 0.47, 0.82), never toward black | `shadow_tint` |
+| Colour | each token 10% more saturated | `saturated` |
+| Rim | the piece's own light (`gold_top`, `life_light`, `time_light`), soft, on the lit edge, at 0.42 (the world's 0.28 and a half, since an icon has no world around it) | `rim_strength` |
+| Fill | 6% of the `paper` sky, so the darkest step is not dead | the world's ambient |
+
+No reflections, no metalness, no clear coat: gold, enamel and leather differ
+in colour only, as every material of the world does, and the finish (inner
+light, glints) gives gold its shine.
 
 On flat surfaces the same key becomes a lit top lip, a hot spot and the
 gloss on the upper left, and a shaded foot. Drops fall straight down, as the
@@ -88,15 +95,15 @@ outline; a painted inner light kept to the shape, and the glints.
 
 ## Four hero icons
 
-Starlight (struck gold), Essence (a glassy drop), Tidemark, a law of Time in
+Starlight (struck gold), Essence (a drop of the essence green), Tidemark, a law of Time in
 its school's hourglass frame (§21.8: a law icon's frame is its school's
 shape, §7.2), and the loot bag. Each is modelled from extruded and lathed
 forms with deep rounded bevels, its base colours taken from the tokens, lit
 in the studio and finished by the rules at 256 pixels. The board shows them
 at 76 points on enamel, at 48 on glass over the day sky, and at 48 in grey
 for value. §21.8 asks icons for "a three-stop gradient, a gloss and a soft
-drop shadow"; these are rendered, which gives the same three things with real
-form.
+drop shadow"; these are rendered in the toon light, whose steps are the
+gradient, with the finish's inner light for the gloss and its drop.
 
 ## Each material's high-contrast form
 
@@ -132,18 +139,35 @@ to primary, no glass. On the board, with `?hc=1` or inside a `.hcf` block:
    its letters (widened by 2 pixels) at their worst.
 5. `studio.html` has no colour literal (no `#` hex, no `0x` number, no named
    colour), and every colour name it hands its light, materials and finish is
-   a colour of `tokens.json`.
+   a colour of `tokens.json`. It has its toon ramp, and no physically based
+   material, environment map, metalness, clear coat, sheen or transmission.
 6. Each hero icon in `art/`, in both forms, is 256 × 256 with transparent
    corners; at least 90% of its opaque silhouette's edge is the outline's
    colour (`ink_line`, or `text_on_night` in high contrast), and the ink's
    area over that edge's length, its mean width, is at least three quarters
    of the rule (the measure runs short on the ring's inner side).
+7. Every control on `board.png` and `board_hc.png` (each `.button-type`,
+   `.gold-round` and the selected enamel card; glass pills are information,
+   listed but not held to it) stands two value steps off what it sits on:
+   `tools/ui_gate/checks.py value-steps` on the shot files, ΔL* 20 or more.
 
-Last run: 364 words, all passing in both modes; 8 icons keeping the outline
-rule (10.7-pixel rule: 11.9 to 12.8; high contrast's 16: 14.1 to 17.7); the
-self-test's thirteen planted faults each fail.
+Last run: 376 words, all passing in both modes; 8 icons keeping the outline
+rule (10.7-pixel rule: 12.0 to 12.9; high contrast's 16: 14.2 to 17.7); 22
+controls a value step or more off their ground (ΔL* 22.1 at least); the
+self-test's fifteen planted faults each fail.
 
 ## Found while making it, for O2
+
+Part 3 (O2's redirect of B3, B4, B5 and B11):
+
+- **The leather keeps its hue; its well is lit.** BUILD stands ΔL* 26.8 off
+  its oak floor (39.6 in high contrast), the small LEATHER samples 21.9 and
+  39.1. The plaque above it keeps its own oak.
+- **The chosen card's step comes from its gold.** ΔL* 23.6 off the night
+  (28.8 in high contrast), with no glow; its face lifts to `card_lit_glow`.
+- **The gloss band is held under the card's kicker.** At paper 24% the band
+  took "LAW 9 OF 24 · TIME" to 4.41:1; at 20% it passes and still reads at
+  phone size.
 
 Part 2:
 
