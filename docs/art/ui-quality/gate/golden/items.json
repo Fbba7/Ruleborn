@@ -29,7 +29,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "about fifteen equal pills and no primary action; small unstroked Manrope over a busy scene (section 5.1 of report.md)",
-   "image": "images/today-home.png"
+   "image": "images/today-home.png",
+   "third": 3
   },
   {
    "id": "today-heist",
@@ -57,7 +58,8 @@
    "expected": "fail",
    "borderline": true,
    "why": "the strongest of today's screens: rendered busts, but a cream timer pill and unstroked words over the world",
-   "image": "images/today-heist.png"
+   "image": "images/today-heist.png",
+   "third": 1
   },
   {
    "id": "today-result",
@@ -85,7 +87,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "the reward is one flat tile; prose and a replay line compete with it",
-   "image": "images/today-result.png"
+   "image": "images/today-result.png",
+   "third": 1
   },
   {
    "id": "today-character",
@@ -113,7 +116,8 @@
    "expected": "fail",
    "borderline": true,
    "why": "the best material work today, a 3D character on a plinth and a stroked LEVEL UP; prose cards carry the rest",
-   "image": "images/today-character.png"
+   "image": "images/today-character.png",
+   "third": 3
   },
   {
    "id": "today-settings",
@@ -140,7 +144,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "an app's settings page in game colours: thin rows, small icons",
-   "image": "images/today-settings.png"
+   "image": "images/today-settings.png",
+   "third": 2
   },
   {
    "id": "v3-home",
@@ -163,7 +168,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "CSS materials, small Manrope, no single primary action (section 5.2)",
-   "image": "images/v3-home.png"
+   "image": "images/v3-home.png",
+   "third": 1
   },
   {
    "id": "v3-heist",
@@ -186,7 +192,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "a web overlay's HUD over the world",
-   "image": "images/v3-heist.png"
+   "image": "images/v3-heist.png",
+   "third": 3
   },
   {
    "id": "v3-result",
@@ -209,7 +216,8 @@
    "expected": "fail",
    "borderline": true,
    "why": "the study card and reward tiles are v3's best; CSS gloss, text under §21.8's floor",
-   "image": "images/v3-result.png"
+   "image": "images/v3-result.png",
+   "third": 3
   },
   {
    "id": "v3-character",
@@ -232,7 +240,8 @@
    "expected": "fail",
    "borderline": true,
    "why": "the character on a plinth and a stroked UPGRADE; 10-11 pt text",
-   "image": "images/v3-character.png"
+   "image": "images/v3-character.png",
+   "third": 2
   },
   {
    "id": "v3-settings",
@@ -254,7 +263,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "thin rows and text at 10-11 pt",
-   "image": "images/v3-settings.png"
+   "image": "images/v3-settings.png",
+   "third": 2
   },
   {
    "id": "t14-heist",
@@ -282,7 +292,8 @@
    "expected": "pass",
    "borderline": true,
    "why": "the HUD on baked art with stroked display words; one idea is not yet carried by the whole screen",
-   "image": "images/t14-heist.png"
+   "image": "images/t14-heist.png",
+   "third": 2
   },
   {
    "id": "t14-heist-hc",
@@ -310,7 +321,8 @@
    "expected": "pass",
    "borderline": true,
    "why": "the high-contrast twin: plain materials by design (§21.8)",
-   "image": "images/t14-heist-hc.png"
+   "image": "images/t14-heist-hc.png",
+   "third": 3
   },
   {
    "id": "t14-hud-top",
@@ -334,7 +346,8 @@
    "expected": "pass",
    "borderline": false,
    "why": "lipped, glossed frames and stroked numbers",
-   "image": "images/t14-hud-top.png"
+   "image": "images/t14-hud-top.png",
+   "third": 1
   },
   {
    "id": "t14-hud-bottom",
@@ -358,7 +371,8 @@
    "expected": "pass",
    "borderline": false,
    "why": "Cast and Get out as lit buttons, stroked names",
-   "image": "images/t14-hud-bottom.png"
+   "image": "images/t14-hud-bottom.png",
+   "third": 3
   },
   {
    "id": "today-hud-top",
@@ -382,7 +396,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "a cream timer pill and unstroked Manrope",
-   "image": "images/today-hud-top.png"
+   "image": "images/today-hud-top.png",
+   "third": 1
   },
   {
    "id": "today-hud-bottom",
@@ -406,7 +421,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "unstroked names over the world; flat bars",
-   "image": "images/today-hud-bottom.png"
+   "image": "images/today-hud-bottom.png",
+   "third": 3
   },
   {
    "id": "board-enamel",
@@ -417,7 +433,7 @@
     0,
     788,
     780,
-    1754
+    1966
    ],
    "qualities": [
     1,
@@ -428,9 +444,10 @@
    "origin": "natural",
    "plant": null,
    "expected": "pass",
-   "borderline": true,
-   "why": "O2 point B4: the gloss band does not read at 1x, so the card reads as a web card; B5: the selected card's glow",
-   "image": "images/board-enamel.png"
+   "borderline": false,
+   "why": "after O2 B4 (O2-2 approves it): a gloss band over the top 38%, a dark rim and a foot; reads as fired enamel at 1x",
+   "image": "images/board-enamel.png",
+   "third": 2
   },
   {
    "id": "board-gold",
@@ -439,9 +456,9 @@
    "source": "art/ui/board/board.png",
    "crop": [
     0,
-    1818,
+    2030,
     780,
-    2602
+    2815
    ],
    "qualities": [
     1,
@@ -454,7 +471,8 @@
    "expected": "pass",
    "borderline": false,
    "why": "struck gold on a thick lip, words on the light half",
-   "image": "images/board-gold.png"
+   "image": "images/board-gold.png",
+   "third": 1
   },
   {
    "id": "board-wood",
@@ -463,9 +481,9 @@
    "source": "art/ui/board/board.png",
    "crop": [
     0,
-    2666,
+    2879,
     780,
-    3446
+    3733
    ],
    "qualities": [
     1,
@@ -476,9 +494,10 @@
    "origin": "natural",
    "plant": null,
    "expected": "pass",
-   "borderline": true,
-   "why": "O2 point B11: the leather button sits 0.6 value steps off its well",
-   "image": "images/board-wood.png"
+   "borderline": false,
+   "why": "after O2 B11 (O2-2 approves it): the oak well is lit, so the leather button stands more than two value steps off it",
+   "image": "images/board-wood.png",
+   "third": 2
   },
   {
    "id": "board-glass",
@@ -487,9 +506,9 @@
    "source": "art/ui/board/board.png",
    "crop": [
     0,
-    3510,
+    3797,
     780,
-    4446
+    4733
    ],
    "qualities": [
     1,
@@ -502,7 +521,8 @@
    "expected": "pass",
    "borderline": false,
    "why": "smoked glass with a gold rim, checked over three skies",
-   "image": "images/board-glass.png"
+   "image": "images/board-glass.png",
+   "third": 3
   },
   {
    "id": "board-parchment",
@@ -511,9 +531,9 @@
    "source": "art/ui/board/board.png",
    "crop": [
     0,
-    4510,
+    4797,
     780,
-    5404
+    5691
    ],
    "qualities": [
     1,
@@ -526,7 +546,8 @@
    "expected": "pass",
    "borderline": false,
    "why": "parchment with brown ink, browned edges",
-   "image": "images/board-parchment.png"
+   "image": "images/board-parchment.png",
+   "third": 3
   },
   {
    "id": "board-type",
@@ -535,9 +556,9 @@
    "source": "art/ui/board/board.png",
    "crop": [
     0,
-    5468,
+    5755,
     780,
-    6896
+    7183
    ],
    "qualities": [
     1,
@@ -550,7 +571,8 @@
    "expected": "pass",
    "borderline": false,
    "why": "§21.8's faces as written, display words outlined",
-   "image": "images/board-type.png"
+   "image": "images/board-type.png",
+   "third": 1
   },
   {
    "id": "board-light",
@@ -559,9 +581,9 @@
    "source": "art/ui/board/board.png",
    "crop": [
     0,
-    6960,
+    7247,
     780,
-    7928
+    8145
    ],
    "qualities": [
     1,
@@ -574,7 +596,8 @@
    "expected": "fail",
    "borderline": true,
    "why": "O2 point B3: physically based metal and clearcoat reflections, not §21.3's toon light",
-   "image": "images/board-light.png"
+   "image": "images/board-light.png",
+   "third": 3
   },
   {
    "id": "board-icons",
@@ -583,9 +606,9 @@
    "source": "art/ui/board/board.png",
    "crop": [
     0,
-    8860,
+    9077,
     780,
-    9928
+    10157
    ],
    "qualities": [
     1,
@@ -595,10 +618,11 @@
    ],
    "origin": "natural",
    "plant": null,
-   "expected": "fail",
+   "expected": "pass",
    "borderline": true,
-   "why": "O2 point B3: rendered with metalness and room reflections against §21.3 and D5 (b); otherwise strong",
-   "image": "images/board-icons.png"
+   "why": "rebaked in the toon look of §21.3 after O2 B3 (O2-2 approves it): four-step ramp, violet shade, rim kept; borderline because the 48-point row reads small and the hourglass is busy",
+   "image": "images/board-icons.png",
+   "third": 2
   },
   {
    "id": "board-hc",
@@ -607,9 +631,9 @@
    "source": "art/ui/board/board.png",
    "crop": [
     0,
-    9992,
+    10221,
     780,
-    11436
+    11700
    ],
    "qualities": [
     1,
@@ -622,55 +646,8 @@
    "expected": "pass",
    "borderline": false,
    "why": "the high-contrast forms O2 approved",
-   "image": "images/board-hc.png"
-  },
-  {
-   "id": "board-hc-enamel",
-   "class": "kit art",
-   "title": "Style board, high contrast: the violet card",
-   "source": "art/ui/board/board_hc.png",
-   "crop": [
-    0,
-    788,
-    780,
-    1762
-   ],
-   "qualities": [
-    1,
-    2,
-    8,
-    13
-   ],
-   "origin": "natural",
-   "plant": null,
-   "expected": "pass",
-   "borderline": false,
-   "why": "opaque, flat, outlined at 3 points",
-   "image": "images/board-hc-enamel.png"
-  },
-  {
-   "id": "board-hc-gold",
-   "class": "kit art",
-   "title": "Style board, high contrast: gold main actions",
-   "source": "art/ui/board/board_hc.png",
-   "crop": [
-    0,
-    1826,
-    780,
-    2610
-   ],
-   "qualities": [
-    1,
-    2,
-    8,
-    13
-   ],
-   "origin": "natural",
-   "plant": null,
-   "expected": "pass",
-   "borderline": false,
-   "why": "the lip kept as a flat band",
-   "image": "images/board-hc-gold.png"
+   "image": "images/board-hc.png",
+   "third": 2
   },
   {
    "id": "ai-starlight",
@@ -694,7 +671,8 @@
    "expected": "pass",
    "borderline": false,
    "why": "modelled star, lit, outlined",
-   "image": "images/ai-starlight.png"
+   "image": "images/ai-starlight.png",
+   "third": 3
   },
   {
    "id": "ai-essence",
@@ -718,31 +696,8 @@
    "expected": "pass",
    "borderline": false,
    "why": "a lit drop with a glint",
-   "image": "images/ai-essence.png"
-  },
-  {
-   "id": "ai-renown",
-   "class": "icon",
-   "title": "AI artist's Renown at 256 px",
-   "source": "docs/art/ui-quality/ai-artist-icons.png",
-   "crop": [
-    740,
-    505,
-    960,
-    725
-   ],
-   "qualities": [
-    1,
-    3,
-    8,
-    13
-   ],
-   "origin": "natural",
-   "plant": null,
-   "expected": "pass",
-   "borderline": false,
-   "why": "a cut gem with facets in light",
-   "image": "images/ai-renown.png"
+   "image": "images/ai-essence.png",
+   "third": 1
   },
   {
    "id": "ai-chest",
@@ -766,7 +721,8 @@
    "expected": "pass",
    "borderline": true,
    "why": "the chest reads, but its wood is busy at 48 pt",
-   "image": "images/ai-chest.png"
+   "image": "images/ai-chest.png",
+   "third": 1
   },
   {
    "id": "ai-pip",
@@ -790,7 +746,8 @@
    "expected": "pass",
    "borderline": false,
    "why": "a rendered portrait in a gold ring",
-   "image": "images/ai-pip.png"
+   "image": "images/ai-pip.png",
+   "third": 2
   },
   {
    "id": "today-icon-starlight",
@@ -814,7 +771,8 @@
    "expected": "fail",
    "borderline": true,
    "why": "shaded but drawn as vector gradients; thin outline",
-   "image": "images/today-icon-starlight.png"
+   "image": "images/today-icon-starlight.png",
+   "third": 3
   },
   {
    "id": "today-icon-essence",
@@ -838,31 +796,8 @@
    "expected": "fail",
    "borderline": true,
    "why": "a gradient drop, no model",
-   "image": "images/today-icon-essence.png"
-  },
-  {
-   "id": "today-icon-renown",
-   "class": "icon",
-   "title": "Today's Renown icon",
-   "source": "docs/art/ui-quality/ai-artist-icons.png",
-   "crop": [
-    740,
-    55,
-    960,
-    275
-   ],
-   "qualities": [
-    1,
-    3,
-    8,
-    13
-   ],
-   "origin": "natural",
-   "plant": null,
-   "expected": "fail",
-   "borderline": true,
-   "why": "a flat-faceted gem",
-   "image": "images/today-icon-renown.png"
+   "image": "images/today-icon-essence.png",
+   "third": 2
   },
   {
    "id": "today-icon-loot",
@@ -886,7 +821,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "a muddy bag that does not read as a shape",
-   "image": "images/today-icon-loot.png"
+   "image": "images/today-icon-loot.png",
+   "third": 1
   },
   {
    "id": "plant-gold-flat",
@@ -909,7 +845,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "cut to six flat colours: no brushing, gloss or soft drop",
-   "image": "images/plant-gold-flat.png"
+   "image": "images/plant-gold-flat.png",
+   "third": 3
   },
   {
    "id": "plant-enamel-flat",
@@ -932,7 +869,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "cut to six flat colours: no glaze or bevel",
-   "image": "images/plant-enamel-flat.png"
+   "image": "images/plant-enamel-flat.png",
+   "third": 2
   },
   {
    "id": "plant-hud-top-flat",
@@ -955,7 +893,8 @@
    "expected": "fail",
    "borderline": true,
    "why": "cut to sixteen colours: the lips stay, the gloss bands go",
-   "image": "images/plant-hud-top-flat.png"
+   "image": "images/plant-hud-top-flat.png",
+   "third": 1
   },
   {
    "id": "plant-starlight-flat",
@@ -978,7 +917,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "three flat colours: a clip-art star",
-   "image": "images/plant-starlight-flat.png"
+   "image": "images/plant-starlight-flat.png",
+   "third": 1
   },
   {
    "id": "plant-essence-flat",
@@ -1001,7 +941,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "three flat colours",
-   "image": "images/plant-essence-flat.png"
+   "image": "images/plant-essence-flat.png",
+   "third": 2
   },
   {
    "id": "plant-heist-one-step",
@@ -1028,7 +969,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "value range at 35%: controls about one step off the world",
-   "image": "images/plant-heist-one-step.png"
+   "image": "images/plant-heist-one-step.png",
+   "third": 3
   },
   {
    "id": "plant-heist-dim",
@@ -1055,7 +997,8 @@
    "expected": "fail",
    "borderline": true,
    "why": "value range at 60%: under two steps on the dark buttons only",
-   "image": "images/plant-heist-dim.png"
+   "image": "images/plant-heist-dim.png",
+   "third": 1
   },
   {
    "id": "plant-heist-unstroked",
@@ -1101,7 +1044,8 @@
    "expected": "fail",
    "borderline": false,
    "why": "three body-type labels with no outline over the world",
-   "image": "images/plant-heist-unstroked.png"
+   "image": "images/plant-heist-unstroked.png",
+   "third": 1
   },
   {
    "id": "plant-type-hue",
@@ -1123,7 +1067,570 @@
    "expected": "fail",
    "borderline": false,
    "why": "red and green swap; gold turns lime",
-   "image": "images/plant-type-hue.png"
+   "image": "images/plant-type-hue.png",
+   "third": 2
+  },
+  {
+   "id": "kf-home",
+   "class": "screen",
+   "title": "Key frame: home, as written",
+   "source": "art/ui/keyframes/01-home.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": true,
+   "why": "the board's materials and type over the lit world, one gold primary (Collect) and a raised Heist tab; borderline on hierarchy, with eleven pins and side buttons around the world",
+   "image": "images/kf-home.png",
+   "third": 2
+  },
+  {
+   "id": "kf-home-text200",
+   "class": "screen",
+   "title": "Key frame: home, text at 200%",
+   "source": "art/ui/keyframes/01-home_text200.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "the doubled currency plates overlap and clip their own digits under the icons (142.0k, 31.4k, 61.0k, 82%), pins and side buttons pile up on the islands, and the plates bury the world",
+   "image": "images/kf-home-text200.png",
+   "third": 2
+  },
+  {
+   "id": "kf-home-hc",
+   "class": "screen",
+   "title": "Key frame: home, high contrast",
+   "source": "art/ui/keyframes/01-home_hc.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "opaque plates with 3-point outlines over the high-contrast world; the same hierarchy and materials as written",
+   "image": "images/kf-home-hc.png",
+   "third": 3
+  },
+  {
+   "id": "kf-heist",
+   "class": "screen",
+   "title": "Key frame: heist, as written",
+   "source": "art/ui/keyframes/02-heist.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "the world holds the middle, the HUD keeps to two bands; gold Cast and red Get out read by role; the crew's portraits carry character",
+   "image": "images/kf-heist.png",
+   "third": 1
+  },
+  {
+   "id": "kf-heist-text200",
+   "class": "screen",
+   "title": "Key frame: heist, text at 200%",
+   "source": "art/ui/keyframes/02-heist_text200.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "the doubled HUD covers about two thirds of the screen, so the heist itself, the one thing to watch, is a strip; each plate on its own is well made, hence borderline",
+   "image": "images/kf-heist-text200.png",
+   "third": 2
+  },
+  {
+   "id": "kf-heist-hc",
+   "class": "screen",
+   "title": "Key frame: heist, high contrast",
+   "source": "art/ui/keyframes/02-heist_hc.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "opaque outlined plates and the same two bands; the world still holds the middle",
+   "image": "images/kf-heist-hc.png",
+   "third": 2
+  },
+  {
+   "id": "kf-result",
+   "class": "screen",
+   "title": "Key frame: result, as written",
+   "source": "art/ui/keyframes/03-result.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "a display-type outcome title, three reward plates led by the parchment Starlight, one gold Raid again; the moment card and law papers each a material",
+   "image": "images/kf-result.png",
+   "third": 1
+  },
+  {
+   "id": "kf-result-text200",
+   "class": "screen",
+   "title": "Key frame: result, text at 200%",
+   "source": "art/ui/keyframes/03-result_text200.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": true,
+   "why": "the rewards stand in rows and Raid again stays the one gold action; borderline for the empty band where the law papers wait below the fold",
+   "image": "images/kf-result-text200.png",
+   "third": 3
+  },
+  {
+   "id": "kf-result-hc",
+   "class": "screen",
+   "title": "Key frame: result, high contrast",
+   "source": "art/ui/keyframes/03-result_hc.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "opaque outlined cards over a dark ground; materials and hierarchy as written",
+   "image": "images/kf-result-hc.png",
+   "third": 2
+  },
+  {
+   "id": "kf-character",
+   "class": "screen",
+   "title": "Key frame: character, as written",
+   "source": "art/ui/keyframes/04-character.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "the rendered Skyskipper on a pedestal under a display name, gold tabs on parchment, an enamel ability card; Level up the one gold action",
+   "image": "images/kf-character.png",
+   "third": 2
+  },
+  {
+   "id": "kf-character-text200",
+   "class": "screen",
+   "title": "Key frame: character, text at 200%",
+   "source": "art/ui/keyframes/04-character_text200.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "Level up's stacked words crowd the plate's top edge and the price pill, and the level, steps and health stand cramped against the hexagon; the hero and the tabs still hold, hence borderline",
+   "image": "images/kf-character-text200.png",
+   "third": 1
+  },
+  {
+   "id": "kf-character-hc",
+   "class": "screen",
+   "title": "Key frame: character, high contrast",
+   "source": "art/ui/keyframes/04-character_hc.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "opaque outlined cards and the same order; the portrait unchanged",
+   "image": "images/kf-character-hc.png",
+   "third": 3
+  },
+  {
+   "id": "kf-settings",
+   "class": "screen",
+   "title": "Key frame: settings, as written",
+   "source": "art/ui/keyframes/05-settings.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "enamel and parchment plates, gold size buttons, the six school badges; a quiet utility page that still keeps the board's materials",
+   "image": "images/kf-settings.png",
+   "third": 3
+  },
+  {
+   "id": "kf-settings-text200",
+   "class": "screen",
+   "title": "Key frame: settings, text at 200%",
+   "source": "art/ui/keyframes/05-settings_text200.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": true,
+   "why": "one card at the large size, read whole; borderline because 200% presses against both A buttons",
+   "image": "images/kf-settings-text200.png",
+   "third": 1
+  },
+  {
+   "id": "kf-settings-hc",
+   "class": "screen",
+   "title": "Key frame: settings, high contrast",
+   "source": "art/ui/keyframes/05-settings_hc.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "opaque outlined plates; the switch for high contrast shows on",
+   "image": "images/kf-settings-hc.png",
+   "third": 1
+  },
+  {
+   "id": "plant-kf-home-unstroked",
+   "class": "screen",
+   "title": "Planted: island names in thin type over the home world",
+   "source": "kf-home",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "unstroked",
+    "breaks": 2,
+    "labels": [
+     [
+      64,
+      846,
+      17,
+      "Verdant"
+     ],
+     [
+      318,
+      846,
+      17,
+      "Emberreach"
+     ],
+     [
+      214,
+      566,
+      17,
+      "The Heart"
+     ],
+     [
+      178,
+      236,
+      15,
+      "Skyfield"
+     ]
+    ]
+   },
+   "expected": "fail",
+   "borderline": false,
+   "why": "four island names laid in thin white body type with no outline, drop or plate over the busy world",
+   "image": "images/plant-kf-home-unstroked.png",
+   "third": 3
+  },
+  {
+   "id": "plant-kf-result-flat",
+   "class": "kit art",
+   "title": "Planted: the result's reward plates and law papers, flattened",
+   "source": "kf-result",
+   "crop": [
+    12,
+    455,
+    528,
+    830
+   ],
+   "qualities": [
+    1,
+    2,
+    8,
+    13
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "flatten",
+    "breaks": 1,
+    "colours": 6
+   },
+   "expected": "fail",
+   "borderline": false,
+   "why": "parchment, enamel and gold cut to six flat colours: no grain, gloss, bevel or soft drop",
+   "image": "images/plant-kf-result-flat.png",
+   "third": 1
+  },
+  {
+   "id": "plant-kf-heist-icon-flat",
+   "class": "icon",
+   "title": "Planted: the Heist tab's loot bag, flattened",
+   "source": "art/ui/keyframes/01-home.png",
+   "crop": [
+    440,
+    1985,
+    640,
+    2185
+   ],
+   "qualities": [
+    1,
+    3,
+    8,
+    13
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "flatten",
+    "breaks": 3,
+    "colours": 4
+   },
+   "expected": "fail",
+   "borderline": false,
+   "why": "the rendered loot bag on its gold coin cut to four flat colours: a clip-art fill",
+   "image": "images/plant-kf-heist-icon-flat.png",
+   "third": 3
+  },
+  {
+   "id": "plant-kf-heist-cast-sunk",
+   "class": "screen",
+   "title": "Planted: the heist's Cast button sunk into its tray",
+   "source": "kf-heist",
+   "crop": null,
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "planted",
+   "plant": {
+    "kind": "sink",
+    "breaks": 8,
+    "rect": [
+     302,
+     960,
+     518,
+     1026
+    ],
+    "keep": 0.35
+   },
+   "expected": "fail",
+   "borderline": false,
+   "why": "the gold Cast pulled toward the tray's dark leather: about one value step between control and ground, where the board asks for two",
+   "image": "images/plant-kf-heist-cast-sunk.png",
+   "third": 2
   }
  ]
 }
