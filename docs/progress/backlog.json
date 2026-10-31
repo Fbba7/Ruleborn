@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-31T03:46:00Z",
+  "updated_at": "2026-10-31T05:16:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
@@ -259,7 +259,11 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "7d8c4ed6",
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "tools/ui_gate/golden.py",
+        "tools/ui_gate/sheet.py"
+      ]
     },
     {
       "phase": 0,
@@ -365,7 +369,7 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
@@ -376,7 +380,7 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "36b797fd",
-      "merged_sha": null,
+      "merged_sha": "beb8573a",
       "id": "P0-K1-contract-2",
       "title": "Kit contract, O2's redirect (gate/approvals/O2.md, points K1-K3; AD-R5): (1) section 2.1's four values that differ from the design document while citing it (night_* backdrop against §21.2's #171046 to #2C3AA8; card_bottom #120A28 against §21.8's #1A1134; red words on dark #FFB0BC against #FF9AAA; success words on dark #8FF0A8 against #3FBF7F) each take the design document's value or are marked a pending owner decision with a decision brief entry (docs/guides/design-tools.md) and O2.md's interim ruling; (2) section 2.2: titles T2 over the world, gold, oak, leather and school colours, T0 with the drop on the dark card and parchment; (3) K01's tertiary defined as a material, not a ghost. Still version 1 (not yet in effect), with a dated line in section 9. O2.md is on claude/ui-ad at 586cc5a until O2 merges; the lead merges O2 first",
       "role": "K1",
@@ -422,7 +426,7 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "working",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
@@ -489,7 +493,7 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "working",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
@@ -755,7 +759,7 @@
       "estimate_h": 3,
       "tier": 2,
       "critical": false,
-      "state": "open",
+      "state": "working",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
