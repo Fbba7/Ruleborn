@@ -1,6 +1,6 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T01:45:00Z",
+  "updated_at": "2026-10-31T01:50:00Z",
   "expected_next_update_by": "2026-10-31T03:00:00Z",
   "cycle": 3,
   "merging": null,
@@ -9,5 +9,5 @@
     "sha": "463ad9c2"
   },
   "alerts": [],
-  "next_step": "Take ready tasks through the queue one candidate at a time (flaky.md: concurrent runs share user://); expected: O2 (AD), P0-K1-bake-2 (K1), SV-B11-B12 (SV); after O2 merges, start AIA on P0-AIA-keyframes-1"
+  "next_step": "Cycle 3 ended with the lock cleared; cycle 4 (session_01SNkKxrCAg6Y8R7Hovb2PPH) is running: O2 and P0-K1-bake-2 are ready, one candidate at a time (flaky.md); P0-AIA-board-3 is open for AIA"
 }

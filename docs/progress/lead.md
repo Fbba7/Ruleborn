@@ -172,11 +172,14 @@ Your session was created with the repository checked out at main; work in that c
   one at a time in a container** until BT-10 merges.
 - O2 moved ahead of P0-AD-golden in the backlog: it is half an hour and
   unblocks AIA's key frames. Started K1 on P0-K1-bake-2, AD on O2 and SV on
-  SV-B11-B12 (table above). AIA has no open task until O2 merges, so no
-  session. The watchdog's 00:10Z alert (this cycle not yet recorded in
+  SV-B11-B12 (table above). AIA had no open task when this cycle looked;
+  cycle 4 (`session_01SNkKxrCAg6Y8R7Hovb2PPH`, started 01:38Z while this
+  one merged, bookkeeping only under the lock) has since opened
+  P0-AIA-board-3 and found O2 and P0-K1-bake-2 ready, so it owns the next
+  starts. The watchdog's 00:10Z alert (this cycle not yet recorded in
   `lead.md`) is answered in the inbox; no alerts open.
-- Next cycle: take O2, P0-K1-bake-2 and SV-B11-B12 through the queue as
-  they reach `ready` (for bake-2, `check_screens.py` into `check_all.sh` and
+- Next (cycle 4 now): take O2 and P0-K1-bake-2, then SV-B11-B12, through
+  the queue (for bake-2, `check_screens.py` into `check_all.sh` and
   `guard.sh` beside it, per K1-R1). When O2 merges, start AIA on
   P0-AIA-keyframes-1. Restart any agent past its `expected_next_update_by`.
 - Earlier: cycle 2 (22:40Z) found nothing ready and restarted K1 and AD on
