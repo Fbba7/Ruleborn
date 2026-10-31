@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T17:00:00Z",
+  "updated_at": "2026-10-31T17:50:00Z",
   "expected_next_update_by": "2026-10-31T18:15:00Z",
   "cycle": 13,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "ccafa2b3",
+    "task_ids": [
+      "O3"
+    ],
+    "started_at": "2026-10-31T17:45:00Z",
+    "expires_at": "2026-10-31T18:45:00Z"
+  },
   "last_merged": {
     "task_id": "P0-AIA-board-4",
     "sha": "f920b57b"

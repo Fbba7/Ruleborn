@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-31T17:05:00Z",
-  "updated_by": "coordinator",
+  "updated_at": "2026-10-31T17:50:00Z",
+  "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -678,7 +678,10 @@
         "client/scripts/screen_account.gd"
       ],
       "exceptions": [
-        "art/ui/board/tokens.css"
+        "art/ui/board/tokens.css",
+        "client/scripts/screen_parts.gd",
+        "client/scripts/realm_screen.gd",
+        "client/scripts/ui.gd"
       ],
       "deps": [
         "P0-K1-tokens",
@@ -696,8 +699,14 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "blocked",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-10-31T17:05:00Z",
+        "seen_at": "2026-10-31T17:15:35Z",
+        "lease_until": "2026-10-31T20:05:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
@@ -773,11 +782,17 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "ready",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-10-31T16:25:00Z",
+        "seen_at": "2026-10-31T17:11:50Z",
+        "lease_until": "2026-10-31T19:25:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "c89f4e8f",
       "merged_sha": null,
       "default": "none: AD decides; a disagreement is labelled fail"
     },
@@ -1387,7 +1402,7 @@
       "text": "From the owner (progress report KPIs, measured at main 3c4b791f). Three of your KPIs are worse than expected. (1) Setup failures before checks: 3 (target 0); runs stopped on a missing compile target or lint tool. Lesson: put the fresh-container tool line (rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install \"gdtoolkit==4.*\" \"playwright==1.63.0\"; then bash client/build.sh) in every agent start prompt, before its first pre-check. (2) Wait from ready to merged: median 2.1h (target 2h or less). Lesson: start a candidate's checks in the same cycle the task turns ready, and batch tasks that became ready together. (3) Scope added: +9.5h (target 4.7h or less). Lesson: when an approval redirects work, plan the whole follow-up chain with estimates at once, not one task at a time (contract-2, tokens, tokens-2 and board-4 came in pieces). Add M3 to acks when read.",
       "sent_at": "2026-10-31T17:05:00Z",
       "ack_by": "2026-10-31T19:05:00Z",
-      "acked_at": null
+      "acked_at": "2026-10-31T17:50:00Z"
     }
   ]
 }
