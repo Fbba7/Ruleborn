@@ -729,18 +729,21 @@
       "estimate_h": 1,
       "tier": 1,
       "critical": true,
-      "state": "claimed",
+      "state": "ready",
       "claim": {
         "agent": "AD",
         "branch": "claude/ui-ad",
         "claimed_at": "2026-10-31T14:30:00Z",
-        "seen_at": "2026-10-31T14:40:00Z",
+        "seen_at": "2026-10-31T15:40:00Z",
         "lease_until": "2026-10-31T17:30:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "b6fce494",
+      "merged_sha": null,
+      "exceptions": [
+        "tools/ui_gate/golden.py"
+      ]
     },
     {
       "id": "O3",

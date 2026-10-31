@@ -1,13 +1,20 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T14:45:00Z",
-  "expected_next_update_by": "2026-10-31T16:00:00Z",
+  "updated_at": "2026-10-31T15:45:00Z",
+  "expected_next_update_by": "2026-10-31T17:00:00Z",
   "cycle": 12,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "520565f9",
+    "task_ids": [
+      "P0-AD-golden-2"
+    ],
+    "started_at": "2026-10-31T15:45:00Z",
+    "expires_at": "2026-10-31T17:05:00Z"
+  },
   "last_merged": {
     "task_id": "P0-AIA-keyframes-3",
     "sha": "d0dd8a36"
   },
   "alerts": [],
-  "next_step": "Cycle 12 did bookkeeping: AIA (P0-AIA-board-4) and AD (P0-AD-golden-2) are running pre-checks; AIA-R8 answered with its default. The next cycle merges those when ready, then starts K1 on P0-K1-tokens-2 and AD on O3."
+  "next_step": "Cycle 13 is merging P0-AD-golden-2 (candidate 520565f9: check_all, then the ui guard)."
 }
