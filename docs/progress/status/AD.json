@@ -4,16 +4,16 @@
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P0-AD-rubric",
+  "task_id": "P0-AD-sheet",
   "task_state": "working",
-  "claimed_at": "2026-10-30T01:00:00Z",
-  "lease_until": "2026-10-30T04:00:00Z",
-  "updated_at": "2026-10-30T01:40:00Z",
-  "expected_next_update_by": "2026-10-30T02:25:00Z",
+  "claimed_at": "2026-10-30T21:53:00Z",
+  "lease_until": "2026-10-31T01:45:00Z",
+  "updated_at": "2026-10-30T22:45:00Z",
+  "expected_next_update_by": "2026-10-30T23:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Pre-check the rubric commit with tools/run_checks.sh, record it, mark P0-AD-rubric ready"
+    "next_step": "AD-R2 answered (README exception): README line added; pre-check running, then record and mark ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -22,17 +22,31 @@
   "acks": [],
   "requests": [
     {
-      "id": "AD-R1",
+      "id": "AD-R2",
       "from": "AD",
       "to": "lead",
-      "ask": ".claude/agents/ui-judge.md (owner's settings, so proposed, not edited) says the judge runs each comparison in both orders and returns 'split' itself; section 3.5 of report.md and gate/prompts/ have the judge answer pass, fail or unknown per call, with the launcher making three shuffled calls and deciding splits. Proposed exact replacement for its bullets 2-3: '- Answer pass, fail or unknown for the one quality the prompt asks, in the JSON the prompt gives. The launcher shuffles the pictures and repeats the call; it decides splits, not you.'",
+      "ask": "Add tools/ui_gate/ to README.md's tools/ listing, which you own: check_docs_consistency.py fails until it is there ('tools/ui_gate/ exists but is not listed in README.md'), so P0-AD-sheet's pre-check cannot pass on my branch. Exact line, inserted between the ui/ and ui_research/ lines: '  ui_gate/                        the UI wave gate's scripts: stills, contact sheets, frame strips, crops and colour-blindness sheets (python3 tools/ui_gate/sheet.py), the image checks (checks.py); docs/art/ui-quality/gate/shots.md'. Evidence: bash tools/check_all.sh passed ('All checks passed.', 'DONE exit=0', 2026-10-30T22:35:22Z) on a local commit c0985d3 that is 9281bc3 plus exactly this line, so nothing else in P0-AD-sheet fails",
       "files": [
-        ".claude/agents/ui-judge.md"
+        "README.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-10-30T22:00:00Z",
+      "due": "2026-10-31T22:00:00Z",
+      "default": "The lead adds the line on main (or in the candidate that merges P0-AD-sheet) and sets P0-AD-sheet resync; AD merges main, re-runs the pre-check and marks ready",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R3",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Wire the gate's self-tests into tools/check_all.sh, in their own section: 'python3 tools/ui_gate/sheet.py --self-test' (about 4 seconds; it also runs colour.py's and checks.py's tests, with the planted fails). It needs Pillow and numpy, both installed in the container; numpy is new to tools/, so checks.md's 'What it needs' may want a line, which is yours or T15's to write",
+      "files": [
+        "tools/check_all.sh"
       ],
       "blocking": false,
-      "created_at": "2026-10-30T01:40:00Z",
-      "due": "2026-11-01T12:00:00Z",
-      "default": "The prompt in gate/prompts/ is the more specific instruction and governs each gate call; ui-judge.md stays as it is",
+      "created_at": "2026-10-30T22:00:00Z",
+      "due": "2026-11-02T12:00:00Z",
+      "default": "The lead adds the line in the candidate that merges P0-AD-sheet",
       "escalate_to": "lead"
     }
   ],
