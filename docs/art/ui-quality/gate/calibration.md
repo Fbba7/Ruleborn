@@ -126,6 +126,28 @@ Then AD scores it:
    the verdict files: 10–20 items the gate passed, spread over the classes,
    mixed with 3–5 it failed, as a form without the verdicts.
 
+## What to expect
+
+O3's agreement between AD and the blind labeller on the held-out third was 94
+of 123 rows. It was weakest on 13 (12 of 20) and 14 (6 of 11), then 9 (7 of
+10) and 3 (10 of 14). These are the first candidates for step 5, with what O3
+found the rubric leaves open:
+
+- **13. Light behind UI:** whether high contrast may drop the reward glow or
+  the panels' light.
+- **14. One art-direction idea:** how much plain chrome a screen may carry
+  before it fails.
+- **2. Display type:** "word over art" reads a backdrop gradient as art, which
+  fails the plain-backdrop key frames in normal mode.
+- **3. Painted or rendered icons:** rubric version 1 names ai-essence as a
+  clear pass in words, though O3 failed it (its refraction reads as
+  physically based). The words are examples only since O3; the anchors above
+  are the golden set's, so this needs no edit before the first run.
+
+A plant is scored on every row AD labelled, not only on the quality it was
+built to break: O3 found plants that break more than one (the flattened icons
+also fail 13).
+
 ## Results
 
 None yet. Each run's `score --markdown` table goes here, with the date, the
