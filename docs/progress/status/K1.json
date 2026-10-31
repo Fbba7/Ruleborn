@@ -3,24 +3,26 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P0-K1-contract-2",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-10-31T01:45:00Z",
   "lease_until": "2026-10-31T04:45:00Z",
-  "updated_at": "2026-10-31T02:15:00Z",
-  "expected_next_update_by": "2026-10-31T03:00:00Z",
-  "long_run": {
-    "log": "/tmp/check-36b797fd59badd7b0611266c3b38ed1d0687e2cc.log",
-    "expected_end": "2026-10-31T02:45:00Z"
-  },
+  "updated_at": "2026-10-31T02:25:00Z",
+  "expected_next_update_by": "2026-10-31T03:10:00Z",
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "e97ef3a",
-    "next_step": "Record the pre-check on 36b797f; then mark P0-K1-contract-2 ready"
+    "last_green_sha": "36b797f",
+    "next_step": "The lead merges P0-K1-contract-2 (after O2); K1-R4 asks for two brief entries; then P0-K1-kitskin"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "36b797fd59badd7b0611266c3b38ed1d0687e2cc",
+    "exit": 0,
+    "finished_at": "2026-10-31T02:22:27Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "36b797fd",
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
