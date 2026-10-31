@@ -22,7 +22,7 @@
 - Done: O2. The board: gold, oak, glass, parchment, type, outline and glint rules and the high-contrast forms approved; the hero icons' physically based light (D5 (b), §21.3), the enamel card (reads as a web card at 1x), the selected card's glow and the leather button in its oak well (0.6 value steps) redirected. The contract: sections 3-6 approved but K01's tertiary ghost; section 2.1's four values that differ from §21.2 and §21.8 and section 2.2's title treatments redirected. Interim rulings in O2.md for the key frames.
 - Half done: nothing.
 - Open hypotheses: a tappable dark card on the night backdrop cannot clear two value steps by its fill (§21.8's colours); O2 has its step come from rim and lip. If P0-AIA-board-3 cannot meet it, quality 8's ring measure (median face against a 4 pt ring) may need to count the rim, as rubric version 2 at P0-AD-calibrate. Rubric version 2 also narrows quality 2's "gradient" (titles on the card and parchment are plain) and quality 14's "glass card with blur" (§21.8's dark glass is allowed).
-- Next step: O2 is ready at 586cc5a. Next session: P0-AD-golden (its deps: P0-AD-sheet merged, P0-AIA-board-2 merged).
+- Next step: O2 is ready at 586cc5a. Next session: P0-AD-golden (once P0-AD-sheet, now ready, merges; P0-AIA-board-2 is merged).
 
 ## Tried and failed
 - 2026-10-30 first pre-check of f5e9571: failed at the wasm32 cargo build because this container lacked the wasm32-unknown-unknown target (setup step skipped); installed it and re-ran: PASS
