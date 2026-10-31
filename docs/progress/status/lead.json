@@ -1,21 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T19:50:00Z",
-  "expected_next_update_by": "2026-10-31T21:45:00Z",
+  "updated_at": "2026-10-31T20:35:00Z",
+  "expected_next_update_by": "2026-10-31T21:50:00Z",
   "cycle": 16,
-  "merging": {
-    "candidate_sha": "d7561425",
-    "task_ids": [
-      "P0-K1-tokens-2",
-      "P0-AD-calibrate"
-    ],
-    "started_at": "2026-10-31T19:45:00Z",
-    "expires_at": "2026-10-31T21:30:00Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "O3",
-    "sha": "316ff98c"
+    "task_id": "P0-K1-tokens-2 + P0-AD-calibrate",
+    "sha": "eec44b50"
   },
   "alerts": [],
-  "next_step": "Cycle 16 merging candidate d7561425 (P0-K1-tokens-2 + P0-AD-calibrate): check_all and the ui guard running"
+  "next_step": "Launch the dev-fable and dev-opus gate runs (AD-R6, calibration.md 'The runs') once the account's five-hour usage no longer reads allowed_warning, as a dedicated runner session per run that writes docs/art/ui-quality/gate/verdicts/P0-AD-calibrate/<run>.jsonl; then start AD on P0-AD-calibrate-2. No agent has an open, startable task until then."
 }

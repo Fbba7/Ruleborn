@@ -60,8 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxrKCbUeCNtNDyqGwKe` (cycle 15,
-31 October 2026, from 18:38Z).
+Latest lead cycle session: `session_01SNkKxrPXYJXnGbD1R9Zte3` (cycle 16,
+31 October 2026, from 19:38Z).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -74,8 +74,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AD | `session_01SNkKxpHbYoyKJJjMRSPCPZ` | P0-AD-calibrate | `claude/ui-ad` | 2026-10-31 18:33Z |
-| K1 | `session_01SNkKxnxY3qKwypH2HQMfd8` | P0-K1-tokens-2 (restart: K1-R8 answered) | `claude/ui-bake` | 2026-10-31 18:40Z |
+| AD | `session_01SNkKxpHbYoyKJJjMRSPCPZ` (done) | P0-AD-calibrate | `claude/ui-ad` | 2026-10-31 18:33Z |
+| K1 | `session_01SNkKxnxY3qKwypH2HQMfd8` (done) | P0-K1-tokens-2 (restart: K1-R8 answered) | `claude/ui-bake` | 2026-10-31 18:40Z |
 | K1 | `session_01SNkKxnJNP5X4uedWQBNKZt` (idle, replaced) | P0-K1-tokens-2 (restart: K1-R7 answered) | `claude/ui-bake` | 2026-10-31 17:42Z |
 | K1 | `session_01SNkKxopXscd2QpqKuzHGnG` (idle, replaced) | P0-K1-tokens-2 | `claude/ui-bake` | 2026-10-31 16:59Z |
 | AD | `session_01SNkKxokei5gETTF4KU2gsD` (idle, done) | O3 | `claude/ui-ad` | 2026-10-31 16:21Z |
@@ -169,38 +169,41 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 15, 31 October 2026, from 18:38Z (session
-  `session_01SNkKxrKCbUeCNtNDyqGwKe`). Nothing was ready, so no merge; the
-  merge lock is clear. K1 blocked P0-K1-tokens-2 on K1-R8 (the result key
-  frame's two captions, AIA's file); AIA has no session, so the lead
-  granted it as its default says (`03-result.html` and its stills are now
-  exceptions) and restarted K1 on the task (18:40Z). AD is working on
-  P0-AD-calibrate, pre-check running; its AD-R6 is answered: P0-AD-calibrate-2
-  is filed (lesson M3 (3): the whole chain, tool, runs and results, is now
-  in the backlog), and the two development gate runs (dev-fable and
-  dev-opus, 366 judge calls each before splits) start after P0-AD-calibrate
-  merges, when `calibrate.py` is on main. K1 acked M2 (18:29Z). The
-  published pages' sources did not change, so neither was republished. No
-  alerts.
+- Cycle 16, 31 October 2026, from 19:38Z (session
+  `session_01SNkKxrPXYJXnGbD1R9Zte3`). P0-K1-tokens-2 (785cb2a8) and
+  P0-AD-calibrate (3f3797c7) were both ready, so they went in one batch
+  candidate, `d7561425`: check_all passed (20:28Z, about 43 minutes) and
+  `guard.sh` printed "ui guard: OK"; merged onto main's bookkeeping head
+  as `eec44b50` after the documentation check; the merge lock is clear.
+  Neither published page's source changed, so neither was republished.
+  No alerts; no agent started (none has an open task it can take).
+- The dev-fable and dev-opus gate runs (AD-R6) are not launched: the
+  account's five-hour usage reads "allowed_warning", and the two runs are
+  about 730 judge calls plus splits. Nothing waits on them (all eight
+  judged qualities stay in shadow mode, AD-R6's default). Launch them in
+  the first cycle whose `get_session` shows the usage no longer in
+  warning: one runner session per run, created as step 6 says but on the
+  run's model (Fable 5.1 for dev-fable, Opus 5.5 for dev-opus), branch
+  `claude/ui-gate-runs`, doing exactly `calibration.md` ("The runs") with
+  one fresh `ui-judge` subagent per call and writing
+  `docs/art/ui-quality/gate/verdicts/P0-AD-calibrate/<run>.jsonl`; the
+  lead then copies the verdict files to main (they are the lead's), and
+  starts AD on P0-AD-calibrate-2.
+- Housekeeping: this cycle pushed a stray ref
+  `lead/candidate-d756142555c04e567a54cc5367cc5b85edd99a7e` by mistake;
+  the proxy refuses branch deletes (HTTP 403), so it stays. It points at
+  the merged candidate and is harmless; candidates stay local from now on.
 - Tools in a fresh container: `rustup target add wasm32-unknown-unknown
   aarch64-linux-android aarch64-apple-ios`, `pip install "gdtoolkit==4.*"
-  "playwright==1.63.0"` (1.63.0 matches the container's Chromium build
-  1243 in `/opt/pw-browsers`), then `bash client/build.sh` in the guard's
-  worktree. check_all took about 47 minutes in cycle 14, the build and
-  guard about 12.
-- Next: merge K1's P0-K1-tokens-2 and AD's P0-AD-calibrate as each turns
-  ready, starting the candidate's checks in the same cycle (one batch
-  candidate if both are). After P0-AD-calibrate merges, launch the
-  dev-fable and dev-opus runs as `calibration.md` ("The runs") says; then
-  AD starts P0-AD-calibrate-2. The seven-day usage reads "allowed_warning",
-  so weigh the runs' ~750 calls against the reserve before launching. AIA
-  and SV have no open task; AIA's M1 ack waits for its next session.
-- Cycle 14 (17:39Z) merged O3 (`316ff98c`), granted K1-R7 and started AD on
-  P0-AD-calibrate. Cycle 13 (15:39Z) merged P0-AD-golden-2 (`520565f9`) and
-  P0-AIA-board-4 (`f920b57b`). Cycle 12 (14:39Z) did bookkeeping only
-  (answered AIA-R8). Cycle 11 (13:39Z) merged P0-AIA-keyframes-3
-  (`d0dd8a36`). Cycle 9 (11:39Z) merged P0-K1-tokens and
-  P0-AIA-keyframes-2 (`b8308788`). Cycle 8 (08:38Z) merged O2-2 and
+  "playwright==1.63.0"`, then `bash client/build.sh`, before
+  `run_checks.sh start` (cycle 16 started one first and had to stop it).
+  Run `guard.sh` in its own worktree of the candidate (`client/build.sh`
+  there first); about 12 minutes beside check_all.
+- Cycle 15 (18:38Z) granted K1-R8 and restarted K1. Cycle 14 (17:39Z)
+  merged O3 (`316ff98c`). Cycle 13 (15:39Z) merged P0-AD-golden-2
+  (`520565f9`) and P0-AIA-board-4 (`f920b57b`). Cycle 11 (13:39Z) merged
+  P0-AIA-keyframes-3 (`d0dd8a36`). Cycle 9 (11:39Z) merged P0-K1-tokens
+  and P0-AIA-keyframes-2 (`b8308788`). Cycle 8 (08:38Z) merged O2-2 and
   P0-AIA-keyframes-1 (`fafc1a13`). Cycle 6 (04:38Z to 08:10Z) merged
   P0-K1-contract-2, P0-AIA-board-3 with P0-AD-golden, P0-K1-kitskin and
   SV-B11-B12.
