@@ -1,13 +1,21 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T08:10:00Z",
+  "updated_at": "2026-10-31T08:45:00Z",
   "expected_next_update_by": "2026-10-31T09:25:00Z",
-  "cycle": 7,
-  "merging": null,
+  "cycle": 8,
+  "merging": {
+    "candidate_sha": "pending",
+    "task_ids": [
+      "O2-2",
+      "P0-AIA-keyframes-1"
+    ],
+    "started_at": "2026-10-31T08:45:00Z",
+    "expires_at": "2026-10-31T09:45:00Z"
+  },
   "last_merged": {
     "task_id": "SV-B11-B12",
     "sha": "14c30355"
   },
   "alerts": [],
-  "next_step": "Cycle 6 merged SV-B11-B12 (14c30355) and released the merge lock at 08:10Z. Queue next, one candidate at a time: K1-R4's register items and brief entries, O2-2 (a392bcb, check_all only; then start K1 on P0-K1-tokens), P0-AIA-keyframes-1 (b760d6f1, with AIA-R3's check_all.sh lines; then start AIA on P0-AIA-keyframes-2). O2-2 has waited 2 hours from 08:37Z, so batching is allowed then."
+  "next_step": "Cycle 8 is merging O2-2 (a392bcb) and P0-AIA-keyframes-1 (b760d6f1) as one batch candidate, with AIA-R3's check_all.sh lines."
 }
