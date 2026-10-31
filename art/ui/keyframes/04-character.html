@@ -1,0 +1,201 @@
+<!doctype html>
+<!-- Key frame 04, character: one Ruleborn of the roster, in the game's words
+     (client/scripts/character_screen.gd). The stage: the Skyskipper on its
+     pedestal in its school's light, where it stands in the roster and what it
+     is doing, the arrows to the one before and after, and its name on a
+     plate. Under it: its school and its kind and role, its level on a gold
+     hexagon beside the levels its home allows and its health, the three
+     tabs, and the Heist tab: the ability, then role, resists, traits and best
+     work two to a row on parchment. Fixed at the bottom: back to the roster
+     and Level up with its price. The cards scroll: at 200% text the still
+     ends on the ability's name, and its words, its uses and the four cards
+     wait below the fold; the open tab keeps its word and the others their
+     icons, and the health stands under the level's steps. ?lang=pt_BR,
+     ?text=200 and ?hc=1 give its other forms; shoot_keyframes.mjs
+     photographs them all. Level up is the kit's gold, its main action. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Key frame 04 · Character</title>
+<link rel="stylesheet" href="../board/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+body {
+  background-image:
+    radial-gradient(48% 22% at 50% 21%, color-mix(in srgb, var(--c-motion-light) 34%, transparent), color-mix(in srgb, var(--c-motion) 0%, transparent)),
+    var(--g-night);
+}
+html.hc body { background-image: none; background-color: var(--hc-night-top); }
+.screen.character { padding: 6px 12px 6px; gap: 8px; }
+.char-page { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.char-page > * { flex: none; }
+
+/* The stage. */
+.stage { position: relative; height: 180px; }
+.large .stage { height: 176px; }
+.stage-top { position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; min-height: 32px; border-radius: 999px; }
+.pedestal {
+  position: absolute; left: 50%; bottom: 34px; width: 190px; height: 40px; transform: translateX(-50%); border-radius: 50%;
+  background: var(--g-plate-dark); border: var(--line) solid var(--ink);
+  box-shadow: inset 0 3px 0 var(--lit-soft), 0 6px 0 var(--c-drop);
+}
+.hero-art { position: absolute; left: 50%; bottom: 46px; width: 136px; height: 136px; transform: translateX(-50%); object-fit: contain; }
+.large .hero-art { width: 120px; height: 120px; }
+.arrow.gold-round { position: absolute; top: 64px; width: 52px; height: 52px; padding: 0; }
+.large .arrow.gold-round { top: 60px; }
+.arrow.prev { left: 0; }
+.arrow.next { right: 0; }
+.arrow .ico { width: 28px; height: 28px; position: relative; z-index: 1; }
+.name-plate { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); padding: 4px 22px 6px; color: var(--c-cream); white-space: nowrap; }
+.name-plate .title { font-size: calc(26px * var(--ts)); }
+.large .name-plate .title { font-size: 40px; }
+
+/* Its school, kind and role. */
+.sub-line { justify-content: center; flex-wrap: wrap; gap: 8px; }
+.school-chip {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px 2px 4px; border-radius: 999px;
+  background: var(--g-plate-dark); border: var(--line) solid var(--c-motion); color: var(--t1);
+}
+.school-chip .ico { width: calc(22px * var(--ts)); height: calc(22px * var(--ts)); }
+.school-chip .kicker { color: inherit; }
+
+/* Level and health. */
+.level-row { gap: 10px; align-items: center; }
+/* At 200% the health stands under the level's steps, beside the hexagon. */
+.large .level-row { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; row-gap: 4px; }
+.large .hex { grid-row: 1 / 3; }
+.large .health { justify-self: start; }
+.hex {
+  position: relative; flex: none; width: 58px; height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: var(--c-ink-line);
+}
+.hex::before { content: ""; position: absolute; inset: 3px; clip-path: inherit; background: var(--g-gold); z-index: 0; }
+.hex > * { position: relative; z-index: 1; color: var(--c-text-on-gold); }
+.hex .lv { font: 800 13px/1 "Manrope"; letter-spacing: 0.06em; }
+.hex .display-s { color: var(--c-cream); }
+.large .hex { width: 84px; height: 100px; }
+.large .hex .lv { font-size: 26px; }
+.level-words { flex: 1 1 auto; min-width: 0; gap: 4px; }
+.steps { display: flex; gap: 3px; padding: 3px; border-radius: 10px; background: var(--g-plate-dark); border: var(--line) solid var(--ink); }
+.steps i { flex: 1; height: 14px; border-radius: 6px; background: var(--c-night-mid); }
+.steps i.on { background: var(--c-green-bar); box-shadow: inset 0 2px 0 var(--lit); }
+.health { flex: none; }
+
+/* The tabs: one strip of parchment, the open tab on gold. */
+.char-tabs.parchment { flex-direction: row; gap: 4px; padding: 2px; border-radius: 16px; }
+.tab-btn {
+  flex: 1 1 0; min-width: 0; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 0 6px; border: 0; border-radius: 12px; color: var(--c-parchment-ink); font: inherit;
+}
+.tab-btn:not(.gold) { background: none; }
+.tab-btn.gold { --lip: 5px; padding: 0 6px var(--lip); min-height: 48px; color: var(--c-text-on-gold); }
+/* At 200% the open tab keeps its word and the others their icons and
+   spoken names: three words of that size do not fit one row. */
+.tab-btn:not(.gold) .ico { display: none; }
+.large .tab-btn:not(.gold) .ico { display: block; }
+.large .tab-btn.gold .ico, .large .tab-btn:not(.gold) .button-type { display: none; }
+.large .tab-btn .ico { width: 32px; height: 32px; }
+.large .tab-btn.gold { flex: 2 1 0; }
+.large .tab-btn { min-height: 60px; }
+.large .chip { padding: 8px 14px; }
+
+/* The Heist tab. */
+.heist-tab { gap: 8px; padding: 8px; }
+.ability.enamel { display: flex; gap: 12px; align-items: flex-start; padding: 12px 12px calc(12px + var(--foot)); color: var(--t1); }
+.ability-tile { flex: none; width: 52px; height: 52px; display: grid; place-items: center; border-radius: 14px; background: var(--g-gold); border: var(--line) solid var(--ink); }
+.ability-tile .ico { width: 34px; height: 34px; }
+.ability-head { flex-wrap: wrap; gap: 6px; }
+.ability .kicker { color: var(--t1); }
+.uses { padding: 1px 8px; border-radius: 8px; background: var(--g-plate-dark); border: 1.5px solid var(--ink); color: var(--c-cream); font: 800 calc(13px * var(--ts))/1.3 "Manrope"; text-transform: uppercase; letter-spacing: 0.04em; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.info-card { display: flex; gap: 8px; align-items: flex-start; padding: 8px; border-radius: 12px; background: var(--c-cream); border: 1.5px solid var(--c-parchment-ink); color: var(--c-parchment-ink); }
+.info-card .ico { width: 28px; height: 28px; }
+.info-card .kicker { color: var(--c-parchment-ink); }
+
+/* Back and Level up. */
+.char-bottom { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 22px; }
+.back.parchment { flex: none; width: 60px; height: 60px; padding: 0; align-items: center; justify-content: center; border-radius: 16px; }
+.back .ico { width: 30px; height: 30px; }
+.up.gold { flex: 1 1 auto; min-height: 64px; justify-content: space-between; gap: 10px; padding: 6px 12px var(--lip) 16px; }
+.up-words { align-items: flex-start; text-align: left; }
+.up-words .display-s { color: var(--c-cream); }
+.up .caption { font-weight: 800; }
+.price { flex: none; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 12px; background: var(--g-plate-dark); color: var(--c-cream); }
+.price .ico { width: calc(20px * var(--ts)); height: calc(20px * var(--ts)); }
+/* At 200% Level up stacks: its word, then the level it reaches beside its
+   price. The ability's words wait below the fold with the cards. */
+.large .up.gold { display: grid; grid-template-columns: 1fr auto; align-items: center; row-gap: 4px; padding: 8px 12px var(--lip) 14px; }
+.large .up-words { display: contents; }
+.large .up-words .display-s { grid-column: 1 / -1; }
+.large .ability .body, .large .uses { display: none; }
+.large .ability { align-items: center; }
+.large .below { display: none; }
+</style>
+</head>
+<body>
+<div class="screen character">
+  <div class="char-page">
+    <div class="stage">
+      <div class="stage-top">
+        <span class="chip glass info"><span class="number" data-key="CHARACTER_COUNT" data-args="d:2|d:5" data-check></span></span>
+        <span class="chip glass info"><img class="ico" src="../../../client/ui/icons/png/characterstates/idle.png" alt=""><span class="caption on-night-1 state-word" data-key="ROSTER_STATE_IDLE" data-check></span></span>
+      </div>
+      <span class="pedestal"></span>
+      <img class="hero-art" src="art/skyskipper.png" alt="">
+      <button class="arrow prev gold-round ctl" type="button" data-label="CHARACTER_PREVIOUS" data-args="k:RULEBORN_TIDEWALKER"><img class="ico" src="../../../client/ui/icons/png/hud/prev.png" alt=""></button>
+      <button class="arrow next gold-round ctl" type="button" data-label="CHARACTER_NEXT" data-args="k:RULEBORN_MOSSBEAR"><img class="ico" src="../../../client/ui/icons/png/hud/next.png" alt=""></button>
+      <span class="name-plate law-plate info"><span class="title" data-key="RULEBORN_SKYSKIPPER" data-check></span></span>
+    </div>
+
+    <div class="row sub-line info">
+      <span class="school-chip"><img class="ico" src="../../../client/ui/icons/png/schools/motion.png" alt=""><span class="kicker" data-key="SCHOOL_MOTION" data-check></span></span>
+      <span class="body on-night-1" data-key="CHARACTER_SCHOOL_ROLE" data-args="k:RULEBORN_SKYSKIPPER|k:ROLE_CARRIER" data-check></span>
+    </div>
+
+    <div class="row level-row info">
+      <span class="hex"><span class="lv" data-key="CHARACTER_LEVEL_SHORT" data-check></span><span class="display-s" data-num="d:4" data-check></span></span>
+      <span class="col level-words">
+        <span class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+        <span class="caption on-night-1" data-key="CHARACTER_LEVEL_OF" data-args="d:4|d:6" data-check></span>
+      </span>
+      <span class="chip glass health"><span class="caption on-night-2" data-key="CHARACTER_KICK_HEALTH" data-check></span><span class="number" data-num="d:90" data-check></span></span>
+    </div>
+
+    <div class="row char-tabs parchment ctl-group" role="tablist">
+      <button class="tab-btn gold" type="button" role="tab" data-label="CHARACTER_TAB_HEIST" aria-selected="true"><img class="ico" src="../../../client/ui/icons/png/screens/heist.png" alt=""><span class="button-type" data-key="CHARACTER_TAB_HEIST" data-check></span></button>
+      <button class="tab-btn" type="button" role="tab" data-label="CHARACTER_TAB_STATS"><img class="ico" src="../../../client/ui/icons/png/realmactions/upgrade.png" alt=""><span class="button-type" data-key="CHARACTER_TAB_STATS" data-check></span></button>
+      <button class="tab-btn" type="button" role="tab" data-label="CHARACTER_TAB_COMPARE"><img class="ico" src="../../../client/ui/icons/png/screens/roster.png" alt=""><span class="button-type" data-key="CHARACTER_TAB_COMPARE" data-check></span></button>
+    </div>
+
+    <div class="col heist-tab parchment">
+      <div class="ability enamel info">
+        <span class="ability-tile"><img class="ico" src="../../../client/ui/icons/png/heistcontrols/ability.png" alt=""></span>
+        <span class="col grow">
+          <span class="row ability-head"><span class="kicker" data-key="CHARACTER_KICK_ABILITY" data-check></span><span class="uses" data-key="ABILITY_USES_SKYSKIPPER" data-check></span></span>
+          <span class="body" data-key="ABILITY_DOES_SKYSKIPPER" data-check></span>
+        </span>
+      </div>
+      <div class="grid below">
+        <div class="info-card info"><img class="ico" src="../../../client/ui/icons/png/crewroles/carrier.png" alt=""><span class="col"><span class="kicker" data-key="ROLE_CARRIER" data-check></span><span class="caption" data-key="ROLE_JOB_CARRIER" data-check></span></span></div>
+        <div class="info-card info"><img class="ico" src="../../../client/ui/icons/png/hud/shield.png" alt=""><span class="col"><span class="kicker" data-key="CHARACTER_KICK_RESISTS" data-check></span><span class="caption" data-key="RESISTS_SKYSKIPPER" data-check></span></span></div>
+        <div class="info-card info"><img class="ico" src="../../../client/ui/icons/png/traits/swift.png" alt=""><span class="col"><span class="kicker" data-key="CHARACTER_KICK_TRAITS" data-check></span><span class="caption"><span data-key="TRAIT_SWIFT" data-check></span> · <span data-key="TRAIT_HOARDER" data-check></span></span></span></div>
+        <div class="info-card info"><img class="ico" src="../../../client/ui/icons/png/realmactions/assignworker.png" alt=""><span class="col"><span class="kicker" data-key="CHARACTER_KICK_BEST" data-check></span><span class="caption" data-key="BEST_AT_SKYSKIPPER" data-check></span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="char-bottom glass">
+    <button class="back parchment ctl" type="button" data-label="HOME_ROSTER"><img class="ico" src="../../../client/ui/icons/png/generalui/back.png" alt=""></button>
+    <button class="up gold ctl" type="button" data-label="CHARACTER_RAISE" data-args="d:5|n:180">
+      <span class="col up-words"><span class="display-s" data-key="CHARACTER_UPGRADE" data-check></span><span class="caption" data-key="CHARACTER_UPGRADE_LINE" data-args="d:4|d:5" data-check></span></span>
+      <span class="price"><img class="ico" src="../../../client/ui/icons/png/resources/essence.png" alt=""><span class="display-s" data-num="n:180" data-check></span></span>
+    </button>
+  </div>
+</div>
+<script src="words.js"></script>
+<script src="kit.js"></script>
+</body>
+</html>

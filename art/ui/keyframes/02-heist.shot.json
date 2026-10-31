@@ -1,0 +1,145 @@
+{
+ "image": "02-heist.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 1,
+ "controls": [
+  {
+   "name": "laws 1: Laws here Sleepwalk Glass",
+   "rect": [
+    8,
+    50,
+    118.75,
+    100.8
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "clock 2: 2:38",
+   "rect": [
+    146.75,
+    50,
+    96,
+    40
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "alarm 3: Alarm 1 / 6",
+   "rect": [
+    146.75,
+    96,
+    96,
+    66.73
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "loot 4: Room 1,840 Left ~2,600 Load to 80%",
+   "rect": [
+    262.75,
+    50,
+    119.23,
+    115.92
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 5: Tap crew, then ground · hold to sneak or run",
+   "rect": [
+    49.81,
+    565.67,
+    290.36,
+    29.55
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "mate 6: Skyskipper",
+   "rect": [
+    18,
+    637.22,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "mate 7: Tidewalker",
+   "rect": [
+    84,
+    637.22,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "mate 8: Mossbear",
+   "rect": [
+    150,
+    637.22,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "mate 9: Echoplate",
+   "rect": [
+    18,
+    724.11,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "mate 10: Emberling",
+   "rect": [
+    84,
+    724.11,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "sage 11: The Archivist, the Sage: ready in 12 s",
+   "rect": [
+    310,
+    619,
+    64,
+    64
+   ],
+   "persistent": true
+  },
+  {
+   "name": "cast 12: Cast",
+   "rect": [
+    218,
+    693,
+    156,
+    48
+   ],
+   "persistent": true
+  },
+  {
+   "name": "getout 13: Get out",
+   "rect": [
+    218,
+    751,
+    156,
+    52
+   ],
+   "persistent": true
+  }
+ ]
+}

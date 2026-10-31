@@ -1,0 +1,76 @@
+{
+ "image": "05-settings_text200.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 2,
+ "controls": [
+  {
+   "name": "set-head 1: Settings",
+   "rect": [
+    12,
+    50,
+    366,
+    82.39
+   ],
+   "interactive": false
+  },
+  {
+   "name": "row 2: ACCESS",
+   "rect": [
+    12,
+    140.39,
+    366,
+    68
+   ]
+  },
+  {
+   "name": "size-a 4: Text 200%: smaller",
+   "rect": [
+    28,
+    293.89,
+    76,
+    76
+   ]
+  },
+  {
+   "name": "size-mid 5: 200%",
+   "rect": [
+    112,
+    290.39,
+    166,
+    83
+   ],
+   "interactive": false
+  },
+  {
+   "name": "size-a 7: Text 200%: larger",
+   "rect": [
+    286,
+    293.89,
+    76,
+    76
+   ]
+  },
+  {
+   "name": "sample 8: Stillness Anyone standing still for 1.5 seconds becomes invisible to g",
+   "rect": [
+    28,
+    385.39,
+    334,
+    251.47
+   ],
+   "interactive": false
+  },
+  {
+   "name": "back 14: Back",
+   "rect": [
+    22,
+    739,
+    164.44,
+    56
+   ]
+  }
+ ]
+}

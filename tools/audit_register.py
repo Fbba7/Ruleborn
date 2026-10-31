@@ -90,7 +90,9 @@ FOUND_FOLDING_HANDOFF = frozenset({"C56", "C57"})
 FOUND_IN_V37 = frozenset({
     "C58", "F59", "G71", "F60", "C59", "G72", "C60", "C61", "C62", "C63",
     "G73", "C64", "C65", "C66", "C67", "C68", "C69", "G74", "C70", "C71",
-    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "G84", "G85", "G86", "G87", "G88", "D99"})
+    "G75", "C72", "C73", "G76", "F61", "F62", "G77", "G78", "G79", "G80", "G81", "G82", "G83", "G84", "G85", "G86", "G87", "G88", "D99", "D100",
+    # found by K1 building the UI kit's tokens against §21.8 and §21.2 (K1-R4)
+    "C74", "C75"})
 
 FOUND_IN_V3 = frozenset({
     "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28",
@@ -5834,7 +5836,7 @@ dict(id="D64", kind="deviation", severity="minor", status="open",
           "from discoveries and goals, which happen on the device and which the "
           "server cannot yet check; pages and strays, which the device holds, "
           "so a claimed tier is their only record; family approval for 13 to "
-          "15; and any cosmetic to sell \u2014 the catalogue is empty until a set "
+          "15 (D100); and any cosmetic to sell \u2014 the catalogue is empty until a set "
           "is authored. Found building them. Since the owner\u2019s answer to "
           "F41 nothing is sold for Starglass and there are no packs: the "
           "premium track and each cosmetic are store products, a gift is the "
@@ -9887,6 +9889,50 @@ dict(id="D99", kind="deviation", severity="significant", status="open",
          "drafted); keep §26.4’s demand test for the languages after these; have "
          "a native speaker read each drafted language."),
 
+dict(id="D100", kind="deviation", severity="minor", status="open",
+     title="Family approval for 13 to 15 is not built: the server holds a "
+           "minor to the monthly cap and nothing more",
+     refs=["20.2", "22.4"],
+     body="§20.2 caps a minor\u2019s spending each month and §22.4 gives the "
+          "approval words for minors only. The server holds the cap before the "
+          "store is asked (D64), but a parent\u2019s approval for 13 to 15, who "
+          "approves and how the server knows, is not built: the document gives no "
+          "flow for it. It was part of D64\u2019s unbuilt list until the owner "
+          "answered that D64 stays the season track\u2019s and family approval "
+          "takes the next free number.",
+     rec="Say in \u00a720.2 who approves a 13-to-15-year-old\u2019s spending and "
+         "how; then build the approval and the words the player sees."),
+
+dict(id="C74", kind="contradiction", severity="minor", status="open",
+     title="§21.8 keeps success words on a dark surface at #3FBF7F, which "
+           "fails §21.8\u2019s own perceptual contrast check for small words",
+     refs=["21.8"],
+     body="§21.8 says \u201csuccess words keep #3FBF7F\u201d on a dark surface, and "
+          "also that contrast \u201cmeets 4.5:1, checked against a perceptual "
+          "model as well\u201d. #3FBF7F meets 4.5:1 on the dark card (6.7 to 7.6:1) "
+          "but measures APCA Lc 54 to 55 there, 48 to 51 on glass over the day "
+          "sky and 43 on the menus\u2019 backdrop at #2C3AA8, under the Lc 60 that "
+          "bold words under 36 points need (client/ui/colour_check.gd). The kit "
+          "draws #8FF0A8 (Lc 72 to 84); O2.md\u2019s interim ruling keeps #3FBF7F "
+          "at 36 points and over on the card, else ink on the green fill.",
+     rec="The owner decides: a lighter success green for words on dark "
+         "(#8FF0A8, one edit to §21.8\u2019s colours row), or §21.8 as written with "
+         "green words only at 36 points and over."),
+
+dict(id="C75", kind="contradiction", severity="minor", status="open",
+     title="The menus\u2019 night backdrop is §21.2\u2019s linear #171046 to #2C3AA8, "
+           "but the designs draw a three-stop radial",
+     refs=["21.2", "21.8", "23.5"],
+     body="§21.2 has menus stand \u201con a night backdrop (#171046 to #2C3AA8)\u201d. "
+          "§23.5 lets the designs carry the look, and the designs\u2019 sub-screens "
+          "draw radial-gradient(ellipse 90% 50% at 50% 0%, #2E1F5E, #140C30 55%, "
+          "#0A0620) (15 uses, docs/analysis/screens-v3/data/tokens.proposed.json), "
+          "which §21.2\u2019s two values do not describe. client/ui/tokens.json and "
+          "the client draw the radial; kit-spec.md and O2.md\u2019s interim ruling "
+          "take §21.2\u2019s linear values.",
+     rec="The owner decides: §21.2\u2019s linear values (no document change), or "
+         "§21.2 rewritten to the designs\u2019 radial and its three colours."),
+
 dict(id="G88", kind="gap", severity="minor", status="open",
      title="§5.4’s faults have no tile and no clock of their own, §5.5’s "
            "“twice as often” has two readings, and a universe of the Heart "
@@ -11614,6 +11660,18 @@ V37 = {
     "§26.3 and §26.4 (drafted), the coined names in each language (the "
     "owner’s, §26.9), and a native speaker’s read of the drafted languages."),
 
+"D100": dict(status="open", left="build", note=
+    "Renumbered from D64 by the owner's answer to Q5: family approval for 13 "
+    "to 15 is not built, and the document gives no flow for it."),
+
+"C74": dict(status="open", left="document", note=
+    "Found by K1 building the kit\u2019s tokens (K1-R4): §21.8\u2019s success green "
+    "for words on dark fails its own perceptual check; the owner\u2019s choice."),
+
+"C75": dict(status="open", left="document", note=
+    "Found by K1 building the kit\u2019s tokens (K1-R4): §21.2\u2019s menu backdrop "
+    "and the designs\u2019 radial differ; the owner\u2019s choice."),
+
 "G88": dict(status="open", left="document", note=
     "Found building faults and flicker into heists across a universe, after "
     "v3.7: built as read, the readings drafted (TD.75); a universe of the "
@@ -12739,6 +12797,8 @@ FRONTEND = {
     "D74": "a screen, its art or its look in stage SD",
     "D75": "a screen, its art or its look in stage SD",
     "C44": "a screen, its art or its look in stage SD",
+    "C74": "a screen, its art or its look in stage SD",
+    "C75": "a screen, its art or its look in stage SD",
     "D76": "a screen, its art or its look in stage SD",
     "D77": "a screen, its art or its look in stage SD",
     "D78": "a screen, its art or its look in stage SD",
@@ -15090,6 +15150,12 @@ EDITS = {
          find="English and Brazilian Portuguese at launch.",
          replace="English, Portuguese, German and French at launch.",
          why="The demand test starts after the owner’s six. D99."),
+],
+"D100": [
+    dict(section="20.2", action="replace",
+         find="Family approval where set up; €25 a month cap",
+         replace="The store\u2019s family approval where the family has set it up (the game builds none of its own); €25 a month cap",
+         why="Whose approval 13 to 15 means. D100."),
 ],
 "G88": [
     dict(section="5.4", action="replace",

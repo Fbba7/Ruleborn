@@ -40,6 +40,11 @@ Tests that failed and then passed unchanged, each with its fix task
   `lock.png-….ctex`: the import cache was missing files. The change is
   server files and two documents, which Godot does not import. Re-run once
   at 01:13Z (result in `lead.md`, "Now").
+- **Seen again:** lead cycle 6, 31 October 2026, candidate `22c78e6f`
+  (P0-K1-kitskin onto main) run alone at 06:10Z, after a container restart:
+  366 of 374 client tests passed, the same eight failures. Its client tree
+  is the one K1's pre-check passed at `2432031e` (385 and more). Re-run once
+  at 06:30Z (result in `lead.md`, "Now").
 - **Cause (likely):** `client/build.sh` runs `godot --headless --import`
   with its output discarded and `|| true`, so an import that stops early
   leaves a partial `client/.godot/` and the tests run anyway.

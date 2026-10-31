@@ -1,30 +1,39 @@
 # AIA AI UI artist: progress
 
-- Status: Working on P0-AIA-board-3: built; checks pass; the pre-check comes next.
-- Progress: 2 of 6 tasks merged; 0 items passed by the gate (the board has no gate items).
-- Done: P0-AIA-board-3 built: the studio and the four hero icons in §21.3's toon look, the enamel card's gloss band, rim and foot, the chosen card's gold rim, the lit oak well.
-- Next: the pre-check, then P0-AIA-board-3 is ready for O2-2.
+- Status: Green: pre-check PASS at 4fde22f9 (2026-10-31T11:12:20Z); P0-AIA-keyframes-2 is ready.
+- Progress: 4 of 6 tasks merged; 0 items passed by the gate (the board has no gate items).
+- Done: P0-AIA-keyframes-2 built: result and character at 1080 x 2340 in three forms each, in English and Brazilian Portuguese, under the same scripted checks.
+- Next: P0-AIA-keyframes-3 (open): settings and the contact sheet.
 - Blocked by: none.
-- Owner decision needed: none (O2-2 is AD's).
+- Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
 | P0-AIA-board-1: materials and type | 4 | Merged (b6d0a3de) | pre-check PASS at aa11f0e |
 | P0-AIA-board-2: light, outline, glint, icons, high contrast, board.png | 2 | Merged (O2: approved in part) | `node art/ui/board/check_board.mjs` at 1a1afd2: 364 words pass in both modes, 8 icons keep the outline rule; `--self-test`: 13 planted faults each fail; `board.png`, `board_hc.png` |
-| P0-AIA-board-3: O2's redirect of B3, B4, B5, B11 | 3 | Built | `check_board.mjs`: 376 words pass in both modes, 8 icons keep the outline rule, 22 controls pass value-steps (ΔL* 22.1 or more) |
-| P0-AIA-keyframes-1: home and heist | 4 | Open (waits for O2) | |
-| P0-AIA-keyframes-2: result and character | 4 | Open | |
+| P0-AIA-board-3: O2's redirect of B3, B4, B5, B11 | 3 | Merged (a38a3790) | `check_board.mjs`: 376 words pass in both modes, 8 icons keep the outline rule, 22 controls pass value-steps (ΔL* 22.1 or more); `--self-test`: 15 planted faults each fail; `board.png`, `board_hc.png` |
+| P0-AIA-keyframes-1: home and heist | 4 | Merged (fafc1a13) | `node art/ui/keyframes/check_keyframes.mjs`: 12 stills at 1080 x 2340 pass. Home: 18 controls, smallest touch area 48 points, 43 words (26 at 200%) all passing, worst 5.8:1 at 100%. Heist: 8 controls, 22 words, worst 5.7:1. All 12 shots pass value-steps. `--self-test`: 14 planted faults, each fails. `bash tools/check_all.sh`: all checks passed. |
+| P0-AIA-keyframes-2: result and character | 4 | Ready at 4fde22f9 (pre-check PASS) | `node art/ui/keyframes/check_keyframes.mjs`: all 24 stills pass. Result: 5 controls, smallest touch area 56 points, 23 words (13 at 200%), worst 5.4:1. Character: 4 controls and the tab strip, smallest touch area 52 points, 28 words (15 at 200%), worst 6.87:1. All 24 shots pass value-steps. `--self-test`: each planted fault fails. `bash tools/check_all.sh`: all checks passed. |
 | P0-AIA-keyframes-3: settings and the contact sheet | 2 | Open | |
 
 ## Handoff
-- Last verified commit: 1a1afd2 (pre-check green, 2026-10-30T22:40:23Z); this task's pre-check not yet run.
-- Done: `studio.html` lights every piece with one toon shader that mirrors `client/world/toon_light.gdshaderinc` (four-step ramp, violet shade, saturation 1.1, rim in the piece's light); no physically based material is left. `board.html`: the enamel card has a gloss band, a 3-point `card_bottom` rim and a 6-point foot; the chosen card a 4-point gold rim and 8-point gold foot, no glow; the oak well is a lit floor. `shoot_board.mjs` writes shot files with every control's rectangle. `check_board.mjs` gains a toon-look check (in check 5) and check 7 (value steps through `tools/ui_gate/checks.py`), each with a planted fault.
+- Last verified commit: 4fde22f9 (pre-check green, 2026-10-31T11:12:20Z). Requests AIA-R3 to AIA-R7 in the status file, each with a default.
+- Done:
+  - `art/ui/keyframes/` holds `01-home`, `02-heist`, `03-result` and `04-character` as `.html` with `.png` and `.shot.json` in all six forms each: as written, `_text200` and `_hc`, each also `_pt_BR`.
+  - The result and character pages scroll: at 200% their still is the page's top, and what waits below the fold (`.below`) is neither drawn nor measured; `shoot_keyframes.mjs` leaves undrawn controls out of the shots.
+  - `check_keyframes.mjs` runs the scripted checks: token colours only, the game's words, type at least 13 x scale, 48-point touch areas, safe area, overlap, clipping, at most 8 heist controls, value steps and still size. Its `--self-test` has 14 cases.
+  - `README.md` gives the steps: bake, build the words, shoot, check.
+  - `check_board.mjs`'s checkMode now skips words the page does not draw (display: none), and the board still passes its own checks and self-test.
 - Half done: none.
-- Open hypotheses: the icons' rim strength (0.42, the world's 0.28 and a half) is AIA's choice for icons without a world around them; O2-2 may ask for the world's own.
-- Next step: run the pre-check, mark P0-AIA-board-3 ready; then P0-AIA-keyframes-1 in a new session.
+- Open hypotheses: the large-text adaptations (only the chosen tab keeps its word; side names, the chosen name and the Sage plate hide; pins fall back to their level) follow the game's SIDE_BY_SIDE_UP_TO rule and need the lead's agreement (request 4).
+- Next step: P0-AIA-keyframes-3.
 
 ## Tried and failed
 - 2026-10-30 SVG grain composited with an implicit second input: `feComposite` without `in2` masked the flood with the source shape, so the grain painted the whole surface solid. Named results fixed it.
 - 2026-10-30 Measuring words against their whole line box: the box reaches below capitals into darker ground (gold's lower half), so it failed words whose letters pass. The check now measures under the letters, found by drawing each word in black and in white.
 - 2026-10-30 A planted "icon without its outline" from the finish's glow-and-drop step: the drop, grown like the outline and near ink in colour, rings the silhouette, so the check rightly passed it. The planted fault is now the bare render.
 - 2026-10-31 The enamel gloss band at paper 24%: the card's kicker, "LAW 9 OF 24 · TIME", fell to 4.41:1 at its worst point. 20% passes and the band still reads at phone size.
+- 2026-10-31 Measuring tab badges at 200% with 1 point of padding: the probe ring around the figure reached the badge's rim and caught the island behind it, so a badge that reads well failed. A 3-point vertical pad at large text fixed it.
+- 2026-10-31 Gold faces that darken from the middle down: the words on Cast fell to Lc 47-55. The key frames now keep `--c-gold` down to the lip.
+- 2026-10-31 Kit class names on a new page: the character page's `.tabs` and `.head` took the kit's tab bar and heist head, so the strip went dark and the ability's uses stood in a column. Page-own names (`.char-tabs`, `.ability-head`) fixed it.
+- 2026-10-31 Home in leather on the result's glass tray: ΔL* 13 against its ground. Parchment passes.

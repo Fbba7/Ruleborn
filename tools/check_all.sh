@@ -154,6 +154,11 @@ node art/ui/board/check_board.mjs
 node art/ui/board/check_board.mjs --self-test
 
 echo
+echo "== the UI wave's key frames: their words, contrast and colours, with their planted fails (AIA-R3) =="
+node art/ui/keyframes/check_keyframes.mjs
+node art/ui/keyframes/check_keyframes.mjs --self-test
+
+echo
 echo "== the UI kit's bake: atlases match their sources, and its tests (K1-R1) =="
 node tools/ui_bake/bake.js --check
 node --test tools/ui_bake/test/bake.test.js

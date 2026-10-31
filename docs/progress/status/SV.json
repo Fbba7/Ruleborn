@@ -4,25 +4,21 @@
   "branch": "claude/server-decisions",
   "model": "Sonnet 5.5",
   "agent_state": "active",
-  "task_id": "SV-B7-B9",
+  "task_id": "SV-B11-B12",
   "task_state": "working",
-  "claimed_at": "2026-10-30T21:55:00Z",
-  "lease_until": "2026-10-31T00:55:00Z",
-  "updated_at": "2026-10-30T22:10:00Z",
-  "expected_next_update_by": "2026-10-30T22:55:00Z",
-  "long_run": {
-    "log": "/tmp/check-85a6c767bc9b0d70720fa9ebe8a92fb996948b48.log",
-    "expected_end": "2026-10-30T22:35:00Z"
-  },
+  "claimed_at": "2026-10-31T03:40:00Z",
+  "lease_until": "2026-10-31T06:40:00Z",
+  "updated_at": "2026-10-31T04:20:00Z",
+  "expected_next_update_by": "2026-10-31T05:05:00Z",
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "record the pre-check at 85a6c76, run client suite, mark ready"
+    "next_step": "record the pre-check, mark ready"
   },
   "precheck": {
-    "sha": "a2287d5184e9dd82737bd879eadb6fd5fc77eded",
+    "sha": "dfbca6ed82d57d00eb4c1ebcd0c3ef9ac28092c7",
     "exit": 1,
-    "finished_at": "2026-10-30T22:30:59Z",
-    "summary": "== the client: the same simulation inside Godot, and its screen ==:   FAILED: against the server: signed in with the platform, refreshed before the hour with the refresh token rotated, and signed out \u2014 the token refused at once after"
+    "finished_at": "2026-10-31T03:47:21Z",
+    "summary": "== the simulation core (T3.1, T3.2, T5.5, line of sight): failed: cargo build --release --quiet --target wasm32-unknown-unknown"
   },
   "gate_request": null,
   "ready_sha": null,
@@ -30,19 +26,27 @@
   "acks": [],
   "requests": [
     {
-      "id": "SV-1",
+      "id": "SV-2",
       "from": "SV",
       "to": "lead",
-      "ask": "server/load.json (not in SV-B7-B9's files) is stale because B8 removes 4 written rows a day; I regenerated it with node server/load.mjs --write (57.74 billed rows engaged, was 61.74) so `node server/load.mjs --check` passes. Please confirm, and update the figure quoted in docs/decisions/owner-decisions.md and docs/security/auth.md.",
+      "ask": "SV-B11-B12 needed three edits outside its file list: client/tests/run.gd (one line registering the new suite), docs/status.md (three counts that tie to the register after D100 was added) and the generated docs/audit/index.html. Please accept them.",
       "files": [
-        "server/load.json"
+        "client/tests/run.gd",
+        "docs/status.md",
+        "docs/audit/index.html"
       ],
       "blocking": false,
-      "created_at": "2026-10-30T22:10:00Z",
-      "due": "2026-11-01T00:00:00Z",
-      "default": "keep the regenerated load.json",
+      "created_at": "2026-10-31T04:20:00Z",
+      "due": "2026-11-02T00:00:00Z",
+      "default": "keep the edits",
       "escalate_to": "lead"
     }
   ],
-  "answers": []
+  "answers": [
+    {
+      "request_id": "SV-1",
+      "answer": "kept the regenerated load.json (lead's answer)",
+      "at": "2026-10-31T03:40:00Z"
+    }
+  ]
 }

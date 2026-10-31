@@ -1,13 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T05:56:00Z",
-  "expected_next_update_by": "2026-10-31T07:03:00Z",
-  "cycle": 5,
+  "updated_at": "2026-10-31T14:27:00Z",
+  "expected_next_update_by": "2026-10-31T15:30:00Z",
+  "cycle": 11,
   "merging": null,
   "last_merged": {
-    "task_id": "P0-AD-golden",
-    "sha": "a38a3790"
+    "task_id": "P0-AIA-keyframes-3",
+    "sha": "d0dd8a36"
   },
   "alerts": [],
-  "next_step": "Cycle 6 (session_01SNkKxmymBxL2H7jxeLAz9D): candidate a38a3790 (P0-AIA-board-3, P0-AD-golden) passed check_all at 05:46Z; guard.sh running"
+  "next_step": "Cycle 11: check_all passed on candidate 45328085 (P0-AIA-keyframes-3); merge lock renewed to 15:15Z for the ui guard."
 }

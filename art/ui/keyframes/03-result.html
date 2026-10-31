@@ -1,0 +1,151 @@
+<!doctype html>
+<!-- Key frame 03, result: the page after a Loud heist at the Vault, in the
+     game's words (client/scripts/result_screen.gd). One page over the night
+     with gold rays and the island quiet behind it: the outcome and its
+     multipliers, the moment with its replay, the three rewards with the
+     haul on parchment, the entry fee, the study choice and the crew's rest;
+     then, fixed at the bottom, Home and Raid again. The page scrolls: at
+     200% text the still is its top, the rewards last, and the moment, fee,
+     study and rest wait below the fold. ?lang=pt_BR, ?text=200 and ?hc=1 give its
+     other forms; shoot_keyframes.mjs photographs them all. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Key frame 03 · Result</title>
+<link rel="stylesheet" href="../board/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+body {
+  background-image:
+    repeating-conic-gradient(from -4deg at 50% 15%, color-mix(in srgb, var(--c-gold) 10%, transparent) 0deg 5deg, color-mix(in srgb, var(--c-gold) 0%, transparent) 5deg 15deg),
+    radial-gradient(60% 30% at 50% 15%, color-mix(in srgb, var(--c-gold) 22%, transparent), color-mix(in srgb, var(--c-gold) 0%, transparent)),
+    linear-gradient(180deg, var(--c-night-top) 0%, var(--c-night-mid) 45%, color-mix(in srgb, var(--c-night-bottom) 55%, transparent) 78%, color-mix(in srgb, var(--c-night-bottom) 90%, transparent) 100%),
+    url("bg/heist.jpg");
+}
+html.hc body { background-image: none; background-color: var(--hc-night-top); }
+.screen.result { padding: 8px 14px 6px; gap: 10px; }
+.result-page { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+.outcome-head { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding-top: 4px; }
+.result-kicker { color: var(--t1); }
+.outcome-row { gap: 10px; }
+.outcome {
+  font: 400 calc(32px + 8px * var(--ts))/1.05 "Marcellus"; color: var(--c-cream);
+  -webkit-text-stroke: 6px var(--ink); paint-order: stroke fill; text-shadow: 0 3px 0 var(--c-drop);
+}
+.multipliers {
+  display: inline-block; margin: 4px 0 2px; padding: 3px 14px; border-radius: 999px;
+  border: var(--line) solid var(--c-gold-rim); background: var(--c-drop); color: var(--c-gold);
+}
+.multipliers .caption { font-weight: 800; }
+.moment { display: flex; align-items: center; gap: 14px; padding: 12px 14px calc(12px + var(--foot)); }
+.watch.gold { width: 72px; height: 72px; min-width: 72px; padding: 0 0 var(--lip); flex: none; border-radius: 18px; }
+.large .watch.gold { width: 84px; height: 84px; }
+.face-in { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.moment .kicker { color: var(--t1); }
+.rewards { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 10px; }
+.result-page > * { flex: none; }
+.large .rewards { grid-template-columns: 1fr; gap: 8px; }
+.large .reward { flex-direction: row; justify-content: flex-start; gap: 12px; padding: 6px 16px; }
+.reward { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 12px 6px 14px; border-radius: 16px; text-align: center; }
+.reward.glass { display: flex; }
+.reward-n { color: var(--c-cream); font-variant-numeric: tabular-nums; }
+.haul .reward-n { color: var(--c-starlight); }
+.reward-name { font-weight: 800; }
+.fee { text-align: center; }
+.study { display: flex; flex-direction: column; gap: 10px; padding: 12px 12px calc(12px + var(--foot)); }
+.study-row { gap: 10px; align-items: stretch; }
+.law-paper {
+  flex: 1 1 0; min-width: 0; min-height: 56px; flex-direction: row; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 12px; text-align: left; font: inherit; color: var(--c-parchment-ink);
+}
+.law-paper .law-name { text-shadow: none; }
+.law-paper.chosen { box-shadow: inset 0 0 0 3px var(--c-gold-rim), 0 3px 0 var(--c-drop); border-color: var(--ink); }
+.rest { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 16px; }
+.faces { display: flex; flex: none; }
+.faces .portrait { width: 36px; height: 36px; border-radius: 50%; }
+.faces .portrait + .portrait { margin-left: -10px; }
+.rest .caption { color: var(--t1); }
+.result-bottom { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 22px; }
+.home-btn.parchment { min-width: 0; flex: none; flex-direction: row; align-items: center; gap: 8px; padding: 0 16px; min-height: 56px; border-radius: 16px; font: inherit; }
+.again.gold { flex: 1 1 auto; min-height: 60px; padding: 4px 16px var(--lip); }
+.again-words { align-items: center; gap: 3px; }
+.again .idle { font-weight: 700; }
+.large .below { display: none; }
+/* At 200% Home keeps its house and its spoken name, and gives its word's
+   room to Raid again, whose two lines need the width. */
+.large .home-word { display: none; }
+.large .home-btn.parchment { justify-content: center; width: 64px; height: 64px; padding: 0; }
+.large .home-btn .ico { width: 36px; height: 36px; }
+.large .result-page { gap: 8px; }
+.large .outcome-head { gap: 2px; padding-top: 0; }
+.large .reward-n { font-size: calc(24px * var(--ts)); }
+.large .reward-name { flex: 1 1 auto; text-align: left; }
+</style>
+</head>
+<body>
+<div class="screen result">
+  <div class="result-page">
+    <div class="outcome-head info">
+      <span class="kicker result-kicker" data-key="RESULT_KICKER_DONE" data-check></span>
+      <span class="row outcome-row"><img class="ico l" src="../../../client/ui/icons/png/heistoutcomes/loud.png" alt=""><span class="outcome" data-key="GRADE_LOUD" data-check></span></span>
+      <span class="body on-night-1" data-key="RESULT_CONDITION_LOUD" data-check></span>
+      <span class="multipliers"><span class="caption" data-key="RESULT_MULTIPLIERS" data-args="s:0.7|s:0.8" data-check></span></span>
+      <span class="caption on-night-2" data-key="RESULT_SUBLINE" data-args="d:1|d:52|d:2" data-check></span>
+    </div>
+
+    <div class="moment enamel below">
+      <button class="watch gold ctl" type="button" data-label="RESULT_WATCH"><span class="face-in"><img class="ico l" src="../../../client/ui/icons/png/hud/play.png" alt=""><span class="button-type" data-key="RESULT_THREE_SECONDS" data-check></span></span></button>
+      <span class="col grow">
+        <span class="kicker" data-key="RESULT_MOMENT" data-args="d:0|d:48" data-check></span>
+        <span class="body" data-key="RESULT_MOMENT_SEEN" data-check></span>
+      </span>
+    </div>
+
+    <div class="rewards">
+      <div class="reward haul parchment info">
+        <img class="ico l" src="../../../client/ui/icons/png/resources/starlight.png" alt="">
+        <span class="display reward-n" data-num="n:1288" data-check></span>
+        <span class="caption reward-name" data-key="RESULT_STARLIGHT" data-check></span>
+      </div>
+      <div class="reward glass info">
+        <img class="ico l" src="../../../client/ui/icons/png/resources/essence.png" alt="">
+        <span class="display reward-n"><span>+</span><span data-num="d:46" data-check></span></span>
+        <span class="caption reward-name on-night-2" data-key="RESULT_ESSENCE" data-check></span>
+      </div>
+      <div class="reward glass info">
+        <img class="ico l" src="../../../client/ui/icons/png/resources/renown.png" alt="">
+        <span class="display reward-n"><span>+</span><span data-num="d:12" data-check></span></span>
+        <span class="caption reward-name on-night-2" data-key="RESULT_RENOWN" data-check></span>
+      </div>
+    </div>
+
+    <span class="caption on-night-2 fee below info" data-key="RESULT_FEE_RETURNED" data-args="n:120" data-check></span>
+
+    <div class="study enamel below">
+      <span class="kicker" data-key="RESULT_STUDY" data-check></span>
+      <div class="row study-row">
+        <button class="law-paper parchment ctl chosen" type="button" data-label="LAW_SLEEPWALK"><img class="ico" src="../../../client/ui/icons/png/laws/sleepwalk.png" alt=""><span class="col"><span class="law-name" data-key="LAW_SLEEPWALK" data-check></span><span class="caption success-words" data-key="RESULT_STUDIED" data-args="d:3" data-check></span></span></button>
+        <button class="law-paper parchment ctl" type="button" data-label="LAW_GLASS"><img class="ico" src="../../../client/ui/icons/png/laws/glass.png" alt=""><span class="col"><span class="law-name" data-key="LAW_GLASS" data-check></span></span></button>
+      </div>
+    </div>
+
+    <div class="rest glass below info">
+      <span class="faces">
+        <span class="portrait s-motion"><img src="art/skyskipper.png" alt=""></span>
+        <span class="portrait s-time"><img src="art/tidewalker.png" alt=""></span>
+        <span class="portrait s-life"><img src="art/mossbear.png" alt=""></span>
+      </span>
+      <span class="caption" data-key="RESULT_CREW_RESTING" data-args="d:5|d:40" data-check></span>
+    </div>
+  </div>
+
+  <div class="result-bottom glass">
+    <button class="home-btn parchment ctl" type="button" data-label="COMMON_HOME"><img class="ico" src="../../../client/ui/icons/png/hud/home.png" alt=""><span class="button-type home-word" data-key="COMMON_HOME" data-check></span></button>
+    <button class="again gold ctl" type="button" data-label="RESULT_RAID_AGAIN"><span class="col again-words"><span class="button-type" data-key="RESULT_RAID_AGAIN" data-check></span><span class="caption idle" data-key="RESULT_IDLE_CREW" data-args="d:3" data-check></span></span></button>
+  </div>
+</div>
+<script src="words.js"></script>
+<script src="kit.js"></script>
+</body>
+</html>
