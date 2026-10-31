@@ -60,8 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxrPXYJXnGbD1R9Zte3` (cycle 16,
-31 October 2026, from 19:38Z).
+Latest lead cycle session: `session_01SNkKxr25ThMqb9Aeot1dEV` (cycle 17,
+31 October 2026, from 20:38Z).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -74,8 +74,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AD | `session_01SNkKxpHbYoyKJJjMRSPCPZ` (done) | P0-AD-calibrate | `claude/ui-ad` | 2026-10-31 18:33Z |
-| K1 | `session_01SNkKxnxY3qKwypH2HQMfd8` (done) | P0-K1-tokens-2 (restart: K1-R8 answered) | `claude/ui-bake` | 2026-10-31 18:40Z |
+| AD | `session_01SNkKxpHbYoyKJJjMRSPCPZ` (idle, done) | P0-AD-calibrate | `claude/ui-ad` | 2026-10-31 18:33Z |
+| K1 | `session_01SNkKxnxY3qKwypH2HQMfd8` (idle, done) | P0-K1-tokens-2 (restart: K1-R8 answered) | `claude/ui-bake` | 2026-10-31 18:40Z |
 | K1 | `session_01SNkKxnJNP5X4uedWQBNKZt` (idle, replaced) | P0-K1-tokens-2 (restart: K1-R7 answered) | `claude/ui-bake` | 2026-10-31 17:42Z |
 | K1 | `session_01SNkKxopXscd2QpqKuzHGnG` (idle, replaced) | P0-K1-tokens-2 | `claude/ui-bake` | 2026-10-31 16:59Z |
 | AD | `session_01SNkKxokei5gETTF4KU2gsD` (idle, done) | O3 | `claude/ui-ad` | 2026-10-31 16:21Z |
@@ -169,14 +169,19 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 16, 31 October 2026, from 19:38Z (session
-  `session_01SNkKxrPXYJXnGbD1R9Zte3`). P0-K1-tokens-2 (785cb2a8) and
-  P0-AD-calibrate (3f3797c7) were both ready, so they went in one batch
-  candidate, `d7561425`: check_all passed (20:28Z, about 43 minutes) and
-  `guard.sh` printed "ui guard: OK"; merged onto main's bookkeeping head
-  as `eec44b50` after the documentation check; the merge lock is clear.
-  Neither published page's source changed, so neither was republished.
-  No alerts; no agent started (none has an open task it can take).
+- Cycle 17, 31 October 2026, from 20:38Z (session
+  `session_01SNkKxr25ThMqb9Aeot1dEV`): a bookkeeping cycle. No status file
+  changed since cycle 16 (AD, AIA, K1 and SV all `waiting`, no task
+  ready), no merge lock, nothing to merge, no agent started, no alerts.
+  The new remote branches `claude/ui-research` and `claude/ui-screens`
+  are not on the roster (their last commits are from 28 October); left
+  alone. The usage warning now reads the seven-day limit (cycle 16 saw the
+  five-hour one; get_session: `rate_limit_info` type `seven_day`, `allowed_warning`,
+  resets 2 November 17:00Z), so the gate runs stay deferred until then.
+- Cycle 16 (19:38Z, session `session_01SNkKxrPXYJXnGbD1R9Zte3`):
+  P0-K1-tokens-2 (785cb2a8) and P0-AD-calibrate (3f3797c7) merged as one
+  batch candidate `d7561425` (check_all PASS, "ui guard: OK") onto main
+  as `eec44b50`.
 - The dev-fable and dev-opus gate runs (AD-R6) are not launched: the
   account's five-hour usage reads "allowed_warning", and the two runs are
   about 730 judge calls plus splits. Nothing waits on them (all eight
