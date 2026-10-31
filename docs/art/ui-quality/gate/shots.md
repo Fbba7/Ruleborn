@@ -4,7 +4,9 @@ A **shot** is one still and the rectangles of its controls. The gate's image
 checks read shots, and its sheets are made from them (section 3.5 of
 `report.md`). AD keeps the shot lists (`docs/guides/agent-protocol.md`, the
 roster); the renderer that makes the stills from them is backlog task BT-04.
-The scripts are in `tools/ui_gate/` (P0-AD-sheet).
+The scripts are in `tools/ui_gate/` (P0-AD-sheet); `calibrate.py`, the judge's
+calibration on the golden set, is described in [calibration.md](calibration.md)
+(P0-AD-calibrate).
 
 ## The format
 

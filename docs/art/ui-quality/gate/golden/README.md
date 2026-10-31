@@ -14,6 +14,11 @@ existed, and added planted fails to it. P0-AD-golden-2 adds part 2.
 | [labels-blind.md](labels-blind.md) | The blind form: the rows of the held-out third only, filled in at O3 by a fresh subagent given only `../rubric.md` and the images |
 | `labels-head.md`, `labels-blind-head.md` | The headings of the two forms; `golden.py labels` writes them at the top |
 
+**Version 1.** The items as they stand and the labels O3 gave them are golden
+set version 1, the one calibrated against rubric version 1
+([../calibration.md](../calibration.md)). Adding, dropping or relabelling an
+item makes version 2 and re-runs the held-out third.
+
 ## The set at a glance
 
 There are 60 items: 32 screens, 17 kit art and 11 icons. Of these, 32 are
