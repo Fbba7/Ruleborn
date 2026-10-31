@@ -8,11 +8,11 @@
   "task_state": "working",
   "claimed_at": "2026-10-31T17:05:00Z",
   "lease_until": "2026-10-31T20:45:00Z",
-  "updated_at": "2026-10-31T18:12:00Z",
+  "updated_at": "2026-10-31T17:53:00Z",
   "expected_next_update_by": null,
   "long_run": {
     "log": "/tmp/check-04f08bcc6c647dda6765530939cafbda51665731.log",
-    "expected_end": "2026-10-31T18:40:00Z"
+    "expected_end": "2026-10-31T18:20:00Z"
   },
   "progress_marker": {
     "last_green_sha": "5864d65d",
