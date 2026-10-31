@@ -60,8 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxmrimqaqjF6fV9h1sX` (cycle 12,
-31 October 2026, from 14:39Z).
+Latest lead cycle session: `session_01SNkKxr8sjyN888CPXSjhkV` (cycle 13,
+31 October 2026, from 15:39Z).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -74,8 +74,10 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AD | `session_01SNkKxmwhuyTLjRXnCt5A2r` | P0-AD-golden-2 | `claude/ui-ad` | 2026-10-31 14:25Z |
-| AIA | `session_01SNkKxpFZ1uLvbaTsn7n9HE` | P0-AIA-board-4 | `claude/ui-artist` | 2026-10-31 13:41Z |
+| K1 | `session_01SNkKxopXscd2QpqKuzHGnG` | P0-K1-tokens-2 | `claude/ui-bake` | 2026-10-31 16:59Z |
+| AD | `session_01SNkKxokei5gETTF4KU2gsD` | O3 | `claude/ui-ad` | 2026-10-31 16:21Z |
+| AD | `session_01SNkKxmwhuyTLjRXnCt5A2r` (idle, done) | P0-AD-golden-2 | `claude/ui-ad` | 2026-10-31 14:25Z |
+| AIA | `session_01SNkKxpFZ1uLvbaTsn7n9HE` (idle, done) | P0-AIA-board-4 | `claude/ui-artist` | 2026-10-31 13:41Z |
 | AIA | `session_01SNkKxoXUhGbw3TiCMG8jXR` (idle, done) | P0-AIA-keyframes-3 | `claude/ui-artist` | 2026-10-31 12:29Z |
 | K1 | `session_01SNkKxrCv585ZiQCx71ojeP` (idle, done) | P0-K1-tokens | `claude/ui-bake` | 2026-10-31 10:10Z |
 | AIA | `session_01SNkKxmdAT9ocJLJRoW6uGa` (idle, done) | P0-AIA-keyframes-2 | `claude/ui-artist` | 2026-10-31 10:10Z |
@@ -164,26 +166,27 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 12, 31 October 2026, from 14:39Z (session
-  `session_01SNkKxmrimqaqjF6fV9h1sX`). Bookkeeping only: nothing was
-  ready. AIA (P0-AIA-board-4) and AD (P0-AD-golden-2) are both running
-  their pre-checks (AIA past its 14:40Z expected update, but its session
-  is working, so no restart); both tasks set `claimed` with their leases.
-  Answered AIA-R8 with AIA's default and added it to P0-K1-tokens-2's
-  title (success words below 36 points stay off the #3FBF7F fill until
-  C74). No merges, no starts, no restarts, no alerts. The branches
-  `claude/ui-plan`, `claude/ui-research` and `claude/ui-screens` appeared
-  on the remote; none is on the roster, so the cycle ignored them.
+- Cycle 13, 31 October 2026, from 15:39Z (session
+  `session_01SNkKxr8sjyN888CPXSjhkV`). Merged P0-AD-golden-2 (`520565f9`,
+  with `tools/ui_gate/golden.py` granted as an exception, as for part 1)
+  and then P0-AIA-board-4 (`f920b57b`; its branch predates the
+  keyframes-3 merge, so the owners check ran against the candidate's first
+  parent and the merge tree touches only `art/ui/board/**` and AIA's
+  progress files). check_all and the ui guard passed on both; each
+  candidate was merged onto main's bookkeeping head after a docs check.
+  Started AD on O3 (16:21Z) and K1 on P0-K1-tokens-2 (16:59Z). Both
+  published pages already match main, so neither was republished. No
+  alerts, no restarts, no new requests. The merge lock is clear.
 - Tools in a fresh container: `rustup target add wasm32-unknown-unknown
   aarch64-linux-android aarch64-apple-ios`, `pip install "gdtoolkit==4.*"
   "playwright==1.63.0"` (1.63.0 matches the container's Chromium build
   1243 in `/opt/pw-browsers`; a newer Python playwright cannot find a
   browser), then `bash client/build.sh` in the guard's worktree. check_all
   took about 33 minutes, the build and guard about 7.
-- Next: merge P0-AIA-board-4 and P0-AD-golden-2 when ready (one batch
-  candidate if both are). Then start K1 on P0-K1-tokens-2 (waits on
-  P0-AIA-board-4) and AD on O3 (waits on P0-AD-golden-2). SV has none.
-- Cycle 11 (13:39Z) merged P0-AIA-keyframes-3 (`d0dd8a36`) and started AIA
+- Next: merge O3 when AD marks it ready, then AD's P0-AD-calibrate as its
+  deps merge; merge K1's P0-K1-tokens-2 when ready (one batch candidate if
+  both are). AIA has no open task yet; SV has none.
+- Cycle 12 (14:39Z) did bookkeeping only (answered AIA-R8). Cycle 11 (13:39Z) merged P0-AIA-keyframes-3 (`d0dd8a36`) and started AIA
   on P0-AIA-board-4 and AD on P0-AD-golden-2. Cycle 10 (12:39Z) did
   bookkeeping only. Cycle 9 (11:39Z) merged
   P0-K1-tokens and P0-AIA-keyframes-2 (`b8308788`), answered K1-R6
