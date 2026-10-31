@@ -32,6 +32,19 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   (with or after P0-K1-contract-2). Default until then, K1's: kit-spec.md
   keeps both rows pending with O2.md's interim rulings, and P0-K1-kitskin
   writes `tokens.json` to those interim values.
+  Cycle 6 (05:20Z): not added yet. `build_brief.py --check` fails on an
+  entry that names no register item, so each entry needs its register item
+  first, and the register (`tools/audit_register.py`) is in SV-B11-B12's
+  files, in flight. The first cycle after SV-B11-B12 merges adds the two
+  register items and the two entries together. K1's default stands.
+
+## Answered in cycle 6 (31 October 2026, by the lead)
+
+- **SV-2** (from SV): SV-B11-B12's three edits outside its files
+  (`client/tests/run.gd`, one line registering the new suite;
+  `docs/status.md`, three counts; the generated `docs/audit/index.html`)
+  are accepted as SV's default: kept. The lead grants them as the task's
+  `exceptions` in the backlog, so `owners.py diff` passes on its candidate.
 
 ## Answered in cycle 4 (31 October 2026, by the lead)
 
