@@ -3,26 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P0-AD-golden",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-10-31T01:45:00Z",
   "lease_until": "2026-10-31T04:45:00Z",
-  "updated_at": "2026-10-31T01:50:17Z",
-  "expected_next_update_by": "2026-10-31T02:35:17Z",
+  "updated_at": "2026-10-31T02:25:42Z",
+  "expected_next_update_by": "2026-10-31T03:10:42Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "586cc5a",
-    "next_step": "P0-AD-golden: pre-check, then mark ready"
+    "last_green_sha": "7d8c4ed",
+    "next_step": "P0-AD-golden ready at 7d8c4ed; next O2-2 (waits for P0-AIA-board-3, P0-K1-contract-2), then P0-AD-golden-2"
   },
   "precheck": {
     "sha": "7d8c4ed612e5115523aec859d83f7185f9202596",
-    "exit": 127,
-    "finished_at": "2026-10-31T01:55:45Z",
-    "summary": "== the client: the same simulation inside Godot, and its screen ==: tools/check_all.sh: line 55: gdlint: command not found"
+    "exit": 0,
+    "finished_at": "2026-10-31T02:25:32Z",
+    "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "7d8c4ed",
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
