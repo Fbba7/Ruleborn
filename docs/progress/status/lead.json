@@ -1,7 +1,7 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T05:17:00Z",
-  "expected_next_update_by": "2026-10-31T06:32:00Z",
+  "updated_at": "2026-10-31T05:48:00Z",
+  "expected_next_update_by": "2026-10-31T07:03:00Z",
   "cycle": 5,
   "merging": {
     "candidate_sha": "a38a3790",
@@ -9,13 +9,13 @@
       "P0-AIA-board-3",
       "P0-AD-golden"
     ],
-    "started_at": "2026-10-31T05:17:00Z",
-    "expires_at": "2026-10-31T06:17:00Z"
+    "started_at": "2026-10-31T05:48:00Z",
+    "expires_at": "2026-10-31T06:48:00Z"
   },
   "last_merged": {
     "task_id": "P0-K1-contract-2",
     "sha": "beb8573a"
   },
   "alerts": [],
-  "next_step": "Cycle 6 (session_01SNkKxmymBxL2H7jxeLAz9D) merged P0-K1-contract-2 (beb8573a) and is checking P0-AIA-board-3 with P0-AD-golden in one candidate (a38a3790; check_all, then guard.sh)"
+  "next_step": "Cycle 6 (session_01SNkKxmymBxL2H7jxeLAz9D): candidate a38a3790 (P0-AIA-board-3, P0-AD-golden) passed check_all at 05:46Z; guard.sh running"
 }
