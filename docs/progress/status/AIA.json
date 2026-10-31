@@ -8,7 +8,7 @@
   "task_state": "working",
   "claimed_at": "2026-10-31T03:42:36Z",
   "lease_until": "2026-10-31T06:42:36Z",
-  "updated_at": "2026-10-31T04:22:21Z",
+  "updated_at": "2026-10-31T04:38:37Z",
   "expected_next_update_by": "2026-10-31T05:07:21Z",
   "long_run": null,
   "progress_marker": {
@@ -21,5 +21,6 @@
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [],
-  "answers": []
+  "answers": [],
+  "next_step": "Home and heist stills shot in all 12 forms and passing value-steps; next check_keyframes.mjs with its self-test, then the full checks"
 }

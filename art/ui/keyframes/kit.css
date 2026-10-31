@@ -448,7 +448,7 @@ body { position: relative; background-color: var(--c-night-bottom); background-s
 .sb { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; width: 66px; }
 .sb .face {
   position: relative; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--g-round-violet); border: var(--line) solid var(--c-ink-line);
+  background: var(--g-round-sky); border: var(--line) solid var(--c-ink-line);
   box-shadow: inset 0 2px 0 var(--lit), 0 3px 0 var(--c-drop);
 }
 :is(html.hc) .sb .face { box-shadow: 0 0 0 1.5px var(--c-text-on-night), 0 3px 0 var(--c-drop); }
@@ -508,7 +508,7 @@ body { position: relative; background-color: var(--c-night-bottom); background-s
 /* Above 125% the other tabs go to their icons; the chosen tab keeps its word. */
 .large .tab:not(.active) .t { display: none; }
 .large .tab.active { flex-grow: 2.2; }
-.large .tab:not(.active) > img { margin-bottom: 6px; }
+
 .large .tab.heist > .lift { bottom: 4px; }
 .avatar { position: relative; flex: none; }
 .res .glass:last-child { flex-grow: 1.4; }
@@ -536,7 +536,7 @@ body { position: relative; background-color: var(--c-night-bottom); background-s
 .large .side:first-child .sb { align-items: flex-start; }
 .large .side:last-child .sb { align-items: flex-end; }
 /* The tabs' counts sit above their icons, clear of them. */
-.large .tab:not(.active) > img { width: 40px; height: 40px; }
+
 .large .tab .badge { top: -30px; right: calc(50% - 30px); }
 /* A pill's numbers never break; a row out of room wraps to the next. */
 .res .glass { flex: 1 1 auto; min-width: 0; padding: 6px 8px 8px; }
@@ -603,7 +603,7 @@ body { position: relative; background-color: var(--c-night-bottom); background-s
 .chosen-name { position: absolute; left: 0; top: 0; }
 .acts { display: flex; flex-direction: column; align-items: stretch; gap: 10px; width: 156px; }
 .sage { display: flex; align-items: center; gap: 8px; align-self: flex-end; }
-.sage .face { position: relative; display: block; }
+.sage .seat { position: relative; display: block; }
 .sage .ring { width: 64px; height: 64px; padding: 4px; display: block; }
 .sage .portrait { width: 100%; height: 100%; border-radius: 50%; }
 /* The cooldown dial: the share still to wait, with its seconds. */
@@ -614,7 +614,7 @@ body { position: relative; background-color: var(--c-night-bottom); background-s
   font: 800 calc(13px * var(--ts))/1 "Manrope"; font-variant-numeric: tabular-nums; color: var(--t1);
 }
 .sage { order: -1; flex-direction: row-reverse; }
-.cast.leather, .getout { min-width: 0; width: 100%; gap: 8px; font-family: "Manrope"; }
+.cast.gold, .getout { min-width: 0; width: 100%; gap: 8px; font-family: "Manrope"; }
 .cast .button-type, .getout .button-type { white-space: nowrap; }
 /* Three columns as wide as their words, the space between them shared. */
 .heist-top { grid-template-columns: auto auto auto; justify-content: space-between; }
@@ -641,8 +641,50 @@ body { position: relative; background-color: var(--c-night-bottom); background-s
 .large .chosen-name, .large .sage .plate, .large .acts .ico { display: none; }
 .large .acts { width: auto; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
 .large .sage { order: 0; margin-right: auto; }
-.large .cast.leather, .large .getout { width: auto; flex: 1 1 auto; padding: 0 10px 2px; }
+.large .cast.gold, .large .getout { width: auto; flex: 1 1 auto; padding: 0 10px 2px; }
+.large .cast.gold { padding-bottom: var(--lip); }
 .large .mate .pip { width: 12px; height: 12px; }
 /* The dial's seconds grow with the text, so it stands beside the Sage. */
-.large .sage .face { display: flex; align-items: center; gap: 4px; }
+.large .sage .seat { display: flex; align-items: center; gap: 4px; }
 .large .dial { position: static; }
+
+/* The hand's tray: dark glass under the crew and the hand's buttons (§21.8's
+   pills over the world), so each stands two value steps off its ground. */
+.hand.tray { display: flex; min-height: 0; padding: 8px; gap: 8px; overflow: visible; }
+.cast.gold { --lip: 8px; padding: 0 12px var(--lip); }
+/* A pin down to its level keeps the label's cream, so it reads off the night. */
+.pin.small .disc { background: var(--c-cream); color: var(--c-parchment-ink); border-color: var(--m-island-label-line); }
+/* Each other tab stands its icon in a well of the bar's own violet, lit, so
+   the tab is two value steps off the bar as the chosen tab is. */
+.tab > .well { display: grid; place-items: center; width: 44px; height: 40px; border-radius: 12px; background: var(--g-round-violet); border: 1.5px solid var(--c-ink-line); }
+.tab > .well > img { width: 34px; height: 34px; }
+.large .tab:not(.active) > .well { margin-bottom: 6px; width: 48px; height: 46px; }
+.large .tab:not(.active) > .well > img { width: 40px; height: 40px; }
+/* The side buttons' sky keeps its light to two thirds of the way out, so
+   an icon of dark wood still leaves the face two steps off the night. */
+.sb .face { background: radial-gradient(circle at 42% 30%, #B6ECFF 0%, #4AA8EA 80%, #163E8C 100%); }
+/* In high contrast a round control's outline is its own edge: 3 points of
+   the night's text colour, drawn on the face, not around it. */
+:is(html.hc) .sb .face, :is(html.hc) .gold-round { border-color: var(--c-text-on-night); box-shadow: 0 3px 0 var(--c-drop); }
+/* At large text the level stands below the portrait, off its face. */
+.large .lvl { right: auto; left: 50%; bottom: -18px; transform: translateX(-50%); }
+/* At large text the chosen tab's lift sits lower and shorter, so it
+   stays on the bar. */
+.large .tab.active > .lift { height: 46px; bottom: calc(20px * var(--ts) - 2px); }
+.sb .face > img { width: 34px; height: 34px; }
+.sage .ring { padding: 7px; }
+.large .tab .t { line-height: 1.05; }
+.large .tab.active > .lift { bottom: calc(13.65px * var(--ts) + 10px); }
+/* The chosen tab's lift holds its light past the middle, two steps off the
+   bar at any text size. */
+.tab.active > .lift { background: linear-gradient(180deg, var(--c-tab-active-top) 0%, var(--c-tab-active-mid) 65%, var(--c-tab-active-bottom) 100%); }
+/* A side button's count sits on its shoulder, off the face. */
+.sb .badge { top: -10px; right: -10px; }
+/* At large text the count grows; it stands on the shoulder toward the
+   screen's middle, over the face's corner rather than the face. */
+.large .side:first-child .sb .badge { top: -16px; right: -32px; }
+.large .side:last-child .sb .badge { top: -16px; right: auto; left: -32px; }
+/* At large text the side columns close up, so the Lab clears the goal row. */
+.large .mid { padding-top: 0; }
+.large .sb { gap: 0; }
+.large .side { gap: 6px; }

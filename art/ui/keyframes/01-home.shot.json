@@ -1,0 +1,256 @@
+{
+ "image": "01-home.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 1,
+ "controls": [
+  {
+   "name": "ctl 1: 6 The Heart",
+   "rect": [
+    142,
+    308,
+    107.73,
+    28.25
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 2: 4 Skyfield",
+   "rect": [
+    100,
+    192,
+    97.25,
+    28.25
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 3: 5 Crystalline",
+   "rect": [
+    180,
+    224,
+    115.27,
+    28.25
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 4: 4 Tidehold",
+   "rect": [
+    278,
+    378,
+    101.2,
+    28.25
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 5: 3 Verdant",
+   "rect": [
+    46,
+    544,
+    95.59,
+    28.25
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 6: 3 Emberreach",
+   "rect": [
+    224,
+    546,
+    122.39,
+    28.25
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 7: Lantern Vale Opens at Keeper 28",
+   "rect": [
+    8,
+    376,
+    170.28,
+    42.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "avatar 8: Profile",
+   "rect": [
+    12,
+    50,
+    60,
+    60
+   ],
+   "persistent": true
+  },
+  {
+   "name": "glass 9: Keeper 24 1,460 Renown",
+   "rect": [
+    80,
+    50,
+    199.75,
+    58.8
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 10: Strain: Humming, 82%",
+   "rect": [
+    287.75,
+    50,
+    90.25,
+    53.55
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 11: 142.0k",
+   "rect": [
+    12,
+    118,
+    121.08,
+    46
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 12: 31.4k",
+   "rect": [
+    139.08,
+    118,
+    111.17,
+    46
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 13: 61.0k Full",
+   "rect": [
+    256.25,
+    118,
+    121.75,
+    46
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "sb 14: 2 Defence 5 h 12 min",
+   "rect": [
+    11,
+    176,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "sb 15: Lab",
+   "rect": [
+    11,
+    290.5,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "sb 16: 3 Season",
+   "rect": [
+    323,
+    176,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "sb 17: 1 Shop",
+   "rect": [
+    323,
+    266.25,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "glass 18: 1,240 experience to go · Keeper 25",
+   "rect": [
+    8,
+    675.91,
+    200.42,
+    61.09
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "gold 19: Collect all: 3.4k waiting",
+   "rect": [
+    216.42,
+    685,
+    165.58,
+    52
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 20: Islands",
+   "rect": [
+    23,
+    730,
+    56,
+    52
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 21: 1 Laws",
+   "rect": [
+    101,
+    746.41,
+    44,
+    40
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 22: 2 Heist",
+   "rect": [
+    165,
+    722,
+    60,
+    60
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 23: 4 Crew",
+   "rect": [
+    245,
+    746.41,
+    44,
+    40
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 24: 1 Friends",
+   "rect": [
+    317,
+    746.41,
+    44,
+    40
+   ],
+   "persistent": true
+  }
+ ]
+}

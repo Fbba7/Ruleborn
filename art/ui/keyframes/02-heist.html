@@ -2,7 +2,9 @@
 <!-- Key frame 02, heist (§21.8): the crew at the Vault, under the heist
      screen's interface in the game's words. The law banner top left, clock
      and alarm top centre, loot top right; crew bottom left; Sage, Cast and
-     Get out bottom right: eight things to tap. ?lang=pt_BR, ?text=200 and
+     Get out bottom right: eight things to tap. The hand stands on a
+     tray of dark glass, so the portraits and buttons keep their value step
+     off the bright world. ?lang=pt_BR, ?text=200 and
      ?hc=1 give its other forms; shoot_keyframes.mjs photographs them all. -->
 <html lang="en">
 <head>
@@ -41,7 +43,7 @@ html.hc body { background-image: url("bg/heist_hc.jpg"); }
   </div>
   <div class="heist-bottom hud">
     <div class="glass hint info"><span class="caption" data-key="HEIST_HINT_SHORT" data-check></span></div>
-    <div class="hand">
+    <div class="hand glass tray">
       <div class="crew">
         <div class="mate ctl chosen" data-label="RULEBORN_SKYSKIPPER"><span class="face"><span class="portrait s-motion"><img src="art/skyskipper.png" alt=""></span></span><span class="pips" data-label="HEIST_USES_LEFT" data-args="d:1"><span class="pip"></span><span class="pip spent"></span><span class="number" data-num="d:1" data-check></span></span></div>
         <div class="mate ctl" data-label="RULEBORN_TIDEWALKER"><span class="face"><span class="portrait s-time"><img src="art/tidewalker.png" alt=""></span></span><span class="pips" data-label="HEIST_USES_LEFT" data-args="d:2"><span class="pip"></span><span class="pip"></span><span class="number" data-num="d:2" data-check></span></span></div>
@@ -51,8 +53,8 @@ html.hc body { background-image: url("bg/heist_hc.jpg"); }
         <span class="plate chosen-name" data-key="RULEBORN_SKYSKIPPER" data-check></span>
       </div>
       <div class="acts">
-        <div class="sage ctl" data-label="HEIST_SAGE_COOLING" data-args="k:SAGE_THE_ARCHIVIST|d:12"><span class="face"><span class="ring gold-round"><span class="portrait"><img src="art/archivist.png" alt=""></span></span><span class="dial" style="--v: 60%"><span data-num="d:12" data-check></span></span></span><span class="plate" data-key="HEIST_SAGE" data-check></span></div>
-        <button class="cast leather ctl" type="button" data-label="HEIST_CAST"><img class="ico" src="../../../client/ui/icons/png/heistcontrols/cast.png" alt=""><span class="button-type" data-key="HEIST_CAST" data-check></span></button>
+        <div class="sage ctl" data-label="HEIST_SAGE_COOLING" data-args="k:SAGE_THE_ARCHIVIST|d:12"><span class="seat"><span class="ring gold-round face"><span class="portrait s-time"><img src="art/archivist.png" alt=""></span></span><span class="dial" style="--v: 60%"><span data-num="d:12" data-check></span></span></span><span class="plate" data-key="HEIST_SAGE" data-check></span></div>
+        <button class="cast gold ctl" type="button" data-label="HEIST_CAST"><img class="ico" src="../../../client/ui/icons/png/heistcontrols/cast.png" alt=""><span class="button-type" data-key="HEIST_CAST" data-check></span></button>
         <button class="getout alarm-fill ctl" type="button" data-label="HEIST_GET_OUT"><img class="ico" src="../../../client/ui/icons/png/heistcontrols/getout.png" alt=""><span class="button-type" data-key="HEIST_GET_OUT" data-check></span></button>
       </div>
     </div>

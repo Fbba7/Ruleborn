@@ -1,0 +1,256 @@
+{
+ "image": "01-home_text200.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 2,
+ "controls": [
+  {
+   "name": "ctl 1: 6",
+   "rect": [
+    170,
+    396,
+    52,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 2: 4",
+   "rect": [
+    122,
+    346,
+    52,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 3: 5",
+   "rect": [
+    212,
+    346,
+    52,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 4: 4",
+   "rect": [
+    242,
+    396,
+    52,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 5: 3 Verdant",
+   "rect": [
+    10,
+    502,
+    168.17,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 6: 3",
+   "rect": [
+    258,
+    502,
+    52,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 7: ",
+   "rect": [
+    76,
+    440,
+    52,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "avatar 8: Profile",
+   "rect": [
+    12,
+    71.8,
+    60,
+    60
+   ],
+   "persistent": true
+  },
+  {
+   "name": "glass 9: Keeper 24 1,460",
+   "rect": [
+    78,
+    50,
+    300,
+    103.59
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 10: Strain: Humming, 82%",
+   "rect": [
+    198,
+    249.98,
+    180,
+    91.48
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 11: 142.0k",
+   "rect": [
+    12,
+    167.59,
+    180,
+    68.39
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 12: 31.4k",
+   "rect": [
+    198,
+    167.59,
+    180,
+    68.39
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 13: 61.0k Full",
+   "rect": [
+    12,
+    249.98,
+    180,
+    91.48
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "sb 14: 2 5 h 12 min",
+   "rect": [
+    6,
+    341.47,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "sb 15: ",
+   "rect": [
+    6,
+    440.97,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "sb 16: 3",
+   "rect": [
+    328,
+    341.47,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "sb 17: 1",
+   "rect": [
+    328,
+    403.47,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "glass 18: 1,240 experience to go · Keeper 25",
+   "rect": [
+    8,
+    622.81,
+    374,
+    96.19
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "gold 19: Collect all: 3.4k waiting",
+   "rect": [
+    8,
+    552.81,
+    374,
+    62
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 20: Islands",
+   "rect": [
+    50.88,
+    720.7,
+    56,
+    46
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 21: 1",
+   "rect": [
+    147.78,
+    752,
+    48,
+    46
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 22: 2",
+   "rect": [
+    199.84,
+    740,
+    60,
+    60
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 23: 4",
+   "rect": [
+    263.91,
+    752,
+    48,
+    46
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 24: 1",
+   "rect": [
+    321.97,
+    752,
+    48,
+    46
+   ],
+   "persistent": true
+  }
+ ]
+}
