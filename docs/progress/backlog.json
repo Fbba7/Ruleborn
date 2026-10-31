@@ -645,17 +645,17 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "claimed",
+      "state": "ready",
       "claim": {
         "agent": "AIA",
         "branch": "claude/ui-artist",
         "claimed_at": "2026-10-31T13:45:00Z",
-        "seen_at": "2026-10-31T14:40:00Z",
+        "seen_at": "2026-10-31T16:20:00Z",
         "lease_until": "2026-10-31T16:45:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "b83a0b4d",
       "merged_sha": null
     },
     {
@@ -729,7 +729,7 @@
       "estimate_h": 1,
       "tier": 1,
       "critical": true,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "AD",
         "branch": "claude/ui-ad",
@@ -740,7 +740,7 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "b6fce494",
-      "merged_sha": null,
+      "merged_sha": "520565f9",
       "exceptions": [
         "tools/ui_gate/golden.py"
       ]
