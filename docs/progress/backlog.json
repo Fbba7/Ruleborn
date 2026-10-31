@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-30T21:30:00Z",
+  "updated_at": "2026-10-31T01:50:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
@@ -140,12 +140,12 @@
       "estimate_h": 2,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "1a1afd20",
+      "merged_sha": "95e204a1"
     },
     {
       "id": "P0-AD-sheet",
@@ -173,12 +173,57 @@
       "estimate_h": 3,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "f5e95710",
+      "merged_sha": "7f9bf000",
+      "exceptions": [
+        "README.md"
+      ]
+    },
+    {
+      "id": "O2",
+      "title": "AD approves the style board and kit contract v1, or redirects with notes (report.md section 3.4)",
+      "phase": 0,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/approvals/O2.md"
+      ],
+      "deps": [
+        "P0-AIA-board-2",
+        "P0-K1-contract"
+      ],
+      "shows": [
+        "art/ui/board/board.png",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "done_when": [
+        "gate/approvals/O2.md says approve or redirect for art/ui/board/board.png and for kit-spec.md v1, each against §21.2, §21.8 and the rubric, with a note per point",
+        "a redirect is sent to the lead as a request naming the task it becomes (agent-protocol.md, worked example D)",
+        "python3 tools/check_docs_consistency.py"
+      ],
+      "estimate_h": 0.5,
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "ready",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-10-31T00:35:00Z",
+        "seen_at": "2026-10-31T01:04:53Z",
+        "lease_until": "2026-10-31T03:35:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "586cc5ab",
+      "merged_sha": null,
+      "default": "none: AD decides, and a redirect becomes a new task"
     },
     {
       "id": "P0-AD-golden",
@@ -214,29 +259,8 @@
       "merged_sha": null
     },
     {
-      "id": "O2",
-      "title": "AD approves the style board and kit contract v1, or redirects with notes (report.md section 3.4)",
       "phase": 0,
-      "role": "AD",
       "model": "Opus 5.5",
-      "assigned_to": "AD",
-      "files": [
-        "docs/art/ui-quality/gate/approvals/O2.md"
-      ],
-      "deps": [
-        "P0-AIA-board-2",
-        "P0-K1-contract"
-      ],
-      "shows": [
-        "art/ui/board/board.png",
-        "docs/art/ui-quality/kit-spec.md"
-      ],
-      "done_when": [
-        "gate/approvals/O2.md says approve or redirect for art/ui/board/board.png and for kit-spec.md v1, each against §21.2, §21.8 and the rubric, with a note per point",
-        "a redirect is sent to the lead as a request naming the task it becomes (agent-protocol.md, worked example D)",
-        "python3 tools/check_docs_consistency.py"
-      ],
-      "estimate_h": 0.5,
       "gate_items": [],
       "attempts": 0,
       "tier": 1,
@@ -247,7 +271,26 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "default": "none: AD decides, and a redirect becomes a new task"
+      "id": "O2-2",
+      "title": "AD re-approves O2's redirected points only (board points B3, B4, B5, B11; contract points K1-K3), against §21.2, §21.8 and the rubric",
+      "role": "AD",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/approvals/O2-2.md"
+      ],
+      "deps": [
+        "P0-AIA-board-3",
+        "P0-K1-contract-2"
+      ],
+      "shows": [
+        "art/ui/board/board.png",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "done_when": [
+        "gate/approvals/O2-2.md says approve or redirect for each redirected point, with a note per point",
+        "python3 tools/check_docs_consistency.py"
+      ],
+      "estimate_h": 0.5
     },
     {
       "id": "P0-K1-bake-1",
@@ -272,12 +315,15 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "0ceaeec3",
+      "merged_sha": "2b6870fe",
+      "exceptions": [
+        "README.md"
+      ]
     },
     {
       "id": "P0-K1-bake-2",
@@ -302,12 +348,47 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
+      "state": "ready",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-10-31T00:35:00Z",
+        "seen_at": "2026-10-31T01:22:46Z",
+        "lease_until": "2026-10-31T03:35:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "e97ef3ab",
+      "merged_sha": null
+    },
+    {
+      "phase": 0,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
       "state": "open",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "id": "P0-K1-contract-2",
+      "title": "Kit contract, O2's redirect (gate/approvals/O2.md, points K1-K3; AD-R5): (1) section 2.1's four values that differ from the design document while citing it (night_* backdrop against §21.2's #171046 to #2C3AA8; card_bottom #120A28 against §21.8's #1A1134; red words on dark #FFB0BC against #FF9AAA; success words on dark #8FF0A8 against #3FBF7F) each take the design document's value or are marked a pending owner decision with a decision brief entry (docs/guides/design-tools.md) and O2.md's interim ruling; (2) section 2.2: titles T2 over the world, gold, oak, leather and school colours, T0 with the drop on the dark card and parchment; (3) K01's tertiary defined as a material, not a ghost. Still version 1 (not yet in effect), with a dated line in section 9. O2.md is on claude/ui-ad at 586cc5a until O2 merges; the lead merges O2 first",
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "deps": [
+        "P0-K1-contract"
+      ],
+      "done_when": [
+        "python3 tools/check_docs_consistency.py",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1
     },
     {
       "id": "P0-K1-kitskin",
@@ -344,6 +425,37 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null
+    },
+    {
+      "phase": 0,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "id": "P0-AIA-board-3",
+      "title": "Style board, O2's redirect (gate/approvals/O2.md, points B3, B4, B5, B11; AD-R4): (1) re-render the four hero icons and the studio spheres in the toon look of §21.3 and D5 (b) (a four-step ramp, violet-tinted shadow, the rim kept; no MeshPhysicalMaterial metalness, clearcoat or RoomEnvironment reflections), keeping models, finish and rules; (2) the enamel card: a gloss band that reads at 1x over the top 30-45%, a dark hue-matched rim of 2-4 pt, a lip or foot of 3-8 pt; (3) the selected card: a gold rim, no outer glow; (4) the leather button at least two value steps (dL* >= 20, tools/ui_gate/checks.py value-steps) off its well, in both modes, by lighting the well, not changing leather's hue. O2.md is on claude/ui-ad at 586cc5a until O2 merges; the lead merges O2 first",
+      "role": "AIA",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/board/**"
+      ],
+      "deps": [
+        "P0-AIA-board-2"
+      ],
+      "done_when": [
+        "board.png and board_hc.png rebaked",
+        "node art/ui/board/check_board.mjs",
+        "tools/ui_gate/checks.py value-steps passes on every control of the board",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3
     },
     {
       "id": "P0-AIA-keyframes-1",
@@ -580,6 +692,10 @@
         "server/privacy.json",
         "docs/guides/server.md"
       ],
+      "exceptions": [
+        "server/load.json",
+        "server/declarations.md"
+      ],
       "deps": [
         "SV-B1-B6"
       ],
@@ -595,12 +711,12 @@
       "estimate_h": 4,
       "tier": 2,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "89495cd0",
+      "merged_sha": "463ad9c2"
     },
     {
       "id": "SV-B11-B12",
@@ -806,7 +922,10 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     },
     {
       "id": "BT-04b",
@@ -896,6 +1015,61 @@
       "merged_sha": null
     },
     {
+      "id": "BT-10",
+      "title": "Check runner: concurrent runs in one container do not share Godot's user:// or its download (docs/progress/flaky.md)",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Sonnet 5.5",
+      "assigned_to": "lead",
+      "files": [
+        "tools/run_checks.sh"
+      ],
+      "deps": [],
+      "done_when": [
+        "two runs of bash tools/run_checks.sh start on different commits at once both pass",
+        "the self-test covers a run's own data directories",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "BT-11",
+      "title": "client/build.sh fails when Godot's --import leaves the import cache incomplete, instead of running the tests on it (docs/progress/flaky.md)",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Sonnet 5.5",
+      "assigned_to": "lead",
+      "files": [
+        "client/build.sh"
+      ],
+      "deps": [],
+      "done_when": [
+        "a deleted file under client/.godot/imported/ makes client/build.sh fail, naming it",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
       "id": "BT-06",
       "title": "Documentation consistency check: state names, schemas and examples across the brief, the program, the protocol and the example backlog",
       "phase": 1,
@@ -922,7 +1096,10 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     },
     {
       "id": "BT-07",
@@ -978,7 +1155,10 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "README.md"
+      ]
     }
   ],
   "idle_queue": [

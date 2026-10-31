@@ -127,7 +127,8 @@ export class Observatory {
     const wanderer = keeper >= WANDERER_FROM;
     const size = targetsAt(this.level(account)) + (wanderer ? WANDERER_EXTRA : 0);
     const aside = this.setAside(account);
-    const list = offer(mm.raider(account, now), mm.candidates(now).filter((c) => !aside.has(c.bundle)), { size });
+    const list = offer(mm.raider(account, now), mm.listed(now).filter((c) => !aside.has(c.bundle)), { size });
+    list.targets = mm.current(list.targets);
     // The raider's week and Starlight, read once for every card's fee.
     const raider = this.service.raider(account, now);
     const targets = list.targets.map((c) => this.card(account, c, { raider }));
@@ -149,7 +150,7 @@ export class Observatory {
       const island = this.db.prepare("SELECT bundle, realm FROM islands WHERE owner = ? ORDER BY realm = 'heart' DESC")
         .get(raider);
       if (!island) continue;
-      const c = mm.candidates(now).find((x) => x.bundle === island.bundle && x.owner === raider)
+      const c = mm.listed(now).find((x) => x.bundle === island.bundle && x.owner === raider)
         ?? { bundle: island.bundle, owner: raider, echo: false, origin: "authored" };
       return { ...this.card(account, c, { trace: true, raider }), fee: 0 };
     }

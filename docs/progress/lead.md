@@ -60,8 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxo62zrxovKkkFLFbrX` (cycle 1,
-30 October 2026, 21:50Z).
+Latest lead cycle session: `session_01SNkKxnFBPxodvMYivAg4oB` (cycle 3,
+30 October 2026 23:22Z to 31 October 01:45Z).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -74,10 +74,15 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| K1 | `session_01SNkKxq8CnHi34skP7kjhy5` | P0-K1-bake-1 | `claude/ui-bake` | 2026-10-30 21:52Z |
-| AD | `session_01SNkKxoCF3z5x8JQLKYJPYD` | P0-AD-sheet | `claude/ui-ad` | 2026-10-30 21:52Z |
-| AIA | `session_01SNkKxqs5iybVZtkaAz6tXt` | P0-AIA-board-2 | `claude/ui-artist` | 2026-10-30 21:52Z |
-| SV | `session_01SNkKxoTc2asTZD7Uigvf1m` | SV-B7-B9 | `claude/server-decisions` | 2026-10-30 21:52Z |
+| K1 | `session_01SNkKxoCgMUfc9LdKPccMVL` | P0-K1-bake-2 | `claude/ui-bake` | 2026-10-31 00:29Z |
+| AD | `session_01SNkKxqyTwjQ4QFYuR3isqC` | O2 | `claude/ui-ad` | 2026-10-31 00:29Z |
+| K1 | `session_01SNkKxqS4p6oNGXrgf2HMJC` (idle, done) | P0-K1-bake-1 (restart: K1-R2 answered) | `claude/ui-bake` | 2026-10-30 22:41Z |
+| AD | `session_01SNkKxqWsnZkA94QgU4fUmT` (idle, done) | P0-AD-sheet (restart: AD-R2 answered) | `claude/ui-ad` | 2026-10-30 22:41Z |
+| AIA | `session_01SNkKxqs5iybVZtkaAz6tXt` (idle, done) | P0-AIA-board-2 | `claude/ui-artist` | 2026-10-30 21:52Z |
+| SV | `session_01SNkKxpyzv8gcd4M9afzaPz` | SV-B11-B12 | `claude/server-decisions` | 2026-10-31 01:40Z |
+| SV | `session_01SNkKxoTc2asTZD7Uigvf1m` (idle, done) | SV-B7-B9 | `claude/server-decisions` | 2026-10-30 21:52Z |
+| K1 | `session_01SNkKxq8CnHi34skP7kjhy5` (idle, replaced) | P0-K1-bake-1 | `claude/ui-bake` | 2026-10-30 21:52Z |
+| AD | `session_01SNkKxoCF3z5x8JQLKYJPYD` (idle, replaced) | P0-AD-sheet | `claude/ui-ad` | 2026-10-30 21:52Z |
 | K1 | `session_01SNkKxo9cYeD2q9TQAaj2Uj` (archived) | P0-K1-contract | `claude/ui-bake` | 2026-10-30 00:38Z |
 | AD | `session_01SNkKxqUsV3mCCyYnJyXexs` (archived) | P0-AD-rubric | `claude/ui-ad` | 2026-10-30 00:56Z |
 | AIA | `session_01SNkKxr7CHJ3iSQWWrN6UfP` (archived) | P0-AIA-board-1 | `claude/ui-artist` | 2026-10-30 01:11Z |
@@ -147,21 +152,37 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 1, 30 October 2026, about 21:52Z (session
-  `session_01SNkKxo62zrxovKkkFLFbrX`). No agent branch had work past its
-  merged task, so nothing was ready and nothing merged; the merge lock was
-  free and stays `null`; the audit and roadmap pages were not republished,
-  since main's code did not move. Requests K1-R1, AD-R1, AIA-R1 and AIA-R2
-  were already answered on main. Every earlier agent session was archived,
-  so the cycle started one session per agent on its next open task (table
-  above): K1 on P0-K1-bake-1, AD on P0-AD-sheet, AIA on P0-AIA-board-2, SV
-  on SV-B7-B9. `owners.py claims`: their files are disjoint. No alerts.
-- Next cycle: read the four branches' status files, record `seen_at` and
-  copy claims into the backlog, take any ready task through the queue, and
-  restart any agent past its `expected_next_update_by`.
-- Earlier (30 October, about 21:30Z): the lead merged P0-K1-contract,
-  P0-AD-rubric, P0-AIA-board-1 and SV-B1-B6 in one checked batch, answered
-  K1-R1, AD-R1 and AIA-R1, and moved the program onto the session design in
-  `agent-protocol.md`, "Sessions and scheduled tasks" (launcher and
-  watchdog sessions; the six old scheduled tasks retired). The first run's
-  failures and fixes are in the history of this file (commit `b675f5a`).
+- Cycle 3, 30 October 23:22Z to 31 October 01:45Z (session
+  `session_01SNkKxnFBPxodvMYivAg4oB`). Four tasks were ready and all four
+  merged, one candidate at a time, critical path first: P0-AIA-board-2
+  (`4f0f94a`), P0-K1-bake-1 (`fd2c966`, with K1-R1/K1-R2's two
+  `check_all.sh` lines and checks.md rows), P0-AD-sheet (`7dda0a3`, AD-R3's
+  self-test line, Pillow and numpy under "What it needs", and the README's
+  `ui_bake/` and `ui_gate/` lines joined where they met) and SV-B7-B9
+  (`e152462`, with SV-1's figure: 57.74 billed rows, $532 a month at a
+  million, in `owner-decisions.md` and `auth.md`). Main is `463ad9c2` plus
+  bookkeeping; the audit and roadmap pages are republished. `owners.py`:
+  every candidate inside its files, claims disjoint.
+- Recorded check failures, none in the changes: the container lacked the
+  wasm32 target (installed per the brief, re-run); two runs fetched Godot at
+  once (re-run); runs side by side shared Godot's `user://` and failed the
+  builder test (re-run alone, passed); and one run alone had Godot's import
+  stop early (re-run, passed). The last two are in `flaky.md` with fix tasks
+  BT-10 (`run_checks.sh`) and BT-11 (`client/build.sh`). **Run full checks
+  one at a time in a container** until BT-10 merges.
+- O2 moved ahead of P0-AD-golden in the backlog: it is half an hour and
+  unblocks AIA's key frames. Started K1 on P0-K1-bake-2, AD on O2 and SV on
+  SV-B11-B12 (table above). AIA had no open task when this cycle looked;
+  cycle 4 (`session_01SNkKxrCAg6Y8R7Hovb2PPH`, started 01:38Z while this
+  one merged, bookkeeping only under the lock) has since opened
+  P0-AIA-board-3 and found O2 and P0-K1-bake-2 ready, so it owns the next
+  starts. The watchdog's 00:10Z alert (this cycle not yet recorded in
+  `lead.md`) is answered in the inbox; no alerts open.
+- Next (cycle 4 now): take O2 and P0-K1-bake-2, then SV-B11-B12, through
+  the queue (for bake-2, `check_screens.py` into `check_all.sh` and
+  `guard.sh` beside it, per K1-R1). When O2 merges, start AIA on
+  P0-AIA-keyframes-1. Restart any agent past its `expected_next_update_by`.
+- Earlier: cycle 2 (22:40Z) found nothing ready and restarted K1 and AD on
+  their answered requests; cycle 1 (21:52Z) started one session per agent;
+  at about 21:30Z the lead merged P0-K1-contract, P0-AD-rubric,
+  P0-AIA-board-1 and SV-B1-B6.

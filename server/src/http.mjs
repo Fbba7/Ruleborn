@@ -708,8 +708,8 @@ export function handler(service, { webClientId = null, appleNotifications = null
           const me = who();
           const size = Math.min(5, Math.max(1, Number(url.searchParams.get("size") ?? 3) || 3));
           const mm = service.matchmaking;
-          const list = offer(mm.raider(me), mm.candidates(), { size });
-          return json({ ...list, targets: list.targets.map(({ rating, deviation, predicted, ...c }) => c) });
+          const list = offer(mm.raider(me), mm.listed(), { size });
+          return json({ ...list, targets: mm.current(list.targets).map(({ rating, deviation, predicted, ...c }) => c) });
         }
         case "GET /v1/observatory":
           return json(service.observatory.view(who()));

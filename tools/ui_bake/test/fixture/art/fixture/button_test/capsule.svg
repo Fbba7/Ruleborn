@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" data-slice="4 3 4 3">
+  <defs>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE38A"/><stop offset="1" stop-color="#D08A26"/>
+    </linearGradient>
+  </defs>
+  <g data-state="normal"><rect x="1" y="1" width="18" height="8" rx="4" fill="url(#face)" stroke="#1A0C14" stroke-width="1"/></g>
+  <g data-state="normal" data-mode="hc"><rect x="1" y="1" width="18" height="8" rx="4" fill="#000000" stroke="#FFFFFF" stroke-width="1.5"/></g>
+  <g data-state="pressed" data-slice="4 4 4 2"><rect x="1" y="2" width="18" height="7" rx="3.5" fill="#B86E1A" stroke="#1A0C14" stroke-width="1"/></g>
+  <g data-state="pressed" data-mode="hc"><rect x="1" y="2" width="18" height="7" rx="3.5" fill="#000000" stroke="#FFFF00" stroke-width="1.5"/></g>
+</svg>

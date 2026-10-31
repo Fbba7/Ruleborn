@@ -19,7 +19,71 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   is K1's, so the lead has put it on P0-K1-kitskin's `done_when`. Default
   until then: the board keeps its own list in `art/ui/board/build_tokens.mjs`.
 
+## Answered in cycle 4 (31 October 2026, by the lead)
+
+- **AD-R4** (from AD): O2 redirects the style board's points B3, B4, B5 and
+  B11. Filed as written: **P0-AIA-board-3** (AIA, `art/ui/board/**`, 3 h),
+  ahead of P0-AIA-keyframes-1, and **O2-2** (AD,
+  `gate/approvals/O2-2.md`, deps P0-AIA-board-3 and P0-K1-contract-2).
+  P0-AIA-keyframes-1 keeps O2 as its only dep and follows O2.md's interim
+  rulings. P0-AIA-board-3 depends on the merged P0-AIA-board-2 only, so AIA
+  starts it now; O2.md is on `claude/ui-ad` at 586cc5a, and the lead merges
+  O2 before it.
+- **AD-R5** (from AD): O2 redirects the kit contract's points K1–K3. Filed
+  as written: **P0-K1-contract-2** (K1, `kit-spec.md`, 1 h), ahead of
+  P0-K1-kitskin, so the kit's tokens settle before the skin uses them. K1
+  starts it now, on the same terms as P0-AIA-board-3.
+- **K1-R3** (from K1): (1) yes, the lead adds `python3
+  tools/ui_bake/check_screens.py` and its `--self-test` to
+  `tools/check_all.sh` in the candidate that merges P0-K1-bake-2; (2) yes,
+  `bash tools/ui_bake/guard.sh` runs in the merge queue beside check_all on
+  every candidate (D9 (b)); (3) the fonts' glyph caches stay reported beside
+  the 24 MiB of `report.md` section 10.1, not counted in it, and guard.sh
+  records them in each shot's log. No owner decision is needed while they
+  are not counted.
+
+## Done in cycle 3 (30–31 October 2026, by the lead)
+
+- **K1-R1, K1-R2**: `tools/check_all.sh` runs `node tools/ui_bake/bake.js
+  --check` and `node --test tools/ui_bake/test/bake.test.js` in their own
+  section, and `checks.md` lists them; merged with P0-K1-bake-1.
+- **AD-R2, AD-R3**: README.md lists `tools/ui_gate/` (with `tools/ui_bake/`;
+  the two lines met in one place and the lead joined them), and
+  `check_all.sh` runs `python3 tools/ui_gate/sheet.py --self-test`; Pillow
+  and numpy are under `checks.md`'s "What it needs". Merged with
+  P0-AD-sheet.
+- **SV-1**: `owner-decisions.md` and `auth.md` quote 57.74 billed rows a day
+  for an engaged player ($532 a month at a million) in the candidate that
+  merges SV-B7-B9.
+
 ## Answered (30 October 2026, by the lead)
+
+- **K1-R2** (from K1): list `tools/ui_bake/` in README.md's tools listing,
+  and wire the bake's checks into `tools/check_all.sh`. Already granted in
+  the answer to AD-R2 below: P0-K1-bake-1 has `README.md` as an exception
+  for that one line, so K1 adds the line it proposed on its own branch,
+  runs and records the pre-check and marks the task ready. `check_all.sh`
+  stays the lead's: it adds `node tools/ui_bake/bake.js --check` and
+  `node --test tools/ui_bake/test/bake.test.js` in the candidate that
+  merges P0-K1-bake-1 (as for K1-R1). The lead restarts K1 and AD this
+  cycle, since both were blocked on this answer.
+- **SV-1** (from SV): confirm the regenerated `server/load.json` (57.74
+  billed rows a day for an engaged player, was 61.74). Confirmed. Both it and
+  `server/declarations.md` are rebuilt by checks `tools/check_all.sh` runs
+  (`node server/load.mjs`, `node server/src/privacy.mjs`) from files the task
+  owns, so SV-B7-B9 now has them as exceptions. The lead updates the figure
+  quoted in `docs/decisions/owner-decisions.md` and `docs/security/auth.md`
+  in the candidate that merges SV-B7-B9, since it is only true once B8 lands.
+- **AD-R2** (from AD): list `tools/ui_gate/` in README.md's tools listing.
+  P0-AD-sheet now has `README.md` as an exception, for that one line
+  (`agent-protocol.md`, "The candidate's checks"); AD adds the line it
+  proposed on its own branch and re-runs the pre-check. The same exception
+  is on P0-K1-bake-1 for `tools/ui_bake/`, and on BT-04a, BT-06 and BT-08,
+  the first tasks to start `tools/gate/`, `tools/docs/` and `tools/build/`.
+- **AD-R3** (from AD): wire `python3 tools/ui_gate/sheet.py --self-test`
+  into `tools/check_all.sh`. Yes: the lead adds it, in its own section, in
+  the candidate that merges P0-AD-sheet, and a line for numpy under
+  `checks.md`'s "What it needs".
 
 - **K1-R1** (from K1): wire the bake's checks into `tools/check_all.sh`.
   Yes. The lead adds `node tools/ui_bake/bake.js --check` in the candidate
@@ -47,10 +111,7 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 ## Expected
 
 The lead owns `tools/check_all.sh`, so wiring a new check into it is a request
-to the lead. One more is expected in phase 0:
-
-- **AD**, from P0-AD-sheet or P0-AD-calibrate: run the gate's own self-tests
-  (`tools/ui_gate/`) in `tools/check_all.sh`.
+to the lead. None is outstanding: K1's from P0-K1-bake-2 arrived as K1-R3.
 
 ## Owner steps
 

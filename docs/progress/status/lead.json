@@ -1,13 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-30T21:55:00Z",
-  "expected_next_update_by": "2026-10-30T23:10:00Z",
-  "cycle": 1,
+  "updated_at": "2026-10-31T01:50:00Z",
+  "expected_next_update_by": "2026-10-31T03:00:00Z",
+  "cycle": 3,
   "merging": null,
   "last_merged": {
-    "task_id": "SV-B1-B6",
-    "sha": "1c7005fd"
+    "task_id": "SV-B7-B9",
+    "sha": "463ad9c2"
   },
   "alerts": [],
-  "next_step": "Read the status of K1 (P0-K1-bake-1), AD (P0-AD-sheet), AIA (P0-AIA-board-2) and SV (SV-B7-B9), started at 21:52Z; merge what is ready; restart any agent past its expected_next_update_by"
+  "next_step": "Cycle 3 ended with the lock cleared; cycle 4 (session_01SNkKxrCAg6Y8R7Hovb2PPH) is running: O2 and P0-K1-bake-2 are ready, one candidate at a time (flaky.md); P0-AIA-board-3 is open for AIA"
 }
