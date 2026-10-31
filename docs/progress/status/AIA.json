@@ -3,24 +3,29 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P0-AIA-keyframes-2",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-10-31T10:11:03Z",
   "lease_until": "2026-10-31T13:11:03Z",
-  "updated_at": "2026-10-31T10:34:05Z",
-  "expected_next_update_by": "2026-10-31T11:19:05Z",
+  "updated_at": "2026-10-31T11:12:44Z",
+  "expected_next_update_by": "2026-10-31T11:57:44Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "b760d6f1",
-    "next_step": "P0-AIA-keyframes-2: result and character built, all 24 stills pass; pre-check next"
+    "last_green_sha": "4fde22f9",
+    "next_step": "P0-AIA-keyframes-2 ready at 4fde22f9; next session: P0-AIA-keyframes-3 once its deps merge"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "4fde22f9b0300997c237d52a73e9df9a253b0ce0",
+    "exit": 0,
+    "finished_at": "2026-10-31T11:12:20Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "4fde22f9",
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [],
   "answers": [],
-  "next_step": "P0-AIA-keyframes-2: result and character built, all 24 stills pass; pre-check next"
+  "next_step": "P0-AIA-keyframes-2 ready at 4fde22f9; next session: P0-AIA-keyframes-3 once its deps merge"
 }
