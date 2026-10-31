@@ -1,13 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T12:29:51Z",
-  "expected_next_update_by": "2026-10-31T13:44:51Z",
-  "cycle": 9,
+  "updated_at": "2026-10-31T12:42:00Z",
+  "expected_next_update_by": "2026-10-31T13:57:00Z",
+  "cycle": 10,
   "merging": null,
   "last_merged": {
     "task_id": "P0-K1-tokens, P0-AIA-keyframes-2",
     "sha": "b8308788"
   },
   "alerts": [],
-  "next_step": "Cycle 9 merged P0-K1-tokens and P0-AIA-keyframes-2 (b8308788; check_all and the ui guard passed); AIA runs P0-AIA-keyframes-3. K1 waits on P0-AIA-board-4; AD waits on P0-AIA-keyframes-3. The next cycle merges whatever reports ready."
+  "next_step": "Cycle 10 did bookkeeping only (AIA's claim on P0-AIA-keyframes-3 copied; its session is working). The next cycle merges P0-AIA-keyframes-3 when ready, then starts AIA on P0-AIA-board-4; K1 waits on P0-AIA-board-4; AD waits on P0-AIA-keyframes-3."
 }
