@@ -702,17 +702,17 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
         "claimed_at": "2026-10-31T17:05:00Z",
-        "seen_at": "2026-10-31T18:40:00Z",
-        "lease_until": "2026-10-31T20:45:00Z"
+        "seen_at": "2026-10-31T19:40:00Z",
+        "lease_until": "2026-10-31T21:50:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "785cb2a8",
       "merged_sha": null
     },
     {
@@ -824,17 +824,17 @@
       "estimate_h": 3,
       "tier": 1,
       "critical": true,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "AD",
         "branch": "claude/ui-ad",
         "claimed_at": "2026-10-31T18:40:00Z",
-        "seen_at": "2026-10-31T18:40:00Z",
+        "seen_at": "2026-10-31T19:40:00Z",
         "lease_until": "2026-10-31T21:40:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "3f3797c7",
       "merged_sha": null
     },
     {
