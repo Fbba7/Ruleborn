@@ -115,6 +115,8 @@ its own with the command shown.
 | Scope cut | `python3 tools/scope_cut.py --self-test` | |
 | Unread fields | `python3 tools/check_unread_fields.py` | a field the harness computes and nothing reads |
 | The agent program's tools | `bash tools/run_checks.sh --self-test`, `python3 tools/coord/owners.py --self-test`, `owners.py claims` when `docs/progress/backlog.json` exists | two tasks in flight whose files can meet |
+| The UI wave's style board | `node art/ui/board/build_tokens.mjs --check`, `node art/ui/board/check_board.mjs` (and `--self-test`) | the tokens out of date with the board; a contrast or colour off the tokens |
+| The UI kit's bake | `node tools/ui_bake/bake.js --check`, `node --test tools/ui_bake/test/bake.test.js` | an atlas or manifest out of date with `art/ui/`, or edited by hand; a bake test |
 | **This repository's own documents** | `python3 tools/check_docs_consistency.py` (and `--self-test`) | see below |
 | Audit register | `python3 tools/build_audit.py`, `python3 tools/check_audit_ui.py` (and `--self-test`) | rewrites `docs/audit/index.html`; fails on an inconsistent register |
 | Roadmap | `python3 tools/completion.py --self-test`, `python3 tools/build_roadmap.py` | rewrites `docs/roadmap/index.html`; refuses a roadmap that contradicts itself |
