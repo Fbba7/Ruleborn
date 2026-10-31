@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-10-31T13:45:00Z",
   "lease_until": "2026-10-31T16:45:00Z",
-  "updated_at": "2026-10-31T15:10:00Z",
-  "expected_next_update_by": "2026-10-31T15:50:00Z",
+  "updated_at": "2026-10-31T13:58:00Z",
+  "expected_next_update_by": "2026-10-31T14:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "5eec1b60",
@@ -31,7 +31,7 @@
         "client/ui/tokens.json"
       ],
       "blocking": false,
-      "created_at": "2026-10-31T15:10:00Z",
+      "created_at": "2026-10-31T13:58:00Z",
       "due": "2026-11-02T21:00:00Z",
       "default": "Success words in words are set at 36 points on the #3FBF7F fill, as on the board; smaller success words keep their icon and use the alarm-like chip only once the fill is darkened by K1.",
       "escalate_to": "lead"

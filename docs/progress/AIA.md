@@ -1,11 +1,11 @@
 # AIA AI UI artist: progress
 
-- Status: Green: pre-check PASS at 5eec1b60 (2026-10-31T13:33:57Z); P0-AIA-keyframes-3 is ready.
-- Progress: 5 tasks merged, P0-AIA-keyframes-3 ready, P0-AIA-board-4 open; 0 items passed by the gate (the board has no gate items).
-- Done: P0-AIA-keyframes-3 built: settings at 1080 x 2340 in three forms, in English and Brazilian Portuguese, under the same scripted checks, and one contact sheet of all thirty stills.
-- Next: P0-AIA-board-4 (open): the style board's words for the revised kit tokens (K1-R6).
+- Status: Green: pre-check PASS at 294a4595 (PENDING_TIME); P0-AIA-board-4 is ready.
+- Progress: 5 tasks merged, P0-AIA-keyframes-3 and P0-AIA-board-4 ready; 0 items passed by the gate (the board has no gate items).
+- Done: P0-AIA-board-4 built: the board's secondary captions on the night backdrop are bold, and its alarm and success words ride on their own fills, passing with kit-spec section 2.1's revised values tried over tokens.css.
+- Next: none open for AIA on the backlog.
 - Blocked by: none.
-- Owner decision needed: none.
+- Owner decision needed: none. Request AIA-R8 to the lead (copy K1): ink on #3FBF7F reaches Lc 58 at best, so success words on that fill pass only at 36 points or more; default: set them at 36 points, as on the board.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
@@ -15,20 +15,19 @@
 | P0-AIA-keyframes-1: home and heist | 4 | Merged (fafc1a13) | `node art/ui/keyframes/check_keyframes.mjs`: 12 stills at 1080 x 2340 pass. Home: 18 controls, smallest touch area 48 points, 43 words (26 at 200%) all passing, worst 5.8:1 at 100%. Heist: 8 controls, 22 words, worst 5.7:1. All 12 shots pass value-steps. `--self-test`: 14 planted faults, each fails. `bash tools/check_all.sh`: all checks passed. |
 | P0-AIA-keyframes-2: result and character | 4 | Merged (b8308788) | `node art/ui/keyframes/check_keyframes.mjs`: all 24 stills pass. Result: 5 controls, smallest touch area 56 points, 23 words (13 at 200%), worst 5.4:1. Character: 4 controls and the tab strip, smallest touch area 52 points, 28 words (15 at 200%), worst 6.87:1. All 24 shots pass value-steps. `--self-test`: each planted fault fails. `bash tools/check_all.sh`: all checks passed. |
 | P0-AIA-keyframes-3: settings and the contact sheet | 2 | Ready at 5eec1b60 (pre-check PASS) | `node art/ui/keyframes/check_keyframes.mjs`: all 30 stills pass. Settings: 5 controls (3 at 200%), smallest touch area 52 points, 20 words (8 at 200%), worst 8.59:1. All 30 shots pass value-steps. `contact_sheet.png` is 1882 x 3085. `--self-test`: each planted fault fails, including a contact sheet of the wrong size. `bash tools/run_checks.sh`: all checks passed. |
-| P0-AIA-board-4: the board's words for the revised tokens (K1-R6) | 1 | Built; pre-check pending | `node art/ui/board/check_board.mjs` and `--revised` (section 2.1's backdrop #171046 to #2C3AA8, #FF9AAA, #3FBF7F tried over `tokens.css`): 378 words pass in both modes, 8 icons keep the outline rule, 16 controls pass value-steps; `--self-test`: each planted fault fails, including a regular-weight caption on the revised backdrop; `board.png`, `board_hc.png` |
+| P0-AIA-board-4: the board's words for the revised tokens (K1-R6) | 1 | Ready at 294a4595 (pre-check PASS) | `node art/ui/board/check_board.mjs` and `--revised` (section 2.1's backdrop #171046 to #2C3AA8, #FF9AAA, #3FBF7F tried over `tokens.css`): 378 words pass in both modes, 8 icons keep the outline rule, 16 controls pass value-steps; `--self-test`: each planted fault fails, including a regular-weight caption on the revised backdrop; `board.png`, `board_hc.png` |
 
 
 ## Handoff
-- Last verified commit: 5eec1b60 (pre-check green, 2026-10-31T13:33:57Z). Requests AIA-R3 to AIA-R7 in the status file, each with a default.
+- Last verified commit: 294a4595 (pre-check green, PENDING_TIME). Request AIA-R8 in the status file, with a default.
 - Done:
-  - `art/ui/keyframes/` holds `01-home`, `02-heist`, `03-result`, `04-character` and `05-settings` as `.html` with `.png` and `.shot.json` in all six forms each: as written, `_text200` and `_hc`, each also `_pt_BR`.
-  - Settings: the Access tab with the text-size card (gold A buttons, the figure, the steps, a law read at that size), the six school shapes, and the switches in framed parchment rows; the dock holds only the back button. At 200% only the text card is drawn; in Portuguese one switch is drawn.
-  - `contact_sheet.py` lays the thirty stills on `contact_sheet.png` (a row for each page, a column for each form and language); `check_keyframes.mjs` checks its size.
-  - `kit.js` takes `k:KEY:arg` for a key with its own argument.
-  - `README.md` gives the steps, now with the contact sheet, and the settings page's choices.
+  - `art/ui/board/board.html`: the recipe's captions and the glass note are bold (kit-spec section 2.1: `text_on_night_2` on the bare backdrop is bold only). A `.status` chip sets an alarm in paper on `alarm_fill` ("Alarm 3", "Alarm 4 of 5") and a success in ink on `#3FBF7F` at 36 points ("Escape open", "Vault open"), with high-contrast forms.
+  - `check_board.mjs --revised` tries the backdrop #171046 to #2C3AA8, #FF9AAA and #3FBF7F over `tokens.css` without editing it; `--self-test` adds "the revised values pass" and "a regular-weight caption on the revised backdrop fails".
+  - Literal trial: those values swapped into `tokens.css` gave 378 of 378 words passing; the file was restored and `build_tokens.mjs --check` reports it up to date.
+  - `shoot_board.mjs` lists status chips as information; `board.png`, `board_hc.png` and their shot files are re-shot.
 - Half done: none.
-- Open hypotheses: the large-text adaptations follow the game's SIDE_BY_SIDE_UP_TO rule and need the lead's agreement (request 4); the gold text-size buttons differ from the game's leather (value steps) and the game may want the same change.
-- Next step: P0-AIA-board-4.
+- Open hypotheses: success words in ink on #3FBF7F cannot pass below 36 points (Lc 58.2 at best); P0-K1-tokens-2 meets the same limit (AIA-R8).
+- Next step: none; wait for the lead.
 
 ## Tried and failed
 - 2026-10-30 SVG grain composited with an implicit second input: `feComposite` without `in2` masked the flood with the source shape, so the grain painted the whole surface solid. Named results fixed it.
