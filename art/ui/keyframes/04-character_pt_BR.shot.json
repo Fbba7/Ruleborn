@@ -1,0 +1,155 @@
+{
+ "image": "04-character_pt_BR.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 1,
+ "controls": [
+  {
+   "name": "chip 1: 2 / 5",
+   "rect": [
+    12,
+    50,
+    57.42,
+    32
+   ],
+   "interactive": false
+  },
+  {
+   "name": "chip 2: livre",
+   "rect": [
+    297.47,
+    50,
+    80.53,
+    32
+   ],
+   "interactive": false
+  },
+  {
+   "name": "arrow 3: Personagem anterior, Tidewalker",
+   "rect": [
+    12,
+    114,
+    52,
+    52
+   ]
+  },
+  {
+   "name": "arrow 4: Próximo personagem, Mossbear",
+   "rect": [
+    326,
+    114,
+    52,
+    52
+   ]
+  },
+  {
+   "name": "name-plate 5: Skyskipper",
+   "rect": [
+    110.96,
+    186.11,
+    168.08,
+    43.89
+   ],
+   "interactive": false
+  },
+  {
+   "name": "row 6: MOVIMENTO Skyskipper · Carregador",
+   "rect": [
+    12,
+    238,
+    366,
+    30
+   ],
+   "interactive": false
+  },
+  {
+   "name": "row 7: NV 4 Nível 4 de 6 Vida 90",
+   "rect": [
+    12,
+    276,
+    366,
+    64
+   ],
+   "interactive": false
+  },
+  {
+   "name": "row 8: ASSALTO ATRIBUTOS COMPARAR",
+   "rect": [
+    12,
+    348,
+    366,
+    56
+   ]
+  },
+  {
+   "name": "ability 9: HABILIDADE TWO USES A HEIST Stuffs its satchel: loads at 60 a second ",
+   "rect": [
+    22,
+    422,
+    346,
+    103.27
+   ],
+   "interactive": false
+  },
+  {
+   "name": "info-card 10: CARREGADOR Hauls loot; 15% slower when loaded",
+   "rect": [
+    22,
+    533.27,
+    169,
+    89.53
+   ],
+   "interactive": false
+  },
+  {
+   "name": "info-card 11: RESISTE Unbothered by Leapfrog's noise",
+   "rect": [
+    199,
+    533.27,
+    169,
+    89.53
+   ],
+   "interactive": false
+  },
+  {
+   "name": "info-card 12: TRAÇOS Swift · Hoarder",
+   "rect": [
+    22,
+    630.8,
+    169,
+    71.98
+   ],
+   "interactive": false
+  },
+  {
+   "name": "info-card 13: MELHOR EM Carrying, Star Wells",
+   "rect": [
+    199,
+    630.8,
+    169,
+    71.98
+   ],
+   "interactive": false
+  },
+  {
+   "name": "back 14: Plantel",
+   "rect": [
+    22,
+    733,
+    60,
+    60
+   ]
+  },
+  {
+   "name": "up 15: Subir ao nível 5, 180 de Essência",
+   "rect": [
+    92,
+    731,
+    276,
+    64
+   ]
+  }
+ ]
+}

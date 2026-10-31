@@ -13,7 +13,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..', '..', '..');
 export const LANGS = ['en', 'pt_BR'];
-export const PAGES = ['01-home.html', '02-heist.html', '03-result.html'];
+export const PAGES = ['01-home.html', '02-heist.html', '03-result.html', '04-character.html'];
 const ALWAYS = ['NUMBER_GROUP', 'NUMBER_DECIMAL', 'HOME_AMOUNT_THOUSANDS', 'HOME_AMOUNT_MILLIONS'];
 
 // One CSV row per line, fields optionally quoted with "" for a quote.

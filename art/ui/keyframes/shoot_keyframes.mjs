@@ -3,13 +3,14 @@
 // (as written, text at 200%, high contrast), each in English and Brazilian
 // Portuguese:
 //
-//   01-home.png  01-home_text200.png  01-home_hc.png  and each _pt_BR
+//   01-home.png  01-home_text200.png  01-home_hc.png  and each _pt_BR,
+//   and so for 02-heist, 03-result and 04-character: 24 stills.
 //
 // Beside each still goes a shot (docs/art/ui-quality/gate/shots.md) with the
 // rectangle of every control, which check_keyframes.mjs hands to
 // tools/ui_gate/checks.py value-steps.
 //
-//   node art/ui/keyframes/shoot_keyframes.mjs
+//   node art/ui/keyframes/shoot_keyframes.mjs [page]   (one page, e.g. 04-character)
 import { writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -21,7 +22,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 
 export const FRAME = [390, 845];
 export const SCALE = 1080 / 390;
-export const PAGES = ['01-home', '02-heist', '03-result'];
+export const PAGES = ['01-home', '02-heist', '03-result', '04-character'];
 export const FORMS = [['', ''], ['_text200', 'text=200'], ['_hc', 'hc=1']];
 export const LANGS = [['', 'en'], ['_pt_BR', 'pt_BR']];
 

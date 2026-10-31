@@ -1,0 +1,115 @@
+{
+ "image": "04-character_text200.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 2,
+ "controls": [
+  {
+   "name": "chip 1: 2 / 5",
+   "rect": [
+    12,
+    50,
+    94.83,
+    54.39
+   ],
+   "interactive": false
+  },
+  {
+   "name": "chip 2: free",
+   "rect": [
+    245.55,
+    50,
+    132.45,
+    64
+   ],
+   "interactive": false
+  },
+  {
+   "name": "arrow 3: Previous character, Tidewalker",
+   "rect": [
+    12,
+    110,
+    52,
+    52
+   ]
+  },
+  {
+   "name": "arrow 4: Next character, Mossbear",
+   "rect": [
+    326,
+    110,
+    52,
+    52
+   ]
+  },
+  {
+   "name": "name-plate 5: Skyskipper",
+   "rect": [
+    78.63,
+    166,
+    232.73,
+    60
+   ],
+   "interactive": false
+  },
+  {
+   "name": "row 6: MOTION Skyskipper · Carrier",
+   "rect": [
+    12,
+    234,
+    366,
+    106.39
+   ],
+   "interactive": false
+  },
+  {
+   "name": "row 7: LV 4 Level 4 of 6 Health 90",
+   "rect": [
+    12,
+    348.39,
+    366,
+    121.48
+   ],
+   "interactive": false
+  },
+  {
+   "name": "row 8: HEIST",
+   "rect": [
+    12,
+    477.88,
+    366,
+    68
+   ]
+  },
+  {
+   "name": "ability 9: ABILITY",
+   "rect": [
+    22,
+    563.88,
+    346,
+    86
+   ],
+   "interactive": false
+  },
+  {
+   "name": "back 14: Roster",
+   "rect": [
+    22,
+    699.44,
+    60,
+    60
+   ]
+  },
+  {
+   "name": "up 15: Raise to level 5, 180 Essence",
+   "rect": [
+    92,
+    662.36,
+    276,
+    134.19
+   ]
+  }
+ ]
+}
