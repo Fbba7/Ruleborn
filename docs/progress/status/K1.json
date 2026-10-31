@@ -4,16 +4,16 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P0-K1-bake-2",
-  "task_state": "working",
-  "claimed_at": "2026-10-31T00:35:00Z",
-  "lease_until": "2026-10-31T03:35:00Z",
-  "updated_at": "2026-10-31T02:20:00Z",
-  "expected_next_update_by": "2026-10-31T03:05:00Z",
+  "task_id": "P0-K1-contract-2",
+  "task_state": "claimed",
+  "claimed_at": "2026-10-31T01:45:00Z",
+  "lease_until": "2026-10-31T04:45:00Z",
+  "updated_at": "2026-10-31T01:45:00Z",
+  "expected_next_update_by": "2026-10-31T02:30:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "052ecbf",
-    "next_step": "Record the 15 shots' figures in budgets.json; write guard.sh and its self-test"
+    "last_green_sha": "e97ef3a",
+    "next_step": "P0-K1-contract-2: kit-spec.md sections 2.1, 2.2 and K01 per O2's K1-K3"
   },
   "precheck": null,
   "gate_request": null,
@@ -31,7 +31,7 @@
         "docs/art/ui-quality/report.md"
       ],
       "blocking": false,
-      "created_at": "2026-10-31T02:20:00Z",
+      "created_at": "2026-10-31T00:50:00Z",
       "due": "2026-11-01T22:00:00Z",
       "default": "(1) and (2) as K1-R1 says; (3) glyph caches stay reported beside the 24 MiB, not counted in it, and guard.sh records them in each shot's log",
       "escalate_to": "lead"
