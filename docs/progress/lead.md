@@ -193,6 +193,11 @@ Your session was created with the repository checked out at main; work in that c
   `lead/candidate-d756142555c04e567a54cc5367cc5b85edd99a7e` by mistake;
   the proxy refuses branch deletes (HTTP 403), so it stays. It points at
   the merged candidate and is harmless; candidates stay local from now on.
+- Gap for the next SV task (or whichever task next touches
+  `client/tests/`): `client/tests/a11y_motion_tests.gd` (SV-B11-B12) is on
+  main without its Godot `.uid`, which every other test has tracked; any
+  build regenerates it untracked (`uid://da3c5n2shdgh7` here). The lead
+  does not commit it, since its bookkeeping touches only `docs/progress/**`.
 - Tools in a fresh container: `rustup target add wasm32-unknown-unknown
   aarch64-linux-android aarch64-apple-ios`, `pip install "gdtoolkit==4.*"
   "playwright==1.63.0"`, then `bash client/build.sh`, before
