@@ -1,0 +1,256 @@
+{
+ "image": "01-home_text200_pt_BR.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 2,
+ "controls": [
+  {
+   "name": "ctl 1: 6",
+   "rect": [
+    170,
+    412,
+    52,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 2: 4",
+   "rect": [
+    122,
+    362,
+    52,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 3: 5",
+   "rect": [
+    212,
+    362,
+    52,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 4: 4",
+   "rect": [
+    242,
+    412,
+    52,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 5: 3",
+   "rect": [
+    132,
+    468,
+    52,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 6: 3",
+   "rect": [
+    258,
+    468,
+    52,
+    44.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "ctl 7: ",
+   "rect": [
+    76,
+    458,
+    52,
+    48.5
+   ],
+   "persistent": true
+  },
+  {
+   "name": "avatar 8: Perfil",
+   "rect": [
+    12,
+    71.8,
+    60,
+    60
+   ],
+   "persistent": true
+  },
+  {
+   "name": "glass 9: Guardião 24 1.460",
+   "rect": [
+    78,
+    50,
+    300,
+    103.59
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 10: Tensão: Humming, 82%",
+   "rect": [
+    198,
+    249.98,
+    180,
+    107.89
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 11: 142,0 mil",
+   "rect": [
+    12,
+    167.59,
+    180,
+    68.39
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 12: 31,4 mil",
+   "rect": [
+    198,
+    167.59,
+    180,
+    68.39
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 13: 61,0 mil Cheio",
+   "rect": [
+    12,
+    249.98,
+    180,
+    107.89
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "sb 14: 2 5 h 12 min",
+   "rect": [
+    6,
+    357.88,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "sb 15: ",
+   "rect": [
+    6,
+    459.38,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "sb 16: 3",
+   "rect": [
+    328,
+    367.88,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "sb 17: 1",
+   "rect": [
+    328,
+    429.88,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "glass 18: faltam 1.240 de experiência · Guardião 25",
+   "rect": [
+    8,
+    587.72,
+    374,
+    131.28
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "gold 19: Coletar tudo: 3,4 mil esperando",
+   "rect": [
+    8,
+    517.72,
+    374,
+    62
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 20: Ilhas",
+   "rect": [
+    50.88,
+    720.7,
+    56,
+    46
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 21: 1",
+   "rect": [
+    147.78,
+    752,
+    48,
+    46
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 22: 2",
+   "rect": [
+    199.84,
+    740,
+    60,
+    60
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 23: 4",
+   "rect": [
+    263.91,
+    752,
+    48,
+    46
+   ],
+   "persistent": true
+  },
+  {
+   "name": "tab 24: 1",
+   "rect": [
+    321.97,
+    752,
+    48,
+    46
+   ],
+   "persistent": true
+  }
+ ]
+}
