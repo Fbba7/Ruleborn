@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-30T22:45:00Z",
+  "updated_at": "2026-10-31T00:30:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
@@ -140,18 +140,12 @@
       "estimate_h": 2,
       "tier": 1,
       "critical": true,
-      "state": "working",
-      "claim": {
-        "agent": "AIA",
-        "branch": "claude/ui-artist",
-        "claimed_at": "2026-10-30T21:55:00Z",
-        "seen_at": "2026-10-30T22:06:16Z",
-        "lease_until": "2026-10-31T00:55:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "1a1afd20",
+      "merged_sha": "95e204a1"
     },
     {
       "id": "P0-AD-sheet",
@@ -179,54 +173,21 @@
       "estimate_h": 3,
       "tier": 1,
       "critical": true,
-      "state": "blocked",
+      "state": "ready",
       "claim": {
         "agent": "AD",
         "branch": "claude/ui-ad",
         "claimed_at": "2026-10-30T21:53:00Z",
-        "seen_at": "2026-10-30T22:35:47Z",
+        "seen_at": "2026-10-30T23:21:28Z",
         "lease_until": "2026-10-31T00:53:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "f5e95710",
       "merged_sha": null,
       "exceptions": [
         "README.md"
       ]
-    },
-    {
-      "id": "P0-AD-golden",
-      "title": "Golden set, part 1: gate/golden/items.json and its images from what exists (today's five screens, Screens v3's five stills, T14's heist proof and five icons, the style board), with planted fails; gate/golden/labels.md, the owner's form",
-      "phase": 0,
-      "role": "AD",
-      "model": "Opus 5.5",
-      "assigned_to": "AD",
-      "files": [
-        "docs/art/ui-quality/gate/**",
-        "!docs/art/ui-quality/gate/verdicts/**"
-      ],
-      "deps": [
-        "P0-AD-sheet",
-        "P0-AIA-board-2"
-      ],
-      "done_when": [
-        "30 or more items, at least a third expected to fail and a quarter borderline",
-        "labels.md has one row per item and quality",
-        "python3 tools/check_docs_consistency.py",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 2,
-      "tier": 1,
-      "critical": true,
-      "state": "open",
-      "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
     },
     {
       "id": "O2",
@@ -265,6 +226,39 @@
       "default": "none: AD decides, and a redirect becomes a new task"
     },
     {
+      "id": "P0-AD-golden",
+      "title": "Golden set, part 1: gate/golden/items.json and its images from what exists (today's five screens, Screens v3's five stills, T14's heist proof and five icons, the style board), with planted fails; gate/golden/labels.md, the owner's form",
+      "phase": 0,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**"
+      ],
+      "deps": [
+        "P0-AD-sheet",
+        "P0-AIA-board-2"
+      ],
+      "done_when": [
+        "30 or more items, at least a third expected to fail and a quarter borderline",
+        "labels.md has one row per item and quality",
+        "python3 tools/check_docs_consistency.py",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
       "id": "P0-K1-bake-1",
       "title": "tools/ui_bake/ part 1: bake.js <family> renders art/ui/ sources and packs one atlas with a manifest of regions and 9-slice margins; --check compares the sources' hash with the manifest's in seconds; tests on a fixture family",
       "phase": 0,
@@ -287,18 +281,12 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "blocked",
-      "claim": {
-        "agent": "K1",
-        "branch": "claude/ui-bake",
-        "claimed_at": "2026-10-30T21:55:00Z",
-        "seen_at": "2026-10-30T22:28:55Z",
-        "lease_until": "2026-10-31T00:55:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
+      "ready_sha": "0ceaeec3",
+      "merged_sha": "2b6870fe",
       "exceptions": [
         "README.md"
       ]
@@ -623,17 +611,17 @@
       "estimate_h": 4,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "SV",
         "branch": "claude/server-decisions",
         "claimed_at": "2026-10-30T21:55:00Z",
-        "seen_at": "2026-10-30T22:14:50Z",
+        "seen_at": "2026-10-30T23:24:24Z",
         "lease_until": "2026-10-31T00:55:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "89495cd0",
       "merged_sha": null
     },
     {
