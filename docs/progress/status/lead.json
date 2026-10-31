@@ -1,13 +1,20 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T12:30:00Z",
-  "expected_next_update_by": "2026-10-31T13:45:00Z",
-  "cycle": 9,
-  "merging": null,
+  "updated_at": "2026-10-31T13:42:00Z",
+  "expected_next_update_by": "2026-10-31T15:00:00Z",
+  "cycle": 11,
+  "merging": {
+    "candidate_sha": "45328085",
+    "task_ids": [
+      "P0-AIA-keyframes-3"
+    ],
+    "started_at": "2026-10-31T13:45:00Z",
+    "expires_at": "2026-10-31T14:45:00Z"
+  },
   "last_merged": {
     "task_id": "P0-K1-tokens, P0-AIA-keyframes-2",
     "sha": "b8308788"
   },
   "alerts": [],
-  "next_step": "Cycle 9 merged P0-K1-tokens and P0-AIA-keyframes-2 (b8308788; check_all and the ui guard passed); AIA runs P0-AIA-keyframes-3. K1 waits on P0-AIA-board-4; AD waits on P0-AIA-keyframes-3. The next cycle merges whatever reports ready."
+  "next_step": "Cycle 11 holds the merge lock on candidate 45328085 (P0-AIA-keyframes-3) while check_all and the ui guard run; AIA started on P0-AIA-board-4."
 }
