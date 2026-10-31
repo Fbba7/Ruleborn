@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T07:20:00Z",
-  "expected_next_update_by": "2026-10-31T08:35:00Z",
-  "cycle": 5,
+  "updated_at": "2026-10-31T07:45:00Z",
+  "expected_next_update_by": "2026-10-31T09:00:00Z",
+  "cycle": 7,
   "merging": {
     "candidate_sha": "14c30355",
     "task_ids": [
@@ -16,5 +16,5 @@
     "sha": "22c78e6f"
   },
   "alerts": [],
-  "next_step": "Cycle 6 (session_01SNkKxmymBxL2H7jxeLAz9D): the container restarted at about 06:05Z mid-run; re-checking P0-K1-kitskin's candidate 22c78e6f (check_all then guard.sh); SV-B11-B12 next"
+  "next_step": "Cycle 7 (session_01SNkKxrJgqsr595mqziZiHC) did bookkeeping only under cycle 6's merge lock (SV-B11-B12, 14c30355, until 08:20Z); queue next: K1-R4 register items and brief entries, O2-2 (a392bcb), P0-AIA-keyframes-1 (b760d6f1)"
 }

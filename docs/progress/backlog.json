@@ -532,11 +532,11 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "ready",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "b760d6f1",
       "merged_sha": null
     },
     {

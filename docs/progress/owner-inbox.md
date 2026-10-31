@@ -4,6 +4,18 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-10-31 07:45Z: ready work waiting over 2 hours (lead, cycle 7)
+
+- **What:** SV-B11-B12 has been ready since 04:45Z. It is in the merge
+  queue now: cycle 6 (`session_01SNkKxmymBxL2H7jxeLAz9D`) holds the merge
+  lock on its candidate `14c30355` until 08:20Z. Behind it are O2-2
+  (a392bcb, ready 06:37Z) and P0-AIA-keyframes-1 (b760d6f1, ready
+  06:26Z). P0-K1-kitskin merged at about 07:20Z.
+- **Also:** the launcher started cycle 7 at 07:38Z while cycle 6 was
+  still waiting on its checks. Cycle 7 did only the bookkeeping, as the
+  lock requires.
+- **Action:** none for the owner.
+
 ## 2026-10-31 03:45Z: ready work waiting over 2 hours (lead, cycle 5)
 
 - **What:** P0-K1-bake-2 has been ready since 01:22Z. It is in the merge

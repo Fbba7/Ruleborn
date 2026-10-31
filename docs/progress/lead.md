@@ -60,8 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxqMduti4DaEuGWcwUo` (cycle 5,
-31 October 2026, from 03:38Z).
+Latest lead cycle session: `session_01SNkKxrJgqsr595mqziZiHC` (cycle 7,
+31 October 2026, from 07:38Z).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -158,33 +158,27 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 5, 31 October 2026, from 03:38Z (session
-  `session_01SNkKxqMduti4DaEuGWcwUo`). Started while cycle 4
-  (`session_01SNkKxrCAg6Y8R7Hovb2PPH`) still held the merge lock on
-  P0-K1-bake-2's candidate `48e0d156` (until 04:37Z, guard.sh re-running),
-  so it did only the bookkeeping and pushed only `docs/progress/**`.
-  Copied the branches' status files into the backlog: P0-AD-golden `ready`
-  at 7d8c4ed6, P0-AIA-board-3 `ready` at e09807f3, P0-K1-contract-2 `ready`
-  at 36b797fd. Filed K1-R4 (two brief entries) in `requests.md`, waiting
-  for a cycle that may edit `docs/decisions/brief.json`. Alerted the ready
-  queue over 2 hours (`owner-inbox.md`). Started K1 on P0-K1-kitskin and
-  AIA on P0-AIA-keyframes-1, and restarted SV on SV-B11-B12 (its last
-  session ended before SV-B7-B9 merged). AD has no open task with its deps
-  merged (O2-2 waits on P0-AIA-board-3 and P0-K1-contract-2).
-- Cycle 4 then merged P0-K1-bake-2 (candidate `48e0d156`, with K1-R3's
-  two `check_all.sh` lines; check_all and `guard.sh` both passed) and
-  cleared the lock at 03:46Z. Its first runs failed on the container, not
-  the code: a fresh container needs `rustup target add
-  wasm32-unknown-unknown` (agent-brief.md, step 2), and guard.sh needs
-  `bash client/build.sh` in the worktree it runs in.
+- Cycle 7, 31 October 2026, from 07:38Z (session
+  `session_01SNkKxrJgqsr595mqziZiHC`). Started while cycle 6
+  (`session_01SNkKxmymBxL2H7jxeLAz9D`) held the merge lock on
+  SV-B11-B12's candidate `14c30355` (until 08:20Z), so it did only the
+  bookkeeping and pushed only `docs/progress/**`. Copied the branches'
+  status files: P0-AIA-keyframes-1 `ready` at b760d6f1, with AIA-R3 to
+  AIA-R7 filed in `requests.md` for its merge. Alerted the ready queue
+  over 2 hours (`owner-inbox.md`). Started no agent: every agent's next
+  task waits on an unmerged dep (K1's P0-K1-tokens on O2-2, AIA's
+  P0-AIA-keyframes-2 on -1, AD's P0-AD-golden-2 on P0-AIA-keyframes-3; SV
+  has none).
+- Cycle 6 (from 04:38Z) merged P0-K1-kitskin (22c78e6f, after one re-run
+  for the import-cache flake, `flaky.md`) and is checking SV-B11-B12.
 - Next: the queue in order, one candidate at a time (`flaky.md`):
-  P0-K1-contract-2 (and
-  K1-R4's two brief entries, `python3 tools/build_brief.py --check`),
-  P0-AIA-board-3, then P0-AD-golden. After P0-AIA-board-3 and
-  P0-K1-contract-2 merge, start AD on O2-2. `owners.py claims`: disjoint.
-- Earlier: cycle 4 (01:38Z) started K1, AIA and AD, merged O2 (fdd82b7c)
-  and P0-K1-bake-2 (48e0d156); cycle 3 (30 October 23:22Z to
-  31 October 01:50Z) merged P0-AIA-board-2, P0-K1-bake-1, P0-AD-sheet and
-  SV-B7-B9 and opened `flaky.md` (BT-10, BT-11: run full checks one at a
-  time until BT-10 merges); cycles 1 and 2 (30 October) started and
-  restarted the agents.
+  SV-B11-B12 (in flight), then K1-R4's two register items and brief
+  entries, O2-2 (a392bcb), then P0-AIA-keyframes-1 (b760d6f1, with
+  AIA-R3's two `check_all.sh` lines). After O2-2 merges, start K1 on
+  P0-K1-tokens; after P0-AIA-keyframes-1 merges, start AIA on
+  P0-AIA-keyframes-2.
+- Earlier: cycle 5 (03:38Z) did bookkeeping under cycle 4's lock and
+  started K1, AIA and SV; cycle 4 (01:38Z) merged O2 and P0-K1-bake-2;
+  cycle 3 (30 October 23:22Z to 31 October 01:50Z) merged P0-AIA-board-2,
+  P0-K1-bake-1, P0-AD-sheet and SV-B7-B9 and opened `flaky.md`; cycles 1
+  and 2 (30 October) started and restarted the agents.
