@@ -55,6 +55,8 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the 24 MiB of `report.md` section 10.1, not counted in it, and guard.sh
   records them in each shot's log. No owner decision is needed while they
   are not counted.
+  Landed with P0-K1-bake-2 at 48e0d156: `check_all.sh` runs check_screens
+  and its self-test, and `checks.md` describes guard.sh in the queue.
 
 ## Done in cycle 3 (30–31 October 2026, by the lead)
 

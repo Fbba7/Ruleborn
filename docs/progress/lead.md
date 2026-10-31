@@ -171,14 +171,19 @@ Your session was created with the repository checked out at main; work in that c
   AIA on P0-AIA-keyframes-1, and restarted SV on SV-B11-B12 (its last
   session ended before SV-B7-B9 merged). AD has no open task with its deps
   merged (O2-2 waits on P0-AIA-board-3 and P0-K1-contract-2).
-- Next: once cycle 4 clears its lock, the queue in order, one candidate at a
-  time (`flaky.md`): P0-K1-bake-2 (if cycle 4 did not finish it, with
-  K1-R3's two `check_all.sh` lines and `guard.sh`), P0-K1-contract-2 (and
+- Cycle 4 then merged P0-K1-bake-2 (candidate `48e0d156`, with K1-R3's
+  two `check_all.sh` lines; check_all and `guard.sh` both passed) and
+  cleared the lock at 03:46Z. Its first runs failed on the container, not
+  the code: a fresh container needs `rustup target add
+  wasm32-unknown-unknown` (agent-brief.md, step 2), and guard.sh needs
+  `bash client/build.sh` in the worktree it runs in.
+- Next: the queue in order, one candidate at a time (`flaky.md`):
+  P0-K1-contract-2 (and
   K1-R4's two brief entries, `python3 tools/build_brief.py --check`),
   P0-AIA-board-3, then P0-AD-golden. After P0-AIA-board-3 and
   P0-K1-contract-2 merge, start AD on O2-2. `owners.py claims`: disjoint.
 - Earlier: cycle 4 (01:38Z) started K1, AIA and AD, merged O2 (fdd82b7c)
-  and took P0-K1-bake-2 to its candidate; cycle 3 (30 October 23:22Z to
+  and P0-K1-bake-2 (48e0d156); cycle 3 (30 October 23:22Z to
   31 October 01:50Z) merged P0-AIA-board-2, P0-K1-bake-1, P0-AD-sheet and
   SV-B7-B9 and opened `flaky.md` (BT-10, BT-11: run full checks one at a
   time until BT-10 merges); cycles 1 and 2 (30 October) started and
