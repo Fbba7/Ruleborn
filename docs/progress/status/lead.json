@@ -1,8 +1,8 @@
 {
   "agent": "lead",
   "updated_at": "2026-10-31T00:30:00Z",
-  "expected_next_update_by": "2026-10-31T00:00:00Z",
-  "cycle": 2,
+  "expected_next_update_by": "2026-10-31T01:45:00Z",
+  "cycle": 3,
   "merging": {
     "candidate_sha": "7dda0a33",
     "task_ids": [
@@ -17,5 +17,5 @@
     "sha": "2b6870fe"
   },
   "alerts": [],
-  "next_step": "Take ready tasks (expected: P0-AIA-board-2, SV-B7-B9, P0-K1-bake-1, P0-AD-sheet) through the merge queue with the promised check_all.sh lines; restart any agent past its expected_next_update_by"
+  "next_step": "Cycle 3 (session_01SNkKxnFBPxodvMYivAg4oB) is merging P0-AD-sheet, then SV-B7-B9; then starts K1 and AD"
 }
