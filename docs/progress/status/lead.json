@@ -1,13 +1,20 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T03:50:00Z",
-  "expected_next_update_by": "2026-10-31T05:05:00Z",
+  "updated_at": "2026-10-31T04:41:00Z",
+  "expected_next_update_by": "2026-10-31T05:56:00Z",
   "cycle": 5,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "beb8573a",
+    "task_ids": [
+      "P0-K1-contract-2"
+    ],
+    "started_at": "2026-10-31T04:41:00Z",
+    "expires_at": "2026-10-31T05:41:00Z"
+  },
   "last_merged": {
     "task_id": "P0-K1-bake-2",
     "sha": "48e0d156"
   },
   "alerts": [],
-  "next_step": "Cycle 5 (session_01SNkKxqMduti4DaEuGWcwUo) ran under cycle 4's merge lock: bookkeeping only (three tasks ready, K1-R4 filed, K1, AIA and SV started). Next: after the lock clears, P0-K1-contract-2 with K1-R4's brief entries, P0-AIA-board-3, P0-AD-golden, one at a time; then start AD on O2-2. Cycle 4 merged P0-K1-bake-2 (48e0d156) and cleared the lock at 03:46Z"
+  "next_step": "Cycle 6 (session_01SNkKxmymBxL2H7jxeLAz9D) is merging P0-K1-contract-2 (candidate beb8573a); then P0-AIA-board-3 and P0-AD-golden, one at a time"
 }
