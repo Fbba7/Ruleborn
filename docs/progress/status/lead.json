@@ -1,21 +1,21 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T08:45:00Z",
-  "expected_next_update_by": "2026-10-31T09:25:00Z",
+  "updated_at": "2026-10-31T09:13:00Z",
+  "expected_next_update_by": "2026-10-31T10:28:00Z",
   "cycle": 8,
   "merging": {
-    "candidate_sha": "pending",
+    "candidate_sha": "fafc1a13",
     "task_ids": [
       "O2-2",
       "P0-AIA-keyframes-1"
     ],
     "started_at": "2026-10-31T08:45:00Z",
-    "expires_at": "2026-10-31T09:45:00Z"
+    "expires_at": "2026-10-31T10:45:00Z"
   },
   "last_merged": {
     "task_id": "SV-B11-B12",
     "sha": "14c30355"
   },
   "alerts": [],
-  "next_step": "Cycle 8 is merging O2-2 (a392bcb) and P0-AIA-keyframes-1 (b760d6f1) as one batch candidate, with AIA-R3's check_all.sh lines."
+  "next_step": "Cycle 8 is checking the batch candidate fafc1a13 (O2-2 a392bcb + P0-AIA-keyframes-1 b760d6f1 + AIA-R3's check_all.sh lines); lock renewed to 10:45Z because this container had to install missing tools and rebuild from scratch."
 }
