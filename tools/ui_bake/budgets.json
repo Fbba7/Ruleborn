@@ -1,0 +1,308 @@
+{
+  "_comment": "The UI guards' baselines (kit-spec.md section 6.8; report.md sections 3.8 and 10.1). 'screens' is check_screens.py's chrome outside the kit, per file; 'shots' is budget_shots.py's five screens. Written by --record, which never raises a figure: a rise is by request to K1 with the lead's approval, logged in 'raises'.",
+  "raises": [],
+  "screens": {
+    "counts": {
+      "client/scripts/age_screen.gd": {
+        "draw": 0,
+        "fill": 0,
+        "texture": 1
+      },
+      "client/scripts/character_screen.gd": {
+        "draw": 0,
+        "fill": 3,
+        "texture": 0
+      },
+      "client/scripts/forms_screen.gd": {
+        "draw": 0,
+        "fill": 1,
+        "texture": 0
+      },
+      "client/scripts/harmony_screen.gd": {
+        "draw": 1,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/scripts/heist_hand.gd": {
+        "draw": 13,
+        "fill": 2,
+        "texture": 0
+      },
+      "client/scripts/heist_hud.gd": {
+        "draw": 3,
+        "fill": 2,
+        "texture": 0
+      },
+      "client/scripts/home.gd": {
+        "draw": 1,
+        "fill": 0,
+        "texture": 2
+      },
+      "client/scripts/observatory_screen.gd": {
+        "draw": 0,
+        "fill": 0,
+        "texture": 2
+      },
+      "client/scripts/result_screen.gd": {
+        "draw": 5,
+        "fill": 1,
+        "texture": 0
+      },
+      "client/scripts/roster_screen.gd": {
+        "draw": 0,
+        "fill": 2,
+        "texture": 0
+      },
+      "client/scripts/screen_box.gd": {
+        "draw": 1,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/scripts/screen_draw.gd": {
+        "draw": 1,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/scripts/screen_kit.gd": {
+        "draw": 0,
+        "fill": 0,
+        "texture": 1
+      },
+      "client/scripts/screen_meter.gd": {
+        "draw": 1,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/scripts/screen_thread.gd": {
+        "draw": 2,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/scripts/ui.gd": {
+        "draw": 0,
+        "fill": 0,
+        "texture": 2
+      },
+      "client/world/fx_anchors.gd": {
+        "draw": 34,
+        "fill": 3,
+        "texture": 0
+      },
+      "client/world/fx_draw.gd": {
+        "draw": 2,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/fx_gloss.gd": {
+        "draw": 4,
+        "fill": 2,
+        "texture": 0
+      },
+      "client/world/fx_icons.gd": {
+        "draw": 70,
+        "fill": 3,
+        "texture": 0
+      },
+      "client/world/fx_pen.gd": {
+        "draw": 12,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/fx_portrait.gd": {
+        "draw": 20,
+        "fill": 2,
+        "texture": 0
+      },
+      "client/world/fx_skin.gd": {
+        "draw": 4,
+        "fill": 1,
+        "texture": 0
+      },
+      "client/world/overlay_diamond.gd": {
+        "draw": 3,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/overlay_landing_deck.gd": {
+        "draw": 0,
+        "fill": 0,
+        "texture": 1
+      },
+      "client/world/overlay_sheet.gd": {
+        "draw": 0,
+        "fill": 1,
+        "texture": 0
+      },
+      "client/world/portrait.gd": {
+        "draw": 2,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/stage_hero.gd": {
+        "draw": 0,
+        "fill": 0,
+        "texture": 2
+      },
+      "client/world/stage_hero_backdrop.gd": {
+        "draw": 5,
+        "fill": 0,
+        "texture": 2
+      },
+      "client/world/stage_hero_bar.gd": {
+        "draw": 2,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/stage_hero_figure.gd": {
+        "draw": 0,
+        "fill": 0,
+        "texture": 1
+      },
+      "client/world/stage_hero_hex.gd": {
+        "draw": 7,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/stage_hero_kit.gd": {
+        "draw": 0,
+        "fill": 3,
+        "texture": 0
+      },
+      "client/world/stage_hero_material.gd": {
+        "draw": 0,
+        "fill": 0,
+        "texture": 1
+      },
+      "client/world/stage_hero_skin.gd": {
+        "draw": 0,
+        "fill": 2,
+        "texture": 1
+      },
+      "client/world/universe_badge.gd": {
+        "draw": 7,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/universe_collect.gd": {
+        "draw": 3,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/universe_goal.gd": {
+        "draw": 4,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/universe_heading.gd": {
+        "draw": 0,
+        "fill": 0,
+        "texture": 2
+      },
+      "client/world/universe_hud.gd": {
+        "draw": 4,
+        "fill": 2,
+        "texture": 2
+      },
+      "client/world/universe_menu.gd": {
+        "draw": 0,
+        "fill": 1,
+        "texture": 1
+      },
+      "client/world/universe_notice.gd": {
+        "draw": 1,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/universe_pins.gd": {
+        "draw": 3,
+        "fill": 0,
+        "texture": 5
+      },
+      "client/world/universe_purse.gd": {
+        "draw": 5,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/universe_reward.gd": {
+        "draw": 0,
+        "fill": 0,
+        "texture": 1
+      },
+      "client/world/universe_side.gd": {
+        "draw": 4,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/universe_strain.gd": {
+        "draw": 2,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/universe_view.gd": {
+        "draw": 1,
+        "fill": 0,
+        "texture": 0
+      },
+      "client/world/universe_wipe.gd": {
+        "draw": 5,
+        "fill": 0,
+        "texture": 0
+      }
+    },
+    "data_files": {
+      "client/scripts/realm_view.gd": "the realm drawn from the simulation state each tick (sim proof view), not chrome",
+      "client/world/overlay_route.gd": "a rehearsal route drawn from the simulation report (section 13), data that changes with the run"
+    },
+    "totals": {
+      "draw": 232,
+      "fill": 31,
+      "texture": 27
+    }
+  },
+  "shots": {
+    "limits": {
+      "contrast_floor": 4.5,
+      "draw_calls_below": 150,
+      "texture_bytes_max": 25165824
+    },
+    "screens": {
+      "character": {
+        "env": {},
+        "hc_env": {
+          "HC": "1"
+        },
+        "script": "client/tests/shots/screen_character.gd"
+      },
+      "heist": {
+        "env": {
+          "MOMENT": "sneak"
+        },
+        "hc_env": {
+          "CONTRAST": "1"
+        },
+        "script": "client/tests/shots/screen_heist.gd"
+      },
+      "home": {
+        "env": {},
+        "hc_env": {
+          "CONTRAST": "1"
+        },
+        "script": "client/tests/shots/universe_home.gd"
+      },
+      "result": {
+        "env": {},
+        "hc_env": {},
+        "script": "client/tests/shots/screen_result.gd"
+      },
+      "settings": {
+        "env": {
+          "SCREEN": "settings"
+        },
+        "hc_env": {
+          "HC": "1"
+        },
+        "script": "client/tests/shots/screen_meta.gd"
+      }
+    }
+  }
+}

@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P0-K1-bake-2",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-10-31T00:35:00Z",
   "lease_until": "2026-10-31T03:35:00Z",
-  "updated_at": "2026-10-31T00:35:00Z",
-  "expected_next_update_by": "2026-10-31T01:20:00Z",
+  "updated_at": "2026-10-31T01:25:00Z",
+  "expected_next_update_by": "2026-10-31T02:10:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "052ecbf",
-    "next_step": "Read kit-spec.md section 7 and report.md section 10.8; write check_screens.py, budgets.json, guard.sh"
+    "next_step": "Record the 15 shots' figures in budgets.json; write guard.sh and its self-test"
   },
   "precheck": null,
   "gate_request": null,
