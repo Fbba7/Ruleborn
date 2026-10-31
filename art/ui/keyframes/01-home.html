@@ -1,0 +1,73 @@
+<!doctype html>
+<!-- Key frame 01, home (§21.8): the universe the game draws, under the home
+     screen's interface in the game's words. ?lang=pt_BR, ?text=200 and ?hc=1
+     give its other forms; shoot_keyframes.mjs photographs them all. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390">
+<title>Key frame 01 · Home</title>
+<link rel="stylesheet" href="../board/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+body { background-image: url("bg/home.jpg"); }
+html.hc body { background-image: url("bg/home_hc.jpg"); }
+</style>
+</head>
+<body>
+<div class="ctl pin" data-at="195.5,322"><span class="hit"></span><span class="disc" data-num="d:6" data-check></span><span data-key="UNIVERSE_HEART" data-check></span></div>
+<div class="ctl pin" data-at="148.7,206.1"><span class="hit"></span><span class="disc" data-num="d:4" data-check></span><span data-key="REALM_SKYFIELD" data-check></span></div>
+<div class="ctl pin" data-at="238.35,236.5"><span class="hit"></span><span class="disc" data-num="d:5" data-check></span><span data-key="REALM_CRYSTALLINE" data-check></span></div>
+<div class="ctl pin" data-at="328.6,392.5"><span class="hit"></span><span class="disc" data-num="d:4" data-check></span><span data-key="REALM_TIDEHOLD" data-check></span></div>
+<div class="ctl pin" data-at="93.1,558.2"><span class="hit"></span><span class="disc" data-num="d:3" data-check></span><span data-key="REALM_VERDANT" data-check></span></div>
+<div class="ctl pin" data-at="284.8,560"><span class="hit"></span><span class="disc" data-num="d:3" data-check></span><span data-key="REALM_EMBERREACH" data-check></span></div>
+<div class="ctl pin locked" data-at="72.8,385.5"><span class="hit"></span><span class="disc"><img src="../../../client/ui/icons/png/generalui/lock.png" alt=""></span><span class="col"><span data-key="REALM_LANTERN_VALE" data-check></span><span data-key="HOME_OPENS_KEEPER" data-args="d:28" data-check></span></span></div>
+
+<div class="screen">
+  <div class="home-top hud">
+    <div class="avatar ctl" data-label="HOME_PROFILE"><span class="portrait s-spirit"><img src="art/featherkin.png" alt=""></span><span class="lvl" data-num="d:24" data-check></span></div>
+    <div class="glass keeper info">
+      <span class="label" data-key="KEEPER_TITLE" data-args="d:24" data-check></span>
+      <span class="row"><img class="ico" src="../../../client/ui/icons/png/resources/renown.png" alt=""><span class="number" data-num="n:1460" data-check></span><span class="caption on-night-2" data-key="RESULT_RENOWN" data-check></span></span>
+    </div>
+    <div class="glass strain info" data-label="HOME_STRAIN_SPOKEN" data-args="k:WEAVING_BAND_2|d:82">
+      <span class="row"><img class="ico" src="../../../client/ui/icons/png/hud/strain.png" alt=""><span class="number" data-num="s:82%" data-check></span></span>
+      <span class="caption band-word" data-key="WEAVING_BAND_2" data-check></span>
+    </div>
+  </div>
+  <div class="res hud" data-label="HOME_PURSE">
+    <div class="glass info"><span class="row"><img class="ico" src="../../../client/ui/icons/png/resources/starlight.png" alt=""><span class="number" data-num="c:142050" data-check></span></span><span class="bar" style="--fill: var(--c-starlight); --v: 71%"><i></i></span></div>
+    <div class="glass info"><span class="row"><img class="ico" src="../../../client/ui/icons/png/resources/aether.png" alt=""><span class="number" data-num="c:31400" data-check></span></span><span class="bar" style="--fill: var(--c-aether); --v: 39%"><i></i></span></div>
+    <div class="glass info"><span class="row"><img class="ico" src="../../../client/ui/icons/png/resources/essence.png" alt=""><span class="number" data-num="c:61000" data-check></span><span class="tag" data-key="KIT_FULL" data-check></span></span><span class="bar" style="--fill: var(--c-essence); --v: 100%"><i></i></span></div>
+  </div>
+  <div class="mid">
+    <div class="side hud">
+      <div class="sb ctl"><span class="face"><img src="../../../client/ui/icons/png/hud/shield.png" alt=""><span class="badge" data-num="d:2" data-check></span></span><span class="plate name" data-key="HOME_SIDE_DEFENCE" data-check></span><span class="plate" data-key="WEAVING_HOURS_MINUTES" data-args="d:5|d:12" data-check></span></div>
+      <div class="sb ctl"><span class="face"><img src="../../../client/ui/icons/png/screens/resonancelab.png" alt=""></span><span class="plate name" data-key="HOME_SIDE_LAB" data-check></span></div>
+    </div>
+    <div class="side hud">
+      <div class="sb ctl"><span class="face"><img src="../../../client/ui/icons/png/screens/season.png" alt=""><span class="badge" data-num="d:3" data-check></span></span><span class="plate name" data-key="HOME_SIDE_SEASON" data-check></span></div>
+      <div class="sb ctl"><span class="face"><img src="../../../client/ui/icons/png/screens/shop.png" alt=""><span class="badge" data-num="d:1" data-check></span></span><span class="plate name" data-key="HOME_SIDE_SHOP" data-check></span></div>
+    </div>
+  </div>
+  <div class="home-bottom hud">
+    <div class="goal-row">
+      <div class="glass goal info">
+        <span class="row"><img class="ico" src="../../../client/ui/icons/png/hud/star.png" alt=""><span class="caption" data-key="HOME_GOAL_KEEPER" data-args="n:1240|d:25" data-check></span></span>
+        <span class="bar" style="--fill: var(--c-green-bar); --v: 62%"><i></i></span>
+      </div>
+      <button class="gold collect ctl" type="button" data-label="HOME_COLLECT_SPOKEN" data-args="c1000:3400"><img class="ico" src="../../../client/ui/icons/png/hud/collectall.png" alt=""><span class="button-type" data-key="HOME_COLLECT_AMOUNT" data-args="c1000:3400" data-check></span></button>
+    </div>
+    <nav class="tabs ctl-group">
+      <span class="tab active"><span class="lift"><img src="../../../client/ui/icons/png/tabs/islands.png" alt=""></span><span class="t" data-key="NAV_ISLANDS" data-check></span></span>
+      <span class="tab"><img src="../../../client/ui/icons/png/tabs/codex.png" alt=""><span class="badge" data-num="d:1" data-check></span><span class="t" data-key="NAV_LAWS" data-check></span></span>
+      <span class="tab heist"><span class="lift gold-round"><img src="../../../client/ui/icons/png/tabs/heist.png" alt=""></span><span class="badge" data-num="d:2" data-check></span><span class="t" data-key="NAV_HEIST" data-check></span></span>
+      <span class="tab"><img src="../../../client/ui/icons/png/tabs/crew.png" alt=""><span class="badge" data-num="d:4" data-check></span><span class="t" data-key="NAV_CREW" data-check></span></span>
+      <span class="tab"><img src="../../../client/ui/icons/png/tabs/friends.png" alt=""><span class="badge" data-num="d:1" data-check></span><span class="t" data-key="NAV_FRIENDS" data-check></span></span>
+    </nav>
+  </div>
+</div>
+<script src="words.js"></script>
+<script src="kit.js"></script>
+</body>
+</html>
