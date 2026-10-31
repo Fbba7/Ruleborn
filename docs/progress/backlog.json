@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-31T14:27:00Z",
+  "updated_at": "2026-10-31T18:35:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
@@ -645,7 +645,7 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "AIA",
         "branch": "claude/ui-artist",
@@ -656,7 +656,7 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "b83a0b4d",
-      "merged_sha": null
+      "merged_sha": "f920b57b"
     },
     {
       "id": "P0-K1-tokens-2",
@@ -678,7 +678,10 @@
         "client/scripts/screen_account.gd"
       ],
       "exceptions": [
-        "art/ui/board/tokens.css"
+        "art/ui/board/tokens.css",
+        "client/scripts/screen_parts.gd",
+        "client/scripts/realm_screen.gd",
+        "client/scripts/ui.gd"
       ],
       "deps": [
         "P0-K1-tokens",
@@ -696,8 +699,14 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "blocked",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-10-31T17:05:00Z",
+        "seen_at": "2026-10-31T17:15:35Z",
+        "lease_until": "2026-10-31T20:05:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
@@ -773,12 +782,18 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-10-31T16:25:00Z",
+        "seen_at": "2026-10-31T17:11:50Z",
+        "lease_until": "2026-10-31T19:25:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
+      "ready_sha": "c89f4e8f",
+      "merged_sha": "316ff98c",
       "default": "none: AD decides; a disagreement is labelled fail"
     },
     {
@@ -1364,5 +1379,30 @@
       "claim": null
     }
   ],
-  "messages": []
+  "messages": [
+    {
+      "id": "M1",
+      "to": "AIA",
+      "text": "From the owner (progress report KPIs, measured at main 3c4b791f). Two of your KPIs are worse than expected. (1) First style approval: 7 of 11 points passed at O2 (target 90% or more); B3, B4, B5 and B11 were sent back. Lesson: before you mark a board or keyframe task ready, score every point yourself against AD's rubric (docs/art/ui-quality/gate/rubric.md) and run tools/ui_gate/checks.py value-steps; put that self-score in the handoff evidence. (2) Largest single session: 47M tokens on a 4h task (2.4 times the average; target twice or less). Lesson: work from reduced-size previews, and when a session passes about 20M tokens, write the handoff and end it. Add M1 to acks when read.",
+      "sent_at": "2026-10-31T17:05:00Z",
+      "ack_by": "2026-10-31T19:05:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M2",
+      "to": "K1",
+      "text": "From the owner (progress report KPIs, measured at main 3c4b791f). Rework from review is worse than expected: 4.5h, 8% of phase 0 (target 5% or less). Its biggest part was the kit contract: four values in section 2.1 differed from §21.2 and §21.8 and came back as P0-K1-contract-2. Lesson: before asking for approval, check every value in a contract or token file against the design sections it cites, and list that check in the handoff evidence. Add M2 to acks when read.",
+      "sent_at": "2026-10-31T17:05:00Z",
+      "ack_by": "2026-10-31T19:05:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M3",
+      "to": "lead",
+      "text": "From the owner (progress report KPIs, measured at main 3c4b791f). Three of your KPIs are worse than expected. (1) Setup failures before checks: 3 (target 0); runs stopped on a missing compile target or lint tool. Lesson: put the fresh-container tool line (rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install \"gdtoolkit==4.*\" \"playwright==1.63.0\"; then bash client/build.sh) in every agent start prompt, before its first pre-check. (2) Wait from ready to merged: median 2.1h (target 2h or less). Lesson: start a candidate's checks in the same cycle the task turns ready, and batch tasks that became ready together. (3) Scope added: +9.5h (target 4.7h or less). Lesson: when an approval redirects work, plan the whole follow-up chain with estimates at once, not one task at a time (contract-2, tokens, tokens-2 and board-4 came in pieces). Add M3 to acks when read.",
+      "sent_at": "2026-10-31T17:05:00Z",
+      "ack_by": "2026-10-31T19:05:00Z",
+      "acked_at": "2026-10-31T17:50:00Z"
+    }
+  ]
 }

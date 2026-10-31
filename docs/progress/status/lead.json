@@ -1,20 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T16:24:00Z",
-  "expected_next_update_by": "2026-10-31T17:45:00Z",
-  "cycle": 12,
-  "merging": {
-    "candidate_sha": "f920b57b",
-    "task_ids": [
-      "P0-AIA-board-4"
-    ],
-    "started_at": "2026-10-31T16:24:00Z",
-    "expires_at": "2026-10-31T17:45:00Z"
-  },
+  "updated_at": "2026-10-31T18:40:00Z",
+  "expected_next_update_by": "2026-10-31T19:55:00Z",
+  "cycle": 14,
+  "merging": null,
   "last_merged": {
-    "task_id": "P0-AD-golden-2",
-    "sha": "520565f9"
+    "task_id": "O3",
+    "sha": "316ff98c"
   },
   "alerts": [],
-  "next_step": "Cycle 13 merged P0-AD-golden-2 (520565f9) and is merging P0-AIA-board-4 (candidate f920b57b: check_all and the ui guard)."
+  "next_step": "Merge K1's P0-K1-tokens-2 when ready (session_01SNkKxnJNP5X4uedWQBNKZt, restarted after K1-R7); merge AD's P0-AD-calibrate when ready (session_01SNkKxpHbYoyKJJjMRSPCPZ); one batch candidate if both are ready together."
 }

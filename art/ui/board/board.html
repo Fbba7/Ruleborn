@@ -82,8 +82,11 @@ body {
 .plate > header { display: flex; flex-direction: column; gap: 4px; }
 .recipe { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; }
 .recipe dt { font-weight: 800; color: var(--t1); }
-.recipe dd { color: var(--t2); }
-.note { color: var(--t2); font-size: 13px; }
+.recipe dd { color: var(--t2); font-weight: 700; }
+/* Secondary words on the bare backdrop are bold: kit-spec.md section 2.1
+   measures them at #2C3AA8, the backdrop's lightest point, where regular
+   weight reads Lc 73-74 (75 needed) and bold needs 60. */
+.note { color: var(--t2); font-size: 13px; font-weight: 700; }
 .row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
 .stack { display: flex; flex-direction: column; gap: 12px; }
 
@@ -387,8 +390,21 @@ body {
   box-shadow: inset 0 2px 0 color-mix(in srgb, var(--c-paper) 22%, transparent), inset 0 -3px 0 var(--dark), 0 4px 0 var(--c-drop);
 }
 :is(html.hc, .hcf) .alarm-fill { background: var(--hc-alarm-fill); }
-.red-on-dark { color: var(--c-alarm-text-on-night); font-weight: 800; }
-.green-on-dark { color: var(--c-success-text-on-night); font-weight: 800; }
+/* Status words carried on their fills (O2.md, interim ruling 1): an alarm
+   in paper on alarm_fill; a success in ink on §21.8's green. Ink on #3FBF7F
+   reads Lc 58 at best, under the 60 that bold words under 36 points need,
+   so a success in words is set at 36 points. */
+.status {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  border: var(--line) solid var(--ink); border-radius: 10px;
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--c-paper) 22%, transparent), 0 3px 0 var(--c-drop);
+}
+.status.alarm { min-height: 32px; padding: 0 10px 1px; background: var(--c-alarm-fill); color: var(--c-on-alarm); }
+.status.success { min-height: 52px; padding: 0 16px 2px; border-radius: 14px; background: var(--c-success); color: var(--c-ink-line); font: 800 36px/1 "Manrope"; }
+:is(html.hc, .hcf) .status { box-shadow: none; }
+:is(html.hc, .hcf) .status.alarm { background: var(--hc-alarm-fill); }
+:is(html.hc, .hcf) .status.success { color: var(--hc-ink); }
+.world .status.success { position: absolute; left: 14px; top: 14px; }
 .school-band {
   position: relative; display: flex; align-items: center; height: 64px; padding: 0 10px; border-radius: 14px;
   background: var(--g-chapter-motion); border: var(--line) solid var(--ink);
@@ -598,16 +614,16 @@ body {
     <header>
       <p class="kicker" data-check>Material 4 · glass</p>
       <h2 class="heading" data-check>Pills over the world</h2>
-      <p class="note" data-check>Dresses §21.8's dark glass at 78% as smoked glass with a gold rim: the world blurs behind it and a sheen rakes across from the key. Checked over §21.2's three skies.</p>
+      <p class="note" data-check>Dresses §21.8's dark glass at 78% as smoked glass with a gold rim: the world blurs behind it and a sheen rakes across from the key. Checked over §21.2's skies; a status in words rides on its own fill.</p>
     </header>
     <div class="world day"><span class="isle" style="left: 170px"></span>
       <div class="glass"><span class="number-m" data-check>2:41</span><span class="sep"></span><span class="label" data-check>Loot 18 / 40</span></div>
     </div>
     <div class="world dusk"><span class="isle" style="left: 120px"></span>
-      <div class="glass"><span class="number-m" data-check>1:07</span><span class="sep"></span><span class="label red-on-dark" data-check>Alarm 3</span></div>
+      <div class="glass"><span class="number-m" data-check>1:07</span><span class="sep"></span><span class="status alarm label" data-check>Alarm 3</span></div>
     </div>
     <div class="world night"><span class="isle" style="left: 200px"></span>
-      <div class="glass"><span class="number-m" data-check>0:12</span><span class="sep"></span><span class="label green-on-dark" data-check>Escape open</span></div>
+      <span class="status success" data-check>Escape open</span>
     </div>
     <dl class="recipe caption">
       <dt data-check>Body</dt><dd data-check>glass, #140A16 at 78%, a 6-point blur behind</dd>
@@ -665,10 +681,12 @@ body {
     <div class="school-band"><span class="law-plate"><span class="heading" data-check>Sun-Step</span></span><svg class="chevron" viewBox="0 0 24 24" aria-label="Motion"><path d="M5 6 L12 12 L5 18 M12 6 L19 12 L12 18"/></svg></div>
     <div class="row">
       <span class="alarm-fill button-type"><span data-check>Get out</span></span>
-      <span class="stack" style="gap: 2px"><span class="body red-on-dark" data-check>Alarm 4 of 5</span><span class="body green-on-dark" data-check>Vault open</span></span>
+      <span class="status alarm label" data-check>Alarm 4 of 5</span>
     </div>
+    <div class="row"><span class="status success" data-check>Vault open</span></div>
     <dl class="recipe caption">
       <dt data-check>Floors</dt><dd data-check>body 16, nothing under 13; 900 is drawn at 800</dd>
+      <dt data-check>Status</dt><dd data-check>an alarm in paper on alarm_fill; a success in ink on the green fill, at 36 points</dd>
       <dt data-check>Outline</dt><dd data-check>display words: ink all round, 2–4 points, at least 1.5</dd>
       <dt data-check>Drop</dt><dd data-check>a hard drop under titles and numbers; it never counts toward contrast</dd>
       <dt data-check>Plate</dt><dd data-check>a law title on a light school colour sits on a dark plate; the school also shows its shape</dd>

@@ -19,9 +19,10 @@ const scale = at > 0 ? Number(process.argv[at + 1]) : 2;
 
 // What a hand presses on the board: every button, the round gold button and
 // the selected card. Glass pills are information, not controls (O2, B6),
-// and are listed as such, so the ring around a control leaves them out.
+// as are status words on their fills; they are listed as such, so the ring
+// around a control leaves them out.
 export const CONTROLS = '.button-type, .gold-round, .enamel.selected';
-export const INFO = '.glass';
+export const INFO = '.glass, .status';
 
 export async function controls(page) {
   return page.evaluate(([sel, info]) => {

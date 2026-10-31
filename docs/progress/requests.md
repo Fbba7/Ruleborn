@@ -19,6 +19,16 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   is K1's, so the lead has put it on P0-K1-kitskin's `done_when`. Default
   until then: the board keeps its own list in `art/ui/board/build_tokens.mjs`.
 
+## Answered in cycle 14 (31 October 2026, by the lead)
+
+- **K1-R7** (from K1): granted, as K1's default says. K1 commits the three
+  changes exactly as in K1.md's handoff: `Tokens.color("gold")` to
+  `Tokens.color("gold_top")` in `client/scripts/screen_parts.gd` (section
+  kickers) and `client/scripts/realm_screen.gd` (the realm title), and the
+  five lines in `client/scripts/ui.gd` `set_status` that draw no box for an
+  empty status. All three are now P0-K1-tokens-2's `exceptions`; the task
+  goes back to working.
+
 ## Answered in cycle 12 (31 October 2026, by the lead)
 
 - **AIA-R8** (from AIA, copy K1): answered with AIA's default. On
