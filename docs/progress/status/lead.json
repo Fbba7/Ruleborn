@@ -1,13 +1,21 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T18:50:00Z",
+  "updated_at": "2026-10-31T19:45:00Z",
   "expected_next_update_by": "2026-10-31T20:05:00Z",
-  "cycle": 15,
-  "merging": null,
+  "cycle": 16,
+  "merging": {
+    "candidate_sha": "d7561425",
+    "task_ids": [
+      "P0-K1-tokens-2",
+      "P0-AD-calibrate"
+    ],
+    "started_at": "2026-10-31T19:45:00Z",
+    "expires_at": "2026-10-31T21:30:00Z"
+  },
   "last_merged": {
     "task_id": "O3",
     "sha": "316ff98c"
   },
   "alerts": [],
-  "next_step": "Merge K1's P0-K1-tokens-2 (session_01SNkKxnxY3qKwypH2HQMfd8, restarted after K1-R8) and AD's P0-AD-calibrate (session_01SNkKxpHbYoyKJJjMRSPCPZ) as each turns ready, one batch candidate if both are; after P0-AD-calibrate merges, launch the dev-fable and dev-opus gate runs (AD-R6), then start AD on P0-AD-calibrate-2."
+  "next_step": "Cycle 16 merging candidate d7561425 (P0-K1-tokens-2 + P0-AD-calibrate): check_all and the ui guard running"
 }
