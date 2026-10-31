@@ -8,9 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-10-31T17:05:00Z",
   "lease_until": "2026-10-31T21:50:00Z",
-  "updated_at": "2026-10-31T18:50:00Z",
-  "expected_next_update_by": "2026-10-31T19:35:00Z",
-  "long_run": null,
+  "updated_at": "2026-10-31T19:12:00Z",
+  "expected_next_update_by": null,
+  "long_run": {
+    "log": "/tmp/check-785cb2a8942fb394f70e678e7ce471338295bd23.log",
+    "expected_end": "2026-10-31T19:45:00Z"
+  },
   "progress_marker": {
     "last_green_sha": "5864d65d",
     "next_step": "pre-check d9e34b69 (K1-R8 applied); on PASS mark ready"
