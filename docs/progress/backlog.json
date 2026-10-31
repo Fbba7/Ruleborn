@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-30T23:58:00Z",
+  "updated_at": "2026-10-31T00:30:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
@@ -281,18 +281,12 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "ready",
-      "claim": {
-        "agent": "K1",
-        "branch": "claude/ui-bake",
-        "claimed_at": "2026-10-30T21:55:00Z",
-        "seen_at": "2026-10-30T23:12:21Z",
-        "lease_until": "2026-10-31T00:55:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "0ceaeec3",
-      "merged_sha": null,
+      "merged_sha": "2b6870fe",
       "exceptions": [
         "README.md"
       ]
