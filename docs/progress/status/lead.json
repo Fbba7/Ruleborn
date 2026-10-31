@@ -1,13 +1,21 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T11:00:00Z",
-  "expected_next_update_by": "2026-10-31T12:15:00Z",
+  "updated_at": "2026-10-31T11:40:58Z",
+  "expected_next_update_by": "2026-10-31T13:05:58Z",
   "cycle": 8,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "b8308788",
+    "task_ids": [
+      "P0-K1-tokens",
+      "P0-AIA-keyframes-2"
+    ],
+    "started_at": "2026-10-31T11:40:58Z",
+    "expires_at": "2026-10-31T12:50:58Z"
+  },
   "last_merged": {
     "task_id": "K1-R4",
     "sha": "8714c57b"
   },
   "alerts": [],
-  "next_step": "Cycle 8 merged O2-2 and P0-AIA-keyframes-1 (fafc1a13) and K1-R4 (8714c57b; check_all passed); K1 runs P0-K1-tokens and AIA runs P0-AIA-keyframes-2. The next cycle merges whichever reports ready."
+  "next_step": "Cycle 9 holds the merge lock on candidate b8308788 (P0-K1-tokens and P0-AIA-keyframes-2) while its checks run."
 }
