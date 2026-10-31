@@ -7,13 +7,20 @@ gate/golden/README.md).
         Writes gate/golden/images/<id>.png for every item: its source, cropped,
         and for a planted item the copy with one quality broken.
     golden.py labels [--force]
-        Writes labels.md's empty form, one row per item and quality. It
-        refuses to overwrite a form that exists unless --force.
+        Writes labels.md's empty form, one row per item and quality, and
+        labels-blind.md's, the held-out third's rows only (the items whose
+        "third" is 3). It refuses to overwrite a form that exists unless
+        --force.
+    golden.py split
+        Sets each item's "third" (1, 2 or 3; 3 is held out): the items sorted
+        by class, label, borderline flag and origin, then dealt in turn, so
+        each third holds its share of each.
     golden.py check
         Checks items.json (ids, classes, qualities, sources, the share of
-        expected fails and borderline items), that every image exists at the
-        size its crop gives, and that labels.md has exactly one row per item
-        and quality, each label empty, pass, fail or n/a.
+        expected fails and borderline items, the thirds), that every image
+        exists at the size its crop and size give, and that labels.md (and
+        labels-blind.md, the held-out third) has exactly one row per item and
+        quality, each label empty, pass, fail or n/a.
     golden.py --self-test
         The plants' tests: each breaks what it says and nothing else.
 
@@ -31,6 +38,8 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 GOLDEN = ROOT / "docs/art/ui-quality/gate/golden"
 ITEMS = GOLDEN / "items.json"
 LABELS = GOLDEN / "labels.md"
+BLIND = GOLDEN / "labels-blind.md"
+HELD_OUT = 3
 FONT = ROOT / "client/ui/fonts/manrope/Manrope-Variable.ttf"
 
 # The judged qualities of each asset class (gate/rubric.md, "The method at
@@ -87,11 +96,28 @@ def unstroked(im, labels):
     return out
 
 
+def sink(im, rect, keep, ring=10):
+    """One control sunk into its ground: the pixels inside rect pulled toward
+    the median colour of a ring around it, so keep 0.35 leaves about one
+    value step between control and ground where there were three
+    (quality 8). rect: [x0, y0, x1, y1] in pixels of the image."""
+    a = np.asarray(im.convert("RGB")).astype(np.float64)
+    h, w = a.shape[:2]
+    x0, y0, x1, y1 = rect
+    outer = np.zeros((h, w), bool)
+    outer[max(0, y0 - ring):min(h, y1 + ring), max(0, x0 - ring):min(w, x1 + ring)] = True
+    outer[y0:y1, x0:x1] = False
+    ground = np.median(a[outer], axis=0)
+    a[y0:y1, x0:x1] = ground + (a[y0:y1, x0:x1] - ground) * keep
+    return Image.fromarray(np.clip(a + 0.5, 0, 255).astype(np.uint8))
+
+
 PLANTS = {
     "flatten": lambda im, p: flatten(im, p["colours"]),
     "low_value": lambda im, p: low_value(im, p["keep"]),
     "hue_mirror": lambda im, p: hue_mirror(im),
     "unstroked": lambda im, p: unstroked(im, p["labels"]),
+    "sink": lambda im, p: sink(im, p["rect"], p["keep"]),
 }
 
 
@@ -115,6 +141,8 @@ def render(item, items):
         im = Image.open(ROOT / src).convert("RGB")
     if item.get("crop"):
         im = im.crop(tuple(item["crop"]))
+    if item.get("size"):
+        im = im.resize(tuple(item["size"]), Image.Resampling.LANCZOS)
     plant = item.get("plant")
     if plant:
         im = PLANTS[plant["kind"]](im, plant)
@@ -140,17 +168,38 @@ def rows(data):
             yield it["id"], q
 
 
+def blind_rows(data):
+    for it in data["items"]:
+        if it.get("third") == HELD_OUT:
+            for q in it["qualities"]:
+                yield it["id"], q
+
+
 def labels(force=False):
-    if LABELS.exists() and not force:
-        sys.exit(f"{LABELS} exists; --force overwrites the labels in it")
     data = load()
-    head = (GOLDEN / "labels-head.md").read_text()
-    lines = [head.rstrip("\n"), "",
-             "| Item | Quality | Label | Critique |", "|---|---|---|---|"]
-    for iid, q in rows(data):
-        lines.append(f"| {iid} | {q}. {QUALITY_NAMES[q]} |  |  |")
-    LABELS.write_text("\n".join(lines) + "\n")
-    print(LABELS)
+    for path, head, want in ((LABELS, "labels-head.md", rows(data)),
+                             (BLIND, "labels-blind-head.md", blind_rows(data))):
+        if path.exists() and not force:
+            sys.exit(f"{path} exists; --force overwrites the labels in it")
+        text = (GOLDEN / head).read_text()
+        lines = [text.rstrip("\n"), "",
+                 "| Item | Quality | Label | Critique |", "|---|---|---|---|"]
+        for iid, q in want:
+            lines.append(f"| {iid} | {q}. {QUALITY_NAMES[q]} |  |  |")
+        path.write_text("\n".join(lines) + "\n")
+        print(path)
+
+
+def split():
+    """Deal the items into thirds, stratified, and write items.json."""
+    data = load()
+    order = sorted(data["items"], key=lambda it: (
+        it["class"], it["expected"], it["borderline"], it["origin"], it["id"]))
+    for n, it in enumerate(order):
+        it["third"] = n % 3 + 1
+    ITEMS.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
+    for t in (1, 2, 3):
+        print(f"third {t}: {sum(it['third'] == t for it in data['items'])} items")
 
 
 ROW = re.compile(r"^\| ([a-z0-9-]+) \| (\d+)\. [^|]+\| ([^|]*)\| ([^|]*)\|$")
@@ -167,7 +216,7 @@ def read_labels(text):
 
 # ---------------------------------------------------------------- check
 
-def problems(data, label_text, images=True):
+def problems(data, label_text, images=True, blind_text=None):
     bad = []
     ids = [it["id"] for it in data["items"]]
     if len(set(ids)) != len(ids):
@@ -201,10 +250,15 @@ def problems(data, label_text, images=True):
             path = GOLDEN / it["image"]
             if not path.is_file():
                 bad.append(f"{iid}: {it['image']} missing (golden.py build)")
+            elif it.get("size"):
+                if Image.open(path).size != tuple(it["size"]):
+                    bad.append(f"{iid}: image size differs from its size")
             elif it.get("crop"):
                 x0, y0, x1, y1 = it["crop"]
                 if Image.open(path).size != (x1 - x0, y1 - y0):
                     bad.append(f"{iid}: image size differs from its crop")
+        if it.get("third") not in (1, 2, 3):
+            bad.append(f"{iid}: third must be 1, 2 or 3 (golden.py split)")
     n = len(ids)
     fails = sum(it["expected"] == "fail" for it in data["items"])
     border = sum(it["borderline"] for it in data["items"])
@@ -214,6 +268,19 @@ def problems(data, label_text, images=True):
         bad.append(f"{fails} of {n} expected to fail; a third needed")
     if 4 * border < n:
         bad.append(f"{border} of {n} borderline; a quarter needed")
+    held = [it for it in data["items"] if it.get("third") == HELD_OUT]
+    if n >= 30 and not (n // 3 <= len(held) <= n // 3 + 1):
+        bad.append(f"{len(held)} items held out; a third of {n} needed")
+    for what, test in (("an expected fail", lambda it: it["expected"] == "fail"),
+                       ("a borderline item", lambda it: it["borderline"]),
+                       ("a planted item", lambda it: it["origin"] == "planted")):
+        if n >= 30 and not any(test(it) for it in held):
+            bad.append(f"the held-out third has no {what}")
+    if blind_text is not None:
+        got = [(i, q) for i, q, _, _ in read_labels(blind_text)]
+        if got != list(blind_rows(data)):
+            bad.append("labels-blind.md's rows differ from the held-out third's "
+                       "items and qualities (golden.py labels --force)")
     want = list(rows(data))
     got = read_labels(label_text)
     if [(i, q) for i, q, _, _ in got] != want:
@@ -226,7 +293,8 @@ def problems(data, label_text, images=True):
 
 
 def check():
-    bad = problems(load(), LABELS.read_text())
+    bad = problems(load(), LABELS.read_text(),
+                   blind_text=BLIND.read_text() if BLIND.exists() else None)
     for b in bad:
         print("golden:", b)
     if bad:
@@ -262,6 +330,12 @@ def self_test():
     assert any("30 or more" in b for b in bad)
     assert any("a third" in b for b in bad)
     assert any("'maybe'" in b for b in bad)
+    card = Image.new("RGB", (60, 40), (30, 20, 60))
+    ImageDraw.Draw(card).rectangle((20, 10, 39, 29), fill=(240, 200, 80))
+    sunk = np.asarray(sink(card, [20, 10, 40, 30], 0.35)).astype(float)
+    want = np.array([30, 20, 60]) + 0.35 * np.array([210, 180, 20])
+    assert abs(sunk[20, 30] - want).max() < 1.5, "the control keeps a third of its contrast"
+    assert (sunk[2, 2] == (30, 20, 60)).all(), "the ground is left alone"
     print("ui_gate golden self-test: ok")
 
 
@@ -275,6 +349,8 @@ def main(argv):
         build(only)
     elif argv[:1] == ["labels"]:
         labels("--force" in argv)
+    elif argv[:1] == ["split"]:
+        split()
     elif argv[:1] == ["check"]:
         check()
     else:
