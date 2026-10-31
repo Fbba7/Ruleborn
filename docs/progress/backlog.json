@@ -272,12 +272,12 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "ready",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "a392bcb",
-      "merged_sha": null,
+      "merged_sha": "fafc1a13",
       "id": "O2-2",
       "title": "AD re-approves O2's redirected points only (board points B3, B4, B5, B11; contract points K1-K3), against §21.2, §21.8 and the rubric",
       "role": "AD",
@@ -532,12 +532,16 @@
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "ready",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "b760d6f1",
-      "merged_sha": null
+      "merged_sha": "fafc1a13",
+      "exceptions": [
+        "art/ui/board/check_board.mjs",
+        "tools/check_all.sh"
+      ]
     },
     {
       "id": "P0-AIA-keyframes-2",

@@ -1,21 +1,20 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T09:13:00Z",
-  "expected_next_update_by": "2026-10-31T10:28:00Z",
+  "updated_at": "2026-10-31T10:10:00Z",
+  "expected_next_update_by": "2026-10-31T11:25:00Z",
   "cycle": 8,
   "merging": {
-    "candidate_sha": "fafc1a13",
+    "candidate_sha": "pending",
     "task_ids": [
-      "O2-2",
-      "P0-AIA-keyframes-1"
+      "K1-R4"
     ],
-    "started_at": "2026-10-31T08:45:00Z",
-    "expires_at": "2026-10-31T10:45:00Z"
+    "started_at": "2026-10-31T10:10:00Z",
+    "expires_at": "2026-10-31T11:40:00Z"
   },
   "last_merged": {
-    "task_id": "SV-B11-B12",
-    "sha": "14c30355"
+    "task_id": "O2-2 + P0-AIA-keyframes-1",
+    "sha": "fafc1a13"
   },
   "alerts": [],
-  "next_step": "Cycle 8 is checking the batch candidate fafc1a13 (O2-2 a392bcb + P0-AIA-keyframes-1 b760d6f1 + AIA-R3's check_all.sh lines); lock renewed to 10:45Z because this container had to install missing tools and rebuild from scratch."
+  "next_step": "Cycle 8 merged O2-2 and P0-AIA-keyframes-1 (batch fafc1a13; check_all and the ui guard passed) and now checks K1-R4's register items C74 and C75 and their brief entries as the next candidate."
 }

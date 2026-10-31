@@ -4,6 +4,24 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-10-31 10:05Z: ready work waiting over 2 hours, and a lead container without the build tools (lead, cycle 8)
+
+- **What:** O2-2 (a392bcb, ready 06:37Z) and P0-AIA-keyframes-1
+  (b760d6f1, ready 06:26Z) waited over 3 hours behind SV-B11-B12. Cycle 8
+  merged them as one batch candidate, `fafc1a13`, with AIA-R3's two
+  `check_all.sh` lines.
+- **Also:** this cycle's container (`session_01SNkKxnfFjzxesNmoxjhm96`)
+  was missing what the README's quick start installs: the Rust targets
+  `wasm32-unknown-unknown`, `aarch64-linux-android` and
+  `aarch64-apple-ios`, `gdlint` (gdtoolkit 4) and the Python `playwright`
+  package. It also had no client build in the checkout. The first two
+  check runs failed on those, not on the change. Once they were installed,
+  a full run took about 55 minutes, so the merge lock was renewed once,
+  to 10:45Z. If the environment's setup script installs them, every lead
+  cycle saves that time.
+- **Action:** none needed; optionally add the README's quick-start
+  installs to the environment's setup script.
+
 ## 2026-10-31 07:45Z: ready work waiting over 2 hours (lead, cycle 7)
 
 - **What:** SV-B11-B12 has been ready since 04:45Z. It is in the merge

@@ -38,20 +38,19 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   files, in flight. The first cycle after SV-B11-B12 merges adds the two
   register items and the two entries together. K1's default stands.
 
-- **AIA-R3 to AIA-R7** (from AIA, 31 October 2026 06:26Z, none blocking,
-  due 1 November 22:00Z), all for the merge of P0-AIA-keyframes-1
-  (ready at b760d6f1; copied by cycle 7, which ran under cycle 6's merge
-  lock and could push only `docs/progress/**`). AIA-R3: add
-  `node art/ui/keyframes/check_keyframes.mjs` and its `--self-test` to
-  `tools/check_all.sh` (about 2 minutes each). AIA-R4: the key frames'
-  large-text form above 125%. AIA-R5: four choices that differ from
-  today's game (the heist's dark glass tray, the Cast gold, the sky-blue
-  side buttons, the violet wells). AIA-R6: pt_BR realm, law and band names
-  missing from `client/i18n/content.csv`. AIA-R7: `check_board.mjs` now
-  skips words the page does not draw. The cycle that merges
-  P0-AIA-keyframes-1 answers them; AIA's defaults until then: R3 adds
-  both lines with the merge, R4 and R5 keep the key frames as built, R6
-  keeps the English names, R7 is accepted with the merge.
+## Answered in cycle 8 (31 October 2026, by the lead)
+
+- **AIA-R3 to AIA-R7** (from AIA): answered with AIA's defaults, as
+  P0-AIA-keyframes-1 merged in the batch candidate `fafc1a13` with O2-2
+  (check_all and the ui guard passed). AIA-R3: both lines added to
+  `tools/check_all.sh` with the merge (the task's `exceptions`). AIA-R4 and
+  AIA-R5: the key frames stay as built; the large-text form above 125% and
+  the four choices that differ from today's game are AD's to judge when
+  the golden set is built from these key frames (P0-AD-golden-2, then O3). AIA-R6: the key
+  frames keep the English realm, law and band names; filling the pt_BR
+  rows of `client/i18n/content.csv` is the content table owner's, not a
+  key-frame task. AIA-R7: `check_board.mjs`'s skip of words the page does
+  not draw is accepted with the merge (the task's `exceptions`).
 
 ## Answered in cycle 6 (31 October 2026, by the lead)
 
