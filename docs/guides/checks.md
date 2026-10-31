@@ -12,6 +12,11 @@ task ready only when it ends green on the task's own commit (its pre-check),
 and the lead runs it again on the merge candidate before main moves (see
 [agent-program.md](agent-program.md#merging-the-queue-and-the-guards)). A
 full run takes about 25 minutes, most of it the client's headless tests.
+Beside it, on every merge candidate, the lead runs the UI kit's guard,
+`bash tools/ui_bake/guard.sh` (about 12 minutes; Godot from
+`client/build.sh`, `xvfb-run`, Node and the container's Chromium; it prints
+`ui guard: OK`): a full rebake byte for byte, and draw calls, texture memory
+and contrast against `tools/ui_bake/budgets.json` (D9 (b), K1-R3).
 
 ## Running it in the background: the worktree runner
 
@@ -61,6 +66,7 @@ ready.
 | Godot 4.7.2 | fetched by `client/build.sh` on first use into `~/.cache/ruleborn/` |
 | `gdlint` (`pip install "gdtoolkit==4.*"`) | the client's lint step |
 | Python Playwright with a Chromium | the prototype's conformance check (`tools/check_prototype_conformance.py`) |
+| Pillow and numpy (`pip install pillow numpy`) | the UI kit's bake (`pack.py`) and the UI wave gate's tools (`tools/ui_gate/`) |
 | network access to github.com, once | Godot's download |
 
 ```bash
@@ -117,6 +123,8 @@ its own with the command shown.
 | The agent program's tools | `bash tools/run_checks.sh --self-test`, `python3 tools/coord/owners.py --self-test`, `owners.py claims` when `docs/progress/backlog.json` exists | two tasks in flight whose files can meet |
 | The UI wave's style board | `node art/ui/board/build_tokens.mjs --check`, `node art/ui/board/check_board.mjs` (and `--self-test`) | the tokens out of date with the board; a contrast or colour off the tokens |
 | The UI kit's bake | `node tools/ui_bake/bake.js --check`, `node --test tools/ui_bake/test/bake.test.js` | an atlas or manifest out of date with `art/ui/`, or edited by hand; a bake test |
+| The UI kit's screens | `python3 tools/ui_bake/check_screens.py` and its `--self-test` | a screen drawing chrome of its own (kit-spec.md section 7) past `tools/ui_bake/budgets.json`'s counts; the check missing a planted draw call, fill or texture |
+| The UI wave gate's tools | `python3 tools/ui_gate/sheet.py --self-test` (also runs `colour.py`'s and `checks.py`'s tests) | a contact sheet, strip or crop drawn wrong; an image check missing its planted fail |
 | **This repository's own documents** | `python3 tools/check_docs_consistency.py` (and `--self-test`) | see below |
 | Audit register | `python3 tools/build_audit.py`, `python3 tools/check_audit_ui.py` (and `--self-test`) | rewrites `docs/audit/index.html`; fails on an inconsistent register |
 | Roadmap | `python3 tools/completion.py --self-test`, `python3 tools/build_roadmap.py` | rewrites `docs/roadmap/index.html`; refuses a roadmap that contradicts itself |

@@ -4,16 +4,16 @@
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P0-AIA-board-2",
+  "task_id": "P0-AIA-keyframes-1",
   "task_state": "working",
-  "claimed_at": "2026-10-30T21:55:00Z",
-  "lease_until": "2026-10-31T00:55:00Z",
-  "updated_at": "2026-10-30T21:58:38Z",
-  "expected_next_update_by": "2026-10-30T22:43:38Z",
+  "claimed_at": "2026-10-31T03:42:36Z",
+  "lease_until": "2026-10-31T06:42:36Z",
+  "updated_at": "2026-10-31T05:04:35Z",
+  "expected_next_update_by": "2026-10-31T05:49:35Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "aa11f0e",
-    "next_step": "Board plates: studio light, outline and glint rules, hero icons, high-contrast forms; board.png"
+    "last_green_sha": "e09807f",
+    "next_step": "check_keyframes.mjs and its self-test pass on all twelve stills; next the full checks and the pre-check"
   },
   "precheck": null,
   "gate_request": null,
@@ -21,5 +21,6 @@
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [],
-  "answers": []
+  "answers": [],
+  "next_step": "check_keyframes.mjs and its self-test pass on all twelve stills; next the full checks and the pre-check"
 }

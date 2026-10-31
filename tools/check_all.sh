@@ -154,9 +154,23 @@ node art/ui/board/check_board.mjs
 node art/ui/board/check_board.mjs --self-test
 
 echo
+echo "== the UI wave's key frames: their words, contrast and colours, with their planted fails (AIA-R3) =="
+node art/ui/keyframes/check_keyframes.mjs
+node art/ui/keyframes/check_keyframes.mjs --self-test
+
+echo
 echo "== the UI kit's bake: atlases match their sources, and its tests (K1-R1) =="
 node tools/ui_bake/bake.js --check
 node --test tools/ui_bake/test/bake.test.js
+
+echo
+echo "== the UI kit's screens add no chrome of their own, and its planted fails (K1-R3) =="
+python3 tools/ui_bake/check_screens.py
+python3 tools/ui_bake/check_screens.py --self-test
+
+echo
+echo "== the UI wave gate's sheets and image checks, with their planted fails (AD-R3) =="
+python3 tools/ui_gate/sheet.py --self-test
 
 echo
 echo "== this repository's own documents agree with each other =="

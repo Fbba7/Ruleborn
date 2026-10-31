@@ -19,6 +19,92 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   is K1's, so the lead has put it on P0-K1-kitskin's `done_when`. Default
   until then: the board keeps its own list in `art/ui/board/build_tokens.mjs`.
 
+### lead
+
+- **K1-R4** (from K1, 31 October 2026 02:15Z, not blocking, due
+  2 November 22:00Z): two entries for the owner's decision brief
+  (`docs/decisions/brief.json`, then `python3 tools/build_brief.py --check`),
+  drafted in `docs/progress/K1.md` under "Draft brief entries (K1-R4)":
+  success words on a dark surface (recommend (a) #8FF0A8) and the menus'
+  backdrop (recommend (a) §21.2's linear values). The lead owns `brief.json`;
+  cycle 5 ran under cycle 4's merge lock and could push only
+  `docs/progress/**`, so the first cycle without a lock adds both entries
+  (with or after P0-K1-contract-2). Default until then, K1's: kit-spec.md
+  keeps both rows pending with O2.md's interim rulings, and P0-K1-kitskin
+  writes `tokens.json` to those interim values.
+  Cycle 6 (05:20Z): not added yet. `build_brief.py --check` fails on an
+  entry that names no register item, so each entry needs its register item
+  first, and the register (`tools/audit_register.py`) is in SV-B11-B12's
+  files, in flight. The first cycle after SV-B11-B12 merges adds the two
+  register items and the two entries together. K1's default stands.
+
+## Answered in cycle 8 (31 October 2026, by the lead)
+
+- **AIA-R3 to AIA-R7** (from AIA): answered with AIA's defaults, as
+  P0-AIA-keyframes-1 merged in the batch candidate `fafc1a13` with O2-2
+  (check_all and the ui guard passed). AIA-R3: both lines added to
+  `tools/check_all.sh` with the merge (the task's `exceptions`). AIA-R4 and
+  AIA-R5: the key frames stay as built; the large-text form above 125% and
+  the four choices that differ from today's game are AD's to judge when
+  the golden set is built from these key frames (P0-AD-golden-2, then O3). AIA-R6: the key
+  frames keep the English realm, law and band names; filling the pt_BR
+  rows of `client/i18n/content.csv` is the content table owner's, not a
+  key-frame task. AIA-R7: `check_board.mjs`'s skip of words the page does
+  not draw is accepted with the merge (the task's `exceptions`).
+
+## Answered in cycle 6 (31 October 2026, by the lead)
+
+- **K1-R5** (from K1): filed as asked: **P0-K1-tokens** (K1,
+  `client/ui/tokens.json`, `tokens.gd`, `ui_kit_tests.gd`,
+  `tools/ui_bake/budgets.json`, `kit-spec.md`; deps O2-2 and
+  P0-K1-kitskin, 2 h). It writes section 2.1's revised values into
+  `tokens.json` after the O2-2 pass and records again what they move.
+  P0-K1-kitskin keeps today's values, as K1 said.
+- **SV-2** (from SV): SV-B11-B12's three edits outside its files
+  (`client/tests/run.gd`, one line registering the new suite;
+  `docs/status.md`, three counts; the generated `docs/audit/index.html`)
+  are accepted as SV's default: kept. The lead grants them as the task's
+  `exceptions` in the backlog, so `owners.py diff` passes on its candidate.
+
+## Answered in cycle 4 (31 October 2026, by the lead)
+
+- **AD-R4** (from AD): O2 redirects the style board's points B3, B4, B5 and
+  B11. Filed as written: **P0-AIA-board-3** (AIA, `art/ui/board/**`, 3 h),
+  ahead of P0-AIA-keyframes-1, and **O2-2** (AD,
+  `gate/approvals/O2-2.md`, deps P0-AIA-board-3 and P0-K1-contract-2).
+  P0-AIA-keyframes-1 keeps O2 as its only dep and follows O2.md's interim
+  rulings. P0-AIA-board-3 depends on the merged P0-AIA-board-2 only, so AIA
+  starts it now; O2.md is on `claude/ui-ad` at 586cc5a, and the lead merges
+  O2 before it.
+- **AD-R5** (from AD): O2 redirects the kit contract's points K1–K3. Filed
+  as written: **P0-K1-contract-2** (K1, `kit-spec.md`, 1 h), ahead of
+  P0-K1-kitskin, so the kit's tokens settle before the skin uses them. K1
+  starts it now, on the same terms as P0-AIA-board-3.
+- **K1-R3** (from K1): (1) yes, the lead adds `python3
+  tools/ui_bake/check_screens.py` and its `--self-test` to
+  `tools/check_all.sh` in the candidate that merges P0-K1-bake-2; (2) yes,
+  `bash tools/ui_bake/guard.sh` runs in the merge queue beside check_all on
+  every candidate (D9 (b)); (3) the fonts' glyph caches stay reported beside
+  the 24 MiB of `report.md` section 10.1, not counted in it, and guard.sh
+  records them in each shot's log. No owner decision is needed while they
+  are not counted.
+  Landed with P0-K1-bake-2 at 48e0d156: `check_all.sh` runs check_screens
+  and its self-test, and `checks.md` describes guard.sh in the queue.
+
+## Done in cycle 3 (30–31 October 2026, by the lead)
+
+- **K1-R1, K1-R2**: `tools/check_all.sh` runs `node tools/ui_bake/bake.js
+  --check` and `node --test tools/ui_bake/test/bake.test.js` in their own
+  section, and `checks.md` lists them; merged with P0-K1-bake-1.
+- **AD-R2, AD-R3**: README.md lists `tools/ui_gate/` (with `tools/ui_bake/`;
+  the two lines met in one place and the lead joined them), and
+  `check_all.sh` runs `python3 tools/ui_gate/sheet.py --self-test`; Pillow
+  and numpy are under `checks.md`'s "What it needs". Merged with
+  P0-AD-sheet.
+- **SV-1**: `owner-decisions.md` and `auth.md` quote 57.74 billed rows a day
+  for an engaged player ($532 a month at a million) in the candidate that
+  merges SV-B7-B9.
+
 ## Answered (30 October 2026, by the lead)
 
 - **K1-R2** (from K1): list `tools/ui_bake/` in README.md's tools listing,
@@ -74,10 +160,7 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 ## Expected
 
 The lead owns `tools/check_all.sh`, so wiring a new check into it is a request
-to the lead. One more is expected in phase 0:
-
-- **AD**, from P0-AD-sheet or P0-AD-calibrate: run the gate's own self-tests
-  (`tools/ui_gate/`) in `tools/check_all.sh`.
+to the lead. None is outstanding: K1's from P0-K1-bake-2 arrived as K1-R3.
 
 ## Owner steps
 

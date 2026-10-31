@@ -17,13 +17,19 @@
 //      more, else against the pixels behind its letters at their worst point;
 //   5. studio.html, which renders the icons and the studio, names no colour
 //      of its own either: no literal, and every colour it names is a token;
+//      It lights every piece in the toon look (§21.3, D5 (b)): no physically
+//      based material, environment map, metalness or clear coat;
 //   6. every hero icon in art/ keeps the outline rule: its silhouette is
 //      edged in ink_line (in high contrast, in the text colour around the
-//      ink) and the ink is as wide as the rule asks.
+//      ink) and the ink is as wide as the rule asks;
+//   7. every control on board.png and board_hc.png stands two value steps
+//      (ΔL* 20) off what it sits on: tools/ui_gate/checks.py value-steps on
+//      the shots shoot_board.mjs writes beside them.
 //
 //   node art/ui/board/check_board.mjs [--out report.json]
 //   node art/ui/board/check_board.mjs --self-test   plants faults; each must fail
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -65,10 +71,10 @@ export function apca(text, bg) {
 export const lcNeeded = (points, bold) => (points >= 36 ? 45 : points >= 24 || bold ? 60 : 75);
 
 const hexRgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
-const hex = ([r, g, b]) => '#' + [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, '0')).join('').toUpperCase();
+export const hex = ([r, g, b]) => '#' + [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, '0')).join('').toUpperCase();
 
 // Every colour a computed style can hold, as [r, g, b, a] with r, g, b in 0-255.
-function parseColours(text) {
+export function parseColours(text) {
   const out = [];
   for (const m of text.matchAll(/rgba?\(([^)]*)\)/g)) {
     const p = m[1].split(/[\s,/]+/).filter(Boolean).map(Number);
@@ -82,14 +88,14 @@ function parseColours(text) {
   return out;
 }
 
-function allowedColours() {
+export function allowedColours() {
   const set = new Map();
   const raw = readFileSync(join(root, 'client/ui/tokens.json'), 'utf8');
   for (const m of raw.matchAll(/"(#[0-9A-Fa-f]{6})(?:[0-9A-Fa-f]{2})?"/g)) set.set(m[1].toUpperCase(), 'tokens.json');
   for (const [name, [h, section]] of Object.entries(DESIGN)) set.set(h.toUpperCase(), `§${section} (${name})`);
   return set;
 }
-const near = (rgb, allowed) => {
+export const near = (rgb, allowed) => {
   for (const h of allowed.keys()) {
     const t = hexRgb(h);
     if (Math.abs(t[0] - rgb[0]) <= 1.5 && Math.abs(t[1] - rgb[1]) <= 1.5 && Math.abs(t[2] - rgb[2]) <= 1.5) return h;
@@ -122,7 +128,7 @@ function calls(code, name) {
   return out;
 }
 
-function checkFiles(html, tokensCss) {
+export function checkFiles(html, tokensCss, where = 'board.html') {
   const fails = [];
   if (tokensCss !== build()) fails.push({ kind: 'tokens', what: 'tokens.css is out of date: run node art/ui/board/build_tokens.mjs' });
   for (const [name, [h, section]] of Object.entries(DESIGN)) {
@@ -133,10 +139,10 @@ function checkFiles(html, tokensCss) {
   for (const text of [...styles, ...attrs]) {
     const code = text.replace(/\/\*[\s\S]*?\*\//g, '');
     for (const m of code.matchAll(/#[0-9A-Fa-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/g)) {
-      fails.push({ kind: 'literal', what: `a colour literal in board.html: ${m[0]}` });
+      fails.push({ kind: 'literal', what: `a colour literal in ${where}: ${m[0]}` });
     }
     for (const m of code.matchAll(/(?<![-.#\w])(?:white|black|red|green|blue|gold|silver|gray|grey|orange|purple|pink|brown|yellow)(?![-\w])/g)) {
-      fails.push({ kind: 'literal', what: `a named colour in board.html: ${m[0]}` });
+      fails.push({ kind: 'literal', what: `a named colour in ${where}: ${m[0]}` });
     }
     for (const inner of calls(code, 'color-mix')) {
       if (!/^in srgb, var\(--[\w-]+\) (?:[\d.]+%|calc\([^()]*(?:\([^()]*\))?[^()]*\)), transparent$/.test(inner.trim())) {
@@ -153,7 +159,7 @@ function checkFiles(html, tokensCss) {
 // edge, and the colours of `ground` (the words gone) under them are what the
 // word is read against. The browser's own canvas decodes the screenshots.
 const RADIUS = 2;
-async function pixelsBehind(context, black, white, ground, rectLists) {
+export async function pixelsBehind(context, black, white, ground, rectLists) {
   const page = await context.newPage();
   try {
     return await page.evaluate(async ([a, b, c, lists, radius]) => {
@@ -221,13 +227,39 @@ function checkStudio(code) {
   // Every quoted name handed to the studio's colour functions, or set as a
   // piece's light, glint, ink or drop, must be a colour token.
   const names = new Set();
-  for (const fn of ['tok', 'rgba', 'gold', 'enamel', 'cloth', 'studio']) {
+  for (const fn of ['tok', 'rgba', 'toon', 'gold', 'enamel', 'cloth', 'studio']) {
     for (const inner of calls(body, fn)) for (const m of inner.matchAll(/'([a-z_]+)'/g)) names.add(m[1]);
   }
   for (const m of body.matchAll(/\b(?:colour|sky|ground|light|ink|keyline|drop|glint): '([a-z_]+)'/g)) names.add(m[1]);
   for (const m of body.matchAll(/inner: \[[^\]]*'([a-z_]+)'/g)) names.add(m[1]);
   for (const n of names) if (!tokens[n]) fails.push({ kind: 'colour', what: `studio.html names ${n}, which is not a colour of tokens.json` });
   if (names.size < 10) fails.push({ kind: 'colour', what: `studio.html names only ${names.size} token colours; the check found too few to trust` });
+  // The toon look: one ramp, no physically based light.
+  for (const m of body.matchAll(/\b(?:Mesh(?:Physical|Standard|Phong|Lambert)Material|RoomEnvironment|PMREMGenerator|envMap\w*|metalness|clearcoat\w*|sheen\w*|transmission)\b/g)) {
+    fails.push({ kind: 'pbr', what: `studio.html lights a piece outside the toon look: ${m[0]}` });
+  }
+  if (!/toonRamp/.test(body)) fails.push({ kind: 'pbr', what: 'studio.html has no toon ramp' });
+  return fails;
+}
+
+// ---- 7: the value step of every control ----
+const SHOTS = [join(here, 'board.shot.json'), join(here, 'board_hc.shot.json')];
+export function checkSteps(shots) {
+  const fails = [];
+  for (const shot of shots) {
+    let out;
+    try {
+      out = execFileSync('python3', [join(root, 'tools/ui_gate/checks.py'), 'value-steps', shot], { encoding: 'utf8' });
+    } catch (e) {
+      out = String(e.stdout ?? '');
+      if (!out) { fails.push({ kind: 'value-steps', what: `checks.py value-steps did not run on ${shot}: ${e.message}` }); continue; }
+    }
+    const rows = out.trim().split('\n').filter(Boolean).map((l) => JSON.parse(l));
+    if (!rows.length) fails.push({ kind: 'value-steps', what: `${shot} has no controls` });
+    for (const r of rows.filter((r) => r.result !== 'PASS')) {
+      fails.push({ kind: 'value-steps', what: `${r.control} in ${shot.split('/').pop()}: ΔL* ${r.delta_L ?? '?'}, needs 20` });
+    }
+  }
   return fails;
 }
 
@@ -294,10 +326,10 @@ const COLOUR_PROPS = ['color', 'backgroundColor', 'backgroundImage', 'borderTopC
   'borderBottomColor', 'borderLeftColor', 'boxShadow', 'textShadow', 'outlineColor', 'webkitTextStrokeColor',
   'webkitTextFillColor', 'fill', 'stroke', 'floodColor', 'stopColor', 'lightingColor', 'textDecorationColor', 'columnRuleColor'];
 
-async function checkMode(page, mode, allowed, inject) {
+export async function checkMode(page, mode, allowed, inject, href = null) {
   const fails = [];
   const rows = [];
-  await page.goto(pathToFileURL(BOARD).href + (mode === 'hc' ? '?hc=1' : ''));
+  await page.goto(href ?? pathToFileURL(BOARD).href + (mode === 'hc' ? '?hc=1' : ''));
   if (inject) await page.addStyleTag({ content: inject });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(150);
@@ -339,6 +371,8 @@ async function checkMode(page, mode, allowed, inject) {
   const texts = await page.evaluate(() => {
     const out = [];
     document.querySelectorAll('[data-check]').forEach((el, i) => {
+      // A word the page does not draw (display: none) has nothing to read.
+      if (!el.getClientRects().length) return;
       el.setAttribute('data-check-id', i);
       const cs = getComputedStyle(el);
       let opacity = 1;
@@ -435,10 +469,11 @@ async function checkMode(page, mode, allowed, inject) {
   return { fails, rows };
 }
 
-export async function run({ inject = null, html = null, tokensCss = null, studio = null, icons = null } = {}) {
+export async function run({ inject = null, html = null, tokensCss = null, studio = null, icons = null, shots = null } = {}) {
   const allowed = allowedColours();
   const fails = checkFiles(html ?? readFileSync(BOARD, 'utf8'), tokensCss ?? readFileSync(join(here, 'tokens.css'), 'utf8'));
   fails.push(...checkStudio(studio ?? readFileSync(STUDIO, 'utf8')));
+  fails.push(...checkSteps(shots ?? SHOTS));
   const rows = [];
   const browser = await chromium.launch();
   try {
@@ -462,6 +497,14 @@ export async function run({ inject = null, html = null, tokensCss = null, studio
   return { fails, rows };
 }
 
+// A shot whose one control is a patch of the night with the night around it.
+function flatShot() {
+  const shot = JSON.parse(readFileSync(SHOTS[0], 'utf8'));
+  const at = join(mkdtempSync(join(tmpdir(), 'board-')), 'flat.shot.json');
+  writeFileSync(at, JSON.stringify({ ...shot, image: join(here, shot.image), controls: [{ name: 'a patch of night', rect: [150, 8, 40, 4] }] }));
+  return at;
+}
+
 async function selfTest() {
   const html = readFileSync(BOARD, 'utf8');
   const css = readFileSync(join(here, 'tokens.css'), 'utf8');
@@ -476,7 +519,9 @@ async function selfTest() {
     ['a colour literal in the page fails', { html: html.replace('.world { position: relative;', '.world { color: #FF00FF; position: relative;') }, 'literal'],
     ['a mix of two colours fails', { html: html.replace('--lit-none: color-mix(in srgb, var(--c-paper) 0%, transparent);', '--lit-none: color-mix(in srgb, var(--c-paper) 50%, var(--c-ink));') }, 'literal'],
     ['stale tokens.css fails', { tokensCss: css.replace('--c-gold: #E9B65C;', '--c-gold: #E9B65D;') }, 'tokens'],
-    ['a colour literal in the studio fails', { studio: studio.replace("metalness: 0.75,", "metalness: 0.75, sheen: 0xFF00FF,") }, 'literal'],
+    ['a colour literal in the studio fails', { studio: studio.replace("saturation: 1.1,", "saturation: 1.1, tint: 0xFF00FF,") }, 'literal'],
+    ['a physically based material in the studio fails', { studio: studio.replace("const cloth = (face) => toon(face);", "const cloth = (face) => new THREE.MeshStandardMaterial({ roughness: 0.8 });") }, 'pbr'],
+    ['a control without its value step fails', { shots: [flatShot()] }, 'value-steps'],
     ['a studio colour that is not a token fails', { studio: studio.replace("studio('time_light')", "studio('time_glow')") }, 'colour'],
     ['an icon without its outline fails', { icons: [{ name: 'finish_1', file: join(ART, 'finish_1.png'), form: 'normal' }] }, 'icon'],
     ['an icon with a thin outline fails', { icons: [{ name: 'starlight as hc', file: join(ART, 'starlight.png'), form: 'hc' }] }, 'icon'],

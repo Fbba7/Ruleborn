@@ -461,16 +461,16 @@ test("an intent that lapsed unredeemed and a lease that expired unplayed go a we
   const start = t.clock.now;
   t.clock.now = start + LEASE_MS + CLOSED_KEEP_DAYS * DAY - 1;
   // busy()'s held lease, issued a day sooner, has gone a week past its end.
-  assert.deepEqual(t.service.expireLapsed(), { intents: 1, leases: 1 }, "the intent lapsed sooner");
+  assert.deepEqual(t.service.expireLapsed(), { intents: 1, leases: 1, plays: 0 }, "the intent lapsed sooner");
   assert.equal(db.prepare("SELECT 1 FROM purchase_intents WHERE id = ?").get(lapsed), undefined);
   assert.ok(db.prepare("SELECT 1 FROM purchase_intents WHERE id = ?").get(redeemed), "a redeemed one is a record");
   assert.ok(db.prepare("SELECT 1 FROM leases WHERE token = ?").get(open), "a week less a moment after it expired");
   t.clock.now += 2;
-  assert.deepEqual(t.service.expireLapsed(), { intents: 0, leases: 1 });
+  assert.deepEqual(t.service.expireLapsed(), { intents: 0, leases: 1, plays: 0 });
   assert.equal(db.prepare("SELECT 1 FROM leases WHERE token = ?").get(open), undefined);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM leases WHERE token IN (SELECT token FROM heists)").get().n, played,
                "a played lease is a record");
-  assert.deepEqual(t.service.expireLapsed(), { intents: 0, leases: 0 }, "once");
+  assert.deepEqual(t.service.expireLapsed(), { intents: 0, leases: 0, plays: 0 }, "once");
   // A receipt that comes after its intent went is honoured as one with none.
   const out = t.service.shop.redeem(x, "app-store", lapsed);
   assert.equal(out.product, "premium.1");

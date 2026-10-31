@@ -27,6 +27,7 @@
 import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
+import { RAIDED } from "./matchmaking.mjs";
 import { Refused } from "./refused.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
@@ -240,16 +241,40 @@ export class Notifications {
     const waiting = this.db.prepare(
       "SELECT * FROM notifications WHERE account = ? AND kind = 'raided' AND sent_at IS NULL")
       .get(lease.defender);
+    // DB-4: the day's raids are listed by reference. The first raid writes
+    // the notification and when it came; a later one that is a lease on
+    // record (every real one: its heist row follows in this transaction)
+    // writes nothing, and the message reads the
+    // day's raids from `heists_by_defender` when it is sent (raids()).
     if (waiting) {
       const data = JSON.parse(waiting.data);
+      if (data.since !== undefined && this.db.prepare("SELECT 1 FROM leases WHERE token = ?").get(lease.token)) {
+        return waiting.id;
+      }
       data.heists.push({ heist: lease.token, grade: verdict.grade });
       this.db.prepare("UPDATE notifications SET data = ? WHERE id = ?").run(JSON.stringify(data), waiting.id);
       return waiting.id;
     }
-    const data = { heists: [{ heist: lease.token, grade: verdict.grade }] };
+    const data = { heists: [{ heist: lease.token, grade: verdict.grade }], since: now };
     return Number(this.db.prepare(
       "INSERT INTO notifications (account, kind, data, due_at) VALUES (?, 'raided', ?, ?)")
       .run(lease.defender, JSON.stringify(data), this.digest(lease.defender, now)).lastInsertRowid);
+  }
+
+  /** The raids a waiting notification tells of: those it carries, then the
+   *  heists on record against the player since its first, which it only
+   *  refers to (DB-4). */
+  raids(n) {
+    const data = JSON.parse(n.data);
+    if (data.since === undefined) return data.heists;
+    const known = new Set(data.heists.map((h) => h.heist));
+    const more = this.db.prepare(
+      `SELECT h.token, json_extract(h.outcome, '$.verdict.grade') AS grade
+         FROM heists h JOIN leases l ON l.token = h.token
+        WHERE h.defender = ? AND h.submitted_at >= ? AND ${RAIDED}
+        ORDER BY h.submitted_at, h.token`).all(n.account, data.since)
+      .filter((h) => !known.has(h.token)).map((h) => ({ heist: h.token, grade: h.grade }));
+    return [...data.heists, ...more];
   }
 
   /** The day's reminder for every player who chose a time and has none
@@ -329,11 +354,11 @@ export class Notifications {
         const r = this.db.prepare("SELECT account, data FROM notifications WHERE id = ? AND sent_at IS NULL").get(id);
         if (!r) return;
         const waiting = this.db.prepare(
-          "SELECT id, data FROM notifications WHERE account = ? AND kind = 'raided' AND sent_at IS NULL ORDER BY id")
+          "SELECT id, account, data FROM notifications WHERE account = ? AND kind = 'raided' AND sent_at IS NULL ORDER BY id")
           .all(r.account);
         if (!waiting.length) return;
         const data = JSON.parse(r.data);
-        data.heists = [...(data.heists ?? []), ...waiting.flatMap((w) => JSON.parse(w.data).heists)];
+        data.heists = [...(data.heists ?? []), ...waiting.flatMap((w) => this.raids(w))];
         this.db.prepare("UPDATE notifications SET data = ? WHERE id = ?").run(JSON.stringify(data), id);
         for (const w of waiting) this.db.prepare("DELETE FROM notifications WHERE id = ?").run(w.id);
       });
@@ -364,7 +389,8 @@ export class Notifications {
       // The token as it is now: one turned off or replaced meanwhile is not used.
       const a = this.db.prepare("SELECT push_token, time_zone, deleted_at FROM accounts WHERE id = ?").get(n.account);
       if (!a?.push_token || !a.time_zone || a.deleted_at) continue;
-      const message = { kind: n.kind, ...JSON.parse(n.data) };
+      const { since, ...body } = JSON.parse(n.data);
+      const message = { kind: n.kind, ...body, ...(n.kind === "raided" ? { heists: this.raids(n) } : {}) };
       const outcome = await push(a.push_token, message, { expiresAt: this.expires(n.account, n.kind, now), now });
       const why = outcome?.status ? `${outcome.status}${outcome.code ? ` ${outcome.code}` : ""}` : (outcome?.reason ?? "unknown");
       if (outcome?.gone) {

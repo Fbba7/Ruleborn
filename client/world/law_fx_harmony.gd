@@ -71,7 +71,9 @@ static func clash(fx: LawFx, into: Node3D, which: String, a: Vector3, b: Vector3
 					var u := fmod(s, 15.0)
 					var on := u > 12.0
 					if LawFxPaint.calm():
-						# No strobe: the dark phase settles in and lifts.
+						# No strobe: the dark phase settles in and lifts, and a
+						# flash left over from before the setting changed is cleared.
+						tint.set_shader_parameter("flash", 0.0)
 						tint.set_shader_parameter("wash", LawFxPaint.flash((u - 12.0) / 3.0, 0.35) if on else 0.0)
 						return
 					# Two flashes a second at most over the whole screen (WCAG
@@ -217,7 +219,7 @@ static func paradox(fx: LawFx, into: Node3D, id: String) -> void:
 			var tint := fx.tint(Color("#2A1A4A"), 0.0)
 			fx.every(func(s: float) -> void:
 				var u := fmod(s, 20.0)
-				var on := not (u < 1.2 and (LawFxPaint.calm() or int(s * 4.0) % 2 == 0))
+				var on := LawFxPaint.calm() or not (u < 1.2 and int(s * 4.0) % 2 == 0)
 				fx.show_signatures(on)
 				if tint != null:
-					tint.set_shader_parameter("edge", 0.0 if on or LawFxPaint.calm() else 0.6))
+					tint.set_shader_parameter("edge", 0.0 if on else 0.6))

@@ -26,7 +26,7 @@ else. "Build" means the decision needs code, listed under
 | Item | Decision | Build |
 |---|---|---|
 | Refresh-token rotation | Rotate only when the token is older than 24 hours (`RULEBORN_REFRESH_ROTATE_HOURS=24` in production), as T13 recommends; also write `used_at` and `place` only when they change by more than the devices list shows | B9 |
-| Sessions rows in §24.1's write budget | Accepted; the current figure is the load model's (61.74 billed rows a day for an engaged player), see DB-7 | None |
+| Sessions rows in §24.1's write budget | Accepted; the current figure is the load model's (57.74 billed rows a day for an engaged player since B8, was 61.74), see DB-7 | None |
 | The client's certificate pin | Pin the certificate authority the production certificate chains to, never the leaf; set once the host below exists | B10 |
 | Native Keychain, Keystore, Game Center and Google sign-in plugins | Deferred to release preparation, which needs a machine with Xcode 16 and Android SDK 35; the stand-ins stay until then. The Android store uses a Keystore AES-GCM key, not EncryptedSharedPreferences | Later |
 | The devices list's country | Kept, declared to both stores as approximate location | None |

@@ -4,27 +4,49 @@
   "branch": "claude/server-decisions",
   "model": "Sonnet 5.5",
   "agent_state": "active",
-  "task_id": "SV-B1-B6",
-  "task_state": "claimed",
-  "claimed_at": "2026-10-30T01:30:00Z",
-  "lease_until": "2026-10-30T04:30:00Z",
-  "updated_at": "2026-10-30T01:30:00Z",
-  "expected_next_update_by": "2026-10-30T02:15:00Z",
-  "long_run": null,
+  "task_id": "SV-B11-B12",
+  "task_state": "working",
+  "claimed_at": "2026-10-31T03:40:00Z",
+  "lease_until": "2026-10-31T06:40:00Z",
+  "updated_at": "2026-10-31T04:20:00Z",
+  "expected_next_update_by": "2026-10-31T05:05:00Z",
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Build B1-B6 in server/src and change the six tests in security_owner.test.mjs"
+    "next_step": "record the pre-check, mark ready"
   },
   "precheck": {
-    "sha": "b6161f984a48de314815b0bf6412be04e7558620",
+    "sha": "dfbca6ed82d57d00eb4c1ebcd0c3ef9ac28092c7",
     "exit": 1,
-    "finished_at": "2026-10-30T01:37:47Z",
-    "summary": "== the client: the same simulation inside Godot, and its screen ==: client contract: 1 break(s)"
+    "finished_at": "2026-10-31T03:47:21Z",
+    "summary": "== the simulation core (T3.1, T3.2, T5.5, line of sight): failed: cargo build --release --quiet --target wasm32-unknown-unknown"
   },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
-  "requests": [],
-  "answers": []
+  "requests": [
+    {
+      "id": "SV-2",
+      "from": "SV",
+      "to": "lead",
+      "ask": "SV-B11-B12 needed three edits outside its file list: client/tests/run.gd (one line registering the new suite), docs/status.md (three counts that tie to the register after D100 was added) and the generated docs/audit/index.html. Please accept them.",
+      "files": [
+        "client/tests/run.gd",
+        "docs/status.md",
+        "docs/audit/index.html"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-31T04:20:00Z",
+      "due": "2026-11-02T00:00:00Z",
+      "default": "keep the edits",
+      "escalate_to": "lead"
+    }
+  ],
+  "answers": [
+    {
+      "request_id": "SV-1",
+      "answer": "kept the regenerated load.json (lead's answer)",
+      "at": "2026-10-31T03:40:00Z"
+    }
+  ]
 }
