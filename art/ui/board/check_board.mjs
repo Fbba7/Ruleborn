@@ -371,6 +371,8 @@ export async function checkMode(page, mode, allowed, inject, href = null) {
   const texts = await page.evaluate(() => {
     const out = [];
     document.querySelectorAll('[data-check]').forEach((el, i) => {
+      // A word the page does not draw (display: none) has nothing to read.
+      if (!el.getClientRects().length) return;
       el.setAttribute('data-check-id', i);
       const cs = getComputedStyle(el);
       let opacity = 1;

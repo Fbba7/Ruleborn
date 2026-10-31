@@ -145,5 +145,7 @@
       cells.splice(i, 1);
     }
   };
+  // Every face loads, used or not, so the page is the same in every form.
+  for (const f of document.fonts) f.load();
   document.fonts.ready.then(() => { settle(); html.dataset.ready = '1'; });
 })();

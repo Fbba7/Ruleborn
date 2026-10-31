@@ -559,7 +559,7 @@ body { position: relative; background-color: var(--c-night-bottom); background-s
 /* ---------- heist ----------
    §21.8's arrangement in three columns at the top and the hand at the
    bottom; the world between them stays clear. */
-.heist { justify-content: space-between; }
+.screen.heist { justify-content: space-between; }
 .heist-top { display: grid; grid-template-columns: 1fr auto 1fr; gap: 6px; align-items: start; padding: 6px 8px 0; }
 .laws { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; min-width: 0; }
 /* "Laws here" in gold with an ink outline, as the game's (heist_hud.gd). */
@@ -662,7 +662,7 @@ body { position: relative; background-color: var(--c-night-bottom); background-s
 .large .tab:not(.active) > .well > img { width: 40px; height: 40px; }
 /* The side buttons' sky keeps its light to two thirds of the way out, so
    an icon of dark wood still leaves the face two steps off the night. */
-.sb .face { background: radial-gradient(circle at 42% 30%, #B6ECFF 0%, #4AA8EA 80%, #163E8C 100%); }
+.sb .face { background: var(--g-round-sky) 30% 20% / 160% 160%; }
 /* In high contrast a round control's outline is its own edge: 3 points of
    the night's text colour, drawn on the face, not around it. */
 :is(html.hc) .sb .face, :is(html.hc) .gold-round { border-color: var(--c-text-on-night); box-shadow: 0 3px 0 var(--c-drop); }
@@ -688,3 +688,42 @@ body { position: relative; background-color: var(--c-night-bottom); background-s
 .large .mid { padding-top: 0; }
 .large .sb { gap: 0; }
 .large .side { gap: 6px; }
+/* The key frames' gold holds its gold down to the lip, so the words on the
+   face keep APCA's level wherever they sit. */
+.gold {
+  --g-gold-face: linear-gradient(180deg, var(--c-gold-top) 0%, var(--c-gold) 50%, var(--c-gold) calc(100% - var(--lip)), var(--c-gold-bottom) 100%);
+  background:
+    linear-gradient(0deg,
+      color-mix(in srgb, var(--c-gold-rim) 22%, transparent) 0 var(--lip),
+      color-mix(in srgb, var(--c-gold-top) 70%, transparent) var(--lip) calc(var(--lip) + 1.5px),
+      color-mix(in srgb, var(--c-gold-top) 0%, transparent) calc(var(--lip) + 1.5px)),
+    var(--g-gold-face);
+}
+:is(html.hc) .gold { background: var(--g-gold-face); }
+/* The heist tab's count sits on the lift's shoulder, off the tab's word. */
+html:not(.large) .tab.heist .badge { top: auto; bottom: calc(20px * var(--ts) + 48px); right: calc(50% - 36px); }
+/* The heist tab's lift rises out of the bar; the goal row stands clear of it. */
+html:not(.large) .goal-row { margin-bottom: 16px; }
+/* A locked pin's two lines keep clear of its edge. */
+.pin.locked { padding-top: 4px; padding-bottom: 4px; }
+/* The band's word is small, so it is bold, for APCA's level at 13 points. */
+.band-word { font-weight: 700; }
+/* The dial's seconds stand on its dark middle, clear of the cream ring. */
+.dial { width: calc(34px * var(--ts)); height: calc(34px * var(--ts)); background: radial-gradient(closest-side, var(--c-drop) 84%, transparent 85%), conic-gradient(var(--c-cream) var(--v), var(--c-drop) 0); }
+/* At 200% the tab badges stand centred over their tab, clear of the next
+   tab's coin; the Season badge's column steps down to clear the strain card;
+   the plates keep their letters off their rim; the Cast button grows so its
+   words stand on the gold, above the lip. */
+.large .tab .badge { right: auto; left: 50%; transform: translateX(-50%); }
+.large .side:last-child { padding-top: 10px; }
+.large .plate { padding: 2px 12px 3px; }
+.dial { width: calc(30px * var(--ts)); height: calc(30px * var(--ts)); }
+.large .cast.gold { min-height: 58px; }
+/* A pin's tall letters keep off its rim at 200%; a tab's badge stands over
+   the next tab's coin glow; the high-contrast bar's thicker rim lifts the
+   coin 2 points, so the goal row steps up with it. */
+.large .pin:not(.small) { padding-top: 4px; padding-bottom: 4px; }
+.tab .badge { z-index: 2; }
+html.hc:not(.large) .goal-row { margin-bottom: 18px; }
+/* At 200% a badge's figure keeps 3 points off its rim. */
+.large .badge { padding-top: 3px; padding-bottom: 3px; }
