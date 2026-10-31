@@ -118,7 +118,7 @@ static func section(words: String, right := "") -> VBoxContainer:
 	var row := HBoxContainer.new()
 	var l := ScreenKit.text(words.to_upper(), 13.0, "words", "card", true, true)
 	l.theme_type_variation = "Kicker"
-	l.add_theme_color_override("font_color", Tokens.color("gold"))
+	l.add_theme_color_override("font_color", Tokens.color("gold_top"))
 	l.add_theme_constant_override("line_spacing", 0)
 	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(l)

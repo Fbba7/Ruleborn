@@ -10,7 +10,8 @@ launcher.
 | [prompts/](prompts/README.md) | One judge prompt per judged quality (1, 2, 3, 6, 8, 9, 13, 14) | P0-AD-rubric |
 | [shots.md](shots.md) | The shot format (a still and its control rectangles), the image checks and the sheets of `tools/ui_gate/` | P0-AD-sheet |
 | [golden/](golden/README.md) | The golden set: `items.json`, its images, and `labels.md`, the owner's form for O3 | P0-AD-golden, P0-AD-golden-2 |
-| `calibration.md` | The split into thirds, the catch rates per quality, the judge model chosen | P0-AD-calibrate |
+| [calibration.md](calibration.md) | The split into thirds, the anchors, the run plan, the catch rates per quality, the judge model chosen | P0-AD-calibrate |
+| `calibration/runs/` | Each calibration run's plan, one judge call per line, written by `calibrate.py plan` | P0-AD-calibrate |
 | [approvals/](approvals/O2.md) | AD's approvals in place of the owner (section 3.4 of `report.md`): `O2.md`, the style board and the kit contract | O2 |
 | `verdicts/` | The gate's verdicts, `<task_id>/<sha>.json`, and the exceptions queue | the lead |
 
