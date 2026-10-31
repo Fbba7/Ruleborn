@@ -1,15 +1,15 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T06:10:00Z",
-  "expected_next_update_by": "2026-10-31T07:25:00Z",
+  "updated_at": "2026-10-31T06:30:00Z",
+  "expected_next_update_by": "2026-10-31T07:45:00Z",
   "cycle": 5,
   "merging": {
     "candidate_sha": "22c78e6f",
     "task_ids": [
       "P0-K1-kitskin"
     ],
-    "started_at": "2026-10-31T06:10:00Z",
-    "expires_at": "2026-10-31T07:10:00Z"
+    "started_at": "2026-10-31T06:30:00Z",
+    "expires_at": "2026-10-31T07:30:00Z"
   },
   "last_merged": {
     "task_id": "P0-AD-golden",
