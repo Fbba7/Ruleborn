@@ -74,8 +74,10 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| K1 | `session_01SNkKxqS4p6oNGXrgf2HMJC` | P0-K1-bake-1 (restart: K1-R2 answered) | `claude/ui-bake` | 2026-10-30 22:41Z |
-| AD | `session_01SNkKxqWsnZkA94QgU4fUmT` | P0-AD-sheet (restart: AD-R2 answered) | `claude/ui-ad` | 2026-10-30 22:41Z |
+| K1 | `session_01SNkKxoCgMUfc9LdKPccMVL` | P0-K1-bake-2 | `claude/ui-bake` | 2026-10-31 00:29Z |
+| AD | `session_01SNkKxqyTwjQ4QFYuR3isqC` | O2 | `claude/ui-ad` | 2026-10-31 00:29Z |
+| K1 | `session_01SNkKxqS4p6oNGXrgf2HMJC` (idle, done) | P0-K1-bake-1 (restart: K1-R2 answered) | `claude/ui-bake` | 2026-10-30 22:41Z |
+| AD | `session_01SNkKxqWsnZkA94QgU4fUmT` (idle, done) | P0-AD-sheet (restart: AD-R2 answered) | `claude/ui-ad` | 2026-10-30 22:41Z |
 | AIA | `session_01SNkKxqs5iybVZtkaAz6tXt` | P0-AIA-board-2 | `claude/ui-artist` | 2026-10-30 21:52Z |
 | SV | `session_01SNkKxoTc2asTZD7Uigvf1m` | SV-B7-B9 | `claude/server-decisions` | 2026-10-30 21:52Z |
 | K1 | `session_01SNkKxq8CnHi34skP7kjhy5` (idle, replaced) | P0-K1-bake-1 | `claude/ui-bake` | 2026-10-30 21:52Z |
