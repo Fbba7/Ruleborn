@@ -3,7 +3,7 @@
 - Status: Green: pre-check PASS at e09807f (2026-10-31T02:41:29Z); P0-AIA-board-3 is ready.
 - Progress: 2 of 6 tasks merged; 0 items passed by the gate (the board has no gate items).
 - Done: P0-AIA-board-3 built: the studio and the four hero icons in §21.3's toon look, the enamel card's gloss band, rim and foot, the chosen card's gold rim, the lit oak well.
-- Next: the lead merges P0-AIA-board-3 for AD's O2-2; then P0-AIA-keyframes-1.
+- Next: P0-AIA-keyframes-1 (working): the pages over the baked worlds.
 - Blocked by: none.
 - Owner decision needed: none (O2-2 is AD's).
 
@@ -12,7 +12,7 @@
 | P0-AIA-board-1: materials and type | 4 | Merged (b6d0a3de) | pre-check PASS at aa11f0e |
 | P0-AIA-board-2: light, outline, glint, icons, high contrast, board.png | 2 | Merged (O2: approved in part) | `node art/ui/board/check_board.mjs` at 1a1afd2: 364 words pass in both modes, 8 icons keep the outline rule; `--self-test`: 13 planted faults each fail; `board.png`, `board_hc.png` |
 | P0-AIA-board-3: O2's redirect of B3, B4, B5, B11 | 3 | Ready at e09807f (pre-check PASS) | `check_board.mjs`: 376 words pass in both modes, 8 icons keep the outline rule, 22 controls pass value-steps (ΔL* 22.1 or more); `--self-test`: 15 planted faults each fail; `board.png`, `board_hc.png` |
-| P0-AIA-keyframes-1: home and heist | 4 | Open (waits for O2) | |
+| P0-AIA-keyframes-1: home and heist | 4 | Working | worlds and portraits baked by `art/ui/keyframes/bake.sh` |
 | P0-AIA-keyframes-2: result and character | 4 | Open | |
 | P0-AIA-keyframes-3: settings and the contact sheet | 2 | Open | |
 

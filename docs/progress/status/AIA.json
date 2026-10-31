@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P0-AIA-keyframes-1",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-10-31T03:42:36Z",
   "lease_until": "2026-10-31T06:42:36Z",
-  "updated_at": "2026-10-31T03:42:36Z",
-  "expected_next_update_by": "2026-10-31T04:27:36Z",
+  "updated_at": "2026-10-31T03:56:38Z",
+  "expected_next_update_by": "2026-10-31T04:41:38Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e09807f",
-    "next_step": "Read the plan and \u00a721.8's home and heist; build 01-home"
+    "next_step": "Worlds and portraits baked from the game; next kit.css, words.js, 01-home.html and 02-heist.html over them"
   },
   "precheck": null,
   "gate_request": null,
