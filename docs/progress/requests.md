@@ -40,6 +40,12 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ## Answered in cycle 6 (31 October 2026, by the lead)
 
+- **K1-R5** (from K1): filed as asked: **P0-K1-tokens** (K1,
+  `client/ui/tokens.json`, `tokens.gd`, `ui_kit_tests.gd`,
+  `tools/ui_bake/budgets.json`, `kit-spec.md`; deps O2-2 and
+  P0-K1-kitskin, 2 h). It writes section 2.1's revised values into
+  `tokens.json` after the O2-2 pass and records again what they move.
+  P0-K1-kitskin keeps today's values, as K1 said.
 - **SV-2** (from SV): SV-B11-B12's three edits outside its files
   (`client/tests/run.gd`, one line registering the new suite;
   `docs/status.md`, three counts; the generated `docs/audit/index.html`)

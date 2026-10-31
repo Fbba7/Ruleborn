@@ -438,6 +438,41 @@
       ]
     },
     {
+      "id": "P0-K1-tokens",
+      "title": "Kit tokens, O2's redirect in code (K1-R5): once O2-2 lets the revised kit contract stand, write kit-spec.md section 2.1's revised values into client/ui/tokens.json (the menus' backdrop, card_bottom #1A1134, red words on dark #FF9AAA bold; success words on dark and the backdrop's shape as the brief's entries are settled, else O2.md's interim rulings), and record again the counts and stills they move (tools/ui_bake/budgets.json), with a dated line in kit-spec.md section 9",
+      "phase": 0,
+      "role": "K1",
+      "model": "Opus 5.5",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/tokens.json",
+        "client/ui/tokens.gd",
+        "client/tests/ui_kit_tests.gd",
+        "tools/ui_bake/budgets.json",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "deps": [
+        "O2-2",
+        "P0-K1-kitskin"
+      ],
+      "done_when": [
+        "bash tools/ui_bake/guard.sh",
+        "python3 tools/check_docs_consistency.py",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
       "phase": 0,
       "model": "Opus 5.5",
       "gate_items": [],
