@@ -3,24 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P0-AD-calibrate",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-10-31T18:40:00Z",
   "lease_until": "2026-10-31T21:40:00Z",
-  "updated_at": "2026-10-31T19:15:00Z",
-  "expected_next_update_by": "2026-10-31T19:50:00Z",
-  "long_run": {
-    "log": "/tmp/check-3f3797c73731dfbb2d5c696eb9248b8ca832448d.log",
-    "expected_end": "2026-10-31T19:45:00Z"
-  },
+  "updated_at": "2026-10-31T19:25:00Z",
+  "expected_next_update_by": "2026-10-31T20:10:00Z",
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "c89f4e8",
-    "next_step": "pre-check 3f3797c running; record it, then mark P0-AD-calibrate ready"
+    "last_green_sha": "3f3797c",
+    "next_step": "P0-AD-calibrate ready at 3f3797c; waiting for the lead to merge, launch dev-fable and dev-opus and file P0-AD-calibrate-2 (AD-R6)"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "3f3797c73731dfbb2d5c696eb9248b8ca832448d",
+    "exit": 0,
+    "finished_at": "2026-10-31T19:23:00Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "3f3797c",
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
