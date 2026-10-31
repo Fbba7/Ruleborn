@@ -1,0 +1,145 @@
+{
+ "image": "02-heist_text200_pt_BR.png",
+ "frame_pt": [
+  390,
+  845
+ ],
+ "text_scale": 2,
+ "controls": [
+  {
+   "name": "laws 1: Leis aqui Sleepwalk Glass",
+   "rect": [
+    8,
+    50,
+    237.19,
+    146.38
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "clock 2: 2:38",
+   "rect": [
+    251.19,
+    50,
+    130.81,
+    66
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "alarm 3: Alarme 1 / 6",
+   "rect": [
+    251.19,
+    122,
+    130.81,
+    103.48
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "loot 4: Espaço 1.840 Restam ~2.600 Carregar até 80%",
+   "rect": [
+    8,
+    233.48,
+    374,
+    158.58
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "glass 5: Toque na equipe, depois no chão · segure para se esgueirar ou correr",
+   "rect": [
+    8,
+    441.92,
+    374,
+    117.28
+   ],
+   "interactive": false,
+   "persistent": true
+  },
+  {
+   "name": "mate 6: Skyskipper",
+   "rect": [
+    21.39,
+    707.2,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "mate 7: Tidewalker",
+   "rect": [
+    94.19,
+    707.2,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "mate 8: Mossbear",
+   "rect": [
+    166.98,
+    707.2,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "mate 9: Echoplate",
+   "rect": [
+    239.78,
+    707.2,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "mate 10: Emberling",
+   "rect": [
+    312.59,
+    707.2,
+    56,
+    56
+   ],
+   "persistent": true
+  },
+  {
+   "name": "sage 11: The Archivist, o Sábio: pronto em 12 s",
+   "rect": [
+    16,
+    575.2,
+    64,
+    64
+   ],
+   "persistent": true
+  },
+  {
+   "name": "cast 12: Lançar",
+   "rect": [
+    152,
+    578.2,
+    222,
+    58
+   ],
+   "persistent": true
+  },
+  {
+   "name": "getout 13: Fugir",
+   "rect": [
+    16,
+    647.2,
+    358,
+    52
+   ],
+   "persistent": true
+  }
+ ]
+}
