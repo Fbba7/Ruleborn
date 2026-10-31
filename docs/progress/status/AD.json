@@ -3,26 +3,21 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "O3",
-  "task_state": "ready",
-  "claimed_at": "2026-10-31T16:25:00Z",
-  "lease_until": "2026-10-31T19:25:00Z",
-  "updated_at": "2026-10-31T17:15:00Z",
-  "expected_next_update_by": "2026-10-31T18:00:00Z",
+  "agent_state": "active",
+  "task_id": "P0-AD-calibrate",
+  "task_state": "claimed",
+  "claimed_at": "2026-10-31T18:40:00Z",
+  "lease_until": "2026-10-31T21:40:00Z",
+  "updated_at": "2026-10-31T18:40:00Z",
+  "expected_next_update_by": "2026-10-31T19:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "c89f4e8",
-    "next_step": "P0-AD-calibrate once O3 merges"
+    "next_step": "P0-AD-calibrate: tools/ui_gate/calibrate.py and gate/calibration.md"
   },
-  "precheck": {
-    "sha": "c89f4e8f16d4b15a4aafdf0613bac5eda151636f",
-    "exit": 0,
-    "finished_at": "2026-10-31T17:11:29Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "c89f4e8",
+  "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
@@ -58,7 +53,7 @@
       "id": "AD-R4",
       "from": "AD",
       "to": "lead",
-      "ask": "O2 redirects part of the style board (docs/art/ui-quality/gate/approvals/O2.md, points B3, B4, B5, B11). File new task P0-AIA-board-3 for AIA, files art/ui/board/**: (1) re-render the four hero icons and the studio spheres in the toon look of \u00a721.3 and D5 (b) (a four-step ramp, violet-tinted shadow, the rim kept; no MeshPhysicalMaterial metalness, clearcoat or RoomEnvironment reflections), keeping models, finish and rules; (2) the enamel card: a gloss band that reads at 1x over the top 30-45%, a dark hue-matched rim of 2-4 pt, a lip or foot of 3-8 pt; (3) the selected card: a gold rim, no outer glow; (4) the leather button at least two value steps (dL* >= 20, tools/ui_gate/checks.py value-steps) off its well, in both modes, by lighting the well, not changing leather's hue. done_when: board.png and board_hc.png rebaked; check_board.mjs passes; value-steps passes on every control of the board; bash tools/check_all.sh. Estimate 3 h. Also file O2-2 (AD, files docs/art/ui-quality/gate/approvals/O2-2.md, deps P0-AIA-board-3 and P0-K1-contract-2): AD re-approves the redirected points only",
+      "ask": "O2 redirects part of the style board (docs/art/ui-quality/gate/approvals/O2.md, points B3, B4, B5, B11). File new task P0-AIA-board-3 for AIA, files art/ui/board/**: (1) re-render the four hero icons and the studio spheres in the toon look of §21.3 and D5 (b) (a four-step ramp, violet-tinted shadow, the rim kept; no MeshPhysicalMaterial metalness, clearcoat or RoomEnvironment reflections), keeping models, finish and rules; (2) the enamel card: a gloss band that reads at 1x over the top 30-45%, a dark hue-matched rim of 2-4 pt, a lip or foot of 3-8 pt; (3) the selected card: a gold rim, no outer glow; (4) the leather button at least two value steps (dL* >= 20, tools/ui_gate/checks.py value-steps) off its well, in both modes, by lighting the well, not changing leather's hue. done_when: board.png and board_hc.png rebaked; check_board.mjs passes; value-steps passes on every control of the board; bash tools/check_all.sh. Estimate 3 h. Also file O2-2 (AD, files docs/art/ui-quality/gate/approvals/O2-2.md, deps P0-AIA-board-3 and P0-K1-contract-2): AD re-approves the redirected points only",
       "files": [
         "docs/progress/backlog.json"
       ],
@@ -72,7 +67,7 @@
       "id": "AD-R5",
       "from": "AD",
       "to": "lead",
-      "ask": "O2 redirects part of the kit contract (docs/art/ui-quality/gate/approvals/O2.md, points K1-K3). File new task P0-K1-contract-2 for K1, files docs/art/ui-quality/kit-spec.md: (1) section 2.1's four values that differ from the design document while citing it (night_* backdrop against \u00a721.2's #171046 to #2C3AA8; card_bottom #120A28 against \u00a721.8's #1A1134; red words on dark #FFB0BC against #FF9AAA; success words on dark #8FF0A8 against #3FBF7F) each take the design document's value or are marked a pending owner decision with a decision brief entry (docs/guides/design-tools.md, the decision brief) and O2.md's interim ruling; (2) section 2.2: titles T2 over the world, gold, oak, leather and school colours, T0 with the drop on the dark card and parchment; (3) K01's tertiary defined as a material, not a ghost. Still version 1 (not yet in effect), with a dated line in section 9. done_when: python3 tools/check_docs_consistency.py; bash tools/check_all.sh. Estimate 1 h",
+      "ask": "O2 redirects part of the kit contract (docs/art/ui-quality/gate/approvals/O2.md, points K1-K3). File new task P0-K1-contract-2 for K1, files docs/art/ui-quality/kit-spec.md: (1) section 2.1's four values that differ from the design document while citing it (night_* backdrop against §21.2's #171046 to #2C3AA8; card_bottom #120A28 against §21.8's #1A1134; red words on dark #FFB0BC against #FF9AAA; success words on dark #8FF0A8 against #3FBF7F) each take the design document's value or are marked a pending owner decision with a decision brief entry (docs/guides/design-tools.md, the decision brief) and O2.md's interim ruling; (2) section 2.2: titles T2 over the world, gold, oak, leather and school colours, T0 with the drop on the dark card and parchment; (3) K01's tertiary defined as a material, not a ghost. Still version 1 (not yet in effect), with a dated line in section 9. done_when: python3 tools/check_docs_consistency.py; bash tools/check_all.sh. Estimate 1 h",
       "files": [
         "docs/progress/backlog.json"
       ],
