@@ -153,7 +153,7 @@ body {
 .enamel::before {
   content: ""; position: absolute; left: calc(var(--rim) + 4px); right: calc(var(--rim) + 4px); top: calc(var(--rim) + 2px); height: 38%; z-index: -1;
   border-radius: 12px 12px 50% 50% / 12px 12px 14px 14px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--c-paper) 24%, transparent), color-mix(in srgb, var(--c-paper) 9%, transparent));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c-paper) 20%, transparent), color-mix(in srgb, var(--c-paper) 8%, transparent));
   opacity: var(--grain);
 }
 .enamel::after {
@@ -518,7 +518,7 @@ body {
     <header>
       <p class="kicker" data-check>Material 1 · enamel</p>
       <h2 class="heading" data-check>The violet card</h2>
-      <p class="note" data-check>Dresses §21.8's dark surface, the violet card from #261A4C down, as fired enamel: a glassy glaze, a hot spot where the key lands, a bevelled edge.</p>
+      <p class="note" data-check>Dresses §21.8's dark surface, the violet card from #261A4C down, as fired enamel: a gloss band across its top, a hot spot where the key lands, a dark rim and a foot. Chosen, it takes a gold rim and a gold foot, never a glow.</p>
     </header>
     <article class="enamel stack">
       <svg class="tex" aria-hidden="true"><rect width="100%" height="100%" style="fill: var(--c-paper)" filter="url(#grain-enamel)"/></svg>
@@ -537,9 +537,11 @@ body {
     </article>
     <dl class="recipe caption">
       <dt data-check>Fill</dt><dd data-check>the card gradient, card_top to card_bottom</dd>
-      <dt data-check>Glaze</dt><dd data-check>paper at 9% over the top 42%; a 10% hot spot top left</dd>
-      <dt data-check>Bevel</dt><dd data-check>a lit 2-point lip on top, a dark 3-point foot</dd>
-      <dt data-check>Edge</dt><dd data-check>ink outline; card line inside; hard drop of 3</dd>
+      <dt data-check>Glaze</dt><dd data-check>a band of paper, 20% fading to 8%, over the top 38%; a 10% hot spot top left</dd>
+      <dt data-check>Rim</dt><dd data-check>card_bottom, 3 points inside the edge, then the card line</dd>
+      <dt data-check>Foot</dt><dd data-check>card_bottom, 6 points, under a lit seam</dd>
+      <dt data-check>Chosen</dt><dd data-check>a 4-point gold rim and an 8-point gold foot; the face lifts to card_lit_glow</dd>
+      <dt data-check>Edge</dt><dd data-check>ink outline; hard drop of 3</dd>
     </dl>
   </section>
 
@@ -586,6 +588,7 @@ body {
       <dt data-check>Oak</dt><dd data-check>the oak frame's four stops at 160°, oak grain streaked along it</dd>
       <dt data-check>Leather</dt><dd data-check>the leather radial, lit at 28% from the top</dd>
       <dt data-check>Craft</dt><dd data-check>cream stitching at 38%; Motion-shadow rim</dd>
+      <dt data-check>Well</dt><dd data-check>oak floor lit by the key: two value steps under the leather</dd>
       <dt data-check>Edge</dt><dd data-check>ink outline; drop of 4 in the drop black</dd>
     </dl>
   </section>
@@ -677,14 +680,14 @@ body {
     <header>
       <p class="kicker" data-check>The studio light</p>
       <h2 class="heading" data-check>One light on everything</h2>
-      <p class="note" data-check>Every rendered piece stands in one studio, so a set of sixty stays one family. Gold, enamel and leather here, in studio.html's light.</p>
+      <p class="note" data-check>Every rendered piece stands in one studio, so a set of sixty stays one family. It is §21.3's toon look, the world's own: gold, enamel and leather here, in studio.html's light.</p>
     </header>
     <img class="shot" src="art/studio.png" alt="Three spheres, gold, violet enamel and leather, under the studio light">
     <dl class="recipe caption">
-      <dt data-check>Key</dt><dd data-check>cream, from the top left and in front; the strongest</dd>
-      <dt data-check>Rim</dt><dd data-check>the piece's own light colour, from behind on the right</dd>
-      <dt data-check>Fill</dt><dd data-check>soft, from below: a paper sky over a ground of the night</dd>
-      <dt data-check>Room</dt><dd data-check>reflections for metal and gloss; neutral tone mapping</dd>
+      <dt data-check>Key</dt><dd data-check>cream, from the top left and in front, read in four steps of 62, 140, 215 and 255</dd>
+      <dt data-check>Shade</dt><dd data-check>falls toward violet, never toward black; colours 10% more saturated</dd>
+      <dt data-check>Rim</dt><dd data-check>the piece's own light colour, soft, on the lit edge</dd>
+      <dt data-check>Fill</dt><dd data-check>a little of the paper sky</dd>
       <dt data-check>Flat</dt><dd data-check>on panels the key is a lit top lip, a hot spot and the gloss on the upper left, and a shaded foot; drops fall straight down</dd>
     </dl>
   </section>
