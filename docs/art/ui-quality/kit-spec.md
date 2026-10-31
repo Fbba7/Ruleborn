@@ -1,6 +1,6 @@
 # The Ruleborn UI kit: specification (T16; owner and freeze rules by T17)
 
-**Contract:** version 1. Sections 2–6 are frozen, version 1, as written by K1 on 30 October 2026; the lead merges this page when its checks pass, and they take effect at AD's approval at O2 (`report.md` section 3.4) (`docs/guides/agent-protocol.md`, worked example D). **Owner:** K1. **Consumers:** S1, S2, S3 (the screens), AIA and AIA-2 (the art the bake reads), AD and the gate (the catalogue and the names), and the lead (the hotspot files and `tools/check_all.sh`).
+**Contract:** version 1. Sections 2–6 are frozen, version 1, as written by K1 on 30 October 2026 and revised on 31 October for AD's redirect at O2 (`gate/approvals/O2.md`, points K1–K3). At O2 (`report.md` section 3.4) AD approved sections 3, 4 (but K01's tertiary), 5 and 6, which are in effect; section 2 and K01's tertiary, as revised, take effect at AD's re-approval, O2-2 (`docs/guides/agent-protocol.md`, worked example D). Until then, O2.md's interim rulings hold. **Owner:** K1. **Consumers:** S1, S2, S3 (the screens), AIA and AIA-2 (the art the bake reads), AD and the gate (the catalogue and the names), and the lead (the hotspot files and `tools/check_all.sh`).
 
 This is the kit the UI wave builds against: what the components are, the states each one has, the tokens they share, how they are named and laid out on disk, how a screen uses them, who may add one, and what happens to today's kit. The plan that builds it is `report.md` section 3. Where this page and the design document disagree, the design document wins (§23.5), and the disagreement is an owner decision in `report.md` section 12.
 
@@ -17,25 +17,25 @@ This is the kit the UI wave builds against: what the components are, the states 
 
 ## 2. Tokens
 
-*Frozen, version 1.*
+*Frozen, version 1; revised on 31 October for O2 (points K1 and K2), in effect at O2-2.*
 
-The tokens live in `client/ui/tokens.json` (K1's file), which already holds most of them. This section is the contract; the file is the one home of each value. Values here are quoted from it on 30 October (checked by K1 at the freeze); where the plan changes one, the change is marked. If a value here and the file ever differ, the file is right and this table is corrected by a dated line in section 9.
+The tokens live in `client/ui/tokens.json` (K1's file), which already holds most of them. This section is the contract; the file is the one home of each value. Values here are quoted from it on 30 October (checked by K1 at the freeze); where the plan changes one, the change is marked. **Marked "takes the design document's value"**: the row now quotes §21.2 or §21.8 instead of the file; `tokens.json` takes the value in P0-K1-kitskin, and until then this row, not the file, is right. **Marked "pending owner decision"**: the row names its entry for the owner's decision brief (`docs/decisions/brief.json`, `docs/guides/design-tools.md`) and O2.md's interim ruling, which the kit follows until the owner answers. If a value here and the file ever differ, the file is right and this table is corrected by a dated line in section 9.
 
 ### 2.1 Colour roles
 
 | Role | Token(s) today | Value | Rule |
 |---|---|---|---|
 | Ink (every outline) | `ink_line`; `ink` and `ink_deep` for ink-coloured fills and icon strokes | #1A0C14; #221C3A; #120C2A | §21.8: each surface family outlined in ink |
-| Backdrop (menus) | `night_top`, `night_mid`, `night_bottom` | #2E1F5E, #140C30, #0A0620 | §21.2: menus stand on a night backdrop |
-| Dark surface | `card_top`, `card_bottom` | #261A4C to #120A28 | §21.8 |
+| Backdrop (menus) | `night_top`, `night_mid`, `night_bottom` | #171046 to #2C3AA8, a linear gradient read top to bottom in §21.2's order for the skies; `night_mid` is their midpoint, #222577. **Takes the design document's value** (`tokens.json` holds the designs' #2E1F5E, #140C30, #0A0620). Words on the bare backdrop are measured at #2C3AA8, its lightest point: `text_on_night` for body text (Lc 85), `text_on_night_2` bold only (Lc 73); `text_on_night_3` (Lc 46) sits on a card, never on the bare backdrop. **Pending owner decision** on the shape: the designs' sub-screens draw a radial (ellipse at the top centre, #2E1F5E, #140C30 at 55%, #0A0620), which §21.2's two values do not describe; brief entry requested by K1-R4; interim, O2.md ruling 2: §21.2's linear values | §21.2: "Menus stand on a night backdrop (#171046 to #2C3AA8)" |
+| Dark surface | `card_top`, `card_bottom` | #261A4C to #1A1134. **Takes the design document's value** (`tokens.json` holds #120A28; O2.md ruling 3) | §21.8: "a violet card from #261A4C to #1A1134" |
 | Glass over the world | `glass` | #140A16 at 78% | §21.8; none in high contrast |
 | Leather (secondary buttons) | `leather_light`, `leather_mid`, `leather_dark`, `leather_rim`; words `text_on_leather` | #6A3E52, #3A2030, #1E1018, rim #B8741E; words #F6E6C8 | §21.8 |
 | Parchment surface | `parchment_top`, `parchment_bottom` | #FFFBF0 to #F1E3C4 | §21.8 |
 | Text on dark: primary, secondary, tertiary | `text_on_night`, `text_on_night_2`, `text_on_night_3` | #F3EEFF, #E2D9F7, #B8A8D8 (no darker than #B8A8D8; tertiary bold) | §21.8 |
 | Text on parchment: primary, secondary, tertiary | `parchment_ink`, `parchment_text_2`, `parchment_text_3` | #2A1A10, #54392A, #8A5A1C | §21.8 |
 | Main action | `gold_top`, `gold`, `gold_bottom`, `gold_rim`; words `text_on_gold` | #F9DE9C, #E9B65C, #C88A35; words #1B1430 | §21.8: gold for main actions |
-| Alarm | `alarm`, `alarm_fill`, `alarm_text`, `alarm_text_on_night`, `on_alarm` | colour #E2536B; fill under words #B3203A with paper words (`on_alarm`, #FCFBFF); words #9A1B32 bold on parchment; words #FFB0BC bold on dark (`alarm_text_on_night`: lighter than §21.8's #FF9AAA, which falls under APCA Lc 60 on glass over the day sky) | §21.8 |
-| Success | `success`, `success_text`, `success_text_on_night` | fill #3FBF7F; words #8FF0A8 on dark, #155A38 bold on parchment | §21.8 |
+| Alarm | `alarm`, `alarm_fill`, `alarm_text`, `alarm_text_on_night`, `on_alarm` | colour #E2536B; fill under words #B3203A with paper words (`on_alarm`, #FCFBFF); words #9A1B32 bold on parchment; words #FF9AAA bold on dark (`alarm_text_on_night`). **Takes the design document's value** (`tokens.json` holds #FFB0BC, deprecated and kept until phase 1 ends). Measured bold (4.5:1 and Lc 60, `client/ui/colour_check.gd`), #FF9AAA passes on the dark card (Lc 61–63 at its two stops) and fails on glass over the day sky (Lc 55–58), on the backdrop at #2C3AA8 (Lc 51) and on leather's light stop (Lc 50); there an alarm in words is carried on `alarm_fill`, paper on #B3203A (Lc 84), as §21.8 and O2.md ruling 1 say | §21.8: "on a dark surface red words are #FF9AAA, bold"; "text on an alarm fill is paper on #B3203A" |
+| Success | `success`, `success_text`, `success_text_on_night` | fill #3FBF7F; words #155A38 bold on parchment; words on dark (`success_text_on_night`) **pending owner decision**. §21.8's #3FBF7F meets 4.5:1 on the dark card (6.7–7.6:1) but measures Lc 54–55 there, 48–51 on glass over the day sky and 43 on the backdrop at #2C3AA8, under the Lc 60 that bold words under 36 points need; ink on the #3FBF7F fill measures Lc 57.5. `tokens.json` holds #8FF0A8 (Lc 72–84). Brief entry requested by K1-R4 (options: lighter success words on dark, or §21.8's green only at 36 points and over with smaller words on the fill). Interim, O2.md ruling 1: #3FBF7F where it meets both checks (36 points and over, on the dark card); elsewhere ink on the #3FBF7F fill; no lighter tint until the owner decides | §21.8: "success words keep #3FBF7F" |
 | School colours and shadows | `motion` … `spirit`, `*_shadow`, `*_light` | §21.2's six | One set, no palette switch (§20.8) |
 | Rank frames | gradients `frame_oak`, `frame_silver`, `frame_gold`, `frame_prismatic` | gradients | The only rank ladder the kit draws |
 | Scrim | gradient `scrim` | #0A0620 at 70% to 85% | Modals dim the scene |
@@ -55,17 +55,17 @@ No word carries opacity (§21.8). No information is carried by colour alone (§2
 | `body`, `body_bold` | Manrope | 600, 800 | 16 | T0 |
 | `number` | Manrope, tabular | 800 | 16 | T1 |
 | `number_m` | Manrope, tabular | 800 | 22 | T1 |
-| `heading` | Marcellus | 400 | 20 | T2 |
-| `title` | Marcellus | 400 | 28 | T2 |
-| `hero` | Marcellus | 400 | 34 | T2 |
+| `heading` | Marcellus | 400 | 20 | T2 over the world, gold, oak, leather or a school colour; T0 with its drop on the dark card and on parchment |
+| `title` | Marcellus | 400 | 28 | The same as `heading` |
+| `hero` | Marcellus | 400 | 34 | The same as `heading` |
 | `display_s`, `display`, `display_xl` | Lilita One | 400 | 18, 28, 44 | T2; numbers that do not change |
 | Baked numerals | pictures drawn with Lilita One | – | sized to their slot, at every text size | T3 |
 
 Floors: 13 points everywhere, 16 for body text, at 100% to 200% text (§21.8, §20.8). A weight of 900 is drawn at 800. Which face carries labels and changing numbers on art is decision D4 (`report.md` section 12); this table is §21.8 as written.
 
 **Treatments.**
-- **T0 plain:** live text on a calm surface, measured against what is behind it at its worst point.
-- **T1 outlined:** an ink outline all round, at least 1.5 points or 12% of the size (§21.8). Measured against the outline. Every word over art is T1 or T2.
+- **T0 plain:** live text on a calm surface, measured against what is behind it at its worst point. The calm surfaces are the dark card and parchment. A Marcellus title (`heading`, `title`, `hero`) on one of them is T0 with its role's hard drop and no outline; the drop does not count for contrast.
+- **T1 outlined:** an ink outline all round, at least 1.5 points or 12% of the size (§21.8). Measured against the outline. Every word over the world, gold, oak, leather or a school colour is T1 or T2.
 - **T2 display:** T1 plus a hard drop (`drop` in the role). The drop does not count for contrast.
 - **T3 baked numerals:** a gradient fill, a thick ink stroke and a hard drop, baked per glyph in four finishes (gold, white, timer, timer red, as the proof bakes them). The set is 0–9 and , . : / + − % × ? and a space, with a fixed advance for numbers that change. The proof's set lacks the full stop, the minus sign and the question mark; K1 adds them (`report.md` section 10.4). Each baked number keeps its spoken value.
 
@@ -141,7 +141,7 @@ Every component the five key screens (home, heist, result, character, settings) 
 
 | ID | Component | Variants | States | Built from | Today |
 |---|---|---|---|---|---|
-| K01 | Button | primary (gold), secondary (leather), tertiary (ghost), danger (red) | N P D S L A Ld RM | 9-slice face per state; live T1 label; optional icon | `UI.button`, `UI.action`, `KitControls.action`, `ScreenKit.button` |
+| K01 | Button | primary (gold), secondary (leather), tertiary (an inked plate, below), danger (red) | N P D S L A Ld RM | 9-slice face per state; live T1 label; optional icon | `UI.button`, `UI.action`, `KitControls.action`, `ScreenKit.button` |
 | K02 | Big round action | Cast, Get out, the home's main action | N P D L A Ld RM | Round sprite per state; icon; label under | `KitControls.big_action`, `round_action`, proof's buttons |
 | K03 | Icon button | round 48, square 48 | N P D S A RM | Small disc sprite; icon | `KitControls.icon_button`, `small_disc` |
 | K04 | Close and back | close (×), back (round, lower band, §21.1) | N P RM | K03's skin; fixed icon | `KitNav.back`, `ScreenNav.back_button` |
@@ -152,6 +152,8 @@ Every component the five key screens (home, heist, result, character, settings) 
 | K09 | Tab bar | five tabs, Heist in the centre (§21.8) | N P S A RM | Bar 9-slice; tab faces; icons | `KitTabs`, `ScreenNav.bar` |
 | K10 | Hub control | the Laws hub's gold control | N P S RM | Segmented skin in gold | `ScreenNav.hub` |
 | K11 | Text field | search | N D S Ld | Glass well 9-slice | `KitControls.search` |
+
+**K01's tertiary** (revised on 31 October for O2, point K3; in effect at O2-2). The tertiary button is a made thing, not a ghost: an inked plate of the material it sits on. Its face is that material lifted, flat (one gradient lit from the top, no gloss band, no gold rim), at least two value steps off the surface under it (ΔL* ≥ 20, rubric quality 8, pass item 3) so that it reads as a control in greyscale; an ink edge all round of 2 points (3 in high contrast); a lip of 3 points. It has two face sets in its one skin, `button_tertiary`: violet, lifted from the dark card, on the dark card, glass and the backdrop; parchment, lifted from parchment, on parchment. Its label is T1 in the surface's primary words (`text_on_night`, or `parchment_ink`), in `button`. It never has a hairline border, a fill with opacity or a blur. The two faces' colours come from the board (AIA) and enter `tokens.json` with the skin; until then the skin's switch stays off (section 6.7) and today's `ghost` material draws. The kit keeps four button styles (rubric quality 11): the tertiary ranks below leather by having no gloss and no rim, not by being fainter.
 
 ### 4.2 Containers
 
@@ -398,7 +400,7 @@ Today's 106 materials become 35 baked skins. A material not listed is mapped by 
 |---|---|
 | `button_primary` | `gold`, `gold_round`, `plate_gold`, `reward_gold` |
 | `button_secondary` | `leather`, `plate_leather` |
-| `button_tertiary` | `ghost` |
+| `button_tertiary` | `ghost` (today's ghost is replaced by section 4.1's inked plate, not kept as a look) |
 | `button_danger` | `red`, `banner_alarm`, `tag_alarm` |
 | `success` | `green`, `green_muted`, `banner_success`, `tag_success`, `reward_green` |
 | `panel_dark` | `card`, `card_selected`, `card_gold`, `album`, `fact`, `ability`, `plate`, `plate_dark`, `banner_info` |
@@ -431,3 +433,4 @@ That is 35 skins, counting each rank frame and each of the tab bar's three, agai
 - 28 October: written by T16 for the UI wave.
 - 29 October: T17 (plan v3) made K1 the owner, added the freeze at the end of phase 0, and moved component requests into the requesters' own status files with this page's request log.
 - 30 October: K1 checked sections 2–6 against `client/ui/tokens.json` and the kit's code and froze them as version 1. It corrected the colour rows to the file's values (ink, backdrop, dark surface, leather, text on dark and on parchment, gold, alarm, success, scrim), counted the materials (106, not 108; `banner_info` mapped to `panel_dark`), put section 6.3's example in `big_action`'s real order, and added sections 6.5 (the functions screens call), 6.6 (the manifest's format), 6.7 (the switch per skin) and 6.8 (the ownership map of the hotspot files).
+- 31 October: K1 (P0-K1-contract-2) revised version 1 for AD's redirect at O2 (`gate/approvals/O2.md`, points K1–K3); still version 1, not yet in effect for the revised parts, which take effect at O2-2. Section 2.1: the menus' backdrop takes §21.2's #171046 to #2C3AA8, `card_bottom` §21.8's #1A1134 and red words on dark §21.8's #FF9AAA bold (carried on the alarm fill where they fail the perceptual check); success words on dark, and the shape of the backdrop (the designs' radial), are pending owner decisions with brief entries requested by K1-R4 and O2.md's interim rulings. Section 2.2: Marcellus titles are T2 over the world, gold, oak, leather and school colours, and T0 with their drop on the dark card and parchment. Section 4.1: K01's tertiary is an inked plate of its surface's material, not a ghost. `tokens.json` takes the new values in P0-K1-kitskin.
