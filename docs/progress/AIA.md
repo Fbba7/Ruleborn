@@ -1,6 +1,6 @@
 # AIA AI UI artist: progress
 
-- Status: Green: check_all passed at b760d6f1; its pre-check is running. P0-AIA-keyframes-1 is working.
+- Status: Green: pre-check PASS at b760d6f1 (2026-10-31T06:25:31Z); P0-AIA-keyframes-1 is ready.
 - Progress: 2 of 6 tasks merged; 0 items passed by the gate (the board has no gate items).
 - Done: P0-AIA-keyframes-1 built: home and heist at 1080 x 2340 in three forms each, in English and Brazilian Portuguese, with their scripted checks.
 - Next: P0-AIA-keyframes-2 (open): result and character.
@@ -12,12 +12,12 @@
 | P0-AIA-board-1: materials and type | 4 | Merged (b6d0a3de) | pre-check PASS at aa11f0e |
 | P0-AIA-board-2: light, outline, glint, icons, high contrast, board.png | 2 | Merged (O2: approved in part) | `node art/ui/board/check_board.mjs` at 1a1afd2: 364 words pass in both modes, 8 icons keep the outline rule; `--self-test`: 13 planted faults each fail; `board.png`, `board_hc.png` |
 | P0-AIA-board-3: O2's redirect of B3, B4, B5, B11 | 3 | Ready at e09807f (pre-check PASS) | `check_board.mjs`: 376 words pass in both modes, 8 icons keep the outline rule, 22 controls pass value-steps (ΔL* 22.1 or more); `--self-test`: 15 planted faults each fail; `board.png`, `board_hc.png` |
-| P0-AIA-keyframes-1: home and heist | 4 | Working (pre-check running on b760d6f1) | `node art/ui/keyframes/check_keyframes.mjs`: 12 stills at 1080 x 2340 pass. Home: 18 controls, smallest touch area 48 points, 43 words (26 at 200%) all passing, worst 5.8:1 at 100%. Heist: 8 controls, 22 words, worst 5.7:1. All 12 shots pass value-steps. `--self-test`: 14 planted faults, each fails. `bash tools/check_all.sh`: all checks passed. |
+| P0-AIA-keyframes-1: home and heist | 4 | Ready at b760d6f1 (pre-check PASS) | `node art/ui/keyframes/check_keyframes.mjs`: 12 stills at 1080 x 2340 pass. Home: 18 controls, smallest touch area 48 points, 43 words (26 at 200%) all passing, worst 5.8:1 at 100%. Heist: 8 controls, 22 words, worst 5.7:1. All 12 shots pass value-steps. `--self-test`: 14 planted faults, each fails. `bash tools/check_all.sh`: all checks passed. |
 | P0-AIA-keyframes-2: result and character | 4 | Open | |
 | P0-AIA-keyframes-3: settings and the contact sheet | 2 | Open | |
 
 ## Handoff
-- Last verified commit: b760d6f1 (check_all passed; pre-check running).
+- Last verified commit: b760d6f1 (pre-check green, 2026-10-31T06:25:31Z). Requests AIA-R3 to AIA-R7 in the status file, each with a default.
 - Done:
   - `art/ui/keyframes/` holds `01-home` and `02-heist` as `.html` with `.png` and `.shot.json` in all twelve forms: as written, `_text200` and `_hc`, each also `_pt_BR`.
   - `check_keyframes.mjs` runs the scripted checks: token colours only, the game's words, type at least 13 x scale, 48-point touch areas, safe area, overlap, clipping, at most 8 heist controls, value steps and still size. Its `--self-test` has 14 cases.

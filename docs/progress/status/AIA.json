@@ -3,24 +3,101 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P0-AIA-keyframes-1",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-10-31T03:42:36Z",
   "lease_until": "2026-10-31T06:42:36Z",
-  "updated_at": "2026-10-31T05:04:35Z",
-  "expected_next_update_by": "2026-10-31T05:49:35Z",
+  "updated_at": "2026-10-31T06:26:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "e09807f",
-    "next_step": "check_keyframes.mjs and its self-test pass on all twelve stills; next the full checks and the pre-check"
+    "last_green_sha": "b760d6f1",
+    "next_step": "P0-AIA-keyframes-1 ready at b760d6f1 (pre-check PASS); waiting for the lead"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "b760d6f1b38831a319b27deb1f1e12ae98b191e5",
+    "exit": 0,
+    "finished_at": "2026-10-31T06:25:31Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "b760d6f1b38831a319b27deb1f1e12ae98b191e5",
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "AIA-R3",
+      "from": "AIA",
+      "to": "lead",
+      "ask": "Add the key frames' checks to tools/check_all.sh, which is yours: 'node art/ui/keyframes/check_keyframes.mjs' and 'node art/ui/keyframes/check_keyframes.mjs --self-test'. Each takes about 2 minutes on a 390 x 845 page per still; both pass at b760d6f1.",
+      "files": [
+        "tools/check_all.sh"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-31T06:26:00Z",
+      "due": "2026-11-01T22:00:00Z",
+      "default": "The lead adds both lines when merging P0-AIA-keyframes-1; until then they run by hand, as the README says",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R4",
+      "from": "AIA",
+      "to": "lead",
+      "ask": "Agree the key frames' large-text form. Above 125% (the game's SIDE_BY_SIDE_UP_TO): only the chosen tab keeps its word; the side buttons' names, the heist's chosen name, the Sage plate and the button icons hide; the hand lays out in rows; the badges move; a realm pin with no room keeps only its level.",
+      "files": [
+        "art/ui/keyframes/kit.css"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-31T06:26:00Z",
+      "due": "2026-11-01T22:00:00Z",
+      "default": "Keep it as built; the client follows it when the 200% screens are made",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R5",
+      "from": "AIA",
+      "to": "lead",
+      "ask": "Look at four choices in the key frames that differ from today's game, each made so the controls keep \u00a721.8's two value steps off their ground: the dark glass tray under the heist's hand, the Cast gold that holds --c-gold down to the lip, the sky-blue side buttons, and the violet wells under the other tabs. The heist marks its whole interface persistent in its shots. It has no pause button, so it stays at eight things to tap.",
+      "files": [
+        "art/ui/keyframes/kit.css",
+        "art/ui/keyframes/02-heist.html"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-31T06:26:00Z",
+      "due": "2026-11-01T22:00:00Z",
+      "default": "Keep them; the client takes them up when it builds these screens",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R6",
+      "from": "AIA",
+      "to": "lead",
+      "ask": "Realm, law and band names in pt_BR show in English, because client/i18n/content.csv has no pt_BR text for them (words.js takes the game's own). Ask the owner of content.csv to add it.",
+      "files": [
+        "client/i18n/content.csv"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-31T06:26:00Z",
+      "due": "2026-11-01T22:00:00Z",
+      "default": "The key frames keep the English names until content.csv has the pt_BR ones; build_words.mjs then picks them up with no other change",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R7",
+      "from": "AIA",
+      "to": "lead",
+      "ask": "Note for review: art/ui/board/check_board.mjs's checkMode now skips words the page does not draw (no client rects, i.e. display: none). They have nothing to read, and before this change they failed as 'no pixels behind'. The board's own checks (376 words) and self-test still pass.",
+      "files": [
+        "art/ui/board/check_board.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-31T06:26:00Z",
+      "due": "2026-11-01T22:00:00Z",
+      "default": "Accept it with the merge",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": [],
-  "next_step": "check_keyframes.mjs and its self-test pass on all twelve stills; next the full checks and the pre-check"
+  "next_step": "P0-AIA-keyframes-1 ready at b760d6f1 (pre-check PASS); waiting for the lead"
 }
