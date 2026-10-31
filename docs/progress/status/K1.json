@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P0-K1-kitskin",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-10-31T03:45:00Z",
   "lease_until": "2026-10-31T06:45:00Z",
-  "updated_at": "2026-10-31T03:45:00Z",
-  "expected_next_update_by": "2026-10-31T04:30:00Z",
+  "updated_at": "2026-10-31T04:10:00Z",
+  "expected_next_update_by": "2026-10-31T04:55:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "36b797f",
-    "next_step": "P0-K1-kitskin: read report.md 10.9 and kit-spec.md 8.2, then the switch"
+    "next_step": "P0-K1-kitskin: compare every screen's stills with every family off, then the precheck"
   },
   "precheck": null,
   "gate_request": null,

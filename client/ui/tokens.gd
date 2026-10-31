@@ -67,6 +67,15 @@ static func paint(name: String) -> Color:
 	return Color(name) if name.begins_with("#") else color(name)
 
 
+## One of §21.2's skies ("day", "dusk" or "night"), top and bottom: what the
+## HUD's words over the world are checked against.
+static func sky(name: String) -> Array[Color]:
+	var out: Array[Color] = []
+	for v: String in list("sky", name):
+		out.append(paint(v))
+	return out
+
+
 ## A gradient's stops as a Gradient, in the current contrast mode.
 static func gradient(name: String) -> Gradient:
 	var key := "%s:%s" % [name, high_contrast]
