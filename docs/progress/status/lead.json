@@ -1,13 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T18:40:00Z",
-  "expected_next_update_by": "2026-10-31T19:55:00Z",
-  "cycle": 14,
+  "updated_at": "2026-10-31T18:50:00Z",
+  "expected_next_update_by": "2026-10-31T20:05:00Z",
+  "cycle": 15,
   "merging": null,
   "last_merged": {
     "task_id": "O3",
     "sha": "316ff98c"
   },
   "alerts": [],
-  "next_step": "Merge K1's P0-K1-tokens-2 when ready (session_01SNkKxnJNP5X4uedWQBNKZt, restarted after K1-R7); merge AD's P0-AD-calibrate when ready (session_01SNkKxpHbYoyKJJjMRSPCPZ); one batch candidate if both are ready together."
+  "next_step": "Merge K1's P0-K1-tokens-2 (session_01SNkKxnxY3qKwypH2HQMfd8, restarted after K1-R8) and AD's P0-AD-calibrate (session_01SNkKxpHbYoyKJJjMRSPCPZ) as each turns ready, one batch candidate if both are; after P0-AD-calibrate merges, launch the dev-fable and dev-opus gate runs (AD-R6), then start AD on P0-AD-calibrate-2."
 }

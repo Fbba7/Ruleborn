@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-31T18:35:00Z",
+  "updated_at": "2026-10-31T18:45:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
@@ -681,7 +681,10 @@
         "art/ui/board/tokens.css",
         "client/scripts/screen_parts.gd",
         "client/scripts/realm_screen.gd",
-        "client/scripts/ui.gd"
+        "client/scripts/ui.gd",
+        "art/ui/keyframes/03-result.html",
+        "art/ui/keyframes/03-result*.png",
+        "art/ui/keyframes/03-result*.shot.json"
       ],
       "deps": [
         "P0-K1-tokens",
@@ -699,13 +702,13 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "blocked",
+      "state": "working",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
         "claimed_at": "2026-10-31T17:05:00Z",
-        "seen_at": "2026-10-31T17:15:35Z",
-        "lease_until": "2026-10-31T20:05:00Z"
+        "seen_at": "2026-10-31T18:40:00Z",
+        "lease_until": "2026-10-31T20:45:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
@@ -812,13 +815,52 @@
         "O3"
       ],
       "done_when": [
-        "the judge meets its target on the held-out third, or each quality that misses is listed as owner-checked",
+        "the tool, the split, the anchors, the run plans and the method in calibration.md (AD-R6: the held-out result moves to P0-AD-calibrate-2)",
         "rubric and golden set committed as version 1",
         "bash tools/check_all.sh"
       ],
       "gate_items": [],
       "attempts": 0,
       "estimate_h": 3,
+      "tier": 1,
+      "critical": true,
+      "state": "working",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-10-31T18:40:00Z",
+        "seen_at": "2026-10-31T18:40:00Z",
+        "lease_until": "2026-10-31T21:40:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P0-AD-calibrate-2",
+      "title": "Calibration results (AD-R6): score the lead's development runs dev-fable and dev-opus with calibrate.py, choose the judge (Fable 5.1 unless Opus 5.5 catches more), revise any missing quality's prompt at most twice (a rubric version bump), plan the held-out run held-<model> and launch it, score it and fill calibration.md's results",
+      "phase": 0,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P0-AD-calibrate"
+      ],
+      "requires": "both development runs written to docs/art/ui-quality/gate/verdicts/P0-AD-calibrate/ by the lead",
+      "done_when": [
+        "the judge meets its target on the held-out third, or each quality that misses is listed as owner-checked",
+        "rubric and golden set committed as version 1",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
       "tier": 1,
       "critical": true,
       "state": "open",
@@ -1394,7 +1436,7 @@
       "text": "From the owner (progress report KPIs, measured at main 3c4b791f). Rework from review is worse than expected: 4.5h, 8% of phase 0 (target 5% or less). Its biggest part was the kit contract: four values in section 2.1 differed from §21.2 and §21.8 and came back as P0-K1-contract-2. Lesson: before asking for approval, check every value in a contract or token file against the design sections it cites, and list that check in the handoff evidence. Add M2 to acks when read.",
       "sent_at": "2026-10-31T17:05:00Z",
       "ack_by": "2026-10-31T19:05:00Z",
-      "acked_at": null
+      "acked_at": "2026-10-31T18:29:00Z"
     },
     {
       "id": "M3",
