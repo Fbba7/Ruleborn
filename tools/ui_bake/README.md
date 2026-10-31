@@ -8,6 +8,9 @@ Owner: K1. The contract it serves is `docs/art/ui-quality/kit-spec.md`
 node tools/ui_bake/bake.js kit              # bake one family (or several)
 node tools/ui_bake/bake.js --check          # every family, in well under a second
 node --test tools/ui_bake/test/bake.test.js # the bake's tests, on a fixture family
+python3 tools/ui_bake/check_screens.py      # screens add no chrome of their own, in a second
+bash tools/ui_bake/guard.sh                 # the UI guards before a merge, about 12 minutes
+bash tools/ui_bake/guard.sh --self-test     # they refuse a planted extra draw call
 ```
 
 `bake.js <family>` reads the family's sources in `art/ui/<dir>/` (the folders
@@ -71,10 +74,65 @@ that do not fit a 2048 × 2048 atlas.
 The fixture in `test/fixture/` shows each form: a button with two states and
 twin groups, a tinted disc with a class twin, and a numeral.
 
+## The guards (`check_screens.py`, `guard.sh`, `budgets.json`)
+
+`check_screens.py` counts, per file in `client/scripts/` and `client/world/`,
+the chrome drawn outside the kit (kit-spec.md sections 6.3 and 7): `draw_*`
+calls that put something on the canvas, `canvas_item_add_*` and `FxPen`
+calls; `StyleBoxFlat`s that draw a fill (not those whose `draw_center` is set
+false in the same function); and textures made for chrome (`TextureRect`,
+`NinePatchRect`, `StyleBoxTexture`, `GradientTexture2D`, image files loaded by
+path). Comments and strings are not counted. No file's count may rise above
+`budgets.json`'s `screens.counts`; when screens move onto the kit and a count
+falls, `--record` lowers it (it never raises one). The two files in
+`screens.data_files` draw data, not chrome (kit-spec.md section 4.5), and are
+reported but not limited. The counts recorded on 31 October 2026, at main's
+7bd1c60: 232 draw calls, 31 fills and 27 textures in 49 files, and 49 draw
+calls of data drawing. (Section 7's 383 counts the whole client, `client/ui/`
+included; the kit's own drawing is not limited here.)
+
+`guard.sh` runs, in order: the full rebake byte for byte (each family with a
+manifest in `client/ui/art/` is baked into a scratch folder and compared file
+by file; with none baked yet, the fixture is baked twice and compared);
+`bake.js --check`; `check_screens.py`; and `budget_shots.py`, the five key
+screens (home, heist, result, character, settings; their shot scripts and
+settings are in `budgets.json`'s `shots.screens`) at 100% and 200% text and in
+high contrast. Each shot is the screen's own shot script, extended in a
+scratch folder by a wrapper that snapshots every frame with `measure.gd`, so
+the measure is of the frame the shot saves. A shot passes when:
+
+- its draw calls (`RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME`, the world's
+  included) are under 150 and no higher than recorded (§21.3; report.md
+  section 10.1);
+- its interface textures, the textures its canvas items hold counted at
+  4 bytes a pixel (report.md section 10.1's way of counting an atlas), are at
+  most 24 MiB. The fonts' glyph caches are reported beside it, not counted
+  in it (request K1-R3 to the lead);
+- no more of its words are below 4.5:1 than recorded. A word (a label's or
+  an enabled button's, on screen and not scrolled out of its list) is
+  measured against its ink outline where §21.8 lets that count, else against
+  the pixels of its box in the rendered frame: their contrasts with the
+  words' colour, at the median, since the glyphs cover well under half of a
+  box and sort lowest. This reads what is drawn, so it covers what
+  a11y_tests.gd's colour model cannot (baked art, the world behind glass);
+  any words below the floor are listed in the shot's log.
+
+The run takes about 12 minutes and writes its logs and stills to
+`$UI_GUARD_LOGS`. `budget_shots.py --only home/100,heist/hc` runs some shots;
+`--record` lowers the recorded figures (it writes them only when none is
+recorded yet). A recorded figure rises only by request to K1 with the lead's
+approval, logged in `budgets.json`'s `raises`. `guard.sh --self-test` plants
+a `draw_rect` in a copy of a screen's source, an extra draw call (a square
+with a material of its own) on the result screen's shot, and grey words on a
+grey square there, and passes only if each is refused for that reason.
+
+The guard does not go into `check_all.sh`: by D9 (b) the lead runs it in the
+pre-check of every change that touches the client or the art, and on every
+candidate. `check_screens.py` and its `--self-test` do (K1-R1).
+
 ## Not yet
 
 - The icon families (`icons_48`, `icons_256`) are three.js scenes
   (`art/ui/icons/<name>.js`); `--check` hashes them, but `bake.js` refuses them
   until their renderer is written, against AIA-2's scene format.
 - `art/ui/palette.json` from `client/ui/tokens.json` (kit-spec.md section 6.2).
-- `check_screens.py`, `guard.sh` and `budgets.json`: task P0-K1-bake-2.
