@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-10-31T17:05:00Z",
   "lease_until": "2026-10-31T20:45:00Z",
-  "updated_at": "2026-10-31T17:45:00Z",
-  "expected_next_update_by": "2026-10-31T18:30:00Z",
+  "updated_at": "2026-10-31T18:20:00Z",
+  "expected_next_update_by": "2026-10-31T19:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "5864d65d",
-    "next_step": "K1-R7 granted (cycle 14): apply the patch, guard.sh, pre-check, mark ready"
+    "next_step": "ui_a11y 0 failed with K1-R7 applied; guard.sh running, then pre-check"
   },
   "precheck": null,
   "gate_request": null,
