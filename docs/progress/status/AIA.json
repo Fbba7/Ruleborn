@@ -3,29 +3,24 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P0-AIA-keyframes-2",
-  "task_state": "ready",
-  "claimed_at": "2026-10-31T10:11:03Z",
-  "lease_until": "2026-10-31T13:11:03Z",
-  "updated_at": "2026-10-31T11:12:44Z",
-  "expected_next_update_by": "2026-10-31T11:57:44Z",
+  "agent_state": "active",
+  "task_id": "P0-AIA-keyframes-3",
+  "task_state": "claimed",
+  "claimed_at": "2026-10-31T12:29:54Z",
+  "lease_until": "2026-10-31T15:29:54Z",
+  "updated_at": "2026-10-31T12:29:54Z",
+  "expected_next_update_by": "2026-10-31T13:14:54Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "4fde22f9",
-    "next_step": "P0-AIA-keyframes-2 ready at 4fde22f9; next session: P0-AIA-keyframes-3 once its deps merge"
+    "next_step": "P0-AIA-keyframes-3: settings key frame, then the contact sheet"
   },
-  "precheck": {
-    "sha": "4fde22f9b0300997c237d52a73e9df9a253b0ce0",
-    "exit": 0,
-    "finished_at": "2026-10-31T11:12:20Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "4fde22f9",
+  "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [],
   "answers": [],
-  "next_step": "P0-AIA-keyframes-2 ready at 4fde22f9; next session: P0-AIA-keyframes-3 once its deps merge"
+  "next_step": "P0-AIA-keyframes-3: settings key frame, then the contact sheet"
 }
