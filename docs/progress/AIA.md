@@ -1,6 +1,6 @@
 # AIA AI UI artist: progress
 
-- Status: Green: pre-check PASS at 294a4595 (PENDING_TIME); P0-AIA-board-4 is ready.
+- Status: Green: pre-check PASS at b83a0b4d (2026-10-31T15:49:22Z); P0-AIA-board-4 is ready.
 - Progress: 5 tasks merged, P0-AIA-keyframes-3 and P0-AIA-board-4 ready; 0 items passed by the gate (the board has no gate items).
 - Done: P0-AIA-board-4 built: the board's secondary captions on the night backdrop are bold, and its alarm and success words ride on their own fills, passing with kit-spec section 2.1's revised values tried over tokens.css.
 - Next: none open for AIA on the backlog.
@@ -15,11 +15,11 @@
 | P0-AIA-keyframes-1: home and heist | 4 | Merged (fafc1a13) | `node art/ui/keyframes/check_keyframes.mjs`: 12 stills at 1080 x 2340 pass. Home: 18 controls, smallest touch area 48 points, 43 words (26 at 200%) all passing, worst 5.8:1 at 100%. Heist: 8 controls, 22 words, worst 5.7:1. All 12 shots pass value-steps. `--self-test`: 14 planted faults, each fails. `bash tools/check_all.sh`: all checks passed. |
 | P0-AIA-keyframes-2: result and character | 4 | Merged (b8308788) | `node art/ui/keyframes/check_keyframes.mjs`: all 24 stills pass. Result: 5 controls, smallest touch area 56 points, 23 words (13 at 200%), worst 5.4:1. Character: 4 controls and the tab strip, smallest touch area 52 points, 28 words (15 at 200%), worst 6.87:1. All 24 shots pass value-steps. `--self-test`: each planted fault fails. `bash tools/check_all.sh`: all checks passed. |
 | P0-AIA-keyframes-3: settings and the contact sheet | 2 | Ready at 5eec1b60 (pre-check PASS) | `node art/ui/keyframes/check_keyframes.mjs`: all 30 stills pass. Settings: 5 controls (3 at 200%), smallest touch area 52 points, 20 words (8 at 200%), worst 8.59:1. All 30 shots pass value-steps. `contact_sheet.png` is 1882 x 3085. `--self-test`: each planted fault fails, including a contact sheet of the wrong size. `bash tools/run_checks.sh`: all checks passed. |
-| P0-AIA-board-4: the board's words for the revised tokens (K1-R6) | 1 | Ready at 294a4595 (pre-check PASS) | `node art/ui/board/check_board.mjs` and `--revised` (section 2.1's backdrop #171046 to #2C3AA8, #FF9AAA, #3FBF7F tried over `tokens.css`): 378 words pass in both modes, 8 icons keep the outline rule, 16 controls pass value-steps; `--self-test`: each planted fault fails, including a regular-weight caption on the revised backdrop; `board.png`, `board_hc.png` |
+| P0-AIA-board-4: the board's words for the revised tokens (K1-R6) | 1 | Ready at b83a0b4d (pre-check PASS) | `node art/ui/board/check_board.mjs` and `--revised` (section 2.1's backdrop #171046 to #2C3AA8, #FF9AAA, #3FBF7F tried over `tokens.css`): 378 words pass in both modes, 8 icons keep the outline rule, 16 controls pass value-steps; `--self-test`: each planted fault fails, including a regular-weight caption on the revised backdrop; `board.png`, `board_hc.png` |
 
 
 ## Handoff
-- Last verified commit: 294a4595 (pre-check green, PENDING_TIME). Request AIA-R8 in the status file, with a default.
+- Last verified commit: b83a0b4d (pre-check green, 2026-10-31T15:49:22Z). Request AIA-R8 in the status file, with a default.
 - Done:
   - `art/ui/board/board.html`: the recipe's captions and the glass note are bold (kit-spec section 2.1: `text_on_night_2` on the bare backdrop is bold only). A `.status` chip sets an alarm in paper on `alarm_fill` ("Alarm 3", "Alarm 4 of 5") and a success in ink on `#3FBF7F` at 36 points ("Escape open", "Vault open"), with high-contrast forms.
   - `check_board.mjs --revised` tries the backdrop #171046 to #2C3AA8, #FF9AAA and #3FBF7F over `tokens.css` without editing it; `--self-test` adds "the revised values pass" and "a regular-weight caption on the revised backdrop fails".
@@ -30,6 +30,7 @@
 - Next step: none; wait for the lead.
 
 ## Tried and failed
+- 2026-10-31 Pre-check in a fresh container: it failed three times on missing one-time setup (the WebAssembly Rust target, gdlint, Python Playwright), not on the change. Installing what the README's "Once" block lists, with Python Playwright pinned to the pre-installed 1.63.0 so it finds the browser in /opt/pw-browsers, passed it.
 - 2026-10-30 SVG grain composited with an implicit second input: `feComposite` without `in2` masked the flood with the source shape, so the grain painted the whole surface solid. Named results fixed it.
 - 2026-10-30 Measuring words against their whole line box: the box reaches below capitals into darker ground (gold's lower half), so it failed words whose letters pass. The check now measures under the letters, found by drawing each word in black and in white.
 - 2026-10-30 A planted "icon without its outline" from the finish's glow-and-drop step: the drop, grown like the outline and near ink in colour, rings the silhouette, so the check rightly passed it. The planted fault is now the bare render.

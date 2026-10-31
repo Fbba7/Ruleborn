@@ -3,21 +3,26 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P0-AIA-board-4",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-10-31T13:45:00Z",
   "lease_until": "2026-10-31T16:45:00Z",
-  "updated_at": "2026-10-31T13:58:00Z",
-  "expected_next_update_by": "2026-10-31T14:40:00Z",
+  "updated_at": "2026-10-31T15:52:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "5eec1b60",
-    "next_step": "P0-AIA-board-4: pre-check, then ready"
+    "last_green_sha": "b83a0b4d",
+    "next_step": "wait for the lead: P0-AIA-board-4 is ready"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "b83a0b4d3ae8008c0a83bb858e660bae4b2238c7",
+    "exit": 0,
+    "finished_at": "2026-10-31T15:49:22Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "b83a0b4d",
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
@@ -38,5 +43,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P0-AIA-board-4: pre-check, then ready"
+  "next_step": "wait for the lead: P0-AIA-board-4 is ready"
 }
