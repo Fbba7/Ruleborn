@@ -4,7 +4,8 @@
 // Portuguese:
 //
 //   01-home.png  01-home_text200.png  01-home_hc.png  and each _pt_BR,
-//   and so for 02-heist, 03-result and 04-character: 24 stills.
+//   and so for 02-heist, 03-result, 04-character and 05-settings: 30 stills.
+//   contact_sheet.py lays all thirty on one sheet.
 //
 // Beside each still goes a shot (docs/art/ui-quality/gate/shots.md) with the
 // rectangle of every control, which check_keyframes.mjs hands to
@@ -22,7 +23,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 
 export const FRAME = [390, 845];
 export const SCALE = 1080 / 390;
-export const PAGES = ['01-home', '02-heist', '03-result', '04-character'];
+export const PAGES = ['01-home', '02-heist', '03-result', '04-character', '05-settings'];
 export const FORMS = [['', ''], ['_text200', 'text=200'], ['_hc', 'hc=1']];
 export const LANGS = [['', 'en'], ['_pt_BR', 'pt_BR']];
 
