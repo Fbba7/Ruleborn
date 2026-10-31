@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P0-AIA-board-3",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-10-31T01:42:25Z",
   "lease_until": "2026-10-31T04:42:25Z",
-  "updated_at": "2026-10-31T01:42:25Z",
-  "expected_next_update_by": "2026-10-31T02:27:25Z",
+  "updated_at": "2026-10-31T01:48:30Z",
+  "expected_next_update_by": "2026-10-31T02:33:30Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "1a1afd2",
-    "next_step": "P0-AIA-board-3: toon studio, enamel card, selected rim, lit well"
+    "next_step": "P0-AIA-board-3: toon studio (B11), checks, recipe text"
   },
   "precheck": null,
   "gate_request": null,

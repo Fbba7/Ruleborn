@@ -1,0 +1,169 @@
+{
+ "image": "board.png",
+ "frame_pt": [
+  390,
+  5804
+ ],
+ "text_scale": 1,
+ "controls": [
+  {
+   "name": "enamel 1: Chosen for this heist 3 / 4",
+   "rect": [
+    16,
+    718.06,
+    358,
+    64.8
+   ]
+  },
+  {
+   "name": "gold 2: START HEIST",
+   "rect": [
+    75,
+    1048.05,
+    240,
+    64
+   ]
+  },
+  {
+   "name": "gold 3: CLAIM",
+   "rect": [
+    29.69,
+    1130.05,
+    106.83,
+    48
+   ]
+  },
+  {
+   "name": "gold 4: PRESSED",
+   "rect": [
+    152.52,
+    1133.05,
+    131.8,
+    48
+   ]
+  },
+  {
+   "name": "gold-round 5: Starlight",
+   "rect": [
+    300.31,
+    1124.05,
+    60,
+    60
+   ]
+  },
+  {
+   "name": "leather 6: BUILD",
+   "rect": [
+    115,
+    1549.17,
+    160,
+    52
+   ]
+  },
+  {
+   "name": "alarm-fill 7: GET OUT",
+   "rect": [
+    16,
+    3267.31,
+    122,
+    52
+   ]
+  },
+  {
+   "name": "gold 8: GOLD",
+   "rect": [
+    59.84,
+    5243.05,
+    83.84,
+    48
+   ]
+  },
+  {
+   "name": "gold 9: GOLD",
+   "rect": [
+    243.84,
+    5243.05,
+    85.84,
+    48
+   ]
+  },
+  {
+   "name": "leather 10: LEATHER",
+   "rect": [
+    45.55,
+    5339.05,
+    112.45,
+    52
+   ]
+  },
+  {
+   "name": "leather 11: LEATHER",
+   "rect": [
+    229.55,
+    5339.05,
+    114.45,
+    52
+   ]
+  },
+  {
+   "name": "glass 1: 2:41 Loot 18 / 40",
+   "rect": [
+    32,
+    1904.36,
+    204.42,
+    48
+   ],
+   "interactive": false
+  },
+  {
+   "name": "glass 2: 1:07 Alarm 3",
+   "rect": [
+    32,
+    2002.36,
+    169.67,
+    48
+   ],
+   "interactive": false
+  },
+  {
+   "name": "glass 3: 0:12 Escape open",
+   "rect": [
+    32,
+    2100.36,
+    212.61,
+    48
+   ],
+   "interactive": false
+  },
+  {
+   "name": "glass 4: 840 2",
+   "rect": [
+    32,
+    4733.03,
+    198.56,
+    48
+   ],
+   "interactive": false
+  },
+  {
+   "name": "glass 5: Glass",
+   "rect": [
+    26,
+    5443.05,
+    78.63,
+    48
+   ],
+   "interactive": false
+  },
+  {
+   "name": "glass 6: Glass",
+   "rect": [
+    210.55,
+    5444.05,
+    84.63,
+    48
+   ],
+   "interactive": false
+  }
+ ]
+}
