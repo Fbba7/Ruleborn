@@ -3,26 +3,21 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P0-AD-sheet",
-  "task_state": "ready",
-  "claimed_at": "2026-10-30T21:53:00Z",
-  "lease_until": "2026-10-31T01:45:00Z",
-  "updated_at": "2026-10-30T23:25:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "O2",
+  "task_state": "claimed",
+  "claimed_at": "2026-10-31T00:35:00Z",
+  "lease_until": "2026-10-31T03:35:00Z",
+  "updated_at": "2026-10-31T00:35:00Z",
+  "expected_next_update_by": "2026-10-31T01:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "f5e9571029f6ec13909c6bafd8f9a809feaf566d",
-    "next_step": "Lead merges P0-AD-sheet (adds the check_all.sh self-test line per AD-R3); then P0-AD-golden / O2 as their deps merge"
+    "next_step": "O2: review art/ui/board/board.png and kit-spec.md v1 against §21.2, §21.8 and the rubric; write gate/approvals/O2.md"
   },
-  "precheck": {
-    "sha": "f5e9571029f6ec13909c6bafd8f9a809feaf566d",
-    "exit": 0,
-    "finished_at": "2026-10-30T23:20:33Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "f5e9571029f6ec13909c6bafd8f9a809feaf566d",
+  "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
