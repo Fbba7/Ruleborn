@@ -3,26 +3,21 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P0-K1-bake-2",
-  "task_state": "ready",
-  "claimed_at": "2026-10-31T00:35:00Z",
-  "lease_until": "2026-10-31T03:35:00Z",
-  "updated_at": "2026-10-31T01:25:00Z",
-  "expected_next_update_by": "2026-10-31T02:10:00Z",
+  "agent_state": "active",
+  "task_id": "P0-K1-contract-2",
+  "task_state": "claimed",
+  "claimed_at": "2026-10-31T01:45:00Z",
+  "lease_until": "2026-10-31T04:45:00Z",
+  "updated_at": "2026-10-31T01:45:00Z",
+  "expected_next_update_by": "2026-10-31T02:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e97ef3a",
-    "next_step": "Wait for the lead to merge P0-K1-bake-2 (with K1-R3's check_all lines); then P0-K1-kitskin"
+    "next_step": "P0-K1-contract-2: kit-spec.md sections 2.1, 2.2 and K01 per O2's K1-K3"
   },
-  "precheck": {
-    "sha": "e97ef3ab89e6dbf60966f5ff8adee94870ea9237",
-    "exit": 0,
-    "finished_at": "2026-10-31T01:22:20Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "e97ef3ab",
+  "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [
