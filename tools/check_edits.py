@@ -162,6 +162,8 @@ def dangling_sections(doc: str) -> list:
 NO_EDIT_BECAUSE = {
     # Found reading Screens v3 against v3.6 and the build (the register's v3.6 layer).
     "C44": "a decision for the owner: which home layout the build follows, §21.8's or the design's",
+    "C74": "a decision for the owner: which green success words on a dark surface are, §21.8's #3FBF7F or a lighter #8FF0A8",
+    "C75": "a decision for the owner: which night backdrop the menus stand on, §21.2's linear values or the designs' radial",
     "C45": "a decision for the owner: that the recorded answers stand over v3.6's unedited sections",
     "D77": "a decision for the owner: what a scout or a target card shows, now that scouting is free",
     "C46": "a decision for the owner: whether the Wanderer's sixth target stands, and what the list holds",

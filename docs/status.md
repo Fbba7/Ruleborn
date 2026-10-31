@@ -83,7 +83,7 @@ against itself, each a decision
 v3.6 itself answers none of the 70 items open against v3.4, narrows G28 and F37,
 and reopens C11.
 
-Seven versions have now answered the audit. **199 of 330 register items are fixed**,
+Seven versions have now answered the audit. **199 of 332 register items are fixed**,
 in the document itself or, for D71, by the build; the latest 87 by v3.7. 86 are
 still open: 48 of the 139 open against v3.6 (38 waiting on the build, ten partly
 done with their edits drafted) and 38 of the 39 found reading v3.7 or building
@@ -217,7 +217,7 @@ is done. In short:
 ## The audit register
 
 Everything that changed about the plan and everything still to fix in the design
-document, as 330 tracked items with section references and status:
+document, as 332 tracked items with section references and status:
 **https://claude.ai/artifact/8m5MgpjWfFurnfwc6b76sN**
 
 Each item carries **the edits to make in the document**: the section to open,

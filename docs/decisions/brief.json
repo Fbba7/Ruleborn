@@ -95,7 +95,9 @@
   "G50",
   "G64",
   "C54",
-  "C56"
+  "C56",
+  "C74",
+  "C75"
  ],
  "order_notes": {
   "F33": "Design tier. It sets whether one Glare decides a realm, and F35's Vault-reach argument and G19's hold claim both rest on the hold numbers it changes.",
@@ -189,7 +191,9 @@
   "D75": "Found reading Screens v3 against v3.6 (October 2026), and a decision since your design handoff called the camera final; answered with its group below.",
   "C56": "Found folding your design handoff into the roadmap (October 2026). It comes after launch, so it can wait for the next version of the document.",
   "G70": "Found reading your design handoff against v3.6 (October 2026); answered with its group below.",
-  "C57": "Found folding your design handoff into the roadmap (October 2026). No task waits on it: the heist is built to §21.12 with the other reading one token away."
+  "C57": "Found folding your design handoff into the roadmap (October 2026). No task waits on it: the heist is built to §21.12 with the other reading one token away.",
+  "C74": "Minor tier, from the UI kit. Decide with C75: both set the colours words are measured against on the menus.",
+  "C75": "Minor tier, from the UI kit; with C74."
  },
  "groups": [
   {
@@ -7616,6 +7620,92 @@
      "23.2"
     ]
    }
+  },
+  "C74": {
+   "id": "C74",
+   "question": "May success words on a dark surface be a lighter green than §21.8's #3FBF7F?",
+   "why_it_matters": "§21.8 says 'success words keep #3FBF7F' on a dark surface, and also that contrast 'meets 4.5:1, checked against a perceptual model as well'. #3FBF7F meets 4.5:1 on the dark card (6.7 to 7.6:1) but measures APCA Lc 54 to 55 there, 48 to 51 on glass over the day sky and 43 on the menus' backdrop at #2C3AA8, under the Lc 60 that bold words under 36 points need (client/ui/colour_check.gd); ink on the #3FBF7F fill measures Lc 57.5. As written, §21.8's two sentences cannot both hold for small success words.",
+   "today": "client/ui/tokens.json has #8FF0A8 for success words on dark (Lc 72 to 84). O2.md's interim ruling, which kit-spec.md follows until you answer, uses #3FBF7F at 36 points and over on the card, else ink on the green fill.",
+   "options": [
+    {
+     "key": "A",
+     "label": "A lighter success green for words on dark (#8FF0A8)",
+     "means": "Success words on a dark surface are #8FF0A8; #3FBF7F stays the green of fills, rings and marks.",
+     "consequences": "Green keeps its role on every size of word, and the words meet both of §21.8's checks. Words and fills are two greens.",
+     "numbers": "#8FF0A8 measures Lc 72 to 84 on the dark surfaces.",
+     "doc_edit": "§21.8's colours row: 'success words keep #3FBF7F' becomes 'success words are #8FF0A8'.",
+     "build_change": "none: the kit's tokens already hold #8FF0A8; P0-K1-tokens records it"
+    },
+    {
+     "key": "B",
+     "label": "Keep §21.8: #3FBF7F, at 36 points and over",
+     "means": "Green words appear only at 36 points and over on the dark card; smaller success words are ink on the green fill.",
+     "consequences": "One green everywhere, as written. Small success messages lose green words; ink on the fill stays under Lc 60 (57.5), so the perceptual check is still not met there.",
+     "numbers": "#3FBF7F: Lc 54 to 55 on the card, 43 on the menus' backdrop.",
+     "doc_edit": "§21.8: say that success words under 36 points are ink on the green fill.",
+     "build_change": "tokens.json's success-on-dark value goes back to #3FBF7F, and the kit's small success words move to the fill"
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "confidence": "medium",
+    "rationale": "It is the one option under which both of §21.8's checks hold for every size of word, and the build already draws it. Choose B if one green across fills and words matters more."
+   },
+   "interacts_with": [
+    "C75"
+   ],
+   "quotes": [
+    {
+     "section": "21.8",
+     "text": "on a dark surface red words are #FF9AAA, bold, and success words keep #3FBF7F"
+    },
+    {
+     "section": "21.8",
+     "text": "Contrast meets 4.5:1, checked against a perceptual model as well, because the standard formula overstates contrast on dark backgrounds."
+    }
+   ],
+   "also_needed": "Nothing. Drafted by K1 (K1-R4, docs/progress/K1.md)."
+  },
+  "C75": {
+   "id": "C75",
+   "question": "Is the menus' night backdrop §21.2's linear #171046 to #2C3AA8, or the designs' radial?",
+   "why_it_matters": "§21.2 has menus stand 'on a night backdrop (#171046 to #2C3AA8)'. §23.5 lets the designs carry the look, and the designs' sub-screens draw radial-gradient(ellipse 90% 50% at 50% 0%, #2E1F5E, #140C30 55%, #0A0620) (15 uses, docs/analysis/screens-v3/data/tokens.proposed.json), which §21.2's two values do not describe. The kit needs one backdrop, and words on it are measured against it.",
+   "today": "client/ui/tokens.json and the client draw the designs' radial; kit-spec.md and O2.md's interim ruling take §21.2's linear values.",
+   "options": [
+    {
+     "key": "A",
+     "label": "§21.2's linear values",
+     "means": "The menus stand on a linear gradient from #171046 to #2C3AA8.",
+     "consequences": "No document change. The kit's tokens move from the radial to §21.2's values; words on it measure Lc 85 (text_on_night) at its lightest point.",
+     "numbers": "Two stops, #171046 and #2C3AA8.",
+     "doc_edit": "none",
+     "build_change": "tokens.json's night backdrop becomes §21.2's linear values (P0-K1-tokens)"
+    },
+    {
+     "key": "B",
+     "label": "The designs' radial",
+     "means": "The menus stand on the designs' three-stop radial, #2E1F5E to #140C30 to #0A0620.",
+     "consequences": "The build and the designs already agree; the document changes to match them.",
+     "numbers": "Three stops: #2E1F5E, #140C30 at 55%, #0A0620.",
+     "doc_edit": "§21.2: 'Menus stand on a night backdrop (#171046 to #2C3AA8)' becomes the designs' radial and its three colours.",
+     "build_change": "none"
+    }
+   ],
+   "recommendation": {
+    "option": "A",
+    "confidence": "medium",
+    "rationale": "No document change, and words on it measure Lc 85 at its lightest point. Choose B to keep the designs' look, which the build draws today."
+   },
+   "interacts_with": [
+    "C74"
+   ],
+   "quotes": [
+    {
+     "section": "21.2",
+     "text": "Menus stand on a night backdrop (#171046 to #2C3AA8), so only the HUD over the world meets all three skies."
+    }
+   ],
+   "also_needed": "Nothing. Drafted by K1 (K1-R4, docs/progress/K1.md)."
   }
  }
 }
