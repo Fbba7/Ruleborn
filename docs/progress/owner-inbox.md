@@ -18,6 +18,11 @@ recording the answer under it.
   `expected_next_update_by` again.
 - **Still open for the owner:** C74 and C75 need "A/A"; message M1 to AIA
   is past its `ack_by`.
+- **Answer (2026-11-02 22:59Z):** the owner resumed the program after the
+  2 November 17:00Z usage reset. Both scheduled tasks are re-enabled, the
+  launcher was fired once by hand to start a lead cycle now, and
+  `expected_next_update_by` is set to 2026-11-03 00:15Z (now + 75 min) so
+  the watchdog watches the lead again.
 
 ## 2026-10-31 10:05Z: ready work waiting over 2 hours, and a lead container without the build tools (lead, cycle 8)
 
