@@ -60,8 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxr25ThMqb9Aeot1dEV` (cycle 17,
-31 October 2026, from 20:38Z).
+Latest lead cycle session: `session_01SNkKxokCvaGUnmATx2vzaZ` (cycle 18,
+2 November 2026, from 23:38Z).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -74,6 +74,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| gate run dev-fable (Fable 5.1) | `session_01SNkKxonjTzEysQx5wxdp97` (working) | AD-R6 for P0-AD-calibrate | `claude/ui-gate-runs` | 2026-11-02 23:40Z |
+| gate run dev-opus (Opus 5.5) | `session_01SNkKxogMyzESz7z3XzwBUJ` (working) | AD-R6 for P0-AD-calibrate | `claude/ui-gate-runs` | 2026-11-02 23:40Z |
 | AD | `session_01SNkKxpHbYoyKJJjMRSPCPZ` (idle, done) | P0-AD-calibrate | `claude/ui-ad` | 2026-10-31 18:33Z |
 | K1 | `session_01SNkKxnxY3qKwypH2HQMfd8` (idle, done) | P0-K1-tokens-2 (restart: K1-R8 answered) | `claude/ui-bake` | 2026-10-31 18:40Z |
 | K1 | `session_01SNkKxnJNP5X4uedWQBNKZt` (idle, replaced) | P0-K1-tokens-2 (restart: K1-R7 answered) | `claude/ui-bake` | 2026-10-31 17:42Z |
@@ -169,31 +171,33 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 17, 31 October 2026, from 20:38Z (session
-  `session_01SNkKxr25ThMqb9Aeot1dEV`): a bookkeeping cycle. No status file
-  changed since cycle 16 (AD, AIA, K1 and SV all `waiting`, no task
-  ready), no merge lock, nothing to merge, no agent started, no alerts.
-  The new remote branches `claude/ui-research` and `claude/ui-screens`
-  are not on the roster (their last commits are from 28 October); left
-  alone. The usage warning now reads the seven-day limit (cycle 16 saw the
-  five-hour one; get_session: `rate_limit_info` type `seven_day`, `allowed_warning`,
-  resets 2 November 17:00Z), so the gate runs stay deferred until then.
+- Cycle 18, 2 November 2026, from 23:38Z (session
+  `session_01SNkKxokCvaGUnmATx2vzaZ`): the first cycle since the owner's
+  pause (31 October 20:55Z) and resume (2 November 22:59Z). Usage now
+  reads `allowed` (get_session: five-hour limit, no warning), so the two
+  development gate runs of AD-R6 are launched: `dev-fable` in
+  `session_01SNkKxonjTzEysQx5wxdp97` (Fable 5.1) and `dev-opus` in
+  `session_01SNkKxogMyzESz7z3XzwBUJ` (Opus 5.5), both on branch
+  `claude/ui-gate-runs`, each writing
+  `docs/art/ui-quality/gate/verdicts/P0-AD-calibrate/<run>.jsonl` and its
+  run's extended `plan.jsonl`, pushing every 50 calls, and ending with a
+  commit "gate-run <run>: done". No status file changed since cycle 17
+  (AD, AIA, K1 and SV `waiting`, nothing ready), no merge lock, nothing
+  to merge, no alerts.
+- Next: when both runners' "done" commits are on `claude/ui-gate-runs`,
+  copy the two verdict files to main (they are the lead's), mark the
+  runner sessions done here, and start AD on P0-AD-calibrate-2; AD takes
+  the two extended `plan.jsonl` files from `claude/ui-gate-runs` in that
+  task (they are AD's files). If a runner is idle without its "done"
+  commit, restart it once (it resumes, skipping calls already written).
+- BT-10 and BT-11 (`flaky.md`) stay open on the lead, unstarted.
+- Cycle 17 (31 October 20:38Z, session `session_01SNkKxr25ThMqb9Aeot1dEV`):
+  bookkeeping only; gate runs deferred while the seven-day usage read
+  `allowed_warning`.
 - Cycle 16 (19:38Z, session `session_01SNkKxrPXYJXnGbD1R9Zte3`):
   P0-K1-tokens-2 (785cb2a8) and P0-AD-calibrate (3f3797c7) merged as one
   batch candidate `d7561425` (check_all PASS, "ui guard: OK") onto main
   as `eec44b50`.
-- The dev-fable and dev-opus gate runs (AD-R6) are not launched: the
-  account's five-hour usage reads "allowed_warning", and the two runs are
-  about 730 judge calls plus splits. Nothing waits on them (all eight
-  judged qualities stay in shadow mode, AD-R6's default). Launch them in
-  the first cycle whose `get_session` shows the usage no longer in
-  warning: one runner session per run, created as step 6 says but on the
-  run's model (Fable 5.1 for dev-fable, Opus 5.5 for dev-opus), branch
-  `claude/ui-gate-runs`, doing exactly `calibration.md` ("The runs") with
-  one fresh `ui-judge` subagent per call and writing
-  `docs/art/ui-quality/gate/verdicts/P0-AD-calibrate/<run>.jsonl`; the
-  lead then copies the verdict files to main (they are the lead's), and
-  starts AD on P0-AD-calibrate-2.
 - Housekeeping: this cycle pushed a stray ref
   `lead/candidate-d756142555c04e567a54cc5367cc5b85edd99a7e` by mistake;
   the proxy refuses branch deletes (HTTP 403), so it stays. It points at
