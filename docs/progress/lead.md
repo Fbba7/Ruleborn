@@ -60,8 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxp9qUS4iHzqFjbgh1C` (cycle 22,
-3 November 2026, from 11:08Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxoYmLFt1yB79vuEdqD` (cycle 23,
+3 November 2026, from 11:39Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -172,6 +172,17 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 23, 3 November 2026, from 11:39Z (session
+  `session_01SNkKxoYmLFt1yB79vuEdqD`, started by the launcher):
+  bookkeeping only. AD (`session_01SNkKxrEMe4td5Bk4zmN1Ed`) is working on
+  P0-AD-calibrate-2: `status/AD.json` reads `working`, with dev-opus-v2
+  (rubric version 2) results pushed to `claude/ui-ad` (`7f3945a0`, 309
+  calls). No other roster status changed, no merge lock, nothing to merge,
+  pages not republished.
+- Next: watch AD. When `status/AD.json` on `claude/ui-ad` shows
+  P0-AD-calibrate-2 `ready`, gate and merge it (owners.py diff, check_all
+  PASS), then republish both pages. Usage still reads `allowed_warning`
+  (seven-day, resets 2026-11-09T17:00Z), so start no session beyond AD.
 - Cycle 22, 3 November 2026, from 11:08Z (session
   `session_01SNkKxp9qUS4iHzqFjbgh1C`, started by the launcher): `dev-fable`
   finished (`0e78b6ce` on `claude/ui-gate-runs`, 444 lines: 366 base calls
@@ -182,11 +193,6 @@ Your session was created with the repository checked out at main; work in that c
   `plan.jsonl` files (dev-fable +78, dev-opus +48 lines) from
   `claude/ui-gate-runs`. No status file changed, no merge lock, nothing to
   merge, pages not republished.
-- Next: watch AD. When `status/AD.json` on `claude/ui-ad` shows
-  P0-AD-calibrate-2 `ready`, gate and merge it (owners.py diff, check_all
-  PASS), then republish both pages. AD launches the held-out run itself
-  within the task. Usage still reads `allowed_warning` (seven-day, resets
-  2026-11-09T17:00Z), so start no session beyond AD.
 - Cycle 21 (06:38Z, session `session_01SNkKxodap1UHY9Fb2zQzaR`):
   bookkeeping only; `dev-fable` at 366 of 414.
 - Cycle 20 (06:11Z, session
