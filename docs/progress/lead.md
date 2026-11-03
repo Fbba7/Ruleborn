@@ -60,8 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxnyd3MBvapHXExHjTR` (cycle 14,
-31 October 2026, from 17:39Z).
+Latest lead cycle session: `session_01SNkKxp9qUS4iHzqFjbgh1C` (cycle 22,
+3 November 2026, from 11:08Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -74,8 +74,12 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AD | `session_01SNkKxpHbYoyKJJjMRSPCPZ` | P0-AD-calibrate | `claude/ui-ad` | 2026-10-31 18:33Z |
-| K1 | `session_01SNkKxnJNP5X4uedWQBNKZt` | P0-K1-tokens-2 (restart: K1-R7 answered) | `claude/ui-bake` | 2026-10-31 17:42Z |
+| AD | `session_01SNkKxrEMe4td5Bk4zmN1Ed` (working) | P0-AD-calibrate-2 | `claude/ui-ad` | 2026-11-03 11:09Z |
+| gate run dev-fable (Fable 5.1) | `session_01SNkKxonjTzEysQx5wxdp97` (idle, done: 444 lines, 6 unknown, `0e78b6ce`) | AD-R6 for P0-AD-calibrate | `claude/ui-gate-runs` | 2026-11-02 23:40Z |
+| gate run dev-opus (Opus 5.5) | `session_01SNkKxogMyzESz7z3XzwBUJ` (idle, done) | AD-R6 for P0-AD-calibrate | `claude/ui-gate-runs` | 2026-11-02 23:40Z |
+| AD | `session_01SNkKxpHbYoyKJJjMRSPCPZ` (idle, done) | P0-AD-calibrate | `claude/ui-ad` | 2026-10-31 18:33Z |
+| K1 | `session_01SNkKxnxY3qKwypH2HQMfd8` (idle, done) | P0-K1-tokens-2 (restart: K1-R8 answered) | `claude/ui-bake` | 2026-10-31 18:40Z |
+| K1 | `session_01SNkKxnJNP5X4uedWQBNKZt` (idle, replaced) | P0-K1-tokens-2 (restart: K1-R7 answered) | `claude/ui-bake` | 2026-10-31 17:42Z |
 | K1 | `session_01SNkKxopXscd2QpqKuzHGnG` (idle, replaced) | P0-K1-tokens-2 | `claude/ui-bake` | 2026-10-31 16:59Z |
 | AD | `session_01SNkKxokei5gETTF4KU2gsD` (idle, done) | O3 | `claude/ui-ad` | 2026-10-31 16:21Z |
 | AD | `session_01SNkKxmwhuyTLjRXnCt5A2r` (idle, done) | P0-AD-golden-2 | `claude/ui-ad` | 2026-10-31 14:25Z |
@@ -168,38 +172,66 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 14, 31 October 2026, from 17:39Z (session
-  `session_01SNkKxnyd3MBvapHXExHjTR`). Merged O3 (candidate `ccafa2b3`,
-  merged onto main's bookkeeping head as `316ff98c` after a docs check;
-  check_all and the ui guard passed; the merge touches only AD's golden
-  labels and progress files). Granted K1-R7 (three exceptions on
-  P0-K1-tokens-2) and restarted K1 on it (17:42Z); started AD on
-  P0-AD-calibrate (18:33Z). Acknowledged the owner's M3: the fresh-container
-  tool line is now in every agent prompt below, before the first pre-check;
-  lessons (2) and (3) (start a candidate's checks in the cycle the task
-  turns ready, batch tasks ready together, plan a redirect's whole follow-up
-  chain at once) apply from this cycle. The published pages' sources did
-  not change, so neither was republished. No alerts. The merge lock is
-  clear.
+- Cycle 22, 3 November 2026, from 11:08Z (session
+  `session_01SNkKxp9qUS4iHzqFjbgh1C`, started by the launcher): `dev-fable`
+  finished (`0e78b6ce` on `claude/ui-gate-runs`, 444 lines: 366 base calls
+  plus 78 extra samples from the D-06 split rule, 6 unknown); its
+  `dev-fable.jsonl` was copied to main (`720e309e`). Both development runs
+  are now on main, so AD was started on P0-AD-calibrate-2
+  (`session_01SNkKxrEMe4td5Bk4zmN1Ed`), told to take the extended
+  `plan.jsonl` files (dev-fable +78, dev-opus +48 lines) from
+  `claude/ui-gate-runs`. No status file changed, no merge lock, nothing to
+  merge, pages not republished.
+- Next: watch AD. When `status/AD.json` on `claude/ui-ad` shows
+  P0-AD-calibrate-2 `ready`, gate and merge it (owners.py diff, check_all
+  PASS), then republish both pages. AD launches the held-out run itself
+  within the task. Usage still reads `allowed_warning` (seven-day, resets
+  2026-11-09T17:00Z), so start no session beyond AD.
+- Cycle 21 (06:38Z, session `session_01SNkKxodap1UHY9Fb2zQzaR`):
+  bookkeeping only; `dev-fable` at 366 of 414.
+- Cycle 20 (06:11Z, session
+  `session_01SNkKxo6TYzdUtAL4USoPyt`, started by the watchdog): no lead
+  cycle ran between 01:41Z and 06:11Z because the account hit its
+  five-hour usage limit (owner-inbox, 06:10Z). Branches
+  `claude/ui-screens` and `claude/ui-research` (not on the roster) are
+  left alone.
+- Cycle 19 (01:38Z, session `session_01SNkKxpMi6cZ8M6M33w8ntT`): dev-opus
+  finished (`e3a9b94a`, 217 pass, 197 fail); its `dev-opus.jsonl` was
+  copied to main.
+- BT-10 and BT-11 (`flaky.md`) stay open on the lead, unstarted.
+- Cycle 18 (2 November 23:38Z, session `session_01SNkKxokCvaGUnmATx2vzaZ`):
+  the first cycle after the owner's pause and resume; launched the two
+  AD-R6 development gate runs on `claude/ui-gate-runs`.
+- Cycle 17 (31 October 20:38Z, session `session_01SNkKxr25ThMqb9Aeot1dEV`):
+  bookkeeping only; gate runs deferred while the seven-day usage read
+  `allowed_warning`.
+- Cycle 16 (19:38Z, session `session_01SNkKxrPXYJXnGbD1R9Zte3`):
+  P0-K1-tokens-2 (785cb2a8) and P0-AD-calibrate (3f3797c7) merged as one
+  batch candidate `d7561425` (check_all PASS, "ui guard: OK") onto main
+  as `eec44b50`.
+- Housekeeping: this cycle pushed a stray ref
+  `lead/candidate-d756142555c04e567a54cc5367cc5b85edd99a7e` by mistake;
+  the proxy refuses branch deletes (HTTP 403), so it stays. It points at
+  the merged candidate and is harmless; candidates stay local from now on.
+- Gap for the next SV task (or whichever task next touches
+  `client/tests/`): `client/tests/a11y_motion_tests.gd` (SV-B11-B12) is on
+  main without its Godot `.uid`, which every other test has tracked; any
+  build regenerates it untracked (`uid://da3c5n2shdgh7` here). The lead
+  does not commit it, since its bookkeeping touches only `docs/progress/**`.
 - Tools in a fresh container: `rustup target add wasm32-unknown-unknown
   aarch64-linux-android aarch64-apple-ios`, `pip install "gdtoolkit==4.*"
-  "playwright==1.63.0"` (1.63.0 matches the container's Chromium build
-  1243 in `/opt/pw-browsers`), then `bash client/build.sh` in the guard's
-  worktree. check_all took about 47 minutes this cycle, the build and guard
-  about 12.
-- Next: merge K1's P0-K1-tokens-2 and AD's P0-AD-calibrate when each is
-  ready (one batch candidate if both are). AIA has no open task; SV has
-  none. M1 (AIA) and M2 (K1) are due for acks by 19:05Z; K1's restart
-  prompt asks for M2; AIA has no session, so M1 is acked when AIA next
-  starts.
-- Cycle 13 (15:39Z) merged P0-AD-golden-2 (`520565f9`) and P0-AIA-board-4
-  (`f920b57b`) and started AD on O3 and K1 on P0-K1-tokens-2. Cycle 12
-  (14:39Z) did bookkeeping only (answered AIA-R8). Cycle 11 (13:39Z) merged
-  P0-AIA-keyframes-3 (`d0dd8a36`). Cycle 9 (11:39Z) merged P0-K1-tokens and
-  P0-AIA-keyframes-2 (`b8308788`) and answered K1-R6. Cycle 8 (08:38Z)
-  merged O2-2 and P0-AIA-keyframes-1 (`fafc1a13`). Cycle 6 (04:38Z to
-  08:10Z) merged P0-K1-contract-2, P0-AIA-board-3 with P0-AD-golden,
-  P0-K1-kitskin and SV-B11-B12.
+  "playwright==1.63.0"`, then `bash client/build.sh`, before
+  `run_checks.sh start` (cycle 16 started one first and had to stop it).
+  Run `guard.sh` in its own worktree of the candidate (`client/build.sh`
+  there first); about 12 minutes beside check_all.
+- Cycle 15 (18:38Z) granted K1-R8 and restarted K1. Cycle 14 (17:39Z)
+  merged O3 (`316ff98c`). Cycle 13 (15:39Z) merged P0-AD-golden-2
+  (`520565f9`) and P0-AIA-board-4 (`f920b57b`). Cycle 11 (13:39Z) merged
+  P0-AIA-keyframes-3 (`d0dd8a36`). Cycle 9 (11:39Z) merged P0-K1-tokens
+  and P0-AIA-keyframes-2 (`b8308788`). Cycle 8 (08:38Z) merged O2-2 and
+  P0-AIA-keyframes-1 (`fafc1a13`). Cycle 6 (04:38Z to 08:10Z) merged
+  P0-K1-contract-2, P0-AIA-board-3 with P0-AD-golden, P0-K1-kitskin and
+  SV-B11-B12.
 - Earlier: cycle 4 (01:38Z) merged O2 and P0-K1-bake-2; cycle 3 (30
   October 23:22Z to 31 October 01:50Z) merged P0-AIA-board-2,
   P0-K1-bake-1, P0-AD-sheet and SV-B7-B9 and opened `flaky.md`; cycles 1

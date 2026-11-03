@@ -1,13 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-10-31T18:40:00Z",
-  "expected_next_update_by": "2026-10-31T19:55:00Z",
-  "cycle": 14,
+  "updated_at": "2026-11-03T11:12:00Z",
+  "expected_next_update_by": "2026-11-03T12:27:00Z",
+  "cycle": 22,
   "merging": null,
   "last_merged": {
-    "task_id": "O3",
-    "sha": "316ff98c"
+    "task_id": "P0-K1-tokens-2 + P0-AD-calibrate",
+    "sha": "eec44b50"
   },
   "alerts": [],
-  "next_step": "Merge K1's P0-K1-tokens-2 when ready (session_01SNkKxnJNP5X4uedWQBNKZt, restarted after K1-R7); merge AD's P0-AD-calibrate when ready (session_01SNkKxpHbYoyKJJjMRSPCPZ); one batch candidate if both are ready together."
+  "next_step": "Watch AD (session_01SNkKxrEMe4td5Bk4zmN1Ed) on P0-AD-calibrate-2 on claude/ui-ad. When status/AD.json shows it ready, gate it (owners.py diff, run_checks PASS), merge to main and republish the audit and roadmap pages. Start no other session while usage reads allowed_warning."
 }

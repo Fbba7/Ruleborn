@@ -180,6 +180,11 @@ static func set_status(l: Label, kind: String, text: String) -> void:
 	# The family's shade for the status (§21.8: alarm and success words are
 	# bold, deep on parchment and light on dark), from the theme around it.
 	l.remove_theme_color_override("font_color")
+	# A status carried on a fill draws none while it says nothing.
+	if text == "":
+		l.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	else:
+		l.remove_theme_stylebox_override("normal")
 	l.theme_type_variation = "Status" + kind.capitalize()
 	l.set_meta("status", kind)
 	l.set_meta("bold", kind == "alarm" or kind == "success")

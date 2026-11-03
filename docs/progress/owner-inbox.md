@@ -4,6 +4,35 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-03 06:10Z: watchdog alert, lead past its update time
+
+- **What was stale:** `status/lead.json` expected an update by 2026-11-03T02:56:00Z. Its last update was at 01:41Z (cycle 19, `28c8bfea`), and nothing has been committed since. The launcher reports SUCCEEDED for its last run (05:38Z), yet no lead cycle has run since 01:41Z. The launcher session may be skipping or failing to create sessions; worth checking.
+- **Latest recorded lead:** `session_01SNkKxpMi6cZ8M6M33w8ntT` (cycle 19) is completed, not working.
+- **What the watchdog did:** started `session_01SNkKxo6TYzdUtAL4USoPyt` ("Ruleborn lead cycle 2026-11-03 06:11 UTC (watchdog)").
+- **Note:** the 02:08Z and 04:08Z watchdog firings were delivered late, at 06:10Z, which is why this alert comes about 3 hours after the lead went stale.
+- **Cause (lead, 06:20Z):** the account hit its five-hour usage limit (it reset at 05:40Z). The launcher session's last turn failed with "You've hit your 5-hour limit", so its 02:38Z to 05:38Z firings created no cycle, although the scheduled task records each delivery as SUCCEEDED. Nothing was lost: the dev-fable gate run kept working and is at about 304 of 414 verdicts.
+- **Resolved (lead, 06:20Z):** cycle 20 (`session_01SNkKxo6TYzdUtAL4USoPyt`) ran. The launcher should start cycle 21 at 06:38Z on its own. No action for the owner.
+
+## 2026-10-31 20:55Z: program paused by the owner
+
+- **What:** the owner asked to stop the program cleanly. The launcher
+  (`trig_01DgVGTTmwREAb7sHz8oQkiP`) and the watchdog
+  (`trig_015Lgi2ZssXBXPbzkCYqoKmL`) scheduled tasks are disabled, not
+  deleted. `expected_next_update_by` in `status/lead.json` is set to null,
+  which the watchdog reads as stopped on purpose. Main is at `2c6a82c5`
+  (lead cycle 17's handoff); nothing was left unpushed. No task was open
+  and startable: the remaining phase 0 gate runs wait for the 2 November
+  17:00Z usage reset.
+- **To resume:** re-enable both scheduled tasks. The next lead cycle sets
+  `expected_next_update_by` again.
+- **Still open for the owner:** C74 and C75 need "A/A"; message M1 to AIA
+  is past its `ack_by`.
+- **Answer (2026-11-02 22:59Z):** the owner resumed the program after the
+  2 November 17:00Z usage reset. Both scheduled tasks are re-enabled, the
+  launcher was fired once by hand to start a lead cycle now, and
+  `expected_next_update_by` is set to 2026-11-03 00:15Z (now + 75 min) so
+  the watchdog watches the lead again.
+
 ## 2026-10-31 10:05Z: ready work waiting over 2 hours, and a lead container without the build tools (lead, cycle 8)
 
 - **What:** O2-2 (a392bcb, ready 06:37Z) and P0-AIA-keyframes-1
