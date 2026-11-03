@@ -10,6 +10,8 @@ recording the answer under it.
 - **Latest recorded lead:** `session_01SNkKxpMi6cZ8M6M33w8ntT` (cycle 19) is completed, not working.
 - **What the watchdog did:** started `session_01SNkKxo6TYzdUtAL4USoPyt` ("Ruleborn lead cycle 2026-11-03 06:11 UTC (watchdog)").
 - **Note:** the 02:08Z and 04:08Z watchdog firings were delivered late, at 06:10Z, which is why this alert comes about 3 hours after the lead went stale.
+- **Cause (lead, 06:20Z):** the account hit its five-hour usage limit (it reset at 05:40Z). The launcher session's last turn failed with "You've hit your 5-hour limit", so its 02:38Z to 05:38Z firings created no cycle, although the scheduled task records each delivery as SUCCEEDED. Nothing was lost: the dev-fable gate run kept working and is at about 304 of 414 verdicts.
+- **Resolved (lead, 06:20Z):** cycle 20 (`session_01SNkKxo6TYzdUtAL4USoPyt`) ran. The launcher should start cycle 21 at 06:38Z on its own. No action for the owner.
 
 ## 2026-10-31 20:55Z: program paused by the owner
 
