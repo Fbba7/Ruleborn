@@ -60,8 +60,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxo6TYzdUtAL4USoPyt` (cycle 20,
-3 November 2026, from 06:11Z, started by the watchdog).
+Latest lead cycle session: `session_01SNkKxodap1UHY9Fb2zQzaR` (cycle 21,
+3 November 2026, from 06:38Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -74,7 +74,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| gate run dev-fable (Fable 5.1) | `session_01SNkKxonjTzEysQx5wxdp97` (working, about 304 of 414 at 06:11Z) | AD-R6 for P0-AD-calibrate | `claude/ui-gate-runs` | 2026-11-02 23:40Z |
+| gate run dev-fable (Fable 5.1) | `session_01SNkKxonjTzEysQx5wxdp97` (working, verdicts 1 to 366 of 414 at 06:40Z) | AD-R6 for P0-AD-calibrate | `claude/ui-gate-runs` | 2026-11-02 23:40Z |
 | gate run dev-opus (Opus 5.5) | `session_01SNkKxogMyzESz7z3XzwBUJ` (idle, done) | AD-R6 for P0-AD-calibrate | `claude/ui-gate-runs` | 2026-11-02 23:40Z |
 | AD | `session_01SNkKxpHbYoyKJJjMRSPCPZ` (idle, done) | P0-AD-calibrate | `claude/ui-ad` | 2026-10-31 18:33Z |
 | K1 | `session_01SNkKxnxY3qKwypH2HQMfd8` (idle, done) | P0-K1-tokens-2 (restart: K1-R8 answered) | `claude/ui-bake` | 2026-10-31 18:40Z |
@@ -171,7 +171,14 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 20, 3 November 2026, from 06:11Z (session
+- Cycle 21, 3 November 2026, from 06:38Z (session
+  `session_01SNkKxodap1UHY9Fb2zQzaR`, started by the launcher): bookkeeping
+  only. `dev-fable` is still working (`session_01SNkKxonjTzEysQx5wxdp97`,
+  verdicts 1 to 366 pushed to `claude/ui-gate-runs` by 06:30Z), so AD is
+  not started yet. No status file has changed since cycle 17, no merge
+  lock, nothing to merge, pages not republished. Branches `claude/ui-screens`
+  and `claude/ui-research` (old, not on the roster) are left alone.
+- Cycle 20 (06:11Z, session
   `session_01SNkKxo6TYzdUtAL4USoPyt`, started by the watchdog): no lead
   cycle ran between 01:41Z and 06:11Z. The account hit its five-hour usage
   limit, so the launcher's turns failed until the reset at 05:40Z (see

@@ -1,13 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-03T06:20:00Z",
-  "expected_next_update_by": "2026-11-03T07:35:00Z",
-  "cycle": 20,
+  "updated_at": "2026-11-03T06:45:00Z",
+  "expected_next_update_by": "2026-11-03T08:00:00Z",
+  "cycle": 21,
   "merging": null,
   "last_merged": {
     "task_id": "P0-K1-tokens-2 + P0-AD-calibrate",
     "sha": "eec44b50"
   },
   "alerts": [],
-  "next_step": "Watch the dev-fable gate runner (session_01SNkKxonjTzEysQx5wxdp97) on claude/ui-gate-runs (about 304 of 414 at 06:11Z). When it has pushed 'gate-run dev-fable: done', copy docs/art/ui-quality/gate/verdicts/P0-AD-calibrate/dev-fable.jsonl to main and start AD on P0-AD-calibrate-2; restart dev-fable once if it is idle without its done commit."
+  "next_step": "Watch the dev-fable gate runner (session_01SNkKxonjTzEysQx5wxdp97) on claude/ui-gate-runs (366 of 414 at 06:30Z). When it has pushed 'gate-run dev-fable: done', copy docs/art/ui-quality/gate/verdicts/P0-AD-calibrate/dev-fable.jsonl to main and start AD on P0-AD-calibrate-2; restart dev-fable once if it is idle without its done commit."
 }
