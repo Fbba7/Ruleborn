@@ -1,6 +1,6 @@
 # Judge prompt: 14. One art-direction idea
 
-Rubric version 1 (`../rubric.md`, quality 14). The launcher fills the
+Rubric version 2 (`../rubric.md`, quality 14). The launcher fills the
 `{{...}}` fields and sends everything below the line as one isolated call. The
 call is made three times, with the pictures in a new shuffled order each time.
 
@@ -66,6 +66,16 @@ problems; you are asked one comparison.
   (chunky, inked, soft-edged).
 - Do not judge layout, colour roles or type sizes here; those are other
   calls.
+
+**Rulings from calibration (version 2):**
+- High contrast: opaque dark cards with a light outline about 3 pt wide are
+  the game's own high-contrast form (§21.8), not app chrome. Judge a high-
+  contrast still on its controls, icons and type.
+- A plain card is not app chrome by itself. It fails only when drawn in
+  another idiom: a hairline stroke with a blur, a stock toggle, a thin flat
+  slider bar, a native list row.
+- A screen laid out as a standard app list (rows of label with switch or
+  slider) in the game's colours fails, even if its buttons are chunky.
 
 **How to decide.**
 1. Find the region of each picture that this quality is about (above).

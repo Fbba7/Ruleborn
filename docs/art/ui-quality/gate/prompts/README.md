@@ -1,6 +1,6 @@
 # The judge's prompts
 
-Rubric version 1 (`../rubric.md`). One prompt per judged quality (section 3.5 of
+Rubric version 2 (`../rubric.md`). One prompt per judged quality (section 3.5 of
 `report.md`). Qualities 4, 5, 7, 10, 11 and 12 have no prompt: they are
 scripted or the owner's, because a still cannot show them or a script measures
 them better.

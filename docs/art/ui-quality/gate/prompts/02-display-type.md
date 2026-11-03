@@ -1,6 +1,6 @@
 # Judge prompt: 2. Display type
 
-Rubric version 1 (`../rubric.md`, quality 2). The launcher fills the
+Rubric version 2 (`../rubric.md`, quality 2). The launcher fills the
 `{{...}}` fields and sends everything below the line as one isolated call. The
 call is made three times, with the pictures in a new shuffled order each time.
 
@@ -67,6 +67,19 @@ problems; you are asked one comparison.
 - Words on a solid plate or card are not over art. Words straight over the
   world or a textured image are.
 - At 200% text, check that the outline scaled with the word.
+
+**Rulings from calibration (version 2):**
+- Over art means over the world, a scene, or a textured surface (wood grain,
+  pebbled leather, stone). A word on a card, a plate or a button, including
+  over that card's own gloss band or body gradient, is not over art and needs
+  no outline. In high contrast, words on solid plates need none either.
+- Big numbers are the screen's headline figures: a timer, a reward total, the
+  currency counts on home. They need the outline, the hard drop and the
+  gradient fill wherever they sit, on a plate too; a plain flat headline
+  figure fails. Secondary figures (a +46 beside the total, a 3 / 4 count on a
+  card) are a lower rank and follow the label rule.
+- Text that is clipped or overlapped by an icon, so that a word or number
+  loses glyphs, fails.
 
 **How to decide.**
 1. Find the region of each picture that this quality is about (above).

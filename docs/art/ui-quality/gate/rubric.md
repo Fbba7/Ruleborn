@@ -1,8 +1,9 @@
 # The gate's rubric
 
-**Version 1** (P0-AD-rubric, 30 October 2026). Owner: AD. Not yet calibrated:
-every judged quality runs in shadow mode until `calibration.md` says it meets
-its target (section 3.5 of `report.md`).
+**Version 2** (P0-AD-calibrate-2, 3 November 2026; version 1 was P0-AD-rubric,
+30 October 2026). Owner: AD. Calibration is in `calibration.md`: every judged
+quality runs in shadow mode until that page says it meets its target on the
+held-out third (section 3.5 of `report.md`).
 
 This is what the gate checks, quality by quality. It turns the 14 qualities of
 section 4 of `report.md` into pass and fail criteria, folds in the design
@@ -129,6 +130,25 @@ well, a lip and grain; the Cast and Get out buttons sit on thick lips.
 **Clear fail:** the same image, left column (the deployed HUD): the clock is a
 flat cream pill, and the panels are single fills with a thin border.
 
+**Rulings from calibration (version 2):**
+- High contrast: an opaque card or panel with a light outline about 3 pt wide,
+  a body gradient and a drop or lip is this game's high-contrast material
+  (§21.8), not a web overlay, even when the anchors are in normal mode. Fail a
+  high-contrast panel only if it has no drop or lip and no body gradient
+  either.
+- Grain belongs to wood, leather and parchment. A smooth material (enamel, the
+  violet card, dark glass) passes with its body gradient, gloss band, rim and
+  lip and no grain; a single card or button needs those four layers, not a
+  bevelled frame.
+- A frame and well are asked of panels that hold other things. Plain tiles or
+  wells set inside a dressed panel are that panel's inner wells and do not
+  each need four layers.
+- Look at the largest panel too (a crew tray, a dock, a list card), not only
+  the buttons: rich buttons beside a large panel that is one flat fill with a
+  hairline rim fail.
+- Banding counts at phone size: a gloss band or body that breaks into visible
+  flat steps (posterised) fails, however complete its layers.
+
 **Method:** scripted: twins and states. Judge: kit art on the catalogue sheet;
 icons; screens on the still at 960 px plus full-resolution crops of three
 components (one primary button, one panel, one pill), since grain and bevels
@@ -176,6 +196,19 @@ a fill gradient, on a lit well.
 `docs/art/ui-quality/audit-home.png`: small Manrope without stroke over a busy
 scene.
 
+**Rulings from calibration (version 2):**
+- Over art means over the world, a scene, or a textured surface (wood grain,
+  pebbled leather, stone). A word on a card, a plate or a button, including
+  over that card's own gloss band or body gradient, is not over art and needs
+  no outline. In high contrast, words on solid plates need none either.
+- Big numbers are the screen's headline figures: a timer, a reward total, the
+  currency counts on home. They need the outline, the hard drop and the
+  gradient fill wherever they sit, on a plate too; a plain flat headline
+  figure fails. Secondary figures (a +46 beside the total, a 3 / 4 count on a
+  card) are a lower rank and follow the label rule.
+- Text that is clipped or overlapped by an icon, so that a word or number
+  loses glyphs, fails.
+
 **Method:** scripted: outline width, faces, sizes, opacity. Judge:
 full-resolution crops of headers and numbers only (one crop per text rank,
 at most four), at 100% and 200% text. Owner: boards.
@@ -217,6 +250,19 @@ out: it is not an anchor.)
 
 **Clear fail:** the "Client today" row of the same image: flat gradient glyphs
 with an outline and no form or light.
+
+**Rulings from calibration (version 2):**
+- Things of value are pictures of objects: currency, rewards, chests, items,
+  law and ability icons, and the pictured icons of tabs and rows (a gear, a
+  bell, a drop, a door). Abstract marks are not icons for this quality: charge
+  pips, dots, rings, bars, chevrons, toggles and slider handles are judged
+  elsewhere; never fail a screen for them.
+- A screen with no currency or reward (settings, a list) is still judged: its
+  pictured icons must meet the same bar. Do not answer UNKNOWN for that
+  reason.
+- Judge each class of icon on the screen, not the best one: a currency row
+  where one icon is modelled and the others are flat glyphs fails; tab and nav
+  icons that are modelled with outline and top-left light pass even if small.
 
 **Method:** scripted: outline, silhouette, sizes. Judge: icon sheets at 48 and
 96 pt at native resolution and in grayscale; on screens, a crop of the
@@ -319,6 +365,22 @@ brightest thing, with every other control visibly a step down.
 **Clear fail:** the left column of `audit-home.png`: about fifteen pills and
 badges of the same size and no single primary action.
 
+**Rulings from calibration (version 2):**
+- The primary is the action the design names for the screen: on the heist,
+  Cast (Get out is the exit, a secondary); on the character screen, Level up;
+  on the result, Raid again; on home, one of Collect and the Heist tab must
+  clearly lead. If any other control, including a red or warning one, draws
+  the eye before the primary in grayscale, the screen fails.
+- Big panels compete too, not only controls: a currency strip, stat panel or
+  timer box as heavy in grayscale as the primary is a second primary, and so
+  is a row of pills at the primary's value.
+- Two controls of equal size side by side, with neither clearly larger or
+  brighter, split the primary: fail.
+- Gold seconds about half the primary's size or less (a tab, arrows, a level
+  badge) fall in behind it and do not compete.
+- No primary (settings): the title must be the first thing the eye lands on in
+  grayscale. A gold tab or gold value button louder than the title fails.
+
 **Method:** scripted: area ratio and count from the control rectangles. Judge:
 the grayscale still at 960 px, beside the colour still. Owner: boards.
 
@@ -398,6 +460,18 @@ shape; on the colour-blindness sheet every school still differs by shape.
 the same lightness, so in grayscale the buttons vanish, and whose rarities
 differ by hue only.
 
+**Rulings from calibration (version 2):**
+- Gold is two things: a material (frames, rims, bevels and the chosen card's
+  rim, as the approved board shows) and the main-action fill. Gold frames and
+  rims are the material and give gold no second role. A gold fill on something
+  that is not a main action (a selected tab in a settings list, a language
+  picker, a chart bar) is gold in a second role: fail.
+- A role colour that has drifted (an action gold turned muddy brown, a chosen
+  rim turned pale lilac, a school pip turned grey) has lost its role: fail,
+  even if each colour on its own looks fine.
+- A bar, chart or state told apart by hue alone, with no shape, label or
+  pattern, fails.
+
 **Method:** scripted: contrast, value steps, palette, colour-blindness sheet.
 Judge: whether the semantic hues and the rarity ladder read, on the still at
 960 px and its colour-blindness sheet. Owner: boards.
@@ -433,6 +507,18 @@ left column: a 3D character on a plinth, large, lit and framed.
 **Clear fail:** the home screen in the left column of `audit-home.png`: the
 only characters are figures a few points tall on the islands, with nothing
 framed or alive in the interface.
+
+**Rulings from calibration (version 2):**
+- Look at every portrait or figure in its crop, one at a time. One portrait in
+  a physically based or photographic finish (a photographic rock or fabric
+  texture, a metallic sheen, glossy gem reflections) fails the screen,
+  whatever the others show.
+- A portrait that at its size turns into a smudge of colour with no readable
+  figure (no dark shape, no face) is too small to recognise: fail, even inside
+  a gold ring.
+- Soft fur and smooth soft shading on the game's own rendered models are the
+  toon look; outlines may be thin on large renders. Fail on photographic
+  texture or specular reflections, not on smoothness.
 
 **Method:** scripted: the live node on home. Judge: the still at 960 px plus a
 full-resolution crop of the character. Owner: board 3.
@@ -532,6 +618,16 @@ button lit from the top, lips below, one direction throughout.
 left column: thin rows on a plain night backdrop, with no lit scene, no
 vignette and barely a highlight on the panels.
 
+**Rulings from calibration (version 2):**
+- Every screen needs a lit ground, not only home: a lit scene, a gradient lit
+  from one place, or a vignette that falls off towards the edges. Panels on a
+  flat dark backdrop that barely catch the light fail, even if their faint
+  highlights sit on top.
+- A few faint stars or a uniform tint on a dark backdrop is not a lit scene;
+  look for a visible light source or glow and a falloff.
+- In high contrast the ground may be plain: judge only the scrim and any
+  sunburst there.
+
 **Method:** scripted: the scrim. Judge: the still at 960 px plus crops of two
 panels and one icon. Owner: boards.
 
@@ -563,6 +659,16 @@ cut out and placed on an island without looking foreign.
 **Clear fail:** the same settings screen: an app's settings page in game
 colours.
 
+**Rulings from calibration (version 2):**
+- High contrast: opaque dark cards with a light outline about 3 pt wide are
+  the game's own high-contrast form (§21.8), not app chrome. Judge a high-
+  contrast still on its controls, icons and type.
+- A plain card is not app chrome by itself. It fails only when drawn in
+  another idiom: a hairline stroke with a blur, a stock toggle, a thin flat
+  slider bar, a native list row.
+- A screen laid out as a standard app list (rows of label with switch or
+  slider) in the game's colours fails, even if its buttons are chunky.
+
 **Method:** not scripted. Judge: the whole still at 960 px. Owner: every
 board.
 
@@ -576,3 +682,4 @@ made under.
 | Version | Date | What changed |
 |---|---|---|
 | 1 | 2026-10-30 | First version: the 14 qualities of section 4 of `report.md` as pass and fail criteria, with §21.8's, §21.1's, §21.3's, §20.8's and §21.10's rules folded in; anchors provisional until O3 |
+| 2 | 2026-11-03 | Calibration, step 5 (P0-AD-calibrate-2): every judged quality missed its target on the development third with both models (`calibration.md`, "Results"). Each judged quality (1, 2, 3, 6, 8, 9, 13, 14) gains "Rulings from calibration", here and in its prompt, written from AD's O3 critiques of the training and development thirds against the judges' reasons: the high-contrast form is the material, not a web overlay (1, 14); "over art" excludes a card's own gradient, and headline figures need the full treatment on a plate too (2); what counts as an icon of value (3); naming the primary and counting big panels as rivals (6); gold as material versus gold as the action fill (8); one physically based portrait fails the screen (9); every screen needs a lit ground (13). No pass or fail criterion of version 1 is removed |

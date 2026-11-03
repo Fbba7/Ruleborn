@@ -1,6 +1,6 @@
 # Judge prompt: 6. Hierarchy
 
-Rubric version 1 (`../rubric.md`, quality 6). The launcher fills the
+Rubric version 2 (`../rubric.md`, quality 6). The launcher fills the
 `{{...}}` fields and sends everything below the line as one isolated call. The
 call is made three times, with the pictures in a new shuffled order each time.
 
@@ -70,6 +70,22 @@ problems; you are asked one comparison.
 - Judge the arrangement the design asks for (the Heist tab in the centre of
   home's five tabs; the heist's controls at the bottom right); do not fail a
   screen for where the design puts things.
+
+**Rulings from calibration (version 2):**
+- The primary is the action the design names for the screen: on the heist,
+  Cast (Get out is the exit, a secondary); on the character screen, Level up;
+  on the result, Raid again; on home, one of Collect and the Heist tab must
+  clearly lead. If any other control, including a red or warning one, draws
+  the eye before the primary in grayscale, the screen fails.
+- Big panels compete too, not only controls: a currency strip, stat panel or
+  timer box as heavy in grayscale as the primary is a second primary, and so
+  is a row of pills at the primary's value.
+- Two controls of equal size side by side, with neither clearly larger or
+  brighter, split the primary: fail.
+- Gold seconds about half the primary's size or less (a tab, arrows, a level
+  badge) fall in behind it and do not compete.
+- No primary (settings): the title must be the first thing the eye lands on in
+  grayscale. A gold tab or gold value button louder than the title fails.
 
 **How to decide.**
 1. Find the region of each picture that this quality is about (above).

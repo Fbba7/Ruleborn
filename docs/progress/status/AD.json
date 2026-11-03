@@ -5,7 +5,7 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P0-AD-calibrate-2",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-03T11:15:00Z",
   "lease_until": "2026-11-03T14:15:00Z",
   "updated_at": "2026-11-03T11:15:00Z",

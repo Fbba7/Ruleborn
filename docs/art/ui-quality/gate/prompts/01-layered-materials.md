@@ -1,6 +1,6 @@
 # Judge prompt: 1. Layered materials
 
-Rubric version 1 (`../rubric.md`, quality 1). The launcher fills the
+Rubric version 2 (`../rubric.md`, quality 1). The launcher fills the
 `{{...}}` fields and sends everything below the line as one isolated call. The
 call is made three times, with the pictures in a new shuffled order each time.
 
@@ -71,6 +71,25 @@ problems; you are asked one comparison.
   under the face.
 - Grain that only shows in the crop is fine; grain that shows as noise in the
   960 px still is not.
+
+**Rulings from calibration (version 2):**
+- High contrast: an opaque card or panel with a light outline about 3 pt wide,
+  a body gradient and a drop or lip is this game's high-contrast material
+  (§21.8), not a web overlay, even when the anchors are in normal mode. Fail a
+  high-contrast panel only if it has no drop or lip and no body gradient
+  either.
+- Grain belongs to wood, leather and parchment. A smooth material (enamel, the
+  violet card, dark glass) passes with its body gradient, gloss band, rim and
+  lip and no grain; a single card or button needs those four layers, not a
+  bevelled frame.
+- A frame and well are asked of panels that hold other things. Plain tiles or
+  wells set inside a dressed panel are that panel's inner wells and do not
+  each need four layers.
+- Look at the largest panel too (a crew tray, a dock, a list card), not only
+  the buttons: rich buttons beside a large panel that is one flat fill with a
+  hairline rim fail.
+- Banding counts at phone size: a gloss band or body that breaks into visible
+  flat steps (posterised) fails, however complete its layers.
 
 **How to decide.**
 1. Find the region of each picture that this quality is about (above).
