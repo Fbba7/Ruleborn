@@ -7,19 +7,23 @@ counting (P0-AD-calibrate).
 
 ## Where it stands
 
-- **Rubric version 1** (`rubric.md` and `prompts/`, as merged at 167ccf6c) and
-  **golden set version 1** (`golden/items.json` version 1, 60 items; the labels
-  in `golden/labels.md` and `golden/labels-blind.md` as O3 merged them at
-  316ff98c) are the versions calibrated. Neither changes during calibration
-  except through step 5 below, which bumps the rubric's version and is logged
-  in `rubric.md`'s "Versions".
-- **No quality is calibrated yet.** The gate runs are the lead's to launch
-  (P0-AD-calibrate's title; section 3.3 of `../report.md`, "The gate's runs
-  through the wave"), and none has run. Until a quality meets the target
-  below, the gate runs in **shadow mode** on it: its verdicts block nothing,
-  and every item of that quality goes on AD's board before it merges
-  (section 3.5 of `../report.md`; `agent-protocol.md`, "Before calibration").
-  Today that is all eight judged qualities: 1, 2, 3, 6, 8, 9, 13 and 14.
+- **Rubric version 2** (`rubric.md` and `prompts/`, P0-AD-calibrate-2, 3
+  November 2026) is the version being calibrated, with **golden set version
+  1** (`golden/items.json` version 1, 60 items; the labels in
+  `golden/labels.md` and `golden/labels-blind.md` as O3 merged them at
+  316ff98c). Version 1 (as merged at 167ccf6c) missed the target on all eight
+  qualities with both models on the development third (Results below); step
+  5's first revision added each quality's "Rulings from calibration" and is
+  logged in `rubric.md`'s "Versions". The labels did not change.
+- **The judge is Opus 5.5** (step 4): on the development third it caught 33 of
+  the 48 fails, against Fable 5.1's 23, and caught at least as many on every
+  quality. So the blind audit doubles (section 3.5 of `../report.md`).
+- **No quality is calibrated yet.** Until a quality meets the target below on
+  the held-out third, the gate runs in **shadow mode** on it: its verdicts
+  block nothing, and every item of that quality goes on AD's board before it
+  merges (section 3.5 of `../report.md`; `agent-protocol.md`, "Before
+  calibration"). Today that is all eight judged qualities: 1, 2, 3, 6, 8, 9,
+  13 and 14.
 - **Owner-checked qualities:** none yet. A quality becomes owner-checked only
   after both models miss it (step 5); AD then checks it on every board.
 
@@ -87,9 +91,10 @@ label away. The plans are committed in `calibration/runs/<run>/plan.jsonl`.
 
 | Run | Model | Third | Rows | Calls (before splits) | Status |
 |---|---|---:|---:|---:|---|
-| `dev-fable` | Fable 5.1 | 2 | 122 | 366 | planned; waits for the lead |
-| `dev-opus` | Opus 5.5 | 2 | 122 | 366 | planned; waits for the lead |
-| `held-<model>` | the model chosen | 3 | 123 | 369 | planned once the model is chosen (step 4) |
+| `dev-fable` | Fable 5.1 | 2 | 122 | 366 | run by the lead on rubric version 1 (78 extra calls for splits); scored below |
+| `dev-opus` | Opus 5.5 | 2 | 122 | 366 | run by the lead on rubric version 1 (48 extra calls for splits); scored below |
+| `dev-opus-v2` | Opus 5.5 | 2 | 122 | 366 | rubric version 2 (step 5's re-run); running |
+| `held-opus` | Opus 5.5 | 3 | 123 | 369 | planned once step 5 settles the rubric version |
 
 What the launcher does for each run (request AD-R6):
 
@@ -150,16 +155,49 @@ also fail 13).
 
 ## Results
 
-None yet. Each run's `score --markdown` table goes here, with the date, the
-rubric version and the run's commit.
+Each run's `score --markdown` table goes here, with the date, the rubric
+version and the run's commit.
+
+### Development third, rubric version 1 (3 November 2026)
+
+The lead's runs, merged at 720e309e
+(`verdicts/P0-AD-calibrate/dev-fable.jsonl` and `dev-opus.jsonl`), scored by
+AD with `calibrate.py score`.
+
+| Quality | Fable 5.1: fails caught | False blocks | To exceptions | Opus 5.5: fails caught | False blocks | To exceptions |
+|---|---|---|---|---|---|---|
+| 1. Layered materials | 5 of 9 | 3 of 11 | 0 of 20 | 8 of 9 | 5 of 11 | 0 of 20 |
+| 2. Display type | 5 of 7 | 3 of 9 | 1 of 16 | 6 of 7 | 4 of 9 | 0 of 16 |
+| 3. Painted or rendered icons | 3 of 6 | 4 of 9 | 2 of 15 | 5 of 6 | 7 of 9 | 0 of 15 |
+| 6. Hierarchy | 2 of 7 | 0 of 4 | 0 of 11 | 4 of 7 | 1 of 4 | 0 of 11 |
+| 8. Colour roles and value | 2 of 6 | 1 of 14 | 0 of 20 | 3 of 6 | 1 of 14 | 0 of 20 |
+| 9. Character presence | 3 of 7 | 1 of 2 | 0 of 9 | 3 of 7 | 0 of 2 | 0 of 9 |
+| 13. Light behind UI | 2 of 4 | 0 of 16 | 0 of 20 | 2 of 4 | 0 of 16 | 0 of 20 |
+| 14. One art-direction idea | 1 of 2 | 1 of 9 | 0 of 11 | 2 of 2 | 4 of 9 | 0 of 11 |
+
+Both models missed on every quality. What the misses had in common, which
+rubric version 2's rulings answer:
+
+- the high-contrast mode's opaque cards failed as "web overlay" (1) or "app
+  chrome" (14), though they are the game's own form;
+- display type on a card's own gloss was read as "over art" and asked for an
+  outline (2), while headline figures on plates went unchecked;
+- abstract marks (pips, toggles) were judged as icons (3), and screens with
+  no currency were sent to UNKNOWN;
+- the primary action was not named, so a rival panel or a gold second passed
+  (6), and gold fills on non-actions passed (8);
+- one physically based portrait among game models passed (9), and faint stars
+  on a dark backdrop passed as a lit scene (13).
+
+### Held-out third
 
 | Quality | Judge | Rubric | Third 3: fails caught | False blocks | To exceptions | State |
 |---|---|---|---|---|---|---|
-| 1. Layered materials | – | 1 | – | – | – | shadow |
-| 2. Display type | – | 1 | – | – | – | shadow |
-| 3. Painted or rendered icons | – | 1 | – | – | – | shadow |
-| 6. Hierarchy | – | 1 | – | – | – | shadow |
-| 8. Colour roles and value | – | 1 | – | – | – | shadow |
-| 9. Character presence | – | 1 | – | – | – | shadow |
-| 13. Light behind UI | – | 1 | – | – | – | shadow |
-| 14. One art-direction idea | – | 1 | – | – | – | shadow |
+| 1. Layered materials | – | 2 | – | – | – | shadow |
+| 2. Display type | – | 2 | – | – | – | shadow |
+| 3. Painted or rendered icons | – | 2 | – | – | – | shadow |
+| 6. Hierarchy | – | 2 | – | – | – | shadow |
+| 8. Colour roles and value | – | 2 | – | – | – | shadow |
+| 9. Character presence | – | 2 | – | – | – | shadow |
+| 13. Light behind UI | – | 2 | – | – | – | shadow |
+| 14. One art-direction idea | – | 2 | – | – | – | shadow |
