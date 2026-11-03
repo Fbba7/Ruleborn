@@ -1,7 +1,7 @@
 # The gate's rubric
 
-**Version 2** (P0-AD-calibrate-2, 3 November 2026; version 1 was P0-AD-rubric,
-30 October 2026). Owner: AD. Calibration is in `calibration.md`: every judged
+**Version 3** (P0-AD-calibrate-2, 3 November 2026; version 2 the same day;
+version 1 was P0-AD-rubric, 30 October 2026). Owner: AD. Calibration is in `calibration.md`: every judged
 quality runs in shadow mode until that page says it meets its target on the
 held-out third (section 3.5 of `report.md`).
 
@@ -381,6 +381,17 @@ badges of the same size and no single primary action.
 - No primary (settings): the title must be the first thing the eye lands on in
   grayscale. A gold tab or gold value button louder than the title fails.
 
+**Rulings from calibration (version 3):**
+- Leading in grayscale is size, place and weight together, not lightness
+  alone. The full-width control at the foot of the screen that carries the
+  primary's label leads unless something else is clearly larger and heavier; a
+  mid-value gold primary beside lighter cream cards still leads by its size
+  and saturation.
+- A panel that holds information and no action (an ability card, a stat card,
+  a reward card) competes only when it is both larger and heavier than the
+  primary; in high contrast the cream cards are light by the mode's design and
+  do not compete for that alone.
+
 **Method:** scripted: area ratio and count from the control rectangles. Judge:
 the grayscale still at 960 px, beside the colour still. Owner: boards.
 
@@ -520,6 +531,17 @@ framed or alive in the interface.
   toon look; outlines may be thin on large renders. Fail on photographic
   texture or specular reflections, not on smoothness.
 
+**Rulings from calibration (version 3):**
+- Judge each portrait on its own, not against the anchors: a PASS ANCHOR that
+  shows the same character with the same flaw does not make the flaw pass. The
+  fails-on rules hold for every portrait whatever the anchors show.
+- Name each portrait's body surface in the reason. A rock, moss or stone body
+  drawn with fine photographic grain, or armour with mirror-like reflections,
+  where the other portraits have flat toon fills, is a physically based
+  material: fail.
+- At the portrait's own size, a figure that does not read as a dark shape
+  against its ring (it blends into a purple or grey wash) is a smudge: fail.
+
 **Method:** scripted: the live node on home. Judge: the still at 960 px plus a
 full-resolution crop of the character. Owner: board 3.
 
@@ -628,6 +650,15 @@ vignette and barely a highlight on the panels.
 - In high contrast the ground may be plain: judge only the scrim and any
   sunburst there.
 
+**Rulings from calibration (version 3):**
+- Kit art and single items are judged on their own light (a top light, a lip,
+  a drop), not on the ground they were shot on; the lit-ground ruling is for
+  full screens.
+- A backdrop that only fades from a little lighter at the top to darker below
+  is a tint, not a lit scene: a lit ground shows a source, a glow or a
+  vignette that frames the content, and panels that sit on a tint and barely
+  catch light fail.
+
 **Method:** scripted: the scrim. Judge: the still at 960 px plus crops of two
 panels and one icon. Owner: boards.
 
@@ -683,3 +714,4 @@ made under.
 |---|---|---|
 | 1 | 2026-10-30 | First version: the 14 qualities of section 4 of `report.md` as pass and fail criteria, with §21.8's, §21.1's, §21.3's, §20.8's and §21.10's rules folded in; anchors provisional until O3 |
 | 2 | 2026-11-03 | Calibration, step 5 (P0-AD-calibrate-2): every judged quality missed its target on the development third with both models (`calibration.md`, "Results"). Each judged quality (1, 2, 3, 6, 8, 9, 13, 14) gains "Rulings from calibration", here and in its prompt, written from AD's O3 critiques of the training and development thirds against the judges' reasons: the high-contrast form is the material, not a web overlay (1, 14); "over art" excludes a card's own gradient, and headline figures need the full treatment on a plate too (2); what counts as an icon of value (3); naming the primary and counting big panels as rivals (6); gold as material versus gold as the action fill (8); one physically based portrait fails the screen (9); every screen needs a lit ground (13). No pass or fail criterion of version 1 is removed |
+| 3 | 2026-11-03 | Calibration, step 5, second and last revision (P0-AD-calibrate-2): on the development third with Opus 5.5, version 2 met the target on 1, 2, 8 and 14 and missed on 3, 6, 9 and 13 (`calibration.md`, "Results"). Qualities 6, 9 and 13 gain a version 3 ruling block: leading in grayscale is size, place and weight, and information panels compete only when larger and heavier (6); each portrait is judged on its own, not against an anchor showing the same flaw, with its body surface named (9); kit art is judged on its own light, and a top-to-bottom tint is not a lit ground (13). Quality 3 is not revised: its misses are the small law and currency glyphs, which the judges read as flat, as AD does on review; that is a question for the golden set's next version, not the rubric. No criterion of version 2 is removed |

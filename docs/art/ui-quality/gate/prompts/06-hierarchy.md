@@ -1,6 +1,6 @@
 # Judge prompt: 6. Hierarchy
 
-Rubric version 2 (`../rubric.md`, quality 6). The launcher fills the
+Rubric version 3 (`../rubric.md`, quality 6). The launcher fills the
 `{{...}}` fields and sends everything below the line as one isolated call. The
 call is made three times, with the pictures in a new shuffled order each time.
 
@@ -86,6 +86,17 @@ problems; you are asked one comparison.
   badge) fall in behind it and do not compete.
 - No primary (settings): the title must be the first thing the eye lands on in
   grayscale. A gold tab or gold value button louder than the title fails.
+
+**Rulings from calibration (version 3):**
+- Leading in grayscale is size, place and weight together, not lightness
+  alone. The full-width control at the foot of the screen that carries the
+  primary's label leads unless something else is clearly larger and heavier; a
+  mid-value gold primary beside lighter cream cards still leads by its size
+  and saturation.
+- A panel that holds information and no action (an ability card, a stat card,
+  a reward card) competes only when it is both larger and heavier than the
+  primary; in high contrast the cream cards are light by the mode's design and
+  do not compete for that alone.
 
 **How to decide.**
 1. Find the region of each picture that this quality is about (above).

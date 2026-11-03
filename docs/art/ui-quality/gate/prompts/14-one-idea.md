@@ -1,6 +1,6 @@
 # Judge prompt: 14. One art-direction idea
 
-Rubric version 2 (`../rubric.md`, quality 14). The launcher fills the
+Rubric version 3 (`../rubric.md`, quality 14). The launcher fills the
 `{{...}}` fields and sends everything below the line as one isolated call. The
 call is made three times, with the pictures in a new shuffled order each time.
 

@@ -1,6 +1,6 @@
 # Judge prompt: 9. Character presence
 
-Rubric version 2 (`../rubric.md`, quality 9). The launcher fills the
+Rubric version 3 (`../rubric.md`, quality 9). The launcher fills the
 `{{...}}` fields and sends everything below the line as one isolated call. The
 call is made three times, with the pictures in a new shuffled order each time.
 
@@ -80,6 +80,17 @@ problems; you are asked one comparison.
 - Soft fur and smooth soft shading on the game's own rendered models are the
   toon look; outlines may be thin on large renders. Fail on photographic
   texture or specular reflections, not on smoothness.
+
+**Rulings from calibration (version 3):**
+- Judge each portrait on its own, not against the anchors: a PASS ANCHOR that
+  shows the same character with the same flaw does not make the flaw pass. The
+  fails-on rules hold for every portrait whatever the anchors show.
+- Name each portrait's body surface in the reason. A rock, moss or stone body
+  drawn with fine photographic grain, or armour with mirror-like reflections,
+  where the other portraits have flat toon fills, is a physically based
+  material: fail.
+- At the portrait's own size, a figure that does not read as a dark shape
+  against its ring (it blends into a purple or grey wash) is a smudge: fail.
 
 **How to decide.**
 1. Find the region of each picture that this quality is about (above).
