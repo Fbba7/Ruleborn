@@ -1,7 +1,7 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-03T11:45:00Z",
-  "expected_next_update_by": "2026-11-03T13:00:00Z",
+  "updated_at": "2026-11-03T23:43:00Z",
+  "expected_next_update_by": null,
   "cycle": 23,
   "merging": null,
   "last_merged": {
@@ -9,5 +9,5 @@
     "sha": "eec44b50"
   },
   "alerts": [],
-  "next_step": "Watch AD (session_01SNkKxrEMe4td5Bk4zmN1Ed) on P0-AD-calibrate-2 on claude/ui-ad. When status/AD.json shows it ready, gate it (owners.py diff, run_checks PASS), merge to main and republish the audit and roadmap pages. Start no other session while usage reads allowed_warning."
+  "next_step": "Stopped by the owner on 3 November 2026 (CLAUDE.md). Run no cycle and start no session or scheduled task until the owner restarts the program in their own chat. Never use Fable 5.1."
 }
