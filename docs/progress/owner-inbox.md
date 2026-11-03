@@ -4,6 +4,13 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-03 06:10Z: watchdog alert, lead past its update time
+
+- **What was stale:** `status/lead.json` expected an update by 2026-11-03T02:56:00Z. Its last update was at 01:41Z (cycle 19, `28c8bfea`), and nothing has been committed since. The launcher reports SUCCEEDED for its last run (05:38Z), yet no lead cycle has run since 01:41Z. The launcher session may be skipping or failing to create sessions; worth checking.
+- **Latest recorded lead:** `session_01SNkKxpMi6cZ8M6M33w8ntT` (cycle 19) is completed, not working.
+- **What the watchdog did:** started `session_01SNkKxo6TYzdUtAL4USoPyt` ("Ruleborn lead cycle 2026-11-03 06:11 UTC (watchdog)").
+- **Note:** the 02:08Z and 04:08Z watchdog firings were delivered late, at 06:10Z, which is why this alert comes about 3 hours after the lead went stale.
+
 ## 2026-10-31 20:55Z: program paused by the owner
 
 - **What:** the owner asked to stop the program cleanly. The launcher
