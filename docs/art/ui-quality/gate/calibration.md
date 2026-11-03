@@ -93,8 +93,10 @@ label away. The plans are committed in `calibration/runs/<run>/plan.jsonl`.
 |---|---|---:|---:|---:|---|
 | `dev-fable` | Fable 5.1 | 2 | 122 | 366 | run by the lead on rubric version 1 (78 extra calls for splits); scored below |
 | `dev-opus` | Opus 5.5 | 2 | 122 | 366 | run by the lead on rubric version 1 (48 extra calls for splits); scored below |
-| `dev-opus-v2` | Opus 5.5 | 2 | 122 | 366 | rubric version 2 (step 5's re-run); running |
-| `held-opus` | Opus 5.5 | 3 | 123 | 369 | planned once step 5 settles the rubric version |
+| `dev-opus-v2` | Opus 5.5 | 2 | 122 | 366 | rubric version 2 (step 5's first re-run), run in a launcher session (72 extra calls); scored below |
+| `dev-opus-v3` | Opus 5.5 | 2 | 122 | 366 | rubric version 3 (step 5's second and last re-run); running |
+| `dev-fable-v3` | Fable 5.1 | 2 | 122 | 366 | rubric version 3 (step 5's other-model try); running |
+| `held-opus` | Opus 5.5 | 3 | 123 | 369 | rubric version 3, the held-out run, measured once; running |
 
 What the launcher does for each run (request AD-R6):
 
@@ -188,6 +190,30 @@ rubric version 2's rulings answer:
   (6), and gold fills on non-actions passed (8);
 - one physically based portrait among game models passed (9), and faint stars
   on a dark backdrop passed as a lit scene (13).
+
+### Development third, rubric version 2 (3 November 2026)
+
+`dev-opus-v2`, run in a launcher session and pushed at b5141ba9
+(`calibration/runs/dev-opus-v2/results.jsonl`, 438 calls with the splits'
+samples 4-6), scored by AD with `calibrate.py score`. No call went to
+exceptions.
+
+| Quality | Opus 5.5: fails caught | False blocks | To exceptions | Target |
+|---|---|---|---|---|
+| 1. Layered materials | 8 of 9 | 2 of 11 | 0 of 20 | met |
+| 2. Display type | 7 of 7 | 1 of 9 | 0 of 16 | met |
+| 3. Painted or rendered icons | 5 of 6 | 7 of 9 | 0 of 15 | missed |
+| 6. Hierarchy | 7 of 7 | 2 of 4 | 0 of 11 | missed |
+| 8. Colour roles and value | 6 of 6 | 2 of 14 | 0 of 20 | met |
+| 9. Character presence | 4 of 7 | 0 of 2 | 0 of 9 | missed |
+| 13. Light behind UI | 3 of 4 | 1 of 16 | 0 of 20 | missed |
+| 14. One art-direction idea | 2 of 2 | 1 of 9 | 0 of 11 | met |
+
+Rubric version 3 answers the misses on 6, 9 and 13 (`rubric.md`,
+"Versions"). Quality 3 is not revised: its false blocks are law and
+currency glyphs that the golden labels pass and that read as flat both to
+the judge and to AD on review, so the question is the golden set's labels,
+not the rubric's wording.
 
 ### Held-out third
 
