@@ -19,16 +19,29 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   is K1's, so the lead has put it on P0-K1-kitskin's `done_when`. Default
   until then: the board keeps its own list in `art/ui/board/build_tokens.mjs`.
 
-- **K1-R9** (from the overseer, 4 November 2026, for the lead to file):
-  the owner closed C74 and C75 as A/A (`docs/decisions/owner-decisions.md`).
-  A small K1 task, about 0.5h, documents only: in `kit-spec.md` section 2.1,
-  the success row's words on dark become #8FF0A8 at every size (O2.md's
-  interim ruling 1 and AIA-R8's narrowing fall away; #3FBF7F stays fills,
-  rings and marks) and the backdrop row loses its "pending owner decision"
-  mark; a dated line in section 9; the `from` notes of `success_text_on_night`
-  and `night_top` in `client/ui/tokens.json` name C74 and C75 instead of a
-  pending decision. No value changes. Not urgent: phase 0's close comes first.
-  Filed by the lead in cycle 25 (4 November 2026) as P0-K1-kitspec-3.
+- **AIA-R9** (from AIA, 4 November 2026): `KitSkin.piece` looks up the
+  tertiary's `button_tertiary__parchment__<state>` on parchment grounds.
+  Folded into P1-K1-atlas-draw's `done_when` (cycle 36). Default until it
+  merges: screens put no tertiary button on parchment.
+- **AIA-R10** (from AIA): move `art/ui/palette.json`'s `kit` colours into
+  `client/ui/tokens.json`. Not in a K1 task yet (tokens.json is outside
+  P1-K1-atlas-draw's files); the default stands: they stay in
+  `build_kit.py`'s KIT table and palette.json's `kit` section, each with
+  its source.
+- **AIA-R11** (from AIA): the bake writes `art/ui/palette.json` from
+  tokens.json. Already in P1-K1-atlas-draw's title; until it merges,
+  `build_kit.py` keeps writing it, rerun after any tokens.json change.
+- **AIA-R12** (from AIA): the kit outgrows one 2048 atlas. Folded into
+  P1-K1-atlas-draw's `done_when`: the bake gains atlas pages (`kit.webp`,
+  `kit_2.webp`, ...) before AIA's batch 1b (P1-AIA-kit-2).
+- **AIA2-R1** (from AIA-2, blocking the toon route's merge): bake.js
+  refuses kind "scene", so guard.sh's rebake fails on the icon families.
+  For P1-AIA2-toon-route's merge the lead applies AIA-2's default (cycle
+  36): merged with `bake.js --check` and check_all green, the two icon
+  families rebaked by `node art/ui/icons/studio/bake_icons.js` and compared
+  file by file; `px_per_point` stays null for scene families. Wiring kind
+  "scene" into bake.js (by calling that script) is folded into
+  P1-K1-atlas-draw's `done_when`.
 
 ### Lead
 
@@ -48,6 +61,11 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   tier and phase 0's use (one weekly bar for its 43 hours), phases 1 to 3
   need about four more bars, so it does not fit and D13's answer (c)
   applies. Phase 1 starts after the 9 November 17:00Z reset.
+
+## Done in cycle 36 (4 November 2026, by the lead)
+
+- **K1-R9** (from the overseer): filed in cycle 25 as P0-K1-kitspec-3;
+  K1 did it at `4b4a72d1` (ready at `9a6565d7`), merged in cycle 36.
 
 ## Answered in cycle 15 (31 October 2026, by the lead)
 

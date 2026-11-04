@@ -748,12 +748,12 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "9a6565d7",
+      "merged_sha": "9b2bde70"
     },
     {
       "id": "P1-K1-atlas-draw",
@@ -776,6 +776,9 @@
       ],
       "done_when": [
         "client/tests/ui_kit_tests.gd draws a switched-on fixture skin from its atlas, normal and high contrast, and falls back on a missing piece",
+        "AIA-R9: on parchment grounds KitSkin.piece looks up button_tertiary__parchment__<state>",
+        "AIA-R12: the bake writes atlas pages (kit.webp, kit_2.webp, ... and their _hc twins) when a family outgrows one atlas",
+        "AIA2-R1: bake.js bakes kind \"scene\" families by calling node art/ui/icons/studio/bake_icons.js, so guard.sh's rebake covers icons_48 and icons_256 byte for byte; px_per_point null for scene families",
         "node tools/ui_bake/bake.js --check",
         "bash tools/ui_bake/guard.sh, every recorded figure unchanged with every switch off",
         "bash tools/check_all.sh"
@@ -981,8 +984,13 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-11-04T12:50:00Z",
+        "lease_until": "2026-11-04T15:50:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
@@ -1196,12 +1204,15 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "02e7ef0f",
+      "merged_sha": "9b2bde70",
+      "exceptions": [
+        "client/tests/shots/icon_portraits.gd.uid"
+      ]
     },
     {
       "id": "P1-AIA2-icons-1a",
