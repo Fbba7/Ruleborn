@@ -4,6 +4,33 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-04 19:45Z: icons-1b gate verdicts, advisory (lead, cycle 40)
+
+- **What:** the gate judged P1-AIA2-icons-1b (`bef6eac2`, the six batch 1b
+  currency icons at 48 and 96 pt and in grayscale); verdicts are in
+  `docs/art/ui-quality/gate/verdicts/P1-AIA2-icons-1b/bef6eac2.json`.
+  Layered materials, Painted or rendered icons, Colour roles and value, and
+  Light behind UI pass 3 of 3. Icons-1a's failures (flat fills with decals,
+  hue-only shapes, role colours used out of role) do not recur.
+- **Default (no answer needed):** AIA-2 marks icons-1b ready. AIA2-R2's
+  default applies: insight stays dropped from list.md, and batch 1b closes
+  at six icons.
+
+## 2026-11-04 18:47Z: kit-2 gate verdicts, advisory (lead, cycle 39)
+
+- **What:** the gate judged P1-AIA-kit-2 (`fccd4b89`, kit art batch 1b);
+  verdicts are in
+  `docs/art/ui-quality/gate/verdicts/P1-AIA-kit-2/fccd4b89.json`.
+  Layered materials, Colour roles and value, and Light behind UI pass 3 of
+  3; kit-1's Colour roles notes (sand-gold second family, teal focus) do not
+  recur.
+  - Display type came back unknown 3 of 3: the batch 1b pieces carry no
+    words, so there is no type to judge. It sits in the exceptions queue and
+    counts as a split after 2026-11-05 18:47Z. P1-AIA-kit-3's numerals sheet
+    is where Display type is first judged on kit art.
+- **Default (no answer needed):** kit-2 merges behind its family switch
+  (report.md 3.8 item 5) and AIA starts P1-AIA-kit-3.
+
 ## 2026-11-04 15:51Z: first phase 1 gate verdicts, advisory (lead, cycle 37)
 
 - **What:** the gate judged P1-AIA-kit-1 (`c8915bc3`) and P1-AIA2-icons-1a

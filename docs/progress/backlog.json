@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-04T13:05:00Z",
+  "updated_at": "2026-11-04T21:10:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-09T21:00:00Z",
   "lease_hours": 3,
@@ -823,12 +823,20 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-04T17:50:00Z",
+        "lease_until": "2026-11-04T23:00:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "c3a8b158",
+      "merged_sha": null,
+      "exceptions": [
+        "client/tests/shots/ui_kit_catalogue.gd.uid"
+      ]
     },
     {
       "id": "P1-K1-words",
@@ -1037,17 +1045,16 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "working",
-      "claim": {
-        "agent": "AIA",
-        "branch": "claude/ui-artist",
-        "claimed_at": "2026-11-04T16:25:00Z",
-        "lease_until": "2026-11-04T19:25:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "fccd4b89",
+      "merged_sha": "661f4f6a",
+      "exceptions": [
+        "art/ui/kit_build/**",
+        "art/ui/kit_next/**"
+      ]
     },
     {
       "id": "P1-AIA-kit-3",
@@ -1085,12 +1092,22 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "ready",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-11-04T19:30:00Z",
+        "lease_until": "2026-11-04T22:30:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "3a04e828",
+      "merged_sha": null,
+      "exceptions": [
+        "art/ui/kit_build/**",
+        "art/ui/palette.json",
+        "client/ui/art/kit_2*"
+      ]
     },
     {
       "id": "P1-AIA-kit-4",
@@ -1303,11 +1320,16 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "resync",
+      "claim": {
+        "agent": "AIA-2",
+        "branch": "claude/ui-artist-icons",
+        "claimed_at": "2026-11-04T18:40:00Z",
+        "lease_until": "2026-11-04T21:40:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "bef6eac2",
       "merged_sha": null
     },
     {

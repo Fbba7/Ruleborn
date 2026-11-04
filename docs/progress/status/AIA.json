@@ -4,16 +4,16 @@
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P1-AIA-kit-1",
+  "task_id": "P1-AIA-kit-2",
   "task_state": "working",
-  "claimed_at": "2026-11-04T12:50:00Z",
-  "lease_until": "2026-11-04T15:50:00Z",
-  "updated_at": "2026-11-04T13:10:00Z",
-  "expected_next_update_by": "2026-11-04T13:55:00Z",
+  "claimed_at": "2026-11-04T16:30:00Z",
+  "lease_until": "2026-11-04T19:30:00Z",
+  "updated_at": "2026-11-04T16:55:47Z",
+  "expected_next_update_by": "2026-11-04T17:35:47Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "294a4595",
-    "next_step": "P1-AIA-kit-1: checks, pre-check, handoff"
+    "last_green_sha": "464e4fcc",
+    "next_step": "P1-AIA-kit-2: check_all and pre-check, then gate request"
   },
   "precheck": null,
   "gate_request": null,
@@ -79,8 +79,40 @@
       "due": "2026-11-05T13:10:00Z",
       "default": "the bake gains atlas pages (kit.webp, kit_2.webp, ...) before batch 1b; AIA keeps the piece sizes",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R13",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Batch 1b fills the kit atlas: 51 pieces in 2048 x ~1900, and disc_school's 6 pieces do not fit beside them. When the bake gains atlas pages (AIA-R12), bake art/ui/kit_next/disc_school/ into the kit; KitSkin draws disc_school as its tinted `box` (vertex-coloured per school) under the untinted `frame` (ink, gloss, outline), both at the same rect",
+      "files": [
+        "tools/ui_bake/bake.js",
+        "client/ui/kit_skin.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T16:45:00Z",
+      "due": "2026-11-05T16:45:00Z",
+      "default": "disc_school stays in art/ui/kit_next/ (sources written, proofed from SVG, not baked) and draws in code until the atlas has pages; no piece is shrunk",
+      "escalate_to": "lead",
+      "cc": [
+        "lead"
+      ]
+    },
+    {
+      "id": "AIA-R14",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Batch 1b adds overlay skins KitSkin.SKINS lacks: `selected` (selected__rim, drawn over a card for card_selected), `spinner` (spinner__ring, rotated in code), and pieces `locked__lock`, `badge__dot`, `bar_track__tick`, `disc__level_disc`, `tag__tag_violet`, `tag__tag_warn`, `bar_fill__alarm`; bar_fill__box is a neutral tinted per use (data-tint), so its gold variant is dropped; tag_success falls back to tag__box",
+      "files": [
+        "client/ui/kit_skin.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T16:45:00Z",
+      "due": "2026-11-05T16:45:00Z",
+      "default": "the pieces sit in the atlas unused; every batch 1b skin stays off in kit_families.json and draws in code",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "P1-AIA-kit-1: checks, pre-check, handoff"
+  "next_step": "P1-AIA-kit-2: check_all and pre-check, then gate request"
 }

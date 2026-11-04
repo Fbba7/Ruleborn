@@ -1,0 +1,70 @@
+[
+ {
+  "task_id": "P1-AIA-kit-2",
+  "sha": "fccd4b89",
+  "item": "kit atlas contact sheet, batch 1b, at phone size (tools/ui_gate/sheet.py)",
+  "quality": "Layered materials",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Discs, pills and tags carry all four layers (top-lit body gradient, gloss band on the top third, dark hue-matched rim, solid darker lip); panel_glass has a gold bevelled frame around a dark inner well; nothing bands at 60 pt; the high-contrast twins are opaque with a light ~3 pt outline and a drop (ruling v2). Weaker points: 'disc box disabled' is a near-flat fill (a disabled state, not a primary control), and panel_glass's gold frame is flatter than the anchor's bevel.",
+  "advisory": true,
+  "at": "2026-11-04T18:47:00Z"
+ },
+ {
+  "task_id": "P1-AIA-kit-2",
+  "sha": "fccd4b89",
+  "item": "kit atlas contact sheet, batch 1b, at phone size (tools/ui_gate/sheet.py)",
+  "quality": "Display type",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "unknown",
+   "unknown",
+   "unknown"
+  ],
+  "result": "unknown",
+  "critique": "Not applicable to this item: the batch 1b pieces carry no headers, labels or numbers on art (the only words are the contact sheet's own captions), so there is nothing to compare with the anchors. Sent to the exceptions queue (owner inbox); if unanswered by 2026-11-05T18:47Z it is treated as a split. Display type is judged when words sit on kit art (screens; P1-AIA-kit-3's numerals sheet).",
+  "advisory": true,
+  "at": "2026-11-04T18:47:00Z"
+ },
+ {
+  "task_id": "P1-AIA-kit-2",
+  "sha": "fccd4b89",
+  "item": "kit atlas contact sheet, batch 1b, at phone size (tools/ui_gate/sheet.py)",
+  "quality": "Colour roles and value",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Each hue keeps one role: red for alarm and badge (with a notch or stripe), gold only as the selected-rim material, orange with hatching for warn, teal with hatching and a lock for locked, violet for the base controls; every state also has a shape, so it survives grayscale and high contrast, and the controls stand off their ground in value. Kit-1's sand-gold and teal-focus notes do not recur here. Close calls: the bronze-ish panel_glass rim reads as frame material, and the locked teal sits near a cyan school hue.",
+  "advisory": true,
+  "at": "2026-11-04T18:47:00Z"
+ },
+ {
+  "task_id": "P1-AIA-kit-2",
+  "sha": "fccd4b89",
+  "item": "kit atlas contact sheet, batch 1b, at phone size (tools/ui_gate/sheet.py)",
+  "quality": "Light behind UI",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Every lit piece shares one top or top-left light: a gloss or specular on top, a darker lip and drop below, and the well and bar track shaded as true insets; none is lit from below or the side. High-contrast pieces are flat by design.",
+  "advisory": true,
+  "at": "2026-11-04T18:47:00Z"
+ }
+]
