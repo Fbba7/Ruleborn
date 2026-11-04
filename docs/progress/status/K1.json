@@ -3,26 +3,21 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P1-K1-atlas-draw",
-  "task_state": "ready",
-  "claimed_at": "2026-11-04T14:45:00Z",
-  "lease_until": "2026-11-04T17:45:00Z",
-  "updated_at": "2026-11-04T16:25:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P1-K1-catalogue",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-04T17:50:00Z",
+  "lease_until": "2026-11-04T20:50:00Z",
+  "updated_at": "2026-11-04T17:50:00Z",
+  "expected_next_update_by": "2026-11-04T18:35:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "2ae9c82c",
-    "next_step": "P1-K1-atlas-draw ready at 2ae9c82c (pre-check PASS, All checks passed, 16:24:56Z); waiting for the lead"
+    "next_step": "P1-K1-catalogue: claimed; build the catalogue shot and its coverage test"
   },
-  "precheck": {
-    "sha": "2ae9c82c53525fe4b1cf9f8dcfc247e300f31dab",
-    "exit": 0,
-    "finished_at": "2026-11-04T16:24:56Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "2ae9c82c53525fe4b1cf9f8dcfc247e300f31dab",
+  "ready_sha": null,
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [
     "M2"
