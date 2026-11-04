@@ -8,14 +8,17 @@
   "task_state": "working",
   "claimed_at": "2026-11-04T12:47:10Z",
   "lease_until": "2026-11-04T15:47:10Z",
-  "updated_at": "2026-11-04T13:02:00Z",
-  "expected_next_update_by": "2026-11-04T13:47:00Z",
+  "updated_at": "2026-11-04T13:32:00Z",
+  "expected_next_update_by": "2026-11-04T14:17:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
     "next_step": "pre-check 02e7ef0f running; on PASS record it and mark P1-AIA2-toon-route ready"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "02e7ef0f00ea0444842a4d0158f50e271a97c952",
+    "state": "RUNNING"
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-09T21:00:00Z",
