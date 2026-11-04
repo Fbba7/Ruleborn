@@ -1,6 +1,6 @@
 # Judge prompt: 13. Light behind UI
 
-Rubric version 1 (`../rubric.md`, quality 13). The launcher fills the
+Rubric version 3 (`../rubric.md`, quality 13). The launcher fills the
 `{{...}}` fields and sends everything below the line as one isolated call. The
 call is made three times, with the pictures in a new shuffled order each time.
 
@@ -64,6 +64,25 @@ problems; you are asked one comparison.
   judge only the scene, the scrim and the sunburst.
 - Light on the world (warm on the islands, cool beneath) is part of the
   scene; it is not a second light direction for the panels.
+
+**Rulings from calibration (version 2):**
+- Every screen needs a lit ground, not only home: a lit scene, a gradient lit
+  from one place, or a vignette that falls off towards the edges. Panels on a
+  flat dark backdrop that barely catch the light fail, even if their faint
+  highlights sit on top.
+- A few faint stars or a uniform tint on a dark backdrop is not a lit scene;
+  look for a visible light source or glow and a falloff.
+- In high contrast the ground may be plain: judge only the scrim and any
+  sunburst there.
+
+**Rulings from calibration (version 3):**
+- Kit art and single items are judged on their own light (a top light, a lip,
+  a drop), not on the ground they were shot on; the lit-ground ruling is for
+  full screens.
+- A backdrop that only fades from a little lighter at the top to darker below
+  is a tint, not a lit scene: a lit ground shows a source, a glow or a
+  vignette that frames the content, and panels that sit on a tint and barely
+  catch light fail.
 
 **How to decide.**
 1. Find the region of each picture that this quality is about (above).

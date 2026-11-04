@@ -4,6 +4,31 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-04 04:40Z: the usage projection does not fit (lead, cycle 27)
+
+- **What:** phase 0's last exit criterion, the usage projection, is made:
+  [`usage-projection.md`](usage-projection.md). The seven-day bar reads
+  `allowed_warning` (reset 9 November 17:00Z); phase 0 used about one
+  weekly bar, and phases 1 to 3 need about four more. D13's answer (c)
+  applies: three builders at once, icon batches 3 and 4 deferred.
+- **Also:** the wave's `stop_at` (6 November 21:00Z) falls before the
+  reset, so phase 1 cannot start inside it while the bar is in warning.
+- **Default (no answer needed):** phase 0 is closed; the lead starts no new
+  building session until the reset, then seeds phase 1 and sets a new
+  `stop_at` for it.
+
+## 2026-11-04 01:58Z: C74, C75 and M1 closed
+
+- **What:** the owner asked that everything waiting on them be solved.
+- **C74 and C75:** closed as A/A, the recommendations, under the
+  2026-10-29 rule; recorded in [`owner-decisions.md`](../decisions/owner-decisions.md#ui-kit-colours-c74-c75-closed-2026-11-04).
+  The follow-up is K1-R9 in [`requests.md`](requests.md).
+- **M1:** AIA acknowledged it at 01:34Z (`fd2620f2` on `claude/ui-artist`);
+  the lead copies the ack at its next cycle.
+- **Left for the owner, no deadline:** §21.8's sentence "success words keep
+  #3FBF7F" now differs from C74's answer; only the owner edits the design
+  document.
+
 ## 2026-11-03 06:10Z: watchdog alert, lead past its update time
 
 - **What was stale:** `status/lead.json` expected an update by 2026-11-03T02:56:00Z. Its last update was at 01:41Z (cycle 19, `28c8bfea`), and nothing has been committed since. The launcher reports SUCCEEDED for its last run (05:38Z), yet no lead cycle has run since 01:41Z. The launcher session may be skipping or failing to create sessions; worth checking.
