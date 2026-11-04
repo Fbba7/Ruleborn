@@ -1258,12 +1258,12 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "cd30ce21",
+      "merged_sha": "8ce107c9"
     },
     {
       "id": "P1-AIA2-icons-1b",
