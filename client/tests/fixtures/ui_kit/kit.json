@@ -1,0 +1,15 @@
+{
+  "atlas": {"height":256,"high_contrast":"kit_hc.webp","normal":"kit.webp","width":256},
+  "family": "kit",
+  "format": 1,
+  "pieces": {
+    "button_primary__box__disabled": {"h":60,"slice":{"b":18,"l":24,"r":24,"t":18},"tint":false,"w":120,"x":100,"y":2},
+    "button_primary__box__normal": {"h":60,"slice":{"b":18,"l":24,"r":24,"t":18},"tint":false,"w":120,"x":2,"y":100},
+    "button_primary__box__pressed": {"h":60,"slice":{"b":18,"l":24,"r":24,"t":18},"tint":false,"w":120,"x":124,"y":100},
+    "button_tertiary__parchment__normal": {"h":60,"slice":{"b":18,"l":24,"r":24,"t":18},"tint":false,"w":120,"x":2,"y":162},
+    "button_tertiary__parchment__pressed": {"h":60,"slice":{"b":18,"l":24,"r":24,"t":18},"tint":false,"w":120,"x":124,"y":162},
+    "disc__box__normal": {"h":96,"slice":null,"tint":true,"w":96,"x":2,"y":2}
+  },
+  "px_per_point": 6,
+  "sources_hash": "sha256:57961af6f1c59c12dab744831703d59bbb42e8e2d1552383ad53ba88518e1939"
+}

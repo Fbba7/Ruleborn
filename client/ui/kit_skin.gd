@@ -85,6 +85,9 @@ static var _on: Dictionary = {}
 static var _kit: Dictionary = {}
 static var _atlas: Texture2D = null
 static var _atlas_hc: Texture2D = null
+## Every page of the atlas from the second on (kit-spec.md section 6.6's
+## `atlas.pages`), as [normal, high contrast] pairs.
+static var _pages: Array = []
 static var _read := false
 
 
@@ -150,28 +153,58 @@ static func is_on(name: String) -> bool:
 ## The atlas piece for `material_name` in `state` ("normal", "pressed",
 ## "disabled" or "locked"), when its skin is switched on: the material's own
 ## shape first (`<skin>__<material>__<state>`), then the skin's
-## (`<skin>__box__<state>`). Empty when the skin is off, and when the atlas
-## lacks the piece, which is logged: the code-drawn box draws instead.
-static func piece(material_name: String, state := "normal") -> Dictionary:
+## (`<skin>__box__<state>`). On a parchment `ground` the skin's parchment
+## face comes first (`<skin>__parchment__<state>`, kit-spec.md section 4.1);
+## the tertiary has no other face there, its dark-ground face never drawn on
+## parchment. Empty when the skin is off, and when the atlas lacks the piece,
+## which is logged: the code-drawn box draws instead.
+static func piece(material_name: String, state := "normal", ground := "") -> Dictionary:
 	var k := skin(material_name)
 	if k == "" or not is_on(k):
 		return {}
 	var pieces: Dictionary = _kit.get("pieces", {})
-	for shape: String in [material_name, "box"]:
+	var shapes: Array = [material_name, "box"]
+	if ground == "parchment":
+		shapes = ["parchment"] if k == "button_tertiary" else ["parchment", material_name, "box"]
+	for shape: String in shapes:
 		var key := "%s__%s__%s" % [k, shape, state]
-		if pieces.has(key) and atlas() != null:
+		if pieces.has(key) and texture(pieces[key]) != null:
 			return pieces[key]
-	var lost := "%s__%s__%s" % [k, material_name, state]
+	var lost := "%s__%s__%s" % [k, shapes[0] if ground == "parchment" else material_name, state]
 	if lost not in missing:
 		missing.append(lost)
 		push_warning("kit: no piece %s in %s; drawn by the code-drawn box" % [lost, MANIFEST])
 	return {}
 
 
+## The ground a control at `node` sits on: "parchment" when the nearest
+## surface around it (an ancestor dressed by the kit's box) is drawn in the
+## parchment skin, else "".
+static func ground_of(node: Node) -> String:
+	var n := node.get_parent() if node != null else null
+	while n != null:
+		if n.has_meta("rb_material"):
+			return "parchment" if skin(str(n.get_meta("rb_material"))) == "panel_parchment" else ""
+		n = n.get_parent()
+	return ""
+
+
 ## The atlas pieces are cut from, in the current contrast mode.
 static func atlas() -> Texture2D:
 	_load()
 	return _atlas_hc if Tokens.high_contrast and _atlas_hc != null else _atlas
+
+
+## The page `p` (a piece of the manifest) is cut from, in the current
+## contrast mode: page 1 is `atlas()`, a later one its own pair of files.
+static func texture(p: Dictionary) -> Texture2D:
+	var page := int(p.get("page", 1))
+	if page <= 1:
+		return atlas()
+	if page - 2 >= _pages.size():
+		return null
+	var pair: Array = _pages[page - 2]
+	return pair[1] if Tokens.high_contrast and pair[1] != null else pair[0]
 
 
 ## Pixels on screen per pixel of a piece (kit-spec.md section 6.6).
@@ -187,12 +220,29 @@ static func switch(name: String, on: bool) -> void:
 	_on[name] = on
 
 
-## Uses `manifest` and its atlases instead of the files (the tests' kit).
-static func use(manifest: Dictionary, normal: Texture2D, high_contrast: Texture2D) -> void:
+## Uses `manifest` and its atlases instead of the files (the tests' kit);
+## `pages` holds the pages from the second on, as [normal, high contrast].
+static func use(manifest: Dictionary, normal: Texture2D, high_contrast: Texture2D, pages := []) -> void:
 	_load()
 	_kit = manifest
 	_atlas = normal
 	_atlas_hc = high_contrast
+	_pages = pages
+
+
+## Uses the manifest at `path` and its atlas pages beside it, read straight
+## from their files (a baked fixture, which the project does not import).
+## False when the manifest is not a JSON object.
+static func use_files(path: String) -> bool:
+	_load()
+	var kit: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if not kit is Dictionary:
+		return false
+	var pairs := _page_files(kit, path.get_base_dir(), func(file: String) -> Texture2D:
+		var img: Image = Image.load_from_file(file) if FileAccess.file_exists(file) else null
+		return ImageTexture.create_from_image(img) if img != null else null)
+	use(kit, pairs[0][0], pairs[0][1], pairs.slice(1))
+	return true
 
 
 ## Reads the files again: every switch as shipped, no piece logged.
@@ -202,6 +252,7 @@ static func reset() -> void:
 	_kit = {}
 	_atlas = null
 	_atlas_hc = null
+	_pages = []
 	missing.clear()
 	_load()
 
@@ -220,12 +271,24 @@ static func _load() -> void:
 		push_warning("kit: %s is not a JSON object; every skin drawn in code" % MANIFEST)
 		return
 	_kit = kit
-	var files: Dictionary = _kit.get("atlas", {})
-	var dir := MANIFEST.get_base_dir()
-	for which: String in ["normal", "high_contrast"]:
-		var path := "%s/%s" % [dir, files.get(which, "")]
-		var tex: Texture2D = load(path) if ResourceLoader.exists(path) else null
-		if which == "normal":
-			_atlas = tex
-		else:
-			_atlas_hc = tex
+	var pairs := _page_files(_kit, MANIFEST.get_base_dir(), func(file: String) -> Texture2D:
+		return load(file) if ResourceLoader.exists(file) else null)
+	_atlas = pairs[0][0]
+	_atlas_hc = pairs[0][1]
+	_pages = pairs.slice(1)
+
+
+## Every page of manifest `kit` in `dir`, as [normal, high contrast]
+## textures read by `read`: `atlas.pages` when the bake wrote it (more than
+## one page), else the one page `atlas` names.
+static func _page_files(kit: Dictionary, dir: String, read: Callable) -> Array:
+	var files: Dictionary = kit.get("atlas", {})
+	var pages: Array = files.get("pages", [files])
+	var out := []
+	for page: Variant in pages:
+		var names: Dictionary = page if page is Dictionary else {}
+		var pair := []
+		for which: String in ["normal", "high_contrast"]:
+			pair.append(read.call("%s/%s" % [dir, names.get(which, "")]))
+		out.append(pair)
+	return out
