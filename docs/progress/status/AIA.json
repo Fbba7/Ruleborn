@@ -3,24 +3,31 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-AIA-kit-1",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-04T12:50:00Z",
   "lease_until": "2026-11-04T15:50:00Z",
-  "updated_at": "2026-11-04T13:19:23Z",
+  "updated_at": "2026-11-04T13:52:07Z",
   "expected_next_update_by": "2026-11-04T13:55:00Z",
-  "long_run": {
-    "log": "/tmp/check-c8915bc36abf8184588e1321b44d8b5f245093fb.log",
-    "expected_end": "2026-11-04T14:44:23Z"
-  },
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "294a4595",
-    "next_step": "P1-AIA-kit-1: pre-check at c8915bc3 running; then record, gate_request, ready"
+    "last_green_sha": "c8915bc3",
+    "next_step": "none; wait for the lead (gate on P1-AIA-kit-1)"
   },
-  "precheck": null,
-  "gate_request": null,
-  "ready_sha": null,
+  "precheck": {
+    "sha": "c8915bc36abf8184588e1321b44d8b5f245093fb",
+    "exit": 0,
+    "finished_at": "2026-11-04T13:51:41Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "c8915bc36abf8184588e1321b44d8b5f245093fb",
+    "items": [
+      "kit atlas contact sheet, batch 1a, at phone size (tools/ui_gate/sheet.py)"
+    ]
+  },
+  "ready_sha": "c8915bc36abf8184588e1321b44d8b5f245093fb",
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [
     "M1"
@@ -85,5 +92,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P1-AIA-kit-1: pre-check at c8915bc3 running; then record, gate_request, ready"
+  "next_step": "none; wait for the lead (gate on P1-AIA-kit-1)"
 }

@@ -1,7 +1,7 @@
 # AIA AI UI artist: progress
 
-- Status: Green: P1-AIA-kit-1 built; pre-check to follow, then ready.
-- Progress: 5 tasks merged, P0-AIA-keyframes-3 and P0-AIA-board-4 ready, P1-AIA-kit-1 built; 0 items passed by the gate.
+- Status: Green: pre-check PASS at c8915bc3 (2026-11-04T13:51:41Z); P1-AIA-kit-1 is ready.
+- Progress: 5 tasks merged, P0-AIA-keyframes-3 and P0-AIA-board-4 ready, P1-AIA-kit-1 ready; 0 items passed by the gate.
 - Done: P1-AIA-kit-1: kit batch 1a, five button skins (primary, secondary, tertiary, danger, success) plus the round gold action and a parchment tertiary face, each in normal, pressed, disabled and locked with high-contrast twins, baked into `client/ui/art/kit.webp`, `kit_hc.webp` and `kit.json`.
 - Next: wait for the lead (gate on the kit atlas contact sheet).
 - Blocked by: none.
@@ -17,11 +17,11 @@
 | P0-AIA-keyframes-3: settings and the contact sheet | 2 | Ready at 5eec1b60 (pre-check PASS) | `node art/ui/keyframes/check_keyframes.mjs`: all 30 stills pass. Settings: 5 controls (3 at 200%), smallest touch area 52 points, 20 words (8 at 200%), worst 8.59:1. All 30 shots pass value-steps. `contact_sheet.png` is 1882 x 3085. `--self-test`: each planted fault fails, including a contact sheet of the wrong size. `bash tools/run_checks.sh`: all checks passed. |
 | P0-AIA-board-4: the board's words for the revised tokens (K1-R6) | 1 | Ready at b83a0b4d (pre-check PASS) | `node art/ui/board/check_board.mjs` and `--revised` (section 2.1's backdrop #171046 to #2C3AA8, #FF9AAA, #3FBF7F tried over `tokens.css`): 378 words pass in both modes, 8 icons keep the outline rule, 16 controls pass value-steps; `--self-test`: each planted fault fails, including a regular-weight caption on the revised backdrop; `board.png`, `board_hc.png` |
 
-| P1-AIA-kit-1: kit art batch 1a | 4 | Built | `node tools/ui_bake/bake.js --check`: kit 28 pieces, 2048 x 2048, 446350 bytes for both atlases. `python3 art/ui/kit_build/proof_kit.py --check`: 280 results, 0 fail: 152 value-steps (76 a mode; worst ΔL* 21.9 normal, 23.8 high contrast, both `button_danger__box__pressed` on the backdrop) and 128 label contrasts (worst 4.78:1 normal, tertiary on the backdrop; 5.81:1 high contrast). Contact sheets `art/ui/kit_build/proof/contact_normal.png`, `contact_hc.png` (sheet.py contact, 60 and 120 points). |
+| P1-AIA-kit-1: kit art batch 1a | 4 | Ready at c8915bc3 (pre-check PASS) | `node tools/ui_bake/bake.js --check`: kit 28 pieces, 2048 x 2048, 446350 bytes for both atlases. `python3 art/ui/kit_build/proof_kit.py --check`: 280 results, 0 fail: 152 value-steps (76 a mode; worst ΔL* 21.9 normal, 23.8 high contrast, both `button_danger__box__pressed` on the backdrop) and 128 label contrasts (worst 4.78:1 normal, tertiary on the backdrop; 5.81:1 high contrast). Contact sheets `art/ui/kit_build/proof/contact_normal.png`, `contact_hc.png` (sheet.py contact, 60 and 120 points). |
 
 ## Handoff
 - M1 (acked 2026-11-04): scored against `docs/art/ui-quality/gate/rubric.md` below, value-steps run, from reduced-size previews.
-- Last verified commit: see the status file's `precheck`.
+- Last verified commit: c8915bc3 (pre-check green, 2026-11-04T13:51:41Z).
 - Done (P1-AIA-kit-1):
   - `art/ui/kit_build/build_kit.py` writes the sources from `client/ui/tokens.json`: `art/ui/kit/<skin>/box.svg` for button_primary, button_secondary, button_tertiary, button_danger and success; `button_primary/gold_round.svg` (the 60-point round action, a sprite); `button_tertiary/parchment.svg` (the tertiary face for paper grounds); and `art/ui/palette.json` (the tokens' colours and gradients resolved, plus a `kit` section of the colours this batch adds, each with where it comes from).
   - Every box is a 9-slice piece, 38 x (42 + lip) points, slices 18/20/18/(20 + lip). Normal: body gradient lit from the top, a gloss band over the top 36%, rim, highlight and shade strokes, the ink edge, a solid lip of `drop_m` (3 for the tertiary). Pressed: the face sinks `press_travel` onto the lip, darker, the gloss gone. Disabled: flat, no lip, muted, words above 4.5:1. Locked: the teal gradient lifted a step (`kit.locked_top`, `kit.locked_bottom`), hatching on the end caps only, white rim. High contrast: opaque flat fills, 3-point black edges, black lips, no gloss or grain.
