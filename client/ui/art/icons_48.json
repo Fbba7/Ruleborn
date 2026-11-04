@@ -4,16 +4,21 @@
   "format": 1,
   "pieces": {
     "crew__pip__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":2,"y":2},
-    "heistcontrols__ability__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":132,"y":2},
-    "heistcontrols__aim__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":262,"y":2},
-    "heistcontrols__callskiff__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":392,"y":2},
-    "heistcontrols__cast__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":522,"y":2},
-    "heistcontrols__getout__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":652,"y":2},
-    "heistcontrols__regroup__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":782,"y":2},
-    "heistcontrols__sagewheel__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":2,"y":132},
-    "heistcontrols__splitcrew__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":132,"y":132},
-    "resources__starlight__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":262,"y":132}
+    "currencies__seasonstars__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":132,"y":2},
+    "currencies__starglass__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":262,"y":2},
+    "heistcontrols__ability__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":392,"y":2},
+    "heistcontrols__aim__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":522,"y":2},
+    "heistcontrols__callskiff__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":652,"y":2},
+    "heistcontrols__cast__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":782,"y":2},
+    "heistcontrols__getout__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":2,"y":132},
+    "heistcontrols__regroup__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":132,"y":132},
+    "heistcontrols__sagewheel__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":262,"y":132},
+    "heistcontrols__splitcrew__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":392,"y":132},
+    "resources__aether__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":522,"y":132},
+    "resources__essence__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":652,"y":132},
+    "resources__renown__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":782,"y":132},
+    "resources__starlight__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":2,"y":262}
   },
   "px_per_point": null,
-  "sources_hash": "sha256:be0de8b4ba7b52b6b8f96576a11448d7626d4635beb5d65a12738c63ef03e978"
+  "sources_hash": "sha256:8c6282f06a61e21ef6f8db6414136dccb750212e6b3435fe2bb89c17b0b3b7c9"
 }

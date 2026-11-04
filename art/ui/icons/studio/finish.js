@@ -82,8 +82,11 @@ export async function finish(icon, px, mode, pt) {
   if (!hc) {
     x.save(); x.filter = `blur(${R * 0.034}px)`; x.globalAlpha = 0.85;
     draw(silhouette(shot, rgba(icon.light, 0.6))); x.restore();
-    x.save(); x.filter = `blur(${R * 0.006}px)`; x.globalAlpha = 0.8;
-    x.translate(0, R * 0.028); grow(x, silhouette(shot, tok(RULES.drop)), ow); x.restore();
+    // The soft drop (§21.8; rubric.md quality 3 fails a hard ink drop):
+    // the silhouette, wide blur, half strength, set down and right of the
+    // top-left key.
+    x.save(); x.filter = `blur(${R * 0.022}px)`; x.globalAlpha = 0.55;
+    x.translate(R * 0.012, R * 0.04); draw(silhouette(shot, tok(RULES.drop))); x.restore();
   } else {
     grow(x, silhouette(shot, tok(RULES.keyline)), ow + RULES.keylineHc / pt * R / 0.88);
   }
@@ -97,6 +100,17 @@ export async function finish(icon, px, mode, pt) {
   g.addColorStop(0, rgba(lc, la));
   g.addColorStop(1, rgba(lc, 0));
   l.fillStyle = g;
+  l.fillRect(0, 0, R, R);
+  // §21.8's three-stop body gradient over the whole render, lit from the
+  // top: the key's cream at the top, clear through the middle, the drop's
+  // shade at the foot. A flat face (a door, a star's front) then reads as
+  // lit from above, not as one fill.
+  const body = l.createLinearGradient(0, R * 0.08, 0, R * 0.92);
+  body.addColorStop(0, rgba(RULES.glint, 0.3));
+  body.addColorStop(0.45, rgba(RULES.glint, 0));
+  body.addColorStop(0.6, rgba(RULES.drop, 0));
+  body.addColorStop(1, rgba(RULES.drop, 0.32));
+  l.fillStyle = body;
   l.fillRect(0, 0, R, R);
   draw(lit);
   if (!hc) for (const [gx, gy, k] of (icon.glints || []).slice(0, RULES.glintMax)) glint(x, gx * R, gy * R, RULES.glintSize * R * 1.3 * k);

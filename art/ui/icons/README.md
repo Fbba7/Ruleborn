@@ -20,7 +20,10 @@ included. After any change here, rebake.
 
 - **Objects** (currencies, controls, rewards) are three.js scenes lit by
   `studio/toon.js`. This light is the world's toon light, number for number:
-  - a ramp of four steps;
+  - a ramp of four steps, blended over a narrow band (`rampSoft`) so the
+    steps hold without posterised edges;
+  - one hard-edged toon gloss band in `cream` on the key side (`gloss`);
+    a material's `glossy` scales it, 0 for none;
   - shade that falls toward violet;
   - a rim on the lit side;
   - no metalness and no reflections (§21.3, D5 (b)).
@@ -38,7 +41,7 @@ the board's rules rule for rule:
 
 | Mode | What the finish draws |
 |---|---|
-| Normal | a glow in the icon's light colour; a soft drop in `drop`; the ink outline in `ink_line`, 2 points at the size shown; a radial inner light; at most two `cream` glints |
+| Normal | a glow in the icon's light colour; a soft, blurred drop in `drop`, down and a little right; the ink outline in `ink_line`, 2 points at the size shown; a radial inner light; a three-stop body gradient (a `cream` lift at the top, clear in the middle, `drop` at the foot); at most two `cream` glints |
 | High contrast | a 3-point ink outline; a 1.5-point keyline in `text_on_night` outside it; the inner light; no glow, no drop and no glints |
 
 Each family has the size it is shown at, in `SHOWN_PT`: 48 pt for
@@ -60,7 +63,7 @@ The module's default export has these keys:
 | `light` | the colour token of the glow |
 | `inner` | `[x, y, radius, token, alpha]`, the inner light, as fractions of the side |
 | `glints` | `[[x, y, size], ...]`, at most two |
-| `build(S)` | returns a `THREE.Scene`, built only with `S.toon(face, rim)` materials. `S` is `studio/toon.js`: `THREE`, `tok`, `rgba`, `toon`, `starShape`, `puffed`, `renderTo`. The shared parts in `studio/shapes.js` (`box`, `ball`, `rod`, `pip`, `arrowShape`, `boltShape`, `slab`) take `S` first and use only `S.toon` |
+| `build(S)` | returns a `THREE.Scene`, built only with `S.toon(face, rim, glossy)` materials. `S` is `studio/toon.js`: `THREE`, `tok`, `rgba`, `toon`, `starShape`, `puffed`, `renderTo`. The shared parts in `studio/shapes.js` (`box`, `ball`, `rod`, `pip`, `arrowShape`, `boltShape`, `slab`, `star5Shape`, `lathe`, `profile`) take `S` first and use only `S.toon` |
 | `draw(S, R)` | optional: returns a canvas of side R, in place of rendering `build` (a badge uses it to lay in its render) |
 
 The bake turns each module into the piece `<group>__<name>__normal`. The piece

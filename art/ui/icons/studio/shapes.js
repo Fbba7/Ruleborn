@@ -76,3 +76,40 @@ export function boltShape(S, h) {
 export function slab(S, shape, size, face, rim, depth = 0.22) {
   return new S.THREE.Mesh(S.puffed(shape, size, depth), S.toon(face, rim));
 }
+
+// A five-pointed star with rounded tips, `outer` to the tips and `inner`
+// to the waists; `round` is how far along each edge (0 to 0.5) the tip's
+// curve starts.
+export function star5Shape(S, outer, inner, round = 0.18) {
+  const pt = (i) => {
+    const a = Math.PI / 2 + i * Math.PI / 5;
+    const r = i % 2 ? inner : outer;
+    return [Math.cos(a) * r, Math.sin(a) * r];
+  };
+  const lerp = (p, q, t) => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+  const s = new S.THREE.Shape();
+  for (let k = 0; k < 5; k++) {
+    const tip = pt(2 * k);
+    const a = lerp(tip, pt(2 * k - 1), round);
+    const b = lerp(tip, pt(2 * k + 1), round);
+    if (k === 0) s.moveTo(...a); else s.lineTo(...a);
+    s.quadraticCurveTo(...tip, ...b);
+    s.lineTo(...pt(2 * k + 1));
+  }
+  s.closePath();
+  return s;
+}
+
+// A solid of revolution round y from a profile of [radius, y] points.
+export function lathe(S, profile, face, rim, glossy = 1) {
+  const { THREE } = S;
+  const g = new THREE.LatheGeometry(profile.map(([r, y]) => new THREE.Vector2(r, y)), 64);
+  g.computeVertexNormals();
+  return new THREE.Mesh(g, S.toon(face, rim, glossy));
+}
+
+// A smooth profile through control points, for `lathe`.
+export function profile(S, pts, n = 40) {
+  const c = new S.THREE.SplineCurve(pts.map(([r, y]) => new S.THREE.Vector2(r, y)));
+  return c.getPoints(n).map((p) => [Math.max(0, p.x), p.y]);
+}

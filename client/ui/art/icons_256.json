@@ -1,10 +1,15 @@
 {
-  "atlas": {"height":512,"high_contrast":"icons_256_hc.webp","normal":"icons_256.webp","width":1024},
+  "atlas": {"height":1024,"high_contrast":"icons_256_hc.webp","normal":"icons_256.webp","width":1024},
   "family": "icons_256",
   "format": 1,
   "pieces": {
-    "resources__starlight__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":2,"y":2}
+    "currencies__seasonstars__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":2,"y":2},
+    "currencies__starglass__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":260,"y":2},
+    "resources__aether__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":518,"y":2},
+    "resources__essence__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":2,"y":260},
+    "resources__renown__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":260,"y":260},
+    "resources__starlight__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":518,"y":260}
   },
   "px_per_point": null,
-  "sources_hash": "sha256:be0de8b4ba7b52b6b8f96576a11448d7626d4635beb5d65a12738c63ef03e978"
+  "sources_hash": "sha256:8c6282f06a61e21ef6f8db6414136dccb750212e6b3435fe2bb89c17b0b3b7c9"
 }
