@@ -8,15 +8,28 @@
   "task_state": "working",
   "claimed_at": "2026-11-04T14:45:00Z",
   "lease_until": "2026-11-04T17:45:00Z",
-  "updated_at": "2026-11-04T15:05:00Z",
-  "expected_next_update_by": "2026-11-04T15:50:00Z",
+  "updated_at": "2026-11-04T15:20:00Z",
+  "expected_next_update_by": "2026-11-04T16:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "02e7ef0f00ea0444842a4d0158f50e271a97c952",
-    "next_step": "P1-AIA2-icons-1a: 8 heist controls built; finish grow() made dense (fixes holes at thin points); rebaking, then handoff and pre-check"
+    "next_step": "P1-AIA2-icons-1a: scripted checks green at c1d14d38; pre-check running; waiting for the gate"
   },
   "precheck": null,
-  "gate_request": null,
+  "gate_request": {
+    "sha": "c1d14d38a3ed910d3b28b169cc0f86081c53b127",
+    "items": [
+      {
+        "item": "icon sheet at 48 and 96 points and in grayscale",
+        "qualities": [
+          "Layered materials",
+          "Painted or rendered icons",
+          "Colour roles and value",
+          "Light behind UI"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [],
