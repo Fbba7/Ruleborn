@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-04T14:41:59Z",
-  "expected_next_update_by": "2026-11-04T15:56:59Z",
+  "updated_at": "2026-11-04T15:42:00Z",
+  "expected_next_update_by": "2026-11-04T16:57:00Z",
   "cycle": 36,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "103c569b",
+    "task_ids": [
+      "P1-AIA-kit-1"
+    ],
+    "started_at": "2026-11-04T15:42:00Z",
+    "expires_at": "2026-11-04T16:42:00Z"
+  },
   "last_merged": {
     "task_id": "P1-AIA2-toon-route",
     "sha": "9b2bde70"
