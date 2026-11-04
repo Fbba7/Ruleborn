@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxoYmLFt1yB79vuEdqD` (cycle 23,
-3 November 2026, from 11:39Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxperiwzZk3yVhDBHZf` (cycle 24,
+4 November 2026, from 01:39Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -177,6 +177,22 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 24, 4 November 2026, from 01:39Z (session
+  `session_01SNkKxperiwzZk3yVhDBHZf`, started by the launcher), the first
+  cycle after the owner's restart: bookkeeping only. AD
+  (`session_01SNkKxrEMe4td5Bk4zmN1Ed`, idle between turns, its own
+  check-in due at 01:43Z to score) is still on P0-AD-calibrate-2,
+  `working`, lease to 04:10Z: Opus-only runs dev-opus-v3 (426 calls) and
+  held-opus (414 calls) pushed to `claude/ui-ad` (`1c886ca4`). AIA
+  acknowledged M1 (`fd2620f2`), which closes the M1 item noted in the
+  owner inbox on 31 October. No other roster status changed (AIA, K1 and
+  SV status files still show tasks merged long ago), no merge lock,
+  nothing to merge, pages not republished.
+- Next: watch AD. When `status/AD.json` on `claude/ui-ad` shows
+  P0-AD-calibrate-2 `ready`, gate and merge it (owners.py diff, check_all
+  PASS), then republish both pages. Usage still reads `allowed_warning`
+  (seven-day, resets 2026-11-09T17:00Z), so start no session beyond AD.
+  Never use Fable 5.1 (CLAUDE.md).
 - Cycle 23, 3 November 2026, from 11:39Z (session
   `session_01SNkKxoYmLFt1yB79vuEdqD`, started by the launcher):
   bookkeeping only. AD (`session_01SNkKxrEMe4td5Bk4zmN1Ed`) is working on
