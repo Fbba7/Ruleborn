@@ -14,6 +14,33 @@ extends RefCounted
 ## its own sources): the gold button's skin, the tertiary's parchment face
 ## and a tinted disc, normal and high contrast.
 const FIXTURE := "res://tests/fixtures/ui_kit/kit.json"
+## The catalogue sheet (kit-spec.md section 6.4).
+const Catalogue := preload("res://tests/shots/ui_kit_catalogue.gd")
+const Art := preload("res://tests/shots/ui_kit_catalogue_art.gd")
+## The components whose baked faces are skins, and those skins' faces: once a
+## skin has art, each of the component's baked states is a piece of it.
+## The bar's pieces are K46's (N RM), the component built from them: K25's
+## locked state is section 3's locked material, not a face of the bar. The
+## overlay skins (selected, locked's mark, the spinner) are the catalogue's
+## OVERLAYS, one normal piece each.
+const SKINS_OF := {
+	"K01": ["button_primary__box", "button_secondary__box", "button_tertiary__box",
+		"button_tertiary__parchment", "button_danger__box"],
+	"K02": ["button_primary__gold_round"],
+	"K12": ["panel_dark__box"],
+	"K15": ["well__box"],
+	"K23": ["pill__box"],
+	"K24": ["num_gold"],
+	"K27": ["badge__box", "badge__dot"],
+	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn"],
+	"K29": ["success__box"],
+	"K31": ["num_timer", "num_timer_red"],
+	"K33": ["panel_glass__box"],
+	"K34": ["spinner__ring"],
+	"K38": ["disc__level_disc", "num_white"],
+	"K44": ["disc__box"],
+	"K46": ["bar_track__box", "bar_track__tick", "bar_fill__box", "bar_fill__alarm"],
+}
 
 var tree: SceneTree
 var check: Callable
@@ -39,6 +66,7 @@ func run() -> void:
 	await _fixture()
 	_pages()
 	_skies()
+	await _catalogue()
 
 
 func _tokens() -> void:
@@ -516,3 +544,84 @@ func _skies() -> void:
 		and Tokens.sky("night") == [Color("#1A1433"), Color("#3A2B6B")]
 	check.call("§21.2's day, dusk and night skies are tokens, top and bottom", ok,
 		"day %s, dusk %s, night %s" % [day, Tokens.sky("dusk"), Tokens.sky("night")])
+
+
+## Every (component, state) pair of kit-spec.md section 4 has a place on a
+## catalogue page, no part is taller than a page, and every baked state of a
+## skin with art is a piece inside both the normal and the high-contrast
+## atlas, the catalogue drawing none from the code-drawn box (section 6.4).
+func _catalogue() -> void:
+	var bad := []
+	var spec_file := ProjectSettings.globalize_path("res://") + "/../docs/art/ui-quality/kit-spec.md"
+	var pairs := Catalogue.inventory(FileAccess.get_file_as_string(spec_file))
+	if pairs.size() < 100:
+		bad.append("section 4 reads as %d pairs" % pairs.size())
+	var on := Art.art_on()
+	await Catalogue.lay_out(tree, func(_n: int, _screen: Control) -> void: pass)
+	for pair: String in pairs:
+		if not Catalogue.placed.has(pair):
+			bad.append("%s has no place" % pair)
+	for title: String in Catalogue.tall:
+		bad.append("%s is taller than a page" % title)
+	for lost: String in KitSkin.missing:
+		bad.append("the catalogue drew %s from the code-drawn box" % lost)
+	var kit: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Art.MANIFEST))
+	var pieces: Dictionary = kit.get("pieces", {})
+	var atlas: Dictionary = kit.get("atlas", {})
+	for look: String in ["normal", "high_contrast"]:
+		var img := Image.load_from_file(Art.MANIFEST.get_base_dir() + "/" + str(atlas.get(look, "")))
+		if img == null or img.get_size() != Vector2i(int(atlas.get("width", 0)), int(atlas.get("height", 0))):
+			bad.append("the %s atlas is not the manifest's size" % look)
+			continue
+		for key: String in pieces:
+			var p: Dictionary = pieces[key]
+			var r := Rect2i(int(p["x"]), int(p["y"]), int(p["w"]), int(p["h"]))
+			if not Rect2i(Vector2i.ZERO, img.get_size()).encloses(r) or r.size.x <= 0 or r.size.y <= 0:
+				bad.append("%s lies outside the %s atlas" % [key, look])
+	var mapped := []
+	for id: String in SKINS_OF:
+		for face: String in SKINS_OF[id]:
+			if face.begins_with("num_"):
+				_numerals_mapped(face, pieces, mapped, bad)
+				continue
+			var skin := face.get_slice("__", 0)
+			mapped.append(skin)
+			if skin not in on:
+				continue
+			for pair: String in pairs:
+				var state := pair.get_slice(":", 1)
+				if pair.begins_with(id + ":") and Art.FACES.has(state) \
+						and not pieces.has("%s__%s" % [face, Art.FACES[state]]):
+					bad.append("%s has no piece %s__%s" % [pair, face, Art.FACES[state]])
+	for state: String in Art.OVERLAYS:
+		var key: String = Art.OVERLAYS[state]
+		if pieces.has(key):
+			mapped.append(key.get_slice("__", 0))
+			if key not in Art.drawn:
+				bad.append("the catalogue drew no %s over state %s" % [key, state])
+	if pieces.has(Art.DOT) and Art.DOT not in Art.drawn:
+		bad.append("the catalogue drew no %s for K27's dot" % Art.DOT)
+	for skin: String in on:
+		if skin not in mapped:
+			bad.append("%s has art but no component in SKINS_OF" % skin)
+	KitSkin.reset()
+	check.call("every (component, state) pair of kit-spec.md section 4 has a place on the catalogue sheet, and "
+			+ "each baked state of a skin with art is a piece in both atlases (section 6.4)", bad.is_empty(),
+			"; ".join(bad.slice(0, 12)))
+
+
+## Numeral finish `finish` in SKINS_OF: each of its glyphs (`<finish>_<glyph>`,
+## section 6.1) the catalogue drew from the atlas is mapped; one it did not
+## draw is a failure, as is a finish with no glyph in the atlas.
+func _numerals_mapped(finish: String, pieces: Dictionary, mapped: Array, bad: Array) -> void:
+	var found := 0
+	for key: String in pieces:
+		if key.substr(0, key.rfind("_")) != finish:
+			continue
+		found += 1
+		if key in Art.drawn:
+			mapped.append(key)
+		else:
+			bad.append("the catalogue drew no %s" % key)
+	if found == 0:
+		bad.append("SKINS_OF names %s, which has no glyph in the atlas" % finish)

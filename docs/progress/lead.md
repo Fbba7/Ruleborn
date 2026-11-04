@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxqTNCgdepYrCx4541M` (cycle 40,
-4 November 2026, from 19:39Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxnLzPFPR6HcJhTvYru` (cycle 42,
+4 November 2026, from 21:38Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -79,10 +79,13 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AIA-2 | `session_01SNkKxnfqxoDcFwrXf6z7o8` (working) | P1-AIA2-icons-1b | `claude/ui-artist-icons` | 2026-11-04 18:34Z |
-| K1 | `session_01SNkKxorLGKFDuXX2ULtTU2` (working) | P1-K1-catalogue (restart: resync, kit-2's skins missing from SKINS_OF) | `claude/ui-bake` | 2026-11-04 20:00Z |
+| AIA-2 | `session_01SNkKxoAA41vxL7RwwKNRGN` (working) | P1-AIA2-icons-1b (restart: resync, icons_48_hc.webp is not what its sources bake to) | `claude/ui-artist-icons` | 2026-11-04 20:59Z |
+| AIA-2 | `session_01SNkKxnfqxoDcFwrXf6z7o8` (idle, replaced) | P1-AIA2-icons-1b | `claude/ui-artist-icons` | 2026-11-04 18:34Z |
+| K1 | `session_01SNkKxqXv3kuBk7Uya8STrT` (working) | P1-K1-catalogue (restart: resync, kit-3's numerals missing from SKINS_OF) | `claude/ui-bake` | 2026-11-04 21:54Z |
+| K1 | `session_01SNkKxorLGKFDuXX2ULtTU2` (idle, replaced) | P1-K1-catalogue (restart: resync, kit-2's skins missing from SKINS_OF) | `claude/ui-bake` | 2026-11-04 20:00Z |
 | K1 | `session_01SNkKxnnyL6yNX5UpCnt8dH` (idle, replaced) | P1-K1-catalogue | `claude/ui-bake` | 2026-11-04 17:41Z |
-| AIA | `session_01SNkKxqGqwHJU12VPiWB68i` (working) | P1-AIA-kit-3 | `claude/ui-artist` | 2026-11-04 19:20Z |
+| AIA | `session_01SNkKxmbXiobGvGu7DHZRJZ` (working) | P1-AIA-kit-4 | `claude/ui-artist` | 2026-11-04 21:32Z |
+| AIA | `session_01SNkKxqGqwHJU12VPiWB68i` (idle, done) | P1-AIA-kit-3 | `claude/ui-artist` | 2026-11-04 19:20Z |
 | AIA | `session_01SNkKxmwaE4rQY339ct2nz9` (idle, done) | P1-AIA-kit-2 | `claude/ui-artist` | 2026-11-04 16:25Z |
 | K1 | `session_01SNkKxrN8TYssSGXSznyneA` (idle, done) | P1-K1-atlas-draw | `claude/ui-bake` | 2026-11-04 14:41Z |
 | AIA-2 | `session_01SNkKxmwwK7YE4rm4Mh8nS1` (idle, done) | P1-AIA2-icons-1a | `claude/ui-artist-icons` | 2026-11-04 14:41Z |
@@ -217,6 +220,53 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 42, 4 November 2026, from 21:38Z (session
+  `session_01SNkKxnLzPFPR6HcJhTvYru`, started by the launcher): K1 was
+  ready on P1-K1-catalogue at `71562ab1`. Granted
+  `client/tests/shots/ui_kit_catalogue_art.gd` and its `.uid` (a helper
+  split from the catalogue, owned by no other task) as the task's
+  exceptions; owners.py diff then clean. Took the merge lock
+  (`2d87db84`), built candidate `aa1ab0b0`: check_all FAIL, 391 of 392:
+  the coverage test finds kit-3's twelve numerals (`num_gold_0` to `_9`,
+  `_colon`, `_comma`, merged as `3f4766c7` after K1's resync) with art
+  but no component in SKINS_OF. guard.sh stopped unfinished. Lock
+  released, task set to `resync` (lease 5 November 01:00Z), K1 restarted
+  (`session_01SNkKxqXv3kuBk7Uya8STrT`) with the failure lines.
+  Owner-inbox entry, no answer needed. AIA-2 (icons-1b resync,
+  pre-check running) and AIA (kit-4) still working: three builders, the
+  D13 (c) cap. Nothing merged; pages not republished. Godot's untracked
+  .uid/.import files deleted, not committed.
+- Next: merge the catalogue before P1-AIA-kit-4 (rebuild the candidate,
+  check_all and guard.sh; `npm ci` in tools/ui_research of the candidate
+  worktree first). When kit-4 then merges, its new skins will lack SKINS_OF
+  entries: grant those lines in `ui_kit_catalogue.gd` as kit-4's exception
+  or send it to K1; never loosen the test. Merge AIA-2's icons-1b on
+  ready. After the catalogue merges, start K1 on P1-K1-words. Never use
+  Fable 5.1 (CLAUDE.md).
+
+- Cycle 41, 4 November 2026, from 20:39Z (session
+  `session_01SNkKxmc7wTBUoEfsJ3qwf9`, started by the launcher): ran
+  P1-AIA-kit-3's gate on `3a04e828` (numerals sheet at phone size, 100%
+  and 200% text; Opus 5.5 ui-judge samples, advisory): Display type and
+  Colour roles and value pass 3 of 3. AIA-R15 filed with its default;
+  AIA2-R2 closed with its default. Built a stacked candidate for
+  icons-1b and kit-3: P1-AIA2-icons-1b's guard.sh FAILED (rebake:
+  `client/ui/art/icons_48_hc.webp` is not what its sources bake to;
+  main's icons rebake byte for byte, so the stale file is AIA-2's). Set
+  icons-1b to `resync` and restarted AIA-2
+  (`session_01SNkKxoAA41vxL7RwwKNRGN`) with the failure line. Checked
+  kit-3 alone on candidate `ec84404b`: check_all PASS, guard.sh OK;
+  merged as `3f4766c7`. Started AIA on P1-AIA-kit-4
+  (`session_01SNkKxmbXiobGvGu7DHZRJZ`). Three builders (K1 catalogue
+  resync, AIA-2 icons-1b resync, AIA kit-4), the D13 (c) cap. Pages
+  republished. Godot's untracked .uid/.import files deleted, not
+  committed. A push by mistake created a stray remote branch `main` at
+  `2455f3b5` (deleting it was refused to the lead); start sessions on
+  `claude/videogame-project-analysis-ewkkk2` by name, never on `main`,
+  until the owner deletes it (owner-inbox entry).
+- Next: merge K1's catalogue and AIA-2's icons-1b as each is ready again
+  (rebuild the candidate, check_all and guard.sh); gate AIA's kit-4 on
+  ready (kit catalogue sheet, batch 2a). Never use Fable 5.1 (CLAUDE.md).
 - Cycle 40, 4 November 2026, from 19:39Z (session
   `session_01SNkKxqTNCgdepYrCx4541M`, started by the launcher): ran
   P1-AIA2-icons-1b's gate on `bef6eac2` (icon sheet, batch 1b, six icons

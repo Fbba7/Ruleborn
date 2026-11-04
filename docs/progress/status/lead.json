@@ -1,20 +1,20 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-04T21:10:00Z",
-  "expected_next_update_by": "2026-11-04T22:20:00Z",
-  "cycle": 41,
+  "updated_at": "2026-11-04T23:26:00Z",
+  "expected_next_update_by": "2026-11-05T01:15:00Z",
+  "cycle": 42,
   "merging": {
-    "candidate_sha": "ec84404b",
+    "candidate_sha": "050f2e10",
     "task_ids": [
-      "P1-AIA-kit-3"
+      "P1-AIA-kit-4"
     ],
-    "started_at": "2026-11-04T20:50:00Z",
-    "expires_at": "2026-11-04T22:05:00Z"
+    "started_at": "2026-11-04T23:26:00Z",
+    "expires_at": "2026-11-05T01:00:00Z"
   },
   "last_merged": {
-    "task_id": "P1-AIA-kit-2",
-    "sha": "661f4f6a"
+    "task_id": "P1-K1-catalogue",
+    "sha": "7e6de29d"
   },
   "alerts": [],
-  "next_step": "K1 resyncs P1-K1-catalogue (merge main into claude/ui-bake, add kit-2's skins to SKINS_OF, re-run the pre-check, mark ready); then rebuild the candidate and merge on PASS. Merge AIA-2's P1-AIA2-icons-1b on ready (gate passed, advisory). Gate and merge AIA's P1-AIA-kit-3 on ready. Never use Fable 5.1."
+  "next_step": "K1 (session_01SNkKxqXv3kuBk7Uya8STrT) resyncs P1-K1-catalogue for kit-3's numerals (candidate aa1ab0b0 failed the coverage test) and marks it ready; merge it before P1-AIA-kit-4 (rebuild candidate, check_all and guard.sh). AIA-2 is pre-checking P1-AIA2-icons-1b's resync; merge on ready (gate passed, advisory). Gate AIA's kit-4 on ready (kit catalogue sheet, batch 2a). Never use Fable 5.1."
 }
