@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-04T17:50:00Z",
   "lease_until": "2026-11-04T20:50:00Z",
-  "updated_at": "2026-11-04T17:53:00Z",
-  "expected_next_update_by": "2026-11-04T18:38:00Z",
+  "updated_at": "2026-11-04T18:03:39Z",
+  "expected_next_update_by": "2026-11-04T18:48:39Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "2ae9c82c",
@@ -149,5 +149,6 @@
       "answer": "Done in P0-K1-kitspec-3 at 4b4a72d1: kit-spec.md section 2.1's success and backdrop rows and section 9; tokens.json's notes for success_text_on_night, night_top and gradient.night. No value changes.",
       "at": "2026-11-04T13:05:00Z"
     }
-  ]
+  ],
+  "next_step": "catalogue renders (one variant, 151 pairs placed); fixing parts taller than a page, then the eight variants and the coverage test"
 }
