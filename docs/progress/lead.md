@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxogLFWgTcU9Pd3EKdc` (cycle 38,
-4 November 2026, from 16:39Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxoTLAFfAWjeMPjhfvd` (cycle 39,
+4 November 2026, from 18:38Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -81,7 +81,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 |---|---|---|---|---|
 | AIA-2 | `session_01SNkKxnfqxoDcFwrXf6z7o8` (working) | P1-AIA2-icons-1b | `claude/ui-artist-icons` | 2026-11-04 18:34Z |
 | K1 | `session_01SNkKxnnyL6yNX5UpCnt8dH` (working) | P1-K1-catalogue | `claude/ui-bake` | 2026-11-04 17:41Z |
-| AIA | `session_01SNkKxmwaE4rQY339ct2nz9` (idle, ready at `fccd4b89`, gate pending) | P1-AIA-kit-2 | `claude/ui-artist` | 2026-11-04 16:25Z |
+| AIA | `session_01SNkKxqGqwHJU12VPiWB68i` (working) | P1-AIA-kit-3 | `claude/ui-artist` | 2026-11-04 19:20Z |
+| AIA | `session_01SNkKxmwaE4rQY339ct2nz9` (idle, done) | P1-AIA-kit-2 | `claude/ui-artist` | 2026-11-04 16:25Z |
 | K1 | `session_01SNkKxrN8TYssSGXSznyneA` (idle, done) | P1-K1-atlas-draw | `claude/ui-bake` | 2026-11-04 14:41Z |
 | AIA-2 | `session_01SNkKxmwwK7YE4rm4Mh8nS1` (idle, done) | P1-AIA2-icons-1a | `claude/ui-artist-icons` | 2026-11-04 14:41Z |
 | AIA | `session_01SNkKxqU4sZmrYcBz3mbRR2` (idle, done) | P1-AIA-kit-1 | `claude/ui-artist` | 2026-11-04 12:44Z |
@@ -215,6 +216,26 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 39, 4 November 2026, from 18:38Z (session
+  `session_01SNkKxoTLAFfAWjeMPjhfvd`, started by the launcher): ran
+  P1-AIA-kit-2's gate on `fccd4b89` (contact sheets of the 23 batch 1b
+  pieces; 12 Opus 5.5 ui-judge samples, advisory): Layered materials,
+  Colour roles and value, and Light behind UI pass 3 of 3 (kit-1's
+  Colour roles notes do not recur); Display type unknown 3 of 3 (no words
+  on the pieces; exceptions queue, a split after 5 November 18:47Z).
+  Owner-inbox entry, no answer needed. Merged kit-2 as `661f4f6a`
+  (candidate `be0757d4`; check_all PASS, guard.sh OK; kit.json's
+  `sources_hash` rebaked by bake.js, a merge exception; owners.py clean
+  with the `art/ui/kit_build/**` and `art/ui/kit_next/**` exceptions).
+  Started AIA on P1-AIA-kit-3 (`session_01SNkKxqGqwHJU12VPiWB68i`). K1
+  (catalogue) and AIA-2 (icons-1b) still working: three builders, the
+  D13 (c) cap. Godot's untracked .uid/.import files deleted, not
+  committed. Pages not republished.
+- Next: gate and merge K1's catalogue, AIA-2's icons-1b and AIA's kit-3
+  as each reaches `ready` (kit-3's gate item: numerals sheet at phone
+  size, 100% and 200% text; Display type, Colour roles and value). Set
+  `expected_next_update_by` past any merge lock. Never use Fable 5.1
+  (CLAUDE.md).
 - Cycle 38, 4 November 2026, from 16:39Z (session
   `session_01SNkKxogLFWgTcU9Pd3EKdc`, started by the launcher): merged
   P1-K1-atlas-draw as `62188517` (candidate `a6212fcd`, ready at
