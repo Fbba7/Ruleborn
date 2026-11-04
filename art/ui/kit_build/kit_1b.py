@@ -36,6 +36,12 @@ from build_kit import C, HC, K, KIT, LINE, LINE_HC, TRAVEL, Svg, col, p, rrect, 
 
 # The colours this batch adds; each says what it comes from.
 KIT_1B = {
+    "pill_top": ("#F3EEFF", "text_on_night"),
+    "pill_bottom": ("#CFC4EE", "text_on_night, a step down"),
+    "pill_lip": ("#7E6FB8", "the pill's foot"),
+    "pill_pressed_top": ("#C9BEEA", "pill_bottom, pressed"),
+    "pill_pressed_bottom": ("#B6A9DE", "pill_bottom, two steps down"),
+    "pill_hc_pressed": ("#D8D8D8", "white, pressed"),
     "edge_hc": ("#B8A8D8", "text_on_night_3: a dark piece's 3-point edge in high contrast, 7:1 on the hc night"),
     "plate_hc": ("#2A2060", "gradient.plate_dark's top, flat"),
     "card_locked_top": ("#22303E", "card #261A4C toward locked teal #3A8A90, a step"),
@@ -49,7 +55,7 @@ KIT_1B = {
     "school_dark": ("#8E8E8E", "neutral, tinted: the ground's foot"),
     "school_lip": ("#4A4A4A", "neutral, tinted: the lip, the school colour's deep shade"),
     "school_pressed": ("#B4B4B4", "school_mid, darker: pressed"),
-    "school_disabled": ("#8A8A8A", "neutral, flat: the tint comes out muted"),
+    "school_disabled": ("#A0A0A0", "neutral, flat: the tint comes out muted"),
     "bar_neutral_top": ("#FFFFFF", "neutral, tinted: a bar's lit top"),
     "bar_neutral_bottom": ("#B4B4B4", "neutral, tinted: a bar's foot"),
     "warn_cap": ("#F07A3C", "energy: tag_warn's cap (not amber, so gold keeps one role)"),
@@ -259,14 +265,17 @@ def badge():
 
 
 def pill():
-    """The currency pill (K23; pill_points 36, E1): the dark track with the
-    token's gold edge (gold as a material, never a fill)."""
+    """The currency pill (K23; pill_points 36, E1): a light moon face with dark
+    numerals, two value steps off every ground it sits on (the world, the
+    night, glass and the dark card, in the top bar); an ink rim, not gold, so
+    gold stays the main action's."""
     FH, DROP = 36, 2
     W, H = 42, 1 + FH + DROP + 1
     R = FH / 2
     svg = Svg(W, H, [19, 18, 19, 21])
     x, y, w = 1, 1, W - 2
-    track = [(0, "#140A16"), (1, "#24142A")]
+    face = {"normal": [(0, K["pill_top"]), (1, K["pill_bottom"])],
+            "pressed": [(0, K["pill_pressed_top"]), (1, K["pill_pressed_bottom"])]}
     for st in ("normal", "pressed"):
         fy = y + (DROP if st == "pressed" else 0)
         for hc in (False, True):
@@ -274,20 +283,18 @@ def pill():
             if hc:
                 if st == "normal":
                     b.append(rrect(x, y + DROP, w, FH, R, "#000000"))
-                b.append(rrect(x, fy, w, FH, R, HC["glass"] if st == "normal" else "#000000"))
-                b.append(hc_edge(x, fy, w, FH, R, K["edge_hc"]))
+                b.append(rrect(x, fy, w, FH, R, "#FFFFFF" if st == "normal" else K["pill_hc_pressed"]))
+                b.append(rrect(x + 1.5, fy + 1.5, w - 3, FH - 3, R - 1.5, "none", stroke("#000000", LINE_HC)))
                 svg.state(st, b, hc=True)
                 continue
             if st == "normal":
-                b.append(rrect(x, y + DROP, w, FH, R, C["drop"]))
-            b.append(rrect(x, fy, w, FH, R, svg.grad(track if st == "normal" else track[::-1])))
+                b.append(rrect(x, y + DROP, w, FH, R, K["pill_lip"]))
+            b.append(rrect(x, fy, w, FH, R, svg.grad(face[st])))
             if st == "normal":
-                b.append(lit_band(svg, x + 4, fy + 2.5, w - 8, FH, R - 3, 0.1, 13))
-            b.append(rim_ring(x + 1, fy + 1, w - 2, FH - 2, R - 1, a(C["gold"], 0.9 if st == "normal" else 0.6), 1.5))
-            if st == "normal":
-                b.append(top_light(svg, x + 2.5, fy + 2.5, w - 5, FH - 5, R - 2.5, a(C["gold_top"], 0.45), 1))
+                b.append(lit_band(svg, x + 4, fy + 2.5, w - 8, FH, R - 3, 0.35, 13))
+                b.append(top_light(svg, x + 2.5, fy + 2.5, w - 5, FH - 5, R - 2.5, a("#FFFFFF", 0.7), 1))
             else:
-                b.append(top_light(svg, x + 2.5, fy + 2.5, w - 5, FH - 5, R - 2.5, a("#000000", 0.5), 2))
+                b.append(top_light(svg, x + 2.5, fy + 2.5, w - 5, FH - 5, R - 2.5, a(K["pill_lip"], 0.6), 2))
             b.append(rrect(x, fy, w, FH, R, "none", ink(C["ink_line"], 1.5)))
             svg.state(st, b)
     return svg.text()
@@ -416,7 +423,7 @@ def disc():
                 if st != "disabled":
                     b.append(circle(cx, cy + D_LIP, r - 0.5, "#000000"))
                 b.append(circle(cx, fy, r - 0.5, fill))
-                b.append(circle(cx, fy, r - 1.5, "none", stroke("#000000", LINE_HC)))
+                b.append(circle(cx, fy, r - 1.5, "none", stroke(K["edge_hc"], LINE_HC)))
                 svg.state(st, b, hc=True)
                 continue
             if st == "disabled":
@@ -499,7 +506,7 @@ def disc_school():
                 if st != "disabled":
                     b.append(circle(cx, cy + D_LIP, r - 0.5, "none", stroke("#000000", 1.5)))
                 b.append(circle(cx, fy, r - 3.5, "none", stroke(HC["paper"], 1.5)))
-                b.append(circle(cx, fy, r - 1.5, "none", stroke("#000000", LINE_HC)))
+                b.append(circle(cx, fy, r - 1.5, "none", stroke(K["edge_hc"], LINE_HC)))
                 svg.state(st, b, hc=True)
                 continue
             line = K["disabled_line"] if st == "disabled" else C["ink_line"]

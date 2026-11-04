@@ -1002,6 +1002,30 @@
       "value": "#B08A4A",
       "from": "tertiary parchment, flat, darker"
     },
+    "pill_bottom": {
+      "value": "#CFC4EE",
+      "from": "text_on_night, a step down"
+    },
+    "pill_hc_pressed": {
+      "value": "#D8D8D8",
+      "from": "white, pressed"
+    },
+    "pill_lip": {
+      "value": "#7E6FB8",
+      "from": "the pill's foot"
+    },
+    "pill_pressed_bottom": {
+      "value": "#B6A9DE",
+      "from": "pill_bottom, two steps down"
+    },
+    "pill_pressed_top": {
+      "value": "#C9BEEA",
+      "from": "pill_bottom, pressed"
+    },
+    "pill_top": {
+      "value": "#F3EEFF",
+      "from": "text_on_night"
+    },
     "plate_hc": {
       "value": "#2A2060",
       "from": "gradient.plate_dark's top, flat"
@@ -1027,7 +1051,7 @@
       "from": "neutral, tinted: the ground's foot"
     },
     "school_disabled": {
-      "value": "#8A8A8A",
+      "value": "#A0A0A0",
       "from": "neutral, flat: the tint comes out muted"
     },
     "school_light": {
