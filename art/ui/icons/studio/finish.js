@@ -33,10 +33,13 @@ function silhouette(src, colour) {
   x.fillRect(0, 0, c.width, c.height);
   return c;
 }
-// The silhouette grown by `r` pixels, drawn in one colour.
+// The silhouette grown by `r` pixels, drawn in one colour. The stamps sit
+// at most a pixel apart round the circle: at the board's fixed 48, a thin
+// point (a star's tip) left gaps that read as holes in the ring.
 function grow(x, sil, r) {
-  for (let i = 0; i < 48; i++) {
-    const a = i / 48 * Math.PI * 2;
+  const n = Math.max(48, Math.ceil(2 * Math.PI * r));
+  for (let i = 0; i < n; i++) {
+    const a = i / n * Math.PI * 2;
     x.drawImage(sil, Math.cos(a) * r, Math.sin(a) * r);
   }
   x.drawImage(sil, 0, 0);

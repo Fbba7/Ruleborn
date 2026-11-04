@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P1-AIA2-icons-1a",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-04T14:45:00Z",
   "lease_until": "2026-11-04T17:45:00Z",
-  "updated_at": "2026-11-04T14:45:00Z",
-  "expected_next_update_by": "2026-11-04T15:30:00Z",
+  "updated_at": "2026-11-04T15:05:00Z",
+  "expected_next_update_by": "2026-11-04T15:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "02e7ef0f00ea0444842a4d0158f50e271a97c952",
-    "next_step": "P1-AIA2-icons-1a: the eight heist controls as scenes in art/ui/icons/heistcontrols/"
+    "next_step": "P1-AIA2-icons-1a: 8 heist controls built; finish grow() made dense (fixes holes at thin points); rebaking, then handoff and pre-check"
   },
   "precheck": null,
   "gate_request": null,
