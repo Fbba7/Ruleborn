@@ -39,6 +39,10 @@ files are in [the roster](agent-protocol.md#the-roster).
 
 ## Hard rules
 
+0. **The owner's orders come first.** [`CLAUDE.md`](../../CLAUDE.md) holds
+   them: the owner's stop switch (if the owner says stop, start nothing and
+   do no work until the owner restarts the program), and never use
+   Fable 5.1.
 1. **Your branch only.** Push with `git push -u origin <your-branch>`. If a
    push fails on the network, retry after 2, 4, 8 and 16 seconds. Never push
    to main or to another agent's branch, except the lead, which moves main as

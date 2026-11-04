@@ -1,13 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-03T11:12:00Z",
-  "expected_next_update_by": "2026-11-03T12:27:00Z",
-  "cycle": 22,
+  "updated_at": "2026-11-04T01:00:00Z",
+  "expected_next_update_by": "2026-11-04T02:45:00Z",
+  "cycle": 23,
   "merging": null,
   "last_merged": {
     "task_id": "P0-K1-tokens-2 + P0-AD-calibrate",
     "sha": "eec44b50"
   },
   "alerts": [],
-  "next_step": "Watch AD (session_01SNkKxrEMe4td5Bk4zmN1Ed) on P0-AD-calibrate-2 on claude/ui-ad. When status/AD.json shows it ready, gate it (owners.py diff, run_checks PASS), merge to main and republish the audit and roadmap pages. Start no other session while usage reads allowed_warning."
+  "next_step": "Restarted by the owner on 4 November 2026 (CLAUDE.md). Next cycle: check AD on P0-AD-calibrate-2, which finishes dev-opus-v3 and held-opus with Opus 5.5 as the judge. Never use Fable 5.1; dev-fable-v3 is abandoned."
 }
