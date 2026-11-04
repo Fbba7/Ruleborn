@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-04T20:00:00Z",
   "lease_until": "2026-11-04T23:00:00Z",
-  "updated_at": "2026-11-04T20:10:00Z",
-  "expected_next_update_by": "2026-11-04T20:55:00Z",
+  "updated_at": "2026-11-04T20:17:00Z",
+  "expected_next_update_by": "2026-11-04T21:02:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "c3a8b158",
-    "next_step": "resync: main merged; map AIA's new skins in SKINS_OF, draw the overlays (lock, rim, dot, ring) from the atlas, re-run the catalogue and the pre-check"
+    "next_step": "pre-check at c5550dd3 (SKINS_OF covers every baked skin; overlays drawn from the atlas; 46/47/62/63 pages re-rendered, none missing)"
   },
   "precheck": null,
   "gate_request": null,
@@ -150,5 +150,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "resync: main merged; map AIA's new skins in SKINS_OF, draw the overlays (lock, rim, dot, ring) from the atlas, re-run the catalogue and the pre-check"
+  "next_step": "pre-check at c5550dd3 (SKINS_OF covers every baked skin; overlays drawn from the atlas; 46/47/62/63 pages re-rendered, none missing)"
 }
