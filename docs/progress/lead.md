@@ -1,8 +1,9 @@
 # The lead's handoff
 
-> **Stopped by the owner, 3 November 2026.** No cycle runs, no session or
-> scheduled task starts, and Fable 5.1 is never used again. Read the owner
-> orders in [`CLAUDE.md`](../../CLAUDE.md) first: they override this file.
+> **Owner orders.** The owner stopped the program on 3 November 2026 and
+> restarted it on 4 November 2026. Fable 5.1 is never used again, and
+> `dev-fable-v3` is never resumed. Read the owner orders in
+> [`CLAUDE.md`](../../CLAUDE.md) first: they override this file.
 
 Every cycle of the lead is a fresh session, created by the launcher with the
 repository checked out at main. It starts here and from

@@ -1,7 +1,7 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-03T23:43:00Z",
-  "expected_next_update_by": null,
+  "updated_at": "2026-11-04T01:00:00Z",
+  "expected_next_update_by": "2026-11-04T02:45:00Z",
   "cycle": 23,
   "merging": null,
   "last_merged": {
@@ -9,5 +9,5 @@
     "sha": "eec44b50"
   },
   "alerts": [],
-  "next_step": "Stopped by the owner on 3 November 2026 (CLAUDE.md). Run no cycle and start no session or scheduled task until the owner restarts the program in their own chat. Never use Fable 5.1."
+  "next_step": "Restarted by the owner on 4 November 2026 (CLAUDE.md). Next cycle: check AD on P0-AD-calibrate-2, which finishes dev-opus-v3 and held-opus with Opus 5.5 as the judge. Never use Fable 5.1; dev-fable-v3 is abandoned."
 }
