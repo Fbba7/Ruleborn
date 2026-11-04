@@ -220,8 +220,8 @@
  {
   "check": "label-contrast",
   "control": "popup body 1",
-  "ratio": 14.41,
-  "apca_lc": 96.0,
+  "ratio": 14.34,
+  "apca_lc": 95.9,
   "against": "face",
   "treatment": "T0",
   "font": "Manrope",

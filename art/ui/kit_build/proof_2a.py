@@ -182,9 +182,20 @@ def popup_still(hc, atlas):
     b.put(atlas.draw("ribbon__frame__normal", 260, 46), r[0], r[1])
     b.say("popup title", [r[0] + 20, r[1] + 1, r[2] - 40, 36], "Reward", 22, white, outline, drop=True,
           display=True)
+    # The rank frame of the reward in the middle, on a glow (rubric 13: a
+    # reward sits on a glow). The sunburst is K39's, a later batch: the
+    # proof draws a plain radial glow of `gold` in its place.
+    if not hc:
+        W, H = round(FRAME[0] * PX), round(FRAME[1] * PX)
+        yy, xx = np.mgrid[0:H, 0:W]
+        cx, cy = FRAME[0] / 2 * PX, (fy + 188) * PX
+        dist = np.hypot(xx - cx, yy - cy) / (92 * PX)
+        glow = np.zeros((H, W, 4), dtype=np.uint8)
+        glow[..., :3] = rgb("gold")
+        glow[..., 3] = (np.clip(1 - dist, 0, 1) ** 1.5 * 220).astype(np.uint8)
+        b.overlay(Image.fromarray(glow, "RGBA"))
     for i, line in enumerate(["You found the old key.", "It opens the tower door."]):
         b.say("popup body %d" % i, [fx + 20, fy + 70 + i * 28, fw - 40, 24], line, 16, white)
-    # The rank frame of the reward in the middle.
     b.put(atlas.draw("panel_dark__box__normal", 96, 96), FRAME[0] / 2 - 48, fy + 140)
     b.put(atlas.draw("frame_gold__box__normal", 106, 106), FRAME[0] / 2 - 53, fy + 136)
     br = b.put(atlas.draw("button_primary__box__normal", 220, 56), (FRAME[0] - 220) / 2, fy + fh - 80,
