@@ -19,9 +19,14 @@ export const RULES = {
   drop: 'drop', glint: 'cream', glintMax: 2, glintSize: 0.075,
 };
 
+// Every finish canvas is a software one (willReadFrequently): on a
+// GPU-backed 2D canvas, a grow's hundreds of stamps were sometimes dropped
+// when the machine was idle (an octagon instead of a ring round crew/pip in
+// high contrast), so the bake differed with the machine's load.
 export function canvas(w, h = w) {
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
+  c.getContext('2d', { willReadFrequently: true });
   return c;
 }
 function silhouette(src, colour) {

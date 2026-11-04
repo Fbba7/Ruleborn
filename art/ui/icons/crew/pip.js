@@ -29,7 +29,8 @@ export default {
     const back = S.renderTo(this.build(S), R);
     const out = document.createElement('canvas');
     out.width = out.height = R;
-    const x = out.getContext('2d');
+    // A software canvas, as finish.js's: the bake must not depend on load.
+    const x = out.getContext('2d', { willReadFrequently: true });
     x.drawImage(back, 0, 0);
     const img = new Image();
     img.src = new URL(`../${this.render}`, import.meta.url).href;
