@@ -790,12 +790,12 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "2ae9c82c",
+      "merged_sha": "62188517"
     },
     {
       "id": "P1-K1-catalogue",
