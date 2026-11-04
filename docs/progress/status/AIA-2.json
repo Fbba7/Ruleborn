@@ -5,18 +5,23 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P1-AIA2-icons-1b",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-04T18:40:00Z",
   "lease_until": "2026-11-04T21:40:00Z",
-  "updated_at": "2026-11-04T18:40:00Z",
-  "expected_next_update_by": "2026-11-04T19:25:00Z",
+  "updated_at": "2026-11-04T19:20:00Z",
+  "expected_next_update_by": "2026-11-04T20:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "cd30ce21",
-    "next_step": "P1-AIA2-icons-1b: answer the 1a critiques in the finish (soft drop, gloss band, three-stop body), then the six new icons"
+    "next_step": "P1-AIA2-icons-1b: pre-check at bef6eac2, then the gate's verdict, then ready"
   },
   "precheck": null,
-  "gate_request": null,
+  "gate_request": {
+    "sha": "bef6eac2b2691dd9933b5674c2c0791b2f501861",
+    "items": [
+      "icon sheet at 48 and 96 points and in grayscale"
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [],
@@ -36,8 +41,23 @@
       "default": "The lead merges P1-AIA2-toon-route with bake.js --check and check_all green, and runs guard.sh's rebake for the two icon families as `node art/ui/icons/studio/bake_icons.js icons_48 icons_256 --out <scratch>` compared file by file, until K1 wires kind \"scene\" into bake.js by calling that script; px_per_point stays null for scene families.",
       "escalate_to": "lead",
       "state": "answered by lead cycle 36 (default applied; scene kind folded into P1-K1-atlas-draw)"
+    },
+    {
+      "id": "AIA2-R2",
+      "from": "AIA-2",
+      "to": "lead",
+      "ask": "list.md batch 1b names currencies/insight, but the design has no Insight (§11.7) and no client code uses the icon. Batch 1b ships five new icons plus Starlight. Drop insight, or name a replacement?",
+      "files": [
+        "art/ui/icons/list.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T19:20:00Z",
+      "due": "2026-11-05T19:20:00Z",
+      "default": "Insight stays dropped from list.md with no replacement; batch 1b is done at six icons unless the lead assigns another.",
+      "escalate_to": "lead",
+      "state": "open"
     }
   ],
   "answers": [],
-  "note": "P1-AIA2-icons-1a merged as 8ce107c9; claimed P1-AIA2-icons-1b"
+  "note": "P1-AIA2-icons-1b pushed at bef6eac2; pre-check running; gate requested"
 }
