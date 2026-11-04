@@ -514,7 +514,8 @@ func _fixture() -> void:
 ## a label's, an action's and a field's words are `UI.WORDS_Z` up, their
 ## code-drawn box back down in the art's; a full-rect layer added over a
 ## screen (a veil, a menu, a sheet) stands `UI.OVERLAY_Z` above it, so the
-## screen's words never show through it. A frame is sized from its words:
+## screen's words never show through it, and a later sibling stands in the
+## layer of the one before it. A frame is sized from its words:
 ## at 200% text a law card's and a portrait's frames widen rather than
 ## shrinking or cutting their words.
 func _words() -> void:
@@ -552,6 +553,10 @@ func _words() -> void:
 		bad.append("a layer moved behind the screen keeps z %d (the veil %d)" % [menu.z_index, veil.z_index])
 	var rows := VBoxContainer.new()
 	screen.add_child(rows)
+	# A page that is not full-screen, added after a full-screen backdrop (the
+	# result screen's rays, then its column), stands in the backdrop's layer.
+	if rows.z_index != veil.z_index:
+		bad.append("a page added after a full-screen layer is at z %d, under it (%d)" % [rows.z_index, veil.z_index])
 	var row := Control.new()
 	row.set_anchors_preset(Control.PRESET_FULL_RECT)
 	rows.add_child(Label.new())

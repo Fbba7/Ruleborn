@@ -176,42 +176,48 @@ static func raise_words(c: CanvasItem) -> void:
 ## parent that does not lay them out (a screen's column over its sky; a
 ## menu, a sheet or a dialog over the screen) stands `OVERLAY_Z` above the
 ## sibling before it, so the words below it, a layer up from their art, stay
-## under it as they did when every control shared one z. The parent's layers
-## are stacked again whenever its children are reordered, so a view a screen
-## moves behind its column after adding it goes back under the column.
+## under it as they did when every control shared one z; a later sibling that
+## is not full-screen stands in the layer of the one before it, so the tree's
+## order still decides between them. The parent's layers are stacked again
+## whenever its children are reordered, so a view a screen moves behind its
+## column after adding it goes back under the column.
 static func _layer(n: Node) -> void:
 	var c := n as Control
 	var parent := c.get_parent() as Control if c != null else null
-	if parent == null or parent is Container or not _layered(c):
+	if parent == null or parent is Container or not _managed(c):
 		return
-	if not parent.has_meta("rb_stacked"):
+	if _full(c) and not parent.has_meta("rb_stacked"):
 		parent.set_meta("rb_stacked", true)
 		parent.child_order_changed.connect(_restack.bind(parent))
-	_lift(c)
+	if parent.has_meta("rb_stacked"):
+		_lift(c)
 
 
-## Stacks `parent`'s full-screen layers again, in their order.
+## Stacks `parent`'s layers again, in their order.
 static func _restack(parent: Control) -> void:
 	if not is_instance_valid(parent) or parent.is_queued_for_deletion():
 		return
 	for n: Node in parent.get_children():
-		if n is Control and _layered(n):
+		if n is Control and _managed(n):
 			_lift(n)
 
 
-## Whether `c` is a full-screen layer the kit stacks: full rect, in the
-## parent's z, and at the z the kit gave it (a control a screen gave its own
-## z keeps it).
-static func _layered(c: Control) -> bool:
+## Whether the kit stacks `c`: in the parent's z, and at the z the kit gave
+## it (a control a screen gave its own z keeps it).
+static func _managed(c: Control) -> bool:
 	if c.top_level or not c.z_as_relative:
-		return false
-	if c.anchor_right < 1.0 or c.anchor_bottom < 1.0 or c.anchor_left > 0.0 or c.anchor_top > 0.0:
 		return false
 	return c.z_index == int(c.get_meta("rb_layer", WORDS_Z if c.has_meta("rb_words") else 0))
 
 
-## Puts layer `c` `OVERLAY_Z` above the canvas item before it, or back at
-## the parent's z when nothing is before it.
+## Whether `c` covers its parent: a full-screen layer.
+static func _full(c: Control) -> bool:
+	return c.anchor_left <= 0.0 and c.anchor_top <= 0.0 and c.anchor_right >= 1.0 and c.anchor_bottom >= 1.0
+
+
+## Puts `c` in the layer of the canvas item before it, `OVERLAY_Z` above it
+## when `c` is a full-screen layer, or back at the parent's z when nothing is
+## before it.
 static func _lift(c: Control) -> void:
 	var siblings := c.get_parent().get_children()
 	var below: CanvasItem = null
@@ -222,8 +228,10 @@ static func _lift(c: Control) -> void:
 	var own := WORDS_Z if c.has_meta("rb_words") else 0
 	var z := own
 	if below != null:
-		z = below.z_index - (WORDS_Z if below.has_meta("rb_words") else 0) + OVERLAY_Z + own
-	c.z_index = mini(z, RenderingServer.CANVAS_ITEM_Z_MAX)
+		z = below.z_index - (WORDS_Z if below.has_meta("rb_words") else 0) + own
+		if _full(c):
+			z += OVERLAY_Z
+	c.z_index = clampi(z, RenderingServer.CANVAS_ITEM_Z_MIN, RenderingServer.CANVAS_ITEM_Z_MAX)
 	c.set_meta("rb_layer", c.z_index)
 
 
