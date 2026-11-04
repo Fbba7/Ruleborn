@@ -823,7 +823,7 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
@@ -832,10 +832,12 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": "c3a8b158",
+      "ready_sha": "71562ab1",
       "merged_sha": null,
       "exceptions": [
-        "client/tests/shots/ui_kit_catalogue.gd.uid"
+        "client/tests/shots/ui_kit_catalogue.gd.uid",
+        "client/tests/shots/ui_kit_catalogue_art.gd",
+        "client/tests/shots/ui_kit_catalogue_art.gd.uid"
       ]
     },
     {
