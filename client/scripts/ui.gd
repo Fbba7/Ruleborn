@@ -13,6 +13,13 @@ class_name UI
 const GLYPH := {"success": "✓", "alarm": "!", "info": "ⓘ", "confirming": "…"}
 ## §21.2's school shapes as glyphs, for words that name a school.
 const SHAPE_GLYPH := {"chevron": "^", "cube": "■", "hourglass": "⧗", "bolt": "ϟ", "leaf": "❦", "eye": "◉"}
+## kit-spec.md section 5 (`report.md` section 7's rule 2): words in their own z layer, one above the
+## art they stand on, so the art batches apart from the words.
+const WORDS_Z := 1
+## A layer laid over the earlier children of its parent (a screen's column
+## over its sky, a menu or dialog over the screen) stands this far above the
+## sibling before it, so it covers that sibling's words as well as its art.
+const OVERLAY_Z := 16
 
 ## §21.1: "Primary controls are at least 9 mm across — about 48 points". The
 ## base frame is 1080 pixels for a 360-point-wide phone, so 3 pixels a point.
@@ -22,13 +29,6 @@ static var CONTROL_POINTS: float = Tokens.number("size", "control_points")
 static var TEXT_POINTS: float = Tokens.number("size", "body_points")
 static var TITLE_POINTS: float = Tokens.number("size", "title_points")
 static var _rooted := false
-## kit-spec.md section 7's rule 2: words in their own z layer, one above the
-## art they stand on, so the art batches apart from the words.
-const WORDS_Z := 1
-## A layer laid over the earlier children of its parent (a screen's column
-## over its sky, a menu or dialog over the screen) stands this far above the
-## sibling before it, so it covers that sibling's words as well as its art.
-const OVERLAY_Z := 16
 
 
 
@@ -172,32 +172,59 @@ static func raise_words(c: CanvasItem) -> void:
 		box.z_index = -WORDS_Z
 
 
-## kit-spec.md section 7: a full-screen layer added over earlier children of
-## a parent that does not lay them out (a screen's column over its sky; a
+## kit-spec.md section 5: a full-screen layer over earlier children of a
+## parent that does not lay them out (a screen's column over its sky; a
 ## menu, a sheet or a dialog over the screen) stands `OVERLAY_Z` above the
 ## sibling before it, so the words below it, a layer up from their art, stay
-## under it as they did when every control shared one z.
+## under it as they did when every control shared one z. The parent's layers
+## are stacked again whenever its children are reordered, so a view a screen
+## moves behind its column after adding it goes back under the column.
 static func _layer(n: Node) -> void:
 	var c := n as Control
 	var parent := c.get_parent() as Control if c != null else null
-	if parent == null or parent is Container or c.top_level or not c.z_as_relative:
+	if parent == null or parent is Container or not _layered(c):
 		return
+	if not parent.has_meta("rb_stacked"):
+		parent.set_meta("rb_stacked", true)
+		parent.child_order_changed.connect(_restack.bind(parent))
+	_lift(c)
+
+
+## Stacks `parent`'s full-screen layers again, in their order.
+static func _restack(parent: Control) -> void:
+	if not is_instance_valid(parent) or parent.is_queued_for_deletion():
+		return
+	for n: Node in parent.get_children():
+		if n is Control and _layered(n):
+			_lift(n)
+
+
+## Whether `c` is a full-screen layer the kit stacks: full rect, in the
+## parent's z, and at the z the kit gave it (a control a screen gave its own
+## z keeps it).
+static func _layered(c: Control) -> bool:
+	if c.top_level or not c.z_as_relative:
+		return false
 	if c.anchor_right < 1.0 or c.anchor_bottom < 1.0 or c.anchor_left > 0.0 or c.anchor_top > 0.0:
-		return
-	if c.z_index != (WORDS_Z if c.has_meta("rb_words") else 0) and not c.has_meta("rb_layer"):
-		return
-	var siblings := parent.get_children()
-	var at := siblings.find(c)
+		return false
+	return c.z_index == int(c.get_meta("rb_layer", WORDS_Z if c.has_meta("rb_words") else 0))
+
+
+## Puts layer `c` `OVERLAY_Z` above the canvas item before it, or back at
+## the parent's z when nothing is before it.
+static func _lift(c: Control) -> void:
+	var siblings := c.get_parent().get_children()
 	var below: CanvasItem = null
-	for i: int in range(at - 1, -1, -1):
+	for i: int in range(siblings.find(c) - 1, -1, -1):
 		if siblings[i] is CanvasItem:
 			below = siblings[i]
 			break
-	if below == null:
-		return
-	var base := below.z_index - (WORDS_Z if below.has_meta("rb_words") else 0) + OVERLAY_Z
-	c.z_index = mini(base + (WORDS_Z if c.has_meta("rb_words") else 0), RenderingServer.CANVAS_ITEM_Z_MAX)
-	c.set_meta("rb_layer", true)
+	var own := WORDS_Z if c.has_meta("rb_words") else 0
+	var z := own
+	if below != null:
+		z = below.z_index - (WORDS_Z if below.has_meta("rb_words") else 0) + OVERLAY_Z + own
+	c.z_index = mini(z, RenderingServer.CANVAS_ITEM_Z_MAX)
+	c.set_meta("rb_layer", c.z_index)
 
 
 ## A screen's title in Marcellus (§21.8), with the designs' hard drop under

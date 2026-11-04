@@ -63,6 +63,10 @@ const SKINS := {
 }
 ## The backdrop's materials: gradients, not skins, always drawn in code.
 const BACKDROP := ["night", "night_rays", "scrim"]
+## The switches beside the 35 skins': the baked numerals (`num_<finish>_<glyph>`,
+## kit-spec.md section 6.1), off until their art passes the gate; absent
+## from kit_families.json means off.
+const BESIDE := ["numerals"]
 
 ## A skin's surface names, as the kit's materials.
 const SURFACES := {

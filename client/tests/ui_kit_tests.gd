@@ -326,12 +326,13 @@ func _skins() -> void:
 		if not switches.has(k):
 			bad.append("no switch for %s" % k)
 	for k: String in switches:
-		if not KitSkin.SKINS.has(k):
+		if not KitSkin.SKINS.has(k) and k not in KitSkin.BESIDE:
 			bad.append("a switch for no skin, %s" % k)
 		elif switches[k] != false:
 			bad.append("%s is switched on" % k)
 	check.call("every material maps onto one of the kit's 35 skins or the backdrop, and kit_families.json holds "
-			+ "one switch per skin, every one off (kit-spec.md sections 6.7, 8.2)", bad.is_empty(), "; ".join(bad))
+			+ "one switch per skin (and the numerals' beside them), every one off (kit-spec.md sections 6.7, "
+			+ "8.2)", bad.is_empty(), "; ".join(bad))
 
 
 func _switch() -> void:
@@ -546,6 +547,9 @@ func _words() -> void:
 	screen.add_child(menu)
 	if menu.z_index != 2 * UI.OVERLAY_Z:
 		bad.append("a layer over the veil is at z %d, not %d" % [menu.z_index, 2 * UI.OVERLAY_Z])
+	screen.move_child(menu, 0)
+	if menu.z_index != 0 or veil.z_index != UI.OVERLAY_Z:
+		bad.append("a layer moved behind the screen keeps z %d (the veil %d)" % [menu.z_index, veil.z_index])
 	var rows := VBoxContainer.new()
 	screen.add_child(rows)
 	var row := Control.new()
@@ -632,6 +636,11 @@ func _numerals() -> void:
 	br.free()
 	Strings.set_locale("en")
 	KitSkin.reset()
+	var shipped: Dictionary = (JSON.parse_string(FileAccess.get_file_as_string(KitSkin.MANIFEST)) as Dictionary)["pieces"]
+	for finish: String in KitNumerals.FINISHES:
+		for glyph: String in KitNumerals.GLYPHS.values():
+			if not shipped.has("%s_%s" % [finish, glyph]):
+				bad.append("the kit's atlas has no %s_%s" % [finish, glyph])
 	await tree.process_frame
 	check.call("the baked numerals draw each glyph in its fixed advance, group as the language shown groups "
 			+ "(1,234 and 1.234), and fall back to live text while their skin is off or a piece is missing "
