@@ -8,14 +8,19 @@
   "task_state": "working",
   "claimed_at": "2026-11-04T14:45:00Z",
   "lease_until": "2026-11-04T17:45:00Z",
-  "updated_at": "2026-11-04T15:20:00Z",
-  "expected_next_update_by": "2026-11-04T16:05:00Z",
+  "updated_at": "2026-11-04T16:05:27Z",
+  "expected_next_update_by": "2026-11-04T16:50:27Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "02e7ef0f00ea0444842a4d0158f50e271a97c952",
     "next_step": "P1-AIA2-icons-1a: scripted checks green at c1d14d38; pre-check running; waiting for the gate"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "c1d14d38a3ed910d3b28b169cc0f86081c53b127",
+    "exit": 1,
+    "finished_at": "2026-11-04T16:03:52Z",
+    "summary": "== the UI kit's bake: atlases match their sources, and its tests (K1-R1) ==: interface atlases: 240234 bytes in all"
+  },
   "gate_request": {
     "sha": "c1d14d38a3ed910d3b28b169cc0f86081c53b127",
     "items": [
@@ -51,5 +56,6 @@
       "state": "answered by lead cycle 36 (default applied; scene kind folded into P1-K1-atlas-draw)"
     }
   ],
-  "answers": []
+  "answers": [],
+  "note": "pre-check at c1d14d38 failed: icon manifests stale (a __pycache__ under art/ui was hashed at bake time); rebaking clean"
 }
