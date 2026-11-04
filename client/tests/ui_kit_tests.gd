@@ -16,14 +16,28 @@ extends RefCounted
 const FIXTURE := "res://tests/fixtures/ui_kit/kit.json"
 ## The catalogue sheet (kit-spec.md section 6.4).
 const Catalogue := preload("res://tests/shots/ui_kit_catalogue.gd")
+const Art := preload("res://tests/shots/ui_kit_catalogue_art.gd")
 ## The components whose baked faces are skins, and those skins' faces: once a
 ## skin has art, each of the component's baked states is a piece of it.
+## The bar's pieces are K46's (N RM), the component built from them: K25's
+## locked state is section 3's locked material, not a face of the bar. The
+## overlay skins (selected, locked's mark, the spinner) are the catalogue's
+## OVERLAYS, one normal piece each.
 const SKINS_OF := {
 	"K01": ["button_primary__box", "button_secondary__box", "button_tertiary__box",
 		"button_tertiary__parchment", "button_danger__box"],
 	"K02": ["button_primary__gold_round"],
-	"K28": ["success__box"],
+	"K12": ["panel_dark__box"],
+	"K15": ["well__box"],
+	"K23": ["pill__box"],
+	"K27": ["badge__box", "badge__dot"],
+	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn"],
 	"K29": ["success__box"],
+	"K33": ["panel_glass__box"],
+	"K34": ["spinner__ring"],
+	"K38": ["disc__level_disc"],
+	"K44": ["disc__box"],
+	"K46": ["bar_track__box", "bar_track__tick", "bar_fill__box", "bar_fill__alarm"],
 }
 
 var tree: SceneTree
@@ -540,7 +554,7 @@ func _catalogue() -> void:
 	var pairs := Catalogue.inventory(FileAccess.get_file_as_string(spec_file))
 	if pairs.size() < 100:
 		bad.append("section 4 reads as %d pairs" % pairs.size())
-	var on := Catalogue.art_on()
+	var on := Art.art_on()
 	await Catalogue.lay_out(tree, func(_n: int, _screen: Control) -> void: pass)
 	for pair: String in pairs:
 		if not Catalogue.placed.has(pair):
@@ -549,11 +563,11 @@ func _catalogue() -> void:
 		bad.append("%s is taller than a page" % title)
 	for lost: String in KitSkin.missing:
 		bad.append("the catalogue drew %s from the code-drawn box" % lost)
-	var kit: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Catalogue.MANIFEST))
+	var kit: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Art.MANIFEST))
 	var pieces: Dictionary = kit.get("pieces", {})
 	var atlas: Dictionary = kit.get("atlas", {})
 	for look: String in ["normal", "high_contrast"]:
-		var img := Image.load_from_file(Catalogue.MANIFEST.get_base_dir() + "/" + str(atlas.get(look, "")))
+		var img := Image.load_from_file(Art.MANIFEST.get_base_dir() + "/" + str(atlas.get(look, "")))
 		if img == null or img.get_size() != Vector2i(int(atlas.get("width", 0)), int(atlas.get("height", 0))):
 			bad.append("the %s atlas is not the manifest's size" % look)
 			continue
@@ -571,9 +585,17 @@ func _catalogue() -> void:
 				continue
 			for pair: String in pairs:
 				var state := pair.get_slice(":", 1)
-				if pair.begins_with(id + ":") and Catalogue.FACES.has(state) \
-						and not pieces.has("%s__%s" % [face, Catalogue.FACES[state]]):
-					bad.append("%s has no piece %s__%s" % [pair, face, Catalogue.FACES[state]])
+				if pair.begins_with(id + ":") and Art.FACES.has(state) \
+						and not pieces.has("%s__%s" % [face, Art.FACES[state]]):
+					bad.append("%s has no piece %s__%s" % [pair, face, Art.FACES[state]])
+	for state: String in Art.OVERLAYS:
+		var key: String = Art.OVERLAYS[state]
+		if pieces.has(key):
+			mapped.append(key.get_slice("__", 0))
+			if key not in Art.drawn:
+				bad.append("the catalogue drew no %s over state %s" % [key, state])
+	if pieces.has(Art.DOT) and Art.DOT not in Art.drawn:
+		bad.append("the catalogue drew no %s for K27's dot" % Art.DOT)
 	for skin: String in on:
 		if skin not in mapped:
 			bad.append("%s has art but no component in SKINS_OF" % skin)

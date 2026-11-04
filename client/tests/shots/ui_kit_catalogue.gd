@@ -14,9 +14,7 @@ const H := 2340
 const CELL_MIN := 80
 ## How far a part may reach into the frame's bottom margin.
 const SLACK := 6
-const MANIFEST := "res://ui/art/kit.json"
-## A face's state letter and the piece state it is baked in (section 5).
-const FACES := {"N": "normal", "P": "pressed", "D": "disabled", "L": "locked"}
+const Art := preload("res://tests/shots/ui_kit_catalogue_art.gd")
 
 ## "K01:P" -> the page it is on, from the last lay_out().
 static var placed: Dictionary = {}
@@ -40,7 +38,7 @@ func _go() -> void:
 	Settings.reduced_motion = false
 	Settings.banners_stay = true
 	Settings.apply()
-	art_on()
+	Art.art_on()
 	var shot := OS.get_environment("SHOT")
 	var pages := await lay_out(self, func(n: int, _screen: Control) -> void:
 		for i: int in 120:
@@ -60,28 +58,13 @@ func _go() -> void:
 	quit()
 
 
-## Switches on every skin that has pieces in the shipped manifest, read from
-## its files: the sheet shows the baked faces (all skins ship off).
-static func art_on() -> Array[String]:
-	var on: Array[String] = []
-	KitSkin.reset()
-	if not KitSkin.use_files(MANIFEST):
-		return on
-	var kit: Variant = JSON.parse_string(FileAccess.get_file_as_string(MANIFEST))
-	for key: String in (kit as Dictionary).get("pieces", {}):
-		var skin := key.get_slice("__", 0)
-		if skin not in on:
-			on.append(skin)
-			KitSkin.switch(skin, true)
-	return on
-
-
 ## Lays every part out on pages of the phone's size in `tree`, calling
 ## `save` (n, screen) once a page is full and settled; returns the number of
 ## pages, and fills `placed` and `tall`.
 static func lay_out(tree: SceneTree, save: Callable) -> int:
 	placed = {}
 	tall = []
+	Art.drawn = []
 	var all := parts()
 	var n := 0
 	var i := 0
@@ -452,7 +435,7 @@ static func parts() -> Array:
 		var r := _flow()
 		r.add_child(_cell("K27", "N", func() -> Control: return KitStatus.badge("4"), "count"))
 		r.add_child(_cell("K27", "N", func() -> Control: return KitStatus.badge("12"), "count"))
-		r.add_child(_cell("K27", "A", func() -> Control: return KitStatus.badge(""), "dot", true))
+		r.add_child(_cell("K27", "A", Art.dot, "dot", true))
 		return _part("K27 Badge", [r])])
 	out.append(["K28 Tag and plate", func() -> Control:
 		var r := _flow()
@@ -513,7 +496,8 @@ static func parts() -> Array:
 		# mark with the word.
 		var r := _flow()
 		for turn: int in 4:
-			r.add_child(_cell("K34", "", func() -> Control: return _spinner(turn * 90.0), "%d°, stand-in" % (turn * 90)))
+			r.add_child(_cell("K34", "", func() -> Control: return _spinner(turn * 90.0),
+				"%d°%s" % [turn * 90, "" if Art.pieces.has(Art.OVERLAYS["Ld"]) else ", stand-in"]))
 		var still := _flow()
 		still.add_child(_cell("K34", "RM", func() -> Control:
 			var h := HBoxContainer.new()
@@ -763,15 +747,19 @@ static func _apply(c: Control, state: String, over: Control) -> String:
 			return Strings.t("ERR_NOT_ENOUGH_ESSENCE")
 		"S":
 			var box := RbBox.of(_target(c))
-			if box != null:
+			if box != null and Art.pieces.has(Art.OVERLAYS["S"]):
+				var target := _target(c)
+				_posts.append(Art.rim.bind(target, over))
+			elif box != null:
 				box.set_chosen(true)
 			elif _target(c) is LineEdit:
 				_posts.append((_target(c) as LineEdit).grab_focus)
 		"L":
 			var target := _target(c)
-			_posts.append(_lock.bind(target))
+			_posts.append(Art.lock.bind(target))
 			var mark := TextureRect.new()
-			mark.texture = Icons.texture("generalui/lock")
+			var lock := Art.overlay(Art.OVERLAYS["L"])
+			mark.texture = lock if lock != null else Icons.texture("generalui/lock")
 			mark.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			mark.size = Vector2.ONE * UI.px(22)
@@ -811,50 +799,6 @@ static func _target(c: Control) -> Control:
 	return c
 
 
-## The locked face (section 5): the atlas's locked piece when the skin has
-## art, else the locked material.
-static func _lock(target: Control) -> void:
-	var box := RbBox.of(target)
-	if box == null:
-		target.modulate.a = 0.6
-		return
-	var p := KitSkin.piece(box.look, "locked", KitSkin.ground_of(target))
-	var face: Control = box.get("_face")
-	if p.is_empty() or face == null:
-		box.set_look("locked")
-		return
-	if face.draw.is_connected(Callable(box, "_draw_face")):
-		face.draw.disconnect(Callable(box, "_draw_face"))
-	face.draw.connect(_draw_piece.bind(box, face, p))
-	face.queue_redraw()
-
-
-## Draws atlas piece `p` on `face` over `box`'s rect, as RbBox draws a face.
-static func _draw_piece(box: RbBox, face: Control, p: Dictionary) -> void:
-	var tex := KitSkin.texture(p)
-	if tex == null:
-		return
-	var s := KitSkin.scale()
-	var reach: float = box.get("_reach")
-	var r := box.quad().grow(-reach)
-	var region := Rect2(float(p["x"]), float(p["y"]), float(p["w"]), float(p["h"]))
-	face.draw_set_transform(r.position, 0.0, Vector2(s, s))
-	var at := Rect2(Vector2.ZERO, r.size / s)
-	var slice: Variant = p.get("slice")
-	if slice is Dictionary:
-		var sb := StyleBoxTexture.new()
-		sb.texture = tex
-		sb.region_rect = region
-		sb.texture_margin_left = float(slice["l"])
-		sb.texture_margin_top = float(slice["t"])
-		sb.texture_margin_right = float(slice["r"])
-		sb.texture_margin_bottom = float(slice["b"])
-		face.draw_style_box(sb, at)
-	else:
-		face.draw_texture_rect_region(tex, at, region)
-	face.draw_set_transform(Vector2.ZERO)
-
-
 ## `c` on a parchment panel, the ground the parchment faces are made for.
 static func _on_parchment(c: Control) -> Control:
 	var p := UI.panel("parchment")
@@ -876,7 +820,8 @@ static func _spinner(degrees: float) -> Control:
 	holder.custom_minimum_size = Vector2.ONE * UI.px(24)
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var mark := TextureRect.new()
-	mark.texture = Icons.texture("generalui/timer")
+	var ring := Art.overlay(Art.OVERLAYS["Ld"])
+	mark.texture = ring if ring != null else Icons.texture("generalui/timer")
 	mark.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	mark.size = Vector2.ONE * UI.px(24)
