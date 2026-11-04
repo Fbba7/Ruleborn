@@ -8,12 +8,15 @@
   "task_state": "working",
   "claimed_at": "2026-11-04T12:50:00Z",
   "lease_until": "2026-11-04T15:50:00Z",
-  "updated_at": "2026-11-04T13:05:00Z",
-  "expected_next_update_by": "2026-11-04T13:50:00Z",
-  "long_run": null,
+  "updated_at": "2026-11-04T13:20:00Z",
+  "expected_next_update_by": null,
+  "long_run": {
+    "log": "/tmp/check-9a6565d7bed4b4192ab5d867d76129f75e0e8595.log",
+    "expected_end": "2026-11-04T13:50:00Z"
+  },
   "progress_marker": {
     "last_green_sha": "785cb2a8",
-    "next_step": "wait for client/build.sh; guard.sh and pre-check at 4b4a72d1"
+    "next_step": "pre-check and guard.sh running at 9a6565d7; on PASS record and mark ready"
   },
   "precheck": null,
   "gate_request": null,
