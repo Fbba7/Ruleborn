@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxqdB4Qn1GGpgMJ8SUE` (cycle 33,
-4 November 2026, from 10:38Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxqYuKcaV9WFPjR4eYL` (cycle 34,
+4 November 2026, from 11:39Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -177,20 +177,20 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 33, 4 November 2026, from 10:38Z (session
-  `session_01SNkKxqdB4Qn1GGpgMJ8SUE`, started by the launcher):
+- Cycle 34, 4 November 2026, from 11:39Z (session
+  `session_01SNkKxqYuKcaV9WFPjR4eYL`, started by the launcher):
   bookkeeping only. No roster branch moved since cycle 27 (AD, AIA, K1
   and SV all `waiting` on tasks already merged; no new requests), no
   merge lock, nothing ready, nothing merged, pages not republished, no
   session started. The seven-day bar still reads `allowed_warning`
   (reset 2026-11-09T17:00Z).
 - Next: as cycle 27 says below. Never use Fable 5.1 (CLAUDE.md).
-- Cycles 28 to 32, 4 November 2026, 05:38Z to 09:40Z (sessions
+- Cycles 28 to 33, 4 November 2026, 05:38Z to 10:40Z (sessions
   `session_01SNkKxqggtvFkbsicdmz58F`, `session_01SNkKxp3mbYDaJnVdPiRV3R`,
   `session_01SNkKxrFapFkzWn83y5X9ky`, `session_01SNkKxqLRk7TzD31oWv3kM6`,
-  `session_01SNkKxo9TNVATJL3S4bNxyc`, all started by the launcher):
-  bookkeeping only, each the same: nothing moved, nothing ready, usage in
-  warning.
+  `session_01SNkKxo9TNVATJL3S4bNxyc`, `session_01SNkKxqdB4Qn1GGpgMJ8SUE`,
+  all started by the launcher): bookkeeping only, each the same: nothing
+  moved, nothing ready, usage in warning.
 - Cycle 27, 4 November 2026, from 04:38Z (session
   `session_01SNkKxnqf4U1yn3FoEDAMTb`, started by the launcher): answered
   OV-R1 with [`usage-projection.md`](usage-projection.md). `/usage`
