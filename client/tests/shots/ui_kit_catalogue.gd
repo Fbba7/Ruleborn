@@ -403,7 +403,8 @@ static func parts() -> Array:
 		var roll := _flow()
 		for v: String in ["0", "580", "1,160", "1,740", "2,310"]:
 			roll.add_child(_cell("K24", "N", counter.call(v), "roll"))
-		return _part("K24 Counter", [r, roll])])
+		var gold := _wide("K24", "N", Art.numerals.bind("num_gold"), "num_gold, every glyph")
+		return _part("K24 Counter", [r, roll, gold])])
 	var bar := func(tone: String) -> Callable:
 		return func() -> Control:
 			var p := KitStatus.progress(3, 5, "3 / 5", Tokens.color(tone))
@@ -481,7 +482,10 @@ static func parts() -> Array:
 		r.add_child(_cell("K31", "A", func() -> Control: return KitHud.clock("0:24", true), "clock"))
 		r.add_child(_cell("K31", "RM", func() -> Control: return KitHud.clock("2:26"), "clock"))
 		var alarm := _wide("K31", "N", func() -> Control: return KitHud.alarm(2, 6, t.call("HUD_ALARM_WORD")), "alarm")
-		return _part("K31 Heist clock and alarm meter", [r, alarm])])
+		var digits := _flow()
+		for finish: String in ["num_timer", "num_timer_red"]:
+			digits.add_child(_wide("K31", "N", Art.numerals.bind(finish), "%s, every glyph" % finish))
+		return _part("K31 Heist clock and alarm meter", [r, alarm, digits])])
 	out.append(["K32 Pips", func() -> Control:
 		var r := _flow()
 		r.add_child(_cell("K32", "N", func() -> Control: return KitHud.pips(2, 2), "2 of 2"))
@@ -547,7 +551,8 @@ static func parts() -> Array:
 		r.add_child(_cell("K38", "A", disc))
 		r.add_child(_cell("K38", "N", func() -> Control:
 			return KitHud.keeper(Icons.texture("crewroles/scout"), "Ines", 7, 0.64, "410"), "keeper"))
-		return _part("K38 Level disc", [r])])
+		var white := _wide("K38", "N", Art.numerals.bind("num_white"), "num_white, every glyph")
+		return _part("K38 Level disc", [r, white])])
 	out.append(["K39 Reward tile", func() -> Control:
 		var r := _flow()
 		var tile := func(icon: String, amount: String, key: String, tone: String) -> Callable:

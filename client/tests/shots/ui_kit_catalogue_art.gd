@@ -13,8 +13,13 @@ const FACES := {"N": "normal", "P": "pressed", "D": "disabled", "L": "locked"}
 const OVERLAYS := {"S": "selected__rim__normal", "L": "locked__lock__normal", "Ld": "spinner__ring__normal"}
 ## K27's dot: the badge skin's second face, drawn as a sprite.
 const DOT := "badge__dot__normal"
+## Section 2's T3 glyphs, in the order the sheet lays out a finish's set
+## (section 6.1 names a numeral `num_<finish>_<glyph>`).
+const GLYPHS := ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "comma", "period", "colon",
+	"slash", "plus", "minus", "percent", "x", "question", "space"]
 
-## The overlay pieces (OVERLAYS, DOT) the last lay_out() drew from the atlas.
+## The overlay pieces (OVERLAYS, DOT) and numerals the last lay_out() drew
+## from the atlas.
 static var drawn: Array[String] = []
 ## The shipped manifest's pieces, from art_on().
 static var pieces: Dictionary = {}
@@ -148,3 +153,32 @@ static func dot() -> Control:
 	sprite.custom_minimum_size = tex.region.size * KitSkin.scale()
 	sprite.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	return sprite
+
+
+## Every glyph of numeral finish `finish` (`num_gold`, `num_timer_red`) the
+## atlas holds, each a sprite at the kit's scale in its fixed advance, recorded
+## in `drawn`; the code's Display number when the atlas has none.
+static func numerals(finish: String) -> Control:
+	var row := HFlowContainer.new()
+	row.add_theme_constant_override("h_separation", 0)
+	row.add_theme_constant_override("v_separation", UI.px(4))
+	var s := KitSkin.scale()
+	for glyph: String in GLYPHS:
+		var key := "%s_%s" % [finish, glyph]
+		var tex := overlay(key)
+		if tex == null:
+			continue
+		var sprite := TextureRect.new()
+		sprite.texture = tex
+		sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		var size := tex.region.size * s
+		size.x = maxf(size.x, float(pieces[key].get("advance", 0)) * s)
+		sprite.custom_minimum_size = size
+		sprite.tooltip_text = glyph
+		row.add_child(sprite)
+	if row.get_child_count() == 0:
+		var l := UI.label("0123456789", 30)
+		l.theme_type_variation = "Display"
+		return l
+	return row

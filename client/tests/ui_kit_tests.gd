@@ -30,12 +30,14 @@ const SKINS_OF := {
 	"K12": ["panel_dark__box"],
 	"K15": ["well__box"],
 	"K23": ["pill__box"],
+	"K24": ["num_gold"],
 	"K27": ["badge__box", "badge__dot"],
 	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn"],
 	"K29": ["success__box"],
+	"K31": ["num_timer", "num_timer_red"],
 	"K33": ["panel_glass__box"],
 	"K34": ["spinner__ring"],
-	"K38": ["disc__level_disc"],
+	"K38": ["disc__level_disc", "num_white"],
 	"K44": ["disc__box"],
 	"K46": ["bar_track__box", "bar_track__tick", "bar_fill__box", "bar_fill__alarm"],
 }
@@ -579,6 +581,9 @@ func _catalogue() -> void:
 	var mapped := []
 	for id: String in SKINS_OF:
 		for face: String in SKINS_OF[id]:
+			if face.begins_with("num_"):
+				_numerals_mapped(face, pieces, mapped, bad)
+				continue
 			var skin := face.get_slice("__", 0)
 			mapped.append(skin)
 			if skin not in on:
@@ -603,3 +608,20 @@ func _catalogue() -> void:
 	check.call("every (component, state) pair of kit-spec.md section 4 has a place on the catalogue sheet, and "
 			+ "each baked state of a skin with art is a piece in both atlases (section 6.4)", bad.is_empty(),
 			"; ".join(bad.slice(0, 12)))
+
+
+## Numeral finish `finish` in SKINS_OF: each of its glyphs (`<finish>_<glyph>`,
+## section 6.1) the catalogue drew from the atlas is mapped; one it did not
+## draw is a failure, as is a finish with no glyph in the atlas.
+func _numerals_mapped(finish: String, pieces: Dictionary, mapped: Array, bad: Array) -> void:
+	var found := 0
+	for key: String in pieces:
+		if key.substr(0, key.rfind("_")) != finish:
+			continue
+		found += 1
+		if key in Art.drawn:
+			mapped.append(key)
+		else:
+			bad.append("the catalogue drew no %s" % key)
+	if found == 0:
+		bad.append("SKINS_OF names %s, which has no glyph in the atlas" % finish)
