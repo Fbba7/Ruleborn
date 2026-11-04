@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxngpz6t5F8cyrdiup4` (cycle 37,
-4 November 2026, from 15:39Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxoTLAFfAWjeMPjhfvd` (cycle 39,
+4 November 2026, from 18:38Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -79,9 +79,13 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| K1 | `session_01SNkKxrN8TYssSGXSznyneA` (working) | P1-K1-atlas-draw | `claude/ui-bake` | 2026-11-04 14:41Z |
-| AIA-2 | `session_01SNkKxmwwK7YE4rm4Mh8nS1` (working) | P1-AIA2-icons-1a | `claude/ui-artist-icons` | 2026-11-04 14:41Z |
-| AIA | `session_01SNkKxqU4sZmrYcBz3mbRR2` (working) | P1-AIA-kit-1 | `claude/ui-artist` | 2026-11-04 12:44Z |
+| AIA-2 | `session_01SNkKxnfqxoDcFwrXf6z7o8` (working) | P1-AIA2-icons-1b | `claude/ui-artist-icons` | 2026-11-04 18:34Z |
+| K1 | `session_01SNkKxnnyL6yNX5UpCnt8dH` (working) | P1-K1-catalogue | `claude/ui-bake` | 2026-11-04 17:41Z |
+| AIA | `session_01SNkKxqGqwHJU12VPiWB68i` (working) | P1-AIA-kit-3 | `claude/ui-artist` | 2026-11-04 19:20Z |
+| AIA | `session_01SNkKxmwaE4rQY339ct2nz9` (idle, done) | P1-AIA-kit-2 | `claude/ui-artist` | 2026-11-04 16:25Z |
+| K1 | `session_01SNkKxrN8TYssSGXSznyneA` (idle, done) | P1-K1-atlas-draw | `claude/ui-bake` | 2026-11-04 14:41Z |
+| AIA-2 | `session_01SNkKxmwwK7YE4rm4Mh8nS1` (idle, done) | P1-AIA2-icons-1a | `claude/ui-artist-icons` | 2026-11-04 14:41Z |
+| AIA | `session_01SNkKxqU4sZmrYcBz3mbRR2` (idle, done) | P1-AIA-kit-1 | `claude/ui-artist` | 2026-11-04 12:44Z |
 | K1 | `session_01SNkKxpvstSMYkV1wwCL3rU` (idle, done) | P0-K1-kitspec-3 | `claude/ui-bake` | 2026-11-04 12:44Z |
 | AIA-2 | `session_01SNkKxnm9wVSENc6xKHm79A` (idle, done) | P1-AIA2-toon-route | `claude/ui-artist-icons` | 2026-11-04 12:44Z |
 | AD | `session_01SNkKxrEMe4td5Bk4zmN1Ed` (idle, done) | P0-AD-calibrate-2 | `claude/ui-ad` | 2026-11-03 11:09Z |
@@ -212,6 +216,75 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 39, 4 November 2026, from 18:38Z (session
+  `session_01SNkKxoTLAFfAWjeMPjhfvd`, started by the launcher): ran
+  P1-AIA-kit-2's gate on `fccd4b89` (contact sheets of the 23 batch 1b
+  pieces; 12 Opus 5.5 ui-judge samples, advisory): Layered materials,
+  Colour roles and value, and Light behind UI pass 3 of 3 (kit-1's
+  Colour roles notes do not recur); Display type unknown 3 of 3 (no words
+  on the pieces; exceptions queue, a split after 5 November 18:47Z).
+  Owner-inbox entry, no answer needed. Merged kit-2 as `661f4f6a`
+  (candidate `be0757d4`; check_all PASS, guard.sh OK; kit.json's
+  `sources_hash` rebaked by bake.js, a merge exception; owners.py clean
+  with the `art/ui/kit_build/**` and `art/ui/kit_next/**` exceptions).
+  Started AIA on P1-AIA-kit-3 (`session_01SNkKxqGqwHJU12VPiWB68i`). K1
+  (catalogue) and AIA-2 (icons-1b) still working: three builders, the
+  D13 (c) cap. Godot's untracked .uid/.import files deleted, not
+  committed. Pages not republished.
+- Next: gate and merge K1's catalogue, AIA-2's icons-1b and AIA's kit-3
+  as each reaches `ready` (kit-3's gate item: numerals sheet at phone
+  size, 100% and 200% text; Display type, Colour roles and value). Set
+  `expected_next_update_by` past any merge lock. Never use Fable 5.1
+  (CLAUDE.md).
+- Cycle 38, 4 November 2026, from 16:39Z (session
+  `session_01SNkKxogLFWgTcU9Pd3EKdc`, started by the launcher): merged
+  P1-K1-atlas-draw as `62188517` (candidate `a6212fcd`, ready at
+  `2ae9c82c`; check_all and guard.sh PASS; kit.json's `sources_hash`
+  rebaked by bake.js, a merge exception), with AIA-R13 and AIA-R14 folded
+  into P1-K1-switch-heist first (`a5755db6`). Then merged P1-AIA2-icons-1a
+  as `8ce107c9` (candidate `20a6a994`, ready at `cd30ce21`; check_all and
+  guard.sh PASS, guard now rebakes kind "scene" itself, so the cycle 36
+  substitute is retired; icons_48.json and icons_256.json conflicted on
+  `sources_hash` only, taken from AIA-2 and rebaked by bake.js, a merge
+  exception). Icons-1a merges behind its family switch with its advisory
+  fails (cycle 37). K1-R10 done. Started K1 on P1-K1-catalogue
+  (`session_01SNkKxnnyL6yNX5UpCnt8dH`) and AIA-2 on P1-AIA2-icons-1b
+  (`session_01SNkKxnfqxoDcFwrXf6z7o8`). AIA is ready on P1-AIA-kit-2 at
+  `fccd4b89`; its gate was not run this cycle (time). Three builders, the
+  D13 (c) cap. Pages not republished.
+- Next: run kit-2's gate (item "kit atlas contact sheet, batch 1b, at
+  phone size"; Layered materials, Display type, Colour roles and value,
+  Light behind UI; three samples each, Opus 5.5 ui-judge, advisory), then
+  merge it and start AIA on P1-AIA-kit-3. Gate and merge K1's catalogue
+  and AIA-2's icons-1b as they reach `ready`. Set
+  `expected_next_update_by` past any merge lock. Never use Fable 5.1
+  (CLAUDE.md).
+- Cycle 37, 4 November 2026, from 15:39Z (session
+  `session_01SNkKxngpz6t5F8cyrdiup4`, started by the launcher): merged
+  P1-AIA-kit-1 as `5e5cccf9` (check_all PASS on candidate `103c569b`;
+  owners.py clean once `art/ui/kit_build/**` was granted as an exception).
+  guard.sh failed only its rebake step (kind "scene" icon families, as in
+  cycle 36); with the substitute, kit rebaked with bake.js and both icon
+  families with bake_icons.js, all nine files byte for byte. Gate (judge
+  advisory, every quality owner-checked): kit-1 passes Layered materials
+  and Light, fails Colour roles 3 of 3 (sand-gold second button family,
+  teal focus on danger), Display type unknown 3 of 3 (blank plates;
+  exceptions queue, a split after 5 November 15:46Z). Icons-1a
+  (`c1d14d38`, carried to `5f759a03`, same pixels): Light passes; Layered
+  materials, Painted icons and Colour roles fail 3 of 3. Owner-inbox entry,
+  no answer needed. K1-R10 copied to requests.md. Started AIA on
+  P1-AIA-kit-2 (`session_01SNkKxmwaE4rQY339ct2nz9`) with the Colour roles
+  note. K1 (atlas-draw) and AIA-2 (icons-1a, gate requested at
+  `5f759a03`, not yet ready) still working: three builders. Godot left
+  icons_*.webp.import and a11y_motion_tests.gd.uid untracked after
+  build.sh; the lead deleted them, not committed (their owners decide).
+  Pages not republished.
+- Next: gate and merge each task as it reaches `ready`. AIA-2's icons-1a
+  verdicts are in (advisory, three fails): when it is ready, merge behind
+  its family switch (report.md 3.8 item 5) unless the sha's pixels changed,
+  in which case judge again. Keep the guard rebake substitute until K1's
+  atlas-draw merges. Set `expected_next_update_by` past any merge lock.
+  Never use Fable 5.1 (CLAUDE.md).
 - Cycle 36, 4 November 2026, from 13:39Z (session
   `session_01SNkKxrLqp81CeCToVADsyb`, started by the launcher): merged
   P0-K1-kitspec-3 and P1-AIA2-toon-route in one batch as `9b2bde70`

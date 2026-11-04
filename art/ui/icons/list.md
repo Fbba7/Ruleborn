@@ -15,14 +15,14 @@ Batches 3 and 4 are deferred (D13 (c)). The lead opens them.
 
 | # | Icon | Object |
 |---|---|---|
-| 1 | heistcontrols/cast | the Sage's hand casting a spark |
-| 2 | heistcontrols/getout | the skiff's escape arrow |
-| 3 | heistcontrols/ability | the crew member's ability burst |
+| 1 | heistcontrols/cast | the Sage's wand casting a spark |
+| 2 | heistcontrols/getout | an open door and the escape arrow |
+| 3 | heistcontrols/ability | the crew member's ability burst: a bolt and a flare |
 | 4 | heistcontrols/aim | a crosshair ring |
-| 5 | heistcontrols/regroup | three crew pips drawn together |
-| 6 | heistcontrols/splitcrew | three crew pips fanned apart |
+| 5 | heistcontrols/regroup | three crew pips drawn together round a flag |
+| 6 | heistcontrols/splitcrew | three crew pips fanned apart on a three-way fork |
 | 7 | heistcontrols/callskiff | the skiff with a call ring |
-| 8 | heistcontrols/sagewheel | the Sage's power wheel |
+| 8 | heistcontrols/sagewheel | the Sage's power wheel, as a helm in the six school colours |
 
 ### 1b: currencies and resources (P1-AIA2-icons-1b)
 

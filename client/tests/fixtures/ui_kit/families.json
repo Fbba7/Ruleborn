@@ -1,0 +1,6 @@
+{
+  "families": {
+    "kit": {"dir": "kit", "kind": "svg", "px_per_point": 6, "width": 256}
+  },
+  "fonts": {}
+}

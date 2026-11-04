@@ -42,6 +42,16 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   file by file; `px_per_point` stays null for scene families. Wiring kind
   "scene" into bake.js (by calling that script) is folded into
   P1-K1-atlas-draw's `done_when`.
+- **AIA-R13** (from AIA, 4 November 2026): batch 1b fills the kit atlas;
+  once the bake has atlas pages, bake `art/ui/kit_next/disc_school/` into
+  the kit, and KitSkin draws disc_school as its tinted `box` under the
+  untinted `frame`. Folded into P1-K1-switch-heist's `done_when` (cycle
+  38), with `client/ui/kit_skin.gd` added to its files. Default until
+  then: disc_school stays in `kit_next/`, drawn in code; no piece shrunk.
+- **AIA-R14** (from AIA, 4 November 2026): batch 1b's overlay skins
+  (`selected`, `spinner`) and pieces KitSkin.SKINS lacks. Folded into
+  P1-K1-switch-heist's `done_when` (cycle 38). Default until then: the
+  pieces sit in the atlas unused and every batch 1b skin stays off.
 
 ### Lead
 
@@ -61,6 +71,21 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   tier and phase 0's use (one weekly bar for its 43 hours), phases 1 to 3
   need about four more bars, so it does not fit and D13's answer (c)
   applies. Phase 1 starts after the 9 November 17:00Z reset.
+
+## Done in cycle 38 (4 November 2026, by the lead)
+
+- **K1-R10** (from K1): applied. P1-K1-atlas-draw merged as `62188517`
+  with kit.json's `sources_hash` rebaked by bake.js; P1-AIA2-icons-1a
+  merged as `8ce107c9` with icons_48.json and icons_256.json rebaked the
+  same way, hash lines only (merge exceptions).
+- **AIA-R13** and **AIA-R14** (from AIA): filed in P1-K1-switch-heist's
+  `done_when` and files (`a5755db6`); they stay open above until it merges.
+
+## Done in cycle 37 (4 November 2026, by the lead)
+
+- **AIA-R12** stays open above; the lead's prompt for P1-AIA-kit-2 asks AIA
+  to raise a request with a default, not shrink pieces, if batch 1b does
+  not fit before K1's atlas pages land.
 
 ## Done in cycle 36 (4 November 2026, by the lead)
 
