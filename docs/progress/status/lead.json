@@ -1,20 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-04T23:26:00Z",
-  "expected_next_update_by": "2026-11-05T01:15:00Z",
-  "cycle": 42,
-  "merging": {
-    "candidate_sha": "050f2e10",
-    "task_ids": [
-      "P1-AIA-kit-4"
-    ],
-    "started_at": "2026-11-04T23:26:00Z",
-    "expires_at": "2026-11-05T01:00:00Z"
-  },
+  "updated_at": "2026-11-04T23:33:00Z",
+  "expected_next_update_by": "2026-11-05T00:48:00Z",
+  "cycle": 43,
+  "merging": null,
   "last_merged": {
     "task_id": "P1-K1-catalogue",
     "sha": "7e6de29d"
   },
   "alerts": [],
-  "next_step": "K1 (session_01SNkKxqXv3kuBk7Uya8STrT) resyncs P1-K1-catalogue for kit-3's numerals (candidate aa1ab0b0 failed the coverage test) and marks it ready; merge it before P1-AIA-kit-4 (rebuild candidate, check_all and guard.sh). AIA-2 is pre-checking P1-AIA2-icons-1b's resync; merge on ready (gate passed, advisory). Gate AIA's kit-4 on ready (kit catalogue sheet, batch 2a). Never use Fable 5.1."
+  "next_step": "Main fails guard.sh's rebake on its own: client/ui/art/icons_48_hc.webp is not what its sources bake to in this container (the high-contrast halo is gone and crew/pip is an octagon again; same sources and file as 00e31ef0, which passed at about 23:00Z), so no candidate can pass guard until AIA-2 makes the icon finish environment-independent. Check P1-AIA2-icons-2a's candidate (AIA-2 session_01SNkKxnB46NyYAV26hWtwrg) with guard.sh on ready; if the rebake still differs, set resync with this finding. AIA (session_01SNkKxpLGXniYM5JnmyzqE7) resyncs P1-AIA-kit-4: SKINS_OF entries for its nine skins (client/tests/ui_kit_tests.gd granted, SKINS_OF block only); merge on ready once guard is green. K1 (session_01SNkKxo2gLyAa89sh1bYjJq) on P1-K1-words. Three builders, the D13 (c) cap. Never use Fable 5.1."
 }

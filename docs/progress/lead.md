@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxnLzPFPR6HcJhTvYru` (cycle 42,
-4 November 2026, from 21:38Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxr5KfuQpAn8isazH9U` (cycle 43,
+4 November 2026, from 22:38Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -79,12 +79,15 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AIA-2 | `session_01SNkKxoAA41vxL7RwwKNRGN` (working) | P1-AIA2-icons-1b (restart: resync, icons_48_hc.webp is not what its sources bake to) | `claude/ui-artist-icons` | 2026-11-04 20:59Z |
+| AIA | `session_01SNkKxpLGXniYM5JnmyzqE7` (working) | P1-AIA-kit-4 (restart: resync, its nine skins missing from SKINS_OF) | `claude/ui-artist` | 2026-11-04 23:30Z |
+| AIA-2 | `session_01SNkKxnB46NyYAV26hWtwrg` (working) | P1-AIA2-icons-2a | `claude/ui-artist-icons` | 2026-11-04 23:21Z |
+| K1 | `session_01SNkKxo2gLyAa89sh1bYjJq` (working) | P1-K1-words | `claude/ui-bake` | 2026-11-04 23:21Z |
+| AIA-2 | `session_01SNkKxoAA41vxL7RwwKNRGN` (idle, done) | P1-AIA2-icons-1b (restart: resync, icons_48_hc.webp is not what its sources bake to) | `claude/ui-artist-icons` | 2026-11-04 20:59Z |
 | AIA-2 | `session_01SNkKxnfqxoDcFwrXf6z7o8` (idle, replaced) | P1-AIA2-icons-1b | `claude/ui-artist-icons` | 2026-11-04 18:34Z |
-| K1 | `session_01SNkKxqXv3kuBk7Uya8STrT` (working) | P1-K1-catalogue (restart: resync, kit-3's numerals missing from SKINS_OF) | `claude/ui-bake` | 2026-11-04 21:54Z |
+| K1 | `session_01SNkKxqXv3kuBk7Uya8STrT` (idle, done) | P1-K1-catalogue (restart: resync, kit-3's numerals missing from SKINS_OF) | `claude/ui-bake` | 2026-11-04 21:54Z |
 | K1 | `session_01SNkKxorLGKFDuXX2ULtTU2` (idle, replaced) | P1-K1-catalogue (restart: resync, kit-2's skins missing from SKINS_OF) | `claude/ui-bake` | 2026-11-04 20:00Z |
 | K1 | `session_01SNkKxnnyL6yNX5UpCnt8dH` (idle, replaced) | P1-K1-catalogue | `claude/ui-bake` | 2026-11-04 17:41Z |
-| AIA | `session_01SNkKxmbXiobGvGu7DHZRJZ` (working) | P1-AIA-kit-4 | `claude/ui-artist` | 2026-11-04 21:32Z |
+| AIA | `session_01SNkKxmbXiobGvGu7DHZRJZ` (idle, replaced) | P1-AIA-kit-4 | `claude/ui-artist` | 2026-11-04 21:32Z |
 | AIA | `session_01SNkKxqGqwHJU12VPiWB68i` (idle, done) | P1-AIA-kit-3 | `claude/ui-artist` | 2026-11-04 19:20Z |
 | AIA | `session_01SNkKxmwaE4rQY339ct2nz9` (idle, done) | P1-AIA-kit-2 | `claude/ui-artist` | 2026-11-04 16:25Z |
 | K1 | `session_01SNkKxrN8TYssSGXSznyneA` (idle, done) | P1-K1-atlas-draw | `claude/ui-bake` | 2026-11-04 14:41Z |
@@ -219,6 +222,41 @@ Your session was created with the repository checked out at main; work in that c
 ```
 
 ## Now
+
+- Cycle 43, 4 November 2026, from 22:38Z (session
+  `session_01SNkKxr5KfuQpAn8isazH9U`, started by the launcher): ran
+  P1-AIA-kit-4's gate on `3eb4e200` (kit catalogue sheet, batch 2a; Opus
+  5.5 ui-judge samples, advisory): Light behind UI passes; Layered
+  materials (6 samples), Display type (6) and Colour roles and value
+  fail (large panels flat with thin rims; same-rank titles treated
+  differently; bronze and silver frames told apart by colour only).
+  Batched P1-AIA2-icons-1b (`5ecb0202`) and P1-K1-catalogue (`ecec63dc`)
+  on candidate `00e31ef0`: check_all PASS, guard.sh OK; merged as
+  `90f72fd7` and `7e6de29d`. Started K1 on P1-K1-words
+  (`session_01SNkKxo2gLyAa89sh1bYjJq`) and AIA-2 on P1-AIA2-icons-2a
+  (`session_01SNkKxnB46NyYAV26hWtwrg`). Kit-4's candidate `050f2e10`
+  (exceptions `art/ui/kit_build/**`, `art/ui/palette.json`,
+  `client/ui/art/kit_2*`, kit-3's) failed check_all, 391 of 392: its
+  nine skins have art but no SKINS_OF entry. guard.sh FAILED (rebake) on
+  `client/ui/art/icons_48_hc.webp`, and main's own head `0a1a5eb0` fails
+  the same way. The sources and file are unchanged since `00e31ef0`
+  passed, but every bake since about 23:15Z drops the high-contrast halo
+  and draws pip as an octagon, idle or loaded, so the icon finish still
+  depends on the environment. Lock released. Kit-4 set to `resync` with
+  the SKINS_OF block of `client/tests/ui_kit_tests.gd` granted, and AIA
+  restarted (`session_01SNkKxpLGXniYM5JnmyzqE7`). Owner-inbox entry, no
+  answer needed. Three builders, the D13 (c) cap. Pages republished.
+  Godot's untracked .uid/.import files deleted, not committed.
+- Next: nothing merges while main fails guard's rebake. Check
+  P1-AIA2-icons-2a's candidate with guard.sh on ready; if
+  `icons_48_hc.webp` still does not rebake, set it to `resync` with this
+  finding (make the finish's halo and pip ring independent of the
+  Chromium canvas backend). Merge kit-4 on ready once guard is green.
+  Start AIA on P1-AIA-kit-5 after kit-4 merges, with the kit-4 gate
+  notes: bevelled frame, inner well, gloss and lip for large panels; one
+  outline and drop treatment per title rank; a shape mark (studs or
+  pips) on the bronze and silver frames beyond colour. Never use Fable
+  5.1 (CLAUDE.md).
 
 - Cycle 42, 4 November 2026, from 21:38Z (session
   `session_01SNkKxnLzPFPR6HcJhTvYru`, started by the launcher): K1 was

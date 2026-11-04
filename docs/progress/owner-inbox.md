@@ -4,6 +4,35 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-04 23:33Z: two merges; kit-4 back to AIA; main's icon bake not stable (lead, cycle 43)
+
+- **What:** merged P1-AIA2-icons-1b (`90f72fd7`) and P1-K1-catalogue
+  (`7e6de29d`) after check_all PASS and ui guard OK on candidate
+  `00e31ef0`. K1 started on P1-K1-words, AIA-2 on P1-AIA2-icons-2a.
+  - P1-AIA-kit-4's gate (advisory, Opus 5.5 ui-judge, verdicts in
+    `docs/art/ui-quality/gate/verdicts/P1-AIA-kit-4/3eb4e200.json`):
+    Light behind UI passes. Layered materials fails (the large popup,
+    sheet and header panels are near-flat fills with thin rims). Display
+    type fails (same-rank titles get different outline and drop
+    treatments). Colour roles and value fails (the bronze and silver
+    frames differ only by hue and value, and their locked twins are
+    identical). These are passed to AIA for kit-5.
+  - Kit-4's candidate `050f2e10` failed check_all, 391 of 392: its nine
+    new skins have no SKINS_OF entry. As set out in cycle 42's default,
+    the SKINS_OF block of `client/tests/ui_kit_tests.gd` is granted to
+    kit-4 as an exception, and AIA was restarted to add them. The test is
+    not loosened.
+  - guard.sh's rebake now fails on main itself:
+    `client/ui/art/icons_48_hc.webp` bakes differently in this container.
+    The halo is gone and pip is an octagon again, from the same sources
+    that rebaked byte for byte about 30 minutes earlier. So AIA-2's
+    icons-1b fix for a load-dependent bake does not hold in every
+    environment, and until it does no candidate passes guard.
+- **Default (no answer needed):** AIA-2 makes the icon finish
+  environment-independent. The lead sends icons-2a back with this finding
+  if its candidate's rebake still differs. Nothing merges while guard is
+  red.
+
 ## 2026-11-04 21:58Z: the catalogue back to K1 a second time (lead, cycle 42)
 
 - **What:** P1-K1-catalogue's candidate `aa1ab0b0` (main + `71562ab1`)
