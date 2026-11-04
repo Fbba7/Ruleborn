@@ -1,0 +1,238 @@
+{
+ "image": "faces_hc_pressed.png",
+ "frame_pt": [
+  390,
+  844
+ ],
+ "text_scale": 1.0,
+ "controls": [
+  {
+   "name": "button_primary__box__pressed @ backdrop",
+   "rect": [
+    30,
+    16.0,
+    149.86,
+    54.17
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_primary__gold_round__pressed @ backdrop",
+   "rect": [
+    210,
+    16.0,
+    59.94,
+    64.64
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_tertiary__box__pressed @ backdrop",
+   "rect": [
+    30,
+    88.0,
+    149.86,
+    53.08
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_danger__box__pressed @ backdrop",
+   "rect": [
+    210,
+    88.0,
+    149.86,
+    54.17
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "success__box__pressed @ backdrop",
+   "rect": [
+    30,
+    160.0,
+    149.86,
+    54.17
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_primary__box__pressed @ dark card",
+   "rect": [
+    30,
+    227.0,
+    149.86,
+    54.17
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_primary__gold_round__pressed @ dark card",
+   "rect": [
+    210,
+    227.0,
+    59.94,
+    64.64
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_tertiary__box__pressed @ dark card",
+   "rect": [
+    30,
+    299.0,
+    149.86,
+    53.08
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_danger__box__pressed @ dark card",
+   "rect": [
+    210,
+    299.0,
+    149.86,
+    54.17
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "success__box__pressed @ dark card",
+   "rect": [
+    30,
+    371.0,
+    149.86,
+    54.17
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_primary__box__pressed @ glass",
+   "rect": [
+    30,
+    438.0,
+    149.86,
+    54.17
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_primary__gold_round__pressed @ glass",
+   "rect": [
+    210,
+    438.0,
+    59.94,
+    64.64
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_tertiary__box__pressed @ glass",
+   "rect": [
+    30,
+    510.0,
+    149.86,
+    53.08
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_danger__box__pressed @ glass",
+   "rect": [
+    210,
+    510.0,
+    149.86,
+    54.17
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "success__box__pressed @ glass",
+   "rect": [
+    30,
+    582.0,
+    149.86,
+    54.17
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_secondary__box__pressed @ parchment",
+   "rect": [
+    30,
+    649.0,
+    149.86,
+    54.17
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_tertiary__parchment__pressed @ parchment",
+   "rect": [
+    210,
+    649.0,
+    149.86,
+    53.08
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "button_danger__box__pressed @ parchment",
+   "rect": [
+    30,
+    721.0,
+    149.86,
+    54.17
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "success__box__pressed @ parchment",
+   "rect": [
+    210,
+    721.0,
+    149.86,
+    54.17
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  }
+ ]
+}

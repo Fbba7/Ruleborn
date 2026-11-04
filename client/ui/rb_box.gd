@@ -246,8 +246,9 @@ func _shade() -> void:
 	_redraw()
 
 
-## The atlas piece the box is drawn from in the host's state, or empty
-## while the code-drawn box draws it (its skin off, or the piece missing).
+## The atlas piece the box is drawn from in the host's state and on the
+## ground under it, or empty while the code-drawn box draws it (its skin
+## off, or the piece missing).
 func piece() -> Dictionary:
 	if _face == null:
 		return {}
@@ -255,7 +256,7 @@ func piece() -> Dictionary:
 	if host is Button:
 		var b := host as Button
 		state = "disabled" if b.disabled else ("pressed" if b.button_pressed or press > 0.5 else "normal")
-	return KitSkin.piece(look, state)
+	return KitSkin.piece(look, state, KitSkin.ground_of(host))
 
 
 func _redraw() -> void:
@@ -279,7 +280,7 @@ func _draw_face() -> void:
 	var p := piece()
 	if p.is_empty() or not _shown():
 		return
-	var tex := KitSkin.atlas()
+	var tex := KitSkin.texture(p)
 	var s := KitSkin.scale()
 	var r := quad().grow(-_reach)
 	var region := Rect2(float(p["x"]), float(p["y"]), float(p["w"]), float(p["h"]))

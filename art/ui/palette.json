@@ -1,0 +1,1014 @@
+{
+  "_what": "The art's palette, generated from client/ui/tokens.json by art/ui/kit_build/build_kit.py (kit-spec.md section 6.2); never edited by hand. `kit` holds the colours the kit's faces add, which enter tokens.json through K1 with their skins.",
+  "color": {
+    "aether": "#3CC6D8",
+    "alarm": "#E2536B",
+    "alarm_fill": "#B3203A",
+    "alarm_light": "#FF8A9A",
+    "alarm_text": "#9A1B32",
+    "alarm_text_on_night": "#FF9AAA",
+    "band_breaking": "#9C2A4A",
+    "band_brimming": "#E9B65C",
+    "band_cracking": "#E2536B",
+    "band_humming": "#3CC6D8",
+    "band_quiet": "#7A6E86",
+    "band_steady": "#5CC46A",
+    "band_strained": "#F07A3C",
+    "card_bottom": "#1A1134",
+    "card_lit_end": "#170E32",
+    "card_lit_glow": "#5A3CA8",
+    "card_lit_mid": "#2A1A56",
+    "card_selected_rim": "#F2C45C",
+    "card_top": "#261A4C",
+    "cream": "#FFF3CC",
+    "drop": "#0A0408",
+    "energy": "#F07A3C",
+    "energy_light": "#FFB488",
+    "energy_shadow": "#B04A1E",
+    "essence": "#5CC46A",
+    "glass": "#140A16C7",
+    "gold": "#E9B65C",
+    "gold_bottom": "#C88A35",
+    "gold_drop": "#4A2A10",
+    "gold_rim": "#6B4420",
+    "gold_round_mid": "#F2C45C",
+    "gold_top": "#F9DE9C",
+    "gravel": "#B9AE9F",
+    "green_bar": "#5CC542",
+    "green_top": "#A8F0B8",
+    "ink": "#221C3A",
+    "ink_deep": "#120C2A",
+    "ink_line": "#1A0C14",
+    "leather_dark": "#1E1018",
+    "leather_light": "#6A3E52",
+    "leather_mid": "#3A2030",
+    "leather_rim": "#B8741E",
+    "life": "#5CC46A",
+    "life_light": "#A6E8AE",
+    "life_shadow": "#2F8A45",
+    "matter": "#8C6CF0",
+    "matter_light": "#BFAEFF",
+    "matter_shadow": "#5A3FB0",
+    "motion": "#F2B43C",
+    "motion_light": "#FFDC8A",
+    "motion_shadow": "#B8741E",
+    "night_bottom": "#2C3AA8",
+    "night_mid": "#222577",
+    "night_star": "#FFF6DCB3",
+    "night_top": "#171046",
+    "oak_grain": "#5A3218",
+    "on_alarm": "#FCFBFF",
+    "panel": "#FCFBFFD9",
+    "paper": "#FCFBFF",
+    "parchment_bottom": "#F1E3C4",
+    "parchment_ink": "#2A1A10",
+    "parchment_text_2": "#54392A",
+    "parchment_text_3": "#8A5A1C",
+    "parchment_top": "#FFFBF0",
+    "plate_text": "#2A1622",
+    "red_deep": "#C42040",
+    "silver_ink": "#1E2632",
+    "sky_bottom": "#F6D9C8",
+    "sky_top": "#9FB9F0",
+    "soil": "#8A6A4E",
+    "spirit": "#E05CB4",
+    "spirit_light": "#F7A6DA",
+    "spirit_shadow": "#9C3380",
+    "starlight": "#F2B43C",
+    "stone": "#D8CFC2",
+    "success": "#3FBF7F",
+    "success_light": "#8FF0A8",
+    "success_text": "#155A38",
+    "success_text_on_night": "#8FF0A8",
+    "tab_active_bottom": "#4532B8",
+    "tab_active_mid": "#6A5AF0",
+    "tab_active_top": "#8FA2FF",
+    "tab_label": "#FFF6DC",
+    "text_on_gold": "#1B1430",
+    "text_on_green": "#FFF6DC",
+    "text_on_leather": "#F6E6C8",
+    "text_on_night": "#F3EEFF",
+    "text_on_night_2": "#E2D9F7",
+    "text_on_night_3": "#B8A8D8",
+    "text_on_success": "#0A3A20",
+    "time": "#3CC6D8",
+    "time_light": "#9BEAF3",
+    "time_shadow": "#1F8499",
+    "warn": "#F2A03C",
+    "water": "#9ADFE8",
+    "wood": "#B07A4F"
+  },
+  "color_high_contrast": {
+    "alarm_fill": "#8E1428",
+    "alarm_text": "#8E1428",
+    "card_bottom": "#140C2A",
+    "card_top": "#140C2A",
+    "glass": "#140A16",
+    "ink": "#000000",
+    "night_top": "#140C30",
+    "panel": "#FFFFFFFF",
+    "paper": "#FFFFFF",
+    "parchment_text_2": "#2A1A10",
+    "sky_bottom": "#FBF0E9",
+    "sky_top": "#DCE6FA",
+    "success_text": "#0F4A2E",
+    "text_on_night_2": "#F3EEFF",
+    "text_on_night_3": "#F3EEFF"
+  },
+  "gradient": {
+    "ability": [
+      [
+        0,
+        "#5E3A72"
+      ],
+      [
+        0.55,
+        "#3A2048"
+      ],
+      [
+        1,
+        "#24122E"
+      ]
+    ],
+    "card": [
+      [
+        0,
+        "#261A4C"
+      ],
+      [
+        1,
+        "#1A1134"
+      ]
+    ],
+    "card_hc": [
+      [
+        0,
+        "#140C2A"
+      ],
+      [
+        1,
+        "#140C2A"
+      ]
+    ],
+    "card_hover": [
+      [
+        0,
+        "#2E2158"
+      ],
+      [
+        1,
+        "#20163E"
+      ]
+    ],
+    "card_lit": [
+      [
+        0,
+        "#5A3CA8"
+      ],
+      [
+        0.5,
+        "#2A1A56"
+      ],
+      [
+        1,
+        "#170E32"
+      ]
+    ],
+    "chapter_energy": [
+      [
+        0,
+        "#F07A3C"
+      ],
+      [
+        1,
+        "#B04A1E"
+      ]
+    ],
+    "chapter_life": [
+      [
+        0,
+        "#5CC46A"
+      ],
+      [
+        1,
+        "#2F8A45"
+      ]
+    ],
+    "chapter_matter": [
+      [
+        0,
+        "#8C6CF0"
+      ],
+      [
+        1,
+        "#5A3FB0"
+      ]
+    ],
+    "chapter_motion": [
+      [
+        0,
+        "#F2B43C"
+      ],
+      [
+        1,
+        "#B8741E"
+      ]
+    ],
+    "chapter_spirit": [
+      [
+        0,
+        "#E05CB4"
+      ],
+      [
+        1,
+        "#9C3380"
+      ]
+    ],
+    "chapter_time": [
+      [
+        0,
+        "#3CC6D8"
+      ],
+      [
+        1,
+        "#1F8499"
+      ]
+    ],
+    "clear": [
+      [
+        0,
+        "#00000000"
+      ],
+      [
+        1,
+        "#00000000"
+      ]
+    ],
+    "frame_gold": [
+      [
+        0,
+        "#FFF6CF"
+      ],
+      [
+        0.28,
+        "#E9B65C"
+      ],
+      [
+        0.48,
+        "#FFE8A0"
+      ],
+      [
+        0.72,
+        "#AE6E16"
+      ],
+      [
+        1,
+        "#F2C45C"
+      ]
+    ],
+    "frame_oak": [
+      [
+        0,
+        "#C89058"
+      ],
+      [
+        0.45,
+        "#8A5630"
+      ],
+      [
+        0.7,
+        "#AE7442"
+      ],
+      [
+        1,
+        "#6A3E1E"
+      ]
+    ],
+    "frame_prismatic": [
+      [
+        0,
+        "#FF8AD0"
+      ],
+      [
+        0.2,
+        "#FFD27A"
+      ],
+      [
+        0.4,
+        "#8AF0C8"
+      ],
+      [
+        0.6,
+        "#7AC4FF"
+      ],
+      [
+        0.8,
+        "#C29AFF"
+      ],
+      [
+        1,
+        "#FF8AD0"
+      ]
+    ],
+    "frame_silver": [
+      [
+        0,
+        "#FAFCFF"
+      ],
+      [
+        0.28,
+        "#B4BECE"
+      ],
+      [
+        0.48,
+        "#EEF2F7"
+      ],
+      [
+        0.72,
+        "#86919F"
+      ],
+      [
+        1,
+        "#DCE2EA"
+      ]
+    ],
+    "gem": [
+      [
+        0,
+        "#B79CFF"
+      ],
+      [
+        0.5,
+        "#7A52E8"
+      ],
+      [
+        1,
+        "#4A2AA8"
+      ]
+    ],
+    "glass": [
+      [
+        0,
+        "#140A16C7"
+      ],
+      [
+        1,
+        "#140A16C7"
+      ]
+    ],
+    "gold": [
+      [
+        0,
+        "#F9DE9C"
+      ],
+      [
+        0.46,
+        "#E9B65C"
+      ],
+      [
+        1,
+        "#C88A35"
+      ]
+    ],
+    "gold_round": [
+      [
+        0,
+        "#FFF3CC"
+      ],
+      [
+        0.45,
+        "#F2C45C"
+      ],
+      [
+        1,
+        "#B8741E"
+      ]
+    ],
+    "green": [
+      [
+        0,
+        "#8EE050"
+      ],
+      [
+        0.5,
+        "#5CC542"
+      ],
+      [
+        1,
+        "#349125"
+      ]
+    ],
+    "green_muted": [
+      [
+        0,
+        "#24604A"
+      ],
+      [
+        1,
+        "#163E30"
+      ]
+    ],
+    "leather": [
+      [
+        0,
+        "#6A3E52"
+      ],
+      [
+        0.55,
+        "#3A2030"
+      ],
+      [
+        1,
+        "#1E1018"
+      ]
+    ],
+    "leather_chosen": [
+      [
+        0,
+        "#5A3A24"
+      ],
+      [
+        1,
+        "#3E2716"
+      ]
+    ],
+    "locked": [
+      [
+        0,
+        "#3A8A90"
+      ],
+      [
+        1,
+        "#245A66"
+      ]
+    ],
+    "night": [
+      [
+        0,
+        "#171046"
+      ],
+      [
+        0.5,
+        "#222577"
+      ],
+      [
+        1,
+        "#2C3AA8"
+      ]
+    ],
+    "parchment": [
+      [
+        0,
+        "#FFFBF0"
+      ],
+      [
+        1,
+        "#F1E3C4"
+      ]
+    ],
+    "parchment_deep": [
+      [
+        0,
+        "#FFFDF6"
+      ],
+      [
+        0.5,
+        "#F6EAD0"
+      ],
+      [
+        1,
+        "#EAD7AE"
+      ]
+    ],
+    "phone_sky": [
+      [
+        0,
+        "#171046"
+      ],
+      [
+        0.45,
+        "#2A1A86"
+      ],
+      [
+        0.8,
+        "#3A2AA6"
+      ],
+      [
+        1,
+        "#2C3AA8"
+      ]
+    ],
+    "plain_night": [
+      [
+        0,
+        "#1A1134"
+      ],
+      [
+        1,
+        "#0A0620"
+      ]
+    ],
+    "plate_dark": [
+      [
+        0,
+        "#2A2060"
+      ],
+      [
+        1,
+        "#140C34"
+      ]
+    ],
+    "portrait_energy": [
+      [
+        0,
+        "#FFB488"
+      ],
+      [
+        0.6,
+        "#F07A3C"
+      ],
+      [
+        1,
+        "#B04A1E"
+      ]
+    ],
+    "portrait_life": [
+      [
+        0,
+        "#A6E8AE"
+      ],
+      [
+        0.6,
+        "#5CC46A"
+      ],
+      [
+        1,
+        "#2F8A45"
+      ]
+    ],
+    "portrait_matter": [
+      [
+        0,
+        "#BFAEFF"
+      ],
+      [
+        0.6,
+        "#8C6CF0"
+      ],
+      [
+        1,
+        "#5A3FB0"
+      ]
+    ],
+    "portrait_motion": [
+      [
+        0,
+        "#FFDC8A"
+      ],
+      [
+        0.6,
+        "#F2B43C"
+      ],
+      [
+        1,
+        "#B8741E"
+      ]
+    ],
+    "portrait_spirit": [
+      [
+        0,
+        "#F7A6DA"
+      ],
+      [
+        0.6,
+        "#E05CB4"
+      ],
+      [
+        1,
+        "#9C3380"
+      ]
+    ],
+    "portrait_time": [
+      [
+        0,
+        "#9BEAF3"
+      ],
+      [
+        0.6,
+        "#3CC6D8"
+      ],
+      [
+        1,
+        "#1F8499"
+      ]
+    ],
+    "red": [
+      [
+        0,
+        "#FF8A9A"
+      ],
+      [
+        1,
+        "#C42040"
+      ]
+    ],
+    "round_sky": [
+      [
+        0,
+        "#B6ECFF"
+      ],
+      [
+        0.5,
+        "#4AA8EA"
+      ],
+      [
+        1,
+        "#163E8C"
+      ]
+    ],
+    "round_violet": [
+      [
+        0,
+        "#B8A6FF"
+      ],
+      [
+        0.5,
+        "#6A52D8"
+      ],
+      [
+        1,
+        "#2A1A6A"
+      ]
+    ],
+    "school_energy": [
+      [
+        0,
+        "#FFB488"
+      ],
+      [
+        0.55,
+        "#F07A3C"
+      ],
+      [
+        1,
+        "#B04A1E"
+      ]
+    ],
+    "school_life": [
+      [
+        0,
+        "#A6E8AE"
+      ],
+      [
+        0.55,
+        "#5CC46A"
+      ],
+      [
+        1,
+        "#2F8A45"
+      ]
+    ],
+    "school_matter": [
+      [
+        0,
+        "#BFAEFF"
+      ],
+      [
+        0.55,
+        "#8C6CF0"
+      ],
+      [
+        1,
+        "#5A3FB0"
+      ]
+    ],
+    "school_motion": [
+      [
+        0,
+        "#FFDC8A"
+      ],
+      [
+        0.55,
+        "#F2B43C"
+      ],
+      [
+        1,
+        "#B8741E"
+      ]
+    ],
+    "school_spirit": [
+      [
+        0,
+        "#F7A6DA"
+      ],
+      [
+        0.55,
+        "#E05CB4"
+      ],
+      [
+        1,
+        "#9C3380"
+      ]
+    ],
+    "school_time": [
+      [
+        0,
+        "#9BEAF3"
+      ],
+      [
+        0.55,
+        "#3CC6D8"
+      ],
+      [
+        1,
+        "#1F8499"
+      ]
+    ],
+    "scrim": [
+      [
+        0,
+        "#0A0620B3"
+      ],
+      [
+        1,
+        "#0A0620D9"
+      ]
+    ],
+    "tab_active": [
+      [
+        0,
+        "#8FA2FF"
+      ],
+      [
+        0.45,
+        "#6A5AF0"
+      ],
+      [
+        1,
+        "#4532B8"
+      ]
+    ],
+    "tab_bar": [
+      [
+        0,
+        "#2C1E5C"
+      ],
+      [
+        0.5,
+        "#1C1240"
+      ],
+      [
+        1,
+        "#120A2C"
+      ]
+    ],
+    "tag_alarm": [
+      [
+        0,
+        "#C8304A"
+      ],
+      [
+        1,
+        "#A01E36"
+      ]
+    ],
+    "tag_success": [
+      [
+        0,
+        "#1C7840"
+      ],
+      [
+        1,
+        "#155C31"
+      ]
+    ],
+    "tag_violet": [
+      [
+        0,
+        "#6A55D0"
+      ],
+      [
+        1,
+        "#4E3BAE"
+      ]
+    ],
+    "tag_warn": [
+      [
+        0,
+        "#F8D274"
+      ],
+      [
+        1,
+        "#EFB84E"
+      ]
+    ],
+    "track": [
+      [
+        0,
+        "#140A16"
+      ],
+      [
+        1,
+        "#24142A"
+      ]
+    ],
+    "tray_track": [
+      [
+        0,
+        "#EBDDBE"
+      ],
+      [
+        1,
+        "#E0CDA4"
+      ]
+    ],
+    "week_day": [
+      [
+        0,
+        "#8C6CF0"
+      ],
+      [
+        1,
+        "#4E34A8"
+      ]
+    ],
+    "week_today": [
+      [
+        0,
+        "#FFF0B8"
+      ],
+      [
+        0.55,
+        "#F2C45C"
+      ],
+      [
+        1,
+        "#B8741E"
+      ]
+    ],
+    "well": [
+      [
+        0,
+        "#06031066"
+      ],
+      [
+        1,
+        "#06031066"
+      ]
+    ]
+  },
+  "kit": {
+    "disabled_hc": {
+      "value": "#8A8494",
+      "from": "every disabled face in high contrast: one grey"
+    },
+    "disabled_line": {
+      "value": "#2E2632",
+      "from": "ink_line softened: a flat face's edge"
+    },
+    "gold_disabled": {
+      "value": "#B8A88C",
+      "from": "gold, desaturated; text_on_gold 8:1 on it"
+    },
+    "gold_hc": {
+      "value": "#F2C14E",
+      "from": "gold, flat"
+    },
+    "gold_hc_pressed": {
+      "value": "#D9A630",
+      "from": "gold, flat, darker"
+    },
+    "gold_pressed_bottom": {
+      "value": "#A8702A",
+      "from": "gold_bottom x0.85"
+    },
+    "gold_pressed_mid": {
+      "value": "#D09C44",
+      "from": "gold x0.88"
+    },
+    "gold_pressed_top": {
+      "value": "#E2BF72",
+      "from": "gold_top x0.88"
+    },
+    "green_disabled": {
+      "value": "#5A7856",
+      "from": "green, desaturated; text_on_green 5.4:1"
+    },
+    "green_hc": {
+      "value": "#4AAA4C",
+      "from": "green, flat"
+    },
+    "green_hc_pressed": {
+      "value": "#3E9A40",
+      "from": "green, flat, darker"
+    },
+    "green_pressed_bottom": {
+      "value": "#2A7A1E",
+      "from": "green bottom x0.84"
+    },
+    "green_pressed_mid": {
+      "value": "#4AA834",
+      "from": "green mid x0.85"
+    },
+    "green_pressed_top": {
+      "value": "#76C440",
+      "from": "green top x0.86"
+    },
+    "leather_disabled": {
+      "value": "#4A3C44",
+      "from": "leather, desaturated; text_on_leather 7:1"
+    },
+    "leather_hc": {
+      "value": "#7A4660",
+      "from": "leather lifted, so it steps off the opaque card"
+    },
+    "leather_hc_pressed": {
+      "value": "#64384E",
+      "from": "leather lifted, darker"
+    },
+    "leather_pressed_light": {
+      "value": "#55303F",
+      "from": "leather_light x0.8"
+    },
+    "leather_pressed_mid": {
+      "value": "#2E1826",
+      "from": "leather_mid x0.8"
+    },
+    "locked_bottom": {
+      "value": "#30707A",
+      "from": "gradient.locked's #245A66, lifted"
+    },
+    "locked_hc": {
+      "value": "#2E6E76",
+      "from": "locked teal, flat"
+    },
+    "locked_top": {
+      "value": "#4A9AA0",
+      "from": "gradient.locked's #3A8A90, lifted: 2 value steps off the lit backdrop"
+    },
+    "parchment_disabled": {
+      "value": "#C4B69C",
+      "from": "tertiary parchment, desaturated; parchment_ink 9:1"
+    },
+    "parchment_hc": {
+      "value": "#C9A462",
+      "from": "tertiary parchment, flat"
+    },
+    "parchment_hc_pressed": {
+      "value": "#B08A4A",
+      "from": "tertiary parchment, flat, darker"
+    },
+    "red_disabled": {
+      "value": "#8A5862",
+      "from": "alarm, desaturated; on_alarm 5.9:1"
+    },
+    "red_hc_pressed": {
+      "value": "#8A1328",
+      "from": "alarm_fill (hc), a shade darker"
+    },
+    "red_pressed_bottom": {
+      "value": "#A01834",
+      "from": "red_deep x0.82"
+    },
+    "red_pressed_top": {
+      "value": "#E86A7C",
+      "from": "alarm_light x0.86"
+    },
+    "tertiary_parchment_bottom": {
+      "value": "#C6A266",
+      "from": "parchment lowered ~24 L*"
+    },
+    "tertiary_parchment_lip": {
+      "value": "#7A5428",
+      "from": "parchment_text_3 #8A5A1C, deeper"
+    },
+    "tertiary_parchment_top": {
+      "value": "#D9BC86",
+      "from": "parchment #F1E3C4 lowered ~16 L*, lit top"
+    },
+    "tertiary_violet_bottom": {
+      "value": "#6250AA",
+      "from": "card #1A1134 lifted ~30 L*"
+    },
+    "tertiary_violet_lip": {
+      "value": "#140C2A",
+      "from": "card's foot, darker"
+    },
+    "tertiary_violet_top": {
+      "value": "#7A68C2",
+      "from": "card #261A4C lifted ~34 L*, lit top"
+    },
+    "violet_disabled": {
+      "value": "#6A6488",
+      "from": "tertiary violet, desaturated; text_on_night 8:1"
+    },
+    "violet_hc": {
+      "value": "#5A4AA6",
+      "from": "tertiary violet, flat"
+    },
+    "violet_hc_pressed": {
+      "value": "#4C3C96",
+      "from": "tertiary violet, flat, darker"
+    }
+  }
+}
