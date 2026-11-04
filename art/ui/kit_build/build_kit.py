@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Writes the kit's batch 1a sources (kit-spec.md sections 3, 4.1 and 5) and
+"""Writes the kit's batch 1a sources (kit-spec.md sections 3, 4.1 and 5),
+batch 1b's (kit_1b.py: the heist's other families and the overlays) and
 art/ui/palette.json (section 6.2) from client/ui/tokens.json.
 
     python3 art/ui/kit_build/build_kit.py
@@ -18,6 +19,11 @@ import os
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 TOKENS = os.path.join(ROOT, "client/ui/tokens.json")
 KIT_DIR = os.path.join(ROOT, "art/ui/kit")
+# Skins written beside the kit, not into it, until the kit atlas has pages
+# (request AIA-R13): batch 1b does not fit one 2048x2048 atlas beside 1a.
+# The bake does not read this folder; proof_1b.py draws them from it.
+NEXT_DIR = os.path.join(ROOT, "art/ui/kit_next")
+DEFERRED = ("disc_school",)
 PALETTE = os.path.join(ROOT, "art/ui/palette.json")
 
 T = json.load(open(TOKENS))
@@ -331,6 +337,12 @@ def build():
         svgs["%s/%s.svg" % (skin, shape)] = svg.text()
 
     svgs["button_primary/gold_round.svg"] = gold_round()
+    # Batch 1b (kit_1b.py) is merged here, into this module's KIT, so the
+    # palette holds its colours when this file runs as the script.
+    import kit_1b
+    KIT.update(kit_1b.KIT_1B)
+    K.update({k: v[0] for k, v in kit_1b.KIT_1B.items()})
+    svgs.update(kit_1b.build_1b())
     return svgs
 
 
@@ -410,7 +422,7 @@ def palette():
 def main():
     svgs = build()
     for rel, text in sorted(svgs.items()):
-        path = os.path.join(KIT_DIR, rel)
+        path = os.path.join(NEXT_DIR if rel.split("/")[0] in DEFERRED else KIT_DIR, rel)
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w") as f:
             f.write(text)

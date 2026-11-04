@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" data-slice="15 15 15 15">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0.549"/><stop offset="0.3" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0.6"/><stop offset="0.45" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.1412"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <rect x="1" y="1" width="30" height="30" rx="14" fill="#060310" fill-opacity="0.4"/>
+    <rect x="1" y="1" width="30" height="30" rx="14" fill="url(#g1)"/>
+    <rect x="2.25" y="2.25" width="27.5" height="27.5" rx="12.75" fill="none" stroke="url(#g2)" stroke-width="2.5"/>
+    <rect x="1.625" y="1.625" width="28.75" height="28.75" rx="13.375" fill="none" stroke="url(#g3)" stroke-width="1.25"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <rect x="1" y="1" width="30" height="30" rx="14" fill="#000000"/>
+    <rect x="2" y="2" width="28" height="28" rx="12.5" fill="none" stroke="#B8A8D8" stroke-width="3"/>
+  </g>
+</svg>
