@@ -22,15 +22,19 @@ counting (P0-AD-calibrate).
   the 48 fails, against Fable 5.1's 23, and caught at least as many on every
   quality; and the owner's order of 4 November 2026 (root `CLAUDE.md`) bans
   Fable 5.1 for good, so no other model is tried. So the blind audit doubles (section 3.5 of `../report.md`).
-- **No quality is calibrated yet.** Until a quality meets the target below on
-  the held-out third, the gate runs in **shadow mode** on it: its verdicts
-  block nothing, and every item of that quality goes on AD's board before it
-  merges (section 3.5 of `../report.md`; `agent-protocol.md`, "Before
-  calibration"). Today that is all eight judged qualities: 1, 2, 3, 6, 8, 9,
-  13 and 14.
-- **Owner-checked qualities:** none yet. A quality becomes owner-checked when
-  Opus 5.5 still misses it after step 5's two revisions; AD then checks it on
-  every board.
+- **No quality is calibrated.** `held-opus` (Opus 5.5, rubric version 3,
+  measured once on 4 November 2026) missed the target on all eight judged
+  qualities (Results, "Held-out third"). The gate keeps running in **shadow
+  mode**: its verdicts block nothing, and every item goes on AD's board
+  before it merges (section 3.5 of `../report.md`; `agent-protocol.md`,
+  "Before calibration").
+- **Owner-checked qualities: all eight, 1, 2, 3, 6, 8, 9, 13 and 14.** Step
+  5's two revisions are spent and no other model may be tried (Fable 5.1 is
+  banned), so each quality that misses on the held-out third is
+  owner-checked: AD checks it on every board, and the judge's verdict on it
+  is advice only. A quality leaves this list only through a later rubric or
+  golden set version that meets the target on a fresh held-out
+  measurement.
 
 ## The split
 
@@ -99,9 +103,9 @@ label away. The plans are committed in `calibration/runs/<run>/plan.jsonl`.
 | `dev-fable` | Fable 5.1 | 2 | 122 | 366 | run by the lead on rubric version 1 (78 extra calls for splits); scored below |
 | `dev-opus` | Opus 5.5 | 2 | 122 | 366 | run by the lead on rubric version 1 (48 extra calls for splits); scored below |
 | `dev-opus-v2` | Opus 5.5 | 2 | 122 | 366 | rubric version 2 (step 5's first re-run), run in a launcher session (72 extra calls); scored below |
-| `dev-opus-v3` | Opus 5.5 | 2 | 122 | 366 | rubric version 3 (step 5's second and last re-run); stopped with the program on 3 November at 193 calls, resumed on 4 November; running |
+| `dev-opus-v3` | Opus 5.5 | 2 | 122 | 366 | rubric version 3 (step 5's second and last re-run); stopped with the program on 3 November at 193 calls, resumed on 4 November (60 extra calls); scored below |
 | `dev-fable-v3` | Fable 5.1 | 2 | 122 | 366 | rubric version 3 (step 5's other-model try); abandoned at 120 calls by the owner's order of 4 November 2026 (Fable 5.1 banned); not scored, its results kept as written |
-| `held-opus` | Opus 5.5 | 3 | 123 | 369 | rubric version 3, the held-out run, measured once; stopped with the program on 3 November at 103 calls, resumed on 4 November; running |
+| `held-opus` | Opus 5.5 | 3 | 123 | 369 | rubric version 3, the held-out run, measured once; stopped with the program on 3 November at 103 calls, resumed on 4 November (45 extra calls); scored below |
 
 What the launcher does for each run (request AD-R6):
 
@@ -223,15 +227,60 @@ currency glyphs that the golden labels pass and that read as flat both to
 the judge and to AD on review, so the question is the golden set's labels,
 not the rubric's wording.
 
+### Development third, rubric version 3 (4 November 2026)
+
+`dev-opus-v3` (`calibration/runs/dev-opus-v3/results.jsonl`, 426 calls with
+the splits' samples 4-6, pushed at 38ebfb5f), scored by AD with
+`calibrate.py score`. The rulings fixed what they aimed at (6 and 9 now meet
+the target, 13 lost its false block), but 1, 8 and 14 slipped back by one or
+two false blocks each, and 13 is still one catch short. With two to four
+passes in some rows of a third, one picture moves a quality across the line.
+`dev-fable-v3` is not scored (abandoned; Fable 5.1 banned).
+
+| Quality | Opus 5.5: fails caught | False blocks | To exceptions | Target |
+|---|---|---|---|---|
+| 1. Layered materials | 8 of 9 | 4 of 11 | 0 of 20 | missed |
+| 2. Display type | 7 of 7 | 1 of 9 | 0 of 16 | met |
+| 3. Painted or rendered icons | 5 of 6 | 7 of 9 | 0 of 15 | missed |
+| 6. Hierarchy | 6 of 7 | 0 of 4 | 0 of 11 | met |
+| 8. Colour roles and value | 6 of 6 | 3 of 14 | 0 of 20 | missed |
+| 9. Character presence | 7 of 7 | 0 of 2 | 0 of 9 | met |
+| 13. Light behind UI | 3 of 4 | 0 of 16 | 0 of 20 | missed |
+| 14. One art-direction idea | 2 of 2 | 2 of 9 | 0 of 11 | missed |
+
 ### Held-out third
+
+`held-opus` (`calibration/runs/held-opus/results.jsonl`, 414 calls with the
+splits' samples 4-6, pushed at 1c886ca4), measured once on rubric version 3
+and scored by AD with `calibrate.py score`.
 
 | Quality | Judge | Rubric | Third 3: fails caught | False blocks | To exceptions | State |
 |---|---|---|---|---|---|---|
-| 1. Layered materials | – | 3 | – | – | – | shadow |
-| 2. Display type | – | 3 | – | – | – | shadow |
-| 3. Painted or rendered icons | – | 3 | – | – | – | shadow |
-| 6. Hierarchy | – | 3 | – | – | – | shadow |
-| 8. Colour roles and value | – | 3 | – | – | – | shadow |
-| 9. Character presence | – | 3 | – | – | – | shadow |
-| 13. Light behind UI | – | 3 | – | – | – | shadow |
-| 14. One art-direction idea | – | 3 | – | – | – | shadow |
+| 1. Layered materials | Opus 5.5 | 3 | 15 of 16 | 2 of 4 | 0 of 20 | owner-checked |
+| 2. Display type | Opus 5.5 | 3 | 9 of 11 | 2 of 6 | 1 of 17 | owner-checked |
+| 3. Painted or rendered icons | Opus 5.5 | 3 | 11 of 11 | 2 of 3 | 0 of 14 | owner-checked |
+| 6. Hierarchy | Opus 5.5 | 3 | 7 of 9 | 0 of 2 | 0 of 11 | owner-checked |
+| 8. Colour roles and value | Opus 5.5 | 3 | 3 of 7 | 3 of 13 | 0 of 20 | owner-checked |
+| 9. Character presence | Opus 5.5 | 3 | 7 of 7 | 1 of 3 | 0 of 10 | owner-checked |
+| 13. Light behind UI | Opus 5.5 | 3 | 5 of 12 | 1 of 8 | 0 of 20 | owner-checked |
+| 14. One art-direction idea | Opus 5.5 | 3 | 4 of 8 | 3 of 3 | 0 of 11 | owner-checked |
+
+Every quality missed. What the misses show, for the next rubric or golden
+set version (each needs a fresh held-out measurement):
+
+- **Too few passes to measure false blocks.** Five qualities have two to
+  four passes in the held-out third (6: 2; 3, 9 and 14: 3; 1: 4), so a
+  single false block there is 25% to 50%. Qualities 1, 3, 6 and 9 caught at
+  least 7 of 9 and missed on one or two pictures. A golden set version 2
+  with more passing items per quality would make the target measurable.
+- **Real catch gaps on 8, 13 and 14:** 3 of 7, 5 of 12 and 4 of 8. The same
+  failing screens pass all three (`today-home`, `v3-result`,
+  `today-character`, `today-hud-bottom`), with reasons that the rulings
+  invite: gold "only on the main action" (8), "a visible light source" and
+  glow on the scene behind the UI (13), "the same toy-box idiom" as the pass
+  anchor (14). The labels fail these screens on details the judge does not
+  weigh, so the next version should name those details per item, from the
+  owner's notes in `golden/labels-blind.md`.
+- **Quality 3** catches 11 of 11, but its false blocks are again the flat
+  law and currency glyphs the golden labels pass; AD proposes relabelling
+  them in golden set version 2 rather than bending the rubric.
