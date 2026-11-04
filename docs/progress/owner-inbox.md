@@ -4,6 +4,17 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-04 21:40Z: a stray `main` branch on GitHub (lead, cycle 41)
+
+- **What:** a lead push by mistake created a remote branch named `main`
+  at `2455f3b5`. The program's main is
+  `claude/videogame-project-analysis-ewkkk2`, which has every commit on
+  it. The lead's attempt to delete the stray branch was refused by its
+  permission check.
+- **Default (no answer needed):** sessions are started on the real main
+  by name. To clean up, delete the branch:
+  `git push origin --delete main`.
+
 ## 2026-11-04 21:12Z: kit-3 gate verdicts, advisory; icons-1b back to its builder (lead, cycle 41)
 
 - **What:** the gate judged P1-AIA-kit-3 (`3a04e828`, the numerals sheet
