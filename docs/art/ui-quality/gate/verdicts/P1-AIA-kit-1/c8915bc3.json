@@ -1,0 +1,70 @@
+[
+ {
+  "task_id": "P1-AIA-kit-1",
+  "sha": "c8915bc3",
+  "item": "kit atlas contact sheet, batch 1a, at phone size (tools/ui_gate/sheet.py)",
+  "quality": "Layered materials",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Primary pills and round buttons carry all four layers (top-lit body gradient, gloss band on the top third, dark rim about 3 pt, solid darker lip), with smooth gradients and no banding; the tertiary parchment pill's gloss is fainter than the others.",
+  "advisory": true,
+  "at": "2026-11-04T16:05:00Z"
+ },
+ {
+  "task_id": "P1-AIA-kit-1",
+  "sha": "c8915bc3",
+  "item": "kit atlas contact sheet, batch 1a, at phone size (tools/ui_gate/sheet.py)",
+  "quality": "Display type",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "unknown",
+   "unknown",
+   "unknown"
+  ],
+  "result": "unknown",
+  "critique": "Not applicable to this item: the batch 1a plates are blank and carry no headers, labels or numbers on art, so there is nothing to compare with the anchors. Sent to the exceptions queue (owner inbox); if unanswered by 2026-11-05T16:05Z it is treated as a split. Display type is judged when words sit on kit art (screens).",
+  "advisory": true,
+  "at": "2026-11-04T16:05:00Z"
+ },
+ {
+  "task_id": "P1-AIA-kit-1",
+  "sha": "c8915bc3",
+  "item": "kit atlas contact sheet, batch 1a, at phone size (tools/ui_gate/sheet.py)",
+  "quality": "Colour roles and value",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "A second, duller sand-gold filled button family (the right-middle columns, about 21 to 24; crop 3, the tertiary parchment pill) sits beside the bright primary gold and reads as gold in a second role or a drifted action gold; in grayscale it nearly matches the primary. One sample also flagged the danger button's focus state turning teal, so its red alarm role disappears on focus. Red danger, gold primary, purple secondary and green success otherwise hold.",
+  "advisory": true,
+  "at": "2026-11-04T16:05:00Z"
+ },
+ {
+  "task_id": "P1-AIA-kit-1",
+  "sha": "c8915bc3",
+  "item": "kit atlas contact sheet, batch 1a, at phone size (tools/ui_gate/sheet.py)",
+  "quality": "Light behind UI",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Every piece takes one light from the top: a gloss at the top, a darker lip and a drop below, none lit from below or the side.",
+  "advisory": true,
+  "at": "2026-11-04T16:05:00Z"
+ }
+]

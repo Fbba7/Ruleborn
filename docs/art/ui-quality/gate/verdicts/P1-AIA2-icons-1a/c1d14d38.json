@@ -1,0 +1,70 @@
+[
+ {
+  "task_id": "P1-AIA2-icons-1a",
+  "sha": "c1d14d38",
+  "item": "heistcontrols icon sheet at 48 and 96 pt and in grayscale (icons_48 at c1d14d38)",
+  "quality": "Layered materials",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Icon bodies are near-flat fills under a thick dark outline with sparkle glints; no gloss band, no grain or bevel on the wooden door or skiff hull, little lip. Only the lightning bolt has a real extrusion.",
+  "advisory": true,
+  "at": "2026-11-04T16:20:00Z"
+ },
+ {
+  "task_id": "P1-AIA2-icons-1a",
+  "sha": "c1d14d38",
+  "item": "heistcontrols icon sheet at 48 and 96 pt and in grayscale (icons_48 at c1d14d38)",
+  "quality": "Painted or rendered icons",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Most icons are flat fills with a slight gradient and pasted-on sparkle stars rather than highlights that follow a surface; the getout door and arrow, sagewheel segments, splitcrew arrow and aim rings read flat in the grayscale rows. The drop is a hard dark offset, not a soft shadow.",
+  "advisory": true,
+  "at": "2026-11-04T16:20:00Z"
+ },
+ {
+  "task_id": "P1-AIA2-icons-1a",
+  "sha": "c1d14d38",
+  "item": "heistcontrols icon sheet at 48 and 96 pt and in grayscale (icons_48 at c1d14d38)",
+  "quality": "Colour roles and value",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "The sagewheel's six school wedges differ by hue alone and merge into one grey in grayscale; alarm red fills the aim reticle and success green the getout arrow; gold fills the splitcrew arrow and the regroup base, a second role for gold.",
+  "advisory": true,
+  "at": "2026-11-04T16:20:00Z"
+ },
+ {
+  "task_id": "P1-AIA2-icons-1a",
+  "sha": "c1d14d38",
+  "item": "heistcontrols icon sheet at 48 and 96 pt and in grayscale (icons_48 at c1d14d38)",
+  "quality": "Light behind UI",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "One top-left light throughout: top-left glints and lighter faces, darker lower faces and a drop below on every icon; nothing lit from the side or below. Modelling is a little softer than the anchor's.",
+  "advisory": true,
+  "at": "2026-11-04T16:20:00Z"
+ }
+]

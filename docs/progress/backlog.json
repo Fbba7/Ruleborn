@@ -994,7 +994,10 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "art/ui/kit_build/**"
+      ]
     },
     {
       "id": "P1-AIA-kit-2",
