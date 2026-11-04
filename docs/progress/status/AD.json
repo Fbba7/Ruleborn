@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-03T11:15:00Z",
   "lease_until": "2026-11-04T04:10:00Z",
-  "updated_at": "2026-11-04T01:46:00Z",
-  "expected_next_update_by": "2026-11-04T02:30:00Z",
+  "updated_at": "2026-11-04T01:58:00Z",
+  "expected_next_update_by": "2026-11-04T02:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "3f3797c",
-    "next_step": "dev-opus-v3 and held-opus complete and scored (Opus 5.5, rubric version 3): held-out target missed on all eight qualities, so all eight become owner-checked; writing calibration.md results and AD.md, then pre-check"
+    "next_step": "results filled in calibration.md (all eight qualities owner-checked after held-opus); AD.md handoff written; pre-check of 8e4b808 running, then record and mark ready"
   },
   "precheck": null,
   "gate_request": null,
