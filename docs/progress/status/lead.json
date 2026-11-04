@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-04T01:45:00Z",
+  "updated_at": "2026-11-04T02:41:00Z",
   "expected_next_update_by": "2026-11-04T03:00:00Z",
   "cycle": 24,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "0e2a6317",
+    "task_ids": [
+      "P0-AD-calibrate-2"
+    ],
+    "started_at": "2026-11-04T02:41:00Z",
+    "expires_at": "2026-11-04T03:41:00Z"
+  },
   "last_merged": {
     "task_id": "P0-K1-tokens-2 + P0-AD-calibrate",
     "sha": "eec44b50"
