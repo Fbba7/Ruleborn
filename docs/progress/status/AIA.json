@@ -3,31 +3,21 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P1-AIA-kit-3",
-  "task_state": "ready",
-  "claimed_at": "2026-11-04T19:30:00Z",
-  "lease_until": "2026-11-04T22:30:00Z",
-  "updated_at": "2026-11-04T20:24:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P1-AIA-kit-4",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-04T21:40:00Z",
+  "lease_until": "2026-11-05T00:40:00Z",
+  "updated_at": "2026-11-04T21:40:00Z",
+  "expected_next_update_by": "2026-11-04T22:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "3a04e828",
-    "next_step": "none; wait for the lead"
+    "next_step": "kit_2a.py: panel_parchment, sheet, popup, rank frames, header, ribbon"
   },
-  "precheck": {
-    "sha": "3a04e828d41ae191f423f2094ecd3b6bbdf52328",
-    "exit": 0,
-    "finished_at": "2026-11-04T20:21:18Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "3a04e828",
-    "items": [
-      "numerals sheet at phone size, 100% and 200% text"
-    ]
-  },
-  "ready_sha": "3a04e828",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [
     "M1"
@@ -126,7 +116,7 @@
       "id": "AIA-R15",
       "from": "AIA",
       "to": "K1",
-      "ask": "Batch 1c bakes the numerals as num_<finish>_<glyph> (finishes gold 28, white 22, timer 28, timer_red 28 pt; glyphs 0-9, comma, period, colon, slash, plus, minus, percent, x, question, space) on atlas page 2, drawn in Manrope 800 with tabular figures per §21.8 and D4 (b). (1) kit-spec.md section 2.2's T3 row still says the baked numerals are drawn with Lilita One: please make it read Manrope 800 tabular. (2) To draw them, KitSkin sets a number glyph by glyph: each piece carries `advance`; the piece's box is its advance cell plus 1 pt each side, so draw it at pen - (w - advance)/2 and move the pen by `advance`. The client's own number formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5)",
+      "ask": "Batch 1c bakes the numerals as num_<finish>_<glyph> (finishes gold 28, white 22, timer 28, timer_red 28 pt; glyphs 0-9, comma, period, colon, slash, plus, minus, percent, x, question, space) on atlas page 2, drawn in Manrope 800 with tabular figures per \u00a721.8 and D4 (b). (1) kit-spec.md section 2.2's T3 row still says the baked numerals are drawn with Lilita One: please make it read Manrope 800 tabular. (2) To draw them, KitSkin sets a number glyph by glyph: each piece carries `advance`; the piece's box is its advance cell plus 1 pt each side, so draw it at pen - (w - advance)/2 and move the pen by `advance`. The client's own number formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5)",
       "files": [
         "docs/art/ui-quality/kit-spec.md",
         "client/ui/kit_skin.gd"
@@ -142,5 +132,5 @@
     }
   ],
   "answers": [],
-  "next_step": "none; wait for the lead (gate on the numerals sheet)"
+  "next_step": "write batch 2a sources (kit_2a.py), bake, proof_2a.py"
 }
