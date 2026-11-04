@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-04T16:47:00Z",
-  "expected_next_update_by": "2026-11-04T18:02:00Z",
+  "updated_at": "2026-11-04T17:48:00Z",
+  "expected_next_update_by": "2026-11-04T19:03:00Z",
   "cycle": 37,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "20a6a994",
+    "task_ids": [
+      "P1-AIA2-icons-1a"
+    ],
+    "started_at": "2026-11-04T17:48:00Z",
+    "expires_at": "2026-11-04T18:48:00Z"
+  },
   "last_merged": {
     "task_id": "P1-K1-atlas-draw",
     "sha": "62188517"
