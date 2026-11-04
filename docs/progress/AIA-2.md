@@ -1,9 +1,9 @@
 # AIA-2 icon maker: progress
 
 - Status: Green (pre-check PASS at bef6eac2), and the last push has P1-AIA2-icons-1b: five new icons (aether, essence, renown, starglass, season stars) and Starlight in `icons_48` and `icons_256`, and a finish that answers 1a's critiques (a blended toon ramp, a gloss band, a three-stop body gradient, a soft drop). Every icon was rebaked.
-- Progress: 2 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9); 0 items passed by the gate. P1-AIA2-icons-1b waits for its pre-check and the gate.
+- Progress: 2 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9); 0 items passed by the gate. P1-AIA2-icons-1b is ready at bef6eac2 (pre-check PASS; gate pass on Layered materials, Painted icons, Colour roles and Light behind UI, advisory).
 - Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources (Insight dropped: the design has none, §11.7).
-- Next: the gate on "icon sheet at 48 and 96 points and in grayscale" at bef6eac2, then ready.
+- Next: the lead's merge of P1-AIA2-icons-1b (ready at bef6eac2; gate passed, advisory).
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -11,7 +11,7 @@
 |---|---:|---|---|
 | P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Merged at 9b2bde70 | `bake.js --check`, `check_icons.py` and `run_checks.sh` PASS at 02e7ef0f |
 | P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Merged at 8ce107c9 | gate advisory at 5f759a03: Light behind UI pass; three qualities fail 3 of 3 |
-| P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Pre-check PASS at bef6eac2; gate pending | `python3 -B art/ui/icons/studio/check_icons.py`: all 42 faces pass (21 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 15 pieces, icons_256 6 pieces, both ok |
+| P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Ready at bef6eac2: pre-check PASS; gate pass on all four qualities (advisory) | `python3 -B art/ui/icons/studio/check_icons.py`: all 42 faces pass (21 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 15 pieces, icons_256 6 pieces, both ok |
 
 ## Handoff
 
@@ -81,7 +81,7 @@ None.
 
 ### Next step
 
-1. The lead runs the gate at bef6eac2; on a pass with the pre-check green, mark ready.
+1. The lead merges P1-AIA2-icons-1b at bef6eac2 (ready: pre-check PASS; the gate passed all four qualities).
 2. A later pass on 1a for the sagewheel's values and gold roles, if the lead opens one.
 
 ## Tried and failed
