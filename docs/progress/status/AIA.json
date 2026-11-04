@@ -3,31 +3,21 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P1-AIA-kit-1",
-  "task_state": "ready",
-  "claimed_at": "2026-11-04T12:50:00Z",
-  "lease_until": "2026-11-04T15:50:00Z",
-  "updated_at": "2026-11-04T13:52:07Z",
-  "expected_next_update_by": "2026-11-04T13:55:00Z",
+  "agent_state": "active",
+  "task_id": "P1-AIA-kit-2",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-04T16:30:00Z",
+  "lease_until": "2026-11-04T19:30:00Z",
+  "updated_at": "2026-11-04T16:30:00Z",
+  "expected_next_update_by": "2026-11-04T17:15:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "c8915bc3",
-    "next_step": "none; wait for the lead (gate on P1-AIA-kit-1)"
+    "last_green_sha": "464e4fcc",
+    "next_step": "P1-AIA-kit-2: build batch 1b pieces in build_kit.py"
   },
-  "precheck": {
-    "sha": "c8915bc36abf8184588e1321b44d8b5f245093fb",
-    "exit": 0,
-    "finished_at": "2026-11-04T13:51:41Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "c8915bc36abf8184588e1321b44d8b5f245093fb",
-    "items": [
-      "kit atlas contact sheet, batch 1a, at phone size (tools/ui_gate/sheet.py)"
-    ]
-  },
-  "ready_sha": "c8915bc36abf8184588e1321b44d8b5f245093fb",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [
     "M1"
@@ -92,5 +82,5 @@
     }
   ],
   "answers": [],
-  "next_step": "none; wait for the lead (gate on P1-AIA-kit-1)"
+  "next_step": "P1-AIA-kit-2: build batch 1b pieces"
 }
