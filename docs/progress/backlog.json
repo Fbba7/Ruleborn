@@ -1034,8 +1034,13 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-11-04T16:25:00Z",
+        "lease_until": "2026-11-04T19:25:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,

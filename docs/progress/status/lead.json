@@ -1,20 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-04T15:42:00Z",
-  "expected_next_update_by": "2026-11-04T16:57:00Z",
-  "cycle": 36,
-  "merging": {
-    "candidate_sha": "103c569b",
-    "task_ids": [
-      "P1-AIA-kit-1"
-    ],
-    "started_at": "2026-11-04T15:42:00Z",
-    "expires_at": "2026-11-04T16:42:00Z"
-  },
+  "updated_at": "2026-11-04T16:27:00Z",
+  "expected_next_update_by": "2026-11-04T17:42:00Z",
+  "cycle": 37,
+  "merging": null,
   "last_merged": {
-    "task_id": "P1-AIA2-toon-route",
-    "sha": "9b2bde70"
+    "task_id": "P1-AIA-kit-1",
+    "sha": "5e5cccf9"
   },
   "alerts": [],
-  "next_step": "Watch K1 (P1-K1-atlas-draw), AIA (P1-AIA-kit-1) and AIA-2 (P1-AIA2-icons-1a); gate and merge each as it reaches ready. Until K1 wires kind scene into bake.js, substitute guard.sh's rebake for icon families with art/ui/icons/studio/bake_icons.js (npm ci in tools/ui_research first) and a byte compare. Never use Fable 5.1."
+  "next_step": "Watch K1 (P1-K1-atlas-draw), AIA (P1-AIA-kit-2) and AIA-2 (P1-AIA2-icons-1a, gate verdicts in at 5f759a03); gate and merge each as it reaches ready. Until K1 wires kind scene into bake.js, substitute guard.sh's rebake for icon families with art/ui/icons/studio/bake_icons.js and a byte compare. Never use Fable 5.1."
 }
