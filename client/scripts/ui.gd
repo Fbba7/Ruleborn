@@ -22,6 +22,13 @@ static var CONTROL_POINTS: float = Tokens.number("size", "control_points")
 static var TEXT_POINTS: float = Tokens.number("size", "body_points")
 static var TITLE_POINTS: float = Tokens.number("size", "title_points")
 static var _rooted := false
+## kit-spec.md section 7's rule 2: words in their own z layer, one above the
+## art they stand on, so the art batches apart from the words.
+const WORDS_Z := 1
+## A layer laid over the earlier children of its parent (a screen's column
+## over its sky, a menu or dialog over the screen) stands this far above the
+## sibling before it, so it covers that sibling's words as well as its art.
+const OVERLAY_Z := 16
 
 
 
@@ -131,6 +138,7 @@ static func field(spoken: String) -> LineEdit:
 	f.focus_exited.connect(box.set_chosen.bind(false))
 	f.set_meta("points", TEXT_POINTS)
 	f.set_meta("bold", true)
+	raise_words(f)
 	return f
 
 
@@ -148,7 +156,48 @@ static func label(text := "", points := -1.0, wraps := false) -> Label:
 	if wraps:
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.set_meta("points", points)
+	raise_words(l)
 	return l
+
+
+## Puts control `c`'s words in the words' z layer (`WORDS_Z`, kit-spec.md
+## section 7's rule 2): a label, a button or a field draws its words in its
+## own canvas item, so the control rises and the kit's box behind it, if it
+## has one, keeps the art's layer.
+static func raise_words(c: CanvasItem) -> void:
+	c.z_index = WORDS_Z
+	c.set_meta("rb_words", true)
+	var box := RbBox.of(c as Control) if c is Control else null
+	if box != null:
+		box.z_index = -WORDS_Z
+
+
+## kit-spec.md section 7: a full-screen layer added over earlier children of
+## a parent that does not lay them out (a screen's column over its sky; a
+## menu, a sheet or a dialog over the screen) stands `OVERLAY_Z` above the
+## sibling before it, so the words below it, a layer up from their art, stay
+## under it as they did when every control shared one z.
+static func _layer(n: Node) -> void:
+	var c := n as Control
+	var parent := c.get_parent() as Control if c != null else null
+	if parent == null or parent is Container or c.top_level or not c.z_as_relative:
+		return
+	if c.anchor_right < 1.0 or c.anchor_bottom < 1.0 or c.anchor_left > 0.0 or c.anchor_top > 0.0:
+		return
+	if c.z_index != (WORDS_Z if c.has_meta("rb_words") else 0) and not c.has_meta("rb_layer"):
+		return
+	var siblings := parent.get_children()
+	var at := siblings.find(c)
+	var below: CanvasItem = null
+	for i: int in range(at - 1, -1, -1):
+		if siblings[i] is CanvasItem:
+			below = siblings[i]
+			break
+	if below == null:
+		return
+	var base := below.z_index - (WORDS_Z if below.has_meta("rb_words") else 0) + OVERLAY_Z
+	c.z_index = mini(base + (WORDS_Z if c.has_meta("rb_words") else 0), RenderingServer.CANVAS_ITEM_Z_MAX)
+	c.set_meta("rb_layer", true)
 
 
 ## A screen's title in Marcellus (§21.8), with the designs' hard drop under
@@ -162,6 +211,8 @@ static func title(text: String) -> Label:
 	rule.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	rule.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	rule.position.y = -px(2)
+	# The rule is art: back in the art's layer under its words.
+	rule.z_index = -WORDS_Z
 	l.add_child(rule, false, Node.INTERNAL_MODE_FRONT)
 	return l
 
@@ -217,6 +268,9 @@ static func panel(look := "card") -> PanelContainer:
 static func dress(c: Control, look: String, radius := -1.0) -> RbBox:
 	var box := RbBox.dress(c, look, radius)
 	c.theme = RbTheme.of_material(look)
+	# A box behind words is art: in the art's layer, under the words' one.
+	if c.has_meta("rb_words"):
+		box.z_index = -WORDS_Z
 	return box
 
 
@@ -243,6 +297,7 @@ static func root_theme() -> void:
 	var tree := Engine.get_main_loop() as SceneTree
 	if tree != null and tree.root != null:
 		tree.root.theme = RbTheme.of("dark")
+		tree.node_added.connect(_layer)
 		_rooted = true
 
 
@@ -274,6 +329,7 @@ static func action(text: String, pressed: Callable, look := "leather", spoken :=
 	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
 		b.add_theme_stylebox_override(state, clear_box(9, 4))
 	set_look(b, look)
+	raise_words(b)
 	b.set_meta("points", TEXT_POINTS)
 	fit(b)
 	b.button_down.connect(Motion.press.bind(b, true))

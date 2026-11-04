@@ -64,6 +64,8 @@ func run() -> void:
 	_skins()
 	await _switch()
 	await _fixture()
+	await _words()
+	await _numerals()
 	_pages()
 	_skies()
 	await _catalogue()
@@ -505,6 +507,135 @@ func _fixture() -> void:
 	check.call("a skin switched on draws from the baked fixture's atlas, normal and high contrast; the tertiary on "
 			+ "parchment takes its parchment face (AIA-R9); a piece the atlas lacks falls back to the code-drawn "
 			+ "box and is logged (kit-spec.md sections 4.1, 6.7)", bad.is_empty(), "; ".join(bad))
+
+
+## Words stand in their own layer above the art (kit-spec.md section 6.5):
+## a label's, an action's and a field's words are `UI.WORDS_Z` up, their
+## code-drawn box back down in the art's; a full-rect layer added over a
+## screen (a veil, a menu, a sheet) stands `UI.OVERLAY_Z` above it, so the
+## screen's words never show through it. A frame is sized from its words:
+## at 200% text a law card's and a portrait's frames widen rather than
+## shrinking or cutting their words.
+func _words() -> void:
+	var bad := []
+	UI.root_theme()
+	var screen := Control.new()
+	screen.size = Vector2(1080, 2340)
+	tree.root.add_child(screen)
+	var l := UI.label("Words", 18)
+	screen.add_child(l)
+	var go := UI.action("Go", func() -> void: pass)
+	screen.add_child(go)
+	var f := UI.field("Name")
+	screen.add_child(f)
+	for c: Control in [l, go, f]:
+		if c.z_index != UI.WORDS_Z:
+			bad.append("%s's words are at z %d, not %d" % [c.get_class(), c.z_index, UI.WORDS_Z])
+		var box := RbBox.of(c)
+		if box != null and box.z_index + c.z_index != 0:
+			bad.append("%s's box is at z %d, not back in the art's layer" % [c.get_class(), box.z_index + c.z_index])
+	var veil := ColorRect.new()
+	veil.set_anchors_preset(Control.PRESET_FULL_RECT)
+	screen.add_child(veil)
+	if veil.z_index != UI.OVERLAY_Z:
+		bad.append("a full-rect veil over the screen is at z %d, not %d" % [veil.z_index, UI.OVERLAY_Z])
+	if veil.z_index <= f.z_index:
+		bad.append("the veil is not above the screen's words")
+	var menu := Control.new()
+	menu.set_anchors_preset(Control.PRESET_FULL_RECT)
+	screen.add_child(menu)
+	if menu.z_index != 2 * UI.OVERLAY_Z:
+		bad.append("a layer over the veil is at z %d, not %d" % [menu.z_index, 2 * UI.OVERLAY_Z])
+	var rows := VBoxContainer.new()
+	screen.add_child(rows)
+	var row := Control.new()
+	row.set_anchors_preset(Control.PRESET_FULL_RECT)
+	rows.add_child(Label.new())
+	rows.add_child(row)
+	if row.z_index != 0:
+		bad.append("a child a container lays out is lifted as a layer (z %d)" % row.z_index)
+	screen.queue_free()
+	var wide := {}
+	for scale: int in [100, 200]:
+		Settings.text_scale = scale
+		var card := KitCards.law_card("laws/bounce", "Thunderbringer", "motion", "common")
+		var face := KitCards.portrait(null, "Wanderwing", 3, "motion", Color.WHITE, "crewroles/carrier", func() -> void: pass)
+		wide[scale] = [card.custom_minimum_size.x, face.custom_minimum_size]
+		card.free()
+		face.free()
+	Settings.text_scale = 100
+	if wide[200][0] <= wide[100][0]:
+		bad.append("a law card is %.0f px wide at 200%% text, no wider than at 100%% (%.0f)" % [wide[200][0], wide[100][0]])
+	var at100: Vector2 = wide[100][1]
+	var at200: Vector2 = wide[200][1]
+	if at200.x <= at100.x or at200.y <= at100.y:
+		bad.append("a portrait is %s at 200%% text, not larger than at 100%% (%s)" % [at200, at100])
+	await tree.process_frame
+	check.call("words stand in their own layer above the art, a full-rect layer over a screen stands above its "
+			+ "words, and a frame widens with its words at 200% text (kit-spec.md section 6.5)", bad.is_empty(),
+			"; ".join(bad))
+
+
+## The baked numerals (kit-spec.md sections 3, 6.1): while their skin is off,
+## or a glyph's piece is missing, a number is live text in its role; with
+## every piece there it is drawn from the atlas, each glyph in its fixed
+## advance (so "1,111" and "8,888" are one width), and grouped as the
+## language shown groups it: "1,234" in English and "1.234" in Brazilian
+## Portuguese, from the same pieces.
+func _numerals() -> void:
+	var bad := []
+	KitSkin.reset()
+	var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
+	img.fill(Color.WHITE)
+	var tex := ImageTexture.create_from_image(img)
+	var pieces := {}
+	var glyphs := ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "comma", "period"]
+	for i: int in glyphs.size():
+		var narrow: bool = glyphs[i] in ["1", "comma", "period"]
+		pieces["num_gold_%s" % glyphs[i]] = {"x": 0, "y": 0, "w": (16 if narrow else 30) + 12, "h": 48,
+			"advance": 16 if narrow else 30, "slice": null, "tint": false}
+	KitSkin.use({"format": 1, "family": "kit", "px_per_point": 6, "pieces": pieces}, tex, tex)
+	var off := KitNumerals.number(1234)
+	if not (off is Label) or (off as Label).text != "1,234":
+		bad.append("with the numerals' skin off, 1234 is not the live text \"1,234\"")
+	off.free()
+	KitSkin.switch("numerals", true)
+	var row := KitNumerals.number(1234)
+	if row is Label:
+		bad.append("with every piece there, 1234 is not drawn from the atlas")
+	elif String(row.get_meta("numerals")) != "1,234" or String(row.get_meta("spoken")) != "1234":
+		bad.append("1234 draws \"%s\" and says \"%s\"" % [row.get_meta("numerals"), row.get_meta("spoken")])
+	var ones := KitNumerals.make("8,888")
+	var eights := KitNumerals.make("8,111")
+	var tens := KitNumerals.make("88")
+	if not (ones is Label or eights is Label):
+		var a: Array[float] = ones.advances()
+		var s: float = ones.glyph_scale()
+		if not is_equal_approx(a[0], 30.0 * s) or not is_equal_approx(a[1], 16.0 * s):
+			bad.append("a glyph's cell is not its fixed advance (%s)" % [a])
+		if not is_equal_approx(ones.get_combined_minimum_size().x, ceilf((30.0 * 4 + 16.0) * s)):
+			bad.append("8,888's width is not the sum of its advances")
+		if is_equal_approx(eights.get_combined_minimum_size().x, ones.get_combined_minimum_size().x):
+			bad.append("narrow glyphs take the wide ones' cells")
+		if not is_equal_approx(tens.get_combined_minimum_size().y, ones.get_combined_minimum_size().y):
+			bad.append("two numbers in one role are not one height")
+	for n: Control in [row, ones, eights, tens]:
+		n.free()
+	var missing := KitNumerals.make("12:30")
+	if not (missing is Label) or "num_gold_colon" not in KitSkin.missing:
+		bad.append("a number with a glyph the atlas lacks is not live text, or the piece is not logged")
+	missing.free()
+	Strings.set_locale("pt_BR")
+	var br := KitNumerals.number(1234)
+	if br is Label or String(br.get_meta("numerals")) != "1.234":
+		bad.append("in Brazilian Portuguese 1234 draws \"%s\", not \"1.234\"" % br.get_meta("numerals", ""))
+	br.free()
+	Strings.set_locale("en")
+	KitSkin.reset()
+	await tree.process_frame
+	check.call("the baked numerals draw each glyph in its fixed advance, group as the language shown groups "
+			+ "(1,234 and 1.234), and fall back to live text while their skin is off or a piece is missing "
+			+ "(kit-spec.md sections 3, 6.1)", bad.is_empty(), "; ".join(bad))
 
 
 func _pages() -> void:
