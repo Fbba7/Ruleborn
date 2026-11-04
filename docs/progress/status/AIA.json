@@ -3,47 +3,26 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P0-AIA-board-4",
-  "task_state": "ready",
-  "claimed_at": "2026-10-31T13:45:00Z",
-  "lease_until": "2026-10-31T16:45:00Z",
-  "updated_at": "2026-11-04T01:34:28Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P1-AIA-kit-1",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-04T12:50:00Z",
+  "lease_until": "2026-11-04T15:50:00Z",
+  "updated_at": "2026-11-04T12:50:00Z",
+  "expected_next_update_by": "2026-11-04T13:35:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "b83a0b4d",
-    "next_step": "wait for the lead: P0-AIA-board-4 is ready"
+    "last_green_sha": "294a4595",
+    "next_step": "P1-AIA-kit-1: read kit-spec and bake tool, draw batch 1a"
   },
-  "precheck": {
-    "sha": "b83a0b4d3ae8008c0a83bb858e660bae4b2238c7",
-    "exit": 0,
-    "finished_at": "2026-10-31T15:49:22Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "b83a0b4d",
-  "stop_at": "2026-11-06T21:00:00Z",
+  "ready_sha": null,
+  "stop_at": "2026-11-09T21:00:00Z",
   "acks": [
     "M1"
   ],
-  "requests": [
-    {
-      "id": "AIA-R8",
-      "from": "AIA",
-      "to": "lead (copy K1)",
-      "ask": "O2.md interim ruling 1 sets a success in ink on #3FBF7F. The darkest ink (#000) reaches only Lc 58.2 there, under the Lc 60 a bold word below 36 points needs, so no ink word on that fill passes under 36 points. P0-K1-tokens-2's plan to move the screens' smaller status words onto the green fill will fail the same contrast check. Please choose: success words at 36 points or more on the fill, a darker success fill, or paper on a darker green.",
-      "files": [
-        "art/ui/board/board.html",
-        "client/ui/tokens.json"
-      ],
-      "blocking": false,
-      "created_at": "2026-10-31T13:58:00Z",
-      "due": "2026-11-02T21:00:00Z",
-      "default": "Success words in words are set at 36 points on the #3FBF7F fill, as on the board; smaller success words keep their icon and use the alarm-like chip only once the fill is darkened by K1.",
-      "escalate_to": "lead"
-    }
-  ],
+  "requests": [],
   "answers": [],
-  "next_step": "wait for the lead: P0-AIA-board-4 is ready"
+  "next_step": "P1-AIA-kit-1: read kit-spec and bake tool, draw batch 1a"
 }
