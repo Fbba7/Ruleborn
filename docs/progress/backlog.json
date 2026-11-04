@@ -748,11 +748,16 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "ready",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-04T12:50:00Z",
+        "lease_until": "2026-11-04T15:50:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "9a6565d7",
       "merged_sha": null
     },
     {
@@ -981,8 +986,13 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-11-04T12:50:00Z",
+        "lease_until": "2026-11-04T15:50:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
@@ -1196,12 +1206,20 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "ready",
+      "claim": {
+        "agent": "AIA-2",
+        "branch": "claude/ui-artist-icons",
+        "claimed_at": "2026-11-04T12:47:10Z",
+        "lease_until": "2026-11-04T15:47:10Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "02e7ef0f",
+      "merged_sha": null,
+      "exceptions": [
+        "client/tests/shots/icon_portraits.gd.uid"
+      ]
     },
     {
       "id": "P1-AIA2-icons-1a",
