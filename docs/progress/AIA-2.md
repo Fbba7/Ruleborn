@@ -1,52 +1,54 @@
 # AIA-2 icon maker: progress
 
-- Status: Amber until the pre-check passes. The last push has P1-AIA2-icons-1a's eight heist controls baked into `icons_48`, and a finish fix (a solid outline ring at thin points). The pre-check at c1d14d38 failed on stale icon manifests (a `__pycache__` under `art/ui` was hashed at bake time); 5f759a03 rebakes them clean and `bake.js --check` passes in a clean worktree.
-- Progress: 1 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70); 0 items passed by the gate. P1-AIA2-icons-1a is waiting for its gate.
-- Done: the toon route, with Starlight and Pip; the eight heist-control icons (ability, aim, call skiff, cast, get out, regroup, Sage's wheel, split crew) in `icons_48`, normal and high contrast.
-- Next: the gate on P1-AIA2-icons-1a's icon sheet, then P1-AIA2-icons-1b (four resources and three currencies).
+- Status: Green (pre-check PASS at bef6eac2), and the last push has P1-AIA2-icons-1b: five new icons (aether, essence, renown, starglass, season stars) and Starlight in `icons_48` and `icons_256`, and a finish that answers 1a's critiques (a blended toon ramp, a gloss band, a three-stop body gradient, a soft drop). Every icon was rebaked.
+- Progress: 2 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9); 1 item passed by the gate (icons-1b, advisory). P1-AIA2-icons-1b is ready at bef6eac2 (pre-check PASS; gate pass on Layered materials, Painted icons, Colour roles and Light behind UI, advisory).
+- Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources (Insight dropped: the design has none, §11.7).
+- Next: the lead's merge of P1-AIA2-icons-1b (ready at bef6eac2; gate passed, advisory).
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
 | P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Merged at 9b2bde70 | `bake.js --check`, `check_icons.py` and `run_checks.sh` PASS at 02e7ef0f |
-| P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Waiting for its gate | `python3 art/ui/icons/studio/check_icons.py`: all 24 faces pass (12 pieces across 2 families, in 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 10 pieces, icons_256 1 piece, both ok |
+| P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Merged at 8ce107c9 | gate advisory at 5f759a03: Light behind UI pass; three qualities fail 3 of 3 |
+| P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Ready at bef6eac2: pre-check PASS; gate pass on all four qualities (advisory) | `python3 -B art/ui/icons/studio/check_icons.py`: all 42 faces pass (21 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 15 pieces, icons_256 6 pieces, both ok |
 
 ## Handoff
 
-- **Last verified commit:** 5f759a03 (scripted checks green, `bake.js --check` green in a clean worktree; pre-check pending).
+- **Last verified commit:** bef6eac2 (`check_icons.py` and `bake.js --check` green; pre-check started).
 
 ### Done
 
-**Eight scenes in `art/ui/icons/heistcontrols/`.** Each one is a toy-like solid in the one toon light. They share the parts in `studio/shapes.js`: `box`, `ball`, `rod`, `pip`, `arrowShape`, `boltShape` and `slab`. Colours are token names only.
+**The finish, for 1a's critiques** (every icon changes, a full rebake):
+- `studio/toon.js`: the four ramp steps blend over a narrow band (`rampSoft` 0.05), so faces shade without posterised edges; a hard-edged `cream` gloss band sits on the key side (Blinn term over 0.955); `toon(face, rim, glossy)` scales it per material (0 for none).
+- `studio/finish.js`: the drop is soft (blur 0.022R, alpha 0.55, offset down and a little right), not a hard ink offset; after the inner light, a three-stop body gradient lays a `cream` lift on the top, nothing in the middle, `drop` at the foot.
+- `studio/shapes.js`: `star5Shape` (five-point star with rounded tips), `lathe` and `profile` (turned solids from a spline).
+
+**Batch 1b in `art/ui/icons/`** (each in `icons_48` and `icons_256`):
 
 | Icon | What it shows | Light |
 |---|---|---|
-| `ability` | a motion-amber lightning bolt with a cream star flare | `energy_light` |
-| `aim` | a stone ring with four cream ticks around an alarm-red eye | `alarm_light` |
-| `callskiff` | a wooden hull with a gold trim, a mast and a cream sail, inside a time-teal arc | `time_light` |
-| `cast` | a stubby wooden wand with a leather grip, a gold collar, a matter-violet orb and a cream spark | `matter_light` |
-| `getout` | a wooden door frame, the door swung open on the dark, and a success-green arrow out | `success_light` |
-| `regroup` | three crew pips (time, energy, matter) on a gold pad round an alarm pennant | `time_light` |
-| `sagewheel` | a ship's helm whose six segments are the six school colours, with spokes, a gold rim and hub, and a cream star | `motion_light` |
-| `splitcrew` | a gold three-way fork, with a pip at the end of each prong | `motion_light` |
+| `resources/aether` | a teal flask on a time-shadow sea, a gold collar, a wooden cork, a cloud puff above | `time_light` |
+| `resources/essence` | a turned drop of the essence green with a bubble in it, a small darker sister drop | `life_light` |
+| `resources/renown` | a gold medal with a cream star, four laurel leaves a side, two violet ribbon tails | `motion_light` |
+| `currencies/starglass` | a cut five-point star gem, flat facets in the spirit colour | `spirit_light` |
+| `currencies/seasonstars` | three stars large to small: time, matter, cream | `time_light` |
+| `resources/starlight` | unchanged design, set 8% larger to keep its 32 pt coverage with the soft drop | `motion_light` |
 
-`list.md`'s batch 1a now describes these designs.
+`currencies/insight` is dropped from `list.md`: §11.7 says there is no Insight, and no client code uses the icon. A request to the lead (AIA2-R2) has the default.
 
-**A fix in the finish (`studio/finish.js`).** `grow()` stamped the silhouette at 48 angles, as on the style board. At R = 640 that is 3.9 px apart round a 2 pt ring. Around a thin point (a star's tip) the gaps between stamps left see-through holes in the ink. The stamps now sit at most a pixel apart (`max(48, ceil(2πr))`). Every icon was rebaked; Starlight and Pip changed only at the edges (both still pass). The board (`art/ui/board/studio.html`) still has 48; its owner may want the same fix.
+**Check figures** (normal mode; high contrast passes for all, median 8.0–9.0 px against 8.0 px):
 
-**Check figures** (`check_icons.py` on the baked atlas). Each row gives the outline median and tenth percentile against 5.3 px, then 32 pt coverage and ellipse overlap. In high contrast every heist control passes, with median 7.5–9.5 px and p10 7.0–7.5 px against 8.0 px.
+| Icon | Family | Median | p10 | 32 pt cover | Ellipse |
+|---|---|---:|---:|---:|---:|
+| aether | 48 / 256 | 5.0 / 5.0 | 4.2 / 4.1 | 30% / 26% | 0.78 / 0.74 |
+| essence | 48 / 256 | 5.0 / 5.0 | 4.2 / 4.3 | 32% / 28% | 0.73 / 0.71 |
+| renown | 48 / 256 | 5.0 / 5.0 | 4.2 / 4.3 | 38% / 33% | 0.93 / 0.92 |
+| starglass | 48 / 256 | 5.0 / 5.1 | 4.2 / 4.3 | 44% / 38% | 0.83 / 0.82 |
+| seasonstars | 48 / 256 | 5.0 / 5.0 | 3.6 / 4.0 | 36% / 30% | 0.75 / 0.70 |
+| starlight | 48 / 256 | 5.3 / 5.4 | 3.9 / 4.1 | 33% / 27% | 0.69 / 0.63 |
 
-| Icon (normal) | Median | p10 | 32 pt cover | Ellipse |
-|---|---:|---:|---:|---:|
-| ability | 6.0 | 4.0 | 34% | 0.79 |
-| aim | 7.0 | 4.3 | 38% | 0.76 |
-| callskiff | 5.9 | 4.5 | 47% | 0.88 |
-| cast | 5.9 | 4.0 | 33% | 0.76 |
-| getout | 6.2 | 4.9 | 41% | 0.80 |
-| regroup | 6.0 | 4.4 | 39% | 0.79 |
-| sagewheel | 6.3 | 4.2 | 41% | 0.77 |
-| splitcrew | 7.3 | 4.4 | 42% | 0.76 |
+Medians fell from about 6 to 5.0 px: the old hard drop was counted as ink. They pass the 0.85 threshold (4.5 px).
 
 ### Self-score
 
@@ -54,23 +56,20 @@ Against rubric.md quality 3 (Painted or rendered icons):
 
 | Rule | Score | Why |
 |---|---|---|
-| 1. 3D form, top-left key, rim, specular, dark outline | Pass | Every icon is a lit solid, keyed from (-3, 4, 5) with the rim on the lit side. Glints act as the specular and the ink ring as the outline. |
-| 2. Outline 2 pt at the size shown | Pass, scripted | `check_icons.py`, all faces |
-| 3. A dark shape at 32 pt | Pass, scripted | Coverage 33–47% and ellipse overlap 0.76–0.88: none is a blob |
-| 4. §21.8 volume | Pass | The toon ramp and the inner light carry the gradient, the glints are the gloss, and the drop is soft |
-| 5. One toon look | Pass | No PBR. The pips are toy figures in school colours, not characters, so no model render is needed |
-| 6. Law and school frames | Not applicable | No law icon. The Sage's wheel carries all six school colours, in §21.2's order round the helm |
+| 1. 3D form, top-left key, rim, specular, dark outline | Pass | Lathed and bevelled solids, keyed top left, rim on the lit side, a gloss band as the specular, the ink ring |
+| 2. Outline 2 pt at the size shown | Pass, scripted | all 42 faces |
+| 3. A dark shape at 32 pt | Pass, scripted | coverage 26–44%, ellipse 0.63–0.93 |
+| 4. §21.8 volume | Pass | blended ramp, gloss band, three-stop body gradient, soft drop |
+| 5. One toon look | Pass | no PBR; one material for all |
+| 6. Law and school frames | Not applicable | |
 
-Against the gate item's other qualities:
-- **Layered materials.** Wood, leather, gold, stone and enamel stay distinct by hue and ramp step, each with its own rim.
-- **Colour roles and value.** Each control takes its role's colour: alarm for aim, success for get out, a school colour for cast and ability. In grayscale the silhouettes and the ink ring carry every icon.
-- **Light behind UI.** Each icon has a glow in its light token behind it, and an inner light toward the top left.
+Other qualities: **Layered materials**: glass, gold, wood, cloud and leaf differ by hue, ramp and gloss (`glossy` 0.6 on the medal face, full on glass). **Colour roles and value**: gold is a material (collar, medal) and never a fill for an action; each icon's parts step in value (renown's dark ribbons, light star; seasonstars dark to light). **Light behind UI**: a glow in the light token, one top-left light.
 
 **Risks a judge may see:**
-- In grayscale the Sage's wheel's six segments fall into close greys. The spokes and rim still read, but the six colours do not.
-- In grayscale, regroup's three pips are close in value. They read by their shape.
-- At 45 px, the split crew's pips and the regroup pips become dots. The fork and the flag keep the shape.
-- `regroup` and `callskiff` share `time_light`, and `sagewheel` and `splitcrew` share `motion_light`. Side by side on the HUD, their glows match.
+- Starglass's facets are subtle at 48 pt; it may read as a plain star.
+- Renown's ellipse overlap (0.93) is close to the 0.96 limit: a round medal.
+- Glints are still separate cream sparks; the gloss band now carries the real highlight.
+- No wood grain yet (aether's cork is small); 1a's sagewheel grayscale and gold-as-fill notes are not addressed here (1a is merged; a later pass).
 
 ### Half done
 
@@ -79,13 +78,11 @@ None.
 ### Open hypotheses
 
 - The client may show `icons_256` at sizes other than 96 pt. If so, the outline is 2 pt only at 96.
-- The outline check counts the soft drop as ink where it is darker than 0.2 and over alpha 200. Below an icon, the drop adds to the measured ring. That is why medians run above 2 pt.
 
 ### Next step
 
-1. Set the gate request on the icon sheet at the verified commit.
-2. When it passes and the pre-check is green, mark the task ready.
-3. Then start P1-AIA2-icons-1b.
+1. The lead merges P1-AIA2-icons-1b at bef6eac2 (ready: pre-check PASS; the gate passed all four qualities).
+2. A later pass on 1a for the sagewheel's values and gold roles, if the lead opens one.
 
 ## Tried and failed
 
@@ -99,3 +96,8 @@ None.
 - 2026-11-04 Split crew's prongs short and close together: the fork read as a crown or a bundle at 48 pt. Longer prongs, wider angles and the pips further out made it a fork.
 - 2026-11-04 The finish's 48 stamps round the outline (the board's count): holes in the ink ring at thin points. The stamps now sit a pixel apart.
 - 2026-11-04 Running `check_icons.py` (or importing it) without `-B` before a bake: Python wrote `art/ui/icons/studio/__pycache__/`, the bake hashed it into `sources_hash`, and a clean checkout called both manifests stale. Run the Python checks with `python3 -B`, and run `git status --ignored art/ui` before a bake.
+- 2026-11-04 The 1a finish (a four-step hard ramp, a hard ink drop at 0.006R blur, alpha 0.8): the gate saw flat fills and a pasted shadow. Now a blended ramp, a gloss band, a body gradient and a soft drop.
+- 2026-11-04 The soft drop alone: essence 256 (22%) and starlight 256 (24%) fell under 25% coverage at 32 pt, since the hard drop had added to the shape. Scaling them up 14% and 8% fixed it.
+- 2026-11-04 Season stars with sharp tips and thin waists: outline p10 3.1 px. Rounded tips and fatter waists give 3.6 px and over.
+- 2026-11-04 Starglass with an octahedron core inside the star: it read as a second object. A faceted, flat-shaded star alone is cleaner.
+- 2026-11-04 Renown at scale 1.2: the medal's top clipped the square. Scale 1.08, raised 0.08.

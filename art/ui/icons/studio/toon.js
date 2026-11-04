@@ -42,6 +42,14 @@ export const STUDIO = {
   shade: [0.55, 0.47, 0.82],
   saturation: 1.1,
   rim: 0.42,
+  // The ramp's four steps meet over a short blend (in N·L remapped to
+  // [0, 1]), so a body reads as a gradient in steps, not posterised bands
+  // at phone size (rubric.md quality 1: banding fails).
+  rampSoft: 0.05,
+  // The gloss: a toon highlight, the key's half vector cut by a step (no
+  // physically based specular, §21.3): a crisp cream spot that sits on and
+  // follows the surface it lights. `at` is the N·H where it starts.
+  gloss: { colour: 'cream', at: 0.955, soft: 0.012, strength: 0.9 },
 };
 
 let renderer = null;
@@ -86,6 +94,9 @@ uniform vec3 shade;
 uniform vec4 ramp;
 uniform float saturation;
 uniform float rimStrength;
+uniform float rampSoft;
+uniform vec3 glossColour;
+uniform vec3 gloss;
 varying vec3 vNormal;
 varying vec3 vView;
 varying vec3 vKey;
@@ -95,10 +106,10 @@ vec3 saturated(vec3 c) {
 }
 float toonRamp(float ndl) {
   float x = ndl * 0.5 + 0.5;
-  if (x < 0.25) return ramp.x;
-  if (x < 0.5) return ramp.y;
-  if (x < 0.75) return ramp.z;
-  return ramp.w;
+  float r = ramp.x;
+  r = mix(r, ramp.y, smoothstep(0.25 - rampSoft, 0.25 + rampSoft, x));
+  r = mix(r, ramp.z, smoothstep(0.5 - rampSoft, 0.5 + rampSoft, x));
+  return mix(r, ramp.w, smoothstep(0.75 - rampSoft, 0.75 + rampSoft, x));
 }
 void main() {
   vec3 n = normalize(vNormal) * (gl_FrontFacing ? 1.0 : -1.0);
@@ -109,13 +120,17 @@ void main() {
   vec3 c = saturated(albedo) * (keyColour * lit * tint + fill);
   float rim = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 3.0) * step(0.0, ndl);
   c += keyColour * rimColour * rim * rimStrength;
+  float ndh = dot(n, normalize(vKey + v));
+  c = mix(c, glossColour, smoothstep(gloss.x, gloss.x + gloss.y, ndh) * gloss.z);
   gl_FragColor = vec4(c, 1.0);
   #include <colorspace_fragment>
 }`;
 
 // The one material: a token colour in the studio's toon light, its rim in
-// the icon's light colour (`rim`, a token).
-export function toon(face, rim) {
+// the icon's light colour (`rim`, a token). `glossy` scales the gloss: 0
+// for a matte part (wood grain, cloth), 1 by default.
+export function toon(face, rim, glossy = 1) {
+  const G = STUDIO.gloss;
   const colour = (name) => new THREE.Color(tok(name));
   return new THREE.ShaderMaterial({
     vertexShader: TOON_VERTEX,
@@ -130,6 +145,9 @@ export function toon(face, rim) {
       ramp: { value: new THREE.Vector4(...STUDIO.ramp.map((v) => v / 255)) },
       saturation: { value: STUDIO.saturation },
       rimStrength: { value: STUDIO.rim },
+      rampSoft: { value: STUDIO.rampSoft },
+      glossColour: { value: colour(G.colour) },
+      gloss: { value: new THREE.Vector3(G.at, G.soft, G.strength * glossy) },
     },
   });
 }
