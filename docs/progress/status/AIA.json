@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P1-AIA-kit-1",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-04T12:50:00Z",
   "lease_until": "2026-11-04T15:50:00Z",
-  "updated_at": "2026-11-04T12:50:00Z",
-  "expected_next_update_by": "2026-11-04T13:35:00Z",
+  "updated_at": "2026-11-04T12:59:00Z",
+  "expected_next_update_by": "2026-11-04T13:44:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "294a4595",
-    "next_step": "P1-AIA-kit-1: read kit-spec and bake tool, draw batch 1a"
+    "next_step": "P1-AIA-kit-1: checks, pre-check, handoff"
   },
   "precheck": null,
   "gate_request": null,
@@ -24,5 +24,5 @@
   ],
   "requests": [],
   "answers": [],
-  "next_step": "P1-AIA-kit-1: read kit-spec and bake tool, draw batch 1a"
+  "next_step": "P1-AIA-kit-1: checks, pre-check, handoff"
 }
