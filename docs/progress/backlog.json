@@ -823,12 +823,12 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "ready",
+      "state": "resync",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
         "claimed_at": "2026-11-04T17:50:00Z",
-        "lease_until": "2026-11-04T23:00:00Z"
+        "lease_until": "2026-11-05T01:00:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
