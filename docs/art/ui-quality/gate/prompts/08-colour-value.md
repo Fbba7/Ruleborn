@@ -1,6 +1,6 @@
 # Judge prompt: 8. Colour roles and value
 
-Rubric version 1 (`../rubric.md`, quality 8). The launcher fills the
+Rubric version 3 (`../rubric.md`, quality 8). The launcher fills the
 `{{...}}` fields and sends everything below the line as one isolated call. The
 call is made three times, with the pictures in a new shuffled order each time.
 
@@ -68,6 +68,18 @@ problems; you are asked one comparison.
   Motion card is correct.
 - High-contrast stills raise secondary text and drop glass; compare them with
   an anchor of the same mode.
+
+**Rulings from calibration (version 2):**
+- Gold is two things: a material (frames, rims, bevels and the chosen card's
+  rim, as the approved board shows) and the main-action fill. Gold frames and
+  rims are the material and give gold no second role. A gold fill on something
+  that is not a main action (a selected tab in a settings list, a language
+  picker, a chart bar) is gold in a second role: fail.
+- A role colour that has drifted (an action gold turned muddy brown, a chosen
+  rim turned pale lilac, a school pip turned grey) has lost its role: fail,
+  even if each colour on its own looks fine.
+- A bar, chart or state told apart by hue alone, with no shape, label or
+  pattern, fails.
 
 **How to decide.**
 1. Find the region of each picture that this quality is about (above).

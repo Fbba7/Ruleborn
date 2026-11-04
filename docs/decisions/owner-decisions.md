@@ -79,6 +79,21 @@ else. "Build" means the decision needs code, listed under
 | G-67 Nobody notices a dead lead | A separate scheduled task checks the lead's last status commit every hour while a wave has agents building, and alerts in [`owner-inbox.md`](../progress/owner-inbox.md); the coordinator script (BT-01) takes this over later | Wave launch |
 | G-70 A prompt whose deadline has passed | The lead checks `stop_at` against the clock before starting or messaging a session | None |
 
+## UI kit colours (C74, C75), closed 2026-11-04
+
+On 2026-11-04 at 01:50Z the owner asked, in the overseer session's chat,
+that everything waiting on them be solved. Both questions were closed under
+the 2026-10-29 rule above: each takes K1's recommendation. C75's option A
+keeps the design document as written; for C74 both options change §21.8, so
+the recommendation decides. `docs/decisions/answers.json` is the owner's own
+record of the brief page and is not edited here; the design document is not
+edited here either.
+
+| Item | Decision | Build |
+|---|---|---|
+| C74 Success words on a dark surface | A: words are #8FF0A8 at every size; #3FBF7F stays the green of fills, rings and marks. The words meet both of §21.8's checks (Lc 72 to 84). §21.8's sentence "success words keep #3FBF7F" is left for the owner's next revision of the design document | None in the build: `tokens.json` already holds #8FF0A8. K1 updates `kit-spec.md`'s success row and the `tokens.json` notes (K1-R9 in `requests.md`) |
+| C75 The menus' night backdrop | A: §21.2's linear #171046 to #2C3AA8 | None: the build has drawn it since P0-K1-tokens-2. K1-R9 drops the row's "pending owner decision" mark |
+
 ## Validation
 
 | Item | Decision | Build |

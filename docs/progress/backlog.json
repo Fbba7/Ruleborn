@@ -1,10 +1,10 @@
 {
-  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
+  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
-  "phase": 0,
-  "updated_at": "2026-10-31T14:27:00Z",
+  "phase": 1,
+  "updated_at": "2026-11-04T13:05:00Z",
   "updated_by": "lead",
-  "stop_at": "2026-11-06T21:00:00Z",
+  "stop_at": "2026-11-09T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
   "check_minutes": 25,
@@ -25,6 +25,14 @@
     },
     "SV": {
       "branch": "claude/server-decisions",
+      "model": "Sonnet 5.5"
+    },
+    "AIA-2": {
+      "branch": "claude/ui-artist-icons",
+      "model": "Opus 5.5"
+    },
+    "S1": {
+      "branch": "claude/ui-screens-heist",
       "model": "Sonnet 5.5"
     }
   },
@@ -678,7 +686,13 @@
         "client/scripts/screen_account.gd"
       ],
       "exceptions": [
-        "art/ui/board/tokens.css"
+        "art/ui/board/tokens.css",
+        "client/scripts/screen_parts.gd",
+        "client/scripts/realm_screen.gd",
+        "client/scripts/ui.gd",
+        "art/ui/keyframes/03-result.html",
+        "art/ui/keyframes/03-result*.png",
+        "art/ui/keyframes/03-result*.shot.json"
       ],
       "deps": [
         "P0-K1-tokens",
@@ -696,6 +710,810 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-10-31T17:05:00Z",
+        "seen_at": "2026-10-31T19:40:00Z",
+        "lease_until": "2026-10-31T21:50:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "785cb2a8",
+      "merged_sha": "eec44b50"
+    },
+    {
+      "id": "P0-K1-kitspec-3",
+      "title": "Kit contract after C74 and C75 (K1-R9, owner-decisions.md 'UI kit colours (C74, C75)'): in kit-spec.md section 2.1 the success row's words on dark become #8FF0A8 at every size (O2.md's interim ruling 1 and AIA-R8's narrowing fall away; #3FBF7F stays fills, rings and marks) and the backdrop row loses its 'pending owner decision' mark; a dated line in section 9; the 'from' notes of success_text_on_night and night_top in client/ui/tokens.json name C74 and C75 instead of a pending decision. No value changes",
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "docs/art/ui-quality/kit-spec.md",
+        "client/ui/tokens.json"
+      ],
+      "deps": [
+        "P0-K1-tokens-2"
+      ],
+      "done_when": [
+        "no token value changes (only notes in tokens.json)",
+        "bash tools/ui_bake/guard.sh",
+        "python3 tools/check_docs_consistency.py",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 0.5,
+      "phase": 0,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-K1-atlas-draw",
+      "title": "Texture-backed kit (report.md step 4, phase 1): KitSkin draws a switched-on skin from the kit atlas through its manifest (kit-spec.md sections 5, 6.6 and 6.7): 9-slice pieces as StyleBoxTexture, sprites as textures, the _hc atlas swapped in high contrast with the same regions, a missing piece falling back to the code-drawn box and logged; neutral school pieces tinted by vertex colour (report.md section 10.5); the bake also writes art/ui/palette.json from tokens.json (kit-spec.md section 6.2). Tested on a fixture atlas under tools/ui_bake/test/ or client/tests/, not on real art. With every switch off, every still is unchanged",
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/kit_skin.gd",
+        "client/ui/rb_theme.gd",
+        "client/ui/rb_box.gd",
+        "client/ui/kit_*.gd",
+        "!client/ui/kit_families.json",
+        "tools/ui_bake/**",
+        "client/tests/ui_kit_tests.gd",
+        "client/tests/fixtures/ui_kit/**",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "deps": [
+        "P0-K1-kitspec-3"
+      ],
+      "done_when": [
+        "client/tests/ui_kit_tests.gd draws a switched-on fixture skin from its atlas, normal and high contrast, and falls back on a missing piece",
+        "node tools/ui_bake/bake.js --check",
+        "bash tools/ui_bake/guard.sh, every recorded figure unchanged with every switch off",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 4,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-K1-catalogue",
+      "title": "The catalogue sheet (kit-spec.md section 6.4): client/tests/shots/ui_kit_catalogue.gd renders every component in every state, normal and high contrast, 100% and 200% text, English and Brazilian Portuguese, one PNG per page under 400 KB in docs/art/shots/ui-bake/; a test that every (component, state) pair of section 4 has a place on a page and, once its skin has art, a piece in both atlases. This sheet is what the gate checks as the Kit art class",
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "client/tests/shots/ui_kit_catalogue.gd",
+        "client/tests/ui_kit_tests.gd",
+        "docs/art/shots/ui-bake/**",
+        "tools/ui_bake/**"
+      ],
+      "deps": [
+        "P1-K1-atlas-draw"
+      ],
+      "done_when": [
+        "the catalogue's coverage test passes",
+        "every page under 400 KB",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 4,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-K1-words",
+      "title": "The kit's words (report.md step 4): labels in their own z layer above the art, so art and words batch apart (section 7's rule 2); frames sized from their words, so 200% text widens a frame rather than shrinking its words; baked numerals drawn with their fixed advance (num_<finish>_<glyph>, kit-spec.md section 6.1) and both launch languages' separators (section 10.4), falling back to live text while the numerals' pieces are absent",
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "client/scripts/ui.gd",
+        "client/ui/kit_*.gd",
+        "!client/ui/kit_families.json",
+        "client/ui/rb_theme.gd",
+        "client/tests/ui_kit_tests.gd",
+        "client/tests/a11y_tests.gd",
+        "tools/ui_bake/budgets.json",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "deps": [
+        "P1-K1-catalogue"
+      ],
+      "done_when": [
+        "bash tools/ui_bake/guard.sh (draw calls at or under budgets.json; any change recorded with its reason)",
+        "client/tests/a11y_tests.gd passes at 200% text",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 4,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-K1-switch-heist",
+      "title": "Switch on the heist's skins (kit-spec.md section 6.7) after the gate's pass on kit batch 1 is recorded: client/ui/kit_families.json on for button_primary, button_secondary, button_tertiary, button_danger, success, panel_dark, panel_glass, well, badge, pill, tag, bar_track, bar_fill, disc, disc_school (neutral, tinted per school) and the overlays (selected rim, lock, attention badge, spinner); the heist proof runs on the kit at 147 draw calls or fewer (report.md step 4's done-when); guard.sh's baselines and the goldens they move re-recorded with their reason; the fonts' licence ledger rows for anything new (section 10.6)",
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/kit_families.json",
+        "tools/ui_bake/budgets.json",
+        "tools/ui_bake/**",
+        "client/tests/shots/uiq_*.gd",
+        "client/tests/shots/ui_*.gd",
+        "client/tests/golden/**",
+        "docs/art/shots/ui-bake/**",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "deps": [
+        "P1-K1-words",
+        "P1-AIA-kit-3"
+      ],
+      "done_when": [
+        "the gate's pass on P1-AIA-kit-1 to -3 recorded in docs/art/ui-quality/gate/verdicts/",
+        "bash tools/ui_bake/guard.sh: the heist at 147 draw calls or fewer",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-K1-switch-rest",
+      "title": "Switch on the rest of the skins after the gate's pass on kit batch 2 is recorded; re-record the guard's baselines and goldens they move; then, when nothing reads client/prototypes/ui_quality/ any more, delete it with its shots (report.md step 4's done-when)",
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/kit_families.json",
+        "tools/ui_bake/**",
+        "client/prototypes/ui_quality/**",
+        "client/tests/shots/uiq_*.gd",
+        "client/tests/shots/ui_*.gd",
+        "client/tests/golden/**",
+        "docs/art/shots/ui-bake/**",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "deps": [
+        "P1-K1-switch-heist",
+        "P1-AIA-kit-5"
+      ],
+      "done_when": [
+        "the gate's pass on P1-AIA-kit-4 and -5 recorded",
+        "bash tools/ui_bake/guard.sh",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-AIA-kit-1",
+      "title": "Kit art, batch 1a (report.md step 5, the heist's families first): art/ui/kit/<skin>/<shape>.svg for button_primary, button_secondary, button_tertiary, button_danger, success, a face per state (normal, pressed, disabled, locked) each with its high-contrast twin, from the approved board and the golden key frames; baked with node tools/ui_bake/bake.js kit into client/ui/art/kit.webp, kit_hc.webp and kit.json. The switches stay off (K1 turns them on)",
+      "role": "AIA",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/kit/**",
+        "art/ui/palette.json",
+        "client/ui/art/kit.webp",
+        "client/ui/art/kit_hc.webp",
+        "client/ui/art/kit.json",
+        "client/ui/art/kit*.import"
+      ],
+      "deps": [
+        "P0-K1-tokens-2",
+        "P0-AD-calibrate-2"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "every piece has its _hc twin; contrast in both modes (tools/ui_gate/checks.py value-steps on every control face)",
+        "self-score against gate/rubric.md in the handoff (M1)",
+        "gate: Kit art",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 4,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "kit atlas contact sheet, batch 1a, at phone size (tools/ui_gate/sheet.py)",
+          "qualities": [
+            "Layered materials",
+            "Display type",
+            "Colour roles and value",
+            "Light behind UI"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-AIA-kit-2",
+      "title": "Kit art, batch 1b (the heist's other families): panel_dark, panel_glass, well, badge, pill, tag, bar_track, bar_fill, disc, disc_school (neutral, tinted per school) and the overlays (selected rim, lock, attention badge, spinner), each with its state faces and high-contrast twin; baked into the kit family",
+      "role": "AIA",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/kit/**",
+        "art/ui/palette.json",
+        "client/ui/art/kit.webp",
+        "client/ui/art/kit_hc.webp",
+        "client/ui/art/kit.json",
+        "client/ui/art/kit*.import"
+      ],
+      "deps": [
+        "P1-AIA-kit-1"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "every piece has its _hc twin; contrast in both modes",
+        "self-score against gate/rubric.md in the handoff (M1)",
+        "gate: Kit art",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 4,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "kit atlas contact sheet, batch 1b, at phone size",
+          "qualities": [
+            "Layered materials",
+            "Display type",
+            "Colour roles and value",
+            "Light behind UI"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-AIA-kit-3",
+      "title": "Kit art, batch 1c: the numerals in four finishes with the full set of marks and both launch languages' separators (num_<finish>_<glyph>, kit-spec.md section 6.1; report.md section 10.4), each with a fixed advance and its high-contrast twin",
+      "role": "AIA",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/kit/**",
+        "client/ui/art/kit.webp",
+        "client/ui/art/kit_hc.webp",
+        "client/ui/art/kit.json",
+        "client/ui/art/kit*.import"
+      ],
+      "deps": [
+        "P1-AIA-kit-2"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "self-score against gate/rubric.md in the handoff (M1)",
+        "gate: Kit art",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "numerals sheet at phone size, 100% and 200% text",
+          "qualities": [
+            "Display type",
+            "Colour roles and value"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-AIA-kit-4",
+      "title": "Kit art, batch 2a: panel_parchment, sheet, popup, frame_oak, frame_silver, frame_gold, frame_prismatic, header and ribbon (neutral, tinted per school), with state faces and twins",
+      "role": "AIA",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/kit/**",
+        "client/ui/art/kit.webp",
+        "client/ui/art/kit_hc.webp",
+        "client/ui/art/kit.json",
+        "client/ui/art/kit*.import"
+      ],
+      "deps": [
+        "P1-AIA-kit-3"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "self-score against gate/rubric.md in the handoff (M1)",
+        "gate: Kit art",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "kit catalogue sheet, batch 2a, at phone size",
+          "qualities": [
+            "Layered materials",
+            "Display type",
+            "Colour roles and value",
+            "Light behind UI"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-AIA-kit-5",
+      "title": "Kit art, batch 2b: tab_bar, tab, tab_active, segmented, segmented_on, chip, chip_on, tile, locked, toggle and slider, with state faces and twins; batch 2 then covers all 35 skins (kit-spec.md section 8.2)",
+      "role": "AIA",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/kit/**",
+        "client/ui/art/kit.webp",
+        "client/ui/art/kit_hc.webp",
+        "client/ui/art/kit.json",
+        "client/ui/art/kit*.import"
+      ],
+      "deps": [
+        "P1-AIA-kit-4"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "the catalogue's coverage test finds a piece for every skin",
+        "self-score against gate/rubric.md in the handoff (M1)",
+        "gate: Kit art",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "kit catalogue sheet, batch 2b, at phone size",
+          "qualities": [
+            "Layered materials",
+            "Display type",
+            "Colour roles and value",
+            "Light behind UI"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-AIA2-toon-route",
+      "title": "Icons, setup (report.md step 6): the toon route through Godot's toon portrait studio (section 10.6, §21.3, D5 (b)), read-only use of client/world/portrait*.gd through AIA-2's own shot scripts; art/ui/icons/list.md: the 60 most-seen icons in the order the screens need them (heist controls and currencies first, then rewards and nav), in four batches of 15; two icons rendered end to end through bake.js icons_48 and icons_256 as the route's proof",
+      "role": "AIA-2",
+      "assigned_to": "AIA-2",
+      "files": [
+        "art/ui/icons/**",
+        "client/tests/shots/icon_*.gd",
+        "client/ui/art/icons_48*",
+        "client/ui/art/icons_256*"
+      ],
+      "deps": [
+        "P0-AD-calibrate-2"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "each proof icon has the 2-point outline at its shown size and reads as a dark shape at 32 points",
+        "self-score against gate/rubric.md in the handoff (M1)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-AIA2-icons-1a",
+      "title": "Icons, batch 1 first half: the first 8 icons of art/ui/icons/list.md's batch 1 (heist controls), toon look, baked into icons_48 (and icons_256 for reward icons)",
+      "role": "AIA-2",
+      "assigned_to": "AIA-2",
+      "files": [
+        "art/ui/icons/**",
+        "client/tests/shots/icon_*.gd",
+        "client/ui/art/icons_48*",
+        "client/ui/art/icons_256*"
+      ],
+      "deps": [
+        "P1-AIA2-toon-route"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "2-point outline; dark-shape read at 32 points",
+        "self-score in the handoff (M1)",
+        "gate: Icons",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 4,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "icon sheet at 48 and 96 points and in grayscale",
+          "qualities": [
+            "Layered materials",
+            "Painted or rendered icons",
+            "Colour roles and value",
+            "Light behind UI"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-AIA2-icons-1b",
+      "title": "Icons, batch 1 second half: the other 7 icons of batch 1 (heist controls and currencies)",
+      "role": "AIA-2",
+      "assigned_to": "AIA-2",
+      "files": [
+        "art/ui/icons/**",
+        "client/tests/shots/icon_*.gd",
+        "client/ui/art/icons_48*",
+        "client/ui/art/icons_256*"
+      ],
+      "deps": [
+        "P1-AIA2-icons-1a"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "2-point outline; dark-shape read at 32 points",
+        "self-score in the handoff (M1)",
+        "gate: Icons",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "icon sheet at 48 and 96 points and in grayscale",
+          "qualities": [
+            "Layered materials",
+            "Painted or rendered icons",
+            "Colour roles and value",
+            "Light behind UI"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-AIA2-icons-2a",
+      "title": "Icons, batch 2 first half: the first 8 icons of list.md's batch 2",
+      "role": "AIA-2",
+      "assigned_to": "AIA-2",
+      "files": [
+        "art/ui/icons/**",
+        "client/tests/shots/icon_*.gd",
+        "client/ui/art/icons_48*",
+        "client/ui/art/icons_256*"
+      ],
+      "deps": [
+        "P1-AIA2-icons-1b"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "2-point outline; dark-shape read at 32 points",
+        "self-score in the handoff (M1)",
+        "gate: Icons",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 4,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "icon sheet at 48 and 96 points and in grayscale",
+          "qualities": [
+            "Layered materials",
+            "Painted or rendered icons",
+            "Colour roles and value",
+            "Light behind UI"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-AIA2-icons-2b",
+      "title": "Icons, batch 2 second half: the other 7 icons of batch 2",
+      "role": "AIA-2",
+      "assigned_to": "AIA-2",
+      "files": [
+        "art/ui/icons/**",
+        "client/tests/shots/icon_*.gd",
+        "client/ui/art/icons_48*",
+        "client/ui/art/icons_256*"
+      ],
+      "deps": [
+        "P1-AIA2-icons-2a"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "2-point outline; dark-shape read at 32 points",
+        "self-score in the handoff (M1)",
+        "gate: Icons",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "icon sheet at 48 and 96 points and in grayscale",
+          "qualities": [
+            "Layered materials",
+            "Painted or rendered icons",
+            "Colour roles and value",
+            "Light behind UI"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-S1-pilot-1",
+      "title": "Pilot heist from the kit alone, part 1: the HUD (report.md step 7). No chrome of the screen's own (tools/ui_bake/check_screens.py); what the kit cannot build becomes a component request to K1 in S1's status file; stills before and after",
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/heist_screen.gd",
+        "client/scripts/heist_hud.gd",
+        "client/tests/shots/heist_*.gd",
+        "docs/art/tracks/heist-pilot.md"
+      ],
+      "deps": [
+        "P1-K1-switch-heist",
+        "P1-AIA2-icons-1b"
+      ],
+      "done_when": [
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 1,
+      "model": "Sonnet 5.5",
+      "gate_items": [
+        {
+          "item": "heist at 100% text",
+          "qualities": [
+            "Layered materials",
+            "Display type",
+            "Painted or rendered icons",
+            "Hierarchy",
+            "Colour roles and value",
+            "Light behind UI",
+            "One art-direction idea"
+          ]
+        },
+        {
+          "item": "heist at 200% text",
+          "qualities": [
+            "Display type",
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-S1-pilot-2",
+      "title": "Pilot heist, part 2: the rest of the heist screen (hint, alarms, the way out, the result hand-off) from the kit alone, in high contrast too; notes in docs/art/tracks/heist-pilot.md",
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/heist_screen.gd",
+        "client/scripts/heist_hud.gd",
+        "client/world/fx_*.gd",
+        "client/tests/shots/heist_*.gd",
+        "docs/art/tracks/heist-pilot.md"
+      ],
+      "deps": [
+        "P1-S1-pilot-1"
+      ],
+      "done_when": [
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 1,
+      "model": "Sonnet 5.5",
+      "gate_items": [
+        {
+          "item": "heist in high contrast",
+          "qualities": [
+            "Colour roles and value",
+            "Hierarchy"
+          ]
+        },
+        {
+          "item": "heist at 200% text",
+          "qualities": [
+            "Display type",
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
+      "id": "P1-AD-board-1",
+      "title": "Board 1, kit and heist (O4, report.md section 3.4), and phase 1's flow review: AD posts docs/art/ui-quality/gate/boards/board-1.md with 5-10 items beside their golden references at phone size and the gate's verdicts, checks every owner-checked quality (calibration.md), and lets it stand or objects with notes; then reviews the integrated build's flows (about 1 hour); findings go to the lead as requests",
+      "role": "AD",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P1-S1-pilot-2",
+        "P1-K1-switch-heist",
+        "P1-AIA2-icons-1b"
+      ],
+      "done_when": [
+        "board-1.md says it stands, or lists its objections",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
       "state": "open",
       "claim": null,
       "prior_branch": null,
@@ -773,12 +1591,18 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-10-31T16:25:00Z",
+        "seen_at": "2026-10-31T17:11:50Z",
+        "lease_until": "2026-10-31T19:25:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
+      "ready_sha": "c89f4e8f",
+      "merged_sha": "316ff98c",
       "default": "none: AD decides; a disagreement is labelled fail"
     },
     {
@@ -797,7 +1621,7 @@
         "O3"
       ],
       "done_when": [
-        "the judge meets its target on the held-out third, or each quality that misses is listed as owner-checked",
+        "the tool, the split, the anchors, the run plans and the method in calibration.md (AD-R6: the held-out result moves to P0-AD-calibrate-2)",
         "rubric and golden set committed as version 1",
         "bash tools/check_all.sh"
       ],
@@ -806,12 +1630,51 @@
       "estimate_h": 3,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-10-31T18:40:00Z",
+        "seen_at": "2026-10-31T19:40:00Z",
+        "lease_until": "2026-10-31T21:40:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "3f3797c7",
+      "merged_sha": "eec44b50"
+    },
+    {
+      "id": "P0-AD-calibrate-2",
+      "title": "Calibration results (AD-R6): score the lead's development runs dev-fable and dev-opus with calibrate.py, choose the judge (Fable 5.1 unless Opus 5.5 catches more), revise any missing quality's prompt at most twice (a rubric version bump), plan the held-out run held-<model> and launch it, score it and fill calibration.md's results",
+      "phase": 0,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P0-AD-calibrate"
+      ],
+      "requires": "both development runs written to docs/art/ui-quality/gate/verdicts/P0-AD-calibrate/ by the lead",
+      "done_when": [
+        "the judge meets its target on the held-out third, or each quality that misses is listed as owner-checked",
+        "rubric and golden set committed as version 1",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
+      "tier": 1,
+      "critical": true,
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "8e4b808",
+      "merged_sha": "0ff3278a"
     },
     {
       "id": "SV-B1-B6",
@@ -1364,5 +2227,30 @@
       "claim": null
     }
   ],
-  "messages": []
+  "messages": [
+    {
+      "id": "M1",
+      "to": "AIA",
+      "text": "From the owner (progress report KPIs, measured at main 3c4b791f). Two of your KPIs are worse than expected. (1) First style approval: 7 of 11 points passed at O2 (target 90% or more); B3, B4, B5 and B11 were sent back. Lesson: before you mark a board or keyframe task ready, score every point yourself against AD's rubric (docs/art/ui-quality/gate/rubric.md) and run tools/ui_gate/checks.py value-steps; put that self-score in the handoff evidence. (2) Largest single session: 47M tokens on a 4h task (2.4 times the average; target twice or less). Lesson: work from reduced-size previews, and when a session passes about 20M tokens, write the handoff and end it. Add M1 to acks when read.",
+      "sent_at": "2026-10-31T17:05:00Z",
+      "ack_by": "2026-10-31T19:05:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M2",
+      "to": "K1",
+      "text": "From the owner (progress report KPIs, measured at main 3c4b791f). Rework from review is worse than expected: 4.5h, 8% of phase 0 (target 5% or less). Its biggest part was the kit contract: four values in section 2.1 differed from §21.2 and §21.8 and came back as P0-K1-contract-2. Lesson: before asking for approval, check every value in a contract or token file against the design sections it cites, and list that check in the handoff evidence. Add M2 to acks when read.",
+      "sent_at": "2026-10-31T17:05:00Z",
+      "ack_by": "2026-10-31T19:05:00Z",
+      "acked_at": "2026-10-31T18:29:00Z"
+    },
+    {
+      "id": "M3",
+      "to": "lead",
+      "text": "From the owner (progress report KPIs, measured at main 3c4b791f). Three of your KPIs are worse than expected. (1) Setup failures before checks: 3 (target 0); runs stopped on a missing compile target or lint tool. Lesson: put the fresh-container tool line (rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install \"gdtoolkit==4.*\" \"playwright==1.63.0\"; then bash client/build.sh) in every agent start prompt, before its first pre-check. (2) Wait from ready to merged: median 2.1h (target 2h or less). Lesson: start a candidate's checks in the same cycle the task turns ready, and batch tasks that became ready together. (3) Scope added: +9.5h (target 4.7h or less). Lesson: when an approval redirects work, plan the whole follow-up chain with estimates at once, not one task at a time (contract-2, tokens, tokens-2 and board-4 came in pieces). Add M3 to acks when read.",
+      "sent_at": "2026-10-31T17:05:00Z",
+      "ack_by": "2026-10-31T19:05:00Z",
+      "acked_at": "2026-10-31T17:50:00Z"
+    }
+  ]
 }
