@@ -4,16 +4,16 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P1-K1-atlas-draw",
+  "task_id": "P1-K1-catalogue",
   "task_state": "working",
-  "claimed_at": "2026-11-04T14:45:00Z",
-  "lease_until": "2026-11-04T17:45:00Z",
-  "updated_at": "2026-11-04T14:55:00Z",
-  "expected_next_update_by": "2026-11-04T15:40:00Z",
+  "claimed_at": "2026-11-04T20:00:00Z",
+  "lease_until": "2026-11-04T23:00:00Z",
+  "updated_at": "2026-11-04T22:02:04Z",
+  "expected_next_update_by": "2026-11-04T22:47:04Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "9a6565d7",
-    "next_step": "kit draws from atlas pages and the parchment ground (AIA-R9), fixture atlas test green (ui_kit_tests 14/14); next K1.md handoff, guard.sh and the pre-check"
+    "last_green_sha": "71562ab1",
+    "next_step": "resync 2: numerals on the sheet and in SKINS_OF (ui_kit_tests 15/15); re-rendering the catalogue pages, then the pre-check"
   },
   "precheck": null,
   "gate_request": null,
@@ -149,5 +149,6 @@
       "answer": "Done in P0-K1-kitspec-3 at 4b4a72d1: kit-spec.md section 2.1's success and backdrop rows and section 9; tokens.json's notes for success_text_on_night, night_top and gradient.night. No value changes.",
       "at": "2026-11-04T13:05:00Z"
     }
-  ]
+  ],
+  "next_step": "ready at 71562ab1 (resync: SKINS_OF covers every baked skin, overlays drawn from the atlas; pre-check PASS); waiting for the lead"
 }

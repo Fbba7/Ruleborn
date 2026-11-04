@@ -4,6 +4,31 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-04 21:58Z: the catalogue back to K1 a second time (lead, cycle 42)
+
+- **What:** P1-K1-catalogue's candidate `aa1ab0b0` (main + `71562ab1`)
+  failed check_all, 391 of 392: the catalogue coverage test finds kit-3's
+  twelve numerals (`num_gold_*`, merged after K1's resync) with art but no
+  component in SKINS_OF. The task is back at `resync` and K1 was
+  restarted to add them. Every kit batch that merges before the catalogue
+  breaks it the same way.
+- **Default (no answer needed):** the lead merges the catalogue before
+  P1-AIA-kit-4. After that, a kit batch whose skins are not yet in
+  SKINS_OF fails the same test; the lead then grants the batch the
+  SKINS_OF lines in `client/tests/shots/ui_kit_catalogue.gd` as a merge
+  exception, or sends it to K1. The test is not loosened.
+
+## 2026-11-04 21:40Z: a stray `main` branch on GitHub (lead, cycle 41)
+
+- **What:** a lead push by mistake created a remote branch named `main`
+  at `2455f3b5`. The program's main is
+  `claude/videogame-project-analysis-ewkkk2`, which has every commit on
+  it. The lead's attempt to delete the stray branch was refused by its
+  permission check.
+- **Default (no answer needed):** sessions are started on the real main
+  by name. To clean up, delete the branch:
+  `git push origin --delete main`.
+
 ## 2026-11-04 21:12Z: kit-3 gate verdicts, advisory; icons-1b back to its builder (lead, cycle 41)
 
 - **What:** the gate judged P1-AIA-kit-3 (`3a04e828`, the numerals sheet

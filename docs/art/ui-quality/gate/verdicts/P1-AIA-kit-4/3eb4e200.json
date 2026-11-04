@@ -1,0 +1,76 @@
+[
+  {
+    "task_id": "P1-AIA-kit-4",
+    "sha": "3eb4e200",
+    "item": "kit catalogue sheet, batch 2a, at phone size",
+    "quality": "Layered materials",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "samples": [
+      "pass",
+      "fail",
+      "pass",
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Split at 2 pass, 1 fail; three more samples all failed, 4 of 6 (D-06). The tile frames (bevelled metal, rivets, inner well), the CLAIM button, the Lv pill and the ribbons carry body gradient, gloss band, dark rim and lip, as good as the pass anchor. The largest panels do not: the Reward popup body, the dark Inventory sheet and the parchment Quest log sheet are near-uniform fills with a thin rim, a faint gradient or grain, no bevelled frame, no inner well and no solid lip, and the Chapter 3 header bar is a soft gradient with a thin rim. Under the largest-panel ruling these read as web overlays.",
+    "advisory": true,
+    "at": "2026-11-04T23:00:00Z"
+  },
+  {
+    "task_id": "P1-AIA-kit-4",
+    "sha": "3eb4e200",
+    "item": "kit catalogue sheet, batch 2a, at phone size",
+    "quality": "Display type",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "samples": [
+      "fail",
+      "fail",
+      "pass",
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "5 of 6 fail after a split. Titles of one rank do not share one treatment: the ribbon titles ('Chapter 3', 'Reward', the six school ribbons) have a dark ink outline and a drop; the header-plate 'Chapter 3' and the 'Inventory' sheet title have only a soft drop; 'Quest log' has no outline or drop. One pass sample read the sheet titles as body text on cards.",
+    "advisory": true,
+    "at": "2026-11-04T23:00:00Z"
+  },
+  {
+    "task_id": "P1-AIA-kit-4",
+    "sha": "3eb4e200",
+    "item": "kit catalogue sheet, batch 2a, at phone size",
+    "quality": "Colour roles and value",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "3 of 3 fail. Gold is kept to frame material and the CLAIM main action, green to the success check, and the school ribbons are labelled, as the pass anchor does. But in the rarity ladder only gold (round studs) and prismatic (diamond studs) carry a shape: the bronze and silver frames share the same plain rim, and their locked twins are identical, so those two rarities differ by hue and value alone, in normal, high contrast and grayscale.",
+    "advisory": true,
+    "at": "2026-11-04T23:00:00Z"
+  },
+  {
+    "task_id": "P1-AIA-kit-4",
+    "sha": "3eb4e200",
+    "item": "kit catalogue sheet, batch 2a, at phone size",
+    "quality": "Light behind UI",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "3 of 3 pass. Frames, quest cards, header and ribbons take one top light: sheen on top, a darker lip and a drop below; the reward slot sits on a warm glow. Better than the flat fail anchor.",
+    "advisory": true,
+    "at": "2026-11-04T23:00:00Z"
+  }
+]

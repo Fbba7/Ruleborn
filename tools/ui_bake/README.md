@@ -11,6 +11,7 @@ node --test tools/ui_bake/test/bake.test.js # the bake's tests, on a fixture fam
 python3 tools/ui_bake/check_screens.py      # screens add no chrome of their own, in a second
 bash tools/ui_bake/guard.sh                 # the UI guards before a merge, about 12 minutes
 bash tools/ui_bake/guard.sh --self-test     # they refuse a planted extra draw call
+bash tools/ui_bake/catalogue.sh             # the catalogue sheet, eight variants (or: en n 100)
 ```
 
 `bake.js <family>` reads the family's sources in `art/ui/<dir>/` (the folders
@@ -154,3 +155,17 @@ node tools/ui_bake/bake.js kit --config $d/families.json --art $d/art --out $d
 ```
 
 The bake's tests fail when it is stale.
+
+## The catalogue sheet (`catalogue.sh`)
+
+`client/tests/shots/ui_kit_catalogue.gd` lays every component of
+kit-spec.md section 4 out in every state on pages of the phone's size, with
+every skin that has art switched on, and `catalogue.sh` renders it in eight
+variants: English and Brazilian Portuguese, normal and high contrast, 100%
+and 200% text, as `docs/art/shots/ui-bake/catalogue-<locale>-<n|hc>-<text>-NN.png`.
+Each cell's caption names its face and state; a disabled cell says why, a
+locked one what unlocks it. A page over 400 KB is quantized to a palette, and
+one that stays over fails the script. `ui_kit_tests.gd` holds the sheet to
+section 4: every (component, state) pair has a place, no part is taller than
+a page, and each baked state of a skin with art is a piece inside both
+atlases, none drawn from the code-drawn box.
