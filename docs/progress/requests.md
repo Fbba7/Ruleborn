@@ -42,6 +42,16 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   file by file; `px_per_point` stays null for scene families. Wiring kind
   "scene" into bake.js (by calling that script) is folded into
   P1-K1-atlas-draw's `done_when`.
+- **AIA-R13** (from AIA, 4 November 2026): batch 1b fills the kit atlas;
+  once the bake has atlas pages, bake `art/ui/kit_next/disc_school/` into
+  the kit, and KitSkin draws disc_school as its tinted `box` under the
+  untinted `frame`. Folded into P1-K1-switch-heist's `done_when` (cycle
+  38), with `client/ui/kit_skin.gd` added to its files. Default until
+  then: disc_school stays in `kit_next/`, drawn in code; no piece shrunk.
+- **AIA-R14** (from AIA, 4 November 2026): batch 1b's overlay skins
+  (`selected`, `spinner`) and pieces KitSkin.SKINS lacks. Folded into
+  P1-K1-switch-heist's `done_when` (cycle 38). Default until then: the
+  pieces sit in the atlas unused and every batch 1b skin stays off.
 
 - **K1-R10** (from K1, 4 November 2026): P1-K1-atlas-draw edits
   `tools/ui_bake/bake.js`, which every family's `sources_hash` covers, so

@@ -873,6 +873,7 @@
       "role": "K1",
       "assigned_to": "K1",
       "files": [
+        "client/ui/kit_skin.gd",
         "client/ui/kit_families.json",
         "tools/ui_bake/budgets.json",
         "tools/ui_bake/**",
@@ -887,6 +888,8 @@
         "P1-AIA-kit-3"
       ],
       "done_when": [
+        "AIA-R14: KitSkin.SKINS gains the batch 1b overlay skins selected (selected__rim over a card) and spinner (spinner__ring, rotated in code), and the pieces locked__lock, badge__dot, bar_track__tick, disc__level_disc, tag__tag_violet, tag__tag_warn and bar_fill__alarm; bar_fill__box tinted per use; tag_success falls back to tag__box",
+        "AIA-R13: KitSkin draws disc_school as its tinted box (vertex-coloured per school) under its untinted frame, both at the same rect, once AIA bakes disc_school into the kit's atlas pages",
         "the gate's pass on P1-AIA-kit-1 to -3 recorded in docs/art/ui-quality/gate/verdicts/",
         "bash tools/ui_bake/guard.sh: the heist at 147 draw calls or fewer",
         "bash tools/check_all.sh"
