@@ -1,6 +1,6 @@
 # AIA-2 icon maker: progress
 
-- Status: Green, and the last push (bef6eac2) has P1-AIA2-icons-1b: five new icons (aether, essence, renown, starglass, season stars) and Starlight in `icons_48` and `icons_256`, and a finish that answers 1a's critiques (a blended toon ramp, a gloss band, a three-stop body gradient, a soft drop). Every icon was rebaked.
+- Status: Green (pre-check PASS at bef6eac2), and the last push has P1-AIA2-icons-1b: five new icons (aether, essence, renown, starglass, season stars) and Starlight in `icons_48` and `icons_256`, and a finish that answers 1a's critiques (a blended toon ramp, a gloss band, a three-stop body gradient, a soft drop). Every icon was rebaked.
 - Progress: 2 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9); 0 items passed by the gate. P1-AIA2-icons-1b waits for its pre-check and the gate.
 - Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources (Insight dropped: the design has none, §11.7).
 - Next: the gate on "icon sheet at 48 and 96 points and in grayscale" at bef6eac2, then ready.
@@ -11,7 +11,7 @@
 |---|---:|---|---|
 | P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Merged at 9b2bde70 | `bake.js --check`, `check_icons.py` and `run_checks.sh` PASS at 02e7ef0f |
 | P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Merged at 8ce107c9 | gate advisory at 5f759a03: Light behind UI pass; three qualities fail 3 of 3 |
-| P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Pre-check and gate pending at bef6eac2 | `python3 -B art/ui/icons/studio/check_icons.py`: all 42 faces pass (21 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 15 pieces, icons_256 6 pieces, both ok |
+| P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Pre-check PASS at bef6eac2; gate pending | `python3 -B art/ui/icons/studio/check_icons.py`: all 42 faces pass (21 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 15 pieces, icons_256 6 pieces, both ok |
 
 ## Handoff
 

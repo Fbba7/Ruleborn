@@ -8,14 +8,19 @@
   "task_state": "working",
   "claimed_at": "2026-11-04T18:40:00Z",
   "lease_until": "2026-11-04T21:40:00Z",
-  "updated_at": "2026-11-04T19:20:00Z",
-  "expected_next_update_by": "2026-11-04T20:05:00Z",
+  "updated_at": "2026-11-04T19:50:00Z",
+  "expected_next_update_by": "2026-11-04T20:35:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "cd30ce21",
-    "next_step": "P1-AIA2-icons-1b: pre-check at bef6eac2, then the gate's verdict, then ready"
+    "last_green_sha": "bef6eac2",
+    "next_step": "P1-AIA2-icons-1b: pre-check green at bef6eac2; waiting for the gate's verdict, then ready"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "bef6eac2b2691dd9933b5674c2c0791b2f501861",
+    "exit": 0,
+    "finished_at": "2026-11-04T19:18:12Z",
+    "summary": "All checks passed."
+  },
   "gate_request": {
     "sha": "bef6eac2b2691dd9933b5674c2c0791b2f501861",
     "items": [
@@ -59,5 +64,5 @@
     }
   ],
   "answers": [],
-  "note": "P1-AIA2-icons-1b pushed at bef6eac2; pre-check running; gate requested"
+  "note": "P1-AIA2-icons-1b at bef6eac2: pre-check PASS; gate requested"
 }
