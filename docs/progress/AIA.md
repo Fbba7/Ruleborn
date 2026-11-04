@@ -1,11 +1,11 @@
 # AIA AI UI artist: progress
 
-- Status: Green: pre-check PASS at fccd4b89 (2026-11-04T17:28:21Z); P1-AIA-kit-2 is ready.
-- Progress: 5 tasks merged, P0-AIA-keyframes-3, P0-AIA-board-4 and P1-AIA-kit-1 ready, P1-AIA-kit-2 ready; 0 items passed by the gate.
-- Done: P1-AIA-kit-2: kit batch 1b, panel_dark, panel_glass, well, badge, pill, tag, bar_track, bar_fill and disc, with the overlays (selected rim, lock, attention dot, spinner), each in its states with high-contrast twins, baked into `client/ui/art/kit.webp`, `kit_hc.webp` and `kit.json`; disc_school written and proofed beside the kit in `art/ui/kit_next/` (AIA-R13).
-- Next: wait for the lead (gate on the kit atlas contact sheet, batch 1b).
+- Status: Working: pre-check running at 3a04e828; P1-AIA-kit-3 is ready once it passes.
+- Progress: 5 tasks merged, P0-AIA-keyframes-3, P0-AIA-board-4, P1-AIA-kit-1 and P1-AIA-kit-2 ready, P1-AIA-kit-3 in its pre-check; 0 items passed by the gate.
+- Done: P1-AIA-kit-3: kit batch 1c, the baked numerals: `num_<finish>_<glyph>` in four finishes (gold, white, timer, timer_red), each with the ten tabular digits, the marks both launch languages need (comma, period, colon, slash, plus, minus, percent, times, question) and a space, each with a fixed advance and its high-contrast twin, baked into a second atlas page (`client/ui/art/kit_2.webp`, `kit_2_hc.webp`).
+- Next: wait for the lead (gate on the numerals sheet at phone size, 100% and 200% text).
 - Blocked by: none.
-- Owner decision needed: none. Requests AIA-R9 to AIA-R14 to K1 are in the status file, each with a default.
+- Owner decision needed: none. Requests AIA-R9 to AIA-R15 to K1 are in the status file, each with a default.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
@@ -19,26 +19,33 @@
 | P1-AIA-kit-1: kit art batch 1a | 4 | Ready at c8915bc3 (pre-check PASS) | `node tools/ui_bake/bake.js --check`: kit 28 pieces, 2048 x 2048, 446350 bytes for both atlases. `python3 art/ui/kit_build/proof_kit.py --check`: 280 results, 0 fail: 152 value-steps (76 a mode; worst ΔL* 21.9 normal, 23.8 high contrast, both `button_danger__box__pressed` on the backdrop) and 128 label contrasts (worst 4.78:1 normal, tertiary on the backdrop; 5.81:1 high contrast). Contact sheets `art/ui/kit_build/proof/contact_normal.png`, `contact_hc.png` (sheet.py contact, 60 and 120 points). |
 | P1-AIA-kit-2: kit art batch 1b | 4 | Ready at fccd4b89 (pre-check PASS) | `node tools/ui_bake/bake.js --check`: kit 51 pieces, 2048 x 2048, 797984 bytes for both atlases. `python3 art/ui/kit_build/proof_1b.py --check`: 142 results, 0 fail: 92 value-steps (46 a mode; worst ΔL* 23.0 normal, 26.1 high contrast, both the pressed disc on the backdrop) and 50 label contrasts (worst 5.53:1 normal, the violet tag on the dark card; 7.08:1 high contrast). `proof_kit.py --check` (batch 1a) still 280 results, 0 fail. Contact sheets `art/ui/kit_build/proof_1b/contact_1b_normal.png`, `contact_1b_hc.png` (60 and 120 points); stills `controls_<mode>.png`, `surfaces_<mode>.png`. |
 
+| P1-AIA-kit-3: kit art batch 1c, the numerals | 3 | Pre-check running at 3a04e828 | `node tools/ui_bake/bake.js --check`: kit 131 pieces on 2 pages (2048 x 2048 and 2048 x 1024; 24 MiB in memory, report.md section 10.1's budget), 1041770 bytes for both atlases. `python3 art/ui/kit_build/proof_num.py --check`: 24 results, 0 fail: tabular (one digit advance and one height a finish), outline (half the stroke shows: 3.5 pt at 28, 2.75 pt at 22, over max(1.5 pt, 12%)), and fill against outline at the worst fill pixel (worst 9.45:1 / Lc 63.2 normal, timer_red; 10.45:1 / Lc 63.7 high contrast). `proof_kit.py --check` 280 and `proof_1b.py --check` 142 results, 0 fail. Stills `art/ui/kit_build/proof_num/numerals_<mode>_<100,200>_<en,pt_br>.png`; contact sheets `contact_num_normal.png`, `contact_num_hc.png`. |
 
 ## Handoff
-- M1 (acked 2026-11-04): scored against `docs/art/ui-quality/gate/rubric.md` below, value-steps run, from reduced-size previews.
-- Last verified commit: fccd4b89 (pre-check green, 2026-11-04T17:28:21Z).
-- Done (P1-AIA-kit-2):
-  - `art/ui/kit_build/kit_1b.py` (called from `build_kit.py`) writes batch 1b's sources from the tokens: `panel_dark/box` (normal, locked), `panel_glass/box`, `well/box`, `badge/box` and `badge/dot`, `pill/box` (normal, pressed), `tag/box`, `tag/tag_violet`, `tag/tag_warn`, `bar_track/box` and `bar_track/tick`, `bar_fill/box` (a neutral, tinted per use) and `bar_fill/alarm`, `disc/box` (normal, pressed, disabled, locked) and `disc/level_disc`, the overlays `selected/rim`, `locked/lock`, `spinner/ring`; and `kit_next/disc_school/box` (tinted per school) plus `frame` (untinted ink, gloss, outline), normal, pressed, disabled.
-  - Every piece has its `data-mode="hc"` twin: opaque flat fills, black or lavender (`edge_hc`) edges, no gloss.
-  - `art/ui/kit_build/proof_1b.py` renders the baked pieces (and `kit_next`, baked to a scratch atlas) at phone density on the backdrop, dark card, glass and parchment, runs value-steps and the labels' contrast, and makes the contact sheets. `proof_1b/tiles/` and `proof_1b/kit_next/` are regenerated and not committed.
-  - `proof_kit.py`'s contact sheet now shows batch 1a's pieces only.
+- M1 (acked 2026-11-04): scored against `docs/art/ui-quality/gate/rubric.md` below, from the proof stills at full size.
+- Last verified commit: 3a04e828 (pre-check running).
+- Done (P1-AIA-kit-3):
+  - `art/ui/kit_build/kit_num.py` (called from `build_kit.py`) writes 80 sources, `art/ui/kit/num_<finish>/<glyph>.svg`: gold 28 pt (currency, rewards, the loot count), white 22 pt (counts on cards and badges), timer 28 pt (the heist clock) and timer_red 28 pt (its last seconds), each at its 100% size; the bake draws them at 200%.
+  - The face is Manrope 800 with tabular figures (§21.8's face for every number that changes, D4 (b), report.md section 10.4), not Lilita One as kit-spec.md section 2.2's T3 row still says (AIA-R15).
+  - Each glyph: a gradient fill lit from the cap height to the baseline, an ink outline (paint-order stroke, half of it showing), a hard ink drop 0.08 of the size straight down, and an unstroked second fill pass that covers the variable font's overlap seams. High contrast: a flat fill (paper, `gold_hc`, #FF9AAA), the high-contrast ink outline and drop, the same geometry.
+  - Advances: a digit 0.72 of the size (20 pt gold and timer, 16 pt white); a mark its ink plus 0.11 of the size each side, rounded to a whole point; the space 0.35 of the size. A piece is its advance cell plus 1 pt each side, all of a finish one height, so a number is set by drawing each piece at pen - 1 pt and moving the pen by `advance` (AIA-R15). Box sizes are whole points because the bake clips in points.
+  - New colours, each in `KIT_NUM` with what it comes from: `num_timer_bottom` #D6E4F2, `num_red_top` #FFE4E8, `num_red_mid` #FFBFC9. timer_red's foot is #FF9AAA (red words on dark, §21.8).
+  - The atlas now has two pages; batch 1a/1b pieces were repacked across them by the bake. `proof_kit.py`'s `Atlas` reads `atlas.pages` and each piece's `page`, and `proof_1b.py` uses it.
+  - `art/ui/kit_build/proof_num.py` sets en (1,234 / 12.5) and pt_br (1.234 / 12,5) numbers from the pieces at 390 pt wide, 100% and 200% text, both modes, on the backdrop, dark card, glass and parchment; it runs the checks above and makes the contact sheets. `proof_num/tiles/` is regenerated and not committed.
 - Self-score against the rubric (statements, not a rating):
-  - 1 Layered materials: the dark panel is a body gradient, inner rim and drop; the glass panel a translucent fill, a lit top edge and a faint gold rim; the well an inset with a shade at the top; discs a body gradient, gloss cap and lip; the pill a light moon face with a lit band and an ink rim; bars a recessed track with the fill's top light. Risk: the `glass` token's alpha (0.78) makes the glass panel read nearly opaque over a busy ground; that is the token's, not the piece's.
-  - 2 Display type: the kit carries no words; the proof's figures and tags are Manrope 800.
-  - 8 Colour roles and value: gold has one role, a material rim (the selected rim, the glass rim at 0.45); no batch 1b piece has a gold fill, and the currency pill is moon-light with an ink rim, not gold. Red is the alarm (badge, alarm bar, LOW tag), and each family's pressed and focus faces stay in their own hue. School tints come from the tokens' school colours, the same in both modes. Every interactive face is two value steps or more off each ground (worst ΔL* 23.0), words 5.53:1 or more.
-  - 13 Light behind UI: one top light; gloss caps and lit bands above, lips and drops below; pressed faces lose the top light; the well and track are lit from inside at the bottom, as recesses.
-- Known limits: the pill does not go on parchment (light on light); disc_school is not in the atlas (AIA-R13); the new skins are not in `KitSkin.SKINS` (AIA-R14). Out of this task: kit-1's parchment tertiary (the Colour roles fail) is not changed here.
+  - 2 Display type: every piece has an ink outline all round, 3.5 pt visible at 28 pt and 2.75 pt at 22 pt (12.5% of the size; the rule asks 12% or 1.5 pt), a hard drop and a gradient fill, as the clear pass's clock "2:18". The face is Manrope 800 tabular, so a changing number keeps its width (one digit advance a finish). The smallest finish is 22 pt at 100%. One treatment across all four finishes: the same stroke ratio, drop ratio and light.
+  - 8 Colour roles and value: gold only for currency and rewards; red only for the clock's alarm seconds, its darkest pixel #FF9AAA; the white and timer finishes are paper to lilac and paper to cool white, so the clock never borrows the time school's cyan. Every fill pixel is 4.5:1 and Lc 60 or more against its outline in both modes (measured two pixels inside the fill, diagonals too; worst Lc 63.2 normal, 63.7 high contrast). Colours come from the palette (`art/ui/palette.json`'s `color` and `kit` sections).
+  - Risks: tabular figures leave a wide cell round a 1 ("12:05"), as tabular figures do; at 200% the proof's ground label crosses the first row's last digits on the parchment band (the label, not the art).
+- Known limits: KitSkin does not set numbers from the pieces yet (AIA-R15); disc_school is still in `art/ui/kit_next/` though the atlas now has pages (AIA-R13, outside this task).
 - Half done: none.
-- Open hypotheses: the kit needs atlas pages (AIA-R12, AIA-R13): batch 1b fills 2048 x ~1900.
+- Open hypotheses: none.
 - Next step: none; wait for the lead.
 
 ## Tried and failed
+- 2026-11-04 Numeral boxes in fractions of a point: the bake clips and sizes its screenshot in points, so the packed piece came out 3 px short. Whole-point boxes fixed it.
+- 2026-11-04 Numerals with 1.4 x size boxes and 2 pt pads: page 2 reached 2048 x 2048, over report.md section 10.1's 24 MiB. Boxes of 1.24 x size, 1 pt pads, fit 2048 x 1024.
+- 2026-11-04 Gradients down to `gold_bottom`, `text_on_night_3` and #F2647A at the foot: Lc 40 to 59 on the outline. Feet of `gold`, `pill_bottom` and #FF9AAA pass.
+- 2026-11-04 A 4-neighbour erosion for the fill's worst pixel: it kept anti-aliased pixels on inner corners (the 9's counter). A 3 x 3 erosion measures the fill itself.
 - 2026-10-31 Pre-check in a fresh container: it failed three times on missing one-time setup (the WebAssembly Rust target, gdlint, Python Playwright), not on the change. Installing what the README's "Once" block lists, with Python Playwright pinned to the pre-installed 1.63.0 so it finds the browser in /opt/pw-browsers, passed it.
 - 2026-10-30 SVG grain composited with an implicit second input: `feComposite` without `in2` masked the flood with the source shape, so the grain painted the whole surface solid. Named results fixed it.
 - 2026-10-30 Measuring words against their whole line box: the box reaches below capitals into darker ground (gold's lower half), so it failed words whose letters pass. The check now measures under the letters, found by drawing each word in black and in white.
