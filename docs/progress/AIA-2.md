@@ -1,7 +1,7 @@
 # AIA-2 icon maker: progress
 
 - Status: Green (pre-check PASS at bef6eac2), and the last push has P1-AIA2-icons-1b: five new icons (aether, essence, renown, starglass, season stars) and Starlight in `icons_48` and `icons_256`, and a finish that answers 1a's critiques (a blended toon ramp, a gloss band, a three-stop body gradient, a soft drop). Every icon was rebaked.
-- Progress: 2 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9); 0 items passed by the gate. P1-AIA2-icons-1b is ready at bef6eac2 (pre-check PASS; gate pass on Layered materials, Painted icons, Colour roles and Light behind UI, advisory).
+- Progress: 2 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9); 1 item passed by the gate (icons-1b, advisory). P1-AIA2-icons-1b is ready at bef6eac2 (pre-check PASS; gate pass on Layered materials, Painted icons, Colour roles and Light behind UI, advisory).
 - Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources (Insight dropped: the design has none, §11.7).
 - Next: the lead's merge of P1-AIA2-icons-1b (ready at bef6eac2; gate passed, advisory).
 - Blocked by: none.
