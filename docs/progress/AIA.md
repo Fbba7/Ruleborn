@@ -19,6 +19,7 @@
 
 
 ## Handoff
+- M1 (acked 2026-11-04): before marking any board or keyframe task ready I will score every point against `docs/art/ui-quality/gate/rubric.md`, run `tools/ui_gate/checks.py value-steps`, and put both in the handoff evidence; I will work from reduced-size previews and, past about 20M tokens in a session, write the handoff and end it.
 - Last verified commit: b83a0b4d (pre-check green, 2026-10-31T15:49:22Z). Request AIA-R8 in the status file, with a default.
 - Done:
   - `art/ui/board/board.html`: the recipe's captions and the glass note are bold (kit-spec section 2.1: `text_on_night_2` on the bare backdrop is bold only). A `.status` chip sets an alarm in paper on `alarm_fill` ("Alarm 3", "Alarm 4 of 5") and a success in ink on `#3FBF7F` at 36 points ("Escape open", "Vault open"), with high-contrast forms.
