@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxnpW76h9UU2VzxnVPi` (cycle 25,
-4 November 2026, from 02:39Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxn1EkNKS1Uoxxu2Lvn` (cycle 26,
+4 November 2026, from 03:39Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -177,6 +177,16 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 26, 4 November 2026, from 03:39Z (session
+  `session_01SNkKxn1EkNKS1Uoxxu2Lvn`, started by the launcher):
+  bookkeeping only. No roster status changed since cycle 25 (AD, AIA, K1
+  and SV all `waiting` on tasks already merged; no new requests), no
+  merge lock, nothing ready, nothing merged, pages not republished.
+  P0-K1-kitspec-3 (K1, open) stays unstarted: usage still reads
+  `allowed_warning` (seven-day, resets 2026-11-09T17:00Z).
+- Next: start K1 on P0-K1-kitspec-3 once usage allows; then decide on
+  AD's golden set version 2 and rubric version 4. Never use Fable 5.1
+  (CLAUDE.md).
 - Cycle 25, 4 November 2026, from 02:39Z (session
   `session_01SNkKxnpW76h9UU2VzxnVPi`, started by the launcher): merged
   P0-AD-calibrate-2 (AD, ready at `8e4b808`). owners.py diff and claims
