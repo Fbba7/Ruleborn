@@ -3,26 +3,21 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P1-K1-catalogue",
-  "task_state": "ready",
-  "claimed_at": "2026-11-04T17:50:00Z",
-  "lease_until": "2026-11-04T20:50:00Z",
-  "updated_at": "2026-11-04T19:32:19Z",
-  "expected_next_update_by": "2026-11-04T20:17:19Z",
+  "task_state": "working",
+  "claimed_at": "2026-11-04T20:00:00Z",
+  "lease_until": "2026-11-04T23:00:00Z",
+  "updated_at": "2026-11-04T20:10:00Z",
+  "expected_next_update_by": "2026-11-04T20:55:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "c3a8b158",
-    "next_step": "P1-K1-catalogue ready at c3a8b158 (pre-check PASS); waiting for the lead's merge"
+    "next_step": "resync: main merged; map AIA's new skins in SKINS_OF, draw the overlays (lock, rim, dot, ring) from the atlas, re-run the catalogue and the pre-check"
   },
-  "precheck": {
-    "sha": "c3a8b158928280f90b77f90078cae3a30ec9eabb",
-    "exit": 0,
-    "finished_at": "2026-11-04T19:31:45Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "c3a8b158",
+  "ready_sha": null,
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [
     "M2"
@@ -155,5 +150,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-catalogue ready at c3a8b158 (pre-check PASS); waiting for the lead's merge"
+  "next_step": "resync: main merged; map AIA's new skins in SKINS_OF, draw the overlays (lock, rim, dot, ring) from the atlas, re-run the catalogue and the pre-check"
 }
