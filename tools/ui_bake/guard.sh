@@ -10,8 +10,8 @@
 #                                             and planted grey words
 #
 # 1. The full rebake, byte for byte: each family with a manifest in
-#    client/ui/art/ is baked again into a scratch folder and compared file
-#    by file. With none baked yet, the test fixture is baked twice instead,
+#    client/ui/art/ (SVG and scene alike) is baked again into a scratch
+#    folder and compared file by file, every page with its twin. With none baked yet, the test fixture is baked twice instead,
 #    so the pinned tools are still shown to be byte for byte.
 # 2. bake.js --check: hashes, twins, regions and sizes.
 # 3. check_screens.py: no chrome of a screen's own above the counts recorded.
@@ -55,7 +55,17 @@ rebake() {
     fam=$(basename "$f" .json)
     node tools/ui_bake/bake.js "$fam" --out "$scratch" > "$UI_GUARD_LOGS/rebake-$fam.log" 2>&1 || {
       echo "the bake of $fam failed: $UI_GUARD_LOGS/rebake-$fam.log"; return 1; }
-    for part in "$fam.json" "$fam.webp" "${fam}_hc.webp"; do
+    # The manifest and every page with its twin (kit-spec.md section 6.6),
+    # on either side, so a page gained or lost differs too.
+    local parts=() d
+    shopt -s nullglob
+    for d in client/ui/art "$scratch"; do
+      for f in "$d/$fam.json" "$d/$fam.webp" "$d/${fam}_hc.webp" "$d/${fam}"_[0-9]*.webp; do
+        parts+=("$(basename "$f")")
+      done
+    done
+    shopt -u nullglob
+    for part in $(printf '%s\n' "${parts[@]}" | sort -u); do
       cmp -s "client/ui/art/$part" "$scratch/$part" || {
         echo "rebake differs: client/ui/art/$part is not what its sources bake to"; return 1; }
     done
