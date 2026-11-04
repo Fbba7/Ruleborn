@@ -1,6 +1,6 @@
 # AIA-2 icon maker: progress
 
-- Status: Green. The last push has P1-AIA2-icons-1a's eight heist controls baked into `icons_48`, and a finish fix (a solid outline ring at thin points). Its pre-check is pending.
+- Status: Amber until the pre-check passes. The last push has P1-AIA2-icons-1a's eight heist controls baked into `icons_48`, and a finish fix (a solid outline ring at thin points). The pre-check at c1d14d38 failed on stale icon manifests (a `__pycache__` under `art/ui` was hashed at bake time); 5f759a03 rebakes them clean and `bake.js --check` passes in a clean worktree.
 - Progress: 1 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70); 0 items passed by the gate. P1-AIA2-icons-1a is waiting for its gate.
 - Done: the toon route, with Starlight and Pip; the eight heist-control icons (ability, aim, call skiff, cast, get out, regroup, Sage's wheel, split crew) in `icons_48`, normal and high contrast.
 - Next: the gate on P1-AIA2-icons-1a's icon sheet, then P1-AIA2-icons-1b (four resources and three currencies).
@@ -14,7 +14,7 @@
 
 ## Handoff
 
-- **Last verified commit:** LASTSHA (scripted checks green; pre-check pending).
+- **Last verified commit:** 5f759a03 (scripted checks green, `bake.js --check` green in a clean worktree; pre-check pending).
 
 ### Done
 
@@ -98,3 +98,4 @@ None.
 - 2026-11-04 Cast with the spark joined to the orb, but still a long wand: p10 1.8 px on the atlas. The outline check's rays from the centre run along the wand's long sides, so each stopped on a one-pixel step. A stubby wand fixed it.
 - 2026-11-04 Split crew's prongs short and close together: the fork read as a crown or a bundle at 48 pt. Longer prongs, wider angles and the pips further out made it a fork.
 - 2026-11-04 The finish's 48 stamps round the outline (the board's count): holes in the ink ring at thin points. The stamps now sit a pixel apart.
+- 2026-11-04 Running `check_icons.py` (or importing it) without `-B` before a bake: Python wrote `art/ui/icons/studio/__pycache__/`, the bake hashed it into `sources_hash`, and a clean checkout called both manifests stale. Run the Python checks with `python3 -B`, and run `git status --ignored art/ui` before a bake.
