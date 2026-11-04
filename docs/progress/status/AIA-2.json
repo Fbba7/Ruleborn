@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P1-AIA2-icons-2a",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-04T23:30:00Z",
   "lease_until": "2026-11-05T02:30:00Z",
-  "updated_at": "2026-11-04T23:30:00Z",
-  "expected_next_update_by": "2026-11-05T00:15:00Z",
+  "updated_at": "2026-11-05T00:20:00Z",
+  "expected_next_update_by": "2026-11-05T01:05:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "5ecb0202",
-    "next_step": "Model the eight batch 2a icons (lootbag, clock, bagcapacity, alarm, spotted, vaultprogress, shield, strain)"
+    "last_green_sha": "6a382d97",
+    "next_step": "Record the pre-check at 6a382d97, set the gate request, then wait for the Icons gate"
   },
   "precheck": null,
   "gate_request": null,
@@ -54,5 +54,5 @@
     }
   ],
   "answers": [],
-  "note": "P1-AIA2-icons-2a claimed: the eight heist-status icons of list.md batch 2a."
+  "note": "P1-AIA2-icons-2a: eight icons committed at 6a382d97; pre-check running."
 }

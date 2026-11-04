@@ -1,9 +1,9 @@
 # AIA-2 icon maker: progress
 
-- Status: Green (pre-check PASS at 5ecb0202, 21:45 UTC; guard.sh green). The last push has the icons-1b resync: the icon finish draws on software canvases, so the bake no longer depends on the machine's load; icons_48_hc.webp changes in crew/pip only.
-- Progress: 2 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9); 1 item passed by the gate (icons-1b at bef6eac2, advisory). P1-AIA2-icons-1b is ready again at 5ecb0202 (resync).
-- Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources (Insight dropped: the design has none, §11.7).
-- Next: the lead's merge of P1-AIA2-icons-1b at 5ecb0202; the lead judges whether the high-contrast Pip change needs the gate again.
+- Status: Green (P1-AIA2-icons-2a committed at 6a382d97; `check_icons.py` and `bake.js --check` pass; pre-check running).
+- Progress: 3 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7); P1-AIA2-icons-2a waiting for its pre-check and the Icons gate.
+- Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources; batch 2a's eight heist-status and HUD icons.
+- Next: the pre-check record at 6a382d97, then the Icons gate on "icon sheet at 48 and 96 points and in grayscale".
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -11,51 +11,42 @@
 |---|---:|---|---|
 | P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Merged at 9b2bde70 | `bake.js --check`, `check_icons.py` and `run_checks.sh` PASS at 02e7ef0f |
 | P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Merged at 8ce107c9 | gate advisory at 5f759a03: Light behind UI pass; three qualities fail 3 of 3 |
-| P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Ready at bef6eac2: pre-check PASS; gate pass on all four qualities (advisory) | `python3 -B art/ui/icons/studio/check_icons.py`: all 42 faces pass (21 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 15 pieces, icons_256 6 pieces, both ok |
+| P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Merged at 90f72fd7 | gate pass on all four qualities (advisory) at bef6eac2; resync at 5ecb0202 |
+| P1-AIA2-icons-2a: eight heist-status and HUD icons in `icons_48` | 4 | Committed at 6a382d97; pre-check and gate pending | `python3 -B art/ui/icons/studio/check_icons.py`: all 46 faces pass (23 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 23 pieces, icons_256 6 pieces, both ok |
 
 ## Handoff
 
-- **Last verified commit:** 5ecb0202 (pre-check PASS, 2026-11-04T21:45:55Z; guard.sh green).
-
-### Resync (4 November 2026, cycle 41's candidate 3925aa99)
-
-- **Why the guard failed:** the lead's rebake of `icons_48_hc.webp` differed from the committed sheet in one piece, `crew__pip__normal`. In Chromium's GPU-backed 2D canvas, an idle machine dropped most of `grow()`'s stamps (the keyline and ink ring are about 430 drawImage calls), and Pip's high-contrast ring came out as an octagon. Under load (one core, or busy cores) every stamp landed and the ring was round. The committed sheet was the idle one (wrong); the lead's rebake was the loaded one (right).
-- **Fix:** `studio/finish.js`'s `canvas()` and `crew/pip.js`'s `draw` create their 2D contexts with `willReadFrequently`, i.e. software canvases. Rebaked idle, on one core (`taskset -c 0`) and under four busy loops: all three byte for byte. guard.sh's rebake passed while the pre-check ran beside it.
-- **Pixels:** `icons_48_hc.webp` changes in `crew/pip` only, from the octagon to the round ring, and is now byte for byte the lead's rebake. `icons_48.webp`, `icons_256.webp` and `icons_256_hc.webp` are unchanged; both manifests change in their `sources_hash` line only. **The 48-point high-contrast sheet's pixels changed** (one icon), so the lead may judge again.
-
+- **Last verified commit:** 6a382d97 (check_icons, bake.js --check and check_docs_consistency green; `run_checks.sh` pre-check started).
 
 ### Done
 
-**The finish, for 1a's critiques** (every icon changes, a full rebake):
-- `studio/toon.js`: the four ramp steps blend over a narrow band (`rampSoft` 0.05), so faces shade without posterised edges; a hard-edged `cream` gloss band sits on the key side (Blinn term over 0.955); `toon(face, rim, glossy)` scales it per material (0 for none).
-- `studio/finish.js`: the drop is soft (blur 0.022R, alpha 0.55, offset down and a little right), not a hard ink offset; after the inner light, a three-stop body gradient lays a `cream` lift on the top, nothing in the middle, `drop` at the foot.
-- `studio/shapes.js`: `star5Shape` (five-point star with rounded tips), `lathe` and `profile` (turned solids from a spline).
-
-**Batch 1b in `art/ui/icons/`** (each in `icons_48` and `icons_256`):
+**Batch 2a in `art/ui/icons/`** (each in `icons_48`, normal and high contrast; none is in `icons_256`, as list.md says):
 
 | Icon | What it shows | Light |
 |---|---|---|
-| `resources/aether` | a teal flask on a time-shadow sea, a gold collar, a wooden cork, a cloud puff above | `time_light` |
-| `resources/essence` | a turned drop of the essence green with a bubble in it, a small darker sister drop | `life_light` |
-| `resources/renown` | a gold medal with a cream star, four laurel leaves a side, two violet ribbon tails | `motion_light` |
-| `currencies/starglass` | a cut five-point star gem, flat facets in the spirit colour | `spirit_light` |
-| `currencies/seasonstars` | three stars large to small: time, matter, cream | `time_light` |
-| `resources/starlight` | unchanged design, set 8% larger to keep its 32 pt coverage with the soft drop | `motion_light` |
+| `heiststatus/lootbag` | a turned leather sack, a ruffled neck tied with a gold cord, a gold star stamped on the front | `motion_light` |
+| `heiststatus/clock` | a gold pocket clock: bezel, paper face, four ticks, ink hands, crown and loop, a red alarm pin | `time_light` |
+| `heiststatus/bagcapacity` | a sack filled in the motion colour up to a green fill-line ring; empty parchment above, a dark opening | `motion_light` |
+| `heiststatus/alarm` | a tilted red bell with a gold lip, knob and clapper; one thick sound arc on each side | `alarm_light` |
+| `heiststatus/spotted` | an open eye (red lids, white, a time-blue iris, ink pupil) in front of a yellow eight-point flash | `alarm_light` |
+| `heiststatus/vaultprogress` | a stone vault door with a gold wheel and two hinges, in a dark track ringed three-quarters with green progress and a bright head knob | `success_light` |
+| `hud/shield` | a heater shield: gold rim, time-blue field, cream chevron, gold boss | `time_light` |
+| `hud/strain` | a gold pressure gauge with six band colours from quiet to breaking, the needle near the top band, a crack across the face, a stem and nut, steam puffs | `alarm_light` |
 
-`currencies/insight` is dropped from `list.md`: §11.7 says there is no Insight, and no client code uses the icon. A request to the lead (AIA2-R2) has the default.
+**Check figures** (`icons_48`; outline target 5.3 px normal, 8.0 px high contrast):
 
-**Check figures** (normal mode; high contrast passes for all, median 8.0–9.0 px against 8.0 px):
+| Icon | Median (n / hc) | p10 (n / hc) | 32 pt cover (n / hc) | Ellipse (n / hc) |
+|---|---:|---:|---:|---:|
+| alarm | 5.0 / 8.0 | 3.9 / 7.0 | 34% / 51% | 0.74 / 0.88 |
+| bagcapacity | 5.0 / 7.5 | 4.0 / 7.0 | 37% / 51% | 0.85 / 0.89 |
+| clock | 5.0 / 7.5 | 4.3 / 7.0 | 32% / 44% | 0.87 / 0.89 |
+| lootbag | 5.3 / 8.0 | 4.4 / 7.0 | 34% / 46% | 0.84 / 0.87 |
+| spotted | 5.3 / 10.5 | 3.9 / 9.0 | 41% / 57% | 0.81 / 0.85 |
+| vaultprogress | 5.0 / 7.5 | 4.3 / 7.0 | 54% / 69% | 0.94 / 0.95 |
+| shield | 5.0 / 7.5 | 4.0 / 7.0 | 40% / 52% | 0.89 / 0.91 |
+| strain | 5.0 / 7.5 | 4.0 / 7.0 | 36% / 49% | 0.82 / 0.85 |
 
-| Icon | Family | Median | p10 | 32 pt cover | Ellipse |
-|---|---|---:|---:|---:|---:|
-| aether | 48 / 256 | 5.0 / 5.0 | 4.2 / 4.1 | 30% / 26% | 0.78 / 0.74 |
-| essence | 48 / 256 | 5.0 / 5.0 | 4.2 / 4.3 | 32% / 28% | 0.73 / 0.71 |
-| renown | 48 / 256 | 5.0 / 5.0 | 4.2 / 4.3 | 38% / 33% | 0.93 / 0.92 |
-| starglass | 48 / 256 | 5.0 / 5.1 | 4.2 / 4.3 | 44% / 38% | 0.83 / 0.82 |
-| seasonstars | 48 / 256 | 5.0 / 5.0 | 3.6 / 4.0 | 36% / 30% | 0.75 / 0.70 |
-| starlight | 48 / 256 | 5.3 / 5.4 | 3.9 / 4.1 | 33% / 27% | 0.69 / 0.63 |
-
-Medians fell from about 6 to 5.0 px: the old hard drop was counted as ink. They pass the 0.85 threshold (4.5 px).
+The ring edge is 100% for all of them in both modes. The earlier icons are unchanged; `icons_256.json` changes only in its `sources_hash` line, because the sources directory changed.
 
 ### Self-score
 
@@ -63,20 +54,20 @@ Against rubric.md quality 3 (Painted or rendered icons):
 
 | Rule | Score | Why |
 |---|---|---|
-| 1. 3D form, top-left key, rim, specular, dark outline | Pass | Lathed and bevelled solids, keyed top left, rim on the lit side, a gloss band as the specular, the ink ring |
-| 2. Outline 2 pt at the size shown | Pass, scripted | all 42 faces |
-| 3. A dark shape at 32 pt | Pass, scripted | coverage 26–44%, ellipse 0.63–0.93 |
-| 4. §21.8 volume | Pass | blended ramp, gloss band, three-stop body gradient, soft drop |
-| 5. One toon look | Pass | no PBR; one material for all |
+| 1. 3D form, top-left key, rim, specular, dark outline | Pass | Lathed sacks and bell, bevelled slabs, tori; keyed top left with the gloss band |
+| 2. Outline 2 pt at the size shown | Pass, scripted | all 46 faces |
+| 3. A dark shape at 32 pt | Pass, scripted | coverage 32–54% (normal), ellipse 0.74–0.94 |
+| 4. §21.8 volume | Pass | the 1b finish: blended ramp, gloss band, body gradient, soft drop |
+| 5. One toon look | Pass | one `S.toon` material throughout |
 | 6. Law and school frames | Not applicable | |
 
-Other qualities: **Layered materials**: glass, gold, wood, cloud and leaf differ by hue, ramp and gloss (`glossy` 0.6 on the medal face, full on glass). **Colour roles and value**: gold is a material (collar, medal) and never a fill for an action; each icon's parts step in value (renown's dark ribbons, light star; seasonstars dark to light). **Light behind UI**: a glow in the light token, one top-left light.
+Other qualities: **Layered materials**: leather (matt, glossy 0), gold (glossy), paper and stone (low gloss), enamel on the bell and shield. **Colour roles and value**: red only for alarm states (alarm, spotted, the clock's pin), green only for progress (the fill line, the vault ring), gold as metal trim; every icon steps from a dark outer part to a light focal point. **Light behind UI**: a glow in each icon's light token.
 
 **Risks a judge may see:**
-- Starglass's facets are subtle at 48 pt; it may read as a plain star.
-- Renown's ellipse overlap (0.93) is close to the 0.96 limit: a round medal.
-- Glints are still separate cream sparks; the gloss band now carries the real highlight.
-- No wood grain yet (aether's cork is small); 1a's sagewheel grayscale and gold-as-fill notes are not addressed here (1a is merged; a later pass).
+- Vaultprogress is the roundest icon (ellipse 0.94/0.95, near the 0.96 limit); the hinges and head knob are what break the disc.
+- Strain's six band colours are small at 48 pt; it reads as a gauge with a crack before it reads as bands.
+- Lootbag and bagcapacity are both sacks: different fill and colour, but similar outlines.
+- The glints are still separate cream sparks (as in 1b).
 
 ### Half done
 
@@ -88,8 +79,8 @@ None.
 
 ### Next step
 
-1. The lead merges P1-AIA2-icons-1b at bef6eac2 (ready: pre-check PASS; the gate passed all four qualities).
-2. A later pass on 1a for the sagewheel's values and gold roles, if the lead opens one.
+1. Record the pre-check at 6a382d97 (`bash tools/run_checks.sh record 6a382d97 AIA-2`) if the session ends before it does.
+2. The Icons gate on the 2a sheet; then ready.
 
 ## Tried and failed
 
@@ -109,3 +100,8 @@ None.
 - 2026-11-04 Starglass with an octahedron core inside the star: it read as a second object. A faceted, flat-shaded star alone is cleaner.
 - 2026-11-04 Renown at scale 1.2: the medal's top clipped the square. Scale 1.08, raised 0.08.
 - 2026-11-04 committed icons_48_hc.webp baked on an idle machine: GPU-backed canvas dropped grow() stamps (Pip's hc ring an octagon), so the lead's loaded rebake differed; fixed with software canvases.
+- 2026-11-04 Vaultprogress and strain as plain discs: ellipse overlap 0.99 (over 0.96). Hinges and a progress head knob on the vault, a stem, nut and steam on the gauge brought them to 0.94 and 0.82.
+- 2026-11-04 Strain's crack as a polygon slab: the triangulation failed and the crack vanished. Rod segments along a zigzag work; a branch made it read as a stick figure, so it was removed.
+- 2026-11-04 Bagcapacity as a straight-sided vessel with coin dots: it read as a polka-dot jar. A sack profile with a bunched neck and a green fill-line ring reads as a bag being filled.
+- 2026-11-04 Two sound arcs on each side of the alarm: thin arcs broke the high-contrast ring edge (89%). One thicker arc per side gives 100%.
+- 2026-11-04 Lootbag's star flush with the sack and a glossy dark leather: the star was buried and the gloss read as a smudge. The star now stands proud of the sack (z 1.12), the leather is matt and lighter.
