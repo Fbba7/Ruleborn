@@ -1,78 +1,76 @@
 # AIA-2 icon maker: progress
 
-- Status: P1-AIA2-toon-route ready at 02e7ef0f; pre-check PASS (13:32Z, all checks passed).
-- Progress: 0 tasks merged; P1-AIA2-toon-route is up for merge.
-- Done: the toon route for icons, from a scene or a character render through one finish into `icons_48` and `icons_256`, with two proof icons (Starlight in both families, Pip's crew badge in `icons_48`). Also the 60-icon list in four batches.
-- Next: P1-AIA2-icons-1a (the eight heist controls), once this merges.
-- Blocked by: none for the work. The merge waits on request AIA2-R1 to K1: `guard.sh`'s rebake runs `bake.js`, which refuses kind "scene".
+- Status: Green. The last push has P1-AIA2-icons-1a's eight heist controls baked into `icons_48`, and a finish fix (a solid outline ring at thin points). Its pre-check is pending.
+- Progress: 1 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70); 0 items passed by the gate. P1-AIA2-icons-1a is waiting for its gate.
+- Done: the toon route, with Starlight and Pip; the eight heist-control icons (ability, aim, call skiff, cast, get out, regroup, Sage's wheel, split crew) in `icons_48`, normal and high contrast.
+- Next: the gate on P1-AIA2-icons-1a's icon sheet, then P1-AIA2-icons-1b (four resources and three currencies).
+- Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Ready at 02e7ef0f | `node tools/ui_bake/bake.js --check`: icons_48 2 pieces, icons_256 1 piece, both ok. `python3 art/ui/icons/studio/check_icons.py`: all 6 faces pass (2 pieces in 2 families, 2 modes). A rebake into a scratch folder is byte for byte on all four atlases. `bash tools/run_checks.sh`: PASS at 02e7ef0f |
+| P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Merged at 9b2bde70 | `bake.js --check`, `check_icons.py` and `run_checks.sh` PASS at 02e7ef0f |
+| P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Waiting for its gate | `python3 art/ui/icons/studio/check_icons.py`: all 24 faces pass (12 pieces across 2 families, in 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 10 pieces, icons_256 1 piece, both ok |
 
 ## Handoff
 
-- **Last verified commit:** 02e7ef0f, plus this handoff and the status file.
+- **Last verified commit:** LASTSHA (scripted checks green; pre-check pending).
 
 ### Done
 
-**`art/ui/icons/list.md`.** The 60 most-seen icons, in four batches of 15:
-- 1a: the eight heist controls;
-- 1b: the four resources and three currencies;
-- 2a: the heist status;
-- 2b: the rewards, Pip's badge among them;
-- 3: navigation;
-- 4: the rest.
+**Eight scenes in `art/ui/icons/heistcontrols/`.** Each one is a toy-like solid in the one toon light. They share the parts in `studio/shapes.js`: `box`, `ball`, `rod`, `pip`, `arrowShape`, `boltShape` and `slab`. Colours are token names only.
 
-Each reward is marked "256" where it also goes to `icons_256`. The order was checked against how often the client's scripts name each icon.
+| Icon | What it shows | Light |
+|---|---|---|
+| `ability` | a motion-amber lightning bolt with a cream star flare | `energy_light` |
+| `aim` | a stone ring with four cream ticks around an alarm-red eye | `alarm_light` |
+| `callskiff` | a wooden hull with a gold trim, a mast and a cream sail, inside a time-teal arc | `time_light` |
+| `cast` | a stubby wooden wand with a leather grip, a gold collar, a matter-violet orb and a cream spark | `matter_light` |
+| `getout` | a wooden door frame, the door swung open on the dark, and a success-green arrow out | `success_light` |
+| `regroup` | three crew pips (time, energy, matter) on a gold pad round an alarm pennant | `time_light` |
+| `sagewheel` | a ship's helm whose six segments are the six school colours, with spokes, a gold rim and hub, and a cream star | `motion_light` |
+| `splitcrew` | a gold three-way fork, with a pip at the end of each prong | `motion_light` |
 
-**`art/ui/icons/README.md`.** The two routes, the scene format and the commands.
+`list.md`'s batch 1a now describes these designs.
 
-**`studio/toon.js`.** The world's toon light (`client/world/toon_light.gdshaderinc`), mirrored number for number as on the style board. Colours come only from token names.
+**A fix in the finish (`studio/finish.js`).** `grow()` stamped the silhouette at 48 angles, as on the style board. At R = 640 that is 3.9 px apart round a 2 pt ring. Around a thin point (a star's tip) the gaps between stamps left see-through holes in the ink. The stamps now sit at most a pixel apart (`max(48, ceil(2πr))`). Every icon was rebaked; Starlight and Pip changed only at the edges (both still pass). The board (`art/ui/board/studio.html`) still has 48; its owner may want the same fix.
 
-**`studio/finish.js`.** The board's finish (`studio.html` bakeIcon), rule for rule, with one change: outline and keyline widths are in points of the size shown (`SHOWN_PT`: 48 for `icons_48`, 96 for `icons_256`). The board's 1/24 of the side is 2 pt at 48 pt. At 96 pt it would have been 4 pt, which the rubric's "2 pt at the size shown" rules out.
+**Check figures** (`check_icons.py` on the baked atlas). Each row gives the outline median and tenth percentile against 5.3 px, then 32 pt coverage and ellipse overlap. In high contrast every heist control passes, with median 7.5–9.5 px and p10 7.0–7.5 px against 8.0 px.
 
-**`studio/page.html` and `studio/bake_icons.js`.** The interim bake. It uses `bake.js`'s own `layout`, `manifestText` and `sourcesHash`, and its `pack.py`, so `bake.js --check` accepts what it writes. The manifest's `px_per_point` is null.
-
-**The character route.** `client/tests/shots/icon_portraits.gd` renders each kind in T7's portrait studio and writes `art/ui/icons/renders/<name>.png`. It uses `portrait_studio.gd` read only, and the studio's bust cut, widened 1.3 so that the ears and shoulders are kept. A badge module draws its toon frame in three.js and lays the render in, with the head standing over the ring.
-
-**The proof icons.**
-- `resources/starlight.js`, in both families: the board's hero, unchanged.
-- `crew/pip.js`, in `icons_48`: a night-enamel disc (`card_top`) in a ring of the motion school's amber, with Pip's render in it.
-
-**`studio/check_icons.py`.** The rubric's two scripted rules:
-- The outline is 2 pt at the size shown (3 pt in high contrast). From the centre of mass, 180 rays measure the outermost ink run across the edge. The median must be at least 0.85 of the target and the tenth percentile at least 0.6.
-- A dark shape at 32 pt (90 px):
-  - the silhouette covers 25 to 85% of its square;
-  - it is not a blob: its overlap with the ellipse of its own moments is under 0.96;
-  - at least 90% of its edge is dark (in high contrast, light: the keyline).
-
-Results, as outline median against target, then 32 pt coverage and ellipse overlap:
-
-| Icon, family and mode | Outline median | Target | 32 pt coverage | Ellipse overlap |
+| Icon (normal) | Median | p10 | 32 pt cover | Ellipse |
 |---|---:|---:|---:|---:|
-| Starlight, `icons_48` normal | 6.5 px | 5.3 px | 33% | 0.73 |
-| Pip, `icons_48` normal | 5.7 px | 5.3 px | 49% | 0.93 |
-| Starlight, `icons_256` normal | 7.9 px | 5.3 px | 26% | 0.67 |
-| Starlight and Pip, high contrast | 7.5–9.0 px | 8.0 px | 31–60% | 0.71–0.94 |
+| ability | 6.0 | 4.0 | 34% | 0.79 |
+| aim | 7.0 | 4.3 | 38% | 0.76 |
+| callskiff | 5.9 | 4.5 | 47% | 0.88 |
+| cast | CASTMED | CASTP10 | CASTCOV | CASTELL |
+| getout | 6.2 | 4.9 | 41% | 0.80 |
+| regroup | 6.0 | 4.4 | 39% | 0.79 |
+| sagewheel | 6.3 | 4.2 | 41% | 0.77 |
+| splitcrew | 7.3 | 4.4 | 42% | 0.76 |
 
-The normal median runs above 2 pt where the soft drop joins the ink under the icon.
+### Self-score
 
-### Self-score against rubric.md quality 3 (Painted or rendered icons)
+Against rubric.md quality 3 (Painted or rendered icons):
 
 | Rule | Score | Why |
 |---|---|---|
-| 1. 3D form, top-left key, rim, specular, dark outline | Pass | Starlight is lit from (-3, 4, 5), with the rim on the lit side, two cream glints and the ink outline. Pip is the model's own toon render, in a toon disc and ring with a glint and the outline. |
-| 2. Outline 2 pt at the size shown | Pass, scripted | `check_icons.py`, all six faces |
-| 3. A dark shape at 32 pt | Pass, scripted | All six faces. Pip's ears clear the ring, so the badge is not a disc (overlap 0.93) |
-| 4. §21.8 volume: three-stop gradient, gloss, soft drop | Pass | The toon ramp's steps and the inner light carry the gradient, the glints are the gloss, and the drop is blurred (not a hard ink drop) |
-| 5. One toon look, characters from imported models | Pass | No PBR anywhere. Pip comes from `StageHero.make_figure("skyskipper")` in the hero stage's light |
-| 6. Law and school frames | Not applicable | No law icon yet. Pip's ring is in the motion school's colour; the school's shape (§21.2) goes on the crew-role icons of batch 4 |
+| 1. 3D form, top-left key, rim, specular, dark outline | Pass | Every icon is a lit solid, keyed from (-3, 4, 5) with the rim on the lit side. Glints act as the specular and the ink ring as the outline. |
+| 2. Outline 2 pt at the size shown | Pass, scripted | `check_icons.py`, all faces |
+| 3. A dark shape at 32 pt | Pass, scripted | Coverage 34–47% and ellipse overlap 0.74–0.88: none is a blob |
+| 4. §21.8 volume | Pass | The toon ramp and the inner light carry the gradient, the glints are the gloss, and the drop is soft |
+| 5. One toon look | Pass | No PBR. The pips are toy figures in school colours, not characters, so no model render is needed |
+| 6. Law and school frames | Not applicable | No law icon. The Sage's wheel carries all six school colours, in §21.2's order round the helm |
+
+Against the gate item's other qualities:
+- **Layered materials.** Wood, leather, gold, stone and enamel stay distinct by hue and ramp step, each with its own rim.
+- **Colour roles and value.** Each control takes its role's colour: alarm for aim, success for get out, a school colour for cast and ability. In grayscale the silhouettes and the ink ring carry every icon.
+- **Light behind UI.** Each icon has a glow in its light token behind it, and an inner light toward the top left.
 
 **Risks a judge may see:**
-- At 48 pt, Pip's coins (the carrier's satchel, at the render's right edge) read as a row of dots inside the ring.
-- In normal mode on the night backdrop, the ink outline is dark on dark. The glow and the amber ring carry the edge there, as on the board.
+- In grayscale the Sage's wheel's six segments fall into close greys. The spokes and rim still read, but the six colours do not.
+- In grayscale, regroup's three pips are close in value. They read by their shape.
+- At 45 px, the split crew's pips and the regroup pips become dots. The fork and the flag keep the shape.
+- `regroup` and `callskiff` share `time_light`, and `sagewheel` and `splitcrew` share `motion_light`. Side by side on the HUD, their glows match.
 
 ### Half done
 
@@ -80,12 +78,14 @@ None.
 
 ### Open hypotheses
 
-- The client may show `icons_256` at other sizes than 96 pt. If so, the outline is 2 pt only at 96, and the kit should scale these icons only from 72 to 128 pt.
-- `px_per_point` null may not suit the kit's loader (K1). The default is to keep null for scene families.
+- The client may show `icons_256` at sizes other than 96 pt. If so, the outline is 2 pt only at 96.
+- The outline check counts the soft drop as ink where it is darker than 0.2 and over alpha 200. Below an icon, the drop adds to the measured ring. That is why medians run above 2 pt.
 
 ### Next step
 
-P1-AIA2-icons-1a, once this merges: the eight heist controls as scenes in `art/ui/icons/heistcontrols/`, each checked by `check_icons.py`.
+1. Set the gate request on the icon sheet at the verified commit.
+2. When it passes and the pre-check is green, mark the task ready.
+3. Then start P1-AIA2-icons-1b.
 
 ## Tried and failed
 
@@ -94,3 +94,7 @@ P1-AIA2-icons-1a, once this merges: the eight heist controls as scenes in `art/u
 - 2026-11-04 The render placed at the badge's top edge: the ears were clipped by the square. Placing it at 0.82 of the side, 7% down, keeps them.
 - 2026-11-04 The board's outline (1/24 of the side) for `icons_256`: it measured 13.8 px, 4 pt at 96 pt. The finish now sets outline widths in points of the size shown.
 - 2026-11-04 The 32 pt edge check in high contrast against "dark": the edge there is the light keyline, by design, so it failed every face. In high contrast it now checks for light.
+- 2026-11-04 Cast as a long thin wand on the diagonal, with a free-floating spark: outline p10 0.6 px. The spark's ring stood apart from the wand's.
+- 2026-11-04 Cast with the spark joined to the orb, but still a long wand: p10 1.8 px on the atlas. The outline check's rays from the centre run along the wand's long sides, so each stopped on a one-pixel step. A stubby wand fixed it.
+- 2026-11-04 Split crew's prongs short and close together: the fork read as a crown or a bundle at 48 pt. Longer prongs, wider angles and the pips further out made it a fork.
+- 2026-11-04 The finish's 48 stamps round the outline (the board's count): holes in the ink ring at thin points. The stamps now sit a pixel apart.
