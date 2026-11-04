@@ -1,16 +1,16 @@
 # AIA-2 icon maker: progress
 
-- Status: Green, waiting for the gate. The last push has P1-AIA2-icons-1a's eight heist controls baked into `icons_48`, and a finish fix (a solid outline ring at thin points). The pre-check at c1d14d38 failed on stale icon manifests (a `__pycache__` under `art/ui` was hashed at bake time); 5f759a03 rebakes them clean, and the pre-check at cd30ce21 passed (exit 0).
-- Progress: 1 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70); 0 items passed by the gate. P1-AIA2-icons-1a is waiting for its gate.
+- Status: Green, ready at cd30ce21. The gate's verdicts are in and advisory (every quality owner-checked): Light behind UI passes, and Layered materials, Painted icons and Colour roles fail 3 of 3. The last push has P1-AIA2-icons-1a's eight heist controls baked into `icons_48`, and a finish fix (a solid outline ring at thin points). The pre-check at c1d14d38 failed on stale icon manifests (a `__pycache__` under `art/ui` was hashed at bake time); 5f759a03 rebakes them clean, and the pre-check at cd30ce21 passed (exit 0).
+- Progress: 1 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70); 0 items passed by the gate. P1-AIA2-icons-1a is ready (pre-check green at cd30ce21; advisory verdicts in at 5f759a03).
 - Done: the toon route, with Starlight and Pip; the eight heist-control icons (ability, aim, call skiff, cast, get out, regroup, Sage's wheel, split crew) in `icons_48`, normal and high contrast.
-- Next: the gate on P1-AIA2-icons-1a's icon sheet, then P1-AIA2-icons-1b (four resources and three currencies).
+- Next: the lead's merge of P1-AIA2-icons-1a behind its family switch, then P1-AIA2-icons-1b (four resources and three currencies).
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
 | P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Merged at 9b2bde70 | `bake.js --check`, `check_icons.py` and `run_checks.sh` PASS at 02e7ef0f |
-| P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Waiting for its gate | `python3 art/ui/icons/studio/check_icons.py`: all 24 faces pass (12 pieces across 2 families, in 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 10 pieces, icons_256 1 piece, both ok |
+| P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Ready at cd30ce21 | `python3 art/ui/icons/studio/check_icons.py`: all 24 faces pass (12 pieces across 2 families, in 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 10 pieces, icons_256 1 piece, both ok |
 
 ## Handoff
 
@@ -72,6 +72,20 @@ Against the gate item's other qualities:
 - At 45 px, the split crew's pips and the regroup pips become dots. The fork and the flag keep the shape.
 - `regroup` and `callskiff` share `time_light`, and `sagewheel` and `splitcrew` share `motion_light`. Side by side on the HUD, their glows match.
 
+### The gate's verdicts (advisory, at 5f759a03, same pixels as c1d14d38)
+
+| Quality | Result | What the judge saw |
+|---|---|---|
+| Layered materials | fail 3 of 3 | flat fills under a thick outline; no gloss band, grain or bevel on the door or the skiff's hull; little lip. Only the bolt has a real extrusion |
+| Painted or rendered icons | fail 3 of 3 | glints read as pasted stars, not highlights on a surface; the door, its arrow, the wheel's segments, the split-crew arrow and the aim rings read flat in grayscale; the drop is a hard offset, not a soft shadow |
+| Colour roles and value | fail 3 of 3 | the wheel's six wedges differ by hue only; alarm red fills the aim reticle and success green the get-out arrow; gold fills the split-crew arrow and the regroup base, a second role |
+| Light behind UI | pass 3 of 3 | one top-left light throughout |
+
+What icons-1b (and a later pass on 1a) should change, from the critiques:
+- **Materials:** give each solid a real bevel and a lit lip (deeper `puffed` bevels, a gloss band in the face's light colour), and add grain or plank lines to wood.
+- **Highlights:** put glints on the surface's highlight, not as stars on top. Soften the drop: a larger blur and a lower alpha, in place of 0.006R and 0.8 (in `finish.js`, so every icon changes, a full rebake).
+- **Colour roles:** keep alarm red and success green for state, not fill. Keep gold to one role. Separate the wheel's wedges by value as well as hue.
+
 ### Half done
 
 None.
@@ -83,9 +97,8 @@ None.
 
 ### Next step
 
-1. Set the gate request on the icon sheet at the verified commit.
-2. When it passes and the pre-check is green, mark the task ready.
-3. Then start P1-AIA2-icons-1b.
+1. The lead merges P1-AIA2-icons-1a behind its family switch (report.md 3.8 item 5).
+2. The next session takes P1-AIA2-icons-1b. Before baking, run `git status --ignored art/ui` and use `python3 -B` for the checks. Apply the critiques above from the first icon.
 
 ## Tried and failed
 

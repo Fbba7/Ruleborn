@@ -3,13 +3,13 @@
   "role": "AIA-2",
   "branch": "claude/ui-artist-icons",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-AIA2-icons-1a",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-04T14:45:00Z",
   "lease_until": "2026-11-04T17:45:00Z",
-  "updated_at": "2026-11-04T17:00:34Z",
-  "expected_next_update_by": "2026-11-04T17:45:34Z",
+  "updated_at": "2026-11-04T17:01:33Z",
+  "expected_next_update_by": "2026-11-04T17:46:33Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "02e7ef0f00ea0444842a4d0158f50e271a97c952",
@@ -35,7 +35,7 @@
       }
     ]
   },
-  "ready_sha": null,
+  "ready_sha": "cd30ce218969fa972fffbb5c296d319d809d7e0b",
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [],
   "requests": [
@@ -57,5 +57,5 @@
     }
   ],
   "answers": [],
-  "note": "pre-check green at cd30ce21; gate request at 5f759a03, waiting for the verdict"
+  "note": "icons-1a ready at cd30ce21 (pre-check green). Advisory gate verdicts at 5f759a03: Light pass; Layered materials, Painted icons, Colour roles fail 3 of 3; critiques carried into the handoff for icons-1b. Commits after cd30ce21 touch only docs/progress."
 }
