@@ -1,0 +1,11 @@
+{
+  "atlas": {"height":256,"high_contrast":"icons_48_hc.webp","normal":"icons_48.webp","width":1024},
+  "family": "icons_48",
+  "format": 1,
+  "pieces": {
+    "crew__pip__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":2,"y":2},
+    "resources__starlight__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":132,"y":2}
+  },
+  "px_per_point": null,
+  "sources_hash": "sha256:328b70c7b5dad3734b0ef18b7e50b5d89cfe3953c211239d3404939a54a7dfb6"
+}
