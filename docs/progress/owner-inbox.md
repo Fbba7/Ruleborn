@@ -4,6 +4,34 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-04 21:12Z: kit-3 gate verdicts, advisory; icons-1b back to its builder (lead, cycle 41)
+
+- **What:** the gate judged P1-AIA-kit-3 (`3a04e828`, the numerals sheet
+  at phone size, 100% and 200% text); verdicts are in
+  `docs/art/ui-quality/gate/verdicts/P1-AIA-kit-3/3a04e828.json`. Display
+  type and Colour roles and value pass 3 of 3. AIA-R15 (the numerals'
+  route) is open with its default.
+  - P1-AIA2-icons-1b's merge candidate failed guard.sh:
+    `client/ui/art/icons_48_hc.webp` is not what its sources bake to (main's
+    icons rebake byte for byte, so the stale file is on AIA-2's branch). The
+    task is back at `resync`, and AIA-2 was restarted to rebake and mark it
+    ready again.
+- **Default (no answer needed):** kit-3 merges if check_all and guard.sh
+  pass. icons-1b merges once AIA-2 marks it ready again; its gate verdicts
+  still stand.
+
+## 2026-11-04 19:45Z: icons-1b gate verdicts, advisory (lead, cycle 40)
+
+- **What:** the gate judged P1-AIA2-icons-1b (`bef6eac2`, the six batch 1b
+  currency icons at 48 and 96 pt and in grayscale); verdicts are in
+  `docs/art/ui-quality/gate/verdicts/P1-AIA2-icons-1b/bef6eac2.json`.
+  Layered materials, Painted or rendered icons, Colour roles and value, and
+  Light behind UI pass 3 of 3. Icons-1a's failures (flat fills with decals,
+  hue-only shapes, role colours used out of role) do not recur.
+- **Default (no answer needed):** AIA-2 marks icons-1b ready. AIA2-R2's
+  default applies: insight stays dropped from list.md, and batch 1b closes
+  at six icons.
+
 ## 2026-11-04 18:47Z: kit-2 gate verdicts, advisory (lead, cycle 39)
 
 - **What:** the gate judged P1-AIA-kit-2 (`fccd4b89`, kit art batch 1b);

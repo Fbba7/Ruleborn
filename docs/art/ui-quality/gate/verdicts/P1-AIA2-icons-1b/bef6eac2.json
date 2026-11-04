@@ -1,0 +1,70 @@
+[
+ {
+  "task_id": "P1-AIA2-icons-1b",
+  "sha": "bef6eac2",
+  "item": "icon sheet, batch 1b (aether, essence, renown, starglass, seasonstars, starlight), at 48 and 96 pt and in grayscale",
+  "quality": "Layered materials",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Every body (bottle, drop, medal, faceted star, star cluster, sparkle) has a top-lit gradient, gloss highlights, a darker shaded underside and a dark ink outline. Starglass is faceted and renown has a bevelled rim. There is no banding or noise at 48 pt, and the high-contrast twins keep the opaque body inside the light outline.",
+  "advisory": true,
+  "at": "2026-11-04T19:45:00Z"
+ },
+ {
+  "task_id": "P1-AIA2-icons-1b",
+  "sha": "bef6eac2",
+  "item": "icon sheet, batch 1b (aether, essence, renown, starglass, seasonstars, starlight), at 48 and 96 pt and in grayscale",
+  "quality": "Painted or rendered icons",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "All six are modelled objects in one stepped toon look, with a top-left key light, specular glints, a rim and a soft drop shadow. The grayscale rows show the shading follows the form, the shapes hold at 48 pt, and nothing reads as photoreal.",
+  "advisory": true,
+  "at": "2026-11-04T19:45:00Z"
+ },
+ {
+  "task_id": "P1-AIA2-icons-1b",
+  "sha": "bef6eac2",
+  "item": "icon sheet, batch 1b (aether, essence, renown, starglass, seasonstars, starlight), at 48 and 96 pt and in grayscale",
+  "quality": "Colour roles and value",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Each currency has its own hue and its own silhouette: flask, drop, laurel medal, faceted star, star cluster and four-point sparkle. Renown and starlight share gold but differ by shape, and the gold reads as material or glow, not as an action fill. Every icon stands off its ground in grayscale and high contrast.",
+  "advisory": true,
+  "at": "2026-11-04T19:45:00Z"
+ },
+ {
+  "task_id": "P1-AIA2-icons-1b",
+  "sha": "bef6eac2",
+  "item": "icon sheet, batch 1b (aether, essence, renown, starglass, seasonstars, starlight), at 48 and 96 pt and in grayscale",
+  "quality": "Light behind UI",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Highlights and sparkles sit top-left on every icon, with darker facets toward the lower right and a soft drop shadow below. The light comes from one direction in every row, including grayscale and the high-contrast twins.",
+  "advisory": true,
+  "at": "2026-11-04T19:45:00Z"
+ }
+]

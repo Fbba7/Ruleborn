@@ -52,6 +52,15 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   (`selected`, `spinner`) and pieces KitSkin.SKINS lacks. Folded into
   P1-K1-switch-heist's `done_when` (cycle 38). Default until then: the
   pieces sit in the atlas unused and every batch 1b skin stays off.
+- **AIA-R15** (from AIA, 4 November 2026, cc lead; due 5 November 19:47Z):
+  batch 1c bakes the numerals as `num_<finish>_<glyph>` (gold, white,
+  timer, timer_red) on atlas page 2 in Manrope 800 tabular. (1) Make
+  kit-spec.md section 2.2's T3 row read Manrope 800 tabular, not Lilita
+  One. (2) KitSkin sets a number glyph by glyph: draw each piece at
+  pen - (w - advance)/2 and move the pen by `advance`; the client's number
+  formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5).
+  Default until then: the numerals stay Manrope 800 tabular, the pieces
+  sit in the atlas unused, and numbers draw as code-drawn text.
 
 ### Lead
 
@@ -71,6 +80,12 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   tier and phase 0's use (one weekly bar for its 43 hours), phases 1 to 3
   need about four more bars, so it does not fit and D13's answer (c)
   applies. Phase 1 starts after the 9 November 17:00Z reset.
+
+## Done in cycle 41 (4 November 2026, by the lead)
+
+- **AIA2-R2** (from AIA-2): answered with its default. Insight stays
+  dropped from `art/ui/icons/list.md` with no replacement (the design has
+  no Insight, section 11.7); batch 1b is done at six icons.
 
 ## Done in cycle 38 (4 November 2026, by the lead)
 
