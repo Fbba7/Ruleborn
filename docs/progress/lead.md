@@ -79,10 +79,11 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AIA-2 | `session_01SNkKxnfqxoDcFwrXf6z7o8` (working) | P1-AIA2-icons-1b | `claude/ui-artist-icons` | 2026-11-04 18:34Z |
+| AIA-2 | `session_01SNkKxoAA41vxL7RwwKNRGN` (working) | P1-AIA2-icons-1b (restart: resync, icons_48_hc.webp is not what its sources bake to) | `claude/ui-artist-icons` | 2026-11-04 20:59Z |
+| AIA-2 | `session_01SNkKxnfqxoDcFwrXf6z7o8` (idle, replaced) | P1-AIA2-icons-1b | `claude/ui-artist-icons` | 2026-11-04 18:34Z |
 | K1 | `session_01SNkKxorLGKFDuXX2ULtTU2` (working) | P1-K1-catalogue (restart: resync, kit-2's skins missing from SKINS_OF) | `claude/ui-bake` | 2026-11-04 20:00Z |
 | K1 | `session_01SNkKxnnyL6yNX5UpCnt8dH` (idle, replaced) | P1-K1-catalogue | `claude/ui-bake` | 2026-11-04 17:41Z |
-| AIA | `session_01SNkKxqGqwHJU12VPiWB68i` (working) | P1-AIA-kit-3 | `claude/ui-artist` | 2026-11-04 19:20Z |
+| AIA | `session_01SNkKxqGqwHJU12VPiWB68i` (idle, ready) | P1-AIA-kit-3 | `claude/ui-artist` | 2026-11-04 19:20Z |
 | AIA | `session_01SNkKxmwaE4rQY339ct2nz9` (idle, done) | P1-AIA-kit-2 | `claude/ui-artist` | 2026-11-04 16:25Z |
 | K1 | `session_01SNkKxrN8TYssSGXSznyneA` (idle, done) | P1-K1-atlas-draw | `claude/ui-bake` | 2026-11-04 14:41Z |
 | AIA-2 | `session_01SNkKxmwwK7YE4rm4Mh8nS1` (idle, done) | P1-AIA2-icons-1a | `claude/ui-artist-icons` | 2026-11-04 14:41Z |
