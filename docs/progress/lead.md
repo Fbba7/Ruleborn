@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxperiwzZk3yVhDBHZf` (cycle 24,
-4 November 2026, from 01:39Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxnpW76h9UU2VzxnVPi` (cycle 25,
+4 November 2026, from 02:39Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -79,7 +79,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AD | `session_01SNkKxrEMe4td5Bk4zmN1Ed` (working) | P0-AD-calibrate-2 | `claude/ui-ad` | 2026-11-03 11:09Z |
+| AD | `session_01SNkKxrEMe4td5Bk4zmN1Ed` (idle, done) | P0-AD-calibrate-2 | `claude/ui-ad` | 2026-11-03 11:09Z |
 | gate run dev-fable (Fable 5.1) | `session_01SNkKxonjTzEysQx5wxdp97` (idle, done: 444 lines, 6 unknown, `0e78b6ce`) | AD-R6 for P0-AD-calibrate | `claude/ui-gate-runs` | 2026-11-02 23:40Z |
 | gate run dev-opus (Opus 5.5) | `session_01SNkKxogMyzESz7z3XzwBUJ` (idle, done) | AD-R6 for P0-AD-calibrate | `claude/ui-gate-runs` | 2026-11-02 23:40Z |
 | AD | `session_01SNkKxpHbYoyKJJjMRSPCPZ` (idle, done) | P0-AD-calibrate | `claude/ui-ad` | 2026-10-31 18:33Z |
@@ -177,6 +177,28 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 25, 4 November 2026, from 02:39Z (session
+  `session_01SNkKxnpW76h9UU2VzxnVPi`, started by the launcher): merged
+  P0-AD-calibrate-2 (AD, ready at `8e4b808`). owners.py diff and claims
+  clean; candidate `0e2a6317` passed check_all (03:15:33Z, "All checks
+  passed."); main had gained only this cycle's lock commit, so the
+  candidate went onto it as `0ff3278a` with the documentation check re-run.
+  No guard: nothing under `client/` or `art/` changed. Results: Opus 5.5 is
+  the judge; rubric version 3; the held-out run `held-opus` missed the
+  target on all eight judged qualities, so all eight are owner-checked (AD
+  checks each on every board; the judge's verdicts are advice).
+  AD's request on `results.jsonl` takes its default: the runs stay in
+  `gate/calibration/runs/`. AD has no open task left (session idle, done).
+- Filed K1-R9 (the overseer's follow-up to C74 and C75) as
+  P0-K1-kitspec-3 for K1, open, about 0.5 h, documents and tokens.json
+  notes only. Not started: usage still reads `allowed_warning` (seven-day,
+  resets 2026-11-09T17:00Z), and it is not urgent. AIA's M1 ack is noted
+  (owner inbox, 4 November 02:05Z).
+- Next: AD proposes golden set version 2 (more passing items per quality,
+  quality 3's relabel), then rubric version 4 and a fresh held-out run, and
+  a fix to `render` leaving crops missing; not yet filed, since phase 0's
+  close comes first and usage is in warning. Start K1 on P0-K1-kitspec-3
+  once usage allows. Never use Fable 5.1 (CLAUDE.md).
 - Cycle 24, 4 November 2026, from 01:39Z (session
   `session_01SNkKxperiwzZk3yVhDBHZf`, started by the launcher), the first
   cycle after the owner's restart: bookkeeping only. AD

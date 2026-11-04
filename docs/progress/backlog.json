@@ -716,6 +716,38 @@
       "merged_sha": "eec44b50"
     },
     {
+      "id": "P0-K1-kitspec-3",
+      "title": "Kit contract after C74 and C75 (K1-R9, owner-decisions.md 'UI kit colours (C74, C75)'): in kit-spec.md section 2.1 the success row's words on dark become #8FF0A8 at every size (O2.md's interim ruling 1 and AIA-R8's narrowing fall away; #3FBF7F stays fills, rings and marks) and the backdrop row loses its 'pending owner decision' mark; a dated line in section 9; the 'from' notes of success_text_on_night and night_top in client/ui/tokens.json name C74 and C75 instead of a pending decision. No value changes",
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "docs/art/ui-quality/kit-spec.md",
+        "client/ui/tokens.json"
+      ],
+      "deps": [
+        "P0-K1-tokens-2"
+      ],
+      "done_when": [
+        "no token value changes (only notes in tokens.json)",
+        "bash tools/ui_bake/guard.sh",
+        "python3 tools/check_docs_consistency.py",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 0.5,
+      "phase": 0,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null
+    },
+    {
       "id": "P0-AD-golden-2",
       "title": "Golden set, part 2: the five key frames at 200% text and in high contrast, and planted fails copied from them (labels without stroke, a flattened material, a flat icon, one value step between control and ground); labels.md completed for O3",
       "phase": 0,
@@ -863,12 +895,12 @@
       "estimate_h": 2,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "8e4b808",
+      "merged_sha": "0ff3278a"
     },
     {
       "id": "SV-B1-B6",

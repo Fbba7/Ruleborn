@@ -28,6 +28,7 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   mark; a dated line in section 9; the `from` notes of `success_text_on_night`
   and `night_top` in `client/ui/tokens.json` name C74 and C75 instead of a
   pending decision. No value changes. Not urgent: phase 0's close comes first.
+  Filed by the lead in cycle 25 (4 November 2026) as P0-K1-kitspec-3.
 
 ## Answered in cycle 15 (31 October 2026, by the lead)
 
