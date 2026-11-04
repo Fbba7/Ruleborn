@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P0-K1-kitspec-3",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-04T12:50:00Z",
   "lease_until": "2026-11-04T15:50:00Z",
-  "updated_at": "2026-11-04T12:50:00Z",
-  "expected_next_update_by": "2026-11-04T13:35:00Z",
+  "updated_at": "2026-11-04T13:05:00Z",
+  "expected_next_update_by": "2026-11-04T13:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "785cb2a8",
-    "next_step": "P0-K1-kitspec-3: kit-spec.md section 2.1 success and backdrop rows, section 9 line, tokens.json notes"
+    "next_step": "wait for client/build.sh; guard.sh and pre-check at 4b4a72d1"
   },
   "precheck": null,
   "gate_request": null,
@@ -128,6 +128,11 @@
       "request_id": "AIA-R2",
       "answer": "client/ui/tokens.json has a 'sky' group with day, dusk and night stops (read with Tokens.sky(name) -> Array[Color]), kept out of the color, gradient and material groups the board's build_tokens.mjs --check reads. card_bottom keeps the designs' #120A28 for now, with a note: kit-spec.md section 2.1 takes 21.8's #1A1134 once O2-2 lets the revised contract stand (K1-R5). kit-spec.md section 8.2's code note gives the piece names KitSkin looks up.",
       "at": "2026-10-31T03:55:00Z"
+    },
+    {
+      "request_id": "K1-R9",
+      "answer": "Done in P0-K1-kitspec-3 at 4b4a72d1: kit-spec.md section 2.1's success and backdrop rows and section 9; tokens.json's notes for success_text_on_night, night_top and gradient.night. No value changes.",
+      "at": "2026-11-04T13:05:00Z"
     }
   ]
 }
