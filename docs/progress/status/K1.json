@@ -4,22 +4,29 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P0-K1-tokens",
+  "task_id": "P0-K1-tokens-2",
   "task_state": "working",
-  "claimed_at": "2026-10-31T10:20:00Z",
-  "lease_until": "2026-10-31T13:20:00Z",
-  "updated_at": "2026-10-31T10:45:00Z",
-  "expected_next_update_by": "2026-10-31T11:30:00Z",
+  "claimed_at": "2026-10-31T17:05:00Z",
+  "lease_until": "2026-10-31T21:50:00Z",
+  "updated_at": "2026-10-31T18:50:00Z",
+  "expected_next_update_by": "2026-10-31T19:35:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "2432031e",
-    "next_step": "guard.sh on card_bottom #1A1134, then the pre-check"
+    "last_green_sha": "5864d65d",
+    "next_step": "pre-check d9e34b69 (K1-R8 applied); on PASS mark ready"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "04f08bcc6c647dda6765530939cafbda51665731",
+    "exit": 1,
+    "finished_at": "2026-10-31T18:24:53Z",
+    "summary": "== the UI wave's key frames: their words, contrast and colours, with their planted fails (AIA-R3) ==: FAIL contrast: \"Taxa de entrada de 120 devolvida\" (03-result_pt_BR.png): 5.26:1, Lc 68 on #545384 against the pixels behind its letters, at their worst; needs 4.5:1 and Lc 75 at 13 points"
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
-  "acks": [],
+  "acks": [
+    "M2"
+  ],
   "requests": [
     {
       "id": "K1-R3",
@@ -40,14 +47,14 @@
       "id": "K1-R4",
       "from": "K1",
       "to": "lead",
-      "ask": "P0-K1-contract-2 (AD-R5) leaves two of kit-spec.md section 2.1's values pending owner decisions, as O2.md allows. Please add two entries to the owner's decision brief (docs/decisions/brief.json, then python3 tools/build_brief.py --check), drafted in docs/progress/K1.md under 'Draft brief entries (K1-R4)': (1) success words on a dark surface: §21.8's #3FBF7F measures Lc 54-55 on the dark card (43 on the backdrop's #2C3AA8) against the Lc 60 bold words under 36 points need, and ink on the green fill Lc 57.5; options (a) lighter success words on dark, #8FF0A8, (b) keep §21.8: green words only at 36 points and over on the card, smaller ones as ink on the fill; recommend (a). (2) the menus' backdrop: the designs' sub-screens draw a radial (#2E1F5E, #140C30, #0A0620), §21.2 says '#171046 to #2C3AA8'; options (a) §21.2's linear values, (b) change §21.2 to the designs' radial; recommend (a). If brief.json is not the lead's to edit, forward this to its owner.",
+      "ask": "P0-K1-contract-2 (AD-R5) leaves two of kit-spec.md section 2.1's values pending owner decisions, as O2.md allows. Please add two entries to the owner's decision brief (docs/decisions/brief.json, then python3 tools/build_brief.py --check), drafted in docs/progress/K1.md under 'Draft brief entries (K1-R4)': (1) success words on a dark surface: \u00a721.8's #3FBF7F measures Lc 54-55 on the dark card (43 on the backdrop's #2C3AA8) against the Lc 60 bold words under 36 points need, and ink on the green fill Lc 57.5; options (a) lighter success words on dark, #8FF0A8, (b) keep \u00a721.8: green words only at 36 points and over on the card, smaller ones as ink on the fill; recommend (a). (2) the menus' backdrop: the designs' sub-screens draw a radial (#2E1F5E, #140C30, #0A0620), \u00a721.2 says '#171046 to #2C3AA8'; options (a) \u00a721.2's linear values, (b) change \u00a721.2 to the designs' radial; recommend (a). If brief.json is not the lead's to edit, forward this to its owner.",
       "files": [
         "docs/decisions/brief.json"
       ],
       "blocking": false,
       "created_at": "2026-10-31T02:15:00Z",
       "due": "2026-11-02T22:00:00Z",
-      "default": "No brief entry; kit-spec.md keeps both rows marked pending with O2.md's interim rulings (#3FBF7F at 36 points and over on the card, else ink on the green fill; §21.2's linear backdrop), and P0-K1-kitskin writes tokens.json to those interim values",
+      "default": "No brief entry; kit-spec.md keeps both rows marked pending with O2.md's interim rulings (#3FBF7F at 36 points and over on the card, else ink on the green fill; \u00a721.2's linear backdrop), and P0-K1-kitskin writes tokens.json to those interim values",
       "escalate_to": "lead"
     },
     {
@@ -85,6 +92,39 @@
       "created_at": "2026-10-31T10:45:00Z",
       "due": "2026-11-01T22:00:00Z",
       "default": "(1) tokens.css granted as P0-K1-tokens' exception; (2) P0-K1-tokens merges with card_bottom alone, and the backdrop, red and success words on dark wait for a follow-up task the lead files with AIA's board change and the screen owners' moves",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R7",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P0-K1-tokens-2: three changes outside the task's files, please grant them as exceptions. On the linear backdrop #2C3AA8, `gold` #E9B65C is 4.97:1 but Lc 55, under the Lc 60 bold and large words need: a11y test 14 fails the 13-point bold section kickers (client/scripts/screen_parts.gd:121, section(): settings 'SOUND', 'PLAY', workshop 'THE ISLANDS MOST FINISHED') and the 26-point realm title (client/scripts/realm_screen.gd:105). Change: Tokens.color(\"gold\") to Tokens.color(\"gold_top\") (#F9DE9C, Lc 75.3) in each. Third, client/scripts/ui.gd set_status (P0-K1-kitskin's file, not this task's): dark alarm words now sit on an alarm_fill box, so an empty status must draw no box: five lines that set a StyleBoxEmpty 'normal' override when the text is empty and remove it otherwise. With all three applied locally, a11y test 14 passes on every screen in both modes. The exact diff is in docs/progress/K1.md's handoff.",
+      "files": [
+        "client/scripts/screen_parts.gd",
+        "client/scripts/realm_screen.gd",
+        "client/scripts/ui.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-10-31T17:15:00Z",
+      "due": "2026-11-01T12:00:00Z",
+      "default": "granted: K1 commits the three changes exactly as in K1.md's handoff, as P0-K1-tokens-2's exceptions",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R8",
+      "from": "K1",
+      "to": "AIA",
+      "cc": [
+        "lead"
+      ],
+      "ask": "P0-K1-tokens-2's pre-check (04f08bcc, FAIL) stops at the key frames (AIA-R3): with section 2.1's linear backdrop in tokens.css, the result key frame's two 13-point regular captions in text_on_night_2 (#E2D9F7) fall under Lc 75: 'alarm 2 / 6' subline Lc 74 on #50415F and 'Entry fee 120 returned' Lc 68-69 on #554E7C/#545384 (art/ui/keyframes/03-result.html lines 94 and 123, class on-night-2). The kit made the same move: night's text_2 is text_on_night. Change: class 'caption on-night-2' to 'caption on-night-1' (text_on_night, #F3EEFF) on those two lines (diff in docs/progress/K1.md's handoff). With it applied locally, node art/ui/keyframes/check_keyframes.mjs prints 'key frame checks passed'. Either AIA commits it, or the lead grants the file as P0-K1-tokens-2's exception and K1 commits it.",
+      "files": [
+        "art/ui/keyframes/03-result.html"
+      ],
+      "blocking": true,
+      "created_at": "2026-10-31T18:29:00Z",
+      "due": "2026-11-01T12:00:00Z",
+      "default": "granted as P0-K1-tokens-2's exception: K1 commits exactly the two-class change in K1.md's handoff (and any stills check_keyframes needs re-shot), re-runs the pre-check and marks ready",
       "escalate_to": "lead"
     }
   ],

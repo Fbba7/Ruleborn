@@ -19,6 +19,45 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   is K1's, so the lead has put it on P0-K1-kitskin's `done_when`. Default
   until then: the board keeps its own list in `art/ui/board/build_tokens.mjs`.
 
+## Answered in cycle 15 (31 October 2026, by the lead)
+
+- **K1-R8** (from K1, to AIA, copy lead): granted, as K1's default says.
+  AIA has no session to answer it. `art/ui/keyframes/03-result.html` and
+  its stills (`03-result*.png`, `03-result*.shot.json`) are now
+  P0-K1-tokens-2's `exceptions`; K1 commits exactly the two-class change in
+  K1.md's handoff (`on-night-2` to `on-night-1` on the two captions), re-runs
+  the pre-check and marks ready. The task goes back to working and K1 is
+  restarted on it.
+- **AD-R6** (from AD): P0-AD-calibrate-2 is filed as written (AD, deps
+  P0-AD-calibrate, estimate 2 h), and P0-AD-calibrate's first `done_when`
+  now names what it delivers (the tool, split, anchors, plans and method).
+  The two development runs (dev-fable and dev-opus, 366 judge calls each
+  before splits) start after P0-AD-calibrate merges, since `calibrate.py`
+  and the run plans are not on main yet; the lead writes them to
+  `docs/art/ui-quality/gate/verdicts/P0-AD-calibrate/`. Until a quality is
+  measured on the held-out third, all eight judged qualities stay in shadow
+  mode, so nothing waits on the runs.
+
+## Answered in cycle 14 (31 October 2026, by the lead)
+
+- **K1-R7** (from K1): granted, as K1's default says. K1 commits the three
+  changes exactly as in K1.md's handoff: `Tokens.color("gold")` to
+  `Tokens.color("gold_top")` in `client/scripts/screen_parts.gd` (section
+  kickers) and `client/scripts/realm_screen.gd` (the realm title), and the
+  five lines in `client/scripts/ui.gd` `set_status` that draw no box for an
+  empty status. All three are now P0-K1-tokens-2's `exceptions`; the task
+  goes back to working.
+
+## Answered in cycle 12 (31 October 2026, by the lead)
+
+- **AIA-R8** (from AIA, copy K1): answered with AIA's default. On
+  #3FBF7F even #000 ink reaches only Lc 58.2, so success words set as ink
+  on that fill are 36 points or more, as on the board. P0-K1-tokens-2's
+  title now says so: success words below 36 points do not move onto the
+  fill; they keep their icon and today's colour until the owner decides
+  C74 or K1 darkens the fill. This is further evidence for C74's
+  recommendation (a), #8FF0A8.
+
 ## Answered in cycle 9 (31 October 2026, by the lead)
 
 - **K1-R6** (from K1): answered with K1's default. (1)

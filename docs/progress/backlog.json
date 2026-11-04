@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phase 0 (docs/art/ui-quality/report.md section 3.3, steps 1-4); SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 0,
-  "updated_at": "2026-10-31T13:45:00Z",
+  "updated_at": "2026-10-31T20:35:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-06T21:00:00Z",
   "lease_hours": 3,
@@ -609,7 +609,7 @@
       "estimate_h": 2,
       "tier": 1,
       "critical": true,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "AIA",
         "branch": "claude/ui-artist",
@@ -620,7 +620,7 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "5eec1b60",
-      "merged_sha": null
+      "merged_sha": "d0dd8a36"
     },
     {
       "id": "P0-AIA-board-4",
@@ -645,16 +645,22 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-10-31T13:45:00Z",
+        "seen_at": "2026-10-31T16:20:00Z",
+        "lease_until": "2026-10-31T16:45:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "b83a0b4d",
+      "merged_sha": "f920b57b"
     },
     {
       "id": "P0-K1-tokens-2",
-      "title": "Kit tokens, the rest of O2's redirect (K1-R6): write kit-spec.md section 2.1's revised backdrop (#171046 to #2C3AA8, linear, until C75 is decided), red words on dark (#FF9AAA) and success words on dark (O2.md's interim ruling until C74 is decided) into client/ui/tokens.json; the scrim's text_bg names its own #0A0620; status words below 36 points move onto their fills (rb_theme.gd status_colour; result, observatory, curation, lab and account screens, which no screen maker owns in phase 0); regenerate art/ui/board/tokens.css with build_tokens.mjs; record again the counts and stills they move, with a dated line in kit-spec.md section 9",
+      "title": "Kit tokens, the rest of O2's redirect (K1-R6): write kit-spec.md section 2.1's revised backdrop (#171046 to #2C3AA8, linear, until C75 is decided), red words on dark (#FF9AAA) and success words on dark (O2.md's interim ruling until C74 is decided) into client/ui/tokens.json; the scrim's text_bg names its own #0A0620; status words below 36 points move onto their fills (rb_theme.gd status_colour; result, observatory, curation, lab and account screens, which no screen maker owns in phase 0); regenerate art/ui/board/tokens.css with build_tokens.mjs; record again the counts and stills they move, with a dated line in kit-spec.md section 9; success words below 36 points do not move onto the #3FBF7F fill, where no ink reaches Lc 60 (AIA-R8): they keep their icon and today's colour until C74 is decided or the success fill is darkened",
       "role": "K1",
       "assigned_to": "K1",
       "files": [
@@ -672,7 +678,13 @@
         "client/scripts/screen_account.gd"
       ],
       "exceptions": [
-        "art/ui/board/tokens.css"
+        "art/ui/board/tokens.css",
+        "client/scripts/screen_parts.gd",
+        "client/scripts/realm_screen.gd",
+        "client/scripts/ui.gd",
+        "art/ui/keyframes/03-result.html",
+        "art/ui/keyframes/03-result*.png",
+        "art/ui/keyframes/03-result*.shot.json"
       ],
       "deps": [
         "P0-K1-tokens",
@@ -690,12 +702,18 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-10-31T17:05:00Z",
+        "seen_at": "2026-10-31T19:40:00Z",
+        "lease_until": "2026-10-31T21:50:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "785cb2a8",
+      "merged_sha": "eec44b50"
     },
     {
       "id": "P0-AD-golden-2",
@@ -723,12 +741,21 @@
       "estimate_h": 1,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-10-31T14:30:00Z",
+        "seen_at": "2026-10-31T15:40:00Z",
+        "lease_until": "2026-10-31T17:30:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "b6fce494",
+      "merged_sha": "520565f9",
+      "exceptions": [
+        "tools/ui_gate/golden.py"
+      ]
     },
     {
       "id": "O3",
@@ -758,12 +785,18 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-10-31T16:25:00Z",
+        "seen_at": "2026-10-31T17:11:50Z",
+        "lease_until": "2026-10-31T19:25:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
+      "ready_sha": "c89f4e8f",
+      "merged_sha": "316ff98c",
       "default": "none: AD decides; a disagreement is labelled fail"
     },
     {
@@ -782,13 +815,52 @@
         "O3"
       ],
       "done_when": [
-        "the judge meets its target on the held-out third, or each quality that misses is listed as owner-checked",
+        "the tool, the split, the anchors, the run plans and the method in calibration.md (AD-R6: the held-out result moves to P0-AD-calibrate-2)",
         "rubric and golden set committed as version 1",
         "bash tools/check_all.sh"
       ],
       "gate_items": [],
       "attempts": 0,
       "estimate_h": 3,
+      "tier": 1,
+      "critical": true,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-10-31T18:40:00Z",
+        "seen_at": "2026-10-31T19:40:00Z",
+        "lease_until": "2026-10-31T21:40:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "3f3797c7",
+      "merged_sha": "eec44b50"
+    },
+    {
+      "id": "P0-AD-calibrate-2",
+      "title": "Calibration results (AD-R6): score the lead's development runs dev-fable and dev-opus with calibrate.py, choose the judge (Fable 5.1 unless Opus 5.5 catches more), revise any missing quality's prompt at most twice (a rubric version bump), plan the held-out run held-<model> and launch it, score it and fill calibration.md's results",
+      "phase": 0,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P0-AD-calibrate"
+      ],
+      "requires": "both development runs written to docs/art/ui-quality/gate/verdicts/P0-AD-calibrate/ by the lead",
+      "done_when": [
+        "the judge meets its target on the held-out third, or each quality that misses is listed as owner-checked",
+        "rubric and golden set committed as version 1",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2,
       "tier": 1,
       "critical": true,
       "state": "open",
@@ -1349,5 +1421,30 @@
       "claim": null
     }
   ],
-  "messages": []
+  "messages": [
+    {
+      "id": "M1",
+      "to": "AIA",
+      "text": "From the owner (progress report KPIs, measured at main 3c4b791f). Two of your KPIs are worse than expected. (1) First style approval: 7 of 11 points passed at O2 (target 90% or more); B3, B4, B5 and B11 were sent back. Lesson: before you mark a board or keyframe task ready, score every point yourself against AD's rubric (docs/art/ui-quality/gate/rubric.md) and run tools/ui_gate/checks.py value-steps; put that self-score in the handoff evidence. (2) Largest single session: 47M tokens on a 4h task (2.4 times the average; target twice or less). Lesson: work from reduced-size previews, and when a session passes about 20M tokens, write the handoff and end it. Add M1 to acks when read.",
+      "sent_at": "2026-10-31T17:05:00Z",
+      "ack_by": "2026-10-31T19:05:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M2",
+      "to": "K1",
+      "text": "From the owner (progress report KPIs, measured at main 3c4b791f). Rework from review is worse than expected: 4.5h, 8% of phase 0 (target 5% or less). Its biggest part was the kit contract: four values in section 2.1 differed from §21.2 and §21.8 and came back as P0-K1-contract-2. Lesson: before asking for approval, check every value in a contract or token file against the design sections it cites, and list that check in the handoff evidence. Add M2 to acks when read.",
+      "sent_at": "2026-10-31T17:05:00Z",
+      "ack_by": "2026-10-31T19:05:00Z",
+      "acked_at": "2026-10-31T18:29:00Z"
+    },
+    {
+      "id": "M3",
+      "to": "lead",
+      "text": "From the owner (progress report KPIs, measured at main 3c4b791f). Three of your KPIs are worse than expected. (1) Setup failures before checks: 3 (target 0); runs stopped on a missing compile target or lint tool. Lesson: put the fresh-container tool line (rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install \"gdtoolkit==4.*\" \"playwright==1.63.0\"; then bash client/build.sh) in every agent start prompt, before its first pre-check. (2) Wait from ready to merged: median 2.1h (target 2h or less). Lesson: start a candidate's checks in the same cycle the task turns ready, and batch tasks that became ready together. (3) Scope added: +9.5h (target 4.7h or less). Lesson: when an approval redirects work, plan the whole follow-up chain with estimates at once, not one task at a time (contract-2, tokens, tokens-2 and board-4 came in pieces). Add M3 to acks when read.",
+      "sent_at": "2026-10-31T17:05:00Z",
+      "ack_by": "2026-10-31T19:05:00Z",
+      "acked_at": "2026-10-31T17:50:00Z"
+    }
+  ]
 }

@@ -18,7 +18,10 @@ How to fill it in:
 - Do not change the Item or Quality columns. `python3 tools/ui_gate/golden.py
   check` fails if the rows no longer match items.json.
 
-Who labels: at O3, AD labels every row. At P0-AD-calibrate, the set is split
-into thirds and a second labeller labels the held-out third blind. That
-labeller is a fresh subagent given only rubric.md and the held-out images. The
-two sets of labels are then compared row by row.
+Who labels: at O3, AD labels every row here. A fresh subagent, given only
+gate/rubric.md and the held-out images, labels the held-out third (the items
+with `third` 3 in items.json) blind, in labels-blind.md. The two sets of labels
+are then compared row by row. Where they disagree on a held-out row, the label
+here becomes `fail`, and the critique says what each labeller saw.
+P0-AD-calibrate uses the agreement on the held-out third to calibrate the
+judge.

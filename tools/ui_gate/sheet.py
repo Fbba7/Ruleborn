@@ -18,8 +18,8 @@ of docs/art/ui-quality/report.md; gate/rubric.md, "The method at a glance").
         The colour-blindness sheet: the still beside its protanopia,
         deuteranopia and tritanopia simulations (quality 8).
     sheet.py --self-test
-        The tests of this file, colour.py and checks.py, and golden.py's
-        tests and check.
+        The tests of this file, colour.py and checks.py, golden.py's tests
+        and check, and calibrate.py's tests.
 
 Every output is a PNG, made the same way from the same input.
 """
@@ -236,6 +236,8 @@ def self_test():
     import golden  # the golden set's plants, and its items, images and form
     golden.self_test()
     golden.check()
+    import calibrate  # the judge's calibration: the sampling rule, rates, anchors, audit
+    calibrate.self_test()
 
 
 def main(argv):

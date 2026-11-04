@@ -102,7 +102,7 @@ func _header() -> Control:
 	title.set_meta("points", 26.0)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	title.add_theme_color_override("font_color", Tokens.color("gold"))
+	title.add_theme_color_override("font_color", Tokens.color("gold_top"))
 	title.add_theme_color_override("font_outline_color", Tokens.color("ink_deep"))
 	title.add_theme_constant_override("outline_size", UI.px(3))
 	title.name = "RealmName"

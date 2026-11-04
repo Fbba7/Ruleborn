@@ -104,6 +104,14 @@ func _backgrounds(c: Control) -> Array[Color]:
 	var fills: Array[Color] = []
 	var n: Node = c
 	while n != null and fills.is_empty():
+		# Words carried on a fill of their own (an alarm on a dark family,
+		# RbTheme.status_fill) are read on that fill.
+		if n is Label:
+			var own := (n as Label).get_theme_stylebox("normal")
+			if own is StyleBoxFlat and (own as StyleBoxFlat).bg_color.a > 0.5:
+				fills.append((own as StyleBoxFlat).bg_color)
+				n = n.get_parent()
+				continue
 		# A fill a style box cannot say — a gradient material — says what its
 		# words sit on itself (StageHeroMaterial).
 		if n.has_meta("behind"):
@@ -213,6 +221,9 @@ func _kit_pairs(hc: bool) -> Array:
 				var under: Array = Tokens.material(surface)["text_bg"]
 				if bool(Tokens.material(surface)["over_world"]):
 					under = _skies().map(func(sky: Color) -> Color: return ColourCheck.over(Tokens.color("glass"), sky))
+				var fill := RbTheme.status_fill(status, family)
+				if fill.a > 0.0:
+					under = [fill]
 				for bg: Color in under:
 					if not ColourCheck.readable(words, bg, UI.TEXT_POINTS, status != "info" and status != "confirming"):
 						bad.append("%s words on %s%s: %.2f:1, Lc %.0f" % [status, surface, " (hc)" if hc else "",
