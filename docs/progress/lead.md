@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxp3mbYDaJnVdPiRV3R` (cycle 29,
-4 November 2026, from 06:39Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxrFapFkzWn83y5X9ky` (cycle 30,
+4 November 2026, from 07:39Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -177,6 +177,14 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 30, 4 November 2026, from 07:39Z (session
+  `session_01SNkKxrFapFkzWn83y5X9ky`, started by the launcher):
+  bookkeeping only. No roster branch moved since cycle 29 (AD, AIA, K1
+  and SV all `waiting` on tasks already merged; no new requests), no
+  merge lock, nothing ready, nothing merged, pages not republished, no
+  session started. The seven-day bar still reads `allowed_warning`
+  (reset 2026-11-09T17:00Z).
+- Next: as cycle 27 says below. Never use Fable 5.1 (CLAUDE.md).
 - Cycle 29, 4 November 2026, from 06:39Z (session
   `session_01SNkKxp3mbYDaJnVdPiRV3R`, started by the launcher):
   bookkeeping only. No roster branch moved since cycle 28 (AD, AIA, K1
