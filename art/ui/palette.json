@@ -858,6 +858,22 @@
     ]
   },
   "kit": {
+    "bar_neutral_bottom": {
+      "value": "#B4B4B4",
+      "from": "neutral, tinted: a bar's foot"
+    },
+    "bar_neutral_top": {
+      "value": "#FFFFFF",
+      "from": "neutral, tinted: a bar's lit top"
+    },
+    "card_locked_bottom": {
+      "value": "#16202C",
+      "from": "card #1A1134 toward locked teal, a step"
+    },
+    "card_locked_top": {
+      "value": "#22303E",
+      "from": "card #261A4C toward locked teal #3A8A90, a step"
+    },
     "disabled_hc": {
       "value": "#8A8494",
       "from": "every disabled face in high contrast: one grey"
@@ -865,6 +881,26 @@
     "disabled_line": {
       "value": "#2E2632",
       "from": "ink_line softened: a flat face's edge"
+    },
+    "disc_lip": {
+      "value": "#2A1E7A",
+      "from": "tab_active_bottom #4532B8, deeper: the violet disc's lip"
+    },
+    "disc_pressed_bottom": {
+      "value": "#3A2A9E",
+      "from": "tab_active_bottom x0.86"
+    },
+    "disc_pressed_mid": {
+      "value": "#5848D2",
+      "from": "tab_active_mid x0.86"
+    },
+    "disc_pressed_top": {
+      "value": "#7A8AE6",
+      "from": "tab_active_top x0.86"
+    },
+    "edge_hc": {
+      "value": "#B8A8D8",
+      "from": "text_on_night_3: a dark piece's 3-point edge in high contrast, 7:1 on the hc night"
     },
     "gold_disabled": {
       "value": "#B8A88C",
@@ -934,6 +970,14 @@
       "value": "#2E1826",
       "from": "leather_mid x0.8"
     },
+    "lock_light": {
+      "value": "#F3EEFF",
+      "from": "text_on_night: the lock mark's body"
+    },
+    "lock_shade": {
+      "value": "#B8A8D8",
+      "from": "text_on_night_3: the lock mark's shaded side and shackle"
+    },
     "locked_bottom": {
       "value": "#30707A",
       "from": "gradient.locked's #245A66, lifted"
@@ -958,6 +1002,10 @@
       "value": "#B08A4A",
       "from": "tertiary parchment, flat, darker"
     },
+    "plate_hc": {
+      "value": "#2A2060",
+      "from": "gradient.plate_dark's top, flat"
+    },
     "red_disabled": {
       "value": "#8A5862",
       "from": "alarm, desaturated; on_alarm 5.9:1"
@@ -973,6 +1021,30 @@
     "red_pressed_top": {
       "value": "#E86A7C",
       "from": "alarm_light x0.86"
+    },
+    "school_dark": {
+      "value": "#8E8E8E",
+      "from": "neutral, tinted: the ground's foot"
+    },
+    "school_disabled": {
+      "value": "#8A8A8A",
+      "from": "neutral, flat: the tint comes out muted"
+    },
+    "school_light": {
+      "value": "#FFFFFF",
+      "from": "neutral, tinted: the ground's lit top becomes the school colour"
+    },
+    "school_lip": {
+      "value": "#4A4A4A",
+      "from": "neutral, tinted: the lip, the school colour's deep shade"
+    },
+    "school_mid": {
+      "value": "#D2D2D2",
+      "from": "neutral, tinted: the ground's body, a step under the school colour"
+    },
+    "school_pressed": {
+      "value": "#B4B4B4",
+      "from": "school_mid, darker: pressed"
     },
     "tertiary_parchment_bottom": {
       "value": "#C6A266",
@@ -1009,6 +1081,10 @@
     "violet_hc_pressed": {
       "value": "#4C3C96",
       "from": "tertiary violet, flat, darker"
+    },
+    "warn_cap": {
+      "value": "#F07A3C",
+      "from": "energy: tag_warn's cap (not amber, so gold keeps one role)"
     }
   }
 }

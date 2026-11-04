@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="40" data-slice="19 18 19 21">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#140A16"/><stop offset="1" stop-color="#24142A"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.102"/><stop offset="0.7" stop-color="#FFFFFF" stop-opacity="0.0431"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.0196"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F9DE9C" stop-opacity="0.451"/><stop offset="0.45" stop-color="#F9DE9C" stop-opacity="0"/><stop offset="1" stop-color="#F9DE9C" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="1" stop-color="#24142A"/><stop offset="0" stop-color="#140A16"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0.502"/><stop offset="0.45" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <rect x="1" y="3" width="40" height="36" rx="18" fill="#0A0408"/>
+    <rect x="1" y="1" width="40" height="36" rx="18" fill="url(#g1)"/>
+    <rect x="5" y="3.5" width="32" height="13" rx="15" fill="url(#g2)"/>
+    <rect x="2.75" y="2.75" width="36.5" height="32.5" rx="16.25" fill="none" stroke="#E9B65C" stroke-width="1.5" stroke-opacity="0.902"/>
+    <rect x="4" y="4" width="34" height="30" rx="15" fill="none" stroke="url(#g3)" stroke-width="1"/>
+    <rect x="1" y="1" width="40" height="36" rx="18" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <rect x="1" y="3" width="40" height="36" rx="18" fill="#000000"/>
+    <rect x="1" y="1" width="40" height="36" rx="18" fill="#140A16"/>
+    <rect x="2" y="2" width="38" height="34" rx="16.5" fill="none" stroke="#B8A8D8" stroke-width="3"/>
+  </g>
+  <g data-state="pressed">
+    <rect x="1" y="3" width="40" height="36" rx="18" fill="url(#g4)"/>
+    <rect x="2.75" y="4.75" width="36.5" height="32.5" rx="16.25" fill="none" stroke="#E9B65C" stroke-width="1.5" stroke-opacity="0.6"/>
+    <rect x="4.5" y="6.5" width="33" height="29" rx="14.5" fill="none" stroke="url(#g5)" stroke-width="2"/>
+    <rect x="1" y="3" width="40" height="36" rx="18" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+  </g>
+  <g data-state="pressed" data-mode="hc">
+    <rect x="1" y="3" width="40" height="36" rx="18" fill="#000000"/>
+    <rect x="2" y="4" width="38" height="34" rx="16.5" fill="none" stroke="#B8A8D8" stroke-width="3"/>
+  </g>
+</svg>

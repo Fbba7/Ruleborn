@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="54">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.6"/><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.4"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.451"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.251"/><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.4"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <circle cx="25" cy="29" r="23.5" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+    <circle cx="25" cy="25" r="21.75" fill="none" stroke="url(#g1)" stroke-width="2.5"/>
+    <ellipse cx="21" cy="13" rx="12" ry="6.24" fill="url(#g2)"/>
+    <circle cx="25" cy="25" r="23.5" fill="none" stroke="#1A0C14" stroke-width="2"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <circle cx="25" cy="29" r="23.5" fill="none" stroke="#000000" stroke-width="1.5"/>
+    <circle cx="25" cy="25" r="20.5" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+    <circle cx="25" cy="25" r="22.5" fill="none" stroke="#000000" stroke-width="3"/>
+  </g>
+  <g data-state="pressed">
+    <circle cx="25" cy="29" r="23.5" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+    <circle cx="25" cy="28" r="21.75" fill="none" stroke="url(#g3)" stroke-width="2.5"/>
+    <circle cx="25" cy="28" r="23.5" fill="none" stroke="#1A0C14" stroke-width="2"/>
+  </g>
+  <g data-state="pressed" data-mode="hc">
+    <circle cx="25" cy="29" r="23.5" fill="none" stroke="#000000" stroke-width="1.5"/>
+    <circle cx="25" cy="28" r="20.5" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+    <circle cx="25" cy="28" r="22.5" fill="none" stroke="#000000" stroke-width="3"/>
+  </g>
+  <g data-state="disabled">
+    <circle cx="25" cy="25" r="23.5" fill="none" stroke="#2E2632" stroke-width="2"/>
+  </g>
+  <g data-state="disabled" data-mode="hc">
+    <circle cx="25" cy="25" r="20.5" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+    <circle cx="25" cy="25" r="22.5" fill="none" stroke="#000000" stroke-width="3"/>
+  </g>
+</svg>

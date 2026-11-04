@@ -1,0 +1,29 @@
+<svg data-tint="true" xmlns="http://www.w3.org/2000/svg" width="50" height="54">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <radialGradient id="g1" cx="0.42" cy="0.22" r="0.95" fx="0.42" fy="0.22"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#D2D2D2"/><stop offset="1" stop-color="#8E8E8E"/></radialGradient>
+    <radialGradient id="g2" cx="0.42" cy="0.22" r="0.95" fx="0.42" fy="0.22"><stop offset="0" stop-color="#D2D2D2"/><stop offset="0.55" stop-color="#B4B4B4"/><stop offset="1" stop-color="#8E8E8E"/></radialGradient>
+  </defs>
+  <g data-state="normal">
+    <circle cx="25" cy="29" r="23.5" fill="#4A4A4A"/>
+    <circle cx="25" cy="25" r="23.5" fill="url(#g1)"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <circle cx="25" cy="29" r="23.5" fill="#707070"/>
+    <circle cx="25" cy="25" r="23.5" fill="#FFFFFF"/>
+  </g>
+  <g data-state="pressed">
+    <circle cx="25" cy="29" r="23.5" fill="#4A4A4A"/>
+    <circle cx="25" cy="28" r="23.5" fill="url(#g2)"/>
+  </g>
+  <g data-state="pressed" data-mode="hc">
+    <circle cx="25" cy="29" r="23.5" fill="#707070"/>
+    <circle cx="25" cy="28" r="23.5" fill="#D0D0D0"/>
+  </g>
+  <g data-state="disabled">
+    <circle cx="25" cy="25" r="23.5" fill="#8A8A8A"/>
+  </g>
+  <g data-state="disabled" data-mode="hc">
+    <circle cx="25" cy="25" r="23.5" fill="#9A9A9A"/>
+  </g>
+</svg>
