@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxoTLAFfAWjeMPjhfvd` (cycle 39,
-4 November 2026, from 18:38Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxqTNCgdepYrCx4541M` (cycle 40,
+4 November 2026, from 19:39Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -80,7 +80,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
 | AIA-2 | `session_01SNkKxnfqxoDcFwrXf6z7o8` (working) | P1-AIA2-icons-1b | `claude/ui-artist-icons` | 2026-11-04 18:34Z |
-| K1 | `session_01SNkKxnnyL6yNX5UpCnt8dH` (working) | P1-K1-catalogue | `claude/ui-bake` | 2026-11-04 17:41Z |
+| K1 | `session_01SNkKxorLGKFDuXX2ULtTU2` (working) | P1-K1-catalogue (restart: resync, kit-2's skins missing from SKINS_OF) | `claude/ui-bake` | 2026-11-04 20:00Z |
+| K1 | `session_01SNkKxnnyL6yNX5UpCnt8dH` (idle, replaced) | P1-K1-catalogue | `claude/ui-bake` | 2026-11-04 17:41Z |
 | AIA | `session_01SNkKxqGqwHJU12VPiWB68i` (working) | P1-AIA-kit-3 | `claude/ui-artist` | 2026-11-04 19:20Z |
 | AIA | `session_01SNkKxmwaE4rQY339ct2nz9` (idle, done) | P1-AIA-kit-2 | `claude/ui-artist` | 2026-11-04 16:25Z |
 | K1 | `session_01SNkKxrN8TYssSGXSznyneA` (idle, done) | P1-K1-atlas-draw | `claude/ui-bake` | 2026-11-04 14:41Z |
@@ -216,6 +217,33 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 40, 4 November 2026, from 19:39Z (session
+  `session_01SNkKxqTNCgdepYrCx4541M`, started by the launcher): ran
+  P1-AIA2-icons-1b's gate on `bef6eac2` (icon sheet, batch 1b, six icons
+  at 48 and 96 pt and in grayscale; 12 Opus 5.5 ui-judge samples,
+  advisory): Layered materials, Painted or rendered icons, Colour roles
+  and value, and Light behind UI pass 3 of 3; icons-1a's fails do not
+  recur. Verdicts and owner-inbox entry in `ecdff43a`, no answer needed;
+  AIA2-R2 default applied (insight stays dropped from list.md, batch 1b
+  closes at six icons). AIA-2 marks the task ready itself. Built
+  P1-K1-catalogue's candidate `60d78155` (main + `c3a8b158`): guard.sh OK
+  (after `npm ci` in tools/ui_research of the candidate worktree), but
+  check_all FAIL, 391 of 392: the catalogue coverage test finds kit-2's
+  skins (badge, bar_fill, bar_track, disc, locked, panel_dark,
+  panel_glass, pill, selected, spinner) with art but no component in
+  SKINS_OF, and locked__locked__normal and bar_track__bar_track__locked
+  drawn from the code-drawn box. K1's branch predates kit-2 (`661f4f6a`).
+  Set the task to `resync` (lease 23:00Z) and restarted K1
+  (`session_01SNkKxorLGKFDuXX2ULtTU2`) with the failure lines. Three
+  builders (AIA kit-3, AIA-2 icons-1b, K1), the D13 (c) cap. Godot's
+  untracked .uid/.import files deleted, not committed. Pages not
+  republished (main's code did not move).
+- Next: merge K1's catalogue once it is ready again (rebuild the
+  candidate, check_all and guard.sh); merge AIA-2's icons-1b on ready
+  (gate passed); gate and merge AIA's kit-3 on ready (its gate item: numerals sheet at
+  phone size, 100% and 200% text; Display type, Colour roles and value).
+  Set `expected_next_update_by` past any merge lock. Never use Fable 5.1
+  (CLAUDE.md).
 - Cycle 39, 4 November 2026, from 18:38Z (session
   `session_01SNkKxoTLAFfAWjeMPjhfvd`, started by the launcher): ran
   P1-AIA-kit-2's gate on `fccd4b89` (contact sheets of the 23 batch 1b
@@ -231,11 +259,6 @@ Your session was created with the repository checked out at main; work in that c
   (catalogue) and AIA-2 (icons-1b) still working: three builders, the
   D13 (c) cap. Godot's untracked .uid/.import files deleted, not
   committed. Pages not republished.
-- Next: gate and merge K1's catalogue, AIA-2's icons-1b and AIA's kit-3
-  as each reaches `ready` (kit-3's gate item: numerals sheet at phone
-  size, 100% and 200% text; Display type, Colour roles and value). Set
-  `expected_next_update_by` past any merge lock. Never use Fable 5.1
-  (CLAUDE.md).
 - Cycle 38, 4 November 2026, from 16:39Z (session
   `session_01SNkKxogLFWgTcU9Pd3EKdc`, started by the launcher): merged
   P1-K1-atlas-draw as `62188517` (candidate `a6212fcd`, ready at
