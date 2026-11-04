@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="24">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EEFF"/><stop offset="1" stop-color="#B8A8D8"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <rect x="3" y="11.5" width="15" height="11.5" rx="3" fill="#0A0408" fill-opacity="0.6"/>
+    <path d="M6 11 V7.5 a4 4 0 0 1 8 0 V11" fill="none" stroke="#1A0C14" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M6 11 V7.5 a4 4 0 0 1 8 0 V11" fill="none" stroke="#B8A8D8" stroke-width="2" stroke-linecap="round"/>
+    <rect x="2.5" y="10" width="15" height="11.5" rx="3" fill="url(#g1)"/>
+    <rect x="4" y="11.25" width="12" height="2" rx="1" fill="#FFFFFF" fill-opacity="0.6"/>
+    <rect x="2.5" y="10" width="15" height="11.5" rx="3" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+    <circle cx="10" cy="14.5" r="1.75" fill="#120C2A"/>
+    <rect x="9.25" y="15" width="1.5" height="3.5" fill="#120C2A"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <path d="M6 11 V7.5 a4 4 0 0 1 8 0 V11" fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round"/>
+    <path d="M6 11 V7.5 a4 4 0 0 1 8 0 V11" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+    <rect x="2.5" y="10" width="15" height="11.5" rx="3" fill="#FFFFFF" stroke="#000000" stroke-width="3"/>
+    <circle cx="10" cy="14.5" r="1.75" fill="#000000"/>
+    <rect x="9.25" y="15" width="1.5" height="3.5" fill="#000000"/>
+  </g>
+</svg>

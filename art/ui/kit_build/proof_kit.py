@@ -249,8 +249,9 @@ def main(argv):
                 r["mode"], r["state"] = mode, state
                 fails += r["result"] == "FAIL"
             results += rows
-        # Contact sheet: every piece at phone size, as the gate's tool draws it.
-        names = sorted(atlas.man["pieces"])
+        # Contact sheet: each piece at phone size, as the gate's tool draws it.
+        # Batch 1a's pieces only; proof_1b.py draws batch 1b's.
+        names = sorted(n for n in atlas.man["pieces"] if n.rsplit("__", 1)[0] in USES)
         tiles = []
         for n in names:
             p = atlas.man["pieces"][n]
