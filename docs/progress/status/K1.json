@@ -3,26 +3,21 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P0-K1-kitspec-3",
-  "task_state": "ready",
-  "claimed_at": "2026-11-04T12:50:00Z",
-  "lease_until": "2026-11-04T15:50:00Z",
-  "updated_at": "2026-11-04T13:22:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P1-K1-atlas-draw",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-04T14:45:00Z",
+  "lease_until": "2026-11-04T17:45:00Z",
+  "updated_at": "2026-11-04T14:45:00Z",
+  "expected_next_update_by": "2026-11-04T15:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "9a6565d7",
-    "next_step": "P0-K1-kitspec-3 ready at 9a6565d7; wait for the lead's merge, then P1-K1-atlas-draw"
+    "next_step": "read KitSkin, RbBox and the bake; draw a fixture atlas"
   },
-  "precheck": {
-    "sha": "9a6565d7bed4b4192ab5d867d76129f75e0e8595",
-    "exit": 0,
-    "finished_at": "2026-11-04T13:19:15Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "9a6565d7bed4b4192ab5d867d76129f75e0e8595",
+  "ready_sha": null,
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [
     "M2"
