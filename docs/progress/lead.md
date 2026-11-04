@@ -187,6 +187,9 @@ Your session was created with the repository checked out at main; work in that c
   the judge; rubric version 3; the held-out run `held-opus` missed the
   target on all eight judged qualities, so all eight are owner-checked (AD
   checks each on every board; the judge's verdicts are advice).
+  Pages not republished: the merge changed neither `docs/audit/`,
+  `docs/roadmap/` nor their generators' sources, so the published pages
+  already match main.
   AD's request on `results.jsonl` takes its default: the runs stay in
   `gate/calibration/runs/`. AD has no open task left (session idle, done).
 - Filed K1-R9 (the overseer's follow-up to C74 and C75) as
