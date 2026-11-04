@@ -1,9 +1,9 @@
 # AIA AI UI artist: progress
 
-- Status: Green: P1-AIA-kit-2 built and proofed; pre-check pending.
-- Progress: 5 tasks merged, P0-AIA-keyframes-3, P0-AIA-board-4 and P1-AIA-kit-1 ready, P1-AIA-kit-2 in pre-check; 0 items passed by the gate.
+- Status: Green: pre-check PASS at fccd4b89 (2026-11-04T17:28:21Z); P1-AIA-kit-2 is ready.
+- Progress: 5 tasks merged, P0-AIA-keyframes-3, P0-AIA-board-4 and P1-AIA-kit-1 ready, P1-AIA-kit-2 ready; 0 items passed by the gate.
 - Done: P1-AIA-kit-2: kit batch 1b, panel_dark, panel_glass, well, badge, pill, tag, bar_track, bar_fill and disc, with the overlays (selected rim, lock, attention dot, spinner), each in its states with high-contrast twins, baked into `client/ui/art/kit.webp`, `kit_hc.webp` and `kit.json`; disc_school written and proofed beside the kit in `art/ui/kit_next/` (AIA-R13).
-- Next: the pre-check, then the gate on the kit atlas contact sheet, batch 1b.
+- Next: wait for the lead (gate on the kit atlas contact sheet, batch 1b).
 - Blocked by: none.
 - Owner decision needed: none. Requests AIA-R9 to AIA-R14 to K1 are in the status file, each with a default.
 
@@ -17,12 +17,12 @@
 | P0-AIA-keyframes-3: settings and the contact sheet | 2 | Ready at 5eec1b60 (pre-check PASS) | `node art/ui/keyframes/check_keyframes.mjs`: all 30 stills pass. Settings: 5 controls (3 at 200%), smallest touch area 52 points, 20 words (8 at 200%), worst 8.59:1. All 30 shots pass value-steps. `contact_sheet.png` is 1882 x 3085. `--self-test`: each planted fault fails, including a contact sheet of the wrong size. `bash tools/run_checks.sh`: all checks passed. |
 | P0-AIA-board-4: the board's words for the revised tokens (K1-R6) | 1 | Ready at b83a0b4d (pre-check PASS) | `node art/ui/board/check_board.mjs` and `--revised` (section 2.1's backdrop #171046 to #2C3AA8, #FF9AAA, #3FBF7F tried over `tokens.css`): 378 words pass in both modes, 8 icons keep the outline rule, 16 controls pass value-steps; `--self-test`: each planted fault fails, including a regular-weight caption on the revised backdrop; `board.png`, `board_hc.png` |
 | P1-AIA-kit-1: kit art batch 1a | 4 | Ready at c8915bc3 (pre-check PASS) | `node tools/ui_bake/bake.js --check`: kit 28 pieces, 2048 x 2048, 446350 bytes for both atlases. `python3 art/ui/kit_build/proof_kit.py --check`: 280 results, 0 fail: 152 value-steps (76 a mode; worst ΔL* 21.9 normal, 23.8 high contrast, both `button_danger__box__pressed` on the backdrop) and 128 label contrasts (worst 4.78:1 normal, tertiary on the backdrop; 5.81:1 high contrast). Contact sheets `art/ui/kit_build/proof/contact_normal.png`, `contact_hc.png` (sheet.py contact, 60 and 120 points). |
-| P1-AIA-kit-2: kit art batch 1b | 4 | Built at HEAD (pre-check pending) | `node tools/ui_bake/bake.js --check`: kit 51 pieces, 2048 x 2048, 797984 bytes for both atlases. `python3 art/ui/kit_build/proof_1b.py --check`: 142 results, 0 fail: 92 value-steps (46 a mode; worst ΔL* 23.0 normal, 26.1 high contrast, both the pressed disc on the backdrop) and 50 label contrasts (worst 5.53:1 normal, the violet tag on the dark card; 7.08:1 high contrast). `proof_kit.py --check` (batch 1a) still 280 results, 0 fail. Contact sheets `art/ui/kit_build/proof_1b/contact_1b_normal.png`, `contact_1b_hc.png` (60 and 120 points); stills `controls_<mode>.png`, `surfaces_<mode>.png`. |
+| P1-AIA-kit-2: kit art batch 1b | 4 | Ready at fccd4b89 (pre-check PASS) | `node tools/ui_bake/bake.js --check`: kit 51 pieces, 2048 x 2048, 797984 bytes for both atlases. `python3 art/ui/kit_build/proof_1b.py --check`: 142 results, 0 fail: 92 value-steps (46 a mode; worst ΔL* 23.0 normal, 26.1 high contrast, both the pressed disc on the backdrop) and 50 label contrasts (worst 5.53:1 normal, the violet tag on the dark card; 7.08:1 high contrast). `proof_kit.py --check` (batch 1a) still 280 results, 0 fail. Contact sheets `art/ui/kit_build/proof_1b/contact_1b_normal.png`, `contact_1b_hc.png` (60 and 120 points); stills `controls_<mode>.png`, `surfaces_<mode>.png`. |
 
 
 ## Handoff
 - M1 (acked 2026-11-04): scored against `docs/art/ui-quality/gate/rubric.md` below, value-steps run, from reduced-size previews.
-- Last verified commit: see the status file's `precheck`.
+- Last verified commit: fccd4b89 (pre-check green, 2026-11-04T17:28:21Z).
 - Done (P1-AIA-kit-2):
   - `art/ui/kit_build/kit_1b.py` (called from `build_kit.py`) writes batch 1b's sources from the tokens: `panel_dark/box` (normal, locked), `panel_glass/box`, `well/box`, `badge/box` and `badge/dot`, `pill/box` (normal, pressed), `tag/box`, `tag/tag_violet`, `tag/tag_warn`, `bar_track/box` and `bar_track/tick`, `bar_fill/box` (a neutral, tinted per use) and `bar_fill/alarm`, `disc/box` (normal, pressed, disabled, locked) and `disc/level_disc`, the overlays `selected/rim`, `locked/lock`, `spinner/ring`; and `kit_next/disc_school/box` (tinted per school) plus `frame` (untinted ink, gloss, outline), normal, pressed, disabled.
   - Every piece has its `data-mode="hc"` twin: opaque flat fills, black or lavender (`edge_hc`) edges, no gloss.
@@ -36,7 +36,7 @@
 - Known limits: the pill does not go on parchment (light on light); disc_school is not in the atlas (AIA-R13); the new skins are not in `KitSkin.SKINS` (AIA-R14). Out of this task: kit-1's parchment tertiary (the Colour roles fail) is not changed here.
 - Half done: none.
 - Open hypotheses: the kit needs atlas pages (AIA-R12, AIA-R13): batch 1b fills 2048 x ~1900.
-- Next step: pre-check, then the gate; wait for the lead.
+- Next step: none; wait for the lead.
 
 ## Tried and failed
 - 2026-10-31 Pre-check in a fresh container: it failed three times on missing one-time setup (the WebAssembly Rust target, gdlint, Python Playwright), not on the change. Installing what the README's "Once" block lists, with Python Playwright pinned to the pre-installed 1.63.0 so it finds the browser in /opt/pw-browsers, passed it.
