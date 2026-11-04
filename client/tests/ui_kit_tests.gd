@@ -10,6 +10,11 @@ extends RefCounted
 ## draws from the atlas, and a piece the atlas lacks falls back to the
 ## code-drawn box (kit-spec.md sections 6.7 and 8.2).
 
+## The baked fixture kit (tests/fixtures/ui_kit, baked by tools/ui_bake from
+## its own sources): the gold button's skin, the tertiary's parchment face
+## and a tinted disc, normal and high contrast.
+const FIXTURE := "res://tests/fixtures/ui_kit/kit.json"
+
 var tree: SceneTree
 var check: Callable
 
@@ -31,6 +36,8 @@ func run() -> void:
 	await _pieces()
 	_skins()
 	await _switch()
+	await _fixture()
+	_pages()
 	_skies()
 
 
@@ -370,6 +377,136 @@ func _switch() -> void:
 	check.call("a skin switched on draws its materials from the kit's atlas (its _hc twin in high contrast) and one "
 			+ "switched off from the code-drawn box; a piece the atlas lacks falls back to the code-drawn box and "
 			+ "is logged once (kit-spec.md section 6.7)", bad.is_empty(), "; ".join(bad))
+
+
+## The colour at the middle of piece `p` in the page it is cut from.
+static func _middle(p: Dictionary) -> Color:
+	var tex := KitSkin.texture(p)
+	if tex == null:
+		return Color(0, 0, 0, 0)
+	var at := Vector2i(int(p["x"]) + int(p["w"]) / 2, int(p["y"]) + int(p["h"]) / 2)
+	return tex.get_image().get_pixelv(at)
+
+
+func _fixture() -> void:
+	var bad := []
+	KitSkin.reset()
+	if not KitSkin.use_files(FIXTURE):
+		check.call("the baked fixture kit loads", false, FIXTURE)
+		return
+	var pieces: Dictionary = (JSON.parse_string(FileAccess.get_file_as_string(FIXTURE)) as Dictionary)["pieces"]
+	for k: String in ["button_primary", "button_tertiary", "button_danger"]:
+		KitSkin.switch(k, true)
+	var screen := VBoxContainer.new()
+	screen.size = Vector2(1080, 2340)
+	tree.root.add_child(screen)
+	var play := Button.new()
+	play.text = "Play"
+	screen.add_child(play)
+	var play_box := KitSkin.button(play, "gold")
+	var wait := Button.new()
+	wait.text = "Wait"
+	wait.disabled = true
+	screen.add_child(wait)
+	var wait_box := KitSkin.button(wait, "gold")
+	# The tertiary on parchment takes its parchment face; on the dark card
+	# the fixture has no face for it, and the code-drawn box draws it.
+	var sheet := PanelContainer.new()
+	screen.add_child(sheet)
+	KitSkin.panel(sheet, "parchment")
+	var rows := VBoxContainer.new()
+	sheet.add_child(rows)
+	var later := Button.new()
+	later.text = "Later"
+	rows.add_child(later)
+	var later_box := KitSkin.button(later, "ghost")
+	var gone := Button.new()
+	gone.text = "Gone"
+	gone.disabled = true
+	rows.add_child(gone)
+	var gone_box := KitSkin.button(gone, "ghost")
+	var card := PanelContainer.new()
+	screen.add_child(card)
+	KitSkin.panel(card, "card")
+	var skip := Button.new()
+	skip.text = "Skip"
+	card.add_child(skip)
+	var skip_box := KitSkin.button(skip, "ghost")
+	var leave := Button.new()
+	leave.text = "Quit"
+	screen.add_child(leave)
+	var leave_box := KitSkin.button(leave, "red")
+	for i: int in 2:
+		await tree.process_frame
+	var p := play_box.piece()
+	if p != pieces["button_primary__box__normal"] or play_box.find_child("KitFace", true, false) == null:
+		bad.append("the gold button switched on does not take the fixture's normal face")
+	elif not _middle(p).is_equal_approx(Color("#E0B040")):
+		bad.append("the gold's face is %s in the normal atlas, not #E0B040" % _middle(p).to_html(false))
+	var drawn := false
+	for sb: Variant in play_box._faces.values():
+		drawn = drawn or (sb is StyleBoxTexture and (sb as StyleBoxTexture).texture == KitSkin.texture(p))
+	if not drawn:
+		bad.append("the gold's face is not drawn from the normal atlas")
+	if wait_box.piece() != pieces["button_primary__box__disabled"]:
+		bad.append("a disabled gold button does not take the disabled face")
+	if later_box.piece() != pieces["button_tertiary__parchment__normal"]:
+		bad.append("the tertiary on parchment does not take button_tertiary__parchment__normal")
+	if not gone_box.piece().is_empty() or "button_tertiary__parchment__disabled" not in KitSkin.missing:
+		bad.append("a missing parchment face is not drawn by the code-drawn box and logged")
+	if not skip_box.piece().is_empty() or "button_tertiary__ghost__normal" not in KitSkin.missing:
+		bad.append("the tertiary off parchment takes a face the fixture lacks, or is not logged")
+	if not leave_box.piece().is_empty() or "button_danger__red__normal" not in KitSkin.missing:
+		bad.append("a skin on whose pieces the atlas lacks is not drawn by the code-drawn box and logged")
+	var normal := KitSkin.texture(p)
+	Tokens.high_contrast = true
+	play_box.queue_redraw()
+	play_box._redraw()
+	await tree.process_frame
+	if KitSkin.texture(p) == normal or not _middle(p).is_equal_approx(Color("#000000")):
+		bad.append("high contrast does not take the fixture's _hc twin (%s)" % _middle(p).to_html(false))
+	drawn = false
+	for sb: Variant in play_box._faces.values():
+		drawn = drawn or (sb is StyleBoxTexture and (sb as StyleBoxTexture).texture == KitSkin.texture(p))
+	if not drawn:
+		bad.append("the gold's face is not drawn from the _hc atlas in high contrast")
+	Tokens.high_contrast = false
+	screen.queue_free()
+	KitSkin.reset()
+	await tree.process_frame
+	check.call("a skin switched on draws from the baked fixture's atlas, normal and high contrast; the tertiary on "
+			+ "parchment takes its parchment face (AIA-R9); a piece the atlas lacks falls back to the code-drawn "
+			+ "box and is logged (kit-spec.md sections 4.1, 6.7)", bad.is_empty(), "; ".join(bad))
+
+
+func _pages() -> void:
+	var bad := []
+	KitSkin.reset()
+	var tex := func(c: Color) -> ImageTexture:
+		var img := Image.create(16, 16, false, Image.FORMAT_RGBA8)
+		img.fill(c)
+		return ImageTexture.create_from_image(img)
+	var one: ImageTexture = tex.call(Color.WHITE)
+	var two: ImageTexture = tex.call(Color.RED)
+	var two_hc: ImageTexture = tex.call(Color.BLACK)
+	var pieces := {
+		"badge__box__normal": {"x": 0, "y": 0, "w": 8, "h": 8, "slice": null, "tint": false, "page": 2},
+		"badge__box__pressed": {"x": 0, "y": 0, "w": 8, "h": 8, "slice": null, "tint": false, "page": 3},
+	}
+	KitSkin.use({"format": 1, "family": "kit", "px_per_point": 6, "pieces": pieces}, one, one, [[two, two_hc]])
+	KitSkin.switch("badge", true)
+	var p := KitSkin.piece("badge")
+	if p != pieces["badge__box__normal"] or KitSkin.texture(p) != two:
+		bad.append("a piece on page 2 is not cut from page 2")
+	Tokens.high_contrast = true
+	if KitSkin.texture(p) != two_hc:
+		bad.append("a piece on page 2 does not take page 2's _hc twin in high contrast")
+	Tokens.high_contrast = false
+	if not KitSkin.piece("badge", "pressed").is_empty() or "badge__badge__pressed" not in KitSkin.missing:
+		bad.append("a piece on a page the atlas lacks is not drawn by the code-drawn box and logged")
+	KitSkin.reset()
+	check.call("a piece names the atlas page it is cut from (kit-spec.md section 6.6, AIA-R12)", bad.is_empty(),
+			"; ".join(bad))
 
 
 func _skies() -> void:

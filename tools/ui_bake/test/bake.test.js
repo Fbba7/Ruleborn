@@ -14,6 +14,7 @@ const { spawnSync, execFileSync } = require('child_process');
 const { manifestText, layout, paginate, palette, webpSize } = require('../bake.js');
 
 const BAKE = path.join(__dirname, '..', 'bake.js');
+const ROOT = path.join(__dirname, '..', '..', '..');
 const FIXTURE = path.join(__dirname, 'fixture');
 
 function scratch() {
@@ -320,4 +321,12 @@ test('bakes kind "scene" through the icon studio, from the real art only', () =>
   const r = run(['icons'], where);
   assert.equal(r.code, 2, r.out);
   assert.match(r.out, /a scene family bakes from art\/ui and tools\/ui_bake\/families\.json only/);
+});
+
+test("the Godot kit tests' fixture (client/tests/fixtures/ui_kit) is baked from its sources", () => {
+  const dir = path.join(ROOT, 'client/tests/fixtures/ui_kit');
+  const where = { config: path.join(dir, 'families.json'), art: path.join(dir, 'art'), out: dir };
+  const r = run(['--check'], where);
+  assert.equal(r.code, 0, `${r.out}\nrebake: node tools/ui_bake/bake.js kit --config ${where.config} --art ${where.art} --out ${dir}`);
+  assert.match(r.out, /ok {3}kit: 6 pieces/);
 });
