@@ -7,25 +7,30 @@ counting (P0-AD-calibrate).
 
 ## Where it stands
 
-- **Rubric version 2** (`rubric.md` and `prompts/`, P0-AD-calibrate-2, 3
-  November 2026) is the version being calibrated, with **golden set version
+- **Rubric version 3** (`rubric.md` and `prompts/`, P0-AD-calibrate-2, 3
+  November 2026; step 5's second and last revision) is the version being
+  calibrated, with **golden set version
   1** (`golden/items.json` version 1, 60 items; the labels in
   `golden/labels.md` and `golden/labels-blind.md` as O3 merged them at
   316ff98c). Version 1 (as merged at 167ccf6c) missed the target on all eight
   qualities with both models on the development third (Results below); step
-  5's first revision added each quality's "Rulings from calibration" and is
-  logged in `rubric.md`'s "Versions". The labels did not change.
+  5's first revision (version 2) added each quality's "Rulings from
+  calibration"; version 2 then met the target on 1, 2, 8 and 14, and the
+  second revision (version 3) added rulings for 6, 9 and 13. Both are logged
+  in `rubric.md`'s "Versions". The labels did not change.
 - **The judge is Opus 5.5** (step 4): on the development third it caught 33 of
   the 48 fails, against Fable 5.1's 23, and caught at least as many on every
-  quality. So the blind audit doubles (section 3.5 of `../report.md`).
+  quality; and the owner's order of 4 November 2026 (root `CLAUDE.md`) bans
+  Fable 5.1 for good, so no other model is tried. So the blind audit doubles (section 3.5 of `../report.md`).
 - **No quality is calibrated yet.** Until a quality meets the target below on
   the held-out third, the gate runs in **shadow mode** on it: its verdicts
   block nothing, and every item of that quality goes on AD's board before it
   merges (section 3.5 of `../report.md`; `agent-protocol.md`, "Before
   calibration"). Today that is all eight judged qualities: 1, 2, 3, 6, 8, 9,
   13 and 14.
-- **Owner-checked qualities:** none yet. A quality becomes owner-checked only
-  after both models miss it (step 5); AD then checks it on every board.
+- **Owner-checked qualities:** none yet. A quality becomes owner-checked when
+  Opus 5.5 still misses it after step 5's two revisions; AD then checks it on
+  every board.
 
 ## The split
 
@@ -94,9 +99,9 @@ label away. The plans are committed in `calibration/runs/<run>/plan.jsonl`.
 | `dev-fable` | Fable 5.1 | 2 | 122 | 366 | run by the lead on rubric version 1 (78 extra calls for splits); scored below |
 | `dev-opus` | Opus 5.5 | 2 | 122 | 366 | run by the lead on rubric version 1 (48 extra calls for splits); scored below |
 | `dev-opus-v2` | Opus 5.5 | 2 | 122 | 366 | rubric version 2 (step 5's first re-run), run in a launcher session (72 extra calls); scored below |
-| `dev-opus-v3` | Opus 5.5 | 2 | 122 | 366 | rubric version 3 (step 5's second and last re-run); running |
-| `dev-fable-v3` | Fable 5.1 | 2 | 122 | 366 | rubric version 3 (step 5's other-model try); running |
-| `held-opus` | Opus 5.5 | 3 | 123 | 369 | rubric version 3, the held-out run, measured once; running |
+| `dev-opus-v3` | Opus 5.5 | 2 | 122 | 366 | rubric version 3 (step 5's second and last re-run); stopped with the program on 3 November at 193 calls, resumed on 4 November; running |
+| `dev-fable-v3` | Fable 5.1 | 2 | 122 | 366 | rubric version 3 (step 5's other-model try); abandoned at 120 calls by the owner's order of 4 November 2026 (Fable 5.1 banned); not scored, its results kept as written |
+| `held-opus` | Opus 5.5 | 3 | 123 | 369 | rubric version 3, the held-out run, measured once; stopped with the program on 3 November at 103 calls, resumed on 4 November; running |
 
 What the launcher does for each run (request AD-R6):
 
@@ -120,12 +125,15 @@ Then AD scores it:
    alone.
 3. **The target:** catch at least 80%, false blocks at most 20%, exceptions
    at most 30%, on every judged quality.
-4. **The judge model:** Fable 5.1, unless Opus 5.5 catches more on the
-   development third; then Opus 5.5, and the blind audit doubles.
+4. **The judge model:** Opus 5.5, and the blind audit doubles. (The plan
+   named Fable 5.1 unless Opus 5.5 caught more; Opus 5.5 caught more, and the
+   owner's order of 4 November 2026 in the root `CLAUDE.md` bans Fable 5.1
+   for good.)
 5. **A quality that misses** on the development third: AD revises its prompt
    against the training and development critiques (a rubric version bump),
-   at most twice, re-running the development third; if it still misses, the
-   other model is tried; if both miss, it becomes owner-checked.
+   at most twice, re-running the development third; if it still misses
+   with Opus 5.5, it becomes owner-checked (no other model is tried, since
+   Fable 5.1 is banned).
 6. **The held-out third** is then run once on the chosen model and the
    current rubric version. Its figures are the ones that decide whether a
    quality leaves shadow mode. Any later rubric edit re-runs it.
@@ -219,11 +227,11 @@ not the rubric's wording.
 
 | Quality | Judge | Rubric | Third 3: fails caught | False blocks | To exceptions | State |
 |---|---|---|---|---|---|---|
-| 1. Layered materials | – | 2 | – | – | – | shadow |
-| 2. Display type | – | 2 | – | – | – | shadow |
-| 3. Painted or rendered icons | – | 2 | – | – | – | shadow |
-| 6. Hierarchy | – | 2 | – | – | – | shadow |
-| 8. Colour roles and value | – | 2 | – | – | – | shadow |
-| 9. Character presence | – | 2 | – | – | – | shadow |
-| 13. Light behind UI | – | 2 | – | – | – | shadow |
-| 14. One art-direction idea | – | 2 | – | – | – | shadow |
+| 1. Layered materials | – | 3 | – | – | – | shadow |
+| 2. Display type | – | 3 | – | – | – | shadow |
+| 3. Painted or rendered icons | – | 3 | – | – | – | shadow |
+| 6. Hierarchy | – | 3 | – | – | – | shadow |
+| 8. Colour roles and value | – | 3 | – | – | – | shadow |
+| 9. Character presence | – | 3 | – | – | – | shadow |
+| 13. Light behind UI | – | 3 | – | – | – | shadow |
+| 14. One art-direction idea | – | 3 | – | – | – | shadow |

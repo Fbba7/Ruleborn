@@ -7,13 +7,13 @@
   "task_id": "P0-AD-calibrate-2",
   "task_state": "working",
   "claimed_at": "2026-11-03T11:15:00Z",
-  "lease_until": "2026-11-03T14:15:00Z",
-  "updated_at": "2026-11-03T11:55:00Z",
-  "expected_next_update_by": "2026-11-03T12:40:00Z",
+  "lease_until": "2026-11-04T04:10:00Z",
+  "updated_at": "2026-11-04T01:10:00Z",
+  "expected_next_update_by": "2026-11-04T01:55:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "3f3797c",
-    "next_step": "rubric version 3 committed (rulings for qualities 6, 9, 13); dev-opus-v3 and dev-fable-v3 running in launcher sessions; then score both, choose the judge, run held-<judge>"
+    "next_step": "program restarted 4 November, Opus only: judge is Opus 5.5; dev-fable-v3 abandoned (Fable 5.1 banned); dev-opus-v3 and held-opus resumed in launcher sessions; then score both, fill calibration.md results, list missed qualities as owner-checked"
   },
   "precheck": null,
   "gate_request": null,
