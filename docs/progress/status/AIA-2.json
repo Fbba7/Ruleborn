@@ -7,13 +7,16 @@
   "task_id": "P1-AIA2-icons-1b",
   "task_state": "working",
   "claimed_at": "2026-11-04T21:02:00Z",
-  "lease_until": "2026-11-05T00:02:00Z",
-  "updated_at": "2026-11-04T21:02:00Z",
-  "expected_next_update_by": "2026-11-04T21:47:00Z",
-  "long_run": null,
+  "lease_until": "2026-11-05T00:40:00Z",
+  "updated_at": "2026-11-04T21:40:00Z",
+  "expected_next_update_by": null,
+  "long_run": {
+    "log": "/tmp/check-5ecb0202309b89d36ada707dc26004f57e0f4571.log",
+    "expected_end": "2026-11-04T22:05:00Z"
+  },
   "progress_marker": {
     "last_green_sha": "bef6eac2",
-    "next_step": "resync: rebake icons_48 from its sources (icons_48_hc.webp differs), guard.sh, pre-check, ready again"
+    "next_step": "record the pre-check at 5ecb0202 and mark ready again"
   },
   "precheck": null,
   "gate_request": null,

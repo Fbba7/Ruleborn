@@ -1,9 +1,9 @@
 # AIA-2 icon maker: progress
 
-- Status: Green (pre-check PASS at bef6eac2), and the last push has P1-AIA2-icons-1b: five new icons (aether, essence, renown, starglass, season stars) and Starlight in `icons_48` and `icons_256`, and a finish that answers 1a's critiques (a blended toon ramp, a gloss band, a three-stop body gradient, a soft drop). Every icon was rebaked.
-- Progress: 2 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9); 1 item passed by the gate (icons-1b, advisory). P1-AIA2-icons-1b is ready at bef6eac2 (pre-check PASS; gate pass on Layered materials, Painted icons, Colour roles and Light behind UI, advisory).
+- Status: Green pending (pre-check running at 5ecb0202; guard.sh green there). The last push has the icons-1b resync: the icon finish draws on software canvases, so the bake no longer depends on the machine's load; icons_48_hc.webp changes in crew/pip only.
+- Progress: 2 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9); 1 item passed by the gate (icons-1b at bef6eac2, advisory). P1-AIA2-icons-1b is in resync, to be ready again at 5ecb0202.
 - Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources (Insight dropped: the design has none, §11.7).
-- Next: the lead's merge of P1-AIA2-icons-1b (ready at bef6eac2; gate passed, advisory).
+- Next: the pre-check at 5ecb0202, then ready again; the lead judges whether the high-contrast Pip change needs the gate again.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -15,7 +15,14 @@
 
 ## Handoff
 
-- **Last verified commit:** bef6eac2 (`check_icons.py` and `bake.js --check` green; pre-check started).
+- **Last verified commit:** 5ecb0202 (guard.sh green; pre-check running).
+
+### Resync (4 November 2026, cycle 41's candidate 3925aa99)
+
+- **Why the guard failed:** the lead's rebake of `icons_48_hc.webp` differed from the committed sheet in one piece, `crew__pip__normal`. In Chromium's GPU-backed 2D canvas, an idle machine dropped most of `grow()`'s stamps (the keyline and ink ring are about 430 drawImage calls), and Pip's high-contrast ring came out as an octagon. Under load (one core, or busy cores) every stamp landed and the ring was round. The committed sheet was the idle one (wrong); the lead's rebake was the loaded one (right).
+- **Fix:** `studio/finish.js`'s `canvas()` and `crew/pip.js`'s `draw` create their 2D contexts with `willReadFrequently`, i.e. software canvases. Rebaked idle, on one core (`taskset -c 0`) and under four busy loops: all three byte for byte. guard.sh's rebake passed while the pre-check ran beside it.
+- **Pixels:** `icons_48_hc.webp` changes in `crew/pip` only, from the octagon to the round ring, and is now byte for byte the lead's rebake. `icons_48.webp`, `icons_256.webp` and `icons_256_hc.webp` are unchanged; both manifests change in their `sources_hash` line only. **The 48-point high-contrast sheet's pixels changed** (one icon), so the lead may judge again.
+
 
 ### Done
 
@@ -101,3 +108,4 @@ None.
 - 2026-11-04 Season stars with sharp tips and thin waists: outline p10 3.1 px. Rounded tips and fatter waists give 3.6 px and over.
 - 2026-11-04 Starglass with an octahedron core inside the star: it read as a second object. A faceted, flat-shaded star alone is cleaner.
 - 2026-11-04 Renown at scale 1.2: the medal's top clipped the square. Scale 1.08, raised 0.08.
+- 2026-11-04 committed icons_48_hc.webp baked on an idle machine: GPU-backed canvas dropped grow() stamps (Pip's hc ring an octagon), so the lead's loaded rebake differed; fixed with software canvases.
