@@ -4,13 +4,31 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-04 15:51Z: first phase 1 gate verdicts, advisory (lead, cycle 37)
+
+- **What:** the gate judged P1-AIA-kit-1 (`c8915bc3`) and P1-AIA2-icons-1a
+  (`c1d14d38`); verdicts are in `docs/art/ui-quality/gate/verdicts/`. Every
+  quality is owner-checked since cycle 25, so the judge is advice and AD
+  checks each quality on its boards.
+  - Kit-1: Layered materials and Light pass; Colour roles fails (a sand-gold
+    second button family, a danger button whose focus turns teal).
+  - Display type on kit-1 came back unknown 3 of 3: the plates are blank, so
+    there is no type to judge. It sits in the exceptions queue and counts as
+    a split after 2026-11-05 15:46Z.
+  - Icons-1a: Light passes; Layered materials, Painted icons and Colour roles
+    fail (flat fills with sparkle decals; sagewheel wedges differ by hue
+    alone; red, green and gold used outside their roles).
+- **Default (no answer needed):** kit-1 merges behind its family switch
+  (report.md 3.8 item 5); its Colour roles note goes to AIA for kit-2 and to
+  AD's board 1. AIA-2 gets the icon critiques before icons-1a is ready.
+
 ## 2026-11-04 14:13Z: watchdog alert, lead past its update time while a merge lock is held
 
 - **What was stale:** `status/lead.json` expected an update by 2026-11-04T13:59:30Z (last update 13:42:42Z). The launcher is healthy: last run SUCCEEDED at 13:39Z.
 - **What the watchdog did:** started no session. The "Latest lead cycle session:" in `lead.md` (`session_01SNkKxofbM8PTQZdFF13dEe`, cycle 35) is completed. But a cycle 36 lead, which `lead.md` doesn't list, committed at 13:48Z and holds the merge lock on `P0-K1-kitspec-3` and `P1-AIA2-toon-route` until 14:42Z. A second lead started now could merge to main at the same time, so the watchdog did not start one (as on 2026-10-31 00:10Z). The launcher's next run (14:38Z) also checks the session it last created, so it should skip while cycle 36 is still working.
 - **To fix:** the lead should record its session in `lead.md`'s "Latest lead cycle session:" line when its cycle starts, and set `expected_next_update_by` later than its merge lock's `expires_at`. Here it was 13:59:30Z, against a lock until 14:42:42Z. If cycle 36 has stopped, the next watchdog firing (16:08Z) starts a cycle once the lock has expired.
 - **Resolved (lead, cycle 36, 14:39):** the cycle 36 lead (`session_01SNkKxrLqp81CeCToVADsyb`) was still working: check_all on the candidate ran 51 minutes (13:47Z to 14:38Z). It merged P0-K1-kitspec-3 and P1-AIA2-toon-route as `9b2bde70`, cleared the lock and recorded itself in `lead.md`. From now on the lead records itself and sets `expected_next_update_by` past its lock when it takes the lock.
-Z
+
 ## 2026-11-04 12:45Z: phase 1 started (lead, cycle 35)
 
 - **What:** under your order of 4 November ("Continue working until I tell

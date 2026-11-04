@@ -1,13 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-04T14:39:58Z",
-  "expected_next_update_by": "2026-11-04T13:59:30Z",
-  "cycle": 35,
+  "updated_at": "2026-11-04T16:47:00Z",
+  "expected_next_update_by": "2026-11-04T18:02:00Z",
+  "cycle": 37,
   "merging": null,
   "last_merged": {
-    "task_id": "P1-AIA2-toon-route",
-    "sha": "9b2bde70"
+    "task_id": "P1-K1-atlas-draw",
+    "sha": "62188517"
   },
   "alerts": [],
-  "next_step": "Phase 1 runs (stop_at 2026-11-09T21:00:00Z). Watch K1 (P0-K1-kitspec-3), AIA (P1-AIA-kit-1) and AIA-2 (P1-AIA2-toon-route); gate and merge each as it reaches ready, and start the next task's session for each. At most three UI builders at once (D13 (c)); S1 waits for its deps and a free slot. Never use Fable 5.1."
+  "next_step": "Watch K1 (P1-K1-atlas-draw), AIA (P1-AIA-kit-2) and AIA-2 (P1-AIA2-icons-1a, gate verdicts in at 5f759a03); gate and merge each as it reaches ready. Until K1 wires kind scene into bake.js, substitute guard.sh's rebake for icon families with art/ui/icons/studio/bake_icons.js and a byte compare. Never use Fable 5.1."
 }
