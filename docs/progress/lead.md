@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxqYuKcaV9WFPjR4eYL` (cycle 34,
-4 November 2026, from 11:39Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxofbM8PTQZdFF13dEe` (cycle 35,
+4 November 2026, from 12:39Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -79,6 +79,9 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| K1 | `session_01SNkKxpvstSMYkV1wwCL3rU` (working) | P0-K1-kitspec-3, then P1-K1-* | `claude/ui-bake` | 2026-11-04 12:44Z |
+| AIA | `session_01SNkKxqU4sZmrYcBz3mbRR2` (working) | P1-AIA-kit-1 | `claude/ui-artist` | 2026-11-04 12:44Z |
+| AIA-2 | `session_01SNkKxnm9wVSENc6xKHm79A` (working) | P1-AIA2-toon-route | `claude/ui-artist-icons` | 2026-11-04 12:44Z |
 | AD | `session_01SNkKxrEMe4td5Bk4zmN1Ed` (idle, done) | P0-AD-calibrate-2 | `claude/ui-ad` | 2026-11-03 11:09Z |
 | gate run dev-fable (Fable 5.1) | `session_01SNkKxonjTzEysQx5wxdp97` (idle, done: 444 lines, 6 unknown, `0e78b6ce`) | AD-R6 for P0-AD-calibrate | `claude/ui-gate-runs` | 2026-11-02 23:40Z |
 | gate run dev-opus (Opus 5.5) | `session_01SNkKxogMyzESz7z3XzwBUJ` (idle, done) | AD-R6 for P0-AD-calibrate | `claude/ui-gate-runs` | 2026-11-02 23:40Z |
@@ -207,6 +210,27 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 35, 4 November 2026, from 12:39Z (session
+  `session_01SNkKxofbM8PTQZdFF13dEe`, started by the launcher): phase 1
+  started under owner order 3 (CLAUDE.md). Seeded 18 phase 1 tasks
+  (`3939b11d`): K1's atlas-draw, catalogue, words and the two family
+  switches; AIA's kit-1 to -5; the new agent AIA-2's toon route and icon
+  batches 1a to 2b (batches 3 and 4 deferred, D13 (c)); the new agent S1's
+  heist pilot 1 and 2 (Sonnet 5.5); AD's board 1. `phase` 1, `stop_at`
+  2026-11-09T21:00:00Z. owners.py claims clean. Prompts updated (phase 1,
+  new STOP_AT; AIA-2 and S1 added). Started three builders, the D13 (c)
+  cap: K1 on P0-K1-kitspec-3 (`session_01SNkKxpvstSMYkV1wwCL3rU`), AIA on
+  P1-AIA-kit-1 (`session_01SNkKxqU4sZmrYcBz3mbRR2`) and AIA-2 on
+  P1-AIA2-toon-route (`session_01SNkKxnm9wVSENc6xKHm79A`). Nothing ready,
+  nothing merged, pages not republished. Owner told (inbox, no answer
+  needed).
+- Next: watch K1, AIA and AIA-2; gate and merge each task as it reaches
+  `ready`. S1 and AD wait on their deps (S1's pilot-1 on
+  P1-K1-switch-heist and P1-AIA2-icons-1b); keep at most three UI builders
+  at once, so S1 starts only when a builder slot is free. If `stop_at`
+  nears with work left, move it forward (order 3). AD's golden set v2,
+  rubric v4 and the `render` crop fix stay unfiled while the cap is full.
+  Never use Fable 5.1 (CLAUDE.md).
 - Cycle 34, 4 November 2026, from 11:39Z (session
   `session_01SNkKxqYuKcaV9WFPjR4eYL`, started by the launcher):
   bookkeeping only. No roster branch moved since cycle 27 (AD, AIA, K1

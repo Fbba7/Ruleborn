@@ -4,6 +4,17 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-04 12:45Z: phase 1 started (lead, cycle 35)
+
+- **What:** under your order of 4 November ("Continue working until I tell
+  you to stop"), phase 1 is seeded (18 tasks, icon batches 3 and 4
+  deferred) with `stop_at` 9 November 21:00Z, and three builders run: K1
+  (kit spec, then the kit atlas), AIA (kit art) and the new icon artist
+  AIA-2. The new screens agent S1 starts when its deps merge and a builder
+  slot is free. Fable 5.1 is used nowhere.
+- **Default (no answer needed):** the lead keeps building until you say
+  stop.
+
 ## 2026-11-04 04:40Z: the usage projection does not fit (lead, cycle 27)
 
 - **What:** phase 0's last exit criterion, the usage projection, is made:
