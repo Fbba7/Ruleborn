@@ -115,14 +115,20 @@ def words_for(base, state, hc):
 
 
 class Atlas:
-    def __init__(self, hc):
-        self.man = json.load(open(os.path.join(ART, "kit.json")))
-        self.im = Image.open(os.path.join(ART, "kit_hc.webp" if hc else "kit.webp")).convert("RGBA")
+    def __init__(self, hc, art=ART, stem="kit"):
+        self.man = json.load(open(os.path.join(art, stem + ".json")))
+        # Every page the manifest names (atlas.pages from the second page on),
+        # in this contrast mode; a piece without `page` is on page 1.
+        files = self.man["atlas"].get("pages", [self.man["atlas"]])
+        self.pages = [Image.open(os.path.join(art, f["high_contrast" if hc else "normal"])).convert("RGBA")
+                      for f in files]
+        self.im = self.pages[0]
         self.k = PX / self.man["px_per_point"]
 
     def piece(self, name):
         p = self.man["pieces"][name]
-        return p, self.im.crop((p["x"], p["y"], p["x"] + p["w"], p["y"] + p["h"]))
+        im = self.pages[p.get("page", 1) - 1]
+        return p, im.crop((p["x"], p["y"], p["x"] + p["w"], p["y"] + p["h"]))
 
     def draw(self, name, w_pt, h_pt=None):
         """The piece at w_pt x h_pt points on the phone: 9-sliced, its corners

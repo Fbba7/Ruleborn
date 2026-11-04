@@ -1,0 +1,36 @@
+[
+ {
+  "task_id": "P1-AIA-kit-3",
+  "sha": "3a04e828",
+  "item": "numerals sheet at phone size, 100% and 200% text",
+  "quality": "Display type",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "On all eight sheets (normal and high contrast, 100% and 200%, backdrop and card), every glyph and separator in the gold, white, timer and timer_red finishes has an unbroken dark ink outline that grows with the text, plus a hard drop to the lower right. Normal mode adds a vertical gradient fill, and high contrast uses a flat fill with a black outline. Each finish is treated the same throughout. This matches the pass anchor's outlined, dropped HUD timer and figures.",
+  "advisory": true,
+  "at": "2026-11-04T20:44:00Z"
+ },
+ {
+  "task_id": "P1-AIA-kit-3",
+  "sha": "3a04e828",
+  "item": "numerals sheet at phone size, 100% and 200% text",
+  "quality": "Colour roles and value",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "The roles are fixed. Gold is for values, white and cream are for neutral counts and the timer, and red-pink appears only on the low-time alarm timer. The roles hold across normal and high contrast, en and pt_br, and both grounds, with no drift. The heavy outline keeps every glyph clear of both grounds. No colour-blindness sheet was supplied, so the red timer state rests on hue plus value.",
+  "advisory": true,
+  "at": "2026-11-04T20:44:00Z"
+ }
+]

@@ -40,11 +40,6 @@ SKINS = ["panel_dark", "panel_glass", "well", "badge", "pill", "tag", "bar_track
 
 
 class Atlas(pk.Atlas):
-    def __init__(self, hc, art=pk.ART, stem="kit"):
-        self.man = json.load(open(os.path.join(art, stem + ".json")))
-        self.im = Image.open(os.path.join(art, stem + ("_hc" if hc else "") + ".webp")).convert("RGBA")
-        self.k = PX / self.man["px_per_point"]
-
     def has(self, name):
         return name in self.man["pieces"]
 
