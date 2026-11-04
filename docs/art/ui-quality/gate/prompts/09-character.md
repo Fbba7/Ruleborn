@@ -1,6 +1,6 @@
 # Judge prompt: 9. Character presence
 
-Rubric version 1 (`../rubric.md`, quality 9). The launcher fills the
+Rubric version 3 (`../rubric.md`, quality 9). The launcher fills the
 `{{...}}` fields and sends everything below the line as one isolated call. The
 call is made three times, with the pictures in a new shuffled order each time.
 
@@ -68,6 +68,29 @@ problems; you are asked one comparison.
 - A big character can still fail if it is lit like a product render.
 - Do not judge the character's design or appeal: only whether it is present,
   readable, framed and in the look.
+
+**Rulings from calibration (version 2):**
+- Look at every portrait or figure in its crop, one at a time. One portrait in
+  a physically based or photographic finish (a photographic rock or fabric
+  texture, a metallic sheen, glossy gem reflections) fails the screen,
+  whatever the others show.
+- A portrait that at its size turns into a smudge of colour with no readable
+  figure (no dark shape, no face) is too small to recognise: fail, even inside
+  a gold ring.
+- Soft fur and smooth soft shading on the game's own rendered models are the
+  toon look; outlines may be thin on large renders. Fail on photographic
+  texture or specular reflections, not on smoothness.
+
+**Rulings from calibration (version 3):**
+- Judge each portrait on its own, not against the anchors: a PASS ANCHOR that
+  shows the same character with the same flaw does not make the flaw pass. The
+  fails-on rules hold for every portrait whatever the anchors show.
+- Name each portrait's body surface in the reason. A rock, moss or stone body
+  drawn with fine photographic grain, or armour with mirror-like reflections,
+  where the other portraits have flat toon fills, is a physically based
+  material: fail.
+- At the portrait's own size, a figure that does not read as a dark shape
+  against its ring (it blends into a purple or grey wash) is a smudge: fail.
 
 **How to decide.**
 1. Find the region of each picture that this quality is about (above).
