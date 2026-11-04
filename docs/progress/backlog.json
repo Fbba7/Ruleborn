@@ -984,17 +984,15 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "working",
-      "claim": {
-        "agent": "AIA",
-        "branch": "claude/ui-artist",
-        "claimed_at": "2026-11-04T12:50:00Z",
-        "lease_until": "2026-11-04T15:50:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "c8915bc3",
+      "merged_sha": "5e5cccf9",
+      "exceptions": [
+        "art/ui/kit_build/**"
+      ]
     },
     {
       "id": "P1-AIA-kit-2",
@@ -1036,8 +1034,13 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-11-04T16:25:00Z",
+        "lease_until": "2026-11-04T19:25:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
