@@ -1,13 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-04T04:50:00Z",
-  "expected_next_update_by": "2026-11-04T06:05:00Z",
-  "cycle": 27,
+  "updated_at": "2026-11-04T05:40:00Z",
+  "expected_next_update_by": "2026-11-04T06:55:00Z",
+  "cycle": 28,
   "merging": null,
   "last_merged": {
     "task_id": "P0-AD-calibrate-2",
     "sha": "0ff3278a"
   },
   "alerts": [],
-  "next_step": "Cycle 27 answered OV-R1 (usage-projection.md): the projection does not fit, D13 (c) applies, phase 0's exit criteria are met. Start no building session while the seven-day bar reads allowed_warning; after the 2026-11-09T17:00Z reset start K1 on P0-K1-kitspec-3 and seed phase 1. Never use Fable 5.1."
+  "next_step": "Cycle 28 was bookkeeping only: no roster status changed, nothing ready. Start no building session while the seven-day bar reads allowed_warning; after the 2026-11-09T17:00Z reset start K1 on P0-K1-kitspec-3 and seed phase 1. Never use Fable 5.1."
 }
