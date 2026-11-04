@@ -1,11 +1,19 @@
 {
-  "atlas": {"height":256,"high_contrast":"icons_48_hc.webp","normal":"icons_48.webp","width":1024},
+  "atlas": {"height":512,"high_contrast":"icons_48_hc.webp","normal":"icons_48.webp","width":1024},
   "family": "icons_48",
   "format": 1,
   "pieces": {
     "crew__pip__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":2,"y":2},
-    "resources__starlight__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":132,"y":2}
+    "heistcontrols__ability__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":132,"y":2},
+    "heistcontrols__aim__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":262,"y":2},
+    "heistcontrols__callskiff__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":392,"y":2},
+    "heistcontrols__cast__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":522,"y":2},
+    "heistcontrols__getout__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":652,"y":2},
+    "heistcontrols__regroup__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":782,"y":2},
+    "heistcontrols__sagewheel__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":2,"y":132},
+    "heistcontrols__splitcrew__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":132,"y":132},
+    "resources__starlight__normal": {"h":128,"slice":null,"tint":false,"w":128,"x":262,"y":132}
   },
   "px_per_point": null,
-  "sources_hash": "sha256:328b70c7b5dad3734b0ef18b7e50b5d89cfe3953c211239d3404939a54a7dfb6"
+  "sources_hash": "sha256:619c6084a1fd0216f565a9773e5edba080c9ede70ea964612a5ba5b23e282a14"
 }
