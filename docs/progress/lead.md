@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxr5KfuQpAn8isazH9U` (cycle 43,
-4 November 2026, from 22:38Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxqKY1WGt7cJSaqyYtWj` (cycle 44,
+4 November 2026, from 23:39Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -222,6 +222,41 @@ Your session was created with the repository checked out at main; work in that c
 ```
 
 ## Now
+
+- Cycle 44, 4 November 2026, from 23:39Z (session
+  `session_01SNkKxqKY1WGt7cJSaqyYtWj`, started by the launcher):
+  bookkeeping and a diagnosis. All three builders are working (AIA
+  kit-4 resync, pre-check on `f3456cac` to about 00:20Z; AIA-2 icons-2a
+  at `6a382d97`, pre-check running; K1 words, no commit of code yet).
+  Nothing ready, no merge lock, nothing merged, no session started, pages
+  not republished. Backlog: K1's words and AIA-2's icons-2a copied to
+  `working` with their claims; kit-4 `working` (lease kept at 03:00Z).
+  Reproduced main's guard failure here: `node tools/ui_bake/bake.js
+  icons_48` (after `npm ci` in tools/ui_research) rebakes `icons_48.json`
+  and `icons_48.webp` byte for byte but not `icons_48_hc.webp`; two
+  bakes in this container agree with each other, so the bake is
+  deterministic per container and differs between containers. The only
+  piece that differs is `crew__pip__normal` in high contrast: the
+  committed file has a round ink ring with a white keyline; this
+  container draws both rings as an octagon. That is `finish.js`'s
+  `grow()` (hundreds of `drawImage` stamps of a silhouette) on pip, the
+  one icon with its own `draw` (a WebGL render composited with an
+  image). AIA-2's icons-2a branch does not touch `finish.js` or pip, so
+  its candidate will fail guard the same way. No new owner-inbox entry
+  (cycle 43's covers it). Cloud agent sessions cannot be messaged from a
+  lead session (ListAgents lists none), so the finding waits for the
+  resync.
+- Next: when AIA-2 marks icons-2a ready, set it to `resync` (unless it
+  already changed the finish) with this finding: make the outline and
+  keyline grow independent of the canvas backend, for example a
+  dilation computed on the pixels (`getImageData`, a disc of radius r)
+  instead of stamped `drawImage` calls, rebake `icons_48*` and
+  `icons_256*`, and show the rebake byte for byte in a fresh container
+  (guard.sh). Merge kit-4 on ready once guard is green; if guard is still
+  red only on `icons_48_hc.webp`, that file is AIA-2's and not kit-4's
+  fault, but main still does not move on a red guard. Start AIA on
+  P1-AIA-kit-5 after kit-4 merges, with the kit-4 gate notes (cycle 43).
+  Never use Fable 5.1 (CLAUDE.md).
 
 - Cycle 43, 4 November 2026, from 22:38Z (session
   `session_01SNkKxr5KfuQpAn8isazH9U`, started by the launcher): ran

@@ -1,13 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-04T23:33:00Z",
-  "expected_next_update_by": "2026-11-05T00:48:00Z",
-  "cycle": 43,
+  "updated_at": "2026-11-04T23:58:00Z",
+  "expected_next_update_by": "2026-11-05T01:13:00Z",
+  "cycle": 44,
   "merging": null,
   "last_merged": {
     "task_id": "P1-K1-catalogue",
     "sha": "7e6de29d"
   },
   "alerts": [],
-  "next_step": "Main fails guard.sh's rebake on its own: client/ui/art/icons_48_hc.webp is not what its sources bake to in this container (the high-contrast halo is gone and crew/pip is an octagon again; same sources and file as 00e31ef0, which passed at about 23:00Z), so no candidate can pass guard until AIA-2 makes the icon finish environment-independent. Check P1-AIA2-icons-2a's candidate (AIA-2 session_01SNkKxnB46NyYAV26hWtwrg) with guard.sh on ready; if the rebake still differs, set resync with this finding. AIA (session_01SNkKxpLGXniYM5JnmyzqE7) resyncs P1-AIA-kit-4: SKINS_OF entries for its nine skins (client/tests/ui_kit_tests.gd granted, SKINS_OF block only); merge on ready once guard is green. K1 (session_01SNkKxo2gLyAa89sh1bYjJq) on P1-K1-words. Three builders, the D13 (c) cap. Never use Fable 5.1."
+  "next_step": "Main still fails guard.sh's rebake on client/ui/art/icons_48_hc.webp (reproduced in cycle 44: only crew__pip__normal in high contrast differs; this container draws its ink ring and keyline as an octagon, deterministically, where the committed file is round; finish.js's grow() of stamped drawImage calls). When AIA-2 (session_01SNkKxnB46NyYAV26hWtwrg) marks P1-AIA2-icons-2a ready, set it to resync with this finding unless it changed the finish: compute the outline and keyline dilation on the pixels, rebake, prove byte for byte in a fresh container with guard.sh. AIA (session_01SNkKxpLGXniYM5JnmyzqE7) on the P1-AIA-kit-4 resync (pre-check on f3456cac); merge on ready once guard is green, then start AIA on P1-AIA-kit-5 with the kit-4 gate notes. K1 (session_01SNkKxo2gLyAa89sh1bYjJq) on P1-K1-words. Three builders, the D13 (c) cap. Never use Fable 5.1."
 }
