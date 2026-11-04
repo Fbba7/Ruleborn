@@ -5,22 +5,24 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P1-AIA2-toon-route",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-04T12:47:10Z",
   "lease_until": "2026-11-04T15:47:10Z",
-  "updated_at": "2026-11-04T13:32:00Z",
-  "expected_next_update_by": "2026-11-04T14:17:00Z",
+  "updated_at": "2026-11-04T13:35:00Z",
+  "expected_next_update_by": "2026-11-04T14:20:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "pre-check 02e7ef0f running; on PASS record it and mark P1-AIA2-toon-route ready"
+    "last_green_sha": "02e7ef0f00ea0444842a4d0158f50e271a97c952",
+    "next_step": "P1-AIA2-icons-1a (the eight heist controls) once P1-AIA2-toon-route merges; the merge waits on AIA2-R1 (guard.sh rebake vs kind \"scene\"), default in the request"
   },
   "precheck": {
     "sha": "02e7ef0f00ea0444842a4d0158f50e271a97c952",
-    "state": "RUNNING"
+    "exit": 0,
+    "finished_at": "2026-11-04T13:32:24Z",
+    "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "02e7ef0f00ea0444842a4d0158f50e271a97c952",
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [],
   "requests": [

@@ -1,6 +1,6 @@
 # AIA-2 icon maker: progress
 
-- Status: P1-AIA2-toon-route built at 02e7ef0f; its pre-check is in the status file.
+- Status: P1-AIA2-toon-route ready at 02e7ef0f; pre-check PASS (13:32Z, all checks passed).
 - Progress: 0 tasks merged; P1-AIA2-toon-route is up for merge.
 - Done: the toon route for icons, from a scene or a character render through one finish into `icons_48` and `icons_256`, with two proof icons (Starlight in both families, Pip's crew badge in `icons_48`). Also the 60-icon list in four batches.
 - Next: P1-AIA2-icons-1a (the eight heist controls), once this merges.
@@ -9,7 +9,7 @@
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Built at 02e7ef0f | `node tools/ui_bake/bake.js --check`: icons_48 2 pieces, icons_256 1 piece, both ok. `python3 art/ui/icons/studio/check_icons.py`: all 6 faces pass (2 pieces in 2 families, 2 modes). A rebake into a scratch folder is byte for byte on all four atlases. `bash tools/run_checks.sh`: see `precheck` |
+| P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Ready at 02e7ef0f | `node tools/ui_bake/bake.js --check`: icons_48 2 pieces, icons_256 1 piece, both ok. `python3 art/ui/icons/studio/check_icons.py`: all 6 faces pass (2 pieces in 2 families, 2 modes). A rebake into a scratch folder is byte for byte on all four atlases. `bash tools/run_checks.sh`: PASS at 02e7ef0f |
 
 ## Handoff
 
