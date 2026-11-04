@@ -9,5 +9,5 @@
     "sha": "0ff3278a"
   },
   "alerts": [],
-  "next_step": "Cycle 34 was bookkeeping only: no roster status changed, nothing ready. Start no building session while the seven-day bar reads allowed_warning; after the 2026-11-09T17:00Z reset start K1 on P0-K1-kitspec-3 and seed phase 1. Never use Fable 5.1."
+  "next_step": "Owner order 3 (CLAUDE.md, 4 November 2026): a usage tier is no longer a reason to pause. Start phase 1 now: seed phase 1's tasks (without icon batches 3 and 4), start K1 on P0-K1-kitspec-3 and the other agents as their tasks open, at most three UI builders at once (D13 (c)), and set a new stop_at for phase 1. Never use Fable 5.1."
 }

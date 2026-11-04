@@ -50,6 +50,9 @@ builders: phases 1 to 3 need about four more weekly bars.
 - **D13's answer (c):** three builders at once, never four or five; icon
   batches 3 and 4 deferred. The backlog's `building_cap` of 4 (three UI
   builders plus SV) stays the ceiling, and SV has no open task.
+- **Superseded on 4 November 2026 by owner order 3 (CLAUDE.md):** a usage
+  tier is no longer a reason to pause, and phase 1 starts now, not after the
+  reset. The two items below are kept as history.
 - **D-11 and section 3.9's tiers:** while the bar reads `allowed_warning`,
   the lead starts no new building session and no idle-queue task; the
   critical path (the lead, K1, the gate, AIA, S1) is the last to stop, so the

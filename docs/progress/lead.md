@@ -184,7 +184,13 @@ Your session was created with the repository checked out at main; work in that c
   merge lock, nothing ready, nothing merged, pages not republished, no
   session started. The seven-day bar still reads `allowed_warning`
   (reset 2026-11-09T17:00Z).
-- Next: as cycle 27 says below. Never use Fable 5.1 (CLAUDE.md).
+- Next (owner order 3, CLAUDE.md, 4 November 2026): a usage tier is no
+  longer a reason to pause. Start phase 1 now: seed phase 1's tasks
+  (without icon batches 3 and 4), start K1 on P0-K1-kitspec-3 and the
+  other agents as their tasks open, at most three UI builders at once
+  (D13's answer (c)), and set a new `stop_at` for phase 1. The cycle 27
+  rule below ("start no building session while the bar reads
+  `allowed_warning`") no longer applies. Never use Fable 5.1 (CLAUDE.md).
 - Cycles 28 to 33, 4 November 2026, 05:38Z to 10:40Z (sessions
   `session_01SNkKxqggtvFkbsicdmz58F`, `session_01SNkKxp3mbYDaJnVdPiRV3R`,
   `session_01SNkKxrFapFkzWn83y5X9ky`, `session_01SNkKxqLRk7TzD31oWv3kM6`,
