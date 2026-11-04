@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="46" data-slice="18 18 18 22">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFBF0"/><stop offset="0.5" stop-color="#F6EAD0"/><stop offset="1" stop-color="#F1E3C4"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.949"/><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A5A1C" stop-opacity="0"/><stop offset="0.55" stop-color="#8A5A1C" stop-opacity="0"/><stop offset="1" stop-color="#8A5A1C" stop-opacity="0.451"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4EEE8"/><stop offset="1" stop-color="#BCD2CC"/></linearGradient>
+    <pattern id="s5" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2.5" height="6" fill="#30707A" fill-opacity="0.298"/></pattern>
+    <mask id="m6" maskUnits="userSpaceOnUse" x="0" y="0" width="40" height="46"><rect x="0" y="0" width="17" height="17" fill="#FFFFFF"/><rect x="0" y="29" width="17" height="17" fill="#FFFFFF"/><rect x="23" y="0" width="17" height="17" fill="#FFFFFF"/><rect x="23" y="29" width="17" height="17" fill="#FFFFFF"/></mask>
+    <linearGradient id="g7" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.949"/><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g8" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A5A1C" stop-opacity="0"/><stop offset="0.55" stop-color="#8A5A1C" stop-opacity="0"/><stop offset="1" stop-color="#8A5A1C" stop-opacity="0.451"/></linearGradient>
+    <pattern id="s9" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2" height="6" fill="#2E6E76"/></pattern>
+    <mask id="m10" maskUnits="userSpaceOnUse" x="0" y="0" width="40" height="46"><rect x="0" y="0" width="17" height="17" fill="#FFFFFF"/><rect x="0" y="29" width="17" height="17" fill="#FFFFFF"/><rect x="23" y="0" width="17" height="17" fill="#FFFFFF"/><rect x="23" y="29" width="17" height="17" fill="#FFFFFF"/></mask>
+  </defs>
+  <g data-state="normal">
+    <rect x="1" y="5" width="38" height="40" rx="16" fill="#8A5A1C" stroke="#1A0C14" stroke-width="2"/>
+    <rect x="1" y="1" width="38" height="40" rx="16" fill="url(#g1)"/>
+    <rect x="3" y="3" width="34" height="36" rx="14" fill="none" stroke="url(#g2)" stroke-width="2"/>
+    <rect x="3.25" y="3.25" width="33.5" height="35.5" rx="13.75" fill="none" stroke="url(#g3)" stroke-width="2.5"/>
+    <rect x="5.5" y="5.5" width="29" height="31" rx="11.5" fill="none" stroke="#C9A86A" stroke-width="1" stroke-opacity="0.7"/>
+    <rect x="1" y="1" width="38" height="40" rx="16" fill="none" stroke="#1A0C14" stroke-width="2"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <rect x="1" y="5" width="38" height="40" rx="16" fill="#000000"/>
+    <rect x="1" y="1" width="38" height="40" rx="16" fill="#FFFFFF"/>
+    <rect x="2" y="2" width="36" height="38" rx="14.5" fill="none" stroke="#000000" stroke-width="3"/>
+  </g>
+  <g data-state="locked">
+    <rect x="1" y="5" width="38" height="40" rx="16" fill="#8A5A1C" stroke="#1A0C14" stroke-width="2"/>
+    <rect x="1" y="1" width="38" height="40" rx="16" fill="url(#g4)"/>
+    <rect x="1" y="1" width="38" height="40" rx="16" fill="url(#s5)" mask="url(#m6)"/>
+    <rect x="3" y="3" width="34" height="36" rx="14" fill="none" stroke="url(#g7)" stroke-width="2"/>
+    <rect x="3.25" y="3.25" width="33.5" height="35.5" rx="13.75" fill="none" stroke="url(#g8)" stroke-width="2.5"/>
+    <rect x="5.5" y="5.5" width="29" height="31" rx="11.5" fill="none" stroke="#C9A86A" stroke-width="1" stroke-opacity="0.7"/>
+    <rect x="1" y="1" width="38" height="40" rx="16" fill="none" stroke="#1A0C14" stroke-width="2"/>
+  </g>
+  <g data-state="locked" data-mode="hc">
+    <rect x="1" y="5" width="38" height="40" rx="16" fill="#000000"/>
+    <rect x="1" y="1" width="38" height="40" rx="16" fill="#FFFFFF"/>
+    <rect x="1" y="1" width="38" height="40" rx="16" fill="url(#s9)" mask="url(#m10)"/>
+    <rect x="2" y="2" width="36" height="38" rx="14.5" fill="none" stroke="#2E6E76" stroke-width="3"/>
+  </g>
+</svg>

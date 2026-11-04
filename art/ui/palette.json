@@ -874,6 +874,14 @@
       "value": "#22303E",
       "from": "card #261A4C toward locked teal #3A8A90, a step"
     },
+    "chapter_fold": {
+      "value": "#24186A",
+      "from": "tab_active_bottom, deep: the violet ribbon's fold"
+    },
+    "chapter_tail": {
+      "value": "#4836B0",
+      "from": "tab_active_bottom #4532B8: the violet ribbon's tail"
+    },
     "disabled_hc": {
       "value": "#8A8494",
       "from": "every disabled face in high contrast: one grey"
@@ -898,9 +906,29 @@
       "value": "#7A8AE6",
       "from": "tab_active_top x0.86"
     },
+    "done_corner_bottom": {
+      "value": "#2E9A62",
+      "from": "success #3FBF7F, shaded: the done corner's foot"
+    },
+    "done_corner_top": {
+      "value": "#5ED092",
+      "from": "success #3FBF7F, lit: the done corner's top"
+    },
     "edge_hc": {
       "value": "#B8A8D8",
       "from": "text_on_night_3: a dark piece's 3-point edge in high contrast, 7:1 on the hc night"
+    },
+    "frame_locked_dark": {
+      "value": "#24545C",
+      "from": "locked_bottom #30707A, deeper"
+    },
+    "frame_locked_light": {
+      "value": "#7AB6BA",
+      "from": "locked_top #4A9AA0, lit: a locked frame's bevel"
+    },
+    "gem_light": {
+      "value": "#FFFFFF",
+      "from": "the prismatic gem's lit facet"
     },
     "gold_disabled": {
       "value": "#B8A88C",
@@ -949,6 +977,14 @@
     "green_pressed_top": {
       "value": "#76C440",
       "from": "green top x0.86"
+    },
+    "header_bottom": {
+      "value": "#1C1240",
+      "from": "card_bottom #1A1134, lifted a little"
+    },
+    "header_top": {
+      "value": "#2E2060",
+      "from": "card_lit_mid #2A1A56, lifted: the top bar's band"
     },
     "leather_disabled": {
       "value": "#4A3C44",
@@ -1002,6 +1038,14 @@
       "value": "#D6E4F2",
       "from": "text_on_night_2, cooled: the clock's foot, not the time school's cyan"
     },
+    "oak_hc": {
+      "value": "#8A5630",
+      "from": "frame_oak's body, flat"
+    },
+    "parchment_deckle": {
+      "value": "#C9A86A",
+      "from": "parchment_bottom #F1E3C4 two steps down: the inset deckle line"
+    },
     "parchment_disabled": {
       "value": "#C4B69C",
       "from": "tertiary parchment, desaturated; parchment_ink 9:1"
@@ -1013,6 +1057,18 @@
     "parchment_hc_pressed": {
       "value": "#B08A4A",
       "from": "tertiary parchment, flat, darker"
+    },
+    "parchment_lip": {
+      "value": "#8A5A1C",
+      "from": "parchment_text_3: parchment's solid lip, a tan foot, not a black one"
+    },
+    "parchment_locked_bottom": {
+      "value": "#BCD2CC",
+      "from": "parchment_bottom toward locked teal, a step"
+    },
+    "parchment_locked_top": {
+      "value": "#E4EEE8",
+      "from": "parchment_top toward locked teal, a step"
     },
     "pill_bottom": {
       "value": "#CFC4EE",
@@ -1042,6 +1098,14 @@
       "value": "#2A2060",
       "from": "gradient.plate_dark's top, flat"
     },
+    "popup_rim": {
+      "value": "#3E2E86",
+      "from": "card_lit_glow #5A3CA8 toward card, a raised bevel ring"
+    },
+    "prismatic_hc": {
+      "value": "#C29AFF",
+      "from": "frame_prismatic's violet stop, flat"
+    },
     "red_disabled": {
       "value": "#8A5862",
       "from": "alarm, desaturated; on_alarm 5.9:1"
@@ -1057,6 +1121,18 @@
     "red_pressed_top": {
       "value": "#E86A7C",
       "from": "alarm_light x0.86"
+    },
+    "ribbon_fold": {
+      "value": "#5A5A5A",
+      "from": "neutral, tinted: the fold, the school colour's deep shade"
+    },
+    "ribbon_hc": {
+      "value": "#D2D2D2",
+      "from": "neutral, flat, tinted in high contrast"
+    },
+    "ribbon_tail": {
+      "value": "#A8A8A8",
+      "from": "neutral, tinted: the tail, a step under the band"
     },
     "school_dark": {
       "value": "#8E8E8E",
@@ -1081,6 +1157,10 @@
     "school_pressed": {
       "value": "#B4B4B4",
       "from": "school_mid, darker: pressed"
+    },
+    "silver_hc": {
+      "value": "#C8D0DC",
+      "from": "frame_silver's body, flat"
     },
     "tertiary_parchment_bottom": {
       "value": "#C6A266",

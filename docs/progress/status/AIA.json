@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P1-AIA-kit-4",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-04T21:40:00Z",
   "lease_until": "2026-11-05T00:40:00Z",
-  "updated_at": "2026-11-04T21:40:00Z",
-  "expected_next_update_by": "2026-11-04T22:25:00Z",
+  "updated_at": "2026-11-04T21:48:00Z",
+  "expected_next_update_by": "2026-11-04T22:33:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "3a04e828",
-    "next_step": "kit_2a.py: panel_parchment, sheet, popup, rank frames, header, ribbon"
+    "next_step": "pre-check on the batch 2a commit"
   },
   "precheck": null,
   "gate_request": null,
@@ -129,8 +129,23 @@
       "cc": [
         "lead"
       ]
+    },
+    {
+      "id": "AIA-R16",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Batch 2a adds pieces KitSkin must draw: (1) `ribbon__box` is a neutral tinted per school (data-tint) and `ribbon__frame` (untinted gloss and ink) is drawn over it at the same rect, as disc_school; `ribbon__chapter` is the untinted violet chapter ribbon; the words sit on the band, the top 32 pt of the 42 pt piece. (2) The grab handles `sheet__handle` and `sheet__handle_parchment` are 42 x 9 pt sprites centred by code 12 pt below a sheet's top edge (a 9-slice cannot centre them). (3) `frame_<rank>__box__<state>` is a 9-slice ring with a hollow middle, drawn over the portrait's rect grown by 4 pt each side. (4) `popup__box` carries an 8/4/12 pt margin round its face (plus the 5 pt lip) and is drawn over the scrim; its title is a ribbon set across the top edge. (5) `header__name_plate` is the header's leather plate; `panel_parchment__parchment_done` is the done panel with its green seal in the top-right corner cell",
+      "files": [
+        "client/ui/kit_skin.gd",
+        "client/ui/kit_families.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T21:48:00Z",
+      "due": "2026-11-05T21:48:00Z",
+      "default": "the pieces sit in the atlas unused; those skins stay off in kit_families.json and draw in code",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "write batch 2a sources (kit_2a.py), bake, proof_2a.py"
+  "next_step": "proof_2a review, pre-check, gate request"
 }
