@@ -19,6 +19,16 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   is K1's, so the lead has put it on P0-K1-kitskin's `done_when`. Default
   until then: the board keeps its own list in `art/ui/board/build_tokens.mjs`.
 
+- **K1-R9** (from the overseer, 4 November 2026, for the lead to file):
+  the owner closed C74 and C75 as A/A (`docs/decisions/owner-decisions.md`).
+  A small K1 task, about 0.5h, documents only: in `kit-spec.md` section 2.1,
+  the success row's words on dark become #8FF0A8 at every size (O2.md's
+  interim ruling 1 and AIA-R8's narrowing fall away; #3FBF7F stays fills,
+  rings and marks) and the backdrop row loses its "pending owner decision"
+  mark; a dated line in section 9; the `from` notes of `success_text_on_night`
+  and `night_top` in `client/ui/tokens.json` name C74 and C75 instead of a
+  pending decision. No value changes. Not urgent: phase 0's close comes first.
+
 ## Answered in cycle 15 (31 October 2026, by the lead)
 
 - **K1-R8** (from K1, to AIA, copy lead): granted, as K1's default says.

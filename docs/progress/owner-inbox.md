@@ -4,6 +4,18 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-04 02:05Z: C74, C75 and M1 closed
+
+- **What:** the owner asked that everything waiting on them be solved.
+- **C74 and C75:** closed as A/A, the recommendations, under the
+  2026-10-29 rule; recorded in [`owner-decisions.md`](../decisions/owner-decisions.md#ui-kit-colours-c74-c75-closed-2026-11-04).
+  The follow-up is K1-R9 in [`requests.md`](requests.md).
+- **M1:** AIA acknowledged it at 01:34Z (`fd2620f2` on `claude/ui-artist`);
+  the lead copies the ack at its next cycle.
+- **Left for the owner, no deadline:** §21.8's sentence "success words keep
+  #3FBF7F" now differs from C74's answer; only the owner edits the design
+  document.
+
 ## 2026-11-03 06:10Z: watchdog alert, lead past its update time
 
 - **What was stale:** `status/lead.json` expected an update by 2026-11-03T02:56:00Z. Its last update was at 01:41Z (cycle 19, `28c8bfea`), and nothing has been committed since. The launcher reports SUCCEEDED for its last run (05:38Z), yet no lead cycle has run since 01:41Z. The launcher session may be skipping or failing to create sessions; worth checking.
