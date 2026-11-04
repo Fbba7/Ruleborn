@@ -11,7 +11,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { spawnSync, execFileSync } = require('child_process');
-const { manifestText, layout, webpSize } = require('../bake.js');
+const { manifestText, layout, paginate, palette, webpSize } = require('../bake.js');
 
 const BAKE = path.join(__dirname, '..', 'bake.js');
 const FIXTURE = path.join(__dirname, 'fixture');
@@ -28,7 +28,8 @@ function copyFixture() {
 }
 
 function run(args, where) {
-  const r = spawnSync('node', [BAKE, ...args, '--config', where.config, '--art', where.art, '--out', where.out], {
+  const extra = where.tokens ? ['--tokens', where.tokens] : [];
+  const r = spawnSync('node', [BAKE, ...args, ...extra, '--config', where.config, '--art', where.art, '--out', where.out], {
     encoding: 'utf8',
   });
   return { code: r.status, out: r.stdout + r.stderr };
@@ -192,4 +193,131 @@ test('packs in shelves, tallest first, and widens before refusing', () => {
   );
   assert.deepEqual(lay, { width: 64, height: 64, places: { b: { x: 2, y: 2 }, a: { x: 2, y: 24 }, c: { x: 2, y: 36 } } });
   assert.equal(layout([{ name: 'wide', w: 100, h: 4 }], 64).width, 128);
+});
+
+test('splits pieces that outgrow one atlas into pages, tallest first', () => {
+  const pieces = [
+    { name: 'big_a', w: 1500, h: 1500 },
+    { name: 'big_b', w: 1500, h: 1400 },
+    { name: 'small', w: 100, h: 50 },
+  ];
+  const pages = paginate(pieces, 1024);
+  assert.equal(pages.length, 2);
+  assert.deepEqual(pages[0], { width: 2048, height: 2048, places: { big_a: { x: 2, y: 2, page: 1 } } });
+  assert.deepEqual(pages[1].places, { big_b: { x: 2, y: 2, page: 2 }, small: { x: 1504, y: 2, page: 2 } });
+  assert.deepEqual([pages[1].width, pages[1].height], [2048, 2048]);
+  const one = paginate([{ name: 'a', w: 30, h: 10 }], 64);
+  assert.deepEqual(one, [{ width: 64, height: 16, places: { a: { x: 2, y: 2, page: 1 } } }], 'a family that fits keeps one atlas');
+  assert.throws(() => paginate([{ name: 'huge', w: 2100, h: 10 }], 64), /do not fit a 2048x2048 atlas.*huge is larger than a page/);
+});
+
+// Two pieces of 520 points (1040 px at the fixture's 2 px a point): one a page.
+const BIG = (fill) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="520" height="520" data-hc="class"><style>.hc rect { fill: #fff; }</style><rect width="520" height="520" fill="${fill}"/></svg>`;
+
+test('bakes a family that outgrows one atlas into pages with their twins', () => {
+  const where = copyFixture();
+  fs.mkdirSync(path.join(where.art, 'fixture/plain'));
+  fs.writeFileSync(path.join(where.art, 'fixture/plain/big.svg'), BIG('#ff0000'));
+  fs.writeFileSync(path.join(where.art, 'fixture/plain/bigger.svg'), BIG('#00ff00'));
+  const r = run(['fixture'], where);
+  assert.equal(r.code, 0, r.out);
+  assert.match(r.out, /6 pieces twice into 2 pages/);
+  const text = fs.readFileSync(path.join(where.out, 'fixture.json'), 'utf8');
+  const m = JSON.parse(text);
+  assert.equal(text, manifestText(m));
+  const page = (n, w, h) => ({ normal: n === 1 ? 'fixture.webp' : `fixture_${n}.webp`, high_contrast: n === 1 ? 'fixture_hc.webp' : `fixture_${n}_hc.webp`, width: w, height: h });
+  assert.deepEqual(m.atlas, { ...page(1, 2048, 2048), pages: [page(1, 2048, 2048), page(2, 2048, 2048)] });
+  assert.equal(m.pieces.plain__big__normal.page, undefined, 'page 1 is the default');
+  assert.equal(m.pieces.plain__bigger__normal.page, 2);
+  for (const f of ['fixture.webp', 'fixture_hc.webp', 'fixture_2.webp', 'fixture_2_hc.webp']) {
+    assert.deepEqual(webpSize(path.join(where.out, f)), { width: 2048, height: 2048 }, f);
+  }
+  // Tallest first, then by name: big on page 1, bigger and the rest on page 2.
+  const on2 = m.pieces.plain__bigger__normal;
+  assert.deepEqual(pixel(path.join(where.out, 'fixture_2.webp'), on2.x + 10, on2.y + 10), [0, 255, 0, 255]);
+  assert.deepEqual(pixel(path.join(where.out, 'fixture_2_hc.webp'), on2.x + 10, on2.y + 10), [255, 255, 255, 255]);
+  assert.equal(m.pieces.button_test__capsule__normal.page, 2);
+  const ok = run(['--check'], where);
+  assert.equal(ok.code, 0, ok.out);
+  assert.match(ok.out, /ok {3}fixture: 6 pieces, 2 pages/);
+
+  // Rebaked byte for byte, every page.
+  const again = { ...where, out: path.join(scratch(), 'out') };
+  assert.equal(run(['fixture'], again).code, 0);
+  for (const f of ['fixture.json', 'fixture.webp', 'fixture_hc.webp', 'fixture_2.webp', 'fixture_2_hc.webp']) {
+    assert.ok(fs.readFileSync(path.join(where.out, f)).equals(fs.readFileSync(path.join(again.out, f))), `${f} differs`);
+  }
+
+  // A page that loses its twin, or a piece pointed off its pages, fails the check.
+  fs.rmSync(path.join(again.out, 'fixture_2_hc.webp'));
+  const lost = run(['--check'], again);
+  assert.equal(lost.code, 1);
+  assert.match(lost.out, /fixture_2_hc\.webp is missing/);
+
+  // Back to one atlas: the second page goes with the bake that no longer needs it.
+  fs.rmSync(path.join(where.art, 'fixture/plain/bigger.svg'));
+  assert.equal(run(['fixture'], where).code, 0);
+  assert.ok(!fs.existsSync(path.join(where.out, 'fixture_2.webp')));
+  assert.ok(!fs.existsSync(path.join(where.out, 'fixture_2_hc.webp')));
+  const one = JSON.parse(fs.readFileSync(path.join(where.out, 'fixture.json'), 'utf8'));
+  assert.equal(one.atlas.pages, undefined);
+  assert.equal(run(['--check'], where).code, 0);
+  fs.copyFileSync(path.join(again.out, 'fixture_2.webp'), path.join(where.out, 'fixture_2.webp'));
+  const stray = run(['--check'], where);
+  assert.equal(stray.code, 1);
+  assert.match(stray.out, /fixture_2\.webp is a page the manifest does not list/);
+});
+
+test('--check refuses a piece on a page the atlas does not have', () => {
+  const where = copyFixture();
+  assert.equal(run(['fixture'], where).code, 0);
+  const mfile = path.join(where.out, 'fixture.json');
+  const m = JSON.parse(fs.readFileSync(mfile, 'utf8'));
+  m.pieces.disc_test__16__normal.page = 2;
+  fs.writeFileSync(mfile, manifestText(m));
+  const r = run(['--check'], where);
+  assert.equal(r.code, 1);
+  assert.match(r.out, /disc_test__16__normal is on page 2, which the atlas does not have/);
+});
+
+test('--palette writes palette.json from tokens.json, keeping its kit colours', () => {
+  const where = copyFixture();
+  where.tokens = path.join(path.dirname(where.art), 'tokens.json');
+  const tokens = {
+    color: { _what: 'x', gold: { value: '#E9B65C', from: 'a' }, ink: { value: '#221C3A', from: 'b' } },
+    color_high_contrast: { ink: { value: '#000000', from: 'c' } },
+    gradient: { _what: 'y', gold: { value: [[0, 'gold'], [1, '#C88A35']], from: 'd' } },
+  };
+  fs.writeFileSync(where.tokens, JSON.stringify(tokens));
+  fs.writeFileSync(path.join(where.art, 'palette.json'), JSON.stringify({ kit: { gold_hc: { value: '#F2C14E', from: 'gold, flat' } } }));
+  const r = run(['--palette'], where);
+  assert.equal(r.code, 0, r.out);
+  const p = JSON.parse(fs.readFileSync(path.join(where.art, 'palette.json'), 'utf8'));
+  assert.deepEqual(p.color, { gold: '#E9B65C', ink: '#221C3A' });
+  assert.deepEqual(p.color_high_contrast, { ink: '#000000' });
+  assert.deepEqual(p.gradient, { gold: [[0, '#E9B65C'], [1, '#C88A35']] });
+  assert.deepEqual(p.kit, { gold_hc: { value: '#F2C14E', from: 'gold, flat' } });
+  assert.match(p._what, /generated from client\/ui\/tokens\.json by tools\/ui_bake\/bake\.js/);
+  assert.deepEqual(palette(tokens, null).kit, {});
+  assert.equal(run(['fixture'], where).code, 0);
+  const ok = run(['--check'], where);
+  assert.equal(ok.code, 0, ok.out);
+  assert.match(ok.out, /ok {3}palette\.json/);
+  tokens.color.gold.value = '#000001';
+  fs.writeFileSync(where.tokens, JSON.stringify(tokens));
+  const stale = run(['--check'], where);
+  assert.equal(stale.code, 1);
+  assert.match(stale.out, /palette\.json's color is not tokens\.json's/);
+  assert.match(stale.out, /palette\.json's gradient is not tokens\.json's/);
+});
+
+test('bakes kind "scene" through the icon studio, from the real art only', () => {
+  const where = copyFixture();
+  const cfg = JSON.parse(fs.readFileSync(where.config, 'utf8'));
+  cfg.families.icons = { dir: 'icons', kind: 'scene', px: 64, width: 256 };
+  fs.writeFileSync(where.config, JSON.stringify(cfg));
+  const r = run(['icons'], where);
+  assert.equal(r.code, 2, r.out);
+  assert.match(r.out, /a scene family bakes from art\/ui and tools\/ui_bake\/families\.json only/);
 });
