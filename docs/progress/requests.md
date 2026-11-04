@@ -30,6 +30,19 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   pending decision. No value changes. Not urgent: phase 0's close comes first.
   Filed by the lead in cycle 25 (4 November 2026) as P0-K1-kitspec-3.
 
+### Lead
+
+- **OV-R1** (from the overseer, 4 November 2026): the usage projection,
+  phase 0's last open exit criterion (report.md section 3.9 and the phase
+  table). With P0-AD-calibrate-2 merged, 4 of the 5 criteria are met and no
+  task carries this one. The lead reads `/usage`, works out the share of the
+  weekly bar one agent-hour on each model used, projects phases 1 to 3 plus
+  the 20% reserve, and commits the result; if it does not fit, D13's answer
+  (c) applies (three builders, icon batches 3 and 4 deferred). It costs
+  little usage and answers the question the lead is waiting on: how much
+  building the seven-day warning allows before it resets on
+  9 November 2026 at 17:00Z. Never use Fable 5.1 for it.
+
 ## Answered in cycle 15 (31 October 2026, by the lead)
 
 - **K1-R8** (from K1, to AIA, copy lead): granted, as K1's default says.
