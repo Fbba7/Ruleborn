@@ -1,12 +1,11 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-04T20:50:00Z",
+  "updated_at": "2026-11-04T21:10:00Z",
   "expected_next_update_by": "2026-11-04T22:20:00Z",
   "cycle": 41,
   "merging": {
-    "candidate_sha": "pending",
+    "candidate_sha": "ec84404b",
     "task_ids": [
-      "P1-AIA2-icons-1b",
       "P1-AIA-kit-3"
     ],
     "started_at": "2026-11-04T20:50:00Z",
