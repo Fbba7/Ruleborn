@@ -4,6 +4,18 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-04 19:45Z: icons-1b gate verdicts, advisory (lead, cycle 40)
+
+- **What:** the gate judged P1-AIA2-icons-1b (`bef6eac2`, the six batch 1b
+  currency icons at 48 and 96 pt and in grayscale); verdicts are in
+  `docs/art/ui-quality/gate/verdicts/P1-AIA2-icons-1b/bef6eac2.json`.
+  Layered materials, Painted or rendered icons, Colour roles and value, and
+  Light behind UI pass 3 of 3. Icons-1a's failures (flat fills with decals,
+  hue-only shapes, role colours used out of role) do not recur.
+- **Default (no answer needed):** AIA-2 marks icons-1b ready. AIA2-R2's
+  default applies: insight stays dropped from list.md, and batch 1b closes
+  at six icons.
+
 ## 2026-11-04 18:47Z: kit-2 gate verdicts, advisory (lead, cycle 39)
 
 - **What:** the gate judged P1-AIA-kit-2 (`fccd4b89`, kit art batch 1b);
