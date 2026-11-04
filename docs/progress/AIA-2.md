@@ -42,7 +42,7 @@
 | ability | 6.0 | 4.0 | 34% | 0.79 |
 | aim | 7.0 | 4.3 | 38% | 0.76 |
 | callskiff | 5.9 | 4.5 | 47% | 0.88 |
-| cast | CASTMED | CASTP10 | CASTCOV | CASTELL |
+| cast | 5.9 | 4.0 | 33% | 0.76 |
 | getout | 6.2 | 4.9 | 41% | 0.80 |
 | regroup | 6.0 | 4.4 | 39% | 0.79 |
 | sagewheel | 6.3 | 4.2 | 41% | 0.77 |
@@ -56,7 +56,7 @@ Against rubric.md quality 3 (Painted or rendered icons):
 |---|---|---|
 | 1. 3D form, top-left key, rim, specular, dark outline | Pass | Every icon is a lit solid, keyed from (-3, 4, 5) with the rim on the lit side. Glints act as the specular and the ink ring as the outline. |
 | 2. Outline 2 pt at the size shown | Pass, scripted | `check_icons.py`, all faces |
-| 3. A dark shape at 32 pt | Pass, scripted | Coverage 34–47% and ellipse overlap 0.74–0.88: none is a blob |
+| 3. A dark shape at 32 pt | Pass, scripted | Coverage 33–47% and ellipse overlap 0.76–0.88: none is a blob |
 | 4. §21.8 volume | Pass | The toon ramp and the inner light carry the gradient, the glints are the gloss, and the drop is soft |
 | 5. One toon look | Pass | No PBR. The pips are toy figures in school colours, not characters, so no model render is needed |
 | 6. Law and school frames | Not applicable | No law icon. The Sage's wheel carries all six school colours, in §21.2's order round the helm |
