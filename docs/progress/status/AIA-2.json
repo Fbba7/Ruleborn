@@ -5,21 +5,37 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P1-AIA2-toon-route",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-04T12:47:10Z",
   "lease_until": "2026-11-04T15:47:10Z",
-  "updated_at": "2026-11-04T12:47:10Z",
-  "expected_next_update_by": "2026-11-04T13:32:10Z",
+  "updated_at": "2026-11-04T13:02:00Z",
+  "expected_next_update_by": "2026-11-04T13:47:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "P1-AIA2-toon-route: icon list, scene format, Godot portrait route, two proof icons"
+    "next_step": "pre-check 02e7ef0f running; on PASS record it and mark P1-AIA2-toon-route ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "AIA2-R1",
+      "from": "AIA-2",
+      "to": "K1",
+      "ask": "Icon families are kind \"scene\" (families.json), which bake.js refuses, so guard.sh's rebake fails on client/ui/art/icons_48.json and icons_256.json once P1-AIA2-toon-route merges. Please give bake.js a renderer for kind \"scene\": for that family, run the route in art/ui/icons/studio/ (README.md there: load studio/page.html over a local server in Chromium with SwiftShader, call window.finish(name, family, px, mode) for every <group>/<name>.js whose families list it, then layout, pack.py and manifestText as for SVG), or call `node art/ui/icons/studio/bake_icons.js <family> --out <dir>`, which already writes exactly that. Today's output is byte for byte on rebake. Also: should px_per_point be null for a scene family (AIA-2 writes null), or px / shown points?",
+      "files": [
+        "tools/ui_bake/bake.js",
+        "tools/ui_bake/README.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-04T13:02:00Z",
+      "due": "2026-11-04T19:00:00Z",
+      "default": "The lead merges P1-AIA2-toon-route with bake.js --check and check_all green, and runs guard.sh's rebake for the two icon families as `node art/ui/icons/studio/bake_icons.js icons_48 icons_256 --out <scratch>` compared file by file, until K1 wires kind \"scene\" into bake.js by calling that script; px_per_point stays null for scene families.",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
