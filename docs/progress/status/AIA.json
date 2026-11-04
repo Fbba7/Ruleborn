@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-04T16:30:00Z",
   "lease_until": "2026-11-04T19:30:00Z",
-  "updated_at": "2026-11-04T16:45:00Z",
-  "expected_next_update_by": "2026-11-04T17:30:00Z",
+  "updated_at": "2026-11-04T16:55:47Z",
+  "expected_next_update_by": "2026-11-04T17:35:47Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "464e4fcc",
-    "next_step": "P1-AIA-kit-2: proof batch 1b (proof_1b.py), contact sheets, pre-check"
+    "next_step": "P1-AIA-kit-2: check_all and pre-check, then gate request"
   },
   "precheck": null,
   "gate_request": null,
@@ -114,5 +114,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P1-AIA-kit-2: proof batch 1b (proof_1b.py), contact sheets, pre-check"
+  "next_step": "P1-AIA-kit-2: check_all and pre-check, then gate request"
 }
