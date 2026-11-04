@@ -3,21 +3,31 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-AIA-kit-3",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-04T19:30:00Z",
   "lease_until": "2026-11-04T22:30:00Z",
-  "updated_at": "2026-11-04T19:47:00Z",
-  "expected_next_update_by": "2026-11-04T20:30:00Z",
+  "updated_at": "2026-11-04T20:24:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "fccd4b89",
-    "next_step": "full checks (run_checks.sh), handoff with the self-score, gate request"
+    "last_green_sha": "3a04e828",
+    "next_step": "none; wait for the lead"
   },
-  "precheck": null,
-  "gate_request": null,
-  "ready_sha": null,
+  "precheck": {
+    "sha": "3a04e828d41ae191f423f2094ecd3b6bbdf52328",
+    "exit": 0,
+    "finished_at": "2026-11-04T20:21:18Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "3a04e828",
+    "items": [
+      "numerals sheet at phone size, 100% and 200% text"
+    ]
+  },
+  "ready_sha": "3a04e828",
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [
     "M1"
@@ -132,5 +142,5 @@
     }
   ],
   "answers": [],
-  "next_step": "run tools/run_checks.sh on the numerals commit; write the handoff; request the gate"
+  "next_step": "none; wait for the lead (gate on the numerals sheet)"
 }
