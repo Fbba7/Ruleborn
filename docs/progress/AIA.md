@@ -1,11 +1,11 @@
 # AIA AI UI artist: progress
 
-- Status: Green: pre-check PASS at b83a0b4d (2026-10-31T15:49:22Z); P0-AIA-board-4 is ready.
-- Progress: 5 tasks merged, P0-AIA-keyframes-3 and P0-AIA-board-4 ready; 0 items passed by the gate (the board has no gate items).
-- Done: P0-AIA-board-4 built: the board's secondary captions on the night backdrop are bold, and its alarm and success words ride on their own fills, passing with kit-spec section 2.1's revised values tried over tokens.css.
-- Next: none open for AIA on the backlog.
+- Status: Green: P1-AIA-kit-1 built; pre-check to follow, then ready.
+- Progress: 5 tasks merged, P0-AIA-keyframes-3 and P0-AIA-board-4 ready, P1-AIA-kit-1 built; 0 items passed by the gate.
+- Done: P1-AIA-kit-1: kit batch 1a, five button skins (primary, secondary, tertiary, danger, success) plus the round gold action and a parchment tertiary face, each in normal, pressed, disabled and locked with high-contrast twins, baked into `client/ui/art/kit.webp`, `kit_hc.webp` and `kit.json`.
+- Next: wait for the lead (gate on the kit atlas contact sheet).
 - Blocked by: none.
-- Owner decision needed: none. Request AIA-R8 to the lead (copy K1): ink on #3FBF7F reaches Lc 58 at best, so success words on that fill pass only at 36 points or more; default: set them at 36 points, as on the board.
+- Owner decision needed: none. Requests AIA-R9 to AIA-R12 to K1 are in the status file, each with a default.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
@@ -17,17 +17,24 @@
 | P0-AIA-keyframes-3: settings and the contact sheet | 2 | Ready at 5eec1b60 (pre-check PASS) | `node art/ui/keyframes/check_keyframes.mjs`: all 30 stills pass. Settings: 5 controls (3 at 200%), smallest touch area 52 points, 20 words (8 at 200%), worst 8.59:1. All 30 shots pass value-steps. `contact_sheet.png` is 1882 x 3085. `--self-test`: each planted fault fails, including a contact sheet of the wrong size. `bash tools/run_checks.sh`: all checks passed. |
 | P0-AIA-board-4: the board's words for the revised tokens (K1-R6) | 1 | Ready at b83a0b4d (pre-check PASS) | `node art/ui/board/check_board.mjs` and `--revised` (section 2.1's backdrop #171046 to #2C3AA8, #FF9AAA, #3FBF7F tried over `tokens.css`): 378 words pass in both modes, 8 icons keep the outline rule, 16 controls pass value-steps; `--self-test`: each planted fault fails, including a regular-weight caption on the revised backdrop; `board.png`, `board_hc.png` |
 
+| P1-AIA-kit-1: kit art batch 1a | 4 | Built | `node tools/ui_bake/bake.js --check`: kit 28 pieces, 2048 x 2048, 446350 bytes for both atlases. `python3 art/ui/kit_build/proof_kit.py --check`: 280 results, 0 fail: 152 value-steps (76 a mode; worst ΔL* 21.9 normal, 23.8 high contrast, both `button_danger__box__pressed` on the backdrop) and 128 label contrasts (worst 4.78:1 normal, tertiary on the backdrop; 5.81:1 high contrast). Contact sheets `art/ui/kit_build/proof/contact_normal.png`, `contact_hc.png` (sheet.py contact, 60 and 120 points). |
 
 ## Handoff
-- M1 (acked 2026-11-04): before marking any board or keyframe task ready I will score every point against `docs/art/ui-quality/gate/rubric.md`, run `tools/ui_gate/checks.py value-steps`, and put both in the handoff evidence; I will work from reduced-size previews and, past about 20M tokens in a session, write the handoff and end it.
-- Last verified commit: b83a0b4d (pre-check green, 2026-10-31T15:49:22Z). Request AIA-R8 in the status file, with a default.
-- Done:
-  - `art/ui/board/board.html`: the recipe's captions and the glass note are bold (kit-spec section 2.1: `text_on_night_2` on the bare backdrop is bold only). A `.status` chip sets an alarm in paper on `alarm_fill` ("Alarm 3", "Alarm 4 of 5") and a success in ink on `#3FBF7F` at 36 points ("Escape open", "Vault open"), with high-contrast forms.
-  - `check_board.mjs --revised` tries the backdrop #171046 to #2C3AA8, #FF9AAA and #3FBF7F over `tokens.css` without editing it; `--self-test` adds "the revised values pass" and "a regular-weight caption on the revised backdrop fails".
-  - Literal trial: those values swapped into `tokens.css` gave 378 of 378 words passing; the file was restored and `build_tokens.mjs --check` reports it up to date.
-  - `shoot_board.mjs` lists status chips as information; `board.png`, `board_hc.png` and their shot files are re-shot.
+- M1 (acked 2026-11-04): scored against `docs/art/ui-quality/gate/rubric.md` below, value-steps run, from reduced-size previews.
+- Last verified commit: see the status file's `precheck`.
+- Done (P1-AIA-kit-1):
+  - `art/ui/kit_build/build_kit.py` writes the sources from `client/ui/tokens.json`: `art/ui/kit/<skin>/box.svg` for button_primary, button_secondary, button_tertiary, button_danger and success; `button_primary/gold_round.svg` (the 60-point round action, a sprite); `button_tertiary/parchment.svg` (the tertiary face for paper grounds); and `art/ui/palette.json` (the tokens' colours and gradients resolved, plus a `kit` section of the colours this batch adds, each with where it comes from).
+  - Every box is a 9-slice piece, 38 x (42 + lip) points, slices 18/20/18/(20 + lip). Normal: body gradient lit from the top, a gloss band over the top 36%, rim, highlight and shade strokes, the ink edge, a solid lip of `drop_m` (3 for the tertiary). Pressed: the face sinks `press_travel` onto the lip, darker, the gloss gone. Disabled: flat, no lip, muted, words above 4.5:1. Locked: the teal gradient lifted a step (`kit.locked_top`, `kit.locked_bottom`), hatching on the end caps only, white rim. High contrast: opaque flat fills, 3-point black edges, black lips, no gloss or grain.
+  - Stretch-safe: the hatching is masked to the end caps and the leather seam is a solid groove with a lit line, so neither kinks or smears when the middle is stretched.
+  - `art/ui/kit_build/proof_kit.py` renders every piece out of the baked atlases at phone density on the grounds it is meant for, runs value-steps (`tools/ui_gate/checks.py`) and the labels' contrast, and makes the contact sheets. `proof/tiles/` is regenerated and not committed.
+- Self-score against the rubric (statements, not a rating):
+  - 1 Layered materials: primary, danger and success have body gradient, gloss band, rim and lip; secondary is leather with grain-free radial body, rim, seam and lip; the tertiary is the quiet rank (body gradient, edge, lip, no gloss). Every state and twin is baked (`bake.js --check`). Risk: the tertiary's lack of gloss may read flat beside the others.
+  - 2 Display type: the kit carries no words; the proof's labels are Manrope 800, with ink outlines on danger and success.
+  - 8 Colour roles and value: gold only on the main action, red on danger, green on success; every face is two value steps or more off each ground it is used on (worst ΔL* 21.9), words 4.78:1 or more. All colours come from the tokens or the palette's `kit` section.
+  - 13 Light behind UI: one top light throughout, highlights above, lips and shade below; pressed faces lose their top light.
+- Known limits (where each face may go): gold on parchment is about ΔL* 15, so parchment grounds take leather or the tertiary parchment face; leather on the dark grounds fails, so leather goes on parchment and oak; the tertiary violet is for dark grounds only.
 - Half done: none.
-- Open hypotheses: success words in ink on #3FBF7F cannot pass below 36 points (Lc 58.2 at best); P0-K1-tokens-2 meets the same limit (AIA-R8).
+- Open hypotheses: the whole kit will not fit one 2048 atlas at 6 px/pt (batch 1a reaches y 1268); AIA-R12.
 - Next step: none; wait for the lead.
 
 ## Tried and failed
@@ -42,3 +49,7 @@
 - 2026-10-31 Home in leather on the result's glass tray: ΔL* 13 against its ground. Parchment passes.
 - 2026-10-31 Leather text-size buttons on the enamel card: ΔL* 1 to 11 against it, so value-steps failed. Gold passes.
 - 2026-10-31 A 64-point button for the large A at 200%: the 52-point letter overflowed onto the dark rim (1.03:1). 76 x 76 at large text fits it.
+- 2026-11-04 Kit pieces at 64 x 54 points: batch 1a alone filled the 2048 atlas at 6 px/pt. 38 x (42 + lip) with 18-point caps fits it in 1268 rows.
+- 2026-11-04 Diagonal hatching across a 9-slice face: it kinks where the middle stretches. Masked to the end caps it holds.
+- 2026-11-04 A dashed stitch on the leather face: stretched, the dashes smear into long bars. A solid groove with a lit line stretches cleanly.
+- 2026-11-04 The tokens' locked gradient as it is: on the lit foot of the night backdrop it is 1.8 value steps off (ΔL* 17.9). Lifted a step (#4A9AA0 to #30707A) it passes.

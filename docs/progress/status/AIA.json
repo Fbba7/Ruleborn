@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-04T12:50:00Z",
   "lease_until": "2026-11-04T15:50:00Z",
-  "updated_at": "2026-11-04T12:59:00Z",
-  "expected_next_update_by": "2026-11-04T13:44:00Z",
+  "updated_at": "2026-11-04T13:10:00Z",
+  "expected_next_update_by": "2026-11-04T13:55:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "294a4595",
@@ -22,7 +22,65 @@
   "acks": [
     "M1"
   ],
-  "requests": [],
+  "requests": [
+    {
+      "id": "AIA-R9",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "KitSkin.piece: on parchment grounds, look up the tertiary's `button_tertiary__parchment__<state>` (the violet box fails value-steps on paper)",
+      "files": [
+        "client/ui/kit_skin.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T13:10:00Z",
+      "due": "2026-11-05T13:10:00Z",
+      "default": "screens put no tertiary button on parchment until K1 wires the parchment shape",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R10",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Move the colours in art/ui/palette.json's `kit` section (pressed, disabled, high-contrast and lifted-locked faces) into client/ui/tokens.json",
+      "files": [
+        "client/ui/tokens.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T13:10:00Z",
+      "due": "2026-11-05T13:10:00Z",
+      "default": "they stay in art/ui/kit_build/build_kit.py's KIT table and palette.json's `kit` section, each with where it comes from",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R11",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "art/ui/palette.json is written by art/ui/kit_build/build_kit.py until the bake makes it from tokens.json (kit-spec.md section 6.2; tools/ui_bake/README.md 'Not yet')",
+      "files": [
+        "tools/ui_bake/bake.js"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T13:10:00Z",
+      "due": "2026-11-05T13:10:00Z",
+      "default": "build_kit.py keeps writing it; rerun it after any tokens.json change",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R12",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Atlas capacity: batch 1a's 28 pieces fill 2048 x 1268 of the kit's 2048 atlas at 6 px/pt, so the rest of the kit will not fit one atlas",
+      "files": [
+        "tools/ui_bake/bake.js",
+        "tools/ui_bake/families.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T13:10:00Z",
+      "due": "2026-11-05T13:10:00Z",
+      "default": "the bake gains atlas pages (kit.webp, kit_2.webp, ...) before batch 1b; AIA keeps the piece sizes",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": [],
   "next_step": "P1-AIA-kit-1: checks, pre-check, handoff"
 }
