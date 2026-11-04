@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-04T21:40:00Z",
   "lease_until": "2026-11-05T00:40:00Z",
-  "updated_at": "2026-11-04T21:48:00Z",
-  "expected_next_update_by": "2026-11-04T22:33:00Z",
+  "updated_at": "2026-11-04T21:50:06Z",
+  "expected_next_update_by": "2026-11-04T22:35:06Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "3a04e828",
-    "next_step": "pre-check on the batch 2a commit"
+    "next_step": "pre-check on 3eb4e200 (batch 2a final), then ready + gate request"
   },
   "precheck": null,
   "gate_request": null,
