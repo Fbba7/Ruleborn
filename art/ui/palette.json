@@ -990,6 +990,18 @@
       "value": "#4A9AA0",
       "from": "gradient.locked's #3A8A90, lifted: 2 value steps off the lit backdrop"
     },
+    "num_red_bottom": {
+      "value": "#F2647A",
+      "from": "alarm, lifted: 6:1 on ink_line"
+    },
+    "num_red_top": {
+      "value": "#FFE4E8",
+      "from": "alarm_text_on_night, lifted toward paper"
+    },
+    "num_timer_bottom": {
+      "value": "#D6E4F2",
+      "from": "text_on_night_2, cooled: the clock's foot, not the time school's cyan"
+    },
     "parchment_disabled": {
       "value": "#C4B69C",
       "from": "tertiary parchment, desaturated; parchment_ink 9:1"

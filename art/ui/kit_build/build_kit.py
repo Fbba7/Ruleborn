@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Writes the kit's batch 1a sources (kit-spec.md sections 3, 4.1 and 5),
-batch 1b's (kit_1b.py: the heist's other families and the overlays) and
+batch 1b's (kit_1b.py: the heist's other families and the overlays),
+batch 1c's (kit_num.py: the baked numerals) and
 art/ui/palette.json (section 6.2) from client/ui/tokens.json.
 
     python3 art/ui/kit_build/build_kit.py
@@ -343,6 +344,11 @@ def build():
     KIT.update(kit_1b.KIT_1B)
     K.update({k: v[0] for k, v in kit_1b.KIT_1B.items()})
     svgs.update(kit_1b.build_1b())
+    # Batch 1c (kit_num.py): the baked numerals, merged the same way.
+    import kit_num
+    KIT.update(kit_num.KIT_NUM)
+    K.update({k: v[0] for k, v in kit_num.KIT_NUM.items()})
+    svgs.update(kit_num.build_num())
     return svgs
 
 
