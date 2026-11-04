@@ -990,9 +990,9 @@
       "value": "#4A9AA0",
       "from": "gradient.locked's #3A8A90, lifted: 2 value steps off the lit backdrop"
     },
-    "num_red_bottom": {
-      "value": "#F2647A",
-      "from": "alarm, lifted: 6:1 on ink_line"
+    "num_red_mid": {
+      "value": "#FFBFC9",
+      "from": "half way from num_red_top to alarm_text_on_night"
     },
     "num_red_top": {
       "value": "#FFE4E8",

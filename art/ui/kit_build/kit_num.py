@@ -15,7 +15,8 @@ larger:
     gold       28   currency, rewards, the loot count: a gold fill
     white      22   counts on cards and badges: a white-to-lilac fill
     timer      28   the heist clock: a cool white fill
-    timer_red  28   the clock in its last seconds: the alarm's light red
+    timer_red  28   the clock in its last seconds: red words on dark, its
+                    foot #FF9AAA (alarm_text_on_night) and lighter above
 
 Each glyph is one piece, num_<finish>_<glyph>, with a fixed advance:
 
@@ -26,7 +27,10 @@ Each glyph is one piece, num_<finish>_<glyph>, with a fixed advance:
 
 The drawing: a gradient fill, an ink outline twice the rubric's visible width
 under the fill (paint-order stroke), and a hard drop, an ink copy 0.08 of the
-size straight down. The gradient runs from the cap height to the baseline in
+size straight down. A second pass of the fill, unstroked, lies over the face:
+the variable font's contours overlap, and one pass leaves a faint seam where
+they meet. Every fill pixel is at least Lc 60 and 4.5:1 on its outline
+(proof_num.py measures it). The gradient runs from the cap height to the baseline in
 the drawing's own units, so every glyph of a finish is lit the same.
 
 The box (its width, height and advance in whole points). Every piece of a
@@ -45,7 +49,7 @@ from build_kit import C, HC, K, KIT, p
 KIT_NUM = {
     "num_timer_bottom": ("#D6E4F2", "text_on_night_2, cooled: the clock's foot, not the time school's cyan"),
     "num_red_top": ("#FFE4E8", "alarm_text_on_night, lifted toward paper"),
-    "num_red_bottom": ("#F2647A", "alarm, lifted: 6:1 on ink_line"),
+    "num_red_mid": ("#FFBFC9", "half way from num_red_top to alarm_text_on_night"),
 }
 KIT.update(KIT_NUM)
 K.update({k: v[0] for k, v in KIT_NUM.items()})
@@ -70,13 +74,12 @@ MARKS = {
 
 # Each finish: size, gradient stops (offset, colour), its high-contrast fill.
 FINISHES = {
-    "gold": (28, [(0, "cream"), (0.45, "gold_top"), (0.55, "gold_round_mid"), (1, "gold_bottom")], "gold_hc"),
-    "white": (22, [(0, "paper"), (0.5, "paper"), (0.56, "text_on_night_2"), (1, "text_on_night_3")],
-              "paper"),
+    "gold": (28, [(0, "cream"), (0.45, "gold_top"), (0.55, "gold_round_mid"), (1, "gold")], "gold_hc"),
+    "white": (22, [(0, "paper"), (0.5, "paper"), (0.56, "text_on_night_2"), (1, "pill_bottom")], "paper"),
     "timer": (28, [(0, "paper"), (0.5, "text_on_night"), (0.56, "text_on_night_2"), (1, "num_timer_bottom")],
               "paper"),
-    "timer_red": (28, [(0, "num_red_top"), (0.5, "alarm_text_on_night"), (0.56, "alarm_light"), (1, "num_red_bottom")],
-                  "alarm_text_on_night"),
+    "timer_red": (28, [(0, "num_red_top"), (0.5, "num_red_mid"), (0.56, "alarm_text_on_night"),
+                       (1, "alarm_text_on_night")], "alarm_text_on_night"),
 }
 
 
@@ -138,11 +141,11 @@ def glyph_svg(finish, glyph):
     out.append("  <style>text { font-family: 'Manrope'; font-variation-settings: 'wght' 800; "
                "font-feature-settings: 'tnum' 1; font-size: %spx; stroke-width: %s; stroke-linejoin: round; "
                "paint-order: stroke; }\n"
-               "  .d { fill: %s; stroke: %s; } .f { fill: url(#f); stroke: %s; }\n"
-               "  .hc .d { fill: %s; stroke: %s; } .hc .f { fill: %s; stroke: %s; }</style>"
-               % (p(size), p(g["line"]), ink, ink, ink, hc, hc, colour(hc_fill), hc))
+               "  .d { fill: %s; stroke: %s; } .f { fill: url(#f); stroke: %s; } .s { fill: url(#f); stroke: none; }\n"
+               "  .hc .d { fill: %s; stroke: %s; } .hc .f { fill: %s; stroke: %s; } .hc .s { fill: %s; }</style>"
+               % (p(size), p(g["line"]), ink, ink, ink, hc, hc, colour(hc_fill), hc, colour(hc_fill)))
     if ch is not None:
-        for cls, dy in (("d", g["drop"]), ("f", 0)):
+        for cls, dy in (("d", g["drop"]), ("f", 0), ("s", 0)):
             out.append('  <text class="%s" x="%s" y="%s" text-anchor="%s">%s</text>'
                        % (cls, p(x), p(base + dy), anchor, ch))
     out.append("</svg>")
