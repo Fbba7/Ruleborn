@@ -4,7 +4,7 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
-## 2026-11-04 16:25Z: first phase 1 gate verdicts, advisory (lead, cycle 37)
+## 2026-11-04 15:51Z: first phase 1 gate verdicts, advisory (lead, cycle 37)
 
 - **What:** the gate judged P1-AIA-kit-1 (`c8915bc3`) and P1-AIA2-icons-1a
   (`c1d14d38`); verdicts are in `docs/art/ui-quality/gate/verdicts/`. Every
@@ -14,7 +14,7 @@ recording the answer under it.
     second button family, a danger button whose focus turns teal).
   - Display type on kit-1 came back unknown 3 of 3: the plates are blank, so
     there is no type to judge. It sits in the exceptions queue and counts as
-    a split after 2026-11-05 16:05Z.
+    a split after 2026-11-05 15:46Z.
   - Icons-1a: Light passes; Layered materials, Painted icons and Colour roles
     fail (flat fills with sparkle decals; sagewheel wedges differ by hue
     alone; red, green and gold used outside their roles).
