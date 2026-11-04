@@ -1,9 +1,9 @@
 # AIA-2 icon maker: progress
 
-- Status: Green pending (pre-check running at 5ecb0202; guard.sh green there). The last push has the icons-1b resync: the icon finish draws on software canvases, so the bake no longer depends on the machine's load; icons_48_hc.webp changes in crew/pip only.
-- Progress: 2 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9); 1 item passed by the gate (icons-1b at bef6eac2, advisory). P1-AIA2-icons-1b is in resync, to be ready again at 5ecb0202.
+- Status: Green (pre-check PASS at 5ecb0202, 21:45 UTC; guard.sh green). The last push has the icons-1b resync: the icon finish draws on software canvases, so the bake no longer depends on the machine's load; icons_48_hc.webp changes in crew/pip only.
+- Progress: 2 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9); 1 item passed by the gate (icons-1b at bef6eac2, advisory). P1-AIA2-icons-1b is ready again at 5ecb0202 (resync).
 - Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources (Insight dropped: the design has none, §11.7).
-- Next: the pre-check at 5ecb0202, then ready again; the lead judges whether the high-contrast Pip change needs the gate again.
+- Next: the lead's merge of P1-AIA2-icons-1b at 5ecb0202; the lead judges whether the high-contrast Pip change needs the gate again.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -15,7 +15,7 @@
 
 ## Handoff
 
-- **Last verified commit:** 5ecb0202 (guard.sh green; pre-check running).
+- **Last verified commit:** 5ecb0202 (pre-check PASS, 2026-11-04T21:45:55Z; guard.sh green).
 
 ### Resync (4 November 2026, cycle 41's candidate 3925aa99)
 
