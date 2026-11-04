@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-04T17:50:00Z",
   "lease_until": "2026-11-04T20:50:00Z",
-  "updated_at": "2026-11-04T18:17:23Z",
-  "expected_next_update_by": "2026-11-04T19:02:23Z",
+  "updated_at": "2026-11-04T18:20:54Z",
+  "expected_next_update_by": "2026-11-04T19:05:54Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "2ae9c82c",
@@ -150,5 +150,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "catalogue script, catalogue.sh and the coverage test committed at dffb269a (test passes; en/n/100: 46 pages, 151 pairs, none taller than a page); rendering the other seven variants, then check_all and the pre-check"
+  "next_step": "200% text: cells two to a row and a part taller than a page drawn smaller to fit; rendering the eight variants, then check_all and the pre-check"
 }

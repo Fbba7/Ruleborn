@@ -1,23 +1,12 @@
 extends SceneTree
 ## The kit's catalogue sheet (kit-spec.md section 6.4): every component of
-## section 4 in every state it has, page after page at phone size, one PNG a
-## page. The variant comes from the environment: HC (any value: high
-## contrast), TEXT (100 or 200) and LOCALE (en or pt_BR). SHOT names the
-## first page (`...-01.png`); a later page replaces `01` with its number.
-## tools/ui_bake/catalogue.sh renders the eight variants into
-## docs/art/shots/ui-bake/.
-##
-## Each cell is one (component, state) pair, captioned with its state's
-## letters (section 3): N normal, P pressed (the press's last frame), D
-## disabled (with its reason), S selected, L locked (the locked face and the
-## lock mark, with its reason), A attention (the badge), Ld loading (the
-## spinner in the label's place), RM reduced motion (built with reduced
-## motion on). Motion components add frame strips, full and reduced. HC is
-## the page's own mode. A skin with art in client/ui/art/kit.json draws
-## from the atlas, so the sheet shows the baked faces.
-##
-## ui_kit_tests.gd lays the pages out off screen and checks that every pair
-## of section 4 has a place on a page (`placed`).
+## section 4 in every state, on phone-sized pages, one PNG a page. HC (any
+## value), TEXT (100 or 200) and LOCALE (en or pt_BR) pick the variant; SHOT
+## names page 1 (`...-01.png`). tools/ui_bake/catalogue.sh renders all eight.
+## A cell is one (component, state) pair captioned with section 3's letters;
+## D and L say why. Motion components add frame strips, full and reduced;
+## skins with art draw from the atlas; a part taller than a page is drawn
+## smaller to fit. ui_kit_tests.gd checks every pair has a place (`placed`).
 
 const W := 1080
 const H := 2340
@@ -132,6 +121,7 @@ static func lay_out(tree: SceneTree, save: Callable) -> int:
 				break
 			if over:
 				tall.append(str(all[i][0]))
+				part = _fit(column, part, room - part.position.y)
 			for pair: String in _pending:
 				if not placed.has(pair):
 					placed[pair] = n
@@ -152,6 +142,19 @@ static func lay_out(tree: SceneTree, save: Callable) -> int:
 		screen.queue_free()
 		await tree.process_frame
 	return n
+
+
+## Draws `part`, alone and taller than `room`, smaller, in a holder (a
+## container would undo its scale).
+static func _fit(column: Control, part: Control, room: float) -> Control:
+	var at := part.size
+	var holder := Control.new()
+	part.reparent(holder, false)
+	part.scale = Vector2.ONE * room / at.y
+	part.size = at
+	holder.custom_minimum_size = at * room / at.y
+	column.add_child(holder)
+	return holder
 
 
 ## Every (component, state) pair of kit-spec.md section 4, as "K01:N"; HC is
@@ -671,6 +674,7 @@ static func _part(title: String, rows: Array) -> VBoxContainer:
 	var head := UI.label(title, 15)
 	head.theme_type_variation = "BodyBold"
 	head.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	head.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(head)
 	for r: Control in rows:
 		v.add_child(r)
@@ -717,19 +721,17 @@ static func _cell(id: String, state: String, make: Callable, caption := "", own 
 		why = _apply(c, state, over)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(2))
-	v.custom_minimum_size.x = UI.px(CELL_MIN)
 	v.add_child(stage)
+	v.custom_minimum_size.x = UI.px(CELL_MIN * clampf(Settings.text_scale / 100.0, 1.0, 1.8))
 	var bits := PackedStringArray()
 	for w: String in [caption, state, why]:
 		if w != "":
 			bits.append(w)
-	var words := " · ".join(bits)
-	v.add_child(_caption(words))
+	v.add_child(_caption(" · ".join(bits)))
 	return v
 
 
-## Puts `c` in `state`; returns the reason a disabled or locked control
-## shows.
+## Puts `c` in `state`; returns why it is disabled or locked, if it is.
 static func _apply(c: Control, state: String, over: Control) -> String:
 	match state:
 		"P":
