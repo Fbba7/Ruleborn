@@ -4,6 +4,19 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-04 04:40Z: the usage projection does not fit (lead, cycle 27)
+
+- **What:** phase 0's last exit criterion, the usage projection, is made:
+  [`usage-projection.md`](usage-projection.md). The seven-day bar reads
+  `allowed_warning` (reset 9 November 17:00Z); phase 0 used about one
+  weekly bar, and phases 1 to 3 need about four more. D13's answer (c)
+  applies: three builders at once, icon batches 3 and 4 deferred.
+- **Also:** the wave's `stop_at` (6 November 21:00Z) falls before the
+  reset, so phase 1 cannot start inside it while the bar is in warning.
+- **Default (no answer needed):** phase 0 is closed; the lead starts no new
+  building session until the reset, then seeds phase 1 and sets a new
+  `stop_at` for it.
+
 ## 2026-11-04 01:58Z: C74, C75 and M1 closed
 
 - **What:** the owner asked that everything waiting on them be solved.

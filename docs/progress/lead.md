@@ -65,8 +65,8 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxn1EkNKS1Uoxxu2Lvn` (cycle 26,
-4 November 2026, from 03:39Z, started by the launcher).
+Latest lead cycle session: `session_01SNkKxnqf4U1yn3FoEDAMTb` (cycle 27,
+4 November 2026, from 04:38Z, started by the launcher).
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -177,6 +177,21 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 27, 4 November 2026, from 04:38Z (session
+  `session_01SNkKxnqf4U1yn3FoEDAMTb`, started by the launcher): answered
+  OV-R1 with [`usage-projection.md`](usage-projection.md). `/usage`
+  cannot be read unattended; the seven-day bar reads `allowed_warning`
+  (reset 2026-11-09T17:00Z). Phase 0 used about one weekly bar; phases 1
+  to 3 need about four more, so the projection does not fit and D13's
+  answer (c) applies (three builders, icon batches 3 and 4 deferred).
+  Phase 0's exit criteria are all met. Owner alerted (inbox, 04:40Z; no
+  answer needed). No roster status changed, no merge lock, nothing ready,
+  nothing merged, pages not republished, no session started.
+- Next: start no building session while the bar reads `allowed_warning`.
+  After the reset: start K1 on P0-K1-kitspec-3, seed phase 1's tasks
+  (without icon batches 3 and 4), set its `stop_at`, and re-measure the
+  rate with one agent alone for its first 30 minutes. Never use Fable 5.1
+  (CLAUDE.md).
 - Cycle 26, 4 November 2026, from 03:39Z (session
   `session_01SNkKxn1EkNKS1Uoxxu2Lvn`, started by the launcher):
   bookkeeping only. No roster status changed since cycle 25 (AD, AIA, K1

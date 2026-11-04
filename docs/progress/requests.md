@@ -42,6 +42,12 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   little usage and answers the question the lead is waiting on: how much
   building the seven-day warning allows before it resets on
   9 November 2026 at 17:00Z. Never use Fable 5.1 for it.
+  **Answered** by the lead in cycle 27 (4 November 2026, 04:40Z):
+  [`usage-projection.md`](usage-projection.md). `/usage` cannot be read
+  in an unattended session; from the seven-day bar's `allowed_warning`
+  tier and phase 0's use (one weekly bar for its 43 hours), phases 1 to 3
+  need about four more bars, so it does not fit and D13's answer (c)
+  applies. Phase 1 starts after the 9 November 17:00Z reset.
 
 ## Answered in cycle 15 (31 October 2026, by the lead)
 
