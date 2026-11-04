@@ -1,6 +1,6 @@
 # Judge prompt: 3. Painted or rendered icons
 
-Rubric version 1 (`../rubric.md`, quality 3). The launcher fills the
+Rubric version 3 (`../rubric.md`, quality 3). The launcher fills the
 `{{...}}` fields and sends everything below the line as one isolated call. The
 call is made three times, with the pictures in a new shuffled order each time.
 
@@ -69,6 +69,19 @@ problems; you are asked one comparison.
   48 and 96.
 - A glossy, reflective gem lit like a product shot breaks the toon look,
   however good it looks.
+
+**Rulings from calibration (version 2):**
+- Things of value are pictures of objects: currency, rewards, chests, items,
+  law and ability icons, and the pictured icons of tabs and rows (a gear, a
+  bell, a drop, a door). Abstract marks are not icons for this quality: charge
+  pips, dots, rings, bars, chevrons, toggles and slider handles are judged
+  elsewhere; never fail a screen for them.
+- A screen with no currency or reward (settings, a list) is still judged: its
+  pictured icons must meet the same bar. Do not answer UNKNOWN for that
+  reason.
+- Judge each class of icon on the screen, not the best one: a currency row
+  where one icon is modelled and the others are flat glyphs fails; tab and nav
+  icons that are modelled with outline and top-left light pass even if small.
 
 **How to decide.**
 1. Find the region of each picture that this quality is about (above).
