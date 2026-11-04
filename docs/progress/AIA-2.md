@@ -1,6 +1,6 @@
 # AIA-2 icon maker: progress
 
-- Status: Amber until the pre-check passes. The last push has P1-AIA2-icons-1a's eight heist controls baked into `icons_48`, and a finish fix (a solid outline ring at thin points). The pre-check at c1d14d38 failed on stale icon manifests (a `__pycache__` under `art/ui` was hashed at bake time); 5f759a03 rebakes them clean and `bake.js --check` passes in a clean worktree.
+- Status: Green, waiting for the gate. The last push has P1-AIA2-icons-1a's eight heist controls baked into `icons_48`, and a finish fix (a solid outline ring at thin points). The pre-check at c1d14d38 failed on stale icon manifests (a `__pycache__` under `art/ui` was hashed at bake time); 5f759a03 rebakes them clean, and the pre-check at cd30ce21 passed (exit 0).
 - Progress: 1 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70); 0 items passed by the gate. P1-AIA2-icons-1a is waiting for its gate.
 - Done: the toon route, with Starlight and Pip; the eight heist-control icons (ability, aim, call skiff, cast, get out, regroup, Sage's wheel, split crew) in `icons_48`, normal and high contrast.
 - Next: the gate on P1-AIA2-icons-1a's icon sheet, then P1-AIA2-icons-1b (four resources and three currencies).
@@ -14,7 +14,7 @@
 
 ## Handoff
 
-- **Last verified commit:** 5f759a03 (scripted checks green, `bake.js --check` green in a clean worktree; pre-check pending).
+- **Last verified commit:** 5f759a03 (scripted checks green, `bake.js --check` green in a clean worktree; pre-check green at cd30ce21).
 
 ### Done
 
