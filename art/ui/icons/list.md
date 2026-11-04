@@ -29,12 +29,12 @@ Batches 3 and 4 are deferred (D13 (c)). The lead opens them.
 | # | Icon | Object | 256 |
 |---|---|---|---|
 | 9 | resources/starlight | two struck gold stars (proof, baked) | 256 |
-| 10 | resources/aether | a cloud vial | 256 |
-| 11 | resources/essence | a drop of the essence green | 256 |
-| 12 | resources/renown | a laurel medal | 256 |
-| 13 | currencies/starglass | a cut star gem in the toon light | 256 |
-| 14 | currencies/insight | an eye lens | 256 |
-| 15 | currencies/seasonstars | a cluster of season stars | 256 |
+| 10 | resources/aether | a cloud vial: a teal flask, a gold collar, a cork and a puff of cloud | 256 |
+| 11 | resources/essence | a drop of the essence green, a bubble in it and a small sister drop | 256 |
+| 12 | resources/renown | a laurel medal: a gold disc with a cream star, laurel leaves and two ribbon tails | 256 |
+| 13 | currencies/starglass | a cut star gem in the spirit colour, flat facets in the toon light | 256 |
+| 14 | ~~currencies/insight~~ | dropped: there is no Insight in the design (§11.7) | — |
+| 15 | currencies/seasonstars | three season stars, large to small, in time, matter and cream | 256 |
 
 ## Batch 2: heist status and rewards
 

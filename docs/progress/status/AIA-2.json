@@ -4,37 +4,19 @@
   "branch": "claude/ui-artist-icons",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P1-AIA2-icons-1a",
+  "task_id": "P1-AIA2-icons-1b",
   "task_state": "working",
-  "claimed_at": "2026-11-04T14:45:00Z",
-  "lease_until": "2026-11-04T17:45:00Z",
-  "updated_at": "2026-11-04T16:11:37Z",
-  "expected_next_update_by": "2026-11-04T16:56:37Z",
+  "claimed_at": "2026-11-04T21:02:00Z",
+  "lease_until": "2026-11-05T00:02:00Z",
+  "updated_at": "2026-11-04T21:02:00Z",
+  "expected_next_update_by": "2026-11-04T21:47:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "02e7ef0f00ea0444842a4d0158f50e271a97c952",
-    "next_step": "P1-AIA2-icons-1a: scripted checks green at c1d14d38; pre-check running; waiting for the gate"
+    "last_green_sha": "bef6eac2",
+    "next_step": "resync: rebake icons_48 from its sources (icons_48_hc.webp differs), guard.sh, pre-check, ready again"
   },
-  "precheck": {
-    "sha": "c1d14d38a3ed910d3b28b169cc0f86081c53b127",
-    "exit": 1,
-    "finished_at": "2026-11-04T16:03:52Z",
-    "summary": "== the UI kit's bake: atlases match their sources, and its tests (K1-R1) ==: interface atlases: 240234 bytes in all"
-  },
-  "gate_request": {
-    "sha": "5f759a03458bec7025673ae9524024eb824ce241",
-    "items": [
-      {
-        "item": "icon sheet at 48 and 96 points and in grayscale",
-        "qualities": [
-          "Layered materials",
-          "Painted or rendered icons",
-          "Colour roles and value",
-          "Light behind UI"
-        ]
-      }
-    ]
-  },
+  "precheck": null,
+  "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [],
@@ -54,8 +36,23 @@
       "default": "The lead merges P1-AIA2-toon-route with bake.js --check and check_all green, and runs guard.sh's rebake for the two icon families as `node art/ui/icons/studio/bake_icons.js icons_48 icons_256 --out <scratch>` compared file by file, until K1 wires kind \"scene\" into bake.js by calling that script; px_per_point stays null for scene families.",
       "escalate_to": "lead",
       "state": "answered by lead cycle 36 (default applied; scene kind folded into P1-K1-atlas-draw)"
+    },
+    {
+      "id": "AIA2-R2",
+      "from": "AIA-2",
+      "to": "lead",
+      "ask": "list.md batch 1b names currencies/insight, but the design has no Insight (\u00a711.7) and no client code uses the icon. Batch 1b ships five new icons plus Starlight. Drop insight, or name a replacement?",
+      "files": [
+        "art/ui/icons/list.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T19:20:00Z",
+      "due": "2026-11-05T19:20:00Z",
+      "default": "Insight stays dropped from list.md with no replacement; batch 1b is done at six icons unless the lead assigns another.",
+      "escalate_to": "lead",
+      "state": "answered by the lead (default applied)"
     }
   ],
   "answers": [],
-  "note": "icon manifests rebaked clean at 5f759a03 (the c1d14d38 pre-check found them stale); same atlas pixels; gate request moved to 5f759a03; pre-check running"
+  "note": "P1-AIA2-icons-1b in resync: rebaking icons_48 (the committed _hc sheet is not what its sources bake to)"
 }
