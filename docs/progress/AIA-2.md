@@ -1,9 +1,9 @@
 # AIA-2 icon maker: progress
 
-- Status: Green (P1-AIA2-icons-2a committed at 6a382d97; `check_icons.py` and `bake.js --check` pass; pre-check running).
+- Status: Green (P1-AIA2-icons-2a ready at 6a382d97: pre-check PASS 00:42 UTC, 5 November; gate request set).
 - Progress: 3 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7); P1-AIA2-icons-2a waiting for its pre-check and the Icons gate.
 - Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources; batch 2a's eight heist-status and HUD icons.
-- Next: the pre-check record at 6a382d97, then the Icons gate on "icon sheet at 48 and 96 points and in grayscale".
+- Next: the Icons gate on "icon sheet at 48 and 96 points and in grayscale", then the lead's merge.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -12,11 +12,11 @@
 | P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Merged at 9b2bde70 | `bake.js --check`, `check_icons.py` and `run_checks.sh` PASS at 02e7ef0f |
 | P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Merged at 8ce107c9 | gate advisory at 5f759a03: Light behind UI pass; three qualities fail 3 of 3 |
 | P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Merged at 90f72fd7 | gate pass on all four qualities (advisory) at bef6eac2; resync at 5ecb0202 |
-| P1-AIA2-icons-2a: eight heist-status and HUD icons in `icons_48` | 4 | Committed at 6a382d97; pre-check and gate pending | `python3 -B art/ui/icons/studio/check_icons.py`: all 46 faces pass (23 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 23 pieces, icons_256 6 pieces, both ok |
+| P1-AIA2-icons-2a: eight heist-status and HUD icons in `icons_48` | 4 | Ready at 6a382d97: pre-check PASS; gate pending | `python3 -B art/ui/icons/studio/check_icons.py`: all 46 faces pass (23 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 23 pieces, icons_256 6 pieces, both ok |
 
 ## Handoff
 
-- **Last verified commit:** 6a382d97 (check_icons, bake.js --check and check_docs_consistency green; `run_checks.sh` pre-check started).
+- **Last verified commit:** 6a382d97 (pre-check PASS, 2026-11-05T00:42:36Z; check_icons and bake.js --check green).
 
 ### Done
 
@@ -79,7 +79,7 @@ None.
 
 ### Next step
 
-1. Record the pre-check at 6a382d97 (`bash tools/run_checks.sh record 6a382d97 AIA-2`) if the session ends before it does.
+1. The Icons gate on the 2a sheet at 6a382d97 (pre-check recorded).
 2. The Icons gate on the 2a sheet; then ready.
 
 ## Tried and failed
