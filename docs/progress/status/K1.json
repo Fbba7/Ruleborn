@@ -3,21 +3,26 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-K1-words",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-04T23:25:00Z",
   "lease_until": "2026-11-05T03:30:00Z",
-  "updated_at": "2026-11-05T00:30:07Z",
-  "expected_next_update_by": "2026-11-05T01:15:07Z",
+  "updated_at": "2026-11-05T01:46:49Z",
+  "expected_next_update_by": "2026-11-05T02:31:49Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "7e6de29d",
-    "next_step": "P1-K1-words: baseline stills of every screen at 100% and 200% text rendering; then words z layer (ui.gd, kit_panels.gd, kit_skin.gd), KitNumerals, frames sized from words in kit_cards.gd"
+    "last_green_sha": "0e829632",
+    "next_step": "P1-K1-words ready; P1-K1-switch-heist after it merges and P1-AIA-kit-3"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "0e829632157470fabb8f5d7da2f0e7e99fa1eeee",
+    "exit": 0,
+    "finished_at": "2026-11-05T01:46:04Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "0e829632157470fabb8f5d7da2f0e7e99fa1eeee",
   "stop_at": "2026-11-09T21:00:00Z",
   "acks": [
     "M2"
@@ -164,5 +169,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-words working"
+  "next_step": "P1-K1-words ready at 0e829632 (pre-check PASS); waiting for the lead. Next K1 tasks P1-K1-switch-heist and P1-K1-switch-rest open after it merges."
 }
