@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-04T23:30:00Z",
   "lease_until": "2026-11-05T02:30:00Z",
-  "updated_at": "2026-11-05T00:20:00Z",
-  "expected_next_update_by": "2026-11-05T01:05:00Z",
+  "updated_at": "2026-11-05T00:10:00Z",
+  "expected_next_update_by": "2026-11-05T00:55:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "6a382d97",
@@ -54,5 +54,5 @@
     }
   ],
   "answers": [],
-  "note": "P1-AIA2-icons-2a: eight icons committed at 6a382d97; pre-check running."
+  "note": "P1-AIA2-icons-2a: eight icons committed at 6a382d97 (check_icons, bake.js --check green). Two container restarts killed the run_checks.sh pre-check mid-run (in the heist harness and the sim tests, no failure before); third run starting."
 }
