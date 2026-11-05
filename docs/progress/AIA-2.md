@@ -1,7 +1,7 @@
 # AIA-2 icon maker: progress
 
 - Status: Green (P1-AIA2-icons-2a ready at 6a382d97: pre-check PASS 00:42 UTC, 5 November; gate request set).
-- Progress: 3 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7); P1-AIA2-icons-2a waiting for its pre-check and the Icons gate.
+- Progress: 3 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7); P1-AIA2-icons-2a ready at 6a382d97 (pre-check PASS), waiting for the Icons gate.
 - Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources; batch 2a's eight heist-status and HUD icons.
 - Next: the Icons gate on "icon sheet at 48 and 96 points and in grayscale", then the lead's merge.
 - Blocked by: none.
