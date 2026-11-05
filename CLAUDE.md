@@ -8,8 +8,18 @@ the status files, requests and scheduled-task prompts.
 
 - **3 November 2026:** the owner stopped the agent program.
 - **4 November 2026:** the owner restarted it ("Ok now continue"), in the
-  chat of the overseer session. The program runs again as the protocol
-  describes, under order 2 below.
+  chat of the overseer session.
+- **5 November 2026, 00:05 UTC:** the owner stopped it again ("We need to
+  stop but stop cleanly without losing any progress"), in the chat of the
+  overseer session. **The program is stopped.** The launcher, the watchdog
+  and the overseer's check-in are disabled. Order 3's "keep working" is
+  paused by this stop until the owner restarts the program.
+
+A session that is in the middle of a turn when the program is stopped
+finishes cleanly, so no work is lost: commit and push what it has to its
+own branch (never to main), set `agent_state: stopped` in its status file,
+write "Stopped here" with where the work stands in its handoff, and end
+its turn. It merges nothing and starts nothing new.
 
 The owner can stop it again at any time. When the owner says "stop" in a
 session's chat, or this section says the program is stopped:

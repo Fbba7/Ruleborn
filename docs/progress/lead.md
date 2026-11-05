@@ -1,7 +1,26 @@
 # The lead's handoff
 
-> **Owner orders.** The owner stopped the program on 3 November 2026 and
-> restarted it on 4 November 2026. Fable 5.1 is never used again, and
+> **Stopped by the owner, 5 November 2026 at 00:05Z.** No cycle runs, no
+> session or scheduled task starts. The launcher
+> (`trig_01DgVGTTmwREAb7sHz8oQkiP`), the watchdog
+> (`trig_015Lgi2ZssXBXPbzkCYqoKmL`) and the overseer's check-in
+> (`trig_01TLsnuwnbJBV11EePZc34TD`) are disabled and kept. Only the owner,
+> in their own words, restarts the program (CLAUDE.md order 1).
+>
+> Where the work stands at the stop, all of it pushed:
+>
+> | Task | Branch | Last commit | State |
+> |---|---|---|---|
+> | P1-AIA-kit-4 (resync) | `claude/ui-artist` | `f3456cac` (status `5b083581`) | the nine batch 2a skins added to SKINS_OF; its pre-check was running |
+> | P1-AIA2-icons-2a | `claude/ui-artist-icons` | `6a382d97` (handoff `761986d1`) | eight heist-status and HUD icons; pre-check was running |
+> | P1-K1-words | `claude/ui-bake` | `84904f0f` | in progress, nothing unpushed |
+>
+> Main (`42513d93` before this stop) fails guard.sh's rebake on
+> `client/ui/art/icons_48_hc.webp` (see "Now" and `status/lead.json`). Tasks
+> done: 8 of 18. On restart, read the three branches' status files first.
+>
+> **Owner orders.** The owner stopped the program on 3 November 2026,
+> restarted it on 4 November 2026 and stopped it again on 5 November 2026. Fable 5.1 is never used again, and
 > `dev-fable-v3` is never resumed. Read the owner orders in
 > [`CLAUDE.md`](../../CLAUDE.md) first: they override this file.
 
@@ -62,8 +81,8 @@ every other session is created with `create_session`.
 
 | Scheduled task | ID | Fires into | Schedule (UTC) |
 |---|---|---|---|
-| The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
-| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
+| The launcher: one fresh lead cycle session an hour, unless the last is still working (disabled 5 Nov, the owner's stop) | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
+| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts (disabled 5 Nov, the owner's stop) | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
 
 Latest lead cycle session: `session_01SNkKxqKY1WGt7cJSaqyYtWj` (cycle 44,
 4 November 2026, from 23:39Z, started by the launcher).
