@@ -4,6 +4,23 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-09 21:05Z: restarted on Fable 5.2 only (overseer, on the owner's word)
+
+- **What:** the owner said "Let's continue and use only Fable 5.2" in the
+  overseer's chat. CLAUDE.md order 1 now says the program runs; the new
+  order 4 says every session, subagent and judge runs on Fable 5.2 and on
+  no other model. Fable 5.1 stays banned (order 2).
+- **Done:** a new launcher (`trig_015MfKt65r6dHc7ozcWK9gRj`, hourly at
+  :38) and a new watchdog (`trig_01TrtGdoG6u7tDQe4Yn6BLpF`, every 2 hours
+  at :08), each firing into a new Fable 5.2 session. The old launcher,
+  watchdog and check-in stay disabled. The backlog's roster and every
+  task not yet merged name Fable 5.2.
+- **Nothing was lost at the stop:** kit-4, icons-2a and words are all
+  ready on their branches with pre-check PASS. The first cycle (21:38Z)
+  takes them up; main's `icons_48_hc.webp` rebake still has to be fixed
+  before guard is green.
+- **Needs the owner:** nothing.
+
 ## 2026-11-04 23:33Z: two merges; kit-4 back to AIA; main's icon bake not stable (lead, cycle 43)
 
 - **What:** merged P1-AIA2-icons-1b (`90f72fd7`) and P1-K1-catalogue

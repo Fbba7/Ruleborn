@@ -1,7 +1,7 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-05T00:10:00Z",
-  "expected_next_update_by": null,
+  "updated_at": "2026-11-09T21:05:00Z",
+  "expected_next_update_by": "2026-11-09T22:55:00Z",
   "cycle": 44,
   "merging": null,
   "last_merged": {
@@ -9,7 +9,7 @@
     "sha": "7e6de29d"
   },
   "alerts": [
-    "Stopped by the owner on 5 November 2026 at 00:05Z; the launcher, the watchdog and the overseer check-in are disabled. Read CLAUDE.md order 1."
+    "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). New launcher trig_015MfKt65r6dHc7ozcWK9gRj and watchdog trig_01TrtGdoG6u7tDQe4Yn6BLpF; the old ones stay disabled."
   ],
-  "next_step": "Stopped. Start no cycle and no session; restart only on the owner's own word in the overseer's chat (CLAUDE.md order 1). Where the work is: P1-AIA-kit-4's resync on claude/ui-artist (f3456cac, pre-check was running); P1-AIA2-icons-2a on claude/ui-artist-icons (6a382d97, handoff 761986d1); P1-K1-words on claude/ui-bake (84904f0f). Main fails guard.sh's rebake on client/ui/art/icons_48_hc.webp (crew__pip__normal high contrast); the fix is to compute the outline and keyline dilation on the pixels, then rebake and prove it byte for byte in a fresh container. On restart: read the three branches' status files, set icons-2a to resync with that finding, merge kit-4 once guard is green. Never use Fable 5.1."
+  "next_step": "Restarted by the owner on 9 November 2026 (written by the overseer); no cycle has run since cycle 44. Every session and subagent runs on Fable 5.2 and on no other model (CLAUDE.md order 4); never Fable 5.1; reuse no session from 4 November. Cycle 45: three tasks are ready on their branches with pre-check PASS, though the backlog still shows them working: P1-AIA-kit-4's resync at f3456cac (claude/ui-artist, head 15d22123), P1-AIA2-icons-2a at 6a382d97 (claude/ui-artist-icons, ready commit e3d5416b, head abb67696), P1-K1-words at 0e829632 (claude/ui-bake, head eaa23f89). Read their status files first. Main fails guard.sh's rebake on client/ui/art/icons_48_hc.webp (crew__pip__normal high contrast); the fix is to compute the outline and keyline dilation on the pixels, then rebake and prove it byte for byte in a fresh container. Set icons-2a to resync with that finding in a fresh Fable 5.2 session unless its ready commit already changed the finish; merge kit-4 and words once the candidate passes check_all and guard."
 }
