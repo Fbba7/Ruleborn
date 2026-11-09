@@ -84,6 +84,13 @@ const MARGIN_POINTS := 1.0
 ## The skins whose baked art is a mark alone (the lock): their own box
 ## stays code-drawn while they are on.
 const MARKS := ["locked"]
+## The materials whose words do not hold on their skin's box: a light
+## material (dark words) whose skin's box is dark, or a dark one whose box is
+## light. Each draws only a shape baked for it (`<skin>__<material>__<state>`)
+## and keeps its code-drawn box, unlogged, until it has one (kit-spec.md
+## section 8.2). ui_kit_tests.gd holds this list to the atlas.
+const OWN_SHAPE_ONLY := ["album", "fact", "plate", "bar_track_light", "tag", "island_label", "pill_gold_edge",
+	"banner_success", "green_muted"]
 ## The backdrop's materials: gradients, not skins, always drawn in code.
 const BACKDROP := ["night", "night_rays", "scrim"]
 ## The switches beside the 35 skins': the baked numerals (`num_<finish>_<glyph>`,
@@ -190,6 +197,7 @@ static func is_on(name: String) -> bool:
 ## parchment. Empty when the skin is off, and when the atlas lacks the piece,
 ## which is logged: the code-drawn box draws instead. A skin
 ## whose art is a mark alone (`MARKS`) leaves its box to the code, unlogged.
+## So does a material of `OWN_SHAPE_ONLY` with no shape of its own.
 ## A `shape` named by the use comes before them all (a bar's `alarm` fill).
 static func piece(material_name: String, state := "normal", ground := "", shape_name := "") -> Dictionary:
 	var k := skin(material_name)
@@ -199,13 +207,16 @@ static func piece(material_name: String, state := "normal", ground := "", shape_
 	var shapes: Array = [material_name, "box"]
 	if ground == "parchment":
 		shapes = ["parchment"] if k == "button_tertiary" else ["parchment", material_name, "box"]
+	var own_only := material_name in OWN_SHAPE_ONLY
+	if own_only:
+		shapes = [material_name]
 	if shape_name != "":
 		shapes.push_front(shape_name)
 	for shape: String in shapes:
 		var key := "%s__%s__%s" % [k, shape, state]
 		if pieces.has(key) and texture(pieces[key]) != null:
 			return pieces[key]
-	if k in MARKS:
+	if k in MARKS or own_only:
 		return {}
 	var lost := "%s__%s__%s" % [k, shapes[0] if ground == "parchment" else material_name, state]
 	if lost not in missing:

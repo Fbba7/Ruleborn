@@ -274,11 +274,16 @@ func _shade() -> void:
 
 ## The atlas piece the box is drawn from in the host's state and on the
 ## ground under it, or empty while the code-drawn box draws it (its skin
-## off, or the piece missing).
+## off, or the piece missing). A box refilled by its use (`tint`) draws only
+## a piece baked to be tinted: an untinted one would lose the use's colour,
+## which its words are set against, so the code-drawn box keeps it.
 func piece() -> Dictionary:
 	if _face == null:
 		return {}
-	return KitSkin.piece(look, _state(), KitSkin.ground_of(host), skin_shape)
+	var p := KitSkin.piece(look, _state(), KitSkin.ground_of(host), skin_shape)
+	if _tint is Color and not bool(p.get("tint", false)):
+		return {}
+	return p
 
 
 ## The selected rim drawn over the box from the atlas (kit-spec.md section
