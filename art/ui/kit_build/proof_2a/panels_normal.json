@@ -1,0 +1,58 @@
+{
+ "image": "panels_normal.png",
+ "frame_pt": [
+  390,
+  844
+ ],
+ "text_scale": 1.0,
+ "controls": [
+  {
+   "name": "parchment normal",
+   "rect": [
+    12,
+    88,
+    85.94,
+    119.89
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "parchment lock",
+   "rect": [
+    106,
+    88,
+    85.94,
+    119.89
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "parchment done",
+   "rect": [
+    200,
+    88,
+    85.94,
+    119.89
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "parchment selected",
+   "rect": [
+    294,
+    88,
+    85.94,
+    119.89
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  }
+ ]
+}

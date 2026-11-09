@@ -1,0 +1,22 @@
+{
+ "image": "popup_normal.png",
+ "frame_pt": [
+  390,
+  844
+ ],
+ "text_scale": 1.0,
+ "controls": [
+  {
+   "name": "popup button",
+   "rect": [
+    85.0,
+    513,
+    219.92,
+    55.97
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  }
+ ]
+}
