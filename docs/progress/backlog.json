@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-09T21:06:00Z",
-  "updated_by": "overseer",
+  "updated_at": "2026-11-09T21:58:00Z",
+  "updated_by": "lead",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -865,7 +865,7 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
@@ -874,8 +874,11 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "0e829632",
+      "merged_sha": null,
+      "exceptions": [
+        "client/ui/kit_numerals.gd.uid"
+      ]
     },
     {
       "id": "P1-K1-switch-heist",
@@ -924,6 +927,7 @@
       "role": "K1",
       "assigned_to": "K1",
       "files": [
+        "client/ui/kit_skin.gd",
         "client/ui/kit_families.json",
         "tools/ui_bake/**",
         "client/prototypes/ui_quality/**",
@@ -938,6 +942,7 @@
         "P1-AIA-kit-5"
       ],
       "done_when": [
+        "AIA-R16: KitSkin draws batch 2a's pieces: ribbon as its tinted ribbon__box (vertex-coloured per school) under the untinted ribbon__frame at the same rect, and ribbon__chapter untinted, the words on the band's top 32 points; sheet__handle and sheet__handle_parchment as 42 x 9 point sprites centred by code 12 points below a sheet's top edge; frame_<rank>__box__<state> as a hollow 9-slice ring over the portrait's rect grown by 4 points each side; popup__box with its 8/4/12 point margin (plus the 5 point lip) over the scrim, its title a ribbon across the top edge; header__name_plate; panel_parchment__parchment_done",
         "the gate's pass on P1-AIA-kit-4 and -5 recorded",
         "bash tools/ui_bake/guard.sh",
         "bash tools/check_all.sh"
@@ -1144,7 +1149,7 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "AIA",
         "branch": "claude/ui-artist",
@@ -1153,7 +1158,7 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": "3eb4e200",
+      "ready_sha": "f3456cac",
       "merged_sha": null,
       "exceptions": [
         "art/ui/kit_build/**",
@@ -1373,7 +1378,7 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "AIA-2",
         "branch": "claude/ui-artist-icons",
@@ -1382,7 +1387,7 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "6a382d97",
       "merged_sha": null
     },
     {
