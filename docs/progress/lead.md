@@ -188,7 +188,7 @@ Agent: AD            Role: art director (AD)        Model: Fable 5.2
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
 Tasks: P1-AD-board-1 once its deps merge (every phase 0 AD task is merged). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
-STOP_AT: 2026-11-09T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-ad from it (create it if it does not exist) and push only to claude/ui-ad with git push -u origin claude/ui-ad, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AD, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -203,7 +203,7 @@ Agent: AIA            Role: maker (AIA): kit art and motion art        Model: Fa
 Branch: claude/ui-artist
 Owned files: art/ui/** except art/ui/icons/**, client/ui/art/kit*, docs/progress/AIA.md, docs/progress/status/AIA.json
 Tasks: P1-AIA-kit-1, then P1-AIA-kit-2 to -5 as their deps merge (every phase 0 AIA task is merged). Icons are AIA-2's, not yours.
-STOP_AT: 2026-11-09T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-artist from it (create it if it does not exist) and push only to claude/ui-artist with git push -u origin claude/ui-artist, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AIA, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -218,7 +218,7 @@ Agent: K1            Role: contract owner (K1): the UI kit, its bake and its gua
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
 Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist and P1-K1-switch-rest as their deps merge (every other phase 0 K1 task is merged)
-STOP_AT: 2026-11-09T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-bake from it (create it if it does not exist) and push only to claude/ui-bake with git push -u origin claude/ui-bake, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is K1, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -233,7 +233,7 @@ Agent: AIA-2            Role: maker (AIA-2): icon art        Model: Fable 5.2
 Branch: claude/ui-artist-icons
 Owned files: art/ui/icons/**, client/tests/shots/icon_*.gd, client/ui/art/icons_48*, client/ui/art/icons_256*, docs/progress/AIA-2.md, docs/progress/status/AIA-2.json
 Tasks: P1-AIA2-toon-route, then P1-AIA2-icons-1a, -1b, -2a and -2b as their deps merge. Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
-STOP_AT: 2026-11-09T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-artist-icons from it (create it if it does not exist) and push only to claude/ui-artist-icons with git push -u origin claude/ui-artist-icons, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AIA-2, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -248,7 +248,7 @@ Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot     
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
 Tasks: P1-S1-pilot-1, then P1-S1-pilot-2 as their deps merge (pilot-1 waits on P1-K1-switch-heist and P1-AIA2-icons-1b).
-STOP_AT: 2026-11-09T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-heist from it (create it if it does not exist) and push only to claude/ui-screens-heist with git push -u origin claude/ui-screens-heist, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S1, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -263,7 +263,7 @@ Agent: SV            Role: maker (SV): the owner's server decisions B1-B12 (docs
 Branch: claude/server-decisions
 Owned files: only the files each SV task lists in the backlog, docs/progress/SV.md, docs/progress/status/SV.json
 Tasks: none open (SV-B1-B6, SV-B7-B9 and SV-B11-B12 are merged; SV-B10 is not yours yet). Run the client suite (python3 client/status.py) before marking a task ready.
-STOP_AT: 2026-11-09T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/server-decisions from it (create it if it does not exist) and push only to claude/server-decisions with git push -u origin claude/server-decisions, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SV, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
