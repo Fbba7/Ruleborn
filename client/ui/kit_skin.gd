@@ -63,6 +63,10 @@ const SKINS := {
 }
 ## The backdrop's materials: gradients, not skins, always drawn in code.
 const BACKDROP := ["night", "night_rays", "scrim"]
+## The switches beside the 35 skins': the baked numerals (`num_<finish>_<glyph>`,
+## kit-spec.md section 6.1), off until their art passes the gate; absent
+## from kit_families.json means off.
+const BESIDE := ["numerals"]
 
 ## A skin's surface names, as the kit's materials.
 const SURFACES := {
@@ -129,6 +133,7 @@ static func button(b: Button, kind: String, radius_points := -1.0) -> RbBox:
 		b.button_down.connect(Motion.press.bind(b, true))
 		b.button_up.connect(Motion.press.bind(b, false))
 	b.set_meta("surface", kind)
+	UI.raise_words(b)
 	return box
 
 
@@ -187,6 +192,21 @@ static func ground_of(node: Node) -> String:
 			return "parchment" if skin(str(n.get_meta("rb_material"))) == "panel_parchment" else ""
 		n = n.get_parent()
 	return ""
+
+
+## Numeral `name`'s piece (`num_<finish>_<glyph>`, kit-spec.md section
+## 6.1) when the numerals' skin is switched on, else empty. A piece, or its
+## page, the atlas lacks is logged and empty: the number is live text.
+static func numeral(name: String) -> Dictionary:
+	if not is_on("numerals"):
+		return {}
+	var pieces: Dictionary = _kit.get("pieces", {})
+	if pieces.has(name) and texture(pieces[name]) != null:
+		return pieces[name]
+	if name not in missing:
+		missing.append(name)
+		push_warning("kit: no numeral %s in %s; drawn as live text" % [name, MANIFEST])
+	return {}
 
 
 ## The atlas pieces are cut from, in the current contrast mode.
