@@ -5,15 +5,15 @@
   "model": "Fable 5.2",
   "agent_state": "active",
   "task_id": "P1-K1-switch-heist",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-09T22:27:00Z",
   "lease_until": "2026-11-10T01:27:00Z",
-  "updated_at": "2026-11-09T22:27:00Z",
-  "expected_next_update_by": "2026-11-09T23:12:00Z",
+  "updated_at": "2026-11-09T22:42:00Z",
+  "expected_next_update_by": "2026-11-09T23:27:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "68cfd4e4",
-    "next_step": "read kit-spec.md 6.7 and KitSkin; add AIA-R13 and AIA-R14's skins"
+    "next_step": "heist with the skins on: 122 draw calls at 100% and in high contrast (124 with them off); next the other four screens, kit-spec.md, guard.sh and its baselines"
   },
   "precheck": null,
   "gate_request": null,
@@ -150,6 +150,21 @@
       "due": "2026-11-06T22:00:00Z",
       "default": "No change to kit_families.json: the numerals' switch stays absent (off), every number stays live text in its role, and the switch is added when the numerals' art passes the gate",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R12",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P1-K1-switch-heist needs two files of mine outside its list. client/ui/rb_box.gd draws the face from the atlas, so AIA-R13 (the tinted box under its untinted frame) and AIA-R14 (the selected rim over a card; a use's named shape) are drawn there, and a piece's 1-point margin and lip are drawn outside the host so a skin switched on does not move the layout. client/tests/ui_kit_tests.gd test 10 asserted every switch off; it now asserts the switched-on set, and a new test covers the overlays and parts. Please grant both as the task's exceptions.",
+      "files": [
+        "client/ui/rb_box.gd",
+        "client/tests/ui_kit_tests.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-09T22:42:00Z",
+      "due": "2026-11-10T12:00:00Z",
+      "default": "granted: both files merge with the candidate as P1-K1-switch-heist's exceptions",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -164,5 +179,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-switch-heist claimed; main merged into the branch"
+  "next_step": "P1-K1-switch-heist working: skins switched on, KitSkin overlays and parts in, kit tests 18 of 18"
 }
