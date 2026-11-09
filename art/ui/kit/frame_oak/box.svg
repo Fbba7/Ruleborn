@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" data-slice="22 22 22 22">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C89058"/><stop offset="0.45" stop-color="#8A5630"/><stop offset="0.7" stop-color="#AE7442"/><stop offset="1" stop-color="#6A3E1E"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.8"/><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0"/><stop offset="0.55" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.4"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0.451"/><stop offset="0.5" stop-color="#000000" stop-opacity="0.102"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.349"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7AB6BA"/><stop offset="0.5" stop-color="#4A9AA0"/><stop offset="1" stop-color="#24545C"/></linearGradient>
+    <pattern id="s6" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2.5" height="6" fill="#FFFFFF" fill-opacity="0.2196"/></pattern>
+    <mask id="m7" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect x="0" y="0" width="16" height="16" fill="#FFFFFF"/><rect x="0" y="32" width="16" height="16" fill="#FFFFFF"/><rect x="32" y="0" width="16" height="16" fill="#FFFFFF"/><rect x="32" y="32" width="16" height="16" fill="#FFFFFF"/></mask>
+    <linearGradient id="g8" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.451"/><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g9" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0"/><stop offset="0.55" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.4"/></linearGradient>
+    <linearGradient id="g10" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0.451"/><stop offset="0.5" stop-color="#000000" stop-opacity="0.102"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.349"/></linearGradient>
+    <pattern id="s11" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2" height="6" fill="#000000"/></pattern>
+    <mask id="m12" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect x="0" y="0" width="16" height="16" fill="#FFFFFF"/><rect x="0" y="32" width="16" height="16" fill="#FFFFFF"/><rect x="32" y="0" width="16" height="16" fill="#FFFFFF"/><rect x="32" y="32" width="16" height="16" fill="#FFFFFF"/></mask>
+  </defs>
+  <g data-state="normal">
+    <path fill-rule="evenodd" d="M19 1H29Q47 1 47 19V29Q47 47 29 47H19Q1 47 1 29V19Q1 1 19 1Z M19 7Q7 7 7 19V29Q7 41 19 41H29Q41 41 41 29V19Q41 7 29 7Z" fill="url(#g1)"/>
+    <rect x="3.2" y="3.2" width="41.6" height="41.6" rx="15.8" fill="none" stroke="#5A3218" stroke-width="0.6" stroke-opacity="0.5"/>
+    <rect x="4.6" y="4.6" width="38.8" height="38.8" rx="14.4" fill="none" stroke="#5A3218" stroke-width="0.6" stroke-opacity="0.3"/>
+    <rect x="5.6" y="5.6" width="36.8" height="36.8" rx="13.4" fill="none" stroke="#5A3218" stroke-width="0.6" stroke-opacity="0.45"/>
+    <rect x="2.75" y="2.75" width="42.5" height="42.5" rx="16.25" fill="none" stroke="url(#g2)" stroke-width="1.5"/>
+    <rect x="2.75" y="2.75" width="42.5" height="42.5" rx="16.25" fill="none" stroke="url(#g3)" stroke-width="1.5"/>
+    <rect x="5.8" y="5.8" width="36.4" height="36.4" rx="13.2" fill="none" stroke="url(#g4)" stroke-width="1.2"/>
+    <rect x="1" y="1" width="46" height="46" rx="18" fill="none" stroke="#1A0C14" stroke-width="2"/>
+    <rect x="7" y="7" width="34" height="34" rx="12" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <path fill-rule="evenodd" d="M19 1H29Q47 1 47 19V29Q47 47 29 47H19Q1 47 1 29V19Q1 1 19 1Z M19 7Q7 7 7 19V29Q7 41 19 41H29Q41 41 41 29V19Q41 7 29 7Z" fill="#8A5630"/>
+    <rect x="1.5" y="1.5" width="45" height="45" rx="17.5" fill="none" stroke="#000000" stroke-width="3"/>
+    <rect x="6.5" y="6.5" width="35" height="35" rx="12.5" fill="none" stroke="#000000" stroke-width="2"/>
+  </g>
+  <g data-state="locked">
+    <path fill-rule="evenodd" d="M19 1H29Q47 1 47 19V29Q47 47 29 47H19Q1 47 1 29V19Q1 1 19 1Z M19 7Q7 7 7 19V29Q7 41 19 41H29Q41 41 41 29V19Q41 7 29 7Z" fill="url(#g5)"/>
+    <path fill-rule="evenodd" d="M19 1H29Q47 1 47 19V29Q47 47 29 47H19Q1 47 1 29V19Q1 1 19 1Z M19 7Q7 7 7 19V29Q7 41 19 41H29Q41 41 41 29V19Q41 7 29 7Z" fill="url(#s6)" mask="url(#m7)"/>
+    <rect x="2.75" y="2.75" width="42.5" height="42.5" rx="16.25" fill="none" stroke="url(#g8)" stroke-width="1.5"/>
+    <rect x="2.75" y="2.75" width="42.5" height="42.5" rx="16.25" fill="none" stroke="url(#g9)" stroke-width="1.5"/>
+    <rect x="5.8" y="5.8" width="36.4" height="36.4" rx="13.2" fill="none" stroke="url(#g10)" stroke-width="1.2"/>
+    <rect x="1" y="1" width="46" height="46" rx="18" fill="none" stroke="#1A0C14" stroke-width="2"/>
+    <rect x="7" y="7" width="34" height="34" rx="12" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+  </g>
+  <g data-state="locked" data-mode="hc">
+    <path fill-rule="evenodd" d="M19 1H29Q47 1 47 19V29Q47 47 29 47H19Q1 47 1 29V19Q1 1 19 1Z M19 7Q7 7 7 19V29Q7 41 19 41H29Q41 41 41 29V19Q41 7 29 7Z" fill="#2E6E76"/>
+    <path fill-rule="evenodd" d="M19 1H29Q47 1 47 19V29Q47 47 29 47H19Q1 47 1 29V19Q1 1 19 1Z M19 7Q7 7 7 19V29Q7 41 19 41H29Q41 41 41 29V19Q41 7 29 7Z" fill="url(#s11)" mask="url(#m12)"/>
+    <rect x="1.5" y="1.5" width="45" height="45" rx="17.5" fill="none" stroke="#000000" stroke-width="3"/>
+    <rect x="6.5" y="6.5" width="35" height="35" rx="12.5" fill="none" stroke="#000000" stroke-width="2"/>
+  </g>
+</svg>

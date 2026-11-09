@@ -1,11 +1,11 @@
 # AIA AI UI artist: progress
 
-- Status: Green: pre-check PASS at fccd4b89 (2026-11-04T17:28:21Z); P1-AIA-kit-2 is ready.
-- Progress: 5 tasks merged, P0-AIA-keyframes-3, P0-AIA-board-4 and P1-AIA-kit-1 ready, P1-AIA-kit-2 ready; 0 items passed by the gate.
-- Done: P1-AIA-kit-2: kit batch 1b, panel_dark, panel_glass, well, badge, pill, tag, bar_track, bar_fill and disc, with the overlays (selected rim, lock, attention dot, spinner), each in its states with high-contrast twins, baked into `client/ui/art/kit.webp`, `kit_hc.webp` and `kit.json`; disc_school written and proofed beside the kit in `art/ui/kit_next/` (AIA-R13).
-- Next: wait for the lead (gate on the kit atlas contact sheet, batch 1b).
+- Status: P1-AIA-kit-4 ready at 3eb4e200 (pre-check PASS); waiting for the gate "Kit art".
+- Progress: 5 tasks merged, P0-AIA-keyframes-3, P0-AIA-board-4, P1-AIA-kit-1, P1-AIA-kit-2 and P1-AIA-kit-3 ready, P1-AIA-kit-4 working; 0 items passed by the gate.
+- Done: P1-AIA-kit-4: kit batch 2a: panel_parchment (normal, locked, done, the parchment sheet), sheet with its grab handles, popup, the four rank frames (oak, silver, gold, prismatic; normal and locked), header with its name plate, and the ribbon (neutral and tinted per school, its untinted frame, the violet chapter ribbon), each with its high-contrast twin.
+- Next: wait for the lead (gate "Kit art" on the batch 2a sheet at phone size).
 - Blocked by: none.
-- Owner decision needed: none. Requests AIA-R9 to AIA-R14 to K1 are in the status file, each with a default.
+- Owner decision needed: none. Requests AIA-R9 to AIA-R16 to K1 are in the status file, each with a default.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
@@ -18,27 +18,37 @@
 | P0-AIA-board-4: the board's words for the revised tokens (K1-R6) | 1 | Ready at b83a0b4d (pre-check PASS) | `node art/ui/board/check_board.mjs` and `--revised` (section 2.1's backdrop #171046 to #2C3AA8, #FF9AAA, #3FBF7F tried over `tokens.css`): 378 words pass in both modes, 8 icons keep the outline rule, 16 controls pass value-steps; `--self-test`: each planted fault fails, including a regular-weight caption on the revised backdrop; `board.png`, `board_hc.png` |
 | P1-AIA-kit-1: kit art batch 1a | 4 | Ready at c8915bc3 (pre-check PASS) | `node tools/ui_bake/bake.js --check`: kit 28 pieces, 2048 x 2048, 446350 bytes for both atlases. `python3 art/ui/kit_build/proof_kit.py --check`: 280 results, 0 fail: 152 value-steps (76 a mode; worst ΔL* 21.9 normal, 23.8 high contrast, both `button_danger__box__pressed` on the backdrop) and 128 label contrasts (worst 4.78:1 normal, tertiary on the backdrop; 5.81:1 high contrast). Contact sheets `art/ui/kit_build/proof/contact_normal.png`, `contact_hc.png` (sheet.py contact, 60 and 120 points). |
 | P1-AIA-kit-2: kit art batch 1b | 4 | Ready at fccd4b89 (pre-check PASS) | `node tools/ui_bake/bake.js --check`: kit 51 pieces, 2048 x 2048, 797984 bytes for both atlases. `python3 art/ui/kit_build/proof_1b.py --check`: 142 results, 0 fail: 92 value-steps (46 a mode; worst ΔL* 23.0 normal, 26.1 high contrast, both the pressed disc on the backdrop) and 50 label contrasts (worst 5.53:1 normal, the violet tag on the dark card; 7.08:1 high contrast). `proof_kit.py --check` (batch 1a) still 280 results, 0 fail. Contact sheets `art/ui/kit_build/proof_1b/contact_1b_normal.png`, `contact_1b_hc.png` (60 and 120 points); stills `controls_<mode>.png`, `surfaces_<mode>.png`. |
-
+| P1-AIA-kit-3: kit art batch 1c, the numerals | 3 | Ready at 3a04e828 (pre-check PASS) | `node tools/ui_bake/bake.js --check`: kit 131 pieces on 2 pages (2048 x 2048 and 2048 x 1024; 24 MiB in memory, report.md section 10.1's budget), 1041770 bytes for both atlases. `python3 art/ui/kit_build/proof_num.py --check`: 24 results, 0 fail: tabular (one digit advance and one height a finish), outline (half the stroke shows: 3.5 pt at 28, 2.75 pt at 22, over max(1.5 pt, 12%)), and fill against outline at the worst fill pixel (worst 9.45:1 / Lc 63.2 normal, timer_red; 10.45:1 / Lc 63.7 high contrast). `proof_kit.py --check` 280 and `proof_1b.py --check` 142 results, 0 fail. Stills `art/ui/kit_build/proof_num/numerals_<mode>_<100,200>_<en,pt_br>.png`; contact sheets `contact_num_normal.png`, `contact_num_hc.png`. |
+| P1-AIA-kit-4: kit art batch 2a | 3 | Ready at 3eb4e200 (pre-check PASS) | `node tools/ui_bake/bake.js --check`: kit 152 pieces on 2 pages, 1397334 bytes for both atlases. `python3 art/ui/kit_build/proof_2a.py --check`: 58 results, 0 fail: 10 value-steps (5 a mode; worst ΔL* 62.7 normal, 75.3 high contrast, the popup's button) and 48 word checks at 4.5:1 and APCA Lc 60 (worst 9.31:1 / Lc 66.3 normal, 12.51:1 / Lc 74.3 high contrast, the popup button's words). `proof_kit.py --check` 280, `proof_1b.py --check` 142 and `proof_num.py --check` 24 results, 0 fail. Stills `art/ui/kit_build/proof_2a/{panels,popup,sheets}_<mode>.png`; contact sheets `contact_2a_normal.png`, `contact_2a_hc.png` (60 and 120 points). |
 
 ## Handoff
-- M1 (acked 2026-11-04): scored against `docs/art/ui-quality/gate/rubric.md` below, value-steps run, from reduced-size previews.
-- Last verified commit: fccd4b89 (pre-check green, 2026-11-04T17:28:21Z).
-- Done (P1-AIA-kit-2):
-  - `art/ui/kit_build/kit_1b.py` (called from `build_kit.py`) writes batch 1b's sources from the tokens: `panel_dark/box` (normal, locked), `panel_glass/box`, `well/box`, `badge/box` and `badge/dot`, `pill/box` (normal, pressed), `tag/box`, `tag/tag_violet`, `tag/tag_warn`, `bar_track/box` and `bar_track/tick`, `bar_fill/box` (a neutral, tinted per use) and `bar_fill/alarm`, `disc/box` (normal, pressed, disabled, locked) and `disc/level_disc`, the overlays `selected/rim`, `locked/lock`, `spinner/ring`; and `kit_next/disc_school/box` (tinted per school) plus `frame` (untinted ink, gloss, outline), normal, pressed, disabled.
-  - Every piece has its `data-mode="hc"` twin: opaque flat fills, black or lavender (`edge_hc`) edges, no gloss.
-  - `art/ui/kit_build/proof_1b.py` renders the baked pieces (and `kit_next`, baked to a scratch atlas) at phone density on the backdrop, dark card, glass and parchment, runs value-steps and the labels' contrast, and makes the contact sheets. `proof_1b/tiles/` and `proof_1b/kit_next/` are regenerated and not committed.
-  - `proof_kit.py`'s contact sheet now shows batch 1a's pieces only.
+- M1 (acked 2026-11-04): scored against `docs/art/ui-quality/gate/rubric.md` below, from reduced previews of the proof stills.
+- Last verified commit: 3eb4e200 (pre-check green, 2026-11-04T22:27:09Z).
+- Done (P1-AIA-kit-4):
+  - `art/ui/kit_build/kit_2a.py` (called from `build_kit.py`) writes 21 sources under `art/ui/kit/`: `panel_parchment/{box,parchment_done,sheet_parchment}.svg`, `sheet/{box,handle,handle_parchment}.svg`, `popup/box.svg`, `frame_{oak,silver,gold,prismatic}/box.svg`, `header/{box,name_plate}.svg`, `ribbon/{box,frame,chapter}.svg`. States follow kit-spec.md section 3: K13 and K14 normal and locked (selected is the existing `selected__rim` over them); K16 to K19 normal (reduced motion changes no art).
+  - Parchment panel (E2): a tan lip (`parchment_lip`, not black), the paper gradient, a deckle line, a white lit top and an inner ink hairline. Locked takes the locked teal with hatching masked to the four corner cells. Done is the same paper with a green seal and an ink tick in the top-right corner cell.
+  - Sheets (E3): rounded top, flush foot, a blurred shadow above the top edge; dark and parchment. The grab handles are their own 42 x 9 pt sprites, since a 9-slice cannot centre them (AIA-R16).
+  - Popup (E3): the lit card gradient, a 3 pt violet bevel ring (`popup_rim`), the drop_l lip, a soft shadow over the scrim, an inner hairline and a lit band; its title is a ribbon across its top edge.
+  - Rank frames: a 6 pt ring with a hollow middle drawn over a portrait. Each rank also differs in shape, not only colour, so it reads in grey and for colour-blind players: oak has concentric grain; silver adds a groove; gold adds the groove and four studs; prismatic adds the groove, a diagonal hue gradient, a pearl sheen and four gems. Locked turns the metal locked teal, keeping each rank's shape cues.
+  - Header: a band flush to the top, rounded at the foot with a drop_m lip; the name plate is a leather E1 plate.
+  - Ribbon: a 32 pt band with offset swallowtail tails and folds. `ribbon__box` is neutral and tinted per school (data-tint); `ribbon__frame`, the gloss, top light, groove hem and ink edges, is drawn over it untinted, as disc_school. `ribbon__chapter` is the untinted violet chapter ribbon.
+  - New colours, each in `KIT_2A` with what it comes from (written to `art/ui/palette.json`).
+  - `art/ui/kit_build/proof_2a.py` draws the stills from the baked atlas at 390 pt wide in both modes and runs value-steps on the interactive pieces and word contrast (4.5:1 and Lc 60) on every word. The reward's glow behind the gold frame in the popup still is drawn by the proof: the sunburst is K39's, a later batch. `proof_2a/tiles/` is regenerated and not committed.
 - Self-score against the rubric (statements, not a rating):
-  - 1 Layered materials: the dark panel is a body gradient, inner rim and drop; the glass panel a translucent fill, a lit top edge and a faint gold rim; the well an inset with a shade at the top; discs a body gradient, gloss cap and lip; the pill a light moon face with a lit band and an ink rim; bars a recessed track with the fill's top light. Risk: the `glass` token's alpha (0.78) makes the glass panel read nearly opaque over a busy ground; that is the token's, not the piece's.
-  - 2 Display type: the kit carries no words; the proof's figures and tags are Manrope 800.
-  - 8 Colour roles and value: gold has one role, a material rim (the selected rim, the glass rim at 0.45); no batch 1b piece has a gold fill, and the currency pill is moon-light with an ink rim, not gold. Red is the alarm (badge, alarm bar, LOW tag), and each family's pressed and focus faces stay in their own hue. School tints come from the tokens' school colours, the same in both modes. Every interactive face is two value steps or more off each ground (worst ΔL* 23.0), words 5.53:1 or more.
-  - 13 Light behind UI: one top light; gloss caps and lit bands above, lips and drops below; pressed faces lose the top light; the well and track are lit from inside at the bottom, as recesses.
-- Known limits: the pill does not go on parchment (light on light); disc_school is not in the atlas (AIA-R13); the new skins are not in `KitSkin.SKINS` (AIA-R14). Out of this task: kit-1's parchment tertiary (the Colour roles fail) is not changed here.
+  - 1 Layered materials: every surface has a lip below, a gradient body, a lit top edge and an ink edge; the popup adds a bevel ring and lit band; the frames carry grooves, studs or gems. Risks: the plain parchment panel's face is quiet at phone size (paper, deckle and hairline only); the sheet bodies are large flat-ish areas, lit mostly at the top edge.
+  - 2 Display type: the header title, the chapter and school ribbons and the popup title are Marcellus with a 1.5 pt ink outline and a hard drop (T2); sheet titles on the dark sheet are T2, on parchment plain ink (T0). Every word passes 4.5:1 and Lc 60 against its outline or face.
+  - 8 Colour roles and value: gold is a material only (frame_gold, its studs) and the primary button; the school colours appear only as the ribbon's tint; violet is the chapter ribbon and popup rim; green only marks done; locked is the locked teal throughout. Every interactive piece steps at least ΔL* 62.7 from its ground. Risk: kit-2's note that locked teal sits near the time school's cyan still applies to the locked frames.
+  - 13 Light behind UI: every piece is lit from the top with its lip or shadow below; the popup sits on the scrim with a shadow; the reward in the popup still sits on a glow (drawn by the proof, see above).
+- Known limits: KitSkin does not draw the new pieces yet (AIA-R16); disc_school is still in `art/ui/kit_next/` (AIA-R13).
 - Half done: none.
-- Open hypotheses: the kit needs atlas pages (AIA-R12, AIA-R13): batch 1b fills 2048 x ~1900.
+- Open hypotheses: none.
 - Next step: none; wait for the lead.
 
 ## Tried and failed
+- 2026-11-04 Numeral boxes in fractions of a point: the bake clips and sizes its screenshot in points, so the packed piece came out 3 px short. Whole-point boxes fixed it.
+- 2026-11-04 Numerals with 1.4 x size boxes and 2 pt pads: page 2 reached 2048 x 2048, over report.md section 10.1's 24 MiB. Boxes of 1.24 x size, 1 pt pads, fit 2048 x 1024.
+- 2026-11-04 Gradients down to `gold_bottom`, `text_on_night_3` and #F2647A at the foot: Lc 40 to 59 on the outline. Feet of `gold`, `pill_bottom` and #FF9AAA pass.
+- 2026-11-04 A 4-neighbour erosion for the fill's worst pixel: it kept anti-aliased pixels on inner corners (the 9's counter). A 3 x 3 erosion measures the fill itself.
 - 2026-10-31 Pre-check in a fresh container: it failed three times on missing one-time setup (the WebAssembly Rust target, gdlint, Python Playwright), not on the change. Installing what the README's "Once" block lists, with Python Playwright pinned to the pre-installed 1.63.0 so it finds the browser in /opt/pw-browsers, passed it.
 - 2026-10-30 SVG grain composited with an implicit second input: `feComposite` without `in2` masked the flood with the source shape, so the grain painted the whole surface solid. Named results fixed it.
 - 2026-10-30 Measuring words against their whole line box: the box reaches below capitals into darker ground (gold's lower half), so it failed words whose letters pass. The check now measures under the letters, found by drawing each word in black and in white.
@@ -57,3 +67,6 @@
 - 2026-11-04 A dark currency pill: ΔL* 0 to 12 on the dark grounds, so value-steps failed. A light moon face with an ink rim passes.
 - 2026-11-04 Black HC outlines on the locked disc: with the black lip and lock, more than half the box was black and its median matched the backdrop. A lavender `edge_hc` outline passes.
 - 2026-11-04 The tokens' locked gradient as it is: on the lit foot of the night backdrop it is 1.8 value steps off (ΔL* 17.9). Lifted a step (#4A9AA0 to #30707A) it passes.
+- 2026-11-04 The rank frame's inner ring path with its V and H commands out of order: the hole did not cut, the ring filled solid and the stretched middle showed a diagonal. Reordered, the evenodd hole cuts.
+- 2026-11-04 The parchment's locked hatching masked to the end caps: on a tall panel the caps stretch vertically and the stripes kinked. Masked to the four corner cells they hold.
+- 2026-11-04 The done mark as a dog-ear between the rounded corner and a diagonal: a 5 pt sliver too thin to read. A round seal inside the corner cell reads; at 7 pt radius it crossed the cell edge and smeared, at 6 pt it fits.

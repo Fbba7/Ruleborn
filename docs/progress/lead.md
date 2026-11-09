@@ -1,8 +1,30 @@
 # The lead's handoff
 
-> **Owner orders.** The owner stopped the program on 3 November 2026 and
-> restarted it on 4 November 2026. Fable 5.1 is never used again, and
-> `dev-fable-v3` is never resumed. Read the owner orders in
+> **Restarted by the owner, 9 November 2026** ("Let's continue and use only
+> Fable 5.2", in the overseer's chat). The program runs, on Fable 5.2 only
+> (CLAUDE.md order 4): every session the lead creates and every subagent it
+> starts runs on Fable 5.2, and on no other model. Fable 5.1 is never used
+> (order 2). The launcher and the watchdog are new scheduled tasks firing
+> into new Fable 5.2 sessions (table below); the old ones stay disabled.
+>
+> Where the work stands at the restart (nothing moved between the stop of
+> 5 November at 00:05Z and now; all of it is pushed):
+>
+> | Task | Branch | Ready at | Branch head | State |
+> |---|---|---|---|---|
+> | P1-AIA-kit-4 (resync) | `claude/ui-artist` | `f3456cac` | `15d22123` | ready, pre-check PASS, ui guard OK |
+> | P1-AIA2-icons-2a | `claude/ui-artist-icons` | `6a382d97` (ready commit `e3d5416b`) | `abb67696` | ready, pre-check PASS |
+> | P1-K1-words | `claude/ui-bake` | `0e829632` | `eaa23f89` | ready, pre-check PASS |
+>
+> Main fails guard.sh's rebake on `client/ui/art/icons_48_hc.webp` (see
+> "Now" and `status/lead.json`). Tasks done: 8 of 18. Read the three
+> branches' status files first. The sessions of 4 November ran on
+> Opus 5.5: reuse none of them; a task that goes back to its agent gets a
+> fresh Fable 5.2 session.
+>
+> **Owner orders.** The owner stopped the program on 3 November 2026,
+> restarted it on 4 November, stopped it again on 5 November and restarted
+> it on 9 November 2026. Read the owner orders in
 > [`CLAUDE.md`](../../CLAUDE.md) first: they override this file.
 
 Every cycle of the lead is a fresh session, created by the launcher with the
@@ -33,8 +55,8 @@ then rewrites the "Now" section below and `status/lead.json`, and pushes.
 6. Start and restart agents (cycle step 6) with `create_session`, never a
    scheduled task: `source_url` https://github.com/Fbba7/Ruleborn,
    `source_revision` `claude/videogame-project-analysis-ewkkk2` (main),
-   `model` the roster's model (`agents` in the
-   backlog), title `Ruleborn <agent> <task id>`, tags `ruleborn:ui-wave`
+   `model` Fable 5.2 (the owner's order 4; the roster in the backlog
+   says the same), title `Ruleborn <agent> <task id>`, tags `ruleborn:ui-wave`
    and `ruleborn:<agent>`, and as prompt a first line giving the reason
    (start, or restart and why) followed by the agent's prompt below. Start
    an agent when its next task is open with its deps merged and it has no
@@ -62,11 +84,37 @@ every other session is created with `create_session`.
 
 | Scheduled task | ID | Fires into | Schedule (UTC) |
 |---|---|---|---|
-| The launcher: one fresh lead cycle session an hour, unless the last is still working | `trig_01DgVGTTmwREAb7sHz8oQkiP` | the launcher, `session_01SNkKxn46tjHDfKNwyTXZwg` | hourly at :38 |
-| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself and alerts | `trig_015Lgi2ZssXBXPbzkCYqoKmL` | the watchdog, `session_01SNkKxpnV81q24cdprpaTwe` | every 2 hours at :08 |
+| The launcher: one fresh lead cycle session an hour on Fable 5.2, unless the last is still working (created 9 Nov at 21:32Z, after the restart was on main) | `trig_01ChLd51gPMwzsKrXifYfkYj` | the launcher, `session_01SNkKxoc1ntTt7RqPTLViwy` (Fable 5.2) | hourly at :38 |
+| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Fable 5.2 and alerts (created 9 Nov at 21:33Z, after the restart was on main) | `trig_016aHfeAQkYXB6Z5X361irkE` | the watchdog, `session_01SNkKxpLf6R26Jp1H6iXTPv` (Fable 5.2) | every 2 hours at :08 |
 
-Latest lead cycle session: `session_01SNkKxnLzPFPR6HcJhTvYru` (cycle 42,
-4 November 2026, from 21:38Z, started by the launcher).
+A scheduled task that fires into a session runs on that session's model,
+so the two were created anew on 9 November instead of re-enabled. Both
+read CLAUDE.md first and do nothing while order 1 says the program is
+stopped.
+
+**Create these two sessions only after the restart is on main.** A
+session keeps the CLAUDE.md it was created with; `git fetch` does not
+refresh it. A first pair was created on 9 November at 20:55Z, four minutes
+before the restart commit (`b5e822ac`, 20:59Z), so their CLAUDE.md still
+said the program was stopped. The launcher's first run, fired by hand at
+21:30Z, was refused when it called `create_session`, and no lead cycle
+started. That pair is retired and stays disabled, never re-enabled:
+launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
+`session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
+`trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
+
+Latest lead cycle session: none since the restart of 9 November 2026 (the
+first is created by the launcher in use now, at 21:38Z). Cycle 44's, of 4 November
+2026 from 23:39Z, was recorded here as `session_01SNkKxqKY1WGt7cJSaqyYtWj`,
+which is not a valid ID (one character too many); treat an ID that
+`get_session` rejects as "not working".
+
+Retired on 9 November 2026 (they fired into Opus 5.5 sessions), disabled
+and kept for their run history: the launcher
+`trig_01DgVGTTmwREAb7sHz8oQkiP` (into `session_01SNkKxn46tjHDfKNwyTXZwg`),
+the watchdog `trig_015Lgi2ZssXBXPbzkCYqoKmL` (into
+`session_01SNkKxpnV81q24cdprpaTwe`) and the overseer's one-shot check-in
+`trig_01TLsnuwnbJBV11EePZc34TD`. Never re-enable them.
 
 Retired on 30 October 2026, disabled and kept for their run history: the old
 lead cycle `trig_018vvUDvm2PkMuXrcJPQ9BiB`, watchdog
@@ -79,12 +127,15 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AIA-2 | `session_01SNkKxoAA41vxL7RwwKNRGN` (working) | P1-AIA2-icons-1b (restart: resync, icons_48_hc.webp is not what its sources bake to) | `claude/ui-artist-icons` | 2026-11-04 20:59Z |
+| AIA | `session_01SNkKxpLGXniYM5JnmyzqE7` (idle, ready at `f3456cac`; Opus 5.5, not reused) | P1-AIA-kit-4 (restart: resync, its nine skins missing from SKINS_OF) | `claude/ui-artist` | 2026-11-04 23:30Z |
+| AIA-2 | `session_01SNkKxnB46NyYAV26hWtwrg` (idle, ready at `6a382d97`; Opus 5.5, not reused) | P1-AIA2-icons-2a | `claude/ui-artist-icons` | 2026-11-04 23:21Z |
+| K1 | `session_01SNkKxo2gLyAa89sh1bYjJq` (idle, ready at `0e829632`; Opus 5.5, not reused) | P1-K1-words | `claude/ui-bake` | 2026-11-04 23:21Z |
+| AIA-2 | `session_01SNkKxoAA41vxL7RwwKNRGN` (idle, done) | P1-AIA2-icons-1b (restart: resync, icons_48_hc.webp is not what its sources bake to) | `claude/ui-artist-icons` | 2026-11-04 20:59Z |
 | AIA-2 | `session_01SNkKxnfqxoDcFwrXf6z7o8` (idle, replaced) | P1-AIA2-icons-1b | `claude/ui-artist-icons` | 2026-11-04 18:34Z |
-| K1 | `session_01SNkKxqXv3kuBk7Uya8STrT` (working) | P1-K1-catalogue (restart: resync, kit-3's numerals missing from SKINS_OF) | `claude/ui-bake` | 2026-11-04 21:54Z |
+| K1 | `session_01SNkKxqXv3kuBk7Uya8STrT` (idle, done) | P1-K1-catalogue (restart: resync, kit-3's numerals missing from SKINS_OF) | `claude/ui-bake` | 2026-11-04 21:54Z |
 | K1 | `session_01SNkKxorLGKFDuXX2ULtTU2` (idle, replaced) | P1-K1-catalogue (restart: resync, kit-2's skins missing from SKINS_OF) | `claude/ui-bake` | 2026-11-04 20:00Z |
 | K1 | `session_01SNkKxnnyL6yNX5UpCnt8dH` (idle, replaced) | P1-K1-catalogue | `claude/ui-bake` | 2026-11-04 17:41Z |
-| AIA | `session_01SNkKxmbXiobGvGu7DHZRJZ` (working) | P1-AIA-kit-4 | `claude/ui-artist` | 2026-11-04 21:32Z |
+| AIA | `session_01SNkKxmbXiobGvGu7DHZRJZ` (idle, replaced) | P1-AIA-kit-4 | `claude/ui-artist` | 2026-11-04 21:32Z |
 | AIA | `session_01SNkKxqGqwHJU12VPiWB68i` (idle, done) | P1-AIA-kit-3 | `claude/ui-artist` | 2026-11-04 19:20Z |
 | AIA | `session_01SNkKxmwaE4rQY339ct2nz9` (idle, done) | P1-AIA-kit-2 | `claude/ui-artist` | 2026-11-04 16:25Z |
 | K1 | `session_01SNkKxrN8TYssSGXSznyneA` (idle, done) | P1-K1-atlas-draw | `claude/ui-bake` | 2026-11-04 14:41Z |
@@ -133,11 +184,11 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 ```text
 You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: AD            Role: art director (AD)        Model: Opus 5.5
+Agent: AD            Role: art director (AD)        Model: Fable 5.2
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
 Tasks: P1-AD-board-1 once its deps merge (every phase 0 AD task is merged). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
-STOP_AT: 2026-11-09T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-ad from it (create it if it does not exist) and push only to claude/ui-ad with git push -u origin claude/ui-ad, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AD, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -148,11 +199,11 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent AIA of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: AIA            Role: maker (AIA): kit art and motion art        Model: Opus 5.5
+Agent: AIA            Role: maker (AIA): kit art and motion art        Model: Fable 5.2
 Branch: claude/ui-artist
 Owned files: art/ui/** except art/ui/icons/**, client/ui/art/kit*, docs/progress/AIA.md, docs/progress/status/AIA.json
 Tasks: P1-AIA-kit-1, then P1-AIA-kit-2 to -5 as their deps merge (every phase 0 AIA task is merged). Icons are AIA-2's, not yours.
-STOP_AT: 2026-11-09T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-artist from it (create it if it does not exist) and push only to claude/ui-artist with git push -u origin claude/ui-artist, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AIA, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -163,11 +214,11 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5
+Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Fable 5.2
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
 Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist and P1-K1-switch-rest as their deps merge (every other phase 0 K1 task is merged)
-STOP_AT: 2026-11-09T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-bake from it (create it if it does not exist) and push only to claude/ui-bake with git push -u origin claude/ui-bake, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is K1, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -178,11 +229,11 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent AIA-2 of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: AIA-2            Role: maker (AIA-2): icon art        Model: Opus 5.5
+Agent: AIA-2            Role: maker (AIA-2): icon art        Model: Fable 5.2
 Branch: claude/ui-artist-icons
 Owned files: art/ui/icons/**, client/tests/shots/icon_*.gd, client/ui/art/icons_48*, client/ui/art/icons_256*, docs/progress/AIA-2.md, docs/progress/status/AIA-2.json
 Tasks: P1-AIA2-toon-route, then P1-AIA2-icons-1a, -1b, -2a and -2b as their deps merge. Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
-STOP_AT: 2026-11-09T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-artist-icons from it (create it if it does not exist) and push only to claude/ui-artist-icons with git push -u origin claude/ui-artist-icons, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AIA-2, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -193,11 +244,11 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Sonnet 5.5
+Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Fable 5.2
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
 Tasks: P1-S1-pilot-1, then P1-S1-pilot-2 as their deps merge (pilot-1 waits on P1-K1-switch-heist and P1-AIA2-icons-1b).
-STOP_AT: 2026-11-09T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-heist from it (create it if it does not exist) and push only to claude/ui-screens-heist with git push -u origin claude/ui-screens-heist, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S1, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -208,17 +259,104 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent SV of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: SV            Role: maker (SV): the owner's server decisions B1-B12 (docs/decisions/owner-decisions.md, Build tasks)        Model: Sonnet 5.5
+Agent: SV            Role: maker (SV): the owner's server decisions B1-B12 (docs/decisions/owner-decisions.md, Build tasks)        Model: Fable 5.2
 Branch: claude/server-decisions
 Owned files: only the files each SV task lists in the backlog, docs/progress/SV.md, docs/progress/status/SV.json
 Tasks: none open (SV-B1-B6, SV-B7-B9 and SV-B11-B12 are merged; SV-B10 is not yours yet). Run the client suite (python3 client/status.py) before marking a task ready.
-STOP_AT: 2026-11-09T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/server-decisions from it (create it if it does not exist) and push only to claude/server-decisions with git push -u origin claude/server-decisions, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SV, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
 
 ## Now
+
+- Restart, 9 November 2026 at 21:05Z (the overseer, on the owner's word
+  "Let's continue and use only Fable 5.2"): CLAUDE.md order 1 says the
+  program runs and order 4 says Fable 5.2 only. The backlog's roster and
+  every task not yet merged name Fable 5.2; `stop_at` moved to 14 November
+  21:00Z. New launcher and watchdog (table above). No lead cycle ran
+  between 5 November 00:05Z and this entry, and nothing was merged. The
+  three builders finished cleanly at the stop and all three tasks are
+  ready with pre-check PASS: kit-4 at `f3456cac`, icons-2a at `6a382d97`,
+  words at `0e829632`. The backlog still shows them `working`; the
+  branches' status files are the newer record.
+- Next (cycle 45, the first after the restart): read the three status
+  files. Main still fails guard.sh's rebake on `icons_48_hc.webp`, so the
+  plan below holds: icons-2a goes back to AIA-2 as a `resync` with the
+  pixel-dilation finding (a fresh Fable 5.2 session), unless its ready
+  commit already changed the finish; merge kit-4 and words once the
+  candidate passes check_all and guard, or record exactly which file
+  keeps guard red and whose it is.
+- Cycle 44, 4 November 2026, from 23:39Z (session
+  `session_01SNkKxqKY1WGt7cJSaqyYtWj`, started by the launcher):
+  bookkeeping and a diagnosis. All three builders are working (AIA
+  kit-4 resync, pre-check on `f3456cac` to about 00:20Z; AIA-2 icons-2a
+  at `6a382d97`, pre-check running; K1 words, no commit of code yet).
+  Nothing ready, no merge lock, nothing merged, no session started, pages
+  not republished. Backlog: K1's words and AIA-2's icons-2a copied to
+  `working` with their claims; kit-4 `working` (lease kept at 03:00Z).
+  Reproduced main's guard failure here: `node tools/ui_bake/bake.js
+  icons_48` (after `npm ci` in tools/ui_research) rebakes `icons_48.json`
+  and `icons_48.webp` byte for byte but not `icons_48_hc.webp`; two
+  bakes in this container agree with each other, so the bake is
+  deterministic per container and differs between containers. The only
+  piece that differs is `crew__pip__normal` in high contrast: the
+  committed file has a round ink ring with a white keyline; this
+  container draws both rings as an octagon. That is `finish.js`'s
+  `grow()` (hundreds of `drawImage` stamps of a silhouette) on pip, the
+  one icon with its own `draw` (a WebGL render composited with an
+  image). AIA-2's icons-2a branch does not touch `finish.js` or pip, so
+  its candidate will fail guard the same way. No new owner-inbox entry
+  (cycle 43's covers it). Cloud agent sessions cannot be messaged from a
+  lead session (ListAgents lists none), so the finding waits for the
+  resync.
+- Next: when AIA-2 marks icons-2a ready, set it to `resync` (unless it
+  already changed the finish) with this finding: make the outline and
+  keyline grow independent of the canvas backend, for example a
+  dilation computed on the pixels (`getImageData`, a disc of radius r)
+  instead of stamped `drawImage` calls, rebake `icons_48*` and
+  `icons_256*`, and show the rebake byte for byte in a fresh container
+  (guard.sh). Merge kit-4 on ready once guard is green; if guard is still
+  red only on `icons_48_hc.webp`, that file is AIA-2's and not kit-4's
+  fault, but main still does not move on a red guard. Start AIA on
+  P1-AIA-kit-5 after kit-4 merges, with the kit-4 gate notes (cycle 43).
+  Never use Fable 5.1 (CLAUDE.md).
+
+- Cycle 43, 4 November 2026, from 22:38Z (session
+  `session_01SNkKxr5KfuQpAn8isazH9U`, started by the launcher): ran
+  P1-AIA-kit-4's gate on `3eb4e200` (kit catalogue sheet, batch 2a; Opus
+  5.5 ui-judge samples, advisory): Light behind UI passes; Layered
+  materials (6 samples), Display type (6) and Colour roles and value
+  fail (large panels flat with thin rims; same-rank titles treated
+  differently; bronze and silver frames told apart by colour only).
+  Batched P1-AIA2-icons-1b (`5ecb0202`) and P1-K1-catalogue (`ecec63dc`)
+  on candidate `00e31ef0`: check_all PASS, guard.sh OK; merged as
+  `90f72fd7` and `7e6de29d`. Started K1 on P1-K1-words
+  (`session_01SNkKxo2gLyAa89sh1bYjJq`) and AIA-2 on P1-AIA2-icons-2a
+  (`session_01SNkKxnB46NyYAV26hWtwrg`). Kit-4's candidate `050f2e10`
+  (exceptions `art/ui/kit_build/**`, `art/ui/palette.json`,
+  `client/ui/art/kit_2*`, kit-3's) failed check_all, 391 of 392: its
+  nine skins have art but no SKINS_OF entry. guard.sh FAILED (rebake) on
+  `client/ui/art/icons_48_hc.webp`, and main's own head `0a1a5eb0` fails
+  the same way. The sources and file are unchanged since `00e31ef0`
+  passed, but every bake since about 23:15Z drops the high-contrast halo
+  and draws pip as an octagon, idle or loaded, so the icon finish still
+  depends on the environment. Lock released. Kit-4 set to `resync` with
+  the SKINS_OF block of `client/tests/ui_kit_tests.gd` granted, and AIA
+  restarted (`session_01SNkKxpLGXniYM5JnmyzqE7`). Owner-inbox entry, no
+  answer needed. Three builders, the D13 (c) cap. Pages republished.
+  Godot's untracked .uid/.import files deleted, not committed.
+- Next: nothing merges while main fails guard's rebake. Check
+  P1-AIA2-icons-2a's candidate with guard.sh on ready; if
+  `icons_48_hc.webp` still does not rebake, set it to `resync` with this
+  finding (make the finish's halo and pip ring independent of the
+  Chromium canvas backend). Merge kit-4 on ready once guard is green.
+  Start AIA on P1-AIA-kit-5 after kit-4 merges, with the kit-4 gate
+  notes: bevelled frame, inner well, gloss and lip for large panels; one
+  outline and drop treatment per title rank; a shape mark (studs or
+  pips) on the bronze and silver frames beyond colour. Never use Fable
+  5.1 (CLAUDE.md).
 
 - Cycle 42, 4 November 2026, from 21:38Z (session
   `session_01SNkKxnLzPFPR6HcJhTvYru`, started by the launcher): K1 was
