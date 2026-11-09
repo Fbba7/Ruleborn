@@ -2,18 +2,18 @@
   "agent": "AIA",
   "role": "AIA",
   "branch": "claude/ui-artist",
-  "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P1-AIA-kit-4",
-  "task_state": "ready",
-  "claimed_at": "2026-11-04T21:40:00Z",
-  "lease_until": "2026-11-05T00:40:00Z",
-  "updated_at": "2026-11-05T00:25:00Z",
-  "expected_next_update_by": "2026-11-05T01:10:00Z",
+  "model": "Fable 5.2",
+  "agent_state": "active",
+  "task_id": "P1-AIA-kit-5",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-09T22:25:25Z",
+  "lease_until": "2026-11-10T01:25:25Z",
+  "updated_at": "2026-11-09T22:25:25Z",
+  "expected_next_update_by": "2026-11-09T23:10:25Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "f3456cac",
-    "next_step": "lead: merge P1-AIA-kit-4 at f3456cac"
+    "last_green_sha": "d2deb896",
+    "next_step": "batch 2b sources"
   },
   "precheck": {
     "sha": "f3456cacc25ba00fa096db1516d85a677f3d7c77",
@@ -22,8 +22,8 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": "f3456cacc25ba00fa096db1516d85a677f3d7c77",
-  "stop_at": "2026-11-09T21:00:00Z",
+  "ready_sha": null,
+  "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M1"
   ],
@@ -152,5 +152,5 @@
     }
   ],
   "answers": [],
-  "next_step": "lead merges P1-AIA-kit-4 at f3456cac"
+  "next_step": "read kit-spec sections for batch 2b; build the sources"
 }
