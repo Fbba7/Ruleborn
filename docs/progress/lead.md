@@ -7,15 +7,15 @@
 > (order 2). The launcher and the watchdog are new scheduled tasks firing
 > into new Fable 5.2 sessions (table below); the old ones stay disabled.
 >
-> Where the work stands after cycle 45 (9 November 2026, 22:30Z):
+> Where the work stands after cycle 46 (9 November 2026, 22:55Z):
 >
 > | Task | Branch | State |
 > |---|---|---|
 > | P1-AIA-kit-4 | `claude/ui-artist` | merged, `d2deb896` |
 > | P1-K1-words | `claude/ui-bake` | merged, `68cfd4e4` |
-> | P1-AIA2-icons-2a | `claude/ui-artist-icons` | `resync`: guard's rebake fails on `icons_48_hc.webp` with it; a fresh AIA-2 session has it |
-> | P1-AIA-kit-5 | `claude/ui-artist` | started (AIA) |
-> | P1-K1-switch-heist | `claude/ui-bake` | started (K1) |
+> | P1-AIA2-icons-2a | `claude/ui-artist-icons` | working (AIA-2): grow reworked at `5ae7dbd5`, pre-check running on `ac4809ed`; its icons rebake byte for byte in cycle 46's container |
+> | P1-AIA-kit-5 | `claude/ui-artist` | working (AIA); AIA-R17 granted |
+> | P1-K1-switch-heist | `claude/ui-bake` | claimed (K1) |
 >
 > Main passed check_all and guard.sh in cycle 45's container. Tasks done:
 > 10 of 18. Three builders are working, which is the cap (D13 (c)). The
@@ -102,9 +102,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxoFQJdmfH1eKm7DbKK` ("Ruleborn
-lead cycle 2026-11-09 21:38 UTC", cycle 45, created by the launcher's
-session `session_01SNkKxoc1ntTt7RqPTLViwy`). Cycle 44's, of 4 November
+Latest lead cycle session: `session_01SNkKxoVXNfpAABNM81P62e` ("Ruleborn
+lead cycle 2026-11-09 22:39 UTC", cycle 46, created by the launcher's
+session `session_01SNkKxoc1ntTt7RqPTLViwy`). Cycle 45's was
+`session_01SNkKxoFQJdmfH1eKm7DbKK`. Cycle 44's, of 4 November
 2026 from 23:39Z, was recorded here as `session_01SNkKxqKY1WGt7cJSaqyYtWj`,
 which is not a valid ID (one character too many); treat an ID that
 `get_session` rejects as "not working".
@@ -302,7 +303,42 @@ Your session was created with the repository checked out at main; work in that c
   SKINS_OF reminder) and K1 on P1-K1-switch-heist. Three builders work,
   the cap. Both pages republished (audit version 218, roadmap version
   158). `stop_at` is 14 November 21:00Z.
-- Next (cycle 46): read the three branches' status files and copy the
+- Cycle 46, 9 November 2026, from 22:39Z (session
+  `session_01SNkKxoVXNfpAABNM81P62e`, started by the launcher):
+  bookkeeping, one request answered, one early check. All three builders'
+  sessions are working (`get_session`), none past its update time: AIA on
+  P1-AIA-kit-5 (working, lease 01:25Z), K1 on P1-K1-switch-heist
+  (claimed, lease 01:27Z), AIA-2 on the P1-AIA2-icons-2a resync (working,
+  lease 00:54Z; grow computed on the pixels at `5ae7dbd5`, the atlases'
+  import files at `ac4809ed`, pre-check running on `ac4809ed`, expected
+  to end about 23:35Z). Claims copied to the backlog; owners.py claims
+  clean. AIA-R17 granted with its default (requests.md): the batch 2b
+  faces in `SKINS_OF` of `client/tests/ui_kit_tests.gd` are P1-AIA-kit-5's
+  exception. Early check, not a merge check: in this fresh container
+  (`npm ci` in tools/ui_research, then `node tools/ui_bake/bake.js
+  icons_48 icons_256 kit --out <scratch>` one family at a time on the
+  branch head `219ea6f0`), all eleven files, `icons_48_hc.webp` among
+  them, match the committed ones byte for byte, so the reworked grow
+  holds in a second container. No gate request, nothing ready, no merge
+  lock taken, nothing merged, no session started, pages not republished,
+  no owner-inbox entry.
+- Next (cycle 47): AIA-2 should be ready on icons-2a (ready sha at or
+  after `ac4809ed`). Its pixels changed since the gate on `6a382d97`, so
+  run the gate again on the ready sha (icon sheet at 48 and 96 points and
+  in grayscale; four qualities, three Fable 5.2 ui-judge samples each,
+  advisory), take the merge lock, build the candidate, and run guard.sh
+  and check_all in that cycle's fresh container: it merges only if
+  `icons_48*` and `icons_256*` rebake byte for byte there too. Then start
+  AIA-2 on P1-AIA2-icons-2b (batches 3 and 4 stay deferred). Gate kit-5
+  on ready (kit catalogue sheet, batch 2b: Layered materials, Display
+  type, Colour roles and value, Light behind UI); at its merge expect
+  kit-4's exceptions again (`art/ui/kit_build/**`, `art/ui/palette.json`,
+  `client/ui/art/kit_2*`) and grant them if the diff shows only those.
+  Merge switch-heist on ready; then S1's pilot-1 opens (its deps are
+  switch-heist and icons-1b) and S1 starts only if a builder slot is
+  free; switch-rest needs switch-heist and kit-5 merged. No more than
+  three UI builders at once. Only Fable 5.2; never Fable 5.1 (CLAUDE.md).
+- Cycle 45's plan for cycle 46 was: read the three branches' status files and copy the
   claims to the backlog. When icons-2a is ready, build the candidate and
   run guard.sh in this fresh container before check_all: it merges only
   if `icons_48*` and `icons_256*` rebake byte for byte here; then start

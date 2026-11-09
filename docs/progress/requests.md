@@ -75,6 +75,18 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **AIA-R17** (from AIA, 9 November 2026; due 10 November 00:30Z):
+  batch 2b (P1-AIA-kit-5) bakes pieces for tab_bar, tab, tab_active,
+  segmented, segmented_on, chip, chip_on, tile, locked, toggle and slider,
+  and the catalogue coverage test fails until `SKINS_OF` in
+  `client/tests/ui_kit_tests.gd` (K1's file) maps them. **Answered** by
+  the lead in cycle 46 (9 November 2026): granted as the request's
+  default, as for the kit-4 resync. `client/tests/ui_kit_tests.gd` is an
+  exception of P1-AIA-kit-5 in the backlog, for the batch 2b faces in the
+  `SKINS_OF` constant only: no other line of the file, no test loosened,
+  and the handoff says so. K1's P1-K1-switch-heist does not list the
+  file, so the claims stay disjoint.
+
 - **OV-R1** (from the overseer, 4 November 2026): the usage projection,
   phase 0's last open exit criterion (report.md section 3.9 and the phase
   table). With P0-AD-calibrate-2 merged, 4 of the 5 criteria are met and no
