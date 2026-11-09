@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72" height="42" data-slice="35 34 35 6">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <filter id="f1" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2C45C"/><stop offset="0.0647" stop-color="#C8923A"/><stop offset="0.1294" stop-color="#8A5A1C"/><stop offset="1" stop-color="#5A3A12"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2C1E5C"/><stop offset="0.7333" stop-color="#261A52"/><stop offset="0.8" stop-color="#160E34"/><stop offset="1" stop-color="#120A2C"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0.549"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="0.25" stop-color="#FFFFFF" stop-opacity="0.1216"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <path d="M2 39V29Q2 5 26 5H46Q70 5 70 29V39Z" fill="#000000" fill-opacity="0.6196" filter="url(#f1)"/>
+    <path d="M0 42V32Q0 8 24 8H48Q72 8 72 32V42Z" fill="url(#g2)"/>
+    <path d="M0.9 42.9V32Q0.9 8.9 24 8.9H48Q71.1 8.9 71.1 32V42.9Z" fill="none" stroke="#FFF3CC" stroke-width="0.9" stroke-opacity="0.75"/>
+    <path d="M4 42V32Q4 12 24 12H48Q68 12 68 32V42Z" fill="url(#g3)"/>
+    <path d="M4 19V32Q4 12 24 12H48Q68 12 68 32V19Z" fill="url(#g4)"/>
+    <path d="M7 33V33Q7 16 24 16H48Q65 16 65 33V33Z" fill="url(#g5)"/>
+    <path d="M4 44V32Q4 12 24 12H48Q68 12 68 32V44Z" fill="none" stroke="#120C2A" stroke-width="1.5"/>
+    <path d="M0 44V32Q0 8 24 8H48Q72 8 72 32V44Z" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <path d="M0 42V32Q0 8 24 8H48Q72 8 72 32V42Z" fill="#140C2A"/>
+    <path d="M1.5 43.5V32Q1.5 9.5 24 9.5H48Q70.5 9.5 70.5 32V43.5Z" fill="none" stroke="#B8A8D8" stroke-width="3"/>
+  </g>
+</svg>

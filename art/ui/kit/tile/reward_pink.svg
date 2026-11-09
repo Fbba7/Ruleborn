@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="40" data-slice="17 16 17 22">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <filter id="f1" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.8"/></filter>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFBF0"/><stop offset="0.5" stop-color="#F6EAD0"/><stop offset="1" stop-color="#F1E3C4"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E05CB4"/><stop offset="1" stop-color="#E05CB4"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.6"/><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A5A1C" stop-opacity="0"/><stop offset="0.55" stop-color="#8A5A1C" stop-opacity="0"/><stop offset="1" stop-color="#8A5A1C" stop-opacity="0.4"/></linearGradient>
+    <filter id="f6" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.8"/></filter>
+    <linearGradient id="g7" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A8A90"/><stop offset="1" stop-color="#245A66"/></linearGradient>
+    <pattern id="s8" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2.5" height="6" fill="#FFFFFF" fill-opacity="0.1412"/></pattern>
+    <mask id="m9" maskUnits="userSpaceOnUse" x="0" y="0" width="36" height="40"><rect x="0" y="0" width="15" height="15" fill="#FFFFFF"/><rect x="0" y="25" width="15" height="15" fill="#FFFFFF"/><rect x="21" y="0" width="15" height="15" fill="#FFFFFF"/><rect x="21" y="25" width="15" height="15" fill="#FFFFFF"/></mask>
+    <linearGradient id="g10" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7AB6BA"/><stop offset="1" stop-color="#4A9AA0"/></linearGradient>
+    <linearGradient id="g11" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.6"/><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g12" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0"/><stop offset="0.55" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.4"/></linearGradient>
+    <pattern id="s13" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2" height="6" fill="#000000"/></pattern>
+    <mask id="m14" maskUnits="userSpaceOnUse" x="0" y="0" width="36" height="40"><rect x="0" y="0" width="15" height="15" fill="#FFFFFF"/><rect x="0" y="25" width="15" height="15" fill="#FFFFFF"/><rect x="21" y="0" width="15" height="15" fill="#FFFFFF"/><rect x="21" y="25" width="15" height="15" fill="#FFFFFF"/></mask>
+  </defs>
+  <g data-state="normal">
+    <rect x="2" y="7" width="32" height="30" rx="14" fill="#000000" fill-opacity="0.4" filter="url(#f1)"/>
+    <rect x="3" y="5" width="30" height="30" rx="14" fill="#4A2A10" stroke="#1A0C14" stroke-width="1.5"/>
+    <rect x="3" y="2" width="30" height="30" rx="14" fill="url(#g2)"/>
+    <rect x="4.5" y="3.5" width="27" height="27" rx="12.5" fill="none" stroke="url(#g3)" stroke-width="3"/>
+    <rect x="4.4" y="3.4" width="27.2" height="27.2" rx="12.6" fill="none" stroke="url(#g4)" stroke-width="1.2"/>
+    <rect x="7" y="6" width="22" height="22" rx="10" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-opacity="0.7"/>
+    <rect x="6.95" y="5.95" width="22.1" height="22.1" rx="10.05" fill="none" stroke="url(#g5)" stroke-width="1.5"/>
+    <rect x="3" y="2" width="30" height="30" rx="14" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+    <path d="M8.1613 4.0363L11.2863 7.1613L8.1613 10.2863L5.0363 7.1613Z" fill="#E05CB4" stroke="#1A0C14" stroke-width="1" stroke-linejoin="round"/>
+    <circle cx="7.2238" cy="6.2238" r="0.9375" fill="#FFFFFF" fill-opacity="0.8"/>
+    <path d="M27.8387 4.0363L30.9637 7.1613L27.8387 10.2863L24.7137 7.1613Z" fill="#E05CB4" stroke="#1A0C14" stroke-width="1" stroke-linejoin="round"/>
+    <circle cx="26.9012" cy="6.2238" r="0.9375" fill="#FFFFFF" fill-opacity="0.8"/>
+    <path d="M8.1613 23.7137L11.2863 26.8387L8.1613 29.9637L5.0363 26.8387Z" fill="#E05CB4" stroke="#1A0C14" stroke-width="1" stroke-linejoin="round"/>
+    <circle cx="7.2238" cy="25.9012" r="0.9375" fill="#FFFFFF" fill-opacity="0.8"/>
+    <path d="M27.8387 23.7137L30.9637 26.8387L27.8387 29.9637L24.7137 26.8387Z" fill="#E05CB4" stroke="#1A0C14" stroke-width="1" stroke-linejoin="round"/>
+    <circle cx="26.9012" cy="25.9012" r="0.9375" fill="#FFFFFF" fill-opacity="0.8"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <rect x="3" y="5" width="30" height="30" rx="14" fill="#000000"/>
+    <rect x="3" y="2" width="30" height="30" rx="14" fill="#FFFFFF"/>
+    <rect x="7" y="6" width="22" height="22" rx="10" fill="none" stroke="#A8307E" stroke-width="2"/>
+    <rect x="4" y="3" width="28" height="28" rx="12.5" fill="none" stroke="#000000" stroke-width="3"/>
+    <path d="M8.1613 4.0363L11.2863 7.1613L8.1613 10.2863L5.0363 7.1613Z" fill="#FFFFFF" stroke="#000000" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M27.8387 4.0363L30.9637 7.1613L27.8387 10.2863L24.7137 7.1613Z" fill="#FFFFFF" stroke="#000000" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M8.1613 23.7137L11.2863 26.8387L8.1613 29.9637L5.0363 26.8387Z" fill="#FFFFFF" stroke="#000000" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M27.8387 23.7137L30.9637 26.8387L27.8387 29.9637L24.7137 26.8387Z" fill="#FFFFFF" stroke="#000000" stroke-width="1.2" stroke-linejoin="round"/>
+  </g>
+  <g data-state="locked">
+    <rect x="2" y="7" width="32" height="30" rx="14" fill="#000000" fill-opacity="0.4" filter="url(#f6)"/>
+    <rect x="3" y="5" width="30" height="30" rx="14" fill="#0A0408" stroke="#1A0C14" stroke-width="1.5"/>
+    <rect x="3" y="2" width="30" height="30" rx="14" fill="url(#g7)"/>
+    <rect x="3" y="2" width="30" height="30" rx="14" fill="url(#s8)" mask="url(#m9)"/>
+    <rect x="4.5" y="3.5" width="27" height="27" rx="12.5" fill="none" stroke="url(#g10)" stroke-width="3"/>
+    <rect x="4.4" y="3.4" width="27.2" height="27.2" rx="12.6" fill="none" stroke="url(#g11)" stroke-width="1.2"/>
+    <rect x="7" y="6" width="22" height="22" rx="10" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-opacity="0.15"/>
+    <rect x="6.95" y="5.95" width="22.1" height="22.1" rx="10.05" fill="none" stroke="url(#g12)" stroke-width="1.5"/>
+    <rect x="3" y="2" width="30" height="30" rx="14" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+    <path d="M8.1613 4.0363L11.2863 7.1613L8.1613 10.2863L5.0363 7.1613Z" fill="#7AB6BA" stroke="#1A0C14" stroke-width="1" stroke-linejoin="round"/>
+    <circle cx="7.2238" cy="6.2238" r="0.9375" fill="#FFFFFF" fill-opacity="0.4"/>
+    <path d="M27.8387 4.0363L30.9637 7.1613L27.8387 10.2863L24.7137 7.1613Z" fill="#7AB6BA" stroke="#1A0C14" stroke-width="1" stroke-linejoin="round"/>
+    <circle cx="26.9012" cy="6.2238" r="0.9375" fill="#FFFFFF" fill-opacity="0.4"/>
+    <path d="M8.1613 23.7137L11.2863 26.8387L8.1613 29.9637L5.0363 26.8387Z" fill="#7AB6BA" stroke="#1A0C14" stroke-width="1" stroke-linejoin="round"/>
+    <circle cx="7.2238" cy="25.9012" r="0.9375" fill="#FFFFFF" fill-opacity="0.4"/>
+    <path d="M27.8387 23.7137L30.9637 26.8387L27.8387 29.9637L24.7137 26.8387Z" fill="#7AB6BA" stroke="#1A0C14" stroke-width="1" stroke-linejoin="round"/>
+    <circle cx="26.9012" cy="25.9012" r="0.9375" fill="#FFFFFF" fill-opacity="0.4"/>
+  </g>
+  <g data-state="locked" data-mode="hc">
+    <rect x="3" y="5" width="30" height="30" rx="14" fill="#000000"/>
+    <rect x="3" y="2" width="30" height="30" rx="14" fill="#2E6E76"/>
+    <rect x="3" y="2" width="30" height="30" rx="14" fill="url(#s13)" mask="url(#m14)"/>
+    <rect x="7" y="6" width="22" height="22" rx="10" fill="none" stroke="#B8A8D8" stroke-width="2"/>
+    <rect x="4" y="3" width="28" height="28" rx="12.5" fill="none" stroke="#B8A8D8" stroke-width="3"/>
+    <path d="M8.1613 4.0363L11.2863 7.1613L8.1613 10.2863L5.0363 7.1613Z" fill="#FFFFFF" stroke="#000000" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M27.8387 4.0363L30.9637 7.1613L27.8387 10.2863L24.7137 7.1613Z" fill="#FFFFFF" stroke="#000000" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M8.1613 23.7137L11.2863 26.8387L8.1613 29.9637L5.0363 26.8387Z" fill="#FFFFFF" stroke="#000000" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M27.8387 23.7137L30.9637 26.8387L27.8387 29.9637L24.7137 26.8387Z" fill="#FFFFFF" stroke="#000000" stroke-width="1.2" stroke-linejoin="round"/>
+  </g>
+</svg>

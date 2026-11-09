@@ -60,10 +60,13 @@ class Board(Board1b):
         base.alpha_composite(rgba)
         self.im = base.convert("RGB")
 
-    def say(self, name, rect, words, pt, ink, outline=None, drop=False, display=False, band=(0.3, 0.7)):
+    def say(self, name, rect, words, pt, ink, outline=None, drop=False, display=False, band=(0.3, 0.7),
+            inactive=False):
         """Words centred on rect. T0 is plain ink on the face; T1 adds an ink
         outline of 1.5 points; T2 adds a hard drop under it. The ratio is
-        taken against the outline when there is one, else the face under."""
+        taken against the outline when there is one, else the face under.
+        A disabled control's words (`inactive`) are held to 4.5:1 alone, as
+        batch 1's were: they are muted on purpose."""
         x, y, w, h = rect
         a = np.asarray(self.im, dtype=float)
         face = a[round((y + h * band[0]) * PX):round((y + h * band[1]) * PX),
@@ -79,7 +82,7 @@ class Board(Board1b):
         d.text((cx, cy), words, fill=ink, font=f, anchor="mm", stroke_width=sw, stroke_fill=outline)
         against = outline if outline else under
         cr, lc = wcag(ink, against), apca(ink, against)
-        ok = cr >= 4.5 and lc >= 60
+        ok = cr >= 4.5 and (inactive or lc >= 60)
         self.words.append({"check": "label-contrast", "control": name, "ratio": round(cr, 2),
                            "apca_lc": round(lc, 1), "against": "outline" if outline else "face",
                            "treatment": "T2" if drop and outline else "T1" if outline else "T0",

@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-09T22:25:25Z",
   "lease_until": "2026-11-10T01:25:25Z",
-  "updated_at": "2026-11-09T22:38:00Z",
-  "expected_next_update_by": "2026-11-09T23:23:00Z",
+  "updated_at": "2026-11-09T22:53:00Z",
+  "expected_next_update_by": "2026-11-09T23:38:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d2deb896",
@@ -166,5 +166,5 @@
     }
   ],
   "answers": [],
-  "next_step": "write kit_2b.py; bake; proof at phone size"
+  "next_step": "batch 2b drawn, baked and proofed (176 results, 0 fail); next: shape marks on the oak and silver frames, coverage test, guard, checks"
 }
