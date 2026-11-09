@@ -1,9 +1,18 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-09T21:05:00Z",
-  "expected_next_update_by": "2026-11-09T22:55:00Z",
-  "cycle": 44,
-  "merging": null,
+  "updated_at": "2026-11-09T21:43:28Z",
+  "expected_next_update_by": "2026-11-09T23:03:28Z",
+  "cycle": 45,
+  "merging": {
+    "candidate_sha": "3ebfb223",
+    "task_ids": [
+      "P1-AIA-kit-4",
+      "P1-K1-words",
+      "P1-AIA2-icons-2a"
+    ],
+    "started_at": "2026-11-09T21:43:28Z",
+    "expires_at": "2026-11-09T22:43:28Z"
+  },
   "last_merged": {
     "task_id": "P1-K1-catalogue",
     "sha": "7e6de29d"
@@ -11,5 +20,5 @@
   "alerts": [
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Restarted by the owner on 9 November 2026 (written by the overseer); no cycle has run since cycle 44. Every session and subagent runs on Fable 5.2 and on no other model (CLAUDE.md order 4); never Fable 5.1; reuse no session from 4 November. Cycle 45: three tasks are ready on their branches with pre-check PASS, though the backlog still shows them working: P1-AIA-kit-4's resync at f3456cac (claude/ui-artist, head 15d22123), P1-AIA2-icons-2a at 6a382d97 (claude/ui-artist-icons, ready commit e3d5416b, head abb67696), P1-K1-words at 0e829632 (claude/ui-bake, head eaa23f89). Read their status files first. Main fails guard.sh's rebake on client/ui/art/icons_48_hc.webp (crew__pip__normal high contrast); the fix is to compute the outline and keyline dilation on the pixels, then rebake and prove it byte for byte in a fresh container. Set icons-2a to resync with that finding in a fresh Fable 5.2 session unless its ready commit already changed the finish; merge kit-4 and words once the candidate passes check_all and guard."
+  "next_step": "Cycle 45 is running (session_01SNkKxoFQJdmfH1eKm7DbKK): a local candidate of main with P1-AIA-kit-4 (f3456cac), P1-K1-words (0e829632) and P1-AIA2-icons-2a (6a382d97) is in check_all and guard.sh under the merge lock. Another cycle that finds the lock unexpired skips the gate and the merge."
 }
