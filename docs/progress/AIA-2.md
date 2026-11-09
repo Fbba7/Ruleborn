@@ -1,7 +1,7 @@
 # AIA-2 icon maker: progress
 
-- Status: Green (P1-AIA2-icons-2a resynced: the grow is computed on the pixels, icons rebaked; `bash tools/ui_bake/guard.sh` ends "ui guard: OK" in a fresh container; pre-check running on ac4809ed).
-- Progress: 3 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7); P1-AIA2-icons-2a resynced at ac4809ed, pre-check running; its sheet passed the Icons gate 12 of 12 at 6a382d97 (advisory).
+- Status: Green (P1-AIA2-icons-2a resynced: the grow is computed on the pixels, icons rebaked; `bash tools/ui_bake/guard.sh` ends "ui guard: OK" in a fresh container; pre-check PASS on ac4809ed, 22:41 UTC, 9 November).
+- Progress: 3 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7); P1-AIA2-icons-2a ready at ac4809ed (pre-check PASS); its sheet passed the Icons gate 12 of 12 at 6a382d97 (advisory).
 - Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources; batch 2a's eight heist-status and HUD icons.
 - Next: the lead's merge of P1-AIA2-icons-2a; then P1-AIA2-icons-2b.
 - Blocked by: none.
@@ -12,11 +12,11 @@
 | P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Merged at 9b2bde70 | `bake.js --check`, `check_icons.py` and `run_checks.sh` PASS at 02e7ef0f |
 | P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Merged at 8ce107c9 | gate advisory at 5f759a03: Light behind UI pass; three qualities fail 3 of 3 |
 | P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Merged at 90f72fd7 | gate pass on all four qualities (advisory) at bef6eac2; resync at 5ecb0202 |
-| P1-AIA2-icons-2a: eight heist-status and HUD icons in `icons_48` | 4 | Resynced at ac4809ed (from 6a382d97): guard OK, pre-check running; gate 12 of 12 at 6a382d97 (advisory) | `python3 -B art/ui/icons/studio/check_icons.py`: all 46 faces pass (23 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 23 pieces, icons_256 6 pieces, both ok |
+| P1-AIA2-icons-2a: eight heist-status and HUD icons in `icons_48` | 4 | Ready at ac4809ed (resync of 6a382d97): guard OK, pre-check PASS; gate 12 of 12 at 6a382d97 (advisory) | `python3 -B art/ui/icons/studio/check_icons.py`: all 46 faces pass (23 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 23 pieces, icons_256 6 pieces, both ok |
 
 ## Handoff
 
-- **Last verified commit:** ac4809ed (pre-check running on ac4809ed; `bash tools/ui_bake/guard.sh` ends "ui guard: OK", 9 November, in a fresh container: `icons_256`, `icons_48` and `kit` each "rebakes byte for byte"; check_icons and bake.js --check green).
+- **Last verified commit:** ac4809ed (pre-check PASS on ac4809ed, 22:41 UTC, 9 November; `bash tools/ui_bake/guard.sh` ends "ui guard: OK", 9 November, in a fresh container: `icons_256`, `icons_48` and `kit` each "rebakes byte for byte"; check_icons and bake.js --check green).
 
 ### The resync (lead cycle 45)
 

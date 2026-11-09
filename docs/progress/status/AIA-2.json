@@ -3,24 +3,31 @@
   "role": "AIA-2",
   "branch": "claude/ui-artist-icons",
   "model": "Fable 5.2",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-AIA2-icons-2a",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-09T21:54:00Z",
   "lease_until": "2026-11-10T00:54:00Z",
-  "updated_at": "2026-11-09T23:05:00Z",
-  "expected_next_update_by": "2026-11-09T23:50:00Z",
-  "long_run": {
-    "log": "/tmp/check-ac4809eded32a54938379d12830fc65a7ada11a0.log",
-    "expected_end": "2026-11-09T23:35:00Z"
-  },
+  "updated_at": "2026-11-09T22:43:00Z",
+  "expected_next_update_by": null,
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "6a382d97",
-    "next_step": "record the pre-check on ac4809ed, then ready"
+    "last_green_sha": "ac4809ed",
+    "next_step": "The lead merges P1-AIA2-icons-2a; then P1-AIA2-icons-2b, starting with the gate's three notes on 2a"
   },
-  "precheck": null,
-  "gate_request": null,
-  "ready_sha": null,
+  "precheck": {
+    "sha": "ac4809eded32a54938379d12830fc65a7ada11a0",
+    "exit": 0,
+    "finished_at": "2026-11-09T22:41:54Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "ac4809eded32a54938379d12830fc65a7ada11a0",
+    "items": [
+      "icon sheet at 48 and 96 points and in grayscale"
+    ]
+  },
+  "ready_sha": "ac4809eded32a54938379d12830fc65a7ada11a0",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
   "requests": [
@@ -57,5 +64,5 @@
     }
   ],
   "answers": [],
-  "note": "P1-AIA2-icons-2a resync: grow computed on the pixels, icons rebaked, guard.sh ends 'ui guard: OK' in a fresh container; pre-check running on ac4809ed."
+  "note": "P1-AIA2-icons-2a ready at ac4809ed after the resync: the grow is computed on the pixels, icons_48* and icons_256* rebaked, guard.sh ends 'ui guard: OK' in a fresh container, pre-check PASS 22:41Z. Every icon's outline edge pixels moved, no shape changed (handoff has the counts); the gate passed the sheet 12 of 12 at 6a382d97, and the gate request names ac4809ed in case the lead wants it judged again."
 }
