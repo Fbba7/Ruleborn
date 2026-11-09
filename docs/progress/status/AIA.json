@@ -1,170 +1,170 @@
 {
- "agent": "AIA",
- "role": "AIA",
- "branch": "claude/ui-artist",
- "model": "Fable 5.2",
- "agent_state": "active",
- "task_id": "P1-AIA-kit-5",
- "task_state": "working",
- "claimed_at": "2026-11-09T22:25:25Z",
- "lease_until": "2026-11-10T01:25:25Z",
- "updated_at": "2026-11-09T22:38:00Z",
- "expected_next_update_by": "2026-11-09T23:23:00Z",
- "long_run": null,
- "progress_marker": {
-  "last_green_sha": "d2deb896",
-  "next_step": "batch 2b sources"
- },
- "precheck": {
-  "sha": "f3456cacc25ba00fa096db1516d85a677f3d7c77",
-  "exit": 0,
-  "finished_at": "2026-11-05T00:25:14Z",
-  "summary": "All checks passed."
- },
- "gate_request": null,
- "ready_sha": null,
- "stop_at": "2026-11-14T21:00:00Z",
- "acks": [
-  "M1"
- ],
- "requests": [
-  {
-   "id": "AIA-R9",
-   "from": "AIA",
-   "to": "K1",
-   "ask": "KitSkin.piece: on parchment grounds, look up the tertiary's `button_tertiary__parchment__<state>` (the violet box fails value-steps on paper)",
-   "files": [
-    "client/ui/kit_skin.gd"
-   ],
-   "blocking": false,
-   "created_at": "2026-11-04T13:10:00Z",
-   "due": "2026-11-05T13:10:00Z",
-   "default": "screens put no tertiary button on parchment until K1 wires the parchment shape",
-   "escalate_to": "lead"
+  "agent": "AIA",
+  "role": "AIA",
+  "branch": "claude/ui-artist",
+  "model": "Fable 5.2",
+  "agent_state": "active",
+  "task_id": "P1-AIA-kit-5",
+  "task_state": "working",
+  "claimed_at": "2026-11-09T22:25:25Z",
+  "lease_until": "2026-11-10T01:25:25Z",
+  "updated_at": "2026-11-09T22:38:00Z",
+  "expected_next_update_by": "2026-11-09T23:23:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": "d2deb896",
+    "next_step": "batch 2b sources"
   },
-  {
-   "id": "AIA-R10",
-   "from": "AIA",
-   "to": "K1",
-   "ask": "Move the colours in art/ui/palette.json's `kit` section (pressed, disabled, high-contrast and lifted-locked faces) into client/ui/tokens.json",
-   "files": [
-    "client/ui/tokens.json"
-   ],
-   "blocking": false,
-   "created_at": "2026-11-04T13:10:00Z",
-   "due": "2026-11-05T13:10:00Z",
-   "default": "they stay in art/ui/kit_build/build_kit.py's KIT table and palette.json's `kit` section, each with where it comes from",
-   "escalate_to": "lead"
+  "precheck": {
+    "sha": "f3456cacc25ba00fa096db1516d85a677f3d7c77",
+    "exit": 0,
+    "finished_at": "2026-11-05T00:25:14Z",
+    "summary": "All checks passed."
   },
-  {
-   "id": "AIA-R11",
-   "from": "AIA",
-   "to": "K1",
-   "ask": "art/ui/palette.json is written by art/ui/kit_build/build_kit.py until the bake makes it from tokens.json (kit-spec.md section 6.2; tools/ui_bake/README.md 'Not yet')",
-   "files": [
-    "tools/ui_bake/bake.js"
-   ],
-   "blocking": false,
-   "created_at": "2026-11-04T13:10:00Z",
-   "due": "2026-11-05T13:10:00Z",
-   "default": "build_kit.py keeps writing it; rerun it after any tokens.json change",
-   "escalate_to": "lead"
-  },
-  {
-   "id": "AIA-R12",
-   "from": "AIA",
-   "to": "K1",
-   "ask": "Atlas capacity: batch 1a's 28 pieces fill 2048 x 1268 of the kit's 2048 atlas at 6 px/pt, so the rest of the kit will not fit one atlas",
-   "files": [
-    "tools/ui_bake/bake.js",
-    "tools/ui_bake/families.json"
-   ],
-   "blocking": false,
-   "created_at": "2026-11-04T13:10:00Z",
-   "due": "2026-11-05T13:10:00Z",
-   "default": "the bake gains atlas pages (kit.webp, kit_2.webp, ...) before batch 1b; AIA keeps the piece sizes",
-   "escalate_to": "lead"
-  },
-  {
-   "id": "AIA-R13",
-   "from": "AIA",
-   "to": "K1",
-   "ask": "Batch 1b fills the kit atlas: 51 pieces in 2048 x ~1900, and disc_school's 6 pieces do not fit beside them. When the bake gains atlas pages (AIA-R12), bake art/ui/kit_next/disc_school/ into the kit; KitSkin draws disc_school as its tinted `box` (vertex-coloured per school) under the untinted `frame` (ink, gloss, outline), both at the same rect",
-   "files": [
-    "tools/ui_bake/bake.js",
-    "client/ui/kit_skin.gd"
-   ],
-   "blocking": false,
-   "created_at": "2026-11-04T16:45:00Z",
-   "due": "2026-11-05T16:45:00Z",
-   "default": "disc_school stays in art/ui/kit_next/ (sources written, proofed from SVG, not baked) and draws in code until the atlas has pages; no piece is shrunk",
-   "escalate_to": "lead",
-   "cc": [
-    "lead"
-   ]
-  },
-  {
-   "id": "AIA-R14",
-   "from": "AIA",
-   "to": "K1",
-   "ask": "Batch 1b adds overlay skins KitSkin.SKINS lacks: `selected` (selected__rim, drawn over a card for card_selected), `spinner` (spinner__ring, rotated in code), and pieces `locked__lock`, `badge__dot`, `bar_track__tick`, `disc__level_disc`, `tag__tag_violet`, `tag__tag_warn`, `bar_fill__alarm`; bar_fill__box is a neutral tinted per use (data-tint), so its gold variant is dropped; tag_success falls back to tag__box",
-   "files": [
-    "client/ui/kit_skin.gd"
-   ],
-   "blocking": false,
-   "created_at": "2026-11-04T16:45:00Z",
-   "due": "2026-11-05T16:45:00Z",
-   "default": "the pieces sit in the atlas unused; every batch 1b skin stays off in kit_families.json and draws in code",
-   "escalate_to": "lead"
-  },
-  {
-   "id": "AIA-R15",
-   "from": "AIA",
-   "to": "K1",
-   "ask": "Batch 1c bakes the numerals as num_<finish>_<glyph> (finishes gold 28, white 22, timer 28, timer_red 28 pt; glyphs 0-9, comma, period, colon, slash, plus, minus, percent, x, question, space) on atlas page 2, drawn in Manrope 800 with tabular figures per §21.8 and D4 (b). (1) kit-spec.md section 2.2's T3 row still says the baked numerals are drawn with Lilita One: please make it read Manrope 800 tabular. (2) To draw them, KitSkin sets a number glyph by glyph: each piece carries `advance`; the piece's box is its advance cell plus 1 pt each side, so draw it at pen - (w - advance)/2 and move the pen by `advance`. The client's own number formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5)",
-   "files": [
-    "docs/art/ui-quality/kit-spec.md",
-    "client/ui/kit_skin.gd"
-   ],
-   "blocking": false,
-   "created_at": "2026-11-04T19:47:00Z",
-   "due": "2026-11-05T19:47:00Z",
-   "default": "the numerals stay Manrope 800 tabular; the pieces sit in the atlas unused and numbers draw as code-drawn text until KitSkin sets them",
-   "escalate_to": "lead",
-   "cc": [
-    "lead"
-   ]
-  },
-  {
-   "id": "AIA-R16",
-   "from": "AIA",
-   "to": "K1",
-   "ask": "Batch 2a adds pieces KitSkin must draw: (1) `ribbon__box` is a neutral tinted per school (data-tint) and `ribbon__frame` (untinted gloss and ink) is drawn over it at the same rect, as disc_school; `ribbon__chapter` is the untinted violet chapter ribbon; the words sit on the band, the top 32 pt of the 42 pt piece. (2) The grab handles `sheet__handle` and `sheet__handle_parchment` are 42 x 9 pt sprites centred by code 12 pt below a sheet's top edge (a 9-slice cannot centre them). (3) `frame_<rank>__box__<state>` is a 9-slice ring with a hollow middle, drawn over the portrait's rect grown by 4 pt each side. (4) `popup__box` carries an 8/4/12 pt margin round its face (plus the 5 pt lip) and is drawn over the scrim; its title is a ribbon set across the top edge. (5) `header__name_plate` is the header's leather plate; `panel_parchment__parchment_done` is the done panel with its green seal in the top-right corner cell",
-   "files": [
-    "client/ui/kit_skin.gd",
-    "client/ui/kit_families.json"
-   ],
-   "blocking": false,
-   "created_at": "2026-11-04T21:48:00Z",
-   "due": "2026-11-05T21:48:00Z",
-   "default": "the pieces sit in the atlas unused; those skins stay off in kit_families.json and draw in code",
-   "escalate_to": "lead"
-  },
-  {
-   "id": "AIA-R17",
-   "from": "AIA",
-   "to": "lead",
-   "ask": "Batch 2b (P1-AIA-kit-5) bakes pieces for tab_bar, tab, tab_active, segmented, segmented_on, chip, chip_on, tile, locked, toggle and slider. The catalogue coverage test fails with '<skin> has art but no component in SKINS_OF' until `client/tests/ui_kit_tests.gd` (K1's file) maps them: K05 toggle, K06 slider, K07 segmented and segmented_on, K08 chip and chip_on, K09 tab_bar, tab and tab_active, K39 tile, and the locked face. Please grant me that one constant for this task, as in the kit-4 resync, or have K1 add the lines",
-   "files": [
-    "client/tests/ui_kit_tests.gd"
-   ],
-   "blocking": false,
-   "created_at": "2026-11-09T22:38:00Z",
-   "due": "2026-11-10T00:30:00Z",
-   "default": "I add the batch 2b faces to SKINS_OF only (no other line of the file, no test loosened), as granted for the kit-4 resync, and say so in the handoff",
-   "escalate_to": "lead"
-  }
- ],
- "answers": [],
- "next_step": "write kit_2b.py; bake; proof at phone size"
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-14T21:00:00Z",
+  "acks": [
+    "M1"
+  ],
+  "requests": [
+    {
+      "id": "AIA-R9",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "KitSkin.piece: on parchment grounds, look up the tertiary's `button_tertiary__parchment__<state>` (the violet box fails value-steps on paper)",
+      "files": [
+        "client/ui/kit_skin.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T13:10:00Z",
+      "due": "2026-11-05T13:10:00Z",
+      "default": "screens put no tertiary button on parchment until K1 wires the parchment shape",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R10",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Move the colours in art/ui/palette.json's `kit` section (pressed, disabled, high-contrast and lifted-locked faces) into client/ui/tokens.json",
+      "files": [
+        "client/ui/tokens.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T13:10:00Z",
+      "due": "2026-11-05T13:10:00Z",
+      "default": "they stay in art/ui/kit_build/build_kit.py's KIT table and palette.json's `kit` section, each with where it comes from",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R11",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "art/ui/palette.json is written by art/ui/kit_build/build_kit.py until the bake makes it from tokens.json (kit-spec.md section 6.2; tools/ui_bake/README.md 'Not yet')",
+      "files": [
+        "tools/ui_bake/bake.js"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T13:10:00Z",
+      "due": "2026-11-05T13:10:00Z",
+      "default": "build_kit.py keeps writing it; rerun it after any tokens.json change",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R12",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Atlas capacity: batch 1a's 28 pieces fill 2048 x 1268 of the kit's 2048 atlas at 6 px/pt, so the rest of the kit will not fit one atlas",
+      "files": [
+        "tools/ui_bake/bake.js",
+        "tools/ui_bake/families.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T13:10:00Z",
+      "due": "2026-11-05T13:10:00Z",
+      "default": "the bake gains atlas pages (kit.webp, kit_2.webp, ...) before batch 1b; AIA keeps the piece sizes",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R13",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Batch 1b fills the kit atlas: 51 pieces in 2048 x ~1900, and disc_school's 6 pieces do not fit beside them. When the bake gains atlas pages (AIA-R12), bake art/ui/kit_next/disc_school/ into the kit; KitSkin draws disc_school as its tinted `box` (vertex-coloured per school) under the untinted `frame` (ink, gloss, outline), both at the same rect",
+      "files": [
+        "tools/ui_bake/bake.js",
+        "client/ui/kit_skin.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T16:45:00Z",
+      "due": "2026-11-05T16:45:00Z",
+      "default": "disc_school stays in art/ui/kit_next/ (sources written, proofed from SVG, not baked) and draws in code until the atlas has pages; no piece is shrunk",
+      "escalate_to": "lead",
+      "cc": [
+        "lead"
+      ]
+    },
+    {
+      "id": "AIA-R14",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Batch 1b adds overlay skins KitSkin.SKINS lacks: `selected` (selected__rim, drawn over a card for card_selected), `spinner` (spinner__ring, rotated in code), and pieces `locked__lock`, `badge__dot`, `bar_track__tick`, `disc__level_disc`, `tag__tag_violet`, `tag__tag_warn`, `bar_fill__alarm`; bar_fill__box is a neutral tinted per use (data-tint), so its gold variant is dropped; tag_success falls back to tag__box",
+      "files": [
+        "client/ui/kit_skin.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T16:45:00Z",
+      "due": "2026-11-05T16:45:00Z",
+      "default": "the pieces sit in the atlas unused; every batch 1b skin stays off in kit_families.json and draws in code",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R15",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Batch 1c bakes the numerals as num_<finish>_<glyph> (finishes gold 28, white 22, timer 28, timer_red 28 pt; glyphs 0-9, comma, period, colon, slash, plus, minus, percent, x, question, space) on atlas page 2, drawn in Manrope 800 with tabular figures per §21.8 and D4 (b). (1) kit-spec.md section 2.2's T3 row still says the baked numerals are drawn with Lilita One: please make it read Manrope 800 tabular. (2) To draw them, KitSkin sets a number glyph by glyph: each piece carries `advance`; the piece's box is its advance cell plus 1 pt each side, so draw it at pen - (w - advance)/2 and move the pen by `advance`. The client's own number formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5)",
+      "files": [
+        "docs/art/ui-quality/kit-spec.md",
+        "client/ui/kit_skin.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T19:47:00Z",
+      "due": "2026-11-05T19:47:00Z",
+      "default": "the numerals stay Manrope 800 tabular; the pieces sit in the atlas unused and numbers draw as code-drawn text until KitSkin sets them",
+      "escalate_to": "lead",
+      "cc": [
+        "lead"
+      ]
+    },
+    {
+      "id": "AIA-R16",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Batch 2a adds pieces KitSkin must draw: (1) `ribbon__box` is a neutral tinted per school (data-tint) and `ribbon__frame` (untinted gloss and ink) is drawn over it at the same rect, as disc_school; `ribbon__chapter` is the untinted violet chapter ribbon; the words sit on the band, the top 32 pt of the 42 pt piece. (2) The grab handles `sheet__handle` and `sheet__handle_parchment` are 42 x 9 pt sprites centred by code 12 pt below a sheet's top edge (a 9-slice cannot centre them). (3) `frame_<rank>__box__<state>` is a 9-slice ring with a hollow middle, drawn over the portrait's rect grown by 4 pt each side. (4) `popup__box` carries an 8/4/12 pt margin round its face (plus the 5 pt lip) and is drawn over the scrim; its title is a ribbon set across the top edge. (5) `header__name_plate` is the header's leather plate; `panel_parchment__parchment_done` is the done panel with its green seal in the top-right corner cell",
+      "files": [
+        "client/ui/kit_skin.gd",
+        "client/ui/kit_families.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T21:48:00Z",
+      "due": "2026-11-05T21:48:00Z",
+      "default": "the pieces sit in the atlas unused; those skins stay off in kit_families.json and draw in code",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R17",
+      "from": "AIA",
+      "to": "lead",
+      "ask": "Batch 2b (P1-AIA-kit-5) bakes pieces for tab_bar, tab, tab_active, segmented, segmented_on, chip, chip_on, tile, locked, toggle and slider. The catalogue coverage test fails with '<skin> has art but no component in SKINS_OF' until `client/tests/ui_kit_tests.gd` (K1's file) maps them: K05 toggle, K06 slider, K07 segmented and segmented_on, K08 chip and chip_on, K09 tab_bar, tab and tab_active, K39 tile, and the locked face. Please grant me that one constant for this task, as in the kit-4 resync, or have K1 add the lines",
+      "files": [
+        "client/tests/ui_kit_tests.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-09T22:38:00Z",
+      "due": "2026-11-10T00:30:00Z",
+      "default": "I add the batch 2b faces to SKINS_OF only (no other line of the file, no test loosened), as granted for the kit-4 resync, and say so in the handoff",
+      "escalate_to": "lead"
+    }
+  ],
+  "answers": [],
+  "next_step": "write kit_2b.py; bake; proof at phone size"
 }
