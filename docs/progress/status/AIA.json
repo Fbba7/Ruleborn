@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-09T22:25:25Z",
   "lease_until": "2026-11-10T01:25:25Z",
-  "updated_at": "2026-11-09T22:53:00Z",
-  "expected_next_update_by": "2026-11-09T23:38:00Z",
+  "updated_at": "2026-11-09T23:06:00Z",
+  "expected_next_update_by": "2026-11-09T23:51:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d2deb896",
-    "next_step": "batch 2b sources"
+    "next_step": "art committed at 51269c72; the pre-check and the ui guard are running on it; then record, gate request, ready"
   },
   "precheck": {
     "sha": "f3456cacc25ba00fa096db1516d85a677f3d7c77",
