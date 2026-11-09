@@ -2,33 +2,23 @@
   "agent": "AIA-2",
   "role": "AIA-2",
   "branch": "claude/ui-artist-icons",
-  "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "model": "Fable 5.2",
+  "agent_state": "active",
   "task_id": "P1-AIA2-icons-2a",
-  "task_state": "ready",
-  "claimed_at": "2026-11-04T23:30:00Z",
-  "lease_until": "2026-11-05T02:30:00Z",
-  "updated_at": "2026-11-05T00:43:00Z",
-  "expected_next_update_by": null,
+  "task_state": "working",
+  "claimed_at": "2026-11-09T21:54:00Z",
+  "lease_until": "2026-11-10T00:54:00Z",
+  "updated_at": "2026-11-09T22:35:00Z",
+  "expected_next_update_by": "2026-11-09T23:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "6a382d97",
-    "next_step": "The Icons gate on the 2a sheet, then the lead merges P1-AIA2-icons-2a"
+    "next_step": "guard.sh and the pre-check on the pixel-computed grow, then ready"
   },
-  "precheck": {
-    "sha": "6a382d9759056f9568dede27bf10132150c041a8",
-    "exit": 0,
-    "finished_at": "2026-11-05T00:42:36Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "6a382d9759056f9568dede27bf10132150c041a8",
-    "items": [
-      "icon sheet at 48 and 96 points and in grayscale"
-    ]
-  },
-  "ready_sha": "6a382d9759056f9568dede27bf10132150c041a8",
-  "stop_at": "2026-11-09T21:00:00Z",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
   "requests": [
     {
@@ -64,5 +54,5 @@
     }
   ],
   "answers": [],
-  "note": "P1-AIA2-icons-2a ready at 6a382d97: eight heist-status and HUD icons in icons_48; pre-check PASS 00:42Z; gate request set."
+  "note": "P1-AIA2-icons-2a resync (lead cycle 45): finish.js's grow is now computed on the pixels; icons_48* and icons_256* rebaked; guard.sh and the pre-check running."
 }

@@ -10,6 +10,7 @@ import * as S from './toon.js';
 
 const { tok, rgba } = S;
 export const R = 640;
+const rgb = (name) => [1, 3, 5].map((i) => parseInt(tok(name).slice(i, i + 2), 16));
 // Outline and keyline widths are in points of the size an icon is shown at
 // (rubric.md quality 3: "2 pt at the size shown"); the board's 1/24 of the
 // side is 2 points at 48.
@@ -19,10 +20,8 @@ export const RULES = {
   drop: 'drop', glint: 'cream', glintMax: 2, glintSize: 0.075,
 };
 
-// Every finish canvas is a software one (willReadFrequently): on a
-// GPU-backed 2D canvas, a grow's hundreds of stamps were sometimes dropped
-// when the machine was idle (an octagon instead of a ring round crew/pip in
-// high contrast), so the bake differed with the machine's load.
+// Every finish canvas is a software one (willReadFrequently), so its
+// pixels can be read back without a GPU round trip.
 export function canvas(w, h = w) {
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
@@ -38,16 +37,77 @@ function silhouette(src, colour) {
   x.fillRect(0, 0, c.width, c.height);
   return c;
 }
-// The silhouette grown by `r` pixels, drawn in one colour. The stamps sit
-// at most a pixel apart round the circle: at the board's fixed 48, a thin
-// point (a star's tip) left gaps that read as holes in the ring.
-function grow(x, sil, r) {
-  const n = Math.max(48, Math.ceil(2 * Math.PI * r));
-  for (let i = 0; i < n; i++) {
-    const a = i / n * Math.PI * 2;
-    x.drawImage(sil, Math.cos(a) * r, Math.sin(a) * r);
+// The silhouette grown by `r` pixels, drawn in one colour (`rgb`, 0–255).
+// Computed on the pixels, never drawn: the exact Euclidean distance from
+// each pixel to the nearest pixel inside the shape (alpha of a half or
+// more), then full ink up to `r` and one pixel of falloff. The same
+// arithmetic on every machine, where stamping the silhouette round a
+// circle with drawImage gave a ring on one canvas backend and an octagon
+// on another.
+const FAR = 1e20;
+// Squared distance to the nearest zero of `f` along one line (Felzenszwalb
+// and Huttenlocher's lower envelope of parabolas), written to `d`.
+function edt1d(f, d, v, z, n) {
+  let k = 0;
+  v[0] = 0; z[0] = -FAR; z[1] = FAR;
+  for (let q = 1; q < n; q++) {
+    let s;
+    for (;;) {
+      const p = v[k];
+      s = ((f[q] + q * q) - (f[p] + p * p)) / (2 * q - 2 * p);
+      if (s > z[k]) break;
+      k--;
+    }
+    k++; v[k] = q; z[k] = s; z[k + 1] = FAR;
   }
-  x.drawImage(sil, 0, 0);
+  k = 0;
+  for (let q = 0; q < n; q++) {
+    while (z[k + 1] < q) k++;
+    const p = v[k];
+    d[q] = (q - p) * (q - p) + f[p];
+  }
+}
+// The grown shape may pass the render's own edge, so the result is `pad`
+// pixels wider on every side.
+function grown(src, rgb, r, pad) {
+  const sw = src.width, sh = src.height;
+  const w = sw + 2 * pad, h = sh + 2 * pad, n = Math.max(w, h);
+  const a = src.getContext('2d').getImageData(0, 0, sw, sh).data;
+  const alpha = new Uint8Array(w * h);
+  for (let y = 0; y < sh; y++) {
+    for (let x = 0; x < sw; x++) alpha[(y + pad) * w + x + pad] = a[(y * sw + x) * 4 + 3];
+  }
+  const dist = new Float64Array(w * h);
+  const f = new Float64Array(n), d = new Float64Array(n);
+  const v = new Int32Array(n), z = new Float64Array(n + 1);
+  for (let i = 0; i < w * h; i++) dist[i] = alpha[i] >= 128 ? 0 : FAR;
+  for (let x = 0; x < w; x++) {
+    for (let y = 0; y < h; y++) f[y] = dist[y * w + x];
+    edt1d(f, d, v, z, h);
+    for (let y = 0; y < h; y++) dist[y * w + x] = d[y];
+  }
+  const out = canvas(w, h);
+  const o = out.getContext('2d');
+  const img = o.createImageData(w, h);
+  const px = img.data;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) f[x] = dist[y * w + x];
+    edt1d(f, d, v, z, w);
+    for (let x = 0; x < w; x++) {
+      const cover = Math.min(1, Math.max(0, r + 0.5 - Math.sqrt(d[x])));
+      // The shape's own soft edge is kept where it is wider than the grow.
+      const al = Math.max(Math.round(cover * 255), alpha[y * w + x]);
+      if (!al) continue;
+      const i = (y * w + x) * 4;
+      px[i] = rgb[0]; px[i + 1] = rgb[1]; px[i + 2] = rgb[2]; px[i + 3] = al;
+    }
+  }
+  o.putImageData(img, 0, 0);
+  return out;
+}
+function grow(x, src, colour, r) {
+  const pad = Math.ceil(r) + 2;
+  x.drawImage(grown(src, colour, r, pad), -pad, -pad);
 }
 function glint(ctx, x, y, s) {
   ctx.save();
@@ -93,9 +153,9 @@ export async function finish(icon, px, mode, pt) {
     x.save(); x.filter = `blur(${R * 0.022}px)`; x.globalAlpha = 0.55;
     x.translate(R * 0.012, R * 0.04); draw(silhouette(shot, tok(RULES.drop))); x.restore();
   } else {
-    grow(x, silhouette(shot, tok(RULES.keyline)), ow + RULES.keylineHc / pt * R / 0.88);
+    grow(x, shot, rgb(RULES.keyline), ow + RULES.keylineHc / pt * R / 0.88);
   }
-  grow(x, silhouette(shot, tok(RULES.ink)), ow);
+  grow(x, shot, rgb(RULES.ink), ow);
   const lit = canvas(R);
   const l = lit.getContext('2d');
   l.drawImage(shot, 0, 0);
