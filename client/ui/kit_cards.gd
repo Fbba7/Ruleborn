@@ -64,7 +64,11 @@ static func law_card(icon: String, title: String, school: String, rarity: String
 	# A card three to a row (under 130 points) sets its name smaller and its
 	# school's mark over its rank's word, so neither widens it past its row.
 	var compact := points < 130.0
-	var name_plate := UI.plate(_name(title, _fit(title, points - 22.0) if compact else 18.0), "parchment")
+	var name_points := _fit(title, points - 22.0) if compact else 18.0
+	var name_plate := UI.plate(_name(title, name_points), "parchment")
+	# Sized from its words (kit-spec.md section 5): at a larger text size the
+	# card widens to hold its name's longest word, rather than shrinking it.
+	card.custom_minimum_size.x = maxf(UI.px(points), _word_px(title, name_points) + UI.px(22))
 	if compact:
 		name_plate.add_theme_stylebox_override("panel", UI.clear_box(4, 6))
 	v.add_child(name_plate)
@@ -109,7 +113,9 @@ static func album_card(icon: String, title: String, school: String, rarity: Stri
 	var words := VBoxContainer.new()
 	words.add_theme_constant_override("separation", UI.px(2))
 	words.alignment = BoxContainer.ALIGNMENT_CENTER
-	words.add_child(_name(title, _fit(title, points - 18.0)))
+	var name_points := _fit(title, points - 18.0)
+	words.add_child(_name(title, name_points))
+	card.custom_minimum_size.x = maxf(UI.px(points), _word_px(title, name_points) + UI.px(18))
 	var rank := UI.label(Strings.t("LAW_RANK_" + rarity.to_upper()), 13)
 	rank.theme_type_variation = "Kicker"
 	rank.uppercase = true
@@ -330,17 +336,28 @@ static func stat(icon: String, kicker: String, value: String, gain: String, fill
 
 
 ## The largest size from 15 points down to §21.8's 13 at which the name's
-## longest word fits `room` points, so it wraps between words, not in one.
+## longest word fits `room` points at 100% text, so it wraps between words,
+## not in one. The size is the design's: a larger text size widens the card
+## (`_word_px`), never shrinks its words.
 static func _fit(title: String, room: float) -> float:
-	var face := RbTheme.role_font("heading")
-	var longest := ""
-	for word: String in title.split(" "):
-		if word.length() > longest.length():
-			longest = word
 	for size: float in [15.0, 14.0]:
-		if face.get_string_size(longest, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(size)).x <= UI.px(room):
+		if _widest_word(title, UI.px(size)) <= UI.px(room):
 			return size
 	return 13.0
+
+
+## The width in pixels of `title`'s widest word, as a name of `points` shows
+## it at the player's text size.
+static func _word_px(title: String, points: float) -> float:
+	return ceilf(_widest_word(title, UI.text_px(points)))
+
+
+static func _widest_word(title: String, font_px: int) -> float:
+	var face := RbTheme.role_font("heading")
+	var widest := 0.0
+	for word: String in title.split(" "):
+		widest = maxf(widest, face.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_px).x)
+	return widest
 
 
 static func _name(title: String, points: float) -> Label:
@@ -358,7 +375,14 @@ static func portrait(picture: Texture2D, name: String, level: int, school: Strin
 		pressed: Callable, chosen := false, spoken := "") -> Button:
 	var b := UI.action("", pressed, "portrait_" + school, spoken if spoken != "" else name)
 	b.name = "Portrait"
-	b.custom_minimum_size = Vector2(UI.px(100), UI.px(140))
+	# Sized from its name (kit-spec.md section 5): the plate is the name's
+	# line tall, and the card as wide as the name, so a larger text size
+	# grows the card rather than cutting its name short.
+	var face := RbTheme.role_font("label")
+	var line := face.get_height(UI.text_px(14))
+	var plate_px := maxf(UI.px(26), ceilf(line) + UI.px(4))
+	var name_px := face.get_string_size(name, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(14)).x + UI.px(12)
+	b.custom_minimum_size = Vector2(maxf(UI.px(100), ceilf(name_px)), UI.px(140) + plate_px - UI.px(26))
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	RbBox.of(b).set_chosen(chosen)
 	var art := TextureRect.new()
@@ -369,7 +393,7 @@ static func portrait(picture: Texture2D, name: String, level: int, school: Strin
 	art.offset_left = UI.px(2)
 	art.offset_right = -UI.px(2)
 	art.offset_top = UI.px(2)
-	art.offset_bottom = -UI.px(26)
+	art.offset_bottom = -plate_px
 	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	art.clip_contents = true
 	b.add_child(art)
@@ -377,7 +401,7 @@ static func portrait(picture: Texture2D, name: String, level: int, school: Strin
 	plate.add_theme_stylebox_override("panel", UI.clear_box(4, 2))
 	UI.dress(plate, "name_plate")
 	plate.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	plate.offset_top = -UI.px(26)
+	plate.offset_top = -plate_px
 	plate.offset_left = UI.px(2)
 	plate.offset_right = -UI.px(2)
 	plate.offset_bottom = -UI.px(2)
@@ -385,8 +409,6 @@ static func portrait(picture: Texture2D, name: String, level: int, school: Strin
 	var n := UI.label(name, 14)
 	n.theme_type_variation = "LabelText"
 	n.set_meta("bold", true)
-	n.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	n.clip_text = true
 	plate.add_child(n)
 	b.add_child(plate)
 	var lv := PanelContainer.new()

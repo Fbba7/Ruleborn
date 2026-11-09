@@ -82,6 +82,13 @@ The owner decided D-01 to D-14 of T17's work order on 29 October 2026
 
 ## Roles
 
+> **Models since 9 November 2026.** By the owner's order 4
+> ([CLAUDE.md](../../CLAUDE.md)), every model named in the table below
+> reads Fable 5.2: the lead, every agent, every subagent and the gate's
+> judge. The Model column keeps the plan as it stood before that order.
+> The gate so runs on the same model as the agents it checks; its verdicts
+> are advisory and the owner checks every quality.
+
 | Role | What it does | What it never does | Model |
 |---|---|---|---|
 | **Lead (integrator)** | Writes the wave's plan and backlog; seeds and refills the idle queue; runs the merge queue and is the only agent that moves main; restarts stalled, blocked and resynced agents; keeps acknowledgements and request deadlines; launches the gate and writes its verdicts; writes the owner's digests and alerts; keeps its own status file and handoff; owns every file no other agent owns, and the hotspot files (`project.godot`, autoload registries, export presets), which it changes only through its own backlog tasks, checked like any other | Builds features outside backlog tasks; judges quality; resolves another agent's conflicts by hand; approves its own integrated build as "good" (that would be self-assessment too) | Opus 5.5, medium effort; a fresh session per cycle, started every hour by the launcher session's scheduled task (decision D-02; `agent-protocol.md`, "Sessions and scheduled tasks") |

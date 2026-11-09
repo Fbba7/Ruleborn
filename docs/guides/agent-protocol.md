@@ -59,6 +59,13 @@ protocol needs (the tier and the shared things each one owns). Files are
 owned by the agent holding the claimed task, inside the globs below, never
 by a role in general.
 
+> **Models since 9 November 2026.** By the owner's order 4
+> ([CLAUDE.md](../../CLAUDE.md)), every model named in the table below
+> reads Fable 5.2: the lead, every agent, every subagent and the gate's
+> judge. The Model column keeps the plan as it stood before that order.
+> The gate so runs on the same model as the agents it checks; its verdicts
+> are advisory and the owner checks every quality.
+
 | Agent | Role | Branch | Model | Active phases | Owns (globs) | Tier |
 |---|---|---|---|---|---|---|
 | Lead | Lead | main | Opus 5.5, medium effort | all | `docs/progress/backlog.json`, `docs/progress/requests.md`, `docs/progress/owner-inbox.md`, `docs/progress/flaky.md`, `docs/progress/status/lead.json`, the verdict files it writes for the gate, the hotspot files (`client/project.godot`, autoload registries, `client/export_presets.cfg`), `tools/check_all.sh`, the toolchain pins, the server, and every file no other agent owns | 1 |
