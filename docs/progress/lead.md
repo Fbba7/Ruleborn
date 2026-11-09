@@ -84,16 +84,27 @@ every other session is created with `create_session`.
 
 | Scheduled task | ID | Fires into | Schedule (UTC) |
 |---|---|---|---|
-| The launcher: one fresh lead cycle session an hour on Fable 5.2, unless the last is still working (created 9 Nov, the owner's restart) | `trig_015MfKt65r6dHc7ozcWK9gRj` | the launcher, `session_01SNkKxoZzkq3w8QP1Q43bBT` (Fable 5.2) | hourly at :38 |
-| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Fable 5.2 and alerts (created 9 Nov, the owner's restart) | `trig_01TrtGdoG6u7tDQe4Yn6BLpF` | the watchdog, `session_01SNkKxmyJfHHm4UViVkYKYY` (Fable 5.2) | every 2 hours at :08 |
+| The launcher: one fresh lead cycle session an hour on Fable 5.2, unless the last is still working (created 9 Nov at 21:32Z, after the restart was on main) | `trig_01ChLd51gPMwzsKrXifYfkYj` | the launcher, `session_01SNkKxoc1ntTt7RqPTLViwy` (Fable 5.2) | hourly at :38 |
+| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Fable 5.2 and alerts (created 9 Nov at 21:33Z, after the restart was on main) | `trig_016aHfeAQkYXB6Z5X361irkE` | the watchdog, `session_01SNkKxpLf6R26Jp1H6iXTPv` (Fable 5.2) | every 2 hours at :08 |
 
 A scheduled task that fires into a session runs on that session's model,
 so the two were created anew on 9 November instead of re-enabled. Both
 read CLAUDE.md first and do nothing while order 1 says the program is
 stopped.
 
+**Create these two sessions only after the restart is on main.** A
+session keeps the CLAUDE.md it was created with; `git fetch` does not
+refresh it. A first pair was created on 9 November at 20:55Z, four minutes
+before the restart commit (`b5e822ac`, 20:59Z), so their CLAUDE.md still
+said the program was stopped. The launcher's first run, fired by hand at
+21:30Z, was refused when it called `create_session`, and no lead cycle
+started. That pair is retired and stays disabled, never re-enabled:
+launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
+`session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
+`trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
+
 Latest lead cycle session: none since the restart of 9 November 2026 (the
-first is created by the launcher at 21:38Z). Cycle 44's, of 4 November
+first is created by the launcher in use now, at 21:38Z). Cycle 44's, of 4 November
 2026 from 23:39Z, was recorded here as `session_01SNkKxqKY1WGt7cJSaqyYtWj`,
 which is not a valid ID (one character too many); treat an ID that
 `get_session` rejects as "not working".

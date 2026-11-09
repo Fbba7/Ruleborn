@@ -10,11 +10,17 @@ recording the answer under it.
   overseer's chat. CLAUDE.md order 1 now says the program runs; the new
   order 4 says every session, subagent and judge runs on Fable 5.2 and on
   no other model. Fable 5.1 stays banned (order 2).
-- **Done:** a new launcher (`trig_015MfKt65r6dHc7ozcWK9gRj`, hourly at
-  :38) and a new watchdog (`trig_01TrtGdoG6u7tDQe4Yn6BLpF`, every 2 hours
-  at :08), each firing into a new Fable 5.2 session. The old launcher,
-  watchdog and check-in stay disabled. The backlog's roster and every
-  task not yet merged name Fable 5.2.
+- **Done:** a new launcher (hourly at :38) and a new watchdog (every 2
+  hours at :08), each firing into a new Fable 5.2 session. The old
+  launcher, watchdog and check-in stay disabled. The backlog's roster and
+  every task not yet merged name Fable 5.2.
+- **Corrected at 21:36Z:** the first launcher and watchdog of the restart
+  were created at 20:55Z, before the restart was on main, and started no
+  lead cycle: the launcher's run at 21:30Z was refused when it tried to
+  create the session. They are disabled. The ones in use were created at
+  21:32Z: launcher `trig_01ChLd51gPMwzsKrXifYfkYj` and watchdog
+  `trig_016aHfeAQkYXB6Z5X361irkE` (`lead.md` has the table). Until
+  21:38Z no session had done any work since the restart.
 - **Nothing was lost at the stop:** kit-4, icons-2a and words are all
   ready on their branches with pre-check PASS. The first cycle (21:38Z)
   takes them up; main's `icons_48_hc.webp` rebake still has to be fixed
