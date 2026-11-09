@@ -2,28 +2,23 @@
   "agent": "K1",
   "role": "K1",
   "branch": "claude/ui-bake",
-  "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P1-K1-words",
-  "task_state": "ready",
-  "claimed_at": "2026-11-04T23:25:00Z",
-  "lease_until": "2026-11-05T03:30:00Z",
-  "updated_at": "2026-11-05T01:46:49Z",
-  "expected_next_update_by": "2026-11-05T02:31:49Z",
+  "model": "Fable 5.2",
+  "agent_state": "active",
+  "task_id": "P1-K1-switch-heist",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-09T22:27:00Z",
+  "lease_until": "2026-11-10T01:27:00Z",
+  "updated_at": "2026-11-09T22:27:00Z",
+  "expected_next_update_by": "2026-11-09T23:12:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "0e829632",
-    "next_step": "P1-K1-words ready; P1-K1-switch-heist after it merges and P1-AIA-kit-3"
+    "last_green_sha": "68cfd4e4",
+    "next_step": "read kit-spec.md 6.7 and KitSkin; add AIA-R13 and AIA-R14's skins"
   },
-  "precheck": {
-    "sha": "0e829632157470fabb8f5d7da2f0e7e99fa1eeee",
-    "exit": 0,
-    "finished_at": "2026-11-05T01:46:04Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "0e829632157470fabb8f5d7da2f0e7e99fa1eeee",
-  "stop_at": "2026-11-09T21:00:00Z",
+  "ready_sha": null,
+  "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M2"
   ],
@@ -169,5 +164,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-words ready at 0e829632 (pre-check PASS); waiting for the lead. Next K1 tasks P1-K1-switch-heist and P1-K1-switch-rest open after it merges."
+  "next_step": "P1-K1-switch-heist claimed; main merged into the branch"
 }
