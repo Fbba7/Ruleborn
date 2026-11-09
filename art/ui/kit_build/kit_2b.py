@@ -219,6 +219,7 @@ def tab_bar():
             b.append(top_round(x, y, w, FH, R, HC["card_top"]))
             b.append(top_round(x + 1.5, y + 1.5, w - 3, FH, R - 1.5, "none", stroke(K["edge_hc"], LINE_HC)))
             svg.state("normal", b, hc=True)
+            svg.state("pressed", b, hc=True)
             continue
         b.append(top_round(x + 2, y - 3, w - 4, FH, R, a("#000000", 0.62), blur(svg, 2.2)))
         f = FH
@@ -239,6 +240,9 @@ def tab_bar():
         b.append(top_round(wx, wy, ww, wh + 2, wr, "none", ink(C["ink_deep"], 1.5)))
         b.append(top_round(x, y, w, FH + 2, R, "none", ink(C["ink_line"], 1.5)))
         svg.state("normal", b)
+        # The bar itself is never pressed (its tabs are): pressed repeats
+        # normal, so K09's pressed row finds a piece for every face.
+        svg.state("pressed", b)
     return {"tab_bar/box.svg": svg.text()}
 
 
@@ -334,9 +338,12 @@ def segmented(M):
                                 a(K["tray_shade"], 0.55), K["parchment_disabled"], "#FFFFFF", "#000000")}
     for name, (fill, line, shade, flat, hcf, hcl) in beds.items():
         svg = Svg(S, S, [14, 14, 14, 14])
-        for st in ("normal", "disabled"):
+        # The bed is never pressed (its segments are): pressed repeats normal,
+        # so K07's pressed row finds a piece for every face.
+        for st in ("normal", "pressed", "disabled"):
             for hc in (False, True):
-                svg.state(st, sunk(svg, st, hc, 1, 1, S - 2, S - 2, R, fill, line, shade, flat, hcf, hcl), hc=hc)
+                svg.state(st, sunk(svg, "disabled" if st == "disabled" else "normal", hc, 1, 1, S - 2, S - 2, R,
+                                   fill, line, shade, flat, hcf, hcl), hc=hc)
         out["segmented/%s.svg" % name] = svg.text()
 
     # An unchosen segment: words on the track; pressed, a wash over the track.
@@ -377,8 +384,9 @@ def chips(M):
     R = FH / 2
     for skin, name, m, states in (("chip", "chip", M["smoke"], ("normal", "pressed", "disabled", "locked")),
                                   ("chip", "chip_light", M["tan"], ("normal", "pressed", "disabled", "locked")),
-                                  ("chip_on", "chip_on", M["gold"], ("normal", "pressed", "disabled")),
-                                  ("chip_on", "chip_on_light", M["chosen"], ("normal", "pressed", "disabled"))):
+                                  # A chosen chip that is locked shows the locked face, as an unchosen one does.
+                                  ("chip_on", "chip_on", M["gold"], ("normal", "pressed", "disabled", "locked")),
+                                  ("chip_on", "chip_on_light", M["chosen"], ("normal", "pressed", "disabled", "locked"))):
         svg = Svg(W, H, [23, 22, 23, 25])
         for st in states:
             for hc in (False, True):
