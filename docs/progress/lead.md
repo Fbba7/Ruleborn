@@ -7,20 +7,19 @@
 > (order 2). The launcher and the watchdog are new scheduled tasks firing
 > into new Fable 5.2 sessions (table below); the old ones stay disabled.
 >
-> Where the work stands at the restart (nothing moved between the stop of
-> 5 November at 00:05Z and now; all of it is pushed):
+> Where the work stands after cycle 45 (9 November 2026, 22:30Z):
 >
-> | Task | Branch | Ready at | Branch head | State |
-> |---|---|---|---|---|
-> | P1-AIA-kit-4 (resync) | `claude/ui-artist` | `f3456cac` | `15d22123` | ready, pre-check PASS, ui guard OK |
-> | P1-AIA2-icons-2a | `claude/ui-artist-icons` | `6a382d97` (ready commit `e3d5416b`) | `abb67696` | ready, pre-check PASS |
-> | P1-K1-words | `claude/ui-bake` | `0e829632` | `eaa23f89` | ready, pre-check PASS |
+> | Task | Branch | State |
+> |---|---|---|
+> | P1-AIA-kit-4 | `claude/ui-artist` | merged, `d2deb896` |
+> | P1-K1-words | `claude/ui-bake` | merged, `68cfd4e4` |
+> | P1-AIA2-icons-2a | `claude/ui-artist-icons` | `resync`: guard's rebake fails on `icons_48_hc.webp` with it; a fresh AIA-2 session has it |
+> | P1-AIA-kit-5 | `claude/ui-artist` | started (AIA) |
+> | P1-K1-switch-heist | `claude/ui-bake` | started (K1) |
 >
-> Main fails guard.sh's rebake on `client/ui/art/icons_48_hc.webp` (see
-> "Now" and `status/lead.json`). Tasks done: 8 of 18. Read the three
-> branches' status files first. The sessions of 4 November ran on
-> Opus 5.5: reuse none of them; a task that goes back to its agent gets a
-> fresh Fable 5.2 session.
+> Main passed check_all and guard.sh in cycle 45's container. Tasks done:
+> 10 of 18. Three builders are working, which is the cap (D13 (c)). The
+> sessions of 4 November ran on Opus 5.5 and are not reused.
 >
 > **Owner orders.** The owner stopped the program on 3 November 2026,
 > restarted it on 4 November, stopped it again on 5 November and restarted
@@ -103,8 +102,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: none since the restart of 9 November 2026 (the
-first is created by the launcher in use now, at 21:38Z). Cycle 44's, of 4 November
+Latest lead cycle session: `session_01SNkKxoFQJdmfH1eKm7DbKK` ("Ruleborn
+lead cycle 2026-11-09 21:38 UTC", cycle 45, created by the launcher's
+session `session_01SNkKxoc1ntTt7RqPTLViwy`). Cycle 44's, of 4 November
 2026 from 23:39Z, was recorded here as `session_01SNkKxqKY1WGt7cJSaqyYtWj`,
 which is not a valid ID (one character too many); treat an ID that
 `get_session` rejects as "not working".
@@ -127,9 +127,12 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AIA | `session_01SNkKxpLGXniYM5JnmyzqE7` (idle, ready at `f3456cac`; Opus 5.5, not reused) | P1-AIA-kit-4 (restart: resync, its nine skins missing from SKINS_OF) | `claude/ui-artist` | 2026-11-04 23:30Z |
-| AIA-2 | `session_01SNkKxnB46NyYAV26hWtwrg` (idle, ready at `6a382d97`; Opus 5.5, not reused) | P1-AIA2-icons-2a | `claude/ui-artist-icons` | 2026-11-04 23:21Z |
-| K1 | `session_01SNkKxo2gLyAa89sh1bYjJq` (idle, ready at `0e829632`; Opus 5.5, not reused) | P1-K1-words | `claude/ui-bake` | 2026-11-04 23:21Z |
+| AIA | `session_01SNkKxoemFM74dP2XqeyASw` | P1-AIA-kit-5 | `claude/ui-artist` | 2026-11-09 22:23Z |
+| K1 | `session_01SNkKxprLYRQQqA25xRhiQi` | P1-K1-switch-heist | `claude/ui-bake` | 2026-11-09 22:23Z |
+| AIA-2 | `session_01SNkKxnFDNLwC9swBdJVTEM` | P1-AIA2-icons-2a (restart: resync, guard's rebake fails on icons_48_hc.webp; make finish.js's grow computed on pixels) | `claude/ui-artist-icons` | 2026-11-09 21:53Z |
+| AIA | `session_01SNkKxpLGXniYM5JnmyzqE7` (idle, done; Opus 5.5, not reused) | P1-AIA-kit-4 (restart: resync, its nine skins missing from SKINS_OF) | `claude/ui-artist` | 2026-11-04 23:30Z |
+| AIA-2 | `session_01SNkKxnB46NyYAV26hWtwrg` (idle, replaced; Opus 5.5, not reused) | P1-AIA2-icons-2a | `claude/ui-artist-icons` | 2026-11-04 23:21Z |
+| K1 | `session_01SNkKxo2gLyAa89sh1bYjJq` (idle, done; Opus 5.5, not reused) | P1-K1-words | `claude/ui-bake` | 2026-11-04 23:21Z |
 | AIA-2 | `session_01SNkKxoAA41vxL7RwwKNRGN` (idle, done) | P1-AIA2-icons-1b (restart: resync, icons_48_hc.webp is not what its sources bake to) | `claude/ui-artist-icons` | 2026-11-04 20:59Z |
 | AIA-2 | `session_01SNkKxnfqxoDcFwrXf6z7o8` (idle, replaced) | P1-AIA2-icons-1b | `claude/ui-artist-icons` | 2026-11-04 18:34Z |
 | K1 | `session_01SNkKxqXv3kuBk7Uya8STrT` (idle, done) | P1-K1-catalogue (restart: resync, kit-3's numerals missing from SKINS_OF) | `claude/ui-bake` | 2026-11-04 21:54Z |
@@ -281,13 +284,33 @@ Your session was created with the repository checked out at main; work in that c
   ready with pre-check PASS: kit-4 at `f3456cac`, icons-2a at `6a382d97`,
   words at `0e829632`. The backlog still shows them `working`; the
   branches' status files are the newer record.
-- Next (cycle 45, the first after the restart): read the three status
-  files. Main still fails guard.sh's rebake on `icons_48_hc.webp`, so the
-  plan below holds: icons-2a goes back to AIA-2 as a `resync` with the
-  pixel-dilation finding (a fresh Fable 5.2 session), unless its ready
-  commit already changed the finish; merge kit-4 and words once the
-  candidate passes check_all and guard, or record exactly which file
-  keeps guard red and whose it is.
+- Cycle 45, 9 November 2026, from 21:38Z (session
+  `session_01SNkKxoFQJdmfH1eKm7DbKK`, started by the launcher; the first
+  cycle after the restart, on Fable 5.2): two merges, one resync, three
+  sessions started. Ran P1-AIA2-icons-2a's gate on `6a382d97` (Fable 5.2
+  ui-judge samples, advisory): 12 of 12 pass, verdict in
+  `docs/art/ui-quality/gate/verdicts/P1-AIA2-icons-2a/6a382d97.json`.
+  The candidate of all three ready tasks (`3ebfb223`) failed guard.sh's
+  rebake on `client/ui/art/icons_48_hc.webp` (piece `crew__pip__normal`):
+  `art/ui/icons/studio/finish.js`'s `grow()` stamps with `drawImage` and
+  the result differs between containers. That file is AIA-2's, so
+  icons-2a went back as `resync` (reason in the backlog) to a fresh AIA-2
+  session. kit-4 and words alone (`0fbb4723`): ui guard OK, check_all
+  PASS at 22:22Z, owners diff clean, claims disjoint. Merged
+  P1-AIA-kit-4 as `d2deb896` and P1-K1-words as `68cfd4e4`; lock
+  released. Started AIA on P1-AIA-kit-5 (with kit-4's gate notes and the
+  SKINS_OF reminder) and K1 on P1-K1-switch-heist. Three builders work,
+  the cap. Both pages republished (audit version 218, roadmap version
+  158). `stop_at` is 14 November 21:00Z.
+- Next (cycle 46): read the three branches' status files and copy the
+  claims to the backlog. When icons-2a is ready, build the candidate and
+  run guard.sh in this fresh container before check_all: it merges only
+  if `icons_48*` and `icons_256*` rebake byte for byte here; then start
+  AIA-2 on P1-AIA2-icons-2b (batches 3 and 4 stay deferred). Gate kit-5
+  on ready (kit art: Layered materials, Display type, Colour roles and
+  value, Light behind UI). Merge switch-heist on ready; switch-rest needs
+  switch-heist and kit-5 merged. No more than three UI builders at once.
+  Only Fable 5.2; never Fable 5.1 (CLAUDE.md).
 - Cycle 44, 4 November 2026, from 23:39Z (session
   `session_01SNkKxqKY1WGt7cJSaqyYtWj`, started by the launcher):
   bookkeeping and a diagnosis. All three builders are working (AIA
