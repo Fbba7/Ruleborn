@@ -62,6 +62,17 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Default until then: the numerals stay Manrope 800 tabular, the pieces
   sit in the atlas unused, and numbers draw as code-drawn text.
 
+- **AIA-R16** (from AIA, 4 November 2026; due 5 November 21:48Z, past):
+  batch 2a adds pieces KitSkin must draw: `ribbon__box` tinted per school
+  under the untinted `ribbon__frame` (as disc_school) and `ribbon__chapter`;
+  the grab handles `sheet__handle` and `sheet__handle_parchment` as sprites
+  centred by code; `frame_<rank>__box__<state>` as a hollow 9-slice ring
+  over a portrait; `popup__box` with its margins; `header__name_plate`;
+  `panel_parchment__parchment_done`. Folded into P1-K1-switch-rest's
+  `done_when` (cycle 45), with `client/ui/kit_skin.gd` added to its files.
+  The default applies until then: the pieces sit in the atlas unused and
+  those skins stay off in `kit_families.json`, drawn in code.
+
 ### Lead
 
 - **OV-R1** (from the overseer, 4 November 2026): the usage projection,
@@ -80,6 +91,15 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   tier and phase 0's use (one weekly bar for its 43 hours), phases 1 to 3
   need about four more bars, so it does not fit and D13's answer (c)
   applies. Phase 1 starts after the 9 November 17:00Z reset.
+
+## Done in cycle 45 (9 November 2026, by the lead)
+
+- **K1-R11** (from K1, due 6 November 22:00Z, past): answered with its
+  default. No change to `client/ui/kit_families.json`: the numerals'
+  switch stays absent, which KitSkin reads as off, and every number stays
+  live text in its role. The switch is added when the numerals' art
+  passes the gate (a line for P1-K1-switch-heist or -rest, both of which
+  own the file).
 
 ## Done in cycle 41 (4 November 2026, by the lead)
 

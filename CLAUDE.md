@@ -8,8 +8,19 @@ the status files, requests and scheduled-task prompts.
 
 - **3 November 2026:** the owner stopped the agent program.
 - **4 November 2026:** the owner restarted it ("Ok now continue"), in the
-  chat of the overseer session. The program runs again as the protocol
-  describes, under order 2 below.
+  chat of the overseer session.
+- **5 November 2026, 00:05 UTC:** the owner stopped it again ("We need to
+  stop but stop cleanly without losing any progress"), in the chat of the
+  overseer session.
+- **9 November 2026:** the owner restarted it ("Let's continue and use only
+  Fable 5.2"), in the chat of the overseer session. **The program runs**,
+  on Fable 5.2 only (order 4). Order 3's "keep working" applies again.
+
+A session that is in the middle of a turn when the program is stopped
+finishes cleanly, so no work is lost: commit and push what it has to its
+own branch (never to main), set `agent_state: stopped` in its status file,
+write "Stopped here" with where the work stands in its handoff, and end
+its turn. It merges nothing and starts nothing new.
 
 The owner can stop it again at any time. When the owner says "stop" in a
 session's chat, or this section says the program is stopped:
@@ -39,10 +50,11 @@ Fable 5.1 must never be used again, for anything, including:
 - a calibration or held-out run.
 
 Where a document names Fable 5.1 as a default or a plan (for example
-`dev-fable` runs, or "Fable 5.1 unless Opus 5.5 catches more"), read Opus 5.5
-instead. Do not plan or launch any further `*-fable*` run, and never resume
+`dev-fable` runs, or "Fable 5.1 unless Opus 5.5 catches more"), read
+Fable 5.2 instead (order 4). Do not plan or launch any further `*-fable*` run, and never resume
 `dev-fable-v3`. The history that records past Fable runs stays as written.
-This order is permanent: restarting the program does not lift it.
+This order is permanent: restarting the program does not lift it. Fable 5.2
+is a different model, and order 4 does not lift this order either.
 
 ## 3. Keep working until the owner says stop
 
@@ -64,4 +76,26 @@ be the logic."
   sessions), nothing is lost: the launcher and the watchdog resume the work
   after the limit resets, with no further pause and nothing asked of the
   owner.
-- **Never use Fable 5.1** (order 2).
+- **Never use Fable 5.1** (order 2), and **use only Fable 5.2** (order 4).
+
+## 4. Use only Fable 5.2
+
+On 9 November 2026 the owner ordered, in the chat of the overseer session:
+"Let's continue and use only Fable 5.2."
+
+- **Every session runs on Fable 5.2 and on no other model:** the lead's
+  cycles, the launcher, the watchdog, every agent and the overseer. The
+  same holds for every subagent and workflow model override, for the gate's
+  judge (it inherits the model of the session that calls it) and for any
+  calibration or held-out run.
+- **Where a document names another model** (Opus 5.5, Sonnet 5.5, Haiku 5.5
+  or any other) as the model of a session, a subagent or the judge, read
+  Fable 5.2. This covers the roster in `backlog.json`, the protocol, the
+  briefs, the agents' prompts and the UI report. The history that records
+  which model did past work stays as written.
+- **Fable 5.2 is not Fable 5.1.** Order 2 stands: Fable 5.1 is never used.
+- **A session started before 9 November 2026 on another model is not
+  reused.** Its work is on its branch; a fresh session on Fable 5.2 takes
+  the task.
+- **A session that finds itself on another model does no work.** It writes
+  that in its status file or handoff, and ends its turn.

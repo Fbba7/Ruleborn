@@ -1,0 +1,70 @@
+[
+  {
+    "task_id": "P1-AIA2-icons-2a",
+    "sha": "6a382d97",
+    "item": "icon sheet, batch 2a (alarm, bagcapacity, clock, lootbag, spotted, vaultprogress, shield, strain), at 48 and 96 pt and in grayscale",
+    "quality": "Layered materials",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Every body has a top-lit gradient, a gloss, a darker hue-matched rim or underside and a dark ink outline, with bevelled gold bezels and inset wells on clock, shield, vault and gauge; no banding at 48 pt or in grayscale. At least the chest anchor's level. The spotted starburst is the flattest body.",
+    "advisory": true,
+    "at": "2026-11-09T21:47:39Z"
+  },
+  {
+    "task_id": "P1-AIA2-icons-2a",
+    "sha": "6a382d97",
+    "item": "icon sheet, batch 2a (alarm, bagcapacity, clock, lootbag, spotted, vaultprogress, shield, strain), at 48 and 96 pt and in grayscale",
+    "quality": "Painted or rendered icons",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "All eight are modelled toon objects with a top-left light, stepped soft shading, a specular highlight and an unbroken dark outline, and keep their shape at 48 pt and in grayscale. The spotted starburst and the alarm's side vibration arcs are the flattest parts, still shaded and outlined.",
+    "advisory": true,
+    "at": "2026-11-09T21:47:39Z"
+  },
+  {
+    "task_id": "P1-AIA2-icons-2a",
+    "sha": "6a382d97",
+    "item": "icon sheet, batch 2a (alarm, bagcapacity, clock, lootbag, spotted, vaultprogress, shield, strain), at 48 and 96 pt and in grayscale",
+    "quality": "Colour roles and value",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Red is kept for the alarm and the strain gauge's danger end, green for progress and fill, gold as rim material; each state also has a shape (needle, arc, band, crack). All eight separate from the ground in grayscale. The lootbag's dark body is the closest in value to the ground and is carried by its outline, star and tie.",
+    "advisory": true,
+    "at": "2026-11-09T21:47:39Z"
+  },
+  {
+    "task_id": "P1-AIA2-icons-2a",
+    "sha": "6a382d97",
+    "item": "icon sheet, batch 2a (alarm, bagcapacity, clock, lootbag, spotted, vaultprogress, shield, strain), at 48 and 96 pt and in grayscale",
+    "quality": "Light behind UI",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Judged on the icons' own light: all eight share one top or top-left light with shading below, confirmed in grayscale; none is lit from below or the opposite side. At least as consistent as the chest anchor.",
+    "advisory": true,
+    "at": "2026-11-09T21:47:39Z"
+  }
+]

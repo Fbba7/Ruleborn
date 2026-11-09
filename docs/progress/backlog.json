@@ -2,9 +2,9 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-04T23:26:00Z",
+  "updated_at": "2026-11-09T21:58:00Z",
   "updated_by": "lead",
-  "stop_at": "2026-11-09T21:00:00Z",
+  "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
   "check_minutes": 25,
@@ -13,27 +13,27 @@
   "agents": {
     "AD": {
       "branch": "claude/ui-ad",
-      "model": "Opus 5.5"
+      "model": "Fable 5.2"
     },
     "AIA": {
       "branch": "claude/ui-artist",
-      "model": "Opus 5.5"
+      "model": "Fable 5.2"
     },
     "K1": {
       "branch": "claude/ui-bake",
-      "model": "Opus 5.5"
+      "model": "Fable 5.2"
     },
     "SV": {
       "branch": "claude/server-decisions",
-      "model": "Sonnet 5.5"
+      "model": "Fable 5.2"
     },
     "AIA-2": {
       "branch": "claude/ui-artist-icons",
-      "model": "Opus 5.5"
+      "model": "Fable 5.2"
     },
     "S1": {
       "branch": "claude/ui-screens-heist",
-      "model": "Sonnet 5.5"
+      "model": "Fable 5.2"
     }
   },
   "strings_owner": "lead",
@@ -860,17 +860,25 @@
       ],
       "estimate_h": 4,
       "phase": 1,
-      "model": "Opus 5.5",
+      "model": "Fable 5.2",
       "gate_items": [],
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "ready",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-04T23:25:00Z",
+        "lease_until": "2026-11-05T03:30:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "0e829632",
+      "merged_sha": null,
+      "exceptions": [
+        "client/ui/kit_numerals.gd.uid"
+      ]
     },
     {
       "id": "P1-K1-switch-heist",
@@ -901,7 +909,7 @@
       ],
       "estimate_h": 3,
       "phase": 1,
-      "model": "Opus 5.5",
+      "model": "Fable 5.2",
       "gate_items": [],
       "attempts": 0,
       "tier": 1,
@@ -919,6 +927,7 @@
       "role": "K1",
       "assigned_to": "K1",
       "files": [
+        "client/ui/kit_skin.gd",
         "client/ui/kit_families.json",
         "tools/ui_bake/**",
         "client/prototypes/ui_quality/**",
@@ -933,13 +942,14 @@
         "P1-AIA-kit-5"
       ],
       "done_when": [
+        "AIA-R16: KitSkin draws batch 2a's pieces: ribbon as its tinted ribbon__box (vertex-coloured per school) under the untinted ribbon__frame at the same rect, and ribbon__chapter untinted, the words on the band's top 32 points; sheet__handle and sheet__handle_parchment as 42 x 9 point sprites centred by code 12 points below a sheet's top edge; frame_<rank>__box__<state> as a hollow 9-slice ring over the portrait's rect grown by 4 points each side; popup__box with its 8/4/12 point margin (plus the 5 point lip) over the scrim, its title a ribbon across the top edge; header__name_plate; panel_parchment__parchment_done",
         "the gate's pass on P1-AIA-kit-4 and -5 recorded",
         "bash tools/ui_bake/guard.sh",
         "bash tools/check_all.sh"
       ],
       "estimate_h": 2,
       "phase": 1,
-      "model": "Opus 5.5",
+      "model": "Fable 5.2",
       "gate_items": [],
       "attempts": 0,
       "tier": 1,
@@ -1124,7 +1134,7 @@
       ],
       "estimate_h": 3,
       "phase": 1,
-      "model": "Opus 5.5",
+      "model": "Fable 5.2",
       "gate_items": [
         {
           "item": "kit catalogue sheet, batch 2a, at phone size",
@@ -1144,16 +1154,17 @@
         "agent": "AIA",
         "branch": "claude/ui-artist",
         "claimed_at": "2026-11-04T21:40:00Z",
-        "lease_until": "2026-11-05T00:40:00Z"
+        "lease_until": "2026-11-05T03:00:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": "3eb4e200",
+      "ready_sha": "f3456cac",
       "merged_sha": null,
       "exceptions": [
         "art/ui/kit_build/**",
         "art/ui/palette.json",
-        "client/ui/art/kit_2*"
+        "client/ui/art/kit_2*",
+        "client/tests/ui_kit_tests.gd"
       ]
     },
     {
@@ -1180,7 +1191,7 @@
       ],
       "estimate_h": 3,
       "phase": 1,
-      "model": "Opus 5.5",
+      "model": "Fable 5.2",
       "gate_items": [
         {
           "item": "kit catalogue sheet, batch 2b, at phone size",
@@ -1352,7 +1363,7 @@
       ],
       "estimate_h": 4,
       "phase": 1,
-      "model": "Opus 5.5",
+      "model": "Fable 5.2",
       "gate_items": [
         {
           "item": "icon sheet at 48 and 96 points and in grayscale",
@@ -1367,12 +1378,18 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "resync",
+      "claim": {
+        "agent": "AIA-2",
+        "branch": "claude/ui-artist-icons",
+        "claimed_at": "2026-11-04T23:30:00Z",
+        "lease_until": "2026-11-10T02:00:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "6a382d97",
+      "merged_sha": null,
+      "resync_reason": "Cycle 45, candidate 3ebfb223: guard.sh FAILED, 'rebake differs: client/ui/art/icons_48_hc.webp is not what its sources bake to'. Only the piece crew__pip__normal differs (atlas box 2,2 to 130,130; 3603 pixels); icons_48.json, icons_48.webp and the kit rebake byte for byte, and main's own icons rebake byte for byte in the lead's container. Cause: finish.js's grow() stamps the outline and keyline with drawImage, which differs between containers. Make the grow pixel-computed (getImageData, a disc of radius r), rebake icons_48* and icons_256*, and show guard.sh green in a fresh container. The gate passed 12 of 12 (advisory; verdicts/P1-AIA2-icons-2a/6a382d97.json): the spotted starburst and the alarm's vibration arcs are the flattest, and the lootbag's dark body sits close to the ground in grayscale."
     },
     {
       "id": "P1-AIA2-icons-2b",
@@ -1397,7 +1414,7 @@
       ],
       "estimate_h": 3,
       "phase": 1,
-      "model": "Opus 5.5",
+      "model": "Fable 5.2",
       "gate_items": [
         {
           "item": "icon sheet at 48 and 96 points and in grayscale",
@@ -1442,7 +1459,7 @@
       ],
       "estimate_h": 3,
       "phase": 1,
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "gate_items": [
         {
           "item": "heist at 100% text",
@@ -1497,7 +1514,7 @@
       ],
       "estimate_h": 3,
       "phase": 1,
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "gate_items": [
         {
           "item": "heist in high contrast",
@@ -1545,7 +1562,7 @@
       ],
       "estimate_h": 2,
       "phase": 1,
-      "model": "Opus 5.5",
+      "model": "Fable 5.2",
       "gate_items": [],
       "attempts": 0,
       "tier": 1,
@@ -1830,7 +1847,7 @@
       "title": "B10 the client's certificate pin on the production certificate's authority, never the leaf: waits for the production host (owner-decisions.md); unassigned until it exists",
       "phase": 0,
       "role": "SV",
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "assigned_to": null,
       "files": [
         "client/data/http_transport.gd",
@@ -1913,7 +1930,7 @@
       "title": "Coordinator, part 1: a dry-run cycle that reads every status file from origin, expires leases, copies states into the backlog, flags missed acknowledgements, request deadlines and stalls, and prints the actions",
       "phase": 0,
       "role": "specialist",
-      "model": "Opus 5.5",
+      "model": "Fable 5.2",
       "assigned_to": "SP-bt-01",
       "files": [
         "tools/coord/**",
@@ -1942,7 +1959,7 @@
       "title": "Coordinator, part 2: the merge-then-test queue (owners.py diff, run_checks.sh on the candidate, the merge lock in status/lead.json, fast-forward) and the owner-inbox entries",
       "phase": 0,
       "role": "specialist",
-      "model": "Opus 5.5",
+      "model": "Fable 5.2",
       "assigned_to": "SP-bt-01",
       "files": [
         "tools/coord/**",
@@ -1973,7 +1990,7 @@
       "title": "Gate shot renderer, part 1: the shot-list format and still rendering of a listed item at a given sha",
       "phase": 0,
       "role": "specialist",
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "assigned_to": "SP-bt-04",
       "files": [
         "tools/gate/render.*",
@@ -2004,7 +2021,7 @@
       "title": "Gate shot renderer, part 2: frame strips, 200% text and high-contrast variants, named crops",
       "phase": 0,
       "role": "specialist",
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "assigned_to": "SP-bt-04",
       "files": [
         "tools/gate/render.*",
@@ -2034,7 +2051,7 @@
       "title": "Gate launcher and verdict writer, with schema validation",
       "phase": 0,
       "role": "specialist",
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "assigned_to": "SP-bt-05",
       "files": [
         "tools/gate/run.*",
@@ -2065,7 +2082,7 @@
       "title": "Environment setup with pinned versions",
       "phase": 0,
       "role": "specialist",
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "assigned_to": "SP-bt-09",
       "files": [
         "tools/setup_env.sh"
@@ -2091,7 +2108,7 @@
       "title": "Check runner: concurrent runs in one container do not share Godot's user:// or its download (docs/progress/flaky.md)",
       "phase": 0,
       "role": "specialist",
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "assigned_to": "lead",
       "files": [
         "tools/run_checks.sh"
@@ -2119,7 +2136,7 @@
       "title": "client/build.sh fails when Godot's --import leaves the import cache incomplete, instead of running the tests on it (docs/progress/flaky.md)",
       "phase": 0,
       "role": "specialist",
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "assigned_to": "lead",
       "files": [
         "client/build.sh"
@@ -2146,7 +2163,7 @@
       "title": "Documentation consistency check: state names, schemas and examples across the brief, the program, the protocol and the example backlog",
       "phase": 1,
       "role": "specialist",
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "assigned_to": "SP-bt-06",
       "files": [
         "tools/docs/protocol_check.*",
@@ -2178,7 +2195,7 @@
       "title": "Metrics report from coordination data",
       "phase": 1,
       "role": "specialist",
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "assigned_to": "SP-bt-07",
       "files": [
         "tools/coord/metrics.*"
@@ -2207,7 +2224,7 @@
       "title": "Per-screen string and route files merged by script",
       "phase": 1,
       "role": "specialist",
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "assigned_to": "SP-bt-08",
       "files": [
         "tools/build/merge_tables.*"
@@ -2238,7 +2255,7 @@
       "id": "IQ-import-check",
       "title": "Check every tracked .import and .uid file matches its source after a clean import; file mismatches as requests to their owners",
       "role": "any",
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "assigned_to": null,
       "files": [
         "docs/progress/<your-agent>.md"
@@ -2252,7 +2269,7 @@
       "id": "IQ-kit-docs",
       "title": "Read kit-spec.md against client/ui/ and list every component the spec names and the code lacks, as a request to K1",
       "role": "any",
-      "model": "Sonnet 5.5",
+      "model": "Fable 5.2",
       "assigned_to": null,
       "files": [
         "docs/progress/<your-agent>.md"
