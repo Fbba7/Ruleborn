@@ -1,183 +1,183 @@
 {
- "agent": "K1",
- "role": "K1",
- "branch": "claude/ui-bake",
- "model": "Fable 5.2",
- "agent_state": "active",
- "task_id": "P1-K1-switch-heist",
- "task_state": "working",
- "claimed_at": "2026-11-09T22:27:00Z",
- "lease_until": "2026-11-10T01:27:00Z",
- "updated_at": "2026-11-09T22:59:00Z",
- "expected_next_update_by": "2026-11-09T23:44:00Z",
- "long_run": null,
- "progress_marker": {
-  "last_green_sha": "68cfd4e4",
-  "next_step": "heist with the skins on: 122 draw calls at 100% and in high contrast (124 with them off); next the other four screens, kit-spec.md, guard.sh and its baselines"
- },
- "precheck": null,
- "gate_request": null,
- "ready_sha": null,
- "stop_at": "2026-11-14T21:00:00Z",
- "acks": [
-  "M2"
- ],
- "requests": [
-  {
-   "id": "K1-R3",
-   "from": "K1",
-   "to": "lead",
-   "ask": "P0-K1-bake-2 is in tools/ui_bake/. (1) As K1-R1 granted, in the candidate that merges it add to tools/check_all.sh: 'python3 tools/ui_bake/check_screens.py' and 'python3 tools/ui_bake/check_screens.py --self-test' (about a second together). (2) Run 'bash tools/ui_bake/guard.sh' in the merge queue beside check_all (D9 (b)); about 12 minutes; it needs Godot from client/build.sh, xvfb-run, Node and the container's Chromium, and prints 'ui guard: OK'. (3) report.md section 10.1 caps interface textures at 24 MiB. guard.sh counts the textures the screens' canvas items hold (at 4 bytes a pixel, as 10.1 counts an atlas): 1.3-4.5 MiB today. The fonts' glyph caches are real resident textures too and are 7-40 MiB a shot (the heist at 200% text: 40.5 MiB), so counting them would fail main today. Should they count in the 24 MiB (then the cap needs an owner decision, D8), or stay reported beside it?",
-   "files": [
-    "tools/check_all.sh",
-    "docs/art/ui-quality/report.md"
-   ],
-   "blocking": false,
-   "created_at": "2026-10-31T00:50:00Z",
-   "due": "2026-11-01T22:00:00Z",
-   "default": "(1) and (2) as K1-R1 says; (3) glyph caches stay reported beside the 24 MiB, not counted in it, and guard.sh records them in each shot's log",
-   "escalate_to": "lead"
+  "agent": "K1",
+  "role": "K1",
+  "branch": "claude/ui-bake",
+  "model": "Fable 5.2",
+  "agent_state": "active",
+  "task_id": "P1-K1-switch-heist",
+  "task_state": "working",
+  "claimed_at": "2026-11-09T22:27:00Z",
+  "lease_until": "2026-11-10T01:27:00Z",
+  "updated_at": "2026-11-09T22:59:00Z",
+  "expected_next_update_by": "2026-11-09T23:44:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": "68cfd4e4",
+    "next_step": "heist with the skins on: 122 draw calls at 100% and in high contrast (124 with them off); next the other four screens, kit-spec.md, guard.sh and its baselines"
   },
-  {
-   "id": "K1-R4",
-   "from": "K1",
-   "to": "lead",
-   "ask": "P0-K1-contract-2 (AD-R5) leaves two of kit-spec.md section 2.1's values pending owner decisions, as O2.md allows. Please add two entries to the owner's decision brief (docs/decisions/brief.json, then python3 tools/build_brief.py --check), drafted in docs/progress/K1.md under 'Draft brief entries (K1-R4)': (1) success words on a dark surface: §21.8's #3FBF7F measures Lc 54-55 on the dark card (43 on the backdrop's #2C3AA8) against the Lc 60 bold words under 36 points need, and ink on the green fill Lc 57.5; options (a) lighter success words on dark, #8FF0A8, (b) keep §21.8: green words only at 36 points and over on the card, smaller ones as ink on the fill; recommend (a). (2) the menus' backdrop: the designs' sub-screens draw a radial (#2E1F5E, #140C30, #0A0620), §21.2 says '#171046 to #2C3AA8'; options (a) §21.2's linear values, (b) change §21.2 to the designs' radial; recommend (a). If brief.json is not the lead's to edit, forward this to its owner.",
-   "files": [
-    "docs/decisions/brief.json"
-   ],
-   "blocking": false,
-   "created_at": "2026-10-31T02:15:00Z",
-   "due": "2026-11-02T22:00:00Z",
-   "default": "No brief entry; kit-spec.md keeps both rows marked pending with O2.md's interim rulings (#3FBF7F at 36 points and over on the card, else ink on the green fill; §21.2's linear backdrop), and P0-K1-kitskin writes tokens.json to those interim values",
-   "escalate_to": "lead"
-  },
-  {
-   "id": "K1-R5",
-   "from": "K1",
-   "to": "lead",
-   "ask": "P0-K1-contract-2 said client/ui/tokens.json takes kit-spec.md section 2.1's revised values in P0-K1-kitskin, but P0-K1-kitskin must leave every screen's stills unchanged with every family off, and the revised values change them. P0-K1-kitskin keeps today's values. Please queue a K1 task that writes the revised section 2.1 values into tokens.json after the O2-2 pass, with the goldens it moves.",
-   "files": [
-    "client/ui/tokens.json",
-    "docs/art/ui-quality/kit-spec.md"
-   ],
-   "blocking": false,
-   "created_at": "2026-10-31T03:55:00Z",
-   "due": "2026-11-02T22:00:00Z",
-   "default": "K1 writes the revised section 2.1 values in its next task after the O2-2 pass, re-baking the goldens they move",
-   "escalate_to": "lead"
-  },
-  {
-   "id": "K1-R6",
-   "from": "K1",
-   "to": "lead",
-   "ask": "P0-K1-tokens: (1) Exception: art/ui/board/tokens.css is AIA's, but it is generated from client/ui/tokens.json and check_all's 'node art/ui/board/build_tokens.mjs --check' fails on any token change unless it is regenerated. K1's commit carries it regenerated by that script, one line (--c-card-bottom), no hand edit; check_board.mjs still passes (376 of 376 words). Please grant it as the task's exception. (2) Split: only card_bottom (#1A1134) is written, because the other revised values each fail a check in files outside the task. Tried on this branch: backdrop #171046 to #2C3AA8 linear: the board's two regular-weight secondary captions measure Lc 73-74 on #2C3AA8 (needs 75; art/ui/board/board.html, AIA's), and a11y test 1's scrim words (Lc 73: the scrim material's text_bg names night_bottom, which becomes the backdrop's lightest stop; client/ui/tokens.json, fixable by K1 by naming the scrim's own #0A0620); red words on dark #FF9AAA: a11y test 2 fails result_screen's '!' note on the backdrop and the Observatory's and curation's notes in the kit's glass (Lc 58, needs 60), which must move onto alarm_fill (client/ui/rb_theme.gd status_colour, client/scripts/result_screen.gd, observatory_screen.gd, curation_screen.gd), and the board's 'Alarm 3', 'Alarm 4 of 5' (Lc 58-59); success words on dark #3FBF7F: a11y test 1 (Lc 48-56 on the card and glass) and the screens' own uses at 13-14 points (lab_screen.gd:172, screen_account.gd:25), and the board's 'Escape open', 'Vault open'. Please file P0-K1-tokens-2 (K1: tokens.json, rb_theme.gd, a11y_tests.gd, budgets.json, kit-spec.md) with deps on an AIA board task (those captions bold or on a card, alarm and success words on their fills) and the screen owners' moves onto the kit's status words; success waits on K1-R4's brief entry. Note: O2-2.md says nothing in the kit may use a lighter tint meanwhile, yet tokens.json keeps #8FF0A8 and #FFB0BC until that follow-up.",
-   "files": [
-    "art/ui/board/tokens.css",
-    "art/ui/board/board.html",
-    "client/ui/rb_theme.gd",
-    "client/scripts/result_screen.gd",
-    "client/scripts/observatory_screen.gd",
-    "client/scripts/curation_screen.gd",
-    "client/scripts/lab_screen.gd",
-    "client/scripts/screen_account.gd",
-    "docs/progress/backlog.json"
-   ],
-   "blocking": false,
-   "created_at": "2026-10-31T10:45:00Z",
-   "due": "2026-11-01T22:00:00Z",
-   "default": "(1) tokens.css granted as P0-K1-tokens' exception; (2) P0-K1-tokens merges with card_bottom alone, and the backdrop, red and success words on dark wait for a follow-up task the lead files with AIA's board change and the screen owners' moves",
-   "escalate_to": "lead"
-  },
-  {
-   "id": "K1-R7",
-   "from": "K1",
-   "to": "lead",
-   "ask": "P0-K1-tokens-2: three changes outside the task's files, please grant them as exceptions. On the linear backdrop #2C3AA8, `gold` #E9B65C is 4.97:1 but Lc 55, under the Lc 60 bold and large words need: a11y test 14 fails the 13-point bold section kickers (client/scripts/screen_parts.gd:121, section(): settings 'SOUND', 'PLAY', workshop 'THE ISLANDS MOST FINISHED') and the 26-point realm title (client/scripts/realm_screen.gd:105). Change: Tokens.color(\"gold\") to Tokens.color(\"gold_top\") (#F9DE9C, Lc 75.3) in each. Third, client/scripts/ui.gd set_status (P0-K1-kitskin's file, not this task's): dark alarm words now sit on an alarm_fill box, so an empty status must draw no box: five lines that set a StyleBoxEmpty 'normal' override when the text is empty and remove it otherwise. With all three applied locally, a11y test 14 passes on every screen in both modes. The exact diff is in docs/progress/K1.md's handoff.",
-   "files": [
-    "client/scripts/screen_parts.gd",
-    "client/scripts/realm_screen.gd",
-    "client/scripts/ui.gd"
-   ],
-   "blocking": true,
-   "created_at": "2026-10-31T17:15:00Z",
-   "due": "2026-11-01T12:00:00Z",
-   "default": "granted: K1 commits the three changes exactly as in K1.md's handoff, as P0-K1-tokens-2's exceptions",
-   "escalate_to": "lead"
-  },
-  {
-   "id": "K1-R8",
-   "from": "K1",
-   "to": "AIA",
-   "cc": [
-    "lead"
-   ],
-   "ask": "P0-K1-tokens-2's pre-check (04f08bcc, FAIL) stops at the key frames (AIA-R3): with section 2.1's linear backdrop in tokens.css, the result key frame's two 13-point regular captions in text_on_night_2 (#E2D9F7) fall under Lc 75: 'alarm 2 / 6' subline Lc 74 on #50415F and 'Entry fee 120 returned' Lc 68-69 on #554E7C/#545384 (art/ui/keyframes/03-result.html lines 94 and 123, class on-night-2). The kit made the same move: night's text_2 is text_on_night. Change: class 'caption on-night-2' to 'caption on-night-1' (text_on_night, #F3EEFF) on those two lines (diff in docs/progress/K1.md's handoff). With it applied locally, node art/ui/keyframes/check_keyframes.mjs prints 'key frame checks passed'. Either AIA commits it, or the lead grants the file as P0-K1-tokens-2's exception and K1 commits it.",
-   "files": [
-    "art/ui/keyframes/03-result.html"
-   ],
-   "blocking": true,
-   "created_at": "2026-10-31T18:29:00Z",
-   "due": "2026-11-01T12:00:00Z",
-   "default": "granted as P0-K1-tokens-2's exception: K1 commits exactly the two-class change in K1.md's handoff (and any stills check_keyframes needs re-shot), re-runs the pre-check and marks ready",
-   "escalate_to": "lead"
-  },
-  {
-   "id": "K1-R10",
-   "from": "K1",
-   "to": "lead",
-   "ask": "P1-K1-atlas-draw edits tools/ui_bake/bake.js, which every family's sources_hash covers, so client/ui/art/icons_48.json and icons_256.json (AIA-2's) go stale. I rebaked both with 'node tools/ui_bake/bake.js icons_48 icons_256' (which now calls AIA-2's bake_icons.js): only their sources_hash line changes, the four .webp files are byte for byte the same. Please grant the two regenerated manifests in my candidate, as tokens.css was granted before. Also, for AIA and AIA-2: kit-spec.md section 6.6 gains two optional fields (atlas.pages and a piece's page, absent meaning page 1); format stays 1.",
-   "files": [
-    "client/ui/art/icons_48.json",
-    "client/ui/art/icons_256.json"
-   ],
-   "blocking": false,
-   "created_at": "2026-11-04T14:55:00Z",
-   "due": "2026-11-05T15:00:00Z",
-   "default": "granted: the two manifests merge with the candidate, regenerated by the bake, nothing else in client/ui/art/ changed",
-   "escalate_to": "lead"
-  },
-  {
-   "id": "K1-R11",
-   "from": "K1",
-   "to": "lead",
-   "ask": "P1-K1-words draws the baked numerals (KitNumerals) only while a 'numerals' switch is on. client/ui/kit_families.json is not in the task's files: please add '\"numerals\": false' to it (or grant it as this task's exception, a one-line addition). ui_kit_tests test 10 accepts it as the one switch beside the 35 skins (KitSkin.BESIDE) while it is off. Absent, KitSkin reads it as off, so nothing changes until the numerals' art passes the gate and the switch is turned on.",
-   "files": [
-    "client/ui/kit_families.json"
-   ],
-   "blocking": false,
-   "created_at": "2026-11-04T23:45:00Z",
-   "due": "2026-11-06T22:00:00Z",
-   "default": "No change to kit_families.json: the numerals' switch stays absent (off), every number stays live text in its role, and the switch is added when the numerals' art passes the gate",
-   "escalate_to": "lead"
-  },
-  {
-   "id": "K1-R12",
-   "from": "K1",
-   "to": "lead",
-   "ask": "P1-K1-switch-heist needs two files of mine outside its list. client/ui/rb_box.gd draws the face from the atlas, so AIA-R13 (the tinted box under its untinted frame) and AIA-R14 (the selected rim over a card; a use's named shape) are drawn there, and a piece's 1-point margin and lip are drawn outside the host so a skin switched on does not move the layout. client/tests/ui_kit_tests.gd test 10 asserted every switch off; it now asserts the switched-on set, and a new test covers the overlays and parts. Please grant both as the task's exceptions.",
-   "files": [
-    "client/ui/rb_box.gd",
-    "client/tests/ui_kit_tests.gd"
-   ],
-   "blocking": false,
-   "created_at": "2026-11-09T22:42:00Z",
-   "due": "2026-11-10T12:00:00Z",
-   "default": "granted: both files merge with the candidate as P1-K1-switch-heist's exceptions",
-   "escalate_to": "lead"
-  }
- ],
- "answers": [
-  {
-   "request_id": "AIA-R2",
-   "answer": "client/ui/tokens.json has a 'sky' group with day, dusk and night stops (read with Tokens.sky(name) -> Array[Color]), kept out of the color, gradient and material groups the board's build_tokens.mjs --check reads. card_bottom keeps the designs' #120A28 for now, with a note: kit-spec.md section 2.1 takes 21.8's #1A1134 once O2-2 lets the revised contract stand (K1-R5). kit-spec.md section 8.2's code note gives the piece names KitSkin looks up.",
-   "at": "2026-10-31T03:55:00Z"
-  },
-  {
-   "request_id": "K1-R9",
-   "answer": "Done in P0-K1-kitspec-3 at 4b4a72d1: kit-spec.md section 2.1's success and backdrop rows and section 9; tokens.json's notes for success_text_on_night, night_top and gradient.night. No value changes.",
-   "at": "2026-11-04T13:05:00Z"
-  }
- ],
- "next_step": "P1-K1-switch-heist working: skins switched on, KitSkin overlays and parts in, kit tests 18 of 18"
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-14T21:00:00Z",
+  "acks": [
+    "M2"
+  ],
+  "requests": [
+    {
+      "id": "K1-R3",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P0-K1-bake-2 is in tools/ui_bake/. (1) As K1-R1 granted, in the candidate that merges it add to tools/check_all.sh: 'python3 tools/ui_bake/check_screens.py' and 'python3 tools/ui_bake/check_screens.py --self-test' (about a second together). (2) Run 'bash tools/ui_bake/guard.sh' in the merge queue beside check_all (D9 (b)); about 12 minutes; it needs Godot from client/build.sh, xvfb-run, Node and the container's Chromium, and prints 'ui guard: OK'. (3) report.md section 10.1 caps interface textures at 24 MiB. guard.sh counts the textures the screens' canvas items hold (at 4 bytes a pixel, as 10.1 counts an atlas): 1.3-4.5 MiB today. The fonts' glyph caches are real resident textures too and are 7-40 MiB a shot (the heist at 200% text: 40.5 MiB), so counting them would fail main today. Should they count in the 24 MiB (then the cap needs an owner decision, D8), or stay reported beside it?",
+      "files": [
+        "tools/check_all.sh",
+        "docs/art/ui-quality/report.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-31T00:50:00Z",
+      "due": "2026-11-01T22:00:00Z",
+      "default": "(1) and (2) as K1-R1 says; (3) glyph caches stay reported beside the 24 MiB, not counted in it, and guard.sh records them in each shot's log",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R4",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P0-K1-contract-2 (AD-R5) leaves two of kit-spec.md section 2.1's values pending owner decisions, as O2.md allows. Please add two entries to the owner's decision brief (docs/decisions/brief.json, then python3 tools/build_brief.py --check), drafted in docs/progress/K1.md under 'Draft brief entries (K1-R4)': (1) success words on a dark surface: §21.8's #3FBF7F measures Lc 54-55 on the dark card (43 on the backdrop's #2C3AA8) against the Lc 60 bold words under 36 points need, and ink on the green fill Lc 57.5; options (a) lighter success words on dark, #8FF0A8, (b) keep §21.8: green words only at 36 points and over on the card, smaller ones as ink on the fill; recommend (a). (2) the menus' backdrop: the designs' sub-screens draw a radial (#2E1F5E, #140C30, #0A0620), §21.2 says '#171046 to #2C3AA8'; options (a) §21.2's linear values, (b) change §21.2 to the designs' radial; recommend (a). If brief.json is not the lead's to edit, forward this to its owner.",
+      "files": [
+        "docs/decisions/brief.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-31T02:15:00Z",
+      "due": "2026-11-02T22:00:00Z",
+      "default": "No brief entry; kit-spec.md keeps both rows marked pending with O2.md's interim rulings (#3FBF7F at 36 points and over on the card, else ink on the green fill; §21.2's linear backdrop), and P0-K1-kitskin writes tokens.json to those interim values",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R5",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P0-K1-contract-2 said client/ui/tokens.json takes kit-spec.md section 2.1's revised values in P0-K1-kitskin, but P0-K1-kitskin must leave every screen's stills unchanged with every family off, and the revised values change them. P0-K1-kitskin keeps today's values. Please queue a K1 task that writes the revised section 2.1 values into tokens.json after the O2-2 pass, with the goldens it moves.",
+      "files": [
+        "client/ui/tokens.json",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-31T03:55:00Z",
+      "due": "2026-11-02T22:00:00Z",
+      "default": "K1 writes the revised section 2.1 values in its next task after the O2-2 pass, re-baking the goldens they move",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R6",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P0-K1-tokens: (1) Exception: art/ui/board/tokens.css is AIA's, but it is generated from client/ui/tokens.json and check_all's 'node art/ui/board/build_tokens.mjs --check' fails on any token change unless it is regenerated. K1's commit carries it regenerated by that script, one line (--c-card-bottom), no hand edit; check_board.mjs still passes (376 of 376 words). Please grant it as the task's exception. (2) Split: only card_bottom (#1A1134) is written, because the other revised values each fail a check in files outside the task. Tried on this branch: backdrop #171046 to #2C3AA8 linear: the board's two regular-weight secondary captions measure Lc 73-74 on #2C3AA8 (needs 75; art/ui/board/board.html, AIA's), and a11y test 1's scrim words (Lc 73: the scrim material's text_bg names night_bottom, which becomes the backdrop's lightest stop; client/ui/tokens.json, fixable by K1 by naming the scrim's own #0A0620); red words on dark #FF9AAA: a11y test 2 fails result_screen's '!' note on the backdrop and the Observatory's and curation's notes in the kit's glass (Lc 58, needs 60), which must move onto alarm_fill (client/ui/rb_theme.gd status_colour, client/scripts/result_screen.gd, observatory_screen.gd, curation_screen.gd), and the board's 'Alarm 3', 'Alarm 4 of 5' (Lc 58-59); success words on dark #3FBF7F: a11y test 1 (Lc 48-56 on the card and glass) and the screens' own uses at 13-14 points (lab_screen.gd:172, screen_account.gd:25), and the board's 'Escape open', 'Vault open'. Please file P0-K1-tokens-2 (K1: tokens.json, rb_theme.gd, a11y_tests.gd, budgets.json, kit-spec.md) with deps on an AIA board task (those captions bold or on a card, alarm and success words on their fills) and the screen owners' moves onto the kit's status words; success waits on K1-R4's brief entry. Note: O2-2.md says nothing in the kit may use a lighter tint meanwhile, yet tokens.json keeps #8FF0A8 and #FFB0BC until that follow-up.",
+      "files": [
+        "art/ui/board/tokens.css",
+        "art/ui/board/board.html",
+        "client/ui/rb_theme.gd",
+        "client/scripts/result_screen.gd",
+        "client/scripts/observatory_screen.gd",
+        "client/scripts/curation_screen.gd",
+        "client/scripts/lab_screen.gd",
+        "client/scripts/screen_account.gd",
+        "docs/progress/backlog.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-10-31T10:45:00Z",
+      "due": "2026-11-01T22:00:00Z",
+      "default": "(1) tokens.css granted as P0-K1-tokens' exception; (2) P0-K1-tokens merges with card_bottom alone, and the backdrop, red and success words on dark wait for a follow-up task the lead files with AIA's board change and the screen owners' moves",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R7",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P0-K1-tokens-2: three changes outside the task's files, please grant them as exceptions. On the linear backdrop #2C3AA8, `gold` #E9B65C is 4.97:1 but Lc 55, under the Lc 60 bold and large words need: a11y test 14 fails the 13-point bold section kickers (client/scripts/screen_parts.gd:121, section(): settings 'SOUND', 'PLAY', workshop 'THE ISLANDS MOST FINISHED') and the 26-point realm title (client/scripts/realm_screen.gd:105). Change: Tokens.color(\"gold\") to Tokens.color(\"gold_top\") (#F9DE9C, Lc 75.3) in each. Third, client/scripts/ui.gd set_status (P0-K1-kitskin's file, not this task's): dark alarm words now sit on an alarm_fill box, so an empty status must draw no box: five lines that set a StyleBoxEmpty 'normal' override when the text is empty and remove it otherwise. With all three applied locally, a11y test 14 passes on every screen in both modes. The exact diff is in docs/progress/K1.md's handoff.",
+      "files": [
+        "client/scripts/screen_parts.gd",
+        "client/scripts/realm_screen.gd",
+        "client/scripts/ui.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-10-31T17:15:00Z",
+      "due": "2026-11-01T12:00:00Z",
+      "default": "granted: K1 commits the three changes exactly as in K1.md's handoff, as P0-K1-tokens-2's exceptions",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R8",
+      "from": "K1",
+      "to": "AIA",
+      "cc": [
+        "lead"
+      ],
+      "ask": "P0-K1-tokens-2's pre-check (04f08bcc, FAIL) stops at the key frames (AIA-R3): with section 2.1's linear backdrop in tokens.css, the result key frame's two 13-point regular captions in text_on_night_2 (#E2D9F7) fall under Lc 75: 'alarm 2 / 6' subline Lc 74 on #50415F and 'Entry fee 120 returned' Lc 68-69 on #554E7C/#545384 (art/ui/keyframes/03-result.html lines 94 and 123, class on-night-2). The kit made the same move: night's text_2 is text_on_night. Change: class 'caption on-night-2' to 'caption on-night-1' (text_on_night, #F3EEFF) on those two lines (diff in docs/progress/K1.md's handoff). With it applied locally, node art/ui/keyframes/check_keyframes.mjs prints 'key frame checks passed'. Either AIA commits it, or the lead grants the file as P0-K1-tokens-2's exception and K1 commits it.",
+      "files": [
+        "art/ui/keyframes/03-result.html"
+      ],
+      "blocking": true,
+      "created_at": "2026-10-31T18:29:00Z",
+      "due": "2026-11-01T12:00:00Z",
+      "default": "granted as P0-K1-tokens-2's exception: K1 commits exactly the two-class change in K1.md's handoff (and any stills check_keyframes needs re-shot), re-runs the pre-check and marks ready",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R10",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P1-K1-atlas-draw edits tools/ui_bake/bake.js, which every family's sources_hash covers, so client/ui/art/icons_48.json and icons_256.json (AIA-2's) go stale. I rebaked both with 'node tools/ui_bake/bake.js icons_48 icons_256' (which now calls AIA-2's bake_icons.js): only their sources_hash line changes, the four .webp files are byte for byte the same. Please grant the two regenerated manifests in my candidate, as tokens.css was granted before. Also, for AIA and AIA-2: kit-spec.md section 6.6 gains two optional fields (atlas.pages and a piece's page, absent meaning page 1); format stays 1.",
+      "files": [
+        "client/ui/art/icons_48.json",
+        "client/ui/art/icons_256.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T14:55:00Z",
+      "due": "2026-11-05T15:00:00Z",
+      "default": "granted: the two manifests merge with the candidate, regenerated by the bake, nothing else in client/ui/art/ changed",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R11",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P1-K1-words draws the baked numerals (KitNumerals) only while a 'numerals' switch is on. client/ui/kit_families.json is not in the task's files: please add '\"numerals\": false' to it (or grant it as this task's exception, a one-line addition). ui_kit_tests test 10 accepts it as the one switch beside the 35 skins (KitSkin.BESIDE) while it is off. Absent, KitSkin reads it as off, so nothing changes until the numerals' art passes the gate and the switch is turned on.",
+      "files": [
+        "client/ui/kit_families.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T23:45:00Z",
+      "due": "2026-11-06T22:00:00Z",
+      "default": "No change to kit_families.json: the numerals' switch stays absent (off), every number stays live text in its role, and the switch is added when the numerals' art passes the gate",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R12",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P1-K1-switch-heist needs two files of mine outside its list. client/ui/rb_box.gd draws the face from the atlas, so AIA-R13 (the tinted box under its untinted frame) and AIA-R14 (the selected rim over a card; a use's named shape) are drawn there, and a piece's 1-point margin and lip are drawn outside the host so a skin switched on does not move the layout. client/tests/ui_kit_tests.gd test 10 asserted every switch off; it now asserts the switched-on set, and a new test covers the overlays and parts. Please grant both as the task's exceptions.",
+      "files": [
+        "client/ui/rb_box.gd",
+        "client/tests/ui_kit_tests.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-09T22:42:00Z",
+      "due": "2026-11-10T12:00:00Z",
+      "default": "granted: both files merge with the candidate as P1-K1-switch-heist's exceptions",
+      "escalate_to": "lead"
+    }
+  ],
+  "answers": [
+    {
+      "request_id": "AIA-R2",
+      "answer": "client/ui/tokens.json has a 'sky' group with day, dusk and night stops (read with Tokens.sky(name) -> Array[Color]), kept out of the color, gradient and material groups the board's build_tokens.mjs --check reads. card_bottom keeps the designs' #120A28 for now, with a note: kit-spec.md section 2.1 takes 21.8's #1A1134 once O2-2 lets the revised contract stand (K1-R5). kit-spec.md section 8.2's code note gives the piece names KitSkin looks up.",
+      "at": "2026-10-31T03:55:00Z"
+    },
+    {
+      "request_id": "K1-R9",
+      "answer": "Done in P0-K1-kitspec-3 at 4b4a72d1: kit-spec.md section 2.1's success and backdrop rows and section 9; tokens.json's notes for success_text_on_night, night_top and gradient.night. No value changes.",
+      "at": "2026-11-04T13:05:00Z"
+    }
+  ],
+  "next_step": "P1-K1-switch-heist working: skins switched on, KitSkin overlays and parts in, kit tests 18 of 18"
 }
