@@ -1,9 +1,9 @@
 # AIA-2 icon maker: progress
 
-- Status: Green (P1-AIA2-icons-2a resynced: the grow is computed on the pixels, icons rebaked; `bash tools/ui_bake/guard.sh` ends "ui guard: OK" in a fresh container; pre-check PASS on ac4809ed, 22:41 UTC, 9 November).
-- Progress: 3 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7); P1-AIA2-icons-2a ready at ac4809ed (pre-check PASS); its sheet passed the Icons gate 12 of 12 at 6a382d97 (advisory).
-- Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources; batch 2a's eight heist-status and HUD icons.
-- Next: the lead's merge of P1-AIA2-icons-2a; then P1-AIA2-icons-2b.
+- Status: Green (P1-AIA2-icons-2b: six new icons baked, three of batch 2a reworked on the gate's notes; `check_icons.py` passes all 80 faces, `bake.js --check` ok, a rebake of both families is byte for byte; pre-check running on 29e91db0).
+- Progress: 4 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7, P1-AIA2-icons-2a at 027379a2); P1-AIA2-icons-2b is with the gate.
+- Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources; batch 2a's eight heist-status and HUD icons; batch 2b's six reward icons.
+- Next: the gate's verdict on P1-AIA2-icons-2b and the lead's merge. Batches 3 and 4 are deferred (D13 (c)).
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -12,84 +12,78 @@
 | P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Merged at 9b2bde70 | `bake.js --check`, `check_icons.py` and `run_checks.sh` PASS at 02e7ef0f |
 | P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Merged at 8ce107c9 | gate advisory at 5f759a03: Light behind UI pass; three qualities fail 3 of 3 |
 | P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Merged at 90f72fd7 | gate pass on all four qualities (advisory) at bef6eac2; resync at 5ecb0202 |
-| P1-AIA2-icons-2a: eight heist-status and HUD icons in `icons_48` | 4 | Ready at ac4809ed (resync of 6a382d97): guard OK, pre-check PASS; gate 12 of 12 at 6a382d97 (advisory) | `python3 -B art/ui/icons/studio/check_icons.py`: all 46 faces pass (23 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 23 pieces, icons_256 6 pieces, both ok |
+| P1-AIA2-icons-2a: eight heist-status and HUD icons in `icons_48` | 4 | Merged at 027379a2 | gate 12 of 12 at 6a382d97 (advisory); pre-check PASS on ac4809ed |
+| P1-AIA2-icons-2b: the six reward icons in `icons_48`, five of them in `icons_256` | 3 | Gate requested at 29e91db0 | `python3 -B art/ui/icons/studio/check_icons.py`: all 80 faces pass (29 and 11 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 29 pieces, icons_256 11 pieces, both ok |
 
 ## Handoff
 
-- **Last verified commit:** ac4809ed (pre-check PASS on ac4809ed, 22:41 UTC, 9 November; `bash tools/ui_bake/guard.sh` ends "ui guard: OK", 9 November, in a fresh container: `icons_256`, `icons_48` and `kit` each "rebakes byte for byte"; check_icons and bake.js --check green).
-
-### The resync (lead cycle 45)
-
-**Cause.** `art/ui/icons/studio/finish.js` drew the ink outline and the high-contrast keyline by stamping the silhouette round a circle with hundreds of `drawImage` calls. The result depended on the container's canvas backend (a ring in one, an octagon in another, on `crew/pip` in high contrast). In this session's container the old code still baked the committed files byte for byte, so the fault could not be reproduced here; it is removed by construction instead.
-
-**Fix.** `grow()` no longer draws. It reads the render's alpha with `getImageData`, computes the exact Euclidean distance from each pixel to the shape (alpha of a half or more) with a two-pass distance transform in plain arithmetic, and writes full ink up to the radius with one pixel of falloff, through `putImageData`. The grown canvas is wider than the render by the radius, so an outline may pass the render's edge as the stamps did. Two bakes in a row here are byte for byte the same.
-
-**Which pixels moved.** Every icon's, in all four atlases, and only along the outline's and keyline's edges: the regions in both manifests are unchanged, and no shape changes. Compared with the old bake, as premultiplied values:
-
-| Atlas | Pixels moved per icon | Of them over 16 of 255 | Largest step |
-|---|---:|---:|---:|
-| `icons_48.webp` (23 icons, 128 px) | 577 to 1071 of 16384 | 186 to 362 | 86 |
-| `icons_48_hc.webp` | 1107 to 1846 of 16384 | 452 to 689 | 99 |
-| `icons_256.webp` (6 icons, 256 px) | 1277 to 1741 of 65536 | 616 to 828 | 99 |
-| `icons_256_hc.webp` | 2671 to 3810 of 65536 | 1402 to 2041 | 120 |
-
-`crew/pip` in high contrast, the piece that differed: 1473 pixels moved, 669 over 16. `check_icons.py` passes all 58 faces; medians and p10 are within 0.5 px of the figures below (normal medians 4.9 to 5.3 px, high contrast 7.5 to 10.5 px).
-
-**Also in this push.** The four `client/ui/art/icons_*.webp.import` files are now tracked, as the kit's are (Godot writes them on import; untracked, they showed as changes in every fresh container).
-
-**Not taken.** The gate's notes (the spotted starburst and the alarm's arcs are the flattest; the lootbag's dark body sits close to the ground in grayscale) are not taken here: each changes an icon's art, which would put new shapes in front of the gate inside a resync. They are the first things to do in P1-AIA2-icons-2b's session.
-
-**For the lead.** Godot writes `client/tests/a11y_motion_tests.gd.uid` on import in a fresh container; it is not tracked and not mine, so I deleted my copy and did not commit it. Its owner may want to track it.
+- **Last verified commit:** 29e91db0 (pre-check running on 29e91db0; `check_icons.py` and `bake.js --check` green; `node art/ui/icons/studio/bake_icons.js icons_48 icons_256 --out <scratch>` gives the six committed files byte for byte, 10 November). `bash tools/ui_bake/guard.sh` was not run in full in this session; its rebake step is what the line above repeats.
 
 ### Done
 
-**Batch 2a in `art/ui/icons/`** (each in `icons_48`, normal and high contrast; none is in `icons_256`, as list.md says):
+**Batch 2b in `art/ui/icons/`** (list.md numbers 24 to 29; number 30, `crew/pip`, was baked with the route). Each is in `icons_48`; all but the star are also in `icons_256`.
 
 | Icon | What it shows | Light |
 |---|---|---|
-| `heiststatus/lootbag` | a turned leather sack, a ruffled neck tied with a gold cord, a gold star stamped on the front | `motion_light` |
-| `heiststatus/clock` | a gold pocket clock: bezel, paper face, four ticks, ink hands, crown and loop, a red alarm pin | `time_light` |
-| `heiststatus/bagcapacity` | a sack filled in the motion colour up to a green fill-line ring; empty parchment above, a dark opening | `motion_light` |
-| `heiststatus/alarm` | a tilted red bell with a gold lip, knob and clapper; one thick sound arc on each side | `alarm_light` |
-| `heiststatus/spotted` | an open eye (red lids, white, a time-blue iris, ink pupil) in front of a yellow eight-point flash | `alarm_light` |
-| `heiststatus/vaultprogress` | a stone vault door with a gold wheel and two hinges, in a dark track ringed three-quarters with green progress and a bright head knob | `success_light` |
-| `hud/shield` | a heater shield: gold rim, time-blue field, cream chevron, gold boss | `time_light` |
-| `hud/strain` | a gold pressure gauge with six band colours from quiet to breaking, the needle near the top band, a crack across the face, a stem and nut, steam puffs | `alarm_light` |
+| `currencies/pages` | three fanned codex sheets (a gold-edged one under two parchment ones), three ruled lines, a gold star seal, a ribbon marker in the matter colour | `motion_light` |
+| `season/tierreward` | a closed wooden chest with a barrel lid, a gold lip and two gold straps, tied with a matter-colour ribbon and bow | `motion_light` |
+| `alerts/seasonreward` | the same chest open, with its gold lock plate: a dark inside, a heap of gold, four coins, a four-point star rising | `starlight` |
+| `hud/star` | one puffed gold star with rounded tips | `starlight` |
+| `heistoutcomes/clean` | a scalloped seal in the success green, a gold ring, a dark green face, a cream tick, a spark at the upper right | `success_light` |
+| `heistoutcomes/worthyourtime` | an open cloth sack, slumped, with a rolled lip, a tie cord with a knot and loose ends and a stitched patch; coins heaped in it and a gold star standing on the heap | `motion_light` |
 
-**Check figures** (`icons_48`; outline target 5.3 px normal, 8.0 px high contrast):
+**New shared parts** in `studio/shapes.js`: `chest(S, {open, ribbon, light})` (one chest for both reward icons: `open` swings the lid on its back edge, `ribbon` swaps the lock plate for a band and bow) and `coin(S, r)`. README.md's scene-format table names them.
 
-| Icon | Median (n / hc) | p10 (n / hc) | 32 pt cover (n / hc) | Ellipse (n / hc) |
-|---|---:|---:|---:|---:|
-| alarm | 5.0 / 8.0 | 3.9 / 7.0 | 34% / 51% | 0.74 / 0.88 |
-| bagcapacity | 5.0 / 7.5 | 4.0 / 7.0 | 37% / 51% | 0.85 / 0.89 |
-| clock | 5.0 / 7.5 | 4.3 / 7.0 | 32% / 44% | 0.87 / 0.89 |
-| lootbag | 5.3 / 8.0 | 4.4 / 7.0 | 34% / 46% | 0.84 / 0.87 |
-| spotted | 5.3 / 10.5 | 3.9 / 9.0 | 41% / 57% | 0.81 / 0.85 |
-| vaultprogress | 5.0 / 7.5 | 4.3 / 7.0 | 54% / 69% | 0.94 / 0.95 |
-| shield | 5.0 / 7.5 | 4.0 / 7.0 | 40% / 52% | 0.89 / 0.91 |
-| strain | 5.0 / 7.5 | 4.0 / 7.0 | 36% / 49% | 0.82 / 0.85 |
+**The gate's notes on batch 2a** (the verdict at ac4809ed), taken here as the last handoff said:
 
-The ring edge is 100% for all of them in both modes. The earlier icons are unchanged; `icons_256.json` changes only in its `sources_hash` line, because the sources directory changed.
+| Icon | Note | Change |
+|---|---|---|
+| `heiststatus/spotted` | the starburst is flat | two stacked bursts with a deeper bevel: the warn one behind, a smaller pale gold one turned between its points |
+| `heiststatus/alarm` | the sound arcs are flat | each arc is a thicker glossy tube with a ball at each end |
+| `heiststatus/lootbag` | the dark body sits close to the ground in grayscale | a paler rim light, the ruffle in the lighter leather, a hem in the rim leather round the foot |
+
+The other icons' pixels are unchanged; both manifests change in their regions for the new pieces and in `sources_hash`.
+
+**Check figures** (outline target 5.3 px normal, 8.0 px high contrast; normal / high contrast):
+
+| Icon | Family | Median | p10 | 32 pt cover | Ellipse | Ring edge |
+|---|---|---:|---:|---:|---:|---:|
+| pages | 48 | 4.9 / 8.0 | 4.0 / 7.0 | 39% / 53% | 0.85 / 0.86 | 100% / 100% |
+| pages | 256 | 4.8 / 8.0 | 3.9 / 7.0 | 34% / 40% | 0.84 / 0.85 | 100% / 100% |
+| tierreward | 48 | 5.0 / 8.0 | 4.0 / 7.0 | 43% / 56% | 0.92 / 0.93 | 100% / 100% |
+| tierreward | 256 | 5.0 / 8.0 | 4.0 / 7.0 | 38% / 44% | 0.91 / 0.92 | 100% / 100% |
+| seasonreward | 48 | 5.0 / 8.0 | 4.1 / 7.0 | 44% / 59% | 0.85 / 0.88 | 100% / 100% |
+| seasonreward | 256 | 5.0 / 8.0 | 4.0 / 7.0 | 39% / 45% | 0.83 / 0.85 | 100% / 100% |
+| star | 48 | 4.9 / 9.0 | 4.0 / 7.5 | 30% / 42% | 0.79 / 0.84 | 98% / 100% |
+| clean | 48 | 4.9 / 8.0 | 4.1 / 7.0 | 39% / 53% | 0.83 / 0.87 | 100% / 100% |
+| clean | 256 | 5.0 / 8.0 | 4.1 / 7.0 | 34% / 40% | 0.82 / 0.84 | 100% / 100% |
+| worthyourtime | 48 | 5.0 / 8.0 | 4.1 / 7.0 | 37% / 50% | 0.85 / 0.89 | 97% / 100% |
+| worthyourtime | 256 | 5.0 / 8.0 | 4.0 / 7.0 | 32% / 38% | 0.83 / 0.85 | 96% / 100% |
+| alarm (reworked) | 48 | 4.9 / 8.0 | 3.9 / 7.0 | 36% / 54% | 0.76 / 0.89 | 100% / 100% |
+| lootbag (reworked) | 48 | 5.1 / 8.0 | 4.3 / 7.0 | 34% / 47% | 0.83 / 0.87 | 100% / 100% |
+| spotted (reworked) | 48 | 5.0 / 10.5 | 3.9 / 8.0 | 40% / 56% | 0.82 / 0.85 | 100% / 100% |
 
 ### Self-score
 
-Against rubric.md quality 3 (Painted or rendered icons):
+Against rubric.md quality 3 (Painted or rendered icons), from the contact sheet at 256 px, 48 pt, 32 pt, grayscale and high contrast:
 
 | Rule | Score | Why |
 |---|---|---|
-| 1. 3D form, top-left key, rim, specular, dark outline | Pass | Lathed sacks and bell, bevelled slabs, tori; keyed top left with the gloss band |
-| 2. Outline 2 pt at the size shown | Pass, scripted | all 46 faces |
-| 3. A dark shape at 32 pt | Pass, scripted | coverage 32–54% (normal), ellipse 0.74–0.94 |
+| 1. 3D form, top-left key, rim, specular, dark outline | Pass | boxes with a barrel lid, lathed sack, puffed slabs, tori and coins as solids; keyed top left with the gloss band on the metal |
+| 2. Outline 2 pt at the size shown | Pass, scripted | all 80 faces |
+| 3. A dark shape at 32 pt | Pass, scripted | coverage 30–44% (normal), ellipse 0.79–0.92 |
 | 4. §21.8 volume | Pass | the 1b finish: blended ramp, gloss band, body gradient, soft drop |
 | 5. One toon look | Pass | one `S.toon` material throughout |
 | 6. Law and school frames | Not applicable | |
 
-Other qualities: **Layered materials**: leather (matt, glossy 0), gold (glossy), paper and stone (low gloss), enamel on the bell and shield. **Colour roles and value**: red only for alarm states (alarm, spotted, the clock's pin), green only for progress (the fill line, the vault ring), gold as metal trim; every icon steps from a dark outer part to a light focal point. **Light behind UI**: a glow in each icon's light token.
+Other qualities: **Layered materials**: wood and cloth (matt), gold straps, coins and seals (glossy), parchment (low gloss), ribbon. **Colour roles and value**: gold is the reward in every icon; green only on the clean seal (success); the matter colour only as ribbon; each icon steps from a dark outer part (wood, cloth, the seal's rim) to a light focal point (the star, the tick, the seal). **Light behind UI**: a glow in each icon's light token.
 
 **Risks a judge may see:**
-- Vaultprogress is the roundest icon (ellipse 0.94/0.95, near the 0.96 limit); the hinges and head knob are what break the disc.
-- Strain's six band colours are small at 48 pt; it reads as a gauge with a crack before it reads as bands.
-- Lootbag and bagcapacity are both sacks: different fill and colour, but similar outlines.
+- Tierreward is the boxiest icon (ellipse 0.92/0.93, limit 0.96); the bow is what breaks the block.
+- Tierreward and seasonreward share one chest by design (closed with a ribbon, open with coins); at 32 pt the open lid and the star are what tell them apart.
+- Worthyourtime and lootbag are both sacks: one open, brown and brimming, the other tied, in leather with a star on its front. The patch on worthyourtime is faint under 48 pt.
+- Pages' three ruled lines merge into a tone at 32 pt; the fan, the seal and the ribbon carry it there.
+- `hud/star` and `resources/starlight` are both gold stars (one star against two struck ones).
 - The glints are still separate cream sparks (as in 1b).
 
 ### Half done
@@ -99,11 +93,15 @@ None.
 ### Open hypotheses
 
 - The client may show `icons_256` at sizes other than 96 pt. If so, the outline is 2 pt only at 96.
+- No client code names the six new icons yet; their callers will choose `icons_48` or `icons_256` by size.
 
 ### Next step
 
-1. The lead merges P1-AIA2-icons-2a at ac4809ed.
-2. P1-AIA2-icons-2b, starting with the gate's three notes on 2a.
+1. The lead runs the Icons gate on P1-AIA2-icons-2b at the requested commit and merges.
+2. If the gate fails a quality: fix what its notes name, rebake, run `check_icons.py` and the pre-check again.
+3. Batches 3 and 4 stay deferred until the lead opens them.
+
+**For the lead.** Godot still writes `client/tests/a11y_motion_tests.gd.uid` on import in a fresh container; it is not tracked and not mine, so I deleted my copy again and did not commit it.
 
 ## Tried and failed
 
@@ -130,3 +128,7 @@ None.
 - 2026-11-04 Lootbag's star flush with the sack and a glossy dark leather: the star was buried and the gloss read as a smudge. The star now stands proud of the sack (z 1.12), the leather is matt and lighter.
 - 2026-11-09 Software canvases as the cure for the grow's octagon: the lead's container still baked `crew/pip` differently in high contrast. Hundreds of `drawImage` stamps are not the same on every canvas backend; the grow is now computed on the pixels.
 - 2026-11-09 The pixel grow on a canvas the size of the render: outlines were cut where a shape touches the render's edge (the stamps had spilled past it). The grown canvas is now wider by the radius.
+- 2026-11-10 Worth your time as a smooth lathed sack with a plain lip: it read as a clay pot. A slumped profile, a tie cord with a knot and two loose ends, and a stitched patch make it cloth.
+- 2026-11-10 Lootbag's body with a gloss of 0.25 to lift it in grayscale: the gloss band sat on the leather as a grey smudge above the star (the same fault as on 4 November). The body is matt again; a paler rim light, a lighter ruffle and a hem in the rim leather do the lifting.
+- 2026-11-10 Baking while `client/build.sh` was importing in the same container: Godot read `icons_48_hc.webp` half written and rewrote its `.import` file with `valid=false`. Restore the `.import` files with `git checkout` after such a bake; `git diff --stat -- client/ui/art/*.import` must be empty before a commit.
+
