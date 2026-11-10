@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-10T07:40:00Z",
   "lease_until": "2026-11-10T10:40:00Z",
-  "updated_at": "2026-11-10T08:20:24Z",
-  "expected_next_update_by": "2026-11-10T09:05:24Z",
+  "updated_at": "2026-11-10T08:36:47Z",
+  "expected_next_update_by": "2026-11-10T09:21:47Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "0ce3c751",
-    "next_step": "P1-K1-switch-rest: M4 read. origin/claude/ui-artist at 00571a44 (P1-AIA-kit-6) merged into claude/ui-bake; AIA-R19 wired (the seven shapes drawn by their own name, KitSkin.OWN_SHAPE_ONLY now pill_gold_edge and green_muted); the 19 kit tests pass. Next: budgets, catalogue, guard, pre-check on that head, then ready."
+    "next_step": "P1-K1-switch-rest: M4 and M5 read (the owner's order of 10 November, 08:28Z: finish the task and stop). Head e012f9ff: ui-artist 00571a44 merged, AIA-R19 wired, 19 kit tests pass, budgets unchanged, catalogue rebuilt, ui guard: OK. Pre-check running on e012f9ff; on PASS by 09:45Z ready, else a save point. Then stopped; no new task."
   },
   "precheck": {
     "sha": "0ce3c751cbdea99a384fd82046cf5c5c1b427dbb",
@@ -26,7 +26,8 @@
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M2",
-    "M4"
+    "M4",
+    "M5"
   ],
   "requests": [
     {
@@ -257,5 +258,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-switch-rest: M4 read. origin/claude/ui-artist at 00571a44 (P1-AIA-kit-6) merged into claude/ui-bake; AIA-R19 wired (the seven shapes drawn by their own name, KitSkin.OWN_SHAPE_ONLY now pill_gold_edge and green_muted); the 19 kit tests pass. Next: budgets, catalogue, guard, pre-check on that head, then ready."
+  "next_step": "P1-K1-switch-rest: M4 and M5 read (the owner's order of 10 November, 08:28Z: finish the task and stop). Head e012f9ff: ui-artist 00571a44 merged, AIA-R19 wired, 19 kit tests pass, budgets unchanged, catalogue rebuilt, ui guard: OK. Pre-check running on e012f9ff; on PASS by 09:45Z ready, else a save point. Then stopped; no new task."
 }
