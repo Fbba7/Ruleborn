@@ -26,7 +26,15 @@ export default {
     scene.add(bell);
     for (const side of [-1, 1]) {
       for (const [r, k] of [[1.3, 0.55]]) {
-        const arc = new THREE.Mesh(new THREE.TorusGeometry(r, 0.13, 16, 40, k * 1.3), S.toon('alarm_light', 'cream', 0.4));
+        // A fat glossy tube with a ball at each end, so the arc is a
+        // rounded solid and not a flat stroke.
+        const arc = new THREE.Group();
+        arc.add(new THREE.Mesh(new THREE.TorusGeometry(r, 0.15, 16, 40, k * 1.3), S.toon('alarm_light', 'cream', 1)));
+        for (const a of [0, k * 1.3]) {
+          const cap = ball(S, 0.15, 'alarm_light', 'cream');
+          cap.position.set(Math.cos(a) * r, Math.sin(a) * r, 0);
+          arc.add(cap);
+        }
         arc.rotation.z = side > 0 ? -k * 0.65 : Math.PI - k * 0.65;
         arc.position.set(-0.12, 0.08, 0.1);
         scene.add(arc);
