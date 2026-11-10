@@ -1,20 +1,19 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-10T09:30:00Z",
+  "updated_at": "2026-11-10T10:03:39Z",
   "expected_next_update_by": "2026-11-10T11:30:00Z",
   "cycle": 49,
   "merging": {
-    "candidate_sha": "0e98262b98678ba7eb1689c41a2c5b6c332b2526",
+    "candidate_sha": "6fb29341431b7da50d28b14a052fab0527ce6947",
     "task_ids": [
-      "P1-AIA-kit-6",
-      "P1-K1-switch-rest"
+      "P1-S1-pilot-1"
     ],
-    "started_at": "2026-11-10T09:30:00Z",
-    "expires_at": "2026-11-10T10:30:00Z"
+    "started_at": "2026-11-10T10:03:39Z",
+    "expires_at": "2026-11-10T11:10:00Z"
   },
   "last_merged": {
-    "task_id": "P1-K1-switch-heist",
-    "sha": "3ac50485"
+    "task_id": "P1-K1-switch-rest",
+    "sha": "e072364a"
   },
   "alerts": [
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
