@@ -909,12 +909,12 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "claimed",
+      "state": "working",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
         "claimed_at": "2026-11-09T22:27:00Z",
-        "lease_until": "2026-11-10T05:55:00Z"
+        "lease_until": "2026-11-10T06:55:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
@@ -924,7 +924,7 @@
         "client/tests/ui_kit_tests.gd",
         "client/ui/rb_box.gd"
       ],
-      "updated_at": "2026-11-10T02:55:00Z",
+      "updated_at": "2026-11-10T03:43:00Z",
       "updated_by": "lead"
     },
     {
@@ -1276,8 +1276,13 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-11-10T02:50:24Z",
+        "lease_until": "2026-11-10T05:50:24Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
@@ -1288,7 +1293,7 @@
         "client/ui/art/kit_2*.webp",
         "client/ui/art/kit_3*.webp"
       ],
-      "updated_at": "2026-11-10T02:55:00Z",
+      "updated_at": "2026-11-10T03:43:00Z",
       "updated_by": "lead"
     },
     {
@@ -1509,12 +1514,19 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "ready",
+      "claim": {
+        "agent": "AIA-2",
+        "branch": "claude/ui-artist-icons",
+        "claimed_at": "2026-11-10T02:52:00Z",
+        "lease_until": "2026-11-10T05:52:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "29e91db0",
+      "merged_sha": null,
+      "updated_at": "2026-11-10T03:43:00Z",
+      "updated_by": "lead"
     },
     {
       "id": "P1-S1-pilot-1",
