@@ -914,7 +914,7 @@
         "agent": "K1",
         "branch": "claude/ui-bake",
         "claimed_at": "2026-11-09T22:27:00Z",
-        "lease_until": "2026-11-10T01:27:00Z"
+        "lease_until": "2026-11-10T05:55:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
@@ -924,7 +924,7 @@
         "client/tests/ui_kit_tests.gd",
         "client/ui/rb_box.gd"
       ],
-      "updated_at": "2026-11-10T02:10:00Z",
+      "updated_at": "2026-11-10T02:55:00Z",
       "updated_by": "lead"
     },
     {
@@ -1233,6 +1233,62 @@
         "client/ui/art/kit_3*.webp"
       ],
       "updated_at": "2026-11-10T02:10:00Z",
+      "updated_by": "lead"
+    },
+    {
+      "id": "P1-AIA-kit-6",
+      "title": "Kit art, batch 2c: the fixes the gate asked of batch 2b (verdict P1-AIA-kit-5/51269c72.json, Colour roles and value failed 3 of 3) and K1-R14 parts 1 and 2: the selected faces of segmented_on and chip_on, the claimed tile and the chart's bars stop using the main action's gold fill and are told by value and shape, not hue alone; chip and segment labels outlined the same way on every plate; disc_school baked into the kit's atlas pages; a shape of their own name (or restyled words) for album, fact, plate, bar_track_light, tag, island_label, pill_gold_edge, banner_success and green_muted, and tag__tag_warn's shape agreeing with tag_warn's dark words",
+      "role": "AIA",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/kit/**",
+        "client/ui/art/kit.webp",
+        "client/ui/art/kit_hc.webp",
+        "client/ui/art/kit.json",
+        "client/ui/art/kit*.import"
+      ],
+      "deps": [
+        "P1-AIA-kit-5"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "the gate's notes on P1-AIA-kit-5 (verdicts/P1-AIA-kit-5/51269c72.json) answered one by one in the handoff",
+        "K1-R14 part 1: disc_school is a piece in client/ui/art/kit.json; part 2: each of the nine materials has a baked shape of its own name or a note in the handoff saying why it stays code-drawn",
+        "the catalogue's coverage test finds a piece for every skin",
+        "self-score against gate/rubric.md in the handoff (M1)",
+        "gate: Kit art",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 1,
+      "model": "Fable 5.2",
+      "gate_items": [
+        {
+          "item": "kit catalogue sheet, batch 2c, at phone size",
+          "qualities": [
+            "Layered materials",
+            "Display type",
+            "Colour roles and value",
+            "Light behind UI"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "exceptions": [
+        "art/ui/kit_build/**",
+        "art/ui/palette.json",
+        "client/ui/art/kit_2*.webp",
+        "client/ui/art/kit_3*.webp"
+      ],
+      "updated_at": "2026-11-10T02:55:00Z",
       "updated_by": "lead"
     },
     {
