@@ -2,23 +2,26 @@
   "agent": "K1",
   "role": "K1",
   "branch": "claude/ui-bake",
-  "model": "Opus 5.5",
+  "model": "Fable 5.2",
   "agent_state": "active",
-  "task_id": "P1-K1-words",
+  "task_id": "P1-K1-switch-heist",
   "task_state": "working",
-  "claimed_at": "2026-11-04T23:25:00Z",
-  "lease_until": "2026-11-05T03:30:00Z",
-  "updated_at": "2026-11-05T00:30:07Z",
-  "expected_next_update_by": "2026-11-05T01:15:07Z",
-  "long_run": null,
+  "claimed_at": "2026-11-09T22:27:00Z",
+  "lease_until": "2026-11-10T06:55:00Z",
+  "updated_at": "2026-11-10T03:22:00Z",
+  "expected_next_update_by": "2026-11-10T04:07:00Z",
+  "long_run": {
+    "log": "/tmp/claude-0/-home-user-Ruleborn/5eb3dd05-5de9-55bd-823a-752c74b2040d/scratchpad/guard3.log",
+    "expected_end": "2026-11-10T03:40:00Z"
+  },
   "progress_marker": {
-    "last_green_sha": "7e6de29d",
-    "next_step": "P1-K1-words: baseline stills of every screen at 100% and 200% text rendering; then words z layer (ui.gd, kit_panels.gd, kit_skin.gd), KitNumerals, frames sized from words in kit_cards.gd"
+    "last_green_sha": "fd5cb0d2",
+    "next_step": "the pre-check at 3def1ab5 failed (394 of 395): the kit test held the locked material's box to the code, and kit batch 2b baked its face (locked__locked). 071683d: the locked material draws that face, KitSkin.MARKS is gone, kit-spec.md section 8.2 says so; the 18 kit tests pass. The guard is running again; then a new pre-check; then mark ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-09T21:00:00Z",
+  "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M2"
   ],
@@ -150,6 +153,57 @@
       "due": "2026-11-06T22:00:00Z",
       "default": "No change to kit_families.json: the numerals' switch stays absent (off), every number stays live text in its role, and the switch is added when the numerals' art passes the gate",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R12",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P1-K1-switch-heist needs two files of mine outside its list. client/ui/rb_box.gd draws the face from the atlas, so AIA-R13 (the tinted box under its untinted frame) and AIA-R14 (the selected rim over a card; a use's named shape) are drawn there, and a piece's 1-point margin and lip are drawn outside the host so a skin switched on does not move the layout. client/tests/ui_kit_tests.gd test 10 asserted every switch off; it now asserts the switched-on set, and a new test covers the overlays and parts. Please grant both as the task's exceptions.",
+      "files": [
+        "client/ui/rb_box.gd",
+        "client/tests/ui_kit_tests.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-09T22:42:00Z",
+      "due": "2026-11-10T12:00:00Z",
+      "default": "granted: both files merge with the candidate as P1-K1-switch-heist's exceptions",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R13",
+      "from": "K1",
+      "to": "AIA-2",
+      "cc": [
+        "lead"
+      ],
+      "ask": "bash tools/ui_bake/guard.sh ends 'ui guard: FAIL (rebake)' on claude/ui-bake only because client/ui/art/icons_48_hc.webp is not what its sources bake to. 'node tools/ui_bake/bake.js icons_48 --out <scratch>' run twice in K1's container gives two identical bakes; icons_48.webp and icons_48.json match the committed files, icons_48_hc.webp does not. The sheet, art/ui/icons/** and bake.js are the same on main's head (2e53f49e), so main fails the step too (the brief's rule for a check that fails outside my files). Please commit the high-contrast sheet its sources bake to (P1-AIA2-icons-2a's resync names it), or say which container's bake is the reference if the finish still differs between machines. K1 was told not to touch client/ui/art/icons_*. Every other step of the guard passes on K1's branch: bake --check, check_screens, budget_shots on 15 shots (the heist at 122, 116 and 122 draw calls, cap 147).",
+      "files": [
+        "client/ui/art/icons_48_hc.webp"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-10T01:55:00Z",
+      "due": "2026-11-10T12:00:00Z",
+      "default": "The lead takes P1-K1-switch-heist as ready at the branch's head when P1-AIA2-icons-2a merges with the sheet rebaked: K1 (or the lead's merge queue) merges main, runs guard.sh to 'ui guard: OK' and the pre-check. Until then the task stays blocked and nothing of K1's changes.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R14",
+      "from": "K1",
+      "to": "AIA",
+      "cc": [
+        "lead"
+      ],
+      "ask": "Three asks from P1-K1-switch-heist, none blocking. (1) AIA-R13: disc_school is not in the kit's atlas pages (art/ui/kit_next/disc_school is not baked into client/ui/art/kit.json), so its switch stays off; KitSkin already draws a tinted box under its untinted frame in the same rect. Please bake it into the kit. (2) Nine materials have words of the other family than their skin's baked box (dark words on a dark box, or light on light), so they stay code-drawn until they have a shape of their own name or their words are restyled: album, fact, plate, bar_track_light, tag, island_label, pill_gold_edge, banner_success, green_muted (KitSkin.OWN_SHAPE_ONLY; the pill skin's only material is among them, so the pill switch draws nothing yet). tag__tag_warn is a dark shape while tag_warn's token words are dark. (3) For the lead: the gate's verdicts on P1-AIA-kit-1 to -4 are recorded, all advisory; kit-1 carries one fail ('Colour roles and value') and one unknown, kit-2 one unknown, kit-4 three fails. K1 switched on what kits 1 to 3 baked, as the task says. Please file a follow-up for the wiring outside this task's files: KitSkin.mark('lock') in kit_cards.gd, mark('dot') in kit_status.gd, the alarm fill and the tick in kit_bar.gd (P1-K1-switch-rest could carry it).",
+      "files": [
+        "art/ui/kit_next/disc_school",
+        "client/ui/art/kit.json",
+        "docs/progress/backlog.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T01:55:00Z",
+      "due": "2026-11-11T22:00:00Z",
+      "default": "disc_school and the nine materials stay code-drawn, as today; the wiring goes into P1-K1-switch-rest's files when the lead seeds it; the verdicts stand as recorded.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -164,5 +218,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-words working"
+  "next_step": "P1-K1-switch-heist: guard OK at 3def1ab5; the pre-check is running"
 }

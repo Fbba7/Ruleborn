@@ -267,32 +267,32 @@
     },
     "recorded": {
       "character/100": {
-        "draw_calls": 112,
+        "draw_calls": 107,
         "texture_bytes": 2558016,
         "words_below": 0
       },
       "character/200": {
-        "draw_calls": 87,
+        "draw_calls": 84,
         "texture_bytes": 2558016,
         "words_below": 0
       },
       "character/hc": {
-        "draw_calls": 112,
+        "draw_calls": 107,
         "texture_bytes": 2558016,
         "words_below": 0
       },
       "heist/100": {
-        "draw_calls": 126,
+        "draw_calls": 122,
         "texture_bytes": 2499264,
         "words_below": 0
       },
       "heist/200": {
-        "draw_calls": 120,
+        "draw_calls": 116,
         "texture_bytes": 2333376,
         "words_below": 0
       },
       "heist/hc": {
-        "draw_calls": 126,
+        "draw_calls": 122,
         "texture_bytes": 2499264,
         "words_below": 0
       },
@@ -312,32 +312,32 @@
         "words_below": 0
       },
       "result/100": {
-        "draw_calls": 97,
+        "draw_calls": 95,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "result/200": {
-        "draw_calls": 94,
+        "draw_calls": 91,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "result/hc": {
-        "draw_calls": 97,
+        "draw_calls": 95,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "settings/100": {
-        "draw_calls": 62,
+        "draw_calls": 55,
         "texture_bytes": 1327168,
         "words_below": 0
       },
       "settings/200": {
-        "draw_calls": 58,
+        "draw_calls": 49,
         "texture_bytes": 1244224,
         "words_below": 0
       },
       "settings/hc": {
-        "draw_calls": 62,
+        "draw_calls": 55,
         "texture_bytes": 1327168,
         "words_below": 0
       }
