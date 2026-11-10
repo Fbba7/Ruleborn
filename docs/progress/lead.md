@@ -515,6 +515,65 @@ Your session was created with the repository checked out at main; work in that c
     (`client/tests/shots/ui_kit_catalogue.gd`,
     `client/tests/shots/ui_kit_pages.gd`); no game screen shows it, and
     no test caught it.
+  - **Correction and addition to the fault above** (the overseer, 10
+    November 2026 at about 19:40Z, on the owner's "Continue deeply";
+    read from the history and the code, not proven by a run, because
+    Godot is not in the overseer's container):
+    - **The fault did not come in with `e072364a`.** The skin `disc` was
+      switched on in `client/ui/kit_families.json` by `5274fba5` (9
+      November, 22:41Z, "Switch on the kit's gated skins"), which reached
+      main with the merge `3ac50485` (P1-K1-switch-heist, 10 November,
+      07:33Z). The catalogue's pages 27, 44 and 45 on main were last
+      rendered on 4 November, before the switch. K1 rebuilt the English
+      pages in `53a14e17`, merged in `e072364a`: that is when the stills
+      first showed the fault, not when the code got it.
+    - **How it happens.** `KitSkin.SKINS` maps six looks to the skin
+      `disc`: `disc`, `icon_disc`, `level_disc`, `gem`, `round_sky` and
+      `round_violet` (`client/ui/kit_skin.gd`). The skin's pieces
+      (`disc__box__<state>`) are sprites with no 9-slice, and
+      `RbBox._draw_piece` draws a sprite as wide as its host, from the
+      host's top, whatever the host's shape. On a round host that is
+      right. On a bar track or an oval button it is a disc as wide as the
+      host.
+    - **Part K45 (the product card) has it too, and was not recorded.**
+      Catalogue pages 44 and 45, English, normal, 100%: the Buy button
+      (`KitCards.product`, `look` default `round_violet`,
+      `client/ui/kit_cards.gd`) is drawn as a disc as wide as the button.
+      It runs past the card and covers the state's caption in the states
+      N, P, D (page 44) and S (page 45). State L (the teal oval) is
+      right.
+    - **"No game screen shows it" above is not established.** One game
+      screen dresses a host that is not round in a look of the disc skin:
+      the observatory's "echo" ribbon
+      (`client/scripts/observatory_screen.gd`, `_ribbon`, the look
+      `round_violet` on `OverlayHud.pill`, a pill). No still of the
+      observatory was rendered after the switch, so whether it shows the
+      fault is not known; the fix task renders it. The product card and
+      the storage bar are called only by the catalogue, the sample pages
+      and the tests today. Two more uses were read and look right: the
+      week streak's prize tile (`client/ui/kit_hud.gd`, `round_violet`)
+      is nearly square and draws as a disc on page 41, and the heist
+      HUD's law chip uses `icon_disc` on a round host.
+    - **Ruled out, by the diff `8e5cab5e..312b1a12`:** the switch file
+      (`disc` was already on), the atlas manifest (the five disc pieces
+      did not change), the callers (`KitCards.product` and
+      `KitStatus.resource` did not change) and the catalogue test.
+    - **What the fix task should deliver** (K1's files): the disc's
+      sprite draws only on a round host, or `round_sky` and
+      `round_violet` stop mapping to the sprite on a host that is not
+      round (K1 decides and writes why); a test in
+      `client/tests/ui_kit_tests.gd` that fails on main today; pages 27,
+      44 and 45 rendered again in all eight variants, with a still of
+      each game screen the fix changes. From then on, a task that
+      switches a skin on renders again every catalogue page that skin
+      changes, in the same task.
+    - **An older fault on page 42 (part K43, the quest card), not from
+      this wave:** the claim button's words run past the button's right
+      edge in the states claim N, P and A. The page at `8e5cab5e` shows
+      the same. It can ride with the fix above or follow it.
+    - The scan behind this: all 46 English pages (normal, 100%) at
+      `312b1a12`. Pages 1 to 26, 28 to 41, 43 and 46 show no fault. The
+      Portuguese, high-contrast and 200% variants were not scanned.
   - The pilot heist's gate verdict has 5 passes of 16, not 4: the cycle
     50 entry above lists five (Layered materials at 100%, Painted or
     rendered icons at 100%, Light behind UI at both sizes, One
