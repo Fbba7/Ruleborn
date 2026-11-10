@@ -3,34 +3,26 @@ extends VBoxContainer
 ## §21.8's heist layout, top row: "Clock and alarm meter at the top centre;
 ## loot at the top right as two numbers, what the bags can still take and what
 ## is left to load (12.19), beside the Vault's progress; the law banner at the
-## top left". Drawn as the Screens v3 heist draws it: dark glass pills over
-## the world with ink outlines, the clock in Lilita One counting down and
-## turning red in its last 30 seconds, the alarm as six bells, amber to three
-## and red from four, with "N / 6" beside them so the level never rests on
-## colour (§20.8); the loot as its two numbers with the bags' fill and the
-## Vault's cracking as bars; each law running in the realm as a chip with its
-## school's shape. Three columns, left, centre and right; with §20.8's large
-## text their words wrap rather than outgrow the phone.
+## top left". Built from the kit alone (docs/art/ui-quality/kit-spec.md 6.3):
+## the clock is KitHud.clock, counting down and turning to the alarm's red
+## plate in its last 30 seconds; the alarm is KitHud.alarm, six bells with
+## "N / 6" written beside them so the level never rests on colour (§20.8);
+## the loot is KitHud.loot, its two numbers over the bags' fill, with the
+## Vault's cracking as a second bar while it is shut; each law running in the
+## realm is a KitCards.law_chip. The kit's pieces are built whole, so a piece
+## whose state changes is built again in its place. Three columns, left,
+## centre and right; with §20.8's large text the loot stands under the laws.
 
 ## §21.8: the clock turns red in its last 30 seconds.
 const RED_SECONDS := 30
 const BELLS := 6
-## The loot panel's names: the design's soft lilac, light enough to read on
-## the leather at §21.10's level.
-const SOFT_INK := Color("#E2DAF8")
-
-## Each law icon measured dark or not (dark_icon).
-static var _dark := {}
+## How many coins fly to the loot at most, and how long each takes (seconds).
+const COINS := 6
+const FLIGHT := 0.6
 
 var clock_label: Label
 var alarm_label: Label
-## The loot panel's two numbers (§21.8, 12.19): what the bags can still
-## take, and what is left to load ("?" until the Vault opens, 12.6).
-var room_label: Label
-var left_label: Label
 var loot_panel: PanelContainer
-## "Load to N%" under the bar (§12.5's load target).
-var load_label: Label
 ## §12.5's load target the screen gives, and the target card's rough loot
 ## estimate (12.4), -1 when the heist has none: "Left" says it until the
 ## Vault opens, and "?" without one. No load target (a replay) shows no
@@ -43,22 +35,20 @@ var realm_label: Label
 var laws_box: VBoxContainer
 var clock_panel: PanelContainer
 var alarm_panel: PanelContainer
-var meter: FxDraw
-var loot_bars: FxDraw
 
 var _alarm := 0
-var _bags := 0.0
-var _cracked := 0.0
 var _open := false
 var _vault_full := -1
 var _laws_key := ""
+var _loot_key := ""
 var _red := false
-## Seconds left of the bells' shake after the alarm rose.
-var _ring := 0.0
 var _time := 0.0
-## Coins on their way to the loot panel: {from: Vector2 (global), t: float}.
+## The loot's bars: the bags' fill and, while the Vault is shut, its cracking.
+var _load: KitBar
+var _crack: KitBar
+## Coins on their way to the loot panel: {from: Vector2 (global), t: float,
+## coin: Control}.
 var _flights: Array[Dictionary] = []
-var _coins: FxDraw
 
 
 func _init() -> void:
@@ -71,193 +61,148 @@ func _init() -> void:
 	top.add_theme_constant_override("separation", UI.px(4))
 	add_child(top)
 	var large := Settings.text_scale > 130
-	# The law banner, top left.
-	var left := _side(top, BoxContainer.ALIGNMENT_BEGIN)
-	# The designs': "Laws here" in gold, a leather chip for each law.
+	# The law banner, top left: "Laws here" over a chip for each law.
+	var left := _side(top)
 	var laws := VBoxContainer.new()
+	laws.name = "Laws"
 	laws.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	laws.add_theme_constant_override("separation", UI.px(4))
-	# The chips share the column's width, as the designs': a name lies on one line
-	# wherever the column has room for it.
-	laws.size_flags_horizontal = Control.SIZE_FILL
-	var here := FxSkin.label(Strings.t("HUD_LAWS_HERE"), 14.0)
-	here.add_theme_color_override("font_color", FxSkin.GOLD)
-	here.add_theme_constant_override("outline_size", UI.px(3))
+	laws.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	var here := UI.label(Strings.t("HUD_LAWS_HERE"), 16)
+	here.theme_type_variation = "DisplayS"
+	here.add_theme_color_override("font_color", Tokens.color("gold_top"))
 	here.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	here.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	laws.add_child(here)
 	laws_box = VBoxContainer.new()
 	laws_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	laws_box.add_theme_constant_override("separation", UI.px(5))
 	laws.add_child(laws_box)
-	laws.name = "Laws"
 	laws.visible = false
 	left.add_child(laws)
-	# The clock in its pill, the alarm's bells beneath.
+	# The clock on its plate, the alarm's bells beneath.
 	var centre := VBoxContainer.new()
 	centre.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	centre.add_theme_constant_override("separation", UI.px(3))
 	centre.alignment = BoxContainer.ALIGNMENT_BEGIN
 	centre.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	# The clock on cream with a gold rim, in tabular figures; the alarm on
-	# leather beneath it: its word and "N / 6", six segments under them.
-	clock_panel = _surface("parchment", true)
-	clock_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	clock_label = FxSkin.label("", 26.0, "parchment")
-	clock_label.add_theme_font_override("font", FxSkin.figures())
-	clock_label.custom_minimum_size.x = UI.px(76)
-	clock_panel.add_child(clock_label)
-	centre.add_child(clock_panel)
-	var alarm := _surface("leather")
-	alarm_panel = alarm
-	var alarm_box := VBoxContainer.new()
-	alarm_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	alarm_box.add_theme_constant_override("separation", UI.px(3))
-	var alarm_row := HFlowContainer.new()
-	alarm_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	alarm_row.add_theme_constant_override("h_separation", UI.px(8))
-	var alarm_word := FxSkin.label(Strings.t("HUD_ALARM_WORD"), 14.0)
-	alarm_word.add_theme_color_override("font_color", FxSkin.PARCH_TOP)
-	alarm_word.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	alarm_word.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	alarm_row.add_child(alarm_word)
-	alarm_label = FxSkin.label("", 14.0)
-	alarm_label.add_theme_font_override("font", FxSkin.figures())
-	alarm_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	alarm_row.add_child(alarm_label)
-	alarm_box.add_child(alarm_row)
-	meter = FxDraw.new(_draw_meter, Vector2(UI.px(13) * BELLS, UI.px(12)))
-	alarm_box.add_child(meter)
-	alarm.add_child(alarm_box)
-	centre.add_child(alarm)
 	top.add_child(centre)
-	# The loot, top right: two numbers and the bars beside them.
-	# With large text it stands under the law banner instead, its rows kept
-	# whole, so the column stays above the hand's controls.
-	var right_side := left if large else _side(top, BoxContainer.ALIGNMENT_END)
-	var right := _surface("leather")
-	right.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN if large else Control.SIZE_SHRINK_END
-	loot_panel = right
-	var right_box := VBoxContainer.new()
-	right_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	right_box.add_theme_constant_override("separation", UI.px(3))
-	right_box.custom_minimum_size.x = UI.px(84)
-	# A row each: its name, and the number at the row's end.
-	room_label = _stat(right_box, Strings.t("HUD_ROOM"), true)
-	left_label = _stat(right_box, Strings.t("HUD_LEFT"), true)
-	# The design's slim bar: the bags' fill with a white tick at the load
-	# target, "Load to N%" under it; while the Vault is shut its cracking
-	# as a thinner bar beside a lock, so its progress is always on screen.
-	loot_bars = FxDraw.new(_draw_bars, Vector2(UI.px(56), UI.px(16)))
-	loot_bars.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right_box.add_child(loot_bars)
-	load_label = FxSkin.label("", 13.0)
-	load_label.add_theme_color_override("font_color", SOFT_INK)
-	load_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	load_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	right_box.add_child(load_label)
-	right.add_child(right_box)
-	right_side.add_child(right)
-	realm_label = FxSkin.label("", 14.0)
-	realm_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	realm_label.visible = false
-	var realm_panel := FxSkin.panel("glass", 12.0, 6.0)
-	realm_panel.add_child(realm_label)
+	clock_panel = PanelContainer.new()
+	centre.add_child(clock_panel)
+	_build_clock("0:00")
+	alarm_panel = PanelContainer.new()
+	centre.add_child(alarm_panel)
+	_build_alarm()
+	# The loot, top right; with large text under the law banner instead, so
+	# the column stays above the hand's controls.
+	var right := left if large else _side(top)
+	loot_panel = PanelContainer.new()
+	loot_panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN if large else Control.SIZE_SHRINK_END
+	right.add_child(loot_panel)
+	_build_loot("", "?", "", 0.0, 0.0)
+	var realm_panel := KitStatus.hint("")
 	realm_panel.name = "Realm"
 	realm_panel.visible = false
+	realm_label = realm_panel.get_node("Words")
+	realm_label.visible = false
 	add_child(realm_panel)
 
 
-## One of the loot panel's numbers: its name, and the number in tabular
-## figures at the row's end (wrapping under it unless `whole`); returns the
-## number's label.
-func _stat(box: VBoxContainer, title: String, whole := false) -> Label:
-	var row: Container = HFlowContainer.new()
-	if whole:
-		row = HBoxContainer.new()
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation" if whole else "h_separation", UI.px(3))
-	var name_label := FxSkin.label(title, 14.0)
-	# The design's: the name in soft lilac, the number in warm cream.
-	name_label.add_theme_color_override("font_color", SOFT_INK)
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(name_label)
-	var number := FxSkin.label("", 16.0)
-	number.add_theme_font_override("font", FxSkin.figures())
-	number.add_theme_color_override("font_color", FxSkin.PARCH_BOTTOM)
-	number.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	number.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(number)
-	box.add_child(row)
-	return number
-
-
-## A HUD surface in the kit's material (§21.8's leather or parchment over
-## the world), gold-rimmed as the designs' clock when asked.
-static func _surface(look: String, gold_rim := false) -> PanelContainer:
-	var p := UI.panel(look)
-	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	# Tighter than a page's panels: the HUD's three columns share the phone.
-	p.add_theme_stylebox_override("panel", UI.clear_box(7, 6))
-	if gold_rim:
-		_gold_rim(p)
-	return p
-
-
-static func _gold_rim(p: Control) -> void:
-	var box := RbBox.of(p)
-	if box != null and box.material is ShaderMaterial:
-		(box.material as ShaderMaterial).set_shader_parameter("rim_color", FxSkin.GOLD)
-		(box.material as ShaderMaterial).set_shader_parameter("rim_w", UI.px(3.5))
-
-
-## Words that wrap between words: on one line when it fits the column (the
-## designs' chips), else as narrow as their longest word, so a long law's
-## name wraps the line rather than breaking a word; with §20.8's large text a
-## word too long for its column breaks rather than outgrow the phone.
-static func _wrap_by_words(l: Label) -> void:
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var font := l.get_theme_font("font")
-	var px := l.get_theme_font_size("font_size")
-	var widest := 0.0
-	for w: String in l.text.replace("\n", " ").split(" ", false):
-		widest = maxf(widest, font.get_string_size(w, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x)
-	var line := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
-	var cap := UI.px(100) * maxf(1.0, Settings.text_scale / 100.0)
-	l.custom_minimum_size.x = minf(ceilf(line if line <= UI.px(88) else widest) + 2.0, cap)
-
-
-## A side column of the top row: it takes what room there is and holds its
-## panel to its edge.
-func _side(top: HBoxContainer, edge: BoxContainer.AlignmentMode) -> VBoxContainer:
+## A side column of the top row: it takes what room there is.
+func _side(top: HBoxContainer) -> VBoxContainer:
 	var v := VBoxContainer.new()
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.alignment = BoxContainer.ALIGNMENT_BEGIN
-	v.set_meta("edge", edge)
 	top.add_child(v)
 	return v
+
+
+## Puts a kit piece built afresh where `old` stood, keeping its place, how it
+## sits in its column and its spoken name. The HUD lies over the world, so
+## no part of it takes a touch.
+func _swap(old: Control, piece: Control) -> void:
+	var parent := old.get_parent()
+	var at := old.get_index()
+	piece.size_flags_horizontal = old.size_flags_horizontal
+	piece.accessibility_name = old.accessibility_name
+	parent.remove_child(old)
+	old.queue_free()
+	parent.add_child(piece)
+	parent.move_child(piece, at)
+	_through(piece)
+
+
+static func _through(node: Node) -> void:
+	if node is Control:
+		(node as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for c in node.get_children():
+		_through(c)
+
+
+func _build_clock(text: String) -> void:
+	var piece := KitHud.clock(text, _red)
+	piece.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	clock_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_swap(clock_panel, piece)
+	clock_panel = piece
+	clock_label = piece.get_node("Time")
+
+
+func _build_alarm() -> void:
+	var piece := KitHud.alarm(_alarm, BELLS, Strings.t("HUD_ALARM_WORD"))
+	_swap(alarm_panel, piece)
+	alarm_panel = piece
+	alarm_label = piece.find_children("*", "Label", true, false)[1]
+	if _alarm >= BELLS / 2 + 1:
+		# Red from four, as its bells; the number says the level either way.
+		alarm_label.add_theme_color_override("font_color", Tokens.color("alarm_text_on_night"))
+	alarm_panel.accessibility_name = Strings.t("HUD_ALARM", alarm_label.text)
+
+
+## The loot panel: its two numbers, the bags' fill with a tick at the load
+## target and "Load to N%" under it; while the Vault is shut its cracking as
+## a thinner bar beside the Vault's icon, so its progress is always on
+## screen (§12.19: the bars say which binds first).
+func _build_loot(room: String, left: String, load_words: String, bags: float, cracked: float) -> void:
+	var piece := KitHud.loot([[Strings.t("HUD_ROOM"), room], [Strings.t("HUD_LEFT"), left]], bags,
+		load_target / 100.0, load_words)
+	_load = piece.find_child("Load", true, false)
+	(_load.get_node("Aim") as Control).visible = load_target >= 0
+	_crack = null
+	if not _open:
+		var row := HBoxContainer.new()
+		row.name = "Vault"
+		row.add_theme_constant_override("separation", UI.px(4))
+		var icon := Icons.view("heiststatus/vaultprogress", 16.0)
+		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(icon)
+		_crack = KitBar.make(cracked, Color(), 5.0)
+		_crack.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(_crack)
+		_load.add_sibling(row)
+	_swap(loot_panel, piece)
+	loot_panel = piece
+	loot_panel.accessibility_name = "%s %s, %s %s, %s" % [Strings.t("HUD_ROOM"), room, Strings.t("HUD_LEFT"), left,
+		load_words]
 
 
 func show_state(r: RulebornReplay) -> void:
 	var tps := RulebornReplay.ticks_per_second()
 	var left := maxi(0, (r.ticks() - r.tick()) / tps)
-	clock_label.text = "%d:%02d" % [left / 60, left % 60]
+	var time := "%d:%02d" % [left / 60, left % 60]
 	var red := r.ticks() > 0 and left <= RED_SECONDS
 	if red != _red:
 		_red = red
-		# The last 30 seconds in paper on the alarm's red; else ink on cream.
-		RbBox.of(clock_panel).set_look("red" if red else "parchment")
-		_gold_rim(clock_panel)
-		clock_label.add_theme_color_override("font_color", FxSkin.PARCH_TOP if red else FxSkin.PARCH_INK)
-		clock_label.add_theme_constant_override("outline_size", UI.px(3) if red else 0)
-	if r.alarm() > _alarm and r.tick() > 0:
-		_ring = 1.0
-	_alarm = r.alarm()
-	alarm_label.text = "%d / %d" % [_alarm, BELLS]
-	alarm_panel.accessibility_name = Strings.t("HUD_ALARM", alarm_label.text)
-	alarm_label.add_theme_color_override("font_color", FxSkin.ALARM_ON_DARK if _alarm >= 4 else FxSkin.ON_DARK)
-	meter.queue_redraw()
+		_build_clock(time)
+	else:
+		clock_label.text = time
+	if r.alarm() != _alarm:
+		var rose := r.alarm() > _alarm and r.tick() > 0
+		_alarm = r.alarm()
+		_build_alarm()
+		if rose and is_inside_tree():
+			Motion.pop(alarm_panel)
 	var carried := 0
 	var carry := 0
 	for m: Dictionary in r.crew():
@@ -265,97 +210,50 @@ func show_state(r: RulebornReplay) -> void:
 		carry += int(m["carry"])
 	var v := r.vault()
 	_open = bool(v.get("open", false))
-	room_label.text = ShopPresenter.grouped(carry - carried)
-	left_label.text = ShopPresenter.grouped(int(v.get("exposed", 0))) if _open \
+	var room := ShopPresenter.grouped(carry - carried)
+	var to_load := ShopPresenter.grouped(int(v.get("exposed", 0))) if _open \
 		else ("~" + ShopPresenter.grouped(estimate) if estimate >= 0 else "?")
-	load_label.text = Strings.t("HUD_LOAD_TO", load_target) if load_target >= 0 else ""
-	load_label.visible = load_target >= 0
-	loot_panel.accessibility_name = "%s %s, %s %s, %s" % [Strings.t("HUD_ROOM"), room_label.text,
-		Strings.t("HUD_LEFT"), left_label.text, load_label.text]
-	_bags = float(carried) / maxf(1.0, float(carry))
+	var load_words := Strings.t("HUD_LOAD_TO", load_target) if load_target >= 0 else ""
+	var bags := float(carried) / maxf(1.0, float(carry))
 	var health := int(v.get("health", 0))
 	if _vault_full < 0 or health > _vault_full:
 		_vault_full = health
-	_cracked = 1.0 if _open else 1.0 - float(health) / maxf(1.0, float(_vault_full))
-	loot_bars.queue_redraw()
+	var cracked := 1.0 if _open else 1.0 - float(health) / maxf(1.0, float(_vault_full))
+	var key := "%s|%s|%s|%s" % [room, to_load, load_words, _open]
+	if key != _loot_key:
+		_loot_key = key
+		_build_loot(room, to_load, load_words, bags, cracked)
+	else:
+		Motion.fill(_load, bags)
+		if _crack != null:
+			Motion.fill(_crack, cracked)
 	realm_label.text = realm(r.realm_code(), r.realms_to_go())
 	realm_label.visible = realm_label.text != ""
 	(realm_label.get_parent() as Control).visible = realm_label.visible
 	_show_laws(r)
 
 
-## The laws running in the realm: one chip a standing pylon's law, with its
-## school's shape (§21.8's law banner; §15.3).
+## The laws running in the realm: one chip a standing pylon's law, its icon
+## beside its name (§21.8's law banner; §15.3).
 func _show_laws(r: RulebornReplay) -> void:
-	var laws: Array[Dictionary] = []
+	var laws: Array[String] = []
 	for p: Dictionary in r.pylons():
 		if p.get("standing", false):
-			laws.append(p)
-	var key := ",".join(laws.map(func(p: Dictionary) -> String: return str(p.get("law", ""))))
+			laws.append(str(p.get("law", "")))
+	var key := ",".join(laws)
 	if key == _laws_key:
 		return
 	_laws_key = key
 	for c in laws_box.get_children():
+		laws_box.remove_child(c)
 		c.queue_free()
-	for p in laws:
-		var chip := HBoxContainer.new()
-		chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		chip.add_theme_constant_override("separation", UI.px(3))
-		var school := str(p.get("school", ""))
-		var icon := "laws/" + str(p.get("law", "")).replace("_", "")
-		if Icons.has(icon) and not dark_icon(icon):
-			# The law's own icon straight on the chip, as the design's.
-			var bare := Icons.view(icon, 24.0)
-			bare.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-			chip.add_child(bare)
-		elif Icons.has(icon):
-			# A dark icon (Glowing dark) on a light disc, so it reads on the
-			# leather.
-			var disc := PanelContainer.new()
-			disc.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			var ring := StyleBoxFlat.new()
-			ring.bg_color = FxSkin.PARCH_TOP
-			ring.border_color = FxSkin.INK_LINE
-			ring.set_border_width_all(maxi(2, UI.px(1.5)))
-			ring.set_corner_radius_all(UI.px(14))
-			ring.set_content_margin_all(UI.px(2))
-			disc.add_theme_stylebox_override("panel", ring)
-			disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-			disc.add_child(Icons.view(icon, 22.0))
-			chip.add_child(disc)
-		else:
-			chip.add_child(FxDraw.new(func(ci: Control) -> void:
-				FxIcons.school(ci, ci.size / 2.0, minf(ci.size.x, ci.size.y), school), Vector2(UI.px(20), UI.px(20))))
-		var words := FxSkin.label(Strings.term("LAW", str(p.get("law", ""))), 14.0)
-		words.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		_wrap_by_words(words)
-		words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		chip.add_child(words)
-		var plate := _surface("leather")
-		plate.add_child(chip)
-		laws_box.add_child(plate)
+	for law in laws:
+		var icon := "laws/" + law.replace("_", "")
+		var chip := KitCards.law_chip(icon if Icons.has(icon) else "", Strings.term("LAW", law))
+		chip.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		laws_box.add_child(chip)
+		_through(chip)
 	(laws_box.get_parent() as Control).visible = not laws.is_empty()
-
-
-## Whether an icon is mostly dark ink, which needs a light disc behind it
-## on the leather: its drawn pixels' mean lightness, measured once.
-static func dark_icon(icon: String) -> bool:
-	if _dark.has(icon):
-		return _dark[icon]
-	var image := Icons.texture(icon).get_image()
-	var light := 0.0
-	var drawn := 0.0
-	if image != null:
-		var small := image.duplicate() as Image
-		small.decompress()
-		small.resize(16, 16)
-		for y in 16:
-			for x in 16:
-				var c := small.get_pixel(x, y)
-				light += c.get_luminance() * c.a
-				drawn += c.a
-	_dark[icon] = drawn > 0.0 and light / drawn < 0.3
-	return _dark[icon]
 
 
 ## §21.8: "rewards fly into their counter": coins from a point on the screen
@@ -363,15 +261,17 @@ static func dark_icon(icon: String) -> bool:
 func fly_coins(from: Vector2, count: int) -> void:
 	if Settings.reduced_motion:
 		return
-	for k in clampi(count, 1, 6):
-		_flights.append({"from": from + Vector2(k * 9.0 - 20.0, -k * 6.0), "t": -k * 0.08})
+	for k in clampi(count, 1, COINS):
+		var coin := Icons.view("heiststatus/lootbag", 14.0)
+		coin.top_level = true
+		coin.z_index = 10
+		coin.visible = false
+		add_child(coin)
+		_flights.append({"from": from + Vector2(k * 9.0 - 20.0, -k * 6.0), "t": -k * 0.08, "coin": coin})
 
 
 func _process(delta: float) -> void:
 	_time += delta
-	_ring = maxf(0.0, _ring - delta)
-	if _ring > 0.0:
-		meter.queue_redraw()
 	if _red and not Settings.reduced_motion:
 		# The last 30 seconds pulse once a second (within §20.8's three
 		# flashes a second).
@@ -379,64 +279,30 @@ func _process(delta: float) -> void:
 		clock_panel.scale = Vector2.ONE * (1.0 + 0.05 * maxf(0.0, sin(_time * TAU)))
 	elif clock_panel.scale != Vector2.ONE:
 		clock_panel.scale = Vector2.ONE
-	if not _flights.is_empty():
-		for f in _flights:
-			f["t"] = float(f["t"]) + delta * 1.6
-		_flights = _flights.filter(func(f: Dictionary) -> bool: return float(f["t"]) < 1.0)
-		if _coins == null:
-			_coins = FxDraw.new(_draw_flights)
-			_coins.top_level = true
-			_coins.z_index = 10
-			add_child(_coins)
-		_coins.position = Vector2.ZERO
-		_coins.size = get_viewport_rect().size
-		_coins.queue_redraw()
-
-
-func _draw_flights(ci: Control) -> void:
-	var to := loot_bars.get_global_rect().position + Vector2(UI.px(8), UI.px(4))
+	if _flights.is_empty():
+		return
+	var to := _load.get_global_rect().position
 	for f in _flights:
-		var t := float(f["t"])
-		if t < 0.0:
-			continue
-		var from: Vector2 = f["from"]
-		var e := 1.0 - pow(1.0 - t, 3.0)
-		var p := from.lerp(to, e) + Vector2(0, -sin(t * PI) * 120.0)
-		FxIcons.coin(ci, p, UI.px(6) * (1.0 - 0.3 * t))
+		var t := float(f["t"]) + delta / FLIGHT
+		f["t"] = t
+		var coin: Control = f["coin"]
+		if t >= 1.0:
+			coin.queue_free()
+		elif t >= 0.0:
+			var from: Vector2 = f["from"]
+			var e := 1.0 - pow(1.0 - t, 3.0)
+			coin.visible = true
+			coin.global_position = from.lerp(to, e) + Vector2(0, -sin(t * PI) * 120.0) - coin.size / 2.0
+			coin.scale = Vector2.ONE * (1.0 - 0.3 * t)
+	_flights = _flights.filter(func(f: Dictionary) -> bool: return float(f["t"]) < 1.0)
 
 
-func _draw_meter(ci: Control) -> void:
-	var step := ci.size.x / BELLS
-	var gap := maxf(2.0, step * 0.12)
-	for i in BELLS:
-		var r := Rect2(Vector2(step * i + gap * 0.5, 0), Vector2(step - gap, ci.size.y))
-		if _ring > 0.0 and i < _alarm and not Settings.reduced_motion:
-			r.position.y += sin(_time * 40.0 + i) * ci.size.y * 0.12 * _ring
-		# The designs' segments: amber to three, red from four, dark when not
-		# yet reached, each with its ink edge.
-		var lit := i < _alarm
-		var box := StyleBoxFlat.new()
-		box.bg_color = (FxSkin.ALARM if i >= 3 else FxSkin.GOLD) if lit else Color("#1C1210")
-		box.border_color = FxSkin.INK_LINE
-		box.set_border_width_all(maxi(1, UI.px(1)))
-		box.set_corner_radius_all(int(ci.size.y * 0.3))
-		FxPen.style_box(ci, box, r)
-		if lit:
-			FxPen.rect(ci, Rect2(r.position + Vector2(r.size.x * 0.2, r.size.y * 0.18), Vector2(r.size.x * 0.6,
-				r.size.y * 0.16)), Color(1, 1, 1, 0.4))
-
-
-## The bags' fill and the Vault's cracking: the bars say which binds first
-## without a word (§12.19).
-func _draw_bars(ci: Control) -> void:
-	var h := UI.px(7)
-	var bags := Rect2(Vector2(0, UI.px(2)), Vector2(ci.size.x, h))
-	FxIcons.bar(ci, bags, _bags, FxSkin.GOLD, load_target / 100.0 if load_target >= 0 else -1.0)
-	if not _open:
-		var lock := Vector2(UI.px(5), bags.end.y + UI.px(5))
-		FxPen.circle(ci, lock, UI.px(3.5), Color("#9B8CF0"))
-		FxIcons.bar(ci, Rect2(Vector2(UI.px(11), bags.end.y + UI.px(3)), Vector2(ci.size.x - UI.px(11), UI.px(4))),
-			_cracked, Color("#9B8CF0"))
+## The designs' gold rim on a kit surface (the result's haul tile).
+static func _gold_rim(p: Control) -> void:
+	var box := RbBox.of(p)
+	if box != null and box.material is ShaderMaterial:
+		(box.material as ShaderMaterial).set_shader_parameter("rim_color", FxSkin.GOLD)
+		(box.material as ShaderMaterial).set_shader_parameter("rim_w", UI.px(3.5))
 
 
 ## The realm the crew is in across a universe, in words; "" for a heist of
