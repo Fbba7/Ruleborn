@@ -919,7 +919,13 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "exceptions": [
+        "client/tests/ui_kit_tests.gd",
+        "client/ui/rb_box.gd"
+      ],
+      "updated_at": "2026-11-10T02:10:00Z",
+      "updated_by": "lead"
     },
     {
       "id": "P1-K1-switch-rest",
@@ -935,7 +941,10 @@
         "client/tests/shots/ui_*.gd",
         "client/tests/golden/**",
         "docs/art/shots/ui-bake/**",
-        "docs/art/ui-quality/kit-spec.md"
+        "docs/art/ui-quality/kit-spec.md",
+        "client/ui/kit_cards.gd",
+        "client/ui/kit_status.gd",
+        "client/ui/kit_bar.gd"
       ],
       "deps": [
         "P1-K1-switch-heist",
@@ -943,6 +952,8 @@
       ],
       "done_when": [
         "AIA-R16: KitSkin draws batch 2a's pieces: ribbon as its tinted ribbon__box (vertex-coloured per school) under the untinted ribbon__frame at the same rect, and ribbon__chapter untinted, the words on the band's top 32 points; sheet__handle and sheet__handle_parchment as 42 x 9 point sprites centred by code 12 points below a sheet's top edge; frame_<rank>__box__<state> as a hollow 9-slice ring over the portrait's rect grown by 4 points each side; popup__box with its 8/4/12 point margin (plus the 5 point lip) over the scrim, its title a ribbon across the top edge; header__name_plate; panel_parchment__parchment_done",
+        "AIA-R18: KitSkin draws batch 2b's pieces: the toggle's track and knob, the slider's track, fill and knob, the heist tab's halo, the week bars, the tab bar and tab faces, the segmented bed and faces, and the chips",
+        "K1-R14 part 3: KitSkin.mark('lock') in kit_cards.gd, mark('dot') in kit_status.gd, the alarm fill and the tick in kit_bar.gd",
         "the gate's pass on P1-AIA-kit-4 and -5 recorded",
         "bash tools/ui_bake/guard.sh",
         "bash tools/check_all.sh"
@@ -959,7 +970,9 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "updated_at": "2026-11-10T02:10:00Z",
+      "updated_by": "lead"
     },
     {
       "id": "P1-AIA-kit-1",
@@ -1201,7 +1214,7 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "working",
+      "state": "merged",
       "claim": {
         "agent": "AIA",
         "branch": "claude/ui-artist",
@@ -1210,11 +1223,17 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
+      "ready_sha": "51269c72",
+      "merged_sha": "027379a2",
       "exceptions": [
-        "client/tests/ui_kit_tests.gd"
-      ]
+        "art/ui/kit_build/**",
+        "art/ui/palette.json",
+        "client/tests/ui_kit_tests.gd",
+        "client/ui/art/kit_2*.webp",
+        "client/ui/art/kit_3*.webp"
+      ],
+      "updated_at": "2026-11-10T02:10:00Z",
+      "updated_by": "lead"
     },
     {
       "id": "P1-AIA2-toon-route",
@@ -1381,7 +1400,7 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "working",
+      "state": "merged",
       "claim": {
         "agent": "AIA-2",
         "branch": "claude/ui-artist-icons",
@@ -1390,9 +1409,11 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": "6a382d97",
-      "merged_sha": null,
-      "resync_reason": "Cycle 45, candidate 3ebfb223: guard.sh FAILED, 'rebake differs: client/ui/art/icons_48_hc.webp is not what its sources bake to'. Only the piece crew__pip__normal differs (atlas box 2,2 to 130,130; 3603 pixels); icons_48.json, icons_48.webp and the kit rebake byte for byte, and main's own icons rebake byte for byte in the lead's container. Cause: finish.js's grow() stamps the outline and keyline with drawImage, which differs between containers. Make the grow pixel-computed (getImageData, a disc of radius r), rebake icons_48* and icons_256*, and show guard.sh green in a fresh container. The gate passed 12 of 12 (advisory; verdicts/P1-AIA2-icons-2a/6a382d97.json): the spotted starburst and the alarm's vibration arcs are the flattest, and the lootbag's dark body sits close to the ground in grayscale."
+      "ready_sha": "ac4809ed",
+      "merged_sha": "027379a2",
+      "resync_reason": "Cycle 45, candidate 3ebfb223: guard.sh FAILED, 'rebake differs: client/ui/art/icons_48_hc.webp is not what its sources bake to'. Only the piece crew__pip__normal differs (atlas box 2,2 to 130,130; 3603 pixels); icons_48.json, icons_48.webp and the kit rebake byte for byte, and main's own icons rebake byte for byte in the lead's container. Cause: finish.js's grow() stamps the outline and keyline with drawImage, which differs between containers. Make the grow pixel-computed (getImageData, a disc of radius r), rebake icons_48* and icons_256*, and show guard.sh green in a fresh container. The gate passed 12 of 12 (advisory; verdicts/P1-AIA2-icons-2a/6a382d97.json): the spotted starburst and the alarm's vibration arcs are the flattest, and the lootbag's dark body sits close to the ground in grayscale.",
+      "updated_at": "2026-11-10T02:10:00Z",
+      "updated_by": "lead"
     },
     {
       "id": "P1-AIA2-icons-2b",
