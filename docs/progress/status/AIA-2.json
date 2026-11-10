@@ -5,15 +5,15 @@
   "model": "Fable 5.2",
   "agent_state": "active",
   "task_id": "P1-AIA2-icons-2b",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-10T02:52:00Z",
   "lease_until": "2026-11-10T05:52:00Z",
-  "updated_at": "2026-11-10T02:52:00Z",
-  "expected_next_update_by": "2026-11-10T03:37:00Z",
+  "updated_at": "2026-11-10T03:00:00Z",
+  "expected_next_update_by": "2026-11-10T03:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "027379a2",
-    "next_step": "the six new icons of batch 2b: pages, tierreward, seasonreward, star, clean, worthyourtime"
+    "next_step": "run the pre-check, rewrite the handoff with the self-score, request the gate"
   },
   "precheck": null,
   "gate_request": null,
@@ -54,5 +54,5 @@
     }
   ],
   "answers": [],
-  "note": "P1-AIA2-icons-2b claimed (lead cycle 47); main merged into the branch."
+  "note": "P1-AIA2-icons-2b: the six new icons are baked and pass check_icons.py; the pre-check is next."
 }

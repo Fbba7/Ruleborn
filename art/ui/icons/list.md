@@ -55,12 +55,12 @@ Batches 3 and 4 are deferred (D13 (c)). The lead opens them.
 
 | # | Icon | Object | 256 |
 |---|---|---|---|
-| 24 | currencies/pages | a stack of codex pages | 256 |
-| 25 | season/tierreward | a ribboned reward chest | 256 |
-| 26 | alerts/seasonreward | the season chest, open | 256 |
-| 27 | hud/star | a single gold star | |
-| 28 | heistoutcomes/clean | a clean-heist seal | 256 |
-| 29 | heistoutcomes/worthyourtime | a full sack with a star | 256 |
+| 24 | currencies/pages | three fanned codex pages, a gold star seal, a ribbon marker (baked) | 256 |
+| 25 | season/tierreward | a closed wooden chest with gold straps, tied with a ribbon and bow (baked) | 256 |
+| 26 | alerts/seasonreward | the same chest open with its lock plate, coins heaped and a star rising (baked) | 256 |
+| 27 | hud/star | a single puffed gold star (baked) | |
+| 28 | heistoutcomes/clean | a scalloped green seal, a gold ring, a cream tick and a spark (baked) | 256 |
+| 29 | heistoutcomes/worthyourtime | an open tied sack brimming with coins, a gold star on the heap (baked) | 256 |
 | 30 | crew/pip | Pip's badge, a render from the portrait studio (proof, baked) | |
 
 ## Batch 3: navigation (deferred)

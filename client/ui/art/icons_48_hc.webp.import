@@ -3,15 +3,11 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqn2l1qo3we80"
-path="res://.godot/imported/icons_48_hc.webp-834a70283d6a8541418ebf9a169dc374.ctex"
-metadata={
-"vram_texture": false
-}
+valid=false
 
 [deps]
 
 source_file="res://ui/art/icons_48_hc.webp"
-dest_files=["res://.godot/imported/icons_48_hc.webp-834a70283d6a8541418ebf9a169dc374.ctex"]
 
 [params]
 
