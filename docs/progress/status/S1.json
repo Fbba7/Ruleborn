@@ -7,13 +7,13 @@
   "task_id": "P1-S1-pilot-1",
   "task_state": "working",
   "claimed_at": "2026-11-10T07:38:00Z",
-  "lease_until": "2026-11-10T10:48:06Z",
-  "updated_at": "2026-11-10T08:48:06Z",
-  "expected_next_update_by": "2026-11-10T09:33:06Z",
+  "lease_until": "2026-11-10T09:56:31Z",
+  "updated_at": "2026-11-10T08:56:31Z",
+  "expected_next_update_by": "2026-11-10T09:41:31Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "98b199ba",
-    "next_step": "HUD fits the phone in Portuguese again and the loot clears the hint at 200% text in English; client tests running on that, then guard, the pre-check and the gate"
+    "next_step": "Part 1 built: client tests 395 of 395, check_screens OK, ui guard OK on S1's runs; the pre-check is running on the task's last commit. By the owner's order of 10 November (08:28 UTC) S1 stops after this task and takes no new one."
   },
   "precheck": null,
   "gate_request": null,
