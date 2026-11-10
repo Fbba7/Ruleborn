@@ -7,8 +7,8 @@ extends VBoxContainer
 ## the clock is KitHud.clock, counting down and turning to the alarm's red
 ## plate in its last 30 seconds; the alarm is KitHud.alarm, six bells with
 ## "N / 6" written beside them so the level never rests on colour (§20.8);
-## the loot is KitHud.loot, its two numbers over the bags' fill, with the
-## Vault's cracking as a second bar while it is shut; each law running in the
+## the loot is KitHud.loot, its two numbers over the bags' fill, with how far
+## the Vault is cracked as a third while it is shut; each law running in the
 ## realm is a chip of the kit's leather. The kit's pieces are built whole, so a piece
 ## whose state changes is built again in its place. Three columns, left,
 ## centre and right; with §20.8's large text the loot stands under the laws.
@@ -46,9 +46,8 @@ var _laws_key := ""
 var _loot_key := ""
 var _red := false
 var _time := 0.0
-## The loot's bars: the bags' fill and, while the Vault is shut, its cracking.
+## The loot's bar: the bags' fill.
 var _load: KitBar
-var _crack: KitBar
 ## Coins on their way to the loot panel: {from: Vector2 (global), t: float,
 ## coin: Control}.
 var _flights: Array[Dictionary] = []
@@ -109,7 +108,7 @@ func _init() -> void:
 	loot_panel = PanelContainer.new()
 	loot_panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN if large else Control.SIZE_SHRINK_END
 	right.add_child(loot_panel)
-	_build_loot("", "?", "", 0.0, 0.0)
+	_build_loot("", "?", "", 0.0, "")
 	var realm_panel := KitStatus.hint("")
 	realm_panel.name = "Realm"
 	realm_panel.visible = false
@@ -178,52 +177,87 @@ func _build_alarm() -> void:
 
 
 ## The loot panel: its two numbers, the bags' fill with a tick at the load
-## target and "Load to N%" under it; while the Vault is shut its cracking as
-## a thinner bar beside the Vault's icon, so its progress is always on
-## screen (§12.19: the bars say which binds first).
-func _build_loot(room: String, left: String, load_words: String, bags: float, cracked: float) -> void:
-	var piece := KitHud.loot([[Strings.t("HUD_ROOM"), room], [Strings.t("HUD_LEFT"), left]], bags,
-		load_target / 100.0, load_words)
+## target and "Load to N%" under it; while the Vault is shut how far it is
+## cracked as a third number, so its progress is always on screen (§12.19).
+## Written rather than a second bar: the kit's bar, tick and icon are a draw
+## call each, where the heist's budget has room for none (S1-R2).
+func _build_loot(room: String, left: String, load_words: String, bags: float, cracked: String) -> void:
+	var rows := [[Strings.t("HUD_ROOM"), room], [Strings.t("HUD_LEFT"), left]]
+	if cracked != "":
+		rows.append([Strings.t("REHEARSE_LEGEND_VAULT"), cracked])
+	var piece := KitHud.loot(rows, bags, load_target / 100.0, load_words)
 	_load = piece.find_child("Load", true, false)
 	(_load.get_node("Aim") as Control).visible = load_target >= 0
-	for row in piece.get_child(0).get_children():
-		# A long word beside a long number ("Restam ~2.600") would push the
-		# panel off the phone: the number goes under its word instead.
-		if not row is HBoxContainer:
-			continue
-		var number := row.get_child(1) as Label
-		if _wide((row.get_child(0) as Label).text, 14) + _wide(number.text, 16) + UI.px(8) > UI.px(96):
-			row.remove_child(number)
-			row.add_sibling(number)
-			number.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_columns(piece.get_child(0), rows)
 	if load_words != "":
 		# "Load to N%" breaks between words where a language's are long, rather
 		# than widen the panel past the phone (S1-R2 asks the kit for both).
 		var words := piece.get_child(0).get_child(-1) as Label
 		words.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		words.custom_minimum_size.x = minf(_wide(load_words, 14), UI.px(88))
-	_crack = null
-	if not _open:
-		var row := HBoxContainer.new()
-		row.name = "Vault"
-		row.add_theme_constant_override("separation", UI.px(4))
-		var icon := Icons.view("heiststatus/vaultprogress", 16.0)
-		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(icon)
-		_crack = KitBar.make(cracked, Color(), 5.0)
-		_crack.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(_crack)
-		_load.add_sibling(row)
 	_swap(loot_panel, piece)
 	loot_panel = piece
-	loot_panel.accessibility_name = "%s %s, %s %s, %s" % [Strings.t("HUD_ROOM"), room, Strings.t("HUD_LEFT"), left,
-		load_words]
+	var spoken := PackedStringArray()
+	for r: Array in rows:
+		spoken.append("%s %s" % r)
+	if load_words != "":
+		spoken.append(load_words)
+	loot_panel.accessibility_name = ", ".join(spoken)
+
+
+## Sets the loot's rows as two columns, the words and then the numbers, so
+## each face is drawn in one call rather than one a label (the heist's draw
+## calls are held to their record; S1-R2). Where a language's words are too
+## long for that ("Restam ~2.600"), a long row's number goes under its word
+## instead, rather than push the panel off the phone.
+static func _columns(v: Control, rows: Array) -> void:
+	var word := 0.0
+	var number := 0.0
+	for r: Array in rows:
+		word = maxf(word, _wide(str(r[0]), 14))
+		number = maxf(number, _wide(str(r[1]), 16))
+	var lines: Array[Node] = []
+	for c in v.get_children():
+		if c is HBoxContainer:
+			lines.append(c)
+	# With §20.8's large text the loot stands under the laws, in a column
+	# twice as wide.
+	var room := UI.px(96) * (2.0 if Settings.text_scale > 130 else 1.0)
+	if word + number + UI.px(8) > room:
+		for line in lines:
+			var n := line.get_child(1) as Label
+			if _wide((line.get_child(0) as Label).text, 14) + _wide(n.text, 16) + UI.px(8) > room:
+				line.remove_child(n)
+				line.add_sibling(n)
+				n.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		return
+	var both := HBoxContainer.new()
+	both.add_theme_constant_override("separation", UI.px(8))
+	var sides: Array[VBoxContainer] = [VBoxContainer.new(), VBoxContainer.new()]
+	sides[0].size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for side in sides:
+		side.add_theme_constant_override("separation", UI.px(2))
+		both.add_child(side)
+	for line in lines:
+		for k in 2:
+			var l := line.get_child(0) as Label
+			line.remove_child(l)
+			# One height for a word and its number, so the columns keep the rows.
+			l.custom_minimum_size.y = ceilf(UI.text_px(16) * 1.4)
+			l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			if k == 1:
+				l.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+			sides[k].add_child(l)
+		v.remove_child(line)
+		line.queue_free()
+	v.add_child(both)
+	v.move_child(both, 0)
 
 
 ## How wide words stand in the kit's bold face at a size in points (the
 ## pieces are measured before they are in the tree, where no theme reaches).
 static func _wide(text: String, points: float) -> float:
-	return ceilf(UI.bold_font().get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(points)).x) + 2.0
+	return ceilf(UI.bold_font().get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(points)).x)
 
 
 func show_state(r: RulebornReplay) -> void:
@@ -257,15 +291,13 @@ func show_state(r: RulebornReplay) -> void:
 	var health := int(v.get("health", 0))
 	if _vault_full < 0 or health > _vault_full:
 		_vault_full = health
-	var cracked := 1.0 if _open else 1.0 - float(health) / maxf(1.0, float(_vault_full))
-	var key := "%s|%s|%s|%s" % [room, to_load, load_words, _open]
+	var cracked := "" if _open else "%d%%" % int(100.0 * (1.0 - float(health) / maxf(1.0, float(_vault_full))))
+	var key := "%s|%s|%s|%s" % [room, to_load, load_words, cracked]
 	if key != _loot_key:
 		_loot_key = key
 		_build_loot(room, to_load, load_words, bags, cracked)
 	else:
 		Motion.fill(_load, bags)
-		if _crack != null:
-			Motion.fill(_crack, cracked)
 	realm_label.text = realm(r.realm_code(), r.realms_to_go())
 	realm_label.visible = realm_label.text != ""
 	(realm_label.get_parent() as Control).visible = realm_label.visible
