@@ -3,24 +3,26 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Fable 5.2",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-K1-switch-heist",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-09T22:27:00Z",
   "lease_until": "2026-11-10T06:55:00Z",
-  "updated_at": "2026-11-10T03:22:00Z",
-  "expected_next_update_by": "2026-11-10T04:07:00Z",
-  "long_run": {
-    "log": "/tmp/claude-0/-home-user-Ruleborn/5eb3dd05-5de9-55bd-823a-752c74b2040d/scratchpad/guard3.log",
-    "expected_end": "2026-11-10T03:40:00Z"
-  },
+  "updated_at": "2026-11-10T04:05:00Z",
+  "expected_next_update_by": null,
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "fd5cb0d2",
-    "next_step": "the pre-check at 3def1ab5 failed (394 of 395): the kit test held the locked material's box to the code, and kit batch 2b baked its face (locked__locked). 071683d: the locked material draws that face, KitSkin.MARKS is gone, kit-spec.md section 8.2 says so; the 18 kit tests pass. The guard is running again; then a new pre-check; then mark ready"
+    "last_green_sha": "0ce3c751",
+    "next_step": "P1-K1-switch-heist is ready at 0ce3c751 (pre-check PASS 04:00Z, ui guard: OK). Waiting for the merge; P1-K1-switch-rest is not taken in this session."
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "0ce3c751cbdea99a384fd82046cf5c5c1b427dbb",
+    "exit": 0,
+    "finished_at": "2026-11-10T04:00:09Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "0ce3c751cbdea99a384fd82046cf5c5c1b427dbb",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M2"
