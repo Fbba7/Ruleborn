@@ -3,17 +3,17 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Fable 5.2",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-K1-switch-heist",
-  "task_state": "working",
+  "task_state": "blocked",
   "claimed_at": "2026-11-09T22:27:00Z",
-  "lease_until": "2026-11-10T01:27:00Z",
-  "updated_at": "2026-11-09T22:59:00Z",
-  "expected_next_update_by": "2026-11-09T23:44:00Z",
+  "lease_until": "2026-11-10T04:55:00Z",
+  "updated_at": "2026-11-10T01:55:00Z",
+  "expected_next_update_by": "2026-11-10T12:00:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "68cfd4e4",
-    "next_step": "heist with the skins on: 122 draw calls at 100% and in high contrast (124 with them off); next the other four screens, kit-spec.md, guard.sh and its baselines"
+    "last_green_sha": "05c6bf03",
+    "next_step": "when K1-R13 is answered: merge main, bash tools/ui_bake/guard.sh to \"ui guard: OK\", the pre-check, mark ready; nothing else is left in P1-K1-switch-heist"
   },
   "precheck": null,
   "gate_request": null,
@@ -165,6 +165,42 @@
       "due": "2026-11-10T12:00:00Z",
       "default": "granted: both files merge with the candidate as P1-K1-switch-heist's exceptions",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R13",
+      "from": "K1",
+      "to": "AIA-2",
+      "cc": [
+        "lead"
+      ],
+      "ask": "bash tools/ui_bake/guard.sh ends 'ui guard: FAIL (rebake)' on claude/ui-bake only because client/ui/art/icons_48_hc.webp is not what its sources bake to. 'node tools/ui_bake/bake.js icons_48 --out <scratch>' run twice in K1's container gives two identical bakes; icons_48.webp and icons_48.json match the committed files, icons_48_hc.webp does not. The sheet, art/ui/icons/** and bake.js are the same on main's head (2e53f49e), so main fails the step too (the brief's rule for a check that fails outside my files). Please commit the high-contrast sheet its sources bake to (P1-AIA2-icons-2a's resync names it), or say which container's bake is the reference if the finish still differs between machines. K1 was told not to touch client/ui/art/icons_*. Every other step of the guard passes on K1's branch: bake --check, check_screens, budget_shots on 15 shots (the heist at 122, 116 and 122 draw calls, cap 147).",
+      "files": [
+        "client/ui/art/icons_48_hc.webp"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-10T01:55:00Z",
+      "due": "2026-11-10T12:00:00Z",
+      "default": "The lead takes P1-K1-switch-heist as ready at the branch's head when P1-AIA2-icons-2a merges with the sheet rebaked: K1 (or the lead's merge queue) merges main, runs guard.sh to 'ui guard: OK' and the pre-check. Until then the task stays blocked and nothing of K1's changes.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R14",
+      "from": "K1",
+      "to": "AIA",
+      "cc": [
+        "lead"
+      ],
+      "ask": "Three asks from P1-K1-switch-heist, none blocking. (1) AIA-R13: disc_school is not in the kit's atlas pages (art/ui/kit_next/disc_school is not baked into client/ui/art/kit.json), so its switch stays off; KitSkin already draws a tinted box under its untinted frame in the same rect. Please bake it into the kit. (2) Nine materials have words of the other family than their skin's baked box (dark words on a dark box, or light on light), so they stay code-drawn until they have a shape of their own name or their words are restyled: album, fact, plate, bar_track_light, tag, island_label, pill_gold_edge, banner_success, green_muted (KitSkin.OWN_SHAPE_ONLY; the pill skin's only material is among them, so the pill switch draws nothing yet). tag__tag_warn is a dark shape while tag_warn's token words are dark. (3) For the lead: the gate's verdicts on P1-AIA-kit-1 to -4 are recorded, all advisory; kit-1 carries one fail ('Colour roles and value') and one unknown, kit-2 one unknown, kit-4 three fails. K1 switched on what kits 1 to 3 baked, as the task says. Please file a follow-up for the wiring outside this task's files: KitSkin.mark('lock') in kit_cards.gd, mark('dot') in kit_status.gd, the alarm fill and the tick in kit_bar.gd (P1-K1-switch-rest could carry it).",
+      "files": [
+        "art/ui/kit_next/disc_school",
+        "client/ui/art/kit.json",
+        "docs/progress/backlog.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T01:55:00Z",
+      "due": "2026-11-11T22:00:00Z",
+      "default": "disc_school and the nine materials stay code-drawn, as today; the wiring goes into P1-K1-switch-rest's files when the lead seeds it; the verdicts stand as recorded.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -179,5 +215,6 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-switch-heist working: skins switched on, KitSkin overlays and parts in, kit tests 18 of 18"
+  "next_step": "P1-K1-switch-heist blocked on K1-R13: the work is done and pushed; check_all passed at 05c6bf03 (All checks passed); the guard passes every step but the rebake of icons_48_hc.webp, AIA-2's file, which fails on main as well",
+  "note": "The session's worker restarted between 23:40Z and 01:50Z, so the 23:44Z update was missed; no work was lost."
 }
