@@ -186,13 +186,22 @@ func _build_loot(room: String, left: String, load_words: String, bags: float, cr
 		load_target / 100.0, load_words)
 	_load = piece.find_child("Load", true, false)
 	(_load.get_node("Aim") as Control).visible = load_target >= 0
+	for row in piece.get_child(0).get_children():
+		# A long word beside a long number ("Restam ~2.600") would push the
+		# panel off the phone: the number goes under its word instead.
+		if not row is HBoxContainer:
+			continue
+		var number := row.get_child(1) as Label
+		if _wide((row.get_child(0) as Label).text, 14) + _wide(number.text, 16) + UI.px(8) > UI.px(96):
+			row.remove_child(number)
+			row.add_sibling(number)
+			number.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	if load_words != "":
 		# "Load to N%" breaks between words where a language's are long, rather
-		# than widen the panel past the phone (S1-R2 asks the kit for this).
+		# than widen the panel past the phone (S1-R2 asks the kit for both).
 		var words := piece.get_child(0).get_child(-1) as Label
-		var line := words.get_combined_minimum_size().x
 		words.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		words.custom_minimum_size.x = minf(line, UI.px(88))
+		words.custom_minimum_size.x = minf(_wide(load_words, 14), UI.px(88))
 	_crack = null
 	if not _open:
 		var row := HBoxContainer.new()
@@ -209,6 +218,12 @@ func _build_loot(room: String, left: String, load_words: String, bags: float, cr
 	loot_panel = piece
 	loot_panel.accessibility_name = "%s %s, %s %s, %s" % [Strings.t("HUD_ROOM"), room, Strings.t("HUD_LEFT"), left,
 		load_words]
+
+
+## How wide words stand in the kit's bold face at a size in points (the
+## pieces are measured before they are in the tree, where no theme reaches).
+static func _wide(text: String, points: float) -> float:
+	return ceilf(UI.bold_font().get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(points)).x) + 2.0
 
 
 func show_state(r: RulebornReplay) -> void:
@@ -310,8 +325,8 @@ static func _law_chip(icon: String, title: String) -> PanelContainer:
 	# §20.8's large text a word too long for the column breaks instead.
 	var widest := 0.0
 	for w: String in title.split(" ", false):
-		widest = maxf(widest, UI.bold_font().get_string_size(w, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(14)).x)
-	l.custom_minimum_size.x = minf(ceilf(widest * 1.08) + 2.0, UI.px(100) * maxf(1.0, Settings.text_scale / 100.0))
+		widest = maxf(widest, _wide(w, 14))
+	l.custom_minimum_size.x = minf(ceilf(widest * 1.08), UI.px(100) * maxf(1.0, Settings.text_scale / 100.0))
 	row.add_child(l)
 	p.add_child(row)
 	return p
