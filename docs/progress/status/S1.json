@@ -7,13 +7,13 @@
   "task_id": "P1-S1-pilot-1",
   "task_state": "working",
   "claimed_at": "2026-11-10T07:38:00Z",
-  "lease_until": "2026-11-10T10:58:07Z",
-  "updated_at": "2026-11-10T08:24:23Z",
-  "expected_next_update_by": "2026-11-10T09:09:23Z",
+  "lease_until": "2026-11-10T10:48:06Z",
+  "updated_at": "2026-11-10T08:48:06Z",
+  "expected_next_update_by": "2026-11-10T09:33:06Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "98b199ba",
-    "next_step": "HUD inside the heist's draw-call record (121/114/121); client tests running again, then the final stills, guard and the pre-check"
+    "next_step": "HUD fits the phone in Portuguese again and the loot clears the hint at 200% text in English; client tests running on that, then guard, the pre-check and the gate"
   },
   "precheck": null,
   "gate_request": null,
@@ -39,14 +39,14 @@
       "id": "S1-R2",
       "from": "S1",
       "to": "K1",
-      "ask": "KitHud.loot that stays narrow in every language: a caption that wraps between words (\"Carregar até 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese), an aim tick that can be left out (a replay has no load target), and a second, thinner bar with an icon for the Vault's cracking.",
+      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar até 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
       "files": [
         "client/ui/kit_hud.gd"
       ],
       "blocking": false,
       "created_at": "2026-11-10T07:58:32Z",
       "due": "2026-11-11T07:58:32Z",
-      "default": "The HUD sets the kit caption's label to wrap with a minimum of 88 points, hides the \"Aim\" tick when there is no load target, and adds the Vault's row itself from Icons.view and KitBar.make as a sibling of \"Load\".",
+      "default": "The HUD sets the kit caption's label to wrap with a minimum of 88 points; hides the \"Aim\" tick when there is no load target; writes the Vault's cracking as a third row (\"Vault N%\", with the string REHEARSE_LEGEND_VAULT) at normal text and as a thin KitBar beside the heiststatus/vaultprogress icon at large text, where a third row would stand the panel on the hint; moves the kit's rows into two columns (words, numbers) so each face is one draw call; and where a row is longer than 90 points, stands its number closer to its word and then under it.",
       "escalate_to": "lead"
     },
     {
@@ -60,7 +60,7 @@
       "blocking": false,
       "created_at": "2026-11-10T07:58:32Z",
       "due": "2026-11-11T07:58:32Z",
-      "default": "The HUD composes the chip from UI.panel(\"leather\"), Icons.view and UI.label, with UI.dress(disc, \"icon_disc\") behind a dark icon, and measures the icon's darkness itself.",
+      "default": "The HUD composes the chip from UI.panel(\"leather\"), Icons.view and UI.label, with UI.dress(disc, \"icon_disc\") behind a dark icon, and measures the icon's darkness itself. With large text the chip's spacing is 1 point and the disc 15 points, so a two-word name keeps one line beside the alarm.",
       "escalate_to": "lead"
     },
     {

@@ -60,9 +60,11 @@ func _init() -> void:
 	# banner, rather than outgrow the phone.
 	var top := HBoxContainer.new()
 	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	top.add_theme_constant_override("separation", UI.px(4))
-	add_child(top)
 	var large := Settings.text_scale > 130
+	# With large text the columns stand closer, so a law's two words keep one
+	# line beside the alarm.
+	top.add_theme_constant_override("separation", UI.px(1 if large else 4))
+	add_child(top)
 	# The law banner, top left: "Laws here" over a chip for each law.
 	var left := _side(top)
 	var laws := VBoxContainer.new()
@@ -183,7 +185,8 @@ func _build_alarm() -> void:
 ## call each, where the heist's budget has room for none (S1-R2).
 func _build_loot(room: String, left: String, load_words: String, bags: float, cracked: String) -> void:
 	var rows := [[Strings.t("HUD_ROOM"), room], [Strings.t("HUD_LEFT"), left]]
-	if cracked != "":
+	var large := Settings.text_scale > 130
+	if cracked != "" and not large:
 		rows.append([Strings.t("REHEARSE_LEGEND_VAULT"), cracked])
 	var piece := KitHud.loot(rows, bags, load_target / 100.0, load_words)
 	_load = piece.find_child("Load", true, false)
@@ -195,11 +198,26 @@ func _build_loot(room: String, left: String, load_words: String, bags: float, cr
 		var words := piece.get_child(0).get_child(-1) as Label
 		words.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		words.custom_minimum_size.x = minf(_wide(load_words, 14), UI.px(88))
+	if cracked != "" and large:
+		# §20.8's large text: a third row would stand the panel on the hint
+		# below, so the Vault's cracking is a thin bar beside its icon instead.
+		var row := HBoxContainer.new()
+		row.name = "Vault"
+		row.add_theme_constant_override("separation", UI.px(4))
+		var icon := Icons.view("heiststatus/vaultprogress", 16.0)
+		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(icon)
+		var crack := KitBar.make(cracked.to_float() / 100.0, Color(), 5.0)
+		crack.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(crack)
+		_load.add_sibling(row)
 	_swap(loot_panel, piece)
 	loot_panel = piece
 	var spoken := PackedStringArray()
 	for r: Array in rows:
 		spoken.append("%s %s" % r)
+	if cracked != "" and large:
+		spoken.append("%s %s" % [Strings.t("REHEARSE_LEGEND_VAULT"), cracked])
 	if load_words != "":
 		spoken.append(load_words)
 	loot_panel.accessibility_name = ", ".join(spoken)
@@ -222,11 +240,18 @@ static func _columns(v: Control, rows: Array) -> void:
 			lines.append(c)
 	# With §20.8's large text the loot stands under the laws, in a column
 	# twice as wide.
-	var room := UI.px(96) * (2.0 if Settings.text_scale > 130 else 1.0)
+	var large := Settings.text_scale > 130
+	var room := UI.px(90) * (2.3 if large else 1.0)
 	if word + number + UI.px(8) > room:
+		# A long row first stands its number closer to its word, and only
+		# then under it.
 		for line in lines:
 			var n := line.get_child(1) as Label
-			if _wide((line.get_child(0) as Label).text, 14) + _wide(n.text, 16) + UI.px(8) > room:
+			var wide := _wide((line.get_child(0) as Label).text, 14) + _wide(n.text, 16)
+			if wide + UI.px(8) <= room:
+				continue
+			line.add_theme_constant_override("separation", UI.px(2))
+			if wide + UI.px(2) > room:
 				line.remove_child(n)
 				line.add_sibling(n)
 				n.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -335,13 +360,14 @@ static func _law_chip(icon: String, title: String) -> PanelContainer:
 	var p := UI.panel("leather")
 	p.name = "Law"
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", UI.px(4))
+	row.add_theme_constant_override("separation", UI.px(1 if Settings.text_scale > 130 else 4))
 	if icon != "" and dark_icon(icon):
 		var disc := PanelContainer.new()
 		disc.add_theme_stylebox_override("panel", UI.clear_box(1, 1))
 		UI.dress(disc, "icon_disc", 999)
 		disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		disc.add_child(Icons.view(icon, 19.0))
+		# Smaller with large text, where the column is at its narrowest.
+		disc.add_child(Icons.view(icon, 15.0 if Settings.text_scale > 130 else 19.0))
 		row.add_child(disc)
 	elif icon != "":
 		var bare := Icons.view(icon, 24.0)
