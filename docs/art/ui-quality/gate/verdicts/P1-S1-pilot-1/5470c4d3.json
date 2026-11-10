@@ -1,0 +1,289 @@
+[
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 100% text",
+  "quality": "Layered materials",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Panels, law chips and buttons carry a top-lit gradient, an inked rim and a lower lip; the layers read at the anchor's level.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 200% text",
+  "quality": "Layered materials",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "pass",
+   "fail",
+   "fail",
+   "pass",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "At 200% the hint banner is a flat card with a hairline outline and the Room panel has no inner well; the two flat pieces sit under the pass anchor.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 100% text",
+  "quality": "Display type",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "The timer 2:25 is flat, with no outline or drop; 'Laws here' and the crew names carry no ink outline.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 200% text",
+  "quality": "Display type",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Same flat timer and unoutlined labels; at 200% the name 'Pip' is overlapped by Ash's wrapped portrait.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 100% text",
+  "quality": "Painted or rendered icons",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "pass",
+   "fail",
+   "pass",
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "The law and action icons are rendered with light and rim; the Bloom flower is the weakest.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 200% text",
+  "quality": "Painted or rendered icons",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "At 200% the Bloom icon is a tiny flat glyph and the Cast and Get out icons are gone.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 100% text",
+  "quality": "Hierarchy",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "In grayscale the red Get out leads before the dark plum Cast; the timer and the panels outweigh Cast, the main action.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 200% text",
+  "quality": "Hierarchy",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Same order at 200%: Get out and the panels lead, Cast does not.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 100% text",
+  "quality": "Colour roles and value",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "fail",
+   "fail",
+   "pass",
+   "pass",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Get out has a red fill while Alarm has none, the main action has no gold fill, and the crew rings differ by hue alone and merge under colour-vision deficiency.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 200% text",
+  "quality": "Colour roles and value",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Same roles at 200%: red on Get out, no gold main-action fill, crew rings told apart by hue alone.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 100% text",
+  "quality": "Character presence",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Hollow blends into its purple ring and reads as a smudge under the v3 ruling; Bramble is low in contrast.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 200% text",
+  "quality": "Character presence",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Same at 200%: Hollow merges with its ring, Bramble is low in contrast.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 100% text",
+  "quality": "Light behind UI",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Panels, buttons and portrait rims are lit from the top over a night scene with glows and a falloff to dark edges.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 200% text",
+  "quality": "Light behind UI",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "pass",
+   "pass",
+   "fail",
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "One top light on every piece over a real lit scene; the scene is dimmer than the pass anchor's spotlight.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 100% text",
+  "quality": "One art-direction idea",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "The thin flat load bar, the flat crew bars and the hairline hint pill read as generic chrome beside the chunky inked kit.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-1",
+  "sha": "5470c4d3",
+  "item": "heist at 200% text",
+  "quality": "One art-direction idea",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "fail",
+   "fail",
+   "pass",
+   "fail",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three of six fail, under the four that make a fail: the kit holds one chunky inked idiom, but the thin load bars, the flat hint card and the missing button icons pull away from it.",
+  "advisory": true,
+  "at": "2026-11-10T10:06:00Z"
+ }
+]
