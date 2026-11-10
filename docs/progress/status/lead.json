@@ -1,16 +1,9 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-10T07:50:00Z",
-  "expected_next_update_by": "2026-11-10T09:05:00Z",
-  "cycle": 48,
-  "merging": {
-    "candidate_sha": "37c28af0",
-    "task_ids": [
-      "P1-AIA-kit-6"
-    ],
-    "started_at": "2026-11-10T07:50:00Z",
-    "expires_at": "2026-11-10T08:50:00Z"
-  },
+  "updated_at": "2026-11-10T07:55:00Z",
+  "expected_next_update_by": "2026-11-10T09:10:00Z",
+  "cycle": 49,
+  "merging": null,
   "last_merged": {
     "task_id": "P1-K1-switch-heist",
     "sha": "3ac50485"
@@ -18,5 +11,5 @@
   "alerts": [
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 49: read the status files of claude/ui-artist (AIA, P1-AIA-kit-6, session started 06:53Z), claude/ui-bake (K1, P1-K1-switch-rest, started 07:33Z) and claude/ui-screens-heist (S1, P1-S1-pilot-1, started 07:33Z) and copy their claims to the backlog; start no duplicate session for them. Gate kit-6 on ready (kit catalogue sheet, batch 2c, at phone size, four qualities; give the judge kit-5's verdict notes), check the owners diff with the art/ui/kit_next/** exception, then merge (client/build.sh before guard.sh in a fresh worktree; check_all). switch-rest's AIA-R19 wiring waits for kit-6 on main. AIA-2 has no open task (icon batches 3 and 4 deferred). Only Fable 5.2, never Fable 5.1."
+  "next_step": "Cycle 50: read the status files of claude/ui-bake (K1, P1-K1-switch-rest) and claude/ui-screens-heist (S1, P1-S1-pilot-1) and copy their claims; check that K1 acked M4 (if its session ended without it, restart K1 on switch-rest with M4 in the reason line); start no duplicate session. P1-AIA-kit-6 is ready at 00571a44 but not merged: on main plus kit-6, check_all fails the kit test on KitSkin.OWN_SHAPE_ONLY (K1's file). When switch-rest is ready, build one candidate (main + origin/claude/ui-artist at 00571a44 + origin/claude/ui-bake), owners diff per merge with explicit SHAs, client/build.sh before guard.sh in a fresh worktree, check_all, mark both merged, then start AIA on P1-AIA-kit-7 with kit-6's verdict notes. Gate pilot-1 when ready. Only Fable 5.2, never Fable 5.1."
 }

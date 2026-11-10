@@ -947,6 +947,7 @@
         "P1-AIA-kit-5"
       ],
       "done_when": [
+        "M4 (cycle 49): origin/claude/ui-artist at 00571a44 (P1-AIA-kit-6, ready) merged into the branch; KitSkin.OWN_SHAPE_ONLY agrees with the atlas, so ui_kit_tests.gd passes on main plus kit-6; merged by the lead in one candidate with P1-AIA-kit-6",
         "AIA-R16: KitSkin draws batch 2a's pieces: ribbon as its tinted ribbon__box (vertex-coloured per school) under the untinted ribbon__frame at the same rect, and ribbon__chapter untinted, the words on the band's top 32 points; sheet__handle and sheet__handle_parchment as 42 x 9 point sprites centred by code 12 points below a sheet's top edge; frame_<rank>__box__<state> as a hollow 9-slice ring over the portrait's rect grown by 4 points each side; popup__box with its 8/4/12 point margin (plus the 5 point lip) over the scrim, its title a ribbon across the top edge; header__name_plate; panel_parchment__parchment_done",
         "AIA-R18: KitSkin draws batch 2b's pieces: the toggle's track and knob, the slider's track, fill and knob, the heist tab's halo, the week bars, the tab bar and tab faces, the segmented bed and faces, and the chips",
         "K1-R14 part 3: KitSkin.mark('lock') in kit_cards.gd, mark('dot') in kit_status.gd, the alarm fill and the tick in kit_bar.gd",
@@ -973,7 +974,7 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-10T07:43:00Z",
+      "updated_at": "2026-11-10T07:53:00Z",
       "updated_by": "lead"
     },
     {
@@ -2458,6 +2459,14 @@
       "sent_at": "2026-10-31T17:05:00Z",
       "ack_by": "2026-10-31T19:05:00Z",
       "acked_at": "2026-10-31T17:50:00Z"
+    },
+    {
+      "id": "M4",
+      "to": "K1",
+      "text": "From the lead (cycle 49). P1-AIA-kit-6 cannot merge alone: on main plus kit-6 (candidate 37c28af0) check_all fails one test of client/tests/ui_kit_tests.gd, 'the materials off their box's ground are [green_muted, pill_gold_edge], KitSkin.OWN_SHAPE_ONLY is [album, banner_success, bar_track_light, fact, green_muted, island_label, pill_gold_edge, plate, tag]': kit-6 bakes a shape of their own name for seven of the nine, and the list is in client/ui/kit_skin.gd, your file. So do not wait for kit-6 on main. In P1-K1-switch-rest, merge origin/claude/ui-artist at its ready commit 00571a44 into claude/ui-bake (the art is final there; change none of AIA's files), then do the AIA-R19 wiring on top of it, with KitSkin.OWN_SHAPE_ONLY brought to what the atlas now says; loosen no test. Pre-check and guard on that head, then mark ready as usual. The lead merges kit-6 and switch-rest in one candidate and checks your files against main plus kit-6. Add M4 to acks when read.",
+      "sent_at": "2026-11-10T07:53:00Z",
+      "ack_by": "2026-11-10T09:00:00Z",
+      "acked_at": null
     }
   ]
 }
