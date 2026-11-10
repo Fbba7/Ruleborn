@@ -4,9 +4,10 @@
     python3 art/ui/kit_build/proof_2b.py [--check] [--all]
 
 Two stills a mode, drawn from the baked atlas as the phone shows it:
-`controls` puts the segmented control on the backdrop (dark track, gold
-chosen segment) and on parchment (tray track, leather chosen segment), the
-chips in every state on glass and on parchment, the switch on and off and
+`controls` puts the segmented control on the backdrop (dark track, cream
+chosen segment in a gold rim) and on parchment (tray track, leather chosen
+segment in the same rim), the chips in every state on glass and on parchment
+(a locked chip is the locked face, on the `tiles` still), the switch on and off and
 the slider in every state on the dark card, and the tab bar at the foot with
 its chosen tab, a pressed tab and the Heist tab;
 `tiles` puts the streak's days and the week's bars on parchment, the reward
@@ -58,8 +59,9 @@ def segmented(b, atlas, x, y, w, light, names, chosen, pressed, hc, white, outli
             face = "pressed" if i == pressed else st
             r = b.put(atlas.draw("segmented__seg%s__%s" % ("_light" if light else "", face), sw, 40), sx, y + 4)
             ink = rgb("#000000") if hc and st == "disabled" else pink if light else white
+            # A white label is outlined on every plate; a dark one never is.
             b.say("segment words %s %s %d" % ("light" if light else "dark", st, i), r, words, 14, ink,
-                  inactive=st == "disabled")
+                  None if light or ink == rgb("#000000") else outline, inactive=st == "disabled")
 
 
 def chip(b, atlas, piece, x, y, w, words, ink, name, interactive=True, outline=None):
@@ -83,8 +85,8 @@ def controls_still(hc, atlas):
     segmented(b, atlas, 200, 72, 174, False, ["Easy", "Hard"], 0, None, hc, white, outline, pink, "disabled")
     # Chips on glass.
     b.ground(130, 122, g["glass"])
-    row = [("chip__chip__normal", "All", white, outline), ("chip_on__chip_on__normal", "Motion", gold_ink, None),
-           ("chip__chip__pressed", "Time", white, outline), ("chip__chip__disabled", "Life", white, outline)]
+    row = [("chip__chip__normal", "All", white, outline), ("chip_on__chip_on__normal", "Owned", gold_ink, None),
+           ("chip__chip__pressed", "New", white, outline), ("chip__chip__disabled", "Sets", white, outline)]
     x = 12
     for piece, words, ink, ol in row:
         w = 62 + 8 * len(words)
@@ -93,14 +95,11 @@ def controls_still(hc, atlas):
         chip(b, atlas, piece, x, 138, w, words, ink, "chip " + piece.split("__", 1)[1], not piece.endswith("disabled"), ol)
         x += w + 6
     x = 12
-    for piece, words, ink, ol in [("chip__chip__locked", "Spirit", white, outline),
-                                  ("chip_on__chip_on__pressed", "Energy", gold_ink, None),
-                                  ("chip_on__chip_on__disabled", "Matter", gold_ink, None)]:
+    for piece, words, ink, ol in [("chip_on__chip_on__pressed", "Rare", gold_ink, None),
+                                  ("chip_on__chip_on__disabled", "Epic", gold_ink, None)]:
         w = 62 + 8 * len(words)
-        r = chip(b, atlas, piece, x, 194, w, words, ink, "chip " + piece.split("__", 1)[1],
-                 not piece.endswith("disabled"), ol)
-        if piece.endswith("locked"):
-            b.put(atlas.draw("locked__lock__normal", 16), r[0] + 8, r[1] + 12)
+        chip(b, atlas, piece, x, 194, w, words, ink, "chip " + piece.split("__", 1)[1],
+             not piece.endswith("disabled"), ol)
         x += w + 6
     # Parchment: segmented and chips.
     b.ground(252, 232, g["parchment"])
@@ -108,22 +107,19 @@ def controls_still(hc, atlas):
     segmented(b, atlas, 16, 316, 174, True, ["Mine", "All"], 0, None, hc, white, outline, pink, "pressed")
     segmented(b, atlas, 200, 316, 174, True, ["Mine", "All"], 0, None, hc, white, outline, pink, "disabled")
     x = 12
-    for piece, words, ink in [("chip__chip_light__normal", "All", pink), ("chip_on__chip_on_light__normal", "Motion", leather_ink),
-                              ("chip__chip_light__pressed", "Time", pink), ("chip__chip_light__disabled", "Life", pink)]:
+    for piece, words, ink in [("chip__chip_light__normal", "All", pink), ("chip_on__chip_on_light__normal", "Owned", leather_ink),
+                              ("chip__chip_light__pressed", "New", pink), ("chip__chip_light__disabled", "Sets", pink)]:
         w = 62 + 8 * len(words)
         chip(b, atlas, piece, x, 372, w, words, ink, "chip " + piece.split("__", 1)[1], not piece.endswith("disabled"))
         x += w + 6
     x = 12
-    for piece, words, ink, ol in [("chip__chip_light__locked", "Spirit", white, outline),
-                                  ("chip_on__chip_on_light__pressed", "Energy", leather_ink, None),
-                                  ("chip_on__chip_on_light__disabled", "Matter", leather_ink, None)]:
+    for piece, words, ink, ol in [("chip_on__chip_on_light__pressed", "Rare", leather_ink, None),
+                                  ("chip_on__chip_on_light__disabled", "Epic", leather_ink, None)]:
         w = 62 + 8 * len(words)
         if piece.endswith("disabled") and hc:
             ink = rgb("#000000")
-        r = chip(b, atlas, piece, x, 426, w, words, ink, "chip " + piece.split("__", 1)[1],
-                 not piece.endswith("disabled"), ol)
-        if piece.endswith("locked"):
-            b.put(atlas.draw("locked__lock__normal", 16), r[0] + 8, r[1] + 12)
+        chip(b, atlas, piece, x, 426, w, words, ink, "chip " + piece.split("__", 1)[1],
+             not piece.endswith("disabled"), ol)
         x += w + 6
     # The dark card: switches and sliders.
     b.ground(484, 270, g["dark card"])
@@ -150,7 +146,9 @@ def controls_still(hc, atlas):
               role="primary")
     # The tab bar at the foot, five tabs: the chosen one, a pressed one, the Heist tab.
     BAR = 86
-    b.put(atlas.draw("tab_bar__box__normal", 390, BAR + 8), 0, FRAME[1] - BAR - 8)
+    # The bar runs off the foot of the screen (the safe area is under it), so
+    # its bottom edge is not in the frame.
+    b.put(atlas.draw("tab_bar__box__normal", 390, BAR + 20), 0, FRAME[1] - BAR - 8)
     tw = 390 / 5
     for i, words in enumerate(["Home", "Roster", "Heist", "Shop", "Laws"]):
         cx = i * tw + tw / 2
@@ -188,7 +186,7 @@ def tiles_still(hc, atlas):
         kind = "day_done" if i < 3 else "day_today" if i == 3 else "day_later"
         x = 22 + i * 50
         r = b.put(atlas.draw("tile__%s__normal" % kind, 44, 52), x, 62, "day %d %s" % (i + 1, kind), False)
-        ink = gold_ink if kind == "day_done" else pink
+        ink = pink
         yo = 3 if kind == "day_later" else 0
         b.say("day %d words" % (i + 1), [r[0], r[1] + yo, 44, 46], str(i + 1), 18, ink)
     # The week's bars, standing on a line.

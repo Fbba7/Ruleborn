@@ -9,7 +9,7 @@ pill (not on parchment: it sits in the top bar), the tags, the badges and
 the bars on each of the four grounds;
 `surfaces` puts the dark card (plain, locked, selected), the glass panel,
 the well with its bars, and the school disc tinted for each school. The
-school disc is not in the kit atlas yet (request AIA-R13): it is baked from
+school disc is not in the kit atlas (request AIA-R21): it is baked from
 art/ui/kit_next/ into the proof folder with the kit's own bake.
 
 The gate's value-steps check runs on every interactive control (the discs
@@ -37,6 +37,9 @@ SCHOOLS = ["motion", "matter", "time", "energy", "life", "spirit"]
 # The skins batch 1b adds to the kit atlas.
 SKINS = ["panel_dark", "panel_glass", "well", "badge", "pill", "tag", "bar_track", "bar_fill", "disc",
          "locked", "selected", "spinner"]
+# Batch 2c's shapes in batch 1b's skins: proof_2c.py holds them.
+LATER = {"panel_dark__album", "panel_dark__fact", "panel_dark__plate", "bar_track__bar_track_light", "tag__tag",
+         "tag__island_label", "pill__pill_gold_edge"}
 
 
 class Atlas(pk.Atlas):
@@ -141,7 +144,8 @@ def controls_still(hc, atlas):
             r = b.put(atlas.draw("tag__%s__normal" % shape, 76, 24), 16 + j * 86, y0 + 128)
             b.word("tag %s @ %s" % (shape, gname), [r[0] + (14 if shape == "tag_warn" else 0), r[1],
                                                     r[2] - (14 if shape == "tag_warn" else 0), r[3] - 2],
-                   words, 11, ink, band=(0.25, 0.65))
+                   words, 11, (rgb("#000000") if hc else rgb("text_on_gold")) if shape == "tag_warn" else ink,
+                   band=(0.25, 0.65))
         # Bars: a track, a tinted fill, the alarm fill, a target tick.
         for j, (shape, col) in enumerate([("box", "life"), ("box", "time"), ("alarm", None)]):
             x, y = 16 + j * 122, y0 + 170
@@ -198,7 +202,8 @@ def surfaces_still(hc, atlas, nxt):
 
 def tiles(atlas, nxt, mode):
     paths = []
-    for src, names in ((atlas, sorted(n for n in atlas.man["pieces"] if n.split("__")[0] in SKINS)),
+    for src, names in ((atlas, sorted(n for n in atlas.man["pieces"] if n.split("__")[0] in SKINS
+                                      and n.rsplit("__", 1)[0] not in LATER)),
                        (nxt, sorted(nxt.man["pieces"]))):
         for n in names:
             p = src.man["pieces"][n]

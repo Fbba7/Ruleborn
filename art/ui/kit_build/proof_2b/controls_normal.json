@@ -59,7 +59,7 @@
    "rect": [
     104,
     138,
-    110.14,
+    101.83,
     48.03
    ],
    "role": "secondary",
@@ -69,9 +69,9 @@
   {
    "name": "chip chip__pressed",
    "rect": [
-    220,
+    212,
     138,
-    93.89,
+    85.94,
     48.03
    ],
    "role": "secondary",
@@ -81,7 +81,7 @@
   {
    "name": "chip chip__disabled",
    "rect": [
-    320,
+    304,
     138,
     93.89,
     48.03
@@ -91,23 +91,11 @@
    "persistent": false
   },
   {
-   "name": "chip chip__locked",
+   "name": "chip chip_on__pressed",
    "rect": [
     12,
     194,
-    110.14,
-    48.03
-   ],
-   "role": "secondary",
-   "interactive": true,
-   "persistent": false
-  },
-  {
-   "name": "chip chip_on__pressed",
-   "rect": [
-    128,
-    194,
-    110.14,
+    93.89,
     48.03
    ],
    "role": "secondary",
@@ -117,9 +105,9 @@
   {
    "name": "chip chip_on__disabled",
    "rect": [
-    244,
+    112,
     194,
-    110.14,
+    93.89,
     48.03
    ],
    "role": "secondary",
@@ -179,7 +167,7 @@
    "rect": [
     104,
     372,
-    110.14,
+    101.83,
     48.03
    ],
    "role": "secondary",
@@ -189,9 +177,9 @@
   {
    "name": "chip chip_light__pressed",
    "rect": [
-    220,
+    212,
     372,
-    93.89,
+    85.94,
     48.03
    ],
    "role": "secondary",
@@ -201,7 +189,7 @@
   {
    "name": "chip chip_light__disabled",
    "rect": [
-    320,
+    304,
     372,
     93.89,
     48.03
@@ -211,23 +199,11 @@
    "persistent": false
   },
   {
-   "name": "chip chip_light__locked",
+   "name": "chip chip_on_light__pressed",
    "rect": [
     12,
     426,
-    110.14,
-    48.03
-   ],
-   "role": "secondary",
-   "interactive": true,
-   "persistent": false
-  },
-  {
-   "name": "chip chip_on_light__pressed",
-   "rect": [
-    128,
-    426,
-    110.14,
+    93.89,
     48.03
    ],
    "role": "secondary",
@@ -237,9 +213,9 @@
   {
    "name": "chip chip_on_light__disabled",
    "rect": [
-    244,
+    112,
     426,
-    110.14,
+    93.89,
     48.03
    ],
    "role": "secondary",
