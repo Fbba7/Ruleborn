@@ -1,24 +1,15 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-10T02:45:30Z",
-  "expected_next_update_by": "2026-11-10T03:11:32Z",
+  "updated_at": "2026-11-10T02:55:00Z",
+  "expected_next_update_by": "2026-11-10T04:10:00Z",
   "cycle": 47,
-  "merging": {
-    "candidate_sha": "5dabdc58",
-    "task_ids": [
-      "P1-AIA2-icons-2a",
-      "P1-AIA-kit-5"
-    ],
-    "started_at": "2026-11-10T01:51:32Z",
-    "expires_at": "2026-11-10T03:45:00Z",
-    "held_by": "session_01SNkKxqErNms87y9wMHpJWR"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "P1-K1-words",
-    "sha": "68cfd4e4"
+    "task_id": "P1-AIA-kit-5",
+    "sha": "027379a2"
   },
   "alerts": [
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 47: read the status files of claude/ui-artist-icons (AIA-2, P1-AIA2-icons-2a, pre-check on ac4809ed), claude/ui-artist (AIA, P1-AIA-kit-5) and claude/ui-bake (K1, P1-K1-switch-heist) and copy their claims to the backlog. On ready: icons-2a's pixels changed, so run its gate again on the ready sha, then merge only if guard.sh rebakes icons_48* and icons_256* byte for byte in the lead's fresh container (they did in cycle 46's, at 219ea6f0) and check_all passes; then start AIA-2 on icons-2b. Gate kit-5; merge switch-heist, then S1's pilot-1 opens if a builder slot is free. At most three UI builders. Only Fable 5.2, never Fable 5.1."
+  "next_step": "Cycle 48: read the status files of claude/ui-bake (K1, P1-K1-switch-heist: merge main, guard, pre-check, ready), claude/ui-artist (AIA, P1-AIA-kit-6) and claude/ui-artist-icons (AIA-2, P1-AIA2-icons-2b) and copy their claims to the backlog. Merge switch-heist on ready (check its ui_kit_tests.gd diff loosens no test; client/build.sh before guard.sh in a fresh worktree; check_all). Then switch-rest opens for K1; S1's pilot-1 opens but S1 starts only when one of the three builder slots is free. Gate icons-2b and kit-6 on ready. Only Fable 5.2, never Fable 5.1."
 }

@@ -4,6 +4,24 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-10 02:55Z: two merges, kit-5's colour roles failed the gate, three builders working (lead, cycle 47)
+
+- **What:** P1-AIA2-icons-2a and P1-AIA-kit-5 are merged (`027379a2`):
+  check_all PASS and ui guard OK on the candidate, and the icon sheets now
+  rebake byte for byte from one container to another. Tasks done: 12 of
+  19.
+- **Gate (advisory):** icons-2a passes 12 of 12. kit-5 passes three
+  qualities and fails "Colour roles and value" 3 of 3: the gold fill of
+  the main action is also used for selected segments and chips, claimed
+  day tiles and a chart bar, and selection is told by hue alone. The gate
+  is advisory, so kit-5 merged; the fix is the new task P1-AIA-kit-6.
+- **Done:** three fresh Fable 5.2 sessions: AIA on kit-6, AIA-2 on
+  icons-2b, K1 to finish P1-K1-switch-heist (it was blocked only on the
+  icon rebake). That is the cap of three UI builders.
+- **Also:** the watchdog and the launcher each started a cycle at 01:51Z;
+  the second session did no work, and nothing merged twice.
+- **Needs the owner:** nothing.
+
 ## 2026-11-10 01:51Z: lead was stale, watchdog started a cycle (watchdog)
 
 - **What:** `lead.json` was past its `expected_next_update_by` of
