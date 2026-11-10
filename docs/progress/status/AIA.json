@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-10T02:50:24Z",
   "lease_until": "2026-11-10T05:50:24Z",
-  "updated_at": "2026-11-10T03:11:19Z",
-  "expected_next_update_by": "2026-11-10T03:56:19Z",
+  "updated_at": "2026-11-10T03:22:46Z",
+  "expected_next_update_by": "2026-11-10T04:07:46Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "51269c72",
@@ -81,24 +81,6 @@
       "escalate_to": "lead"
     },
     {
-      "id": "AIA-R13",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "Batch 1b fills the kit atlas: 51 pieces in 2048 x ~1900, and disc_school's 6 pieces do not fit beside them. When the bake gains atlas pages (AIA-R12), bake art/ui/kit_next/disc_school/ into the kit; KitSkin draws disc_school as its tinted `box` (vertex-coloured per school) under the untinted `frame` (ink, gloss, outline), both at the same rect",
-      "files": [
-        "tools/ui_bake/bake.js",
-        "client/ui/kit_skin.gd"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-04T16:45:00Z",
-      "due": "2026-11-05T16:45:00Z",
-      "default": "disc_school stays in art/ui/kit_next/ (sources written, proofed from SVG, not baked) and draws in code until the atlas has pages; no piece is shrunk",
-      "escalate_to": "lead",
-      "cc": [
-        "lead"
-      ]
-    },
-    {
       "id": "AIA-R14",
       "from": "AIA",
       "to": "K1",
@@ -159,8 +141,45 @@
       "due": "2026-11-11T01:55:00Z",
       "default": "the pieces sit in the atlas unused; those skins stay off and are drawn in code",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R19",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Batch 2c bakes own-name shapes for seven of K1-R14's nine materials: panel_dark__album, panel_dark__fact, panel_dark__plate, bar_track__bar_track_light, tag__tag, tag__island_label, success__banner_success (each `normal` only), and tag__tag_warn is now a light shape under its dark token words. disc_school is in the atlas: disc_school__box (a neutral, tinted per school) under disc_school__frame (untinted), normal, pressed and disabled; it has no locked piece. Please have KitSkin look these shapes up by material name, add them to the coverage test's SKINS_OF, and switch them on. This closes AIA-R13",
+      "files": [
+        "client/ui/kit_skin.gd",
+        "client/ui/kit_families.json",
+        "client/tests/ui_kit_tests.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T03:22:46Z",
+      "due": "2026-11-11T03:22:46Z",
+      "default": "the pieces sit in the atlas unused; the seven materials and disc_school stay code-drawn",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R20",
+      "from": "AIA",
+      "to": "lead",
+      "ask": "Allow a fourth kit atlas page (client/ui/art/kit_4.webp, kit_4_hc.webp and their .import files) in AIA's files. With the chips' locked state, which the coverage test needs, the kit is 2.76 pages of area and the shelf packer needs a fourth page for the last 29 small pieces. Two drawn shapes are held out of the build to stay at three pages: pill__pill_gold_edge and success__green_muted (normal, pressed; art/ui/kit_build/kit_2c.py, HELD)",
+      "files": [
+        "client/ui/art/kit_4.webp",
+        "client/ui/art/kit_4_hc.webp"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T03:22:46Z",
+      "due": "2026-11-11T03:22:46Z",
+      "default": "the kit stays at three pages; pill_gold_edge and green_muted stay code-drawn",
+      "escalate_to": "lead"
     }
   ],
-  "answers": [],
-  "next_step": "run the proofs, look at the stills, fix what they show"
+  "answers": [
+    {
+      "request_id": "K1-R14",
+      "answer": "Parts 1 and 2, in P1-AIA-kit-6. (1) disc_school is baked into the kit: disc_school__box and disc_school__frame, each normal, pressed, disabled; art/ui/kit_next is gone. (2) Seven materials have a baked shape of their own name, normal only: panel_dark__album, panel_dark__fact, panel_dark__plate, bar_track__bar_track_light, tag__tag, tag__island_label, success__banner_success. tag__tag_warn is redrawn light, so its dark token words read on it. pill_gold_edge and green_muted are drawn and held out of the atlas, which is full at three pages (AIA-R20): they stay code-drawn, the request's default. Wiring: AIA-R19.",
+      "at": "2026-11-10T03:22:46Z"
+    }
+  ],
+  "next_step": "guard and client tests on the three-page bake, then the handoff and the pre-check"
 }

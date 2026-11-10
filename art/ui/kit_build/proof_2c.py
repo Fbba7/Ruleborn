@@ -6,9 +6,9 @@
 One still a mode, drawn from the baked atlas as the phone shows it: the
 album page with its fact slips, plates and a light bar track; the island's
 label on the backdrop; the tags (the plain tag, the warning tag, and the
-violet tag beside them) on the dark card and on parchment; the gold-edged
-pill, normal and pressed; the muted green button beside the success button
-it is the quiet form of; and the success banner.
+violet tag beside them) on the dark card and on parchment; and the success
+banner under the success button. The gold-edged pill and the muted green are
+held out of the atlas (kit_2c.py, HELD), so they are not here.
 
 The gate's value-steps check runs on every interactive control, and each
 word is measured against the face or outline under it: 4.5:1 and APCA Lc 60.
@@ -29,8 +29,7 @@ import checks  # noqa: E402
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "proof_2c")
 PIECES = ["panel_dark__album", "panel_dark__fact", "panel_dark__plate", "tag__island_label", "tag__tag",
-          "tag__tag_warn", "bar_track__bar_track_light", "pill__pill_gold_edge", "success__green_muted",
-          "success__banner_success"]
+          "tag__tag_warn", "bar_track__bar_track_light", "success__banner_success"]
 
 
 def still(hc, atlas):
@@ -71,31 +70,10 @@ def still(hc, atlas):
             r = b.put(atlas.draw(piece, w, 26), x, y + 4 if row else y, name, False)
             b.say(name + " words", [r[0], r[1], r[2], 24], words, 12, ink, ol)
             x += w + 10
-    # The gold-edged pill: a counter in the header, normal and pressed. Its
-    # token fill is the header's own dark (#140A16 to #24142A) and its gold
-    # edge is what lifts it, so it is shown as a readout, not held to the
-    # value steps a pressable control needs.
-    gold = rgb("#FFFFFF") if hc else rgb("gold_top")
-    for i, st in enumerate(["normal", "pressed"]):
-        r = b.put(atlas.draw("pill__pill_gold_edge__%s" % st, 118, 40), 16 + i * 130, 396,
-                  "gold-edged pill " + st, False)
-        off = 2 if st == "pressed" else 0
-        b.say("gold-edged pill %s words" % st, [r[0], r[1] + off, r[2], 36], "1,250", 16, gold,
-              outline if hc else None)
-    # The muted green beside the success button, on the dark card: the quiet
-    # "already done" form, at its token fill (#24604A to #163E30), which is
-    # dark by design so the live action beside it leads. It shows a state and
-    # is not held to the value steps a pressable control needs.
+    # The success button on the dark card, and the success banner under it.
     b.ground(452, 150, g["dark card"])
     r = b.put(atlas.draw("success__box__normal", 112, 52), 16, 468, "success button", True, role="primary")
     b.say("success button words", [r[0], r[1], r[2], 44], "Claim", 16, white, outline)
-    muted = rgb("#FFFFFF") if hc else rgb("success_light")
-    for i, st in enumerate(["normal", "pressed"]):
-        r = b.put(atlas.draw("success__green_muted__%s" % st, 112, 52), 138 + i * 122, 468,
-                  "muted green " + st, False)
-        off = 3 if st == "pressed" else 0
-        b.say("muted green %s words" % st, [r[0], r[1] + off, r[2], 44], "Claimed", 16, muted, outline)
-    # The success banner.
     r = b.put(atlas.draw("success__banner_success__normal", 358, 60), 16, 534, "success banner", False)
     b.say("success banner words", [r[0], r[1], r[2], 54], "Reward added to your bag", 15, white, outline)
     return b

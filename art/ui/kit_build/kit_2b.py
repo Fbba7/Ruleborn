@@ -13,10 +13,10 @@ writes the files.
     segmented/seg_light         an unchosen segment on parchment: normal, pressed, disabled
     segmented_on/seg_on         the chosen segment, cream in a gold rim (E1): normal, pressed, disabled
     segmented_on/seg_on_light   the chosen segment on parchment, leather in a gold rim: normal, pressed, disabled
-    chip/chip                   a chip, off: normal, pressed, disabled
-    chip/chip_light             a chip on parchment, off: normal, pressed, disabled
-    chip_on/chip_on             a chip, on, cream in a gold rim: normal, pressed, disabled
-    chip_on/chip_on_light       a chip on parchment, on, leather in a gold rim: normal, pressed, disabled
+    chip/chip                   a chip, off: normal, pressed, disabled, locked
+    chip/chip_light             a chip on parchment, off: normal, pressed, disabled, locked
+    chip_on/chip_on             a chip, on, cream in a gold rim: normal, pressed, disabled, locked
+    chip_on/chip_on_light       a chip on parchment, on, leather in a gold rim: normal, pressed, disabled, locked
     tile/day_done               a streak day kept, a tan plate stamped with a bronze ring: normal
     tile/day_today              today, parchment ringed in gold: normal
     tile/day_later              a day to come, an empty slot: normal
@@ -427,11 +427,12 @@ def chips(M):
     FH, DROP = 44, 2
     W, H = 48, 1 + FH + DROP + 1
     R = FH / 2
-    for skin, name, m, states in (("chip", "chip", M["smoke"], ("normal", "pressed", "disabled")),
-                                  ("chip", "chip_light", M["tan"], ("normal", "pressed", "disabled")),
-                                  # A locked chip is the locked skin's face (locked/locked), not a chip state.
-                                  ("chip_on", "chip_on", M["paper"], ("normal", "pressed", "disabled")),
-                                  ("chip_on", "chip_on_light", M["chosen"], ("normal", "pressed", "disabled"))):
+    L = ("normal", "pressed", "disabled", "locked")
+    for skin, name, m, states in (("chip", "chip", M["smoke"], L),
+                                  ("chip", "chip_light", M["tan"], L),
+                                  # A chosen chip that is locked shows the locked face, as an unchosen one does.
+                                  ("chip_on", "chip_on", M["paper"], L),
+                                  ("chip_on", "chip_on_light", M["chosen"], L)):
         svg = Svg(W, H, [23, 22, 23, 25])
         for st in states:
             for hc in (False, True):

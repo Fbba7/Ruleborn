@@ -1,4 +1,4 @@
-"""Kit batch 2c: the own-name shapes of nine materials that drew as their
+"""Kit batch 2c: the own-name shapes of seven materials that drew as their
 skin's box, and the warn tag redrawn light. Run through build_kit.py (it
 imports this module and writes its SVGs with the others).
 
@@ -9,13 +9,16 @@ imports this module and writes its SVGs with the others).
     tag/tag                     a ribbon tag, cream in a gold rim: normal
     tag/tag_warn                a state tag, warm paper with a hatched orange cap: normal
     tag/island_label            an island's label, a cream pill: normal
-    pill/pill_gold_edge         the multiplier pill, a dark well in a gold edge: normal, pressed
     success/banner_success      the raid banner, a dark card edged and lit green: normal
-    success/green_muted         a green action not yet afforded, deep green: normal, pressed
 
-Each shape has the states listed above and no more, so the atlas stays at
-three pages; for a state a shape lacks, the code draws its own box. Sizes follow each material's radius: a
+Each shape has the states listed above and no more; for a state a shape
+lacks, the code draws its own box. Sizes follow each material's radius: a
 9-slice's corner cells must hold the whole corner.
+
+Two more shapes are drawn here and held back (HELD): pill/pill_gold_edge
+(normal, pressed) and success/green_muted (normal, pressed). With them the
+atlas needs a fourth page, so until one is allowed they stay out of the
+build and the code draws those two materials.
 
 Gold keeps its two roles (kit_2b.py): the ribbon tag's token fill is gold,
 and a tag is no action, so it is cream in a gold rim; the warn tag's token
@@ -303,6 +306,10 @@ def greens():
     return out
 
 
+# Drawn, and kept out of the build while the atlas is held to three pages.
+HELD = ("pill/pill_gold_edge.svg", "success/green_muted.svg")
+
+
 def build_2c(T):
     svgs = {}
     svgs.update(papers())
@@ -310,4 +317,6 @@ def build_2c(T):
     svgs.update(track_light())
     svgs.update(pill_gold_edge())
     svgs.update(greens())
+    for name in HELD:
+        del svgs[name]
     return svgs
