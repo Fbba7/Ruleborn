@@ -267,7 +267,7 @@
     },
     "recorded": {
       "character/100": {
-        "draw_calls": 108,
+        "draw_calls": 107,
         "texture_bytes": 2558016,
         "words_below": 0
       },
@@ -277,7 +277,7 @@
         "words_below": 0
       },
       "character/hc": {
-        "draw_calls": 108,
+        "draw_calls": 107,
         "texture_bytes": 2558016,
         "words_below": 0
       },
@@ -312,32 +312,32 @@
         "words_below": 0
       },
       "result/100": {
-        "draw_calls": 96,
+        "draw_calls": 95,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "result/200": {
-        "draw_calls": 92,
+        "draw_calls": 91,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "result/hc": {
-        "draw_calls": 96,
+        "draw_calls": 95,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "settings/100": {
-        "draw_calls": 54,
+        "draw_calls": 55,
         "texture_bytes": 1327168,
         "words_below": 0
       },
       "settings/200": {
-        "draw_calls": 48,
+        "draw_calls": 49,
         "texture_bytes": 1244224,
         "words_below": 0
       },
       "settings/hc": {
-        "draw_calls": 54,
+        "draw_calls": 55,
         "texture_bytes": 1327168,
         "words_below": 0
       }
