@@ -9,7 +9,7 @@ extends VBoxContainer
 ## "N / 6" written beside them so the level never rests on colour (§20.8);
 ## the loot is KitHud.loot, its two numbers over the bags' fill, with the
 ## Vault's cracking as a second bar while it is shut; each law running in the
-## realm is a KitCards.law_chip. The kit's pieces are built whole, so a piece
+## realm is a chip of the kit's leather. The kit's pieces are built whole, so a piece
 ## whose state changes is built again in its place. Three columns, left,
 ## centre and right; with §20.8's large text the loot stands under the laws.
 
@@ -19,6 +19,9 @@ const BELLS := 6
 ## How many coins fly to the loot at most, and how long each takes (seconds).
 const COINS := 6
 const FLIGHT := 0.6
+
+## Each law icon measured dark or not (dark_icon).
+static var _dark := {}
 
 var clock_label: Label
 var alarm_label: Label
@@ -67,10 +70,17 @@ func _init() -> void:
 	laws.name = "Laws"
 	laws.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	laws.add_theme_constant_override("separation", UI.px(4))
-	laws.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	var here := UI.label(Strings.t("HUD_LAWS_HERE"), 16)
-	here.theme_type_variation = "DisplayS"
-	here.add_theme_color_override("font_color", Tokens.color("gold_top"))
+	# The chips share the column's width, as the designs': a name lies on one
+	# line wherever the column has room for it.
+	laws.size_flags_horizontal = Control.SIZE_FILL
+	var here := UI.label(Strings.t("HUD_LAWS_HERE"), 14)
+	here.add_theme_font_override("font", UI.bold_font())
+	here.set_meta("bold", true)
+	here.add_theme_color_override("font_color", Tokens.color("gold"))
+	# An ink outline all round (§21.8): the words lie on the world, and read
+	# on any sky.
+	here.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	here.add_theme_constant_override("outline_size", UI.px(3))
 	here.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	here.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	laws.add_child(here)
@@ -154,6 +164,13 @@ func _build_alarm() -> void:
 	_swap(alarm_panel, piece)
 	alarm_panel = piece
 	alarm_label = piece.find_children("*", "Label", true, false)[1]
+	if Settings.text_scale > 130:
+		# §20.8's large text: the count on its own line under the word, rather
+		# than run off the phone's edge (S1-R4 asks the kit for this).
+		var head := alarm_label.get_parent()
+		head.remove_child(alarm_label)
+		head.add_sibling(alarm_label)
+		alarm_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	if _alarm >= BELLS / 2 + 1:
 		# Red from four, as its bells; the number says the level either way.
 		alarm_label.add_theme_color_override("font_color", Tokens.color("alarm_text_on_night"))
@@ -169,6 +186,13 @@ func _build_loot(room: String, left: String, load_words: String, bags: float, cr
 		load_target / 100.0, load_words)
 	_load = piece.find_child("Load", true, false)
 	(_load.get_node("Aim") as Control).visible = load_target >= 0
+	if load_words != "":
+		# "Load to N%" breaks between words where a language's are long, rather
+		# than widen the panel past the phone (S1-R2 asks the kit for this).
+		var words := piece.get_child(0).get_child(-1) as Label
+		var line := words.get_combined_minimum_size().x
+		words.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		words.custom_minimum_size.x = minf(line, UI.px(88))
 	_crack = null
 	if not _open:
 		var row := HBoxContainer.new()
@@ -249,11 +273,69 @@ func _show_laws(r: RulebornReplay) -> void:
 		c.queue_free()
 	for law in laws:
 		var icon := "laws/" + law.replace("_", "")
-		var chip := KitCards.law_chip(icon if Icons.has(icon) else "", Strings.term("LAW", law))
-		chip.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		var chip := _law_chip(icon if Icons.has(icon) else "", Strings.term("LAW", law))
 		laws_box.add_child(chip)
 		_through(chip)
 	(laws_box.get_parent() as Control).visible = not laws.is_empty()
+
+
+## A law's chip as wide as the banner's column: the kit's leather with the
+## law's icon and its name, which wraps between words rather than outgrow the
+## column (KitCards.law_chip keeps one line and ends a long name in an
+## ellipsis; S1-R3 asks the kit for this one). A dark icon (Glowing dark)
+## stands on the kit's light disc so it reads on the leather.
+static func _law_chip(icon: String, title: String) -> PanelContainer:
+	var p := UI.panel("leather")
+	p.name = "Law"
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(4))
+	if icon != "" and dark_icon(icon):
+		var disc := PanelContainer.new()
+		disc.add_theme_stylebox_override("panel", UI.clear_box(1, 1))
+		UI.dress(disc, "icon_disc", 999)
+		disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		disc.add_child(Icons.view(icon, 19.0))
+		row.add_child(disc)
+	elif icon != "":
+		var bare := Icons.view(icon, 24.0)
+		bare.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(bare)
+	var l := UI.label(title, 14, true)
+	l.name = "Words"
+	l.theme_type_variation = "LabelText"
+	l.set_meta("bold", true)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# No narrower than its longest word, so a line breaks between words; with
+	# §20.8's large text a word too long for the column breaks instead.
+	var widest := 0.0
+	for w: String in title.split(" ", false):
+		widest = maxf(widest, UI.bold_font().get_string_size(w, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(14)).x)
+	l.custom_minimum_size.x = minf(ceilf(widest * 1.08) + 2.0, UI.px(100) * maxf(1.0, Settings.text_scale / 100.0))
+	row.add_child(l)
+	p.add_child(row)
+	return p
+
+
+## Whether an icon is mostly dark ink, which needs a light disc behind it
+## on the leather: its drawn pixels' mean lightness, measured once.
+static func dark_icon(icon: String) -> bool:
+	if _dark.has(icon):
+		return _dark[icon]
+	var image := Icons.texture(icon).get_image()
+	var light := 0.0
+	var drawn := 0.0
+	if image != null:
+		var small := image.duplicate() as Image
+		small.decompress()
+		small.resize(16, 16)
+		for y in 16:
+			for x in 16:
+				var c := small.get_pixel(x, y)
+				light += c.get_luminance() * c.a
+				drawn += c.a
+	_dark[icon] = drawn > 0.0 and light / drawn < 0.3
+	return _dark[icon]
 
 
 ## §21.8: "rewards fly into their counter": coins from a point on the screen
