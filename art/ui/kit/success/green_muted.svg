@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="48" data-slice="18 20 18 24">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#24604A"/><stop offset="1" stop-color="#163E30"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8FF0A8" stop-opacity="0.302"/><stop offset="0.42" stop-color="#8FF0A8" stop-opacity="0"/><stop offset="1" stop-color="#8FF0A8" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0"/><stop offset="0.6" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.251"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.102"/><stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0.0549"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.0235"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A4A38"/><stop offset="1" stop-color="#103026"/></linearGradient>
+    <linearGradient id="g6" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0.4"/><stop offset="0.35" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <rect x="1" y="5" width="36" height="42" rx="16" fill="#0A3A20" stroke="#1A0C14" stroke-width="2"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="url(#g1)"/>
+    <rect x="2.75" y="2.75" width="32.5" height="38.5" rx="14.25" fill="none" stroke="#3FBF7F" stroke-width="1.5" stroke-opacity="0.4"/>
+    <rect x="3" y="3" width="32" height="38" rx="14" fill="none" stroke="url(#g2)" stroke-width="2"/>
+    <rect x="3.5" y="3.5" width="31" height="37" rx="13.5" fill="none" stroke="url(#g3)" stroke-width="3"/>
+    <rect x="5" y="4" width="28" height="15" rx="8" fill="url(#g4)"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="none" stroke="#1A0C14" stroke-width="2"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <rect x="1" y="5" width="36" height="42" rx="16" fill="#000000" stroke="#000000" stroke-width="3"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="#0F4A2E"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="none" stroke="#000000" stroke-width="3"/>
+  </g>
+  <g data-state="pressed">
+    <rect x="1" y="5" width="36" height="42" rx="16" fill="#0A3A20" stroke="#1A0C14" stroke-width="2"/>
+    <rect x="1" y="4" width="36" height="42" rx="16" fill="url(#g5)"/>
+    <rect x="2.75" y="5.75" width="32.5" height="38.5" rx="14.25" fill="none" stroke="#3FBF7F" stroke-width="1.5" stroke-opacity="0.251"/>
+    <rect x="3.5" y="6.5" width="31" height="37" rx="13.5" fill="none" stroke="url(#g6)" stroke-width="3"/>
+    <rect x="1" y="4" width="36" height="42" rx="16" fill="none" stroke="#1A0C14" stroke-width="2"/>
+  </g>
+  <g data-state="pressed" data-mode="hc">
+    <rect x="1" y="5" width="36" height="42" rx="16" fill="#000000" stroke="#000000" stroke-width="3"/>
+    <rect x="1" y="4" width="36" height="42" rx="16" fill="#0A3420"/>
+    <rect x="1" y="4" width="36" height="42" rx="16" fill="none" stroke="#000000" stroke-width="3"/>
+  </g>
+</svg>

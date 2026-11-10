@@ -7,14 +7,6 @@
     <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#241A52" stop-opacity="0"/><stop offset="0.55" stop-color="#241A52" stop-opacity="0"/><stop offset="1" stop-color="#241A52" stop-opacity="0.502"/></linearGradient>
     <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A3A84"/><stop offset="1" stop-color="#5A4A98"/></linearGradient>
     <linearGradient id="g6" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0.4"/><stop offset="0.45" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></linearGradient>
-    <linearGradient id="g7" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A8A90"/><stop offset="1" stop-color="#245A66"/></linearGradient>
-    <pattern id="s8" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2.5" height="6" fill="#FFFFFF" fill-opacity="0.1412"/></pattern>
-    <mask id="m9" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect x="0" y="0" width="20" height="20" fill="#FFFFFF"/><rect x="0" y="28" width="20" height="20" fill="#FFFFFF"/><rect x="28" y="0" width="20" height="20" fill="#FFFFFF"/><rect x="28" y="28" width="20" height="20" fill="#FFFFFF"/></mask>
-    <linearGradient id="g10" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.102"/><stop offset="0.7" stop-color="#FFFFFF" stop-opacity="0.0431"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.0196"/></linearGradient>
-    <linearGradient id="g11" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.4"/><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
-    <linearGradient id="g12" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0"/><stop offset="0.55" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.349"/></linearGradient>
-    <pattern id="s13" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2" height="6" fill="#000000"/></pattern>
-    <mask id="m14" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect x="0" y="0" width="20" height="20" fill="#FFFFFF"/><rect x="0" y="28" width="20" height="20" fill="#FFFFFF"/><rect x="28" y="0" width="20" height="20" fill="#FFFFFF"/><rect x="28" y="28" width="20" height="20" fill="#FFFFFF"/></mask>
   </defs>
   <g data-state="normal">
     <rect x="1" y="3" width="46" height="44" rx="22" fill="#241A52" stroke="#1A0C14" stroke-width="1.5"/>
@@ -44,21 +36,6 @@
   </g>
   <g data-state="disabled" data-mode="hc">
     <rect x="1" y="1" width="46" height="44" rx="22" fill="#8A8494"/>
-    <rect x="2" y="2" width="44" height="42" rx="20.5" fill="none" stroke="#B8A8D8" stroke-width="3"/>
-  </g>
-  <g data-state="locked">
-    <rect x="1" y="3" width="46" height="44" rx="22" fill="#0A0408" stroke="#1A0C14" stroke-width="1.5"/>
-    <rect x="1" y="1" width="46" height="44" rx="22" fill="url(#g7)"/>
-    <rect x="1" y="1" width="46" height="44" rx="22" fill="url(#s8)" mask="url(#m9)"/>
-    <rect x="3.7" y="3.7" width="40.6" height="13" rx="19.3" fill="url(#g10)"/>
-    <rect x="3.1" y="3.1" width="41.8" height="39.8" rx="19.9" fill="none" stroke="url(#g11)" stroke-width="1.5"/>
-    <rect x="3.25" y="3.25" width="41.5" height="39.5" rx="19.75" fill="none" stroke="url(#g12)" stroke-width="1.8"/>
-    <rect x="1" y="1" width="46" height="44" rx="22" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
-  </g>
-  <g data-state="locked" data-mode="hc">
-    <rect x="1" y="3" width="46" height="44" rx="22" fill="#000000"/>
-    <rect x="1" y="1" width="46" height="44" rx="22" fill="#2E6E76"/>
-    <rect x="1" y="1" width="46" height="44" rx="22" fill="url(#s13)" mask="url(#m14)"/>
     <rect x="2" y="2" width="44" height="42" rx="20.5" fill="none" stroke="#B8A8D8" stroke-width="3"/>
   </g>
 </svg>

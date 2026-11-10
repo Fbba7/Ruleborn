@@ -11,17 +11,17 @@ writes the files.
     segmented/seg_track_light   the track on parchment, sunk: normal, disabled
     segmented/seg               an unchosen segment on the dark track: normal, pressed, disabled
     segmented/seg_light         an unchosen segment on parchment: normal, pressed, disabled
-    segmented_on/seg_on         the chosen segment, gold (E1): normal, pressed, disabled
-    segmented_on/seg_on_light   the chosen segment on parchment, leather: normal, pressed, disabled
-    chip/chip                   a chip, off: normal, pressed, disabled, locked
-    chip/chip_light             a chip on parchment, off: normal, pressed, disabled, locked
-    chip_on/chip_on             a chip, on, gold: normal, pressed, disabled
-    chip_on/chip_on_light       a chip on parchment, on, leather: normal, pressed, disabled
-    tile/day_done               a streak day kept, gold: normal
+    segmented_on/seg_on         the chosen segment, cream in a gold rim (E1): normal, pressed, disabled
+    segmented_on/seg_on_light   the chosen segment on parchment, leather in a gold rim: normal, pressed, disabled
+    chip/chip                   a chip, off: normal, pressed, disabled
+    chip/chip_light             a chip on parchment, off: normal, pressed, disabled
+    chip_on/chip_on             a chip, on, cream in a gold rim: normal, pressed, disabled
+    chip_on/chip_on_light       a chip on parchment, on, leather in a gold rim: normal, pressed, disabled
+    tile/day_done               a streak day kept, a tan plate stamped with a bronze ring: normal
     tile/day_today              today, parchment ringed in gold: normal
     tile/day_later              a day to come, an empty slot: normal
     tile/week_day               a day's bar, violet: normal
-    tile/week_today             today's bar, gold, glowing: normal
+    tile/week_today             today's bar: a lighter violet under a cream cap, in a gold rim, glowing: normal
     tile/reward_sky             a reward tile edged in sky, round pips: normal, locked
     tile/reward_pink            a reward tile edged in pink, diamond pips: normal, locked
     locked/locked               the locked face, teal, hatched in its corners: normal, pressed
@@ -36,8 +36,15 @@ An unchosen chip on parchment is a tan plate, not the token's cream, as
 K01's tertiary on parchment is: cream on parchment is no value step at all.
 A chip that is off and the switch's off track are a smoked violet, not the
 token's glass: glass on the night backdrop is under one value step, and an
-interactive face needs two (kit-spec.md section 2.2). Gold stays the chosen
-state's: chip_on, seg_on, day_done, the knobs and the slider's fill.
+interactive face needs two (kit-spec.md section 2.2).
+
+Gold has two roles and no third. As a fill it is the main action's, and the
+knobs' and the slider's fill, which are the control's one moving part. As a
+rim it marks the chosen one of a set: tab_active, seg_on, chip_on, day_today
+and week_today all wear the same gold rim, on a face that turns its ground's
+value over (cream on the dark track, leather on parchment), so the chosen
+state reads by value and by the rim's shape, not by hue. A kept day is not
+chosen: it is a tan plate with a stamped ring, and holds no gold.
 """
 
 from build_kit import C, HC, K, KIT, LINE, LINE_HC, Svg, col, p, rrect, stroke
@@ -91,6 +98,10 @@ KIT_2B = {
     "week_bottom": ("#4E34A8", "week_day's foot"),
     "week_hc": ("#7A5CE0", "week_day, flat"),
     "halo": ("#F2C45C", "tab_heist's glow"),
+    "week_today_top": ("#DCD0FF", "week_day's top #8C6CF0 toward white: today's bar, two steps lighter than its neighbours"),
+    "week_today_bottom": ("#A48CF4", "week_day's top, lifted: today's bar's foot"),
+    "week_today_hc": ("#FFFFFF", "today's bar, flat: white among violet bars"),
+    "stamp": ("#8A5A1C", "parchment_text_3: the ring stamped on a kept day"),
     "active_glow": ("#AA96FF", "tab_active's glow"),
     "tile_lip": ("#4A2A10", "reward tiles' drop"),
     "green_sunk": ("#1E6A1A", "green_bottom #349125, shaded: the on track's inner shade"),
@@ -179,6 +190,38 @@ def raised(svg, st, hc, x, y, w, fh, r, drop, m, lw=1.5, locked=None, hatch=None
         b.append(foot_shade(svg, x + i, fy + i, w - 2 * i, fh - 2 * i, r - i, m["foot"], 1.8))
     b.append(rrect(x, fy, w, fh, r, "none", ink(C["ink_line"], lw)))
     return b
+
+
+def gold_rim(svg, st, hc, x, fy, w, fh, r, lw=1.5, wd=2.2):
+    """The chosen state's mark, the same on every chosen face: a gold rim
+    just inside the ink edge, lit at the top, with a bronze hairline inside
+    it. Disabled, the rim stays as a grey line, so chosen still reads.
+    High contrast: a flat gold band inside the 3-point edge."""
+    if hc:
+        i = LINE_HC + 1.25
+        c = "#000000" if st == "disabled" else K["gold_hc"]
+        return [rrect(x + i, fy + i, w - 2 * i, fh - 2 * i, max(r - i, 1), "none", stroke(c, 2 if st == "disabled" else 2.5))]
+    if st == "disabled":
+        i = lw / 2 + wd / 2 + 0.6
+        return [rrect(x + i, fy + i, w - 2 * i, fh - 2 * i, max(r - i, 1), "none", stroke(K["disabled_line"], 1.2))]
+    i = lw / 2 + wd / 2
+    j = lw / 2 + wd + 0.4
+    g = svg.grad([(0, C["gold_top"]), (0.4, K["today_ring"]), (1, C["gold_bottom"])] if st != "pressed" else
+                 [(0, C["gold_bottom"]), (0.6, K["today_ring"]), (1, C["gold"])])
+    return [rrect(x + i, fy + i, w - 2 * i, fh - 2 * i, max(r - i, 1), "none", ' stroke="%s" stroke-width="%s"' % (g, p(wd))),
+            rrect(x + j, fy + j, w - 2 * j, fh - 2 * j, max(r - j, 1), "none",
+                  stroke(K["bronze"], 0.8) + ' stroke-opacity="0.7"')]
+
+
+def chosen(svg, st, hc, x, y, w, fh, r, drop, m, lw=1.5, locked=None, hatch=None):
+    """A raised face that is the chosen one of its set: material m, in the
+    gold rim. Locked, it is the locked face, as an unchosen one is."""
+    b = raised(svg, st, hc, x, y, w, fh, r, drop, m, lw, locked, hatch)
+    if st == "locked":
+        return b
+    fy = y + (drop if st == "pressed" else 0)
+    rim = gold_rim(svg, st, hc, x, fy, w, fh, r, lw)
+    return b[:-1] + rim + b[-1:] if not hc else b + rim
 
 
 def sunk(svg, st, hc, x, y, w, h, r, fill, line, shade, flat, hc_fill, hc_line, lw=1.5):
@@ -368,11 +411,13 @@ def segmented(M):
 
     FH, R, DROP = 22, 8, 2
     W, H = 22, 1 + FH + DROP + 1
-    for name, m in (("seg_on", M["gold"]), ("seg_on_light", M["chosen"])):
+    # The chosen segment: cream on the dark track, leather on the tray, each
+    # in the gold rim. Gold is the rim, never the fill (the main action's).
+    for name, m in (("seg_on", M["paper"]), ("seg_on_light", M["chosen"])):
         svg = Svg(W, H, [10, 10, 10, 12])
         for st in ("normal", "pressed", "disabled"):
             for hc in (False, True):
-                svg.state(st, raised(svg, st, hc, 1, 1, W - 2, FH, R, DROP, m), hc=hc)
+                svg.state(st, chosen(svg, st, hc, 1, 1, W - 2, FH, R, DROP, m), hc=hc)
         out["segmented_on/%s.svg" % name] = svg.text()
     return out
 
@@ -382,15 +427,16 @@ def chips(M):
     FH, DROP = 44, 2
     W, H = 48, 1 + FH + DROP + 1
     R = FH / 2
-    for skin, name, m, states in (("chip", "chip", M["smoke"], ("normal", "pressed", "disabled", "locked")),
-                                  ("chip", "chip_light", M["tan"], ("normal", "pressed", "disabled", "locked")),
-                                  # A chosen chip that is locked shows the locked face, as an unchosen one does.
-                                  ("chip_on", "chip_on", M["gold"], ("normal", "pressed", "disabled", "locked")),
-                                  ("chip_on", "chip_on_light", M["chosen"], ("normal", "pressed", "disabled", "locked"))):
+    for skin, name, m, states in (("chip", "chip", M["smoke"], ("normal", "pressed", "disabled")),
+                                  ("chip", "chip_light", M["tan"], ("normal", "pressed", "disabled")),
+                                  # A locked chip is the locked skin's face (locked/locked), not a chip state.
+                                  ("chip_on", "chip_on", M["paper"], ("normal", "pressed", "disabled")),
+                                  ("chip_on", "chip_on_light", M["chosen"], ("normal", "pressed", "disabled"))):
         svg = Svg(W, H, [23, 22, 23, 25])
         for st in states:
             for hc in (False, True):
-                svg.state(st, raised(svg, st, hc, 1, 1, W - 2, FH, R, DROP, m, locked=M["locked"], hatch=20), hc=hc)
+                face = chosen if skin == "chip_on" else raised
+                svg.state(st, face(svg, st, hc, 1, 1, W - 2, FH, R, DROP, m, locked=M["locked"], hatch=20), hc=hc)
         out["%s/%s.svg" % (skin, name)] = svg.text()
     return out
 
@@ -415,12 +461,21 @@ def pip(svg, kind, cx, cy, r, colour, hc, lk):
 
 def tiles(M):
     out = {}
-    # Streak days: kept (gold, raised), today (paper in a gold ring), to come (an empty slot).
+    # Streak days: kept (a tan plate stamped with a bronze ring), today (paper in a gold ring), to come (an empty slot).
     FH, R, DROP = 30, 12, 3
     W, H = 30, 1 + FH + DROP + 1
     svg = Svg(W, H, [14, 14, 14, 17])
     for hc in (False, True):
-        svg.state("normal", raised(svg, "normal", hc, 1, 1, W - 2, FH, R, DROP, M["gold"], lw=LINE), hc=hc)
+        b = raised(svg, "normal", hc, 1, 1, W - 2, FH, R, DROP, M["tan"], lw=LINE)
+        # The stamp: two rings pressed into the plate. Kept is a done thing,
+        # not the chosen one, so it wears bronze ink and no gold.
+        if hc:
+            b.append(rrect(5.5, 5.5, W - 11, FH - 9, R - 4.5, "none", stroke("#000000", 1.5)))
+        else:
+            b.insert(-1, rrect(4.4, 4.4, W - 8.8, FH - 6.8, R - 3.4, "none", stroke(K["stamp"], 1.4) + ' stroke-opacity="0.85"'))
+            b.insert(-1, rrect(6.6, 6.6, W - 13.2, FH - 11.2, R - 5.6, "none", stroke(K["stamp"], 0.7) + ' stroke-opacity="0.7"'))
+            b.insert(-1, rrect(4.4, 5.2, W - 8.8, FH - 6.8, R - 3.4, "none", stroke("#FFFFFF", 0.7) + ' stroke-opacity="0.5"'))
+        svg.state("normal", b, hc=hc)
     out["tile/day_done.svg"] = svg.text()
 
     svg = Svg(W, H, [14, 14, 14, 17])
@@ -475,13 +530,24 @@ def tiles(M):
     svg = Svg(16 + 2 * G, 16 + 2 * G, [7 + G, 8 + G, 7 + G, 5 + G])
     for hc in (False, True):
         b = []
+        # Today's bar is a bar like its neighbours, two steps lighter, with a
+        # cream cap across its top (inside the fixed top row) and the chosen
+        # state's gold rim: told by value and shape, not by hue.
+        cap = '<path d="M%s %sV%sQ%s %s %s %sH%sQ%s %s %s %sV%sZ"%s/>'
         if hc:
-            b.append(bar(svg, G + 1, G + 1, 14, 14, K["gold_hc"]))
+            b.append(bar(svg, G + 1, G + 1, 14, 14, K["week_today_hc"]))
+            b.append('<rect x="%s" y="%s" width="11" height="2"%s/>' % (p(G + 2.5), p(G + 6.2), col("#000000")))
+            b.append(bar(svg, G + 4, G + 4, 8, 8, "none", stroke(K["gold_hc"], 1.5)))
             b.append(bar(svg, G + 2.5, G + 2.5, 11, 11, "none", stroke("#000000", LINE_HC)))
         else:
-            b.append(rrect(G - 1, G - 1, 18, 18, 7, a(K["halo"], 0.6), blur(svg, 2)))
-            b.append(bar(svg, G + 1, G + 1, 14, 14, svg.grad([(0, "#FFF0B8"), (0.55, "#F2C45C"), (1, "#B8741E")])))
-            b.append(rrect(G + 3, G + 2.6, 10, 1.6, 0.8, a("#FFFFFF", 0.8)))
+            b.append(rrect(G - 1, G - 1, 18, 18, 7, a(C["cream"], 0.55), blur(svg, 2)))
+            b.append(bar(svg, G + 1, G + 1, 14, 14, svg.grad([(0, K["week_today_top"]), (1, K["week_today_bottom"])])))
+            b.append(cap % (p(G + 1), p(G + 6.4), p(G + 6.4), p(G + 1), p(G + 1), p(G + 6.4), p(G + 1), p(G + 9.6),
+                            p(G + 15), p(G + 1), p(G + 15), p(G + 6.4), p(G + 6.4), col(C["cream"])))
+            b.append('<rect x="%s" y="%s" width="14" height="1.1"%s/>' % (p(G + 1), p(G + 6.4), col(C["ink_line"])))
+            b.append(rrect(G + 3.4, G + 2.6, 9.2, 1.4, 0.7, a("#FFFFFF", 0.9)))
+            rimg = svg.grad([(0, C["gold_top"]), (0.4, K["today_ring"]), (1, C["gold_bottom"])])
+            b.append(bar(svg, G + 2.3, G + 2.3, 11.4, 11.4, "none", ' stroke="%s" stroke-width="1.3"' % rimg))
             b.append(bar(svg, G + 1, G + 1, 14, 14, "none", ink(C["ink_line"], 1.5)))
         svg.state("normal", b, hc=hc)
     out["tile/week_today.svg"] = svg.text()

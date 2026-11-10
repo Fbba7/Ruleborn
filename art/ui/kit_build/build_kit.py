@@ -23,11 +23,11 @@ import os
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 TOKENS = os.path.join(ROOT, "client/ui/tokens.json")
 KIT_DIR = os.path.join(ROOT, "art/ui/kit")
-# Skins written beside the kit, not into it, until the kit atlas has pages
-# (request AIA-R13): batch 1b does not fit one 2048x2048 atlas beside 1a.
-# The bake does not read this folder; proof_1b.py draws them from it.
+# Skins written beside the kit, not into it: none now (the atlas has pages,
+# so disc_school, once kept here, is baked with the rest). A skin named in
+# DEFERRED is written to NEXT_DIR, which the bake does not read.
 NEXT_DIR = os.path.join(ROOT, "art/ui/kit_next")
-DEFERRED = ("disc_school",)
+DEFERRED = ()
 PALETTE = os.path.join(ROOT, "art/ui/palette.json")
 
 T = json.load(open(TOKENS))
@@ -362,6 +362,11 @@ def build():
     KIT.update(kit_2b.KIT_2B)
     K.update({k: v[0] for k, v in kit_2b.KIT_2B.items()})
     svgs.update(kit_2b.build_2b(T))
+    # Batch 2c (kit_2c.py): the own-name shapes of nine materials, and the warn tag.
+    import kit_2c
+    KIT.update(kit_2c.KIT_2C)
+    K.update({k: v[0] for k, v in kit_2c.KIT_2C.items()})
+    svgs.update(kit_2c.build_2c(T))
     return svgs
 
 
