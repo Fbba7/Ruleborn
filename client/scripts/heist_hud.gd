@@ -182,7 +182,9 @@ func _build_alarm() -> void:
 ## target and "Load to N%" under it; while the Vault is shut how far it is
 ## cracked as a third number, so its progress is always on screen (§12.19).
 ## Written rather than a second bar: the kit's bar, tick and icon are a draw
-## call each, where the heist's budget has room for none (S1-R2).
+## call each, where the heist's budget has room for none (S1-R2). With §20.8's
+## large text it is a thin bar beside its icon instead, which is lower than a
+## third row and keeps the panel off the hint below.
 func _build_loot(room: String, left: String, load_words: String, bags: float, cracked: String) -> void:
 	var rows := [[Strings.t("HUD_ROOM"), room], [Strings.t("HUD_LEFT"), left]]
 	var large := Settings.text_scale > 130
