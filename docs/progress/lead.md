@@ -1,15 +1,13 @@
 # The lead's handoff
 
-> **Final deploy, then stop (owner's order, 10 November 2026, 08:28Z:
-> "Deploy and then stop cleanly").** CLAUDE.md order 1 has the terms.
-> Cycle 50 is the last cycle and is started by the overseer by hand; the
-> launcher and the watchdog are disabled and stay disabled. The final
-> cycle merges what is ready and passes the checks, starts no session
-> (not AIA on kit-7, no restart), seeds no task and arms nothing; its
-> steps are under "Next (cycle 50, the final cycle)" in "Now" and in
-> `status/lead.json`. Messages M5 (K1) and M6 (S1) in the backlog tell
-> the two builders to bring their task to ready by 09:45Z or push a save
-> point, then stop. After the cycle the overseer records the stop.
+> **Final deploy done (owner's order, 10 November 2026, 08:28Z: "Deploy
+> and then stop cleanly").** CLAUDE.md order 1 has the terms. Cycle 50
+> was the last cycle, started by the overseer by hand; it merged what was
+> ready and passed the checks, started no session, seeded no task and
+> armed nothing. The launcher and the watchdog are disabled and stay
+> disabled. The overseer records the stop in CLAUDE.md after this
+> cycle's push. No lead cycle follows until the owner, in their own
+> words, restarts the program.
 
 > **Restarted by the owner, 9 November 2026** ("Let's continue and use only
 > Fable 5.2", in the overseer's chat). The program runs, on Fable 5.2 only
@@ -18,21 +16,20 @@
 > (order 2). The launcher and the watchdog are new scheduled tasks firing
 > into new Fable 5.2 sessions (table below); the old ones stay disabled.
 >
-> Where the work stands after cycle 49 (10 November 2026, 07:55Z):
+> Where the work stands after cycle 50, the final cycle (10 November
+> 2026, 10:33Z):
 >
 > | Task | Branch | State |
 > |---|---|---|
-> | P1-AIA2-icons-2b | `claude/ui-artist-icons` | merged, `d30530ee` (gate 12 of 12 pass) |
-> | P1-K1-switch-heist | `claude/ui-bake` | merged, `3ac50485` |
-> | P1-AIA-kit-6 | `claude/ui-artist` | ready at `00571a44`, not merged: check_all fails one kit test on main plus kit-6; waits for switch-rest (message M4). Gate: Layered materials failed 3 of 3, advisory |
-> | P1-K1-switch-rest | `claude/ui-bake` | claimed (K1, working); M4: merge kit-6's branch in and bring `KitSkin.OWN_SHAPE_ONLY` to the atlas |
-> | P1-S1-pilot-1 | `claude/ui-screens-heist` | claimed (S1, working) |
-> | P1-AIA-kit-7 | `claude/ui-artist` | open (seeded in cycle 49 from the gate's notes), deps kit-6 |
+> | P1-AIA-kit-6 | `claude/ui-artist` | merged, `e072364a` (gate: Layered materials failed 3 of 3, advisory; P1-AIA-kit-7 carries the notes) |
+> | P1-K1-switch-rest | `claude/ui-bake` | merged, `e072364a`; branch head `a2e75777`, K1 stopped |
+> | P1-S1-pilot-1 | `claude/ui-screens-heist` | merged, `718ddcbe` (gate, advisory: 4 of 16 pass) |
+> | P1-AIA-kit-7 | `claude/ui-artist` | open, deps merged, not started; branch head `0c27e773` |
+> | P1-S1-pilot-2 | `claude/ui-screens-heist` | open, deps merged, not started |
 >
-> Main passed check_all and guard.sh in cycle 48's container (candidate
-> `f685870d`). Tasks done: 14 of 20. Two builders are working (K1, S1);
-> the cap is three (D13 (c)). The sessions of 4 November ran on Opus 5.5
-> and are not reused.
+> Main passed check_all and guard.sh in cycle 50's container. Tasks
+> done: 46 of 61. No builder is working: every session is stopped or
+> idle. The sessions of 4 November ran on Opus 5.5 and are not reused.
 >
 > **Owner orders.** The owner stopped the program on 3 November 2026,
 > restarted it on 4 November, stopped it again on 5 November and restarted
@@ -115,8 +112,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxonDy8BxQGiqJJMXsB` (cycle 49,
-10 November 2026 from 07:38Z to about 07:55Z). Cycle 48's was
+Latest lead cycle session: `session_01SNkKxnL64HmHVVoj2K58mZ` (cycle 50, the
+final cycle, 10 November 2026 from 09:19Z to about 10:33Z, started by the
+overseer by hand). Cycle 49's was `session_01SNkKxonDy8BxQGiqJJMXsB`
+(from 07:38Z to about 07:55Z). Cycle 48's was
 `session_01SNkKxqhTHTeKwMPJKdCubU` (from 03:38Z; paused from about
 04:20Z to 06:50Z). Cycle
 47's was `session_01SNkKxqErNms87y9wMHpJWR` (from 01:51Z); the watchdog
@@ -145,9 +144,9 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AIA | `session_01SNkKxn3ipTmYbgSCzE7KeM` | P1-AIA-kit-6 (restart: AIA-R20 and AIA-R21 answered with their defaults; fill the handoff, mark ready, gate request); idle since kit-6 turned ready | `claude/ui-artist` | 2026-11-10 06:53Z |
-| K1 | `session_01SNkKxoJ8mhZCTqZrVR3GTe` | P1-K1-switch-rest | `claude/ui-bake` | 2026-11-10 07:33Z |
-| S1 | `session_01SNkKxq8aqgTaKU6VpynuMm` | P1-S1-pilot-1 | `claude/ui-screens-heist` | 2026-11-10 07:33Z |
+| AIA | `session_01SNkKxn3ipTmYbgSCzE7KeM` | P1-AIA-kit-6 (restart: AIA-R20 and AIA-R21 answered with their defaults; fill the handoff, mark ready, gate request); idle, done | `claude/ui-artist` | 2026-11-10 06:53Z |
+| K1 | `session_01SNkKxoJ8mhZCTqZrVR3GTe` (stopped, done) | P1-K1-switch-rest | `claude/ui-bake` | 2026-11-10 07:33Z |
+| S1 | `session_01SNkKxq8aqgTaKU6VpynuMm` (stopped, done) | P1-S1-pilot-1 | `claude/ui-screens-heist` | 2026-11-10 07:33Z |
 | AIA | `session_01SNkKxqtMs5PEduX3C73kWc` (idle, replaced) | P1-AIA-kit-6 | `claude/ui-artist` | 2026-11-10 02:49Z |
 | K1 | `session_01SNkKxokS4F9D68QZEPomby` (idle, done) | P1-K1-switch-heist (restart: K1-R13 answered, icons-2a merged; merge main, guard, pre-check, ready) | `claude/ui-bake` | 2026-11-10 02:49Z |
 | AIA-2 | `session_01SNkKxmfMQZ66P5GyjL9tNY` (idle, done) | P1-AIA2-icons-2b | `claude/ui-artist-icons` | 2026-11-10 02:49Z |
@@ -426,29 +425,63 @@ Your session was created with the repository checked out at main; work in that c
   stay), deps kit-6, so no AIA session was started. The lock is
   released. The audit and roadmap pages did not change. No owner-inbox
   entry.
-- Next (cycle 50, the final cycle; owner's order "Deploy and then stop
-  cleanly", CLAUDE.md order 1). Start no session, seed no task, create
-  or re-arm no scheduled task.
-  1. Fetch; read the status files of `claude/ui-bake` (K1) and
-     `claude/ui-screens-heist` (S1) and copy the claims.
-  2. If P1-K1-switch-rest has a `ready_sha`: build one candidate, main +
-     `origin/claude/ui-artist` at `00571a44` (P1-AIA-kit-6) +
-     `origin/claude/ui-bake` at the ready commit; owners diff for kit-6
-     over the first merge and for switch-rest over the second (explicit
-     SHAs); `bash client/build.sh` before guard.sh in a fresh worktree;
-     check_all; on PASS push main and mark both merged. If switch-rest
-     is not ready, merge neither: kit-6 fails check_all without it.
-  3. If P1-S1-pilot-1 has a `ready_sha` set by 09:45Z: gate it
-     (advisory), then merge it the same way, in the same candidate when
-     it is ready before the candidate is built, or in a second candidate
-     after the first merge. A task marked ready after 09:45Z stays ready
-     on its branch.
-  4. Loosen, skip or disable no test. A candidate that fails stays
-     unmerged; write the failure here.
-  5. End: rewrite this section with, for every task not merged, its
-     branch, last commit and state; republish the audit and roadmap
-     pages if main moved; commit and push main; end the turn. The
-     overseer then records the stop. Only Fable 5.2; never Fable 5.1.
+- Cycle 50, the final cycle, 10 November 2026, from 09:19Z to about
+  10:33Z (session `session_01SNkKxnL64HmHVVoj2K58mZ`, started by the overseer by hand under the
+  owner's order "Deploy and then stop cleanly"): started no session,
+  seeded no task, touched no scheduled task. K1 and S1 had both stopped
+  cleanly with their task ready before 09:45Z: switch-rest at `e012f9ff`
+  (pre-check PASS 09:18Z; branch head `a2e75777`), pilot-1 at `5470c4d3`
+  (pre-check PASS 09:31Z; branch head `376d86a9`). K1 acknowledged M5;
+  S1's status file has no ack of M6 but S1 did what it says.
+  First candidate `0e98262b` (main + `claude/ui-artist` at `00571a44` +
+  `claude/ui-bake` at `e012f9ff`): owners diff clean for kit-6; for
+  switch-rest it named the five kit files K1-R15 asks for and
+  `client/tests/shots/ui_kit_rest.gd.uid`, all outside the task's
+  list, granted as the task's exceptions (backlog). This container lacked the build tools at
+  first, so the first check_all (no wasm target, E0463) and the first
+  guard (`FAIL (rebake)`, the icon bake timed out without three.js)
+  failed for the container, not the candidate; after the installs under
+  "Tools in a fresh container", ui guard OK at 09:40Z and check_all PASS
+  at 10:01Z. Merged P1-AIA-kit-6 and P1-K1-switch-rest as `e072364a`;
+  AIA-R16, AIA-R18, AIA-R19 and K1-R14 part 3 are done with it
+  (requests.md). K1-R16 answered with its default: album and fact stay
+  out of `SKINS_OF`.
+  Gate on pilot-1 at `5470c4d3` (Fable 5.2 ui-judge, three samples a
+  quality, three more on a split, advisory), the heist at 100% and at
+  200% text, eight qualities each: 4 of 16 pass. Pass: Layered materials
+  at 100%, Painted or rendered icons at 100%, Light behind UI at both
+  sizes, One art-direction idea at 200% (3 of 6 fail, one short of a
+  fail). Fail: Display type at both sizes (the timer is flat, "Laws
+  here" and the crew names have no ink outline, at 200% "Pip" is
+  overlapped by Ash's portrait); Hierarchy at both (in grayscale the red
+  Get out leads before the dark plum Cast); Colour roles and value at
+  both (red fill on Get out while Alarm has none, no gold main-action
+  fill, crew rings told apart by hue alone); Character presence at both
+  (Hollow blends into its purple ring, Bramble is low in contrast);
+  Layered materials at 200% (flat hint banner, Room panel without an
+  inner well); Painted or rendered icons at 200% (Bloom is a tiny flat
+  glyph, the Cast and Get out icons are gone); One art-direction idea
+  at 100% (thin flat load bar, flat crew bars, hairline hint pill).
+  Verdict in
+  `docs/art/ui-quality/gate/verdicts/P1-S1-pilot-1/5470c4d3.json`. The
+  gate is advisory and did not decide the merge; its notes are the
+  brief for P1-S1-pilot-2 and for the kit work S1-R1 to S1-R7 ask of K1
+  (requests.md).
+  Candidate `6fb29341` (main `e072364a` + pilot-1 at `5470c4d3`): owners diff clean, claims disjoint, ui guard OK, check_all PASS at 10:33Z. Merged P1-S1-pilot-1 as `718ddcbe`; lock released.
+  The audit and roadmap pages did not change and were not republished.
+  No owner-inbox entry.
+- After the stop (for whoever the owner restarts the program with; until
+  then nothing runs). Tasks not merged, with branch, last commit and
+  state: P1-S1-pilot-2 is open with its deps merged and not started; S1's branch `claude/ui-screens-heist` is at `376d86a9` (status and handoff after the ready commit), stopped.
+  P1-AIA-kit-7 (batch 2d, the gate's notes on kit-6; K1-R16's two
+  pressed and locked states could ride with it) is open with its deps
+  merged and not started; `claude/ui-artist` is at `0c27e773`, AIA's
+  session idle. `claude/ui-bake` is at `a2e75777`, all of it merged
+  except K1's last status and handoff commits; K1 has no open task, and
+  S1-R1 to S1-R7 would be its next one once the lead seeds it. Icon
+  batches 3 and 4 stay deferred (D13 (c)). A restart needs new sessions
+  on Fable 5.2 and, if the owner wants the hourly cycle again, a new
+  launcher and watchdog created after the restart is on main.
 - Cycle 44, 4 November 2026, from 23:39Z (session
   `session_01SNkKxqKY1WGt7cJSaqyYtWj`, started by the launcher):
   bookkeeping and a diagnosis. All three builders are working (AIA
