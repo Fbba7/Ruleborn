@@ -1,6 +1,6 @@
 # AIA-2 icon maker: progress
 
-- Status: Green (P1-AIA2-icons-2b: six new icons baked, three of batch 2a reworked on the gate's notes; `check_icons.py` passes all 80 faces, `bake.js --check` ok, a rebake of both families is byte for byte; pre-check running on 29e91db0).
+- Status: Green (P1-AIA2-icons-2b: six new icons baked, three of batch 2a reworked on the gate's notes; `check_icons.py` passes all 80 faces, `bake.js --check` ok, a rebake of both families is byte for byte; pre-check PASS on 29e91db0, 03:29 UTC, 10 November).
 - Progress: 4 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7, P1-AIA2-icons-2a at 027379a2); P1-AIA2-icons-2b is with the gate.
 - Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources; batch 2a's eight heist-status and HUD icons; batch 2b's six reward icons.
 - Next: the gate's verdict on P1-AIA2-icons-2b and the lead's merge. Batches 3 and 4 are deferred (D13 (c)).
@@ -13,11 +13,11 @@
 | P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Merged at 8ce107c9 | gate advisory at 5f759a03: Light behind UI pass; three qualities fail 3 of 3 |
 | P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Merged at 90f72fd7 | gate pass on all four qualities (advisory) at bef6eac2; resync at 5ecb0202 |
 | P1-AIA2-icons-2a: eight heist-status and HUD icons in `icons_48` | 4 | Merged at 027379a2 | gate 12 of 12 at 6a382d97 (advisory); pre-check PASS on ac4809ed |
-| P1-AIA2-icons-2b: the six reward icons in `icons_48`, five of them in `icons_256` | 3 | Gate requested at 29e91db0 | `python3 -B art/ui/icons/studio/check_icons.py`: all 80 faces pass (29 and 11 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 29 pieces, icons_256 11 pieces, both ok |
+| P1-AIA2-icons-2b: the six reward icons in `icons_48`, five of them in `icons_256` | 3 | Ready at 29e91db0: pre-check PASS; gate requested | `python3 -B art/ui/icons/studio/check_icons.py`: all 80 faces pass (29 and 11 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 29 pieces, icons_256 11 pieces, both ok |
 
 ## Handoff
 
-- **Last verified commit:** 29e91db0 (pre-check running on 29e91db0; `check_icons.py` and `bake.js --check` green; `node art/ui/icons/studio/bake_icons.js icons_48 icons_256 --out <scratch>` gives the six committed files byte for byte, 10 November). `bash tools/ui_bake/guard.sh` was not run in full in this session; its rebake step is what the line above repeats.
+- **Last verified commit:** 29e91db0 (pre-check PASS on 29e91db0, 03:29 UTC, 10 November; `check_icons.py` and `bake.js --check` green; `node art/ui/icons/studio/bake_icons.js icons_48 icons_256 --out <scratch>` gives the six committed files byte for byte, 10 November). `bash tools/ui_bake/guard.sh` was not run in full in this session; its rebake step is what the line above repeats.
 
 ### Done
 
