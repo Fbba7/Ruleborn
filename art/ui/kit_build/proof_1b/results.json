@@ -267,7 +267,7 @@
  {
   "check": "label-contrast",
   "control": "tag tag_warn @ backdrop",
-  "ratio": 14.35,
+  "ratio": 13.89,
   "against": "face",
   "result": "PASS",
   "mode": "normal",
@@ -321,7 +321,7 @@
  {
   "check": "label-contrast",
   "control": "tag tag_warn @ dark card",
-  "ratio": 13.88,
+  "ratio": 13.99,
   "against": "face",
   "result": "PASS",
   "mode": "normal",
@@ -375,7 +375,7 @@
  {
   "check": "label-contrast",
   "control": "tag tag_warn @ glass",
-  "ratio": 13.88,
+  "ratio": 13.99,
   "against": "face",
   "result": "PASS",
   "mode": "normal",
@@ -411,7 +411,7 @@
  {
   "check": "label-contrast",
   "control": "tag tag_warn @ parchment",
-  "ratio": 14.28,
+  "ratio": 13.9,
   "against": "face",
   "result": "PASS",
   "mode": "normal",
@@ -952,7 +952,7 @@
  {
   "check": "label-contrast",
   "control": "tag tag_warn @ backdrop",
-  "ratio": 14.25,
+  "ratio": 21.0,
   "against": "face",
   "result": "PASS",
   "mode": "hc",
@@ -1006,7 +1006,7 @@
  {
   "check": "label-contrast",
   "control": "tag tag_warn @ dark card",
-  "ratio": 14.25,
+  "ratio": 21.0,
   "against": "face",
   "result": "PASS",
   "mode": "hc",
@@ -1060,7 +1060,7 @@
  {
   "check": "label-contrast",
   "control": "tag tag_warn @ glass",
-  "ratio": 14.25,
+  "ratio": 21.0,
   "against": "face",
   "result": "PASS",
   "mode": "hc",
@@ -1096,7 +1096,7 @@
  {
   "check": "label-contrast",
   "control": "tag tag_warn @ parchment",
-  "ratio": 14.25,
+  "ratio": 21.0,
   "against": "face",
   "result": "PASS",
   "mode": "hc",
