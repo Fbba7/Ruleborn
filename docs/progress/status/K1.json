@@ -8,15 +8,15 @@
   "task_state": "working",
   "claimed_at": "2026-11-09T22:27:00Z",
   "lease_until": "2026-11-10T06:55:00Z",
-  "updated_at": "2026-11-10T03:10:00Z",
-  "expected_next_update_by": "2026-11-10T03:55:00Z",
+  "updated_at": "2026-11-10T03:22:00Z",
+  "expected_next_update_by": "2026-11-10T04:07:00Z",
   "long_run": {
-    "log": "/tmp/check-3def1ab5fb2ef941f8904c73328d72dd531e0e41.log",
+    "log": "/tmp/claude-0/-home-user-Ruleborn/5eb3dd05-5de9-55bd-823a-752c74b2040d/scratchpad/guard3.log",
     "expected_end": "2026-11-10T03:40:00Z"
   },
   "progress_marker": {
-    "last_green_sha": "3def1ab5",
-    "next_step": "ui guard: OK at 3def1ab5 (budgets re-recorded from main's figures after kit batch 2b's three pages; settings 55/49/55, main 62/58/62); the pre-check is running; then mark ready"
+    "last_green_sha": "fd5cb0d2",
+    "next_step": "the pre-check at 3def1ab5 failed (394 of 395): the kit test held the locked material's box to the code, and kit batch 2b baked its face (locked__locked). 071683d: the locked material draws that face, KitSkin.MARKS is gone, kit-spec.md section 8.2 says so; the 18 kit tests pass. The guard is running again; then a new pre-check; then mark ready"
   },
   "precheck": null,
   "gate_request": null,
