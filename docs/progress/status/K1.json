@@ -8,12 +8,15 @@
   "task_state": "working",
   "claimed_at": "2026-11-09T22:27:00Z",
   "lease_until": "2026-11-10T06:55:00Z",
-  "updated_at": "2026-11-10T02:55:00Z",
-  "expected_next_update_by": "2026-11-10T03:40:00Z",
-  "long_run": null,
+  "updated_at": "2026-11-10T03:10:00Z",
+  "expected_next_update_by": "2026-11-10T03:55:00Z",
+  "long_run": {
+    "log": "/tmp/check-3def1ab5fb2ef941f8904c73328d72dd531e0e41.log",
+    "expected_end": "2026-11-10T03:40:00Z"
+  },
   "progress_marker": {
-    "last_green_sha": "05c6bf03",
-    "next_step": "K1-R13 answered (lead cycle 47): main merged at 907a734; build, bash tools/ui_bake/guard.sh to \"ui guard: OK\", the pre-check, mark ready"
+    "last_green_sha": "3def1ab5",
+    "next_step": "ui guard: OK at 3def1ab5 (budgets re-recorded from main's figures after kit batch 2b's three pages; settings 55/49/55, main 62/58/62); the pre-check is running; then mark ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -215,5 +218,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-switch-heist: main merged; running the guard and the pre-check"
+  "next_step": "P1-K1-switch-heist: guard OK at 3def1ab5; the pre-check is running"
 }
