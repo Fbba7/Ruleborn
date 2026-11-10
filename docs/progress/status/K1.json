@@ -3,17 +3,17 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Fable 5.2",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P1-K1-switch-heist",
-  "task_state": "blocked",
+  "task_state": "working",
   "claimed_at": "2026-11-09T22:27:00Z",
-  "lease_until": "2026-11-10T04:55:00Z",
-  "updated_at": "2026-11-10T01:55:00Z",
-  "expected_next_update_by": "2026-11-10T12:00:00Z",
+  "lease_until": "2026-11-10T06:55:00Z",
+  "updated_at": "2026-11-10T02:55:00Z",
+  "expected_next_update_by": "2026-11-10T03:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "05c6bf03",
-    "next_step": "when K1-R13 is answered: merge main, bash tools/ui_bake/guard.sh to \"ui guard: OK\", the pre-check, mark ready; nothing else is left in P1-K1-switch-heist"
+    "next_step": "K1-R13 answered (lead cycle 47): main merged at 907a734; build, bash tools/ui_bake/guard.sh to \"ui guard: OK\", the pre-check, mark ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -215,6 +215,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-switch-heist blocked on K1-R13: the work is done and pushed; check_all passed at 05c6bf03 (All checks passed); the guard passes every step but the rebake of icons_48_hc.webp, AIA-2's file, which fails on main as well",
-  "note": "The session's worker restarted between 23:40Z and 01:50Z, so the 23:44Z update was missed; no work was lost."
+  "next_step": "P1-K1-switch-heist: main merged; running the guard and the pre-check"
 }
