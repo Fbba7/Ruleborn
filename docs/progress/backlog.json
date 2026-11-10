@@ -955,7 +955,7 @@
         "AIA-R16: KitSkin draws batch 2a's pieces: ribbon as its tinted ribbon__box (vertex-coloured per school) under the untinted ribbon__frame at the same rect, and ribbon__chapter untinted, the words on the band's top 32 points; sheet__handle and sheet__handle_parchment as 42 x 9 point sprites centred by code 12 points below a sheet's top edge; frame_<rank>__box__<state> as a hollow 9-slice ring over the portrait's rect grown by 4 points each side; popup__box with its 8/4/12 point margin (plus the 5 point lip) over the scrim, its title a ribbon across the top edge; header__name_plate; panel_parchment__parchment_done",
         "AIA-R18: KitSkin draws batch 2b's pieces: the toggle's track and knob, the slider's track, fill and knob, the heist tab's halo, the week bars, the tab bar and tab faces, the segmented bed and faces, and the chips",
         "K1-R14 part 3: KitSkin.mark('lock') in kit_cards.gd, mark('dot') in kit_status.gd, the alarm fill and the tick in kit_bar.gd",
-        "AIA-R19: KitSkin looks up batch 2c's shapes of their own name (panel_dark__album, panel_dark__fact, panel_dark__plate, bar_track__bar_track_light, tag__tag, tag__island_label, success__banner_success; disc_school's box and frame), adds them to SKINS_OF and switches them on",
+        "AIA-R19: KitSkin looks up batch 2c's shapes of their own name (panel_dark__album, panel_dark__fact, panel_dark__plate, bar_track__bar_track_light, tag__tag, tag__island_label, success__banner_success), adds them to SKINS_OF and switches them on; disc_school is not baked (AIA-R21) and stays code-drawn",
         "the gate's pass on P1-AIA-kit-4 and -5 recorded",
         "bash tools/ui_bake/guard.sh",
         "bash tools/check_all.sh"
@@ -973,7 +973,7 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-10T03:45:00Z",
+      "updated_at": "2026-11-10T06:58:00Z",
       "updated_by": "lead"
     },
     {
@@ -1255,7 +1255,7 @@
       "done_when": [
         "node tools/ui_bake/bake.js --check",
         "the gate's notes on P1-AIA-kit-5 (verdicts/P1-AIA-kit-5/51269c72.json) answered one by one in the handoff",
-        "K1-R14 part 1: disc_school is a piece in client/ui/art/kit.json; part 2: each of the nine materials has a baked shape of its own name or a note in the handoff saying why it stays code-drawn",
+        "K1-R14 part 1 (AIA-R21 answered with its default, cycle 48): disc_school is drawn and kept in art/ui/kit_next/, unbaked and code-drawn, until a later task carries its SKINS_OF line; part 2: each of the nine materials has a baked shape of its own name or a note in the handoff saying why it stays code-drawn",
         "the catalogue's coverage test finds a piece for every skin",
         "self-score against gate/rubric.md in the handoff (M1)",
         "gate: Kit art",
@@ -1283,7 +1283,7 @@
         "agent": "AIA",
         "branch": "claude/ui-artist",
         "claimed_at": "2026-11-10T02:50:24Z",
-        "lease_until": "2026-11-10T05:50:24Z"
+        "lease_until": "2026-11-10T09:50:38Z"
       },
       "prior_branch": null,
       "prior_sha": null,
@@ -1293,9 +1293,10 @@
         "art/ui/kit_build/**",
         "art/ui/palette.json",
         "client/ui/art/kit_2*.webp",
-        "client/ui/art/kit_3*.webp"
+        "client/ui/art/kit_3*.webp",
+        "art/ui/kit_next/**"
       ],
-      "updated_at": "2026-11-10T03:43:00Z",
+      "updated_at": "2026-11-10T06:58:00Z",
       "updated_by": "lead"
     },
     {

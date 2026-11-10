@@ -103,10 +103,12 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqErNms87y9wMHpJWR` (cycle 47,
-10 November 2026 from 01:51Z). The watchdog started a second cycle
-session at the same minute (`session_01SNkKxqgeutvzGq4AWJLbqG`), which
-did no work. Cycle 46's was `session_01SNkKxoVXNfpAABNM81P62e`, cycle
+Latest lead cycle session: `session_01SNkKxqhTHTeKwMPJKdCubU` (cycle 48,
+10 November 2026 from 03:38Z; paused from about 04:20Z to 06:50Z and
+still merging after that, under the lock in `status/lead.json`). Cycle
+47's was `session_01SNkKxqErNms87y9wMHpJWR` (from 01:51Z); the watchdog
+started a second cycle session at the same minute
+(`session_01SNkKxqgeutvzGq4AWJLbqG`), which did no work. Cycle 46's was `session_01SNkKxoVXNfpAABNM81P62e`, cycle
 45's `session_01SNkKxoFQJdmfH1eKm7DbKK`. Cycle 44's, of 4 November
 2026 from 23:39Z, was recorded here as `session_01SNkKxqKY1WGt7cJSaqyYtWj`,
 which is not a valid ID (one character too many); treat an ID that
