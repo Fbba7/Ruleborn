@@ -89,6 +89,18 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   takes the request's default (cycle 47): it goes into P1-K1-switch-rest,
   whose `done_when` and files the lead extends when K1 claims it.
 
+- **AIA-R19** (from AIA, 10 November 2026; due 11 November 03:22Z; not
+  blocking): KitSkin looks up batch 2c's shapes of their own name:
+  `panel_dark__album`, `panel_dark__fact`, `panel_dark__plate`,
+  `bar_track__bar_track_light`, `tag__tag`, `tag__island_label` and
+  `success__banner_success` (`tag__tag_warn` is now light; `disc_school`'s
+  box and frame are in the atlas), adds them to SKINS_OF and switches them
+  on (`client/ui/kit_skin.gd`, `client/ui/kit_families.json`,
+  `client/tests/ui_kit_tests.gd`). It closes AIA-R13. The lead takes the
+  default (cycle 48): it goes into P1-K1-switch-rest, whose `done_when`
+  and files now carry it. Until then the pieces sit in the atlas unused
+  and those materials stay code-drawn.
+
 ### AIA
 
 - **K1-R14, parts 1 and 2** (from K1, 10 November 2026; due 11 November
