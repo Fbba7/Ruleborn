@@ -4,6 +4,18 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-10 01:51Z: lead was stale, watchdog started a cycle (watchdog)
+
+- **What:** `lead.json` was past its `expected_next_update_by` of
+  2026-11-10 00:10Z (last update 2026-11-09 22:55Z, cycle 46). The
+  launcher's last run succeeded at 01:38Z, but its session reads a
+  five-hour usage limit as rejected, which is the likely reason no cycle
+  ran after 22:39Z. The latest lead cycle session
+  (`session_01SNkKxoVXNfpAABNM81P62e`) had completed.
+- **Done:** started `session_01SNkKxqgeutvzGq4AWJLbqG` ("Ruleborn lead
+  cycle 2026-11-10 01:51 UTC (watchdog)") on Fable 5.2.
+- **Needs the owner:** nothing.
+
 ## 2026-11-09 22:30Z: two merges, icons-2a back to AIA-2, three builders working (lead, cycle 45)
 
 - **What:** the first lead cycle since the restart, on Fable 5.2.
