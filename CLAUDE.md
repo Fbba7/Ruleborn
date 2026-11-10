@@ -16,21 +16,19 @@ the status files, requests and scheduled-task prompts.
   Fable 5.2"), in the chat of the overseer session. The program ran, on
   Fable 5.2 only (order 4).
 - **10 November 2026, 08:28 UTC:** the owner ordered "Deploy and then stop
-  cleanly", in the chat of the overseer session. **A final deploy is under
-  way; when it is on main, the program is stopped** and this section is
-  updated to say so. Order 3's "keep working" no longer applies. Until
-  then only this runs, on Fable 5.2 only:
-  - **The builders with a task in hand finish it and stop** (K1 on
-    P1-K1-switch-rest, S1 on P1-S1-pilot-1). If the pre-check and the
-    guard pass on the task's head by 09:45 UTC, mark it ready as usual;
-    if not, push a save point by then. Either way then stop as the
-    paragraph below says, and take no new task. Loosen no test to make
-    the time.
-  - **One final lead cycle**, started by the overseer by hand, merges
-    what is ready and passes the checks, as the lead's handoff describes.
-    It starts no session, seeds no task and arms nothing.
-  - **The launcher and the watchdog are disabled** and stay disabled.
-    Nothing else is started, by anyone.
+  cleanly", in the chat of the overseer session. The final deploy is on
+  main: P1-AIA-kit-6 and P1-K1-switch-rest (merge `e072364a`),
+  P1-S1-pilot-1 (merge `718ddcbe`) and the lead's last write-up
+  (`8f03235f`, 10:34 UTC). **The program is stopped.** Order 3's "keep
+  working" does not apply while it is stopped.
+  - **No session is working.** The builders (K1, S1, AIA) and the final
+    lead cycle ended their turns with their work pushed. No session was
+    interrupted and no work was lost.
+  - **The launcher and the watchdog are disabled** and stay disabled, and
+    no check-in is armed. Nothing is started, by anyone.
+  - **Where the work stands for a restart** is in
+    [`docs/progress/lead.md`](docs/progress/lead.md), "Now", entry "After
+    the stop".
 
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its

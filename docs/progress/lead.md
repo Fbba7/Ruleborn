@@ -1,20 +1,24 @@
 # The lead's handoff
 
-> **Final deploy done (owner's order, 10 November 2026, 08:28Z: "Deploy
-> and then stop cleanly").** CLAUDE.md order 1 has the terms. Cycle 50
-> was the last cycle, started by the overseer by hand; it merged what was
-> ready and passed the checks, started no session, seeded no task and
-> armed nothing. The launcher and the watchdog are disabled and stay
-> disabled. The overseer records the stop in CLAUDE.md after this
-> cycle's push. No lead cycle follows until the owner, in their own
-> words, restarts the program.
+> **Stopped by the owner, 10 November 2026** ("Deploy and then stop
+> cleanly", 08:28Z, in the overseer's chat). The final deploy is on main
+> (merges `e072364a` and `718ddcbe`, the lead's last write-up `8f03235f`)
+> and CLAUDE.md order 1 says the program is stopped. Cycle 50 was the
+> last cycle, started by the overseer by hand; it merged what was ready
+> and passed the checks, started no session, seeded no task and armed
+> nothing. No session is working, the launcher and the watchdog are
+> disabled and stay disabled, and no check-in is armed. Do no work and
+> start nothing until the owner, in their own words, restarts the
+> program. Where the work stands is in "Now", entry "After the stop".
 
 > **Restarted by the owner, 9 November 2026** ("Let's continue and use only
-> Fable 5.2", in the overseer's chat). The program runs, on Fable 5.2 only
-> (CLAUDE.md order 4): every session the lead creates and every subagent it
-> starts runs on Fable 5.2, and on no other model. Fable 5.1 is never used
+> Fable 5.2", in the overseer's chat). The program ran from then until the
+> stop of 10 November, on Fable 5.2 only (CLAUDE.md order 4): every session
+> the lead creates and every subagent it starts runs on Fable 5.2, and on
+> no other model. Fable 5.1 is never used
 > (order 2). The launcher and the watchdog are new scheduled tasks firing
 > into new Fable 5.2 sessions (table below); the old ones stay disabled.
+> Since the stop of 10 November these two are disabled as well.
 >
 > Where the work stands after cycle 50, the final cycle (10 November
 > 2026, 10:33Z):
@@ -23,17 +27,19 @@
 > |---|---|---|
 > | P1-AIA-kit-6 | `claude/ui-artist` | merged, `e072364a` (gate: Layered materials failed 3 of 3, advisory; P1-AIA-kit-7 carries the notes) |
 > | P1-K1-switch-rest | `claude/ui-bake` | merged, `e072364a`; branch head `a2e75777`, K1 stopped |
-> | P1-S1-pilot-1 | `claude/ui-screens-heist` | merged, `718ddcbe` (gate, advisory: 4 of 16 pass) |
+> | P1-S1-pilot-1 | `claude/ui-screens-heist` | merged, `718ddcbe` (gate, advisory: 5 of 16 pass in the verdict file; cycle 50's entry says 4 and lists five) |
 > | P1-AIA-kit-7 | `claude/ui-artist` | open, deps merged, not started; branch head `0c27e773` |
-> | P1-S1-pilot-2 | `claude/ui-screens-heist` | open, deps merged, not started |
+> | P1-S1-pilot-2 | `claude/ui-screens-heist` | open, deps merged, not started; branch head `376d86a9` |
+> | P1-AD-board-1 | `claude/ui-ad` | open, waits for P1-S1-pilot-2, not started; branch head `1be67031` |
 >
 > Main passed check_all and guard.sh in cycle 50's container. Tasks
 > done: 46 of 61. No builder is working: every session is stopped or
 > idle. The sessions of 4 November ran on Opus 5.5 and are not reused.
 >
 > **Owner orders.** The owner stopped the program on 3 November 2026,
-> restarted it on 4 November, stopped it again on 5 November and restarted
-> it on 9 November 2026. Read the owner orders in
+> restarted it on 4 November, stopped it again on 5 November, restarted
+> it on 9 November and stopped it on 10 November 2026. Read the owner
+> orders in
 > [`CLAUDE.md`](../../CLAUDE.md) first: they override this file.
 
 Every cycle of the lead is a fresh session, created by the launcher with the
@@ -95,6 +101,11 @@ every other session is created with `create_session`.
 |---|---|---|---|
 | The launcher: one fresh lead cycle session an hour on Fable 5.2, unless the last is still working (created 9 Nov at 21:32Z, after the restart was on main) | `trig_01ChLd51gPMwzsKrXifYfkYj` | the launcher, `session_01SNkKxoc1ntTt7RqPTLViwy` (Fable 5.2) | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Fable 5.2 and alerts (created 9 Nov at 21:33Z, after the restart was on main) | `trig_016aHfeAQkYXB6Z5X361irkE` | the watchdog, `session_01SNkKxpLf6R26Jp1H6iXTPv` (Fable 5.2) | every 2 hours at :08 |
+
+**Both are disabled since 10 November 2026** (the launcher at 08:30Z, the
+watchdog at 08:34Z), on the owner's order to deploy and stop. They stay
+disabled and are never re-enabled: a restart creates a new pair, after the
+restart is on main.
 
 A scheduled task that fires into a session runs on that session's model,
 so the two were created anew on 9 November instead of re-enabled. Both
@@ -482,6 +493,36 @@ Your session was created with the repository checked out at main; work in that c
   batches 3 and 4 stay deferred (D13 (c)). A restart needs new sessions
   on Fable 5.2 and, if the owner wants the hourly cycle again, a new
   launcher and watchdog created after the restart is on main.
+- The stop, 10 November 2026 at about 10:45Z (the overseer, on the
+  owner's order "Deploy and then stop cleanly"): CLAUDE.md order 1 says
+  the program is stopped. Checked before writing it: main at `8f03235f`,
+  merge lock free; cycle 50's session, K1's, S1's and AIA's all ended
+  (`get_session`: idle, completed); launcher and watchdog disabled
+  (`get_trigger`); no check-in armed. `status/lead.json` has
+  `expected_next_update_by` null, which means stopped on purpose, not
+  stale. Four things the entries above do not say, for the restart:
+  - P1-AD-board-1 is the third open task of phase 1 (17 of 20 merged, 57
+    of 64 hours). It waits for P1-S1-pilot-2; `claude/ui-ad` is at
+    `1be67031`.
+  - **First fix on a restart, with a test: a fault that came in with
+    `e072364a`.** On the kit's catalogue (part K23, the currency pill) a
+    large disc is drawn under every pill and covers the captions below.
+    `KitStatus.resource()` in `client/ui/kit_status.gd` dresses the
+    storage bar's track with the look `icon_disc`; the likely cause,
+    read from the code and not proven by a run, is that this look draws
+    the disc's sprite as wide as the bar. It is K1's file. Only the
+    catalogue and sample pages call it
+    (`client/tests/shots/ui_kit_catalogue.gd`,
+    `client/tests/shots/ui_kit_pages.gd`); no game screen shows it, and
+    no test caught it.
+  - The pilot heist's gate verdict has 5 passes of 16, not 4: the cycle
+    50 entry above lists five (Layered materials at 100%, Painted or
+    rendered icons at 100%, Light behind UI at both sizes, One
+    art-direction idea at 200%), and so does
+    `docs/art/ui-quality/gate/verdicts/P1-S1-pilot-1/5470c4d3.json`.
+  - No still of the rebuilt heist HUD is committed. The gate judged
+    stills rendered in cycle 50's container. P1-S1-pilot-2 should commit
+    its stills, so the change can be shown.
 - Cycle 44, 4 November 2026, from 23:39Z (session
   `session_01SNkKxqKY1WGt7cJSaqyYtWj`, started by the launcher):
   bookkeeping and a diagnosis. All three builders are working (AIA
