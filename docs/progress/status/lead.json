@@ -1,17 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-10T01:51:32Z",
+  "updated_at": "2026-11-10T02:45:30Z",
   "expected_next_update_by": "2026-11-10T03:11:32Z",
   "cycle": 47,
   "merging": {
-    "candidate_sha": null,
+    "candidate_sha": "5dabdc58",
     "task_ids": [
       "P1-AIA2-icons-2a",
-      "P1-AIA-kit-5",
-      "P1-K1-switch-heist"
+      "P1-AIA-kit-5"
     ],
     "started_at": "2026-11-10T01:51:32Z",
-    "expires_at": "2026-11-10T02:51:32Z",
+    "expires_at": "2026-11-10T03:45:00Z",
     "held_by": "session_01SNkKxqErNms87y9wMHpJWR"
   },
   "last_merged": {
