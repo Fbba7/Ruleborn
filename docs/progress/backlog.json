@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-10T02:55:00Z",
+  "updated_at": "2026-11-10T09:30:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
@@ -963,7 +963,7 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "claimed",
+      "state": "ready",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
@@ -972,10 +972,18 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "e012f9ffc3787abee696977cc1530b0292923c8b",
       "merged_sha": null,
-      "updated_at": "2026-11-10T07:53:00Z",
-      "updated_by": "lead"
+      "updated_at": "2026-11-10T09:30:00Z",
+      "updated_by": "lead",
+      "exceptions": [
+        "client/ui/rb_box.gd",
+        "client/ui/kit_panels.gd",
+        "client/ui/kit_switch.gd",
+        "client/ui/rb_theme.gd",
+        "client/ui/kit_hud.gd",
+        "client/tests/shots/ui_kit_rest.gd.uid"
+      ]
     },
     {
       "id": "P1-AIA-kit-1",
@@ -1632,18 +1640,18 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "claimed",
+      "state": "working",
       "claim": {
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-10T07:38:00Z",
-        "lease_until": "2026-11-10T10:38:00Z"
+        "lease_until": "2026-11-10T09:56:31Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-10T07:43:00Z",
+      "updated_at": "2026-11-10T09:30:00Z",
       "updated_by": "lead"
     },
     {
@@ -2466,7 +2474,7 @@
       "text": "From the lead (cycle 49). P1-AIA-kit-6 cannot merge alone: on main plus kit-6 (candidate 37c28af0) check_all fails one test of client/tests/ui_kit_tests.gd, 'the materials off their box's ground are [green_muted, pill_gold_edge], KitSkin.OWN_SHAPE_ONLY is [album, banner_success, bar_track_light, fact, green_muted, island_label, pill_gold_edge, plate, tag]': kit-6 bakes a shape of their own name for seven of the nine, and the list is in client/ui/kit_skin.gd, your file. So do not wait for kit-6 on main. In P1-K1-switch-rest, merge origin/claude/ui-artist at its ready commit 00571a44 into claude/ui-bake (the art is final there; change none of AIA's files), then do the AIA-R19 wiring on top of it, with KitSkin.OWN_SHAPE_ONLY brought to what the atlas now says; loosen no test. Pre-check and guard on that head, then mark ready as usual. The lead merges kit-6 and switch-rest in one candidate and checks your files against main plus kit-6. Add M4 to acks when read.",
       "sent_at": "2026-11-10T07:53:00Z",
       "ack_by": "2026-11-10T09:00:00Z",
-      "acked_at": null
+      "acked_at": "2026-11-10T09:18:30Z"
     },
     {
       "id": "M5",
@@ -2474,7 +2482,7 @@
       "text": "From the owner, relayed by the overseer (CLAUDE.md order 1, 10 November 2026, 08:28Z): \"Deploy and then stop cleanly\". Finish P1-K1-switch-rest and stop. If the pre-check and the guard pass on its head by 09:45Z, mark it ready as usual (ready_sha set): the lead's final cycle merges what is ready then. If they do not pass by then, push a save point instead; it is merged in a later round, nothing is lost. Loosen no test to make the time. Either way, then set agent_state to stopped in your status file, write 'Stopped here' with where the work stands in your handoff, push your branch (never main) and end your turn. Take no new task and start nothing. Add M5 to acks when read.",
       "sent_at": "2026-11-10T08:40:00Z",
       "ack_by": "2026-11-10T09:45:00Z",
-      "acked_at": null
+      "acked_at": "2026-11-10T09:18:30Z"
     },
     {
       "id": "M6",
