@@ -909,22 +909,22 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
         "claimed_at": "2026-11-09T22:27:00Z",
-        "lease_until": "2026-11-10T06:55:00Z"
+        "lease_until": "2026-11-10T08:55:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "0ce3c751",
       "merged_sha": null,
       "exceptions": [
         "client/tests/ui_kit_tests.gd",
         "client/ui/rb_box.gd"
       ],
-      "updated_at": "2026-11-10T03:43:00Z",
+      "updated_at": "2026-11-10T06:53:00Z",
       "updated_by": "lead"
     },
     {
@@ -1516,18 +1516,13 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "ready",
-      "claim": {
-        "agent": "AIA-2",
-        "branch": "claude/ui-artist-icons",
-        "claimed_at": "2026-11-10T02:52:00Z",
-        "lease_until": "2026-11-10T05:52:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "29e91db0",
-      "merged_sha": null,
-      "updated_at": "2026-11-10T03:43:00Z",
+      "merged_sha": "d30530ee",
+      "updated_at": "2026-11-10T06:53:00Z",
       "updated_by": "lead"
     },
     {
