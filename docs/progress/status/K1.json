@@ -3,17 +3,17 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Fable 5.2",
-  "agent_state": "waiting",
-  "task_id": "P1-K1-switch-heist",
-  "task_state": "ready",
-  "claimed_at": "2026-11-09T22:27:00Z",
-  "lease_until": "2026-11-10T06:55:00Z",
-  "updated_at": "2026-11-10T04:05:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P1-K1-switch-rest",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-10T07:40:00Z",
+  "lease_until": "2026-11-10T10:40:00Z",
+  "updated_at": "2026-11-10T07:40:00Z",
+  "expected_next_update_by": "2026-11-10T08:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "0ce3c751",
-    "next_step": "P1-K1-switch-heist is ready at 0ce3c751 (pre-check PASS 04:00Z, ui guard: OK). Waiting for the merge; P1-K1-switch-rest is not taken in this session."
+    "next_step": "P1-K1-switch-rest claimed; main (98b199ba) merged in. Next: read batch 2a and 2b pieces in the atlas, wire them in KitSkin."
   },
   "precheck": {
     "sha": "0ce3c751cbdea99a384fd82046cf5c5c1b427dbb",
@@ -22,7 +22,7 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": "0ce3c751cbdea99a384fd82046cf5c5c1b427dbb",
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M2"
