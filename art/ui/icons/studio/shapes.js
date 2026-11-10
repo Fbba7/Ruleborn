@@ -113,3 +113,77 @@ export function profile(S, pts, n = 40) {
   const c = new S.THREE.SplineCurve(pts.map(([r, y]) => new S.THREE.Vector2(r, y)));
   return c.getPoints(n).map((p) => [Math.max(0, p.x), p.y]);
 }
+
+// The reward chest (season/tierreward shut and ribboned, alerts/seasonreward
+// open): a wooden box with a barrel lid, gold straps and a gold lip. Its
+// lid is hinged on the back edge: `open` is the angle it is thrown back.
+// `ribbon` is a token: a band over the middle with a bow on the lid; with
+// no ribbon the chest has a gold lock plate. The body's top is at y 0.
+export function chest(S, { open = 0, ribbon = null, light = 'gold_top' } = {}) {
+  const { THREE } = S;
+  const W = 2.0, H = 1.0, D = 1.3, R = D / 2;
+  const g = new THREE.Group();
+  const arch = (r, len, face, rim, glossy) => {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 48, 1, false, 0, Math.PI), S.toon(face, rim, glossy));
+    m.rotation.z = Math.PI / 2;
+    return m;
+  };
+  const body = box(S, W, H, D, 0.1, 'wood', light);
+  body.material = S.toon('wood', light, 0.3);
+  body.position.y = -H / 2;
+  const lip = box(S, W + 0.1, 0.16, D + 0.1, 0.06, 'gold', 'gold_top');
+  lip.position.y = -0.08;
+  g.add(body, lip);
+  const lid = new THREE.Group();
+  lid.position.set(0, 0, -R);
+  const dome = arch(R, W, 'wood', light, 0.3);
+  dome.position.z = R;
+  const under = box(S, W - 0.04, 0.08, D - 0.04, 0.03, 'leather_mid', light);
+  under.position.set(0, 0.02, R);
+  lid.add(dome, under);
+  for (const x of [-0.7, 0.7]) {
+    const strap = box(S, 0.24, H + 0.04, D + 0.08, 0.05, 'gold', 'gold_top');
+    strap.position.set(x, -H / 2, 0);
+    const over = arch(R + 0.04, 0.24, 'gold', 'gold_top', 1);
+    over.position.set(x, 0, R);
+    g.add(strap);
+    lid.add(over);
+  }
+  if (ribbon) {
+    const band = box(S, 0.4, H + 0.06, D + 0.12, 0.05, ribbon, light);
+    band.position.set(0, -H / 2, 0);
+    const over = arch(R + 0.06, 0.4, ribbon, light, 1);
+    over.position.set(0, 0, R);
+    g.add(band);
+    lid.add(over);
+    for (const side of [-1, 1]) {
+      const loop = ball(S, 0.36, ribbon, light);
+      loop.scale.set(1.05, 0.62, 0.6);
+      loop.position.set(side * 0.36, R + 0.2, R + 0.1);
+      loop.rotation.z = side * 0.45;
+      lid.add(loop);
+    }
+    const knot = ball(S, 0.19, ribbon + '_shadow', light);
+    knot.position.set(0, R + 0.12, R + 0.14);
+    lid.add(knot);
+  } else {
+    const plate = box(S, 0.42, 0.5, 0.16, 0.07, 'gold_top', 'cream');
+    plate.position.set(0, -0.3, R + 0.04);
+    const hole = ball(S, 0.08, 'gold_drop', 'gold');
+    hole.position.set(0, -0.3, R + 0.12);
+    g.add(plate, hole);
+  }
+  lid.rotation.x = -open;
+  g.add(lid);
+  return g;
+}
+
+// A coin lying flat (its axis is y): a gold disc with a paler face.
+export function coin(S, r = 0.3) {
+  const { THREE } = S;
+  const g = new THREE.Group();
+  g.add(new THREE.Mesh(new THREE.CylinderGeometry(r, r, r * 0.3, 40), S.toon('gold', 'gold_top')));
+  const face = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.7, r * 0.7, r * 0.34, 40), S.toon('gold_top', 'cream'));
+  g.add(face);
+  return g;
+}
