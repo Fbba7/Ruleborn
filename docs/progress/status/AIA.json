@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-10T02:50:24Z",
   "lease_until": "2026-11-10T05:50:24Z",
-  "updated_at": "2026-11-10T03:22:46Z",
-  "expected_next_update_by": "2026-11-10T04:07:46Z",
+  "updated_at": "2026-11-10T03:41:16Z",
+  "expected_next_update_by": "2026-11-10T04:26:16Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "51269c72",
@@ -181,5 +181,5 @@
       "at": "2026-11-10T03:22:46Z"
     }
   ],
-  "next_step": "guard and client tests on the three-page bake, then the handoff and the pre-check"
+  "next_step": "pre-check and guard on the tree with disc_school back in art/ui/kit_next (baked with no SKINS_OF entry it fails the coverage test), then the handoff"
 }

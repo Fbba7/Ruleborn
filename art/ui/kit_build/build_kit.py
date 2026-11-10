@@ -23,11 +23,12 @@ import os
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 TOKENS = os.path.join(ROOT, "client/ui/tokens.json")
 KIT_DIR = os.path.join(ROOT, "art/ui/kit")
-# Skins written beside the kit, not into it: none now (the atlas has pages,
-# so disc_school, once kept here, is baked with the rest). A skin named in
-# DEFERRED is written to NEXT_DIR, which the bake does not read.
+# Skins written beside the kit, not into it. A skin named in DEFERRED is
+# written to NEXT_DIR, which the bake does not read; proof_1b.py draws them
+# from it. disc_school waits here until the catalogue's coverage test names
+# a component for it (request AIA-R21): a baked skin with none fails it.
 NEXT_DIR = os.path.join(ROOT, "art/ui/kit_next")
-DEFERRED = ()
+DEFERRED = ("disc_school",)
 PALETTE = os.path.join(ROOT, "art/ui/palette.json")
 
 T = json.load(open(TOKENS))

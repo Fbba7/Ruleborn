@@ -8,7 +8,9 @@ Two stills a mode, drawn from the baked atlas as the phone shows it:
 pill (not on parchment: it sits in the top bar), the tags, the badges and
 the bars on each of the four grounds;
 `surfaces` puts the dark card (plain, locked, selected), the glass panel,
-the well with its bars, and the school disc tinted for each school.
+the well with its bars, and the school disc tinted for each school. The
+school disc is not in the kit atlas (request AIA-R21): it is baked from
+art/ui/kit_next/ into the proof folder with the kit's own bake.
 
 The gate's value-steps check runs on every interactive control (the discs
 and the pill), and each word is measured against the face under it, 4.5:1.
@@ -29,11 +31,12 @@ sys.path.insert(0, os.path.join(ROOT, "tools/ui_gate"))
 import checks  # noqa: E402
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "proof_1b")
+NEXT = os.path.join(OUT, "kit_next")
 FRAME = (390, 844)
 SCHOOLS = ["motion", "matter", "time", "energy", "life", "spirit"]
 # The skins batch 1b adds to the kit atlas.
 SKINS = ["panel_dark", "panel_glass", "well", "badge", "pill", "tag", "bar_track", "bar_fill", "disc",
-         "disc_school", "locked", "selected", "spinner"]
+         "locked", "selected", "spinner"]
 # Batch 2c's shapes in batch 1b's skins: proof_2c.py holds them.
 LATER = {"panel_dark__album", "panel_dark__fact", "panel_dark__plate", "bar_track__bar_track_light", "tag__tag",
          "tag__island_label", "pill__pill_gold_edge"}
@@ -42,6 +45,18 @@ LATER = {"panel_dark__album", "panel_dark__fact", "panel_dark__plate", "bar_trac
 class Atlas(pk.Atlas):
     def has(self, name):
         return name in self.man["pieces"]
+
+
+def bake_next():
+    """disc_school, baked from art/ui/kit_next/ into the proof folder."""
+    os.makedirs(NEXT, exist_ok=True)
+    cfg = json.load(open(os.path.join(ROOT, "tools/ui_bake/families.json")))
+    cfg["families"] = {"kit_next": {"dir": "kit_next", "kind": "svg", "px_per_point": 6, "width": 1024}}
+    path = os.path.join(NEXT, "families.json")
+    with open(path, "w") as f:
+        json.dump(cfg, f)
+    subprocess.run(["node", os.path.join(ROOT, "tools/ui_bake/bake.js"), "kit_next", "--config", path,
+                    "--out", NEXT], check=True, stdout=subprocess.DEVNULL)
 
 
 def tint(im, hexcol):
@@ -143,7 +158,7 @@ def controls_still(hc, atlas):
     return b
 
 
-def surfaces_still(hc, atlas):
+def surfaces_still(hc, atlas, nxt):
     b = Board(hc)
     g = pk.grounds(hc)
     b.ground(0, FRAME[1], g["backdrop"])
@@ -173,22 +188,23 @@ def surfaces_still(hc, atlas):
     for row, st in enumerate(["normal", "pressed", "disabled"]):
         for j, school in enumerate(SCHOOLS):
             x, y = 16 + j * 60, 404 + row * 66
-            under = tint(atlas.draw("disc_school__box__" + st, 48), school)
+            under = tint(nxt.draw("disc_school__box__" + st, 48), school)
             b.put(under, x, y, "disc_school %s %s" % (school, st), True)
-            b.put(atlas.draw("disc_school__frame__" + st, 48), x, y)
+            b.put(nxt.draw("disc_school__frame__" + st, 48), x, y)
     # Every school disc also on the backdrop (normal), and a pill on glass.
     for j, school in enumerate(SCHOOLS):
         x, y = 16 + j * 60, 620
-        b.put(tint(atlas.draw("disc_school__box__normal", 48), school), x, y,
+        b.put(tint(nxt.draw("disc_school__box__normal", 48), school), x, y,
               "disc_school %s on dark card 2" % school, True)
-        b.put(atlas.draw("disc_school__frame__normal", 48), x, y)
+        b.put(nxt.draw("disc_school__frame__normal", 48), x, y)
     return b
 
 
-def tiles(atlas, mode):
+def tiles(atlas, nxt, mode):
     paths = []
     for src, names in ((atlas, sorted(n for n in atlas.man["pieces"] if n.split("__")[0] in SKINS
-                                      and n.rsplit("__", 1)[0] not in LATER)),):
+                                      and n.rsplit("__", 1)[0] not in LATER)),
+                       (nxt, sorted(nxt.man["pieces"]))):
         for n in names:
             p = src.man["pieces"][n]
             w_pt = p["w"] / 6
@@ -204,11 +220,12 @@ def tiles(atlas, mode):
 
 def main(argv):
     os.makedirs(OUT, exist_ok=True)
+    bake_next()
     results, fails = [], 0
     for hc in (False, True):
         mode = "hc" if hc else "normal"
-        atlas = Atlas(hc)
-        for still, board in (("controls", controls_still(hc, atlas)), ("surfaces", surfaces_still(hc, atlas))):
+        atlas, nxt = Atlas(hc), Atlas(hc, NEXT, "kit_next")
+        for still, board in (("controls", controls_still(hc, atlas)), ("surfaces", surfaces_still(hc, atlas, nxt))):
             png = "%s_%s.png" % (still, mode)
             board.im.save(os.path.join(OUT, png))
             data = {"image": png, "frame_pt": list(FRAME), "text_scale": 1.0, "controls": board.controls}
@@ -221,7 +238,7 @@ def main(argv):
                 fails += r["result"] == "FAIL"
             results += rows
         subprocess.run([sys.executable, os.path.join(ROOT, "tools/ui_gate/sheet.py"), "contact",
-                        os.path.join(OUT, "contact_1b_%s.png" % mode), *tiles(atlas, mode),
+                        os.path.join(OUT, "contact_1b_%s.png" % mode), *tiles(atlas, nxt, mode),
                         "--sizes", "60,120"], check=True)
     with open(os.path.join(OUT, "results.json"), "w") as f:
         json.dump(results, f, indent=1)
