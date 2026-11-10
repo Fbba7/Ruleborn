@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-09T22:55:00Z",
+  "updated_at": "2026-11-10T02:55:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
@@ -909,22 +909,17 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "claimed",
-      "claim": {
-        "agent": "K1",
-        "branch": "claude/ui-bake",
-        "claimed_at": "2026-11-09T22:27:00Z",
-        "lease_until": "2026-11-10T05:55:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
+      "ready_sha": "0ce3c751",
+      "merged_sha": "3ac50485",
       "exceptions": [
         "client/tests/ui_kit_tests.gd",
         "client/ui/rb_box.gd"
       ],
-      "updated_at": "2026-11-10T02:55:00Z",
+      "updated_at": "2026-11-10T07:36:00Z",
       "updated_by": "lead"
     },
     {
@@ -944,7 +939,8 @@
         "docs/art/ui-quality/kit-spec.md",
         "client/ui/kit_cards.gd",
         "client/ui/kit_status.gd",
-        "client/ui/kit_bar.gd"
+        "client/ui/kit_bar.gd",
+        "client/tests/ui_kit_tests.gd"
       ],
       "deps": [
         "P1-K1-switch-heist",
@@ -954,6 +950,7 @@
         "AIA-R16: KitSkin draws batch 2a's pieces: ribbon as its tinted ribbon__box (vertex-coloured per school) under the untinted ribbon__frame at the same rect, and ribbon__chapter untinted, the words on the band's top 32 points; sheet__handle and sheet__handle_parchment as 42 x 9 point sprites centred by code 12 points below a sheet's top edge; frame_<rank>__box__<state> as a hollow 9-slice ring over the portrait's rect grown by 4 points each side; popup__box with its 8/4/12 point margin (plus the 5 point lip) over the scrim, its title a ribbon across the top edge; header__name_plate; panel_parchment__parchment_done",
         "AIA-R18: KitSkin draws batch 2b's pieces: the toggle's track and knob, the slider's track, fill and knob, the heist tab's halo, the week bars, the tab bar and tab faces, the segmented bed and faces, and the chips",
         "K1-R14 part 3: KitSkin.mark('lock') in kit_cards.gd, mark('dot') in kit_status.gd, the alarm fill and the tick in kit_bar.gd",
+        "AIA-R19: KitSkin looks up batch 2c's shapes of their own name (panel_dark__album, panel_dark__fact, panel_dark__plate, bar_track__bar_track_light, tag__tag, tag__island_label, success__banner_success), adds them to SKINS_OF and switches them on; disc_school is not baked (AIA-R21) and stays code-drawn",
         "the gate's pass on P1-AIA-kit-4 and -5 recorded",
         "bash tools/ui_bake/guard.sh",
         "bash tools/check_all.sh"
@@ -971,7 +968,7 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-10T02:10:00Z",
+      "updated_at": "2026-11-10T06:58:00Z",
       "updated_by": "lead"
     },
     {
@@ -1253,7 +1250,7 @@
       "done_when": [
         "node tools/ui_bake/bake.js --check",
         "the gate's notes on P1-AIA-kit-5 (verdicts/P1-AIA-kit-5/51269c72.json) answered one by one in the handoff",
-        "K1-R14 part 1: disc_school is a piece in client/ui/art/kit.json; part 2: each of the nine materials has a baked shape of its own name or a note in the handoff saying why it stays code-drawn",
+        "K1-R14 part 1 (AIA-R21 answered with its default, cycle 48): disc_school is drawn and kept in art/ui/kit_next/, unbaked and code-drawn, until a later task carries its SKINS_OF line; part 2: each of the nine materials has a baked shape of its own name or a note in the handoff saying why it stays code-drawn",
         "the catalogue's coverage test finds a piece for every skin",
         "self-score against gate/rubric.md in the handoff (M1)",
         "gate: Kit art",
@@ -1276,8 +1273,13 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-11-10T02:50:24Z",
+        "lease_until": "2026-11-10T09:50:38Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
@@ -1286,9 +1288,10 @@
         "art/ui/kit_build/**",
         "art/ui/palette.json",
         "client/ui/art/kit_2*.webp",
-        "client/ui/art/kit_3*.webp"
+        "client/ui/art/kit_3*.webp",
+        "art/ui/kit_next/**"
       ],
-      "updated_at": "2026-11-10T02:55:00Z",
+      "updated_at": "2026-11-10T06:58:00Z",
       "updated_by": "lead"
     },
     {
@@ -1509,12 +1512,14 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "29e91db0",
+      "merged_sha": "d30530ee",
+      "updated_at": "2026-11-10T06:53:00Z",
+      "updated_by": "lead"
     },
     {
       "id": "P1-S1-pilot-1",

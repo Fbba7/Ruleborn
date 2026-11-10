@@ -1,9 +1,9 @@
 # AIA-2 icon maker: progress
 
-- Status: Green (P1-AIA2-icons-2a ready at 6a382d97: pre-check PASS 00:42 UTC, 5 November; gate request set).
-- Progress: 3 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7); P1-AIA2-icons-2a ready at 6a382d97 (pre-check PASS), waiting for the Icons gate.
+- Status: Green (P1-AIA2-icons-2a resynced: the grow is computed on the pixels, icons rebaked; `bash tools/ui_bake/guard.sh` ends "ui guard: OK" in a fresh container; pre-check PASS on ac4809ed, 22:41 UTC, 9 November).
+- Progress: 3 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7); P1-AIA2-icons-2a ready at ac4809ed (pre-check PASS); its sheet passed the Icons gate 12 of 12 at 6a382d97 (advisory).
 - Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources; batch 2a's eight heist-status and HUD icons.
-- Next: the Icons gate on "icon sheet at 48 and 96 points and in grayscale", then the lead's merge.
+- Next: the lead's merge of P1-AIA2-icons-2a; then P1-AIA2-icons-2b.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -12,11 +12,34 @@
 | P1-AIA2-toon-route: list, scene format, two icons end to end | 3 | Merged at 9b2bde70 | `bake.js --check`, `check_icons.py` and `run_checks.sh` PASS at 02e7ef0f |
 | P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Merged at 8ce107c9 | gate advisory at 5f759a03: Light behind UI pass; three qualities fail 3 of 3 |
 | P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Merged at 90f72fd7 | gate pass on all four qualities (advisory) at bef6eac2; resync at 5ecb0202 |
-| P1-AIA2-icons-2a: eight heist-status and HUD icons in `icons_48` | 4 | Ready at 6a382d97: pre-check PASS; gate pending | `python3 -B art/ui/icons/studio/check_icons.py`: all 46 faces pass (23 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 23 pieces, icons_256 6 pieces, both ok |
+| P1-AIA2-icons-2a: eight heist-status and HUD icons in `icons_48` | 4 | Ready at ac4809ed (resync of 6a382d97): guard OK, pre-check PASS; gate 12 of 12 at 6a382d97 (advisory) | `python3 -B art/ui/icons/studio/check_icons.py`: all 46 faces pass (23 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 23 pieces, icons_256 6 pieces, both ok |
 
 ## Handoff
 
-- **Last verified commit:** 6a382d97 (pre-check PASS, 2026-11-05T00:42:36Z; check_icons and bake.js --check green).
+- **Last verified commit:** ac4809ed (pre-check PASS on ac4809ed, 22:41 UTC, 9 November; `bash tools/ui_bake/guard.sh` ends "ui guard: OK", 9 November, in a fresh container: `icons_256`, `icons_48` and `kit` each "rebakes byte for byte"; check_icons and bake.js --check green).
+
+### The resync (lead cycle 45)
+
+**Cause.** `art/ui/icons/studio/finish.js` drew the ink outline and the high-contrast keyline by stamping the silhouette round a circle with hundreds of `drawImage` calls. The result depended on the container's canvas backend (a ring in one, an octagon in another, on `crew/pip` in high contrast). In this session's container the old code still baked the committed files byte for byte, so the fault could not be reproduced here; it is removed by construction instead.
+
+**Fix.** `grow()` no longer draws. It reads the render's alpha with `getImageData`, computes the exact Euclidean distance from each pixel to the shape (alpha of a half or more) with a two-pass distance transform in plain arithmetic, and writes full ink up to the radius with one pixel of falloff, through `putImageData`. The grown canvas is wider than the render by the radius, so an outline may pass the render's edge as the stamps did. Two bakes in a row here are byte for byte the same.
+
+**Which pixels moved.** Every icon's, in all four atlases, and only along the outline's and keyline's edges: the regions in both manifests are unchanged, and no shape changes. Compared with the old bake, as premultiplied values:
+
+| Atlas | Pixels moved per icon | Of them over 16 of 255 | Largest step |
+|---|---:|---:|---:|
+| `icons_48.webp` (23 icons, 128 px) | 577 to 1071 of 16384 | 186 to 362 | 86 |
+| `icons_48_hc.webp` | 1107 to 1846 of 16384 | 452 to 689 | 99 |
+| `icons_256.webp` (6 icons, 256 px) | 1277 to 1741 of 65536 | 616 to 828 | 99 |
+| `icons_256_hc.webp` | 2671 to 3810 of 65536 | 1402 to 2041 | 120 |
+
+`crew/pip` in high contrast, the piece that differed: 1473 pixels moved, 669 over 16. `check_icons.py` passes all 58 faces; medians and p10 are within 0.5 px of the figures below (normal medians 4.9 to 5.3 px, high contrast 7.5 to 10.5 px).
+
+**Also in this push.** The four `client/ui/art/icons_*.webp.import` files are now tracked, as the kit's are (Godot writes them on import; untracked, they showed as changes in every fresh container).
+
+**Not taken.** The gate's notes (the spotted starburst and the alarm's arcs are the flattest; the lootbag's dark body sits close to the ground in grayscale) are not taken here: each changes an icon's art, which would put new shapes in front of the gate inside a resync. They are the first things to do in P1-AIA2-icons-2b's session.
+
+**For the lead.** Godot writes `client/tests/a11y_motion_tests.gd.uid` on import in a fresh container; it is not tracked and not mine, so I deleted my copy and did not commit it. Its owner may want to track it.
 
 ### Done
 
@@ -79,8 +102,8 @@ None.
 
 ### Next step
 
-1. The Icons gate on the 2a sheet at 6a382d97 (pre-check recorded).
-2. The Icons gate on the 2a sheet; then ready.
+1. The lead merges P1-AIA2-icons-2a at ac4809ed.
+2. P1-AIA2-icons-2b, starting with the gate's three notes on 2a.
 
 ## Tried and failed
 
@@ -105,3 +128,5 @@ None.
 - 2026-11-04 Bagcapacity as a straight-sided vessel with coin dots: it read as a polka-dot jar. A sack profile with a bunched neck and a green fill-line ring reads as a bag being filled.
 - 2026-11-04 Two sound arcs on each side of the alarm: thin arcs broke the high-contrast ring edge (89%). One thicker arc per side gives 100%.
 - 2026-11-04 Lootbag's star flush with the sack and a glossy dark leather: the star was buried and the gloss read as a smudge. The star now stands proud of the sack (z 1.12), the leather is matt and lighter.
+- 2026-11-09 Software canvases as the cure for the grow's octagon: the lead's container still baked `crew/pip` differently in high contrast. Hundreds of `drawImage` stamps are not the same on every canvas backend; the grow is now computed on the pixels.
+- 2026-11-09 The pixel grow on a canvas the size of the render: outlines were cut where a shape touches the render's edge (the stamps had spilled past it). The grown canvas is now wider by the radius.

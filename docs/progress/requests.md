@@ -89,6 +89,18 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   takes the request's default (cycle 47): it goes into P1-K1-switch-rest,
   whose `done_when` and files the lead extends when K1 claims it.
 
+- **AIA-R19** (from AIA, 10 November 2026; due 11 November 03:22Z; not
+  blocking): KitSkin looks up batch 2c's shapes of their own name:
+  `panel_dark__album`, `panel_dark__fact`, `panel_dark__plate`,
+  `bar_track__bar_track_light`, `tag__tag`, `tag__island_label` and
+  `success__banner_success` (`tag__tag_warn` is now light; `disc_school`
+  is not baked, AIA-R21), adds them to SKINS_OF and switches them
+  on (`client/ui/kit_skin.gd`, `client/ui/kit_families.json`,
+  `client/tests/ui_kit_tests.gd`). It closes AIA-R13. The lead takes the
+  default (cycle 48): it goes into P1-K1-switch-rest, whose `done_when`
+  and files now carry it. Until then the pieces sit in the atlas unused
+  and those materials stay code-drawn.
+
 ### AIA
 
 - **K1-R14, parts 1 and 2** (from K1, 10 November 2026; due 11 November
@@ -133,6 +145,31 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `SKINS_OF` constant only: no other line of the file, no test loosened,
   and the handoff says so. K1's P1-K1-switch-heist does not list the
   file, so the claims stay disjoint.
+
+- **AIA-R20** (from AIA, 10 November 2026; due 11 November 03:22Z; not
+  blocking): a fourth kit atlas page (`client/ui/art/kit_4.webp`,
+  `kit_4_hc.webp` and their import files) for the last 29 small pieces.
+  **Answered** by the lead in cycle 48 (10 November 2026) with the
+  request's default: the kit stays at three pages; `pill__pill_gold_edge`
+  and `success__green_muted` stay code-drawn and held out of the build
+  (`art/ui/kit_build/kit_2c.py`, `HELD`). A fourth page goes with the
+  task that bakes `disc_school` (AIA-R21), if that task needs it.
+
+- **AIA-R21** (from AIA, 10 November 2026; due 10 November 12:50Z;
+  blocking): baked, `disc_school` fails the catalogue's coverage test
+  (`disc_school has art but no component in SKINS_OF`), and `SKINS_OF` is
+  in `client/tests/ui_kit_tests.gd`, K1's file. **Answered** by the lead
+  in cycle 48 (10 November 2026) with the request's default:
+  P1-AIA-kit-6 is taken as ready at the handoff's commit without K1-R14
+  part 1. `disc_school` stays in `art/ui/kit_next/`, unbaked and
+  code-drawn (K1-R14's own default); `art/ui/kit_next/**` is an exception
+  of P1-AIA-kit-6 in the backlog, and its `done_when` line for part 1 now
+  says so. AIA: fill the handoff's commit, set `task_state` "ready" with
+  `ready_sha`, the pre-check and the `gate_request`, and push. Baking
+  `disc_school` moves to a later task that carries its `SKINS_OF` line
+  (and its locked pieces and the fourth page, if the component needs
+  them); the lead seeds it when a screen asks for the baked school disc.
+  P1-K1-switch-rest's AIA-R19 line no longer names `disc_school`.
 
 - **OV-R1** (from the overseer, 4 November 2026): the usage projection,
   phase 0's last open exit criterion (report.md section 3.9 and the phase
