@@ -275,8 +275,11 @@ def popup():
 
 FRAMES = {
     # rank: (token gradient, flat high-contrast fill, groove, studs, gems)
-    "oak": ("frame_oak", "oak_hc", False, False, False),
-    "silver": ("frame_silver", "silver_hc", True, False, False),
+    # Every rank carries its own corner mark, so the rank reads by shape as
+    # well as by colour: oak a dark nail head, silver a square rivet, gold a
+    # round stud, prismatic a cut gem.
+    "oak": ("frame_oak", "oak_hc", False, "nail", False),
+    "silver": ("frame_silver", "silver_hc", True, "rivet", False),
     "gold": ("frame_gold", "gold_hc", True, True, False),
     "prismatic": ("frame_prismatic", "prismatic_hc", True, False, True),
 }
@@ -308,6 +311,28 @@ def stud(svg, cx, cy, r, hc, locked):
     return ['<circle cx="%s" cy="%s" r="%s" fill="%s"%s/>' % (p(cx), p(cy), p(r), g, stroke(C["ink_line"], 1.2)),
             '<circle cx="%s" cy="%s" r="%s"%s/>' % (p(cx - r * 0.35), p(cy - r * 0.38), p(r * 0.32),
                                                    col(a("#FFFFFF", 0.4 if locked else 0.85)))]
+
+
+def nail(svg, cx, cy, r, hc, locked):
+    """Oak's mark: a small dark iron nail head, a glint on its shoulder."""
+    if hc:
+        return ['<circle cx="%s" cy="%s" r="%s"%s%s/>' % (p(cx), p(cy), p(r), col("#000000"), stroke("#FFFFFF", 1))]
+    return ['<circle cx="%s" cy="%s" r="%s"%s%s/>' % (p(cx), p(cy), p(r), col(C["ink_line"]),
+                                                     ' fill-opacity="%s"' % ("0.75" if locked else "0.95")),
+            '<circle cx="%s" cy="%s" r="%s"%s/>' % (p(cx - r * 0.3), p(cy - r * 0.35), p(r * 0.36),
+                                                   col(a("#FFFFFF", 0.3 if locked else 0.6)))]
+
+
+def rivet(svg, cx, cy, r, hc, locked):
+    """Silver's mark: a square rivet, lit from the top left."""
+    box = (p(cx - r), p(cy - r), p(2 * r), p(2 * r))
+    if hc:
+        return ['<rect x="%s" y="%s" width="%s" height="%s" rx="0.6"%s%s/>' % (box + (col("#FFFFFF"), stroke("#000000", 1.5)))]
+    g = svg.grad([(0, K["frame_locked_light"] if locked else "#FFFFFF"), (1, K["frame_locked_dark"] if locked else C["silver_ink"])],
+                 x2=1, y2=1)
+    return ['<rect x="%s" y="%s" width="%s" height="%s" rx="0.6" fill="%s"%s/>' % (box + (g, stroke(C["ink_line"], 1.1))),
+            '<rect x="%s" y="%s" width="%s" height="%s"%s/>' % (p(cx - r * 0.55), p(cy - r * 0.55), p(r * 0.6), p(r * 0.6),
+                                                               col(a("#FFFFFF", 0.35 if locked else 0.8)))]
 
 
 def gem(svg, cx, cy, r, hc, locked):
@@ -383,7 +408,11 @@ def rank_frames(T):
                     b.append(rrect(x + TH, y + TH, w - 2 * TH, w - 2 * TH, R - TH, "none", ink(C["ink_line"], 1.5)))
                 c = TH / 2 + 3.2
                 for cx, cy in ((x + c, y + c), (x + w - c, y + c), (x + c, y + w - c), (x + w - c, y + w - c)):
-                    if studs:
+                    if studs == "nail":
+                        b += nail(svg, cx, cy, 2.4, hc, lk)
+                    elif studs == "rivet":
+                        b += rivet(svg, cx, cy, 2.1, hc, lk)
+                    elif studs:
                         b += stud(svg, cx, cy, 2.6, hc, lk)
                     if gems:
                         b += gem(svg, cx, cy, 3.4, hc, lk)
