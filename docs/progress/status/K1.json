@@ -5,15 +5,15 @@
   "model": "Fable 5.2",
   "agent_state": "active",
   "task_id": "P1-K1-switch-rest",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-10T07:40:00Z",
   "lease_until": "2026-11-10T10:40:00Z",
-  "updated_at": "2026-11-10T07:40:00Z",
-  "expected_next_update_by": "2026-11-10T08:25:00Z",
+  "updated_at": "2026-11-10T07:50:00Z",
+  "expected_next_update_by": "2026-11-10T08:35:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "0ce3c751",
-    "next_step": "P1-K1-switch-rest claimed; main (98b199ba) merged in. Next: read batch 2a and 2b pieces in the atlas, wire them in KitSkin."
+    "next_step": "P1-K1-switch-rest: every skin but disc_school switched on; popup margin, rank-frame rings, sheet handles, toggle, slider, lock, tick and alarm fill wired locally. Next: kit tests, stills, budgets, guard."
   },
   "precheck": {
     "sha": "0ce3c751cbdea99a384fd82046cf5c5c1b427dbb",
@@ -206,6 +206,24 @@
       "due": "2026-11-11T22:00:00Z",
       "default": "disc_school and the nine materials stay code-drawn, as today; the wiring goes into P1-K1-switch-rest's files when the lead seeds it; the verdicts stand as recorded.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R15",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P1-K1-switch-rest needs five kit files outside its list, each a few lines. client/ui/rb_box.gd: a baked box's own margin (the popup's 8/4/8/12 points plus its 5-point lip, KitSkin.margins) and the rank frames' hollow ring drawn over the code-drawn box (AIA-R16). client/ui/kit_panels.gd: the sheet's grip is the baked sheet__handle or sheet__handle_parchment, and a dialog's card draws popup__box (AIA-R16). client/ui/kit_switch.gd: the toggle's track and knob (AIA-R18). client/ui/rb_theme.gd: the slider's track, fill and knob in the theme (AIA-R18). client/ui/kit_hud.gd: the loot bar's hand-built tick becomes KitBar.aim(), which draws the baked tick (K1-R14 part 3). Each falls back to today's code-drawn look when its skin is off. Please grant them as the task's exceptions.",
+      "files": [
+        "client/ui/rb_box.gd",
+        "client/ui/kit_panels.gd",
+        "client/ui/kit_switch.gd",
+        "client/ui/rb_theme.gd",
+        "client/ui/kit_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:50:00Z",
+      "due": "2026-11-10T20:00:00Z",
+      "default": "granted: the five files merge with the candidate as P1-K1-switch-rest's exceptions",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -220,5 +238,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-switch-heist: guard OK at 3def1ab5; the pre-check is running"
+  "next_step": "P1-K1-switch-rest: every skin but disc_school switched on; popup margin, rank-frame rings, sheet handles, toggle, slider, lock, tick and alarm fill wired locally. Next: kit tests, stills, budgets, guard."
 }
