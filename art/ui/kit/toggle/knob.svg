@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="40">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <radialGradient id="g1" cx="0.36" cy="0.3" r="0.8" fx="0.36" fy="0.3"><stop offset="0" stop-color="#FFF3CC"/><stop offset="0.35" stop-color="#F9DE9C"/><stop offset="0.7" stop-color="#E9B65C"/><stop offset="1" stop-color="#C88A35"/></radialGradient>
+    <radialGradient id="g2" cx="0.36" cy="0.3" r="0.8" fx="0.36" fy="0.3"><stop offset="0" stop-color="#E2BF72"/><stop offset="0.5" stop-color="#D09C44"/><stop offset="1" stop-color="#A8702A"/></radialGradient>
+  </defs>
+  <g data-state="normal">
+    <circle cx="19" cy="21" r="18" fill="#4A2A10" stroke="#1A0C14" stroke-width="1.5"/>
+    <circle cx="19" cy="19" r="18" fill="url(#g1)"/>
+    <circle cx="19" cy="19" r="9" fill="none" stroke="#6B4420" stroke-width="1" stroke-opacity="0.55"/>
+    <circle cx="19" cy="19.7" r="9" fill="none" stroke="#FFFFFF" stroke-width="0.8" stroke-opacity="0.55"/>
+    <ellipse cx="15.4" cy="9.1" rx="8.64" ry="3.96" fill="#FFFFFF" fill-opacity="0.6"/>
+    <circle cx="19" cy="19" r="17.25" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <circle cx="19" cy="21" r="18" fill="#000000"/>
+    <circle cx="19" cy="19" r="18" fill="#F2C14E"/>
+    <circle cx="19" cy="19" r="17" fill="none" stroke="#000000" stroke-width="2"/>
+  </g>
+  <g data-state="pressed">
+    <circle cx="19" cy="21" r="18" fill="url(#g2)"/>
+    <circle cx="19" cy="21" r="9" fill="none" stroke="#6B4420" stroke-width="1" stroke-opacity="0.55"/>
+    <circle cx="19" cy="21.7" r="9" fill="none" stroke="#FFFFFF" stroke-width="0.8" stroke-opacity="0.55"/>
+    <circle cx="19" cy="21" r="17.25" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+  </g>
+  <g data-state="pressed" data-mode="hc">
+    <circle cx="19" cy="21" r="18" fill="#D9A630"/>
+    <circle cx="19" cy="21" r="17" fill="none" stroke="#000000" stroke-width="2"/>
+  </g>
+  <g data-state="disabled">
+    <circle cx="19" cy="19" r="18" fill="#A89A80"/>
+    <circle cx="19" cy="19" r="17.25" fill="none" stroke="#2E2632" stroke-width="1.5"/>
+  </g>
+  <g data-state="disabled" data-mode="hc">
+    <circle cx="19" cy="19" r="18" fill="#8A8494"/>
+    <circle cx="19" cy="19" r="17" fill="none" stroke="#000000" stroke-width="2"/>
+  </g>
+</svg>

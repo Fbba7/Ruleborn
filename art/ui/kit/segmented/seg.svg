@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" data-slice="9 9 9 9">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.298"/><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <rect x="1" y="1" width="18" height="18" rx="8" fill="#FFFFFF" fill-opacity="0.0039"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <rect x="1" y="1" width="18" height="18" rx="8" fill="#FFFFFF" fill-opacity="0.0039"/>
+  </g>
+  <g data-state="pressed">
+    <rect x="1" y="1" width="18" height="18" rx="8" fill="#FFFFFF" fill-opacity="0.1412"/>
+    <rect x="2.2" y="2.2" width="15.6" height="15.6" rx="6.8" fill="none" stroke="url(#g1)" stroke-width="1.2"/>
+  </g>
+  <g data-state="pressed" data-mode="hc">
+    <rect x="1" y="1" width="18" height="18" rx="8" fill="#463A86"/>
+    <rect x="2" y="2" width="16" height="16" rx="7" fill="none" stroke="#B8A8D8" stroke-width="2"/>
+  </g>
+  <g data-state="disabled">
+    <rect x="1" y="1" width="18" height="18" rx="8" fill="#FFFFFF" fill-opacity="0.0039"/>
+  </g>
+  <g data-state="disabled" data-mode="hc">
+    <rect x="1" y="1" width="18" height="18" rx="8" fill="#FFFFFF" fill-opacity="0.0039"/>
+  </g>
+</svg>
