@@ -1,0 +1,25 @@
+<svg data-tint="true" xmlns="http://www.w3.org/2000/svg" width="64" height="42" data-slice="20 14 20 22">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A8A8A8"/><stop offset="1" stop-color="#5A5A5A"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A8A8A8"/><stop offset="1" stop-color="#5A5A5A"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.55" stop-color="#D2D2D2"/><stop offset="1" stop-color="#8E8E8E"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <path d="M1 7H16V39H1L6 23Z" fill="#0A0408" transform="translate(0 2)" fill-opacity="0.7"/>
+    <path d="M63 7H48V39H63L58 23Z" fill="#0A0408" transform="translate(0 2)" fill-opacity="0.7"/>
+    <rect x="10" y="3" width="44" height="32" rx="4" fill="#0A0408" fill-opacity="0.698"/>
+    <path d="M1 7H16V39H1L6 23Z" fill="url(#g1)"/>
+    <path d="M63 7H48V39H63L58 23Z" fill="url(#g2)"/>
+    <path d="M10 33H16V39Z" fill="#5A5A5A"/>
+    <path d="M54 33H48V39Z" fill="#5A5A5A"/>
+    <rect x="10" y="1" width="44" height="32" rx="4" fill="url(#g3)"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <path d="M1 7H16V39H1L6 23Z" fill="#D2D2D2"/>
+    <path d="M63 7H48V39H63L58 23Z" fill="#D2D2D2"/>
+    <path d="M10 33H16V39Z" fill="#5A5A5A"/>
+    <path d="M54 33H48V39Z" fill="#5A5A5A"/>
+    <rect x="10" y="1" width="44" height="32" rx="4" fill="#D2D2D2"/>
+  </g>
+</svg>

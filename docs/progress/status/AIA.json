@@ -2,23 +2,28 @@
   "agent": "AIA",
   "role": "AIA",
   "branch": "claude/ui-artist",
-  "model": "Opus 5.5",
+  "model": "Fable 5.2",
   "agent_state": "active",
-  "task_id": "P1-AIA-kit-3",
+  "task_id": "P1-AIA-kit-5",
   "task_state": "working",
-  "claimed_at": "2026-11-04T19:30:00Z",
-  "lease_until": "2026-11-04T22:30:00Z",
-  "updated_at": "2026-11-04T19:47:00Z",
-  "expected_next_update_by": "2026-11-04T20:30:00Z",
+  "claimed_at": "2026-11-09T22:25:25Z",
+  "lease_until": "2026-11-10T01:25:25Z",
+  "updated_at": "2026-11-09T22:53:00Z",
+  "expected_next_update_by": "2026-11-09T23:38:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "fccd4b89",
-    "next_step": "full checks (run_checks.sh), handoff with the self-score, gate request"
+    "last_green_sha": "d2deb896",
+    "next_step": "batch 2b sources"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "f3456cacc25ba00fa096db1516d85a677f3d7c77",
+    "exit": 0,
+    "finished_at": "2026-11-05T00:25:14Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-09T21:00:00Z",
+  "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M1"
   ],
@@ -129,8 +134,37 @@
       "cc": [
         "lead"
       ]
+    },
+    {
+      "id": "AIA-R16",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Batch 2a adds pieces KitSkin must draw: (1) `ribbon__box` is a neutral tinted per school (data-tint) and `ribbon__frame` (untinted gloss and ink) is drawn over it at the same rect, as disc_school; `ribbon__chapter` is the untinted violet chapter ribbon; the words sit on the band, the top 32 pt of the 42 pt piece. (2) The grab handles `sheet__handle` and `sheet__handle_parchment` are 42 x 9 pt sprites centred by code 12 pt below a sheet's top edge (a 9-slice cannot centre them). (3) `frame_<rank>__box__<state>` is a 9-slice ring with a hollow middle, drawn over the portrait's rect grown by 4 pt each side. (4) `popup__box` carries an 8/4/12 pt margin round its face (plus the 5 pt lip) and is drawn over the scrim; its title is a ribbon set across the top edge. (5) `header__name_plate` is the header's leather plate; `panel_parchment__parchment_done` is the done panel with its green seal in the top-right corner cell",
+      "files": [
+        "client/ui/kit_skin.gd",
+        "client/ui/kit_families.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T21:48:00Z",
+      "due": "2026-11-05T21:48:00Z",
+      "default": "the pieces sit in the atlas unused; those skins stay off in kit_families.json and draw in code",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R17",
+      "from": "AIA",
+      "to": "lead",
+      "ask": "Batch 2b (P1-AIA-kit-5) bakes pieces for tab_bar, tab, tab_active, segmented, segmented_on, chip, chip_on, tile, locked, toggle and slider. The catalogue coverage test fails with '<skin> has art but no component in SKINS_OF' until `client/tests/ui_kit_tests.gd` (K1's file) maps them: K05 toggle, K06 slider, K07 segmented and segmented_on, K08 chip and chip_on, K09 tab_bar, tab and tab_active, K39 tile, and the locked face. Please grant me that one constant for this task, as in the kit-4 resync, or have K1 add the lines",
+      "files": [
+        "client/tests/ui_kit_tests.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-09T22:38:00Z",
+      "due": "2026-11-10T00:30:00Z",
+      "default": "I add the batch 2b faces to SKINS_OF only (no other line of the file, no test loosened), as granted for the kit-4 resync, and say so in the handoff",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "run tools/run_checks.sh on the numerals commit; write the handoff; request the gate"
+  "next_step": "batch 2b drawn, baked and proofed (176 results, 0 fail); next: shape marks on the oak and silver frames, coverage test, guard, checks"
 }

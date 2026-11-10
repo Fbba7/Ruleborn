@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" data-slice="16 16 16 16">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0.549"/><stop offset="0.45" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#AA96FF" stop-opacity="0"/><stop offset="0.55" stop-color="#AA96FF" stop-opacity="0"/><stop offset="1" stop-color="#AA96FF" stop-opacity="0.4"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <rect x="1" y="1" width="32" height="32" rx="14" fill="#FFFFFF" fill-opacity="0.0039"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <rect x="1" y="1" width="32" height="32" rx="14" fill="#FFFFFF" fill-opacity="0.0039"/>
+  </g>
+  <g data-state="pressed">
+    <rect x="1" y="1" width="32" height="32" rx="14" fill="#000000" fill-opacity="0.3412"/>
+    <rect x="3" y="3" width="28" height="28" rx="12" fill="none" stroke="url(#g1)" stroke-width="2.4"/>
+    <rect x="2.4" y="2.4" width="29.2" height="29.2" rx="12.6" fill="none" stroke="url(#g2)" stroke-width="1.2"/>
+  </g>
+  <g data-state="pressed" data-mode="hc">
+    <rect x="1" y="1" width="32" height="32" rx="14" fill="#140A16"/>
+    <rect x="2" y="2" width="30" height="30" rx="12.5" fill="none" stroke="#B8A8D8" stroke-width="3"/>
+  </g>
+</svg>

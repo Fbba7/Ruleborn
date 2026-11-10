@@ -1,0 +1,70 @@
+[
+  {
+    "task_id": "P1-AIA-kit-5",
+    "sha": "51269c72",
+    "item": "kit catalogue sheet, batch 2b (tab bar, tabs, segmented, chips, tiles, locked, toggle, slider), at phone size",
+    "quality": "Layered materials",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Raised controls (selected segments and chips, toggles, teal tiles, day chips) show a top-lit gradient, a gloss band, a dark hue-matched rim and a solid lip; the parchment 'Day 4 of 7' panel has a bevelled frame and inner wells; nothing is posterised. Pressed and disabled faces are flatter, and the high-contrast tab bar is a flat fill with a light outline whose bottom edge is cropped in the still, so its lip could not be checked.",
+    "advisory": true,
+    "at": "2026-11-10T01:58:00Z"
+  },
+  {
+    "task_id": "P1-AIA-kit-5",
+    "sha": "51269c72",
+    "item": "kit catalogue sheet, batch 2b (tab bar, tabs, segmented, chips, tiles, locked, toggle, slider), at phone size",
+    "quality": "Display type",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Words on textured surfaces ('Spirit', 'Locked', 'Lv 9'), the tab bar labels and On/Off carry a full unbroken ink outline in both modes, and the day numbers share one treatment; the sheet has no headline figure. Note: white chip and segment labels are outlined on some plates (All, Time) and not on others (Weekly, Season, Motion).",
+    "advisory": true,
+    "at": "2026-11-10T01:58:00Z"
+  },
+  {
+    "task_id": "P1-AIA-kit-5",
+    "sha": "51269c72",
+    "item": "kit catalogue sheet, batch 2b (tab bar, tabs, segmented, chips, tiles, locked, toggle, slider), at phone size",
+    "quality": "Colour roles and value",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "The main action's gold fill is also used for selected segments ('Daily', 'Hard'), selected filter chips ('Motion', 'Energy'), claimed day tiles 1 to 3 and one chart bar in 'Day 4 of 7', which is told from its purple neighbours by hue alone; the same selected state turns brown on the parchment ground. The version 2 ruling names this as gold in a second role; the pass anchor keeps gold to frames, rims and numerals. The school chips carry no school colour or shape.",
+    "advisory": true,
+    "at": "2026-11-10T01:58:00Z"
+  },
+  {
+    "task_id": "P1-AIA-kit-5",
+    "sha": "51269c72",
+    "item": "kit catalogue sheet, batch 2b (tab bar, tabs, segmented, chips, tiles, locked, toggle, slider), at phone size",
+    "quality": "Light behind UI",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Judged as kit art on its own light: every raised control and tile has a top highlight with a darker lip and drop below, recessed tracks are shaded at the top under the same light, and nothing is lit from below. The high-contrast stills are flat by design.",
+    "advisory": true,
+    "at": "2026-11-10T01:58:00Z"
+  }
+]

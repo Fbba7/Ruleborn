@@ -858,6 +858,10 @@
     ]
   },
   "kit": {
+    "active_glow": {
+      "value": "#AA96FF",
+      "from": "tab_active's glow"
+    },
     "bar_neutral_bottom": {
       "value": "#B4B4B4",
       "from": "neutral, tinted: a bar's foot"
@@ -866,6 +870,26 @@
       "value": "#FFFFFF",
       "from": "neutral, tinted: a bar's lit top"
     },
+    "bar_well_low": {
+      "value": "#160E34",
+      "from": "tab_bar_bottom #120A2C, lifted a little: the well's foot"
+    },
+    "bar_well_mid": {
+      "value": "#261A52",
+      "from": "tab_bar_top #2C1E5C toward its middle: the well under the gloss"
+    },
+    "bronze": {
+      "value": "#8A5A1C",
+      "from": "tab_bar's line #8A5A1C: the bevel's body"
+    },
+    "bronze_dark": {
+      "value": "#5A3A12",
+      "from": "tab_bar's line, shaded: the bevel's foot"
+    },
+    "bronze_light": {
+      "value": "#F2C45C",
+      "from": "tab_bar's rim #F2C45C: the bevel's lit edge"
+    },
     "card_locked_bottom": {
       "value": "#16202C",
       "from": "card #1A1134 toward locked teal, a step"
@@ -873,6 +897,50 @@
     "card_locked_top": {
       "value": "#22303E",
       "from": "card #261A4C toward locked teal #3A8A90, a step"
+    },
+    "chapter_fold": {
+      "value": "#24186A",
+      "from": "tab_active_bottom, deep: the violet ribbon's fold"
+    },
+    "chapter_tail": {
+      "value": "#4836B0",
+      "from": "tab_active_bottom #4532B8: the violet ribbon's tail"
+    },
+    "chosen_bottom": {
+      "value": "#3E2716",
+      "from": "leather_chosen's foot"
+    },
+    "chosen_disabled": {
+      "value": "#6A5A50",
+      "from": "leather_chosen, greyed and flat"
+    },
+    "chosen_hc": {
+      "value": "#2A1A10",
+      "from": "seg_on_light's drop, flat: two steps off the black edge and the white tray"
+    },
+    "chosen_hc_pressed": {
+      "value": "#5A3A24",
+      "from": "leather_chosen's top, flat: pressed, lit from under"
+    },
+    "chosen_lip": {
+      "value": "#2A1A10",
+      "from": "seg_on_light's drop"
+    },
+    "chosen_pressed_bottom": {
+      "value": "#321E10",
+      "from": "leather_chosen's foot, a step down"
+    },
+    "chosen_pressed_top": {
+      "value": "#4A2E1C",
+      "from": "leather_chosen's top, a step down"
+    },
+    "chosen_rim": {
+      "value": "#FFDCB4",
+      "from": "seg_on_light's highlight"
+    },
+    "chosen_top": {
+      "value": "#5A3A24",
+      "from": "leather_chosen's top"
     },
     "disabled_hc": {
       "value": "#8A8494",
@@ -898,9 +966,29 @@
       "value": "#7A8AE6",
       "from": "tab_active_top x0.86"
     },
+    "done_corner_bottom": {
+      "value": "#2E9A62",
+      "from": "success #3FBF7F, shaded: the done corner's foot"
+    },
+    "done_corner_top": {
+      "value": "#5ED092",
+      "from": "success #3FBF7F, lit: the done corner's top"
+    },
     "edge_hc": {
       "value": "#B8A8D8",
       "from": "text_on_night_3: a dark piece's 3-point edge in high contrast, 7:1 on the hc night"
+    },
+    "frame_locked_dark": {
+      "value": "#24545C",
+      "from": "locked_bottom #30707A, deeper"
+    },
+    "frame_locked_light": {
+      "value": "#7AB6BA",
+      "from": "locked_top #4A9AA0, lit: a locked frame's bevel"
+    },
+    "gem_light": {
+      "value": "#FFFFFF",
+      "from": "the prismatic gem's lit facet"
     },
     "gold_disabled": {
       "value": "#B8A88C",
@@ -913,6 +1001,18 @@
     "gold_hc_pressed": {
       "value": "#D9A630",
       "from": "gold, flat, darker"
+    },
+    "gold_in_bottom": {
+      "value": "#E8B450",
+      "from": "gold: pressed, the light comes from under"
+    },
+    "gold_in_mid": {
+      "value": "#E0AC44",
+      "from": "gold, a touch down: text_on_gold still reads on it"
+    },
+    "gold_in_top": {
+      "value": "#D8A238",
+      "from": "gold #E9B65C, a step down: a chosen face pressed, shaded at its top"
     },
     "gold_pressed_bottom": {
       "value": "#A8702A",
@@ -938,6 +1038,10 @@
       "value": "#3E9A40",
       "from": "green, flat, darker"
     },
+    "green_off": {
+      "value": "#24604A",
+      "from": "green_muted's top: a disabled on track, flat"
+    },
     "green_pressed_bottom": {
       "value": "#2A7A1E",
       "from": "green bottom x0.84"
@@ -949,6 +1053,30 @@
     "green_pressed_top": {
       "value": "#76C440",
       "from": "green top x0.86"
+    },
+    "green_sunk": {
+      "value": "#1E6A1A",
+      "from": "green_bottom #349125, shaded: the on track's inner shade"
+    },
+    "halo": {
+      "value": "#F2C45C",
+      "from": "tab_heist's glow"
+    },
+    "header_bottom": {
+      "value": "#1C1240",
+      "from": "card_bottom #1A1134, lifted a little"
+    },
+    "header_top": {
+      "value": "#2E2060",
+      "from": "card_lit_mid #2A1A56, lifted: the top bar's band"
+    },
+    "knob_disabled": {
+      "value": "#A89A80",
+      "from": "gold_disabled, a step down: a knob that cannot move"
+    },
+    "later_line": {
+      "value": "#C9B48A",
+      "from": "day_later's line"
     },
     "leather_disabled": {
       "value": "#4A3C44",
@@ -1002,6 +1130,26 @@
       "value": "#D6E4F2",
       "from": "text_on_night_2, cooled: the clock's foot, not the time school's cyan"
     },
+    "oak_hc": {
+      "value": "#8A5630",
+      "from": "frame_oak's body, flat"
+    },
+    "paper_lip": {
+      "value": "#C9A876",
+      "from": "chip_light's drop: a tan foot"
+    },
+    "paper_pressed_bottom": {
+      "value": "#E0CDA4",
+      "from": "tray_track's foot"
+    },
+    "paper_pressed_top": {
+      "value": "#EBDDBE",
+      "from": "tray_track's top: paper pressed in"
+    },
+    "parchment_deckle": {
+      "value": "#C9A86A",
+      "from": "parchment_bottom #F1E3C4 two steps down: the inset deckle line"
+    },
     "parchment_disabled": {
       "value": "#C4B69C",
       "from": "tertiary parchment, desaturated; parchment_ink 9:1"
@@ -1013,6 +1161,18 @@
     "parchment_hc_pressed": {
       "value": "#B08A4A",
       "from": "tertiary parchment, flat, darker"
+    },
+    "parchment_lip": {
+      "value": "#8A5A1C",
+      "from": "parchment_text_3: parchment's solid lip, a tan foot, not a black one"
+    },
+    "parchment_locked_bottom": {
+      "value": "#BCD2CC",
+      "from": "parchment_bottom toward locked teal, a step"
+    },
+    "parchment_locked_top": {
+      "value": "#E4EEE8",
+      "from": "parchment_top toward locked teal, a step"
     },
     "pill_bottom": {
       "value": "#CFC4EE",
@@ -1042,6 +1202,22 @@
       "value": "#2A2060",
       "from": "gradient.plate_dark's top, flat"
     },
+    "popup_rim": {
+      "value": "#3E2E86",
+      "from": "card_lit_glow #5A3CA8 toward card, a raised bevel ring"
+    },
+    "prismatic_hc": {
+      "value": "#C29AFF",
+      "from": "frame_prismatic's violet stop, flat"
+    },
+    "rail_bottom": {
+      "value": "#24142A",
+      "from": "track's foot"
+    },
+    "rail_top": {
+      "value": "#140A16",
+      "from": "track's top"
+    },
     "red_disabled": {
       "value": "#8A5862",
       "from": "alarm, desaturated; on_alarm 5.9:1"
@@ -1057,6 +1233,18 @@
     "red_pressed_top": {
       "value": "#E86A7C",
       "from": "alarm_light x0.86"
+    },
+    "ribbon_fold": {
+      "value": "#5A5A5A",
+      "from": "neutral, tinted: the fold, the school colour's deep shade"
+    },
+    "ribbon_hc": {
+      "value": "#D2D2D2",
+      "from": "neutral, flat, tinted in high contrast"
+    },
+    "ribbon_tail": {
+      "value": "#A8A8A8",
+      "from": "neutral, tinted: the tail, a step under the band"
     },
     "school_dark": {
       "value": "#8E8E8E",
@@ -1082,6 +1270,70 @@
       "value": "#B4B4B4",
       "from": "school_mid, darker: pressed"
     },
+    "silver_hc": {
+      "value": "#C8D0DC",
+      "from": "frame_silver's body, flat"
+    },
+    "smoke_bottom": {
+      "value": "#50408C",
+      "from": "the off chip's foot"
+    },
+    "smoke_disabled": {
+      "value": "#4A4460",
+      "from": "smoke, greyed and flat"
+    },
+    "smoke_hc": {
+      "value": "#5A4AA6",
+      "from": "violet_hc: the off chip, flat"
+    },
+    "smoke_hc_pressed": {
+      "value": "#463A86",
+      "from": "violet_hc, a step down"
+    },
+    "smoke_lip": {
+      "value": "#241A52",
+      "from": "tab_bar_top, deep: the off chip's lip"
+    },
+    "smoke_pressed_bottom": {
+      "value": "#5A4A98",
+      "from": "smoke_top, a step down: pressed, the light comes from under"
+    },
+    "smoke_pressed_top": {
+      "value": "#4A3A84",
+      "from": "smoke_bottom, a step down"
+    },
+    "smoke_rim": {
+      "value": "#B8A8D8",
+      "from": "text_on_night_3: the off chip's lit inner rim"
+    },
+    "smoke_top": {
+      "value": "#6C5CB0",
+      "from": "text_on_night_3 #B8A8D8 toward tab_active_bottom: an off chip's lit top, two steps off the night"
+    },
+    "tan_bottom": {
+      "value": "#CAAA70",
+      "from": "tertiary_parchment_bottom #C6A266, a touch up: its foot (parchment_ink still reads on it)"
+    },
+    "tan_hc": {
+      "value": "#C0C0C0",
+      "from": "a grey plate: two steps off white paper, black words on it"
+    },
+    "tan_hc_pressed": {
+      "value": "#B4B4B4",
+      "from": "tan_hc, a step down"
+    },
+    "tan_pressed_bottom": {
+      "value": "#D4B67E",
+      "from": "tan_top, a touch down"
+    },
+    "tan_pressed_top": {
+      "value": "#CAA96E",
+      "from": "tan_bottom, a touch down: pressed, the light comes from under"
+    },
+    "tan_top": {
+      "value": "#D4B67E",
+      "from": "tertiary_parchment_top #D9BC86, a touch down: an unchosen chip on parchment, lit top"
+    },
     "tertiary_parchment_bottom": {
       "value": "#C6A266",
       "from": "parchment lowered ~24 L*"
@@ -1106,6 +1358,42 @@
       "value": "#7A68C2",
       "from": "card #261A4C lifted ~34 L*, lit top"
     },
+    "tile_lip": {
+      "value": "#4A2A10",
+      "from": "reward tiles' drop"
+    },
+    "today_ring": {
+      "value": "#E9B65C",
+      "from": "day_today's line: gold"
+    },
+    "track_disabled": {
+      "value": "#221A26",
+      "from": "track, flat"
+    },
+    "track_hc_edge": {
+      "value": "#7868C4",
+      "from": "violet_hc, lifted: the dark track's edge, two steps under the gold on it"
+    },
+    "track_line": {
+      "value": "#624328",
+      "from": "seg_track's line"
+    },
+    "track_on_pressed_bottom": {
+      "value": "#5CC542",
+      "from": "green's body: pressed, the light comes from under"
+    },
+    "track_on_pressed_top": {
+      "value": "#3E9A30",
+      "from": "green's body, a step down"
+    },
+    "tray_line": {
+      "value": "#B08A58",
+      "from": "seg_track_light's line"
+    },
+    "tray_shade": {
+      "value": "#8A5A1C",
+      "from": "parchment_text_3: the tray's inner shade"
+    },
     "violet_disabled": {
       "value": "#6A6488",
       "from": "tertiary violet, desaturated; text_on_night 8:1"
@@ -1121,6 +1409,18 @@
     "warn_cap": {
       "value": "#F07A3C",
       "from": "energy: tag_warn's cap (not amber, so gold keeps one role)"
+    },
+    "week_bottom": {
+      "value": "#4E34A8",
+      "from": "week_day's foot"
+    },
+    "week_hc": {
+      "value": "#7A5CE0",
+      "from": "week_day, flat"
+    },
+    "week_top": {
+      "value": "#8C6CF0",
+      "from": "week_day's top"
     }
   }
 }

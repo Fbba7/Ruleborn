@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Writes the kit's batch 1a sources (kit-spec.md sections 3, 4.1 and 5),
 batch 1b's (kit_1b.py: the heist's other families and the overlays),
-batch 1c's (kit_num.py: the baked numerals) and
+batch 1c's (kit_num.py: the baked numerals), batch 2a's (kit_2a.py:
+the panels, sheets, popup, rank frames, header and ribbon), batch 2b's
+(kit_2b.py: the tab bar, tabs, segmented, chips, tiles, locked, toggle and
+slider) and
 art/ui/palette.json (section 6.2) from client/ui/tokens.json.
 
     python3 art/ui/kit_build/build_kit.py
@@ -349,6 +352,16 @@ def build():
     KIT.update(kit_num.KIT_NUM)
     K.update({k: v[0] for k, v in kit_num.KIT_NUM.items()})
     svgs.update(kit_num.build_num())
+    # Batch 2a (kit_2a.py): panels, sheets, popup, frames, header, ribbon.
+    import kit_2a
+    KIT.update(kit_2a.KIT_2A)
+    K.update({k: v[0] for k, v in kit_2a.KIT_2A.items()})
+    svgs.update(kit_2a.build_2a(T))
+    # Batch 2b (kit_2b.py): tab bar, tabs, segmented, chips, tiles, locked, toggle, slider.
+    import kit_2b
+    KIT.update(kit_2b.KIT_2B)
+    K.update({k: v[0] for k, v in kit_2b.KIT_2B.items()})
+    svgs.update(kit_2b.build_2b(T))
     return svgs
 
 
