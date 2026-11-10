@@ -8,18 +8,118 @@
   "task_state": "working",
   "claimed_at": "2026-11-10T07:38:00Z",
   "lease_until": "2026-11-10T10:58:07Z",
-  "updated_at": "2026-11-10T07:58:07Z",
-  "expected_next_update_by": "2026-11-10T08:43:07Z",
+  "updated_at": "2026-11-10T07:58:32Z",
+  "expected_next_update_by": "2026-11-10T08:43:32Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "98b199ba",
-    "next_step": "HUD rebuilt from the kit (save point); fix the laws column width at 100% and 200%, retake the after stills, run the tests"
+    "next_step": "HUD on the kit and requests S1-R1 to R7 filed; tests running, then the after stills, guard and the pre-check"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "S1-R1",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Update calls on the HUD pieces: KitHud.set_clock(piece, text, alarmed), KitHud.set_alarm(piece, level) and KitHud.set_loot(piece, rows, fraction, aim, caption), so a piece changes state without being built again (as KitStatus.set_pill does for the pill).",
+      "files": [
+        "client/ui/kit_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The heist HUD builds the piece again in its place when its state changes, and sets only the clock's text and the bars' fill between changes.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R2",
+      "from": "S1",
+      "to": "K1",
+      "ask": "KitHud.loot that stays narrow in every language: a caption that wraps between words (\"Carregar até 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese), an aim tick that can be left out (a replay has no load target), and a second, thinner bar with an icon for the Vault's cracking.",
+      "files": [
+        "client/ui/kit_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The HUD sets the kit caption's label to wrap with a minimum of 88 points, hides the \"Aim\" tick when there is no load target, and adds the Vault's row itself from Icons.view and KitBar.make as a sibling of \"Load\".",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R3",
+      "from": "S1",
+      "to": "K1",
+      "ask": "A law chip for a narrow column: KitCards.law_chip keeps the name on one line and ends it in an ellipsis at 300 points, wider than the heist banner's column. Ask: a wrapping form (the name breaks between words, the chip no narrower than its longest word) with the kit's light disc behind an icon that is mostly dark ink (Glowing dark does not read on the leather without it).",
+      "files": [
+        "client/ui/kit_cards.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The HUD composes the chip from UI.panel(\"leather\"), Icons.view and UI.label, with UI.dress(disc, \"icon_disc\") behind a dark icon, and measures the icon's darkness itself.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R4",
+      "from": "S1",
+      "to": "K1",
+      "ask": "KitHud.alarm at large text and at high levels: at 200% text the word and \"N / 6\" on one line run off the phone's edge, so the count needs to go under the word; and the count has no raised state (the designs turn it red from level 4, as its bells).",
+      "files": [
+        "client/ui/kit_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The HUD moves the kit's count label under the word when text is above 130%, and from level 4 overrides its colour with the alarm_text_on_night token.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R5",
+      "from": "S1",
+      "to": "K1",
+      "ask": "A clock as the key frame 02-heist.png: KitHud.clock is a cream pill with 24-point figures; the frame's clock is larger, with a gold rim. Ask: that look on KitHud.clock (or a \"large\" form).",
+      "files": [
+        "client/ui/kit_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The HUD uses KitHud.clock as it is: smaller than before, no gold rim.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R6",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Rewards flying to their counter: a coin icon for the loot and a kit motion for a piece flying from a point to a control (Motion has pop and fill only). Also a role for words that lie on the world with an ink outline (the banner's \"Laws here\"): UI.label has no such look.",
+      "files": [
+        "client/ui/motion.gd",
+        "client/scripts/ui.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The HUD flies Icons.view(\"heiststatus/lootbag\") and moves each itself in _process; \"Laws here\" is a UI.label with the bold font, the gold token and an ink_line outline set by the HUD.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R7",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Lower heist_hud.gd's record in tools/ui_bake/budgets.json to 0 draw and 0 fill: check_screens.py now counts none (recorded 3 and 2).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The record stays at 3 and 2; the check passes either way.",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
