@@ -478,10 +478,11 @@ func _parts() -> void:
 			bad.append("%s %s does not draw %s" % [pair[0], pair[1], pair[2]])
 	if not bool(KitSkin.piece("bar").get("tint", false)):
 		bad.append("the bar's fill is not tinted per use")
-	# The locked skin's art is its mark: the locked material's box stays the
-	# code-drawn one, and nothing is logged for it.
-	if not KitSkin.piece("locked").is_empty() or not KitSkin.missing.is_empty():
-		bad.append("the locked material's box is not left to the code, unlogged: %s" % ", ".join(KitSkin.missing))
+	# The locked skin has its lock and, since kit batch 2b, its own face: the
+	# locked material draws that face, and nothing is logged for it.
+	if KitSkin.piece("locked") != pieces.get("locked__locked__normal", {"lost": "locked__locked__normal"}) \
+			or not KitSkin.missing.is_empty():
+		bad.append("the locked material does not draw its own face, unlogged: %s" % ", ".join(KitSkin.missing))
 	# A material whose words do not hold on its skin's box (a light material
 	# on a dark box, a dark one on a light box, in either atlas) keeps its
 	# code-drawn box, unlogged: the list is the atlas's, no more and no less.
@@ -557,8 +558,8 @@ func _parts() -> void:
 	await tree.process_frame
 	check.call("the overlays and marks (selected rim, spinner, lock, attention dot, bar tick) draw from the atlas "
 			+ "while their skin is on; a material draws its own shape, a use's named shape, else the skin's box; "
-			+ "the locked material's box stays code-drawn, and so does a material's whose words do not hold on "
-			+ "its skin's box; a school's disc is its tinted box under its untinted "
+			+ "the locked material draws its own face; a material whose words do not hold on its skin's box "
+			+ "keeps its code-drawn box; a school's disc is its tinted box under its untinted "
 			+ "frame (kit-spec.md sections 5, 6.7, 8.2; AIA-R13, AIA-R14)", bad.is_empty(), "; ".join(bad))
 
 

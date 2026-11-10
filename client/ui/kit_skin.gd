@@ -81,9 +81,6 @@ const PARTS := {
 ## The margin every piece keeps around its face for its ink line, in
 ## points; its lip lies below that (a 9-slice's bottom margin less its top).
 const MARGIN_POINTS := 1.0
-## The skins whose baked art is a mark alone (the lock): their own box
-## stays code-drawn while they are on.
-const MARKS := ["locked"]
 ## The materials whose words do not hold on their skin's box: a light
 ## material (dark words) whose skin's box is dark, or a dark one whose box is
 ## light. Each draws only a shape baked for it (`<skin>__<material>__<state>`)
@@ -195,9 +192,9 @@ static func is_on(name: String) -> bool:
 ## face comes first (`<skin>__parchment__<state>`, kit-spec.md section 4.1);
 ## the tertiary has no other face there, its dark-ground face never drawn on
 ## parchment. Empty when the skin is off, and when the atlas lacks the piece,
-## which is logged: the code-drawn box draws instead. A skin
-## whose art is a mark alone (`MARKS`) leaves its box to the code, unlogged.
-## So does a material of `OWN_SHAPE_ONLY` with no shape of its own.
+## which is logged: the code-drawn box draws instead. A material of
+## `OWN_SHAPE_ONLY` with no shape of its own keeps its code-drawn box,
+## unlogged.
 ## A `shape` named by the use comes before them all (a bar's `alarm` fill).
 static func piece(material_name: String, state := "normal", ground := "", shape_name := "") -> Dictionary:
 	var k := skin(material_name)
@@ -216,7 +213,7 @@ static func piece(material_name: String, state := "normal", ground := "", shape_
 		var key := "%s__%s__%s" % [k, shape, state]
 		if pieces.has(key) and texture(pieces[key]) != null:
 			return pieces[key]
-	if k in MARKS or own_only:
+	if own_only:
 		return {}
 	var lost := "%s__%s__%s" % [k, shapes[0] if ground == "parchment" else material_name, state]
 	if lost not in missing:
