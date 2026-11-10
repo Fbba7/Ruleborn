@@ -1,22 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="35" data-slice="14 14 14 17">
   <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
   <defs>
-    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F9DE9C"/><stop offset="0.46" stop-color="#E9B65C"/><stop offset="1" stop-color="#C88A35"/></linearGradient>
-    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.298"/><stop offset="0.7" stop-color="#FFFFFF" stop-opacity="0.1333"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.0588"/></linearGradient>
-    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.6"/><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
-    <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6B4420" stop-opacity="0"/><stop offset="0.55" stop-color="#6B4420" stop-opacity="0"/><stop offset="1" stop-color="#6B4420" stop-opacity="0.451"/></linearGradient>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D4B67E"/><stop offset="1" stop-color="#CAAA70"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.698"/><stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A5A1C" stop-opacity="0"/><stop offset="0.55" stop-color="#8A5A1C" stop-opacity="0"/><stop offset="1" stop-color="#8A5A1C" stop-opacity="0.4"/></linearGradient>
   </defs>
   <g data-state="normal">
-    <rect x="1" y="4" width="28" height="30" rx="12" fill="#4A2A10" stroke="#1A0C14" stroke-width="2"/>
+    <rect x="1" y="4" width="28" height="30" rx="12" fill="#7A5428" stroke="#1A0C14" stroke-width="2"/>
     <rect x="1" y="1" width="28" height="30" rx="12" fill="url(#g1)"/>
-    <rect x="4.2" y="4.2" width="21.6" height="12.6" rx="8.8" fill="url(#g2)"/>
-    <rect x="3.35" y="3.35" width="23.3" height="25.3" rx="9.65" fill="none" stroke="url(#g3)" stroke-width="1.5"/>
-    <rect x="3.5" y="3.5" width="23" height="25" rx="9.5" fill="none" stroke="url(#g4)" stroke-width="1.8"/>
+    <rect x="3.35" y="3.35" width="23.3" height="25.3" rx="9.65" fill="none" stroke="url(#g2)" stroke-width="1.5"/>
+    <rect x="3.5" y="3.5" width="23" height="25" rx="9.5" fill="none" stroke="url(#g3)" stroke-width="1.8"/>
+    <rect x="4.4" y="4.4" width="21.2" height="23.2" rx="8.6" fill="none" stroke="#8A5A1C" stroke-width="1.4" stroke-opacity="0.85"/>
+    <rect x="6.6" y="6.6" width="16.8" height="18.8" rx="6.4" fill="none" stroke="#8A5A1C" stroke-width="0.7" stroke-opacity="0.7"/>
+    <rect x="4.4" y="5.2" width="21.2" height="23.2" rx="8.6" fill="none" stroke="#FFFFFF" stroke-width="0.7" stroke-opacity="0.5"/>
     <rect x="1" y="1" width="28" height="30" rx="12" fill="none" stroke="#1A0C14" stroke-width="2"/>
   </g>
   <g data-state="normal" data-mode="hc">
     <rect x="1" y="4" width="28" height="30" rx="12" fill="#000000"/>
-    <rect x="1" y="1" width="28" height="30" rx="12" fill="#F2C14E"/>
+    <rect x="1" y="1" width="28" height="30" rx="12" fill="#C0C0C0"/>
     <rect x="2" y="2" width="26" height="28" rx="10.5" fill="none" stroke="#000000" stroke-width="3"/>
+    <rect x="5.5" y="5.5" width="19" height="21" rx="7.5" fill="none" stroke="#000000" stroke-width="1.5"/>
   </g>
 </svg>
