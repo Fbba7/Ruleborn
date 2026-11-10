@@ -2,19 +2,19 @@
 skin's box, and the warn tag redrawn light. Run through build_kit.py (it
 imports this module and writes its SVGs with the others).
 
-    panel_dark/album            a Codex chapter's album, parchment, radius 22: normal, locked
-    panel_dark/fact             a fact tile, parchment with a soft tan edge: normal, locked
-    panel_dark/plate            a name or level plate, parchment, radius 8: normal, locked
+    panel_dark/album            a Codex chapter's album, parchment, radius 22: normal
+    panel_dark/fact             a fact tile, parchment with a soft tan edge: normal
+    panel_dark/plate            a name or level plate, parchment, radius 8: normal
     bar_track/bar_track_light   a progress track on parchment, sunk tan: normal
     tag/tag                     a ribbon tag, cream in a gold rim: normal
     tag/tag_warn                a state tag, warm paper with a hatched orange cap: normal
     tag/island_label            an island's label, a cream pill: normal
     pill/pill_gold_edge         the multiplier pill, a dark well in a gold edge: normal, pressed
-    success/banner_success      the raid banner, a dark card edged and lit green: normal, pressed, disabled, locked
-    success/green_muted         a green action not yet afforded, deep green: normal, pressed, disabled, locked
+    success/banner_success      the raid banner, a dark card edged and lit green: normal
+    success/green_muted         a green action not yet afforded, deep green: normal, pressed
 
-Each shape has its skin's box's states, so the code that asks for a
-material's piece by state finds it. Sizes follow each material's radius: a
+Each shape has the states listed above and no more, so the atlas stays at
+three pages; for a state a shape lacks, the code draws its own box. Sizes follow each material's radius: a
 9-slice's corner cells must hold the whole corner.
 
 Gold keeps its two roles (kit_2b.py): the ribbon tag's token fill is gold,
@@ -213,7 +213,7 @@ def pill_gold_edge():
 
 
 def greens():
-    """success's two other shapes, at its box's size, slice and states."""
+    """success's two other shapes, at its box's size and slice."""
     out = {}
     W, FACE, R = 38, 42, 16
     H = 1 + FACE + LIP + 1
