@@ -564,11 +564,14 @@ static func season_reward(rank: String, icon: String, amount: String, claim: Cal
 	m.add_child(v)
 	p.add_child(m)
 	if locked and icon != "":
-		var badge := PanelContainer.new()
+		# The kit's lock while its skin is on, else the lock icon on a disc.
+		var badge: Control = KitSkin.mark("lock", 22.0)
+		if badge == null:
+			badge = PanelContainer.new()
+			badge.add_theme_stylebox_override("panel", UI.clear_box(3, 3))
+			UI.dress(badge, "icon_disc", 999)
+			badge.add_child(Icons.view("generalui/lock", 16))
 		badge.name = "Lock"
-		badge.add_theme_stylebox_override("panel", UI.clear_box(3, 3))
-		UI.dress(badge, "icon_disc", 999)
-		badge.add_child(Icons.view("generalui/lock", 16))
 		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var corner := Control.new()
 		corner.mouse_filter = Control.MOUSE_FILTER_IGNORE
