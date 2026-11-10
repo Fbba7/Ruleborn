@@ -962,13 +962,18 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-10T07:40:00Z",
+        "lease_until": "2026-11-10T10:40:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-10T06:58:00Z",
+      "updated_at": "2026-11-10T07:43:00Z",
       "updated_by": "lead"
     },
     {
@@ -1273,13 +1278,70 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "AIA",
         "branch": "claude/ui-artist",
         "claimed_at": "2026-11-10T02:50:24Z",
         "lease_until": "2026-11-10T09:50:38Z"
       },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "00571a442017a1c873e234ffdd689846674e4a1c",
+      "merged_sha": null,
+      "exceptions": [
+        "art/ui/kit_build/**",
+        "art/ui/palette.json",
+        "client/ui/art/kit_2*.webp",
+        "client/ui/art/kit_3*.webp",
+        "art/ui/kit_next/**"
+      ],
+      "updated_at": "2026-11-10T07:43:00Z",
+      "updated_by": "lead"
+    },
+    {
+      "id": "P1-AIA-kit-7",
+      "title": "Kit art, batch 2d: the fixes the gate asked of batch 2c (verdict P1-AIA-kit-6/00571a44.json, Layered materials failed 3 of 3): the album panel gets a bevelled frame, an inner well, a readable gloss band and parchment grain; the fact slips and plates get a rim, gloss and lip that read at phone size; the success banner's inner glow is a smooth ramp with no flat steps at 60 and 120 pt; the white success-banner line is inked like the Event and Claim labels; the empty light bar track stands off the cream panel in value. Names, sizes and nine-slice margins of the baked pieces do not change (P1-K1-switch-rest wires them)",
+      "role": "AIA",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/kit/**",
+        "client/ui/art/kit.webp",
+        "client/ui/art/kit_hc.webp",
+        "client/ui/art/kit.json",
+        "client/ui/art/kit*.import"
+      ],
+      "deps": [
+        "P1-AIA-kit-6"
+      ],
+      "done_when": [
+        "node tools/ui_bake/bake.js --check",
+        "the gate's notes on P1-AIA-kit-6 (verdicts/P1-AIA-kit-6/00571a44.json) answered one by one in the handoff",
+        "no baked piece changes its name, size or nine-slice margins (kit.json differs only where the handoff says why)",
+        "the catalogue's coverage test finds a piece for every skin",
+        "self-score against gate/rubric.md in the handoff (M1)",
+        "gate: Kit art",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "phase": 1,
+      "model": "Fable 5.2",
+      "gate_items": [
+        {
+          "item": "kit catalogue sheet, batch 2d, at phone size",
+          "qualities": [
+            "Layered materials",
+            "Display type",
+            "Colour roles and value",
+            "Light behind UI"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
@@ -1291,7 +1353,7 @@
         "client/ui/art/kit_3*.webp",
         "art/ui/kit_next/**"
       ],
-      "updated_at": "2026-11-10T06:58:00Z",
+      "updated_at": "2026-11-10T07:50:00Z",
       "updated_by": "lead"
     },
     {
@@ -1569,12 +1631,19 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S1",
+        "branch": "claude/ui-screens-heist",
+        "claimed_at": "2026-11-10T07:38:00Z",
+        "lease_until": "2026-11-10T10:38:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "updated_at": "2026-11-10T07:43:00Z",
+      "updated_by": "lead"
     },
     {
       "id": "P1-S1-pilot-2",
