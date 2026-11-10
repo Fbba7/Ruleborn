@@ -2467,6 +2467,22 @@
       "sent_at": "2026-11-10T07:53:00Z",
       "ack_by": "2026-11-10T09:00:00Z",
       "acked_at": null
+    },
+    {
+      "id": "M5",
+      "to": "K1",
+      "text": "From the owner, relayed by the overseer (CLAUDE.md order 1, 10 November 2026, 08:28Z): \"Deploy and then stop cleanly\". Finish P1-K1-switch-rest and stop. If the pre-check and the guard pass on its head by 09:45Z, mark it ready as usual (ready_sha set): the lead's final cycle merges what is ready then. If they do not pass by then, push a save point instead; it is merged in a later round, nothing is lost. Loosen no test to make the time. Either way, then set agent_state to stopped in your status file, write 'Stopped here' with where the work stands in your handoff, push your branch (never main) and end your turn. Take no new task and start nothing. Add M5 to acks when read.",
+      "sent_at": "2026-11-10T08:40:00Z",
+      "ack_by": "2026-11-10T09:45:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M6",
+      "to": "S1",
+      "text": "From the owner, relayed by the overseer (CLAUDE.md order 1, 10 November 2026, 08:28Z): \"Deploy and then stop cleanly\". Finish P1-S1-pilot-1 and stop. If the pre-check and the guard pass on its head by 09:45Z, mark it ready as usual (ready_sha set): the lead's final cycle merges what is ready then. If they do not pass by then, push a save point instead; it is merged in a later round, nothing is lost. Loosen no test to make the time. Either way, then set agent_state to stopped in your status file, write 'Stopped here' with where the work stands in your handoff, push your branch (never main) and end your turn. Take no new task and start nothing. Add M6 to acks when read.",
+      "sent_at": "2026-11-10T08:40:00Z",
+      "ack_by": "2026-11-10T09:45:00Z",
+      "acked_at": null
     }
   ]
 }

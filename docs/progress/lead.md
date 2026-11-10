@@ -1,5 +1,16 @@
 # The lead's handoff
 
+> **Final deploy, then stop (owner's order, 10 November 2026, 08:28Z:
+> "Deploy and then stop cleanly").** CLAUDE.md order 1 has the terms.
+> Cycle 50 is the last cycle and is started by the overseer by hand; the
+> launcher and the watchdog are disabled and stay disabled. The final
+> cycle merges what is ready and passes the checks, starts no session
+> (not AIA on kit-7, no restart), seeds no task and arms nothing; its
+> steps are under "Next (cycle 50, the final cycle)" in "Now" and in
+> `status/lead.json`. Messages M5 (K1) and M6 (S1) in the backlog tell
+> the two builders to bring their task to ready by 09:45Z or push a save
+> point, then stop. After the cycle the overseer records the stop.
+
 > **Restarted by the owner, 9 November 2026** ("Let's continue and use only
 > Fable 5.2", in the overseer's chat). The program runs, on Fable 5.2 only
 > (CLAUDE.md order 4): every session the lead creates and every subagent it
@@ -415,19 +426,29 @@ Your session was created with the repository checked out at main; work in that c
   stay), deps kit-6, so no AIA session was started. The lock is
   released. The audit and roadmap pages did not change. No owner-inbox
   entry.
-- Next (cycle 50): read the status files of `claude/ui-bake` (K1) and
-  `claude/ui-screens-heist` (S1) and copy the claims; check that K1
-  acked M4 (if K1's session ended without it, restart K1 on switch-rest
-  with M4 in the reason line). Do not start a second session for an
-  agent whose session in the table above is still running. When
-  switch-rest is ready: build one candidate, main +
-  `origin/claude/ui-artist` at `00571a44` + `origin/claude/ui-bake`;
-  owners diff for kit-6 over the first merge and for switch-rest over
-  the second (explicit SHAs); `bash client/build.sh` before guard.sh in
-  a fresh worktree; check_all; then mark both merged and start AIA on
-  P1-AIA-kit-7 (with kit-6's verdict notes). pilot-1 merges on its own
-  when ready (gate first). Seed a disc_school bake task only when a
-  screen asks for it. Only Fable 5.2; never Fable 5.1 (CLAUDE.md).
+- Next (cycle 50, the final cycle; owner's order "Deploy and then stop
+  cleanly", CLAUDE.md order 1). Start no session, seed no task, create
+  or re-arm no scheduled task.
+  1. Fetch; read the status files of `claude/ui-bake` (K1) and
+     `claude/ui-screens-heist` (S1) and copy the claims.
+  2. If P1-K1-switch-rest has a `ready_sha`: build one candidate, main +
+     `origin/claude/ui-artist` at `00571a44` (P1-AIA-kit-6) +
+     `origin/claude/ui-bake` at the ready commit; owners diff for kit-6
+     over the first merge and for switch-rest over the second (explicit
+     SHAs); `bash client/build.sh` before guard.sh in a fresh worktree;
+     check_all; on PASS push main and mark both merged. If switch-rest
+     is not ready, merge neither: kit-6 fails check_all without it.
+  3. If P1-S1-pilot-1 has a `ready_sha` set by 09:45Z: gate it
+     (advisory), then merge it the same way, in the same candidate when
+     it is ready before the candidate is built, or in a second candidate
+     after the first merge. A task marked ready after 09:45Z stays ready
+     on its branch.
+  4. Loosen, skip or disable no test. A candidate that fails stays
+     unmerged; write the failure here.
+  5. End: rewrite this section with, for every task not merged, its
+     branch, last commit and state; republish the audit and roadmap
+     pages if main moved; commit and push main; end the turn. The
+     overseer then records the stop. Only Fable 5.2; never Fable 5.1.
 - Cycle 44, 4 November 2026, from 23:39Z (session
   `session_01SNkKxqKY1WGt7cJSaqyYtWj`, started by the launcher):
   bookkeeping and a diagnosis. All three builders are working (AIA
