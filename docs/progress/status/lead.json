@@ -1,7 +1,7 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-10T07:36:00Z",
-  "expected_next_update_by": "2026-11-10T08:08:00Z",
+  "updated_at": "2026-11-10T07:34:00Z",
+  "expected_next_update_by": "2026-11-10T08:49:00Z",
   "cycle": 48,
   "merging": null,
   "last_merged": {
@@ -11,5 +11,5 @@
   "alerts": [
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 48: read the status files of claude/ui-bake (K1, P1-K1-switch-heist: merge main, guard, pre-check, ready), claude/ui-artist (AIA, P1-AIA-kit-6) and claude/ui-artist-icons (AIA-2, P1-AIA2-icons-2b) and copy their claims to the backlog. Merge switch-heist on ready (check its ui_kit_tests.gd diff loosens no test; client/build.sh before guard.sh in a fresh worktree; check_all). Then switch-rest opens for K1; S1's pilot-1 opens but S1 starts only when one of the three builder slots is free. Gate icons-2b and kit-6 on ready. Only Fable 5.2, never Fable 5.1."
+  "next_step": "Cycle 49: read the status files of claude/ui-artist (AIA, P1-AIA-kit-6, session started 06:53Z), claude/ui-bake (K1, P1-K1-switch-rest, started 07:33Z) and claude/ui-screens-heist (S1, P1-S1-pilot-1, started 07:33Z) and copy their claims to the backlog; start no duplicate session for them. Gate kit-6 on ready (kit catalogue sheet, batch 2c, at phone size, four qualities; give the judge kit-5's verdict notes), check the owners diff with the art/ui/kit_next/** exception, then merge (client/build.sh before guard.sh in a fresh worktree; check_all). switch-rest's AIA-R19 wiring waits for kit-6 on main. AIA-2 has no open task (icon batches 3 and 4 deferred). Only Fable 5.2, never Fable 5.1."
 }

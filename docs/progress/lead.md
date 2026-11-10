@@ -132,9 +132,12 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AIA | `session_01SNkKxqtMs5PEduX3C73kWc` | P1-AIA-kit-6 | `claude/ui-artist` | 2026-11-10 02:49Z |
-| K1 | `session_01SNkKxokS4F9D68QZEPomby` | P1-K1-switch-heist (restart: K1-R13 answered, icons-2a merged; merge main, guard, pre-check, ready) | `claude/ui-bake` | 2026-11-10 02:49Z |
-| AIA-2 | `session_01SNkKxmfMQZ66P5GyjL9tNY` | P1-AIA2-icons-2b | `claude/ui-artist-icons` | 2026-11-10 02:49Z |
+| AIA | `session_01SNkKxn3ipTmYbgSCzE7KeM` | P1-AIA-kit-6 (restart: AIA-R20 and AIA-R21 answered with their defaults; fill the handoff, mark ready, gate request) | `claude/ui-artist` | 2026-11-10 06:53Z |
+| K1 | `session_01SNkKxoJ8mhZCTqZrVR3GTe` | P1-K1-switch-rest | `claude/ui-bake` | 2026-11-10 07:33Z |
+| S1 | `session_01SNkKxq8aqgTaKU6VpynuMm` | P1-S1-pilot-1 | `claude/ui-screens-heist` | 2026-11-10 07:33Z |
+| AIA | `session_01SNkKxqtMs5PEduX3C73kWc` (idle, replaced) | P1-AIA-kit-6 | `claude/ui-artist` | 2026-11-10 02:49Z |
+| K1 | `session_01SNkKxokS4F9D68QZEPomby` (idle, done) | P1-K1-switch-heist (restart: K1-R13 answered, icons-2a merged; merge main, guard, pre-check, ready) | `claude/ui-bake` | 2026-11-10 02:49Z |
+| AIA-2 | `session_01SNkKxmfMQZ66P5GyjL9tNY` (idle, done) | P1-AIA2-icons-2b | `claude/ui-artist-icons` | 2026-11-10 02:49Z |
 | AIA | `session_01SNkKxoemFM74dP2XqeyASw` (idle, done) | P1-AIA-kit-5 | `claude/ui-artist` | 2026-11-09 22:23Z |
 | K1 | `session_01SNkKxprLYRQQqA25xRhiQi` (idle, replaced) | P1-K1-switch-heist | `claude/ui-bake` | 2026-11-09 22:23Z |
 | AIA-2 | `session_01SNkKxnFDNLwC9swBdJVTEM` (idle, done) | P1-AIA2-icons-2a (restart: resync, guard's rebake fails on icons_48_hc.webp; make finish.js's grow computed on pixels) | `claude/ui-artist-icons` | 2026-11-09 21:53Z |
@@ -357,17 +360,43 @@ Your session was created with the repository checked out at main; work in that c
   pre-check, ready). The audit and roadmap pages did not change in this
   merge, so they were not republished. The watchdog's second cycle
   session of 01:51Z did no work.
-- Next (cycle 48): read the three branches' status files and copy the
-  claims to the backlog. switch-heist should be ready first: check that
-  its diff to `client/tests/ui_kit_tests.gd` loosens no test, take the
-  lock, build the candidate, `bash client/build.sh`, guard.sh, check_all,
-  merge. Then P1-K1-switch-rest opens for K1 (deps switch-heist and
-  kit-5), and S1's pilot-1 opens (deps switch-heist and icons-1b) but S1
-  starts only when a builder slot is free: the cap is three and AIA, K1
-  and AIA-2 hold them. Gate icons-2b on ready (icon sheet at 48 and 96
-  points and in grayscale) and kit-6 on ready (kit catalogue sheet,
-  batch 2c; give the judge kit-5's verdict notes). Only Fable 5.2; never
-  Fable 5.1 (CLAUDE.md).
+- Cycle 48, 10 November 2026, from 03:38Z to about 07:40Z (session
+  `session_01SNkKxqhTHTeKwMPJKdCubU`, started by the launcher; the
+  session was paused from about 04:20Z to 06:50Z): two merges, two
+  requests answered, three sessions started. icons-2b was ready: gate
+  (Fable 5.2 ui-judge, three samples a quality, advisory) 12 of 12 pass,
+  verdict in `docs/art/ui-quality/gate/verdicts/P1-AIA2-icons-2b/`;
+  candidate `4058367a` ui guard OK, check_all PASS at 04:20Z; merged as
+  `d30530ee`. AIA-R19 (wiring kit-6's skins) folded into
+  P1-K1-switch-rest. switch-heist was ready: its diff to
+  `client/tests/ui_kit_tests.gd` tightens the tests (exact SWITCHED_ON
+  equality, a new `_parts()` test) and loosens none; candidate
+  `f685870d` ui guard OK, check_all PASS at 07:32Z; merged as
+  `3ac50485`. kit-6 was green at `00571a44` but blocked on AIA-R21:
+  answered with its default (kit-6 is taken as ready without K1-R14
+  part 1; disc_school stays in `art/ui/kit_next/`, unbaked and
+  code-drawn; its bake is a later task, seeded when a screen asks), and
+  AIA-R20 with its default (the kit stays at three pages; pill_gold_edge
+  and green_muted stay code-drawn). kit-6's done_when and exceptions
+  (`art/ui/kit_next/**`) and switch-rest's done_when and files are
+  updated in the backlog. Started on Fable 5.2: AIA again on kit-6 (fill
+  the handoff, mark ready, gate request), K1 on switch-rest, S1 on
+  pilot-1 (its first session). AIA-2 has no open task (icon batches 3
+  and 4 are deferred), so the builders are AIA, K1 and S1, the cap of
+  three. The audit and roadmap pages did not change in these merges, so
+  they were not republished. No owner-inbox entry.
+- Next (cycle 49): read the status files of `claude/ui-artist` (AIA,
+  kit-6), `claude/ui-bake` (K1, switch-rest) and
+  `claude/ui-screens-heist` (S1, pilot-1) and copy the claims to the
+  backlog. Do not start a second session for an agent listed in the
+  session table above as started at 06:53Z or 07:33Z. kit-6 should be
+  ready first: gate it (kit catalogue sheet, batch 2c, at phone size,
+  four qualities; give the judge kit-5's verdict notes), check the
+  owners diff with the `art/ui/kit_next/**` exception, then merge
+  (`bash client/build.sh` before guard.sh in a fresh worktree,
+  check_all). switch-rest's AIA-R19 wiring waits for kit-6 on main.
+  Seed a disc_school bake task only when a screen asks for it. Only
+  Fable 5.2; never Fable 5.1 (CLAUDE.md).
 - Cycle 44, 4 November 2026, from 23:39Z (session
   `session_01SNkKxqKY1WGt7cJSaqyYtWj`, started by the launcher):
   bookkeeping and a diagnosis. All three builders are working (AIA
