@@ -25,6 +25,16 @@ static func run(tree: SceneTree) -> Array:
 			bad.append("KitSkin.face does not give %s" % key)
 	if KitSkin.piece("card", "normal", "", "popup/box") != pieces.get("popup__box__normal", {"lost": true}):
 		bad.append("a card that names popup/box does not draw the popup's box")
+	# A material with a shape of its own name draws it, not its skin's box
+	# (kit batch 2c, AIA-R19; `tag_warn` is light there).
+	for pair: Array in [["album", "panel_dark"], ["fact", "panel_dark"], ["plate", "panel_dark"],
+			["bar_track_light", "bar_track"], ["tag", "tag"], ["island_label", "tag"], ["tag_warn", "tag"],
+			["banner_success", "success"]]:
+		var own := "%s__%s__normal" % [pair[1], pair[0]]
+		if KitSkin.piece(pair[0]) != pieces.get(own, {"lost": own}):
+			bad.append("%s does not draw %s" % [pair[0], own])
+		if pair[0] in KitSkin.OWN_SHAPE_ONLY:
+			bad.append("%s has a shape of its own and is still in KitSkin.OWN_SHAPE_ONLY" % pair[0])
 	if not KitSkin.missing.is_empty():
 		bad.append("a baked shape is logged missing: %s" % ", ".join(KitSkin.missing))
 	if not KitSkin.face("toggle", "no_such_shape").is_empty() or KitSkin.missing != ["toggle__no_such_shape__normal"]:

@@ -45,8 +45,9 @@ const SKINS_OF := {
 	"K23": ["pill__box"],
 	"K24": ["num_gold"],
 	"K27": ["badge__box", "badge__dot"],
-	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn"],
-	"K29": ["success__box"],
+	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn", "tag__tag", "tag__island_label",
+		"panel_dark__plate"],
+	"K29": ["success__box", "success__banner_success"],
 	"K31": ["num_timer", "num_timer_red"],
 	"K33": ["panel_glass__box"],
 	"K34": ["spinner__ring"],
@@ -54,7 +55,7 @@ const SKINS_OF := {
 	"K39": ["tile__reward_sky", "tile__reward_pink"],
 	"K42": ["tile__day_done", "tile__day_today", "tile__day_later", "tile__week_day", "tile__week_today"],
 	"K44": ["disc__box"],
-	"K46": ["bar_track__box", "bar_track__tick", "bar_fill__box", "bar_fill__alarm"],
+	"K46": ["bar_track__box", "bar_track__bar_track_light", "bar_track__tick", "bar_fill__box", "bar_fill__alarm"],
 }
 
 ## The luminance between the kit's dark grounds and its light ones: the

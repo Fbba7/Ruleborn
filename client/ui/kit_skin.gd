@@ -99,8 +99,7 @@ const RING_REACH_POINTS := 4.0
 ## light. Each draws only a shape baked for it (`<skin>__<material>__<state>`)
 ## and keeps its code-drawn box, unlogged, until it has one (kit-spec.md
 ## section 8.2). ui_kit_tests.gd holds this list to the atlas.
-const OWN_SHAPE_ONLY := ["album", "fact", "plate", "bar_track_light", "tag", "island_label", "pill_gold_edge",
-	"banner_success", "green_muted"]
+const OWN_SHAPE_ONLY := ["pill_gold_edge", "green_muted"]
 ## The backdrop's materials: gradients, not skins, always drawn in code.
 const BACKDROP := ["night", "night_rays", "scrim"]
 ## The switches beside the 35 skins': the baked numerals (`num_<finish>_<glyph>`,
