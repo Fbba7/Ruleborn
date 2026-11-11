@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-11T01:16:09Z",
   "lease_until": "2026-11-11T04:16:09Z",
-  "updated_at": "2026-11-11T01:21:49Z",
-  "expected_next_update_by": "2026-11-11T02:06:49Z",
+  "updated_at": "2026-11-11T01:26:11Z",
+  "expected_next_update_by": "2026-11-11T02:11:11Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e012f9ff",
@@ -258,5 +258,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-disc-host: the fault is reproduced by a run on main at 40c92625 (the new kit test fails there, passes here: a sprite face draws only on a host about as wide as tall). Next: pages 27, 44, 45 in eight variants, the observatory still, the six looks on every host, kit-spec.md, guard, pre-check."
+  "next_step": "P1-K1-disc-host: the fix, its test, kit-spec.md and the Observatory's still are pushed; the catalogue's eight variants are rendering again (the sheet's own locked face followed the rule late), then the guard, the pre-check and the handoff."
 }
