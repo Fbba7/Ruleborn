@@ -17,6 +17,7 @@ const FIXTURE := "res://tests/fixtures/ui_kit/kit.json"
 ## The catalogue sheet (kit-spec.md section 6.4).
 const Catalogue := preload("res://tests/shots/ui_kit_catalogue.gd")
 const Art := preload("res://tests/shots/ui_kit_catalogue_art.gd")
+const Rest := preload("res://tests/shots/ui_kit_rest.gd")
 ## The components whose baked faces are skins, and those skins' faces: once a
 ## skin has art, each of the component's baked states is a piece of it.
 ## The bar's pieces are K46's (N RM), the component built from them: K25's
@@ -44,8 +45,9 @@ const SKINS_OF := {
 	"K23": ["pill__box"],
 	"K24": ["num_gold"],
 	"K27": ["badge__box", "badge__dot"],
-	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn"],
-	"K29": ["success__box"],
+	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn", "tag__tag", "tag__island_label",
+		"panel_dark__plate"],
+	"K29": ["success__box", "success__banner_success"],
 	"K31": ["num_timer", "num_timer_red"],
 	"K33": ["panel_glass__box"],
 	"K34": ["spinner__ring"],
@@ -53,8 +55,17 @@ const SKINS_OF := {
 	"K39": ["tile__reward_sky", "tile__reward_pink"],
 	"K42": ["tile__day_done", "tile__day_today", "tile__day_later", "tile__week_day", "tile__week_today"],
 	"K44": ["disc__box"],
-	"K46": ["bar_track__box", "bar_track__tick", "bar_fill__box", "bar_fill__alarm"],
+	"K46": ["bar_track__box", "bar_track__bar_track_light", "bar_track__tick", "bar_fill__box", "bar_fill__alarm"],
 }
+
+## The luminance between the kit's dark grounds and its light ones: the
+## lightest dark box (the danger button's red) is below it, the darkest
+## light one (the success green in high contrast) above.
+const GROUND_SPLIT := 0.27
+## The skins still off in kit_families.json: every other is switched on
+## (kit-spec.md section 9). The school disc joins them once its art is baked
+## into the kit's pages.
+const NOT_BAKED := ["disc_school"]
 
 var tree: SceneTree
 var check: Callable
@@ -77,6 +88,8 @@ func run() -> void:
 	await _pieces()
 	_skins()
 	await _switch()
+	await _parts()
+	await _rest()
 	await _fixture()
 	await _words()
 	await _numerals()
@@ -334,19 +347,34 @@ func _skins() -> void:
 			bad.append("%s maps onto no skin" % m)
 	var shipped: Variant = JSON.parse_string(FileAccess.get_file_as_string(KitSkin.FAMILIES_FILE))
 	var switches: Dictionary = shipped if shipped is Dictionary else {}
-	if KitSkin.SKINS.size() != 35:
-		bad.append("%d skins, not 35" % KitSkin.SKINS.size())
+	if KitSkin.SKINS.size() != 35 + KitSkin.OVERLAYS.size():
+		bad.append("%d skins, not 35 and the overlays" % KitSkin.SKINS.size())
 	for k: String in KitSkin.SKINS:
 		if not switches.has(k):
 			bad.append("no switch for %s" % k)
+	for k: String in KitSkin.OVERLAYS:
+		if not KitSkin.SKINS.has(k) or not (KitSkin.SKINS[k] as Array).is_empty():
+			bad.append("the overlay %s is not a skin with no material" % k)
+	for k: String in KitSkin.PARTS:
+		if not KitSkin.SKINS.has(KitSkin.PARTS[k][0]):
+			bad.append("the part %s is of no skin" % k)
+	var on := []
 	for k: String in switches:
 		if not KitSkin.SKINS.has(k) and k not in KitSkin.BESIDE:
 			bad.append("a switch for no skin, %s" % k)
-		elif switches[k] != false:
-			bad.append("%s is switched on" % k)
-	check.call("every material maps onto one of the kit's 35 skins or the backdrop, and kit_families.json holds "
-			+ "one switch per skin (and the numerals' beside them), every one off (kit-spec.md sections 6.7, "
-			+ "8.2)", bad.is_empty(), "; ".join(bad))
+		elif switches[k] is not bool:
+			bad.append("%s's switch is not true or false" % k)
+		elif switches[k]:
+			on.append(k)
+	on.sort()
+	var passed := KitSkin.SKINS.keys().filter(func(k: String) -> bool: return k not in NOT_BAKED)
+	passed.sort()
+	if on != passed:
+		bad.append("switched on: %s, not %s" % [", ".join(on), ", ".join(passed)])
+	check.call("every material maps onto one of the kit's 35 skins or the backdrop, the two overlays are skins "
+			+ "of their own, and kit_families.json holds one switch per skin (and the numerals' beside them), on "
+			+ "for the skins whose art passed the gate and off for the rest (kit-spec.md sections 6.7, 8.2)",
+		bad.is_empty(), "; ".join(bad))
 
 
 func _switch() -> void:
@@ -355,7 +383,8 @@ func _switch() -> void:
 	var screen := Control.new()
 	screen.size = Vector2(1080, 2340)
 	tree.root.add_child(screen)
-	# Off, as shipped: the code-drawn box, and no face from the atlas.
+	# Off: the code-drawn box, and no face from the atlas.
+	KitSkin.switch("panel_dark", false)
 	var off := PanelContainer.new()
 	off.custom_minimum_size = Vector2(300, 200)
 	screen.add_child(off)
@@ -422,6 +451,130 @@ func _switch() -> void:
 	check.call("a skin switched on draws its materials from the kit's atlas (its _hc twin in high contrast) and one "
 			+ "switched off from the code-drawn box; a piece the atlas lacks falls back to the code-drawn box and "
 			+ "is logged once (kit-spec.md section 6.7)", bad.is_empty(), "; ".join(bad))
+
+
+func _parts() -> void:
+	var bad := []
+	KitSkin.reset()
+	var pieces: Dictionary = (JSON.parse_string(FileAccess.get_file_as_string(KitSkin.MANIFEST)) as Dictionary)[
+		"pieces"]
+	# As shipped: each overlay and mark is its skin's piece, from the atlas.
+	for k: String in KitSkin.PARTS:
+		var key := "%s__%s__normal" % KitSkin.PARTS[k]
+		if KitSkin.part(k) != pieces.get(key, {"lost": key}):
+			bad.append("the part %s is not %s" % [k, key])
+		if KitSkin.mark(k) == null:
+			bad.append("no control draws the part %s" % k)
+	var lock := KitSkin.mark("lock", 12.0)
+	if lock != null and not is_equal_approx(lock.size.y, UI.px(12.0)):
+		bad.append("a mark is not as tall as asked")
+	if lock != null:
+		lock.free()
+	# A material draws its own shape, a use's named shape before it, and the
+	# skin's box when its own is unbaked.
+	for pair: Array in [["tag_warn", "", "tag__tag_warn__normal"], ["tag_violet", "", "tag__tag_violet__normal"],
+			["tag_success", "", "tag__box__normal"], ["level_disc", "", "disc__level_disc__normal"],
+			["bar", "alarm", "bar_fill__alarm__normal"], ["bar", "", "bar_fill__box__normal"]]:
+		if KitSkin.piece(pair[0], "normal", "", pair[1]) != pieces.get(pair[2], {"lost": pair[2]}):
+			bad.append("%s %s does not draw %s" % [pair[0], pair[1], pair[2]])
+	if not bool(KitSkin.piece("bar").get("tint", false)):
+		bad.append("the bar's fill is not tinted per use")
+	# The locked skin has its lock and, since kit batch 2b, its own face: the
+	# locked material draws that face, and nothing is logged for it.
+	if KitSkin.piece("locked") != pieces.get("locked__locked__normal", {"lost": "locked__locked__normal"}) \
+			or not KitSkin.missing.is_empty():
+		bad.append("the locked material does not draw its own face, unlogged: %s" % ", ".join(KitSkin.missing))
+	# A material whose words do not hold on its skin's box (a light material
+	# on a dark box, a dark one on a light box, in either atlas) keeps its
+	# code-drawn box, unlogged: the list is the atlas's, no more and no less.
+	var odd := []
+	for hc: bool in [false, true]:
+		Tokens.high_contrast = hc
+		for m: String in Tokens.materials():
+			var k := KitSkin.skin(m)
+			var box: Variant = pieces.get("%s__box__normal" % k)
+			if k in NOT_BAKED or not box is Dictionary or box["slice"] == null or bool(box["tint"]):
+				continue
+			# A rank's frame is a hollow ring over its code-drawn box, which
+			# stays the ground of its words (_rest checks it).
+			if k in KitSkin.RINGS:
+				continue
+			if pieces.has("%s__%s__normal" % [k, m]):
+				continue
+			var light := ColourCheck.luminance(_middle(box)) > GROUND_SPLIT
+			if light != (str(Tokens.material(m)["family"]) == "light") and m not in odd:
+				odd.append(m)
+	Tokens.high_contrast = false
+	var listed: Array = KitSkin.OWN_SHAPE_ONLY.duplicate()
+	odd.sort()
+	listed.sort()
+	if odd != listed:
+		bad.append("the materials off their box's ground are %s, KitSkin.OWN_SHAPE_ONLY is %s" % [odd, listed])
+	for m: String in KitSkin.OWN_SHAPE_ONLY:
+		if not pieces.has("%s__%s__normal" % [KitSkin.skin(m), m]) and not KitSkin.piece(m).is_empty():
+			bad.append("%s draws its skin's box" % m)
+	if not KitSkin.missing.is_empty():
+		bad.append("a material kept off its skin's box is logged: %s" % ", ".join(KitSkin.missing))
+	var screen := Control.new()
+	screen.size = Vector2(1080, 2340)
+	tree.root.add_child(screen)
+	var chosen := PanelContainer.new()
+	chosen.custom_minimum_size = Vector2(300, 200)
+	screen.add_child(chosen)
+	var chosen_box := KitSkin.panel(chosen, "card_selected")
+	var plain := PanelContainer.new()
+	plain.custom_minimum_size = Vector2(300, 200)
+	screen.add_child(plain)
+	var plain_box := KitSkin.panel(plain, "card")
+	for i: int in 2:
+		await tree.process_frame
+	if chosen_box.rim() != pieces.get("selected__rim__normal", {"lost": true}) or not plain_box.rim().is_empty():
+		bad.append("the selected rim is not drawn over the selected card alone")
+	# A box its use refills keeps its code-drawn box: the dark panel's
+	# untinted piece would lose the colour the use's words are set against.
+	if plain_box.piece().is_empty():
+		bad.append("a card is not drawn from the atlas")
+	plain_box.tint(Color("#FBF3E2"), Color("#F1E3C4"))
+	if not plain_box.piece().is_empty():
+		bad.append("a refilled card draws the dark panel's untinted piece")
+	# Switched off, a part is the caller's to draw in code again.
+	KitSkin.switch("selected", false)
+	KitSkin.switch("spinner", false)
+	if not chosen_box.rim().is_empty() or KitSkin.spinner() != null or not KitSkin.part("rim").is_empty():
+		bad.append("an overlay switched off still draws from the atlas")
+	# A school's disc: its tinted box under its untinted frame (AIA-R13).
+	var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
+	img.fill(Color.WHITE)
+	var page := ImageTexture.create_from_image(img)
+	KitSkin.use({"format": 1, "family": "kit", "px_per_point": 6, "pieces": {
+		"disc_school__box__normal": {"x": 0, "y": 0, "w": 16, "h": 16, "slice": null, "tint": true},
+		"disc_school__frame__normal": {"x": 16, "y": 0, "w": 16, "h": 16, "slice": null, "tint": false},
+	}}, page, page)
+	KitSkin.switch("disc_school", true)
+	if not bool(KitSkin.piece("portrait_motion").get("tint", false)):
+		bad.append("a school's disc is not its tinted box")
+	var over := KitSkin.frame("portrait_motion")
+	if over.is_empty() or bool(over.get("tint", true)) or int(over["x"]) != 16:
+		bad.append("a school's disc has no untinted frame over its box")
+	if not KitSkin.frame("card").is_empty():
+		bad.append("a skin switched off has a frame")
+	screen.queue_free()
+	KitSkin.reset()
+	await tree.process_frame
+	check.call("the overlays and marks (selected rim, spinner, lock, attention dot, bar tick) draw from the atlas "
+			+ "while their skin is on; a material draws its own shape, a use's named shape, else the skin's box; "
+			+ "the locked material draws its own face; a material whose words do not hold on its skin's box "
+			+ "keeps its code-drawn box; a school's disc is its tinted box under its untinted "
+			+ "frame (kit-spec.md sections 5, 6.7, 8.2; AIA-R13, AIA-R14)", bad.is_empty(), "; ".join(bad))
+
+
+func _rest() -> void:
+	var bad: Array = await Rest.run(tree)
+	check.call("the rest of the kit draws from the atlas while its skin is on and in code while it is off: the "
+			+ "popup's box with its own margin under a dialog, a rank's frame as a hollow ring over its "
+			+ "code-drawn box, the sheet's handles, the toggle's and the slider's pieces, a bar's alarm fill and "
+			+ "tick, the attention dot (kit-spec.md sections 5, 6.7, 8.2; AIA-R16, AIA-R18, K1-R14)",
+			bad.is_empty(), "; ".join(bad))
 
 
 ## The colour at the middle of piece `p` in the page it is cut from.

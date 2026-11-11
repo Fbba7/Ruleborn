@@ -1,0 +1,70 @@
+[
+  {
+    "task_id": "P1-AIA2-icons-2b",
+    "sha": "29e91db0",
+    "item": "icon sheet, batch 2b (pages, tierreward, seasonreward, star, clean, worthyourtime), at 48 and 96 pt and in grayscale",
+    "quality": "Layered materials",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Every body has a top-lit gradient, a gloss highlight, a dark hue-matched ink rim and a darker underside, with no banding or noise at 48 pt, and the layers hold in grayscale. At least the chest anchor's level, far from the flat-fill fail anchor.",
+    "advisory": true,
+    "at": "2026-11-10T03:42:00Z"
+  },
+  {
+    "task_id": "P1-AIA2-icons-2b",
+    "sha": "29e91db0",
+    "item": "icon sheet, batch 2b (pages, tierreward, seasonreward, star, clean, worthyourtime), at 48 and 96 pt and in grayscale",
+    "quality": "Painted or rendered icons",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "All six are modelled toon objects with a top-left light, specular highlights, stepped soft shading, a continuous dark outline and a soft drop, and keep their shape at 48 pt and in grayscale. Pages is the flattest of the six, still layered and shaded.",
+    "advisory": true,
+    "at": "2026-11-10T03:42:00Z"
+  },
+  {
+    "task_id": "P1-AIA2-icons-2b",
+    "sha": "29e91db0",
+    "item": "icon sheet, batch 2b (pages, tierreward, seasonreward, star, clean, worthyourtime), at 48 and 96 pt and in grayscale",
+    "quality": "Colour roles and value",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Each hue holds one role: gold for reward material, green only on the clean seal (also carried by its check shape), purple only as ribbon and bookmark accent, brown as wood and sack. Every icon stays distinct in grayscale; the worthyourtime bag's brown body is the darkest and closest to its ground at 48 pt. No fail anchor exists for this class and quality; no colour-blindness sheet was shown.",
+    "advisory": true,
+    "at": "2026-11-10T03:42:00Z"
+  },
+  {
+    "task_id": "P1-AIA2-icons-2b",
+    "sha": "29e91db0",
+    "item": "icon sheet, batch 2b (pages, tierreward, seasonreward, star, clean, worthyourtime), at 48 and 96 pt and in grayscale",
+    "quality": "Light behind UI",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Every icon carries one top-left light with speculars above, shaded lower faces and a soft drop, consistent across the set and readable in grayscale. At least as clear as the chest anchor's top-lit lid.",
+    "advisory": true,
+    "at": "2026-11-10T03:42:00Z"
+  }
+]

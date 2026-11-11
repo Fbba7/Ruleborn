@@ -19,8 +19,16 @@ export default {
       if (i === 0) burst.moveTo(Math.cos(a) * r, Math.sin(a) * r); else burst.lineTo(Math.cos(a) * r, Math.sin(a) * r);
     }
     burst.closePath();
-    const flash = slab(S, burst, 0.4, 'warn', 'cream', 0.12);
-    flash.position.z = -0.4;
+    // Two stacked bursts, a deep warn one and a smaller pale one turned
+    // between its points, so the flash has steps of its own.
+    const flash = new THREE.Group();
+    const back = slab(S, burst, 0.4, 'warn', 'cream', 0.3);
+    const front = slab(S, burst, 0.4, 'gold_top', 'cream', 0.3);
+    front.scale.set(0.68, 0.68, 1);
+    front.rotation.z = Math.PI / 8;
+    front.position.z = 0.16;
+    flash.add(back, front);
+    flash.position.z = -0.5;
     flash.rotation.z = 0.2;
     const g = new THREE.Group();
     const almond = new THREE.Shape();

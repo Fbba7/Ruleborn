@@ -267,77 +267,77 @@
     },
     "recorded": {
       "character/100": {
-        "draw_calls": 112,
+        "draw_calls": 103,
         "texture_bytes": 2558016,
         "words_below": 0
       },
       "character/200": {
-        "draw_calls": 87,
+        "draw_calls": 80,
         "texture_bytes": 2558016,
         "words_below": 0
       },
       "character/hc": {
-        "draw_calls": 112,
+        "draw_calls": 103,
         "texture_bytes": 2558016,
         "words_below": 0
       },
       "heist/100": {
-        "draw_calls": 126,
+        "draw_calls": 121,
         "texture_bytes": 2499264,
         "words_below": 0
       },
       "heist/200": {
-        "draw_calls": 120,
+        "draw_calls": 115,
         "texture_bytes": 2333376,
         "words_below": 0
       },
       "heist/hc": {
-        "draw_calls": 126,
+        "draw_calls": 121,
         "texture_bytes": 2499264,
         "words_below": 0
       },
       "home/100": {
-        "draw_calls": 120,
+        "draw_calls": 119,
         "texture_bytes": 4723360,
         "words_below": 0
       },
       "home/200": {
-        "draw_calls": 98,
+        "draw_calls": 97,
         "texture_bytes": 4880360,
         "words_below": 0
       },
       "home/hc": {
-        "draw_calls": 120,
+        "draw_calls": 119,
         "texture_bytes": 4723360,
         "words_below": 0
       },
       "result/100": {
-        "draw_calls": 97,
-        "texture_bytes": 580608,
-        "words_below": 0
-      },
-      "result/200": {
         "draw_calls": 94,
         "texture_bytes": 580608,
         "words_below": 0
       },
+      "result/200": {
+        "draw_calls": 90,
+        "texture_bytes": 580608,
+        "words_below": 0
+      },
       "result/hc": {
-        "draw_calls": 97,
+        "draw_calls": 94,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "settings/100": {
-        "draw_calls": 62,
+        "draw_calls": 52,
         "texture_bytes": 1327168,
         "words_below": 0
       },
       "settings/200": {
-        "draw_calls": 58,
+        "draw_calls": 47,
         "texture_bytes": 1244224,
         "words_below": 0
       },
       "settings/hc": {
-        "draw_calls": 62,
+        "draw_calls": 52,
         "texture_bytes": 1327168,
         "words_below": 0
       }

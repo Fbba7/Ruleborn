@@ -63,7 +63,7 @@ The module's default export has these keys:
 | `light` | the colour token of the glow |
 | `inner` | `[x, y, radius, token, alpha]`, the inner light, as fractions of the side |
 | `glints` | `[[x, y, size], ...]`, at most two |
-| `build(S)` | returns a `THREE.Scene`, built only with `S.toon(face, rim, glossy)` materials. `S` is `studio/toon.js`: `THREE`, `tok`, `rgba`, `toon`, `starShape`, `puffed`, `renderTo`. The shared parts in `studio/shapes.js` (`box`, `ball`, `rod`, `pip`, `arrowShape`, `boltShape`, `slab`, `star5Shape`, `lathe`, `profile`) take `S` first and use only `S.toon` |
+| `build(S)` | returns a `THREE.Scene`, built only with `S.toon(face, rim, glossy)` materials. `S` is `studio/toon.js`: `THREE`, `tok`, `rgba`, `toon`, `starShape`, `puffed`, `renderTo`. The shared parts in `studio/shapes.js` (`box`, `ball`, `rod`, `pip`, `arrowShape`, `boltShape`, `slab`, `star5Shape`, `lathe`, `profile`, `chest`, `coin`) take `S` first and use only `S.toon` |
 | `draw(S, R)` | optional: returns a canvas of side R, in place of rendering `build` (a badge uses it to lay in its render) |
 
 The bake turns each module into the piece `<group>__<name>__normal`. The piece

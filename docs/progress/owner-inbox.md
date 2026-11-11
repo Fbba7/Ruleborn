@@ -4,6 +4,41 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-11 01:15Z: the program is restarted on the owner's word (overseer)
+
+- **What:** the owner said, in the overseer session's chat, "We still need
+  to keep the UI process we were doing with the phases running as it was",
+  then "Make sure it is running now". CLAUDE.md order 1 now says the
+  program runs, on Fable 5.2 only (order 4).
+- **What ran since the stop:** nothing. The last work of the program is
+  the lead's write-up of 10 November, 10:34Z (`8f03235f`). From then until
+  this restart every scheduled task was disabled and no session worked.
+  Main moved only by two commits of the overseer (`312b1a12`, `1c6aa12a`,
+  10 November 19:36Z): a handoff note on the disc drawing fault.
+- **Done:** a new launcher (hourly) and a new watchdog (two-hourly) are
+  created after this commit is on main; their IDs go in `lead.md`. The
+  first cycle after the restart is cycle 51: AIA on P1-AIA-kit-7, S1 on
+  P1-S1-pilot-2, and K1 on the disc drawn under the currency pills.
+- **Needs the owner:** nothing.
+
+## 2026-11-10 02:55Z: two merges, kit-5's colour roles failed the gate, three builders working (lead, cycle 47)
+
+- **What:** P1-AIA2-icons-2a and P1-AIA-kit-5 are merged (`027379a2`):
+  check_all PASS and ui guard OK on the candidate, and the icon sheets now
+  rebake byte for byte from one container to another. Tasks done: 12 of
+  19.
+- **Gate (advisory):** icons-2a passes 12 of 12. kit-5 passes three
+  qualities and fails "Colour roles and value" 3 of 3: the gold fill of
+  the main action is also used for selected segments and chips, claimed
+  day tiles and a chart bar, and selection is told by hue alone. The gate
+  is advisory, so kit-5 merged; the fix is the new task P1-AIA-kit-6.
+- **Done:** three fresh Fable 5.2 sessions: AIA on kit-6, AIA-2 on
+  icons-2b, K1 to finish P1-K1-switch-heist (it was blocked only on the
+  icon rebake). That is the cap of three UI builders.
+- **Also:** the watchdog and the launcher each started a cycle at 01:51Z;
+  the second session did no work, and nothing merged twice.
+- **Needs the owner:** nothing.
+
 ## 2026-11-10 01:51Z: lead was stale, watchdog started a cycle (watchdog)
 
 - **What:** `lead.json` was past its `expected_next_update_by` of

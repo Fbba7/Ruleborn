@@ -34,6 +34,25 @@ static func badge(text: String, look := "badge", points := 13.0) -> PanelContain
 	return p
 
 
+## The attention dot (a tab or a row with something new, no count): the
+## kit's dot while its skin is on, else a dot in the alarm's red. It is a
+## mark beside words that say the same, never the only sign (§20.8).
+static func attention(points := 12.0) -> Control:
+	var d: Control = KitSkin.mark("dot", points)
+	if d == null:
+		var ring := KitRing.new()
+		ring.dot = true
+		ring.fraction = 1.0
+		ring.tint = Tokens.color("alarm")
+		ring.custom_minimum_size = Vector2.ONE * UI.px(points)
+		ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		d = ring
+	d.name = "Dot"
+	d.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	d.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	return d
+
+
 ## A pill of words, with an icon before them if named: glass over the world
 ## unless another material is given. Words wider than `widest` points (by
 ## default the phone less its margins) end in an ellipsis; the label keeps
