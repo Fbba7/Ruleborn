@@ -388,18 +388,7 @@ static func loot(rows: Array, carried: float, mark: float, words: String) -> Pan
 	var v := p.get_child(0) as VBoxContainer
 	var bar := KitBar.make(carried, Color(), 8.0)
 	bar.name = "Load"
-	var tick := ColorRect.new()
-	tick.name = "Aim"
-	tick.color = Tokens.color("cream")
-	tick.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	tick.anchor_left = clampf(mark, 0.0, 1.0)
-	tick.anchor_right = tick.anchor_left
-	tick.anchor_bottom = 1.0
-	tick.offset_left = -UI.px(1.5)
-	tick.offset_right = UI.px(1.5)
-	tick.offset_top = -UI.px(2)
-	tick.offset_bottom = UI.px(2)
-	bar.add_child(tick)
+	bar.aim(mark)
 	v.add_child(bar)
 	if words != "":
 		var l := UI.label(words, 14)

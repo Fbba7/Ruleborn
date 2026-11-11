@@ -17,6 +17,7 @@ const FIXTURE := "res://tests/fixtures/ui_kit/kit.json"
 ## The catalogue sheet (kit-spec.md section 6.4).
 const Catalogue := preload("res://tests/shots/ui_kit_catalogue.gd")
 const Art := preload("res://tests/shots/ui_kit_catalogue_art.gd")
+const Rest := preload("res://tests/shots/ui_kit_rest.gd")
 ## The components whose baked faces are skins, and those skins' faces: once a
 ## skin has art, each of the component's baked states is a piece of it.
 ## The bar's pieces are K46's (N RM), the component built from them: K25's
@@ -44,8 +45,9 @@ const SKINS_OF := {
 	"K23": ["pill__box"],
 	"K24": ["num_gold"],
 	"K27": ["badge__box", "badge__dot"],
-	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn"],
-	"K29": ["success__box"],
+	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn", "tag__tag", "tag__island_label",
+		"panel_dark__plate"],
+	"K29": ["success__box", "success__banner_success"],
 	"K31": ["num_timer", "num_timer_red"],
 	"K33": ["panel_glass__box"],
 	"K34": ["spinner__ring"],
@@ -53,19 +55,17 @@ const SKINS_OF := {
 	"K39": ["tile__reward_sky", "tile__reward_pink"],
 	"K42": ["tile__day_done", "tile__day_today", "tile__day_later", "tile__week_day", "tile__week_today"],
 	"K44": ["disc__box"],
-	"K46": ["bar_track__box", "bar_track__tick", "bar_fill__box", "bar_fill__alarm"],
+	"K46": ["bar_track__box", "bar_track__bar_track_light", "bar_track__tick", "bar_fill__box", "bar_fill__alarm"],
 }
 
-## The skins switched on in kit_families.json: those whose art passed the
-## gate (kit-spec.md section 9). The school disc joins them once its art is
-## baked into the kit's pages.
 ## The luminance between the kit's dark grounds and its light ones: the
 ## lightest dark box (the danger button's red) is below it, the darkest
 ## light one (the success green in high contrast) above.
 const GROUND_SPLIT := 0.27
-const SWITCHED_ON := ["button_primary", "button_secondary", "button_tertiary", "button_danger", "success",
-	"panel_dark", "panel_glass", "well", "badge", "pill", "tag", "bar_track", "bar_fill", "disc", "locked",
-	"selected", "spinner"]
+## The skins still off in kit_families.json: every other is switched on
+## (kit-spec.md section 9). The school disc joins them once its art is baked
+## into the kit's pages.
+const NOT_BAKED := ["disc_school"]
 
 var tree: SceneTree
 var check: Callable
@@ -89,6 +89,7 @@ func run() -> void:
 	_skins()
 	await _switch()
 	await _parts()
+	await _rest()
 	await _fixture()
 	await _words()
 	await _numerals()
@@ -366,7 +367,7 @@ func _skins() -> void:
 		elif switches[k]:
 			on.append(k)
 	on.sort()
-	var passed := SWITCHED_ON.duplicate()
+	var passed := KitSkin.SKINS.keys().filter(func(k: String) -> bool: return k not in NOT_BAKED)
 	passed.sort()
 	if on != passed:
 		bad.append("switched on: %s, not %s" % [", ".join(on), ", ".join(passed)])
@@ -492,7 +493,11 @@ func _parts() -> void:
 		for m: String in Tokens.materials():
 			var k := KitSkin.skin(m)
 			var box: Variant = pieces.get("%s__box__normal" % k)
-			if k not in SWITCHED_ON or not box is Dictionary or box["slice"] == null or bool(box["tint"]):
+			if k in NOT_BAKED or not box is Dictionary or box["slice"] == null or bool(box["tint"]):
+				continue
+			# A rank's frame is a hollow ring over its code-drawn box, which
+			# stays the ground of its words (_rest checks it).
+			if k in KitSkin.RINGS:
 				continue
 			if pieces.has("%s__%s__normal" % [k, m]):
 				continue
@@ -561,6 +566,15 @@ func _parts() -> void:
 			+ "the locked material draws its own face; a material whose words do not hold on its skin's box "
 			+ "keeps its code-drawn box; a school's disc is its tinted box under its untinted "
 			+ "frame (kit-spec.md sections 5, 6.7, 8.2; AIA-R13, AIA-R14)", bad.is_empty(), "; ".join(bad))
+
+
+func _rest() -> void:
+	var bad: Array = await Rest.run(tree)
+	check.call("the rest of the kit draws from the atlas while its skin is on and in code while it is off: the "
+			+ "popup's box with its own margin under a dialog, a rank's frame as a hollow ring over its "
+			+ "code-drawn box, the sheet's handles, the toggle's and the slider's pieces, a bar's alarm fill and "
+			+ "tick, the attention dot (kit-spec.md sections 5, 6.7, 8.2; AIA-R16, AIA-R18, K1-R14)",
+			bad.is_empty(), "; ".join(bad))
 
 
 ## The colour at the middle of piece `p` in the page it is cut from.

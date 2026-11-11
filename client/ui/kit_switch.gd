@@ -41,6 +41,9 @@ static func make(on: bool, on_words: String, off_words: String, spoken: String, 
 func _dress(on: bool) -> void:
 	text = _on_words if on else _off_words
 	var box := UI.dress(self, "green" if on else "chip", 999)
+	# The baked track once the toggle's skin is switched on (K05).
+	box.held_only = true
+	box.skin_shape = "toggle/track_on" if on else "toggle/track_off"
 	# The words sit away from the knob.
 	var words: Color = Tokens.color("text_on_green") if on else box.spec["text"]
 	for colour: String in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
@@ -81,6 +84,13 @@ func _draw() -> void:
 	var r := size.y * 0.5 - UI.px(5)
 	var x := lerpf(size.y * 0.5, size.x - size.y * 0.5, _knob)
 	var c := Vector2(x, size.y * 0.5)
+	var baked := KitSkin.face("toggle", "knob", "disabled" if disabled else "normal")
+	if not baked.is_empty():
+		# The sprite's lip hangs below the knob's disc.
+		var side := KitSkin.region(baked).size * KitSkin.scale()
+		draw_texture_rect_region(KitSkin.texture(baked), Rect2(c - Vector2(side.x, side.x) * 0.5, side),
+			KitSkin.region(baked))
+		return
 	draw_circle(c + Vector2(0, UI.px(1.5)), r, Tokens.color("drop"), true, -1.0, true)
 	draw_circle(c, r, Tokens.color("ink_line"), true, -1.0, true)
 	draw_circle(c, r - UI.px(1.5), Tokens.color("gold"), true, -1.0, true)

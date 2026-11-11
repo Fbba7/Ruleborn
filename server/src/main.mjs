@@ -138,6 +138,10 @@ if (platforms.stubbed && process.env.RULEBORN_STUB_SIGNIN !== "1") {
   throw new Error(`sign-in would be stubbed${storeKit || play ? " beside a store's receipts" : ""}: set `
                   + "RULEBORN_GAMECENTER_ROOTS or RULEBORN_GOOGLE_CLIENT_IDS, or RULEBORN_STUB_SIGNIN=1 for a local or test server");
 }
+if (platforms.stubbed) {
+  console.warn("RULEBORN_STUB_SIGNIN=1: any credential is taken as the identity it names. "
+               + "A local or test server only: it must not face a network (SR-29)");
+}
 
 // D70: the edge's cache of an under-13 player's bundles, purged on their
 // deletion (edge.mjs). RULEBORN_CF_ZONE is the zone the bundles are served

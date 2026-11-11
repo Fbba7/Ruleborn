@@ -1,0 +1,214 @@
+{
+ "image": "shapes_normal.png",
+ "frame_pt": [
+  390,
+  844
+ ],
+ "text_scale": 1.0,
+ "controls": [
+  {
+   "name": "island label",
+   "rect": [
+    120,
+    14,
+    149.86,
+    26.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "album",
+   "rect": [
+    12,
+    52,
+    366.17,
+    278.06
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "fact 0",
+   "rect": [
+    28,
+    102,
+    162.14,
+    62.11
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "fact 1",
+   "rect": [
+    198,
+    102,
+    162.14,
+    62.11
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "plate 0",
+   "rect": [
+    28,
+    176,
+    75.83,
+    40.08
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "plate 1",
+   "rect": [
+    112,
+    176,
+    75.83,
+    40.08
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "plate 2",
+   "rect": [
+    196,
+    176,
+    75.83,
+    40.08
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "plate 3",
+   "rect": [
+    280,
+    176,
+    75.83,
+    40.08
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "light track",
+   "rect": [
+    28,
+    234,
+    334.03,
+    14.08
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "tag on parchment",
+   "rect": [
+    28,
+    286,
+    54.17,
+    26.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "tag_warn on parchment",
+   "rect": [
+    92,
+    286,
+    85.94,
+    26.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "tag_violet on parchment",
+   "rect": [
+    188,
+    286,
+    70.06,
+    26.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "tag on dark card",
+   "rect": [
+    28,
+    350,
+    54.17,
+    26.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "tag_warn on dark card",
+   "rect": [
+    92,
+    350,
+    85.94,
+    26.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "tag_violet on dark card",
+   "rect": [
+    188,
+    350,
+    70.06,
+    26.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "success button",
+   "rect": [
+    16,
+    468,
+    111.94,
+    52.0
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "success banner",
+   "rect": [
+    16,
+    534,
+    357.86,
+    59.94
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  }
+ ]
+}

@@ -34,16 +34,49 @@ static func make(fraction := 0.0, tone := Color(), points := -1.0) -> KitBar:
 	return b
 
 
-## The fill's colour: a light top over the colour itself.
+## The fill's colour: a light top over the colour itself. In the alarm's
+## red the kit's own alarm fill is drawn (`bar_fill__alarm`, untinted) while
+## its skin is on.
 func colour(c: Color) -> void:
+	var box := RbBox.of(fill)
+	if box != null:
+		box.skin_shape = "alarm" if c == Tokens.color("alarm") else ""
 	if c == Color():
 		_top = Color()
 		return
 	_top = c.lightened(0.35)
 	_bottom = c
-	var box := RbBox.of(fill)
 	if box != null:
 		box.tint(_top, _bottom)
+
+
+## A tick across the bar at `at` of its length (0 to 1): the share aimed
+## for (the loot panel's load, §21.8). The kit's tick while its skin is on,
+## else a cream line.
+func aim(at: float) -> Control:
+	var tick: Control = KitSkin.mark("tick")
+	var half := Vector2(UI.px(1.5), UI.px(2))
+	if tick == null:
+		var line := ColorRect.new()
+		line.color = Tokens.color("cream")
+		line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tick = line
+		tick.anchor_bottom = 1.0
+		tick.offset_top = -half.y
+		tick.offset_bottom = half.y
+	else:
+		half = tick.size / 2.0
+		tick.anchor_top = 0.5
+		tick.anchor_bottom = 0.5
+		tick.offset_top = -half.y
+		tick.offset_bottom = half.y
+	tick.name = "Aim"
+	tick.anchor_left = clampf(at, 0.0, 1.0)
+	tick.anchor_right = tick.anchor_left
+	tick.offset_left = -half.x
+	tick.offset_right = half.x
+	add_child(tick)
+	return tick
 
 
 func _ready() -> void:

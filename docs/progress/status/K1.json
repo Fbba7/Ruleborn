@@ -4,26 +4,29 @@
   "branch": "claude/ui-bake",
   "model": "Fable 5.2",
   "agent_state": "active",
-  "task_id": "P1-K1-switch-heist",
+  "task_id": "P1-K1-switch-rest",
   "task_state": "working",
-  "claimed_at": "2026-11-09T22:27:00Z",
-  "lease_until": "2026-11-10T06:55:00Z",
-  "updated_at": "2026-11-10T03:22:00Z",
-  "expected_next_update_by": "2026-11-10T04:07:00Z",
-  "long_run": {
-    "log": "/tmp/claude-0/-home-user-Ruleborn/5eb3dd05-5de9-55bd-823a-752c74b2040d/scratchpad/guard3.log",
-    "expected_end": "2026-11-10T03:40:00Z"
-  },
+  "claimed_at": "2026-11-10T07:40:00Z",
+  "lease_until": "2026-11-10T10:40:00Z",
+  "updated_at": "2026-11-10T08:20:24Z",
+  "expected_next_update_by": "2026-11-10T09:05:24Z",
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "fd5cb0d2",
-    "next_step": "the pre-check at 3def1ab5 failed (394 of 395): the kit test held the locked material's box to the code, and kit batch 2b baked its face (locked__locked). 071683d: the locked material draws that face, KitSkin.MARKS is gone, kit-spec.md section 8.2 says so; the 18 kit tests pass. The guard is running again; then a new pre-check; then mark ready"
+    "last_green_sha": "0ce3c751",
+    "next_step": "P1-K1-switch-rest: M4 read. origin/claude/ui-artist at 00571a44 (P1-AIA-kit-6) merged into claude/ui-bake; AIA-R19 wired (the seven shapes drawn by their own name, KitSkin.OWN_SHAPE_ONLY now pill_gold_edge and green_muted); the 19 kit tests pass. Next: budgets, catalogue, guard, pre-check on that head, then ready."
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "0ce3c751cbdea99a384fd82046cf5c5c1b427dbb",
+    "exit": 0,
+    "finished_at": "2026-11-10T04:00:09Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
-    "M2"
+    "M2",
+    "M4"
   ],
   "requests": [
     {
@@ -204,6 +207,42 @@
       "due": "2026-11-11T22:00:00Z",
       "default": "disc_school and the nine materials stay code-drawn, as today; the wiring goes into P1-K1-switch-rest's files when the lead seeds it; the verdicts stand as recorded.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R15",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P1-K1-switch-rest needs five kit files outside its list, each a few lines. client/ui/rb_box.gd: a baked box's own margin (the popup's 8/4/8/12 points plus its 5-point lip, KitSkin.margins) and the rank frames' hollow ring drawn over the code-drawn box (AIA-R16). client/ui/kit_panels.gd: the sheet's grip is the baked sheet__handle or sheet__handle_parchment, and a dialog's card draws popup__box (AIA-R16). client/ui/kit_switch.gd: the toggle's track and knob (AIA-R18). client/ui/rb_theme.gd: the slider's track, fill and knob in the theme (AIA-R18). client/ui/kit_hud.gd: the loot bar's hand-built tick becomes KitBar.aim(), which draws the baked tick (K1-R14 part 3). Each falls back to today's code-drawn look when its skin is off. Please grant them as the task's exceptions.",
+      "files": [
+        "client/ui/rb_box.gd",
+        "client/ui/kit_panels.gd",
+        "client/ui/kit_switch.gd",
+        "client/ui/rb_theme.gd",
+        "client/ui/kit_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:50:00Z",
+      "due": "2026-11-10T20:00:00Z",
+      "default": "granted: the five files merge with the candidate as P1-K1-switch-rest's exceptions",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R16",
+      "from": "K1",
+      "to": "lead",
+      "cc": [
+        "AIA"
+      ],
+      "ask": "AIA-R19 asks for the seven shapes in ui_kit_tests.gd's SKINS_OF. Five are there (K28: tag__tag, tag__island_label, panel_dark__plate; K29: success__banner_success; K46: bar_track__bar_track_light). panel_dark__album and panel_dark__fact are not: their component is K47 (states N P S L in kit-spec.md section 4), and test 19 asks a piece for each baked state of a SKINS_OF face, but batch 2c bakes only their normal state (no panel_dark__album__pressed or __locked, no panel_dark__fact__pressed or __locked). Adding them would fail test 19 and I loosen no test. Both are asserted another way: ui_kit_rest.gd checks that each of the seven materials (and tag_warn) draws the shape of its own name. Either AIA bakes the pressed and locked states of album and fact, or the lead rules that K47's faces are K12's and K13's and album and fact stay out of SKINS_OF.",
+      "files": [
+        "client/tests/ui_kit_tests.gd",
+        "client/ui/art/kit.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T08:20:24Z",
+      "due": "2026-11-12T22:00:00Z",
+      "default": "album and fact stay out of SKINS_OF; the lookup of all seven shapes stays asserted in client/tests/shots/ui_kit_rest.gd",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -218,5 +257,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-switch-heist: guard OK at 3def1ab5; the pre-check is running"
+  "next_step": "P1-K1-switch-rest: M4 read. origin/claude/ui-artist at 00571a44 (P1-AIA-kit-6) merged into claude/ui-bake; AIA-R19 wired (the seven shapes drawn by their own name, KitSkin.OWN_SHAPE_ONLY now pill_gold_edge and green_muted); the 19 kit tests pass. Next: budgets, catalogue, guard, pre-check on that head, then ready."
 }

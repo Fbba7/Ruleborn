@@ -13,8 +13,28 @@ the status files, requests and scheduled-task prompts.
   stop but stop cleanly without losing any progress"), in the chat of the
   overseer session.
 - **9 November 2026:** the owner restarted it ("Let's continue and use only
-  Fable 5.2"), in the chat of the overseer session. **The program runs**,
-  on Fable 5.2 only (order 4). Order 3's "keep working" applies again.
+  Fable 5.2"), in the chat of the overseer session. The program ran, on
+  Fable 5.2 only (order 4).
+- **10 November 2026, 08:28 UTC:** the owner ordered "Deploy and then stop
+  cleanly", in the chat of the overseer session. The final deploy is on
+  main: P1-AIA-kit-6 and P1-K1-switch-rest (merge `e072364a`),
+  P1-S1-pilot-1 (merge `718ddcbe`) and the lead's last write-up
+  (`8f03235f`, 10:34 UTC). The program did not run from then until the
+  restart of 11 November: the builders (K1, S1, AIA) and the final lead
+  cycle had ended their turns with their work pushed, no session worked,
+  and the launcher and the watchdog of 9 November were disabled. Those
+  two stay disabled.
+- **11 November 2026, about 01:00 UTC:** the owner restarted it ("We still
+  need to keep the UI process we were doing with the phases running as it
+  was", then "Make sure it is running now"), in the chat of the overseer
+  session. **The program runs**, on Fable 5.2 only (order 4). Order 3's
+  "keep working" applies again.
+  - **A new launcher and a new watchdog**, created after this restart was
+    on main, start the lead's cycles. Their IDs are in
+    [`docs/progress/lead.md`](docs/progress/lead.md), "The program's
+    scheduled tasks and sessions".
+  - **Where the work stood at the restart** is in the same file, "Now",
+    entries "Restart, 11 November 2026", "After the stop" and "The stop".
 
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its
