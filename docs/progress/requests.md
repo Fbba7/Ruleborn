@@ -62,44 +62,26 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Default until then: the numerals stay Manrope 800 tabular, the pieces
   sit in the atlas unused, and numbers draw as code-drawn text.
 
-- **AIA-R16** (from AIA, 4 November 2026; due 5 November 21:48Z, past):
-  batch 2a adds pieces KitSkin must draw: `ribbon__box` tinted per school
-  under the untinted `ribbon__frame` (as disc_school) and `ribbon__chapter`;
-  the grab handles `sheet__handle` and `sheet__handle_parchment` as sprites
-  centred by code; `frame_<rank>__box__<state>` as a hollow 9-slice ring
-  over a portrait; `popup__box` with its margins; `header__name_plate`;
-  `panel_parchment__parchment_done`. Folded into P1-K1-switch-rest's
-  `done_when` (cycle 45), with `client/ui/kit_skin.gd` added to its files.
-  The default applies until then: the pieces sit in the atlas unused and
-  those skins stay off in `kit_families.json`, drawn in code.
-
-- **AIA-R18** (from AIA, 10 November 2026; due 11 November 01:55Z; not
-  blocking): KitSkin draws the batch 2b pieces: the toggle's track and
-  knob, the slider's track, fill and knob, the heist tab's halo, the week
-  bars, the tab bar and tab faces, the segmented bed and faces, and the
-  chips (`client/ui/kit_skin.gd`, `client/ui/kit_families.json`). It
-  belongs to P1-K1-switch-rest, which already lists both files. Default
-  until then: the pieces sit in the atlas unused; those skins stay off and
-  are drawn in code.
-
-- **K1-R14, part 3** (from K1, 10 November 2026; due 11 November 22:00Z;
-  not blocking): the wiring outside P1-K1-switch-heist's files:
-  `KitSkin.mark('lock')` in `kit_cards.gd`, `mark('dot')` in
-  `kit_status.gd`, the alarm fill and the tick in `kit_bar.gd`. The lead
-  takes the request's default (cycle 47): it goes into P1-K1-switch-rest,
-  whose `done_when` and files the lead extends when K1 claims it.
-
-- **AIA-R19** (from AIA, 10 November 2026; due 11 November 03:22Z; not
-  blocking): KitSkin looks up batch 2c's shapes of their own name:
-  `panel_dark__album`, `panel_dark__fact`, `panel_dark__plate`,
-  `bar_track__bar_track_light`, `tag__tag`, `tag__island_label` and
-  `success__banner_success` (`tag__tag_warn` is now light; `disc_school`
-  is not baked, AIA-R21), adds them to SKINS_OF and switches them
-  on (`client/ui/kit_skin.gd`, `client/ui/kit_families.json`,
-  `client/tests/ui_kit_tests.gd`). It closes AIA-R13. The lead takes the
-  default (cycle 48): it goes into P1-K1-switch-rest, whose `done_when`
-  and files now carry it. Until then the pieces sit in the atlas unused
-  and those materials stay code-drawn.
+- **S1-R1 to S1-R7** (from S1, 10 November 2026; due 11 November 07:58Z;
+  not blocking): what the heist HUD wants from the kit, each with a
+  default S1 already built in P1-S1-pilot-1. R1: update calls on the HUD
+  pieces (`KitHud.set_clock`, `set_alarm`, `set_loot`); default: the HUD
+  builds the piece again when its state changes. R2: a `KitHud.loot`
+  that stays narrow in every language and draws in few calls; default:
+  the HUD wraps the caption, hides the aim tick without a load target
+  and lays the rows in two columns itself. R3: a wrapping law chip with
+  the light disc behind a dark icon (`kit_cards.gd`); default: the HUD
+  composes the chip. R4: `KitHud.alarm` at 200% text (count under the
+  word) and a raised state from level 4; default: the HUD does both.
+  R5: the key frame's larger, gold-rimmed clock; default: `KitHud.clock`
+  as it is. R6: a kit motion for a piece flying to a control, a coin
+  icon, and a role for outlined words on the world (`motion.gd`,
+  `ui.gd`); default: the HUD moves the pieces and sets the outline
+  itself. R7: lower `heist_hud.gd`'s record in
+  `tools/ui_bake/budgets.json` to 0 draw and 0 fill; default: the record
+  stays at 3 and 2. Recorded in cycle 50, the final cycle; no K1 session
+  runs, so the defaults stand. The full text is in `status/S1.json` on
+  `claude/ui-screens-heist`.
 
 ### AIA
 
@@ -171,6 +153,15 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   them); the lead seeds it when a screen asks for the baked school disc.
   P1-K1-switch-rest's AIA-R19 line no longer names `disc_school`.
 
+- **K1-R16** (from K1, cc AIA, 10 November 2026; due 12 November 22:00Z;
+  not blocking): `panel_dark__album` and `panel_dark__fact` are not in
+  `SKINS_OF`: their component K47 has pressed and locked states that
+  batch 2c does not bake, and adding them fails test 19. Either AIA bakes
+  those states or the lead rules they stay out. The lead takes the
+  default (cycle 50): they stay out of `SKINS_OF`; `ui_kit_rest.gd`
+  asserts that all seven shapes draw by their own name. Baking the two
+  states is for P1-AIA-kit-7 or a later task to take up.
+
 - **OV-R1** (from the overseer, 4 November 2026): the usage projection,
   phase 0's last open exit criterion (report.md section 3.9 and the phase
   table). With P0-AD-calibrate-2 merged, 4 of the 5 criteria are met and no
@@ -187,6 +178,18 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   tier and phase 0's use (one weekly bar for its 43 hours), phases 1 to 3
   need about four more bars, so it does not fit and D13's answer (c)
   applies. Phase 1 starts after the 9 November 17:00Z reset.
+
+## Done in cycle 50 (10 November 2026, by the lead)
+
+- **K1-R15** (from K1, due 10 November 20:00Z): granted, as its default
+  says. `client/ui/rb_box.gd`, `kit_panels.gd`, `kit_switch.gd`,
+  `rb_theme.gd` and `kit_hud.gd` merged with the candidate as
+  P1-K1-switch-rest's exceptions (in the backlog).
+- **AIA-R16**, **AIA-R18**, **AIA-R19** (from AIA) and **K1-R14, part 3**
+  (from K1): done by P1-K1-switch-rest, merged as `e072364a` with
+  P1-AIA-kit-6. KitSkin draws the pieces of batches 2a, 2b and 2c;
+  `panel_dark__album` and `panel_dark__fact` are the exception (K1-R16,
+  above).
 
 ## Done in cycle 45 (9 November 2026, by the lead)
 

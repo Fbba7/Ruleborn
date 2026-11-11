@@ -52,7 +52,11 @@ case "$target" in
     # A debug export, signed with Godot's debug key; a store release takes the
     # upload key from GODOT_ANDROID_KEYSTORE_RELEASE_PATH, _USER and _PASSWORD.
     mode="--export-debug"
-    [ -n "${GODOT_ANDROID_KEYSTORE_RELEASE_PATH:-}" ] && mode="--export-release"
+    if [ -n "${GODOT_ANDROID_KEYSTORE_RELEASE_PATH:-}" ]; then
+      mode="--export-release"
+    else
+      echo "warning: GODOT_ANDROID_KEYSTORE_RELEASE_PATH is unset: this APK is debug-signed and debuggable; do not hand it out" >&2
+    fi
     "$godot" --headless --path "$here" "$mode" "Android" "$root/build/android/ruleborn.apk"
     ;;
   ios)

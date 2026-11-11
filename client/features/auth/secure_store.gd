@@ -4,8 +4,9 @@ extends RefCounted
 ## own secret storage, never a plain file. On iPhone the Keychain, as a
 ## generic password readable after the first unlock and never leaving this
 ## device (kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly, so it is in no
-## iCloud or iTunes backup); on Android a value encrypted with an Android
-## Keystore key that cannot be exported (EncryptedSharedPreferences). Both are
+## iCloud or iTunes backup); on Android a value encrypted (AES-GCM) with an
+## Android Keystore key that cannot be exported, kept in the app's private
+## storage; not EncryptedSharedPreferences, which is deprecated. Both are
 ## reached through the platform's plugin, the engine singleton SINGLETON,
 ## with `read(key) -> String` ("" for none), `write(key, value) -> bool` and
 ## `erase(key)`.
