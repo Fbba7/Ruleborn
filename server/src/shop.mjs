@@ -138,6 +138,19 @@ export class Shop {
     return Math.max(0, cap * 100 - spent - held);
   }
 
+  /** Refused when granting `p` would take a capped account past the
+   *  month's cap, counted at the grant whatever intents were made before
+   *  (SEC-21). The account's own intent, while it still holds its place in
+   *  the allowance, is counted once, not twice. */
+  capCheck(account, p, i, now) {
+    let left = this.allowance(account, now);
+    if (left === null) return;
+    if (i && i.account === account && !i.redeemed_at && i.created_at > now - INTENT_MS) left += i.price ?? p.price;
+    if (p.price > left) {
+      throw new Refused(403, "monthly_cap", { left, cap: facts.SPENDING_CAPS_EUR[this.ageBand(account)] * 100 });
+    }
+  }
+
   /**
    * Step one: ask to buy a product, for oneself or, as a gift, for a friend
    * (`for`). Refused over a minor's cap, before the store is asked for
@@ -191,6 +204,10 @@ export class Shop {
     if (!proof) throw new Refused(402, "receipt_refused");
     const now = this.service.now();
     return transaction(this.db, () => {
+      // Nothing new is written about an account deleted while its claim was
+      // with the store (SEC-33).
+      const buyer = this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?").get(account);
+      if (!buyer || buyer.deleted_at) throw new Refused(410, "account_deleted");
       const done = this.db.prepare("SELECT * FROM purchases WHERE store = ? AND txn = ?")
         .get(store, proof.transaction);
       if (done) {
@@ -201,17 +218,12 @@ export class Shop {
       const p = this.product(proof.product);
       if (!p) throw new Refused(404, "no_such_product");
       const i = this.intentOf(proof);
-      if (i) {
-        if (i.account !== account || i.product !== proof.product) throw new Refused(409, "intent_mismatch");
-        this.db.prepare("UPDATE purchase_intents SET redeemed_at = ? WHERE id = ?").run(now, i.id);
-      } else {
-        // SR-10: a receipt with no intent never went past the cap's check, so
-        // a minor's is refused once it would take the month past §20.2's cap.
-        const left = this.allowance(account, now);
-        if (left !== null && p.price > left) {
-          throw new Refused(403, "monthly_cap", { left, cap: facts.SPENDING_CAPS_EUR[this.ageBand(account)] * 100 });
-        }
-      }
+      if (i && (i.account !== account || i.product !== proof.product)) throw new Refused(409, "intent_mismatch");
+      // SR-10 and SEC-21: a minor's receipt, with an intent or none, is
+      // refused once it would take the month past §20.2's cap; an intent
+      // checked when it was made may have lapsed, and others been made since.
+      this.capCheck(account, p, i, now);
+      if (i) this.db.prepare("UPDATE purchase_intents SET redeemed_at = ? WHERE id = ?").run(now, i.id);
       // A friend deleted since is owed nothing: the gift is the buyer's.
       const friend = i?.recipient && !this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?")
         .get(i.recipient).deleted_at ? i.recipient : null;
@@ -269,7 +281,11 @@ export class Shop {
     if (!done) {
       // Refused before the store is told anything, so nothing is consumed.
       if (this.refunded(store, proof.transaction)) throw new Refused(402, "receipt_refunded");
-      this.intentOf(proof);
+      const i = this.intentOf(proof);
+      // Over a minor's cap, refused before the store acknowledges it, so a
+      // Play purchase is refunded by itself (SEC-21).
+      const p = this.product(proof.product);
+      if (p) this.capCheck(account, p, i, this.service.now());
       const settled = await this.settleReceipt(store, proof);
       if (!settled?.ok) {
         const reason = settled?.reason ?? "receipt_refused";
