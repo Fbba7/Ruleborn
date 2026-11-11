@@ -15,6 +15,16 @@ recording the answer under it.
 - **Done:** started a lead cycle on Fable 5.2,
   `session_01SNkKxnH8TzJqFh4YN5MvvE`.
 - **Needs the owner:** nothing.
+- **Follow-up, 05:25Z (the watchdog's cycle session):** the launcher
+  started a cycle session of its own five seconds earlier, at 05:20:21Z
+  (`session_01SNkKxrATVfECHBXAWskbLg`, working). The lead was stale
+  because every session stood still from about 01:16Z to 05:20Z; the
+  launcher's four late firings arrived together at 05:20Z. That session
+  runs cycle 52. This one (`session_01SNkKxnH8TzJqFh4YN5MvvE`) stands
+  down so two leads do not gate, merge and start sessions at once, as
+  with cycle 47's duplicate: it merges nothing and starts no session.
+  It looks once more at about 05:45Z and runs the cycle only if the
+  launcher's session has stopped without writing cycle 52.
 
 ## 2026-11-11 01:20Z: three builders working after the restart, two K1 tasks seeded (lead, cycle 51)
 
