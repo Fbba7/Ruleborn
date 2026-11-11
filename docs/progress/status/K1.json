@@ -5,11 +5,11 @@
   "model": "Fable 5.2",
   "agent_state": "active",
   "task_id": "P1-K1-disc-host",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-11T01:16:09Z",
   "lease_until": "2026-11-11T04:16:09Z",
-  "updated_at": "2026-11-11T01:16:09Z",
-  "expected_next_update_by": "2026-11-11T02:01:09Z",
+  "updated_at": "2026-11-11T01:21:49Z",
+  "expected_next_update_by": "2026-11-11T02:06:49Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e012f9ff",
@@ -258,5 +258,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "P1-K1-disc-host: claimed after the restart of 11 November; main merged into claude/ui-bake. Next: reproduce the wide disc with a run, then the test and the fix."
+  "next_step": "P1-K1-disc-host: the fault is reproduced by a run on main at 40c92625 (the new kit test fails there, passes here: a sprite face draws only on a host about as wide as tall). Next: pages 27, 44, 45 in eight variants, the observatory still, the six looks on every host, kit-spec.md, guard, pre-check."
 }

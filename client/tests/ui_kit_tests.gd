@@ -18,6 +18,7 @@ const FIXTURE := "res://tests/fixtures/ui_kit/kit.json"
 const Catalogue := preload("res://tests/shots/ui_kit_catalogue.gd")
 const Art := preload("res://tests/shots/ui_kit_catalogue_art.gd")
 const Rest := preload("res://tests/shots/ui_kit_rest.gd")
+const Round := preload("res://tests/shots/ui_kit_round.gd")
 ## The components whose baked faces are skins, and those skins' faces: once a
 ## skin has art, each of the component's baked states is a piece of it.
 ## The bar's pieces are K46's (N RM), the component built from them: K25's
@@ -90,6 +91,7 @@ func run() -> void:
 	await _switch()
 	await _parts()
 	await _rest()
+	await _round()
 	await _fixture()
 	await _words()
 	await _numerals()
@@ -575,6 +577,13 @@ func _rest() -> void:
 			+ "code-drawn box, the sheet's handles, the toggle's and the slider's pieces, a bar's alarm fill and "
 			+ "tick, the attention dot (kit-spec.md sections 5, 6.7, 8.2; AIA-R16, AIA-R18, K1-R14)",
 			bad.is_empty(), "; ".join(bad))
+
+
+func _round() -> void:
+	var bad: Array = await Round.run(tree)
+	check.call("no piece of the skin disc, nor the gold round, is drawn on a host that is not round: a sprite is "
+			+ "as wide as its host and keeps its shape, so a bar, a pill or an oval button keeps its "
+			+ "code-drawn box (kit-spec.md section 8.2)", bad.is_empty(), "; ".join(bad))
 
 
 ## The colour at the middle of piece `p` in the page it is cut from.
