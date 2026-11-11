@@ -1,0 +1,73 @@
+[
+ {
+  "task_id": "P1-AIA-kit-7",
+  "sha": "961c7905",
+  "item": "kit catalogue sheet, batch 2d (album panel, fact slips, plates, light bar track, island label, tags, success banner), at phone size",
+  "quality": "Layered materials",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "The album panel now has a bevelled frame, an inset parchment well, a top gloss band, a dark ink outline and a solid lip; the Claim button, the plates and the tags show gradient, gloss band, rim and lip. The gradients are smooth, with no stepped banding on the contact sheets. The paper grain is faint at 960 px. The weakest piece is the success banner, whose lip is thin.",
+  "advisory": true,
+  "at": "2026-11-11T05:28:00Z"
+ },
+ {
+  "task_id": "P1-AIA-kit-7",
+  "sha": "961c7905",
+  "item": "kit catalogue sheet, batch 2d (album panel, fact slips, plates, light bar track, island label, tags, success banner), at phone size",
+  "quality": "Display type",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "fail",
+   "fail",
+   "pass",
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Split on the first three samples (two fails), then three passes: two fails of six. Every light word on a coloured piece (Claim, 'Reward added to your bag', Event) carries a continuous dark outline and a hard drop that holds in grayscale and high contrast; the dark words sit on cream cards or plates, which the version 2 ruling does not count as over art. The close point, named by all six samples: the 'Field Notes' header is a thin serif with no outline on the album panel's gloss band and paper wear; the two fails read that paper as a textured surface and the header as below the pass anchor's heavy outlined headers. No headline figure on the sheet; no glyph clipped.",
+  "advisory": true,
+  "at": "2026-11-11T05:28:00Z"
+ },
+ {
+  "task_id": "P1-AIA-kit-7",
+  "sha": "961c7905",
+  "item": "kit catalogue sheet, batch 2d (album panel, fact slips, plates, light bar track, island label, tags, success banner), at phone size",
+  "quality": "Colour roles and value",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Gold appears only as rim and frame material; green only on Claim and the success banner; orange only on the warning tag, with its hatched stripe. The tags stay distinct in the colour-vision and grayscale views. Note: violet is still shared by the Event tag and the bar fill; it reads as the accent and is always labelled.",
+  "advisory": true,
+  "at": "2026-11-11T05:28:00Z"
+ },
+ {
+  "task_id": "P1-AIA-kit-7",
+  "sha": "961c7905",
+  "item": "kit catalogue sheet, batch 2d (album panel, fact slips, plates, light bar track, island label, tags, success banner), at phone size",
+  "quality": "Light behind UI",
+  "rubric_version": 3,
+  "judge": "Fable 5.2",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Judged as kit art on its own light: every piece has a top highlight, a darker lip and a drop shadow; the bar track is shaded at its top as an inset; the banner has a lit rim. Nothing is lit from below or from the side.",
+  "advisory": true,
+  "at": "2026-11-11T05:28:00Z"
+ }
+]

@@ -4,6 +4,28 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-11 05:21Z: the lead was stale, a lead cycle is started (watchdog)
+
+- **What:** `status/lead.json` was past its `expected_next_update_by` of
+  02:35Z (last update 01:20Z, cycle 51). The launcher itself had not
+  failed: it is enabled and its last run succeeded at 04:38Z, yet no
+  lead cycle has written to main since 01:15Z. The latest lead cycle
+  session on record (`session_01SNkKxnDPjsoJBxjS6oA73p`, cycle 51) is
+  idle.
+- **Done:** started a lead cycle on Fable 5.2,
+  `session_01SNkKxnH8TzJqFh4YN5MvvE`.
+- **Needs the owner:** nothing.
+- **Follow-up, 05:25Z (the watchdog's cycle session):** the launcher
+  started a cycle session of its own five seconds earlier, at 05:20:21Z
+  (`session_01SNkKxrATVfECHBXAWskbLg`, working). The lead was stale
+  because every session stood still from about 01:16Z to 05:20Z; the
+  launcher's four late firings arrived together at 05:20Z. That session
+  runs cycle 52. This one (`session_01SNkKxnH8TzJqFh4YN5MvvE`) stands
+  down so two leads do not gate, merge and start sessions at once, as
+  with cycle 47's duplicate: it merges nothing and starts no session.
+  It looks once more at about 05:45Z and runs the cycle only if the
+  launcher's session has stopped without writing cycle 52.
+
 ## 2026-11-11 01:20Z: three builders working after the restart, two K1 tasks seeded (lead, cycle 51)
 
 - **What:** the first cycle after the restart found nothing to gate or

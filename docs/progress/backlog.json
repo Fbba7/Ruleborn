@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-11T01:30:00Z",
-  "updated_by": "lead",
+  "updated_at": "2026-11-11T19:56:00Z",
+  "updated_by": "lead (cycle 53)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -13,27 +13,27 @@
   "agents": {
     "AD": {
       "branch": "claude/ui-ad",
-      "model": "Fable 5.2"
+      "model": "Opus 5.5"
     },
     "AIA": {
       "branch": "claude/ui-artist",
-      "model": "Fable 5.2"
+      "model": "Opus 5.5"
     },
     "K1": {
       "branch": "claude/ui-bake",
-      "model": "Fable 5.2"
+      "model": "Opus 5.5"
     },
     "SV": {
       "branch": "claude/server-decisions",
-      "model": "Fable 5.2"
+      "model": "Opus 5.5"
     },
     "AIA-2": {
       "branch": "claude/ui-artist-icons",
-      "model": "Fable 5.2"
+      "model": "Opus 5.5"
     },
     "S1": {
       "branch": "claude/ui-screens-heist",
-      "model": "Fable 5.2"
+      "model": "Opus 5.5"
     }
   },
   "strings_owner": "lead",
@@ -1015,17 +1015,17 @@
       "role": "K1",
       "assigned_to": "K1",
       "phase": 1,
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "gate_items": [],
       "attempts": 0,
       "tier": 1,
       "state": "open",
       "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
+      "prior_branch": "claude/ui-bake",
+      "prior_sha": "905f9fca",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-11T01:30:00Z",
+      "updated_at": "2026-11-11T05:28:00Z",
       "updated_by": "lead"
     },
     {
@@ -1060,7 +1060,7 @@
       "role": "K1",
       "assigned_to": "K1",
       "phase": 1,
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "gate_items": [],
       "attempts": 0,
       "tier": 1,
@@ -1417,7 +1417,7 @@
       ],
       "estimate_h": 2,
       "phase": 1,
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "gate_items": [
         {
           "item": "kit catalogue sheet, batch 2d, at phone size",
@@ -1432,11 +1432,11 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
+      "state": "ready",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "961c79051e3bc0f9d279b227bfec5f7ab645e33d",
       "merged_sha": null,
       "exceptions": [
         "art/ui/kit_build/**",
@@ -1445,7 +1445,7 @@
         "client/ui/art/kit_3*.webp",
         "art/ui/kit_next/**"
       ],
-      "updated_at": "2026-11-10T07:50:00Z",
+      "updated_at": "2026-11-11T05:28:00Z",
       "updated_by": "lead"
     },
     {
@@ -1755,7 +1755,7 @@
       ],
       "estimate_h": 3,
       "phase": 1,
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "gate_items": [
         {
           "item": "heist in high contrast",
@@ -1777,10 +1777,12 @@
       "critical": true,
       "state": "open",
       "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
+      "prior_branch": "claude/ui-screens-heist",
+      "prior_sha": "38a154ea",
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "updated_at": "2026-11-11T05:28:00Z",
+      "updated_by": "lead"
     },
     {
       "id": "P1-AD-board-1",
@@ -1803,7 +1805,7 @@
       ],
       "estimate_h": 2,
       "phase": 1,
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "gate_items": [],
       "attempts": 0,
       "tier": 1,
@@ -2088,7 +2090,7 @@
       "title": "B10 the client's certificate pin on the production certificate's authority, never the leaf: waits for the production host (owner-decisions.md); unassigned until it exists",
       "phase": 0,
       "role": "SV",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": null,
       "files": [
         "client/data/http_transport.gd",
@@ -2171,7 +2173,7 @@
       "title": "Coordinator, part 1: a dry-run cycle that reads every status file from origin, expires leases, copies states into the backlog, flags missed acknowledgements, request deadlines and stalls, and prints the actions",
       "phase": 0,
       "role": "specialist",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": "SP-bt-01",
       "files": [
         "tools/coord/**",
@@ -2200,7 +2202,7 @@
       "title": "Coordinator, part 2: the merge-then-test queue (owners.py diff, run_checks.sh on the candidate, the merge lock in status/lead.json, fast-forward) and the owner-inbox entries",
       "phase": 0,
       "role": "specialist",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": "SP-bt-01",
       "files": [
         "tools/coord/**",
@@ -2231,7 +2233,7 @@
       "title": "Gate shot renderer, part 1: the shot-list format and still rendering of a listed item at a given sha",
       "phase": 0,
       "role": "specialist",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": "SP-bt-04",
       "files": [
         "tools/gate/render.*",
@@ -2262,7 +2264,7 @@
       "title": "Gate shot renderer, part 2: frame strips, 200% text and high-contrast variants, named crops",
       "phase": 0,
       "role": "specialist",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": "SP-bt-04",
       "files": [
         "tools/gate/render.*",
@@ -2292,7 +2294,7 @@
       "title": "Gate launcher and verdict writer, with schema validation",
       "phase": 0,
       "role": "specialist",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": "SP-bt-05",
       "files": [
         "tools/gate/run.*",
@@ -2323,7 +2325,7 @@
       "title": "Environment setup with pinned versions",
       "phase": 0,
       "role": "specialist",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": "SP-bt-09",
       "files": [
         "tools/setup_env.sh"
@@ -2349,7 +2351,7 @@
       "title": "Check runner: concurrent runs in one container do not share Godot's user:// or its download (docs/progress/flaky.md)",
       "phase": 0,
       "role": "specialist",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": "lead",
       "files": [
         "tools/run_checks.sh"
@@ -2377,7 +2379,7 @@
       "title": "client/build.sh fails when Godot's --import leaves the import cache incomplete, instead of running the tests on it (docs/progress/flaky.md)",
       "phase": 0,
       "role": "specialist",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": "lead",
       "files": [
         "client/build.sh"
@@ -2404,7 +2406,7 @@
       "title": "Documentation consistency check: state names, schemas and examples across the brief, the program, the protocol and the example backlog",
       "phase": 1,
       "role": "specialist",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": "SP-bt-06",
       "files": [
         "tools/docs/protocol_check.*",
@@ -2436,7 +2438,7 @@
       "title": "Metrics report from coordination data",
       "phase": 1,
       "role": "specialist",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": "SP-bt-07",
       "files": [
         "tools/coord/metrics.*"
@@ -2465,7 +2467,7 @@
       "title": "Per-screen string and route files merged by script",
       "phase": 1,
       "role": "specialist",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": "SP-bt-08",
       "files": [
         "tools/build/merge_tables.*"
