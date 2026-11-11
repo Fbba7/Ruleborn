@@ -48,7 +48,7 @@ import { createServer } from "node:http";
 import { X509Certificate, createPublicKey, randomBytes } from "node:crypto";
 import { chmodSync, existsSync, linkSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve, sep } from "node:path";
 
 import { Journal, reapplyDeletions } from "./accounts.mjs";
 import { CloudflarePurge, purgeEdge } from "./edge.mjs";
@@ -141,6 +141,14 @@ if (platforms.stubbed && process.env.RULEBORN_STUB_SIGNIN !== "1") {
 if (platforms.stubbed) {
   console.warn("RULEBORN_STUB_SIGNIN=1: any credential is taken as the identity it names. "
                + "A local or test server only: it must not face a network (SR-29)");
+}
+// A deployment whose deletions journal sits inside its data folder restores
+// the journal with every restore of the data, and so can undo deletions made
+// since the backup (declarations.md, SEC-38).
+const journalDir = resolve(process.env.RULEBORN_DELETIONS ?? join(data, "deletions"));
+if (!platforms.stubbed && journalDir.startsWith(resolve(data) + sep)) {
+  console.warn("RULEBORN_DELETIONS is inside RULEBORN_DATA: a restore of the data folder "
+               + "also restores the journal, and can undo later deletions (declarations.md)");
 }
 
 // D70: the edge's cache of an under-13 player's bundles, purged on their

@@ -10,6 +10,7 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 
 import { open, transaction } from "../src/db.mjs";
 import { T0, openPlan, play, twoPlayers } from "./setup.mjs";
@@ -130,4 +131,43 @@ test("SEC-20: every background job in main.mjs runs under a guard that logs and 
     assert.match(tidy, new RegExp(`guarded\\("[^"]+", \\(\\) => service\\.${job.replace(".", "\\.")}\\(`), job);
   }
   assert.doesNotMatch(main, /uncaughtException/, "a throw outside the jobs still stops the process");
+});
+
+/** What main.mjs writes to standard error by the time it is listening, as a
+ *  deployment with real sign-in (a Google client id; its keys are fetched
+ *  only at a sign-in) and `env`; stopped once it says it is up. */
+async function startupWarnings(env) {
+  const dir = mkdtempSync(join(tmpdir(), "rb-sec38-"));
+  const all = { ...process.env, RULEBORN_DATA: join(dir, "data"), RULEBORN_GOOGLE_CLIENT_IDS: "sec38.test",
+                ...env(dir) };
+  for (const k of ["RULEBORN_STUB_SIGNIN", "RULEBORN_GAMECENTER_ROOTS", "RULEBORN_DELETIONS"]) {
+    if (!(k in env(dir))) delete all[k];
+  }
+  for (const [k, v] of Object.entries(all)) if (v === undefined) delete all[k];
+  const child = spawn(process.execPath, ["--no-warnings", fileURLToPath(new URL("../src/main.mjs", import.meta.url)), "0"],
+                      { env: all, stdio: ["ignore", "pipe", "pipe"] });
+  let stderr = "";
+  child.stderr.on("data", (b) => { stderr += b; });
+  try {
+    await new Promise((done, fail) => {
+      let said = "";
+      child.stdout.on("data", (b) => { said += b; if (said.includes("ruleborn server on")) done(); });
+      child.on("exit", (code) => fail(new Error(`main.mjs exited ${code}: ${stderr}`)));
+    });
+    return stderr;
+  } finally {
+    const gone = new Promise((done) => child.on("exit", done));
+    child.kill();
+    await gone;
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+test("SEC-38: a deployment is warned when its deletions journal sits inside its data folder", async () => {
+  assert.match(await startupWarnings(() => ({})), /RULEBORN_DELETIONS is inside RULEBORN_DATA/,
+               "the default, a folder beside the database");
+  assert.doesNotMatch(await startupWarnings((dir) => ({ RULEBORN_DELETIONS: join(dir, "journal") })),
+                      /RULEBORN_DELETIONS is inside/, "a journal on its own storage is not");
+  assert.doesNotMatch(await startupWarnings(() => ({ RULEBORN_STUB_SIGNIN: "1", RULEBORN_GOOGLE_CLIENT_IDS: undefined })), /RULEBORN_DELETIONS is inside/,
+                      "nor a local server with stubbed sign-in");
 });
