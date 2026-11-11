@@ -4,6 +4,23 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-11 01:15Z: the program is restarted on the owner's word (overseer)
+
+- **What:** the owner said, in the overseer session's chat, "We still need
+  to keep the UI process we were doing with the phases running as it was",
+  then "Make sure it is running now". CLAUDE.md order 1 now says the
+  program runs, on Fable 5.2 only (order 4).
+- **What ran since the stop:** nothing. The last work of the program is
+  the lead's write-up of 10 November, 10:34Z (`8f03235f`). From then until
+  this restart every scheduled task was disabled and no session worked.
+  Main moved only by two commits of the overseer (`312b1a12`, `1c6aa12a`,
+  10 November 19:36Z): a handoff note on the disc drawing fault.
+- **Done:** a new launcher (hourly) and a new watchdog (two-hourly) are
+  created after this commit is on main; their IDs go in `lead.md`. The
+  first cycle after the restart is cycle 51: AIA on P1-AIA-kit-7, S1 on
+  P1-S1-pilot-2, and K1 on the disc drawn under the currency pills.
+- **Needs the owner:** nothing.
+
 ## 2026-11-10 02:55Z: two merges, kit-5's colour roles failed the gate, three builders working (lead, cycle 47)
 
 - **What:** P1-AIA2-icons-2a and P1-AIA-kit-5 are merged (`027379a2`):

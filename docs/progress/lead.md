@@ -1,15 +1,24 @@
 # The lead's handoff
 
+> **Restarted by the owner, 11 November 2026** ("We still need to keep the
+> UI process we were doing with the phases running as it was", then "Make
+> sure it is running now", in the overseer's chat, at about 01:00Z).
+> CLAUDE.md order 1 says the program runs, on Fable 5.2 only (order 4):
+> every session the lead creates and every subagent it starts runs on
+> Fable 5.2, and on no other model. Fable 5.1 is never used (order 2).
+> The launcher and the watchdog are a new pair, created after the restart
+> was on main (table below); every older one stays disabled. Cycle 51 is
+> the first cycle after the restart. What it starts from is in "Now",
+> entries "Restart, 11 November 2026" and "After the stop".
+
 > **Stopped by the owner, 10 November 2026** ("Deploy and then stop
-> cleanly", 08:28Z, in the overseer's chat). The final deploy is on main
-> (merges `e072364a` and `718ddcbe`, the lead's last write-up `8f03235f`)
-> and CLAUDE.md order 1 says the program is stopped. Cycle 50 was the
-> last cycle, started by the overseer by hand; it merged what was ready
-> and passed the checks, started no session, seeded no task and armed
-> nothing. No session is working, the launcher and the watchdog are
-> disabled and stay disabled, and no check-in is armed. Do no work and
-> start nothing until the owner, in their own words, restarts the
-> program. Where the work stands is in "Now", entry "After the stop".
+> cleanly", 08:28Z, in the overseer's chat), until the restart of 11
+> November. The final deploy is on main (merges `e072364a` and
+> `718ddcbe`, the lead's last write-up `8f03235f`). Cycle 50 was the
+> last cycle before the stop, started by the overseer by hand; it merged
+> what was ready and passed the checks, started no session, seeded no
+> task and armed nothing. No session worked and nothing was merged
+> between the stop and the restart.
 
 > **Restarted by the owner, 9 November 2026** ("Let's continue and use only
 > Fable 5.2", in the overseer's chat). The program ran from then until the
@@ -33,12 +42,14 @@
 > | P1-AD-board-1 | `claude/ui-ad` | open, waits for P1-S1-pilot-2, not started; branch head `1be67031` |
 >
 > Main passed check_all and guard.sh in cycle 50's container. Tasks
-> done: 46 of 61. No builder is working: every session is stopped or
-> idle. The sessions of 4 November ran on Opus 5.5 and are not reused.
+> done: 46 of 61. At the restart of 11 November no builder was working:
+> every session was stopped or idle, and each open task needs a fresh
+> session. The sessions of 4 November ran on Opus 5.5 and are not reused.
 >
 > **Owner orders.** The owner stopped the program on 3 November 2026,
 > restarted it on 4 November, stopped it again on 5 November, restarted
-> it on 9 November and stopped it on 10 November 2026. Read the owner
+> it on 9 November, stopped it on 10 November and restarted it on 11
+> November 2026. Read the owner
 > orders in
 > [`CLAUDE.md`](../../CLAUDE.md) first: they override this file.
 
@@ -102,15 +113,17 @@ every other session is created with `create_session`.
 | The launcher: one fresh lead cycle session an hour on Fable 5.2, unless the last is still working (created 9 Nov at 21:32Z, after the restart was on main) | `trig_01ChLd51gPMwzsKrXifYfkYj` | the launcher, `session_01SNkKxoc1ntTt7RqPTLViwy` (Fable 5.2) | hourly at :38 |
 | The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Fable 5.2 and alerts (created 9 Nov at 21:33Z, after the restart was on main) | `trig_016aHfeAQkYXB6Z5X361irkE` | the watchdog, `session_01SNkKxpLf6R26Jp1H6iXTPv` (Fable 5.2) | every 2 hours at :08 |
 
-**Both are disabled since 10 November 2026** (the launcher at 08:30Z, the
-watchdog at 08:34Z), on the owner's order to deploy and stop. They stay
-disabled and are never re-enabled: a restart creates a new pair, after the
-restart is on main.
+**The pair in this table is disabled since 10 November 2026** (the
+launcher at 08:30Z, the watchdog at 08:34Z), on the owner's order to
+deploy and stop. It stays disabled and is never re-enabled. **The restart
+of 11 November 2026 creates a new pair**, after the restart commit is on
+main; the overseer records its IDs in this table in its next commit.
+Until then, do not take the IDs above for the working pair.
 
 A scheduled task that fires into a session runs on that session's model,
-so the two were created anew on 9 November instead of re-enabled. Both
-read CLAUDE.md first and do nothing while order 1 says the program is
-stopped.
+and a session keeps the CLAUDE.md it was created with, so a restart
+creates the two anew instead of re-enabling them. Both read CLAUDE.md
+first and do nothing while order 1 says the program is stopped.
 
 **Create these two sessions only after the restart is on main.** A
 session keeps the CLAUDE.md it was created with; `git fetch` does not
@@ -308,6 +321,31 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Restart, 11 November 2026 at about 01:15Z (the overseer, on the owner's
+  words "We still need to keep the UI process we were doing with the
+  phases running as it was" and "Make sure it is running now"): CLAUDE.md
+  order 1 says the program runs, on Fable 5.2 only. Nothing ran and
+  nothing was merged between cycle 50 (10 November, 10:33Z) and this
+  entry; main moved only by the overseer's two write-ups (`312b1a12`,
+  `1c6aa12a`). `stop_at` is still 14 November 21:00Z. A new launcher and
+  a new watchdog are created after this commit is on main (table above).
+  For cycle 51, the first cycle after the restart:
+  - Every earlier session is stopped or idle and is not reused. Start
+    fresh Fable 5.2 sessions: AIA on P1-AIA-kit-7 and S1 on
+    P1-S1-pilot-2 (both open, deps merged). P1-AD-board-1 waits for
+    pilot-2. At most three UI builders at once; icon batches 3 and 4
+    stay deferred (D13 (c)).
+  - Seed K1's next task and start K1 on it: first the disc drawn under
+    the currency pills on kit catalogue parts K23 and K45, with a test
+    (entry "The stop", "First fix on a restart"), then S1-R1 to S1-R7.
+  - The overseer is also landing small security fixes on main, from a
+    static review of the repository: comments and text in
+    `docs/security/auth.md`, `server/src/auth.mjs` and
+    `client/features/auth/secure_store.gd`, and one warning line each in
+    `server/src/main.mjs` and `client/export.sh`. No builder owns those
+    files. Fetch before a merge, as always; if such a commit lands in
+    the middle of a merge, rebase the candidate and run the checks
+    again.
 - Restart, 9 November 2026 at 21:05Z (the overseer, on the owner's word
   "Let's continue and use only Fable 5.2"): CLAUDE.md order 1 says the
   program runs and order 4 says Fable 5.2 only. The backlog's roster and
@@ -481,8 +519,9 @@ Your session was created with the repository checked out at main; work in that c
   Candidate `6fb29341` (main `e072364a` + pilot-1 at `5470c4d3`): owners diff clean, claims disjoint, ui guard OK, check_all PASS at 10:33Z. Merged P1-S1-pilot-1 as `718ddcbe`; lock released.
   The audit and roadmap pages did not change and were not republished.
   No owner-inbox entry.
-- After the stop (for whoever the owner restarts the program with; until
-  then nothing runs). Tasks not merged, with branch, last commit and
+- After the stop (written for the restart; the owner restarted the
+  program on 11 November 2026, entry "Restart, 11 November 2026" above).
+  Tasks not merged, with branch, last commit and
   state: P1-S1-pilot-2 is open with its deps merged and not started; S1's branch `claude/ui-screens-heist` is at `376d86a9` (status and handoff after the ready commit), stopped.
   P1-AIA-kit-7 (batch 2d, the gate's notes on kit-6; K1-R16's two
   pressed and locked states could ride with it) is open with its deps
@@ -494,8 +533,9 @@ Your session was created with the repository checked out at main; work in that c
   on Fable 5.2 and, if the owner wants the hourly cycle again, a new
   launcher and watchdog created after the restart is on main.
 - The stop, 10 November 2026 at about 10:45Z (the overseer, on the
-  owner's order "Deploy and then stop cleanly"): CLAUDE.md order 1 says
-  the program is stopped. Checked before writing it: main at `8f03235f`,
+  owner's order "Deploy and then stop cleanly"): CLAUDE.md order 1 said
+  the program was stopped, until the restart of 11 November. Checked
+  before writing it: main at `8f03235f`,
   merge lock free; cycle 50's session, K1's, S1's and AIA's all ended
   (`get_session`: idle, completed); launcher and watchdog disabled
   (`get_trigger`); no check-in armed. `status/lead.json` has

@@ -1,7 +1,7 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-10T10:45:00Z",
-  "expected_next_update_by": null,
+  "updated_at": "2026-11-11T01:15:00Z",
+  "expected_next_update_by": "2026-11-11T03:00:00Z",
   "cycle": 50,
   "merging": null,
   "last_merged": {
@@ -9,9 +9,10 @@
     "sha": "718ddcbe"
   },
   "alerts": [
-    "STOPPED by the owner on 10 November 2026 (\"Deploy and then stop cleanly\", CLAUDE.md order 1). The final deploy is on main (e072364a, 718ddcbe, 8f03235f). No session is working; the launcher trig_01ChLd51gPMwzsKrXifYfkYj and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled and are never re-enabled; no check-in is armed. Do no work and start nothing until the owner, in their own words, restarts the program.",
+    "Restarted by the owner on 11 November 2026 (\"We still need to keep the UI process we were doing with the phases running as it was\", then \"Make sure it is running now\"; CLAUDE.md order 1), on Fable 5.2 only (order 4). A new launcher and a new watchdog are created after the restart is on main; their IDs are added here and in lead.md in the overseer's next commit. Every older scheduled task stays disabled and is never re-enabled.",
+    "Stopped by the owner on 10 November 2026 (\"Deploy and then stop cleanly\", CLAUDE.md order 1), until the restart of 11 November 2026. The final deploy is on main (e072364a, 718ddcbe, 8f03235f). No session worked and nothing was merged between the stop and the restart. The launcher trig_01ChLd51gPMwzsKrXifYfkYj and the watchdog trig_016aHfeAQkYXB6Z5X361irkE were disabled then, stay disabled and are never re-enabled.",
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Stopped. The program is stopped by the owner's order of 10 November 2026 (CLAUDE.md order 1); expected_next_update_by is null on purpose. Cycle 50 was the final cycle. Start no lead cycle and no session, seed no task, create, enable, fire or re-arm no scheduled task. Only the owner, in their own words, restarts the program. Where the work stands for a restart is in lead.md, \"Now\", entries \"After the stop\" and \"The stop\". Only Fable 5.2; never Fable 5.1."
+  "next_step": "Cycle 51, the first cycle after the restart of 11 November 2026 (lead.md, \"Now\", entries \"Restart, 11 November 2026\" and \"After the stop\"). Start fresh Fable 5.2 sessions: AIA on P1-AIA-kit-7 and S1 on P1-S1-pilot-2. Seed K1's next task and start K1 on it: the disc drawn under the currency pills, kit catalogue parts K23 and K45, with a test that fails before the fix; then S1-R1 to S1-R7. P1-AD-board-1 waits for pilot-2. At most three UI builders at once; icon batches 3 and 4 stay deferred (D13 answer c). The overseer is landing small security fixes on main (docs/security/auth.md, server/src/auth.mjs, server/src/main.mjs, client/features/auth/secure_store.gd, client/export.sh): fetch before a merge, rebase the candidate and run the checks again. Only Fable 5.2; never Fable 5.1."
 }
