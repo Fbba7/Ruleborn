@@ -125,6 +125,11 @@ not written down here (a question for the owner, in
 - **A refresh token** rotates only past 24 hours (`RULEBORN_REFRESH_ROTATE_HOURS`
   unset is 24, or 0 under `--example`; 0 rotates it on every refresh); inside the span a refresh
   writes nothing.
+- **A job that fails** (a busy database, one bad row) is logged as
+  `<job name>: <error>` on standard error and tried again on its next turn,
+  without stopping the server; a hold measurement that fails is logged as
+  `hold <bundle>: <error>` and set aside. Watch the log for these lines: the
+  server keeps answering while a job keeps failing (SEC-20).
 
 ## Generated files the server reads
 

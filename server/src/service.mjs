@@ -100,6 +100,8 @@ export const HEART_LEVEL = 3;
 
 const day = (ms) => new Date(ms).toISOString().slice(0, 10);
 const DAY_MS = 24 * 60 * 60 * 1000;
+/** Expired replays are marked in chunks of this many rows (expireReplays). */
+const EXPIRE_CHUNK = 200;
 /** Midnight UTC at the start of `ms`'s day, and of its week (Monday, G20). */
 const dayStart = (ms) => ms - (ms % DAY_MS);
 const weekStart = (ms) => dayStart(ms) - ((new Date(ms).getUTCDay() + 6) % 7) * DAY_MS;
@@ -1037,18 +1039,26 @@ export class Service {
    *  longest, a replay goes; its heist row and hashes stay. Idempotent. */
   expireReplays(now = this.now()) {
     const before = now - facts.RAW_KEEP_DAYS * DAY_MS;
-    return transaction(this.db, () => {
-      const old = this.db.prepare(
-        "SELECT token, log_hash FROM heists WHERE replay_gone = 0 AND submitted_at < ?").all(before);
-      for (const h of old) {
-        // Two heists can carry the same bytes; the replay stays while any is kept.
-        const kept = this.db.prepare(
-          "SELECT 1 FROM heists WHERE log_hash = ? AND replay_gone = 0 AND submitted_at >= ?").get(h.log_hash, before);
-        if (!kept) this.replays.delete(h.log_hash);
-        this.db.prepare("UPDATE heists SET replay_gone = 1 WHERE token = ?").run(h.token);
-      }
-      return old.length;
-    });
+    const old = this.db.prepare(
+      "SELECT token, log_hash FROM heists WHERE replay_gone = 0 AND submitted_at < ?").all(before);
+    // In chunks, each its own short transaction, so a long backlog never holds
+    // the write lock for the whole loop; the files go after each commit (a
+    // crash between the two leaves an orphan file, never a row without bytes).
+    for (let i = 0; i < old.length; i += EXPIRE_CHUNK) {
+      const gone = transaction(this.db, () => {
+        const files = [];
+        for (const h of old.slice(i, i + EXPIRE_CHUNK)) {
+          // Two heists can carry the same bytes; the replay stays while any is kept.
+          const kept = this.db.prepare(
+            "SELECT 1 FROM heists WHERE log_hash = ? AND replay_gone = 0 AND submitted_at >= ?").get(h.log_hash, before);
+          if (!kept) files.push(h.log_hash);
+          this.db.prepare("UPDATE heists SET replay_gone = 1 WHERE token = ?").run(h.token);
+        }
+        return files;
+      });
+      for (const hash of gone) this.replays.delete(hash);
+    }
+    return old.length;
   }
 
   /** The raider's own Vault level, from their Heart's current snapshot; a
