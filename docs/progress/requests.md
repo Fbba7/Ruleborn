@@ -62,6 +62,20 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Default until then: the numerals stay Manrope 800 tabular, the pieces
   sit in the atlas unused, and numbers draw as code-drawn text.
 
+- **AIA-R22** (from AIA to K1, 11 November 2026 01:50Z; due 13 November
+  01:50Z; not blocking): a nine-slice stretches one sample across its
+  middle, so `panel_dark__album` and the other parchment panels carry
+  paper grain only in their fixed border. If the gate still finds the
+  middle of a large parchment panel flat, KitSkin would lay a tiled grain
+  texture over the panel's centre cell (`client/ui/kit_skin.gd`, K1's
+  file) and AIA would draw a tileable grain piece in a task that carries
+  it. Default: no tiled grain; parchment panels keep grain in their
+  border only and a plain stretched middle. Recorded in cycle 52
+  (11 November 2026). The gate passed Layered materials on batch 2d at
+  `961c7905` with three passes of three, so the condition has not
+  arisen; the default stands unless K1 answers otherwise by the due
+  time.
+
 - **S1-R1 to S1-R7** (from S1, 10 November 2026; due 11 November 07:58Z;
   not blocking): what the heist HUD wants from the kit, each with a
   default S1 already built in P1-S1-pilot-1. R1: update calls on the HUD
