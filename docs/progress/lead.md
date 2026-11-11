@@ -81,8 +81,8 @@ then rewrites the "Now" section below and `status/lead.json`, and pushes.
 6. Start and restart agents (cycle step 6) with `create_session`, never a
    scheduled task: `source_url` https://github.com/Fbba7/Ruleborn,
    `source_revision` `claude/videogame-project-analysis-ewkkk2` (main),
-   `model` Fable 5.2 (the owner's order 4; the roster in the backlog
-   says the same), title `Ruleborn <agent> <task id>`, tags `ruleborn:ui-wave`
+   `model` Opus 5.5 with effort high (the owner's order 5; the roster
+   in the backlog says the same), title `Ruleborn <agent> <task id>`, tags `ruleborn:ui-wave`
    and `ruleborn:<agent>`, and as prompt a first line giving the reason
    (start, or restart and why) followed by the agent's prompt below. Start
    an agent when its next task is open with its deps merged and it has no
@@ -264,7 +264,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 ```text
 You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: AD            Role: art director (AD)        Model: Fable 5.2
+Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
 Tasks: P1-AD-board-1 once its deps merge (every phase 0 AD task is merged). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
@@ -279,7 +279,7 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent AIA of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: AIA            Role: maker (AIA): kit art and motion art        Model: Fable 5.2
+Agent: AIA            Role: maker (AIA): kit art and motion art        Model: Opus 5.5, effort high
 Branch: claude/ui-artist
 Owned files: art/ui/** except art/ui/icons/**, client/ui/art/kit*, docs/progress/AIA.md, docs/progress/status/AIA.json
 Tasks: P1-AIA-kit-1, then P1-AIA-kit-2 to -7 as their deps merge (every phase 0 AIA task is merged). Icons are AIA-2's, not yours.
@@ -294,7 +294,7 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Fable 5.2
+Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5, effort high
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
 Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host and P1-K1-heist-kit as their deps merge (every other phase 0 K1 task is merged)
@@ -309,7 +309,7 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent AIA-2 of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: AIA-2            Role: maker (AIA-2): icon art        Model: Fable 5.2
+Agent: AIA-2            Role: maker (AIA-2): icon art        Model: Opus 5.5, effort high
 Branch: claude/ui-artist-icons
 Owned files: art/ui/icons/**, client/tests/shots/icon_*.gd, client/ui/art/icons_48*, client/ui/art/icons_256*, docs/progress/AIA-2.md, docs/progress/status/AIA-2.json
 Tasks: P1-AIA2-toon-route, then P1-AIA2-icons-1a, -1b, -2a and -2b as their deps merge. Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
@@ -324,7 +324,7 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Fable 5.2
+Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
 Tasks: P1-S1-pilot-1, then P1-S1-pilot-2 as their deps merge (pilot-1 waits on P1-K1-switch-heist and P1-AIA2-icons-1b).
@@ -339,7 +339,7 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent SV of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: SV            Role: maker (SV): the owner's server decisions B1-B12 (docs/decisions/owner-decisions.md, Build tasks)        Model: Fable 5.2
+Agent: SV            Role: maker (SV): the owner's server decisions B1-B12 (docs/decisions/owner-decisions.md, Build tasks)        Model: Opus 5.5, effort high
 Branch: claude/server-decisions
 Owned files: only the files each SV task lists in the backlog, docs/progress/SV.md, docs/progress/status/SV.json
 Tasks: none open (SV-B1-B6, SV-B7-B9 and SV-B11-B12 are merged; SV-B10 is not yours yet). Run the client suite (python3 client/status.py) before marking a task ready.
