@@ -1019,13 +1019,19 @@
       "gate_items": [],
       "attempts": 0,
       "tier": 1,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-11T01:16:09Z",
+        "seen_at": "2026-11-11T05:28:00Z",
+        "lease_until": "2026-11-11T08:28:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-11T01:30:00Z",
+      "updated_at": "2026-11-11T05:28:00Z",
       "updated_by": "lead"
     },
     {
@@ -1432,11 +1438,11 @@
       "attempts": 0,
       "tier": 1,
       "critical": false,
-      "state": "open",
+      "state": "ready",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "961c79051e3bc0f9d279b227bfec5f7ab645e33d",
       "merged_sha": null,
       "exceptions": [
         "art/ui/kit_build/**",
@@ -1445,7 +1451,7 @@
         "client/ui/art/kit_3*.webp",
         "art/ui/kit_next/**"
       ],
-      "updated_at": "2026-11-10T07:50:00Z",
+      "updated_at": "2026-11-11T05:28:00Z",
       "updated_by": "lead"
     },
     {
@@ -1775,12 +1781,20 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S1",
+        "branch": "claude/ui-screens-heist",
+        "claimed_at": "2026-11-11T01:17:05Z",
+        "seen_at": "2026-11-11T05:28:00Z",
+        "lease_until": "2026-11-11T08:28:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "updated_at": "2026-11-11T05:28:00Z",
+      "updated_by": "lead"
     },
     {
       "id": "P1-AD-board-1",
