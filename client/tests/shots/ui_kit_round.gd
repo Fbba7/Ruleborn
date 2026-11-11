@@ -21,7 +21,7 @@ static func run(tree: SceneTree) -> Array:
 	tree.root.add_child(screen)
 	# The hosts the fault was seen on (catalogue pages 27, 44 and 45; the
 	# observatory's echo ribbon).
-	var resource := KitStatus.resource("gold", "61.0k", 0.6, Tokens.color("gold_top"))
+	var resource := KitStatus.resource("resources/starlight", "12,480", 0.62, Tokens.color("starlight"))
 	resource.custom_minimum_size.x = UI.px(120)
 	resource.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	screen.add_child(resource)
