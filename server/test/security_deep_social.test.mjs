@@ -9,7 +9,7 @@ import { test } from "node:test";
 import { clockTicks } from "../src/service.mjs";
 import { Social } from "../src/social.mjs";
 import { Workshop } from "../src/workshop.mjs";
-import { openPlan, server } from "./setup.mjs";
+import { openPlan, play, server, twoPlayers } from "./setup.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
 const HOUR = 60 * 60 * 1000;
@@ -121,4 +121,26 @@ test("SEC-42: a crew's invite is shown to its members only", async () => {
   const seen = await get(b, `/v1/crews/${started.id}`);
   assert.equal(seen.id, started.id);
   assert.equal("invite" in seen, false, "one outside the crew does not");
+});
+
+test("SEC-48: the friends' feed answers for more friends than SQLite has bound variables", () => {
+  const t = twoPlayers(true);
+  const watcher = t.service.session("gc:sec48").account;
+  t.service.friends.accept(t.raider.account, t.service.friends.invite(watcher).invite);
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+  // 16,400 more friends, written straight to the tables in one transaction.
+  const db = t.service.db;
+  const account = db.prepare("INSERT INTO accounts (id, platform_identity, created_at) VALUES (?, ?, ?)");
+  const friend = db.prepare("INSERT INTO friends (a, b, since) VALUES (?, ?, ?)");
+  db.exec("BEGIN");
+  for (let i = 0; i < 16_400; i++) {
+    const id = `sec48-${String(i).padStart(5, "0")}`;
+    account.run(id, `gc:${id}`, t.clock.now);
+    friend.run(...[watcher, id].sort(), t.clock.now);
+  }
+  db.exec("COMMIT");
+  assert.equal(t.service.friends.list(watcher).length, 16_401);
+  assert.deepEqual(t.service.friends.feed(watcher).map((e) => [e.raider, e.defender]),
+                   [[t.raider.account, t.defender.account]], "the same answer as with one friend");
 });
