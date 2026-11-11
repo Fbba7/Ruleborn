@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqcjmNkScYYnT5Er2i` (cycle 54, 11
-November 2026 from 20:39Z, started by the Opus 5.5 launcher). Cycle 53's
+Latest lead cycle session: `session_01SNkKxnNomdRK7U7hfS4cvz` (cycle 55, 11
+November 2026 from 21:38Z, started by the Opus 5.5 launcher). Cycle 54's
+was `session_01SNkKxqcjmNkScYYnT5Er2i` (from 20:39Z). Cycle 53's
 was `session_01SNkKxq9SSpFo8PxqxGC3p8` (from 19:51Z, the first cycle on
 Opus 5.5 at effort high, order 5; its first commit, `2fccd5b2`, names it
 with a mistyped ID in its trailer). Cycle 52's was `session_01SNkKxrATVfECHBXAWskbLg` (11 November
@@ -200,9 +201,10 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| AD | `session_01SNkKxqUaNgqwmejJAEzasn` (Opus 5.5, effort high) | P1-AD-board-1 (start: P1-S1-pilot-2 merged as d880807e) | `claude/ui-ad` | 2026-11-11 22:16Z |
 | K1 | `session_01SNkKxrLVEpoeqhNUMybpRi` (Opus 5.5, effort high) | P1-K1-heist-kit (start: P1-K1-disc-host merged as 4dde8d03) | `claude/ui-bake` | 2026-11-11 21:16Z |
 | K1 | `session_01SNkKxqMwm4w36af9FQvXVB` (Opus 5.5, effort high; idle, its task merged) | P1-K1-disc-host (restart: the Fable 5.2 session stood still and is not reused, order 5; merge prior_sha 905f9fca, finish guard, pre-check, handoff) | `claude/ui-bake` | 2026-11-11 19:54Z |
-| S1 | `session_01SNkKxou5iRnrCMLMUqmcRa` (Opus 5.5, effort high) | P1-S1-pilot-2 (restart: as K1; merge prior_sha 38a154ea and do the task) | `claude/ui-screens-heist` | 2026-11-11 19:54Z |
+| S1 | `session_01SNkKxou5iRnrCMLMUqmcRa` (Opus 5.5, effort high; idle, its task merged) | P1-S1-pilot-2 (restart: as K1; merge prior_sha 38a154ea and do the task) | `claude/ui-screens-heist` | 2026-11-11 19:54Z |
 | AIA | `session_01SNkKxqH1rhueBqbuneEFSq` (Fable 5.2, interrupted, not reused) | P1-AIA-kit-7 | `claude/ui-artist` | 2026-11-11 01:15Z |
 | K1 | `session_01SNkKxpc8H8L5VAJUYuNCba` (Fable 5.2, interrupted, not reused) | P1-K1-disc-host | `claude/ui-bake` | 2026-11-11 01:15Z |
 | S1 | `session_01SNkKxqxd6Shqp4e1AafGUY` (Fable 5.2, interrupted, not reused) | P1-S1-pilot-2 | `claude/ui-screens-heist` | 2026-11-11 01:15Z |
@@ -359,6 +361,40 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 55, 11 November 2026, from 21:38Z (session
+  `session_01SNkKxnNomdRK7U7hfS4cvz`, started by the Opus 5.5 launcher):
+  one merge, one gate run, one session started.
+  - K1's claim on P1-K1-heist-kit recorded from its status file (lease to
+    00:05Z). S1 marked P1-S1-pilot-2 ready at a4d87d18 at 21:43Z and asked
+    for the gate; its new stills under `docs/art/shots/heist-pilot/**`
+    were granted as an exception.
+  - **Gate for P1-S1-pilot-2** (advisory, shadow mode; 3 ui-judge samples
+    per item and quality, pictures shuffled; stills rendered on the
+    candidate 134a0ddf), verdict in `39465f4`: heist in high contrast,
+    Hierarchy pass and Colour roles and value pass; heist at 200% text,
+    Hierarchy pass and **Display type fail** (3 of 3: the flat '2:25'
+    timer has no ink outline, hard drop or gradient fill, and the crew
+    names and 'Laws here' have no clear outline at 200%). As for pilot-1
+    and kit-6, the fail is advisory and does not block the merge; AD's
+    board (P1-AD-board-1) reviews it.
+  - **Merged P1-S1-pilot-2** (ready a4d87d18) as `d880807e`: merge lock in
+    `26e6c9a`, candidate 134a0ddf, `owners.py diff` clean, claims
+    disjoint, check_all PASS, guard.sh OK, no test loosened. Main had
+    gained only the verdict commit, so the merge was redone on `39465f4`
+    and only check_docs_consistency was run again. The lock was released
+    in this cycle's bookkeeping. The pages did not change, so they were not
+    republished.
+  - Started AD on P1-AD-board-1 at 22:16Z
+    (`session_01SNkKxqUaNgqwmejJAEzasn`, Opus 5.5, effort high accepted).
+    Two builders work (K1 and AD); S1 and AIA have no open task. S1's
+    open requests S1-R1 to S1-R3 (kit_hud update calls, loot layout, law
+    chip wrapping) are K1's in heist-kit, none blocking, defaults stand.
+    The backlog has 63 tasks, 49 merged. No owner-inbox entry.
+  - `run_checks.sh wait` can outlast a 10-minute foreground call (it was
+    cut at 590 s while check_all still ran); wait on its log in the
+    background instead.
+  - Next: merge K1's heist-kit and AD's board-1 when each is ready. At
+    most three builders; icon batches 3 and 4 stay deferred (D13 (c)).
 - Cycle 54, 11 November 2026, from 20:39Z (session
   `session_01SNkKxqcjmNkScYYnT5Er2i`, started by the Opus 5.5 launcher):
   one merge, one session started, three requests recorded.
