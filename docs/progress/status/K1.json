@@ -3,17 +3,17 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P1-K1-disc-host",
-  "task_state": "ready",
-  "claimed_at": "2026-11-11T19:58:00Z",
-  "lease_until": "2026-11-11T22:58:00Z",
-  "updated_at": "2026-11-11T20:45:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P1-K1-heist-kit",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-11T21:05:00Z",
+  "lease_until": "2026-11-12T00:05:00Z",
+  "updated_at": "2026-11-11T21:05:00Z",
+  "expected_next_update_by": "2026-11-11T21:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "62bbef35",
-    "next_step": "P1-K1-disc-host ready at 62bbef35 (pre-check PASS 2026-11-11T20:41:42Z, ui guard OK); waiting for the lead's merge. On a resync: merge main, import, guard.sh, the pre-check."
+    "next_step": "P1-K1-heist-kit claimed: main merged; reading S1-R1 to S1-R6, S1-R10 and the gate's notes on P1-S1-pilot-1."
   },
   "precheck": {
     "sha": "62bbef351ffc5fd6d24d414a569db4eaebd8308b",
@@ -22,7 +22,7 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": "62bbef351ffc5fd6d24d414a569db4eaebd8308b",
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M2",
