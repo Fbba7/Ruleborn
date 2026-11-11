@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-11T19:55:52Z",
   "lease_until": "2026-11-11T22:55:52Z",
-  "updated_at": "2026-11-11T20:14:06Z",
-  "expected_next_update_by": "2026-11-11T20:59:06Z",
+  "updated_at": "2026-11-11T21:12:10Z",
+  "expected_next_update_by": "2026-11-11T21:57:10Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "718ddcbe",
-    "next_step": "Client tests on the hint guard, entry card, gait menu and pill on the kit; then budgets, stills (before/after), part 2's notes, pre-check"
+    "last_green_sha": "a4d87d18",
+    "next_step": "Pre-check on a4d87d18 running; then record it, the gate request (heist in high contrast, heist at 200% text) and ready"
   },
   "precheck": null,
   "gate_request": null,
