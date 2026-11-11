@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-11T22:22:00Z",
   "lease_until": "2026-11-12T01:22:00Z",
-  "updated_at": "2026-11-11T22:22:00Z",
-  "expected_next_update_by": "2026-11-11T23:07:00Z",
+  "updated_at": "2026-11-11T22:33:00Z",
+  "expected_next_update_by": "2026-11-11T23:18:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Render board 1's stills on main's integrated head (d880807e), set them beside their golden key frames at phone size, check the eight owner-checked qualities, then the flow review"
+    "next_step": "Board 1 posted (does not stand: objections A-E). Next: flow review of the integrated build (home, heist, result), then requests to the lead, pre-check and handoff"
   },
   "precheck": null,
   "gate_request": null,

@@ -13,6 +13,7 @@ launcher.
 | [calibration.md](calibration.md) | The split into thirds, the anchors, the run plan, the catch rates per quality, the judge model chosen | P0-AD-calibrate |
 | `calibration/runs/` | Each calibration run's plan, one judge call per line, written by `calibrate.py plan` | P0-AD-calibrate |
 | [approvals/](approvals/O2.md) | AD's approvals in place of the owner (section 3.4 of `report.md`): `O2.md`, the style board and the kit contract | O2 |
+| [boards/](boards/board-1.md) | O4's family boards: each item beside its golden reference at phone size, the gate's verdicts and AD's check of the owner-checked qualities. `board-1.md` covers the kit, icon batches 1–2 and the heist pilot | P1-AD-board-1 |
 | `verdicts/` | The gate's verdicts, `<task_id>/<sha>.json`, and the exceptions queue | the lead |
 
 The scripts the gate uses (contact sheets, frame strips, crops, the image
