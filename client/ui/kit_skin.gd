@@ -94,6 +94,9 @@ const MARGINS := {"popup": [8.0, 4.0, 8.0, 17.0]}
 ## normal state whatever the host's (as the selected rim is).
 const RINGS := ["frame_oak", "frame_silver", "frame_gold", "frame_prismatic"]
 const RING_REACH_POINTS := 4.0
+## How far from square a host may be and still draw a sprite (a piece with
+## no 9-slice), as a share of its shorter side (`fits`).
+const ROUND_SLACK := 0.15
 ## The materials whose words do not hold on their skin's box: a light
 ## material (dark words) whose skin's box is dark, or a dark one whose box is
 ## light. Each draws only a shape baked for it (`<skin>__<material>__<state>`)
@@ -242,6 +245,18 @@ static func piece(material_name: String, state := "normal", ground := "", shape_
 		missing.append(lost)
 		push_warning("kit: no piece %s in %s; drawn by the code-drawn box" % [lost, MANIFEST])
 	return {}
+
+
+## Whether piece `p` can be the face of a host `size` pixels large. A
+## 9-slice stretches to any host. A sprite (no `slice`: the disc, the gold
+## round) is drawn whole, as wide as its host, so it fits only a host about
+## as wide as it is tall (`ROUND_SLACK`). On any other (a bar's track, a
+## pill, an oval button) it would run past the host's foot and over what
+## lies below, and the code-drawn box draws the material instead.
+static func fits(p: Dictionary, size: Vector2) -> bool:
+	if p.is_empty() or p.get("slice") is Dictionary:
+		return true
+	return absf(size.x - size.y) <= ROUND_SLACK * minf(size.x, size.y)
 
 
 ## The untinted layer over `material_name`'s tinted piece in `state`
