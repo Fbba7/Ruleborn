@@ -110,15 +110,19 @@ every other session is created with `create_session`.
 
 | Scheduled task | ID | Fires into | Schedule (UTC) |
 |---|---|---|---|
-| The launcher: one fresh lead cycle session an hour on Fable 5.2, unless the last is still working (created 9 Nov at 21:32Z, after the restart was on main) | `trig_01ChLd51gPMwzsKrXifYfkYj` | the launcher, `session_01SNkKxoc1ntTt7RqPTLViwy` (Fable 5.2) | hourly at :38 |
-| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Fable 5.2 and alerts (created 9 Nov at 21:33Z, after the restart was on main) | `trig_016aHfeAQkYXB6Z5X361irkE` | the watchdog, `session_01SNkKxpLf6R26Jp1H6iXTPv` (Fable 5.2) | every 2 hours at :08 |
+| The launcher: one fresh lead cycle session an hour on Fable 5.2, unless the last is still working (created 11 Nov at 01:10Z, after the restart was on main) | `trig_01U7kEeot7dmuJuNZVQJ7Bhm` | the launcher, `session_01SNkKxoSssjoHhFMVu5fLBN` (Fable 5.2) | hourly at :38 |
+| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Fable 5.2 and alerts (created 11 Nov at 01:11Z, after the restart was on main) | `trig_0195QvFjjm2oUgeCeyhU4bp4` | the watchdog, `session_01SNkKxrFNAJUoT99Tauv1rD` (Fable 5.2) | every 2 hours at :08 |
 
-**The pair in this table is disabled since 10 November 2026** (the
-launcher at 08:30Z, the watchdog at 08:34Z), on the owner's order to
-deploy and stop. It stays disabled and is never re-enabled. **The restart
-of 11 November 2026 creates a new pair**, after the restart commit is on
-main; the overseer records its IDs in this table in its next commit.
-Until then, do not take the IDs above for the working pair.
+**The pair in this table is the working pair**, created on 11 November
+2026 after the restart commit (`40c92625`) was on main. The launcher's
+first run, fired by hand at 01:11Z, started cycle 51's session.
+
+The pair of 9 November is retired: launcher
+`trig_01ChLd51gPMwzsKrXifYfkYj` (into `session_01SNkKxoc1ntTt7RqPTLViwy`)
+and watchdog `trig_016aHfeAQkYXB6Z5X361irkE` (into
+`session_01SNkKxpLf6R26Jp1H6iXTPv`), disabled on 10 November 2026 (the
+launcher at 08:30Z, the watchdog at 08:34Z) on the owner's order to
+deploy and stop. It stays disabled and is never re-enabled.
 
 A scheduled task that fires into a session runs on that session's model,
 and a session keeps the CLAUDE.md it was created with, so a restart
@@ -328,7 +332,9 @@ Your session was created with the repository checked out at main; work in that c
   nothing was merged between cycle 50 (10 November, 10:33Z) and this
   entry; main moved only by the overseer's two write-ups (`312b1a12`,
   `1c6aa12a`). `stop_at` is still 14 November 21:00Z. A new launcher and
-  a new watchdog are created after this commit is on main (table above).
+  a new watchdog were created after this entry's commit (`40c92625`) was
+  on main; their IDs are in the table above. The security fixes named
+  below landed at `ca96667f` (01:13Z).
   For cycle 51, the first cycle after the restart:
   - Every earlier session is stopped or idle and is not reused. Start
     fresh Fable 5.2 sessions: AIA on P1-AIA-kit-7 and S1 on
