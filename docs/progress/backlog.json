@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-11T20:31:00Z",
-  "updated_by": "lead (cycle 53)",
+  "updated_at": "2026-11-11T20:42:00Z",
+  "updated_by": "lead (cycle 54)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -1019,18 +1019,28 @@
       "gate_items": [],
       "attempts": 0,
       "tier": 1,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-11T19:58:00Z",
+        "seen_at": "2026-11-11T20:42:00Z",
+        "lease_until": "2026-11-11T22:58:00Z"
+      },
       "prior_branch": "claude/ui-bake",
       "prior_sha": "905f9fca",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-11T05:28:00Z",
-      "updated_by": "lead"
+      "updated_at": "2026-11-11T20:42:00Z",
+      "updated_by": "lead (cycle 54)",
+      "exceptions": [
+        "client/tests/shots/ui_kit_round.gd.uid",
+        "client/tests/shots/ui_observatory_echo.gd.uid"
+      ]
     },
     {
       "id": "P1-K1-heist-kit",
-      "title": "What the heist HUD asked of the kit (S1-R1 to S1-R6, requests.md and status/S1.json on claude/ui-screens-heist), added without changing what exists, so P1-S1-pilot-2 keeps building on today's kit: update calls on the HUD pieces (KitHud.set_clock, set_alarm, set_loot); a KitHud.loot that stays narrow in every language and draws in few calls; a wrapping law chip with the light disc behind a dark icon; KitHud.alarm at 200% text and a raised state from level 4; the key frame's larger, gold-rimmed clock; a kit motion for a piece flying to a control, a coin icon and a role for outlined words on the world. S1-R7 (heist_hud.gd's record in budgets.json down to 0 draw and 0 fill) waits for the S1 task that adopts these calls",
+      "title": "What the heist HUD asked of the kit (S1-R1 to S1-R6, requests.md and status/S1.json on claude/ui-screens-heist), added without changing what exists, so P1-S1-pilot-2 keeps building on today's kit: update calls on the HUD pieces (KitHud.set_clock, set_alarm, set_loot); a KitHud.loot that stays narrow in every language and draws in few calls; a wrapping law chip with the light disc behind a dark icon; KitHud.alarm at 200% text and a raised state from level 4; the key frame's larger, gold-rimmed clock; a kit motion for a piece flying to a control, a coin icon and a role for outlined words on the world. S1-R10 (fx_portrait.gd's record in budgets.json down to 19 draw, as check_screens.py counts) is in this task too. S1-R7 (heist_hud.gd's record in budgets.json down to 0 draw and 0 fill) waits for the S1 task that adopts these calls",
       "files": [
         "client/ui/kit_hud.gd",
         "client/ui/kit_cards.gd",
@@ -1049,6 +1059,7 @@
       ],
       "done_when": [
         "S1-R1 to S1-R6 answered one by one in the handoff: built, or declined with the reason",
+        "S1-R10: fx_portrait.gd's record in tools/ui_bake/budgets.json lowered to the draw count check_screens.py prints (19 when S1 asked), or declined with the reason",
         "each new call has a test in client/tests/ui_kit_tests.gd and a state on the kit's catalogue",
         "no existing call changes its signature or its look (the heist's stills on main do not move)",
         "the gate's notes on P1-S1-pilot-1 that are the kit's (verdicts/P1-S1-pilot-1/5470c4d3.json: the flat timer, the flat load and crew bars, the hairline hint pill) answered in the handoff",
@@ -1070,8 +1081,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-11T01:30:00Z",
-      "updated_by": "lead"
+      "updated_at": "2026-11-11T20:42:00Z",
+      "updated_by": "lead (cycle 54)"
     },
     {
       "id": "P1-AIA-kit-1",
@@ -1775,14 +1786,20 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "S1",
+        "branch": "claude/ui-screens-heist",
+        "claimed_at": "2026-11-11T19:55:52Z",
+        "seen_at": "2026-11-11T20:42:00Z",
+        "lease_until": "2026-11-11T22:55:52Z"
+      },
       "prior_branch": "claude/ui-screens-heist",
       "prior_sha": "38a154ea",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-11T05:28:00Z",
-      "updated_by": "lead"
+      "updated_at": "2026-11-11T20:42:00Z",
+      "updated_by": "lead (cycle 54)"
     },
     {
       "id": "P1-AD-board-1",
@@ -2498,7 +2515,7 @@
       "id": "IQ-import-check",
       "title": "Check every tracked .import and .uid file matches its source after a clean import; file mismatches as requests to their owners",
       "role": "any",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": null,
       "files": [
         "docs/progress/<your-agent>.md"
@@ -2512,7 +2529,7 @@
       "id": "IQ-kit-docs",
       "title": "Read kit-spec.md against client/ui/ and list every component the spec names and the code lacks, as a request to K1",
       "role": "any",
-      "model": "Fable 5.2",
+      "model": "Opus 5.5",
       "assigned_to": null,
       "files": [
         "docs/progress/<your-agent>.md"
