@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-11T21:16:00Z",
-  "updated_by": "lead (cycle 54)",
+  "updated_at": "2026-11-11T21:55:00Z",
+  "updated_by": "lead (cycle 55)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -1069,14 +1069,20 @@
       "gate_items": [],
       "attempts": 0,
       "tier": 1,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-11T21:05:00Z",
+        "seen_at": "2026-11-11T21:45:00Z",
+        "lease_until": "2026-11-12T00:05:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-11T20:42:00Z",
-      "updated_by": "lead (cycle 54)"
+      "updated_at": "2026-11-11T21:45:00Z",
+      "updated_by": "lead (cycle 55)"
     },
     {
       "id": "P1-AIA-kit-1",
@@ -1780,20 +1786,23 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-11T19:55:52Z",
-        "seen_at": "2026-11-11T20:42:00Z",
+        "seen_at": "2026-11-11T21:55:00Z",
         "lease_until": "2026-11-11T22:55:52Z"
       },
       "prior_branch": "claude/ui-screens-heist",
       "prior_sha": "38a154ea",
-      "ready_sha": null,
+      "ready_sha": "a4d87d187dfc29a1ec4d75e66a1c88c4972bd6e0",
       "merged_sha": null,
-      "updated_at": "2026-11-11T20:42:00Z",
-      "updated_by": "lead (cycle 54)"
+      "updated_at": "2026-11-11T21:55:00Z",
+      "updated_by": "lead (cycle 55)",
+      "exceptions": [
+        "docs/art/shots/heist-pilot/**"
+      ]
     },
     {
       "id": "P1-AD-board-1",

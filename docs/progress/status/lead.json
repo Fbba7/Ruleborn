@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-11T21:18:00Z",
+  "updated_at": "2026-11-11T21:56:00Z",
   "expected_next_update_by": "2026-11-11T22:33:00Z",
   "cycle": 54,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "134a0ddf250fda9dbfebd893e6222afb2d55d963",
+    "task_ids": [
+      "P1-S1-pilot-2"
+    ],
+    "started_at": "2026-11-11T21:56:00Z",
+    "expires_at": "2026-11-11T23:10:00Z"
+  },
   "last_merged": {
     "task_id": "P1-K1-disc-host",
     "sha": "4dde8d03"
