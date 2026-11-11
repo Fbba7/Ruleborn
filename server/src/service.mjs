@@ -671,7 +671,10 @@ export class Service {
       if (casts.some((law) => !law || !restored.has(law))) return refuse("cast_not_restored");
     }
 
-    // §24.11: re-simulated by the build it was played under, however old.
+    // §24.11: re-simulated by the build it was played under, however old;
+    // the lease fixed which that is (§24.12), so a replay may not choose
+    // another build that happens to be held (SEC-31).
+    if (header.rules !== lease.rules) return refuse("wrong_rules");
     const build = this.builds.get(header.rules);
     if (!build) return refuse("rules_not_held");
     // An island erased with its under-13 owner's account (accounts.mjs).

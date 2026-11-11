@@ -6,8 +6,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
+import { Build, Builds } from "../src/sim.mjs";
 import { Store } from "../src/store.mjs";
-import { openPlan, play, twoPlayers } from "./setup.mjs";
+import { WASM, openPlan, play, twoPlayers } from "./setup.mjs";
 
 const files = (dir) => readdirSync(dir, { recursive: true }).filter((f) => /[0-9a-f]{64}$/.test(f));
 
@@ -50,4 +51,27 @@ test("SEC-18: the deployed server puts the floor on the replays only, 512 MiB un
   assert.match(main, /store: new Store\(join\(data, "bundles"\)\),/, "published islands keep being written");
   assert.match(main, /deletions: new Journal\(new Store\(process\.env\.RULEBORN_DELETIONS \?\? join\(data, "deletions"\)\)\)/,
                "the deletions journal never refuses");
+});
+
+// SEC-31: the lease keeps the rules it was issued under, but the replay's
+// header chose the build that judged it: any other build held would do.
+test("SEC-31: a replay is judged under its lease's rules; one naming another held build is refused wrong_rules", () => {
+  const t = twoPlayers(true);
+  const old = t.service.builds.current;
+  // A second build: the same wasm under another version, as a rules upgrade
+  // leaves the old build held beside the new.
+  const newer = Build.load(WASM);
+  newer.rulesVersion = "f".repeat(64);
+  t.service.builds = new Builds([old, newer]);
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  assert.equal(t.service.db.prepare("SELECT rules FROM leases WHERE token = ?").get(lease.token).rules, newer.rulesVersion);
+  // Recorded by the old build, so its header names the old rules.
+  const replay = play(t, lease, { plan: openPlan() });
+  const out = t.service.submit(t.raider.account, lease.token, replay);
+  assert.deepEqual([out.validated, out.reason], [false, "wrong_rules"]);
+  // A lease issued under the old rules, before the upgrade, still plays.
+  t.service.builds = new Builds([old]);
+  const before = t.service.lease(t.raider.account, t.bundle);
+  t.service.builds = new Builds([old, newer]);
+  assert.equal(t.service.submit(t.raider.account, before.token, play(t, before, { plan: openPlan() })).validated, true);
 });

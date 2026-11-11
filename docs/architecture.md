@@ -62,7 +62,8 @@ same compiled code.
   the version is computed from the build's behaviour. The server keeps one
   WebAssembly build per rules version it holds (`Builds` keys them by
   `rb_rules_version`) and refuses a replay whose version it does not hold
-  (`rules_not_held`).
+  (`rules_not_held`), or one whose version is not its lease's
+  (`wrong_rules`).
 
 ## A heist, end to end
 
