@@ -1,0 +1,70 @@
+[
+  {
+    "task_id": "P1-S1-pilot-2",
+    "sha": "a4d87d18",
+    "item": "heist in high contrast",
+    "quality": "Hierarchy",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "In colour and grayscale the large gold Cast is the lightest, heaviest control and the eye lands on it first; Get out is smaller and darker, the HUD panels are mid-grey. Cast leads at least as clearly as Level up on the pass anchor.",
+    "advisory": true,
+    "at": "2026-11-11T22:13:00Z"
+  },
+  {
+    "task_id": "P1-S1-pilot-2",
+    "sha": "a4d87d18",
+    "item": "heist in high contrast",
+    "quality": "Colour roles and value",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Gold fill only on the main action (Cast), gold rim and name only on the chosen crew member; green only for health; school markers carry a shape as well as a colour; Get out is a neutral plum, not a misused red; every control stands off the dark ground in grayscale.",
+    "advisory": true,
+    "at": "2026-11-11T22:13:00Z"
+  },
+  {
+    "task_id": "P1-S1-pilot-2",
+    "sha": "a4d87d18",
+    "item": "heist at 200% text",
+    "quality": "Display type",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "The headline timer '2:25' is flat dark figures on a cream plate with no ink outline, hard drop or gradient fill: the fail anchor's treatment, not the pass anchor's inked, embossed figure. The crew names and 'Laws here' over the world show no clear outline at 200% either.",
+    "advisory": true,
+    "at": "2026-11-11T22:13:00Z"
+  },
+  {
+    "task_id": "P1-S1-pilot-2",
+    "sha": "a4d87d18",
+    "item": "heist at 200% text",
+    "quality": "Hierarchy",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Cast is the only light, saturated gold block and clearly outranks the same-size dark Get out; the larger Room/Left panel is dark and informational, the 2:25 timer about half Cast's size, so Cast leads at least as clearly as on the pass anchor.",
+    "advisory": true,
+    "at": "2026-11-11T22:13:00Z"
+  }
+]

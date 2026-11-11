@@ -1,0 +1,20 @@
+{
+  "atlas": {"height":2048,"high_contrast":"icons_256_hc.webp","normal":"icons_256.webp","width":1024},
+  "family": "icons_256",
+  "format": 1,
+  "pieces": {
+    "alerts__seasonreward__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":2,"y":2},
+    "currencies__pages__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":260,"y":2},
+    "currencies__seasonstars__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":518,"y":2},
+    "currencies__starglass__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":2,"y":260},
+    "heistoutcomes__clean__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":260,"y":260},
+    "heistoutcomes__worthyourtime__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":518,"y":260},
+    "resources__aether__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":2,"y":518},
+    "resources__essence__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":260,"y":518},
+    "resources__renown__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":518,"y":518},
+    "resources__starlight__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":2,"y":776},
+    "season__tierreward__normal": {"h":256,"slice":null,"tint":false,"w":256,"x":260,"y":776}
+  },
+  "px_per_point": null,
+  "sources_hash": "sha256:7d671df7f50ac7ad7bf6608d73295c79654d216bddef3599dcecb2ece991873e"
+}

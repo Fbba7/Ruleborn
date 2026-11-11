@@ -10,6 +10,64 @@ extends RefCounted
 ## draws from the atlas, and a piece the atlas lacks falls back to the
 ## code-drawn box (kit-spec.md sections 6.7 and 8.2).
 
+## The baked fixture kit (tests/fixtures/ui_kit, baked by tools/ui_bake from
+## its own sources): the gold button's skin, the tertiary's parchment face
+## and a tinted disc, normal and high contrast.
+const FIXTURE := "res://tests/fixtures/ui_kit/kit.json"
+## The catalogue sheet (kit-spec.md section 6.4).
+const Catalogue := preload("res://tests/shots/ui_kit_catalogue.gd")
+const Art := preload("res://tests/shots/ui_kit_catalogue_art.gd")
+const Rest := preload("res://tests/shots/ui_kit_rest.gd")
+const Round := preload("res://tests/shots/ui_kit_round.gd")
+## The components whose baked faces are skins, and those skins' faces: once a
+## skin has art, each of the component's baked states is a piece of it.
+## The bar's pieces are K46's (N RM), the component built from them: K25's
+## locked state is section 3's locked material, not a face of the bar. The
+## overlay skins (selected, locked's mark, the spinner) are the catalogue's
+## OVERLAYS, one normal piece each.
+const SKINS_OF := {
+	"K01": ["button_primary__box", "button_secondary__box", "button_tertiary__box",
+		"button_tertiary__parchment", "button_danger__box"],
+	"K02": ["button_primary__gold_round"],
+	"K05": ["toggle__track_on", "toggle__track_off", "toggle__knob"],
+	"K06": ["slider__track", "slider__fill", "slider__knob"],
+	"K07": ["segmented__seg_track", "segmented__seg_track_light", "segmented__seg", "segmented__seg_light",
+		"segmented_on__seg_on", "segmented_on__seg_on_light"],
+	"K08": ["chip__chip", "chip__chip_light", "chip_on__chip_on", "chip_on__chip_on_light"],
+	"K09": ["tab_bar__box", "tab__tab", "tab__tab_heist", "tab_active__box"],
+	"K12": ["panel_dark__box"],
+	"K13": ["panel_parchment__box"],
+	"K14": ["frame_oak__box", "frame_silver__box", "frame_gold__box", "frame_prismatic__box"],
+	"K15": ["well__box"],
+	"K16": ["sheet__box", "sheet__handle", "sheet__handle_parchment", "panel_parchment__sheet_parchment"],
+	"K17": ["popup__box"],
+	"K18": ["header__box", "header__name_plate"],
+	"K19": ["ribbon__box", "ribbon__frame", "ribbon__chapter"],
+	"K23": ["pill__box"],
+	"K24": ["num_gold"],
+	"K27": ["badge__box", "badge__dot"],
+	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn", "tag__tag", "tag__island_label",
+		"panel_dark__plate"],
+	"K29": ["success__box", "success__banner_success"],
+	"K31": ["num_timer", "num_timer_red"],
+	"K33": ["panel_glass__box"],
+	"K34": ["spinner__ring"],
+	"K38": ["disc__level_disc", "num_white"],
+	"K39": ["tile__reward_sky", "tile__reward_pink"],
+	"K42": ["tile__day_done", "tile__day_today", "tile__day_later", "tile__week_day", "tile__week_today"],
+	"K44": ["disc__box"],
+	"K46": ["bar_track__box", "bar_track__bar_track_light", "bar_track__tick", "bar_fill__box", "bar_fill__alarm"],
+}
+
+## The luminance between the kit's dark grounds and its light ones: the
+## lightest dark box (the danger button's red) is below it, the darkest
+## light one (the success green in high contrast) above.
+const GROUND_SPLIT := 0.27
+## The skins still off in kit_families.json: every other is switched on
+## (kit-spec.md section 9). The school disc joins them once its art is baked
+## into the kit's pages.
+const NOT_BAKED := ["disc_school"]
+
 var tree: SceneTree
 var check: Callable
 
@@ -31,7 +89,15 @@ func run() -> void:
 	await _pieces()
 	_skins()
 	await _switch()
+	await _parts()
+	await _rest()
+	await _round()
+	await _fixture()
+	await _words()
+	await _numerals()
+	_pages()
 	_skies()
+	await _catalogue()
 
 
 func _tokens() -> void:
@@ -283,18 +349,34 @@ func _skins() -> void:
 			bad.append("%s maps onto no skin" % m)
 	var shipped: Variant = JSON.parse_string(FileAccess.get_file_as_string(KitSkin.FAMILIES_FILE))
 	var switches: Dictionary = shipped if shipped is Dictionary else {}
-	if KitSkin.SKINS.size() != 35:
-		bad.append("%d skins, not 35" % KitSkin.SKINS.size())
+	if KitSkin.SKINS.size() != 35 + KitSkin.OVERLAYS.size():
+		bad.append("%d skins, not 35 and the overlays" % KitSkin.SKINS.size())
 	for k: String in KitSkin.SKINS:
 		if not switches.has(k):
 			bad.append("no switch for %s" % k)
+	for k: String in KitSkin.OVERLAYS:
+		if not KitSkin.SKINS.has(k) or not (KitSkin.SKINS[k] as Array).is_empty():
+			bad.append("the overlay %s is not a skin with no material" % k)
+	for k: String in KitSkin.PARTS:
+		if not KitSkin.SKINS.has(KitSkin.PARTS[k][0]):
+			bad.append("the part %s is of no skin" % k)
+	var on := []
 	for k: String in switches:
-		if not KitSkin.SKINS.has(k):
+		if not KitSkin.SKINS.has(k) and k not in KitSkin.BESIDE:
 			bad.append("a switch for no skin, %s" % k)
-		elif switches[k] != false:
-			bad.append("%s is switched on" % k)
-	check.call("every material maps onto one of the kit's 35 skins or the backdrop, and kit_families.json holds "
-			+ "one switch per skin, every one off (kit-spec.md sections 6.7, 8.2)", bad.is_empty(), "; ".join(bad))
+		elif switches[k] is not bool:
+			bad.append("%s's switch is not true or false" % k)
+		elif switches[k]:
+			on.append(k)
+	on.sort()
+	var passed := KitSkin.SKINS.keys().filter(func(k: String) -> bool: return k not in NOT_BAKED)
+	passed.sort()
+	if on != passed:
+		bad.append("switched on: %s, not %s" % [", ".join(on), ", ".join(passed)])
+	check.call("every material maps onto one of the kit's 35 skins or the backdrop, the two overlays are skins "
+			+ "of their own, and kit_families.json holds one switch per skin (and the numerals' beside them), on "
+			+ "for the skins whose art passed the gate and off for the rest (kit-spec.md sections 6.7, 8.2)",
+		bad.is_empty(), "; ".join(bad))
 
 
 func _switch() -> void:
@@ -303,7 +385,8 @@ func _switch() -> void:
 	var screen := Control.new()
 	screen.size = Vector2(1080, 2340)
 	tree.root.add_child(screen)
-	# Off, as shipped: the code-drawn box, and no face from the atlas.
+	# Off: the code-drawn box, and no face from the atlas.
+	KitSkin.switch("panel_dark", false)
 	var off := PanelContainer.new()
 	off.custom_minimum_size = Vector2(300, 200)
 	screen.add_child(off)
@@ -372,6 +455,409 @@ func _switch() -> void:
 			+ "is logged once (kit-spec.md section 6.7)", bad.is_empty(), "; ".join(bad))
 
 
+func _parts() -> void:
+	var bad := []
+	KitSkin.reset()
+	var pieces: Dictionary = (JSON.parse_string(FileAccess.get_file_as_string(KitSkin.MANIFEST)) as Dictionary)[
+		"pieces"]
+	# As shipped: each overlay and mark is its skin's piece, from the atlas.
+	for k: String in KitSkin.PARTS:
+		var key := "%s__%s__normal" % KitSkin.PARTS[k]
+		if KitSkin.part(k) != pieces.get(key, {"lost": key}):
+			bad.append("the part %s is not %s" % [k, key])
+		if KitSkin.mark(k) == null:
+			bad.append("no control draws the part %s" % k)
+	var lock := KitSkin.mark("lock", 12.0)
+	if lock != null and not is_equal_approx(lock.size.y, UI.px(12.0)):
+		bad.append("a mark is not as tall as asked")
+	if lock != null:
+		lock.free()
+	# A material draws its own shape, a use's named shape before it, and the
+	# skin's box when its own is unbaked.
+	for pair: Array in [["tag_warn", "", "tag__tag_warn__normal"], ["tag_violet", "", "tag__tag_violet__normal"],
+			["tag_success", "", "tag__box__normal"], ["level_disc", "", "disc__level_disc__normal"],
+			["bar", "alarm", "bar_fill__alarm__normal"], ["bar", "", "bar_fill__box__normal"]]:
+		if KitSkin.piece(pair[0], "normal", "", pair[1]) != pieces.get(pair[2], {"lost": pair[2]}):
+			bad.append("%s %s does not draw %s" % [pair[0], pair[1], pair[2]])
+	if not bool(KitSkin.piece("bar").get("tint", false)):
+		bad.append("the bar's fill is not tinted per use")
+	# The locked skin has its lock and, since kit batch 2b, its own face: the
+	# locked material draws that face, and nothing is logged for it.
+	if KitSkin.piece("locked") != pieces.get("locked__locked__normal", {"lost": "locked__locked__normal"}) \
+			or not KitSkin.missing.is_empty():
+		bad.append("the locked material does not draw its own face, unlogged: %s" % ", ".join(KitSkin.missing))
+	# A material whose words do not hold on its skin's box (a light material
+	# on a dark box, a dark one on a light box, in either atlas) keeps its
+	# code-drawn box, unlogged: the list is the atlas's, no more and no less.
+	var odd := []
+	for hc: bool in [false, true]:
+		Tokens.high_contrast = hc
+		for m: String in Tokens.materials():
+			var k := KitSkin.skin(m)
+			var box: Variant = pieces.get("%s__box__normal" % k)
+			if k in NOT_BAKED or not box is Dictionary or box["slice"] == null or bool(box["tint"]):
+				continue
+			# A rank's frame is a hollow ring over its code-drawn box, which
+			# stays the ground of its words (_rest checks it).
+			if k in KitSkin.RINGS:
+				continue
+			if pieces.has("%s__%s__normal" % [k, m]):
+				continue
+			var light := ColourCheck.luminance(_middle(box)) > GROUND_SPLIT
+			if light != (str(Tokens.material(m)["family"]) == "light") and m not in odd:
+				odd.append(m)
+	Tokens.high_contrast = false
+	var listed: Array = KitSkin.OWN_SHAPE_ONLY.duplicate()
+	odd.sort()
+	listed.sort()
+	if odd != listed:
+		bad.append("the materials off their box's ground are %s, KitSkin.OWN_SHAPE_ONLY is %s" % [odd, listed])
+	for m: String in KitSkin.OWN_SHAPE_ONLY:
+		if not pieces.has("%s__%s__normal" % [KitSkin.skin(m), m]) and not KitSkin.piece(m).is_empty():
+			bad.append("%s draws its skin's box" % m)
+	if not KitSkin.missing.is_empty():
+		bad.append("a material kept off its skin's box is logged: %s" % ", ".join(KitSkin.missing))
+	var screen := Control.new()
+	screen.size = Vector2(1080, 2340)
+	tree.root.add_child(screen)
+	var chosen := PanelContainer.new()
+	chosen.custom_minimum_size = Vector2(300, 200)
+	screen.add_child(chosen)
+	var chosen_box := KitSkin.panel(chosen, "card_selected")
+	var plain := PanelContainer.new()
+	plain.custom_minimum_size = Vector2(300, 200)
+	screen.add_child(plain)
+	var plain_box := KitSkin.panel(plain, "card")
+	for i: int in 2:
+		await tree.process_frame
+	if chosen_box.rim() != pieces.get("selected__rim__normal", {"lost": true}) or not plain_box.rim().is_empty():
+		bad.append("the selected rim is not drawn over the selected card alone")
+	# A box its use refills keeps its code-drawn box: the dark panel's
+	# untinted piece would lose the colour the use's words are set against.
+	if plain_box.piece().is_empty():
+		bad.append("a card is not drawn from the atlas")
+	plain_box.tint(Color("#FBF3E2"), Color("#F1E3C4"))
+	if not plain_box.piece().is_empty():
+		bad.append("a refilled card draws the dark panel's untinted piece")
+	# Switched off, a part is the caller's to draw in code again.
+	KitSkin.switch("selected", false)
+	KitSkin.switch("spinner", false)
+	if not chosen_box.rim().is_empty() or KitSkin.spinner() != null or not KitSkin.part("rim").is_empty():
+		bad.append("an overlay switched off still draws from the atlas")
+	# A school's disc: its tinted box under its untinted frame (AIA-R13).
+	var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
+	img.fill(Color.WHITE)
+	var page := ImageTexture.create_from_image(img)
+	KitSkin.use({"format": 1, "family": "kit", "px_per_point": 6, "pieces": {
+		"disc_school__box__normal": {"x": 0, "y": 0, "w": 16, "h": 16, "slice": null, "tint": true},
+		"disc_school__frame__normal": {"x": 16, "y": 0, "w": 16, "h": 16, "slice": null, "tint": false},
+	}}, page, page)
+	KitSkin.switch("disc_school", true)
+	if not bool(KitSkin.piece("portrait_motion").get("tint", false)):
+		bad.append("a school's disc is not its tinted box")
+	var over := KitSkin.frame("portrait_motion")
+	if over.is_empty() or bool(over.get("tint", true)) or int(over["x"]) != 16:
+		bad.append("a school's disc has no untinted frame over its box")
+	if not KitSkin.frame("card").is_empty():
+		bad.append("a skin switched off has a frame")
+	screen.queue_free()
+	KitSkin.reset()
+	await tree.process_frame
+	check.call("the overlays and marks (selected rim, spinner, lock, attention dot, bar tick) draw from the atlas "
+			+ "while their skin is on; a material draws its own shape, a use's named shape, else the skin's box; "
+			+ "the locked material draws its own face; a material whose words do not hold on its skin's box "
+			+ "keeps its code-drawn box; a school's disc is its tinted box under its untinted "
+			+ "frame (kit-spec.md sections 5, 6.7, 8.2; AIA-R13, AIA-R14)", bad.is_empty(), "; ".join(bad))
+
+
+func _rest() -> void:
+	var bad: Array = await Rest.run(tree)
+	check.call("the rest of the kit draws from the atlas while its skin is on and in code while it is off: the "
+			+ "popup's box with its own margin under a dialog, a rank's frame as a hollow ring over its "
+			+ "code-drawn box, the sheet's handles, the toggle's and the slider's pieces, a bar's alarm fill and "
+			+ "tick, the attention dot (kit-spec.md sections 5, 6.7, 8.2; AIA-R16, AIA-R18, K1-R14)",
+			bad.is_empty(), "; ".join(bad))
+
+
+func _round() -> void:
+	var bad: Array = await Round.run(tree)
+	check.call("no piece of the skin disc, nor the gold round, is drawn on a host that is not round: a sprite is "
+			+ "as wide as its host and keeps its shape, so a bar, a pill or an oval button keeps its "
+			+ "code-drawn box (kit-spec.md section 8.2)", bad.is_empty(), "; ".join(bad))
+
+
+## The colour at the middle of piece `p` in the page it is cut from.
+static func _middle(p: Dictionary) -> Color:
+	var tex := KitSkin.texture(p)
+	if tex == null:
+		return Color(0, 0, 0, 0)
+	var at := Vector2i(int(p["x"]) + int(p["w"]) / 2, int(p["y"]) + int(p["h"]) / 2)
+	return tex.get_image().get_pixelv(at)
+
+
+func _fixture() -> void:
+	var bad := []
+	KitSkin.reset()
+	if not KitSkin.use_files(FIXTURE):
+		check.call("the baked fixture kit loads", false, FIXTURE)
+		return
+	var pieces: Dictionary = (JSON.parse_string(FileAccess.get_file_as_string(FIXTURE)) as Dictionary)["pieces"]
+	for k: String in ["button_primary", "button_tertiary", "button_danger"]:
+		KitSkin.switch(k, true)
+	var screen := VBoxContainer.new()
+	screen.size = Vector2(1080, 2340)
+	tree.root.add_child(screen)
+	var play := Button.new()
+	play.text = "Play"
+	screen.add_child(play)
+	var play_box := KitSkin.button(play, "gold")
+	var wait := Button.new()
+	wait.text = "Wait"
+	wait.disabled = true
+	screen.add_child(wait)
+	var wait_box := KitSkin.button(wait, "gold")
+	# The tertiary on parchment takes its parchment face; on the dark card
+	# the fixture has no face for it, and the code-drawn box draws it.
+	var sheet := PanelContainer.new()
+	screen.add_child(sheet)
+	KitSkin.panel(sheet, "parchment")
+	var rows := VBoxContainer.new()
+	sheet.add_child(rows)
+	var later := Button.new()
+	later.text = "Later"
+	rows.add_child(later)
+	var later_box := KitSkin.button(later, "ghost")
+	var gone := Button.new()
+	gone.text = "Gone"
+	gone.disabled = true
+	rows.add_child(gone)
+	var gone_box := KitSkin.button(gone, "ghost")
+	var card := PanelContainer.new()
+	screen.add_child(card)
+	KitSkin.panel(card, "card")
+	var skip := Button.new()
+	skip.text = "Skip"
+	card.add_child(skip)
+	var skip_box := KitSkin.button(skip, "ghost")
+	var leave := Button.new()
+	leave.text = "Quit"
+	screen.add_child(leave)
+	var leave_box := KitSkin.button(leave, "red")
+	for i: int in 2:
+		await tree.process_frame
+	var p := play_box.piece()
+	if p != pieces["button_primary__box__normal"] or play_box.find_child("KitFace", true, false) == null:
+		bad.append("the gold button switched on does not take the fixture's normal face")
+	elif not _middle(p).is_equal_approx(Color("#E0B040")):
+		bad.append("the gold's face is %s in the normal atlas, not #E0B040" % _middle(p).to_html(false))
+	var drawn := false
+	for sb: Variant in play_box._faces.values():
+		drawn = drawn or (sb is StyleBoxTexture and (sb as StyleBoxTexture).texture == KitSkin.texture(p))
+	if not drawn:
+		bad.append("the gold's face is not drawn from the normal atlas")
+	if wait_box.piece() != pieces["button_primary__box__disabled"]:
+		bad.append("a disabled gold button does not take the disabled face")
+	if later_box.piece() != pieces["button_tertiary__parchment__normal"]:
+		bad.append("the tertiary on parchment does not take button_tertiary__parchment__normal")
+	if not gone_box.piece().is_empty() or "button_tertiary__parchment__disabled" not in KitSkin.missing:
+		bad.append("a missing parchment face is not drawn by the code-drawn box and logged")
+	if not skip_box.piece().is_empty() or "button_tertiary__ghost__normal" not in KitSkin.missing:
+		bad.append("the tertiary off parchment takes a face the fixture lacks, or is not logged")
+	if not leave_box.piece().is_empty() or "button_danger__red__normal" not in KitSkin.missing:
+		bad.append("a skin on whose pieces the atlas lacks is not drawn by the code-drawn box and logged")
+	var normal := KitSkin.texture(p)
+	Tokens.high_contrast = true
+	play_box.queue_redraw()
+	play_box._redraw()
+	await tree.process_frame
+	if KitSkin.texture(p) == normal or not _middle(p).is_equal_approx(Color("#000000")):
+		bad.append("high contrast does not take the fixture's _hc twin (%s)" % _middle(p).to_html(false))
+	drawn = false
+	for sb: Variant in play_box._faces.values():
+		drawn = drawn or (sb is StyleBoxTexture and (sb as StyleBoxTexture).texture == KitSkin.texture(p))
+	if not drawn:
+		bad.append("the gold's face is not drawn from the _hc atlas in high contrast")
+	Tokens.high_contrast = false
+	screen.queue_free()
+	KitSkin.reset()
+	await tree.process_frame
+	check.call("a skin switched on draws from the baked fixture's atlas, normal and high contrast; the tertiary on "
+			+ "parchment takes its parchment face (AIA-R9); a piece the atlas lacks falls back to the code-drawn "
+			+ "box and is logged (kit-spec.md sections 4.1, 6.7)", bad.is_empty(), "; ".join(bad))
+
+
+## Words stand in their own layer above the art (kit-spec.md section 6.5):
+## a label's, an action's and a field's words are `UI.WORDS_Z` up, their
+## code-drawn box back down in the art's; a full-rect layer added over a
+## screen (a veil, a menu, a sheet) stands `UI.OVERLAY_Z` above it, so the
+## screen's words never show through it, and a later sibling stands in the
+## layer of the one before it. A frame is sized from its words:
+## at 200% text a law card's and a portrait's frames widen rather than
+## shrinking or cutting their words.
+func _words() -> void:
+	var bad := []
+	UI.root_theme()
+	var screen := Control.new()
+	screen.size = Vector2(1080, 2340)
+	tree.root.add_child(screen)
+	var l := UI.label("Words", 18)
+	screen.add_child(l)
+	var go := UI.action("Go", func() -> void: pass)
+	screen.add_child(go)
+	var f := UI.field("Name")
+	screen.add_child(f)
+	for c: Control in [l, go, f]:
+		if c.z_index != UI.WORDS_Z:
+			bad.append("%s's words are at z %d, not %d" % [c.get_class(), c.z_index, UI.WORDS_Z])
+		var box := RbBox.of(c)
+		if box != null and box.z_index + c.z_index != 0:
+			bad.append("%s's box is at z %d, not back in the art's layer" % [c.get_class(), box.z_index + c.z_index])
+	var veil := ColorRect.new()
+	veil.set_anchors_preset(Control.PRESET_FULL_RECT)
+	screen.add_child(veil)
+	if veil.z_index != UI.OVERLAY_Z:
+		bad.append("a full-rect veil over the screen is at z %d, not %d" % [veil.z_index, UI.OVERLAY_Z])
+	if veil.z_index <= f.z_index:
+		bad.append("the veil is not above the screen's words")
+	var menu := Control.new()
+	menu.set_anchors_preset(Control.PRESET_FULL_RECT)
+	screen.add_child(menu)
+	if menu.z_index != 2 * UI.OVERLAY_Z:
+		bad.append("a layer over the veil is at z %d, not %d" % [menu.z_index, 2 * UI.OVERLAY_Z])
+	screen.move_child(menu, 0)
+	if menu.z_index != 0 or veil.z_index != UI.OVERLAY_Z:
+		bad.append("a layer moved behind the screen keeps z %d (the veil %d)" % [menu.z_index, veil.z_index])
+	var rows := VBoxContainer.new()
+	screen.add_child(rows)
+	# A page that is not full-screen, added after a full-screen backdrop (the
+	# result screen's rays, then its column), stands in the backdrop's layer.
+	if rows.z_index != veil.z_index:
+		bad.append("a page added after a full-screen layer is at z %d, under it (%d)" % [rows.z_index, veil.z_index])
+	var row := Control.new()
+	row.set_anchors_preset(Control.PRESET_FULL_RECT)
+	rows.add_child(Label.new())
+	rows.add_child(row)
+	if row.z_index != 0:
+		bad.append("a child a container lays out is lifted as a layer (z %d)" % row.z_index)
+	screen.queue_free()
+	var wide := {}
+	for scale: int in [100, 200]:
+		Settings.text_scale = scale
+		var card := KitCards.law_card("laws/bounce", "Thunderbringer", "motion", "common")
+		var face := KitCards.portrait(null, "Wanderwing", 3, "motion", Color.WHITE, "crewroles/carrier", func() -> void: pass)
+		wide[scale] = [card.custom_minimum_size.x, face.custom_minimum_size]
+		card.free()
+		face.free()
+	Settings.text_scale = 100
+	if wide[200][0] <= wide[100][0]:
+		bad.append("a law card is %.0f px wide at 200%% text, no wider than at 100%% (%.0f)" % [wide[200][0], wide[100][0]])
+	var at100: Vector2 = wide[100][1]
+	var at200: Vector2 = wide[200][1]
+	if at200.x <= at100.x or at200.y <= at100.y:
+		bad.append("a portrait is %s at 200%% text, not larger than at 100%% (%s)" % [at200, at100])
+	await tree.process_frame
+	check.call("words stand in their own layer above the art, a full-rect layer over a screen stands above its "
+			+ "words, and a frame widens with its words at 200% text (kit-spec.md section 6.5)", bad.is_empty(),
+			"; ".join(bad))
+
+
+## The baked numerals (kit-spec.md sections 3, 6.1): while their skin is off,
+## or a glyph's piece is missing, a number is live text in its role; with
+## every piece there it is drawn from the atlas, each glyph in its fixed
+## advance (so "1,111" and "8,888" are one width), and grouped as the
+## language shown groups it: "1,234" in English and "1.234" in Brazilian
+## Portuguese, from the same pieces.
+func _numerals() -> void:
+	var bad := []
+	KitSkin.reset()
+	var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
+	img.fill(Color.WHITE)
+	var tex := ImageTexture.create_from_image(img)
+	var pieces := {}
+	var glyphs := ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "comma", "period"]
+	for i: int in glyphs.size():
+		var narrow: bool = glyphs[i] in ["1", "comma", "period"]
+		pieces["num_gold_%s" % glyphs[i]] = {"x": 0, "y": 0, "w": (16 if narrow else 30) + 12, "h": 48,
+			"advance": 16 if narrow else 30, "slice": null, "tint": false}
+	KitSkin.use({"format": 1, "family": "kit", "px_per_point": 6, "pieces": pieces}, tex, tex)
+	var off := KitNumerals.number(1234)
+	if not (off is Label) or (off as Label).text != "1,234":
+		bad.append("with the numerals' skin off, 1234 is not the live text \"1,234\"")
+	off.free()
+	KitSkin.switch("numerals", true)
+	var row := KitNumerals.number(1234)
+	if row is Label:
+		bad.append("with every piece there, 1234 is not drawn from the atlas")
+	elif String(row.get_meta("numerals")) != "1,234" or String(row.get_meta("spoken")) != "1234":
+		bad.append("1234 draws \"%s\" and says \"%s\"" % [row.get_meta("numerals"), row.get_meta("spoken")])
+	var ones := KitNumerals.make("8,888")
+	var eights := KitNumerals.make("8,111")
+	var tens := KitNumerals.make("88")
+	if not (ones is Label or eights is Label):
+		var a: Array[float] = ones.advances()
+		var s: float = ones.glyph_scale()
+		if not is_equal_approx(a[0], 30.0 * s) or not is_equal_approx(a[1], 16.0 * s):
+			bad.append("a glyph's cell is not its fixed advance (%s)" % [a])
+		if not is_equal_approx(ones.get_combined_minimum_size().x, ceilf((30.0 * 4 + 16.0) * s)):
+			bad.append("8,888's width is not the sum of its advances")
+		if is_equal_approx(eights.get_combined_minimum_size().x, ones.get_combined_minimum_size().x):
+			bad.append("narrow glyphs take the wide ones' cells")
+		if not is_equal_approx(tens.get_combined_minimum_size().y, ones.get_combined_minimum_size().y):
+			bad.append("two numbers in one role are not one height")
+	for n: Control in [row, ones, eights, tens]:
+		n.free()
+	var missing := KitNumerals.make("12:30")
+	if not (missing is Label) or "num_gold_colon" not in KitSkin.missing:
+		bad.append("a number with a glyph the atlas lacks is not live text, or the piece is not logged")
+	missing.free()
+	Strings.set_locale("pt_BR")
+	var br := KitNumerals.number(1234)
+	if br is Label or String(br.get_meta("numerals")) != "1.234":
+		bad.append("in Brazilian Portuguese 1234 draws \"%s\", not \"1.234\"" % br.get_meta("numerals", ""))
+	br.free()
+	Strings.set_locale("en")
+	KitSkin.reset()
+	var shipped: Dictionary = (JSON.parse_string(FileAccess.get_file_as_string(KitSkin.MANIFEST)) as Dictionary)["pieces"]
+	for finish: String in KitNumerals.FINISHES:
+		for glyph: String in KitNumerals.GLYPHS.values():
+			if not shipped.has("%s_%s" % [finish, glyph]):
+				bad.append("the kit's atlas has no %s_%s" % [finish, glyph])
+	await tree.process_frame
+	check.call("the baked numerals draw each glyph in its fixed advance, group as the language shown groups "
+			+ "(1,234 and 1.234), and fall back to live text while their skin is off or a piece is missing "
+			+ "(kit-spec.md sections 3, 6.1)", bad.is_empty(), "; ".join(bad))
+
+
+func _pages() -> void:
+	var bad := []
+	KitSkin.reset()
+	var tex := func(c: Color) -> ImageTexture:
+		var img := Image.create(16, 16, false, Image.FORMAT_RGBA8)
+		img.fill(c)
+		return ImageTexture.create_from_image(img)
+	var one: ImageTexture = tex.call(Color.WHITE)
+	var two: ImageTexture = tex.call(Color.RED)
+	var two_hc: ImageTexture = tex.call(Color.BLACK)
+	var pieces := {
+		"badge__box__normal": {"x": 0, "y": 0, "w": 8, "h": 8, "slice": null, "tint": false, "page": 2},
+		"badge__box__pressed": {"x": 0, "y": 0, "w": 8, "h": 8, "slice": null, "tint": false, "page": 3},
+	}
+	KitSkin.use({"format": 1, "family": "kit", "px_per_point": 6, "pieces": pieces}, one, one, [[two, two_hc]])
+	KitSkin.switch("badge", true)
+	var p := KitSkin.piece("badge")
+	if p != pieces["badge__box__normal"] or KitSkin.texture(p) != two:
+		bad.append("a piece on page 2 is not cut from page 2")
+	Tokens.high_contrast = true
+	if KitSkin.texture(p) != two_hc:
+		bad.append("a piece on page 2 does not take page 2's _hc twin in high contrast")
+	Tokens.high_contrast = false
+	if not KitSkin.piece("badge", "pressed").is_empty() or "badge__badge__pressed" not in KitSkin.missing:
+		bad.append("a piece on a page the atlas lacks is not drawn by the code-drawn box and logged")
+	KitSkin.reset()
+	check.call("a piece names the atlas page it is cut from (kit-spec.md section 6.6, AIA-R12)", bad.is_empty(),
+			"; ".join(bad))
+
+
 func _skies() -> void:
 	var day := Tokens.sky("day")
 	var ok := day == [Tokens.color("sky_top"), Tokens.color("sky_bottom")] \
@@ -379,3 +865,84 @@ func _skies() -> void:
 		and Tokens.sky("night") == [Color("#1A1433"), Color("#3A2B6B")]
 	check.call("§21.2's day, dusk and night skies are tokens, top and bottom", ok,
 		"day %s, dusk %s, night %s" % [day, Tokens.sky("dusk"), Tokens.sky("night")])
+
+
+## Every (component, state) pair of kit-spec.md section 4 has a place on a
+## catalogue page, no part is taller than a page, and every baked state of a
+## skin with art is a piece inside both the normal and the high-contrast
+## atlas, the catalogue drawing none from the code-drawn box (section 6.4).
+func _catalogue() -> void:
+	var bad := []
+	var spec_file := ProjectSettings.globalize_path("res://") + "/../docs/art/ui-quality/kit-spec.md"
+	var pairs := Catalogue.inventory(FileAccess.get_file_as_string(spec_file))
+	if pairs.size() < 100:
+		bad.append("section 4 reads as %d pairs" % pairs.size())
+	var on := Art.art_on()
+	await Catalogue.lay_out(tree, func(_n: int, _screen: Control) -> void: pass)
+	for pair: String in pairs:
+		if not Catalogue.placed.has(pair):
+			bad.append("%s has no place" % pair)
+	for title: String in Catalogue.tall:
+		bad.append("%s is taller than a page" % title)
+	for lost: String in KitSkin.missing:
+		bad.append("the catalogue drew %s from the code-drawn box" % lost)
+	var kit: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Art.MANIFEST))
+	var pieces: Dictionary = kit.get("pieces", {})
+	var atlas: Dictionary = kit.get("atlas", {})
+	for look: String in ["normal", "high_contrast"]:
+		var img := Image.load_from_file(Art.MANIFEST.get_base_dir() + "/" + str(atlas.get(look, "")))
+		if img == null or img.get_size() != Vector2i(int(atlas.get("width", 0)), int(atlas.get("height", 0))):
+			bad.append("the %s atlas is not the manifest's size" % look)
+			continue
+		for key: String in pieces:
+			var p: Dictionary = pieces[key]
+			var r := Rect2i(int(p["x"]), int(p["y"]), int(p["w"]), int(p["h"]))
+			if not Rect2i(Vector2i.ZERO, img.get_size()).encloses(r) or r.size.x <= 0 or r.size.y <= 0:
+				bad.append("%s lies outside the %s atlas" % [key, look])
+	var mapped := []
+	for id: String in SKINS_OF:
+		for face: String in SKINS_OF[id]:
+			if face.begins_with("num_"):
+				_numerals_mapped(face, pieces, mapped, bad)
+				continue
+			var skin := face.get_slice("__", 0)
+			mapped.append(skin)
+			if skin not in on:
+				continue
+			for pair: String in pairs:
+				var state := pair.get_slice(":", 1)
+				if pair.begins_with(id + ":") and Art.FACES.has(state) \
+						and not pieces.has("%s__%s" % [face, Art.FACES[state]]):
+					bad.append("%s has no piece %s__%s" % [pair, face, Art.FACES[state]])
+	for state: String in Art.OVERLAYS:
+		var key: String = Art.OVERLAYS[state]
+		if pieces.has(key):
+			mapped.append(key.get_slice("__", 0))
+			if key not in Art.drawn:
+				bad.append("the catalogue drew no %s over state %s" % [key, state])
+	if pieces.has(Art.DOT) and Art.DOT not in Art.drawn:
+		bad.append("the catalogue drew no %s for K27's dot" % Art.DOT)
+	for skin: String in on:
+		if skin not in mapped:
+			bad.append("%s has art but no component in SKINS_OF" % skin)
+	KitSkin.reset()
+	check.call("every (component, state) pair of kit-spec.md section 4 has a place on the catalogue sheet, and "
+			+ "each baked state of a skin with art is a piece in both atlases (section 6.4)", bad.is_empty(),
+			"; ".join(bad.slice(0, 12)))
+
+
+## Numeral finish `finish` in SKINS_OF: each of its glyphs (`<finish>_<glyph>`,
+## section 6.1) the catalogue drew from the atlas is mapped; one it did not
+## draw is a failure, as is a finish with no glyph in the atlas.
+func _numerals_mapped(finish: String, pieces: Dictionary, mapped: Array, bad: Array) -> void:
+	var found := 0
+	for key: String in pieces:
+		if key.substr(0, key.rfind("_")) != finish:
+			continue
+		found += 1
+		if key in Art.drawn:
+			mapped.append(key)
+		else:
+			bad.append("the catalogue drew no %s" % key)
+	if found == 0:
+		bad.append("SKINS_OF names %s, which has no glyph in the atlas" % finish)

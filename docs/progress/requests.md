@@ -19,6 +19,251 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   is K1's, so the lead has put it on P0-K1-kitskin's `done_when`. Default
   until then: the board keeps its own list in `art/ui/board/build_tokens.mjs`.
 
+- **AIA-R9** (from AIA, 4 November 2026): `KitSkin.piece` looks up the
+  tertiary's `button_tertiary__parchment__<state>` on parchment grounds.
+  Folded into P1-K1-atlas-draw's `done_when` (cycle 36). Default until it
+  merges: screens put no tertiary button on parchment.
+- **AIA-R10** (from AIA): move `art/ui/palette.json`'s `kit` colours into
+  `client/ui/tokens.json`. Not in a K1 task yet (tokens.json is outside
+  P1-K1-atlas-draw's files); the default stands: they stay in
+  `build_kit.py`'s KIT table and palette.json's `kit` section, each with
+  its source.
+- **AIA-R11** (from AIA): the bake writes `art/ui/palette.json` from
+  tokens.json. Already in P1-K1-atlas-draw's title; until it merges,
+  `build_kit.py` keeps writing it, rerun after any tokens.json change.
+- **AIA-R12** (from AIA): the kit outgrows one 2048 atlas. Folded into
+  P1-K1-atlas-draw's `done_when`: the bake gains atlas pages (`kit.webp`,
+  `kit_2.webp`, ...) before AIA's batch 1b (P1-AIA-kit-2).
+- **AIA2-R1** (from AIA-2, blocking the toon route's merge): bake.js
+  refuses kind "scene", so guard.sh's rebake fails on the icon families.
+  For P1-AIA2-toon-route's merge the lead applies AIA-2's default (cycle
+  36): merged with `bake.js --check` and check_all green, the two icon
+  families rebaked by `node art/ui/icons/studio/bake_icons.js` and compared
+  file by file; `px_per_point` stays null for scene families. Wiring kind
+  "scene" into bake.js (by calling that script) is folded into
+  P1-K1-atlas-draw's `done_when`.
+- **AIA-R13** (from AIA, 4 November 2026): batch 1b fills the kit atlas;
+  once the bake has atlas pages, bake `art/ui/kit_next/disc_school/` into
+  the kit, and KitSkin draws disc_school as its tinted `box` under the
+  untinted `frame`. Folded into P1-K1-switch-heist's `done_when` (cycle
+  38), with `client/ui/kit_skin.gd` added to its files. Default until
+  then: disc_school stays in `kit_next/`, drawn in code; no piece shrunk.
+- **AIA-R14** (from AIA, 4 November 2026): batch 1b's overlay skins
+  (`selected`, `spinner`) and pieces KitSkin.SKINS lacks. Folded into
+  P1-K1-switch-heist's `done_when` (cycle 38). Default until then: the
+  pieces sit in the atlas unused and every batch 1b skin stays off.
+- **AIA-R15** (from AIA, 4 November 2026, cc lead; due 5 November 19:47Z):
+  batch 1c bakes the numerals as `num_<finish>_<glyph>` (gold, white,
+  timer, timer_red) on atlas page 2 in Manrope 800 tabular. (1) Make
+  kit-spec.md section 2.2's T3 row read Manrope 800 tabular, not Lilita
+  One. (2) KitSkin sets a number glyph by glyph: draw each piece at
+  pen - (w - advance)/2 and move the pen by `advance`; the client's number
+  formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5).
+  Default until then: the numerals stay Manrope 800 tabular, the pieces
+  sit in the atlas unused, and numbers draw as code-drawn text.
+
+- **AIA-R22** (from AIA to K1, 11 November 2026 01:50Z; due 13 November
+  01:50Z; not blocking): a nine-slice stretches one sample across its
+  middle, so `panel_dark__album` and the other parchment panels carry
+  paper grain only in their fixed border. If the gate still finds the
+  middle of a large parchment panel flat, KitSkin would lay a tiled grain
+  texture over the panel's centre cell (`client/ui/kit_skin.gd`, K1's
+  file) and AIA would draw a tileable grain piece in a task that carries
+  it. Default: no tiled grain; parchment panels keep grain in their
+  border only and a plain stretched middle. Recorded in cycle 52
+  (11 November 2026). The gate passed Layered materials on batch 2d at
+  `961c7905` with three passes of three, so the condition has not
+  arisen; the default stands unless K1 answers otherwise by the due
+  time.
+
+- **S1-R1 to S1-R7** (from S1, 10 November 2026; due 11 November 07:58Z;
+  not blocking): what the heist HUD wants from the kit, each with a
+  default S1 already built in P1-S1-pilot-1. R1: update calls on the HUD
+  pieces (`KitHud.set_clock`, `set_alarm`, `set_loot`); default: the HUD
+  builds the piece again when its state changes. R2: a `KitHud.loot`
+  that stays narrow in every language and draws in few calls; default:
+  the HUD wraps the caption, hides the aim tick without a load target
+  and lays the rows in two columns itself. R3: a wrapping law chip with
+  the light disc behind a dark icon (`kit_cards.gd`); default: the HUD
+  composes the chip. R4: `KitHud.alarm` at 200% text (count under the
+  word) and a raised state from level 4; default: the HUD does both.
+  R5: the key frame's larger, gold-rimmed clock; default: `KitHud.clock`
+  as it is. R6: a kit motion for a piece flying to a control, a coin
+  icon, and a role for outlined words on the world (`motion.gd`,
+  `ui.gd`); default: the HUD moves the pieces and sets the outline
+  itself. R7: lower `heist_hud.gd`'s record in
+  `tools/ui_bake/budgets.json` to 0 draw and 0 fill; default: the record
+  stays at 3 and 2. Recorded in cycle 50, the final cycle; no K1 session
+  runs, so the defaults stand. The full text is in `status/S1.json` on
+  `claude/ui-screens-heist`.
+
+- **S1-R9** (from S1, 11 November 2026; due 12 November 20:14Z; not
+  blocking): gait (feet) and pause icons in `client/ui/icons.gd`, for the
+  heist HUD. Default: the HUD keeps FxIcons' drawn feet and pause marks
+  until the icons exist. Recorded in cycle 54: the default stands for
+  P1-S1-pilot-2. Icon art is AIA-2's and icon batches 3 and 4 are
+  deferred (D13 (c)), so no task carries it yet.
+
+- **S1-R10** (from S1, 11 November 2026; due 12 November 20:14Z; not
+  blocking): lower `fx_portrait.gd`'s record in
+  `tools/ui_bake/budgets.json` to 19 draw (it records 20). Default: the
+  record stays at 20. Recorded in cycle 54 and folded into
+  P1-K1-heist-kit (its title and `done_when`; `tools/ui_bake/**` is in
+  its files), which K1 takes after P1-K1-disc-host merges.
+
+### AIA
+
+- **K1-R14, parts 1 and 2** (from K1, 10 November 2026; due 11 November
+  22:00Z; not blocking): (1) `disc_school` is not in the kit's atlas pages
+  (`art/ui/kit_next/disc_school` is not baked into
+  `client/ui/art/kit.json`), so its switch stays off; please bake it into
+  the kit. (2) Nine materials have words of the other family than their
+  skin's baked box, so they stay code-drawn until they have a shape of
+  their own name or their words are restyled: album, fact, plate,
+  bar_track_light, tag, island_label, pill_gold_edge, banner_success,
+  green_muted; `tag__tag_warn` is a dark shape while `tag_warn`'s token
+  words are dark. Default: `disc_school` and the nine materials stay
+  code-drawn, as today.
+
+### Lead
+
+- **S1-R8** (from S1, 11 November 2026; due 12 November 20:14Z; not
+  blocking): add `client/scripts/heist_hand.gd` to S1's heist files, so
+  the hand's Cast and Get out buttons can wear the kit. Default:
+  `heist_screen.gd` re-dresses Cast (gold `KitControls.big_action`) and
+  Get out (leather `big_action`) in place, and `heist_hand.gd` is not
+  touched. Recorded in cycle 54: the default stands for P1-S1-pilot-2
+  (`owners.py owner` gives the file to the lead; no task in flight
+  owns it). The lead files the file into S1's next heist task if S1
+  still needs it there.
+
+- **K1-R12** (from K1, 9 November 2026; due 10 November 12:00Z):
+  P1-K1-switch-heist needs `client/ui/rb_box.gd` (the face drawn from the
+  atlas, the tinted box under its frame, the selected rim, a piece's margin
+  and lip drawn outside the host) and `client/tests/ui_kit_tests.gd`
+  (test 10 asserts the switched-on set; a new test covers the overlays
+  and parts). **Answered** by the lead in cycle 47 (10 November 2026):
+  granted, both files are exceptions of P1-K1-switch-heist in the backlog.
+  The lead checks at the merge that no test is loosened.
+
+- **K1-R13** (from K1 to AIA-2, copy to the lead, 10 November 2026; due
+  10 November 12:00Z; blocking): the guard's rebake step fails on
+  `client/ui/art/icons_48_hc.webp`, on main as well as on K1's branch.
+  **Answered** by the lead in cycle 47: P1-AIA2-icons-2a at ac4809ed
+  carries the sheet rebaked; the request's default then applies:
+  P1-K1-switch-heist is taken as ready at its branch's head once main is
+  merged into it, `guard.sh` ends 'ui guard: OK' and the pre-check passes.
+
+- **AIA-R17** (from AIA, 9 November 2026; due 10 November 00:30Z):
+  batch 2b (P1-AIA-kit-5) bakes pieces for tab_bar, tab, tab_active,
+  segmented, segmented_on, chip, chip_on, tile, locked, toggle and slider,
+  and the catalogue coverage test fails until `SKINS_OF` in
+  `client/tests/ui_kit_tests.gd` (K1's file) maps them. **Answered** by
+  the lead in cycle 46 (9 November 2026): granted as the request's
+  default, as for the kit-4 resync. `client/tests/ui_kit_tests.gd` is an
+  exception of P1-AIA-kit-5 in the backlog, for the batch 2b faces in the
+  `SKINS_OF` constant only: no other line of the file, no test loosened,
+  and the handoff says so. K1's P1-K1-switch-heist does not list the
+  file, so the claims stay disjoint.
+
+- **AIA-R20** (from AIA, 10 November 2026; due 11 November 03:22Z; not
+  blocking): a fourth kit atlas page (`client/ui/art/kit_4.webp`,
+  `kit_4_hc.webp` and their import files) for the last 29 small pieces.
+  **Answered** by the lead in cycle 48 (10 November 2026) with the
+  request's default: the kit stays at three pages; `pill__pill_gold_edge`
+  and `success__green_muted` stay code-drawn and held out of the build
+  (`art/ui/kit_build/kit_2c.py`, `HELD`). A fourth page goes with the
+  task that bakes `disc_school` (AIA-R21), if that task needs it.
+
+- **AIA-R21** (from AIA, 10 November 2026; due 10 November 12:50Z;
+  blocking): baked, `disc_school` fails the catalogue's coverage test
+  (`disc_school has art but no component in SKINS_OF`), and `SKINS_OF` is
+  in `client/tests/ui_kit_tests.gd`, K1's file. **Answered** by the lead
+  in cycle 48 (10 November 2026) with the request's default:
+  P1-AIA-kit-6 is taken as ready at the handoff's commit without K1-R14
+  part 1. `disc_school` stays in `art/ui/kit_next/`, unbaked and
+  code-drawn (K1-R14's own default); `art/ui/kit_next/**` is an exception
+  of P1-AIA-kit-6 in the backlog, and its `done_when` line for part 1 now
+  says so. AIA: fill the handoff's commit, set `task_state` "ready" with
+  `ready_sha`, the pre-check and the `gate_request`, and push. Baking
+  `disc_school` moves to a later task that carries its `SKINS_OF` line
+  (and its locked pieces and the fourth page, if the component needs
+  them); the lead seeds it when a screen asks for the baked school disc.
+  P1-K1-switch-rest's AIA-R19 line no longer names `disc_school`.
+
+- **K1-R16** (from K1, cc AIA, 10 November 2026; due 12 November 22:00Z;
+  not blocking): `panel_dark__album` and `panel_dark__fact` are not in
+  `SKINS_OF`: their component K47 has pressed and locked states that
+  batch 2c does not bake, and adding them fails test 19. Either AIA bakes
+  those states or the lead rules they stay out. The lead takes the
+  default (cycle 50): they stay out of `SKINS_OF`; `ui_kit_rest.gd`
+  asserts that all seven shapes draw by their own name. Baking the two
+  states is for P1-AIA-kit-7 or a later task to take up.
+
+- **OV-R1** (from the overseer, 4 November 2026): the usage projection,
+  phase 0's last open exit criterion (report.md section 3.9 and the phase
+  table). With P0-AD-calibrate-2 merged, 4 of the 5 criteria are met and no
+  task carries this one. The lead reads `/usage`, works out the share of the
+  weekly bar one agent-hour on each model used, projects phases 1 to 3 plus
+  the 20% reserve, and commits the result; if it does not fit, D13's answer
+  (c) applies (three builders, icon batches 3 and 4 deferred). It costs
+  little usage and answers the question the lead is waiting on: how much
+  building the seven-day warning allows before it resets on
+  9 November 2026 at 17:00Z. Never use Fable 5.1 for it.
+  **Answered** by the lead in cycle 27 (4 November 2026, 04:40Z):
+  [`usage-projection.md`](usage-projection.md). `/usage` cannot be read
+  in an unattended session; from the seven-day bar's `allowed_warning`
+  tier and phase 0's use (one weekly bar for its 43 hours), phases 1 to 3
+  need about four more bars, so it does not fit and D13's answer (c)
+  applies. Phase 1 starts after the 9 November 17:00Z reset.
+
+## Done in cycle 50 (10 November 2026, by the lead)
+
+- **K1-R15** (from K1, due 10 November 20:00Z): granted, as its default
+  says. `client/ui/rb_box.gd`, `kit_panels.gd`, `kit_switch.gd`,
+  `rb_theme.gd` and `kit_hud.gd` merged with the candidate as
+  P1-K1-switch-rest's exceptions (in the backlog).
+- **AIA-R16**, **AIA-R18**, **AIA-R19** (from AIA) and **K1-R14, part 3**
+  (from K1): done by P1-K1-switch-rest, merged as `e072364a` with
+  P1-AIA-kit-6. KitSkin draws the pieces of batches 2a, 2b and 2c;
+  `panel_dark__album` and `panel_dark__fact` are the exception (K1-R16,
+  above).
+
+## Done in cycle 45 (9 November 2026, by the lead)
+
+- **K1-R11** (from K1, due 6 November 22:00Z, past): answered with its
+  default. No change to `client/ui/kit_families.json`: the numerals'
+  switch stays absent, which KitSkin reads as off, and every number stays
+  live text in its role. The switch is added when the numerals' art
+  passes the gate (a line for P1-K1-switch-heist or -rest, both of which
+  own the file).
+
+## Done in cycle 41 (4 November 2026, by the lead)
+
+- **AIA2-R2** (from AIA-2): answered with its default. Insight stays
+  dropped from `art/ui/icons/list.md` with no replacement (the design has
+  no Insight, section 11.7); batch 1b is done at six icons.
+
+## Done in cycle 38 (4 November 2026, by the lead)
+
+- **K1-R10** (from K1): applied. P1-K1-atlas-draw merged as `62188517`
+  with kit.json's `sources_hash` rebaked by bake.js; P1-AIA2-icons-1a
+  merged as `8ce107c9` with icons_48.json and icons_256.json rebaked the
+  same way, hash lines only (merge exceptions).
+- **AIA-R13** and **AIA-R14** (from AIA): filed in P1-K1-switch-heist's
+  `done_when` and files (`a5755db6`); they stay open above until it merges.
+
+## Done in cycle 37 (4 November 2026, by the lead)
+
+- **AIA-R12** stays open above; the lead's prompt for P1-AIA-kit-2 asks AIA
+  to raise a request with a default, not shrink pieces, if batch 1b does
+  not fit before K1's atlas pages land.
+
+## Done in cycle 36 (4 November 2026, by the lead)
+
+- **K1-R9** (from the overseer): filed in cycle 25 as P0-K1-kitspec-3;
+  K1 did it at `4b4a72d1` (ready at `9a6565d7`), merged in cycle 36.
+
 ## Answered in cycle 15 (31 October 2026, by the lead)
 
 - **K1-R8** (from K1, to AIA, copy lead): granted, as K1's default says.

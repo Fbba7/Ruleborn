@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="27" data-advance="16" data-hc="class">
+  <!-- Written by art/ui/kit_build/build_kit.py (kit_num.py); do not edit. -->
+  <defs><linearGradient id="f" gradientUnits="userSpaceOnUse" x1="0" y1="3.6633" x2="0" y2="19.8333"><stop offset="0" stop-color="#FCFBFF"/><stop offset="0.5" stop-color="#FCFBFF"/><stop offset="0.56" stop-color="#E2D9F7"/><stop offset="1" stop-color="#CFC4EE"/></linearGradient></defs>
+  <style>text { font-family: 'Manrope'; font-variation-settings: 'wght' 800; font-feature-settings: 'tnum' 1; font-size: 22px; stroke-width: 5.5; stroke-linejoin: round; paint-order: stroke; }
+  .d { fill: #1A0C14; stroke: #1A0C14; } .f { fill: url(#f); stroke: #1A0C14; } .s { fill: url(#f); stroke: none; }
+  .hc .d { fill: #000000; stroke: #000000; } .hc .f { fill: #FCFBFF; stroke: #000000; } .hc .s { fill: #FCFBFF; }</style>
+  <text class="d" x="9" y="21.6667" text-anchor="middle">4</text>
+  <text class="f" x="9" y="19.8333" text-anchor="middle">4</text>
+  <text class="s" x="9" y="19.8333" text-anchor="middle">4</text>
+</svg>

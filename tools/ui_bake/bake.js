@@ -2,10 +2,21 @@
 //
 //   node tools/ui_bake/bake.js <family>...      bake the families named
 //   node tools/ui_bake/bake.js --check [family...]   compare hashes, in seconds
+//   node tools/ui_bake/bake.js --palette [family...]   write <art>/palette.json
+//                                               (then bake the families named)
 //
 // Options: --art DIR (default art/ui), --out DIR (default client/ui/art),
-// --config FILE (default tools/ui_bake/families.json). The tests use them to
-// bake a fixture family into a scratch folder.
+// --config FILE (default tools/ui_bake/families.json), --tokens FILE
+// (default client/ui/tokens.json). The tests use them to bake a fixture
+// family into a scratch folder.
+//
+// A family of kind "scene" (the icons) is drawn by its own studio,
+// art/ui/icons/studio/bake_icons.js, which this calls; its manifest has
+// px_per_point null. A family whose pieces outgrow one 2048x2048 atlas is
+// split into pages: <family>.webp, <family>_2.webp, ..., each with its _hc
+// twin (kit-spec.md section 6.6). --palette writes art/ui/palette.json
+// from tokens.json (kit-spec.md section 6.2), keeping the file's `kit`
+// section, and --check compares it with tokens.json when it exists.
 //
 // A family's sources live in <art>/<dir>/; the bake draws each source's faces
 // in headless Chromium, once in the normal form and once in its high-contrast
@@ -38,15 +49,18 @@ function refuse(msg) {
 function parseArgs(argv) {
   const opts = {
     check: false,
+    palette: false,
     families: [],
     art: path.join(ROOT, 'art/ui'),
+    tokens: path.join(ROOT, 'client/ui/tokens.json'),
     out: path.join(ROOT, 'client/ui/art'),
     config: path.join(HERE, 'families.json'),
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--check') opts.check = true;
-    else if (a === '--art' || a === '--out' || a === '--config') {
+    else if (a === '--palette') opts.palette = true;
+    else if (a === '--art' || a === '--out' || a === '--config' || a === '--tokens') {
       if (i + 1 >= argv.length) refuse(`${a} needs a path`);
       opts[a.slice(2)] = path.resolve(argv[++i]);
     } else if (a.startsWith('-')) refuse(`unknown option ${a}`);
@@ -133,6 +147,71 @@ function manifestText(m) {
   return '{\n' + lines.join('\n') + '\n}\n';
 }
 
+// --- The art's palette (kit-spec.md section 6.2) ------------------------
+
+const PALETTE_WHAT = 'The art\'s palette, generated from client/ui/tokens.json by tools/ui_bake/bake.js ' +
+  '(kit-spec.md section 6.2); never edited by hand. `kit` holds the colours the kit\'s faces add, ' +
+  'which enter tokens.json through K1 with their skins.';
+
+// A token section's colours flat ({name: value}), sorted by name.
+function flat(section) {
+  const out = {};
+  for (const k of Object.keys(section || {}).sort()) {
+    const v = section[k];
+    if (v && typeof v === 'object' && 'value' in v) out[k] = v.value;
+  }
+  return out;
+}
+
+// The palette from tokens.json: the colours flat, normal and high contrast,
+// the gradients' stops resolved to hex, and `kit` as `kit` holds it now
+// (the colours the kit's faces add; they move into tokens.json with their
+// skins, request AIA-R10).
+function palette(tokens, kit) {
+  const color = flat(tokens.color);
+  const gradient = {};
+  for (const k of Object.keys(tokens.gradient || {}).sort()) {
+    const g = tokens.gradient[k];
+    if (k.startsWith('_') || !g || typeof g !== 'object' || !('value' in g)) continue;
+    gradient[k] = g.value.map(([o, c]) => [o, c in color ? color[c] : c]);
+  }
+  return { _what: PALETTE_WHAT, color, color_high_contrast: flat(tokens.color_high_contrast), gradient, kit: kit || {} };
+}
+
+function readJson(file) {
+  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : null;
+}
+
+function writePalette(opts) {
+  const file = path.join(opts.art, 'palette.json');
+  const old = readJson(file);
+  const p = palette(JSON.parse(fs.readFileSync(opts.tokens, 'utf8')), old && old.kit);
+  fs.mkdirSync(opts.art, { recursive: true });
+  fs.writeFileSync(file, JSON.stringify(p, null, 2) + '\n');
+  console.log(`wrote ${path.relative(ROOT, file) || file}`);
+}
+
+// --check: the palette, when there is one, holds what tokens.json says (its
+// words and its `kit` aside; the file may be written by another tool).
+function checkPalette(opts) {
+  const file = path.join(opts.art, 'palette.json');
+  let old;
+  try {
+    old = readJson(file);
+  } catch (e) {
+    return [`palette.json is not JSON: ${e.message}`];
+  }
+  if (!old) return null;
+  const want = palette(JSON.parse(fs.readFileSync(opts.tokens, 'utf8')), old.kit);
+  const problems = [];
+  for (const k of ['color', 'color_high_contrast', 'gradient']) {
+    if (JSON.stringify(sortKeys(old[k])) !== JSON.stringify(sortKeys(want[k]))) {
+      problems.push(`palette.json's ${k} is not tokens.json's: node tools/ui_bake/bake.js --palette`);
+    }
+  }
+  return problems;
+}
+
 // Width and height of a WebP file from its header (VP8L, VP8X or VP8).
 function webpSize(file) {
   const b = fs.readFileSync(file);
@@ -173,38 +252,77 @@ function checkFamily(cfg, family, opts) {
   if (!srcs.length) problems.push(`${family}.json exists but its sources are gone`);
   const want = sourcesHash(cfg, family, opts.art);
   if (m.sources_hash !== want) problems.push(`${family}.json is stale: sources hash ${want}, manifest ${m.sources_hash}: rebake`);
+  const fam = cfg.families[family];
+  const ppp = fam.kind === 'scene' ? null : fam.px_per_point;
+  if (m.px_per_point !== ppp) problems.push(`${family}.json: px_per_point ${m.px_per_point}, expected ${ppp}`);
   const atlas = m.atlas || {};
-  if (!pow2(atlas.width) || !pow2(atlas.height) || atlas.width > MAX_SIDE || atlas.height > MAX_SIDE) {
-    problems.push(`${family}.json: atlas ${atlas.width}x${atlas.height} is not powers of two up to ${MAX_SIDE}`);
+  const first = { normal: atlas.normal, high_contrast: atlas.high_contrast, width: atlas.width, height: atlas.height };
+  const pages = atlas.pages === undefined ? [first] : atlas.pages;
+  if (atlas.pages !== undefined) {
+    if (!Array.isArray(pages) || pages.length < 2) problems.push(`${family}.json: atlas.pages lists fewer than two pages`);
+    else if (JSON.stringify(sortKeys(pages[0])) !== JSON.stringify(sortKeys(first))) {
+      problems.push(`${family}.json: atlas.pages[0] is not the atlas's own page`);
+    }
   }
   let bytes = 0;
-  for (const [key, expect] of [['normal', family + '.webp'], ['high_contrast', family + '_hc.webp']]) {
-    if (atlas[key] !== expect) problems.push(`${family}.json: atlas.${key} is ${atlas[key]}, expected ${expect}`);
-    const f = path.join(opts.out, expect);
-    if (!fs.existsSync(f)) {
-      problems.push(`${expect} is missing`);
+  const pageList = Array.isArray(pages) ? pages : [first];
+  pageList.forEach((pg, i) => {
+    const names = pageFiles(family, i + 1);
+    if (!pow2(pg.width) || !pow2(pg.height) || pg.width > MAX_SIDE || pg.height > MAX_SIDE) {
+      problems.push(`${family}.json: page ${i + 1} is ${pg.width}x${pg.height}, not powers of two up to ${MAX_SIDE}`);
+    }
+    for (const key of ['normal', 'high_contrast']) {
+      const expect = names[key];
+      if (pg[key] !== expect) problems.push(`${family}.json: page ${i + 1}'s ${key} is ${pg[key]}, expected ${expect}`);
+      const f = path.join(opts.out, expect);
+      if (!fs.existsSync(f)) {
+        problems.push(`${expect} is missing`);
+        continue;
+      }
+      bytes += fs.statSync(f).size;
+      const size = webpSize(f);
+      if (!size) problems.push(`${expect} is not a WebP file`);
+      else if (size.width !== pg.width || size.height !== pg.height) {
+        problems.push(`${expect} is ${size.width}x${size.height}, the manifest says ${pg.width}x${pg.height}`);
+      }
+    }
+  });
+  const stray = pageFiles(family, pageList.length + 1).normal;
+  if (fs.existsSync(path.join(opts.out, stray))) problems.push(`${stray} is a page the manifest does not list: rebake`);
+  for (const [n, p] of Object.entries(m.pieces || {})) {
+    const page = p.page === undefined ? 1 : p.page;
+    const pg = pageList[page - 1];
+    if (!pg || (p.page !== undefined && page < 2)) {
+      problems.push(`${n} is on page ${p.page}, which the atlas does not have`);
       continue;
     }
-    bytes += fs.statSync(f).size;
-    const size = webpSize(f);
-    if (!size) problems.push(`${expect} is not a WebP file`);
-    else if (size.width !== atlas.width || size.height !== atlas.height) {
-      problems.push(`${expect} is ${size.width}x${size.height}, the manifest says ${atlas.width}x${atlas.height}`);
-    }
-  }
-  for (const [n, p] of Object.entries(m.pieces || {})) {
-    if (p.x < 0 || p.y < 0 || p.w <= 0 || p.h <= 0 || p.x + p.w > atlas.width || p.y + p.h > atlas.height) {
-      problems.push(`${n} lies outside the atlas`);
+    if (p.x < 0 || p.y < 0 || p.w <= 0 || p.h <= 0 || p.x + p.w > pg.width || p.y + p.h > pg.height) {
+      problems.push(`${n} lies outside its page`);
     }
     if (p.slice && (p.slice.l + p.slice.r > p.w || p.slice.t + p.slice.b > p.h)) problems.push(`${n}: 9-slice margins exceed the piece`);
   }
-  return { problems, bytes, pieces: Object.keys(m.pieces || {}).length, atlas };
+  return { problems, bytes, pieces: Object.keys(m.pieces || {}).length, atlas: first, pages: pageList.length };
+}
+
+// The files of a family's page `n` (from 1): the first is <family>.webp,
+// the others <family>_<n>.webp, each with its _hc twin.
+function pageFiles(family, n) {
+  const stem = n === 1 ? family : `${family}_${n}`;
+  return { normal: stem + '.webp', high_contrast: stem + '_hc.webp' };
 }
 
 function check(cfg, opts) {
   const families = opts.families.length ? opts.families : Object.keys(cfg.families).sort();
   let failed = 0;
   let total = 0;
+  if (!opts.families.length) {
+    const pal = checkPalette(opts);
+    if (pal === null) console.log('ok   palette.json: none written yet');
+    else if (pal.length) {
+      failed++;
+      for (const p of pal) console.log(`FAIL palette: ${p}`);
+    } else console.log("ok   palette.json: tokens.json's colours and gradients");
+  }
   for (const family of families) {
     const r = checkFamily(cfg, family, opts);
     total += r.bytes || 0;
@@ -212,7 +330,8 @@ function check(cfg, opts) {
       failed++;
       for (const p of r.problems) console.log(`FAIL ${family}: ${p}`);
     } else if (r.atlas) {
-      console.log(`ok   ${family}: ${r.pieces} pieces, ${r.atlas.width}x${r.atlas.height}, ${r.bytes} bytes for both atlases`);
+      const size = r.pages > 1 ? `${r.pages} pages` : `${r.atlas.width}x${r.atlas.height}`;
+      console.log(`ok   ${family}: ${r.pieces} pieces, ${size}, ${r.bytes} bytes for both atlases`);
     } else {
       console.log(`ok   ${family}: ${r.note}`);
     }
@@ -319,9 +438,73 @@ function layout(pieces, width) {
   refuse(`the pieces do not fit a ${MAX_SIDE}x${MAX_SIDE} atlas (report.md section 10.1): split the family`);
 }
 
+// The family's pages: one atlas when its pieces fit (layout's), else
+// shelves of MAX_SIDE wide pages, tallest first, a page ending when the
+// next shelf would pass MAX_SIDE; the last page's height is the next power
+// of two. A piece wider or taller than a page is still refused.
+function paginate(pieces, width) {
+  const big = pieces.find((p) => p.w + 2 * PAD > MAX_SIDE || p.h + 2 * PAD > MAX_SIDE);
+  if (big) refuse(`the pieces do not fit a ${MAX_SIDE}x${MAX_SIDE} atlas (report.md section 10.1): ${big.name} is larger than a page`);
+  try {
+    const one = layout(pieces, width);
+    for (const k of Object.keys(one.places)) one.places[k].page = 1;
+    return [{ width: one.width, height: one.height, places: one.places }];
+  } catch (e) {
+    if (!(e instanceof Refusal)) throw e;
+  }
+  const order = [...pieces].sort((a, b) => b.h - a.h || b.w - a.w || (a.name < b.name ? -1 : 1));
+  const pages = [];
+  let page = null;
+  let x = PAD;
+  let y = PAD;
+  let shelf = 0;
+  const close = () => {
+    let H = 1;
+    while (H < y + shelf + PAD) H *= 2;
+    page.height = H;
+  };
+  for (const p of order) {
+    if (page && x + p.w + PAD > MAX_SIDE) {
+      x = PAD;
+      y += shelf + PAD;
+      shelf = 0;
+    }
+    if (!page || y + p.h + PAD > MAX_SIDE) {
+      if (page) close();
+      page = { width: MAX_SIDE, height: MAX_SIDE, places: {} };
+      pages.push(page);
+      x = PAD;
+      y = PAD;
+      shelf = 0;
+    }
+    page.places[p.name] = { x, y, page: pages.length };
+    x += p.w + PAD;
+    shelf = Math.max(shelf, p.h);
+  }
+  close();
+  return pages;
+}
+
+// A scene family (the icons) is drawn by its studio, which writes the same
+// files and manifest as an SVG family, with px_per_point null.
+const SCENE_STUDIO = path.join(ROOT, 'art/ui/icons/studio/bake_icons.js');
+
+function bakeScene(cfg, family, opts) {
+  if (path.resolve(opts.art) !== path.join(ROOT, 'art/ui') || path.resolve(cfg.file) !== path.join(HERE, 'families.json')) {
+    refuse(`${family}: a scene family bakes from art/ui and tools/ui_bake/families.json only`);
+  }
+  if (!fs.existsSync(SCENE_STUDIO)) refuse(`${family}: kind "scene" is drawn by ${path.relative(ROOT, SCENE_STUDIO)}, which is missing`);
+  try {
+    execFileSync(process.execPath, [SCENE_STUDIO, family, '--out', opts.out], { stdio: 'inherit' });
+  } catch (e) {
+    refuse(`${family}: ${path.relative(ROOT, SCENE_STUDIO)} failed (exit ${e.status})`);
+  }
+}
+
 async function bakeFamily(browser, cfg, family, opts) {
   const fam = cfg.families[family];
   if (!fam) refuse(`no family ${family} in ${path.relative(ROOT, cfg.file)}`);
+  if (fam.kind === 'scene') return bakeScene(cfg, family, opts);
   if (fam.kind !== 'svg') refuse(`${family}: sources of kind "${fam.kind}" have no renderer yet`);
   const ppp = fam.px_per_point;
   const famDir = path.join(opts.art, fam.dir);
@@ -407,53 +590,76 @@ async function bakeFamily(browser, cfg, family, opts) {
     }
     await tab.close();
 
-    const lay = layout(pieces, fam.width || 1024);
+    const pages = paginate(pieces, fam.width || 1024);
+    const place = {};
+    for (const pg of pages) Object.assign(place, pg.places);
     const outFiles = {};
-    for (const [mode, file] of [['normal', family + '.webp'], ['hc', family + '_hc.webp']]) {
-      const job = {
-        out: path.join(work, file),
-        width: lay.width,
-        height: lay.height,
-        pieces: pieces.map((p) => [path.join(work, mode, p.name + '.png'), lay.places[p.name].x, lay.places[p.name].y, p.w, p.h]),
-      };
-      execFileSync('python3', [path.join(HERE, 'pack.py')], { input: JSON.stringify(job) });
-      outFiles[file] = job.out;
-    }
+    const atlasPages = pages.map((pg, i) => {
+      const files = pageFiles(family, i + 1);
+      for (const [mode, file] of [['normal', files.normal], ['hc', files.high_contrast]]) {
+        const job = {
+          out: path.join(work, file),
+          width: pg.width,
+          height: pg.height,
+          pieces: pieces
+            .filter((p) => place[p.name].page === i + 1)
+            .map((p) => [path.join(work, mode, p.name + '.png'), place[p.name].x, place[p.name].y, p.w, p.h]),
+        };
+        execFileSync('python3', [path.join(HERE, 'pack.py')], { input: JSON.stringify(job) });
+        outFiles[file] = job.out;
+      }
+      return { normal: files.normal, high_contrast: files.high_contrast, width: pg.width, height: pg.height };
+    });
+    const atlas = Object.assign({}, atlasPages[0]);
+    if (pages.length > 1) atlas.pages = atlasPages;
     const manifest = {
       format: 1,
       family,
       sources_hash: sourcesHash(cfg, family, opts.art),
-      atlas: { normal: family + '.webp', high_contrast: family + '_hc.webp', width: lay.width, height: lay.height },
+      atlas,
       px_per_point: ppp,
       pieces: {},
     };
     for (const p of pieces) {
-      const e = { x: lay.places[p.name].x, y: lay.places[p.name].y, w: p.w, h: p.h, slice: p.slice, tint: p.tint };
+      const e = { x: place[p.name].x, y: place[p.name].y, w: p.w, h: p.h, slice: p.slice, tint: p.tint };
+      if (place[p.name].page > 1) e.page = place[p.name].page;
       if (p.advance !== undefined) e.advance = p.advance;
       manifest.pieces[p.name] = e;
     }
     fs.mkdirSync(opts.out, { recursive: true });
+    // A page the last bake wrote and this one does not is removed with it.
+    for (let n = pages.length + 1; ; n++) {
+      const old = pageFiles(family, n);
+      if (!fs.existsSync(path.join(opts.out, old.normal)) && !fs.existsSync(path.join(opts.out, old.high_contrast))) break;
+      fs.rmSync(path.join(opts.out, old.normal), { force: true });
+      fs.rmSync(path.join(opts.out, old.high_contrast), { force: true });
+    }
     let bytes = 0;
     for (const [file, src] of Object.entries(outFiles)) {
       fs.copyFileSync(src, path.join(opts.out, file));
       bytes += fs.statSync(src).size;
     }
     fs.writeFileSync(path.join(opts.out, family + '.json'), manifestText(manifest));
-    console.log(`baked ${family}: ${pieces.length} pieces twice into ${lay.width}x${lay.height}, ${bytes} bytes for both atlases`);
+    const size = pages.length > 1 ? `${pages.length} pages` : `${pages[0].width}x${pages[0].height}`;
+    console.log(`baked ${family}: ${pieces.length} pieces twice into ${size}, ${bytes} bytes for both atlases`);
   } finally {
     fs.rmSync(work, { recursive: true, force: true });
   }
 }
 
 async function bake(cfg, opts) {
+  if (opts.palette) writePalette(opts);
+  if (opts.palette && !opts.families.length) return 0;
   if (!opts.families.length) refuse('name the families to bake: ' + Object.keys(cfg.families).sort().join(', '));
   for (const f of opts.families) if (!cfg.families[f]) refuse(`no family ${f} in ${path.relative(ROOT, cfg.file)}`);
-  const { chromium } = require('playwright');
-  const browser = await chromium.launch();
+  let browser = null;
   try {
-    for (const family of opts.families) await bakeFamily(browser, cfg, family, opts);
+    for (const family of opts.families) {
+      if (!browser && cfg.families[family].kind !== 'scene') browser = await require('playwright').chromium.launch();
+      await bakeFamily(browser, cfg, family, opts);
+    }
   } finally {
-    await browser.close();
+    if (browser) await browser.close();
   }
   return 0;
 }
@@ -477,4 +683,4 @@ if (require.main === module) {
   main(process.argv.slice(2)).then((code) => process.exit(code));
 }
 
-module.exports = { main, manifestText, sourcesHash, layout, webpSize, loadConfig, listFiles };
+module.exports = { main, manifestText, sourcesHash, layout, paginate, palette, webpSize, loadConfig, listFiles };

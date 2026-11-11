@@ -1,0 +1,214 @@
+{
+ "image": "tiles_normal.png",
+ "frame_pt": [
+  390,
+  844
+ ],
+ "text_scale": 1.0,
+ "controls": [
+  {
+   "name": "day 1 day_done",
+   "rect": [
+    22,
+    62,
+    44.06,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "day 2 day_done",
+   "rect": [
+    72,
+    62,
+    44.06,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "day 3 day_done",
+   "rect": [
+    122,
+    62,
+    44.06,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "day 4 day_today",
+   "rect": [
+    172,
+    62,
+    44.06,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "day 5 day_later",
+   "rect": [
+    222,
+    62,
+    44.06,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "day 6 day_later",
+   "rect": [
+    272,
+    62,
+    44.06,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "day 7 day_later",
+   "rect": [
+    322,
+    62,
+    44.06,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "reward_sky normal on dark card",
+   "rect": [
+    10,
+    222,
+    88.11,
+    104.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "reward_pink normal on dark card",
+   "rect": [
+    104,
+    222,
+    88.11,
+    104.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "reward_sky locked on dark card",
+   "rect": [
+    198,
+    222,
+    88.11,
+    104.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "reward_pink locked on dark card",
+   "rect": [
+    292,
+    222,
+    88.11,
+    104.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "locked normal on dark card",
+   "rect": [
+    16,
+    334,
+    107.97,
+    75.83
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "locked pressed on dark card",
+   "rect": [
+    136,
+    334,
+    107.97,
+    75.83
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "reward_sky locked on parchment",
+   "rect": [
+    198,
+    434,
+    88.11,
+    104.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "reward_pink locked on parchment",
+   "rect": [
+    292,
+    434,
+    88.11,
+    104.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "locked normal on parchment",
+   "rect": [
+    16,
+    546,
+    107.97,
+    75.83
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "locked pressed on parchment",
+   "rect": [
+    136,
+    546,
+    107.97,
+    75.83
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  }
+ ]
+}

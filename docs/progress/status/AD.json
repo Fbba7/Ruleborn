@@ -3,26 +3,21 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P0-AD-calibrate-2",
-  "task_state": "ready",
+  "task_state": "working",
   "claimed_at": "2026-11-03T11:15:00Z",
   "lease_until": "2026-11-04T04:10:00Z",
-  "updated_at": "2026-11-04T02:22:00Z",
-  "expected_next_update_by": null,
+  "updated_at": "2026-11-04T01:46:00Z",
+  "expected_next_update_by": "2026-11-04T02:30:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "8e4b808",
-    "next_step": "P0-AD-calibrate-2 ready at 8e4b808 (pre-check PASS 2026-11-04T02:20:20Z): judge Opus 5.5, rubric version 3, held-opus missed all eight qualities so all eight are owner-checked; proposed next: golden set version 2, then rubric version 4 and a fresh held-out run"
+    "last_green_sha": "3f3797c",
+    "next_step": "dev-opus-v3 and held-opus complete and scored (Opus 5.5, rubric version 3): held-out target missed on all eight qualities, so all eight become owner-checked; writing calibration.md results and AD.md, then pre-check"
   },
-  "precheck": {
-    "sha": "8e4b808712ce14e1a3a3b7175d53d258005ffb0e",
-    "exit": 0,
-    "finished_at": "2026-11-04T02:20:20Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "8e4b808712ce14e1a3a3b7175d53d258005ffb0e",
+  "ready_sha": null,
   "stop_at": "2026-11-06T21:00:00Z",
   "acks": [],
   "requests": [

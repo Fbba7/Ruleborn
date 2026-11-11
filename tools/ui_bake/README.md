@@ -11,6 +11,7 @@ node --test tools/ui_bake/test/bake.test.js # the bake's tests, on a fixture fam
 python3 tools/ui_bake/check_screens.py      # screens add no chrome of their own, in a second
 bash tools/ui_bake/guard.sh                 # the UI guards before a merge, about 12 minutes
 bash tools/ui_bake/guard.sh --self-test     # they refuse a planted extra draw call
+bash tools/ui_bake/catalogue.sh             # the catalogue sheet, eight variants (or: en n 100)
 ```
 
 `bake.js <family>` reads the family's sources in `art/ui/<dir>/` (the folders
@@ -130,9 +131,41 @@ The guard does not go into `check_all.sh`: by D9 (b) the lead runs it in the
 pre-check of every change that touches the client or the art, and on every
 candidate. `check_screens.py` and its `--self-test` do (K1-R1).
 
-## Not yet
+## Pages, scenes and the palette
 
-- The icon families (`icons_48`, `icons_256`) are three.js scenes
-  (`art/ui/icons/<name>.js`); `--check` hashes them, but `bake.js` refuses them
-  until their renderer is written, against AIA-2's scene format.
-- `art/ui/palette.json` from `client/ui/tokens.json` (kit-spec.md section 6.2).
+- A family whose pieces outgrow one 2048x2048 atlas is baked into pages,
+  shelf by shelf, tallest first: `<family>.webp` and `<family>_hc.webp` are
+  page 1, `<family>_2.webp` and `<family>_2_hc.webp` page 2, and so on. The
+  manifest lists them in `atlas.pages` and gives each piece past page 1 its
+  `page` (kit-spec.md section 6.6). A rebake that needs fewer pages removes
+  the extra ones; `--check` fails on a page the manifest does not list.
+- A family of kind `scene` (`icons_48`, `icons_256`) is baked by AIA-2's
+  `bake_icons.js`, which `bake.js` runs as its own process; its manifest's
+  `px_per_point` is `null`. `guard.sh`'s rebake covers it byte for byte.
+- `node tools/ui_bake/bake.js --palette` writes `art/ui/palette.json` from
+  `client/ui/tokens.json` (`--tokens FILE` for another), keeping the file's
+  `kit` section. `--check` compares it with the tokens.
+
+The Godot kit tests' fixture, `client/tests/fixtures/ui_kit/` (a
+`.gdignore` keeps Godot from importing it), is baked from its own sources:
+
+```sh
+d=client/tests/fixtures/ui_kit
+node tools/ui_bake/bake.js kit --config $d/families.json --art $d/art --out $d
+```
+
+The bake's tests fail when it is stale.
+
+## The catalogue sheet (`catalogue.sh`)
+
+`client/tests/shots/ui_kit_catalogue.gd` lays every component of
+kit-spec.md section 4 out in every state on pages of the phone's size, with
+every skin that has art switched on, and `catalogue.sh` renders it in eight
+variants: English and Brazilian Portuguese, normal and high contrast, 100%
+and 200% text, as `docs/art/shots/ui-bake/catalogue-<locale>-<n|hc>-<text>-NN.png`.
+Each cell's caption names its face and state; a disabled cell says why, a
+locked one what unlocks it. A page over 400 KB is quantized to a palette, and
+one that stays over fails the script. `ui_kit_tests.gd` holds the sheet to
+section 4: every (component, state) pair has a place, no part is taller than
+a page, and each baked state of a skin with art is a piece inside both
+atlases, none drawn from the code-drawn box.

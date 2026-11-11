@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="48" data-slice="18 20 18 24">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A9A"/><stop offset="1" stop-color="#C42040"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.251"/><stop offset="0.42" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.2784"/><stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0.1529"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.0706"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E86A7C"/><stop offset="1" stop-color="#A01834"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0.349"/><stop offset="0.35" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g6" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A9AA0"/><stop offset="1" stop-color="#30707A"/></linearGradient>
+    <pattern id="s7" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2.5" height="6" fill="#FFFFFF" fill-opacity="0.1608"/></pattern>
+    <linearGradient id="m8g" x1="0" y1="0" x2="38" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF" stop-opacity="1"/><stop offset="0.3158" stop-color="#FFFFFF" stop-opacity="1"/><stop offset="0.4474" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="0.5526" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="0.6842" stop-color="#FFFFFF" stop-opacity="1"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="1"/></linearGradient>
+    <mask id="m8" maskUnits="userSpaceOnUse" x="0" y="0" width="38" height="48"><rect width="38" height="48" fill="url(#m8g)"/></mask>
+    <linearGradient id="g9" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.251"/><stop offset="0.42" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g10" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.2392"/><stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0.1333"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.0588"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <rect x="1" y="5" width="36" height="42" rx="16" fill="#0A0408" stroke="#1A0C14" stroke-width="2"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="url(#g1)"/>
+    <rect x="3" y="3" width="32" height="38" rx="14" fill="none" stroke="#B8741E" stroke-width="2"/>
+    <rect x="3" y="3" width="32" height="38" rx="14" fill="none" stroke="url(#g2)" stroke-width="2"/>
+    <rect x="5" y="4" width="28" height="15" rx="8" fill="url(#g3)"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="none" stroke="#1A0C14" stroke-width="2"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <rect x="1" y="5" width="36" height="42" rx="16" fill="#000000" stroke="#000000" stroke-width="3"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="#8E1428"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="none" stroke="#000000" stroke-width="3"/>
+  </g>
+  <g data-state="pressed">
+    <rect x="1" y="5" width="36" height="42" rx="16" fill="#0A0408" stroke="#1A0C14" stroke-width="2"/>
+    <rect x="1" y="4" width="36" height="42" rx="16" fill="url(#g4)"/>
+    <rect x="3" y="6" width="32" height="38" rx="14" fill="none" stroke="#B8741E" stroke-width="2" stroke-opacity="0.702"/>
+    <rect x="3.5" y="6.5" width="31" height="37" rx="13.5" fill="none" stroke="url(#g5)" stroke-width="3"/>
+    <rect x="1" y="4" width="36" height="42" rx="16" fill="none" stroke="#1A0C14" stroke-width="2"/>
+  </g>
+  <g data-state="pressed" data-mode="hc">
+    <rect x="1" y="5" width="36" height="42" rx="16" fill="#000000" stroke="#000000" stroke-width="3"/>
+    <rect x="1" y="4" width="36" height="42" rx="16" fill="#8A1328"/>
+    <rect x="1" y="4" width="36" height="42" rx="16" fill="none" stroke="#000000" stroke-width="3"/>
+  </g>
+  <g data-state="disabled">
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="#8A5862"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="none" stroke="#2E2632" stroke-width="2"/>
+  </g>
+  <g data-state="disabled" data-mode="hc">
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="#8A8494"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="none" stroke="#000000" stroke-width="3"/>
+  </g>
+  <g data-state="locked">
+    <rect x="1" y="5" width="36" height="42" rx="16" fill="#0A0408" stroke="#1A0C14" stroke-width="2"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="url(#g6)"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="url(#s7)" mask="url(#m8)"/>
+    <rect x="2.75" y="2.75" width="32.5" height="38.5" rx="14.25" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.149"/>
+    <rect x="3" y="3" width="32" height="38" rx="14" fill="none" stroke="url(#g9)" stroke-width="2"/>
+    <rect x="5" y="4" width="28" height="15" rx="8" fill="url(#g10)"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="none" stroke="#1A0C14" stroke-width="2"/>
+  </g>
+  <g data-state="locked" data-mode="hc">
+    <rect x="1" y="5" width="36" height="42" rx="16" fill="#000000" stroke="#000000" stroke-width="3"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="#2E6E76"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="none" stroke="#000000" stroke-width="3"/>
+  </g>
+</svg>

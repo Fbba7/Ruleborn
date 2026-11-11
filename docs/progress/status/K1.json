@@ -4,28 +4,30 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P0-K1-tokens-2",
+  "task_id": "P1-K1-disc-host",
   "task_state": "working",
-  "claimed_at": "2026-10-31T17:05:00Z",
-  "lease_until": "2026-10-31T21:50:00Z",
-  "updated_at": "2026-10-31T18:50:00Z",
-  "expected_next_update_by": "2026-10-31T19:35:00Z",
+  "claimed_at": "2026-11-11T19:58:00Z",
+  "lease_until": "2026-11-11T22:58:00Z",
+  "updated_at": "2026-11-11T20:05:00Z",
+  "expected_next_update_by": "2026-11-11T20:50:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "5864d65d",
-    "next_step": "pre-check d9e34b69 (K1-R8 applied); on PASS mark ready"
+    "last_green_sha": "e012f9ff",
+    "next_step": "P1-K1-disc-host: main merged; building the client, then the failing run on main at 40c92625, the guard, the pre-check and the handoff."
   },
   "precheck": {
-    "sha": "04f08bcc6c647dda6765530939cafbda51665731",
-    "exit": 1,
-    "finished_at": "2026-10-31T18:24:53Z",
-    "summary": "== the UI wave's key frames: their words, contrast and colours, with their planted fails (AIA-R3) ==: FAIL contrast: \"Taxa de entrada de 120 devolvida\" (03-result_pt_BR.png): 5.26:1, Lc 68 on #545384 against the pixels behind its letters, at their worst; needs 4.5:1 and Lc 75 at 13 points"
+    "sha": "e012f9ffc3787abee696977cc1530b0292923c8b",
+    "exit": 0,
+    "finished_at": "2026-11-10T09:18:02Z",
+    "summary": "All checks passed."
   },
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-06T21:00:00Z",
+  "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
-    "M2"
+    "M2",
+    "M4",
+    "M5"
   ],
   "requests": [
     {
@@ -47,14 +49,14 @@
       "id": "K1-R4",
       "from": "K1",
       "to": "lead",
-      "ask": "P0-K1-contract-2 (AD-R5) leaves two of kit-spec.md section 2.1's values pending owner decisions, as O2.md allows. Please add two entries to the owner's decision brief (docs/decisions/brief.json, then python3 tools/build_brief.py --check), drafted in docs/progress/K1.md under 'Draft brief entries (K1-R4)': (1) success words on a dark surface: \u00a721.8's #3FBF7F measures Lc 54-55 on the dark card (43 on the backdrop's #2C3AA8) against the Lc 60 bold words under 36 points need, and ink on the green fill Lc 57.5; options (a) lighter success words on dark, #8FF0A8, (b) keep \u00a721.8: green words only at 36 points and over on the card, smaller ones as ink on the fill; recommend (a). (2) the menus' backdrop: the designs' sub-screens draw a radial (#2E1F5E, #140C30, #0A0620), \u00a721.2 says '#171046 to #2C3AA8'; options (a) \u00a721.2's linear values, (b) change \u00a721.2 to the designs' radial; recommend (a). If brief.json is not the lead's to edit, forward this to its owner.",
+      "ask": "P0-K1-contract-2 (AD-R5) leaves two of kit-spec.md section 2.1's values pending owner decisions, as O2.md allows. Please add two entries to the owner's decision brief (docs/decisions/brief.json, then python3 tools/build_brief.py --check), drafted in docs/progress/K1.md under 'Draft brief entries (K1-R4)': (1) success words on a dark surface: §21.8's #3FBF7F measures Lc 54-55 on the dark card (43 on the backdrop's #2C3AA8) against the Lc 60 bold words under 36 points need, and ink on the green fill Lc 57.5; options (a) lighter success words on dark, #8FF0A8, (b) keep §21.8: green words only at 36 points and over on the card, smaller ones as ink on the fill; recommend (a). (2) the menus' backdrop: the designs' sub-screens draw a radial (#2E1F5E, #140C30, #0A0620), §21.2 says '#171046 to #2C3AA8'; options (a) §21.2's linear values, (b) change §21.2 to the designs' radial; recommend (a). If brief.json is not the lead's to edit, forward this to its owner.",
       "files": [
         "docs/decisions/brief.json"
       ],
       "blocking": false,
       "created_at": "2026-10-31T02:15:00Z",
       "due": "2026-11-02T22:00:00Z",
-      "default": "No brief entry; kit-spec.md keeps both rows marked pending with O2.md's interim rulings (#3FBF7F at 36 points and over on the card, else ink on the green fill; \u00a721.2's linear backdrop), and P0-K1-kitskin writes tokens.json to those interim values",
+      "default": "No brief entry; kit-spec.md keeps both rows marked pending with O2.md's interim rulings (#3FBF7F at 36 points and over on the card, else ink on the green fill; §21.2's linear backdrop), and P0-K1-kitskin writes tokens.json to those interim values",
       "escalate_to": "lead"
     },
     {
@@ -126,6 +128,122 @@
       "due": "2026-11-01T12:00:00Z",
       "default": "granted as P0-K1-tokens-2's exception: K1 commits exactly the two-class change in K1.md's handoff (and any stills check_keyframes needs re-shot), re-runs the pre-check and marks ready",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R10",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P1-K1-atlas-draw edits tools/ui_bake/bake.js, which every family's sources_hash covers, so client/ui/art/icons_48.json and icons_256.json (AIA-2's) go stale. I rebaked both with 'node tools/ui_bake/bake.js icons_48 icons_256' (which now calls AIA-2's bake_icons.js): only their sources_hash line changes, the four .webp files are byte for byte the same. Please grant the two regenerated manifests in my candidate, as tokens.css was granted before. Also, for AIA and AIA-2: kit-spec.md section 6.6 gains two optional fields (atlas.pages and a piece's page, absent meaning page 1); format stays 1.",
+      "files": [
+        "client/ui/art/icons_48.json",
+        "client/ui/art/icons_256.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T14:55:00Z",
+      "due": "2026-11-05T15:00:00Z",
+      "default": "granted: the two manifests merge with the candidate, regenerated by the bake, nothing else in client/ui/art/ changed",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R11",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P1-K1-words draws the baked numerals (KitNumerals) only while a 'numerals' switch is on. client/ui/kit_families.json is not in the task's files: please add '\"numerals\": false' to it (or grant it as this task's exception, a one-line addition). ui_kit_tests test 10 accepts it as the one switch beside the 35 skins (KitSkin.BESIDE) while it is off. Absent, KitSkin reads it as off, so nothing changes until the numerals' art passes the gate and the switch is turned on.",
+      "files": [
+        "client/ui/kit_families.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-04T23:45:00Z",
+      "due": "2026-11-06T22:00:00Z",
+      "default": "No change to kit_families.json: the numerals' switch stays absent (off), every number stays live text in its role, and the switch is added when the numerals' art passes the gate",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R12",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P1-K1-switch-heist needs two files of mine outside its list. client/ui/rb_box.gd draws the face from the atlas, so AIA-R13 (the tinted box under its untinted frame) and AIA-R14 (the selected rim over a card; a use's named shape) are drawn there, and a piece's 1-point margin and lip are drawn outside the host so a skin switched on does not move the layout. client/tests/ui_kit_tests.gd test 10 asserted every switch off; it now asserts the switched-on set, and a new test covers the overlays and parts. Please grant both as the task's exceptions.",
+      "files": [
+        "client/ui/rb_box.gd",
+        "client/tests/ui_kit_tests.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-09T22:42:00Z",
+      "due": "2026-11-10T12:00:00Z",
+      "default": "granted: both files merge with the candidate as P1-K1-switch-heist's exceptions",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R13",
+      "from": "K1",
+      "to": "AIA-2",
+      "cc": [
+        "lead"
+      ],
+      "ask": "bash tools/ui_bake/guard.sh ends 'ui guard: FAIL (rebake)' on claude/ui-bake only because client/ui/art/icons_48_hc.webp is not what its sources bake to. 'node tools/ui_bake/bake.js icons_48 --out <scratch>' run twice in K1's container gives two identical bakes; icons_48.webp and icons_48.json match the committed files, icons_48_hc.webp does not. The sheet, art/ui/icons/** and bake.js are the same on main's head (2e53f49e), so main fails the step too (the brief's rule for a check that fails outside my files). Please commit the high-contrast sheet its sources bake to (P1-AIA2-icons-2a's resync names it), or say which container's bake is the reference if the finish still differs between machines. K1 was told not to touch client/ui/art/icons_*. Every other step of the guard passes on K1's branch: bake --check, check_screens, budget_shots on 15 shots (the heist at 122, 116 and 122 draw calls, cap 147).",
+      "files": [
+        "client/ui/art/icons_48_hc.webp"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-10T01:55:00Z",
+      "due": "2026-11-10T12:00:00Z",
+      "default": "The lead takes P1-K1-switch-heist as ready at the branch's head when P1-AIA2-icons-2a merges with the sheet rebaked: K1 (or the lead's merge queue) merges main, runs guard.sh to 'ui guard: OK' and the pre-check. Until then the task stays blocked and nothing of K1's changes.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R14",
+      "from": "K1",
+      "to": "AIA",
+      "cc": [
+        "lead"
+      ],
+      "ask": "Three asks from P1-K1-switch-heist, none blocking. (1) AIA-R13: disc_school is not in the kit's atlas pages (art/ui/kit_next/disc_school is not baked into client/ui/art/kit.json), so its switch stays off; KitSkin already draws a tinted box under its untinted frame in the same rect. Please bake it into the kit. (2) Nine materials have words of the other family than their skin's baked box (dark words on a dark box, or light on light), so they stay code-drawn until they have a shape of their own name or their words are restyled: album, fact, plate, bar_track_light, tag, island_label, pill_gold_edge, banner_success, green_muted (KitSkin.OWN_SHAPE_ONLY; the pill skin's only material is among them, so the pill switch draws nothing yet). tag__tag_warn is a dark shape while tag_warn's token words are dark. (3) For the lead: the gate's verdicts on P1-AIA-kit-1 to -4 are recorded, all advisory; kit-1 carries one fail ('Colour roles and value') and one unknown, kit-2 one unknown, kit-4 three fails. K1 switched on what kits 1 to 3 baked, as the task says. Please file a follow-up for the wiring outside this task's files: KitSkin.mark('lock') in kit_cards.gd, mark('dot') in kit_status.gd, the alarm fill and the tick in kit_bar.gd (P1-K1-switch-rest could carry it).",
+      "files": [
+        "art/ui/kit_next/disc_school",
+        "client/ui/art/kit.json",
+        "docs/progress/backlog.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T01:55:00Z",
+      "due": "2026-11-11T22:00:00Z",
+      "default": "disc_school and the nine materials stay code-drawn, as today; the wiring goes into P1-K1-switch-rest's files when the lead seeds it; the verdicts stand as recorded.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R15",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P1-K1-switch-rest needs five kit files outside its list, each a few lines. client/ui/rb_box.gd: a baked box's own margin (the popup's 8/4/8/12 points plus its 5-point lip, KitSkin.margins) and the rank frames' hollow ring drawn over the code-drawn box (AIA-R16). client/ui/kit_panels.gd: the sheet's grip is the baked sheet__handle or sheet__handle_parchment, and a dialog's card draws popup__box (AIA-R16). client/ui/kit_switch.gd: the toggle's track and knob (AIA-R18). client/ui/rb_theme.gd: the slider's track, fill and knob in the theme (AIA-R18). client/ui/kit_hud.gd: the loot bar's hand-built tick becomes KitBar.aim(), which draws the baked tick (K1-R14 part 3). Each falls back to today's code-drawn look when its skin is off. Please grant them as the task's exceptions.",
+      "files": [
+        "client/ui/rb_box.gd",
+        "client/ui/kit_panels.gd",
+        "client/ui/kit_switch.gd",
+        "client/ui/rb_theme.gd",
+        "client/ui/kit_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:50:00Z",
+      "due": "2026-11-10T20:00:00Z",
+      "default": "granted: the five files merge with the candidate as P1-K1-switch-rest's exceptions",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R16",
+      "from": "K1",
+      "to": "lead",
+      "cc": [
+        "AIA"
+      ],
+      "ask": "AIA-R19 asks for the seven shapes in ui_kit_tests.gd's SKINS_OF. Five are there (K28: tag__tag, tag__island_label, panel_dark__plate; K29: success__banner_success; K46: bar_track__bar_track_light). panel_dark__album and panel_dark__fact are not: their component is K47 (states N P S L in kit-spec.md section 4), and test 19 asks a piece for each baked state of a SKINS_OF face, but batch 2c bakes only their normal state (no panel_dark__album__pressed or __locked, no panel_dark__fact__pressed or __locked). Adding them would fail test 19 and I loosen no test. Both are asserted another way: ui_kit_rest.gd checks that each of the seven materials (and tag_warn) draws the shape of its own name. Either AIA bakes the pressed and locked states of album and fact, or the lead rules that K47's faces are K12's and K13's and album and fact stay out of SKINS_OF.",
+      "files": [
+        "client/tests/ui_kit_tests.gd",
+        "client/ui/art/kit.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T08:20:24Z",
+      "due": "2026-11-12T22:00:00Z",
+      "default": "album and fact stay out of SKINS_OF; the lookup of all seven shapes stays asserted in client/tests/shots/ui_kit_rest.gd",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -133,6 +251,12 @@
       "request_id": "AIA-R2",
       "answer": "client/ui/tokens.json has a 'sky' group with day, dusk and night stops (read with Tokens.sky(name) -> Array[Color]), kept out of the color, gradient and material groups the board's build_tokens.mjs --check reads. card_bottom keeps the designs' #120A28 for now, with a note: kit-spec.md section 2.1 takes 21.8's #1A1134 once O2-2 lets the revised contract stand (K1-R5). kit-spec.md section 8.2's code note gives the piece names KitSkin looks up.",
       "at": "2026-10-31T03:55:00Z"
+    },
+    {
+      "request_id": "K1-R9",
+      "answer": "Done in P0-K1-kitspec-3 at 4b4a72d1: kit-spec.md section 2.1's success and backdrop rows and section 9; tokens.json's notes for success_text_on_night, night_top and gradient.night. No value changes.",
+      "at": "2026-11-04T13:05:00Z"
     }
-  ]
+  ],
+  "next_step": "P1-K1-disc-host: main merged; building the client, then the failing run on main at 40c92625, the guard, the pre-check and the handoff."
 }

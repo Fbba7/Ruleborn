@@ -1,0 +1,298 @@
+{
+ "image": "surfaces_hc.png",
+ "frame_pt": [
+  390,
+  844
+ ],
+ "text_scale": 1.0,
+ "controls": [
+  {
+   "name": "disc_school motion normal",
+   "rect": [
+    16,
+    404,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school matter normal",
+   "rect": [
+    76,
+    404,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school time normal",
+   "rect": [
+    136,
+    404,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school energy normal",
+   "rect": [
+    196,
+    404,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school life normal",
+   "rect": [
+    256,
+    404,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school spirit normal",
+   "rect": [
+    316,
+    404,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school motion pressed",
+   "rect": [
+    16,
+    470,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school matter pressed",
+   "rect": [
+    76,
+    470,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school time pressed",
+   "rect": [
+    136,
+    470,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school energy pressed",
+   "rect": [
+    196,
+    470,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school life pressed",
+   "rect": [
+    256,
+    470,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school spirit pressed",
+   "rect": [
+    316,
+    470,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school motion disabled",
+   "rect": [
+    16,
+    536,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school matter disabled",
+   "rect": [
+    76,
+    536,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school time disabled",
+   "rect": [
+    136,
+    536,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school energy disabled",
+   "rect": [
+    196,
+    536,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school life disabled",
+   "rect": [
+    256,
+    536,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school spirit disabled",
+   "rect": [
+    316,
+    536,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school motion on dark card 2",
+   "rect": [
+    16,
+    620,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school matter on dark card 2",
+   "rect": [
+    76,
+    620,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school time on dark card 2",
+   "rect": [
+    136,
+    620,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school energy on dark card 2",
+   "rect": [
+    196,
+    620,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school life on dark card 2",
+   "rect": [
+    256,
+    620,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "disc_school spirit on dark card 2",
+   "rect": [
+    316,
+    620,
+    48.03,
+    52.0
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  }
+ ]
+}

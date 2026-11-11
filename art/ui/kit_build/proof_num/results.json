@@ -1,0 +1,242 @@
+[
+ {
+  "check": "tabular",
+  "control": "num_gold",
+  "advances": [
+   120
+  ],
+  "heights": [
+   210
+  ],
+  "result": "PASS",
+  "mode": "normal"
+ },
+ {
+  "check": "outline",
+  "control": "num_gold",
+  "visible_pt": 3.5,
+  "needed_pt": 3.36,
+  "result": "PASS",
+  "mode": "normal"
+ },
+ {
+  "check": "fill-contrast",
+  "control": "num_gold (worst: num_gold_0)",
+  "colour": "#E9B65C",
+  "ratio": 10.22,
+  "lc": 67.2,
+  "against": "outline",
+  "result": "PASS",
+  "mode": "normal"
+ },
+ {
+  "check": "tabular",
+  "control": "num_white",
+  "advances": [
+   96
+  ],
+  "heights": [
+   162
+  ],
+  "result": "PASS",
+  "mode": "normal"
+ },
+ {
+  "check": "outline",
+  "control": "num_white",
+  "visible_pt": 2.75,
+  "needed_pt": 2.64,
+  "result": "PASS",
+  "mode": "normal"
+ },
+ {
+  "check": "fill-contrast",
+  "control": "num_white (worst: num_white_0)",
+  "colour": "#CFC4EE",
+  "ratio": 11.55,
+  "lc": 73.9,
+  "against": "outline",
+  "result": "PASS",
+  "mode": "normal"
+ },
+ {
+  "check": "tabular",
+  "control": "num_timer",
+  "advances": [
+   120
+  ],
+  "heights": [
+   210
+  ],
+  "result": "PASS",
+  "mode": "normal"
+ },
+ {
+  "check": "outline",
+  "control": "num_timer",
+  "visible_pt": 3.5,
+  "needed_pt": 3.36,
+  "result": "PASS",
+  "mode": "normal"
+ },
+ {
+  "check": "fill-contrast",
+  "control": "num_timer (worst: num_timer_0)",
+  "colour": "#E1D9F6",
+  "ratio": 13.97,
+  "lc": 85.5,
+  "against": "outline",
+  "result": "PASS",
+  "mode": "normal"
+ },
+ {
+  "check": "tabular",
+  "control": "num_timer_red",
+  "advances": [
+   120
+  ],
+  "heights": [
+   210
+  ],
+  "result": "PASS",
+  "mode": "normal"
+ },
+ {
+  "check": "outline",
+  "control": "num_timer_red",
+  "visible_pt": 3.5,
+  "needed_pt": 3.36,
+  "result": "PASS",
+  "mode": "normal"
+ },
+ {
+  "check": "fill-contrast",
+  "control": "num_timer_red (worst: num_timer_red_0)",
+  "colour": "#FF9AAA",
+  "ratio": 9.45,
+  "lc": 63.2,
+  "against": "outline",
+  "result": "PASS",
+  "mode": "normal"
+ },
+ {
+  "check": "tabular",
+  "control": "num_gold",
+  "advances": [
+   120
+  ],
+  "heights": [
+   210
+  ],
+  "result": "PASS",
+  "mode": "hc"
+ },
+ {
+  "check": "outline",
+  "control": "num_gold",
+  "visible_pt": 3.5,
+  "needed_pt": 3.36,
+  "result": "PASS",
+  "mode": "hc"
+ },
+ {
+  "check": "fill-contrast",
+  "control": "num_gold (worst: num_gold_0)",
+  "colour": "#F2C14E",
+  "ratio": 12.51,
+  "lc": 73.3,
+  "against": "outline",
+  "result": "PASS",
+  "mode": "hc"
+ },
+ {
+  "check": "tabular",
+  "control": "num_white",
+  "advances": [
+   96
+  ],
+  "heights": [
+   162
+  ],
+  "result": "PASS",
+  "mode": "hc"
+ },
+ {
+  "check": "outline",
+  "control": "num_white",
+  "visible_pt": 2.75,
+  "needed_pt": 2.64,
+  "result": "PASS",
+  "mode": "hc"
+ },
+ {
+  "check": "fill-contrast",
+  "control": "num_white (worst: num_white_0)",
+  "colour": "#FCFBFF",
+  "ratio": 20.38,
+  "lc": 105.6,
+  "against": "outline",
+  "result": "PASS",
+  "mode": "hc"
+ },
+ {
+  "check": "tabular",
+  "control": "num_timer",
+  "advances": [
+   120
+  ],
+  "heights": [
+   210
+  ],
+  "result": "PASS",
+  "mode": "hc"
+ },
+ {
+  "check": "outline",
+  "control": "num_timer",
+  "visible_pt": 3.5,
+  "needed_pt": 3.36,
+  "result": "PASS",
+  "mode": "hc"
+ },
+ {
+  "check": "fill-contrast",
+  "control": "num_timer (worst: num_timer_0)",
+  "colour": "#FCFBFF",
+  "ratio": 20.38,
+  "lc": 105.6,
+  "against": "outline",
+  "result": "PASS",
+  "mode": "hc"
+ },
+ {
+  "check": "tabular",
+  "control": "num_timer_red",
+  "advances": [
+   120
+  ],
+  "heights": [
+   210
+  ],
+  "result": "PASS",
+  "mode": "hc"
+ },
+ {
+  "check": "outline",
+  "control": "num_timer_red",
+  "visible_pt": 3.5,
+  "needed_pt": 3.36,
+  "result": "PASS",
+  "mode": "hc"
+ },
+ {
+  "check": "fill-contrast",
+  "control": "num_timer_red (worst: num_timer_red_0)",
+  "colour": "#FF9AAA",
+  "ratio": 10.45,
+  "lc": 63.7,
+  "against": "outline",
+  "result": "PASS",
+  "mode": "hc"
+ }
+]

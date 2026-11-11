@@ -1,0 +1,1372 @@
+[
+ {
+  "check": "value-steps",
+  "control": "disc normal @ backdrop",
+  "face_L": 42.2,
+  "ground_L": 14.3,
+  "delta_L": 27.9,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc pressed @ backdrop",
+  "face_L": 35.7,
+  "ground_L": 12.7,
+  "delta_L": 23.0,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc disabled @ backdrop",
+  "face_L": 44.2,
+  "ground_L": 12.7,
+  "delta_L": 31.4,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc locked @ backdrop",
+  "face_L": 47.8,
+  "ground_L": 12.7,
+  "delta_L": 35.0,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "pill normal @ backdrop",
+  "face_L": 85.2,
+  "ground_L": 18.9,
+  "delta_L": 66.3,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "pill pressed @ backdrop",
+  "face_L": 73.6,
+  "ground_L": 18.9,
+  "delta_L": 54.7,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc normal @ dark card",
+  "face_L": 42.2,
+  "ground_L": 12.4,
+  "delta_L": 29.8,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc pressed @ dark card",
+  "face_L": 35.7,
+  "ground_L": 12.4,
+  "delta_L": 23.3,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc disabled @ dark card",
+  "face_L": 44.2,
+  "ground_L": 12.4,
+  "delta_L": 31.8,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc locked @ dark card",
+  "face_L": 47.8,
+  "ground_L": 12.4,
+  "delta_L": 35.4,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "pill normal @ dark card",
+  "face_L": 85.2,
+  "ground_L": 10.7,
+  "delta_L": 74.5,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "pill pressed @ dark card",
+  "face_L": 73.6,
+  "ground_L": 10.7,
+  "delta_L": 62.9,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc normal @ glass",
+  "face_L": 42.1,
+  "ground_L": 4.9,
+  "delta_L": 37.3,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc pressed @ glass",
+  "face_L": 35.7,
+  "ground_L": 4.8,
+  "delta_L": 31.0,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc disabled @ glass",
+  "face_L": 44.2,
+  "ground_L": 4.8,
+  "delta_L": 39.4,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc locked @ glass",
+  "face_L": 47.8,
+  "ground_L": 4.8,
+  "delta_L": 43.0,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "pill normal @ glass",
+  "face_L": 85.2,
+  "ground_L": 5.8,
+  "delta_L": 79.4,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "pill pressed @ glass",
+  "face_L": 73.6,
+  "ground_L": 5.8,
+  "delta_L": 67.8,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc normal @ parchment",
+  "face_L": 49.2,
+  "ground_L": 96.3,
+  "delta_L": 47.2,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc pressed @ parchment",
+  "face_L": 46.8,
+  "ground_L": 97.0,
+  "delta_L": 50.2,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc disabled @ parchment",
+  "face_L": 44.2,
+  "ground_L": 97.0,
+  "delta_L": 52.8,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc locked @ parchment",
+  "face_L": 57.0,
+  "ground_L": 97.0,
+  "delta_L": 40.0,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "badge 3 @ backdrop",
+  "ratio": 5.56,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "pill normal @ backdrop",
+  "ratio": 13.78,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "pill pressed @ backdrop",
+  "ratio": 9.59,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag box @ backdrop",
+  "ratio": 14.35,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_violet @ backdrop",
+  "ratio": 5.8,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_warn @ backdrop",
+  "ratio": 13.89,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "badge 3 @ dark card",
+  "ratio": 5.6,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "pill normal @ dark card",
+  "ratio": 13.78,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "pill pressed @ dark card",
+  "ratio": 9.59,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag box @ dark card",
+  "ratio": 13.88,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_violet @ dark card",
+  "ratio": 5.53,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_warn @ dark card",
+  "ratio": 13.99,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "badge 3 @ glass",
+  "ratio": 5.54,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "pill normal @ glass",
+  "ratio": 13.78,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "pill pressed @ glass",
+  "ratio": 9.62,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag box @ glass",
+  "ratio": 13.88,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_violet @ glass",
+  "ratio": 5.53,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_warn @ glass",
+  "ratio": 13.99,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "badge 3 @ parchment",
+  "ratio": 5.56,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag box @ parchment",
+  "ratio": 14.28,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_violet @ parchment",
+  "ratio": 5.73,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_warn @ parchment",
+  "ratio": 13.9,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school motion normal",
+  "face_L": 57.6,
+  "ground_L": 13.0,
+  "delta_L": 44.6,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school matter normal",
+  "face_L": 40.9,
+  "ground_L": 13.0,
+  "delta_L": 27.9,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school time normal",
+  "face_L": 55.0,
+  "ground_L": 13.0,
+  "delta_L": 41.9,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school energy normal",
+  "face_L": 47.7,
+  "ground_L": 13.0,
+  "delta_L": 34.7,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school life normal",
+  "face_L": 53.0,
+  "ground_L": 13.0,
+  "delta_L": 40.0,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school spirit normal",
+  "face_L": 43.8,
+  "ground_L": 13.0,
+  "delta_L": 30.7,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school motion pressed",
+  "face_L": 53.0,
+  "ground_L": 12.0,
+  "delta_L": 41.0,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school matter pressed",
+  "face_L": 36.9,
+  "ground_L": 12.0,
+  "delta_L": 24.9,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school time pressed",
+  "face_L": 50.6,
+  "ground_L": 12.0,
+  "delta_L": 38.6,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school energy pressed",
+  "face_L": 43.5,
+  "ground_L": 12.0,
+  "delta_L": 31.5,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school life pressed",
+  "face_L": 48.8,
+  "ground_L": 12.0,
+  "delta_L": 36.7,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school spirit pressed",
+  "face_L": 39.7,
+  "ground_L": 12.0,
+  "delta_L": 27.7,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school motion disabled",
+  "face_L": 49.9,
+  "ground_L": 11.3,
+  "delta_L": 38.6,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school matter disabled",
+  "face_L": 34.5,
+  "ground_L": 11.3,
+  "delta_L": 23.2,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school time disabled",
+  "face_L": 47.7,
+  "ground_L": 11.3,
+  "delta_L": 36.4,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school energy disabled",
+  "face_L": 40.9,
+  "ground_L": 11.3,
+  "delta_L": 29.6,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school life disabled",
+  "face_L": 45.9,
+  "ground_L": 11.3,
+  "delta_L": 34.6,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school spirit disabled",
+  "face_L": 37.2,
+  "ground_L": 11.3,
+  "delta_L": 26.0,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school motion on dark card 2",
+  "face_L": 57.6,
+  "ground_L": 10.1,
+  "delta_L": 47.5,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school matter on dark card 2",
+  "face_L": 40.9,
+  "ground_L": 10.1,
+  "delta_L": 30.8,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school time on dark card 2",
+  "face_L": 55.0,
+  "ground_L": 10.1,
+  "delta_L": 44.9,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school energy on dark card 2",
+  "face_L": 47.7,
+  "ground_L": 10.1,
+  "delta_L": 37.6,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school life on dark card 2",
+  "face_L": 53.0,
+  "ground_L": 10.1,
+  "delta_L": 42.9,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school spirit on dark card 2",
+  "face_L": 43.8,
+  "ground_L": 10.1,
+  "delta_L": 33.7,
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "label-contrast",
+  "control": "card words normal",
+  "ratio": 14.11,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "label-contrast",
+  "control": "card words normal selected",
+  "ratio": 14.11,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "label-contrast",
+  "control": "glass words",
+  "ratio": 14.35,
+  "against": "face",
+  "result": "PASS",
+  "mode": "normal",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc normal @ backdrop",
+  "face_L": 37.5,
+  "ground_L": 5.6,
+  "delta_L": 31.9,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc pressed @ backdrop",
+  "face_L": 31.7,
+  "ground_L": 5.6,
+  "delta_L": 26.1,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc disabled @ backdrop",
+  "face_L": 56.1,
+  "ground_L": 5.6,
+  "delta_L": 50.5,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc locked @ backdrop",
+  "face_L": 42.8,
+  "ground_L": 5.6,
+  "delta_L": 37.2,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "pill normal @ backdrop",
+  "face_L": 100.0,
+  "ground_L": 5.6,
+  "delta_L": 94.4,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "pill pressed @ backdrop",
+  "face_L": 86.3,
+  "ground_L": 5.6,
+  "delta_L": 80.7,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc normal @ dark card",
+  "face_L": 37.5,
+  "ground_L": 5.2,
+  "delta_L": 32.3,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc pressed @ dark card",
+  "face_L": 31.7,
+  "ground_L": 5.2,
+  "delta_L": 26.5,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc disabled @ dark card",
+  "face_L": 56.1,
+  "ground_L": 5.2,
+  "delta_L": 50.9,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc locked @ dark card",
+  "face_L": 42.8,
+  "ground_L": 5.2,
+  "delta_L": 37.6,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "pill normal @ dark card",
+  "face_L": 100.0,
+  "ground_L": 5.2,
+  "delta_L": 94.8,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "pill pressed @ dark card",
+  "face_L": 86.3,
+  "ground_L": 5.2,
+  "delta_L": 81.1,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc normal @ glass",
+  "face_L": 37.5,
+  "ground_L": 3.8,
+  "delta_L": 33.7,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc pressed @ glass",
+  "face_L": 31.7,
+  "ground_L": 3.8,
+  "delta_L": 27.9,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc disabled @ glass",
+  "face_L": 56.1,
+  "ground_L": 3.8,
+  "delta_L": 52.3,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc locked @ glass",
+  "face_L": 42.8,
+  "ground_L": 3.8,
+  "delta_L": 39.0,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "pill normal @ glass",
+  "face_L": 100.0,
+  "ground_L": 3.8,
+  "delta_L": 96.2,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "pill pressed @ glass",
+  "face_L": 86.3,
+  "ground_L": 3.8,
+  "delta_L": 82.5,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc normal @ parchment",
+  "face_L": 37.5,
+  "ground_L": 100.0,
+  "delta_L": 62.5,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc pressed @ parchment",
+  "face_L": 32.1,
+  "ground_L": 100.0,
+  "delta_L": 67.9,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc disabled @ parchment",
+  "face_L": 56.5,
+  "ground_L": 100.0,
+  "delta_L": 43.5,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc locked @ parchment",
+  "face_L": 42.8,
+  "ground_L": 100.0,
+  "delta_L": 57.2,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "badge 3 @ backdrop",
+  "ratio": 9.21,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "pill normal @ backdrop",
+  "ratio": 21.0,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "pill pressed @ backdrop",
+  "ratio": 14.73,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag box @ backdrop",
+  "ratio": 14.25,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_violet @ backdrop",
+  "ratio": 7.08,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_warn @ backdrop",
+  "ratio": 21.0,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "badge 3 @ dark card",
+  "ratio": 9.21,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "pill normal @ dark card",
+  "ratio": 21.0,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "pill pressed @ dark card",
+  "ratio": 14.73,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag box @ dark card",
+  "ratio": 14.25,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_violet @ dark card",
+  "ratio": 7.08,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_warn @ dark card",
+  "ratio": 21.0,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "badge 3 @ glass",
+  "ratio": 9.21,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "pill normal @ glass",
+  "ratio": 21.0,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "pill pressed @ glass",
+  "ratio": 14.73,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag box @ glass",
+  "ratio": 14.25,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_violet @ glass",
+  "ratio": 7.08,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_warn @ glass",
+  "ratio": 21.0,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "badge 3 @ parchment",
+  "ratio": 9.21,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag box @ parchment",
+  "ratio": 14.25,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_violet @ parchment",
+  "ratio": 7.08,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "label-contrast",
+  "control": "tag tag_warn @ parchment",
+  "ratio": 21.0,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "controls"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school motion normal",
+  "face_L": 77.2,
+  "ground_L": 5.2,
+  "delta_L": 72.0,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school matter normal",
+  "face_L": 54.6,
+  "ground_L": 5.2,
+  "delta_L": 49.4,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school time normal",
+  "face_L": 73.7,
+  "ground_L": 5.2,
+  "delta_L": 68.5,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school energy normal",
+  "face_L": 64.0,
+  "ground_L": 5.2,
+  "delta_L": 58.8,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school life normal",
+  "face_L": 71.4,
+  "ground_L": 5.2,
+  "delta_L": 66.2,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school spirit normal",
+  "face_L": 58.8,
+  "ground_L": 5.2,
+  "delta_L": 53.6,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school motion pressed",
+  "face_L": 63.9,
+  "ground_L": 5.2,
+  "delta_L": 58.6,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school matter pressed",
+  "face_L": 44.9,
+  "ground_L": 5.2,
+  "delta_L": 39.7,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school time pressed",
+  "face_L": 61.0,
+  "ground_L": 5.2,
+  "delta_L": 55.8,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school energy pressed",
+  "face_L": 52.7,
+  "ground_L": 5.2,
+  "delta_L": 47.4,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school life pressed",
+  "face_L": 58.9,
+  "ground_L": 5.2,
+  "delta_L": 53.7,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school spirit pressed",
+  "face_L": 48.3,
+  "ground_L": 5.2,
+  "delta_L": 43.1,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school motion disabled",
+  "face_L": 48.2,
+  "ground_L": 5.2,
+  "delta_L": 43.0,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school matter disabled",
+  "face_L": 33.3,
+  "ground_L": 5.2,
+  "delta_L": 28.1,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school time disabled",
+  "face_L": 45.9,
+  "ground_L": 5.2,
+  "delta_L": 40.7,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school energy disabled",
+  "face_L": 39.3,
+  "ground_L": 5.2,
+  "delta_L": 34.1,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school life disabled",
+  "face_L": 44.4,
+  "ground_L": 5.2,
+  "delta_L": 39.2,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school spirit disabled",
+  "face_L": 35.9,
+  "ground_L": 5.2,
+  "delta_L": 30.7,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school motion on dark card 2",
+  "face_L": 77.2,
+  "ground_L": 5.2,
+  "delta_L": 72.0,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school matter on dark card 2",
+  "face_L": 54.6,
+  "ground_L": 5.2,
+  "delta_L": 49.4,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school time on dark card 2",
+  "face_L": 73.7,
+  "ground_L": 5.2,
+  "delta_L": 68.5,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school energy on dark card 2",
+  "face_L": 64.0,
+  "ground_L": 5.2,
+  "delta_L": 58.8,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school life on dark card 2",
+  "face_L": 71.4,
+  "ground_L": 5.2,
+  "delta_L": 66.2,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "value-steps",
+  "control": "disc_school spirit on dark card 2",
+  "face_L": 58.8,
+  "ground_L": 5.2,
+  "delta_L": 53.6,
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "label-contrast",
+  "control": "card words normal",
+  "ratio": 18.82,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "label-contrast",
+  "control": "card words normal selected",
+  "ratio": 18.82,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ },
+ {
+  "check": "label-contrast",
+  "control": "glass words",
+  "ratio": 19.36,
+  "against": "face",
+  "result": "PASS",
+  "mode": "hc",
+  "still": "surfaces"
+ }
+]

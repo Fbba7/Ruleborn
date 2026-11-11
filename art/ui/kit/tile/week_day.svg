@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" data-slice="7 8 7 5">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8C6CF0"/><stop offset="1" stop-color="#4E34A8"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <path d="M1 12V7Q1 1 7 1H9Q15 1 15 7V12Q15 15 12 15H4Q1 15 1 12Z" fill="url(#g1)"/>
+    <rect x="3" y="2.6" width="10" height="1.4" rx="0.7" fill="#FFFFFF" fill-opacity="0.451"/>
+    <path d="M1 12V7Q1 1 7 1H9Q15 1 15 7V12Q15 15 12 15H4Q1 15 1 12Z" fill="none" stroke="#1A0C14" stroke-width="1.5"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <path d="M1 12V7Q1 1 7 1H9Q15 1 15 7V12Q15 15 12 15H4Q1 15 1 12Z" fill="#7A5CE0"/>
+    <path d="M2.5 10.5V8.5Q2.5 2.5 8.5 2.5H7.5Q13.5 2.5 13.5 8.5V10.5Q13.5 13.5 10.5 13.5H5.5Q2.5 13.5 2.5 10.5Z" fill="none" stroke="#B8A8D8" stroke-width="3"/>
+  </g>
+</svg>

@@ -1,0 +1,346 @@
+{
+ "image": "controls_normal.png",
+ "frame_pt": [
+  390,
+  844
+ ],
+ "text_scale": 1.0,
+ "controls": [
+  {
+   "name": "segment chosen dark normal",
+   "rect": [
+    20.0,
+    19,
+    116.64,
+    41.89
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "segment chosen dark pressed",
+   "rect": [
+    103.0,
+    75,
+    83.06,
+    41.89
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "segment chosen dark disabled",
+   "rect": [
+    204.0,
+    75,
+    83.06,
+    41.89
+   ],
+   "role": "primary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "chip chip__normal",
+   "rect": [
+    12,
+    138,
+    85.94,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "chip chip_on__normal",
+   "rect": [
+    104,
+    138,
+    101.83,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "chip chip__pressed",
+   "rect": [
+    212,
+    138,
+    85.94,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "chip chip__disabled",
+   "rect": [
+    304,
+    138,
+    93.89,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "chip chip_on__pressed",
+   "rect": [
+    12,
+    194,
+    93.89,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "chip chip_on__disabled",
+   "rect": [
+    112,
+    194,
+    93.89,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "segment chosen light normal",
+   "rect": [
+    136.67,
+    265,
+    116.64,
+    41.89
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "segment chosen light pressed",
+   "rect": [
+    20.0,
+    319,
+    83.06,
+    41.89
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "segment chosen light disabled",
+   "rect": [
+    204.0,
+    319,
+    83.06,
+    41.89
+   ],
+   "role": "primary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "chip chip_light__normal",
+   "rect": [
+    12,
+    372,
+    85.94,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "chip chip_on_light__normal",
+   "rect": [
+    104,
+    372,
+    101.83,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "chip chip_light__pressed",
+   "rect": [
+    212,
+    372,
+    85.94,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "chip chip_light__disabled",
+   "rect": [
+    304,
+    372,
+    93.89,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "chip chip_on_light__pressed",
+   "rect": [
+    12,
+    426,
+    93.89,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "chip chip_on_light__disabled",
+   "rect": [
+    112,
+    426,
+    93.89,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "switch on normal",
+   "rect": [
+    16,
+    496,
+    92.08,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "switch off normal",
+   "rect": [
+    16,
+    554,
+    92.08,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "switch on pressed",
+   "rect": [
+    140,
+    496,
+    92.08,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "switch off pressed",
+   "rect": [
+    140,
+    554,
+    92.08,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "switch on disabled",
+   "rect": [
+    264,
+    496,
+    92.08,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "switch off disabled",
+   "rect": [
+    264,
+    554,
+    92.08,
+    48.03
+   ],
+   "role": "secondary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "slider knob normal",
+   "rect": [
+    210,
+    623,
+    29.97,
+    32.14
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "slider knob pressed",
+   "rect": [
+    150,
+    663,
+    29.97,
+    32.14
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  },
+  {
+   "name": "slider knob disabled",
+   "rect": [
+    250,
+    703,
+    29.97,
+    32.14
+   ],
+   "role": "primary",
+   "interactive": false,
+   "persistent": false
+  },
+  {
+   "name": "tab chosen",
+   "rect": [
+    84.0,
+    760,
+    66.08,
+    62.83
+   ],
+   "role": "primary",
+   "interactive": true,
+   "persistent": false
+  }
+ ]
+}

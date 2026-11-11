@@ -1,0 +1,70 @@
+[
+  {
+    "task_id": "P1-AIA-kit-6",
+    "sha": "00571a44",
+    "item": "kit catalogue sheet, batch 2c (album panel, fact slips, plates, light bar track, island label, tags, success banner), at phone size",
+    "quality": "Layered materials",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "The Claim button and the tags carry all four layers (top-lit gradient, gloss band, dark rim, solid lip), but the album panel, the largest piece, is a near-flat cream fill with a hairline inner line: no bevelled frame or inner well, no readable gloss band and no parchment grain. The fact slips and plates read as rounded rectangles with a thin tan rim and lip. The success banner's inner glow breaks into concentric flat steps on the 60 and 120 pt contact sheets (banding). The high-contrast still was not the cause.",
+    "advisory": true,
+    "at": "2026-11-10T07:46:00Z"
+  },
+  {
+    "task_id": "P1-AIA-kit-6",
+    "sha": "00571a44",
+    "item": "kit catalogue sheet, batch 2c (album panel, fact slips, plates, light bar track, island label, tags, success banner), at phone size",
+    "quality": "Display type",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Every word sits on a solid plate, card, tag, button or banner, none straight over the world or a texture; the white labels on Event and Claim carry a full dark outline with a hard drop in the standard, high-contrast, grayscale and colour-blindness views; nothing is clipped. The sheet has no headline figure, so the outline, drop and gradient rule was not tested. Notes: the white success-banner line is inked more thinly than Event and Claim, and the 'Field Notes' header is a light face with no header of the same rank to compare (font choice is measured elsewhere).",
+    "advisory": true,
+    "at": "2026-11-10T07:46:00Z"
+  },
+  {
+    "task_id": "P1-AIA-kit-6",
+    "sha": "00571a44",
+    "item": "kit catalogue sheet, batch 2c (album panel, fact slips, plates, light bar track, island label, tags, success banner), at phone size",
+    "quality": "Colour roles and value",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Batch 2b's fault is fixed: gold appears only as the NEW tag's rim, as material, with no gold fill in a second role. Green is only on the Claim button and the success banner's rim, orange only on the warn tag, which also has a hatched stripe and a label. The three tags stay distinct by rim, hatch, fill and label in grayscale and in all three colour-blindness panels; plates, tags and banner stand off their ground in value. Notes: violet serves both the Event tag and the bar fill, the empty light bar track is close in value to the cream panel, and the banner's green rim turns tan under protan and deutan (its label carries it).",
+    "advisory": true,
+    "at": "2026-11-10T07:46:00Z"
+  },
+  {
+    "task_id": "P1-AIA-kit-6",
+    "sha": "00571a44",
+    "item": "kit catalogue sheet, batch 2c (album panel, fact slips, plates, light bar track, island label, tags, success banner), at phone size",
+    "quality": "Light behind UI",
+    "rubric_version": 3,
+    "judge": "Fable 5.2",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Judged as kit art on its own light: every piece has a lighter top edge, a darker lip and a drop shadow below; the bar track reads as an inset under the same top light and the success banner has a green glow rim brighter at the top. No piece is lit from below or from the side.",
+    "advisory": true,
+    "at": "2026-11-10T07:46:00Z"
+  }
+]

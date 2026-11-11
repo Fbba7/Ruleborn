@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3" height="14">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+
+  </defs>
+  <g data-state="normal">
+    <rect x="1" y="2" width="1" height="10" fill="#0A0408" fill-opacity="0.75"/>
+    <rect x="2" y="2" width="0.5" height="10" fill="#FFFFFF" fill-opacity="0.3"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <rect x="0.75" y="1" width="1.5" height="12" fill="#B8A8D8"/>
+  </g>
+</svg>
