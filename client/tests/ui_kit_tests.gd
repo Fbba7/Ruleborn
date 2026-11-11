@@ -19,6 +19,7 @@ const Catalogue := preload("res://tests/shots/ui_kit_catalogue.gd")
 const Art := preload("res://tests/shots/ui_kit_catalogue_art.gd")
 const Rest := preload("res://tests/shots/ui_kit_rest.gd")
 const Round := preload("res://tests/shots/ui_kit_round.gd")
+const Heist := preload("res://tests/shots/ui_kit_heist.gd")
 ## The components whose baked faces are skins, and those skins' faces: once a
 ## skin has art, each of the component's baked states is a piece of it.
 ## The bar's pieces are K46's (N RM), the component built from them: K25's
@@ -92,6 +93,7 @@ func run() -> void:
 	await _parts()
 	await _rest()
 	await _round()
+	await _heist()
 	await _fixture()
 	await _words()
 	await _numerals()
@@ -585,6 +587,14 @@ func _round() -> void:
 			+ "as wide as its host and keeps its shape, so a bar, a pill or an oval button keeps its "
 			+ "code-drawn box (kit-spec.md section 8.2)", bad.is_empty(), "; ".join(bad))
 
+
+func _heist() -> void:
+	var bad: Array = await Heist.run(tree)
+	check.call("the heist's calls (S1-R1 to S1-R6): the clock, the alarm and the loot changed in place; the "
+			+ "large clock; the alarm and the loot for a narrow column at any text size; the wrapping law chip "
+			+ "and its disc behind a dark icon; the tip, words on the world and the crew's ink with outlines that "
+			+ "count; a coin flying into its counter, or freed at once under reduced motion (kit-spec.md "
+			+ "sections 6.5, 9)", bad.is_empty(), "; ".join(bad))
 
 ## The colour at the middle of piece `p` in the page it is cut from.
 static func _middle(p: Dictionary) -> Color:
