@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Proofs the kit's batch 2c (kit_2c.py) at phone size, in both modes.
+"""Proofs the kit's batches 2c and 2d (kit_2c.py) at phone size, in both modes.
 
     python3 art/ui/kit_build/proof_2c.py [--check] [--all]
 

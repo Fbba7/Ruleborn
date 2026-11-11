@@ -2,14 +2,14 @@
 skin's box, and the warn tag redrawn light. Run through build_kit.py (it
 imports this module and writes its SVGs with the others).
 
-    panel_dark/album            a Codex chapter's album, parchment, radius 22: normal
-    panel_dark/fact             a fact tile, parchment with a soft tan edge: normal
-    panel_dark/plate            a name or level plate, parchment, radius 8: normal
-    bar_track/bar_track_light   a progress track on parchment, sunk tan: normal
+    panel_dark/album            a Codex chapter's album: a bevelled tan frame round a sunk parchment well, radius 22: normal
+    panel_dark/fact             a fact tile, a parchment slip in a tan rim on a tan lip: normal
+    panel_dark/plate            a name or level plate, parchment in a gold rim, radius 8: normal
+    bar_track/bar_track_light   a progress track on parchment, a sunk tan groove: normal
     tag/tag                     a ribbon tag, cream in a gold rim: normal
     tag/tag_warn                a state tag, warm paper with a hatched orange cap: normal
     tag/island_label            an island's label, a cream pill: normal
-    success/banner_success      the raid banner, a dark card edged and lit green: normal
+    success/banner_success      the raid banner, a deep green card edged and lit green: normal
 
 Each shape has the states listed above and no more; for a state a shape
 lacks, the code draws its own box. Sizes follow each material's radius: a
@@ -24,19 +24,36 @@ Gold keeps its two roles (kit_2b.py): the ribbon tag's token fill is gold,
 and a tag is no action, so it is cream in a gold rim; the warn tag's token
 fill is amber, a hue beside gold, so it is a paler warm paper and its cap
 says "warn" by shape. Both keep their tokens' dark words.
+
+Batch 2d redrew the album, the fact slip, the plate, the light track and the
+banner in place: same names, sizes and slices. A 9-slice's centre is one
+stretched sample, so paper grain lives where the cells are fixed (specks in
+the corners) or where a mark runs along the stretch (laid lines in the top
+and bottom rows); the stretched middle of a large album stays plain paper.
 """
+
+import random
 
 from build_kit import C, HC, K, KIT, LINE, LINE_HC, LIP, TRAVEL, Svg, col, face_layers, hc_set, mat, p, rrect, stroke
 from kit_1b import a, cap_mask, foot_shade, hc_edge, ink, lit_band, rim_ring, stripes, top_light
-from kit_2a import corner_mask
+from kit_2a import blur, corner_mask
 
 KIT_2C = {
     "fact_line": ("#C9A876", "material.fact's line #C9A876: the fact tile's soft tan edge"),
-    "fact_lip": ("#D8BE92", "material.fact's drop #C9A87699 over parchment_bottom, solid"),
+    "fact_lip": ("#9A7440", "material.fact's drop, deepened to a solid tan: a 2 point lip reads on cream at phone size"),
+    "fact_edge": ("#8F6B3A", "fact_line, deepened: the slip's outer edge, a clear value step off the album's paper"),
+    "fact_rim_top": ("#F2DDB0", "fact_line, lit: the top of the slip's rim"),
+    "album_frame_top": ("#F3DFB2", "parchment_deckle #C9A86A, lit: the album frame's bevel at its top"),
+    "album_frame_mid": ("#D6B67E", "parchment_deckle, a step lighter: the album frame's face"),
+    "album_frame_bottom": ("#B08A54", "parchment_deckle, shaded: the album frame's bevel at its foot"),
+    "album_well_line": ("#7A5428", "parchment_lip #8A5A1C, deeper: the line where the frame meets the well"),
+    "album_well_top": ("#F4E6C6", "parchment_bottom #F1E3C4, a touch lighter: the well's paper under its gloss"),
+    "album_well_bottom": ("#EBD9B4", "parchment_bottom, a step down: the well's paper at its foot"),
+    "paper_grain": ("#8A5A1C", "parchment_lip #8A5A1C: the paper's specks, fibres and laid lines, drawn faint"),
     "fact_top": ("#FFFDF6", "parchment_top #FFFBF0, lifted: a fact tile sits lighter than its panel"),
-    "track_light_top": ("#D4C096", "material.bar_track_light's #E0CDA4, shaded: the sunk track's top"),
-    "track_light_bottom": ("#EBDDBE", "material.bar_track_light's text_bg #EBDDBE: the sunk track's foot"),
-    "track_light_line": ("#B08A58", "material.bar_track_light's line #B08A58"),
+    "track_light_top": ("#9C7C4C", "material.bar_track_light's line #B08A58, shaded: the groove's top, well under the cream panel in value"),
+    "track_light_bottom": ("#C2A674", "material.bar_track_light's #E0CDA4, two steps down: the groove's foot"),
+    "track_light_line": ("#6E4E26", "material.bar_track_light's line #B08A58, deepened: the groove's edge"),
     "track_light_hc": ("#D8D8D8", "pill_hc_pressed: a grey rail, a step off white paper, a white fill reads on it"),
     "warn_paper_top": ("#FFEBCB", "parchment_top toward warn_cap #F07A3C, a step: the warn tag's paper"),
     "warn_paper_bottom": ("#FBD3A0", "parchment_bottom toward warn_cap, a step"),
@@ -44,6 +61,9 @@ KIT_2C = {
     "well_bottom": ("#24142A", "material.pill_gold_edge's text_bg #24142A: the well's foot"),
     "well_pressed": ("#0C060E", "well_top, pressed in"),
     "banner_lip": ("#0A0618", "material.banner_success's drop #0A0618"),
+    "banner_top": ("#2F7A5E", "success #3FBF7F, deep: the banner's face at its top, so a white line's ink outline shows on it"),
+    "banner_mid": ("#25634F", "banner_top, a step down"),
+    "banner_bottom": ("#1A4A3E", "banner_top, two steps down: the banner's foot"),
     "banner_edge_dark": ("#1E7A50", "success #3FBF7F, shaded: the banner's edge at its foot and when pressed"),
     "banner_pressed_top": ("#1A1238", "card_bottom #1A1134, the pressed banner's top"),
     "banner_pressed_bottom": ("#120B28", "card_bottom, deeper"),
@@ -91,21 +111,106 @@ def paper(svg, st, hc, x, y, w, fh, r, line, lw, lip, dh, deckle=False, top=None
     return b
 
 
+def clip(svg, x, y, w, h, r):
+    svg.ids += 1
+    cid = "c%d" % svg.ids
+    svg.defs.append('<clipPath id="%s">%s</clipPath>' % (cid, rrect(x, y, w, h, r, "#FFFFFF")))
+    return ' clip-path="url(#%s)"' % cid
+
+
+def grain(svg, x, y, w, h, c, seed, n):
+    """Paper grain for a 9-slice: specks and short fibres in the four fixed
+    c-point corners (masked), seeded so the build repeats."""
+    rnd = random.Random(seed)
+    g = []
+    for _ in range(n):
+        px, py = x + rnd.random() * w, y + rnd.random() * h
+        al = 0.1 + rnd.random() * 0.16
+        if rnd.random() < 0.45:
+            ln = 1.2 + rnd.random() * 2.4
+            dy = (rnd.random() - 0.5) * 0.5
+            g.append('<path d="M%s %sl%s %s" stroke="%s" stroke-opacity="%s" stroke-width="0.35" stroke-linecap="round"/>'
+                     % (p(px), p(py), p(ln), p(dy), K["paper_grain"], p(al)))
+        else:
+            g.append('<circle cx="%s" cy="%s" r="%s" fill="%s" fill-opacity="%s"/>'
+                     % (p(px), p(py), p(0.18 + rnd.random() * 0.3), K["paper_grain"], p(al)))
+    return '<g mask="%s">%s</g>' % (corner_mask(svg, c), "".join(g))
+
+
+def album(svg, x, y, w, fh, r, dh):
+    """The album: a lip, a bevelled tan frame, a sunk well of paper with a
+    gloss band under the frame's top, grain, an ink edge."""
+    F = 5.5  # the frame's width
+    wx, wy, ww, wh, wr = x + F, y + F, w - 2 * F, fh - 2 * F, r - F
+    cl = clip(svg, wx, wy, ww, wh, wr)
+    b = [rrect(x, y + dh, w, fh, r, C["gold_drop"], ink(C["ink_line"], LINE))]
+    # The well's paper.
+    b.append(rrect(wx, wy, ww, wh, wr, svg.grad([(0, K["album_well_top"]), (0.5, C["parchment_bottom"]), (1, K["album_well_bottom"])])))
+    # Aged edges: the paper warms toward the frame.
+    b.append('<g%s>%s</g>' % (cl, rrect(wx, wy, ww, wh, wr, "none", stroke(a(K["album_frame_bottom"], 0.55), 5) + blur(svg, 2.2))))
+    # Laid lines, along the stretch, in the fixed top and bottom rows.
+    lines = []
+    for ly in (wy + 11.5, wy + 14, wy + 16.5, wy + wh - 4.5, wy + wh - 7, wy + wh - 9.5):
+        lines.append('<rect x="%s" y="%s" width="%s" height="0.4" fill="%s" fill-opacity="0.2"/>' % (p(wx), p(ly), p(ww), K["paper_grain"]))
+    b.append('<g%s>%s</g>' % (cl, "".join(lines)))
+    b.append('<g%s>%s</g>' % (cl, grain(svg, wx, wy, ww, wh, 22, 2204, 150)))
+    # The gloss band: white, hard-edged, under the frame's top.
+    gl = svg.grad([(0, a("#FFFFFF", 0.95)), (1, a("#FFFFFF", 0.7))])
+    b.append('<g%s>%s</g>' % (cl, rrect(wx + 2.2, wy + 2.6, ww - 4.4, 6, wr - 2.4, gl)))
+    # The well sinks: the frame's shade on its top, a lit foot.
+    b.append('<g%s>%s</g>' % (cl, rrect(wx, wy - 0.4, ww, wh, wr, "none", stroke(a(C["gold_drop"], 0.5), 2.6) + blur(svg, 0.9))))
+    b.append(foot_shade(svg, wx + 0.4, wy + 0.4, ww - 0.8, wh - 0.8, wr - 0.4, a("#FFFFFF", 0.9), 1.2))
+    # The frame: a bevel, lit at its top, dark where it meets the well.
+    fg = svg.grad([(0, K["album_frame_top"]), (0.3, K["album_frame_mid"]), (1, K["album_frame_bottom"])])
+    b.append(rrect(x + F / 2, y + F / 2, w - F, fh - F, r - F / 2, "none", ' stroke="%s" stroke-width="%s"' % (fg, p(F))))
+    b.append(top_light(svg, x + 1, y + 1, w - 2, fh - 2, r - 1, a("#FFFFFF", 0.95), 1.6))
+    b.append(foot_shade(svg, x + 1, y + 1, w - 2, fh - 2, r - 1, a(C["gold_drop"], 0.5), 1.6))
+    b.append(rrect(x + F - 1.6, y + F - 1.6, w - 2 * F + 3.2, fh - 2 * F + 3.2, wr + 1.6, "none",
+                   stroke(a("#FFFFFF", 0.35), 0.8)))
+    b.append(rrect(wx, wy, ww, wh, wr, "none", stroke(K["album_well_line"], 1.1)))
+    b.append(rrect(x, y, w, fh, r, "none", ink(C["ink_line"], LINE)))
+    return b
+
+
+def slip(svg, x, y, w, fh, r, dh, edge, lw, lip, rim, top, seed):
+    """A fact slip or a plate: a solid lip, the paper, a two-tone rim inside
+    its edge, a hard gloss band, a foot shade, grain in its corners."""
+    b = [rrect(x, y + dh, w, fh, r, lip, ink(edge, lw))]
+    b.append(rrect(x, y, w, fh, r, svg.grad([(0, top), (0.45, C["parchment_bottom"]), (1, K["album_well_bottom"])])))
+    i = lw / 2 + 1.5  # inside the rim
+    cl = clip(svg, x + i, y + i, w - 2 * i, fh - 2 * i, r - i)
+    b.append('<g%s>%s</g>' % (cl, grain(svg, x, y, w, fh, r, seed, 40)))
+    gl = svg.grad([(0, a("#FFFFFF", 0.98)), (1, a("#FFFFFF", 0.75))])
+    b.append('<g%s>%s</g>' % (cl, rrect(x + i + 0.9, y + i + 0.9, w - 2 * i - 1.8, 4.6, r - i - 0.9, gl)))
+    b.append(foot_shade(svg, x + i, y + i, w - 2 * i, fh - 2 * i, r - i, a(K["album_frame_bottom"], 0.7), 2.4))
+    # The rim: a lit-to-shaded band, a dark hairline inside it.
+    rg = svg.grad([(0, rim[0]), (0.5, rim[1]), (1, rim[2])])
+    b.append(rrect(x + lw / 2 + 0.7, y + lw / 2 + 0.7, w - lw - 1.4, fh - lw - 1.4, r - lw / 2 - 0.7, "none",
+                   ' stroke="%s" stroke-width="1.5"' % rg))
+    b.append(rrect(x + i, y + i, w - 2 * i, fh - 2 * i, r - i, "none", stroke(a(rim[3], 0.75), 0.6)))
+    b.append(rrect(x, y, w, fh, r, "none", ink(edge, lw)))
+    return b
+
+
 def papers():
     out = {}
-    # shape: face height, radius, line, line width, lip, lip height, deckle, lit top
-    specs = {
-        "album": (48, 22, C["ink_line"], LINE, C["gold_drop"], 4, True, None),
-        "fact": (28, 12, K["fact_line"], 1.5, K["fact_lip"], 2, False, K["fact_top"]),
-        "plate": (20, 8, C["ink_line"], 1.5, C["gold_drop"], 2, False, None),
-    }
-    for shape, (fh, r, line, lw, lip, dh, deckle, top) in specs.items():
+    # shape: face height, radius, lip height
+    specs = {"album": (48, 22, 4), "fact": (28, 12, 2), "plate": (20, 8, 2)}
+    for shape, (fh, r, dh) in specs.items():
         W, H = fh, 1 + fh + dh + 1
         c = r + 1
         svg = Svg(W, H, [c, c, c, c + dh])
-        for st in ("normal",):
-            for hc in (False, True):
-                svg.state(st, paper(svg, st, hc, 1, 1, W - 2, fh, r, line, lw, lip, dh, deckle, top), hc=hc)
+        if shape == "album":
+            body = album(svg, 1, 1, W - 2, fh, r, dh)
+        elif shape == "fact":
+            body = slip(svg, 1, 1, W - 2, fh, r, dh, K["fact_edge"], 1.5, K["fact_lip"],
+                        (K["fact_rim_top"], K["fact_line"], K["album_frame_bottom"], K["album_well_line"]), K["fact_top"], 2211)
+        else:
+            body = slip(svg, 1, 1, W - 2, fh, r, dh, C["ink_line"], 1.5, C["gold_drop"],
+                        (C["gold_top"], C["gold"], C["gold_bottom"], C["gold_rim"]), C["parchment_top"], 2212)
+        svg.state("normal", body)
+        line, lw = (C["ink_line"], LINE) if shape == "album" else (C["ink_line"], 1.5)
+        svg.state("normal", paper(svg, "normal", True, 1, 1, W - 2, fh, r, line, lw, None, dh), hc=True)
         out["panel_dark/%s.svg" % shape] = svg.text()
 
     # The island's label: a cream pill.
@@ -170,8 +275,8 @@ def track_light():
     svg = Svg(W, H, [7, 7, 7, 7])
     x, y, w = 1, 1, W - 2
     b = [rrect(x, y, w, TH, R, svg.grad([(0, K["track_light_top"]), (1, K["track_light_bottom"])])),
-         top_light(svg, x + 0.5, y + 0.5, w - 1, TH - 1, R - 0.5, a(C["gold_drop"], 0.45), 2),
-         foot_shade(svg, x + 0.5, y + 0.5, w - 1, TH - 1, R - 0.5, a("#FFFFFF", 0.8), 1),
+         top_light(svg, x + 0.5, y + 0.5, w - 1, TH - 1, R - 0.5, a(C["gold_drop"], 0.7), 2.4),
+         foot_shade(svg, x + 0.5, y + 0.5, w - 1, TH - 1, R - 0.5, a("#FFFFFF", 0.55), 1),
          rrect(x, y, w, TH, R, "none", ink(K["track_light_line"], 1))]
     svg.state("normal", b)
     svg.state("normal", [rrect(x, y, w, TH, R, K["track_light_hc"]), hc_edge(x, y, w, TH, R, "#000000", 2)], hc=True)
@@ -251,7 +356,7 @@ def greens():
             svg.state(st, body, hc=hc)
     out["success/green_muted.svg"] = svg.text()
 
-    # banner_success: the dark card, edged green and lit green inside its edge.
+    # banner_success: a deep green card, edged green and lit green inside its edge.
     svg = Svg(W, H, sl)
     for st in ("normal",):
         fy = y + (TRAVEL if st == "pressed" else 0)
@@ -277,7 +382,7 @@ def greens():
                 continue
             b.append(rrect(x, y + LIP, w, FACE, R, K["banner_lip"], stroke(C["ink_line"], LINE)))
             if st == "normal":
-                b.append(rrect(x, fy, w, FACE, R, svg.grad([(0, C["card_lit_mid"]), (0.5, C["card_top"]), (1, C["card_bottom"])])))
+                b.append(rrect(x, fy, w, FACE, R, svg.grad([(0, K["banner_top"]), (0.5, K["banner_mid"]), (1, K["banner_bottom"])])))
             elif st == "pressed":
                 b.append(rrect(x, fy, w, FACE, R, svg.grad([(0, K["banner_pressed_top"]), (1, K["banner_pressed_bottom"])])))
             else:
@@ -288,11 +393,11 @@ def greens():
                 b.append(rrect(x, fy, w, FACE, R, "none", ink(C["ink_deep"], LINE)))
                 svg.state(st, b)
                 continue
-            # The glow inside the edge: three rings, fading inward.
+            # The glow inside the edge: one blurred ring, a smooth ramp inward.
             k = 0.6 if st == "pressed" else 1
-            for inset, wd, al in ((2.6, 1.6, 0.42), (4.2, 1.8, 0.22), (6, 2, 0.1)):
-                b.append(rrect(x + inset, fy + inset, w - 2 * inset, FACE - 2 * inset, R - inset, "none",
-                               stroke(a(C["success"], al * k), wd)))
+            b.append('<g%s>%s</g>' % (clip(svg, x, fy, w, FACE, R),
+                                      rrect(x + 1, fy + 1, w - 2, FACE - 2, R - 1, "none",
+                                            stroke(a(C["success_light"], 0.6 * k), 4.5) + blur(svg, 2.4))))
             if st == "normal":
                 b.append(lit_band(svg, x + 3, fy + 2.5, w - 6, FACE, R - 3, 0.08, 18.5))
                 g = svg.grad([(0, C["success_light"]), (0.4, C["success"]), (1, K["banner_edge_dark"])])
