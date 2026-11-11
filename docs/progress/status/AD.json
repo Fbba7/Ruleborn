@@ -8,18 +8,105 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-11T22:22:00Z",
   "lease_until": "2026-11-12T01:22:00Z",
-  "updated_at": "2026-11-11T22:33:00Z",
-  "expected_next_update_by": "2026-11-11T23:18:00Z",
+  "updated_at": "2026-11-11T22:40:00Z",
+  "expected_next_update_by": "2026-11-11T23:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Board 1 posted (does not stand: objections A-E). Next: flow review of the integrated build (home, heist, result), then requests to the lead, pre-check and handoff"
+    "next_step": "Board 1 posted (objections A-E) and flow review written; requests AD-R7 to AD-R12 filed. Next: pre-check, then ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "AD-R7",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 objection A: the heist timer is flat type; draw it with KitNumerals like the other kit numbers.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md",
+        "client/screens/heist_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-11T22:40:00Z",
+      "due": "2026-11-13T22:40:00Z",
+      "default": "file it as a phase 1 task for S1 (heist screen); AD re-checks board 1 on the new stills",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R8",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 objection B: at 200% in pt_BR the loot line 'Carregar ate 80%' leaves its panel and overlaps Pip, and the guard's bubble is clipped; wrap or fit both.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-11T22:40:00Z",
+      "due": "2026-11-13T22:40:00Z",
+      "default": "file it as a phase 1 task for S1 (heist screen); AD re-checks board 1 on the new stills",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R9",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 objection C: no crew tray; Ash's name wraps alone; the hint bar and the load bar read as generic chrome, not kit parts.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-11T22:40:00Z",
+      "due": "2026-11-13T22:40:00Z",
+      "default": "file it as a phase 1 task for S1 (heist screen); AD re-checks board 1 on the new stills",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R10",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 objection D: the Hollow and Bramble portraits do not separate from their rings; give them a value step against the ring.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-11T22:40:00Z",
+      "due": "2026-11-13T22:40:00Z",
+      "default": "file it as a phase 1 task for S1 (heist screen); AD re-checks board 1 on the new stills (with AR if the portraits change)",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R11",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 objection E: the MOMENT=alarm shot shows 'Alarm 0/6', the same as sneak; the shot must show a raised alarm.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md",
+        "client/tests/shots/"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-11T22:40:00Z",
+      "due": "2026-11-13T22:40:00Z",
+      "default": "file it as a phase 1 task for S1 (heist screen); AD re-checks board 1 on the new stills",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R12",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Flow review findings F1-F7 on the integrated build (home raid line cut; home at 200% pins stack and three are missing; first-screen tagline on an island; scout chip row clipped; planner 'choose 3 to 3 crew'; result alarm peak vs 'No guard alerted', empty lower screen, byte count; replay markers pile up). Details in docs/progress/AD.md, Flow review.",
+      "files": [
+        "docs/progress/AD.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-11T22:40:00Z",
+      "due": "2026-11-13T22:40:00Z",
+      "default": "file each finding as a backlog task for the screen's owner; none holds phase 2",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
