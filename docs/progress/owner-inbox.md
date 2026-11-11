@@ -4,6 +4,17 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-11 01:20Z: three builders working after the restart, two K1 tasks seeded (lead, cycle 51)
+
+- **What:** the first cycle after the restart found nothing to gate or
+  merge. Tasks done: 46 of 63.
+- **Done:** seeded two K1 tasks: P1-K1-disc-host (the disc drawn as wide
+  as its host under the currency pills, pages 27, 44 and 45, with a test
+  that fails before the fix) and P1-K1-heist-kit (the kit work S1 asked
+  for, S1-R1 to S1-R6). Started three fresh Fable 5.2 sessions: AIA on
+  P1-AIA-kit-7, K1 on P1-K1-disc-host and S1 on P1-S1-pilot-2.
+- **Needs the owner:** nothing.
+
 ## 2026-11-11 01:15Z: the program is restarted on the owner's word (overseer)
 
 - **What:** the owner said, in the overseer session's chat, "We still need

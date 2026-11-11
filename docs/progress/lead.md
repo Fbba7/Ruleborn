@@ -140,9 +140,11 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnL64HmHVVoj2K58mZ` (cycle 50, the
-final cycle, 10 November 2026 from 09:19Z to about 10:33Z, started by the
-overseer by hand). Cycle 49's was `session_01SNkKxonDy8BxQGiqJJMXsB`
+Latest lead cycle session: `session_01SNkKxnDPjsoJBxjS6oA73p` (cycle 51, the
+first cycle after the restart of 11 November 2026, from 01:11Z, started by
+the launcher). Cycle 50's was `session_01SNkKxnL64HmHVVoj2K58mZ` (the last
+cycle before the stop, 10 November 2026 from 09:19Z to about 10:33Z,
+started by the overseer by hand). Cycle 49's was `session_01SNkKxonDy8BxQGiqJJMXsB`
 (from 07:38Z to about 07:55Z). Cycle 48's was
 `session_01SNkKxqhTHTeKwMPJKdCubU` (from 03:38Z; paused from about
 04:20Z to 06:50Z). Cycle
@@ -172,6 +174,9 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| AIA | `session_01SNkKxqH1rhueBqbuneEFSq` | P1-AIA-kit-7 | `claude/ui-artist` | 2026-11-11 01:15Z |
+| K1 | `session_01SNkKxpc8H8L5VAJUYuNCba` | P1-K1-disc-host | `claude/ui-bake` | 2026-11-11 01:15Z |
+| S1 | `session_01SNkKxqxd6Shqp4e1AafGUY` | P1-S1-pilot-2 | `claude/ui-screens-heist` | 2026-11-11 01:15Z |
 | AIA | `session_01SNkKxn3ipTmYbgSCzE7KeM` | P1-AIA-kit-6 (restart: AIA-R20 and AIA-R21 answered with their defaults; fill the handoff, mark ready, gate request); idle, done | `claude/ui-artist` | 2026-11-10 06:53Z |
 | K1 | `session_01SNkKxoJ8mhZCTqZrVR3GTe` (stopped, done) | P1-K1-switch-rest | `claude/ui-bake` | 2026-11-10 07:33Z |
 | S1 | `session_01SNkKxq8aqgTaKU6VpynuMm` (stopped, done) | P1-S1-pilot-1 | `claude/ui-screens-heist` | 2026-11-10 07:33Z |
@@ -256,7 +261,7 @@ You are agent AIA of the Ruleborn agent program (UI wave). Read docs/guides/agen
 Agent: AIA            Role: maker (AIA): kit art and motion art        Model: Fable 5.2
 Branch: claude/ui-artist
 Owned files: art/ui/** except art/ui/icons/**, client/ui/art/kit*, docs/progress/AIA.md, docs/progress/status/AIA.json
-Tasks: P1-AIA-kit-1, then P1-AIA-kit-2 to -6 as their deps merge (every phase 0 AIA task is merged). Icons are AIA-2's, not yours.
+Tasks: P1-AIA-kit-1, then P1-AIA-kit-2 to -7 as their deps merge (every phase 0 AIA task is merged). Icons are AIA-2's, not yours.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
@@ -271,7 +276,7 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Fable 5.2
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist and P1-K1-switch-rest as their deps merge (every other phase 0 K1 task is merged)
+Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host and P1-K1-heist-kit as their deps merge (every other phase 0 K1 task is merged)
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
@@ -325,6 +330,33 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 51, 11 November 2026, from 01:11Z (session
+  `session_01SNkKxnDPjsoJBxjS6oA73p`, started by the launcher; the first
+  cycle after the restart, on Fable 5.2): no merge, two tasks seeded,
+  three sessions started. Nothing was ready to gate or merge, no new
+  request, no merge lock. Main's code moved only by the overseer's
+  security fixes (`ca96667f`), so the pages were not republished.
+  - Seeded two K1 tasks (`de49748e`): **P1-K1-disc-host** (critical; the
+    skin's disc sprites are drawn as wide as their host, parts K23 and
+    K45, pages 27, 44 and 45; a test that fails on main first, the three
+    pages re-rendered in the eight variants, the six disc looks checked)
+    and **P1-K1-heist-kit** (S1-R1 to S1-R6, after the disc fix; S1-R7
+    waits). The backlog has 63 tasks, 46 merged. `owners.py claims`:
+    the tasks in flight have disjoint files.
+  - Every earlier session of AIA, K1 and S1 was idle (`get_session`) and
+    is not reused. Started three fresh Fable 5.2 sessions at 01:15Z, the
+    cap of three: AIA on P1-AIA-kit-7
+    (`session_01SNkKxqH1rhueBqbuneEFSq`), K1 on P1-K1-disc-host
+    (`session_01SNkKxpc8H8L5VAJUYuNCba`) and S1 on P1-S1-pilot-2
+    (`session_01SNkKxqxd6Shqp4e1AafGUY`), which takes pilot-1's gate
+    notes as its brief.
+  - Next: gate and merge what comes ready (kit-7, disc-host, pilot-2),
+    one merge at a time; disc-host touches the goldens and the bake
+    stills, so merge it before pilot-2 if both are ready and have S1
+    merge main. Start K1 on P1-K1-heist-kit once disc-host is merged,
+    and AD on P1-AD-board-1 once pilot-2 is merged. Icon batches 3 and
+    4 stay deferred (D13 (c)). The overseer may still land small fixes
+    on main: fetch before a merge.
 - Restart, 11 November 2026 at about 01:15Z (the overseer, on the owner's
   words "We still need to keep the UI process we were doing with the
   phases running as it was" and "Make sure it is running now"): CLAUDE.md
