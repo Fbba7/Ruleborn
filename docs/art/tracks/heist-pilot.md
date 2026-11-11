@@ -113,7 +113,7 @@ The heist's budget stills (`tools/ui_bake/budget_shots.py`), against the records
 | Budget still | Record | Part 2 |
 |---|---|---|
 | heist/100 | 121 | 117 |
-| heist/200 | 115 | 115 |
+| heist/200 | 115 | 114 |
 | heist/hc | 121 | 117 |
 
 Every word reaches 4.5:1. The worst ratios are 6.17, 7.63 and 5.55. `check_screens.py` notes two falls below their records: `heist_hud.gd` (0 and 0, recorded 3 and 2) and `fx_portrait.gd` (19 draw, recorded 20). Lowering the records is K1's (S1-R10).
