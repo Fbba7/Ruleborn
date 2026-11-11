@@ -36,7 +36,7 @@ at the code and the test that prove it.
 | # | Threat | Defence |
 |---|--------|---------|
 | T1 | **Token theft** — an access token read off the wire, a log, a crash report, a URL, a backup | HTTPS only (client refuses `http://` except loopback; server sends HSTS). Tokens only in the `Authorization` header, never a URL. The client's action log and the server's error log name the route alone. Access tokens live an hour; a stolen one dies at sign-out (server-side check every request). The refresh token is in the platform's secure storage, never a plain file. |
-| T2 | **Refresh-token theft** — the long-lived credential copied off a device | Rotation on every use; a refresh token used twice revokes its whole family (the thief and the player are both signed out, the player silently signs back in with the platform; the thief cannot). Idle limit 30 days, absolute limit 180 days. Stored on the server only as a salt; the token is an HMAC over it, so a database copy alone mints nothing, and neither does the key alone. |
+| T2 | **Refresh-token theft** — the long-lived credential copied off a device | Rotation once the token is a day old (`RULEBORN_REFRESH_ROTATE_HOURS`, 24 unless set, the owner's decision B9; 0 rotates it on every use); a refresh token of an older generation, presented after a rotation, revokes its whole family (the thief and the player are both signed out, the player silently signs back in with the platform; the thief cannot). Inside the span a copied token works beside the player's and is caught at the next rotation, not the next refresh. Idle limit 30 days, absolute limit 180 days. Stored on the server only as a salt; the token is an HMAC over it, so a database copy alone mints nothing, and neither does the key alone. |
 | T3 | **Replay of a platform proof** — a captured Game Center signature or Google ID token sent again | Game Center: at most five minutes old, and each (player, salt, timestamp) accepted once inside that window. Google: `nonce` must be a server-issued, single-use, five-minute nonce; the same token is refused the second time. |
 | T4 | **Forgery** — a made-up access or refresh token, a made-up platform proof | HMAC-SHA256 over every field with a server key; constant-time comparison; a key id in the token. Game Center's key fetched only from `static.gc.apple.com`/`sandbox.gc.apple.com` over HTTPS with no redirects, chained to a pinned root, Apple's organisation in the subject, the bundle id. Google: RS256 against Google's published keys (cached, refetched on an unknown `kid`, rate-limited), `iss`, `aud` among the app's client ids, `exp`/`iat` with five minutes of skew, `sub` numeric. `alg` is pinned (no `none`, no HS256 confusion). |
 | T5 | **Session fixation** — an attacker plants a session id the victim then signs into | The server makes every session id itself, at sign-in, from a CSPRNG; a client never names one. A sign-in always makes a new session; the device throws away any session it held before. |
@@ -65,8 +65,10 @@ without OAuth's ceremony (one first-party client).
   same read as the account row the server already makes (deleted, banned), so
   sign-out is immediate and the read count grows by one primary-key row.
 - Refresh token: `r1.<kid>.<session>.<generation>.<mac>`, the MAC over the
-  session's random salt as well. Rotated on every use: the old generation is
-  dead from then on.
+  session's random salt as well. Rotated once it is older than
+  `RULEBORN_REFRESH_ROTATE_HOURS` (24 unless set, the owner's decision B9;
+  0 rotates it on every use, as the `--example` server does): the old
+  generation is dead from then on.
 - Reuse: a refresh token of an older generation, correctly signed, means two
   holders: the session (the family) is ended with reason `reused`, and every
   token of it refused.
@@ -295,8 +297,10 @@ sign in, with the other platform offered; the recovery line.
 
 A sign-in writes one `sessions` row, a refresh one update, a sign-out one
 update. **One switch** for the owner's decision on that update:
-`RULEBORN_REFRESH_ROTATE_HOURS` (default 0) rotates the refresh token on
-every refresh; 24 rotates it once a day — within the day a refresh answers
+`RULEBORN_REFRESH_ROTATE_HOURS`. Unset it is 24, the owner's decision (B9,
+`docs/decisions/owner-decisions.md`): the refresh token rotates once a day
+(0 rotates it on every refresh, the `--example` server's default) — within
+the day a refresh answers
 a new access token and the same refresh token and writes nothing, so an
 engaged player's 5 refresh rows a day become 1.33 (82.48 instead of 86.15
 billed rows a day). The price: a copied refresh token is caught at the next
@@ -357,9 +361,9 @@ client `auth_tests.gd`, 18 checks with the round trip against the server):
 
 **For the owner to confirm:**
 
-- Refresh's billed row: keep rotation on every refresh (86.15 rows a day
-  for an engaged player) or set `RULEBORN_REFRESH_ROTATE_HOURS=24`
-  (82.48, from `server/load.mjs` run with it).
+- Refresh's billed row: decided (B9, `docs/decisions/owner-decisions.md`).
+  The token rotates once a day, the code's default;
+  `RULEBORN_REFRESH_ROTATE_HOURS=0` restores rotation on every refresh.
 - Which CA the client pins.
 - The native Keychain/Keystore and sign-in plugins.
 - Noted, not asked: the devices list's country is declared to both stores
