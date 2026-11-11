@@ -110,12 +110,29 @@ every other session is created with `create_session`.
 
 | Scheduled task | ID | Fires into | Schedule (UTC) |
 |---|---|---|---|
-| The launcher: one fresh lead cycle session an hour on Fable 5.2, unless the last is still working (created 11 Nov at 01:10Z, after the restart was on main) | `trig_01U7kEeot7dmuJuNZVQJ7Bhm` | the launcher, `session_01SNkKxoSssjoHhFMVu5fLBN` (Fable 5.2) | hourly at :38 |
-| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Fable 5.2 and alerts (created 11 Nov at 01:11Z, after the restart was on main) | `trig_0195QvFjjm2oUgeCeyhU4bp4` | the watchdog, `session_01SNkKxrFNAJUoT99Tauv1rD` (Fable 5.2) | every 2 hours at :08 |
+| The launcher: one fresh lead cycle session an hour on Opus 5.5 at effort high, unless the last is still working (created 11 Nov at 19:50Z, after order 5 was on main) | `trig_01T7B65veojXUDAKzLK3FFBP` | the launcher, `session_01SNkKxoNHJW6nWHDeA8Mfth` (Opus 5.5, effort high) | hourly at :38 |
+| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Opus 5.5 at effort high and alerts (created 11 Nov at 19:50Z, after order 5 was on main) | `trig_01A1NwZvKD6MDUosh4jyvqqr` | the watchdog, `session_01SNkKxnxxr83hSzGYBXwyr3` (Opus 5.5, effort high) | every 2 hours at :08 |
 
 **The pair in this table is the working pair**, created on 11 November
-2026 after the restart commit (`40c92625`) was on main. The launcher's
-first run, fired by hand at 01:11Z, started cycle 51's session.
+2026 at 19:50Z after the owner's order 5 (`780df6d8`) was on main.
+
+The Fable 5.2 pair of 11 November is retired: launcher
+`trig_01U7kEeot7dmuJuNZVQJ7Bhm` (into `session_01SNkKxoSssjoHhFMVu5fLBN`)
+and watchdog `trig_0195QvFjjm2oUgeCeyhU4bp4` (into
+`session_01SNkKxrFNAJUoT99Tauv1rD`), created at 01:10Z after the restart
+commit (`40c92625`) was on main (its first run started cycle 51's session)
+and disabled on 11 November 2026 at 19:49Z. From about 05:30Z that day every Fable 5.2 session of the program,
+these two included, stood still with its seven-day limit reading
+`rejected`, so no cycle started after cycle 52. It stays disabled and is
+never re-enabled. The overseer interrupted the Fable 5.2 sessions at
+19:49Z: the launcher and watchdog above, cycle 52's lead
+(`session_01SNkKxrATVfECHBXAWskbLg`) and its duplicate
+(`session_01SNkKxnH8TzJqFh4YN5MvvE`), and the builders AIA
+(`session_01SNkKxqH1rhueBqbuneEFSq`, P1-AIA-kit-7), K1
+(`session_01SNkKxpc8H8L5VAJUYuNCba`, P1-K1-disc-host) and S1
+(`session_01SNkKxqxd6Shqp4e1AafGUY`, P1-S1-pilot-2). None is reused
+(order 5): their work is on their branches, and the lead starts each
+unfinished task anew on Opus 5.5. Cycle 52's merge lock expired at 06:30Z.
 
 The pair of 9 November is retired: launcher
 `trig_01ChLd51gPMwzsKrXifYfkYj` (into `session_01SNkKxoc1ntTt7RqPTLViwy`)
