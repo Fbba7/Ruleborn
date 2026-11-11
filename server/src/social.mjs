@@ -196,7 +196,9 @@ export class Social {
     // §17.7's "4 to 8": a crew forms from its first member and counts as one
     // — for co-op and shared goals — from four (D63).
     if (this.hiddenFrom(viewer, members)) throw new Refused(404, "no_such_crew");
-    return { id, invite: c.invite, members: members.filter((m) => this.shown(viewer, m.account)),
+    // The invite joins the crew, so only its members see it (SEC-42).
+    const member = viewer !== null && members.some((m) => m.account === viewer);
+    return { id, ...(member ? { invite: c.invite } : {}), members: members.filter((m) => this.shown(viewer, m.account)),
              formed: members.length >= least };
   }
 
@@ -212,7 +214,7 @@ export class Social {
       this.db.prepare("INSERT INTO crew_members (crew, account, joined_at) VALUES (?, ?, ?)")
         .run(id, account, now);
     });
-    return this.crew(id);
+    return this.crew(id, account);
   }
 
   joinCrew(account, invite) {

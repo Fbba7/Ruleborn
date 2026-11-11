@@ -7,6 +7,7 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
 import { clockTicks } from "../src/service.mjs";
+import { Social } from "../src/social.mjs";
 import { Workshop } from "../src/workshop.mjs";
 import { openPlan, server } from "./setup.mjs";
 
@@ -105,4 +106,19 @@ test("SEC-40: a play submitted once its island is withdrawn earns nothing; compl
   assert.equal(other.w.ladder(other.creator).completions, 1);
   other.remove(other.item.id);
   assert.equal(other.w.ladder(other.creator).completions, 0);
+});
+
+test("SEC-42: a crew's invite is shown to its members only", async () => {
+  const t = server();
+  const a = t.service.session("gc:sec42a");
+  const b = t.service.session("gc:sec42b");
+  const get = async (who, path) => (await t.handle(new Request(`https://edge.example${path}`,
+    { headers: { authorization: `Bearer ${who.token}` } }))).json();
+  const started = new Social(t.service).startCrew(a.account);
+  assert.ok(started.invite, "the founder is given the invite");
+  const own = (await get(a, "/v1/crews/mine")).crew;
+  assert.equal(own.invite, started.invite, "a member still sees it");
+  const seen = await get(b, `/v1/crews/${started.id}`);
+  assert.equal(seen.id, started.id);
+  assert.equal("invite" in seen, false, "one outside the crew does not");
 });
