@@ -6,7 +6,9 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-import { server } from "./setup.mjs";
+import { clockTicks } from "../src/service.mjs";
+import { Workshop } from "../src/workshop.mjs";
+import { openPlan, server } from "./setup.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
 const HOUR = 60 * 60 * 1000;
@@ -48,4 +50,59 @@ test("SEC-35: a Rift rebuilt reversed owes its upkeep from where it was paid to,
   t.service.universe.show(me);
   assert.equal(t.service.aether(me), 9 * perHour, "the hour is paid at the hour, as if it had not been touched");
   assert.equal(row().open, 1);
+});
+
+/** A Workshop with one island published by `creator`, and a moderator. */
+function workshop() {
+  const t = server();
+  const w = new Workshop(t.service);
+  const island = t.build.exampleIsland(true);
+  const cleared = t.build.record(island, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() });
+  const creator = t.service.session("gc:creator").account;
+  const item = w.publish(creator, island, cleared, { adjective: 1, noun: 9 });
+  const person = t.service.session("gc:moderator").account;
+  t.service.db.prepare("UPDATE accounts SET moderator = 1 WHERE id = ?").run(person);
+  const remove = (id) => w.resolve(person, w.report(person, id, "unfair").report, "remove", "unfair");
+  return { t, w, island, cleared, creator, item, remove };
+}
+
+/** A play's clear, as the device would record it, not yet submitted. */
+function cleared(t, p) {
+  return t.build.record(t.service.bundle(p.bundle), { seed: BigInt(p.seed), ticks: p.ticks, crew: 3,
+                                                       commands: openPlan() });
+}
+
+test("SEC-40: a play submitted once its island is taken down is answered, but earns its creator nothing", () => {
+  const { t, w, creator, item, remove } = workshop();
+  const player = t.service.session("gc:player").account;
+  const p = w.play(player, item.id);
+  remove(item.id);
+  const outcome = w.submitPlay(player, p.token, cleared(t, p));
+  assert.equal(outcome.validated, true, "the player still sees their result");
+  assert.equal(outcome.cleared, true);
+  assert.equal(outcome.counted, false);
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM workshop_completions").get().n, 0);
+  assert.equal(w.ladder(creator).completions, 0);
+  assert.deepEqual(t.service.fund.played(0, t.clock.now + 1), {}, "and no Fund time");
+});
+
+test("SEC-40: a play submitted once its island is withdrawn earns nothing; completions earned while listed stay", () => {
+  const { t, w, creator, item, remove } = workshop();
+  const early = t.service.session("gc:early").account;
+  const p0 = w.play(early, item.id);
+  assert.equal(w.submitPlay(early, p0.token, cleared(t, p0)).counted, true);
+  const late = t.service.session("gc:late").account;
+  const p1 = w.play(late, item.id);
+  w.withdraw(creator, item.id);
+  assert.equal(w.submitPlay(late, p1.token, cleared(t, p1)).counted, false);
+  assert.equal(w.ladder(creator).completions, 1, "the creator keeps what was earned while it was listed");
+  assert.deepEqual(Object.keys(t.service.fund.played(0, t.clock.now + 1)), [creator]);
+  // A removed island drops off the ladder altogether.
+  const other = workshop();
+  const player = other.t.service.session("gc:player").account;
+  const p2 = other.w.play(player, other.item.id);
+  assert.equal(other.w.submitPlay(player, p2.token, cleared(other.t, p2)).counted, true);
+  assert.equal(other.w.ladder(other.creator).completions, 1);
+  other.remove(other.item.id);
+  assert.equal(other.w.ladder(other.creator).completions, 0);
 });
