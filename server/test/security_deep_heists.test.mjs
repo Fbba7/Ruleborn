@@ -1,6 +1,8 @@
-// The deep security run's fixes on heist submission (SEC-18 part A, SEC-31).
+// The deep security run's fixes on heist submission (SEC-18 part A, SEC-25
+// part A, SEC-31).
 
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { mkdtempSync, readFileSync, readdirSync, rmSync, statfsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -74,4 +76,31 @@ test("SEC-31: a replay is judged under its lease's rules; one naming another hel
   const before = t.service.lease(t.raider.account, t.bundle);
   t.service.builds = new Builds([old, newer]);
   assert.equal(t.service.submit(t.raider.account, before.token, play(t, before, { plan: openPlan() })).validated, true);
+});
+
+// SEC-25 part A: a heist's stray was rolled from the account and the lease's
+// token alone, both known to the device, so a client could tell before it
+// submitted whether the heist would find a stray, and drop the ones that
+// would not. The roll is now keyed with a secret the device never holds.
+test("SEC-25: the stray roll cannot be worked out from the account and the token", () => {
+  const t = twoPlayers(false);
+  const me = t.raider.account;
+  const dice = (seed) => { let i = 0; return (n) => createHash("sha256").update(`${seed}:${i++}`).digest().readUInt32BE(0) % n; };
+  const db = t.service.db;
+  let predicted = 0, found = 0, agree = 0;
+  db.exec("SAVEPOINT sec25");
+  try {
+    for (let n = 0; n < 64; n++) {
+      const token = createHash("sha256").update(`sec25-${n}`).digest("hex").slice(0, 32);
+      const guess = dice(`${me}:stray:${token}`)(8) === 0;
+      const got = t.service.home.findStray(me, token, [], t.clock.now) !== null;
+      predicted += guess; found += got; agree += guess === got;
+    }
+  } finally {
+    db.exec("ROLLBACK TO sec25"); db.exec("RELEASE sec25");
+  }
+  assert.ok(predicted > 0 && found > 0, `both find strays (${predicted}, ${found})`);
+  assert.ok(agree < 64, "the device's prediction misses");
+  // The same key after a restart: it comes from the server's secret.
+  assert.deepEqual(t.service.home.strayKey, twoPlayers(false).service.home.strayKey);
 });
