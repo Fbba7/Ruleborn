@@ -140,7 +140,11 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnDPjsoJBxjS6oA73p` (cycle 51, the
+Latest lead cycle session: `session_01SNkKxrATVfECHBXAWskbLg` (cycle 52, 11
+November 2026 from 05:20Z, started by the launcher; it holds the merge
+lock). The watchdog started a second cycle session at the same minute
+(`session_01SNkKxnH8TzJqFh4YN5MvvE`), which stood down (`95985299`) and
+did no work. Cycle 51's was `session_01SNkKxnDPjsoJBxjS6oA73p` (the
 first cycle after the restart of 11 November 2026, from 01:11Z, started by
 the launcher). Cycle 50's was `session_01SNkKxnL64HmHVVoj2K58mZ` (the last
 cycle before the stop, 10 November 2026 from 09:19Z to about 10:33Z,
