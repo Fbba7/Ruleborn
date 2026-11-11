@@ -546,7 +546,11 @@ static func parts() -> Array:
 			var l := UI.label("7", 18)
 			l.theme_type_variation = "NumberM"
 			p.add_child(l)
-			return p
+			# The cell is wider than the disc: centred, the disc keeps its own
+			# round size, the host its sprite needs (`KitSkin.fits`).
+			var c := CenterContainer.new()
+			c.add_child(p)
+			return c
 		r.add_child(_cell("K38", "N", disc))
 		r.add_child(_cell("K38", "A", disc))
 		r.add_child(_cell("K38", "N", func() -> Control:
