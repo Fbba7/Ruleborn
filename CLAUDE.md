@@ -27,8 +27,9 @@ the status files, requests and scheduled-task prompts.
 - **11 November 2026, about 01:00 UTC:** the owner restarted it ("We still
   need to keep the UI process we were doing with the phases running as it
   was", then "Make sure it is running now"), in the chat of the overseer
-  session. **The program runs**, on Fable 5.2 only (order 4). Order 3's
-  "keep working" applies again.
+  session. **The program runs**, on Fable 5.2 only (order 4) until the
+  switch of 11 November 2026, about 19:50 UTC, and on Opus 5.5 at effort
+  high since then (order 5). Order 3's "keep working" applies again.
   - **A new launcher and a new watchdog**, created after this restart was
     on main, start the lead's cycles. Their IDs are in
     [`docs/progress/lead.md`](docs/progress/lead.md), "The program's
@@ -71,10 +72,10 @@ Fable 5.1 must never be used again, for anything, including:
 
 Where a document names Fable 5.1 as a default or a plan (for example
 `dev-fable` runs, or "Fable 5.1 unless Opus 5.5 catches more"), read
-Fable 5.2 instead (order 4). Do not plan or launch any further `*-fable*` run, and never resume
+Opus 5.5 instead (order 5). Do not plan or launch any further `*-fable*` run, and never resume
 `dev-fable-v3`. The history that records past Fable runs stays as written.
 This order is permanent: restarting the program does not lift it. Fable 5.2
-is a different model, and order 4 does not lift this order either.
+is a different model, and neither order 4 nor order 5 lifts this order.
 
 ## 3. Keep working until the owner says stop
 
@@ -96,9 +97,13 @@ be the logic."
   sessions), nothing is lost: the launcher and the watchdog resume the work
   after the limit resets, with no further pause and nothing asked of the
   owner.
-- **Never use Fable 5.1** (order 2), and **use only Fable 5.2** (order 4).
+- **Never use Fable 5.1** (order 2), and **use only Opus 5.5, at effort
+  high** (order 5).
 
-## 4. Use only Fable 5.2
+## 4. Use only Fable 5.2 (replaced by order 5)
+
+This order held from 9 November 2026 until 11 November 2026, about 19:50
+UTC. Order 5 replaces it; read it as history.
 
 On 9 November 2026 the owner ordered, in the chat of the overseer session:
 "Let's continue and use only Fable 5.2."
@@ -117,5 +122,39 @@ On 9 November 2026 the owner ordered, in the chat of the overseer session:
 - **A session started before 9 November 2026 on another model is not
   reused.** Its work is on its branch; a fresh session on Fable 5.2 takes
   the task.
+- **A session that finds itself on another model does no work.** It writes
+  that in its status file or handoff, and ends its turn.
+
+## 5. Use only Opus 5.5, at effort high
+
+On 11 November 2026, at about 19:50 UTC, the owner ordered, in the chat of
+the overseer session: "Let's switch to Opus 5.5 everywhere again, effort
+high." This order replaces order 4.
+
+- **Every session runs on Opus 5.5, at effort high, and on no other
+  model:** the lead's cycles, the launcher, the watchdog, every agent and
+  the overseer. The same holds for every subagent and workflow model
+  override (effort high), for the gate's judge (it inherits the model of
+  the session that calls it) and for any calibration or held-out run. If
+  `create_session` refuses the effort setting, create the session on
+  Opus 5.5 without it and say so in your status file.
+- **Where a document names another model** (Fable 5.2, Sonnet 5.5,
+  Haiku 5.5 or any other) as the model of a session, a subagent or the
+  judge, read Opus 5.5. This covers the roster in `backlog.json`, the
+  protocol, the briefs, the agents' prompts, the UI report and order 4.
+  The history that records which model did past work stays as written.
+- **Order 2 stands:** Fable 5.1 is never used.
+- **A session started on another model is not reused.** That includes the
+  Fable 5.2 sessions of 9 to 11 November 2026: the launcher, the watchdog,
+  the lead's cycles and the builders K1, S1 and AIA. Their work is on their
+  branches. A fresh session on Opus 5.5 takes each unfinished task: the
+  lead starts the builders anew, within the cap of three.
+- **Why the switch:** from about 05:30 UTC on 11 November 2026 every
+  Fable 5.2 session of the program stood still, its seven-day limit
+  reading `rejected`. The overseer interrupted them and disabled their
+  launcher and watchdog, which are never re-enabled. A new launcher and a
+  new watchdog on Opus 5.5 start the lead's cycles. Their IDs are in
+  [`docs/progress/lead.md`](docs/progress/lead.md), "The program's
+  scheduled tasks and sessions".
 - **A session that finds itself on another model does no work.** It writes
   that in its status file or handoff, and ends its turn.
