@@ -579,6 +579,10 @@ func _build() -> void:
 	hint_panel = KitStatus.hint("")
 	hint_label = hint_panel.get_node("Words") as Label
 	var hint := hint_panel
+	# The hint gives way when the columns meet, measured after each layout
+	# (a refresh comes before the containers settle).
+	for moving: Control in [top_column, lower]:
+		moving.item_rect_changed.connect(func() -> void: _fit_hint.call_deferred())
 
 	# The design's landing picker (T6's `OverlayLanding`), its header over
 	# the world at the top while the crew chooses.
