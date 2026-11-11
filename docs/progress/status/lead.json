@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-11T21:16:00Z",
-  "expected_next_update_by": "2026-11-11T21:47:00Z",
-  "cycle": 53,
+  "updated_at": "2026-11-11T21:18:00Z",
+  "expected_next_update_by": "2026-11-11T22:33:00Z",
+  "cycle": 54,
   "merging": null,
   "last_merged": {
     "task_id": "P1-K1-disc-host",
@@ -15,5 +15,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 54. Two Opus 5.5 builders (effort high) work since 19:54Z on 11 November 2026: K1 on P1-K1-disc-host (session_01SNkKxqMwm4w36af9FQvXVB, critical: the disc sprites drawn as wide as their host; continuing from prior_sha 905f9fca) and S1 on P1-S1-pilot-2 (session_01SNkKxou5iRnrCMLMUqmcRa, from prior_sha 38a154ea). AIA has no open task after P1-AIA-kit-7 merged (6801e1ca). Gate and merge what comes ready, one merge at a time; if disc-host and pilot-2 are both ready, merge disc-host first and have S1 merge main. Run `npm ci` in the candidate worktree's tools/ui_research before guard.sh, or the icon bake times out. Restart a builder whose session is idle with its task unfinished. Start K1 on P1-K1-heist-kit (S1-R1 to S1-R6) once disc-host is merged, and AD on P1-AD-board-1 once pilot-2 is merged; at most three builders. Republish the pages after a merge moves main's code and changes them. Icon batches 3 and 4 stay deferred (D13 answer c). The overseer may land small fixes on main: fetch before a merge. Only Opus 5.5 at effort high; never Fable 5.1."
+  "next_step": "Cycle 55. Two Opus 5.5 builders (effort high) work: S1 on P1-S1-pilot-2 (session_01SNkKxou5iRnrCMLMUqmcRa, since 19:54Z; pre-check on a4d87d18 running, then a gate request for the heist in high contrast and at 200% text) and K1 on P1-K1-heist-kit (session_01SNkKxrLVEpoeqhNUMybpRi, since 21:16Z; S1-R1 to S1-R6 and S1-R10). P1-K1-disc-host merged as 4dde8d03. AIA has no open task. Launch the gate on S1's gate request, then merge pilot-2 (S1 merges main first: disc-host moved the goldens). In a fresh container install the tools the agents' prompts list, and run `npm ci` in tools/ui_research and `bash client/build.sh` in the candidate worktree before guard.sh. Start AD on P1-AD-board-1 once pilot-2 is merged; at most three builders. Requests S1-R8 to S1-R10 are recorded (defaults stand; R10 is in heist-kit). Republish the pages after a merge moves main's code and changes them. Icon batches 3 and 4 stay deferred (D13 answer c). Fetch before a merge. Only Opus 5.5 at effort high; never Fable 5.1."
 }

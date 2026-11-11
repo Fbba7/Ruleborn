@@ -157,11 +157,11 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxq9SSpFo8PxqxGC3p8` (cycle 53, 11
-November 2026 from 19:51Z, started by the Opus 5.5 launcher; the first
-cycle on Opus 5.5 at effort high, order 5). Its first commit (`2fccd5b2`)
-names this session with a mistyped ID in its trailer; the ID here is the
-right one. Cycle 52's was `session_01SNkKxrATVfECHBXAWskbLg` (11 November
+Latest lead cycle session: `session_01SNkKxqcjmNkScYYnT5Er2i` (cycle 54, 11
+November 2026 from 20:39Z, started by the Opus 5.5 launcher). Cycle 53's
+was `session_01SNkKxq9SSpFo8PxqxGC3p8` (from 19:51Z, the first cycle on
+Opus 5.5 at effort high, order 5; its first commit, `2fccd5b2`, names it
+with a mistyped ID in its trailer). Cycle 52's was `session_01SNkKxrATVfECHBXAWskbLg` (11 November
 2026 from 05:20Z, on Fable 5.2, started by the launcher; it took the merge
 lock for P1-AIA-kit-7 and stood still on its seven-day limit, and the lock
 expired at 06:30Z). The watchdog started a second cycle session at the same minute
@@ -200,7 +200,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| K1 | `session_01SNkKxqMwm4w36af9FQvXVB` (Opus 5.5, effort high) | P1-K1-disc-host (restart: the Fable 5.2 session stood still and is not reused, order 5; merge prior_sha 905f9fca, finish guard, pre-check, handoff) | `claude/ui-bake` | 2026-11-11 19:54Z |
+| K1 | `session_01SNkKxrLVEpoeqhNUMybpRi` (Opus 5.5, effort high) | P1-K1-heist-kit (start: P1-K1-disc-host merged as 4dde8d03) | `claude/ui-bake` | 2026-11-11 21:16Z |
+| K1 | `session_01SNkKxqMwm4w36af9FQvXVB` (Opus 5.5, effort high; idle, its task merged) | P1-K1-disc-host (restart: the Fable 5.2 session stood still and is not reused, order 5; merge prior_sha 905f9fca, finish guard, pre-check, handoff) | `claude/ui-bake` | 2026-11-11 19:54Z |
 | S1 | `session_01SNkKxou5iRnrCMLMUqmcRa` (Opus 5.5, effort high) | P1-S1-pilot-2 (restart: as K1; merge prior_sha 38a154ea and do the task) | `claude/ui-screens-heist` | 2026-11-11 19:54Z |
 | AIA | `session_01SNkKxqH1rhueBqbuneEFSq` (Fable 5.2, interrupted, not reused) | P1-AIA-kit-7 | `claude/ui-artist` | 2026-11-11 01:15Z |
 | K1 | `session_01SNkKxpc8H8L5VAJUYuNCba` (Fable 5.2, interrupted, not reused) | P1-K1-disc-host | `claude/ui-bake` | 2026-11-11 01:15Z |
@@ -358,6 +359,42 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 54, 11 November 2026, from 20:39Z (session
+  `session_01SNkKxqcjmNkScYYnT5Er2i`, started by the Opus 5.5 launcher):
+  one merge, one session started, three requests recorded.
+  - Claims recorded from the builders' status files: P1-K1-disc-host (K1,
+    `claude/ui-bake`, lease to 22:58Z) and P1-S1-pilot-2 (S1,
+    `claude/ui-screens-heist`, lease to 22:55Z). The idle queue's two
+    items now name Opus 5.5 (order 5).
+  - **Merged P1-K1-disc-host** (ready 62bbef35, no gate items) as
+    `4dde8d03`: merge lock at `3d4acff1`, candidate on main's head,
+    `owners.py diff` clean once the two Godot `.uid` companions of K1's
+    new shot scripts (`ui_kit_round.gd.uid`, `ui_observatory_echo.gd.uid`)
+    were granted as exceptions, as for earlier tasks; claims disjoint;
+    check_all PASS; guard.sh OK; no test loosened (the two removed lines
+    are catalogue drawing code). Lock released in `c4239219`. The audit
+    and roadmap pages did not change, so they were not republished.
+  - A fresh container lacks the tools: the first check_all failed on the
+    missing wasm32 target and guard.sh on the missing Godot. Install them
+    as the agents' prompts say (rustup targets, pip, `npm ci` in
+    tools/ui_research, `bash client/build.sh`) in the lead's checkout, and
+    run `bash client/build.sh` in the candidate worktree too before
+    guard.sh, or every budget shot fails on the missing
+    `libruleborn_godot.so`.
+  - Requests from S1 (11 November, due 12 November 20:14Z, none
+    blocking): S1-R8 (`heist_hand.gd` in S1's files; default stands for
+    pilot-2), S1-R9 (gait and pause icons; default stands, icon art is
+    AIA-2's and batches 3 and 4 are deferred), S1-R10 (`fx_portrait.gd`'s
+    record to 19 draw; folded into P1-K1-heist-kit).
+  - Started K1 on P1-K1-heist-kit at 21:16Z
+    (`session_01SNkKxrLVEpoeqhNUMybpRi`, Opus 5.5, effort high accepted).
+    S1 is still working on pilot-2 (pre-check on a4d87d18 running, then a
+    gate request for the heist in high contrast and at 200% text). The
+    backlog has 63 tasks, 48 merged. No owner-inbox entry.
+  - Next: launch the gate on S1's gate request when it lands, then merge
+    pilot-2 (S1 merges main first, as disc-host moved the goldens). Start
+    AD on P1-AD-board-1 once pilot-2 is merged. At most three builders;
+    icon batches 3 and 4 stay deferred (D13 (c)).
 - Cycle 53, 11 November 2026, from 19:51Z (session
   `session_01SNkKxq9SSpFo8PxqxGC3p8`, started by the Opus 5.5 launcher;
   the first cycle on Opus 5.5 at effort high, order 5): one merge, two
