@@ -148,6 +148,12 @@ export class Workshop {
         || !WORDS.adjectives[adjective] || !WORDS.nouns[noun]) {
       throw new Refused(400, "name_not_from_the_word_lists");
     }
+    // Before the island is checked and the replay re-simulated, so a remix
+    // of nothing costs no simulation (SEC-44).
+    if (remixOf !== null) {
+      const parent = this.db.prepare("SELECT removed_at FROM workshop_items WHERE id = ?").get(remixOf);
+      if (!parent || parent.removed_at) throw new Refused(404, "no_such_island");
+    }
     const build = this.service.builds.current;
     const read = build.island(bundle);
     if (read.error) throw new Refused(400, read.error);
@@ -167,10 +173,6 @@ export class Workshop {
                                              grade: result.verdict?.grade });
     }
 
-    if (remixOf !== null) {
-      const parent = this.db.prepare("SELECT removed_at FROM workshop_items WHERE id = ?").get(remixOf);
-      if (!parent || parent.removed_at) throw new Refused(404, "no_such_island");
-    }
     const stored = Number(this.db.prepare(
       "SELECT COALESCE(SUM(bytes), 0) AS n FROM workshop_items WHERE creator = ?").get(creator).n);
     const live = this.db.prepare(

@@ -312,7 +312,22 @@ const port = Number(process.argv.slice(2).find((a) => /^\d+$/.test(a)) ?? 8787);
 // long before it could hold much memory, and nothing a request does takes the
 // process down (C26).
 const MAX_READ = 64 * 1024;
-createServer(async (req, res) => {
+const METHODS = ["GET", "HEAD", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"];
+// A slow caller cannot hold a socket open without end, nor every socket the
+// process has: headers within 10 s, the whole request within 30 s, an idle
+// kept-alive socket closed after 5 s (SEC-34).
+const headersTimeout = Number(process.env.RULEBORN_HEADERS_TIMEOUT_MS ?? 10_000);
+const listener = createServer({
+  headersTimeout, requestTimeout: Math.max(30_000, headersTimeout), keepAliveTimeout: 5_000,
+  connectionsCheckingInterval: Math.min(1_000, headersTimeout),
+}, async (req, res) => {
+  // The methods the routes answer; any other is refused before it is read,
+  // where `new Request` would throw for it (SEC-34).
+  if (!METHODS.includes(req.method)) {
+    res.writeHead(405, { "content-type": "application/json", allow: METHODS.join(", ") });
+    res.end(JSON.stringify({ error: "method_not_allowed" }));
+    return;
+  }
   try {
     const chunks = [];
     let size = 0;
@@ -341,7 +356,9 @@ createServer(async (req, res) => {
     if (!res.headersSent) res.writeHead(500, { "content-type": "application/json" });
     res.end(JSON.stringify({ error: "internal" }));
   }
-}).listen(port, "127.0.0.1", () => {
+});
+listener.maxConnections = Number(process.env.RULEBORN_MAX_CONNECTIONS ?? 2048);
+listener.listen(port, "127.0.0.1", () => {
   console.log(`ruleborn server on http://127.0.0.1:${port} (rules ${service.builds.current.rulesVersion.slice(0, 12)})`);
 });
 

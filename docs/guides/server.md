@@ -97,7 +97,9 @@ development default except what a real deployment needs.
 | `RULEBORN_CF_ZONE`, `RULEBORN_CF_PURGE_TOKEN`, `RULEBORN_PUBLIC_ORIGIN` | purging deleted bundles from the edge cache |
 | `RULEBORN_FCM_SERVICE_ACCOUNT`, `RULEBORN_FCM_PROJECT` | push notifications through Firebase Cloud Messaging |
 | `RULEBORN_CONTACT` | the contact shown on the stores' pages |
-| `RULEBORN_PEER_HEADER`, `RULEBORN_PLACE_HEADER` | which request headers carry the caller's address and country behind a proxy |
+| `RULEBORN_PEER_HEADER`, `RULEBORN_PLACE_HEADER` | which request headers carry the caller's address and country behind a proxy; with the address set, the sign-in nonce and the deletion page are also limited by address (SEC-34) |
+| `RULEBORN_HEADERS_TIMEOUT_MS` | how long the local listener waits for a request's headers before closing the socket (10000 unless set; the whole request has at least 30 s) (SEC-34) |
+| `RULEBORN_MAX_CONNECTIONS` | how many sockets the local listener holds open at once (2048 unless set) (SEC-34) |
 
 All are read in `server/src/main.mjs`; what each one does is explained where
 [`server/README.md`](../../server/README.md) describes its area ("The stores'
