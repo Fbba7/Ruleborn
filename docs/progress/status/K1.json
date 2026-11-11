@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P1-K1-heist-kit",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-11T21:05:00Z",
   "lease_until": "2026-11-12T00:05:00Z",
-  "updated_at": "2026-11-11T21:05:00Z",
-  "expected_next_update_by": "2026-11-11T21:50:00Z",
+  "updated_at": "2026-11-11T21:30:00Z",
+  "expected_next_update_by": "2026-11-11T22:15:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "62bbef35",
-    "next_step": "P1-K1-heist-kit claimed: main merged; reading S1-R1 to S1-R6, S1-R10 and the gate's notes on P1-S1-pilot-1."
+    "next_step": "Large clock look chosen by probe (parchment at radius 14, cream inked tabular figures); writing the additive heist calls in kit_hud.gd (set_clock, set_alarm, set_loot, clock_large, alarm_fit, loot_fit)."
   },
   "precheck": {
     "sha": "62bbef351ffc5fd6d24d414a569db4eaebd8308b",
