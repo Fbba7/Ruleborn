@@ -840,6 +840,13 @@ func _fit_hint() -> void:
 	if not playing or top_column_node == null or not hud.visible or _hint_level >= 2 or column_node.size.y <= 0.0 \
 			or not is_visible_in_tree():
 		return
+	# A column whose box is not yet its content's height is mid-layout: its
+	# place says nothing about room.
+	for moving: Control in [top_column_node, column_node]:
+		var safe := moving.get_parent_control()
+		if not is_equal_approx(moving.size.y, moving.get_combined_minimum_size().y) \
+				or not is_equal_approx(safe.size.y, safe.get_combined_minimum_size().y):
+			return
 	var low := column_node.global_position.y
 	var top := top_column_node.get_global_rect().end.y + UI.px(Tokens.number("size", "gap_points"))
 	# Once a step a layout: the containers settle a frame late.
