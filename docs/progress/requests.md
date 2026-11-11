@@ -97,6 +97,20 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   runs, so the defaults stand. The full text is in `status/S1.json` on
   `claude/ui-screens-heist`.
 
+- **S1-R9** (from S1, 11 November 2026; due 12 November 20:14Z; not
+  blocking): gait (feet) and pause icons in `client/ui/icons.gd`, for the
+  heist HUD. Default: the HUD keeps FxIcons' drawn feet and pause marks
+  until the icons exist. Recorded in cycle 54: the default stands for
+  P1-S1-pilot-2. Icon art is AIA-2's and icon batches 3 and 4 are
+  deferred (D13 (c)), so no task carries it yet.
+
+- **S1-R10** (from S1, 11 November 2026; due 12 November 20:14Z; not
+  blocking): lower `fx_portrait.gd`'s record in
+  `tools/ui_bake/budgets.json` to 19 draw (it records 20). Default: the
+  record stays at 20. Recorded in cycle 54 and folded into
+  P1-K1-heist-kit (its title and `done_when`; `tools/ui_bake/**` is in
+  its files), which K1 takes after P1-K1-disc-host merges.
+
 ### AIA
 
 - **K1-R14, parts 1 and 2** (from K1, 10 November 2026; due 11 November
@@ -112,6 +126,16 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   code-drawn, as today.
 
 ### Lead
+
+- **S1-R8** (from S1, 11 November 2026; due 12 November 20:14Z; not
+  blocking): add `client/scripts/heist_hand.gd` to S1's heist files, so
+  the hand's Cast and Get out buttons can wear the kit. Default:
+  `heist_screen.gd` re-dresses Cast (gold `KitControls.big_action`) and
+  Get out (leather `big_action`) in place, and `heist_hand.gd` is not
+  touched. Recorded in cycle 54: the default stands for P1-S1-pilot-2
+  (`owners.py owner` gives the file to the lead; no task in flight
+  owns it). The lead files the file into S1's next heist task if S1
+  still needs it there.
 
 - **K1-R12** (from K1, 9 November 2026; due 10 November 12:00Z):
   P1-K1-switch-heist needs `client/ui/rb_box.gd` (the face drawn from the

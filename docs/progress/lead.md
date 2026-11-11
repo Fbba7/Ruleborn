@@ -157,9 +157,14 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxrATVfECHBXAWskbLg` (cycle 52, 11
-November 2026 from 05:20Z, started by the launcher; it holds the merge
-lock). The watchdog started a second cycle session at the same minute
+Latest lead cycle session: `session_01SNkKxq9SSpFo8PxqxGC3p8` (cycle 53, 11
+November 2026 from 19:51Z, started by the Opus 5.5 launcher; the first
+cycle on Opus 5.5 at effort high, order 5). Its first commit (`2fccd5b2`)
+names this session with a mistyped ID in its trailer; the ID here is the
+right one. Cycle 52's was `session_01SNkKxrATVfECHBXAWskbLg` (11 November
+2026 from 05:20Z, on Fable 5.2, started by the launcher; it took the merge
+lock for P1-AIA-kit-7 and stood still on its seven-day limit, and the lock
+expired at 06:30Z). The watchdog started a second cycle session at the same minute
 (`session_01SNkKxnH8TzJqFh4YN5MvvE`), which stood down (`95985299`) and
 did no work. Cycle 51's was `session_01SNkKxnDPjsoJBxjS6oA73p` (the
 first cycle after the restart of 11 November 2026, from 01:11Z, started by
@@ -195,9 +200,11 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AIA | `session_01SNkKxqH1rhueBqbuneEFSq` | P1-AIA-kit-7 | `claude/ui-artist` | 2026-11-11 01:15Z |
-| K1 | `session_01SNkKxpc8H8L5VAJUYuNCba` | P1-K1-disc-host | `claude/ui-bake` | 2026-11-11 01:15Z |
-| S1 | `session_01SNkKxqxd6Shqp4e1AafGUY` | P1-S1-pilot-2 | `claude/ui-screens-heist` | 2026-11-11 01:15Z |
+| K1 | `session_01SNkKxqMwm4w36af9FQvXVB` (Opus 5.5, effort high) | P1-K1-disc-host (restart: the Fable 5.2 session stood still and is not reused, order 5; merge prior_sha 905f9fca, finish guard, pre-check, handoff) | `claude/ui-bake` | 2026-11-11 19:54Z |
+| S1 | `session_01SNkKxou5iRnrCMLMUqmcRa` (Opus 5.5, effort high) | P1-S1-pilot-2 (restart: as K1; merge prior_sha 38a154ea and do the task) | `claude/ui-screens-heist` | 2026-11-11 19:54Z |
+| AIA | `session_01SNkKxqH1rhueBqbuneEFSq` (Fable 5.2, interrupted, not reused) | P1-AIA-kit-7 | `claude/ui-artist` | 2026-11-11 01:15Z |
+| K1 | `session_01SNkKxpc8H8L5VAJUYuNCba` (Fable 5.2, interrupted, not reused) | P1-K1-disc-host | `claude/ui-bake` | 2026-11-11 01:15Z |
+| S1 | `session_01SNkKxqxd6Shqp4e1AafGUY` (Fable 5.2, interrupted, not reused) | P1-S1-pilot-2 | `claude/ui-screens-heist` | 2026-11-11 01:15Z |
 | AIA | `session_01SNkKxn3ipTmYbgSCzE7KeM` | P1-AIA-kit-6 (restart: AIA-R20 and AIA-R21 answered with their defaults; fill the handoff, mark ready, gate request); idle, done | `claude/ui-artist` | 2026-11-10 06:53Z |
 | K1 | `session_01SNkKxoJ8mhZCTqZrVR3GTe` (stopped, done) | P1-K1-switch-rest | `claude/ui-bake` | 2026-11-10 07:33Z |
 | S1 | `session_01SNkKxq8aqgTaKU6VpynuMm` (stopped, done) | P1-S1-pilot-1 | `claude/ui-screens-heist` | 2026-11-10 07:33Z |
@@ -351,6 +358,38 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 53, 11 November 2026, from 19:51Z (session
+  `session_01SNkKxq9SSpFo8PxqxGC3p8`, started by the Opus 5.5 launcher;
+  the first cycle on Opus 5.5 at effort high, order 5): one merge, two
+  leases reopened, two sessions started.
+  - Cycle 52 (Fable 5.2) took the merge lock for P1-AIA-kit-7 at 05:30Z
+    and stood still on its seven-day limit; its gate verdict
+    (`verdicts/P1-AIA-kit-7/961c7905.json`, advisory, four passes) was
+    already on main. The lock expired at 06:30Z and was cleared
+    (`2fccd5b2`).
+  - The backlog's roster and every unmerged task now name Opus 5.5
+    (`8bece1d8`). The leases of P1-K1-disc-host and P1-S1-pilot-2 lapsed
+    with their Fable 5.2 sessions; both are open again with
+    `prior_branch` and `prior_sha` (905f9fca on `claude/ui-bake`,
+    38a154ea on `claude/ui-screens-heist`).
+  - **Merged P1-AIA-kit-7** (ready 961c7905) as `6801e1ca`: candidate on
+    main `8bece1d8`, `owners.py diff` clean, claims disjoint, check_all
+    PASS, guard.sh OK. The first guard run failed (rebake: the icon bake
+    timed out waiting for three.js) because the candidate worktree had no
+    `tools/ui_research/node_modules`; after `npm ci` there it passed,
+    byte for byte. Run `npm ci` in the candidate worktree before guard.sh.
+    The audit and roadmap pages did not change, so they were not
+    republished.
+  - Started two Opus 5.5 sessions at effort high at 19:54Z (the
+    `create_session` effort setting was accepted): K1 on P1-K1-disc-host
+    (`session_01SNkKxqMwm4w36af9FQvXVB`) and S1 on P1-S1-pilot-2
+    (`session_01SNkKxou5iRnrCMLMUqmcRa`). AIA has no open task. The
+    backlog has 63 tasks, 47 merged. No owner-inbox entry.
+  - Next: gate and merge disc-host and pilot-2 as they come ready, one at
+    a time, disc-host first if both are ready (it touches the goldens and
+    the bake stills; have S1 merge main). Start K1 on P1-K1-heist-kit
+    once disc-host is merged, and AD on P1-AD-board-1 once pilot-2 is
+    merged. Icon batches 3 and 4 stay deferred (D13 (c)).
 - Cycle 51, 11 November 2026, from 01:11Z (session
   `session_01SNkKxnDPjsoJBxjS6oA73p`, started by the launcher; the first
   cycle after the restart, on Fable 5.2): no merge, two tasks seeded,
