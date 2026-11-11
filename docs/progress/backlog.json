@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-10T10:33:57Z",
+  "updated_at": "2026-11-11T01:30:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
@@ -979,6 +979,99 @@
         "client/ui/kit_hud.gd",
         "client/tests/shots/ui_kit_rest.gd.uid"
       ]
+    },
+    {
+      "id": "P1-K1-disc-host",
+      "title": "The disc skin draws only where it fits: on kit catalogue parts K23 (the currency pill's storage bar, look icon_disc) and K45 (the product card's Buy button, look round_violet) a disc as wide as the host is drawn and covers the captions (pages 27, 44 and 45; lead.md, 'The stop', 'First fix on a restart' and its correction). The skin disc's pieces are sprites with no 9-slice and RbBox._draw_piece draws a sprite as wide as its host. Either the disc's sprite draws only on a round host, or the looks that dress hosts that are not round stop mapping to the sprite; K1 decides and writes why in the handoff. First reproduce the fault with a run (the diagnosis was read from the code, not proven)",
+      "files": [
+        "client/ui/rb_box.gd",
+        "client/ui/kit_skin.gd",
+        "client/ui/kit_status.gd",
+        "client/ui/kit_cards.gd",
+        "client/ui/kit_families.json",
+        "client/tests/ui_kit_tests.gd",
+        "client/tests/shots/ui_*.gd",
+        "client/tests/golden/**",
+        "docs/art/shots/ui-bake/**",
+        "docs/art/ui-quality/kit-spec.md",
+        "tools/ui_bake/**"
+      ],
+      "deps": [
+        "P1-K1-switch-rest"
+      ],
+      "done_when": [
+        "a test in client/tests/ui_kit_tests.gd that fails on main at 40c92625 and passes on the branch: no piece of the skin disc is drawn wider than it is tall on a host that is not round (the handoff shows the failing run on main)",
+        "catalogue pages 27, 44 and 45 rendered again in all eight variants and committed; the captions under K23 and K45 are readable in every state",
+        "a still of the observatory with its echo ribbon (client/scripts/observatory_screen.gd, _ribbon, look round_violet on a pill) rendered after the fix and committed; if the screen's own file needs a change, ask the lead for it as a request with a default",
+        "the six looks of the skin disc (disc, icon_disc, level_disc, gem, round_sky, round_violet) each checked on every host that uses them; the handoff lists them",
+        "optional, if time allows: page 42 (part K43, the quest card), the claim button's words stay inside the button in the states claim N, P and A; otherwise say so in the handoff",
+        "kit-spec.md says: a task that switches a skin on renders again every catalogue page that skin changes, in the same task",
+        "no test is skipped, disabled or loosened",
+        "bash tools/ui_bake/guard.sh",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "critical": true,
+      "role": "K1",
+      "assigned_to": "K1",
+      "phase": 1,
+      "model": "Fable 5.2",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-11T01:30:00Z",
+      "updated_by": "lead"
+    },
+    {
+      "id": "P1-K1-heist-kit",
+      "title": "What the heist HUD asked of the kit (S1-R1 to S1-R6, requests.md and status/S1.json on claude/ui-screens-heist), added without changing what exists, so P1-S1-pilot-2 keeps building on today's kit: update calls on the HUD pieces (KitHud.set_clock, set_alarm, set_loot); a KitHud.loot that stays narrow in every language and draws in few calls; a wrapping law chip with the light disc behind a dark icon; KitHud.alarm at 200% text and a raised state from level 4; the key frame's larger, gold-rimmed clock; a kit motion for a piece flying to a control, a coin icon and a role for outlined words on the world. S1-R7 (heist_hud.gd's record in budgets.json down to 0 draw and 0 fill) waits for the S1 task that adopts these calls",
+      "files": [
+        "client/ui/kit_hud.gd",
+        "client/ui/kit_cards.gd",
+        "client/ui/motion.gd",
+        "client/scripts/ui.gd",
+        "client/ui/kit_skin.gd",
+        "client/tests/ui_kit_tests.gd",
+        "client/tests/shots/ui_*.gd",
+        "client/tests/golden/**",
+        "docs/art/shots/ui-bake/**",
+        "docs/art/ui-quality/kit-spec.md",
+        "tools/ui_bake/**"
+      ],
+      "deps": [
+        "P1-K1-disc-host"
+      ],
+      "done_when": [
+        "S1-R1 to S1-R6 answered one by one in the handoff: built, or declined with the reason",
+        "each new call has a test in client/tests/ui_kit_tests.gd and a state on the kit's catalogue",
+        "no existing call changes its signature or its look (the heist's stills on main do not move)",
+        "the gate's notes on P1-S1-pilot-1 that are the kit's (verdicts/P1-S1-pilot-1/5470c4d3.json: the flat timer, the flat load and crew bars, the hairline hint pill) answered in the handoff",
+        "bash tools/ui_bake/guard.sh",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "critical": false,
+      "role": "K1",
+      "assigned_to": "K1",
+      "phase": 1,
+      "model": "Fable 5.2",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-11T01:30:00Z",
+      "updated_by": "lead"
     },
     {
       "id": "P1-AIA-kit-1",
