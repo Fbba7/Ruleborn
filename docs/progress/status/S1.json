@@ -2,24 +2,26 @@
   "agent": "S1",
   "role": "S1",
   "branch": "claude/ui-screens-heist",
-  "model": "Fable 5.2",
+  "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P1-S1-pilot-1",
+  "task_id": "P1-S1-pilot-2",
   "task_state": "working",
-  "claimed_at": "2026-11-10T07:38:00Z",
-  "lease_until": "2026-11-10T09:56:31Z",
-  "updated_at": "2026-11-10T08:56:31Z",
-  "expected_next_update_by": "2026-11-10T09:41:31Z",
+  "claimed_at": "2026-11-11T19:55:52Z",
+  "lease_until": "2026-11-11T22:55:52Z",
+  "updated_at": "2026-11-11T20:14:06Z",
+  "expected_next_update_by": "2026-11-11T20:59:06Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "98b199ba",
-    "next_step": "Part 1 built: client tests 395 of 395, check_screens OK, ui guard OK on S1's runs; the pre-check is running on the task's last commit. By the owner's order of 10 November (08:28 UTC) S1 stops after this task and takes no new one."
+    "last_green_sha": "718ddcbe",
+    "next_step": "Client tests on the hint guard, entry card, gait menu and pill on the kit; then budgets, stills (before/after), part 2's notes, pre-check"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
-  "acks": [],
+  "acks": [
+    "M6"
+  ],
   "requests": [
     {
       "id": "S1-R1",
@@ -119,6 +121,48 @@
       "due": "2026-11-11T07:58:32Z",
       "default": "The record stays at 3 and 2; the check passes either way.",
       "escalate_to": "lead"
+    },
+    {
+      "from": "S1",
+      "blocking": false,
+      "created_at": "2026-11-11T20:14:06Z",
+      "due": "2026-11-12T20:14:06Z",
+      "escalate_to": "lead",
+      "id": "S1-R8",
+      "to": "lead",
+      "ask": "Add client/scripts/heist_hand.gd to S1's files for the heist tasks: Cast and Get out are built there with the old chrome.",
+      "files": [
+        "client/scripts/heist_hand.gd"
+      ],
+      "default": "heist_screen.gd re-dresses Cast (gold KitControls.big_action, the largest control) and Get out (leather big_action) in their place in the hand; heist_hand.gd is not touched."
+    },
+    {
+      "from": "S1",
+      "blocking": false,
+      "created_at": "2026-11-11T20:14:06Z",
+      "due": "2026-11-12T20:14:06Z",
+      "escalate_to": "lead",
+      "id": "S1-R9",
+      "to": "K1",
+      "ask": "Two icons the heist needs and the kit lacks: a gait (feet) icon for the walk / sneak / run pill and its menu, and a pause icon beside hud/play for a rehearsal's Pause.",
+      "files": [
+        "client/ui/icons.gd"
+      ],
+      "default": "The heist keeps FxIcons' drawn feet and pause marks (counted by check_screens) until the icons exist."
+    },
+    {
+      "from": "S1",
+      "blocking": false,
+      "created_at": "2026-11-11T20:14:06Z",
+      "due": "2026-11-12T20:14:06Z",
+      "escalate_to": "lead",
+      "id": "S1-R10",
+      "to": "K1",
+      "ask": "Lower fx_portrait.gd's record in tools/ui_bake/budgets.json to 19 draw: check_screens.py now counts 19 (recorded 20).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "default": "The record stays at 20; the check passes either way."
     }
   ],
   "answers": []

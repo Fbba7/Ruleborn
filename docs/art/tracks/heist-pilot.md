@@ -75,8 +75,63 @@ These are what the kit's pieces cannot do yet. Each is a request to K1 in `docs/
 ### Left for other tasks
 
 - `HeistHud._gold_rim` stays: `client/scripts/result_screen.gd` calls it for the haul tile. It reaches into the kit's insides (`RbBox`) and goes when the result screen moves to the kit (step 9).
-- `client/scripts/heist_screen.gd` still draws through `FxSkin` and `FxDraw` (the hint, the gait menu, the footer). That is part 2.
+- `client/scripts/heist_screen.gd` still drew through `FxSkin` and `FxDraw` (the hint, the gait menu, the footer). Part 2 moved them to the kit.
+
+## Part 2: the rest of the screen
+
+The brief is part 1's gate notes (`docs/art/ui-quality/gate/verdicts/P1-S1-pilot-1/5470c4d3.json`): Cast did not lead in grayscale and had no gold, Get out was red while red is the alarm's, the hint was a flat card, the action icons were gone at 200% text, Ash's portrait covered "Pip" at 200%, and the crew rings were told apart by hue alone.
+
+### What was done
+
+| Piece | Before | Now |
+|---|---|---|
+| Cast | Leather action, as large as Get out | `UI.action(..., "gold")` dressed as the kit's `big_action` (92 × 76 points), the largest control and first in grayscale |
+| Get out | Red action | Leather `big_action` (66 × 54 points); red is left to the alarm alone |
+| Action icons | Dropped at 200% text | Kept at every text size |
+| Hint | `FxSkin` panel, words set directly | `KitStatus.hint` (the kit's dark glass), every message through one setter |
+| Entry card's title | `FxSkin` label | `UI.label` heading |
+| Gait menu | `FxSkin` panel | `UI.panel("parchment")` |
+| Gait pill's word | `FxSkin` label | `UI.label`, 13 points, bold |
+| Crew portraits | One ring colour a school; fixed height | A school mark drawn on the rim (a shape, not a hue), the disc in one loop, the height growing with the text (`client/world/fx_portrait.gd`, 19 draw calls, recorded 20) |
+
+**The hint gives room.** At large text, or in a long language, the lower column (hint, crew, hand) can climb into the HUD. The hint now gives way, one step each layout: first it keeps only its first clause ("Tap crew, then ground"), then it hides. The HUD, the crew and the hand never do. A new hint, such as a message or the result hand-off's "Checking…", starts whole again. The room is measured once both columns' boxes are their content's height, after each layout, and not inside the refresh: the shot scripts and the first frame refresh before the containers settle, and a box measured mid-layout reads as no room.
+
+**Messages and the result hand-off.** The errors, the asking line, the offline lines and the two "Checking…" lines of `finish()` all go through the hint's setter. Before, a message could stay cut to an earlier hint's first clause, or stay hidden.
+
+**Ash's portrait no longer covers "Pip" at 200% text.** The taller portraits stand the fifth crew member on a row of their own, with the pause beside it.
+
+### Evidence
+
+Stills: `docs/art/shots/heist-pilot/before-*.png` (this branch at part 1's end) and `after-*.png` (this task's last commit). They use the same script and settings as part 1, in five cases: `sneak-100`, `sneak-200`, `alarm-hc` (high contrast), `alarm-hc-200` (high contrast at 200% text) and `sneak-200-pt` (`LOCALE=pt_BR`).
+
+- **100% text:** the whole hint shows under the hand. Cast is gold and the largest control. Get out is leather.
+- **200% text, English:** the hint hides; the HUD's loot ends above the crew row with a gap.
+- **High contrast, 100% and 200%:** the kit's flat high-contrast skins: Cast in solid gold, the panels in solid plum, inked rims.
+
+The heist's budget stills (`tools/ui_bake/budget_shots.py`), against the records as K1 re-recorded them after part 1:
+
+| Budget still | Record | Part 2 |
+|---|---|---|
+| heist/100 | 121 | 117 |
+| heist/200 | 115 | 114 |
+| heist/hc | 121 | 117 |
+
+Every word reaches 4.5:1. The worst ratios are 6.17, 7.63 and 5.55. `check_screens.py` notes two falls below their records: `heist_hud.gd` (0 and 0, recorded 3 and 2) and `fx_portrait.gd` (19 draw, recorded 20). Lowering the records is K1's (S1-R10).
+
+### What is still worse
+
+- **Portuguese at 200% text still stands the loot's caption on the crew row.** The hint hides, but "Carregar até 80%" still lies over Pip's and Mo's portraits and names, by about 270 pixels on the still. Before part 2 the hint lay over the loot too, so this is better but not clean. The room has to come from the HUD (a narrower loot, K1's S1-R2) or from the lower column (Ash, the pause and the hand in one flow, or one crew row at large text). That is left for the next heist task.
+- **At large text the hint hides entirely in English,** so "hold to sneak or run" is not said. The gait pill is not shown at large text either, so holding the ground is the only gait control, with nothing on screen saying so.
+- **The gait's feet and the pause are still drawn** (`FxIcons` through `FxDraw`). The kit has no gait or pause icon. (S1-R9)
+- **Cast and Get out are dressed by `heist_screen.gd`.** `client/scripts/heist_hand.gd` builds them, but it is not one of this task's files, so the screen dresses them after it builds them. (S1-R8)
+- **The clock is still the kit's small flat pill**, with no outline or drop (S1-R5). Crew names and "Laws here" are not outlined by a kit look (S1-R6).
+- **Hollow still blends into its purple ring.** The school mark helps colour-vision deficiency but not the portrait's own contrast. The portrait art is not this task's.
+
+### Left for other tasks
+
+- The Portuguese 200% overlap (above).
+- `FxSkin.frame`, `camera_row` and `corner_clear` stay. They are the screen's layout, not chrome, and the kit has no frame.
 
 ### Stopped here
 
-Part 1 is done and waits on the pre-check and the gate. `heist_hud.gd` has no drawing of its own. Part 2 (`heist_screen.gd`: the hint, the gait menu, the footer, high contrast) has not been started and is for a later session; it should give the loot room over the hint at large text in long languages.
+Part 2 is done and waits on the pre-check and the gate. The checks run on the last commit are in `docs/progress/S1.md`.
