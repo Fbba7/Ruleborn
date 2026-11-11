@@ -3,34 +3,25 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Fable 5.2",
-  "agent_state": "stopped",
-  "task_id": "P1-S1-pilot-1",
-  "task_state": "ready",
-  "claimed_at": "2026-11-10T07:38:00Z",
-  "lease_until": "2026-11-10T09:56:31Z",
-  "updated_at": "2026-11-10T09:31:36Z",
-  "expected_next_update_by": "2026-11-10T09:41:31Z",
+  "agent_state": "active",
+  "task_id": "P1-S1-pilot-2",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-11T01:17:05Z",
+  "lease_until": "2026-11-11T04:17:05Z",
+  "updated_at": "2026-11-11T01:17:05Z",
+  "expected_next_update_by": "2026-11-11T02:02:05Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "5470c4d3",
-    "next_step": "Stopped by the owner's order of 10 November 2026 (08:28 UTC). P1-S1-pilot-1 is ready at 5470c4d3: the pre-check passed at 09:31 UTC and the ui guard passed on the same code, inside the order's 09:45 UTC. The gate has given no verdict on it; gate_request names the items. P1-S1-pilot-2 is not started."
+    "last_green_sha": "718ddcbe",
+    "next_step": "Read heist_screen.gd; move the hint, the gait menu and the footer onto the kit; high contrast and 200% stills"
   },
-  "precheck": {
-    "sha": "5470c4d3a0889750ed68ee866d25fc0e8bc012c3",
-    "exit": 0,
-    "finished_at": "2026-11-10T09:31:06Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "5470c4d3a0889750ed68ee866d25fc0e8bc012c3",
-    "items": [
-      "heist at 100% text",
-      "heist at 200% text"
-    ]
-  },
-  "ready_sha": "5470c4d3a0889750ed68ee866d25fc0e8bc012c3",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
-  "acks": [],
+  "acks": [
+    "M6"
+  ],
   "requests": [
     {
       "id": "S1-R1",
