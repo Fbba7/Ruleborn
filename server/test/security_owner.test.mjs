@@ -93,7 +93,12 @@ test("SR-15 (D60 unbuilt): an island's exposed loot is clamped to 750, the media
   const t = server();
   const owner = t.service.session("gc:owner").account;
   const island = t.build.exampleIsland(true);
+  // SEC-17: an exposure above i32::MAX, which the simulation would read as a
+  // negative one, is not an island at all; the largest it can hold is
+  // clamped as before.
   new DataView(island.buffer, island.byteOffset).setUint32(6, 0xffffffff, true);
+  assert.throws(() => t.service.publish(owner, island), { reason: "island_malformed" });
+  new DataView(island.buffer, island.byteOffset).setUint32(6, 0x7fffffff, true);
   const { bundle } = t.service.publish(owner, island);
   const exposed = t.service.db.prepare("SELECT exposed FROM snapshots WHERE bundle = ?").get(bundle).exposed;
   assert.equal(exposed, 750, "a player with nothing stored claims no more than the median");

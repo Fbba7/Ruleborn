@@ -205,7 +205,10 @@ const service = new Service({
   // seasons do not move between restarts.
   seasonStart: Date.parse(process.env.RULEBORN_SEASON_START ?? "2026-01-05T00:00:00Z"),
   // §24.3's replays, private: not in the store anyone may fetch by hash.
-  replays: new Store(join(data, "replays")),
+  // A floor of free space under the replays (SEC-18): below it a heist is
+  // refused with 503 storage_low, and the lease kept, until space returns.
+  replays: new Store(join(data, "replays"),
+                     { minFreeBytes: Number(process.env.RULEBORN_REPLAYS_MIN_FREE_MB ?? 512) * 2 ** 20 }),
   deletions: new Journal(new Store(process.env.RULEBORN_DELETIONS ?? join(data, "deletions"))),
   edge,
 });

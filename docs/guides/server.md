@@ -88,6 +88,7 @@ development default except what a real deployment needs.
 | `RULEBORN_REFRESH_ROTATE_HOURS` | how often a refresh token rotates: 24 unless set, the owner's decision (B9); 0 rotates it on every refresh. Inside the span a refresh answers a new access token and writes nothing, so a session's `used_at` and country are up to that old |
 | `RULEBORN_SEASON_START` | the first season's start |
 | `RULEBORN_DELETIONS` | the account-deletion journal |
+| `RULEBORN_REPLAYS_MIN_FREE_MB` | the free space, in MiB, below which a heist's replay is refused with 503 `storage_low` and its lease kept (512 unless set; 0 turns the floor off) |
 | `RULEBORN_STUB_SIGNIN` | `1` accepts a stand-in sign-in (development only) |
 | `RULEBORN_GOOGLE_CLIENT_IDS`, `RULEBORN_GOOGLE_WEB_CLIENT_ID` | Google sign-in, and the web deletion page's |
 | `RULEBORN_BUNDLE_ID`, `RULEBORN_GAMECENTER_ROOTS`, `RULEBORN_STOREKIT_ROOTS`, `RULEBORN_APPLE_SANDBOX` | Game Center and StoreKit proofs |

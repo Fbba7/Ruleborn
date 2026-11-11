@@ -11,9 +11,11 @@
 // an independent one on every island the server stores.
 
 import { createHash } from "node:crypto";
-import { closeSync, existsSync, fsyncSync, mkdirSync, openSync, readFileSync, readdirSync, renameSync, unlinkSync,
-  writeFileSync } from "node:fs";
+import { closeSync, existsSync, fsyncSync, mkdirSync, openSync, readFileSync, readdirSync, renameSync, statfsSync,
+  unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+
+import { Refused } from "./refused.mjs";
 
 export const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 
@@ -30,9 +32,13 @@ function syncDirectory(dir) {
 }
 
 export class Store {
-  /** In memory without a directory; on disk with one. */
-  constructor(dir = null) {
+  /** In memory without a directory; on disk with one. `minFreeBytes`, when
+   *  set, refuses a new object (503 storage_low) while the volume has less
+   *  free than that, so a filling store stops before the database and the
+   *  deletions journal run out of room (SEC-18). */
+  constructor(dir = null, { minFreeBytes = 0 } = {}) {
     this.dir = dir;
+    this.minFreeBytes = minFreeBytes;
     this.memory = new Map();
     if (dir) mkdirSync(dir, { recursive: true });
   }
@@ -53,6 +59,10 @@ export class Store {
     if (this.dir) {
       const path = this.path(key);
       if (!existsSync(path)) {
+        if (this.minFreeBytes) {
+          const fs = statfsSync(this.dir);
+          if (fs.bavail * fs.bsize < this.minFreeBytes) throw new Refused(503, "storage_low");
+        }
         mkdirSync(join(this.dir, key.slice(0, 2)), { recursive: true });
         // Written beside and renamed, so a reader never sees half an object.
         if (durable) {
