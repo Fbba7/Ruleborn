@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-11T21:05:00Z",
   "lease_until": "2026-11-12T00:05:00Z",
-  "updated_at": "2026-11-11T21:40:00Z",
-  "expected_next_update_by": "2026-11-11T22:25:00Z",
+  "updated_at": "2026-11-11T21:42:00Z",
+  "expected_next_update_by": "2026-11-11T22:27:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "62bbef35",
@@ -258,5 +258,5 @@
       "at": "2026-11-04T13:05:00Z"
     }
   ],
-  "next_step": "The heist's calls are written and tested (tests/shots/ui_kit_heist.gd); next the catalogue's cells, kit-spec sections 6.5 and 9, then the long checks."
+  "next_step": "Catalogue states and kit-spec section 6.5 and 9 done; running catalogue.sh and guard.sh, then the pre-check and the handoff."
 }
