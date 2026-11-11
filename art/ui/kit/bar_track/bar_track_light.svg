@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14" data-slice="7 7 7 7">
   <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
   <defs>
-    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D4C096"/><stop offset="1" stop-color="#EBDDBE"/></linearGradient>
-    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A2A10" stop-opacity="0.451"/><stop offset="0.45" stop-color="#4A2A10" stop-opacity="0"/><stop offset="1" stop-color="#4A2A10" stop-opacity="0"/></linearGradient>
-    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.8"/></linearGradient>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9C7C4C"/><stop offset="1" stop-color="#C2A674"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A2A10" stop-opacity="0.698"/><stop offset="0.45" stop-color="#4A2A10" stop-opacity="0"/><stop offset="1" stop-color="#4A2A10" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.549"/></linearGradient>
   </defs>
   <g data-state="normal">
     <rect x="1" y="1" width="14" height="12" rx="6" fill="url(#g1)"/>
-    <rect x="2.5" y="2.5" width="11" height="9" rx="4.5" fill="none" stroke="url(#g2)" stroke-width="2"/>
+    <rect x="2.7" y="2.7" width="10.6" height="8.6" rx="4.3" fill="none" stroke="url(#g2)" stroke-width="2.4"/>
     <rect x="2" y="2" width="12" height="10" rx="5" fill="none" stroke="url(#g3)" stroke-width="1"/>
-    <rect x="1" y="1" width="14" height="12" rx="6" fill="none" stroke="#B08A58" stroke-width="1"/>
+    <rect x="1" y="1" width="14" height="12" rx="6" fill="none" stroke="#6E4E26" stroke-width="1"/>
   </g>
   <g data-state="normal" data-mode="hc">
     <rect x="1" y="1" width="14" height="12" rx="6" fill="#D8D8D8"/>
