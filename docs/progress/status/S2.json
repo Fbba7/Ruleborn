@@ -1,0 +1,22 @@
+{
+  "agent": "S2",
+  "role": "S2",
+  "branch": "claude/ui-screens-home",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "P2-S2-flow-home",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-12T17:55:00Z",
+  "lease_until": "2026-11-12T20:55:00Z",
+  "updated_at": "2026-11-12T17:55:00Z",
+  "expected_next_update_by": "2026-11-12T18:40:00Z",
+  "long_run": null,
+  "progress_marker": {"last_green_sha": null, "next_step": "Render universe_home at 100% and 200% on main; fix F1 (notice line wraps) and F2 (pins at 200%, gem in its pill) in home.gd"},
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-14T21:00:00Z",
+  "acks": [],
+  "requests": [],
+  "answers": []
+}
