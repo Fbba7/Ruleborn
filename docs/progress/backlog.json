@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three.",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-12T17:46:32Z",
-  "updated_by": "lead (cycle 70)",
+  "updated_at": "2026-11-12T18:15:00Z",
+  "updated_by": "overseer (phase 1 lessons, messages M10 to M14)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -3110,6 +3110,46 @@
       "text": "From the lead (cycle 61). K1-R18 approved: raise tools/ui_bake/budgets.json's shots.recorded heist/100, heist/200 and heist/hc by 2 (to 120, 116, 120), logged in 'raises' with K1-R18 and AD-R14 as the reason; keep the header's drop with its own outline. Nothing else in the records moves and no test changes. Run guard.sh and check_all.sh on the head you mark ready, then ask the gate (heist at 100% text, Display type, switch on). Name the raise in the handoff (numerals-on's done_when). Add M9 to acks when read.",
       "sent_at": "2026-11-12T07:29:00Z",
       "ack_by": "2026-11-12T10:00:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M10",
+      "to": "lead",
+      "text": "From the owner (phase 1 lessons, progress report KPIs, measured at main 40f91dfd). Four phase 1 KPIs missed their targets; carry these rules into phase 2's seeding and cycles. (1) Scope grew +22h (38% over the 58h planned; limit 10%): the pilot heist took 5 parts and board 1 took 4 rounds, because the art director's objections came after the work was finished, one round at a time. When you seed a screen or a board, estimate it with one review round included, and put in its done_when that AD previews the stills before ready (see M12). (2) All 5 of phase 1's first-attempt misses (24 of 29 merged at first attempt, target 90% or more) came from a list or a baked file that had gone out of step with another task's work: the catalogue's SKINS_OF list twice, kit art 2a's new skins without a SKINS_OF entry, kit art 2c against the kit's list of materials with no baked shape, and the high-contrast icon atlas not rebaking to its sources (twice). When two tasks share such a list or derived file, make one depend on the other, or put both changes in one task, and build every candidate from current main. (3) Pace was 1.02h of work an hour against 1.2 needed. Seed phase 2's remaining steps (report.md 3.3: motion art, screens, boards 2-5) now, so each builder has its next task open before its current one merges and none of the three slots sits empty. (4) Several of your checks failed on the container, not the work (no wasm32 target, no Godot, no node_modules, no native library in the candidate's folder). At the start of each cycle, run the fresh-container setup line from M3, then bash client/build.sh in the candidate worktree, before any check_all or guard.sh. Add M10 to acks when read.",
+      "sent_at": "2026-11-12T18:15:00Z",
+      "ack_by": "2026-11-12T20:15:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M11",
+      "to": "S1",
+      "text": "From the owner (phase 1 lessons, progress report KPIs, measured at main 40f91dfd). Two lessons for phase 2. (1) Pilot part 5 waited 3.9h from its gate verdict to merged because the session went idle without marking the task ready. Mark the task ready and push in the same turn the gate verdict comes back. (2) All 5 of phase 1's first-attempt misses (24 of 29 merged at first attempt, target 90% or more) came from a list or a baked file that had gone out of step with another task's work: the catalogue's SKINS_OF list twice, kit art 2a's new skins without a SKINS_OF entry, kit art 2c against the kit's list of materials with no baked shape, and the high-contrast icon atlas not rebaking to its sources (twice). Before you mark ready, merge current main into your branch, rerun bash tools/check_all.sh and bash tools/ui_bake/guard.sh on that merge, and say so in the handoff evidence. (3) Only 44 of 68 qualities passed at first judging (65%). Before ready, judge your own stills against the task's gate items and references, and send AD a preview of the stills while the work can still change (see M12), rather than waiting for the gate. Add M11 to acks when read.",
+      "sent_at": "2026-11-12T18:15:00Z",
+      "ack_by": "2026-11-12T20:15:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M12",
+      "to": "AD",
+      "text": "From the owner (phase 1 lessons, progress report KPIs, measured at main 40f91dfd). Scope grew +22h in phase 1 (38% over plan; limit 10%), most of it the pilot heist's five parts and board 1's four rounds: objections arrived after a part was finished and one round at a time, so each round reopened finished work. In phase 2: (1) when a builder sends you stills before ready, review them within the same cycle; (2) list every objection you have in one round, in order of weight, and keep later rounds to what the fix itself changed; (3) when an objection needs the source repainted (like note G), say so in the first round, not after a flat pass. Add M12 to acks when read.",
+      "sent_at": "2026-11-12T18:15:00Z",
+      "ack_by": "2026-11-12T20:15:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M13",
+      "to": "S2",
+      "text": "From the owner (phase 1 lessons, progress report KPIs, measured at main 40f91dfd). You are new in phase 2; these come from phase 1's misses. (1) All 5 of phase 1's first-attempt misses (24 of 29 merged at first attempt, target 90% or more) came from a list or a baked file that had gone out of step with another task's work: the catalogue's SKINS_OF list twice, kit art 2a's new skins without a SKINS_OF entry, kit art 2c against the kit's list of materials with no baked shape, and the high-contrast icon atlas not rebaking to its sources (twice). Before you mark ready, merge current main into your branch, rerun bash tools/check_all.sh and bash tools/ui_bake/guard.sh on that merge (run the fresh-container setup line and bash client/build.sh first), and say so in the handoff evidence. (2) Mark ready and push in the same turn the gate verdict comes back; a session that goes idle first can hold a merge for hours. (3) Send AD a preview of your stills before ready, while the work can still change; phase 1's late objections cost +22h. Add M13 to acks when read.",
+      "sent_at": "2026-11-12T18:15:00Z",
+      "ack_by": "2026-11-12T20:15:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M14",
+      "to": "AIA-2",
+      "text": "From the owner (phase 1 lessons, progress report KPIs, measured at main 40f91dfd). (1) All 5 of phase 1's first-attempt misses (24 of 29 merged at first attempt, target 90% or more) came from a list or a baked file that had gone out of step with another task's work: the catalogue's SKINS_OF list twice, kit art 2a's new skins without a SKINS_OF entry, kit art 2c against the kit's list of materials with no baked shape, and the high-contrast icon atlas not rebaking to its sources (twice). Two of the five were your icon atlas: a stale icons_48_hc.webp on the branch, then finish.js's grow() drawing differently between containers. For P2-AIA2-busts and every later art task: rebake from a fresh container, merge current main into your branch and run bash tools/ui_bake/guard.sh on that merge before ready. If your art adds, removes or renames a piece or a material, list the matching change to its owner's list (SKINS_OF, the kit's materials list) in a request to the lead with the same task, so both land together. (2) Send AD the 119 px portraits in colour and grayscale before ready, so note G closes in one round. Add M14 to acks when read.",
+      "sent_at": "2026-11-12T18:15:00Z",
+      "ack_by": "2026-11-12T20:15:00Z",
       "acked_at": null
     }
   ]
