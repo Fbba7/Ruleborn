@@ -1,0 +1,22 @@
+[
+ {
+  "task_id": "P2-S1-toon-drop",
+  "sha": "a7dd6501",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-12T22:52:00Z",
+  "item": "heist at 100% text",
+  "quality": "Character presence",
+  "samples": [
+   "fail",
+   "pass",
+   "pass",
+   "fail",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "A split, then a pass: 2 fails of 6 (a fail needs 4). All six samples read the five crew portraits (Pip, Mo, Bramble, Hollow, Ash) as present, ringed and larger than the pass anchor's crew row, and none found photographic grain or a metallic sheen; Ash's surface, the narrow point of P2-AIA2-busts, no longer drew a fail. The two fails were on one point: Pip, Mo and Ash read as soft-shaded renders of the game's models, while Bramble's plates and Hollow's facets read as flat vector fills with dark outlines, so the row does not keep one rendered look (the pass need 'rendered from the game's own models'). The four passes read the same flat fills as toon shading. Bramble's and Hollow's portraits are the narrow point for the next portrait pass: shade them like the other three."
+ }
+]
