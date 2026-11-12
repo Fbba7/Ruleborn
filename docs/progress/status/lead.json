@@ -1,9 +1,18 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T07:45:00Z",
+  "updated_at": "2026-11-12T08:47:00Z",
   "expected_next_update_by": "2026-11-12T09:00:00Z",
   "cycle": 62,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "a4471d44",
+    "task_ids": [
+      "P1-S1-pilot-4",
+      "P1-K1-numerals-on"
+    ],
+    "started_at": "2026-11-12T08:47:00Z",
+    "expires_at": "2026-11-12T09:47:00Z",
+    "note": "candidate 481254f9 = main + P1-S1-pilot-4 (e846c531); candidate a4471d44 = 481254f9 + P1-K1-numerals-on (1d21bf4a); checked side by side, main moves to each in turn on PASS"
+  },
   "last_merged": {
     "task_id": "P1-AD-board-1b",
     "sha": "af14e1c7"
