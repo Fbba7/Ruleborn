@@ -1,16 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T00:42:00Z",
+  "updated_at": "2026-11-12T00:52:00Z",
   "expected_next_update_by": "2026-11-11T23:34:00Z",
   "cycle": 55,
   "merging": {
-    "candidate_sha": "6766d05f",
+    "candidate_sha": "75593d76",
     "task_ids": [
       "P1-K1-heist-kit",
       "P1-AD-board-1"
     ],
-    "started_at": "2026-11-12T00:42:00Z",
-    "expires_at": "2026-11-12T01:42:00Z"
+    "started_at": "2026-11-12T00:52:00Z",
+    "expires_at": "2026-11-12T01:52:00Z"
   },
   "last_merged": {
     "task_id": "P1-S1-pilot-2",
