@@ -3,33 +3,22 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "done",
-  "task_id": "P1-S1-pilot-4",
-  "task_state": "ready",
-  "claimed_at": "2026-11-12T06:55:26Z",
-  "lease_until": "2026-11-12T09:55:26Z",
-  "updated_at": "2026-11-12T08:33:31Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P1-S1-pilot-5",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-12T11:28:53Z",
+  "lease_until": "2026-11-12T14:28:53Z",
+  "updated_at": "2026-11-12T11:28:53Z",
+  "expected_next_update_by": "2026-11-12T12:08:53Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e846c531",
-    "next_step": "P1-S1-pilot-4 ready at e846c531 (pre-check PASS, 08:33Z); gate asked on \"heist at 100% text\" (Character presence) and \"heist at 200% text, pt_BR, no crew plan\" (Hierarchy). No S1 task is left for this session; agent_state done. On a fail, a fresh session re-works from the critique under docs/art/ui-quality/gate/verdicts/P1-S1-pilot-4/.",
-    "at": "2026-11-12T08:33:31Z"
+    "next_step": "P1-S1-pilot-5: D (Bramble, Hollow toon fills in fx_portrait.gd) and F (header on KitStatus.tag in heist_hud.gd).",
+    "at": "2026-11-12T11:28:53Z"
   },
-  "precheck": {
-    "sha": "e846c53136af86be7af2cfe829ee5676eb02dbbe",
-    "exit": 0,
-    "finished_at": "2026-11-12T08:33:12Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "e846c53136af86be7af2cfe829ee5676eb02dbbe",
-    "items": [
-      "heist at 100% text",
-      "heist at 200% text, pt_BR, no crew plan"
-    ]
-  },
-  "ready_sha": "e846c53136af86be7af2cfe829ee5676eb02dbbe",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6",
@@ -54,7 +43,7 @@
       "id": "S1-R2",
       "from": "S1",
       "to": "K1",
-      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar até 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
+      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar at\u00e9 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
       "files": [
         "client/ui/kit_hud.gd"
       ],
@@ -193,5 +182,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-4: D and B done locally (FIT matrix running); then the budget shots, the checks, the commit and the pre-check."
+  "next_step": "P1-S1-pilot-5: D (Bramble, Hollow toon fills in fx_portrait.gd) and F (header on KitStatus.tag in heist_hud.gd)."
 }
