@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-12T03:55:00Z",
-  "updated_by": "lead (cycle 59)",
+  "updated_at": "2026-11-12T05:36:00Z",
+  "updated_by": "lead (cycle 60)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -1080,6 +1080,55 @@
       "exceptions": [
         "client/tests/shots/ui_kit_heist.gd.uid"
       ]
+    },
+    {
+      "id": "P1-K1-numerals-on",
+      "title": "Switch the kit's numerals on: \"numerals\": true in client/ui/kit_families.json (S1-R11, K1-R11; board 1's objection A), so the heist's timer draws in KitNumerals' baked figures on KitHud.clock_large (heist_hud.gd's switch-on path is on main since P1-S1-pilot-3) and every screen that draws KitNumerals shows its figures. Answers the gate's Display type note on P1-S1-pilot-3 (verdicts/P1-S1-pilot-3/0d142dd0.json: the 2:25 timer is flat dark figures on a cream plate). S1 measured, with the switch on, heist/100 118, heist/200 114 and heist/hc 118 draw calls against records 121, 115 and 121",
+      "files": [
+        "client/ui/kit_families.json",
+        "client/ui/kit_numerals.gd",
+        "client/tests/ui_kit_tests.gd",
+        "client/tests/golden/**",
+        "docs/art/shots/ui-bake/**",
+        "docs/art/ui-quality/kit-spec.md",
+        "tools/ui_bake/**"
+      ],
+      "deps": [
+        "P1-S1-pilot-3"
+      ],
+      "done_when": [
+        "the line \"numerals\": true added to client/ui/kit_families.json (the key is not there today, so KitSkin.is_on(\"numerals\") reads false), and no other family changes",
+        "every screen that draws KitNumerals stays within its draw-call record in tools/ui_bake/budgets.json, as check_screens.py counts; a record that has to move is named in the handoff with the reason",
+        "client/tests/shots/screen_heist.gd with FIT=1 passes at 200% text in en and pt_BR, sneak and alarm, and in high contrast",
+        "S1-R11 and K1-R11 answered in the handoff; kit-spec.md says the switch is on",
+        "bash tools/ui_bake/guard.sh",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "critical": true,
+      "role": "K1",
+      "assigned_to": "K1",
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "heist at 100% text",
+          "qualities": [
+            "Display type"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "state": "open",
+      "claim": null,
+      "prior_branch": "claude/ui-bake",
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T05:36:00Z",
+      "updated_by": "lead (cycle 60)",
+      "exceptions": []
     },
     {
       "id": "P1-AIA-kit-1",
@@ -2552,20 +2601,14 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "working",
-      "claim": {
-        "agent": "S1",
-        "branch": "claude/ui-screens-heist",
-        "claimed_at": "2026-11-12T01:23:10Z",
-        "seen_at": "2026-11-12T03:55:00Z",
-        "lease_until": "2026-11-12T06:20:49Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": "claude/ui-screens-heist",
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-12T03:55:00Z",
-      "updated_by": "lead (cycle 59)",
+      "ready_sha": "0d142dd06f72c33998b3d8ef2455c48c79acc665",
+      "merged_sha": "085c812a",
+      "updated_at": "2026-11-12T05:36:00Z",
+      "updated_by": "lead (cycle 60)",
       "id": "P1-S1-pilot-3",
       "title": "Pilot heist, part 3: board 1's objections A-E (AD-R7 to AD-R11, docs/art/ui-quality/gate/boards/board-1.md): A the timer in KitNumerals' timer figures, inked like the key frame's; B at 200% text in pt_BR the loot line stays in its panel and off Pip, and the guard's bubble is not clipped; C a crew tray that seats the portraits as the key frame does, Ash on the same row, and the hint and load bars as kit parts; D Hollow and Bramble a clear value step off their rings; E the MOMENT=alarm shot shows a raised alarm. It adopts P1-K1-heist-kit's HUD calls (K1's handoff answers S1-R1 to S1-R6), lowers heist_hud.gd's record in tools/ui_bake/budgets.json to what check_screens.py prints (S1-R7), and may dress Cast and Get out in heist_hand.gd (S1-R8); notes in docs/art/tracks/heist-pilot.md",
       "exceptions": [

@@ -146,6 +146,13 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the switch is on for every screen that draws KitNumerals. If either
   check fails with the line in outside S1's files, S1 drops the line and
   takes the default. Message M7 tells S1.
+  **Cycle 60 (12 November 2026):** S1 marked P1-S1-pilot-3 ready at
+  `0d142dd0` without the line (M7 not acknowledged; the head's
+  `kit_families.json` is main's), so the task merged on the default:
+  stills with the switch off, objection A open. The switch is K1's again,
+  in the new task P1-K1-numerals-on (deps: pilot-3; gate item: heist at
+  100% text, Display type, switch on). heist_hud.gd's switch-on path is
+  on main.
 
 - **AD-R7 to AD-R11** (from AD, 11 November 2026 22:40Z; due 13 November
   22:40Z; blocking): board 1's objections A to E
