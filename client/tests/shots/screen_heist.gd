@@ -193,6 +193,16 @@ func _go() -> void:
 				HORIZONTAL_ALIGNMENT_LEFT, -1, screen.hint_label.get_theme_font_size("font_size")).x)
 		print("hud ", screen.hud.get_global_rect(), " loot ", screen.hud.loot_panel.get_global_rect(),
 			" tray ", screen.actions_band.get_global_rect())
+	if OS.get_environment("FIT") != "":
+		# FIT: board 1's objection B as a check, at whatever TEXT and LOCALE
+		# say; the run fails if anything does not fit.
+		var bad := fit(screen)
+		for b: String in bad:
+			print("fit FAIL ", b)
+		print("fit ", "ok" if bad.is_empty() else "FAIL")
+		if not bad.is_empty():
+			quit(1)
+			return
 	# §21.3's budgets, as the renderer counted the frame.
 	print("budget: %d draw calls, %d primitives" % [
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
@@ -200,6 +210,68 @@ func _go() -> void:
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()
+
+
+## What does not fit on `screen`, one line each (board 1's objection B):
+## a label's words wider than the label, or the label outside its panel; a
+## HUD panel over another or over the crew's tray; a guard's bubble off the
+## screen, over a panel, or drawn below the panels.
+static func fit(screen: HeistScreen) -> Array[String]:
+	var bad: Array[String] = []
+	var whole := Rect2(Vector2.ZERO, screen.size)
+	for root: Control in [screen.hud, screen.actions_band, screen.hint_panel]:
+		for l: Label in root.find_children("*", "Label", true, false):
+			if not l.is_visible_in_tree() or l.text == "":
+				continue
+			var at := l.get_global_rect()
+			var font := l.get_theme_font("font")
+			var wide := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				l.get_theme_font_size("font_size")).x
+			if l.autowrap_mode == TextServer.AUTOWRAP_OFF and wide > at.size.x + 1.0:
+				bad.append("%s %s: %.0f px of words in %.0f" % [l.get_path(), l.text, wide, at.size.x])
+			var p := l.get_parent()
+			while p != null and not p is PanelContainer:
+				p = p.get_parent()
+			if p != null and not (p as Control).get_global_rect().grow(1.0).encloses(at):
+				bad.append("%s %s: %s outside its panel %s" % [l.get_path(), l.text, at,
+					(p as Control).get_global_rect()])
+			if not whole.grow(1.0).encloses(at):
+				bad.append("%s %s: %s off the screen" % [l.get_path(), l.text, at])
+	var hud: Array[Control] = [screen.hud.clock_panel, screen.hud.alarm_panel, screen.hud.loot_panel]
+	for c in screen.hud.laws_box.get_children():
+		hud.append(c as Control)
+	var tray := screen.actions_band.get_global_rect()
+	for i in hud.size():
+		if not hud[i].is_visible_in_tree():
+			continue
+		var a := hud[i].get_global_rect()
+		if a.intersects(tray):
+			bad.append("%s %s over the tray %s" % [hud[i].name, a, tray])
+		for j in range(i + 1, hud.size()):
+			if hud[j].is_visible_in_tree() and a.intersects(hud[j].get_global_rect()):
+				bad.append("%s over %s" % [hud[i].name, hud[j].name])
+	var anchors := screen.view.anchors
+	var layer := anchors.speech_layer
+	var top: Node = screen.actions_band
+	while top.get_parent() != screen:
+		top = top.get_parent()
+	if layer == null or layer.get_parent() != screen or layer.get_index() < top.get_index():
+		bad.append("the guards' words are drawn below the panels")
+	# A bubble may lie over a panel's edge where the world shows no room for
+	# it (it is drawn above the panels), but never over a panel's words.
+	var words: Array[Rect2] = []
+	for root: Control in [screen.hud, screen.actions_band, screen.hint_panel]:
+		for l: Label in root.find_children("*", "Label", true, false):
+			if l.is_visible_in_tree() and l.text != "":
+				words.append(l.get_global_rect())
+	for box: Rect2 in anchors.speech_boxes:
+		var on := Rect2(box.position + layer.global_position, box.size)
+		if not whole.encloses(on):
+			bad.append("a bubble %s off the screen" % on)
+		for r: Rect2 in words:
+			if on.intersects(r):
+				bad.append("a bubble %s over words %s" % [on, r])
+	return bad
 
 
 ## The integrator's cast of character models, until the app sets one: each

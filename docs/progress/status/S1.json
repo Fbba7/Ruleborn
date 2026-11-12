@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T01:23:10Z",
   "lease_until": "2026-11-12T04:23:10Z",
-  "updated_at": "2026-11-12T01:53:30Z",
-  "expected_next_update_by": "2026-11-12T02:38:30Z",
+  "updated_at": "2026-11-12T02:13:26Z",
+  "expected_next_update_by": "2026-11-12T02:58:26Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4d87d18",
-    "next_step": "P1-S1-pilot-3: A, C, D and E done (cream mat on fx_portrait); B layout done (large-text loot at full width, thinner leather, HUD clears the tray by 47 px in en and pt_BR); next the guard's bubble at 200%, the scripted fit test, stills, Part 3, pre-check, gate."
+    "next_step": "P1-S1-pilot-3: A, C, D, E done; B: large-text layout done, the guards' words now go to a speech layer above the panels (moved to the nearest clear gap, no tail into a panel) and screen_heist.gd's FIT=1 check passes at 200% in en and pt_BR; next bring MOMENT=alarm at 100% back under 147 draws (148 now), stills, Part 3, pre-check, gate."
   },
   "precheck": null,
   "gate_request": null,
@@ -166,5 +166,5 @@
     }
   ],
   "answers": [],
-  "next_step": "A and E done; C done (glass tray, kit tip, crew 3+2, Sage beside Cast so the world's crew show); next D (cream mat on fx_portrait), then B (200% en/pt_BR check and scripted fit test), stills, pre-check, gate."
+  "next_step": "P1-S1-pilot-3: A, C, D, E done; B: large-text layout done, the guards' words now go to a speech layer above the panels (moved to the nearest clear gap, no tail into a panel) and screen_heist.gd's FIT=1 check passes at 200% in en and pt_BR; next bring MOMENT=alarm at 100% back under 147 draws (148 now), stills, Part 3, pre-check, gate."
 }

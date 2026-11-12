@@ -689,6 +689,34 @@ func _build() -> void:
 	column.move_child(foot, tray.get_index())
 	# Clear of the bottom corners, where §21.1 puts nothing to tap.
 	column.add_child(FxSkin.corner_clear())
+	# The guards' words on a layer above the panels, moved off them where the
+	# world has room, so a bubble is never clipped behind the HUD or the tray.
+	var speech := Control.new()
+	speech.name = "Speech"
+	speech.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	speech.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(speech)
+	if view.anchors != null:
+		view.anchors.speech_layer = speech
+		view.anchors.keep_off = _panel_rects.bind(speech)
+
+
+## The rects of the panels a guard's bubble keeps off, in `layer`'s pixels:
+## the HUD's, the hint's and the tray.
+func _panel_rects(layer: Control) -> Array:
+	var out: Array = []
+	var panels: Array = [hud.clock_panel, hud.alarm_panel, hud.loot_panel, actions_band]
+	if hud.laws_box != null:
+		panels.append_array(hud.laws_box.get_children())
+	if hint_panel != null:
+		panels.append(hint_panel)
+	for c: Variant in panels:
+		var ctl := c as Control
+		if ctl != null and ctl.is_visible_in_tree() and ctl.size.x > 0.0:
+			var r := ctl.get_global_rect()
+			r.position -= layer.global_position
+			out.append(r)
+	return out
 
 
 ## The crew's portraits, one a member the simulation has, each its kind's
