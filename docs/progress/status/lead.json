@@ -3,7 +3,14 @@
   "updated_at": "2026-11-12T17:47:44Z",
   "expected_next_update_by": "2026-11-12T19:02:44Z",
   "cycle": 70,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "efefbeb77c4ad52fde8c1937f10f482b7000e106",
+    "task_ids": [
+      "P2-AIA2-busts"
+    ],
+    "started_at": "2026-11-12T18:42:30Z",
+    "expires_at": "2026-11-12T19:42:30Z"
+  },
   "last_merged": {
     "task_id": "P1-AD-board-1d",
     "sha": "a154d246"
