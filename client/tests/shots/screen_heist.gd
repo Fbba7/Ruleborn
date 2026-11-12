@@ -188,7 +188,9 @@ func _go() -> void:
 	if OS.get_environment("SIZES") != "":
 		print("row ", screen.crew_node.size, " band ", screen.actions_band.size, " hand ", screen.hand.size,
 			" frame ", frame.size, " screen ", screen.size, " ", screen.crew_buttons.map(func(b: Control) -> Vector2:
-				return b.size))
+				return b.size), " hint ", screen.hint_label.size, " lines ", screen.hint_label.get_line_count(),
+			" wants ", screen.hint_label.get_theme_font("font").get_string_size(screen.hint_label.text,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, screen.hint_label.get_theme_font_size("font_size")).x)
 	# §21.3's budgets, as the renderer counted the frame.
 	print("budget: %d draw calls, %d primitives" % [
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),

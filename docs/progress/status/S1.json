@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T01:23:10Z",
   "lease_until": "2026-11-12T04:23:10Z",
-  "updated_at": "2026-11-12T01:34:00Z",
-  "expected_next_update_by": "2026-11-12T02:19:00Z",
+  "updated_at": "2026-11-12T01:41:37Z",
+  "expected_next_update_by": "2026-11-12T02:26:37Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4d87d18",
@@ -165,5 +165,6 @@
       "default": "The record stays at 20; the check passes either way."
     }
   ],
-  "answers": []
+  "answers": [],
+  "next_step": "A and E done; C done (glass tray, kit tip, crew 3+2, Sage beside Cast so the world's crew show); next D (cream mat on fx_portrait), then B (200% en/pt_BR check and scripted fit test), stills, pre-check, gate."
 }

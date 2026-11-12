@@ -574,9 +574,9 @@ func _build() -> void:
 	var top_column := column
 	top_column_node = top_column
 	column = lower
-	# The kit's hint (KitStatus.hint): dark glass, its words whole, centred
-	# and wrapping.
-	hint_panel = KitStatus.hint("")
+	# The kit's tip (KitHud.tip, 02-heist.png's "Tap crew, then ground"):
+	# leather, its words bold cream outlined in ink, whole and wrapping.
+	hint_panel = KitHud.tip("")
 	hint_label = hint_panel.get_node("Words") as Label
 	var hint := hint_panel
 	# The hint gives way when the columns meet, measured after each layout
@@ -613,10 +613,21 @@ func _build() -> void:
 	band.add_theme_constant_override("separation", UI.px(4))
 	if Settings.left_handed:
 		band.layout_direction = Control.LAYOUT_DIRECTION_RTL
-	# With large text the names, wider than their discs, keep apart.
-	var crew_row := UI.row(1.0 if Settings.text_scale <= 100 else 8.0, true)
+	# The crew three to a row beside the hand, as the design's (a crew of
+	# five stands three over two, never four over one); with large text one
+	# flowing row under the hand's, the names, wider than their discs, apart.
+	var crew_row: Container
+	if Settings.text_scale <= 130:
+		var grid := GridContainer.new()
+		grid.columns = 3
+		grid.add_theme_constant_override("h_separation", UI.px(4))
+		grid.add_theme_constant_override("v_separation", UI.px(1))
+		crew_row = grid
+	else:
+		var flow := UI.row(8.0, true)
+		flow.alignment = FlowContainer.ALIGNMENT_BEGIN
+		crew_row = flow
 	crew_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	crew_row.alignment = FlowContainer.ALIGNMENT_BEGIN
 	crew_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	crew_row.size_flags_vertical = Control.SIZE_SHRINK_END
 	crew_node = crew_row
@@ -631,6 +642,14 @@ func _build() -> void:
 	_dress_hand()
 	actions_node = hand
 	band.add_child(hand)
+	if band is HBoxContainer:
+		# The Sage's disc beside Cast rather than over it, so the hand is
+		# no taller than the crew's two rows and the tray leaves the world
+		# its crew.
+		var sage := hand.sage_button
+		sage.reparent(band)
+		band.move_child(sage, hand.get_index())
+		sage.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	if band is VBoxContainer:
 		# With large text the hand's buttons and the gait are one row that
 		# wraps, under the portraits and lowest in reach; the hand keeps
@@ -642,10 +661,15 @@ func _build() -> void:
 			c.reparent(flow)
 		band.add_child(flow)
 		actions_node = flow
-	actions_band = band
-	column.add_child(band)
-	# The hint on the bottom line, under the hand's controls (the design's),
-	# with the gait's small button before it.
+	# The crew and the hand on one tray of dark glass (the design's), so the
+	# portraits and buttons keep their value step off the bright world.
+	var tray := FxSkin.panel("glass", 14.0, 5.0)
+	tray.name = "Tray"
+	tray.add_child(band)
+	actions_band = tray
+	column.add_child(tray)
+	# The hint over the tray (the design's), with the gait's small button
+	# before it.
 	var foot := HBoxContainer.new()
 	foot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	foot.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -662,10 +686,7 @@ func _build() -> void:
 	hint.custom_minimum_size.x = UI.px(150)
 	foot.add_child(hint)
 	column.add_child(foot)
-	if Settings.text_scale > 130:
-		# With §20.8's large text the hint, taller, goes over the controls,
-		# so they stay low in reach.
-		column.move_child(foot, band.get_index())
+	column.move_child(foot, tray.get_index())
 	# Clear of the bottom corners, where §21.1 puts nothing to tap.
 	column.add_child(FxSkin.corner_clear())
 
@@ -832,10 +853,11 @@ func _set_hint(words: String) -> void:
 	hint_panel.visible = _hint_level < 2
 
 
-## §20.8's large text in a long language can stand the lower column (the
-## hint over the controls) on the HUD's loot. The hint gives way, a step a
-## layout: first it says only its first clause, then it hides; the loot and
-## the controls never do. A new hint starts whole again.
+## A hint too long for one line says only its first clause. §20.8's large
+## text in a long language can stand the lower column (the hint over the
+## controls) on the HUD's loot. The hint gives way, a step a layout: first it
+## says only its first clause, then it hides; the loot and the controls never
+## do. A new hint starts whole again.
 func _fit_hint() -> void:
 	if not playing or top_column_node == null or not hud.visible or _hint_level >= 2 or column_node.size.y <= 0.0 \
 			or not is_visible_in_tree():
@@ -847,6 +869,13 @@ func _fit_hint() -> void:
 		if not is_equal_approx(moving.size.y, moving.get_combined_minimum_size().y) \
 				or not is_equal_approx(safe.size.y, safe.get_combined_minimum_size().y):
 			return
+	# A tip says one line: a hint that would wrap says its first clause, so
+	# the tip over the tray stands no taller than the design's and the crew
+	# on the world stay in sight.
+	if _hint_level == 0 and hint_label.get_line_count() > 1 and " · " in _hint_source:
+		_hint_level = 1
+		_set_hint(_hint_source)
+		return
 	var low := column_node.global_position.y
 	var top := top_column_node.get_global_rect().end.y + UI.px(Tokens.number("size", "gap_points"))
 	# Once a step a layout: the containers settle a frame late.
