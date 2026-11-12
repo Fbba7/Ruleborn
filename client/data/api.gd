@@ -70,6 +70,11 @@ func raw(method: HTTPClient.Method, path: String, body := PackedByteArray()) -> 
 
 
 func _raw(method: HTTPClient.Method, path: String, body: PackedByteArray) -> Result:
+	# The token goes to the configured server only: a path that could move the
+	# URL to another host is sent nowhere (SEC-30).
+	if not path.begins_with("/v1/") or path.contains("@") or path.contains("//") or path.contains("\\") \
+			or path.contains("\n") or path.contains("\r"):
+		return Result.failure("bad_route")
 	var headers: PackedStringArray = []
 	if token != "":
 		headers.append("Authorization: Bearer " + token)
