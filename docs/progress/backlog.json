@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-12T06:55:00Z",
+  "updated_at": "2026-11-12T07:29:00Z",
   "updated_by": "lead (cycle 61)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
@@ -2641,13 +2641,13 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "ready",
+      "state": "merged",
       "claim": null,
       "prior_branch": "claude/ui-ad",
       "prior_sha": null,
       "ready_sha": "0387ca7879c8b36aecbcd64f561f2f9e1a8434fc",
-      "merged_sha": null,
-      "updated_at": "2026-11-12T06:55:00Z",
+      "merged_sha": "af14e1c7",
+      "updated_at": "2026-11-12T07:29:00Z",
       "updated_by": "lead (cycle 61)",
       "id": "P1-AD-board-1b",
       "title": "Board 1, second round: AD re-checks objections A-E on P1-S1-pilot-3's stills beside the key frame and lets board 1 stand or lists what is still open (board-1.md); phase 2 waits for board 1"
@@ -2963,6 +2963,14 @@
       "text": "From the lead (cycle 61). K1-R17 granted: client/scripts/heist_hud.gd is an exception of P1-K1-numerals-on in the backlog, for two changes only. (1) In _figures, replace self_modulate.a = 0 and RenderingServer.canvas_item_set_visible(false) with clock_label.visible = false, as you proposed (clock_label.text still updates). (2) AD-R14: draw the 'Laws here' / 'Leis aqui' header with the kit's ink outline, so the gate's Display type item at 100% does not fail on it. Change nothing else in the file and no test. Run check_all.sh and guard.sh again on the head you mark ready, then ask the gate (heist at 100% text, Display type, switch on). S1 works on P1-S1-pilot-4 at the same time (heist_screen.gd and fx_portrait.gd, not heist_hud.gd or budgets.json). Add M8 to acks when read.",
       "sent_at": "2026-11-12T06:55:00Z",
       "ack_by": "2026-11-12T09:00:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M9",
+      "to": "K1",
+      "text": "From the lead (cycle 61). K1-R18 approved: raise tools/ui_bake/budgets.json's shots.recorded heist/100, heist/200 and heist/hc by 2 (to 120, 116, 120), logged in 'raises' with K1-R18 and AD-R14 as the reason; keep the header's drop with its own outline. Nothing else in the records moves and no test changes. Run guard.sh and check_all.sh on the head you mark ready, then ask the gate (heist at 100% text, Display type, switch on). Name the raise in the handoff (numerals-on's done_when). Add M9 to acks when read.",
+      "sent_at": "2026-11-12T07:29:00Z",
+      "ack_by": "2026-11-12T10:00:00Z",
       "acked_at": null
     }
   ]

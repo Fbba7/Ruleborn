@@ -371,6 +371,37 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 61, 12 November 2026, from 06:39Z (session
+  `session_01SNkKxrEkx6oXeGzdGm4sDr`, started by the Opus 5.5 launcher):
+  P1-AD-board-1b merged; board 1 does not stand after round 2; two
+  requests granted; S1 started on P1-S1-pilot-4.
+  - **P1-AD-board-1b merged as `af14e1c7`** (ready `0387ca78`, docs
+    only): check_all PASS on candidate `121464ac` at 07:27Z, `owners.py
+    diff` clean, claims disjoint. Main moved during the check by
+    bookkeeping commits only, so the merge went onto the new head and
+    only the documentation check ran again. Board 1's round 2 leaves
+    objections A, B and D and the 'Laws here' header open (AD-R13 to
+    AD-R16).
+  - **K1-R17 granted** (M8): `client/scripts/heist_hud.gd` is an
+    exception of P1-K1-numerals-on, for `clock_label.visible = false` and
+    AD-R14's header outline only, with no test changed. **K1-R18
+    approved** (M9): the heist's draw-call records go up by 2 (120, 116,
+    120; cap 150) for the header's drop, logged in `budgets.json`'s
+    `raises`.
+  - **P1-S1-pilot-4 seeded** (AD-R13, AD-R15: objection D, the
+    portraits' L* step or ink silhouette; objection B, the tray at 200%
+    pt_BR with no crew plan) and **P1-AD-board-1c** (AD-R16: round 3
+    re-checks A, B, D and the header; deps numerals-on and pilot-4).
+    Phase 2's four flow tasks now wait on board-1c.
+  - Started S1 on P1-S1-pilot-4 (`session_01SNkKxnQXTay5oBDdKNoz8h`,
+    Opus 5.5 at effort high). K1's own session continues: its check-in at
+    06:54Z read the grant, and its 07:46Z check-in reads K1-R18's answer.
+    AD has no open task until board-1c opens. Two builders, under the
+    cap. The merge is docs only, so the pages were not republished. The
+    backlog has 72 tasks, 53 merged. No owner-inbox entry.
+  - Next: merge numerals-on and pilot-4 when ready, then AD on board-1c;
+    phase 2 opens once board 1 stands. At most three builders; icon
+    batches 3 and 4 stay deferred (D13 (c)).
 - Cycle 60, 12 November 2026, from 04:38Z (session
   `session_01SNkKxp1vEH7M7oEGRULZPR`, started by the Opus 5.5 launcher):
   P1-S1-pilot-3 merged; three fixes to main; AD and K1 started.

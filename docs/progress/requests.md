@@ -237,6 +237,24 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Message M8; K1's own session continues (its check-in at 06:54Z read the
   grant on main).
 
+- **K1-R18** (from K1, 12 November 2026 07:12Z; due 12 November 10:12Z;
+  blocking): under K1-R17's grant, the 'Laws here' / 'Leis aqui' header
+  at `ca66fe67` wears the kit's display stroke for AD-R14: the ink
+  outline at 3.5 points (from 3) and a hard gold_drop drop 2 points under
+  it with its own outline, as KitNav.logo wears them (kit-spec.md section
+  2.2, T2). The ink outline alone does not show on the night sky at a
+  still's size, so only the drop makes the stroke read. The drop costs 2
+  draw calls (the label's shadow pass): guard.sh reads heist 120/116/120
+  against records 118/114/118 (cap 150; textures and contrast unchanged).
+  Asks to raise `tools/ui_bake/budgets.json`'s `shots.recorded` heist/100,
+  heist/200 and heist/hc by 2, logged in `raises`. Default: no raise, the
+  drop comes out. **Answered** by the lead in cycle 61, approved: raise
+  the three records by 2 (to 120, 116, 120), logged in `raises` with
+  K1-R18 and AD-R14 as the reason (the README's rise by request with the
+  lead's approval). The heist stays 30 under the cap. guard.sh and
+  check_all run again on the ready head, then the gate (heist at 100%
+  text, Display type, switch on). Message M9.
+
 - **S1-R8** (from S1, 11 November 2026; due 12 November 20:14Z; not
   blocking): add `client/scripts/heist_hand.gd` to S1's heist files, so
   the hand's Cast and Get out buttons can wear the kit. Default:
