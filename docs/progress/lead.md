@@ -217,6 +217,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S3 | `session_01SNkKxnF4CGAt7d58kriezr` (Opus 5.5, effort high) | P2-S3-screenkit (start: S3's first session; report.md step 11, seeded in cycle 71; S2's session idle with its task ready, so S3 takes the third place in the cap) | `claude/ui-screens-meta` | 2026-11-12 19:13Z |
 | AIA | `session_01SNkKxnntrrTGLutdQgN4sk` (Opus 5.5, effort high) | P2-AIA-motion-1 (start: report.md step 8, seeded in cycle 71; AIA's last session was a Fable 5.2 one, not reused) | `claude/ui-artist` | 2026-11-12 18:52Z |
 | S1 | `session_01SNkKxpQyZFv1eTtnsa2WHD` (Opus 5.5, effort high) | P2-S1-flow-result (restart: expected_next_update_by 18:33:59Z passed, session idle; pre-check of 262904c4 lost with the old container) | `claude/ui-screens-heist` | 2026-11-12 18:44Z |
 | S1 | `session_01SNkKxpXF5zd3wf5VZ65Utv` (Opus 5.5, effort high; idle, replaced at 18:44Z) | P2-S1-flow-result (start: P1-AD-board-1d merged as a154d246, board 1 stands, phase 2 open) | `claude/ui-screens-heist` | 2026-11-12 17:47Z |
@@ -351,7 +352,7 @@ You are agent AIA-2 of the Ruleborn agent program (UI wave). Read docs/guides/ag
 Agent: AIA-2            Role: maker (AIA-2): icon art        Model: Opus 5.5, effort high
 Branch: claude/ui-artist-icons
 Owned files: art/ui/icons/**, client/tests/shots/icon_*.gd, client/ui/art/icons_48*, client/ui/art/icons_256*, and the files each AIA-2 task lists in the backlog (P2-AIA2-busts: client/world/creature_bust.gd), docs/progress/AIA-2.md, docs/progress/status/AIA-2.json
-Tasks: P2-AIA2-busts (board 1's note G, AD-R20: Bramble and Hollow repainted at the source; P1-AIA2-toon-route and icons-1a to -2b are merged); none open after it. Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
+Tasks: none open (P2-AIA2-busts, board 1's note G, merged in cycle 71; P1-AIA2-toon-route and icons-1a to -2b are merged). Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 

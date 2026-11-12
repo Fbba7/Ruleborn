@@ -2864,20 +2864,20 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
+      "state": "ready",
       "claim": {
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-12T17:48:59Z",
-        "seen_at": "2026-11-12T18:48:50Z",
+        "seen_at": "2026-11-12T19:22:49Z",
         "lease_until": "2026-11-12T21:45:17Z"
       },
       "prior_branch": "claude/ui-screens-heist",
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "8b47be966dba863a29e9f13a28891bf74ac33887",
       "merged_sha": null,
-      "updated_at": "2026-11-12T19:11:58Z",
-      "updated_by": "lead (cycle 71)",
+      "updated_at": "2026-11-12T19:28:00Z",
+      "updated_by": "lead",
       "id": "P2-S1-flow-result",
       "title": "Result screen, flow findings F6 (AD-R12, docs/progress/AD.md, Flow review): a Clean heist does not say 'No guard alerted' over an alarm peak; the actions move up or the haul fills the lower screen; no byte count in the player's line"
     },
@@ -2909,7 +2909,10 @@
       "updated_at": "2026-11-12T10:55:00Z",
       "updated_by": "lead (cycle 65)",
       "id": "P2-S1-flow-replay",
-      "title": "Replay screen, flow finding F7 (AD-R12): timeline markers that share a time stack or merge into one marker with a count"
+      "title": "Replay screen, flow finding F7 (AD-R12): timeline markers that share a time stack or merge into one marker with a count",
+      "exceptions": [
+        "client/i18n/strings.csv"
+      ]
     },
     {
       "role": "S2",
@@ -3057,7 +3060,7 @@
         "agent": "AIA",
         "branch": "claude/ui-artist",
         "claimed_at": "2026-11-12T18:53:51Z",
-        "seen_at": "2026-11-12T19:05:00Z",
+        "seen_at": "2026-11-12T19:20:00Z",
         "lease_until": "2026-11-12T21:53:51Z"
       },
       "prior_branch": null,
@@ -3424,7 +3427,8 @@
       "files": [
         "client/scripts/screen_kit.gd",
         "client/scripts/screen_box.gd",
-        "docs/art/tracks/menu-screens.md"
+        "docs/art/tracks/menu-screens.md",
+        "client/scripts/screen_meter.gd"
       ],
       "deps": [],
       "done_when": [
@@ -3453,14 +3457,20 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-12T19:16:00Z",
+        "seen_at": "2026-11-12T19:25:31Z",
+        "lease_until": "2026-11-12T22:16:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T18:55:00Z",
-      "updated_by": "lead (cycle 71)",
+      "updated_at": "2026-11-12T19:28:00Z",
+      "updated_by": "lead",
       "id": "P2-S3-screenkit",
       "title": "Menu screens through the kit (report.md step 11): ScreenKit and ScreenBox draw their materials through KitSkin, so every menu screen inherits the new kit"
     },
