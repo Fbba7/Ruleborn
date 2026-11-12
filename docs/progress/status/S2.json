@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-12T20:00:00Z",
   "lease_until": "2026-11-12T23:00:00Z",
-  "updated_at": "2026-11-12T20:00:00Z",
-  "expected_next_update_by": "2026-11-12T20:45:00Z",
+  "updated_at": "2026-11-12T20:10:00Z",
+  "expected_next_update_by": "2026-11-12T20:55:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "de9d115c",
-    "next_step": "Render first, scout and planner shots on main to see F3 to F5"
+    "next_step": "F3 to F5 written in the three screens; rendering after stills at 100% and 200% to check them"
   },
   "precheck": null,
   "gate_request": null,
@@ -50,6 +50,21 @@
       "created_at": "2026-11-12T18:15:00Z",
       "due": "2026-11-13T18:15:00Z",
       "default": "Home hides the whole pins layer at the whole universe whenever a realm pin would be missing (_fit_pins); the realms stay in the world's spoken description and each island still takes its tap",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R3",
+      "from": "S2",
+      "to": "lead",
+      "ask": "strings.csv and planner_presenter.gd: add a PLAN_NEEDS_CREW_ONE row ('choose %d crew', in all six languages) and have the presenter pick it for the start key's why when the crew's least equals its most (3 of 3), so the line names what is needed in one phrase (AD-R12 F5).",
+      "files": [
+        "client/i18n/strings.csv",
+        "client/features/planner/planner_presenter.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T20:10:00Z",
+      "due": "2026-11-13T20:10:00Z",
+      "default": "planner_screen.gd shows the crew's own count line ('Crew: 0 of 3', PLAN_CREW) under START THE HEIST in place of 'choose 3 to 3 crew' whenever the crew has one size; nothing changes once the crew can be larger",
       "escalate_to": "lead"
     }
   ],
