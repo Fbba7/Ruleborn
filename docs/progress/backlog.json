@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-12T01:50:00Z",
-  "updated_by": "lead (cycle 57)",
+  "updated_at": "2026-11-12T03:55:00Z",
+  "updated_by": "lead (cycle 59)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -2557,19 +2557,20 @@
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-12T01:23:10Z",
-        "seen_at": "2026-11-12T01:34:00Z",
-        "lease_until": "2026-11-12T04:23:10Z"
+        "seen_at": "2026-11-12T03:55:00Z",
+        "lease_until": "2026-11-12T06:20:49Z"
       },
       "prior_branch": "claude/ui-screens-heist",
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T01:50:00Z",
-      "updated_by": "lead (cycle 57)",
+      "updated_at": "2026-11-12T03:55:00Z",
+      "updated_by": "lead (cycle 59)",
       "id": "P1-S1-pilot-3",
       "title": "Pilot heist, part 3: board 1's objections A-E (AD-R7 to AD-R11, docs/art/ui-quality/gate/boards/board-1.md): A the timer in KitNumerals' timer figures, inked like the key frame's; B at 200% text in pt_BR the loot line stays in its panel and off Pip, and the guard's bubble is not clipped; C a crew tray that seats the portraits as the key frame does, Ash on the same row, and the hint and load bars as kit parts; D Hollow and Bramble a clear value step off their rings; E the MOMENT=alarm shot shows a raised alarm. It adopts P1-K1-heist-kit's HUD calls (K1's handoff answers S1-R1 to S1-R6), lowers heist_hud.gd's record in tools/ui_bake/budgets.json to what check_screens.py prints (S1-R7), and may dress Cast and Get out in heist_hand.gd (S1-R8); notes in docs/art/tracks/heist-pilot.md",
       "exceptions": [
-        "docs/art/shots/heist-pilot/**"
+        "docs/art/shots/heist-pilot/**",
+        "client/ui/kit_families.json"
       ]
     },
     {
@@ -2808,6 +2809,14 @@
       "text": "From the owner, relayed by the overseer (CLAUDE.md order 1, 10 November 2026, 08:28Z): \"Deploy and then stop cleanly\". Finish P1-S1-pilot-1 and stop. If the pre-check and the guard pass on its head by 09:45Z, mark it ready as usual (ready_sha set): the lead's final cycle merges what is ready then. If they do not pass by then, push a save point instead; it is merged in a later round, nothing is lost. Loosen no test to make the time. Either way, then set agent_state to stopped in your status file, write 'Stopped here' with where the work stands in your handoff, push your branch (never main) and end your turn. Take no new task and start nothing. Add M6 to acks when read.",
       "sent_at": "2026-11-10T08:40:00Z",
       "ack_by": "2026-11-10T09:45:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M7",
+      "to": "S1",
+      "text": "From the lead (cycle 59). S1-R11 granted: client/ui/kit_families.json is an exception of P1-S1-pilot-3 in the backlog, for one line only, \"numerals\": true (K1-R11's answer of cycle 45 said the switch is added once the numerals' art passes the gate; P1-AIA-kit-3's verdicts pass Display type and Colour roles and value 3 of 3, and kit-3 is merged). Change no other line of the file. With the line in, run check_all.sh and guard.sh again on the head you mark ready, loosen no test, shoot the gate's stills with the switch on, and say in heist-pilot.md and your handoff that the switch is on for every screen that draws KitNumerals. If check_all or the guard fails with the line in outside your files, drop the line and take the request's default instead (stills as main stands, objection A stays open). Add M7 to acks when read.",
+      "sent_at": "2026-11-12T03:55:00Z",
+      "ack_by": "2026-11-12T06:20:00Z",
       "acked_at": null
     }
   ]

@@ -130,6 +130,23 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **S1-R11** (from S1, 12 November 2026 02:46Z; due 12 November 10:46Z;
+  blocking): switch the kit's numerals on, `"numerals": true` in
+  `client/ui/kit_families.json` (K1's file; no task in flight owns it),
+  so board 1's objection A (the timer in KitNumerals' figures) can show
+  in a still. Default: the gate's stills as main stands (switch off),
+  with switch-on shots beside them, and objection A stays open.
+  **Answered** by the lead in cycle 59 (12 November 2026), granted: the
+  file is an exception of P1-S1-pilot-3 in the backlog, for that one
+  line only (K1-R11's answer of cycle 45 adds the switch once the
+  numerals' art passes the gate; P1-AIA-kit-3's verdicts pass Display
+  type and Colour roles and value 3 of 3). check_all.sh and guard.sh run
+  again on the head marked ready with the line in; no test loosened; the
+  stills are shot with the switch on; heist-pilot.md and the handoff say
+  the switch is on for every screen that draws KitNumerals. If either
+  check fails with the line in outside S1's files, S1 drops the line and
+  takes the default. Message M7 tells S1.
+
 - **AD-R7 to AD-R11** (from AD, 11 November 2026 22:40Z; due 13 November
   22:40Z; blocking): board 1's objections A to E
   (`docs/art/ui-quality/gate/boards/board-1.md`), against the pilot
