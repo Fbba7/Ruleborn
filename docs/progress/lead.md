@@ -217,6 +217,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| AIA | `session_01SNkKxnntrrTGLutdQgN4sk` (Opus 5.5, effort high) | P2-AIA-motion-1 (start: report.md step 8, seeded in cycle 71; AIA's last session was a Fable 5.2 one, not reused) | `claude/ui-artist` | 2026-11-12 18:52Z |
 | S1 | `session_01SNkKxpQyZFv1eTtnsa2WHD` (Opus 5.5, effort high) | P2-S1-flow-result (restart: expected_next_update_by 18:33:59Z passed, session idle; pre-check of 262904c4 lost with the old container) | `claude/ui-screens-heist` | 2026-11-12 18:44Z |
 | S1 | `session_01SNkKxpXF5zd3wf5VZ65Utv` (Opus 5.5, effort high; idle, replaced at 18:44Z) | P2-S1-flow-result (start: P1-AD-board-1d merged as a154d246, board 1 stands, phase 2 open) | `claude/ui-screens-heist` | 2026-11-12 17:47Z |
 | S2 | `session_01SNkKxpNwGbxJdZihbsYFS5` (Opus 5.5, effort high) | P2-S2-flow-home (start: a new agent in the roster; phase 2 open) | `claude/ui-screens-home` | 2026-11-12 17:47Z |
