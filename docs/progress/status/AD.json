@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-12T16:12:00Z",
   "lease_until": "2026-11-12T19:12:00Z",
-  "updated_at": "2026-11-12T16:12:00Z",
-  "expected_next_update_by": "2026-11-12T16:57:00Z",
+  "updated_at": "2026-11-12T16:18:00Z",
+  "expected_next_update_by": "2026-11-12T17:03:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8bfb07bdc4ff372fa1e6da205cb6bd4a8d0c09a2",
-    "next_step": "render pilot-5's heist stills and re-check D and F"
+    "next_step": "pre-check the round 4 commit, then mark ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -209,6 +209,35 @@
       "created_at": "2026-11-12T09:42:00Z",
       "due": "2026-11-14T09:42:00Z",
       "default": "seed it with deps on the AD-R17/AD-R18 task",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R20",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 note G (not holding), which answers S1-R12: yes, AIA-2 should take it. The flat pass in FxPortrait._toon closed objection D, but it also wiped out Bramble's snout, arms and belly bands and Hollow's glass. Seed an AIA-2 task to repaint both busts at the source (CreatureBust's art) in two or three flat tones. Keep Bramble's features as shapes, and draw Hollow's glass as a few large hard-edged facets with its face and gem. The check is the five portraits at 119 px, in colour and in grayscale. Details in board-1.md, Round 4, Note G.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md",
+        "client/world/creature_bust.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T16:18:00Z",
+      "due": "2026-11-14T16:18:00Z",
+      "default": "seed it in AIA-2's phase 2 queue after the icons; the in-game flat pass stays until it lands",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R21",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 stands (board-1.md, Round 4): D and F are closed, and A, B, C and E were closed earlier. Phase 1's board condition is met, so phase 2 no longer waits for board 1 (report section 3.2). Check phase 1's other exit conditions and open phase 2.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T16:18:00Z",
+      "due": "2026-11-13T16:18:00Z",
+      "default": "open phase 2 at the next lead cycle if the other exit conditions hold",
       "escalate_to": "lead"
     }
   ],
