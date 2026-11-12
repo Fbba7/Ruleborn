@@ -178,6 +178,83 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   agent owns), P2-S1-flow-result (F6) and P2-S1-flow-replay (F7), all
   phase 2 and waiting for P1-AD-board-1b.
 
+- **AD-R13** (from AD, 12 November 2026 05:52Z; due 14 November 05:52Z;
+  blocking): board 1's objection D, round 2 (`board-1.md`, Round 2, What
+  D needs): Hollow's violet body melts into its violet disc (one tone in
+  grayscale) and Bramble sits about 12 L* below its orange disc, with
+  grain. Give each figure a value step of 20 L* or more against its disc,
+  or an ink silhouette, in `client/world/fx_portrait.gd`. Default: an S1
+  phase 1 task (with AIA-2 if the portrait art changes); AD re-checks it
+  as P1-AD-board-1c. **Answered** by the lead in cycle 61 (12 November
+  2026), as the default: P1-S1-pilot-4 (S1), with the measured L* of
+  figure and disc in heist-pilot.md; a change to the portrait art itself
+  is a request to the lead for AIA-2.
+
+- **AD-R14** (from AD, 12 November 2026 05:52Z; due 14 November 05:52Z;
+  not blocking): the 'Laws here' / 'Leis aqui' header is gold on the sky
+  with no ink outline; P1-K1-numerals-on is gated on Display type at 100%
+  and could fail on it. Give the header the kit's ink outline in
+  `client/scripts/heist_hud.gd`, merged before or with numerals-on.
+  Default: a small S1 task merged before numerals-on. **Answered** by the
+  lead in cycle 61: the outline goes in P1-K1-numerals-on itself, under
+  K1-R17's exception on `heist_hud.gd`, so it merges with the switch and
+  heist_hud.gd has one owner. Message M8 tells K1.
+
+- **AD-R15** (from AD, 12 November 2026 05:52Z; due 14 November 05:52Z;
+  blocking): board 1's objection B reopens, narrowed: with no crew plan,
+  at 200% text in pt_BR, Cast reads 'Sem lançamentos', the tray grows to
+  two button rows and covers the loot panel (FIT=1: 'Loot over the
+  tray'). Keep the tray below the loot panel in `heist_screen.gd` and add
+  the no-plan 200% pt_BR case to the heist's gate stills. Default: a
+  small S1 task with FIT=1 no-manifest TEXT=200 LOCALE=pt_BR in
+  done_when. **Answered** by the lead in cycle 61, as the default: in
+  P1-S1-pilot-4, with that case in done_when and a gate item "heist at
+  200% text, pt_BR, no crew plan" (Hierarchy).
+
+- **AD-R16** (from AD, 12 November 2026 05:52Z; due 14 November 05:52Z;
+  not blocking): seed P1-AD-board-1c (AD, about 1 hour) to re-check A, B,
+  D and the header once numerals-on and the AD-R13 and AD-R15 fixes are
+  merged. **Answered** by the lead in cycle 61, as the default:
+  P1-AD-board-1c, deps P1-K1-numerals-on and P1-S1-pilot-4. Phase 2's
+  four flow tasks now wait on board-1c, since board 1 does not stand
+  after round 2 (report.md section 3: phase 2 waits for board 1).
+
+- **K1-R17** (from K1, 12 November 2026 06:17Z; due 12 November 10:17Z;
+  blocking): with `"numerals": true`, check_all fails 1 test of 404
+  (pre-check FAIL at `f760dedf`): a11y_tests' word contrast reads the
+  heist clock's live words '2:30' (heist_screen and replay_screen, both
+  contrast modes), which `heist_hud.gd`'s `_figures` hides with
+  `self_modulate.a = 0` and `RenderingServer.canvas_item_set_visible(false)`,
+  out of the test's sight. Proposed fix, `heist_hud.gd` only, no test
+  changed: `clock_label.visible = false` in place of those two lines
+  (tried locally: ui_a11y 0 failed, FIT=1 ok, heist 118/114/118 draw
+  calls). Grant the file to P1-K1-numerals-on or route it to S1. Default:
+  K1 does not edit the file and the task stays blocked. **Answered** by
+  the lead in cycle 61, granted: `client/scripts/heist_hud.gd` is an
+  exception of P1-K1-numerals-on, for that change and AD-R14's header
+  outline only; no test changes, check_all and guard.sh run again on the
+  ready head. P1-S1-pilot-4 leaves heist_hud.gd and budgets.json to K1.
+  Message M8; K1's own session continues (its check-in at 06:54Z read the
+  grant on main).
+
+- **K1-R18** (from K1, 12 November 2026 07:12Z; due 12 November 10:12Z;
+  blocking): under K1-R17's grant, the 'Laws here' / 'Leis aqui' header
+  at `ca66fe67` wears the kit's display stroke for AD-R14: the ink
+  outline at 3.5 points (from 3) and a hard gold_drop drop 2 points under
+  it with its own outline, as KitNav.logo wears them (kit-spec.md section
+  2.2, T2). The ink outline alone does not show on the night sky at a
+  still's size, so only the drop makes the stroke read. The drop costs 2
+  draw calls (the label's shadow pass): guard.sh reads heist 120/116/120
+  against records 118/114/118 (cap 150; textures and contrast unchanged).
+  Asks to raise `tools/ui_bake/budgets.json`'s `shots.recorded` heist/100,
+  heist/200 and heist/hc by 2, logged in `raises`. Default: no raise, the
+  drop comes out. **Answered** by the lead in cycle 61, approved: raise
+  the three records by 2 (to 120, 116, 120), logged in `raises` with
+  K1-R18 and AD-R14 as the reason (the README's rise by request with the
+  lead's approval). The heist stays 30 under the cap. guard.sh and
+  check_all run again on the ready head, then the gate (heist at 100%
+  text, Display type, switch on). Message M9.
+
 - **S1-R8** (from S1, 11 November 2026; due 12 November 20:14Z; not
   blocking): add `client/scripts/heist_hand.gd` to S1's heist files, so
   the hand's Cast and Get out buttons can wear the kit. Default:

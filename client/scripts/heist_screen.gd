@@ -865,8 +865,11 @@ func _hand_order(icon: String, words: String, call: Callable, look: String, leas
 	var fit := func() -> void:
 		# In the narrow text's single row a long phrase ("Sem lançamentos")
 		# stands on two lines, so the tray keeps inside the frame (§21.1).
-		if Settings.text_scale <= 130 and l.text.contains(" ") \
-				and l.get_minimum_size().x + UI.px(16) > UI.px(least.x) * 1.5:
+		# With §20.8's large text it does so too once it is too wide to
+		# keep its row beside Get out, so the hand's row never wraps and
+		# the tray stays under the loot (AD-R15).
+		var wide := UI.px(least.x) * (1.5 if Settings.text_scale <= 130 else 2.2)
+		if l.text.contains(" ") and l.get_minimum_size().x + UI.px(16) > wide:
 			l.text = HeistHand.two_lines(l.text)
 		b.custom_minimum_size = Vector2(maxf(UI.px(least.x), l.get_minimum_size().x + UI.px(16)),
 			maxf(UI.px(least.y), l.get_minimum_size().y + UI.px(icon_points + 10.0)))

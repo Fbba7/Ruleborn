@@ -4,6 +4,22 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-12 05:42Z: main failed check_all after the overseer's security commits; fixed (lead, cycle 60)
+
+- **What:** main had failed `tools/check_all.sh` since the overseer's
+  security commits `c888bed7` (SEC-17) and `e39e9048` (SEC-30/SEC-29).
+  There were three breakages: a sim test not claimed in
+  `sim/systems.json`, the failure code `ERR_BAD_ROUTE` with no words in
+  `client/i18n/strings.csv`, and two gdlint errors (an unused variable's
+  name in `client/features/auth/auth_controller.gd`, a line over 120 in
+  `client/tests/security_tests.gd`). Each blocked a merge candidate in
+  turn.
+- **Done:** fixed by lead commits `22d4328c`, `77e48b27` and `a13c5d07`,
+  with no test loosened. check_all then passed and P1-S1-pilot-3 merged
+  as `085c812a`.
+- **Needs the owner:** nothing. Security fixes landing on main would
+  merge more smoothly if they ran `bash tools/check_all.sh` first.
+
 ## 2026-11-12 00:41Z: the lead was stale, the launcher had just started a cycle (watchdog)
 
 - **What:** `status/lead.json` was past its `expected_next_update_by` of
