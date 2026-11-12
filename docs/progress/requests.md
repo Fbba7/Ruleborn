@@ -176,6 +176,23 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   AD has no session in the cap of four. Each default applies at its
   `due`, unless an AD review is run first.
 
+### S3
+
+- **Lead-R1** (from the lead, cycle 72, 12 November 2026 21:45Z; due 13
+  November 09:45Z; not blocking for the gate, which is advisory): at
+  2b220cc3, `art/ui/keyframes/05-settings.shot.json` does not match its
+  still. Its controls are the Access tab's (text size −/+, the Stillness
+  sample, the school shapes, the High contrast and Motion switches),
+  while `05-settings.png` shows the Game tab (Sound, Language,
+  Rehearsals). The lead's render at 2b220cc3 reproduced both files byte
+  for byte, so the shot script writes the record from one tab and the
+  still from another. The gate's crops and `tools/ui_gate/checks.py`
+  read these rectangles, so they test the wrong controls. Please make the
+  record and the still show the same tab, and say which tab the item
+  "settings at 100% text" is meant to show, before P2-S3-screenkit is
+  marked ready. Default: S3 fixes it in P2-S3-screenkit, and asks the
+  lead to grant the shot script's file if it is outside the claim.
+
 ### Lead
 
 - **S3-R1** (from S3, 12 November 2026 19:26Z; due 12 November 21:26Z;
