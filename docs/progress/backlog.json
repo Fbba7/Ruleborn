@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-12T11:41:00Z",
-  "updated_by": "lead (cycle 66)",
+  "updated_at": "2026-11-12T16:45:00Z",
+  "updated_by": "lead (cycle 70)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -2825,14 +2825,20 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-11-12T16:12:00Z",
+        "seen_at": "2026-11-12T16:45:00Z",
+        "lease_until": "2026-11-12T19:12:00Z"
+      },
       "prior_branch": "claude/ui-ad",
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T10:55:00Z",
-      "updated_by": "lead (cycle 65)",
+      "updated_at": "2026-11-12T16:45:00Z",
+      "updated_by": "lead (cycle 70)",
       "id": "P1-AD-board-1d",
       "title": "Board 1, fourth round (AD-R19): AD re-checks objections D (Bramble's grain, Hollow's fill and framing) and F (the 'Laws here' header's outline) on P1-S1-pilot-5's stills beside the key frame, and lets board 1 stand or lists what is still open (board-1.md); phase 2 waits for board 1"
     },
@@ -2960,6 +2966,49 @@
       "updated_by": "lead (cycle 65)",
       "id": "P2-flow-entry",
       "title": "First, scout and planner screens, flow findings F3 to F5 (AD-R12): the first screen's tagline on a plate or clear of the island ring; the scout chip row fits its panel or scrolls with a cue; the planner says 'choose %d crew' when the minimum is the maximum (a second string beside PLAN_NEEDS_CREW) and its plan card fits or shows a scroll cue"
+    },
+    {
+      "role": "AIA-2",
+      "assigned_to": "AIA-2",
+      "files": [
+        "client/world/creature_bust.gd",
+        "docs/progress/AIA-2.md"
+      ],
+      "deps": [
+        "P1-AD-board-1d"
+      ],
+      "done_when": [
+        "board 1's note G (AD-R20, board-1.md Round 4): Bramble and Hollow repainted at the source in client/world/creature_bust.gd in two or three flat tones; Bramble's snout, arms and belly bands kept as shapes; Hollow's glass as a few large hard-edged facets with its face and gem",
+        "the five portraits at 119 px (SIZES=1 PORTRAITS=<dir>) in colour and grayscale read as framed toon figures, noted in the handoff; the in-game flat pass in client/world/fx_portrait.gd (S1's) stays until this lands, and a change to it is a request to the lead",
+        "every heist screen within its draw-call record in tools/ui_bake/budgets.json",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "heist at 100% text",
+          "qualities": [
+            "Character presence"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T16:45:00Z",
+      "updated_by": "lead (cycle 70)",
+      "id": "P2-AIA2-busts",
+      "title": "Bramble and Hollow repainted at the source (AD-R20, board 1's note G, not holding): CreatureBust's art in two or three flat tones, Bramble's features kept as shapes and Hollow's glass as a few hard-edged facets with its face and gem; checked on the five portraits at 119 px in colour and grayscale"
     }
   ],
   "idle_queue": [
