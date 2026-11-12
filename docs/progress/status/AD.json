@@ -3,26 +3,21 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "done",
-  "task_id": "P1-AD-board-1",
-  "task_state": "ready",
-  "claimed_at": "2026-11-11T22:22:00Z",
-  "lease_until": "2026-11-12T01:22:00Z",
-  "updated_at": "2026-11-12T00:40:12Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P1-AD-board-1b",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-12T05:42:00Z",
+  "lease_until": "2026-11-12T08:42:00Z",
+  "updated_at": "2026-11-12T05:42:00Z",
+  "expected_next_update_by": "2026-11-12T06:27:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "45d2c28626a49671aed4f3e5034fc92aa4ca16b7",
-    "next_step": "P1-AD-board-1 ready at 45d2c286 (pre-check PASS). Board 1 does not stand: objections A-E (AD-R7 to AD-R11); flow findings F1-F7 (AD-R12). Next: AD re-checks board 1 when S1's fixes land"
+    "next_step": "re-check board 1 objections A-E on P1-S1-pilot-3's stills (main 085c812a)"
   },
-  "precheck": {
-    "sha": "45d2c28626a49671aed4f3e5034fc92aa4ca16b7",
-    "exit": 0,
-    "finished_at": "2026-11-11T23:07:12Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "45d2c28626a49671aed4f3e5034fc92aa4ca16b7",
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
   "requests": [
