@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpKUASWJcNRTsGDfsp` (cycle 70, 12
-November 2026 from 16:38Z, started by the Opus 5.5 launcher). Cycle 69's
+Latest lead cycle session: `session_01SNkKxr8rzRPkaA8ocqu69E` (cycle 71, 12
+November 2026 from 18:39Z, started by the Opus 5.5 launcher). Cycle 70's
+was `session_01SNkKxpKUASWJcNRTsGDfsp` (from 16:38Z). Cycle 69's
 was `session_01SNkKxnAEyrHDn5aRYpjvTB` (from 14:39Z). Cycle 68's
 was `session_01SNkKxnfPvJzu1iksNyMgNw` (from 13:39Z). Cycle 67's
 was `session_01SNkKxqJqzRbvVerXcUszbd` (from 12:39Z). Cycle 66's
@@ -216,7 +217,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| S1 | `session_01SNkKxpXF5zd3wf5VZ65Utv` (Opus 5.5, effort high) | P2-S1-flow-result (start: P1-AD-board-1d merged as a154d246, board 1 stands, phase 2 open) | `claude/ui-screens-heist` | 2026-11-12 17:47Z |
+| S1 | `session_01SNkKxpQyZFv1eTtnsa2WHD` (Opus 5.5, effort high) | P2-S1-flow-result (restart: expected_next_update_by 18:33:59Z passed, session idle; pre-check of 262904c4 lost with the old container) | `claude/ui-screens-heist` | 2026-11-12 18:44Z |
+| S1 | `session_01SNkKxpXF5zd3wf5VZ65Utv` (Opus 5.5, effort high; idle, replaced at 18:44Z) | P2-S1-flow-result (start: P1-AD-board-1d merged as a154d246, board 1 stands, phase 2 open) | `claude/ui-screens-heist` | 2026-11-12 17:47Z |
 | S2 | `session_01SNkKxpNwGbxJdZihbsYFS5` (Opus 5.5, effort high) | P2-S2-flow-home (start: a new agent in the roster; phase 2 open) | `claude/ui-screens-home` | 2026-11-12 17:47Z |
 | AIA-2 | `session_01SNkKxoqXe6HWeBBVJdS6Ru` (Opus 5.5, effort high) | P2-AIA2-busts (start: board 1's note G, AD-R20; phase 2 open) | `claude/ui-artist-icons` | 2026-11-12 17:47Z |
 | AD | `session_01SNkKxrFqhFsxDUmtqPET8E` (Opus 5.5, effort high; its task merged) | P1-AD-board-1d (start: P1-S1-pilot-5 merged as fe27c8f2; re-check objections D and F on pilot-5's stills; verdicts in verdicts/P1-S1-pilot-5/beb8a023.json) | `claude/ui-ad` | 2026-11-12 16:07Z |
@@ -303,7 +305,7 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: none open (P1-AD-board-1d is merged: board 1 stands and phase 2 has started; boards 2-5 follow as the lead seeds them). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+Tasks: P2-AD-board-3 (home), P2-AD-board-4 (result and motion) and P2-AD-board-5 (character and settings) as their deps merge (seeded in cycle 71; board 2, icons, waits for icon batches 3-4, deferred by D13's answer (c)). Between boards, review the stills builders send you before ready within the same cycle, every objection in one round (M12). P1-AD-board-1d is merged: board 1 stands. O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -318,7 +320,7 @@ You are agent AIA of the Ruleborn agent program (UI wave). Read docs/guides/agen
 Agent: AIA            Role: maker (AIA): kit art and motion art        Model: Opus 5.5, effort high
 Branch: claude/ui-artist
 Owned files: art/ui/** except art/ui/icons/**, client/ui/art/kit*, docs/progress/AIA.md, docs/progress/status/AIA.json
-Tasks: P1-AIA-kit-1, then P1-AIA-kit-2 to -7 as their deps merge (every phase 0 AIA task is merged). Icons are AIA-2's, not yours.
+Tasks: P2-AIA-motion-1, then P2-AIA-motion-2 as its deps merge (report.md step 8; P1-AIA-kit-1 to -7 and every phase 0 AIA task are merged). Icons are AIA-2's, not yours.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -333,7 +335,7 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5, effort high
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97)
+Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97); now P2-K1-motion once P2-AIA-motion-1 merges
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -348,7 +350,7 @@ You are agent AIA-2 of the Ruleborn agent program (UI wave). Read docs/guides/ag
 Agent: AIA-2            Role: maker (AIA-2): icon art        Model: Opus 5.5, effort high
 Branch: claude/ui-artist-icons
 Owned files: art/ui/icons/**, client/tests/shots/icon_*.gd, client/ui/art/icons_48*, client/ui/art/icons_256*, and the files each AIA-2 task lists in the backlog (P2-AIA2-busts: client/world/creature_bust.gd), docs/progress/AIA-2.md, docs/progress/status/AIA-2.json
-Tasks: P2-AIA2-busts (board 1's note G, AD-R20: Bramble and Hollow repainted at the source; P1-AIA2-toon-route and icons-1a to -2b are merged). Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
+Tasks: P2-AIA2-busts (board 1's note G, AD-R20: Bramble and Hollow repainted at the source; P1-AIA2-toon-route and icons-1a to -2b are merged); none open after it. Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -363,7 +365,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P2-S1-flow-result, then P2-S1-flow-replay (the flow findings F6 and F7, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review). Pilot-1 to pilot-5 and P1-AD-board-1d are merged: board 1 stands.
+Tasks: P2-S1-flow-result, then P2-S1-flow-replay (the flow findings F6 and F7, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review), then P2-S1-toon-drop, P2-S1-result-1 and P2-S1-result-2 as their deps merge (report.md step 9). Pilot-1 to pilot-5 and P1-AD-board-1d are merged: board 1 stands.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -378,11 +380,26 @@ You are agent S2 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-home
 Owned files: only the files each S2 task lists in the backlog, docs/progress/S2.md, docs/progress/status/S2.json
-Tasks: P2-S2-flow-home, then P2-flow-entry (the flow findings F1 to F5, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+Tasks: P2-S2-flow-home, then P2-flow-entry (the flow findings F1 to F5, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review), then P2-S2-home-1 and P2-S2-home-2 as their deps merge (report.md step 10). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-home from it (create it if it does not exist) and push only to claude/ui-screens-home with git push -u origin claude/ui-screens-home, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S2, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### S3
+
+```text
+You are agent S3 of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
+
+Agent: S3            Role: maker (S3): the character and settings screens        Model: Opus 5.5, effort high
+Branch: claude/ui-screens-meta
+Owned files: only the files each S3 task lists in the backlog, docs/progress/S3.md, docs/progress/status/S3.json
+Tasks: P2-S3-screenkit, then P2-S3-character and P2-S3-settings as their deps merge (report.md step 11: ScreenKit and ScreenBox draw through KitSkin, then the two screens on the kit). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-meta from it (create it if it does not exist) and push only to claude/ui-screens-meta with git push -u origin claude/ui-screens-meta, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S3, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
 
 ### SV

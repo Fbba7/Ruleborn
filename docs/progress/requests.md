@@ -130,6 +130,32 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **S2-R1** (from S2, 12 November 2026 18:15Z; due 13 November 18:15Z;
+  not blocking): `client/world/universe_badge.gd` starts the renown number
+  past the gem at every text size (at 200% text the gem covers the first
+  digit), so Home can drop its padding. Default: `home.gd` keeps padding
+  the renown with spaces where the gem would cover it.
+  **Answered** by the lead in cycle 71 (12 November 2026), granted: the
+  file has no owner, so it joins P2-S2-home-1's files and the change is in
+  that task's `done_when`. Until it merges, the default stands.
+- **S2-R2** (from S2, 12 November 2026 18:15Z; due 13 November 18:15Z;
+  not blocking): `client/world/universe_pins.gd` lets a front realm pin
+  shrink to its icon and level when the room is short, so at 150% and 200%
+  text the pins shrink rather than hide as a set. Default: Home hides the
+  whole pins layer whenever a realm pin would be missing; the realms stay
+  in the world's spoken description and each island still takes its tap.
+  **Answered** by the lead in cycle 71, granted the same way: the file
+  joins P2-S2-home-1. Until it merges, the default stands.
+- **AIA2-R3** (from AIA-2, 12 November 2026 18:05Z; due 13 November
+  18:05Z; not blocking): once P2-AIA2-busts lands, drop quarryback and
+  glass_golem (with glass_golem's own crop) from `FxPortrait.TOON` in
+  `client/world/fx_portrait.gd` (S1's file): their busts are painted flat
+  at the source and the toon pass re-quantises them into blotches.
+  Default: a follow-up task after the busts merge.
+  **Answered** by the lead in cycle 71 with its default: task
+  P2-S1-toon-drop (S1, 0.5 h, after P2-AIA2-busts), gated on heist at 100%
+  text, Character presence.
+
 - **S1-R11** (from S1, 12 November 2026 02:46Z; due 12 November 10:46Z;
   blocking): switch the kit's numerals on, `"numerals": true` in
   `client/ui/kit_families.json` (K1's file; no task in flight owns it),
