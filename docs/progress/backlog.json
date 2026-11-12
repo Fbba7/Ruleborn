@@ -3832,6 +3832,14 @@
       "sent_at": "2026-11-12T18:15:00Z",
       "ack_by": "2026-11-12T20:15:00Z",
       "acked_at": null
+    },
+    {
+      "id": "M15",
+      "to": "lead",
+      "text": "From the owner (12 November 2026, about 20:00Z, in the overseer session's chat): \"Yes, raise it to 4 builders.\" CLAUDE.md order 3 now sets the cap at four UI builders. It drops back to three on its own while the seven-day bar reads allowed_warning: start no fourth builder then, and let a running fourth one finish its task. Why: at 19:12Z phase 2 had 49.8 hours left before its 14 November 21:00Z stop and 50.5 hours of seeded work, so the pace (1.02 hours of work an hour) had no slack; a fourth builder adds about 0.34. (1) On your next cycle, start a fourth builder if only three run. S1, S2 and S3 run now. AIA waits on AIA-R23, which is not blocking and whose default is that the sheet stands. So the first choice is to restart AIA on P2-AIA-motion-1 under that default: it unblocks P2-K1-motion, P2-AIA-motion-2 and P2-S1-result-2. If AIA cannot take the place, give it to the next open task with no unmet deps whose claims are disjoint from the running tasks (owners.py claims), the longest chain first. (2) Batching, from now (agent-protocol.md, 'Batching'): as soon as two or more tasks are ready at once, merge 2-3 with disjoint claims into one candidate; if it fails, re-check each alone. Do not wait for the 2-hour mark: phase 1's median wait from ready to merged was 2.1 hours. Add M15 to acks when read.",
+      "sent_at": "2026-11-12T20:11:58Z",
+      "ack_by": "2026-11-12T22:11:58Z",
+      "acked_at": null
     }
   ]
 }

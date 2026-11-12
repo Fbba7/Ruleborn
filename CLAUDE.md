@@ -88,7 +88,15 @@ be the logic."
   the lead keeps building as the protocol describes: D-11's and report.md
   section 3.9's rule "start no building session while the bar reads
   `allowed_warning`" no longer applies. D13's answer (c) still sets the
-  pace: at most three UI builders at once, icon batches 3 and 4 deferred.
+  pace, with the cap raised to four (below): at most four UI builders at
+  once, icon batches 3 and 4 deferred.
+- **The cap is four UI builders.** On 12 November 2026, at about 20:00
+  UTC, the owner ordered, in the chat of the overseer session: "Yes, raise
+  it to 4 builders." This raises D13 (c)'s cap from three to four, to give
+  phase 2 slack before its 14 November stop. While the seven-day bar reads
+  `allowed_warning`, the cap drops back to three on its own: the lead
+  starts no fourth builder then, and lets a running fourth one finish its
+  task. The lead and the gate's short runs stay outside the cap.
 - **Phase 1 starts now, not after the reset.** The lead seeds phase 1's
   tasks, starts K1 on P0-K1-kitspec-3 and the other agents as their tasks
   open, and sets a new `stop_at` for phase 1. A wave's `stop_at` passing
@@ -148,7 +156,7 @@ high." This order replaces order 4.
   Fable 5.2 sessions of 9 to 11 November 2026: the launcher, the watchdog,
   the lead's cycles and the builders K1, S1 and AIA. Their work is on their
   branches. A fresh session on Opus 5.5 takes each unfinished task: the
-  lead starts the builders anew, within the cap of three.
+  lead starts the builders anew, within the cap of order 3.
 - **Why the switch:** from about 05:30 UTC on 11 November 2026 every
   Fable 5.2 session of the program stood still, its seven-day limit
   reading `rejected`. The overseer interrupted them and disabled their
