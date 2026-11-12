@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-12T21:30:00Z",
-  "updated_by": "lead (cycle 72)",
+  "updated_at": "2026-11-12T22:50:00Z",
+  "updated_by": "lead (cycle 73)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -3081,16 +3081,31 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-12T22:09:00Z",
+        "seen_at": "2026-11-12T22:40:34Z",
+        "lease_until": "2026-11-13T01:37:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T18:55:00Z",
-      "updated_by": "lead (cycle 71)",
+      "updated_at": "2026-11-12T22:50:00Z",
+      "updated_by": "lead (cycle 73)",
       "id": "P2-K1-motion",
-      "title": "Kit Motion on the motion art (report.md steps 4 and 8): client/ui/motion.gd reads the baked curves and offers the reward sequence, the press squash and the idle shine, each with its reduced form"
+      "title": "Kit Motion on the motion art (report.md steps 4 and 8): client/ui/motion.gd reads the baked curves and offers the reward sequence, the press squash and the idle shine, each with its reduced form",
+      "exceptions": [
+        "client/ui/art/icons_256.json",
+        "client/ui/art/icons_48.json",
+        "client/ui/art/kit.json",
+        "client/ui/art/motion.json",
+        "client/tests/fixtures/ui_kit/kit.json",
+        "client/tests/shots/ui_kit_motion.gd",
+        "client/tests/shots/ui_kit_motion.gd.uid"
+      ]
     },
     {
       "role": "AIA",
@@ -3166,14 +3181,20 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "S1",
+        "branch": "claude/ui-screens-heist",
+        "claimed_at": "2026-11-12T22:04:25Z",
+        "seen_at": "2026-11-12T22:41:37Z",
+        "lease_until": "2026-11-13T01:04:25Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T18:55:00Z",
-      "updated_by": "lead (cycle 71)",
+      "updated_at": "2026-11-12T22:50:00Z",
+      "updated_by": "lead (cycle 73)",
       "id": "P2-S1-toon-drop",
       "title": "Portraits: Bramble and Hollow out of the toon pass (AIA2-R3, board 1's note G): their painted busts go through FxPortrait unquantised and uncropped"
     },
@@ -3344,14 +3365,20 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "S2",
+        "branch": "claude/ui-screens-home",
+        "claimed_at": "2026-11-12T22:10:00Z",
+        "seen_at": "2026-11-12T22:37:55Z",
+        "lease_until": "2026-11-13T01:10:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T18:55:00Z",
-      "updated_by": "lead (cycle 71)",
+      "updated_at": "2026-11-12T22:50:00Z",
+      "updated_by": "lead (cycle 73)",
       "id": "P2-S2-home-1",
       "title": "Home screen, part 1 (report.md step 10): the layout on the kit, from the key frame, at 100% and 200% text and in high contrast, with S2-R1 and S2-R2; notes in docs/art/tracks/home-screen.md; estimate includes one review round with AD"
     },
@@ -3440,20 +3467,14 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "working",
-      "claim": {
-        "agent": "S3",
-        "branch": "claude/ui-screens-meta",
-        "claimed_at": "2026-11-12T19:16:00Z",
-        "seen_at": "2026-11-12T20:37:59Z",
-        "lease_until": "2026-11-12T22:16:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
+      "state": "open",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-meta",
+      "prior_sha": "03b3d7627083b3947a31b6c76962fadd295127b5",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T19:28:00Z",
-      "updated_by": "lead",
+      "updated_at": "2026-11-12T22:50:00Z",
+      "updated_by": "lead (cycle 73)",
       "id": "P2-S3-screenkit",
       "title": "Menu screens through the kit (report.md step 11): ScreenKit and ScreenBox draw their materials through KitSkin, so every menu screen inherits the new kit"
     },
@@ -3835,6 +3856,14 @@
       "sent_at": "2026-11-12T20:11:58Z",
       "ack_by": "2026-11-12T22:11:58Z",
       "acked_at": "2026-11-12T20:43:00Z"
+    },
+    {
+      "id": "M16",
+      "to": "lead",
+      "text": "Lesson from UI phase 2 (P2-S2-flow-home, cycle 71). The first check_all on candidate 1e438a19 failed one fixture in tools/test_run_checks.sh (\"and makes no worktree and no log\") although S2 touches no runner file; the re-run on the same sha passed. Your write-up names the likely cause: the planted and refused test repos have the same tree and the same identity, so two commits made in the same second share a sha. The rule: (1) tools/test_run_checks.sh is yours (no task in flight owns it). Make its two test repos differ, with a distinct author identity, commit time or file in each, so their shas cannot collide; do it yourself between merges or seed a small K1 task for it. Never loosen, skip or delete the fixture. (2) Until that fix is on main, a lone FAIL of that fixture on a candidate that touches no runner file is re-run once on the same sha; a second FAIL is real. (3) Two lessons are past their ack_by and unread because their agents are waiting: deliver M12 to AD and M14 to AIA-2 in the prompt when you next start or resume them, and have them ack it in their status files.",
+      "sent_at": "2026-11-12T20:54:00Z",
+      "ack_by": "2026-11-12T22:54:00Z",
+      "acked_at": "2026-11-12T22:50:00Z"
     }
   ]
 }
