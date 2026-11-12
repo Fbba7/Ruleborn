@@ -275,6 +275,21 @@ export class Social {
     });
   }
 
+  /** A new invite for a crew, the old one joining nobody from now (SEC-42).
+   *  A crew has no founder to keep it, so its leader here is the member who
+   *  has been in it longest: the founder while they stay, then the next to
+   *  have joined. */
+  newInvite(account, id) {
+    const c = this.db.prepare("SELECT id FROM crews WHERE id = ?").get(id);
+    if (!c) throw new Refused(404, "no_such_crew");
+    const leader = this.db.prepare(
+      "SELECT account FROM crew_members WHERE crew = ? AND left_at IS NULL ORDER BY joined_at, rowid LIMIT 1")
+      .get(id)?.account;
+    if (leader !== account) throw new Refused(403, "crew_leader_only");
+    this.db.prepare("UPDATE crews SET invite = ? WHERE id = ?").run(this.service.random(6).toString("hex"), id);
+    return this.crew(id, account);
+  }
+
   /** Leave a crew. It carries on with whoever is left: there is no founder
    *  to lose, so "any member can keep it". */
   leaveCrew(account) {

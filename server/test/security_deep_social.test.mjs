@@ -230,6 +230,38 @@ test("SEC-42: a crew's invite is shown to its members only", async () => {
   assert.equal("invite" in seen, false, "one outside the crew does not");
 });
 
+test("SEC-42: a crew's longest-standing member gives it a new invite, and the old one joins nobody", async () => {
+  const t = server();
+  const [a, b, c, d] = ["a", "b", "c", "d"].map((n) => t.service.session(`gc:sec42-${n}`));
+  for (const p of [b, c, d]) t.service.friends.accept(p.account, t.service.friends.invite(a.account).invite);
+  t.service.friends.accept(d.account, t.service.friends.invite(b.account).invite);   // still a friend in it once a leaves
+  const social = new Social(t.service);
+  const call = async (who, path) => {
+    const r = await t.handle(new Request(`https://edge.example${path}`,
+      { method: "POST", headers: { authorization: `Bearer ${who.token}` } }));
+    return [r.status, await r.json()];
+  };
+  const crew = social.startCrew(a.account);
+  social.joinCrew(b.account, crew.invite);
+  t.clock.now += 1000;
+  social.joinCrew(c.account, crew.invite);
+  const [status, fresh] = await call(a, `/v1/crews/${crew.id}/invite`);
+  assert.equal(status, 200);
+  assert.ok(fresh.invite && fresh.invite !== crew.invite, "a new invite");
+  assert.throws(() => social.joinCrew(d.account, crew.invite), (e) => e.reason === "no_such_crew", "the old one joins nobody");
+  for (const who of [b, d]) {
+    const [s, out] = await call(who, `/v1/crews/${crew.id}/invite`);
+    assert.deepEqual([s, out.error], [403, "crew_leader_only"], "a later member, or one outside, cannot");
+  }
+  assert.deepEqual((await call(a, "/v1/crews/nothing/invite"))[0], 404);
+  // The founder leaves: the member who has been in it longest keeps it.
+  social.leaveCrew(a.account);
+  assert.equal((await call(c, `/v1/crews/${crew.id}/invite`))[1].error, "crew_leader_only");
+  const [, next] = await call(b, `/v1/crews/${crew.id}/invite`);
+  assert.ok(next.invite && next.invite !== fresh.invite);
+  assert.equal(social.joinCrew(d.account, next.invite).members.length, 3, "the new invite joins");
+});
+
 test("SEC-48: the friends' feed answers for more friends than SQLite has bound variables", () => {
   const t = twoPlayers(true);
   const watcher = t.service.session("gc:sec48").account;

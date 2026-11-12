@@ -119,6 +119,7 @@
 //   POST /v1/crews/leave                                     → left
 //   GET  /v1/crews/mine                                      → {crew}, the caller's, or null
 //   GET  /v1/crews/:id                                       → it
+//   POST /v1/crews/:id/invite                                → it, with a new invite (its longest member; SEC-42)
 //
 // The season track (§18.2, §18.8; track.mjs), purchases and cosmetics
 // (§20.2, §22.1, F41, G32; shop.mjs):
@@ -252,6 +253,7 @@ async function socialRoute(service, social, request, parts, who) {
     if (m === "POST" && !a) return json(social.startCrew(me), 201);
     if (m === "POST" && a === "join") return json(social.joinCrew(me, text((await body(request)).invite)));
     if (m === "POST" && a === "leave") return json(social.leaveCrew(me));
+    if (m === "POST" && a && b === "invite") return json(social.newInvite(me, a));
     if (m === "GET" && a === "mine") {
       const own = social.crewOf(me);
       return json({ crew: own ? social.crew(own, me) : null });
