@@ -371,7 +371,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P2-S1-flow-replay (the flow finding F7, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review), then P2-S1-toon-drop, P2-S1-result-1 and P2-S1-result-2 as their deps merge (report.md step 9). Pilot-1 to pilot-5 and P1-AD-board-1d are merged: board 1 stands.
+Tasks: P2-S1-toon-drop (P2-S1-flow-replay is merged, as 509c43c2), then P2-S1-result-1 and P2-S1-result-2 as their deps merge (report.md step 9). Pilot-1 to pilot-5 and P1-AD-board-1d are merged: board 1 stands.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
