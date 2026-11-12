@@ -1160,6 +1160,9 @@ function ledgerWithoutAether(db) {
 
 export function open(path = ":memory:") {
   const db = new DatabaseSync(path);
+  // A lock held briefly by another connection (a backup, an operator's shell)
+  // is waited out for up to 5 s instead of failing the next write at once.
+  db.exec("PRAGMA busy_timeout = 5000");
   // Set here, as SCHEMA's own pragma does nothing inside a transaction. A
   // table the others name by a foreign key is made again with the keys off
   // (withRowid), which SQLite allows only outside a transaction; they are
@@ -1281,7 +1284,10 @@ export function transaction(db, fn) {
     db.exec("COMMIT");
     return result;
   } catch (err) {
-    db.exec("ROLLBACK");
+    // A rollback that fails itself never hides the first error.
+    if (db.isTransaction) {
+      try { db.exec("ROLLBACK"); } catch (rollbackErr) { err.rollback = rollbackErr; }
+    }
     throw err;
   }
 }

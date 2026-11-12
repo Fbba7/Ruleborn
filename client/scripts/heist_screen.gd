@@ -26,6 +26,10 @@ var playing := true
 var view: WorldView
 var hud: HeistHud
 var hint_label: Label
+## The hint's panel (KitStatus.hint), whose "Words" is hint_label.
+var hint_panel: PanelContainer
+## The HUD's top column, which the hint must not reach (_fit_hint).
+var top_column_node: VBoxContainer
 var gait_button: Button
 var pause_button: Button
 var crew_buttons: Array[FxPortrait] = []
@@ -77,6 +81,12 @@ var _owed := 0.0
 var _alarm := 0
 var _live_wards := -1
 var _pylons := -1
+## What the hint would say, whole; how far it has given way for room (0
+## whole, 1 its first clause, 2 hidden); and where the controls stood when
+## it last gave way.
+var _hint_source := ""
+var _hint_level := 0
+var _hint_measured_at := -1.0
 ## The most health each crew member has shown, its health ring's whole.
 var _most_health := {}
 
@@ -98,7 +108,7 @@ func _ready() -> void:
 		# build cannot load is said, never swapped for the fixture realm.
 		if not begin(str(play["seed"]), int(play["ticks"]), HeistController.CREW, heist["island"]):
 			playing = false
-			hint_label.text = Errors.message("HEIST_NONE", "island_does_not_load")
+			_set_hint(Errors.message("HEIST_NONE", "island_does_not_load"))
 	elif not services.api.online():
 		begin(HeistController.SEED, HeistController.TICKS, HeistController.CREW)
 	else:
@@ -113,7 +123,7 @@ func start_online(services: Services) -> void:
 	if offline_prompt != null:
 		offline_prompt.queue_free()
 	offline_prompt = null
-	hint_label.text = Strings.t("HEIST_ASKING")
+	_set_hint(Strings.t("HEIST_ASKING"))
 	var problem := await begin_online(services)
 	if problem == "":
 		# Online: send what waited, and keep the stock for next time.
@@ -125,13 +135,13 @@ func start_online(services: Services) -> void:
 	# Held back by the server (G44) is not offline: the server was reached,
 	# and asked to wait; the player tries again, online.
 	if problem == "too_many_requests":
-		hint_label.text = Errors.message("HEIST_NONE", problem)
+		_set_hint(Errors.message("HEIST_NONE", problem))
 		offline_prompt = UI.row(-1.0, true)
 		offline_prompt.add_child(UI.button(Strings.t("OFFLINE_TRY_AGAIN"), func() -> void: start_online(services), true))
 		column_node.add_child(offline_prompt)
 		return
 	if not Outbox.transient(Result.failure(problem)):
-		hint_label.text = Errors.message("HEIST_NONE", problem)
+		_set_hint(Errors.message("HEIST_NONE", problem))
 		return
 	_offer_offline(services)
 
@@ -140,7 +150,7 @@ func start_online(services: Services) -> void:
 ## phone, its haul shown as confirming until the server confirms it.
 func _offer_offline(services: Services) -> void:
 	var stocked := services.heists.stock.count() > 0
-	hint_label.text = Strings.t("OFFLINE_RECOMMEND" if stocked else "OFFLINE_NONE")
+	_set_hint(Strings.t("OFFLINE_RECOMMEND" if stocked else "OFFLINE_NONE"))
 	offline_prompt = UI.row(-1.0, true)
 	offline_prompt.add_child(UI.button(Strings.t("OFFLINE_TRY_AGAIN"), func() -> void: start_online(services), true))
 	if stocked:
@@ -273,11 +283,11 @@ func finish() -> void:
 		Haptics.play("success")
 	var play: Dictionary = services.store.get_slice(AppState.HEIST)["workshop"]
 	if not play.is_empty():
-		hint_label.text = Strings.t("HEIST_CHECKING")
+		_set_hint(Strings.t("HEIST_CHECKING"))
 		var played := await services.workshop_flow.submit(str(play["token"]), replay)
 		services.store.dispatch(&"heist_verdict", WorkshopController.settled(played, local))
 	elif not lease.is_empty():
-		hint_label.text = Strings.t("HEIST_CHECKING")
+		_set_hint(Strings.t("HEIST_CHECKING"))
 		var plan: Dictionary = services.store.get_slice(AppState.HEIST).get("plan", {})
 		var answer := await services.heists.submit(str(lease["token"]), replay, plan.get("crew", []))
 		var settled := HeistController.settled(answer, local)
@@ -337,8 +347,8 @@ func _refresh() -> void:
 	if _crew_shape(controller.world.crew()) != _crew_key:
 		_build_crew()
 	var me: Dictionary = controller.world.crew()[controller.selected]
-	hint_label.text = Strings.t("HEIST_SKIFF_HINT") if controller.calling_skiff else \
-		(_aim_hint() if not aiming.is_empty() else Strings.t("HEIST_HINT_SHORT"))
+	_set_hint(Strings.t("HEIST_SKIFF_HINT") if controller.calling_skiff else \
+		(_aim_hint() if not aiming.is_empty() else Strings.t("HEIST_HINT_SHORT")))
 	hand.armed = int(aiming.get("kind", 0)) if not aiming.is_empty() and int(aiming["kind"]) != Kind.ABILITY else 0
 	hand.show_state(controller.world.sage(), controller.world.casts(), controller.world.tick())
 	# Before the crew lands: where, and nothing else (§5.4).
@@ -366,7 +376,7 @@ func _refresh() -> void:
 		picker_across.text = p.get("across", "")
 		landing.show_pick()
 	hud.visible = not choosing
-	(hint_label.get_parent().get_parent() as Control).visible = not choosing
+	(hint_panel.get_parent() as Control).visible = not choosing
 	# §12.7: never more than eight things to tap; the gait's button stands
 	# only while there is room under them (it is a held tap on the ground too).
 	var taps := crew_buttons.size() + (1 if hand.sage_button.visible else 0) + 2 + (1 if pause_button != null else 0)
@@ -407,6 +417,7 @@ func _refresh() -> void:
 		pause_button.tooltip_text = pause_button.accessibility_name
 		pause_button.set_meta("icon", "play" if paused else "pause")
 		FxSkin.redraw(pause_button)
+	_fit_hint()
 	view.describe()
 	view.queue_redraw()
 
@@ -422,8 +433,11 @@ func entry_card(words: String) -> void:
 		card.queue_free()
 	card = UI.panel("parchment")
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	card.add_child(FxSkin.label(words, UI.TEXT_POINTS + 6.0, "parchment", true))
-	(card.get_child(0) as Label).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# The kit's heading on its parchment: the material's ink, wrapping.
+	var title := UI.label(words, float(Tokens.type_role("heading")["points"]), true)
+	title.theme_type_variation = "Heading"
+	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(title)
 	card.set_anchors_preset(Control.PRESET_CENTER)
 	card.custom_minimum_size.x = UI.px(260)
 	card.grow_horizontal = Control.GROW_DIRECTION_BOTH
@@ -448,7 +462,8 @@ func open_gait_menu(at: Vector2) -> void:
 	var tile := view.tile_at(at)
 	if controller.choosing or tile.x < 0:
 		return
-	gait_menu = FxSkin.panel("parchment", 18.0, 8.0)
+	gait_menu = UI.panel("parchment")
+	gait_menu.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_theme_constant_override("separation", UI.px(6))
@@ -557,13 +572,17 @@ func _build() -> void:
 		column.add_child(pause_button)
 	view.looted.connect(func(at: Vector2, amount: int) -> void: hud.fly_coins(at, amount / 20))
 	var top_column := column
+	top_column_node = top_column
 	column = lower
-	hint_label = FxSkin.label("", 13.0)
-	hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var hint := FxSkin.panel("glass", 14.0, 6.0)
-	hint.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	hint.custom_minimum_size.x = UI.px(240)
-	hint.add_child(hint_label)
+	# The kit's tip (KitHud.tip, 02-heist.png's "Tap crew, then ground"):
+	# leather, its words bold cream outlined in ink, whole and wrapping.
+	hint_panel = KitHud.tip("")
+	hint_label = hint_panel.get_node("Words") as Label
+	var hint := hint_panel
+	# The hint gives way when the columns meet, measured after each layout
+	# (a refresh comes before the containers settle).
+	for moving: Control in [top_column, lower]:
+		moving.item_rect_changed.connect(func() -> void: _fit_hint.call_deferred())
 
 	# The design's landing picker (T6's `OverlayLanding`), its header over
 	# the world at the top while the crew chooses.
@@ -594,10 +613,21 @@ func _build() -> void:
 	band.add_theme_constant_override("separation", UI.px(4))
 	if Settings.left_handed:
 		band.layout_direction = Control.LAYOUT_DIRECTION_RTL
-	# With large text the names, wider than their discs, keep apart.
-	var crew_row := UI.row(1.0 if Settings.text_scale <= 100 else 8.0, true)
+	# The crew three to a row beside the hand, as the design's (a crew of
+	# five stands three over two, never four over one); with large text one
+	# flowing row under the hand's, the names, wider than their discs, apart.
+	var crew_row: Container
+	if Settings.text_scale <= 130:
+		var grid := GridContainer.new()
+		grid.columns = 3
+		grid.add_theme_constant_override("h_separation", UI.px(4))
+		grid.add_theme_constant_override("v_separation", UI.px(1))
+		crew_row = grid
+	else:
+		var flow := UI.row(8.0, true)
+		flow.alignment = FlowContainer.ALIGNMENT_BEGIN
+		crew_row = flow
 	crew_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	crew_row.alignment = FlowContainer.ALIGNMENT_BEGIN
 	crew_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	crew_row.size_flags_vertical = Control.SIZE_SHRINK_END
 	crew_node = crew_row
@@ -609,8 +639,17 @@ func _build() -> void:
 	hand.put_away.connect(func() -> void:
 		aiming = {}
 		_refresh())
+	_dress_hand()
 	actions_node = hand
 	band.add_child(hand)
+	if band is HBoxContainer:
+		# The Sage's disc beside Cast rather than over it, so the hand is
+		# no taller than the crew's two rows and the tray leaves the world
+		# its crew.
+		var sage := hand.sage_button
+		sage.reparent(band)
+		band.move_child(sage, hand.get_index())
+		sage.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	if band is VBoxContainer:
 		# With large text the hand's buttons and the gait are one row that
 		# wraps, under the portraits and lowest in reach; the hand keeps
@@ -622,10 +661,15 @@ func _build() -> void:
 			c.reparent(flow)
 		band.add_child(flow)
 		actions_node = flow
-	actions_band = band
-	column.add_child(band)
-	# The hint on the bottom line, under the hand's controls (the design's),
-	# with the gait's small button before it.
+	# The crew and the hand on one tray of dark glass (the design's), so the
+	# portraits and buttons keep their value step off the bright world.
+	var tray := FxSkin.panel("glass", 14.0, 5.0)
+	tray.name = "Tray"
+	tray.add_child(band)
+	actions_band = tray
+	column.add_child(tray)
+	# The hint over the tray (the design's), with the gait's small button
+	# before it.
 	var foot := HBoxContainer.new()
 	foot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	foot.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -639,17 +683,40 @@ func _build() -> void:
 		# controls take one row fewer and stay low in reach.
 		gait_button.reparent(actions_node)
 		actions_node.move_child(gait_button, 0)
-	hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hint.custom_minimum_size.x = UI.px(150)
-	hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	foot.add_child(hint)
 	column.add_child(foot)
-	if Settings.text_scale > 130:
-		# With §20.8's large text the hint, taller, goes over the controls,
-		# so they stay low in reach.
-		column.move_child(foot, band.get_index())
+	column.move_child(foot, tray.get_index())
 	# Clear of the bottom corners, where §21.1 puts nothing to tap.
 	column.add_child(FxSkin.corner_clear())
+	# The guards' words on a layer above the panels, moved off them where the
+	# world has room, so a bubble is never clipped behind the HUD or the tray.
+	var speech := Control.new()
+	speech.name = "Speech"
+	speech.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	speech.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(speech)
+	if view.anchors != null:
+		view.anchors.speech_layer = speech
+		view.anchors.keep_off = _panel_rects.bind(speech)
+
+
+## The rects of the panels a guard's bubble keeps off, in `layer`'s pixels:
+## the HUD's, the hint's and the tray.
+func _panel_rects(layer: Control) -> Array:
+	var out: Array = []
+	var panels: Array = [hud.clock_panel, hud.alarm_panel, hud.loot_panel, actions_band]
+	if hud.laws_box != null:
+		panels.append_array(hud.laws_box.get_children())
+	if hint_panel != null:
+		panels.append(hint_panel)
+	for c: Variant in panels:
+		var ctl := c as Control
+		if ctl != null and ctl.is_visible_in_tree() and ctl.size.x > 0.0:
+			var r := ctl.get_global_rect()
+			r.position -= layer.global_position
+			out.append(r)
+	return out
 
 
 ## The crew's portraits, one a member the simulation has, each its kind's
@@ -756,6 +823,102 @@ func _get_out() -> void:
 	controller.get_out()
 
 
+## The hand's two orders as the kit draws them (KitControls.big_action),
+## in the hand's place and keeping its state: Cast, the main action, in gold
+## and the largest thing to tap; Get out in leather, smaller, since red is
+## the alarm's alone (the gate's colour roles; §21.8 names no colour for
+## it). Each keeps its icon over its word at every text size.
+func _dress_hand() -> void:
+	var cast := _hand_order("heistcontrols/cast", Strings.t("HEIST_CAST"), hand._open_casts, "gold",
+		Vector2(92, 76), 34.0)
+	var go := _hand_order("heistcontrols/getout", Strings.t("HEIST_GET_OUT"), _get_out, "leather",
+		Vector2(66, 54), 24.0)
+	for pair: Array in [[hand.cast_button, cast], [hand.go_button, go]]:
+		var old: Button = pair[0]
+		var at := old.get_index()
+		hand.remove_child(old)
+		old.free()
+		hand.add_child(pair[1])
+		hand.move_child(pair[1], at)
+	hand.cast_button = cast
+	hand.go_button = go
+
+
+## One of the hand's orders: the kit's big action at `least` points, its
+## icon at `icon_points`, as wide and tall as its word needs with §20.8's
+## large text. Its icon is meta "icon" and its word meta "words", as the
+## hand's squares (HeistHand.show_state greys the icon, never the word).
+func _hand_order(icon: String, words: String, call: Callable, look: String, least: Vector2,
+		icon_points: float) -> Button:
+	var b := KitControls.big_action(icon, words, call, look)
+	b.tooltip_text = words
+	b.size_flags_vertical = Control.SIZE_SHRINK_END
+	b.size_flags_horizontal = Control.SIZE_SHRINK_END
+	var column := b.get_child(b.get_child_count() - 1) as VBoxContainer
+	var pic := column.get_node("Icon") as Control
+	pic.custom_minimum_size = Vector2.ONE * UI.px(icon_points)
+	pic.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var l := column.get_child(column.get_child_count() - 1) as Label
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	b.set_meta("icon", pic)
+	b.set_meta("words", l)
+	var fit := func() -> void:
+		# In the narrow text's single row a long phrase ("Sem lançamentos")
+		# stands on two lines, so the tray keeps inside the frame (§21.1).
+		if Settings.text_scale <= 130 and l.text.contains(" ") \
+				and l.get_minimum_size().x + UI.px(16) > UI.px(least.x) * 1.5:
+			l.text = HeistHand.two_lines(l.text)
+		b.custom_minimum_size = Vector2(maxf(UI.px(least.x), l.get_minimum_size().x + UI.px(16)),
+			maxf(UI.px(least.y), l.get_minimum_size().y + UI.px(icon_points + 10.0)))
+	fit.call()
+	l.minimum_size_changed.connect(fit)
+	return b
+
+
+## The hint's words as `_refresh` has them, said whole unless `_fit_hint`
+## found no room for them.
+func _set_hint(words: String) -> void:
+	if words != _hint_source:
+		_hint_source = words
+		_hint_level = 0
+		_hint_measured_at = -1.0
+	hint_label.text = words if _hint_level == 0 else words.get_slice(" · ", 0)
+	hint_panel.visible = _hint_level < 2
+
+
+## A hint too long for one line says only its first clause. §20.8's large
+## text in a long language can stand the lower column (the hint over the
+## controls) on the HUD's loot. The hint gives way, a step a layout: first it
+## says only its first clause, then it hides; the loot and the controls never
+## do. A new hint starts whole again.
+func _fit_hint() -> void:
+	if not playing or top_column_node == null or not hud.visible or _hint_level >= 2 or column_node.size.y <= 0.0 \
+			or not is_visible_in_tree():
+		return
+	# A column whose box is not yet its content's height is mid-layout: its
+	# place says nothing about room.
+	for moving: Control in [top_column_node, column_node]:
+		var safe := moving.get_parent_control()
+		if not is_equal_approx(moving.size.y, moving.get_combined_minimum_size().y) \
+				or not is_equal_approx(safe.size.y, safe.get_combined_minimum_size().y):
+			return
+	# A tip says one line: a hint that would wrap says its first clause, so
+	# the tip over the tray stands no taller than the design's and the crew
+	# on the world stay in sight.
+	if _hint_level == 0 and hint_label.get_line_count() > 1 and " · " in _hint_source:
+		_hint_level = 1
+		_set_hint(_hint_source)
+		return
+	var low := column_node.global_position.y
+	var top := top_column_node.get_global_rect().end.y + UI.px(Tokens.number("size", "gap_points"))
+	# Once a step a layout: the containers settle a frame late.
+	if low >= top or is_equal_approx(low, _hint_measured_at):
+		return
+	_hint_measured_at = low
+	_hint_level += 2 if _hint_level == 0 and not " · " in _hint_source else 1
+	_set_hint(_hint_source)
+
+
 ## The gait's small button: its footprints and its word, a tap steps it
 ## (walk, crouch, run).
 func _gait_pill() -> Button:
@@ -771,7 +934,9 @@ func _gait_pill() -> Button:
 		FxIcons.order(ci, ci.size * 0.5, minf(ci.size.x, ci.size.y), str(b.get_meta("icon", "")), FxSkin.ON_DARK))
 	feet.custom_minimum_size = Vector2.ONE * UI.px(22)
 	row.add_child(feet)
-	var l := FxSkin.label(Strings.term("GAIT", "Walk"), 13.0)
+	var l := UI.label(Strings.term("GAIT", "Walk"), 13.0)
+	l.set_meta("bold", true)
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(l)
 	b.add_child(row)
 	b.set_meta("icon", "Walk")

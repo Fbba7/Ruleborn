@@ -13,6 +13,8 @@ extends Button
 
 ## §12.6: every ability has two uses a heist; the pips show what is left.
 const PIPS := 2
+## The mat between the ring and the portrait (stage_hero_sculpt's cream).
+const MAT := Color("#F6E6C8")
 ## A digit's strokes, as fractions of its cell: (x0, y0, x1, y1) each.
 const SEGMENTS := {0: [[0, 0, 1, 0], [1, 0, 1, 1], [1, 1, 0, 1], [0, 1, 0, 0]], 1: [[0.5, 0, 0.5, 1]],
 	2: [[0, 0, 1, 0], [1, 0, 1, 0.5], [1, 0.5, 0, 0.5], [0, 0.5, 0, 1], [0, 1, 1, 1]],
@@ -60,7 +62,9 @@ func _init(member_role := "", pressed_call: Callable = Callable(), member_kind :
 	# At 100% a name may reach a little past its disc, as the design's do, so
 	# five fit beside the hand; with large text names keep apart.
 	var spare := UI.px(4) if Settings.text_scale > 100 else -UI.px(4)
-	custom_minimum_size = Vector2(maxf(side, name_w + spare), side + UI.px(32))
+	# As tall as its disc, its bar and its name at the player's text size,
+	# so a second row of portraits never lies over a name.
+	custom_minimum_size = Vector2(maxf(side, name_w + spare), side + UI.px(15) + ceilf(UI.text_px(13.0) * 1.35))
 	focus_mode = Control.FOCUS_ALL
 	var clear := StyleBoxFlat.new()
 	# A dark fill, so a screen's checks find what is behind its words.
@@ -122,9 +126,13 @@ func _paint() -> void:
 	if armed:
 		var beat := 0.5 + 0.5 * sin(_time * 6.0) if not Settings.reduced_motion else 1.0
 		FxPen.circle(self, c, r * 1.2, Color(1, 1, 1, 0.35 + 0.4 * beat))
-	FxPen.circle(self, c, r, FxSkin.INK_LINE)
-	FxPen.circle(self, c, r * 0.93, FxSkin.GOLD if chosen else Color("#8A5A22"))
-	FxPen.circle(self, c, r * 0.86, FxSkin.INK_LINE)
+	# The ring, then a cream mat inside it, outlined in ink both sides: the
+	# value step that parts a dark portrait (a Hollow, a Bramble) from the
+	# dark ring and the dark tray.
+	var rim: Color = FxSkin.GOLD if chosen else Color("#8A5A22")
+	var rings := [[1.0, FxSkin.INK_LINE], [0.93, rim], [0.885, FxSkin.INK_LINE], [0.86, MAT], [0.815, FxSkin.INK_LINE]]
+	for ring: Array in rings:
+		FxPen.circle(self, c, r * float(ring[0]), ring[1])
 	# The disc: its school's colour, lighter at the middle, as the design's.
 	var ground: Color = Palette.SCHOOL.get(StageHeroFigure.school(kind), Palette.ROLE.get(role, Palette.STONE)) \
 		if kind != "" else Palette.ROLE.get(role, Palette.STONE)
@@ -132,10 +140,10 @@ func _paint() -> void:
 		ground = Color("#5A5468")
 	elif down:
 		ground = FxSkin.ALARM_DEEP if fmod(_time, 1.0) < 0.5 or Settings.reduced_motion else FxSkin.ALARM_DEEP.darkened(0.25)
-	var inner := r * 0.82
-	FxPen.circle(self, c, inner, ground.darkened(0.12))
-	FxPen.circle(self, c + Vector2(0, -inner * 0.12), inner * 0.78, ground.lightened(0.12))
-	FxPen.circle(self, c + Vector2(0, -inner * 0.22), inner * 0.48, ground.lightened(0.3))
+	var inner := r * 0.79
+	for step: Array in [[0.0, 1.0, -0.12], [0.12, 0.78, 0.12], [0.22, 0.48, 0.3]]:
+		var tone := ground.darkened(-step[2]) if step[2] < 0.0 else ground.lightened(step[2])
+		FxPen.circle(self, c + Vector2(0, -inner * step[0]), inner * step[1], tone)
 	if _picture_ready:
 		# The model's head and shoulders filling the disc, cut to its round.
 		var tint := Color(0.55, 0.55, 0.6) if out else (Color(1.0, 0.72, 0.72) if down else Color.WHITE)
@@ -149,6 +157,12 @@ func _paint() -> void:
 	# The bag, at the lower left, when it holds anything.
 	if carried > 0.0:
 		FxIcons.sack(self, c + Vector2(-r * 0.78, r * 0.6), r * 0.5, carried)
+	# Its school's mark at the lower right, a shape of its own (the gate's
+	# colour roles: the rings are never told apart by their hue alone).
+	if kind != "" and not out:
+		var at := c + Vector2(r * 0.74, r * 0.66)
+		for coat: Array in [[r * 0.36, FxSkin.INK_LINE], [r * 0.26, ground.lightened(0.45)]]:
+			FxPen.polygon(self, mark(StageHeroFigure.school(kind), at, coat[0]), coat[1])
 	var tag := c + Vector2(r * 0.36, -r * 0.9)
 	if uses >= 0:
 		_pips(tag, r)
@@ -198,6 +212,29 @@ func _pips_number(at: Vector2, r: float) -> void:
 		var a: Vector2 = cell.position + cell.size * Vector2(seg[0], seg[1])
 		var b: Vector2 = cell.position + cell.size * Vector2(seg[2], seg[3])
 		FxPen.line(self, a, b, FxSkin.GOLD, ink)
+
+
+## A school's mark as a polygon of radius `r` at `at`, each school its own
+## shape: motion a triangle pointing on, matter a square, time an hourglass,
+## energy a diamond, life a round, spirit a star.
+static func mark(school: String, at: Vector2, r: float) -> PackedVector2Array:
+	var unit: Array = {
+		"motion": [[-0.8, -1], [1, 0], [-0.8, 1]],
+		"matter": [[-0.85, -0.85], [0.85, -0.85], [0.85, 0.85], [-0.85, 0.85]],
+		"time": [[-0.9, -1], [0.9, -1], [0.18, 0], [0.9, 1], [-0.9, 1], [-0.18, 0]],
+		"energy": [[0, -1.1], [0.8, 0], [0, 1.1], [-0.8, 0]],
+	}.get(school, [])
+	var pts := PackedVector2Array()
+	if school == "spirit":
+		for i in 10:
+			var a := -PI / 2.0 + TAU * i / 10.0
+			pts.append(at + Vector2(cos(a), sin(a)) * r * (1.1 if i % 2 == 0 else 0.48))
+	elif unit.is_empty():
+		for i in 16:
+			pts.append(at + Vector2(cos(TAU * i / 16.0), sin(TAU * i / 16.0)) * r * 0.9)
+	for u: Array in unit:
+		pts.append(at + Vector2(u[0], u[1]) * r)
+	return pts
 
 
 ## A disc's outline as a polygon, and its texture coordinates: the upper

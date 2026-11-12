@@ -75,8 +75,117 @@ These are what the kit's pieces cannot do yet. Each is a request to K1 in `docs/
 ### Left for other tasks
 
 - `HeistHud._gold_rim` stays: `client/scripts/result_screen.gd` calls it for the haul tile. It reaches into the kit's insides (`RbBox`) and goes when the result screen moves to the kit (step 9).
-- `client/scripts/heist_screen.gd` still draws through `FxSkin` and `FxDraw` (the hint, the gait menu, the footer). That is part 2.
+- `client/scripts/heist_screen.gd` still drew through `FxSkin` and `FxDraw` (the hint, the gait menu, the footer). Part 2 moved them to the kit.
+
+## Part 2: the rest of the screen
+
+The brief is part 1's gate notes (`docs/art/ui-quality/gate/verdicts/P1-S1-pilot-1/5470c4d3.json`): Cast did not lead in grayscale and had no gold, Get out was red while red is the alarm's, the hint was a flat card, the action icons were gone at 200% text, Ash's portrait covered "Pip" at 200%, and the crew rings were told apart by hue alone.
+
+### What was done
+
+| Piece | Before | Now |
+|---|---|---|
+| Cast | Leather action, as large as Get out | `UI.action(..., "gold")` dressed as the kit's `big_action` (92 × 76 points), the largest control and first in grayscale |
+| Get out | Red action | Leather `big_action` (66 × 54 points); red is left to the alarm alone |
+| Action icons | Dropped at 200% text | Kept at every text size |
+| Hint | `FxSkin` panel, words set directly | `KitStatus.hint` (the kit's dark glass), every message through one setter |
+| Entry card's title | `FxSkin` label | `UI.label` heading |
+| Gait menu | `FxSkin` panel | `UI.panel("parchment")` |
+| Gait pill's word | `FxSkin` label | `UI.label`, 13 points, bold |
+| Crew portraits | One ring colour a school; fixed height | A school mark drawn on the rim (a shape, not a hue), the disc in one loop, the height growing with the text (`client/world/fx_portrait.gd`, 19 draw calls, recorded 20) |
+
+**The hint gives room.** At large text, or in a long language, the lower column (hint, crew, hand) can climb into the HUD. The hint now gives way, one step each layout: first it keeps only its first clause ("Tap crew, then ground"), then it hides. The HUD, the crew and the hand never do. A new hint, such as a message or the result hand-off's "Checking…", starts whole again. The room is measured once both columns' boxes are their content's height, after each layout, and not inside the refresh: the shot scripts and the first frame refresh before the containers settle, and a box measured mid-layout reads as no room.
+
+**Messages and the result hand-off.** The errors, the asking line, the offline lines and the two "Checking…" lines of `finish()` all go through the hint's setter. Before, a message could stay cut to an earlier hint's first clause, or stay hidden.
+
+**Ash's portrait no longer covers "Pip" at 200% text.** The taller portraits stand the fifth crew member on a row of their own, with the pause beside it.
+
+### Evidence
+
+Stills: `docs/art/shots/heist-pilot/before-*.png` (this branch at part 1's end) and `after-*.png` (this task's last commit). They use the same script and settings as part 1, in five cases: `sneak-100`, `sneak-200`, `alarm-hc` (high contrast), `alarm-hc-200` (high contrast at 200% text) and `sneak-200-pt` (`LOCALE=pt_BR`).
+
+- **100% text:** the whole hint shows under the hand. Cast is gold and the largest control. Get out is leather.
+- **200% text, English:** the hint hides; the HUD's loot ends above the crew row with a gap.
+- **High contrast, 100% and 200%:** the kit's flat high-contrast skins: Cast in solid gold, the panels in solid plum, inked rims.
+
+The heist's budget stills (`tools/ui_bake/budget_shots.py`), against the records as K1 re-recorded them after part 1:
+
+| Budget still | Record | Part 2 |
+|---|---|---|
+| heist/100 | 121 | 117 |
+| heist/200 | 115 | 114 |
+| heist/hc | 121 | 117 |
+
+Every word reaches 4.5:1. The worst ratios are 6.17, 7.63 and 5.55. `check_screens.py` notes two falls below their records: `heist_hud.gd` (0 and 0, recorded 3 and 2) and `fx_portrait.gd` (19 draw, recorded 20). Lowering the records is K1's (S1-R10).
+
+### What is still worse
+
+- **Portuguese at 200% text still stands the loot's caption on the crew row.** The hint hides, but "Carregar até 80%" still lies over Pip's and Mo's portraits and names, by about 270 pixels on the still. Before part 2 the hint lay over the loot too, so this is better but not clean. The room has to come from the HUD (a narrower loot, K1's S1-R2) or from the lower column (Ash, the pause and the hand in one flow, or one crew row at large text). That is left for the next heist task.
+- **At large text the hint hides entirely in English,** so "hold to sneak or run" is not said. The gait pill is not shown at large text either, so holding the ground is the only gait control, with nothing on screen saying so.
+- **The gait's feet and the pause are still drawn** (`FxIcons` through `FxDraw`). The kit has no gait or pause icon. (S1-R9)
+- **Cast and Get out are dressed by `heist_screen.gd`.** `client/scripts/heist_hand.gd` builds them, but it is not one of this task's files, so the screen dresses them after it builds them. (S1-R8)
+- **The clock is still the kit's small flat pill**, with no outline or drop (S1-R5). Crew names and "Laws here" are not outlined by a kit look (S1-R6).
+- **Hollow still blends into its purple ring.** The school mark helps colour-vision deficiency but not the portrait's own contrast. The portrait art is not this task's.
+
+### Left for other tasks
+
+- The Portuguese 200% overlap (above).
+- `FxSkin.frame`, `camera_row` and `corner_clear` stay. They are the screen's layout, not chrome, and the kit has no frame.
 
 ### Stopped here
 
-Part 1 is done and waits on the pre-check and the gate. `heist_hud.gd` has no drawing of its own. Part 2 (`heist_screen.gd`: the hint, the gait menu, the footer, high contrast) has not been started and is for a later session; it should give the loot room over the hint at large text in long languages.
+Part 2 is done and waits on the pre-check and the gate. The checks run on the last commit are in `docs/progress/S1.md`.
+
+## Part 3: board 1's objections (P1-S1-pilot-3)
+
+Board 1 (`docs/art/ui-quality/gate/boards/board-1.md`) raised five objections, A to E (AD-R7 to AD-R11). This part answers them.
+
+### What was done
+
+- **A, the timer in the kit's figures.** The clock is built by `heist_hud.gd`'s `_build_clock`. With the numerals' switch on it uses `KitHud.clock_large` with `KitNumerals`' baked timer figures. The plate's own words are kept for layout and for a screen reader, but `RenderingServer.canvas_item_set_visible` takes them out of the frame, so they cost no draw calls. While the switch is off (`client/ui/kit_families.json` has no `"numerals"` key, on main too), `KitNumerals.make` would hand back live words. On the large plate those words are inked, outlined and shadowed at display size, which costs about five draw calls at 200% text and puts heist/200 over its record. So until the switch is on, the clock keeps `KitHud.clock`, the kit's plain plate. **Objection A is closed only once the switch is on** (S1-R11 to the lead; turning it on is K1's file, not this task's).
+- **B, large text in Portuguese.** At large text, the loot spans the full row under the laws and the alarm. The leather is thinner. The clock and the loot plates are tighter (`_tight`: 5 px at the sides and 3 px at the top and bottom above 130% text). Together these end the HUD column above the crew's tray in English and in Portuguese, and "Glowing dark" stays on one line. A guard's bubble that would fall behind the HUD or the tray moves to the nearest clear place, or to the middle of a gap narrower than itself. It is drawn on a layer above the panels, with no tail into a panel. **The scripted check:** `screen_heist.gd` with `FIT=1` fails the run when a label's words leave their panel, a HUD panel lies over another panel or over the tray, or a bubble covers words. Every one of the eight shots below passes it, with the switch off and on:
+
+      FIT=1 MANIFEST=1 ESTIMATE=2600 LAWS=bloom,glowing_dark MOMENT=sneak TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd out.png
+
+- **C, the crew's tray.**
+  - The crew, the Sage, Cast and Get out sit on one tray of the kit's glass.
+  - The crew stands in two rows, three and two, so Ash shares a row with Hollow.
+  - The Sage stands beside Cast.
+  - The hint is `KitHud.tip`, and it says only its first clause ("Tap crew, then ground").
+  - The load bar is `KitHud`'s `loot_fit` bar.
+  - Before landing, Cast reads "No casts". In Portuguese ("Sem lançamentos") that word on one line, beside the crew's longer kind names, made the tray ask 1,129 px of the 1,080 px frame, and the layout test (§21.1, at 9:19.5) failed. In the narrow text's single row, a phrase wider than one and a half times the order's square now stands on two lines (`HeistHand.two_lines`). The tray then asks 933 px.
+- **D, Hollow and Bramble against their rings.** A cream mat (#F6E6C8, L* 92) lies between the ring (L* 43) and the portrait, inked on both sides. Hollow (L* 66 / 58) and Bramble (L* 71 / 56) now part from it by 21 points or more of L*.
+- **E, the alarm moment.** `MOMENT=alarm` raises the alarm to 3 of 6 on its own, with a guard looking and the crew unhurt. The still shows the bar a third lit, the guard's "Who's there?" and the red edge.
+- **Budgets (S1-R7).** `heist_hud.gd` now draws nothing outside the kit, so its record is gone from `tools/ui_bake/budgets.json`. `fx_portrait.gd` has 17 draw sites (it had 20). The speech layer's pen and the portrait's rings are each one draw site.
+
+### Evidence
+
+Stills are in `docs/art/shots/heist-pilot/`. Each one is the script above with `MOMENT`, `TEXT`, `LOCALE` and `CONTRAST` set to match its name.
+
+- **As main stands (numerals switched off):** `part3-sneak-100`, `part3-sneak-200`, `part3-sneak-200-pt`, `part3-alarm-100`, `part3-alarm-hc` and `part3-alarm-hc-200`. These are the gate's stills.
+- **With the numerals switched on**, for objection A, shot with `"numerals": true` set locally in `kit_families.json` and then restored: `numerals-sneak-100`, `numerals-sneak-200-pt` and `numerals-alarm-hc-200`.
+- **Part 2's end:** the `after-*` stills.
+
+| Budget still | Record before | Part 3, switch off | Part 3, switch on |
+|---|---|---|---|
+| heist/100 | 121 | 118 | 118 |
+| heist/200 | 115 | 114 | 114 |
+| heist/hc | 121 | 118 | 118 |
+
+`budget_shots.py --record` lowered the three records to 118, 114 and 118. `check_screens.py --record` lowered the totals for chrome outside the kit from 232 draw and 31 fill to 226 draw and 29 fill. The worst word contrasts are 6.17, 6.43 and 5.55. `bash tools/ui_bake/guard.sh` passes.
+
+### What is still worse
+
+- **The timer shows the kit's figures only with the switch on.** As main stands, the gate sees the plain plate (objection A open, S1-R11).
+- **At 200% text in Portuguese, the guard's bubble sits on the tray's top edge**, in the one clear gap between the HUD and the tray. It covers no words and is not clipped, but it leaves no air above the crew.
+- **At large text the hint hides**, as in part 2, and the gait pill is not shown.
+- **The gait's feet and the pause are still drawn** (S1-R9), and the large clock's words are hidden, not removed. They hold its size until the kit's numerals plate sizes itself.
+
+### Left for other tasks
+
+- Turning the numerals' switch on (K1's `kit_families.json`, S1-R11).
+- A gait and a pause icon in the kit (S1-R9).
+
+### Stopped here
+
+Part 3 is done and waits on the pre-check and the gate. The checks run on the last commit are in `docs/progress/S1.md`.

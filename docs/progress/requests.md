@@ -95,7 +95,10 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `tools/ui_bake/budgets.json` to 0 draw and 0 fill; default: the record
   stays at 3 and 2. Recorded in cycle 50, the final cycle; no K1 session
   runs, so the defaults stand. The full text is in `status/S1.json` on
-  `claude/ui-screens-heist`.
+  `claude/ui-screens-heist`. Cycle 56 (12 November 2026): R1 to R6 are answered
+  by P1-K1-heist-kit (merged; K1's handoff answers each), and R7 is in
+  P1-S1-pilot-3, which adopts the new calls and owns
+  `tools/ui_bake/budgets.json` for it.
 
 - **S1-R9** (from S1, 11 November 2026; due 12 November 20:14Z; not
   blocking): gait (feet) and pause icons in `client/ui/icons.gd`, for the
@@ -127,6 +130,54 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **S1-R11** (from S1, 12 November 2026 02:46Z; due 12 November 10:46Z;
+  blocking): switch the kit's numerals on, `"numerals": true` in
+  `client/ui/kit_families.json` (K1's file; no task in flight owns it),
+  so board 1's objection A (the timer in KitNumerals' figures) can show
+  in a still. Default: the gate's stills as main stands (switch off),
+  with switch-on shots beside them, and objection A stays open.
+  **Answered** by the lead in cycle 59 (12 November 2026), granted: the
+  file is an exception of P1-S1-pilot-3 in the backlog, for that one
+  line only (K1-R11's answer of cycle 45 adds the switch once the
+  numerals' art passes the gate; P1-AIA-kit-3's verdicts pass Display
+  type and Colour roles and value 3 of 3). check_all.sh and guard.sh run
+  again on the head marked ready with the line in; no test loosened; the
+  stills are shot with the switch on; heist-pilot.md and the handoff say
+  the switch is on for every screen that draws KitNumerals. If either
+  check fails with the line in outside S1's files, S1 drops the line and
+  takes the default. Message M7 tells S1.
+  **Cycle 60 (12 November 2026):** S1 marked P1-S1-pilot-3 ready at
+  `0d142dd0` without the line (M7 not acknowledged; the head's
+  `kit_families.json` is main's), so the task merged on the default:
+  stills with the switch off, objection A open. The switch is K1's again,
+  in the new task P1-K1-numerals-on (deps: pilot-3; gate item: heist at
+  100% text, Display type, switch on). heist_hud.gd's switch-on path is
+  on main.
+
+- **AD-R7 to AD-R11** (from AD, 11 November 2026 22:40Z; due 13 November
+  22:40Z; blocking): board 1's objections A to E
+  (`docs/art/ui-quality/gate/boards/board-1.md`), against the pilot
+  heist. A: the timer "2:25" is flat type; draw it with KitNumerals, inked
+  like the key frame's. B: at 200% text in pt_BR the loot line 'Carregar
+  ate 80%' leaves its panel and overlaps Pip, and the guard's bubble is
+  clipped. C: no crew tray; Ash's name wraps alone; the hint bar and the
+  load bar read as generic chrome. D: Hollow and Bramble do not separate
+  from their rings. E: the `MOMENT=alarm` shot shows 'Alarm 0/6'. Default,
+  each: file it as a phase 1 task for S1 (heist screen); AD re-checks
+  board 1 on the new stills. **Answered** by the lead in cycle 56
+  (12 November 2026), as the default: all five are P1-S1-pilot-3, which
+  also adopts P1-K1-heist-kit's HUD calls and carries S1-R7 and S1-R8;
+  AD re-checks in P1-AD-board-1b. Phase 2 waits for board 1.
+
+- **AD-R12** (from AD, 11 November 2026 22:40Z; due 13 November 22:40Z;
+  not blocking): flow findings F1 to F7 on the integrated build
+  (`docs/progress/AD.md`, "Flow review"). Default: file each finding as a
+  backlog task for the screen's owner; none holds phase 2. **Answered**
+  by the lead in cycle 56, as the default: P2-S2-flow-home (F1, F2),
+  P2-flow-entry (F3 to F5: first, scout and planner, which no screen
+  agent owns), P2-S1-flow-result (F6) and P2-S1-flow-replay (F7), all
+  phase 2 and waiting for P1-AD-board-1b.
+
 - **S1-R8** (from S1, 11 November 2026; due 12 November 20:14Z; not
   blocking): add `client/scripts/heist_hand.gd` to S1's heist files, so
   the hand's Cast and Get out buttons can wear the kit. Default:
@@ -135,7 +186,8 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   touched. Recorded in cycle 54: the default stands for P1-S1-pilot-2
   (`owners.py owner` gives the file to the lead; no task in flight
   owns it). The lead files the file into S1's next heist task if S1
-  still needs it there.
+  still needs it there. Cycle 56: `heist_hand.gd` is in P1-S1-pilot-3's
+  files.
 
 - **K1-R12** (from K1, 9 November 2026; due 10 November 12:00Z):
   P1-K1-switch-heist needs `client/ui/rb_box.gd` (the face drawn from the

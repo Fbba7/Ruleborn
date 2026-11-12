@@ -131,19 +131,22 @@ export class Friends {
   feed(account, limit = 20) {
     const friends = this.list(account).map((f) => f.account);
     if (friends.length === 0) return [];
-    const marks = friends.map(() => "?").join(", ");
+    // The friends are bound once each side as one JSON array, not one
+    // parameter apiece, so any number of friends stays under SQLite's
+    // limit on bound variables (SEC-48).
+    const ids = JSON.stringify(friends);
     return this.db.prepare(
       `SELECT l.attacker, l.defender, l.mode, json_extract(h.outcome, '$.verdict.grade') AS grade, h.submitted_at AS at
          FROM heists h JOIN leases l ON l.token = h.token
          JOIN accounts r ON r.id = l.attacker
          JOIN accounts d ON d.id = l.defender
         WHERE h.validated = 1 AND h.submitted_at > ?
-          AND (l.attacker IN (${marks}) OR l.defender IN (${marks}))
+          AND (l.attacker IN (SELECT value FROM json_each(?)) OR l.defender IN (SELECT value FROM json_each(?)))
           AND r.age_band != '13-15' AND d.age_band != '13-15'
           AND NOT EXISTS (SELECT 1 FROM blocks b WHERE (b.blocker = ? AND b.blocked IN (l.attacker, l.defender))
                                                     OR (b.blocked = ? AND b.blocker IN (l.attacker, l.defender)))
         ORDER BY h.submitted_at DESC LIMIT ?`)
-      .all(this.now() - FEED_DAYS * DAY, ...friends, ...friends, account, account, Math.min(100, Math.max(1, limit)))
+      .all(this.now() - FEED_DAYS * DAY, ids, ids, account, account, Math.min(100, Math.max(1, limit)))
       .map((r) => ({ raider: r.attacker, defender: r.defender, mode: r.mode, grade: r.grade, at: r.at }));
   }
 

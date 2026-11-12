@@ -112,7 +112,8 @@ export class Fund {
     const by = new Map();
     for (const r of rows) {
       const o = r.outcome ? JSON.parse(r.outcome) : null;
-      if (!o?.validated || r.player === r.creator) continue;
+      // A play submitted once its island was no longer listed (SEC-40).
+      if (!o?.validated || o.listed === false || r.player === r.creator) continue;
       const seconds = Number.isInteger(o.report?.held) ? o.report.held : r.ticks / TICKS_PER_SECOND;
       const key = `${r.player}\n${r.item}`;
       const was = by.get(key);

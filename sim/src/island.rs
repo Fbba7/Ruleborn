@@ -178,6 +178,9 @@ pub enum Malformed {
     /// A tunnels list of none, a mouth shared or out of order, or mouths
     /// nearer than 2 tiles or further than 6.
     Tunnel,
+    /// An exposure above `i32::MAX`, which the rules cannot hold: it would be
+    /// read as a negative one (SEC-17).
+    Exposed,
 }
 
 /// What stands on a tile, by its place in the island's list.
@@ -461,6 +464,9 @@ impl Island {
             return Err(Malformed::VaultLevel);
         }
         let exposed = u32::from_le_bytes([head[2], head[3], head[4], head[5]]);
+        if exposed > i32::MAX as u32 {
+            return Err(Malformed::Exposed);
+        }
         let side = 9 + realm_level as u16;
         let on_grid = |x: u8, y: u8| (x as u16) < side && (y as u16) < side;
         let vault = (head[6], head[7]);

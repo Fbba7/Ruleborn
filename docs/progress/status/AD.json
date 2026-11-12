@@ -4,92 +4,107 @@
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P0-AD-calibrate-2",
-  "task_state": "working",
-  "claimed_at": "2026-11-03T11:15:00Z",
-  "lease_until": "2026-11-04T04:10:00Z",
-  "updated_at": "2026-11-04T01:46:00Z",
-  "expected_next_update_by": "2026-11-04T02:30:00Z",
+  "task_id": "P1-AD-board-1",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-11T22:22:00Z",
+  "lease_until": "2026-11-12T01:22:00Z",
+  "updated_at": "2026-11-11T22:40:00Z",
+  "expected_next_update_by": "2026-11-11T23:25:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "3f3797c",
-    "next_step": "dev-opus-v3 and held-opus complete and scored (Opus 5.5, rubric version 3): held-out target missed on all eight qualities, so all eight become owner-checked; writing calibration.md results and AD.md, then pre-check"
+    "last_green_sha": null,
+    "next_step": "Board 1 posted (objections A-E) and flow review written; requests AD-R7 to AD-R12 filed. Next: pre-check, then ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-06T21:00:00Z",
+  "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
   "requests": [
     {
-      "id": "AD-R2",
+      "id": "AD-R7",
       "from": "AD",
       "to": "lead",
-      "ask": "Add tools/ui_gate/ to README.md's tools/ listing, which you own: check_docs_consistency.py fails until it is there ('tools/ui_gate/ exists but is not listed in README.md'), so P0-AD-sheet's pre-check cannot pass on my branch. Exact line, inserted between the ui/ and ui_research/ lines: '  ui_gate/                        the UI wave gate's scripts: stills, contact sheets, frame strips, crops and colour-blindness sheets (python3 tools/ui_gate/sheet.py), the image checks (checks.py); docs/art/ui-quality/gate/shots.md'. Evidence: bash tools/check_all.sh passed ('All checks passed.', 'DONE exit=0', 2026-10-30T22:35:22Z) on a local commit c0985d3 that is 9281bc3 plus exactly this line, so nothing else in P0-AD-sheet fails",
+      "ask": "Board 1 objection A: the heist timer is flat type; draw it with KitNumerals like the other kit numbers.",
       "files": [
-        "README.md"
+        "docs/art/ui-quality/gate/boards/board-1.md",
+        "client/screens/heist_screen.gd"
       ],
       "blocking": true,
-      "created_at": "2026-10-30T22:00:00Z",
-      "due": "2026-10-31T22:00:00Z",
-      "default": "The lead adds the line on main (or in the candidate that merges P0-AD-sheet) and sets P0-AD-sheet resync; AD merges main, re-runs the pre-check and marks ready",
+      "created_at": "2026-11-11T22:40:00Z",
+      "due": "2026-11-13T22:40:00Z",
+      "default": "file it as a phase 1 task for S1 (heist screen); AD re-checks board 1 on the new stills",
       "escalate_to": "lead"
     },
     {
-      "id": "AD-R3",
+      "id": "AD-R8",
       "from": "AD",
       "to": "lead",
-      "ask": "Wire the gate's self-tests into tools/check_all.sh, in their own section: 'python3 tools/ui_gate/sheet.py --self-test' (about 4 seconds; it also runs colour.py's and checks.py's tests, with the planted fails). It needs Pillow and numpy, both installed in the container; numpy is new to tools/, so checks.md's 'What it needs' may want a line, which is yours or T15's to write",
+      "ask": "Board 1 objection B: at 200% in pt_BR the loot line 'Carregar ate 80%' leaves its panel and overlaps Pip, and the guard's bubble is clipped; wrap or fit both.",
       "files": [
-        "tools/check_all.sh"
+        "docs/art/ui-quality/gate/boards/board-1.md"
       ],
-      "blocking": false,
-      "created_at": "2026-10-30T22:00:00Z",
-      "due": "2026-11-02T12:00:00Z",
-      "default": "The lead adds the line in the candidate that merges P0-AD-sheet",
+      "blocking": true,
+      "created_at": "2026-11-11T22:40:00Z",
+      "due": "2026-11-13T22:40:00Z",
+      "default": "file it as a phase 1 task for S1 (heist screen); AD re-checks board 1 on the new stills",
       "escalate_to": "lead"
     },
     {
-      "id": "AD-R4",
+      "id": "AD-R9",
       "from": "AD",
       "to": "lead",
-      "ask": "O2 redirects part of the style board (docs/art/ui-quality/gate/approvals/O2.md, points B3, B4, B5, B11). File new task P0-AIA-board-3 for AIA, files art/ui/board/**: (1) re-render the four hero icons and the studio spheres in the toon look of \u00a721.3 and D5 (b) (a four-step ramp, violet-tinted shadow, the rim kept; no MeshPhysicalMaterial metalness, clearcoat or RoomEnvironment reflections), keeping models, finish and rules; (2) the enamel card: a gloss band that reads at 1x over the top 30-45%, a dark hue-matched rim of 2-4 pt, a lip or foot of 3-8 pt; (3) the selected card: a gold rim, no outer glow; (4) the leather button at least two value steps (dL* >= 20, tools/ui_gate/checks.py value-steps) off its well, in both modes, by lighting the well, not changing leather's hue. done_when: board.png and board_hc.png rebaked; check_board.mjs passes; value-steps passes on every control of the board; bash tools/check_all.sh. Estimate 3 h. Also file O2-2 (AD, files docs/art/ui-quality/gate/approvals/O2-2.md, deps P0-AIA-board-3 and P0-K1-contract-2): AD re-approves the redirected points only",
+      "ask": "Board 1 objection C: no crew tray; Ash's name wraps alone; the hint bar and the load bar read as generic chrome, not kit parts.",
       "files": [
-        "docs/progress/backlog.json"
+        "docs/art/ui-quality/gate/boards/board-1.md"
       ],
-      "blocking": false,
-      "created_at": "2026-10-31T00:40:00Z",
-      "due": "2026-10-31T12:00:00Z",
-      "default": "The lead files P0-AIA-board-3 and O2-2 as written here; P0-AIA-keyframes-1 keeps O2 as its only dep and follows O2.md's interim rulings",
+      "blocking": true,
+      "created_at": "2026-11-11T22:40:00Z",
+      "due": "2026-11-13T22:40:00Z",
+      "default": "file it as a phase 1 task for S1 (heist screen); AD re-checks board 1 on the new stills",
       "escalate_to": "lead"
     },
     {
-      "id": "AD-R5",
+      "id": "AD-R10",
       "from": "AD",
       "to": "lead",
-      "ask": "O2 redirects part of the kit contract (docs/art/ui-quality/gate/approvals/O2.md, points K1-K3). File new task P0-K1-contract-2 for K1, files docs/art/ui-quality/kit-spec.md: (1) section 2.1's four values that differ from the design document while citing it (night_* backdrop against \u00a721.2's #171046 to #2C3AA8; card_bottom #120A28 against \u00a721.8's #1A1134; red words on dark #FFB0BC against #FF9AAA; success words on dark #8FF0A8 against #3FBF7F) each take the design document's value or are marked a pending owner decision with a decision brief entry (docs/guides/design-tools.md, the decision brief) and O2.md's interim ruling; (2) section 2.2: titles T2 over the world, gold, oak, leather and school colours, T0 with the drop on the dark card and parchment; (3) K01's tertiary defined as a material, not a ghost. Still version 1 (not yet in effect), with a dated line in section 9. done_when: python3 tools/check_docs_consistency.py; bash tools/check_all.sh. Estimate 1 h",
+      "ask": "Board 1 objection D: the Hollow and Bramble portraits do not separate from their rings; give them a value step against the ring.",
       "files": [
-        "docs/progress/backlog.json"
+        "docs/art/ui-quality/gate/boards/board-1.md"
       ],
-      "blocking": false,
-      "created_at": "2026-10-31T00:40:00Z",
-      "due": "2026-10-31T12:00:00Z",
-      "default": "The lead files P0-K1-contract-2 as written here; until it merges, the parts of sections 2-6 O2.md approves are in effect and the redirected points follow O2.md's interim rulings",
+      "blocking": true,
+      "created_at": "2026-11-11T22:40:00Z",
+      "due": "2026-11-13T22:40:00Z",
+      "default": "file it as a phase 1 task for S1 (heist screen); AD re-checks board 1 on the new stills (with AR if the portraits change)",
       "escalate_to": "lead"
     },
     {
-      "id": "AD-R6",
+      "id": "AD-R11",
       "from": "AD",
       "to": "lead",
-      "ask": "Launch P0-AD-calibrate's gate runs, as docs/art/ui-quality/gate/calibration.md ('The runs') says: for run dev-fable (Fable 5.1) and dev-opus (Opus 5.5), the development third, 366 calls each before splits: python3 tools/ui_gate/calibrate.py render --run <run> --out <a folder outside the repository>; one fresh read-only ui-judge call per <out>/calls/<call>.md on the run's model; write each answer as one JSON line {\"call\", \"answer\", \"region\", \"reason\"} to docs/art/ui-quality/gate/verdicts/P0-AD-calibrate/<run>.jsonl; then calibrate.py extra --run <run> <that file>, render again and run the added calls (samples 4-6 for split rows), appending. Also file P0-AD-calibrate-2 for AD (files docs/art/ui-quality/gate/**, !docs/art/ui-quality/gate/verdicts/**, tools/ui_gate/**; deps: both runs written; estimate 2 h): score both runs, choose the judge (Fable 5.1 unless Opus 5.5 catches more), revise any missing quality's prompt at most twice (a rubric version bump), plan the held-out run held-<model> for you to launch, score it and fill calibration.md's results; done_when: the judge meets its target on the held-out third, or each quality that misses is listed as owner-checked; bash tools/check_all.sh. P0-AD-calibrate delivers the tool, the split, the anchors, the plans and the method, and carries its first done_when to P0-AD-calibrate-2, since its title gives the runs to you",
+      "ask": "Board 1 objection E: the MOMENT=alarm shot shows 'Alarm 0/6', the same as sneak; the shot must show a raised alarm.",
       "files": [
-        "docs/art/ui-quality/gate/verdicts/P0-AD-calibrate/",
-        "docs/progress/backlog.json"
+        "docs/art/ui-quality/gate/boards/board-1.md",
+        "client/tests/shots/"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-11T22:40:00Z",
+      "due": "2026-11-13T22:40:00Z",
+      "default": "file it as a phase 1 task for S1 (heist screen); AD re-checks board 1 on the new stills",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R12",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Flow review findings F1-F7 on the integrated build (home raid line cut; home at 200% pins stack and three are missing; first-screen tagline on an island; scout chip row clipped; planner 'choose 3 to 3 crew'; result alarm peak vs 'No guard alerted', empty lower screen, byte count; replay markers pile up). Details in docs/progress/AD.md, Flow review.",
+      "files": [
+        "docs/progress/AD.md"
       ],
       "blocking": false,
-      "created_at": "2026-10-31T19:05:00Z",
-      "due": "2026-11-01T19:00:00Z",
-      "default": "The lead files P0-AD-calibrate-2 as written here and launches the two development runs at its next cycle with gate hours; until a quality is measured on the held-out third, all eight judged qualities stay in shadow mode (every item on AD's board before it merges), so nothing waits on the runs",
+      "created_at": "2026-11-11T22:40:00Z",
+      "due": "2026-11-13T22:40:00Z",
+      "default": "file each finding as a backlog task for the screen's owner; none holds phase 2",
       "escalate_to": "lead"
     }
   ],
