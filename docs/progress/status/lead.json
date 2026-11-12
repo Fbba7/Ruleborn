@@ -1,7 +1,7 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T22:01:00Z",
-  "expected_next_update_by": "2026-11-12T22:47:00Z",
+  "updated_at": "2026-11-12T22:03:00Z",
+  "expected_next_update_by": "2026-11-12T23:18:00Z",
   "cycle": 72,
   "merging": null,
   "last_merged": {
@@ -18,5 +18,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 73: merge P2-S3-screenkit, P2-flow-entry, P2-S1-flow-replay and P2-AIA-motion-1 as they turn ready; as soon as two are ready, batch 2-3 with disjoint claims into one candidate (M15), re-check each alone if it fails (guard.sh after client/build.sh and the node_modules link in the worktree). Builders S1, S2, S3 and AIA (cap of four; three while the seven-day bar reads allowed_warning). Next queued: P2-S2-home-1, P2-S1-toon-drop, and P2-K1-motion once motion-1 merges."
+  "next_step": "Cycle 73: merge whatever turns ready: P2-S3-screenkit (awaits S3's ready and Lead-R1, the settings shot record's tab, due 13 November 09:45Z), P2-S1-toon-drop, P2-S2-home-1 and P2-K1-motion; as soon as two are ready, batch 2-3 with disjoint claims into one candidate (M15), re-check each alone if it fails (guard.sh after client/build.sh and the node_modules link in the worktree; install the wasm32 target and the Python tools first in a fresh container). Builders S1, S2, S3 and K1 (cap of four; three while the seven-day bar reads allowed_warning). Next queued: P2-AIA-motion-2 once P2-K1-motion merges, P2-S1-result-1, P2-S3-character after screenkit, P2-S2-home-2 after home-1. AD's S3-R2 preview is due 13 November 07:40Z; S2-R4's default applies (flow-entry merged)."
 }
