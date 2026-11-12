@@ -3,27 +3,22 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P2-S1-flow-replay",
-  "task_state": "ready",
-  "claimed_at": "2026-11-12T19:59:29Z",
-  "lease_until": "2026-11-12T22:59:29Z",
-  "updated_at": "2026-11-12T20:42:58Z",
-  "expected_next_update_by": "2026-11-12T23:42:58Z",
+  "agent_state": "active",
+  "task_id": "P2-S1-toon-drop",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-12T22:04:25Z",
+  "lease_until": "2026-11-13T01:04:25Z",
+  "updated_at": "2026-11-12T22:04:25Z",
+  "expected_next_update_by": "2026-11-12T22:49:25Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "b6a477f8",
-    "next_step": "P2-S1-flow-replay (F7): stack or merge the replay timeline's markers that share a time.",
-    "at": "2026-11-12T19:59:29Z"
+    "next_step": "P2-S1-toon-drop (AIA2-R3): drop quarryback and glass_golem from FxPortrait.TOON, render the five portraits, guard, pre-check, gate.",
+    "at": "2026-11-12T22:04:25Z"
   },
-  "precheck": {
-    "sha": "b6a477f8daaa3c56977fcf0d2a645c2a1410b237",
-    "exit": 0,
-    "finished_at": "2026-11-12T20:42:32Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "b6a477f8",
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6",
