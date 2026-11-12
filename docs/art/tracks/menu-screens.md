@@ -32,6 +32,12 @@ Stills at 100% text, 1080 × 2340 rendered and saved at half size, in `docs/art/
 | Character | `before-character-100.png` | `after-character-100.png` | Nothing: the character screen uses no `well` |
 | Codex | `before-codex-100.png` | `after-codex-100.png` | The lead tile is a rounded well |
 | Lab | `before-lab-100.png` | `after-lab-100.png` | The tiles are rounded wells |
+| Profile | `before-profile-100.png` | `after-profile-100.png` | The grade and season pills are rounded dark insets, not squared plates |
+| Shop | `before-shop-100.png` | `after-shop-100.png` | The kind pills and the currency chips are rounded dark insets |
+| Workshop | `before-workshop-100.png` | `after-workshop-100.png` | The level, cleared and remix pills are rounded dark insets |
+| Law | `before-law-100.png` | `after-law-100.png` | The note pills are rounded; the preview lost its dark frame (below) |
+
+Friends, which uses a `well` pill only for a "partial" grade the fixture does not show, renders the same.
 
 Commands: `SCREEN=<route> TEXT=100 bash tools/render/shoot.sh client/tests/shots/screen_meta.gd out.png` for the menu screens, and `TEXT=100 bash tools/render/shoot.sh client/tests/shots/screen_character.gd out.png` for the character screen (`SCREEN=character` on `screen_meta.gd` renders an empty screen).
 
@@ -39,7 +45,7 @@ The checks run on the task's last commit are in `docs/progress/S3.md`.
 
 ### What is still worse than before
 
-Nothing yet seen.
+- **The law card's preview has no frame.** `law_screen.gd` seats the preview in `ScreenKit.panel("well", preview, 16.0, 3.0)`. The track skin drew a dark rim round it; the well skin's rim is soft and 3 points of padding leave it under the picture, so the picture's edges fade into the green card. `law_screen.gd` is not this task's; it is in S3-R2 for AD to judge, and a fix (more padding, or the kit's `frame_*` look) is a request to the lead.
 
 ### Left for other tasks
 

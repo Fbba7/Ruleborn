@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T19:16:00Z",
   "lease_until": "2026-11-12T22:16:00Z",
-  "updated_at": "2026-11-12T19:40:00Z",
-  "expected_next_update_by": "2026-11-12T20:25:00Z",
+  "updated_at": "2026-11-12T20:05:00Z",
+  "expected_next_update_by": "2026-11-12T20:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "P2-S3-screenkit: stills at 100% text committed under docs/art/shots/menu-screens/; AD preview asked (S3-R2); next: check_screens, guard, track notes, pre-check.",
-    "at": "2026-11-12T19:40:00Z"
+    "next_step": "P2-S3-screenkit: guard.sh OK on 9ca7ea49; stills of the nine screens that use 'well' with AD (S3-R2); next: pre-check, main merged, gate.",
+    "at": "2026-11-12T20:05:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -40,7 +40,7 @@
       "id": "S3-R2",
       "from": "S3",
       "to": "AD",
-      "ask": "Preview the menu-screen stills at 100% text before P2-S3-screenkit is marked ready, before and after each: docs/art/shots/menu-screens/{before,after}-{settings,character,codex,lab}-100.png. One change: ScreenKit's 'well' material (the icon tiles on the settings rows, the codex's lead tile, the lab's tiles) drew the resource bar's track skin, a gold-rimmed pill, and now draws the kit's own well skin, the rounded dark inset of tokens.json's 'well' (radius 14). Every other ScreenKit material already drew from the atlas and is unchanged; the character screen uses no well, so its stills are the same. The bars under Music, Effects and Alerts are still code-drawn (S3-R1). Send every objection in one round (M12)",
+      "ask": "Preview the menu-screen stills at 100% text before P2-S3-screenkit is marked ready, before and after each: docs/art/shots/menu-screens/{before,after}-{settings,character,codex,lab,profile,shop,workshop,law}-100.png. One change: ScreenKit's 'well' look drew the resource bar's track skin and now draws the kit's own well skin, the rounded dark inset of the 'well' token (radius 14). It is the look of the settings rows' icon tiles, the codex's lead tile, the lab's tiles, the law card's preview, and the dark pills on profile, shop (and its currency chips), workshop and law. Every other ScreenKit look already drew from the atlas and is unchanged; character and friends use no well and are the same. One loss to judge: the law card's preview had a dark frame round the picture and now has none; its edges fade into the green card (law_screen.gd is not S3's; a fix would be a request to the lead). The bars under Music, Effects and Alerts are still code-drawn (S3-R1). Send every objection in one round (M12)",
       "files": [
         "docs/art/shots/menu-screens/before-settings-100.png",
         "docs/art/shots/menu-screens/after-settings-100.png",
@@ -49,11 +49,19 @@
         "docs/art/shots/menu-screens/before-codex-100.png",
         "docs/art/shots/menu-screens/after-codex-100.png",
         "docs/art/shots/menu-screens/before-lab-100.png",
-        "docs/art/shots/menu-screens/after-lab-100.png"
+        "docs/art/shots/menu-screens/after-lab-100.png",
+        "docs/art/shots/menu-screens/before-profile-100.png",
+        "docs/art/shots/menu-screens/after-profile-100.png",
+        "docs/art/shots/menu-screens/before-shop-100.png",
+        "docs/art/shots/menu-screens/after-shop-100.png",
+        "docs/art/shots/menu-screens/before-workshop-100.png",
+        "docs/art/shots/menu-screens/after-workshop-100.png",
+        "docs/art/shots/menu-screens/before-law-100.png",
+        "docs/art/shots/menu-screens/after-law-100.png"
       ],
       "blocking": false,
-      "created_at": "2026-11-12T19:40:00Z",
-      "due": "2026-11-13T07:40:00Z",
+      "created_at": "2026-11-12T20:05:00Z",
+      "due": "2026-11-13T08:05:00Z",
       "default": "the stills stand as rendered, and S3 marks P2-S3-screenkit ready when its checks pass",
       "escalate_to": "lead"
     }
