@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+  <!-- Written by art/ui/motion/build_motion.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="c1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F9DE9C"/><stop offset="0.5" stop-color="#E9B65C"/><stop offset="1" stop-color="#C88A35"/></linearGradient>
+    <linearGradient id="c2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.85"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <ellipse cx="14" cy="14.75" rx="6.875" ry="12.5" fill="#4A2A10"/>
+    <ellipse cx="14" cy="13.25" rx="6.875" ry="12.5" fill="url(#c1)" stroke="#6B4420" stroke-width="1.5"/>
+    <ellipse cx="14" cy="13.25" rx="5.445" ry="9.9" fill="none" stroke="#C88A35" stroke-width="1.2" stroke-opacity="0.75"/>
+    <polygon points="14,7.05 14.873,11.066 17.243,11.334 15.412,14.084 16.004,18.266 14,15.95 11.996,18.266 12.588,14.084 10.757,11.334 13.127,11.066" fill="#C88A35" stroke-linejoin="round"/>
+    <polygon points="14,6.35 14.873,10.366 17.243,10.634 15.412,13.384 16.004,17.566 14,15.25 11.996,17.566 12.588,13.384 10.757,10.634 13.127,10.366" fill="#F9DE9C"/>
+    <ellipse cx="12.281" cy="7.625" rx="3.438" ry="4" fill="url(#c2)"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <ellipse cx="14" cy="14" rx="6.375" ry="12" fill="#E9B65C" stroke="#000000" stroke-width="3"/>
+    <polygon points="14,8 14.905,11.735 17.138,12.146 15.465,14.865 15.94,18.854 14,16.8 12.06,18.854 12.535,14.865 10.862,12.146 13.095,11.735" fill="#000000" stroke-linejoin="round"/>
+  </g>
+</svg>
