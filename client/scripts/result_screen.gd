@@ -59,6 +59,11 @@ var _peak := 0
 var _crew_end: Array = []
 var _clock := 0.0
 var _verdict := {}
+## F6: the page that scrolls, and the actions with the corner's clearance
+## that end it, or the bar at the phone's foot they move to (_fit_actions).
+var _scroll: ScrollContainer
+var _foot: VBoxContainer
+var _ending: Array[Control] = []
 
 
 func _ready() -> void:
@@ -77,23 +82,22 @@ func _ready() -> void:
 	add_child(backdrop)
 	var columns := FxSkin.frame(self)
 	var column := columns[1]
-	# The page hangs from the top, as the design's, over the bottom bar.
-	# With large text the page is taller than the phone: it scrolls under the
-	# safe top, over the bottom bar that stays where the thumb is.
-	var page: VBoxContainer = columns[0]
-	if Settings.text_scale > 100:
-		var safe := column.get_parent() as MarginContainer
-		safe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		safe.add_theme_constant_override("margin_top", UI.px(Tokens.number("size", "safe_top_points")))
-		var scroll := ScrollContainer.new()
-		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		page = VBoxContainer.new()
-		page.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		page.add_theme_constant_override("separation", column.get_theme_constant("separation"))
-		scroll.add_child(page)
-		column.add_child(scroll)
+	# The page hangs from the top, as the design's, and scrolls under the
+	# safe top when it is taller than the phone: with large text over the
+	# bottom bar that stays where the thumb is, otherwise with the actions at
+	# its end (F6, below).
+	var safe := column.get_parent() as MarginContainer
+	safe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	safe.add_theme_constant_override("margin_top", UI.px(Tokens.number("size", "safe_top_points")))
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var page := VBoxContainer.new()
+	page.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	page.add_theme_constant_override("separation", column.get_theme_constant("separation"))
+	scroll.add_child(page)
+	column.add_child(scroll)
 	var card := VBoxContainer.new()
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var box := VBoxContainer.new()
@@ -127,6 +131,8 @@ func _ready() -> void:
 	subline_label = FxSkin.label("", 14.0)
 	subline_label.add_theme_font_override("font", FxSkin.figures())
 	subline_label.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT)
+	# The realm alarm's line wraps with large text rather than widen the page.
+	subline_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	detail_label = FxSkin.label("", UI.TEXT_POINTS)
 	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	check_label = FxSkin.label("", 13.0)
@@ -283,9 +289,17 @@ func _ready() -> void:
 		again.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		again.custom_minimum_size.x = UI.px(UI.CONTROL_POINTS)
 		actions.add_child(again)
-	column.add_child(actions if plain else UI.narrow(actions))
-	column.add_child(FxSkin.corner_clear())
+	# F6: the actions follow what the heist paid, at the page's end, rather
+	# than a bar at the phone's foot with an empty band above it (and a page
+	# that ran under it once the study card showed). With large text the bar
+	# stays at the foot, where the thumb is, under the scrolling page.
+	_scroll = scroll
+	_foot = column
+	_ending = [actions if plain else UI.narrow(actions), FxSkin.corner_clear()]
+	for c: Control in _ending:
+		(column if Settings.text_scale > 100 else page).add_child(c)
 	show_verdict(heist["verdict"], (heist["replay"] as PackedByteArray).size())
+	_fit_actions()
 	# The coins fly over everything, into the card.
 	if flight != null:
 		add_child(flight)
@@ -630,6 +644,8 @@ func play_again(id: String) -> void:
 
 func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 	_verdict = v
+	if is_node_ready():
+		_fit_actions()
 	var by_server: bool = v.get("server", false)
 	_show_outcome(v)
 	_show_rewards(v)
@@ -646,11 +662,11 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 				else "WORKSHOP_NOT_CLEARED")
 			if by_server and WorkshopController.clears(v):
 				detail_label.text += "\n" + Strings.t("RESULT_COUNTED" if v.get("counted", false) else "RESULT_NOT_COUNTED")
-			check_label.text = Strings.t("RESULT_CONFIRMING" if v.get("confirming", false)
+			check_label.text = _verdict_line("RESULT_CONFIRMING" if v.get("confirming", false)
 				else "RESULT_ACCEPTED_SERVER", replay_bytes)
 		elif v.get("confirming", false):
 			detail_label.text = Strings.t("RESULT_BANKED", int(v["banked"]))
-			check_label.text = Strings.t("RESULT_CONFIRMING", replay_bytes)
+			check_label.text = _verdict_line("RESULT_CONFIRMING", replay_bytes)
 		elif by_server:
 			# The split's tiles say what was minted; without one, the line does.
 			var lines := PackedStringArray()
@@ -662,10 +678,10 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 			if v.get("gift", false):
 				lines.append(Strings.t("RESULT_INVITE_GIFT"))
 			detail_label.text = "\n".join(lines)
-			check_label.text = Strings.t("RESULT_ACCEPTED_SERVER", replay_bytes)
+			check_label.text = _verdict_line("RESULT_ACCEPTED_SERVER", replay_bytes)
 		else:
 			detail_label.text = Strings.t("RESULT_BANKED", int(v["banked"]))
-			check_label.text = Strings.t("RESULT_ACCEPTED_LOCAL", replay_bytes)
+			check_label.text = _verdict_line("RESULT_ACCEPTED_LOCAL", replay_bytes)
 		# The haul's count on the rule already says what was banked.
 		detail_label.visible = detail_label.text != Strings.t("RESULT_BANKED", int(v["banked"])) \
 			and detail_label.text != ""
@@ -676,6 +692,32 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 		# A Workshop play stakes and pays nothing: refused, it does not count.
 		var nothing := "RESULT_PAID_NOTHING" if by_server else "RESULT_WOULD_PAY_NOTHING"
 		UI.set_status(check_label, "alarm", Strings.t("RESULT_PLAY_NOT_COUNTED" if v.get("workshop", false) else nothing))
+
+
+## F6: the actions end the page while it fits on the phone; a page taller
+## than the phone (a long language over the study card, say) leaves them in
+## the bar at its foot, under the page that scrolls, as large text does. Once
+## moved they stay: the page only grows (a verdict that arrives later).
+func _fit_actions() -> void:
+	if _ending.is_empty() or _ending[0].get_parent() == _foot:
+		return
+	# The wrapped lines' heights are known once the page is laid out.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var page := _ending[0].get_parent() as Control
+	if not is_inside_tree() or page == _foot or page.get_combined_minimum_size().y <= _scroll.size.y:
+		return
+	for c: Control in _ending:
+		c.reparent(_foot)
+
+
+## The verdict's line as the player reads it (F6): the check and what it
+## found, without the replay's size in bytes, which is the developer's. The
+## accepted lines carry the size on a line of their own, which is dropped;
+## the confirming line carries it inline and keeps it until its string loses
+## it (request S1-R13).
+func _verdict_line(key: String, replay_bytes: int) -> String:
+	return Strings.t(key, replay_bytes).split("\n")[0]
 
 
 ## §12.9's outcome in full: the kicker, the condition, what it multiplies,
@@ -708,7 +750,11 @@ func _show_outcome(v: Dictionary) -> void:
 	chip_label.text = Strings.t("RESULT_FOILED_CHIP") if grade == "Foiled" else Strings.t("RESULT_MULTIPLIERS",
 		[row[1], row[2]])
 	var seconds := _ticks / RulebornReplay.ticks_per_second()
-	subline_label.text = Strings.t("RESULT_SUBLINE", [seconds / 60, seconds % 60, _peak])
+	# F6: "alarm 5 / 6" under "No guard alerted" read as a contradiction.
+	# The peak is the realm's ladder (§12.17), which climbs with time whatever
+	# the crew does, so the line names it as that: the length, then the
+	# realm alarm's true peak (§12.9).
+	subline_label.text = "%d:%02d" % [seconds / 60, seconds % 60] + " · " + Strings.t("DEFENCES_ALARM", _peak)
 	var keeper := keeper_name()
 	if keeper != "":
 		subline_label.text = Strings.t("RESULT_KEEPER_REALM", keeper) + " · " + subline_label.text
