@@ -5,17 +5,22 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P1-K1-numerals-on",
-  "task_state": "working",
+  "task_state": "blocked",
   "claimed_at": "2026-11-12T05:55:00Z",
   "lease_until": "2026-11-12T08:55:00Z",
-  "updated_at": "2026-11-12T05:58:00Z",
-  "expected_next_update_by": "2026-11-12T06:43:00Z",
+  "updated_at": "2026-11-12T06:17:00Z",
+  "expected_next_update_by": "2026-11-12T07:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e1cee5c1",
-    "next_step": "switch on and tests held at 94c4ca50; kit-spec.md and the stills at 10bbf1d9; screen_heist FIT=1 8 of 8 fit ok; next: guard.sh result, the pre-check, the gate request"
+    "next_step": "blocked on K1-R17: the switch on makes a11y_tests' word-contrast check fail on heist_hud.gd's hidden clock words; once the fix is in (by K1 under an exception, or by S1), the pre-check again, then the gate request"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "f760dedfe1fe9e199e079bb5ae6221184eef95d8",
+    "state": "FAIL",
+    "finished_at": "2026-11-12T06:10:25Z",
+    "summary": "tests 403 of 404: a11y word contrast on the clock's hidden words (heist_screen, replay_screen, both contrast modes); everything else passed; guard.sh OK at 10bbf1d9"
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
@@ -239,6 +244,20 @@
       "due": "2026-11-12T22:00:00Z",
       "default": "album and fact stay out of SKINS_OF; the lookup of all seven shapes stays asserted in client/tests/shots/ui_kit_rest.gd",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R17",
+      "from": "K1",
+      "to": "lead",
+      "ask": "With \"numerals\": true, check_all fails 1 test of 404 (pre-check FAIL at f760dedf, 06:10:25Z): a11y_tests' word contrast reads the heist clock's live words '2:30' (Clock/Time, heist_screen and replay_screen, normal and high contrast) at 2.06:1 on the ink outline. heist_hud.gd _figures (S1's file, P1-S1-pilot-3) hides those words behind the baked figures with self_modulate.a = 0 and RenderingServer.canvas_item_set_visible(false), which the test cannot see (it skips only words not visible_in_tree). S1's pilot-3 never ran check_all with the switch on. No open task owns heist_hud.gd or a11y_tests.gd. Proposed fix, in heist_hud.gd only (no test changed): in _figures replace those two lines with clock_label.visible = false (the Figures row sizes the plate and carries the spoken name, KitNumerals.make sets accessibility_name; clock_label.text still updates, which heist_fx_tests reads). Tried locally and reverted: tests/shots/ui_a11y.gd 0 failed (test 23 ok); screen_heist FIT=1 fit ok at sneak and alarm, 100%, 200% and high contrast; heist 118/114/118 draw calls at sneak, equal to the records. Grant client/scripts/heist_hud.gd to P1-K1-numerals-on as an exception for that change, or route it to S1.",
+      "files": [
+        "client/scripts/heist_hud.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-12T06:17:00Z",
+      "due": "2026-11-12T10:17:00Z",
+      "default": "K1 does not edit heist_hud.gd; P1-K1-numerals-on stays blocked at f760dedf (the switch on, guard OK, check_all 403 of 404) until S1 or a granted exception makes the change, then K1 runs the pre-check again and asks the gate",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -258,5 +277,5 @@
       "at": "2026-11-12T05:58:00Z"
     }
   ],
-  "next_step": "P1-K1-numerals-on: guard.sh, the pre-check, then the gate request (heist at 100% text, Display type)"
+  "next_step": "P1-K1-numerals-on blocked on K1-R17 (heist_hud.gd's hidden clock words fail a11y word contrast with the switch on); then the pre-check and the gate request"
 }
