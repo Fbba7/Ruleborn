@@ -74,6 +74,8 @@ var _tab_badges := {}
 var _close := ""
 ## Strain as last shown: its share and band in words, on one line and on two.
 var _strain_lines := PackedStringArray()
+## The strain pill now shown (KitStatus.strain), inside its tap area.
+var _strain_pill: PanelContainer
 var _strain_room := 0.0
 var _full := {}
 var _raid_words: Label
@@ -245,7 +247,7 @@ func _side(holder: CenterContainer, badge: String) -> void:
 	var route: StringName = s[0]
 	var action := KitControls.round_action(s[1], Strings.t(s[2]), func() -> void: App.services.router.go(route), false,
 		52.0, badge, "sky")
-	action.set_meta("frequent", false)
+	_secondary(action)
 	holder.add_child(action)
 
 
@@ -498,14 +500,20 @@ func _show_strain(share: float, band: int, known: bool) -> void:
 	for c: Node in strain.get_children():
 		c.queue_free()
 	var pill := KitStatus.strain(lines[0], BAND_KEYS[band])
-	pill.set_meta("band", key)
-	pill.size_flags_horizontal = Control.SIZE_SHRINK_END
-	pill.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	pill.custom_minimum_size.y = UI.px(UI.CONTROL_POINTS)
-	KitLayout.tap(pill, func() -> void: App.services.router.go(&"weaving"),
+	var tap := KitLayout.tap(pill, func() -> void: App.services.router.go(&"weaving"),
 		Strings.t("HOME_STRAIN_SPOKEN", [named, pct]))
-	pill.set_meta("frequent", false)
-	strain.add_child(pill)
+	# Inside the pill the tap would stand within its padding, short of §21.1's
+	# 48 points; over a holder of the pill's own size it is the whole pill.
+	var hit := MarginContainer.new()
+	hit.set_meta("band", key)
+	hit.size_flags_horizontal = Control.SIZE_SHRINK_END
+	hit.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	hit.add_child(pill)
+	tap.reparent(hit, false)
+	_secondary(hit)
+	strain.add_child(hit)
+	_strain_pill = pill
 	_strain_room = 0.0
 
 
@@ -516,7 +524,7 @@ func _fit_strain(room: float) -> void:
 	if strain.get_child_count() == 0 or _strain_lines.is_empty() or absf(room - _strain_room) < 0.5:
 		return
 	_strain_room = room
-	var pill := strain.get_child(0) as PanelContainer
+	var pill := _strain_pill
 	var l := pill.find_child("Words", true, false) as Label
 	var font := l.get_theme_font("font")
 	var points := l.get_theme_font_size("font_size")
@@ -586,7 +594,7 @@ func _show_goal(g: Dictionary) -> void:
 	card.custom_minimum_size.x = minf(UI.px(230), get_viewport_rect().size.x - UI.px(40))
 	var route: StringName = g.get("route", &"profile")
 	KitLayout.tap(card, func() -> void: App.services.router.go(route), Strings.t("HOME_GOAL_SPOKEN", str(g["text"])))
-	card.set_meta("frequent", false)
+	_secondary(card)
 	goal_card.add_child(card)
 
 
@@ -712,3 +720,11 @@ func send_waiting(column: VBoxContainer) -> int:
 func _play() -> void:
 	App.services.store.dispatch(&"heist_started", {})
 	App.services.router.go(&"heist")
+
+
+## A secondary place (§21.1 binds only the frequently used controls to the
+## thumb zone): `top` and every button in it, the kit's tap areas included.
+static func _secondary(top: Control) -> void:
+	top.set_meta("frequent", false)
+	for b: Node in top.find_children("*", "Button", true, false):
+		b.set_meta("frequent", false)

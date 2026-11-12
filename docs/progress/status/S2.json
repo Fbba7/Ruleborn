@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T22:10:00Z",
   "lease_until": "2026-11-13T01:10:00Z",
-  "updated_at": "2026-11-12T23:20:00Z",
+  "updated_at": "2026-11-12T23:22:00Z",
   "expected_next_update_by": "2026-11-13T00:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "62c66327",
-    "next_step": "R1/R2 done; FIT passes in 11 cases; main merged at 41986564; check_all running on it; home-screen.md drafted; requests R5, R8-R10 added. Next: budget stills, guard, AD preview, handoff, pre-check"
+    "next_step": "Client test fixes: strain tap 48 points, secondary places marked on their buttons, keeper badge's tap not frequent; client tests rerunning. Next: budget stills, guard, AD preview, handoff, pre-check"
   },
   "precheck": null,
   "gate_request": null,
@@ -116,14 +116,14 @@
       "id": "S2-R9",
       "from": "S2",
       "to": "K1",
-      "ask": "KitLayout.tap connects button_down twice, so every part made tappable logs 'Signal button_down is already connected' (home's strain and goal card; seen in every universe_home.gd run). Connect once, or check is_connected first.",
+      "ask": "KitLayout.tap: (1) it connects button_down twice, so every part made tappable logs 'Signal button_down is already connected' (home's strain and goal card; seen in every universe_home.gd run): connect once. (2) its clear button is a child of the card, so inside a PanelContainer it is laid out within the card's padding, not over the whole card: on KitStatus.strain (48 points tall) the tap was 40 points, failing §21.1's 48 (client test 'every control on every screen'). Lay it over the whole card (e.g. a holder of the card's size, or the card's padding moved into an inner margin). (3) let it carry 'frequent' = false when the card is a secondary place, as the card itself does.",
       "files": [
         "client/ui/kit_layout.gd"
       ],
       "blocking": false,
       "created_at": "2026-11-12T23:20:00Z",
       "due": "2026-11-14T20:00:00Z",
-      "default": "the error stays in the log; the tap works",
+      "default": "home.gd stands the strain pill and its tap in a MarginContainer of the pill's size and marks the tap's button not frequent; the double-connect error stays in the log; the tap works",
       "escalate_to": "lead"
     },
     {

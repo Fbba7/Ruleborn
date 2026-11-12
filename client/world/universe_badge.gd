@@ -31,6 +31,9 @@ func _init() -> void:
 	size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	accessibility_name = Strings.t("HOME_MENU")
 	tap = KitLayout.tap(self, func() -> void: pressed.emit(), accessibility_name)
+	# The menu is a secondary place (§21.1 binds only the frequent controls to
+	# the thumb zone), and the check reads that on the button itself.
+	tap.set_meta("frequent", false)
 
 
 ## What the Keeper bar says (KeeperPresenter.bar), and Renown if known.

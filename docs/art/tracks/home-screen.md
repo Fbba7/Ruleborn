@@ -41,6 +41,8 @@ The check found that pins could overlap by up to two gaps, at 9:16 and 200% text
 
 `check_screens.py` now counts 0 draw and 0 texture in `home.gd` (recorded 1 and 2), and 0 draw in `universe_badge.gd` (recorded 7). Lowering those records is K1's job (S2-R10).
 
+**Tap areas.** `KitLayout.tap` puts its clear button inside the card, so on the strain pill it stood within the pill's padding: 40 points tall, short of §21.1's 48. The client test "every control on every screen" caught it. Home now stands the pill and its tap in a holder of the pill's own size, so the tap is the whole pill, 48 points. The strain, the goal card and the side buttons are secondary places, so §21.1's thumb zone does not bind them. Home now marks each of their buttons that way, the kit's tap areas included, and not only the part that holds them.
+
 ## Evidence
 
 Stills come from `client/tests/shots/universe_home.gd`, the same script before and after, with six outer realms and two raids not yet seen:
@@ -83,7 +85,7 @@ These are things the kit's parts cannot do yet, or costs that the kit's parts br
 - **Home draws 20 more calls at 100% and in high contrast** (139 against a record of 119). It is still 11 under the cap of 150. At 200% it stays at 97. A saving on the kit's side is K1's to weigh: icons in the skin atlas, or one layer for a part's art across its siblings. (S2-R7)
 - **The raid notice's card is drawn in code.** `banner_alarm` has no shape of its own in the skin. It falls back to the red button's light face, on which white words measure 2.5 to 2.8:1. Home refills the box with the material's dark card colours. The line goes once the shape lands. (S2-R6)
 - **The raid notice is composed by the screen.** `KitPanels.notice` (through `UI.banner`) frees itself after `banner_ms` unless the player keeps banners, and its cross frees the panel. Home's notice must stay until it is seen or dismissed (§21.8), and must come back when new raids arrive. At 150% text and above its words also need the card's whole width, with the mark, See and the cross in a row beneath; the kit's notice keeps them all in one row. So home composes the notice from `UI.panel`, `UI.status` and `UI.action`. (S2-R8)
-- **Every tap through `KitLayout.tap` logs an error.** It connects `button_down` twice ("Signal 'button_down' is already connected"). The tap still works. (S2-R9)
+- **Home reaches around `KitLayout.tap`.** The kit's tap stands inside the card's padding, so home moves it into a holder of the pill's own size and marks its button not frequent. Every tap also logs an error, because it connects `button_down` twice ("Signal 'button_down' is already connected"). The tap still works. (S2-R9)
 - **At 200% text, the realms' pins hide as a set.** Even compact, the seven pins do not all find room there, so home shows the islands unnamed. (No request: the room is the screen's, and the islands are a few points wide at that size.)
 - **At 200% text in Portuguese, the purse takes three rows.** "Pedras" and the widest amounts do not fit two pills to a row beside the badge, and the world shows only between the top and the tab bar. Nothing overlaps (FIT passes), but the universe is barely seen. (No request yet: a narrower pill is a kit question, to raise if AD objects.)
 
