@@ -3,21 +3,32 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-S1-pilot-5",
   "task_state": "working",
   "claimed_at": "2026-11-12T11:28:53Z",
   "lease_until": "2026-11-12T15:15:37Z",
-  "updated_at": "2026-11-12T12:15:37Z",
-  "expected_next_update_by": "2026-11-12T13:00:37Z",
+  "updated_at": "2026-11-12T13:04:16Z",
+  "expected_next_update_by": "2026-11-12T13:49:16Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "e846c531",
-    "next_step": "P1-S1-pilot-5: part 5 written; the pre-check at 3690e4ca failed one layout test (German 'GESETZE HIER' on the tag widened the top row past 1080 px in heist and replay). Fixed: at normal text a header wider than 80 points breaks between its words. Next: client tests, pre-check again, then the gate request.",
-    "at": "2026-11-12T12:15:37Z"
+    "last_green_sha": "beb8a023",
+    "next_step": "P1-S1-pilot-5: pre-check PASS at beb8a023; the gate is asked on 'heist at 100% text' and 'heist at 200% text, pt_BR'. Waiting for its verdicts; then P2-S1-flow-result once P1-AD-board-1d merges.",
+    "at": "2026-11-12T13:04:16Z"
   },
-  "precheck": null,
-  "gate_request": null,
+  "precheck": {
+    "sha": "beb8a023e78e85b02ce6674fa2c5463e9fc48b80",
+    "exit": 0,
+    "finished_at": "2026-11-12T13:03:33Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "beb8a023e78e85b02ce6674fa2c5463e9fc48b80",
+    "items": [
+      "heist at 100% text",
+      "heist at 200% text, pt_BR"
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
@@ -196,5 +207,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-5: part 5 written; the pre-check at 3690e4ca failed one layout test (German 'GESETZE HIER' on the tag widened the top row past 1080 px in heist and replay). Fixed: at normal text a header wider than 80 points breaks between its words. Next: client tests, pre-check again, then the gate request."
+  "next_step": "P1-S1-pilot-5: pre-check PASS at beb8a023; the gate is asked on 'heist at 100% text' and 'heist at 200% text, pt_BR'. Waiting for its verdicts; then P2-S1-flow-result once P1-AD-board-1d merges."
 }
