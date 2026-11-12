@@ -1,0 +1,17 @@
+{
+  "atlas": {"height":1024,"high_contrast":"motion_hc.webp","normal":"motion.webp","width":1024},
+  "family": "motion",
+  "format": 1,
+  "pieces": {
+    "burst__rays__normal": {"h":480,"slice":null,"tint":false,"w":480,"x":2,"y":2},
+    "burst__ring__normal": {"h":480,"slice":null,"tint":false,"w":480,"x":484,"y":2},
+    "coin__edge__normal": {"h":168,"slice":null,"tint":false,"w":168,"x":244,"y":484},
+    "coin__face__normal": {"h":168,"slice":null,"tint":false,"w":168,"x":414,"y":484},
+    "coin__turn__normal": {"h":168,"slice":null,"tint":false,"w":168,"x":584,"y":484},
+    "shine__sweep__normal": {"h":480,"slice":null,"tint":false,"w":240,"x":2,"y":484},
+    "sparkle__dot__normal": {"h":48,"slice":null,"tint":false,"w":48,"x":900,"y":484},
+    "sparkle__star__normal": {"h":144,"slice":null,"tint":false,"w":144,"x":754,"y":484}
+  },
+  "px_per_point": 6,
+  "sources_hash": "sha256:e5679dd0ec2e390ea9ca6109022798f30d6e977451ed753c59da2978548ea1ab"
+}

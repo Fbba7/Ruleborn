@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+  <!-- Written by art/ui/motion/build_motion.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <radialGradient id="r1" cx="0.5" cy="0.5" r="0.5"><stop offset="0.72" stop-color="#FFF3CC" stop-opacity="0"/><stop offset="0.86" stop-color="#FFFFFF"/><stop offset="0.92" stop-color="#F9DE9C" stop-opacity="0.7"/><stop offset="1" stop-color="#E9B65C" stop-opacity="0"/></radialGradient>
+  </defs>
+  <g data-state="normal">
+    <circle cx="40" cy="40" r="40" fill="url(#r1)"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <circle cx="40" cy="40" r="35" fill="none" stroke="#000000" stroke-width="7"/>
+    <circle cx="40" cy="40" r="35" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+  </g>
+</svg>

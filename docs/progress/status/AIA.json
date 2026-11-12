@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-AIA-motion-1",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-12T18:53:51Z",
   "lease_until": "2026-11-12T21:53:51Z",
-  "updated_at": "2026-11-12T18:53:51Z",
-  "expected_next_update_by": "2026-11-12T19:38:51Z",
+  "updated_at": "2026-11-12T19:05:00Z",
+  "expected_next_update_by": "2026-11-12T19:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8e9bcf0c",
-    "next_step": "draw the motion sprites in art/ui/motion/ and write curves.json"
+    "next_step": "answer AD's preview of art/ui/proof/motion_sheet.png (AIA-R23), merge main, run the setup line, client/build.sh, check_all.sh and guard.sh, then mark ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -98,7 +98,7 @@
       "id": "AIA-R15",
       "from": "AIA",
       "to": "K1",
-      "ask": "Batch 1c bakes the numerals as num_<finish>_<glyph> (finishes gold 28, white 22, timer 28, timer_red 28 pt; glyphs 0-9, comma, period, colon, slash, plus, minus, percent, x, question, space) on atlas page 2, drawn in Manrope 800 with tabular figures per \u00a721.8 and D4 (b). (1) kit-spec.md section 2.2's T3 row still says the baked numerals are drawn with Lilita One: please make it read Manrope 800 tabular. (2) To draw them, KitSkin sets a number glyph by glyph: each piece carries `advance`; the piece's box is its advance cell plus 1 pt each side, so draw it at pen - (w - advance)/2 and move the pen by `advance`. The client's own number formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5)",
+      "ask": "Batch 1c bakes the numerals as num_<finish>_<glyph> (finishes gold 28, white 22, timer 28, timer_red 28 pt; glyphs 0-9, comma, period, colon, slash, plus, minus, percent, x, question, space) on atlas page 2, drawn in Manrope 800 with tabular figures per §21.8 and D4 (b). (1) kit-spec.md section 2.2's T3 row still says the baked numerals are drawn with Lilita One: please make it read Manrope 800 tabular. (2) To draw them, KitSkin sets a number glyph by glyph: each piece carries `advance`; the piece's box is its advance cell plus 1 pt each side, so draw it at pen - (w - advance)/2 and move the pen by `advance`. The client's own number formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5)",
       "files": [
         "docs/art/ui-quality/kit-spec.md",
         "client/ui/kit_skin.gd"
@@ -201,6 +201,21 @@
       "due": "2026-11-13T01:50:00Z",
       "default": "no tiled grain: parchment panels keep grain in their border only and a plain stretched middle",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R23",
+      "from": "AIA",
+      "to": "AD",
+      "ask": "Preview the motion sprite sheet at phone size before P2-AIA-motion-1 is marked ready: art/ui/proof/motion_sheet.png (left normal, right high contrast; top on the night of the result screen, bottom on parchment; half the atlas scale, the size they show on a phone). Pieces: burst rays and ring, sparkle star and dot, shine sweep, coin face, turn and edge. The curves are in art/ui/motion/curves.json (every step 150-250 ms, cubic ease-out, no overshoot, each motion's reduced form named). Send every objection in one round (M12)",
+      "files": [
+        "art/ui/proof/motion_sheet.png",
+        "art/ui/motion/curves.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T19:05:00Z",
+      "due": "2026-11-13T07:00:00Z",
+      "default": "the sheet stands as drawn, and AIA marks the task ready when its checks pass",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -210,5 +225,5 @@
       "at": "2026-11-10T06:50:38Z"
     }
   ],
-  "next_step": "draw the motion sprites in art/ui/motion/ and write curves.json"
+  "next_step": "answer AD's preview of art/ui/proof/motion_sheet.png (AIA-R23), merge main, run the setup line, client/build.sh, check_all.sh and guard.sh, then mark ready"
 }

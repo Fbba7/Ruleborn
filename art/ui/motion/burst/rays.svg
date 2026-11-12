@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+  <!-- Written by art/ui/motion/build_motion.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <radialGradient id="r1" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.25" stop-color="#FFF3CC"/><stop offset="0.7" stop-color="#F9DE9C" stop-opacity="0.55"/><stop offset="1" stop-color="#E9B65C" stop-opacity="0"/></radialGradient>
+    <radialGradient id="r2" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FFF3CC" stop-opacity="0.9"/><stop offset="0.35" stop-color="#F9DE9C" stop-opacity="0.45"/><stop offset="1" stop-color="#E9B65C" stop-opacity="0"/></radialGradient>
+  </defs>
+  <g data-state="normal">
+    <circle cx="40" cy="40" r="25" fill="url(#r2)"/>
+    <path d="M44.5 35 L40 1 L35.5 35 Z M46.718 39.646 L67.577 12.423 L40.354 33.282 Z M45 44.5 L79 40 L45 35.5 Z M40.354 46.718 L67.577 67.577 L46.718 40.354 Z M35.5 45 L40 79 L44.5 45 Z M33.282 40.354 L12.423 67.577 L39.646 46.718 Z M35 35.5 L1 40 L35 44.5 Z M39.646 33.282 L12.423 12.423 L33.282 39.646 Z" fill="url(#r1)"/>
+    <path d="M45.147 36.72 L50.715 14.131 L38.68 34.041 Z M45.959 41.32 L65.869 29.285 L43.28 34.853 Z M43.28 45.147 L65.869 50.715 L45.959 38.68 Z M38.68 45.959 L50.715 65.869 L45.147 43.28 Z M34.853 43.28 L29.285 65.869 L41.32 45.959 Z M34.041 38.68 L14.131 50.715 L36.72 45.147 Z M36.72 34.853 L14.131 29.285 L34.041 41.32 Z M41.32 34.041 L29.285 14.131 L34.853 36.72 Z" fill="url(#r1)" opacity="0.8"/>
+    <circle cx="40" cy="40" r="7.5" fill="#FFFFFF"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <path d="M45.147 36.72 L50.332 15.055 L38.68 34.041 Z M45.959 41.32 L64.945 29.668 L43.28 34.853 Z M43.28 45.147 L64.945 50.332 L45.959 38.68 Z M38.68 45.959 L50.332 64.945 L45.147 43.28 Z M34.853 43.28 L29.668 64.945 L41.32 45.959 Z M34.041 38.68 L15.055 50.332 L36.72 45.147 Z M36.72 34.853 L15.055 29.668 L34.041 41.32 Z M41.32 34.041 L29.668 15.055 L34.853 36.72 Z" fill="#E9B65C" stroke="#000000" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M44.5 35 L40 3 L35.5 35 Z M46.718 39.646 L66.163 13.837 L40.354 33.282 Z M45 44.5 L77 40 L45 35.5 Z M40.354 46.718 L66.163 66.163 L46.718 40.354 Z M35.5 45 L40 77 L44.5 45 Z M33.282 40.354 L13.837 66.163 L39.646 46.718 Z M35 35.5 L3 40 L35 44.5 Z M39.646 33.282 L13.837 13.837 L33.282 39.646 Z" fill="#FFFFFF" stroke="#000000" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="40" cy="40" r="8.5" fill="#FFFFFF" stroke="#000000" stroke-width="3"/>
+  </g>
+</svg>
