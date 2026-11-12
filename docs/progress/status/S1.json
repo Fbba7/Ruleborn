@@ -3,27 +3,22 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P2-S1-flow-result",
-  "task_state": "ready",
-  "claimed_at": "2026-11-12T17:48:59Z",
-  "lease_until": "2026-11-12T21:45:17Z",
-  "updated_at": "2026-11-12T19:22:49Z",
-  "expected_next_update_by": "2026-11-12T20:07:49Z",
+  "agent_state": "active",
+  "task_id": "P2-S1-flow-replay",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-12T19:59:29Z",
+  "lease_until": "2026-11-12T22:59:29Z",
+  "updated_at": "2026-11-12T19:59:29Z",
+  "expected_next_update_by": "2026-11-12T20:44:29Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8b47be96",
-    "next_step": "P2-S1-flow-result ready at 8b47be96 (262904c4 plus main at 4d9f737): check_all PASS and guard.sh OK on that merge. Next: P2-S1-flow-replay (F7) in a fresh session.",
-    "at": "2026-11-12T19:22:49Z"
+    "next_step": "P2-S1-flow-replay (F7): stack or merge the replay timeline's markers that share a time.",
+    "at": "2026-11-12T19:59:29Z"
   },
-  "precheck": {
-    "sha": "8b47be966dba863a29e9f13a28891bf74ac33887",
-    "exit": 0,
-    "finished_at": "2026-11-12T19:22:18Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "8b47be966dba863a29e9f13a28891bf74ac33887",
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6",
@@ -49,7 +44,7 @@
       "id": "S1-R2",
       "from": "S1",
       "to": "K1",
-      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar até 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
+      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar at\u00e9 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
       "files": [
         "client/ui/kit_hud.gd"
       ],
@@ -230,5 +225,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P2-S1-flow-result ready at 8b47be96 (262904c4 plus main at 4d9f737): check_all PASS and guard.sh OK on that merge. Next: P2-S1-flow-replay (F7) in a fresh session."
+  "next_step": "P2-S1-flow-replay (F7): stack or merge the replay timeline's markers that share a time."
 }
