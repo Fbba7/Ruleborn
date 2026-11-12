@@ -2795,7 +2795,7 @@
       "prior_sha": null,
       "ready_sha": "beb8a023e78e85b02ce6674fa2c5463e9fc48b80",
       "merged_sha": "fe27c8f2",
-      "updated_at": "2026-11-12T16:25:00Z",
+      "updated_at": "2026-11-12T16:06:00Z",
       "updated_by": "lead (cycle 69)",
       "id": "P1-S1-pilot-5",
       "title": "Pilot heist, part 5: board 1's open objections D and F, round 3 (AD-R17, AD-R18; docs/art/ui-quality/gate/boards/board-1.md, Round 3): D Bramble without the grain and Hollow a flat toon fill framed head and shoulders, in client/world/fx_portrait.gd; F the 'Laws here' header on a kit tag plate in client/scripts/heist_hud.gd (K1's handoff: the ink outline is drawn but ink on the navy sky has almost no contrast); notes in docs/art/tracks/heist-pilot.md",
