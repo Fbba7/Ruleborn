@@ -381,6 +381,8 @@ func _two_players() -> void:
 		played = await _played(sb, int(sb.store.get_slice(AppState.HEIST)["workshop"].get("ticks", 0)))
 	var v: Dictionary = played.get("verdict", {})
 	await sb.workshop_flow.rate(id, 5, 4, 3)
+	# SEC-26: a brand-new account's rating is recorded but is not in the
+	# island's numbers, so the count the server answers stays 0.
 	var rated: Dictionary = sb.store.get_slice(WorkshopState.WORKSHOP)
 	await sa.workshop_flow.withdraw(id)
 	var gone: Dictionary = sa.store.get_slice(WorkshopState.WORKSHOP)
@@ -390,7 +392,7 @@ func _two_players() -> void:
 	check.call(name,
 		a[1].ok and b[1].ok and offer["can"] and offer["name"] != "" and published and id != "" and listed and started
 			and v.get("server", false) and v.get("workshop", false) and v.get("cleared", false)
-			and v.get("counted", false) and rated["done"] == "rated" and int(rated["last"].get("count", 0)) == 1
+			and v.get("counted", false) and rated["done"] == "rated" and int(rated["last"].get("count", -1)) == 0
 			and gone["done"] == "withdrawn"
 			and (gone["items"] as Array).any(func(i: Dictionary) -> bool: return i["id"] == id and i["withdrawn"])
 			and not still,

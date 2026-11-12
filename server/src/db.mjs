@@ -64,11 +64,13 @@ CREATE TABLE IF NOT EXISTS accounts (
   -- §14.6 and §20.2's notifications: the device's IANA time zone (none
   -- reported, no push: G34), their daily reminder (minutes after local
   -- midnight), an adult's choice of a quiet night, and the device's push
-  -- token (notifications.mjs).
+  -- token (notifications.mjs), with the session that registered it: that
+  -- session's end takes the token with it (auth.mjs, SEC-37).
   time_zone         TEXT,
   reminder_at       INTEGER,
   night_quiet       INTEGER NOT NULL DEFAULT 1,
   push_token        TEXT,
+  push_session      INTEGER,
   -- §13.1's seeded islands: the game's own, "stocked with designed islands
   -- from the start", and no new player to protect (matchmaking.mjs).
   seeded            INTEGER NOT NULL DEFAULT 0,
@@ -362,7 +364,10 @@ CREATE TABLE IF NOT EXISTS heists (
   -- Whose island it raided, as its lease names them: the defence log, the
   -- raid badge and the Trace read a player's raids by it, each a range of
   -- its index where they read every lease ever issued (§24.1's reads).
-  defender     TEXT REFERENCES accounts(id)
+  defender     TEXT REFERENCES accounts(id),
+  -- SEC-18 B: how many bytes of replay this row stored, 0 for none: an
+  -- account's day stores at most service.REPLAY_BYTES_A_DAY.
+  log_bytes    INTEGER NOT NULL DEFAULT 0
 ) WITHOUT ROWID;
 -- Keyed by its token alone, as a lease is: one index entry the fewer.
 -- A player's heists by day: every count of the day's and week's heists
@@ -486,15 +491,20 @@ CREATE TABLE IF NOT EXISTS workshop_plays (
   ticks        INTEGER NOT NULL,
   issued_at    INTEGER NOT NULL,
   submitted_at INTEGER,
-  outcome      TEXT
+  outcome      TEXT,
+  -- SEC-26: 1 when the play's time counts toward the Island Fund: its
+  -- player counted when they played (workshop.mjs, qualified).
+  counted      INTEGER NOT NULL DEFAULT 0
 );
 
 -- §18.7: "completions by the same player count once".
 CREATE TABLE IF NOT EXISTS workshop_completions (
-  item   TEXT NOT NULL REFERENCES workshop_items(id),
-  player TEXT NOT NULL REFERENCES accounts(id),
-  weight REAL NOT NULL,
-  at     INTEGER NOT NULL,
+  item    TEXT NOT NULL REFERENCES workshop_items(id),
+  player  TEXT NOT NULL REFERENCES accounts(id),
+  weight  REAL NOT NULL,
+  at      INTEGER NOT NULL,
+  -- SEC-26: 1 when it counts toward the ladder and the island's numbers.
+  counted INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (item, player)
 );
 
@@ -506,6 +516,8 @@ CREATE TABLE IF NOT EXISTS workshop_ratings (
   cleverness INTEGER NOT NULL CHECK (cleverness BETWEEN 1 AND 5),
   fairness   INTEGER NOT NULL CHECK (fairness BETWEEN 1 AND 5),
   at         INTEGER NOT NULL,
+  -- SEC-26: 1 when it counts toward the island's numbers.
+  counted    INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (item, player)
 );
 
@@ -600,7 +612,10 @@ CREATE TABLE IF NOT EXISTS constellation_members (
   account       TEXT NOT NULL REFERENCES accounts(id),
   role          TEXT NOT NULL CHECK (role IN ('founder', 'elder', 'member')),
   joined_at     INTEGER NOT NULL,
-  left_at       INTEGER
+  left_at       INTEGER,
+  -- 1 when its founder or an elder removed the player: they cannot join it
+  -- again for a week (social.mjs, SEC-43).
+  removed       INTEGER NOT NULL DEFAULT 0
 );
 -- One constellation at a time.
 CREATE UNIQUE INDEX IF NOT EXISTS one_constellation
@@ -681,6 +696,15 @@ CREATE TABLE IF NOT EXISTS purchase_intents (
   redeemed_at INTEGER,
   -- A gift's friend (F41); null for the buyer's own.
   recipient   TEXT REFERENCES accounts(id)
+);
+
+-- SEC-29: whose a deleted lapsed intent was, for TOMBSTONE_DAYS (shop.mjs),
+-- so its receipt is granted to that account and no other. Nothing of the
+-- purchase is kept.
+CREATE TABLE IF NOT EXISTS intent_tombstones (
+  id         TEXT PRIMARY KEY,
+  account    TEXT NOT NULL REFERENCES accounts(id),
+  deleted_at INTEGER NOT NULL
 );
 
 -- A store's receipt, granted once per store transaction.
@@ -1013,6 +1037,7 @@ const ADDED = [
   ["accounts", "reminder_at", "INTEGER"],
   ["accounts", "night_quiet", "INTEGER NOT NULL DEFAULT 1"],
   ["accounts", "push_token", "TEXT"],
+  ["accounts", "push_session", "INTEGER"],
   // §14.2's experience toward the next Keeper level (keeper.mjs).
   ["accounts", "keeper_xp", "INTEGER NOT NULL DEFAULT 0"],
   // §7.6's "a law you are actually working on" (codex.mjs).
@@ -1057,6 +1082,12 @@ const ADDED = [
   ["accounts", "raider_volatility", "REAL"],
   ["accounts", "raider_games", "INTEGER"],
   ["heists", "defender", "TEXT REFERENCES accounts(id)"],
+  ["heists", "log_bytes", "INTEGER NOT NULL DEFAULT 0"],
+  // SEC-26: what counts toward the Workshop's paying numbers.
+  ["workshop_plays", "counted", "INTEGER NOT NULL DEFAULT 0"],
+  ["workshop_completions", "counted", "INTEGER NOT NULL DEFAULT 0"],
+  ["workshop_ratings", "counted", "INTEGER NOT NULL DEFAULT 0"],
+  ["constellation_members", "removed", "INTEGER NOT NULL DEFAULT 0"],
   ["ledger", "starlight_total", "INTEGER"],
   ["ledger", "essence_total", "INTEGER"],
   ["ledger", "aether_total", "INTEGER"],
@@ -1160,6 +1191,9 @@ function ledgerWithoutAether(db) {
 
 export function open(path = ":memory:") {
   const db = new DatabaseSync(path);
+  // A lock held briefly by another connection (a backup, an operator's shell)
+  // is waited out for up to 5 s instead of failing the next write at once.
+  db.exec("PRAGMA busy_timeout = 5000");
   // Set here, as SCHEMA's own pragma does nothing inside a transaction. A
   // table the others name by a foreign key is made again with the keys off
   // (withRowid), which SQLite allows only outside a transaction; they are
@@ -1281,7 +1315,10 @@ export function transaction(db, fn) {
     db.exec("COMMIT");
     return result;
   } catch (err) {
-    db.exec("ROLLBACK");
+    // A rollback that fails itself never hides the first error.
+    if (db.isTransaction) {
+      try { db.exec("ROLLBACK"); } catch (rollbackErr) { err.rollback = rollbackErr; }
+    }
     throw err;
   }
 }

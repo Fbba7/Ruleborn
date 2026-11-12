@@ -8,7 +8,7 @@ import { Refused, clockTicks } from "../src/service.mjs";
 import { BOUNDS, SEASON_MS, place } from "../src/seasons.mjs";
 import { Social } from "../src/social.mjs";
 import { Workshop } from "../src/workshop.mjs";
-import { T0, openPlan, play, server, twoPlayers } from "./setup.mjs";
+import { T0, counting, openPlan, play, server, twoPlayers } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
 const EMBER = BOUNDS.leagues.Ember;
@@ -227,6 +227,7 @@ test("a crew is four to eight, joined by its invite, and survives its founder le
 test("a Workshop completion from the creator's own constellation counts at a quarter (18.7)", () => {
   const t = beacon(3);
   const [creator, kin, stranger] = t.players;
+  for (const p of t.players) counting(t, p);           // completions that count (SEC-26)
   const c = t.social.found(creator, { adjective: 0, noun: 0 });
   t.social.join(kin, c.id);
   const w = new Workshop(t.service);
@@ -244,6 +245,7 @@ test("a Workshop completion from the creator's own constellation counts at a qua
 test("leaving the constellation to complete an island, and coming back, still counts a quarter (18.7)", () => {
   const t = beacon(4);
   const [creator, kin, other, stranger] = t.players;
+  for (const p of t.players) counting(t, p);           // completions that count (SEC-26)
   const c = t.social.found(creator, { adjective: 0, noun: 0 });
   t.social.join(kin, c.id);
   t.social.join(other, c.id);

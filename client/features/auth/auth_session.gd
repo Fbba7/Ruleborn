@@ -29,6 +29,10 @@ extends RefCounted
 ## No token is ever logged: Api logs a failure's route alone.
 
 signal renewed(result: Result)
+## The server answered a renewal or a sign-in for another account than the
+## one this phone last held (`previous`): what that account queued is parked
+## under it before anything is sent as `now` (AuthController, SEC-29).
+signal account_changed(previous: String, now: String)
 
 const FILE := "user://auth.json"
 const REFRESH_KEY := "ruleborn.session.refresh"
@@ -283,8 +287,12 @@ func _adopt(answer: Variant) -> Result:
 	expires_at = Time.get_ticks_msec() + int(v.get("expiresIn", DEFAULT_SECONDS)) * 1000
 	account = str(v.get("account", ""))
 	if account != last_account:
+		var previous := last_account
 		last_account = account
 		_write()
+		if previous != "":
+			api.account_epoch += 1
+			account_changed.emit(previous, account)
 	var refresh := str(v.get("refreshToken", ""))
 	if refresh != "":
 		vault.write(REFRESH_KEY, refresh)

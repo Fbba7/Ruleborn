@@ -287,6 +287,10 @@ func piece() -> Dictionary:
 		return {}
 	var ground := KitSkin.ground_of(host)
 	var p := KitSkin.piece(look, _state(), ground, skin_shape)
+	# A sprite keeps its shape, so it draws only on a host of its shape: a
+	# disc on a bar or an oval button stays the code-drawn box.
+	if not KitSkin.fits(p, quad().size - Vector2.ONE * 2.0 * _reach):
+		return {}
 	if _tint is Color and not bool(p.get("tint", false)):
 		if skin_shape == "" or p == KitSkin.piece(look, _state(), ground):
 			return {}
@@ -355,7 +359,8 @@ func _draw_face() -> void:
 ## the code-drawn box's outline and drop do; a skin with a wider margin
 ## names it (`KitSkin.margins`). A 9-slice whose margins are
 ## larger than the host is drawn smaller, whole; a sprite keeps its shape,
-## as wide as the host, from its top.
+## as wide as the host, from its top, and is drawn only on a host of its
+## shape (`KitSkin.fits`).
 func _draw_piece(p: Dictionary, hue: Color) -> void:
 	var tex := KitSkin.texture(p)
 	var s := KitSkin.scale()

@@ -62,6 +62,20 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Default until then: the numerals stay Manrope 800 tabular, the pieces
   sit in the atlas unused, and numbers draw as code-drawn text.
 
+- **AIA-R22** (from AIA to K1, 11 November 2026 01:50Z; due 13 November
+  01:50Z; not blocking): a nine-slice stretches one sample across its
+  middle, so `panel_dark__album` and the other parchment panels carry
+  paper grain only in their fixed border. If the gate still finds the
+  middle of a large parchment panel flat, KitSkin would lay a tiled grain
+  texture over the panel's centre cell (`client/ui/kit_skin.gd`, K1's
+  file) and AIA would draw a tileable grain piece in a task that carries
+  it. Default: no tiled grain; parchment panels keep grain in their
+  border only and a plain stretched middle. Recorded in cycle 52
+  (11 November 2026). The gate passed Layered materials on batch 2d at
+  `961c7905` with three passes of three, so the condition has not
+  arisen; the default stands unless K1 answers otherwise by the due
+  time.
+
 - **S1-R1 to S1-R7** (from S1, 10 November 2026; due 11 November 07:58Z;
   not blocking): what the heist HUD wants from the kit, each with a
   default S1 already built in P1-S1-pilot-1. R1: update calls on the HUD
@@ -81,7 +95,24 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `tools/ui_bake/budgets.json` to 0 draw and 0 fill; default: the record
   stays at 3 and 2. Recorded in cycle 50, the final cycle; no K1 session
   runs, so the defaults stand. The full text is in `status/S1.json` on
-  `claude/ui-screens-heist`.
+  `claude/ui-screens-heist`. Cycle 56 (12 November 2026): R1 to R6 are answered
+  by P1-K1-heist-kit (merged; K1's handoff answers each), and R7 is in
+  P1-S1-pilot-3, which adopts the new calls and owns
+  `tools/ui_bake/budgets.json` for it.
+
+- **S1-R9** (from S1, 11 November 2026; due 12 November 20:14Z; not
+  blocking): gait (feet) and pause icons in `client/ui/icons.gd`, for the
+  heist HUD. Default: the HUD keeps FxIcons' drawn feet and pause marks
+  until the icons exist. Recorded in cycle 54: the default stands for
+  P1-S1-pilot-2. Icon art is AIA-2's and icon batches 3 and 4 are
+  deferred (D13 (c)), so no task carries it yet.
+
+- **S1-R10** (from S1, 11 November 2026; due 12 November 20:14Z; not
+  blocking): lower `fx_portrait.gd`'s record in
+  `tools/ui_bake/budgets.json` to 19 draw (it records 20). Default: the
+  record stays at 20. Recorded in cycle 54 and folded into
+  P1-K1-heist-kit (its title and `done_when`; `tools/ui_bake/**` is in
+  its files), which K1 takes after P1-K1-disc-host merges.
 
 ### AIA
 
@@ -98,6 +129,236 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   code-drawn, as today.
 
 ### Lead
+
+- **S2-R1** (from S2, 12 November 2026 18:15Z; due 13 November 18:15Z;
+  not blocking): `client/world/universe_badge.gd` starts the renown number
+  past the gem at every text size (at 200% text the gem covers the first
+  digit), so Home can drop its padding. Default: `home.gd` keeps padding
+  the renown with spaces where the gem would cover it.
+  **Answered** by the lead in cycle 71 (12 November 2026), granted: the
+  file has no owner, so it joins P2-S2-home-1's files and the change is in
+  that task's `done_when`. Until it merges, the default stands.
+- **S2-R2** (from S2, 12 November 2026 18:15Z; due 13 November 18:15Z;
+  not blocking): `client/world/universe_pins.gd` lets a front realm pin
+  shrink to its icon and level when the room is short, so at 150% and 200%
+  text the pins shrink rather than hide as a set. Default: Home hides the
+  whole pins layer whenever a realm pin would be missing; the realms stay
+  in the world's spoken description and each island still takes its tap.
+  **Answered** by the lead in cycle 71, granted the same way: the file
+  joins P2-S2-home-1. Until it merges, the default stands.
+- **AIA2-R3** (from AIA-2, 12 November 2026 18:05Z; due 13 November
+  18:05Z; not blocking): once P2-AIA2-busts lands, drop quarryback and
+  glass_golem (with glass_golem's own crop) from `FxPortrait.TOON` in
+  `client/world/fx_portrait.gd` (S1's file): their busts are painted flat
+  at the source and the toon pass re-quantises them into blotches.
+  Default: a follow-up task after the busts merge.
+  **Answered** by the lead in cycle 71 with its default: task
+  P2-S1-toon-drop (S1, 0.5 h, after P2-AIA2-busts), gated on heist at 100%
+  text, Character presence.
+
+- **S1-R11** (from S1, 12 November 2026 02:46Z; due 12 November 10:46Z;
+  blocking): switch the kit's numerals on, `"numerals": true` in
+  `client/ui/kit_families.json` (K1's file; no task in flight owns it),
+  so board 1's objection A (the timer in KitNumerals' figures) can show
+  in a still. Default: the gate's stills as main stands (switch off),
+  with switch-on shots beside them, and objection A stays open.
+  **Answered** by the lead in cycle 59 (12 November 2026), granted: the
+  file is an exception of P1-S1-pilot-3 in the backlog, for that one
+  line only (K1-R11's answer of cycle 45 adds the switch once the
+  numerals' art passes the gate; P1-AIA-kit-3's verdicts pass Display
+  type and Colour roles and value 3 of 3). check_all.sh and guard.sh run
+  again on the head marked ready with the line in; no test loosened; the
+  stills are shot with the switch on; heist-pilot.md and the handoff say
+  the switch is on for every screen that draws KitNumerals. If either
+  check fails with the line in outside S1's files, S1 drops the line and
+  takes the default. Message M7 tells S1.
+  **Cycle 60 (12 November 2026):** S1 marked P1-S1-pilot-3 ready at
+  `0d142dd0` without the line (M7 not acknowledged; the head's
+  `kit_families.json` is main's), so the task merged on the default:
+  stills with the switch off, objection A open. The switch is K1's again,
+  in the new task P1-K1-numerals-on (deps: pilot-3; gate item: heist at
+  100% text, Display type, switch on). heist_hud.gd's switch-on path is
+  on main.
+
+- **AD-R7 to AD-R11** (from AD, 11 November 2026 22:40Z; due 13 November
+  22:40Z; blocking): board 1's objections A to E
+  (`docs/art/ui-quality/gate/boards/board-1.md`), against the pilot
+  heist. A: the timer "2:25" is flat type; draw it with KitNumerals, inked
+  like the key frame's. B: at 200% text in pt_BR the loot line 'Carregar
+  ate 80%' leaves its panel and overlaps Pip, and the guard's bubble is
+  clipped. C: no crew tray; Ash's name wraps alone; the hint bar and the
+  load bar read as generic chrome. D: Hollow and Bramble do not separate
+  from their rings. E: the `MOMENT=alarm` shot shows 'Alarm 0/6'. Default,
+  each: file it as a phase 1 task for S1 (heist screen); AD re-checks
+  board 1 on the new stills. **Answered** by the lead in cycle 56
+  (12 November 2026), as the default: all five are P1-S1-pilot-3, which
+  also adopts P1-K1-heist-kit's HUD calls and carries S1-R7 and S1-R8;
+  AD re-checks in P1-AD-board-1b. Phase 2 waits for board 1.
+
+- **AD-R12** (from AD, 11 November 2026 22:40Z; due 13 November 22:40Z;
+  not blocking): flow findings F1 to F7 on the integrated build
+  (`docs/progress/AD.md`, "Flow review"). Default: file each finding as a
+  backlog task for the screen's owner; none holds phase 2. **Answered**
+  by the lead in cycle 56, as the default: P2-S2-flow-home (F1, F2),
+  P2-flow-entry (F3 to F5: first, scout and planner, which no screen
+  agent owns), P2-S1-flow-result (F6) and P2-S1-flow-replay (F7), all
+  phase 2 and waiting for P1-AD-board-1b.
+
+- **AD-R13** (from AD, 12 November 2026 05:52Z; due 14 November 05:52Z;
+  blocking): board 1's objection D, round 2 (`board-1.md`, Round 2, What
+  D needs): Hollow's violet body melts into its violet disc (one tone in
+  grayscale) and Bramble sits about 12 L* below its orange disc, with
+  grain. Give each figure a value step of 20 L* or more against its disc,
+  or an ink silhouette, in `client/world/fx_portrait.gd`. Default: an S1
+  phase 1 task (with AIA-2 if the portrait art changes); AD re-checks it
+  as P1-AD-board-1c. **Answered** by the lead in cycle 61 (12 November
+  2026), as the default: P1-S1-pilot-4 (S1), with the measured L* of
+  figure and disc in heist-pilot.md; a change to the portrait art itself
+  is a request to the lead for AIA-2.
+
+- **AD-R14** (from AD, 12 November 2026 05:52Z; due 14 November 05:52Z;
+  not blocking): the 'Laws here' / 'Leis aqui' header is gold on the sky
+  with no ink outline; P1-K1-numerals-on is gated on Display type at 100%
+  and could fail on it. Give the header the kit's ink outline in
+  `client/scripts/heist_hud.gd`, merged before or with numerals-on.
+  Default: a small S1 task merged before numerals-on. **Answered** by the
+  lead in cycle 61: the outline goes in P1-K1-numerals-on itself, under
+  K1-R17's exception on `heist_hud.gd`, so it merges with the switch and
+  heist_hud.gd has one owner. Message M8 tells K1.
+
+- **AD-R15** (from AD, 12 November 2026 05:52Z; due 14 November 05:52Z;
+  blocking): board 1's objection B reopens, narrowed: with no crew plan,
+  at 200% text in pt_BR, Cast reads 'Sem lançamentos', the tray grows to
+  two button rows and covers the loot panel (FIT=1: 'Loot over the
+  tray'). Keep the tray below the loot panel in `heist_screen.gd` and add
+  the no-plan 200% pt_BR case to the heist's gate stills. Default: a
+  small S1 task with FIT=1 no-manifest TEXT=200 LOCALE=pt_BR in
+  done_when. **Answered** by the lead in cycle 61, as the default: in
+  P1-S1-pilot-4, with that case in done_when and a gate item "heist at
+  200% text, pt_BR, no crew plan" (Hierarchy).
+
+- **AD-R16** (from AD, 12 November 2026 05:52Z; due 14 November 05:52Z;
+  not blocking): seed P1-AD-board-1c (AD, about 1 hour) to re-check A, B,
+  D and the header once numerals-on and the AD-R13 and AD-R15 fixes are
+  merged. **Answered** by the lead in cycle 61, as the default:
+  P1-AD-board-1c, deps P1-K1-numerals-on and P1-S1-pilot-4. Phase 2's
+  four flow tasks now wait on board-1c, since board 1 does not stand
+  after round 2 (report.md section 3: phase 2 waits for board 1).
+
+- **AD-R17** (from AD, 12 November 2026 09:42Z; due 14 November 09:42Z;
+  blocking): board 1's objection D, round 3 (`board-1.md`, Round 3, What
+  D needs): Bramble still shows the grain, and Hollow reads glassy, with
+  faceted highlights. Render both through the toon ramp in 2 to 3 flat
+  tones, with no specular, and frame Hollow head and shoulders like Mo,
+  in `client/world/fx_portrait.gd`. Checked on the five portraits at
+  119 px, in colour and grayscale. Default: a small S1 task on
+  fx_portrait.gd, with AIA-2 only if the portrait art itself has to
+  change. **Answered** by the lead in cycle 65, as the default:
+  P1-S1-pilot-5 (S1), together with AD-R18.
+
+- **AD-R18** (from AD, 12 November 2026 09:42Z; due 14 November 09:42Z;
+  blocking): board 1's objection F, the 'Laws here' header. Its ink
+  outline is drawn, but it does not show on the dark night sky (K1's
+  handoff: ink #1A0C14 on navy). Seat the header on a kit `tag` plate, or
+  lighten the sky so ink and sky differ by ΔL* 15 or more. A lighter
+  stroke is not the fix. Default: in the same S1 task as AD-R17, the
+  header on KitStatus.tag in `heist_hud.gd`, checked at 100% and 200%
+  pt_BR at 4×. **Answered** by the lead in cycle 65, as the default: in
+  P1-S1-pilot-5. heist_hud.gd is S1's file (report.md section 3), and
+  K1's grant to it ended when P1-K1-numerals-on merged.
+
+- **AD-R19** (from AD, 12 November 2026 09:42Z; not blocking): seed
+  P1-AD-board-1d (AD, about 1 hour) to re-check objections D and F once
+  the AD-R17 and AD-R18 fixes are merged. If both close, board 1 stands
+  and phase 2 can start. **Answered** by the lead in cycle 65, as the
+  default: P1-AD-board-1d, deps P1-S1-pilot-5. Phase 2's four flow tasks
+  now wait on board-1d, not board-1c.
+
+- **AD-R20** (from AD, 12 November 2026 16:18Z; due 14 November 16:18Z;
+  not blocking): board 1's note G, which answers S1-R12. The flat pass in
+  `FxPortrait._toon` closed objection D but wiped out Bramble's snout,
+  arms and belly bands and Hollow's glass. Seed an AIA-2 task to repaint
+  both busts at the source (`client/world/creature_bust.gd`) in two or
+  three flat tones, Bramble's features kept as shapes and Hollow's glass
+  as a few large hard-edged facets with its face and gem; checked on the
+  five portraits at 119 px in colour and grayscale. Default: seed it in
+  AIA-2's phase 2 queue after the icons; the in-game flat pass stays
+  until it lands. **Answered** by the lead in cycle 70, as the default:
+  P2-AIA2-busts (AIA-2, deps P1-AD-board-1d, files
+  `client/world/creature_bust.gd`), after the phase 2 flow tasks in the
+  backlog's order and within the cap of three. Icon batches 3 and 4 stay
+  deferred (D13 (c)); this is not an icon batch.
+
+- **AD-R21** (from AD, 12 November 2026 16:18Z; due 13 November 16:18Z;
+  not blocking): board 1 stands (board-1.md, Round 4): D and F are
+  closed, A, B, C and E were closed earlier, so phase 2 no longer waits
+  for board 1 (report section 3.2). Check phase 1's other exit conditions
+  and open phase 2. Default: open phase 2 at the next lead cycle if the
+  other exit conditions hold. **Recorded** by the lead in cycle 70: the
+  round 4 verdict is on AD's branch, not yet on main. When P1-AD-board-1d
+  merges, its phase 2 dependants open and the lead checks phase 1's other
+  exit conditions before setting the backlog's `phase` to 2.
+
+- **K1-R17** (from K1, 12 November 2026 06:17Z; due 12 November 10:17Z;
+  blocking): with `"numerals": true`, check_all fails 1 test of 404
+  (pre-check FAIL at `f760dedf`): a11y_tests' word contrast reads the
+  heist clock's live words '2:30' (heist_screen and replay_screen, both
+  contrast modes), which `heist_hud.gd`'s `_figures` hides with
+  `self_modulate.a = 0` and `RenderingServer.canvas_item_set_visible(false)`,
+  out of the test's sight. Proposed fix, `heist_hud.gd` only, no test
+  changed: `clock_label.visible = false` in place of those two lines
+  (tried locally: ui_a11y 0 failed, FIT=1 ok, heist 118/114/118 draw
+  calls). Grant the file to P1-K1-numerals-on or route it to S1. Default:
+  K1 does not edit the file and the task stays blocked. **Answered** by
+  the lead in cycle 61, granted: `client/scripts/heist_hud.gd` is an
+  exception of P1-K1-numerals-on, for that change and AD-R14's header
+  outline only; no test changes, check_all and guard.sh run again on the
+  ready head. P1-S1-pilot-4 leaves heist_hud.gd and budgets.json to K1.
+  Message M8; K1's own session continues (its check-in at 06:54Z read the
+  grant on main).
+
+- **K1-R18** (from K1, 12 November 2026 07:12Z; due 12 November 10:12Z;
+  blocking): under K1-R17's grant, the 'Laws here' / 'Leis aqui' header
+  at `ca66fe67` wears the kit's display stroke for AD-R14: the ink
+  outline at 3.5 points (from 3) and a hard gold_drop drop 2 points under
+  it with its own outline, as KitNav.logo wears them (kit-spec.md section
+  2.2, T2). The ink outline alone does not show on the night sky at a
+  still's size, so only the drop makes the stroke read. The drop costs 2
+  draw calls (the label's shadow pass): guard.sh reads heist 120/116/120
+  against records 118/114/118 (cap 150; textures and contrast unchanged).
+  Asks to raise `tools/ui_bake/budgets.json`'s `shots.recorded` heist/100,
+  heist/200 and heist/hc by 2, logged in `raises`. Default: no raise, the
+  drop comes out. **Answered** by the lead in cycle 61, approved: raise
+  the three records by 2 (to 120, 116, 120), logged in `raises` with
+  K1-R18 and AD-R14 as the reason (the README's rise by request with the
+  lead's approval). The heist stays 30 under the cap. guard.sh and
+  check_all run again on the ready head, then the gate (heist at 100%
+  text, Display type, switch on). Message M9.
+
+- **S1-R8** (from S1, 11 November 2026; due 12 November 20:14Z; not
+  blocking): add `client/scripts/heist_hand.gd` to S1's heist files, so
+  the hand's Cast and Get out buttons can wear the kit. Default:
+  `heist_screen.gd` re-dresses Cast (gold `KitControls.big_action`) and
+  Get out (leather `big_action`) in place, and `heist_hand.gd` is not
+  touched. Recorded in cycle 54: the default stands for P1-S1-pilot-2
+  (`owners.py owner` gives the file to the lead; no task in flight
+  owns it). The lead files the file into S1's next heist task if S1
+  still needs it there. Cycle 56: `heist_hand.gd` is in P1-S1-pilot-3's
+  files.
+
+- **S1-R12** (from S1, 12 November 2026 11:55Z; due 13 November 11:55Z;
+  not blocking): board 1's objection D (AD-R17) is met in game by a flat
+  pass in `client/world/fx_portrait.gd` (`FxPortrait._toon`: Bramble and
+  Hollow in three tones of their colour, marks kept). At 119 px Bramble
+  reads as a grey-violet mass with small eyes, and the pass runs in
+  GDScript the first time each portrait shows at a size. Asks whether
+  AIA-2 should flat-paint Bramble and Hollow at their source
+  (`client/world/creature_bust.gd`). Default: the in-game pass stays as
+  the fix for D, the source art is unchanged, and the gate judges the
+  pass. **Recorded** by the lead in cycle 67, as the default: no AIA-2
+  task now (icon and art batches stay paced by D13 (c)). If the gate on
+  P1-S1-pilot-5 or AD's re-check in P1-AD-board-1d leaves objection D
+  open, the lead seeds an AIA-2 task on the source art then.
 
 - **K1-R12** (from K1, 9 November 2026; due 10 November 12:00Z):
   P1-K1-switch-heist needs `client/ui/rb_box.gd` (the face drawn from the

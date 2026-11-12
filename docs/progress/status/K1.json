@@ -2,23 +2,23 @@
   "agent": "K1",
   "role": "K1",
   "branch": "claude/ui-bake",
-  "model": "Fable 5.2",
-  "agent_state": "active",
-  "task_id": "P1-K1-switch-rest",
-  "task_state": "working",
-  "claimed_at": "2026-11-10T07:40:00Z",
-  "lease_until": "2026-11-10T10:40:00Z",
-  "updated_at": "2026-11-10T08:20:24Z",
-  "expected_next_update_by": "2026-11-10T09:05:24Z",
+  "model": "Opus 5.5",
+  "agent_state": "working",
+  "task_id": "P1-K1-numerals-on",
+  "task_state": "in_progress",
+  "claimed_at": "2026-11-12T05:55:00Z",
+  "lease_until": "2026-11-12T08:55:00Z",
+  "updated_at": "2026-11-12T07:50:00Z",
+  "expected_next_update_by": "2026-11-12T08:35:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "0ce3c751",
-    "next_step": "P1-K1-switch-rest: M4 read. origin/claude/ui-artist at 00571a44 (P1-AIA-kit-6) merged into claude/ui-bake; AIA-R19 wired (the seven shapes drawn by their own name, KitSkin.OWN_SHAPE_ONLY now pill_gold_edge and green_muted); the 19 kit tests pass. Next: budgets, catalogue, guard, pre-check on that head, then ready."
+    "last_green_sha": "e1cee5c1",
+    "next_step": "K1-R18 approved (M9): heist records raised by 2 in budgets.json, logged in raises; guard.sh and the pre-check on that head, the stills rebaked, the handoff, then the gate request (heist at 100% text, Display type)"
   },
   "precheck": {
-    "sha": "0ce3c751cbdea99a384fd82046cf5c5c1b427dbb",
+    "sha": "ca66fe67924bb7a9f05bf2398addeb876fce7e37",
     "exit": 0,
-    "finished_at": "2026-11-10T04:00:09Z",
+    "finished_at": "2026-11-12T07:42:13Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
@@ -26,7 +26,10 @@
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M2",
-    "M4"
+    "M4",
+    "M5",
+    "M8",
+    "M9"
   ],
   "requests": [
     {
@@ -243,6 +246,35 @@
       "due": "2026-11-12T22:00:00Z",
       "default": "album and fact stay out of SKINS_OF; the lookup of all seven shapes stays asserted in client/tests/shots/ui_kit_rest.gd",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R17",
+      "from": "K1",
+      "to": "lead",
+      "ask": "With \"numerals\": true, check_all fails 1 test of 404 (pre-check FAIL at f760dedf, 06:10:25Z): a11y_tests' word contrast reads the heist clock's live words '2:30' (Clock/Time, heist_screen and replay_screen, normal and high contrast) at 2.06:1 on the ink outline. heist_hud.gd _figures (S1's file, P1-S1-pilot-3) hides those words behind the baked figures with self_modulate.a = 0 and RenderingServer.canvas_item_set_visible(false), which the test cannot see (it skips only words not visible_in_tree). S1's pilot-3 never ran check_all with the switch on. No open task owns heist_hud.gd or a11y_tests.gd. Proposed fix, in heist_hud.gd only (no test changed): in _figures replace those two lines with clock_label.visible = false (the Figures row sizes the plate and carries the spoken name, KitNumerals.make sets accessibility_name; clock_label.text still updates, which heist_fx_tests reads). Tried locally and reverted: tests/shots/ui_a11y.gd 0 failed (test 23 ok); screen_heist FIT=1 fit ok at sneak and alarm, 100%, 200% and high contrast; heist 118/114/118 draw calls at sneak, equal to the records. Grant client/scripts/heist_hud.gd to P1-K1-numerals-on as an exception for that change, or route it to S1.",
+      "files": [
+        "client/scripts/heist_hud.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-12T06:17:00Z",
+      "due": "2026-11-12T10:17:00Z",
+      "default": "K1 does not edit heist_hud.gd; P1-K1-numerals-on stays blocked at f760dedf (the switch on, guard OK, check_all 403 of 404) until S1 or a granted exception makes the change, then K1 runs the pre-check again and asks the gate",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R18",
+      "from": "K1",
+      "to": "lead",
+      "ask": "Under K1-R17's grant (M8), heist_hud.gd at ca66fe67 hides the clock's words (clock_label.visible = false) and gives the 'Laws here' / 'Leis aqui' header the kit's display stroke for AD-R14: the ink outline heavier (3.5 points, from 3) and a hard gold_drop drop 2 points under it with its own outline, as KitNav.logo wears them (kit-spec.md section 2.2's T2). The header already had UI.world_words' ink outline: ink #1A0C14 on the night sky does not show at a still's size, which is why the gate and AD saw none; only the drop makes the stroke read (stills compared). The drop costs 2 draw calls, the label's shadow pass: guard.sh reads heist 120/116/120 against records 118/114/118 (cap 150; textures and contrast unchanged, 0 words below 4.5:1). A drop without its own outline costs 1 and hides behind the outline. Approve raising tools/ui_bake/budgets.json's shots.recorded heist/100, heist/200 and heist/hc by 2 (to 120, 116, 120), logged in 'raises' (README: a rise by request to K1 with the lead's approval).",
+      "files": [
+        "tools/ui_bake/budgets.json",
+        "client/scripts/heist_hud.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-12T07:12:00Z",
+      "due": "2026-11-12T10:12:00Z",
+      "default": "No raise: K1 takes the drop out (the header keeps the heavier ink outline, no draw calls added, records unchanged), runs guard.sh and the pre-check on that head and asks the gate; if the gate fails Display type on the header, K1 files the raise again with the verdict",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -255,7 +287,12 @@
       "request_id": "K1-R9",
       "answer": "Done in P0-K1-kitspec-3 at 4b4a72d1: kit-spec.md section 2.1's success and backdrop rows and section 9; tokens.json's notes for success_text_on_night, night_top and gradient.night. No value changes.",
       "at": "2026-11-04T13:05:00Z"
+    },
+    {
+      "request_id": "AIA-R22",
+      "answer": "The default stands: no tiled grain. Parchment panels keep their grain in the nine-slice border and a plain stretched middle; KitSkin lays no overlay on the centre cell. The gate passed Layered materials on batch 2d (961c7905, 3 of 3), so the condition has not arisen; if a later verdict finds a large parchment panel's middle flat, K1 adds the overlay in a task that owns kit_skin.gd once AIA has a tileable grain piece.",
+      "at": "2026-11-12T05:58:00Z"
     }
   ],
-  "next_step": "P1-K1-switch-rest: M4 read. origin/claude/ui-artist at 00571a44 (P1-AIA-kit-6) merged into claude/ui-bake; AIA-R19 wired (the seven shapes drawn by their own name, KitSkin.OWN_SHAPE_ONLY now pill_gold_edge and green_muted); the 19 kit tests pass. Next: budgets, catalogue, guard, pre-check on that head, then ready."
+  "next_step": "K1-R18 approved (M9): heist records raised by 2 in budgets.json, logged in raises; guard.sh and the pre-check on that head, the stills rebaked, the handoff, then the gate request (heist at 100% text, Display type)"
 }

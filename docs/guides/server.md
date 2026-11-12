@@ -30,8 +30,10 @@ example island so a fresh database has something to lease. Data goes to
 start.
 
 On start it prints the address, the rules version it holds, and a warning for
-each protection a missing setting turns off (for example, without
-`RULEBORN_PEER_HEADER` failed sign-ins are not limited by address).
+each protection a missing setting turns off (for example, a local server
+without `RULEBORN_PEER_HEADER` does not limit failed sign-ins by address). A
+server with real sign-in (Game Center's roots or Google's client ids set)
+refuses to start without `RULEBORN_PEER_HEADER` (SEC-36).
 
 `RULEBORN_STUB_SIGNIN=1` accepts a stand-in sign-in credential, which is what
 a desktop client sends (it has no Game Center or Play Games). Without it, and
@@ -87,7 +89,8 @@ development default except what a real deployment needs.
 | `RULEBORN_SECRET`, `RULEBORN_TOKEN_KEYS` | the keys that sign session tokens |
 | `RULEBORN_REFRESH_ROTATE_HOURS` | how often a refresh token rotates: 24 unless set, the owner's decision (B9); 0 rotates it on every refresh. Inside the span a refresh answers a new access token and writes nothing, so a session's `used_at` and country are up to that old |
 | `RULEBORN_SEASON_START` | the first season's start |
-| `RULEBORN_DELETIONS` | the account-deletion journal |
+| `RULEBORN_DELETIONS` | the account-deletion journal (default `deletions/` inside `RULEBORN_DATA`). A deployment puts it on separate storage that is not restored with the data, or a restore of the data could undo later deletions; with real sign-in, the server will not start while it is inside the data folder, and a local server with stubbed sign-in warns (SEC-38) |
+| `RULEBORN_REPLAYS_MIN_FREE_MB` | the free space, in MiB, below which a heist's replay is refused with 503 `storage_low` and its lease kept (512 unless set; 0 turns the floor off) |
 | `RULEBORN_STUB_SIGNIN` | `1` accepts a stand-in sign-in (development only) |
 | `RULEBORN_GOOGLE_CLIENT_IDS`, `RULEBORN_GOOGLE_WEB_CLIENT_ID` | Google sign-in, and the web deletion page's |
 | `RULEBORN_BUNDLE_ID`, `RULEBORN_GAMECENTER_ROOTS`, `RULEBORN_STOREKIT_ROOTS`, `RULEBORN_APPLE_SANDBOX` | Game Center and StoreKit proofs |
@@ -96,7 +99,9 @@ development default except what a real deployment needs.
 | `RULEBORN_CF_ZONE`, `RULEBORN_CF_PURGE_TOKEN`, `RULEBORN_PUBLIC_ORIGIN` | purging deleted bundles from the edge cache |
 | `RULEBORN_FCM_SERVICE_ACCOUNT`, `RULEBORN_FCM_PROJECT` | push notifications through Firebase Cloud Messaging |
 | `RULEBORN_CONTACT` | the contact shown on the stores' pages |
-| `RULEBORN_PEER_HEADER`, `RULEBORN_PLACE_HEADER` | which request headers carry the caller's address and country behind a proxy |
+| `RULEBORN_PEER_HEADER`, `RULEBORN_PLACE_HEADER` | which request headers carry the caller's address and country behind a proxy; with the address set, the sign-in nonce and the deletion page are also limited by address (SEC-34) |
+| `RULEBORN_HEADERS_TIMEOUT_MS` | how long the local listener waits for a request's headers before closing the socket (10000 unless set; the whole request has at least 30 s) (SEC-34) |
+| `RULEBORN_MAX_CONNECTIONS` | how many sockets the local listener holds open at once (2048 unless set) (SEC-34) |
 
 All are read in `server/src/main.mjs`; what each one does is explained where
 [`server/README.md`](../../server/README.md) describes its area ("The stores'
@@ -125,6 +130,11 @@ not written down here (a question for the owner, in
 - **A refresh token** rotates only past 24 hours (`RULEBORN_REFRESH_ROTATE_HOURS`
   unset is 24, or 0 under `--example`; 0 rotates it on every refresh); inside the span a refresh
   writes nothing.
+- **A job that fails** (a busy database, one bad row) is logged as
+  `<job name>: <error>` on standard error and tried again on its next turn,
+  without stopping the server; a hold measurement that fails is logged as
+  `hold <bundle>: <error>` and set aside. Watch the log for these lines: the
+  server keeps answering while a job keeps failing (SEC-20).
 
 ## Generated files the server reads
 

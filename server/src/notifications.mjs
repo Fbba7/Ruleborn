@@ -122,7 +122,7 @@ export class Notifications {
    * adult's nights are quiet, and the device's push token. §20.2's minors
    * cannot open the night, and a reminder cannot be set inside it (G34).
    */
-  set(account, { timeZone, reminder, nightQuiet, pushToken } = {}) {
+  set(account, { timeZone, reminder, nightQuiet, pushToken } = {}, { session = null } = {}) {
     const updates = {};
     if (timeZone !== undefined) {
       const canonical = canonicalZone(timeZone);
@@ -161,6 +161,9 @@ export class Notifications {
         throw new Refused(400, "bad_push_token");
       }
       updates.push_token = pushToken;
+      // The session that registered it: its sign-out clears the token
+      // (auth.mjs), so a signed-out device is sent nothing more (SEC-37).
+      updates.push_session = pushToken === null ? null : session;
     }
     transaction(this.db, () => {
       for (const [column, value] of Object.entries(updates)) {
@@ -387,15 +390,20 @@ export class Notifications {
         .run(now, n.id).changes;
       if (!claimed) continue;
       // The token as it is now: one turned off or replaced meanwhile is not used.
-      const a = this.db.prepare("SELECT push_token, time_zone, deleted_at FROM accounts WHERE id = ?").get(n.account);
+      // And only while the session that registered it lives (SEC-37).
+      const a = this.db.prepare(
+        `SELECT a.push_token, a.time_zone, a.deleted_at, a.push_session, s.id AS live
+           FROM accounts a LEFT JOIN sessions s ON s.id = a.push_session AND s.ended_at IS NULL
+          WHERE a.id = ?`).get(n.account);
       if (!a?.push_token || !a.time_zone || a.deleted_at) continue;
+      if (a.push_session !== null && a.live === null) continue;
       const { since, ...body } = JSON.parse(n.data);
       const message = { kind: n.kind, ...body, ...(n.kind === "raided" ? { heists: this.raids(n) } : {}) };
       const outcome = await push(a.push_token, message, { expiresAt: this.expires(n.account, n.kind, now), now });
       const why = outcome?.status ? `${outcome.status}${outcome.code ? ` ${outcome.code}` : ""}` : (outcome?.reason ?? "unknown");
       if (outcome?.gone) {
         tick.gone++;
-        this.db.prepare("UPDATE accounts SET push_token = NULL WHERE id = ? AND push_token = ?")
+        this.db.prepare("UPDATE accounts SET push_token = NULL, push_session = NULL WHERE id = ? AND push_token = ?")
           .run(n.account, a.push_token);
       } else if (outcome?.retry) {
         const attempts = n.attempts + 1;

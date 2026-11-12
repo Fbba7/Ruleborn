@@ -106,7 +106,10 @@ static func lock(target: Control) -> void:
 	var p := KitSkin.piece(box.look, "locked", KitSkin.ground_of(target)) \
 		if KitSkin.is_on(skin) and _baked(skin, "locked") else {}
 	var face: Control = box.get("_face")
-	if p.is_empty() or face == null:
+	# A sprite's locked face draws only on a host of its shape, as its other
+	# states do (`KitSkin.fits`).
+	var reach: float = box.get("_reach")
+	if p.is_empty() or face == null or not KitSkin.fits(p, box.quad().grow(-reach).size):
 		box.set_look("locked")
 		return
 	if face.draw.is_connected(Callable(box, "_draw_face")):

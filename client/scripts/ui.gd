@@ -160,6 +160,22 @@ static func label(text := "", points := -1.0, wraps := false) -> Label:
 	return l
 
 
+## Words standing on the world, with no plate behind them (the heist's
+## "Laws here" over the room): bold, in `tone` (a tokens.json colour), with
+## an ink outline all round heavy enough to count against any ground
+## (§21.8: 1.5 points or 12% of their size, at the least 3 points here).
+static func world_words(text: String, points := -1.0, tone := "gold_top") -> Label:
+	var l := label(text, points)
+	var pts := TEXT_POINTS if points < 0 else points
+	l.name = "WorldWords"
+	l.add_theme_font_override("font", bold_font())
+	l.add_theme_color_override("font_color", Tokens.color(tone))
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", px(maxf(3.0, 0.12 * pts + 0.5)))
+	l.set_meta("bold", true)
+	return l
+
+
 ## Puts control `c`'s words in the words' z layer (`WORDS_Z`, kit-spec.md
 ## section 7's rule 2): a label, a button or a field draws its words in its
 ## own canvas item, so the control rises and the kit's box behind it, if it

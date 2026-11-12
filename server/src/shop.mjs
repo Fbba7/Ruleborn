@@ -43,6 +43,11 @@ export const MOST_OPEN_INTENTS = 10;
  *  a store can send its receipt late (G38, F41). */
 export const GIFT_KEEP_DAYS = 30;
 
+/** SEC-29: how long, once a lapsed intent is deleted, the server still
+ *  remembers whose it was (its id, its account and when it went, nothing
+ *  of the purchase), so a receipt naming it is granted to no one else. */
+export const TOMBSTONE_DAYS = 90;
+
 /** A season's premium track, in euro cents: §22.1's "about €6 a season". */
 export const PREMIUM_PRICE = facts.PREMIUM_TRACK_EUR * 100;
 
@@ -138,6 +143,19 @@ export class Shop {
     return Math.max(0, cap * 100 - spent - held);
   }
 
+  /** Refused when granting `p` would take a capped account past the
+   *  month's cap, counted at the grant whatever intents were made before
+   *  (SEC-21). The account's own intent, while it still holds its place in
+   *  the allowance, is counted once, not twice. */
+  capCheck(account, p, i, now) {
+    let left = this.allowance(account, now);
+    if (left === null) return;
+    if (i && i.account === account && !i.redeemed_at && i.created_at > now - INTENT_MS) left += i.price ?? p.price;
+    if (p.price > left) {
+      throw new Refused(403, "monthly_cap", { left, cap: facts.SPENDING_CAPS_EUR[this.ageBand(account)] * 100 });
+    }
+  }
+
   /**
    * Step one: ask to buy a product, for oneself or, as a gift, for a friend
    * (`for`). Refused over a minor's cap, before the store is asked for
@@ -191,6 +209,10 @@ export class Shop {
     if (!proof) throw new Refused(402, "receipt_refused");
     const now = this.service.now();
     return transaction(this.db, () => {
+      // Nothing new is written about an account deleted while its claim was
+      // with the store (SEC-33).
+      const buyer = this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?").get(account);
+      if (!buyer || buyer.deleted_at) throw new Refused(410, "account_deleted");
       const done = this.db.prepare("SELECT * FROM purchases WHERE store = ? AND txn = ?")
         .get(store, proof.transaction);
       if (done) {
@@ -201,25 +223,23 @@ export class Shop {
       const p = this.product(proof.product);
       if (!p) throw new Refused(404, "no_such_product");
       const i = this.intentOf(proof);
-      if (i) {
-        if (i.account !== account || i.product !== proof.product) throw new Refused(409, "intent_mismatch");
-        this.db.prepare("UPDATE purchase_intents SET redeemed_at = ? WHERE id = ?").run(now, i.id);
-      } else {
-        // SR-10: a receipt with no intent never went past the cap's check, so
-        // a minor's is refused once it would take the month past §20.2's cap.
-        const left = this.allowance(account, now);
-        if (left !== null && p.price > left) {
-          throw new Refused(403, "monthly_cap", { left, cap: facts.SPENDING_CAPS_EUR[this.ageBand(account)] * 100 });
-        }
+      if (i && (i.account !== account || (!i.tomb && i.product !== proof.product))) {
+        throw new Refused(409, "intent_mismatch");
       }
+      // SR-10 and SEC-21: a minor's receipt, with an intent or none, is
+      // refused once it would take the month past §20.2's cap; an intent
+      // checked when it was made may have lapsed, and others been made since.
+      this.capCheck(account, p, i, now);
+      const intent = i && !i.tomb ? i : null;   // a tombstone is no intent to redeem (SEC-29)
+      if (intent) this.db.prepare("UPDATE purchase_intents SET redeemed_at = ? WHERE id = ?").run(now, intent.id);
       // A friend deleted since is owed nothing: the gift is the buyer's.
-      const friend = i?.recipient && !this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?")
+      const friend = intent?.recipient && !this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?")
         .get(i.recipient).deleted_at ? i.recipient : null;
       const to = friend ?? account;
       this.db.prepare(
         `INSERT INTO purchases (store, txn, account, product, price, intent, at, recipient)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
-        .run(store, proof.transaction, account, proof.product, p.price, i ? i.id : null, now, friend);
+        .run(store, proof.transaction, account, proof.product, p.price, intent ? intent.id : null, now, friend);
       const granted = this.grant(to, p, now);
       this.service.telemetry.record(account, "purchase", { product: proof.product, cents: p.price }, now);
       return { product: proof.product, to, granted };
@@ -233,13 +253,19 @@ export class Shop {
    * intent names: after that it is refused unsettled, so Play refunds it by
    * itself and an App Store one is left unfinished for the player to ask
    * Apple for their money, rather than given to the buyer who meant it for
-   * someone else.
+   * someone else. One deleted less than TOMBSTONE_DAYS ago still names its
+   * account (SEC-29): `{ id, account, tomb: true }`, so a receipt that
+   * reached another account's device is not granted there.
    */
   intentOf(proof) {
     const i = proof.intent
       ? this.db.prepare("SELECT * FROM purchase_intents WHERE id = ?").get(proof.intent) : null;
     if (!i && typeof proof.product === "string" && proof.product.startsWith(GIFT)) {
       throw new Refused(409, "gift_intent_gone");
+    }
+    if (!i && proof.intent) {
+      const tomb = this.db.prepare("SELECT id, account FROM intent_tombstones WHERE id = ?").get(proof.intent);
+      if (tomb) return { ...tomb, tomb: true };
     }
     return i ?? null;
   }
@@ -269,7 +295,11 @@ export class Shop {
     if (!done) {
       // Refused before the store is told anything, so nothing is consumed.
       if (this.refunded(store, proof.transaction)) throw new Refused(402, "receipt_refunded");
-      this.intentOf(proof);
+      const i = this.intentOf(proof);
+      // Over a minor's cap, refused before the store acknowledges it, so a
+      // Play purchase is refunded by itself (SEC-21).
+      const p = this.product(proof.product);
+      if (p) this.capCheck(account, p, i, this.service.now());
       const settled = await this.settleReceipt(store, proof);
       if (!settled?.ok) {
         const reason = settled?.reason ?? "receipt_refused";

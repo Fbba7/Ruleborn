@@ -341,6 +341,13 @@ bash tools/run_checks.sh record <sha> <agent>   # writes precheck into your stat
 `DONE exit=<code> sha=<sha>` to `/tmp/check-<sha>.log` when it ends. `wait`
 and `result` remove the worktree once the run is done.
 
+The candidate's code is not trusted (SEC-19). The run goes inside bwrap,
+with everything read-only but its worktree and a private `/tmp`, no network,
+no capabilities and none of the environment's secret-looking variables;
+without bwrap, as the unprivileged user `CHECK_USER`; with neither, `start`
+refuses and says why, unless `CHECK_UNSANDBOXED=1` is set (a warned, local
+opt-out). Install bubblewrap on the machine that runs the lead.
+
 - **A run passed** only if its log ends `DONE exit=0` **and** contains
   `All checks passed.` `check_all.sh` runs under `set -euo pipefail`, prints
   a `== <check> ==` heading before each step and stops at the first failure,
@@ -443,6 +450,11 @@ Main moves only to a candidate that passed on the integrator's side.
 not available from the agents' tools, so nothing configures it. Only the lead
 or the coordinator moves main, through this queue, after `check_all.sh`
 passes on the candidate; every other agent pushes only to its own branch.
+GitHub runs `.github/workflows/checks.yml` on every push and pull request
+(SEC-28): the server's and the simulation's tests, the documents check, the
+ownership self-test and the runner's containment with a real bubblewrap. It
+binds only once the owner turns on branch protection for main in the
+repository's settings, requiring its `checks` status.
 
 **The candidate's checks** also include an ownership check: every changed
 path must match the task's `files` or an exception the lead granted:
@@ -486,7 +498,8 @@ is still enabled and reads its last run. The wake-up ban
 applies to idle building sessions, not to the lead's scheduled cycle.
 
 What is known about the trigger (reported by the integrator from this
-project): the repository has no CI (no `.github/workflows`); scheduled tasks
+project): the repository had no CI then (it has `.github/workflows/checks.yml`
+since SEC-28); scheduled tasks
 are cron-style triggers on the owner's account, plus one-shot `send_later`
 messages; a disabled scheduled task delivered nothing; and a one-shot message
 counts as delivered only after checking that the target session is running.

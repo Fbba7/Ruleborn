@@ -144,6 +144,14 @@ python3 tools/check_unread_fields.py
 echo
 echo "== the agent program's check runner and ownership check =="
 bash tools/run_checks.sh --self-test
+# The runner's containment of a candidate's code (SEC-19). Inside a contained
+# run it cannot nest a sandbox, so it says NOT TESTED for those cases; CI runs
+# it as root with bubblewrap installed, where every case is required.
+bash tools/test_run_checks.sh
+# export.sh's Android signing gate (SEC-30), with everything stubbed.
+bash client/test_export.sh
+# The CI workflow runs on every push and pull request, pinned (SEC-28).
+python3 tools/check_ci.py
 python3 tools/coord/owners.py --self-test
 if [ -f docs/progress/backlog.json ]; then python3 tools/coord/owners.py claims; fi
 

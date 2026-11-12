@@ -31,8 +31,9 @@ const ACTIONS = {
   place: (service, account, a) => service.universe.place(account, a),
   work: (service, account, a) => service.home.work(account, a.character,
     a.kind == null ? {} : { realm: a.realm, kind: a.kind, n: a.n ?? 1 }),
-  weave: (service, account, a) => service.weaving.weave(account, a),
-  unweave: (service, account, a) => service.weaving.unweave(account, a),
+  // The view is built once, after the whole queue (SEC-23).
+  weave: (service, account, a) => service.weaving.weave(account, a, { view: false }),
+  unweave: (service, account, a) => service.weaving.unweave(account, a, { view: false }),
 };
 
 /** The device's queue made in order: each action's answer, and the

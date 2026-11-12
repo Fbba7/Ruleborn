@@ -50,8 +50,9 @@ test("SR-12: one player's time on one island counts to an hour a quarter", () =>
     .run(creator, q.starts_at);
   const at = q.starts_at + 1000;
   for (let n = 0; n < 200; n++) {
-    db.prepare(`INSERT INTO workshop_plays (token, player, item, seed, ticks, issued_at, submitted_at, outcome)
-                VALUES (?, ?, 'i', '1', ?, ?, ?, '{"validated":true}')`).run(`p${n}`, alt, 150 * TICKS_PER_SECOND, at, at);
+    // counted: an account old enough to count (SEC-26), so only SR-12's cap holds it.
+    db.prepare(`INSERT INTO workshop_plays (token, player, item, seed, ticks, issued_at, submitted_at, outcome, counted)
+                VALUES (?, ?, 'i', '1', ?, ?, ?, '{"validated":true}', 1)`).run(`p${n}`, alt, 150 * TICKS_PER_SECOND, at, at);
   }
   assert.equal(ONE_PLAYER_ONE_ISLAND_S, 3600);
   assert.equal(t.service.fund.played(q.starts_at, q.ends_at)[creator], ONE_PLAYER_ONE_ISLAND_S,
@@ -93,7 +94,12 @@ test("SR-15 (D60 unbuilt): an island's exposed loot is clamped to 750, the media
   const t = server();
   const owner = t.service.session("gc:owner").account;
   const island = t.build.exampleIsland(true);
+  // SEC-17: an exposure above i32::MAX, which the simulation would read as a
+  // negative one, is not an island at all; the largest it can hold is
+  // clamped as before.
   new DataView(island.buffer, island.byteOffset).setUint32(6, 0xffffffff, true);
+  assert.throws(() => t.service.publish(owner, island), { reason: "island_malformed" });
+  new DataView(island.buffer, island.byteOffset).setUint32(6, 0x7fffffff, true);
   const { bundle } = t.service.publish(owner, island);
   const exposed = t.service.db.prepare("SELECT exposed FROM snapshots WHERE bundle = ?").get(bundle).exposed;
   assert.equal(exposed, 750, "a player with nothing stored claims no more than the median");

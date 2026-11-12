@@ -6,7 +6,7 @@ import { test } from "node:test";
 
 import { defenceShare } from "../src/economy.mjs";
 import { KEEPER_LEVEL_CAP, SAGES, climb, counted, heistExperience } from "../src/keeper.mjs";
-import { openPlan, play, server, twoPlayers } from "./setup.mjs";
+import { openPlan, play, server, submitCrewed, twoPlayers } from "./setup.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
 
@@ -62,7 +62,7 @@ test("a foiled raid earns a foiled heist's experience; a game among friends earn
   const { invite } = t.service.friends.invite(t.defender.account);
   t.service.friends.accept(t.raider.account, invite);
   const friendly = t.service.lease(t.raider.account, t.bundle, null, { mode: "friendly" });
-  const game = t.service.submit(t.raider.account, friendly.token, play(t, friendly, { plan: [] }));
+  const game = submitCrewed(t, t.raider.account, friendly, { plan: [] });   // a friendly heist names its crew (SEC-24)
   assert.equal(game.keeper, null);
   assert.equal(t.service.keeper.view(t.raider.account).xp, 12);
 });

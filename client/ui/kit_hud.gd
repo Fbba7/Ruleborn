@@ -93,17 +93,11 @@ static func meter(level: int, of: int, words: String) -> VBoxContainer:
 	v.add_theme_constant_override("separation", UI.px(2))
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var row := HBoxContainer.new()
+	row.name = "Bells"
 	row.add_theme_constant_override("separation", UI.px(2))
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	for i: int in of:
-		var bell := Control.new()
-		bell.custom_minimum_size = Vector2(UI.px(9), UI.px(12))
-		bell.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var lit := Tokens.color("warn") if i < of / 2 else Tokens.color("alarm")
-		row.add_child(bell)
-		RbBox.dress(bell, "bar_track", 3)
-		if i < level:
-			RbBox.of(bell).tint(lit.lightened(0.3), lit)
+		_bell(row, i, level, of)
 	v.add_child(row)
 	var l := UI.label(words, 13)
 	l.theme_type_variation = "Caption"
@@ -113,11 +107,26 @@ static func meter(level: int, of: int, words: String) -> VBoxContainer:
 	return v
 
 
+## Bell `i` of `of` in `row`: lit (marked "lit") below `level`, amber in the
+## first half and red after.
+static func _bell(row: HBoxContainer, i: int, level: int, of: int) -> void:
+	var bell := Control.new()
+	bell.custom_minimum_size = Vector2(UI.px(9), UI.px(12))
+	bell.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var lit := Tokens.color("warn") if i < of / 2 else Tokens.color("alarm")
+	row.add_child(bell)
+	RbBox.dress(bell, "bar_track", 3)
+	if i < level:
+		RbBox.of(bell).tint(lit.lightened(0.3), lit)
+		bell.set_meta("lit", true)
+
+
 ## The clock: tabular figures on parchment, the alarm's red plate under
 ## thirty seconds (`warning`), its words staying readable on either.
 static func clock(text: String, warning := false) -> PanelContainer:
 	var p := PanelContainer.new()
 	p.name = "Clock"
+	p.set_meta("alarmed", warning)
 	p.add_theme_stylebox_override("panel", UI.clear_box(12, 2))
 	UI.dress(p, "red" if warning else "parchment", 999)
 	var l := UI.label(text, 22)
@@ -258,8 +267,10 @@ static func week(minutes: Array, letters: Array, today: int) -> HBoxContainer:
 ## ground in a leather ring, their ability's uses as diamonds on a dark tag
 ## at its shoulder (filled and hollow: told apart by shape), their health
 ## as a green bar and their name beneath. `school` "" keeps the violet.
+## `inked` (the heist over the world): a thicker bar and a heavier ink
+## outline round the name, so both read on any ground.
 static func crew(picture: Texture2D, name: String, health: float, uses: int, pressed: Callable,
-		school := "") -> VBoxContainer:
+		school := "", inked := false) -> VBoxContainer:
 	var v := VBoxContainer.new()
 	v.name = "Crew"
 	v.add_theme_constant_override("separation", UI.px(3))
@@ -289,7 +300,7 @@ static func crew(picture: Texture2D, name: String, health: float, uses: int, pre
 		tag.offset_bottom = -UI.px(8)
 		b.add_child(tag)
 	v.add_child(b)
-	var bar := KitBar.make(health, Tokens.color("success"), 8)
+	var bar := KitBar.make(health, Tokens.color("success"), 11 if inked else 8)
 	bar.custom_minimum_size.x = UI.px(54)
 	bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(bar)
@@ -297,7 +308,7 @@ static func crew(picture: Texture2D, name: String, health: float, uses: int, pre
 	n.add_theme_font_override("font", UI.bold_font())
 	n.add_theme_color_override("font_color", Tokens.color("text_on_night"))
 	n.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
-	n.add_theme_constant_override("outline_size", UI.px(2))
+	n.add_theme_constant_override("outline_size", _ink(14) if inked else UI.px(2))
 	n.set_meta("bold", true)
 	v.add_child(n)
 	return v
@@ -328,6 +339,7 @@ static func _uses(left: int, of: int) -> PanelContainer:
 static func alarm(level: int, of: int, title: String) -> PanelContainer:
 	var p := UI.panel("leather")
 	p.name = "Alarm"
+	p.set_meta("of", of)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(4))
 	var head := HBoxContainer.new()
@@ -339,6 +351,7 @@ static func alarm(level: int, of: int, title: String) -> PanelContainer:
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	head.add_child(t)
 	var n := UI.label("%d / %d" % [level, of], 14)
+	n.name = "Count"
 	n.theme_type_variation = "Number"
 	n.set_meta("bold", true)
 	head.add_child(n)
@@ -386,18 +399,290 @@ static func loot(rows: Array, carried: float, mark: float, words: String) -> Pan
 	var p := figures(rows, "leather")
 	p.name = "Loot"
 	var v := p.get_child(0) as VBoxContainer
+	var said: Array[Label] = []
+	var counts: Array[Label] = []
+	for h: Node in v.get_children():
+		said.append(h.get_child(0) as Label)
+		counts.append(h.get_child(1) as Label)
+	p.set_meta("words", said)
+	p.set_meta("numbers", counts)
 	var bar := KitBar.make(carried, Color(), 8.0)
 	bar.name = "Load"
 	bar.aim(mark)
 	v.add_child(bar)
 	if words != "":
 		var l := UI.label(words, 14)
+		l.name = "Caption"
 		l.theme_type_variation = "Secondary"
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		l.set_meta("bold", true)
 		l.add_theme_font_override("font", UI.bold_font())
 		v.add_child(l)
 	return p
+
+
+## The clock as the key frame 02-heist.png draws it: Lilita One figures in
+## tabular widths, cream with an ink outline and a drop, on parchment
+## rounded 14 points with its gold edge; the alarm's red plate when
+## `alarmed`. Larger than `clock`, and kept modest beside the crew.
+static func clock_large(text: String, alarmed := false) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.name = "Clock"
+	p.set_meta("large", true)
+	p.set_meta("alarmed", alarmed)
+	var pad := UI.clear_box(14, 4)
+	pad.content_margin_bottom = UI.px(6)
+	p.add_theme_stylebox_override("panel", pad)
+	UI.dress(p, "red" if alarmed else "parchment", 14)
+	var l := UI.label(text, 26)
+	l.name = "Time"
+	l.add_theme_font_override("font", Tokens.font("display", 400, true))
+	l.add_theme_color_override("font_color", Tokens.color("on_alarm" if alarmed else "cream"))
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", _ink(26))
+	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
+	l.add_theme_constant_override("shadow_offset_x", 0)
+	l.add_theme_constant_override("shadow_offset_y", UI.px(1.5))
+	l.set_meta("bold", true)
+	p.add_child(l)
+	return p
+
+
+## A clock's new time, and its plate red or parchment as `alarmed` says,
+## without building it again (`clock` or `clock_large`).
+static func set_clock(p: PanelContainer, text: String, alarmed := false) -> void:
+	var l := p.get_node("Time") as Label
+	l.text = text
+	if bool(p.get_meta("alarmed", false)) == alarmed:
+		return
+	p.set_meta("alarmed", alarmed)
+	var large := bool(p.get_meta("large", false))
+	UI.dress(p, "red" if alarmed else "parchment", 14 if large else 999)
+	if large:
+		l.add_theme_color_override("font_color", Tokens.color("on_alarm" if alarmed else "cream"))
+	elif alarmed:
+		l.add_theme_color_override("font_color", Tokens.color("on_alarm"))
+		l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+		l.add_theme_constant_override("outline_size", UI.px(3))
+	else:
+		l.remove_theme_color_override("font_color")
+		l.remove_theme_color_override("font_outline_color")
+		l.remove_theme_constant_override("outline_size")
+
+
+## The alarm panel for a narrow column at any text size: with §20.8's large
+## text the count stands under the word rather than run off the phone, and
+## from past half the bells it is written in the alarm's red, as the bells
+## are (the number says the level either way, §20.8). Named for a screen
+## reader as "Alarm 4 / 6".
+static func alarm_fit(level: int, of: int, title: String) -> PanelContainer:
+	var p := alarm(level, of, title)
+	p.set_meta("fit", true)
+	var n := p.find_child("Count", true, false) as Label
+	if Settings.text_scale > 130:
+		var head := n.get_parent()
+		head.remove_child(n)
+		head.add_sibling(n)
+		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_raise(p, n, level, of)
+	return p
+
+
+## An alarm panel's new level (`alarm` or `alarm_fit`): its bells and its
+## count, without building it again.
+static func set_alarm(p: PanelContainer, level: int) -> void:
+	var of := int(p.get_meta("of", 0))
+	var row := p.find_child("Bells", true, false) as HBoxContainer
+	for c: Node in row.get_children():
+		row.remove_child(c)
+		c.queue_free()
+	for i: int in of:
+		_bell(row, i, level, of)
+	var n := p.find_child("Count", true, false) as Label
+	n.text = "%d / %d" % [level, of]
+	if bool(p.get_meta("fit", false)):
+		_raise(p, n, level, of)
+
+
+static func _raise(p: PanelContainer, n: Label, level: int, of: int) -> void:
+	if level >= of / 2 + 1:
+		n.add_theme_color_override("font_color", Tokens.color("alarm_text_on_night"))
+	else:
+		n.remove_theme_color_override("font_color")
+	p.accessibility_name = Strings.t("HUD_ALARM", n.text)
+
+
+## The loot panel for a narrow column, `width` points wide (2.3 times that
+## with §20.8's large text, where the column is wider), in any language:
+## the rows as two columns (words, then numbers: a face drawn in one call)
+## while they fit, else a long row's number closer to its word and then
+## under it; the caption wrapping between words; the aim's tick left out
+## when `aim` is below 0 (a replay has no target); a thicker load bar.
+## `vault` [word, number, fraction] adds the Vault's cracking: a third row,
+## or with large text a thin bar beside its icon, lower than a row. Named
+## for a screen reader with every number.
+static func loot_fit(rows: Array, carried: float, aim: float, words: String, vault := [],
+		width := 90.0) -> PanelContainer:
+	var large := Settings.text_scale > 130
+	var all := rows.duplicate()
+	if not vault.is_empty() and not large:
+		all.append([vault[0], vault[1]])
+	var p := loot(all, carried, maxf(aim, 0.0), words)
+	p.set_meta("fit", true)
+	p.set_meta("vault", vault.duplicate())
+	var v := p.get_child(0) as VBoxContainer
+	var bar := v.get_node("Load") as KitBar
+	bar.custom_minimum_size.y = UI.px(10)
+	(bar.get_node("Aim") as Control).visible = aim >= 0.0
+	_columns(v, all, UI.px(width) * (2.3 if large else 1.0))
+	var caption := v.get_node_or_null("Caption") as Label
+	if caption != null:
+		caption.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		caption.custom_minimum_size.x = minf(_wide(words, 14), UI.px(width - 2.0))
+	if not vault.is_empty() and large:
+		var row := HBoxContainer.new()
+		row.name = "Vault"
+		row.add_theme_constant_override("separation", UI.px(4))
+		var icon := Icons.view("heiststatus/vaultprogress", 16.0)
+		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(icon)
+		var crack := KitBar.make(float(vault[2]), Color(), 5.0)
+		crack.name = "Cracked"
+		crack.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(crack)
+		bar.add_sibling(row)
+	_speak(p, all, words)
+	return p
+
+
+## A loot panel's new numbers (`loot` or `loot_fit`), without building it
+## again: `rows` in the order it was built with (a row it was not built
+## with is left out), the load easing to `fraction`, the aim's tick at `aim`
+## (hidden below 0), the caption's words and, on `loot_fit`, the Vault's
+## [word, number, fraction]. A change of language or text size builds it
+## again.
+static func set_loot(p: PanelContainer, rows: Array, fraction: float, aim: float, caption: String,
+		vault := []) -> void:
+	var all := rows.duplicate()
+	var cracked := p.find_child("Cracked", true, false) as KitBar
+	if not vault.is_empty():
+		p.set_meta("vault", vault.duplicate())
+		if cracked != null:
+			Motion.fill(cracked, clampf(float(vault[2]), 0.0, 1.0))
+		else:
+			all.append([vault[0], vault[1]])
+	var said: Array = p.get_meta("words", [])
+	var counts: Array = p.get_meta("numbers", [])
+	for i: int in mini(all.size(), said.size()):
+		(said[i] as Label).text = str(all[i][0])
+		(counts[i] as Label).text = str(all[i][1])
+	var bar := p.find_child("Load", true, false) as KitBar
+	Motion.fill(bar, clampf(fraction, 0.0, 1.0))
+	var tick := bar.get_node_or_null("Aim") as Control
+	if tick != null:
+		tick.visible = aim >= 0.0
+		tick.anchor_left = clampf(aim, 0.0, 1.0)
+		tick.anchor_right = tick.anchor_left
+	var l := p.find_child("Caption", true, false) as Label
+	if l != null:
+		l.text = caption
+	if bool(p.get_meta("fit", false)):
+		_speak(p, all.slice(0, said.size()), caption)
+
+
+static func _speak(p: PanelContainer, rows: Array, words: String) -> void:
+	var spoken := PackedStringArray()
+	for r: Array in rows:
+		spoken.append("%s %s" % [r[0], r[1]])
+	var vault: Array = p.get_meta("vault", [])
+	if not vault.is_empty() and p.find_child("Cracked", true, false) != null:
+		spoken.append("%s %s" % [vault[0], vault[1]])
+	if words != "":
+		spoken.append(words)
+	p.accessibility_name = ", ".join(spoken)
+
+
+## Sets a loot panel's rows (in `v`) as two columns, words and numbers,
+## where they fit in `room` pixels; else each long row stands its number
+## closer to its word, and under it where even that is too wide.
+static func _columns(v: VBoxContainer, rows: Array, room: float) -> void:
+	var word := 0.0
+	var number := 0.0
+	for r: Array in rows:
+		word = maxf(word, _wide(str(r[0]), 14))
+		number = maxf(number, _wide(str(r[1]), 16))
+	var lines: Array[Node] = []
+	for c: Node in v.get_children():
+		if c is HBoxContainer:
+			lines.append(c)
+	if word + number + UI.px(8) > room:
+		for line: Node in lines:
+			var n := line.get_child(1) as Label
+			var wide := _wide((line.get_child(0) as Label).text, 14) + _wide(n.text, 16)
+			if wide + UI.px(8) <= room:
+				continue
+			(line as HBoxContainer).add_theme_constant_override("separation", UI.px(2))
+			if wide + UI.px(2) > room:
+				line.remove_child(n)
+				line.add_sibling(n)
+				n.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		return
+	var both := HBoxContainer.new()
+	both.name = "Columns"
+	both.add_theme_constant_override("separation", UI.px(8))
+	var sides: Array[VBoxContainer] = [VBoxContainer.new(), VBoxContainer.new()]
+	sides[0].size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for side: VBoxContainer in sides:
+		side.add_theme_constant_override("separation", UI.px(2))
+		both.add_child(side)
+	for line: Node in lines:
+		for k: int in 2:
+			var l := line.get_child(0) as Label
+			line.remove_child(l)
+			# One height for a word and its number, so the columns keep the rows.
+			l.custom_minimum_size.y = ceilf(UI.text_px(16) * 1.4)
+			l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			if k == 1:
+				l.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+			sides[k].add_child(l)
+		v.remove_child(line)
+		line.queue_free()
+	v.add_child(both)
+	v.move_child(both, 0)
+
+
+## A tip over the world for the heist (02-heist.png's "Tap crew, then
+## ground"): leather rounded 14 points, its words bold in cream with an ink
+## outline all round, whole and centred, wrapping rather than ending in an
+## ellipsis. Reads at any text size where the glass `KitStatus.hint` thins.
+static func tip(text: String) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.name = "Tip"
+	p.add_theme_stylebox_override("panel", UI.clear_box(14, 6))
+	UI.dress(p, "leather", 14)
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var l := UI.label(text, 15, true)
+	l.name = "Words"
+	l.add_theme_font_override("font", UI.bold_font())
+	l.add_theme_color_override("font_color", Tokens.color("cream"))
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", _ink(15))
+	l.set_meta("bold", true)
+	p.add_child(l)
+	return p
+
+
+## An ink outline, in pixels, wide enough to count all round for words
+## `points` tall (§21.8: 1.5 points or 12% of their size).
+static func _ink(points: float) -> int:
+	return UI.px(maxf(1.5, 0.12 * points) + 0.5)
+
+
+## How wide words stand in the kit's bold face (measured before the piece
+## is in the tree, where no theme reaches).
+static func _wide(text: String, points: float) -> float:
+	return ceilf(UI.bold_font().get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(points)).x)
 
 
 ## The Sage beside the crew (02-heist.png): their portrait round in a gold
