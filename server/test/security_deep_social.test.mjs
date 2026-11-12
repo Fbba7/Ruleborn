@@ -213,3 +213,50 @@ test("SEC-48: the friends' feed answers for more friends than SQLite has bound v
   assert.deepEqual(t.service.friends.feed(watcher).map((e) => [e.raider, e.defender]),
                    [[t.raider.account, t.defender.account]], "the same answer as with one friend");
 });
+
+// SEC-37: the push token lived on the account alone, so a device signed out
+// (or every device, signed out everywhere) was still sent the account's
+// notifications. Now the token records the session that registered it, and
+// that session's end clears it; signing out everywhere always does.
+test("SEC-37: a push token goes with the sign-out of the session that registered it, and with sign-out everywhere", async () => {
+  const t = server();
+  const phone = t.service.session("gc:sec37");
+  const tablet = t.service.session("gc:sec37");
+  assert.equal(phone.account, tablet.account);
+  const call = (who, path, method, body) => t.handle(new Request(`https://edge.example${path}`, {
+    method, headers: { authorization: `Bearer ${who.token}`, "content-type": "application/json" },
+    body: JSON.stringify(body) }));
+  const register = async (who, pushToken) => {
+    assert.equal((await call(who, "/v1/notifications", "PUT", { pushToken, timeZone: "UTC" })).status, 200);
+  };
+  // A message due now, and the tokens it is sent to.
+  const sentTo = async () => {
+    t.service.db.prepare("INSERT INTO notifications (account, kind, data, due_at) VALUES (?, 'reminder', ?, ?)")
+      .run(phone.account, JSON.stringify({ day: "2026-09-23" }), t.clock.now);
+    const to = [];
+    await t.service.notifications.deliver((token) => { to.push(token); return {}; });
+    return to;
+  };
+  await register(phone, "phone-token");
+  assert.deepEqual(await sentTo(), ["phone-token"]);
+  // The other device's sign-out leaves the phone's token.
+  assert.equal((await call(tablet, "/v1/session/end", "POST", {})).status, 200);
+  assert.deepEqual(await sentTo(), ["phone-token"], "the tablet signed out; the phone still hears");
+  // The phone's own sign-out takes it.
+  assert.equal((await call(phone, "/v1/session/end", "POST", {})).status, 200);
+  assert.deepEqual(await sentTo(), [], "the phone signed out hears nothing");
+  assert.equal(t.service.db.prepare("SELECT push_token FROM accounts WHERE id = ?").get(phone.account).push_token, null);
+  // Sign out everywhere, from another device than the one that registered it.
+  const again = t.service.session("gc:sec37");
+  const laptop = t.service.session("gc:sec37");
+  await register(again, "phone-token-2");
+  assert.deepEqual(await sentTo(), ["phone-token-2"]);
+  assert.equal((await call(laptop, "/v1/session/end", "POST", { everywhere: true })).status, 200);
+  assert.deepEqual(await sentTo(), [], "signed out everywhere, no device hears");
+  // Signing out the other devices, from the one that registered it, keeps it.
+  const mine = t.service.session("gc:sec37");
+  t.service.session("gc:sec37");
+  await register(mine, "phone-token-3");
+  assert.equal((await call(mine, "/v1/session/end", "POST", { others: true })).status, 200);
+  assert.deepEqual(await sentTo(), ["phone-token-3"]);
+});

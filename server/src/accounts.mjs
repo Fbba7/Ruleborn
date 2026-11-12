@@ -115,7 +115,7 @@ export function deleteAccount(service, account, reason = "requested", { journal 
          deleted_at = COALESCE(deleted_at, ?),
          deleted_reason = COALESCE(deleted_reason, ?), equipped = '{}', working_on = NULL, guardian_sage = NULL, defences_seen_at = NULL, profile_public = 0,
          keeper_adjective = NULL, keeper_noun = NULL,
-         push_token = NULL,
+         push_token = NULL, push_session = NULL,
          raider_rating = NULL, raider_deviation = NULL, raider_volatility = NULL, raider_games = NULL,
          reminder_at = NULL, time_zone = NULL, night_quiet = 1, terms_version = NULL,
          banned_at = NULL, banned_reason = NULL WHERE id = ?`)

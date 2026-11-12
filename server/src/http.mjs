@@ -693,8 +693,13 @@ export function handler(service, { webClientId = null, appleNotifications = null
           if (parts[3] !== "replay") return json({ error: "no_such_route" }, 404);
           return octets(service.replay(who(), parts[2] ?? ""));
         }
-        case "PUT /v1/notifications":
-          return json(service.notifications.set(who(), await body(request)));
+        case "PUT /v1/notifications": {
+          // The session it comes from: its sign-out clears a token it sends (SEC-37).
+          const account = who();
+          const header = request.headers.get("authorization") ?? "";
+          const { session } = service.auth.holder(header.startsWith("Bearer ") ? header.slice(7) : "");
+          return json(service.notifications.set(account, await body(request), { session }));
+        }
         case "POST /v1/heists": {
           const attacker = who();
           // TD.34: ?crew=12,15,19 names the roster's characters who went.

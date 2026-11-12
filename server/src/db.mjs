@@ -64,11 +64,13 @@ CREATE TABLE IF NOT EXISTS accounts (
   -- §14.6 and §20.2's notifications: the device's IANA time zone (none
   -- reported, no push: G34), their daily reminder (minutes after local
   -- midnight), an adult's choice of a quiet night, and the device's push
-  -- token (notifications.mjs).
+  -- token (notifications.mjs), with the session that registered it: that
+  -- session's end takes the token with it (auth.mjs, SEC-37).
   time_zone         TEXT,
   reminder_at       INTEGER,
   night_quiet       INTEGER NOT NULL DEFAULT 1,
   push_token        TEXT,
+  push_session      INTEGER,
   -- §13.1's seeded islands: the game's own, "stocked with designed islands
   -- from the start", and no new player to protect (matchmaking.mjs).
   seeded            INTEGER NOT NULL DEFAULT 0,
@@ -1032,6 +1034,7 @@ const ADDED = [
   ["accounts", "reminder_at", "INTEGER"],
   ["accounts", "night_quiet", "INTEGER NOT NULL DEFAULT 1"],
   ["accounts", "push_token", "TEXT"],
+  ["accounts", "push_session", "INTEGER"],
   // §14.2's experience toward the next Keeper level (keeper.mjs).
   ["accounts", "keeper_xp", "INTEGER NOT NULL DEFAULT 0"],
   // §7.6's "a law you are actually working on" (codex.mjs).

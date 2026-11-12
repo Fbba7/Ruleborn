@@ -329,6 +329,11 @@
      "deletion": "cleared",
      "holds": "the device's push token"
     },
+    "push_session": {
+     "type": "user-id",
+     "deletion": "cleared",
+     "holds": "the session that registered the push token, so its sign-out clears it"
+    },
     "seeded": {
      "type": "none",
      "holds": "marks the game's own seeded islands' account"

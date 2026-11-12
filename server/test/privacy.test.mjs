@@ -47,6 +47,7 @@ test("every column the server stores is declared, with the stores' words for it,
 async function busy() {
   const t = server();
   const x = t.service.session("gc:x");
+  const xSession = t.service.auth.holder(x.token).session;
   const y = t.service.session("gc:y");
   established(t, x.account);
   established(t, y.account);
@@ -146,7 +147,8 @@ async function busy() {
 
   const n = t.service.notifications;
   // Settings no player starts with, so clearing them is seen.
-  n.set(x.account, { pushToken: "device-x", reminder: 12 * 60, timeZone: "UTC", nightQuiet: false });
+  n.set(x.account, { pushToken: "device-x", reminder: 12 * 60, timeZone: "UTC", nightQuiet: false },
+        { session: xSession });                        // the session that registered it (SEC-37)
   t.service.db.prepare(`UPDATE accounts SET equipped = '{"banner":"x"}' WHERE id = ?`).run(x.account);
   t.clock.now = Date.UTC(2026, 8, 25, 12, 5);
   await n.deliver(() => {});
