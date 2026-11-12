@@ -3,21 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-AD-board-1b",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-12T05:42:00Z",
   "lease_until": "2026-11-12T08:42:00Z",
-  "updated_at": "2026-11-12T05:52:00Z",
-  "expected_next_update_by": "2026-11-12T06:45:00Z",
+  "updated_at": "2026-11-12T06:27:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "45d2c28626a49671aed4f3e5034fc92aa4ca16b7",
-    "next_step": "commit Round 2 of board-1.md, pre-check, mark ready"
+    "last_green_sha": "0387ca7879c8b36aecbcd64f561f2f9e1a8434fc",
+    "next_step": "P1-AD-board-1c (asked in AD-R16) re-checks A, B and D once K1-numerals-on and the AD-R13/AD-R15 fixes merge"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "0387ca7879c8b36aecbcd64f561f2f9e1a8434fc",
+    "exit": 0,
+    "finished_at": "2026-11-12T06:26:27Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "0387ca7879c8b36aecbcd64f561f2f9e1a8434fc",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
   "requests": [
