@@ -3,17 +3,17 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "working",
   "task_id": "P1-K1-numerals-on",
   "task_state": "blocked",
   "claimed_at": "2026-11-12T05:55:00Z",
   "lease_until": "2026-11-12T08:55:00Z",
-  "updated_at": "2026-11-12T06:17:00Z",
-  "expected_next_update_by": "2026-11-12T07:00:00Z",
+  "updated_at": "2026-11-12T07:12:00Z",
+  "expected_next_update_by": "2026-11-12T07:55:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e1cee5c1",
-    "next_step": "blocked on K1-R17: the switch on makes a11y_tests' word-contrast check fail on heist_hud.gd's hidden clock words; once the fix is in (by K1 under an exception, or by S1), the pre-check again, then the gate request"
+    "next_step": "pre-check running at ca66fe67 (K1-R17's two changes in heist_hud.gd); K1-R18 asks the lead to approve raising the heist's draw-call records by 2 for AD-R14's drop; on the answer, the final head (raise logged, or the drop taken out), guard.sh and the pre-check on it, then the gate request"
   },
   "precheck": {
     "sha": "f760dedfe1fe9e199e079bb5ae6221184eef95d8",
@@ -27,7 +27,8 @@
   "acks": [
     "M2",
     "M4",
-    "M5"
+    "M5",
+    "M8"
   ],
   "requests": [
     {
@@ -257,6 +258,21 @@
       "created_at": "2026-11-12T06:17:00Z",
       "due": "2026-11-12T10:17:00Z",
       "default": "K1 does not edit heist_hud.gd; P1-K1-numerals-on stays blocked at f760dedf (the switch on, guard OK, check_all 403 of 404) until S1 or a granted exception makes the change, then K1 runs the pre-check again and asks the gate",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R18",
+      "from": "K1",
+      "to": "lead",
+      "ask": "Under K1-R17's grant (M8), heist_hud.gd at ca66fe67 hides the clock's words (clock_label.visible = false) and gives the 'Laws here' / 'Leis aqui' header the kit's display stroke for AD-R14: the ink outline heavier (3.5 points, from 3) and a hard gold_drop drop 2 points under it with its own outline, as KitNav.logo wears them (kit-spec.md section 2.2's T2). The header already had UI.world_words' ink outline: ink #1A0C14 on the night sky does not show at a still's size, which is why the gate and AD saw none; only the drop makes the stroke read (stills compared). The drop costs 2 draw calls, the label's shadow pass: guard.sh reads heist 120/116/120 against records 118/114/118 (cap 150; textures and contrast unchanged, 0 words below 4.5:1). A drop without its own outline costs 1 and hides behind the outline. Approve raising tools/ui_bake/budgets.json's shots.recorded heist/100, heist/200 and heist/hc by 2 (to 120, 116, 120), logged in 'raises' (README: a rise by request to K1 with the lead's approval).",
+      "files": [
+        "tools/ui_bake/budgets.json",
+        "client/scripts/heist_hud.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-12T07:12:00Z",
+      "due": "2026-11-12T10:12:00Z",
+      "default": "No raise: K1 takes the drop out (the header keeps the heavier ink outline, no draw calls added, records unchanged), runs guard.sh and the pre-check on that head and asks the gate; if the gate fails Display type on the header, K1 files the raise again with the verdict",
       "escalate_to": "lead"
     }
   ],
