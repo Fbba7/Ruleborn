@@ -8,12 +8,15 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-12T17:55:00Z",
   "lease_until": "2026-11-12T20:55:00Z",
-  "updated_at": "2026-11-12T18:20:00Z",
-  "expected_next_update_by": "2026-11-12T19:05:00Z",
-  "long_run": null,
+  "updated_at": "2026-11-12T18:16:00Z",
+  "expected_next_update_by": "2026-11-12T19:01:00Z",
+  "long_run": {
+    "log": "/tmp/check-416449ccc73fc8a820e00b0e9e64c5c0acefc12f.log",
+    "expected_end": "2026-11-12T19:46:00Z"
+  },
   "progress_marker": {
     "last_green_sha": "9f6537f9",
-    "next_step": "Client tests running on 9f6537f9, then the pre-check and ready"
+    "next_step": "Pre-check of 416449cc running (client tests: 379 ok, 25 need the server); then record and ready"
   },
   "precheck": null,
   "gate_request": null,
