@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T18:53:51Z",
   "lease_until": "2026-11-12T21:53:51Z",
-  "updated_at": "2026-11-12T19:05:00Z",
-  "expected_next_update_by": "2026-11-12T19:50:00Z",
+  "updated_at": "2026-11-12T19:20:00Z",
+  "expected_next_update_by": "2026-11-12T20:05:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "8e9bcf0c",
-    "next_step": "answer AD's preview of art/ui/proof/motion_sheet.png (AIA-R23), merge main, run the setup line, client/build.sh, check_all.sh and guard.sh, then mark ready"
+    "last_green_sha": "8fbe66d8",
+    "next_step": "record the pre-check on 8fbe66d8 and the guard result, answer AD's preview (AIA-R23) or let its default apply, then mark ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -206,7 +206,7 @@
       "id": "AIA-R23",
       "from": "AIA",
       "to": "AD",
-      "ask": "Preview the motion sprite sheet at phone size before P2-AIA-motion-1 is marked ready: art/ui/proof/motion_sheet.png (left normal, right high contrast; top on the night of the result screen, bottom on parchment; half the atlas scale, the size they show on a phone). Pieces: burst rays and ring, sparkle star and dot, shine sweep, coin face, turn and edge. The curves are in art/ui/motion/curves.json (every step 150-250 ms, cubic ease-out, no overshoot, each motion's reduced form named). Send every objection in one round (M12)",
+      "ask": "Preview the motion sprite sheet at phone size before P2-AIA-motion-1 is marked ready: art/ui/proof/motion_sheet.png (left normal, right high contrast; top on the night of the result screen, bottom on parchment; half the atlas scale, the size they show on a phone). Pieces: burst rays and ring, sparkle star and dot, shine sweep, coin face, turn and edge. The curves are in art/ui/motion/curves.json (revised at 8fbe66d8: rarity tiers, 300-700 ms anticipation, a counter pulse on each landing; every step 150-250 ms, cubic ease-out, no overshoot, each motion's reduced form named). Send every objection in one round (M12)",
       "files": [
         "art/ui/proof/motion_sheet.png",
         "art/ui/motion/curves.json"
@@ -215,6 +215,20 @@
       "created_at": "2026-11-12T19:05:00Z",
       "due": "2026-11-13T07:00:00Z",
       "default": "the sheet stands as drawn, and AIA marks the task ready when its checks pass",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R24",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "In P2-K1-motion, time Motion from art/ui/motion/curves.json: Motion.press presses down in press_ms x 0.6 (108 ms), under §21.8's 150 ms (curves.json: down 150 ms, up 180 ms, with a darken to 0.9 and a light haptic); pop and sheet ease with TRANS_QUART where curves.json names cubic ease-out only; and the reduced press in curves.json sinks and darkens over 150 ms rather than changing at once (report.md section 10.3)",
+      "files": [
+        "client/ui/motion.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T19:20:00Z",
+      "due": "2026-11-14T19:20:00Z",
+      "default": "K1 times Motion as it sees fit in P2-K1-motion; curves.json stays the art's statement of the curves",
       "escalate_to": "lead"
     }
   ],
@@ -225,5 +239,5 @@
       "at": "2026-11-10T06:50:38Z"
     }
   ],
-  "next_step": "answer AD's preview of art/ui/proof/motion_sheet.png (AIA-R23), merge main, run the setup line, client/build.sh, check_all.sh and guard.sh, then mark ready"
+  "next_step": "record the pre-check on 8fbe66d8 and the guard result, answer AD's preview (AIA-R23) or let its default apply, then mark ready"
 }
