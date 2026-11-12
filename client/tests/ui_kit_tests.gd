@@ -68,6 +68,9 @@ const GROUND_SPLIT := 0.27
 ## (kit-spec.md section 9). The school disc joins them once its art is baked
 ## into the kit's pages.
 const NOT_BAKED := ["disc_school"]
+## The switches beside the skins' that are on: the baked numerals, whose art
+## passed the gate (P1-AIA-kit-3; P1-K1-numerals-on, kit-spec.md section 6.7).
+const BESIDE_ON := ["numerals"]
 
 var tree: SceneTree
 var check: Callable
@@ -372,6 +375,7 @@ func _skins() -> void:
 			on.append(k)
 	on.sort()
 	var passed := KitSkin.SKINS.keys().filter(func(k: String) -> bool: return k not in NOT_BAKED)
+	passed.append_array(BESIDE_ON)
 	passed.sort()
 	if on != passed:
 		bad.append("switched on: %s, not %s" % [", ".join(on), ", ".join(passed)])
@@ -790,6 +794,9 @@ func _numerals() -> void:
 		pieces["num_gold_%s" % glyphs[i]] = {"x": 0, "y": 0, "w": (16 if narrow else 30) + 12, "h": 48,
 			"advance": 16 if narrow else 30, "slice": null, "tint": false}
 	KitSkin.use({"format": 1, "family": "kit", "px_per_point": 6, "pieces": pieces}, tex, tex)
+	# The shipped switch is on (P1-K1-numerals-on): switched off for this run,
+	# so the live-text path is held as well as the baked one.
+	KitSkin.switch("numerals", false)
 	var off := KitNumerals.number(1234)
 	if not (off is Label) or (off as Label).text != "1,234":
 		bad.append("with the numerals' skin off, 1234 is not the live text \"1,234\"")
