@@ -78,6 +78,17 @@ func _init() -> void:
 	# dark capitals on gold inside the ink line, which part from any sky.
 	var here := KitStatus.tag(Strings.t("HUD_LAWS_HERE"))
 	here.name = "Here"
+	if not large:
+		# The plate's capitals set the laws column's width at normal text:
+		# German's "GESETZE HIER" on one line pushed the top row past the
+		# frame (§21.1), so a header wider than 80 points (in the bold face,
+		# before the kicker's spacing; "LAWS HERE" is about 73) breaks
+		# between its words. Large text already stacks the row.
+		var plate := here.get_child(0) as Label
+		var wide := UI.bold_font().get_string_size(plate.text.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1,
+			plate.get_theme_font_size("font_size")).x
+		if wide > UI.px(80):
+			plate.text = plate.text.replace(" ", "\n")
 	if Tokens.high_contrast:
 		# High contrast thickens the plate's ink line until it crowds the
 		# capitals; a ring of the plate's own fill (high contrast's paper)

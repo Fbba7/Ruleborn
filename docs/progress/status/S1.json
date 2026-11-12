@@ -7,14 +7,14 @@
   "task_id": "P1-S1-pilot-5",
   "task_state": "working",
   "claimed_at": "2026-11-12T11:28:53Z",
-  "lease_until": "2026-11-12T14:53:23Z",
-  "updated_at": "2026-11-12T11:53:23Z",
-  "expected_next_update_by": "2026-11-12T12:38:23Z",
+  "lease_until": "2026-11-12T15:15:37Z",
+  "updated_at": "2026-11-12T12:15:37Z",
+  "expected_next_update_by": "2026-11-12T13:00:37Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e846c531",
-    "next_step": "P1-S1-pilot-5: D done; F done (header on KitStatus.tag, a paper outline in high contrast); FIT reads broken labels by line. Next: finish the FIT matrix and budget shots, write part 5, pre-check and gate.",
-    "at": "2026-11-12T11:53:23Z"
+    "next_step": "P1-S1-pilot-5: part 5 written; the pre-check at 3690e4ca failed one layout test (German 'GESETZE HIER' on the tag widened the top row past 1080 px in heist and replay). Fixed: at normal text a header wider than 80 points breaks between its words. Next: client tests, pre-check again, then the gate request.",
+    "at": "2026-11-12T12:15:37Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -196,5 +196,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-5: D done; F done (header on KitStatus.tag, a paper outline in high contrast); FIT reads broken labels by line. Next: finish the FIT matrix and budget shots, write part 5, pre-check and gate."
+  "next_step": "P1-S1-pilot-5: part 5 written; the pre-check at 3690e4ca failed one layout test (German 'GESETZE HIER' on the tag widened the top row past 1080 px in heist and replay). Fixed: at normal text a header wider than 80 points breaks between its words. Next: client tests, pre-check again, then the gate request."
 }
