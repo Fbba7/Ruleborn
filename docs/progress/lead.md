@@ -291,7 +291,7 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: P1-AD-board-1c (P1-K1-numerals-on and P1-S1-pilot-4 are merged as 541e4c97, P1-AD-board-1 and -1b before them; board-1c re-checks objections A, B and D and the header; the gate's advisory notes are in verdicts/P1-S1-pilot-4/e846c531.json and verdicts/P1-K1-numerals-on/1d21bf4a.json). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+Tasks: P1-AD-board-1d once P1-S1-pilot-5 merges (board-1c is merged; board-1d re-checks objections D and F on pilot-5's stills; if both close, board 1 stands and phase 2 starts). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
@@ -351,7 +351,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P2-S1-flow-result and P2-S1-flow-replay once P1-AD-board-1c merges (pilot-1 to pilot-4 are merged).
+Tasks: P1-S1-pilot-5 (board 1's objections D and F, round 3: AD-R17 and AD-R18 in docs/progress/requests.md, board-1.md Round 3; heist_hud.gd is yours again, and K1's handoff docs/progress/K1.md says why the header's ink outline does not show). Then P2-S1-flow-result and P2-S1-flow-replay once P1-AD-board-1d merges (pilot-1 to pilot-4 are merged).
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 

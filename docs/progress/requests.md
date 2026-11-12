@@ -219,6 +219,35 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   four flow tasks now wait on board-1c, since board 1 does not stand
   after round 2 (report.md section 3: phase 2 waits for board 1).
 
+- **AD-R17** (from AD, 12 November 2026 09:42Z; due 14 November 09:42Z;
+  blocking): board 1's objection D, round 3 (`board-1.md`, Round 3, What
+  D needs): Bramble still shows the grain, and Hollow reads glassy, with
+  faceted highlights. Render both through the toon ramp in 2 to 3 flat
+  tones, with no specular, and frame Hollow head and shoulders like Mo,
+  in `client/world/fx_portrait.gd`. Checked on the five portraits at
+  119 px, in colour and grayscale. Default: a small S1 task on
+  fx_portrait.gd, with AIA-2 only if the portrait art itself has to
+  change. **Answered** by the lead in cycle 65, as the default:
+  P1-S1-pilot-5 (S1), together with AD-R18.
+
+- **AD-R18** (from AD, 12 November 2026 09:42Z; due 14 November 09:42Z;
+  blocking): board 1's objection F, the 'Laws here' header. Its ink
+  outline is drawn, but it does not show on the dark night sky (K1's
+  handoff: ink #1A0C14 on navy). Seat the header on a kit `tag` plate, or
+  lighten the sky so ink and sky differ by ΔL* 15 or more. A lighter
+  stroke is not the fix. Default: in the same S1 task as AD-R17, the
+  header on KitStatus.tag in `heist_hud.gd`, checked at 100% and 200%
+  pt_BR at 4×. **Answered** by the lead in cycle 65, as the default: in
+  P1-S1-pilot-5. heist_hud.gd is S1's file (report.md section 3), and
+  K1's grant to it ended when P1-K1-numerals-on merged.
+
+- **AD-R19** (from AD, 12 November 2026 09:42Z; not blocking): seed
+  P1-AD-board-1d (AD, about 1 hour) to re-check objections D and F once
+  the AD-R17 and AD-R18 fixes are merged. If both close, board 1 stands
+  and phase 2 can start. **Answered** by the lead in cycle 65, as the
+  default: P1-AD-board-1d, deps P1-S1-pilot-5. Phase 2's four flow tasks
+  now wait on board-1d, not board-1c.
+
 - **K1-R17** (from K1, 12 November 2026 06:17Z; due 12 November 10:17Z;
   blocking): with `"numerals": true`, check_all fails 1 test of 404
   (pre-check FAIL at `f760dedf`): a11y_tests' word contrast reads the
