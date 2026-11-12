@@ -8,13 +8,16 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T17:48:59Z",
   "lease_until": "2026-11-12T21:45:17Z",
-  "updated_at": "2026-11-12T18:45:17Z",
-  "expected_next_update_by": "2026-11-12T19:30:17Z",
-  "long_run": null,
+  "updated_at": "2026-11-12T18:48:50Z",
+  "expected_next_update_by": "2026-11-12T19:33:50Z",
+  "long_run": {
+    "log": "/tmp/check-8b47be966dba863a29e9f13a28891bf74ac33887.log",
+    "expected_end": "2026-11-12T19:23:50Z"
+  },
   "progress_marker": {
     "last_green_sha": "beb8a023",
-    "next_step": "Main merged at a1477f2 (ready commit 262904c4 plus main); pre-check (check_all) and guard.sh to run on the merge (M11), then mark ready.",
-    "at": "2026-11-12T18:45:17Z"
+    "next_step": "Pre-check (check_all) running on 8b47be96 (262904c4 plus main) and guard.sh on the same checkout (M11); then record and mark ready.",
+    "at": "2026-11-12T18:48:50Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -211,5 +214,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Main merged at a1477f2 (ready commit 262904c4 plus main); pre-check (check_all) and guard.sh to run on the merge (M11), then mark ready."
+  "next_step": "Pre-check (check_all) running on 8b47be96 (262904c4 plus main) and guard.sh on the same checkout (M11); then record and mark ready."
 }
