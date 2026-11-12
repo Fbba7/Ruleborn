@@ -8,7 +8,7 @@ import { test } from "node:test";
 
 import { deleteAccount } from "../src/accounts.mjs";
 import { Refused } from "../src/refused.mjs";
-import { INTENT_MS, Shop } from "../src/shop.mjs";
+import { INTENT_MS, Shop, TOMBSTONE_DAYS } from "../src/shop.mjs";
 import { server } from "./setup.mjs";
 
 /** A store the tests vouch for: "txn:product[:intent]". */
@@ -122,4 +122,43 @@ test("SEC-33: an account deleted while its claim is with the store is granted no
   await assert.rejects(claim, (e) => e instanceof Refused && e.status === 410 && e.reason === "account_deleted");
   assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM purchases WHERE account = ?").get(me).n, 0);
   assert.ok(!recorded.some((r) => r.account === me && r.kind === "purchase"), "no purchase telemetry");
+});
+
+// SEC-29: a lapsed intent is deleted a week after it lapses (G38), and a
+// receipt naming a deleted intent was honoured as one with none, for
+// whoever sent it. A receipt that reached another account (a shared or
+// handed-on device) was granted to that account. The server now keeps a
+// tombstone, the intent's id, its account and when it went, for
+// TOMBSTONE_DAYS, and grants its receipt to that account only.
+test("SEC-29: a receipt naming a deleted lapsed intent is granted only to the account that made it, for 90 days", () => {
+  const t = server();
+  const DAY = 24 * 60 * 60 * 1000;
+  const shop = new Shop(t.service, { verifyReceipt, catalogue: CATALOGUE });
+  t.service.shop = shop;
+  const a = t.service.session("gc:sec29a").account;
+  const b = t.service.session("gc:sec29b").account;
+  const { intent } = shop.intent(a, "robe-aurora");
+  t.clock.now += INTENT_MS + 8 * DAY;
+  assert.equal(t.service.expireLapsed().intents, 1);
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM purchase_intents").get().n, 0, "deleted, as G38 says");
+  assert.deepEqual(Object.keys(t.service.db.prepare("SELECT * FROM intent_tombstones").get()).sort(),
+                   ["account", "deleted_at", "id"], "nothing of the purchase is kept");
+  assert.throws(() => shop.redeem(b, "app-store", `txn-1:robe-aurora:${intent}`),
+                (e) => e instanceof Refused && e.status === 409 && e.reason === "intent_mismatch");
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM purchases").get().n, 0);
+  const granted = shop.redeem(a, "app-store", `txn-1:robe-aurora:${intent}`);
+  assert.deepEqual([granted.to, granted.repeated], [a, undefined], "the buyer is still served late");
+  assert.equal(t.service.db.prepare("SELECT intent FROM purchases WHERE txn = 'txn-1'").get().intent, null);
+  // Past TOMBSTONE_DAYS the tombstone goes too, and the receipt is one with
+  // no intent, as a restore is.
+  const later = shop.intent(a, "sky-aurora").intent;
+  t.clock.now += INTENT_MS + 8 * DAY;
+  t.service.expireLapsed();
+  t.clock.now += TOMBSTONE_DAYS * DAY - 1;
+  t.service.expireLapsed();
+  assert.throws(() => shop.redeem(b, "app-store", `txn-2:sky-aurora:${later}`), { reason: "intent_mismatch" },
+                "still remembered on its ninetieth day");
+  t.clock.now += 2;
+  t.service.expireLapsed();
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM intent_tombstones").get().n, 0);
 });

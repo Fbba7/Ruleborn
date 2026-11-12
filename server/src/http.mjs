@@ -112,12 +112,14 @@
 //   GET  /v1/constellations/:id                              → it, and its members
 //   POST /v1/constellations/:id/join                         → joined
 //   POST /v1/constellations/:id/roles {"account", "role"}    → an elder named, or unnamed
+//   POST /v1/constellations/:id/remove {"account"}           → a member removed (founder, elders; SEC-43)
 //   POST /v1/constellations/leave                            → left
 //   POST /v1/crews                                           → a crew, and its invite
 //   POST /v1/crews/join          {"invite"}                  → joined
 //   POST /v1/crews/leave                                     → left
 //   GET  /v1/crews/mine                                      → {crew}, the caller's, or null
 //   GET  /v1/crews/:id                                       → it
+//   POST /v1/crews/:id/invite                                → it, with a new invite (its longest member; SEC-42)
 //
 // The season track (§18.2, §18.8; track.mjs), purchases and cosmetics
 // (§20.2, §22.1, F41, G32; shop.mjs):
@@ -243,11 +245,15 @@ async function socialRoute(service, social, request, parts, who) {
       const { account, role } = await body(request);
       return json(social.appoint(me, text(account), text(role)));
     }
+    if (m === "POST" && a && b === "remove") {
+      return json(social.remove(me, a, text((await body(request)).account)));
+    }
   }
   if (area === "crews") {
     if (m === "POST" && !a) return json(social.startCrew(me), 201);
     if (m === "POST" && a === "join") return json(social.joinCrew(me, text((await body(request)).invite)));
     if (m === "POST" && a === "leave") return json(social.leaveCrew(me));
+    if (m === "POST" && a && b === "invite") return json(social.newInvite(me, a));
     if (m === "GET" && a === "mine") {
       const own = social.crewOf(me);
       return json({ crew: own ? social.crew(own, me) : null });
@@ -436,7 +442,8 @@ export function handler(service, { webClientId = null, appleNotifications = null
       if (peer && unsigned) limit("unsigned", peer);
       if (parts[0] === "v1" && parts[1] === "session") {
         return await sessionRoute(service, request, parts,
-                                  { signIn, limit, read: body, optional, place: placeOf?.(request) ?? null });
+                                  { signIn, limit, read: body, optional, place: placeOf?.(request) ?? null,
+                                    peer });
       }
       if (["league", "seasons", "constellations", "crews"].includes(parts[1])) {
         const out = await socialRoute(service, social, request, parts, who);
@@ -692,8 +699,13 @@ export function handler(service, { webClientId = null, appleNotifications = null
           if (parts[3] !== "replay") return json({ error: "no_such_route" }, 404);
           return octets(service.replay(who(), parts[2] ?? ""));
         }
-        case "PUT /v1/notifications":
-          return json(service.notifications.set(who(), await body(request)));
+        case "PUT /v1/notifications": {
+          // The session it comes from: its sign-out clears a token it sends (SEC-37).
+          const account = who();
+          const header = request.headers.get("authorization") ?? "";
+          const { session } = service.auth.holder(header.startsWith("Bearer ") ? header.slice(7) : "");
+          return json(service.notifications.set(account, await body(request), { session }));
+        }
         case "POST /v1/heists": {
           const attacker = who();
           // TD.34: ?crew=12,15,19 names the roster's characters who went.

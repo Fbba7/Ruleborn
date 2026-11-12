@@ -1,0 +1,68 @@
+# The checks a change must pass before it may land (SEC-28).
+#
+# Branch protection makes this binding: in the repository's settings, a rule
+# on the default branch that requires a pull request and the "checks" status
+# below, blocks force-pushes and deletions, and lets no one bypass it. This
+# file alone only reports.
+#
+# Every action is pinned to a full commit SHA, with its release tag beside it.
+# The job needs nothing from the network but the toolchains: the server has no
+# npm dependencies and the simulation none from crates.io.
+name: checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: "22"
+
+      - name: Rust target for the simulation's WebAssembly build
+        run: rustup target add wasm32-unknown-unknown
+
+      - name: The simulation's WebAssembly build, which the server's tests load
+        working-directory: sim
+        run: cargo build --locked --release --target wasm32-unknown-unknown
+
+      - name: The server's tests
+        working-directory: server
+        run: npm test
+
+      - name: The simulation's tests
+        working-directory: sim
+        run: cargo test --locked
+
+      - name: The documents agree with each other
+        run: python3 tools/check_docs_consistency.py
+
+      - name: This workflow still runs every check, pinned
+        run: python3 tools/check_ci.py
+
+      - name: The ownership check
+        run: python3 tools/coord/owners.py --self-test
+
+      - name: The check runner's containment, with a real bubblewrap (SEC-19)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap
+          sudo env "PATH=$PATH" CHECK_TEST_REQUIRE_BWRAP=1 bash tools/test_run_checks.sh
+
+      - name: The Android export's signing gate (SEC-30)
+        run: bash client/test_export.sh

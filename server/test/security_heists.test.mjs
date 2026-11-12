@@ -51,7 +51,9 @@ test("SR-13: a name every object answers to is no law", async () => {
 });
 
 // SR-08's server half: every submission's bytes are kept before they are
-// checked, and the defender was handed even a refused one's.
+// checked, and the defender was handed even a refused one's. Since SEC-18 B
+// bytes refused before the header checks pass are never stored, so the
+// raider is answered 410 for them too (it was 200, the junk handed back).
 test("SR-08: a defender is served the replays of raids that were played, never a refused submission's bytes", async () => {
   const t = twoPlayers(true);
   const get = async (who, token) => (await t.handle(new Request(`https://edge.example/v1/heists/${token}/replay`,
@@ -60,7 +62,7 @@ test("SR-08: a defender is served the replays of raids that were played, never a
   const refused = t.service.submit(t.raider.account, bad.token, new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]));
   assert.equal(refused.validated, false);
   assert.equal(await get(t.defender, bad.token), 404, "the refused bytes are not the defender's to load");
-  assert.equal(await get(t.raider, bad.token), 200, "the raider keeps their own");
+  assert.equal(await get(t.raider, bad.token), 410, "junk that is no heist is not kept, even for its sender (SEC-18 B)");
   const good = t.service.lease(t.raider.account, t.bundle);
   assert.equal(t.service.submit(t.raider.account, good.token, play(t, good, { plan: openPlan() })).validated, true);
   assert.equal(await get(t.defender, good.token), 200, "a raid played is theirs to watch");

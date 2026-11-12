@@ -117,7 +117,7 @@ export class Codex {
    *  of its law; every eighth paying heist a page of the law worked on; and a
    *  friendly heist's owner a page for each raider caught. Returns the pages
    *  given, by law. */
-  afterHeist(lease, verdict, now, cast = []) {
+  afterHeist(lease, verdict, now, cast = [], { friendPages = true } = {}) {
     const raider = lease.attacker;
     this.ensure(raider, now);
     const given = {};
@@ -158,7 +158,8 @@ export class Codex {
         for (const law of cast) this.add(owner, law, 1, now);
       }
     }
-    if (lease.mode === "friendly" && verdict.caught > 0) {
+    // Only the pair's first friendly heist of the day pays them (SEC-24).
+    if (lease.mode === "friendly" && friendPages && verdict.caught > 0) {
       const owner = this.db.prepare("SELECT owner FROM snapshots WHERE bundle = ?").get(lease.bundle)?.owner;
       const working = owner && this.db.prepare("SELECT working_on FROM accounts WHERE id = ?").get(owner)?.working_on;
       if (working) {

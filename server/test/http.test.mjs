@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { established, openPlan, play, server } from "./setup.mjs";
+import { counting, established, openPlan, play, server } from "./setup.mjs";
 
 test("sign in, publish, lease, play, submit and read the balance over HTTP", async () => {
   const t = server();
@@ -80,6 +80,7 @@ test("the Workshop over HTTP: publish a cleared island, browse, play, rate, remi
   const listed = await (await call("GET", "/v1/workshop?list=new", { token: player.token })).json();
   assert.deepEqual(listed.map((i) => i.id), [item.id]);
 
+  counting(t, player.account);          // a player whose completion and rating count (SEC-26)
   const p = await (await call("POST", `/v1/workshop/${item.id}/play`, { token: player.token })).json();
   const replay = play(t, p, { plan: openPlan() });
   const done = await (await call("POST", `/v1/workshop/plays/${p.token}`,

@@ -1,0 +1,19 @@
+[
+ {
+  "task_id": "P1-K1-numerals-on",
+  "sha": "1d21bf4a",
+  "item": "heist at 100% text",
+  "quality": "Display type",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "The 2:25 timer now wears an outline, a hard drop and a gradient fill, and beats the pass anchor's 2:18 (objection A met). The 'Laws here' header over the night sky still shows only the gold offset drop, with no dark ink outline all round: a drop shadow standing in for an outline. outline_size is set (UI.px(3.5)) but no outline is visible; check that the header's font_outline_color is set.",
+  "advisory": true,
+  "at": "2026-11-12T08:55:00Z"
+ }
+]

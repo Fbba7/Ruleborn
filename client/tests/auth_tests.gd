@@ -414,6 +414,31 @@ func _another_account_parks_the_queue() -> void:
 			+ "the new account; it waits under the account that queued it (SEC-29)",
 		s.auth.account == "acc2" and s.outbox.pending() == 0 and parked.has("receipt-1")
 			and not _routes(t).has("POST /v1/shop/receipts"), str(_routes(t)))
+	# The call whose own renewal answered for another account is not sent as
+	# it either: it waits, parked, beside what was queued behind it.
+	check.call("the queued request whose own call renews the session for another account is not sent as the "
+			+ "new account; it waits under the account that queued it (SEC-29)",
+		parked.has("lease-1") and not _routes(t).has("POST /v1/heists/lease-1"), str(_routes(t)))
+	s.close()
+	# And when the server refuses the old session and the renewal that follows
+	# answers for another account: the refused call is not made again as it.
+	var h := _fake("change-refused")
+	s = h[0]
+	t = h[1]
+	await s.auth_flow.sign_in()
+	t.on("POST /v1/session/refresh", acc2)
+	t.on("POST /v1/heists/lease-1", {"error": "session_refused"}, 401)
+	s.outbox.put("lease-1", "/v1/heists/lease-1", PackedByteArray([1]))
+	t.calls.clear()
+	var sent := await s.outbox.send(s.api, "lease-2", "/v1/heists/lease-2", PackedByteArray([2]))
+	parked = Outbox.new(s.auth_flow.parked_path("acc1"))
+	var tries := _routes(t).filter(func(r: String) -> bool: return r == "POST /v1/heists/lease-1")
+	check.call("a call the server refuses, renewed for another account, is not made again as the new account; "
+			+ "it waits under the account that made it (SEC-29)",
+		s.auth.account == "acc2" and tries.size() == 1 and s.outbox.pending() == 0 and parked.has("lease-1")
+			and parked.has("lease-2") and sent.ok and sent.value.get("pending", false)
+			and not _routes(t).has("POST /v1/heists/lease-2"),
+		"%s %s" % [sent, _routes(t)])
 	s.close()
 
 

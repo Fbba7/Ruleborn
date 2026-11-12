@@ -6,10 +6,11 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
+import { deleteAccount } from "../src/accounts.mjs";
 import { clockTicks } from "../src/service.mjs";
 import { Social } from "../src/social.mjs";
-import { Workshop } from "../src/workshop.mjs";
-import { openPlan, play, server, twoPlayers } from "./setup.mjs";
+import { COUNTED_AGE_MS, COUNTED_KEEPER_LEVEL, LONE_FANS_A_DAY, Workshop } from "../src/workshop.mjs";
+import { counting, openPlan, play, server, twoPlayers } from "./setup.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
 const HOUR = 60 * 60 * 1000;
@@ -90,6 +91,7 @@ test("SEC-40: a play submitted once its island is taken down is answered, but ea
 test("SEC-40: a play submitted once its island is withdrawn earns nothing; completions earned while listed stay", () => {
   const { t, w, creator, item, remove } = workshop();
   const early = t.service.session("gc:early").account;
+  counting(t, early);                   // a completion that counts (SEC-26)
   const p0 = w.play(early, item.id);
   assert.equal(w.submitPlay(early, p0.token, cleared(t, p0)).counted, true);
   const late = t.service.session("gc:late").account;
@@ -101,11 +103,116 @@ test("SEC-40: a play submitted once its island is withdrawn earns nothing; compl
   // A removed island drops off the ladder altogether.
   const other = workshop();
   const player = other.t.service.session("gc:player").account;
+  counting(other.t, player);
   const p2 = other.w.play(player, other.item.id);
   assert.equal(other.w.submitPlay(player, p2.token, cleared(other.t, p2)).counted, true);
   assert.equal(other.w.ladder(other.creator).completions, 1);
   other.remove(other.item.id);
   assert.equal(other.w.ladder(other.creator).completions, 0);
+});
+
+// SEC-26: one person with many accounts could lift a creator's ladder, the
+// island's numbers and its Island Fund share. A completion, a rating or a
+// play's time now counts only from an account at least COUNTED_AGE_MS old
+// and at COUNTED_KEEPER_LEVEL when it is recorded, and of the accounts that
+// play nothing but that creator's islands, only LONE_FANS_A_DAY a UTC day.
+test("SEC-26: completions, ratings and play time from new or low-level accounts are recorded but do not count", () => {
+  const { t, w, creator, item } = workshop();
+  const score = { fun: 5, cleverness: 5, fairness: 5 };
+  for (let i = 0; i < 10; i++) {
+    const alt = t.service.session(`gc:alt${i}`).account;
+    // Old enough but too low, or high enough but too new.
+    t.service.db.prepare("UPDATE accounts SET created_at = ?, keeper_level = ? WHERE id = ?")
+      .run(i % 2 ? t.clock.now - COUNTED_AGE_MS : t.clock.now - COUNTED_AGE_MS + 1,
+           i % 2 ? COUNTED_KEEPER_LEVEL - 1 : COUNTED_KEEPER_LEVEL, alt);
+    const p = w.play(alt, item.id);
+    const out = w.submitPlay(alt, p.token, cleared(t, p));
+    assert.deepEqual([out.validated, out.counted, out.ladder], [true, true, false], "recorded, not counted");
+    w.rate(alt, item.id, score);
+  }
+  assert.deepEqual(w.ladder(creator), { level: null, completions: 0, featured: 0 }, "not even a Builder");
+  const v = w.view(w.row(item.id));
+  assert.deepEqual([v.completions, v.ratings.count, v.uncounted], [0, 0, { completions: 10, ratings: 10 }]);
+  assert.deepEqual(w.browse(creator, "top").map((i) => i.completions ?? 0), [0]);
+  assert.deepEqual(t.service.fund.played(0, t.clock.now + 1), {}, "no Island Fund time");
+  // One that qualifies counts, everywhere.
+  const fan = t.service.session("gc:fan").account;
+  counting(t, fan);
+  const p = w.play(fan, item.id);
+  assert.equal(w.submitPlay(fan, p.token, cleared(t, p)).ladder, true);
+  w.rate(fan, item.id, score);
+  assert.equal(w.ladder(creator).completions, 1);
+  assert.equal(w.view(w.row(item.id)).ratings.count, 1);
+  assert.deepEqual(Object.keys(t.service.fund.played(0, t.clock.now + 1)), [creator]);
+});
+
+test("SEC-26: of the qualified accounts that play only one creator's islands, three a day count for that creator", () => {
+  const { t, w, creator, item, island } = workshop();
+  const score = { fun: 4, cleverness: 4, fairness: 4 };
+  t.clock.now = Math.floor(t.clock.now / (24 * HOUR)) * 24 * HOUR + HOUR;   // the day's first hour
+  const fan = (name) => {
+    const a = t.service.session(`gc:${name}`).account;
+    counting(t, a);
+    const p = w.play(a, item.id);
+    const ladder = w.submitPlay(a, p.token, cleared(t, p)).ladder;
+    w.rate(a, item.id, score);
+    return ladder;
+  };
+  const day = [0, 1, 2, 3, 4].map((i) => fan(`lone${i}`));
+  assert.deepEqual(day, [true, true, true, false, false], `the first ${LONE_FANS_A_DAY} a day`);
+  assert.equal(w.ladder(creator).completions, LONE_FANS_A_DAY);
+  assert.equal(w.view(w.row(item.id)).ratings.count, LONE_FANS_A_DAY);
+  // A player who has played someone else's island is no lone fan.
+  // Another creator's own island: other bytes, since these are listed (SEC-41).
+  const theirs = Uint8Array.from(island);
+  theirs[6] = (theirs[6] + 1) & 0xff;
+  const elsewhere = w.publish(t.service.session("gc:other").account, theirs,
+                              t.build.record(theirs, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() }),
+                              { adjective: 2, noun: 2 });
+  const wide = t.service.session("gc:wide").account;
+  counting(t, wide);
+  const q = w.play(wide, elsewhere.id);
+  w.submitPlay(wide, q.token, cleared(t, q));
+  const p = w.play(wide, item.id);
+  assert.equal(w.submitPlay(wide, p.token, cleared(t, p)).ladder, true, "past the cap, a wider player counts");
+  // The next UTC day, three more lone fans.
+  t.clock.now += 24 * HOUR;
+  assert.deepEqual([5, 6, 7, 8].map((i) => fan(`lone${i}`)), [true, true, true, false]);
+  assert.equal(w.ladder(creator).completions, 2 * LONE_FANS_A_DAY + 1);
+});
+
+test("SEC-41: another creator's listed or taken-down island is not listed again unchanged; a withdrawn one may be", () => {
+  const { t, w, island, cleared, creator, item, remove } = workshop();
+  const copier = t.service.session("gc:sec41-copier").account;
+  const status = (fn) => { try { fn(); return "listed"; } catch (e) { return `${e.status} ${e.reason}`; } };
+  const copy = (opts) => () => w.publish(copier, island, cleared, { adjective: 2, noun: 3, ...opts });
+  const fetched = w.remix(copier, item.id);
+  assert.deepEqual(Buffer.from(fetched), Buffer.from(island), "the remix hands over the bytes");
+  assert.equal(status(copy({ remixOf: item.id })), "409 remix_unchanged", "a remix changed nothing");
+  assert.equal(status(copy({})), "409 already_published", "nor a copy named as no remix");
+  assert.equal(w.publish(creator, island, cleared, { adjective: 3, noun: 4 }).bundle, item.bundle,
+               "its own creator may list it twice");
+  const other = t.build.exampleIsland(true);
+  other[6] = (other[6] + 1) & 0xff;                       // the loot exposed: other bytes
+  const otherClear = t.build.record(other, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() });
+  const changed = w.publish(copier, other, otherClear, { adjective: 2, noun: 3, remixOf: item.id });
+  assert.notEqual(changed.bundle, item.bundle, "a remix that changes something is listed");
+  remove(item.id);
+  assert.equal(status(copy({})), "409 already_published", "an island taken down is not listed again by another");
+  // The creator's second listing withdrawn as well: nothing of theirs is shown.
+  const second = w.mine(creator).find((i) => i.id !== item.id && i.bundle === item.bundle);
+  w.withdraw(creator, second.id);
+  assert.equal(status(copy({})), "409 already_published", "the taken-down one still counts");
+});
+
+test("SEC-41: an island its creator withdrew may be listed by another, and its bytes stay when that creator's account goes", () => {
+  const { t, w, island, cleared, creator, item } = workshop();
+  w.withdraw(creator, item.id);
+  const later = t.service.session("gc:sec41-later").account;
+  const listed = w.publish(later, island, cleared, { adjective: 2, noun: 3 });
+  assert.equal(listed.bundle, item.bundle);
+  deleteAccount(t.service, later, "under-13");
+  assert.notEqual(t.service.bundle(item.bundle), null, "the withdrawn island's creator still holds the bytes");
 });
 
 test("SEC-42: a crew's invite is shown to its members only", async () => {
@@ -121,6 +228,38 @@ test("SEC-42: a crew's invite is shown to its members only", async () => {
   const seen = await get(b, `/v1/crews/${started.id}`);
   assert.equal(seen.id, started.id);
   assert.equal("invite" in seen, false, "one outside the crew does not");
+});
+
+test("SEC-42: a crew's longest-standing member gives it a new invite, and the old one joins nobody", async () => {
+  const t = server();
+  const [a, b, c, d] = ["a", "b", "c", "d"].map((n) => t.service.session(`gc:sec42-${n}`));
+  for (const p of [b, c, d]) t.service.friends.accept(p.account, t.service.friends.invite(a.account).invite);
+  t.service.friends.accept(d.account, t.service.friends.invite(b.account).invite);   // still a friend in it once a leaves
+  const social = new Social(t.service);
+  const call = async (who, path) => {
+    const r = await t.handle(new Request(`https://edge.example${path}`,
+      { method: "POST", headers: { authorization: `Bearer ${who.token}` } }));
+    return [r.status, await r.json()];
+  };
+  const crew = social.startCrew(a.account);
+  social.joinCrew(b.account, crew.invite);
+  t.clock.now += 1000;
+  social.joinCrew(c.account, crew.invite);
+  const [status, fresh] = await call(a, `/v1/crews/${crew.id}/invite`);
+  assert.equal(status, 200);
+  assert.ok(fresh.invite && fresh.invite !== crew.invite, "a new invite");
+  assert.throws(() => social.joinCrew(d.account, crew.invite), (e) => e.reason === "no_such_crew", "the old one joins nobody");
+  for (const who of [b, d]) {
+    const [s, out] = await call(who, `/v1/crews/${crew.id}/invite`);
+    assert.deepEqual([s, out.error], [403, "crew_leader_only"], "a later member, or one outside, cannot");
+  }
+  assert.deepEqual((await call(a, "/v1/crews/nothing/invite"))[0], 404);
+  // The founder leaves: the member who has been in it longest keeps it.
+  social.leaveCrew(a.account);
+  assert.equal((await call(c, `/v1/crews/${crew.id}/invite`))[1].error, "crew_leader_only");
+  const [, next] = await call(b, `/v1/crews/${crew.id}/invite`);
+  assert.ok(next.invite && next.invite !== fresh.invite);
+  assert.equal(social.joinCrew(d.account, next.invite).members.length, 3, "the new invite joins");
 });
 
 test("SEC-48: the friends' feed answers for more friends than SQLite has bound variables", () => {
@@ -143,4 +282,108 @@ test("SEC-48: the friends' feed answers for more friends than SQLite has bound v
   assert.equal(t.service.friends.list(watcher).length, 16_401);
   assert.deepEqual(t.service.friends.feed(watcher).map((e) => [e.raider, e.defender]),
                    [[t.raider.account, t.defender.account]], "the same answer as with one friend");
+});
+
+// SEC-37: the push token lived on the account alone, so a device signed out
+// (or every device, signed out everywhere) was still sent the account's
+// notifications. Now the token records the session that registered it, and
+// that session's end clears it; signing out everywhere always does.
+test("SEC-37: a push token goes with the sign-out of the session that registered it, and with sign-out everywhere", async () => {
+  const t = server();
+  const phone = t.service.session("gc:sec37");
+  const tablet = t.service.session("gc:sec37");
+  assert.equal(phone.account, tablet.account);
+  const call = (who, path, method, body) => t.handle(new Request(`https://edge.example${path}`, {
+    method, headers: { authorization: `Bearer ${who.token}`, "content-type": "application/json" },
+    body: JSON.stringify(body) }));
+  const register = async (who, pushToken) => {
+    assert.equal((await call(who, "/v1/notifications", "PUT", { pushToken, timeZone: "UTC" })).status, 200);
+  };
+  // A message due now, and the tokens it is sent to.
+  const sentTo = async () => {
+    t.service.db.prepare("INSERT INTO notifications (account, kind, data, due_at) VALUES (?, 'reminder', ?, ?)")
+      .run(phone.account, JSON.stringify({ day: "2026-09-23" }), t.clock.now);
+    const to = [];
+    await t.service.notifications.deliver((token) => { to.push(token); return {}; });
+    return to;
+  };
+  await register(phone, "phone-token");
+  assert.deepEqual(await sentTo(), ["phone-token"]);
+  // The other device's sign-out leaves the phone's token.
+  assert.equal((await call(tablet, "/v1/session/end", "POST", {})).status, 200);
+  assert.deepEqual(await sentTo(), ["phone-token"], "the tablet signed out; the phone still hears");
+  // The phone's own sign-out takes it.
+  assert.equal((await call(phone, "/v1/session/end", "POST", {})).status, 200);
+  assert.deepEqual(await sentTo(), [], "the phone signed out hears nothing");
+  assert.equal(t.service.db.prepare("SELECT push_token FROM accounts WHERE id = ?").get(phone.account).push_token, null);
+  // Sign out everywhere, from another device than the one that registered it.
+  const again = t.service.session("gc:sec37");
+  const laptop = t.service.session("gc:sec37");
+  await register(again, "phone-token-2");
+  assert.deepEqual(await sentTo(), ["phone-token-2"]);
+  assert.equal((await call(laptop, "/v1/session/end", "POST", { everywhere: true })).status, 200);
+  assert.deepEqual(await sentTo(), [], "signed out everywhere, no device hears");
+  // Signing out the other devices, from the one that registered it, keeps it.
+  const mine = t.service.session("gc:sec37");
+  t.service.session("gc:sec37");
+  await register(mine, "phone-token-3");
+  assert.equal((await call(mine, "/v1/session/end", "POST", { others: true })).status, 200);
+  assert.deepEqual(await sentTo(), ["phone-token-3"]);
+});
+
+test("SEC-43: a member's block does not hide the constellation from the player blocked; its founder's still does", () => {
+  const t = server();
+  const social = new Social(t.service);
+  const [founder, member, p] = ["gc:f43", "gc:m43", "gc:p43"].map((id) => t.service.session(id).account);
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 6").run();
+  const c = social.found(founder, { adjective: 1, noun: 2 });
+  social.join(member, c.id);
+  t.service.safety.block(member, p);
+  // P still sees the open group, without the member who blocked them.
+  assert.deepEqual(social.constellation(c.id, p).members.map((m) => m.account), [founder]);
+  assert.equal(social.join(p, c.id).id, c.id, "and can join it");
+  assert.deepEqual(social.constellation(c.id, member).members.map((m) => m.account).sort(),
+                   [founder, member].sort(), "the member who blocked P does not see them");
+  social.leave(p);
+  // The founder's block hides it, answered as no such group (17.8).
+  t.service.safety.block(founder, p);
+  assert.throws(() => social.constellation(c.id, p), (e) => e.reason === "no_such_constellation");
+  assert.throws(() => social.join(p, c.id), (e) => e.reason === "no_such_constellation");
+});
+
+test("SEC-43: the founder or an elder removes a member, who cannot join again for 7 days", async () => {
+  const { REMOVED_DAYS } = await import("../src/social.mjs");
+  assert.equal(REMOVED_DAYS, 7);
+  const t = server();
+  const social = new Social(t.service);
+  const s = ["gc:f", "gc:e", "gc:m", "gc:n"].map((id) => t.service.session(id));
+  const [founder, elder, member, other] = s.map((x) => x.account);
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 6").run();
+  const c = social.found(founder, { adjective: 1, noun: 2 });
+  for (const a of [elder, member, other]) social.join(a, c.id);
+  social.appoint(founder, elder, "elder");
+  const refused = (fn, reason) => assert.throws(fn, (e) => e.reason === reason, reason);
+  // A member removes no one; an elder removes no elder or founder.
+  refused(() => social.remove(member, c.id, other), "officers_only");
+  refused(() => social.remove(elder, c.id, founder), "officers_only");
+  refused(() => social.remove(founder, c.id, founder), "not_a_member");
+  refused(() => social.remove(founder, "elsewhere", member), "officers_only");
+  // An elder removes a member, over HTTP.
+  const r = await t.handle(new Request(`https://edge.example/v1/constellations/${c.id}/remove`, {
+    method: "POST", headers: { authorization: `Bearer ${s[1].token}`, "content-type": "application/json" },
+    body: JSON.stringify({ account: member }) }));
+  assert.equal(r.status, 200);
+  assert.ok(!(await r.json()).members.some((m) => m.account === member), "the member is gone");
+  assert.equal(social.membership(member), null);
+  // They cannot join again for a week, to the millisecond.
+  const until = t.clock.now + REMOVED_DAYS * 24 * 60 * 60 * 1000;
+  t.clock.now = until - 1;
+  refused(() => social.join(member, c.id), "removed_from_constellation");
+  t.clock.now = until;
+  assert.equal(social.join(member, c.id).id, c.id, "a week on, they may");
+  // A player who left of their own accord may come back at once.
+  social.leave(other);
+  assert.equal(social.join(other, c.id).id, c.id);
+  // The founder removes an elder.
+  assert.ok(!social.remove(founder, c.id, elder).members.some((m) => m.account === elder));
 });

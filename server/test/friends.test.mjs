@@ -6,7 +6,7 @@ import { test } from "node:test";
 import { INVITE_GIFT } from "../src/friends.mjs";
 import { Refused } from "../src/service.mjs";
 import { Workshop } from "../src/workshop.mjs";
-import { openPlan, play, twoPlayers } from "./setup.mjs";
+import { openPlan, play, submitCrewed, twoPlayers } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
 const DAY = 24 * 60 * 60 * 1000;
@@ -41,7 +41,7 @@ test("a friendly heist is for fun: no fee, no Renown, the friend loses nothing a
   t.service.db.prepare("UPDATE accounts SET created_at = ? WHERE id = ?").run(t.clock.now, t.defender.account);
   const lease = t.service.lease(t.raider.account, t.bundle, null, { mode: "friendly" });
   assert.equal(lease.mode, "friendly");
-  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: [] }));
+  const out = submitCrewed(t, t.raider.account, lease, { plan: [] });   // a friendly heist names its crew (SEC-24)
   assert.equal(out.verdict.grade, "foiled");
   assert.deepEqual([out.fee, out.renown, out.stars, out.rating, out.defence], [0, { raider: 0, defender: 0 },
                    { raider: 0, defender: 0 }, null, null]);

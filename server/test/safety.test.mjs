@@ -49,7 +49,11 @@ test("a block hides each player from the other in the Workshop's lists, and not 
   assert.deepEqual(t.service.safety.block(t.viewer, t.creator), { blocked: t.creator, unfriended: false });
   assert.deepEqual(listed(t.viewer), [], "the blocked creator's islands leave the blocker's lists");
   assert.deepEqual(listed(t.other), [item.id], "and no one else's");
-  const mine = t.w.publish(t.viewer, t.island, t.cleared, { adjective: 4, noun: 5 });
+  // The blocker's own island: other bytes, since the creator's are listed (SEC-41).
+  const own = Uint8Array.from(t.island);
+  own[6] = (own[6] + 1) & 0xff;
+  const mine = t.w.publish(t.viewer, own, t.build.record(own, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() }),
+                           { adjective: 4, noun: 5 });
   assert.ok(!listed(t.creator).includes(mine.id), "and the blocker's leave the blocked player's (you disappear from theirs)");
   // "Their island can still appear as a target, and yours as theirs."
   const { bundle } = t.service.publish(t.creator, t.island);
