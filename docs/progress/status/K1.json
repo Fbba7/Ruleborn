@@ -3,17 +3,17 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "idle",
   "task_id": "P1-K1-numerals-on",
-  "task_state": "in_progress",
+  "task_state": "merged",
   "claimed_at": "2026-11-12T05:55:00Z",
   "lease_until": "2026-11-12T08:55:00Z",
-  "updated_at": "2026-11-12T09:04:00Z",
-  "expected_next_update_by": "2026-11-12T09:49:00Z",
+  "updated_at": "2026-11-12T09:46:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "1d21bf4a",
-    "next_step": "gate requested at 1d21bf4a (heist at 100% text, Display type, numerals switch on): guard.sh OK there (heist 120/116/120, equal to the records raised by K1-R18), pre-check PASS 08:20:29Z; ready when the gate passes; on a fail, read the verdict and fix within the task's files"
+    "next_step": "P1-K1-numerals-on merged as 541e4c97; the gate's advisory Display type fail on the 'Laws here' header is diagnosed in K1.md (the ink outline is set but does not show on the navy sky); waiting for the lead's next task"
   },
   "precheck": {
     "sha": "1d21bf4a21cbd1584b800ccdf214ffa28ba81c12",
@@ -21,12 +21,7 @@
     "finished_at": "2026-11-12T08:20:29Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "1d21bf4a21cbd1584b800ccdf214ffa28ba81c12",
-    "items": [
-      "heist at 100% text"
-    ]
-  },
+  "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
@@ -299,5 +294,5 @@
       "at": "2026-11-12T05:58:00Z"
     }
   ],
-  "next_step": "gate requested at 1d21bf4a (heist at 100% text, Display type, numerals switch on): guard.sh OK there (heist 120/116/120, equal to the records raised by K1-R18), pre-check PASS 08:20:29Z; ready when the gate passes; on a fail, read the verdict and fix within the task's files"
+  "next_step": "P1-K1-numerals-on merged as 541e4c97; the gate's advisory Display type fail on the 'Laws here' header is diagnosed in K1.md (the ink outline is set but does not show on the navy sky); waiting for the lead's next task"
 }
