@@ -37,7 +37,8 @@ func _write(path: String, text: String) -> void:
 func _settings_build_nothing() -> void:
 	Settings.path = "user://settings-security-test.cfg"
 	DirAccess.remove_absolute(RAN)
-	var source := "extends RefCounted\nfunc _init() -> void:\n\tvar f := FileAccess.open(\"%s\", FileAccess.WRITE)\n" % RAN \
+	var source := "extends RefCounted\nfunc _init() -> void:\n" \
+		+ "\tvar f := FileAccess.open(\"%s\", FileAccess.WRITE)\n" % RAN \
 		+ "\tf.store_string(\"ran\")\n"
 	_write(Settings.path, "[general]\n\nlocale=Object(RefCounted,\"script\":Object(GDScript,\"script/source\":\"%s\"))\n"
 		% source.c_escape() + "\n[volume]\n\nmusic=3\n\n[access]\n\ntext_scale=Object(RefCounted,\"script\":null)\n")

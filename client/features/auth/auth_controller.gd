@@ -27,7 +27,7 @@ func _init(s: Services) -> void:
 ## The session now speaks for another account: what `previous` queued waits
 ## under it, never sent as the new one (SEC-29).
 func _park_for(previous: String, _now: String) -> void:
-	var _moved := services.outbox.park(parked_path(previous))
+	services.outbox.park(parked_path(previous))
 
 
 func _account() -> String:
