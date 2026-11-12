@@ -7,13 +7,13 @@
   "task_id": "P1-S1-pilot-3",
   "task_state": "working",
   "claimed_at": "2026-11-12T01:23:10Z",
-  "lease_until": "2026-11-12T04:23:10Z",
-  "updated_at": "2026-11-12T03:00:51Z",
-  "expected_next_update_by": "2026-11-12T03:40:51Z",
+  "lease_until": "2026-11-12T06:20:49Z",
+  "updated_at": "2026-11-12T03:20:49Z",
+  "expected_next_update_by": "2026-11-12T04:00:49Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4d87d18",
-    "next_step": "P1-S1-pilot-3: A to E built and noted (heist-pilot.md part 3; stills part3-* with the numerals' switch off, numerals-* with it on). Records lowered (heist 118/114/118; check_screens 226/29). guard.sh OK. Next: check_all.sh on 75fb660a, the pre-check, then the gate on both items.",
+    "next_step": "P1-S1-pilot-3: A to E built and noted. check_all.sh on 75fb660a failed one test: the pre-landing tray asked 1,129 px of 1,080 in pt_BR and pt_PT (§21.1, at 9:19.5). Fixed in a90ea011 (\"Sem lançamentos\" on two lines); the layout test, budget_shots (118/114/118), check_screens and guard.sh pass. Next: check_all.sh on a90ea011, the pre-check, the gate.",
     "at": null
   },
   "precheck": null,
@@ -181,5 +181,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-3: A to E built and noted (heist-pilot.md part 3; stills part3-* with the numerals' switch off, numerals-* with it on). Records lowered (heist 118/114/118; check_screens 226/29). guard.sh OK. Next: check_all.sh on 75fb660a, the pre-check, then the gate on both items."
+  "next_step": "P1-S1-pilot-3: A to E built and noted. check_all.sh on 75fb660a failed one test: the pre-landing tray asked 1,129 px of 1,080 in pt_BR and pt_PT (§21.1, at 9:19.5). Fixed in a90ea011 (\"Sem lançamentos\" on two lines); the layout test, budget_shots (118/114/118), check_screens and guard.sh pass. Next: check_all.sh on a90ea011, the pre-check, the gate."
 }
