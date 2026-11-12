@@ -1906,6 +1906,30 @@
     }
    }
   },
+  "intent_tombstones": {
+   "about": "Whose a deleted lapsed purchase intent was, so a late receipt naming it goes to that account only (SEC-29).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "days": 90,
+    "after": "its intent is deleted",
+    "by": "expireLapsed"
+   },
+   "deletion": "severed",
+   "columns": {
+    "id": {
+     "type": "purchase-history"
+    },
+    "deleted_at": {
+     "type": "purchase-history"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
+    }
+   }
+  },
   "purchases": {
    "about": "Store receipts granted, append-only: a record of money taken, which tax law keeps.",
    "purposes": [

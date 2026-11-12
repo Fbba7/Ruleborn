@@ -30,7 +30,7 @@ import { Friends } from "./friends.mjs";
 import { Matchmaking } from "./matchmaking.mjs";
 import { Notifications } from "./notifications.mjs";
 import { Seasons } from "./seasons.mjs";
-import { GIFT_KEEP_DAYS, INTENT_MS, Shop } from "./shop.mjs";
+import { GIFT_KEEP_DAYS, INTENT_MS, Shop, TOMBSTONE_DAYS } from "./shop.mjs";
 import { readHeader, readManifest } from "./sim.mjs";
 import { Journal } from "./accounts.mjs";
 import { Keeper, heistExperience } from "./keeper.mjs";
@@ -1097,12 +1097,18 @@ export class Service {
    */
   expireLapsed(now = this.now()) {
     const before = now - CLOSED_KEEP_DAYS * DAY_MS;
+    // A gift's is kept longer: only it names the friend (shop.intentOf).
+    const lapsed = `FROM purchase_intents WHERE redeemed_at IS NULL AND created_at + ? < ?
+                      AND (recipient IS NULL OR created_at + ? < ?)`;
+    const args = [INTENT_MS, before, INTENT_MS, now - GIFT_KEEP_DAYS * DAY_MS];
     return transaction(this.db, () => ({
-      // A gift's is kept longer: only it names the friend (shop.intentOf).
-      intents: Number(this.db.prepare(
-        `DELETE FROM purchase_intents WHERE redeemed_at IS NULL AND created_at + ? < ?
-            AND (recipient IS NULL OR created_at + ? < ?)`)
-        .run(INTENT_MS, before, INTENT_MS, now - GIFT_KEEP_DAYS * DAY_MS).changes),
+      intents: Number((() => {
+        // SEC-29: whose it was outlives it, TOMBSTONE_DAYS (shop.intentOf).
+        this.db.prepare(`INSERT OR IGNORE INTO intent_tombstones (id, account, deleted_at)
+                           SELECT id, account, ? ${lapsed}`).run(now, ...args);
+        this.db.prepare("DELETE FROM intent_tombstones WHERE deleted_at < ?").run(now - TOMBSTONE_DAYS * DAY_MS);
+        return this.db.prepare(`DELETE ${lapsed}`).run(...args).changes;
+      })()),
       leases: Number(this.db.prepare(
         // Unplayed is no heist, whatever its state: a lease that lapsed and
         // was closed when its target was leased again was never played.

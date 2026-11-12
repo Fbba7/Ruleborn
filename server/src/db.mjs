@@ -693,6 +693,15 @@ CREATE TABLE IF NOT EXISTS purchase_intents (
   recipient   TEXT REFERENCES accounts(id)
 );
 
+-- SEC-29: whose a deleted lapsed intent was, for TOMBSTONE_DAYS (shop.mjs),
+-- so its receipt is granted to that account and no other. Nothing of the
+-- purchase is kept.
+CREATE TABLE IF NOT EXISTS intent_tombstones (
+  id         TEXT PRIMARY KEY,
+  account    TEXT NOT NULL REFERENCES accounts(id),
+  deleted_at INTEGER NOT NULL
+);
+
 -- A store's receipt, granted once per store transaction.
 CREATE TABLE IF NOT EXISTS purchases (
   store   TEXT NOT NULL,
