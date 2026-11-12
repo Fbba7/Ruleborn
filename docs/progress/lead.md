@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqEW3A3hwRz6VufQz5` (cycle 62, 12
-November 2026 from 07:39Z, started by the Opus 5.5 launcher). Cycle 61's
+Latest lead cycle session: `session_01SNkKxnWuvvM5evq2WinaFR` (cycle 63, 12
+November 2026 from 08:39Z, started by the Opus 5.5 launcher). Cycle 62's
+was `session_01SNkKxqEW3A3hwRz6VufQz5` (from 07:39Z). Cycle 61's
 was `session_01SNkKxrEkx6oXeGzdGm4sDr` (from 06:39Z). Cycle 60's
 was `session_01SNkKxp1vEH7M7oEGRULZPR` (from 04:38Z). Cycle 59's
 was `session_01SNkKxpnpDTy3xKH1cD7N64` (from 03:41Z). Cycle 58's
@@ -208,9 +209,9 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| S1 | `session_01SNkKxnQXTay5oBDdKNoz8h` (Opus 5.5, effort high) | P1-S1-pilot-4 (start: board 1's round 2 in P1-AD-board-1b, objections D and B open; AD-R13, AD-R15) | `claude/ui-screens-heist` | 2026-11-12 06:54Z |
-| K1 | `session_01SNkKxqEuMj3TF1SQMhjHgP` (Opus 5.5, effort high) | P1-K1-numerals-on (start: P1-S1-pilot-3 merged as 085c812a with the switch off; S1-R11, K1-R11, the gate's Display type note) | `claude/ui-bake` | 2026-11-12 05:39Z |
-| AD | `session_01SNkKxpcpCTDib53apRny85` (Opus 5.5, effort high) | P1-AD-board-1b (start: P1-S1-pilot-3 merged as 085c812a; the gate's notes in verdicts/P1-S1-pilot-3/0d142dd0.json) | `claude/ui-ad` | 2026-11-12 05:39Z |
+| S1 | `session_01SNkKxnQXTay5oBDdKNoz8h` (Opus 5.5, effort high; idle, its task merged) | P1-S1-pilot-4 (start: board 1's round 2 in P1-AD-board-1b, objections D and B open; AD-R13, AD-R15) | `claude/ui-screens-heist` | 2026-11-12 06:54Z |
+| K1 | `session_01SNkKxqEuMj3TF1SQMhjHgP` (Opus 5.5, effort high; idle, its task merged) | P1-K1-numerals-on (start: P1-S1-pilot-3 merged as 085c812a with the switch off; S1-R11, K1-R11, the gate's Display type note) | `claude/ui-bake` | 2026-11-12 05:39Z |
+| AD | `session_01SNkKxpcpCTDib53apRny85` (Opus 5.5, effort high; idle, its task merged) | P1-AD-board-1b (start: P1-S1-pilot-3 merged as 085c812a; the gate's notes in verdicts/P1-S1-pilot-3/0d142dd0.json) | `claude/ui-ad` | 2026-11-12 05:39Z |
 | S1 | `session_01SNkKxp6HQPTjRP521X89Gw` (Opus 5.5, effort high; idle, its task merged) | P1-S1-pilot-3 (start: P1-K1-heist-kit and P1-AD-board-1 merged as a01e4d6c; board 1's objections A-E) | `claude/ui-screens-heist` | 2026-11-12 01:21Z |
 | AD | `session_01SNkKxqUaNgqwmejJAEzasn` (Opus 5.5, effort high; idle, its task merged) | P1-AD-board-1 (start: P1-S1-pilot-2 merged as d880807e) | `claude/ui-ad` | 2026-11-11 22:16Z |
 | K1 | `session_01SNkKxrLVEpoeqhNUMybpRi` (Opus 5.5, effort high; idle, its task merged) | P1-K1-heist-kit (start: P1-K1-disc-host merged as 4dde8d03) | `claude/ui-bake` | 2026-11-11 21:16Z |
@@ -288,7 +289,7 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: P1-AD-board-1c once P1-K1-numerals-on and P1-S1-pilot-4 merge (P1-AD-board-1 and -1b are merged; board-1c re-checks objections A, B and D and the header). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+Tasks: P1-AD-board-1c (P1-K1-numerals-on and P1-S1-pilot-4 are merged as 541e4c97, P1-AD-board-1 and -1b before them; board-1c re-checks objections A, B and D and the header; the gate's advisory notes are in verdicts/P1-S1-pilot-4/e846c531.json and verdicts/P1-K1-numerals-on/1d21bf4a.json). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
@@ -318,7 +319,7 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5, effort high
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (every other phase 0 K1 task is merged; numerals-on carries client/scripts/heist_hud.gd as an exception, K1-R17 and AD-R14)
+Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97)
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
@@ -348,7 +349,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P1-S1-pilot-4 (board 1's open objections D and B, round 2: AD-R13, AD-R15; pilot-1 to pilot-3 are merged), then P2-S1-flow-result and P2-S1-flow-replay once P1-AD-board-1c merges.
+Tasks: P2-S1-flow-result and P2-S1-flow-replay once P1-AD-board-1c merges (pilot-1 to pilot-4 are merged).
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
@@ -372,6 +373,39 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 63, 12 November 2026, from 08:39Z (session
+  `session_01SNkKxnWuvvM5evq2WinaFR`, started by the Opus 5.5 launcher):
+  P1-S1-pilot-4 and P1-K1-numerals-on merged as `541e4c97`.
+  - **Ready:** S1's pilot-4 at `e846c531` and K1's numerals-on at
+    `1d21bf4a`. The lock (`cda39ca7`) named two candidates, `481254f9`
+    (main + pilot-4) and `a4471d44` (`481254f9` + numerals-on). Owners
+    checked: each diff only in its owner's files, budgets.json's change
+    only the three heist records and their raises entry, heist_hud.gd
+    only K1-R17's two changes.
+  - **Checks:** the two candidates ran side by side from 08:47Z, against
+    flaky.md's "Until fixed" rule. `481254f9` passed; `a4471d44` failed
+    403 of 404 client tests, the settings test ("saved as they change and
+    restored on the next launch"), because both runs share
+    `user://settings.cfg`. Re-run alone, unchanged, it passed
+    (`DONE exit=0`, "All checks passed.", 09:29Z). Recorded under
+    flaky.md's first entry ("Seen again"); BT-10 is its fix task. The
+    queue runs one full check at a time again.
+  - **Gate (advisory, judge Opus 5.5, rubric 3):** pilot-4 fails
+    Character presence at 100% text (3 of 3) and Hierarchy at 200% pt_BR
+    with no crew plan (a split, 4 fails of 6); numerals-on fails Display
+    type at 100% text (3 of 3): the timer is fixed (objection A met), but
+    the "Laws here" header shows no ink outline. Advisory fails do not
+    block a merge (pilot-3's precedent); the notes are in
+    `verdicts/P1-S1-pilot-4/e846c531.json` and
+    `verdicts/P1-K1-numerals-on/1d21bf4a.json`, and board-1c re-checks
+    the header.
+  - **Started:** AD on P1-AD-board-1c, once this merge is on main.
+  - The backlog has 72 tasks, 55 merged. One builder running, under the
+    cap of three. No new request; no owner-inbox entry. docs/audit and
+    docs/roadmap did not change, so the pages were not republished.
+  - Next: merge board-1c when ready; then S1 on P2-S1-flow-result and
+    P2-S1-flow-replay. One full check at a time (flaky.md). Icon batches
+    3 and 4 stay deferred (D13 (c)).
 - Cycle 62, 12 November 2026, from 07:39Z (session
   `session_01SNkKxqEW3A3hwRz6VufQz5`, started by the Opus 5.5 launcher):
   a bookkeeping cycle, nothing merged, no session started.

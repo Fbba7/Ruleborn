@@ -1,0 +1,39 @@
+[
+ {
+  "task_id": "P1-S1-pilot-4",
+  "sha": "e846c531",
+  "item": "heist at 100% text",
+  "quality": "Character presence",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Pip, Mo, Ash and the wizard read as dark, framed toon figures. Bramble's grey, grainy, stone-like body washes into its pale lavender ring, and Hollow's purple body melts into its purple ring with no dark shape: both are smudges under the v3 ruling. The pass anchor's same flaw does not excuse them.",
+  "advisory": true,
+  "at": "2026-11-12T08:55:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-4",
+  "sha": "e846c531",
+  "item": "heist at 200% text, pt_BR, no crew plan",
+  "quality": "Hierarchy",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "fail",
+   "fail",
+   "pass",
+   "fail",
+   "fail",
+   "pass"
+  ],
+  "result": "fail",
+  "critique": "Split on the first three samples, so three more were taken: 4 fails of 6. Lançar is the only filled gold control, but the large Espaço/Restam/Carregar panel's white labels are as big and bold as Lançar's label, and the cream 2:25 timer plate is the lightest mass in grayscale, so the eye lands on secondary content at the main action's weight before it reaches Lançar. Better than the fail anchor, below the pass anchor.",
+  "advisory": true,
+  "at": "2026-11-12T08:55:00Z"
+ }
+]

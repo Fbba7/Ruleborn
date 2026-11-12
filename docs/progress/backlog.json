@@ -1121,20 +1121,14 @@
       ],
       "attempts": 0,
       "tier": 1,
-      "state": "blocked",
-      "claim": {
-        "agent": "K1",
-        "branch": "claude/ui-bake",
-        "claimed_at": "2026-11-12T05:55:00Z",
-        "seen_at": "2026-11-12T07:42:00Z",
-        "lease_until": "2026-11-12T08:55:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": "claude/ui-bake",
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-12T06:55:00Z",
-      "updated_by": "lead (cycle 61)",
+      "ready_sha": "1d21bf4a21cbd1584b800ccdf214ffa28ba81c12",
+      "merged_sha": "541e4c97",
+      "updated_at": "2026-11-12T09:25:00Z",
+      "updated_by": "lead (cycle 63)",
       "exceptions": [
         "client/scripts/heist_hud.gd"
       ]
@@ -2702,20 +2696,14 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "working",
-      "claim": {
-        "agent": "S1",
-        "branch": "claude/ui-screens-heist",
-        "claimed_at": "2026-11-12T06:55:26Z",
-        "seen_at": "2026-11-12T07:42:00Z",
-        "lease_until": "2026-11-12T09:55:26Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": "claude/ui-screens-heist",
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-12T06:55:00Z",
-      "updated_by": "lead (cycle 61)",
+      "ready_sha": "e846c53136af86be7af2cfe829ee5676eb02dbbe",
+      "merged_sha": "541e4c97",
+      "updated_at": "2026-11-12T09:25:00Z",
+      "updated_by": "lead (cycle 63)",
       "id": "P1-S1-pilot-4",
       "title": "Pilot heist, part 4: board 1's open objections D and B, round 2 (AD-R13, AD-R15; docs/art/ui-quality/gate/boards/board-1.md, Round 2): D Hollow and Bramble a value step of 20 L* or more off their discs, or an ink silhouette, in client/world/fx_portrait.gd (if the portrait art itself has to change, a request to the lead for AIA-2); B with no crew plan at 200% text in pt_BR the tray stays below the loot panel, and that case joins the gate's stills. heist_hud.gd and tools/ui_bake/budgets.json are in P1-K1-numerals-on (K1-R17, AD-R14), not here; notes in docs/art/tracks/heist-pilot.md",
       "exceptions": [
