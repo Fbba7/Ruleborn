@@ -237,8 +237,12 @@ static func fit(screen: HeistScreen) -> Array[String]:
 				continue
 			var at := l.get_global_rect()
 			var font := l.get_theme_font("font")
-			var wide := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
-				l.get_theme_font_size("font_size")).x
+			# A label broken by hand stands on its lines; its widest one is what
+			# has to fit.
+			var wide := 0.0
+			for line: String in l.text.split("\n"):
+				wide = maxf(wide, font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1,
+					l.get_theme_font_size("font_size")).x)
 			if l.autowrap_mode == TextServer.AUTOWRAP_OFF and wide > at.size.x + 1.0:
 				bad.append("%s %s: %.0f px of words in %.0f" % [l.get_path(), l.text, wide, at.size.x])
 			var p := l.get_parent()

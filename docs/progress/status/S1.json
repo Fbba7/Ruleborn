@@ -7,14 +7,14 @@
   "task_id": "P1-S1-pilot-5",
   "task_state": "working",
   "claimed_at": "2026-11-12T11:28:53Z",
-  "lease_until": "2026-11-12T14:43:14Z",
-  "updated_at": "2026-11-12T11:43:14Z",
-  "expected_next_update_by": "2026-11-12T12:28:14Z",
+  "lease_until": "2026-11-12T14:53:23Z",
+  "updated_at": "2026-11-12T11:53:23Z",
+  "expected_next_update_by": "2026-11-12T12:38:23Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e846c531",
-    "next_step": "P1-S1-pilot-5: D done (Bramble and Hollow toon fills, Hollow framed head and shoulders); next F, the 'Laws here' header on KitStatus.tag in heist_hud.gd.",
-    "at": "2026-11-12T11:43:14Z"
+    "next_step": "P1-S1-pilot-5: D done; F done (header on KitStatus.tag, a paper outline in high contrast); FIT reads broken labels by line. Next: finish the FIT matrix and budget shots, write part 5, pre-check and gate.",
+    "at": "2026-11-12T11:53:23Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -179,8 +179,22 @@
         "client/ui/kit_families.json"
       ],
       "default": "S1 asks the gate on stills shot as main stands (switch off: the clock is KitHud.clock's plain plate, as before) and puts beside them, marked as such in heist-pilot.md, the same moments shot with the switch on locally; objection A stays open until the switch is on."
+    },
+    {
+      "from": "S1",
+      "to": "lead",
+      "id": "S1-R12",
+      "blocking": false,
+      "created_at": "2026-11-12T11:55:00Z",
+      "due": "2026-11-13T11:55:00Z",
+      "escalate_to": "lead",
+      "ask": "Board 1's objection D (AD-R17) is met in game by a flat pass in client/world/fx_portrait.gd (FxPortrait._toon): Bramble and Hollow are filled in three tones of their colour with their marks kept. At 119 px Bramble reads as a grey-violet mass with small eyes, and the pass runs in GDScript the first time each portrait shows at a size. A flat-painted Bramble and Hollow at their source (CreatureBust's art) would be AIA-2's: should AIA-2 take it as a task?",
+      "files": [
+        "client/world/creature_bust.gd"
+      ],
+      "default": "The in-game flat pass stays as the fix for D; the source art is unchanged, and the gate judges the pass."
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-5: D done (Bramble and Hollow toon fills, Hollow framed head and shoulders); next F, the 'Laws here' header on KitStatus.tag in heist_hud.gd."
+  "next_step": "P1-S1-pilot-5: D done; F done (header on KitStatus.tag, a paper outline in high contrast); FIT reads broken labels by line. Next: finish the FIT matrix and budget shots, write part 5, pre-check and gate."
 }

@@ -73,19 +73,19 @@ func _init() -> void:
 	# The chips share the column's width, as the designs': a name lies on one
 	# line wherever the column has room for it.
 	laws.size_flags_horizontal = Control.SIZE_FILL
-	# Gold words with the kit's ink outline all round (§21.8): they lie on the
-	# world, and read on any sky.
-	var here := UI.world_words(Strings.t("HUD_LAWS_HERE"), 14, "gold")
-	# AD-R14: on the night sky the ink alone is lost, so the header takes the
-	# kit's display stroke (T2, kit-spec.md section 2.2): the heavy ink line
-	# and a hard gold drop under it, as the logo wears them.
-	here.add_theme_constant_override("outline_size", UI.px(3.5))
-	here.add_theme_color_override("font_shadow_color", Tokens.color("gold_drop"))
-	here.add_theme_constant_override("shadow_offset_x", 0)
-	here.add_theme_constant_override("shadow_offset_y", UI.px(2))
-	here.add_theme_constant_override("shadow_outline_size", UI.px(3.5))
-	here.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	here.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# AD-R18: gold words outlined in ink were lost on the night sky (ink and
+	# sky a few L* apart), so the header is seated on the kit's tag plate:
+	# dark capitals on gold inside the ink line, which part from any sky.
+	var here := KitStatus.tag(Strings.t("HUD_LAWS_HERE"))
+	here.name = "Here"
+	if Tokens.high_contrast:
+		# High contrast thickens the plate's ink line until it crowds the
+		# capitals; a ring of the plate's own fill (high contrast's paper)
+		# round each letter keeps them off the line (§21.8 counts an outline
+		# of 1.5 points or more).
+		var words := here.get_child(0) as Label
+		words.add_theme_color_override("font_outline_color", Tokens.color("paper"))
+		words.add_theme_constant_override("outline_size", UI.px(2))
 	laws.add_child(here)
 	laws_box = VBoxContainer.new()
 	laws_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
