@@ -19,6 +19,12 @@ var status_label: Label
 var stage: StageHero
 ## The beat last drawn, so a new one is greeted.
 var _beat := ""
+## The logo and tagline over the scene, and the universe's ring behind them
+## with where `add_universe` set it, so the ring is lowered below the words.
+var _title: Control
+var _universe: Node3D
+var _universe_at := Vector3.ZERO
+var _universe_size := Vector3.ONE
 
 
 func _ready() -> void:
@@ -50,6 +56,9 @@ func _build() -> void:
 	stage.welcome = true
 	stage.show_kinds(WELCOME, [], "bare")
 	stage.add_universe(FAR)
+	_universe = stage.scenery.get_child(stage.scenery.get_child_count() - 1) as Node3D
+	_universe_at = _universe.position
+	_universe_size = _universe.scale
 	# The night's violet behind the universe, as the design's title screen.
 	stage.backdrop.set_glow(Color("#8A5AE0"))
 	# The game's name over the welcome scene as the design's logo: Lilita One
@@ -73,16 +82,66 @@ func _build() -> void:
 	var tagline := StageHeroKit.words(Strings.t("FIRST_TAGLINE"), 17.0, StageHeroSkin.LIGHT, true)
 	tagline.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	tagline.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	tagline.custom_minimum_size.x = UI.px(200)
+	# As wide as the phone allows, so the line wraps only when it must
+	# (large text, a long language).
+	tagline.custom_minimum_size.x = UI.px(330)
 	title.add_child(tagline)
+	_title = title
 	var top := MarginContainer.new()
 	top.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	top.add_theme_constant_override("margin_top", UI.px(Tokens.number("size", "safe_top_points")))
 	stage.add_child(top)
 	StageHeroSkin.on_stage(top, title, Control.PRESET_CENTER_TOP)
+	title.resized.connect(_clear_title, CONNECT_DEFERRED)
+	stage.resized.connect(_clear_title, CONNECT_DEFERRED)
 	column.add_child(RosterScreen.padded(StageHeroSkin.plate(status_label)))
 	body = UI.scroll(column)
+
+
+## The universe's ring stands below the logo and tagline, however many
+## lines large text or a long language gives the tagline (AD-R12 F3): lowered
+## by what the words would cover, measured on the stage's own camera.
+func _clear_title() -> void:
+	if _universe == null or not is_inside_tree() or stage.size.y <= 0.0:
+		return
+	_universe.position = _universe_at
+	_universe.scale = _universe_size
+	var below := _title.get_global_rect().end.y - stage.get_global_rect().position.y + UI.px(6)
+	# A long way down, the ring would stand behind the welcome party's heads:
+	# smaller for what it must drop, so it keeps between the words and them.
+	var need := below - _top_of(_universe)
+	if need > 0.0:
+		_universe.scale = _universe_size * clampf(1.0 - 1.2 * need / stage.size.y, 0.72, 1.0)
+	# Twice, as the ring's depth shifts a little as it moves.
+	for i in 2:
+		var top := _top_of(_universe)
+		if top >= below:
+			return
+		var depth := stage.camera.global_position.distance_to(_universe.global_position)
+		var per_point := 2.0 * depth * tan(deg_to_rad(stage.camera.fov) * 0.5) / stage.size.y
+		_universe.position.y -= (below - top) * per_point
+
+
+## The highest point of `group` on the stage, in the stage's own units: its
+## islands by their boxes, the buildings and bridges by their vertices.
+func _top_of(group: Node3D) -> float:
+	var top := INF
+	# `add_universe` adds the town, every building and bridge in one mesh, last.
+	var town := group.get_child(group.get_child_count() - 1)
+	for mi: MeshInstance3D in group.find_children("*", "MeshInstance3D", true, false):
+		var points: Array[Vector3] = []
+		if mi == town and mi.mesh is ArrayMesh:
+			points.assign((mi.mesh as ArrayMesh).surface_get_arrays(0)[Mesh.ARRAY_VERTEX])
+		else:
+			var box := mi.get_aabb()
+			for k in 8:
+				points.append(box.get_endpoint(k))
+		for p: Vector3 in points:
+			var at := mi.global_transform * p
+			if not stage.camera.is_position_behind(at):
+				top = minf(top, stage.camera.unproject_position(at).y)
+	return top * stage.size.y / maxf(1.0, float(stage.viewport.size.y))
 
 
 func _refresh() -> void:
