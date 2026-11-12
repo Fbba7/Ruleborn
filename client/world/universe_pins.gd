@@ -453,11 +453,13 @@ static func _settle(node: Control, taken: Array[Rect2], screen: Array[Rect2], ce
 	heights = heights.filter(func(y: float) -> bool: return y >= ceiling and absf(y - from) <= node.size.y * 3.0)
 	heights.sort_custom(func(a: float, b: float) -> bool: return absf(a - from) < absf(b - from))
 	for y: float in heights:
-		var box := Rect2(Vector2(node.position.x, y), node.size).grow(-gap)
+		var at := Rect2(Vector2(node.position.x, y), node.size)
+		# Clear of the others, not merely overlapping them by a hair.
+		var box := at.grow(-0.5)
 		if not taken.any(func(other: Rect2) -> bool: return other.intersects(box)) \
 				and not screen.any(func(other: Rect2) -> bool: return other.intersects(box)):
 			node.position.y = y
-			taken.append(box)
+			taken.append(at)
 			return true
 	return false
 

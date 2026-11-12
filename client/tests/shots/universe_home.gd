@@ -5,7 +5,8 @@ extends SceneTree
 ## (seconds of animation) are optional; WHOLE shows the whole universe; RAIDS the
 ## raids not yet seen (2); MOST every amount at its widest;
 ## LOCALE the language; CONTRAST high contrast; TALL the window's height in
-## points over 540 wide (960 for 9:16).
+## points over 540 wide (960 for 9:16). FIT checks that everything fits (see
+## `fit`); the run fails where something does not.
 
 
 func _initialize() -> void:
@@ -113,6 +114,16 @@ func _go() -> void:
 						item.modulate.a = 1.0
 		await process_frame
 		await RenderingServer.frame_post_draw
+	if env.call("FIT", "") != "":
+		var bad := fit(screen)
+		for b: String in bad:
+			print("fit FAIL ", b)
+		print("fit ", "ok" if bad.is_empty() else "FAIL")
+		if not bad.is_empty():
+			# The still is saved all the same, to show what does not fit.
+			root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
+			quit(1)
+			return
 	print("triangles ", screen.world.triangles, " draw calls ", screen.world.draw_calls(), " frame ",
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME), " prims ",
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME), " calls")
@@ -130,3 +141,77 @@ static func _all_inside(top: Node) -> Array:
 			out.append(c)
 		out.append_array(_all_inside(c))
 	return out
+
+
+## What does not fit on home, one line each: a label's words wider than the
+## label, or outside its panel, or off the screen; one of home's parts over
+## another; a realm's pin over another pin or over home's parts, or off the
+## screen; or some realms named over the whole universe and others not.
+static func fit(screen: Home) -> Array[String]:
+	var bad: Array[String] = []
+	var whole := Rect2(Vector2.ZERO, screen.size)
+	for l: Label in screen.find_children("*", "Label", true, false):
+		if not l.is_visible_in_tree() or l.text == "" or screen.world.is_ancestor_of(l):
+			continue
+		var at := l.get_global_rect()
+		var font := l.get_theme_font("font")
+		var wide := 0.0
+		for line: String in l.text.split("\n"):
+			wide = maxf(wide, font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				l.get_theme_font_size("font_size")).x)
+		if l.autowrap_mode == TextServer.AUTOWRAP_OFF and not l.clip_text \
+				and l.text_overrun_behavior == TextServer.OVERRUN_NO_TRIMMING and wide > at.size.x + 1.0:
+			bad.append("%s %s: %.0f px of words in %.0f" % [l.get_path(), l.text, wide, at.size.x])
+		var p := l.get_parent()
+		while p != null and p != screen and not p is PanelContainer:
+			p = p.get_parent()
+		if p is PanelContainer and not (p as Control).get_global_rect().grow(1.0).encloses(at):
+			bad.append("%s %s: %s outside its panel %s" % [l.get_path(), l.text, at, (p as Control).get_global_rect()])
+		if not whole.grow(1.0).encloses(at):
+			bad.append("%s %s: %s off the screen" % [l.get_path(), l.text, at])
+	var parts := {"keeper": screen.keeper_plate, "strain": screen.strain, "purse": screen.purse,
+		"notice": screen.notice, "collect": screen.collect_button, "goal": screen.goal_card, "tabs": screen.tabs}
+	for side: StringName in screen.sides:
+		parts["side " + side] = screen.sides[side]
+	var shown := {}
+	for key: String in parts:
+		var c := parts[key] as Control
+		if c != null and c.is_visible_in_tree():
+			shown[key] = c.get_global_rect()
+	var keys := shown.keys()
+	for i in keys.size():
+		var a: Rect2 = shown[keys[i]]
+		if not whole.grow(1.0).encloses(a):
+			bad.append("%s %s off the screen" % [keys[i], a])
+		for j in range(i + 1, keys.size()):
+			if a.grow(-1.0).intersects(shown[keys[j]]):
+				bad.append("%s %s over %s %s" % [keys[i], a, keys[j], shown[keys[j]]])
+	var pins := screen.world.pins
+	if not pins.is_visible_in_tree():
+		return bad
+	var named: Array[String] = []
+	var missing: Array[String] = []
+	var boxes := {}
+	for id: String in screen.world.islands:
+		var pin := pins.realm_pin(id)
+		if pin == null:
+			continue
+		if pin.is_visible_in_tree():
+			named.append(id)
+			boxes[id] = pin.get_global_rect()
+		else:
+			missing.append(id)
+	if screen.world.zoom == 0 and not missing.is_empty():
+		bad.append("realms %s named and %s not" % [named, missing])
+	var ids := boxes.keys()
+	for i in ids.size():
+		var a: Rect2 = boxes[ids[i]]
+		if not whole.encloses(a):
+			bad.append("pin %s %s off the screen" % [ids[i], a])
+		for j in range(i + 1, ids.size()):
+			if a.grow(-0.5).intersects(boxes[ids[j]]):
+				bad.append("pin %s %s over pin %s %s" % [ids[i], a, ids[j], boxes[ids[j]]])
+		for key: String in shown:
+			if a.grow(-0.5).intersects(shown[key]):
+				bad.append("pin %s %s over %s %s" % [ids[i], a, key, shown[key]])
+	return bad
