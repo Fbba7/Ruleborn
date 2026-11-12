@@ -3,26 +3,26 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-AIA-motion-1",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-12T18:53:51Z",
   "lease_until": "2026-11-12T23:50:00Z",
-  "updated_at": "2026-11-12T20:50:00Z",
-  "expected_next_update_by": "2026-11-12T21:35:00Z",
+  "updated_at": "2026-11-12T21:20:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "8fbe66d8",
-    "next_step": "AIA-R23's default applied (lead cycle 72): main merged at e448c6a6; run the setup line, client/build.sh, the pre-check and guard.sh on the merge, then mark ready"
+    "last_green_sha": "49159bc0",
+    "next_step": "ready; wait for the lead's merge, then P2-AIA-motion-2 once P2-K1-motion merges"
   },
   "precheck": {
-    "sha": "8fbe66d892b812713bd3134c8e3ff90b1f9c1918",
+    "sha": "49159bc0e6b62c76bf382d1c9caca5f9e6f421da",
     "exit": 0,
-    "finished_at": "2026-11-12T19:31:51Z",
+    "finished_at": "2026-11-12T21:17:35Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "49159bc0e6b62c76bf382d1c9caca5f9e6f421da",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M1"
@@ -245,5 +245,5 @@
       "at": "2026-11-10T06:50:38Z"
     }
   ],
-  "next_step": "AIA-R23's default applied (lead cycle 72): main merged at e448c6a6; run the setup line, client/build.sh, the pre-check and guard.sh on the merge, then mark ready"
+  "next_step": "ready; wait for the lead's merge, then P2-AIA-motion-2 once P2-K1-motion merges"
 }
