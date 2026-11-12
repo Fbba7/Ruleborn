@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxr8rzRPkaA8ocqu69E` (cycle 71, 12
-November 2026 from 18:39Z, started by the Opus 5.5 launcher). Cycle 70's
+Latest lead cycle session: `session_01SNkKxq8UPsw413Cqn38hyd` (cycle 72, 12
+November 2026 from 20:39Z, started by the Opus 5.5 launcher). Cycle 71's
+was `session_01SNkKxr8rzRPkaA8ocqu69E` (from 18:39Z). Cycle 70's
 was `session_01SNkKxpKUASWJcNRTsGDfsp` (from 16:38Z). Cycle 69's
 was `session_01SNkKxnAEyrHDn5aRYpjvTB` (from 14:39Z). Cycle 68's
 was `session_01SNkKxnfPvJzu1iksNyMgNw` (from 13:39Z). Cycle 67's
@@ -220,7 +221,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 | S1 | `session_01SNkKxqKPyULbAiucFCfPRG` (Opus 5.5, effort high) | P2-S1-flow-replay (start: P2-S1-flow-result merged as 9e1dd558; S1's session idle with its task merged; S1-R13 granted) | `claude/ui-screens-heist` | 2026-11-12 19:56Z |
 | S2 | `session_01SNkKxozf5JRQDJPnSF8RWh` (Opus 5.5, effort high) | P2-flow-entry (start: P2-S2-flow-home merged as 7d899ce4; S2's session idle with its task merged) | `claude/ui-screens-home` | 2026-11-12 19:55Z |
 | S3 | `session_01SNkKxnF4CGAt7d58kriezr` (Opus 5.5, effort high) | P2-S3-screenkit (start: S3's first session; report.md step 11, seeded in cycle 71; S2's session idle with its task ready, so S3 takes the third place in the cap) | `claude/ui-screens-meta` | 2026-11-12 19:13Z |
-| AIA | `session_01SNkKxnntrrTGLutdQgN4sk` (Opus 5.5, effort high; waiting on AIA-R23) | P2-AIA-motion-1 (start: report.md step 8, seeded in cycle 71; AIA's last session was a Fable 5.2 one, not reused) | `claude/ui-artist` | 2026-11-12 18:52Z |
+| AIA | `session_01SNkKxnSyJpXP86pzUyQUqT` (Opus 5.5, effort high) | P2-AIA-motion-1 (restart: the fourth builder by the owner's cap of four, M15; AIA-R23's default applied, the sheet stands; spec and checks passed at b96e3f64) | `claude/ui-artist` | 2026-11-12 20:42Z |
+| AIA | `session_01SNkKxnntrrTGLutdQgN4sk` (Opus 5.5, effort high; idle waiting on AIA-R23, replaced at 20:42Z) | P2-AIA-motion-1 (start: report.md step 8, seeded in cycle 71; AIA's last session was a Fable 5.2 one, not reused) | `claude/ui-artist` | 2026-11-12 18:52Z |
 | S1 | `session_01SNkKxpQyZFv1eTtnsa2WHD` (Opus 5.5, effort high; idle, its task merged) | P2-S1-flow-result (restart: expected_next_update_by 18:33:59Z passed, session idle; pre-check of 262904c4 lost with the old container) | `claude/ui-screens-heist` | 2026-11-12 18:44Z |
 | S1 | `session_01SNkKxpXF5zd3wf5VZ65Utv` (Opus 5.5, effort high; idle, replaced at 18:44Z) | P2-S1-flow-result (start: P1-AD-board-1d merged as a154d246, board 1 stands, phase 2 open) | `claude/ui-screens-heist` | 2026-11-12 17:47Z |
 | S2 | `session_01SNkKxpNwGbxJdZihbsYFS5` (Opus 5.5, effort high; idle, its task merged) | P2-S2-flow-home (start: a new agent in the roster; phase 2 open) | `claude/ui-screens-home` | 2026-11-12 17:47Z |
@@ -339,7 +341,7 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5, effort high
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97); now P2-K1-motion once P2-AIA-motion-1 merges
+Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97); now P2-K1-motion (P2-AIA-motion-1 is merged, as a43e4d5a)
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -369,7 +371,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P2-S1-flow-replay (the flow finding F7, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review), then P2-S1-toon-drop, P2-S1-result-1 and P2-S1-result-2 as their deps merge (report.md step 9). Pilot-1 to pilot-5 and P1-AD-board-1d are merged: board 1 stands.
+Tasks: P2-S1-toon-drop (P2-S1-flow-replay is merged, as 509c43c2), then P2-S1-result-1 and P2-S1-result-2 as their deps merge (report.md step 9). Pilot-1 to pilot-5 and P1-AD-board-1d are merged: board 1 stands.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -384,7 +386,7 @@ You are agent S2 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-home
 Owned files: only the files each S2 task lists in the backlog, docs/progress/S2.md, docs/progress/status/S2.json
-Tasks: P2-flow-entry (the flow findings F3 to F5, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review), then P2-S2-home-1 and P2-S2-home-2 as their deps merge (report.md step 10). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+Tasks: P2-S2-home-1 (P2-flow-entry is merged, as 62c66327), then P2-S2-home-2 as its deps merge (report.md step 10). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -422,6 +424,30 @@ Your session was created with the repository checked out at main; work in that c
 ```
 
 ## Now
+
+- Cycle 72, 12 November 2026, from 20:39Z (session
+  `session_01SNkKxq8UPsw413Cqn38hyd`, started by the Opus 5.5 launcher):
+  no task ready, no gate and no merge; AIA restarted as the fourth builder.
+  - **M15 read and acked** (the owner's order of 12 November, about 20:00Z:
+    the cap is four UI builders, three while the seven-day bar reads
+    `allowed_warning`; batch merges as soon as two tasks are ready). No
+    session showed `allowed_warning` (S2's five-hour bar read `allowed`).
+  - **AIA restarted** on P2-AIA-motion-1 as `session_01SNkKxnSyJpXP86pzUyQUqT`
+    (20:42Z): its last session was idle, spec and checks passed at
+    b96e3f64, waiting only on AIA-R23. By M15 the lead applied AIA-R23's
+    default ahead of its due: the sheet stands. The claim's lease runs
+    from the restart to 23:42:39Z. Motion-1 unblocks P2-K1-motion,
+    P2-AIA-motion-2 and P2-S1-result-2.
+  - **Builders:** S1 (P2-S1-flow-replay, handoff b6a477f8, full checks
+    running), S2 (P2-flow-entry, pre-check and guard on merge 2bf66433),
+    S3 (P2-S3-screenkit, pre-check re-running at 2b220cc3) and AIA: four,
+    the cap. The backlog now shows flow-replay and screenkit `working`,
+    flow-entry `claimed`, with the branches' claims and `seen_at`.
+  - **Requests:** S2-R3 (to the lead) answered with its default ('Crew: 0
+    of 3' under START THE HEIST; strings.csv is in flight as
+    P2-S1-flow-replay's exception). S2-R4 (to AD, due 13 November 08:15Z)
+    copied into requests.md; its default applies at its due.
+  - **No alert** holds beyond those already listed.
 
 - Cycle 71, 12 November 2026, from 18:39Z (session
   `session_01SNkKxr8rzRPkaA8ocqu69E`, started by the Opus 5.5 launcher):
