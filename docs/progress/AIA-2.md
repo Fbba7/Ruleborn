@@ -1,10 +1,10 @@
 # AIA-2 icon maker: progress
 
-- Status: Green (P1-AIA2-icons-2b: six new icons baked, three of batch 2a reworked on the gate's notes; `check_icons.py` passes all 80 faces, `bake.js --check` ok, a rebake of both families is byte for byte; pre-check PASS on 29e91db0, 03:29 UTC, 10 November).
-- Progress: 4 of 5 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7, P1-AIA2-icons-2a at 027379a2); P1-AIA2-icons-2b is with the gate.
-- Done: the toon route, with Starlight and Pip; the eight heist controls; batch 1b's currencies and resources; batch 2a's eight heist-status and HUD icons; batch 2b's six reward icons.
-- Next: the gate's verdict on P1-AIA2-icons-2b and the lead's merge. Batches 3 and 4 are deferred (D13 (c)).
-- Blocked by: none.
+- Status: Yellow (P2-AIA2-busts: Bramble and Hollow painted flat at the source in `creature_bust.gd`, cb52e5da; `guard.sh` OK with every heist screen at its draw-call record; pre-check running on 354a9b1b).
+- Progress: 5 of 6 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7, P1-AIA2-icons-2a at 027379a2, P1-AIA2-icons-2b at d30530ee); P2-AIA2-busts is in its checks.
+- Done: the toon route and icon batches 1a, 1b, 2a and 2b; the two painted busts.
+- Next: the pre-check, then the gate on "heist at 100% text" (Character presence) and the lead's merge. Batches 3 and 4 are deferred (D13 (c)).
+- Blocked by: none. AIA2-R3 (non-blocking) asks the lead to drop the two kinds from `FxPortrait.TOON` after this lands.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
@@ -13,78 +13,40 @@
 | P1-AIA2-icons-1a: the eight heist controls in `icons_48` | 4 | Merged at 8ce107c9 | gate advisory at 5f759a03: Light behind UI pass; three qualities fail 3 of 3 |
 | P1-AIA2-icons-1b: the currencies and resources in `icons_48` and `icons_256` | 3 | Merged at 90f72fd7 | gate pass on all four qualities (advisory) at bef6eac2; resync at 5ecb0202 |
 | P1-AIA2-icons-2a: eight heist-status and HUD icons in `icons_48` | 4 | Merged at 027379a2 | gate 12 of 12 at 6a382d97 (advisory); pre-check PASS on ac4809ed |
-| P1-AIA2-icons-2b: the six reward icons in `icons_48`, five of them in `icons_256` | 3 | Ready at 29e91db0: pre-check PASS; gate requested | `python3 -B art/ui/icons/studio/check_icons.py`: all 80 faces pass (29 and 11 pieces, 2 modes). `node tools/ui_bake/bake.js --check`: icons_48 29 pieces, icons_256 11 pieces, both ok |
+| P1-AIA2-icons-2b: the six reward icons in `icons_48`, five of them in `icons_256` | 3 | Merged at d30530ee | gate advisory, four passes (lead cycle 48); check_all PASS on candidate 4058367a |
+| P2-AIA2-busts: Bramble and Hollow painted flat at the source (board 1's note G, AD-R20) | 2 | Working at 354a9b1b: pre-check running | `bash tools/ui_bake/guard.sh`: OK; heist/100, heist/200 and heist/hc within their draw-call records; gdlint clean |
 
 ## Handoff
 
-- **Last verified commit:** 29e91db0 (pre-check PASS on 29e91db0, 03:29 UTC, 10 November; `check_icons.py` and `bake.js --check` green; `node art/ui/icons/studio/bake_icons.js icons_48 icons_256 --out <scratch>` gives the six committed files byte for byte, 10 November). `bash tools/ui_bake/guard.sh` was not run in full in this session; its rebake step is what the line above repeats.
+- **Last verified commit:** 354a9b1b (`bash tools/ui_bake/guard.sh` OK; `python3 -B tools/check_docs_consistency.py` clean; pre-check started, result below when recorded).
 
 ### Done
 
-**Batch 2b in `art/ui/icons/`** (list.md numbers 24 to 29; number 30, `crew/pip`, was baked with the route). Each is in `icons_48`; all but the star are also in `icons_256`.
+**`client/world/creature_bust.gd`** now draws two busts by hand instead of rendering them. `PAINTED` holds one SVG for each, keyed by the exported kind (`quarryback`, `glassgolem`), SIZE across. `of()` takes that path when the bust has no look and drawing is possible: it rasterises the SVG with `Image.load_svg_from_string` and cuts it round with the studio's own `round_cut`, so the result has the same disc and alpha as a rendered bust. It is drawn at once, with no studio and no wait. Every other kind, and any look, goes through the studio as before. The headless tests do not draw, so `creature_tests.gd` is unchanged and still covers the studio path and `round_cut`.
 
-| Icon | What it shows | Light |
+| Bust | Tones (light, mid, dark) | Shapes kept |
 |---|---|---|
-| `currencies/pages` | three fanned codex sheets (a gold-edged one under two parchment ones), three ruled lines, a gold star seal, a ribbon marker in the matter colour | `motion_light` |
-| `season/tierreward` | a closed wooden chest with a barrel lid, a gold lip and two gold straps, tied with a matter-colour ribbon and bow | `motion_light` |
-| `alerts/seasonreward` | the same chest open, with its gold lock plate: a dark inside, a heap of gold, four coins, a four-point star rising | `starlight` |
-| `hud/star` | one puffed gold star with rounded tips | `starlight` |
-| `heistoutcomes/clean` | a scalloped seal in the success green, a gold ring, a dark green face, a cream tick, a spark at the upper right | `success_light` |
-| `heistoutcomes/worthyourtime` | an open cloth sack, slumped, with a rolled lip, a tie cord with a knot and loose ends and a stitched patch; coins heaped in it and a gold star standing on the heap | `motion_light` |
+| Bramble (quarryback) | fur #C9B7C3 / #A08E9E / #75647A; shell #9C95B8 / #7B7298 / #575073 | a long snout with a dark nose, dark eyes with a catch light and brows, pink inner ears, a lamp gem on the brow, the banded shell behind, a pale belly with four band strokes, two outlined arms with cream claws |
+| Hollow (glass_golem) | glass #AE9AFB / #7E63E6 / #4A30B4, a highlight #D2C6FF | a few large hard-edged facets on the chest, shoulders and two crystal spikes; iron bracers; a dark visor with white slit eyes; the hexagonal gem in a dark rim on the chest |
 
-**New shared parts** in `studio/shapes.js`: `chest(S, {open, ribbon, light})` (one chest for both reward icons: `open` swings the lid on its back edge, `ribbon` swaps the lock plate for a band and bow) and `coin(S, r)`. README.md's scene-format table names them.
+**The five heist portraits at 119 px** (`MANIFEST=1 ESTIMATE=400 SIZES=1 PORTRAITS=<dir> bash tools/render/shoot.sh client/tests/shots/screen_heist.gd <dir>/heist.png`, with Pip, Mo, Bramble, Hollow and Ash), looked at in colour and in grayscale, both with `FxPortrait.TOON` as committed and with it emptied for the render only:
 
-**The gate's notes on batch 2a** (the verdict at ac4809ed), taken here as the last handoff said:
+- **Colour and grayscale, toon pass off:** all five read as framed toon figures. Bramble reads as an armadillo-like digger: snout, eyes, ears, lamp, belly bands, arms and claws, with the shell behind. Hollow reads as a faceted glass guardian: visor and slit eyes, spikes, shoulders and the white gem, each facet a flat step. In grayscale both keep three steps of value and a figure distinct from its disc.
+- **Colour and grayscale, toon pass on (as main stands):** both still read. Bramble's arms and bands thin out and its lamp is lost to the re-quantising. The TOON crop takes Hollow to its head, visor, spikes and gem; the gem was raised so that it stays inside that crop.
 
-| Icon | Note | Change |
+| Measure (shot's own print) | Bramble | Hollow |
 |---|---|---|
-| `heiststatus/spotted` | the starburst is flat | two stacked bursts with a deeper bevel: the warn one behind, a smaller pale gold one turned between its points |
-| `heiststatus/alarm` | the sound arcs are flat | each arc is a thicker glossy tube with a ball at each end |
-| `heiststatus/lootbag` | the dark body sits close to the ground in grayscale | a paler rim light, the ruffle in the lighter leather, a hem in the rim leather round the foot |
+| Figure / disc L*, toon on | 54.6 / 84.4 (step 29.8) | 51.0 / 81.2 (step 30.2) |
+| Figure / disc L*, toon off | 56.0 / 85.8 (step 29.8) | 51.3 / 81.4 (step 30.1) |
+| Before (rendered bust) | 56.1 / 85.3 | 57.4 / 87.3 |
 
-The other icons' pixels are unchanged; both manifests change in their regions for the new pieces and in `sources_hash`.
+**Draw calls:** the five-member heist shot gives 137 draw calls before and after the change. The budget shots in `guard.sh` give heist/100, heist/200 (115, recorded 116) and heist/hc (120, recorded 120) within their records. The painted busts are one texture each, as the rendered ones were.
 
-**Check figures** (outline target 5.3 px normal, 8.0 px high contrast; normal / high contrast):
-
-| Icon | Family | Median | p10 | 32 pt cover | Ellipse | Ring edge |
-|---|---|---:|---:|---:|---:|---:|
-| pages | 48 | 4.9 / 8.0 | 4.0 / 7.0 | 39% / 53% | 0.85 / 0.86 | 100% / 100% |
-| pages | 256 | 4.8 / 8.0 | 3.9 / 7.0 | 34% / 40% | 0.84 / 0.85 | 100% / 100% |
-| tierreward | 48 | 5.0 / 8.0 | 4.0 / 7.0 | 43% / 56% | 0.92 / 0.93 | 100% / 100% |
-| tierreward | 256 | 5.0 / 8.0 | 4.0 / 7.0 | 38% / 44% | 0.91 / 0.92 | 100% / 100% |
-| seasonreward | 48 | 5.0 / 8.0 | 4.1 / 7.0 | 44% / 59% | 0.85 / 0.88 | 100% / 100% |
-| seasonreward | 256 | 5.0 / 8.0 | 4.0 / 7.0 | 39% / 45% | 0.83 / 0.85 | 100% / 100% |
-| star | 48 | 4.9 / 9.0 | 4.0 / 7.5 | 30% / 42% | 0.79 / 0.84 | 98% / 100% |
-| clean | 48 | 4.9 / 8.0 | 4.1 / 7.0 | 39% / 53% | 0.83 / 0.87 | 100% / 100% |
-| clean | 256 | 5.0 / 8.0 | 4.1 / 7.0 | 34% / 40% | 0.82 / 0.84 | 100% / 100% |
-| worthyourtime | 48 | 5.0 / 8.0 | 4.1 / 7.0 | 37% / 50% | 0.85 / 0.89 | 97% / 100% |
-| worthyourtime | 256 | 5.0 / 8.0 | 4.0 / 7.0 | 32% / 38% | 0.83 / 0.85 | 96% / 100% |
-| alarm (reworked) | 48 | 4.9 / 8.0 | 3.9 / 7.0 | 36% / 54% | 0.76 / 0.89 | 100% / 100% |
-| lootbag (reworked) | 48 | 5.1 / 8.0 | 4.3 / 7.0 | 34% / 47% | 0.83 / 0.87 | 100% / 100% |
-| spotted (reworked) | 48 | 5.0 / 10.5 | 3.9 / 8.0 | 40% / 56% | 0.82 / 0.85 | 100% / 100% |
+**Not touched:** `client/world/fx_portrait.gd` (S1's file). Its flat pass stays until this lands. Request AIA2-R3 asks the lead to drop the two kinds from `FxPortrait.TOON` afterwards.
 
 ### Self-score
 
-Against rubric.md quality 3 (Painted or rendered icons), from the contact sheet at 256 px, 48 pt, 32 pt, grayscale and high contrast:
-
-| Rule | Score | Why |
-|---|---|---|
-| 1. 3D form, top-left key, rim, specular, dark outline | Pass | boxes with a barrel lid, lathed sack, puffed slabs, tori and coins as solids; keyed top left with the gloss band on the metal |
-| 2. Outline 2 pt at the size shown | Pass, scripted | all 80 faces |
-| 3. A dark shape at 32 pt | Pass, scripted | coverage 30–44% (normal), ellipse 0.79–0.92 |
-| 4. §21.8 volume | Pass | the 1b finish: blended ramp, gloss band, body gradient, soft drop |
-| 5. One toon look | Pass | one `S.toon` material throughout |
-| 6. Law and school frames | Not applicable | |
-
-Other qualities: **Layered materials**: wood and cloth (matt), gold straps, coins and seals (glossy), parchment (low gloss), ribbon. **Colour roles and value**: gold is the reward in every icon; green only on the clean seal (success); the matter colour only as ribbon; each icon steps from a dark outer part (wood, cloth, the seal's rim) to a light focal point (the star, the tick, the seal). **Light behind UI**: a glow in each icon's light token.
-
-**Risks a judge may see:**
-- Tierreward is the boxiest icon (ellipse 0.92/0.93, limit 0.96); the bow is what breaks the block.
-- Tierreward and seasonreward share one chest by design (closed with a ribbon, open with coins); at 32 pt the open lid and the star are what tell them apart.
-- Worthyourtime and lootbag are both sacks: one open, brown and brimming, the other tied, in leather with a star on its front. The patch on worthyourtime is faint under 48 pt.
-- Pages' three ruled lines merge into a tone at 32 pt; the fan, the seal and the ribbon carry it there.
-- `hud/star` and `resources/starlight` are both gold stars (one star against two struck ones).
-- The glints are still separate cream sparks (as in 1b).
+Against Character presence on "heist at 100% text": Bramble and Hollow now read as characters with faces, at the same toon finish as the rendered three, instead of a furred mottle and a glass blur. The risk a judge may see is the toon pass on main still blotching them a little (above), and the two painted busts being flatter than the three rendered ones beside them.
 
 ### Half done
 
@@ -92,16 +54,14 @@ None.
 
 ### Open hypotheses
 
-- The client may show `icons_256` at sizes other than 96 pt. If so, the outline is 2 pt only at 96.
-- No client code names the six new icons yet; their callers will choose `icons_48` or `icons_256` by size.
+- Another screen that shows a quarryback or glass golem bust with a look (a skin) still gets the rendered bust: `PAINTED` only stands in for the plain one.
+- Dropping both kinds from `FxPortrait.TOON` (AIA2-R3) should give the toon-off column above in the game.
 
 ### Next step
 
-1. The lead runs the Icons gate on P1-AIA2-icons-2b at the requested commit and merges.
-2. If the gate fails a quality: fix what its notes name, rebake, run `check_icons.py` and the pre-check again.
-3. Batches 3 and 4 stay deferred until the lead opens them.
-
-**For the lead.** Godot still writes `client/tests/a11y_motion_tests.gd.uid` on import in a fresh container; it is not tracked and not mine, so I deleted my copy again and did not commit it.
+1. The pre-check records on 354a9b1b (or the later sha with this file), then `gate_request` for "heist at 100% text", Character presence.
+2. If the gate fails Character presence: change what its notes name in `PAINTED`, re-render the five portraits in colour and grayscale, and run `guard.sh` and the pre-check again.
+3. After the merge: AIA2-R3. Batches 3 and 4 stay deferred until the lead opens them.
 
 ## Tried and failed
 
@@ -131,4 +91,6 @@ None.
 - 2026-11-10 Worth your time as a smooth lathed sack with a plain lip: it read as a clay pot. A slumped profile, a tie cord with a knot and two loose ends, and a stitched patch make it cloth.
 - 2026-11-10 Lootbag's body with a gloss of 0.25 to lift it in grayscale: the gloss band sat on the leather as a grey smudge above the star (the same fault as on 4 November). The body is matt again; a paler rim light, a lighter ruffle and a hem in the rim leather do the lifting.
 - 2026-11-10 Baking while `client/build.sh` was importing in the same container: Godot read `icons_48_hc.webp` half written and rewrote its `.import` file with `valid=false`. Restore the `.import` files with `git checkout` after such a bake; `git diff --stat -- client/ui/art/*.import` must be empty before a commit.
-
+- 2026-11-12 The painted busts through `FxPortrait`'s toon pass: it re-quantises the flat painting into blotches (Bramble's arms and bands thin, its lamp lost). The busts are framed to read through it until AIA2-R3 drops them from the list.
+- 2026-11-12 Hollow's head drawn at its natural size: under the default crop it was a small cap over a big chest, and the face did not lead. The head is now 1.2 times larger.
+- 2026-11-12 Hollow scaled up 1.3 to 1.4 times as a whole: the TOON crop (centre y 61, radius 61 of 192) and the default crop cut the gem off the bottom. The whole figure is back at scale 1, lowered 6 px, with the head enlarged and the gem raised 10 px.
