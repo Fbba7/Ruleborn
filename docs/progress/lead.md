@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxrEkx6oXeGzdGm4sDr` (cycle 61, 12
-November 2026 from 06:39Z, started by the Opus 5.5 launcher). Cycle 60's
+Latest lead cycle session: `session_01SNkKxqEW3A3hwRz6VufQz5` (cycle 62, 12
+November 2026 from 07:39Z, started by the Opus 5.5 launcher). Cycle 61's
+was `session_01SNkKxrEkx6oXeGzdGm4sDr` (from 06:39Z). Cycle 60's
 was `session_01SNkKxp1vEH7M7oEGRULZPR` (from 04:38Z). Cycle 59's
 was `session_01SNkKxpnpDTy3xKH1cD7N64` (from 03:41Z). Cycle 58's
 was `session_01SNkKxq63oZNWPm4cReDWcP` (from 02:38Z). Cycle 57's
@@ -371,6 +372,30 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 62, 12 November 2026, from 07:39Z (session
+  `session_01SNkKxqEW3A3hwRz6VufQz5`, started by the Opus 5.5 launcher):
+  a bookkeeping cycle, nothing merged, no session started.
+  - **Claims recorded** from the status files: K1 on P1-K1-numerals-on
+    (state `blocked` as K1's status says, on K1-R18, which cycle 61
+    approved with M9; lease to 08:55Z; pre-check running at `ca66fe67`;
+    its session `session_01SNkKxqEuMj3TF1SQMhjHgP` is idle between
+    check-ins, its next update due 07:55Z) and S1 on P1-S1-pilot-4
+    (working, lease to 09:55Z, last push `d62e2537` at 07:11Z: objections
+    D and B built, FIT shots passing, the checks next; its session
+    `session_01SNkKxnQXTay5oBDdKNoz8h` is running). `owners.py claims`:
+    disjoint. Neither is past its `expected_next_update_by`, so neither
+    was restarted.
+  - No task is ready and no gate request is open, so no merge lock was
+    taken. No new request: K1-R15 to K1-R18, S1-R8 to S1-R11 and AD-R13
+    to AD-R16 are already in requests.md. AD has no open task until
+    board-1c opens; AIA, AIA-2 and SV have none.
+  - Main did not move, so the pages were not republished. Two builders,
+    under the cap. The backlog has 72 tasks, 53 merged. No owner-inbox
+    entry.
+  - Next: merge numerals-on (budgets.json's change only the three heist
+    records and their raises entry; heist_hud.gd only K1-R17's two
+    changes) and pilot-4 when ready, then AD on board-1c. At most three
+    builders; icon batches 3 and 4 stay deferred (D13 (c)).
 - Cycle 61, 12 November 2026, from 06:39Z (session
   `session_01SNkKxrEkx6oXeGzdGm4sDr`, started by the Opus 5.5 launcher):
   P1-AD-board-1b merged; board 1 does not stand after round 2; two
