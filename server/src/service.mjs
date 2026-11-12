@@ -74,6 +74,10 @@ export const REPLAY_BYTES_A_DAY = 2 * 2 ** 20;
 /** SEC-18 B: a submission refused after its header checks is kept this many
  *  days for review and its sender, not the full retention (§24.3). */
 export const REFUSED_KEEP_DAYS = 7;
+/** SEC-25 B (decided): an account that has had this many submissions
+ *  refused in a UTC day is leased nothing more that day. An honest device
+ *  almost never has one. */
+export const MAX_REFUSALS_A_DAY = 10;
 
 /** §24.10: "Tick rate — 30 a second, fixed." */
 // SR-15 (the owner's, until D60 reads the ledger): §24.8 has a published
@@ -539,12 +543,24 @@ export class Service {
         }
         return this.leaseView(held);
       }
+      // SEC-25 B: a day of refusals is the end of that day's leases.
+      const refusals = this.db.prepare(
+        "SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND day = ? AND validated = 0").get(attacker, day(now)).n;
+      if (refusals >= MAX_REFUSALS_A_DAY) throw new Refused(429, "too_many_refusals");
+      // SEC-25 B: a submission refused while its lease was live does not buy
+      // a fresh seed. The next lease keeps the refused one's until that one
+      // would have expired, so sending junk until a liked seed comes gains
+      // nothing; a played lease, or one run out, frees it as before.
+      const refusedLive = newest && newest.expires_at > now
+        && this.db.prepare("SELECT 1 FROM heists WHERE token = ? AND validated = 0").get(newest.token);
       // Expired and never submitted, it reserved nothing (§24.13): a fresh
       // one is issued beside it.
+      const token = this.random(16).toString("hex");
+      const drawn = this.random(8).readBigUInt64LE(0).toString();
       const row = {
-        token: this.random(16).toString("hex"),
+        token,
         attacker, bundle, defender,
-        seed: this.random(8).readBigUInt64LE(0).toString(),
+        seed: refusedLive ? newest.seed : drawn,
         ticks: clockTicks(0) + era.seconds * TICKS_PER_SECOND,
         rules: this.builds.current.rulesVersion,
         // Never at the moment the newest was issued, nor before it: the

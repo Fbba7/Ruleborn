@@ -135,7 +135,8 @@ test("SEC-18 B: a submission refused before its header checks pass stores no byt
   assert.equal(await fetchReplay(t, t.raider, lease.token), 410);
   // A wrong seed is refused by the header too.
   const other = t.service.lease(t.raider.account, t.bundle);
-  const wrong = t.service.submit(t.raider.account, other.token, play(t, lease, { plan: openPlan() }));
+  const otherSeed = { ...other, seed: (BigInt(other.seed) + 1n).toString() };
+  const wrong = t.service.submit(t.raider.account, other.token, play(t, otherSeed, { plan: openPlan() }));
   assert.equal(wrong.reason, "wrong_seed");
   assert.equal(t.service.replays.get(replayOf(t, other.token).log_hash), null);
 });
@@ -179,4 +180,45 @@ test("SEC-18 B: past 2 MiB of replays a day a refusal stores nothing, a validate
   const next = t.service.lease(t.raider.account, t.bundle);
   t.service.submit(t.raider.account, next.token, tampered(play(t, next, { plan: openPlan() })));
   assert.equal(replayOf(t, next.token).replay_gone, 0);
+});
+
+// SEC-25 part B (decided): a refused submission freed its lease at once and
+// the next lease drew a fresh seed, so a client could send junk until it
+// was handed a seed it liked. Now the next lease on the target keeps the
+// refused lease's seed while that lease would have been live, and an
+// account is leased nothing more on a day it has had MAX_REFUSALS_A_DAY
+// refusals.
+test("SEC-25 B: a refused lease's seed is kept by the next lease on the target, until it would have expired", () => {
+  const t = twoPlayers(true);
+  const first = t.service.lease(t.raider.account, t.bundle);
+  t.service.submit(t.raider.account, first.token, new Uint8Array(8));
+  const second = t.service.lease(t.raider.account, t.bundle);
+  assert.notEqual(second.token, first.token);
+  assert.equal(second.seed, first.seed, "no fresh seed for a refusal");
+  // The kept seed plays: the device may send the same heist again.
+  assert.equal(t.service.submit(t.raider.account, second.token, play(t, second, { plan: openPlan() })).validated, true);
+  // A played lease frees the seed, as it always did.
+  const third = t.service.lease(t.raider.account, t.bundle);
+  assert.notEqual(third.seed, first.seed);
+  // Refused, then leased again after the refused lease's day ran out: fresh.
+  t.service.submit(t.raider.account, third.token, new Uint8Array(8));
+  t.clock.now += 24 * 60 * 60 * 1000 + 1;
+  assert.notEqual(t.service.lease(t.raider.account, t.bundle).seed, third.seed);
+});
+
+test("SEC-25 B: after 10 refused submissions in a UTC day, leasing is refused 429 too_many_refusals until the next", async () => {
+  const { MAX_REFUSALS_A_DAY } = await import("../src/service.mjs");
+  assert.equal(MAX_REFUSALS_A_DAY, 10);
+  const t = twoPlayers(true);
+  for (let i = 0; i < MAX_REFUSALS_A_DAY; i++) {
+    const lease = t.service.lease(t.raider.account, t.bundle);
+    assert.equal(t.service.submit(t.raider.account, lease.token, new Uint8Array(8)).validated, false);
+  }
+  assert.throws(() => t.service.lease(t.raider.account, t.bundle),
+                (e) => e.status === 429 && e.reason === "too_many_refusals");
+  // Another player is not held by it.
+  const other = t.service.session("gc:other");
+  assert.ok(t.service.lease(other.account, t.bundle).token);
+  t.clock.now += 24 * 60 * 60 * 1000;
+  assert.ok(t.service.lease(t.raider.account, t.bundle).token, "a new day");
 });
