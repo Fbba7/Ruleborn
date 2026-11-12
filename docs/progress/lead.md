@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqJqzRbvVerXcUszbd` (cycle 67, 12
-November 2026 from 12:39Z, started by the Opus 5.5 launcher). Cycle 66's
+Latest lead cycle session: `session_01SNkKxnfPvJzu1iksNyMgNw` (cycle 68, 12
+November 2026 from 13:39Z, started by the Opus 5.5 launcher). Cycle 67's
+was `session_01SNkKxqJqzRbvVerXcUszbd` (from 12:39Z). Cycle 66's
 was `session_01SNkKxqr3DC7Kb5YZfijUtN` (from 11:39Z). Cycle 65's
 was `session_01SNkKxqZN7A6CTcTtr4tEcm` (from 10:38Z). Cycle 64's
 was `session_01SNkKxqijuvwjXHbeAGDLGB` (from 09:39Z). Cycle 63's
@@ -213,7 +214,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| S1 | `session_01SNkKxoXAbUvoLyhk2tDXzh` (Opus 5.5, effort high) | P1-S1-pilot-5 (start: board 1's round 3 in P1-AD-board-1c, objections D and F open; AD-R17, AD-R18) | `claude/ui-screens-heist` | 2026-11-12 11:27Z |
+| S1 | `session_01SNkKxn9y7QjFsFiRjgoaAP` (Opus 5.5, effort high) | P1-S1-pilot-5 (restart: the session below went idle waiting for the gate; verdicts in verdicts/P1-S1-pilot-5/beb8a023.json, all pass, advisory; mark ready from the handoff) | `claude/ui-screens-heist` | 2026-11-12 13:52Z |
+| S1 | `session_01SNkKxoXAbUvoLyhk2tDXzh` (Opus 5.5, effort high; idle, replaced at 13:52Z) | P1-S1-pilot-5 (start: board 1's round 3 in P1-AD-board-1c, objections D and F open; AD-R17, AD-R18) | `claude/ui-screens-heist` | 2026-11-12 11:27Z |
 | AD | `session_01SNkKxmtatzN7YRTTZcPFsL` (Opus 5.5, effort high; idle, its task merged) | P1-AD-board-1c (start: P1-K1-numerals-on and P1-S1-pilot-4 merged as 541e4c97; the gate's notes in verdicts/P1-S1-pilot-4/e846c531.json and verdicts/P1-K1-numerals-on/1d21bf4a.json) | `claude/ui-ad` | 2026-11-12 09:30Z |
 | S1 | `session_01SNkKxnQXTay5oBDdKNoz8h` (Opus 5.5, effort high; idle, its task merged) | P1-S1-pilot-4 (start: board 1's round 2 in P1-AD-board-1b, objections D and B open; AD-R13, AD-R15) | `claude/ui-screens-heist` | 2026-11-12 06:54Z |
 | K1 | `session_01SNkKxqEuMj3TF1SQMhjHgP` (Opus 5.5, effort high; idle, its task merged) | P1-K1-numerals-on (start: P1-S1-pilot-3 merged as 085c812a with the switch off; S1-R11, K1-R11, the gate's Display type note) | `claude/ui-bake` | 2026-11-12 05:39Z |
@@ -379,6 +381,40 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 68, 12 November 2026, from 13:39Z (session
+  `session_01SNkKxnfPvJzu1iksNyMgNw`, started by the Opus 5.5 launcher):
+  the gate for P1-S1-pilot-5, and S1 restarted; nothing merged.
+  - **S1's pre-check passed** at `beb8a023` (exit 0) and it asked the
+    gate for "heist at 100% text" and "heist at 200% text, pt_BR". The
+    lead rendered both at `beb8a023` and ran the ui-judge (rubric v3,
+    blind, shuffled pairs). Verdicts in
+    `docs/art/ui-quality/gate/verdicts/P1-S1-pilot-5/beb8a023.json`:
+    - 100%, Character presence: split, then **pass** at 3 fails of 6
+      (a fail needs 4). Pip, Mo, Ash and the wizard read as framed toon
+      figures; the samples split on Bramble and Hollow, now flat-painted,
+      against their pale rings. Narrow: board-1d should re-check
+      objection D.
+    - 100%, Display type: **pass** (3 of 3). The timer's ink outline
+      shows; "LAWS HERE" sits on the tag plate (objection F met).
+    - 200% pt_BR, Display type: **pass** (3 of 3); "Alarme" and
+      "~2.600" touch their frames, a layout note.
+    The verdicts are advisory (shadow mode) and do not block the merge.
+  - **S1 restarted:** its session `session_01SNkKxoXAbUvoLyhk2tDXzh`
+    went idle at 13:04Z waiting for the verdicts, and its
+    `expected_next_update_by` (13:49Z) passed. A fresh session
+    `session_01SNkKxn9y7QjFsFiRjgoaAP` (Opus 5.5, effort high, the
+    roster's prompt) reads the handoff, takes the verdicts and marks the
+    task ready. The claim's lease follows S1's own (to 15:15Z).
+  - No task is ready, so no merge lock was taken. No new request: S1-R1
+    to S1-R12 are already in requests.md. Main had not moved before this
+    cycle, so the pages were not republished.
+  - The launcher and the watchdog are enabled. One builder, under the
+    cap of three. The backlog has 74 tasks, 56 merged. No owner-inbox
+    entry.
+  - Next: merge pilot-5 when ready (owners diff, one full check at a
+    time via tools/run_checks.sh, and guard.sh since it touches the
+    client), then start AD on P1-AD-board-1d, which re-checks objection
+    D. Icon batches 3 and 4 stay deferred (D13 (c)).
 - Cycle 67, 12 November 2026, from 12:39Z (session
   `session_01SNkKxqJqzRbvVerXcUszbd`, started by the Opus 5.5 launcher):
   a bookkeeping cycle, nothing merged, no session started.

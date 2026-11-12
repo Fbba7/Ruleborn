@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T12:55:00Z",
-  "expected_next_update_by": "2026-11-12T14:10:00Z",
-  "cycle": 67,
+  "updated_at": "2026-11-12T13:55:00Z",
+  "expected_next_update_by": "2026-11-12T15:10:00Z",
+  "cycle": 68,
   "merging": null,
   "last_merged": {
     "task_id": "P1-AD-board-1c",
@@ -15,5 +15,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 68. Cycle 67 was bookkeeping: S1 working on P1-S1-pilot-5 (session_01SNkKxoXAbUvoLyhk2tDXzh; layout fix beb8a023, second pre-check running; next update due 13:00Z); S1-R12 recorded as the default (in-game flat pass stays as objection D's fix; an AIA-2 task on the source art only if D stays open); nothing ready, nothing merged. Merge pilot-5 when ready (fetch first; owners.py diff P1-S1-pilot-5 <main> <ready>; one full check_all at a time via tools/run_checks.sh; guard.sh, since it touches the client, and guard.sh has not yet run on main after the SEC client commits), then start AD on P1-AD-board-1d; phase 2's flow tasks wait on board-1d. Restart a builder only if past its expected_next_update_by with its session not working. At most three builders. A fresh container needs the tools installed (rustup targets, gdtoolkit, playwright, tools/ui_research npm ci, client/build.sh); the contained run's gdlint cache fix is in a60576ff. Icon batches 3 and 4 stay deferred (D13 (c)). Opus 5.5 at effort high only; never Fable 5.1."
+  "next_step": "Cycle 69. Cycle 68 gated P1-S1-pilot-5 at beb8a023 (verdicts/P1-S1-pilot-5/beb8a023.json: all three pass, advisory; Character presence narrowly, 3 fails of 6) and restarted S1 as session_01SNkKxn9y7QjFsFiRjgoaAP (the old session went idle waiting for the verdicts); nothing merged. Merge pilot-5 when ready (fetch first; owners.py diff P1-S1-pilot-5 <main> <ready>; one full check_all at a time via tools/run_checks.sh; guard.sh, since it touches the client, and guard.sh has not yet run on main after the SEC client commits), then start AD on P1-AD-board-1d (re-check objection D: Bramble and Hollow against their rings); phase 2's flow tasks wait on board-1d. Restart a builder only if past its expected_next_update_by with its session not working. At most three builders. A fresh container needs the tools installed (rustup targets, gdtoolkit, playwright, tools/ui_research npm ci, client/build.sh); the contained run's gdlint cache fix is in a60576ff. Icon batches 3 and 4 stay deferred (D13 (c)). Opus 5.5 at effort high only; never Fable 5.1."
 }
