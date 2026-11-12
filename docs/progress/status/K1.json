@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T22:09:00Z",
   "lease_until": "2026-11-13T01:37:00Z",
-  "updated_at": "2026-11-12T22:37:00Z",
-  "expected_next_update_by": "2026-11-12T23:22:00Z",
+  "updated_at": "2026-11-12T22:40:00Z",
+  "expected_next_update_by": "2026-11-12T23:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "1d21bf4a",
-    "next_step": "client/ui/motion.gd reads motion.json (press, screen, shine, reward, each with its reduced form; tokens as fallback); tests in tests/shots/ui_kit_motion.gd pass alone; next: full kit and client tests, guard.sh, check_all, pre-check"
+    "next_step": "main (30ff0f9a) merged as 23e379f0; helper .uid committed (87921e49); running the setup line and check_all on the merge, then the kit tests, guard.sh and the pre-check"
   },
   "precheck": {
     "sha": "1d21bf4a21cbd1584b800ccdf214ffa28ba81c12",
@@ -335,5 +335,5 @@
       "at": "2026-11-12T22:37:00Z"
     }
   ],
-  "next_step": "P2-K1-motion claimed; main (dca7da32) merged as 38be1773; next: the bake embeds art/ui/motion/curves.json in client/ui/art/motion.json, then client/ui/motion.gd reads it"
+  "next_step": "main (30ff0f9a) merged as 23e379f0; helper .uid committed (87921e49); running the setup line and check_all on the merge, then the kit tests, guard.sh and the pre-check"
 }
