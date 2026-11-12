@@ -680,6 +680,11 @@ export class Service {
     // is "checked against the roster it holds", so one the device sends
     // without naming the crew is refused: else any kind could be claimed,
     // and nobody would rest after.
+    // §12.11: after a friendly heist "the crew rests as after any heist", so
+    // one is played by a crew the roster names and the manifest carries;
+    // without one nobody would rest, and a friend could be played on a loop
+    // (SEC-24).
+    if (lease.mode === "friendly" && (!header.manifest || !crew)) return refuse("crew_required");
     if (header.manifest && !crew) return refuse("crew_not_named");
     if (crew) {
       const why = this.home.crewProblem(attacker, crew, replay, header, now);
@@ -794,12 +799,19 @@ export class Service {
                       // §13.2's report and the Profile's facts, from the
                       // event log at settlement (TD.39, G57).
                       decision.report ? { report: decision.report } : {});
+        // SEC-24: a friendly heist pays its pages and its stray roll only as
+        // the pair's first of the UTC day, whichever of the two raided whom;
+        // later ones still play, rest the crew and are recorded, and pay
+        // nothing. The design gives no cap; without one two friends farm
+        // pages and strays on a loop.
+        const paysOut = lease.mode !== "friendly" || this.friendlyEarlierToday(lease, now) === 0;
+        if (!paysOut) Object.assign(outcome, { friendPages: 0, friendlyPaid: false });
         // §11.5: the first heist brings two strays home, free (home.mjs);
         // the roster says so, and the heist's outcome is the haul's alone.
         const crossed = lawsOf(this.store.get(lease.bundle));
         const first = this.home.firstStrays(lease.attacker, crossed, now);
         // §11.5: about one successful heist in eight finds a stray (home.mjs).
-        if (!first.length && decision.verdict.grade !== "foiled") {
+        if (paysOut && !first.length && decision.verdict.grade !== "foiled") {
           const stray = this.home.findStray(lease.attacker, lease.token, crossed, now);
           if (stray) outcome.stray = stray;
         }
@@ -807,7 +819,7 @@ export class Service {
         const gift = this.friends.firstHeist(lease.attacker, now);
         if (gift) outcome.inviteGift = gift;
         // §7.6: the laws met, the pylons' pages and the floor (codex.mjs).
-        this.codex.afterHeist(lease, decision.verdict, now, decision.cast?.laws ?? []);
+        this.codex.afterHeist(lease, decision.verdict, now, decision.cast?.laws ?? [], { friendPages: paysOut });
         // §11.6: the crew away and resting, each by its outcome (home.mjs).
         if (decision.crew) {
           outcome.rest = this.home.rest(lease.attacker, decision.crew, decision.verdict, decision.heistMs, now);
@@ -1009,6 +1021,15 @@ export class Service {
     return { verdict, fee, feeReturned: returned, cast, haul: pay, renown, renownCounted, stars, rating,
              defence, denied, keeper, mode: lease.mode ?? "raid",
              ...(friendly ? { friendPages } : {}) };
+  }
+
+  /** The validated friendly heists two friends have played on each other
+   *  today (UTC), either way round (SEC-24). Before this one is written. */
+  friendlyEarlierToday(lease, now) {
+    const q = this.db.prepare(
+      `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
+        WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND h.validated = 1 AND l.mode = 'friendly'`);
+    return q.get(lease.attacker, day(now), lease.defender).n + q.get(lease.defender, day(now), lease.attacker).n;
   }
 
   /** The validated raids a player has played, games among friends and

@@ -2,7 +2,7 @@
 // compiled, a clock the test moves, and a random source that counts, so every
 // seed and token is the same on every run.
 
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { open } from "../src/db.mjs";
@@ -145,6 +145,27 @@ export function play(t, lease, { plan = null, crew = 3, manifest = null } = {}) 
   const spec = { seed: BigInt(lease.seed), ticks: lease.ticks, crew, era };
   return plan ? t.build.record(island, { ...spec, commands: landed(plan), manifest })
               : t.build.recordDrawn(island, spec);
+}
+
+const content = (name) => JSON.parse(readFileSync(new URL(`../../content/${name}.json`, import.meta.url), "utf8"));
+
+/** A lease played by `account`'s first three characters, named and in the
+ *  replay's manifest as the device writes them: what a friendly heist needs
+ *  (SEC-24). The replay and the ids to submit with it. */
+export function crewed(t, account, lease, { plan = openPlan() } = {}) {
+  const kinds = content("ruleborn").map((k) => k.id);
+  const traits = content("traits").map((x) => x.id);
+  const crew = t.service.home.show(account).characters.slice(0, 3);
+  const manifest = { members: crew.map((c) => ({ kind: kinds.indexOf(c.kind), level: c.level,
+                                                 traits: c.traits.map((x) => traits.indexOf(x)) })),
+                     sage: 0, casts: [] };
+  return { replay: play(t, lease, { plan, manifest }), crew: crew.map((c) => c.id) };
+}
+
+/** Submit a friendly (or any) lease played by `account`'s named crew. */
+export function submitCrewed(t, account, lease, opts) {
+  const { replay, crew } = crewed(t, account, lease, opts);
+  return t.service.submit(account, lease.token, replay, crew);
 }
 
 /** `plan`, with a landing on (0, 0) first unless it has its own. */

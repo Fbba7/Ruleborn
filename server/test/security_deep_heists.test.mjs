@@ -10,7 +10,7 @@ import { test } from "node:test";
 
 import { Build, Builds } from "../src/sim.mjs";
 import { Store } from "../src/store.mjs";
-import { WASM, openPlan, play, twoPlayers } from "./setup.mjs";
+import { WASM, crewed, established, openPlan, play, submitCrewed, twoPlayers } from "./setup.mjs";
 
 const files = (dir) => readdirSync(dir, { recursive: true }).filter((f) => /[0-9a-f]{64}$/.test(f));
 
@@ -221,4 +221,86 @@ test("SEC-25 B: after 10 refused submissions in a UTC day, leasing is refused 42
   assert.ok(t.service.lease(other.account, t.bundle).token);
   t.clock.now += 24 * 60 * 60 * 1000;
   assert.ok(t.service.lease(t.raider.account, t.bundle).token, "a new day");
+});
+
+// SEC-24: a friendly heist costs nothing and paid the defender a page of
+// their worked-on law for every raider caught, and rolled a stray for the
+// raider, with no cap: two friends could farm pages and strays on a loop.
+// Only the pair's first friendly heist of the UTC day pays now, either way
+// round; and a friendly heist names its crew, so the crew rests after it.
+test("SEC-24: only a pair's first friendly heist of the UTC day pays pages or rolls a stray, either way round; the next day pays again", () => {
+  const t = twoPlayers(true);
+  const HOUR = 60 * 60 * 1000;
+  const { invite } = t.service.friends.invite(t.defender.account);
+  t.service.friends.accept(t.raider.account, invite);
+  established(t, t.raider.account);
+  const island = t.build.exampleIsland(true);
+  island[5] = 2;                                       // a different island of the raider's own
+  const home = t.service.publish(t.raider.account, island).bundle;
+  for (const who of [t.raider.account, t.defender.account]) t.service.codex.workOn(who, "glass");
+  const pages = (who) => t.service.codex.view(who).laws.find((l) => l.law === "glass")?.pages ?? 0;
+  let rolls = 0;
+  const findStray = t.service.home.findStray.bind(t.service.home);
+  t.service.home.findStray = (...a) => { rolls++; return findStray(...a); };
+  // The day's first hour, so every heist below falls on one UTC day.
+  t.clock.now = (Math.floor(t.clock.now / (24 * HOUR)) + 1) * 24 * HOUR + HOUR;
+  const friendly = (by, bundle, plan) => {
+    const out = submitCrewed(t, by, t.service.lease(by, bundle, null, { mode: "friendly" }), { plan });
+    assert.equal(out.validated, true, out.reason);
+    t.clock.now += 5 * HOUR;                           // the crew rested: 180 minutes caught, × 1.5 if Sleepy
+    return out;
+  };
+  // Foiled: the guards catch raiders and the defender earns pages.
+  const first = friendly(t.raider.account, t.bundle, []);
+  assert.equal(first.reason, undefined);
+  assert.ok(first.verdict.caught > 0);
+  assert.equal(first.friendPages, first.verdict.caught);
+  assert.equal(pages(t.defender.account), first.verdict.caught, "the day's first pays");
+  for (let i = 0; i < 2; i++) {
+    const again = friendly(t.raider.account, t.bundle, []);
+    assert.ok(again.verdict.caught > 0, "still played and judged");
+    assert.equal(again.friendPages, 0, "a repeat pays no pages");
+  }
+  assert.equal(pages(t.defender.account), first.verdict.caught, "the defender's pages grew once");
+  const back = friendly(t.defender.account, home, []);
+  assert.ok(back.verdict.caught > 0);
+  assert.equal(back.friendPages, 0, "the other way round the same day pays nothing either");
+  assert.equal(pages(t.raider.account), 0);
+  // A clean friendly heist rolls a stray only as the day's first.
+  const before = rolls;
+  friendly(t.raider.account, t.bundle, openPlan());
+  assert.equal(rolls, before, "no stray roll for a repeat");
+  // The next UTC day, the pair's first pays again.
+  t.clock.now = (Math.floor(t.clock.now / (24 * HOUR)) + 1) * 24 * HOUR + HOUR;
+  const next = friendly(t.raider.account, t.bundle, []);
+  assert.equal(next.friendPages, next.verdict.caught);
+  assert.equal(pages(t.defender.account), first.verdict.caught + next.verdict.caught);
+  friendly(t.defender.account, home, openPlan());       // a repeat the other way: no roll
+  const nextDay = rolls;
+  t.clock.now = (Math.floor(t.clock.now / (24 * HOUR)) + 1) * 24 * HOUR + HOUR;
+  friendly(t.raider.account, t.bundle, openPlan());
+  assert.equal(rolls, nextDay + 1, "a clean first of the day rolls");
+});
+
+test("SEC-24: a friendly heist without a named crew in its manifest is refused crew_required", () => {
+  const t = twoPlayers(true);
+  const { invite } = t.service.friends.invite(t.defender.account);
+  t.service.friends.accept(t.raider.account, invite);
+  const lease = () => t.service.lease(t.raider.account, t.bundle, null, { mode: "friendly" });
+  const refusedAs = (fn) => {
+    const out = fn();
+    assert.deepEqual([out.validated, out.reason], [false, "crew_required"]);
+  };
+  const bare = lease();
+  refusedAs(() => t.service.submit(t.raider.account, bare.token, play(t, bare, { plan: [] })));
+  const drawn = lease();
+  refusedAs(() => t.service.submit(t.raider.account, drawn.token, play(t, drawn)));
+  const unnamed = lease();
+  refusedAs(() => t.service.submit(t.raider.account, unnamed.token, crewed(t, t.raider.account, unnamed).replay));
+  const named = lease();
+  const { replay, crew } = crewed(t, t.raider.account, named, { plan: [] });
+  assert.equal(t.service.submit(t.raider.account, named.token, replay, crew).mode, "friendly");
+  // A raid without a manifest is played as before.
+  const raid = t.service.lease(t.raider.account, t.bundle);
+  assert.ok(t.service.submit(t.raider.account, raid.token, play(t, raid, { plan: openPlan() })).verdict);
 });
