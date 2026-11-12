@@ -23,6 +23,12 @@ const SEGMENTS := {0: [[0, 0, 1, 0], [1, 0, 1, 1], [1, 1, 0, 1], [0, 1, 0, 0]], 
 	6: [[1, 0, 0, 0], [0, 0, 0, 1], [0, 1, 1, 1], [1, 1, 1, 0.5], [1, 0.5, 0, 0.5]], 7: [[0, 0, 1, 0], [1, 0, 1, 1]],
 	8: [[0, 0, 1, 0], [1, 0, 1, 1], [1, 1, 0, 1], [0, 1, 0, 0], [0, 0.5, 1, 0.5]],
 	9: [[1, 0.5, 0, 0.5], [0, 0.5, 0, 0], [0, 0, 1, 0], [1, 0, 1, 1], [1, 1, 0, 1]]}
+## How far the disc stands off the figure, in CIE L* (AD-R13 asks 20 or more).
+const VALUE_STEP := 30.0
+## The composed portraits, by kind, school and pixel size, and what each
+## measured: {key: {"figure": L*, "disc": L*, "least": L*}} (the gate's notes).
+static var measured := {}
+static var _composed := {}
 
 var role := ""
 ## Its kind (`RulebornReplay.crew()`'s, from the manifest), "" when played by
@@ -39,18 +45,15 @@ var uses := -1
 var is_ready := true
 var armed := false
 ## The portrait rendered from the character model, when the build has it;
-## else the drawn face. `figure` is the model alone on a clear ground; once
+## else the drawn face. `figure()` is the model alone on a clear ground; once
 ## it is drawn, `picture` is the figure set on its own disc (`compose`).
 var picture: Texture2D
-var figure: Texture2D
+## Whether the build has the model's bust. The bust itself stays in
+## CreatureBust's cache and is only read to compose, so the portrait holds
+## one texture, its composed disc, at the size it is drawn.
+var _has_figure := false
 var _time := 0.0
 var _picture_ready := false
-## How far the disc stands off the figure, in CIE L* (AD-R13 asks 20 or more).
-const VALUE_STEP := 30.0
-## The composed portraits, by kind, school and pixel size, and what each
-## measured: {key: {"figure": L*, "disc": L*, "least": L*}} (the gate's notes).
-static var _composed := {}
-static var measured := {}
 
 
 func _init(member_role := "", pressed_call: Callable = Callable(), member_kind := "", shown_name := "") -> void:
@@ -61,7 +64,8 @@ func _init(member_role := "", pressed_call: Callable = Callable(), member_kind :
 	letters = shown_name if shown_name != "" else Strings.term("ROLE", role)
 	if kind != "" and CreatureModel.manifest().has(kind.replace("_", "")):
 		# T1's bust: the head and body alone, set on its disc by `compose`.
-		figure = CreatureBust.of(kind, "", Color(0, 0, 0, 0))
+		_has_figure = true
+		CreatureBust.of(kind, "", Color(0, 0, 0, 0))
 	text = ""
 	var side := UI.px(50)
 	# As wide as its name, so with large text names never run together.
@@ -102,13 +106,19 @@ static func _drawn(t: Texture2D) -> bool:
 	return t.get_image() != null and not t.get_image().is_invisible()
 
 
+## The model alone on a clear ground, from CreatureBust's cache; null when
+## the build has no model for this kind.
+func figure() -> Texture2D:
+	return CreatureBust.of(kind, "", Color(0, 0, 0, 0)) if _has_figure else null
+
+
 func _process(delta: float) -> void:
-	if figure != null and size.y > 0.0 and Engine.get_process_frames() % 10 == 0 and _drawn(figure):
+	if _has_figure and size.y > 0.0 and Engine.get_process_frames() % 10 == 0 and _drawn(figure()):
 		var side := ceili(_radius() * 0.79 * 2.0)
 		var key := "%s/%s/%d" % [kind, school_ground().to_html(), side]
 		if not _picture_ready or picture != _composed.get(key):
 			if not _composed.has(key):
-				_composed[key] = compose(figure.get_image(), school_ground(), side, key)
+				_composed[key] = compose(figure().get_image(), school_ground(), side, key)
 			picture = _composed[key]
 			_picture_ready = true
 			queue_redraw()

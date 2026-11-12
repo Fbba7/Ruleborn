@@ -199,7 +199,7 @@ func _go() -> void:
 			for b: FxPortrait in screen.crew_buttons:
 				if b.picture != null:
 					b.picture.get_image().save_png(keep.path_join(b.letters + ".png"))
-					b.figure.get_image().save_png(keep.path_join(b.letters + "-figure.png"))
+					b.figure().get_image().save_png(keep.path_join(b.letters + "-figure.png"))
 		# Board 1's objection D: each portrait's figure and disc, in L*.
 		for b: FxPortrait in screen.crew_buttons:
 			for key: String in FxPortrait.measured:
