@@ -47,6 +47,19 @@ Commands: `SCREEN=<route> TEXT=100 bash tools/render/shoot.sh client/tests/shots
 
 The checks run on the task's last commit are in `docs/progress/S3.md`.
 
+### The settings shot record (Lead-R1)
+
+The gate's first samples on "settings at 100% text" were cut from the rectangles of `art/ui/keyframes/05-settings.shot.json`, the key frame's record. That record and its still, `05-settings.png`, both show the Access tab, the key frame's design. The candidate still, rendered by `screen_meta.gd`, shows the Game tab, the tab the settings screen opens on. `screen_meta.gd` writes no record, so the gate had none of its own for the candidate.
+
+`docs/art/shots/menu-screens/shot_record.gd` renders the settings screen and writes its record from the same frame: the title and every button on screen, in points of the 390 × 845 frame. The two pairs:
+
+| Tab | Still | Record | Used for |
+|---|---|---|---|
+| Game | `after-settings-100-game.png` | `after-settings-100-game.shot.json` | P2-S3-screenkit's "settings at 100% text": the tab with the volume bars and the row wells this task changed. The still is pixel for pixel `after-settings-100.png` |
+| Access | `after-settings-100-access.png` | `after-settings-100-access.shot.json` | P2-S3-settings, whose items follow key frame 05 (the Access tab) |
+
+`python3 tools/ui_gate/checks.py all` on them: hud-share PASS and hierarchy N/A (no primary) on both. value-steps passes the open tab and the language pill on Game, the open tab on Access, and fails the rest: the dark plum steppers, switches and back button sit 0 to 1.1 value steps off the plum cards and the night ground, where the rule asks 2. On the key frame's record every control passes, its cream steppers and switches 44 to 88 L* off their ground. That is P2-S3-settings' work (the screen built on the key frame), not ScreenKit's materials.
+
 ### What is still worse than before
 
 - **The law card's preview has no frame.** `law_screen.gd` seats the preview in `ScreenKit.panel("well", preview, 16.0, 3.0)`. The track skin drew a dark rim round it; the well skin's rim is soft and 3 points of padding leave it under the picture, so the picture's edges fade into the green card. `law_screen.gd` is not this task's; it is in S3-R2 for AD to judge, and a fix (more padding, or the kit's `frame_*` look) is a request to the lead.
