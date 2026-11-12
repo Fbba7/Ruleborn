@@ -8,16 +8,26 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T19:16:00Z",
   "lease_until": "2026-11-12T22:16:00Z",
-  "updated_at": "2026-11-12T20:05:00Z",
-  "expected_next_update_by": "2026-11-12T20:50:00Z",
+  "updated_at": "2026-11-12T20:07:00Z",
+  "expected_next_update_by": "2026-11-12T20:52:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "P2-S3-screenkit: guard.sh OK on 9ca7ea49; stills of the nine screens that use 'well' with AD (S3-R2); next: pre-check, main merged, gate.",
-    "at": "2026-11-12T20:05:00Z"
+    "last_green_sha": "a9f7133d17c1bdbd2ca5564c2bb04fe632099610",
+    "next_step": "P2-S3-screenkit: pre-check PASS at a9f7133d (after the setup line and build reran on main's head 36c10290, guard.sh OK); gate asked on 'settings at 100% text'; waiting on the verdict, AD's preview (S3-R2) and S3-R1.",
+    "at": "2026-11-12T20:07:00Z"
   },
-  "precheck": null,
-  "gate_request": null,
+  "precheck": {
+    "sha": "a9f7133d17c1bdbd2ca5564c2bb04fe632099610",
+    "exit": 0,
+    "finished_at": "2026-11-12T20:05:13Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "a9f7133d17c1bdbd2ca5564c2bb04fe632099610",
+    "items": [
+      "settings at 100% text"
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
