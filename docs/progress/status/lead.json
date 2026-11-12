@@ -1,19 +1,19 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T19:51:00Z",
+  "updated_at": "2026-11-12T19:54:00Z",
   "expected_next_update_by": "2026-11-12T21:06:00Z",
   "cycle": 71,
   "merging": {
-    "candidate_sha": "1e438a1902fd8b468f4c9a3a2879b23eea9ce307",
+    "candidate_sha": "1d6700ab1e7643b50f7ea758e956bdd85798b66c",
     "task_ids": [
-      "P2-S2-flow-home"
+      "P2-S1-flow-result"
     ],
-    "started_at": "2026-11-12T19:02:30Z",
-    "expires_at": "2026-11-12T20:51:00Z"
+    "started_at": "2026-11-12T19:54:00Z",
+    "expires_at": "2026-11-12T20:54:00Z"
   },
   "last_merged": {
-    "task_id": "P2-AIA2-busts",
-    "sha": "fb07a2ce"
+    "task_id": "P2-S2-flow-home",
+    "sha": "7d899ce4"
   },
   "alerts": [
     "Owner's order 5 of 11 November 2026, about 19:50Z (\"Let's switch to Opus 5.5 everywhere again, effort high\"): every session runs on Opus 5.5 at effort high; never Fable 5.1 (order 2). Launcher trig_01T7B65veojXUDAKzLK3FFBP and watchdog trig_01A1NwZvKD6MDUosh4jyvqqr, created at 19:50Z after order 5 was on main. The Fable 5.2 pair (trig_01U7kEeot7dmuJuNZVQJ7Bhm, trig_0195QvFjjm2oUgeCeyhU4bp4), disabled at 19:49Z, and every older scheduled task stay disabled and are never re-enabled. No Fable 5.2 session is reused.",
@@ -22,5 +22,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "cycle 71 in progress: check_all on P2-S2-flow-home's candidate 1e438a19 runs again (the first run failed one fixture of tools/test_run_checks.sh, two identical test repositories committed in the same second; S2 changes no runner file); then merge it, then P2-S1-flow-result (candidate 1d6700ab, guard OK, check_all running)"
+  "next_step": "cycle 71 in progress: P2-S2-flow-home merged as 7d899ce4; merging P2-S1-flow-result (candidate 1d6700ab: guard OK, check_all running)"
 }
