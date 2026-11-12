@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxoLAJu3YypfTqBzR97` (cycle 57, 12
-November 2026 from 01:39Z, started by the Opus 5.5 launcher). Cycle 56's
+Latest lead cycle session: `session_01SNkKxq63oZNWPm4cReDWcP` (cycle 58, 12
+November 2026 from 02:38Z, started by the Opus 5.5 launcher). Cycle 57's
+was `session_01SNkKxoLAJu3YypfTqBzR97` (from 01:39Z). Cycle 56's
 was `session_01SNkKxoW2tKv8QRKNSnU1yd` (from 00:40Z). Cycle 55's
 was `session_01SNkKxnNomdRK7U7hfS4cvz` (from 21:38Z). Cycle 54's
 was `session_01SNkKxqcjmNkScYYnT5Er2i` (from 20:39Z). Cycle 53's
@@ -364,6 +365,26 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 58, 12 November 2026, from 02:38Z (session
+  `session_01SNkKxq63oZNWPm4cReDWcP`, started by the Opus 5.5 launcher):
+  a bookkeeping cycle, nothing merged, no session started.
+  - S1 works on P1-S1-pilot-3 (session
+    `session_01SNkKxp6HQPTjRP521X89Gw` working, lease to 04:23Z, last
+    push `74cd015e` at 02:17Z): A, C, D and E done; B's large-text layout
+    done and check_screens OK, the heist/200 budget still reads 117
+    against 115; then budgets, stills, pre-check and the gate. Not
+    restarted.
+  - No task is ready and no gate request is open, so no merge lock was
+    taken. AD's board-1b waits on pilot-3; K1, AD, AIA, AIA-2 and SV have
+    no open task. No new request (every request in the status files is
+    in requests.md; none past due).
+  - Main did not move since cycle 57, so the pages were not republished.
+    One builder works (S1). The backlog has 69 tasks, 51 merged. No
+    owner-inbox entry.
+  - Next: merge pilot-3 when ready (gate items: heist at 100% and at 200%
+    text, pt_BR; render the stills on the candidate), then start AD on
+    board-1b. At most three builders; icon batches 3 and 4 stay deferred
+    (D13 (c)).
 - Cycle 57, 12 November 2026, from 01:39Z (session
   `session_01SNkKxoLAJu3YypfTqBzR97`, started by the Opus 5.5 launcher):
   a bookkeeping cycle, nothing merged, no session started.

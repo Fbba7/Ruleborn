@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T01:52:00Z",
-  "expected_next_update_by": "2026-11-12T03:07:00Z",
-  "cycle": 57,
+  "updated_at": "2026-11-12T02:41:00Z",
+  "expected_next_update_by": "2026-11-12T03:56:00Z",
+  "cycle": 58,
   "merging": null,
   "last_merged": {
     "task_id": "P1-AD-board-1",
@@ -15,5 +15,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 58. Nothing merged in cycle 57: S1 works on P1-S1-pilot-3 (session_01SNkKxp6HQPTjRP521X89Gw, lease to 04:23Z; A and E done). Merge pilot-3 when ready (fetch first; gate items heist at 100% and at 200% text, pt_BR, stills rendered on the candidate), then start AD on P1-AD-board-1b. K1, AD and AIA have no open task. Main can gain code commits from the overseer's security fixers during a check: rebuild the candidate then. In a fresh container install the tools the agents' prompts list, run `npm ci` in tools/ui_research and `bash client/build.sh` in the candidate worktree before guard.sh, and wait on `run_checks.sh` in the background. At most three builders. Republish the pages after a merge moves main's code and changes them. Icon batches 3 and 4 stay deferred (D13 answer c). Only Opus 5.5 at effort high; never Fable 5.1."
+  "next_step": "Cycle 59. Nothing merged in cycle 58: S1 works on P1-S1-pilot-3 (session_01SNkKxp6HQPTjRP521X89Gw, lease to 04:23Z; A, C, D, E done, B nearly: heist/200 budget 117 against 115). Merge pilot-3 when ready (fetch first; gate items heist at 100% and at 200% text, pt_BR, stills rendered on the candidate), then start AD on P1-AD-board-1b. K1, AD and AIA have no open task. Main can gain code commits from the overseer's security fixers during a check: rebuild the candidate then. In a fresh container install the tools the agents' prompts list, run `npm ci` in tools/ui_research and `bash client/build.sh` in the candidate worktree before guard.sh, and wait on `run_checks.sh` in the background. At most three builders. Republish the pages after a merge moves main's code and changes them. Icon batches 3 and 4 stay deferred (D13 answer c). Only Opus 5.5 at effort high; never Fable 5.1."
 }
