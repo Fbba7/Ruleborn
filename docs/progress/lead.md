@@ -209,6 +209,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| AD | `session_01SNkKxmtatzN7YRTTZcPFsL` (Opus 5.5, effort high) | P1-AD-board-1c (start: P1-K1-numerals-on and P1-S1-pilot-4 merged as 541e4c97; the gate's notes in verdicts/P1-S1-pilot-4/e846c531.json and verdicts/P1-K1-numerals-on/1d21bf4a.json) | `claude/ui-ad` | 2026-11-12 09:30Z |
 | S1 | `session_01SNkKxnQXTay5oBDdKNoz8h` (Opus 5.5, effort high; idle, its task merged) | P1-S1-pilot-4 (start: board 1's round 2 in P1-AD-board-1b, objections D and B open; AD-R13, AD-R15) | `claude/ui-screens-heist` | 2026-11-12 06:54Z |
 | K1 | `session_01SNkKxqEuMj3TF1SQMhjHgP` (Opus 5.5, effort high; idle, its task merged) | P1-K1-numerals-on (start: P1-S1-pilot-3 merged as 085c812a with the switch off; S1-R11, K1-R11, the gate's Display type note) | `claude/ui-bake` | 2026-11-12 05:39Z |
 | AD | `session_01SNkKxpcpCTDib53apRny85` (Opus 5.5, effort high; idle, its task merged) | P1-AD-board-1b (start: P1-S1-pilot-3 merged as 085c812a; the gate's notes in verdicts/P1-S1-pilot-3/0d142dd0.json) | `claude/ui-ad` | 2026-11-12 05:39Z |
@@ -399,7 +400,9 @@ Your session was created with the repository checked out at main; work in that c
     `verdicts/P1-S1-pilot-4/e846c531.json` and
     `verdicts/P1-K1-numerals-on/1d21bf4a.json`, and board-1c re-checks
     the header.
-  - **Started:** AD on P1-AD-board-1c, once this merge is on main.
+  - **Started:** AD on P1-AD-board-1c at 09:30Z, after the merge was on
+    main (`ed6bcfdc`): `session_01SNkKxmtatzN7YRTTZcPFsL`, Opus 5.5 at
+    effort high.
   - The backlog has 72 tasks, 55 merged. One builder running, under the
     cap of three. No new request; no owner-inbox entry. docs/audit and
     docs/roadmap did not change, so the pages were not republished.
