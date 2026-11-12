@@ -1,12 +1,19 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T01:22:00Z",
-  "expected_next_update_by": "2026-11-12T02:37:00Z",
-  "cycle": 56,
-  "merging": null,
+  "updated_at": "2026-11-12T06:44:00Z",
+  "expected_next_update_by": "2026-11-12T07:59:00Z",
+  "cycle": 60,
+  "merging": {
+    "candidate_sha": "121464ac",
+    "task_ids": [
+      "P1-AD-board-1b"
+    ],
+    "started_at": "2026-11-12T06:44:00Z",
+    "expires_at": "2026-11-12T07:44:00Z"
+  },
   "last_merged": {
-    "task_id": "P1-AD-board-1",
-    "sha": "a01e4d6c"
+    "task_id": "P1-S1-pilot-3",
+    "sha": "085c812a"
   },
   "alerts": [
     "Owner's order 5 of 11 November 2026, about 19:50Z (\"Let's switch to Opus 5.5 everywhere again, effort high\"): every session runs on Opus 5.5 at effort high; never Fable 5.1 (order 2). Launcher trig_01T7B65veojXUDAKzLK3FFBP and watchdog trig_01A1NwZvKD6MDUosh4jyvqqr, created at 19:50Z after order 5 was on main. The Fable 5.2 pair (trig_01U7kEeot7dmuJuNZVQJ7Bhm, trig_0195QvFjjm2oUgeCeyhU4bp4), disabled at 19:49Z, and every older scheduled task stay disabled and are never re-enabled. No Fable 5.2 session is reused.",
@@ -15,5 +22,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 57. P1-K1-heist-kit and P1-AD-board-1 merged together as a01e4d6c (candidate 75593d76, check_all PASS, guard OK, redone on the lock commit 3ffa07f8). AD's board objections A-E (AD-R7 to AD-R11) are answered by P1-S1-pilot-3 (S1) and AD's re-check P1-AD-board-1b; AD-R12's flow findings F1-F7 are phase 2 tasks (P2-S2-flow-home, P2-flow-entry, P2-S1-flow-result, P2-S1-flow-replay), all waiting on board-1b. One builder works: S1 on P1-S1-pilot-3 (see lead.md, session table). K1, AD and AIA have no open task. Merge pilot-3 when ready (fetch first), then start AD on board-1b. Main can gain code commits from the overseer's security fixers during a check: rebuild the candidate then. In a fresh container install the tools the agents' prompts list, run `npm ci` in tools/ui_research and `bash client/build.sh` in the candidate worktree before guard.sh, and wait on `run_checks.sh` in the background. At most three builders. Republish the pages after a merge moves main's code and changes them. Icon batches 3 and 4 stay deferred (D13 answer c). Only Opus 5.5 at effort high; never Fable 5.1."
+  "next_step": "Cycle 61. P1-S1-pilot-3 merged as 085c812a in cycle 60 (switch off, S1-R11's default; gate advisory: Display type fails at 100% and 200%, Character presence fails, Hierarchy passes). Main's check_all breakage from the overseer's c888bed7 and e39e9048 is fixed (22d4328c, 77e48b27, a13c5d07). AD works on P1-AD-board-1b (session_01SNkKxpcpCTDib53apRny85) and K1 on the new P1-K1-numerals-on (session_01SNkKxqEuMj3TF1SQMhjHgP). Merge each when ready (fetch first; owners.py diff; numerals-on's gate item heist at 100% text, Display type, stills shot with the switch on). Then phase 2's flow tasks open (P2-S1-flow-result, P2-S1-flow-replay, P2-S2-flow-home, P2-flow-entry). Main can gain code commits from the overseer's security fixers during a check: rebuild the candidate then, and if main itself fails check_all, fix it with a lead commit ahead of the merge. In a fresh container install the tools the agents' prompts list, run `npm ci` in tools/ui_research and `bash client/build.sh` in the candidate worktree before guard.sh, and wait on `run_checks.sh` in the background. At most three builders. Republish the pages after a merge moves main's code and changes them. Icon batches 3 and 4 stay deferred (D13 answer c). Only Opus 5.5 at effort high; never Fable 5.1."
 }

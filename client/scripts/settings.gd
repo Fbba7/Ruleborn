@@ -62,27 +62,75 @@ static func restore() -> void:
 ## Not `reload`: that is Script.reload(), which recompiles this class and
 ## resets every static here.
 static func read_file() -> void:
-	var cfg := ConfigFile.new()
-	var found := cfg.load(path) == OK
-	locale = str(cfg.get_value("general", "locale", Strings.default_locale()))
+	var cfg := _plain_values(path)
+	var found: bool = cfg.get("_clean", false)
+	locale = str(_value(cfg, "general", "locale", Strings.default_locale()))
 	if locale not in Strings.LOCALES:
 		locale = Strings.default_locale()
 	for bus: String in VOLUMES:
-		volume[bus] = clampi(int(cfg.get_value("volume", bus, DEFAULT_VOLUME[bus])), 0, VOLUME_STEPS)
-	reduced_motion = bool(cfg.get_value("motion", "reduced", phone_says("reduce_animation")))
-	haptics = bool(cfg.get_value("motion", "haptics", true))
-	var scale := int(cfg.get_value("access", "text_scale", 100))
+		volume[bus] = clampi(int(_value(cfg, "volume", bus, int(DEFAULT_VOLUME[bus]))), 0, VOLUME_STEPS)
+	reduced_motion = bool(_value(cfg, "motion", "reduced", phone_says("reduce_animation")))
+	haptics = bool(_value(cfg, "motion", "haptics", true))
+	var scale := int(_value(cfg, "access", "text_scale", 100))
 	text_scale = scale if scale in text_steps() else 100
-	high_contrast = bool(cfg.get_value("access", "high_contrast", phone_says("increase_contrast")))
-	var hold := int(cfg.get_value("access", "hold_ms", hold_default()))
+	high_contrast = bool(_value(cfg, "access", "high_contrast", phone_says("increase_contrast")))
+	var hold := int(_value(cfg, "access", "hold_ms", hold_default()))
 	hold_ms = hold if hold in hold_steps() else hold_default()
-	left_handed = bool(cfg.get_value("access", "left_handed", false))
-	slow_rehearsals = bool(cfg.get_value("access", "slow_rehearsals", false))
-	banners_stay = bool(cfg.get_value("access", "banners_stay", false))
-	camera_buttons = bool(cfg.get_value("access", "camera_buttons", false))
+	left_handed = bool(_value(cfg, "access", "left_handed", false))
+	slow_rehearsals = bool(_value(cfg, "access", "slow_rehearsals", false))
+	banners_stay = bool(_value(cfg, "access", "banners_stay", false))
+	camera_buttons = bool(_value(cfg, "access", "camera_buttons", false))
 	apply()
 	if not found:
 		save()
+
+
+## The settings file read as plain values only (security finding SEC-30):
+## ConfigFile.load would build any object a line names, and run a script
+## planted in it. A line here is `[section]` or `key=value`, and a value is a
+## bool, a whole number, a decimal or a string with no quote or backslash in
+## it, which is all `save` writes. Anything else is skipped. "_clean" is
+## whether the file was there and held nothing that was skipped; when it is
+## not, `read_file` writes the file again from the values it kept.
+static func _plain_values(file: String) -> Dictionary:
+	var out := {"_clean": FileAccess.file_exists(file)}
+	if not out["_clean"]:
+		return out
+	var whole := RegEx.create_from_string("^-?\\d+$")
+	var decimal := RegEx.create_from_string("^-?\\d+\\.\\d+$")
+	var text := RegEx.create_from_string("^\"[^\"\\\\]*\"$")
+	var section := ""
+	for raw: String in FileAccess.get_file_as_string(file).split("\n"):
+		var line := raw.strip_edges()
+		if line.is_empty() or line.begins_with(";"):
+			continue
+		if line.begins_with("[") and line.ends_with("]"):
+			section = line.substr(1, line.length() - 2).strip_edges()
+			continue
+		var at := line.find("=")
+		if at <= 0:
+			out["_clean"] = false
+			continue
+		var key := "%s/%s" % [section, line.substr(0, at).strip_edges()]
+		var value := line.substr(at + 1).strip_edges()
+		if value == "true" or value == "false":
+			out[key] = value == "true"
+		elif whole.search(value) != null:
+			out[key] = value.to_int()
+		elif decimal.search(value) != null:
+			out[key] = value.to_float()
+		elif text.search(value) != null:
+			out[key] = value.substr(1, value.length() - 2)
+		else:
+			out["_clean"] = false
+	return out
+
+
+## The value read for this setting, or `default` when the file has none of
+## the same kind.
+static func _value(cfg: Dictionary, section: String, key: String, default: Variant) -> Variant:
+	var value: Variant = cfg.get("%s/%s" % [section, key], default)
+	return value if typeof(value) == typeof(default) else default
 
 
 ## Whether the phone's own accessibility settings ask for this: "increase_contrast"

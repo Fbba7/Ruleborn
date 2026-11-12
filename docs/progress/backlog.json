@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-12T01:20:00Z",
-  "updated_by": "lead (cycle 56)",
+  "updated_at": "2026-11-12T06:55:00Z",
+  "updated_by": "lead (cycle 61)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -1079,6 +1079,58 @@
       "updated_by": "lead (cycle 56)",
       "exceptions": [
         "client/tests/shots/ui_kit_heist.gd.uid"
+      ]
+    },
+    {
+      "id": "P1-K1-numerals-on",
+      "title": "Switch the kit's numerals on: \"numerals\": true in client/ui/kit_families.json (S1-R11, K1-R11; board 1's objection A), so the heist's timer draws in KitNumerals' baked figures on KitHud.clock_large (heist_hud.gd's switch-on path is on main since P1-S1-pilot-3) and every screen that draws KitNumerals shows its figures. Answers the gate's Display type note on P1-S1-pilot-3 (verdicts/P1-S1-pilot-3/0d142dd0.json: the 2:25 timer is flat dark figures on a cream plate). S1 measured, with the switch on, heist/100 118, heist/200 114 and heist/hc 118 draw calls against records 121, 115 and 121. K1-R17 (cycle 61): client/scripts/heist_hud.gd is an exception for two changes only: in _figures, hide the clock's live words with clock_label.visible = false in place of self_modulate.a = 0 and RenderingServer.canvas_item_set_visible(false), so a11y_tests' word contrast skips them; and AD-R14, the kit's ink outline on the 'Laws here' / 'Leis aqui' header",
+      "files": [
+        "client/ui/kit_families.json",
+        "client/ui/kit_numerals.gd",
+        "client/tests/ui_kit_tests.gd",
+        "client/tests/golden/**",
+        "docs/art/shots/ui-bake/**",
+        "docs/art/ui-quality/kit-spec.md",
+        "tools/ui_bake/**"
+      ],
+      "deps": [
+        "P1-S1-pilot-3"
+      ],
+      "done_when": [
+        "the line \"numerals\": true added to client/ui/kit_families.json (the key is not there today, so KitSkin.is_on(\"numerals\") reads false), and no other family changes",
+        "client/scripts/heist_hud.gd changed only as K1-R17's grant says: the clock's words hidden with clock_label.visible = false (clock_label.text still updates), and the 'Laws here' / 'Leis aqui' header drawn with the kit's ink outline (AD-R14); no test changed",
+        "every screen that draws KitNumerals stays within its draw-call record in tools/ui_bake/budgets.json, as check_screens.py counts; a record that has to move is named in the handoff with the reason",
+        "client/tests/shots/screen_heist.gd with FIT=1 passes at 200% text in en and pt_BR, sneak and alarm, and in high contrast",
+        "S1-R11 and K1-R11 answered in the handoff; kit-spec.md says the switch is on",
+        "bash tools/ui_bake/guard.sh",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "critical": true,
+      "role": "K1",
+      "assigned_to": "K1",
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "heist at 100% text",
+          "qualities": [
+            "Display type"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "state": "open",
+      "claim": null,
+      "prior_branch": "claude/ui-bake",
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T06:55:00Z",
+      "updated_by": "lead (cycle 61)",
+      "exceptions": [
+        "client/scripts/heist_hud.gd"
       ]
     },
     {
@@ -2552,18 +2604,19 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": "claude/ui-screens-heist",
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-12T01:20:00Z",
-      "updated_by": "lead (cycle 56)",
+      "ready_sha": "0d142dd06f72c33998b3d8ef2455c48c79acc665",
+      "merged_sha": "085c812a",
+      "updated_at": "2026-11-12T05:36:00Z",
+      "updated_by": "lead (cycle 60)",
       "id": "P1-S1-pilot-3",
       "title": "Pilot heist, part 3: board 1's objections A-E (AD-R7 to AD-R11, docs/art/ui-quality/gate/boards/board-1.md): A the timer in KitNumerals' timer figures, inked like the key frame's; B at 200% text in pt_BR the loot line stays in its panel and off Pip, and the guard's bubble is not clipped; C a crew tray that seats the portraits as the key frame does, Ash on the same row, and the hint and load bars as kit parts; D Hollow and Bramble a clear value step off their rings; E the MOMENT=alarm shot shows a raised alarm. It adopts P1-K1-heist-kit's HUD calls (K1's handoff answers S1-R1 to S1-R6), lowers heist_hud.gd's record in tools/ui_bake/budgets.json to what check_screens.py prints (S1-R7), and may dress Cast and Get out in heist_hand.gd (S1-R8); notes in docs/art/tracks/heist-pilot.md",
       "exceptions": [
-        "docs/art/shots/heist-pilot/**"
+        "docs/art/shots/heist-pilot/**",
+        "client/ui/kit_families.json"
       ]
     },
     {
@@ -2588,16 +2641,108 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
+      "state": "ready",
+      "claim": null,
+      "prior_branch": "claude/ui-ad",
+      "prior_sha": null,
+      "ready_sha": "0387ca7879c8b36aecbcd64f561f2f9e1a8434fc",
+      "merged_sha": null,
+      "updated_at": "2026-11-12T06:55:00Z",
+      "updated_by": "lead (cycle 61)",
+      "id": "P1-AD-board-1b",
+      "title": "Board 1, second round: AD re-checks objections A-E on P1-S1-pilot-3's stills beside the key frame and lets board 1 stand or lists what is still open (board-1.md); phase 2 waits for board 1"
+    },
+    {
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/heist_screen.gd",
+        "client/scripts/heist_hand.gd",
+        "client/world/fx_*.gd",
+        "client/tests/shots/heist_*.gd",
+        "client/tests/shots/screen_heist.gd",
+        "docs/art/tracks/heist-pilot.md"
+      ],
+      "deps": [
+        "P1-S1-pilot-3"
+      ],
+      "done_when": [
+        "objection D (AD-R13): Hollow and Bramble each stand 20 L* or more off their school disc, or carry an ink silhouette outline, in client/world/fx_portrait.gd, the school hue kept in the ring or the mat; the measured L* of figure and disc for both in heist-pilot.md; Bramble's grain checked in the portrait render",
+        "objection B (AD-R15): with no crew plan (no MANIFEST), at 200% text in pt_BR, the tray stays below the loot panel whatever Cast reads ('Sem lançamentos'); client/tests/shots/screen_heist.gd with FIT=1 TEXT=200 LOCALE=pt_BR and no MANIFEST passes, and that case is among the heist's gate stills",
+        "client/tests/shots/screen_heist.gd with FIT=1 passes at 100% and 200% text in en and pt_BR, sneak and alarm, and in high contrast",
+        "every heist screen within its draw-call record in tools/ui_bake/budgets.json (K1's file in P1-K1-numerals-on); a record that has to move is a request to the lead",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "heist at 100% text",
+          "qualities": [
+            "Character presence"
+          ]
+        },
+        {
+          "item": "heist at 200% text, pt_BR, no crew plan",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-heist",
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T06:55:00Z",
+      "updated_by": "lead (cycle 61)",
+      "id": "P1-S1-pilot-4",
+      "title": "Pilot heist, part 4: board 1's open objections D and B, round 2 (AD-R13, AD-R15; docs/art/ui-quality/gate/boards/board-1.md, Round 2): D Hollow and Bramble a value step of 20 L* or more off their discs, or an ink silhouette, in client/world/fx_portrait.gd (if the portrait art itself has to change, a request to the lead for AIA-2); B with no crew plan at 200% text in pt_BR the tray stays below the loot panel, and that case joins the gate's stills. heist_hud.gd and tools/ui_bake/budgets.json are in P1-K1-numerals-on (K1-R17, AD-R14), not here; notes in docs/art/tracks/heist-pilot.md",
+      "exceptions": [
+        "docs/art/shots/heist-pilot/**"
+      ]
+    },
+    {
+      "role": "AD",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P1-K1-numerals-on",
+        "P1-S1-pilot-4"
+      ],
+      "done_when": [
+        "board-1.md says it stands, or lists its objections",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
       "state": "open",
       "claim": null,
       "prior_branch": "claude/ui-ad",
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T01:20:00Z",
-      "updated_by": "lead (cycle 56)",
-      "id": "P1-AD-board-1b",
-      "title": "Board 1, second round: AD re-checks objections A-E on P1-S1-pilot-3's stills beside the key frame and lets board 1 stand or lists what is still open (board-1.md); phase 2 waits for board 1"
+      "updated_at": "2026-11-12T06:55:00Z",
+      "updated_by": "lead (cycle 61)",
+      "id": "P1-AD-board-1c",
+      "title": "Board 1, third round (AD-R16): AD re-checks objections A (the timer in KitNumerals' figures, switch on), B (no crew plan at 200% pt_BR) and D (Hollow and Bramble against their discs), and the 'Laws here' header's outline, on P1-K1-numerals-on's and P1-S1-pilot-4's stills beside the key frame, and lets board 1 stand or lists what is still open (board-1.md); phase 2 waits for board 1"
     },
     {
       "role": "S1",
@@ -2606,7 +2751,7 @@
         "client/scripts/result_screen.gd"
       ],
       "deps": [
-        "P1-AD-board-1b"
+        "P1-AD-board-1c"
       ],
       "done_when": [
         "python3 tools/ui_bake/check_screens.py",
@@ -2625,8 +2770,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T01:20:00Z",
-      "updated_by": "lead (cycle 56)",
+      "updated_at": "2026-11-12T06:55:00Z",
+      "updated_by": "lead (cycle 61)",
       "id": "P2-S1-flow-result",
       "title": "Result screen, flow findings F6 (AD-R12, docs/progress/AD.md, Flow review): a Clean heist does not say 'No guard alerted' over an alarm peak; the actions move up or the haul fills the lower screen; no byte count in the player's line"
     },
@@ -2637,7 +2782,7 @@
         "client/scripts/replay_screen.gd"
       ],
       "deps": [
-        "P1-AD-board-1b"
+        "P1-AD-board-1c"
       ],
       "done_when": [
         "bash tools/check_all.sh"
@@ -2655,8 +2800,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T01:20:00Z",
-      "updated_by": "lead (cycle 56)",
+      "updated_at": "2026-11-12T06:55:00Z",
+      "updated_by": "lead (cycle 61)",
       "id": "P2-S1-flow-replay",
       "title": "Replay screen, flow finding F7 (AD-R12): timeline markers that share a time stack or merge into one marker with a count"
     },
@@ -2667,7 +2812,7 @@
         "client/scripts/home.gd"
       ],
       "deps": [
-        "P1-AD-board-1b"
+        "P1-AD-board-1c"
       ],
       "done_when": [
         "python3 tools/ui_bake/check_screens.py",
@@ -2686,8 +2831,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T01:20:00Z",
-      "updated_by": "lead (cycle 56)",
+      "updated_at": "2026-11-12T06:55:00Z",
+      "updated_by": "lead (cycle 61)",
       "id": "P2-S2-flow-home",
       "title": "Home screen, flow findings F1 and F2 (AD-R12): the raid notice's line wraps instead of cutting 'held'; at 200% text the island pins hide, shrink or list when the band is short, none goes missing, and the gem stays inside its pill"
     },
@@ -2700,7 +2845,7 @@
         "client/scripts/planner_screen.gd"
       ],
       "deps": [
-        "P1-AD-board-1b"
+        "P1-AD-board-1c"
       ],
       "done_when": [
         "python3 tools/ui_bake/check_screens.py",
@@ -2719,8 +2864,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T01:20:00Z",
-      "updated_by": "lead (cycle 56)",
+      "updated_at": "2026-11-12T06:55:00Z",
+      "updated_by": "lead (cycle 61)",
       "id": "P2-flow-entry",
       "title": "First, scout and planner screens, flow findings F3 to F5 (AD-R12): the first screen's tagline on a plate or clear of the island ring; the scout chip row fits its panel or scrolls with a cue; the planner says 'choose %d crew' when the minimum is the maximum (a second string beside PLAN_NEEDS_CREW) and its plan card fits or shows a scroll cue"
     }
@@ -2802,6 +2947,22 @@
       "text": "From the owner, relayed by the overseer (CLAUDE.md order 1, 10 November 2026, 08:28Z): \"Deploy and then stop cleanly\". Finish P1-S1-pilot-1 and stop. If the pre-check and the guard pass on its head by 09:45Z, mark it ready as usual (ready_sha set): the lead's final cycle merges what is ready then. If they do not pass by then, push a save point instead; it is merged in a later round, nothing is lost. Loosen no test to make the time. Either way, then set agent_state to stopped in your status file, write 'Stopped here' with where the work stands in your handoff, push your branch (never main) and end your turn. Take no new task and start nothing. Add M6 to acks when read.",
       "sent_at": "2026-11-10T08:40:00Z",
       "ack_by": "2026-11-10T09:45:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M7",
+      "to": "S1",
+      "text": "From the lead (cycle 59). S1-R11 granted: client/ui/kit_families.json is an exception of P1-S1-pilot-3 in the backlog, for one line only, \"numerals\": true (K1-R11's answer of cycle 45 said the switch is added once the numerals' art passes the gate; P1-AIA-kit-3's verdicts pass Display type and Colour roles and value 3 of 3, and kit-3 is merged). Change no other line of the file. With the line in, run check_all.sh and guard.sh again on the head you mark ready, loosen no test, shoot the gate's stills with the switch on, and say in heist-pilot.md and your handoff that the switch is on for every screen that draws KitNumerals. If check_all or the guard fails with the line in outside your files, drop the line and take the request's default instead (stills as main stands, objection A stays open). Add M7 to acks when read.",
+      "sent_at": "2026-11-12T03:55:00Z",
+      "ack_by": "2026-11-12T06:20:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M8",
+      "to": "K1",
+      "text": "From the lead (cycle 61). K1-R17 granted: client/scripts/heist_hud.gd is an exception of P1-K1-numerals-on in the backlog, for two changes only. (1) In _figures, replace self_modulate.a = 0 and RenderingServer.canvas_item_set_visible(false) with clock_label.visible = false, as you proposed (clock_label.text still updates). (2) AD-R14: draw the 'Laws here' / 'Leis aqui' header with the kit's ink outline, so the gate's Display type item at 100% does not fail on it. Change nothing else in the file and no test. Run check_all.sh and guard.sh again on the head you mark ready, then ask the gate (heist at 100% text, Display type, switch on). S1 works on P1-S1-pilot-4 at the same time (heist_screen.gd and fx_portrait.gd, not heist_hud.gd or budgets.json). Add M8 to acks when read.",
+      "sent_at": "2026-11-12T06:55:00Z",
+      "ack_by": "2026-11-12T09:00:00Z",
       "acked_at": null
     }
   ]
