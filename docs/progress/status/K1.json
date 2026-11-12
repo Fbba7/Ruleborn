@@ -3,7 +3,7 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-K1-numerals-on",
   "task_state": "blocked",
   "claimed_at": "2026-11-12T05:55:00Z",
