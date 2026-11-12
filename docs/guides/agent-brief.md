@@ -215,6 +215,9 @@ Write `task_state: "ready"` and `ready_sha`.
 
 **Before you mark ready** (phase 1's lessons, in force from UI phase 2):
 
+- **Set up a fresh container first.** In a new container, run the
+  fresh-container setup line, then `bash client/build.sh`, before any
+  check or bake; a missing tool fails the container, not your work.
 - **Merge current main into your branch** before the pre-check
   (`git merge origin/claude/videogame-project-analysis-ewkkk2`; never rebase a pushed branch), so
   the pre-check and the guard run on what the candidate will hold. All five
