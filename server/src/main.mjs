@@ -144,11 +144,16 @@ if (platforms.stubbed) {
 }
 // A deployment whose deletions journal sits inside its data folder restores
 // the journal with every restore of the data, and so can undo deletions made
-// since the backup (declarations.md, SEC-38).
+// since the backup (declarations.md, SEC-38). With real sign-in the server
+// will not start so; a local server with stubbed sign-in is warned.
 const journalDir = resolve(process.env.RULEBORN_DELETIONS ?? join(data, "deletions"));
-if (!platforms.stubbed && journalDir.startsWith(resolve(data) + sep)) {
-  console.warn("RULEBORN_DELETIONS is inside RULEBORN_DATA: a restore of the data folder "
-               + "also restores the journal, and can undo later deletions (declarations.md)");
+if (journalDir === resolve(data) || journalDir.startsWith(resolve(data) + sep)) {
+  const why = "RULEBORN_DELETIONS is inside RULEBORN_DATA: a restore of the data folder "
+            + "also restores the journal, and can undo later deletions (declarations.md)";
+  if (!platforms.stubbed) {
+    throw new Error(`${why}. Set RULEBORN_DELETIONS to a folder on storage that is not restored with the data`);
+  }
+  console.warn(why);
 }
 
 // D70: the edge's cache of an under-13 player's bundles, purged on their
@@ -244,9 +249,15 @@ const contact = contactMatch ? { name: contactMatch[1], email: contactMatch[2] }
 // are limited by address only where the proxy in front of this listener (it
 // binds 127.0.0.1) names the caller's one address in a header it sets
 // itself, RULEBORN_PEER_HEADER (Cloudflare's cf-connecting-ip, or x-real-ip;
-// never x-forwarded-for, whose first address the caller writes). Unset,
-// failures are not limited at all, and the log says so.
+// never x-forwarded-for, whose first address the caller writes). The same
+// address spaces Game Center's unseen key names (stores.mjs, SEC-36). A
+// deployment with real sign-in must set it, and refuses to start without;
+// a local one with stubbed proofs is warned that failures are not limited.
 const peerHeader = (process.env.RULEBORN_PEER_HEADER ?? "").trim().toLowerCase();
+if (!peerHeader && !platforms.stubbed) {
+  throw new Error("RULEBORN_PEER_HEADER is unset: with real sign-in the proxy's address header is required, "
+                  + "so failed sign-ins and Game Center key fetches are limited by address (G44, SEC-36)");
+}
 if (!peerHeader) console.warn("RULEBORN_PEER_HEADER unset: failed sign-ins are not limited by address (G44)");
 const peerOf = peerHeader ? (request) => request.headers.get(peerHeader) : null;
 // The devices list's country: a header the edge sets from the address,

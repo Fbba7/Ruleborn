@@ -18,6 +18,11 @@ import { WORDS, Workshop } from "./workshop.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
 
+/** SEC-43: how long a member removed from a constellation is kept from
+ *  joining it again. */
+export const REMOVED_DAYS = 7;
+const DAY = 24 * 60 * 60 * 1000;
+
 export class Social {
   constructor(service) {
     this.service = service;
@@ -76,13 +81,15 @@ export class Social {
 
   /** A constellation as `viewer` sees it: §17.8's block hides a member the
    *  viewer blocked, or who blocked them, from its list. To a viewer outside
-   *  it and across a block from one of its members it does not exist, as
+   *  it and across a block from its founder it does not exist (one member's
+   *  blocks do not hide an open group from everyone they blocked, SEC-43), as
    *  join() answers them, so neither route tells the block. */
   constellation(id, viewer = null) {
     const c = this.db.prepare("SELECT * FROM constellations WHERE id = ?").get(id);
     if (!c) throw new Refused(404, "no_such_constellation");
     const members = this.members(id);
-    if (this.hiddenFrom(viewer, members)) throw new Refused(404, "no_such_constellation");
+    const founder = members.filter((m) => m.role === "founder");
+    if (this.hiddenFrom(viewer, members, founder)) throw new Refused(404, "no_such_constellation");
     return { id: c.id, name: Workshop.name(c.name_adjective, c.name_noun),
              members: members.filter((m) => this.shown(viewer, m.account)) };
   }
@@ -93,12 +100,13 @@ export class Social {
   }
 
   /** Whether a group of these members is hidden from `viewer`: they are not
-   *  in it, and one of its members is across a block from them. It is one
-   *  they cannot join, answered as one that does not exist, so the block is
-   *  not told (§17.8's "invitations"). */
-  hiddenFrom(viewer, members) {
+   *  in it, and one of `across` (every member of a crew, the founder of a
+   *  constellation) is across a block from them. It is one they cannot
+   *  join, answered as one that does not exist, so the block is not told
+   *  (§17.8's "invitations"). */
+  hiddenFrom(viewer, members, across = members) {
     return Boolean(viewer) && !members.some((m) => m.account === viewer)
-      && members.some((m) => this.service.safety.between(viewer, m.account));
+      && across.some((m) => this.service.safety.between(viewer, m.account));
   }
 
   /** Join through the Beacon: open to any Keeper past the gate while there is
@@ -107,6 +115,13 @@ export class Social {
   join(account, id) {
     this.gate(account);
     this.constellation(id, account);
+    // SEC-43: one its founder or an elder removed stays out a week.
+    const removed = this.db.prepare(
+      `SELECT MAX(left_at) AS at FROM constellation_members
+        WHERE constellation = ? AND account = ? AND removed = 1`).get(id, account).at;
+    if (removed !== null && removed > this.now() - REMOVED_DAYS * DAY) {
+      throw new Refused(403, "removed_from_constellation", { until: removed + REMOVED_DAYS * DAY });
+    }
     return transaction(this.db, () => {
       const members = this.members(id).length;
       if (members === 0) throw new Refused(410, "constellation_closed");
@@ -165,6 +180,25 @@ export class Social {
     }
     this.setRole(f.constellation, account, role);
     return this.constellation(f.constellation, founder);
+  }
+
+  /** SEC-43: the founder removes an elder or a member, an elder a member.
+   *  The removed player leaves as by leave() and cannot join that
+   *  constellation again for REMOVED_DAYS. */
+  remove(officer, id, account) {
+    const o = this.membership(officer);
+    if (!o || o.constellation !== id || !["founder", "elder"].includes(o.role)) {
+      throw new Refused(403, "officers_only");
+    }
+    const m = this.membership(account);
+    if (!m || m.constellation !== id || account === officer) throw new Refused(404, "not_a_member");
+    if (m.role === "founder" || (o.role === "elder" && m.role !== "member")) {
+      throw new Refused(403, "officers_only");
+    }
+    this.db.prepare(
+      "UPDATE constellation_members SET left_at = ?, removed = 1 WHERE account = ? AND left_at IS NULL")
+      .run(this.now(), account);
+    return this.constellation(id, officer);
   }
 
   /** Whether two players share a constellation now: §18.7's "completions
@@ -239,6 +273,21 @@ export class Social {
         .run(c.id, account, this.now());
       return this.crew(c.id, account);
     });
+  }
+
+  /** A new invite for a crew, the old one joining nobody from now (SEC-42).
+   *  A crew has no founder to keep it, so its leader here is the member who
+   *  has been in it longest: the founder while they stay, then the next to
+   *  have joined. */
+  newInvite(account, id) {
+    const c = this.db.prepare("SELECT id FROM crews WHERE id = ?").get(id);
+    if (!c) throw new Refused(404, "no_such_crew");
+    const leader = this.db.prepare(
+      "SELECT account FROM crew_members WHERE crew = ? AND left_at IS NULL ORDER BY joined_at, rowid LIMIT 1")
+      .get(id)?.account;
+    if (leader !== account) throw new Refused(403, "crew_leader_only");
+    this.db.prepare("UPDATE crews SET invite = ? WHERE id = ?").run(this.service.random(6).toString("hex"), id);
+    return this.crew(id, account);
   }
 
   /** Leave a crew. It carries on with whoever is left: there is no founder

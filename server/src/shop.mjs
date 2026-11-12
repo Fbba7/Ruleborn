@@ -43,6 +43,11 @@ export const MOST_OPEN_INTENTS = 10;
  *  a store can send its receipt late (G38, F41). */
 export const GIFT_KEEP_DAYS = 30;
 
+/** SEC-29: how long, once a lapsed intent is deleted, the server still
+ *  remembers whose it was (its id, its account and when it went, nothing
+ *  of the purchase), so a receipt naming it is granted to no one else. */
+export const TOMBSTONE_DAYS = 90;
+
 /** A season's premium track, in euro cents: §22.1's "about €6 a season". */
 export const PREMIUM_PRICE = facts.PREMIUM_TRACK_EUR * 100;
 
@@ -218,20 +223,23 @@ export class Shop {
       const p = this.product(proof.product);
       if (!p) throw new Refused(404, "no_such_product");
       const i = this.intentOf(proof);
-      if (i && (i.account !== account || i.product !== proof.product)) throw new Refused(409, "intent_mismatch");
+      if (i && (i.account !== account || (!i.tomb && i.product !== proof.product))) {
+        throw new Refused(409, "intent_mismatch");
+      }
       // SR-10 and SEC-21: a minor's receipt, with an intent or none, is
       // refused once it would take the month past §20.2's cap; an intent
       // checked when it was made may have lapsed, and others been made since.
       this.capCheck(account, p, i, now);
-      if (i) this.db.prepare("UPDATE purchase_intents SET redeemed_at = ? WHERE id = ?").run(now, i.id);
+      const intent = i && !i.tomb ? i : null;   // a tombstone is no intent to redeem (SEC-29)
+      if (intent) this.db.prepare("UPDATE purchase_intents SET redeemed_at = ? WHERE id = ?").run(now, intent.id);
       // A friend deleted since is owed nothing: the gift is the buyer's.
-      const friend = i?.recipient && !this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?")
+      const friend = intent?.recipient && !this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?")
         .get(i.recipient).deleted_at ? i.recipient : null;
       const to = friend ?? account;
       this.db.prepare(
         `INSERT INTO purchases (store, txn, account, product, price, intent, at, recipient)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
-        .run(store, proof.transaction, account, proof.product, p.price, i ? i.id : null, now, friend);
+        .run(store, proof.transaction, account, proof.product, p.price, intent ? intent.id : null, now, friend);
       const granted = this.grant(to, p, now);
       this.service.telemetry.record(account, "purchase", { product: proof.product, cents: p.price }, now);
       return { product: proof.product, to, granted };
@@ -245,13 +253,19 @@ export class Shop {
    * intent names: after that it is refused unsettled, so Play refunds it by
    * itself and an App Store one is left unfinished for the player to ask
    * Apple for their money, rather than given to the buyer who meant it for
-   * someone else.
+   * someone else. One deleted less than TOMBSTONE_DAYS ago still names its
+   * account (SEC-29): `{ id, account, tomb: true }`, so a receipt that
+   * reached another account's device is not granted there.
    */
   intentOf(proof) {
     const i = proof.intent
       ? this.db.prepare("SELECT * FROM purchase_intents WHERE id = ?").get(proof.intent) : null;
     if (!i && typeof proof.product === "string" && proof.product.startsWith(GIFT)) {
       throw new Refused(409, "gift_intent_gone");
+    }
+    if (!i && proof.intent) {
+      const tomb = this.db.prepare("SELECT id, account FROM intent_tombstones WHERE id = ?").get(proof.intent);
+      if (tomb) return { ...tomb, tomb: true };
     }
     return i ?? null;
   }

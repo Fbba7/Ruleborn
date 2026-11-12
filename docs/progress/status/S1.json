@@ -4,17 +4,17 @@
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P1-S1-pilot-4",
+  "task_id": "P1-S1-pilot-5",
   "task_state": "working",
-  "claimed_at": "2026-11-12T06:55:26Z",
-  "lease_until": "2026-11-12T09:55:26Z",
-  "updated_at": "2026-11-12T07:11:47Z",
-  "expected_next_update_by": "2026-11-12T07:51:47Z",
+  "claimed_at": "2026-11-12T11:28:53Z",
+  "lease_until": "2026-11-12T15:15:37Z",
+  "updated_at": "2026-11-12T12:15:37Z",
+  "expected_next_update_by": "2026-11-12T13:00:37Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "0d142dd0",
-    "next_step": "P1-S1-pilot-4: D and B done locally (FIT matrix running); then the budget shots, the checks, the commit and the pre-check.",
-    "at": "2026-11-12T07:11:47Z"
+    "last_green_sha": "e846c531",
+    "next_step": "P1-S1-pilot-5: part 5 written; the pre-check at 3690e4ca failed one layout test (German 'GESETZE HIER' on the tag widened the top row past 1080 px in heist and replay). Fixed: at normal text a header wider than 80 points breaks between its words. Next: client tests, pre-check again, then the gate request.",
+    "at": "2026-11-12T12:15:37Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -179,8 +179,22 @@
         "client/ui/kit_families.json"
       ],
       "default": "S1 asks the gate on stills shot as main stands (switch off: the clock is KitHud.clock's plain plate, as before) and puts beside them, marked as such in heist-pilot.md, the same moments shot with the switch on locally; objection A stays open until the switch is on."
+    },
+    {
+      "from": "S1",
+      "to": "lead",
+      "id": "S1-R12",
+      "blocking": false,
+      "created_at": "2026-11-12T11:55:00Z",
+      "due": "2026-11-13T11:55:00Z",
+      "escalate_to": "lead",
+      "ask": "Board 1's objection D (AD-R17) is met in game by a flat pass in client/world/fx_portrait.gd (FxPortrait._toon): Bramble and Hollow are filled in three tones of their colour with their marks kept. At 119 px Bramble reads as a grey-violet mass with small eyes, and the pass runs in GDScript the first time each portrait shows at a size. A flat-painted Bramble and Hollow at their source (CreatureBust's art) would be AIA-2's: should AIA-2 take it as a task?",
+      "files": [
+        "client/world/creature_bust.gd"
+      ],
+      "default": "The in-game flat pass stays as the fix for D; the source art is unchanged, and the gate judges the pass."
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-4: D and B done locally (FIT matrix running); then the budget shots, the checks, the commit and the pre-check."
+  "next_step": "P1-S1-pilot-5: part 5 written; the pre-check at 3690e4ca failed one layout test (German 'GESETZE HIER' on the tag widened the top row past 1080 px in heist and replay). Fixed: at normal text a header wider than 80 points breaks between its words. Next: client tests, pre-check again, then the gate request."
 }

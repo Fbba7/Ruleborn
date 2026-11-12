@@ -20,7 +20,7 @@ import { CLOSED_KEEP_DAYS, LEASE_MS, Refused, TARGET_LISTS_MS, clockTicks } from
 import { INTENT_MS } from "../src/shop.mjs";
 import { Social } from "../src/social.mjs";
 import { Workshop } from "../src/workshop.mjs";
-import { established, openPlan, play, server } from "./setup.mjs";
+import { counting, established, openPlan, play, server } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
 const DAY = 24 * 60 * 60 * 1000;
@@ -47,6 +47,7 @@ test("every column the server stores is declared, with the stores' words for it,
 async function busy() {
   const t = server();
   const x = t.service.session("gc:x");
+  const xSession = t.service.auth.holder(x.token).session;
   const y = t.service.session("gc:y");
   established(t, x.account);
   established(t, y.account);
@@ -92,8 +93,14 @@ async function busy() {
   const w = new Workshop(t.service);
   const shared = t.build.exampleIsland(true);
   const cleared = t.build.record(shared, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() });
+  // y listed these bytes first and withdrew them, so x may list them too
+  // (SEC-41) and they are bytes another player's Workshop island also is.
+  w.withdraw(y.account, w.publish(y.account, shared, cleared, { adjective: 2, noun: 2 }).id);
   const mine = w.publish(x.account, shared, cleared, { adjective: 0, noun: 0 });
-  const theirs = w.publish(y.account, shared, cleared, { adjective: 1, noun: 1 });
+  const yours = Uint8Array.from(shared);
+  yours[6] = (yours[6] + 1) & 0xff;                      // the loot exposed: y's own bytes
+  const theirs = w.publish(y.account, yours,
+    t.build.record(yours, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() }), { adjective: 1, noun: 1 });
   const p = w.play(x.account, theirs.id);
   w.submitPlay(x.account, p.token, t.build.record(t.service.bundle(p.bundle),
     { seed: BigInt(p.seed), ticks: p.ticks, crew: 3, commands: openPlan() }));
@@ -103,6 +110,7 @@ async function busy() {
   // A quarter of the Island Fund closed, paying x for y's play on its island
   // (fund.mjs).
   t.service.fund.optIn(x.account, true);
+  counting(t, y.account);                              // y's time counts (SEC-26)
   const yp = w.play(y.account, mine.id);
   w.submitPlay(y.account, yp.token, t.build.record(t.service.bundle(yp.bundle),
     { seed: BigInt(yp.seed), ticks: yp.ticks, crew: 3, commands: openPlan() }));
@@ -145,7 +153,8 @@ async function busy() {
 
   const n = t.service.notifications;
   // Settings no player starts with, so clearing them is seen.
-  n.set(x.account, { pushToken: "device-x", reminder: 12 * 60, timeZone: "UTC", nightQuiet: false });
+  n.set(x.account, { pushToken: "device-x", reminder: 12 * 60, timeZone: "UTC", nightQuiet: false },
+        { session: xSession });                        // the session that registered it (SEC-37)
   t.service.db.prepare(`UPDATE accounts SET equipped = '{"banner":"x"}' WHERE id = ?`).run(x.account);
   t.clock.now = Date.UTC(2026, 8, 25, 12, 5);
   await n.deliver(() => {});

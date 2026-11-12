@@ -6,7 +6,7 @@ import { test } from "node:test";
 
 import { Refused, clockTicks } from "../src/service.mjs";
 import { BUILDER_SLOTS, SLOTS, SPIKE_MIN, WORDS, Workshop } from "../src/workshop.mjs";
-import { T0, established, openPlan, server } from "./setup.mjs";
+import { T0, counting, established, openPlan, server } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
 const HOUR = 60 * 60 * 1000;
@@ -66,7 +66,9 @@ test("a creator holds five islands, eight once a Builder, and a withdrawn one fr
   t.w.publish(me, t.island, t.cleared, t.name);
   assert.equal(t.w.mine(me).length, SLOTS + 1, "withdrawn, never deleted");
   // "Publishing an island anyone completes" makes a Builder: three more.
+  // The completion is from a player who counts (SEC-26).
   const player = t.service.session("gc:player").account;
+  counting(t, player);
   clear(t, player, items[1].id);
   assert.equal(t.w.ladder(me).level, "builder");
   for (let i = 0; i < BUILDER_SLOTS; i++) t.w.publish(me, t.island, t.cleared, t.name);
@@ -78,6 +80,7 @@ test("a completion counts once a player, never the creator's own, and climbs the
   const me = t.service.session("gc:creator").account;
   const { id } = t.w.publish(me, t.island, t.cleared, t.name);
   const player = t.service.session("gc:player").account;
+  counting(t, player);                  // SEC-26: a player whose completion counts
   const first = clear(t, player, id);
   assert.equal(first.validated, true);
   assert.equal(first.cleared, true);
@@ -117,6 +120,7 @@ test("islands are rated for fun, cleverness and fairness by those who played the
   const me = t.service.session("gc:creator").account;
   const { id } = t.w.publish(me, t.island, t.cleared, t.name);
   const player = t.service.session("gc:player").account;
+  counting(t, player);                  // SEC-26: a player whose rating counts
   const score = { fun: 5, cleverness: 4, fairness: 3 };
   refusal(() => t.w.rate(player, id, score), "not_played");
   clear(t, player, id);
@@ -165,7 +169,13 @@ test("remixing hands over the island, and publishing the remix names the origina
   const player = t.service.session("gc:player").account;
   const draft = t.w.remix(player, original.id);
   assert.deepEqual(draft, t.island, "the island itself, to open in a builder");
-  const remix = t.w.publish(player, draft, t.cleared, { adjective: 4, noun: 0, remixOf: original.id });
+  assert.throws(() => t.w.publish(player, draft, t.cleared, { adjective: 4, noun: 0, remixOf: original.id }),
+                (e) => e.status === 409 && e.reason === "remix_unchanged", "a remix that changes nothing (SEC-41)");
+  const changed = Uint8Array.from(draft);
+  changed[6] = (changed[6] + 1) & 0xff;                  // the loot exposed
+  const remix = t.w.publish(player, changed,
+    t.build.record(changed, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() }),
+    { adjective: 4, noun: 0, remixOf: original.id });
   assert.equal(remix.remixOf, original.id);
   assert.equal(remix.creator, player, "a remix is its remixer's own island, cleared by them");
   assert.equal(t.w.view(t.w.row(original.id)).remixes, 1);

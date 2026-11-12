@@ -3,7 +3,7 @@
 // shows no more than its caller may see.
 
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { connect, createServer as createNetServer } from "node:net";
 import { tmpdir } from "node:os";
@@ -14,6 +14,7 @@ import { fileURLToPath } from "node:url";
 import { handler } from "../src/http.mjs";
 import { KINDS } from "../src/limits.mjs";
 import { confirm, MAX_ACTIONS } from "../src/offline.mjs";
+import { DEVELOPER, gc, real } from "./auth_fixtures.mjs";
 import { openPlan, play, server } from "./setup.mjs";
 
 test("SEC-23: an offline batch of weaves builds the weaving view once, not once a weave", (ctx) => {
@@ -146,4 +147,87 @@ test("SEC-34: the listener's timeouts and connection cap are set, the cap from R
   assert.match(main, /process\.env\.RULEBORN_HEADERS_TIMEOUT_MS \?\? 10_000/);
   assert.match(main, /requestTimeout: Math\.max\(30_000, headersTimeout\), keepAliveTimeout: 5_000/);
   assert.match(main, /listener\.maxConnections = Number\(process\.env\.RULEBORN_MAX_CONNECTIONS \?\? 2048\)/);
+});
+
+// SEC-36: an unseen Game Center key name cost one fetch a second, whoever
+// asked, so a caller naming made-up keys (gc-prod-9999) took the one fetch a
+// real player's new key needed, and that player's sign-in failed. Now a name
+// more than GAME_CENTER_KEY_AHEAD past the newest key of its kind Apple has
+// served is never fetched, and the second is per address.
+const keyUrl = (n, kind = "prod") => `https://static.gc.apple.com/public-key/gc-${kind}-${n}.cer`;
+
+test("SEC-36: a Game Center key name far past Apple's newest is refused without a fetch, so a real new key is fetched in the same second", async () => {
+  // Apple's key at every name but gc-prod-9, where another of the CA's, and
+  // nothing at a name Apple never used (its answer is a 404).
+  const apple = readFileSync(new URL("./fixtures/apple/gamecenter.pem", import.meta.url));
+  const { t, clock, fetched } = real({ fetchCertificate: async (url) => {
+    if (url === keyUrl(9999)) throw new Error("404");
+    return url === keyUrl(9) ? DEVELOPER.raw : apple;
+  } });
+  const signIn = async (url, peer = "198.51.100.1") => {
+    const credential = gc({ url, timestamp: clock.now });
+    await t.service.preparePlatform(credential, peer);
+    return t.service.auth.prove(credential);
+  };
+  assert.equal(await signIn(keyUrl(6)), "gc:T:_player1", "the key in use");
+  clock.now += 2000;
+  // A probe and a player on Apple's next key, from one address, in one second.
+  assert.equal(await signIn(keyUrl(9999)), null, "the probe proves nothing");
+  assert.equal(await signIn(keyUrl(7)), "gc:T:_player1", "the player's new key is fetched all the same");
+  assert.deepEqual(fetched, [keyUrl(6), keyUrl(7)], "the probe cost no fetch");
+  // Up to three past the newest key is a key Apple may have just made.
+  clock.now += 2000;
+  assert.equal(await signIn(keyUrl(9)), null, "a certificate not Apple's proves nothing");
+  clock.now += 2000;
+  assert.equal(await signIn(keyUrl(11)), null, "nor does it move the newest up: 11 is four past 7");
+  assert.equal(await signIn(keyUrl(10)), "gc:T:_player1", "three past 7");
+  assert.deepEqual(fetched.slice(2), [keyUrl(9), keyUrl(10)]);
+  // Each kind has its own newest key.
+  clock.now += 2000;
+  assert.equal(await signIn(keyUrl(40, "sb")), "gc:T:_player1", "no sandbox key seen yet: nothing to be past");
+  clock.now += 2000;
+  assert.equal(await signIn(keyUrl(44, "sb")), null);
+  assert.equal(fetched.at(-1), keyUrl(40, "sb"));
+});
+
+test("SEC-36: an unseen key name's one fetch a second is per address where the deployment says it", async () => {
+  const { t, clock, fetched } = real();
+  const prepare = (url, peer) => t.service.preparePlatform(gc({ url, timestamp: clock.now }), peer);
+  await prepare(keyUrl(6), "198.51.100.1");
+  clock.now += 2000;
+  await prepare(keyUrl(7), "198.51.100.1");
+  await prepare(keyUrl(8), "198.51.100.1");
+  assert.deepEqual(fetched, [keyUrl(6), keyUrl(7)], "a second new name from one address waits its second");
+  await prepare(keyUrl(8), "198.51.100.2");
+  assert.equal(fetched.at(-1), keyUrl(8), "another address is not held by the first");
+  await prepare(keyUrl(9), null);
+  await prepare(keyUrl(9), null);
+  assert.equal(fetched.filter((u) => u === keyUrl(9)).length, 1);
+  // Over HTTP, the address is the one the proxy's header names.
+  const handle = handler(t.service, { peerOf: (r) => r.headers.get("x-peer") });
+  clock.now += 2000;
+  for (const [n, peer] of [[10, "203.0.113.1"], [11, "203.0.113.2"]]) {
+    const res = await call(t, "POST", "/v1/session", { json: { credential: gc({ url: keyUrl(n), timestamp: clock.now, salt: `salt-${n}` }) },
+                                                       peer, handle });
+    assert.equal(res.status, 200, `gc-prod-${n} from ${peer}`);
+  }
+});
+
+test("SEC-36: a deployment with real sign-in will not start without the proxy's address header", () => {
+  const dir = mkdtempSync(join(tmpdir(), "rb-sec36-"));
+  const main = fileURLToPath(new URL("../src/main.mjs", import.meta.url));
+  // A journal on its own storage, so that only the header is missing (SEC-38).
+  const env = { ...process.env, RULEBORN_DATA: join(dir, "data"), RULEBORN_GOOGLE_CLIENT_IDS: "sec36.test",
+                RULEBORN_DELETIONS: join(dir, "journal") };
+  for (const k of ["RULEBORN_STUB_SIGNIN", "RULEBORN_GAMECENTER_ROOTS", "RULEBORN_PEER_HEADER"]) {
+    delete env[k];
+  }
+  try {
+    const run = spawnSync(process.execPath, ["--no-warnings", main, "0"], { env, encoding: "utf8", timeout: 30000 });
+    assert.notEqual(run.status, 0, "it stops");
+    assert.match(run.stderr, /RULEBORN_PEER_HEADER is unset/);
+    assert.doesNotMatch(run.stdout, /ruleborn server on/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

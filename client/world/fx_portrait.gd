@@ -25,6 +25,19 @@ const SEGMENTS := {0: [[0, 0, 1, 0], [1, 0, 1, 1], [1, 1, 0, 1], [0, 1, 0, 0]], 
 	9: [[1, 0.5, 0, 0.5], [0, 0.5, 0, 0], [0, 0, 1, 0], [1, 0, 1, 1], [1, 1, 0, 1]]}
 ## How far the disc stands off the figure, in CIE L* (AD-R13 asks 20 or more).
 const VALUE_STEP := 30.0
+## The figures painted flat (AD-R17): a grained or glassy model (a Bramble's
+## furred shell, a Hollow's faceted glass) minifies into mottle at a
+## portrait's size, so these are filled in three tones of their own colour,
+## lit from the upper left as the toon models are, with only their strong
+## marks (eyes, gems, an emblem) kept. "crop" is the bust's part shown, as
+## (centre x, centre y, radius) of its side; a tall figure is framed head
+## and shoulders, as a Mo is, so its disc shows round its head. "form" is
+## how much the light on the silhouette's swell weighs against the model's
+## own (0.65 unless given); a faceted figure leans on the swell, since its
+## own light is all facets.
+const TOON := {"quarryback": {}, "glass_golem": {"crop": Vector3(0.5, 0.32, 0.32), "form": 0.85}}
+## The bust's part every other portrait shows (`_disc_uv`'s).
+const CROP := Vector3(0.5, 0.44, 0.42)
 ## The composed portraits, by kind, school and pixel size, and what each
 ## measured: {key: {"figure": L*, "disc": L*, "least": L*}} (the gate's notes).
 static var measured := {}
@@ -118,7 +131,7 @@ func _process(delta: float) -> void:
 		var key := "%s/%s/%d" % [kind, school_ground().to_html(), side]
 		if not _picture_ready or picture != _composed.get(key):
 			if not _composed.has(key):
-				_composed[key] = compose(figure().get_image(), school_ground(), side, key)
+				_composed[key] = compose(figure().get_image(), school_ground(), side, key, kind)
 			picture = _composed[key]
 			_picture_ready = true
 			queue_redraw()
@@ -296,15 +309,20 @@ static func _disc_uv(x := 0.5, y := 0.44, r := 0.42) -> PackedVector2Array:
 ## VALUE_STEP L* off the figure's mean (lighter, unless that would be near
 ## white), lit at its upper middle; around it an ink silhouette, so a figure
 ## whose colour is its school's (a Hollow) still parts from its disc. Cut to
-## its round. Its measures go in `measured`, under `key`.
-static func compose(bust: Image, school: Color, side: int, key := "") -> Texture2D:
+## its round. An `of_kind` in TOON is framed and painted flat (`_toon`). Its
+## measures go in `measured`, under `key`.
+static func compose(bust: Image, school: Color, side: int, key := "", of_kind := "") -> Texture2D:
 	var src := bust.duplicate() as Image
 	src.convert(Image.FORMAT_RGBA8)
 	var n := src.get_width()
-	var crop := Rect2i(Vector2i(roundi(n * (0.5 - 0.42)), roundi(n * (0.44 - 0.42))), Vector2i.ONE * roundi(n * 0.84))
+	var part: Vector3 = TOON.get(of_kind, {}).get("crop", CROP)
+	var corner := Vector2i(roundi(n * (part.x - part.z)), roundi(n * (part.y - part.z)))
+	var crop := Rect2i(corner, Vector2i.ONE * roundi(n * part.z * 2.0))
 	var img := src.get_region(crop)
 	side = maxi(side, 16)
 	img.resize(side, side, Image.INTERPOLATE_LANCZOS)
+	if TOON.has(of_kind):
+		_toon(img, TOON[of_kind].get("form", 0.65))
 	var half := side * 0.5
 	var centre := Vector2(half, half)
 	# The figure's value: its mean L* where it is solid, inside the round.
@@ -374,6 +392,130 @@ static func compose(bust: Image, school: Color, side: int, key := "") -> Texture
 		measured[key] = {"figure": snappedf(figure_l, 0.1), "disc": snappedf(disc_l, 0.1),
 			"step": snappedf(absf(disc_l - figure_l), 0.1), "least": snappedf(least, 0.1)}
 	return ImageTexture.create_from_image(out)
+
+
+## Paints `img`, a figure on a clear ground, flat (AD-R17): solid where it
+## is more than half opaque and thicker than a line, clear elsewhere (a
+## glass figure's see-through spikes and thin rods go); each solid pixel one
+## of three tones of the figure's median colour, chosen by a light from the
+## upper left on its silhouette's swell and by the model's own light seen
+## broadly (weighed `form` to 1 - `form`), so the grain and the facets'
+## glints are gone; and its strong marks, where the figure stands well off
+## its broad light (eyes, a gem, an emblem), kept as they are.
+static func _toon(img: Image, form: float) -> void:
+	var side := img.get_width()
+	var count := side * side
+	var scale := side / 119.0
+	var solid := PackedFloat32Array()
+	var lights := PackedFloat32Array()
+	var weighted := PackedFloat32Array()
+	solid.resize(count)
+	lights.resize(count)
+	weighted.resize(count)
+	var reds := PackedFloat32Array()
+	var greens := PackedFloat32Array()
+	var blues := PackedFloat32Array()
+	for i in count:
+		solid[i] = 1.0 if img.get_pixel(i % side, i / side).a > 0.55 else 0.0
+	# Thin bits (a Hollow's rods, a whisker) go: what a little blur leaves
+	# under half is no body to fill.
+	var body := _blur(solid, side, 1.6 * scale)
+	for i in count:
+		if body[i] < 0.5:
+			solid[i] = 0.0
+	for i in count:
+		var p := img.get_pixel(i % side, i / side)
+		if solid[i] > 0.0:
+			lights[i] = ColourCheck._lab(Color(p, 1.0)).x
+			weighted[i] = lights[i]
+			reds.append(p.r)
+			greens.append(p.g)
+			blues.append(p.b)
+	if reds.size() < 16:
+		return
+	reds.sort()
+	greens.sort()
+	blues.sort()
+	var mid := reds.size() / 2
+	var base := Color(reds[mid], greens[mid], blues[mid])
+	# The silhouette's swell, its model's light seen broadly (where the
+	# figure is), and the light its marks are measured against.
+	var swell := _blur(solid, side, 7.0 * scale)
+	var mass3 := _blur(solid, side, 3.0 * scale)
+	var broad := _blur(weighted, side, 3.0 * scale)
+	var mass5 := _blur(solid, side, 5.0 * scale)
+	var wide := _blur(weighted, side, 5.0 * scale)
+	var sun := Vector3(-0.55, -0.8, 0.6).normalized()
+	var reach := 7.0 * scale * 2.5
+	var shades := PackedFloat32Array()
+	var broads := PackedFloat32Array()
+	shades.resize(count)
+	broads.resize(count)
+	var shade_sum := Vector2.ZERO
+	var broad_sum := Vector2.ZERO
+	var solid_n := 0.0
+	for i in count:
+		if solid[i] == 0.0:
+			continue
+		var x := i % side
+		var y := i / side
+		var gx := (swell[y * side + mini(x + 1, side - 1)] - swell[y * side + maxi(x - 1, 0)]) * 0.5
+		var gy := (swell[mini(y + 1, side - 1) * side + x] - swell[maxi(y - 1, 0) * side + x]) * 0.5
+		shades[i] = Vector3(-gx * reach, -gy * reach, 0.6).normalized().dot(sun)
+		broads[i] = broad[i] / maxf(mass3[i], 0.001)
+		shade_sum += Vector2(shades[i], shades[i] * shades[i])
+		broad_sum += Vector2(broads[i], broads[i] * broads[i])
+		solid_n += 1.0
+	var shade_mean := shade_sum.x / solid_n
+	var shade_dev := sqrt(maxf(shade_sum.y / solid_n - shade_mean * shade_mean, 0.0)) + 0.000001
+	var broad_mean := broad_sum.x / solid_n
+	var broad_dev := sqrt(maxf(broad_sum.y / solid_n - broad_mean * broad_mean, 0.0)) + 0.000001
+	var lit := PackedFloat32Array()
+	for i in count:
+		if solid[i] > 0.0:
+			shades[i] = form * (shades[i] - shade_mean) / shade_dev + (1.0 - form) * (broads[i] - broad_mean) / broad_dev
+			lit.append(shades[i])
+	lit.sort()
+	var dark_below := lit[int(lit.size() * 0.22)]
+	var light_above := lit[int(lit.size() * 0.85)]
+	var tones := [base.darkened(0.2), base, base.lerp(Color.WHITE, 0.26)]
+	for i in count:
+		var x := i % side
+		var y := i / side
+		if solid[i] == 0.0:
+			img.set_pixel(x, y, Color(0, 0, 0, 0))
+			continue
+		var own := img.get_pixel(x, y)
+		if absf(lights[i] - wide[i] / maxf(mass5[i], 0.001)) > 22.0:
+			img.set_pixel(x, y, Color(own, 1.0))
+			continue
+		var tone: Color = tones[0 if shades[i] < dark_below else (2 if shades[i] >= light_above else 1)]
+		img.set_pixel(x, y, Color(tone, 1.0))
+
+
+## `values` (a `side`-wide square) blurred about as a Gaussian of `sigma`
+## pixels would: three box passes each way.
+static func _blur(values: PackedFloat32Array, side: int, sigma: float) -> PackedFloat32Array:
+	var half := maxi(1, roundi((sqrt(4.0 * sigma * sigma + 1.0) - 1.0) * 0.5))
+	var out := values.duplicate()
+	for axis in 2:
+		for _pass in 3:
+			var next := PackedFloat32Array()
+			next.resize(out.size())
+			for line in side:
+				var run := 0.0
+				for k in range(-half, half + 1):
+					run += out[_at(line, clampi(k, 0, side - 1), side, axis)]
+				for j in side:
+					next[_at(line, j, side, axis)] = run / (2 * half + 1)
+					run += out[_at(line, clampi(j + half + 1, 0, side - 1), side, axis)]
+					run -= out[_at(line, clampi(j - half, 0, side - 1), side, axis)]
+			out = next
+	return out
+
+
+static func _at(line: int, j: int, side: int, axis: int) -> int:
+	return line * side + j if axis == 0 else j * side + line
 
 
 ## `colour`'s hue lightened or darkened until its L* is `l`.

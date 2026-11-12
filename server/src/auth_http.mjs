@@ -66,7 +66,8 @@ function signedIn(service, request, limit) {
  * JSON body and `optional(request)` one that may be absent. `place` is the
  * country the edge says the request came from, or null (auth.mjs placeOf).
  */
-export async function sessionRoute(service, request, parts, { signIn, limit, read, optional, place = null }) {
+export async function sessionRoute(service, request, parts, { signIn, limit, read, optional, place = null,
+                                                              peer = null }) {
   const m = request.method;
   const [, , verb] = parts;
   if (m === "POST" && !verb) {
@@ -75,7 +76,7 @@ export async function sessionRoute(service, request, parts, { signIn, limit, rea
       if (device !== null && (typeof device !== "object" || Array.isArray(device))) {
         throw new Refused(400, "malformed_body");
       }
-      await service.preparePlatform(credential);
+      await service.preparePlatform(credential, peer);
       return answer(service.session(credential, { admit, device, place }));
     });
   }
@@ -132,7 +133,7 @@ export async function sessionRoute(service, request, parts, { signIn, limit, rea
     return signIn(async (admit) => {
       const body = await read(request);
       const proven = async (credential) => {
-        await service.preparePlatform(credential);
+        await service.preparePlatform(credential, peer);
         const identity = service.auth.prove(credential);
         if (!identity) throw new Refused(401, "platform_identity_refused");
         admit(identity);

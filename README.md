@@ -173,7 +173,7 @@ reading.
 | [`docs/design/spec/README.md`](docs/design/spec/README.md) | The drafted specification, one file per system, proposed until the document adopts it |
 | [`docs/art/3d-program.md`](docs/art/3d-program.md) | The 3D and interface program: the bar, the look, the tracks |
 | [`docs/guides/agent-program.md`](docs/guides/agent-program.md) | How the agent tracks work: branches, ownership, progress files, deploys |
-| [`docs/security/review.md`](docs/security/review.md), [`docs/security/auth.md`](docs/security/auth.md) | The security review, and sign-in's threat model and design |
+| [`docs/security/review.md`](docs/security/review.md), [`docs/security/auth.md`](docs/security/auth.md), [`docs/security/decisions.md`](docs/security/decisions.md) | The security review, sign-in's threat model and design, and the deep security run's decisions |
 | [`docs/server/db-cost.md`](docs/server/db-cost.md) | What the database costs, and what was cut |
 | [`docs/art/ui-quality/report.md`](docs/art/ui-quality/report.md) | Why the interface is not premium yet, and the plan |
 | [`docs/DOCS-CHANGES.md`](docs/DOCS-CHANGES.md) | What the documentation pass changed, and its open questions |
@@ -230,7 +230,7 @@ docs/
   roadmap/      the generated roadmap page
   art/          the 3D and interface program, each track's notes, its stills, the UI quality report
   progress/     each agent track's progress file
-  security/     the security review and sign-in's design
+  security/     the security review, sign-in's design and the security decisions
   server/       the database's cost
 tools/
   # the design document
@@ -265,6 +265,7 @@ tools/
   check_docs_consistency.py       this repository's own documents, against each other
   # the agent program
   run_checks.sh                   the full checks on a separate worktree of one commit, detached; start, wait, result, record
+  check_ci.py                     .github/workflows/checks.yml runs on every push and pull request, pinned, with every check
   coord/                          the program's coordination tools: owners.py checks a change stays inside its task's files
   # models and analyses
   economy_model/                  the day-by-day model §24 references but omits

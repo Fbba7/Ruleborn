@@ -30,8 +30,10 @@ example island so a fresh database has something to lease. Data goes to
 start.
 
 On start it prints the address, the rules version it holds, and a warning for
-each protection a missing setting turns off (for example, without
-`RULEBORN_PEER_HEADER` failed sign-ins are not limited by address).
+each protection a missing setting turns off (for example, a local server
+without `RULEBORN_PEER_HEADER` does not limit failed sign-ins by address). A
+server with real sign-in (Game Center's roots or Google's client ids set)
+refuses to start without `RULEBORN_PEER_HEADER` (SEC-36).
 
 `RULEBORN_STUB_SIGNIN=1` accepts a stand-in sign-in credential, which is what
 a desktop client sends (it has no Game Center or Play Games). Without it, and
@@ -87,7 +89,7 @@ development default except what a real deployment needs.
 | `RULEBORN_SECRET`, `RULEBORN_TOKEN_KEYS` | the keys that sign session tokens |
 | `RULEBORN_REFRESH_ROTATE_HOURS` | how often a refresh token rotates: 24 unless set, the owner's decision (B9); 0 rotates it on every refresh. Inside the span a refresh answers a new access token and writes nothing, so a session's `used_at` and country are up to that old |
 | `RULEBORN_SEASON_START` | the first season's start |
-| `RULEBORN_DELETIONS` | the account-deletion journal (default `deletions/` inside `RULEBORN_DATA`). A deployment puts it on separate storage that is not restored with the data, or a restore of the data could undo later deletions; with real sign-in, the server warns at start while it is inside the data folder (SEC-38) |
+| `RULEBORN_DELETIONS` | the account-deletion journal (default `deletions/` inside `RULEBORN_DATA`). A deployment puts it on separate storage that is not restored with the data, or a restore of the data could undo later deletions; with real sign-in, the server will not start while it is inside the data folder, and a local server with stubbed sign-in warns (SEC-38) |
 | `RULEBORN_REPLAYS_MIN_FREE_MB` | the free space, in MiB, below which a heist's replay is refused with 503 `storage_low` and its lease kept (512 unless set; 0 turns the floor off) |
 | `RULEBORN_STUB_SIGNIN` | `1` accepts a stand-in sign-in (development only) |
 | `RULEBORN_GOOGLE_CLIENT_IDS`, `RULEBORN_GOOGLE_WEB_CLIENT_ID` | Google sign-in, and the web deletion page's |
