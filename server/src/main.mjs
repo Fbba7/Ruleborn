@@ -144,11 +144,16 @@ if (platforms.stubbed) {
 }
 // A deployment whose deletions journal sits inside its data folder restores
 // the journal with every restore of the data, and so can undo deletions made
-// since the backup (declarations.md, SEC-38).
+// since the backup (declarations.md, SEC-38). With real sign-in the server
+// will not start so; a local server with stubbed sign-in is warned.
 const journalDir = resolve(process.env.RULEBORN_DELETIONS ?? join(data, "deletions"));
-if (!platforms.stubbed && journalDir.startsWith(resolve(data) + sep)) {
-  console.warn("RULEBORN_DELETIONS is inside RULEBORN_DATA: a restore of the data folder "
-               + "also restores the journal, and can undo later deletions (declarations.md)");
+if (journalDir === resolve(data) || journalDir.startsWith(resolve(data) + sep)) {
+  const why = "RULEBORN_DELETIONS is inside RULEBORN_DATA: a restore of the data folder "
+            + "also restores the journal, and can undo later deletions (declarations.md)";
+  if (!platforms.stubbed) {
+    throw new Error(`${why}. Set RULEBORN_DELETIONS to a folder on storage that is not restored with the data`);
+  }
+  console.warn(why);
 }
 
 // D70: the edge's cache of an under-13 player's bundles, purged on their

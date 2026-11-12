@@ -216,8 +216,10 @@ test("SEC-36: an unseen key name's one fetch a second is per address where the d
 test("SEC-36: a deployment with real sign-in will not start without the proxy's address header", () => {
   const dir = mkdtempSync(join(tmpdir(), "rb-sec36-"));
   const main = fileURLToPath(new URL("../src/main.mjs", import.meta.url));
-  const env = { ...process.env, RULEBORN_DATA: join(dir, "data"), RULEBORN_GOOGLE_CLIENT_IDS: "sec36.test" };
-  for (const k of ["RULEBORN_STUB_SIGNIN", "RULEBORN_GAMECENTER_ROOTS", "RULEBORN_PEER_HEADER", "RULEBORN_DELETIONS"]) {
+  // A journal on its own storage, so that only the header is missing (SEC-38).
+  const env = { ...process.env, RULEBORN_DATA: join(dir, "data"), RULEBORN_GOOGLE_CLIENT_IDS: "sec36.test",
+                RULEBORN_DELETIONS: join(dir, "journal") };
+  for (const k of ["RULEBORN_STUB_SIGNIN", "RULEBORN_GAMECENTER_ROOTS", "RULEBORN_PEER_HEADER"]) {
     delete env[k];
   }
   try {

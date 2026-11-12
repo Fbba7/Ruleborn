@@ -351,7 +351,8 @@ comma-separated list of `kid:key` pairs the tokens are signed with instead
 one first); `RULEBORN_REFRESH_ROTATE_HOURS` and the rest of the settings are
 listed in [`docs/guides/server.md`](../docs/guides/server.md#configuration).
 `RULEBORN_DELETIONS`
-names the deletion journal (below). The tests use a
+names the deletion journal (below); with real sign-in it must lie outside
+`RULEBORN_DATA`, or the server will not start (SEC-38). The tests use a
 stand-in chain in `test/fixtures/apple/` (its `make.sh` regenerates it). The
 readings are **G32**; Google Play's side is **D67**; and building this found
 **F46**: every island is public by hash before any scout.
