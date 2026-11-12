@@ -5,16 +5,16 @@
   "model": "Opus 5.5",
   "agent_state": "waiting",
   "task_id": "P1-S1-pilot-5",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-12T11:28:53Z",
   "lease_until": "2026-11-12T15:15:37Z",
-  "updated_at": "2026-11-12T13:04:16Z",
-  "expected_next_update_by": "2026-11-12T13:49:16Z",
+  "updated_at": "2026-11-12T13:54:09Z",
+  "expected_next_update_by": "2026-11-12T14:39:09Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "beb8a023",
-    "next_step": "P1-S1-pilot-5: pre-check PASS at beb8a023; the gate is asked on 'heist at 100% text' and 'heist at 200% text, pt_BR'. Waiting for its verdicts; then P2-S1-flow-result once P1-AD-board-1d merges.",
-    "at": "2026-11-12T13:04:16Z"
+    "next_step": "P1-S1-pilot-5 ready at beb8a023 (pre-check PASS, 13:03Z; gate asked on 'heist at 100% text' and 'heist at 200% text, pt_BR', shadow mode as pilot-4). Next: P2-S1-flow-result once P1-AD-board-1d merges; on a gate or board fail, re-work pilot-5 from its critique.",
+    "at": "2026-11-12T13:54:09Z"
   },
   "precheck": {
     "sha": "beb8a023e78e85b02ce6674fa2c5463e9fc48b80",
@@ -29,7 +29,7 @@
       "heist at 200% text, pt_BR"
     ]
   },
-  "ready_sha": null,
+  "ready_sha": "beb8a023e78e85b02ce6674fa2c5463e9fc48b80",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6",
@@ -207,5 +207,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-5: pre-check PASS at beb8a023; the gate is asked on 'heist at 100% text' and 'heist at 200% text, pt_BR'. Waiting for its verdicts; then P2-S1-flow-result once P1-AD-board-1d merges."
+  "next_step": "P1-S1-pilot-5 ready at beb8a023 (pre-check PASS, 13:03Z; gate asked on 'heist at 100% text' and 'heist at 200% text, pt_BR', shadow mode as pilot-4). Next: P2-S1-flow-result once P1-AD-board-1d merges; on a gate or board fail, re-work pilot-5 from its critique."
 }
