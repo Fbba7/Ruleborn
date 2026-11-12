@@ -49,7 +49,10 @@ export CHECK_BWRAP=/nonexistent/bwrap CHECK_UNSANDBOXED=1
 failures=0
 untested=()
 
-# A repository whose tools/check_all.sh is `$1`; prints its HEAD.
+# A repository whose tools/check_all.sh is `$1`; prints its HEAD. The commit
+# message carries the case's name `$2`, so two cases with the same check_all.sh
+# committed in the same second still get different shas, and one case's run
+# directory in $CHECK_DIR is never another's.
 repo() {
   local r="$tmp/repo-$2"
   git init --quiet "$r"
@@ -58,7 +61,7 @@ repo() {
   printf '%s\n' "$1" > "$r/tools/check_all.sh"
   git -C "$r" -c core.hooksPath=/dev/null add tools
   git -C "$r" -c core.hooksPath=/dev/null -c user.email=t@t -c user.name=t -c commit.gpgsign=false \
-    commit --quiet -m candidate
+    commit --quiet -m "candidate $2"
   git -C "$r" rev-parse HEAD
 }
 
