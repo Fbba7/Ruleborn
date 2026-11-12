@@ -5,16 +5,19 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-S1-toon-drop",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-12T22:04:25Z",
   "lease_until": "2026-11-13T01:04:25Z",
-  "updated_at": "2026-11-12T22:04:25Z",
-  "expected_next_update_by": "2026-11-12T22:49:25Z",
-  "long_run": null,
+  "updated_at": "2026-11-12T22:09:05Z",
+  "expected_next_update_by": "2026-11-12T22:54:05Z",
+  "long_run": {
+    "log": "/tmp/check-a7dd6501968c54d6df178185956a4f1efe5d4578.log",
+    "expected_end": "2026-11-12T22:44:05Z"
+  },
   "progress_marker": {
     "last_green_sha": "b6a477f8",
-    "next_step": "P2-S1-toon-drop (AIA2-R3): drop quarryback and glass_golem from FxPortrait.TOON, render the five portraits, guard, pre-check, gate.",
-    "at": "2026-11-12T22:04:25Z"
+    "next_step": "Pre-check and guard.sh on a7dd6501 (TOON emptied, main 53203061 merged); then gate_request for heist at 100% text, Character presence.",
+    "at": "2026-11-12T22:09:05Z"
   },
   "precheck": null,
   "gate_request": null,
