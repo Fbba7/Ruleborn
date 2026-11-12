@@ -5,16 +5,16 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-S3-screenkit",
-  "task_state": "working",
-  "claimed_at": "2026-11-12T19:16:00Z",
-  "lease_until": "2026-11-12T22:16:00Z",
-  "updated_at": "2026-11-12T21:09:38Z",
-  "expected_next_update_by": "2026-11-12T21:54:38Z",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-12T22:45:18Z",
+  "lease_until": "2026-11-13T01:45:18Z",
+  "updated_at": "2026-11-12T22:45:18Z",
+  "expected_next_update_by": "2026-11-12T23:30:18Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a9f7133d17c1bdbd2ca5564c2bb04fe632099610",
-    "next_step": "Pre-check PASS at 2b220cc3 (main 4554557d merged; main's later commits to bb8a7c23 are the lead's bookkeeping). Gate asked on 'settings at 100% text' at 2b220cc3; guard.sh rerunning. Next: the verdict, then ready.",
-    "at": "2026-11-12T21:09:38Z"
+    "next_step": "Reclaimed after the lease lapsed (prior_sha 03b3d762 is the branch head). Next: Lead-R1 (05-settings record and still on one tab), then pre-check and ready.",
+    "at": "2026-11-12T22:45:18Z"
   },
   "precheck": {
     "sha": "2b220cc3d9829060b0851f3f744db8beefdebdcd",
