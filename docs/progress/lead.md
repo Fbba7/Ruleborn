@@ -157,8 +157,13 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqijuvwjXHbeAGDLGB` (cycle 64, 12
-November 2026 from 09:39Z, started by the Opus 5.5 launcher). Cycle 63's
+Latest lead cycle session: `session_01SNkKxnAEyrHDn5aRYpjvTB` (cycle 69, 12
+November 2026 from 14:39Z, started by the Opus 5.5 launcher). Cycle 68's
+was `session_01SNkKxnfPvJzu1iksNyMgNw` (from 13:39Z). Cycle 67's
+was `session_01SNkKxqJqzRbvVerXcUszbd` (from 12:39Z). Cycle 66's
+was `session_01SNkKxqr3DC7Kb5YZfijUtN` (from 11:39Z). Cycle 65's
+was `session_01SNkKxqZN7A6CTcTtr4tEcm` (from 10:38Z). Cycle 64's
+was `session_01SNkKxqijuvwjXHbeAGDLGB` (from 09:39Z). Cycle 63's
 was `session_01SNkKxnWuvvM5evq2WinaFR` (from 08:39Z). Cycle 62's
 was `session_01SNkKxqEW3A3hwRz6VufQz5` (from 07:39Z). Cycle 61's
 was `session_01SNkKxrEkx6oXeGzdGm4sDr` (from 06:39Z). Cycle 60's
@@ -210,7 +215,10 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AD | `session_01SNkKxmtatzN7YRTTZcPFsL` (Opus 5.5, effort high) | P1-AD-board-1c (start: P1-K1-numerals-on and P1-S1-pilot-4 merged as 541e4c97; the gate's notes in verdicts/P1-S1-pilot-4/e846c531.json and verdicts/P1-K1-numerals-on/1d21bf4a.json) | `claude/ui-ad` | 2026-11-12 09:30Z |
+| AD | `session_01SNkKxrFqhFsxDUmtqPET8E` (Opus 5.5, effort high) | P1-AD-board-1d (start: P1-S1-pilot-5 merged as fe27c8f2; re-check objections D and F on pilot-5's stills; verdicts in verdicts/P1-S1-pilot-5/beb8a023.json) | `claude/ui-ad` | 2026-11-12 16:07Z |
+| S1 | `session_01SNkKxn9y7QjFsFiRjgoaAP` (Opus 5.5, effort high; idle, its task merged) | P1-S1-pilot-5 (restart: the session below went idle waiting for the gate; verdicts in verdicts/P1-S1-pilot-5/beb8a023.json, all pass, advisory; mark ready from the handoff) | `claude/ui-screens-heist` | 2026-11-12 13:52Z |
+| S1 | `session_01SNkKxoXAbUvoLyhk2tDXzh` (Opus 5.5, effort high; idle, replaced at 13:52Z) | P1-S1-pilot-5 (start: board 1's round 3 in P1-AD-board-1c, objections D and F open; AD-R17, AD-R18) | `claude/ui-screens-heist` | 2026-11-12 11:27Z |
+| AD | `session_01SNkKxmtatzN7YRTTZcPFsL` (Opus 5.5, effort high; idle, its task merged) | P1-AD-board-1c (start: P1-K1-numerals-on and P1-S1-pilot-4 merged as 541e4c97; the gate's notes in verdicts/P1-S1-pilot-4/e846c531.json and verdicts/P1-K1-numerals-on/1d21bf4a.json) | `claude/ui-ad` | 2026-11-12 09:30Z |
 | S1 | `session_01SNkKxnQXTay5oBDdKNoz8h` (Opus 5.5, effort high; idle, its task merged) | P1-S1-pilot-4 (start: board 1's round 2 in P1-AD-board-1b, objections D and B open; AD-R13, AD-R15) | `claude/ui-screens-heist` | 2026-11-12 06:54Z |
 | K1 | `session_01SNkKxqEuMj3TF1SQMhjHgP` (Opus 5.5, effort high; idle, its task merged) | P1-K1-numerals-on (start: P1-S1-pilot-3 merged as 085c812a with the switch off; S1-R11, K1-R11, the gate's Display type note) | `claude/ui-bake` | 2026-11-12 05:39Z |
 | AD | `session_01SNkKxpcpCTDib53apRny85` (Opus 5.5, effort high; idle, its task merged) | P1-AD-board-1b (start: P1-S1-pilot-3 merged as 085c812a; the gate's notes in verdicts/P1-S1-pilot-3/0d142dd0.json) | `claude/ui-ad` | 2026-11-12 05:39Z |
@@ -291,9 +299,9 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: P1-AD-board-1d once P1-S1-pilot-5 merges (board-1c is merged; board-1d re-checks objections D and F on pilot-5's stills; if both close, board 1 stands and phase 2 starts). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+Tasks: none open (P1-AD-board-1d is merged: board 1 stands and phase 2 has started; boards 2-5 follow as the lead seeds them). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
-Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-ad from it (create it if it does not exist) and push only to claude/ui-ad with git push -u origin claude/ui-ad, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AD, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
@@ -308,7 +316,7 @@ Branch: claude/ui-artist
 Owned files: art/ui/** except art/ui/icons/**, client/ui/art/kit*, docs/progress/AIA.md, docs/progress/status/AIA.json
 Tasks: P1-AIA-kit-1, then P1-AIA-kit-2 to -7 as their deps merge (every phase 0 AIA task is merged). Icons are AIA-2's, not yours.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
-Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-artist from it (create it if it does not exist) and push only to claude/ui-artist with git push -u origin claude/ui-artist, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AIA, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
@@ -323,7 +331,7 @@ Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
 Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97)
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
-Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-bake from it (create it if it does not exist) and push only to claude/ui-bake with git push -u origin claude/ui-bake, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is K1, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
@@ -336,9 +344,9 @@ You are agent AIA-2 of the Ruleborn agent program (UI wave). Read docs/guides/ag
 Agent: AIA-2            Role: maker (AIA-2): icon art        Model: Opus 5.5, effort high
 Branch: claude/ui-artist-icons
 Owned files: art/ui/icons/**, client/tests/shots/icon_*.gd, client/ui/art/icons_48*, client/ui/art/icons_256*, docs/progress/AIA-2.md, docs/progress/status/AIA-2.json
-Tasks: P1-AIA2-toon-route, then P1-AIA2-icons-1a, -1b, -2a and -2b as their deps merge. Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
+Tasks: P2-AIA2-busts (board 1's note G, AD-R20: Bramble and Hollow repainted at the source; P1-AIA2-toon-route and icons-1a to -2b are merged). Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
-Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-artist-icons from it (create it if it does not exist) and push only to claude/ui-artist-icons with git push -u origin claude/ui-artist-icons, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AIA-2, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
@@ -351,11 +359,26 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P1-S1-pilot-5 (board 1's objections D and F, round 3: AD-R17 and AD-R18 in docs/progress/requests.md, board-1.md Round 3; heist_hud.gd is yours again, and K1's handoff docs/progress/K1.md says why the header's ink outline does not show). Then P2-S1-flow-result and P2-S1-flow-replay once P1-AD-board-1d merges (pilot-1 to pilot-4 are merged).
+Tasks: P2-S1-flow-result, then P2-S1-flow-replay (the flow findings F6 and F7, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review). Pilot-1 to pilot-5 and P1-AD-board-1d are merged: board 1 stands.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
-Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-heist from it (create it if it does not exist) and push only to claude/ui-screens-heist with git push -u origin claude/ui-screens-heist, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S1, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### S2
+
+```text
+You are agent S2 of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
+
+Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort high
+Branch: claude/ui-screens-home
+Owned files: only the files each S2 task lists in the backlog, docs/progress/S2.md, docs/progress/status/S2.json
+Tasks: P2-S2-flow-home, then P2-flow-entry (the flow findings F1 to F5, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-home from it (create it if it does not exist) and push only to claude/ui-screens-home with git push -u origin claude/ui-screens-home, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S2, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
 
 ### SV
@@ -368,13 +391,162 @@ Branch: claude/server-decisions
 Owned files: only the files each SV task lists in the backlog, docs/progress/SV.md, docs/progress/status/SV.json
 Tasks: none open (SV-B1-B6, SV-B7-B9 and SV-B11-B12 are merged; SV-B10 is not yours yet). Run the client suite (python3 client/status.py) before marking a task ready.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
-Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/server-decisions from it (create it if it does not exist) and push only to claude/server-decisions with git push -u origin claude/server-decisions, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SV, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
 
 ## Now
 
+- Cycle 69, 12 November 2026, from 14:39Z (session
+  `session_01SNkKxnAEyrHDn5aRYpjvTB`, started by the Opus 5.5 launcher):
+  one merge, one session started.
+  - **Merged P1-S1-pilot-5** (ready beb8a023; gate verdicts at
+    `verdicts/P1-S1-pilot-5/beb8a023.json`, all pass, advisory) as
+    `fe27c8f2`: merge lock at `3592745d`, candidate `2381087c` on main
+    `8f4511ad`, `owners.py diff` clean, claims disjoint, check_all PASS
+    at 15:28Z, ui guard OK (every budget shot within its record; heist
+    119 of 120 draw calls at 100%). Main had only the lock commits beyond
+    the candidate's base, so the merge went onto main's head with the
+    docs check alone. Lock released in `cecf3a64`. The audit and roadmap
+    pages did not change, so they were not republished.
+  - The first guard run timed out (exit 124): the candidate worktree had
+    no `client/bin/libruleborn_godot.so`, so every budget shot failed to
+    compile, as cycle 53's note warns. After `bash client/build.sh` in
+    the worktree the guard passed; the lock was renewed for the rerun
+    (`d1d536b7`). This also closes cycle 68's note that guard.sh had not
+    yet run on main after the SEC client commits.
+  - **Started AD on P1-AD-board-1d** at 16:07Z
+    (`session_01SNkKxrFqhFsxDUmtqPET8E`, Opus 5.5, effort high
+    accepted): re-check objections D (Bramble and Hollow against their
+    rings) and F on pilot-5's stills; if both close, board 1 stands and
+    phase 2's flow tasks open. S1's session
+    `session_01SNkKxn9y7QjFsFiRjgoaAP` is idle, its task merged; S1's
+    next tasks (P2-S1-flow-result, P2-S1-flow-replay) wait on board-1d.
+  - No new request. The launcher and the watchdog are enabled. One
+    builder, under the cap of three. The backlog has 74 tasks, 57
+    merged. No owner-inbox entry.
+  - Next: merge board-1d when ready (docs-only, no guard needed). If
+    board 1 stands, start S1 on P2-S1-flow-result and the other phase 2
+    flow tasks within the cap of three; if D stays open, seed an AIA-2
+    task for Bramble and Hollow at their source (S1-R12's default). Icon
+    batches 3 and 4 stay deferred (D13 (c)).
+- Cycle 68, 12 November 2026, from 13:39Z (session
+  `session_01SNkKxnfPvJzu1iksNyMgNw`, started by the Opus 5.5 launcher):
+  the gate for P1-S1-pilot-5, and S1 restarted; nothing merged.
+  - **S1's pre-check passed** at `beb8a023` (exit 0) and it asked the
+    gate for "heist at 100% text" and "heist at 200% text, pt_BR". The
+    lead rendered both at `beb8a023` and ran the ui-judge (rubric v3,
+    blind, shuffled pairs). Verdicts in
+    `docs/art/ui-quality/gate/verdicts/P1-S1-pilot-5/beb8a023.json`:
+    - 100%, Character presence: split, then **pass** at 3 fails of 6
+      (a fail needs 4). Pip, Mo, Ash and the wizard read as framed toon
+      figures; the samples split on Bramble and Hollow, now flat-painted,
+      against their pale rings. Narrow: board-1d should re-check
+      objection D.
+    - 100%, Display type: **pass** (3 of 3). The timer's ink outline
+      shows; "LAWS HERE" sits on the tag plate (objection F met).
+    - 200% pt_BR, Display type: **pass** (3 of 3); "Alarme" and
+      "~2.600" touch their frames, a layout note.
+    The verdicts are advisory (shadow mode) and do not block the merge.
+  - **S1 restarted:** its session `session_01SNkKxoXAbUvoLyhk2tDXzh`
+    went idle at 13:04Z waiting for the verdicts, and its
+    `expected_next_update_by` (13:49Z) passed. A fresh session
+    `session_01SNkKxn9y7QjFsFiRjgoaAP` (Opus 5.5, effort high, the
+    roster's prompt) reads the handoff, takes the verdicts and marks the
+    task ready. The claim's lease follows S1's own (to 15:15Z).
+  - No task is ready, so no merge lock was taken. No new request: S1-R1
+    to S1-R12 are already in requests.md. Main had not moved before this
+    cycle, so the pages were not republished.
+  - The launcher and the watchdog are enabled. One builder, under the
+    cap of three. The backlog has 74 tasks, 56 merged. No owner-inbox
+    entry.
+  - Next: merge pilot-5 when ready (owners diff, one full check at a
+    time via tools/run_checks.sh, and guard.sh since it touches the
+    client), then start AD on P1-AD-board-1d, which re-checks objection
+    D. Icon batches 3 and 4 stay deferred (D13 (c)).
+- Cycle 67, 12 November 2026, from 12:39Z (session
+  `session_01SNkKxqJqzRbvVerXcUszbd`, started by the Opus 5.5 launcher):
+  a bookkeeping cycle, nothing merged, no session started.
+  - **S1 on P1-S1-pilot-5**, `working` (status 12:15Z, lease to 15:15Z,
+    next update due 13:00Z): part 5 of the heist pilot written
+    (`3690e4ca`); its pre-check failed one layout test (German "GESETZE
+    HIER" on the tag widened the top row past 1080 px), fixed in
+    `beb8a023` (a header wider than 80 points breaks between its words),
+    and a second pre-check is running. Its session
+    `session_01SNkKxoXAbUvoLyhk2tDXzh` reads working; not past its
+    `expected_next_update_by`, so not restarted.
+  - **New request S1-R12** (to the lead, not blocking): should AIA-2
+    flat-paint Bramble and Hollow at their source? Recorded as the
+    default in requests.md: the in-game flat pass stays as D's fix and
+    the gate judges it; if the gate or board-1d leaves D open, the lead
+    seeds an AIA-2 task then.
+  - No task is ready and no gate request is open for an unmerged task
+    (AIA's, AIA-2's, SV's and AD's status files still show merged
+    tasks), so no merge lock was taken. Main did not move, so the pages
+    were not republished.
+  - The launcher (last run 12:39Z, succeeded) and the watchdog (last run
+    12:12Z, succeeded) are enabled. One builder, under the cap of three.
+    The backlog has 74 tasks, 56 merged. No owner-inbox entry.
+  - Next: merge pilot-5 when ready (owners diff, one full check at a
+    time, and guard.sh since it touches the client; guard.sh has not
+    yet been run on main after the SEC client commits), then start AD on
+    P1-AD-board-1d. Icon batches 3 and 4 stay deferred (D13 (c)).
+- Cycle 66, 12 November 2026, from 11:39Z (session
+  `session_01SNkKxqr3DC7Kb5YZfijUtN`, started by the Opus 5.5 launcher):
+  a bookkeeping cycle, nothing merged, no session started.
+  - **Claim recorded** from S1's status: P1-S1-pilot-5 `claimed`
+    (claimed 11:28Z, lease to 14:28Z, next update due 12:08Z); its
+    session `session_01SNkKxoXAbUvoLyhk2tDXzh` is working (prototyping
+    the portraits' toon fills for objection D). Not past its
+    `expected_next_update_by`, so not restarted.
+  - No task is ready and no gate request is open for an unmerged task,
+    so no merge lock was taken. No new request: S1-R1 to S1-R11 are
+    already in requests.md.
+  - The launcher (last run 11:38Z, succeeded) and the watchdog (last run
+    10:09Z, succeeded) are enabled. Main did not move, so the pages were
+    not republished. One builder, under the cap of three. The backlog
+    has 74 tasks, 56 merged. No owner-inbox entry.
+  - Next: merge pilot-5 when ready (owners diff, one full check at a
+    time, and guard.sh since it touches the client; guard.sh has not
+    yet been run on main after the SEC client commits), then start AD on
+    P1-AD-board-1d. Icon batches 3 and 4 stay deferred (D13 (c)).
+- Cycle 65, 12 November 2026, from 10:38Z (session
+  `session_01SNkKxqZN7A6CTcTtr4tEcm`, started by the Opus 5.5 launcher):
+  P1-AD-board-1c merged as `6ee0f7d3`; S1 started on P1-S1-pilot-5.
+  - **Main had moved** by about 20 code commits from the security
+    session (SEC-18 B to SEC-43, SEC-19 B's contained check runs,
+    SEC-28's CI workflow, two client test fixes). The candidate's full
+    check tested them together with board-1c.
+  - **Candidate `906c5363` failed** check_all: gdlint reported "Cannot
+    open file ... Read-only file system" 429 times. Cause: in a fresh
+    container `~/.cache/gdtoolkit` does not exist, and SEC-19 B's bwrap
+    run mounts HOME read-only, so lark cannot write its grammar cache.
+    Fixed in `tools/run_checks.sh` (`a60576ff`): the contained run binds
+    a fresh, writable cache folder there, as it already does for Godot's
+    user folder. No check was skipped or loosened; the runner's
+    self-test passes.
+  - **Candidate `5e209009`** (main `a60576ff` plus ready `8bfb07bd`;
+    owners diff clean) passed ("All checks passed.", DONE exit=0).
+    Main had moved only by the lock commit, so it merged as `6ee0f7d3`
+    after the docs check alone. Lock cleared.
+  - **Board 1, round 3** (board-1.md): objections A and B closed; D (the
+    portraits) and F (the header's ink outline) stay open, so board 1
+    does not stand yet. AD-R17 and AD-R18 answered as the default: both
+    go to S1 as **P1-S1-pilot-5** (heist_hud.gd is S1's file again).
+    AD-R19 answered: the re-check is **P1-AD-board-1d** (deps pilot-5),
+    and phase 2's four flow tasks now wait on board-1d.
+  - **S1 started** on P1-S1-pilot-5: `session_01SNkKxoXAbUvoLyhk2tDXzh`,
+    after its previous session was confirmed idle. One builder, under
+    the cap of three. AD's session is idle, its task merged.
+  - The launcher (last run 10:38Z, succeeded) and the watchdog (last run
+    10:09Z, succeeded) are enabled. The audit and roadmap pages did not
+    change, so they were not republished. The backlog has 74 tasks, 56
+    merged. No owner-inbox entry.
+  - Next: merge pilot-5 when ready (owners diff, one full check at a
+    time, and guard.sh since it touches the client; guard.sh has not
+    yet been run on main after the SEC client commits), then start AD on
+    P1-AD-board-1d. Icon batches 3 and 4 stay deferred (D13 (c)).
 - Cycle 64, 12 November 2026, from 09:39Z (session
   `session_01SNkKxqijuvwjXHbeAGDLGB`, started by the Opus 5.5 launcher):
   a bookkeeping cycle, nothing merged, no session started.

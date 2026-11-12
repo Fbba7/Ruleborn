@@ -1,12 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T11:27:00Z",
-  "expected_next_update_by": "2026-11-12T10:59:00Z",
-  "cycle": 65,
+  "updated_at": "2026-11-12T17:46:32Z",
+  "expected_next_update_by": "2026-11-12T17:23:00Z",
+  "cycle": 69,
   "merging": null,
   "last_merged": {
-    "task_id": "P1-AD-board-1c",
-    "sha": "6ee0f7d3"
+    "task_id": "P1-AD-board-1d",
+    "sha": "a154d246"
   },
   "alerts": [
     "Owner's order 5 of 11 November 2026, about 19:50Z (\"Let's switch to Opus 5.5 everywhere again, effort high\"): every session runs on Opus 5.5 at effort high; never Fable 5.1 (order 2). Launcher trig_01T7B65veojXUDAKzLK3FFBP and watchdog trig_01A1NwZvKD6MDUosh4jyvqqr, created at 19:50Z after order 5 was on main. The Fable 5.2 pair (trig_01U7kEeot7dmuJuNZVQJ7Bhm, trig_0195QvFjjm2oUgeCeyhU4bp4), disabled at 19:49Z, and every older scheduled task stay disabled and are never re-enabled. No Fable 5.2 session is reused.",
@@ -15,5 +15,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 65. Cycle 64 was bookkeeping: AD's claim on P1-AD-board-1c recorded (session_01SNkKxmtatzN7YRTTZcPFsL, working, lease to 12:35Z, next update due 10:20Z); nothing ready, nothing merged. Merge board-1c when ready (fetch first; owners.py diff P1-AD-board-1c <main> <ready>); then S1 on P2-S1-flow-result and P2-S1-flow-replay, whose deps include board-1c. Restart a builder only if past its expected_next_update_by with its session not working. Run full checks one at a time in this container (flaky.md, BT-10): two side by side share user://settings.cfg and fail the settings test. In a fresh container install the tools the agents' prompts list, run `npm ci` in tools/ui_research and `bash client/build.sh` in the candidate worktree before guard.sh, and wait on `run_checks.sh` in the background (a run takes about 40 minutes). If main gains code commits during a check, rebuild the candidate; if main itself fails check_all, fix it with a lead commit ahead of the merge. At most three builders. Republish the pages after a merge moves main's code and changes them. Icon batches 3 and 4 stay deferred (D13 answer c). Only Opus 5.5 at effort high; never Fable 5.1."
+  "next_step": "Cycle 70. Cycle 69 merged P1-S1-pilot-5 as fe27c8f2 (check_all PASS, ui guard OK; run bash client/build.sh in a candidate worktree before guard.sh, or every budget shot fails on the missing libruleborn_godot.so) and started AD on P1-AD-board-1d as session_01SNkKxrFqhFsxDUmtqPET8E (re-check objections D and F on pilot-5's stills). Merge board-1d when ready (fetch first; owners.py diff P1-AD-board-1d <main> <ready>; one full check_all at a time via tools/run_checks.sh; docs-only, so no guard). If board 1 stands, start S1 on P2-S1-flow-result and the other phase 2 flow tasks within the cap of three; if objection D stays open, seed an AIA-2 task for Bramble and Hollow at their source (S1-R12's default). Restart a builder only if past its expected_next_update_by with its session not working. At most three builders. A fresh container needs the tools installed (rustup targets, gdtoolkit, playwright, tools/ui_research npm ci, client/build.sh). Icon batches 3 and 4 stay deferred (D13 (c)). Opus 5.5 at effort high only; never Fable 5.1."
 }

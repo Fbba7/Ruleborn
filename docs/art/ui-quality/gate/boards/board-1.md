@@ -7,6 +7,15 @@ reference at phone size, with the gate's verdicts. AD checks every
 owner-checked quality (`../calibration.md`: 1, 2, 3, 6, 8, 9, 13 and 14) and,
 because this is board 1, quality 4 (press feedback) from a frame pair.
 
+**Round 4 (P1-AD-board-1d, 12 November 2026, on main at `cecf3a64`): the
+board stands.** D and F are closed. Bramble and Hollow are flat-painted and
+sit about 29 L* below their discs, and Hollow is framed head and shoulders.
+"Laws here" sits on the kit's tag plate. Phase 2 no longer waits for board 1
+(section 3.8 of the report). One note does not hold the board: the flat
+pass also wiped out Bramble's snout, arms and belly bands and Hollow's
+glass. The fix belongs in the source art, through AIA-2 (note G). See
+"Round 4" at the end of this page.
+
 **Round 3 (P1-AD-board-1c, 12 November 2026, on main at `ed6bcfdc`): the
 board still does not stand.** A and B are closed. D is narrowed again, to
 the surface of two portraits: Bramble's grainy shell and Hollow's glassy,
@@ -513,3 +522,101 @@ Board 1 stands when:
 
 AD re-checks only those two, as P1-AD-board-1d. Phase 2 still waits for
 board 1 (section 3.8 of the report).
+
+## Round 4
+
+Checked by AD, P1-AD-board-1d, 12 November 2026, on main at `cecf3a64`
+(P1-S1-pilot-5 merged as `fe27c8f2`). What S1 changed is in "Part 5" of
+`docs/art/tracks/heist-pilot.md`. The gate's verdicts on pilot-5 are in
+`../verdicts/P1-S1-pilot-5/beb8a023.json` (advice only):
+- heist at 100%, Character presence: pass, 3 fails of 6 (a fail needs 4).
+  The samples split on Bramble and Hollow. Three read them as darker than
+  their rings, with faces. The other three read them as a wash with faint
+  eyes.
+- heist at 100%, Display type: pass (3 of 3). "LAWS HERE" sits on the tag
+  plate.
+- heist at 200% in pt_BR, Display type: pass (3 of 3).
+
+AD shot these on main with `tools/render/shoot.sh
+client/tests/shots/screen_heist.gd`, with `FIT=1` on every shot, and every
+shot printed "fit ok":
+- sneak at 100%, with a plan (`SIZES=1 PORTRAITS=`);
+- sneak at 200% in pt_BR, with a plan;
+- sneak at 200% in pt_BR, with no plan;
+- alarm in high contrast at 200% in pt_BR, with a plan.
+
+AD's "no plan" still at 200% in pt_BR matches S1's `part5-noplan-200-pt.png`
+pixel for pixel (mean difference 0.01 of 255). AD's 100% shot added Glowing
+dark and an estimate, so its scene differs from S1's; its portraits and
+header plate are the same. The portrait L* that AD measured matches S1's
+table in Part 5 exactly. The stills below are S1's committed stills.
+
+**Decision: the board stands.** D and F are closed. G is a note that does not hold the board.
+
+### The stills
+
+Heist at 100%: the key frame, then main.
+
+![Heist at 100%: key frame and main](board-1/r4-1-heist-100.png)
+
+Heist at 200% in pt_BR with no crew plan: the key frame, then main.
+
+![Heist at 200% pt_BR, no plan](board-1/r4-2-heist-200-pt-noplan.png)
+
+The crew tray at 100%: round 3 (`part4-sneak-100.png`) above, round 4
+(`part5-sneak-100.png`) below.
+
+![Crew tray, round 3 and round 4](board-1/r4-3-crew-tray.png)
+
+The five portraits at 119 px (Pip, Mo, Bramble, Hollow, Ash), in colour and
+in grayscale:
+
+![Portraits, colour and grayscale](board-1/r4-4-portraits.png)
+
+Bramble and Hollow at 4×, in colour and in grayscale:
+
+![Bramble and Hollow at 4x](board-1/r4-5-bramble-hollow-4x.png)
+
+The header at 4×, at 100% in English and at 200% in pt_BR:
+
+![Header at 4x](board-1/r4-6-header.png)
+
+### The objections
+
+| ID | Round 4 | AD's check |
+|---|---|---|
+| D | Closed | What round 3 asked for is met. Bramble's shell and Hollow's body are filled in three flat tones of their own colour, lit from the upper left, with no photographic grain and no glassy facets. Hollow is framed head and shoulders, and its pale disc shows above the shoulders. Each figure sits about 29 L* below its disc (Bramble 56.1 on 85.3, Hollow 57.4 on 87.3), as Pip, Mo and Ash do, and keeps its ink outline. In the tray at 100%, Bramble reads as an eared grey figure and Hollow as a violet figure with white eyes and its gem, both darker than their rings, in colour and in grayscale. That is the rubric's "recognisable dark shape", framed. The gate passes, narrowly. The narrow split is note G, not the value step. |
+| F | Closed | "Laws here" and "Leis aqui" sit on the kit's tag plate: dark capitals (L* 8.5) on the gold plate (62.6 to 71.6) with its light rim (96.6). The plate parts from the night sky by 47 L* or more. At 4× every letter has a clean dark edge on the plate, at 100% in English and at 200% in pt_BR. The gate passes Display type 3 of 3 on both stills. The plate reads more like a label than the key frame's heading. That matches the key frame's character tags, and it does not hold the board. |
+
+A, B, C and E stay closed. Notes from rounds 2 and 3 still stand, including
+the step-down for the loot labels at large text.
+
+### Note G (not holding): Bramble's and Hollow's features
+
+The flat pass solved the surface by removing detail. Round 3's Bramble had a
+snout, arms and banded belly. Round 4's is a grey mass with ears and two dot
+eyes. Hollow's glass is gone: it is a violet mass with two white dashes and
+its gem. At 4× the boundaries between tones are blotchy, and the outline
+steps at the pixel. The pass also runs in GDScript the first time each
+portrait shows at a size (S1's note). These two creatures now read as
+shapes, but less as themselves.
+
+The fix belongs in the source art, not in the portrait code:
+- **Bramble:** a flat-painted bust (`CreatureBust`'s art) in two or three
+  tones, keeping the snout, the arms and the belly bands as shapes, with
+  dark marks for the eyes and nose.
+- **Hollow:** a flat-painted bust with the glass drawn as two or three large,
+  hard-edged facet shapes (light, mid, dark), not as specular flecks, and the
+  face and gem kept.
+- When the new busts land, the `TOON` list in `FxPortrait` can drop them.
+  The check is the same: five portraits at 119 px, in colour and in
+  grayscale.
+
+This is S1-R12's question. AD's answer: yes, it is AIA-2's task. It does not
+keep a switch off. Request AD-R20 to the lead asks to seed it.
+
+### Phase 2
+
+Board 1 was the board phase 2 waits for (section 3.2 of the report, phase
+1's exit). With this round it stands. The lead checks phase 1's other exit
+conditions and opens phase 2 (request AD-R21).

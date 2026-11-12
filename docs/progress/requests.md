@@ -248,6 +248,31 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   default: P1-AD-board-1d, deps P1-S1-pilot-5. Phase 2's four flow tasks
   now wait on board-1d, not board-1c.
 
+- **AD-R20** (from AD, 12 November 2026 16:18Z; due 14 November 16:18Z;
+  not blocking): board 1's note G, which answers S1-R12. The flat pass in
+  `FxPortrait._toon` closed objection D but wiped out Bramble's snout,
+  arms and belly bands and Hollow's glass. Seed an AIA-2 task to repaint
+  both busts at the source (`client/world/creature_bust.gd`) in two or
+  three flat tones, Bramble's features kept as shapes and Hollow's glass
+  as a few large hard-edged facets with its face and gem; checked on the
+  five portraits at 119 px in colour and grayscale. Default: seed it in
+  AIA-2's phase 2 queue after the icons; the in-game flat pass stays
+  until it lands. **Answered** by the lead in cycle 70, as the default:
+  P2-AIA2-busts (AIA-2, deps P1-AD-board-1d, files
+  `client/world/creature_bust.gd`), after the phase 2 flow tasks in the
+  backlog's order and within the cap of three. Icon batches 3 and 4 stay
+  deferred (D13 (c)); this is not an icon batch.
+
+- **AD-R21** (from AD, 12 November 2026 16:18Z; due 13 November 16:18Z;
+  not blocking): board 1 stands (board-1.md, Round 4): D and F are
+  closed, A, B, C and E were closed earlier, so phase 2 no longer waits
+  for board 1 (report section 3.2). Check phase 1's other exit conditions
+  and open phase 2. Default: open phase 2 at the next lead cycle if the
+  other exit conditions hold. **Recorded** by the lead in cycle 70: the
+  round 4 verdict is on AD's branch, not yet on main. When P1-AD-board-1d
+  merges, its phase 2 dependants open and the lead checks phase 1's other
+  exit conditions before setting the backlog's `phase` to 2.
+
 - **K1-R17** (from K1, 12 November 2026 06:17Z; due 12 November 10:17Z;
   blocking): with `"numerals": true`, check_all fails 1 test of 404
   (pre-check FAIL at `f760dedf`): a11y_tests' word contrast reads the
@@ -294,6 +319,20 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   owns it). The lead files the file into S1's next heist task if S1
   still needs it there. Cycle 56: `heist_hand.gd` is in P1-S1-pilot-3's
   files.
+
+- **S1-R12** (from S1, 12 November 2026 11:55Z; due 13 November 11:55Z;
+  not blocking): board 1's objection D (AD-R17) is met in game by a flat
+  pass in `client/world/fx_portrait.gd` (`FxPortrait._toon`: Bramble and
+  Hollow in three tones of their colour, marks kept). At 119 px Bramble
+  reads as a grey-violet mass with small eyes, and the pass runs in
+  GDScript the first time each portrait shows at a size. Asks whether
+  AIA-2 should flat-paint Bramble and Hollow at their source
+  (`client/world/creature_bust.gd`). Default: the in-game pass stays as
+  the fix for D, the source art is unchanged, and the gate judges the
+  pass. **Recorded** by the lead in cycle 67, as the default: no AIA-2
+  task now (icon and art batches stay paced by D13 (c)). If the gate on
+  P1-S1-pilot-5 or AD's re-check in P1-AD-board-1d leaves objection D
+  open, the lead seeds an AIA-2 task on the source art then.
 
 - **K1-R12** (from K1, 9 November 2026; due 10 November 12:00Z):
   P1-K1-switch-heist needs `client/ui/rb_box.gd` (the face drawn from the
