@@ -3,21 +3,36 @@
   "role": "AIA-2",
   "branch": "claude/ui-artist-icons",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-AIA2-busts",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-12T17:55:00Z",
   "lease_until": "2026-11-12T21:05:00Z",
-  "updated_at": "2026-11-12T18:05:00Z",
-  "expected_next_update_by": "2026-11-12T18:50:00Z",
+  "updated_at": "2026-11-12T18:40:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "busts painted (cb52e5da); run guard.sh, budgets and the pre-check, then the gate request"
+    "last_green_sha": "13e38050d64076dd8774a1785e926781e436286a",
+    "next_step": "the lead runs the gate on heist at 100% text (Character presence) and merges; on a fail, rework PAINTED in creature_bust.gd on the gate's notes"
   },
-  "precheck": null,
-  "gate_request": null,
-  "ready_sha": null,
+  "precheck": {
+    "sha": "13e38050d64076dd8774a1785e926781e436286a",
+    "exit": 0,
+    "finished_at": "2026-11-12T18:37:37Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "13e38050d64076dd8774a1785e926781e436286a",
+    "items": [
+      {
+        "item": "heist at 100% text",
+        "qualities": [
+          "Character presence"
+        ]
+      }
+    ]
+  },
+  "ready_sha": "13e38050d64076dd8774a1785e926781e436286a",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
   "requests": [
@@ -69,5 +84,5 @@
     }
   ],
   "answers": [],
-  "note": "P2-AIA2-busts: busts painted flat at the source (cb52e5da); checks next. Session on Opus 5.5, effort high."
+  "note": "P2-AIA2-busts ready at 13e38050: Bramble and Hollow painted flat at the source; guard.sh OK, heist screens within their draw-call records; pre-check PASS; the gate is requested. AIA2-R3 (non-blocking) asks to drop both kinds from FxPortrait.TOON after the merge. Session ended."
 }
