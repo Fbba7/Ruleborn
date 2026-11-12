@@ -3,26 +3,21 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P1-AD-board-1c",
-  "task_state": "ready",
-  "claimed_at": "2026-11-12T09:35:00Z",
-  "lease_until": "2026-11-12T12:35:00Z",
-  "updated_at": "2026-11-12T10:08:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P1-AD-board-1d",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-12T16:12:00Z",
+  "lease_until": "2026-11-12T19:12:00Z",
+  "updated_at": "2026-11-12T16:12:00Z",
+  "expected_next_update_by": "2026-11-12T16:57:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8bfb07bdc4ff372fa1e6da205cb6bd4a8d0c09a2",
-    "next_step": "P1-AD-board-1d re-checks D and F once AD-R17 and AD-R18 merge"
+    "next_step": "render pilot-5's heist stills and re-check D and F"
   },
-  "precheck": {
-    "sha": "8bfb07bdc4ff372fa1e6da205cb6bd4a8d0c09a2",
-    "exit": 0,
-    "finished_at": "2026-11-12T10:06:45Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "8bfb07bdc4ff372fa1e6da205cb6bd4a8d0c09a2",
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
   "requests": [
