@@ -3835,6 +3835,14 @@
       "sent_at": "2026-11-12T20:11:58Z",
       "ack_by": "2026-11-12T22:11:58Z",
       "acked_at": "2026-11-12T20:43:00Z"
+    },
+    {
+      "id": "M16",
+      "to": "lead",
+      "text": "Lesson from UI phase 2 (P2-S2-flow-home, cycle 71). The first check_all on candidate 1e438a19 failed one fixture in tools/test_run_checks.sh (\"and makes no worktree and no log\") although S2 touches no runner file; the re-run on the same sha passed. Your write-up names the likely cause: the planted and refused test repos have the same tree and the same identity, so two commits made in the same second share a sha. The rule: (1) tools/test_run_checks.sh is yours (no task in flight owns it). Make its two test repos differ, with a distinct author identity, commit time or file in each, so their shas cannot collide; do it yourself between merges or seed a small K1 task for it. Never loosen, skip or delete the fixture. (2) Until that fix is on main, a lone FAIL of that fixture on a candidate that touches no runner file is re-run once on the same sha; a second FAIL is real. (3) Two lessons are past their ack_by and unread because their agents are waiting: deliver M12 to AD and M14 to AIA-2 in the prompt when you next start or resume them, and have them ack it in their status files.",
+      "sent_at": "2026-11-12T20:54:00Z",
+      "ack_by": "2026-11-12T22:54:00Z",
+      "acked_at": null
     }
   ]
 }
