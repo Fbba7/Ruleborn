@@ -2,32 +2,22 @@
   "agent": "AIA",
   "role": "AIA",
   "branch": "claude/ui-artist",
-  "model": "Fable 5.2",
-  "agent_state": "waiting",
-  "task_id": "P1-AIA-kit-7",
-  "task_state": "ready",
-  "claimed_at": "2026-11-11T01:16:18Z",
-  "lease_until": "2026-11-11T04:16:18Z",
-  "updated_at": "2026-11-11T05:20:27Z",
-  "expected_next_update_by": null,
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "P2-AIA-motion-1",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-12T18:53:51Z",
+  "lease_until": "2026-11-12T21:53:51Z",
+  "updated_at": "2026-11-12T18:53:51Z",
+  "expected_next_update_by": "2026-11-12T19:38:51Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "961c7905",
-    "next_step": "none; wait for the gate's verdict and the lead's merge"
+    "last_green_sha": "8e9bcf0c",
+    "next_step": "draw the motion sprites in art/ui/motion/ and write curves.json"
   },
-  "precheck": {
-    "sha": "961c79051e3bc0f9d279b227bfec5f7ab645e33d",
-    "exit": 0,
-    "finished_at": "2026-11-11T01:57:22Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "961c79051e3bc0f9d279b227bfec5f7ab645e33d",
-    "items": [
-      "kit catalogue sheet, batch 2d, at phone size"
-    ]
-  },
-  "ready_sha": "961c79051e3bc0f9d279b227bfec5f7ab645e33d",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M1"
@@ -220,5 +210,5 @@
       "at": "2026-11-10T06:50:38Z"
     }
   ],
-  "next_step": "wait for the Kit art gate on batch 2d and the lead's merge"
+  "next_step": "draw the motion sprites in art/ui/motion/ and write curves.json"
 }
