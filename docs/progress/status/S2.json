@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T22:10:00Z",
   "lease_until": "2026-11-13T01:10:00Z",
-  "updated_at": "2026-11-12T23:22:00Z",
-  "expected_next_update_by": "2026-11-13T00:05:00Z",
+  "updated_at": "2026-11-12T23:57:00Z",
+  "expected_next_update_by": "2026-11-13T00:42:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "62c66327",
-    "next_step": "Client test fixes: strain tap 48 points, secondary places marked on their buttons, keeper badge's tap not frequent; client tests rerunning. Next: budget stills, guard, AD preview, handoff, pre-check"
+    "last_green_sha": "4da3eeb0",
+    "next_step": "Client tests 406 of 406 at 4da3eeb0; budget stills 139/97/139 (S2-R7); main merged at a31a9d72, setup and build rerun; check_all and guard running on it. Next: handoff, pre-check, gate request"
   },
   "precheck": null,
   "gate_request": null,
