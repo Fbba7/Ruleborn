@@ -18,6 +18,15 @@ Beside it, on every merge candidate, the lead runs the UI kit's guard,
 `ui guard: OK`): a full rebake byte for byte, and draw calls, texture memory
 and contrast against `tools/ui_bake/budgets.json` (D9 (b), K1-R3).
 
+On GitHub, `.github/workflows/checks.yml` runs the part of these that needs
+no Godot on every push and pull request (SEC-28): the WebAssembly build and
+the server's tests, `cargo test`, the documents check, the ownership
+self-test, `tools/test_run_checks.sh` as root with bubblewrap installed (where
+a missing bwrap fails it), `client/test_export.sh` and `tools/check_ci.py`,
+which keeps the workflow pinned and complete. Branch protection on main,
+requiring the `checks` status, is the owner's to turn on in the repository's
+settings.
+
 ## Running it in the background: the worktree runner
 
 Run the full checks on a separate worktree of the exact commit, with the log

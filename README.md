@@ -265,6 +265,7 @@ tools/
   check_docs_consistency.py       this repository's own documents, against each other
   # the agent program
   run_checks.sh                   the full checks on a separate worktree of one commit, detached; start, wait, result, record
+  check_ci.py                     .github/workflows/checks.yml runs on every push and pull request, pinned, with every check
   coord/                          the program's coordination tools: owners.py checks a change stays inside its task's files
   # models and analyses
   economy_model/                  the day-by-day model §24 references but omits
