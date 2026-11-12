@@ -301,7 +301,8 @@ such as the UI wave's `tools/ui_bake/guard.sh` once K1 has written it, run on
 a separate worktree of exactly that commit, shown by a log that ends
 `DONE exit=0` and contains `All checks passed.`, and recorded in the status
 file's `precheck`), and the gate passed every item in the task's
-`gate_items`. The branch need not contain main's head.
+`gate_items`. From UI phase 2, the branch holds main as it stood when the
+pre-check started (phase 1's lessons, below).
 
 **The queue: merge, then test.** The integrator takes ready tasks one at a
 time, critical path first, then in the order they became ready. It merges
@@ -706,7 +707,10 @@ The brief relies on none of these: an agent follows the same rules by hand.
 
 Phase 1 closed on 12 November 2026 with its three exit criteria met, but
 four KPIs missed their targets. The rules below were sent to the agents as
-backlog messages M10 to M14.
+backlog messages M10 to M14, and are written into the brief ("Before you
+mark ready" and "If you are the lead") and the protocol (the merge queue's
+"Ready" and the phase metrics). Phase 2 adds its own rows here as it goes,
+not at its close.
 
 | What happened | The rule it led to | Now |
 |---|---|---|

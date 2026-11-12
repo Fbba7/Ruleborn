@@ -425,8 +425,9 @@ The judge is never switched to a model that makers use.
 ## The merge queue
 
 **Ready.** At `ready_sha` the agent's pre-check passed and the gate passed
-every item in the task's `gate_items`. The branch need not contain main's
-head.
+every item in the task's `gate_items`. From UI phase 2, the branch holds
+main as it stood when the pre-check started (the brief's "Before you mark
+ready").
 
 **The queue.**
 
@@ -638,7 +639,11 @@ lead records them and does not judge them.
 | Usage per merged task | 1.5 × the phase 1 figure |
 
 At mid-wave, any metric past its threshold triggers a review of this
-protocol (planned: BT-07 reports them).
+protocol (planned: BT-07 reports them). Within a phase, too: when a KPI in
+the progress report rates worse, or a candidate fails on its first attempt,
+the lead finds the cause the same day, sends the rule as a message to the
+agent that can act on it, and adds a row to the program's lessons table for
+the current phase. Lessons are not held until the wave closes.
 
 **Wave close.** New ready changes are accepted until STOP_AT − 2 hours. The
 final blind audit runs. `parked` tasks are listed in the backlog with their
