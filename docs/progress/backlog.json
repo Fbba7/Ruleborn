@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
   "wave": "UI wave",
   "phase": 1,
-  "updated_at": "2026-11-12T00:42:00Z",
+  "updated_at": "2026-11-12T01:20:00Z",
   "updated_by": "lead (cycle 56)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
@@ -1069,19 +1069,13 @@
       "gate_items": [],
       "attempts": 0,
       "tier": 1,
-      "state": "ready",
-      "claim": {
-        "agent": "K1",
-        "branch": "claude/ui-bake",
-        "claimed_at": "2026-11-11T21:05:00Z",
-        "seen_at": "2026-11-11T22:24:00Z",
-        "lease_until": "2026-11-12T00:05:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "e1cee5c1a346c4c00ea97ce6abd1e47cebca4bfe",
-      "merged_sha": null,
-      "updated_at": "2026-11-12T00:42:00Z",
+      "merged_sha": "a01e4d6c",
+      "updated_at": "2026-11-12T01:20:00Z",
       "updated_by": "lead (cycle 56)",
       "exceptions": [
         "client/tests/shots/ui_kit_heist.gd.uid"
@@ -1827,19 +1821,13 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "ready",
-      "claim": {
-        "agent": "AD",
-        "branch": "claude/ui-ad",
-        "claimed_at": "2026-11-11T22:22:00Z",
-        "seen_at": "2026-11-12T00:40:12Z",
-        "lease_until": "2026-11-12T01:22:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "45d2c28626a49671aed4f3e5034fc92aa4ca16b7",
-      "merged_sha": null,
-      "updated_at": "2026-11-12T00:42:00Z",
+      "merged_sha": "a01e4d6c",
+      "updated_at": "2026-11-12T01:20:00Z",
       "updated_by": "lead (cycle 56)"
     },
     {
@@ -2516,6 +2504,225 @@
       "exceptions": [
         "README.md"
       ]
+    },
+    {
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/heist_screen.gd",
+        "client/scripts/heist_hud.gd",
+        "client/scripts/heist_hand.gd",
+        "client/world/fx_*.gd",
+        "client/tests/shots/heist_*.gd",
+        "client/tests/shots/screen_heist.gd",
+        "tools/ui_bake/budgets.json",
+        "docs/art/tracks/heist-pilot.md"
+      ],
+      "deps": [
+        "P1-S1-pilot-2",
+        "P1-K1-heist-kit",
+        "P1-AD-board-1"
+      ],
+      "done_when": [
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "heist at 100% text",
+          "qualities": [
+            "Display type",
+            "Hierarchy",
+            "Character presence"
+          ]
+        },
+        {
+          "item": "heist at 200% text, pt_BR",
+          "qualities": [
+            "Display type",
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-heist",
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T01:20:00Z",
+      "updated_by": "lead (cycle 56)",
+      "id": "P1-S1-pilot-3",
+      "title": "Pilot heist, part 3: board 1's objections A-E (AD-R7 to AD-R11, docs/art/ui-quality/gate/boards/board-1.md): A the timer in KitNumerals' timer figures, inked like the key frame's; B at 200% text in pt_BR the loot line stays in its panel and off Pip, and the guard's bubble is not clipped; C a crew tray that seats the portraits as the key frame does, Ash on the same row, and the hint and load bars as kit parts; D Hollow and Bramble a clear value step off their rings; E the MOMENT=alarm shot shows a raised alarm. It adopts P1-K1-heist-kit's HUD calls (K1's handoff answers S1-R1 to S1-R6), lowers heist_hud.gd's record in tools/ui_bake/budgets.json to what check_screens.py prints (S1-R7), and may dress Cast and Get out in heist_hand.gd (S1-R8); notes in docs/art/tracks/heist-pilot.md",
+      "exceptions": [
+        "docs/art/shots/heist-pilot/**"
+      ]
+    },
+    {
+      "role": "AD",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P1-S1-pilot-3"
+      ],
+      "done_when": [
+        "board-1.md says it stands, or lists its objections",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 1,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": "claude/ui-ad",
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T01:20:00Z",
+      "updated_by": "lead (cycle 56)",
+      "id": "P1-AD-board-1b",
+      "title": "Board 1, second round: AD re-checks objections A-E on P1-S1-pilot-3's stills beside the key frame and lets board 1 stand or lists what is still open (board-1.md); phase 2 waits for board 1"
+    },
+    {
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "deps": [
+        "P1-AD-board-1b"
+      ],
+      "done_when": [
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T01:20:00Z",
+      "updated_by": "lead (cycle 56)",
+      "id": "P2-S1-flow-result",
+      "title": "Result screen, flow findings F6 (AD-R12, docs/progress/AD.md, Flow review): a Clean heist does not say 'No guard alerted' over an alarm peak; the actions move up or the haul fills the lower screen; no byte count in the player's line"
+    },
+    {
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/replay_screen.gd"
+      ],
+      "deps": [
+        "P1-AD-board-1b"
+      ],
+      "done_when": [
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T01:20:00Z",
+      "updated_by": "lead (cycle 56)",
+      "id": "P2-S1-flow-replay",
+      "title": "Replay screen, flow finding F7 (AD-R12): timeline markers that share a time stack or merge into one marker with a count"
+    },
+    {
+      "role": "S2",
+      "assigned_to": "S2",
+      "files": [
+        "client/scripts/home.gd"
+      ],
+      "deps": [
+        "P1-AD-board-1b"
+      ],
+      "done_when": [
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1.5,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T01:20:00Z",
+      "updated_by": "lead (cycle 56)",
+      "id": "P2-S2-flow-home",
+      "title": "Home screen, flow findings F1 and F2 (AD-R12): the raid notice's line wraps instead of cutting 'held'; at 200% text the island pins hide, shrink or list when the band is short, none goes missing, and the gem stays inside its pill"
+    },
+    {
+      "role": "any",
+      "assigned_to": "any",
+      "files": [
+        "client/scripts/first_screen.gd",
+        "client/scripts/scout_screen.gd",
+        "client/scripts/planner_screen.gd"
+      ],
+      "deps": [
+        "P1-AD-board-1b"
+      ],
+      "done_when": [
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1.5,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T01:20:00Z",
+      "updated_by": "lead (cycle 56)",
+      "id": "P2-flow-entry",
+      "title": "First, scout and planner screens, flow findings F3 to F5 (AD-R12): the first screen's tagline on a plate or clear of the island ring; the scout chip row fits its panel or scrolls with a cue; the planner says 'choose %d crew' when the minimum is the maximum (a second string beside PLAN_NEEDS_CREW) and its plan card fits or shows a scroll cue"
     }
   ],
   "idle_queue": [
