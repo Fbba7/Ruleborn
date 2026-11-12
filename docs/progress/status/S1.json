@@ -3,36 +3,26 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P1-S1-pilot-3",
-  "task_state": "ready",
-  "claimed_at": "2026-11-12T01:23:10Z",
-  "lease_until": "2026-11-12T06:20:49Z",
-  "updated_at": "2026-11-12T04:13:19Z",
-  "expected_next_update_by": "2026-11-12T04:58:19Z",
+  "agent_state": "active",
+  "task_id": "P1-S1-pilot-4",
+  "task_state": "working",
+  "claimed_at": "2026-11-12T06:55:26Z",
+  "lease_until": "2026-11-12T09:55:26Z",
+  "updated_at": "2026-11-12T06:55:26Z",
+  "expected_next_update_by": "2026-11-12T07:35:26Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "0d142dd0",
-    "next_step": "P1-S1-pilot-3 ready at 0d142dd0 (pre-check PASS, 04:12Z); gate asked on \"heist at 100% text\" and \"heist at 200% text, pt_BR\". Objection A shows only with the numerals' switch on (S1-R11). Waiting for the verdict.",
+    "next_step": "P1-S1-pilot-4: D (Hollow and Bramble 20 L* off their discs, fx_portrait.gd) and B (no crew plan, 200% pt_BR: the tray below the loot panel, heist_screen.gd).",
     "at": null
   },
-  "precheck": {
-    "sha": "0d142dd06f72c33998b3d8ef2455c48c79acc665",
-    "exit": 0,
-    "finished_at": "2026-11-12T04:12:53Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "0d142dd06f72c33998b3d8ef2455c48c79acc665",
-    "items": [
-      "heist at 100% text",
-      "heist at 200% text, pt_BR"
-    ]
-  },
-  "ready_sha": "0d142dd06f72c33998b3d8ef2455c48c79acc665",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
-    "M6"
+    "M6",
+    "M7"
   ],
   "requests": [
     {
@@ -192,5 +182,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-3 ready at 0d142dd0 (pre-check PASS, 04:12Z); gate asked on \"heist at 100% text\" and \"heist at 200% text, pt_BR\". Objection A shows only with the numerals' switch on (S1-R11). Waiting for the verdict."
+  "next_step": "P1-S1-pilot-4: D (Hollow and Bramble 20 L* off their discs, fx_portrait.gd) and B (no crew plan, 200% pt_BR: the tray below the loot panel, heist_screen.gd)."
 }
