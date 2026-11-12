@@ -8,18 +8,48 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-12T17:55:00Z",
   "lease_until": "2026-11-12T20:55:00Z",
-  "updated_at": "2026-11-12T18:11:00Z",
-  "expected_next_update_by": "2026-11-12T18:55:00Z",
+  "updated_at": "2026-11-12T18:20:00Z",
+  "expected_next_update_by": "2026-11-12T19:05:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "F1 and F2 fixed in home.gd and rendered (100/150/200, 960 tall); check_screens OK; client tests running, then the pre-check"
+    "last_green_sha": "9f6537f9",
+    "next_step": "Client tests running on 9f6537f9, then the pre-check and ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "S2-R1",
+      "from": "S2",
+      "to": "lead",
+      "ask": "universe_badge.gd: start the renown number past the gem at every text size (at 200% the gem, h*1.15 wide from chip.x - g*0.45, covers the first digit, as the text sits at chip.x + px(16)), so Home can drop its padding.",
+      "files": [
+        "client/world/universe_badge.gd",
+        "client/scripts/home.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T18:15:00Z",
+      "due": "2026-11-13T18:15:00Z",
+      "default": "home.gd keeps padding the renown with spaces where the gem would cover it (_clear_of_gem); nothing changes at 100% text",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R2",
+      "from": "S2",
+      "to": "lead",
+      "ask": "universe_pins.gd: let a front realm pin shrink to its icon and level when the room is short, not only on islands under 28 points against the whole view's height, so at 150% and 200% text the Home pins shrink rather than hide as a set.",
+      "files": [
+        "client/world/universe_pins.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T18:15:00Z",
+      "due": "2026-11-13T18:15:00Z",
+      "default": "Home hides the whole pins layer at the whole universe whenever a realm pin would be missing (_fit_pins); the realms stay in the world's spoken description and each island still takes its tap",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
