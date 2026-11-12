@@ -3,18 +3,21 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P2-S1-toon-drop",
   "task_state": "working",
   "claimed_at": "2026-11-12T22:04:25Z",
   "lease_until": "2026-11-13T01:04:25Z",
-  "updated_at": "2026-11-12T22:41:36Z",
-  "expected_next_update_by": "2026-11-13T01:41:36Z",
-  "long_run": null,
+  "updated_at": "2026-11-12T23:50:45Z",
+  "expected_next_update_by": "2026-11-13T00:35:45Z",
+  "long_run": {
+    "log": "/tmp/check-43f81a56f45624dead083e7a807e4f902bb141eb.log",
+    "expected_end": "2026-11-13T00:25:45Z"
+  },
   "progress_marker": {
     "last_green_sha": "a7dd6501",
-    "next_step": "Gate on heist at 100% text, Character presence, at a7dd6501; mark ready at a7dd6501 in the turn its verdict comes back.",
-    "at": "2026-11-12T22:41:36Z"
+    "next_step": "Gate passed (advisory, 2 fails of 6) at a7dd6501; main merged as 43f81a56, pre-check running; mark ready at 43f81a56 when it passes.",
+    "at": "2026-11-12T23:50:45Z"
   },
   "precheck": {
     "sha": "a7dd6501968c54d6df178185956a4f1efe5d4578",
