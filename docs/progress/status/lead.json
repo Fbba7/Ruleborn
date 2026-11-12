@@ -1,19 +1,20 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T20:50:00Z",
-  "expected_next_update_by": "2026-11-12T22:01:00Z",
+  "updated_at": "2026-11-12T21:32:00Z",
+  "expected_next_update_by": "2026-11-12T22:47:00Z",
   "cycle": 72,
   "merging": {
-    "candidate_sha": "ddc51ffa1eb04d5abc6b40b67afef234f84e486d",
+    "candidate_sha": "6fc96d56f71624784ad4c2b3a3b006a9e25fc834",
     "task_ids": [
-      "P2-S1-flow-replay"
+      "P2-flow-entry",
+      "P2-AIA-motion-1"
     ],
-    "started_at": "2026-11-12T20:50:00Z",
-    "expires_at": "2026-11-12T21:50:00Z"
+    "started_at": "2026-11-12T21:32:00Z",
+    "expires_at": "2026-11-12T22:32:00Z"
   },
   "last_merged": {
-    "task_id": "P2-S1-flow-result",
-    "sha": "9e1dd558"
+    "task_id": "P2-S1-flow-replay",
+    "sha": "509c43c2"
   },
   "acks": [
     "M15"
