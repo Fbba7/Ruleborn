@@ -3,21 +3,32 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-S1-pilot-2",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-11T19:55:52Z",
   "lease_until": "2026-11-11T22:55:52Z",
-  "updated_at": "2026-11-11T20:14:06Z",
-  "expected_next_update_by": "2026-11-11T20:59:06Z",
+  "updated_at": "2026-11-11T21:42:49Z",
+  "expected_next_update_by": "2026-11-11T21:52:49Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "718ddcbe",
-    "next_step": "Client tests on the hint guard, entry card, gait menu and pill on the kit; then budgets, stills (before/after), part 2's notes, pre-check"
+    "last_green_sha": "a4d87d18",
+    "next_step": "The gate on P1-S1-pilot-2 (heist in high contrast, heist at 200% text); nothing half done"
   },
-  "precheck": null,
-  "gate_request": null,
-  "ready_sha": null,
+  "precheck": {
+    "sha": "a4d87d187dfc29a1ec4d75e66a1c88c4972bd6e0",
+    "exit": 0,
+    "finished_at": "2026-11-11T21:42:14Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "a4d87d187dfc29a1ec4d75e66a1c88c4972bd6e0",
+    "items": [
+      "heist in high contrast",
+      "heist at 200% text"
+    ]
+  },
+  "ready_sha": "a4d87d187dfc29a1ec4d75e66a1c88c4972bd6e0",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6"
