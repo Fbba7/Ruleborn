@@ -1,6 +1,19 @@
 {
   "_comment": "The UI guards' baselines (kit-spec.md section 6.8; report.md sections 3.8 and 10.1). 'screens' is check_screens.py's chrome outside the kit, per file; 'shots' is budget_shots.py's five screens. Written by --record, which never raises a figure: a rise is by request to K1 with the lead's approval, logged in 'raises'.",
-  "raises": [],
+  "raises": [
+    {
+      "approved_by": "lead, cycle 61 (message M9)",
+      "date": "2026-11-12",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "heist/100": "118 -> 120",
+        "heist/200": "114 -> 116",
+        "heist/hc": "118 -> 120"
+      },
+      "reason": "AD-R14: the heist's 'Laws here' / 'Leis aqui' header wears the kit's display stroke (kit-spec.md section 2.2, T2), an ink outline and a hard gold_drop drop with its own outline; the drop is the label's shadow pass, 2 draw calls. Textures and contrast unchanged; the heist stays 30 under the cap of 150.",
+      "request": "K1-R18"
+    }
+  ],
   "screens": {
     "counts": {
       "client/scripts/age_screen.gd": {
@@ -277,17 +290,17 @@
         "words_below": 0
       },
       "heist/100": {
-        "draw_calls": 118,
+        "draw_calls": 120,
         "texture_bytes": 2499264,
         "words_below": 0
       },
       "heist/200": {
-        "draw_calls": 114,
+        "draw_calls": 116,
         "texture_bytes": 2333376,
         "words_below": 0
       },
       "heist/hc": {
-        "draw_calls": 118,
+        "draw_calls": 120,
         "texture_bytes": 2499264,
         "words_below": 0
       },

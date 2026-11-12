@@ -76,6 +76,14 @@ func _init() -> void:
 	# Gold words with the kit's ink outline all round (§21.8): they lie on the
 	# world, and read on any sky.
 	var here := UI.world_words(Strings.t("HUD_LAWS_HERE"), 14, "gold")
+	# AD-R14: on the night sky the ink alone is lost, so the header takes the
+	# kit's display stroke (T2, kit-spec.md section 2.2): the heavy ink line
+	# and a hard gold drop under it, as the logo wears them.
+	here.add_theme_constant_override("outline_size", UI.px(3.5))
+	here.add_theme_color_override("font_shadow_color", Tokens.color("gold_drop"))
+	here.add_theme_constant_override("shadow_offset_x", 0)
+	here.add_theme_constant_override("shadow_offset_y", UI.px(2))
+	here.add_theme_constant_override("shadow_outline_size", UI.px(3.5))
 	here.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	here.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	laws.add_child(here)
@@ -203,11 +211,9 @@ func _figures(text: String) -> void:
 	row.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	row.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	clock_panel.add_child(row)
-	clock_label.self_modulate.a = 0.0
-	# Unseen, the words still cost the frame their glyphs' draw calls (five at
-	# 200% text): the renderer skips them while the label keeps its place in
-	# the layout and its words for a screen reader.
-	RenderingServer.canvas_item_set_visible(clock_label.get_canvas_item(), false)
+	# The figures take the words' place: the row sizes the plate and the
+	# screen reader says its name, so the words are hidden and cost no draws.
+	clock_label.visible = false
 	_through(row)
 
 
