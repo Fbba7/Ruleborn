@@ -1,0 +1,26 @@
+{
+  "agent": "S3",
+  "role": "S3",
+  "branch": "claude/ui-screens-meta",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "P2-S3-screenkit",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-12T19:16:00Z",
+  "lease_until": "2026-11-12T22:16:00Z",
+  "updated_at": "2026-11-12T19:16:00Z",
+  "expected_next_update_by": "2026-11-12T20:01:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "P2-S3-screenkit: read report.md step 11, kit-spec.md, the heist pilot's track notes and screen_kit.gd / screen_box.gd; then route ScreenKit's materials through KitSkin.",
+    "at": "2026-11-12T19:16:00Z"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-14T21:00:00Z",
+  "acks": [],
+  "requests": [],
+  "answers": []
+}
