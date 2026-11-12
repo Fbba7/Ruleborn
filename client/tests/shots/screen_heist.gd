@@ -193,6 +193,18 @@ func _go() -> void:
 				HORIZONTAL_ALIGNMENT_LEFT, -1, screen.hint_label.get_theme_font_size("font_size")).x)
 		print("hud ", screen.hud.get_global_rect(), " loot ", screen.hud.loot_panel.get_global_rect(),
 			" tray ", screen.actions_band.get_global_rect())
+		# PORTRAITS=dir: each portrait as drawn and its figure, to look at.
+		var keep := OS.get_environment("PORTRAITS")
+		if keep != "":
+			for b: FxPortrait in screen.crew_buttons:
+				if b.picture != null:
+					b.picture.get_image().save_png(keep.path_join(b.letters + ".png"))
+					b.figure().get_image().save_png(keep.path_join(b.letters + "-figure.png"))
+		# Board 1's objection D: each portrait's figure and disc, in L*.
+		for b: FxPortrait in screen.crew_buttons:
+			for key: String in FxPortrait.measured:
+				if key.begins_with(b.kind + "/"):
+					print("portrait ", b.letters, " ", key, " ", FxPortrait.measured[key])
 	if OS.get_environment("FIT") != "":
 		# FIT: board 1's objection B as a check, at whatever TEXT and LOCALE
 		# say; the run fails if anything does not fit.

@@ -35,5 +35,6 @@
  "toggle": true,
  "slider": true,
  "selected": true,
- "spinner": true
+ "spinner": true,
+ "numerals": true
 }
