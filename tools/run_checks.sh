@@ -28,7 +28,8 @@
 # The candidate's code is run contained (SEC-19, part B), in the first of:
 #
 # - bwrap (CHECK_BWRAP, default `bwrap`): the whole file system read-only,
-#   the worktree and a private /tmp writable, /run empty, no network, its own
+#   the worktree, a private /tmp and an empty Godot user folder (the
+#   game's saves, `user://`) writable, /run empty, no network, its own
 #   process tree, no capabilities (as root, bwrap otherwise keeps them, and
 #   the read-only mounts can be remounted writable);
 # - a separate unprivileged user (CHECK_USER), which owns the worktree and
@@ -155,14 +156,19 @@ start() {
   git -C "$root" worktree add --quiet --detach "$wt" "$sha"
   [ -n "${CHECK_CMD:-}" ] || seed "$wt"
   mkdir -p "$tmpd"
-  local prefix=() gcommon v
+  local prefix=() gcommon gudata v
   case "$mode" in
     bwrap)
       gcommon="$(cd "$root" && cd "$(git rev-parse --git-common-dir)" && pwd)"
       # The shared .git stays read-only even when it is under /tmp.
       # /run is emptied, so no host socket there can be reached either.
+      # The client's tests save and read back the game's files under
+      # Godot's user folder: a fresh one for each run, so the candidate
+      # neither reads the host's saves nor fails on a read-only HOME.
+      gudata="${XDG_DATA_HOME:-$HOME/.local/share}/godot/app_userdata"
+      mkdir -p "$gudata" "$tmpd/userdata"
       prefix=("$bwrap_bin" --ro-bind / / --bind "$tmpd" /tmp --tmpfs /run --ro-bind "$gcommon" "$gcommon"
-        --bind "$wt" "$wt" "${bwrap_flags[@]}" --setenv TMPDIR /tmp)
+        --bind "$wt" "$wt" --bind "$tmpd/userdata" "$gudata" "${bwrap_flags[@]}" --setenv TMPDIR /tmp)
       for v in $(secret_vars); do prefix+=(--unsetenv "$v"); done
       prefix+=(--) ;;
     user|user-with-network)
