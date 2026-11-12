@@ -181,13 +181,23 @@ export const GAME_CENTER_RETRY_MS = 60 * 1000;
 
 /** How often a key URL never fetched before may be tried: anyone may ask
  *  before any identity is proved, so an unseen name costs a fetch at most
- *  this often, whoever asks (G32). */
+ *  this often from one address (G32). Where the deployment cannot tell the
+ *  address (no RULEBORN_PEER_HEADER, which production requires), whoever
+ *  asks (SEC-36). */
 export const GAME_CENTER_NEW_MS = 1000;
+
+/** Apple numbers its keys upwards: a key name more than this far past the
+ *  highest of its kind fetched so far is a probe, never fetched, so a caller
+ *  naming made-up keys spends no fetch at all (SEC-36). */
+export const GAME_CENTER_KEY_AHEAD = 3;
+
+/** How many addresses' last unseen-name fetch are remembered. */
+const GAME_CENTER_ADDRESSES = 4096;
 
 /** Game Center's key hosts and names: its production and sandbox keys,
  *  gc-prod-N and gc-sb-N (G32). */
 const KEY_HOSTS = new Set(["static.gc.apple.com", "sandbox.gc.apple.com"]);
-const KEY_NAME = /^\/public-key\/gc-(prod|sb)-\d{1,4}\.cer$/;
+const KEY_NAME = /^\/public-key\/gc-(prod|sb)-(\d{1,4})\.cer$/;
 
 /**
  * Game Center's identity verification. `fetchCertificate(url)` is the one
@@ -202,7 +212,17 @@ export class GameCenter {
     // bad names never pushes a good key out.
     this.certificates = new Map();
     this.failures = new Map();
-    this.lastNew = -Infinity;
+    // When each address (or, unknown, everyone: "") last had an unseen name
+    // fetched, least recent first; and the highest key number of each kind
+    // fetched and found to be Apple's (SEC-36).
+    this.lastNew = new Map();
+    this.highest = new Map();
+  }
+
+  /** A key URL's kind ("prod", "sb") and number. */
+  static keyOf(url) {
+    const m = KEY_NAME.exec(new URL(url).pathname);
+    return { kind: m[1], n: Number(m[2]) };
   }
 
   /**
@@ -220,9 +240,10 @@ export class GameCenter {
     }
   }
 
-  async prepare(credential) {
+  async prepare(credential, peer = null) {
     const url = credential?.publicKeyUrl;
     if (!GameCenter.trustedUrl(url)) return;
+    const { kind, n } = GameCenter.keyOf(url);
     const now = this.now();
     const known = this.certificates.get(url);
     if (known) {
@@ -233,13 +254,25 @@ export class GameCenter {
     }
     const failed = this.failures.get(url);
     if (failed !== undefined && now - failed < GAME_CENTER_RETRY_MS) return;
-    if (now - this.lastNew < GAME_CENTER_NEW_MS) return;
-    this.lastNew = now;
+    // Too far past the newest key of its kind: a probe, refused at once.
+    // Before any key of the kind is fetched there is nothing to be past.
+    const top = this.highest.get(kind);
+    if (top !== undefined && n > top + GAME_CENTER_KEY_AHEAD) return;
+    const from = peer ?? "";
+    if (now - (this.lastNew.get(from) ?? -Infinity) < GAME_CENTER_NEW_MS) return;
+    this.lastNew.delete(from);
+    this.lastNew.set(from, now);
+    while (this.lastNew.size > GAME_CENTER_ADDRESSES) this.lastNew.delete(this.lastNew.keys().next().value);
     let cert = null;
     try {
       cert = new X509Certificate(await this.fetchCertificate(url));
     } catch {
       // An unreachable or unreadable certificate proves nothing; verify refuses.
+    }
+    // Apple's own key, under the pinned roots: the newest of its kind moves up.
+    if (cert && verifyChain([cert], this.roots, now) && cert.subject.split("\n").includes(`O=${this.organization}`)
+        && n > (this.highest.get(kind) ?? -1)) {
+      this.highest.set(kind, n);
     }
     // Past `most`, the oldest goes — but a key that has verified a real
     // signature only once every key not yet proven is gone: a caller naming
@@ -464,7 +497,7 @@ export function signIn({ gameCenter = null, google = null } = {}) {
   const stubbed = !gameCenter && !google;
   return {
     stubbed,
-    prepare: async (c) => { await which(c)?.prepare(c); },
+    prepare: async (c, peer = null) => { await which(c)?.prepare(c, peer); },
     verify: (c) => {
       if (stubbed) return typeof c === "string" && c ? c : null;
       return which(c)?.verify(c) ?? null;

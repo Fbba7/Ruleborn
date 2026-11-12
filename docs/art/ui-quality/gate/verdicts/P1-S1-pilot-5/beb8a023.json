@@ -1,0 +1,56 @@
+[
+ {
+  "task_id": "P1-S1-pilot-5",
+  "sha": "beb8a023",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-12T13:52:00Z",
+  "item": "heist at 100% text",
+  "quality": "Character presence",
+  "samples": [
+   "pass",
+   "pass",
+   "fail",
+   "pass",
+   "fail",
+   "fail"
+  ],
+  "result": "pass",
+  "critique": "A split, then a pass: 3 fails of 6 (a fail needs 4). All six samples read Pip, Mo, Ash and the wizard as framed toon figures, larger and clearer than the pass anchor's crew row. They split on Bramble and Hollow, now flat-painted with no photographic grain. Three read Bramble's matte grey body and Hollow's flat purple body as darker than their pale rings, with faces. The other three read both as blending into a grey-lavender or purple wash with only faint eye marks, so too weak a dark shape against the ring. Objection D's flat fill is met; the two portraits' contrast against their discs is the narrow point for board-1d."
+ },
+ {
+  "task_id": "P1-S1-pilot-5",
+  "sha": "beb8a023",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-12T13:52:00Z",
+  "item": "heist at 100% text",
+  "quality": "Display type",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "The 2:25 timer has a thick dark ink outline all round, a light gradient fill and a hard drop. 'LAWS HERE' now sits on the kit's tag plate, so no word is bare over the sky (objection F met). The stat figures share one gold treatment on their panel, and nothing is clipped."
+ },
+ {
+  "task_id": "P1-S1-pilot-5",
+  "sha": "beb8a023",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-12T13:52:00Z",
+  "item": "heist at 200% text, pt_BR",
+  "quality": "Display type",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "The timer's outline, gradient and drop scale with the 200% text. 'LEIS AQUI', the law plates, 'Alarme' and the Espaço/Restam panel all sit on plates and share one treatment per rank, and no glyph is lost. One sample noted that 'Alarme' and '~2.600' touch their frames: a layout note, not a type fail."
+ }
+]

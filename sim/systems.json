@@ -664,6 +664,8 @@
         "sha256_gives_the_standards_answers",
         "an_island_is_one_encoding_and_one_hash",
         "a_second_encoding_of_an_island_is_refused",
+        "an_exposure_above_i32_max_is_refused",
+        "a_pace_the_rules_do_not_define_is_refused",
         "a_vault_a_level_up_holds_more"
       ]
     },

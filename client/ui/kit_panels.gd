@@ -72,9 +72,14 @@ static func sheet(title: String, look := "sheet") -> PanelContainer:
 	UI.dress(p, look, 26)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(8))
-	var grip := ColorRect.new()
-	grip.color = Color(Tokens.color("text_on_night_2"), 0.35)
-	grip.custom_minimum_size = Vector2(UI.px(40), UI.px(4))
+	# The baked grab handle once the sheet's skin is switched on (K16), in
+	# the code-drawn grip's place.
+	var grip: Control = KitSkin.mark("handle_parchment" if look == "sheet_parchment" else "handle")
+	if grip == null:
+		var bar := ColorRect.new()
+		bar.color = Color(Tokens.color("text_on_night_2"), 0.35)
+		bar.custom_minimum_size = Vector2(UI.px(40), UI.px(4))
+		grip = bar
 	grip.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	grip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(grip)
@@ -103,6 +108,8 @@ static func dialog(host: Control, title: String, words: String, actions: Array) 
 	centre.set_anchors_preset(Control.PRESET_FULL_RECT)
 	veil.add_child(centre)
 	var card := UI.panel("card")
+	# The popup's baked box once its skin is switched on (K17).
+	RbBox.of(card).skin_shape = "popup/box"
 	card.custom_minimum_size.x = UI.px(300)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(12))

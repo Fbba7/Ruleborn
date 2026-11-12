@@ -329,6 +329,11 @@
      "deletion": "cleared",
      "holds": "the device's push token"
     },
+    "push_session": {
+     "type": "user-id",
+     "deletion": "cleared",
+     "holds": "the session that registered the push token, so its sign-out clears it"
+    },
     "seeded": {
      "type": "none",
      "holds": "marks the game's own seeded islands' account"
@@ -957,7 +962,7 @@
    }
   },
   "heists": {
-   "about": "Each submitted heist: the replay's hash, the verdict, what it paid (§24.8). The replay's bytes are kept 90 days in the private store.",
+   "about": "Each submitted heist: the replay's hash, the verdict, what it paid (§24.8). The replay's bytes are kept 90 days in the private store; a refused submission's 7 days, and none of one refused before its header checks pass (SEC-18).",
    "purposes": [
     "functionality",
     "security"
@@ -1023,6 +1028,10 @@
      "type": "user-id",
      "names": "account",
      "holds": "whose island the heist raided, as its lease names them"
+    },
+    "log_bytes": {
+     "type": "none",
+     "holds": "how many bytes of replay the row stored, for the account's daily upload limit (SEC-18)"
     }
    }
   },
@@ -1269,6 +1278,9 @@
     "outcome": {
      "type": "gameplay"
     },
+    "counted": {
+     "type": "gameplay"
+    },
     "player": {
      "type": "user-id",
      "names": "account"
@@ -1294,6 +1306,9 @@
      "type": "gameplay"
     },
     "at": {
+     "type": "gameplay"
+    },
+    "counted": {
      "type": "gameplay"
     },
     "player": {
@@ -1327,6 +1342,9 @@
      "type": "gameplay"
     },
     "at": {
+     "type": "gameplay"
+    },
+    "counted": {
      "type": "gameplay"
     },
     "player": {
@@ -1694,6 +1712,10 @@
     },
     "left_at": {
      "type": "social"
+    },
+    "removed": {
+     "type": "social",
+     "holds": "whether the founder or an elder removed the player, who cannot join again for a week (SEC-43)"
     }
    }
   },
@@ -1890,6 +1912,30 @@
      "type": "user-id",
      "names": "account",
      "holds": "a gift's friend (F41); null for the buyer's own"
+    }
+   }
+  },
+  "intent_tombstones": {
+   "about": "Whose a deleted lapsed purchase intent was, so a late receipt naming it goes to that account only (SEC-29).",
+   "purposes": [
+    "functionality"
+   ],
+   "keep": {
+    "days": 90,
+    "after": "its intent is deleted",
+    "by": "expireLapsed"
+   },
+   "deletion": "severed",
+   "columns": {
+    "id": {
+     "type": "purchase-history"
+    },
+    "deleted_at": {
+     "type": "purchase-history"
+    },
+    "account": {
+     "type": "user-id",
+     "names": "account"
     }
    }
   },

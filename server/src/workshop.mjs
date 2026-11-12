@@ -66,6 +66,16 @@ export const LADDER = [
 export const SPIKE_MIN = 50;
 export const SPIKE_FACTOR = 5;
 
+/** SEC-26: one person's many accounts must not lift a creator. A completion,
+ *  a rating or a play's time counts toward the ladder, the public numbers and
+ *  the Island Fund only from an account at least this old and at this Keeper
+ *  level when it is recorded; others are recorded and shown as uncounted. */
+export const COUNTED_AGE_MS = 7 * DAY_MS;
+export const COUNTED_KEEPER_LEVEL = 3;
+/** SEC-26: of the accounts that have played only one creator's islands, at
+ *  most this many completions (and ratings) a UTC day count for that creator. */
+export const LONE_FANS_A_DAY = 3;
+
 /** The most plays a player may hold unsubmitted from a day (SR-19). */
 export const MOST_OPEN_PLAYS = 50;
 
@@ -148,10 +158,24 @@ export class Workshop {
         || !WORDS.adjectives[adjective] || !WORDS.nouns[noun]) {
       throw new Refused(400, "name_not_from_the_word_lists");
     }
+    // Before the island is checked and the replay re-simulated, so a remix
+    // of nothing costs no simulation (SEC-44).
+    if (remixOf !== null) {
+      const parent = this.db.prepare("SELECT removed_at FROM workshop_items WHERE id = ?").get(remixOf);
+      if (!parent || parent.removed_at) throw new Refused(404, "no_such_island");
+    }
     const build = this.service.builds.current;
     const read = build.island(bundle);
     if (read.error) throw new Refused(400, read.error);
     if (read.problems.length) throw new Refused(422, "island_not_publishable", { problems: read.problems });
+    // An island another creator lists, or one taken down, is not listed
+    // again unchanged as someone else's (SEC-41). Before the replay is
+    // re-simulated, so a copy costs no simulation. One its creator withdrew
+    // is theirs no longer to show, and the same bytes may be listed again.
+    const listedElsewhere = this.db.prepare(
+      `SELECT 1 FROM workshop_items WHERE bundle = ? AND creator != ?
+          AND (withdrawn_at IS NULL OR removed_at IS NOT NULL) LIMIT 1`).get(read.digest, creator);
+    if (listedElsewhere) throw new Refused(409, remixOf !== null ? "remix_unchanged" : "already_published");
 
     const header = readHeader(replay);
     if (!header || header.island !== read.digest) throw new Refused(422, "not_cleared", { why: "wrong_island" });
@@ -167,10 +191,6 @@ export class Workshop {
                                              grade: result.verdict?.grade });
     }
 
-    if (remixOf !== null) {
-      const parent = this.db.prepare("SELECT removed_at FROM workshop_items WHERE id = ?").get(remixOf);
-      if (!parent || parent.removed_at) throw new Refused(404, "no_such_island");
-    }
     const stored = Number(this.db.prepare(
       "SELECT COALESCE(SUM(bytes), 0) AS n FROM workshop_items WHERE creator = ?").get(creator).n);
     const live = this.db.prepare(
@@ -216,10 +236,14 @@ export class Workshop {
 
   view(item) {
     const completions = Number(this.db.prepare(
-      "SELECT COALESCE(SUM(weight), 0) AS n FROM workshop_completions WHERE item = ?").get(item.id).n);
+      "SELECT COALESCE(SUM(weight), 0) AS n FROM workshop_completions WHERE item = ? AND counted = 1").get(item.id).n);
     const r = this.db.prepare(
       `SELECT COUNT(*) AS n, AVG(fun) AS fun, AVG(cleverness) AS cleverness,
-              AVG(fairness) AS fairness FROM workshop_ratings WHERE item = ?`).get(item.id);
+              AVG(fairness) AS fairness FROM workshop_ratings WHERE item = ? AND counted = 1`).get(item.id);
+    // SEC-26: recorded but not counted: from players too new or too low
+    // when they played (`qualified`), or past a day's lone fans (`counts`).
+    const uncounted = (table) => this.db.prepare(
+      `SELECT COUNT(*) AS n FROM ${table} WHERE item = ? AND counted = 0`).get(item.id).n;
     const remixes = this.db.prepare(
       "SELECT COUNT(*) AS n FROM workshop_remixes WHERE item = ?").get(item.id).n;
     // A deleted creator's island stays listed with no creator shown (F43).
@@ -233,6 +257,7 @@ export class Workshop {
       creator: gone ? null : item.creator, creatorLevel: creator,
       remixOf: item.remix_of, completions, remixes,
       ratings: { count: r.n, fun: r.fun, cleverness: r.cleverness, fairness: r.fairness },
+      uncounted: { completions: uncounted("workshop_completions"), ratings: uncounted("workshop_ratings") },
       featured: item.featured_at !== null, publishedAt: item.published_at,
       withdrawn: item.withdrawn_at !== null,
       removed: item.removed_at !== null ? { at: item.removed_at, reason: item.removed_reason } : null,
@@ -259,7 +284,7 @@ export class Workshop {
       new: "i.published_at DESC, i.id",
     }[list];
     const rows = this.db.prepare(
-      `SELECT i.*, COALESCE((SELECT SUM(weight) FROM workshop_completions c WHERE c.item = i.id), 0)
+      `SELECT i.*, COALESCE((SELECT SUM(weight) FROM workshop_completions c WHERE c.item = i.id AND c.counted = 1), 0)
                 AS completions
          FROM workshop_items i JOIN accounts a ON a.id = i.creator
         WHERE i.withdrawn_at IS NULL AND i.removed_at IS NULL AND a.banned_at IS NULL
@@ -348,22 +373,62 @@ export class Workshop {
         : { validated: false, reason: result.reason ?? result.status };
     }
     const now = this.now();
+    // A play on an island withdrawn or taken down since it was issued is
+    // answered as before, but earns its creator nothing (SEC-40).
+    if (!this.listed(item) && outcome.validated) Object.assign(outcome, { counted: false, listed: false });
     return transaction(this.db, () => {
-      if (outcome.cleared && player !== item.creator) {
+      if (outcome.cleared && player !== item.creator && outcome.listed !== false) {
         // §18.7: "completions from a creator's own constellation count at a
         // quarter" — any constellation both were in together in the item's
         // life, the two memberships overlapping each other and it.
         const mate = this.kin(player, item.creator, item.published_at);
+        // SEC-26: recorded either way; on the ladder only from a player
+        // who counts.
+        const paid = this.counts("workshop_completions", player, item.creator, now);
         const fresh = this.db.prepare(
-          `INSERT OR IGNORE INTO workshop_completions (item, player, weight, at)
-           VALUES (?, ?, ?, ?)`).run(item.id, player, mate ? facts.KIN_COMPLETION_WEIGHT : 1, now).changes;
+          `INSERT OR IGNORE INTO workshop_completions (item, player, weight, at, counted)
+           VALUES (?, ?, ?, ?, ?)`).run(item.id, player, mate ? facts.KIN_COMPLETION_WEIGHT : 1, now, paid ? 1 : 0)
+          .changes;
         outcome.counted = fresh === 1;
-        if (fresh) this.spike(item.id, now);
+        if (fresh) {
+          outcome.ladder = paid;            // false: recorded, not yet counted (SEC-26)
+          this.spike(item.id, now);
+        }
       }
-      this.db.prepare("UPDATE workshop_plays SET submitted_at = ?, outcome = ? WHERE token = ?")
-        .run(now, JSON.stringify(outcome), token);
+      // SEC-26: the Island Fund counts a play's time only from a player who
+      // counts (fund.mjs).
+      const timed = outcome.validated && outcome.listed !== false && player !== item.creator
+        && this.qualified(player, now);
+      this.db.prepare("UPDATE workshop_plays SET submitted_at = ?, outcome = ?, counted = ? WHERE token = ?")
+        .run(now, JSON.stringify(outcome), timed ? 1 : 0, token);
       return outcome;
     });
+  }
+
+  /** SEC-26: whether `player`'s account counts toward Workshop numbers that
+   *  pay out: COUNTED_AGE_MS old and at COUNTED_KEEPER_LEVEL at `now`. */
+  qualified(player, now) {
+    const a = this.db.prepare("SELECT created_at, keeper_level FROM accounts WHERE id = ?").get(player);
+    return Boolean(a) && now - a.created_at >= COUNTED_AGE_MS && a.keeper_level >= COUNTED_KEEPER_LEVEL;
+  }
+
+  /** SEC-26: whether a row of `table` (completions or ratings) `player`
+   *  writes now for `creator` counts: a qualified player, and, for one who
+   *  has played only this creator's islands, one of the creator's first
+   *  LONE_FANS_A_DAY such rows of the UTC day. */
+  counts(table, player, creator, now) {
+    if (!this.qualified(player, now)) return false;
+    const elsewhere = `EXISTS (SELECT 1 FROM workshop_plays p JOIN workshop_items j ON j.id = p.item
+                                WHERE p.player = %s AND j.creator != :creator AND j.creator != %s
+                                  AND json_extract(p.outcome, '$.validated') = 1)`;
+    const others = this.db.prepare(`SELECT ${elsewhere.replaceAll("%s", ":player")} AS yes`).get({ player, creator });
+    if (others.yes) return true;
+    const from = Math.floor(now / DAY_MS) * DAY_MS;
+    const lone = this.db.prepare(
+      `SELECT COUNT(*) AS n FROM ${table} c JOIN workshop_items i ON i.id = c.item
+        WHERE i.creator = :creator AND c.counted = 1 AND c.at >= :from AND c.at < :to AND c.player != :player
+          AND NOT ${elsewhere.replaceAll("%s", "c.player")}`).get({ creator, from, to: from + DAY_MS, player }).n;
+    return lone < LONE_FANS_A_DAY;
   }
 
   /** §18.7's constellation rule for this play's creator (`kin`). */
@@ -406,12 +471,17 @@ export class Workshop {
     if (!score.every((v) => Number.isInteger(v) && v >= 1 && v <= 5)) {
       throw new Refused(400, "ratings_are_one_to_five");
     }
+    // SEC-26: recorded either way; in the island's numbers only from a
+    // player who counts, and once counted, counted still.
+    const now = this.now();
+    const paid = this.counts("workshop_ratings", player, item.creator, now) ? 1 : 0;
     this.db.prepare(
-      `INSERT INTO workshop_ratings (item, player, fun, cleverness, fairness, at)
-       VALUES (?, ?, ?, ?, ?, ?)
+      `INSERT INTO workshop_ratings (item, player, fun, cleverness, fairness, at, counted)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT (item, player) DO UPDATE SET fun = excluded.fun,
-         cleverness = excluded.cleverness, fairness = excluded.fairness, at = excluded.at`)
-      .run(id, player, fun, cleverness, fairness, this.now());
+         cleverness = excluded.cleverness, fairness = excluded.fairness, at = excluded.at,
+         counted = MAX(counted, excluded.counted)`)
+      .run(id, player, fun, cleverness, fairness, now, paid);
     return this.view(this.row(id)).ratings;
   }
 
@@ -454,7 +524,8 @@ export class Workshop {
   ladder(creator) {
     const completions = Number(this.db.prepare(
       `SELECT COALESCE(SUM(c.weight), 0) AS n FROM workshop_completions c
-         JOIN workshop_items i ON i.id = c.item WHERE i.creator = ?`).get(creator).n);
+         JOIN workshop_items i ON i.id = c.item
+        WHERE i.creator = ? AND i.removed_at IS NULL AND c.counted = 1`).get(creator).n);
     const featured = this.db.prepare(
       "SELECT COUNT(*) AS n FROM workshop_items WHERE creator = ? AND featured_at IS NOT NULL")
       .get(creator).n;

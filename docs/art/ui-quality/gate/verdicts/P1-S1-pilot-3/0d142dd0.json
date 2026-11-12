@@ -1,0 +1,87 @@
+[
+ {
+  "task_id": "P1-S1-pilot-3",
+  "sha": "0d142dd0",
+  "item": "heist at 100% text",
+  "quality": "Display type",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "The 2:25 timer is flat dark figures on a cream plate, with no outline, no hard drop and no gradient fill (objection A: the kit's numerals stay switched off). The 'Laws here' header sits over the night sky with no ink outline. The pass anchor strokes both.",
+  "advisory": true,
+  "at": "2026-11-12T05:01:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-3",
+  "sha": "0d142dd0",
+  "item": "heist at 100% text",
+  "quality": "Hierarchy",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "In grayscale and in colour, the gold Cast is the largest and lightest control. Get out is smaller and dark, the stats panel holds no action, and the timer is small. It leads at least as clearly as the pass anchor's Level up card.",
+  "advisory": true,
+  "at": "2026-11-12T05:01:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-3",
+  "sha": "0d142dd0",
+  "item": "heist at 100% text",
+  "quality": "Character presence",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Pip, Mo, Ash and the wizard read as dark, framed toon figures. Hollow's violet body melts into the purple wash inside its ring, with no dark shape and no readable face: a smudge under the v3 ruling. Bramble's grey body shows a fine grain.",
+  "advisory": true,
+  "at": "2026-11-12T05:01:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-3",
+  "sha": "0d142dd0",
+  "item": "heist at 200% text, pt_BR",
+  "quality": "Display type",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "'Leis aqui' sits over the starry sky with no ink outline, and the 2:25 timer is flat dark text on a cream plate with no outline, hard drop or gradient. Two of the crew names sit over the see-through panel without an outline.",
+  "advisory": true,
+  "at": "2026-11-12T05:01:00Z"
+ },
+ {
+  "task_id": "P1-S1-pilot-3",
+  "sha": "0d142dd0",
+  "item": "heist at 200% text, pt_BR",
+  "quality": "Hierarchy",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Lançar is the lightest and most saturated filled control, and the eye lands on it first. Fugir is smaller and dark, and the big Espaço/Restam panel is dark and holds no action, so it falls in behind. It clears the pass anchor's bar.",
+  "advisory": true,
+  "at": "2026-11-12T05:01:00Z"
+ }
+]

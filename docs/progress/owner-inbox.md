@@ -4,6 +4,104 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-12 05:42Z: main failed check_all after the overseer's security commits; fixed (lead, cycle 60)
+
+- **What:** main had failed `tools/check_all.sh` since the overseer's
+  security commits `c888bed7` (SEC-17) and `e39e9048` (SEC-30/SEC-29).
+  There were three breakages: a sim test not claimed in
+  `sim/systems.json`, the failure code `ERR_BAD_ROUTE` with no words in
+  `client/i18n/strings.csv`, and two gdlint errors (an unused variable's
+  name in `client/features/auth/auth_controller.gd`, a line over 120 in
+  `client/tests/security_tests.gd`). Each blocked a merge candidate in
+  turn.
+- **Done:** fixed by lead commits `22d4328c`, `77e48b27` and `a13c5d07`,
+  with no test loosened. check_all then passed and P1-S1-pilot-3 merged
+  as `085c812a`.
+- **Needs the owner:** nothing. Security fixes landing on main would
+  merge more smoothly if they ran `bash tools/check_all.sh` first.
+
+## 2026-11-12 00:41Z: the lead was stale, the launcher had just started a cycle (watchdog)
+
+- **What:** `status/lead.json` was past its `expected_next_update_by` of
+  23:34Z (last update 22:19Z, cycle 55). The launcher had not failed: it
+  is enabled and its last run succeeded at 00:38Z. The latest lead cycle
+  session on record (`session_01SNkKxnNomdRK7U7hfS4cvz`, cycle 55) has
+  completed. The watchdog's own firing of 00:09Z reached its session only
+  at 00:40Z.
+- **Done:** started no session. At 00:40Z the launcher's session
+  (`session_01SNkKxoNHJW6nWHDeA8Mfth`) reported "lead cycle 56 launched".
+  A second cycle from the watchdog would only duplicate it, as with the
+  duplicate cycles 47 and 52.
+- **Needs the owner:** nothing.
+
+## 2026-11-11 05:21Z: the lead was stale, a lead cycle is started (watchdog)
+
+- **What:** `status/lead.json` was past its `expected_next_update_by` of
+  02:35Z (last update 01:20Z, cycle 51). The launcher itself had not
+  failed: it is enabled and its last run succeeded at 04:38Z, yet no
+  lead cycle has written to main since 01:15Z. The latest lead cycle
+  session on record (`session_01SNkKxnDPjsoJBxjS6oA73p`, cycle 51) is
+  idle.
+- **Done:** started a lead cycle on Fable 5.2,
+  `session_01SNkKxnH8TzJqFh4YN5MvvE`.
+- **Needs the owner:** nothing.
+- **Follow-up, 05:25Z (the watchdog's cycle session):** the launcher
+  started a cycle session of its own five seconds earlier, at 05:20:21Z
+  (`session_01SNkKxrATVfECHBXAWskbLg`, working). The lead was stale
+  because every session stood still from about 01:16Z to 05:20Z; the
+  launcher's four late firings arrived together at 05:20Z. That session
+  runs cycle 52. This one (`session_01SNkKxnH8TzJqFh4YN5MvvE`) stands
+  down so two leads do not gate, merge and start sessions at once, as
+  with cycle 47's duplicate: it merges nothing and starts no session.
+  It looks once more at about 05:45Z and runs the cycle only if the
+  launcher's session has stopped without writing cycle 52.
+
+## 2026-11-11 01:20Z: three builders working after the restart, two K1 tasks seeded (lead, cycle 51)
+
+- **What:** the first cycle after the restart found nothing to gate or
+  merge. Tasks done: 46 of 63.
+- **Done:** seeded two K1 tasks: P1-K1-disc-host (the disc drawn as wide
+  as its host under the currency pills, pages 27, 44 and 45, with a test
+  that fails before the fix) and P1-K1-heist-kit (the kit work S1 asked
+  for, S1-R1 to S1-R6). Started three fresh Fable 5.2 sessions: AIA on
+  P1-AIA-kit-7, K1 on P1-K1-disc-host and S1 on P1-S1-pilot-2.
+- **Needs the owner:** nothing.
+
+## 2026-11-11 01:15Z: the program is restarted on the owner's word (overseer)
+
+- **What:** the owner said, in the overseer session's chat, "We still need
+  to keep the UI process we were doing with the phases running as it was",
+  then "Make sure it is running now". CLAUDE.md order 1 now says the
+  program runs, on Fable 5.2 only (order 4).
+- **What ran since the stop:** nothing. The last work of the program is
+  the lead's write-up of 10 November, 10:34Z (`8f03235f`). From then until
+  this restart every scheduled task was disabled and no session worked.
+  Main moved only by two commits of the overseer (`312b1a12`, `1c6aa12a`,
+  10 November 19:36Z): a handoff note on the disc drawing fault.
+- **Done:** a new launcher (hourly) and a new watchdog (two-hourly) are
+  created after this commit is on main; their IDs go in `lead.md`. The
+  first cycle after the restart is cycle 51: AIA on P1-AIA-kit-7, S1 on
+  P1-S1-pilot-2, and K1 on the disc drawn under the currency pills.
+- **Needs the owner:** nothing.
+
+## 2026-11-10 02:55Z: two merges, kit-5's colour roles failed the gate, three builders working (lead, cycle 47)
+
+- **What:** P1-AIA2-icons-2a and P1-AIA-kit-5 are merged (`027379a2`):
+  check_all PASS and ui guard OK on the candidate, and the icon sheets now
+  rebake byte for byte from one container to another. Tasks done: 12 of
+  19.
+- **Gate (advisory):** icons-2a passes 12 of 12. kit-5 passes three
+  qualities and fails "Colour roles and value" 3 of 3: the gold fill of
+  the main action is also used for selected segments and chips, claimed
+  day tiles and a chart bar, and selection is told by hue alone. The gate
+  is advisory, so kit-5 merged; the fix is the new task P1-AIA-kit-6.
+- **Done:** three fresh Fable 5.2 sessions: AIA on kit-6, AIA-2 on
+  icons-2b, K1 to finish P1-K1-switch-heist (it was blocked only on the
+  icon rebake). That is the cap of three UI builders.
+- **Also:** the watchdog and the launcher each started a cycle at 01:51Z;
+  the second session did no work, and nothing merged twice.
+- **Needs the owner:** nothing.
+
 ## 2026-11-10 01:51Z: lead was stale, watchdog started a cycle (watchdog)
 
 - **What:** `lead.json` was past its `expected_next_update_by` of

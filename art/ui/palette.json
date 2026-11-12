@@ -862,6 +862,62 @@
       "value": "#AA96FF",
       "from": "tab_active's glow"
     },
+    "album_frame_bottom": {
+      "value": "#B08A54",
+      "from": "parchment_deckle, shaded: the album frame's bevel at its foot"
+    },
+    "album_frame_mid": {
+      "value": "#D6B67E",
+      "from": "parchment_deckle, a step lighter: the album frame's face"
+    },
+    "album_frame_top": {
+      "value": "#F3DFB2",
+      "from": "parchment_deckle #C9A86A, lit: the album frame's bevel at its top"
+    },
+    "album_well_bottom": {
+      "value": "#EBD9B4",
+      "from": "parchment_bottom, a step down: the well's paper at its foot"
+    },
+    "album_well_line": {
+      "value": "#7A5428",
+      "from": "parchment_lip #8A5A1C, deeper: the line where the frame meets the well"
+    },
+    "album_well_top": {
+      "value": "#F4E6C6",
+      "from": "parchment_bottom #F1E3C4, a touch lighter: the well's paper under its gloss"
+    },
+    "banner_bottom": {
+      "value": "#1A4A3E",
+      "from": "banner_top, two steps down: the banner's foot"
+    },
+    "banner_disabled": {
+      "value": "#2C2838",
+      "from": "card_top #261A4C, desaturated"
+    },
+    "banner_edge_dark": {
+      "value": "#1E7A50",
+      "from": "success #3FBF7F, shaded: the banner's edge at its foot and when pressed"
+    },
+    "banner_lip": {
+      "value": "#0A0618",
+      "from": "material.banner_success's drop #0A0618"
+    },
+    "banner_mid": {
+      "value": "#25634F",
+      "from": "banner_top, a step down"
+    },
+    "banner_pressed_bottom": {
+      "value": "#120B28",
+      "from": "card_bottom, deeper"
+    },
+    "banner_pressed_top": {
+      "value": "#1A1238",
+      "from": "card_bottom #1A1134, the pressed banner's top"
+    },
+    "banner_top": {
+      "value": "#2F7A5E",
+      "from": "success #3FBF7F, deep: the banner's face at its top, so a white line's ink outline shows on it"
+    },
     "bar_neutral_bottom": {
       "value": "#B4B4B4",
       "from": "neutral, tinted: a bar's foot"
@@ -978,6 +1034,26 @@
       "value": "#B8A8D8",
       "from": "text_on_night_3: a dark piece's 3-point edge in high contrast, 7:1 on the hc night"
     },
+    "fact_edge": {
+      "value": "#8F6B3A",
+      "from": "fact_line, deepened: the slip's outer edge, a clear value step off the album's paper"
+    },
+    "fact_line": {
+      "value": "#C9A876",
+      "from": "material.fact's line #C9A876: the fact tile's soft tan edge"
+    },
+    "fact_lip": {
+      "value": "#9A7440",
+      "from": "material.fact's drop, deepened to a solid tan: a 2 point lip reads on cream at phone size"
+    },
+    "fact_rim_top": {
+      "value": "#F2DDB0",
+      "from": "fact_line, lit: the top of the slip's rim"
+    },
+    "fact_top": {
+      "value": "#FFFDF6",
+      "from": "parchment_top #FFFBF0, lifted: a fact tile sits lighter than its panel"
+    },
     "frame_locked_dark": {
       "value": "#24545C",
       "from": "locked_bottom #30707A, deeper"
@@ -1037,6 +1113,38 @@
     "green_hc_pressed": {
       "value": "#3E9A40",
       "from": "green, flat, darker"
+    },
+    "green_muted_bottom": {
+      "value": "#163E30",
+      "from": "gradient.green_muted's foot"
+    },
+    "green_muted_disabled": {
+      "value": "#3A4A44",
+      "from": "green_muted, desaturated"
+    },
+    "green_muted_hc": {
+      "value": "#0F4A2E",
+      "from": "color_high_contrast.success_text #0F4A2E: a deep green, white words on it"
+    },
+    "green_muted_hc_pressed": {
+      "value": "#0A3420",
+      "from": "green_muted_hc, pressed in"
+    },
+    "green_muted_lip": {
+      "value": "#0A3A20",
+      "from": "material.green_muted's drop #0A3A20"
+    },
+    "green_muted_pressed_bottom": {
+      "value": "#103026",
+      "from": "green_muted_bottom, pressed in"
+    },
+    "green_muted_pressed_top": {
+      "value": "#1A4A38",
+      "from": "green_muted_top, pressed in"
+    },
+    "green_muted_top": {
+      "value": "#24604A",
+      "from": "gradient.green_muted's top"
     },
     "green_off": {
       "value": "#24604A",
@@ -1133,6 +1241,10 @@
     "oak_hc": {
       "value": "#8A5630",
       "from": "frame_oak's body, flat"
+    },
+    "paper_grain": {
+      "value": "#8A5A1C",
+      "from": "parchment_lip #8A5A1C: the paper's specks, fibres and laid lines, drawn faint"
     },
     "paper_lip": {
       "value": "#C9A876",
@@ -1310,6 +1422,10 @@
       "value": "#6C5CB0",
       "from": "text_on_night_3 #B8A8D8 toward tab_active_bottom: an off chip's lit top, two steps off the night"
     },
+    "stamp": {
+      "value": "#8A5A1C",
+      "from": "parchment_text_3: the ring stamped on a kept day"
+    },
     "tan_bottom": {
       "value": "#CAAA70",
       "from": "tertiary_parchment_bottom #C6A266, a touch up: its foot (parchment_ink still reads on it)"
@@ -1374,6 +1490,22 @@
       "value": "#7868C4",
       "from": "violet_hc, lifted: the dark track's edge, two steps under the gold on it"
     },
+    "track_light_bottom": {
+      "value": "#C2A674",
+      "from": "material.bar_track_light's #E0CDA4, two steps down: the groove's foot"
+    },
+    "track_light_hc": {
+      "value": "#D8D8D8",
+      "from": "pill_hc_pressed: a grey rail, a step off white paper, a white fill reads on it"
+    },
+    "track_light_line": {
+      "value": "#6E4E26",
+      "from": "material.bar_track_light's line #B08A58, deepened: the groove's edge"
+    },
+    "track_light_top": {
+      "value": "#9C7C4C",
+      "from": "material.bar_track_light's line #B08A58, shaded: the groove's top, well under the cream panel in value"
+    },
     "track_line": {
       "value": "#624328",
       "from": "seg_track's line"
@@ -1408,7 +1540,15 @@
     },
     "warn_cap": {
       "value": "#F07A3C",
-      "from": "energy: tag_warn's cap (not amber, so gold keeps one role)"
+      "from": "energy: tag_warn's cap (kit_2c.py; not amber, so gold keeps its roles)"
+    },
+    "warn_paper_bottom": {
+      "value": "#FBD3A0",
+      "from": "parchment_bottom toward warn_cap, a step"
+    },
+    "warn_paper_top": {
+      "value": "#FFEBCB",
+      "from": "parchment_top toward warn_cap #F07A3C, a step: the warn tag's paper"
     },
     "week_bottom": {
       "value": "#4E34A8",
@@ -1418,9 +1558,33 @@
       "value": "#7A5CE0",
       "from": "week_day, flat"
     },
+    "week_today_bottom": {
+      "value": "#A48CF4",
+      "from": "week_day's top, lifted: today's bar's foot"
+    },
+    "week_today_hc": {
+      "value": "#FFFFFF",
+      "from": "today's bar, flat: white among violet bars"
+    },
+    "week_today_top": {
+      "value": "#DCD0FF",
+      "from": "week_day's top #8C6CF0 toward white: today's bar, two steps lighter than its neighbours"
+    },
     "week_top": {
       "value": "#8C6CF0",
       "from": "week_day's top"
+    },
+    "well_bottom": {
+      "value": "#24142A",
+      "from": "material.pill_gold_edge's text_bg #24142A: the well's foot"
+    },
+    "well_pressed": {
+      "value": "#0C060E",
+      "from": "well_top, pressed in"
+    },
+    "well_top": {
+      "value": "#140A16",
+      "from": "material.pill_gold_edge's text_bg #140A16: the well's top"
     }
   }
 }

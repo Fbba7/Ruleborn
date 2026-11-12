@@ -24,6 +24,7 @@ it is not repeated here. The repository's own words:
 | OPEN | A design-document check that fails while its register item is open: reported, but not a build failure |
 | TD.n, T3.1 … | Task ids on the roadmap (`tools/roadmap.py`) |
 | SR-n | A finding of the security review ([`security/review.md`](security/review.md)) |
+| SEC-n | A finding of the deep security run; its decisions are in [`security/decisions.md`](security/decisions.md) |
 | Lease | The server's permission to raid one target: seed, token, clock, rules version, expiry |
 | Rules version | A digest of the law table and of what the build does with the golden heists (`sim::rules_version`); a replay names the one it was played under |
 | Golden replay | A heist recorded once and committed (`sim/golden/`), re-simulated on every build |
@@ -125,5 +126,6 @@ it is not repeated here. The repository's own words:
 |---|---|---|
 | [`security/review.md`](security/review.md) | The adversarial security review: every finding (SR-01 on), its test, its fix or the owner's decision, with patches | T12 |
 | [`security/auth.md`](security/auth.md) | Sign-in and sign-out: threat model, design, abuse limits, native steps | T11 |
+| [`security/decisions.md`](security/decisions.md) | The choices made for the deep security run's findings (SEC-n) that needed one: what was chosen and why, and what is left for the owner | Integrator |
 | [`server/db-cost.md`](server/db-cost.md) | What the database costs, how it is measured, the cuts, the owner's options | T13 |
 | [`../server/declarations.md`](../server/declarations.md) | The stores' privacy declarations | generated |

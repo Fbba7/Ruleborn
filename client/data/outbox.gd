@@ -15,6 +15,11 @@ signal settled(key: String, result: Result)
 
 const FILE := "user://outbox.json"
 
+## The routes the game queues: its own server's /v1/ paths, with a crew's
+## query at most. A queued route read back from the file that is anything
+## else (another host, "//", "@", a line break) is dropped (SEC-30).
+static var _route := RegEx.create_from_string("^/v1/[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)*(\\?[A-Za-z0-9_.,=&-]*)?$")
+
 var path := FILE
 var _items: Array[Dictionary] = []
 
@@ -104,12 +109,20 @@ func has(key: String) -> bool:
 func flush(api: Api) -> int:
 	var done := 0
 	for item: Dictionary in _items.duplicate():
+		# A renewal for another account, made by a send above, parks the queue
+		# (AuthController): what it took is not sent as the new account (SEC-29).
+		if not has(item["key"]):
+			continue
 		var body := Marshalls.base64_to_raw(item["body"])
 		var r: Result
 		if item["json"]:
 			r = await api.post_json(item["route"], JSON.parse_string(body.get_string_from_utf8()))
 		else:
 			r = await _post_raw(api, item["route"], body)
+		# Its own call renewed the session for another account: it was not sent,
+		# and waits parked under the account that queued it (SEC-29).
+		if not has(item["key"]):
+			continue
 		if not r.ok and transient(r):
 			if r.code in ["offline", "unreachable", "timeout", "request_failed"]:
 				break
@@ -133,10 +146,11 @@ func _post_raw(api: Api, route: String, body: PackedByteArray) -> Result:
 ## A 5xx is one, whatever reason came with it: the server, or the store it
 ## asked, could not decide it now (D67's store_unavailable is a 503).
 static func transient(r: Result) -> bool:
-	# A session the server refused, or a limit on how fast it is asked,
-	# decided nothing about the item itself.
+	# A session the server refused, a limit on how fast it is asked, or a
+	# session that came to speak for another account (Api) decided nothing
+	# about the item itself.
 	if r.code in ["offline", "unreachable", "timeout", "request_failed", "internal", "store_unavailable",
-			"session_refused", "too_many_requests"]:
+			"session_refused", "too_many_requests", "account_changed"]:
 		return true
 	return r.code.begins_with("status_5") or int(r.detail.get("status", 0)) >= 500
 
@@ -148,7 +162,8 @@ func _read() -> void:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if parsed is Array:
 		for item: Variant in parsed:
-			if item is Dictionary and item.has("key") and item.has("route") and item.has("body"):
+			if item is Dictionary and item.has("key") and item.has("route") and item.has("body") \
+					and _route.search(str(item["route"])) != null:
 				_items.append(item)
 
 

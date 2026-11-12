@@ -10,7 +10,9 @@ extends RefCounted
 ## 8.2): each material maps onto one of the kit's 35 skins, and a skin
 ## switched on in `kit_families.json` draws its materials from the kit's
 ## atlas instead of the code-drawn box. A piece the atlas lacks falls back to
-## the code-drawn box and is logged, so a screen is never blank.
+## the code-drawn box and is logged, so a screen is never blank. Beside the
+## 35 stand the two overlay skins (`selected`, `spinner`), which no material
+## maps onto: their pieces, and the other skins' marks, are `PARTS`.
 
 ## Which skins draw from the atlas: every one off until its art passes the
 ## gate.
@@ -21,14 +23,14 @@ const MANIFEST := "res://ui/art/kit.json"
 ## kit-spec.md section 8.2: each skin and today's materials drawn in it, a
 ## trailing `*` standing for every material so named. A material named twice
 ## there takes the first row it is in (`card` the dark panel, not the new
-## popup; `tag_success` the success skin), and `tab_bar` is the tab bar's,
-## not the header's.
+## popup), `tag_success` is the tag's (its own shape unbaked, it is drawn as
+## the tag's box), and `tab_bar` is the tab bar's, not the header's.
 const SKINS := {
 	"button_primary": ["gold", "gold_round", "plate_gold", "reward_gold"],
 	"button_secondary": ["leather", "plate_leather"],
 	"button_tertiary": ["ghost"],
 	"button_danger": ["red", "banner_alarm", "tag_alarm"],
-	"success": ["green", "green_muted", "banner_success", "tag_success", "reward_green"],
+	"success": ["green", "green_muted", "banner_success", "reward_green"],
 	"panel_dark": ["card", "card_selected", "card_gold", "album", "fact", "ability", "plate", "plate_dark",
 		"banner_info"],
 	"panel_glass": ["glass", "field_glass", "tag_dark"],
@@ -54,13 +56,53 @@ const SKINS := {
 	"disc": ["disc", "icon_disc", "level_disc", "gem", "round_sky", "round_violet"],
 	"disc_school": ["portrait_*", "ring_*", "window_*"],
 	"badge": ["badge"],
-	"tag": ["tag", "tag_warn", "tag_violet", "price_chip", "island_label"],
+	"tag": ["tag", "tag_warn", "tag_violet", "tag_success", "price_chip", "island_label"],
 	"tile": ["day_done", "day_today", "day_later", "week_*", "reward_sky", "reward_pink"],
 	"locked": ["locked"],
 	"pill": ["pill_gold_edge"],
 	"toggle": [],
 	"slider": [],
+	"selected": [],
+	"spinner": [],
 }
+## The overlay skins among `SKINS`: drawn over or beside a face, never as
+## one (kit-spec.md section 5), so no material maps onto them.
+const OVERLAYS := ["selected", "spinner"]
+## The overlays and marks a face does not draw itself, each as [skin, shape]:
+## the chosen one's rim over its card, the spinner's ring (turned in code),
+## the lock over a locked card, the attention dot, a bar's tick, and a
+## sheet's grab handle on its dark and its parchment face.
+const PARTS := {
+	"rim": ["selected", "rim"],
+	"spinner": ["spinner", "ring"],
+	"lock": ["locked", "lock"],
+	"dot": ["badge", "dot"],
+	"tick": ["bar_track", "tick"],
+	"handle": ["sheet", "handle"],
+	"handle_parchment": ["sheet", "handle_parchment"],
+}
+## The margin every piece keeps around its face for its ink line, in
+## points; its lip lies below that (a 9-slice's bottom margin less its top).
+const MARGIN_POINTS := 1.0
+## The skins whose box keeps a wider margin for its shadow, in points as
+## [left, top, right, bottom], the lip within the bottom (kit-spec.md
+## section 8.2: the popup's 8 at the sides, 4 above, 12 and its 5 point lip
+## below).
+const MARGINS := {"popup": [8.0, 4.0, 8.0, 17.0]}
+## The skins whose box is a hollow ring (a rank's frame): drawn over the
+## material's code-drawn box, 4 points past its edge each side, in its
+## normal state whatever the host's (as the selected rim is).
+const RINGS := ["frame_oak", "frame_silver", "frame_gold", "frame_prismatic"]
+const RING_REACH_POINTS := 4.0
+## How far from square a host may be and still draw a sprite (a piece with
+## no 9-slice), as a share of its shorter side (`fits`).
+const ROUND_SLACK := 0.15
+## The materials whose words do not hold on their skin's box: a light
+## material (dark words) whose skin's box is dark, or a dark one whose box is
+## light. Each draws only a shape baked for it (`<skin>__<material>__<state>`)
+## and keeps its code-drawn box, unlogged, until it has one (kit-spec.md
+## section 8.2). ui_kit_tests.gd holds this list to the atlas.
+const OWN_SHAPE_ONLY := ["pill_gold_edge", "green_muted"]
 ## The backdrop's materials: gradients, not skins, always drawn in code.
 const BACKDROP := ["night", "night_rays", "scrim"]
 ## The switches beside the 35 skins': the baked numerals (`num_<finish>_<glyph>`,
@@ -82,6 +124,9 @@ const SURFACES := {
 	"hero": "card_gold",
 }
 
+## One turn of the spinner's ring.
+const SPIN_SECONDS := 1.0
+
 ## The pieces a skin switched on fell back from, as "<piece>" (logged once).
 static var missing: Array[String] = []
 
@@ -93,6 +138,8 @@ static var _atlas_hc: Texture2D = null
 ## `atlas.pages`), as [normal, high contrast] pairs.
 static var _pages: Array = []
 static var _read := false
+## `cut`'s textures, by page, region and contrast mode.
+static var _cuts: Dictionary = {}
 
 
 ## The material for a skin's surface `kind` (the kit's card for an unknown).
@@ -162,24 +209,195 @@ static func is_on(name: String) -> bool:
 ## face comes first (`<skin>__parchment__<state>`, kit-spec.md section 4.1);
 ## the tertiary has no other face there, its dark-ground face never drawn on
 ## parchment. Empty when the skin is off, and when the atlas lacks the piece,
-## which is logged: the code-drawn box draws instead.
-static func piece(material_name: String, state := "normal", ground := "") -> Dictionary:
+## which is logged: the code-drawn box draws instead. A material of
+## `OWN_SHAPE_ONLY` with no shape of its own keeps its code-drawn box,
+## unlogged.
+## A `shape` named by the use comes before them all (a bar's `alarm` fill).
+## Named as `<skin>/<shape>` it is another skin's (the dialog's card as
+## `popup/box`): that skin's piece when it is switched on, else the
+## material's own as above.
+static func piece(material_name: String, state := "normal", ground := "", shape_name := "") -> Dictionary:
+	if shape_name.contains("/"):
+		var other := face(shape_name.get_slice("/", 0), shape_name.get_slice("/", 1), state)
+		if not other.is_empty():
+			return other
+		shape_name = ""
 	var k := skin(material_name)
-	if k == "" or not is_on(k):
+	if k == "" or not is_on(k) or k in RINGS:
 		return {}
 	var pieces: Dictionary = _kit.get("pieces", {})
 	var shapes: Array = [material_name, "box"]
 	if ground == "parchment":
 		shapes = ["parchment"] if k == "button_tertiary" else ["parchment", material_name, "box"]
+	var own_only := material_name in OWN_SHAPE_ONLY
+	if own_only:
+		shapes = [material_name]
+	if shape_name != "":
+		shapes.push_front(shape_name)
 	for shape: String in shapes:
 		var key := "%s__%s__%s" % [k, shape, state]
 		if pieces.has(key) and texture(pieces[key]) != null:
 			return pieces[key]
+	if own_only:
+		return {}
 	var lost := "%s__%s__%s" % [k, shapes[0] if ground == "parchment" else material_name, state]
 	if lost not in missing:
 		missing.append(lost)
 		push_warning("kit: no piece %s in %s; drawn by the code-drawn box" % [lost, MANIFEST])
 	return {}
+
+
+## Whether piece `p` can be the face of a host `size` pixels large. A
+## 9-slice stretches to any host. A sprite (no `slice`: the disc, the gold
+## round) is drawn whole, as wide as its host, so it fits only a host about
+## as wide as it is tall (`ROUND_SLACK`). On any other (a bar's track, a
+## pill, an oval button) it would run past the host's foot and over what
+## lies below, and the code-drawn box draws the material instead.
+static func fits(p: Dictionary, size: Vector2) -> bool:
+	if p.is_empty() or p.get("slice") is Dictionary:
+		return true
+	return absf(size.x - size.y) <= ROUND_SLACK * minf(size.x, size.y)
+
+
+## The untinted layer over `material_name`'s tinted piece in `state`
+## (`<skin>__frame__<state>`, kit-spec.md section 5: the ink, gloss and
+## outline of a school's neutral face), drawn at the same rect; empty when
+## the skin is off or has none.
+static func frame(material_name: String, state := "normal") -> Dictionary:
+	var k := skin(material_name)
+	if k == "" or not is_on(k):
+		return {}
+	var p: Variant = (_kit.get("pieces", {}) as Dictionary).get("%s__frame__%s" % [k, state])
+	return p if p is Dictionary and texture(p) != null else {}
+
+
+## The overlay or mark `name` (a key of `PARTS`) when its skin is switched
+## on, else empty: the caller then draws it in code, as before. A piece the
+## atlas lacks is logged.
+static func part(name: String) -> Dictionary:
+	var at: Array = PARTS.get(name, [])
+	return {} if at.is_empty() else face(at[0], at[1])
+
+
+## Skin `skin_name`'s piece `<skin>__<shape>__<state>` when the skin is
+## switched on, else empty: for the faces no material maps onto (the
+## toggle's track and knob, the slider's, the popup's box). A piece the atlas
+## lacks is logged, and the caller draws in code.
+static func face(skin_name: String, shape: String, state := "normal") -> Dictionary:
+	if not is_on(skin_name):
+		return {}
+	var key := "%s__%s__%s" % [skin_name, shape, state]
+	var p: Variant = (_kit.get("pieces", {}) as Dictionary).get(key)
+	if p is Dictionary and texture(p) != null:
+		return p
+	if key not in missing:
+		missing.append(key)
+		push_warning("kit: no piece %s in %s; drawn in code" % [key, MANIFEST])
+	return {}
+
+
+## The rectangle of piece `p` in its page, in pixels.
+static func region(p: Dictionary) -> Rect2:
+	return Rect2(float(p["x"]), float(p["y"]), float(p["w"]), float(p["h"]))
+
+
+## What piece `p` keeps outside its face, in the atlas's pixels as
+## [left, top, right, bottom]: its ink line's margin with its lip below (a
+## 9-slice's bottom margin less its top), or its skin's own `MARGINS`.
+static func margins(p: Dictionary) -> Array:
+	var px := float(px_per_point())
+	var pieces: Dictionary = _kit.get("pieces", {})
+	for skin_name: String in MARGINS:
+		if pieces.get("%s__box__normal" % skin_name) == p:
+			return (MARGINS[skin_name] as Array).map(func(v: float) -> float: return v * px)
+	for skin_name: String in RINGS:
+		if pieces.get("%s__box__normal" % skin_name) == p:
+			return [RING_REACH_POINTS * px, RING_REACH_POINTS * px, RING_REACH_POINTS * px, RING_REACH_POINTS * px]
+	var edge := MARGIN_POINTS * px
+	var slice: Variant = p.get("slice")
+	var lip := maxf(0.0, float(slice["b"]) - float(slice["t"])) if slice is Dictionary else 0.0
+	return [edge, edge, edge, edge + lip]
+
+
+## The ring drawn over `material_name`'s code-drawn box (a rank's frame);
+## empty for any other material, while the skin is off, or with no piece.
+static func frame_ring(material_name: String) -> Dictionary:
+	var k := skin(material_name)
+	return face(k, "box") if k in RINGS else {}
+
+
+## A control that draws the mark `name` (a key of `PARTS`) from the atlas,
+## `points` tall (its baked size when negative), in the current contrast
+## mode; null while its skin is off or the piece is missing.
+static func mark(name: String, points := -1.0) -> Control:
+	var p := part(name)
+	if p.is_empty():
+		return null
+	var c := Control.new()
+	c.name = name.capitalize()
+	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	c.focus_mode = Control.FOCUS_NONE
+	var side := region(p).size * scale()
+	if points > 0.0:
+		side *= UI.px(points) / side.y
+	c.custom_minimum_size = side
+	c.size = side
+	c.pivot_offset = side / 2.0
+	c.draw.connect(func() -> void:
+		var q := part(name)
+		if not q.is_empty():
+			c.draw_texture_rect_region(texture(q), Rect2(Vector2.ZERO, c.size), region(q)))
+	return c
+
+
+## Piece `p` as a texture of its own at the screen's scale, for the theme's
+## icons and style boxes (a Slider draws its track and knob itself, at the
+## texture's own size); kept per piece and contrast mode. Null for no piece.
+static func cut(p: Dictionary) -> Texture2D:
+	var tex: Texture2D = null if p.is_empty() else texture(p)
+	if tex == null:
+		return null
+	var at := region(p)
+	var key := "%s:%s:%s:%s" % [p.get("page", 1), at, scale(), Tokens.high_contrast]
+	if not _cuts.has(key):
+		var img := tex.get_image().get_region(Rect2i(at))
+		if img.is_compressed():
+			img.decompress()
+		var side := Vector2i((at.size * scale()).round())
+		img.resize(maxi(side.x, 1), maxi(side.y, 1), Image.INTERPOLATE_LANCZOS)
+		_cuts[key] = ImageTexture.create_from_image(img)
+	return _cuts[key]
+
+
+## 9-slice piece `p` as a style box for the theme, as tall as the piece
+## (its margin and lip within); null for no piece.
+static func stylebox(p: Dictionary) -> StyleBoxTexture:
+	var tex := cut(p)
+	if tex == null or not p.get("slice") is Dictionary:
+		return null
+	var box := StyleBoxTexture.new()
+	box.texture = tex
+	var slice: Dictionary = p["slice"]
+	box.texture_margin_left = roundf(float(slice["l"]) * scale())
+	box.texture_margin_right = roundf(float(slice["r"]) * scale())
+	box.texture_margin_top = roundf(float(slice["t"]) * scale())
+	box.texture_margin_bottom = roundf(float(slice["b"]) * scale())
+	box.content_margin_top = floorf(tex.get_height() / 2.0)
+	box.content_margin_bottom = tex.get_height() - box.content_margin_top
+	return box
+
+
+## The spinner: its ring from the atlas, turned in code once every
+## `SPIN_SECONDS` (held still under reduced motion: it is said aloud as
+## loading either way); null while its skin is off.
+static func spinner(points := -1.0) -> Control:
+	var ring := mark("spinner", points)
+	if ring == null or Settings.reduced_motion:
+		return ring
+	ring.ready.connect(func() -> void:
+		var turn := ring.create_tween().set_loops()
+		turn.tween_property(ring, "rotation", TAU, SPIN_SECONDS).from(0.0))
+	return ring
 
 
 ## The ground a control at `node` sits on: "parchment" when the nearest
@@ -227,6 +445,12 @@ static func texture(p: Dictionary) -> Texture2D:
 	return pair[1] if Tokens.high_contrast and pair[1] != null else pair[0]
 
 
+## The atlas's pixels per point.
+static func px_per_point() -> int:
+	_load()
+	return int(_kit.get("px_per_point", 6))
+
+
 ## Pixels on screen per pixel of a piece (kit-spec.md section 6.6).
 static func scale() -> float:
 	_load()
@@ -248,6 +472,7 @@ static func use(manifest: Dictionary, normal: Texture2D, high_contrast: Texture2
 	_atlas = normal
 	_atlas_hc = high_contrast
 	_pages = pages
+	_cuts.clear()
 
 
 ## Uses the manifest at `path` and its atlas pages beside it, read straight
@@ -273,6 +498,7 @@ static func reset() -> void:
 	_atlas = null
 	_atlas_hc = null
 	_pages = []
+	_cuts.clear()
 	missing.clear()
 	_load()
 

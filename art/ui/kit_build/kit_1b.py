@@ -18,7 +18,6 @@ Pieces, by skin (shapes are the material names KitSkin.piece looks up, or
     pill/box              the currency pill (E1, 36 high, gold edge): normal, pressed
     tag/box               the dark plate (E1, 22 high): normal
     tag/tag_violet        violet: normal
-    tag/tag_warn          the dark plate with a hatched orange cap: normal
     bar_track/box         the track (E0, 12 high): normal
     bar_track/tick        a tick on the track (a sprite): normal
     bar_fill/box          a neutral fill, tinted per use (band, school): normal
@@ -58,7 +57,7 @@ KIT_1B = {
     "school_disabled": ("#A0A0A0", "neutral, flat: the tint comes out muted"),
     "bar_neutral_top": ("#FFFFFF", "neutral, tinted: a bar's lit top"),
     "bar_neutral_bottom": ("#B4B4B4", "neutral, tinted: a bar's foot"),
-    "warn_cap": ("#F07A3C", "energy: tag_warn's cap (not amber, so gold keeps one role)"),
+    "warn_cap": ("#F07A3C", "energy: tag_warn's cap (kit_2c.py; not amber, so gold keeps its roles)"),
     "lock_light": ("#F3EEFF", "text_on_night: the lock mark's body"),
     "lock_shade": ("#B8A8D8", "text_on_night_3: the lock mark's shaded side and shackle"),
 }
@@ -301,14 +300,14 @@ def pill():
 
 
 def tags():
-    """Tags (badge_points 22 high, E1, radius 6): the dark plate, violet, and
-    warn (the dark plate with a hatched orange cap, its shape mark)."""
+    """Tags (badge_points 22 high, E1, radius 6): the dark plate and violet
+    (the warn tag, a light one, is in kit_2c.py)."""
     out = {}
     FH, DROP, R = 22, 2, 6
     W, H = 24, 1 + FH + DROP + 1
     plate = [(0, "#2A2060"), (1, "#140C34")]
     violet = [(0, "#6A55D0"), (1, "#4E3BAE")]
-    for shape in ("box", "tag_violet", "tag_warn"):
+    for shape in ("box", "tag_violet"):
         svg = Svg(W, H, [8, 8, 8, 10])
         x, y, w = 1, 1, W - 2
         for hc in (False, True):
@@ -316,19 +315,11 @@ def tags():
             if hc:
                 b.append(rrect(x, y + DROP, w, FH, R, "#000000"))
                 b.append(rrect(x, y, w, FH, R, K["violet_hc"] if shape == "tag_violet" else K["plate_hc"]))
-                if shape == "tag_warn":
-                    b.append(rrect(x, y, 7, FH, R, K["warn_cap"], ' mask="%s"' % cap_mask(svg, 0, 6)))
-                    b.append(rrect(x + 2, y, 4, FH, 0, stripes(svg, "#000000", 4, 1.5)))
                 b.append(hc_edge(x, y, w, FH, R, K["edge_hc"]))
                 svg.state("normal", b, hc=True)
                 continue
             b.append(rrect(x, y + DROP, w, FH, R, a(C["drop"], 0.8)))
             b.append(rrect(x, y, w, FH, R, svg.grad(violet if shape == "tag_violet" else plate)))
-            if shape == "tag_warn":
-                b.append(rrect(x, y, 8, FH, R, svg.grad([(0, "#FFB488"), (1, K["warn_cap"])]),
-                               ' mask="%s"' % cap_mask(svg, 0, 6)))
-                b.append(rrect(x, y, 6, FH, 0, stripes(svg, a(C["ink_line"], 0.45), 4, 1.5), ' mask="%s"' % cap_mask(svg, 1, 6)))
-                b.append('<rect x="6" y="1.5" width="0.75" height="%s" fill="#0A0408" fill-opacity="0.6"/>' % p(FH - 1))
             b.append(lit_band(svg, x + 2, y + 1.5, w - 4, FH, R - 1.5, 0.16 if shape == "tag_violet" else 0.1, 8))
             b.append(top_light(svg, x + 1, y + 1, w - 2, FH - 2, R - 1,
                                a("#FFFFFF", 0.35 if shape == "tag_violet" else 0.18), 1))

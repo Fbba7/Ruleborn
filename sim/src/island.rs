@@ -9,8 +9,8 @@
 //!
 //! So an island has one canonical encoding, and its digest is SHA-256 of it.
 //! `decode` refuses anything `encode` would not have written — trailing
-//! bytes, an unknown code, a pace of exactly 100 (which is written as 0), a
-//! flag bit nobody defined — because two encodings of one island would be two
+//! bytes, an unknown code, a pace of exactly 100 (which is written as 0) or
+//! one the rules do not define (`PACES`), a flag bit nobody defined — because two encodings of one island would be two
 //! hashes for one island, and the server could not tell a republish from a
 //! new one.
 //!
@@ -170,6 +170,9 @@ pub enum Malformed {
     /// A pace of 100, which is written as 0, or a pace on a tile nobody can
     /// enter: either is a second encoding of the same island.
     NonCanonicalPace,
+    /// A pace the rules do not define: a bare tile is normal (0), mud (60)
+    /// or a fast path (115), and nothing slower or faster (SEC-22).
+    Pace,
     LawId,
     /// A building code nobody defined.
     UnknownBuilding,
@@ -178,6 +181,9 @@ pub enum Malformed {
     /// A tunnels list of none, a mouth shared or out of order, or mouths
     /// nearer than 2 tiles or further than 6.
     Tunnel,
+    /// An exposure above `i32::MAX`, which the rules cannot hold: it would be
+    /// read as a negative one (SEC-17).
+    Exposed,
 }
 
 /// What stands on a tile, by its place in the island's list.
@@ -352,6 +358,10 @@ pub fn ward_from(code: u8) -> Result<WardKind, Malformed> {
     })
 }
 
+/// The paces a bare tile may carry, per cent of normal speed: 0 for normal
+/// (100 is written as 0), §6.2's mud at 60 and a fast path at 115 (SEC-22).
+pub const PACES: [u8; 3] = [0, 60, 115];
+
 /// Whether a feature stops feet, so a pace on it would mean nothing.
 fn blocks_feet(f: Option<Feature>) -> bool {
     f.is_some_and(|f| !f.terrain().passable())
@@ -461,6 +471,9 @@ impl Island {
             return Err(Malformed::VaultLevel);
         }
         let exposed = u32::from_le_bytes([head[2], head[3], head[4], head[5]]);
+        if exposed > i32::MAX as u32 {
+            return Err(Malformed::Exposed);
+        }
         let side = 9 + realm_level as u16;
         let on_grid = |x: u8, y: u8| (x as u16) < side && (y as u16) < side;
         let vault = (head[6], head[7]);
@@ -483,6 +496,12 @@ impl Island {
             }
             if t[1] == 100 || (t[1] != 0 && sets_pace(feature)) {
                 return Err(Malformed::NonCanonicalPace);
+            }
+            // Only a pace the rules define: a hand-edited 1% on every open
+            // tile made an island no crew could cross in time (SEC-22). A new
+            // surface adds its pace here in the change that documents it.
+            if !PACES.contains(&t[1]) {
+                return Err(Malformed::Pace);
             }
             // A stream is water and a gravel path gravel: any other surface
             // written under one is a second encoding of the same island.

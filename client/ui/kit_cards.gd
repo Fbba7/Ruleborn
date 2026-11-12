@@ -8,6 +8,8 @@ class_name KitCards
 
 const RARITY := {"common": "frame_oak", "uncommon": "frame_silver", "rare": "frame_gold", "deep": "frame_prismatic"}
 
+static var _dark := {}
+
 
 ## A school's mark and name on a glass pill.
 static func school_chip(school: String) -> PanelContainer:
@@ -479,6 +481,71 @@ static func law_chip(icon: String, title: String) -> PanelContainer:
 	return p
 
 
+## A law's chip for a narrow column (the heist's "Laws here" banner): the
+## leather with the law's icon and its name, which wraps between words
+## rather than outgrow the column (`law_chip` keeps one line). A dark icon
+## (`dark_icon`) stands on the kit's light disc so it reads on the leather.
+static func law_chip_fit(icon: String, title: String) -> PanelContainer:
+	var large := Settings.text_scale > 130
+	var p := UI.panel("leather")
+	p.name = "Law"
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(1 if large else 4))
+	if icon != "" and dark_icon(icon):
+		var disc := PanelContainer.new()
+		disc.name = "Disc"
+		disc.add_theme_stylebox_override("panel", UI.clear_box(1, 1))
+		UI.dress(disc, "icon_disc", 999)
+		disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		# Smaller with large text, where the column is at its narrowest.
+		disc.add_child(Icons.view(icon, 15.0 if large else 19.0))
+		row.add_child(disc)
+	elif icon != "":
+		var bare := Icons.view(icon, 24.0)
+		bare.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(bare)
+	var l := UI.label(title, 14, true)
+	l.name = "Words"
+	l.theme_type_variation = "LabelText"
+	l.set_meta("bold", true)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# No narrower than its longest word, so a line breaks between words; with
+	# §20.8's large text a word too long for the column breaks instead.
+	var widest := 0.0
+	var face := UI.bold_font()
+	for w: String in title.split(" ", false):
+		widest = maxf(widest, ceilf(face.get_string_size(w, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(14)).x))
+	l.custom_minimum_size.x = minf(ceilf(widest * 1.08), UI.px(100) * maxf(1.0, Settings.text_scale / 100.0))
+	row.add_child(l)
+	p.add_child(row)
+	return p
+
+
+## Whether an icon is mostly dark ink, which needs a light disc behind it
+## on leather or night: its drawn pixels' mean lightness, measured once.
+static func dark_icon(icon: String) -> bool:
+	if _dark.has(icon):
+		return _dark[icon]
+	var picture := Icons.texture(icon)
+	var image: Image = null
+	if picture != null:
+		image = picture.get_image()
+	var light := 0.0
+	var drawn := 0.0
+	if image != null:
+		var small := image.duplicate() as Image
+		small.decompress()
+		small.resize(16, 16)
+		for y: int in 16:
+			for x: int in 16:
+				var c := small.get_pixel(x, y)
+				light += c.get_luminance() * c.a
+				drawn += c.a
+	_dark[icon] = drawn > 0.0 and light / drawn < 0.3
+	return _dark[icon]
+
+
 ## A fact tile (the Character screen's Carrier, Resists, Traits, At home):
 ## its icon on a disc, a kicker in capitals and a bold line. With a `tone`
 ## (a school's name) the disc is lit from white to that school's light and
@@ -564,11 +631,14 @@ static func season_reward(rank: String, icon: String, amount: String, claim: Cal
 	m.add_child(v)
 	p.add_child(m)
 	if locked and icon != "":
-		var badge := PanelContainer.new()
+		# The kit's lock while its skin is on, else the lock icon on a disc.
+		var badge: Control = KitSkin.mark("lock", 22.0)
+		if badge == null:
+			badge = PanelContainer.new()
+			badge.add_theme_stylebox_override("panel", UI.clear_box(3, 3))
+			UI.dress(badge, "icon_disc", 999)
+			badge.add_child(Icons.view("generalui/lock", 16))
 		badge.name = "Lock"
-		badge.add_theme_stylebox_override("panel", UI.clear_box(3, 3))
-		UI.dress(badge, "icon_disc", 999)
-		badge.add_child(Icons.view("generalui/lock", 16))
 		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var corner := Control.new()
 		corner.mouse_filter = Control.MOUSE_FILTER_IGNORE

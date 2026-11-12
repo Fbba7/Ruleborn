@@ -1,0 +1,200 @@
+{
+  "agent": "S1",
+  "role": "S1",
+  "branch": "claude/ui-screens-heist",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "P1-S1-pilot-5",
+  "task_state": "working",
+  "claimed_at": "2026-11-12T11:28:53Z",
+  "lease_until": "2026-11-12T15:15:37Z",
+  "updated_at": "2026-11-12T12:15:37Z",
+  "expected_next_update_by": "2026-11-12T13:00:37Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": "e846c531",
+    "next_step": "P1-S1-pilot-5: part 5 written; the pre-check at 3690e4ca failed one layout test (German 'GESETZE HIER' on the tag widened the top row past 1080 px in heist and replay). Fixed: at normal text a header wider than 80 points breaks between its words. Next: client tests, pre-check again, then the gate request.",
+    "at": "2026-11-12T12:15:37Z"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-14T21:00:00Z",
+  "acks": [
+    "M6",
+    "M7"
+  ],
+  "requests": [
+    {
+      "id": "S1-R1",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Update calls on the HUD pieces: KitHud.set_clock(piece, text, alarmed), KitHud.set_alarm(piece, level) and KitHud.set_loot(piece, rows, fraction, aim, caption), so a piece changes state without being built again (as KitStatus.set_pill does for the pill).",
+      "files": [
+        "client/ui/kit_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The heist HUD builds the piece again in its place when its state changes, and sets only the clock's text and the bars' fill between changes.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R2",
+      "from": "S1",
+      "to": "K1",
+      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar até 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
+      "files": [
+        "client/ui/kit_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The HUD sets the kit caption's label to wrap with a minimum of 88 points; hides the \"Aim\" tick when there is no load target; writes the Vault's cracking as a third row (\"Vault N%\", with the string REHEARSE_LEGEND_VAULT) at normal text and as a thin KitBar beside the heiststatus/vaultprogress icon at large text, where a third row would stand the panel on the hint; moves the kit's rows into two columns (words, numbers) so each face is one draw call; and where a row is longer than 90 points, stands its number closer to its word and then under it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R3",
+      "from": "S1",
+      "to": "K1",
+      "ask": "A law chip for a narrow column: KitCards.law_chip keeps the name on one line and ends it in an ellipsis at 300 points, wider than the heist banner's column. Ask: a wrapping form (the name breaks between words, the chip no narrower than its longest word) with the kit's light disc behind an icon that is mostly dark ink (Glowing dark does not read on the leather without it).",
+      "files": [
+        "client/ui/kit_cards.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The HUD composes the chip from UI.panel(\"leather\"), Icons.view and UI.label, with UI.dress(disc, \"icon_disc\") behind a dark icon, and measures the icon's darkness itself. With large text the chip's spacing is 1 point and the disc 15 points, so a two-word name keeps one line beside the alarm.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R4",
+      "from": "S1",
+      "to": "K1",
+      "ask": "KitHud.alarm at large text and at high levels: at 200% text the word and \"N / 6\" on one line run off the phone's edge, so the count needs to go under the word; and the count has no raised state (the designs turn it red from level 4, as its bells).",
+      "files": [
+        "client/ui/kit_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The HUD moves the kit's count label under the word when text is above 130%, and from level 4 overrides its colour with the alarm_text_on_night token.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R5",
+      "from": "S1",
+      "to": "K1",
+      "ask": "A clock as the key frame 02-heist.png: KitHud.clock is a cream pill with 24-point figures; the frame's clock is larger, with a gold rim. Ask: that look on KitHud.clock (or a \"large\" form).",
+      "files": [
+        "client/ui/kit_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The HUD uses KitHud.clock as it is: smaller than before, no gold rim.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R6",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Rewards flying to their counter: a coin icon for the loot and a kit motion for a piece flying from a point to a control (Motion has pop and fill only). Also a role for words that lie on the world with an ink outline (the banner's \"Laws here\"): UI.label has no such look.",
+      "files": [
+        "client/ui/motion.gd",
+        "client/scripts/ui.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The HUD flies Icons.view(\"heiststatus/lootbag\") and moves each itself in _process; \"Laws here\" is a UI.label with the bold font, the gold token and an ink_line outline set by the HUD.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R7",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Lower heist_hud.gd's record in tools/ui_bake/budgets.json to 0 draw and 0 fill: check_screens.py now counts none (recorded 3 and 2).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T07:58:32Z",
+      "due": "2026-11-11T07:58:32Z",
+      "default": "The record stays at 3 and 2; the check passes either way.",
+      "escalate_to": "lead"
+    },
+    {
+      "from": "S1",
+      "blocking": false,
+      "created_at": "2026-11-11T20:14:06Z",
+      "due": "2026-11-12T20:14:06Z",
+      "escalate_to": "lead",
+      "id": "S1-R8",
+      "to": "lead",
+      "ask": "Add client/scripts/heist_hand.gd to S1's files for the heist tasks: Cast and Get out are built there with the old chrome.",
+      "files": [
+        "client/scripts/heist_hand.gd"
+      ],
+      "default": "heist_screen.gd re-dresses Cast (gold KitControls.big_action, the largest control) and Get out (leather big_action) in their place in the hand; heist_hand.gd is not touched."
+    },
+    {
+      "from": "S1",
+      "blocking": false,
+      "created_at": "2026-11-11T20:14:06Z",
+      "due": "2026-11-12T20:14:06Z",
+      "escalate_to": "lead",
+      "id": "S1-R9",
+      "to": "K1",
+      "ask": "Two icons the heist needs and the kit lacks: a gait (feet) icon for the walk / sneak / run pill and its menu, and a pause icon beside hud/play for a rehearsal's Pause.",
+      "files": [
+        "client/ui/icons.gd"
+      ],
+      "default": "The heist keeps FxIcons' drawn feet and pause marks (counted by check_screens) until the icons exist."
+    },
+    {
+      "from": "S1",
+      "blocking": false,
+      "created_at": "2026-11-11T20:14:06Z",
+      "due": "2026-11-12T20:14:06Z",
+      "escalate_to": "lead",
+      "id": "S1-R10",
+      "to": "K1",
+      "ask": "Lower fx_portrait.gd's record in tools/ui_bake/budgets.json to 19 draw: check_screens.py now counts 19 (recorded 20).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "default": "The record stays at 20; the check passes either way."
+    },
+    {
+      "from": "S1",
+      "to": "lead",
+      "id": "S1-R11",
+      "blocking": true,
+      "created_at": "2026-11-12T02:46:37Z",
+      "due": "2026-11-12T10:46:37Z",
+      "escalate_to": "lead",
+      "ask": "Switch the kit's numerals on: add \"numerals\": true to client/ui/kit_families.json (K1's file; K1-R11 said it is added once the numerals' art passes the gate, and P1-AIA-kit-3 is merged). Board 1's objection A (AD-R7) asks for the timer in KitNumerals' figures, and while the switch is off KitNumerals draws live text, so no still can show it. Measured on claude/ui-screens-heist with the switch on: heist/100 118, heist/200 114, heist/hc 118 draw calls (records 121, 115, 121), and screen_heist.gd's FIT=1 check passes at 200% text in en and pt_BR, sneak and alarm, and in high contrast. Either the lead adds the line at merge, or grants S1 the one line for this task.",
+      "files": [
+        "client/ui/kit_families.json"
+      ],
+      "default": "S1 asks the gate on stills shot as main stands (switch off: the clock is KitHud.clock's plain plate, as before) and puts beside them, marked as such in heist-pilot.md, the same moments shot with the switch on locally; objection A stays open until the switch is on."
+    },
+    {
+      "from": "S1",
+      "to": "lead",
+      "id": "S1-R12",
+      "blocking": false,
+      "created_at": "2026-11-12T11:55:00Z",
+      "due": "2026-11-13T11:55:00Z",
+      "escalate_to": "lead",
+      "ask": "Board 1's objection D (AD-R17) is met in game by a flat pass in client/world/fx_portrait.gd (FxPortrait._toon): Bramble and Hollow are filled in three tones of their colour with their marks kept. At 119 px Bramble reads as a grey-violet mass with small eyes, and the pass runs in GDScript the first time each portrait shows at a size. A flat-painted Bramble and Hollow at their source (CreatureBust's art) would be AIA-2's: should AIA-2 take it as a task?",
+      "files": [
+        "client/world/creature_bust.gd"
+      ],
+      "default": "The in-game flat pass stays as the fix for D; the source art is unchanged, and the gate judges the pass."
+    }
+  ],
+  "answers": [],
+  "next_step": "P1-S1-pilot-5: part 5 written; the pre-check at 3690e4ca failed one layout test (German 'GESETZE HIER' on the tag widened the top row past 1080 px in heist and replay). Fixed: at normal text a header wider than 80 points breaks between its words. Next: client tests, pre-check again, then the gate request."
+}

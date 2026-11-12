@@ -80,14 +80,24 @@ export class Holds {
     if (!r) return 0;
     const island = this.service.store.get(r.bundle);
     const n = Math.min(raids, r.raids - r.played);
-    const held = island ? build.hold(island, { seed: seedOf(r.bundle) + BigInt(r.played), raids: n,
-                                               ticks: clockTicks(0), crew: HOLD_CREW }) : 0;
+    // A measurement that throws is logged and set aside: marked measured,
+    // with no prior, so it is never picked again, before or after a restart,
+    // and its islands keep the default prior (SEC-20).
+    let held = 0, failed = false;
+    try {
+      held = island ? build.hold(island, { seed: seedOf(r.bundle) + BigInt(r.played), raids: n,
+                                           ticks: clockTicks(0), crew: HOLD_CREW }) : 0;
+    } catch (err) {
+      console.error(`hold ${r.bundle.slice(0, 12)}:`, err);
+      held = 0;
+      failed = true;
+    }
     transaction(this.db, () => {
-      const played = r.played + n;
-      const done = played >= r.raids || !island;
+      const played = failed ? r.raids : r.played + n;
+      const done = failed || played >= r.raids || !island;
       this.db.prepare("UPDATE island_holds SET played = ?, held = held + ?, measured_at = ? WHERE bundle = ? AND rules = ?")
         .run(played, held, done ? now : null, r.bundle, r.rules);
-      if (done && island) this.rate(r.bundle, (r.held + held) / r.raids, now);
+      if (done && island && !failed) this.rate(r.bundle, (r.held + held) / r.raids, now);
     });
     return n;
   }

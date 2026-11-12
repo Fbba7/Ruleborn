@@ -157,3 +157,38 @@ static func glow(node: CanvasItem) -> Tween:
 		.set_ease(Tween.EASE_IN_OUT)
 	t.tween_property(node, "self_modulate", Color.WHITE, half).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	return t
+
+
+## §21.8's "rewards fly into their counter": `node` (a coin, a loot bag)
+## flies from `from` on the screen to the middle of `to` in an arc, easing
+## out and shrinking a little, after `delay_ms`; it is freed when it lands.
+## Under reduced motion, or with nowhere to fly, nothing flies: the node is
+## freed at once and the counter's number says the change (§20.8). `node`
+## must already be in the tree.
+static func fly(node: Control, from: Vector2, to: Control, delay_ms := 0.0) -> Tween:
+	if Settings.reduced_motion or not node.is_inside_tree() or not is_instance_valid(to) \
+			or not to.is_inside_tree():
+		node.queue_free()
+		return null
+	node.top_level = true
+	node.z_index = 10
+	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	node.pivot_offset = node.size * 0.5
+	node.global_position = from - node.size * 0.5
+	var t := node.create_tween()
+	if delay_ms > 0.0:
+		node.modulate.a = 0.0
+		t.tween_interval(delay_ms / 1000.0)
+		t.tween_callback(func() -> void: node.modulate.a = 1.0)
+	t.tween_method(_fly_step.bind(node, from, to), 0.0, 1.0, _ms("longest_ms"))
+	t.tween_callback(node.queue_free)
+	return t
+
+
+static func _fly_step(k: float, node: Control, from: Vector2, to: Control) -> void:
+	if not is_instance_valid(to):
+		return
+	var e := 1.0 - pow(1.0 - k, 3.0)
+	var end := to.get_global_rect().get_center()
+	node.global_position = from.lerp(end, e) + Vector2(0.0, -sin(k * PI) * UI.px(44)) - node.size * 0.5
+	node.scale = Vector2.ONE * (1.0 - 0.3 * k)

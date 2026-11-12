@@ -18,7 +18,9 @@ check that gets skipped on the fifth candidate of the day.
 - `diff` lists every path changed between `base...head` that the task does
   not own, and exits 1 if there is one. A task owns its `files`, the
   `exceptions` the lead granted on it, its agent's own status and
-  progress files, and the pages `tools/check_all.sh` regenerates.
+  progress files, and the pages `tools/check_all.sh` regenerates. A rename
+  counts as both its paths, and no task owns an instruction file
+  (`CLAUDE.md`, `AGENTS.md`, `CLAUDE.local.md`, anything under `.claude/`).
 - `claims` exits 1 if two tasks in flight have `files` that can match the
   same path.
 - `owner` names the in-flight task (and agent) whose `files` cover a path.
@@ -33,6 +35,7 @@ before it: `["art/ui/**", "!art/ui/icons/**"]`.
 import fnmatch
 import json
 import pathlib
+import re
 import subprocess
 import sys
 
@@ -155,9 +158,47 @@ def allowed(task: dict) -> list:
     return files
 
 
+#: The agents' instruction files, which no task may change whatever its
+#: globs: only the owner changes them (SEC-46).
+INSTRUCTION = re.compile(r"(^|/)(CLAUDE\.md|AGENTS\.md|CLAUDE\.local\.md)$|(^|/)\.claude/")
+
+
 def unowned(task: dict, changed: list) -> list:
     files = allowed(task)
-    return [p for p in changed if not owned(files, p)]
+    return [p for p in changed if INSTRUCTION.search(p) or not owned(files, p)]
+
+
+def changed(base: str, head: str, cwd=ROOT) -> list:
+    """Every path `base...head` changes, deletes or adds."""
+    # A rename is listed as its old path and its new one, so both are checked
+    # (SEC-27): with rename detection, the path renamed away was not shown.
+    out = subprocess.run(["git", "diff", "--name-only", "--no-renames", f"{base}...{head}"],
+                         cwd=cwd, capture_output=True, text=True, check=True).stdout
+    return [p for p in out.splitlines() if p]
+
+
+def _renamed_away() -> list:
+    """`owners.py diff` on a temporary repository where a builder owning
+    client/ui/ moved CLAUDE.md into it (SEC-27)."""
+    import os
+    import tempfile
+    env = {**os.environ, "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1"}
+    with tempfile.TemporaryDirectory() as tmp:
+        def git(*args):
+            subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid",
+                            "-c", f"core.hooksPath={os.devnull}", *args],
+                           cwd=tmp, env=env, capture_output=True, check=True)
+        git("init", "-q", "-b", "base")
+        (pathlib.Path(tmp) / "CLAUDE.md").write_text("# orders\n" * 20)
+        (pathlib.Path(tmp) / "client" / "ui").mkdir(parents=True)
+        (pathlib.Path(tmp) / "client" / "ui" / "kit.gd").write_text("extends Node\n")
+        git("add", "-A")
+        git("commit", "-q", "-m", "base")
+        git("checkout", "-q", "-b", "head")
+        git("mv", "CLAUDE.md", "client/ui/notes.md")
+        git("commit", "-q", "-m", "a rename")
+        task = {"id": "T", "files": ["client/ui/**"], "assigned_to": "K1"}
+        return unowned(task, changed("base", "head", cwd=tmp))
 
 
 def clashes(tasks: list) -> list:
@@ -202,6 +243,14 @@ def self_test() -> None:
     assert unowned(task, changed) == ["client/project.godot"], unowned(task, changed)
     task["exceptions"] = ["client/project.godot"]
     assert unowned(task, changed) == []
+    # SEC-27: the source side of a rename is checked too.
+    assert _renamed_away() == ["CLAUDE.md"], _renamed_away()
+    # SEC-46: no task's globs reach an instruction file.
+    ui = {"id": "U", "files": ["client/ui/**", ".claude/**"], "assigned_to": "K1"}
+    for path in ["client/ui/CLAUDE.md", "AGENTS.md", "client/ui/AGENTS.md",
+                 "client/ui/CLAUDE.local.md", ".claude/settings.json", "client/ui/.claude/x.md"]:
+        assert unowned(ui, [path]) == [path], path
+    assert unowned(ui, ["client/ui/claude.md.import", "client/ui/kit.gd"]) == []
     # Overlapping claims.
     assert overlap("client/ui/**", "client/ui/art/**")
     assert overlap("client/**/*.gd", "client/ui/kit.gd")
@@ -246,9 +295,7 @@ def main(argv: list) -> int:
     cmd = argv[0]
     if cmd == "diff" and len(argv) == 4:
         task = _task(backlog, argv[1])
-        out = subprocess.run(["git", "diff", "--name-only", f"{argv[2]}...{argv[3]}"],
-                             cwd=ROOT, capture_output=True, text=True, check=True).stdout
-        bad = unowned(task, [p for p in out.splitlines() if p])
+        bad = unowned(task, changed(argv[2], argv[3]))
         for p in bad:
             print(f"not owned by {task['id']}: {p}")
         if not bad:

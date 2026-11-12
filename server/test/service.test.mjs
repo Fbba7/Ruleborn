@@ -8,7 +8,7 @@ import { dayCeiling } from "../src/economy.mjs";
 import { LEASE_MS, Refused } from "../src/service.mjs";
 import { readHeader } from "../src/sim.mjs";
 import { sha256 } from "../src/store.mjs";
-import { established, openPlan, play, server, simulation, twoPlayers } from "./setup.mjs";
+import { established, openPlan, play, server, simulation, submitCrewed, twoPlayers } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
 
@@ -364,7 +364,7 @@ test("a game among friends is not a raid for fatigue (9.6, F48)", () => {
   const { invite } = t.service.friends.invite(t.defender.account);
   t.service.friends.accept(t.raider.account, invite);
   const fun = t.service.lease(t.raider.account, t.bundle, null, { mode: "friendly" });
-  t.service.submit(t.raider.account, fun.token, play(t, fun, { plan: openPlan() }));
+  submitCrewed(t, t.raider.account, fun);                 // a friendly heist names its crew (SEC-24)
   t.clock.now += 60 * 60 * 1000;
   const raid = t.service.lease(t.raider.account, t.bundle);
   const out = t.service.submit(t.raider.account, raid.token, play(t, raid, { plan: openPlan() }));

@@ -231,6 +231,19 @@ static func _controls(th: Theme, text: Color, _light: bool) -> void:
 		th.set_stylebox("grabber_area_highlight", kind, filled)
 		for icon: String in ["grabber", "grabber_highlight"]:
 			th.set_icon(icon, kind, knob())
+		# From the kit's atlas once the slider's skin is switched on (K06).
+		_set_box(th, kind, "slider", KitSkin.stylebox(KitSkin.face("slider", "track")))
+		for area: String in ["grabber_area", "grabber_area_highlight"]:
+			_set_box(th, kind, area, KitSkin.stylebox(KitSkin.face("slider", "fill")))
+		for pair: Array in [["grabber", "normal"], ["grabber_highlight", "pressed"], ["grabber_disabled", "disabled"]]:
+			var baked := KitSkin.cut(KitSkin.face("slider", "knob", pair[1]))
+			if baked != null:
+				th.set_icon(pair[0], kind, baked)
+
+
+static func _set_box(th: Theme, kind: String, part: String, box: StyleBox) -> void:
+	if box != null:
+		th.set_stylebox(part, kind, box)
 
 
 

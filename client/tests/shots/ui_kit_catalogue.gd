@@ -481,11 +481,15 @@ static func parts() -> Array:
 			return KitHud.meter(4, 6, "%s 4 / 6" % t.call("HUD_ALARM_WORD")), "meter"))
 		r.add_child(_cell("K31", "A", func() -> Control: return KitHud.clock("0:24", true), "clock"))
 		r.add_child(_cell("K31", "RM", func() -> Control: return KitHud.clock("2:26"), "clock"))
+		r.add_child(_cell("K31", "N", func() -> Control: return KitHud.clock_large("2:26"), "large clock"))
+		r.add_child(_cell("K31", "A", func() -> Control: return KitHud.clock_large("0:24", true), "large clock"))
 		var alarm := _wide("K31", "N", func() -> Control: return KitHud.alarm(2, 6, t.call("HUD_ALARM_WORD")), "alarm")
+		var fit := _wide("K31", "N", func() -> Control: return KitHud.alarm_fit(4, 6, t.call("HUD_ALARM_WORD")),
+			"alarm_fit, 4 of 6")
 		var digits := _flow()
 		for finish: String in ["num_timer", "num_timer_red"]:
 			digits.add_child(_wide("K31", "N", Art.numerals.bind(finish), "%s, every glyph" % finish))
-		return _part("K31 Heist clock and alarm meter", [r, alarm, digits])])
+		return _part("K31 Heist clock and alarm meter", [r, alarm, fit, digits])])
 	out.append(["K32 Pips", func() -> Control:
 		var r := _flow()
 		r.add_child(_cell("K32", "N", func() -> Control: return KitHud.pips(2, 2), "2 of 2"))
@@ -494,7 +498,8 @@ static func parts() -> Array:
 		return _part("K32 Pips", [r])])
 	out.append(["K33 Hint", func() -> Control:
 		return _part("K33 Hint", [_wide("K33", "N", func() -> Control: return KitStatus.hint(t.call("MAP_NO_ALERTS"))),
-			_wide("K33", "RM", func() -> Control: return KitStatus.hint(t.call("MAP_NO_ALERTS")))])])
+			_wide("K33", "RM", func() -> Control: return KitStatus.hint(t.call("MAP_NO_ALERTS"))),
+			_wide("K33", "N", func() -> Control: return KitHud.tip(t.call("HEIST_SKIFF_HINT")), "tip")])])
 	out.append(["K34 Spinner", func() -> Control:
 		# None today: one sprite turned, a quarter a frame; reduced, a still
 		# mark with the word.
@@ -546,7 +551,11 @@ static func parts() -> Array:
 			var l := UI.label("7", 18)
 			l.theme_type_variation = "NumberM"
 			p.add_child(l)
-			return p
+			# The cell is wider than the disc: centred, the disc keeps its own
+			# round size, the host its sprite needs (`KitSkin.fits`).
+			var c := CenterContainer.new()
+			c.add_child(p)
+			return c
 		r.add_child(_cell("K38", "N", disc))
 		r.add_child(_cell("K38", "A", disc))
 		r.add_child(_cell("K38", "N", func() -> Control:
@@ -604,6 +613,11 @@ static func parts() -> Array:
 		r.add_child(_cell("K44", "N", func() -> Control:
 			return KitCards.law_disc("laws/sleepwalk", "Sleepwalk", "spirit"), "disc"))
 		return _part("K44 Law card and law disc", [r])])
+	out.append(["K44 Law chip, fit", func() -> Control:
+		var r := _flow()
+		for icon: String in ["laws/glowingdark", "laws/halfgravity"]:
+			r.add_child(_cell("K44", "N", KitCards.law_chip_fit.bind(icon, "Half gravity, deep"), "chip, fit"))
+		return _part("K44 Law chip, fit", [r])])
 	for states: Array in [["N", "P", "D"], ["S", "L"]]:
 		out.append(["K45 Product card", func() -> Control:
 			var r := _flow()
@@ -618,6 +632,11 @@ static func parts() -> Array:
 		var r := _flow()
 		r.add_child(_cell("K46", "N", loot))
 		r.add_child(_cell("K46", "RM", loot))
+		var fit := func() -> Control:
+			return KitHud.loot_fit([[t.call("HUD_ROOM"), "1,840"], [t.call("HUD_LEFT"), "2,600"]], 0.62, 0.8, "80%",
+				[t.call("BUILDER_TOOL_VAULT"), "40%", 0.4])
+		r.add_child(_cell("K46", "N", fit, "loot_fit"))
+		r.add_child(_cell("K46", "RM", fit, "loot_fit"))
 		return _part("K46 Loot panel", [r])])
 	out.append(["K47 Album, build and fact cards", func() -> Control:
 		var r := _flow()

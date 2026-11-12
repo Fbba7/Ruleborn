@@ -4,23 +4,18 @@
   "branch": "claude/ui-artist",
   "model": "Fable 5.2",
   "agent_state": "active",
-  "task_id": "P1-AIA-kit-5",
+  "task_id": "P1-AIA-kit-7",
   "task_state": "working",
-  "claimed_at": "2026-11-09T22:25:25Z",
-  "lease_until": "2026-11-10T01:25:25Z",
-  "updated_at": "2026-11-09T22:53:00Z",
-  "expected_next_update_by": "2026-11-09T23:38:00Z",
+  "claimed_at": "2026-11-11T01:16:18Z",
+  "lease_until": "2026-11-11T04:16:18Z",
+  "updated_at": "2026-11-11T01:25:19Z",
+  "expected_next_update_by": "2026-11-11T02:10:19Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "d2deb896",
-    "next_step": "batch 2b sources"
+    "last_green_sha": "00571a44",
+    "next_step": "batch 2d is drawn, baked and proofed; write the handoff, run the pre-check"
   },
-  "precheck": {
-    "sha": "f3456cacc25ba00fa096db1516d85a677f3d7c77",
-    "exit": 0,
-    "finished_at": "2026-11-05T00:25:14Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
@@ -86,24 +81,6 @@
       "escalate_to": "lead"
     },
     {
-      "id": "AIA-R13",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "Batch 1b fills the kit atlas: 51 pieces in 2048 x ~1900, and disc_school's 6 pieces do not fit beside them. When the bake gains atlas pages (AIA-R12), bake art/ui/kit_next/disc_school/ into the kit; KitSkin draws disc_school as its tinted `box` (vertex-coloured per school) under the untinted `frame` (ink, gloss, outline), both at the same rect",
-      "files": [
-        "tools/ui_bake/bake.js",
-        "client/ui/kit_skin.gd"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-04T16:45:00Z",
-      "due": "2026-11-05T16:45:00Z",
-      "default": "disc_school stays in art/ui/kit_next/ (sources written, proofed from SVG, not baked) and draws in code until the atlas has pages; no piece is shrunk",
-      "escalate_to": "lead",
-      "cc": [
-        "lead"
-      ]
-    },
-    {
       "id": "AIA-R14",
       "from": "AIA",
       "to": "K1",
@@ -121,7 +98,7 @@
       "id": "AIA-R15",
       "from": "AIA",
       "to": "K1",
-      "ask": "Batch 1c bakes the numerals as num_<finish>_<glyph> (finishes gold 28, white 22, timer 28, timer_red 28 pt; glyphs 0-9, comma, period, colon, slash, plus, minus, percent, x, question, space) on atlas page 2, drawn in Manrope 800 with tabular figures per §21.8 and D4 (b). (1) kit-spec.md section 2.2's T3 row still says the baked numerals are drawn with Lilita One: please make it read Manrope 800 tabular. (2) To draw them, KitSkin sets a number glyph by glyph: each piece carries `advance`; the piece's box is its advance cell plus 1 pt each side, so draw it at pen - (w - advance)/2 and move the pen by `advance`. The client's own number formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5)",
+      "ask": "Batch 1c bakes the numerals as num_<finish>_<glyph> (finishes gold 28, white 22, timer 28, timer_red 28 pt; glyphs 0-9, comma, period, colon, slash, plus, minus, percent, x, question, space) on atlas page 2, drawn in Manrope 800 with tabular figures per \u00a721.8 and D4 (b). (1) kit-spec.md section 2.2's T3 row still says the baked numerals are drawn with Lilita One: please make it read Manrope 800 tabular. (2) To draw them, KitSkin sets a number glyph by glyph: each piece carries `advance`; the piece's box is its advance cell plus 1 pt each side, so draw it at pen - (w - advance)/2 and move the pen by `advance`. The client's own number formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5)",
       "files": [
         "docs/art/ui-quality/kit-spec.md",
         "client/ui/kit_skin.gd"
@@ -151,20 +128,73 @@
       "escalate_to": "lead"
     },
     {
-      "id": "AIA-R17",
+      "id": "AIA-R18",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "KitSkin: draw the batch 2b pieces: the toggle's track and knob, the slider's track, fill and knob, the heist tab's halo, the week bars, the tab bar and tab faces, the segmented bed and faces, and the chips",
+      "files": [
+        "client/ui/kit_skin.gd",
+        "client/ui/kit_families.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T01:55:00Z",
+      "due": "2026-11-11T01:55:00Z",
+      "default": "the pieces sit in the atlas unused; those skins stay off and are drawn in code",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R19",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "Batch 2c bakes own-name shapes for seven of K1-R14's nine materials: panel_dark__album, panel_dark__fact, panel_dark__plate, bar_track__bar_track_light, tag__tag, tag__island_label, success__banner_success (each `normal` only), and tag__tag_warn is now a light shape under its dark token words. Please have KitSkin look these shapes up by material name and switch them on. disc_school is not baked (AIA-R21)",
+      "files": [
+        "client/ui/kit_skin.gd",
+        "client/ui/kit_families.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T03:22:46Z",
+      "due": "2026-11-11T03:22:46Z",
+      "default": "the pieces sit in the atlas unused; the seven materials stay code-drawn",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R20",
       "from": "AIA",
       "to": "lead",
-      "ask": "Batch 2b (P1-AIA-kit-5) bakes pieces for tab_bar, tab, tab_active, segmented, segmented_on, chip, chip_on, tile, locked, toggle and slider. The catalogue coverage test fails with '<skin> has art but no component in SKINS_OF' until `client/tests/ui_kit_tests.gd` (K1's file) maps them: K05 toggle, K06 slider, K07 segmented and segmented_on, K08 chip and chip_on, K09 tab_bar, tab and tab_active, K39 tile, and the locked face. Please grant me that one constant for this task, as in the kit-4 resync, or have K1 add the lines",
+      "ask": "Allow a fourth kit atlas page (client/ui/art/kit_4.webp, kit_4_hc.webp and their .import files) in AIA's files. With the chips' locked state, which the coverage test needs, the kit is 2.76 pages of area and the shelf packer needs a fourth page for the last 29 small pieces. Two drawn shapes are held out of the build to stay at three pages: pill__pill_gold_edge and success__green_muted (normal, pressed; art/ui/kit_build/kit_2c.py, HELD)",
+      "files": [
+        "client/ui/art/kit_4.webp",
+        "client/ui/art/kit_4_hc.webp"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-10T03:22:46Z",
+      "due": "2026-11-11T03:22:46Z",
+      "default": "the kit stays at three pages; pill_gold_edge and green_muted stay code-drawn",
+      "escalate_to": "lead",
+      "state": "answered by the lead, cycle 48 (default applied; docs/progress/requests.md on main)"
+    },
+    {
+      "id": "AIA-R21",
+      "from": "AIA",
+      "to": "lead",
+      "ask": "P1-AIA-kit-6's done_when asks for disc_school as a piece in client/ui/art/kit.json, and the catalogue's coverage test fails any baked skin that SKINS_OF names no component for: baked at 65aabbda, the pre-check failed on `disc_school has art but no component in SKINS_OF` (393 of 394). SKINS_OF is in client/tests/ui_kit_tests.gd, K1's file. Please either allow AIA one SKINS_OF line for disc_school in this task, as AIA-R17 did for batch 2b, and say which component it stands for (KitSkin gives the skin the materials portrait_*, ring_* and window_*; K37 lists a locked state, so mapping it there also needs locked pieces for disc_school__box and disc_school__frame and AIA-R20's fourth atlas page), or have K1 add the line in the commit that bakes it. The branch is green at 00571a44 with disc_school drawn and kept in art/ui/kit_next/, and every other done_when line met",
       "files": [
         "client/tests/ui_kit_tests.gd"
       ],
-      "blocking": false,
-      "created_at": "2026-11-09T22:38:00Z",
-      "due": "2026-11-10T00:30:00Z",
-      "default": "I add the batch 2b faces to SKINS_OF only (no other line of the file, no test loosened), as granted for the kit-4 resync, and say so in the handoff",
-      "escalate_to": "lead"
+      "blocking": true,
+      "created_at": "2026-11-10T06:50:38Z",
+      "due": "2026-11-10T12:50:38Z",
+      "default": "the task is taken as ready at the handoff's sha without K1-R14 part 1 (pre-check and gate request are in this file); disc_school stays in art/ui/kit_next/, unbaked and code-drawn, K1-R14's own default, and baking it moves to a task that carries the SKINS_OF line",
+      "escalate_to": "lead",
+      "state": "answered by the lead, cycle 48 (default applied; docs/progress/requests.md on main)"
     }
   ],
-  "answers": [],
-  "next_step": "batch 2b drawn, baked and proofed (176 results, 0 fail); next: shape marks on the oak and silver frames, coverage test, guard, checks"
+  "answers": [
+    {
+      "request_id": "K1-R14",
+      "answer": "Parts 1 and 2, in P1-AIA-kit-6. (1) Not done: disc_school is drawn (box and frame; normal, pressed, disabled) and kept in art/ui/kit_next/, unbaked. Baked, it fails the catalogue's coverage test until SKINS_OF names a component for it (AIA-R21, to the lead), so it stays code-drawn for now, the request's default. (2) Seven materials have a baked shape of their own name, normal only: panel_dark__album, panel_dark__fact, panel_dark__plate, bar_track__bar_track_light, tag__tag, tag__island_label, success__banner_success. tag__tag_warn is redrawn light, so its dark token words read on it. pill_gold_edge and green_muted are drawn and held out of the atlas, which is full at three pages (AIA-R20): they stay code-drawn, the request's default. Wiring: AIA-R19.",
+      "at": "2026-11-10T06:50:38Z"
+    }
+  ],
+  "next_step": "wait for the Kit art gate on batch 2c"
 }

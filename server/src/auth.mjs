@@ -97,9 +97,10 @@ const refused = () => new Refused(401, "session_refused");
 
 export class Auth {
   /** `keys` is the token key ring (tokens.mjs keyring). `rotateMs` is how
-   *  long a refresh token is kept before a refresh rotates it: 0, the
-   *  default, rotates it on every refresh — one written row a session an
-   *  hour. Longer writes once in that span: within it a refresh answers a
+   *  long a refresh token is kept before a refresh rotates it: 0, this
+   *  constructor's default, rotates it on every refresh — one written row a
+   *  session an hour; a deployed server passes 24 hours unless told otherwise
+   *  (rotateHoursOf). Longer writes once in that span: within it a refresh answers a
    *  new access token and the same refresh token, writing nothing (the
    *  owner's decision on refresh's billed row, docs/security/auth.md). */
   constructor(service, keys, { rotateMs = 0 } = {}) {
@@ -221,9 +222,11 @@ export class Auth {
     if (everywhere || others || (device !== null && device !== t.session)) this.account(token);
     if (everywhere) return this.endAll(t.account, "everywhere", now);
     if (others) {
-      return Number(this.db.prepare(
+      const ended = Number(this.db.prepare(
         "UPDATE sessions SET ended_at = ?, ended = 'others' WHERE account = ? AND id != ? AND ended_at IS NULL")
         .run(now, t.account, t.session).changes);
+      this.#unpush(t.account);
+      return ended;
     }
     // One device from the list: only a session of this account; any other
     // id ends nothing and answers the same, so ids cannot be probed.
@@ -278,9 +281,28 @@ export class Auth {
     if (!ENDINGS.includes(why)) throw new Error(`no ending ${why}`);
     const where = by === "id" ? "id = ?" : "account = ?";
     const also = account ? " AND account = ?" : "";
-    return Number(this.db.prepare(
+    const ended = Number(this.db.prepare(
       `UPDATE sessions SET ended_at = ?, ended = ? WHERE ${where}${also} AND ended_at IS NULL`)
       .run(now, why, key, ...(account ? [account] : [])).changes);
+    if (ended) {
+      this.#unpush(by === "account" ? key
+        : account ?? this.db.prepare("SELECT account FROM sessions WHERE id = ?").get(key)?.account);
+    }
+    return ended;
+  }
+
+  /** The account's push token cleared once the session that registered it
+   *  has ended, so a signed-out device is sent nothing more; "sign out
+   *  everywhere" ends them all, so it always goes. A token no session is
+   *  known to have registered goes at any sign-out, the device sending it
+   *  again when it next starts (SEC-37). */
+  #unpush(account) {
+    if (!account) return;
+    this.db.prepare(
+      `UPDATE accounts SET push_token = NULL, push_session = NULL
+        WHERE id = ? AND push_token IS NOT NULL
+          AND (push_session IS NULL OR NOT EXISTS (
+                SELECT 1 FROM sessions WHERE id = accounts.push_session AND ended_at IS NULL))`).run(account);
   }
 
   /** An account's sessions and linked identities, gone with its deletion
@@ -357,6 +379,7 @@ export class Auth {
       this.db.prepare(
         `UPDATE sessions SET ended_at = ?, ended = 'identity'
           WHERE account = ? AND via = ? AND id != ? AND ended_at IS NULL`).run(now, account, platform, session);
+      this.#unpush(account);
     });
     return this.identities(account);
   }

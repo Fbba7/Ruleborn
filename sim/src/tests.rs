@@ -2481,6 +2481,16 @@ fn an_island_is_one_encoding_and_one_hash() {
 }
 
 #[test]
+fn an_exposure_above_i32_max_is_refused() {
+    use crate::island::{Island, Malformed};
+    let mut b = Island::example().encode();
+    b[6..10].copy_from_slice(&0x8000_0000u32.to_le_bytes());
+    assert_eq!(Island::decode(&b), Err(Malformed::Exposed));
+    b[6..10].copy_from_slice(&(i32::MAX as u32).to_le_bytes());
+    assert!(Island::decode(&b).is_ok());
+}
+
+#[test]
 fn a_second_encoding_of_an_island_is_refused() {
     use crate::island::{Island, Malformed};
     let good = Island::example().encode();
@@ -2517,6 +2527,31 @@ fn a_second_encoding_of_an_island_is_refused() {
     off[10] = 12;                        // the Vault's x, on a 12-wide realm
     assert_eq!(Island::decode(&off), Err(Malformed::OffGrid));
     assert_eq!(Island::decode(&good[..good.len() - 1]), Err(Malformed::Truncated));
+}
+
+/// SEC-22: a bare tile carries only a pace the rules define, normal (0), mud
+/// (60) or a fast path (115). Any other byte made a hand-edited island whose
+/// every tile was 1% of normal speed, slower than any honest editor can make.
+#[test]
+fn a_pace_the_rules_do_not_define_is_refused() {
+    use crate::island::{Island, Malformed};
+    let good = Island::example().encode();
+    let pace = 4 + 10 + 1;               // the first tile's pace byte
+    assert!(Island::example().tiles[0].feature.is_none(), "the first tile is open ground");
+    for p in [60u8, 115] {
+        let mut b = good.clone();
+        b[pace] = p;
+        assert_eq!(Island::decode(&b).map(|i| i.tiles[0].pace), Ok(p), "pace {p} is defined");
+    }
+    for p in [1u8, 40, 50, 59, 61, 99, 101, 114, 116, 255] {
+        let mut b = good.clone();
+        b[pace] = p;
+        assert_eq!(Island::decode(&b), Err(Malformed::Pace), "pace {p}");
+    }
+    // 100 is still the second encoding of normal, refused as before.
+    let mut b = good.clone();
+    b[pace] = 100;
+    assert_eq!(Island::decode(&b), Err(Malformed::NonCanonicalPace));
 }
 
 #[test]

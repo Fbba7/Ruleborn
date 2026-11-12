@@ -69,7 +69,7 @@ test("a curated defence keeps the generated origin while only curation's verbs a
   assert.deepEqual([now.origin, now.seed], ["generated", v.layouts[1]], "a post turned keeps it generated");
   // The corner tile's pace changed: the terrain is edited.
   const edited = Uint8Array.from(turned);
-  edited[15] = 50;
+  edited[15] = 60;                      // mud: 50 is no pace the rules define (SEC-22)
   assert.equal((await call("PUT", "/v1/islands/heart", edited)).status, 201);
   now = await (await call("GET", "/v1/curation/heart")).json();
   assert.deepEqual([now.origin, now.seed], ["authored", null], "the terrain edited, authored (13.3)");

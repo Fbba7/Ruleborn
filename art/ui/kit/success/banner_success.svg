@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="48" data-slice="18 20 18 24">
+  <!-- Written by art/ui/kit_build/build_kit.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F7A5E"/><stop offset="0.5" stop-color="#25634F"/><stop offset="1" stop-color="#1A4A3E"/></linearGradient>
+    <clipPath id="c2"><rect x="1" y="1" width="36" height="42" rx="16" fill="#FFFFFF"/></clipPath>
+    <filter id="f3" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4"/></filter>
+    <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.0784"/><stop offset="0.7" stop-color="#FFFFFF" stop-opacity="0.0353"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.0157"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8FF0A8"/><stop offset="0.4" stop-color="#3FBF7F"/><stop offset="1" stop-color="#1E7A50"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <rect x="1" y="5" width="36" height="42" rx="16" fill="#0A0618" stroke="#1A0C14" stroke-width="2"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="url(#g1)"/>
+    <g clip-path="url(#c2)"><rect x="2" y="2" width="34" height="40" rx="15" fill="none" stroke="#8FF0A8" stroke-width="4.5" stroke-opacity="0.6" filter="url(#f3)"/></g>
+    <rect x="4" y="3.5" width="30" height="18.5" rx="13" fill="url(#g4)"/>
+    <rect x="1.25" y="1.25" width="35.5" height="41.5" rx="15.75" fill="none" stroke="url(#g5)" stroke-width="2.5"/>
+    <rect x="0.5" y="0.5" width="37" height="43" rx="16.5" fill="none" stroke="#1A0C14" stroke-width="1"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <rect x="1" y="5" width="36" height="42" rx="16" fill="#000000"/>
+    <rect x="1" y="1" width="36" height="42" rx="16" fill="#140C2A"/>
+    <rect x="2" y="2" width="34" height="40" rx="14.5" fill="none" stroke="#4AAA4C" stroke-width="3"/>
+  </g>
+</svg>

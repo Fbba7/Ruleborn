@@ -25,7 +25,7 @@
 // share over the time it counted, whenever the staffing or the level of a
 // producer changes and when it is collected. Nothing is read from the device.
 
-import { createHash } from "node:crypto";
+import { createHash, createHmac } from "node:crypto";
 import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
@@ -102,6 +102,13 @@ const WORK = Object.fromEntries(content("traits").flatMap((t) => {
 function dice(seed) {
   let i = 0;
   return (n) => createHash("sha256").update(`${seed}:${i++}`).digest().readUInt32BE(0) % n;
+}
+
+/** The same draws, keyed with a secret the device never holds, for a roll
+ *  the device must not be able to work out before it submits (SEC-25). */
+function keyedDice(key, seed) {
+  let i = 0;
+  return (n) => createHmac("sha256", key).update(`${seed}:${i++}`).digest().readUInt32BE(0) % n;
 }
 
 /** Whether character `c` is away at `at`: on a heist or resting after it. */
@@ -225,6 +232,15 @@ export class Home {
   constructor(service) {
     this.service = service;
     this.db = service.db;
+  }
+
+  /** The stray roll's key: from the server's secret, so it is the same
+   *  after a restart; a service with no secret draws one of its own. */
+  get strayKey() {
+    this._strayKey ??= this.service.secret
+      ? createHmac("sha256", String(this.service.secret)).update("ruleborn stray roll").digest()
+      : this.service.random(32);
+    return this._strayKey;
   }
 
   get universe() {
@@ -554,7 +570,7 @@ export class Home {
    *  own (firstStrays), so it finds none. §11.5's "one of them rare" waits
    *  for a trait to have a rarity (G82). */
   findStray(account, token, laws, now) {
-    const roll = dice(`${account}:stray:${token}`);
+    const roll = keyedDice(this.strayKey, `${account}:stray:${token}`);
     if (roll(facts.STRAY_HEIST_ODDS) !== 0) return null;
     const known = laws.filter((l) => LAW_SCHOOL[l]);
     const law = known.length ? known[roll(known.length)] : null;
