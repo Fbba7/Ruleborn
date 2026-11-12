@@ -7,6 +7,13 @@ reference at phone size, with the gate's verdicts. AD checks every
 owner-checked quality (`../calibration.md`: 1, 2, 3, 6, 8, 9, 13 and 14) and,
 because this is board 1, quality 4 (press feedback) from a frame pair.
 
+**Round 3 (P1-AD-board-1c, 12 November 2026, on main at `ed6bcfdc`): the
+board still does not stand.** A and B are closed. D is narrowed again, to
+the surface of two portraits: Bramble's grainy shell and Hollow's glassy,
+faceted body, which also fills its disc. The "Laws here" header now has an
+ink outline, but it cannot be seen on the night sky; it is objection F. See
+"Round 3" at the end of this page.
+
 **Round 2 (P1-AD-board-1b, 12 November 2026, on main at `085c812a`): the
 board still does not stand.** C and E are closed. A stays open until the
 kit's numerals are switched on (P1-K1-numerals-on). B is narrowed to one
@@ -398,3 +405,111 @@ Board 1 stands when:
 
 AD re-checks only those three (and the header, if it is fixed by then), as
 P1-AD-board-1c. Phase 2 still waits for board 1 (section 3.8 of the report).
+
+## Round 3
+
+Checked by AD, P1-AD-board-1c, 12 November 2026, on main at `ed6bcfdc`
+(P1-K1-numerals-on and P1-S1-pilot-4 merged as `541e4c97`). What S1 changed
+is in "Part 4" of `docs/art/tracks/heist-pilot.md`. The gate's verdicts on
+the two tasks (advice only):
+- `../verdicts/P1-K1-numerals-on/1d21bf4a.json`, heist at 100%: Display type
+  fail (fff). The judge finds the timer met and the header not.
+- `../verdicts/P1-S1-pilot-4/e846c531.json`: Character presence at 100% fail;
+  Hierarchy at 200% pt_BR with no plan fail (4 of 6).
+
+AD shot every still below on main with `tools/render/shoot.sh
+client/tests/shots/screen_heist.gd`, with `FIT=1` on every shot. All five
+screen shots print "fit ok":
+- sneak at 100%, with a plan;
+- sneak at 200% in pt_BR, with a plan;
+- alarm in high contrast at 200%, with a plan;
+- sneak at 200% in pt_BR, with no plan;
+- alarm at 200% in pt_BR, with no plan.
+
+AD's sneak at 100% differs from S1's `part4-sneak-100.png` only where the
+numerals are now on and where the world moves: a mean of 3.7 of 255, and
+3.8% of pixels by more than 16.
+
+**Decision: the board does not stand.** A and B are closed. D is open,
+narrowed to two portraits' surfaces. F, the header, is open.
+
+### The stills
+
+Heist at 100%: the key frame, then main.
+
+![Heist at 100%: key frame and main](board-1/r3-1-heist-100.png)
+
+Heist at 200% in pt_BR with no crew plan: the key frame, then main at the
+sneak, then main at the alarm.
+
+![Heist at 200% pt_BR, no plan](board-1/r3-2-heist-200-pt-noplan.png)
+
+Heist at 200% in pt_BR with a plan: the key frame, then main at the sneak,
+then main at the alarm in high contrast.
+
+![Heist at 200% pt_BR, with a plan](board-1/r3-3-heist-200-pt.png)
+
+The crew tray at 100%, in colour and in grayscale (crop of the 100% still):
+
+![Crew tray, colour and grayscale](board-1/r3-4-crew-tray.png)
+
+The five portraits at 119 px, as `FxPortrait.compose` makes them (Pip, Mo,
+Bramble, Hollow, Ash), in colour and in grayscale (`SIZES=1 PORTRAITS=`):
+
+![Portraits, colour and grayscale](board-1/r3-5-portraits.png)
+
+The top of the screen: the key frame, then main at 100%, then main at 200%
+in pt_BR. Then the header at 4×, on main:
+
+![Header and timer: key frame and main](board-1/r3-7-top.png)
+
+![Header at 4x](board-1/r3-6-header.png)
+
+### The objections
+
+| ID | Round 3 | AD's check |
+|---|---|---|
+| A | Closed | The timer "2:25" is drawn in `KitNumerals`: cream-to-lilac gradient figures, a full ink outline and a hard drop, on the cream plate. It matches the key frame's "2:38" at 100%, at 200% in pt_BR and in high contrast. The judge agrees. |
+| B | Closed | With no plan, at 200% in pt_BR, Cast keeps its row beside Get out with the short verb "Lançar" and a greyed wand. The tray starts at y 1190, below the loot panel, which ends at y 1131. "Carregar até 100%" sits inside its panel, and "Quem está aí?" is whole. `FIT=1` passes at the sneak and at the alarm. Note, not holding: the gate's Hierarchy fail on this still is fair. "Espaço", "Restam" and "Carregar até 100%" are set as large and bold as "Lançar", so at 200% the loot panel competes with Cast. The loot labels could step down one size at large text (S1). |
+| D | **Open, narrowed** | The disc and outline fix works. Each figure has an ink silhouette outline and a disc about 30 L* above it, as S1 measured. Pip, Mo and Ash read at once in colour and in grayscale: a clear shape, a face, dark details. Two portraits still fail, on their surface rather than their value. Bramble's shell and body carry a fine, mottled photographic grain where the others are smooth toon fills: rubric v3's stone-grain fail. Hollow's body is glassy violet facets with light and dark flecks, which reads as a gem's reflections, not a toon fill. Its body fills the disc to the rim, so little of the disc shows, and its face is two white eyes. In grayscale it is a mottled grey mass inside its outline. The gate fails Character presence for both. |
+| F | **Open** | The header now has the kit's ink outline: about 3 px of ink (26, 12, 20) all round the glyphs, set by `UI.world_words`. But the night sky behind it is just as dark (about 10, 7, 35), so the outline makes no value step and cannot be seen. What shows is the gold drop below. The key frame's header sits on a lighter violet sky, where the same outline reads as a dark ring. The words are legible, but the gate fails Display type on the header every run (`1d21bf4a`), and every heist-like screen in phase 2 would copy it. |
+
+C and E stay closed. Round 2's notes stand.
+
+### What D needs
+
+The fix is in the portrait's surface. The disc, the outline and the framing
+of Pip, Mo and Ash stay as they are.
+- **Bramble:** remove the fine grain at portrait size. Render the portrait
+  through the toon ramp, with the model's texture sampled at a coarser mip
+  level or smoothed, so the shell reads as two or three flat tones.
+- **Hollow:** render the body as a toon fill, with no specular or glassy
+  facets, in two or three tones of its violet. Frame it head and shoulders,
+  like Mo, so the disc shows around the head.
+- Change the portrait art itself only with AIA-2.
+
+The check: the five portraits at 119 px (`SIZES=1 PORTRAITS=<dir>`), in
+colour and in grayscale. Each body must show smooth toon fills, and each
+figure must read as a shape with its disc visible around it.
+
+### What F needs
+
+Give the header something lighter than ink to stand on. Either fix will do:
+- Seat "Laws here" on a kit tag plate (`tag`, as the key frame's character
+  tags), so the ink outline sits against the plate's rim.
+- Or lighten the sky under the HUD's top band towards the key frame's
+  violet, enough for a ΔL* of 15 or more between the ink and the sky.
+
+A lighter stroke instead of ink is not the fix: the kit's display type is an
+ink outline. The check is the 100% and 200% pt_BR stills. At 4× the outline
+must read as a dark ring around each letter, as on the key frame.
+
+### What is still to be seen
+
+Board 1 stands when:
+- D: the five portraits at 119 px show Bramble and Hollow in smooth toon
+  fills, with Hollow's disc visible around its head;
+- F: the header's ink outline reads at 100% and at 200% in pt_BR.
+
+AD re-checks only those two, as P1-AD-board-1d. Phase 2 still waits for
+board 1 (section 3.8 of the report).

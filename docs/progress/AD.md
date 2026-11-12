@@ -1,9 +1,9 @@
 # AD art director: progress
 
-- Status: P1-AD-board-1b ready (board 1 round 2 posted; it still does not stand: A, B and D open, B and D narrowed; C and E closed). Pre-check in the status file.
-- Progress: 11 of 11 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
-- Done: P1-AD-board-1b: "Round 2" in `docs/art/ui-quality/gate/boards/board-1.md`, with stills `board-1/r2-*.png`, on main at `085c812a`.
-- Next: P1-AD-board-1c re-checks A, B and D (and the "Laws here" header) once P1-K1-numerals-on and the fixes for AD-R13 and AD-R15 merge (seeding asked in AD-R16); phase 2 waits for board 1.
+- Status: P1-AD-board-1c ready (board 1 round 3 posted; it still does not stand: A and B closed, D open and narrowed to two portraits' surfaces, F (the header's outline) open). Pre-check in the status file.
+- Progress: 12 of 12 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
+- Done: P1-AD-board-1c: "Round 3" in `docs/art/ui-quality/gate/boards/board-1.md`, with stills `board-1/r3-*.png`, on main at `ed6bcfdc`.
+- Next: P1-AD-board-1d re-checks D and F once the fixes for AD-R17 and AD-R18 merge (seeding asked in AD-R19); phase 2 waits for board 1.
 - Blocked by: none.
 - Owner decision needed: none. AD decides board 1 in place of the owner.
 
@@ -20,19 +20,19 @@
 | P0-AD-calibrate-2: score, choose the judge, revise, held-out | 2 | ready (pre-check in the status file) | `gate/calibration.md` Results: dev runs on rubric versions 1-3, `held-opus` on version 3 (all eight qualities missed, owner-checked); `gate/rubric.md` and `gate/prompts/` version 3; `calibration/runs/{dev-opus-v2,dev-opus-v3,held-opus}/` plans and results; `check_docs_consistency.py` clean |
 | P1-AD-board-1: board 1 and the flow review | 2 | ready (pre-check in the status file) | `gate/boards/board-1.md` and `gate/boards/board-1/*.png`; stills re-rendered on main at `d880807e`; flow review below; requests AD-R7 to AD-R12 in `status/AD.json` |
 | P1-AD-board-1b: re-check board 1 on pilot-3 | 1 | ready (pre-check in the status file) | `gate/boards/board-1.md` Round 2 and `gate/boards/board-1/r2-*.png`; three stills re-rendered on main at `085c812a` match S1's (mean diff ≤ 0.34, ≤ 0.75% of pixels > 16); the no-plan 200% pt_BR shot fails `FIT=1`; requests AD-R13 to AD-R16 in `status/AD.json` |
+| P1-AD-board-1c: re-check board 1 on numerals-on and pilot-4 | 1 | ready (pre-check in the status file) | `gate/boards/board-1.md` Round 3 and `gate/boards/board-1/r3-*.png`; five shots on main at `ed6bcfdc`, all `FIT=1` "fit ok" (no-plan 200% pt_BR included); A and B closed, D and F open; requests AD-R17 to AD-R19 in `status/AD.json` |
 
 ## Handoff
-- Last verified commit: see `precheck` in `status/AD.json`; P1-AD-board-1b ready.
-- Done: board 1 round 2 on main at `085c812a` (P1-S1-pilot-3 merged). **It still does not stand.**
-  - A is open: the timer is still the flat `KitHud.clock`. S1's `numerals-*` stills show the fix behind the switch; A closes when P1-K1-numerals-on merges.
-  - B is open, narrowed: S1's stills all have a crew plan and pass `FIT=1`. AD shot one on main with no plan (rehearsal, Workshop island, offline) at 200% pt_BR. Cast reads "Sem lançamentos", the tray grows to two button rows and covers the loot panel, and `FIT=1` fails (AD-R15).
-  - C and E are closed.
-  - D is open, narrowed: Hollow's violet body is one tone with its violet school disc, and Bramble is grainy and about 12 L* below its disc (AD-R13).
-  - New: the unoutlined "Laws here" header could fail K1's numerals gate (AD-R14).
-- Checked: three re-renders on main match S1's stills, so the stills stand for the integrated build.
+- Last verified commit: see `precheck` in `status/AD.json`; P1-AD-board-1c ready.
+- Done: board 1 round 3 on main at `ed6bcfdc` (P1-K1-numerals-on and P1-S1-pilot-4 merged as `541e4c97`). **It still does not stand.**
+  - A is closed: the timer is drawn in `KitNumerals`, inked, outlined and filled like the key frame's.
+  - B is closed: with no plan at 200% pt_BR, Cast keeps its row as "Lançar", the tray starts at y 1190 below the loot panel (ends y 1131), and `FIT=1` passes at the sneak and the alarm. Note: the loot labels are as large as "Lançar" at 200% (the gate's Hierarchy fail); a size step down would help.
+  - D is open, narrowed: the disc and the ink outline work, and Pip, Mo and Ash read. Bramble's body has a fine photographic grain, and Hollow's is glassy faceted violet that fills its disc (AD-R17).
+  - F is new: the header's ink outline is drawn but invisible, because the night sky is as dark as the ink (AD-R18).
+- Checked: AD's 100% still matches S1's `part4-sneak-100.png` apart from the numerals and the world's motion.
 - Half done: nothing.
-- Open hypotheses: Bramble's grain may come from texture filtering in the portrait render, not the art; the portrait owner should look before AIA-2 changes the art.
-- Next step: P1-AD-board-1c re-checks A, B and D and the header on new stills taken on main.
+- Open hypotheses: Bramble's grain and Hollow's facets may come from the portrait render sampling the models' full textures and specular, not from the art; S1 should try the toon ramp and coarser sampling before AIA-2 changes any art.
+- Next step: P1-AD-board-1d re-checks D (the five portraits at 119 px, colour and grayscale) and F (the header at 4×, 100% and 200% pt_BR).
 
 ## Flow review
 
