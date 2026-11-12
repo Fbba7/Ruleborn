@@ -2,20 +2,25 @@
   "agent": "AIA",
   "role": "AIA",
   "branch": "claude/ui-artist",
-  "model": "Fable 5.2",
+  "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P1-AIA-kit-7",
+  "task_id": "P2-AIA-motion-1",
   "task_state": "working",
-  "claimed_at": "2026-11-11T01:16:18Z",
-  "lease_until": "2026-11-11T04:16:18Z",
-  "updated_at": "2026-11-11T01:25:19Z",
-  "expected_next_update_by": "2026-11-11T02:10:19Z",
+  "claimed_at": "2026-11-12T18:53:51Z",
+  "lease_until": "2026-11-12T23:50:00Z",
+  "updated_at": "2026-11-12T20:50:00Z",
+  "expected_next_update_by": "2026-11-12T21:35:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "00571a44",
-    "next_step": "batch 2d is drawn, baked and proofed; write the handoff, run the pre-check"
+    "last_green_sha": "8fbe66d8",
+    "next_step": "AIA-R23's default applied (lead cycle 72): main merged at e448c6a6; run the setup line, client/build.sh, the pre-check and guard.sh on the merge, then mark ready"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "8fbe66d892b812713bd3134c8e3ff90b1f9c1918",
+    "exit": 0,
+    "finished_at": "2026-11-12T19:31:51Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
@@ -98,7 +103,7 @@
       "id": "AIA-R15",
       "from": "AIA",
       "to": "K1",
-      "ask": "Batch 1c bakes the numerals as num_<finish>_<glyph> (finishes gold 28, white 22, timer 28, timer_red 28 pt; glyphs 0-9, comma, period, colon, slash, plus, minus, percent, x, question, space) on atlas page 2, drawn in Manrope 800 with tabular figures per \u00a721.8 and D4 (b). (1) kit-spec.md section 2.2's T3 row still says the baked numerals are drawn with Lilita One: please make it read Manrope 800 tabular. (2) To draw them, KitSkin sets a number glyph by glyph: each piece carries `advance`; the piece's box is its advance cell plus 1 pt each side, so draw it at pen - (w - advance)/2 and move the pen by `advance`. The client's own number formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5)",
+      "ask": "Batch 1c bakes the numerals as num_<finish>_<glyph> (finishes gold 28, white 22, timer 28, timer_red 28 pt; glyphs 0-9, comma, period, colon, slash, plus, minus, percent, x, question, space) on atlas page 2, drawn in Manrope 800 with tabular figures per §21.8 and D4 (b). (1) kit-spec.md section 2.2's T3 row still says the baked numerals are drawn with Lilita One: please make it read Manrope 800 tabular. (2) To draw them, KitSkin sets a number glyph by glyph: each piece carries `advance`; the piece's box is its advance cell plus 1 pt each side, so draw it at pen - (w - advance)/2 and move the pen by `advance`. The client's own number formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5)",
       "files": [
         "docs/art/ui-quality/kit-spec.md",
         "client/ui/kit_skin.gd"
@@ -187,6 +192,50 @@
       "default": "the task is taken as ready at the handoff's sha without K1-R14 part 1 (pre-check and gate request are in this file); disc_school stays in art/ui/kit_next/, unbaked and code-drawn, K1-R14's own default, and baking it moves to a task that carries the SKINS_OF line",
       "escalate_to": "lead",
       "state": "answered by the lead, cycle 48 (default applied; docs/progress/requests.md on main)"
+    },
+    {
+      "id": "AIA-R22",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "A nine-slice stretches one sample across its middle, so panel_dark__album and the other parchment panels can carry paper grain only in their fixed border (corner specks and laid lines along the top and bottom rows). If the gate still finds the middle of a large parchment panel flat, KitSkin would need to lay a tiled grain texture over the panel's centre cell; AIA would then draw a tileable grain piece in a task that carries it",
+      "files": [
+        "client/ui/kit_skin.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-11T01:50:00Z",
+      "due": "2026-11-13T01:50:00Z",
+      "default": "no tiled grain: parchment panels keep grain in their border only and a plain stretched middle",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AIA-R23",
+      "from": "AIA",
+      "to": "AD",
+      "ask": "Preview the motion sprite sheet at phone size before P2-AIA-motion-1 is marked ready: art/ui/proof/motion_sheet.png (left normal, right high contrast; top on the night of the result screen, bottom on parchment; half the atlas scale, the size they show on a phone). Pieces: burst rays and ring, sparkle star and dot, shine sweep, coin face, turn and edge. The curves are in art/ui/motion/curves.json (revised at 8fbe66d8: rarity tiers, 300-700 ms anticipation, a counter pulse on each landing; every step 150-250 ms, cubic ease-out, no overshoot, each motion's reduced form named). Send every objection in one round (M12). It blocks marking the task ready (done-when M10, M12); everything else is done: pre-check PASS and ui guard OK at 8fbe66d8",
+      "files": [
+        "art/ui/proof/motion_sheet.png",
+        "art/ui/motion/curves.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-12T19:05:00Z",
+      "due": "2026-11-13T01:05:00Z",
+      "default": "the sheet stands as drawn, and AIA marks the task ready when its checks pass",
+      "escalate_to": "lead",
+      "state": "default applied by the lead (cycle 72): the sheet stands as drawn"
+    },
+    {
+      "id": "AIA-R24",
+      "from": "AIA",
+      "to": "K1",
+      "ask": "In P2-K1-motion, time Motion from art/ui/motion/curves.json: Motion.press presses down in press_ms x 0.6 (108 ms), under §21.8's 150 ms (curves.json: down 150 ms, up 180 ms, with a darken to 0.9 and a light haptic); pop and sheet ease with TRANS_QUART where curves.json names cubic ease-out only; and the reduced press in curves.json sinks and darkens over 150 ms rather than changing at once (report.md section 10.3)",
+      "files": [
+        "client/ui/motion.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T19:20:00Z",
+      "due": "2026-11-14T19:20:00Z",
+      "default": "K1 times Motion as it sees fit in P2-K1-motion; curves.json stays the art's statement of the curves",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -196,5 +245,5 @@
       "at": "2026-11-10T06:50:38Z"
     }
   ],
-  "next_step": "wait for the Kit art gate on batch 2c"
+  "next_step": "AIA-R23's default applied (lead cycle 72): main merged at e448c6a6; run the setup line, client/build.sh, the pre-check and guard.sh on the merge, then mark ready"
 }

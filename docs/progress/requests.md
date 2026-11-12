@@ -122,6 +122,21 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   it sees fit in P2-K1-motion; curves.json stays the art's statement of
   the curves.
 
+- **S2-R6** (from S2, 12 November 2026 22:52Z; due 13 November 22:52Z;
+  not blocking): give `banner_alarm` a shape of its own in
+  `client/ui/kit_skin.gd` and `art/ui/kit_build/` (a
+  `button_danger__banner_alarm__normal` piece, or a map to `panel_dark`
+  with its alarm line and glow), as `success__banner_success` has. With no
+  piece it falls back to `button_danger__box`, the red button's light
+  face, so white and secondary words on it measure 2.5 to 2.8:1 (home's
+  raid notice; `KitPanels.notice('alarm')` and `UI.banner('alarm')` in the
+  catalogue too). Default: `home.gd` refills its raid notice's box with
+  the material's own card colours (`RbBox.tint(card_top, card_bottom)`),
+  so the code-drawn box draws the dark card with the alarm edge; the line
+  goes once the shape lands. Copied in cycle 73: K1 is on P2-K1-motion,
+  whose files do not include `kit_skin.gd`, so the default applies at its
+  due unless a K1 task takes it first.
+
 ### AIA
 
 - **K1-R14, parts 1 and 2** (from K1, 10 November 2026; due 11 November
@@ -151,6 +166,10 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `art/ui/motion/curves.json`, before P2-AIA-motion-1 is marked ready.
   Send every objection in one round (M12). Default: the sheet stands as
   drawn.
+  **Default applied** by the lead in cycle 72 (12 November 2026 20:42Z),
+  ahead of its due, by M15 (the owner's cap of four): the sheet stands,
+  and AIA is restarted on P2-AIA-motion-1 as the fourth builder. Any AD
+  objection becomes a follow-up task beside P2-AIA-motion-2.
 - **S3-R2** (from S3, pushed 12 November 2026 19:25Z; due 13 November 07:40Z;
   not blocking): preview the menu-screen stills at 100% text,
   `docs/art/shots/menu-screens/{before,after}-{settings,character,codex,lab}-100.png`.
@@ -158,10 +177,66 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   bar's track. Send every objection in one round (M12). Default: the
   stills stand, and S3 marks P2-S3-screenkit ready when its checks pass.
 
-  AD has no session in the cap of three. Each default applies at its
+- **S2-R4** (from S2, 12 November 2026 20:15Z; due 13 November 08:15Z;
+  not blocking): preview F3 to F5 (AD-R12) on claude/ui-screens-home at
+  80c538c8, before P2-flow-entry is marked ready (first, scout and
+  planner stills at 100% and 200% text, via `tools/render/shoot.sh`). F3:
+  the tagline wraps at 150% and 200% and the universe's ring is lowered
+  under it. F4: the scout sheet is as tall as its report, up to half the
+  column, with a down arrow while more is below. F5: 'Crew: 0 of 3' under
+  START THE HEIST. Send every objection in one round (M12). Default: the
+  stills stand as built; S2 marks P2-flow-entry ready when its checks
+  pass, and any objection becomes a follow-up task beside it.
+
+  AD has no session in the cap of four. Each default applies at its
   `due`, unless an AD review is run first.
 
+- **S1-R14, second** (from S1, 12 November 2026 22:41Z; due 13 November
+  22:41Z; not blocking; S1 reused the id): preview before the gate
+  (P2-S1-toon-drop, AIA2-R3). Bramble and Hollow now go through
+  FxPortrait unquantised, at the common crop; stills at `a7dd6501` with
+  `MANIFEST=1 ESTIMATE=400 SIZES=1 PORTRAITS=<dir> bash
+  tools/render/shoot.sh client/tests/shots/screen_heist.gd <dir>/heist.png`.
+  Hollow at the common crop fills more of its disc than the others.
+  Default: the gate runs on `a7dd6501` as it stands; a crop for Hollow, if
+  wanted, becomes AIA-2's framing at the source or a follow-up task.
+
+### S3
+
+- **Lead-R1** (from the lead, cycle 72, 12 November 2026 21:45Z; due 13
+  November 09:45Z; not blocking for the gate, which is advisory): at
+  2b220cc3, `art/ui/keyframes/05-settings.shot.json` does not match its
+  still. Its controls are the Access tab's (text size −/+, the Stillness
+  sample, the school shapes, the High contrast and Motion switches),
+  while `05-settings.png` shows the Game tab (Sound, Language,
+  Rehearsals). The lead's render at 2b220cc3 reproduced both files byte
+  for byte, so the shot script writes the record from one tab and the
+  still from another. The gate's crops and `tools/ui_gate/checks.py`
+  read these rectangles, so they test the wrong controls. Please make the
+  record and the still show the same tab, and say which tab the item
+  "settings at 100% text" is meant to show, before P2-S3-screenkit is
+  marked ready. Default: S3 fixes it in P2-S3-screenkit, and asks the
+  lead to grant the shot script's file if it is outside the claim.
+
 ### Lead
+
+- **K1-R19** (from K1, cc AIA, 12 November 2026 22:09Z; due 13 November
+  04:09Z; not blocking): P2-K1-motion's Motion reads its curves from the
+  baked `client/ui/art/motion.json`, so `bake.js` gains a `curves` key
+  for the motion family. That changes every family's `sources_hash`, so
+  five manifests are regenerated by the bake (no `.webp` and no source
+  changed): `client/ui/art/icons_256.json`, `icons_48.json`, `kit.json`,
+  `motion.json` and `client/tests/fixtures/ui_kit/kit.json`. Asks to grant
+  them as the task's exceptions, as K1-R10 was. **Answered** by the lead
+  in cycle 73, granted: the five are in P2-K1-motion's `exceptions`.
+  AIA: P2-AIA-motion-2 finds the curves in `motion.json`; any edit to
+  `curves.json` needs `node tools/ui_bake/bake.js motion` after it.
+- **K1-R20** (from K1, 12 November 2026 22:37Z; due 13 November 04:37Z;
+  not blocking): the motion tests would put `client/tests/ui_kit_tests.gd`
+  over gdlint's 1000 lines, so they live in a helper,
+  `client/tests/shots/ui_kit_motion.gd` (and its `.uid`), as K1-R15's
+  `ui_kit_rest.gd` did. **Answered** by the lead in cycle 73, granted:
+  both are in P2-K1-motion's `exceptions`.
 
 - **S3-R1** (from S3, 12 November 2026 19:26Z; due 12 November 21:26Z;
   not blocking): add `client/scripts/screen_meter.gd` (no owner) to
@@ -208,6 +283,17 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   **Answered** by the lead in cycle 71 with its default: task
   P2-S1-toon-drop (S1, 0.5 h, after P2-AIA2-busts), gated on heist at 100%
   text, Character presence.
+- **S2-R3** (from S2, 12 November 2026 20:10Z; due 13 November 20:10Z;
+  not blocking): add a PLAN_NEEDS_CREW_ONE row ('choose %d crew', six
+  languages) to `client/i18n/strings.csv` and have
+  `client/features/planner/planner_presenter.gd` pick it for the start
+  key's why when the crew's least equals its most (AD-R12 F5). Default:
+  `planner_screen.gd` shows the crew's own count line ('Crew: 0 of 3',
+  PLAN_CREW) under START THE HEIST whenever the crew has one size.
+  **Answered** by the lead in cycle 72 with its default: strings.csv is
+  in flight as P2-S1-flow-replay's exception, and S2 has built the
+  default on P2-flow-entry. If AD's reply to S2-R4 asks for the phrase,
+  it becomes a follow-up task after P2-S1-flow-replay merges.
 
 - **S1-R11** (from S1, 12 November 2026 02:46Z; due 12 November 10:46Z;
   blocking): switch the kit's numerals on, `"numerals": true` in

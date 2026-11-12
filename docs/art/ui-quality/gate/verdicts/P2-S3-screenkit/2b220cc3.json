@@ -1,0 +1,39 @@
+[
+  {
+    "task_id": "P2-S3-screenkit",
+    "sha": "2b220cc3",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-12T21:50:00Z",
+    "item": "settings at 100% text",
+    "quality": "Layered materials",
+    "samples": [
+      "pass",
+      "pass",
+      "fail",
+      "pass",
+      "pass",
+      "fail"
+    ],
+    "result": "pass",
+    "critique": "A split, then a pass: 2 fails of 6 (a fail needs 4); a close call in every sample. All six read the -/+ steppers, the back button, the cream Language pill and the selected Game tab as gold-rimmed, top-lit faces with a solid lip, and the tab strip as a frame with an inset well; none found a flat fill, a hairline web overlay or banding at 960 px. They split on the large Sound card that holds three rows: four read its top-lit gradient, ink rim and lip as enough for smooth violet-card material (no grain needed by the version 2 ruling), at least as layered as the pass anchor's dark hairline pills and dock; two read it as nearer the fail anchor's rimmed plum fills, with a faint gloss band and no bevelled frame or inner well, unlike the pass anchor's framed Ability card. The narrow point for the menu screens is a frame-and-well build for panels that hold rows, and a clearer gloss band. Samples 1 to 3 had crops cut from the shot record's rectangles, which name the Access tab's controls while the still shows the Game tab (Lead-R1); samples 4 to 6 had the full-resolution render instead."
+  },
+  {
+    "task_id": "P2-S3-screenkit",
+    "sha": "2b220cc3",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-12T21:50:00Z",
+    "item": "settings at 100% text",
+    "quality": "Colour roles and value",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. Gold appears only as rim and frame material; cream marks the selected Game tab and the Language pill rather than a gold fill; red appears only on the Alerts bell; the toggle and sliders carry a minus glyph or 'off' and their numbers, so state never rests on colour alone; nothing merges on the colour-blindness sheet. Gold is used more strictly than on the pass anchor, whose HEIST tab is gold-filled. One sample noted the cream pills could be read as gold at a glance."
+  }
+]

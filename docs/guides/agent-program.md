@@ -720,6 +720,15 @@ not at its close.
 | The lead's checks failed several times on the container, not the work (no `wasm32` target, no Godot, no `node_modules`, no native library in the candidate's folder) | The fresh-container setup line, then `bash client/build.sh` in the candidate worktree, before any check | In force (brief, protocol) |
 | Pace was 1.02h of work an hour against 1.2 needed | The lead seeds a builder's next task before its current one merges, so none of the three slots sits empty | In force (brief, protocol) |
 
+## Lessons from UI phase 2
+
+Rows are added as the phase runs, each sent to the agent that can act on it
+as a backlog message.
+
+| What happened | The rule it led to | Now |
+|---|---|---|
+| P2-S2-flow-home's first full check failed one fixture in `tools/test_run_checks.sh` that the change does not touch; the re-run on the same sha passed. The fixture's two test repos have the same tree and identity, so commits in the same second share a sha | The lead (who owns the file) makes the two test repos differ so their shas cannot collide, never loosening the test; until then a lone failure of that fixture on a candidate that touches no runner file is re-run once | Sent to the lead as M16 |
+
 ## Waves, progress files and stills
 
 **Waves.** Work happens in *waves*: a stretch of hours in which a set of
