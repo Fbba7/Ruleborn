@@ -489,15 +489,20 @@ CREATE TABLE IF NOT EXISTS workshop_plays (
   ticks        INTEGER NOT NULL,
   issued_at    INTEGER NOT NULL,
   submitted_at INTEGER,
-  outcome      TEXT
+  outcome      TEXT,
+  -- SEC-26: 1 when the play's time counts toward the Island Fund: its
+  -- player counted when they played (workshop.mjs, qualified).
+  counted      INTEGER NOT NULL DEFAULT 0
 );
 
 -- §18.7: "completions by the same player count once".
 CREATE TABLE IF NOT EXISTS workshop_completions (
-  item   TEXT NOT NULL REFERENCES workshop_items(id),
-  player TEXT NOT NULL REFERENCES accounts(id),
-  weight REAL NOT NULL,
-  at     INTEGER NOT NULL,
+  item    TEXT NOT NULL REFERENCES workshop_items(id),
+  player  TEXT NOT NULL REFERENCES accounts(id),
+  weight  REAL NOT NULL,
+  at      INTEGER NOT NULL,
+  -- SEC-26: 1 when it counts toward the ladder and the island's numbers.
+  counted INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (item, player)
 );
 
@@ -509,6 +514,8 @@ CREATE TABLE IF NOT EXISTS workshop_ratings (
   cleverness INTEGER NOT NULL CHECK (cleverness BETWEEN 1 AND 5),
   fairness   INTEGER NOT NULL CHECK (fairness BETWEEN 1 AND 5),
   at         INTEGER NOT NULL,
+  -- SEC-26: 1 when it counts toward the island's numbers.
+  counted    INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (item, player)
 );
 
@@ -1061,6 +1068,10 @@ const ADDED = [
   ["accounts", "raider_games", "INTEGER"],
   ["heists", "defender", "TEXT REFERENCES accounts(id)"],
   ["heists", "log_bytes", "INTEGER NOT NULL DEFAULT 0"],
+  // SEC-26: what counts toward the Workshop's paying numbers.
+  ["workshop_plays", "counted", "INTEGER NOT NULL DEFAULT 0"],
+  ["workshop_completions", "counted", "INTEGER NOT NULL DEFAULT 0"],
+  ["workshop_ratings", "counted", "INTEGER NOT NULL DEFAULT 0"],
   ["ledger", "starlight_total", "INTEGER"],
   ["ledger", "essence_total", "INTEGER"],
   ["ledger", "aether_total", "INTEGER"],

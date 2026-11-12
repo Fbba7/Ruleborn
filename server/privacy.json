@@ -1273,6 +1273,9 @@
     "outcome": {
      "type": "gameplay"
     },
+    "counted": {
+     "type": "gameplay"
+    },
     "player": {
      "type": "user-id",
      "names": "account"
@@ -1298,6 +1301,9 @@
      "type": "gameplay"
     },
     "at": {
+     "type": "gameplay"
+    },
+    "counted": {
      "type": "gameplay"
     },
     "player": {
@@ -1331,6 +1337,9 @@
      "type": "gameplay"
     },
     "at": {
+     "type": "gameplay"
+    },
+    "counted": {
      "type": "gameplay"
     },
     "player": {

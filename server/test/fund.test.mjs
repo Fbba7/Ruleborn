@@ -38,12 +38,15 @@ function quarterOfPlay() {
        VALUES (?, ?, 'b', 3, 0, 0, 'r', 1, ?, ?)`).run(id, creator, q.starts_at, removed);
     return id;
   };
-  const play = (player, item, seconds, { validated = true, held = null, at = q.starts_at + 2 * DAY } = {}) => {
+  // `counted`: the play's player counted when they played (SEC-26); the
+  // Workshop writes 0 for an account too new or too low to count.
+  const play = (player, item, seconds, { validated = true, held = null, at = q.starts_at + 2 * DAY,
+                                         counted = true } = {}) => {
     const outcome = { validated, ...(held === null ? {} : { report: { held } }) };
     db.prepare(
-      `INSERT INTO workshop_plays (token, player, item, seed, ticks, issued_at, submitted_at, outcome)
-       VALUES (?, ?, ?, '1', ?, ?, ?, ?)`).run(`p${++n}`, player, item, seconds * TICKS_PER_SECOND, at, at,
-      JSON.stringify(outcome));
+      `INSERT INTO workshop_plays (token, player, item, seed, ticks, issued_at, submitted_at, outcome, counted)
+       VALUES (?, ?, ?, '1', ?, ?, ?, ?, ?)`).run(`p${++n}`, player, item, seconds * TICKS_PER_SECOND, at, at,
+      JSON.stringify(outcome), counted ? 1 : 0);
   };
   return { t, q, db, who, buy, island, play };
 }

@@ -20,7 +20,7 @@ import { CLOSED_KEEP_DAYS, LEASE_MS, Refused, TARGET_LISTS_MS, clockTicks } from
 import { INTENT_MS } from "../src/shop.mjs";
 import { Social } from "../src/social.mjs";
 import { Workshop } from "../src/workshop.mjs";
-import { established, openPlan, play, server } from "./setup.mjs";
+import { counting, established, openPlan, play, server } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
 const DAY = 24 * 60 * 60 * 1000;
@@ -103,6 +103,7 @@ async function busy() {
   // A quarter of the Island Fund closed, paying x for y's play on its island
   // (fund.mjs).
   t.service.fund.optIn(x.account, true);
+  counting(t, y.account);                              // y's time counts (SEC-26)
   const yp = w.play(y.account, mine.id);
   w.submitPlay(y.account, yp.token, t.build.record(t.service.bundle(yp.bundle),
     { seed: BigInt(yp.seed), ticks: yp.ticks, crew: 3, commands: openPlan() }));

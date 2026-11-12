@@ -50,8 +50,9 @@ test("SR-12: one player's time on one island counts to an hour a quarter", () =>
     .run(creator, q.starts_at);
   const at = q.starts_at + 1000;
   for (let n = 0; n < 200; n++) {
-    db.prepare(`INSERT INTO workshop_plays (token, player, item, seed, ticks, issued_at, submitted_at, outcome)
-                VALUES (?, ?, 'i', '1', ?, ?, ?, '{"validated":true}')`).run(`p${n}`, alt, 150 * TICKS_PER_SECOND, at, at);
+    // counted: an account old enough to count (SEC-26), so only SR-12's cap holds it.
+    db.prepare(`INSERT INTO workshop_plays (token, player, item, seed, ticks, issued_at, submitted_at, outcome, counted)
+                VALUES (?, ?, 'i', '1', ?, ?, ?, '{"validated":true}', 1)`).run(`p${n}`, alt, 150 * TICKS_PER_SECOND, at, at);
   }
   assert.equal(ONE_PLAYER_ONE_ISLAND_S, 3600);
   assert.equal(t.service.fund.played(q.starts_at, q.ends_at)[creator], ONE_PLAYER_ONE_ISLAND_S,

@@ -8,8 +8,8 @@ import { test } from "node:test";
 
 import { clockTicks } from "../src/service.mjs";
 import { Social } from "../src/social.mjs";
-import { Workshop } from "../src/workshop.mjs";
-import { openPlan, play, server, twoPlayers } from "./setup.mjs";
+import { COUNTED_AGE_MS, COUNTED_KEEPER_LEVEL, LONE_FANS_A_DAY, Workshop } from "../src/workshop.mjs";
+import { counting, openPlan, play, server, twoPlayers } from "./setup.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
 const HOUR = 60 * 60 * 1000;
@@ -90,6 +90,7 @@ test("SEC-40: a play submitted once its island is taken down is answered, but ea
 test("SEC-40: a play submitted once its island is withdrawn earns nothing; completions earned while listed stay", () => {
   const { t, w, creator, item, remove } = workshop();
   const early = t.service.session("gc:early").account;
+  counting(t, early);                   // a completion that counts (SEC-26)
   const p0 = w.play(early, item.id);
   assert.equal(w.submitPlay(early, p0.token, cleared(t, p0)).counted, true);
   const late = t.service.session("gc:late").account;
@@ -101,11 +102,79 @@ test("SEC-40: a play submitted once its island is withdrawn earns nothing; compl
   // A removed island drops off the ladder altogether.
   const other = workshop();
   const player = other.t.service.session("gc:player").account;
+  counting(other.t, player);
   const p2 = other.w.play(player, other.item.id);
   assert.equal(other.w.submitPlay(player, p2.token, cleared(other.t, p2)).counted, true);
   assert.equal(other.w.ladder(other.creator).completions, 1);
   other.remove(other.item.id);
   assert.equal(other.w.ladder(other.creator).completions, 0);
+});
+
+// SEC-26: one person with many accounts could lift a creator's ladder, the
+// island's numbers and its Island Fund share. A completion, a rating or a
+// play's time now counts only from an account at least COUNTED_AGE_MS old
+// and at COUNTED_KEEPER_LEVEL when it is recorded, and of the accounts that
+// play nothing but that creator's islands, only LONE_FANS_A_DAY a UTC day.
+test("SEC-26: completions, ratings and play time from new or low-level accounts are recorded but do not count", () => {
+  const { t, w, creator, item } = workshop();
+  const score = { fun: 5, cleverness: 5, fairness: 5 };
+  for (let i = 0; i < 10; i++) {
+    const alt = t.service.session(`gc:alt${i}`).account;
+    // Old enough but too low, or high enough but too new.
+    t.service.db.prepare("UPDATE accounts SET created_at = ?, keeper_level = ? WHERE id = ?")
+      .run(i % 2 ? t.clock.now - COUNTED_AGE_MS : t.clock.now - COUNTED_AGE_MS + 1,
+           i % 2 ? COUNTED_KEEPER_LEVEL - 1 : COUNTED_KEEPER_LEVEL, alt);
+    const p = w.play(alt, item.id);
+    const out = w.submitPlay(alt, p.token, cleared(t, p));
+    assert.deepEqual([out.validated, out.counted, out.ladder], [true, true, false], "recorded, not counted");
+    w.rate(alt, item.id, score);
+  }
+  assert.deepEqual(w.ladder(creator), { level: null, completions: 0, featured: 0 }, "not even a Builder");
+  const v = w.view(w.row(item.id));
+  assert.deepEqual([v.completions, v.ratings.count, v.uncounted], [0, 0, { completions: 10, ratings: 10 }]);
+  assert.deepEqual(w.browse(creator, "top").map((i) => i.completions ?? 0), [0]);
+  assert.deepEqual(t.service.fund.played(0, t.clock.now + 1), {}, "no Island Fund time");
+  // One that qualifies counts, everywhere.
+  const fan = t.service.session("gc:fan").account;
+  counting(t, fan);
+  const p = w.play(fan, item.id);
+  assert.equal(w.submitPlay(fan, p.token, cleared(t, p)).ladder, true);
+  w.rate(fan, item.id, score);
+  assert.equal(w.ladder(creator).completions, 1);
+  assert.equal(w.view(w.row(item.id)).ratings.count, 1);
+  assert.deepEqual(Object.keys(t.service.fund.played(0, t.clock.now + 1)), [creator]);
+});
+
+test("SEC-26: of the qualified accounts that play only one creator's islands, three a day count for that creator", () => {
+  const { t, w, creator, item, island } = workshop();
+  const score = { fun: 4, cleverness: 4, fairness: 4 };
+  t.clock.now = Math.floor(t.clock.now / (24 * HOUR)) * 24 * HOUR + HOUR;   // the day's first hour
+  const fan = (name) => {
+    const a = t.service.session(`gc:${name}`).account;
+    counting(t, a);
+    const p = w.play(a, item.id);
+    const ladder = w.submitPlay(a, p.token, cleared(t, p)).ladder;
+    w.rate(a, item.id, score);
+    return ladder;
+  };
+  const day = [0, 1, 2, 3, 4].map((i) => fan(`lone${i}`));
+  assert.deepEqual(day, [true, true, true, false, false], `the first ${LONE_FANS_A_DAY} a day`);
+  assert.equal(w.ladder(creator).completions, LONE_FANS_A_DAY);
+  assert.equal(w.view(w.row(item.id)).ratings.count, LONE_FANS_A_DAY);
+  // A player who has played someone else's island is no lone fan.
+  const elsewhere = w.publish(t.service.session("gc:other").account, island,
+                              t.build.record(island, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() }),
+                              { adjective: 2, noun: 2 });
+  const wide = t.service.session("gc:wide").account;
+  counting(t, wide);
+  const q = w.play(wide, elsewhere.id);
+  w.submitPlay(wide, q.token, cleared(t, q));
+  const p = w.play(wide, item.id);
+  assert.equal(w.submitPlay(wide, p.token, cleared(t, p)).ladder, true, "past the cap, a wider player counts");
+  // The next UTC day, three more lone fans.
+  t.clock.now += 24 * HOUR;
+  assert.deepEqual([5, 6, 7, 8].map((i) => fan(`lone${i}`)), [true, true, true, false]);
+  assert.equal(w.ladder(creator).completions, 2 * LONE_FANS_A_DAY + 1);
 });
 
 test("SEC-42: a crew's invite is shown to its members only", async () => {

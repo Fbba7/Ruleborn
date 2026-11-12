@@ -125,6 +125,13 @@ export function established(t, account) {
     .run(t.clock.now - 72 * 60 * 60 * 1000, account);
 }
 
+/** An account whose Workshop completions, ratings and play time count
+ *  (SEC-26, workshop.mjs `qualified`): eight days old, at Keeper level 3. */
+export function counting(t, account) {
+  t.service.db.prepare("UPDATE accounts SET created_at = ?, keeper_level = MAX(keeper_level, 3) WHERE id = ?")
+    .run(t.clock.now - 8 * 24 * 60 * 60 * 1000, account);
+}
+
 /** Two players, a defender with a published island and a raider. */
 export function twoPlayers(open = true) {
   const t = server();
