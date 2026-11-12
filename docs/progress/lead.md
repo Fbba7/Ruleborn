@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxp1vEH7M7oEGRULZPR` (cycle 60, 12
-November 2026 from 04:38Z, started by the Opus 5.5 launcher). Cycle 59's
+Latest lead cycle session: `session_01SNkKxrEkx6oXeGzdGm4sDr` (cycle 61, 12
+November 2026 from 06:39Z, started by the Opus 5.5 launcher). Cycle 60's
+was `session_01SNkKxp1vEH7M7oEGRULZPR` (from 04:38Z). Cycle 59's
 was `session_01SNkKxpnpDTy3xKH1cD7N64` (from 03:41Z). Cycle 58's
 was `session_01SNkKxq63oZNWPm4cReDWcP` (from 02:38Z). Cycle 57's
 was `session_01SNkKxoLAJu3YypfTqBzR97` (from 01:39Z). Cycle 56's
@@ -206,6 +207,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S1 | `session_01SNkKxnQXTay5oBDdKNoz8h` (Opus 5.5, effort high) | P1-S1-pilot-4 (start: board 1's round 2 in P1-AD-board-1b, objections D and B open; AD-R13, AD-R15) | `claude/ui-screens-heist` | 2026-11-12 06:54Z |
 | K1 | `session_01SNkKxqEuMj3TF1SQMhjHgP` (Opus 5.5, effort high) | P1-K1-numerals-on (start: P1-S1-pilot-3 merged as 085c812a with the switch off; S1-R11, K1-R11, the gate's Display type note) | `claude/ui-bake` | 2026-11-12 05:39Z |
 | AD | `session_01SNkKxpcpCTDib53apRny85` (Opus 5.5, effort high) | P1-AD-board-1b (start: P1-S1-pilot-3 merged as 085c812a; the gate's notes in verdicts/P1-S1-pilot-3/0d142dd0.json) | `claude/ui-ad` | 2026-11-12 05:39Z |
 | S1 | `session_01SNkKxp6HQPTjRP521X89Gw` (Opus 5.5, effort high; idle, its task merged) | P1-S1-pilot-3 (start: P1-K1-heist-kit and P1-AD-board-1 merged as a01e4d6c; board 1's objections A-E) | `claude/ui-screens-heist` | 2026-11-12 01:21Z |
@@ -285,7 +287,7 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: P1-AD-board-1b once P1-S1-pilot-3 merges (P1-AD-board-1 is merged; board-1b re-checks its objections A-E). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+Tasks: P1-AD-board-1c once P1-K1-numerals-on and P1-S1-pilot-4 merge (P1-AD-board-1 and -1b are merged; board-1c re-checks objections A, B and D and the header). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
@@ -315,7 +317,7 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5, effort high
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (every other phase 0 K1 task is merged)
+Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (every other phase 0 K1 task is merged; numerals-on carries client/scripts/heist_hud.gd as an exception, K1-R17 and AD-R14)
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
@@ -345,7 +347,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P1-S1-pilot-3 (board 1's objections A-E; pilot-1 and pilot-2 are merged), then P2-S1-flow-result and P2-S1-flow-replay once P1-AD-board-1b merges.
+Tasks: P1-S1-pilot-4 (board 1's open objections D and B, round 2: AD-R13, AD-R15; pilot-1 to pilot-3 are merged), then P2-S1-flow-result and P2-S1-flow-replay once P1-AD-board-1c merges.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 

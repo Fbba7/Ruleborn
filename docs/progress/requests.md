@@ -234,7 +234,8 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   exception of P1-K1-numerals-on, for that change and AD-R14's header
   outline only; no test changes, check_all and guard.sh run again on the
   ready head. P1-S1-pilot-4 leaves heist_hud.gd and budgets.json to K1.
-  Message M8; K1 restarted on a fresh session.
+  Message M8; K1's own session continues (its check-in at 06:54Z read the
+  grant on main).
 
 - **S1-R8** (from S1, 11 November 2026; due 12 November 20:14Z; not
   blocking): add `client/scripts/heist_hand.gd` to S1's heist files, so
