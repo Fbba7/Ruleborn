@@ -39,10 +39,18 @@ var uses := -1
 var is_ready := true
 var armed := false
 ## The portrait rendered from the character model, when the build has it;
-## else the drawn face.
+## else the drawn face. `figure` is the model alone on a clear ground; once
+## it is drawn, `picture` is the figure set on its own disc (`compose`).
 var picture: Texture2D
+var figure: Texture2D
 var _time := 0.0
 var _picture_ready := false
+## How far the disc stands off the figure, in CIE L* (AD-R13 asks 20 or more).
+const VALUE_STEP := 30.0
+## The composed portraits, by kind, school and pixel size, and what each
+## measured: {key: {"figure": L*, "disc": L*, "least": L*}} (the gate's notes).
+static var _composed := {}
+static var measured := {}
 
 
 func _init(member_role := "", pressed_call: Callable = Callable(), member_kind := "", shown_name := "") -> void:
@@ -52,9 +60,8 @@ func _init(member_role := "", pressed_call: Callable = Callable(), member_kind :
 		kind = String(Cast.KIND[role])
 	letters = shown_name if shown_name != "" else Strings.term("ROLE", role)
 	if kind != "" and CreatureModel.manifest().has(kind.replace("_", "")):
-		# T1's bust: the head and body on a lit disc of the role's colour.
-		var ground: Color = Palette.ROLE.get(role, Palette.STONE)
-		picture = CreatureBust.of(kind, "", ground.lightened(0.15))
+		# T1's bust: the head and body alone, set on its disc by `compose`.
+		figure = CreatureBust.of(kind, "", Color(0, 0, 0, 0))
 	text = ""
 	var side := UI.px(50)
 	# As wide as its name, so with large text names never run together.
@@ -96,9 +103,15 @@ static func _drawn(t: Texture2D) -> bool:
 
 
 func _process(delta: float) -> void:
-	if picture != null and not _picture_ready and Engine.get_process_frames() % 10 == 0 and _drawn(picture):
-		_picture_ready = true
-		queue_redraw()
+	if figure != null and size.y > 0.0 and Engine.get_process_frames() % 10 == 0 and _drawn(figure):
+		var side := ceili(_radius() * 0.79 * 2.0)
+		var key := "%s/%s/%d" % [kind, school_ground().to_html(), side]
+		if not _picture_ready or picture != _composed.get(key):
+			if not _composed.has(key):
+				_composed[key] = compose(figure.get_image(), school_ground(), side, key)
+			picture = _composed[key]
+			_picture_ready = true
+			queue_redraw()
 	if standing != "Active" or chosen or armed:
 		_time += delta
 		queue_redraw()
@@ -111,9 +124,20 @@ func _draw() -> void:
 	FxPen.end(self)
 
 
+## The disc's radius at the portrait's size.
+func _radius() -> float:
+	return minf(UI.px(25), size.y - UI.px(32))
+
+
+## Its school's colour (its role's when played by role alone).
+func school_ground() -> Color:
+	return Palette.SCHOOL.get(StageHeroFigure.school(kind), Palette.ROLE.get(role, Palette.STONE)) \
+		if kind != "" else Palette.ROLE.get(role, Palette.STONE)
+
+
 func _paint() -> void:
 	var w := size.x
-	var r := minf(UI.px(25), size.y - UI.px(32))
+	var r := _radius()
 	var c := Vector2(w * 0.5, r + UI.px(2))
 	var out := standing in ["Out", "Gone", "Caught"]
 	var down := standing != "Active" and not out
@@ -134,8 +158,7 @@ func _paint() -> void:
 	for ring: Array in rings:
 		FxPen.circle(self, c, r * float(ring[0]), ring[1])
 	# The disc: its school's colour, lighter at the middle, as the design's.
-	var ground: Color = Palette.SCHOOL.get(StageHeroFigure.school(kind), Palette.ROLE.get(role, Palette.STONE)) \
-		if kind != "" else Palette.ROLE.get(role, Palette.STONE)
+	var ground := school_ground()
 	if out:
 		ground = Color("#5A5468")
 	elif down:
@@ -148,7 +171,7 @@ func _paint() -> void:
 		# The model's head and shoulders filling the disc, cut to its round.
 		var tint := Color(0.55, 0.55, 0.6) if out else (Color(1.0, 0.72, 0.72) if down else Color.WHITE)
 		FxPen.flush(self)
-		draw_colored_polygon(_disc(c, inner), tint, _disc_uv(), picture)
+		draw_colored_polygon(_disc(c, inner), tint, _disc_uv(0.5, 0.5, 0.5), picture)
 	else:
 		FxIcons.face(self, c + Vector2(0, r * 0.12), r * 0.6, ground if not out else Color("#7A7488"), role,
 			down or out)
@@ -247,9 +270,112 @@ static func _disc(c: Vector2, r: float) -> PackedVector2Array:
 	return pts
 
 
-static func _disc_uv() -> PackedVector2Array:
+static func _disc_uv(x := 0.5, y := 0.44, r := 0.42) -> PackedVector2Array:
 	var uv := PackedVector2Array()
 	for i in 40:
 		var a := TAU * i / 40.0
-		uv.append(Vector2(0.5, 0.44) + Vector2(cos(a), sin(a)) * 0.42)
+		uv.append(Vector2(x, y) + Vector2(cos(a), sin(a)) * r)
 	return uv
+
+
+## The portrait as it is drawn, `side` pixels across (AD-R13): the model's
+## head and shoulders (the bust's upper part, as `_disc_uv`'s) taken from
+## `bust`, a figure on a clear ground, and resampled once to the size it is
+## drawn at, so a furred or grained figure (a Bramble) is never minified on
+## the screen into noise. Behind it a disc of its school's hue stood
+## VALUE_STEP L* off the figure's mean (lighter, unless that would be near
+## white), lit at its upper middle; around it an ink silhouette, so a figure
+## whose colour is its school's (a Hollow) still parts from its disc. Cut to
+## its round. Its measures go in `measured`, under `key`.
+static func compose(bust: Image, school: Color, side: int, key := "") -> Texture2D:
+	var src := bust.duplicate() as Image
+	src.convert(Image.FORMAT_RGBA8)
+	var n := src.get_width()
+	var crop := Rect2i(Vector2i(roundi(n * (0.5 - 0.42)), roundi(n * (0.44 - 0.42))), Vector2i.ONE * roundi(n * 0.84))
+	var img := src.get_region(crop)
+	side = maxi(side, 16)
+	img.resize(side, side, Image.INTERPOLATE_LANCZOS)
+	var half := side * 0.5
+	var centre := Vector2(half, half)
+	# The figure's value: its mean L* where it is solid, inside the round.
+	var sum := 0.0
+	var count := 0
+	for y in side:
+		for x in side:
+			var p := img.get_pixel(x, y)
+			if p.a > 0.5 and Vector2(x + 0.5, y + 0.5).distance_to(centre) < half:
+				sum += ColourCheck._lab(Color(p, 1.0)).x
+				count += 1
+	var figure_l := sum / maxf(1.0, count)
+	# Lighter where there is room (a pale disc reads as the design's lit
+	# one), else darker; the light at the middle and the shade at the rim
+	# both lean away from the figure, so the step holds across the disc.
+	var lighter := figure_l + VALUE_STEP - 6.0 <= 96.0
+	var disc := _at_lightness(school, minf(figure_l + VALUE_STEP, 96.0) if lighter else figure_l - VALUE_STEP)
+	var lit := disc.lerp(Color.WHITE, 0.12) if lighter else disc
+	var rim := disc.darkened(0.03) if lighter else disc.darkened(0.12)
+	# The ink silhouette: the figure's alpha grown by `ink` pixels.
+	var ink := maxf(1.5, side / 48.0)
+	var reach := ceili(ink)
+	var grown := PackedFloat32Array()
+	grown.resize(side * side)
+	for y in side:
+		for x in side:
+			var most := 0.0
+			for dy in range(-reach, reach + 1):
+				var yy := y + dy
+				if yy < 0 or yy >= side:
+					continue
+				for dx in range(-reach, reach + 1):
+					var xx := x + dx
+					if xx < 0 or xx >= side:
+						continue
+					var d := sqrt(float(dx * dx + dy * dy))
+					if d > ink + 0.5:
+						continue
+					# Solid figure only: the bust's soft shadow gets no line.
+					most = maxf(most, smoothstep(0.4, 0.7, img.get_pixel(xx, yy).a) * clampf(ink + 0.5 - d, 0.0, 1.0))
+			grown[y * side + x] = most
+	var out := Image.create(side, side, false, Image.FORMAT_RGBA8)
+	var light_at := Vector2(half, half * 0.8)
+	var disc_sum := 0.0
+	var disc_count := 0
+	var least := 100.0
+	for y in side:
+		for x in side:
+			var p := Vector2(x + 0.5, y + 0.5)
+			var edge := clampf(half - p.distance_to(centre) + 0.5, 0.0, 1.0)
+			if edge <= 0.0:
+				out.set_pixel(x, y, Color(0, 0, 0, 0))
+				continue
+			var t := clampf(p.distance_to(light_at) / (half * 1.15), 0.0, 1.0)
+			var back := lit.lerp(disc, smoothstep(0.0, 0.7, t)).lerp(rim, smoothstep(0.7, 1.0, t))
+			var f := img.get_pixel(x, y)
+			if f.a < 0.05:
+				var bl := ColourCheck._lab(back).x
+				disc_sum += bl
+				disc_count += 1
+				least = minf(least, absf(bl - figure_l))
+			var c := back.lerp(FxSkin.INK_LINE, grown[y * side + x])
+			c = c.lerp(Color(f, 1.0), f.a)
+			out.set_pixel(x, y, Color(c, edge))
+	var disc_l := disc_sum / maxf(1.0, disc_count)
+	if key != "":
+		measured[key] = {"figure": snappedf(figure_l, 0.1), "disc": snappedf(disc_l, 0.1),
+			"step": snappedf(absf(disc_l - figure_l), 0.1), "least": snappedf(least, 0.1)}
+	return ImageTexture.create_from_image(out)
+
+
+## `colour`'s hue lightened or darkened until its L* is `l`.
+static func _at_lightness(colour: Color, l: float) -> Color:
+	var lo := -1.0
+	var hi := 1.0
+	var c := colour
+	for i in 24:
+		var mid := (lo + hi) * 0.5
+		c = colour.lightened(mid) if mid >= 0.0 else colour.darkened(-mid)
+		if ColourCheck._lab(c).x < l:
+			lo = mid
+		else:
+			hi = mid
+	return c

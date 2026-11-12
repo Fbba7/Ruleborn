@@ -189,3 +189,55 @@ Stills are in `docs/art/shots/heist-pilot/`. Each one is the script above with `
 ### Stopped here
 
 Part 3 is done and waits on the pre-check and the gate. The checks run on the last commit are in `docs/progress/S1.md`.
+
+## Part 4: board 1's round 2 (P1-S1-pilot-4)
+
+Board 1's second round (`board-1.md`, Round 2) left two objections open. D needs Hollow and Bramble to part from their discs (AD-R13). B needs the tray to stay below the loot with no crew plan, at 200% text in Portuguese (AD-R15).
+
+### What was done
+
+- **D, a value step and an ink silhouette.** Each portrait in `fx_portrait.gd` is now composed once per creature and size, and cached (`FxPortrait.compose`):
+  1. It takes the creature's figure on a clear ground (`CreatureBust.of(kind, "", clear)`), which replaces the bust baked on its role's ground.
+  2. It measures the figure's mean L* (the pixels more than half opaque, inside the circle).
+  3. It paints the disc in the creature's school hue (its role's hue for a creature with no school), with the lightness moved 30 L* away from the figure. The disc is lighter when that stays at or below L* 96, and darker otherwise. A soft gradient lights the disc's top.
+  4. It inks the figure's silhouette with a line of the kit's ink (`FxSkin.INK_LINE`), about 2.5 px wide at 100% text, before laying the figure over it. The soft drop shadow under the figure gets no line.
+
+  The school's hue stays in the disc, and the ring and the cream mat of part 3 are kept. The studio halo of the old bust is gone, so Bramble's grain at the disc's edge is gone too. The portrait is still one textured polygon, so the draw calls do not change. Each composite is about 57 KB of texture at 100% text, far inside the 24 MiB limit.
+
+- **B, the Portuguese tray with no plan.** With no crew plan, the hand's order read "Sem lançamentos", which grew the tray to two rows of buttons and pushed its top over the loot panel. FIT reported "Loot over the tray".
+  - At large text (above 130%), the order now keeps its short verb ("Lançar" / "Cast"), and its greyed wand says that no cast is left. A screen reader, the tooltip and the wheel still say "Sem lançamentos" / "No casts" (`heist_hand.gd`).
+  - As a guard, a label too wide to keep its row beside Get out now stands on two lines at large text too (`heist_screen.gd`, `_hand_order`).
+
+  The tray's top moves from y 960 (over the loot, which ends at y 1131) to y 1190.
+
+### Measured L*
+
+These are measured on the composites at 100% text (a 119 px disc), as `screen_heist.gd` prints them with `SIZES=1`:
+
+| Portrait | Figure L* | Disc L* | Step | Least step (disc's dark edge) |
+|---|---|---|---|---|
+| Pip | 70.0 | 95.6 | 25.6 | 23.4 |
+| Mo | 61.8 | 91.4 | 29.6 | 27.6 |
+| Bramble | 56.7 | 86.1 | 29.4 | 27.7 |
+| Hollow | 56.7 | 86.4 | 29.6 | 27.7 |
+| Ash | 44.0 | 73.5 | 29.5 | 28.0 |
+
+Bramble and Hollow share the school hue #8C6CF0, on a pale violet disc. Before this part, Bramble's figure sat about 12 L* below its orange disc, and Hollow's figure and disc were one tone in grayscale (board 1, round 2). Pip's step is shorter because the disc stops at L* 96, so the figure stays off white. Every figure also carries the ink outline. `PORTRAITS=dir` saves each composite and its figure as PNG files, to look at them at 1:1.
+
+### Evidence
+
+Stills are in `docs/art/shots/heist-pilot/`:
+
+- `part4-sneak-100` (crew plan, 100% text) and `part4-before-sneak-100` (before this part);
+- `part4-noplan-200-pt` (no crew plan, 200% text, pt_BR: the new gate still) and `part4-before-noplan-200-pt` (before this part, with the tray over the loot; shot without FIT, which would stop before the still);
+- `part4-bramble` (Bramble at 1:1, before on the left and after on the right).
+
+The no-plan gate still is:
+
+      FIT=1 ESTIMATE=2600 LAWS=bloom,glowing_dark MOMENT=sneak TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd out.png
+
+The other stills are part 3's command with `MOMENT`, `TEXT`, `LOCALE` and `CONTRAST` set to match their names. `FIT=1` passes in each of these cases:
+
+FITTABLE
+
+BUDGETS
