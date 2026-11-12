@@ -436,7 +436,8 @@ export function handler(service, { webClientId = null, appleNotifications = null
       if (peer && unsigned) limit("unsigned", peer);
       if (parts[0] === "v1" && parts[1] === "session") {
         return await sessionRoute(service, request, parts,
-                                  { signIn, limit, read: body, optional, place: placeOf?.(request) ?? null });
+                                  { signIn, limit, read: body, optional, place: placeOf?.(request) ?? null,
+                                    peer });
       }
       if (["league", "seasons", "constellations", "crews"].includes(parts[1])) {
         const out = await socialRoute(service, social, request, parts, who);

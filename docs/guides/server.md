@@ -30,8 +30,10 @@ example island so a fresh database has something to lease. Data goes to
 start.
 
 On start it prints the address, the rules version it holds, and a warning for
-each protection a missing setting turns off (for example, without
-`RULEBORN_PEER_HEADER` failed sign-ins are not limited by address).
+each protection a missing setting turns off (for example, a local server
+without `RULEBORN_PEER_HEADER` does not limit failed sign-ins by address). A
+server with real sign-in (Game Center's roots or Google's client ids set)
+refuses to start without `RULEBORN_PEER_HEADER` (SEC-36).
 
 `RULEBORN_STUB_SIGNIN=1` accepts a stand-in sign-in credential, which is what
 a desktop client sends (it has no Game Center or Play Games). Without it, and

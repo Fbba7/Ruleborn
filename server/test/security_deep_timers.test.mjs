@@ -135,11 +135,12 @@ test("SEC-20: every background job in main.mjs runs under a guard that logs and 
 
 /** What main.mjs writes to standard error by the time it is listening, as a
  *  deployment with real sign-in (a Google client id; its keys are fetched
- *  only at a sign-in) and `env`; stopped once it says it is up. */
+ *  only at a sign-in; the proxy's address header it requires, SEC-36) and
+ *  `env`; stopped once it says it is up. */
 async function startupWarnings(env) {
   const dir = mkdtempSync(join(tmpdir(), "rb-sec38-"));
   const all = { ...process.env, RULEBORN_DATA: join(dir, "data"), RULEBORN_GOOGLE_CLIENT_IDS: "sec38.test",
-                ...env(dir) };
+                RULEBORN_PEER_HEADER: "x-real-ip", ...env(dir) };
   for (const k of ["RULEBORN_STUB_SIGNIN", "RULEBORN_GAMECENTER_ROOTS", "RULEBORN_DELETIONS"]) {
     if (!(k in env(dir))) delete all[k];
   }

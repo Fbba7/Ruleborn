@@ -286,8 +286,10 @@ about any one player. Apple's, each against its own pinned roots:
   covers the player, the app, a timestamp and a salt; the key is in a
   certificate issued to Apple Inc., fetched only from Game Center's key hosts
   and names (the one network call, made and cached by `preparePlatform`
-  before the synchronous sign-in; an unseen name at most once a second, a
-  failure remembered apart) and checked to Game Center's pinned roots; the
+  before the synchronous sign-in; an unseen name at most once a second from
+  one address, never one more than three past the newest key of its kind
+  Apple has served since the server started, a failure remembered apart)
+  and checked to Game Center's pinned roots; the
   signature must be at most five minutes old. The token it earns is
   HMAC-SHA256 (`tokens.mjs`).
 - **App Store purchases.** A StoreKit 2 transaction is a JWS carrying its own
@@ -637,7 +639,8 @@ tries again later (G44).
   who share an address are never held by each other's sign-ins. The address
   comes from the header named by `RULEBORN_PEER_HEADER`, which the proxy in
   front of the listener sets to the caller's one address (`cf-connecting-ip`
-  or `x-real-ip`, never `x-forwarded-for`). When it is unset, failures are
+  or `x-real-ip`, never `x-forwarded-for`). A server with real sign-in
+  refuses to start without it (SEC-36); with stubbed sign-in, failures are
   not limited by address, and the log says so at start.
 
 Each process, or edge isolate, keeps its own buckets. A caller spread across

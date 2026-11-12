@@ -244,9 +244,15 @@ const contact = contactMatch ? { name: contactMatch[1], email: contactMatch[2] }
 // are limited by address only where the proxy in front of this listener (it
 // binds 127.0.0.1) names the caller's one address in a header it sets
 // itself, RULEBORN_PEER_HEADER (Cloudflare's cf-connecting-ip, or x-real-ip;
-// never x-forwarded-for, whose first address the caller writes). Unset,
-// failures are not limited at all, and the log says so.
+// never x-forwarded-for, whose first address the caller writes). The same
+// address spaces Game Center's unseen key names (stores.mjs, SEC-36). A
+// deployment with real sign-in must set it, and refuses to start without;
+// a local one with stubbed proofs is warned that failures are not limited.
 const peerHeader = (process.env.RULEBORN_PEER_HEADER ?? "").trim().toLowerCase();
+if (!peerHeader && !platforms.stubbed) {
+  throw new Error("RULEBORN_PEER_HEADER is unset: with real sign-in the proxy's address header is required, "
+                  + "so failed sign-ins and Game Center key fetches are limited by address (G44, SEC-36)");
+}
 if (!peerHeader) console.warn("RULEBORN_PEER_HEADER unset: failed sign-ins are not limited by address (G44)");
 const peerOf = peerHeader ? (request) => request.headers.get(peerHeader) : null;
 // The devices list's country: a header the edge sets from the address,
