@@ -89,7 +89,7 @@ func _go() -> void:
 			for item: CanvasItem in items:
 				item.modulate.a = 1.0
 		# PROBE=kinds: within the purse, the side buttons and the notice, what
-		# each kind of node costs across them.
+		# each kind of node costs across them (each kind faded with what it holds).
 		if env.call("PROBE", "") == "kinds":
 			for key: String in ["purse", "sides", "notice", "strain"]:
 				var tops: Array = named[key] if named[key] is Array else [named[key]]
@@ -105,12 +105,12 @@ func _go() -> void:
 						kinds[kind] = kinds.get(kind, []) + [c]
 				for kind: String in kinds:
 					for item: CanvasItem in kinds[kind]:
-						item.self_modulate.a = 0.0
+						item.modulate.a = 0.0
 					await process_frame
 					await RenderingServer.frame_post_draw
 					print("  kind %s %s %d" % [key, kind, whole - calls.call()])
 					for item: CanvasItem in kinds[kind]:
-						item.self_modulate.a = 1.0
+						item.modulate.a = 1.0
 		await process_frame
 		await RenderingServer.frame_post_draw
 	print("triangles ", screen.world.triangles, " draw calls ", screen.world.draw_calls(), " frame ",

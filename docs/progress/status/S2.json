@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T22:10:00Z",
   "lease_until": "2026-11-13T01:10:00Z",
-  "updated_at": "2026-11-12T22:52:00Z",
-  "expected_next_update_by": "2026-11-12T23:37:00Z",
+  "updated_at": "2026-11-12T22:43:00Z",
+  "expected_next_update_by": "2026-11-12T23:28:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "62c66327",
-    "next_step": "raid notice now on the material's dark card (words pass); next: keeper level plate under the purse row, draw calls 139 vs 119 at 100% (purse +6, sides +8, notice +4): find savings or ask a raise; then S2-R2 pins and FIT=1"
+    "next_step": "S2-R2 pins (universe_pins.gd), FIT=1 in universe_home.gd, then the checks; draw calls wait on S2-R7"
   },
   "precheck": null,
   "gate_request": null,
@@ -96,6 +96,20 @@
       "created_at": "2026-11-12T22:52:00Z",
       "due": "2026-11-13T22:52:00Z",
       "default": "home.gd refills its raid notice's box with the material's own card colours (RbBox.tint(card_top, card_bottom)), so the code-drawn box draws the dark card with the alarm edge; the line goes once the shape lands",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R7",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Approve a raise of home's draw-call records for K1 to log in tools/ui_bake/budgets.json 'raises' (as K1-R18): home/100 119 -> 139, home/hc 119 -> 139; home/200 stays 97 (measured 97). Reason: home is now built from the kit's parts alone, and a kit part interleaves the skin atlas, its own icon texture and the font, where the old home drew its purse and side buttons in one layer each. Measured by part at 100% (budget_shots home/100, faded in turn): keeper 11, strain 5, purse 15 (old 9: three KitStatus.resource pills, 5 each), side buttons 19 (old about 11: four KitControls.round_action, disc, icon and word plate each), raid notice 11 (old 7: the alarm's fill under its words, and S2-R6's code-drawn card), tab bar 28, pins 14. Textures unchanged (4.7 MiB), 0 words below 4.5:1 at 100%, 200% and hc; home stays 11 under the cap of 150. A kit-side saving (icons in the skin atlas, or a part's art drawn as one layer across siblings) would bring it back; that is K1's to weigh.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-12T22:43:00Z",
+      "due": "2026-11-13T10:43:00Z",
+      "default": "S2 marks P2-S2-home-1 ready with guard.sh failing only home/100 and home/hc's draw calls (139 vs 119), stated in the handoff with these figures; the merge waits on the lead's answer",
       "escalate_to": "lead"
     }
   ],

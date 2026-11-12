@@ -21,10 +21,11 @@ var renown := ""
 var tap: Button
 var _face: Texture2D = UniverseHud.icon("realm_heart")
 var _row: Control
+var _box := UI.clear_box(0, 0)
 
 
 func _init() -> void:
-	add_theme_stylebox_override("panel", UI.clear_box(0, 0))
+	add_theme_stylebox_override("panel", _box)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	size_flags_vertical = Control.SIZE_SHRINK_BEGIN
@@ -56,3 +57,17 @@ func show_keeper(bar: Dictionary, xp_share: float, renown_text: String) -> void:
 		(c as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_row)
 	move_child(_row, 0)
+	# The level's plate hangs below the ring's foot; the badge keeps room for
+	# it beneath, so the row under the badge never covers the level.
+	var plate := ring.get_child(0) as Control
+	plate.item_rect_changed.connect(_clear_plate.bind(plate), CONNECT_DEFERRED)
+	_row.item_rect_changed.connect(_clear_plate.bind(plate), CONNECT_DEFERRED)
+
+
+func _clear_plate(plate: Control) -> void:
+	if not is_instance_valid(plate) or not is_instance_valid(_row) or not plate.is_inside_tree():
+		return
+	var below := maxf(0.0, ceilf(plate.get_global_rect().end.y - _row.get_global_rect().end.y))
+	if not is_equal_approx(_box.content_margin_bottom, below):
+		_box.content_margin_bottom = below
+		update_minimum_size()
