@@ -3,21 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-AD-board-1c",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-12T09:35:00Z",
   "lease_until": "2026-11-12T12:35:00Z",
-  "updated_at": "2026-11-12T09:42:00Z",
-  "expected_next_update_by": "2026-11-12T10:30:00Z",
+  "updated_at": "2026-11-12T10:08:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "0387ca7879c8b36aecbcd64f561f2f9e1a8434fc",
-    "next_step": "pre-check the Round 3 commit and mark P1-AD-board-1c ready"
+    "last_green_sha": "8bfb07bdc4ff372fa1e6da205cb6bd4a8d0c09a2",
+    "next_step": "P1-AD-board-1d re-checks D and F once AD-R17 and AD-R18 merge"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "8bfb07bdc4ff372fa1e6da205cb6bd4a8d0c09a2",
+    "exit": 0,
+    "finished_at": "2026-11-12T10:06:45Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "8bfb07bdc4ff372fa1e6da205cb6bd4a8d0c09a2",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
   "requests": [
