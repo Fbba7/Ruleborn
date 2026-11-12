@@ -7,7 +7,14 @@ reference at phone size, with the gate's verdicts. AD checks every
 owner-checked quality (`../calibration.md`: 1, 2, 3, 6, 8, 9, 13 and 14) and,
 because this is board 1, quality 4 (press feedback) from a frame pair.
 
-**Decision: the board does not stand.** Five objections are open (listed in
+**Round 2 (P1-AD-board-1b, 12 November 2026, on main at `085c812a`): the
+board still does not stand.** C and E are closed. A stays open until the
+kit's numerals are switched on (P1-K1-numerals-on). B is narrowed to one
+case: a heist with no crew plan, at 200% text in pt_BR, where the crew tray
+covers the load bar. D is narrowed to Hollow's body against its own disc,
+and Bramble's grain. See "Round 2" at the end of this page. Round 1 is kept below as it was posted.
+
+**Round 1 decision: the board does not stand.** Five objections are open (listed in
 "Objections" below). Four are against the pilot heist and one against its
 200% Portuguese layout. The kit and icon batches 1–2 stand on AD's check. Phase
 2 waits for this board (section 3.8 of the report), so the objections go to
@@ -266,3 +273,128 @@ The board stands when objections A–E are fixed and re-shot, and AD has
 checked the new stills on this page. The lead seeds the fixes as phase 1
 tasks. Under section 3.8 of the report, the board merges when AD lets it
 stand, with no 24-hour wait.
+
+## Round 2
+
+Checked by AD, P1-AD-board-1b, 12 November 2026, on main at `085c812a`
+(P1-S1-pilot-3 merged). The candidates are S1's part 3 stills in
+`docs/art/shots/heist-pilot/`:
+- `part3-*.png` are main as it stands, with the kit's numerals switched off.
+  These are the gate's stills.
+- `numerals-*.png` were shot by S1 with `"numerals": true` set locally in
+  `client/ui/kit_families.json`, then restored.
+
+What S1 changed is in "Part 3" of `docs/art/tracks/heist-pilot.md`. The gate
+judged pilot-3 at `../verdicts/P1-S1-pilot-3/0d142dd0.json` (advice only):
+- Heist at 100% text: Display type fail (fff); Hierarchy pass (ppp);
+  Character presence fail (fff).
+- Heist at 200% text, pt_BR: Display type fail (fff); Hierarchy pass (ppp).
+
+**Decision: the board does not stand.** A, B and D are open (B and D
+narrowed); C and E are closed.
+
+AD re-rendered three of the stills on main at `085c812a` with the script and
+settings in the track (`part3-sneak-100`, `part3-sneak-200-pt`,
+`part3-alarm-100`). They match S1's: the mean difference is 0.07 to 0.34 of
+255, and 0.1% to 0.75% of pixels differ by more than 16, which is the
+world's motion. So S1's stills stand for the integrated build.
+
+### The stills
+
+Heist at 100%: the key frame, then main, then main with the numerals on.
+
+![Heist at 100%: key frame, part 3, part 3 with numerals](board-1/r2-1-heist-100.png)
+
+Grayscale: [`r2-1-heist-100-gray.png`](board-1/r2-1-heist-100-gray.png).
+Colour-vision sheet: [`r2-1-heist-100-cvd.png`](board-1/r2-1-heist-100-cvd.png).
+
+Heist at 200% in pt_BR: the key frame, then main, then main with the
+numerals on.
+
+![Heist at 200% pt_BR](board-1/r2-2-heist-200-pt.png)
+
+Heist at 200% in English: the key frame, then main.
+
+![Heist at 200%](board-1/r2-4-heist-200.png)
+
+The alarm moment. The frames, in order:
+- the key frame in high contrast;
+- main at 100%;
+- main in high contrast at 100%;
+- main in high contrast at 200%;
+- the last one with the numerals on.
+
+![Alarm moment](board-1/r2-3-heist-alarm.png)
+
+The crew tray at 100%, in colour and in grayscale (crop of
+`part3-sneak-100.png`):
+
+![Crew tray, colour and grayscale](board-1/r2-5-portraits.png)
+
+Heist at 200% in pt_BR with no crew plan (left), beside the gate's still,
+which has a plan (right). AD shot the left one on main without `MANIFEST=1`:
+the default crew of three, as a rehearsal, a Workshop island or an offline
+heist begins.
+
+![Heist at 200% pt_BR, no plan beside a plan](board-1/r2-6-heist-200-pt-noplan.png)
+
+### The objections
+
+| ID | Round 2 | AD's check |
+|---|---|---|
+| A | **Open** | On main the timer is still `KitHud.clock`: flat dark figures on a cream plate, the rubric's fail anchor. The gate fails Display type at both sizes for it. With the numerals switched on (`numerals-*.png`), the timer is inked, outlined and filled like the key frame's, at 100%, at 200% in pt_BR and in high contrast. So the fix is ready but switched off. A closes when P1-K1-numerals-on merges and AD sees the timer in a still taken on main. |
+| B | **Open, narrowed** | With a crew plan (the gate's stills), B holds. At 200% in pt_BR, "Carregar até 80%" stays inside the loot panel, and the crew tray starts below the panel. The guard's "Quem está aí?" is whole and drawn above the panels. S1's `FIT=1` check fails a shot when words leave their panel, when panels overlap, or when a bubble covers words, and it passes on all eight of S1's shots. But all eight have a plan. With no plan (`r2-6`), Cast reads "Sem lançamentos" and no longer fits on a row beside "Fugir". The tray grows to two button rows and starts at y 960 of 2340, over the loot panel (y 625 to 1131). The Batedor's portrait sits on "Carregar até 100%". `FIT=1` fails that shot: "Loot over the tray". In English at 200%, and in both languages at 100%, it passes with no plan. Note: at 200% the words sit 1–2 px from the panel's inner rim ("Alarme", "~2.600", the moon icon of "Glowing dark"). This does not hold the board, but at large text the panels should keep at least 4 pt inside the rim. |
+| C | Closed | The crew, the Sage, Cast and Get out sit on one kit tray. The crew is in two rows, three and two, as the key frame has it, so Ash shares a row with Hollow. The hint is one kit bar with one clause, and the load bar is the kit's `loot_fit` bar. Notes: at 100% the tray ends about a seventh of the screen (about 350 px of 2340) above the bottom edge, leaving dead world under it; at 200% the pause button sits in the crew's rows beside Ash, where it reads as a crew control. |
+| D | **Open, narrowed** | The cream mat does what round 1 asked: each disc now parts from its ring by a clear value step, inked on both sides. But the character still does not read against its own disc, and that disc is the problem. Hollow is a violet body on a violet disc: in grayscale the body and the disc are one tone, with no dark shape, and the face is only two white eyes. That is the rubric's smudge, and the gate fails Character presence for it (fff). Bramble's grey body is about 12 L* below its orange disc. It reads, but its surface shows a fine grain at phone size. Pip and Mo are light on light in grayscale too, but their faces and dark details carry them. |
+| E | Closed | `MOMENT=alarm` shows "Alarm 3 / 6" with three pips lit, the red edge, and a guard asking "Who's there?". This holds at 100% and in high contrast at both sizes. |
+
+### What B needs
+
+The tray must not grow over the loot panel, whatever the Cast label says.
+Either fix will do:
+- Let the Cast button wrap its own label onto two lines, or shrink to the
+  icon and a short word, so it keeps its row beside Get out.
+- Or keep the tray's top below the loot panel and let the tray push down
+  into the empty band under it (see C's note).
+
+The check is S1's own: `FIT=1` with no `MANIFEST`, at `TEXT=200
+LOCALE=pt_BR`. The gate's still list for the heist should gain this case,
+so the next change that lengthens a label is caught. AD asks the lead
+(AD-R15) to file it as a small S1 task (`heist_screen.gd`).
+
+### What D needs
+
+The disc behind each portrait comes from the character's school colour
+(`client/world/fx_portrait.gd`, `Palette.SCHOOL`). So a body in its own
+school's hue, like Hollow, falls on a disc of the same hue and value. Either
+fix will do:
+- Give the figure a value step of 20 L* or more against its disc. For
+  example, a dark plum disc behind a light body, and a light disc behind a
+  dark one. Keep the school's hue in the ring or the mat, not behind the
+  figure.
+- Or draw an ink silhouette outline around the rendered figure, as the
+  key frame's portrait cards have.
+
+Bramble's grain should be checked in the portrait render (filtering or
+sampling of the model's texture). Change the portrait art only with AIA-2.
+
+### A new note that the lead should place
+
+"Laws here" (and "Leis aqui") is gold on the night sky with no ink outline.
+In round 1 this was a note. The gate has now failed Display type on it twice
+(pilot-3 at 100% and at 200% pt_BR). P1-K1-numerals-on is gated on Display
+type at 100%, so it could fail on a label that is not in K1's files. AD asks
+the lead (AD-R14) to give the header the kit's ink outline as a small S1 task
+(`heist_hud.gd`), merged before or with the numerals switch. The crew names
+now sit on the tray's dark glass, so their thin outline is enough there.
+
+### What is still to be seen
+
+Board 1 stands when:
+- A: a still on main shows the timer in the kit's numerals (P1-K1-numerals-on);
+- B: a still on main with no crew plan, at 200% in pt_BR, passes `FIT=1` with
+  the tray below the loot panel;
+- D: a still on main shows Hollow and Bramble reading against their discs.
+
+AD re-checks only those three (and the header, if it is fixed by then), as
+P1-AD-board-1c. Phase 2 still waits for board 1 (section 3.8 of the report).
