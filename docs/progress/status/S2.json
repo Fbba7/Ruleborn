@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-S2-home-1",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-12T22:10:00Z",
   "lease_until": "2026-11-13T01:10:00Z",
-  "updated_at": "2026-11-12T22:10:00Z",
-  "expected_next_update_by": "2026-11-12T22:55:00Z",
+  "updated_at": "2026-11-12T22:12:00Z",
+  "expected_next_update_by": "2026-11-12T22:57:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "62c66327",
-    "next_step": "read report.md step 10, the kit spec, the home key frame and home.gd; plan the home layout on the kit"
+    "next_step": "rebuild universe_badge.gd on kit pieces (S2-R1), then home.gd chrome onto the kit, measuring draw calls after each step"
   },
   "precheck": null,
   "gate_request": null,
