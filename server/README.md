@@ -1017,7 +1017,7 @@ starts one; `POST /v1/lab/sphere` names a chord.
   each season's close.
 - **Crews** are four to eight, joined by an invite code — the only way
   friends "across constellations" find each other here — and carry on
-  whoever leaves.
+  whoever leaves. Only a crew's members are shown its code (SEC-42).
 - **The player's own** constellation and crew are asked for by
   `GET /v1/constellations/mine` and `GET /v1/crews/mine`, so a device that
   knows nothing yet — a new phone, a reinstall — finds them.

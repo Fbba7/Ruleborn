@@ -21,6 +21,7 @@ listed as `READINGS` so they are reported beside the checks rather than
 passing for the document's.
 """
 
+import ast
 import json
 import pathlib
 import re
@@ -114,8 +115,30 @@ def constants(text: str) -> dict[str, object]:
         if tup:
             found[name] = (int(tup.group(1)), int(tup.group(2)))
         elif re.fullmatch(r"[\d\s+\-*/()]+", expr):
-            found[name] = int(eval(expr.replace("/", "//")))  # digits only
+            try:
+                found[name] = arithmetic(expr)
+            except (ValueError, SyntaxError):
+                pass  # not plain arithmetic: left unread, as any other expression is
     return found
+
+
+_OPS = {ast.Add: lambda a, b: a + b, ast.Sub: lambda a, b: a - b,
+        ast.Mult: lambda a, b: a * b, ast.Div: lambda a, b: a // b}
+
+
+def arithmetic(expr: str) -> int:
+    """`expr` read as whole-number arithmetic: + - * and / (as floor division),
+    unary minus, brackets. Anything else, `**` among them, is a ValueError, so a
+    source line cannot make the gate run code or work for ever (SEC-47)."""
+    def walk(node):
+        if isinstance(node, ast.Constant) and type(node.value) is int:
+            return node.value
+        if isinstance(node, ast.BinOp) and type(node.op) in _OPS:
+            return _OPS[type(node.op)](walk(node.left), walk(node.right))
+        if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
+            return -walk(node.operand)
+        raise ValueError(f"not plain arithmetic: {expr!r}")
+    return walk(ast.parse(expr.strip(), mode="eval").body)
 
 
 def roles(text: str) -> dict[str, tuple[int, ...]]:
@@ -758,6 +781,15 @@ def self_test() -> int:
     assert any(w.startswith("design_facts.LOAD_PER_SECOND") for w in got["wrong"]), got
     assert not facts_compare(text)["wrong"], facts_compare(text)["wrong"]
     assert not laws_compare(text)["wrong"], laws_compare(text)["wrong"]
+    # The law table's generator escapes what it quotes (SEC-47).
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("build_laws", HERE / "build_laws.py")
+    build = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(build)
+    build.self_test()
+    # A constant the gate cannot read as plain arithmetic is left unread, at once (SEC-47).
+    assert constants("pub const X: u32 = 9**9**9;") == {}
+    assert constants("pub const A: u32 = 7;\npub const B: u32 = (A * 3 - 1) / 2;") == {"A": 7, "B": 10}
     assert not wards_compare(text)["wrong"], wards_compare(text)["wrong"]
     assert not ruleborn_compare(text)["wrong"], ruleborn_compare(text)["wrong"]
     # A kind given another size, and an ability's number drifted.

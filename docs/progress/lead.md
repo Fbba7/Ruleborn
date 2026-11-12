@@ -157,8 +157,13 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqcjmNkScYYnT5Er2i` (cycle 54, 11
-November 2026 from 20:39Z, started by the Opus 5.5 launcher). Cycle 53's
+Latest lead cycle session: `session_01SNkKxpnpDTy3xKH1cD7N64` (cycle 59, 12
+November 2026 from 03:41Z, started by the Opus 5.5 launcher). Cycle 58's
+was `session_01SNkKxq63oZNWPm4cReDWcP` (from 02:38Z). Cycle 57's
+was `session_01SNkKxoLAJu3YypfTqBzR97` (from 01:39Z). Cycle 56's
+was `session_01SNkKxoW2tKv8QRKNSnU1yd` (from 00:40Z). Cycle 55's
+was `session_01SNkKxnNomdRK7U7hfS4cvz` (from 21:38Z). Cycle 54's
+was `session_01SNkKxqcjmNkScYYnT5Er2i` (from 20:39Z). Cycle 53's
 was `session_01SNkKxq9SSpFo8PxqxGC3p8` (from 19:51Z, the first cycle on
 Opus 5.5 at effort high, order 5; its first commit, `2fccd5b2`, names it
 with a mistyped ID in its trailer). Cycle 52's was `session_01SNkKxrATVfECHBXAWskbLg` (11 November
@@ -200,9 +205,11 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| K1 | `session_01SNkKxrLVEpoeqhNUMybpRi` (Opus 5.5, effort high) | P1-K1-heist-kit (start: P1-K1-disc-host merged as 4dde8d03) | `claude/ui-bake` | 2026-11-11 21:16Z |
+| S1 | `session_01SNkKxp6HQPTjRP521X89Gw` (Opus 5.5, effort high) | P1-S1-pilot-3 (start: P1-K1-heist-kit and P1-AD-board-1 merged as a01e4d6c; board 1's objections A-E) | `claude/ui-screens-heist` | 2026-11-12 01:21Z |
+| AD | `session_01SNkKxqUaNgqwmejJAEzasn` (Opus 5.5, effort high; idle, its task merged) | P1-AD-board-1 (start: P1-S1-pilot-2 merged as d880807e) | `claude/ui-ad` | 2026-11-11 22:16Z |
+| K1 | `session_01SNkKxrLVEpoeqhNUMybpRi` (Opus 5.5, effort high; idle, its task merged) | P1-K1-heist-kit (start: P1-K1-disc-host merged as 4dde8d03) | `claude/ui-bake` | 2026-11-11 21:16Z |
 | K1 | `session_01SNkKxqMwm4w36af9FQvXVB` (Opus 5.5, effort high; idle, its task merged) | P1-K1-disc-host (restart: the Fable 5.2 session stood still and is not reused, order 5; merge prior_sha 905f9fca, finish guard, pre-check, handoff) | `claude/ui-bake` | 2026-11-11 19:54Z |
-| S1 | `session_01SNkKxou5iRnrCMLMUqmcRa` (Opus 5.5, effort high) | P1-S1-pilot-2 (restart: as K1; merge prior_sha 38a154ea and do the task) | `claude/ui-screens-heist` | 2026-11-11 19:54Z |
+| S1 | `session_01SNkKxou5iRnrCMLMUqmcRa` (Opus 5.5, effort high; idle, its task merged) | P1-S1-pilot-2 (restart: as K1; merge prior_sha 38a154ea and do the task) | `claude/ui-screens-heist` | 2026-11-11 19:54Z |
 | AIA | `session_01SNkKxqH1rhueBqbuneEFSq` (Fable 5.2, interrupted, not reused) | P1-AIA-kit-7 | `claude/ui-artist` | 2026-11-11 01:15Z |
 | K1 | `session_01SNkKxpc8H8L5VAJUYuNCba` (Fable 5.2, interrupted, not reused) | P1-K1-disc-host | `claude/ui-bake` | 2026-11-11 01:15Z |
 | S1 | `session_01SNkKxqxd6Shqp4e1AafGUY` (Fable 5.2, interrupted, not reused) | P1-S1-pilot-2 | `claude/ui-screens-heist` | 2026-11-11 01:15Z |
@@ -275,7 +282,7 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: P1-AD-board-1 once its deps merge (every phase 0 AD task is merged). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+Tasks: P1-AD-board-1b once P1-S1-pilot-3 merges (P1-AD-board-1 is merged; board-1b re-checks its objections A-E). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
@@ -335,7 +342,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P1-S1-pilot-1, then P1-S1-pilot-2 as their deps merge (pilot-1 waits on P1-K1-switch-heist and P1-AIA2-icons-1b).
+Tasks: P1-S1-pilot-3 (board 1's objections A-E; pilot-1 and pilot-2 are merged), then P2-S1-flow-result and P2-S1-flow-replay once P1-AD-board-1b merges.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 1
 
@@ -359,6 +366,149 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 59, 12 November 2026, from 03:41Z (session
+  `session_01SNkKxpnpDTy3xKH1cD7N64`, started by the Opus 5.5 launcher):
+  a bookkeeping cycle, nothing merged, no session started; one request
+  answered.
+  - S1 works on P1-S1-pilot-3 (session
+    `session_01SNkKxp6HQPTjRP521X89Gw`, waiting on its check_all run;
+    lease to 06:20Z, last push `0d142dd0` at 03:20Z): A to E built and
+    noted; check_all on 75fb660a failed one layout test (the pre-landing
+    tray at 1,129 px of 1,080 in pt_BR and pt_PT), fixed in a90ea011;
+    check_all on a90ea011, the pre-check and the gate next. Not
+    restarted. The claim's lease in the backlog moved to 06:20Z.
+  - **S1-R11 answered** (blocking, due 10:46Z): granted.
+    `client/ui/kit_families.json` is an exception of P1-S1-pilot-3 for
+    the one line `"numerals": true` (K1-R11's answer adds the switch once
+    the numerals' art passes the gate; kit-3's verdicts pass). check_all
+    and guard run again with the line in, no test loosened; if either
+    fails outside S1's files, S1 takes the default. Message M7 tells S1;
+    requests.md, "Lead", has the answer. At the merge, check with
+    `owners.py diff` that the file's change is that one line.
+  - No task is ready and no gate request is open, so no merge lock was
+    taken. AD's board-1b waits on pilot-3; K1, AD, AIA, AIA-2 and SV have
+    no open task (their status files show only merged tasks). The
+    leftover branch `lead/candidate-d7561425…` is cycle 16's and is
+    stale. Main did not move since cycle 57, so the pages were not
+    republished. One builder works (S1). The backlog has 69 tasks, 51
+    merged. No owner-inbox entry.
+  - Next: merge pilot-3 when ready (gate items: heist at 100% and at 200%
+    text, pt_BR; render the stills on the candidate), then start AD on
+    board-1b. At most three builders; icon batches 3 and 4 stay deferred
+    (D13 (c)).
+- Cycle 58, 12 November 2026, from 02:38Z (session
+  `session_01SNkKxq63oZNWPm4cReDWcP`, started by the Opus 5.5 launcher):
+  a bookkeeping cycle, nothing merged, no session started.
+  - S1 works on P1-S1-pilot-3 (session
+    `session_01SNkKxp6HQPTjRP521X89Gw` working, lease to 04:23Z, last
+    push `74cd015e` at 02:17Z): A, C, D and E done; B's large-text layout
+    done and check_screens OK, the heist/200 budget still reads 117
+    against 115; then budgets, stills, pre-check and the gate. Not
+    restarted.
+  - No task is ready and no gate request is open, so no merge lock was
+    taken. AD's board-1b waits on pilot-3; K1, AD, AIA, AIA-2 and SV have
+    no open task. No new request (every request in the status files is
+    in requests.md; none past due).
+  - Main did not move since cycle 57, so the pages were not republished.
+    One builder works (S1). The backlog has 69 tasks, 51 merged. No
+    owner-inbox entry.
+  - Next: merge pilot-3 when ready (gate items: heist at 100% and at 200%
+    text, pt_BR; render the stills on the candidate), then start AD on
+    board-1b. At most three builders; icon batches 3 and 4 stay deferred
+    (D13 (c)).
+- Cycle 57, 12 November 2026, from 01:39Z (session
+  `session_01SNkKxoLAJu3YypfTqBzR97`, started by the Opus 5.5 launcher):
+  a bookkeeping cycle, nothing merged, no session started.
+  - S1's claim on P1-S1-pilot-3 recorded from its status file (working,
+    lease to 04:23Z; A and E done, C, D and B next). Its session
+    `session_01SNkKxp6HQPTjRP521X89Gw` is working, so it was not
+    restarted. `owners.py claims`: disjoint.
+  - No task is ready and no gate request is open, so no merge lock was
+    taken. AD's board-1b waits on pilot-3; K1, AIA, AIA-2 and SV have no
+    open task (their status files show only their merged tasks). No new
+    request: S1-R8 to S1-R10 and AD-R7 to AD-R12 are already in
+    requests.md, none past due.
+  - Main gained three code commits from the overseer's security fixers
+    since cycle 56 (`eeb33c9c`, `c888bed7`, `e39e9048`: SEC-47, SEC-17,
+    SEC-30/SEC-29; sim, client data and auth files, none of S1's). They
+    did not change the audit or roadmap pages, so these were not
+    republished. pilot-3's candidate will be built on main's head as
+    usual.
+  - One builder works (S1). The backlog has 69 tasks, 51 merged. No
+    owner-inbox entry.
+  - Next: merge pilot-3 when ready (gate items: heist at 100% and at 200%
+    text, pt_BR; render the stills on the candidate), then start AD on
+    board-1b. At most three builders; icon batches 3 and 4 stay deferred
+    (D13 (c)).
+- Cycle 56, 12 November 2026, from 00:40Z (session
+  `session_01SNkKxoW2tKv8QRKNSnU1yd`, started by the Opus 5.5 launcher):
+  two merges in one candidate, six tasks seeded, one session started.
+  - K1 marked P1-K1-heist-kit ready at e1cee5c1 and AD marked
+    P1-AD-board-1 ready at 45d2c286; their claims were disjoint and
+    `owners.py diff` was clean for both. Neither has gate items.
+  - **Merged P1-K1-heist-kit and P1-AD-board-1** as `a01e4d6c`. The first
+    candidate, 6766d05f, went stale during its checks: main gained 15
+    security commits (SEC fixes, among them `owners.py` SEC-27/46 and
+    `run_checks.sh` SEC-19, which now runs with `core.hooksPath=/dev/null`)
+    from the overseer's desktop session `session_011GfsbJKS1vpggEBqbgYNLE`.
+    Its runs were stopped; the candidate was rebuilt as 75593d76 on
+    `f9994ecb`, the lock moved in `3ffa07f8`, and check_all PASS and
+    guard.sh OK on it. Main then had only the lock commit beyond it, so
+    the merges were redone on `3ffa07f8` and only check_docs_consistency
+    was run again. No test was loosened (the removed lines are catalogue
+    drawing code). The lock was released in `0beddac8`. The audit and
+    roadmap pages did not change, so they were not republished.
+  - **Requests answered** (requests.md, "Lead"): AD's blocking objections
+    AD-R7 to AD-R11 (board 1's A-E) by P1-S1-pilot-3 (S1; it also owns
+    `tools/ui_bake/budgets.json` for S1-R7 and `heist_hand.gd` for S1-R8)
+    and AD's re-check P1-AD-board-1b. AD-R12's flow findings F1-F7 became
+    phase 2 tasks: P2-S2-flow-home (F1, F2), P2-flow-entry (F3-F5, any
+    maker), P2-S1-flow-result (F6) and P2-S1-flow-replay (F7), all
+    waiting on board-1b. S1-R1 to S1-R6 were answered by heist-kit.
+  - Started S1 on P1-S1-pilot-3 at 01:21Z
+    (`session_01SNkKxp6HQPTjRP521X89Gw`, Opus 5.5, effort high accepted).
+    One builder works; K1, AD and AIA have no open task. The backlog has
+    69 tasks, 51 merged. No owner-inbox entry.
+  - The lead's checkout is on a local branch `lead-main`: push with
+    `git push origin HEAD:claude/videogame-project-analysis-ewkkk2`, not
+    by the branch name, or git pushes a stale local ref and is rejected.
+  - Next: merge pilot-3 when ready (gate items: heist at 100% and at 200%
+    text, pt_BR), then start AD on board-1b. At most three builders; icon
+    batches 3 and 4 stay deferred (D13 (c)).
+- Cycle 55, 11 November 2026, from 21:38Z (session
+  `session_01SNkKxnNomdRK7U7hfS4cvz`, started by the Opus 5.5 launcher):
+  one merge, one gate run, one session started.
+  - K1's claim on P1-K1-heist-kit recorded from its status file (lease to
+    00:05Z). S1 marked P1-S1-pilot-2 ready at a4d87d18 at 21:43Z and asked
+    for the gate; its new stills under `docs/art/shots/heist-pilot/**`
+    were granted as an exception.
+  - **Gate for P1-S1-pilot-2** (advisory, shadow mode; 3 ui-judge samples
+    per item and quality, pictures shuffled; stills rendered on the
+    candidate 134a0ddf), verdict in `39465f4`: heist in high contrast,
+    Hierarchy pass and Colour roles and value pass; heist at 200% text,
+    Hierarchy pass and **Display type fail** (3 of 3: the flat '2:25'
+    timer has no ink outline, hard drop or gradient fill, and the crew
+    names and 'Laws here' have no clear outline at 200%). As for pilot-1
+    and kit-6, the fail is advisory and does not block the merge; AD's
+    board (P1-AD-board-1) reviews it.
+  - **Merged P1-S1-pilot-2** (ready a4d87d18) as `d880807e`: merge lock in
+    `26e6c9a`, candidate 134a0ddf, `owners.py diff` clean, claims
+    disjoint, check_all PASS, guard.sh OK, no test loosened. Main had
+    gained only the verdict commit, so the merge was redone on `39465f4`
+    and only check_docs_consistency was run again. The lock was released
+    in this cycle's bookkeeping. The pages did not change, so they were not
+    republished.
+  - Started AD on P1-AD-board-1 at 22:16Z
+    (`session_01SNkKxqUaNgqwmejJAEzasn`, Opus 5.5, effort high accepted).
+    Two builders work (K1 and AD); S1 and AIA have no open task. S1's
+    open requests S1-R1 to S1-R3 (kit_hud update calls, loot layout, law
+    chip wrapping) are K1's in heist-kit, none blocking, defaults stand.
+    The backlog has 63 tasks, 49 merged. No owner-inbox entry.
+  - `run_checks.sh wait` can outlast a 10-minute foreground call (it was
+    cut at 590 s while check_all still ran); wait on its log in the
+    background instead.
+  - Next: merge K1's heist-kit and AD's board-1 when each is ready. At
+    most three builders; icon batches 3 and 4 stay deferred (D13 (c)).
 - Cycle 54, 11 November 2026, from 20:39Z (session
   `session_01SNkKxqcjmNkScYYnT5Er2i`, started by the Opus 5.5 launcher):
   one merge, one session started, three requests recorded.

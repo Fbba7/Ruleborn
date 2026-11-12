@@ -3,6 +3,7 @@
 
     python3 sim/build_laws.py            # write it
     python3 sim/build_laws.py --check    # fail if the committed file differs
+    python3 sim/build_laws.py --self-test
 
 The simulation cannot read JSON — it has no dependencies and decides nothing
 in decimals (§24.7) — so the laws reach it as a table of exact ratios,
@@ -39,6 +40,16 @@ def ratio(value) -> tuple[int, int]:
     num, den = round(scaled), 1000
     g = math.gcd(num, den) or 1
     return num // g, den // g
+
+
+def rs(text: str) -> str:
+    """`text` as a Rust string literal: quoted, with `"` and `\\` escaped, so a
+    name in the content file cannot end the literal early and write code into
+    the table (SEC-47). A control character is refused rather than escaped:
+    JSON's `\\u0001` is not Rust's."""
+    if any(ord(c) < 0x20 or ord(c) == 0x7f for c in text):
+        raise SystemExit(f"{text!r} has a control character: the table will not hold it")
+    return json.dumps(text, ensure_ascii=False)
 
 
 def camel(name: str) -> str:
@@ -99,11 +110,11 @@ def render() -> str:
     for law in data["laws"]:
         ps = ", ".join(f"(Param::{camel(k)}, {n}, {d})"
                        for k, v in law["params"].items() for n, d in [ratio(v)])
-        lines.append(f"    LawDef {{ id: \"{law['id']}\", name: \"{law['name']}\", "
+        lines.append(f"    LawDef {{ id: {rs(law['id'])}, name: {rs(law['name'])}, "
                      f"simulated: {'true' if law['simulated'] else 'false'}, "
                      f"params: &[{ps}], notes: {mask(law['notes'])}, "
                      f"launch: {'true' if law['id'] in launch else 'false'}, "
-                     f"school: \"{school[law['id']]}\", cost: {base[law['id']]}, "
+                     f"school: {rs(school[law['id']])}, cost: {base[law['id']]}, "
                      f"chapter: {chapter[law['id']]} }},")
     lines.append("];")
     lines += ["", "/// §8.1's eight notes, one bit each, in the table's order.", "pub mod note {"]
@@ -161,7 +172,35 @@ def render() -> str:
     return "\n".join(lines) + "\n"
 
 
+def self_test() -> None:
+    """A law's name with a quote in it stays inside its literal (SEC-47)."""
+    global CONTENT
+    import tempfile
+    data = json.loads(CONTENT.read_text(encoding="utf-8"))
+    data["laws"][0]["name"] = 'a"b'
+    saved = CONTENT
+    with tempfile.TemporaryDirectory() as tmp:
+        CONTENT = pathlib.Path(tmp) / "law_effects.json"
+        CONTENT.write_text(json.dumps(data), encoding="utf-8")
+        try:
+            table = render()
+        finally:
+            CONTENT = saved
+    assert 'name: "a\\"b",' in table, "a quote in a name must be escaped"
+    assert rs("back\\slash") == '"back\\\\slash"'
+    try:
+        rs("bell\x07")
+    except SystemExit:
+        pass
+    else:
+        raise AssertionError("a control character must be refused")
+
+
 def main() -> int:
+    if "--self-test" in sys.argv:
+        self_test()
+        print("build_laws self-test: a quoted name, a backslash and a control character handled")
+        return 0
     text = render()
     if "--check" in sys.argv:
         if not OUT.exists() or OUT.read_text() != text:

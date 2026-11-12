@@ -8,7 +8,9 @@
 #     bash client/export.sh check     what this machine can build, compiled
 #                                     for both phones without linking
 #
-# Android needs the SDK and the NDK (ANDROID_HOME, ANDROID_NDK_HOME) and Java.
+# Android needs the SDK and the NDK (ANDROID_HOME, ANDROID_NDK_HOME) and Java,
+# and the upload key (GODOT_ANDROID_KEYSTORE_RELEASE_PATH); RULEBORN_DEBUG_EXPORT=1
+# exports a debug-signed APK without it, for a developer's own phone.
 # The iPhone needs a Mac with Xcode, and the App Store team to sign as
 # (RULEBORN_APPLE_TEAM_ID); the bundle identifier is the preset's.
 # Godot's export templates are fetched once, like Godot, into its own folder.
@@ -16,6 +18,15 @@ set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 root="$(cd "$here/.." && pwd)"
 target="${1:-check}"
+
+# A store build is never debug-signed by accident (SEC-30): without the upload
+# key, Android exports nothing unless a developer asks for a debug APK with
+# RULEBORN_DEBUG_EXPORT=1. Checked before anything is fetched or built.
+if [ "$target" = android ] && [ -z "${GODOT_ANDROID_KEYSTORE_RELEASE_PATH:-}" ] \
+    && [ "${RULEBORN_DEBUG_EXPORT:-}" != 1 ]; then
+  echo "error: GODOT_ANDROID_KEYSTORE_RELEASE_PATH is unset: set it to sign a release, or RULEBORN_DEBUG_EXPORT=1 for a debug-signed, debuggable APK that is never handed out" >&2
+  exit 1
+fi
 
 godot="$(bash "$here/build.sh" | tail -n 1)"
 templates="$HOME/.local/share/godot/export_templates/4.7.2.stable"
@@ -49,8 +60,9 @@ case "$target" in
     (cd "$here/ext" && cargo build --release --quiet --target aarch64-linux-android)
     mkdir -p "$here/bin/android" "$root/build/android"
     cp "$here/ext/target/aarch64-linux-android/release/libruleborn_godot.so" "$here/bin/android/"
-    # A debug export, signed with Godot's debug key; a store release takes the
-    # upload key from GODOT_ANDROID_KEYSTORE_RELEASE_PATH, _USER and _PASSWORD.
+    # A store release takes the upload key from GODOT_ANDROID_KEYSTORE_RELEASE_PATH,
+    # _USER and _PASSWORD; without it, only RULEBORN_DEBUG_EXPORT=1 gets here, for
+    # a debug export signed with Godot's debug key.
     mode="--export-debug"
     if [ -n "${GODOT_ANDROID_KEYSTORE_RELEASE_PATH:-}" ]; then
       mode="--export-release"

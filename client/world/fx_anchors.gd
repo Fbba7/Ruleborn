@@ -51,7 +51,25 @@ var wipe := 0.0
 var vault_shown := true
 ## What each guard is saying: guard index -> {text: String, t: float}.
 var speech := {}
+## A layer the screen lays above its panels, or null: the guards' words are
+## drawn there, so a bubble is never clipped behind a panel. It covers the
+## same rect as this one.
+var speech_layer: Control:
+	set(layer):
+		speech_layer = layer
+		if layer != null and not layer.draw.is_connected(_draw_speech_layer):
+			layer.draw.connect(_draw_speech_layer)
+## The screen's panels, in this layer's pixels (a Callable returning an
+## Array of Rect2): a bubble moves off them to the nearest clear place.
+var keep_off := Callable()
+## Where the last frame drew each bubble, in this layer's pixels.
+var speech_boxes: Array[Rect2] = []
+
 var _time := 0.0
+## The guards' words placed this frame (_speech_items), and whether they are
+## drawn on the speech layer.
+var _said: Array[Dictionary] = []
+var _said_up := false
 ## Where the VAULT tag stands this frame, so a guard's words stay off it.
 var _vault_plate := Rect2()
 ## Each figure's most health seen, its bar's whole.
@@ -116,10 +134,14 @@ func _metre() -> float:
 
 
 func _draw() -> void:
-	# Every shape in one call (FxPen).
-	FxPen.begin(self)
-	_paint()
-	FxPen.end(self)
+	_pen(self, _paint)
+
+
+## Every shape a canvas item draws in one call (FxPen).
+func _pen(ci: CanvasItem, paint: Callable) -> void:
+	FxPen.begin(ci)
+	paint.call()
+	FxPen.end(ci)
 
 
 func _paint() -> void:
@@ -138,7 +160,15 @@ func _paint() -> void:
 	_draw_guards(replay, m, calm)
 	_draw_crew(replay, m, calm)
 	_draw_pops(m, calm)
-	_draw_speech(replay, m, calm)
+	# The guards' words here, or on the screen's layer above its panels when
+	# one lies over a panel (a layer of their own costs the frame a call).
+	_said = _speech_items(replay, m, calm)
+	var up := speech_layer != null and _said.any(func(it: Dictionary) -> bool: return it["over"])
+	if not up:
+		_paint_speech(self, _said)
+	if speech_layer != null and (up or _said_up):
+		speech_layer.queue_redraw()
+	_said_up = up
 	if wipe > 0.0:
 		# The crossing's cloud wipe: the swoop's middle in the rift's violet,
 		# clouds rolling across it.
@@ -413,16 +443,83 @@ func say(guard: int, state: String) -> void:
 		speech[guard] = {"text": Strings.t(SAYS[state]), "t": 0.0, "alarm": state == "Alerted"}
 
 
-## A guard's words on a parchment bubble beside its head, its tail to the
-## guard's mouth, popping in and fading (reduced motion: shown, then gone).
+## The guards' words on the screen's layer above its panels.
+func _draw_speech_layer() -> void:
+	if not _said_up or not is_visible_in_tree() or wipe > 0.0:
+		return
+	_pen(speech_layer, _paint_speech.bind(speech_layer, _said))
+
+
+## `box` moved up or down off the screen's panels (keep_off) to the nearest
+## place on screen clear of them, within a few lines of where it was said.
+## Where there is none, it goes where it covers the least of them (in a gap
+## narrower than itself, its middle), and the speech layer draws it above the
+## panels, so it is never clipped.
+func _off_panels(box: Rect2, px: float) -> Rect2:
+	if not keep_off.is_valid():
+		return box
+	var panels: Array = keep_off.call()
+	var cover := func(b: Rect2) -> float:
+		var sum := 0.0
+		for r: Rect2 in panels:
+			var o := b.grow(px * 0.1).intersection(r)
+			sum += o.get_area() if b.grow(px * 0.1).intersects(r) else 0.0
+		return sum
+	if cover.call(box) == 0.0:
+		return box
+	var ys: Array[float] = []
+	for r: Rect2 in panels:
+		ys.append(r.position.y - box.size.y - px * 0.2)
+		ys.append(r.end.y + px * 0.2)
+		for q: Rect2 in panels:
+			if q.position.y > r.end.y:
+				ys.append((r.end.y + q.position.y - box.size.y) * 0.5)
+	var best := box
+	var least: float = cover.call(box)
+	var far := INF
+	for y: float in ys:
+		var b := Rect2(Vector2(box.position.x, y), box.size)
+		var away := absf(y - box.position.y)
+		if y < px * 0.2 or b.end.y > size.y - px * 0.2 or away > px * 6.0:
+			continue
+		var c: float = cover.call(b)
+		if c < least or (c == least and away < far):
+			least = c
+			far = away
+			best = b
+	return best
+
+
+## Whether `box` lies over one of the screen's panels (keep_off).
+func _covers_panel(box: Rect2, px: float) -> bool:
+	if not keep_off.is_valid():
+		return false
+	for r: Rect2 in keep_off.call():
+		if box.grow(px * 0.1).intersects(r as Rect2):
+			return true
+	return false
+
+
+## Whether `at` lies under one of the screen's panels (keep_off).
+func _under_panel(at: Vector2) -> bool:
+	if not keep_off.is_valid():
+		return false
+	for r: Rect2 in keep_off.call():
+		if (r as Rect2).has_point(at):
+			return true
+	return false
+
+
 ## One callout at a time, as the design keeps the middle calm: the most
 ## urgent state said, the newest of those; the others' pips still say
-## theirs.
-func _draw_speech(replay: RulebornReplay, m: float, calm: bool) -> void:
+## theirs: each one's bubble placed, `over` where it lies over a panel.
+func _speech_items(replay: RulebornReplay, m: float, calm: bool) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
 	var nodes: Array[Node3D] = view._guards
 	var font := FxSkin.words()
 	var px := int(clampf(m * 0.36, 34.0, 46.0))
 	var placed: Array[Rect2] = []
+	speech_boxes = placed
 	for i: int in _speaker():
 		if i >= nodes.size() or i >= replay.guards().size():
 			continue
@@ -452,9 +549,31 @@ func _draw_speech(replay: RulebornReplay, m: float, calm: bool) -> void:
 				box.position.y = other.position.y - size.y - px * 0.2
 		box.position.x = clampf(box.position.x, px * 0.2, get_viewport_rect().size.x - size.x - px * 0.2)
 		box.position.y = maxf(box.position.y, px * 0.2)
+		# Off the screen's panels where the world has room for it.
+		box = _off_panels(box, px)
 		placed.append(box)
 		var tail := PackedVector2Array([box.get_center() + Vector2(-side * size.x * 0.25, size.y * 0.3),
 			box.get_center() + Vector2(-side * size.x * 0.05, size.y * 0.3), head + Vector2(side * px * 0.2, -px * 0.3)])
+		# No tail into a panel: a guard behind one says its words from the
+		# nearest clear place, with no point reaching across the panel.
+		var under := _under_panel(head)
+		out.append({"i": i, "box": box, "tail": PackedVector2Array() if under else tail, "a": a,
+			"grow": grow, "words": words, "px": px, "over": under or _covers_panel(box, px)})
+	return out
+
+
+## The guards' bubbles (_speech_items) drawn on `ci`: this layer, or the
+## screen's speech layer.
+func _paint_speech(ci: CanvasItem, items: Array[Dictionary]) -> void:
+	var font := FxSkin.words()
+	for it: Dictionary in items:
+		var i: int = it["i"]
+		var box: Rect2 = it["box"]
+		var size := box.size
+		var tail: PackedVector2Array = it["tail"]
+		var a: float = it["a"]
+		var px: int = it["px"]
+		var words: String = it["words"]
 		# An alert is said in paper on §21.8's alarm fill; the rest on parchment.
 		var fill := FxSkin.ALARM_DEEP if speech[i].get("alarm", false) else FxSkin.PARCH_TOP
 		var ink := FxSkin.PARCH_TOP if speech[i].get("alarm", false) else FxSkin.PARCH_INK
@@ -465,11 +584,13 @@ func _draw_speech(replay: RulebornReplay, m: float, calm: bool) -> void:
 		bubble.set_corner_radius_all(int(size.y * 0.5))
 		bubble.shadow_color = Color(0.05, 0.02, 0.08, 0.3 * a)
 		bubble.shadow_size = 4
-		FxPen.polygon(self, _grown(tail, 3.0), Color(FxSkin.INK_LINE, a))
-		FxPen.style_box(self, bubble, box)
-		FxPen.polygon(self, tail, Color(fill, a))
-		if grow >= 1.0:
-			FxPen.string(self, font, Vector2(box.position.x, box.position.y + size.y * 0.5 + px * 0.36), words,
+		if not tail.is_empty():
+			FxPen.polygon(ci, _grown(tail, 3.0), Color(FxSkin.INK_LINE, a))
+		FxPen.style_box(ci, bubble, box)
+		if not tail.is_empty():
+			FxPen.polygon(ci, tail, Color(fill, a))
+		if float(it["grow"]) >= 1.0:
+			FxPen.string(ci, font, Vector2(box.position.x, box.position.y + size.y * 0.5 + px * 0.36), words,
 				HORIZONTAL_ALIGNMENT_CENTER, box.size.x, px, Color(ink, a))
 
 

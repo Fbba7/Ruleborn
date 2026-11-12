@@ -186,7 +186,10 @@ export class Links {
       if (why) throw new Refused(409, why);
       const cost = l.kind === kind ? 0 : facts.LINK_KINDS[kind].cost;
       if (cost > 0) this.universe.afford(account, { cost });
-      this.db.prepare("UPDATE links SET kind = ?, a = ?, b = ?, paid_to = ?, open = 1 WHERE owner = ? AND n = ?")
+      // The same kind turned round costs nothing, so it changes only the
+      // direction: what is owed and a closed Rift carry over (SEC-35).
+      if (l.kind === kind) this.db.prepare("UPDATE links SET a = ?, b = ? WHERE owner = ? AND n = ?").run(a, b, account, n);
+      else this.db.prepare("UPDATE links SET kind = ?, a = ?, b = ?, paid_to = ?, open = 1 WHERE owner = ? AND n = ?")
         .run(kind, a, b, now, account, n);
       return cost > 0 ? this.universe.pay(account, cost, `a ${kind.replace("_", " ")}, link ${n} (5.3)`, now) : null;
     });

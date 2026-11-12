@@ -4,6 +4,20 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-12 00:41Z: the lead was stale, the launcher had just started a cycle (watchdog)
+
+- **What:** `status/lead.json` was past its `expected_next_update_by` of
+  23:34Z (last update 22:19Z, cycle 55). The launcher had not failed: it
+  is enabled and its last run succeeded at 00:38Z. The latest lead cycle
+  session on record (`session_01SNkKxnNomdRK7U7hfS4cvz`, cycle 55) has
+  completed. The watchdog's own firing of 00:09Z reached its session only
+  at 00:40Z.
+- **Done:** started no session. At 00:40Z the launcher's session
+  (`session_01SNkKxoNHJW6nWHDeA8Mfth`) reported "lead cycle 56 launched".
+  A second cycle from the watchdog would only duplicate it, as with the
+  duplicate cycles 47 and 52.
+- **Needs the owner:** nothing.
+
 ## 2026-11-11 05:21Z: the lead was stale, a lead cycle is started (watchdog)
 
 - **What:** `status/lead.json` was past its `expected_next_update_by` of

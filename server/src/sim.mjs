@@ -221,6 +221,13 @@ export class Build {
 
   /** An island's hash and what stops it being published. */
   island(bytes) {
+    // Bytes 6-9 are `exposed` (u32, little-endian) after "RBI1" and the realm
+    // and vault levels; the simulation reads it as an i32, so a value above
+    // i32::MAX is not an island the rules can hold (SEC-17).
+    if (bytes.length >= 10 &&
+        new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getUint32(6, true) > 0x7fffffff) {
+      return { error: "island_malformed" };
+    }
     this.buffer().set(bytes);
     const mask = this.x.rb_island(bytes.length);
     if (mask < 0) return { error: REFUSED[mask] };

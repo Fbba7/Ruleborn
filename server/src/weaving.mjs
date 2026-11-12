@@ -185,7 +185,7 @@ export class Weaving {
    *  at the tier the Codex has it, paid in Aether, working once §5.6's
    *  weaving time has passed. A repeat of one already woven there is
    *  answered as woven. */
-  weave(account, { realm, slot, law, swap = false }) {
+  weave(account, { realm, slot, law, swap = false }, { view = true } = {}) {
     if (typeof law !== "string" || !Object.hasOwn(LAWS, law)) throw new Refused(400, "no_such_law");
     if (!Number.isInteger(slot) || slot < 1) throw new Refused(400, "malformed_body");
     const now = this.service.now();
@@ -197,7 +197,7 @@ export class Weaving {
       if (slot > this.slots(account, realm)) throw new Refused(409, "no_such_slot", { slots: this.slots(account, realm) });
       const rows = this.rows(account);
       const here = rows.find((r) => r.realm === realm && r.slot === slot);
-      if (here?.law === law) return this.done(account, true);
+      if (here?.law === law) return this.done(account, true, view);
       // G54: curation's swap weaves the new law in the old one's place, at
       // §5.6's price and time, with no hour's rest between.
       if (here?.law && swap !== true) throw new Refused(409, "slot_taken");
@@ -233,7 +233,7 @@ export class Weaving {
       this.service.codex.woven(account, law, now);
       this.service.book(account, "aether", -cost,
         `${LAWS[law].name} woven in ${realm === CROWN ? "the crown" : realm} (5.6)`, now);
-      return this.done(account);
+      return this.done(account, false, view);
     });
   }
 
@@ -265,17 +265,17 @@ export class Weaving {
 
   /** The law in slot `slot` of `realm` taken out, at once; the slot rests
    *  an hour (§5.6). An empty slot is answered as emptied. */
-  unweave(account, { realm, slot }) {
+  unweave(account, { realm, slot }, { view = true } = {}) {
     if (!Number.isInteger(slot) || slot < 1) throw new Refused(400, "malformed_body");
     const now = this.service.now();
     return transaction(this.db, () => {
       const here = this.rows(account).find((r) => r.realm === realm && r.slot === slot);
-      if (!here?.law) return this.done(account, true);
+      if (!here?.law) return this.done(account, true, view);
       this.service.home?.settleAll(account, now);
       this.db.prepare(
         "UPDATE law_slots SET law = NULL, tier = NULL, ready_at = NULL, rests_until = ? WHERE owner = ? AND realm = ? AND slot = ?")
         .run(now + facts.SLOT_REST_MINUTES * MINUTE, account, realm, slot);
-      return this.done(account);
+      return this.done(account, false, view);
     });
   }
 
@@ -331,8 +331,10 @@ export class Weaving {
     });
   }
 
-  done(account, repeated = false) {
-    return { weaving: this.view(account), ...(repeated ? { repeated: true } : {}) };
+  /** An answer, with the weaving view unless `view` is false: a batch of
+   *  offline weaves builds it once at its end, not once a weave (SEC-23). */
+  done(account, repeated = false, view = true) {
+    return { ...(view ? { weaving: this.view(account) } : {}), ...(repeated ? { repeated: true } : {}) };
   }
 
   /** Each realm's slots, the crown's first, each with what is in it: a law

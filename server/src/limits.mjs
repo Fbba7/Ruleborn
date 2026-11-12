@@ -33,6 +33,10 @@ export const KINDS = {
   // players who share an address — a school's, a carrier's — are never held
   // by each other's sign-ins; twenty at once, then one every 3 seconds.
   failedSignIns: { burst: 20, per: 3_000 },
+  // What a caller may ask before signing in that is not a sign-in — a
+  // sign-in nonce, the deletion page — by address, where the deployment can
+  // tell it: a signed-in player's rate (SEC-34).
+  unsigned: { burst: 60, per: 500 },
 };
 
 export class Limiter {

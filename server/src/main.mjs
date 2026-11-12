@@ -48,7 +48,7 @@ import { createServer } from "node:http";
 import { X509Certificate, createPublicKey, randomBytes } from "node:crypto";
 import { chmodSync, existsSync, linkSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve, sep } from "node:path";
 
 import { Journal, reapplyDeletions } from "./accounts.mjs";
 import { CloudflarePurge, purgeEdge } from "./edge.mjs";
@@ -142,6 +142,14 @@ if (platforms.stubbed) {
   console.warn("RULEBORN_STUB_SIGNIN=1: any credential is taken as the identity it names. "
                + "A local or test server only: it must not face a network (SR-29)");
 }
+// A deployment whose deletions journal sits inside its data folder restores
+// the journal with every restore of the data, and so can undo deletions made
+// since the backup (declarations.md, SEC-38).
+const journalDir = resolve(process.env.RULEBORN_DELETIONS ?? join(data, "deletions"));
+if (!platforms.stubbed && journalDir.startsWith(resolve(data) + sep)) {
+  console.warn("RULEBORN_DELETIONS is inside RULEBORN_DATA: a restore of the data folder "
+               + "also restores the journal, and can undo later deletions (declarations.md)");
+}
 
 // D70: the edge's cache of an under-13 player's bundles, purged on their
 // deletion (edge.mjs). RULEBORN_CF_ZONE is the zone the bundles are served
@@ -205,7 +213,10 @@ const service = new Service({
   // seasons do not move between restarts.
   seasonStart: Date.parse(process.env.RULEBORN_SEASON_START ?? "2026-01-05T00:00:00Z"),
   // §24.3's replays, private: not in the store anyone may fetch by hash.
-  replays: new Store(join(data, "replays")),
+  // A floor of free space under the replays (SEC-18): below it a heist is
+  // refused with 503 storage_low, and the lease kept, until space returns.
+  replays: new Store(join(data, "replays"),
+                     { minFreeBytes: Number(process.env.RULEBORN_REPLAYS_MIN_FREE_MB ?? 512) * 2 ** 20 }),
   deletions: new Journal(new Store(process.env.RULEBORN_DELETIONS ?? join(data, "deletions"))),
   edge,
 });
@@ -252,23 +263,36 @@ if (remade) console.log(`${remade} deletion(s) made again from the journal`);
 // Target lists no band names any more, which name players (§20.5).
 service.sweepLists();
 
+// A background job that throws, or whose promise is refused, is logged under
+// its name and tried again on its next turn; it never ends the process
+// (SEC-20). Only its name and the error are logged, never a request.
+const guarded = (name, fn) => () => {
+  try {
+    const r = fn();
+    if (r?.catch) r.catch((err) => console.error(`${name}:`, err));
+  } catch (err) {
+    console.error(`${name}:`, err);
+  }
+};
+
 // §24.8's lists are "generated periodically"; how often is not said. The
 // owner decided once an hour (G21), and once at start.
 // Today's generated islands (§12.22) before each list, so a new day's are
 // on the next list made.
-service.generator.stock();
-service.targetLists();
-setInterval(() => {
+const lists = guarded("target lists", () => {
   service.generator.stock();
   service.targetLists();
-}, TARGET_LISTS_MS).unref();
+});
+lists();
+setInterval(lists, TARGET_LISTS_MS).unref();
 
 // §18.1: a season that has ended is closed — results, rewards, the pull back
 // — and the next opened, checked every fifteen minutes; closing twice is a
 // no-op, so a missed check costs nothing but a little lateness.
 const ROLLOVER_MS = 15 * 60 * 1000;
-service.seasons.rollover();
-setInterval(() => service.seasons.rollover(), ROLLOVER_MS).unref();
+const rollover = guarded("season rollover", () => service.seasons.rollover());
+rollover();
+setInterval(rollover, ROLLOVER_MS).unref();
 
 if (process.argv.includes("--example")) {
   const { account } = service.session("example:defender");
@@ -296,7 +320,22 @@ const port = Number(process.argv.slice(2).find((a) => /^\d+$/.test(a)) ?? 8787);
 // long before it could hold much memory, and nothing a request does takes the
 // process down (C26).
 const MAX_READ = 64 * 1024;
-createServer(async (req, res) => {
+const METHODS = ["GET", "HEAD", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"];
+// A slow caller cannot hold a socket open without end, nor every socket the
+// process has: headers within 10 s, the whole request within 30 s, an idle
+// kept-alive socket closed after 5 s (SEC-34).
+const headersTimeout = Number(process.env.RULEBORN_HEADERS_TIMEOUT_MS ?? 10_000);
+const listener = createServer({
+  headersTimeout, requestTimeout: Math.max(30_000, headersTimeout), keepAliveTimeout: 5_000,
+  connectionsCheckingInterval: Math.min(1_000, headersTimeout),
+}, async (req, res) => {
+  // The methods the routes answer; any other is refused before it is read,
+  // where `new Request` would throw for it (SEC-34).
+  if (!METHODS.includes(req.method)) {
+    res.writeHead(405, { "content-type": "application/json", allow: METHODS.join(", ") });
+    res.end(JSON.stringify({ error: "method_not_allowed" }));
+    return;
+  }
   try {
     const chunks = [];
     let size = 0;
@@ -325,30 +364,35 @@ createServer(async (req, res) => {
     if (!res.headersSent) res.writeHead(500, { "content-type": "application/json" });
     res.end(JSON.stringify({ error: "internal" }));
   }
-}).listen(port, "127.0.0.1", () => {
+});
+listener.maxConnections = Number(process.env.RULEBORN_MAX_CONNECTIONS ?? 2048);
+listener.listen(port, "127.0.0.1", () => {
   console.log(`ruleborn server on http://127.0.0.1:${port} (rules ${service.builds.current.rulesVersion.slice(0, 12)})`);
 });
 
 // §24.3: raw events older than 90 days are "aggregated and discarded", once a
 // day; compacting twice is a no-op.
 const DAY_MS = 24 * 60 * 60 * 1000;
-service.telemetry.compact();
-setInterval(() => service.telemetry.compact(), DAY_MS).unref();
-service.expireReplays();
-setInterval(() => service.expireReplays(), DAY_MS).unref();
+const compact = guarded("telemetry compact", () => service.telemetry.compact());
+compact();
+setInterval(compact, DAY_MS).unref();
+const expireReplays = guarded("expire replays", () => service.expireReplays());
+expireReplays();
+setInterval(expireReplays, DAY_MS).unref();
 // What names a player and is no use once closed: sent notifications, used
 // or lapsed invites and challenge links, and lapsed purchase intents and
-// unplayed leases (§20.5, G38).
+// unplayed leases (§20.5, G38). Each is guarded on its own, so one that
+// throws never keeps the others from running.
 const tidy = () => {
-  service.notifications.expire();
-  service.friends.expire();
-  service.expireLapsed();
+  guarded("expire notifications", () => service.notifications.expire())();
+  guarded("expire invites", () => service.friends.expire())();
+  guarded("expire lapsed", () => service.expireLapsed())();
   // Sessions ended or lapsed a week ago, and proofs past their five minutes.
-  service.auth.expire();
+  guarded("expire sessions", () => service.auth.expire())();
   // §18.9: each ended quarter's Island Fund divided, once.
-  service.fund.closeEnded();
+  guarded("island fund", () => service.fund.closeEnded())();
   // G32: what Google refunded or revoked, taken back, once a day.
-  if (playPurchases) service.shop.voided(playPurchases).catch((err) => console.error("voided purchases:", err));
+  if (playPurchases) guarded("voided purchases", () => service.shop.voided(playPurchases))();
 };
 tidy();
 setInterval(tidy, DAY_MS).unref();
@@ -356,7 +400,7 @@ setInterval(tidy, DAY_MS).unref();
 // so the queue never holds up a request for long (holds.mjs): a raid is
 // some 30 to 50 ms, so two every quarter second, the eight a second forty
 // every five seconds once played in one two-second block (SR-17).
-setInterval(() => service.holds.work(2), 250).unref();
+setInterval(guarded("hold measurements", () => service.holds.work(2)), 250).unref();
 
 // §14.6's notifications, sent once a minute through Firebase Cloud Messaging
 // (§24.1, push.mjs) as the project's service account: RULEBORN_FCM_SERVICE_ACCOUNT
@@ -379,13 +423,13 @@ const push = fcm
 const tally = (map) => Object.entries(map).map(([why, n]) => `${n} ${why}`).join(", ");
 // A purge the edge did not take waits and is asked again, never given up;
 // why it waits is logged every time (edge.mjs).
-setInterval(() => {
+setInterval(guarded("edge purge", () => {
   purgeEdge(service).then(({ waiting, reasons }) => {
     if (Object.keys(reasons).length) console.error(`edge purge to retry: ${tally(reasons)}`);
     else if (waiting && !edge) console.error(`edge purge: ${waiting} waiting, and no edge is configured`);
   }).catch((err) => console.error("edge purge:", err));
-}, 60 * 1000).unref();
-setInterval(() => {
+}), 60 * 1000).unref();
+setInterval(guarded("notifications", () => {
   service.notifications.deliver(push).then(() => {
     const t = service.notifications.tick;
     if (!t) return;
@@ -393,4 +437,4 @@ setInterval(() => {
       if (Object.keys(map).length) console.error(`push ${label}: ${tally(map)}`);
     }
   }).catch((err) => console.error("notifications:", err));
-}, 60 * 1000).unref();
+}), 60 * 1000).unref();

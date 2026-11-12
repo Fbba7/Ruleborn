@@ -2481,6 +2481,16 @@ fn an_island_is_one_encoding_and_one_hash() {
 }
 
 #[test]
+fn an_exposure_above_i32_max_is_refused() {
+    use crate::island::{Island, Malformed};
+    let mut b = Island::example().encode();
+    b[6..10].copy_from_slice(&0x8000_0000u32.to_le_bytes());
+    assert_eq!(Island::decode(&b), Err(Malformed::Exposed));
+    b[6..10].copy_from_slice(&(i32::MAX as u32).to_le_bytes());
+    assert!(Island::decode(&b).is_ok());
+}
+
+#[test]
 fn a_second_encoding_of_an_island_is_refused() {
     use crate::island::{Island, Malformed};
     let good = Island::example().encode();

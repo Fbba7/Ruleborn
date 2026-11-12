@@ -28,11 +28,6 @@
         "fill": 2,
         "texture": 0
       },
-      "client/scripts/heist_hud.gd": {
-        "draw": 3,
-        "fill": 2,
-        "texture": 0
-      },
       "client/scripts/home.gd": {
         "draw": 1,
         "fill": 0,
@@ -109,7 +104,7 @@
         "texture": 0
       },
       "client/world/fx_portrait.gd": {
-        "draw": 20,
+        "draw": 17,
         "fill": 2,
         "texture": 0
       },
@@ -254,8 +249,8 @@
       "client/world/overlay_route.gd": "a rehearsal route drawn from the simulation report (section 13), data that changes with the run"
     },
     "totals": {
-      "draw": 232,
-      "fill": 31,
+      "draw": 226,
+      "fill": 29,
       "texture": 27
     }
   },
@@ -282,17 +277,17 @@
         "words_below": 0
       },
       "heist/100": {
-        "draw_calls": 121,
+        "draw_calls": 118,
         "texture_bytes": 2499264,
         "words_below": 0
       },
       "heist/200": {
-        "draw_calls": 115,
+        "draw_calls": 114,
         "texture_bytes": 2333376,
         "words_below": 0
       },
       "heist/hc": {
-        "draw_calls": 121,
+        "draw_calls": 118,
         "texture_bytes": 2499264,
         "words_below": 0
       },

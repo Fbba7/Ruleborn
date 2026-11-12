@@ -131,17 +131,18 @@ test("a 13-to-15 profile is never served to another account, a 16-to-17 or adult
   const me = t.defender.account;
   const other = t.raider.account;
   const refused = (fn, reason) => assert.throws(fn, (e) => e.reason === reason, reason);
-  refused(() => t.service.profile.show(other, me), "profile_private");
+  // A profile not shown answers as no account at all (SEC-45).
+  refused(() => t.service.profile.show(other, me), "no_such_account");
   t.service.profile.share(me, true);
   const seen = t.service.profile.show(other, me);
   assert.ok(seen.heists && !("log" in seen) && !("public" in seen), "the record, not the battle log");
   for (const band of ["16-17", "13-15"]) {
     t.service.db.prepare("UPDATE accounts SET age_band = ?, profile_public = 0 WHERE id = ?").run(band, me);
-    refused(() => t.service.profile.show(other, me), "profile_private");
+    refused(() => t.service.profile.show(other, me), "no_such_account");
   }
   refused(() => t.service.profile.share(me, true), "profile_private_at_this_age");
   t.service.db.prepare("UPDATE accounts SET profile_public = 1 WHERE id = ?").run(me);
-  refused(() => t.service.profile.show(other, me), "profile_private");
+  refused(() => t.service.profile.show(other, me), "no_such_account");
   assert.equal(t.service.profile.show(me, me).can_share, false, "the player still sees their own");
   t.service.db.prepare("UPDATE accounts SET age_band = '16-17', profile_public = 0 WHERE id = ?").run(me);
   t.service.profile.share(me, true);
@@ -158,7 +159,7 @@ test("the profile is served over HTTP, its switch set there (20.2, 23.2)", async
   const own = await (await call("GET", "/v1/profile", token)).json();
   assert.equal(own.public, false);
   const hidden = await call("GET", `/v1/profile/${t.defender.account}`, other);
-  assert.deepEqual([hidden.status, (await hidden.json()).error], [403, "profile_private"]);
+  assert.deepEqual([hidden.status, (await hidden.json()).error], [404, "no_such_account"], "as no account (SEC-45)");
   assert.equal((await (await call("PUT", "/v1/profile", token, { public: true })).json()).public, true);
   assert.equal((await call("GET", `/v1/profile/${t.defender.account}`, other)).status, 200);
 });

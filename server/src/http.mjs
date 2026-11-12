@@ -241,7 +241,7 @@ async function socialRoute(service, social, request, parts, who) {
     if (m === "POST" && a && b === "join") return json(social.join(me, a));
     if (m === "POST" && a && b === "roles") {
       const { account, role } = await body(request);
-      return json(social.appoint(me, account, role));
+      return json(social.appoint(me, text(account), text(role)));
     }
   }
   if (area === "crews") {
@@ -310,7 +310,7 @@ async function workshopRoute(workshop, request, url, parts, who) {
   if (m === "POST" && !a) {
     const q = await body(request);
     return json(workshop.publish(me, base64(q.bundle), base64(q.replay),
-      { adjective: q.adjective, noun: q.noun, remixOf: q.remixOf ?? null }), 201);
+      { adjective: q.adjective, noun: q.noun, remixOf: text(q.remixOf, true) }), 201);
   }
   if (m === "GET" && !a) {
     return json(workshop.browse(me, url.searchParams.get("list") ?? "top",
@@ -413,8 +413,8 @@ export function handler(service, { webClientId = null, appleNotifications = null
     // A sign-in: refused while its address has failed too often, where the
     // deployment can tell the address; held to the account it proves once
     // proven, before anything is read; and a failure counted to its address.
+    const peer = peerOf ? peerKey(peerOf(request)) : null;
     const signIn = async (proceed) => {
-      const peer = peerOf ? peerKey(peerOf(request)) : null;
       if (peer) {
         const wait = limiter.peek("failedSignIns", peer, service.now());
         if (wait) throw new Refused(429, "too_many_requests", { retryAfter: Math.ceil(wait / 1000) });
@@ -429,6 +429,11 @@ export function handler(service, { webClientId = null, appleNotifications = null
       }
     };
     try {
+      // Asked for before any sign-in, so held to the address where the
+      // deployment says it (SEC-34).
+      const unsigned = (request.method === "POST" && parts.join("/") === "v1/session/nonce")
+        || route === "GET /account/delete";
+      if (peer && unsigned) limit("unsigned", peer);
       if (parts[0] === "v1" && parts[1] === "session") {
         return await sessionRoute(service, request, parts,
                                   { signIn, limit, read: body, optional, place: placeOf?.(request) ?? null });

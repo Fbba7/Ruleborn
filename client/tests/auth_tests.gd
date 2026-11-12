@@ -30,6 +30,7 @@ func run() -> void:
 	await _refused_refresh_asks_the_platform()
 	await _google_nonce()
 	await _sign_out_clears_everything()
+	await _another_account_parks_the_queue()
 	await _sign_out_offline_is_owed()
 	await _signed_back_in_gets_the_queue_back()
 	await _backs_off()
@@ -47,7 +48,7 @@ func run() -> void:
 ## Services on a fake network, with the platform's storage and identity faked.
 func _fake(name: String) -> Array:
 	var outbox := "user://outbox-auth-%s-test.json" % name
-	for suffix: String in ["", "-auth", "-leases", "-parked-acc1", "-notices"]:
+	for suffix: String in ["", "-auth", "-leases", "-parked-acc1", "-parked-acc2", "-notices"]:
 		DirAccess.remove_absolute(outbox.get_basename() + suffix + ".json")
 	var transport := FakeTransport.new()
 	var s := Fixtures.answered(Services.build(tree.root, "https://edge.example", transport, outbox))
@@ -56,6 +57,8 @@ func _fake(name: String) -> Array:
 	var platform := FakePlatformIdentity.new()
 	s.auth = AuthSession.new(s.api, vault, platform, s.auth.path)
 	s.api.stale = s.auth.stale
+	# As Services.build wires it: the controller hears this session's account change.
+	s.auth_flow = AuthController.new(s)
 	transport.on("POST /v1/session", {"account": "acc1", "token": ACCESS, "expiresIn": 3600, "refreshToken": REFRESH})
 	transport.on("POST /v1/session/refresh", {"account": "acc1", "token": ACCESS + "2", "expiresIn": 3600,
 		"refreshToken": REFRESH_2})
@@ -366,6 +369,51 @@ func _sign_out_clears_everything() -> void:
 	check.call("no token reaches the app's log: actions and failures name routes and codes, never a token",
 		not logged.contains(ACCESS) and not logged.contains(REFRESH) and not logged.contains("SECRET-MAC")
 			and logged.contains("v1/heists"), logged.substr(0, 300))
+	s.close()
+
+
+## SEC-29, part B: a session the server answers for another account sends
+## nothing the first one queued, whether the renewal comes before a flush or
+## in the middle of one; it is parked under the account that queued it.
+func _another_account_parks_the_queue() -> void:
+	var f := _fake("change")
+	var s: Services = f[0]
+	var t: FakeTransport = f[1]
+	await s.auth_flow.sign_in()
+	var acc2 := {"account": "acc2", "token": ACCESS + "2", "expiresIn": 3600, "refreshToken": REFRESH_2}
+	t.on("POST /v1/session/refresh", acc2)
+	t.on("POST /v1/heists/lease-1", {"validated": true})
+	t.on("POST /v1/shop/receipts", {"granted": true})
+	s.outbox.put("lease-1", "/v1/heists/lease-1", PackedByteArray([1]))
+	t.calls.clear()
+	s.auth.expires_at = 1
+	var renewed := await s.auth.ensure()
+	var parked := Outbox.new(s.auth_flow.parked_path("acc1"))
+	check.call("a renewal the server answers for another account parks the queue under the account that "
+			+ "made it, and sends none of it as the new one (SEC-29)",
+		renewed.ok and s.auth.account == "acc2" and s.outbox.pending() == 0 and parked.has("lease-1")
+			and not _routes(t).has("POST /v1/heists/lease-1"), "%s %s" % [renewed, _routes(t)])
+	# The same in the middle of a flush: what is still queued behind the call
+	# that renewed is not sent as the new account.
+	var g := _fake("change-flush")
+	s.close()
+	s = g[0]
+	t = g[1]
+	await s.auth_flow.sign_in()
+	t.on("POST /v1/session/refresh", acc2)
+	t.on("POST /v1/heists/lease-1", {"validated": true})
+	t.on("POST /v1/shop/receipts", {"granted": true})
+	s.outbox.put("lease-1", "/v1/heists/lease-1", PackedByteArray([1]))
+	s.outbox.put("receipt-1", "/v1/shop/receipts", JSON.stringify({"store": "fake", "receipt": "r"}).to_utf8_buffer(),
+		true)
+	t.calls.clear()
+	s.auth.expires_at = 1
+	await s.outbox.flush(s.api)
+	parked = Outbox.new(s.auth_flow.parked_path("acc1"))
+	check.call("a renewal for another account in the middle of a flush sends nothing still queued behind it as "
+			+ "the new account; it waits under the account that queued it (SEC-29)",
+		s.auth.account == "acc2" and s.outbox.pending() == 0 and parked.has("receipt-1")
+			and not _routes(t).has("POST /v1/shop/receipts"), str(_routes(t)))
 	s.close()
 
 

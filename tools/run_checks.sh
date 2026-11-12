@@ -18,12 +18,35 @@
 #
 # CHECK_DIR (default /tmp) is where the worktree and log go; CHECK_CMD
 # (default `bash tools/check_all.sh`) is what runs, for this script's tests.
+#
+# The worktree shares the checkout's .git, so a run could plant a hook or a
+# setting there (SEC-19): the runner's own git commands run no hooks, and a
+# run during which .git/config (its branch entries aside) or .git/hooks
+# changed is FAIL "repository changed by the run", whatever its log says.
+# tools/test_run_checks.sh tests this, by hand.
 set -euo pipefail
+git() { command git -c core.hooksPath=/dev/null "$@"; }
 root="$(git -C "$(dirname "$0")/.." rev-parse --show-toplevel)"
 dir="${CHECK_DIR:-/tmp}"
 cmd="${CHECK_CMD:-bash tools/check_all.sh}"
 
-paths() { wt="$dir/check-$1"; log="$dir/check-$1.log"; pidf="$dir/check-$1.pid"; }
+paths() { wt="$dir/check-$1"; log="$dir/check-$1.log"; pidf="$dir/check-$1.pid"; gitf="$dir/check-$1.git"; }
+
+# A hash of the shared .git's config, its branch entries aside (the lead sets
+# upstreams while a run goes on), and of every hook's name, mode and content.
+fingerprint() {
+  local g; g="$(cd "$root" && cd "$(git rev-parse --git-common-dir)" && pwd)"
+  {
+    git config --file "$g/config" --no-includes --list 2>&1 | grep -v '^branch\.' || true
+    if [ -d "$g/hooks" ]; then
+      (cd "$g" && find hooks -print | LC_ALL=C sort | while IFS= read -r f; do
+        if [ -L "$f" ]; then echo "link $f $(readlink "$f")"
+        elif [ -f "$f" ]; then echo "file $f $(stat -c %a "$f") $(sha256sum < "$f")"
+        else echo "other $f"; fi
+      done)
+    fi
+  } | sha256sum | cut -d' ' -f1
+}
 
 # Alive and not a zombie: an orphan nobody reaps still answers kill -0.
 alive() {
@@ -63,6 +86,7 @@ start() {
   [ -n "${CHECK_CMD:-}" ] || seed "$wt"
   : > "$log"
   rm -f "$pidf"
+  rm -f "$gitf.end"; fingerprint > "$gitf"
   # setsid may fork, so the run writes its own pid (also its process group).
   nohup setsid bash -c "echo \$\$ > '$pidf'; cd '$wt' && ( $cmd ) > '$log' 2>&1; echo \"DONE exit=\$? sha=$sha\" >> '$log'" \
     > /dev/null 2>&1 < /dev/null &
@@ -80,7 +104,13 @@ result() {
   elif last="$(tail -n 1 "$log")" && [[ "$last" == "DONE exit="* ]]; then
     exit_code="${last#DONE exit=}"; exit_code="${exit_code%% *}"
     finished="\"$(date -u -r "$log" +%Y-%m-%dT%H:%M:%SZ)\""
-    if [ "$exit_code" = 0 ] && grep -qx "All checks passed." "$log"; then
+    # Taken once, when the run is first seen ended, so a later `record` reads the same.
+    [ -f "$gitf.end" ] || fingerprint > "$gitf.end"
+    if [ ! -f "$gitf" ]; then
+      state=FAIL; summary="no record of .git from the run's start (SEC-19): start the run again"
+    elif [ "$(cat "$gitf")" != "$(cat "$gitf.end")" ]; then
+      state=FAIL; summary="repository changed by the run: .git/config or .git/hooks differs from before it (SEC-19)"
+    elif [ "$exit_code" = 0 ] && grep -qx "All checks passed." "$log"; then
       state=PASS; summary="All checks passed."
     else
       state=FAIL

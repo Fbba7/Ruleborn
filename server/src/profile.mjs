@@ -196,7 +196,9 @@ export class Profile {
     // §17.8: across a block either way, each disappears from the other's
     // view, so the profile is no account at all, as the other routes say.
     if (this.service.safety.between(viewer, account)) throw new Refused(404, "no_such_account");
-    if (a.age_band === "13-15" || !a.profile_public) throw new Refused(403, "profile_private");
+    // A profile that may not be shown answers as one that does not exist, so
+    // the lookup does not tell which account ids are real (SEC-45).
+    if (a.age_band === "13-15" || !a.profile_public) throw new Refused(404, "no_such_account");
     return this.view(account, { own: false });
   }
 

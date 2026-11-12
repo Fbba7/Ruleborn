@@ -352,8 +352,10 @@ To look at it without a desktop, render a still under a virtual display with
 
 - **The store builds.** `export_presets.cfg` holds the Android and iPhone
   presets and `bash client/export.sh android|ios` builds each where its tools
-  are: Android with the SDK and NDK (`ANDROID_HOME`, `ANDROID_NDK_HOME`), the
-  iPhone on a Mac with Xcode (`RULEBORN_APPLE_TEAM_ID`; the team is never
+  are: Android with the SDK and NDK (`ANDROID_HOME`, `ANDROID_NDK_HOME`) and
+  the upload key (`GODOT_ANDROID_KEYSTORE_RELEASE_PATH`), or
+  `RULEBORN_DEBUG_EXPORT=1` for a debug-signed APK never handed out
+  (`bash client/test_export.sh` checks that gate), the iPhone on a Mac with Xcode (`RULEBORN_APPLE_TEAM_ID`; the team is never
   written into the preset). `bash client/export.sh check` runs anywhere: the
   simulation and extension compile for both phones' arm64, and the project
   exports with the Android preset, `pack_check.py` confirming the pack holds

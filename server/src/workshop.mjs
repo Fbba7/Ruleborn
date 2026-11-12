@@ -148,6 +148,12 @@ export class Workshop {
         || !WORDS.adjectives[adjective] || !WORDS.nouns[noun]) {
       throw new Refused(400, "name_not_from_the_word_lists");
     }
+    // Before the island is checked and the replay re-simulated, so a remix
+    // of nothing costs no simulation (SEC-44).
+    if (remixOf !== null) {
+      const parent = this.db.prepare("SELECT removed_at FROM workshop_items WHERE id = ?").get(remixOf);
+      if (!parent || parent.removed_at) throw new Refused(404, "no_such_island");
+    }
     const build = this.service.builds.current;
     const read = build.island(bundle);
     if (read.error) throw new Refused(400, read.error);
@@ -167,10 +173,6 @@ export class Workshop {
                                              grade: result.verdict?.grade });
     }
 
-    if (remixOf !== null) {
-      const parent = this.db.prepare("SELECT removed_at FROM workshop_items WHERE id = ?").get(remixOf);
-      if (!parent || parent.removed_at) throw new Refused(404, "no_such_island");
-    }
     const stored = Number(this.db.prepare(
       "SELECT COALESCE(SUM(bytes), 0) AS n FROM workshop_items WHERE creator = ?").get(creator).n);
     const live = this.db.prepare(
@@ -348,8 +350,11 @@ export class Workshop {
         : { validated: false, reason: result.reason ?? result.status };
     }
     const now = this.now();
+    // A play on an island withdrawn or taken down since it was issued is
+    // answered as before, but earns its creator nothing (SEC-40).
+    if (!this.listed(item) && outcome.validated) Object.assign(outcome, { counted: false, listed: false });
     return transaction(this.db, () => {
-      if (outcome.cleared && player !== item.creator) {
+      if (outcome.cleared && player !== item.creator && outcome.listed !== false) {
         // §18.7: "completions from a creator's own constellation count at a
         // quarter" — any constellation both were in together in the item's
         // life, the two memberships overlapping each other and it.
@@ -454,7 +459,7 @@ export class Workshop {
   ladder(creator) {
     const completions = Number(this.db.prepare(
       `SELECT COALESCE(SUM(c.weight), 0) AS n FROM workshop_completions c
-         JOIN workshop_items i ON i.id = c.item WHERE i.creator = ?`).get(creator).n);
+         JOIN workshop_items i ON i.id = c.item WHERE i.creator = ? AND i.removed_at IS NULL`).get(creator).n);
     const featured = this.db.prepare(
       "SELECT COUNT(*) AS n FROM workshop_items WHERE creator = ? AND featured_at IS NOT NULL")
       .get(creator).n;
