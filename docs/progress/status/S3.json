@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T19:16:00Z",
   "lease_until": "2026-11-12T22:16:00Z",
-  "updated_at": "2026-11-12T20:12:17Z",
-  "expected_next_update_by": "2026-11-12T20:57:17Z",
+  "updated_at": "2026-11-12T20:37:59Z",
+  "expected_next_update_by": "2026-11-12T21:22:59Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a9f7133d17c1bdbd2ca5564c2bb04fe632099610",
-    "next_step": "S3-R1 granted: a7408799 moves ScreenMeter.bar onto KitBar and drops ScreenBox's box. Main (4c27b4df) merged; setup line and build rerun (exit 0). Pre-check and guard.sh running at a7408799; the gate request follows when they pass. The gate request at a9f7133d is withdrawn.",
-    "at": "2026-11-12T20:12:17Z"
+    "next_step": "Pre-check running at 2b220cc3 (main 4554557d merged; setup line and build rerun, exit 0). The run at a7408799 failed one case of tools/test_run_checks.sh ('and makes no worktree and no log: made') while guard.sh ran beside it; the test alone passed twice, and guard.sh was OK at a7408799. On a pass: guard.sh, record, then the gate on 'settings at 100% text'.",
+    "at": "2026-11-12T20:37:59Z"
   },
   "precheck": {
     "sha": "a9f7133d17c1bdbd2ca5564c2bb04fe632099610",
