@@ -92,6 +92,31 @@ func _go() -> void:
 		screen.controller.advance(10)
 		screen._refresh()
 		view._process(1.0 / 3.0)
+	if moment == "alarm":
+		# The alarm up (board 1's objection E): it climbs a level each thirty
+		# seconds (§12.17), so the heist plays on until it stands at ALARM (3 if
+		# unset); then Pip steps toward the nearest guard for a second, so a
+		# guard is turning to look, without the crew being caught.
+		var world := screen.controller.world
+		var want := int(OS.get_environment("ALARM")) if OS.get_environment("ALARM") != "" else 3
+		for k in 400:
+			if world.alarm() >= want:
+				break
+			screen.controller.advance(10)
+			screen._refresh()
+			view._process(1.0 / 3.0)
+		var me: Vector2 = world.crew()[0]["at"]
+		var near := Vector2(-1, -1)
+		for g: Dictionary in world.guards():
+			if not g["down"] and (near.x < 0 or me.distance_to(g["at"]) < me.distance_to(near)):
+				near = g["at"]
+		if near.x >= 0:
+			world.give(0, HeistController.Kind.MOVE_TO, int(near.x * 256.0), int(near.y * 256.0))
+		for k in 3:
+			screen.controller.advance(10)
+			screen._refresh()
+			view._process(1.0 / 3.0)
+		print("alarm ", world.alarm())
 	if moment == "vault":
 		screen.controller.select(0)
 		screen.controller.tap_tile(screen.controller.world.vault()["at"])

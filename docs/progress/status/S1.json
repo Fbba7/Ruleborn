@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P1-S1-pilot-3",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-12T01:23:10Z",
   "lease_until": "2026-11-12T04:23:10Z",
-  "updated_at": "2026-11-12T01:23:10Z",
-  "expected_next_update_by": "2026-11-12T02:08:10Z",
+  "updated_at": "2026-11-12T01:34:00Z",
+  "expected_next_update_by": "2026-11-12T02:19:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4d87d18",
-    "next_step": "P1-S1-pilot-3: board 1 objections A-E on the heist screen"
+    "next_step": "P1-S1-pilot-3: A and E done (kit HUD pieces, alarm moment); next C (crew tray, kit tip), D (portrait mat), B (200% fit check)"
   },
   "precheck": null,
   "gate_request": null,
@@ -41,7 +41,7 @@
       "id": "S1-R2",
       "from": "S1",
       "to": "K1",
-      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar at\u00e9 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
+      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar até 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
       "files": [
         "client/ui/kit_hud.gd"
       ],
