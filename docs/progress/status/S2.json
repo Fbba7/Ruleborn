@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T22:10:00Z",
   "lease_until": "2026-11-13T01:10:00Z",
-  "updated_at": "2026-11-12T22:28:00Z",
-  "expected_next_update_by": "2026-11-12T23:13:00Z",
+  "updated_at": "2026-11-12T22:52:00Z",
+  "expected_next_update_by": "2026-11-12T23:37:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "62c66327",
-    "next_step": "cut home's draw calls back to the records (now 133 at 100%: purse +5, sky side discs +14 over the 119 baseline), then S2-R2 pins and FIT=1"
+    "next_step": "raid notice now on the material's dark card (words pass); next: keeper level plate under the purse row, draw calls 139 vs 119 at 100% (purse +6, sides +8, notice +4): find savings or ask a raise; then S2-R2 pins and FIT=1"
   },
   "precheck": null,
   "gate_request": null,
@@ -81,6 +81,21 @@
       "created_at": "2026-11-12T20:15:00Z",
       "due": "2026-11-13T08:15:00Z",
       "default": "The stills stand as built; S2 marks P2-flow-entry ready when its checks pass, and any objection becomes a follow-up task beside it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R6",
+      "from": "S2",
+      "to": "K1",
+      "ask": "kit_skin / atlas: give banner_alarm a shape of its own (button_danger__banner_alarm__normal, or map it to panel_dark with its alarm line and glow), as success__banner_success has. With no piece it falls back to button_danger__box, the red button's light face, so white and secondary words on it measure 2.5 to 2.8:1 (home's raid notice; KitPanels.notice('alarm') and UI.banner('alarm') in the catalogue too). tokens.json says the material is a dark card edged and glowing in the alarm's colour (01-universe-map-raid.png).",
+      "files": [
+        "client/ui/kit_skin.gd",
+        "art/ui/kit_build/"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T22:52:00Z",
+      "due": "2026-11-13T22:52:00Z",
+      "default": "home.gd refills its raid notice's box with the material's own card colours (RbBox.tint(card_top, card_bottom)), so the code-drawn box draws the dark card with the alarm edge; the line goes once the shape lands",
       "escalate_to": "lead"
     }
   ],

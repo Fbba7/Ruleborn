@@ -74,16 +74,43 @@ func _go() -> void:
 		var named := {"keeper": screen.keeper_plate, "strain": screen.strain, "purse": screen.purse,
 			"notice": screen.notice, "collect": screen.collect_button, "goal": screen.goal_card, "tabs": screen.tabs}
 		for side: StringName in screen.sides:
-			named["side " + side] = screen.sides[side]
+			named["side " + side] = [screen.sides[side]]
+		named["sides"] = screen.sides.values()
 		for key: String in named:
-			var item := named[key] as CanvasItem
-			if item == null or not item.is_visible_in_tree():
+			var items: Array = named[key] if named[key] is Array else [named[key]]
+			items = items.filter(func(i: Variant) -> bool: return i != null and (i as CanvasItem).is_visible_in_tree())
+			if items.is_empty():
 				continue
-			item.modulate.a = 0.0
+			for item: CanvasItem in items:
+				item.modulate.a = 0.0
 			await process_frame
 			await RenderingServer.frame_post_draw
 			print("  part %s %d" % [key, whole - calls.call()])
-			item.modulate.a = 1.0
+			for item: CanvasItem in items:
+				item.modulate.a = 1.0
+		# PROBE=kinds: within the purse, the side buttons and the notice, what
+		# each kind of node costs across them.
+		if env.call("PROBE", "") == "kinds":
+			for key: String in ["purse", "sides", "notice", "strain"]:
+				var tops: Array = named[key] if named[key] is Array else [named[key]]
+				var kinds := {}
+				for top: Node in tops:
+					for c: Node in _all_inside(top):
+						var d := 0
+						var n := c
+						while n != top:
+							n = n.get_parent()
+							d += 1
+						var kind := "%s/%s/%d" % [c.get_class(), String(c.name).rstrip("0123456789"), d]
+						kinds[kind] = kinds.get(kind, []) + [c]
+				for kind: String in kinds:
+					for item: CanvasItem in kinds[kind]:
+						item.self_modulate.a = 0.0
+					await process_frame
+					await RenderingServer.frame_post_draw
+					print("  kind %s %s %d" % [key, kind, whole - calls.call()])
+					for item: CanvasItem in kinds[kind]:
+						item.self_modulate.a = 1.0
 		await process_frame
 		await RenderingServer.frame_post_draw
 	print("triangles ", screen.world.triangles, " draw calls ", screen.world.draw_calls(), " frame ",
@@ -92,3 +119,14 @@ func _go() -> void:
 	root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()
+
+
+## Every canvas item under `top`, internal children (the kit's boxes and
+## faces) included.
+static func _all_inside(top: Node) -> Array:
+	var out := []
+	for c: Node in top.get_children(true):
+		if c is CanvasItem:
+			out.append(c)
+		out.append_array(_all_inside(c))
+	return out

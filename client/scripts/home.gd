@@ -77,6 +77,9 @@ var _strain_lines := PackedStringArray()
 var _strain_room := 0.0
 var _full := {}
 var _raid_words: Label
+## Where rewards fly: a full-screen layer, so the kit stacks it over the
+## column's words (kit-spec.md section 5).
+var _flights: Control
 
 
 func _ready() -> void:
@@ -137,6 +140,11 @@ func _ready() -> void:
 	menu = UniverseMenu.make(PLACES, WORDS)
 	menu.picked.connect(func(route: StringName) -> void: App.services.router.go(route))
 	add_child(menu)
+	_flights = Control.new()
+	_flights.name = "Flights"
+	_flights.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_flights.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_flights)
 	column.sort_children.connect(_frame_world)
 	for c: Control in [goal_card, collect_button, notice]:
 		c.visibility_changed.connect(_frame_world, CONNECT_DEFERRED)
@@ -238,26 +246,7 @@ func _side(holder: CenterContainer, badge: String) -> void:
 	var action := KitControls.round_action(s[1], Strings.t(s[2]), func() -> void: App.services.router.go(route), false,
 		52.0, badge, "sky")
 	action.set_meta("frequent", false)
-	_in_runs(action)
 	holder.add_child(action)
-
-
-## A part's surfaces, icons and words drawn in runs across the screen's parts
-## alike (the side buttons): each kind on its own layer, so the four discs
-## draw together, then their icons, their plates, their words, rather than
-## each button's four in turn (§21.3's draw calls). The order within a part is
-## the kit's: an icon over its disc, a plate over the disc's foot, words over
-## their plate.
-static func _in_runs(part: Control) -> void:
-	for c: Node in part.find_children("*", "CanvasItem", true, false):
-		var item := c as CanvasItem
-		item.z_as_relative = false
-		if item is Label:
-			item.z_index = 3
-		elif item is PanelContainer:
-			item.z_index = 2
-		elif item is TextureRect:
-			item.z_index = 1
 
 
 ## The kit's five tabs, rebuilt when a badge changes.
@@ -490,7 +479,7 @@ func _collect() -> void:
 	# The reward flies to the kit's pills, standing in a purse of its own.
 	var into := UniversePurse.new()
 	into.pills = pills
-	UniverseReward.fly(self, collect_button, into, paid)
+	UniverseReward.fly(_flights, collect_button, into, paid)
 	into.free()
 	_show_hud()
 
@@ -610,6 +599,12 @@ func _show_goal(g: Dictionary) -> void:
 func _raid_notice() -> PanelContainer:
 	var p := UI.panel("banner_alarm")
 	p.name = "RaidNotice"
+	# The material is a dark card edged and glowing in the alarm's colour
+	# (tokens.json, the designs' raid banner). The skin has no banner shape
+	# of its own yet and would fall back to the red button's light face,
+	# under which the words fail 4.5:1; refilled with the material's own
+	# card colours, the code-drawn box draws it (S2-R6 asks K1 for the shape).
+	RbBox.of(p).tint(Tokens.color("card_top"), Tokens.color("card_bottom"))
 	var large := Settings.text_scale >= 150
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
@@ -625,7 +620,6 @@ func _raid_notice() -> PanelContainer:
 	text.add_theme_constant_override("separation", 0)
 	_raid_words = UI.status("alarm", "")
 	_raid_words.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_raid_words.theme_type_variation = "StatusAlarm"
 	_raid_words.accessibility_live = AccessibilityServer.LIVE_ASSERTIVE
 	text.add_child(_raid_words)
 	var line := UI.label(Strings.t("HOME_RAID_LINE"), 13, true)
@@ -662,8 +656,11 @@ func _show_raids(unseen: int) -> void:
 	notice.visible = unseen > 0
 	if notice.visible and not was and notice.is_inside_tree():
 		Motion.pop(notice)
-	_raid_words.text = Strings.t("HOME_RAID_TITLE_ONE") if unseen == 1 else Strings.t("HOME_RAID_TITLE", unseen)
-	notice.accessibility_name = "%s. %s" % [_raid_words.text, (notice.get_meta("line") as Label).text]
+	var title := Strings.t("HOME_RAID_TITLE_ONE") if unseen == 1 else Strings.t("HOME_RAID_TITLE", unseen)
+	# Through the kit, so the words take the alarm's fill and glyph once they
+	# say something (UI.set_status).
+	UI.set_status(_raid_words, "alarm", title)
+	notice.accessibility_name = "%s. %s" % [title, (notice.get_meta("line") as Label).text]
 
 
 static func _room_h() -> Control:
