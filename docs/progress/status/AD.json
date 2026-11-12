@@ -4,16 +4,16 @@
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P1-AD-board-1",
+  "task_id": "P1-AD-board-1d",
   "task_state": "claimed",
-  "claimed_at": "2026-11-11T22:22:00Z",
-  "lease_until": "2026-11-12T01:22:00Z",
-  "updated_at": "2026-11-11T22:40:00Z",
-  "expected_next_update_by": "2026-11-11T23:25:00Z",
+  "claimed_at": "2026-11-12T16:12:00Z",
+  "lease_until": "2026-11-12T19:12:00Z",
+  "updated_at": "2026-11-12T16:18:00Z",
+  "expected_next_update_by": "2026-11-12T17:03:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "Board 1 posted (objections A-E) and flow review written; requests AD-R7 to AD-R12 filed. Next: pre-check, then ready"
+    "last_green_sha": "8bfb07bdc4ff372fa1e6da205cb6bd4a8d0c09a2",
+    "next_step": "pre-check the round 4 commit, then mark ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -105,6 +105,139 @@
       "created_at": "2026-11-11T22:40:00Z",
       "due": "2026-11-13T22:40:00Z",
       "default": "file each finding as a backlog task for the screen's owner; none holds phase 2",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R13",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 objection D (round 2): Hollow's violet body melts into its violet school disc (one tone in grayscale), and Bramble is about 12 L* below its orange disc, with grain. Give each figure a value step of 20 L* or more against its disc (school hue kept in the ring or the mat), or an ink silhouette outline, in client/world/fx_portrait.gd. Check Bramble's grain in the portrait render. Details in board-1.md, Round 2, What D needs.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md",
+        "client/world/fx_portrait.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-12T05:52:00Z",
+      "due": "2026-11-14T05:52:00Z",
+      "default": "file it as an S1 phase 1 task (with AIA-2 if the portrait art changes); AD re-checks it as P1-AD-board-1c",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R14",
+      "from": "AD",
+      "to": "lead",
+      "ask": "The 'Laws here' / 'Leis aqui' header is gold on the sky with no ink outline; the gate failed Display type on it at 100% and 200% pt_BR. P1-K1-numerals-on is gated on Display type at 100%, so it could fail on this label outside K1's files. Give the header the kit's ink outline in client/scripts/heist_hud.gd, merged before or with P1-K1-numerals-on.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md",
+        "client/scripts/heist_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T05:52:00Z",
+      "due": "2026-11-14T05:52:00Z",
+      "default": "file it as a small S1 task, merged before P1-K1-numerals-on",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R15",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 objection B reopens, narrowed: with no crew plan (rehearsal, Workshop island, offline), at 200% text in pt_BR, Cast reads 'Sem lançamentos', the tray grows to two button rows and covers the loot panel (FIT=1 fails: 'Loot over the tray'). Keep the tray below the loot panel whatever the Cast label says, and add the no-plan 200% pt_BR case (FIT=1, no MANIFEST) to the heist's gate stills. Details in board-1.md, Round 2, What B needs.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md",
+        "client/scripts/heist_screen.gd",
+        "client/tests/shots/screen_heist.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-12T05:52:00Z",
+      "due": "2026-11-14T05:52:00Z",
+      "default": "file it as a small S1 task with FIT=1 no-manifest TEXT=200 LOCALE=pt_BR in done_when; AD re-checks it as P1-AD-board-1c",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R16",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Seed P1-AD-board-1c (AD, about 1 h): re-check board 1's objections A, B and D, and the header, once P1-K1-numerals-on and the fixes for AD-R13 and AD-R15 are merged.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T05:52:00Z",
+      "due": "2026-11-14T05:52:00Z",
+      "default": "seed it with deps on P1-K1-numerals-on and the AD-R13 and AD-R15 tasks",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R17",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 objection D, narrowed (round 3): the disc and outline fix works and Pip, Mo and Ash read, but two portraits fail on their surface. Bramble's shell and body carry a fine photographic grain (rubric v3's stone-grain fail); Hollow's body is glassy violet facets that read as gem reflections, and it fills its disc to the rim. Render both through the toon ramp in two or three flat tones (no specular, the texture sampled coarser or smoothed), and frame Hollow head and shoulders so its disc shows. Details in board-1.md, Round 3, What D needs.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md",
+        "client/world/fx_portrait.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-12T09:42:00Z",
+      "due": "2026-11-14T09:42:00Z",
+      "default": "file it as a small S1 task on fx_portrait.gd (AIA-2 only if the portrait art itself must change), checked on the five portraits at 119 px in colour and grayscale",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R18",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 objection F (new, round 3): 'Laws here' now has the kit's ink outline, but the night sky behind it is as dark as the ink, so the outline cannot be seen and the gate fails Display type on it every run (P1-K1-numerals-on/1d21bf4a). Seat the header on a kit tag plate, or lighten the sky under the HUD's top band so ink and sky differ by 15 L* or more. Details in board-1.md, Round 3, What F needs.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md",
+        "client/scripts/heist_hud.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-12T09:42:00Z",
+      "due": "2026-11-14T09:42:00Z",
+      "default": "file it with AD-R17 in the same S1 task: the header on KitStatus.tag in heist_hud.gd, checked at 100% and 200% pt_BR at 4x",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R19",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Seed P1-AD-board-1d (AD, about 1 h): re-check board 1's objections D and F once the AD-R17 and AD-R18 fixes are merged. If both close, board 1 stands and phase 2 can start.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T09:42:00Z",
+      "due": "2026-11-14T09:42:00Z",
+      "default": "seed it with deps on the AD-R17/AD-R18 task",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R20",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 note G (not holding), which answers S1-R12: yes, AIA-2 should take it. The flat pass in FxPortrait._toon closed objection D, but it also wiped out Bramble's snout, arms and belly bands and Hollow's glass. Seed an AIA-2 task to repaint both busts at the source (CreatureBust's art) in two or three flat tones. Keep Bramble's features as shapes, and draw Hollow's glass as a few large hard-edged facets with its face and gem. The check is the five portraits at 119 px, in colour and in grayscale. Details in board-1.md, Round 4, Note G.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md",
+        "client/world/creature_bust.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T16:18:00Z",
+      "due": "2026-11-14T16:18:00Z",
+      "default": "seed it in AIA-2's phase 2 queue after the icons; the in-game flat pass stays until it lands",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R21",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1 stands (board-1.md, Round 4): D and F are closed, and A, B, C and E were closed earlier. Phase 1's board condition is met, so phase 2 no longer waits for board 1 (report section 3.2). Check phase 1's other exit conditions and open phase 2.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T16:18:00Z",
+      "due": "2026-11-13T16:18:00Z",
+      "default": "open phase 2 at the next lead cycle if the other exit conditions hold",
       "escalate_to": "lead"
     }
   ],

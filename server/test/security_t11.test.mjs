@@ -101,11 +101,14 @@ test("SR-20 (T11, fixed): a caller cycling through Apple's key names cannot push
   };
   await gc.prepare(identity());
   assert.equal(gc.verify(identity()), "gc:T:_player1");
+  // The names walk up one at a time from the key in use: a name further
+  // ahead than Apple's newest key is never fetched (SEC-36), so this is the
+  // walk that still fills the cache.
   for (let i = 1; i <= 3 * GAME_CENTER_CACHE; i++) {
     clock.now += 1000;
-    await gc.prepare({ publicKeyUrl: `https://static.gc.apple.com/public-key/gc-prod-${10 + i}.cer` });
+    await gc.prepare({ publicKeyUrl: `https://static.gc.apple.com/public-key/gc-prod-${6 + i}.cer` });
   }
-  assert.ok(gc.certificates.size <= GAME_CENTER_CACHE, "the cache keeps its size");
+  assert.equal(gc.certificates.size, GAME_CENTER_CACHE, "the cache was filled, and keeps its size");
   await gc.prepare(identity());
   assert.equal(gc.verify(identity()), "gc:T:_player1", "the player still signs in, with no fetch to wait for");
 });

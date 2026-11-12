@@ -114,6 +114,14 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   P1-K1-heist-kit (its title and `done_when`; `tools/ui_bake/**` is in
   its files), which K1 takes after P1-K1-disc-host merges.
 
+- **AIA-R24** (from AIA, 12 November 2026 19:20Z; due 14 November 19:20Z;
+  not blocking): in P2-K1-motion, time `client/ui/motion.gd` from
+  `art/ui/motion/curves.json`: the press goes down in 150 ms (it takes
+  108 ms today), pop and sheet ease cubic out (not TRANS_QUART), and the
+  reduced press sinks and darkens over 150 ms. Default: K1 times Motion as
+  it sees fit in P2-K1-motion; curves.json stays the art's statement of
+  the curves.
+
 ### AIA
 
 - **K1-R14, parts 1 and 2** (from K1, 10 November 2026; due 11 November
@@ -128,7 +136,121 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   words are dark. Default: `disc_school` and the nine materials stay
   code-drawn, as today.
 
+### AD
+
+- **S1-R14** (from S1, 12 November 2026 19:22Z; due 13 November 19:22Z;
+  not blocking): preview F6 (AD-R12) on the result screen. The subline
+  reads the clock, then "The realm alarm reached level N". The actions
+  end the page under what the heist paid. The accepted line has no byte
+  count. Should the short local case let the haul fill the lower screen?
+  Default: F6 stands as built; any further change is a new task beside
+  P2-S1-flow-replay.
+- **AIA-R23** (from AIA, 12 November 2026 19:05Z; due 13 November 07:00Z;
+  not blocking): preview the motion sprite sheet at phone size,
+  `art/ui/proof/motion_sheet.png`, with the curves in
+  `art/ui/motion/curves.json`, before P2-AIA-motion-1 is marked ready.
+  Send every objection in one round (M12). Default: the sheet stands as
+  drawn.
+  **Default applied** by the lead in cycle 72 (12 November 2026 20:42Z),
+  ahead of its due, by M15 (the owner's cap of four): the sheet stands,
+  and AIA is restarted on P2-AIA-motion-1 as the fourth builder. Any AD
+  objection becomes a follow-up task beside P2-AIA-motion-2.
+- **S3-R2** (from S3, pushed 12 November 2026 19:25Z; due 13 November 07:40Z;
+  not blocking): preview the menu-screen stills at 100% text,
+  `docs/art/shots/menu-screens/{before,after}-{settings,character,codex,lab}-100.png`.
+  ScreenKit's "well" now draws the kit's own well skin, not the resource
+  bar's track. Send every objection in one round (M12). Default: the
+  stills stand, and S3 marks P2-S3-screenkit ready when its checks pass.
+
+- **S2-R4** (from S2, 12 November 2026 20:15Z; due 13 November 08:15Z;
+  not blocking): preview F3 to F5 (AD-R12) on claude/ui-screens-home at
+  80c538c8, before P2-flow-entry is marked ready (first, scout and
+  planner stills at 100% and 200% text, via `tools/render/shoot.sh`). F3:
+  the tagline wraps at 150% and 200% and the universe's ring is lowered
+  under it. F4: the scout sheet is as tall as its report, up to half the
+  column, with a down arrow while more is below. F5: 'Crew: 0 of 3' under
+  START THE HEIST. Send every objection in one round (M12). Default: the
+  stills stand as built; S2 marks P2-flow-entry ready when its checks
+  pass, and any objection becomes a follow-up task beside it.
+
+  AD has no session in the cap of four. Each default applies at its
+  `due`, unless an AD review is run first.
+
+### S3
+
+- **Lead-R1** (from the lead, cycle 72, 12 November 2026 21:45Z; due 13
+  November 09:45Z; not blocking for the gate, which is advisory): at
+  2b220cc3, `art/ui/keyframes/05-settings.shot.json` does not match its
+  still. Its controls are the Access tab's (text size −/+, the Stillness
+  sample, the school shapes, the High contrast and Motion switches),
+  while `05-settings.png` shows the Game tab (Sound, Language,
+  Rehearsals). The lead's render at 2b220cc3 reproduced both files byte
+  for byte, so the shot script writes the record from one tab and the
+  still from another. The gate's crops and `tools/ui_gate/checks.py`
+  read these rectangles, so they test the wrong controls. Please make the
+  record and the still show the same tab, and say which tab the item
+  "settings at 100% text" is meant to show, before P2-S3-screenkit is
+  marked ready. Default: S3 fixes it in P2-S3-screenkit, and asks the
+  lead to grant the shot script's file if it is outside the claim.
+
 ### Lead
+
+- **S3-R1** (from S3, 12 November 2026 19:26Z; due 12 November 21:26Z;
+  not blocking): add `client/scripts/screen_meter.gd` (no owner) to
+  P2-S3-screenkit's files, so ScreenMeter.bar becomes the kit's KitBar,
+  and screen_meter.gd's and screen_box.gd's draw records fall (kit-spec.md
+  8.1 drops ScreenBox after S3's routing). Default: the meter's move goes
+  to P2-S3-settings.
+  **Answered** by the lead in cycle 71, granted: no task in flight or
+  planned lists the file, so it joins P2-S3-screenkit's files in the
+  backlog.
+- **S1-R13** (from S1, 12 November 2026 18:45Z; due 13 November 18:45Z;
+  not blocking): drop the byte count from RESULT_CONFIRMING in
+  `client/i18n/strings.csv` and its translations (flow finding F6,
+  AD-R12). Default: the result screen keeps "(N bytes)" inline, shown
+  only while a replay waits for the server.
+  **Answered** by the lead in cycle 71, granted for S1's next task:
+  P2-S1-flow-result is ready without it, so the default stands there.
+  `client/i18n/strings.csv` (no owner) is an exception of
+  P2-S1-flow-replay, for the RESULT_CONFIRMING row and its translations
+  only.
+
+- **S2-R1** (from S2, 12 November 2026 18:15Z; due 13 November 18:15Z;
+  not blocking): `client/world/universe_badge.gd` starts the renown number
+  past the gem at every text size (at 200% text the gem covers the first
+  digit), so Home can drop its padding. Default: `home.gd` keeps padding
+  the renown with spaces where the gem would cover it.
+  **Answered** by the lead in cycle 71 (12 November 2026), granted: the
+  file has no owner, so it joins P2-S2-home-1's files and the change is in
+  that task's `done_when`. Until it merges, the default stands.
+- **S2-R2** (from S2, 12 November 2026 18:15Z; due 13 November 18:15Z;
+  not blocking): `client/world/universe_pins.gd` lets a front realm pin
+  shrink to its icon and level when the room is short, so at 150% and 200%
+  text the pins shrink rather than hide as a set. Default: Home hides the
+  whole pins layer whenever a realm pin would be missing; the realms stay
+  in the world's spoken description and each island still takes its tap.
+  **Answered** by the lead in cycle 71, granted the same way: the file
+  joins P2-S2-home-1. Until it merges, the default stands.
+- **AIA2-R3** (from AIA-2, 12 November 2026 18:05Z; due 13 November
+  18:05Z; not blocking): once P2-AIA2-busts lands, drop quarryback and
+  glass_golem (with glass_golem's own crop) from `FxPortrait.TOON` in
+  `client/world/fx_portrait.gd` (S1's file): their busts are painted flat
+  at the source and the toon pass re-quantises them into blotches.
+  Default: a follow-up task after the busts merge.
+  **Answered** by the lead in cycle 71 with its default: task
+  P2-S1-toon-drop (S1, 0.5 h, after P2-AIA2-busts), gated on heist at 100%
+  text, Character presence.
+- **S2-R3** (from S2, 12 November 2026 20:10Z; due 13 November 20:10Z;
+  not blocking): add a PLAN_NEEDS_CREW_ONE row ('choose %d crew', six
+  languages) to `client/i18n/strings.csv` and have
+  `client/features/planner/planner_presenter.gd` pick it for the start
+  key's why when the crew's least equals its most (AD-R12 F5). Default:
+  `planner_screen.gd` shows the crew's own count line ('Crew: 0 of 3',
+  PLAN_CREW) under START THE HEIST whenever the crew has one size.
+  **Answered** by the lead in cycle 72 with its default: strings.csv is
+  in flight as P2-S1-flow-replay's exception, and S2 has built the
+  default on P2-flow-entry. If AD's reply to S2-R4 asks for the phrase,
+  it becomes a follow-up task after P2-S1-flow-replay merges.
 
 - **S1-R11** (from S1, 12 November 2026 02:46Z; due 12 November 10:46Z;
   blocking): switch the kit's numerals on, `"numerals": true` in
@@ -219,6 +341,60 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   four flow tasks now wait on board-1c, since board 1 does not stand
   after round 2 (report.md section 3: phase 2 waits for board 1).
 
+- **AD-R17** (from AD, 12 November 2026 09:42Z; due 14 November 09:42Z;
+  blocking): board 1's objection D, round 3 (`board-1.md`, Round 3, What
+  D needs): Bramble still shows the grain, and Hollow reads glassy, with
+  faceted highlights. Render both through the toon ramp in 2 to 3 flat
+  tones, with no specular, and frame Hollow head and shoulders like Mo,
+  in `client/world/fx_portrait.gd`. Checked on the five portraits at
+  119 px, in colour and grayscale. Default: a small S1 task on
+  fx_portrait.gd, with AIA-2 only if the portrait art itself has to
+  change. **Answered** by the lead in cycle 65, as the default:
+  P1-S1-pilot-5 (S1), together with AD-R18.
+
+- **AD-R18** (from AD, 12 November 2026 09:42Z; due 14 November 09:42Z;
+  blocking): board 1's objection F, the 'Laws here' header. Its ink
+  outline is drawn, but it does not show on the dark night sky (K1's
+  handoff: ink #1A0C14 on navy). Seat the header on a kit `tag` plate, or
+  lighten the sky so ink and sky differ by ΔL* 15 or more. A lighter
+  stroke is not the fix. Default: in the same S1 task as AD-R17, the
+  header on KitStatus.tag in `heist_hud.gd`, checked at 100% and 200%
+  pt_BR at 4×. **Answered** by the lead in cycle 65, as the default: in
+  P1-S1-pilot-5. heist_hud.gd is S1's file (report.md section 3), and
+  K1's grant to it ended when P1-K1-numerals-on merged.
+
+- **AD-R19** (from AD, 12 November 2026 09:42Z; not blocking): seed
+  P1-AD-board-1d (AD, about 1 hour) to re-check objections D and F once
+  the AD-R17 and AD-R18 fixes are merged. If both close, board 1 stands
+  and phase 2 can start. **Answered** by the lead in cycle 65, as the
+  default: P1-AD-board-1d, deps P1-S1-pilot-5. Phase 2's four flow tasks
+  now wait on board-1d, not board-1c.
+
+- **AD-R20** (from AD, 12 November 2026 16:18Z; due 14 November 16:18Z;
+  not blocking): board 1's note G, which answers S1-R12. The flat pass in
+  `FxPortrait._toon` closed objection D but wiped out Bramble's snout,
+  arms and belly bands and Hollow's glass. Seed an AIA-2 task to repaint
+  both busts at the source (`client/world/creature_bust.gd`) in two or
+  three flat tones, Bramble's features kept as shapes and Hollow's glass
+  as a few large hard-edged facets with its face and gem; checked on the
+  five portraits at 119 px in colour and grayscale. Default: seed it in
+  AIA-2's phase 2 queue after the icons; the in-game flat pass stays
+  until it lands. **Answered** by the lead in cycle 70, as the default:
+  P2-AIA2-busts (AIA-2, deps P1-AD-board-1d, files
+  `client/world/creature_bust.gd`), after the phase 2 flow tasks in the
+  backlog's order and within the cap of three. Icon batches 3 and 4 stay
+  deferred (D13 (c)); this is not an icon batch.
+
+- **AD-R21** (from AD, 12 November 2026 16:18Z; due 13 November 16:18Z;
+  not blocking): board 1 stands (board-1.md, Round 4): D and F are
+  closed, A, B, C and E were closed earlier, so phase 2 no longer waits
+  for board 1 (report section 3.2). Check phase 1's other exit conditions
+  and open phase 2. Default: open phase 2 at the next lead cycle if the
+  other exit conditions hold. **Recorded** by the lead in cycle 70: the
+  round 4 verdict is on AD's branch, not yet on main. When P1-AD-board-1d
+  merges, its phase 2 dependants open and the lead checks phase 1's other
+  exit conditions before setting the backlog's `phase` to 2.
+
 - **K1-R17** (from K1, 12 November 2026 06:17Z; due 12 November 10:17Z;
   blocking): with `"numerals": true`, check_all fails 1 test of 404
   (pre-check FAIL at `f760dedf`): a11y_tests' word contrast reads the
@@ -234,7 +410,26 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   exception of P1-K1-numerals-on, for that change and AD-R14's header
   outline only; no test changes, check_all and guard.sh run again on the
   ready head. P1-S1-pilot-4 leaves heist_hud.gd and budgets.json to K1.
-  Message M8; K1 restarted on a fresh session.
+  Message M8; K1's own session continues (its check-in at 06:54Z read the
+  grant on main).
+
+- **K1-R18** (from K1, 12 November 2026 07:12Z; due 12 November 10:12Z;
+  blocking): under K1-R17's grant, the 'Laws here' / 'Leis aqui' header
+  at `ca66fe67` wears the kit's display stroke for AD-R14: the ink
+  outline at 3.5 points (from 3) and a hard gold_drop drop 2 points under
+  it with its own outline, as KitNav.logo wears them (kit-spec.md section
+  2.2, T2). The ink outline alone does not show on the night sky at a
+  still's size, so only the drop makes the stroke read. The drop costs 2
+  draw calls (the label's shadow pass): guard.sh reads heist 120/116/120
+  against records 118/114/118 (cap 150; textures and contrast unchanged).
+  Asks to raise `tools/ui_bake/budgets.json`'s `shots.recorded` heist/100,
+  heist/200 and heist/hc by 2, logged in `raises`. Default: no raise, the
+  drop comes out. **Answered** by the lead in cycle 61, approved: raise
+  the three records by 2 (to 120, 116, 120), logged in `raises` with
+  K1-R18 and AD-R14 as the reason (the README's rise by request with the
+  lead's approval). The heist stays 30 under the cap. guard.sh and
+  check_all run again on the ready head, then the gate (heist at 100%
+  text, Display type, switch on). Message M9.
 
 - **S1-R8** (from S1, 11 November 2026; due 12 November 20:14Z; not
   blocking): add `client/scripts/heist_hand.gd` to S1's heist files, so
@@ -246,6 +441,20 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   owns it). The lead files the file into S1's next heist task if S1
   still needs it there. Cycle 56: `heist_hand.gd` is in P1-S1-pilot-3's
   files.
+
+- **S1-R12** (from S1, 12 November 2026 11:55Z; due 13 November 11:55Z;
+  not blocking): board 1's objection D (AD-R17) is met in game by a flat
+  pass in `client/world/fx_portrait.gd` (`FxPortrait._toon`: Bramble and
+  Hollow in three tones of their colour, marks kept). At 119 px Bramble
+  reads as a grey-violet mass with small eyes, and the pass runs in
+  GDScript the first time each portrait shows at a size. Asks whether
+  AIA-2 should flat-paint Bramble and Hollow at their source
+  (`client/world/creature_bust.gd`). Default: the in-game pass stays as
+  the fix for D, the source art is unchanged, and the gate judges the
+  pass. **Recorded** by the lead in cycle 67, as the default: no AIA-2
+  task now (icon and art batches stay paced by D13 (c)). If the gate on
+  P1-S1-pilot-5 or AD's re-check in P1-AD-board-1d leaves objection D
+  open, the lead seeds an AIA-2 task on the source art then.
 
 - **K1-R12** (from K1, 9 November 2026; due 10 November 12:00Z):
   P1-K1-switch-heist needs `client/ui/rb_box.gd` (the face drawn from the

@@ -18,6 +18,15 @@ Beside it, on every merge candidate, the lead runs the UI kit's guard,
 `ui guard: OK`): a full rebake byte for byte, and draw calls, texture memory
 and contrast against `tools/ui_bake/budgets.json` (D9 (b), K1-R3).
 
+On GitHub, `.github/workflows/checks.yml` runs the part of these that needs
+no Godot on every push and pull request (SEC-28): the WebAssembly build and
+the server's tests, `cargo test`, the documents check, the ownership
+self-test, `tools/test_run_checks.sh` as root with bubblewrap installed (where
+a missing bwrap fails it), `client/test_export.sh` and `tools/check_ci.py`,
+which keeps the workflow pinned and complete. Branch protection on main,
+requiring the `checks` status, is the owner's to turn on in the repository's
+settings.
+
 ## Running it in the background: the worktree runner
 
 Run the full checks on a separate worktree of the exact commit, with the log
@@ -32,6 +41,13 @@ bash tools/run_checks.sh wait <sha>     # in the background: blocks until DONE, 
 bash tools/run_checks.sh result <sha>   # {"state": "PASS"|"FAIL"|"RUNNING", ...}
 ```
 
+- **The candidate's code runs contained** (SEC-19): in bwrap, with the
+  file system read-only but for the worktree and a private `/tmp`, no
+  network and no capabilities; failing that, as the unprivileged user named
+  by `CHECK_USER`. With neither, `start` refuses (exit 3) and says why;
+  `CHECK_UNSANDBOXED=1` runs it anyway, with a warning, on a machine where
+  the candidate may do anything you can. `result` names the containment in
+  `"sandbox"`. `bash tools/test_run_checks.sh` tests all of it.
 - **A run passed** only if its log ends `DONE exit=0` **and** contains
   `All checks passed.` The failing step is the last heading in the log:
   `grep '^== ' "$log" | tail -1; tail -20 "$log"`.

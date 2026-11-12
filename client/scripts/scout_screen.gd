@@ -23,6 +23,9 @@ var _tab := "loot"
 var _tabs: VBoxContainer
 var _dock: HFlowContainer
 var _drawn_key := ""
+## The cue at the sheet's foot while more of it is below: the kit draws no
+## scroll bar, so this says the report goes on (AD-R12 F4).
+var _more: PanelContainer
 
 
 func _ready() -> void:
@@ -72,6 +75,9 @@ func _build() -> void:
 	_dock.add_theme_constant_override("h_separation", UI.px(12))
 	column.add_child(_dock)
 	StageScreen.corner_gap(column)
+	column.resized.connect(_fit_sheet, CONNECT_DEFERRED)
+	_more = more_cue()
+	add_child(_more)
 
 
 func _refresh() -> void:
@@ -155,6 +161,50 @@ func _refresh() -> void:
 	raid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_dock.add_child(raid)
 	_draw_world(card)
+	_fit_sheet.call_deferred()
+
+
+## The sheet as tall as the report it holds, so its last row of pills is not
+## cut at its edge (AD-R12 F4), up to half the column and leaving the world
+## a window; past that it scrolls, under its cue.
+func _fit_sheet() -> void:
+	if _sheet == null or not is_inside_tree():
+		return
+	var column := _sheet.get_parent() as Control
+	var want := (_sheet.get_child(0) as Control).get_combined_minimum_size().y
+	var room := column.size.y - column.get_combined_minimum_size().y + _sheet.custom_minimum_size.y
+	_sheet.custom_minimum_size.y = maxf(0.0, minf(want, minf(column.size.y * 0.5, room - column.size.y * 0.12)))
+
+
+## A down arrow on glass, ignored by touch so a drag still scrolls the sheet.
+static func more_cue() -> PanelContainer:
+	var more := UI.panel("glass")
+	more.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	more.name = "More"
+	var arrow := Icons.view("generalui/back", 16.0)
+	# The kit's back arrow turned to point down, in a plain holder, as a
+	# container would set its turn back to none.
+	var holder := Control.new()
+	holder.custom_minimum_size = arrow.custom_minimum_size
+	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	arrow.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	arrow.pivot_offset = arrow.custom_minimum_size / 2.0
+	arrow.rotation = -PI / 2.0
+	holder.add_child(arrow)
+	more.add_child(holder)
+	more.visible = false
+	return more
+
+
+## The cue in the sheet's lower right corner, clear of the centred keys under
+## it, while the sheet has more below than it shows.
+static func place_more(more: Control, sheet: ScrollContainer) -> void:
+	var bar := sheet.get_v_scroll_bar()
+	more.visible = sheet.is_visible_in_tree() and bar.max_value - bar.page > sheet.scroll_vertical + 2.0
+	if more.visible:
+		more.reset_size()
+		var r := sheet.get_global_rect()
+		more.global_position = r.end - more.size - Vector2.ONE * UI.px(6)
 
 
 ## The target's realm as the scout knows it: a bare island of its level.
@@ -178,3 +228,4 @@ func _process(_delta: float) -> void:
 	if _sheet != null and view != null:
 		view.cover_bottom = StageScreen.covered_below(view, _keys)
 		view.cover_top = StageScreen.covered_above(view, _top)
+		place_more(_more, _sheet)

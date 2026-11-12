@@ -18,6 +18,16 @@ Tests that failed and then passed unchanged, each with its fix task
   both fetched Godot into `~/.cache/ruleborn/`, and one failed with "Godot's
   download does not match its pinned sum"; it passed re-run once the cache
   was filled.
+- **Seen again:** lead cycle 63, 12 November 2026. Two runs side by side
+  (candidates `481254f9` and `a4471d44`, started together at 08:47Z);
+  `a4471d44` failed 403 of 404 client tests, the one failure "settings
+  changed on the settings screen are saved as they change and restored on
+  the next launch" (`client/tests/run.gd`; detail `saved ["pt_BR", …],
+  restored ["en", …]`): both runs write and delete the one
+  `user://settings.cfg` (`client/scripts/settings.gd`). `481254f9` passed;
+  `a4471d44` re-run unchanged, with no other Godot run beside it, passed
+  404 of 404 (result in `lead.md`, "Now"). The lead broke this entry's
+  "Until fixed" rule; the merge queue runs one full check at a time again.
 - **Cause (likely):** every run's worktree is separate, but Godot's
   `user://` (under `~/.local/share/godot/`) and `~/.cache/ruleborn/` are
   shared. The builder opens on the saved draft (`Draft.island()`,

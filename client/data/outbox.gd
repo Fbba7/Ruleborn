@@ -119,6 +119,10 @@ func flush(api: Api) -> int:
 			r = await api.post_json(item["route"], JSON.parse_string(body.get_string_from_utf8()))
 		else:
 			r = await _post_raw(api, item["route"], body)
+		# Its own call renewed the session for another account: it was not sent,
+		# and waits parked under the account that queued it (SEC-29).
+		if not has(item["key"]):
+			continue
 		if not r.ok and transient(r):
 			if r.code in ["offline", "unreachable", "timeout", "request_failed"]:
 				break
@@ -142,10 +146,11 @@ func _post_raw(api: Api, route: String, body: PackedByteArray) -> Result:
 ## A 5xx is one, whatever reason came with it: the server, or the store it
 ## asked, could not decide it now (D67's store_unavailable is a 503).
 static func transient(r: Result) -> bool:
-	# A session the server refused, or a limit on how fast it is asked,
-	# decided nothing about the item itself.
+	# A session the server refused, a limit on how fast it is asked, or a
+	# session that came to speak for another account (Api) decided nothing
+	# about the item itself.
 	if r.code in ["offline", "unreachable", "timeout", "request_failed", "internal", "store_unavailable",
-			"session_refused", "too_many_requests"]:
+			"session_refused", "too_many_requests", "account_changed"]:
 		return true
 	return r.code.begins_with("status_5") or int(r.detail.get("status", 0)) >= 500
 

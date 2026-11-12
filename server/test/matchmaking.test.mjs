@@ -7,7 +7,7 @@ import { test } from "node:test";
 import { expected, fresh, ratingFor, update } from "../src/glicko.mjs";
 import { offer, prior, successBand } from "../src/matchmaking.mjs";
 import { Refused } from "../src/service.mjs";
-import { established, openPlan, play, twoPlayers } from "./setup.mjs";
+import { established, openPlan, play, submitCrewed, twoPlayers } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
 const HOUR = 60 * 60 * 1000;
@@ -160,7 +160,7 @@ test("only a raid on a player's current island lifts the protection: not a frien
   const { challenge } = f.challenge(t.defender.account);
   heist(t.service.lease(fresh, t.bundle, null, { mode: "challenge", challenge }));
   f.accept(fresh, f.invite(t.defender.account).invite);
-  heist(t.service.lease(fresh, t.bundle, null, { mode: "friendly" }));
+  submitCrewed(t, fresh, t.service.lease(fresh, t.bundle, null, { mode: "friendly" }));   // named crew (SEC-24)
   // An echo takes nothing from its owner.
   const moved = t.service.session("gc:moved").account;
   established(t, moved);
@@ -206,7 +206,8 @@ test("a challenge, a friendly heist or an echo robbed nobody, and opens no Trace
   assert.equal(heist(t.service.lease(t.raider.account, t.bundle, null, { mode: "challenge", challenge })).verdict.grade, "clean");
   traced();
   f.accept(t.raider.account, f.invite(t.defender.account).invite);
-  assert.equal(heist(t.service.lease(t.raider.account, t.bundle, null, { mode: "friendly" })).verdict.grade, "clean");
+  assert.equal(submitCrewed(t, t.raider.account, t.service.lease(t.raider.account, t.bundle, null, { mode: "friendly" }))
+                 .verdict.grade, "clean");                           // a friendly heist names its crew (SEC-24)
   traced();
   t.service.publish(t.defender.account, another(t, true, 5));             // t.bundle is an echo now
   const echo = t.service.lease(t.raider.account, t.bundle);

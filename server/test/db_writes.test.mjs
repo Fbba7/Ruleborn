@@ -53,8 +53,18 @@ test("a heist writes its raider's row once: the experience, the raids played and
 
 test("a raid past the week's twenty, which earns no experience, still writes the raider's row once", () => {
   const t = twoPlayers();
+  // A defender each: a pair's later raids the same day are rated no more
+  // (SEC-39), and this holds the rating's write with the raids played.
+  const bundles = [t.bundle];
+  for (let i = 1; i < 21; i++) {
+    const { account } = t.service.session(`gc:defender-${i}`);
+    established(t, account);
+    const island = t.build.exampleIsland(true);
+    island[6] = (island[6] + i) & 0xff;               // its own bytes: a bundle of its own
+    bundles.push(t.service.publish(account, island).bundle);
+  }
   for (let i = 0; i < 21; i++) {
-    const lease = t.service.lease(t.raider.account, t.bundle);
+    const lease = t.service.lease(t.raider.account, bundles[i]);
     const replay = play(t, lease, { plan: openPlan() });
     const order = writes(t.service.db, () => t.service.submit(t.raider.account, lease.token, replay));
     assert.equal(order.filter((w) => w === "UPDATE accounts").length, 1, `raid ${i + 1}: ${order.join(", ")}`);

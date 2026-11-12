@@ -1,9 +1,9 @@
 # AD art director: progress
 
-- Status: P1-AD-board-1 ready (board 1 posted; it does not stand: objections A–E). Pre-check in the status file.
-- Progress: 10 of 10 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
-- Done: P1-AD-board-1: `docs/art/ui-quality/gate/boards/board-1.md` with nine items beside their golden references at phone size, the gate's verdicts and AD's check of every owner-checked quality; the flow review of the integrated build (below).
-- Next: AD re-checks board 1 when S1 re-shoots the heist with objections A–E fixed (requests AD-R7 to AD-R11); phase 2 waits for that.
+- Status: P1-AD-board-1d ready (board 1 round 4 posted: **board 1 stands**. D and F are closed; note G, Bramble's and Hollow's lost features, does not hold it and goes to AIA-2). Pre-check in the status file.
+- Progress: 13 of 13 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
+- Done: P1-AD-board-1d: "Round 4" in `docs/art/ui-quality/gate/boards/board-1.md`, with stills `board-1/r4-*.png`, on main at `cecf3a64`.
+- Next: phase 2 can open (AD-R21); AIA-2 paints Bramble's and Hollow's busts (note G, AD-R20); board 2 when the lead seeds it.
 - Blocked by: none.
 - Owner decision needed: none. AD decides board 1 in place of the owner.
 
@@ -19,14 +19,20 @@
 | P0-AD-calibrate: calibration | 3 | ready (3f3797c) | pre-check PASS at 3f3797c, 2026-10-31T19:23Z (`All checks passed.`, `DONE exit=0`); `tools/ui_gate/calibrate.py --self-test` (run by `sheet.py --self-test` in `check_all.sh`); `gate/calibration.md`; `gate/calibration/runs/dev-{fable,opus}/plan.jsonl`; `check_docs_consistency.py` clean |
 | P0-AD-calibrate-2: score, choose the judge, revise, held-out | 2 | ready (pre-check in the status file) | `gate/calibration.md` Results: dev runs on rubric versions 1-3, `held-opus` on version 3 (all eight qualities missed, owner-checked); `gate/rubric.md` and `gate/prompts/` version 3; `calibration/runs/{dev-opus-v2,dev-opus-v3,held-opus}/` plans and results; `check_docs_consistency.py` clean |
 | P1-AD-board-1: board 1 and the flow review | 2 | ready (pre-check in the status file) | `gate/boards/board-1.md` and `gate/boards/board-1/*.png`; stills re-rendered on main at `d880807e`; flow review below; requests AD-R7 to AD-R12 in `status/AD.json` |
+| P1-AD-board-1b: re-check board 1 on pilot-3 | 1 | ready (pre-check in the status file) | `gate/boards/board-1.md` Round 2 and `gate/boards/board-1/r2-*.png`; three stills re-rendered on main at `085c812a` match S1's (mean diff ≤ 0.34, ≤ 0.75% of pixels > 16); the no-plan 200% pt_BR shot fails `FIT=1`; requests AD-R13 to AD-R16 in `status/AD.json` |
+| P1-AD-board-1c: re-check board 1 on numerals-on and pilot-4 | 1 | ready (pre-check in the status file) | `gate/boards/board-1.md` Round 3 and `gate/boards/board-1/r3-*.png`; five shots on main at `ed6bcfdc`, all `FIT=1` "fit ok" (no-plan 200% pt_BR included); A and B closed, D and F open; requests AD-R17 to AD-R19 in `status/AD.json` |
+| P1-AD-board-1d: re-check board 1 on pilot-5 | 1 | ready (pre-check in the status file) | `gate/boards/board-1.md` Round 4 and `gate/boards/board-1/r4-*.png`; four shots on main at `cecf3a64`, all `FIT=1` "fit ok"; the no-plan 200% pt_BR shot matches S1's (mean diff 0.01); portrait L* matches S1's Part 5 table; D and F closed, board 1 stands; requests AD-R20 and AD-R21 in `status/AD.json` |
 
 ## Handoff
-- Last verified commit: see `precheck` in `status/AD.json`; P1-AD-board-1 ready.
-- Done: board 1 posted on main's integrated head `d880807e`. **It does not stand**: objections A (flat heist timer; use `KitNumerals`), B (200% pt_BR loot line leaves its panel and overlaps Pip; guard bubble clipped), C (no crew tray, Ash wraps alone, generic hint and load bars), D (Hollow and Bramble portraits merge with their rings) and E (`MOMENT=alarm` shows no alarm). The kit, icon batches 1–2 and the press feedback stand. Each objection is a request to the lead (AD-R7 to AD-R11) with S1 as the proposed owner.
-- Corrected before posting: a first draft said the crew names were unoutlined; at 4× zoom they carry a thin plum ink outline, so objection A is the timer only.
+- Last verified commit: see `precheck` in `status/AD.json`; P1-AD-board-1d ready.
+- Done: board 1 round 4 on main at `cecf3a64` (P1-S1-pilot-5 merged as `fe27c8f2`). **Board 1 stands.**
+  - D is closed: Bramble and Hollow are filled in three flat tones, about 29 L* below their discs, and Hollow is framed head and shoulders. The gate passes Character presence 3 fails of 6.
+  - F is closed: "Laws here" sits on the kit's tag plate, 47 L* or more above the sky. The gate passes Display type at 100% and at 200% pt_BR.
+  - Note G, which does not hold the board: the flat pass also wiped out Bramble's snout, arms and belly bands and Hollow's glass. That is AIA-2's job, in the busts' source art (AD-R20, which answers S1-R12).
+- Checked: AD's no-plan 200% pt_BR shot matches S1's `part5-noplan-200-pt.png` (mean diff 0.01). AD's 100% shot used a different law set and estimate from S1's, so its scene differs, but its portraits and header are the same. The portrait L* matches S1's table.
 - Half done: nothing.
-- Open hypotheses: the result screen's "alarm 5 / 6" under "No guard alerted" may be a true peak of the noise meter rather than a wrong figure (flow finding F6); the gameplay owner should say which.
-- Next step: when S1's fixes land, AD re-checks the new stills on `board-1.md` and lets the board stand or keeps the objection.
+- Open hypotheses: once AIA-2's flat busts land, the `TOON` pass in `FxPortrait` may no longer be needed for Bramble and Hollow.
+- Next step: the lead opens phase 2 (AD-R21). AD's next task is board 2 (icons) when it is seeded.
 
 ## Flow review
 

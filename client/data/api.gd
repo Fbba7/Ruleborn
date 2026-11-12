@@ -21,6 +21,10 @@ var reauth: Callable
 ## call then renews first rather than be refused. Unset, a token is used
 ## until refused.
 var stale: Callable
+## How many times the session has come to speak for another account than the
+## one before (AuthSession._adopt). A call during which it changed is not
+## sent: it was made for the account before (SEC-29).
+var account_epoch := 0
 
 
 func _init(t: Transport, url: String, l: ActionLog) -> void:
@@ -56,16 +60,22 @@ func raw(method: HTTPClient.Method, path: String, body := PackedByteArray()) -> 
 	# The session's own routes never sign in to be made: they are how.
 	var signing := method == HTTPClient.METHOD_POST and (path == "/v1/session" or path.begins_with("/v1/session/"))
 	var renew := token == "" or (stale.is_valid() and bool(stale.call()))
+	var epoch := account_epoch
 	if renew and not signing and reauth.is_valid():
 		var signed: Result = await reauth.call()
 		if signed.code == "too_many_requests":
 			return signed
+	# The renewal answered for another account: this call was the one before's.
+	if account_epoch != epoch:
+		return Result.failure("account_changed")
 	var first := await _raw(method, path, body)
 	if first.ok or first.code != "session_refused" or signing or not reauth.is_valid():
 		return first
 	var again: Result = await reauth.call()
 	if not again.ok:
 		return again if again.code == "too_many_requests" else first
+	if account_epoch != epoch:
+		return Result.failure("account_changed")
 	return await _raw(method, path, body)
 
 

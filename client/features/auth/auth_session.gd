@@ -291,6 +291,7 @@ func _adopt(answer: Variant) -> Result:
 		last_account = account
 		_write()
 		if previous != "":
+			api.account_epoch += 1
 			account_changed.emit(previous, account)
 	var refresh := str(v.get("refreshToken", ""))
 	if refresh != "":

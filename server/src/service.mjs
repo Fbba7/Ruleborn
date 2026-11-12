@@ -30,11 +30,11 @@ import { Friends } from "./friends.mjs";
 import { Matchmaking } from "./matchmaking.mjs";
 import { Notifications } from "./notifications.mjs";
 import { Seasons } from "./seasons.mjs";
-import { GIFT_KEEP_DAYS, INTENT_MS, Shop } from "./shop.mjs";
+import { GIFT_KEEP_DAYS, INTENT_MS, Shop, TOMBSTONE_DAYS } from "./shop.mjs";
 import { readHeader, readManifest } from "./sim.mjs";
 import { Journal } from "./accounts.mjs";
 import { Keeper, heistExperience } from "./keeper.mjs";
-import { Store } from "./store.mjs";
+import { Store, sha256 } from "./store.mjs";
 import { Auth } from "./auth.mjs";
 import { keyring } from "./tokens.mjs";
 import { Telemetry, lawsOf } from "./telemetry.mjs";
@@ -66,6 +66,18 @@ export const TARGET_LISTS_MS = 60 * 60 * 1000;
 /** G38's one rule: something that names a player and serves no purpose
  *  once closed is deleted within seven days of closing. */
 export const CLOSED_KEEP_DAYS = 7;
+/** SEC-18 B (decided): what an account may store of its replays in a UTC
+ *  day. A replay is at most one body (16 KiB, http.mjs), so this is over a
+ *  hundred submissions; past it a refused submission stores nothing. A
+ *  validated heist is always stored, and counts. */
+export const REPLAY_BYTES_A_DAY = 2 * 2 ** 20;
+/** SEC-18 B: a submission refused after its header checks is kept this many
+ *  days for review and its sender, not the full retention (§24.3). */
+export const REFUSED_KEEP_DAYS = 7;
+/** SEC-25 B (decided): an account that has had this many submissions
+ *  refused in a UTC day is leased nothing more that day. An honest device
+ *  almost never has one. */
+export const MAX_REFUSALS_A_DAY = 10;
 
 /** §24.10: "Tick rate — 30 a second, fixed." */
 // SR-15 (the owner's, until D60 reads the ledger): §24.8 has a published
@@ -531,12 +543,24 @@ export class Service {
         }
         return this.leaseView(held);
       }
+      // SEC-25 B: a day of refusals is the end of that day's leases.
+      const refusals = this.db.prepare(
+        "SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND day = ? AND validated = 0").get(attacker, day(now)).n;
+      if (refusals >= MAX_REFUSALS_A_DAY) throw new Refused(429, "too_many_refusals");
+      // SEC-25 B: a submission refused while its lease was live does not buy
+      // a fresh seed. The next lease keeps the refused one's until that one
+      // would have expired, so sending junk until a liked seed comes gains
+      // nothing; a played lease, or one run out, frees it as before.
+      const refusedLive = newest && newest.expires_at > now
+        && this.db.prepare("SELECT 1 FROM heists WHERE token = ? AND validated = 0").get(newest.token);
       // Expired and never submitted, it reserved nothing (§24.13): a fresh
       // one is issued beside it.
+      const token = this.random(16).toString("hex");
+      const drawn = this.random(8).readBigUInt64LE(0).toString();
       const row = {
-        token: this.random(16).toString("hex"),
+        token,
         attacker, bundle, defender,
-        seed: this.random(8).readBigUInt64LE(0).toString(),
+        seed: refusedLive ? newest.seed : drawn,
         ticks: clockTicks(0) + era.seconds * TICKS_PER_SECOND,
         rules: this.builds.current.rulesVersion,
         // Never at the moment the newest was issued, nor before it: the
@@ -617,11 +641,14 @@ export class Service {
     if (done) return { ...JSON.parse(done.outcome), repeated: true };
 
     // §24.3: kept for validation and analysis, and for the two players to
-    // watch (§13), in the private store.
-    const logHash = this.replays.put(replay);
+    // watch (§13), in the private store — but only once the header says the
+    // bytes are this lease's heist (SEC-18 B). Junk refused before that is
+    // never written; its row names its hash and has no replay.
+    const logHash = sha256(replay);
     const header = readHeader(replay);
+    let checked = false;
     const refuse = (reason, extra = {}) => this.settle(lease, replay, logHash, now,
-                                                       { validated: false, reason, ...extra });
+      { validated: false, reason, ...extra, kept: checked ? this.keepRefused(attacker, replay, now) : 0 });
 
     // The replay must be the heist this lease allowed: its snapshot, or its
     // universe, its seed, its clock — across a universe, one of its landing
@@ -646,12 +673,18 @@ export class Service {
       if (used > 0) return refuse("lease_expired");
       grace = true;
     }
+    checked = true;
 
     // TD.34: the roster's characters the device names as the crew, held,
     // not away, and the replay manifest's own (home.mjs). §12.5: a manifest
     // is "checked against the roster it holds", so one the device sends
     // without naming the crew is refused: else any kind could be claimed,
     // and nobody would rest after.
+    // §12.11: after a friendly heist "the crew rests as after any heist", so
+    // one is played by a crew the roster names and the manifest carries;
+    // without one nobody would rest, and a friend could be played on a loop
+    // (SEC-24).
+    if (lease.mode === "friendly" && (!header.manifest || !crew)) return refuse("crew_required");
     if (header.manifest && !crew) return refuse("crew_not_named");
     if (crew) {
       const why = this.home.crewProblem(attacker, crew, replay, header, now);
@@ -704,11 +737,33 @@ export class Service {
     const cast = casts.filter((_, i) => (result.verdict.castsUsed ?? 0) & (1 << i));
     const castAether = cast.reduce((n, law) => n + castPrice(law), 0);
     if (castAether > this.aether(attacker)) return refuse("not_enough_aether", { cost: castAether });
+    // A heist played is always kept: below the free-space floor it is
+    // refused 503 and its lease kept for a later submission (SEC-18 A).
+    this.replays.put(replay);
     return this.settle(lease, replay, logHash, now,
                        { validated: true, verdict: result.verdict, grace, crew,
                          cast: { laws: cast, aether: castAether },
                          heistMs: Math.round((header.ticks / TICKS_PER_SECOND) * 1000),
                          report: result.report, crossing });
+  }
+
+  /**
+   * SEC-18 B: a refused submission's bytes, past its header checks, stored
+   * while the account's day stays under REPLAY_BYTES_A_DAY and the volume
+   * above its floor; how many bytes were stored, 0 for none. A refusal is
+   * never answered 503: it is settled, with nothing kept.
+   */
+  keepRefused(attacker, replay, now) {
+    const today = this.db.prepare(
+      "SELECT COALESCE(SUM(log_bytes), 0) AS n FROM heists WHERE attacker = ? AND day = ?").get(attacker, day(now)).n;
+    if (today + replay.length > REPLAY_BYTES_A_DAY) return 0;
+    try {
+      this.replays.put(replay);
+    } catch (e) {
+      if (e instanceof Refused && e.reason === "storage_low") return 0;
+      throw e;
+    }
+    return replay.length;
   }
 
   /**
@@ -744,12 +799,19 @@ export class Service {
                       // §13.2's report and the Profile's facts, from the
                       // event log at settlement (TD.39, G57).
                       decision.report ? { report: decision.report } : {});
+        // SEC-24: a friendly heist pays its pages and its stray roll only as
+        // the pair's first of the UTC day, whichever of the two raided whom;
+        // later ones still play, rest the crew and are recorded, and pay
+        // nothing. The design gives no cap; without one two friends farm
+        // pages and strays on a loop.
+        const paysOut = lease.mode !== "friendly" || this.friendlyEarlierToday(lease, now) === 0;
+        if (!paysOut) Object.assign(outcome, { friendPages: 0, friendlyPaid: false });
         // §11.5: the first heist brings two strays home, free (home.mjs);
         // the roster says so, and the heist's outcome is the haul's alone.
         const crossed = lawsOf(this.store.get(lease.bundle));
         const first = this.home.firstStrays(lease.attacker, crossed, now);
         // §11.5: about one successful heist in eight finds a stray (home.mjs).
-        if (!first.length && decision.verdict.grade !== "foiled") {
+        if (paysOut && !first.length && decision.verdict.grade !== "foiled") {
           const stray = this.home.findStray(lease.attacker, lease.token, crossed, now);
           if (stray) outcome.stray = stray;
         }
@@ -757,7 +819,7 @@ export class Service {
         const gift = this.friends.firstHeist(lease.attacker, now);
         if (gift) outcome.inviteGift = gift;
         // §7.6: the laws met, the pylons' pages and the floor (codex.mjs).
-        this.codex.afterHeist(lease, decision.verdict, now, decision.cast?.laws ?? []);
+        this.codex.afterHeist(lease, decision.verdict, now, decision.cast?.laws ?? [], { friendPages: paysOut });
         // §11.6: the crew away and resting, each by its outcome (home.mjs).
         if (decision.crew) {
           outcome.rest = this.home.rest(lease.attacker, decision.crew, decision.verdict, decision.heistMs, now);
@@ -765,11 +827,14 @@ export class Service {
       }
       this.db.prepare(
         `INSERT INTO heists (token, attacker, bundle, seed, log_hash, state_hash, validated,
-                             outcome, review, grace, submitted_at, day, defender)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+                             outcome, review, grace, submitted_at, day, defender, replay_gone, log_bytes)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
         .run(lease.token, lease.attacker, lease.bundle, lease.seed, logHash, stateHash, decision.validated ? 1 : 0,
              JSON.stringify(outcome), decision.review ? 1 : 0, decision.grace ? 1 : 0, now, day(now),
-             lease.defender);
+             // A validated heist's bytes are stored before it settles; a
+             // refusal's only as keepRefused says (SEC-18 B).
+             lease.defender, decision.validated || decision.kept ? 0 : 1,
+             decision.kept ?? (decision.validated ? replay.length : 0));
       // §24's analytics: a heist's "outcome, laws crossed, crew".
       this.telemetry.record(lease.attacker, "heist", decision.validated
         ? { validated: true, grade: decision.verdict.grade, crew: decision.verdict.crew,
@@ -935,9 +1000,11 @@ export class Service {
     // §13: "The defender is notified afterwards and can watch the replay."
     if (!nobody) this.notifications.raided(lease, verdict, now);
     // An echo rates the raider against its island and leaves the island's
-    // rating alone (G30); an island whose owner is gone rates nobody.
+    // rating alone (G30); an island whose owner is gone rates nobody. A
+    // pair's later raids the same UTC day move no rating either (G37,
+    // SEC-39): the pair chooses those outcomes, as it would its Renown.
     const rated = {};
-    const rating = friendly || gone ? null
+    const rating = !scores || gone ? null
       : this.matchmaking.settle(lease, snapshot.realm, verdict, now, { raiderOnly: Boolean(lease.echo), keep: rated });
     // The raider's row, written once: the experience, the raids played and
     // the rating, which were three writes of it (§24.1's writes). The
@@ -956,6 +1023,15 @@ export class Service {
     return { verdict, fee, feeReturned: returned, cast, haul: pay, renown, renownCounted, stars, rating,
              defence, denied, keeper, mode: lease.mode ?? "raid",
              ...(friendly ? { friendPages } : {}) };
+  }
+
+  /** The validated friendly heists two friends have played on each other
+   *  today (UTC), either way round (SEC-24). Before this one is written. */
+  friendlyEarlierToday(lease, now) {
+    const q = this.db.prepare(
+      `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
+        WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND h.validated = 1 AND l.mode = 'friendly'`);
+    return q.get(lease.attacker, day(now), lease.defender).n + q.get(lease.defender, day(now), lease.attacker).n;
   }
 
   /** The validated raids a player has played, games among friends and
@@ -1023,12 +1099,18 @@ export class Service {
    */
   expireLapsed(now = this.now()) {
     const before = now - CLOSED_KEEP_DAYS * DAY_MS;
+    // A gift's is kept longer: only it names the friend (shop.intentOf).
+    const lapsed = `FROM purchase_intents WHERE redeemed_at IS NULL AND created_at + ? < ?
+                      AND (recipient IS NULL OR created_at + ? < ?)`;
+    const args = [INTENT_MS, before, INTENT_MS, now - GIFT_KEEP_DAYS * DAY_MS];
     return transaction(this.db, () => ({
-      // A gift's is kept longer: only it names the friend (shop.intentOf).
-      intents: Number(this.db.prepare(
-        `DELETE FROM purchase_intents WHERE redeemed_at IS NULL AND created_at + ? < ?
-            AND (recipient IS NULL OR created_at + ? < ?)`)
-        .run(INTENT_MS, before, INTENT_MS, now - GIFT_KEEP_DAYS * DAY_MS).changes),
+      intents: Number((() => {
+        // SEC-29: whose it was outlives it, TOMBSTONE_DAYS (shop.intentOf).
+        this.db.prepare(`INSERT OR IGNORE INTO intent_tombstones (id, account, deleted_at)
+                           SELECT id, account, ? ${lapsed}`).run(now, ...args);
+        this.db.prepare("DELETE FROM intent_tombstones WHERE deleted_at < ?").run(now - TOMBSTONE_DAYS * DAY_MS);
+        return this.db.prepare(`DELETE ${lapsed}`).run(...args).changes;
+      })()),
       leases: Number(this.db.prepare(
         // Unplayed is no heist, whatever its state: a lease that lapsed and
         // was closed when its target was leased again was never played.
@@ -1039,11 +1121,14 @@ export class Service {
   }
 
   /** §24.3: "Raw replays and logs are kept 30 to 90 days". Past the
-   *  longest, a replay goes; its heist row and hashes stay. Idempotent. */
+   *  longest, a replay goes; its heist row and hashes stay. A refused
+   *  submission's go after REFUSED_KEEP_DAYS (SEC-18 B). Idempotent. */
   expireReplays(now = this.now()) {
     const before = now - facts.RAW_KEEP_DAYS * DAY_MS;
+    const refusedBefore = now - REFUSED_KEEP_DAYS * DAY_MS;
     const old = this.db.prepare(
-      "SELECT token, log_hash FROM heists WHERE replay_gone = 0 AND submitted_at < ?").all(before);
+      `SELECT token, log_hash FROM heists WHERE replay_gone = 0
+          AND (submitted_at < ? OR (validated = 0 AND submitted_at < ?))`).all(before, refusedBefore);
     // In chunks, each its own short transaction, so a long backlog never holds
     // the write lock for the whole loop; the files go after each commit (a
     // crash between the two leaves an orphan file, never a row without bytes).
@@ -1053,7 +1138,8 @@ export class Service {
         for (const h of old.slice(i, i + EXPIRE_CHUNK)) {
           // Two heists can carry the same bytes; the replay stays while any is kept.
           const kept = this.db.prepare(
-            "SELECT 1 FROM heists WHERE log_hash = ? AND replay_gone = 0 AND submitted_at >= ?").get(h.log_hash, before);
+            `SELECT 1 FROM heists WHERE log_hash = ? AND replay_gone = 0 AND submitted_at >= ?
+                AND (validated = 1 OR submitted_at >= ?)`).get(h.log_hash, before, refusedBefore);
           if (!kept) files.push(h.log_hash);
           this.db.prepare("UPDATE heists SET replay_gone = 1 WHERE token = ?").run(h.token);
         }

@@ -193,6 +193,18 @@ func _go() -> void:
 				HORIZONTAL_ALIGNMENT_LEFT, -1, screen.hint_label.get_theme_font_size("font_size")).x)
 		print("hud ", screen.hud.get_global_rect(), " loot ", screen.hud.loot_panel.get_global_rect(),
 			" tray ", screen.actions_band.get_global_rect())
+		# PORTRAITS=dir: each portrait as drawn and its figure, to look at.
+		var keep := OS.get_environment("PORTRAITS")
+		if keep != "":
+			for b: FxPortrait in screen.crew_buttons:
+				if b.picture != null:
+					b.picture.get_image().save_png(keep.path_join(b.letters + ".png"))
+					b.figure().get_image().save_png(keep.path_join(b.letters + "-figure.png"))
+		# Board 1's objection D: each portrait's figure and disc, in L*.
+		for b: FxPortrait in screen.crew_buttons:
+			for key: String in FxPortrait.measured:
+				if key.begins_with(b.kind + "/"):
+					print("portrait ", b.letters, " ", key, " ", FxPortrait.measured[key])
 	if OS.get_environment("FIT") != "":
 		# FIT: board 1's objection B as a check, at whatever TEXT and LOCALE
 		# say; the run fails if anything does not fit.
@@ -225,8 +237,12 @@ static func fit(screen: HeistScreen) -> Array[String]:
 				continue
 			var at := l.get_global_rect()
 			var font := l.get_theme_font("font")
-			var wide := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
-				l.get_theme_font_size("font_size")).x
+			# A label broken by hand stands on its lines; its widest one is what
+			# has to fit.
+			var wide := 0.0
+			for line: String in l.text.split("\n"):
+				wide = maxf(wide, font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1,
+					l.get_theme_font_size("font_size")).x)
 			if l.autowrap_mode == TextServer.AUTOWRAP_OFF and wide > at.size.x + 1.0:
 				bad.append("%s %s: %.0f px of words in %.0f" % [l.get_path(), l.text, wide, at.size.x])
 			var p := l.get_parent()
