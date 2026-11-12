@@ -3,22 +3,33 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-S1-pilot-3",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-12T01:23:10Z",
   "lease_until": "2026-11-12T06:20:49Z",
-  "updated_at": "2026-11-12T03:20:49Z",
-  "expected_next_update_by": "2026-11-12T04:00:49Z",
+  "updated_at": "2026-11-12T04:13:19Z",
+  "expected_next_update_by": "2026-11-12T04:58:19Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "a4d87d18",
-    "next_step": "P1-S1-pilot-3: A to E built and noted. check_all.sh on 75fb660a failed one test: the pre-landing tray asked 1,129 px of 1,080 in pt_BR and pt_PT (§21.1, at 9:19.5). Fixed in a90ea011 (\"Sem lançamentos\" on two lines); the layout test, budget_shots (118/114/118), check_screens and guard.sh pass. Next: check_all.sh on a90ea011, the pre-check, the gate.",
+    "last_green_sha": "0d142dd0",
+    "next_step": "P1-S1-pilot-3 ready at 0d142dd0 (pre-check PASS, 04:12Z); gate asked on \"heist at 100% text\" and \"heist at 200% text, pt_BR\". Objection A shows only with the numerals' switch on (S1-R11). Waiting for the verdict.",
     "at": null
   },
-  "precheck": null,
-  "gate_request": null,
-  "ready_sha": null,
+  "precheck": {
+    "sha": "0d142dd06f72c33998b3d8ef2455c48c79acc665",
+    "exit": 0,
+    "finished_at": "2026-11-12T04:12:53Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "0d142dd06f72c33998b3d8ef2455c48c79acc665",
+    "items": [
+      "heist at 100% text",
+      "heist at 200% text, pt_BR"
+    ]
+  },
+  "ready_sha": "0d142dd06f72c33998b3d8ef2455c48c79acc665",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6"
@@ -181,5 +192,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-3: A to E built and noted. check_all.sh on 75fb660a failed one test: the pre-landing tray asked 1,129 px of 1,080 in pt_BR and pt_PT (§21.1, at 9:19.5). Fixed in a90ea011 (\"Sem lançamentos\" on two lines); the layout test, budget_shots (118/114/118), check_screens and guard.sh pass. Next: check_all.sh on a90ea011, the pre-check, the gate."
+  "next_step": "P1-S1-pilot-3 ready at 0d142dd0 (pre-check PASS, 04:12Z); gate asked on \"heist at 100% text\" and \"heist at 200% text, pt_BR\". Objection A shows only with the numerals' switch on (S1-R11). Waiting for the verdict."
 }
