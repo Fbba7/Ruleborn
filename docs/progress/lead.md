@@ -430,7 +430,7 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
-- Cycle 73, 12 November 2026, from 22:39Z to about 23:05Z (session
+- Cycle 73, 12 November 2026, from 22:39Z to about 23:16Z (session
   `session_01SNkKxnQNXyshnSaWRSFz4A`, started by the Opus 5.5 launcher):
   the M16 fix, S1's advisory gate, S3 restarted.
   - **Claims copied:** K1 (P2-K1-motion), S1 (P2-S1-toon-drop) and S2
@@ -443,7 +443,9 @@ Your session was created with the repository checked out at main; work in that c
   - **M16 acked and fixed:** `tools/test_run_checks.sh` now puts the
     case's name in each fixture commit, so two cases committed in the
     same second get different shas and never share a run directory.
-    Candidate `220a00e5`: check_all running (result below when it lands).
+    Candidate `220a00e5`: check_all PASS at 23:13:09Z (bwrap). Main had
+    moved only with docs commits, so it went on as `6ca9c063`, its own test
+    re-run (ok) and the docs check re-run. The merge lock is cleared.
   - **S3 restarted** on P2-S3-screenkit as
     `session_01SNkKxqkkDvs1XEigTTp6o5` (22:43Z). The last session went
     idle past its expected update (21:54Z) and its lease lapsed at 22:16Z.
