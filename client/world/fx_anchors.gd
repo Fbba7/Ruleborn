@@ -134,10 +134,14 @@ func _metre() -> float:
 
 
 func _draw() -> void:
-	# Every shape in one call (FxPen).
-	FxPen.begin(self)
-	_paint()
-	FxPen.end(self)
+	_pen(self, _paint)
+
+
+## Every shape a canvas item draws in one call (FxPen).
+func _pen(ci: CanvasItem, paint: Callable) -> void:
+	FxPen.begin(ci)
+	paint.call()
+	FxPen.end(ci)
 
 
 func _paint() -> void:
@@ -439,15 +443,11 @@ func say(guard: int, state: String) -> void:
 		speech[guard] = {"text": Strings.t(SAYS[state]), "t": 0.0, "alarm": state == "Alerted"}
 
 
-## A guard's words on a parchment bubble beside its head, its tail to the
-## guard's mouth, popping in and fading (reduced motion: shown, then gone).
 ## The guards' words on the screen's layer above its panels.
 func _draw_speech_layer() -> void:
 	if not _said_up or not is_visible_in_tree() or wipe > 0.0:
 		return
-	FxPen.begin(speech_layer)
-	_paint_speech(speech_layer, _said)
-	FxPen.end(speech_layer)
+	_pen(speech_layer, _paint_speech.bind(speech_layer, _said))
 
 
 ## `box` moved up or down off the screen's panels (keep_off) to the nearest

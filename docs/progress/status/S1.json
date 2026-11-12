@@ -8,12 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T01:23:10Z",
   "lease_until": "2026-11-12T04:23:10Z",
-  "updated_at": "2026-11-12T02:13:26Z",
+  "updated_at": "2026-11-12T02:17:28Z",
   "expected_next_update_by": "2026-11-12T02:58:26Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4d87d18",
-    "next_step": "P1-S1-pilot-3: A, C, D, E done; B: large-text layout done, the guards' words now go to a speech layer above the panels (moved to the nearest clear gap, no tail into a panel) and screen_heist.gd's FIT=1 check passes at 200% in en and pt_BR; next bring MOMENT=alarm at 100% back under 147 draws (148 now), stills, Part 3, pre-check, gate."
+    "next_step": "P1-S1-pilot-3: A, C, D, E done; B: large-text layout done, the guards' words go to a speech layer above the panels and screen_heist.gd's FIT=1 check passes at 200% in en and pt_BR; check_screens OK again (draw sites folded); next: budget still heist/200 reads 117 against 115, find and trim the two calls, then budgets, stills, Part 3, pre-check, gate.",
+    "at": null
   },
   "precheck": null,
   "gate_request": null,
@@ -166,5 +167,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-3: A, C, D, E done; B: large-text layout done, the guards' words now go to a speech layer above the panels (moved to the nearest clear gap, no tail into a panel) and screen_heist.gd's FIT=1 check passes at 200% in en and pt_BR; next bring MOMENT=alarm at 100% back under 147 draws (148 now), stills, Part 3, pre-check, gate."
+  "next_step": "P1-S1-pilot-3: A, C, D, E done; B: large-text layout done, the guards' words go to a speech layer above the panels and screen_heist.gd's FIT=1 check passes at 200% in en and pt_BR; check_screens OK again (draw sites folded); next: budget still heist/200 reads 117 against 115, find and trim the two calls, then budgets, stills, Part 3, pre-check, gate."
 }

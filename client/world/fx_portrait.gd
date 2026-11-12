@@ -126,14 +126,13 @@ func _paint() -> void:
 	if armed:
 		var beat := 0.5 + 0.5 * sin(_time * 6.0) if not Settings.reduced_motion else 1.0
 		FxPen.circle(self, c, r * 1.2, Color(1, 1, 1, 0.35 + 0.4 * beat))
-	FxPen.circle(self, c, r, FxSkin.INK_LINE)
-	FxPen.circle(self, c, r * 0.93, FxSkin.GOLD if chosen else Color("#8A5A22"))
-	FxPen.circle(self, c, r * 0.885, FxSkin.INK_LINE)
-	# A cream mat inside the ring, outlined in ink both sides: the value step
-	# that parts a dark portrait (a Hollow, a Bramble) from the dark ring
-	# and the dark tray.
-	FxPen.circle(self, c, r * 0.86, MAT)
-	FxPen.circle(self, c, r * 0.815, FxSkin.INK_LINE)
+	# The ring, then a cream mat inside it, outlined in ink both sides: the
+	# value step that parts a dark portrait (a Hollow, a Bramble) from the
+	# dark ring and the dark tray.
+	var rim: Color = FxSkin.GOLD if chosen else Color("#8A5A22")
+	var rings := [[1.0, FxSkin.INK_LINE], [0.93, rim], [0.885, FxSkin.INK_LINE], [0.86, MAT], [0.815, FxSkin.INK_LINE]]
+	for ring: Array in rings:
+		FxPen.circle(self, c, r * float(ring[0]), ring[1])
 	# The disc: its school's colour, lighter at the middle, as the design's.
 	var ground: Color = Palette.SCHOOL.get(StageHeroFigure.school(kind), Palette.ROLE.get(role, Palette.STONE)) \
 		if kind != "" else Palette.ROLE.get(role, Palette.STONE)
