@@ -22,15 +22,78 @@
 # The worktree shares the checkout's .git, so a run could plant a hook or a
 # setting there (SEC-19): the runner's own git commands run no hooks, and a
 # run during which .git/config (its branch entries aside) or .git/hooks
-# changed is FAIL "repository changed by the run", whatever its log says.
-# tools/test_run_checks.sh tests this, by hand.
+# changed is FAIL "repository changed by the run", whatever its log says
+# (part A).
+#
+# The candidate's code is run contained (SEC-19, part B), in the first of:
+#
+# - bwrap (CHECK_BWRAP, default `bwrap`): the whole file system read-only,
+#   the worktree and a private /tmp writable, /run empty, no network, its own
+#   process tree, no capabilities (as root, bwrap otherwise keeps them, and
+#   the read-only mounts can be remounted writable);
+# - a separate unprivileged user (CHECK_USER), which owns the worktree and
+#   nothing else of the lead's; run as root, the network is cut too
+#   (`unshare --net`); through sudo it is not;
+# - nothing, only if CHECK_UNSANDBOXED=1 is set, with a warning: for a
+#   machine where the candidate may do anything the lead can.
+#
+# With none of them, `start` refuses (exit 3), says why and creates nothing.
+# Contained, the run is not given the environment's variables that look like
+# secrets (token, secret, password, credential, API key, auth).
+# `result` names the containment in "sandbox". tools/test_run_checks.sh
+# tests all of this.
 set -euo pipefail
 git() { command git -c core.hooksPath=/dev/null "$@"; }
 root="$(git -C "$(dirname "$0")/.." rev-parse --show-toplevel)"
 dir="${CHECK_DIR:-/tmp}"
 cmd="${CHECK_CMD:-bash tools/check_all.sh}"
+bwrap_bin="${CHECK_BWRAP:-bwrap}"
+check_user="${CHECK_USER:-}"
 
-paths() { wt="$dir/check-$1"; log="$dir/check-$1.log"; pidf="$dir/check-$1.pid"; gitf="$dir/check-$1.git"; }
+paths() {
+  wt="$dir/check-$1"; log="$dir/check-$1.log"; pidf="$dir/check-$1.pid"; gitf="$dir/check-$1.git"
+  tmpd="$dir/check-$1.tmp"; modef="$dir/check-$1.sandbox"
+}
+
+# The flags every bwrap run takes, the probe included.
+bwrap_flags=(--dev /dev --proc /proc --unshare-net --unshare-pid --unshare-ipc --unshare-uts
+  --cap-drop ALL --die-with-parent --new-session)
+
+# The environment's secrets, which the candidate's code is not given.
+secret_vars() { compgen -e | grep -iE 'token|secret|passw|credential|api_?key|private_?key|auth' || true; }
+
+# How to become CHECK_USER: as root, in a namespace with no network.
+as_user() {
+  if [ "$(id -u)" = 0 ]; then echo unshare --net -- runuser -u "$check_user" --
+  else echo sudo -n -u "$check_user" --; fi
+}
+
+# Sets `mode` to bwrap, user, user-with-network or unsandboxed, or to "" with
+# `why` saying what was missing.
+pick_sandbox() {
+  local out uid
+  mode=""; why=""
+  if ! command -v "$bwrap_bin" > /dev/null; then
+    why="bwrap ($bwrap_bin) is not installed"
+  elif out="$("$bwrap_bin" --ro-bind / / "${bwrap_flags[@]}" -- true 2>&1)"; then
+    mode=bwrap; return
+  else
+    why="bwrap ($bwrap_bin) does not run here: ${out%%$'\n'*}"
+  fi
+  if [ -z "$check_user" ]; then
+    why="$why; CHECK_USER is not set"
+  elif ! uid="$(id -u "$check_user" 2>/dev/null)"; then
+    why="$why; CHECK_USER=$check_user is no user on this machine"
+  elif [ "$uid" = 0 ] || [ "$uid" = "$(id -u)" ]; then
+    why="$why; CHECK_USER=$check_user is not a separate unprivileged user"
+  elif out="$($(as_user) true 2>&1)"; then
+    if [ "$(id -u)" = 0 ]; then mode=user; else mode=user-with-network; fi
+    return
+  else
+    why="$why; cannot switch to CHECK_USER=$check_user: ${out%%$'\n'*}"
+  fi
+  if [ "${CHECK_UNSANDBOXED:-}" = 1 ]; then mode=unsandboxed; fi
+}
 
 # A hash of the shared .git's config, its branch entries aside (the lead sets
 # upstreams while a run goes on), and of every hook's name, mode and content.
@@ -72,6 +135,7 @@ cleanup() {
     git -C "$root" worktree remove --force "$wt" 2>/dev/null || rm -rf "$wt"
     git -C "$root" worktree prune
   fi
+  rm -rf "$tmpd"
   rm -f "$pidf"
 }
 
@@ -80,18 +144,49 @@ start() {
   if alive; then
     echo "already running: sha=$sha log=$log"; return 0
   fi
+  pick_sandbox
+  if [ -z "$mode" ]; then
+    echo "refused: nothing here contains the candidate's code (SEC-19): $why." >&2
+    echo "Install bubblewrap, or set CHECK_USER to an unprivileged user, or set CHECK_UNSANDBOXED=1 to run it with your own rights and network." >&2
+    exit 3
+  fi
   [ -e "$wt" ] && cleanup
   git -C "$root" worktree prune
   git -C "$root" worktree add --quiet --detach "$wt" "$sha"
   [ -n "${CHECK_CMD:-}" ] || seed "$wt"
+  mkdir -p "$tmpd"
+  local prefix=() gcommon v
+  case "$mode" in
+    bwrap)
+      gcommon="$(cd "$root" && cd "$(git rev-parse --git-common-dir)" && pwd)"
+      # The shared .git stays read-only even when it is under /tmp.
+      # /run is emptied, so no host socket there can be reached either.
+      prefix=("$bwrap_bin" --ro-bind / / --bind "$tmpd" /tmp --tmpfs /run --ro-bind "$gcommon" "$gcommon"
+        --bind "$wt" "$wt" "${bwrap_flags[@]}" --setenv TMPDIR /tmp)
+      for v in $(secret_vars); do prefix+=(--unsetenv "$v"); done
+      prefix+=(--) ;;
+    user|user-with-network)
+      mkdir -p "$tmpd/home"
+      chown -R "$check_user" "$wt" "$tmpd"
+      read -r -a prefix <<< "$(as_user)"
+      prefix+=(env)
+      for v in $(secret_vars); do prefix+=(-u "$v"); done
+      prefix+=(HOME="$tmpd/home" TMPDIR="$tmpd" PATH="$PATH"
+        CARGO_HOME="${CARGO_HOME:-$HOME/.cargo}" RUSTUP_HOME="${RUSTUP_HOME:-$HOME/.rustup}") ;;
+    unsandboxed)
+      echo "warning: CHECK_UNSANDBOXED=1: the candidate's code runs with your rights and your network (SEC-19); $why." >&2 ;;
+  esac
+  echo "$mode" > "$modef"
   : > "$log"
   rm -f "$pidf"
   rm -f "$gitf.end"; fingerprint > "$gitf"
+  # The log and the DONE line are written out here, outside the containment.
+  local run; run="$(printf '%q ' "${prefix[@]}" bash -c "$(printf 'cd %q && %s' "$wt" "$cmd")")"
   # setsid may fork, so the run writes its own pid (also its process group).
-  nohup setsid bash -c "echo \$\$ > '$pidf'; cd '$wt' && ( $cmd ) > '$log' 2>&1; echo \"DONE exit=\$? sha=$sha\" >> '$log'" \
+  nohup setsid bash -c "echo \$\$ > '$pidf'; $run > '$log' 2>&1 < /dev/null; echo \"DONE exit=\$? sha=$sha\" >> '$log'" \
     > /dev/null 2>&1 < /dev/null &
   local i; for i in $(seq 50); do [ -s "$pidf" ] && break; sleep 0.1; done
-  echo "started: sha=$sha log=$log"
+  echo "started: sha=$sha log=$log sandbox=$mode"
 }
 
 json_str() { python3 -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$1"; }
@@ -123,7 +218,8 @@ result() {
     state=LOST; summary="no DONE line and no process: the run was killed; start it again"
     cleanup
   fi
-  echo "{\"sha\": \"$sha\", \"state\": \"$state\", \"exit\": $exit_code, \"finished_at\": $finished, \"summary\": $(json_str "$summary"), \"log\": \"$log\"}"
+  local sandbox=null; [ ! -f "$modef" ] || sandbox="\"$(cat "$modef")\""
+  echo "{\"sha\": \"$sha\", \"state\": \"$state\", \"exit\": $exit_code, \"finished_at\": $finished, \"summary\": $(json_str "$summary"), \"sandbox\": $sandbox, \"log\": \"$log\"}"
 }
 
 wait_for() {
@@ -157,14 +253,17 @@ self_test() {
   local tmp; tmp="$(mktemp -d)"
   trap 'rm -rf "$tmp"' RETURN
   git init --quiet "$tmp/repo"
-  git -C "$tmp/repo" -c user.email=t@t -c user.name=t commit --quiet --allow-empty -m one
+  git -C "$tmp/repo" -c user.email=t@t -c user.name=t -c commit.gpgsign=false commit --quiet --allow-empty -m one
   mkdir -p "$tmp/repo/tools" && cp "$0" "$tmp/repo/tools/run_checks.sh"
   local me="$tmp/repo/tools/run_checks.sh" sha out
   sha="$(git -C "$tmp/repo" rev-parse HEAD)"
   export CHECK_DIR="$tmp/runs"; mkdir -p "$CHECK_DIR"
+  # Its own commands, not a candidate's: run them contained if this machine
+  # can, and without otherwise (inside a contained run, it usually cannot).
+  export CHECK_UNSANDBOXED=1
 
   # A pass: outlives the call that started it, ends DONE exit=0, worktree removed.
-  CHECK_CMD="sleep 1; echo '== one =='; echo 'All checks passed.'" bash "$me" start > /dev/null
+  CHECK_CMD="sleep 1; echo '== one =='; echo 'All checks passed.'" bash "$me" start > /dev/null 2>&1
   out="$(bash "$me" result "$sha")"; [[ "$out" == *'"state": "RUNNING"'* ]] || { echo "not running: $out"; return 1; }
   out="$(bash "$me" wait "$sha" 1)" || { echo "wait failed: $out"; return 1; }
   [[ "$out" == *'"state": "PASS"'* && "$out" == *'"exit": 0'* ]] || { echo "not a pass: $out"; return 1; }
@@ -175,18 +274,18 @@ self_test() {
 
   # A failure: the summary names the last heading.
   rm -f "$CHECK_DIR/check-$sha.log"
-  CHECK_CMD="echo '== two =='; echo boom; exit 3" bash "$me" start > /dev/null
+  CHECK_CMD="echo '== two =='; echo boom; exit 3" bash "$me" start > /dev/null 2>&1
   if out="$(bash "$me" wait "$sha" 1)"; then echo "a failure passed: $out"; return 1; fi
   [[ "$out" == *'"state": "FAIL"'* && "$out" == *'"exit": 3'* && "$out" == *'== two ==: boom'* ]] || { echo "bad failure: $out"; return 1; }
 
   # Exit 0 without the closing line is still a failure.
   rm -f "$CHECK_DIR/check-$sha.log"
-  CHECK_CMD="echo '== three =='" bash "$me" start > /dev/null
+  CHECK_CMD="echo '== three =='" bash "$me" start > /dev/null 2>&1
   if out="$(bash "$me" wait "$sha" 1)"; then echo "no closing line passed: $out"; return 1; fi
 
   # A killed run (no DONE line, no process) is LOST, not RUNNING.
   rm -f "$CHECK_DIR/check-$sha.log"
-  CHECK_CMD="sleep 30" bash "$me" start > /dev/null
+  CHECK_CMD="sleep 30" bash "$me" start > /dev/null 2>&1
   kill -- "-$(cat "$CHECK_DIR/check-$sha.pid")" 2>/dev/null || true
   sleep 1
   out="$(bash "$me" result "$sha")"; [[ "$out" == *'"state": "LOST"'* ]] || { echo "not lost: $out"; return 1; }

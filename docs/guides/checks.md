@@ -32,6 +32,13 @@ bash tools/run_checks.sh wait <sha>     # in the background: blocks until DONE, 
 bash tools/run_checks.sh result <sha>   # {"state": "PASS"|"FAIL"|"RUNNING", ...}
 ```
 
+- **The candidate's code runs contained** (SEC-19): in bwrap, with the
+  file system read-only but for the worktree and a private `/tmp`, no
+  network and no capabilities; failing that, as the unprivileged user named
+  by `CHECK_USER`. With neither, `start` refuses (exit 3) and says why;
+  `CHECK_UNSANDBOXED=1` runs it anyway, with a warning, on a machine where
+  the candidate may do anything you can. `result` names the containment in
+  `"sandbox"`. `bash tools/test_run_checks.sh` tests all of it.
 - **A run passed** only if its log ends `DONE exit=0` **and** contains
   `All checks passed.` The failing step is the last heading in the log:
   `grep '^== ' "$log" | tail -1; tail -20 "$log"`.
