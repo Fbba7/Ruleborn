@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T01:23:10Z",
   "lease_until": "2026-11-12T04:23:10Z",
-  "updated_at": "2026-11-12T02:46:37Z",
-  "expected_next_update_by": "2026-11-12T03:26:37Z",
+  "updated_at": "2026-11-12T03:00:51Z",
+  "expected_next_update_by": "2026-11-12T03:40:51Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4d87d18",
-    "next_step": "P1-S1-pilot-3: A, C, D, E done; B done (FIT=1 passes at 100% and 200%, en and pt_BR, sneak and alarm, high contrast, with the numerals switch off and on). Budget: heist/200 reads 114 of 115 (100% and hc 118 of 121): the large clock plate with baked figures only while the kit's numerals are switched on, KitHud.clock while off, and the hidden words skip the renderer. Objection A shows only once kit_families.json switches the numerals on (S1-R11). Next: records, stills, Part 3, check_all, pre-check, gate.",
+    "next_step": "P1-S1-pilot-3: A to E built and noted (heist-pilot.md part 3; stills part3-* with the numerals' switch off, numerals-* with it on). Records lowered (heist 118/114/118; check_screens 226/29). guard.sh OK. Next: check_all.sh on 75fb660a, the pre-check, then the gate on both items.",
     "at": null
   },
   "precheck": null,
@@ -181,5 +181,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-3: A, C, D, E done; B done (FIT=1 passes at 100% and 200%, en and pt_BR, sneak and alarm, high contrast, with the numerals switch off and on). Budget: heist/200 reads 114 of 115 (100% and hc 118 of 121): the large clock plate with baked figures only while the kit's numerals are switched on, KitHud.clock while off, and the hidden words skip the renderer. Objection A shows only once kit_families.json switches the numerals on (S1-R11). Next: records, stills, Part 3, check_all, pre-check, gate."
+  "next_step": "P1-S1-pilot-3: A to E built and noted (heist-pilot.md part 3; stills part3-* with the numerals' switch off, numerals-* with it on). Records lowered (heist 118/114/118; check_screens 226/29). guard.sh OK. Next: check_all.sh on 75fb660a, the pre-check, then the gate on both items."
 }
