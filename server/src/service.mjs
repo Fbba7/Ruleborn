@@ -1000,9 +1000,11 @@ export class Service {
     // §13: "The defender is notified afterwards and can watch the replay."
     if (!nobody) this.notifications.raided(lease, verdict, now);
     // An echo rates the raider against its island and leaves the island's
-    // rating alone (G30); an island whose owner is gone rates nobody.
+    // rating alone (G30); an island whose owner is gone rates nobody. A
+    // pair's later raids the same UTC day move no rating either (G37,
+    // SEC-39): the pair chooses those outcomes, as it would its Renown.
     const rated = {};
-    const rating = friendly || gone ? null
+    const rating = !scores || gone ? null
       : this.matchmaking.settle(lease, snapshot.realm, verdict, now, { raiderOnly: Boolean(lease.echo), keep: rated });
     // The raider's row, written once: the experience, the raids played and
     // the rating, which were three writes of it (§24.1's writes). The

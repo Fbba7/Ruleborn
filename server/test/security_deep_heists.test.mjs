@@ -304,3 +304,31 @@ test("SEC-24: a friendly heist without a named crew in its manifest is refused c
   const raid = t.service.lease(t.raider.account, t.bundle);
   assert.ok(t.service.submit(t.raider.account, raid.token, play(t, raid, { plan: openPlan() })).verdict);
 });
+
+test("SEC-39: a pair's later raids the same UTC day move neither rating; the next day's first does", () => {
+  const t = twoPlayers(true);
+  const raider = t.raider.account;
+  const ratings = () => ({ raider: t.service.matchmaking.raiderRating(raider),
+                           island: t.service.matchmaking.islandRating(t.defender.account, "heart") });
+  const raid = () => {
+    const lease = t.service.lease(raider, t.bundle);
+    const out = t.service.submit(raider, lease.token, play(t, lease, { plan: openPlan() }));
+    assert.equal(out.validated, true);
+    return out;
+  };
+  const before = ratings();
+  const first = raid();
+  assert.ok(first.rating, "the pair's first raid of the day is rated");
+  const afterFirst = ratings();
+  assert.notDeepEqual(afterFirst, before, "the first raid moved the ratings");
+  t.clock.now += 60 * 1000;
+  const second = raid();
+  assert.equal(second.rating, null, "a later raid the same day is not rated");
+  assert.deepEqual(ratings(), afterFirst, "the ratings after the second are those after the first");
+  // The haul and the Keeper experience still follow the raid (G37's haul).
+  assert.ok(second.keeper, "the later raid still earns experience");
+  // The next UTC day, the pair's first raid is rated again.
+  t.clock.now += DAY;
+  assert.ok(raid().rating, "the next day's first raid is rated");
+  assert.notDeepEqual(ratings(), afterFirst);
+});
