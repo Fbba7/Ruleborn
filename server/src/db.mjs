@@ -612,7 +612,10 @@ CREATE TABLE IF NOT EXISTS constellation_members (
   account       TEXT NOT NULL REFERENCES accounts(id),
   role          TEXT NOT NULL CHECK (role IN ('founder', 'elder', 'member')),
   joined_at     INTEGER NOT NULL,
-  left_at       INTEGER
+  left_at       INTEGER,
+  -- 1 when its founder or an elder removed the player: they cannot join it
+  -- again for a week (social.mjs, SEC-43).
+  removed       INTEGER NOT NULL DEFAULT 0
 );
 -- One constellation at a time.
 CREATE UNIQUE INDEX IF NOT EXISTS one_constellation
@@ -1084,6 +1087,7 @@ const ADDED = [
   ["workshop_plays", "counted", "INTEGER NOT NULL DEFAULT 0"],
   ["workshop_completions", "counted", "INTEGER NOT NULL DEFAULT 0"],
   ["workshop_ratings", "counted", "INTEGER NOT NULL DEFAULT 0"],
+  ["constellation_members", "removed", "INTEGER NOT NULL DEFAULT 0"],
   ["ledger", "starlight_total", "INTEGER"],
   ["ledger", "essence_total", "INTEGER"],
   ["ledger", "aether_total", "INTEGER"],

@@ -112,6 +112,7 @@
 //   GET  /v1/constellations/:id                              → it, and its members
 //   POST /v1/constellations/:id/join                         → joined
 //   POST /v1/constellations/:id/roles {"account", "role"}    → an elder named, or unnamed
+//   POST /v1/constellations/:id/remove {"account"}           → a member removed (founder, elders; SEC-43)
 //   POST /v1/constellations/leave                            → left
 //   POST /v1/crews                                           → a crew, and its invite
 //   POST /v1/crews/join          {"invite"}                  → joined
@@ -242,6 +243,9 @@ async function socialRoute(service, social, request, parts, who) {
     if (m === "POST" && a && b === "roles") {
       const { account, role } = await body(request);
       return json(social.appoint(me, text(account), text(role)));
+    }
+    if (m === "POST" && a && b === "remove") {
+      return json(social.remove(me, a, text((await body(request)).account)));
     }
   }
   if (area === "crews") {

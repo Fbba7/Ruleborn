@@ -1712,6 +1712,10 @@
     },
     "left_at": {
      "type": "social"
+    },
+    "removed": {
+     "type": "social",
+     "holds": "whether the founder or an elder removed the player, who cannot join again for a week (SEC-43)"
     }
    }
   },

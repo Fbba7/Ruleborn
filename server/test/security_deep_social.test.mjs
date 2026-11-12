@@ -260,3 +260,60 @@ test("SEC-37: a push token goes with the sign-out of the session that registered
   assert.equal((await call(mine, "/v1/session/end", "POST", { others: true })).status, 200);
   assert.deepEqual(await sentTo(), ["phone-token-3"]);
 });
+
+test("SEC-43: a member's block does not hide the constellation from the player blocked; its founder's still does", () => {
+  const t = server();
+  const social = new Social(t.service);
+  const [founder, member, p] = ["gc:f43", "gc:m43", "gc:p43"].map((id) => t.service.session(id).account);
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 6").run();
+  const c = social.found(founder, { adjective: 1, noun: 2 });
+  social.join(member, c.id);
+  t.service.safety.block(member, p);
+  // P still sees the open group, without the member who blocked them.
+  assert.deepEqual(social.constellation(c.id, p).members.map((m) => m.account), [founder]);
+  assert.equal(social.join(p, c.id).id, c.id, "and can join it");
+  assert.deepEqual(social.constellation(c.id, member).members.map((m) => m.account).sort(),
+                   [founder, member].sort(), "the member who blocked P does not see them");
+  social.leave(p);
+  // The founder's block hides it, answered as no such group (17.8).
+  t.service.safety.block(founder, p);
+  assert.throws(() => social.constellation(c.id, p), (e) => e.reason === "no_such_constellation");
+  assert.throws(() => social.join(p, c.id), (e) => e.reason === "no_such_constellation");
+});
+
+test("SEC-43: the founder or an elder removes a member, who cannot join again for 7 days", async () => {
+  const { REMOVED_DAYS } = await import("../src/social.mjs");
+  assert.equal(REMOVED_DAYS, 7);
+  const t = server();
+  const social = new Social(t.service);
+  const s = ["gc:f", "gc:e", "gc:m", "gc:n"].map((id) => t.service.session(id));
+  const [founder, elder, member, other] = s.map((x) => x.account);
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 6").run();
+  const c = social.found(founder, { adjective: 1, noun: 2 });
+  for (const a of [elder, member, other]) social.join(a, c.id);
+  social.appoint(founder, elder, "elder");
+  const refused = (fn, reason) => assert.throws(fn, (e) => e.reason === reason, reason);
+  // A member removes no one; an elder removes no elder or founder.
+  refused(() => social.remove(member, c.id, other), "officers_only");
+  refused(() => social.remove(elder, c.id, founder), "officers_only");
+  refused(() => social.remove(founder, c.id, founder), "not_a_member");
+  refused(() => social.remove(founder, "elsewhere", member), "officers_only");
+  // An elder removes a member, over HTTP.
+  const r = await t.handle(new Request(`https://edge.example/v1/constellations/${c.id}/remove`, {
+    method: "POST", headers: { authorization: `Bearer ${s[1].token}`, "content-type": "application/json" },
+    body: JSON.stringify({ account: member }) }));
+  assert.equal(r.status, 200);
+  assert.ok(!(await r.json()).members.some((m) => m.account === member), "the member is gone");
+  assert.equal(social.membership(member), null);
+  // They cannot join again for a week, to the millisecond.
+  const until = t.clock.now + REMOVED_DAYS * 24 * 60 * 60 * 1000;
+  t.clock.now = until - 1;
+  refused(() => social.join(member, c.id), "removed_from_constellation");
+  t.clock.now = until;
+  assert.equal(social.join(member, c.id).id, c.id, "a week on, they may");
+  // A player who left of their own accord may come back at once.
+  social.leave(other);
+  assert.equal(social.join(other, c.id).id, c.id);
+  // The founder removes an elder.
+  assert.ok(!social.remove(founder, c.id, elder).members.some((m) => m.account === elder));
+});
