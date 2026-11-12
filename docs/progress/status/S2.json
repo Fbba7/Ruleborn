@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T22:10:00Z",
   "lease_until": "2026-11-13T01:10:00Z",
-  "updated_at": "2026-11-12T23:00:00Z",
-  "expected_next_update_by": "2026-11-12T23:45:00Z",
+  "updated_at": "2026-11-12T23:15:00Z",
+  "expected_next_update_by": "2026-11-13T00:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "62c66327",
-    "next_step": "S2-R1 (badge, 0c3a5104) and S2-R2 (pins shrink to icon and level as a set, never under the purse; every realm named at 150% in en and pt_BR) done in this task and withdrawn as requests. Next: FIT=1 in universe_home.gd, the checks, home-screen.md; draw calls wait on S2-R7"
+    "next_step": "S2-R1 (badge, 0c3a5104) and S2-R2 (pins shrink to icon and level as a set; 7474c113 keeps them from overlapping) done and withdrawn as requests. FIT=1 in universe_home.gd passes at 100/150/200, en and pt_BR, hc, 9:16. Main merged at 41986564; check_all running on it. Next: check_screens, budget stills and guard, home-screen.md, AD preview; draw calls wait on S2-R7"
   },
   "precheck": null,
   "gate_request": null,
