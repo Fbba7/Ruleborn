@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T03:58:00Z",
+  "updated_at": "2026-11-12T04:45:00Z",
   "expected_next_update_by": "2026-11-12T05:13:00Z",
   "cycle": 59,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "f6d3995074f03548eb6297b4e78619b844b43430",
+    "task_ids": [
+      "P1-S1-pilot-3"
+    ],
+    "started_at": "2026-11-12T04:45:00Z",
+    "expires_at": "2026-11-12T05:55:00Z"
+  },
   "last_merged": {
     "task_id": "P1-AD-board-1",
     "sha": "a01e4d6c"
