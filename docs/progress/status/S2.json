@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T22:10:00Z",
   "lease_until": "2026-11-13T01:10:00Z",
-  "updated_at": "2026-11-12T22:12:00Z",
-  "expected_next_update_by": "2026-11-12T22:57:00Z",
+  "updated_at": "2026-11-12T22:28:00Z",
+  "expected_next_update_by": "2026-11-12T23:13:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "62c66327",
-    "next_step": "rebuild universe_badge.gd on kit pieces (S2-R1), then home.gd chrome onto the kit, measuring draw calls after each step"
+    "next_step": "cut home's draw calls back to the records (now 133 at 100%: purse +5, sky side discs +14 over the 119 baseline), then S2-R2 pins and FIT=1"
   },
   "precheck": null,
   "gate_request": null,

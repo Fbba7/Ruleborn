@@ -24,6 +24,10 @@ const LEFT := [[&"defences", "realmactions/defence", "HOME_SIDE_DEFENCE"],
 const RIGHT := [[&"track", "screens/season", "HOME_SIDE_SEASON"], [&"shop", "screens/shop", "HOME_SIDE_SHOP"]]
 ## Where each tab goes; the Islands tab is home itself.
 const TAB_ROUTES := {"laws": &"codex", "crew": &"roster", "friends": &"friends"}
+## Each strain band's colour in the kit (§5.5's seven bands, in order).
+const BAND_KEYS := ["quiet", "steady", "humming", "brimming", "strained", "cracking", "breaking"]
+## The goals' icons in the kit's set, by `UniverseGoal.goals`' names.
+const GOAL_ICONS := {"levelup": "generalui/levelup", "track": "screens/season"}
 
 ## The unseen raids the player dismissed the notice for: it returns only when
 ## more come.
@@ -31,9 +35,17 @@ static var _dismissed := 0
 
 ## The Keeper badge at the top left; hidden until the server has answered.
 var keeper_plate: UniverseBadge
-var strain: UniverseStrain
-var purse: UniversePurse
-var goal: UniverseGoal
+## Strain at the top right: the kit's glass pill (`KitStatus.strain`), drawn at
+## the right of the width the top row gives it; hidden until it is known.
+var strain: HBoxContainer
+## The resources in a full-width row: the kit's resource pills
+## (`KitStatus.resource`), by kind in `UniversePurse.ORDER` in `pills`.
+var purse: HFlowContainer
+var pills := {}
+## The nearest goal (§14.8) on the kit's goal card (`KitHud.goal`), as `goal`
+## (`UniverseGoal.goals`) has it; hidden while Collect shows.
+var goal_card: Control
+var goal := {}
 ## The UI kit's five tabs (`KitTabs`), Islands chosen.
 var tabs: KitTabs
 var menu: UniverseMenu
@@ -42,25 +54,29 @@ var menu: UniverseMenu
 var sides := {}
 ## The universe behind the interface.
 var world: UniverseView
-## The raid notice over the goal.
-var notice: UniverseNotice
-## The design's "COLLECT 3.4k" over the foot, while any producer holds
-## something (§9.3); the goal shows in its place while nothing waits.
-var collect_button: UniverseCollect
+## The raid notice over the foot, from the kit's alarm banner; it stays until
+## the player dismisses it.
+var notice: PanelContainer
+## The design's "COLLECT 3.4k" over the foot, the kit's gold action, while any
+## producer holds something (§9.3); the goal shows in its place while nothing
+## waits.
+var collect_button: Button
 
 var _top: Control
 ## The two edges of side buttons.
 var _edges: Array[Control] = []
 var _foot: HFlowContainer
-## Where the side buttons are drawn, all four in one pass.
-var _side_layer: Control
-var _sides_at := Vector2.INF
 ## Each side button's badge as last drawn, so a button is rebuilt only when
 ## its badge changes.
 var _badges := {}
 var _tab_badges := {}
 ## The realm the world is closed in on: one more tap there opens it.
 var _close := ""
+## Strain as last shown: its share and band in words, on one line and on two.
+var _strain_lines := PackedStringArray()
+var _strain_room := 0.0
+var _full := {}
+var _raid_words: Label
 
 
 func _ready() -> void:
@@ -79,8 +95,6 @@ func _ready() -> void:
 	world = UniverseView.behind(self, column)
 	world.next_chosen.connect(func() -> void: App.services.router.go(&"universe"))
 	world.realm_chosen.connect(_on_realm)
-	_shade(true)
-	_shade(false)
 	# The game's name and what it is, said aloud; the world shows the rest.
 	accessibility_name = Strings.t("APP_NAME")
 	accessibility_description = Strings.t("HOME_TAGLINE")
@@ -104,51 +118,27 @@ func _ready() -> void:
 	_foot.alignment = FlowContainer.ALIGNMENT_CENTER
 	_foot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_foot.add_theme_constant_override("separation", UI.px(8))
-	goal = UniverseGoal.new()
-	goal.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	goal.visible = false
-	goal.pressed.connect(func() -> void: App.services.router.go(goal.goal.get("route", &"profile")))
-	_foot.add_child(goal)
-	collect_button = UniverseCollect.new()
-	collect_button.pressed.connect(_collect)
+	goal_card = CenterContainer.new()
+	goal_card.name = "Goal"
+	goal_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	goal_card.visible = false
+	_foot.add_child(goal_card)
+	collect_button = KitControls.action2(Strings.t("HOME_COLLECT_AMOUNT", "0"), "", _collect, "gold", "hud/collectall")
+	collect_button.name = "Collect"
 	collect_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	collect_button.visible = false
 	_foot.add_child(collect_button)
 	column.add_child(_foot)
-	notice = UniverseNotice.new()
+	notice = _raid_notice()
 	notice.visible = false
-	# The card's words wrap rather than cut a word short ("See how your
-	# defence …"), at every text size: the line says where to go.
-	for l: Label in [notice.words, notice.line]:
-		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		l.clip_text = false
-		l.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
 	_foot.visible = true
-	notice.seen.connect(func() -> void: App.services.router.go(&"defences"))
-	notice.dismissed.connect(_dismiss)
 	column.add_child(notice)
 	_build_tabs({})
-	# The side buttons drawn together over the column (`UniverseSide.draw_all`).
-	_side_layer = Control.new()
-	_side_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_side_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_side_layer.draw.connect(func() -> void:
-		var list: Array[UniverseSide] = []
-		for holder: Control in sides.values():
-			for b: Node in holder.get_children():
-				if b is UniverseSide:
-					list.append(b)
-		UniverseSide.draw_all(_side_layer, list))
-	add_child(_side_layer)
-	for holder: Control in sides.values():
-		for b: Node in holder.get_children():
-			(b as Control).draw.connect(_side_layer.queue_redraw)
-			(b as Control).item_rect_changed.connect(_side_layer.queue_redraw)
 	menu = UniverseMenu.make(PLACES, WORDS)
 	menu.picked.connect(func(route: StringName) -> void: App.services.router.go(route))
 	add_child(menu)
 	column.sort_children.connect(_frame_world)
-	for c: Control in [goal, collect_button, notice]:
+	for c: Control in [goal_card, collect_button, notice]:
 		c.visibility_changed.connect(_frame_world, CONNECT_DEFERRED)
 	App.services.store.changed.connect(_on_changed)
 	show_keeper()
@@ -183,13 +173,13 @@ func _build_top(column: VBoxContainer) -> void:
 	keeper_plate.pressed.connect(func() -> void: Haptics.play("tap"))
 	keeper_plate.pressed.connect(func() -> void: menu.open())
 	top.add_child(keeper_plate)
-	strain = UniverseStrain.new()
+	strain = HBoxContainer.new()
+	strain.name = "StrainHolder"
+	strain.alignment = BoxContainer.ALIGNMENT_END
 	strain.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	strain.visible = false
-	strain.set_meta("frequent", false)
 	strain.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	strain.pressed.connect(func() -> void: Haptics.play("tap"))
-	strain.pressed.connect(func() -> void: App.services.router.go(&"weaving"))
+	strain.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	strain.visible = false
 	top.add_child(strain)
 	column.add_child(top)
 	# Strain fits beside the badge on the screen's own width, never the row's,
@@ -198,8 +188,19 @@ func _build_top(column: VBoxContainer) -> void:
 		var frame := column.get_parent() as MarginContainer
 		var room := get_viewport_rect().size.x - frame.get_theme_constant("margin_left") \
 			- frame.get_theme_constant("margin_right")
-		strain.fit(room - keeper_plate.get_combined_minimum_size().x - top.get_theme_constant("h_separation")))
-	purse = UniversePurse.new()
+		_fit_strain(room - keeper_plate.get_combined_minimum_size().x - top.get_theme_constant("h_separation")))
+	purse = HFlowContainer.new()
+	purse.name = "Purse"
+	purse.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	purse.add_theme_constant_override("h_separation", UI.px(6))
+	purse.add_theme_constant_override("v_separation", UI.px(6))
+	for k: String in UniversePurse.ORDER:
+		var pill := KitStatus.resource("resources/" + k, "–", 0.0, Tokens.color(k))
+		pill.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		pill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		pills[k] = pill
+		purse.add_child(pill)
+	purse.pre_sort_children.connect(_fit_purse)
 	column.add_child(purse)
 	_top = purse
 
@@ -234,14 +235,29 @@ func _side(holder: CenterContainer, badge: String) -> void:
 		c.queue_free()
 	var s: Array = holder.get_meta("side")
 	var route: StringName = s[0]
-	var action := UniverseSide.make(s[1], Strings.t(s[2]), badge)
-	action.pressed.connect(func() -> void: App.services.router.go(route))
+	var action := KitControls.round_action(s[1], Strings.t(s[2]), func() -> void: App.services.router.go(route), false,
+		52.0, badge, "sky")
 	action.set_meta("frequent", false)
-	if _side_layer != null:
-		action.draw.connect(_side_layer.queue_redraw)
-		action.item_rect_changed.connect(_side_layer.queue_redraw)
-		_side_layer.queue_redraw()
+	_in_runs(action)
 	holder.add_child(action)
+
+
+## A part's surfaces, icons and words drawn in runs across the screen's parts
+## alike (the side buttons): each kind on its own layer, so the four discs
+## draw together, then their icons, their plates, their words, rather than
+## each button's four in turn (§21.3's draw calls). The order within a part is
+## the kit's: an icon over its disc, a plate over the disc's foot, words over
+## their plate.
+static func _in_runs(part: Control) -> void:
+	for c: Node in part.find_children("*", "CanvasItem", true, false):
+		var item := c as CanvasItem
+		item.z_as_relative = false
+		if item is Label:
+			item.z_index = 3
+		elif item is PanelContainer:
+			item.z_index = 2
+		elif item is TextureRect:
+			item.z_index = 1
 
 
 ## The kit's five tabs, rebuilt when a badge changes.
@@ -287,30 +303,6 @@ func _fit_tab_words() -> void:
 		l.visible = not (l.get_meta("cut") or (cut and key != tabs.active))
 
 
-## A night tint over the world behind the top's or the foot's interface, so
-## its words read over any island (§21.8: the HUD is checked over the sky); a
-## screen-space gradient, not a pass over the frame (§21.3).
-func _shade(top: bool) -> void:
-	var g := Gradient.new()
-	var night := UniverseHud.CARD[1]
-	g.set_color(0, Color(night, 0.78 if top else 0.0))
-	g.set_color(1, Color(night, 0.0 if top else 0.85))
-	var tex := GradientTexture2D.new()
-	tex.gradient = g
-	tex.fill_from = Vector2(0, 0)
-	tex.fill_to = Vector2(0, 1)
-	var rect := TextureRect.new()
-	rect.texture = tex
-	rect.stretch_mode = TextureRect.STRETCH_SCALE
-	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	rect.set_anchors_preset(Control.PRESET_TOP_WIDE if top else Control.PRESET_BOTTOM_WIDE)
-	var tall := float(UI.px(150 if top else 190))
-	rect.offset_top = 0.0 if top else -tall
-	rect.offset_bottom = tall if top else 0.0
-	add_child(rect)
-	move_child(rect, world.get_index() + 1)
-
-
 static func _room() -> Control:
 	var room := UI.grow()
 	room.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -336,17 +328,10 @@ func _on_realm(id: String) -> void:
 	_close = id if world.zoom == 2 else ""
 
 
-## The side buttons' layer follows them wherever their containers move them.
+## The realms' pins follow the world's zoom and the room.
 func _process(_delta: float) -> void:
-	if _side_layer == null:
-		return
-	_fit_pins()
-	var at := Vector2.ZERO
-	for holder: Control in sides.values():
-		at += holder.global_position * (1.0 if holder.is_visible_in_tree() else 0.5)
-	if at != _sides_at:
-		_sides_at = at
-		_side_layer.queue_redraw()
+	if world != null:
+		_fit_pins()
 
 
 ## The universe framed into the whole room between the resources and the
@@ -387,7 +372,7 @@ func _frame_world() -> void:
 		var r := (sides[route] as Control).get_global_rect()
 		clear.append(Rect2(r.position - world.global_position, r.size))
 	# And of what floats over the foot: Collect or the goal, or the raid card.
-	for c: Control in [collect_button, goal, notice]:
+	for c: Control in [collect_button, goal_card, notice]:
 		if c.is_visible_in_tree():
 			var r := c.get_global_rect()
 			clear.append(Rect2(r.position - world.global_position, r.size))
@@ -456,15 +441,15 @@ func _show_hud() -> void:
 	var store := App.services.store
 	var weaving: Dictionary = store.get_slice(WeavingState.WEAVING).get("view", {})
 	var stability: Dictionary = weaving.get("stability", {})
-	strain.show_strain(float(stability.get("strain", 0.0)), int(stability.get("band", 0)), stability.has("strain"))
-	purse.show_purse(UniverseStore.purse(store))
+	_show_strain(float(stability.get("strain", 0.0)), int(stability.get("band", 0)), stability.has("strain"))
+	_show_purse(UniverseStore.purse(store))
 	var nearest := UniverseGoal.goals(store.get_slice(KeeperState.KEEPER), store.get_slice(ShopState.TRACK))
-	goal.show_goal(nearest[0] if not nearest.is_empty() else {})
+	_show_goal(nearest[0] if not nearest.is_empty() else {})
 	var unseen := int(store.get_slice(DefencesState.DEFENCES).get("unseen", 0))
 	_side(sides[&"defences"], str(unseen) if unseen > 0 else "")
 	if unseen < _dismissed:
 		_dismissed = 0
-	notice.show_raids(unseen if unseen > _dismissed else 0)
+	_show_raids(unseen if unseen > _dismissed else 0)
 	_foot.visible = not notice.visible
 	var track := ShopPresenter.track(store.get_slice(ShopState.TRACK))
 	_side(sides[&"track"], "!" if bool(track.get("can_claim", false)) else "")
@@ -482,14 +467,16 @@ func _show_hud() -> void:
 	collect_button.visible = not ready.is_empty() and str(store.get_slice(RosterState.ROSTER)["busy"]) == ""
 	if collect_button.visible and not was:
 		Motion.pop.call_deferred(collect_button)
-	goal.visible = goal.visible and not collect_button.visible
+	goal_card.visible = not goal.is_empty() and not collect_button.visible
 	var waiting := PackedStringArray()
 	var total := 0
 	for kind: String in UniversePurse.ORDER:
 		if ready.has(kind):
 			waiting.append("%s %s" % [UniverseHud.grouped(ready[kind]), Strings.t("HOME_RES_" + kind.to_upper())])
 			total += int(ready[kind])
-	collect_button.show_amount(total, Strings.t("HOME_COLLECT_SPOKEN", ", ".join(waiting)))
+	var words := collect_button.find_children("*", "Label", true, false)[0] as Label
+	words.text = Strings.t("HOME_COLLECT_AMOUNT", UniverseHud.compact(total, 1000))
+	collect_button.accessibility_name = Strings.t("HOME_COLLECT_SPOKEN", ", ".join(waiting))
 	_build_tabs({"islands": full} if full > 0 else {})
 
 
@@ -500,8 +487,190 @@ func _collect() -> void:
 	if not is_inside_tree():
 		return
 	collect_button.disabled = false
-	UniverseReward.fly(self, collect_button, purse, paid)
+	# The reward flies to the kit's pills, standing in a purse of its own.
+	var into := UniversePurse.new()
+	into.pills = pills
+	UniverseReward.fly(self, collect_button, into, paid)
+	into.free()
 	_show_hud()
+
+
+## Strain as a share (0.82) and its band; `known` false hides the pill.
+func _show_strain(share: float, band: int, known: bool) -> void:
+	strain.visible = known
+	band = clampi(band, 0, UniverseHud.BANDS.size() - 1)
+	var named := WeavingPresenter.band_name(band)
+	var pct := roundi(share * 100.0)
+	var lines := PackedStringArray(["%d%% · %s" % [pct, named], "%d%%\n%s" % [pct, named]])
+	var key := "%d" % band
+	if lines == _strain_lines and strain.get_child_count() > 0 and strain.get_child(0).get_meta("band", "") == key:
+		return
+	_strain_lines = lines
+	for c: Node in strain.get_children():
+		c.queue_free()
+	var pill := KitStatus.strain(lines[0], BAND_KEYS[band])
+	pill.set_meta("band", key)
+	pill.size_flags_horizontal = Control.SIZE_SHRINK_END
+	pill.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	pill.custom_minimum_size.y = UI.px(UI.CONTROL_POINTS)
+	KitLayout.tap(pill, func() -> void: App.services.router.go(&"weaving"),
+		Strings.t("HOME_STRAIN_SPOKEN", [named, pct]))
+	pill.set_meta("frequent", false)
+	strain.add_child(pill)
+	_strain_room = 0.0
+
+
+## The strain pill no wider than `room` if it can be: the number over the
+## band's name where one line will not do; past that, the top row puts the
+## pill on a line of its own.
+func _fit_strain(room: float) -> void:
+	if strain.get_child_count() == 0 or _strain_lines.is_empty() or absf(room - _strain_room) < 0.5:
+		return
+	_strain_room = room
+	var pill := strain.get_child(0) as PanelContainer
+	var l := pill.find_child("Words", true, false) as Label
+	var font := l.get_theme_font("font")
+	var points := l.get_theme_font_size("font_size")
+	var rest := pill.get_combined_minimum_size().x - l.get_combined_minimum_size().x
+	var one := font.get_string_size(_strain_lines[0], HORIZONTAL_ALIGNMENT_LEFT, -1, points).x + rest
+	var two := font.get_multiline_string_size(_strain_lines[1], HORIZONTAL_ALIGNMENT_LEFT, -1, points).x + rest
+	var stacked := one > room and two <= room
+	var text := _strain_lines[1] if stacked else _strain_lines[0]
+	if l.text != text:
+		l.text = text
+		l.clip_text = false
+		l.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
+		l.custom_minimum_size.x = 0.0
+
+
+## What the store holds (UniverseStore.purse): each resource's amount (past
+## 10,000 in thousands, "142.0k"; said in full) and how full its producers are
+## (§9.3), Full in gold words once nearly full. An amount the server has not
+## given is a dash, never a guess.
+func _show_purse(rows: Dictionary) -> void:
+	var said := PackedStringArray()
+	for k: String in UniversePurse.ORDER:
+		var r: Dictionary = rows.get(k, {})
+		var amount := int(r.get("amount", -1))
+		var holds := int(r.get("holds", 0))
+		var share := clampf(float(r.get("ready", 0)) / holds, 0.0, 1.0) if holds > 0 else 0.0
+		_full[k] = share >= UniversePurse.FULL
+		KitStatus.set_resource(pills[k], UniverseHud.compact(amount) if amount >= 0 else "–", share)
+		said.append(Strings.t("HOME_PURSE_SPOKEN", [Strings.t("HOME_RES_" + k.to_upper()),
+			UniverseHud.grouped(amount) if amount >= 0 else Strings.t("HOME_UNKNOWN"),
+			UniverseHud.grouped(int(r.get("ready", 0)))]))
+	purse.accessibility_name = Strings.t("HOME_PURSE")
+	purse.accessibility_description = "\n".join(said)
+	purse.queue_sort()
+
+
+## Where the three pills will not sit on one line with Full in words (a long
+## amount, large text), the word gives way first (the line still shows full,
+## and it is still said); past that the row wraps.
+func _fit_purse() -> void:
+	var need := purse.get_theme_constant("h_separation") * (UniversePurse.ORDER.size() - 1.0)
+	for k: String in UniversePurse.ORDER:
+		var full := (pills[k] as Control).find_child("Full", true, false) as Control
+		full.visible = _full.get(k, false)
+		need += (pills[k] as Control).get_combined_minimum_size().x
+	var fits := need <= purse.size.x + 0.5
+	for k: String in UniversePurse.ORDER:
+		var full := (pills[k] as Control).find_child("Full", true, false) as Control
+		full.visible = _full.get(k, false) and fits
+
+
+## The nearest goal on the kit's goal card, its words and a gold bar of the
+## share done; a tap opens where it is worked on.
+func _show_goal(g: Dictionary) -> void:
+	if g == goal and goal_card.get_child_count() > 0:
+		return
+	goal = g
+	for c: Node in goal_card.get_children():
+		c.queue_free()
+	if g.is_empty():
+		goal_card.visible = false
+		return
+	var card := KitHud.goal(GOAL_ICONS.get(str(g["icon"]), ""), str(g["text"]), float(g["share"]), 1.0, "")
+	# The words say what is left; the bar shows the share, never a number.
+	for l: Label in card.find_child("Progress", true, false).find_children("*", "Label", true, false):
+		l.visible = false
+	card.custom_minimum_size.x = minf(UI.px(230), get_viewport_rect().size.x - UI.px(40))
+	var route: StringName = g.get("route", &"profile")
+	KitLayout.tap(card, func() -> void: App.services.router.go(route), Strings.t("HOME_GOAL_SPOKEN", str(g["text"])))
+	card.set_meta("frequent", false)
+	goal_card.add_child(card)
+
+
+## The raid notice, from the kit's alarm banner: the heist's mark on a red
+## disc, a headline (how many raids came while the player was away) over a
+## line saying where to see how the defence held, a gold See and a close
+## mark. §21.8: a notice that carries information stays until the player
+## dismisses it. With large text (§20.8) the words take the card's whole
+## width, the mark, See and the close mark in a row beneath.
+func _raid_notice() -> PanelContainer:
+	var p := UI.panel("banner_alarm")
+	p.name = "RaidNotice"
+	var large := Settings.text_scale >= 150
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(8))
+	var disc := PanelContainer.new()
+	disc.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
+	UI.dress(disc, "badge")
+	disc.add_child(Icons.view("alerts/raided", 26))
+	disc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(disc)
+	var text := VBoxContainer.new()
+	text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	text.alignment = BoxContainer.ALIGNMENT_CENTER
+	text.add_theme_constant_override("separation", 0)
+	_raid_words = UI.status("alarm", "")
+	_raid_words.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_raid_words.theme_type_variation = "StatusAlarm"
+	_raid_words.accessibility_live = AccessibilityServer.LIVE_ASSERTIVE
+	text.add_child(_raid_words)
+	var line := UI.label(Strings.t("HOME_RAID_LINE"), 13, true)
+	line.theme_type_variation = "Secondary"
+	line.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	text.add_child(line)
+	if large:
+		var stack := VBoxContainer.new()
+		stack.add_theme_constant_override("separation", UI.px(6))
+		stack.add_child(text)
+		stack.add_child(row)
+		p.add_child(stack)
+		row.add_child(_room_h())
+	else:
+		p.add_child(row)
+		row.add_child(text)
+	var see := UI.action(Strings.t("HOME_RAIDED_SEE"), func() -> void: App.services.router.go(&"defences"), "gold")
+	see.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(see)
+	var close := UI.action("×", _dismiss, "seg", Strings.t("HOME_RAIDED_CLOSE"))
+	close.add_theme_font_size_override("font_size", UI.px(26))
+	close.add_theme_color_override("font_color", Tokens.color("text_on_night_2"))
+	close.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(close)
+	p.set_meta("line", line)
+	return p
+
+
+## The raids not yet seen; none hides the notice. It arrives as the kit's
+## banners do (§21.8: easing out, no overshoot); under reduced motion it only
+## fades.
+func _show_raids(unseen: int) -> void:
+	var was := notice.visible
+	notice.visible = unseen > 0
+	if notice.visible and not was and notice.is_inside_tree():
+		Motion.pop(notice)
+	_raid_words.text = Strings.t("HOME_RAID_TITLE_ONE") if unseen == 1 else Strings.t("HOME_RAID_TITLE", unseen)
+	notice.accessibility_name = "%s. %s" % [_raid_words.text, (notice.get_meta("line") as Label).text]
+
+
+static func _room_h() -> Control:
+	var room := Control.new()
+	room.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	room.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return room
 
 
 func _dismiss() -> void:
@@ -523,24 +692,7 @@ func show_keeper() -> void:
 	b["level"] = int(v.get("level", 1))
 	var league: Dictionary = store.get_slice(SocialState.LEAGUE).get("view", {})
 	var renown := UniverseHud.grouped(int(league["renown"])) if league.get("renown") != null else ""
-	keeper_plate.show_keeper(b, float(v.get("xp", 0)) / need if need > 0 else 1.0, _clear_of_gem(renown))
-
-
-## Renown's number moved clear of the gem that overhangs its chip's left end:
-## the gem grows with the text (§20.8) and the number's start does not, so at
-## large text the gem would cover the first digits. Spaces before the number
-## carry it, and the chip, past the gem.
-static func _clear_of_gem(renown: String) -> String:
-	if renown == "":
-		return renown
-	var chip := UI.text_px(13.0)
-	# The gem's right edge past the chip's start, as `UniverseBadge` draws it,
-	# with a little air; the number starts 16 points in.
-	var over := chip * 1.5 * 1.15 * 0.55 + UI.px(3) - UI.px(16)
-	if over <= 0.0:
-		return renown
-	var space := UniverseHud.words_font().get_string_size(" ", HORIZONTAL_ALIGNMENT_LEFT, -1, chip).x
-	return " ".repeat(ceili(over / maxf(1.0, space))) + renown
+	keeper_plate.show_keeper(b, float(v.get("xp", 0)) / need if need > 0 else 1.0, renown)
 
 
 ## G41: what was played offline goes by itself once the network is back, and

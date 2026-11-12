@@ -70,6 +70,20 @@ func _go() -> void:
 			if n >= 4:
 				print("  %d %s (%s)" % [n, item.name, item.get_class()])
 			item.modulate.a = 1.0
+		# And home's own parts by name, whatever they cost.
+		var named := {"keeper": screen.keeper_plate, "strain": screen.strain, "purse": screen.purse,
+			"notice": screen.notice, "collect": screen.collect_button, "goal": screen.goal_card, "tabs": screen.tabs}
+		for side: StringName in screen.sides:
+			named["side " + side] = screen.sides[side]
+		for key: String in named:
+			var item := named[key] as CanvasItem
+			if item == null or not item.is_visible_in_tree():
+				continue
+			item.modulate.a = 0.0
+			await process_frame
+			await RenderingServer.frame_post_draw
+			print("  part %s %d" % [key, whole - calls.call()])
+			item.modulate.a = 1.0
 		await process_frame
 		await RenderingServer.frame_post_draw
 	print("triangles ", screen.world.triangles, " draw calls ", screen.world.draw_calls(), " frame ",
