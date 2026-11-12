@@ -4,16 +4,17 @@
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P1-S1-pilot-2",
+  "task_id": "P1-S1-pilot-3",
   "task_state": "working",
-  "claimed_at": "2026-11-11T19:55:52Z",
-  "lease_until": "2026-11-11T22:55:52Z",
-  "updated_at": "2026-11-11T20:14:06Z",
-  "expected_next_update_by": "2026-11-11T20:59:06Z",
+  "claimed_at": "2026-11-12T01:23:10Z",
+  "lease_until": "2026-11-12T06:20:49Z",
+  "updated_at": "2026-11-12T03:20:49Z",
+  "expected_next_update_by": "2026-11-12T04:00:49Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "718ddcbe",
-    "next_step": "Client tests on the hint guard, entry card, gait menu and pill on the kit; then budgets, stills (before/after), part 2's notes, pre-check"
+    "last_green_sha": "a4d87d18",
+    "next_step": "P1-S1-pilot-3: A to E built and noted. check_all.sh on 75fb660a failed one test: the pre-landing tray asked 1,129 px of 1,080 in pt_BR and pt_PT (§21.1, at 9:19.5). Fixed in a90ea011 (\"Sem lançamentos\" on two lines); the layout test, budget_shots (118/114/118), check_screens and guard.sh pass. Next: check_all.sh on a90ea011, the pre-check, the gate.",
+    "at": null
   },
   "precheck": null,
   "gate_request": null,
@@ -163,7 +164,22 @@
         "tools/ui_bake/budgets.json"
       ],
       "default": "The record stays at 20; the check passes either way."
+    },
+    {
+      "from": "S1",
+      "to": "lead",
+      "id": "S1-R11",
+      "blocking": true,
+      "created_at": "2026-11-12T02:46:37Z",
+      "due": "2026-11-12T10:46:37Z",
+      "escalate_to": "lead",
+      "ask": "Switch the kit's numerals on: add \"numerals\": true to client/ui/kit_families.json (K1's file; K1-R11 said it is added once the numerals' art passes the gate, and P1-AIA-kit-3 is merged). Board 1's objection A (AD-R7) asks for the timer in KitNumerals' figures, and while the switch is off KitNumerals draws live text, so no still can show it. Measured on claude/ui-screens-heist with the switch on: heist/100 118, heist/200 114, heist/hc 118 draw calls (records 121, 115, 121), and screen_heist.gd's FIT=1 check passes at 200% text in en and pt_BR, sneak and alarm, and in high contrast. Either the lead adds the line at merge, or grants S1 the one line for this task.",
+      "files": [
+        "client/ui/kit_families.json"
+      ],
+      "default": "S1 asks the gate on stills shot as main stands (switch off: the clock is KitHud.clock's plain plate, as before) and puts beside them, marked as such in heist-pilot.md, the same moments shot with the switch on locally; objection A stays open until the switch is on."
     }
   ],
-  "answers": []
+  "answers": [],
+  "next_step": "P1-S1-pilot-3: A to E built and noted. check_all.sh on 75fb660a failed one test: the pre-landing tray asked 1,129 px of 1,080 in pt_BR and pt_PT (§21.1, at 9:19.5). Fixed in a90ea011 (\"Sem lançamentos\" on two lines); the layout test, budget_shots (118/114/118), check_screens and guard.sh pass. Next: check_all.sh on a90ea011, the pre-check, the gate."
 }

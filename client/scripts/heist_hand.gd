@@ -95,7 +95,10 @@ func show_state(sage: Dictionary, casts: Array, tick: int) -> void:
 			cast_button.set_meta("rim", mat.get_shader_parameter("rim_color"))
 		mat.set_shader_parameter("rim_color", Color.WHITE if armed == CAST_KIND else cast_button.get_meta("rim"))
 	if cast_button.has_meta("words"):
-		(cast_button.get_meta("words") as Label).text = said
+		var l := cast_button.get_meta("words") as Label
+		# The screen may stand the words on two lines; the same words stay.
+		if l.text.replace("\n", " ") != said:
+			l.text = said
 		# Nothing left to cast greys the wand, never the words (§21.10).
 		(cast_button.get_meta("icon") as Control).modulate.a = 1.0 if open else 0.4
 	else:
@@ -223,6 +226,15 @@ func close_wheel() -> void:
 	if wheel != null and is_instance_valid(wheel):
 		wheel.queue_free()
 	wheel = null
+
+
+## `words` broken onto two lines at the space nearest their middle.
+static func two_lines(words: String) -> String:
+	var best := -1
+	for i in words.length():
+		if words[i] == " " and (best < 0 or absi(i * 2 - words.length()) < absi(best * 2 - words.length())):
+			best = i
+	return words if best < 0 else words.substr(0, best) + "\n" + words.substr(best + 1)
 
 
 ## The design's square order (Cast, Get out): a rounded square in the kit's

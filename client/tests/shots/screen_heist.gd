@@ -92,6 +92,31 @@ func _go() -> void:
 		screen.controller.advance(10)
 		screen._refresh()
 		view._process(1.0 / 3.0)
+	if moment == "alarm":
+		# The alarm up (board 1's objection E): it climbs a level each thirty
+		# seconds (§12.17), so the heist plays on until it stands at ALARM (3 if
+		# unset); then Pip steps toward the nearest guard for a second, so a
+		# guard is turning to look, without the crew being caught.
+		var world := screen.controller.world
+		var want := int(OS.get_environment("ALARM")) if OS.get_environment("ALARM") != "" else 3
+		for k in 400:
+			if world.alarm() >= want:
+				break
+			screen.controller.advance(10)
+			screen._refresh()
+			view._process(1.0 / 3.0)
+		var me: Vector2 = world.crew()[0]["at"]
+		var near := Vector2(-1, -1)
+		for g: Dictionary in world.guards():
+			if not g["down"] and (near.x < 0 or me.distance_to(g["at"]) < me.distance_to(near)):
+				near = g["at"]
+		if near.x >= 0:
+			world.give(0, HeistController.Kind.MOVE_TO, int(near.x * 256.0), int(near.y * 256.0))
+		for k in 3:
+			screen.controller.advance(10)
+			screen._refresh()
+			view._process(1.0 / 3.0)
+		print("alarm ", world.alarm())
 	if moment == "vault":
 		screen.controller.select(0)
 		screen.controller.tap_tile(screen.controller.world.vault()["at"])
@@ -163,7 +188,21 @@ func _go() -> void:
 	if OS.get_environment("SIZES") != "":
 		print("row ", screen.crew_node.size, " band ", screen.actions_band.size, " hand ", screen.hand.size,
 			" frame ", frame.size, " screen ", screen.size, " ", screen.crew_buttons.map(func(b: Control) -> Vector2:
-				return b.size))
+				return b.size), " hint ", screen.hint_label.size, " lines ", screen.hint_label.get_line_count(),
+			" wants ", screen.hint_label.get_theme_font("font").get_string_size(screen.hint_label.text,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, screen.hint_label.get_theme_font_size("font_size")).x)
+		print("hud ", screen.hud.get_global_rect(), " loot ", screen.hud.loot_panel.get_global_rect(),
+			" tray ", screen.actions_band.get_global_rect())
+	if OS.get_environment("FIT") != "":
+		# FIT: board 1's objection B as a check, at whatever TEXT and LOCALE
+		# say; the run fails if anything does not fit.
+		var bad := fit(screen)
+		for b: String in bad:
+			print("fit FAIL ", b)
+		print("fit ", "ok" if bad.is_empty() else "FAIL")
+		if not bad.is_empty():
+			quit(1)
+			return
 	# §21.3's budgets, as the renderer counted the frame.
 	print("budget: %d draw calls, %d primitives" % [
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
@@ -171,6 +210,68 @@ func _go() -> void:
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()
+
+
+## What does not fit on `screen`, one line each (board 1's objection B):
+## a label's words wider than the label, or the label outside its panel; a
+## HUD panel over another or over the crew's tray; a guard's bubble off the
+## screen, over a panel, or drawn below the panels.
+static func fit(screen: HeistScreen) -> Array[String]:
+	var bad: Array[String] = []
+	var whole := Rect2(Vector2.ZERO, screen.size)
+	for root: Control in [screen.hud, screen.actions_band, screen.hint_panel]:
+		for l: Label in root.find_children("*", "Label", true, false):
+			if not l.is_visible_in_tree() or l.text == "":
+				continue
+			var at := l.get_global_rect()
+			var font := l.get_theme_font("font")
+			var wide := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				l.get_theme_font_size("font_size")).x
+			if l.autowrap_mode == TextServer.AUTOWRAP_OFF and wide > at.size.x + 1.0:
+				bad.append("%s %s: %.0f px of words in %.0f" % [l.get_path(), l.text, wide, at.size.x])
+			var p := l.get_parent()
+			while p != null and not p is PanelContainer:
+				p = p.get_parent()
+			if p != null and not (p as Control).get_global_rect().grow(1.0).encloses(at):
+				bad.append("%s %s: %s outside its panel %s" % [l.get_path(), l.text, at,
+					(p as Control).get_global_rect()])
+			if not whole.grow(1.0).encloses(at):
+				bad.append("%s %s: %s off the screen" % [l.get_path(), l.text, at])
+	var hud: Array[Control] = [screen.hud.clock_panel, screen.hud.alarm_panel, screen.hud.loot_panel]
+	for c in screen.hud.laws_box.get_children():
+		hud.append(c as Control)
+	var tray := screen.actions_band.get_global_rect()
+	for i in hud.size():
+		if not hud[i].is_visible_in_tree():
+			continue
+		var a := hud[i].get_global_rect()
+		if a.intersects(tray):
+			bad.append("%s %s over the tray %s" % [hud[i].name, a, tray])
+		for j in range(i + 1, hud.size()):
+			if hud[j].is_visible_in_tree() and a.intersects(hud[j].get_global_rect()):
+				bad.append("%s over %s" % [hud[i].name, hud[j].name])
+	var anchors := screen.view.anchors
+	var layer := anchors.speech_layer
+	var top: Node = screen.actions_band
+	while top.get_parent() != screen:
+		top = top.get_parent()
+	if layer == null or layer.get_parent() != screen or layer.get_index() < top.get_index():
+		bad.append("the guards' words are drawn below the panels")
+	# A bubble may lie over a panel's edge where the world shows no room for
+	# it (it is drawn above the panels), but never over a panel's words.
+	var words: Array[Rect2] = []
+	for root: Control in [screen.hud, screen.actions_band, screen.hint_panel]:
+		for l: Label in root.find_children("*", "Label", true, false):
+			if l.is_visible_in_tree() and l.text != "":
+				words.append(l.get_global_rect())
+	for box: Rect2 in anchors.speech_boxes:
+		var on := Rect2(box.position + layer.global_position, box.size)
+		if not whole.encloses(on):
+			bad.append("a bubble %s off the screen" % on)
+		for r: Rect2 in words:
+			if on.intersects(r):
+				bad.append("a bubble %s over words %s" % [on, r])
+	return bad
 
 
 ## The integrator's cast of character models, until the app sets one: each
