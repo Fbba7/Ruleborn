@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T19:16:00Z",
   "lease_until": "2026-11-12T22:16:00Z",
-  "updated_at": "2026-11-12T19:26:00Z",
-  "expected_next_update_by": "2026-11-12T20:11:00Z",
+  "updated_at": "2026-11-12T19:40:00Z",
+  "expected_next_update_by": "2026-11-12T20:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "P2-S3-screenkit: ScreenKit's 'well' now draws the kit's own well skin (it drew the bar track's); next: meters, stills, AD preview, checks.",
-    "at": "2026-11-12T19:26:00Z"
+    "next_step": "P2-S3-screenkit: stills at 100% text committed under docs/art/shots/menu-screens/; AD preview asked (S3-R2); next: check_screens, guard, track notes, pre-check.",
+    "at": "2026-11-12T19:40:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -34,6 +34,27 @@
       "created_at": "2026-11-12T19:26:00Z",
       "due": "2026-11-12T21:26:00Z",
       "default": "P2-S3-screenkit routes ScreenKit only and leaves ScreenBox as the code-drawn fallback; the meter's move to KitBar goes to P2-S3-settings, with screen_meter.gd added to its files",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R2",
+      "from": "S3",
+      "to": "AD",
+      "ask": "Preview the menu-screen stills at 100% text before P2-S3-screenkit is marked ready, before and after each: docs/art/shots/menu-screens/{before,after}-{settings,character,codex,lab}-100.png. One change: ScreenKit's 'well' material (the icon tiles on the settings rows, the codex's lead tile, the lab's tiles) drew the resource bar's track skin, a gold-rimmed pill, and now draws the kit's own well skin, the rounded dark inset of tokens.json's 'well' (radius 14). Every other ScreenKit material already drew from the atlas and is unchanged; the character screen uses no well, so its stills are the same. The bars under Music, Effects and Alerts are still code-drawn (S3-R1). Send every objection in one round (M12)",
+      "files": [
+        "docs/art/shots/menu-screens/before-settings-100.png",
+        "docs/art/shots/menu-screens/after-settings-100.png",
+        "docs/art/shots/menu-screens/before-character-100.png",
+        "docs/art/shots/menu-screens/after-character-100.png",
+        "docs/art/shots/menu-screens/before-codex-100.png",
+        "docs/art/shots/menu-screens/after-codex-100.png",
+        "docs/art/shots/menu-screens/before-lab-100.png",
+        "docs/art/shots/menu-screens/after-lab-100.png"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T19:40:00Z",
+      "due": "2026-11-13T07:40:00Z",
+      "default": "the stills stand as rendered, and S3 marks P2-S3-screenkit ready when its checks pass",
       "escalate_to": "lead"
     }
   ],
