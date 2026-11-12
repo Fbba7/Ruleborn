@@ -8,21 +8,26 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T19:16:00Z",
   "lease_until": "2026-11-12T22:16:00Z",
-  "updated_at": "2026-11-12T20:37:59Z",
-  "expected_next_update_by": "2026-11-12T21:22:59Z",
+  "updated_at": "2026-11-12T21:09:38Z",
+  "expected_next_update_by": "2026-11-12T21:54:38Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a9f7133d17c1bdbd2ca5564c2bb04fe632099610",
-    "next_step": "Pre-check running at 2b220cc3 (main 4554557d merged; setup line and build rerun, exit 0). The run at a7408799 failed one case of tools/test_run_checks.sh ('and makes no worktree and no log: made') while guard.sh ran beside it; the test alone passed twice, and guard.sh was OK at a7408799. On a pass: guard.sh, record, then the gate on 'settings at 100% text'.",
-    "at": "2026-11-12T20:37:59Z"
+    "next_step": "Pre-check PASS at 2b220cc3 (main 4554557d merged; main's later commits to bb8a7c23 are the lead's bookkeeping). Gate asked on 'settings at 100% text' at 2b220cc3; guard.sh rerunning. Next: the verdict, then ready.",
+    "at": "2026-11-12T21:09:38Z"
   },
   "precheck": {
-    "sha": "a9f7133d17c1bdbd2ca5564c2bb04fe632099610",
+    "sha": "2b220cc3d9829060b0851f3f744db8beefdebdcd",
     "exit": 0,
-    "finished_at": "2026-11-12T20:05:13Z",
+    "finished_at": "2026-11-12T21:08:50Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
+  "gate_request": {
+    "sha": "2b220cc3d9829060b0851f3f744db8beefdebdcd",
+    "items": [
+      "settings at 100% text"
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
