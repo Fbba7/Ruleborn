@@ -156,7 +156,7 @@ start() {
   git -C "$root" worktree add --quiet --detach "$wt" "$sha"
   [ -n "${CHECK_CMD:-}" ] || seed "$wt"
   mkdir -p "$tmpd"
-  local prefix=() gcommon gudata v
+  local prefix=() gcommon gudata gdcache v
   case "$mode" in
     bwrap)
       gcommon="$(cd "$root" && cd "$(git rev-parse --git-common-dir)" && pwd)"
@@ -166,9 +166,14 @@ start() {
       # Godot's user folder: a fresh one for each run, so the candidate
       # neither reads the host's saves nor fails on a read-only HOME.
       gudata="${XDG_DATA_HOME:-$HOME/.local/share}/godot/app_userdata"
-      mkdir -p "$gudata" "$tmpd/userdata"
+      # gdlint compiles its grammar once and keeps it under ~/.cache/gdtoolkit;
+      # in a fresh container nothing is there yet, and a read-only HOME makes
+      # it fail every file ("Cannot open file"). A fresh folder for each run.
+      gdcache="$HOME/.cache/gdtoolkit"
+      mkdir -p "$gudata" "$tmpd/userdata" "$gdcache" "$tmpd/gdcache"
       prefix=("$bwrap_bin" --ro-bind / / --bind "$tmpd" /tmp --tmpfs /run --ro-bind "$gcommon" "$gcommon"
-        --bind "$wt" "$wt" --bind "$tmpd/userdata" "$gudata" "${bwrap_flags[@]}" --setenv TMPDIR /tmp)
+        --bind "$wt" "$wt" --bind "$tmpd/userdata" "$gudata" --bind "$tmpd/gdcache" "$gdcache"
+        "${bwrap_flags[@]}" --setenv TMPDIR /tmp)
       for v in $(secret_vars); do prefix+=(--unsetenv "$v"); done
       prefix+=(--) ;;
     user|user-with-network)
