@@ -117,6 +117,12 @@ func _ready() -> void:
 	column.add_child(_foot)
 	notice = UniverseNotice.new()
 	notice.visible = false
+	# The card's words wrap rather than cut a word short ("See how your
+	# defence …"), at every text size: the line says where to go.
+	for l: Label in [notice.words, notice.line]:
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		l.clip_text = false
+		l.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
 	_foot.visible = true
 	notice.seen.connect(func() -> void: App.services.router.go(&"defences"))
 	notice.dismissed.connect(_dismiss)
@@ -334,6 +340,7 @@ func _on_realm(id: String) -> void:
 func _process(_delta: float) -> void:
 	if _side_layer == null:
 		return
+	_fit_pins()
 	var at := Vector2.ZERO
 	for holder: Control in sides.values():
 		at += holder.global_position * (1.0 if holder.is_visible_in_tree() else 0.5)
@@ -372,7 +379,7 @@ func _fit_edges(column: VBoxContainer, middle: Control) -> void:
 
 
 func _frame_world() -> void:
-	world.fit_between(_top, tabs)
+	world.fit_between(_top, _floor())
 	var clear: Array[Rect2] = []
 	for route: StringName in sides:
 		if not (sides[route] as Control).is_visible_in_tree():
@@ -385,6 +392,38 @@ func _frame_world() -> void:
 			var r := c.get_global_rect()
 			clear.append(Rect2(r.position - world.global_position, r.size))
 	world.keep_clear = clear
+
+
+## The universe's floor: the tabs, as the designs float Collect and the raid
+## card over the islands; but where what floats over the foot would cover a
+## quarter of the room or more (large text, §20.8), its top, so the islands and
+## their pins shrink into the room left above it rather than hide beneath it.
+func _floor() -> Control:
+	var over: Control = _foot
+	if notice.visible:
+		over = notice
+	if not over.visible or tabs == null:
+		return tabs
+	var room := tabs.get_global_rect().position.y - _top.get_global_rect().end.y
+	return over if over.size.y * 4.0 >= room else tabs
+
+
+## Over the whole universe every realm is named, or none is: where the room
+## is too short for every realm's pin (§20.8's large text on a short phone),
+## the pins give way together rather than leave some realms unnamed. Each
+## realm is still said aloud with the world, and each island still takes its
+## tap.
+func _fit_pins() -> void:
+	var pins := world.pins
+	var whole := true
+	if world.zoom == 0:
+		for id: String in world.islands:
+			var pin := pins.realm_pin(id)
+			if pin != null and not pin.visible:
+				whole = false
+				break
+	if pins.visible != whole:
+		pins.visible = whole
 
 
 func _on_changed(slice: StringName) -> void:
@@ -484,7 +523,24 @@ func show_keeper() -> void:
 	b["level"] = int(v.get("level", 1))
 	var league: Dictionary = store.get_slice(SocialState.LEAGUE).get("view", {})
 	var renown := UniverseHud.grouped(int(league["renown"])) if league.get("renown") != null else ""
-	keeper_plate.show_keeper(b, float(v.get("xp", 0)) / need if need > 0 else 1.0, renown)
+	keeper_plate.show_keeper(b, float(v.get("xp", 0)) / need if need > 0 else 1.0, _clear_of_gem(renown))
+
+
+## Renown's number moved clear of the gem that overhangs its chip's left end:
+## the gem grows with the text (§20.8) and the number's start does not, so at
+## large text the gem would cover the first digits. Spaces before the number
+## carry it, and the chip, past the gem.
+static func _clear_of_gem(renown: String) -> String:
+	if renown == "":
+		return renown
+	var chip := UI.text_px(13.0)
+	# The gem's right edge past the chip's start, as `UniverseBadge` draws it,
+	# with a little air; the number starts 16 points in.
+	var over := chip * 1.5 * 1.15 * 0.55 + UI.px(3) - UI.px(16)
+	if over <= 0.0:
+		return renown
+	var space := UniverseHud.words_font().get_string_size(" ", HORIZONTAL_ALIGNMENT_LEFT, -1, chip).x
+	return " ".repeat(ceili(over / maxf(1.0, space))) + renown
 
 
 ## G41: what was played offline goes by itself once the network is back, and

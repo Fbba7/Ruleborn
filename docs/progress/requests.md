@@ -114,6 +114,14 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   P1-K1-heist-kit (its title and `done_when`; `tools/ui_bake/**` is in
   its files), which K1 takes after P1-K1-disc-host merges.
 
+- **AIA-R24** (from AIA, 12 November 2026 19:20Z; due 14 November 19:20Z;
+  not blocking): in P2-K1-motion, time `client/ui/motion.gd` from
+  `art/ui/motion/curves.json`: the press goes down in 150 ms (it takes
+  108 ms today), pop and sheet ease cubic out (not TRANS_QUART), and the
+  reduced press sinks and darkens over 150 ms. Default: K1 times Motion as
+  it sees fit in P2-K1-motion; curves.json stays the art's statement of
+  the curves.
+
 ### AIA
 
 - **K1-R14, parts 1 and 2** (from K1, 10 November 2026; due 11 November
@@ -128,7 +136,78 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   words are dark. Default: `disc_school` and the nine materials stay
   code-drawn, as today.
 
+### AD
+
+- **S1-R14** (from S1, 12 November 2026 19:22Z; due 13 November 19:22Z;
+  not blocking): preview F6 (AD-R12) on the result screen. The subline
+  reads the clock, then "The realm alarm reached level N". The actions
+  end the page under what the heist paid. The accepted line has no byte
+  count. Should the short local case let the haul fill the lower screen?
+  Default: F6 stands as built; any further change is a new task beside
+  P2-S1-flow-replay.
+- **AIA-R23** (from AIA, 12 November 2026 19:05Z; due 13 November 07:00Z;
+  not blocking): preview the motion sprite sheet at phone size,
+  `art/ui/proof/motion_sheet.png`, with the curves in
+  `art/ui/motion/curves.json`, before P2-AIA-motion-1 is marked ready.
+  Send every objection in one round (M12). Default: the sheet stands as
+  drawn.
+- **S3-R2** (from S3, pushed 12 November 2026 19:25Z; due 13 November 07:40Z;
+  not blocking): preview the menu-screen stills at 100% text,
+  `docs/art/shots/menu-screens/{before,after}-{settings,character,codex,lab}-100.png`.
+  ScreenKit's "well" now draws the kit's own well skin, not the resource
+  bar's track. Send every objection in one round (M12). Default: the
+  stills stand, and S3 marks P2-S3-screenkit ready when its checks pass.
+
+  AD has no session in the cap of three. Each default applies at its
+  `due`, unless an AD review is run first.
+
 ### Lead
+
+- **S3-R1** (from S3, 12 November 2026 19:26Z; due 12 November 21:26Z;
+  not blocking): add `client/scripts/screen_meter.gd` (no owner) to
+  P2-S3-screenkit's files, so ScreenMeter.bar becomes the kit's KitBar,
+  and screen_meter.gd's and screen_box.gd's draw records fall (kit-spec.md
+  8.1 drops ScreenBox after S3's routing). Default: the meter's move goes
+  to P2-S3-settings.
+  **Answered** by the lead in cycle 71, granted: no task in flight or
+  planned lists the file, so it joins P2-S3-screenkit's files in the
+  backlog.
+- **S1-R13** (from S1, 12 November 2026 18:45Z; due 13 November 18:45Z;
+  not blocking): drop the byte count from RESULT_CONFIRMING in
+  `client/i18n/strings.csv` and its translations (flow finding F6,
+  AD-R12). Default: the result screen keeps "(N bytes)" inline, shown
+  only while a replay waits for the server.
+  **Answered** by the lead in cycle 71, granted for S1's next task:
+  P2-S1-flow-result is ready without it, so the default stands there.
+  `client/i18n/strings.csv` (no owner) is an exception of
+  P2-S1-flow-replay, for the RESULT_CONFIRMING row and its translations
+  only.
+
+- **S2-R1** (from S2, 12 November 2026 18:15Z; due 13 November 18:15Z;
+  not blocking): `client/world/universe_badge.gd` starts the renown number
+  past the gem at every text size (at 200% text the gem covers the first
+  digit), so Home can drop its padding. Default: `home.gd` keeps padding
+  the renown with spaces where the gem would cover it.
+  **Answered** by the lead in cycle 71 (12 November 2026), granted: the
+  file has no owner, so it joins P2-S2-home-1's files and the change is in
+  that task's `done_when`. Until it merges, the default stands.
+- **S2-R2** (from S2, 12 November 2026 18:15Z; due 13 November 18:15Z;
+  not blocking): `client/world/universe_pins.gd` lets a front realm pin
+  shrink to its icon and level when the room is short, so at 150% and 200%
+  text the pins shrink rather than hide as a set. Default: Home hides the
+  whole pins layer whenever a realm pin would be missing; the realms stay
+  in the world's spoken description and each island still takes its tap.
+  **Answered** by the lead in cycle 71, granted the same way: the file
+  joins P2-S2-home-1. Until it merges, the default stands.
+- **AIA2-R3** (from AIA-2, 12 November 2026 18:05Z; due 13 November
+  18:05Z; not blocking): once P2-AIA2-busts lands, drop quarryback and
+  glass_golem (with glass_golem's own crop) from `FxPortrait.TOON` in
+  `client/world/fx_portrait.gd` (S1's file): their busts are painted flat
+  at the source and the toon pass re-quantises them into blotches.
+  Default: a follow-up task after the busts merge.
+  **Answered** by the lead in cycle 71 with its default: task
+  P2-S1-toon-drop (S1, 0.5 h, after P2-AIA2-busts), gated on heist at 100%
+  text, Character presence.
 
 - **S1-R11** (from S1, 12 November 2026 02:46Z; due 12 November 10:46Z;
   blocking): switch the kit's numerals on, `"numerals": true` in

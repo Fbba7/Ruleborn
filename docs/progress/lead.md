@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpKUASWJcNRTsGDfsp` (cycle 70, 12
-November 2026 from 16:38Z, started by the Opus 5.5 launcher). Cycle 69's
+Latest lead cycle session: `session_01SNkKxr8rzRPkaA8ocqu69E` (cycle 71, 12
+November 2026 from 18:39Z, started by the Opus 5.5 launcher). Cycle 70's
+was `session_01SNkKxpKUASWJcNRTsGDfsp` (from 16:38Z). Cycle 69's
 was `session_01SNkKxnAEyrHDn5aRYpjvTB` (from 14:39Z). Cycle 68's
 was `session_01SNkKxnfPvJzu1iksNyMgNw` (from 13:39Z). Cycle 67's
 was `session_01SNkKxqJqzRbvVerXcUszbd` (from 12:39Z). Cycle 66's
@@ -216,8 +217,13 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| S1 | `session_01SNkKxpXF5zd3wf5VZ65Utv` (Opus 5.5, effort high) | P2-S1-flow-result (start: P1-AD-board-1d merged as a154d246, board 1 stands, phase 2 open) | `claude/ui-screens-heist` | 2026-11-12 17:47Z |
-| S2 | `session_01SNkKxpNwGbxJdZihbsYFS5` (Opus 5.5, effort high) | P2-S2-flow-home (start: a new agent in the roster; phase 2 open) | `claude/ui-screens-home` | 2026-11-12 17:47Z |
+| S1 | `session_01SNkKxqKPyULbAiucFCfPRG` (Opus 5.5, effort high) | P2-S1-flow-replay (start: P2-S1-flow-result merged as 9e1dd558; S1's session idle with its task merged; S1-R13 granted) | `claude/ui-screens-heist` | 2026-11-12 19:56Z |
+| S2 | `session_01SNkKxozf5JRQDJPnSF8RWh` (Opus 5.5, effort high) | P2-flow-entry (start: P2-S2-flow-home merged as 7d899ce4; S2's session idle with its task merged) | `claude/ui-screens-home` | 2026-11-12 19:55Z |
+| S3 | `session_01SNkKxnF4CGAt7d58kriezr` (Opus 5.5, effort high) | P2-S3-screenkit (start: S3's first session; report.md step 11, seeded in cycle 71; S2's session idle with its task ready, so S3 takes the third place in the cap) | `claude/ui-screens-meta` | 2026-11-12 19:13Z |
+| AIA | `session_01SNkKxnntrrTGLutdQgN4sk` (Opus 5.5, effort high; waiting on AIA-R23) | P2-AIA-motion-1 (start: report.md step 8, seeded in cycle 71; AIA's last session was a Fable 5.2 one, not reused) | `claude/ui-artist` | 2026-11-12 18:52Z |
+| S1 | `session_01SNkKxpQyZFv1eTtnsa2WHD` (Opus 5.5, effort high; idle, its task merged) | P2-S1-flow-result (restart: expected_next_update_by 18:33:59Z passed, session idle; pre-check of 262904c4 lost with the old container) | `claude/ui-screens-heist` | 2026-11-12 18:44Z |
+| S1 | `session_01SNkKxpXF5zd3wf5VZ65Utv` (Opus 5.5, effort high; idle, replaced at 18:44Z) | P2-S1-flow-result (start: P1-AD-board-1d merged as a154d246, board 1 stands, phase 2 open) | `claude/ui-screens-heist` | 2026-11-12 17:47Z |
+| S2 | `session_01SNkKxpNwGbxJdZihbsYFS5` (Opus 5.5, effort high; idle, its task merged) | P2-S2-flow-home (start: a new agent in the roster; phase 2 open) | `claude/ui-screens-home` | 2026-11-12 17:47Z |
 | AIA-2 | `session_01SNkKxoqXe6HWeBBVJdS6Ru` (Opus 5.5, effort high) | P2-AIA2-busts (start: board 1's note G, AD-R20; phase 2 open) | `claude/ui-artist-icons` | 2026-11-12 17:47Z |
 | AD | `session_01SNkKxrFqhFsxDUmtqPET8E` (Opus 5.5, effort high; its task merged) | P1-AD-board-1d (start: P1-S1-pilot-5 merged as fe27c8f2; re-check objections D and F on pilot-5's stills; verdicts in verdicts/P1-S1-pilot-5/beb8a023.json) | `claude/ui-ad` | 2026-11-12 16:07Z |
 | S1 | `session_01SNkKxn9y7QjFsFiRjgoaAP` (Opus 5.5, effort high; idle, its task merged) | P1-S1-pilot-5 (restart: the session below went idle waiting for the gate; verdicts in verdicts/P1-S1-pilot-5/beb8a023.json, all pass, advisory; mark ready from the handoff) | `claude/ui-screens-heist` | 2026-11-12 13:52Z |
@@ -303,7 +309,7 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: none open (P1-AD-board-1d is merged: board 1 stands and phase 2 has started; boards 2-5 follow as the lead seeds them). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+Tasks: P2-AD-board-3 (home), P2-AD-board-4 (result and motion) and P2-AD-board-5 (character and settings) as their deps merge (seeded in cycle 71; board 2, icons, waits for icon batches 3-4, deferred by D13's answer (c)). Between boards, review the stills builders send you before ready within the same cycle, every objection in one round (M12). P1-AD-board-1d is merged: board 1 stands. O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -318,7 +324,7 @@ You are agent AIA of the Ruleborn agent program (UI wave). Read docs/guides/agen
 Agent: AIA            Role: maker (AIA): kit art and motion art        Model: Opus 5.5, effort high
 Branch: claude/ui-artist
 Owned files: art/ui/** except art/ui/icons/**, client/ui/art/kit*, docs/progress/AIA.md, docs/progress/status/AIA.json
-Tasks: P1-AIA-kit-1, then P1-AIA-kit-2 to -7 as their deps merge (every phase 0 AIA task is merged). Icons are AIA-2's, not yours.
+Tasks: P2-AIA-motion-1, then P2-AIA-motion-2 as its deps merge (report.md step 8; P1-AIA-kit-1 to -7 and every phase 0 AIA task are merged). Icons are AIA-2's, not yours.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -333,7 +339,7 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5, effort high
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97)
+Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97); now P2-K1-motion once P2-AIA-motion-1 merges
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -348,7 +354,7 @@ You are agent AIA-2 of the Ruleborn agent program (UI wave). Read docs/guides/ag
 Agent: AIA-2            Role: maker (AIA-2): icon art        Model: Opus 5.5, effort high
 Branch: claude/ui-artist-icons
 Owned files: art/ui/icons/**, client/tests/shots/icon_*.gd, client/ui/art/icons_48*, client/ui/art/icons_256*, and the files each AIA-2 task lists in the backlog (P2-AIA2-busts: client/world/creature_bust.gd), docs/progress/AIA-2.md, docs/progress/status/AIA-2.json
-Tasks: P2-AIA2-busts (board 1's note G, AD-R20: Bramble and Hollow repainted at the source; P1-AIA2-toon-route and icons-1a to -2b are merged). Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
+Tasks: none open (P2-AIA2-busts, board 1's note G, merged in cycle 71; P1-AIA2-toon-route and icons-1a to -2b are merged). Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -363,7 +369,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P2-S1-flow-result, then P2-S1-flow-replay (the flow findings F6 and F7, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review). Pilot-1 to pilot-5 and P1-AD-board-1d are merged: board 1 stands.
+Tasks: P2-S1-flow-replay (the flow finding F7, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review), then P2-S1-toon-drop, P2-S1-result-1 and P2-S1-result-2 as their deps merge (report.md step 9). Pilot-1 to pilot-5 and P1-AD-board-1d are merged: board 1 stands.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -378,11 +384,26 @@ You are agent S2 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-home
 Owned files: only the files each S2 task lists in the backlog, docs/progress/S2.md, docs/progress/status/S2.json
-Tasks: P2-S2-flow-home, then P2-flow-entry (the flow findings F1 to F5, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+Tasks: P2-flow-entry (the flow findings F3 to F5, AD-R12 in docs/progress/requests.md and docs/progress/AD.md, Flow review), then P2-S2-home-1 and P2-S2-home-2 as their deps merge (report.md step 10). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-home from it (create it if it does not exist) and push only to claude/ui-screens-home with git push -u origin claude/ui-screens-home, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S2, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### S3
+
+```text
+You are agent S3 of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
+
+Agent: S3            Role: maker (S3): the character and settings screens        Model: Opus 5.5, effort high
+Branch: claude/ui-screens-meta
+Owned files: only the files each S3 task lists in the backlog, docs/progress/S3.md, docs/progress/status/S3.json
+Tasks: P2-S3-screenkit, then P2-S3-character and P2-S3-settings as their deps merge (report.md step 11: ScreenKit and ScreenBox draw through KitSkin, then the two screens on the kit). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-meta from it (create it if it does not exist) and push only to claude/ui-screens-meta with git push -u origin claude/ui-screens-meta, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S3, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
 
 ### SV
@@ -402,6 +423,107 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 71, 12 November 2026, from 18:39Z (session
+  `session_01SNkKxr8rzRPkaA8ocqu69E`, started by the Opus 5.5 launcher):
+  four merges, phase 2's remaining steps seeded, five sessions started.
+  - **Merged P2-AIA2-busts** (ready 13e38050) as `fb07a2ce`. The merge lock
+    is at `4d9f7379` and the candidate is `efefbeb7` on main `96dd6ba1`.
+    The claims were disjoint, guard.sh was OK after `bash client/build.sh`
+    in the worktree, and check_all passed at 19:11Z. Beyond the candidate's
+    base, main had only the lead's docs/progress commits (`4d9f7379`,
+    `537ccb76`, `b3426586`), which touch none of the candidate's files. So
+    the merge went onto main's head, and the docs check was re-run there:
+    clean.
+  - **Merged P2-S2-flow-home** (ready 416449cc) as `7d899ce4`. The
+    candidate is `1e438a19` (`efefbeb7` + 416449cc), and guard.sh was OK.
+    The first check_all failed one fixture in `tools/test_run_checks.sh`
+    ("and makes no worktree and no log"). S2 changes no runner file, and
+    the test passed on `efefbeb7`. The likely cause is that the planted and
+    refused test repos have the same tree and identity, so two commits in
+    the same second share a sha. The re-run on the same sha passed at
+    19:53Z, and no test was changed. The lock was extended in heartbeat
+    `3c22038f`.
+  - **Merged P2-S1-flow-result** (ready 8b47be96) as `9e1dd558`. The
+    candidate is `1d6700ab` (`1e438a19` + 8b47be96), built while S2's
+    check ran. Guard.sh was OK and check_all passed at 19:55Z. Main had
+    only docs/progress commits beyond its base, so the merge went onto
+    main's head, and the docs check was clean.
+  - **The fixture in `tools/test_run_checks.sh` is flaky** (same-second
+    commits of identical trees). It is noted for K1 or the lead as a test
+    fix to make the two repos differ, never a loosening; until then, a
+    lone FAIL of that fixture on a candidate that touches no runner file
+    is re-run once.
+  - **Requests:**
+    - S3-R1 is granted.
+    - S1-R13 is granted: `client/i18n/strings.csv` is an exception of
+      P2-S1-flow-replay, for the RESULT_CONFIRMING row only.
+    - S1-R14, AIA-R23 and S3-R2 (to AD) and AIA-R24 (to K1) are copied
+      into requests.md. AD has no session in the cap, so their defaults
+      apply at their due. AIA-R23 blocks P2-AIA-motion-1 until 01:05Z on
+      13 November; AIA's session is waiting.
+    - S3's status file read 19:40Z when it was pushed at 19:25Z; the lead
+      took the push time for the claim's `seen_at`.
+  - **Gate** (advisory, shadow mode; `verdicts/P2-AIA2-busts/13e38050.json`):
+    heist at 100% text, Character presence. The first three samples split,
+    1 pass to 2 fails, so three more were drawn. The six gave 2 fails, and
+    a fail needs 4, so the item passes.
+    - In all six samples, Bramble and Hollow read as figures against their
+      rings (board 1's note G).
+    - Both fails were on Ash's ember grain and eye highlights, read as a
+      physically based finish. That is the narrow point for the next
+      portrait pass.
+    - P2-S2-flow-home has no gate items.
+  - **The guard needs three.js in the merge worktree.** The first two
+    guard runs on `efefbeb7` failed at "rebake": the icons_256 bake timed
+    out on `page.waitForFunction`, because the worktree had no
+    `tools/ui_research/node_modules`, and the bake page imports three from
+    it. Linking the main checkout's `node_modules` into the worktree fixed
+    it. Do the same before guard.sh in every merge worktree, and unlink it
+    before `git worktree remove`.
+  - **Seeded phase 2's remaining steps** (report.md section 3.3), 14 tasks:
+    - motion art: P2-AIA-motion-1 and -2, P2-K1-motion;
+    - the toon drop: P2-S1-toon-drop, for AIA2-R3;
+    - the result screen: P2-S1-result-1 and -2;
+    - home: P2-S2-home-1 and -2;
+    - S3's screen kit, character and settings: P2-S3-screenkit,
+      -character and -settings;
+    - boards 3, 4 and 5.
+
+    Board 2 is not seeded: it judges icon batches 3 and 4, which stay
+    deferred (D13 (c)). **S3 is added to the roster**
+    (`claude/ui-screens-meta`, prompt above).
+  - **Requests answered:**
+    - S2-R1 and S2-R2 are granted: `universe_badge.gd` and
+      `universe_pins.gd` join P2-S2-home-1.
+    - AIA2-R3 is answered with its default, task P2-S1-toon-drop.
+  - **Sessions** (Opus 5.5, effort high accepted):
+    - S1 was restarted on P2-S1-flow-result at 18:44Z
+      (`session_01SNkKxpQyZFv1eTtnsa2WHD`): its expected_next_update_by of
+      18:33:59Z had passed with the session idle.
+    - AIA started on P2-AIA-motion-1 at 18:52Z
+      (`session_01SNkKxnntrrTGLutdQgN4sk`).
+    - S3 started on P2-S3-screenkit at 19:13Z
+      (`session_01SNkKxnF4CGAt7d58kriezr`). S3's chain (screen kit,
+      character, settings, board 5) is the longest left, so S3 takes the
+      third place in the cap ahead of S2's next task.
+    - S2 started on P2-flow-entry at 19:55Z
+      (`session_01SNkKxozf5JRQDJPnSF8RWh`), after its last task merged.
+    - S1 started on P2-S1-flow-replay at 19:56Z
+      (`session_01SNkKxqKPyULbAiucFCfPRG`), after its last task merged.
+      AIA is waiting on AIA-R23 with no session running, so its place is
+      free.
+    - The builders are S1, S2 and S3: the cap of three. AIA waits on
+      AD's answer, and AIA-2 has no open task.
+  - The launcher and the watchdog are enabled. The backlog has 89 tasks,
+    61 merged. No owner-inbox entry. The audit and roadmap pages
+    did not change, so they were not republished.
+  - Next:
+    - Merge P2-S3-screenkit, P2-flow-entry and P2-S1-flow-replay as they
+      turn ready. On client candidates, run guard.sh after
+      `bash client/build.sh` and the node_modules link in the worktree.
+    - At AIA-R23's due (01:05Z, 13 November) or AD's answer, restart AIA
+      on P2-AIA-motion-1 when a place in the cap is free.
+    - Next in the queue: S2's P2-S2-home-1, S1's P2-S1-toon-drop.
 - Cycle 70, 12 November 2026, from 16:38Z (session
   `session_01SNkKxpKUASWJcNRTsGDfsp`, started by the Opus 5.5 launcher):
   one merge, phase 2 opened, three sessions started.
