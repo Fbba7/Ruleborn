@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T01:23:10Z",
   "lease_until": "2026-11-12T04:23:10Z",
-  "updated_at": "2026-11-12T02:17:28Z",
-  "expected_next_update_by": "2026-11-12T02:58:26Z",
+  "updated_at": "2026-11-12T02:46:37Z",
+  "expected_next_update_by": "2026-11-12T03:26:37Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4d87d18",
-    "next_step": "P1-S1-pilot-3: A, C, D, E done; B: large-text layout done, the guards' words go to a speech layer above the panels and screen_heist.gd's FIT=1 check passes at 200% in en and pt_BR; check_screens OK again (draw sites folded); next: budget still heist/200 reads 117 against 115, find and trim the two calls, then budgets, stills, Part 3, pre-check, gate.",
+    "next_step": "P1-S1-pilot-3: A, C, D, E done; B done (FIT=1 passes at 100% and 200%, en and pt_BR, sneak and alarm, high contrast, with the numerals switch off and on). Budget: heist/200 reads 114 of 115 (100% and hc 118 of 121): the large clock plate with baked figures only while the kit's numerals are switched on, KitHud.clock while off, and the hidden words skip the renderer. Objection A shows only once kit_families.json switches the numerals on (S1-R11). Next: records, stills, Part 3, check_all, pre-check, gate.",
     "at": null
   },
   "precheck": null,
@@ -164,8 +164,22 @@
         "tools/ui_bake/budgets.json"
       ],
       "default": "The record stays at 20; the check passes either way."
+    },
+    {
+      "from": "S1",
+      "to": "lead",
+      "id": "S1-R11",
+      "blocking": true,
+      "created_at": "2026-11-12T02:46:37Z",
+      "due": "2026-11-12T10:46:37Z",
+      "escalate_to": "lead",
+      "ask": "Switch the kit's numerals on: add \"numerals\": true to client/ui/kit_families.json (K1's file; K1-R11 said it is added once the numerals' art passes the gate, and P1-AIA-kit-3 is merged). Board 1's objection A (AD-R7) asks for the timer in KitNumerals' figures, and while the switch is off KitNumerals draws live text, so no still can show it. Measured on claude/ui-screens-heist with the switch on: heist/100 118, heist/200 114, heist/hc 118 draw calls (records 121, 115, 121), and screen_heist.gd's FIT=1 check passes at 200% text in en and pt_BR, sneak and alarm, and in high contrast. Either the lead adds the line at merge, or grants S1 the one line for this task.",
+      "files": [
+        "client/ui/kit_families.json"
+      ],
+      "default": "S1 asks the gate on stills shot as main stands (switch off: the clock is KitHud.clock's plain plate, as before) and puts beside them, marked as such in heist-pilot.md, the same moments shot with the switch on locally; objection A stays open until the switch is on."
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-3: A, C, D, E done; B: large-text layout done, the guards' words go to a speech layer above the panels and screen_heist.gd's FIT=1 check passes at 200% in en and pt_BR; check_screens OK again (draw sites folded); next: budget still heist/200 reads 117 against 115, find and trim the two calls, then budgets, stills, Part 3, pre-check, gate."
+  "next_step": "P1-S1-pilot-3: A, C, D, E done; B done (FIT=1 passes at 100% and 200%, en and pt_BR, sneak and alarm, high contrast, with the numerals switch off and on). Budget: heist/200 reads 114 of 115 (100% and hc 118 of 121): the large clock plate with baked figures only while the kit's numerals are switched on, KitHud.clock while off, and the hidden words skip the renderer. Objection A shows only once kit_families.json switches the numerals on (S1-R11). Next: records, stills, Part 3, check_all, pre-check, gate."
 }

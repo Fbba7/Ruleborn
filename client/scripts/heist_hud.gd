@@ -4,8 +4,8 @@ extends VBoxContainer
 ## loot at the top right as two numbers, what the bags can still take and what
 ## is left to load (12.19), beside the Vault's progress; the law banner at the
 ## top left". Built from the kit alone (docs/art/ui-quality/kit-spec.md 6.3):
-## the clock is KitHud.clock_large, Lilita One figures inked on parchment,
-## counting down and turning to the alarm's red plate in its last 30
+## the clock is KitHud.clock_large with KitNumerals' baked timer figures
+## (KitHud.clock while the numerals are switched off), counting down and turning to the alarm's red plate in its last 30
 ## seconds; the alarm is KitHud.alarm_fit, six bells with "N / 6" written
 ## beside them so the level never rests on colour (§20.8); the loot is
 ## KitHud.loot_fit, its two numbers over the bags' fill, with how far the
@@ -165,8 +165,13 @@ static func _through(node: Node) -> void:
 
 
 func _build_clock(text: String) -> void:
-	var piece := KitHud.clock_large(text, _red)
+	# The large plate is the baked figures' (board 1's objection A). While the
+	# numerals are switched off, its live words would be inked, outlined and
+	# shadowed at display size, three passes over the frame's budget at 200%
+	# text, so the clock keeps the kit's plain plate until then.
+	var piece := KitHud.clock_large(text, _red) if KitSkin.is_on("numerals") else KitHud.clock(text, _red)
 	piece.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_tight(piece)
 	clock_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_swap(clock_panel, piece)
 	clock_panel = piece
@@ -199,6 +204,10 @@ func _figures(text: String) -> void:
 	row.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	clock_panel.add_child(row)
 	clock_label.self_modulate.a = 0.0
+	# Unseen, the words still cost the frame their glyphs' draw calls (five at
+	# 200% text): the renderer skips them while the label keeps its place in
+	# the layout and its words for a screen reader.
+	RenderingServer.canvas_item_set_visible(clock_label.get_canvas_item(), false)
 	_through(row)
 
 
@@ -234,7 +243,7 @@ func _build_loot(rows: Array, bags: float, load_words: String, vault: Array) -> 
 	# _swap carries the old panel's spoken name over; the kit's names every
 	# number.
 	var spoken := piece.accessibility_name
-	_tight(piece, false)
+	_tight(piece)
 	_swap(loot_panel, piece)
 	loot_panel = piece
 	loot_panel.accessibility_name = spoken
