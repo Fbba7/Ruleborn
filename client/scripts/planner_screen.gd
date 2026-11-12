@@ -24,6 +24,9 @@ var _drawn_key := ""
 var _tabs: HBoxContainer
 var _dock: HBoxContainer
 var _tab := "plan"
+## The cue at the sheet's foot while more of the plan is below, over the
+## start key's edge: the kit draws no scroll bar (AD-R12 F5).
+var _more: PanelContainer
 
 
 func _ready() -> void:
@@ -73,6 +76,8 @@ func _build() -> void:
 	_dock.add_theme_constant_override("separation", UI.px(10))
 	column.add_child(_dock)
 	StageScreen.corner_gap(column)
+	_more = ScoutScreen.more_cue()
+	add_child(_more)
 
 
 func _refresh() -> void:
@@ -109,6 +114,11 @@ func _refresh() -> void:
 			(holder as Control).visible = str(holder.get_meta("tab")) == _tab
 	var o: Dictionary = p["start"]
 	var under: String = str(o["why"]) if str(o["why"]) != "" else _clock(card)
+	# Where the crew has one size, "choose 3 to 3 crew" reads wrong (AD-R12
+	# F5): the count it still needs is said as the crew's own line instead.
+	var most := int(PlannerPresenter.limits(store.get_slice(KeeperState.KEEPER))["crew"])
+	if most <= 3 and under == Strings.t("PLAN_NEEDS_CREW", [3, most]):
+		under = p["crew_count"]
 	var start := OverlayHud.main_key(o["action"], under, controller.start, o["spoken"])
 	start.disabled = not o["can"]
 	start.set_meta("key", o["key"])
@@ -317,3 +327,4 @@ func _process(_delta: float) -> void:
 	if _sheet != null and view != null:
 		view.cover_bottom = StageScreen.covered_below(view, _keys)
 		view.cover_top = StageScreen.covered_above(view, _top)
+		ScoutScreen.place_more(_more, _sheet)
