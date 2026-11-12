@@ -98,12 +98,16 @@ func _init() -> void:
 	alarm_panel = PanelContainer.new()
 	centre.add_child(alarm_panel)
 	_build_alarm()
-	# The loot, top right; with large text under the law banner instead, so
+	# The loot, top right; with large text the whole width under the law
+	# banner and the alarm instead, so each of its lines keeps one line and
 	# the column stays above the hand's controls.
-	var right := left if large else _side(top)
 	loot_panel = PanelContainer.new()
-	loot_panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN if large else Control.SIZE_SHRINK_END
-	right.add_child(loot_panel)
+	if large:
+		loot_panel.size_flags_horizontal = Control.SIZE_FILL
+		add_child(loot_panel)
+	else:
+		loot_panel.size_flags_horizontal = Control.SIZE_SHRINK_END
+		_side(top).add_child(loot_panel)
 	_build_loot(_loot_rows("", "?"), 0.0, "", [])
 	var realm_panel := KitStatus.hint("")
 	realm_panel.name = "Realm"
@@ -111,6 +115,21 @@ func _init() -> void:
 	realm_label = realm_panel.get_node("Words")
 	realm_label.visible = false
 	add_child(realm_panel)
+
+
+## With §20.8's large text a panel's leather is thinner (3 points top and
+## bottom, and 5 at the sides where `sides`), so the HUD's column keeps clear
+## of the hand's tray and a law's two words keep one line beside the alarm.
+static func _tight(p: PanelContainer, sides := true) -> void:
+	if Settings.text_scale <= 130:
+		return
+	var box := p.get_theme_stylebox("panel").duplicate() as StyleBox
+	if sides:
+		box.content_margin_left = UI.px(5)
+		box.content_margin_right = UI.px(5)
+	box.content_margin_top = UI.px(3)
+	box.content_margin_bottom = UI.px(3)
+	p.add_theme_stylebox_override("panel", box)
 
 
 ## A side column of the top row: it takes what room there is.
@@ -185,6 +204,7 @@ func _figures(text: String) -> void:
 
 func _build_alarm() -> void:
 	var piece := KitHud.alarm_fit(_alarm, BELLS, Strings.t("HUD_ALARM_WORD"))
+	_tight(piece)
 	_swap(alarm_panel, piece)
 	alarm_panel = piece
 	alarm_label = piece.find_child("Count", true, false)
@@ -203,11 +223,18 @@ static func _loot_rows(room: String, left: String) -> Array:
 ## bar beside its icon, so its progress is always on screen (§12.19).
 func _build_loot(rows: Array, bags: float, load_words: String, vault: Array) -> void:
 	var aim := load_target / 100.0 if load_target >= 0 else -1.0
-	var piece := KitHud.loot_fit(rows, bags, aim, load_words, vault)
+	# With large text the panel has the row's whole width (a 360-point phone
+	# inside §21.1's sides, less its own rim): loot_fit gives a large panel
+	# 2.3 times the width it is told.
+	var width := 90.0
+	if Settings.text_scale > 130:
+		width = (360.0 - 2.0 * Tokens.number("size", "safe_side_points") - 28.0) / 2.3
+	var piece := KitHud.loot_fit(rows, bags, aim, load_words, vault, width)
 	_load = piece.find_child("Load", true, false)
 	# _swap carries the old panel's spoken name over; the kit's names every
 	# number.
 	var spoken := piece.accessibility_name
+	_tight(piece, false)
 	_swap(loot_panel, piece)
 	loot_panel = piece
 	loot_panel.accessibility_name = spoken
@@ -277,6 +304,7 @@ func _show_laws(r: RulebornReplay) -> void:
 	for law in laws:
 		var icon := "laws/" + law.replace("_", "")
 		var chip := KitCards.law_chip_fit(icon if Icons.has(icon) else "", Strings.term("LAW", law))
+		_tight(chip)
 		laws_box.add_child(chip)
 		_through(chip)
 	(laws_box.get_parent() as Control).visible = not laws.is_empty()

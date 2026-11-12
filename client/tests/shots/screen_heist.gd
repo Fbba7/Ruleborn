@@ -191,6 +191,8 @@ func _go() -> void:
 				return b.size), " hint ", screen.hint_label.size, " lines ", screen.hint_label.get_line_count(),
 			" wants ", screen.hint_label.get_theme_font("font").get_string_size(screen.hint_label.text,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, screen.hint_label.get_theme_font_size("font_size")).x)
+		print("hud ", screen.hud.get_global_rect(), " loot ", screen.hud.loot_panel.get_global_rect(),
+			" tray ", screen.actions_band.get_global_rect())
 	# §21.3's budgets, as the renderer counted the frame.
 	print("budget: %d draw calls, %d primitives" % [
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),

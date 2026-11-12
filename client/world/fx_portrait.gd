@@ -13,6 +13,8 @@ extends Button
 
 ## §12.6: every ability has two uses a heist; the pips show what is left.
 const PIPS := 2
+## The mat between the ring and the portrait (stage_hero_sculpt's cream).
+const MAT := Color("#F6E6C8")
 ## A digit's strokes, as fractions of its cell: (x0, y0, x1, y1) each.
 const SEGMENTS := {0: [[0, 0, 1, 0], [1, 0, 1, 1], [1, 1, 0, 1], [0, 1, 0, 0]], 1: [[0.5, 0, 0.5, 1]],
 	2: [[0, 0, 1, 0], [1, 0, 1, 0.5], [1, 0.5, 0, 0.5], [0, 0.5, 0, 1], [0, 1, 1, 1]],
@@ -126,7 +128,12 @@ func _paint() -> void:
 		FxPen.circle(self, c, r * 1.2, Color(1, 1, 1, 0.35 + 0.4 * beat))
 	FxPen.circle(self, c, r, FxSkin.INK_LINE)
 	FxPen.circle(self, c, r * 0.93, FxSkin.GOLD if chosen else Color("#8A5A22"))
-	FxPen.circle(self, c, r * 0.86, FxSkin.INK_LINE)
+	FxPen.circle(self, c, r * 0.885, FxSkin.INK_LINE)
+	# A cream mat inside the ring, outlined in ink both sides: the value step
+	# that parts a dark portrait (a Hollow, a Bramble) from the dark ring
+	# and the dark tray.
+	FxPen.circle(self, c, r * 0.86, MAT)
+	FxPen.circle(self, c, r * 0.815, FxSkin.INK_LINE)
 	# The disc: its school's colour, lighter at the middle, as the design's.
 	var ground: Color = Palette.SCHOOL.get(StageHeroFigure.school(kind), Palette.ROLE.get(role, Palette.STONE)) \
 		if kind != "" else Palette.ROLE.get(role, Palette.STONE)
@@ -134,7 +141,7 @@ func _paint() -> void:
 		ground = Color("#5A5468")
 	elif down:
 		ground = FxSkin.ALARM_DEEP if fmod(_time, 1.0) < 0.5 or Settings.reduced_motion else FxSkin.ALARM_DEEP.darkened(0.25)
-	var inner := r * 0.82
+	var inner := r * 0.79
 	for step: Array in [[0.0, 1.0, -0.12], [0.12, 0.78, 0.12], [0.22, 0.48, 0.3]]:
 		var tone := ground.darkened(-step[2]) if step[2] < 0.0 else ground.lightened(step[2])
 		FxPen.circle(self, c + Vector2(0, -inner * step[0]), inner * step[1], tone)
