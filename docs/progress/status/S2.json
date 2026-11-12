@@ -139,6 +139,22 @@
       "due": "2026-11-14T20:00:00Z",
       "default": "the records stay higher than the counts; check_screens passes and notes the falls",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R11",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Preview home (P2-S2-home-1) on claude/ui-screens-home at 4da3eeb0 before it is marked ready (M10, M12), against art/ui/keyframes/01-home.*. Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`, the same with `TEXT=200 LOCALE=pt_BR`, and with `CONTRAST=1` (the gate's three items: Hierarchy, Display type, Character presence at 100%; Display type, Hierarchy at 200% pt_BR; Colour roles and value, Hierarchy in hc). What changed: every part is the kit's (KitHud.keeper with renown past the gem, KitStatus.strain, three KitStatus.resource pills, four KitControls.round_action, KitHud.goal, KitControls.action2 gold for Collect all); the raid notice is composed from UI.panel('banner_alarm') on the material's dark card (S2-R6, S2-R8); the realm pins shrink to icon and level as a set where room is short (S2-R2). Known: at 200% pt_BR the purse takes three rows, and at 200% the pins hide as a set (the islands are a few points wide). docs/art/tracks/home-screen.md lists the rest. Send every objection in one round (M12).",
+      "files": [
+        "client/scripts/home.gd",
+        "client/world/universe_badge.gd",
+        "client/world/universe_pins.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T23:23:00Z",
+      "due": "2026-11-13T11:23:00Z",
+      "default": "The stills stand as built; S2 marks P2-S2-home-1 ready when its checks pass, and any objection becomes a follow-up task beside it.",
+      "escalate_to": "lead"
     }
   ],
   "answers": []

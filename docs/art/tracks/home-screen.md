@@ -60,7 +60,13 @@ Stills come from `client/tests/shots/universe_home.gd`, the same script before a
 
 **Budget stills** (`tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc`), against the records in `tools/ui_bake/budgets.json`:
 
-BUDGET_TABLE
+| Shot | Draw calls (record) | Textures | Words below 4.5:1 (record) | Worst contrast |
+|---|---:|---:|---:|---:|
+| home/100 | **139** (119) | 4.7 MiB | 0 of 31 (0) | 6.40:1 |
+| home/200 | 97 (97) | 4.8 MiB | 0 of 13 (0) | 6.40:1 |
+| home/hc | **139** (119) | 4.7 MiB | 0 of 31 (0) | 8.94:1 |
+
+home/100 and home/hc fail on draw calls only, 20 over the record and 11 under the cap of 150. S2-R7 asks the lead to approve the raise. Until it is answered, `guard.sh` fails on these two lines.
 
 **Draw calls by part** at 100%, from the shot's `PROBE=1`. Each part is faded in turn and the frame's calls are counted again:
 
