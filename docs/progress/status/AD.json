@@ -3,21 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P1-AD-board-1d",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-12T16:12:00Z",
   "lease_until": "2026-11-12T19:12:00Z",
-  "updated_at": "2026-11-12T16:18:00Z",
-  "expected_next_update_by": "2026-11-12T17:03:00Z",
+  "updated_at": "2026-11-12T16:58:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "8bfb07bdc4ff372fa1e6da205cb6bd4a8d0c09a2",
-    "next_step": "pre-check the round 4 commit, then mark ready"
+    "last_green_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
+    "next_step": "none: P1-AD-board-1d ready; board 2 when seeded"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
+    "exit": 0,
+    "finished_at": "2026-11-12T16:57:06Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
   "requests": [
