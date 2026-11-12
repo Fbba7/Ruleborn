@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T09:44:00Z",
+  "updated_at": "2026-11-12T10:41:00Z",
   "expected_next_update_by": "2026-11-12T10:59:00Z",
   "cycle": 64,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "906c5363",
+    "task_ids": [
+      "P1-AD-board-1c"
+    ],
+    "started_at": "2026-11-12T10:41:00Z",
+    "expires_at": "2026-11-12T11:41:00Z"
+  },
   "last_merged": {
     "task_id": "P1-K1-numerals-on",
     "sha": "541e4c97"
