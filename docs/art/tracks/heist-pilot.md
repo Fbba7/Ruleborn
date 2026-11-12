@@ -153,6 +153,7 @@ Board 1 (`docs/art/ui-quality/gate/boards/board-1.md`) raised five objections, A
   - The Sage stands beside Cast.
   - The hint is `KitHud.tip`, and it says only its first clause ("Tap crew, then ground").
   - The load bar is `KitHud`'s `loot_fit` bar.
+  - Before landing, Cast reads "No casts". In Portuguese ("Sem lançamentos") that word on one line, beside the crew's longer kind names, made the tray ask 1,129 px of the 1,080 px frame, and the layout test (§21.1, at 9:19.5) failed. In the narrow text's single row, a phrase wider than one and a half times the order's square now stands on two lines (`HeistHand.two_lines`). The tray then asks 933 px.
 - **D, Hollow and Bramble against their rings.** A cream mat (#F6E6C8, L* 92) lies between the ring (L* 43) and the portrait, inked on both sides. Hollow (L* 66 / 58) and Bramble (L* 71 / 56) now part from it by 21 points or more of L*.
 - **E, the alarm moment.** `MOMENT=alarm` raises the alarm to 3 of 6 on its own, with a guard looking and the crew unhurt. The still shows the bar a third lit, the guard's "Who's there?" and the red edge.
 - **Budgets (S1-R7).** `heist_hud.gd` now draws nothing outside the kit, so its record is gone from `tools/ui_bake/budgets.json`. `fx_portrait.gd` has 17 draw sites (it had 20). The speech layer's pen and the portrait's rings are each one draw site.

@@ -863,6 +863,11 @@ func _hand_order(icon: String, words: String, call: Callable, look: String, leas
 	b.set_meta("icon", pic)
 	b.set_meta("words", l)
 	var fit := func() -> void:
+		# In the narrow text's single row a long phrase ("Sem lançamentos")
+		# stands on two lines, so the tray keeps inside the frame (§21.1).
+		if Settings.text_scale <= 130 and l.text.contains(" ") \
+				and l.get_minimum_size().x + UI.px(16) > UI.px(least.x) * 1.5:
+			l.text = HeistHand.two_lines(l.text)
 		b.custom_minimum_size = Vector2(maxf(UI.px(least.x), l.get_minimum_size().x + UI.px(16)),
 			maxf(UI.px(least.y), l.get_minimum_size().y + UI.px(icon_points + 10.0)))
 	fit.call()
