@@ -105,13 +105,14 @@ runs are outside the cap.
 |---|---|---|---|
 | 0 | 3 | AD, AIA, K1 | none needed |
 | 1 | 3 until the check time is measured, then up to 4 | K1, AIA, AIA-2 | S1 (the critical path), once the heist's kit families and icon batch 1 have merged (report step 7) |
-| 2 | 3, then up to 5 if the sizing rule allows | S1, AIA, S2 | S3, then AIA-2, then K1's request slot |
+| 2 | 4 by the owner's order of 12 November 2026 (CLAUDE.md order 3); 3 while the seven-day bar reads `allowed_warning` | S1, AIA, S2 | S3, then AIA-2, then K1's request slot |
 | 3 | up to 5 | as the backlog assigns | the idle queue |
 
 **The sizing rule.** Builders running at once ≤ merges per hour × average
-task hours, where merges per hour ≈ 60 ÷ check minutes per candidate. If the
-oldest ready task waits more than 2 hours, batch 2–3 changes per candidate
-(re-checking them one at a time if the batch fails) or lower the cap. The
+task hours, where merges per hour ≈ 60 ÷ check minutes per candidate. As
+soon as two tasks are ready at once, batch 2–3 changes per candidate
+(re-checking them one at a time if the batch fails); if the oldest ready
+task still waits more than 2 hours, lower the cap. The
 lead measures the real check time after phase 1 and records it in the
 backlog's `check_minutes`. With today's 25-minute checks that is about 2.4
 merges an hour (inference; Appendix B of the work order estimated 0.8–1.3
@@ -425,8 +426,9 @@ The judge is never switched to a model that makers use.
 ## The merge queue
 
 **Ready.** At `ready_sha` the agent's pre-check passed and the gate passed
-every item in the task's `gate_items`. The branch need not contain main's
-head.
+every item in the task's `gate_items`. From UI phase 2, the branch holds
+main as it stood when the pre-check started (the brief's "Before you mark
+ready").
 
 **The queue.**
 
@@ -475,9 +477,11 @@ main gained only bookkeeping commits while a candidate's checks ran, the
 lead merges the candidate onto the new head and re-runs only the
 documentation check before moving main.
 
-**Batching.** When the oldest ready task has waited more than 2 hours, the
-lead may merge 2–3 ready changes into one candidate. If it fails, each is
-re-checked alone.
+**Batching.** As soon as two or more tasks are ready at once, the lead
+merges 2–3 of them into one candidate, provided their claims are disjoint.
+If the batch fails, each is re-checked alone. (Phase 2, from 12 November
+2026: phase 1's median wait from ready to merged was 2.1 hours, and waiting
+for the 2-hour mark before batching cost most of it.)
 
 **After a merge** the lead sets `merged` and `merged_sha` in the backlog. The
 agent's stale status copy on main is ignored (decision D-13: candidates do
@@ -638,7 +642,11 @@ lead records them and does not judge them.
 | Usage per merged task | 1.5 × the phase 1 figure |
 
 At mid-wave, any metric past its threshold triggers a review of this
-protocol (planned: BT-07 reports them).
+protocol (planned: BT-07 reports them). Within a phase, too: when a KPI in
+the progress report rates worse, or a candidate fails on its first attempt,
+the lead finds the cause the same day, sends the rule as a message to the
+agent that can act on it, and adds a row to the program's lessons table for
+the current phase. Lessons are not held until the wave closes.
 
 **Wave close.** New ready changes are accepted until STOP_AT − 2 hours. The
 final blind audit runs. `parked` tasks are listed in the backlog with their
