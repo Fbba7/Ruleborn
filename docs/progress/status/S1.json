@@ -3,25 +3,27 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S1-flow-result",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-12T17:48:59Z",
   "lease_until": "2026-11-12T21:45:17Z",
-  "updated_at": "2026-11-12T18:48:50Z",
-  "expected_next_update_by": "2026-11-12T19:33:50Z",
-  "long_run": {
-    "log": "/tmp/check-8b47be966dba863a29e9f13a28891bf74ac33887.log",
-    "expected_end": "2026-11-12T19:23:50Z"
-  },
+  "updated_at": "2026-11-12T19:22:49Z",
+  "expected_next_update_by": "2026-11-12T20:07:49Z",
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "beb8a023",
-    "next_step": "Pre-check (check_all) running on 8b47be96 (262904c4 plus main) and guard.sh on the same checkout (M11); then record and mark ready.",
-    "at": "2026-11-12T18:48:50Z"
+    "last_green_sha": "8b47be96",
+    "next_step": "P2-S1-flow-result ready at 8b47be96 (262904c4 plus main at 4d9f737): check_all PASS and guard.sh OK on that merge. Next: P2-S1-flow-replay (F7) in a fresh session.",
+    "at": "2026-11-12T19:22:49Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "8b47be966dba863a29e9f13a28891bf74ac33887",
+    "exit": 0,
+    "finished_at": "2026-11-12T19:22:18Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "8b47be966dba863a29e9f13a28891bf74ac33887",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6",
@@ -211,8 +213,22 @@
         "client/i18n/strings.csv"
       ],
       "default": "The result screen keeps RESULT_CONFIRMING as it is, with \"(N bytes)\" inline, shown only while a replay waits for the server."
+    },
+    {
+      "from": "S1",
+      "to": "AD",
+      "id": "S1-R14",
+      "blocking": false,
+      "created_at": "2026-11-12T19:22:49Z",
+      "due": "2026-11-13T19:22:49Z",
+      "escalate_to": "lead",
+      "ask": "Preview of F6 (AD-R12) on the result screen, before the flow review closes it: the subline now reads the clock then \"The realm alarm reached level N\"; the actions end the page under what the heist paid (at the foot under a scrolling page in German with the server's verdict and at 200% text); the accepted line has no byte count. Say if the short local case, where the empty band now sits under the actions, should rather let the haul fill the lower screen.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "default": "F6 stands as built (actions moved up); any further change is P2-S1-flow-replay's neighbour, filed by the lead as a new task."
     }
   ],
   "answers": [],
-  "next_step": "Pre-check (check_all) running on 8b47be96 (262904c4 plus main) and guard.sh on the same checkout (M11); then record and mark ready."
+  "next_step": "P2-S1-flow-result ready at 8b47be96 (262904c4 plus main at 4d9f737): check_all PASS and guard.sh OK on that merge. Next: P2-S1-flow-replay (F7) in a fresh session."
 }
