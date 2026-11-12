@@ -3,26 +3,26 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-K1-motion",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-12T22:09:00Z",
   "lease_until": "2026-11-13T01:37:00Z",
-  "updated_at": "2026-11-12T23:20:00Z",
-  "expected_next_update_by": "2026-11-13T00:05:00Z",
+  "updated_at": "2026-11-12T23:58:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "1d21bf4a",
-    "next_step": "on the merge with main 30ff0f9a: check_all All checks passed, kit tests 24 of 24, guard.sh OK; pre-check running at b5d77219, then ready"
+    "last_green_sha": "b5d77219",
+    "next_step": "ready at b5d77219 (pre-check PASS 23:56:10Z); waiting for the lead; K1-R19 and K1-R20 default granted"
   },
   "precheck": {
-    "sha": "1d21bf4a21cbd1584b800ccdf214ffa28ba81c12",
+    "sha": "b5d77219e9207b64e1f153a870b9d8d9995e23da",
     "exit": 0,
-    "finished_at": "2026-11-12T08:20:29Z",
+    "finished_at": "2026-11-12T23:56:10Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "b5d77219e9207b64e1f153a870b9d8d9995e23da",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M2",
@@ -335,5 +335,5 @@
       "at": "2026-11-12T22:37:00Z"
     }
   ],
-  "next_step": "on the merge with main 30ff0f9a: check_all All checks passed, kit tests 24 of 24, guard.sh OK; pre-check running at b5d77219, then ready"
+  "next_step": "ready at b5d77219 (pre-check PASS 23:56:10Z); waiting for the lead; K1-R19 and K1-R20 default granted"
 }
