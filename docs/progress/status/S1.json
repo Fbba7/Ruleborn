@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T06:55:26Z",
   "lease_until": "2026-11-12T09:55:26Z",
-  "updated_at": "2026-11-12T07:11:47Z",
-  "expected_next_update_by": "2026-11-12T07:51:47Z",
+  "updated_at": "2026-11-12T08:04:02Z",
+  "expected_next_update_by": "2026-11-12T10:04:02Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "0d142dd0",
-    "next_step": "P1-S1-pilot-4: D and B done locally (FIT matrix running); then the budget shots, the checks, the commit and the pre-check.",
-    "at": "2026-11-12T07:11:47Z"
+    "next_step": "P1-S1-pilot-4 built at e846c531 (D, B, FIT on 15 cases, budgets within records); pre-check running on e846c531 (run_checks.sh, up to ~1 h); then ready and the gate.",
+    "at": "2026-11-12T08:04:02Z"
   },
   "precheck": null,
   "gate_request": null,
