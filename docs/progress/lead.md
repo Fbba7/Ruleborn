@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqijuvwjXHbeAGDLGB` (cycle 64, 12
-November 2026 from 09:39Z, started by the Opus 5.5 launcher). Cycle 63's
+Latest lead cycle session: `session_01SNkKxqZN7A6CTcTtr4tEcm` (cycle 65, 12
+November 2026 from 10:38Z, started by the Opus 5.5 launcher). Cycle 64's
+was `session_01SNkKxqijuvwjXHbeAGDLGB` (from 09:39Z). Cycle 63's
 was `session_01SNkKxnWuvvM5evq2WinaFR` (from 08:39Z). Cycle 62's
 was `session_01SNkKxqEW3A3hwRz6VufQz5` (from 07:39Z). Cycle 61's
 was `session_01SNkKxrEkx6oXeGzdGm4sDr` (from 06:39Z). Cycle 60's
@@ -210,7 +211,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AD | `session_01SNkKxmtatzN7YRTTZcPFsL` (Opus 5.5, effort high) | P1-AD-board-1c (start: P1-K1-numerals-on and P1-S1-pilot-4 merged as 541e4c97; the gate's notes in verdicts/P1-S1-pilot-4/e846c531.json and verdicts/P1-K1-numerals-on/1d21bf4a.json) | `claude/ui-ad` | 2026-11-12 09:30Z |
+| S1 | `session_01SNkKxoXAbUvoLyhk2tDXzh` (Opus 5.5, effort high) | P1-S1-pilot-5 (start: board 1's round 3 in P1-AD-board-1c, objections D and F open; AD-R17, AD-R18) | `claude/ui-screens-heist` | 2026-11-12 11:27Z |
+| AD | `session_01SNkKxmtatzN7YRTTZcPFsL` (Opus 5.5, effort high; idle, its task merged) | P1-AD-board-1c (start: P1-K1-numerals-on and P1-S1-pilot-4 merged as 541e4c97; the gate's notes in verdicts/P1-S1-pilot-4/e846c531.json and verdicts/P1-K1-numerals-on/1d21bf4a.json) | `claude/ui-ad` | 2026-11-12 09:30Z |
 | S1 | `session_01SNkKxnQXTay5oBDdKNoz8h` (Opus 5.5, effort high; idle, its task merged) | P1-S1-pilot-4 (start: board 1's round 2 in P1-AD-board-1b, objections D and B open; AD-R13, AD-R15) | `claude/ui-screens-heist` | 2026-11-12 06:54Z |
 | K1 | `session_01SNkKxqEuMj3TF1SQMhjHgP` (Opus 5.5, effort high; idle, its task merged) | P1-K1-numerals-on (start: P1-S1-pilot-3 merged as 085c812a with the switch off; S1-R11, K1-R11, the gate's Display type note) | `claude/ui-bake` | 2026-11-12 05:39Z |
 | AD | `session_01SNkKxpcpCTDib53apRny85` (Opus 5.5, effort high; idle, its task merged) | P1-AD-board-1b (start: P1-S1-pilot-3 merged as 085c812a; the gate's notes in verdicts/P1-S1-pilot-3/0d142dd0.json) | `claude/ui-ad` | 2026-11-12 05:39Z |
@@ -375,6 +377,42 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 65, 12 November 2026, from 10:38Z (session
+  `session_01SNkKxqZN7A6CTcTtr4tEcm`, started by the Opus 5.5 launcher):
+  P1-AD-board-1c merged as `6ee0f7d3`; S1 started on P1-S1-pilot-5.
+  - **Main had moved** by about 20 code commits from the security
+    session (SEC-18 B to SEC-43, SEC-19 B's contained check runs,
+    SEC-28's CI workflow, two client test fixes). The candidate's full
+    check tested them together with board-1c.
+  - **Candidate `906c5363` failed** check_all: gdlint reported "Cannot
+    open file ... Read-only file system" 429 times. Cause: in a fresh
+    container `~/.cache/gdtoolkit` does not exist, and SEC-19 B's bwrap
+    run mounts HOME read-only, so lark cannot write its grammar cache.
+    Fixed in `tools/run_checks.sh` (`a60576ff`): the contained run binds
+    a fresh, writable cache folder there, as it already does for Godot's
+    user folder. No check was skipped or loosened; the runner's
+    self-test passes.
+  - **Candidate `5e209009`** (main `a60576ff` plus ready `8bfb07bd`;
+    owners diff clean) passed ("All checks passed.", DONE exit=0).
+    Main had moved only by the lock commit, so it merged as `6ee0f7d3`
+    after the docs check alone. Lock cleared.
+  - **Board 1, round 3** (board-1.md): objections A and B closed; D (the
+    portraits) and F (the header's ink outline) stay open, so board 1
+    does not stand yet. AD-R17 and AD-R18 answered as the default: both
+    go to S1 as **P1-S1-pilot-5** (heist_hud.gd is S1's file again).
+    AD-R19 answered: the re-check is **P1-AD-board-1d** (deps pilot-5),
+    and phase 2's four flow tasks now wait on board-1d.
+  - **S1 started** on P1-S1-pilot-5: `session_01SNkKxoXAbUvoLyhk2tDXzh`,
+    after its previous session was confirmed idle. One builder, under
+    the cap of three. AD's session is idle, its task merged.
+  - The launcher (last run 10:38Z, succeeded) and the watchdog (last run
+    10:09Z, succeeded) are enabled. The audit and roadmap pages did not
+    change, so they were not republished. The backlog has 74 tasks, 56
+    merged. No owner-inbox entry.
+  - Next: merge pilot-5 when ready (owners diff, one full check at a
+    time, and guard.sh since it touches the client; guard.sh has not
+    yet been run on main after the SEC client commits), then start AD on
+    P1-AD-board-1d. Icon batches 3 and 4 stay deferred (D13 (c)).
 - Cycle 64, 12 November 2026, from 09:39Z (session
   `session_01SNkKxqijuvwjXHbeAGDLGB`, started by the Opus 5.5 launcher):
   a bookkeeping cycle, nothing merged, no session started.

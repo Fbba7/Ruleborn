@@ -1,7 +1,7 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T11:27:00Z",
-  "expected_next_update_by": "2026-11-12T10:59:00Z",
+  "updated_at": "2026-11-12T11:29:00Z",
+  "expected_next_update_by": "2026-11-12T12:44:00Z",
   "cycle": 65,
   "merging": null,
   "last_merged": {
@@ -15,5 +15,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 65. Cycle 64 was bookkeeping: AD's claim on P1-AD-board-1c recorded (session_01SNkKxmtatzN7YRTTZcPFsL, working, lease to 12:35Z, next update due 10:20Z); nothing ready, nothing merged. Merge board-1c when ready (fetch first; owners.py diff P1-AD-board-1c <main> <ready>); then S1 on P2-S1-flow-result and P2-S1-flow-replay, whose deps include board-1c. Restart a builder only if past its expected_next_update_by with its session not working. Run full checks one at a time in this container (flaky.md, BT-10): two side by side share user://settings.cfg and fail the settings test. In a fresh container install the tools the agents' prompts list, run `npm ci` in tools/ui_research and `bash client/build.sh` in the candidate worktree before guard.sh, and wait on `run_checks.sh` in the background (a run takes about 40 minutes). If main gains code commits during a check, rebuild the candidate; if main itself fails check_all, fix it with a lead commit ahead of the merge. At most three builders. Republish the pages after a merge moves main's code and changes them. Icon batches 3 and 4 stay deferred (D13 answer c). Only Opus 5.5 at effort high; never Fable 5.1."
+  "next_step": "Cycle 66. Cycle 65 merged P1-AD-board-1c as 6ee0f7d3 (board 1 round 3: A and B closed, D and F open) and started S1 (session_01SNkKxoXAbUvoLyhk2tDXzh) on P1-S1-pilot-5 (AD-R17, AD-R18). Merge pilot-5 when ready (fetch first; owners.py diff P1-S1-pilot-5 <main> <ready>; one full check_all at a time via tools/run_checks.sh; guard.sh, since it touches the client), then start AD on P1-AD-board-1d; phase 2's flow tasks wait on board-1d. At most three builders. A fresh container needs the tools installed (rustup targets, gdtoolkit, playwright, tools/ui_research npm ci, client/build.sh); the contained run's gdlint cache fix is in a60576ff. Icon batches 3 and 4 stay deferred (D13 (c)). Opus 5.5 at effort high only; never Fable 5.1."
 }
