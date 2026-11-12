@@ -4,17 +4,17 @@
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P1-S1-pilot-5",
+  "task_id": "P2-S1-flow-result",
   "task_state": "working",
-  "claimed_at": "2026-11-12T11:28:53Z",
-  "lease_until": "2026-11-12T15:15:37Z",
-  "updated_at": "2026-11-12T12:15:37Z",
-  "expected_next_update_by": "2026-11-12T13:00:37Z",
+  "claimed_at": "2026-11-12T17:48:59Z",
+  "lease_until": "2026-11-12T21:45:17Z",
+  "updated_at": "2026-11-12T18:45:17Z",
+  "expected_next_update_by": "2026-11-12T19:30:17Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "e846c531",
-    "next_step": "P1-S1-pilot-5: part 5 written; the pre-check at 3690e4ca failed one layout test (German 'GESETZE HIER' on the tag widened the top row past 1080 px in heist and replay). Fixed: at normal text a header wider than 80 points breaks between its words. Next: client tests, pre-check again, then the gate request.",
-    "at": "2026-11-12T12:15:37Z"
+    "last_green_sha": "beb8a023",
+    "next_step": "Main merged at a1477f2 (ready commit 262904c4 plus main); pre-check (check_all) and guard.sh to run on the merge (M11), then mark ready.",
+    "at": "2026-11-12T18:45:17Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -22,7 +22,8 @@
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6",
-    "M7"
+    "M7",
+    "M11"
   ],
   "requests": [
     {
@@ -193,8 +194,22 @@
         "client/world/creature_bust.gd"
       ],
       "default": "The in-game flat pass stays as the fix for D; the source art is unchanged, and the gate judges the pass."
+    },
+    {
+      "from": "S1",
+      "to": "lead",
+      "id": "S1-R13",
+      "blocking": false,
+      "created_at": "2026-11-12T18:45:17Z",
+      "due": "2026-11-13T18:45:17Z",
+      "escalate_to": "lead",
+      "ask": "Drop the byte count from RESULT_CONFIRMING in client/i18n/strings.csv (\"Checked on this phone (%d bytes); ...\" and its translations), or give the task that owns the string table this change: the flow finding F6 (AD-R12) asks the result screen to show no byte count, and result_screen.gd can only keep the string's first line.",
+      "files": [
+        "client/i18n/strings.csv"
+      ],
+      "default": "The result screen keeps RESULT_CONFIRMING as it is, with \"(N bytes)\" inline, shown only while a replay waits for the server."
     }
   ],
   "answers": [],
-  "next_step": "P1-S1-pilot-5: part 5 written; the pre-check at 3690e4ca failed one layout test (German 'GESETZE HIER' on the tag widened the top row past 1080 px in heist and replay). Fixed: at normal text a header wider than 80 points breaks between its words. Next: client tests, pre-check again, then the gate request."
+  "next_step": "Main merged at a1477f2 (ready commit 262904c4 plus main); pre-check (check_all) and guard.sh to run on the merge (M11), then mark ready."
 }
