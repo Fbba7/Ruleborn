@@ -8,7 +8,7 @@ extends RefCounted
 ## (`text_bg`), so the contrast check measures the words where they stand.
 
 ## The screens' names for T9's materials (ui/tokens.json `material`).
-const LOOKS := {"card": "card", "card_lit": "card_selected", "well": "track", "glass": "glass",
+const LOOKS := {"card": "card", "card_lit": "card_selected", "well": "well", "glass": "glass",
 	"parchment": "parchment", "leather": "leather", "gold": "gold", "cream": "chip_on", "red": "red", "green": "green",
 	"active": "tab_active", "tab": "tab", "oak": "frame_oak", "silver": "frame_silver", "goldframe": "frame_gold",
 	"prism": "frame_prismatic", "ghost": "ghost", "plate": "plate"}
