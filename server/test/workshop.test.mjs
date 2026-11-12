@@ -169,7 +169,13 @@ test("remixing hands over the island, and publishing the remix names the origina
   const player = t.service.session("gc:player").account;
   const draft = t.w.remix(player, original.id);
   assert.deepEqual(draft, t.island, "the island itself, to open in a builder");
-  const remix = t.w.publish(player, draft, t.cleared, { adjective: 4, noun: 0, remixOf: original.id });
+  assert.throws(() => t.w.publish(player, draft, t.cleared, { adjective: 4, noun: 0, remixOf: original.id }),
+                (e) => e.status === 409 && e.reason === "remix_unchanged", "a remix that changes nothing (SEC-41)");
+  const changed = Uint8Array.from(draft);
+  changed[6] = (changed[6] + 1) & 0xff;                  // the loot exposed
+  const remix = t.w.publish(player, changed,
+    t.build.record(changed, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() }),
+    { adjective: 4, noun: 0, remixOf: original.id });
   assert.equal(remix.remixOf, original.id);
   assert.equal(remix.creator, player, "a remix is its remixer's own island, cleared by them");
   assert.equal(t.w.view(t.w.row(original.id)).remixes, 1);

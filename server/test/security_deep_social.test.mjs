@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
+import { deleteAccount } from "../src/accounts.mjs";
 import { clockTicks } from "../src/service.mjs";
 import { Social } from "../src/social.mjs";
 import { COUNTED_AGE_MS, COUNTED_KEEPER_LEVEL, LONE_FANS_A_DAY, Workshop } from "../src/workshop.mjs";
@@ -162,8 +163,11 @@ test("SEC-26: of the qualified accounts that play only one creator's islands, th
   assert.equal(w.ladder(creator).completions, LONE_FANS_A_DAY);
   assert.equal(w.view(w.row(item.id)).ratings.count, LONE_FANS_A_DAY);
   // A player who has played someone else's island is no lone fan.
-  const elsewhere = w.publish(t.service.session("gc:other").account, island,
-                              t.build.record(island, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() }),
+  // Another creator's own island: other bytes, since these are listed (SEC-41).
+  const theirs = Uint8Array.from(island);
+  theirs[6] = (theirs[6] + 1) & 0xff;
+  const elsewhere = w.publish(t.service.session("gc:other").account, theirs,
+                              t.build.record(theirs, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() }),
                               { adjective: 2, noun: 2 });
   const wide = t.service.session("gc:wide").account;
   counting(t, wide);
@@ -175,6 +179,40 @@ test("SEC-26: of the qualified accounts that play only one creator's islands, th
   t.clock.now += 24 * HOUR;
   assert.deepEqual([5, 6, 7, 8].map((i) => fan(`lone${i}`)), [true, true, true, false]);
   assert.equal(w.ladder(creator).completions, 2 * LONE_FANS_A_DAY + 1);
+});
+
+test("SEC-41: another creator's listed or taken-down island is not listed again unchanged; a withdrawn one may be", () => {
+  const { t, w, island, cleared, creator, item, remove } = workshop();
+  const copier = t.service.session("gc:sec41-copier").account;
+  const status = (fn) => { try { fn(); return "listed"; } catch (e) { return `${e.status} ${e.reason}`; } };
+  const copy = (opts) => () => w.publish(copier, island, cleared, { adjective: 2, noun: 3, ...opts });
+  const fetched = w.remix(copier, item.id);
+  assert.deepEqual(Buffer.from(fetched), Buffer.from(island), "the remix hands over the bytes");
+  assert.equal(status(copy({ remixOf: item.id })), "409 remix_unchanged", "a remix changed nothing");
+  assert.equal(status(copy({})), "409 already_published", "nor a copy named as no remix");
+  assert.equal(w.publish(creator, island, cleared, { adjective: 3, noun: 4 }).bundle, item.bundle,
+               "its own creator may list it twice");
+  const other = t.build.exampleIsland(true);
+  other[6] = (other[6] + 1) & 0xff;                       // the loot exposed: other bytes
+  const otherClear = t.build.record(other, { seed: 7n, ticks: clockTicks(0), crew: 3, commands: openPlan() });
+  const changed = w.publish(copier, other, otherClear, { adjective: 2, noun: 3, remixOf: item.id });
+  assert.notEqual(changed.bundle, item.bundle, "a remix that changes something is listed");
+  remove(item.id);
+  assert.equal(status(copy({})), "409 already_published", "an island taken down is not listed again by another");
+  // The creator's second listing withdrawn as well: nothing of theirs is shown.
+  const second = w.mine(creator).find((i) => i.id !== item.id && i.bundle === item.bundle);
+  w.withdraw(creator, second.id);
+  assert.equal(status(copy({})), "409 already_published", "the taken-down one still counts");
+});
+
+test("SEC-41: an island its creator withdrew may be listed by another, and its bytes stay when that creator's account goes", () => {
+  const { t, w, island, cleared, creator, item } = workshop();
+  w.withdraw(creator, item.id);
+  const later = t.service.session("gc:sec41-later").account;
+  const listed = w.publish(later, island, cleared, { adjective: 2, noun: 3 });
+  assert.equal(listed.bundle, item.bundle);
+  deleteAccount(t.service, later, "under-13");
+  assert.notEqual(t.service.bundle(item.bundle), null, "the withdrawn island's creator still holds the bytes");
 });
 
 test("SEC-42: a crew's invite is shown to its members only", async () => {

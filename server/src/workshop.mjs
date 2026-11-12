@@ -168,6 +168,14 @@ export class Workshop {
     const read = build.island(bundle);
     if (read.error) throw new Refused(400, read.error);
     if (read.problems.length) throw new Refused(422, "island_not_publishable", { problems: read.problems });
+    // An island another creator lists, or one taken down, is not listed
+    // again unchanged as someone else's (SEC-41). Before the replay is
+    // re-simulated, so a copy costs no simulation. One its creator withdrew
+    // is theirs no longer to show, and the same bytes may be listed again.
+    const listedElsewhere = this.db.prepare(
+      `SELECT 1 FROM workshop_items WHERE bundle = ? AND creator != ?
+          AND (withdrawn_at IS NULL OR removed_at IS NOT NULL) LIMIT 1`).get(read.digest, creator);
+    if (listedElsewhere) throw new Refused(409, remixOf !== null ? "remix_unchanged" : "already_published");
 
     const header = readHeader(replay);
     if (!header || header.island !== read.digest) throw new Refused(422, "not_cleared", { why: "wrong_island" });
