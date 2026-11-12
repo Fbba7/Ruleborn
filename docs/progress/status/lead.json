@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-12T23:16:00Z",
+  "updated_at": "2026-11-12T23:46:00Z",
   "expected_next_update_by": "2026-11-13T00:31:00Z",
-  "cycle": 73,
-  "merging": null,
+  "cycle": 74,
+  "merging": {
+    "candidate_sha": "73b678eb",
+    "task_ids": [
+      "P2-S3-screenkit"
+    ],
+    "started_at": "2026-11-12T23:46:00Z",
+    "expires_at": "2026-11-13T00:46:00Z"
+  },
   "last_merged": {
     "task_id": "P2-AIA-motion-1",
     "sha": "a43e4d5a"
