@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T22:10:00Z",
   "lease_until": "2026-11-13T01:10:00Z",
-  "updated_at": "2026-11-12T23:15:00Z",
-  "expected_next_update_by": "2026-11-13T00:00:00Z",
+  "updated_at": "2026-11-12T23:20:00Z",
+  "expected_next_update_by": "2026-11-13T00:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "62c66327",
-    "next_step": "S2-R1 (badge, 0c3a5104) and S2-R2 (pins shrink to icon and level as a set; 7474c113 keeps them from overlapping) done and withdrawn as requests. FIT=1 in universe_home.gd passes at 100/150/200, en and pt_BR, hc, 9:16. Main merged at 41986564; check_all running on it. Next: check_screens, budget stills and guard, home-screen.md, AD preview; draw calls wait on S2-R7"
+    "next_step": "R1/R2 done; FIT passes in 11 cases; main merged at 41986564; check_all running on it; home-screen.md drafted; requests R5, R8-R10 added. Next: budget stills, guard, AD preview, handoff, pre-check"
   },
   "precheck": null,
   "gate_request": null,
@@ -55,6 +55,20 @@
       "escalate_to": "lead"
     },
     {
+      "id": "S2-R5",
+      "from": "S2",
+      "to": "lead",
+      "ask": "client/world/universe_reward.gd: let UniverseReward.fly take the pills by kind (a Dictionary, kind -> Control) in place of a UniversePurse, so home can fly Collect's reward to its KitStatus.resource pills without building a UniversePurse to hold them; then UniversePurse, UniverseStrain, UniverseSide, UniverseNotice and UniverseCollect can be retired (home uses none of them for drawing).",
+      "files": [
+        "client/world/universe_reward.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T23:20:00Z",
+      "due": "2026-11-14T20:00:00Z",
+      "default": "home.gd builds an empty UniversePurse, hands it its pills, flies the reward and frees it (as on this branch); the old widgets stay for a follow-up task",
+      "escalate_to": "lead"
+    },
+    {
       "id": "S2-R6",
       "from": "S2",
       "to": "K1",
@@ -81,6 +95,49 @@
       "created_at": "2026-11-12T22:43:00Z",
       "due": "2026-11-13T10:43:00Z",
       "default": "S2 marks P2-S2-home-1 ready with guard.sh failing only home/100 and home/hc's draw calls (139 vs 119), stated in the handoff with these figures; the merge waits on the lead's answer",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R8",
+      "from": "S2",
+      "to": "K1",
+      "ask": "KitPanels.notice: a notice that stays (frees neither on banner_ms nor on its cross, but hides and can be shown again, with a dismissed signal), and at text above KitLayout.SIDE_BY_SIDE_UP_TO the words over the full width with the icon, action and cross in a row beneath. Home's raid notice must stay until seen or dismissed (§21.8) and return with new raids.",
+      "files": [
+        "client/ui/kit_panels.gd",
+        "client/scripts/ui.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T23:20:00Z",
+      "due": "2026-11-14T20:00:00Z",
+      "default": "home.gd composes its raid notice from UI.panel('banner_alarm'), UI.status and UI.action, as KitPanels.notice is built",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R9",
+      "from": "S2",
+      "to": "K1",
+      "ask": "KitLayout.tap connects button_down twice, so every part made tappable logs 'Signal button_down is already connected' (home's strain and goal card; seen in every universe_home.gd run). Connect once, or check is_connected first.",
+      "files": [
+        "client/ui/kit_layout.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T23:20:00Z",
+      "due": "2026-11-14T20:00:00Z",
+      "default": "the error stays in the log; the tap works",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R10",
+      "from": "S2",
+      "to": "K1",
+      "ask": "Lower check_screens.py's records in tools/ui_bake/budgets.json after this task merges: client/scripts/home.gd draw 1 -> 0 and texture 2 -> 0, client/world/universe_badge.gd draw 7 -> 0 (python3 tools/ui_bake/check_screens.py --record).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T23:20:00Z",
+      "due": "2026-11-14T20:00:00Z",
+      "default": "the records stay higher than the counts; check_screens passes and notes the falls",
       "escalate_to": "lead"
     }
   ],
