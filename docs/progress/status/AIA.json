@@ -3,19 +3,24 @@
   "role": "AIA",
   "branch": "claude/ui-artist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-AIA-motion-1",
-  "task_state": "working",
+  "task_state": "blocked",
   "claimed_at": "2026-11-12T18:53:51Z",
   "lease_until": "2026-11-12T21:53:51Z",
-  "updated_at": "2026-11-12T19:20:00Z",
-  "expected_next_update_by": "2026-11-12T20:05:00Z",
+  "updated_at": "2026-11-12T19:40:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8fbe66d8",
-    "next_step": "record the pre-check on 8fbe66d8 and the guard result, answer AD's preview (AIA-R23) or let its default apply, then mark ready"
+    "next_step": "when AIA-R23 is answered or its due passes: answer AD's objections (or apply the default), merge current main, rerun the setup line, client/build.sh, the pre-check and guard.sh on the merge, then mark ready"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "8fbe66d892b812713bd3134c8e3ff90b1f9c1918",
+    "exit": 0,
+    "finished_at": "2026-11-12T19:31:51Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
@@ -206,14 +211,14 @@
       "id": "AIA-R23",
       "from": "AIA",
       "to": "AD",
-      "ask": "Preview the motion sprite sheet at phone size before P2-AIA-motion-1 is marked ready: art/ui/proof/motion_sheet.png (left normal, right high contrast; top on the night of the result screen, bottom on parchment; half the atlas scale, the size they show on a phone). Pieces: burst rays and ring, sparkle star and dot, shine sweep, coin face, turn and edge. The curves are in art/ui/motion/curves.json (revised at 8fbe66d8: rarity tiers, 300-700 ms anticipation, a counter pulse on each landing; every step 150-250 ms, cubic ease-out, no overshoot, each motion's reduced form named). Send every objection in one round (M12)",
+      "ask": "Preview the motion sprite sheet at phone size before P2-AIA-motion-1 is marked ready: art/ui/proof/motion_sheet.png (left normal, right high contrast; top on the night of the result screen, bottom on parchment; half the atlas scale, the size they show on a phone). Pieces: burst rays and ring, sparkle star and dot, shine sweep, coin face, turn and edge. The curves are in art/ui/motion/curves.json (revised at 8fbe66d8: rarity tiers, 300-700 ms anticipation, a counter pulse on each landing; every step 150-250 ms, cubic ease-out, no overshoot, each motion's reduced form named). Send every objection in one round (M12). It blocks marking the task ready (done-when M10, M12); everything else is done: pre-check PASS and ui guard OK at 8fbe66d8",
       "files": [
         "art/ui/proof/motion_sheet.png",
         "art/ui/motion/curves.json"
       ],
-      "blocking": false,
+      "blocking": true,
       "created_at": "2026-11-12T19:05:00Z",
-      "due": "2026-11-13T07:00:00Z",
+      "due": "2026-11-13T01:05:00Z",
       "default": "the sheet stands as drawn, and AIA marks the task ready when its checks pass",
       "escalate_to": "lead"
     },
@@ -239,5 +244,5 @@
       "at": "2026-11-10T06:50:38Z"
     }
   ],
-  "next_step": "record the pre-check on 8fbe66d8 and the guard result, answer AD's preview (AIA-R23) or let its default apply, then mark ready"
+  "next_step": "when AIA-R23 is answered or its due passes: answer AD's objections (or apply the default), merge current main, rerun the setup line, client/build.sh, the pre-check and guard.sh on the merge, then mark ready"
 }
