@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnWuvvM5evq2WinaFR` (cycle 63, 12
-November 2026 from 08:39Z, started by the Opus 5.5 launcher). Cycle 62's
+Latest lead cycle session: `session_01SNkKxqijuvwjXHbeAGDLGB` (cycle 64, 12
+November 2026 from 09:39Z, started by the Opus 5.5 launcher). Cycle 63's
+was `session_01SNkKxnWuvvM5evq2WinaFR` (from 08:39Z). Cycle 62's
 was `session_01SNkKxqEW3A3hwRz6VufQz5` (from 07:39Z). Cycle 61's
 was `session_01SNkKxrEkx6oXeGzdGm4sDr` (from 06:39Z). Cycle 60's
 was `session_01SNkKxp1vEH7M7oEGRULZPR` (from 04:38Z). Cycle 59's
@@ -374,6 +375,26 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 64, 12 November 2026, from 09:39Z (session
+  `session_01SNkKxqijuvwjXHbeAGDLGB`, started by the Opus 5.5 launcher):
+  a bookkeeping cycle, nothing merged, no session started.
+  - **Claim recorded** from AD's status: P1-AD-board-1c `claimed`
+    (claimed 09:35Z, lease to 12:35Z, next update due 10:20Z); its
+    session `session_01SNkKxmtatzN7YRTTZcPFsL` is working (rendering the
+    stills on main for A, B, D and the header). `owners.py claims`:
+    disjoint. Not past its `expected_next_update_by`, so not restarted.
+  - No task is ready and no gate request is open for an unmerged task
+    (K1's and S1's status files still show their merged tasks), so no
+    merge lock was taken. No new request: every request in the status
+    files is already in requests.md.
+  - The launcher (last run 09:38Z, succeeded) and the watchdog (last run
+    08:09Z, succeeded) are enabled. Main did not move, so the pages were
+    not republished. One builder, under the cap of three. The backlog
+    has 72 tasks, 55 merged. No owner-inbox entry.
+  - Next: merge board-1c when ready; then S1 on P2-S1-flow-result and
+    P2-S1-flow-replay (and the other phase 2 flow tasks) once board 1
+    stands or its open objections are filed. One full check at a time
+    (flaky.md). Icon batches 3 and 4 stay deferred (D13 (c)).
 - Cycle 63, 12 November 2026, from 08:39Z (session
   `session_01SNkKxnWuvvM5evq2WinaFR`, started by the Opus 5.5 launcher):
   P1-S1-pilot-4 and P1-K1-numerals-on merged as `541e4c97`.
