@@ -268,3 +268,100 @@ These are from `budget_shots.py --only heist/100,heist/200,heist/hc`. No record 
 
 - Objection A (numerals switched on) is P1-K1-numerals-on. The header's ink outline (AD-R14) is in the same task.
 - P1-AD-board-1c re-checks A, B, D and the header.
+
+## Part 5: board 1's objections D and F (P1-S1-pilot-5)
+
+Board 1's third round (`board-1.md`, Round 3) left two objections. For D (AD-R17), Bramble's grain and Hollow's glints still mottle the portraits at 119 px, so both should be painted flat, and Hollow should be framed head and shoulders like Mo, with its disc showing round its head. For F (AD-R18), the gold "Laws here" / "Leis aqui" header with its ink outline is lost on the night sky, because ink and sky are only a few L* apart.
+
+### What was done
+
+- **D, Bramble and Hollow painted flat.** `fx_portrait.gd` has a list of the kinds it paints flat (`TOON`: the quarryback and the glass golem). For those kinds, `FxPortrait.compose` now passes the cropped figure through `_toon` before it measures the figure and paints the disc:
+  1. **The solid figure.** It keeps the pixels more than 55% opaque, then drops any part thinner than a line: what a 1.6 px blur leaves under half. That removes Hollow's see-through spikes and rods.
+  2. **Three tones.** Each solid pixel takes one of three tones of the figure's median colour: 20% darker, the colour itself, or 26% towards white. Two lights choose the tone, weighed `form` to 1 − `form`:
+     - a light from the upper left on the silhouette's swell (the solid mask blurred at 7 px);
+     - the model's own lightness, blurred at 3 px.
+
+     The lowest 22% of the figure takes the dark tone and the top 15% the light one. Bramble's grain and Hollow's facet glints are gone.
+  3. **Marks.** A pixel that stands more than 22 L* off the figure's broad lightness (blurred at 5 px) keeps its own colour: eyes, Hollow's gem, Bramble's emblem.
+
+  Hollow's `form` is 0.85, because its own light is all facets; Bramble's is 0.65. Hollow is framed head and shoulders: its crop is centred at (0.5, 0.32) of the bust with radius 0.32, against (0.5, 0.44, 0.42) for the others. Its violet disc now shows round its head and shoulders, where before the figure filled the round. The disc, its value step and the ink silhouette of part 4 are unchanged. They are measured on the flat figure, so the steps stay near 30 L*. The portrait art itself (`CreatureBust`) is not changed.
+
+- **F, the header on the kit's tag plate.** `heist_hud.gd` seats "Laws here" / "Leis aqui" on `KitStatus.tag`: dark capitals (`text_on_gold`) on the gold plate, inside the kit's ink line. That replaces the gold words with an ink outline over the sky. The plate is 47 to 58 L* off the sky, where the old words' ink outline was a few L* off it. The plate's own ink line stays dark against the night sky, but the words no longer depend on it.
+  - **High contrast.** The kit thickens the tag's ink line (`line_hc`) and paints the plate white. The thick line crowded the capitals, and the guard read the words at 4.47:1 over the median of their box. In high contrast the words now carry a 2-point outline in the plate's own white (high contrast's `paper`), which keeps them off the line. §21.8 counts an outline of 1.5 points or more, and the words read 17.7:1 against it.
+
+- **FIT reads a broken label by its lines.** With no crew plan at 100% text in pt_BR, Cast says "Sem lançamentos" on two lines (part 3). FIT measured the whole text as one line, 360 px in a 316 px button, and failed a label that fits. `screen_heist.gd` now measures each line and takes the widest. Neither case was in part 4's FIT table. Both pass now, at sneak and at alarm.
+
+### Measured L*
+
+**Portraits.** Measured on the composites at 100% text (a 119 px disc), as `screen_heist.gd` prints them with `SIZES=1 PORTRAITS=dir`:
+
+| Portrait | Figure L* | Disc L* | Step | Least step (disc's dark edge) |
+|---|---|---|---|---|
+| Pip | 70.0 | 95.6 | 25.6 | 23.4 |
+| Mo | 61.8 | 91.4 | 29.6 | 27.6 |
+| Bramble | 56.1 | 85.3 | 29.3 | 27.7 |
+| Hollow | 57.4 | 87.3 | 29.8 | 27.7 |
+| Ash | 44.0 | 73.5 | 29.5 | 28.0 |
+
+Pip, Mo and Ash are unchanged from part 4. Bramble and Hollow keep their step, now over a flat figure. `part5-portraits-119.png` shows the five at 1:1 in colour, and `part5-portraits-119-gray.png` in grayscale. `part5-portraits-4x.png` and `part5-portraits-4x-gray.png` show them at 4×.
+
+**The header.** Read off the 100% en still:
+
+| Part | L* |
+|---|---|
+| sky behind the header | 13.3 to 16.1 |
+| plate's ink line | 4.8 |
+| gold plate | 62.6 to 71.6 |
+| plate's light rim | 96.6 |
+| capitals | 8.5 |
+
+On the 200% pt_BR still the rim reads 92 to 97 and the capitals 8.5. Ink and sky differ by about 9 L*, but the words no longer depend on that edge. The plate parts from the sky by 47 L* or more, and the capitals sit 54 L* or more below the plate. `part5-header-100-4x.png` and `part5-header-200-pt-4x.png` show the header at 4× on the 100% en and 200% pt_BR stills.
+
+### Evidence
+
+Stills are in `docs/art/shots/heist-pilot/`:
+
+- `part5-sneak-100`: crew plan, 100% text, en; the gate still for "heist at 100% text";
+- `part5-noplan-200-pt`: no crew plan, 200% text, pt_BR; the gate still for "heist at 200% text, pt_BR";
+- `part5-hc-100`: high contrast, 100% text;
+- `part5-portraits-*` and `part5-header-*`, listed above.
+
+The commands are part 4's. `FIT=1` passes in each of these cases:
+
+| Crew plan | Moment | Text | Language | Contrast | Draw calls (shot's count) |
+|---|---|---|---|---|---|
+| yes | sneak, alarm | 100% | en | normal | 133, 135 |
+| yes | sneak, alarm | 100% | pt_BR | normal | 137, 139 |
+| yes | sneak, alarm | 200% | en | normal | 133, 134 |
+| yes | sneak, alarm | 200% | pt_BR | normal | 133, 134 |
+| yes | alarm | 200% | pt_BR | high | 135 |
+| none | sneak, alarm | 100% | en | normal | 119, 121 |
+| none | sneak, alarm | 100% | pt_BR | normal | 125, 127 |
+| none | sneak, alarm | 200% | en | normal | 115, 117 |
+| none | sneak, alarm | 200% | pt_BR | normal | 116, 117 |
+| none | sneak | 100% | en | high | 120 |
+
+Each of these 18 runs exits 0 and prints "fit ok". The no-plan runs at 100% text in pt_BR failed before FIT read a broken label by its lines (see above). The no-plan gate still (part 4's command) also passes, at 122 draw calls.
+
+| Budget still | Draw calls (record) | Texture bytes (record) | Worst word contrast |
+|---|---|---|---|
+| heist/100 | 119 (120) | 2,226,828 (2,499,264) | 6.17 |
+| heist/200 | 115 (116) | 2,309,772 (2,333,376) | 6.43 |
+| heist/hc | 120 (120) | 2,226,828 (2,499,264) | 5.55 |
+
+The tag plate costs one draw call more than part 4's outlined words (118, 114 and 118). The paper outline in high contrast costs one more, so heist/hc sits at its record. No word is below 4.5:1 in any of the three.
+
+These are from `budget_shots.py --only heist/100,heist/200,heist/hc`. No record moves. `check_screens.py` passes with the same counts (226 draw, 29 fill, 27 texture).
+
+### What is still worse
+
+- **Bramble reads as a flat grey-violet mass with small eyes.** Its shell, its legs and its face are one tone apart at most. The grain is gone, but so is most of what made it a Bramble. A cleaner flat figure needs the portrait art itself (AIA-2).
+- **Hollow's facets are gone with its glints.** It reads as a violet toon figure with its eyes and gem, not as glass.
+- **The flat pass is computed in the game**, in GDScript, once per creature and size, the first time a portrait shows at that size, with several blurs on a 119 px image (not timed). A baked set would need AIA-2.
+- **The header's plate is a kit tag**, the same shape as a card's corner ribbon (FEATURED SET), so the header reads as a label, not as a heading.
+
+### Left for other tasks
+
+- Objection A (numerals switched on) is P1-K1-numerals-on.
+- The portrait art at its source (a flat-painted Bramble and Hollow) would be AIA-2's. A request to the lead is in S1.json.
+- P1-AD-board-1d re-checks D and F.
