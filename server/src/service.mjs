@@ -34,7 +34,7 @@ import { GIFT_KEEP_DAYS, INTENT_MS, Shop } from "./shop.mjs";
 import { readHeader, readManifest } from "./sim.mjs";
 import { Journal } from "./accounts.mjs";
 import { Keeper, heistExperience } from "./keeper.mjs";
-import { Store } from "./store.mjs";
+import { Store, sha256 } from "./store.mjs";
 import { Auth } from "./auth.mjs";
 import { keyring } from "./tokens.mjs";
 import { Telemetry, lawsOf } from "./telemetry.mjs";
@@ -66,6 +66,14 @@ export const TARGET_LISTS_MS = 60 * 60 * 1000;
 /** G38's one rule: something that names a player and serves no purpose
  *  once closed is deleted within seven days of closing. */
 export const CLOSED_KEEP_DAYS = 7;
+/** SEC-18 B (decided): what an account may store of its replays in a UTC
+ *  day. A replay is at most one body (16 KiB, http.mjs), so this is over a
+ *  hundred submissions; past it a refused submission stores nothing. A
+ *  validated heist is always stored, and counts. */
+export const REPLAY_BYTES_A_DAY = 2 * 2 ** 20;
+/** SEC-18 B: a submission refused after its header checks is kept this many
+ *  days for review and its sender, not the full retention (§24.3). */
+export const REFUSED_KEEP_DAYS = 7;
 
 /** §24.10: "Tick rate — 30 a second, fixed." */
 // SR-15 (the owner's, until D60 reads the ledger): §24.8 has a published
@@ -617,11 +625,14 @@ export class Service {
     if (done) return { ...JSON.parse(done.outcome), repeated: true };
 
     // §24.3: kept for validation and analysis, and for the two players to
-    // watch (§13), in the private store.
-    const logHash = this.replays.put(replay);
+    // watch (§13), in the private store — but only once the header says the
+    // bytes are this lease's heist (SEC-18 B). Junk refused before that is
+    // never written; its row names its hash and has no replay.
+    const logHash = sha256(replay);
     const header = readHeader(replay);
+    let checked = false;
     const refuse = (reason, extra = {}) => this.settle(lease, replay, logHash, now,
-                                                       { validated: false, reason, ...extra });
+      { validated: false, reason, ...extra, kept: checked ? this.keepRefused(attacker, replay, now) : 0 });
 
     // The replay must be the heist this lease allowed: its snapshot, or its
     // universe, its seed, its clock — across a universe, one of its landing
@@ -646,6 +657,7 @@ export class Service {
       if (used > 0) return refuse("lease_expired");
       grace = true;
     }
+    checked = true;
 
     // TD.34: the roster's characters the device names as the crew, held,
     // not away, and the replay manifest's own (home.mjs). §12.5: a manifest
@@ -704,11 +716,33 @@ export class Service {
     const cast = casts.filter((_, i) => (result.verdict.castsUsed ?? 0) & (1 << i));
     const castAether = cast.reduce((n, law) => n + castPrice(law), 0);
     if (castAether > this.aether(attacker)) return refuse("not_enough_aether", { cost: castAether });
+    // A heist played is always kept: below the free-space floor it is
+    // refused 503 and its lease kept for a later submission (SEC-18 A).
+    this.replays.put(replay);
     return this.settle(lease, replay, logHash, now,
                        { validated: true, verdict: result.verdict, grace, crew,
                          cast: { laws: cast, aether: castAether },
                          heistMs: Math.round((header.ticks / TICKS_PER_SECOND) * 1000),
                          report: result.report, crossing });
+  }
+
+  /**
+   * SEC-18 B: a refused submission's bytes, past its header checks, stored
+   * while the account's day stays under REPLAY_BYTES_A_DAY and the volume
+   * above its floor; how many bytes were stored, 0 for none. A refusal is
+   * never answered 503: it is settled, with nothing kept.
+   */
+  keepRefused(attacker, replay, now) {
+    const today = this.db.prepare(
+      "SELECT COALESCE(SUM(log_bytes), 0) AS n FROM heists WHERE attacker = ? AND day = ?").get(attacker, day(now)).n;
+    if (today + replay.length > REPLAY_BYTES_A_DAY) return 0;
+    try {
+      this.replays.put(replay);
+    } catch (e) {
+      if (e instanceof Refused && e.reason === "storage_low") return 0;
+      throw e;
+    }
+    return replay.length;
   }
 
   /**
@@ -765,11 +799,14 @@ export class Service {
       }
       this.db.prepare(
         `INSERT INTO heists (token, attacker, bundle, seed, log_hash, state_hash, validated,
-                             outcome, review, grace, submitted_at, day, defender)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+                             outcome, review, grace, submitted_at, day, defender, replay_gone, log_bytes)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
         .run(lease.token, lease.attacker, lease.bundle, lease.seed, logHash, stateHash, decision.validated ? 1 : 0,
              JSON.stringify(outcome), decision.review ? 1 : 0, decision.grace ? 1 : 0, now, day(now),
-             lease.defender);
+             // A validated heist's bytes are stored before it settles; a
+             // refusal's only as keepRefused says (SEC-18 B).
+             lease.defender, decision.validated || decision.kept ? 0 : 1,
+             decision.kept ?? (decision.validated ? replay.length : 0));
       // §24's analytics: a heist's "outcome, laws crossed, crew".
       this.telemetry.record(lease.attacker, "heist", decision.validated
         ? { validated: true, grade: decision.verdict.grade, crew: decision.verdict.crew,
@@ -1039,11 +1076,14 @@ export class Service {
   }
 
   /** §24.3: "Raw replays and logs are kept 30 to 90 days". Past the
-   *  longest, a replay goes; its heist row and hashes stay. Idempotent. */
+   *  longest, a replay goes; its heist row and hashes stay. A refused
+   *  submission's go after REFUSED_KEEP_DAYS (SEC-18 B). Idempotent. */
   expireReplays(now = this.now()) {
     const before = now - facts.RAW_KEEP_DAYS * DAY_MS;
+    const refusedBefore = now - REFUSED_KEEP_DAYS * DAY_MS;
     const old = this.db.prepare(
-      "SELECT token, log_hash FROM heists WHERE replay_gone = 0 AND submitted_at < ?").all(before);
+      `SELECT token, log_hash FROM heists WHERE replay_gone = 0
+          AND (submitted_at < ? OR (validated = 0 AND submitted_at < ?))`).all(before, refusedBefore);
     // In chunks, each its own short transaction, so a long backlog never holds
     // the write lock for the whole loop; the files go after each commit (a
     // crash between the two leaves an orphan file, never a row without bytes).
@@ -1053,7 +1093,8 @@ export class Service {
         for (const h of old.slice(i, i + EXPIRE_CHUNK)) {
           // Two heists can carry the same bytes; the replay stays while any is kept.
           const kept = this.db.prepare(
-            "SELECT 1 FROM heists WHERE log_hash = ? AND replay_gone = 0 AND submitted_at >= ?").get(h.log_hash, before);
+            `SELECT 1 FROM heists WHERE log_hash = ? AND replay_gone = 0 AND submitted_at >= ?
+                AND (validated = 1 OR submitted_at >= ?)`).get(h.log_hash, before, refusedBefore);
           if (!kept) files.push(h.log_hash);
           this.db.prepare("UPDATE heists SET replay_gone = 1 WHERE token = ?").run(h.token);
         }

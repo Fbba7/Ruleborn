@@ -104,3 +104,79 @@ test("SEC-25: the stray roll cannot be worked out from the account and the token
   // The same key after a restart: it comes from the server's secret.
   assert.deepEqual(t.service.home.strayKey, twoPlayers(false).service.home.strayKey);
 });
+
+// SEC-18 part B (decided): bytes were stored before any check, so junk that
+// was no heist at all was kept the full retention and handed back to its
+// sender. Now nothing is stored until the header checks pass; a submission
+// refused after them is kept 7 days at most (review evidence); and an
+// account stores at most REPLAY_BYTES_A_DAY of replays a day, past which a
+// refusal stores nothing (a validated heist is always stored).
+const DAY = 24 * 60 * 60 * 1000;
+const replayOf = (t, token) => t.service.db.prepare(
+  "SELECT log_hash, replay_gone, validated FROM heists WHERE token = ?").get(token);
+// The replay's answer to `who`, by the service itself: a session's token
+// would lapse as these tests move the clock on by days.
+const fetchReplay = async (t, who, token) => {
+  try { t.service.replay(who.account, token); return 200; } catch (e) { return e.status; }
+};
+// A played replay whose final state hash is wrong: it passes the header
+// checks and the simulation refuses it.
+const tampered = (bytes) => { const b = Uint8Array.from(bytes); b[b.length - 1] ^= 0xff; return b; };
+
+test("SEC-18 B: a submission refused before its header checks pass stores no bytes, and its sender gets 410", async () => {
+  const t = twoPlayers(true);
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  const junk = new Uint8Array(4096).fill(7);
+  const out = t.service.submit(t.raider.account, lease.token, junk);
+  assert.deepEqual([out.validated, out.reason], [false, "replay_malformed"]);
+  const row = replayOf(t, lease.token);
+  assert.equal(t.service.replays.get(row.log_hash), null, "junk is never written");
+  assert.equal(row.replay_gone, 1);
+  assert.equal(await fetchReplay(t, t.raider, lease.token), 410);
+  // A wrong seed is refused by the header too.
+  const other = t.service.lease(t.raider.account, t.bundle);
+  const wrong = t.service.submit(t.raider.account, other.token, play(t, lease, { plan: openPlan() }));
+  assert.equal(wrong.reason, "wrong_seed");
+  assert.equal(t.service.replays.get(replayOf(t, other.token).log_hash), null);
+});
+
+test("SEC-18 B: a submission refused after the header checks is kept 7 days, a validated one the full retention", async () => {
+  const t = twoPlayers(true);
+  const bad = t.service.lease(t.raider.account, t.bundle);
+  const refused = t.service.submit(t.raider.account, bad.token, tampered(play(t, bad, { plan: openPlan() })));
+  assert.equal(refused.validated, false);
+  assert.notEqual(refused.reason, "replay_malformed");
+  assert.equal(await fetchReplay(t, t.raider, bad.token), 200, "kept for review and its sender");
+  const good = t.service.lease(t.raider.account, t.bundle);
+  assert.equal(t.service.submit(t.raider.account, good.token, play(t, good, { plan: openPlan() })).validated, true);
+  t.clock.now += 6 * DAY;
+  t.service.expireReplays();
+  assert.equal(await fetchReplay(t, t.raider, bad.token), 200, "six days on, still kept");
+  t.clock.now += 1 * DAY + 1000;
+  t.service.expireReplays();
+  assert.equal(await fetchReplay(t, t.raider, bad.token), 410, "past seven days, gone");
+  assert.equal(t.service.replays.get(replayOf(t, bad.token).log_hash), null, "and its bytes deleted");
+  assert.equal(await fetchReplay(t, t.raider, good.token), 200, "the played heist stays");
+});
+
+test("SEC-18 B: past 2 MiB of replays a day a refusal stores nothing, a validated heist is still stored", async () => {
+  const { REPLAY_BYTES_A_DAY } = await import("../src/service.mjs");
+  assert.equal(REPLAY_BYTES_A_DAY, 2 * 2 ** 20);
+  const t = twoPlayers(true);
+  const first = t.service.lease(t.raider.account, t.bundle);
+  assert.equal(t.service.submit(t.raider.account, first.token, play(t, first, { plan: openPlan() })).validated, true);
+  // The day's uploads stand just under the quota.
+  t.service.db.prepare("UPDATE heists SET log_bytes = ? WHERE token = ?").run(REPLAY_BYTES_A_DAY - 100, first.token);
+  const bad = t.service.lease(t.raider.account, t.bundle);
+  assert.equal(t.service.submit(t.raider.account, bad.token, tampered(play(t, bad, { plan: openPlan() }))).validated, false);
+  assert.equal(replayOf(t, bad.token).replay_gone, 1);
+  assert.equal(await fetchReplay(t, t.raider, bad.token), 410);
+  const good = t.service.lease(t.raider.account, t.bundle);
+  assert.equal(t.service.submit(t.raider.account, good.token, play(t, good, { plan: openPlan() })).validated, true);
+  assert.equal(await fetchReplay(t, t.defender, good.token), 200, "a raid played is always kept");
+  // The next day the quota is new.
+  t.clock.now += DAY;
+  const next = t.service.lease(t.raider.account, t.bundle);
+  t.service.submit(t.raider.account, next.token, tampered(play(t, next, { plan: openPlan() })));
+  assert.equal(replayOf(t, next.token).replay_gone, 0);
+});

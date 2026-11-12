@@ -957,7 +957,7 @@
    }
   },
   "heists": {
-   "about": "Each submitted heist: the replay's hash, the verdict, what it paid (§24.8). The replay's bytes are kept 90 days in the private store.",
+   "about": "Each submitted heist: the replay's hash, the verdict, what it paid (§24.8). The replay's bytes are kept 90 days in the private store; a refused submission's 7 days, and none of one refused before its header checks pass (SEC-18).",
    "purposes": [
     "functionality",
     "security"
@@ -1023,6 +1023,10 @@
      "type": "user-id",
      "names": "account",
      "holds": "whose island the heist raided, as its lease names them"
+    },
+    "log_bytes": {
+     "type": "none",
+     "holds": "how many bytes of replay the row stored, for the account's daily upload limit (SEC-18)"
     }
    }
   },

@@ -362,7 +362,10 @@ CREATE TABLE IF NOT EXISTS heists (
   -- Whose island it raided, as its lease names them: the defence log, the
   -- raid badge and the Trace read a player's raids by it, each a range of
   -- its index where they read every lease ever issued (§24.1's reads).
-  defender     TEXT REFERENCES accounts(id)
+  defender     TEXT REFERENCES accounts(id),
+  -- SEC-18 B: how many bytes of replay this row stored, 0 for none: an
+  -- account's day stores at most service.REPLAY_BYTES_A_DAY.
+  log_bytes    INTEGER NOT NULL DEFAULT 0
 ) WITHOUT ROWID;
 -- Keyed by its token alone, as a lease is: one index entry the fewer.
 -- A player's heists by day: every count of the day's and week's heists
@@ -1057,6 +1060,7 @@ const ADDED = [
   ["accounts", "raider_volatility", "REAL"],
   ["accounts", "raider_games", "INTEGER"],
   ["heists", "defender", "TEXT REFERENCES accounts(id)"],
+  ["heists", "log_bytes", "INTEGER NOT NULL DEFAULT 0"],
   ["ledger", "starlight_total", "INTEGER"],
   ["ledger", "essence_total", "INTEGER"],
   ["ledger", "aether_total", "INTEGER"],
