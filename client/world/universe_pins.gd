@@ -20,6 +20,10 @@ const RESOURCE := {"star_well": ["#F2B43C", "✦"], "aether_spring": ["#3CC6D8",
 var view: UniverseView
 ## Each pin: {"node": Control, "at": Vector3 or realm id, "realm": id, "lift": metres, "zooms": [levels]}.
 var _pins: Array[Dictionary] = []
+## Every realm's pin shows only its icon and level: the room was too short for
+## one of them with its name (§20.8's large text). Until the room changes.
+var _compact := false
+var _room := []
 
 
 func _init(owner_view: UniverseView) -> void:
@@ -301,11 +305,26 @@ static func _words(text: String, colour: Color) -> Label:
 
 
 ## Every pin where the camera now shows its point, shown at the zooms it
-## belongs to.
+## belongs to. Where a realm's pin would find no room with its name, every
+## realm's pin shrinks to its icon and level together, rather than one realm
+## going unnamed; the names come back when the room changes.
 func follow() -> void:
 	if view.camera == null or not view.camera.is_inside_tree():
 		return
 	queue_redraw()
+	var room := [view.size, view.inset, view.zoom, view.keep_clear]
+	if room != _room:
+		_room = room
+		_compact = false
+	if not _lay(_compact) and not _compact:
+		_compact = true
+		_lay(true)
+
+
+## The pins laid out once, the realms' with or without their names; false
+## where a realm's pin that belongs on the screen found no room.
+func _lay(compact: bool) -> bool:
+	var every := true
 	var toward := view.toward()
 	var taken: Array[Rect2] = []
 	# Pins keep clear of the screen's own controls (home's side buttons).
@@ -315,7 +334,7 @@ func follow() -> void:
 		if p.has("at"):
 			node.visible = view.zoom in (p["zooms"] as Array)
 			if node.visible:
-				_place(node, view.camera.unproject_position(p["at"]), taken, taken_by_screen)
+				_place(node, view.camera.unproject_position(p["at"]), taken, taken_by_screen, view.inset.x)
 			continue
 		var id := str(p.get("realm", ""))
 		if not view.islands.has(id):
@@ -330,10 +349,11 @@ func follow() -> void:
 			shown = shown and not small
 		if p.get("front", false):
 			# A small island's pin is its icon and level; a nearer one's its name
-			# between them.
+			# between them, where the room allows every realm's.
+			var bare := small or compact
 			var words := node.get_child(0).get_child(1) as Control
-			if words.visible == small:
-				words.visible = not small
+			if words.visible == bare:
+				words.visible = not bare
 				node.reset_size()
 		if view.zoom > 0 and id != view.focus_id:
 			shown = false
@@ -358,15 +378,23 @@ func follow() -> void:
 				node.visible = false
 				continue
 			at = (isl.places[str(p["place"])] as Vector3) + Vector3(0, float(p["lift"]), 0)
-		_place(node, view.camera.unproject_position(at), taken, taken_by_screen)
+		_place(node, view.camera.unproject_position(at), taken, taken_by_screen, view.inset.x)
+		if p.get("front", false) and not node.visible:
+			every = false
+	return every
 
 
 ## A pin centred on `s`, kept in the gap between `screen`'s controls on its
 ## row (home's side buttons), or below them where it is wider than the gap,
-## unless it would cover one already placed.
-static func _place(node: Control, s: Vector2, taken: Array[Rect2], screen: Array[Rect2]) -> void:
+## unless it would cover one already placed; never above `ceiling`, the
+## screen's controls at the top (the view's inset), which it would slip under.
+static func _place(node: Control, s: Vector2, taken: Array[Rect2], screen: Array[Rect2],
+		ceiling := 0.0) -> void:
 	node.position = (s - node.size / 2.0).round()
+	node.position.y = maxf(node.position.y, ceiling + UI.px(2))
 	var wide := (node.get_parent() as Control).size.x
+	# The foot of the side controls beside the gap the pin was kept in.
+	var beside := -1.0
 	for attempt: int in 4:
 		var lo := UI.px(4)
 		var hi := wide - UI.px(4)
@@ -390,6 +418,7 @@ static func _place(node: Control, s: Vector2, taken: Array[Rect2], screen: Array
 			continue
 		if hi - lo >= node.size.x:
 			node.position.x = clampf(node.position.x, lo, hi - node.size.x)
+			beside = lowest
 			break
 		if lowest < 0.0 or attempt == 3:
 			# And inside the screen's edges.
@@ -397,16 +426,40 @@ static func _place(node: Control, s: Vector2, taken: Array[Rect2], screen: Array
 				node.position.x = clampf(node.position.x, UI.px(4), wide - node.size.x - UI.px(4))
 			break
 		node.position.y = lowest + UI.px(2)
-	# Where it would cover another, a step down or up, else not at all; never
-	# onto the screen's own controls.
-	for step: float in [0.0, 1.0, -1.0]:
-		var box := Rect2(node.position + Vector2(0.0, step * (node.size.y + UI.px(2))), node.size).grow(-UI.px(2))
-		if not taken.any(func(other: Rect2) -> bool: return other.intersects(box)) \
-				and not screen.any(func(other: Rect2) -> bool: return other.intersects(box)):
-			node.position = box.grow(UI.px(2)).position
-			taken.append(box)
+	# Where it would cover another, just clear of it below or above, within
+	# three of its heights; where the gap between the side controls is full,
+	# below them over its own point; else not at all.
+	if _settle(node, taken, screen, ceiling):
+		return
+	if beside >= 0.0 and wide > node.size.x:
+		node.position = Vector2(clampf(roundf(s.x - node.size.x / 2.0), UI.px(4), wide - node.size.x - UI.px(4)),
+			beside + UI.px(2))
+		if _settle(node, taken, screen, ceiling):
 			return
 	node.visible = false
+
+
+## The pin where it stands, or else the nearest height just clear of a pin
+## already placed or a control of the screen's, within three of its own
+## heights up or down, that covers neither; false where none is free.
+static func _settle(node: Control, taken: Array[Rect2], screen: Array[Rect2], ceiling: float) -> bool:
+	var from := node.position.y
+	var gap := UI.px(2)
+	var heights: Array[float] = [from]
+	for r: Rect2 in taken + screen:
+		if r.position.x < node.position.x + node.size.x and r.end.x > node.position.x:
+			heights.append(r.end.y + gap)
+			heights.append(r.position.y - node.size.y - gap)
+	heights = heights.filter(func(y: float) -> bool: return y >= ceiling and absf(y - from) <= node.size.y * 3.0)
+	heights.sort_custom(func(a: float, b: float) -> bool: return absf(a - from) < absf(b - from))
+	for y: float in heights:
+		var box := Rect2(Vector2(node.position.x, y), node.size).grow(-gap)
+		if not taken.any(func(other: Rect2) -> bool: return other.intersects(box)) \
+				and not screen.any(func(other: Rect2) -> bool: return other.intersects(box)):
+			node.position.y = y
+			taken.append(box)
+			return true
+	return false
 
 
 ## Where a producer of `kind` stands on its island, its pin over it.

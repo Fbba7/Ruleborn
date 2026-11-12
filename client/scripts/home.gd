@@ -382,11 +382,11 @@ func _floor() -> Control:
 	return over if over.size.y * 4.0 >= room else tabs
 
 
-## Over the whole universe every realm is named, or none is: where the room
-## is too short for every realm's pin (§20.8's large text on a short phone),
-## the pins give way together rather than leave some realms unnamed. Each
-## realm is still said aloud with the world, and each island still takes its
-## tap.
+## Over the whole universe every realm is named, or none is. Where the room is
+## short (§20.8's large text) the realms' pins first shrink to their icons and
+## levels together (UniversePins); where even then one finds no room, the pins
+## give way together rather than leave some realms unnamed. Each realm is still
+## said aloud with the world, and each island still takes its tap.
 func _fit_pins() -> void:
 	var pins := world.pins
 	var whole := true

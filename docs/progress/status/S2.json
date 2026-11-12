@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-12T22:10:00Z",
   "lease_until": "2026-11-13T01:10:00Z",
-  "updated_at": "2026-11-12T22:43:00Z",
-  "expected_next_update_by": "2026-11-12T23:28:00Z",
+  "updated_at": "2026-11-12T23:00:00Z",
+  "expected_next_update_by": "2026-11-12T23:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "62c66327",
-    "next_step": "S2-R2 pins (universe_pins.gd), FIT=1 in universe_home.gd, then the checks; draw calls wait on S2-R7"
+    "next_step": "S2-R1 (badge, 0c3a5104) and S2-R2 (pins shrink to icon and level as a set, never under the purse; every realm named at 150% in en and pt_BR) done in this task and withdrawn as requests. Next: FIT=1 in universe_home.gd, the checks, home-screen.md; draw calls wait on S2-R7"
   },
   "precheck": null,
   "gate_request": null,
@@ -23,35 +23,6 @@
     "M13"
   ],
   "requests": [
-    {
-      "id": "S2-R1",
-      "from": "S2",
-      "to": "lead",
-      "ask": "universe_badge.gd: start the renown number past the gem at every text size (at 200% the gem, h*1.15 wide from chip.x - g*0.45, covers the first digit, as the text sits at chip.x + px(16)), so Home can drop its padding.",
-      "files": [
-        "client/world/universe_badge.gd",
-        "client/scripts/home.gd"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-12T18:15:00Z",
-      "due": "2026-11-13T18:15:00Z",
-      "default": "home.gd keeps padding the renown with spaces where the gem would cover it (_clear_of_gem); nothing changes at 100% text",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "S2-R2",
-      "from": "S2",
-      "to": "lead",
-      "ask": "universe_pins.gd: let a front realm pin shrink to its icon and level when the room is short, not only on islands under 28 points against the whole view's height, so at 150% and 200% text the Home pins shrink rather than hide as a set.",
-      "files": [
-        "client/world/universe_pins.gd"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-12T18:15:00Z",
-      "due": "2026-11-13T18:15:00Z",
-      "default": "Home hides the whole pins layer at the whole universe whenever a realm pin would be missing (_fit_pins); the realms stay in the world's spoken description and each island still takes its tap",
-      "escalate_to": "lead"
-    },
     {
       "id": "S2-R3",
       "from": "S2",
