@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqr3DC7Kb5YZfijUtN` (cycle 66, 12
-November 2026 from 11:39Z, started by the Opus 5.5 launcher). Cycle 65's
+Latest lead cycle session: `session_01SNkKxqJqzRbvVerXcUszbd` (cycle 67, 12
+November 2026 from 12:39Z, started by the Opus 5.5 launcher). Cycle 66's
+was `session_01SNkKxqr3DC7Kb5YZfijUtN` (from 11:39Z). Cycle 65's
 was `session_01SNkKxqZN7A6CTcTtr4tEcm` (from 10:38Z). Cycle 64's
 was `session_01SNkKxqijuvwjXHbeAGDLGB` (from 09:39Z). Cycle 63's
 was `session_01SNkKxnWuvvM5evq2WinaFR` (from 08:39Z). Cycle 62's
@@ -378,6 +379,33 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 67, 12 November 2026, from 12:39Z (session
+  `session_01SNkKxqJqzRbvVerXcUszbd`, started by the Opus 5.5 launcher):
+  a bookkeeping cycle, nothing merged, no session started.
+  - **S1 on P1-S1-pilot-5**, `working` (status 12:15Z, lease to 15:15Z,
+    next update due 13:00Z): part 5 of the heist pilot written
+    (`3690e4ca`); its pre-check failed one layout test (German "GESETZE
+    HIER" on the tag widened the top row past 1080 px), fixed in
+    `beb8a023` (a header wider than 80 points breaks between its words),
+    and a second pre-check is running. Its session
+    `session_01SNkKxoXAbUvoLyhk2tDXzh` reads working; not past its
+    `expected_next_update_by`, so not restarted.
+  - **New request S1-R12** (to the lead, not blocking): should AIA-2
+    flat-paint Bramble and Hollow at their source? Recorded as the
+    default in requests.md: the in-game flat pass stays as D's fix and
+    the gate judges it; if the gate or board-1d leaves D open, the lead
+    seeds an AIA-2 task then.
+  - No task is ready and no gate request is open for an unmerged task
+    (AIA's, AIA-2's, SV's and AD's status files still show merged
+    tasks), so no merge lock was taken. Main did not move, so the pages
+    were not republished.
+  - The launcher (last run 12:39Z, succeeded) and the watchdog (last run
+    12:12Z, succeeded) are enabled. One builder, under the cap of three.
+    The backlog has 74 tasks, 56 merged. No owner-inbox entry.
+  - Next: merge pilot-5 when ready (owners diff, one full check at a
+    time, and guard.sh since it touches the client; guard.sh has not
+    yet been run on main after the SEC client commits), then start AD on
+    P1-AD-board-1d. Icon batches 3 and 4 stay deferred (D13 (c)).
 - Cycle 66, 12 November 2026, from 11:39Z (session
   `session_01SNkKxqr3DC7Kb5YZfijUtN`, started by the Opus 5.5 launcher):
   a bookkeeping cycle, nothing merged, no session started.

@@ -295,6 +295,20 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   still needs it there. Cycle 56: `heist_hand.gd` is in P1-S1-pilot-3's
   files.
 
+- **S1-R12** (from S1, 12 November 2026 11:55Z; due 13 November 11:55Z;
+  not blocking): board 1's objection D (AD-R17) is met in game by a flat
+  pass in `client/world/fx_portrait.gd` (`FxPortrait._toon`: Bramble and
+  Hollow in three tones of their colour, marks kept). At 119 px Bramble
+  reads as a grey-violet mass with small eyes, and the pass runs in
+  GDScript the first time each portrait shows at a size. Asks whether
+  AIA-2 should flat-paint Bramble and Hollow at their source
+  (`client/world/creature_bust.gd`). Default: the in-game pass stays as
+  the fix for D, the source art is unchanged, and the gate judges the
+  pass. **Recorded** by the lead in cycle 67, as the default: no AIA-2
+  task now (icon and art batches stay paced by D13 (c)). If the gate on
+  P1-S1-pilot-5 or AD's re-check in P1-AD-board-1d leaves objection D
+  open, the lead seeds an AIA-2 task on the source art then.
+
 - **K1-R12** (from K1, 9 November 2026; due 10 November 12:00Z):
   P1-K1-switch-heist needs `client/ui/rb_box.gd` (the face drawn from the
   atlas, the tinted box under its frame, the selected rim, a piece's margin
