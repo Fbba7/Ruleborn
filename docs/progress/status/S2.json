@@ -3,23 +3,25 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S2-home-2",
   "task_state": "working",
   "claimed_at": "2026-11-13T05:23:34Z",
   "lease_until": "2026-11-13T08:23:34Z",
-  "updated_at": "2026-11-13T05:39:45Z",
-  "expected_next_update_by": "2026-11-13T06:24:45Z",
-  "long_run": {
-    "log": "/tmp/check-3612e26564859e8df7c3ce1cd48dba118580d9da.log",
-    "expected_end": "2026-11-13T06:09:45Z"
-  },
+  "updated_at": "2026-11-13T06:16:52Z",
+  "expected_next_update_by": "2026-11-13T07:01:52Z",
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "e37c765d",
-    "next_step": "Pre-check on 3612e265; the gate on home at 100%; AD preview (S2-R18); draw-call record (S2-R17)",
-    "at": "2026-11-13T05:39:03Z"
+    "last_green_sha": "3612e265",
+    "next_step": "Gate verdict on home at 100% (gate_request at 3612e265); then mark ready in the same turn. guard.sh fails only home 145/114/145 draw calls (S2-R17)",
+    "at": "2026-11-13T06:16:52Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "3612e26564859e8df7c3ce1cd48dba118580d9da",
+    "exit": 0,
+    "finished_at": "2026-11-13T06:10:29Z",
+    "summary": "All checks passed."
+  },
   "gate_request": {
     "sha": "3612e26564859e8df7c3ce1cd48dba118580d9da",
     "items": [
