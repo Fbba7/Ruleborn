@@ -1,19 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-13T04:44:42Z",
-  "expected_next_update_by": "2026-11-13T05:59:42Z",
+  "updated_at": "2026-11-13T05:23:00Z",
+  "expected_next_update_by": "2026-11-13T06:38:00Z",
   "cycle": 77,
-  "merging": {
-    "candidate_sha": "3d682157b95c2cab03772143ec18a7cf9847a644",
-    "task_ids": [
-      "P2-S2-home-1"
-    ],
-    "started_at": "2026-11-13T04:44:42Z",
-    "expires_at": "2026-11-13T05:44:42Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "P2-S1-toon-drop",
-    "sha": "c0aa1bd6"
+    "task_id": "P2-S2-home-1",
+    "sha": "7e289af9"
   },
   "acks": [
     "M15",
@@ -27,5 +20,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 77: merge whatever turns ready (M15, M17: batch ready tasks with disjoint claims into one candidate, run check_all from the main checkout, merge and clear the lock in the turn the check passes). S2 marks P2-S2-home-1 ready after its full checks on d5465b92; at its merge the lead records S2-R16's raises (home/100 and home/hc 143, home/200 112) in tools/ui_bake/budgets.json, plus S2-R10's lowered check_screens records. S1 (P2-S1-result-1 at 8bec0d84) and S3 (P2-S3-character at f1251e68) take cycle 76's advisory gate points (display type outlines on both; S1's crew portraits, S3's ability card) and mark ready. AIA was overdue at 02:51Z; if its lease on P2-AIA-motion-2 (04:43:33Z) has lapsed with no update, reopen the task from claude/ui-artist at 7fd401e7 and start a fresh AIA session (Opus 5.5, effort high), within the cap of four."
+  "next_step": "Cycle 78: merge whatever turns ready (M15, M17: batch ready tasks with disjoint claims into one candidate, run check_all from the main checkout, merge and clear the lock in the turn the check passes). AIA (session_01SNkKxokBReWMyyoeH6tR9y) builds P2-AIA-motion-2 from 7fd401e7; pre-check its candidate c8863682 or later before the merge. S3 (P2-S3-character at f1251e68) takes cycle 77's advisory gate points (docs/art/ui-quality/gate/verdicts/P2-S3-character/6f6a3b15.json: the display type outline at 100% and 200%) and marks ready. S1 marks P2-S1-result-1 ready (S1-R21, S1-R22 copied to requests.md), then claims P2-S1-result-2. S2 (session_01SNkKxo9ZakHyaiiUKjsDBf) builds P2-S2-home-2 with home-1's gate points (the display treatment on the currency counts, the outline on the header, a larger Keeper on home). Four builders run (S1, S2, S3, AIA): start none more while that holds; at allowed_warning the cap is three."
 }

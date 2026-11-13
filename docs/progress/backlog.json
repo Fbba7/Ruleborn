@@ -3359,19 +3359,13 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "ready",
-      "claim": {
-        "agent": "S2",
-        "branch": "claude/ui-screens-home",
-        "claimed_at": "2026-11-13T02:47:00Z",
-        "seen_at": "2026-11-13T03:59:17Z",
-        "lease_until": "2026-11-13T06:59:17Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": "claude/ui-screens-home",
       "prior_sha": "5164cc43bf12d6e2fd9ee5b91f20064f874ae951",
       "ready_sha": "977edd5bb1a6487067fdd407dc2268b6958cc377",
-      "merged_sha": null,
-      "updated_at": "2026-11-13T04:43:02Z",
+      "merged_sha": "7e289af9d04e122c074b9885ee61906710c3c5eb",
+      "updated_at": "2026-11-13T05:21:00Z",
       "updated_by": "lead (cycle 77)",
       "id": "P2-S2-home-1",
       "title": "Home screen, part 1 (report.md step 10): the layout on the kit, from the key frame, at 100% and 200% text and in high contrast, with S2-R1 and S2-R2; notes in docs/art/tracks/home-screen.md; estimate includes one review round with AD"
