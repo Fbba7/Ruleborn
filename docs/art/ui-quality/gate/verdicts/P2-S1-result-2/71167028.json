@@ -1,0 +1,36 @@
+[
+  {
+    "task_id": "P2-S1-result-2",
+    "sha": "7116702892c0d11b2785c4f14b152e1499e4db72",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T09:52:00Z",
+    "item": "result at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: the full-width gold 'Raid again' at the foot is the largest, most saturated control and leads in grayscale as clearly as the pass anchor's Level up; the gold 3 s replay chip is under half its size and Home is smaller, and the cream Starlight card and law chips are lighter but not both larger and heavier (v3 ruling), so nothing competes for the primary."
+  },
+  {
+    "task_id": "P2-S1-result-2",
+    "sha": "7116702892c0d11b2785c4f14b152e1499e4db72",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T09:52:00Z",
+    "item": "result at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: the three gold-ringed crew portraits, about 100 px tall at full resolution, each read as a figure with a face in soft toon shading (the ember creature a clear dark shape with orange cracks, no grain or sheen), larger than the pass anchor's heist portraits. One judge noted the reward tiles carry no character art."
+  }
+]
