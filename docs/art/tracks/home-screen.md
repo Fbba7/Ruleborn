@@ -119,6 +119,29 @@ These are things the kit's parts cannot do yet, or costs that the kit's parts br
 - **At 200% text in German, Collect shows its words without its picture.** (No request.)
 - **At 200% text in Portuguese, the purse takes three rows.** "Pedras" and the widest amounts do not fit two pills to a row beside the badge, and the world shows only between the top and the tab bar. Nothing overlaps (FIT passes), but the universe is barely seen. (No request yet: a narrower pill is a kit question, to raise if AD objects.)
 
+## Part 2: the live character (P2-S2-home-2)
+
+Task P2-S2-home-2 takes the points the advisory gate made on part 1 (cycle 77, `docs/art/ui-quality/gate/verdicts/P2-S2-home-1/977edd5b.json`) and the task's own `done_when`.
+
+- **The Keeper's companion is alive.** The badge's portrait was a still bust (`Portrait.bust`), about 52 points across, pale on its ground: the gate's "small Keeper avatar, pale and soft against its ring". Now `UniverseBadge` stands the featherkin's model (`StageHero.make_figure`, the toon look, inked as §21.3 asks) in a small 3D stage of its own, a `SubViewport` cleared to nothing. The stage is lit by §21.3's three points, with a warm rim from behind against the spirit's cool ground. The model plays its two idles in turn, as a hero stage does (§21.6). `KitRing` draws the stage's picture cut round, as it drew the still one. The ring is 76 points across (the kit's Keeper part draws 52), and its ground is a step darker than the spirit's colour, so the light figure is the brightest thing in its disc. The paint's pale lift is taken back as the busts take it (`LIFT`, `RAMP_BIAS`). Under reduced motion (§20.8) the figure holds its first pose and the stage draws once; while the badge is hidden the stage does not draw.
+- **The level plate stays clear of the purse.** The badge kept room under the ring for the level's plate by watching `item_rect_changed`, which never fired. The 52-point ring was shorter than the words beside it, so the plate fitted anyway; the 76-point ring is taller, and the purse covered the plate. The badge now watches `resized`, and also measures once after it is built.
+- **The figures read as display type.** The counts and "Keeper 24" were already in the display face (`DisplayS`), but its 2-point ink line reads flat over the starfield at a phone's size: the gate's "flat currency counts" and "no outline on the header". `Home.home_figure` now uses the kit's `Display` role: the same face, with a 3-point ink outline and a 2-point hard drop (tokens.json `type.display`), at home's own sizes.
+- **Collect shines.** Collect is the screen's one primary action, and it carries the kit's idle shine (`Motion.shine`, P2-K1-motion): a soft band crosses its face once a period while it is enabled and idle. There is no shine under reduced motion or in high contrast.
+- **The reward flies to the kit's pills (S2-R5).** `UniverseReward.fly` now takes the pills by kind, so home no longer builds an empty `UniversePurse` to hold them. Retiring the old `universe_*` widgets is still outside this task's files.
+- **A scripted check for rubric quality 9.** The shot's FIT check now also fails when home has no live `CreatureModel` in its badge, when the companion's idle does not play or its stage does not draw, or when the figure fills less than a third of its stage's picture (it fills 63% at 100%).
+
+**AD's objections on part 1.** None were sent: AD had no session, and the lead applied S2-R11's default in cycle 75 ("the stills stand"). Part 2's stills go to AD as S2-R18.
+
+**Draw calls.** The live stage costs 2 draw calls (the model and its ink pass). The budget shots measure home/100 at 145, home/200 at 114 and home/hc at 145, against records of 143, 112 and 143, all under the cap of 150. S2-R17 asks the lead to record them. The shine's band adds none to the budget shots at the moment they are taken.
+
+**Evidence.** `FIT=1` passes in the same eighteen cases as part 1, with the new check. Checks run on the task's last commit are in `docs/progress/S2.md`.
+
+**Still worse, or open:**
+
+- **Home draws 2 more calls for the live character** (S2-R17).
+- **The ring is home's own size.** The kit's Keeper part draws its ring at 52 points. Home sets 76 itself, as it sets the display role on the figures (S2-R12).
+- **The still is not frame-exact.** The companion's idle runs on the frame clock, so two stills can differ by a few frames of the idle. The world's own motion already does the same.
+
 ## Left for other tasks
 
 These widgets are no longer used by home, but they are outside this task's files:
@@ -128,4 +151,4 @@ These widgets are no longer used by home, but they are outside this task's files
 - `client/world/universe_notice.gd`
 - `client/world/universe_collect.gd`
 
-`UniverseGoal` is still used by `client/tests/universe_view_tests.gd`. `UniversePurse` is still used by `client/world/universe_reward.gd`, the coin flight. Retiring them is for a follow-up task. The signature of `UniverseReward.fly` is S2-R5's.
+`UniverseGoal` is still used by `client/tests/universe_view_tests.gd`. `UniversePurse` keeps its `ORDER` and `FULL` for home; the coin flight no longer needs it (S2-R5, part 2). Retiring them is for a follow-up task.
