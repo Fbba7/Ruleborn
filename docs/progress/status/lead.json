@@ -1,7 +1,7 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-13T11:22:36Z",
-  "expected_next_update_by": "2026-11-13T11:58:21Z",
+  "updated_at": "2026-11-13T11:24:15Z",
+  "expected_next_update_by": "2026-11-13T12:39:15Z",
   "cycle": 82,
   "merging": null,
   "last_merged": {
@@ -24,5 +24,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 82: merge whatever turns ready (M15, M17: batch ready tasks with disjoint claims into one candidate, run check_all from the main checkout, merge and clear the lock in the turn the check passes; M19: in the candidate worktree run bash client/build.sh and (cd tools/ui_research && npm ci) before guard.sh; on a fresh container first rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios and pip install gdtoolkit 4 and playwright 1.63.0, or check_all fails on the environment). P2-S1-result-2: its advisory gate at 71167028 passed (verdict on main); by M20 take no merge lock on it until AD answers S1-R25 or its due passes (14 November 09:22Z); at its merge record S1-R26's budgets (result/200 98 with a raises entry, result/100 89, result/hc 27, and the check_screens figures). S2 builds P2-S2-home-3; S3 finishes P2-S3-settings (AD's S3-R7 objections before its gate request); AD answers S1-R25, then its next open task (P2-AD-board-3b waits on home-3 and K1-tabs). P2-K1-tabs takes the next free seat (cap four, three under allowed_warning). Set expected_next_update_by at least to a merge lock's expiry while a check runs."
+  "next_step": "Cycle 83: merge whatever turns ready (M15, M17: batch ready tasks with disjoint claims into one candidate, run check_all from the main checkout, merge and clear the lock in the turn the check passes; M19: in the candidate worktree run bash client/build.sh and (cd tools/ui_research && npm ci) before guard.sh; on a fresh container first rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios and pip install gdtoolkit 4 and playwright 1.63.0). P2-S1-result-2 is merged (135a49b2). S3 fixes P2-S3-settings' text-size readout (Display type failed at eed8b817: ink outline and hard drop) and re-requests the gate; S2 (restarted 11:23Z) finishes P2-S2-home-3 from c0b2bc49 with AD's S2-R20 objections; K1 builds P2-K1-tabs; AD answers S2-R20, then P2-AD-board-4 (AD-R26 inside). Seats: S2, S3, K1, AD, the cap of four (three under allowed_warning). When AIA next starts, put M14's rule in its prompt (M21). Set expected_next_update_by at least to a merge lock's expiry while a check runs."
 }
