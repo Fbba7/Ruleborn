@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-13T08:42:00Z",
+  "updated_at": "2026-11-13T09:00:00Z",
   "updated_by": "lead (cycle 80)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
@@ -3294,19 +3294,19 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "ready",
+      "state": "working",
       "claim": {
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-13T06:14:06Z",
-        "seen_at": "2026-11-13T08:42:00Z",
-        "lease_until": "2026-11-13T09:50:05Z"
+        "seen_at": "2026-11-13T09:00:00Z",
+        "lease_until": "2026-11-13T12:00:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": "aed28321c02e67edf889d45075675bd1343335cd",
+      "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-13T08:42:00Z",
+      "updated_at": "2026-11-13T09:00:00Z",
       "updated_by": "lead (cycle 80)",
       "id": "P2-S1-result-2",
       "title": "Result screen, part 2 (report.md step 9): the reward sequence on the motion art, with frame strips and a clip for board 4"
@@ -3652,6 +3652,126 @@
       "updated_by": "lead (cycle 80)",
       "id": "P2-AD-board-3",
       "title": "Board 3 (home, report.md 3.4 O4): AD lets it stand or lists every objection in one round"
+    },
+    {
+      "role": "S2",
+      "assigned_to": "S2",
+      "files": [
+        "client/scripts/home.gd",
+        "client/world/universe_badge.gd",
+        "client/world/universe_pins.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md",
+        "client/world/universe_reward.gd"
+      ],
+      "deps": [
+        "P2-S2-home-2"
+      ],
+      "done_when": [
+        "AD-R22 (board 3, objection A, hard defect): at 200% text in both locales, with and without the raid notice (NOTICE=1), Collect stays on the screen; the notice collapses to a one-line banner at 200% and its close cross sits on a plate; a scripted check that Collect's rect is inside the viewport at 200% in en and pt_BR, with and without the notice",
+        "AD-R23 (objection B): at 100% the world camera fits between the purse and the bottom panels (as the notice state does); Verdant and Emberreach clear of the goal panel; pins clear of Collect and the side buttons; the Defence badge clear of the Skyfield pin in pt_BR; the goal panel one or two lines",
+        "AD-R24 (objection C): the goal bar kept at every size; numbered realm chips at 200%; the side buttons icon-only at 200%; what of the dock labels is home's (not the kit's KitTabs, which is P2-K1-tabs) kept at 100% pt_BR and 200%",
+        "AD's notes on board 3 considered and answered in the handoff: the featherkin's idle yaw clamped so its face stays readable through the cycle",
+        "AD previews the stills before ready (M10, M12): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "home at 100% text",
+          "qualities": [
+            "Hierarchy",
+            "Character presence"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-13T09:00:00Z",
+      "updated_by": "lead (cycle 80)",
+      "id": "P2-S2-home-3",
+      "title": "Home screen, part 3 (board 3's objections A-C, AD-R22 to AD-R24): Collect on screen at 200% with the notice, the world framed between the panels, nothing dropped at large text or in pt_BR"
+    },
+    {
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/kit_tabs.gd",
+        "client/tests/ui_kit_tests.gd"
+      ],
+      "deps": [],
+      "done_when": [
+        "AD-R25 (board 3, objection D): KitTabs' labels sit below their tile's gold rim, or inside it with clear space, never across it, at 100% and 200% text and in both locales",
+        "if KitTabs drops labels at 100% pt_BR or at 200% (AD-R24's dock labels, the chosen tab's included), KitTabs keeps all five, or says in the handoff which part is home's",
+        "a test in client/tests/ui_kit_tests.gd that a label's rect does not cross its tile's rim",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-13T09:00:00Z",
+      "updated_by": "lead (cycle 80)",
+      "id": "P2-K1-tabs",
+      "title": "KitTabs labels clear of the tile rim (board 3's objection D, AD-R25)"
+    },
+    {
+      "role": "AD",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P2-S2-home-3",
+        "P2-K1-tabs"
+      ],
+      "done_when": [
+        "board-3.md, second round: only what the fixes changed (objections A-D) re-checked on P2-S2-home-3's and P2-K1-tabs's stills beside key frame 01 (M12); the board stands or lists what is still open",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-13T09:00:00Z",
+      "updated_by": "lead (cycle 80)",
+      "id": "P2-AD-board-3b",
+      "title": "Board 3, second round: AD re-checks objections A-D on home-3's and K1-tabs's stills and lets board 3 stand or lists what is still open"
     },
     {
       "role": "AD",

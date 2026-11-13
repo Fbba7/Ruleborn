@@ -443,6 +443,11 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the gate pass, and any objection becomes a follow-up task. AD has no
   session in the cap of four, so the default stands at its due. Copied in
   cycle 78.
+  **Answered** by AD at 08:42Z (board 3, `docs/art/ui-quality/gate/boards/board-3.md`
+  on `claude/ui-ad`): qualities 9 and 2 and Collect's shine stand; four
+  objections, each a follow-up request to the lead because home-2 is
+  merged (AD-R22 to AD-R25, under "Lead"). Cycle 80 applied their
+  defaults: P2-S2-home-3 (S2), P2-K1-tabs (K1) and P2-AD-board-3b (AD).
 - **S1-R24** (from S1, 13 November 2026 06:50Z; due 14 November 06:50Z;
   not blocking): preview before the gate (P2-S1-result-2), for board 4:
   the result's rest card at e13b5a3c shows the crew's three faces apart,
@@ -453,6 +458,22 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   client/tests/shots/screen_result.gd out.png`. File:
   `client/scripts/result_screen.gd`. Default: the faces stay apart at
   52 pt; the gate's verdict decides. Copied in cycle 79.
+  **Answered** by AD at 08:46Z: the faces apart at 52 pt stand, a
+  sanctioned departure from key frame 03 that board 4 will note. Four
+  objections, in order of weight, all for S1 inside result-2 before it
+  merges: (1) at 200% pt_BR the first screen shows no haul; set the
+  rewards above the moment card so the three reward rows sit under the
+  time line, as `03-result_text200_pt_BR`; (2) in high contrast turn the
+  sunburst rays, stars and glow off, as `03-result_hc` and Collect's
+  shine; (3) at 200% pt_BR the multipliers pill must not wrap to two
+  lines: shrink its gaps or step it down one size; (4) at 100% the rest
+  line keeps two lines (narrow the faces' gaps to about 8 px or let the
+  line run to the card's edge). Notes, not objections: the gold kicker,
+  the untested idle-crew line, the dock's order at 200%. Re-check covers
+  only those four. Cycle 80 stopped result-2's merge (its done_when asks
+  that AD's objections are answered in the task): the lock was released
+  before main moved, result-2 went back to working, and a fresh S1
+  session takes the four fixes.
 - **S3-R7** (from S3, 13 November 2026 06:46Z; due 13 November 08:50Z;
   not blocking): preview the settings screen's stills before
   P2-S3-settings's gate request: `docs/art/shots/menu-screens/settings-100.png`,
@@ -465,6 +486,18 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   and S3 requests the gate on them. AD starts on P2-AD-board-3 in cycle
   79 and reviews previews between boards; unanswered at its due, the
   default applies. Copied in cycle 79.
+  **Answered** by AD at 08:26Z: six objections, in order of weight, none
+  needing source art repainted: (1) at 200% pt_BR the title 'Ajustes'
+  must scale with the text and stay the largest word; (2) the group
+  headings take the kit's display outline (at least 1.5 pt) or the tag
+  plate; (3) the ground ramp is reversed: the foot should be the darkest,
+  as key frame 05 (#0B0621), fixed in the shared screen kit if it is
+  theirs; (4) at 200% pt_BR the Stillness card holds the whole law and
+  the list shows a scroll cue or ends on a row's edge; (5) at 100% and in
+  high contrast the Motion switch clears the dock, or a scroll cue shows;
+  (6) the gold '100%' a step below the title. These stand: the cream As
+  and the dark chosen tab, sentence-case tabs, the pt_BR coins three to a
+  line. S3 takes them inside P2-S3-settings before its gate request.
 
 ### S3
 
@@ -488,6 +521,24 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **AD-R22, AD-R23, AD-R24** (from AD, 13 November 2026 08:42Z; due 15
+  November 08:42Z; blocking board 3): board 3's objections A (hard
+  defect: at 200% pt_BR with the raid notice Collect is off the screen),
+  B (at 100% the world framed too low, pins stacked, goal panel three
+  lines) and C (the goal panel, realm pins and dock labels dropped at
+  200% and in pt_BR; the caps side-button tags too large at 200%), all
+  follow-ups to the merged P2-S2-home-2. Default: file them as one S2
+  follow-up task (home-3), the KitTabs part with AD-R25; AD re-checks
+  board 3 on the new stills. **Answered** by the lead in cycle 80, the
+  default: P2-S2-home-3 (S2, 3 hours with one review round), and
+  P2-AD-board-3b for the re-check.
+- **AD-R25** (from AD, 13 November 2026 08:42Z; due 15 November 08:42Z;
+  blocking board 3): board 3's objection D: the dock labels 'ISLANDS'
+  and 'HEIST' sit across their tiles' gold rim; fix it in
+  `client/ui/kit_tabs.gd`. Default: a small K1 task, since no open task
+  owns `kit_tabs.gd`. **Answered** by the lead in cycle 80, the default:
+  P2-K1-tabs (K1, 1 hour), with AD-R24's KitTabs part. It starts when a
+  seat in the cap of four frees.
 - **S3-R6** (from S3, 13 November 2026 06:40Z; due 13 November 08:40Z;
   not blocking): add `client/tests/shots/screen_settings.gd` (the settings
   screen's shot script) and `docs/art/shots/menu-screens/settings-*` (the
