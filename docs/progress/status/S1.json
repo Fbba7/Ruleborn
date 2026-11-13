@@ -3,18 +3,18 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S1-result-2",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-13T06:14:06Z",
   "lease_until": "2026-11-13T09:50:05Z",
-  "updated_at": "2026-11-13T07:49:40Z",
-  "expected_next_update_by": "2026-11-13T08:34:40Z",
+  "updated_at": "2026-11-13T07:57:52Z",
+  "expected_next_update_by": "2026-11-13T08:42:52Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "aed28321",
-    "next_step": "Pre-check PASS on aed28321 (2026-11-13T07:49:05Z, recorded). Gate requested at aed28321 (or e13b5a3c, same screen code). Next: read the verdict; mark ready at aed28321 in the same turn it returns.",
-    "at": "2026-11-13T07:49:40Z"
+    "next_step": "P2-S1-result-2 ready at aed28321: pre-check PASS 2026-11-13T07:49:05Z; gate advisory pass at aed28321 (result at 100% text: Hierarchy 3/3, Character presence 3/3). Waiting for the merge.",
+    "at": "2026-11-13T07:57:52Z"
   },
   "precheck": {
     "sha": "aed28321c02e67edf889d45075675bd1343335cd",
@@ -34,7 +34,7 @@
       }
     ]
   },
-  "ready_sha": null,
+  "ready_sha": "aed28321c02e67edf889d45075675bd1343335cd",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6",
@@ -397,5 +397,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Read the gate verdict for P2-S1-result-2 at aed28321 (or e13b5a3c); mark ready at aed28321 in the same turn"
+  "next_step": "P2-S1-result-2 ready at aed28321: pre-check PASS 2026-11-13T07:49:05Z; gate advisory pass at aed28321 (result at 100% text: Hierarchy 3/3, Character presence 3/3). Waiting for the merge."
 }
