@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-13T00:22:00Z",
   "lease_until": "2026-11-13T03:22:00Z",
-  "updated_at": "2026-11-13T01:43:00Z",
-  "expected_next_update_by": "2026-11-13T02:25:00Z",
+  "updated_at": "2026-11-13T01:57:57Z",
+  "expected_next_update_by": "2026-11-13T02:37:57Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "cf4eecc2c6c98a4ab4c5028269ea391133812b9a",
-    "next_step": "Writing the kit build of character_screen.gd (KitNav.segmented light tabs, KitCards.ability and fact tiles, KitHex level, KitStatus.xp, KitControls.upgrade) and LOCALE and FIT in screen_character.gd.",
-    "at": "2026-11-13T01:43:00Z"
+    "next_step": "Character screen on the kit; FIT passes at 100% and 200%, en and pt_BR, HC, all three tabs. Next: run_checks and guard, merge main, track Part 2, AD preview request, gate request.",
+    "at": "2026-11-13T01:57:57Z"
   },
   "precheck": null,
   "gate_request": null,
