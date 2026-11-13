@@ -7,17 +7,48 @@
   "task_id": "P2-S1-result-1",
   "task_state": "working",
   "claimed_at": "2026-11-13T02:23:29Z",
-  "lease_until": "2026-11-13T05:43:43Z",
-  "updated_at": "2026-11-13T02:43:43Z",
-  "expected_next_update_by": "2026-11-13T03:43:43Z",
+  "lease_until": "2026-11-13T06:08:36Z",
+  "updated_at": "2026-11-13T03:08:36Z",
+  "expected_next_update_by": "2026-11-13T04:08:36Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "43f81a56",
-    "next_step": "P2-S1-result-1: the pre-check at c9488372 failed the large-text test (raid bar unfitted on frame 2); fixed at 8bec0d84 (fit in _ready). Pre-check on 8bec0d84 running, then gate_request.",
-    "at": "2026-11-13T02:43:43Z"
+    "last_green_sha": "8bec0d84",
+    "next_step": "P2-S1-result-1: pre-check PASS at 8bec0d84; gate_request set for result at 100%, at 200% pt_BR and in high contrast. Ready when the gate passes, then P2-S1-result-2.",
+    "at": "2026-11-13T03:08:36Z"
   },
-  "precheck": null,
-  "gate_request": null,
+  "precheck": {
+    "sha": "8bec0d84e170dd14987236b71732ae18a737dc92",
+    "exit": 0,
+    "finished_at": "2026-11-13T03:08:14Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "8bec0d84e170dd14987236b71732ae18a737dc92",
+    "items": [
+      {
+        "item": "result at 100% text",
+        "qualities": [
+          "Hierarchy",
+          "Display type",
+          "Character presence"
+        ]
+      },
+      {
+        "item": "result at 200% text, pt_BR",
+        "qualities": [
+          "Display type",
+          "Hierarchy"
+        ]
+      },
+      {
+        "item": "result in high contrast",
+        "qualities": [
+          "Colour roles and value",
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
@@ -324,5 +355,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P2-S1-result-1: the pre-check at c9488372 failed the large-text test (raid bar unfitted on frame 2); fixed at 8bec0d84 (fit in _ready). Pre-check on 8bec0d84 running, then gate_request."
+  "next_step": "P2-S1-result-1: pre-check PASS at 8bec0d84; gate_request set for result at 100%, at 200% pt_BR and in high contrast. Ready when the gate passes, then P2-S1-result-2."
 }
