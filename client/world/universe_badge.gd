@@ -1,9 +1,9 @@
 class_name UniverseBadge
 extends PanelContainer
 ## Home's top left (§21.8's home layout), from the kit's Keeper part
-## (`KitHud.keeper`): the Keeper's emblem in a ring whose gold arc is the way
+## (`KitHud.keeper`): the Keeper's portrait in a ring whose gold arc is the way
 ## to the next Keeper level (§14.2), the level on a gold plate at the ring's
-## foot, "Keeper 14" in the heading face, and Renown on a glass pill beneath,
+## foot, "Keeper 24" in the display face, and Renown on a glass pill beneath,
 ## its gem before the number, so the number starts past the gem at every text
 ## size. The whole badge is one control (`KitLayout.tap`) that opens the menu
 ## of every screen, as the designs' portrait does. What it shows is said in
@@ -19,7 +19,9 @@ var title := ""
 var renown := ""
 ## The kit's control over the whole badge.
 var tap: Button
-var _face: Texture2D = UniverseHud.icon("realm_heart")
+## The Keeper's companion, as the design's portrait shows it: the featherkin's
+## head and shoulders, rendered from its model (S2-R13).
+var _face: Texture2D = Portrait.bust("featherkin")
 var _row: Control
 var _box := UI.clear_box(0, 0)
 
@@ -48,14 +50,19 @@ func show_keeper(bar: Dictionary, xp_share: float, renown_text: String) -> void:
 		_row.queue_free()
 	_row = KitHud.keeper(_face, title, level, share, renown)
 	var ring := _row.find_child("Portrait", true, false) as KitRing
-	# The emblem stands in the ring on the card's violet, as the design's
-	# portrait does, not cut to its edge.
-	ring.ground = Tokens.color("card_top")
-	ring.zoom = 0.78
+	# The portrait on its school's colour, the spirit's teal, as the roster's
+	# cards and the design's portrait set it.
+	ring.ground = Tokens.color("spirit")
 	# Before the league answers there is no Renown to show, not an empty pill.
 	var pill := _row.find_child("Pill", true, false) as Control
 	if pill != null:
 		pill.visible = renown != ""
+		Home.home_figure(pill.find_child("Words", true, false) as Label, 16)
+	# The name in the display face too, outlined in ink over the starfield, as
+	# the design's "Keeper 24" is (S2-R12).
+	for l: Label in _row.find_children("*", "Label", true, false):
+		if l.text == title:
+			Home.home_figure(l, 22)
 	for c: Node in _row.find_children("*", "Control", true, false):
 		(c as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_row)

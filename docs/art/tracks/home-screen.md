@@ -43,6 +43,15 @@ The check found that pins could overlap by up to two gaps, at 9:16 and 200% text
 
 **Tap areas.** `KitLayout.tap` puts its clear button inside the card, so on the strain pill it stood within the pill's padding: 40 points tall, short of §21.1's 48. The client test "every control on every screen" caught it. Home now stands the pill and its tap in a holder of the pill's own size, so the tap is the whole pill, 48 points. The strain, the goal card and the side buttons are secondary places, so §21.1's thumb zone does not bind them. Home now marks each of their buttons that way, the kit's tap areas included, and not only the part that holds them.
 
+**Cycle 74's gate points.** Against `art/ui/keyframes/01-home.*`:
+
+- **The shot's state is the key frame's.** `universe_home.gd` now sets the key frame's state (`keyframe`): Keeper 24 with 1,240 experience to go, strain at 82% (Humming), and 3.4k waiting with the garden full. The Defence badge carries the two raids, and the notice is already dismissed (`NOTICE=1` shows it as it arrives). `MOST=1` keeps every amount at its widest. The key frames' own `*.shot.json` records are not this task's files, so they stay a follow-up.
+- **A character portrait.** The badge shows the featherkin's head and shoulders, rendered from its model (`Portrait.bust`), on the spirit's teal, as the key frame's portrait does. Which character the Keeper shows is S2-R13's.
+- **Display type on the figures and the name.** "Keeper 24", Renown and the purse's amounts are set in the display face (`DisplayS`), outlined in ink (`Home.home_figure`). The kit's parts set them in the body face; making it their default is S2-R12's.
+- **Heist leads.** The Heist tab stands raised above the bar, its picture larger, as the key frame's gold disc does. A raised disc as the kit's own look is S2-R14's.
+- **Collect beside the goal.** Collect shows while anything waits and reads "Collect 3.4k" as the design writes it, not in the gold's capitals. The goal stands beside it, narrowed to the room left. Where even its narrowest does not fit (large text), Collect shows alone. The kit's `action2` does not measure the words inside it, so home sizes the button to them; the fit check now also catches words that run past a button's edge (S2-R15).
+- **The raid notice stands above the foot,** never in Collect's place, and its See is the ghost look, leaving gold to Collect.
+
 ## Evidence
 
 Stills come from `client/tests/shots/universe_home.gd`, the same script before and after, with six outer realms and two raids not yet seen:
@@ -51,36 +60,42 @@ Stills come from `client/tests/shots/universe_home.gd`, the same script before a
     FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png
     FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png
 
-**FIT=1 passes** in eleven cases:
+**FIT=1 passes** in fifteen cases:
 
 - 100%, 150% and 200% text, in English (`en`) and in Portuguese (`pt_BR`);
 - high contrast at 100% and at 200%;
 - 9:16 (`TALL=960`) at 100% and at 150%;
-- `TALL=900` at 200%.
+- `TALL=900` at 200%;
+- the raid notice as it arrives (`NOTICE=1`) at 100% and at 200%;
+- every amount at its widest (`MOST=1`) at 100% and at 200%.
+
+Runs side by side need a user folder each (`XDG_DATA_HOME`): they otherwise share the shot's settings and outbox, and two crashed that way.
 
 **Budget stills** (`tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc`), against the records in `tools/ui_bake/budgets.json`:
 
 | Shot | Draw calls (record) | Textures | Words below 4.5:1 (record) | Worst contrast |
 |---|---:|---:|---:|---:|
-| home/100 | **139** (119) | 4.7 MiB | 0 of 31 (0) | 6.40:1 |
-| home/200 | 97 (97) | 4.8 MiB | 0 of 13 (0) | 6.40:1 |
-| home/hc | **139** (119) | 4.7 MiB | 0 of 31 (0) | 8.94:1 |
+| home/100 | **143** (119) | see below | see below | see below |
+| home/200 | **114** (97) | see below | see below | see below |
+| home/hc | **143** (119) | see below | see below | see below |
 
-home/100 and home/hc fail on draw calls only, 20 over the record and 11 under the cap of 150. S2-R7 asks the lead to approve the raise. Until it is answered, `guard.sh` fails on these two lines.
+The budget shots now render the key frame's state, so the goal card shows beside Collect. All three fail on draw calls only, 7 or more under the cap of 150. The lead approved 139 for home/100 and home/hc (S2-R7); S2-R16 asks to amend that to 143, and home/200 to 114, for what cycle 74's gate asked for: the goal card (+4), the portrait and the display type. Until they are recorded, `guard.sh` fails on these three lines. The textures and contrast columns are in `docs/progress/S2.md`, from the run on the merge.
 
 **Draw calls by part** at 100%, from the shot's `PROBE=1`. Each part is faded in turn and the frame's calls are counted again:
 
 | Part | Before (old widget) | Now (kit part) |
 |---|---|---|
-| Keeper's badge | — | 11 |
-| Strain | — | 5 |
-| Purse | 9 | 15 (three `KitStatus.resource` pills, 5 each) |
-| Side buttons | about 11 | 19 (four `KitControls.round_action`, each a disc, an icon and a word plate) |
-| Raid notice | 7 | 11 (the alarm's fill under its words, and S2-R6's code-drawn card) |
-| Tab bar | — | 28 |
+| Keeper's badge | — | 16 (with the portrait and the display type) |
+| Strain | — | 6 |
+| Purse | 9 | 22 (three `KitStatus.resource` pills, their amounts in the display face) |
+| Side buttons | about 11 | 18 (four `KitControls.round_action`, each a disc, an icon and a word plate) |
+| Goal | — | 4 |
+| Collect all | — | 2 |
+| Raid notice | 7 | 11 (the alarm's fill under its words, and S2-R6's code-drawn card; shown only with `NOTICE=1`) |
+| Tab bar | — | 24 |
 | Realms' pins | — | 14 |
 
-A kit part draws the skin atlas, its own icon texture and the font in turn. The old home drew its purse and its side buttons in one layer each. S2-R7 asks the lead to approve raising home/100 and home/hc to 139, for K1 to log under `raises`.
+A kit part draws the skin atlas, its own icon texture and the font in turn; the display face and its ink outline add a font of their own. The old home drew its purse and its side buttons in one layer each.
 
 Checks run on the task's last commit: see `docs/progress/S2.md`.
 
@@ -88,7 +103,10 @@ Checks run on the task's last commit: see `docs/progress/S2.md`.
 
 These are things the kit's parts cannot do yet, or costs that the kit's parts bring. Each is a request in `docs/progress/status/S2.json`, with the default home uses until it is answered.
 
-- **Home draws 20 more calls at 100% and in high contrast** (139 against a record of 119). It is still 11 under the cap of 150. At 200% it stays at 97. A saving on the kit's side is K1's to weigh: icons in the skin atlas, or one layer for a part's art across its siblings. (S2-R7)
+- **Home draws 24 more calls at 100% and in high contrast** (143 against a record of 119), and 17 more at 200% (114 against 97). It is still 7 under the cap of 150. A saving on the kit's side is K1's to weigh: icons in the skin atlas, or one layer for a part's art across its siblings. (S2-R7, S2-R16)
+- **In Portuguese, the goal gives way to Collect at 100% text.** "Coletar 3,4 mil" leaves less than the goal's narrowest (150 points) beside it, so Collect shows alone, as at large text in English. (No request: the goal's own screen still shows it.)
+- **At 200% text, the chosen tab's name hides where it would wrap below its tile** ("Ilhas" in Portuguese); the other tabs show their icons alone there already. Each stays named aloud. (S2-R15)
+- **Display type, the raised Heist tab and Collect's size are home's own.** The kit's parts set figures in the body face, have no raised tab, and do not size a button to its words, so home does these itself until the kit does. (S2-R12, S2-R14, S2-R15)
 - **The raid notice's card is drawn in code.** `banner_alarm` has no shape of its own in the skin. It falls back to the red button's light face, on which white words measure 2.5 to 2.8:1. Home refills the box with the material's dark card colours. The line goes once the shape lands. (S2-R6)
 - **The raid notice is composed by the screen.** `KitPanels.notice` (through `UI.banner`) frees itself after `banner_ms` unless the player keeps banners, and its cross frees the panel. Home's notice must stay until it is seen or dismissed (§21.8), and must come back when new raids arrive. At 150% text and above its words also need the card's whole width, with the mark, See and the cross in a row beneath; the kit's notice keeps them all in one row. So home composes the notice from `UI.panel`, `UI.status` and `UI.action`. (S2-R8)
 - **Home reaches around `KitLayout.tap`.** The kit's tap stands inside the card's padding, so home moves it into a holder of the pill's own size and marks its button not frequent. Every tap also logs an error, because it connects `button_down` twice ("Signal 'button_down' is already connected"). The tap still works. (S2-R9)

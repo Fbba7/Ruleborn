@@ -186,6 +186,77 @@
       "due": "2026-11-13T11:23:00Z",
       "default": "The stills stand as built; S2 marks P2-S2-home-1 ready when its checks pass, and any objection becomes a follow-up task beside it.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R12",
+      "from": "S2",
+      "to": "K1",
+      "ask": "Make the display face (theme variation DisplayS, outlined in ink) the default for KitStatus.resource's amount and for KitHud.keeper's name and level pill, as art/ui/keyframes/01-home.* sets them (cycle 74's gate point 'flat white figures and name'). Home sets them itself through Home.home_figure until then.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/world/universe_badge.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:11:20Z",
+      "due": "2026-11-13T15:11:20Z",
+      "default": "Home keeps setting DisplayS on those labels itself (Home.home_figure); the kit's parts stay as they are.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R13",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Which character does the Keeper's portrait on home show? The key frame shows a featherkin's head and shoulders on spirit's teal; home now uses Portrait.bust('featherkin') with ring.ground = Tokens.color('spirit') (cycle 74's gate point 'no character portrait').",
+      "files": [
+        "client/world/universe_badge.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:11:20Z",
+      "due": "2026-11-13T15:11:20Z",
+      "default": "The featherkin, as the key frame shows; a player-chosen Keeper is a later task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R14",
+      "from": "S2",
+      "to": "K1",
+      "ask": "Give KitTabs a raised gold disc for its lead tab (Heist), as the key frame draws it, so screens need not raise it themselves. Home now lifts the Heist tab above the bar and enlarges its picture (Home._raise_heist), cycle 74's gate point 'Heist does not lead'.",
+      "files": [
+        "client/scripts/home.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:11:20Z",
+      "due": "2026-11-13T15:11:20Z",
+      "default": "Home keeps _raise_heist; KitTabs stays as it is.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R15",
+      "from": "S2",
+      "to": "K1",
+      "ask": "(a) KitControls.action2 does not measure its children, so its words run past its edge; let it size itself to its words, with an option to keep their case (the key frame's 'Collect 3.4k' is mixed case, not the gold's capitals). (b) KitTabs: at large text a tab's word wraps below its tile's foot ('Ilhas' at 200% pt_BR); let the tile grow with its word, or hide the word by itself. Home sizes Collect to its words and hides cut or low tab words itself (Home._fit_tab_words).",
+      "files": [
+        "client/scripts/home.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:11:20Z",
+      "due": "2026-11-13T15:11:20Z",
+      "default": "Home keeps sizing Collect and hiding tab words itself; the kit stays as it is.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R16",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Amend S2-R7's approved raise: home/100 and home/hc to 143 draw calls, home/200 to 114 (S2-R7 approved 139 for 100 and hc; home/200's record is 97). The rise comes from what cycle 74's gate asked for: the goal card beside Collect (+4), the character portrait, and the display type on the figures and the name. All three stay under the cap of 150. Please record them in tools/ui_bake/budgets.json (not S2's file).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:11:20Z",
+      "due": "2026-11-13T15:11:20Z",
+      "default": "The lead records 143/114/143 when it merges P2-S2-home-1; until then guard.sh fails on those three draw-call lines only.",
+      "escalate_to": "lead"
     }
   ],
   "answers": []

@@ -3,7 +3,8 @@ extends SceneTree
 ## still (tools/render/shoot.sh). SHOT is the file; OUTER (outer realms, 6),
 ## ZOOM and FOCUS (as universe_zoom.gd), TEXT (the text size, 100) and TIME
 ## (seconds of animation) are optional; WHOLE shows the whole universe; RAIDS the
-## raids not yet seen (2); MOST every amount at its widest;
+## raids not yet seen (2), on the Defence badge; NOTICE their notice too;
+## MOST every amount at its widest (else the key frame's state, `keyframe`);
 ## LOCALE the language; CONTRAST high contrast; TALL the window's height in
 ## points over 540 wide (960 for 9:16). FIT checks that everything fits (see
 ## `fit`); the run fails where something does not.
@@ -28,7 +29,13 @@ func _go() -> void:
 		root.size = Vector2i(540, int(env.call("TALL", "1170")))
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	var store := App.services.store
-	UniverseSample.fill(store, int(env.call("OUTER", "6")), int(env.call("RAIDS", "2")), env.call("MOST", "") != "")
+	var raids := int(env.call("RAIDS", "2"))
+	UniverseSample.fill(store, int(env.call("OUTER", "6")), raids, env.call("MOST", "") != "")
+	if env.call("MOST", "") == "":
+		keyframe(store)
+	# The key frame's home has its raids on the Defence badge, the notice
+	# already dismissed; NOTICE shows the notice as it arrives.
+	Home._dismissed = 0 if env.call("NOTICE", "") != "" else raids
 	var screen: Home = load("res://scenes/home.tscn").instantiate()
 	root.add_child(screen)
 	await process_frame
@@ -132,6 +139,18 @@ func _go() -> void:
 	quit()
 
 
+## The key frame's state (art/ui/keyframes/01-home.*) over the sample's:
+## Keeper 24 with 1,240 experience to go, strain at 82% (Humming), and
+## 3.4k waiting to be collected, the essence garden full.
+static func keyframe(store: Store) -> void:
+	store.dispatch(&"keeper_loaded", {"view": {"level": 24, "xp": 22760, "toNext": 24000}})
+	store.dispatch(&"weaving_loaded", {"view": {"stability": {"strain": 0.82, "band": 2}}})
+	store.dispatch(&"roster_loaded", {"view": {"producers": [
+		{"kind": "star_well", "realm": "heart", "stored": 2000, "holds": 3200},
+		{"kind": "aether_spring", "realm": "outer-2", "stored": 600, "holds": 1800},
+		{"kind": "garden", "realm": "outer-4", "stored": 800, "holds": 860}]}})
+
+
 ## Every canvas item under `top`, internal children (the kit's boxes and
 ## faces) included.
 static func _all_inside(top: Node) -> Array:
@@ -144,7 +163,7 @@ static func _all_inside(top: Node) -> Array:
 
 
 ## What does not fit on home, one line each: a label's words wider than the
-## label, or outside its panel, or off the screen; one of home's parts over
+## label, or outside its panel or button, or off the screen; one of home's parts over
 ## another; a realm's pin over another pin or over home's parts, or off the
 ## screen; or some realms named over the whole universe and others not.
 static func fit(screen: Home) -> Array[String]:
@@ -163,9 +182,9 @@ static func fit(screen: Home) -> Array[String]:
 				and l.text_overrun_behavior == TextServer.OVERRUN_NO_TRIMMING and wide > at.size.x + 1.0:
 			bad.append("%s %s: %.0f px of words in %.0f" % [l.get_path(), l.text, wide, at.size.x])
 		var p := l.get_parent()
-		while p != null and p != screen and not p is PanelContainer:
+		while p != null and p != screen and not p is PanelContainer and not p is Button:
 			p = p.get_parent()
-		if p is PanelContainer and not (p as Control).get_global_rect().grow(1.0).encloses(at):
+		if (p is PanelContainer or p is Button) and not (p as Control).get_global_rect().grow(1.0).encloses(at):
 			bad.append("%s %s: %s outside its panel %s" % [l.get_path(), l.text, at, (p as Control).get_global_rect()])
 		if not whole.grow(1.0).encloses(at):
 			bad.append("%s %s: %s off the screen" % [l.get_path(), l.text, at])

@@ -28,6 +28,9 @@ const TAB_ROUTES := {"laws": &"codex", "crew": &"roster", "friends": &"friends"}
 const BAND_KEYS := ["quiet", "steady", "humming", "brimming", "strained", "cracking", "breaking"]
 ## The goals' icons in the kit's set, by `UniverseGoal.goals`' names.
 const GOAL_ICONS := {"levelup": "generalui/levelup", "track": "screens/season"}
+## The narrowest the goal card goes beside Collect, in points: its picture and
+## three short lines of words.
+const GOAL_NARROWEST := 150.0
 
 ## The unseen raids the player dismissed the notice for: it returns only when
 ## more come.
@@ -116,13 +119,14 @@ func _ready() -> void:
 	for edge: Control in _edges:
 		edge.item_rect_changed.connect(_frame_world, CONNECT_DEFERRED)
 	# The foot over the world, just above the tabs: Collect while anything
-	# waits, as the design's lone pill, else the nearest goal; the raid notice
-	# in their place while it shows, as the designs raise their raid banner
-	# over Collect.
+	# waits, as the design's gold pill, and the nearest goal beside it where
+	# both fit, else the goal alone; the raid notice above them while it
+	# shows, as the designs raise their raid banner, never in Collect's place.
 	_foot = HFlowContainer.new()
 	_foot.alignment = FlowContainer.ALIGNMENT_CENTER
 	_foot.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_foot.add_theme_constant_override("separation", UI.px(8))
+	_foot.add_theme_constant_override("h_separation", UI.px(8))
+	_foot.add_theme_constant_override("v_separation", UI.px(6))
 	goal_card = CenterContainer.new()
 	goal_card.name = "Goal"
 	goal_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -133,11 +137,11 @@ func _ready() -> void:
 	collect_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	collect_button.visible = false
 	_foot.add_child(collect_button)
-	column.add_child(_foot)
+	_foot.pre_sort_children.connect(_fit_foot)
 	notice = _raid_notice()
 	notice.visible = false
-	_foot.visible = true
 	column.add_child(notice)
+	column.add_child(_foot)
 	_build_tabs({})
 	menu = UniverseMenu.make(PLACES, WORDS)
 	menu.picked.connect(func(route: StringName) -> void: App.services.router.go(route))
@@ -208,6 +212,10 @@ func _build_top(column: VBoxContainer) -> void:
 		var pill := KitStatus.resource("resources/" + k, "–", 0.0, Tokens.color(k))
 		pill.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		pill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		# The counts are the screen's headline figures: the kit's display face,
+		# ink-outlined with a hard drop, as the design draws them (S2-R12 asks
+		# K1 to make it the resource part's own).
+		home_figure(pill.find_child("Amount", true, false) as Label, 18)
 		pills[k] = pill
 		purse.add_child(pill)
 	purse.pre_sort_children.connect(_fit_purse)
@@ -273,21 +281,46 @@ func _build_tabs(badges: Dictionary) -> void:
 		l.add_theme_constant_override("outline_size", maxi(UI.px(2), ceili(l.get_theme_font_size("font_size") * 0.13)))
 	for b: Button in tabs.buttons.values():
 		b.resized.connect(_fit_tab_words, CONNECT_DEFERRED)
+	_raise_heist()
+
+
+## The Heist leads the bar, as the design raises it: its tile risen above the
+## others by most of the chosen tab's rise and its picture larger, its head over
+## the tile's top edge, on the kit's gold Heist look. The kit sets every tab
+## afresh when one is chosen; home is left only through the Heist and the others.
+func _raise_heist() -> void:
+	if tabs.active == "heist" or not tabs.buttons.has("heist"):
+		return
+	var b := tabs.buttons["heist"] as Button
+	b.custom_minimum_size.y = UI.px(Tokens.number("size", "tab_height") + KitTabs.RISE * 0.75)
+	var icon := b.find_children("*", "TextureRect", true, false)
+	if icon.is_empty():
+		return
+	var picture := icon[0] as TextureRect
+	picture.custom_minimum_size = Vector2.ONE * UI.px(50)
+	(picture.get_parent() as Control).offset_top = -float(UI.px(8))
 
 
 ## Where large text would cut the other tabs' names short ("ISLA…"), they show
 ## their icons alone, each still named aloud; the chosen tab keeps its name if
-## it fits. A word in pieces reads worse than none.
+## it fits, across and above its tile's foot. A word in pieces reads worse
+## than none.
 func _fit_tab_words() -> void:
 	var words := {}
 	var cut := false
 	for key: String in tabs.buttons:
-		for l: Label in (tabs.buttons[key] as Button).find_children("*", "Label", true, false):
+		var b := tabs.buttons[key] as Button
+		for l: Label in b.find_children("*", "Label", true, false):
 			if l.get_parent() is VBoxContainer:
 				words[key] = l
 				var w := l.get_theme_font("font").get_string_size(l.text.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1,
 					l.get_theme_font_size("font_size")).x
-				l.set_meta("cut", w > l.size.x + 0.5)
+				# Below the foot only where it shows; once hidden it keeps what it found.
+				var low: bool = l.get_meta("low", false)
+				if l.visible:
+					low = l.get_global_rect().end.y > b.get_global_rect().end.y + 1.0
+				l.set_meta("low", low)
+				l.set_meta("cut", w > l.size.x + 0.5 or low)
 				cut = cut or (key != tabs.active and l.get_meta("cut"))
 	for key: String in words:
 		var l: Label = words[key]
@@ -303,6 +336,7 @@ static func _room() -> Control:
 
 func _on_tab(key: String) -> void:
 	if key == "islands":
+		_raise_heist()
 		world.show_whole()
 	elif key == "heist":
 		_play()
@@ -378,10 +412,29 @@ func _floor() -> Control:
 	var over: Control = _foot
 	if notice.visible:
 		over = notice
-	if not over.visible or tabs == null:
+	if tabs == null or over.size.y <= 0.0:
 		return tabs
 	var room := tabs.get_global_rect().position.y - _top.get_global_rect().end.y
-	return over if over.size.y * 4.0 >= room else tabs
+	var span := tabs.get_global_rect().position.y - over.get_global_rect().position.y
+	return over if span * 4.0 >= room else tabs
+
+
+## The goal beside Collect where the two fit on one line, as the design sets
+## them, the goal narrowed to the room left; where they do not (large text, a
+## narrow phone), Collect alone, the goal coming back once nothing waits.
+func _fit_foot() -> void:
+	if goal.is_empty() or goal_card.get_child_count() == 0:
+		return
+	var card := goal_card.get_child(goal_card.get_child_count() - 1) as Control
+	var widest := minf(UI.px(230), get_viewport_rect().size.x - UI.px(40))
+	var room := _foot.size.x - _foot.get_theme_constant("h_separation") - collect_button.get_combined_minimum_size().x
+	var show := not collect_button.visible or room + 0.5 >= UI.px(GOAL_NARROWEST)
+	# Its words wrap, so the card narrows to the room Collect leaves.
+	var wide := widest if not collect_button.visible else clampf(floorf(room), UI.px(GOAL_NARROWEST), widest)
+	if not is_equal_approx(card.custom_minimum_size.x, wide):
+		card.custom_minimum_size.x = wide
+	if goal_card.visible != show:
+		goal_card.visible = show
 
 
 ## Over the whole universe every realm is named, or none is. Where the room is
@@ -441,16 +494,13 @@ func _show_hud() -> void:
 	if unseen < _dismissed:
 		_dismissed = 0
 	_show_raids(unseen if unseen > _dismissed else 0)
-	_foot.visible = not notice.visible
 	var track := ShopPresenter.track(store.get_slice(ShopState.TRACK))
 	_side(sides[&"track"], "!" if bool(track.get("can_claim", false)) else "")
-	# The Islands tab counts the producers that are full (§9.3); Collect shows
-	# while any holds something, what each resource has waiting said aloud.
-	var full := 0
+	# Collect shows while any producer holds something (§9.3), what each
+	# resource has waiting said aloud. The pills say which are full, so the
+	# Islands tab carries no count of its own, as the design draws it.
 	var ready := {}
 	for p: Dictionary in store.get_slice(RosterState.ROSTER).get("view", {}).get("producers", []):
-		if int(p.get("holds", 0)) > 0 and float(p.get("stored", 0)) >= UniversePurse.FULL * int(p["holds"]):
-			full += 1
 		var kind: String = UniverseStore.PRODUCES.get(str(p.get("kind", "")), "")
 		if kind != "" and int(p.get("stored", 0)) > 0:
 			ready[kind] = int(ready.get(kind, 0)) + int(p["stored"])
@@ -458,7 +508,8 @@ func _show_hud() -> void:
 	collect_button.visible = not ready.is_empty() and str(store.get_slice(RosterState.ROSTER)["busy"]) == ""
 	if collect_button.visible and not was:
 		Motion.pop.call_deferred(collect_button)
-	goal_card.visible = not goal.is_empty() and not collect_button.visible
+	goal_card.visible = not goal.is_empty()
+	_foot.queue_sort()
 	var waiting := PackedStringArray()
 	var total := 0
 	for kind: String in UniversePurse.ORDER:
@@ -467,8 +518,16 @@ func _show_hud() -> void:
 			total += int(ready[kind])
 	var words := collect_button.find_children("*", "Label", true, false)[0] as Label
 	words.text = Strings.t("HOME_COLLECT_AMOUNT", UniverseHud.compact(total, 1000))
+	# The amount as the design writes it, "Collect 3.4k", not the gold's capitals:
+	# the narrower button leaves the goal its room beside it.
+	words.uppercase = false
+	# The kit's button keeps its words inside, not laid out by it: it grows to
+	# the amount, its picture and the gold's padding, so the amount never runs
+	# past its edge.
+	var inside := words.get_parent() as Control
+	collect_button.custom_minimum_size.x = maxf(UI.px(120), inside.get_combined_minimum_size().x + UI.px(32))
 	collect_button.accessibility_name = Strings.t("HOME_COLLECT_SPOKEN", ", ".join(waiting))
-	_build_tabs({"islands": full} if full > 0 else {})
+	_build_tabs({})
 
 
 ## Every producer collected (§9.3), the amounts flying into their bars.
@@ -644,7 +703,9 @@ func _raid_notice() -> PanelContainer:
 	else:
 		p.add_child(row)
 		row.add_child(text)
-	var see := UI.action(Strings.t("HOME_RAIDED_SEE"), func() -> void: App.services.router.go(&"defences"), "gold")
+	# The kit's secondary look: gold is the screen's one main action, Collect
+	# (and the Heist tab), and the red card already draws the eye (§21.8).
+	var see := UI.action(Strings.t("HOME_RAIDED_SEE"), func() -> void: App.services.router.go(&"defences"), "ghost")
 	see.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(see)
 	var close := UI.action("×", _dismiss, "seg", Strings.t("HOME_RAIDED_CLOSE"))
@@ -720,6 +781,16 @@ func send_waiting(column: VBoxContainer) -> int:
 func _play() -> void:
 	App.services.store.dispatch(&"heist_started", {})
 	App.services.router.go(&"heist")
+
+
+## `l` in the kit's small display role (tokens.json "display_s": the display
+## face, ink outline and hard drop) at `points`, for home's figures and names.
+static func home_figure(l: Label, points: float) -> void:
+	if l == null:
+		return
+	l.theme_type_variation = "DisplayS"
+	l.add_theme_font_size_override("font_size", UI.text_px(points))
+	l.set_meta("points", points)
 
 
 ## A secondary place (§21.1 binds only the frequently used controls to the
