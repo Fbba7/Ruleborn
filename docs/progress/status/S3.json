@@ -5,16 +5,16 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-S3-character",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-13T00:22:00Z",
   "lease_until": "2026-11-13T03:22:00Z",
-  "updated_at": "2026-11-13T00:22:00Z",
-  "expected_next_update_by": "2026-11-13T01:07:00Z",
+  "updated_at": "2026-11-13T00:26:00Z",
+  "expected_next_update_by": "2026-11-13T01:10:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "cf4eecc2c6c98a4ab4c5028269ea391133812b9a",
-    "next_step": "P2-S3-screenkit merged as 70057394; claimed P2-S3-character. Next: read the character key frame and the current screen, then build it from the kit.",
-    "at": "2026-11-13T00:22:00Z"
+    "next_step": "Rebuilding character_screen.gd from the kit (KitNav.segmented light tabs, KitCards.ability and fact tiles, KitHex level, KitStatus.xp, KitControls.upgrade gold) and adding LOCALE and FIT to screen_character.gd.",
+    "at": "2026-11-13T00:26:00Z"
   },
   "precheck": null,
   "gate_request": null,
