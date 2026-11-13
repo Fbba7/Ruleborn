@@ -1,0 +1,121 @@
+[
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "71d51d7f",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T01:53:00Z",
+  "item": "home at 100% text",
+  "quality": "Hierarchy",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Three fails of three: the screen has no Collect action, and the small Heist tab is outranked by the raid banner's gold See button, the red raid card and the larger badged Islands tab. The judges also noted that art/ui/keyframes/01-home*.shot.json still describe the old keyframe (Keeper 24, 'Collect all') while the build renders Keeper 14 with the raid banner, so the shot record is stale; the crops were drawn by hand. Narrow point: make the Heist tab (or the screen's one main action) lead."
+ },
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "71d51d7f",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T01:53:00Z",
+  "item": "home at 100% text",
+  "quality": "Character presence",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Three fails of three: no character is on the screen. The avatar ring holds a pink top or flask emblem, not a portrait, and the only figure is the flat bunny Crew tab icon. Narrow point: a rendered keeper or creature portrait in the avatar ring or the scene."
+ },
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "71d51d7f",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T01:53:00Z",
+  "item": "home at 100% text",
+  "quality": "Display type",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Three fails of three: 'Keeper 14' sits straight on the starfield with no ink outline, and the currency counts (142.0k, 31.4k, 61.0k), which calibration v2 counts as headline figures, are flat white with no outline, hard drop or gradient fill. Narrow point: give the name and the currency counts the kit's display treatment."
+ },
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "71d51d7f",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T01:53:00Z",
+  "item": "home at 200% text, pt_BR",
+  "quality": "Hierarchy",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Three fails of three: the red 'Assaltado' raid card, the big resource numbers and the ILHAS tab outrank the small Heist tab; no main action leads. Same narrow point as at 100%."
+ },
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "71d51d7f",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T01:53:00Z",
+  "item": "home at 200% text, pt_BR",
+  "quality": "Display type",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Three fails of three: the currency counts (142,0 mil, 31,4 mil, 61,0 mil) and the 1.460 gem purse are flat white Manrope with no outline, hard drop or gradient (calibration v2 headline figures). Same narrow point as at 100%."
+ },
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "71d51d7f",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T01:53:00Z",
+  "item": "home in high contrast",
+  "quality": "Hierarchy",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Three fails of three: in grayscale the See button and the larger Islands tab lead, not the Heist tab. Same narrow point as at 100%."
+ },
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "71d51d7f",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T01:53:00Z",
+  "item": "home in high contrast",
+  "quality": "Colour roles and value",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three passes of three: gold fills only the main action (See) and is rim material elsewhere; red is kept for alarms (Raided card with '!' and label, count badges); the green status dot always sits beside 'Steady'; each island school pip carries its own glyph, so the pips still differ on all three colour-blindness sheets. Caveat from the judges: the anchors are not high-contrast stills, so this is not a same-mode comparison."
+ }
+]
