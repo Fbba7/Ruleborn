@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxorbtQPjVTWkgJKyfY` (cycle 80, 13
-November 2026 from 08:38Z, started by the Opus 5.5 launcher). Cycle 79's
+Latest lead cycle session: `session_01SNkKxmrBHkRN8tALzCsGkF` (cycle 81, 13
+November 2026 from 09:38Z, started by the Opus 5.5 launcher). Cycle 80's
+was `session_01SNkKxorbtQPjVTWkgJKyfY` (from 08:38Z). Cycle 79's
 was `session_01SNkKxpZSJe4qP28t2awv1v` (from 07:38Z). Cycle 78's
 was `session_01SNkKxo77VSsG6MDN6kJbhE` (from 05:39Z). Cycle 77's
 was `session_01SNkKxq8jXKxVQg8t1Ub3bT` (from 04:39Z). Cycle 76's
@@ -226,9 +227,10 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| AD | `session_01SNkKxqeNV7VTwM6RkPTRHh` (Opus 5.5, effort high) | S1-R25 first (M20: re-check S1-R24's four objections in P2-S1-result-2 at 71167028), then the next open AD task, else done; P2-AD-board-3 ready at 4a48eef9 and in the merge queue | `claude/ui-ad` | 2026-11-13 09:44Z |
 | S2 | `session_01SNkKxoy4LFKDybvN7vyFT5` (Opus 5.5, effort high) | P2-S2-home-3 (start: P2-S2-home-2 merged as 807d68a7; board 3's objections AD-R22 to AD-R24) | `claude/ui-screens-home` | 2026-11-13 08:53Z |
 | S1 | `session_01SNkKxn8w6ndc88LGhoq4KQ` (Opus 5.5, effort high) | P2-S1-result-2 (restart: AD's four S1-R24 objections stopped the merge in cycle 80; continue from aed28321, fix them, re-gate, ready) | `claude/ui-screens-heist` | 2026-11-13 08:53Z |
-| AD | `session_01SNkKxoydJpnnk4xwpMmSj4` (Opus 5.5, effort high) | P2-AD-board-3 (start: P2-S2-home-2 merged as 807d68a7; between boards, the previews S2-R18, S1-R24 and S3-R7) | `claude/ui-ad` | 2026-11-13 08:23Z |
+| AD | `session_01SNkKxoydJpnnk4xwpMmSj4` (Opus 5.5, effort high; idle after board 3 ready, replaced at 09:44Z) | P2-AD-board-3 (start: P2-S2-home-2 merged as 807d68a7; between boards, the previews S2-R18, S1-R24 and S3-R7) | `claude/ui-ad` | 2026-11-13 08:23Z |
 | S1 | `session_01SNkKxp1GYKSQAkZjfQC3vM` (Opus 5.5, effort high; idle, replaced at 08:53Z) | P2-S1-result-2 (start: P2-S1-result-1 merged as f41d100e, P2-K1-motion merged; deliver M7 and M11) | `claude/ui-screens-heist` | 2026-11-13 06:13Z |
 | S3 | `session_01SNkKxrGTeWurPkRy5fVrtk` (Opus 5.5, effort high) | P2-S3-settings (start: P2-S3-character merged as f41d100e) | `claude/ui-screens-meta` | 2026-11-13 06:13Z |
 | AIA | `session_01SNkKxokBReWMyyoeH6tR9y` (Opus 5.5, effort high; idle, P2-AIA-motion-2 merged as 0bc0fbb9) | P2-AIA-motion-2 (restart: the last session went idle on AIA-R25 alone and its lease lapsed at 04:43:33Z; prior_sha 7fd401e7; AIA-R25's default applied early, M15; mark ready when its checks pass) | `claude/ui-artist` | 2026-11-13 04:45Z |
