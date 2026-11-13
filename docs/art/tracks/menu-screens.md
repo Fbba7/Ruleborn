@@ -196,7 +196,7 @@ The before still is `before-settings-100.png`, from Part 1.
 
 `tools/ui_bake/check_screens.py`: OK. `settings_screen.gd` and `screen_switch.gd` draw nothing outside the kit.
 
-`tools/ui_bake/guard.sh`: OK. The budget shots (`screen_meta.gd`, `SCREEN=settings`, on the opening Game tab) read 46, 38 and 46 draw calls for settings at 100%, 200% and high contrast, against 52, 47 and 52 recorded. These falls are for K1 or the lead to `--record`. No word is below 4.5:1.
+`tools/ui_bake/guard.sh`: OK. The budget shots (`screen_meta.gd`, `SCREEN=settings`, on the opening Game tab) read 52, 44 and 52 draw calls for settings at 100%, 200% and high contrast, against 52, 47 and 52 recorded (on 9242f955). Before the self-check fixes it read 46 at 100%; the fixes' strokes bring it to 52, and with an outlined drop it read 55. The fall at 200% is for K1 or the lead to `--record`. No word is below 4.5:1; the worst word reads 9.37:1, and 5.94:1 in high contrast.
 
 ### The advisory self-check, and the fixes
 
