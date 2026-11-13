@@ -4,7 +4,7 @@
   "expected_next_update_by": "2026-11-13T09:45:00Z",
   "cycle": 80,
   "merging": {
-    "candidate_sha": null,
+    "candidate_sha": "a95cfd9a1f4948a4fe5ca760180a4d3d56ed9a03",
     "task_ids": [
       "P2-S1-result-2"
     ],
