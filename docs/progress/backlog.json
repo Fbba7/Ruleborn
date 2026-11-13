@@ -4038,6 +4038,14 @@
       "sent_at": "2026-11-13T09:15:00Z",
       "ack_by": "2026-11-13T11:15:00Z",
       "acked_at": null
+    },
+    {
+      "id": "M21",
+      "to": "lead",
+      "text": "Overdue lesson: M14 (to AIA-2, ack_by 2026-11-12T20:15Z) has acked_at null and is in no status acks, on main or on claude/ui-artist, claude/ui-artist-icons or claude/ui-bake. When you next start or resume AIA, give it M14's rule in its prompt: rebake art from a fresh container, merge current main and run bash tools/ui_bake/guard.sh on that merge before ready; list any added, removed or renamed piece or material as a request to the owner of that list (SKINS_OF, the kit's materials) with the same task; send AD portraits in colour and grayscale before ready. Ack by adding M21 to your status acks.",
+      "sent_at": "2026-11-13T09:50:00Z",
+      "ack_by": "2026-11-13T11:50:00Z",
+      "acked_at": null
     }
   ]
 }
