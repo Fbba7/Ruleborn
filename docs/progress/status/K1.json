@@ -3,26 +3,26 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-K1-tabs",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-13T10:55:00Z",
   "lease_until": "2026-11-13T13:55:00Z",
-  "updated_at": "2026-11-13T11:57:00Z",
-  "expected_next_update_by": "2026-11-13T12:40:00Z",
+  "updated_at": "2026-11-13T12:54:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "48cd0dd7",
-    "next_step": "guard.sh at 48cd0dd7: ui guard: OK (home 144/113/144 draw calls, records 145/114/145; the tab's clear bar box no longer draws under its tile); main 03a04e41 merged at 6cd5467c; setup, build, check_all and guard.sh running on the merge, then the pre-check and ready"
+    "last_green_sha": "ba364ba8",
+    "next_step": "Ready at ba364ba8: on the merge 6cd5467c (main 03a04e41) setup, build, check_all (All checks passed) and guard.sh (ui guard: OK) pass; pre-check PASS at ba364ba8. Waiting for the lead's merge queue and the gate."
   },
   "precheck": {
-    "sha": "b5d77219e9207b64e1f153a870b9d8d9995e23da",
+    "sha": "ba364ba898f330ba69e73ebb7b2ff96be49f9bb4",
     "exit": 0,
-    "finished_at": "2026-11-12T23:56:10Z",
+    "finished_at": "2026-11-13T12:52:05Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "ba364ba898f330ba69e73ebb7b2ff96be49f9bb4",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M2",
@@ -335,5 +335,5 @@
       "at": "2026-11-12T22:37:00Z"
     }
   ],
-  "next_step": "P2-K1-tabs: evidence on the merge 6cd5467c running, then the pre-check and ready"
+  "next_step": "P2-K1-tabs ready at ba364ba8; waiting for the lead's merge queue and the gate"
 }
