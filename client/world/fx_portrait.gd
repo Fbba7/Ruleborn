@@ -35,7 +35,7 @@ const VALUE_STEP := 30.0
 ## how much the light on the silhouette's swell weighs against the model's
 ## own (0.65 unless given); a faceted figure leans on the swell, since its
 ## own light is all facets.
-const TOON := {"quarryback": {}, "glass_golem": {"crop": Vector3(0.5, 0.32, 0.32), "form": 0.85}}
+const TOON := {}
 ## The bust's part every other portrait shows (`_disc_uv`'s).
 const CROP := Vector3(0.5, 0.44, 0.42)
 ## The composed portraits, by kind, school and pixel size, and what each

@@ -4,6 +4,17 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-13 10:12Z: the lead was just past its update time, cycle 81 still working (watchdog)
+
+- **What:** `status/lead.json` was past its `expected_next_update_by` of
+  10:12Z by a few seconds when checked at 10:12:16Z (last update 09:46Z,
+  cycle 81). The launcher had not failed: it is enabled and its last run
+  succeeded at 09:38Z.
+- **Done:** started no session. The latest lead cycle session on record
+  (`session_01SNkKxmrBHkRN8tALzCsGkF`, cycle 81, created 09:38Z) is still
+  working: it reports guard.sh passed and check_all running.
+- **Needs the owner:** nothing.
+
 ## 2026-11-12 05:42Z: main failed check_all after the overseer's security commits; fixed (lead, cycle 60)
 
 - **What:** main had failed `tools/check_all.sh` since the overseer's

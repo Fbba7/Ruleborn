@@ -1,0 +1,107 @@
+[
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "f5719f28cbf8c9d751eae45a887de86bab5c2b32",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T08:20:00Z",
+    "item": "settings at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "fail",
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Split on the first three (pass, pass, fail), five passes of six after three more samples, so it passes. The large serif 'Settings' title in its own bar at the top leads by size and place; the gold '100%' is a value readout, smaller and greyer in grayscale. The one fail held that the bold gold '100%' is as large as the title and heavier, and that the thin serif group headers 'Access' and 'Seeing and comfort' sit below the bold row labels; two passes also called the group headers only modestly stronger than the rows."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "f5719f28cbf8c9d751eae45a887de86bab5c2b32",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T08:20:00Z",
+    "item": "settings at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails of three: the section headers 'Access' and 'Seeing and comfort' sit straight on the starfield gradient with only a soft drop shadow, not an ink outline of at least 1.5 pt or 12% all round as display type on a busy ground requires."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "f5719f28cbf8c9d751eae45a887de86bab5c2b32",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T08:20:00Z",
+    "item": "settings at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails of three: the 'Acesso' group header is a thin serif on the starfield with a drop shadow and no ink outline. One sample also found the bottom row of category labels in the lower card clipped, and the header styles mixed (thin serif against heavy Manrope)."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "f5719f28cbf8c9d751eae45a887de86bab5c2b32",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T08:20:00Z",
+    "item": "settings at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails of three: in grayscale the thin 'Ajustes' title on its dark panel is outranked by the bright cream tab bar with its bold selected 'Acesso' tab, by the large cream Stillness card and by 'Voltar'; the 'Acesso' group header is weaker than the rows beneath it."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "f5719f28cbf8c9d751eae45a887de86bab5c2b32",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T08:20:00Z",
+    "item": "settings in high contrast",
+    "quality": "Colour roles and value",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: gold appears only as a rim on the selected tab; the schools keep their own hues and glyphs and stay apart on the colour-blindness views; green means only 'on', and the knob position carries the state too."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "f5719f28cbf8c9d751eae45a887de86bab5c2b32",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T08:20:00Z",
+    "item": "settings in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: in grayscale the large framed 'Settings' title at the top still leads by place and size; the selected Access tab is dark with only a gold rim, and the white rows and cream cards are light by design of the high-contrast mode. The group headers 'Access' and 'Seeing and comfort' are only as strong as the rows."
+  }
+]

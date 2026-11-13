@@ -157,8 +157,17 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxq8UPsw413Cqn38hyd` (cycle 72, 12
-November 2026 from 20:39Z, started by the Opus 5.5 launcher). Cycle 71's
+Latest lead cycle session: `session_01SNkKxmrBHkRN8tALzCsGkF` (cycle 81, 13
+November 2026 from 09:38Z, started by the Opus 5.5 launcher). Cycle 80's
+was `session_01SNkKxorbtQPjVTWkgJKyfY` (from 08:38Z). Cycle 79's
+was `session_01SNkKxpZSJe4qP28t2awv1v` (from 07:38Z). Cycle 78's
+was `session_01SNkKxo77VSsG6MDN6kJbhE` (from 05:39Z). Cycle 77's
+was `session_01SNkKxq8jXKxVQg8t1Ub3bT` (from 04:39Z). Cycle 76's
+was `session_01SNkKxnLXN4d7GMy12F1W5F` (from 03:38Z). Cycle 75's
+was `session_01SNkKxozSRuvzVXmhKrTz3w` (from 02:38Z). Cycle 74's
+was `session_01SNkKxq74K4BtMR3MtbQTe1` (from 23:39Z). Cycle 73's
+was `session_01SNkKxnQNXyshnSaWRSFz4A` (from 22:39Z). Cycle 72's
+was `session_01SNkKxq8UPsw413Cqn38hyd` (from 20:39Z). Cycle 71's
 was `session_01SNkKxr8rzRPkaA8ocqu69E` (from 18:39Z). Cycle 70's
 was `session_01SNkKxpKUASWJcNRTsGDfsp` (from 16:38Z). Cycle 69's
 was `session_01SNkKxnAEyrHDn5aRYpjvTB` (from 14:39Z). Cycle 68's
@@ -218,12 +227,25 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| K1 | `session_01SNkKxqeMVkQseRbMLW4q8r` (Opus 5.5, effort high) | P2-K1-motion (start: P2-AIA-motion-1 merged as a43e4d5a) | `claude/ui-bake` | 2026-11-12 22:02Z |
-| S2 | `session_01SNkKxn7gvvhfq2Xjm1ocpN` (Opus 5.5, effort high) | P2-S2-home-1 (start: P2-flow-entry merged as 62c66327; S2-R4's default applies) | `claude/ui-screens-home` | 2026-11-12 22:02Z |
-| S1 | `session_01SNkKxnTgyGWE1wfK5suMkd` (Opus 5.5, effort high) | P2-S1-toon-drop (start: P2-S1-flow-replay merged as 509c43c2, P2-AIA2-busts merged) | `claude/ui-screens-heist` | 2026-11-12 22:02Z |
+| AD | `session_01SNkKxqeNV7VTwM6RkPTRHh` (Opus 5.5, effort high) | S1-R25 first (M20: re-check S1-R24's four objections in P2-S1-result-2 at 71167028), then the next open AD task, else done; P2-AD-board-3 ready at 4a48eef9 and in the merge queue | `claude/ui-ad` | 2026-11-13 09:44Z |
+| S2 | `session_01SNkKxoy4LFKDybvN7vyFT5` (Opus 5.5, effort high) | P2-S2-home-3 (start: P2-S2-home-2 merged as 807d68a7; board 3's objections AD-R22 to AD-R24) | `claude/ui-screens-home` | 2026-11-13 08:53Z |
+| S1 | `session_01SNkKxn8w6ndc88LGhoq4KQ` (Opus 5.5, effort high) | P2-S1-result-2 (restart: AD's four S1-R24 objections stopped the merge in cycle 80; continue from aed28321, fix them, re-gate, ready) | `claude/ui-screens-heist` | 2026-11-13 08:53Z |
+| AD | `session_01SNkKxoydJpnnk4xwpMmSj4` (Opus 5.5, effort high; idle after board 3 ready, replaced at 09:44Z) | P2-AD-board-3 (start: P2-S2-home-2 merged as 807d68a7; between boards, the previews S2-R18, S1-R24 and S3-R7) | `claude/ui-ad` | 2026-11-13 08:23Z |
+| S1 | `session_01SNkKxp1GYKSQAkZjfQC3vM` (Opus 5.5, effort high; idle, replaced at 08:53Z) | P2-S1-result-2 (start: P2-S1-result-1 merged as f41d100e, P2-K1-motion merged; deliver M7 and M11) | `claude/ui-screens-heist` | 2026-11-13 06:13Z |
+| S3 | `session_01SNkKxrGTeWurPkRy5fVrtk` (Opus 5.5, effort high) | P2-S3-settings (start: P2-S3-character merged as f41d100e) | `claude/ui-screens-meta` | 2026-11-13 06:13Z |
+| AIA | `session_01SNkKxokBReWMyyoeH6tR9y` (Opus 5.5, effort high; idle, P2-AIA-motion-2 merged as 0bc0fbb9) | P2-AIA-motion-2 (restart: the last session went idle on AIA-R25 alone and its lease lapsed at 04:43:33Z; prior_sha 7fd401e7; AIA-R25's default applied early, M15; mark ready when its checks pass) | `claude/ui-artist` | 2026-11-13 04:45Z |
+| S2 | `session_01SNkKxo9ZakHyaiiUKjsDBf` (Opus 5.5, effort high; idle, P2-S2-home-2 merged as 807d68a7) | P2-S2-home-2 (P2-S2-home-1 merged as 7e289af9; take its advisory gate points) | `claude/ui-screens-home` | 2026-11-13 05:22Z |
+| S2 | `session_01SNkKxnuTWp4E5eG5m1dBtB` (Opus 5.5, effort high; idle, its task merged as 7e289af9) | P2-S2-home-1 (restart: the last session idle past its expected_next_update_by 01:18Z and its lease lapsed at 01:10Z; prior_sha 5164cc43; S2-R11's default applied early; take cycle 74's advisory gate points, then ready) | `claude/ui-screens-home` | 2026-11-13 02:43Z |
+| S1 | `session_01SNkKxowrAJqRGxuKn8Tf1C` (Opus 5.5, effort high; idle, P2-S1-result-1 merged as f41d100e) | P2-S1-toon-drop (restart: the last session went idle waiting for the gate; advisory pass in verdicts/P2-S1-toon-drop/a7dd6501.json; mark ready); toon-drop merged as c0aa1bd6, the session builds P2-S1-result-1 next | `claude/ui-screens-heist` | 2026-11-12 23:41Z |
+| S3 | `session_01SNkKxq23wc1i1XYqt7KM15` (Opus 5.5, effort high; idle, its task merged as f41d100e) | P2-S3-character (P2-S3-screenkit merged as 70057394; next task) | `claude/ui-screens-meta` | 2026-11-13 00:19Z |
+| S3 | `session_01SNkKxqkkDvs1XEigTTp6o5` (Opus 5.5, effort high) | P2-S3-screenkit (restart: the last session idle past its expected_next_update_by 21:54:38Z and its lease lapsed at 22:16Z; prior_sha 03b3d762; answer Lead-R1, then ready); idle, its task merged as 70057394 | `claude/ui-screens-meta` | 2026-11-12 22:43Z |
+| K1 | `session_01SNkKxqeMVkQseRbMLW4q8r` (Opus 5.5, effort high; idle, its task merged as ec2200b1) | P2-K1-motion (start: P2-AIA-motion-1 merged as a43e4d5a) | `claude/ui-bake` | 2026-11-12 22:02Z |
+| S2 | `session_01SNkKxn7gvvhfq2Xjm1ocpN` (Opus 5.5, effort high; idle past its expected update, restarted in cycle 75) | P2-S2-home-1 (start: P2-flow-entry merged as 62c66327; S2-R4's default applies) | `claude/ui-screens-home` | 2026-11-12 22:02Z |
+| S1 | `session_01SNkKxnTgyGWE1wfK5suMkd` (Opus 5.5, effort high; idle waiting for the gate, replaced at 23:41Z) | P2-S1-toon-drop (start: P2-S1-flow-replay merged as 509c43c2, P2-AIA2-busts merged) | `claude/ui-screens-heist` | 2026-11-12 22:02Z |
 | S1 | `session_01SNkKxqKPyULbAiucFCfPRG` (Opus 5.5, effort high; idle, its task merged as 509c43c2) | P2-S1-flow-replay (start: P2-S1-flow-result merged as 9e1dd558; S1's session idle with its task merged; S1-R13 granted) | `claude/ui-screens-heist` | 2026-11-12 19:56Z |
 | S2 | `session_01SNkKxozf5JRQDJPnSF8RWh` (Opus 5.5, effort high; idle, its task merged as 62c66327) | P2-flow-entry (start: P2-S2-flow-home merged as 7d899ce4; S2's session idle with its task merged) | `claude/ui-screens-home` | 2026-11-12 19:55Z |
-| S3 | `session_01SNkKxnF4CGAt7d58kriezr` (Opus 5.5, effort high) | P2-S3-screenkit (start: S3's first session; report.md step 11, seeded in cycle 71; S2's session idle with its task ready, so S3 takes the third place in the cap) | `claude/ui-screens-meta` | 2026-11-12 19:13Z |
+| S3 | `session_01SNkKxnF4CGAt7d58kriezr` (Opus 5.5, effort high; idle past its expected update, restarted in cycle 73) | P2-S3-screenkit (start: S3's first session; report.md step 11, seeded in cycle 71; S2's session idle with its task ready, so S3 takes the third place in the cap) | `claude/ui-screens-meta` | 2026-11-12 19:13Z |
+| AIA | `session_01SNkKxpZQK5vjTDskqnfXsB` (Opus 5.5, effort high; idle on AIA-R25 past its lease, replaced at 04:45Z) | P2-AIA-motion-2 (start: P2-K1-motion merged as ec2200b1; the fourth builder with S1, S2 and S3) | `claude/ui-artist` | 2026-11-13 01:41Z |
 | AIA | `session_01SNkKxnSyJpXP86pzUyQUqT` (Opus 5.5, effort high; idle, its task merged as a43e4d5a) | P2-AIA-motion-1 (restart: the fourth builder by the owner's cap of four, M15; AIA-R23's default applied, the sheet stands; spec and checks passed at b96e3f64) | `claude/ui-artist` | 2026-11-12 20:42Z |
 | AIA | `session_01SNkKxnntrrTGLutdQgN4sk` (Opus 5.5, effort high; idle waiting on AIA-R23, replaced at 20:42Z) | P2-AIA-motion-1 (start: report.md step 8, seeded in cycle 71; AIA's last session was a Fable 5.2 one, not reused) | `claude/ui-artist` | 2026-11-12 18:52Z |
 | S1 | `session_01SNkKxpQyZFv1eTtnsa2WHD` (Opus 5.5, effort high; idle, its task merged) | P2-S1-flow-result (restart: expected_next_update_by 18:33:59Z passed, session idle; pre-check of 262904c4 lost with the old container) | `claude/ui-screens-heist` | 2026-11-12 18:44Z |
@@ -374,7 +396,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P2-S1-toon-drop (P2-S1-flow-replay is merged, as 509c43c2), then P2-S1-result-1 and P2-S1-result-2 as their deps merge (report.md step 9). Pilot-1 to pilot-5 and P1-AD-board-1d are merged: board 1 stands.
+Tasks: P2-S1-result-2 (report.md step 9; P2-S1-result-1 and P2-K1-motion are merged): its work is on claude/ui-screens-heist at aed28321; answer AD's four objections to S1-R24 (docs/progress/requests.md) inside the task before ready. Pilot-1 to pilot-5, P2-S1-toon-drop and P2-S1-result-1 are merged.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -389,7 +411,7 @@ You are agent S2 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-home
 Owned files: only the files each S2 task lists in the backlog, docs/progress/S2.md, docs/progress/status/S2.json
-Tasks: P2-S2-home-1 (P2-flow-entry is merged, as 62c66327), then P2-S2-home-2 as its deps merge (report.md step 10). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+Tasks: P2-S2-home-3 (P2-S2-home-2 is merged, as 807d68a7; report.md step 10): board 3's objections A to C (AD-R22 to AD-R24 in docs/progress/requests.md; docs/art/ui-quality/gate/boards/board-3.md on claude/ui-ad until P2-AD-board-3 merges) with the task's own done_when. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -428,6 +450,366 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 81, 13 November 2026, from 09:38Z (session
+  `session_01SNkKxmrBHkRN8tALzCsGkF`, started by the Opus 5.5 launcher):
+  P2-AD-board-3 merged as `f5c9a801`, S1's advisory gate passes, AD
+  started on S1-R25.
+  - **Merge** (M17, M19): P2-AD-board-3 (ready 4a48eef9; docs and
+    answers only). Merge lock taken at `c48c8563` (09:46Z); the
+    candidate, 4a48eef9 merged on that head, was `0a3f5cad`. The first
+    check run failed at 09:44:55Z on the fresh container (no
+    wasm32-unknown-unknown target for std), not on the candidate; the
+    rustup targets and pip packages were installed and the run restarted
+    on the same sha. guard.sh OK (GUARD exit 0); check_all PASS at
+    10:20:26Z. Merged onto main's head (lead-only commits since) as
+    `f5c9a801` with the lock cleared in the same turn (one watchdog
+    commit since). The audit and
+    roadmap pages did not change.
+  - **S1's gate, advisory** (P2-S1-result-2 at 71167028, result at 100%
+    text; `verdicts/P2-S1-result-2/71167028.json`, `4ffffa75`):
+    Hierarchy and Character presence pass, three of three each. The
+    full-width gold Raid again leads in grayscale as clearly as the pass
+    anchor's Level up; the three crew portraits read as faces in the toon
+    look, larger than the pass anchor's.
+  - **M20 acked**: result-2's merge lock waits for AD's answer to S1-R25
+    or its due (14 November 09:22Z). AD started on S1-R25 in the free
+    seat as `session_01SNkKxqeNV7VTwM6RkPTRHh` (09:44Z, effort high),
+    then its next open task; the last AD session was idle after board 3.
+  - **Requests:** S1-R25 (to AD) copied; S1-R26 approved (the lead
+    records result/200 at 98, with a raises entry, and the lowered
+    result/100 89, result/hc 27 and check_screens figures at result-2's
+    merge); S1-R27 granted as exceptions (`client/scripts/result_fit.gd`
+    and its `.uid` added to P2-S1-result-2); S3-R8 copied, the default
+    stands (a later K1 task).
+  - **Builders:** S1 (result-2, waiting on S1-R25), S2 (home-3), S3
+    (settings) and AD, the cap of four; P2-K1-tabs waits for the next
+    free seat. No session showed `allowed_warning`.
+  - **Watchdog** (10:12Z, owner-inbox): lead.json was a few seconds past
+    its 10:12Z, set before the check run; nothing started. The next step
+    now says to set `expected_next_update_by` to at least a lock's expiry
+    while a check runs.
+- Cycle 80, 13 November 2026, from 08:38Z (session
+  `session_01SNkKxorbtQPjVTWkgJKyfY`, started by the Opus 5.5 launcher):
+  P2-S1-result-2's merge stopped before main moved on AD's S1-R24
+  objections; board 3's follow-ups filed; S1 restarted, S2 started.
+  - **Merge stopped** (M15, M19): result-2 (aed28321, advisory gate pass)
+    was set ready and the lock taken at `bfe6d854`; the candidate was
+    `a95cfd9a` (`7143af25`). The fresh container's tools were installed
+    (rustup targets, pip packages, npm ci, client/build.sh). AD answered
+    S1-R24 at 08:46Z with four objections to fix before the merge (the
+    haul above the moment card at 200% pt_BR; rays, stars and glow off in
+    high contrast; the multipliers pill on one line at 200% pt_BR; the
+    rest line on two lines at 100%; the 52 pt faces stand), and result-2's
+    done_when asks for that. The check run and guard.sh were stopped (the
+    run reads LOST for a95cfd9a), the candidate worktree removed, the task
+    put back to working under S1's claim and the lock released in
+    `d17bce1c`. Main did not move; the audit and roadmap pages did not
+    change.
+  - **AD's answers** recorded in requests.md: S2-R18 (board 3), S1-R24
+    (above) and S3-R7 (six objections, for S3 inside P2-S3-settings before
+    its gate request).
+  - **Board 3's follow-ups** (AD-R22 to AD-R25, defaults applied, M18):
+    P2-S2-home-3 (S2, 3h; objections A to C on home-2's six files),
+    P2-K1-tabs (K1, 1h; AD-R25 and the KitTabs part of AD-R24) and
+    P2-AD-board-3b (AD, 1h; the re-check after both), inserted before
+    P2-AD-board-4.
+  - **Sessions** (`5654dca9` names their tasks in the prompts): S1
+    restarted on result-2 as `session_01SNkKxn8w6ndc88LGhoq4KQ` (the last
+    one idle at 126k context); S2 started on home-3 as
+    `session_01SNkKxoy4LFKDybvN7vyFT5`. Both created at effort high.
+    Builders: S1, S2, S3 and AD, the cap of four; P2-K1-tabs waits for a
+    seat. The seven-day bar does not read `allowed_warning`.
+- Cycle 79, 13 November 2026, from 07:38Z to 08:30Z (session
+  `session_01SNkKxpZSJe4qP28t2awv1v`, started by the Opus 5.5 launcher):
+  P2-S2-home-2 merged as `807d68a7`, two advisory gates, AD started on
+  P2-AD-board-3.
+  - **Merge** (M17, M19): P2-S2-home-2 (ready 3612e265, gate passed in
+    cycle 78). Merge lock taken at `d76e2079` (07:43Z); the candidate,
+    3612e265 merged on that head with S2-R17's records (home/100 and
+    home/hc 145, home/200 114, and a raises entry), was `2e1ebe05`.
+    guard.sh OK (GUARD_EXIT=0); check_all PASS at 08:22:10Z, run from the
+    main checkout. Merged onto main's head (two lead-only commits since)
+    as `807d68a7`, docs check clean, pushed with the lock cleared in the
+    same turn (`abbe59eb`). S2-R17 recorded. S2 has no open task; its
+    session stays idle. The audit and roadmap pages did not change.
+  - **S1's gate, advisory** (P2-S1-result-2 at aed28321, result at 100%
+    text; `verdicts/P2-S1-result-2/aed28321.json`): Hierarchy and
+    Character presence pass, three of three each. Raid again leads by size
+    and colour (narrower in grayscale than on the anchor); the three crew
+    portraits read in the toon look.
+  - **S3's gate, advisory** (P2-S3-settings at f5719f28;
+    `verdicts/P2-S3-settings/f5719f28.json`): **Display type fails** at
+    100% and at 200% pt_BR (the group headers 'Access' / 'Acesso' and
+    'Seeing and comfort' sit on the starfield with a drop shadow, no ink
+    outline; one sample saw the lower card's last row of labels clipped at
+    200%), and **Hierarchy at 200% pt_BR fails** (the thin 'Ajustes' title
+    is outranked in grayscale by the cream tab bar, the Stillness card and
+    Voltar). Hierarchy at 100% split (pass, pass, fail), then passed five
+    of six; high contrast passes Colour roles and Hierarchy. Shadow mode:
+    `attempts` stays 0, as for every advisory fail so far; S3 takes the
+    critique before ready, and every item goes on board 5.
+  - **AD started** on P2-AD-board-3 as `session_01SNkKxoydJpnnk4xwpMmSj4`
+    (08:23Z, effort high accepted), with the previews S2-R18, S1-R24 and
+    S3-R7 to answer between boards. Builders: S1, S3 and AD (three, under
+    the cap of four); no session showed `allowed_warning`.
+  - **Requests:** S3-R6 granted (its shot script and
+    `docs/art/shots/menu-screens/**` added to P2-S3-settings). S1-R23
+    (to K1), S1-R24 and S3-R7 (to AD) copied.
+  - **M18:** get_session on S1 (idle, its watch waiting on the gate), S2
+    (idle, completed), S3 (idle, check-in at 08:13Z) and AIA (idle, no
+    task): none needs a restart; the verdicts are on main for S1 and S3.
+- Cycle 78, 13 November 2026, from 05:39Z to 07:00Z (session
+  `session_01SNkKxo77VSsG6MDN6kJbhE`, started by the Opus 5.5 launcher):
+  P2-S3-character and P2-S1-result-1 merged together as `f41d100e`,
+  P2-AIA-motion-2 merged as `0bc0fbb9`,
+  S1 and S3 started on their next tasks, S2's gate passed, S2-R17 approved.
+  - **Batched merge** (M15, M17): P2-S3-character (ready 6f6a3b15, its
+    advisory gate points taken) and P2-S1-result-1 (ready d0f4a899),
+    disjoint claims. Merge lock taken at `61c4cb76` (05:49Z); the
+    candidate, both merged on that head, was `f41d100e`. `owners.py diff`
+    clean for both (S1's on the three-dot diff: its branch merged main
+    before home-1, so the two-dot diff showed home-1's files). guard.sh OK;
+    check_all PASS at 06:11:48Z, run from the main checkout; pushed to main
+    as `f41d100e` and the lock cleared in the same turn (`df12e5f1`).
+    S1-R19's default stands (result's record unchanged; check_screens
+    passes either way).
+  - **AIA's merge** (M17): P2-AIA-motion-2 (ready d0648763, its five
+    shot scripts' `.gd.uid` companions granted as exceptions, by
+    precedent). Merge lock taken at `c1a4e151` (06:17Z); the candidate,
+    d0648763 merged on that head, was `0bc0fbb9`. `owners.py diff` clean.
+    check_all PASS at 06:40:52Z, run from the main checkout. guard.sh
+    failed twice on the container, not on the work: first the candidate
+    worktree had no native library (character's shots, "no measure"; fixed
+    with `bash client/build.sh` in the worktree), then the icon studio page
+    timed out waiting for `window.ready` (the worktree had no
+    `tools/ui_research/node_modules`, so three never loaded; fixed with
+    `npm ci` there). The third run: every family rebakes byte for byte,
+    check_screens and budget_shots OK, ui guard OK (06:52:57Z). Pushed to
+    main as a fast-forward to `0bc0fbb9` and the lock cleared in the same
+    turn. AIA has no open task; its session stays idle. Three builders
+    run (S1, S2, S3).
+  - **S1 and S3 started** (06:13Z, effort high accepted; both old sessions
+    idle with their tasks merged): S1 on P2-S1-result-2 as
+    `session_01SNkKxp1GYKSQAkZjfQC3vM` (its deps, result-1 and P2-K1-motion,
+    merged; the prompt delivers M7 and M11 for its acks), S3 on
+    P2-S3-settings as `session_01SNkKxrGTeWurPkRy5fVrtk`. With S2 and AIA
+    that makes four builders, the cap; no session showed
+    `allowed_warning`.
+  - **S2's gate, advisory** (P2-S2-home-2 at 3612e265, home at 100% text;
+    verdict in
+    `docs/art/ui-quality/gate/verdicts/P2-S2-home-2/3612e265.json`):
+    Character presence and Hierarchy pass, three of three each. The
+    Keeper's portrait, about 110 px in its gold ring, reads as a figure in
+    the toon look; Collect is the one large gold control and leads.
+  - **Requests:** S2-R17 approved: when P2-S2-home-2 merges, the lead
+    records home/100 and home/hc at 145 and home/200 at 114 in
+    `tools/ui_bake/budgets.json`, with a raises entry for S2-R17; S2 may
+    mark ready with guard.sh failing only on those lines. S2-R18 copied to
+    requests.md; AD has no session, so its default stands at its due,
+    11:39Z.
+  - **Claims copied:** S2 (P2-S2-home-2, lease 08:23:34Z, pre-checking
+    3612e265) and AIA (P2-AIA-motion-2, lease 07:48Z, ready d0648763 at
+    05:46Z).
+- Cycle 77, 13 November 2026, from 04:39Z to 05:25Z (session
+  `session_01SNkKxq8jXKxVQg8t1Ub3bT`, started by the Opus 5.5 launcher):
+  P2-S2-home-1 merged as `7e289af9`, S2 started on P2-S2-home-2, AIA restarted, two advisory gates, requests copied.
+  - **Merge:** P2-S2-home-1, ready at 977edd5b (S2's pre-check PASS), as
+    candidate 3d682157 on main's head (merge lock taken at 04:44:42Z,
+    `580c9e4d`). At the merge the lead recorded S2-R16's raises in
+    `tools/ui_bake/budgets.json`: shots home/100 and home/hc at 143 and
+    home/200 at 112, with a raises entry for S2-R16, and the entries for
+    `home.gd`, `screen_box.gd` and `universe_badge.gd` dropped, as S2's
+    branch moved them. guard.sh OK on the candidate; check_all PASS at 05:20:17Z; merged as
+    `7e289af9`.
+  - **AIA restarted** on P2-AIA-motion-2 as
+    `session_01SNkKxokBReWMyyoeH6tR9y` (04:45Z, effort high accepted): the
+    last session (`session_01SNkKxpZQK5vjTDskqnfXsB`) went idle on
+    AIA-R25 alone, with its checks passing at 7fd401e7, and its lease
+    lapsed at 04:43:33Z. The task was set open with prior_branch
+    `claude/ui-artist` at 7fd401e7. **AIA-R25's default applied early**
+    (M15, as AIA-R23): AD has no session in the cap, so the strips stand
+    as shot; any AD objection becomes a follow-up beside board 4. The new
+    session claimed the task (lease 07:48Z) and was pre-checking its
+    merge c8863682 (its commit of 04:52Z).
+  - **Claims copied:** S1 (P2-S1-result-1, lease 06:08:36Z) pushed the
+    gate's advisory points at 0a1a76fa (ink outlines on the words over
+    art, display totals, the 3 s button grow). S3 (P2-S3-character, lease
+    09:00Z) recorded its pre-check at 6f6a3b15 and asked for the gate.
+  - **S2's gate, advisory** (P2-S2-home-1 at 977edd5b; verdict in
+    `docs/art/ui-quality/gate/verdicts/P2-S2-home-1/977edd5b.json`): 4 of
+    7 pass, every item three of three. Fails: Display type at 100% and
+    at 200% (the headline currency counts are flat cream Manrope on dark
+    plates, with no outline, hard drop or gradient; at 200% the
+    'Guardião 24' header over the starfield has only a soft shadow), and
+    Character presence (the only character is the small Keeper avatar,
+    about 65 to 75 px). Passes: Hierarchy at all three settings (Collect
+    leads) and Colour roles in high contrast. These are follow-ups for
+    P2-S2-home-2.
+  - **S3's gate, advisory** (P2-S3-character at 6f6a3b15; verdict in
+    `docs/art/ui-quality/gate/verdicts/P2-S3-character/6f6a3b15.json`): 5
+    of 7 pass. Fails, three of three: Display type at 100% and at 200%
+    ('Skyskipper · Carrier'/'Carregador' and 'Level 3 of 10'/'Nível 3 de
+    10' sit on the starfield with no ink outline, and the 'NV' tag runs
+    over the badge edge; cycle 76's finding stands). Passes: Hierarchy at
+    100% and 200%, Character presence, Colour roles in high contrast, and
+    Hierarchy in high contrast at four of six (samples 1 to 3 split; two
+    samples found the Level up bar mid-gray and about half the anchor's
+    height under a heavier ability card, a follow-up).
+  - **Requests copied:** S1-R21 (to K1: `Motion.reward`'s `top_level`
+    layer draws under UI pages; S1's `_lift_reward` stands until the kit
+    answers; due 14 November 03:47Z) and S1-R22 (to AD, preview before
+    P2-S1-result-2's gate; due 14 November 03:47Z). K1 has no task and AD
+    no slot, so each default stands at its due.
+  - Builders: S1, S2, S3 and AIA make four, the cap; no session showed
+    `allowed_warning`. No alert.
+- Cycle 76, 13 November 2026, from 03:38Z to about 04:00Z (session
+  `session_01SNkKxnLXN4d7GMy12F1W5F`, started by the Opus 5.5 launcher):
+  no merge, two advisory gates, requests copied, M17 acknowledged.
+  - **Claims copied:** S2 reclaimed P2-S2-home-1 (claimed 02:47Z, lease
+    06:31:18Z; full checks running on d5465b92, then pre-check and ready).
+    S1 (P2-S1-result-1, lease 06:08:36Z) and S3 (P2-S3-character, lease
+    capped at 06:32Z, three hours from its last status) are working.
+  - **AIA overdue:** its status (02:47Z, waiting on AIA-R25) promised an
+    update by 02:51Z and none came; its lease on P2-AIA-motion-2 still runs
+    to 04:43:33Z. Cycle 77 rechecks: if the lease has lapsed with no
+    update, the task reopens with prior_branch `claude/ui-artist` at
+    7fd401e7 and a fresh AIA session takes it.
+  - **S3's gate, advisory** (P2-S3-character at f1251e68; verdict in
+    `docs/art/ui-quality/gate/verdicts/P2-S3-character/f1251e68.json`):
+    4 of 7 pass. Fails: Display type at 100% and at 200% pt_BR (outline
+    the words over art, "Skyskipper · Carrier" and "Level 3 of 10"), and
+    Hierarchy at 100% (pffffp; collapse the ability card or shrink its
+    prose, and strengthen Level up). Passes: Character presence, Hierarchy
+    at 200% and in high contrast (fpppff), Colour roles in high contrast.
+  - **S1's gate, advisory** (P2-S1-result-1 at 8bec0d84; verdict in
+    `docs/art/ui-quality/gate/verdicts/P2-S1-result-1/8bec0d84.json`):
+    4 of 7 pass. Fails: Display type at 100% and at 200% pt_BR (outline
+    HEIST COMPLETE, "Clean"/"Limpo", the subtitle, Entry fee and
+    Re-simulated lines; give +2,310, +805 and +15 the display treatment;
+    the "3 s" chip clips at 200%, let it grow with its text), and
+    Character presence at 100% (crew portraits about 45 px against the
+    anchor's 60; make them separate and larger, or put a character on the
+    reward, as S1-R20 foresaw). Hierarchy passes at all three, Colour roles
+    in high contrast. The gate is in shadow mode, so neither fail blocks
+    a merge; each builder takes the cheap fixes before marking ready and
+    lists the rest as follow-ups.
+  - **Requests copied:** S2-R12, S2-R14 and S2-R15 (to K1; K1 has no task
+    and no slot, so each default stands at its due 15:11Z). **Answered:**
+    S2-R13 (the Keeper's portrait is the featherkin, the default) and
+    S2-R16 (approved: the lead records home/100 and home/hc 143 and
+    home/200 112 in `tools/ui_bake/budgets.json` when it merges
+    P2-S2-home-1, in place of S2-R7's 139). S3-R5's due (04:45Z) passes
+    with AD out of the cap; its default stands.
+  - **M17 acknowledged:** batch ready tasks with disjoint claims, merge and
+    clear the lock in the turn the check passes, run check_all from the
+    main checkout.
+  - Nothing ready, the merge lock is clear. Builders: S1, S2, S3 and AIA
+    make four, the cap; no session showed `allowed_warning`. No alert.
+- Cycle 75, 13 November 2026, from 02:38Z to about 02:50Z (session
+  `session_01SNkKxozSRuvzVXmhKrTz3w`, started by the Opus 5.5 launcher):
+  no merge, S2 restarted, requests copied.
+  - **Claims copied:** S1 (P2-S1-result-1, lease 05:23:29Z) and AIA
+    (P2-AIA-motion-2, lease 04:43:33Z) are working; S3's lease on
+    P2-S3-character runs to 05:22Z.
+  - **S2 restarted** on P2-S2-home-1 as `session_01SNkKxnuTWp4E5eG5m1dBtB`
+    (02:43Z): the last session sat idle past its expected update (01:18Z)
+    and its lease lapsed at 01:10Z, so the task was set open with
+    prior_branch `claude/ui-screens-home` at 5164cc43. **S2-R11's default
+    applied early** (M15, as AIA-R23 in cycle 72): AD has no session in the
+    cap, so the stills stand. The new session takes cycle 74's advisory
+    gate points (stale `art/ui/keyframes/01-home*.shot.json`, no character
+    portrait, flat currency figures and name, the Heist tab not leading)
+    where cheap, lists the rest as follow-ups, and marks the task ready.
+  - **Requests copied:** S1-R15 to S1-R19 and S3-R3, S3-R4 (to K1; K1 has
+    no task and no slot, so each default stands at its due); S1-R20 (to
+    AD, preview before P2-S1-result-1's gate, due 14 November 02:23Z) and
+    S3-R5 (to AD, the character stills, due 13 November 04:45Z). S3-R2's
+    task (P2-S3-screenkit) has merged; its default stood.
+  - Nothing ready, no gate request, the merge lock is clear. Builders: S1,
+    S2, S3 and AIA make four, the cap; no session showed
+    `allowed_warning`. The audit and roadmap pages did not change, so they
+    were not republished. No alert.
+- Cycle 74, 12 to 13 November 2026, from 23:39Z to 02:25Z (session
+  `session_01SNkKxq74K4BtMR3MtbQTe1`, started by the Opus 5.5 launcher):
+  three merges, three builders started, S2's advisory gate.
+  - **S1 restarted** on P2-S1-toon-drop as
+    `session_01SNkKxowrAJqRGxuKn8Tf1C` (23:41Z): the last session went idle
+    waiting for the gate, whose advisory pass (cycle 73) lets S1 mark the
+    task ready. It did, at 43f81a56.
+  - **Merged P2-S3-screenkit** (ready cf4eecc2) as `70057394`, candidate
+    `73b678eb`: guard.sh OK, check_all PASS at 00:16:51Z, the menu-screens
+    stills granted to its files. S3 answered Lead-R1 (b657a59f): the
+    settings shot records now come from the render itself, Game and
+    Access.
+  - **Merged P2-K1-motion** (ready b5d77219) as `ec2200b1`, candidate
+    `6bbc1793`: claims checked, guard.sh OK, check_all PASS at 00:49:05Z.
+  - **Merged P2-S1-toon-drop** (ready 43f81a56) as `c0aa1bd6`, candidate
+    `47ac805e`: guard.sh OK, check_all PASS at 02:21:00Z (the first run
+    failed on a read-only cargo lock because it was started inside the
+    candidate's worktree, where `client/ext/target` is a link; re-run from
+    the main checkout). S1's session is still running and builds
+    P2-S1-result-1 on its branch past the ready commit; it claims the task
+    now that toon-drop has merged, so no new S1 session was started.
+  - **AIA-R25** (to AD, the motion strips before P2-AIA-motion-2 is ready,
+    due 13 November 08:08Z) copied; AIA-R24's default stands (P2-K1-motion
+    merged as K1 timed it); AIA-R22's due passed, its default stands (no
+    tiled grain).
+  - **Builders started** (Opus 5.5, effort high): S3 on P2-S3-character
+    (`session_01SNkKxq23wc1i1XYqt7KM15`, 00:19Z, after screenkit merged)
+    and AIA on P2-AIA-motion-2 (`session_01SNkKxpZQK5vjTDskqnfXsB`,
+    01:41Z, after P2-K1-motion merged). Builders: S1, S2, S3 and AIA make
+    four, the cap. No session showed `allowed_warning`. K1 has no open
+    task; S2-R6, S2-R8, S2-R9 and S2-R10 wait for a K1 slot.
+  - **Requests:** S2-R7 approved (home/100 and home/hc 119 to 139, logged
+    in `raises`); P2-K1-motion has merged, so the lead writes the two
+    records on P2-S2-home-1's candidate. S2-R5 granted for P2-S2-home-2
+    (`universe_reward.gd` joins its files); its default stands for
+    home-1. S2-R8, S2-R9 and S2-R10 (to K1) and S2-R11 (to AD, a preview
+    of home before ready, default at its due 13 November 11:23Z) copied.
+  - **S2's gate, advisory** (P2-S2-home-1 at 71d51d7f; home at 100%, at
+    200% pt_BR and in high contrast; 21 samples, no splits; verdicts in
+    `verdicts/P2-S2-home-1/71d51d7f.json`): Hierarchy fails on all three
+    stills (no Collect; the small Heist tab is outranked by the raid
+    banner's See button, the red raid card and the badged Islands tab),
+    Character presence fails at 100% (no portrait: the avatar ring holds an
+    emblem), Display type fails at 100% and 200% (the currency counts and
+    'Keeper 14' are flat white, no outline, drop or gradient); Colour roles
+    in high contrast pass 3-0. The stills were rendered at 71d51d7f because
+    `art/ui/keyframes/01-home*.shot.json` still describe the old keyframe
+    (Keeper 24, 'Collect all'); the crops were drawn by hand. Advisory: it
+    blocks nothing; S2 gets the narrow points.
+  - The audit and roadmap pages did not change, so they were not
+    republished. No alert.
+- Cycle 73, 12 November 2026, from 22:39Z to about 23:16Z (session
+  `session_01SNkKxnQNXyshnSaWRSFz4A`, started by the Opus 5.5 launcher):
+  the M16 fix, S1's advisory gate, S3 restarted.
+  - **Claims copied:** K1 (P2-K1-motion), S1 (P2-S1-toon-drop) and S2
+    (P2-S2-home-1) are working, with leases from their status files.
+    **K1-R19 and K1-R20 granted:** P2-K1-motion's exceptions take the
+    icon jsons, `kit.json`, `motion.json`, the ui_kit fixture and the
+    motion shot. S2-R6 (to K1, default at its due, 13 November 22:52Z)
+    and S1's second S1-R14 (to AD: a preview before the gate; default:
+    the gate runs on a7dd6501) copied to `requests.md`.
+  - **M16 acked and fixed:** `tools/test_run_checks.sh` now puts the
+    case's name in each fixture commit, so two cases committed in the
+    same second get different shas and never share a run directory.
+    Candidate `220a00e5`: check_all PASS at 23:13:09Z (bwrap). Main had
+    moved only with docs commits, so it went on as `6ca9c063`, its own test
+    re-run (ok) and the docs check re-run. The merge lock is cleared.
+  - **S3 restarted** on P2-S3-screenkit as
+    `session_01SNkKxqkkDvs1XEigTTp6o5` (22:43Z). The last session went
+    idle past its expected update (21:54Z) and its lease lapsed at 22:16Z.
+    The new session answers Lead-R1 first, then marks the task ready.
+    Builders: K1, S1, S2 and S3 make four, the cap. No session showed
+    `allowed_warning`.
+  - **S1's gate, advisory** (P2-S1-toon-drop at a7dd6501, heist at 100%
+    text, Character presence; verdict in
+    `verdicts/P2-S1-toon-drop/a7dd6501.json`): a split, then a pass, 2
+    fails of 6. Ash's surface no longer drew a fail. Both fails read
+    Bramble's and Hollow's portraits as flat vector fills next to the
+    other three's soft-shaded renders. S1 may mark the task ready; the
+    narrow point is in the critique.
+  - No merge of a builder's task (none ready), no alert.
 - Cycle 72, 12 November 2026, from 20:39Z to about 22:05Z (session
   `session_01SNkKxq8UPsw413Cqn38hyd`, started by the Opus 5.5 launcher):
   three merges, S3's advisory gate, AIA restarted, three builders started.

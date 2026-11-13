@@ -121,6 +121,125 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   reduced press sinks and darkens over 150 ms. Default: K1 times Motion as
   it sees fit in P2-K1-motion; curves.json stays the art's statement of
   the curves.
+  **Default stands** (lead, cycle 74): P2-K1-motion merged as
+  `ec2200b1` with Motion timed as K1 built it; a retiming to curves.json
+  is a new K1 task when a slot frees.
+
+- **S2-R6** (from S2, 12 November 2026 22:52Z; due 13 November 22:52Z;
+  not blocking): give `banner_alarm` a shape of its own in
+  `client/ui/kit_skin.gd` and `art/ui/kit_build/` (a
+  `button_danger__banner_alarm__normal` piece, or a map to `panel_dark`
+  with its alarm line and glow), as `success__banner_success` has. With no
+  piece it falls back to `button_danger__box`, the red button's light
+  face, so white and secondary words on it measure 2.5 to 2.8:1 (home's
+  raid notice; `KitPanels.notice('alarm')` and `UI.banner('alarm')` in the
+  catalogue too). Default: `home.gd` refills its raid notice's box with
+  the material's own card colours (`RbBox.tint(card_top, card_bottom)`),
+  so the code-drawn box draws the dark card with the alarm edge; the line
+  goes once the shape lands. Copied in cycle 73: K1 is on P2-K1-motion,
+  whose files do not include `kit_skin.gd`, so the default applies at its
+  due unless a K1 task takes it first.
+
+- **S2-R8** (from S2, 12 November 2026 23:20Z; due 14 November 20:00Z;
+  not blocking): a `KitPanels.notice` that stays (it frees neither on
+  `banner_ms` nor on its cross, but hides, can be shown again and emits a
+  dismissed signal), and above `KitLayout.SIDE_BY_SIDE_UP_TO` lays its
+  words over the full width with the icon, action and cross in a row
+  beneath. Home's raid notice stays until seen or dismissed (§21.8).
+  Files: `client/ui/kit_panels.gd`, `client/scripts/ui.gd`. Default:
+  `home.gd` composes its raid notice from `UI.panel('banner_alarm')`,
+  `UI.status` and `UI.action`. Copied in cycle 74; no K1 task in flight
+  lists the files.
+- **S2-R9** (from S2, 12 November 2026 23:20Z; due 14 November 20:00Z;
+  not blocking): `KitLayout.tap` (1) connects `button_down` twice
+  ("Signal button_down is already connected" in every run); (2) lays its
+  clear button inside the card's padding, so on `KitStatus.strain` the
+  tap is 40 points, under §21.1's 48; (3) should carry `frequent` = false
+  for a secondary card. File: `client/ui/kit_layout.gd`. Default:
+  `home.gd` stands the strain pill and its tap in a MarginContainer of
+  the pill's size and marks the tap not frequent; the double-connect line
+  stays in the log. Copied in cycle 74.
+- **S2-R10** (from S2, 12 November 2026 23:20Z; due 14 November 20:00Z;
+  not blocking): after P2-S2-home-1 merges, lower `check_screens.py`'s
+  records in `tools/ui_bake/budgets.json` (`home.gd` draw 1 to 0 and
+  texture 2 to 0, `universe_badge.gd` draw 7 to 0, with
+  `python3 tools/ui_bake/check_screens.py --record`). Default: the
+  records stay above the counts; check_screens passes and notes the
+  falls. Copied in cycle 74.
+
+- **S1-R15** (from S1, 13 November 2026 02:23Z; due 14 November 02:23Z;
+  not blocking): `KitControls.action2`'s words wrap at large text. Its
+  label is 16 points, uppercase and does not wrap, so at 200% text 'RAID
+  AGAIN' runs past the button, and in pt_BR 'ASSALTAR' alone is wider
+  than the room beside Home. Ask: the words wrap between words inside the
+  button's padding, the button growing to its lines. File:
+  `client/ui/kit_controls.gd`. Default: the result screen's `_fit_raid`
+  wraps action2's labels itself, inset by the padding, and stands the bar
+  upright (raid first, full width) when one word will not fit beside
+  Home. Copied in cycle 75.
+- **S1-R16** (from S1, 13 November 2026 02:23Z; due 14 November 02:23Z;
+  not blocking): the hero title's size. kit-spec says 34 points,
+  `KitNav.hero` sets 52, key frame 03 shows the outcome at 40. Ask: one
+  size, or a size argument on `KitNav.hero`. Files:
+  `client/ui/kit_nav.gd`, `docs/art/ui-quality/kit-spec.md`. Default: the
+  result screen sets its title to 40 points, as key frame 03. Copied in
+  cycle 75.
+- **S1-R17** (from S1, 13 November 2026 02:23Z; due 14 November 02:23Z;
+  not blocking): a portrait stack component, the crew's faces
+  overlapping in rings, each over the last by a third of its width, as
+  key frame 03's rest card. File: `client/ui/kit_social.gd`. Default: the
+  result screen composes the stack from KitRing with KitSocial's framing
+  (gold band, ground #4A3A9A, zoom 1.2). Copied in cycle 75.
+- **S1-R18** (from S1, 13 November 2026 02:23Z; due 14 November 02:23Z;
+  not blocking): a dusk or muted backdrop for a foiled heist; the kit has
+  the night and the celebration sunburst only. File:
+  `client/ui/kit_nav.gd`. Default: a foiled or refused heist keeps the
+  plain night. Copied in cycle 75.
+- **S1-R19** (from S1, 13 November 2026 02:23Z; due 14 November 02:23Z;
+  not blocking): lower `result_screen.gd`'s record in
+  `tools/ui_bake/budgets.json` (check_screens counts 0 draw, recorded 5,
+  and 0 fill, recorded 1, after P2-S1-result-1). Default: the record
+  stays; check_screens passes either way. Copied in cycle 75.
+- **S3-R3** (from S3, to the lead for K1, 13 November 2026 02:45Z; due 13
+  November 14:45Z; not blocking): `KitControls.upgrade` should grow and
+  wrap its title at large text; at 200% pt_BR 'SUBIR DE NÍVEL' and its
+  price do not fit the kit's fixed height. File:
+  `client/ui/kit_controls.gd`. Default: S3 keeps the screen-side
+  `_fit_upgrade` in `character_screen.gd` until the kit's button grows by
+  itself. Copied in cycle 75.
+- **S3-R4** (from S3, to the lead for K1, 13 November 2026 02:45Z; due 13
+  November 14:45Z; not blocking): `KitCards.ability`'s kicker wears the
+  kit's gold, Lc 55 on the card's plum, below the 60 asked at that size;
+  `gold_top` passes. Ask: `gold_top` as the kicker's colour in the kit.
+  File: `client/ui/kit_cards.gd`. Default: S3 keeps the screen-side
+  colour override in `character_screen.gd`. Copied in cycle 75.
+
+- **S1-R21** (from S1, to K1, 13 November 2026 03:47Z; due 14 November
+  03:47Z; not blocking): `Motion.reward`'s layer (`top_level`, z 10)
+  draws under any page that is a UI layer, since a `top_level` item's z
+  does not add to its parents' and UI gives a full-screen page z 32; on
+  the result screen the reduced coin did not show and the full coins
+  vanished at the reward tiles. Ask: the layer at the prize's whole z
+  plus 10 (or `z_as_relative` false above UI's layers), and the same for
+  the `top_level` node near line 731. File: `client/ui/motion.gd`.
+  Default: `result_screen.gd` lifts the layer itself after
+  `Motion.reward` returns (`_lift_reward`), removed when the kit answers.
+  Copied in cycle 77.
+
+- **S1-R23** (from S1, 13 November 2026 04:45Z; due 14 November 04:45Z;
+  not blocking): `KitControls.big_action` keeps a fixed 76x64 px minimum
+  and a full-rect child box that does not grow with its words: at 200%
+  text the result's '3 s' replay button clipped its words (gate verdict
+  P2-S1-result-1 at 8bec0d84, Display type at 200% pt_BR). Ask: let the
+  button's minimum grow to its box's combined minimum plus its padding.
+  File: `client/ui/kit_controls.gd`. Default: `result_screen.gd` grows the
+  moment's button itself (`_moment_card`: the kit's size, grown to the
+  box's combined minimum plus 12x10 px), removed when the kit answers.
+  Copied in cycle 79.
+
+  K1 has no task in flight and no slot in the cap of four: S1-R15 to
+  S1-R19, S1-R21, S1-R23, S3-R3, S3-R4, S2-R6, S2-R8, S2-R9 and S2-R10 wait for a K1
+  task; until then each default stands at its due.
 
 ### AIA
 
@@ -155,6 +274,27 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   ahead of its due, by M15 (the owner's cap of four): the sheet stands,
   and AIA is restarted on P2-AIA-motion-1 as the fourth builder. Any AD
   objection becomes a follow-up task beside P2-AIA-motion-2.
+- **AIA-R25** (from AIA, 13 November 2026 02:08Z; due 13 November 08:08Z;
+  blocking for ready): preview the motion frame strips before
+  P2-AIA-motion-2 is marked ready (M10, M12):
+  `art/ui/motion/strips/*.png` (every frame stamped with its number and
+  time, 60 fps) and the clips `art/ui/motion/clips/*.gif`, for board 4:
+  press full and reduced; reward common, rare, epic, epic in high
+  contrast and reduced; shine full, reduced and high contrast (the last
+  two draw nothing, by design); screen change full and reduced.
+  `art/ui/motion/check_frames.py` passes on all of them. One thing to
+  judge: the epic burst reads small against the chest at phone size. Send
+  every objection in one round (M12). Default: the strips stand as shot,
+  and AIA marks the task ready when its checks pass. AD has no session in
+  the cap of four, so the default applies at its due. Recorded in cycle
+  74.
+  **Default applied** by the lead in cycle 77 (13 November 2026 04:45Z),
+  ahead of its due, by M15 (as AIA-R23): AD has no session in the cap of
+  four, and AIA's session went idle on this preview alone with its checks
+  passing at 7fd401e7. The strips stand as shot; the fresh AIA session
+  marks P2-AIA-motion-2 ready when its checks pass. Any AD objection
+  (the epic burst's size among them) becomes a follow-up task beside
+  board 4.
 - **S3-R2** (from S3, pushed 12 November 2026 19:25Z; due 13 November 07:40Z;
   not blocking): preview the menu-screen stills at 100% text,
   `docs/art/shots/menu-screens/{before,after}-{settings,character,codex,lab}-100.png`.
@@ -176,6 +316,206 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   AD has no session in the cap of four. Each default applies at its
   `due`, unless an AD review is run first.
 
+- **S1-R14, second** (from S1, 12 November 2026 22:41Z; due 13 November
+  22:41Z; not blocking; S1 reused the id): preview before the gate
+  (P2-S1-toon-drop, AIA2-R3). Bramble and Hollow now go through
+  FxPortrait unquantised, at the common crop; stills at `a7dd6501` with
+  `MANIFEST=1 ESTIMATE=400 SIZES=1 PORTRAITS=<dir> bash
+  tools/render/shoot.sh client/tests/shots/screen_heist.gd <dir>/heist.png`.
+  Hollow at the common crop fills more of its disc than the others.
+  Default: the gate runs on `a7dd6501` as it stands; a crop for Hollow, if
+  wanted, becomes AIA-2's framing at the source or a follow-up task.
+
+- **S2-R11** (from S2, 12 November 2026 23:23Z; due 13 November 11:23Z;
+  not blocking): preview home (P2-S2-home-1) on `claude/ui-screens-home`
+  at `4da3eeb0` against `art/ui/keyframes/01-home.*` before it is marked
+  ready (M10, M12): `FIT=1 bash tools/render/shoot.sh
+  client/tests/shots/universe_home.gd out.png`, the same with
+  `TEXT=200 LOCALE=pt_BR`, and with `CONTRAST=1`. Every part is now the
+  kit's; the raid notice is composed from `UI.panel('banner_alarm')`
+  (S2-R6, S2-R8); the realm pins shrink to icon and level as a set where
+  room is short. Known: at 200% pt_BR the purse takes three rows, and at
+  200% the pins hide. Send every objection in one round (M12). Default:
+  the stills stand; S2 marks P2-S2-home-1 ready when its checks pass, and
+  any objection becomes a follow-up task beside it. AD has no session in
+  the cap of four, so the default applies at its due.
+  **Default applied** by the lead in cycle 75 (13 November 2026 02:45Z),
+  ahead of its due, by M15 and as AIA-R23 in cycle 72: S2's session sat
+  idle on it, so the stills stand and S2 is restarted to take cycle 74's
+  advisory gate points, then mark P2-S2-home-1 ready. Any AD objection
+  becomes a follow-up task beside it.
+
+- **S1-R20** (from S1, 13 November 2026 02:23Z; due 14 November 02:23Z;
+  not blocking): preview before the gate (P2-S1-result-1, M10, M12): the
+  result screen from the kit alone on key frame 03. Stills: `SERVER=1
+  FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd
+  out.png`, with `TEXT=200 LOCALE=pt_BR` and with `CONTRAST=1`;
+  `GOLDEN=long-crew5` for a foiled heist. Notes in
+  `docs/art/tracks/result-screen.md`. Open: character art is in the
+  crew's faces, none beside the reward tiles (none in the key frame
+  either). Default: the gate runs on the pre-checked head as it stands; a
+  character beside the reward, if wanted, becomes a follow-up task with
+  AIA's art. Copied in cycle 75.
+- **S1-R22** (from S1, 13 November 2026 03:47Z; due 14 November 03:47Z;
+  not blocking): preview before the gate (P2-S1-result-2, M10, M12), for
+  board 4: the result's reward sequence on `Motion.reward` at d2422a0.
+  Frame strips, full and reduced, and clips: `STRIP=out/full SERVER=1
+  FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd
+  out.png`, and the same with `REDUCED=1 STRIP=out/reduced`; the strip
+  and clip lines are in `docs/art/tracks/result-screen.md`, "The reward
+  sequence". Full (epic, 1.93 s): pause, burst on the sunburst, coins in
+  arcs into Starlight, counters stepping with a pulse on each landing.
+  Reduced (0.37 s): one coin and the final value. The burst and coins are
+  the kit's sprite sizes at the 34 pt medal, so they read small. Default:
+  the gate runs on the pre-checked head as it stands; a larger burst, if
+  wanted, is a request to K1 for Motion's scale. Copied in cycle 77.
+- **S3-R5** (from S3, 13 November 2026 02:45Z; due 13 November 04:45Z;
+  not blocking): preview the character screen's stills before
+  P2-S3-character's gate request:
+  `docs/art/shots/menu-screens/character-100.png`,
+  `character-200-pt_BR.png` and `character-hc.png` (the gate's three, each
+  with its `.shot.json`), with `character-100-stats.png`,
+  `character-100-compare.png`, `character-200-pt_BR-scrolled.png` and
+  `before-character-100.png`. What is still worse is listed in
+  `docs/art/tracks/menu-screens.md`, Part 2. Send every objection in one
+  round (M12). Default: the stills stand as rendered, and S3 requests the
+  gate on them. AD has no session in the cap of four, so the default
+  applies at its due. Copied in cycle 75.
+- **S2-R12** (from S2 to K1, 13 November 2026 03:11Z; due 13 November
+  15:11Z; not blocking): make the display face (theme variation DisplayS,
+  outlined in ink) the default for `KitStatus.resource`'s amount and for
+  `KitHud.keeper`'s name and level pill, as `art/ui/keyframes/01-home.*`
+  sets them (cycle 74's gate point "flat white figures and name"). Files:
+  `client/scripts/home.gd`, `client/world/universe_badge.gd`. Default:
+  home keeps setting DisplayS on those labels itself (`Home.home_figure`);
+  the kit's parts stay as they are. Copied in cycle 76.
+- **S2-R13** (from S2 to the lead, 13 November 2026 03:11Z; due 13
+  November 15:11Z; not blocking): which character does the Keeper's
+  portrait on home show? Home uses `Portrait.bust('featherkin')` on
+  spirit's teal, as the key frame shows. Default: the featherkin; a
+  player-chosen Keeper is a later task. **Answered** by the lead in cycle
+  76 (13 November 2026 03:55Z): the default stands, the featherkin.
+- **S2-R14** (from S2 to K1, 13 November 2026 03:11Z; due 13 November
+  15:11Z; not blocking): give `KitTabs` a raised gold disc for its lead
+  tab (Heist), as the key frame draws it, so screens need not raise it
+  themselves (cycle 74's gate point "Heist does not lead"). File:
+  `client/scripts/home.gd`. Default: home keeps `_raise_heist`; KitTabs
+  stays as it is. Copied in cycle 76.
+- **S2-R15** (from S2 to K1, 13 November 2026 03:11Z; due 13 November
+  15:11Z; not blocking): (a) `KitControls.action2` does not measure its
+  children, so its words run past its edge; let it size itself to its
+  words, with an option to keep their case ("Collect 3.4k" is mixed
+  case); (b) at large text a `KitTabs` tab's word wraps below its tile's
+  foot ("Ilhas" at 200% pt_BR); let the tile grow with its word, or hide
+  the word by itself. Same family as S1-R15. File:
+  `client/scripts/home.gd`. Default: home sizes Collect and hides cut tab
+  words itself (`Home._fit_tab_words`); the kit stays as it is. Copied in
+  cycle 76.
+- **S2-R16** (from S2 to the lead, 13 November 2026 03:11Z; due 13
+  November 15:11Z; not blocking): amend S2-R7's approved raise to 143
+  draw calls for home/100 and home/hc and 112 for home/200, from what
+  cycle 74's gate asked for (the goal card beside Collect, the character
+  portrait, the display type); all stay under the cap of 150. The lead
+  records them in `tools/ui_bake/budgets.json`. **Approved** by the lead
+  in cycle 76 (13 November 2026 03:55Z): the lead records 143/112/143
+  when it merges P2-S2-home-1.
+- **S2-R17** (from S2 to the lead, 13 November 2026 05:39Z; due 13
+  November 11:39Z; blocking P2-S2-home-2's merge): record home's draw
+  calls in `tools/ui_bake/budgets.json` when P2-S2-home-2 merges: home/100
+  and home/hc 143 to 145, home/200 112 to 114 (measured with
+  `budget_shots --only home/100,home/200,home/hc` at 3612e265). The two
+  calls are the Keeper's companion drawn live in its own 3D stage (the
+  model and its ink pass), for rubric quality 9; all three stay under the
+  cap of 150, textures and words below 4.5:1 unchanged. **Approved** by
+  the lead in cycle 78 (13 November 2026 05:47Z): the lead records
+  145/114/145, with a raises entry for S2-R17, when it merges
+  P2-S2-home-2; S2 may mark ready with guard.sh failing only on those
+  three lines, said in the handoff.
+  **Recorded** in cycle 79: the records and the raises entry are in
+  `tools/ui_bake/budgets.json` on main since `807d68a7`.
+- **S2-R18** (from S2 to AD, 13 November 2026 05:39Z; due 13 November
+  11:39Z; not blocking): preview home part 2 at 3612e265 on
+  `claude/ui-screens-home` against `art/ui/keyframes/01-home.*` (M10,
+  M12): the Keeper's portrait as the featherkin alive in a 76-point ring,
+  the counts and 'Keeper 24' in the kit's Display role, Collect's idle
+  shine. Files: `client/world/universe_badge.gd`, `client/scripts/home.gd`.
+  Default: the stills stand as built; S2 marks ready when the checks and
+  the gate pass, and any objection becomes a follow-up task. AD has no
+  session in the cap of four, so the default stands at its due. Copied in
+  cycle 78.
+  **Answered** by AD at 08:42Z (board 3, `docs/art/ui-quality/gate/boards/board-3.md`
+  on `claude/ui-ad`): qualities 9 and 2 and Collect's shine stand; four
+  objections, each a follow-up request to the lead because home-2 is
+  merged (AD-R22 to AD-R25, under "Lead"). Cycle 80 applied their
+  defaults: P2-S2-home-3 (S2), P2-K1-tabs (K1) and P2-AD-board-3b (AD).
+- **S1-R24** (from S1, 13 November 2026 06:50Z; due 14 November 06:50Z;
+  not blocking): preview before the gate (P2-S1-result-2), for board 4:
+  the result's rest card at e13b5a3c shows the crew's three faces apart,
+  52 pt each (about 57 px at 960), not key frame 03's overlapping stack
+  of 48 pt; the rest line is 13 pt beside them. Reason: result-1's gate
+  failed Character presence 3/3 on small overlapping portraits. Still:
+  `SERVER=1 FIT=1 bash tools/render/shoot.sh
+  client/tests/shots/screen_result.gd out.png`. File:
+  `client/scripts/result_screen.gd`. Default: the faces stay apart at
+  52 pt; the gate's verdict decides. Copied in cycle 79.
+  **Answered** by AD at 08:46Z: the faces apart at 52 pt stand, a
+  sanctioned departure from key frame 03 that board 4 will note. Four
+  objections, in order of weight, all for S1 inside result-2 before it
+  merges: (1) at 200% pt_BR the first screen shows no haul; set the
+  rewards above the moment card so the three reward rows sit under the
+  time line, as `03-result_text200_pt_BR`; (2) in high contrast turn the
+  sunburst rays, stars and glow off, as `03-result_hc` and Collect's
+  shine; (3) at 200% pt_BR the multipliers pill must not wrap to two
+  lines: shrink its gaps or step it down one size; (4) at 100% the rest
+  line keeps two lines (narrow the faces' gaps to about 8 px or let the
+  line run to the card's edge). Notes, not objections: the gold kicker,
+  the untested idle-crew line, the dock's order at 200%. Re-check covers
+  only those four. Cycle 80 stopped result-2's merge (its done_when asks
+  that AD's objections are answered in the task): the lock was released
+  before main moved, result-2 went back to working, and a fresh S1
+  session takes the four fixes.
+- **S3-R7** (from S3, 13 November 2026 06:46Z; due 13 November 08:50Z;
+  not blocking): preview the settings screen's stills before
+  P2-S3-settings's gate request: `docs/art/shots/menu-screens/settings-100.png`,
+  `settings-200-pt_BR.png` and `settings-hc.png` (the gate's three, all on
+  the Access tab as key frame 05, each with its `.shot.json`), with
+  `settings-pt_BR.png` and `before-settings-100.png`. The screen is
+  rebuilt on the kit after `art/ui/keyframes/05-settings.png`; what is
+  still worse is in `docs/art/tracks/menu-screens.md`, Part 3. Send every
+  objection in one round (M12). Default: the stills stand as rendered,
+  and S3 requests the gate on them. AD starts on P2-AD-board-3 in cycle
+  79 and reviews previews between boards; unanswered at its due, the
+  default applies. Copied in cycle 79.
+  **Answered** by AD at 08:26Z: six objections, in order of weight, none
+  needing source art repainted: (1) at 200% pt_BR the title 'Ajustes'
+  must scale with the text and stay the largest word; (2) the group
+  headings take the kit's display outline (at least 1.5 pt) or the tag
+  plate; (3) the ground ramp is reversed: the foot should be the darkest,
+  as key frame 05 (#0B0621), fixed in the shared screen kit if it is
+  theirs; (4) at 200% pt_BR the Stillness card holds the whole law and
+  the list shows a scroll cue or ends on a row's edge; (5) at 100% and in
+  high contrast the Motion switch clears the dock, or a scroll cue shows;
+  (6) the gold '100%' a step below the title. These stand: the cream As
+  and the dark chosen tab, sentence-case tabs, the pt_BR coins three to a
+  line. S3 takes them inside P2-S3-settings before its gate request.
+
+- **S1-R25** (from S1 to AD, 13 November 2026 09:22Z; due 14 November
+  09:22Z; not blocking): re-check S1-R24's four objections in
+  P2-S1-result-2 at 71167028 (4cf3f522 with main merged): (1) at 200%
+  pt_BR the rewards above the moment card, three rows under the time line,
+  as `03-result_text200_pt_BR`; (2) in high contrast no rays, stars, glow
+  or island, a plain night, as `03-result_hc`; (3) at 200% pt_BR the
+  multipliers pill on one line; (4) at 100% the rest line on two lines,
+  the faces with no gap between them. Stills: `SERVER=1 FIT=1 TEXT=200
+  LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd
+  pt200.png`, the same with `CONTRAST=1` for high contrast and with
+  neither for en 100%; de 200% keeps the tiles as columns. Details in
+  `docs/art/tracks/result-screen.md`, "AD's four objections to S1-R24".
+  File: `client/scripts/result_screen.gd`. Default: the four stand as
+  fixed; S1 marks ready when the pre-check and the gate pass. Copied in
+  cycle 81, which starts AD on it in the free seat (M20): result-2's
+  merge lock waits for AD's answer or the due.
+
 ### S3
 
 - **Lead-R1** (from the lead, cycle 72, 12 November 2026 21:45Z; due 13
@@ -192,8 +532,125 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   "settings at 100% text" is meant to show, before P2-S3-screenkit is
   marked ready. Default: S3 fixes it in P2-S3-screenkit, and asks the
   lead to grant the shot script's file if it is outside the claim.
+  **Answered** by S3 in b657a59f, merged with P2-S3-screenkit in cycle
+  74: the settings shot records now come from the render itself, one for
+  the Game tab and one for Access.
 
 ### Lead
+
+- **S1-R26** (from S1, 13 November 2026 09:22Z; due 14 November 09:22Z;
+  blocking P2-S1-result-2's merge): record result/200's draw calls in
+  `tools/ui_bake/budgets.json` at 98, from 90, when P2-S1-result-2 merges
+  (measured with `budget_shots --only result/100,result/200,result/hc` at
+  dd800065). The 8 calls are AD's 200% first screen for S1-R24 (the haul
+  above the moment card, the reward tiles as rows, the multipliers pill on
+  one line); a bisect shows removing any one brings back an objection. 52
+  under the cap of 150; textures and words below 4.5:1 unchanged. At the
+  same time result/100 (94 to 89) and result/hc (94 to 27) may be lowered,
+  with check_screens' fallen result_screen.gd (draw 5 to 0, fill 1 to 0)
+  and character_screen.gd (fill 3 to 0). Default: S1 marks ready with
+  guard.sh failing only on result/200 at 98 of 90, and the lead records
+  98 when it merges. **Approved** by the lead in cycle 81, as S2-R17 was:
+  the lead records 98 (with a raises entry for S1-R26) and the lowered
+  figures when it merges P2-S1-result-2.
+- **S1-R27** (from S1, 13 November 2026 09:30Z; due 14 November 09:30Z;
+  blocking P2-S1-result-2's merge): AD's S1-R24 fixes would put
+  `client/scripts/result_screen.gd` over gdlint's 1000 lines (1147 at
+  6465a169), so the result's large-text fitting moves to a helper,
+  `client/scripts/result_fit.gd` (class ResultFit), and its `.uid`; grant
+  both as P2-S1-result-2's exceptions. Stills unchanged. Default: the
+  helper stays as committed and the task is marked ready with it.
+  **Answered** by the lead in cycle 81, granted as K1-R20 was: no task in
+  flight owns either path, so both are in P2-S1-result-2's `exceptions`.
+- **S3-R8** (from S3, 13 November 2026 09:23Z; due 13 November 21:23Z;
+  not blocking): for K1, a kit scroll cue for long lists, as AD named it
+  in S3-R7 (a fade over the list's foot into the ground, and a chevron) in
+  `client/ui/kit_layout.gd`; a screen may not draw the fade itself (a
+  GradientTexture2D in settings_screen.gd raised check_screens.py's
+  texture count from 0 to 2). Until then settings ends the list's window
+  on a whole row's edge and shows the kit's hud/next chevron, turned down,
+  below it. Default: settings keeps the row-edge window and the bare
+  chevron; the kit's cue replaces it when it exists. Copied in cycle 81;
+  the default stands. P2-K1-tabs, K1's next task, owns `kit_tabs.gd` only,
+  so the cue is for a later K1 task when a seat allows.
+- **AD-R22, AD-R23, AD-R24** (from AD, 13 November 2026 08:42Z; due 15
+  November 08:42Z; blocking board 3): board 3's objections A (hard
+  defect: at 200% pt_BR with the raid notice Collect is off the screen),
+  B (at 100% the world framed too low, pins stacked, goal panel three
+  lines) and C (the goal panel, realm pins and dock labels dropped at
+  200% and in pt_BR; the caps side-button tags too large at 200%), all
+  follow-ups to the merged P2-S2-home-2. Default: file them as one S2
+  follow-up task (home-3), the KitTabs part with AD-R25; AD re-checks
+  board 3 on the new stills. **Answered** by the lead in cycle 80, the
+  default: P2-S2-home-3 (S2, 3 hours with one review round), and
+  P2-AD-board-3b for the re-check.
+- **AD-R25** (from AD, 13 November 2026 08:42Z; due 15 November 08:42Z;
+  blocking board 3): board 3's objection D: the dock labels 'ISLANDS'
+  and 'HEIST' sit across their tiles' gold rim; fix it in
+  `client/ui/kit_tabs.gd`. Default: a small K1 task, since no open task
+  owns `kit_tabs.gd`. **Answered** by the lead in cycle 80, the default:
+  P2-K1-tabs (K1, 1 hour), with AD-R24's KitTabs part. It starts when a
+  seat in the cap of four frees.
+- **S3-R6** (from S3, 13 November 2026 06:40Z; due 13 November 08:40Z;
+  not blocking): add `client/tests/shots/screen_settings.gd` (the settings
+  screen's shot script) and `docs/art/shots/menu-screens/settings-*` (the
+  stills and their records) to P2-S3-settings's files; the done_when asks
+  for the shot script to pass with FIT=1. Default: both are treated as in
+  the task's files, as `screen_character.gd` and `character-*` were for
+  P2-S3-character. **Answered** by the lead in cycle 79, granted: no task
+  in flight owns either, so `screen_settings.gd` joins P2-S3-settings's
+  `files` and `docs/art/shots/menu-screens/**` its `exceptions`, as for
+  P2-S3-character.
+- **S2-R7** (from S2, 12 November 2026 22:43Z; due 13 November 10:43Z;
+  blocking P2-S2-home-1's merge): approve a raise of home's draw-call
+  records in `tools/ui_bake/budgets.json`, logged in `raises` as K1-R18
+  was: home/100 119 to 139 and home/hc 119 to 139 (home/200 stays 97).
+  Home is now built from the kit's parts alone, and a kit part
+  interleaves the skin atlas, its icon texture and the font, where the old
+  home drew its purse and side buttons in one layer each (measured by
+  part: keeper 11, strain 5, purse 15, side buttons 19, raid notice 11,
+  tab bar 28, pins 14). Textures unchanged (4.7 MiB), no words under
+  4.5:1 at 100%, 200% and hc; home stays 11 under the cap of 150.
+  **Answered** by the lead in cycle 74, approved: raise home/100 and
+  home/hc to 139, logged in `raises` with S2-R7 as the reason (the
+  README's rise by request with the lead's approval). `tools/ui_bake/**`
+  is P2-K1-motion's, so the budgets file is not S2's to edit: S2 marks
+  P2-S2-home-1 ready with guard.sh failing only those two records, by the
+  figures above. At the merge the lead writes the two records and the
+  `raises` entry on the candidate if P2-K1-motion has merged by then (the
+  claim is free); if K1 still holds the file, K1 adds them in
+  P2-K1-motion before it is marked ready. A kit-side saving (icons in the
+  skin atlas) that brings home back down is K1's to weigh, not a
+  condition of this merge.
+- **S2-R5** (from S2, 12 November 2026 23:20Z; due 14 November 20:00Z;
+  not blocking): let `UniverseReward.fly` in
+  `client/world/universe_reward.gd` take the pills by kind (a Dictionary,
+  kind to Control) in place of a UniversePurse, so home flies Collect's
+  reward to its `KitStatus.resource` pills; then UniversePurse,
+  UniverseStrain, UniverseSide, UniverseNotice and UniverseCollect can be
+  retired. Default: `home.gd` builds an empty UniversePurse, hands it its
+  pills, flies the reward and frees it; the old widgets stay for a
+  follow-up task. Copied in cycle 74, granted for S2's next task:
+  `universe_reward.gd` (no owner) joins P2-S2-home-2's files, with the
+  retirement of the old widgets; the default stands for P2-S2-home-1.
+
+- **K1-R19** (from K1, cc AIA, 12 November 2026 22:09Z; due 13 November
+  04:09Z; not blocking): P2-K1-motion's Motion reads its curves from the
+  baked `client/ui/art/motion.json`, so `bake.js` gains a `curves` key
+  for the motion family. That changes every family's `sources_hash`, so
+  five manifests are regenerated by the bake (no `.webp` and no source
+  changed): `client/ui/art/icons_256.json`, `icons_48.json`, `kit.json`,
+  `motion.json` and `client/tests/fixtures/ui_kit/kit.json`. Asks to grant
+  them as the task's exceptions, as K1-R10 was. **Answered** by the lead
+  in cycle 73, granted: the five are in P2-K1-motion's `exceptions`.
+  AIA: P2-AIA-motion-2 finds the curves in `motion.json`; any edit to
+  `curves.json` needs `node tools/ui_bake/bake.js motion` after it.
+- **K1-R20** (from K1, 12 November 2026 22:37Z; due 13 November 04:37Z;
+  not blocking): the motion tests would put `client/tests/ui_kit_tests.gd`
+  over gdlint's 1000 lines, so they live in a helper,
+  `client/tests/shots/ui_kit_motion.gd` (and its `.uid`), as K1-R15's
+  `ui_kit_rest.gd` did. **Answered** by the lead in cycle 73, granted:
+  both are in P2-K1-motion's `exceptions`.
 
 - **S3-R1** (from S3, 12 November 2026 19:26Z; due 12 November 21:26Z;
   not blocking): add `client/scripts/screen_meter.gd` (no owner) to
