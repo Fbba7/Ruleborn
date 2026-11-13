@@ -95,50 +95,73 @@ static func fit(screen: CharacterScreen) -> Array[String]:
 
 
 ## The still's shot record, from the frame it was saved from, so the gate's
-## crops cut the controls this still shows: every button on screen and the
-## words of 20 points and more, in points of the 390 x 845 frame, named by
-## their words. Cards are left out: a button inside a listed card would
-## have no ground left for value-steps.
+## crops cut the controls this still shows, as key frame 04's record names
+## them (art/ui/keyframes/04-character.shot.json): every button on screen,
+## the tabs as one row, and the words of 20 points and more outside them,
+## in points of the 390 x 845 frame. Cards are left out: a button inside a
+## listed card would have no ground left for value-steps. What the scroll
+## hides, under the tray or above the stage, is left out too.
 static func write_record(screen: CharacterScreen, shot: String) -> void:
 	var frame := Vector2(390, 845)
 	var img := screen.get_viewport().get_texture().get_image()
-	var img_w := float(img.get_width())
-	var scale := frame.x / img_w
+	var scale := frame.x / float(img.get_width())
 	var to_px := screen.get_viewport().get_final_transform()
+	var scroll := screen.body.get_parent() as ScrollContainer
+	var seen := to_px * scroll.get_global_rect()
 	var controls := []
-	var n := 0
 	for c: Control in screen.find_children("*", "Control", true, false):
-		if not c.is_visible_in_tree():
+		if not c.is_visible_in_tree() or _inside_button(c):
 			continue
 		var r := to_px * (c.get_global_transform_with_canvas() * Rect2(Vector2.ZERO, c.size))
 		if r.size.x < 8.0 or r.size.y < 8.0 or r.position.y > img.get_height() or r.end.y < 0.0:
 			continue
-		var interactive := c is BaseButton
+		if scroll.is_ancestor_of(c) and not seen.grow(1.0).encloses(r):
+			continue
+		var kind := ""
 		var name := ""
-		if interactive:
-			name = str((c as Button).text) if c is Button else ""
-			if c.accessibility_name != "":
-				name = c.accessibility_name
+		if c.name == "Segments":
+			kind = "row"
+			for l: Label in c.find_children("*", "Label", true, false):
+				name += (" " if name != "" else "") + l.text
+			for b: Button in c.find_children("*", "Button", true, false):
+				if b.text != "":
+					name += (" " if name != "" else "") + b.text
+		elif c is BaseButton:
+			kind = "up" if screen.actions.is_ancestor_of(c) else "arrow" if screen.stage.is_ancestor_of(c) else "button"
+			name = c.accessibility_name
+			if name == "" and c is Button:
+				name = (c as Button).text
 			for l: Label in c.find_children("*", "Label", true, false):
 				if name == "" and l.is_visible_in_tree():
 					name = l.text
 			if name == "":
-				name = c.tooltip_text if c.tooltip_text != "" else str(c.name)
-		elif c is Label and (c as Label).get_theme_font_size("font_size") >= UI.px(20):
+				name = c.tooltip_text
+			if name == Strings.t("HOME_ROSTER"):
+				kind = "back"
+		elif c is Label and (c as Label).get_theme_font_size("font_size") >= UI.text_px(20):
+			kind = "words"
 			name = (c as Label).text
-		else:
+		if kind == "" or name.strip_edges() == "":
 			continue
-		n += 1
-		var entry := {"name": "%s %d: %s" % [c.get_class().to_lower(), n, name.replace("\n", " ").left(80)],
+		var entry := {"name": "%s %d: %s" % [kind, controls.size() + 1, name.replace("\n", " ").left(80)],
 			"rect": [snappedf(r.position.x * scale, 0.01), snappedf(r.position.y * scale, 0.01),
 				snappedf(r.size.x * scale, 0.01), snappedf(r.size.y * scale, 0.01)]}
-		if not interactive:
+		if kind == "words":
 			entry["interactive"] = false
 		controls.append(entry)
-	var text := float(Settings.text_scale) / 100.0
-	var record := {"image": shot.get_file(), "frame_pt": [frame.x, frame.y], "text_scale": text,
-		"controls": controls}
+	var record := {"image": shot.get_file(), "frame_pt": [frame.x, frame.y],
+		"text_scale": float(Settings.text_scale) / 100.0, "controls": controls}
 	var f := FileAccess.open(shot.get_basename() + ".shot.json", FileAccess.WRITE)
 	f.store_string(JSON.stringify(record, " ") + "\n")
 	f.close()
 	print("record ", controls.size(), " controls")
+
+
+## Whether `c` is part of a button or of the tabs, recorded with them.
+static func _inside_button(c: Control) -> bool:
+	var p := c.get_parent()
+	while p != null:
+		if p is BaseButton or p.name == "Segments":
+			return true
+		p = p.get_parent()
+	return false

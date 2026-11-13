@@ -1,27 +1,7 @@
 {
  "controls": [
   {
-   "interactive": false,
-   "name": "label 1: trabalhando",
-   "rect": [
-    164.67,
-    60.67,
-    189.94,
-    41.89
-   ]
-  },
-  {
-   "interactive": false,
-   "name": "label 2: 5 / 12",
-   "rect": [
-    32.5,
-    60.67,
-    79.08,
-    41.89
-   ]
-  },
-  {
-   "name": "button 3: Personagem anterior, Mossbear",
+   "name": "arrow 1: Personagem anterior, Mossbear",
    "rect": [
     21.67,
     137.94,
@@ -30,7 +10,7 @@
    ]
   },
   {
-   "name": "button 4: Próximo personagem, Glass Golem",
+   "name": "arrow 2: Próximo personagem, Glass Golem",
    "rect": [
     313.44,
     137.94,
@@ -40,7 +20,7 @@
   },
   {
    "interactive": false,
-   "name": "label 5: Skyskipper",
+   "name": "words 3: Skyskipper",
    "rect": [
     110.14,
     209.08,
@@ -50,17 +30,7 @@
   },
   {
    "interactive": false,
-   "name": "label 6: Movimento",
-   "rect": [
-    122.06,
-    295.75,
-    172.97,
-    41.89
-   ]
-  },
-  {
-   "interactive": false,
-   "name": "label 7: Skyskipper · Carregador",
+   "name": "words 4: Skyskipper · Carregador",
    "rect": [
     17.33,
     350.64,
@@ -69,114 +39,7 @@
    ]
   },
   {
-   "interactive": false,
-   "name": "label 8: ",
-   "rect": [
-    77.64,
-    457.89,
-    130.36,
-    39.0
-   ]
-  },
-  {
-   "interactive": false,
-   "name": "label 9: Nível 3 de 10",
-   "rect": [
-    77.64,
-    486.06,
-    130.36,
-    84.86
-   ]
-  },
-  {
-   "interactive": false,
-   "name": "label 10: Vida 160",
-   "rect": [
-    229.67,
-    493.28,
-    129.28,
-    41.89
-   ]
-  },
-  {
-   "name": "button 11: Assalto",
-   "rect": [
-    21.67,
-    586.08,
-    170.81,
-    76.27
-   ]
-  },
-  {
-   "interactive": false,
-   "name": "label 12: Assalto",
-   "rect": [
-    21.67,
-    617.5,
-    170.81,
-    39.0
-   ]
-  },
-  {
-   "name": "button 13: Atributos",
-   "rect": [
-    194.64,
-    586.08,
-    170.81,
-    76.27
-   ]
-  },
-  {
-   "interactive": false,
-   "name": "label 14: Atributos",
-   "rect": [
-    194.64,
-    617.5,
-    170.81,
-    39.0
-   ]
-  },
-  {
-   "name": "button 15: Comparar",
-   "rect": [
-    21.67,
-    664.44,
-    170.81,
-    76.27
-   ]
-  },
-  {
-   "interactive": false,
-   "name": "label 16: Comparar",
-   "rect": [
-    21.67,
-    695.86,
-    170.81,
-    39.0
-   ]
-  },
-  {
-   "interactive": false,
-   "name": "label 17: Habilidade",
-   "rect": [
-    117.0,
-    773.14,
-    178.03,
-    39.0
-   ]
-  },
-  {
-   "interactive": false,
-   "name": "label 18: Two uses a heist",
-   "rect": [
-    124.58,
-    819.72,
-    213.78,
-    79.08
-   ]
-  },
-  {
-   "name": "button 19: Plantel",
+   "name": "back 5: Plantel",
    "rect": [
     28.17,
     649.28,
@@ -185,42 +48,12 @@
    ]
   },
   {
-   "name": "button 20: Skyskipper: Subir ao nível 4, 200 de Essência",
+   "name": "up 6: Skyskipper: Subir ao nível 4, 200 de Essência",
    "rect": [
     97.5,
     592.58,
     264.33,
     174.42
-   ]
-  },
-  {
-   "interactive": false,
-   "name": "label 21: Subir de nível",
-   "rect": [
-    108.33,
-    613.17,
-    149.5,
-    96.42
-   ]
-  },
-  {
-   "interactive": false,
-   "name": "label 22: Nível 3 → 4",
-   "rect": [
-    108.33,
-    707.42,
-    149.5,
-    39.0
-   ]
-  },
-  {
-   "interactive": false,
-   "name": "label 23: 200",
-   "rect": [
-    277.69,
-    655.96,
-    64.64,
-    47.67
    ]
   }
  ],
