@@ -55,4 +55,8 @@ for run in "${runs[@]}"; do
     -vf "scale='min(480,iw)':-2:flags=lanczos,split[a][b];[a]palettegen=stats_mode=full[p];[b][p]paletteuse=dither=none" \
     -loop 0 "$out/clips/$name.gif"
 done
-[ -f "$out/check_frames.py" ] && python3 "$out/check_frames.py" "$frames_root"
+# Everything under art/ui/motion/ feeds the motion manifest's sources hash
+# (tools/ui_bake/bake.js), strips and clips included, so the manifest is
+# rebaked to match them; the sprites themselves come out byte for byte.
+node tools/ui_bake/bake.js motion
+python3 "$out/check_frames.py" "$frames_root"
