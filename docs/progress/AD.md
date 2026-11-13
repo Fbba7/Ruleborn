@@ -3,7 +3,7 @@
 - Status: P2-AD-board-3 ready (board 3, home, round 1 posted: **the board does not stand**, objections A to D, each a request to the lead). Pre-check in the status file.
 - Progress: 14 of 14 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
 - Done: P2-AD-board-3: `docs/art/ui-quality/gate/boards/board-3.md`, nine items with stills `board-3/*.png`, on the integration head at `abbe59eb` (home-2 merged as `807d68a7`); previews S3-R7, S2-R18 and S1-R24 answered in `status/AD.json`.
-- Next: S2 fixes A to C (AD-R22 to AD-R24) and K1 fixes D (AD-R25), then AD re-checks only what the fixes change (board 3 round 2); S1 folds S1-R24's four objections into result-2; board 4 and board 5 when the lead seeds them.
+- Next: S2 fixes A to C (AD-R22 to AD-R24) and K1 fixes D (AD-R25), then AD re-checks only what the fixes change (board 3b); board 4 after result-2 merges (S1-R25 re-check done: S1-R24's four objections stand as fixed), board 5 after settings.
 - Blocked by: none.
 - Owner decision needed: none. AD decides board 3 in place of the owner.
 
@@ -36,7 +36,8 @@
 - Checked: `check_docs_consistency.py` clean; the full checks in the pre-check (`check_all.sh` takes more than 10 minutes here, so it runs detached through `run_checks.sh`).
 - Half done: nothing.
 - Open hypotheses: home's shot fixture lacks notifications, a shield and a locked realm, so those states are unjudged; result's fixture has no roster, so RAID AGAIN's idle line is untested.
-- Next step: round 2 of board 3 after AD-R22 to AD-R25 land, re-checking only what the fixes change; then boards 4 and 5.
+- S1-R25 (13 November 10:05Z): re-checked result-2 at `71167028` (pt_BR 200%, high contrast, en 100%, de 200%). The four S1-R24 objections stand as fixed. Outside the re-check's scope: at de 200% the tiles fall back to columns and only Sternenlicht is above the dock (AD-R26, for board 4).
+- Next step: board 3b after AD-R22 to AD-R25 land, re-checking only what the fixes change; board 4 after result-2 merges (list AD-R26 there); board 5 after settings.
 
 ## Flow review
 
