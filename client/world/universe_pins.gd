@@ -20,9 +20,11 @@ const RESOURCE := {"star_well": ["#F2B43C", "✦"], "aether_spring": ["#3CC6D8",
 var view: UniverseView
 ## Each pin: {"node": Control, "at": Vector3 or realm id, "realm": id, "lift": metres, "zooms": [levels]}.
 var _pins: Array[Dictionary] = []
-## Every realm's pin shows only its icon and level: the room was too short for
-## one of them with its name (§20.8's large text). Until the room changes.
-var _compact := false
+## How much of each realm's pin shows, for every realm together: 0 its icon,
+## name and level; 1 its icon and level, where the room was too short for one
+## of them with its name (§20.8's large text); 2 its level alone, a numbered
+## chip, where even that was too wide. Until the room changes.
+var _mode := 0
 var _room := []
 
 
@@ -199,8 +201,9 @@ func _draw() -> void:
 	for node: Control in plates:
 		disc.draw(ci, parts.call(node, 2))
 	for node: Control in plates:
-		var r: Rect2 = parts.call(node, 0)
-		draw_texture_rect(node.get_child(0).get_child(0).get_meta("icon"), r, false)
+		var icon := node.get_child(0).get_child(0) as Control
+		if icon.visible:
+			draw_texture_rect(icon.get_meta("icon"), parts.call(node, 0), false)
 	_draw_links()
 	var font := UI.bold_font()
 	var px := UI.text_px(POINTS)
@@ -306,8 +309,9 @@ static func _words(text: String, colour: Color) -> Label:
 
 ## Every pin where the camera now shows its point, shown at the zooms it
 ## belongs to. Where a realm's pin would find no room with its name, every
-## realm's pin shrinks to its icon and level together, rather than one realm
-## going unnamed; the names come back when the room changes.
+## realm's pin shrinks to its icon and level together, and where one still
+## finds none, to its level alone: a numbered chip, rather than one realm
+## going unmarked. The names come back when the room changes.
 func follow() -> void:
 	if view.camera == null or not view.camera.is_inside_tree():
 		return
@@ -315,15 +319,14 @@ func follow() -> void:
 	var room := [view.size, view.inset, view.zoom, view.keep_clear]
 	if room != _room:
 		_room = room
-		_compact = false
-	if not _lay(_compact) and not _compact:
-		_compact = true
-		_lay(true)
+		_mode = 0
+	while not _lay(_mode) and _mode < 2:
+		_mode += 1
 
 
-## The pins laid out once, the realms' with or without their names; false
-## where a realm's pin that belongs on the screen found no room.
-func _lay(compact: bool) -> bool:
+## The pins laid out once, the realms' in `mode` (see `_mode`); false where a
+## realm's pin that belongs on the screen found no room.
+func _lay(mode: int) -> bool:
 	var every := true
 	var toward := view.toward()
 	var taken: Array[Rect2] = []
@@ -350,10 +353,13 @@ func _lay(compact: bool) -> bool:
 		if p.get("front", false):
 			# A small island's pin is its icon and level; a nearer one's its name
 			# between them, where the room allows every realm's.
-			var bare := small or compact
-			var words := node.get_child(0).get_child(1) as Control
-			if words.visible == bare:
+			var bare := small or mode >= 1
+			var row := node.get_child(0)
+			var words := row.get_child(1) as Control
+			var icon := row.get_child(0) as Control
+			if words.visible == bare or icon.visible == (mode >= 2):
 				words.visible = not bare
+				icon.visible = mode < 2
 				node.reset_size()
 		if view.zoom > 0 and id != view.focus_id:
 			shown = false

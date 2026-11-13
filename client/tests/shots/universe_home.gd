@@ -203,6 +203,37 @@ static func live(screen: Home) -> Array[String]:
 	return bad
 
 
+## Board 3's objections A and C (AD-R22, AD-R24): what home never drops at any
+## text size, with or without the raid notice. Collect, while anything waits,
+## with its whole rect inside the viewport; the goal, while there is one; the
+## chosen tab's name. One line each that fails.
+static func must_show(screen: Home) -> Array[String]:
+	var bad: Array[String] = []
+	var view := screen.get_viewport_rect()
+	var musts := {}
+	var waits := false
+	for p: Dictionary in App.services.store.get_slice(RosterState.ROSTER).get("view", {}).get("producers", []):
+		waits = waits or int(p.get("stored", 0)) > 0
+	if waits:
+		musts["Collect"] = screen.collect_button
+	if not screen.goal.is_empty():
+		musts["goal"] = screen.goal_card
+	var chosen := screen.tabs.buttons.get(screen.tabs.active, null) as Control
+	if chosen != null:
+		for l: Label in chosen.find_children("*", "Label", true, false):
+			if l.get_parent() is VBoxContainer:
+				musts["chosen tab's name"] = l
+	for key: String in musts:
+		var c := musts[key] as Control
+		if not c.is_visible_in_tree():
+			bad.append("%s hidden" % key)
+		elif not view.grow(1.0).encloses(c.get_global_rect()):
+			bad.append("%s %s not inside the viewport %s" % [key, c.get_global_rect(), view])
+		elif c.get_global_rect().size.x < 1.0 or c.get_global_rect().size.y < 1.0:
+			bad.append("%s has no size" % key)
+	return bad
+
+
 ## What does not fit on home, one line each: a label's words wider than the
 ## label, or outside its panel or button, or off the screen; one of home's parts over
 ## another; a realm's pin over another pin or over home's parts, or off the
@@ -246,6 +277,7 @@ static func fit(screen: Home) -> Array[String]:
 		for j in range(i + 1, keys.size()):
 			if a.grow(-1.0).intersects(shown[keys[j]]):
 				bad.append("%s %s over %s %s" % [keys[i], a, keys[j], shown[keys[j]]])
+	bad.append_array(must_show(screen))
 	bad.append_array(live(screen))
 	var pins := screen.world.pins
 	if not pins.is_visible_in_tree():

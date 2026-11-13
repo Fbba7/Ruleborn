@@ -24,6 +24,10 @@ const BODY := 0.74
 const HEADROOM := 0.1
 const TURN := -0.32
 const RISE := 0.14
+## How far its idles may turn its head from its rest pose before the body turns
+## back by the rest (AD's note on board 3): its face stays toward the camera,
+## never its profile or its back, in a ring this small.
+const YAW_LEAVE := 0.3
 ## The rim from behind, warm against the spirit's cool ground, so the figure's
 ## edge reads on its disc as the design's portraits are lit.
 const RIM := Color("#FFD9A0")
@@ -54,6 +58,10 @@ var _face: Texture2D
 var _stage: SubViewport
 var _camera: Camera3D
 var _model: CreatureModel
+var _figure: Node3D
+## The head's turn in the figure's own frame at rest, once the bones have
+## placed it; NAN before.
+var _rest_yaw := NAN
 ## Seconds until the idles take turns (§21.6's "two idles").
 var _fidget := StageHero.IDLE2_EVERY
 var _row: Control
@@ -166,6 +174,7 @@ func _live_face() -> Texture2D:
 	var figure := StageHero.make_figure(KIND, "", true)
 	figure.rotation.y = TURN
 	world.add_child(figure)
+	_figure = figure
 	_model = figure.get_meta("model", null)
 	if _model != null:
 		_model.play(&"idle")
@@ -213,6 +222,7 @@ func _ready() -> void:
 	await get_tree().process_frame
 	if is_instance_valid(_camera):
 		_frame()
+	_rest_yaw = _head_yaw()
 
 
 ## Drawn only while the badge shows; under reduced motion the figure holds
@@ -234,7 +244,32 @@ func _wake() -> void:
 func _process(delta: float) -> void:
 	if _model == null or Settings.reduced_motion:
 		return
+	_keep_facing()
 	_fidget -= delta
 	if _fidget <= 0.0:
 		_fidget = StageHero.IDLE2_EVERY
 		_model.play(&"idle2" if _model.clip == &"idle" else &"idle")
+
+
+## The head's turn about the vertical, in the figure's own frame (its turn
+## toward the light taken out); NAN while it has no head.
+func _head_yaw() -> float:
+	if _model == null or not _model.is_inside_tree() or _model.socket(&"head_top") == null:
+		return NAN
+	var ahead := _model.socket(&"head_top").global_transform.basis.z
+	if Vector2(ahead.x, ahead.z).length() < 0.01:
+		return NAN
+	return wrapf(atan2(ahead.x, ahead.z) - _figure.rotation.y, -PI, PI)
+
+
+## Where an idle turns the head further than YAW_LEAVE from its rest, the
+## figure turns back by what is past it, so the face stays toward the camera.
+func _keep_facing() -> void:
+	if is_nan(_rest_yaw):
+		return
+	var now := _head_yaw()
+	if is_nan(now):
+		return
+	var off := wrapf(now - _rest_yaw, -PI, PI)
+	var past := signf(off) * maxf(0.0, absf(off) - YAW_LEAVE)
+	_figure.rotation.y = TURN - past
