@@ -1,7 +1,8 @@
 extends SceneTree
 ## The result screen after a golden heist, the island in 3D behind the
 ## outcome card (tools/render/shoot.sh). SHOT is the file; GOLDEN and HOUR
-## are optional.
+## are optional; CONTRAST is high contrast, and FIT fails the run when any
+## words do not fit (P2-S1-result-1).
 
 
 func _initialize() -> void:
@@ -22,6 +23,11 @@ func _go() -> void:
 		Strings.set_locale(OS.get_environment("LOCALE"))
 	if OS.get_environment("TEXT") != "":
 		Settings.text_scale = int(OS.get_environment("TEXT"))
+		Settings.apply()
+	if OS.get_environment("CONTRAST") != "":
+		# Only set, never cleared: the guard's high-contrast shot sets it
+		# before this script runs.
+		Settings.high_contrast = true
 		Settings.apply()
 	# The golden clean heist on the fixture realm: what the result shows when
 	# a heist pays. GOLDEN picks another.
@@ -46,6 +52,14 @@ func _go() -> void:
 	for i in 30:
 		await process_frame
 	await RenderingServer.frame_post_draw
+	if OS.get_environment("FIT") != "":
+		var bad := fit(screen)
+		for b: String in bad:
+			print("fit FAIL ", b)
+		print("fit ", "ok" if bad.is_empty() else "FAIL")
+		if not bad.is_empty():
+			quit(1)
+			return
 	# §21.3's budgets, as the renderer counted the frame.
 	print("budget: %d draw calls, %d primitives" % [
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
@@ -53,6 +67,55 @@ func _go() -> void:
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote ", verdict)
 	quit()
+
+
+## What does not fit on `screen`, one line each: a label's words wider than
+## a label that does not wrap, a label outside its panel, or anything wider
+## than the phone (the page scrolls down, never across).
+static func fit(screen: Control) -> Array[String]:
+	var bad: Array[String] = []
+	var wide := screen.size.x
+	for l: Label in screen.find_children("*", "Label", true, false):
+		if not l.is_visible_in_tree() or l.text == "":
+			continue
+		var at := l.get_global_rect()
+		var font := l.get_theme_font("font")
+		var words := 0.0
+		for line: String in l.text.split("\n"):
+			words = maxf(words, font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				l.get_theme_font_size("font_size")).x)
+		if l.autowrap_mode == TextServer.AUTOWRAP_OFF and not l.clip_text and words > at.size.x + 1.0:
+			bad.append("%s %s: %.0f px of words in %.0f" % [l.get_path(), l.text, words, at.size.x])
+		if l.clip_text and words > at.size.x + 1.0:
+			bad.append("%s %s: cut, %.0f px of words in %.0f" % [l.get_path(), l.text, words, at.size.x])
+		var p := l.get_parent()
+		while p != null and not p is PanelContainer:
+			p = p.get_parent()
+		if p != null and not (p as Control).get_global_rect().grow(1.0).encloses(at):
+			bad.append("%s %s: %s outside its panel %s" % [l.get_path(), l.text, at, (p as Control).get_global_rect()])
+		if at.position.x < -1.0 or at.end.x > wide + 1.0:
+			bad.append("%s %s: %s off the phone's width" % [l.get_path(), l.text, at])
+	for b: Button in screen.find_children("*", "Button", true, false):
+		var at := b.get_global_rect()
+		if not b.is_visible_in_tree():
+			continue
+		if at.position.x < -1.0 or at.end.x > wide + 1.0:
+			bad.append("%s %s: %s off the phone's width" % [b.get_path(), b.text, at])
+		# A button's longest word must fit its room: its width less its
+		# padding and its icon (a word too long is cut, or wraps by letters).
+		var room := at.size.x - b.get_theme_stylebox("normal").get_minimum_size().x
+		if b.icon != null:
+			var mark := float(b.icon.get_width())
+			if b.get_theme_constant("icon_max_width") > 0:
+				mark = minf(mark, b.get_theme_constant("icon_max_width"))
+			room -= mark + b.get_theme_constant("h_separation")
+		var font := b.get_theme_font("font")
+		var font_px := b.get_theme_font_size("font_size")
+		for word: String in b.text.split(" ", false):
+			var w := font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_px).x
+			if w > room + 1.0:
+				bad.append("%s %s: the word %s is %.0f px in %.0f" % [b.get_path(), b.text, word, w, room])
+	return bad
 
 
 ## The integrator's cast of character models, until the app sets one: each
