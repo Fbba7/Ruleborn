@@ -7,14 +7,14 @@
   "task_id": "P2-S3-settings",
   "task_state": "working",
   "claimed_at": "2026-11-13T06:16:00Z",
-  "lease_until": "2026-11-13T09:16:00Z",
-  "updated_at": "2026-11-13T07:36:53Z",
-  "expected_next_update_by": "2026-11-13T08:16:53Z",
+  "lease_until": "2026-11-13T11:17:08Z",
+  "updated_at": "2026-11-13T08:17:08Z",
+  "expected_next_update_by": "2026-11-13T08:57:08Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "f5719f28cbf8c9d751eae45a887de86bab5c2b32",
-    "next_step": "Settings screen on the kit (key frame 05), with the self-check fixes. Precheck PASS at f5719f28 (07:36:22Z); check_screens and guard OK (settings 52/44/52 against 52/47/52). gate_request set for the three settings items. Next: the lead's gate; answer AD (S3-R7) if objections arrive; after the gate, merge main and rerun the setup line, build.sh, check_all and guard.",
-    "at": "2026-11-13T07:36:53Z"
+    "next_step": "The lead's gate failed at f5719f28 (verdict docs/art/ui-quality/gate/verdicts/P2-S3-settings/f5719f28.json): Display type at 100% and 200% pt_BR (the group headings' ink outline is lost on the starfield), Hierarchy at 200% pt_BR (the title is outranked). Fixing: group headings on a plate, a stronger title at large text, within the 52/47/52 draw-call budget; then re-render, checks, precheck and a new gate_request.",
+    "at": "2026-11-13T08:17:08Z"
   },
   "precheck": {
     "sha": "f5719f28cbf8c9d751eae45a887de86bab5c2b32",
@@ -22,32 +22,7 @@
     "finished_at": "2026-11-13T07:36:22Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "f5719f28cbf8c9d751eae45a887de86bab5c2b32",
-    "items": [
-      {
-        "item": "settings at 100% text",
-        "qualities": [
-          "Hierarchy",
-          "Display type"
-        ]
-      },
-      {
-        "item": "settings at 200% text, pt_BR",
-        "qualities": [
-          "Display type",
-          "Hierarchy"
-        ]
-      },
-      {
-        "item": "settings in high contrast",
-        "qualities": [
-          "Colour roles and value",
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
+  "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
@@ -191,5 +166,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "Settings screen on the kit (key frame 05), with the self-check fixes. Precheck PASS at f5719f28 (07:36:22Z); check_screens and guard OK (settings 52/44/52 against 52/47/52). gate_request set for the three settings items. Next: the lead's gate; answer AD (S3-R7) if objections arrive; after the gate, merge main and rerun the setup line, build.sh, check_all and guard."
+  "next_step": "The lead's gate failed at f5719f28 (verdict docs/art/ui-quality/gate/verdicts/P2-S3-settings/f5719f28.json): Display type at 100% and 200% pt_BR (the group headings' ink outline is lost on the starfield), Hierarchy at 200% pt_BR (the title is outranked). Fixing: group headings on a plate, a stronger title at large text, within the 52/47/52 draw-call budget; then re-render, checks, precheck and a new gate_request."
 }
