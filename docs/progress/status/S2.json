@@ -7,14 +7,14 @@
   "task_id": "P2-S2-home-3",
   "task_state": "working",
   "claimed_at": "2026-11-13T09:00:00Z",
-  "lease_until": "2026-11-13T12:00:00Z",
-  "updated_at": "2026-11-13T09:58:00Z",
-  "expected_next_update_by": "2026-11-13T10:58:00Z",
+  "lease_until": "2026-11-13T14:27:00Z",
+  "updated_at": "2026-11-13T11:27:00Z",
+  "expected_next_update_by": "2026-11-13T12:12:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "3612e265",
-    "next_step": "A-C built and shot (22 FIT cases pass, budgets 145/114/145 unchanged); AD preview S2-R20 filed; check_all running, then merge main, pre-check, ready",
-    "at": "2026-11-13T09:58:00Z"
+    "next_step": "restarted (cycle 82): merge main (135a49b2), fresh-container setup, client build, pre-check on the merge, guard.sh, then ready; AD answers S2-R20",
+    "at": "2026-11-13T11:27:00Z"
   },
   "precheck": null,
   "gate_request": null,
