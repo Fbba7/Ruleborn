@@ -136,6 +136,10 @@ func _ready() -> void:
 	collect_button.name = "Collect"
 	collect_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	collect_button.visible = false
+	# The screen's one primary action carries the kit's idle shine (report.md
+	# step 10): a soft band across its face once a period while it waits;
+	# none under reduced motion or in high contrast.
+	Motion.shine(collect_button)
 	_foot.add_child(collect_button)
 	_foot.pre_sort_children.connect(_fit_foot)
 	notice = _raid_notice()
@@ -565,11 +569,8 @@ func _collect() -> void:
 	if not is_inside_tree():
 		return
 	collect_button.disabled = false
-	# The reward flies to the kit's pills, standing in a purse of its own.
-	var into := UniversePurse.new()
-	into.pills = pills
-	UniverseReward.fly(_flights, collect_button, into, paid)
-	into.free()
+	# The reward flies to the kit's pills (S2-R5).
+	UniverseReward.fly(_flights, collect_button, pills, paid)
 	_show_hud()
 
 
@@ -811,12 +812,14 @@ func _play() -> void:
 	App.services.router.go(&"heist")
 
 
-## `l` in the kit's small display role (tokens.json "display_s": the display
-## face, ink outline and hard drop) at `points`, for home's figures and names.
+## `l` in the kit's display role (tokens.json "display": the display face,
+## its heavier ink outline and hard drop) at `points`, for home's figures and
+## names: the small role's thinner line reads flat over the starfield at a
+## phone's size (cycle 77's gate).
 static func home_figure(l: Label, points: float) -> void:
 	if l == null:
 		return
-	l.theme_type_variation = "DisplayS"
+	l.theme_type_variation = "Display"
 	l.add_theme_font_size_override("font_size", UI.text_px(points))
 	l.set_meta("points", points)
 
