@@ -221,7 +221,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
 | S1 | `session_01SNkKxowrAJqRGxuKn8Tf1C` (Opus 5.5, effort high) | P2-S1-toon-drop (restart: the last session went idle waiting for the gate; advisory pass in verdicts/P2-S1-toon-drop/a7dd6501.json; mark ready) | `claude/ui-screens-heist` | 2026-11-12 23:41Z |
-| S3 | `session_01SNkKxqkkDvs1XEigTTp6o5` (Opus 5.5, effort high) | P2-S3-screenkit (restart: the last session idle past its expected_next_update_by 21:54:38Z and its lease lapsed at 22:16Z; prior_sha 03b3d762; answer Lead-R1, then ready) | `claude/ui-screens-meta` | 2026-11-12 22:43Z |
+| S3 | `session_01SNkKxq23wc1i1XYqt7KM15` (Opus 5.5, effort high) | P2-S3-character (P2-S3-screenkit merged as 70057394; next task) | `claude/ui-screens-meta` | 2026-11-13 00:19Z |
+| S3 | `session_01SNkKxqkkDvs1XEigTTp6o5` (Opus 5.5, effort high) | P2-S3-screenkit (restart: the last session idle past its expected_next_update_by 21:54:38Z and its lease lapsed at 22:16Z; prior_sha 03b3d762; answer Lead-R1, then ready); idle, its task merged as 70057394 | `claude/ui-screens-meta` | 2026-11-12 22:43Z |
 | K1 | `session_01SNkKxqeMVkQseRbMLW4q8r` (Opus 5.5, effort high) | P2-K1-motion (start: P2-AIA-motion-1 merged as a43e4d5a) | `claude/ui-bake` | 2026-11-12 22:02Z |
 | S2 | `session_01SNkKxn7gvvhfq2Xjm1ocpN` (Opus 5.5, effort high) | P2-S2-home-1 (start: P2-flow-entry merged as 62c66327; S2-R4's default applies) | `claude/ui-screens-home` | 2026-11-12 22:02Z |
 | S1 | `session_01SNkKxnTgyGWE1wfK5suMkd` (Opus 5.5, effort high; idle waiting for the gate, replaced at 23:41Z) | P2-S1-toon-drop (start: P2-S1-flow-replay merged as 509c43c2, P2-AIA2-busts merged) | `claude/ui-screens-heist` | 2026-11-12 22:02Z |
