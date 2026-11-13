@@ -17,10 +17,26 @@ const SECTION_PAD := 12.0
 ## The base frame's width in points (tokens.json's px_per_point: 1080 pixels
 ## for a 360-point phone).
 const SCREEN_POINTS := 360.0
+## The text size in large figures: a step below the title (28 points in
+## Marcellus), so the title stays the screen's largest word.
+const SIZE_POINTS := 24.0
+## The least gap kept under the list's last whole row for the scroll cue,
+## in points.
+const CUE_POINTS := 20.0
+## Room under a row's edge for its skin's drop, in points.
+const DROP_POINTS := 4.0
+## The most of the list's window a snap to a row's edge may give up, in
+## points; past it (a card taller than what is left, at large text) the
+## window cuts through the row instead, above the cue.
+const SNAP_POINTS := 48.0
 
 var volume_labels := {}
 var text_label: Label
 var list_scroll: ScrollContainer
+## The cue that more rows lie below: the kit's chevron turned down, in the
+## gap under the last whole row, shown while the list can scroll further.
+var scroll_cue: Control
+var snap_queued := false
 ## The tab on show: "game" (language, sound, play), "access" or "account".
 var tab_shown := "game"
 
@@ -122,6 +138,7 @@ func _layout() -> void:
 	account.add_child(AuthPanel.new())
 	account.add_child(ScreenAccount.profile_row())
 	account.add_child(ScreenAccount.privacy_note())
+	_cue(column)
 	column.add_child(_bottom())
 
 
@@ -338,10 +355,10 @@ func _text_card() -> Control:
 	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	mid.alignment = BoxContainer.ALIGNMENT_CENTER
 	mid.add_theme_constant_override("separation", UI.px(6))
-	text_label = UI.label("%d%%" % Settings.text_scale, 34)
+	text_label = UI.label("%d%%" % Settings.text_scale, SIZE_POINTS)
 	text_label.theme_type_variation = "Display"
 	text_label.add_theme_color_override("font_color", Tokens.color("gold_top"))
-	_stroked(text_label, 2.5, 3.0, "gold_drop")
+	_stroked(text_label, 2.0, 2.0, "gold_drop")
 	text_label.accessibility_name = size_name
 	mid.add_child(text_label)
 	var dots := HBoxContainer.new()
@@ -366,13 +383,13 @@ func _text_card() -> Control:
 		if side[0] < 0:
 			row.add_child(mid)
 	var sample := PanelContainer.new()
-	var room := UI.clear_box(14, 10)
-	room.content_margin_bottom = UI.px(12)
+	var room := UI.clear_box(10, 8)
+	room.content_margin_bottom = UI.px(10)
 	sample.add_theme_stylebox_override("panel", room)
 	UI.dress(sample, "parchment")
 	var line := HBoxContainer.new()
-	line.add_theme_constant_override("separation", UI.px(10))
-	var mark := Icons.view("laws/stillness", 40)
+	line.add_theme_constant_override("separation", UI.px(8))
+	var mark := Icons.view("laws/stillness", 32)
 	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	line.add_child(mark)
 	var words := VBoxContainer.new()
@@ -386,19 +403,16 @@ func _text_card() -> Control:
 	var rule := UI.label(Strings.t("LAW_RULE_STILLNESS"), Tokens.type_role("caption")["points"], true)
 	rule.theme_type_variation = "Caption"
 	rule.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	# At large text the sample is a taste of the size, not the whole rule:
-	# two lines and an ellipsis, so the card never fills the screen.
-	if large:
-		rule.max_lines_visible = 2
-		rule.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	# The whole law at every size: the sample shows the rule at the reader's
+	# size, and the list scrolls (S3-R7).
 	words.add_child(rule)
 	line.add_child(words)
 	sample.add_child(line)
 	var card := PanelContainer.new()
-	card.add_theme_stylebox_override("panel", UI.clear_box(14, 14))
+	card.add_theme_stylebox_override("panel", UI.clear_box(10, 12))
 	UI.dress(card, "card")
 	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", UI.px(12))
+	box.add_theme_constant_override("separation", UI.px(10))
 	box.add_child(row)
 	box.add_child(sample)
 	card.add_child(box)
@@ -410,10 +424,10 @@ func _text_card() -> Control:
 ## marks on their coins with their names, and that said.
 func _shapes() -> Control:
 	var card := PanelContainer.new()
-	card.add_theme_stylebox_override("panel", UI.clear_box(12, 12))
+	card.add_theme_stylebox_override("panel", UI.clear_box(12, 10))
 	UI.dress(card, "card")
 	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", UI.px(8))
+	box.add_theme_constant_override("separation", UI.px(6))
 	card.add_child(box)
 	var grid := GridContainer.new()
 	grid.add_theme_constant_override("h_separation", UI.px(4))
@@ -451,6 +465,88 @@ func _shapes() -> Control:
 	said.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	box.add_child(said)
 	return card
+
+
+## The scroll cue (S3-R7): the list's window ends on a whole row's edge,
+## never mid-card, and the rows' own chevron (the kit's "hud/next") turned
+## down stands in the gap below it while more rows lie further down. No
+## fade: a screen draws no chrome of its own (kit-spec.md section 6.3), and
+## the kit has no scroll cue yet (S3-R8).
+func _cue(column: VBoxContainer) -> void:
+	var holder := Control.new()
+	holder.name = "ListHolder"
+	holder.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	holder.clip_contents = true
+	column.remove_child(list_scroll)
+	holder.add_child(list_scroll)
+	list_scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
+	column.add_child(holder)
+	var chevron := Icons.view("hud/next", 18)
+	chevron.name = "ScrollCue"
+	chevron.size = chevron.custom_minimum_size
+	chevron.pivot_offset = chevron.size / 2.0
+	chevron.rotation = PI / 2.0
+	chevron.visible = false
+	holder.add_child(chevron)
+	scroll_cue = chevron
+	var bar := list_scroll.get_v_scroll_bar()
+	bar.changed.connect(_show_cue)
+	bar.value_changed.connect(func(_v: float) -> void: _show_cue())
+	holder.resized.connect(_queue_snap)
+	var content := list_scroll.get_child(0) as Container
+	content.sort_children.connect(_queue_snap)
+	for tab: Node in content.get_children():
+		if tab is Container:
+			(tab as Container).sort_children.connect(_queue_snap)
+
+
+## The rows take their places after the containers sort, so the window is
+## snapped once a frame, after them.
+func _queue_snap() -> void:
+	if not snap_queued:
+		snap_queued = true
+		_snap_list.call_deferred()
+
+
+## Shortens the list's window to the lowest whole row that leaves the cue
+## its gap, so the frame ends on a row's edge; a list that fits keeps its
+## whole window, and a row too tall for what is left is cut (SNAP_POINTS).
+func _snap_list() -> void:
+	snap_queued = false
+	if list_scroll == null or not is_instance_valid(list_scroll):
+		return
+	var holder := list_scroll.get_parent() as Control
+	var content := list_scroll.get_child(0) as Control
+	var room := holder.size.y
+	var foot := room
+	if content.size.y > room + 1.0:
+		var gap := UI.px(CUE_POINTS)
+		var drop := UI.px(DROP_POINTS)
+		var best := 0.0
+		for c: Control in content.get_children():
+			if not c.visible:
+				continue
+			var edges := [c.position.y + c.size.y]
+			if c is VBoxContainer:
+				for row: Control in c.get_children():
+					if row.visible:
+						edges.append(c.position.y + row.position.y + row.size.y)
+			for edge: float in edges:
+				if edge + drop <= room - gap and edge + drop > best:
+					best = edge + drop
+		foot = best if room - gap - best <= UI.px(SNAP_POINTS) else room - gap
+	if absf(list_scroll.offset_bottom + (room - foot)) > 0.5:
+		list_scroll.offset_bottom = -(room - foot)
+	scroll_cue.position = Vector2((holder.size.x - scroll_cue.size.x) / 2.0,
+		foot + (room - foot - scroll_cue.size.y) / 2.0)
+	_show_cue()
+
+
+func _show_cue() -> void:
+	if scroll_cue == null or not is_instance_valid(scroll_cue):
+		return
+	var bar := list_scroll.get_v_scroll_bar()
+	scroll_cue.visible = bar.value + bar.page < bar.max_value - 1.0
 
 
 ## Back home, on the glass bar at the foot of the screen, lifted off its

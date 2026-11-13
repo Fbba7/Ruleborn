@@ -205,7 +205,7 @@ The before still is `before-settings-100.png`, from Part 1.
 
 `tools/ui_bake/check_screens.py`: OK. `settings_screen.gd` and `screen_switch.gd` draw nothing outside the kit.
 
-`tools/ui_bake/guard.sh`: OK. The budget shots (`screen_meta.gd`, `SCREEN=settings`, on the opening Game tab) read 48, 40 and 48 draw calls for settings at 100%, 200% and high contrast, against 52, 47 and 52 recorded (after the gate's fixes). Before the self-check fixes it read 46 at 100%; the fixes' strokes brought it to 52 (on 9242f955), and with an outlined drop it read 55. The headings' plates, which drop the headings' outlines, bring it to 48. The falls are for K1 or the lead to `--record`. No word is below 4.5:1; the worst word reads 9.37:1, and 5.94:1 in high contrast.
+`tools/ui_bake/guard.sh`: OK. The budget shots (`screen_meta.gd`, `SCREEN=settings`, on the opening Game tab) read 48, 41 and 48 draw calls for settings at 100%, 200% and high contrast, against 52, 47 and 52 recorded (after AD's S3-R7 fixes; 48, 40 and 48 after the gate's). Before the self-check fixes it read 46 at 100%; the fixes' strokes brought it to 52 (on 9242f955), and with an outlined drop it read 55. The headings' plates, which drop the headings' outlines, bring it to 48. The falls are for K1 or the lead to `--record`. No word is below 4.5:1; the worst word reads 9.37:1, and 5.94:1 in high contrast.
 
 ### The advisory self-check, and the fixes
 
@@ -215,8 +215,23 @@ Before the gate request, an advisory self-check against the gate's three items (
 - **Display type and hierarchy, at 200% in pt_BR.** The law sample filled most of the screen, and its last line was cut. Its words now stop at two lines with an ellipsis.
 - **Colour roles and value, in high contrast.** The open tab, the two As and the current step's dot were gold, beside the main actions' gold (§21.8). The open tab is now the kit's chosen segment for parchment, and the current dot plate. The As went to leather first, but leather on the violet card reads ΔL* 8 (`checks.py value-steps` fails it in en and pt_BR), so they are on parchment, as the tabs and the switch rows: ΔL* 76, and 95 in high contrast.
 
+### AD's preview (S3-R7), and the answers
+
+AD previewed the stills of f5719f28 (`status/AD.json` on `claude/ui-ad`, S3-R7) and sent six objections in one round. They are listed here in AD's order of weight. AD let these stand: the cream As, the dark chosen tab, the sentence-case tabs, and the pt_BR coins three to a line.
+
+1. **The title at 200% must grow with the text and stay the largest word.** Done in 917886c4: the title is 1.3 times the body text's size.
+2. **The headings need the display outline of at least 1.5 points, or the tag plate.** Done in 917886c4: each heading is on its own dark plate.
+3. **The ground ramp is reversed: the foot should be the darkest, #0B0621 as in key frame 05.** Not changed here. The night gradient is §21.2's linear ramp (night_top #171046 to night_bottom #2C3AA8). The owner chose it over the designs' radial ground in C75 (closed 4 November, answer A). It is drawn by `UI.frame` in `ui.gd`, which is not this task's file. A change would be the owner's decision first, then K1's work. The headings no longer stand on the ground (point 2), so their legibility does not depend on it.
+4. **At 200% in pt_BR, the Stillness card should hold the whole law, and the list should end on a row's edge or show a scroll cue.** The two-line ellipsis is gone, and the sample shows the whole law at every size. The sample's padding, line spacing and icon (32 points, was 40) are tighter to make room. The list's window now ends on a whole row's edge (`_snap_list`). The rows' own chevron (the kit's `hud/next`, turned down) stands in the gap below that edge while more rows lie below. Where no edge fits within 48 points (at 200%, the text card is taller than what is left), the window cuts through the row above the cue: the Stillness card shows whole, and its violet card runs on below it. There is no fade. A screen draws no chrome of its own: a `GradientTexture2D` fade raised `check_screens.py`'s texture count from 0 to 2. The kit has no scroll cue (S3-R8 asks K1 for one).
+5. **At 100% and in high contrast, the Motion switch should clear the dock.** At 100%, Stillness's law now fits on two lines (the text card is trimmed). The window ends under the High contrast row, and the chevron says more lies below. Motion is the next row, a scroll away.
+6. **The gold "100%" should be a step below the title.** It is 24 points, against the title's 28, and its outline is 2 points.
+
+AD said it will re-check only what changed: items 4 to 6, and 1 and 2 from 917886c4.
+
 ### What is still worse than before
 
 - **The tab and back words.** Key frame 05 sets them in capitals. The screen keeps the kit's sentence case (`Tokens.type_role`). Capitals would be a change to the kit's type roles, which is K1's work.
 - **The shapes in pt_BR.** At 100% text, the longer Portuguese names (Movimento, Matéria) put the six coins three to a line, not the key frame's six in one row.
-- **The law sample at 200% text.** At this size its words stop at two lines with an ellipsis, so the whole law is read at 100% only. The colour-blind card is cut at the dock in the opening frame, and the switches are below the fold (`SCROLL`); the list scrolls. Its words are the content's, and they are English under pt_BR ("Stillness", from `content/ruleborn.json`), as on the character screen. This is not this task's work.
+- **The fold at 200% text.** The whole law shows, but the text card runs past the window, the colour-blind card and the switches are below the fold (`SCROLL`), and the cue is a chevron with no fade, until the kit has a scroll cue (S3-R8).
+- **The ground.** Key frame 05 darkens towards the foot. The screen keeps §21.2's ramp, which lightens towards the foot, as decided in C75 (point 3 above).
+- **The law's words.** They are the content's, and they are English under pt_BR ("Stillness", from `content/ruleborn.json`), as on the character screen. This is not this task's work.

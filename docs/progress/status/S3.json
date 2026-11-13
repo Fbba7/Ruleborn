@@ -7,19 +7,19 @@
   "task_id": "P2-S3-settings",
   "task_state": "working",
   "claimed_at": "2026-11-13T06:16:00Z",
-  "lease_until": "2026-11-13T11:32:25Z",
-  "updated_at": "2026-11-13T08:32:25Z",
-  "expected_next_update_by": "2026-11-13T09:12:25Z",
+  "lease_until": "2026-11-13T12:23:28Z",
+  "updated_at": "2026-11-13T09:23:28Z",
+  "expected_next_update_by": "2026-11-13T10:03:28Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "f5719f28cbf8c9d751eae45a887de86bab5c2b32",
-    "next_step": "The gate's fixes are in 917886c4 (headings on dark plates, title 1.3x and headings 1.1x the body at large text; advisory re-check 3 of 3 pass; tests 382 ok, check_screens OK, guard OK at 48/40/48). Precheck running on 917886c4; then a new gate_request on the three settings items.",
-    "at": "2026-11-13T08:32:25Z"
+    "last_green_sha": "917886c4f07d73cb586c3587f5379dacd4a99379",
+    "next_step": "AD's S3-R7 fixes are committed: the whole law at every size, the list ending on a row's edge with the kit's chevron below it, '100%' at 24 points, the text card trimmed. Tests 382 ok and 25 not ok (server), check_screens OK, guard OK at 48/41/48. Next: precheck the commit, then a gate_request on the three settings items.",
+    "at": "2026-11-13T09:23:28Z"
   },
   "precheck": {
-    "sha": "f5719f28cbf8c9d751eae45a887de86bab5c2b32",
+    "sha": "917886c4f07d73cb586c3587f5379dacd4a99379",
     "exit": 0,
-    "finished_at": "2026-11-13T07:36:22Z",
+    "finished_at": "2026-11-13T08:59:55Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
@@ -158,6 +158,22 @@
       "created_at": "2026-11-13T06:46:00Z",
       "due": "2026-11-13T08:50:00Z",
       "default": "the stills stand as rendered, and S3 requests the gate on them",
+      "escalate_to": "lead",
+      "state": "answered",
+      "answer": "AD's six objections (status/AD.json, 08:26Z) are answered in docs/art/tracks/menu-screens.md Part 3, 'AD's preview (S3-R7), and the answers'. (1) The title is 1.3x the body text at large text, and (2) each heading is on a dark plate, both in 917886c4. (3) The ground ramp stands: §21.2's linear night, chosen in C75 (A), drawn by ui.gd. A change is the owner's decision first, then K1's work. (4) The sample holds the whole law at every size, and the list's window ends on a whole row's edge with the kit's chevron below while more rows lie below (no fade: screens draw no chrome, see S3-R8). (5) At 100% Stillness is on two lines, and the window ends under High contrast with the cue. (6) '100%' is 24 points against the 28-point title. For AD to re-check what changed: settings-100, -200-pt_BR and -hc at the next gate_request's sha."
+    },
+    {
+      "id": "S3-R8",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: a kit scroll cue for long lists, as AD named it in S3-R7: a fade over the list's foot into the ground, and a chevron. A screen may not draw the fade itself. A GradientTexture2D made in settings_screen.gd raised check_screens.py's texture count from 0 to 2. Until the kit has one, settings_screen.gd ends the list's window on a whole row's edge and shows the kit's hud/next chevron, turned down, in the gap below it (_snap_list).",
+      "files": [
+        "client/ui/kit_layout.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T09:23:28Z",
+      "due": "2026-11-13T21:23:28Z",
+      "default": "settings keeps the row-edge window and the bare chevron; the kit's cue replaces it when it exists",
       "escalate_to": "lead"
     }
   ],
@@ -168,5 +184,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "The gate's fixes are in 917886c4 (headings on dark plates, title 1.3x and headings 1.1x the body at large text; advisory re-check 3 of 3 pass; tests 382 ok, check_screens OK, guard OK at 48/40/48). Precheck running on 917886c4; then a new gate_request on the three settings items."
+  "next_step": "AD's S3-R7 fixes are committed: the whole law at every size, the list ending on a row's edge with the kit's chevron below it, '100%' at 24 points, the text card trimmed. Tests 382 ok and 25 not ok (server), check_screens OK, guard OK at 48/41/48. Next: precheck the commit, then a gate_request on the three settings items."
 }
