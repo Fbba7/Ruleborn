@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-13T11:30:00Z",
   "lease_until": "2026-11-13T14:30:00Z",
-  "updated_at": "2026-11-13T11:30:00Z",
-  "expected_next_update_by": "2026-11-13T12:15:00Z",
+  "updated_at": "2026-11-13T11:40:00Z",
+  "expected_next_update_by": "2026-11-13T12:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
-    "next_step": "Answering S2-R20 (home part 3 preview at c0b2bc49) first, then P2-AD-board-4: result stills, reward strips and clips, AIA motion strips, every objection in one round (AD-R26 among them)."
+    "next_step": "S2-R20 answered; building board 4 (result and motion) from renders of main at 135a49b2"
   },
   "precheck": {
     "sha": "4a48eef9b4fb9fa9164ead1f9a8f7f82d094149f",
@@ -344,6 +344,11 @@
       "request_id": "S1-R25",
       "at": "2026-11-13T10:05:00Z",
       "answer": "AD's re-check of S1-R24's four objections in P2-S1-result-2 at 71167028 on claude/ui-screens-heist (renders with screen_result.gd, SERVER=1, FIT=1: TEXT=200 LOCALE=pt_BR, CONTRAST=1, en 100%, and de 200% for regressions), beside art/ui/keyframes/03-result*. All four stand as fixed: (1) at 200% pt_BR the haul is on the first screen: the three reward rows (Luz-estelar, Essencia, Renome) sit straight under the time line, above the moment card, as 03-result_text200_pt_BR; (2) in high contrast the ground is a plain night: no rays, stars, glow or island, as 03-result_hc; (3) at 200% pt_BR 'Saque x1.0 · Renome x1.0' holds one line in its pill; (4) at 100% the rest line 'Your crew of 5 is home, resting up to 45 min' takes two lines beside the three faces. No new objection inside the re-check's scope; result-2 may go to the gate and its merge. One finding outside that scope, not holding result-2 (de 200% is not a gate still): at 200% de the reward tiles fall back to full-width columns and only Sternenlicht shows above the dock (Essenz and Ruhm below the fold), so German at large text still has part of the haul off the first screen; sent to the lead as AD-R26 for board 4. Notes, unchanged from S1-R24 and not objections: at 200% pt_BR RAID AGAIN carries no idle-crew line (the fixture has no roster)."
+    },
+    {
+      "request_id": "S2-R20",
+      "answer": "AD's review of P2-S2-home-3 at c0b2bc49 on claude/ui-screens-home (the newer head 14fdcdfe only merges main's result files; the home code is unchanged). Renders: client/tests/shots/universe_home.gd, FIT=1, in en/pt_BR/de at 100%, at TEXT=200 (en, pt_BR, de), with NOTICE=1 (en 100%, pt_BR 200%, de 200%) and CONTRAST=1 (en, pt_BR), beside art/ui/keyframes/01-home*. Every render prints 'fit ok'. FIXED and standing from board 3: A (Collect and the goal stay on screen in every state; at pt_BR 200% with the notice it is one line '! 2 · Ver · x' above Collect, as the key frame); most of C (goal bar at every size, numbered chips and the chosen tab's name at 200%, side buttons as icon discs at 200%, all five dock labels at pt_BR 100%); the goal on one line in en 100% and two in pt_BR; all seven realms above the panels. OBJECTIONS, in order of weight (M12, all in this round): (1) Pins detached from their realms (from B's fix, UniversePins._settle_at). At 100% in en, pt_BR, de and high contrast, pins pushed clear of the side buttons stack in a centre column: Lantern Vale's and Tidehold's pins sit over the Heart island and hide its tower (their islands are left and right), the Crystalline pin sits on the Skyfield island, in pt_BR five pins form one column. The Defence badge '2' still abuts the Skyfield pin's left edge (en, pt_BR, de). Key frame 01-home: each pin over its own island, the Heart the large centrepiece. Fix: settle each pin within a short radius of its island's anchor (shrink or drop the name before moving it far), and keep a gap from the Defence badge. (2) The world shrinks with the notice up: at en 100% with NOTICE=1 the world is a thin band and five of seven pins lose their names (The Heart excepted); round 1 framed the realms well in this state. The notice line 'See how your defence / held' leaves 'held' alone on its line. Fix: the notice takes height from the goal/panels before the world, and its text balances its lines or fits one. (3) The 'Full' tag on Essence is dropped at pt_BR 100% ('Cheio'), de 100% and at 200% in every locale; only en 100% shows it. The key frames keep it (01-home 'Full', 01-home_text200_pt_BR 'Cheio'). Fix: keep the tag at every size and locale (stack it under the number if the row is short). (4) The strain chip at 200% en and pt_BR is small: '82% · Humming' on one line at about 100% size; the key frame 01-home_text200_pt_BR shows it large over two lines (de 200% already does this). Fix: the same two-line large form in every locale at 200%. (5) Minor: at pt_BR 100% the purse takes three rows (61,0 mil alone at full width in row 2); the pt_BR goal breaks 'Guardiao / 25' (S2-R19 already open); the high-contrast Collect label reads smaller than at 100%; at pt_BR and de 200% chips 2 and 6 (and 4/6) touch. (6) The dock's ISLANDS label still sits on the gold rim, and HEIST does too in high contrast: board 3's D, owner K1 (client/ui/kit_tabs.gd, P2-K1-tabs), not S2's. NOTES (not objections): the Defence timer, badges and locked Lantern Vale state lack fixture data; the companion's yaw clamp needs frames to verify. A re-check covers only what the fix changes.",
+      "at": "2026-11-13T11:40:00Z"
     }
   ]
 }
