@@ -8,16 +8,27 @@
   "task_state": "working",
   "claimed_at": "2026-11-13T05:23:34Z",
   "lease_until": "2026-11-13T08:23:34Z",
-  "updated_at": "2026-11-13T05:34:54Z",
-  "expected_next_update_by": "2026-11-13T06:19:54Z",
+  "updated_at": "2026-11-13T05:39:03Z",
+  "expected_next_update_by": "2026-11-13T06:24:03Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e37c765d",
-    "next_step": "Home: live companion in the Keeper ring, Display role on figures, Collect shine; then budget shots, AD preview, pre-check",
-    "at": "2026-11-13T05:34:54Z"
+    "next_step": "Pre-check on 3612e265; the gate on home at 100%; AD preview (S2-R18); draw-call record (S2-R17)",
+    "at": "2026-11-13T05:39:03Z"
   },
   "precheck": null,
-  "gate_request": null,
+  "gate_request": {
+    "sha": "3612e26564859e8df7c3ce1cd48dba118580d9da",
+    "items": [
+      {
+        "item": "home at 100% text",
+        "qualities": [
+          "Character presence",
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
@@ -226,6 +237,35 @@
       "created_at": "2026-11-13T03:11:20Z",
       "due": "2026-11-13T15:11:20Z",
       "default": "The lead records 143/112/143 when it merges P2-S2-home-1; until then guard.sh fails on those three draw-call lines only.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R17",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Record home's draw calls in tools/ui_bake/budgets.json (K1's file) when P2-S2-home-2 merges: home/100 143 -> 145, home/hc 143 -> 145, home/200 112 -> 114 (budget_shots --only home/100,home/200,home/hc at 3612e265). The 2 calls are the live character rubric quality 9 asks for: the Keeper's companion drawn each frame in its own 3D stage (the model and its ink pass). All three stay under the cap of 150; textures and words below 4.5:1 unchanged (0, 0, 0).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T05:39:03Z",
+      "due": "2026-11-13T11:39:03Z",
+      "default": "S2 marks P2-S2-home-2 ready with guard.sh failing only on home's three draw-call lines (145/114/145), stated in the handoff; the lead records them when it merges",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R18",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Preview home part 2 (P2-S2-home-2) on claude/ui-screens-home at 3612e265 before it is marked ready (M10, M12), against art/ui/keyframes/01-home.*. Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`, the same with `TEXT=200 LOCALE=pt_BR` and with `CONTRAST=1` (the task's files allow S2 to commit no stills). The gate item is home at 100%: Character presence and Hierarchy. What changed: the Keeper's portrait is the featherkin alive (its model idling in a 3D stage of its own, the toon look, inked, a warm rim against a darker spirit ground), in a 76-point ring where the kit's part draws 52; the counts and 'Keeper 24' in the kit's Display role (3-point ink, 2-point hard drop), for cycle 77's 'flat counts' and 'no outline on the header'; Collect carries the kit's idle shine. docs/art/tracks/home-screen.md, 'Part 2', lists the rest. Send every objection in one round (M12).",
+      "files": [
+        "client/world/universe_badge.gd",
+        "client/scripts/home.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T05:39:03Z",
+      "due": "2026-11-13T11:39:03Z",
+      "default": "The stills stand as built; S2 marks P2-S2-home-2 ready when its checks and the gate pass, and any objection becomes a follow-up task beside it.",
       "escalate_to": "lead"
     }
   ],
