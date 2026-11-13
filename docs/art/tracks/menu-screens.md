@@ -196,6 +196,8 @@ The before still is `before-settings-100.png`, from Part 1.
 
 `tools/ui_bake/check_screens.py`: OK. `settings_screen.gd` and `screen_switch.gd` draw nothing outside the kit.
 
+`tools/ui_bake/guard.sh`: OK. The budget shots (`screen_meta.gd`, `SCREEN=settings`, on the opening Game tab) read 46, 38 and 46 draw calls for settings at 100%, 200% and high contrast, against 52, 47 and 52 recorded. These falls are for K1 or the lead to `--record`. No word is below 4.5:1.
+
 ### What is still worse than before
 
 - **The tab and back words.** Key frame 05 sets them in capitals. The screen keeps the kit's sentence case (`Tokens.type_role`). Capitals would be a change to the kit's type roles, which is K1's work.
