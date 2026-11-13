@@ -27,15 +27,23 @@ the status files, requests and scheduled-task prompts.
 - **11 November 2026, about 01:00 UTC:** the owner restarted it ("We still
   need to keep the UI process we were doing with the phases running as it
   was", then "Make sure it is running now"), in the chat of the overseer
-  session. **The program runs**, on Fable 5.2 only (order 4) until the
+  session. The program ran, on Fable 5.2 only (order 4) until the
   switch of 11 November 2026, about 19:50 UTC, and on Opus 5.5 at effort
-  high since then (order 5). Order 3's "keep working" applies again.
+  high from then until the stop of 13 November.
   - **A new launcher and a new watchdog**, created after this restart was
     on main, start the lead's cycles. Their IDs are in
     [`docs/progress/lead.md`](docs/progress/lead.md), "The program's
     scheduled tasks and sessions".
   - **Where the work stood at the restart** is in the same file, "Now",
     entries "Restart, 11 November 2026", "After the stop" and "The stop".
+- **13 November 2026, about 13:16 UTC:** the owner stopped it again
+  ("Stop cleanly"), in the chat of the overseer session. **The program is
+  stopped.** The overseer disabled the watchdog and its own hourly report
+  check-in, and told the running lead cycle to finish cleanly: merge
+  nothing, start nothing, clear its merge lock and push its progress
+  files. The launcher of 11 November is to be disabled; until it is, it
+  reads this order and stops. Order 3's "keep working" does not apply
+  while the program is stopped.
 
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its
