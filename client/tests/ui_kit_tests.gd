@@ -3,8 +3,9 @@ extends RefCounted
 ## The interface kit (§21.8, §20.8): every material, gradient, type role and
 ## font the tokens name resolves; a dressed control keeps its own size and
 ## says what its words sit on; the three faces load with tabular figures
-## where numbers change; every icon in the manifest loads; a button squashes
-## when pressed and changes at once under reduced motion; and every control
+## where numbers change; every icon in the manifest loads; Motion's press,
+## reward, shine and screen change keep to the baked curves, each with its
+## reduced form (tests/shots/ui_kit_motion.gd); and every control
 ## the kit makes meets §21.1's 48 points. Every material maps onto one of the
 ## kit's 35 skins, every skin's switch is off as shipped, a skin switched on
 ## draws from the atlas, and a piece the atlas lacks falls back to the
@@ -20,6 +21,7 @@ const Art := preload("res://tests/shots/ui_kit_catalogue_art.gd")
 const Rest := preload("res://tests/shots/ui_kit_rest.gd")
 const Round := preload("res://tests/shots/ui_kit_round.gd")
 const Heist := preload("res://tests/shots/ui_kit_heist.gd")
+const MotionKit := preload("res://tests/shots/ui_kit_motion.gd")
 ## The components whose baked faces are skins, and those skins' faces: once a
 ## skin has art, each of the component's baked states is a piece of it.
 ## The bar's pieces are K46's (N RM), the component built from them: K25's
@@ -87,6 +89,9 @@ func run() -> void:
 	await _boxes()
 	await _press()
 	_motion()
+	await _reward()
+	await _shine()
+	await _screens()
 	_icons()
 	await _tab_words()
 	await _small_disc()
@@ -180,36 +185,39 @@ func _boxes() -> void:
 
 
 func _press() -> void:
-	var b := UI.button("press", func() -> void: pass)
-	tree.root.add_child(b)
-	await tree.process_frame
-	Settings.reduced_motion = true
-	Motion.press(b, true)
-	var at_once := RbBox.of(b).press == 1.0 and b.scale == Vector2.ONE
-	Motion.press(b, false)
-	Settings.reduced_motion = false
-	Motion.press(b, true)
-	await tree.create_timer(0.3).timeout
-	var squashed := b.scale.x < 1.0 and b.scale.x >= Tokens.number("motion", "press_squash") - 0.001
-	Motion.press(b, false)
-	await tree.create_timer(0.3).timeout
-	var back := b.scale.is_equal_approx(Vector2.ONE) and is_zero_approx(RbBox.of(b).press)
-	b.queue_free()
-	var bounded := Tokens.number("motion", "press_ms") <= Tokens.number("motion", "longest_ms") \
-		and Tokens.number("motion", "pop_ms") <= Tokens.number("motion", "longest_ms")
-	check.call("a pressed button squashes slightly and sinks onto its drop within 250 ms, easing out, and back; "
-			+ "under reduced motion the change is immediate (§21.8, §20.8)", at_once and squashed and back and bounded,
-		"%s %s %s %s" % [at_once, squashed, back, bounded])
+	var bad: Array = await MotionKit.press(tree)
+	check.call("a press sinks onto its drop, squashes to 0.96 and darkens to 0.9 over the baked 150 ms, and recovers "
+			+ "over 180 ms, easing out from the first frame, never past its rest size; under reduced motion it sinks "
+			+ "and darkens to 0.88 with no squash (motion.json press; §21.8, §20.8; AIA-R24)", bad.is_empty(),
+			"; ".join(bad))
 
 
 func _motion() -> void:
-	var bad := []
-	for name: String in ["fade_ms", "rise_ms", "pop_ms", "sheet_ms", "press_ms", "screen_fade_ms", "bar_fill_ms"]:
-		var seconds := Motion._ms(name)
-		if seconds < 0.15 - 0.0001 or seconds > 0.25 + 0.0001:
-			bad.append("%s %.0f ms" % [name, seconds * 1000.0])
-	check.call("every interface movement the kit makes takes 150 to 250 ms (§21.8), a bar's fill included",
-		bad.is_empty(), "; ".join(bad))
+	var bad: Array = MotionKit.curves()
+	check.call("every interface movement takes 150 to 250 ms (or sets its value at once) and eases out with no "
+			+ "overshoot; Motion reads the baked curves and sprites of motion.json, and the tokens stand in when "
+			+ "a curve is absent (§21.8; report.md step 8)", bad.is_empty(), "; ".join(bad))
+
+
+func _reward() -> void:
+	var bad: Array = await MotionKit.reward(tree)
+	check.call("the reward sequence draws its baked sprites, more for a rarer tier: the prize gathers and is "
+			+ "revealed, the burst, the coins fly to the counter, which rolls up and pulses to 1.06, nothing past "
+			+ "its rest size, and the layer is freed; under reduced motion one coin lands and the counter shows its "
+			+ "new value at 350 ms (motion.json reward; §21.8, §20.8)", bad.is_empty(), "; ".join(bad))
+
+
+func _shine() -> void:
+	var bad: Array = await MotionKit.shine(tree)
+	check.call("a primary button's idle shine waits, sweeps the baked band across its face at most 0.6 bright once "
+			+ "a period, and shows on no disabled button, under reduced motion or in high contrast (motion.json "
+			+ "shine; §20.8)", bad.is_empty(), "; ".join(bad))
+
+
+func _screens() -> void:
+	var bad: Array = await MotionKit.screens(tree)
+	check.call("a screen arrives fading in from 0.985 of its size and leaves fading out; under reduced motion it only "
+			+ "fades (motion.json screen; §21.8, §20.8)", bad.is_empty(), "; ".join(bad))
 
 
 func _icons() -> void:
