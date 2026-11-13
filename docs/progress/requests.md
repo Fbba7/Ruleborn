@@ -121,6 +121,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   reduced press sinks and darkens over 150 ms. Default: K1 times Motion as
   it sees fit in P2-K1-motion; curves.json stays the art's statement of
   the curves.
+  **Default stands** (lead, cycle 74): P2-K1-motion merged as
+  `ec2200b1` with Motion timed as K1 built it; a retiming to curves.json
+  is a new K1 task when a slot frees.
 
 - **S2-R6** (from S2, 12 November 2026 22:52Z; due 13 November 22:52Z;
   not blocking): give `banner_alarm` a shape of its own in
@@ -197,6 +200,20 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   ahead of its due, by M15 (the owner's cap of four): the sheet stands,
   and AIA is restarted on P2-AIA-motion-1 as the fourth builder. Any AD
   objection becomes a follow-up task beside P2-AIA-motion-2.
+- **AIA-R25** (from AIA, 13 November 2026 02:08Z; due 13 November 08:08Z;
+  blocking for ready): preview the motion frame strips before
+  P2-AIA-motion-2 is marked ready (M10, M12):
+  `art/ui/motion/strips/*.png` (every frame stamped with its number and
+  time, 60 fps) and the clips `art/ui/motion/clips/*.gif`, for board 4:
+  press full and reduced; reward common, rare, epic, epic in high
+  contrast and reduced; shine full, reduced and high contrast (the last
+  two draw nothing, by design); screen change full and reduced.
+  `art/ui/motion/check_frames.py` passes on all of them. One thing to
+  judge: the epic burst reads small against the chest at phone size. Send
+  every objection in one round (M12). Default: the strips stand as shot,
+  and AIA marks the task ready when its checks pass. AD has no session in
+  the cap of four, so the default applies at its due. Recorded in cycle
+  74.
 - **S3-R2** (from S3, pushed 12 November 2026 19:25Z; due 13 November 07:40Z;
   not blocking): preview the menu-screen stills at 100% text,
   `docs/art/shots/menu-screens/{before,after}-{settings,character,codex,lab}-100.png`.
