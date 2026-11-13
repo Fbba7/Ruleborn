@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-13T10:55:00Z",
   "lease_until": "2026-11-13T13:55:00Z",
-  "updated_at": "2026-11-13T10:55:00Z",
-  "expected_next_update_by": "2026-11-13T11:40:00Z",
+  "updated_at": "2026-11-13T11:13:00Z",
+  "expected_next_update_by": "2026-11-13T12:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "b5d77219",
-    "next_step": "main (ad2df733) merged as 91931fa4; reading KitTabs' layout to keep labels clear of the tile rim (AD-R25)"
+    "next_step": "KitTabs: names under the tile (Tile control dressed tab_active/tab_heist, label below it), all five at 100% pt_BR; ui_kit_tests 11 (rim) added, kit 25/25 and a11y 37/37 ok; running guard.sh, then merge main and the pre-check"
   },
   "precheck": {
     "sha": "b5d77219e9207b64e1f153a870b9d8d9995e23da",
@@ -335,5 +335,5 @@
       "at": "2026-11-12T22:37:00Z"
     }
   ],
-  "next_step": "ready at b5d77219 (pre-check PASS 23:56:10Z); waiting for the lead; K1-R19 and K1-R20 default granted"
+  "next_step": "P2-K1-tabs in progress: guard.sh, merge main, pre-check"
 }
