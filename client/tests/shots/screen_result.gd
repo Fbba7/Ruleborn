@@ -2,7 +2,20 @@ extends SceneTree
 ## The result screen after a golden heist, the island in 3D behind the
 ## outcome card (tools/render/shoot.sh). SHOT is the file; GOLDEN and HOUR
 ## are optional; CONTRAST is high contrast, and FIT fails the run when any
-## words do not fit (P2-S1-result-1).
+## words do not fit (P2-S1-result-1). The still is taken once the reward
+## sequence has ended, at rest.
+##
+## STRIP=<folder> records the reward sequence instead (P2-S1-result-2): the
+## screen's tweens stepped by a thirtieth of a second a frame, whatever the
+## renderer's speed, each frame saved whole (full_NNN.png) and cut to the
+## hero and the reward tiles (crop_NNN.png). REDUCED records its
+## reduced-motion form.
+
+## A recorded frame's length, in seconds.
+const STEP := 1.0 / 30.0
+## How long a strip runs before the reward starts and after it ends.
+const LEAD := 0.3
+const TAIL := 0.4
 
 
 func _initialize() -> void:
@@ -43,13 +56,32 @@ func _go() -> void:
 			"starlight": 2310 if paid else 0, "essence": 805 if paid else 0, "renown": 15 if paid else -8,
 			"token": "shot", "rest": {"crew": 5, "minutes": 180 if not paid else 45}}, true)
 	App.services.store.dispatch(&"heist_finished", {"replay": replay, "verdict": verdict})
+	var strip := OS.get_environment("STRIP")
+	if OS.get_environment("REDUCED") != "":
+		Settings.reduced_motion = true
 	var screen: Control = load("res://scenes/result_screen.tscn").instantiate()
+	(screen as ResultScreen).hold_reward = strip != ""
 	frame.add_child(screen)
 	if (screen as ResultScreen).world_view != null:
 		var hour := int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 18
 		(screen as ResultScreen).world_view.set_sky_hour(hour)
 	settle(root)
 	for i in 30:
+		await process_frame
+	if strip != "":
+		await record(screen as ResultScreen, frame, strip)
+		quit()
+		return
+	# The page at rest: the reward played out and its sprites gone.
+	var waited := 0
+	while not (screen as ResultScreen).reward_done and waited < 1200:
+		await process_frame
+		waited += 1
+	if not (screen as ResultScreen).reward_done:
+		print("reward FAIL: still playing after %d frames" % waited)
+		quit(1)
+		return
+	for i in 3:
 		await process_frame
 	await RenderingServer.frame_post_draw
 	if OS.get_environment("FIT") != "":
@@ -67,6 +99,57 @@ func _go() -> void:
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote ", verdict)
 	quit()
+
+
+## The reward sequence frame by frame into `dir`: every tween of the tree
+## held and stepped by STEP (the landings' own tweens too, as they start),
+## from LEAD before the reward to TAIL after it.
+func record(screen: ResultScreen, frame: SubViewport, dir: String) -> void:
+	DirAccess.make_dir_recursive_absolute(dir)
+	screen.set_process(false)
+	_hold()
+	var t := 0.0
+	var ended := -1.0
+	var n := 0
+	while t < 8.0:
+		if n == roundi(LEAD / STEP):
+			screen.start_reward()
+			_hold()
+		if n > roundi(LEAD / STEP) and screen.reward_done and ended < 0.0:
+			ended = t
+		if ended >= 0.0 and t - ended >= TAIL:
+			break
+		await process_frame
+		await RenderingServer.frame_post_draw
+		var image := frame.get_texture().get_image()
+		image.save_png(dir.path_join("full_%03d.png" % n))
+		image.get_region(_cut(screen, image.get_size())).save_png(dir.path_join("crop_%03d.png" % n))
+		for tw: Tween in get_processed_tweens():
+			if tw.is_valid():
+				tw.custom_step(STEP)
+		_hold()
+		t += STEP
+		n += 1
+	print("strip: %d frames, the reward over in %.2f s" % [n, ended - LEAD])
+
+
+## Every tween of the tree held, to be stepped by hand.
+func _hold() -> void:
+	for tw: Tween in get_processed_tweens():
+		if tw.is_valid() and tw.is_running():
+			tw.pause()
+
+
+## The frame cut to the hero and the reward tiles, the coins' whole flight,
+## across the phone's width.
+static func _cut(screen: ResultScreen, size: Vector2i) -> Rect2i:
+	var top := screen.grade_icon.get_global_rect().position.y - 160.0
+	var tiles: Control = screen.haul_tile
+	if screen.reward_row.visible:
+		tiles = screen.reward_row
+	var foot := tiles.get_global_rect().end.y + 60.0
+	var y := clampi(int(top), 0, size.y - 1)
+	return Rect2i(0, y, size.x, clampi(int(foot) - y, 1, size.y - y))
 
 
 ## What does not fit on `screen`, one line each: a label's words wider than

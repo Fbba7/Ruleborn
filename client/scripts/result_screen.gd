@@ -10,6 +10,10 @@ extends Control
 ## tiles, the study card, the crew home with their faces, and the bar of
 ## actions. Nothing here draws or styles a box of its own.
 
+## The reward sequence has ended, or there was none to play
+## (`start_reward`).
+signal rewarded
+
 ## §12.9's outcomes: each one's condition and what it multiplies (the haul
 ## and Renown), as the document's table gives them.
 const OUTCOME := {"Clean": ["RESULT_CONDITION_CLEAN", "1.0", "1.0"], "Loud": ["RESULT_CONDITION_LOUD", "0.7", "0.8"],
@@ -27,6 +31,12 @@ const FACE_POINTS := 48.0
 ## The outcome's medal beside its title, in points.
 const MEDAL_POINTS := 34.0
 const TITLE_POINTS := 40.0
+## The reward's tier for each outcome that pays (the kit Motion's tiers): the
+## clean heist the grandest, the partial one the plainest.
+const TIERS := {"Clean": "epic", "Loud": "rare", "Partial": "common"}
+## How long the page stands still before the reward begins, in seconds: the
+## pause before the reveal.
+const REWARD_WAIT := 0.6
 
 var kicker_label: Label
 var grade_label: Label
@@ -65,6 +75,13 @@ var again_button: Button
 var world_view: WorldView
 ## Where the reward lands: the haul's tile, or the row of the split.
 var counter: Control
+## Set before the screen enters the tree, the screen waits for
+## `start_reward` instead of starting it itself (a shot that steps it).
+var hold_reward := false
+## The reward sequence while it plays.
+var reward_tween: Tween
+## The reward has ended, or there was none to play.
+var reward_done := false
 ## The laws the crew crossed, from the replay's pylons, for the study card.
 var _crossed: Array[String] = []
 var _haul := 0
@@ -179,6 +196,11 @@ func _ready() -> void:
 	show_verdict(heist["verdict"], (heist["replay"] as PackedByteArray).size())
 	_fit_raid()
 	_fit_actions()
+	# The numbers start from nothing when the reward will bring them.
+	if _reward_to() > 0:
+		_write_reward(0, _reward_to())
+	if not hold_reward:
+		create_tween().tween_callback(start_reward).set_delay(0.0 if Settings.reduced_motion else REWARD_WAIT)
 
 
 ## The outcome as the kit's hero (key frame 03): the kicker, the medal and
@@ -407,13 +429,83 @@ func _process(delta: float) -> void:
 	if world_view != null and not Settings.reduced_motion:
 		# A slow sway of the island, the diorama on its stand.
 		world_view.sway(sin(_clock * 0.25) * 0.5)
-	if haul_label != null:
-		# The haul counting up from nothing in a second (reduced motion: at
-		# once).
-		var shown := _haul if Settings.reduced_motion else int(_haul * clampf((_clock - 0.6) / 1.0, 0.0, 1.0))
-		haul_label.text = "+%d" % shown
-	if reward_row != null and reward_row.visible:
-		_count_rewards(1.0 if Settings.reduced_motion else clampf((_clock - 0.6) / 1.0, 0.0, 1.0))
+
+
+## The reward (report.md step 8, on the kit's Motion): the medal gathers and
+## charges, bursts on the sunburst and is revealed, and coins fly from it in
+## arcs into the Starlight tile (the haul's tile when there is no split),
+## which rolls up and pulses at each landing; the other tiles count up with
+## it. The tier follows the outcome (TIERS). Reduced motion: the medal fades
+## in, one coin lands and the numbers stand at once. A heist with nothing to
+## reward (refused, foiled, no medal) keeps its final numbers and ends at
+## once. Returns the sequence's tween, or null when there is none.
+func start_reward() -> Tween:
+	var to := _reward_to()
+	if to <= 0 or not grade_icon.visible or not is_inside_tree():
+		_end_reward.call_deferred()
+		return null
+	var tile := _reward_tile()
+	_write_reward(0, to)
+	reward_tween = Motion.reward(grade_icon, tile, 0, to, str(TIERS.get(str(_verdict.get("grade", "")), "common")),
+		_write_reward.bind(to))
+	_lift_reward()
+	reward_tween.finished.connect(_end_reward)
+	return reward_tween
+
+
+## Puts Motion's reward layer over the page. The layer is `top_level`, so its
+## z of 10 does not add to the page's (a `UI` layer at 32, over the night),
+## and its burst and coins drew under the page and its tiles. Until the kit
+## answers (S1-R21), the layer takes the medal's whole z plus its own.
+func _lift_reward() -> void:
+	var z := 0
+	var node: Node = grade_icon
+	while node is CanvasItem:
+		z += (node as CanvasItem).z_index
+		if not (node as CanvasItem).z_as_relative:
+			break
+		node = node.get_parent()
+	for layer in grade_icon.get_children(true):
+		if layer is CanvasItem and (layer as CanvasItem).top_level:
+			(layer as CanvasItem).z_index = clampi(z + (layer as CanvasItem).z_index, RenderingServer.CANVAS_ITEM_Z_MIN,
+				RenderingServer.CANVAS_ITEM_Z_MAX)
+
+
+## Where the coins land: the Starlight tile of the split, else the haul's.
+func _reward_tile() -> Control:
+	if reward_row.visible:
+		return (reward_labels["starlight"] as Label).get_parent().get_parent() as Control
+	return haul_tile
+
+
+## What the coins bring: the split's Starlight, else the haul; 0 when no
+## tile stands to receive it.
+func _reward_to() -> int:
+	if reward_row.visible:
+		return int((reward_labels["starlight"] as Label).get_meta("to", 0))
+	return _haul if haul_tile.visible else 0
+
+
+## The tiles at `v` of the reward's `to`: Starlight (or the haul) at `v`,
+## the split's other tiles at the same share of theirs.
+func _write_reward(v: int, to: int) -> void:
+	if reward_row.visible:
+		_count_rewards(float(v) / float(maxi(to, 1)))
+		(reward_labels["starlight"] as Label).text = "+" + ShopPresenter.grouped(v)
+	else:
+		haul_label.text = "+%d" % v
+
+
+## The reward has ended: every number at its final value.
+func _end_reward() -> void:
+	if reward_done:
+		return
+	reward_done = true
+	reward_tween = null
+	if reward_row.visible:
+		_count_rewards(1.0)
+	haul_label.text = "+%d" % _haul
+	rewarded.emit()
 
 
 ## The replay from three seconds before the moment (§12.13).
@@ -812,6 +904,7 @@ func _show_outcome(v: Dictionary) -> void:
 	for l: Control in [kicker_label, condition_label, chip, subline_label]:
 		l.visible = shown
 	haul_tile.visible = _haul > 0
+	haul_label.text = "+%d" % _haul
 	# The medal for a graded heist; a refusal has none.
 	var medal := "heistoutcomes/" + grade.to_lower()
 	grade_icon.visible = v.get("ok", false) and Icons.has(medal)
