@@ -1,0 +1,127 @@
+[
+  {
+    "task_id": "P2-S3-character",
+    "sha": "f1251e68",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T03:40:00Z",
+    "item": "character at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: the character is the screen's subject, framed large and readable in the toon look."
+  },
+  {
+    "task_id": "P2-S3-character",
+    "sha": "f1251e68",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T03:40:00Z",
+    "item": "character at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails of three: the subtitle 'Skyskipper · Carrier' and the 'Level 3 of 10' label sit straight on the starfield gradient with no ink outline; the pass anchor outlines every word over art. Narrow point: give every word over art the kit's ink outline."
+  },
+  {
+    "task_id": "P2-S3-character",
+    "sha": "f1251e68",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T03:40:00Z",
+    "item": "character at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "fail",
+      "fail",
+      "fail",
+      "fail",
+      "pass"
+    ],
+    "result": "fail",
+    "critique": "Four fails of six (p f f f f p): the open ability card is about twice Level up's area, dark, with serif prose about as large as the LEVEL UP label, and in grayscale it outweighs the mid-grey Level up bar. Narrow point: collapse the ability card to its header as the anchor does, or shrink its prose, and strengthen Level up's label and value."
+  },
+  {
+    "task_id": "P2-S3-character",
+    "sha": "f1251e68",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T03:40:00Z",
+    "item": "character at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails of three: 'Skyskipper · Carregador' and 'Nível 3 de 10' sit on the starfield gradient with no ink outline. Narrow point: as at 100%, outline every word over art."
+  },
+  {
+    "task_id": "P2-S3-character",
+    "sha": "f1251e68",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T03:40:00Z",
+    "item": "character at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: 'Subir de nível' is the largest, lightest and most saturated block at the foot; nothing competes."
+  },
+  {
+    "task_id": "P2-S3-character",
+    "sha": "f1251e68",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T03:40:00Z",
+    "item": "character in high contrast",
+    "quality": "Colour roles and value",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: gold fills the main action and the arrows, the chosen tab takes a gold rim, green is the level bar and the Essence drop, and the level bar is segmented and labelled."
+  },
+  {
+    "task_id": "P2-S3-character",
+    "sha": "f1251e68",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T03:40:00Z",
+    "item": "character in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "fail",
+      "pass",
+      "pass",
+      "pass",
+      "fail",
+      "fail"
+    ],
+    "result": "pass",
+    "critique": "Three fails of six (f p p p f f), so it passes. The failing samples saw the same heavy ability card as at 100%; the fix there will settle this one too."
+  }
+]
