@@ -3,38 +3,22 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P2-S2-home-2",
-  "task_state": "ready",
-  "claimed_at": "2026-11-13T05:23:34Z",
-  "lease_until": "2026-11-13T08:23:34Z",
-  "updated_at": "2026-11-13T07:34:36Z",
-  "expected_next_update_by": "2026-11-13T08:19:36Z",
+  "agent_state": "active",
+  "task_id": "P2-S2-home-3",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-13T09:00:00Z",
+  "lease_until": "2026-11-13T12:00:00Z",
+  "updated_at": "2026-11-13T09:00:00Z",
+  "expected_next_update_by": "2026-11-13T09:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "3612e265",
-    "next_step": "Ready at 3612e265 (pre-check PASS, gate 2 of 2 pass); the lead records home 145/114/145 (S2-R17, approved) on merge",
-    "at": "2026-11-13T07:34:36Z"
+    "next_step": "Read home.gd and the shot; fix objection A (Collect on screen at 200% with the notice), then B and C",
+    "at": "2026-11-13T09:00:00Z"
   },
-  "precheck": {
-    "sha": "3612e26564859e8df7c3ce1cd48dba118580d9da",
-    "exit": 0,
-    "finished_at": "2026-11-13T06:10:29Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "3612e26564859e8df7c3ce1cd48dba118580d9da",
-    "items": [
-      {
-        "item": "home at 100% text",
-        "qualities": [
-          "Character presence",
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
-  "ready_sha": "3612e26564859e8df7c3ce1cd48dba118580d9da",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M13"
@@ -118,7 +102,7 @@
       "id": "S2-R8",
       "from": "S2",
       "to": "K1",
-      "ask": "KitPanels.notice: a notice that stays (frees neither on banner_ms nor on its cross, but hides and can be shown again, with a dismissed signal), and at text above KitLayout.SIDE_BY_SIDE_UP_TO the words over the full width with the icon, action and cross in a row beneath. Home's raid notice must stay until seen or dismissed (\u00a721.8) and return with new raids.",
+      "ask": "KitPanels.notice: a notice that stays (frees neither on banner_ms nor on its cross, but hides and can be shown again, with a dismissed signal), and at text above KitLayout.SIDE_BY_SIDE_UP_TO the words over the full width with the icon, action and cross in a row beneath. Home's raid notice must stay until seen or dismissed (§21.8) and return with new raids.",
       "files": [
         "client/ui/kit_panels.gd",
         "client/scripts/ui.gd"
@@ -133,7 +117,7 @@
       "id": "S2-R9",
       "from": "S2",
       "to": "K1",
-      "ask": "KitLayout.tap: (1) it connects button_down twice, so every part made tappable logs 'Signal button_down is already connected' (home's strain and goal card; seen in every universe_home.gd run): connect once. (2) its clear button is a child of the card, so inside a PanelContainer it is laid out within the card's padding, not over the whole card: on KitStatus.strain (48 points tall) the tap was 40 points, failing \u00a721.1's 48 (client test 'every control on every screen'). Lay it over the whole card (e.g. a holder of the card's size, or the card's padding moved into an inner margin). (3) let it carry 'frequent' = false when the card is a secondary place, as the card itself does.",
+      "ask": "KitLayout.tap: (1) it connects button_down twice, so every part made tappable logs 'Signal button_down is already connected' (home's strain and goal card; seen in every universe_home.gd run): connect once. (2) its clear button is a child of the card, so inside a PanelContainer it is laid out within the card's padding, not over the whole card: on KitStatus.strain (48 points tall) the tap was 40 points, failing §21.1's 48 (client test 'every control on every screen'). Lay it over the whole card (e.g. a holder of the card's size, or the card's padding moved into an inner margin). (3) let it carry 'frequent' = false when the card is a secondary place, as the card itself does.",
       "files": [
         "client/ui/kit_layout.gd"
       ],
