@@ -177,6 +177,7 @@ func _ready() -> void:
 	for c: Control in _ending:
 		(column if Settings.text_scale > 100 else page).add_child(c)
 	show_verdict(heist["verdict"], (heist["replay"] as PackedByteArray).size())
+	_fit_raid()
 	_fit_actions()
 
 
@@ -711,22 +712,34 @@ func _fit_raid() -> bool:
 	if again == null or again.has_meta("wrapped"):
 		return false
 	var row := again.get_parent() as BoxContainer
+	if row == null:
+		return false
 	# Less a margin of paper either side, so a long word does not meet the
 	# button's edge.
 	var pad := again.get_theme_stylebox("normal").get_minimum_size().x + UI.px(16)
-	var wide := again.size.x
+	# The rooms as the column will lay them out, the phone's width less its
+	# safe sides and the bar's padding, and that less Home's: measured rather
+	# than read from the layout, so the bar is fitted before its first frame
+	# and never shows unfitted.
+	var full := get_viewport_rect().size.x - 2.0 * UI.px(Tokens.number("size", "safe_side_points")) \
+		- (row.get_parent() as Control).get_theme_stylebox("panel").get_minimum_size().x
+	var wide := full
+	for c: Control in row.get_children():
+		if c != again:
+			wide -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
 	var words := again.find_children("*", "Label", true, false)
-	if row != null and not _words_fit(words, wide - pad):
+	var upright := not _words_fit(words, wide - pad)
+	if upright:
 		row.vertical = true
 		row.move_child(again, 0)
-		wide = row.size.x
+		wide = full
 	var lines := 0.0
 	var wraps := false
 	for l: Label in words:
 		var n := _lines(l, wide - pad)
 		wraps = wraps or n > 1
 		lines += n * l.get_theme_font("font").get_height(l.get_theme_font_size("font_size"))
-	if not wraps and wide == again.size.x:
+	if not wraps and not upright:
 		return false
 	again.set_meta("wrapped", true)
 	for l: Label in words:

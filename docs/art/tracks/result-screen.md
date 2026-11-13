@@ -22,6 +22,7 @@ Decisions:
 - **A raid bar that stands upright.** `KitControls.action2`'s label does not wrap. At 200% text "RAID AGAIN" ran past the button, and in pt_BR "ASSALTAR" alone was wider than the room beside Home. `_fit_raid` handles this in two steps:
   - When any one word will not fit, the bar's box turns vertical, with the raid first, full width.
   - Otherwise the words wrap inside the button, inset by its padding. The button's height grows to the lines.
+  - The rooms are measured from the phone's width, the safe sides, the bar's padding and Home's width, not read from the layout, so the bar is fitted in `_ready`, before its first frame.
 - **The multiplier pill breaks only at its dots.** At 200% text, "Saque ×1.0 · Renome / ×1.0" left "×1.0" alone on a line. Each part ("Renome ×1.0", "Renome −8") is kept whole with non-breaking spaces, so the pill breaks at " · ".
 - **The bar is on glass, not on `tab_bar`.** The tab bar's skin is made to run off the screen at its foot (`KitTabs`: "only the gold top edge shows"). Standing in the page, its flat foot showed as cut. The key frame's bar is glass.
 - **The actions follow the page** when it fits. Otherwise they go to the foot, under the scroll (F6, `_fit_actions`). The page is laid out first, the laws and the raid bar refitted, and only then measured.
@@ -87,4 +88,5 @@ Each of these is a request to K1 through the lead, with the default the screen u
 - Turning the raid row upright with `vertical = true` on an `HBoxContainer`: it is ignored there. The row is a plain `BoxContainer`.
 - Wrapping the raid words by setting the label's minimum width to the room: the label still wrapped at the full width of `action2`'s box, anchored over the whole button. The box is inset instead.
 - Reading a still after a FIT failure: the shot quits before it saves, so the old still stayed and was misread as current. Renders now go to a fresh folder each round.
+- Fitting the raid bar two frames after the screen opens, from the laid-out sizes: on that frame the bar still stood unfitted, and the client's large-text test, which measures on the second frame, saw the raid at 2094 to 2262 px (in the foot's safe area and corners) and its words asking for 1093 px (pt_BR, pt_PT and fr at 200%). The bar is now fitted in `_ready` from measured rooms.
 - The bar on `tab_bar`, as in the earlier flow-result: its foot is drawn to run off the screen, and showed as a straight cut in the page.
