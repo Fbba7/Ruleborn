@@ -431,6 +431,8 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   145/114/145, with a raises entry for S2-R17, when it merges
   P2-S2-home-2; S2 may mark ready with guard.sh failing only on those
   three lines, said in the handoff.
+  **Recorded** in cycle 79: the records and the raises entry are in
+  `tools/ui_bake/budgets.json` on main since `807d68a7`.
 - **S2-R18** (from S2 to AD, 13 November 2026 05:39Z; due 13 November
   11:39Z; not blocking): preview home part 2 at 3612e265 on
   `claude/ui-screens-home` against `art/ui/keyframes/01-home.*` (M10,
