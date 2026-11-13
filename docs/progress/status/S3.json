@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-13T00:22:00Z",
   "lease_until": "2026-11-13T09:00:00Z",
-  "updated_at": "2026-11-13T04:01:00Z",
-  "expected_next_update_by": "2026-11-13T04:46:00Z",
+  "updated_at": "2026-11-13T04:34:00Z",
+  "expected_next_update_by": "2026-11-13T05:19:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "f1251e68523136caee766eb5186892803fb8f65b",
@@ -17,12 +17,19 @@
     "at": "2026-11-13T04:00:00Z"
   },
   "precheck": {
-    "sha": "f1251e68523136caee766eb5186892803fb8f65b",
+    "sha": "6f6a3b158948e860820c39ec9912ab899638a473",
     "exit": 0,
-    "finished_at": "2026-11-13T03:21:40Z",
+    "finished_at": "2026-11-13T04:29:37Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
+  "gate_request": {
+    "sha": "6f6a3b158948e860820c39ec9912ab899638a473",
+    "items": [
+      "character at 100% text",
+      "character at 200% text, pt_BR",
+      "character in high contrast"
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
@@ -133,5 +140,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "Cheap fixes after the advisory verdict at f1251e68 are committed: the ink outline on the subtitle and the level label, and the ability sentence at 16 points in the body face. Next: run_checks at this commit, record, guard, then the gate on the same three items, then ready."
+  "next_step": "Gate requested at 6f6a3b15 (run_checks PASS 04:29Z, recorded; guard OK) on the same three character items, after the cheap fixes for the verdict at f1251e68. Read the verdict, then mark ready (advisory gate, lead cycle 76), listing what still fails as follow-ups."
 }
