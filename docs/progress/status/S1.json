@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-13T02:23:29Z",
   "lease_until": "2026-11-13T06:08:36Z",
-  "updated_at": "2026-11-13T03:08:36Z",
-  "expected_next_update_by": "2026-11-13T04:08:36Z",
+  "updated_at": "2026-11-13T03:47:22Z",
+  "expected_next_update_by": "2026-11-13T04:47:22Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8bec0d84",
-    "next_step": "P2-S1-result-1: pre-check PASS at 8bec0d84; gate_request set for result at 100%, at 200% pt_BR and in high contrast. Ready when the gate passes, then P2-S1-result-2.",
-    "at": "2026-11-13T03:08:36Z"
+    "next_step": "P2-S1-result-1: pre-check PASS at 8bec0d84, waiting for the gate; ready when its verdict lands. P2-S1-result-2 built at d2422a0 (reward on Motion.reward, strips full and reduced; S1-R21 to K1, S1-R22 AD preview); next: claim it once result-1 is ready, merge main, setup line, build.sh, guard, pre-check, gate_request.",
+    "at": "2026-11-13T03:47:22Z"
   },
   "precheck": {
     "sha": "8bec0d84e170dd14987236b71732ae18a737dc92",
@@ -352,8 +352,37 @@
       "due": "2026-11-14T02:23:29Z",
       "default": "The gate runs on the pre-checked head as it stands; a character beside the reward, if wanted, becomes a follow-up task with AIA's art.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R21",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Motion.reward's layer (client/ui/motion.gd, reward(): top_level, z_index 10) draws under any page that is a UI layer: a top_level item's z does not add to its parents', and UI gives a full-screen page z 32 (OVERLAY_Z over the backdrop). On the result screen the reduced coin did not show and the full coins vanished at the reward tiles. Give the layer the prize's whole z plus 10 (or z_as_relative false at a z above UI's layers); the same holds for the top_level node at motion.gd line ~731.",
+      "files": [
+        "client/ui/motion.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:47:22Z",
+      "due": "2026-11-14T03:47:22Z",
+      "default": "result_screen.gd lifts the layer itself after Motion.reward returns (_lift_reward: the medal's summed z plus the layer's own); it is removed when the kit answers.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R22",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-2, M10, M12), for board 4: the result's reward sequence on Motion.reward at d2422a0. Frame strips, full and reduced, and clips: STRIP=out/full SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, and the same with REDUCED=1 STRIP=out/reduced; the sheet.py strip and ffmpeg lines are in docs/art/tracks/result-screen.md, 'The reward sequence'. Full (epic, 1.93 s): pause, burst on the sunburst, coins in arcs into Starlight, counters stepping with a pulse on each landing. Reduced (0.37 s): one coin and the final value. The burst and coins are the kit's sprite sizes at the 34 pt medal, so they read small. Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:47:22Z",
+      "due": "2026-11-14T03:47:22Z",
+      "default": "The gate runs on the pre-checked head as it stands; a larger burst, if wanted, is a request to K1 for Motion's scale.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "P2-S1-result-1: pre-check PASS at 8bec0d84; gate_request set for result at 100%, at 200% pt_BR and in high contrast. Ready when the gate passes, then P2-S1-result-2."
+  "next_step": "P2-S1-result-1: pre-check PASS at 8bec0d84, waiting for the gate; ready when its verdict lands. P2-S1-result-2 built at d2422a0 (reward on Motion.reward, strips full and reduced; S1-R21 to K1, S1-R22 AD preview); next: claim it once result-1 is ready, merge main, setup line, build.sh, guard, pre-check, gate_request."
 }
