@@ -11,6 +11,31 @@ extends PanelContainer
 
 signal pressed
 
+## The portrait ring's size in points (the kit's Keeper part draws it at 52).
+const RING := 76.0
+## The stage's picture, in pixels a point of the ring: drawn larger than it
+## shows, for clean edges.
+const OVERSAMPLE := 2.0
+## The companion's kind and its framing: the share of its height shown, from
+## the top of its head down, and the air above it (as CreatureBust frames a
+## bust), its turn toward the light and the camera's rise.
+const KIND := "featherkin"
+const BODY := 0.74
+const HEADROOM := 0.1
+const TURN := -0.32
+const RISE := 0.14
+## The rim from behind, warm against the spirit's cool ground, so the figure's
+## edge reads on its disc as the design's portraits are lit.
+const RIM := Color("#FFD9A0")
+## The paint's lift toward warm white against the hero view's, and where its
+## light steps begin (as CreatureBust's studio deepens a bust).
+const LIFT := 0.72
+const RAMP_BIAS := 0.26
+## How far the ring's ground is taken toward the night: a step darker than
+## the light figure, so the figure is the brightest thing in its disc.
+const GROUND_DEPTH := 0.3
+const RIM_ENERGY := 0.9
+
 var level := 0
 ## The share of the way to the next level, 0 to 1.
 var share := 0.0
@@ -20,13 +45,23 @@ var renown := ""
 ## The kit's control over the whole badge.
 var tap: Button
 ## The Keeper's companion, as the design's portrait shows it: the featherkin's
-## head and shoulders, rendered from its model (S2-R13).
-var _face: Texture2D = Portrait.bust("featherkin")
+## head and shoulders (S2-R13), alive (rubric quality 9: home shows a live
+## character node in the toon look). Its model stands in a small 3D stage of
+## its own (`_stage`), lit by §21.3's three points with a warm rim from
+## behind so it stands off the ring's ground, inked as §21.3 asks, and plays
+## its two idles; the ring draws the stage's picture cut round.
+var _face: Texture2D
+var _stage: SubViewport
+var _camera: Camera3D
+var _model: CreatureModel
+## Seconds until the idles take turns (§21.6's "two idles").
+var _fidget := StageHero.IDLE2_EVERY
 var _row: Control
 var _box := UI.clear_box(0, 0)
 
 
 func _init() -> void:
+	_face = _live_face()
 	add_theme_stylebox_override("panel", _box)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
@@ -50,9 +85,12 @@ func show_keeper(bar: Dictionary, xp_share: float, renown_text: String) -> void:
 		_row.queue_free()
 	_row = KitHud.keeper(_face, title, level, share, renown)
 	var ring := _row.find_child("Portrait", true, false) as KitRing
+	# The portrait large enough to read the character at a glance (§21.1's
+	# dark shape at 32 points, with room round it), the badge's lead.
+	ring.custom_minimum_size = Vector2.ONE * UI.px(RING)
 	# The portrait on its school's colour, the spirit's teal, as the roster's
 	# cards and the design's portrait set it.
-	ring.ground = Tokens.color("spirit")
+	ring.ground = Tokens.color("spirit").darkened(GROUND_DEPTH)
 	# Before the league answers there is no Renown to show, not an empty pill.
 	var pill := _row.find_child("Pill", true, false) as Control
 	if pill != null:
@@ -70,8 +108,9 @@ func show_keeper(bar: Dictionary, xp_share: float, renown_text: String) -> void:
 	# The level's plate hangs below the ring's foot; the badge keeps room for
 	# it beneath, so the row under the badge never covers the level.
 	var plate := ring.get_child(0) as Control
-	plate.item_rect_changed.connect(_clear_plate.bind(plate), CONNECT_DEFERRED)
-	_row.item_rect_changed.connect(_clear_plate.bind(plate), CONNECT_DEFERRED)
+	plate.resized.connect(_clear_plate.bind(plate), CONNECT_DEFERRED)
+	_row.resized.connect(_clear_plate.bind(plate), CONNECT_DEFERRED)
+	_clear_plate.call_deferred(plate)
 
 
 func _clear_plate(plate: Control) -> void:
@@ -81,3 +120,121 @@ func _clear_plate(plate: Control) -> void:
 	if not is_equal_approx(_box.content_margin_bottom, below):
 		_box.content_margin_bottom = below
 		update_minimum_size()
+
+
+## The companion's model, alive in the portrait, and the stage it is drawn in
+## (for the shot's check that home's character exists and moves).
+func companion() -> CreatureModel:
+	return _model
+
+
+func stage() -> SubViewport:
+	return _stage
+
+
+## The companion's stage: its own world, cleared to nothing so the ring's lit
+## ground shows behind it; drawn every frame while the badge shows, once under
+## reduced motion (§20.8), where the figure stands still.
+func _live_face() -> Texture2D:
+	_stage = SubViewport.new()
+	_stage.name = "Companion"
+	_stage.own_world_3d = true
+	_stage.transparent_bg = true
+	_stage.msaa_3d = Viewport.MSAA_4X
+	_stage.size = Vector2i.ONE * int(ceilf(UI.px(RING) * OVERSAMPLE))
+	var world := Node3D.new()
+	_stage.add_child(world)
+	var env := Environment.new()
+	env.background_mode = Environment.BG_CLEAR_COLOR
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = StageHero.FILL
+	env.ambient_light_energy = StageHero.FILL_ENERGY
+	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+	var env_node := WorldEnvironment.new()
+	env_node.environment = env
+	world.add_child(env_node)
+	var key := DirectionalLight3D.new()
+	key.light_color = StageHero.KEY
+	key.light_energy = StageHero.KEY_ENERGY
+	key.rotation_degrees = Vector3(-34, 28, 0)
+	world.add_child(key)
+	var rim := DirectionalLight3D.new()
+	rim.light_color = RIM
+	rim.light_energy = RIM_ENERGY
+	rim.rotation_degrees = Vector3(-14, 205, 0)
+	world.add_child(rim)
+	var figure := StageHero.make_figure(KIND, "", true)
+	figure.rotation.y = TURN
+	world.add_child(figure)
+	_model = figure.get_meta("model", null)
+	if _model != null:
+		_model.play(&"idle")
+		# The hero view's pale lift taken back, as the busts take it: at a
+		# portrait's size the figure keeps its colour and its light steps.
+		var m := _model.material()
+		if m != null and m.get_shader_parameter("lift") != null:
+			m.set_shader_parameter("lift", float(m.get_shader_parameter("lift")) * LIFT)
+			m.set_shader_parameter("ramp_bias", RAMP_BIAS)
+	_camera = Camera3D.new()
+	_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	_camera.near = 0.05
+	_camera.far = 40.0
+	world.add_child(_camera)
+	_frame()
+	add_child(_stage, false, Node.INTERNAL_MODE_BACK)
+	visibility_changed.connect(_wake)
+	_wake()
+	return _stage.get_texture()
+
+
+## The camera on the head and body, as CreatureBust frames a bust: from just
+## over `head_top` down, centred between the head and the chest; before the
+## bones have placed the sockets, on the kind's height alone.
+func _frame() -> void:
+	var entry: Dictionary = CreatureModel.manifest().get(KIND, {})
+	var tall := float(entry.get("body_height", entry.get("height", 1.0)))
+	var top := Vector3(0, tall, 0)
+	var chest := top * 0.6
+	if _model != null and _model.is_inside_tree() and _model.socket(&"head_top") != null \
+			and _model.socket(&"chest") != null:
+		top = _model.socket(&"head_top").global_position
+		chest = _model.socket(&"chest").global_position
+	var view := maxf(maxf(0.06, top.y - chest.y) * 1.4, tall * BODY)
+	var centre := Vector3((top.x + chest.x) * 0.5, top.y + view * (HEADROOM - 0.5), (top.z + chest.z) * 0.5)
+	_camera.size = view
+	# The stage's world is its root, so the camera's own transform is its place.
+	var at := centre + Vector3(0.0, RISE, 1.0).normalized() * 8.0
+	_camera.transform = Transform3D(Basis.looking_at(centre - at), at)
+
+
+func _ready() -> void:
+	# The bones' attachments take their places over the first frames.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if is_instance_valid(_camera):
+		_frame()
+
+
+## Drawn only while the badge shows; under reduced motion the figure holds
+## its first pose and the stage draws once.
+func _wake() -> void:
+	if _stage == null:
+		return
+	var still := Settings.reduced_motion
+	if _model != null and _model.player() != null:
+		_model.player().speed_scale = 0.0 if still else 1.0
+	if not is_visible_in_tree() and is_inside_tree():
+		_stage.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	elif still:
+		_stage.render_target_update_mode = SubViewport.UPDATE_ONCE
+	else:
+		_stage.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+
+
+func _process(delta: float) -> void:
+	if _model == null or Settings.reduced_motion:
+		return
+	_fidget -= delta
+	if _fidget <= 0.0:
+		_fidget = StageHero.IDLE2_EVERY
+		_model.play(&"idle2" if _model.clip == &"idle" else &"idle")
