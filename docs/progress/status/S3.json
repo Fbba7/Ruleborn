@@ -3,32 +3,22 @@
   "role": "S3",
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P2-S3-screenkit",
-  "task_state": "ready",
-  "claimed_at": "2026-11-12T22:45:18Z",
-  "lease_until": "2026-11-13T01:45:18Z",
-  "updated_at": "2026-11-12T23:26:12Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P2-S3-character",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-13T00:22:00Z",
+  "lease_until": "2026-11-13T03:22:00Z",
+  "updated_at": "2026-11-13T00:22:00Z",
+  "expected_next_update_by": "2026-11-13T01:07:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "cf4eecc2c6c98a4ab4c5028269ea391133812b9a",
-    "next_step": "Ready at cf4eecc2 (pre-check PASS 23:25:39Z, guard.sh OK). The gate's advisory pass at 2b220cc3 carries over: between 2b220cc3 and cf4eecc2 the task's code files are unchanged, only the notes in menu-screens.md gained the Lead-R1 section. If the gate re-crops 'settings at 100% text', its record is docs/art/shots/menu-screens/after-settings-100-game.shot.json. Next: the lead's merge; then P2-S3-character.",
-    "at": "2026-11-12T23:26:12Z"
+    "next_step": "P2-S3-screenkit merged as 70057394; claimed P2-S3-character. Next: read the character key frame and the current screen, then build it from the kit.",
+    "at": "2026-11-13T00:22:00Z"
   },
-  "precheck": {
-    "sha": "cf4eecc2c6c98a4ab4c5028269ea391133812b9a",
-    "exit": 0,
-    "finished_at": "2026-11-12T23:25:39Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "2b220cc3d9829060b0851f3f744db8beefdebdcd",
-    "items": [
-      "settings at 100% text"
-    ]
-  },
-  "ready_sha": "cf4eecc2c6c98a4ab4c5028269ea391133812b9a",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
   "requests": [
