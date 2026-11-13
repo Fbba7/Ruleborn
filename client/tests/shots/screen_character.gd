@@ -2,7 +2,8 @@ extends SceneTree
 ## The Character screen for one of ShotData's roster (tools/render/shoot.sh):
 ## ID picks the character (5, a Skyskipper, by default); TAB the tab (0
 ## Heist, 1 Stats, 2 Compare); SCROLL scrolls; LOCALE picks the words
-## (pt_BR); FIT=1 fails the run if any words do not fit.
+## (pt_BR); FIT=1 fails the run if any words do not fit; RECORD=1 writes
+## the still's shot record beside it (docs/art/ui-quality/gate/shots.md).
 func _initialize() -> void:
 	_go()
 
@@ -48,6 +49,8 @@ func _go() -> void:
 		await process_frame
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
+	if OS.get_environment("RECORD") != "":
+		write_record(screen, OS.get_environment("SHOT"))
 	if OS.get_environment("FIT") != "":
 		var bad := fit(screen)
 		for b: String in bad:
@@ -89,3 +92,53 @@ static func fit(screen: CharacterScreen) -> Array[String]:
 		if at.position.x < -1.0 or at.end.x > wide_x + 1.0:
 			bad.append("%s %s: %s off the screen" % [l.get_path(), l.text, at])
 	return bad
+
+
+## The still's shot record, from the frame it was saved from, so the gate's
+## crops cut the controls this still shows: every button on screen and the
+## words of 20 points and more, in points of the 390 x 845 frame, named by
+## their words. Cards are left out: a button inside a listed card would
+## have no ground left for value-steps.
+static func write_record(screen: CharacterScreen, shot: String) -> void:
+	var frame := Vector2(390, 845)
+	var img := screen.get_viewport().get_texture().get_image()
+	var img_w := float(img.get_width())
+	var scale := frame.x / img_w
+	var to_px := screen.get_viewport().get_final_transform()
+	var controls := []
+	var n := 0
+	for c: Control in screen.find_children("*", "Control", true, false):
+		if not c.is_visible_in_tree():
+			continue
+		var r := to_px * (c.get_global_transform_with_canvas() * Rect2(Vector2.ZERO, c.size))
+		if r.size.x < 8.0 or r.size.y < 8.0 or r.position.y > img.get_height() or r.end.y < 0.0:
+			continue
+		var interactive := c is BaseButton
+		var name := ""
+		if interactive:
+			name = str((c as Button).text) if c is Button else ""
+			if c.accessibility_name != "":
+				name = c.accessibility_name
+			for l: Label in c.find_children("*", "Label", true, false):
+				if name == "" and l.is_visible_in_tree():
+					name = l.text
+			if name == "":
+				name = c.tooltip_text if c.tooltip_text != "" else str(c.name)
+		elif c is Label and (c as Label).get_theme_font_size("font_size") >= UI.px(20):
+			name = (c as Label).text
+		else:
+			continue
+		n += 1
+		var entry := {"name": "%s %d: %s" % [c.get_class().to_lower(), n, name.replace("\n", " ").left(80)],
+			"rect": [snappedf(r.position.x * scale, 0.01), snappedf(r.position.y * scale, 0.01),
+				snappedf(r.size.x * scale, 0.01), snappedf(r.size.y * scale, 0.01)]}
+		if not interactive:
+			entry["interactive"] = false
+		controls.append(entry)
+	var text := float(Settings.text_scale) / 100.0
+	var record := {"image": shot.get_file(), "frame_pt": [frame.x, frame.y], "text_scale": text,
+		"controls": controls}
+	var f := FileAccess.open(shot.get_basename() + ".shot.json", FileAccess.WRITE)
+	f.store_string(JSON.stringify(record, " ") + "\n")
+	f.close()
+	print("record ", controls.size(), " controls")

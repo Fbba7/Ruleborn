@@ -219,8 +219,9 @@ func _sub_line(c: Dictionary, me: Dictionary) -> Control:
 	chip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	line.add_child(chip)
 	# One line; the flow puts it under the chip when the two do not fit.
+	# In the primary words: the secondary ink is Lc 73 on the bluest
+	# schools' stage grounds, under the 75 that 16 points ask (§21.8).
 	var sub := UI.label("%s · %s" % [RosterPresenter.kind_name(str(me.get("kind", ""))), c["role"]], 16)
-	sub.theme_type_variation = "Secondary"
 	sub.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	line.add_child(sub)
 	_wrap_in(sub, line, 0.0)
@@ -237,8 +238,16 @@ static func _wrap_in(l: Label, room: Control, inset: float) -> void:
 		var words := l.text.to_upper() if l.uppercase else l.text
 		return font.get_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, -1, l.get_theme_font_size("font_size")).x \
 			+ 2.0
-	room.resized.connect(func() -> void:
-		var want := minf(wide.call(), room.size.x - UI.px(inset))
+	# The room is also measured to the screen's side less the safe margin,
+	# each time it moves as well as grows: the label's own width holds its
+	# room open, so the room's width alone, taken before the layout settles,
+	# would let words wider than the screen keep the column past it.
+	room.item_rect_changed.connect(func() -> void:
+		if not room.is_inside_tree() or not l.is_inside_tree():
+			return
+		var side := l.get_viewport_rect().size.x - UI.px(Tokens.number("size", "safe_side_points"))
+		var fits := minf(room.size.x, side - room.get_global_rect().position.x)
+		var want := minf(wide.call(), fits - UI.px(inset))
 		if absf(l.custom_minimum_size.x - want) > 0.5:
 			l.custom_minimum_size.x = want)
 
@@ -285,6 +294,11 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 		elif l.get_parent().name == "Tag":
 			# Its kind of use, broken when larger words do not fit beside it.
 			_wrap_in(l, l.get_parent().get_parent(), 16.0)
+		elif l.theme_type_variation == "Kicker":
+			# The kit's gold kicker is Lc 55 on the card's lit plum, under the
+			# 60 that bold words ask (§21.8); the gradient's top gold is Lc 75.
+			# Requested of the kit in S3-R4 (docs/progress/status/S3.json).
+			l.add_theme_color_override("font_color", Tokens.color("gold_top"))
 	frame.add_child(ability)
 	var role := str(me.get("role", ""))
 	var keys: Array = me.get("traits", [])
@@ -502,7 +516,7 @@ func _upgrade(o: Dictionary, busy: bool) -> Button:
 ## The kit's upgrade stands 64 points tall with its words in the room left
 ## of a 96-point price; at large text the words and the chip outgrow both.
 ## Here the words keep clear of the chip as it is, the title wraps, and the
-## button grows to hold them (requested of the kit as K1-R, see S3.md).
+## button grows to hold them (requested of the kit in S3-R3, docs/progress/status/S3.json).
 static func _fit_upgrade(b: Button) -> void:
 	var v := b.get_child(0) as Control
 	var cost: Control = null

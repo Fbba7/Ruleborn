@@ -1,0 +1,103 @@
+{
+ "controls": [
+  {
+   "name": "button 1: Previous character, Mossbear",
+   "rect": [
+    21.67,
+    137.94,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 2: Next character, Glass Golem",
+   "rect": [
+    313.44,
+    137.94,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "label 3: Skyskipper",
+   "rect": [
+    131.08,
+    221.0,
+    124.94,
+    35.75
+   ]
+  },
+  {
+   "name": "button 4: Heist",
+   "rect": [
+    21.67,
+    406.25,
+    113.03,
+    60.67
+   ]
+  },
+  {
+   "name": "button 5: Stats",
+   "rect": [
+    136.86,
+    406.25,
+    113.03,
+    60.67
+   ]
+  },
+  {
+   "name": "button 6: Compare",
+   "rect": [
+    252.06,
+    406.25,
+    113.39,
+    60.67
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "label 7: Stuffs its satchel: loads at 60 a second instead of 30 for 5 s.",
+   "rect": [
+    117.0,
+    549.25,
+    231.11,
+    92.08
+   ]
+  },
+  {
+   "name": "button 8: Roster",
+   "rect": [
+    28.17,
+    702.0,
+    60.67,
+    60.67
+   ]
+  },
+  {
+   "name": "button 9: Skyskipper: Raise to level 4, 200 Essence",
+   "rect": [
+    97.5,
+    697.67,
+    264.33,
+    69.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "label 10: Level up",
+   "rect": [
+    108.33,
+    708.5,
+    156.36,
+    29.97
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "character-hc.png",
+ "text_scale": 1.0
+}

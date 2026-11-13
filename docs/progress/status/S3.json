@@ -7,14 +7,14 @@
   "task_id": "P2-S3-character",
   "task_state": "working",
   "claimed_at": "2026-11-13T00:22:00Z",
-  "lease_until": "2026-11-13T03:22:00Z",
-  "updated_at": "2026-11-13T01:57:57Z",
-  "expected_next_update_by": "2026-11-13T02:37:57Z",
+  "lease_until": "2026-11-13T05:22:00Z",
+  "updated_at": "2026-11-13T02:18:00Z",
+  "expected_next_update_by": "2026-11-13T03:03:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "cf4eecc2c6c98a4ab4c5028269ea391133812b9a",
-    "next_step": "Character screen on the kit; FIT passes at 100% and 200%, en and pt_BR, HC, all three tabs. Next: run_checks and guard, merge main, track Part 2, AD preview request, gate request.",
-    "at": "2026-11-13T01:57:57Z"
+    "next_step": "Merged main (dc02925f). Screen fixes pushed with the gate stills at 100%, 200% pt_BR and HC, all FIT ok. Next: fix the stills' shot records (one primary, the tabs as one control, no hidden labels), run_checks and guard, track Part 2, requests S3-R3/R4, AD preview, gate request.",
+    "at": "2026-11-13T02:18:00Z"
   },
   "precheck": null,
   "gate_request": null,
