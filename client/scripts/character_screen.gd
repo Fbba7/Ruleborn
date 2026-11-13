@@ -221,7 +221,10 @@ func _sub_line(c: Dictionary, me: Dictionary) -> Control:
 	# One line; the flow puts it under the chip when the two do not fit.
 	# In the primary words: the secondary ink is Lc 73 on the bluest
 	# schools' stage grounds, under the 75 that 16 points ask (§21.8).
-	var sub := UI.label("%s · %s" % [RosterPresenter.kind_name(str(me.get("kind", ""))), c["role"]], 16)
+	# With the kit's ink outline all round, as every word over the stage's
+	# art (§21.8; the gate's display-type check at f1251e68).
+	var sub := ScreenKit.inked(UI.label("%s · %s" % [RosterPresenter.kind_name(str(me.get("kind", ""))),
+		c["role"]], 16))
 	sub.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	line.add_child(sub)
 	_wrap_in(sub, line, 0.0)
@@ -266,7 +269,7 @@ func _level_row(level: int, top: int, health: int) -> Control:
 	v.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	v.add_theme_constant_override("separation", UI.px(4))
 	v.add_child(KitStatus.xp(level, maxi(top, 1), "", clampi(top, 1, 20)))
-	var of := UI.label(Strings.t("CHARACTER_LEVEL_OF", [level, top]), 14, true)
+	var of := ScreenKit.inked(UI.label(Strings.t("CHARACTER_LEVEL_OF", [level, top]), 14, true))
 	of.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	v.add_child(of)
 	row.add_child(v)
@@ -294,6 +297,13 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 		elif l.get_parent().name == "Tag":
 			# Its kind of use, broken when larger words do not fit beside it.
 			_wrap_in(l, l.get_parent().get_parent(), 16.0)
+		elif l.theme_type_variation == "Heading":
+			# What it does in the body face at 16 points, as key frame 04's
+			# card: the kit's 20-point serif made the card outweigh Level up
+			# (the gate's hierarchy check at f1251e68).
+			l.theme_type_variation = ""
+			l.add_theme_font_size_override("font_size", UI.text_px(16))
+			l.set_meta("points", 16.0)
 		elif l.theme_type_variation == "Kicker":
 			# The kit's gold kicker is Lc 55 on the card's lit plum, under the
 			# 60 that bold words ask (§21.8); the gradient's top gold is Lc 75.

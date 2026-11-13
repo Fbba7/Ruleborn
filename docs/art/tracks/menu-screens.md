@@ -60,6 +60,18 @@ The gate's first samples on "settings at 100% text" were cut from the rectangles
 
 `python3 tools/ui_gate/checks.py all` on them: hud-share PASS and hierarchy N/A (no primary) on both. value-steps passes the open tab and the language pill on Game, the open tab on Access, and fails the rest: the dark plum steppers, switches and back button sit 0 to 1.1 value steps off the plum cards and the night ground, where the rule asks 2. On the key frame's record every control passes, its cream steppers and switches 44 to 88 L* off their ground. That is P2-S3-settings' work (the screen built on the key frame), not ScreenKit's materials.
 
+### The gate's advisory verdict at f1251e68, and the fixes
+
+The judge passed 4 of the 7 checks (`docs/art/ui-quality/gate/verdicts/P2-S3-character/f1251e68.json`, shadow mode). The three fails, and what this task changed after them (lead cycle 76: the cheap fixes before ready, the rest as follow-ups):
+
+- **Display type, at 100% and at 200% pt_BR.** The subtitle (kind · role) and the "Level 3 of 10" label sat on the starfield with no ink outline. Both now wear the kit's ink outline all round (`ScreenKit.inked`, 1.5 points), as the world's words do. It adds 2 draw calls a still.
+- **Hierarchy at 100%.** The open ability card outweighed Level up: its sentence was the kit's 20-point serif heading, about as large as the button's label. The sentence is now in the body face at 16 points, as on key frame 04's card, so it no longer counts as display words: the 100% and high-contrast records drop from 7 controls to 6. The high-contrast hierarchy check passed already; its failing samples named the same card.
+
+Follow-ups, not taken here:
+
+- **The ability card is still open, with its sentence.** Key frame 04 shows the sentence too, so collapsing the card to its header would drop words the anchor keeps. If the judge still fails hierarchy, the next step is the kit's: a smaller ability card (request to K1).
+- **Level up's label and value.** The button is the kit's (`KitControls.upgrade`), and its growth is S3-R3's request.
+
 ### What is still worse than before
 
 - **The law card's preview has no frame.** `law_screen.gd` seats the preview in `ScreenKit.panel("well", preview, 16.0, 3.0)`. The track skin drew a dark rim round it; the well skin's rim is soft and 3 points of padding leave it under the picture, so the picture's edges fade into the green card. `law_screen.gd` is not this task's; it is in S3-R2 for AD to judge, and a fix (more padding, or the kit's `frame_*` look) is a request to the lead.
@@ -96,14 +108,14 @@ The stills are in `docs/art/shots/menu-screens/`. Each was rendered with this co
 
 | Still | Env | Draw calls | Record |
 |---|---|---:|---|
-| `character-100.png` | – | 79 | `.shot.json`, 7 controls |
-| `character-200-pt_BR.png` | `TEXT=200 LOCALE=pt_BR` | 55 | `.shot.json`, 6 controls |
-| `character-hc.png` | `HC=1` | 79 | `.shot.json`, 7 controls |
+| `character-100.png` | – | 81 | `.shot.json`, 6 controls |
+| `character-200-pt_BR.png` | `TEXT=200 LOCALE=pt_BR` | 61 | `.shot.json`, 6 controls |
+| `character-hc.png` | `HC=1` | 81 | `.shot.json`, 6 controls |
 | `character-200-pt_BR-scrolled.png` | `TEXT=200 LOCALE=pt_BR SCROLL=2000` | 34 | `.shot.json`, 3 controls |
-| `character-200-pt_BR-tabs.png` | `TEXT=200 LOCALE=pt_BR SCROLL=600` | 50 | `.shot.json`, 4 controls |
-| `character-100-stats.png`, `character-100-compare.png` | `TAB=1`, `TAB=2` | 80, 69 | – |
-| `character-200-en.png` | `TEXT=200` | 55 | – |
-| `character-200-pt_BR-stats.png`, `-compare.png` | `TEXT=200 LOCALE=pt_BR TAB=1`, `TAB=2` | 58, 54 | – |
+| `character-200-pt_BR-tabs.png` | `TEXT=200 LOCALE=pt_BR SCROLL=600` | 56 | `.shot.json`, 4 controls |
+| `character-100-stats.png`, `character-100-compare.png` | `TAB=1`, `TAB=2` | 82, 71 | – |
+| `character-200-en.png` | `TEXT=200` | 59 | – |
+| `character-200-pt_BR-stats.png`, `-compare.png` | `TEXT=200 LOCALE=pt_BR TAB=1`, `TAB=2` | 64, 60 | – |
 
 The before still is `before-character-100.png`, from Part 1.
 
@@ -118,7 +130,7 @@ The before still is `before-character-100.png`, from Part 1.
 - `character_screen.gd`: 3 fill → 0;
 - `screen_box.gd`: 1 draw → 0.
 
-The budget shots' recorded draw calls for the character screen are 103, 80 and 103 (100%, 200% and high contrast). They now read 79, 55 and 79, also for K1 or the lead to `--record`.
+The budget shots' recorded draw calls for the character screen are 103, 80 and 103 (100%, 200% and high contrast). They now read 81, 61 and 81, also for K1 or the lead to `--record`.
 
 ### What is still worse than before
 
