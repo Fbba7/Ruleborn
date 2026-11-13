@@ -21,10 +21,10 @@ const OUTCOME := {"Clean": ["RESULT_CONDITION_CLEAN", "1.0", "1.0"], "Loud": ["R
 ## Each reward and its material, as key frame 03: the Starlight haul on
 ## parchment and wider, the other two on glass.
 const REWARDS := [["starlight", "parchment"], ["essence", "glass"], ["renown", "glass"]]
-## How many of the crew's faces the rest card shows, overlapping (key frame
-## 03), and how large, in points.
+## How many of the crew's faces the rest card shows, apart and larger than
+## key frame 03's stack (gate, Character presence), and how large, in points.
 const FACES := 3
-const FACE_POINTS := 48.0
+const FACE_POINTS := 52.0
 ## The outcome's medal beside its title, in points.
 const MEDAL_POINTS := 34.0
 const TITLE_POINTS := 40.0
@@ -101,9 +101,12 @@ func _ready() -> void:
 	# The kit's frame: the night, and the column inside the safe areas. A
 	# heist that paid turns the night to the sunburst behind its title; a
 	# foiled or refused one keeps the plain night (§23.2: "Celebrate or
-	# learn").
+	# learn"). High contrast keeps the plain night, as key frame 03-result_hc:
+	# no rays, stars or glow behind the words (AD's S1-R24, as Collect's
+	# shine).
 	var column := UI.frame(self)
-	if v0.get("ok", false) and str(v0.get("grade", "")) in ["Clean", "Loud", "Partial"]:
+	if v0.get("ok", false) and str(v0.get("grade", "")) in ["Clean", "Loud", "Partial"] \
+			and not Settings.high_contrast:
 		KitNav.celebrate(self)
 	_build_world(heist)
 	if world_view != null:
@@ -114,17 +117,17 @@ func _ready() -> void:
 	_scroll = page.get_parent() as ScrollContainer
 	page.add_child(_hero())
 	# §12.13: the moment that decided it, with its replay a tap away.
-	page.add_child(_moment_card())
-	# The designs' order: the outcome, the moment, then what it paid.
+	var moment := _moment_card()
 	var paid := VBoxContainer.new()
 	paid.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	paid.add_theme_constant_override("separation", UI.px(6))
+	paid.add_theme_constant_override("separation", UI.px(4))
 	haul_tile = KitCards.reward("resources/starlight", "", Strings.t("RESULT_LOOT"), "gold")
 	UI.dress(haul_tile, "parchment")
 	haul_tile.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	haul_tile.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	haul_tile.custom_minimum_size.x = UI.px(118)
 	haul_label = haul_tile.get_child(0).get_child(1) as Label
+	ResultFit.tile_row(haul_tile)
 	counter = haul_tile
 	paid.add_child(haul_tile)
 	var tiles: Array = []
@@ -134,9 +137,13 @@ func _ready() -> void:
 		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		t.size_flags_stretch_ratio = 1.3 if r[0] == "starlight" else 1.0
 		reward_labels[str(r[0])] = t.get_child(0).get_child(1)
+		ResultFit.tile_row(t)
 		tiles.append(t)
 	# Side by side, as the design's; one above another with large text.
 	reward_row = KitLayout.columns(tiles, 8)
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		# Rows one above another sit closer, so the third clears the dock.
+		reward_row.add_theme_constant_override("separation", UI.px(4))
 	reward_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	reward_row.visible = false
 	paid.add_child(reward_row)
@@ -154,7 +161,15 @@ func _ready() -> void:
 	_display(haul_label, "gold_top")
 	for k: String in reward_labels:
 		_display(reward_labels[k], "gold_top" if k == "starlight" else "cream")
-	page.add_child(paid)
+	# With large text the haul comes first, under the time line, and the
+	# moment after it (key frame 03-result_text200_pt_BR; AD's S1-R24): the
+	# first screen shows what the heist paid.
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		page.add_child(paid)
+		page.add_child(moment)
+	else:
+		page.add_child(moment)
+		page.add_child(paid)
 	# The design's order: what it paid, the law to study, the crew home.
 	study_card = _study_card()
 	page.add_child(study_card)
@@ -310,20 +325,22 @@ func _moment_card() -> PanelContainer:
 
 
 ## §11.6's crew home on the kit's card (key frame 03): the faces of the crew
-## that ran the heist, overlapping in their rings, beside how long it rests.
+## that ran the heist, each apart in its ring, beside how long it rests.
 func _rest_card() -> PanelContainer:
 	var card := UI.panel("glass")
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.visible = false
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation", UI.px(12))
+	row.add_theme_constant_override("separation", UI.px(6))
 	var faces := HBoxContainer.new()
 	faces.name = "Faces"
 	faces.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	faces.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	# Each face over the last by a third of its width, as the design's.
-	faces.add_theme_constant_override("separation", -UI.px(FACE_POINTS * 0.3))
+	# Apart, not overlapping: the key frame's stack read as one small strip.
+	# The rings' own ink edges are the gaps (about 8 px between the gold
+	# bands at 960), so the rest line keeps two lines (AD's S1-R24).
+	faces.add_theme_constant_override("separation", 0)
 	for m: Variant in _crew_end:
 		if faces.get_child_count() >= FACES:
 			break
@@ -337,8 +354,9 @@ func _rest_card() -> PanelContainer:
 		faces.add_child(_face(CreatureBust.of(kind, "", Color(0, 0, 0, 0))))
 	faces.visible = faces.get_child_count() > 0
 	row.add_child(faces)
-	rest_label = UI.label("", 14, true)
+	rest_label = UI.label("", 13, true)
 	rest_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	rest_label.add_theme_constant_override("line_spacing", 0)
 	rest_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	rest_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(rest_label)
@@ -407,6 +425,10 @@ func _build_world(heist: Dictionary) -> void:
 		_peak = maxi(_peak, r.alarm())
 	_ticks = r.tick()
 	_crew_end = r.crew()
+	# High contrast keeps the night plain: no island, nor its sky's moon and
+	# stars, behind the words (AD's S1-R24).
+	if Settings.high_contrast:
+		return
 	world_view = WorldView.new()
 	world_view.heist = false
 	world_view.pitch = WorldView.HOME_PITCH
@@ -581,6 +603,7 @@ func _show_rewards(v: Dictionary) -> void:
 	for kind: String in reward_labels:
 		(reward_labels[kind] as Label).set_meta("to", int(v.get(kind, 0)))
 	_count_rewards(1.0)
+	ResultFit.reward_rows(reward_row, reward_labels, get_viewport_rect().size.x)
 	var fee := int(v["fee"])
 	var back := int(v.get("fee_returned", 0))
 	var said := Strings.t("RESULT_FEE_RETURNED", ShopPresenter.grouped(fee)) if back >= fee \
@@ -810,7 +833,7 @@ func _fit_laws() -> bool:
 		return false
 	var fits := true
 	for b: Button in row.get_children():
-		fits = fits and _word_fits(b)
+		fits = fits and ResultFit.word_fits(b)
 	if fits:
 		return false
 	var grid := KitLayout.grid(2)
@@ -846,7 +869,18 @@ func _fit_raid() -> bool:
 		if c != again:
 			wide -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
 	var words := again.find_children("*", "Label", true, false)
-	var upright := not _words_fit(words, wide - pad)
+	var upright := not ResultFit.words_fit(words, wide - pad)
+	if upright and Settings.text_scale > 100:
+		# Large text: Home as its icon on a square beside the raid, named
+		# aloud, as key frame 03-result_text200_pt_BR, before the raid stands
+		# over a Home row of its own, so the haul keeps the first screen.
+		wide = full
+		for c: Control in row.get_children():
+			if c != again and c is Button:
+				ResultFit.home_square(c as Button)
+			if c != again:
+				wide -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
+		upright = not ResultFit.words_fit(words, wide - pad)
 	if upright:
 		row.vertical = true
 		row.move_child(again, 0)
@@ -854,7 +888,7 @@ func _fit_raid() -> bool:
 	var lines := 0.0
 	var wraps := false
 	for l: Label in words:
-		var n := _lines(l, wide - pad)
+		var n := ResultFit.lines(l, wide - pad)
 		wraps = wraps or n > 1
 		lines += n * l.get_theme_font("font").get_height(l.get_theme_font_size("font_size"))
 	if not wraps and not upright:
@@ -868,47 +902,6 @@ func _fit_raid() -> bool:
 		v.offset_left = pad / 2.0
 		v.offset_right = -pad / 2.0
 	again.custom_minimum_size.y = maxf(again.custom_minimum_size.y, lines * 1.1 + UI.px(12))
-	return true
-
-
-## Whether each word of each label in `words` fits `room`.
-static func _words_fit(words: Array[Node], room: float) -> bool:
-	for l: Label in words:
-		var font := l.get_theme_font("font")
-		var text := l.text.to_upper() if l.uppercase else l.text
-		for word: String in text.split(" ", false):
-			if font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, l.get_theme_font_size("font_size")).x > room:
-				return false
-	return true
-
-
-## How many lines `l`'s words take wrapped between words within `room`.
-static func _lines(l: Label, room: float) -> int:
-	var font := l.get_theme_font("font")
-	var font_px := l.get_theme_font_size("font_size")
-	var text := l.text.to_upper() if l.uppercase else l.text
-	var n := 1
-	var line := ""
-	for word: String in text.split(" ", false):
-		var next := word if line == "" else line + " " + word
-		if line != "" and font.get_string_size(next, HORIZONTAL_ALIGNMENT_LEFT, -1, font_px).x > room:
-			n += 1
-			line = word
-		else:
-			line = next
-	return n
-
-
-## Whether each word on `b` fits the room its padding and icon leave.
-static func _word_fits(b: Button) -> bool:
-	var room := b.size.x - b.get_theme_stylebox("normal").get_minimum_size().x
-	if b.icon != null:
-		room -= UI.px(24) + b.get_theme_constant("h_separation")
-	var font := b.get_theme_font("font")
-	var font_px := b.get_theme_font_size("font_size")
-	for word: String in b.text.split(" ", false):
-		if font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_px).x > room:
-			return false
 	return true
 
 
@@ -946,9 +939,9 @@ func _show_outcome(v: Dictionary) -> void:
 		UI.dress(chip, "tag_alarm", 999)
 	KitStatus.set_pill(chip, Strings.t("RESULT_FOILED_CHIP") if grade == "Foiled" else Strings.t("RESULT_MULTIPLIERS",
 		[row[1], row[2]]))
-	if Settings.text_scale > 100:
+	if Settings.text_scale > 100 and not ResultFit.chip_on_one_line(chip, chip_label, get_viewport_rect().size.x):
 		# Large text: the pill's words wrap onto more lines instead of
-		# trailing off.
+		# trailing off, when even its narrow form does not fit.
 		chip_label.clip_text = false
 		chip_label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
 		chip_label.custom_minimum_size.x = 0
