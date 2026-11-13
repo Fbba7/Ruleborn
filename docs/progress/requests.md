@@ -338,6 +338,44 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   round (M12). Default: the stills stand as rendered, and S3 requests the
   gate on them. AD has no session in the cap of four, so the default
   applies at its due. Copied in cycle 75.
+- **S2-R12** (from S2 to K1, 13 November 2026 03:11Z; due 13 November
+  15:11Z; not blocking): make the display face (theme variation DisplayS,
+  outlined in ink) the default for `KitStatus.resource`'s amount and for
+  `KitHud.keeper`'s name and level pill, as `art/ui/keyframes/01-home.*`
+  sets them (cycle 74's gate point "flat white figures and name"). Files:
+  `client/scripts/home.gd`, `client/world/universe_badge.gd`. Default:
+  home keeps setting DisplayS on those labels itself (`Home.home_figure`);
+  the kit's parts stay as they are. Copied in cycle 76.
+- **S2-R13** (from S2 to the lead, 13 November 2026 03:11Z; due 13
+  November 15:11Z; not blocking): which character does the Keeper's
+  portrait on home show? Home uses `Portrait.bust('featherkin')` on
+  spirit's teal, as the key frame shows. Default: the featherkin; a
+  player-chosen Keeper is a later task. **Answered** by the lead in cycle
+  76 (13 November 2026 03:55Z): the default stands, the featherkin.
+- **S2-R14** (from S2 to K1, 13 November 2026 03:11Z; due 13 November
+  15:11Z; not blocking): give `KitTabs` a raised gold disc for its lead
+  tab (Heist), as the key frame draws it, so screens need not raise it
+  themselves (cycle 74's gate point "Heist does not lead"). File:
+  `client/scripts/home.gd`. Default: home keeps `_raise_heist`; KitTabs
+  stays as it is. Copied in cycle 76.
+- **S2-R15** (from S2 to K1, 13 November 2026 03:11Z; due 13 November
+  15:11Z; not blocking): (a) `KitControls.action2` does not measure its
+  children, so its words run past its edge; let it size itself to its
+  words, with an option to keep their case ("Collect 3.4k" is mixed
+  case); (b) at large text a `KitTabs` tab's word wraps below its tile's
+  foot ("Ilhas" at 200% pt_BR); let the tile grow with its word, or hide
+  the word by itself. Same family as S1-R15. File:
+  `client/scripts/home.gd`. Default: home sizes Collect and hides cut tab
+  words itself (`Home._fit_tab_words`); the kit stays as it is. Copied in
+  cycle 76.
+- **S2-R16** (from S2 to the lead, 13 November 2026 03:11Z; due 13
+  November 15:11Z; not blocking): amend S2-R7's approved raise to 143
+  draw calls for home/100 and home/hc and 112 for home/200, from what
+  cycle 74's gate asked for (the goal card beside Collect, the character
+  portrait, the display type); all stay under the cap of 150. The lead
+  records them in `tools/ui_bake/budgets.json`. **Approved** by the lead
+  in cycle 76 (13 November 2026 03:55Z): the lead records 143/112/143
+  when it merges P2-S2-home-1.
 
 ### S3
 
