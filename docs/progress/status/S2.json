@@ -3,53 +3,22 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P2-S2-home-1",
-  "task_state": "ready",
-  "claimed_at": "2026-11-13T02:47:00Z",
-  "lease_until": "2026-11-13T06:59:17Z",
-  "updated_at": "2026-11-13T03:59:17Z",
-  "expected_next_update_by": "2026-11-13T04:44:17Z",
+  "agent_state": "active",
+  "task_id": "P2-S2-home-2",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-13T05:23:34Z",
+  "lease_until": "2026-11-13T08:23:34Z",
+  "updated_at": "2026-11-13T05:23:34Z",
+  "expected_next_update_by": "2026-11-13T06:08:34Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "977edd5b",
-    "next_step": "Ready at 977edd5b: the gate on home's three items; the lead records home's draw calls (S2-R7, S2-R16); P2-S2-home-2 waits for a later session",
-    "at": "2026-11-13T03:59:17Z"
+    "last_green_sha": "e37c765d",
+    "next_step": "Read the advisory verdict on part 1 and AD previews; frame and light the Keeper",
+    "at": "2026-11-13T05:23:34Z"
   },
-  "precheck": {
-    "sha": "977edd5bb1a6487067fdd407dc2268b6958cc377",
-    "exit": 0,
-    "finished_at": "2026-11-13T03:59:00Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "977edd5bb1a6487067fdd407dc2268b6958cc377",
-    "items": [
-      {
-        "item": "home at 100% text",
-        "qualities": [
-          "Hierarchy",
-          "Display type",
-          "Character presence"
-        ]
-      },
-      {
-        "item": "home at 200% text, pt_BR",
-        "qualities": [
-          "Display type",
-          "Hierarchy"
-        ]
-      },
-      {
-        "item": "home in high contrast",
-        "qualities": [
-          "Colour roles and value",
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
-  "ready_sha": "977edd5bb1a6487067fdd407dc2268b6958cc377",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M13"
@@ -133,7 +102,7 @@
       "id": "S2-R8",
       "from": "S2",
       "to": "K1",
-      "ask": "KitPanels.notice: a notice that stays (frees neither on banner_ms nor on its cross, but hides and can be shown again, with a dismissed signal), and at text above KitLayout.SIDE_BY_SIDE_UP_TO the words over the full width with the icon, action and cross in a row beneath. Home's raid notice must stay until seen or dismissed (§21.8) and return with new raids.",
+      "ask": "KitPanels.notice: a notice that stays (frees neither on banner_ms nor on its cross, but hides and can be shown again, with a dismissed signal), and at text above KitLayout.SIDE_BY_SIDE_UP_TO the words over the full width with the icon, action and cross in a row beneath. Home's raid notice must stay until seen or dismissed (\u00a721.8) and return with new raids.",
       "files": [
         "client/ui/kit_panels.gd",
         "client/scripts/ui.gd"
@@ -148,7 +117,7 @@
       "id": "S2-R9",
       "from": "S2",
       "to": "K1",
-      "ask": "KitLayout.tap: (1) it connects button_down twice, so every part made tappable logs 'Signal button_down is already connected' (home's strain and goal card; seen in every universe_home.gd run): connect once. (2) its clear button is a child of the card, so inside a PanelContainer it is laid out within the card's padding, not over the whole card: on KitStatus.strain (48 points tall) the tap was 40 points, failing §21.1's 48 (client test 'every control on every screen'). Lay it over the whole card (e.g. a holder of the card's size, or the card's padding moved into an inner margin). (3) let it carry 'frequent' = false when the card is a secondary place, as the card itself does.",
+      "ask": "KitLayout.tap: (1) it connects button_down twice, so every part made tappable logs 'Signal button_down is already connected' (home's strain and goal card; seen in every universe_home.gd run): connect once. (2) its clear button is a child of the card, so inside a PanelContainer it is laid out within the card's padding, not over the whole card: on KitStatus.strain (48 points tall) the tap was 40 points, failing \u00a721.1's 48 (client test 'every control on every screen'). Lay it over the whole card (e.g. a holder of the card's size, or the card's padding moved into an inner margin). (3) let it carry 'frequent' = false when the card is a secondary place, as the card itself does.",
       "files": [
         "client/ui/kit_layout.gd"
       ],
