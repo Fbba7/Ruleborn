@@ -3132,19 +3132,13 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "ready",
-      "claim": {
-        "agent": "AIA",
-        "branch": "claude/ui-artist",
-        "claimed_at": "2026-11-13T04:48:00Z",
-        "seen_at": "2026-11-13T05:46:00Z",
-        "lease_until": "2026-11-13T07:48:00Z"
-      },
-      "prior_branch": "claude/ui-artist",
-      "prior_sha": "7fd401e74cf1bba680a821b08bc0f576fe2eec32",
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
       "ready_sha": "d064876337d54e47dcd5110362984ddb688aa010",
-      "merged_sha": null,
-      "updated_at": "2026-11-13T06:17:00Z",
+      "merged_sha": "0bc0fbb9ca08a23bc8f96713aa2cfac78a45bd2a",
+      "updated_at": "2026-11-13T06:55:00Z",
       "updated_by": "lead (cycle 78)",
       "id": "P2-AIA-motion-2",
       "title": "Motion art, part 2 (report.md step 8): the frame strips, full and reduced, and short clips of every motion for board 4, with the timing, reduced-form and flash checks; estimate includes one review round with AD",
@@ -3880,6 +3874,22 @@
       "sent_at": "2026-11-13T02:54:00Z",
       "ack_by": "2026-11-13T04:54:00Z",
       "acked_at": "2026-11-13T03:55:00Z"
+    },
+    {
+      "id": "M18",
+      "to": "lead",
+      "text": "Lesson from the UI report (Work delivered rated worse two pushes in a row: 1.10, then 1.11 hours of work an hour against 1.2). Builder seats sit empty while a builder's session waits idle on its own request until its lease lapses: S2 from about 01:10 to its restart at 02:43 on 13 November, and AIA idle on AIA-R25 until its lease lapsed at 04:43. The rule: each cycle, check every builder's session with get_session. When a session is not working (status_bucket other than working) and has its own request pending, apply that request's default early (as M15 allows) and resume that same session with send_message, or restart it on the same task, without waiting for the lease to lapse. Ack M18 when you next run a cycle.",
+      "sent_at": "2026-11-13T06:56:00Z",
+      "ack_by": "2026-11-13T08:56:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M19",
+      "to": "lead",
+      "text": "Lesson from P2-AIA-motion-2's merge (lead cycle 78): check_all passed on its first run at 06:40:52, but guard.sh failed twice on the candidate's worktree before passing at 06:52:57, first for want of the native library, then for want of tools/ui_research's node packages, so the merge reached main about 12 minutes late. Rule: before the first guard.sh run in a candidate worktree, run `bash client/build.sh` and `npm ci` in tools/ui_research there, or run guard.sh from the main checkout on the candidate commit, as check_all is run (M17). Ack by adding M19 to your status acks.",
+      "sent_at": "2026-11-13T06:57:00Z",
+      "ack_by": "2026-11-13T08:57:00Z",
+      "acked_at": null
     }
   ]
 }
