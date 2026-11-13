@@ -5,15 +5,15 @@
  "model": "Opus 5.5",
  "agent_state": "active",
  "task_id": "P2-AIA-motion-2",
- "task_state": "claimed",
+ "task_state": "working",
  "claimed_at": "2026-11-13T01:43:33Z",
  "lease_until": "2026-11-13T04:43:33Z",
- "updated_at": "2026-11-13T01:43:33Z",
- "expected_next_update_by": "2026-11-13T02:28:33Z",
+ "updated_at": "2026-11-13T02:06:00Z",
+ "expected_next_update_by": "2026-11-13T02:51:00Z",
  "long_run": null,
  "progress_marker": {
   "last_green_sha": "49159bc0",
-  "next_step": "shot scripts client/tests/shots/motion_*.gd, frame strips and clips"
+  "next_step": "AD preview of the frame strips (AIA-R25); bake check and guard; merge main and rerun the checks; pre-check"
  },
  "precheck": null,
  "gate_request": null,
@@ -240,5 +240,5 @@
    "at": "2026-11-10T06:50:38Z"
   }
  ],
- "next_step": "shot scripts client/tests/shots/motion_*.gd, frame strips and clips"
+ "next_step": "AD preview of the frame strips (AIA-R25); bake check and guard; merge main and rerun the checks; pre-check"
 }
