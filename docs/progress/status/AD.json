@@ -3,17 +3,17 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "done",
-  "task_id": "P2-AD-board-3",
-  "task_state": "ready",
-  "claimed_at": "2026-11-13T08:30:00Z",
-  "lease_until": "2026-11-13T11:30:00Z",
-  "updated_at": "2026-11-13T10:05:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P2-AD-board-4",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-13T11:30:00Z",
+  "lease_until": "2026-11-13T14:30:00Z",
+  "updated_at": "2026-11-13T11:30:00Z",
+  "expected_next_update_by": "2026-11-13T12:15:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
-    "next_step": "S1-R25 answered (the four S1-R24 objections stand as fixed at 71167028; AD-R26 for de 200%). P2-AD-board-3 ready at 4a48eef9, unchanged. No AD task open (board-3b waits for home-3 and K1-tabs, board-4 for result-2, board-5 for settings): done."
+    "next_step": "Answering S2-R20 (home part 3 preview at c0b2bc49) first, then P2-AD-board-4: result stills, reward strips and clips, AIA motion strips, every objection in one round (AD-R26 among them)."
   },
   "precheck": {
     "sha": "4a48eef9b4fb9fa9164ead1f9a8f7f82d094149f",
@@ -22,7 +22,7 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": "4a48eef9b4fb9fa9164ead1f9a8f7f82d094149f",
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M12"
