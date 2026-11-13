@@ -160,7 +160,7 @@ The budget shots' recorded draw calls for the character screen are 103, 80 and 1
 
 `client/scripts/settings_screen.gd` is built from the kit, after key frame 05 (`art/ui/keyframes/05-settings.png`):
 
-- **The head.** The settings mark and the title, on the kit's plate. The title wears the display stroke (kit-spec 2.2, T2): an ink outline and a hard drop. Unlike `KitNav.logo`'s, the drop has no outline of its own: an outlined drop costs each stroked label one more draw call, which took settings past its budget (55 against 52 at 100% and in high contrast). At large text the title keeps 1.3 times the body text's size (41.6 points at 200%), where `UI.text_px` alone would leave it the body's size.
+- **The head.** The settings mark and the title, on the kit's plate. The title wears the display stroke (kit-spec 2.2, T2): an ink outline and a hard drop. Unlike `KitNav.logo`'s, the drop has no outline of its own: an outlined drop costs each stroked label one more draw call, which took settings past its budget (55 against 52 at 100% and in high contrast). At large text the title keeps 1.5 times the body text's size (48 points at 200%), where `UI.text_px` alone would leave it the body's size.
 - **The tabs.** Game, Access and Account are one strip of parchment, each with the design's icon. The open tab is on the kit's chosen segment for parchment (`seg_on_light`: dark leather, cream words), so gold stays the main actions' alone (§21.8). When an icon and its word do not fit a third of the strip (at large text, or with a long word), the closed tabs keep only their icon and the open tab only its word, at twice the width. The screen reader still hears every word.
 - **The rows.** Each setting is a kit row or section (`KitPanels.row`, `KitPanels.section`). Each group heading is on its own dark plate that hugs its words (kit-spec 2.2, T0 with its drop on a dark ground), and keeps 1.1 times the body text's size at large text (35.2 points at 200%). A heading too long for one line takes the row and wraps:
   - Steppers have the setting's icon in a well, its words over the kit's bar (`KitBar`), and − and + on leather.
@@ -171,7 +171,7 @@ The budget shots' recorded draw calls for the character screen are 103, 80 and 1
   
   It takes no taps; the row is the control.
 - **Text size.** §20.8's text size is key frame 05's card:
-  - a small A and a large A on parchment, either side of the size in large figures (gold_top, with a 2.5-point outline and the gold drop);
+  - a small A and a large A on parchment, either side of the size in the kit's baked figures (`KitNumerals`, `num_gold`, in the `number_m` role: 22 points at 100%);
   - a dot for each step, the current one on plate and the rest on dark plate;
   - a law's card in the chosen size, to read before leaving. At large text its words stop at two lines, with an ellipsis, so the card does not fill the screen.
 - **Colour blindness.** The colour-blind card shows the six schools' marks on their coins with their names. There is no mode to choose, because each school keeps its own shape in every light (§20.8).
@@ -205,7 +205,7 @@ The before still is `before-settings-100.png`, from Part 1.
 
 `tools/ui_bake/check_screens.py`: OK. `settings_screen.gd` and `screen_switch.gd` draw nothing outside the kit.
 
-`tools/ui_bake/guard.sh`: OK. The budget shots (`screen_meta.gd`, `SCREEN=settings`, on the opening Game tab) read 48, 41 and 48 draw calls for settings at 100%, 200% and high contrast, against 52, 47 and 52 recorded (after AD's S3-R7 fixes; 48, 40 and 48 after the gate's). Before the self-check fixes it read 46 at 100%; the fixes' strokes brought it to 52 (on 9242f955), and with an outlined drop it read 55. The headings' plates, which drop the headings' outlines, bring it to 48. The falls are for K1 or the lead to `--record`. No word is below 4.5:1; the worst word reads 9.37:1, and 5.94:1 in high contrast.
+`tools/ui_bake/guard.sh`: OK. The budget shots (`screen_meta.gd`, `SCREEN=settings`, on the opening Game tab) read 48, 41 and 48 draw calls for settings at 100%, 200% and high contrast, against 52, 47 and 52 recorded (on the gate's fixes, below; 48, 40 and 48 on AD's S3-R7 fixes). Before the self-check fixes it read 46 at 100%; the fixes' strokes brought it to 52 (on 9242f955), and with an outlined drop it read 55. The headings' plates, which drop the headings' outlines, bring it to 48. The falls are for K1 or the lead to `--record`. No word is below 4.5:1; the worst word reads 9.37:1, and 5.94:1 in high contrast.
 
 ### The advisory self-check, and the fixes
 
@@ -219,14 +219,23 @@ Before the gate request, an advisory self-check against the gate's three items (
 
 AD previewed the stills of f5719f28 (`status/AD.json` on `claude/ui-ad`, S3-R7) and sent six objections in one round. They are listed here in AD's order of weight. AD let these stand: the cream As, the dark chosen tab, the sentence-case tabs, and the pt_BR coins three to a line.
 
-1. **The title at 200% must grow with the text and stay the largest word.** Done in 917886c4: the title is 1.3 times the body text's size.
+1. **The title at 200% must grow with the text and stay the largest word.** Done in 917886c4: the title is 1.3 times the body text's size (1.5 since the gate on eed8b817, below).
 2. **The headings need the display outline of at least 1.5 points, or the tag plate.** Done in 917886c4: each heading is on its own dark plate.
 3. **The ground ramp is reversed: the foot should be the darkest, #0B0621 as in key frame 05.** Not changed here. The night gradient is §21.2's linear ramp (night_top #171046 to night_bottom #2C3AA8). The owner chose it over the designs' radial ground in C75 (closed 4 November, answer A). It is drawn by `UI.frame` in `ui.gd`, which is not this task's file. A change would be the owner's decision first, then K1's work. The headings no longer stand on the ground (point 2), so their legibility does not depend on it.
 4. **At 200% in pt_BR, the Stillness card should hold the whole law, and the list should end on a row's edge or show a scroll cue.** The two-line ellipsis is gone, and the sample shows the whole law at every size. The sample's padding, line spacing and icon (32 points, was 40) are tighter to make room. The list's window now ends on a whole row's edge (`_snap_list`). The rows' own chevron (the kit's `hud/next`, turned down) stands in the gap below that edge while more rows lie below. Where no edge fits within 48 points (at 200%, the text card is taller than what is left), the window cuts through the row above the cue: the Stillness card shows whole, and its violet card runs on below it. There is no fade. A screen draws no chrome of its own: a `GradientTexture2D` fade raised `check_screens.py`'s texture count from 0 to 2. The kit has no scroll cue (S3-R8 asks K1 for one).
 5. **At 100% and in high contrast, the Motion switch should clear the dock.** At 100%, Stillness's law now fits on two lines (the text card is trimmed). The window ends under the High contrast row, and the chevron says more lies below. Motion is the next row, a scroll away.
-6. **The gold "100%" should be a step below the title.** It is 24 points, against the title's 28, and its outline is 2 points.
+6. **The gold "100%" should be a step below the title.** It is 24 points, against the title's 28, and its outline is 2 points. (Since the gate on eed8b817 it is the kit's baked figures at 22 points, below.)
 
 AD said it will re-check only what changed: items 4 to 6, and 1 and 2 from 917886c4.
+
+### The gate on eed8b817, and the fixes
+
+The lead's gate on eed8b817 (`docs/art/ui-quality/gate/verdicts/P2-S3-settings/`) failed Display type, at 100% and at 200% in pt_BR, on one word: the text-size readout. It was a flat gold label with a thin outline, where key frame 05's figures are the kit's baked numerals. Hierarchy passed at 200% in pt_BR, but narrowly: the title stood only a little above the groups' headings. The fixes, in `settings_screen.gd`:
+
+- **The readout is the kit's figures.** `KitNumerals.make` with the `num_gold` finish (kit-spec section 3, T3): a cream-to-gold fill, an ink outline that scales with the figure, and a hard drop. It sits in the `number_m` role: 22 points at 100%, a step below the 28-point title, and the body's size at large text. The shot's record names the control by its figures ("100%", "200%").
+- **The title leads further at large text.** `TITLE_LEAD` is 1.5, was 1.3: at 200% the title is 48 points against a heading's 35.2. At 100% nothing changes, since 16 × 1.5 = 24 is under the title's 28.
+
+The four stills were re-rendered with `FIT=1 RECORD=1`, and each printed `fit ok` (the 200% en still too). `checks.py all`: no FAIL, and value-steps passes every control. `gdlint`, `check_screens.py` and `guard.sh`: OK. The client tests read 382 ok; the not ok all need the server. The budget shots read 48, 41 and 48, against 52, 47 and 52; the worst word is 9.37:1, and 5.94:1 in high contrast.
 
 ### What is still worse than before
 

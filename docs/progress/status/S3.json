@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-13T06:16:00Z",
   "lease_until": "2026-11-13T13:30:16Z",
-  "updated_at": "2026-11-13T10:30:16Z",
-  "expected_next_update_by": "2026-11-13T11:10:16Z",
+  "updated_at": "2026-11-13T11:29:44Z",
+  "expected_next_update_by": "2026-11-13T12:09:44Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "eed8b817fe6c01705c8e4eb5e2ee527e0229ef9f",
-    "next_step": "precheck PASS on eed8b817 (AD's S3-R7 fixes), recorded; gate_request set on eed8b817 for the three settings items; at 2026-11-13T10:30:16Z main has no verdict on it yet (lead's next update due 11:40Z); waiting for the lead's gate",
-    "at": "2026-11-13T10:30:16Z"
+    "next_step": "the gate on eed8b817 failed Display type (the text-size readout); fixed (readout on KitNumerals num_gold, TITLE_LEAD 1.5), verified on the working tree and committed; next: precheck the new commit, then gate_request on it",
+    "at": "2026-11-13T11:29:44Z"
   },
   "precheck": {
     "sha": "eed8b817fe6c01705c8e4eb5e2ee527e0229ef9f",
@@ -22,32 +22,7 @@
     "finished_at": "2026-11-13T09:52:09Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "eed8b817fe6c01705c8e4eb5e2ee527e0229ef9f",
-    "items": [
-      {
-        "item": "settings at 100% text",
-        "qualities": [
-          "Hierarchy",
-          "Display type"
-        ]
-      },
-      {
-        "item": "settings at 200% text, pt_BR",
-        "qualities": [
-          "Display type",
-          "Hierarchy"
-        ]
-      },
-      {
-        "item": "settings in high contrast",
-        "qualities": [
-          "Colour roles and value",
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
+  "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
@@ -209,5 +184,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "precheck PASS on eed8b817 (AD's S3-R7 fixes), recorded; gate_request set on eed8b817 for the three settings items; at 2026-11-13T10:30:16Z main has no verdict on it yet (lead's next update due 11:40Z); waiting for the lead's gate"
+  "next_step": "the gate on eed8b817 failed Display type (the text-size readout); fixed (readout on KitNumerals num_gold, TITLE_LEAD 1.5), verified on the working tree and committed; next: precheck the new commit, then gate_request on it"
 }

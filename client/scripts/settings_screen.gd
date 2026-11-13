@@ -8,18 +8,21 @@ extends Control
 ## is always what the setting does.
 
 ## How far the title and a group's heading stand above the body text at
-## large text (_grown): at 200% the body is 32 points, the title 41.6 and a
-## heading 35.2.
-const TITLE_LEAD := 1.3
+## large text (_grown): at 200% the body is 32 points, the title 48 and a
+## heading 35.2, so the title stands well clear of a group's heading too.
+const TITLE_LEAD := 1.5
 const HEADING_LEAD := 1.1
 ## A heading plate's side padding, in points.
 const SECTION_PAD := 12.0
 ## The base frame's width in points (tokens.json's px_per_point: 1080 pixels
 ## for a 360-point phone).
 const SCREEN_POINTS := 360.0
-## The text size in large figures: a step below the title (28 points in
-## Marcellus), so the title stays the screen's largest word.
-const SIZE_POINTS := 24.0
+## The text size in the kit's baked figures (KitNumerals, kit-spec.md
+## section 3, T3: a cream-to-gold fill, an ink outline that scales with the
+## figure and a hard drop), in this type role's slot: 22 points, a step below
+## the 28-point title, and at large text the body's size, still under the
+## title's 1.5 times it, so the title stays the screen's largest word.
+const SIZE_ROLE := "number_m"
 ## The least gap kept under the list's last whole row for the scroll cue,
 ## in points.
 const CUE_POINTS := 20.0
@@ -31,7 +34,7 @@ const DROP_POINTS := 4.0
 const SNAP_POINTS := 48.0
 
 var volume_labels := {}
-var text_label: Label
+var text_label: Control
 var list_scroll: ScrollContainer
 ## The cue that more rows lie below: the kit's chevron turned down, in the
 ## gap under the last whole row, shown while the list can scroll further.
@@ -355,11 +358,7 @@ func _text_card() -> Control:
 	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	mid.alignment = BoxContainer.ALIGNMENT_CENTER
 	mid.add_theme_constant_override("separation", UI.px(6))
-	text_label = UI.label("%d%%" % Settings.text_scale, SIZE_POINTS)
-	text_label.theme_type_variation = "Display"
-	text_label.add_theme_color_override("font_color", Tokens.color("gold_top"))
-	_stroked(text_label, 2.0, 2.0, "gold_drop")
-	text_label.accessibility_name = size_name
+	text_label = KitNumerals.make("%d%%" % Settings.text_scale, "num_gold", SIZE_ROLE, size_name)
 	mid.add_child(text_label)
 	var dots := HBoxContainer.new()
 	dots.alignment = BoxContainer.ALIGNMENT_CENTER

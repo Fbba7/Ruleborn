@@ -161,7 +161,7 @@ static func write_record(screen: SettingsScreen, shot: String) -> void:
 				name = (c as Button).text
 		elif c == screen.text_label:
 			kind = "size-mid"
-			name = screen.text_label.text
+			name = str(screen.text_label.get_meta("numerals", screen.text_label.get_meta("spoken", "")))
 			interactive = false
 		elif c is Label and (c as Label).get_theme_font_size("font_size") >= UI.text_px(20):
 			kind = "words"
