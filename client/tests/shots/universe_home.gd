@@ -162,6 +162,47 @@ static func _all_inside(top: Node) -> Array:
 	return out
 
 
+## Rubric quality 9's scripted half: home shows a live character node in the
+## toon look (the Keeper's companion, a CreatureModel), which moves (its clip
+## plays, its stage draws every frame; held still only under reduced motion),
+## and fills enough of its portrait to read as a shape (at least a third of
+## the stage's picture is the figure). One line each that fails.
+static func live(screen: Home) -> Array[String]:
+	var bad: Array[String] = []
+	var badge := screen.keeper_plate
+	if badge == null or not badge.is_visible_in_tree():
+		return ["no Keeper badge showing"]
+	var model := badge.companion()
+	if model == null or not model.is_inside_tree():
+		return ["no live character on home"]
+	var player := model.player()
+	var moving := not Settings.reduced_motion
+	if player == null or not player.is_playing() or (moving and is_zero_approx(player.speed_scale)):
+		bad.append("the companion's clip does not play")
+	if not String(model.clip).begins_with("idle"):
+		bad.append("the companion plays %s, not an idle" % model.clip)
+	var want := SubViewport.UPDATE_ALWAYS if moving else SubViewport.UPDATE_ONCE
+	var stage := badge.stage()
+	if stage.render_target_update_mode != want and not (not moving
+			and stage.render_target_update_mode == SubViewport.UPDATE_DISABLED):
+		bad.append("the companion's stage does not draw (mode %d)" % stage.render_target_update_mode)
+	var img := stage.get_texture().get_image()
+	if img == null or img.is_empty():
+		bad.append("the companion's stage drew nothing")
+		return bad
+	var solid := 0
+	var step := maxi(1, img.get_width() / 64)
+	var seen := 0
+	for y in range(0, img.get_height(), step):
+		for x in range(0, img.get_width(), step):
+			seen += 1
+			if img.get_pixel(x, y).a > 0.5:
+				solid += 1
+	if solid < seen / 3:
+		bad.append("the companion fills %d%% of its portrait" % (100 * solid / maxi(seen, 1)))
+	return bad
+
+
 ## What does not fit on home, one line each: a label's words wider than the
 ## label, or outside its panel or button, or off the screen; one of home's parts over
 ## another; a realm's pin over another pin or over home's parts, or off the
@@ -205,6 +246,7 @@ static func fit(screen: Home) -> Array[String]:
 		for j in range(i + 1, keys.size()):
 			if a.grow(-1.0).intersects(shown[keys[j]]):
 				bad.append("%s %s over %s %s" % [keys[i], a, keys[j], shown[keys[j]]])
+	bad.append_array(live(screen))
 	var pins := screen.world.pins
 	if not pins.is_visible_in_tree():
 		return bad
