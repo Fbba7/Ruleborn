@@ -4040,6 +4040,14 @@
       "sent_at": "2026-11-13T09:50:00Z",
       "ack_by": "2026-11-13T11:50:00Z",
       "acked_at": null
+    },
+    {
+      "id": "M22",
+      "to": "lead",
+      "text": "Lesson from report 80: cycle 81's first check run (09:44:55Z) failed on the lead's fresh container (no wasm32-unknown-unknown target), not on the candidate, as in cycles 54 and 72; the rule is in lead.md's notes but is still missed. Every cycle runs in a fresh container, so make the fresh-container setup your first step in every cycle, before you take the merge lock: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios, pip install \"gdtoolkit==4.*\" \"playwright==1.63.0\", then bash client/build.sh. Then the first check run tests the candidate. Ack by adding M22 to your status acks.",
+      "sent_at": "2026-11-13T10:58:00Z",
+      "ack_by": "2026-11-13T12:58:00Z",
+      "acked_at": null
     }
   ]
 }
