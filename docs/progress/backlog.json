@@ -3640,19 +3640,13 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "ready",
-      "claim": {
-        "agent": "AD",
-        "branch": "claude/ui-ad",
-        "claimed_at": "2026-11-13T08:30:00Z",
-        "seen_at": "2026-11-13T09:32:00Z",
-        "lease_until": "2026-11-13T11:30:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "4a48eef9",
-      "merged_sha": null,
-      "updated_at": "2026-11-13T09:46:00Z",
+      "merged_sha": "f5c9a80169d50e499787d5a7a77eeafbdc011991",
+      "updated_at": "2026-11-13T10:24:00Z",
       "updated_by": "lead (cycle 81)",
       "id": "P2-AD-board-3",
       "title": "Board 3 (home, report.md 3.4 O4): AD lets it stand or lists every objection in one round"

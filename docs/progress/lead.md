@@ -450,6 +450,44 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 81, 13 November 2026, from 09:38Z (session
+  `session_01SNkKxmrBHkRN8tALzCsGkF`, started by the Opus 5.5 launcher):
+  P2-AD-board-3 merged as `f5c9a801`, S1's advisory gate passes, AD
+  started on S1-R25.
+  - **Merge** (M17, M19): P2-AD-board-3 (ready 4a48eef9; docs and
+    answers only). Merge lock taken at `c48c8563` (09:46Z); the
+    candidate, 4a48eef9 merged on that head, was `0a3f5cad`. The first
+    check run failed at 09:44:55Z on the fresh container (no
+    wasm32-unknown-unknown target for std), not on the candidate; the
+    rustup targets and pip packages were installed and the run restarted
+    on the same sha. guard.sh OK (GUARD exit 0); check_all PASS at
+    10:20:26Z. Merged onto main's head (lead-only commits since) as
+    `f5c9a801` with the lock cleared in the same turn (one watchdog
+    commit since). The audit and
+    roadmap pages did not change.
+  - **S1's gate, advisory** (P2-S1-result-2 at 71167028, result at 100%
+    text; `verdicts/P2-S1-result-2/71167028.json`, `4ffffa75`):
+    Hierarchy and Character presence pass, three of three each. The
+    full-width gold Raid again leads in grayscale as clearly as the pass
+    anchor's Level up; the three crew portraits read as faces in the toon
+    look, larger than the pass anchor's.
+  - **M20 acked**: result-2's merge lock waits for AD's answer to S1-R25
+    or its due (14 November 09:22Z). AD started on S1-R25 in the free
+    seat as `session_01SNkKxqeNV7VTwM6RkPTRHh` (09:44Z, effort high),
+    then its next open task; the last AD session was idle after board 3.
+  - **Requests:** S1-R25 (to AD) copied; S1-R26 approved (the lead
+    records result/200 at 98, with a raises entry, and the lowered
+    result/100 89, result/hc 27 and check_screens figures at result-2's
+    merge); S1-R27 granted as exceptions (`client/scripts/result_fit.gd`
+    and its `.uid` added to P2-S1-result-2); S3-R8 copied, the default
+    stands (a later K1 task).
+  - **Builders:** S1 (result-2, waiting on S1-R25), S2 (home-3), S3
+    (settings) and AD, the cap of four; P2-K1-tabs waits for the next
+    free seat. No session showed `allowed_warning`.
+  - **Watchdog** (10:12Z, owner-inbox): lead.json was a few seconds past
+    its 10:12Z, set before the check run; nothing started. The next step
+    now says to set `expected_next_update_by` to at least a lock's expiry
+    while a check runs.
 - Cycle 80, 13 November 2026, from 08:38Z (session
   `session_01SNkKxorbtQPjVTWkgJKyfY`, started by the Opus 5.5 launcher):
   P2-S1-result-2's merge stopped before main moved on AD's S1-R24
