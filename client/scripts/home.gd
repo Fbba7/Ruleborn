@@ -39,6 +39,9 @@ const TAB_WORD_LEAST := 11.0
 ## The least share of its size strain's words take to keep the purse's fourth
 ## place at large text.
 const STRAIN_LEAST := 0.8
+## The least share of their size the purse's amounts take at large text to
+## keep the purse to two rows (`_fit_amounts`).
+const AMOUNT_LEAST := 0.85
 
 ## The unseen raids the player dismissed the notice for: it returns only when
 ## more come.
@@ -331,14 +334,11 @@ func _raise_heist() -> void:
 	(picture.get_parent() as Control).offset_top = -float(UI.px(8))
 
 
-## The tabs' words, after the kit has fitted them (P2-K1-tabs owns KitTabs
-## itself). The other tabs' names all show, a little smaller where one would
-## otherwise be cut (Portuguese's ASSALTO at 100%), never under
-## TAB_WORD_LEAST at the text size chosen: below that (large text) they show
-## their icons alone, each still named aloud, as the key frame at 200% does. A
-## word in pieces reads worse than none. The chosen tab's name always shows
-## (board 3's objection C), as large as it fits inside its tile, above the
-## tile's foot, never under its own size at 100%.
+## The tabs' words, after the kit has fitted them (P2-K1-tabs owns KitTabs).
+## The others' names show, smaller where one would be cut, never under
+## TAB_WORD_LEAST: below that (large text) their icons alone, each named aloud,
+## as the key frame at 200% does. The chosen tab's name always shows (board 3's
+## objection C), as large as fits inside its tile.
 func _fit_tab_words() -> void:
 	if tabs == null or not is_instance_valid(tabs):
 		return
@@ -423,17 +423,12 @@ func _process(_delta: float) -> void:
 		_fit_pins()
 
 
-## The universe framed into the room between the resources and what stands
-## over its foot (the raid notice, the goal and Collect), so every realm and
-## its pin shows clear of them (board 3's objection B). Collect and the goal
-## always keep their place: the screen's main action is never given up
-## (objection A); the raid notice shrinks to one line at large text instead.
-## The side buttons stand in their columns where the room is tall enough, else
-## side by side across each edge, their discs alone at large text as the key
-## frame at 200% sets them (objection C); only where that row would leave the
-## realms no room beneath it (200% with the raid notice up, a short phone) do
-## they give way: every place they lead to is on the badge's menu, and the
-## raids are on the notice.
+## The universe framed between the resources and its foot (the raid notice,
+## the goal and Collect), every realm and pin clear of them (board 3's B).
+## Collect and the goal always keep their place (A). The side buttons stand in
+## columns where the room is tall enough, else side by side, discs alone at
+## large text (C); only where that row leaves the realms no room do they give
+## way: each place is on the badge's menu, and the raids on the notice.
 func _fit_edges(column: VBoxContainer, middle: Control) -> void:
 	var frame := column.get_parent() as MarginContainer
 	var room := get_viewport_rect().size.y - frame.get_theme_constant("margin_top") \
@@ -443,10 +438,7 @@ func _fit_edges(column: VBoxContainer, middle: Control) -> void:
 	for c: Control in column.get_children():
 		if c.visible and c != middle:
 			need += c.get_combined_minimum_size().y + gap
-	# Each edge's buttons one above the other where the room between the
-	# purse and the foot is tall enough, else side by side (large text: the
-	# discs alone, §20.8) where the world keeps a row's height beneath them for
-	# the realms' chips, else not at all (large text with the raid notice up).
+	# Columns, else a row with a row's height left for the chips, else none.
 	var tall := 0.0
 	var row := 0.0
 	for edge: Control in _edges:
@@ -509,10 +501,8 @@ func _floor() -> Control:
 
 
 ## The goal beside Collect where the two fit on one line, as the design sets
-## them, the goal narrowed to the room left; where they do not (large text, a
-## narrow phone), each on a line of its own across the screen, Collect first
-## and the goal's words wrapping beneath it, as the key frame at 200% stacks
-## them. The goal is never dropped (board 3's objection C).
+## them; else each on its own line, Collect first and the goal wrapping beneath
+## it, as the key frame at 200% stacks them. The goal is never dropped (C).
 func _fit_foot() -> void:
 	var across := _across()
 	var natural: float = collect_button.get_meta("natural", collect_button.custom_minimum_size.x)
@@ -653,22 +643,29 @@ func _show_hud() -> void:
 			total += int(ready[kind])
 	var words := collect_button.find_children("*", "Label", true, false)[0] as Label
 	words.text = Strings.t("HOME_COLLECT_AMOUNT", UniverseHud.compact(total, 1000))
-	# The amount as the design writes it, "Collect 3.4k", not the gold's capitals:
-	# the narrower button leaves the goal its room beside it.
+	# "Collect 3.4k" as the design writes it, not the gold's capitals.
 	words.uppercase = false
-	# The kit's button keeps its words inside, not laid out by it: it grows to
-	# the amount, its picture and the gold's padding, so the amount never runs
-	# past its edge.
-	# Where even that is wider than the screen (text at 200%, the longest
-	# languages), its picture gives way first, and it never asks for more than
-	# the screen's width.
+	# The button grows to the amount, its picture and padding; wider than the
+	# screen (200%, long languages), its picture gives way first.
 	var inside := words.get_parent() as Control
 	var picture := inside.get_child(0) as Control
 	var most := _across()
 	picture.visible = true
+	# The words at the kit's own size first, the amount being new.
+	if not words.has_meta("px"):
+		words.set_meta("px", words.get_theme_font_size("font_size"))
+	words.add_theme_font_size_override("font_size", int(words.get_meta("px")))
 	var need := inside.get_combined_minimum_size().x + UI.px(32)
 	if need > most and picture != words:
 		picture.visible = false
+		need = inside.get_combined_minimum_size().x + UI.px(32)
+	# Still wider (German at 200%, "3,4 Tsd. einsammeln"): the words a little
+	# smaller, so they stay inside the gold at the screen's width.
+	if need > most:
+		var px := int(words.get_meta("px"))
+		var wide := words.get_minimum_size().x
+		var fit := floori(px * (wide - (need - most)) / maxf(wide, 1.0))
+		words.add_theme_font_size_override("font_size", maxi(fit, UI.px(12)))
 		need = inside.get_combined_minimum_size().x + UI.px(32)
 	collect_button.set_meta("natural", clampf(need, UI.px(120), maxf(UI.px(120), most)))
 	collect_button.custom_minimum_size.x = collect_button.get_meta("natural")
@@ -782,9 +779,41 @@ func _fit_purse() -> void:
 	for k: String in UniversePurse.ORDER:
 		var full := (pills[k] as Control).find_child("Full", true, false) as Control
 		full.visible = _full.get(k, false) and fits
+	_fit_amounts()
 	if strain.get_parent() == purse:
 		var last := pills[UniversePurse.ORDER[UniversePurse.ORDER.size() - 1]] as Control
 		_fit_strain(purse.size.x - last.get_combined_minimum_size().x - purse.get_theme_constant("h_separation"))
+
+
+## Large text (§20.8): the purse in two rows. Where the first two amounts
+## cannot share a row (German's "142,0 Tsd."), all three are a little smaller,
+## never under AMOUNT_LEAST, so the third row stays the realms' chips.
+func _fit_amounts() -> void:
+	var amounts: Array[Label] = []
+	for k: String in UniversePurse.ORDER:
+		var l := (pills[k] as Control).find_child("Amount", true, false) as Label
+		if l != null and l.has_meta("points"):
+			amounts.append(l)
+	var share := 1.0
+	if Settings.text_scale >= 150 and amounts.size() >= 2:
+		# The first two pills' widths with their amounts at full size, read from
+		# the face, not from the labels as they are now.
+		var words := 0.0
+		var rest := 0.0
+		for i in 2:
+			var l := amounts[i]
+			var full := UI.text_px(float(l.get_meta("points")))
+			words += l.get_theme_font("font").get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, full).x
+			rest += (pills[UniversePurse.ORDER[i]] as Control).get_combined_minimum_size().x - l.get_combined_minimum_size().x
+		var over := words + rest + purse.get_theme_constant("h_separation") - purse.size.x
+		if over > 0.5:
+			var shrunk := (words - over - 1.0) / maxf(words, 1.0)
+			if shrunk >= AMOUNT_LEAST:
+				share = shrunk
+	for l: Label in amounts:
+		var px := floori(UI.text_px(float(l.get_meta("points"))) * share)
+		if l.get_theme_font_size("font_size") != px:
+			l.add_theme_font_size_override("font_size", px)
 
 
 ## The nearest goal on the kit's goal card, its words and a gold bar of the
@@ -810,14 +839,10 @@ func _show_goal(g: Dictionary) -> void:
 
 
 ## The raid notice, from the kit's alarm banner: the heist's mark on a red
-## disc, a headline (how many raids came while the player was away) over a
-## line saying where to see how the defence held, a secondary See and a close
-## cross on the kit's round plate. §21.8: a notice that carries information
-## stays until the player dismisses it. With large text (§20.8) it is one line,
-## so Collect and the goal keep their room beneath it (board 3's objection A):
-## the mark, the headline's tag alone (the count alone where the words would
-## not fit beside See), See and the cross; the line under the headline is
-## still said with it.
+## disc, a headline over a line saying where to see the defence, See and a
+## close cross on the kit's plate. §21.8: it stays until dismissed. With large
+## text (§20.8) it is one line, so Collect and the goal keep their room (board
+## 3's objection A); the line under the headline is still said with it.
 func _raid_notice() -> PanelContainer:
 	var p := UI.panel("banner_alarm")
 	p.name = "RaidNotice"
