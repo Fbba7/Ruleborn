@@ -10,8 +10,7 @@ extends Control
 ## tiles, the study card, the crew home with their faces, and the bar of
 ## actions. Nothing here draws or styles a box of its own.
 
-## The reward sequence has ended, or there was none to play
-## (`start_reward`).
+## The reward sequence has ended, or there was none (`start_reward`).
 signal rewarded
 
 ## §12.9's outcomes: each one's condition and what it multiplies (the haul
@@ -19,8 +18,6 @@ signal rewarded
 const OUTCOME := {"Clean": ["RESULT_CONDITION_CLEAN", "1.0", "1.0"], "Loud": ["RESULT_CONDITION_LOUD", "0.7", "0.8"],
 	"Partial": ["RESULT_CONDITION_PARTIAL", "0.4", "0.5"], "Foiled": ["RESULT_CONDITION_FOILED", "0", "0"]}
 
-## The design's reward tiles, in its order, each on the kit's tile edged in
-## its tone.
 ## Each reward and its material, as key frame 03: the Starlight haul on
 ## parchment and wider, the other two on glass.
 const REWARDS := [["starlight", "parchment"], ["essence", "glass"], ["renown", "glass"]]
@@ -31,11 +28,9 @@ const FACE_POINTS := 48.0
 ## The outcome's medal beside its title, in points.
 const MEDAL_POINTS := 34.0
 const TITLE_POINTS := 40.0
-## The reward's tier for each outcome that pays (the kit Motion's tiers): the
-## clean heist the grandest, the partial one the plainest.
+## The reward's tier (the kit Motion's) for each outcome that pays.
 const TIERS := {"Clean": "epic", "Loud": "rare", "Partial": "common"}
-## How long the page stands still before the reward begins, in seconds: the
-## pause before the reveal.
+## The pause before the reward begins, in seconds.
 const REWARD_WAIT := 0.6
 
 var kicker_label: Label
@@ -75,8 +70,7 @@ var again_button: Button
 var world_view: WorldView
 ## Where the reward lands: the haul's tile, or the row of the split.
 var counter: Control
-## Set before the screen enters the tree, the screen waits for
-## `start_reward` instead of starting it itself (a shot that steps it).
+## Set before `_ready`, the screen waits for `start_reward` (a shot steps it).
 var hold_reward := false
 ## The reward sequence while it plays.
 var reward_tween: Tween
@@ -153,6 +147,13 @@ func _ready() -> void:
 	paid.add_child(detail_label)
 	check_label = UI.label("", 13, true)
 	paid.add_child(check_label)
+	# The lines under the tiles stand on the night with no plate.
+	for l: Label in [fee_label, detail_label, check_label]:
+		_ink(l, float(l.get_meta("points", UI.TEXT_POINTS)))
+	# The totals as display numbers, in the ink outline.
+	_display(haul_label, "gold_top")
+	for k: String in reward_labels:
+		_display(reward_labels[k], "gold_top" if k == "starlight" else "cream")
 	page.add_child(paid)
 	# The design's order: what it paid, the law to study, the crew home.
 	study_card = _study_card()
@@ -233,7 +234,30 @@ func _hero() -> VBoxContainer:
 	subline_label = UI.label("", 14, true)
 	subline_label.theme_type_variation = "Secondary"
 	hero.add_child(subline_label)
+	_ink(kicker_label, 14)  # The hero's words stand on the sunburst, unplated.
+	_ink(grade_label, TITLE_POINTS)
+	grade_label.add_theme_color_override("font_shadow_color", Color.TRANSPARENT)  # Outline for drop.
+	_ink(condition_label, 16)
+	_ink(subline_label, 14)
 	return hero
+
+
+## An ink outline round words on the art with no plate: 1.5 points or 12% of
+## their size (§21.8), as `UI.world_words`; 3 points in high contrast.
+static func _ink(l: Label, points: float) -> void:
+	if Settings.high_contrast:
+		points = maxf(points, 25.0)
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", UI.px(maxf(1.5, 0.12 * points) + 0.5))
+
+
+## A reward's total as a display number: `tone` (a tokens.json colour) in the
+## ink outline, for the card's soft drop (result/200's draw calls), alike on
+## parchment and glass.
+static func _display(l: Label, tone: String) -> void:
+	_ink(l, float(l.get_meta("points", 24.0)))
+	l.add_theme_color_override("font_color", Tokens.color(tone))
+	l.add_theme_color_override("font_shadow_color", Color.TRANSPARENT)
 
 
 ## §12.13's moment on the kit's card: the gold play button with the replay's
@@ -256,6 +280,14 @@ func _moment_card() -> PanelContainer:
 	# Watching the moment is occasional, not one of the hand's frequent
 	# controls §21.1's thumb zone binds; it stays with its words.
 	watch.set_meta("frequent", false)
+	# The kit's size, grown to the icon and words (at 200% "3 s" clipped).
+	var inner := watch.get_child(0) as Control
+	var least := watch.custom_minimum_size
+	var grow := func() -> void:
+		var pad := Vector2(UI.px(12), UI.px(10))
+		watch.custom_minimum_size = least.max(inner.get_combined_minimum_size() + pad)
+	inner.minimum_size_changed.connect(grow)
+	grow.call()
 	moment.add_child(watch)
 	var words := VBoxContainer.new()
 	words.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -431,14 +463,11 @@ func _process(delta: float) -> void:
 		world_view.sway(sin(_clock * 0.25) * 0.5)
 
 
-## The reward (report.md step 8, on the kit's Motion): the medal gathers and
-## charges, bursts on the sunburst and is revealed, and coins fly from it in
-## arcs into the Starlight tile (the haul's tile when there is no split),
-## which rolls up and pulses at each landing; the other tiles count up with
-## it. The tier follows the outcome (TIERS). Reduced motion: the medal fades
-## in, one coin lands and the numbers stand at once. A heist with nothing to
-## reward (refused, foiled, no medal) keeps its final numbers and ends at
-## once. Returns the sequence's tween, or null when there is none.
+## The reward (report.md step 8) on the kit's `Motion.reward`: the medal
+## bursts and coins fly into the Starlight tile (else the haul's), the other
+## tiles counting with it, in the outcome's tier (TIERS); its reduced form
+## with reduced motion. With nothing to reward it ends at once and returns
+## null; else it returns the sequence's tween.
 func start_reward() -> Tween:
 	var to := _reward_to()
 	if to <= 0 or not grade_icon.visible or not is_inside_tree():
@@ -453,10 +482,9 @@ func start_reward() -> Tween:
 	return reward_tween
 
 
-## Puts Motion's reward layer over the page. The layer is `top_level`, so its
-## z of 10 does not add to the page's (a `UI` layer at 32, over the night),
-## and its burst and coins drew under the page and its tiles. Until the kit
-## answers (S1-R21), the layer takes the medal's whole z plus its own.
+## Motion's reward layer is `top_level`, so its z of 10 does not add to the
+## page's 32 and it drew under the tiles. Until the kit answers (S1-R21), it
+## takes the medal's whole z plus its own.
 func _lift_reward() -> void:
 	var z := 0
 	var node: Node = grade_icon
@@ -478,16 +506,14 @@ func _reward_tile() -> Control:
 	return haul_tile
 
 
-## What the coins bring: the split's Starlight, else the haul; 0 when no
-## tile stands to receive it.
+## What the coins bring: the split's Starlight, else the haul, else 0.
 func _reward_to() -> int:
 	if reward_row.visible:
 		return int((reward_labels["starlight"] as Label).get_meta("to", 0))
 	return _haul if haul_tile.visible else 0
 
 
-## The tiles at `v` of the reward's `to`: Starlight (or the haul) at `v`,
-## the split's other tiles at the same share of theirs.
+## Starlight (or the haul) at `v` of `to`, the other tiles at that share.
 func _write_reward(v: int, to: int) -> void:
 	if reward_row.visible:
 		_count_rewards(float(v) / float(maxi(to, 1)))
@@ -895,9 +921,8 @@ func _verdict_line(key: String, replay_bytes: int) -> String:
 	return Strings.t(key, replay_bytes).split("\n")[0]
 
 
-## §12.9's outcome in full: the kicker, the medal, the condition, what it
-## multiplies, and the heist's length with the alarm's true peak; §12.13's
-## moment under it. A Workshop play and a refusal show only their own lines.
+## §12.9's outcome in full (kicker, medal, condition, multipliers, length and
+## peak) and §12.13's moment; a Workshop play or a refusal only its own lines.
 func _show_outcome(v: Dictionary) -> void:
 	var grade := str(v.get("grade", ""))
 	var shown: bool = v.get("ok", false) and not v.get("workshop", false) and OUTCOME.has(grade)

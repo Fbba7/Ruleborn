@@ -83,8 +83,34 @@ Each of these is a request to K1 through the lead, with the default the screen u
 - **With large text the page scrolls under the foot bar.** At 200% the actions sit at the foot and the moment's card passes under them as the page scrolls (F6's choice: the thumb's bar stays at the foot).
 - **Home's icon stands at the left** of its button with its word centred when the bar is upright (pt_BR, 200%).
 
+## The gate's advisory points (verdict at `8bec0d84`)
+
+The advisory verdict passed 4 of 7. Lead cycle 76 asked each builder to take the cheap fixes before marking ready and to list the rest. Taken:
+
+- **Display type at 100%: words on the art had no outline.** The hero's kicker, title, condition and length lines, and the fee, detail and server-check lines under the tiles, now carry the kit's ink outline (§21.8: 1.5 points or 12% of the size, as `UI.world_words`; 3 points in high contrast). The outline takes the place of the title's soft drop.
+- **Display type at 100%: the totals were flat fills, and +2,310 was dark on cream.** The three totals are display numbers in the ink outline. Starlight is `gold_top` on parchment; Essence and Renown are `cream` on glass.
+- **Display type at 200%, pt_BR: "3 s" was clipped.** `KitControls.big_action` keeps a fixed 76×64 px minimum, and its words grew past it. The moment's button now grows to its icon and words, from the kit's size up.
+
+The hard ink drop the judge also named is left off the totals. Each outline or drop is a further text pass. With the drops, result/200 read 93 draw calls against its record of 90; without them it reads 90.
+
+Not taken, as follow-ups:
+
+- **Character presence** (fail at 100%). The judge asks for separate, larger crew portraits, about 60 px as in the anchor, or a character on the reward. Both are new art placement, for AD to rule on (S1-R20). With result/200 at its record of 90, larger portraits would also need draw calls freed elsewhere.
+- **Baked numerals.** `KitNumerals` could draw the totals as the kit's baked display numbers, with the gradient and the drop, in place of a font with an outline.
+
+Budget stills after the fixes (no server answer):
+
+| Budget still | Record | Before | Now |
+|---|---|---|---|
+| result/100 | 94 | 82 | 89 |
+| result/200 | 90 | 79 | 90 |
+| result/hc | 94 | 82 | 89 |
+
+With `SERVER=1` the full frame is 120 draw calls at 100% (en) and 90 at 200% (en, pt_BR). FIT is ok on en 100%, en 200%, pt_BR 200% and high contrast.
+
 ## Tried and failed
 
+- **The totals with an outline and a hard ink drop:** result/200 rose to 93 draw calls, over its record of 90. The drop was removed and the outline kept.
 - Turning the raid row upright with `vertical = true` on an `HBoxContainer`: it is ignored there. The row is a plain `BoxContainer`.
 - Wrapping the raid words by setting the label's minimum width to the room: the label still wrapped at the full width of `action2`'s box, anchored over the whole button. The box is inset instead.
 - Reading a still after a FIT failure: the shot quits before it saves, so the old still stayed and was misread as current. Renders now go to a fresh folder each round.
