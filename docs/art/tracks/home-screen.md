@@ -108,16 +108,16 @@ Checks run on the task's last commit: see `docs/progress/S2.md`.
 These are things the kit's parts cannot do yet, or costs that the kit's parts bring. Each is a request in `docs/progress/status/S2.json`, with the default home uses until it is answered.
 
 - **Home draws 24 more calls at 100% and in high contrast** (143 against a record of 119), and 15 more at 200% (112 against 97). It is still 7 under the cap of 150, but while the raid notice shows (`NOTICE=1`, not a budget shot) the frame at 100% reaches 154. A saving on the kit's side is K1's to weigh: icons in the skin atlas, or one layer for a part's art across its siblings. (S2-R7, S2-R16)
-- **In Portuguese, the goal gives way to Collect at 100% text.** "Coletar 3,4 mil" leaves less than the goal's narrowest (150 points) beside it, so Collect shows alone, as at large text in English. (No request: the goal's own screen still shows it.)
-- **At 200% text, the chosen tab's name hides where it would wrap below its tile** ("Ilhas" in Portuguese); the other tabs show their icons alone there already. Each stays named aloud. (S2-R15)
+- ~~**In Portuguese, the goal gives way to Collect at 100% text.**~~ Fixed in part 3: where the two do not share a line, the goal stacks under Collect.
+- ~~**At 200% text, the chosen tab's name hides where it would wrap below its tile.**~~ Fixed in part 3: the chosen tab's name always shows, sized to its tile.
 - **Display type, the raised Heist tab and Collect's size are home's own.** The kit's parts set figures in the body face, have no raised tab, and do not size a button to its words, so home does these itself until the kit does. (S2-R12, S2-R14, S2-R15)
 - **The raid notice's card is drawn in code.** `banner_alarm` has no shape of its own in the skin. It falls back to the red button's light face, on which white words measure 2.5 to 2.8:1. Home refills the box with the material's dark card colours. The line goes once the shape lands. (S2-R6)
 - **The raid notice is composed by the screen.** `KitPanels.notice` (through `UI.banner`) frees itself after `banner_ms` unless the player keeps banners, and its cross frees the panel. Home's notice must stay until it is seen or dismissed (§21.8), and must come back when new raids arrive. At 150% text and above its words also need the card's whole width, with the mark, See and the cross in a row beneath; the kit's notice keeps them all in one row. So home composes the notice from `UI.panel`, `UI.status` and `UI.action`. (S2-R8)
 - **Home reaches around `KitLayout.tap`.** The kit's tap stands inside the card's padding, so home moves it into a holder of the pill's own size and marks its button not frequent. Every tap also logs an error, because it connects `button_down` twice ("Signal 'button_down' is already connected"). The tap still works. (S2-R9)
-- **At 200% text, the realms' pins hide as a set.** Even compact, the seven pins do not all find room there, so home shows the islands unnamed. (No request: the room is the screen's, and the islands are a few points wide at that size.)
-- **At 200% text in Portuguese, the raid notice hides Collect** until the raids are seen or dismissed: the screen has no height for both. The goal and Collect come back with the foot. (No request: the room is the screen's.)
+- ~~**At 200% text, the realms' pins hide as a set.**~~ Fixed in part 3: numbered chips show at 200%.
+- ~~**At 200% text in Portuguese, the raid notice hides Collect.**~~ Fixed in part 3: the notice is one line at large text, and Collect is never hidden.
 - **At 200% text in German, Collect shows its words without its picture.** (No request.)
-- **At 200% text in Portuguese, the purse takes three rows.** "Pedras" and the widest amounts do not fit two pills to a row beside the badge, and the world shows only between the top and the tab bar. Nothing overlaps (FIT passes), but the universe is barely seen. (No request yet: a narrower pill is a kit question, to raise if AD objects.)
+- ~~**At 200% text in Portuguese, the purse takes three rows.**~~ Fixed in part 3: two rows in every language, with strain in the second row.
 
 ## Part 2: the live character (P2-S2-home-2)
 
@@ -141,6 +141,81 @@ Task P2-S2-home-2 takes the points the advisory gate made on part 1 (cycle 77, `
 - **Home draws 2 more calls for the live character** (S2-R17).
 - **The ring is home's own size.** The kit's Keeper part draws its ring at 52 points. Home sets 76 itself, as it sets the display role on the figures (S2-R12).
 - **The still is not frame-exact.** The companion's idle runs on the frame clock, so two stills can differ by a few frames of the idle. The world's own motion already does the same.
+
+## Part 3: board 3's objections (P2-S2-home-3)
+
+AD's board 3 (`docs/art/ui-quality/gate/boards/board-3.md`, at `73bbcec6`) did not stand. It made three objections on home (A to C, filed as AD-R22 to AD-R24) and one on the kit's tabs (D, K1's P2-K1-tabs). This part answers A to C.
+
+**A: Collect stays on the screen (AD-R22).**
+
+- Collect and the goal always keep their place, at every text size, in every language and with the raid notice up.
+- At large text (150% and more), the raid notice is one line: the heist's mark, the headline's tag, See, and the close cross on the kit's round plate. The line under the headline is still said aloud with it.
+- Collect's words get smaller before they leave its gold. At 200% German, "3,4 Tsd. einsammeln" first drops Collect's picture, then shrinks to the screen's width, never under 12 points.
+- **The scripted check.** The shot's `FIT=1` check (`must_show` in `client/tests/shots/universe_home.gd`) now fails when any of these is hidden or reaches outside the viewport:
+  - Collect, whenever anything waits to be collected;
+  - the goal;
+  - the chosen tab's name.
+- It also fails when no realm is marked over the whole universe. This is what let objection A pass `FIT=1` before: that check only looked at labels inside their own boxes.
+
+**B: the world is framed between the panels (AD-R23).**
+
+- The universe is fitted into the room between the purse and what stands over its foot (the notice, the goal and Collect), in every state, as the notice state already did.
+- At 100% all seven realms and their pins are clear of the goal and of Collect. Verdant and Emberreach sit above the goal.
+- The pins settle clear of the side buttons and their badges. A wider second search (`UniversePins._settle_at`) finds each pin a place where the first one found none.
+- In Portuguese, the Defence badge is clear of the Skyfield pin.
+- The goal takes one line at 100% in English and two in Portuguese.
+
+**C: nothing is dropped (AD-R24).**
+
+- **The goal bar shows at every size.** It sits beside Collect where the two share a line. Otherwise it stacks under Collect and wraps, as the 200% key frame stacks them.
+- **At 200%, the realms show numbered chips** in place of their named pins: each realm's level on the kit's plate. Each realm is still said aloud.
+- **The purse keeps two rows at large text, in every language.** This leaves the world its room for the chips:
+  - Strain moves into the purse's second row.
+  - In German, where "142,0 Tsd." and "31,4 Tsd." cannot share a row, the three amounts shrink a little, never under 85% of their size (`AMOUNT_LEAST`).
+- **The side buttons are discs alone at large text**, with no caps tags, as the key frame sets them at 200%:
+  - They stand in their columns where the room is tall enough, otherwise side by side across each edge.
+  - Only where that row would leave the realms no room do they give way: at 200% with the raid notice up, or on a short phone. Every place they lead to is also on the badge's menu, and the raids are on the notice.
+- **Home's part of the dock labels.**
+  - At 100% in Portuguese, all five names show. ASSALTO is set a little smaller instead of being cut.
+  - At 200%, the chosen tab's name always shows, sized to fit inside its tile. The other tabs show their icons alone, each still named aloud, as the 200% key frame does.
+  - Where the label sits on the tile's rim is KitTabs' (objection D, P2-K1-tabs).
+
+**AD's notes on board 3.**
+
+| Note | Answer |
+|---|---|
+| The companion's idle turns its face away | The yaw is clamped. Where an idle turns the head more than 0.3 radians from its rest pose (`YAW_LEAVE`), the figure turns back by what is past it, so the face stays toward the camera through the cycle (`UniverseBadge._keep_facing`). |
+| The strain mark is a cyan dot, not the key frame's pink bolt | Kept. The dot is the kit's strain pill (`KitStatus.strain`). A bolt in that part is K1's to add; home will show it once the part has it. |
+| The fixture has no notifications, shield or locked realm | Not added in this task. The dock's count badges are KitTabs' (P2-K1-tabs is open on that file), and adding them now would move the budget shots under K1's work. Home has no Defence timer data to show: the shield timer needs a source in the defence service first. Lantern Vale's lock is the next fixture change to make, in a later task. |
+| Collect's shine did not fall in AD's frames | No change. The kit's motion test covers the shine. |
+
+**Draw calls.**
+
+| Shot | Calls | Budget |
+|---|---|---|
+| home/100 | 145 | 145 |
+| home/200 | 114 | 114 |
+| home/hc | 145 | 145 |
+
+The budget shots are unchanged. With the raid notice up at 100% (`NOTICE=1`, not a budget shot), the frame reaches 154 in English, 152 in French and 151 in Portuguese, as before this part. At 200% with the notice up it draws 112 to 120.
+
+**Evidence.** `FIT=1`, with the new checks, passes in 22 cases:
+
+| Text size | Cases |
+|---|---|
+| 100% | en, pt_BR, de, high contrast, the tallest strings (`MOST`), with the notice in en, pt_BR and fr |
+| 150% | en, and pt_BR with the notice |
+| 200% | en, pt_BR, de, high contrast; with the notice in en, pt_BR, de, fr and pt_PT |
+| 960 points tall | at 100%, and at large text |
+| 900 points tall | 200% with the notice |
+
+Checks run on the task's last commit are in `docs/progress/S2.md`.
+
+**Still worse, or open:**
+
+- **The Portuguese goal is not number-first.** It reads "faltam 1.240 de experiência · Guardião 25", while the key frame's English is number-first. The string is in `strings.csv`, which is not this task's file (S2-R19).
+- **At 200% with the raid notice up, the side buttons give way.** Their places stay on the badge's menu.
+- **Collect's words shrink at 200% in German**, below the kit's button size.
 
 ## Left for other tasks
 

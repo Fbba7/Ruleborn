@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-13T09:00:00Z",
   "lease_until": "2026-11-13T12:00:00Z",
-  "updated_at": "2026-11-13T09:32:00Z",
-  "expected_next_update_by": "2026-11-13T10:32:00Z",
+  "updated_at": "2026-11-13T09:58:00Z",
+  "expected_next_update_by": "2026-11-13T10:58:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "3612e265",
-    "next_step": "200% cases pass the fit check (pins settle wider, edges side by side or hidden, one-line notice); re-rendering 100% and the full case set, then docs and checks",
-    "at": "2026-11-13T09:32:00Z"
+    "next_step": "A-C built and shot (22 FIT cases pass, budgets 145/114/145 unchanged); AD preview S2-R20 filed; check_all running, then merge main, pre-check, ready",
+    "at": "2026-11-13T09:58:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -255,6 +255,37 @@
       "created_at": "2026-11-13T05:39:03Z",
       "due": "2026-11-13T11:39:03Z",
       "default": "The stills stand as built; S2 marks P2-S2-home-2 ready when its checks and the gate pass, and any objection becomes a follow-up task beside it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R19",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Board 3's objection B asks for the goal 'number first, as the key frame'. pt_BR's HOME_GOAL_KEEPER string reads 'faltam 1.240 de experiência · Guardião 25' (the count after 'faltam'). Should it be rewritten number-first, e.g. '1.240 de experiência a ganhar · Guardião 25', in client strings.csv (not S2's file)? Home keeps the goal to two lines at 100% in pt_BR either way.",
+      "files": [
+        "client/i18n/strings.csv"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T09:58:00Z",
+      "due": "2026-11-13T21:58:00Z",
+      "default": "Keep the pt_BR string as it is: it reads naturally, fits two lines at 100%, and the number is the first figure in it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R20",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Preview home part 3 (P2-S2-home-3, board 3's objections A-C, AD-R22 to AD-R24) on claude/ui-screens-home at 0ffb6049 before it is marked ready (M10, M12), against art/ui/keyframes/01-home.* and board 3. Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` and the env TEXT=200, LOCALE=pt_BR, NOTICE=1, LOCALE=de, CONTRAST=1 in board 3's combinations (the task's files allow S2 to commit no stills). What changed: A, Collect always on screen, the notice one line at large text with its cross on the kit's plate, a scripted check (must_show) that Collect, the goal and the chosen tab's name are inside the viewport; B, the world framed between the purse and the foot at 100%, pins clear of Collect, the goal and the side buttons, the goal one line (en) or two (pt_BR); C, the goal kept at every size, numbered realm chips at 200%, side buttons as discs alone at large text, the purse two rows in every language, the chosen tab's name always shown. Your notes: the featherkin's yaw is clamped (YAW_LEAVE 0.3). docs/art/tracks/home-screen.md 'Part 3' lists the rest and what is still open. Send every objection in one round (M12).",
+      "files": [
+        "client/scripts/home.gd",
+        "client/world/universe_pins.gd",
+        "client/world/universe_badge.gd",
+        "client/tests/shots/universe_home.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T09:58:00Z",
+      "due": "2026-11-13T15:58:00Z",
+      "default": "The stills stand as built; S2 marks P2-S2-home-3 ready when its checks pass, and any objection becomes a follow-up task beside it.",
       "escalate_to": "lead"
     }
   ],
