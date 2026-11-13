@@ -8,18 +8,18 @@
   "task_state": "working",
   "claimed_at": "2026-11-13T06:14:06Z",
   "lease_until": "2026-11-13T09:50:05Z",
-  "updated_at": "2026-11-13T07:46:20Z",
-  "expected_next_update_by": "2026-11-13T08:31:20Z",
+  "updated_at": "2026-11-13T07:49:40Z",
+  "expected_next_update_by": "2026-11-13T08:34:40Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "d0f4a89",
-    "next_step": "Main 0826216a merged as aed28321 (setup line, build.sh, guard.sh, check_screens OK; main brought only AIA's motion shots and strips, the screen's code is as at e13b5a3c). The e13b5a3c pre-check was lost in a container restart; pre-check running on aed28321 (at the key-frame stage, 07:46Z); main d76e2079 changed only backlog.json and lead.json since; gate request moved to aed28321. Next: record it, read the verdict, ready in the same turn.",
-    "at": "2026-11-13T07:46:20Z"
+    "last_green_sha": "aed28321",
+    "next_step": "Pre-check PASS on aed28321 (2026-11-13T07:49:05Z, recorded). Gate requested at aed28321 (or e13b5a3c, same screen code). Next: read the verdict; mark ready at aed28321 in the same turn it returns.",
+    "at": "2026-11-13T07:49:40Z"
   },
   "precheck": {
-    "sha": "d0f4a8993658f394f94da0ee9ba9f0fb4c17fd1a",
+    "sha": "aed28321c02e67edf889d45075675bd1343335cd",
     "exit": 0,
-    "finished_at": "2026-11-13T05:41:49Z",
+    "finished_at": "2026-11-13T07:49:05Z",
     "summary": "All checks passed."
   },
   "gate_request": {
@@ -397,5 +397,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Record the pre-check on aed28321; read the gate verdict (aed28321, or e13b5a3c if it was already launched there: same screen code); mark ready in the same turn it returns"
+  "next_step": "Read the gate verdict for P2-S1-result-2 at aed28321 (or e13b5a3c); mark ready at aed28321 in the same turn"
 }
