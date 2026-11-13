@@ -72,6 +72,13 @@ Follow-ups, not taken here:
 - **The ability card is still open, with its sentence.** Key frame 04 shows the sentence too, so collapsing the card to its header would drop words the anchor keeps. If the judge still fails hierarchy, the next step is the kit's: a smaller ability card (request to K1).
 - **Level up's label and value.** The button is the kit's (`KitControls.upgrade`), and its growth is S3-R3's request.
 
+### The gate's advisory verdict at 6f6a3b15
+
+5 of the 7 checks pass (`docs/art/ui-quality/gate/verdicts/P2-S3-character/6f6a3b15.json`). Hierarchy at 100% now passes 3 of 3: Level up leads. Still failing, listed as follow-ups (the gate is advisory; lead cycle 76):
+
+- **Display type, at 100% and at 200% pt_BR (3 fails of 3 each).** The judge still reads the subtitle and the level label as words over art with no outline. The 1.5-point outline is in the render, but it is the kit's ink (`#120C2A`) on a starfield near the same value, so it does not show at the still's scale. Next step, for AD or K1: put the two lines on a dark plate, or give words over the stage a light or gold edge the ink outline cannot give on this ground. The judge also names two kit parts: the level hexagon's "LV"/"NV" kicker runs over the badge's edge (`KitHex`), and the price on Level up is a flat white figure, not display type (`KitControls.upgrade`). Both are K1's.
+- **Hierarchy in high contrast passes 4 of 6.** Two samples found Level up mid-grey and lower than the anchor's. The button's height at large text is S3-R3's.
+
 ### What is still worse than before
 
 - **The law card's preview has no frame.** `law_screen.gd` seats the preview in `ScreenKit.panel("well", preview, 16.0, 3.0)`. The track skin drew a dark rim round it; the well skin's rim is soft and 3 points of padding leave it under the picture, so the picture's edges fade into the green card. `law_screen.gd` is not this task's; it is in S3-R2 for AD to judge, and a fix (more padding, or the kit's `frame_*` look) is a request to the lead.

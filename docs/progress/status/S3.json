@@ -3,17 +3,17 @@
   "role": "S3",
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S3-character",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-13T00:22:00Z",
   "lease_until": "2026-11-13T09:00:00Z",
-  "updated_at": "2026-11-13T04:34:00Z",
-  "expected_next_update_by": "2026-11-13T05:19:00Z",
+  "updated_at": "2026-11-13T05:24:00Z",
+  "expected_next_update_by": "2026-11-13T06:09:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "f1251e68523136caee766eb5186892803fb8f65b",
-    "next_step": "Advisory verdict at f1251e68: 4 of 7 pass. Taking the cheap fixes (lead cycle 76): the ink outline on the subtitle and the level label over the starfield, and the ability card's weight against Level up at 100%. Then pre-check, gate again, ready.",
+    "last_green_sha": "6f6a3b158948e860820c39ec9912ab899638a473",
+    "next_step": "P2-S3-character ready at 6f6a3b15 (run_checks PASS 04:29Z, recorded; guard OK). Advisory gate at 6f6a3b15: 5 of 7 pass, hierarchy at 100% fixed. Follow-ups: display type over the starfield (the ink outline does not show on the dark ground: a plate or light edge, AD/K1), the KitHex kicker and the flat price on KitControls.upgrade (K1). Next session: P2-S3-settings.",
     "at": "2026-11-13T04:00:00Z"
   },
   "precheck": {
@@ -30,7 +30,7 @@
       "character in high contrast"
     ]
   },
-  "ready_sha": null,
+  "ready_sha": "6f6a3b158948e860820c39ec9912ab899638a473",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
   "requests": [
@@ -140,5 +140,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "Gate requested at 6f6a3b15 (run_checks PASS 04:29Z, recorded; guard OK) on the same three character items, after the cheap fixes for the verdict at f1251e68. Read the verdict, then mark ready (advisory gate, lead cycle 76), listing what still fails as follow-ups."
+  "next_step": "P2-S3-character ready at 6f6a3b15 (run_checks PASS 04:29Z, recorded; guard OK). Advisory gate at 6f6a3b15: 5 of 7 pass, hierarchy at 100% fixed. Follow-ups: display type over the starfield (the ink outline does not show on the dark ground: a plate or light edge, AD/K1), the KitHex kicker and the flat price on KitControls.upgrade (K1). Next session: P2-S3-settings."
 }
