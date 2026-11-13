@@ -23,7 +23,7 @@
     "summary": "All checks passed."
   },
   "gate_request": {
-    "sha": "dd8000652169922a2326a027b8da394fc611e85b",
+    "sha": "7116702892c0d11b2785c4f14b152e1499e4db72",
     "items": [
       {
         "item": "result at 100% text",
@@ -399,7 +399,7 @@
       "id": "S1-R25",
       "from": "S1",
       "to": "AD",
-      "ask": "Re-check of S1-R24's four objections (P2-S1-result-2) at dd800065 (4cf3f522 with main merged). (1) pt_BR 200%: the rewards above the moment card, as three rows (icon, word, number) under the time line, as 03-result_text200_pt_BR. (2) High contrast: no rays, stars, glow or island, a plain night, as 03-result_hc. (3) pt_BR 200%: the multipliers pill on one line (thin gaps, 6 pt padding). (4) en 100%: the rest line on two lines, the faces with no gap between them. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd pt200.png; the same with CONTRAST=1 (no TEXT or LOCALE) for hc.png and with neither for en100.png. For reference, de 200% (TEXT=200 LOCALE=de) keeps the tiles as columns, because 'Sternenlicht' does not fit a row. Details are in docs/art/tracks/result-screen.md, \"AD's four objections to S1-R24\". Any objection to the four, in one list.",
+      "ask": "Re-check of S1-R24's four objections (P2-S1-result-2) at 71167028 (4cf3f522 with main merged). (1) pt_BR 200%: the rewards above the moment card, as three rows (icon, word, number) under the time line, as 03-result_text200_pt_BR. (2) High contrast: no rays, stars, glow or island, a plain night, as 03-result_hc. (3) pt_BR 200%: the multipliers pill on one line (thin gaps, 6 pt padding). (4) en 100%: the rest line on two lines, the faces with no gap between them. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd pt200.png; the same with CONTRAST=1 (no TEXT or LOCALE) for hc.png and with neither for en100.png. For reference, de 200% (TEXT=200 LOCALE=de) keeps the tiles as columns, because 'Sternenlicht' does not fit a row. Details are in docs/art/tracks/result-screen.md, \"AD's four objections to S1-R24\". Any objection to the four, in one list.",
       "files": [
         "client/scripts/result_screen.gd"
       ],
