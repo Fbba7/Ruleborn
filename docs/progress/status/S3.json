@@ -7,14 +7,14 @@
   "task_id": "P2-S3-character",
   "task_state": "working",
   "claimed_at": "2026-11-13T00:22:00Z",
-  "lease_until": "2026-11-13T08:25:00Z",
-  "updated_at": "2026-11-13T03:32:00Z",
-  "expected_next_update_by": "2026-11-13T04:17:00Z",
+  "lease_until": "2026-11-13T09:00:00Z",
+  "updated_at": "2026-11-13T04:00:00Z",
+  "expected_next_update_by": "2026-11-13T04:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "f1251e68523136caee766eb5186892803fb8f65b",
-    "next_step": "Gate requested at f1251e68 on the three character items (stills and records in docs/art/shots/menu-screens/character-{100,200-pt_BR,hc}.*). Requested before S3-R5's due time because AD has no running session (its branch's last push is 12 November 17:07Z, state waiting); S3-R5 stays open, and an objection from AD before the verdict is answered with fixed stills and a new gate request. Next: read the verdict under docs/art/ui-quality/gate/verdicts/P2-S3-character/.",
-    "at": "2026-11-13T03:32:00Z"
+    "next_step": "Advisory verdict at f1251e68: 4 of 7 pass. Taking the cheap fixes (lead cycle 76): the ink outline on the subtitle and the level label over the starfield, and the ability card's weight against Level up at 100%. Then pre-check, gate again, ready.",
+    "at": "2026-11-13T04:00:00Z"
   },
   "precheck": {
     "sha": "f1251e68523136caee766eb5186892803fb8f65b",
@@ -22,14 +22,7 @@
     "finished_at": "2026-11-13T03:21:40Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "f1251e68523136caee766eb5186892803fb8f65b",
-    "items": [
-      "character at 100% text",
-      "character at 200% text, pt_BR",
-      "character in high contrast"
-    ]
-  },
+  "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
