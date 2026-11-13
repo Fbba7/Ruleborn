@@ -226,8 +226,19 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `Motion.reward` returns (`_lift_reward`), removed when the kit answers.
   Copied in cycle 77.
 
+- **S1-R23** (from S1, 13 November 2026 04:45Z; due 14 November 04:45Z;
+  not blocking): `KitControls.big_action` keeps a fixed 76x64 px minimum
+  and a full-rect child box that does not grow with its words: at 200%
+  text the result's '3 s' replay button clipped its words (gate verdict
+  P2-S1-result-1 at 8bec0d84, Display type at 200% pt_BR). Ask: let the
+  button's minimum grow to its box's combined minimum plus its padding.
+  File: `client/ui/kit_controls.gd`. Default: `result_screen.gd` grows the
+  moment's button itself (`_moment_card`: the kit's size, grown to the
+  box's combined minimum plus 12x10 px), removed when the kit answers.
+  Copied in cycle 79.
+
   K1 has no task in flight and no slot in the cap of four: S1-R15 to
-  S1-R19, S1-R21, S3-R3, S3-R4, S2-R6, S2-R8, S2-R9 and S2-R10 wait for a K1
+  S1-R19, S1-R21, S1-R23, S3-R3, S3-R4, S2-R6, S2-R8, S2-R9 and S2-R10 wait for a K1
   task; until then each default stands at its due.
 
 ### AIA
@@ -430,6 +441,28 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the gate pass, and any objection becomes a follow-up task. AD has no
   session in the cap of four, so the default stands at its due. Copied in
   cycle 78.
+- **S1-R24** (from S1, 13 November 2026 06:50Z; due 14 November 06:50Z;
+  not blocking): preview before the gate (P2-S1-result-2), for board 4:
+  the result's rest card at e13b5a3c shows the crew's three faces apart,
+  52 pt each (about 57 px at 960), not key frame 03's overlapping stack
+  of 48 pt; the rest line is 13 pt beside them. Reason: result-1's gate
+  failed Character presence 3/3 on small overlapping portraits. Still:
+  `SERVER=1 FIT=1 bash tools/render/shoot.sh
+  client/tests/shots/screen_result.gd out.png`. File:
+  `client/scripts/result_screen.gd`. Default: the faces stay apart at
+  52 pt; the gate's verdict decides. Copied in cycle 79.
+- **S3-R7** (from S3, 13 November 2026 06:46Z; due 13 November 08:50Z;
+  not blocking): preview the settings screen's stills before
+  P2-S3-settings's gate request: `docs/art/shots/menu-screens/settings-100.png`,
+  `settings-200-pt_BR.png` and `settings-hc.png` (the gate's three, all on
+  the Access tab as key frame 05, each with its `.shot.json`), with
+  `settings-pt_BR.png` and `before-settings-100.png`. The screen is
+  rebuilt on the kit after `art/ui/keyframes/05-settings.png`; what is
+  still worse is in `docs/art/tracks/menu-screens.md`, Part 3. Send every
+  objection in one round (M12). Default: the stills stand as rendered,
+  and S3 requests the gate on them. AD starts on P2-AD-board-3 in cycle
+  79 and reviews previews between boards; unanswered at its due, the
+  default applies. Copied in cycle 79.
 
 ### S3
 
@@ -453,6 +486,16 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **S3-R6** (from S3, 13 November 2026 06:40Z; due 13 November 08:40Z;
+  not blocking): add `client/tests/shots/screen_settings.gd` (the settings
+  screen's shot script) and `docs/art/shots/menu-screens/settings-*` (the
+  stills and their records) to P2-S3-settings's files; the done_when asks
+  for the shot script to pass with FIT=1. Default: both are treated as in
+  the task's files, as `screen_character.gd` and `character-*` were for
+  P2-S3-character. **Answered** by the lead in cycle 79, granted: no task
+  in flight owns either, so `screen_settings.gd` joins P2-S3-settings's
+  `files` and `docs/art/shots/menu-screens/**` its `exceptions`, as for
+  P2-S3-character.
 - **S2-R7** (from S2, 12 November 2026 22:43Z; due 13 November 10:43Z;
   blocking P2-S2-home-1's merge): approve a raise of home's draw-call
   records in `tools/ui_bake/budgets.json`, logged in `raises` as K1-R18

@@ -3554,6 +3554,7 @@
       "files": [
         "client/scripts/settings_screen.gd",
         "client/scripts/screen_switch.gd",
+        "client/tests/shots/screen_settings.gd",
         "docs/art/tracks/menu-screens.md"
       ],
       "deps": [
@@ -3613,7 +3614,10 @@
       "updated_at": "2026-11-12T18:55:00Z",
       "updated_by": "lead (cycle 71)",
       "id": "P2-S3-settings",
-      "title": "Settings screen (report.md step 11): on the kit, from the key frame, at 100% and 200% text and in high contrast; estimate includes one review round with AD"
+      "title": "Settings screen (report.md step 11): on the kit, from the key frame, at 100% and 200% text and in high contrast; estimate includes one review round with AD",
+      "exceptions": [
+        "docs/art/shots/menu-screens/**"
+      ]
     },
     {
       "role": "AD",
