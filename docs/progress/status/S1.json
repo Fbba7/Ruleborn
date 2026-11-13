@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-13T06:14:06Z",
   "lease_until": "2026-11-13T09:50:05Z",
-  "updated_at": "2026-11-13T06:50:05Z",
-  "expected_next_update_by": "2026-11-13T07:35:05Z",
+  "updated_at": "2026-11-13T07:15:30Z",
+  "expected_next_update_by": "2026-11-13T08:00:30Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d0f4a89",
-    "next_step": "Gate requested at e13b5a3c (main c1a4e151 merged; build.sh ok; guard, check_screens, gdlint pass; strips and clips re-rendered on main). Rest card: the crew's three faces apart at 52 pt (result-1's Character presence fail). Pre-check running on e13b5a3c; next: record it, read the verdict, ready in the same turn.",
-    "at": "2026-11-13T06:50:05Z"
+    "next_step": "Main 0826216a merged as aed28321 (setup line, build.sh, guard.sh, check_screens OK; main brought only AIA's motion shots and strips, the screen's code is as at e13b5a3c). The e13b5a3c pre-check was lost in a container restart; pre-check running on aed28321; gate request moved to aed28321. Next: record it, read the verdict, ready in the same turn.",
+    "at": "2026-11-13T07:15:30Z"
   },
   "precheck": {
     "sha": "d0f4a8993658f394f94da0ee9ba9f0fb4c17fd1a",
@@ -23,7 +23,7 @@
     "summary": "All checks passed."
   },
   "gate_request": {
-    "sha": "e13b5a3c77ffdb5fabb5914675930f6b374400da",
+    "sha": "aed28321c02e67edf889d45075675bd1343335cd",
     "items": [
       {
         "item": "result at 100% text",
@@ -397,5 +397,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Gate requested at e13b5a3c (main c1a4e151 merged; build.sh ok; guard, check_screens, gdlint pass; strips and clips re-rendered on main). Rest card: the crew's three faces apart at 52 pt (result-1's Character presence fail). Pre-check running on e13b5a3c; next: record it, read the verdict, ready in the same turn."
+  "next_step": "Record the pre-check on aed28321; read the gate verdict (aed28321, or e13b5a3c if it was already launched there: same screen code); mark ready in the same turn it returns"
 }
