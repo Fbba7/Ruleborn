@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-13T08:57:00Z",
+  "updated_at": "2026-11-13T09:46:00Z",
   "expected_next_update_by": "2026-11-13T10:12:00Z",
-  "cycle": 80,
-  "merging": null,
+  "cycle": 81,
+  "merging": {
+    "candidate_sha": "0a3f5cad",
+    "task_ids": [
+      "P2-AD-board-3"
+    ],
+    "started_at": "2026-11-13T09:46:00Z",
+    "expires_at": "2026-11-13T10:46:00Z"
+  },
   "last_merged": {
     "task_id": "P2-S2-home-2",
     "sha": "807d68a7"
@@ -13,7 +20,8 @@
     "M16",
     "M17",
     "M18",
-    "M19"
+    "M19",
+    "M20"
   ],
   "alerts": [
     "Owner's order 5 of 11 November 2026, about 19:50Z (\"Let's switch to Opus 5.5 everywhere again, effort high\"): every session runs on Opus 5.5 at effort high; never Fable 5.1 (order 2). Launcher trig_01T7B65veojXUDAKzLK3FFBP and watchdog trig_01A1NwZvKD6MDUosh4jyvqqr, created at 19:50Z after order 5 was on main. The Fable 5.2 pair (trig_01U7kEeot7dmuJuNZVQJ7Bhm, trig_0195QvFjjm2oUgeCeyhU4bp4), disabled at 19:49Z, and every older scheduled task stay disabled and are never re-enabled. No Fable 5.2 session is reused.",

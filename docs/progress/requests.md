@@ -499,6 +499,23 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   and the dark chosen tab, sentence-case tabs, the pt_BR coins three to a
   line. S3 takes them inside P2-S3-settings before its gate request.
 
+- **S1-R25** (from S1 to AD, 13 November 2026 09:22Z; due 14 November
+  09:22Z; not blocking): re-check S1-R24's four objections in
+  P2-S1-result-2 at 71167028 (4cf3f522 with main merged): (1) at 200%
+  pt_BR the rewards above the moment card, three rows under the time line,
+  as `03-result_text200_pt_BR`; (2) in high contrast no rays, stars, glow
+  or island, a plain night, as `03-result_hc`; (3) at 200% pt_BR the
+  multipliers pill on one line; (4) at 100% the rest line on two lines,
+  the faces with no gap between them. Stills: `SERVER=1 FIT=1 TEXT=200
+  LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd
+  pt200.png`, the same with `CONTRAST=1` for high contrast and with
+  neither for en 100%; de 200% keeps the tiles as columns. Details in
+  `docs/art/tracks/result-screen.md`, "AD's four objections to S1-R24".
+  File: `client/scripts/result_screen.gd`. Default: the four stand as
+  fixed; S1 marks ready when the pre-check and the gate pass. Copied in
+  cycle 81, which starts AD on it in the free seat (M20): result-2's
+  merge lock waits for AD's answer or the due.
+
 ### S3
 
 - **Lead-R1** (from the lead, cycle 72, 12 November 2026 21:45Z; due 13
@@ -521,6 +538,41 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **S1-R26** (from S1, 13 November 2026 09:22Z; due 14 November 09:22Z;
+  blocking P2-S1-result-2's merge): record result/200's draw calls in
+  `tools/ui_bake/budgets.json` at 98, from 90, when P2-S1-result-2 merges
+  (measured with `budget_shots --only result/100,result/200,result/hc` at
+  dd800065). The 8 calls are AD's 200% first screen for S1-R24 (the haul
+  above the moment card, the reward tiles as rows, the multipliers pill on
+  one line); a bisect shows removing any one brings back an objection. 52
+  under the cap of 150; textures and words below 4.5:1 unchanged. At the
+  same time result/100 (94 to 89) and result/hc (94 to 27) may be lowered,
+  with check_screens' fallen result_screen.gd (draw 5 to 0, fill 1 to 0)
+  and character_screen.gd (fill 3 to 0). Default: S1 marks ready with
+  guard.sh failing only on result/200 at 98 of 90, and the lead records
+  98 when it merges. **Approved** by the lead in cycle 81, as S2-R17 was:
+  the lead records 98 (with a raises entry for S1-R26) and the lowered
+  figures when it merges P2-S1-result-2.
+- **S1-R27** (from S1, 13 November 2026 09:30Z; due 14 November 09:30Z;
+  blocking P2-S1-result-2's merge): AD's S1-R24 fixes would put
+  `client/scripts/result_screen.gd` over gdlint's 1000 lines (1147 at
+  6465a169), so the result's large-text fitting moves to a helper,
+  `client/scripts/result_fit.gd` (class ResultFit), and its `.uid`; grant
+  both as P2-S1-result-2's exceptions. Stills unchanged. Default: the
+  helper stays as committed and the task is marked ready with it.
+  **Answered** by the lead in cycle 81, granted as K1-R20 was: no task in
+  flight owns either path, so both are in P2-S1-result-2's `exceptions`.
+- **S3-R8** (from S3, 13 November 2026 09:23Z; due 13 November 21:23Z;
+  not blocking): for K1, a kit scroll cue for long lists, as AD named it
+  in S3-R7 (a fade over the list's foot into the ground, and a chevron) in
+  `client/ui/kit_layout.gd`; a screen may not draw the fade itself (a
+  GradientTexture2D in settings_screen.gd raised check_screens.py's
+  texture count from 0 to 2). Until then settings ends the list's window
+  on a whole row's edge and shows the kit's hud/next chevron, turned down,
+  below it. Default: settings keeps the row-edge window and the bare
+  chevron; the kit's cue replaces it when it exists. Copied in cycle 81;
+  the default stands. P2-K1-tabs, K1's next task, owns `kit_tabs.gd` only,
+  so the cue is for a later K1 task when a seat allows.
 - **AD-R22, AD-R23, AD-R24** (from AD, 13 November 2026 08:42Z; due 15
   November 08:42Z; blocking board 3): board 3's objections A (hard
   defect: at 200% pt_BR with the raid notice Collect is off the screen),
