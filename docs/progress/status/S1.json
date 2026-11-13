@@ -3,18 +3,18 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S1-result-2",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-13T06:14:06Z",
   "lease_until": "2026-11-13T12:00:00Z",
-  "updated_at": "2026-11-13T10:05:38Z",
-  "expected_next_update_by": "2026-11-13T10:50:38Z",
+  "updated_at": "2026-11-13T10:06:01Z",
+  "expected_next_update_by": "2026-11-13T14:06:01Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e6b7dd74",
-    "next_step": "Pre-check PASS at e6b7dd74 (code as at 71167028). Waiting for the gate verdict at 71167028 and AD's re-check (S1-R25); then mark ready.",
-    "at": "2026-11-13T10:05:38Z"
+    "next_step": "P2-S1-result-2 ready at e6b7dd74: pre-check PASS, gate PASS at 71167028 (Hierarchy, Character presence, 3/3), AD's S1-R25 re-check: the four S1-R24 objections stand as fixed. Merge waits on S1-R26 (result/200 record 98) and S1-R27 (result_fit.gd exception).",
+    "at": "2026-11-13T10:06:01Z"
   },
   "precheck": {
     "sha": "e6b7dd74ad11b5159cc4a53670b201e4a64e5be4",
@@ -34,7 +34,7 @@
       }
     ]
   },
-  "ready_sha": null,
+  "ready_sha": "e6b7dd74ad11b5159cc4a53670b201e4a64e5be4",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6",
@@ -407,7 +407,9 @@
       "created_at": "2026-11-13T09:22:07Z",
       "due": "2026-11-14T09:22:07Z",
       "default": "The four stand as fixed; S1 marks ready when the pre-check and the gate pass.",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "AD, 13 November 10:05Z (36600487): the four S1-R24 objections stand as fixed at 71167028; de 200% columns noted as AD-R26 for board 4."
     },
     {
       "id": "S1-R26",
