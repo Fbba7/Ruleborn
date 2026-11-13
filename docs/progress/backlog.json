@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-13T06:14:00Z",
+  "updated_at": "2026-11-13T06:17:00Z",
   "updated_by": "lead (cycle 78)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
@@ -3132,22 +3132,29 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "AIA",
         "branch": "claude/ui-artist",
         "claimed_at": "2026-11-13T04:48:00Z",
-        "seen_at": "2026-11-13T05:40:00Z",
+        "seen_at": "2026-11-13T05:46:00Z",
         "lease_until": "2026-11-13T07:48:00Z"
       },
       "prior_branch": "claude/ui-artist",
       "prior_sha": "7fd401e74cf1bba680a821b08bc0f576fe2eec32",
-      "ready_sha": null,
+      "ready_sha": "d064876337d54e47dcd5110362984ddb688aa010",
       "merged_sha": null,
-      "updated_at": "2026-11-13T05:47:00Z",
+      "updated_at": "2026-11-13T06:17:00Z",
       "updated_by": "lead (cycle 78)",
       "id": "P2-AIA-motion-2",
-      "title": "Motion art, part 2 (report.md step 8): the frame strips, full and reduced, and short clips of every motion for board 4, with the timing, reduced-form and flash checks; estimate includes one review round with AD"
+      "title": "Motion art, part 2 (report.md step 8): the frame strips, full and reduced, and short clips of every motion for board 4, with the timing, reduced-form and flash checks; estimate includes one review round with AD",
+      "exceptions": [
+        "client/tests/shots/motion_press.gd.uid",
+        "client/tests/shots/motion_reward.gd.uid",
+        "client/tests/shots/motion_rig.gd.uid",
+        "client/tests/shots/motion_screen.gd.uid",
+        "client/tests/shots/motion_shine.gd.uid"
+      ]
     },
     {
       "role": "S1",
