@@ -487,10 +487,9 @@ static func _reach(c: Control) -> Rect2:
 	return r
 
 
-## The universe's floor: the top of what stands over its foot, the raid
-## notice while it shows, else the goal and Collect, so the islands and their
-## pins fit in the room above them rather than hide beneath them (board 3's
-## objection B); the tabs only while nothing stands there.
+## The universe's floor: the top of the raid notice while it shows, else of the
+## goal and Collect, so the islands and pins fit above them (board 3's B); the
+## tabs only while nothing stands there.
 func _floor() -> Control:
 	var over: Control = _foot
 	if notice.visible:
@@ -717,9 +716,8 @@ func _show_strain(share: float, band: int, known: bool) -> void:
 
 
 ## The strain pill no wider than `room` if it can be: the number over the
-## band's name where one line will not do, its words a little smaller where
-## even two lines are a hair too wide (large text in Portuguese, whose amounts
-## are longer); past that, the row puts the pill on a line of its own.
+## band's name where one line will not do, its words a little smaller where two
+## lines are a hair too wide (Portuguese at large text); past that, a line alone.
 func _fit_strain(room: float) -> void:
 	if strain.get_child_count() == 0 or _strain_lines.is_empty() or absf(room - _strain_room) < 0.5:
 		return
@@ -745,10 +743,9 @@ func _fit_strain(room: float) -> void:
 		l.custom_minimum_size.x = 0.0
 
 
-## What the store holds (UniverseStore.purse): each resource's amount (past
-## 10,000 in thousands, "142.0k"; said in full) and how full its producers are
-## (§9.3), Full in gold words once nearly full. An amount the server has not
-## given is a dash, never a guess.
+## What the store holds (UniverseStore.purse): each amount (past 10,000 in
+## thousands, "142.0k"; said in full) and how full its producers are (§9.3),
+## Full in gold once nearly full. An amount not given is a dash, never a guess.
 func _show_purse(rows: Dictionary) -> void:
 	var said := PackedStringArray()
 	for k: String in UniversePurse.ORDER:
@@ -846,11 +843,8 @@ func _show_goal(g: Dictionary) -> void:
 func _raid_notice() -> PanelContainer:
 	var p := UI.panel("banner_alarm")
 	p.name = "RaidNotice"
-	# The material is a dark card edged and glowing in the alarm's colour
-	# (tokens.json, the designs' raid banner). The skin has no banner shape
-	# of its own yet and would fall back to the red button's light face,
-	# under which the words fail 4.5:1; refilled with the material's own
-	# card colours, the code-drawn box draws it (S2-R6 asks K1 for the shape).
+	# A dark card edged in the alarm's colour (tokens.json): the skin has no
+	# banner shape yet, and its red face fails 4.5:1 (S2-R6 asks K1 for one).
 	RbBox.of(p).tint(Tokens.color("card_top"), Tokens.color("card_bottom"))
 	var large := Settings.text_scale >= 150
 	if large:
@@ -899,20 +893,27 @@ func _raid_notice() -> PanelContainer:
 
 
 ## At large text the headline's tag on one line beside See and the cross: its
-## words where they fit, else the count alone (the disc says what came).
+## words where they fit, else the count alone; where even that leaves no room
+## (German's See at 200%), the disc gives way to the tag's alarm glyph.
 func _fit_notice(row: HBoxContainer, text: Control) -> void:
 	if _raid_title == "":
 		return
+	var disc := row.get_child(0) as Control
+	var gap := row.get_theme_constant("separation")
 	var room := _across() - notice.get_theme_stylebox("panel").get_minimum_size().x
 	for c: Control in row.get_children():
-		if c.visible and c != text:
-			room -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
+		if c.visible and c != text and c != disc:
+			room -= c.get_combined_minimum_size().x + gap
 	var font := _raid_words.get_theme_font("font")
 	var points := _raid_words.get_theme_font_size("font_size")
-	var pad := _raid_words.get_theme_stylebox("normal").get_minimum_size().x
-	var whole := "%s %s" % [UI.GLYPH["alarm"], _raid_title]
-	var fits := font.get_string_size(whole, HORIZONTAL_ALIGNMENT_LEFT, -1, points).x + pad <= room
-	var want := _raid_title if fits else str(_raid_count)
+	var pad := _raid_words.get_theme_stylebox("normal").get_minimum_size().x + font.get_string_size(
+		UI.GLYPH["alarm"] + " ", HORIZONTAL_ALIGNMENT_LEFT, -1, points).x
+	var with_disc := room - disc.get_combined_minimum_size().x - gap
+	var whole := font.get_string_size(_raid_title, HORIZONTAL_ALIGNMENT_LEFT, -1, points).x + pad <= with_disc
+	var want := _raid_title if whole else str(_raid_count)
+	var keep := whole or font.get_string_size(want, HORIZONTAL_ALIGNMENT_LEFT, -1, points).x + pad <= with_disc
+	if disc.visible != keep:
+		disc.visible = keep
 	if _raid_words.text != "%s %s" % [UI.GLYPH["alarm"], want]:
 		UI.set_status(_raid_words, "alarm", want)
 
@@ -979,10 +980,9 @@ func _play() -> void:
 	App.services.router.go(&"heist")
 
 
-## `l` in the kit's display role (tokens.json "display": the display face,
-## its heavier ink outline and hard drop) at `points`, for home's figures and
-## names: the small role's thinner line reads flat over the starfield at a
-## phone's size (cycle 77's gate).
+## `l` in the kit's display role (tokens.json "display": its face, heavier ink
+## and hard drop) at `points`, for home's figures and names, which the small
+## role's thinner line leaves flat over the starfield (cycle 77's gate).
 static func home_figure(l: Label, points: float) -> void:
 	if l == null:
 		return

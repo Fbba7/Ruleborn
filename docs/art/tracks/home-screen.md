@@ -150,6 +150,7 @@ AD's board 3 (`docs/art/ui-quality/gate/boards/board-3.md`, at `73bbcec6`) did n
 
 - Collect and the goal always keep their place, at every text size, in every language and with the raid notice up.
 - At large text (150% and more), the raid notice is one line: the heist's mark, the headline's tag, See, and the close cross on the kit's round plate. The line under the headline is still said aloud with it.
+- Where even the headline's count leaves the line no room (German's "Ansehen" at 200%), the heist's red disc gives way, and the tag's alarm glyph marks the notice.
 - Collect's words get smaller before they leave its gold. At 200% German, "3,4 Tsd. einsammeln" first drops Collect's picture, then shrinks to the screen's width, never under 12 points.
 - **The scripted check.** The shot's `FIT=1` check (`must_show` in `client/tests/shots/universe_home.gd`) now fails when any of these is hidden or reaches outside the viewport:
   - Collect, whenever anything waits to be collected;
@@ -216,6 +217,7 @@ Checks run on the task's last commit are in `docs/progress/S2.md`.
 - **The Portuguese goal is not number-first.** It reads "faltam 1.240 de experiência · Guardião 25", while the key frame's English is number-first. The string is in `strings.csv`, which is not this task's file (S2-R19).
 - **At 200% with the raid notice up, the side buttons give way.** Their places stay on the badge's menu.
 - **Collect's words shrink at 200% in German**, below the kit's button size.
+- **At 200% in German with the raid notice up, the notice drops its red disc.** The alarm glyph on the tag stays.
 
 ## Left for other tasks
 
