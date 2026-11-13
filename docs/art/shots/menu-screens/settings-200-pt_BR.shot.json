@@ -59,7 +59,17 @@
   },
   {
    "interactive": false,
-   "name": "words 7: Stillness",
+   "name": "sample 7: Stillness Anyone standing still for 1.5 seconds becomes invisible to guards and ",
+   "rect": [
+    32.5,
+    364.0,
+    322.11,
+    150.58
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 8: Stillness",
    "rect": [
     101.83,
     374.83,
@@ -68,7 +78,7 @@
    ]
   },
   {
-   "name": "back 8: Voltar",
+   "name": "back 9: Voltar",
    "rect": [
     28.17,
     704.17,

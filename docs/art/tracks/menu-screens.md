@@ -151,9 +151,9 @@ The budget shots' recorded draw calls for the character screen are 103, 80 and 1
 
 `client/scripts/settings_screen.gd` is built from the kit, after key frame 05 (`art/ui/keyframes/05-settings.png`):
 
-- **The head.** The settings mark and the title, on the kit's plate.
-- **The tabs.** Game, Access and Account are one strip of parchment, with the open tab on gold, each with the design's icon. When an icon and its word do not fit a third of the strip (at large text, or with a long word), the closed tabs keep only their icon and the open tab only its word, at twice the width. The screen reader still hears every word.
-- **The rows.** Each setting is a kit row or section (`KitPanels.row`, `KitPanels.section`):
+- **The head.** The settings mark and the title, on the kit's plate. The title wears the display stroke (kit-spec 2.2, T2): an ink outline and a hard drop. Unlike `KitNav.logo`'s, the drop has no outline of its own: an outlined drop costs each stroked label one more draw call, which took settings past its budget (55 against 52 at 100% and in high contrast).
+- **The tabs.** Game, Access and Account are one strip of parchment, each with the design's icon. The open tab is on the kit's chosen segment for parchment (`seg_on_light`: dark leather, cream words), so gold stays the main actions' alone (§21.8). When an icon and its word do not fit a third of the strip (at large text, or with a long word), the closed tabs keep only their icon and the open tab only its word, at twice the width. The screen reader still hears every word.
+- **The rows.** Each setting is a kit row or section (`KitPanels.row`, `KitPanels.section`). The group headings over the night wear the T2 stroke, a 1.5-point outline and a 2-point drop:
   - Steppers have the setting's icon in a well, its words over the kit's bar (`KitBar`), and − and + on leather.
   - Switches are whole rows framed on parchment. A row's words say On or Off, so the state never rests on colour alone (§20.8).
 - **The switch.** `client/scripts/screen_switch.gd` (`ScreenSwitch.make`) draws key frame 05's switch from the kit's materials alone:
@@ -162,9 +162,9 @@ The budget shots' recorded draw calls for the character screen are 103, 80 and 1
   
   It takes no taps; the row is the control.
 - **Text size.** §20.8's text size is key frame 05's card:
-  - a small A and a large A on gold, either side of the size in large figures;
-  - a dot for each step;
-  - a law's card in the chosen size, to read before leaving.
+  - a small A and a large A on parchment, either side of the size in large figures (gold_top, with a 2.5-point outline and the gold drop);
+  - a dot for each step, the current one on plate and the rest on dark plate;
+  - a law's card in the chosen size, to read before leaving. At large text its words stop at two lines, with an ellipsis, so the card does not fill the screen.
 - **Colour blindness.** The colour-blind card shows the six schools' marks on their coins with their names. There is no mode to choose, because each school keeps its own shape in every light (§20.8).
 - **The way back.** Back home is on the glass bar at the foot of the screen, lifted off its corner (`ScreenNav.CORNER_LIFT_POINTS`).
 - **The shot.** `client/tests/shots/screen_settings.gd` takes `TAB` (default `access`, the key frame's tab), `TEXT`, `LOCALE`, `HC` and `SCROLL`.
@@ -179,18 +179,18 @@ The stills are in `docs/art/shots/menu-screens/`. Each was rendered with the com
 [env] FIT=1 RECORD=1 bash tools/render/shoot.sh client/tests/shots/screen_settings.gd <still>
 ```
 
-| Still | Env | Draw calls | Record |
-|---|---|---:|---|
-| `settings-100.png` | – | 62 | `.shot.json`, 12 controls |
-| `settings-200-pt_BR.png` | `TEXT=200 LOCALE=pt_BR` | 36 | `.shot.json`, 8 controls |
-| `settings-pt_BR.png` | `LOCALE=pt_BR` | 56 | `.shot.json`, 10 controls |
-| `settings-hc.png` | `HC=1` | 62 | `.shot.json`, 12 controls |
+| Still | Env | Record |
+|---|---|---|
+| `settings-100.png` | – | `.shot.json`, 12 controls |
+| `settings-200-pt_BR.png` | `TEXT=200 LOCALE=pt_BR` | `.shot.json`, 9 controls |
+| `settings-pt_BR.png` | `LOCALE=pt_BR` | `.shot.json`, 10 controls |
+| `settings-hc.png` | `HC=1` | `.shot.json`, 12 controls |
 
 The before still is `before-settings-100.png`, from Part 1.
 
 `python3 tools/ui_gate/checks.py all` on the records:
 
-- **value-steps** passes every control. At 100% text, ΔL* is 80 on the tabs, 58 on the two As, 66 on the high-contrast row and 84 on Back. At 200% in pt_BR it is 59 to 83. In high contrast it is 74 to 96.
+- **value-steps** passes every control. At 100% text, ΔL* is 78 on the tabs, 76 on the two As, 66 on the high-contrast row and 84 on Back. At 200% in pt_BR it is 51 to 83. In high contrast it is 74 to 96.
 - **hud-share** passes, at 0.
 - **hierarchy** reads N/A: settings has no primary (`checks.py`). The second level passes.
 
@@ -198,8 +198,16 @@ The before still is `before-settings-100.png`, from Part 1.
 
 `tools/ui_bake/guard.sh`: OK. The budget shots (`screen_meta.gd`, `SCREEN=settings`, on the opening Game tab) read 46, 38 and 46 draw calls for settings at 100%, 200% and high contrast, against 52, 47 and 52 recorded. These falls are for K1 or the lead to `--record`. No word is below 4.5:1.
 
+### The advisory self-check, and the fixes
+
+Before the gate request, an advisory self-check against the gate's three items (one isolated judge per item, on the stills of 1b22adc4) passed 2 of 6 qualities. What it found, and what changed in `settings_screen.gd`:
+
+- **Display type, at 100%.** The group headings had no ink outline, unlike the key frame's, and the "100%" read flat. The headings and the title now wear the T2 stroke; "100%" is gold_top with a 2.5-point outline and the gold drop.
+- **Display type and hierarchy, at 200% in pt_BR.** The law sample filled most of the screen, and its last line was cut. Its words now stop at two lines with an ellipsis.
+- **Colour roles and value, in high contrast.** The open tab, the two As and the current step's dot were gold, beside the main actions' gold (§21.8). The open tab is now the kit's chosen segment for parchment, and the current dot plate. The As went to leather first, but leather on the violet card reads ΔL* 8 (`checks.py value-steps` fails it in en and pt_BR), so they are on parchment, as the tabs and the switch rows: ΔL* 76, and 95 in high contrast.
+
 ### What is still worse than before
 
 - **The tab and back words.** Key frame 05 sets them in capitals. The screen keeps the kit's sentence case (`Tokens.type_role`). Capitals would be a change to the kit's type roles, which is K1's work.
 - **The shapes in pt_BR.** At 100% text, the longer Portuguese names (Movimento, Matéria) put the six coins three to a line, not the key frame's six in one row.
-- **The law sample at 200% text.** At this size the sample card fills most of the opening frame, so the colour-blind card and the switches are below the fold (`SCROLL`). Its words are the content's, and they are English under pt_BR ("Stillness", from `content/ruleborn.json`), as on the character screen. This is not this task's work.
+- **The law sample at 200% text.** At this size its words stop at two lines with an ellipsis, so the whole law is read at 100% only. The colour-blind card is cut at the dock in the opening frame, and the switches are below the fold (`SCROLL`); the list scrolls. Its words are the content's, and they are English under pt_BR ("Stillness", from `content/ruleborn.json`), as on the character screen. This is not this task's work.

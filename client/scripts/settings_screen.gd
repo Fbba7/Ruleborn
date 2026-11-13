@@ -65,7 +65,7 @@ func _layout() -> void:
 	var lang := UI.action(Strings.t("LANGUAGE_" + Settings.locale), next_language, "plate")
 	_tag(lang, "language")
 	game.add_child(KitPanels.row("settingsandwellbeing/language", Strings.t("SETTINGS_LANGUAGE"), "", lang))
-	game.add_child(KitPanels.section(Strings.t("SCREEN_SETTINGS_SOUND")))
+	game.add_child(_section("SCREEN_SETTINGS_SOUND"))
 	var icons := {"music": "music", "effects": "effectsvolume", "alerts": "notifications"}
 	var sound := UI.panel("card")
 	sound.add_theme_stylebox_override("panel", UI.clear_box(12, 10))
@@ -80,15 +80,15 @@ func _layout() -> void:
 			Strings.t("SETTINGS_QUIETER", name), Strings.t("SETTINGS_LOUDER", name), bus,
 			float(Settings.volume[bus]) / float(Settings.VOLUME_STEPS)))
 	game.add_child(sound)
-	game.add_child(KitPanels.section(Strings.t("SCREEN_SETTINGS_PLAY")))
+	game.add_child(_section("SCREEN_SETTINGS_PLAY"))
 	game.add_child(_toggle("slow_rehearsals", "SETTINGS_SLOW_REHEARSALS", "playtimereminder"))
 
 	# Key frame 05: the text size and the schools' marks, then "Seeing and
 	# comfort", each switch a whole row framed on parchment.
-	access.add_child(KitPanels.section(Strings.t("SCREEN_SETTINGS_ACCESS")))
+	access.add_child(_section("SCREEN_SETTINGS_ACCESS"))
 	access.add_child(_text_card())
 	access.add_child(_shapes())
-	access.add_child(KitPanels.section(Strings.t("SCREEN_SETTINGS_COMFORT")))
+	access.add_child(_section("SCREEN_SETTINGS_COMFORT"))
 	for toggle: Array in [
 			["high_contrast", "SETTINGS_CONTRAST", "accessibility"], ["reduced_motion", "SETTINGS_MOTION", "reducedmotion"],
 			["haptics", "SETTINGS_HAPTICS", "haptics"], ["left_handed", "SETTINGS_LEFT_HANDED", "lefthanded"],
@@ -96,7 +96,7 @@ func _layout() -> void:
 			["camera_buttons", "SETTINGS_CAMERA_BUTTONS", "accessibility"]]:
 		access.add_child(_toggle(toggle[0], toggle[1], toggle[2]))
 	# And "Controls and pace": how long a hold is.
-	access.add_child(KitPanels.section(Strings.t("SCREEN_SETTINGS_PACE")))
+	access.add_child(_section("SCREEN_SETTINGS_PACE"))
 	var hold_name := Strings.t("SETTINGS_HOLD", seconds(Settings.hold_ms))
 	var holds := Settings.hold_steps()
 	var pace := UI.panel("card")
@@ -131,15 +131,38 @@ func _head() -> Control:
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	t.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_stroked(t, 2.0, 3.0)
 	row.add_child(t)
 	plate.add_child(row)
 	return plate
 
 
-## The tabs as key frame 05 has them: one strip of parchment, the open tab on
-## gold. Where an icon and its word do not fit a third of the strip (large
-## text, a long word), the closed tabs keep their icon alone and the open one
-## its word alone, twice as wide; a screen reader still hears every word.
+## A group's heading over the night (kit-spec.md 2.2, T2): the kit's
+## section heading with an ink outline all round and its hard drop.
+func _section(key: String) -> Label:
+	return _stroked(KitPanels.section(Strings.t(key)), 1.5, 2.0)
+
+
+## Display type's stroke on a label: an ink outline of `outline` points all
+## round (§21.8) and a hard drop of `drop` points under it. Unlike
+## KitNav.logo's, the drop has no outline of its own: an outlined drop needs
+## one more glyph texture, so it costs each stroked label a draw call, which
+## takes the settings screen past its draw-call budget. The drop does not
+## count for contrast.
+static func _stroked(l: Label, outline: float, drop: float, drop_colour := "drop") -> Label:
+	ScreenKit.inked(l, outline)
+	l.add_theme_color_override("font_shadow_color", Tokens.color(drop_colour))
+	l.add_theme_constant_override("shadow_offset_x", 0)
+	l.add_theme_constant_override("shadow_offset_y", UI.px(drop))
+	return l
+
+
+## The tabs as key frame 05 has them: one strip of parchment, the open tab
+## on the kit's chosen segment for parchment (dark leather, cream words), so
+## gold stays the main actions' alone (§21.8). Where an icon and its word
+## do not fit a third of the strip (large text, a long word), the closed tabs
+## keep their icon alone and the open one its word alone, twice as wide; a
+## screen reader still hears every word.
 func _tabs() -> Control:
 	var strip := PanelContainer.new()
 	strip.name = "Segments"
@@ -162,7 +185,7 @@ func _tabs() -> Control:
 		var open := key == tab_shown
 		var b := UI.action(words, func() -> void:
 			tab_shown = key
-			_build(), "gold" if open else "seg_light", words)
+			_build(), "seg_on_light" if open else "seg_light", words)
 		b.add_theme_font_size_override("font_size", UI.text_px(14))
 		b.set_meta("points", 14.0)
 		b.set_meta("chosen", open)
@@ -253,9 +276,11 @@ func _toggle(setting: String, words: String, icon: String) -> Control:
 	return _tag(b, setting)
 
 
-## §20.8's text size as key frame 05's card: a small A and a large A on gold
-## either side of the size in large figures over a dot a step, and a law's
-## card in the size chosen, to read before leaving.
+## §20.8's text size as key frame 05's card: a small A and a large A on
+## parchment, a cream face off the violet card as the tabs and the toggles
+## (gold stays the main actions'), either side of the size in large figures
+## over a dot a step, and a law's card in the size chosen, to read before
+## leaving.
 func _text_card() -> Control:
 	var steps := Settings.text_steps()
 	var at := steps.find(Settings.text_scale)
@@ -269,6 +294,8 @@ func _text_card() -> Control:
 	mid.add_theme_constant_override("separation", UI.px(6))
 	text_label = UI.label("%d%%" % Settings.text_scale, 34)
 	text_label.theme_type_variation = "Display"
+	text_label.add_theme_color_override("font_color", Tokens.color("gold_top"))
+	_stroked(text_label, 2.5, 3.0, "gold_drop")
 	text_label.accessibility_name = size_name
 	mid.add_child(text_label)
 	var dots := HBoxContainer.new()
@@ -278,11 +305,11 @@ func _text_card() -> Control:
 		var dot := Control.new()
 		dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		dot.custom_minimum_size = Vector2(UI.px(22 if i == at else 9), UI.px(9))
-		UI.dress(dot, "gold" if i == at else "plate_dark", 999)
+		UI.dress(dot, "plate" if i == at else "plate_dark", 999)
 		dots.add_child(dot)
 	mid.add_child(dots)
 	for side: Array in [[-1, 14.0, "text-", "SETTINGS_SMALLER"], [1, 26.0, "text+", "SETTINGS_LARGER"]]:
-		var a := UI.action(Strings.t("SCREEN_TEXT_A"), text_step.bind(side[0]), "gold",
+		var a := UI.action(Strings.t("SCREEN_TEXT_A"), text_step.bind(side[0]), "parchment",
 			Strings.t(side[3], size_name))
 		a.add_theme_font_size_override("font_size", UI.text_px(side[1]))
 		a.set_meta("points", side[1])
@@ -313,6 +340,11 @@ func _text_card() -> Control:
 	var rule := UI.label(Strings.t("LAW_RULE_STILLNESS"), Tokens.type_role("caption")["points"], true)
 	rule.theme_type_variation = "Caption"
 	rule.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	# At large text the sample is a taste of the size, not the whole rule:
+	# two lines and an ellipsis, so the card never fills the screen.
+	if large:
+		rule.max_lines_visible = 2
+		rule.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	words.add_child(rule)
 	line.add_child(words)
 	sample.add_child(line)
