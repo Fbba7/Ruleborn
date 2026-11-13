@@ -3,26 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "done",
   "task_id": "P2-AD-board-4",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-13T11:30:00Z",
   "lease_until": "2026-11-13T14:30:00Z",
-  "updated_at": "2026-11-13T11:55:00Z",
-  "expected_next_update_by": "2026-11-13T12:40:00Z",
+  "updated_at": "2026-11-13T12:14:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
-    "next_step": "board 4 posted (does not stand, objections A-E as AD-R26 to AD-R30); pre-check then ready"
+    "last_green_sha": "c0bab2a89cf95b03d3540f977a5c0050e593c900",
+    "next_step": "P2-AD-board-4 ready; no open AD task (board 3b waits on AD-R22 to AD-R25, board 4b on AD-R26 to AD-R30, board 5 on settings)"
   },
   "precheck": {
-    "sha": "4a48eef9b4fb9fa9164ead1f9a8f7f82d094149f",
+    "sha": "c0bab2a89cf95b03d3540f977a5c0050e593c900",
     "exit": 0,
-    "finished_at": "2026-11-13T09:31:47Z",
+    "finished_at": "2026-11-13T12:11:54Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "c0bab2a89cf95b03d3540f977a5c0050e593c900",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M12"

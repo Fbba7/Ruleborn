@@ -26,7 +26,7 @@
 | P2-AD-board-4: board 4 (result and motion) | 2 | ready (pre-check in the status file) | `gate/boards/board-4.md`, `gate/boards/board-4/*.png` and two `.mp4` clips; result rendered with `FIT=1` at 100% and 200% (en, pt_BR, de) and high contrast beside `art/ui/keyframes/03-result*`, all "fit ok"; reward sequence full and reduced with `STRIP=1`; AIA's `art/ui/motion/strips/` and `clips/` checked for qualities 4, 5 and 7; `check_curves.py` ok; verdicts of result-1 (`8bec0d84`) and result-2 (`aed28321`, `71167028`) cited; objections A to E as requests AD-R26 to AD-R30; `check_docs_consistency.py` clean |
 
 ## Handoff
-- Last verified commit: see `precheck` in `status/AD.json`; P2-AD-board-4 ready.
+- Last verified commit: `c0bab2a8` (pre-check PASS, 12:11:54Z, `All checks passed.`); P2-AD-board-4 ready; agent_state done.
 - Done: board 4 (result and motion), round 1, on `3374eae1`. **The board does not stand.** Objections, in order of weight:
   - A (S1, AD-R27): the lead reward "+2,310" is pale gold with a hairline outline on the parchment, the weakest figure on the screen (hollow in high contrast). Give the reward figures the "Keeper 24" finish.
   - B (S1, AD-R26): at 200% in German, Essenz and Ruhm fall below the fold.
