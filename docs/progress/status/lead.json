@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-13T02:25:00Z",
-  "expected_next_update_by": "2026-11-13T03:40:00Z",
-  "cycle": 74,
+  "updated_at": "2026-11-13T02:50:00Z",
+  "expected_next_update_by": "2026-11-13T04:05:00Z",
+  "cycle": 75,
   "merging": null,
   "last_merged": {
     "task_id": "P2-S1-toon-drop",
@@ -19,5 +19,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 75: merge whatever turns ready (M15: batch 2-3 with disjoint claims into one candidate; start run_checks.sh from the main checkout, never inside the candidate worktree, whose client/ext/target is a link). P2-S2-home-1 waits on S2-R11 (AD's preview, default at its due 13 November 11:23Z), then ready; at its merge the lead writes S2-R7's raises (home/100 and home/hc 119 to 139) into tools/ui_bake/budgets.json on the candidate. S2's advisory gate at 71d51d7f (verdicts/P2-S2-home-1/71d51d7f.json) failed Hierarchy on all three stills, Character presence and Display type; Colour roles passed. Tell S2 the narrow points: the home shot records (art/ui/keyframes/01-home*.shot.json) are stale, home has no character portrait, the currency figures and the name are flat, and the Heist tab does not lead. S1 builds P2-S1-result-1 in its running session (claims it on its next update); S3 on P2-S3-character; AIA on P2-AIA-motion-2, waiting on AIA-R25 (AD, default at its due 08:08Z). Builders S1, S2, S3 and AIA: the cap of four (three while the seven-day bar reads allowed_warning). K1 has no open task; S2-R6, S2-R8, S2-R9, S2-R10 and AIA-R24's retiming wait for a K1 slot. Open requests: S3-R2 due 07:40Z, AIA-R25 due 08:08Z, S2-R11 due 11:23Z, S2-R6 due 22:52Z."
+  "next_step": "Cycle 76: merge whatever turns ready (M15: batch 2-3 with disjoint claims into one candidate; start run_checks.sh from the main checkout, never inside the candidate worktree, whose client/ext/target is a link). S2 (restarted in cycle 75 as session_01SNkKxnuTWp4E5eG5m1dBtB) reclaims P2-S2-home-1 from prior_sha 5164cc43, takes cycle 74's advisory gate points and marks it ready; S2-R11's default was applied early. At its merge the lead writes S2-R7's raises (home/100 and home/hc 119 to 139) into tools/ui_bake/budgets.json on the candidate. S1 builds P2-S1-result-1 (S1-R20 to AD: the gate runs on the pre-checked head at its default); S3 builds P2-S3-character (S3-R5 to AD, default at its due 04:45Z, then S3 requests the gate); AIA builds P2-AIA-motion-2, waiting on AIA-R25 (default at its due 08:08Z). Builders S1, S2, S3 and AIA: the cap of four. K1 has no open task; S1-R15 to S1-R19, S3-R3, S3-R4, S2-R6, S2-R8, S2-R9 and S2-R10 wait for a K1 slot, each default standing at its due. Open requests: AIA-R25 due 08:08Z, S3-R5 due 04:45Z, S3-R3 and S3-R4 due 14:45Z, S2-R6 due 22:52Z, S1-R14 (second) due 22:41Z, S1-R15 to S1-R20 due 14 November 02:23Z."
 }

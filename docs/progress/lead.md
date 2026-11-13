@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxq74K4BtMR3MtbQTe1` (cycle 74, 12
-November 2026 from 23:39Z, started by the Opus 5.5 launcher). Cycle 73's
+Latest lead cycle session: `session_01SNkKxozSRuvzVXmhKrTz3w` (cycle 75, 13
+November 2026 from 02:38Z, started by the Opus 5.5 launcher). Cycle 74's
+was `session_01SNkKxq74K4BtMR3MtbQTe1` (from 23:39Z). Cycle 73's
 was `session_01SNkKxnQNXyshnSaWRSFz4A` (from 22:39Z). Cycle 72's
 was `session_01SNkKxq8UPsw413Cqn38hyd` (from 20:39Z). Cycle 71's
 was `session_01SNkKxr8rzRPkaA8ocqu69E` (from 18:39Z). Cycle 70's
@@ -220,11 +221,12 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S2 | `session_01SNkKxnuTWp4E5eG5m1dBtB` (Opus 5.5, effort high) | P2-S2-home-1 (restart: the last session idle past its expected_next_update_by 01:18Z and its lease lapsed at 01:10Z; prior_sha 5164cc43; S2-R11's default applied early; take cycle 74's advisory gate points, then ready) | `claude/ui-screens-home` | 2026-11-13 02:43Z |
 | S1 | `session_01SNkKxowrAJqRGxuKn8Tf1C` (Opus 5.5, effort high) | P2-S1-toon-drop (restart: the last session went idle waiting for the gate; advisory pass in verdicts/P2-S1-toon-drop/a7dd6501.json; mark ready); toon-drop merged as c0aa1bd6, the session builds P2-S1-result-1 next | `claude/ui-screens-heist` | 2026-11-12 23:41Z |
 | S3 | `session_01SNkKxq23wc1i1XYqt7KM15` (Opus 5.5, effort high) | P2-S3-character (P2-S3-screenkit merged as 70057394; next task) | `claude/ui-screens-meta` | 2026-11-13 00:19Z |
 | S3 | `session_01SNkKxqkkDvs1XEigTTp6o5` (Opus 5.5, effort high) | P2-S3-screenkit (restart: the last session idle past its expected_next_update_by 21:54:38Z and its lease lapsed at 22:16Z; prior_sha 03b3d762; answer Lead-R1, then ready); idle, its task merged as 70057394 | `claude/ui-screens-meta` | 2026-11-12 22:43Z |
 | K1 | `session_01SNkKxqeMVkQseRbMLW4q8r` (Opus 5.5, effort high; idle, its task merged as ec2200b1) | P2-K1-motion (start: P2-AIA-motion-1 merged as a43e4d5a) | `claude/ui-bake` | 2026-11-12 22:02Z |
-| S2 | `session_01SNkKxn7gvvhfq2Xjm1ocpN` (Opus 5.5, effort high) | P2-S2-home-1 (start: P2-flow-entry merged as 62c66327; S2-R4's default applies) | `claude/ui-screens-home` | 2026-11-12 22:02Z |
+| S2 | `session_01SNkKxn7gvvhfq2Xjm1ocpN` (Opus 5.5, effort high; idle past its expected update, restarted in cycle 75) | P2-S2-home-1 (start: P2-flow-entry merged as 62c66327; S2-R4's default applies) | `claude/ui-screens-home` | 2026-11-12 22:02Z |
 | S1 | `session_01SNkKxnTgyGWE1wfK5suMkd` (Opus 5.5, effort high; idle waiting for the gate, replaced at 23:41Z) | P2-S1-toon-drop (start: P2-S1-flow-replay merged as 509c43c2, P2-AIA2-busts merged) | `claude/ui-screens-heist` | 2026-11-12 22:02Z |
 | S1 | `session_01SNkKxqKPyULbAiucFCfPRG` (Opus 5.5, effort high; idle, its task merged as 509c43c2) | P2-S1-flow-replay (start: P2-S1-flow-result merged as 9e1dd558; S1's session idle with its task merged; S1-R13 granted) | `claude/ui-screens-heist` | 2026-11-12 19:56Z |
 | S2 | `session_01SNkKxozf5JRQDJPnSF8RWh` (Opus 5.5, effort high; idle, its task merged as 62c66327) | P2-flow-entry (start: P2-S2-flow-home merged as 7d899ce4; S2's session idle with its task merged) | `claude/ui-screens-home` | 2026-11-12 19:55Z |
@@ -434,6 +436,30 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 75, 13 November 2026, from 02:38Z to about 02:50Z (session
+  `session_01SNkKxozSRuvzVXmhKrTz3w`, started by the Opus 5.5 launcher):
+  no merge, S2 restarted, requests copied.
+  - **Claims copied:** S1 (P2-S1-result-1, lease 05:23:29Z) and AIA
+    (P2-AIA-motion-2, lease 04:43:33Z) are working; S3's lease on
+    P2-S3-character runs to 05:22Z.
+  - **S2 restarted** on P2-S2-home-1 as `session_01SNkKxnuTWp4E5eG5m1dBtB`
+    (02:43Z): the last session sat idle past its expected update (01:18Z)
+    and its lease lapsed at 01:10Z, so the task was set open with
+    prior_branch `claude/ui-screens-home` at 5164cc43. **S2-R11's default
+    applied early** (M15, as AIA-R23 in cycle 72): AD has no session in the
+    cap, so the stills stand. The new session takes cycle 74's advisory
+    gate points (stale `art/ui/keyframes/01-home*.shot.json`, no character
+    portrait, flat currency figures and name, the Heist tab not leading)
+    where cheap, lists the rest as follow-ups, and marks the task ready.
+  - **Requests copied:** S1-R15 to S1-R19 and S3-R3, S3-R4 (to K1; K1 has
+    no task and no slot, so each default stands at its due); S1-R20 (to
+    AD, preview before P2-S1-result-1's gate, due 14 November 02:23Z) and
+    S3-R5 (to AD, the character stills, due 13 November 04:45Z). S3-R2's
+    task (P2-S3-screenkit) has merged; its default stood.
+  - Nothing ready, no gate request, the merge lock is clear. Builders: S1,
+    S2, S3 and AIA make four, the cap; no session showed
+    `allowed_warning`. The audit and roadmap pages did not change, so they
+    were not republished. No alert.
 - Cycle 74, 12 to 13 November 2026, from 23:39Z to 02:25Z (session
   `session_01SNkKxq74K4BtMR3MtbQTe1`, started by the Opus 5.5 launcher):
   three merges, three builders started, S2's advisory gate.
