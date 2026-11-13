@@ -3868,6 +3868,14 @@
       "sent_at": "2026-11-12T20:54:00Z",
       "ack_by": "2026-11-12T22:54:00Z",
       "acked_at": "2026-11-12T22:50:00Z"
+    },
+    {
+      "id": "M17",
+      "to": "lead",
+      "text": "Lesson from UI phase 2 (P2-S1-toon-drop, cycle 74). The wait from ready to merged rated worse for the second push in a row: 3.0h for P2-K1-motion, then 2.7h for the toon drop (ready 23:41, merged 02:21). Three causes, all in the merge queue. At 23:41 three tasks were ready at once with disjoint claims (P2-S3-screenkit ready 22:59, P2-K1-motion ready 22:40, P2-S1-toon-drop ready 23:41), yet they were merged one at a time, against the batching rule you acked as M15. P2-K1-motion's merge reached main at 01:40, 51 minutes after its check passed at 00:49. And the toon drop's first check_all stopped on a read-only cargo lock because it was started inside the candidate's worktree, where client/ext/target is a link; the re-run from the main checkout passed. The rule: (1) As soon as two or more tasks are ready with disjoint claims, merge 2 or 3 of them into one candidate, as agent-protocol.md \"Batching\" says; if the batch fails, re-check each alone. (2) Merge to main and clear the lock in the same turn the check passes, then lock the next candidate in that turn. (3) Start check_all from the main checkout on the candidate sha, never from inside the candidate's worktree, or give that worktree its own writable CARGO_TARGET_DIR. (4) Add M17 to the acks in status/lead.json.",
+      "sent_at": "2026-11-13T02:54:00Z",
+      "ack_by": "2026-11-13T04:54:00Z",
+      "acked_at": null
     }
   ]
 }
