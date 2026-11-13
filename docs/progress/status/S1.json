@@ -5,16 +5,16 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-S1-result-2",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-13T06:14:06Z",
-  "lease_until": "2026-11-13T09:14:06Z",
-  "updated_at": "2026-11-13T06:14:06Z",
-  "expected_next_update_by": "2026-11-13T06:59:06Z",
+  "lease_until": "2026-11-13T09:50:05Z",
+  "updated_at": "2026-11-13T06:50:05Z",
+  "expected_next_update_by": "2026-11-13T07:35:05Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d0f4a89",
-    "next_step": "P2-S1-result-2 claimed (result-1 merged as f41d100e). Main df12e5f1 merged; next: setup line, build.sh, re-render the strips and stills on the merge, guard, pre-check, gate request ('result at 100% text': Hierarchy, Character presence).",
-    "at": "2026-11-13T06:14:06Z"
+    "next_step": "Gate requested at e13b5a3c (main c1a4e151 merged; build.sh ok; guard, check_screens, gdlint pass; strips and clips re-rendered on main). Rest card: the crew's three faces apart at 52 pt (result-1's Character presence fail). Pre-check running on e13b5a3c; next: record it, read the verdict, ready in the same turn.",
+    "at": "2026-11-13T06:50:05Z"
   },
   "precheck": {
     "sha": "d0f4a8993658f394f94da0ee9ba9f0fb4c17fd1a",
@@ -22,7 +22,18 @@
     "finished_at": "2026-11-13T05:41:49Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
+  "gate_request": {
+    "sha": "e13b5a3c77ffdb5fabb5914675930f6b374400da",
+    "items": [
+      {
+        "item": "result at 100% text",
+        "qualities": [
+          "Hierarchy",
+          "Character presence"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
@@ -49,7 +60,7 @@
       "id": "S1-R2",
       "from": "S1",
       "to": "K1",
-      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar at\u00e9 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
+      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar até 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
       "files": [
         "client/ui/kit_hud.gd"
       ],
@@ -369,8 +380,22 @@
       "due": "2026-11-14T04:45:18Z",
       "default": "result_screen.gd grows the moment's button itself (_moment_card: the kit's size, grown to the box's combined minimum plus 12x10 px); it is removed when the kit answers.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R24",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-2), for board 4: the result's rest card at e13b5a3c shows the crew's three faces apart, 52 pt each (about 57 px at 960), not key frame 03's overlapping stack of 48 pt; the rest line is 13 pt beside them. Reason: result-1's gate failed Character presence 3/3 on small overlapping portraits. Still: SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png. Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T06:50:05Z",
+      "due": "2026-11-14T06:50:05Z",
+      "default": "The faces stay apart at 52 pt; the gate's verdict decides.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "P2-S1-result-2 claimed (result-1 merged as f41d100e). Main df12e5f1 merged; next: setup line, build.sh, re-render the strips and stills on the merge, guard, pre-check, gate request ('result at 100% text': Hierarchy, Character presence)."
+  "next_step": "Gate requested at e13b5a3c (main c1a4e151 merged; build.sh ok; guard, check_screens, gdlint pass; strips and clips re-rendered on main). Rest card: the crew's three faces apart at 52 pt (result-1's Character presence fail). Pre-check running on e13b5a3c; next: record it, read the verdict, ready in the same turn."
 }
