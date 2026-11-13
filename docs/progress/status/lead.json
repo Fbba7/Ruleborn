@@ -1,19 +1,21 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-13T07:43:00Z",
-  "expected_next_update_by": "2026-11-13T08:13:00Z",
-  "cycle": 78,
+  "updated_at": "2026-11-13T11:22:36Z",
+  "expected_next_update_by": "2026-11-13T11:58:21Z",
+  "cycle": 82,
   "merging": null,
   "last_merged": {
-    "task_id": "P2-S2-home-2",
-    "sha": "807d68a7"
+    "task_id": "P2-S1-result-2",
+    "sha": "135a49b2"
   },
   "acks": [
     "M15",
     "M16",
     "M17",
     "M18",
-    "M19"
+    "M19",
+    "M20",
+    "M21"
   ],
   "alerts": [
     "Owner's order 5 of 11 November 2026, about 19:50Z (\"Let's switch to Opus 5.5 everywhere again, effort high\"): every session runs on Opus 5.5 at effort high; never Fable 5.1 (order 2). Launcher trig_01T7B65veojXUDAKzLK3FFBP and watchdog trig_01A1NwZvKD6MDUosh4jyvqqr, created at 19:50Z after order 5 was on main. The Fable 5.2 pair (trig_01U7kEeot7dmuJuNZVQJ7Bhm, trig_0195QvFjjm2oUgeCeyhU4bp4), disabled at 19:49Z, and every older scheduled task stay disabled and are never re-enabled. No Fable 5.2 session is reused.",
@@ -22,5 +24,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 79: merge whatever turns ready (M15, M17: batch ready tasks with disjoint claims into one candidate, run check_all from the main checkout, merge and clear the lock in the turn the check passes). In the candidate worktree run bash client/build.sh and (cd tools/ui_research && npm ci) before guard.sh, or guard fails for want of the native library and the icon studio's three. S2 (session_01SNkKxo9ZakHyaiiUKjsDBf) marks P2-S2-home-2 ready after its pre-check of 3612e265 or later; at that merge record S2-R17's budgets in tools/ui_bake/budgets.json (home/100 and home/hc 145, home/200 114) with a raises entry for S2-R17. S1 (session_01SNkKxp1GYKSQAkZjfQC3vM) builds P2-S1-result-2; S3 (session_01SNkKxrGTeWurPkRy5fVrtk) builds P2-S3-settings. AIA (session_01SNkKxokBReWMyyoeH6tR9y) is idle: P2-AIA-motion-2 merged as 0bc0fbb9 and no AIA task is open. Three builders run (S1, S2, S3); P2-AD-board-3 opens when home-2 merges: start AD then, within the cap of four (three at allowed_warning). S2-R18's default stands at its due, 11:39Z."
+  "next_step": "Cycle 82: merge whatever turns ready (M15, M17: batch ready tasks with disjoint claims into one candidate, run check_all from the main checkout, merge and clear the lock in the turn the check passes; M19: in the candidate worktree run bash client/build.sh and (cd tools/ui_research && npm ci) before guard.sh; on a fresh container first rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios and pip install gdtoolkit 4 and playwright 1.63.0, or check_all fails on the environment). P2-S1-result-2: its advisory gate at 71167028 passed (verdict on main); by M20 take no merge lock on it until AD answers S1-R25 or its due passes (14 November 09:22Z); at its merge record S1-R26's budgets (result/200 98 with a raises entry, result/100 89, result/hc 27, and the check_screens figures). S2 builds P2-S2-home-3; S3 finishes P2-S3-settings (AD's S3-R7 objections before its gate request); AD answers S1-R25, then its next open task (P2-AD-board-3b waits on home-3 and K1-tabs). P2-K1-tabs takes the next free seat (cap four, three under allowed_warning). Set expected_next_update_by at least to a merge lock's expiry while a check runs."
 }

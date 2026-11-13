@@ -1,0 +1,107 @@
+[
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "eed8b817fe6c01705c8e4eb5e2ee527e0229ef9f",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T10:53:00Z",
+    "item": "settings at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. In grayscale the large serif 'Settings' title in its dark bar leads, as on the pass anchor. The selected Access tab is a dark pill, not gold; the A-/A+ buttons are cream, not gold; the '100%' readout is lighter than the anchor's heavy figure, so nothing outranks the title. The group headers 'Access' and 'Seeing and comfort' now sit on capsules and stand above the cream rows (the f5719f28 fail's point about thin group headers is answered)."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "eed8b817fe6c01705c8e4eb5e2ee527e0229ef9f",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T10:53:00Z",
+    "item": "settings at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails, all on the same figure. The title and both group headers sit on plates, so they need no outline (f5719f28's objection to the headers is answered). The fail is the '100%' text-size readout between the small-A and big-A buttons: it is the card's headline figure and is a flat gold fill with no dark ink outline and no hard drop, where the pass anchor's '100%' has a heavy dark outline, a cream gradient fill and a hard drop. Fix: draw the readout with the kit's display numeral treatment (ink outline scaled to size, hard drop), as the anchor does."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "eed8b817fe6c01705c8e4eb5e2ee527e0229ef9f",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T10:53:00Z",
+    "item": "settings at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails, on the same figure as at 100%. 'Ajustes', the 'Acesso' tab and the 'Acesso' group header sit on plates and are fine. The '200%' readout is plain pale gold with no visible dark outline and no hard drop, where the pass anchor's '200%' has a thick inked outline that scales with the figure, a drop and a cream gradient fill."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "eed8b817fe6c01705c8e4eb5e2ee527e0229ef9f",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T10:53:00Z",
+    "item": "settings at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "fail",
+      "fail",
+      "pass",
+      "fail"
+    ],
+    "result": "pass",
+    "critique": "Split on the first three (pass, pass, fail); three passes and three fails of six, under the four fails that make a fail, so it passes, narrowly. The passes: 'Ajustes' is the largest text, at the top; the dark selected tab is not gold and the '200%' is quieter than the anchor's. The fails: at 200% the 'Ajustes' title is barely larger than the boxed 'Acesso' group header, and the bright full-width cream tab strip with its high-contrast dark selected tab (and the light Stillness card) draws the eye before the title. Worth a look while fixing the readout: give the title more weight over the group pill at 200%, or quiet the tab strip."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "eed8b817fe6c01705c8e4eb5e2ee527e0229ef9f",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T10:53:00Z",
+    "item": "settings in high contrast",
+    "quality": "Colour roles and value",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The selected Access tab uses a gold rim on a dark fill, not a gold fill; the size buttons are neutral white; the six school pips keep distinct glyphs and stay apart on the protanopia, deuteranopia and tritanopia sheets; the on toggle is green with its knob position; the page dots differ by shape (pill against ring). The only doubt, raised by all three, is the gold '100%' readout text, minor."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "eed8b817fe6c01705c8e4eb5e2ee527e0229ef9f",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T10:53:00Z",
+    "item": "settings in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. In grayscale the large outlined 'Settings' title leads, as on the pass anchor; the selected tab is dark with a thin gold outline, quieter than the anchor's gold tab; the boxed group headers outrank the rows more clearly than the anchor's plain headers; the white cards are light by the mode's design (ruling 3)."
+  }
+]
