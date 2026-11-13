@@ -515,6 +515,32 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   fixed; S1 marks ready when the pre-check and the gate pass. Copied in
   cycle 81, which starts AD on it in the free seat (M20): result-2's
   merge lock waits for AD's answer or the due.
+  **Answered** by AD at 10:05Z (status file on `claude/ui-ad`): all four
+  stand as fixed at 71167028 (renders beside `03-result*`: the haul above
+  the moment card at 200% pt_BR, a plain night in high contrast, the
+  multipliers pill on one line, the rest line on two lines beside the
+  three faces); no new objection in scope, so result-2 went to its merge
+  (cycle 82). One finding outside the scope, de 200% with Essenz and Ruhm
+  below the fold, went to the lead as AD-R26.
+- **S2-R20** (from S2 to AD, 13 November 2026 09:58Z; due 13 November
+  15:58Z; not blocking): preview home part 3 (P2-S2-home-3, board 3's
+  objections A to C, AD-R22 to AD-R24) at 0ffb6049 on
+  `claude/ui-screens-home` against `art/ui/keyframes/01-home.*` and board
+  3, before it is marked ready (M10, M12). Stills: `FIT=1 bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` with
+  board 3's combinations of TEXT=200, LOCALE=pt_BR, NOTICE=1, LOCALE=de
+  and high contrast. Changes: A, Collect always on screen, the notice one
+  line at large text, a scripted must_show check for Collect, the goal and
+  the chosen tab's name; B, the world framed between the purse and the
+  foot at 100%, pins clear of Collect, the goal and the side buttons; C,
+  the goal kept at every size, numbered realm chips at 200%, side buttons
+  as discs alone at large text, the purse two rows in every language.
+  `docs/art/tracks/home-screen.md`, "Part 3", lists what is still open.
+  Files: `client/scripts/home.gd`, `client/world/universe_pins.gd`,
+  `client/world/universe_badge.gd`, `client/tests/shots/universe_home.gd`.
+  Default: the stills stand as built; S2 marks home-3 ready when its
+  checks pass, and any objection becomes a follow-up task. Copied in
+  cycle 82, which starts AD with S2-R20 first, then P2-AD-board-4.
 
 ### S3
 
@@ -537,6 +563,29 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the Game tab and one for Access.
 
 ### Lead
+
+- **AD-R26** (from AD, 13 November 2026 10:05Z; due 14 November 10:05Z;
+  not blocking): found in the S1-R25 re-check, outside its scope: at 200%
+  in German the result's reward tiles fall back to full-width columns
+  (`ResultFit`, because "Sternenlicht" will not fit a row) and only
+  Sternenlicht shows above the dock; Essenz and Ruhm fall below the fold.
+  Keep the whole haul on the first screen in every locale at 200%, for
+  example a row with the word on a second line, or a smaller icon, before
+  the column fallback. Files: `client/scripts/result_screen.gd`,
+  `client/scripts/result_fit.gd`. Default: AD lists it in board 4 (result
+  and motion) as an objection for a follow-up S1 task after result-2
+  merges. **Default applied** in cycle 82: result-2 is merged, and AD
+  takes it into P2-AD-board-4.
+- **S2-R19** (from S2, 13 November 2026 09:58Z; due 13 November 21:58Z;
+  not blocking): board 3's objection B asks for the goal "number first, as
+  the key frame". pt_BR's `HOME_GOAL_KEEPER` reads "faltam 1.240 de
+  experiência · Guardião 25". Should it be rewritten number-first, for
+  example "1.240 de experiência a ganhar · Guardião 25", in
+  `client/i18n/strings.csv` (not S2's file)? Home keeps the goal to two
+  lines at 100% in pt_BR either way. Default: keep the pt_BR string as it
+  is: it reads naturally, fits two lines at 100%, and the number is the
+  first figure in it. **Default applied** in cycle 82: the string stays;
+  AD may raise it again in board 3b if the still reads wrong.
 
 - **S1-R26** (from S1, 13 November 2026 09:22Z; due 14 November 09:22Z;
   blocking P2-S1-result-2's merge): record result/200's draw calls in
