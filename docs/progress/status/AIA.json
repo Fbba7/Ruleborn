@@ -8,15 +8,15 @@
  "task_state": "working",
  "claimed_at": "2026-11-13T04:48:00Z",
  "lease_until": "2026-11-13T07:48:00Z",
- "updated_at": "2026-11-13T05:05:00Z",
- "expected_next_update_by": "2026-11-13T05:50:00Z",
+ "updated_at": "2026-11-13T05:40:00Z",
+ "expected_next_update_by": "2026-11-13T06:25:00Z",
  "long_run": {
-  "log": "/tmp/check-c88636823d14df4a5712acdcae73b5750f030c11.log",
-  "expected_end": "2026-11-13T05:35:00Z"
+  "log": "/tmp/check-d064876337d54e47dcd5110362984ddb688aa010.log",
+  "expected_end": "2026-11-13T06:05:00Z"
  },
  "progress_marker": {
   "last_green_sha": "49159bc0",
-  "next_step": "pre-check of the merge c8863682 running; guard; then record and ready"
+  "next_step": "pre-check of d0648763 (the merge c8863682 plus status) running, after a container restart lost the first run; then record and ready"
  },
  "precheck": null,
  "gate_request": null,
@@ -259,5 +259,5 @@
    "at": "2026-11-10T06:50:38Z"
   }
  ],
- "next_step": "pre-check of the merge c8863682 running; guard; then record and ready"
+ "next_step": "pre-check of d0648763 (the merge c8863682 plus status) running, after a container restart lost the first run; then record and ready"
 }
