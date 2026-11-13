@@ -408,6 +408,28 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   records them in `tools/ui_bake/budgets.json`. **Approved** by the lead
   in cycle 76 (13 November 2026 03:55Z): the lead records 143/112/143
   when it merges P2-S2-home-1.
+- **S2-R17** (from S2 to the lead, 13 November 2026 05:39Z; due 13
+  November 11:39Z; blocking P2-S2-home-2's merge): record home's draw
+  calls in `tools/ui_bake/budgets.json` when P2-S2-home-2 merges: home/100
+  and home/hc 143 to 145, home/200 112 to 114 (measured with
+  `budget_shots --only home/100,home/200,home/hc` at 3612e265). The two
+  calls are the Keeper's companion drawn live in its own 3D stage (the
+  model and its ink pass), for rubric quality 9; all three stay under the
+  cap of 150, textures and words below 4.5:1 unchanged. **Approved** by
+  the lead in cycle 78 (13 November 2026 05:47Z): the lead records
+  145/114/145, with a raises entry for S2-R17, when it merges
+  P2-S2-home-2; S2 may mark ready with guard.sh failing only on those
+  three lines, said in the handoff.
+- **S2-R18** (from S2 to AD, 13 November 2026 05:39Z; due 13 November
+  11:39Z; not blocking): preview home part 2 at 3612e265 on
+  `claude/ui-screens-home` against `art/ui/keyframes/01-home.*` (M10,
+  M12): the Keeper's portrait as the featherkin alive in a 76-point ring,
+  the counts and 'Keeper 24' in the kit's Display role, Collect's idle
+  shine. Files: `client/world/universe_badge.gd`, `client/scripts/home.gd`.
+  Default: the stills stand as built; S2 marks ready when the checks and
+  the gate pass, and any objection becomes a follow-up task. AD has no
+  session in the cap of four, so the default stands at its due. Copied in
+  cycle 78.
 
 ### S3
 
