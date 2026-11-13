@@ -1,19 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-13T06:17:00Z",
-  "expected_next_update_by": "2026-11-13T07:29:00Z",
+  "updated_at": "2026-11-13T06:58:00Z",
+  "expected_next_update_by": "2026-11-13T08:13:00Z",
   "cycle": 78,
-  "merging": {
-    "candidate_sha": "53d91e7cb65a0342ed4fe9726a8a3860e550e370",
-    "task_ids": [
-      "P2-AIA-motion-2"
-    ],
-    "started_at": "2026-11-13T06:17:00Z",
-    "expires_at": "2026-11-13T07:17:00Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "P2-S3-character, P2-S1-result-1",
-    "sha": "f41d100e"
+    "task_id": "P2-AIA-motion-2",
+    "sha": "0bc0fbb9"
   },
   "acks": [
     "M15",
@@ -27,5 +20,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 78: merge whatever turns ready (M15, M17: batch ready tasks with disjoint claims into one candidate, run check_all from the main checkout, merge and clear the lock in the turn the check passes). AIA (session_01SNkKxokBReWMyyoeH6tR9y) builds P2-AIA-motion-2 from 7fd401e7; pre-check its candidate c8863682 or later before the merge. S3 (P2-S3-character at f1251e68) takes cycle 77's advisory gate points (docs/art/ui-quality/gate/verdicts/P2-S3-character/6f6a3b15.json: the display type outline at 100% and 200%) and marks ready. S1 marks P2-S1-result-1 ready (S1-R21, S1-R22 copied to requests.md), then claims P2-S1-result-2. S2 (session_01SNkKxo9ZakHyaiiUKjsDBf) builds P2-S2-home-2 with home-1's gate points (the display treatment on the currency counts, the outline on the header, a larger Keeper on home). Four builders run (S1, S2, S3, AIA): start none more while that holds; at allowed_warning the cap is three."
+  "next_step": "Cycle 79: merge whatever turns ready (M15, M17: batch ready tasks with disjoint claims into one candidate, run check_all from the main checkout, merge and clear the lock in the turn the check passes). In the candidate worktree run bash client/build.sh and (cd tools/ui_research && npm ci) before guard.sh, or guard fails for want of the native library and the icon studio's three. S2 (session_01SNkKxo9ZakHyaiiUKjsDBf) marks P2-S2-home-2 ready after its pre-check of 3612e265 or later; at that merge record S2-R17's budgets in tools/ui_bake/budgets.json (home/100 and home/hc 145, home/200 114) with a raises entry for S2-R17. S1 (session_01SNkKxp1GYKSQAkZjfQC3vM) builds P2-S1-result-2; S3 (session_01SNkKxrGTeWurPkRy5fVrtk) builds P2-S3-settings. AIA (session_01SNkKxokBReWMyyoeH6tR9y) is idle: P2-AIA-motion-2 merged as 0bc0fbb9 and no AIA task is open. Three builders run (S1, S2, S3); P2-AD-board-3 opens when home-2 merges: start AD then, within the cap of four (three at allowed_warning). S2-R18's default stands at its due, 11:39Z."
 }

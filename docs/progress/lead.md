@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxq8jXKxVQg8t1Ub3bT` (cycle 77, 13
-November 2026 from 04:39Z, started by the Opus 5.5 launcher). Cycle 76's
+Latest lead cycle session: `session_01SNkKxo77VSsG6MDN6kJbhE` (cycle 78, 13
+November 2026 from 05:39Z, started by the Opus 5.5 launcher). Cycle 77's
+was `session_01SNkKxq8jXKxVQg8t1Ub3bT` (from 04:39Z). Cycle 76's
 was `session_01SNkKxnLXN4d7GMy12F1W5F` (from 03:38Z). Cycle 75's
 was `session_01SNkKxozSRuvzVXmhKrTz3w` (from 02:38Z). Cycle 74's
 was `session_01SNkKxq74K4BtMR3MtbQTe1` (from 23:39Z). Cycle 73's
@@ -223,11 +224,13 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AIA | `session_01SNkKxokBReWMyyoeH6tR9y` (Opus 5.5, effort high) | P2-AIA-motion-2 (restart: the last session went idle on AIA-R25 alone and its lease lapsed at 04:43:33Z; prior_sha 7fd401e7; AIA-R25's default applied early, M15; mark ready when its checks pass) | `claude/ui-artist` | 2026-11-13 04:45Z |
+| S1 | `session_01SNkKxp1GYKSQAkZjfQC3vM` (Opus 5.5, effort high) | P2-S1-result-2 (start: P2-S1-result-1 merged as f41d100e, P2-K1-motion merged; deliver M7 and M11) | `claude/ui-screens-heist` | 2026-11-13 06:13Z |
+| S3 | `session_01SNkKxrGTeWurPkRy5fVrtk` (Opus 5.5, effort high) | P2-S3-settings (start: P2-S3-character merged as f41d100e) | `claude/ui-screens-meta` | 2026-11-13 06:13Z |
+| AIA | `session_01SNkKxokBReWMyyoeH6tR9y` (Opus 5.5, effort high; idle, P2-AIA-motion-2 merged as 0bc0fbb9) | P2-AIA-motion-2 (restart: the last session went idle on AIA-R25 alone and its lease lapsed at 04:43:33Z; prior_sha 7fd401e7; AIA-R25's default applied early, M15; mark ready when its checks pass) | `claude/ui-artist` | 2026-11-13 04:45Z |
 | S2 | `session_01SNkKxo9ZakHyaiiUKjsDBf` (Opus 5.5, effort high) | P2-S2-home-2 (P2-S2-home-1 merged as 7e289af9; take its advisory gate points) | `claude/ui-screens-home` | 2026-11-13 05:22Z |
 | S2 | `session_01SNkKxnuTWp4E5eG5m1dBtB` (Opus 5.5, effort high; idle, its task merged as 7e289af9) | P2-S2-home-1 (restart: the last session idle past its expected_next_update_by 01:18Z and its lease lapsed at 01:10Z; prior_sha 5164cc43; S2-R11's default applied early; take cycle 74's advisory gate points, then ready) | `claude/ui-screens-home` | 2026-11-13 02:43Z |
-| S1 | `session_01SNkKxowrAJqRGxuKn8Tf1C` (Opus 5.5, effort high) | P2-S1-toon-drop (restart: the last session went idle waiting for the gate; advisory pass in verdicts/P2-S1-toon-drop/a7dd6501.json; mark ready); toon-drop merged as c0aa1bd6, the session builds P2-S1-result-1 next | `claude/ui-screens-heist` | 2026-11-12 23:41Z |
-| S3 | `session_01SNkKxq23wc1i1XYqt7KM15` (Opus 5.5, effort high) | P2-S3-character (P2-S3-screenkit merged as 70057394; next task) | `claude/ui-screens-meta` | 2026-11-13 00:19Z |
+| S1 | `session_01SNkKxowrAJqRGxuKn8Tf1C` (Opus 5.5, effort high; idle, P2-S1-result-1 merged as f41d100e) | P2-S1-toon-drop (restart: the last session went idle waiting for the gate; advisory pass in verdicts/P2-S1-toon-drop/a7dd6501.json; mark ready); toon-drop merged as c0aa1bd6, the session builds P2-S1-result-1 next | `claude/ui-screens-heist` | 2026-11-12 23:41Z |
+| S3 | `session_01SNkKxq23wc1i1XYqt7KM15` (Opus 5.5, effort high; idle, its task merged as f41d100e) | P2-S3-character (P2-S3-screenkit merged as 70057394; next task) | `claude/ui-screens-meta` | 2026-11-13 00:19Z |
 | S3 | `session_01SNkKxqkkDvs1XEigTTp6o5` (Opus 5.5, effort high) | P2-S3-screenkit (restart: the last session idle past its expected_next_update_by 21:54:38Z and its lease lapsed at 22:16Z; prior_sha 03b3d762; answer Lead-R1, then ready); idle, its task merged as 70057394 | `claude/ui-screens-meta` | 2026-11-12 22:43Z |
 | K1 | `session_01SNkKxqeMVkQseRbMLW4q8r` (Opus 5.5, effort high; idle, its task merged as ec2200b1) | P2-K1-motion (start: P2-AIA-motion-1 merged as a43e4d5a) | `claude/ui-bake` | 2026-11-12 22:02Z |
 | S2 | `session_01SNkKxn7gvvhfq2Xjm1ocpN` (Opus 5.5, effort high; idle past its expected update, restarted in cycle 75) | P2-S2-home-1 (start: P2-flow-entry merged as 62c66327; S2-R4's default applies) | `claude/ui-screens-home` | 2026-11-12 22:02Z |
@@ -440,6 +443,58 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 78, 13 November 2026, from 05:39Z to 07:00Z (session
+  `session_01SNkKxo77VSsG6MDN6kJbhE`, started by the Opus 5.5 launcher):
+  P2-S3-character and P2-S1-result-1 merged together as `f41d100e`,
+  P2-AIA-motion-2 merged as `0bc0fbb9`,
+  S1 and S3 started on their next tasks, S2's gate passed, S2-R17 approved.
+  - **Batched merge** (M15, M17): P2-S3-character (ready 6f6a3b15, its
+    advisory gate points taken) and P2-S1-result-1 (ready d0f4a899),
+    disjoint claims. Merge lock taken at `61c4cb76` (05:49Z); the
+    candidate, both merged on that head, was `f41d100e`. `owners.py diff`
+    clean for both (S1's on the three-dot diff: its branch merged main
+    before home-1, so the two-dot diff showed home-1's files). guard.sh OK;
+    check_all PASS at 06:11:48Z, run from the main checkout; pushed to main
+    as `f41d100e` and the lock cleared in the same turn (`df12e5f1`).
+    S1-R19's default stands (result's record unchanged; check_screens
+    passes either way).
+  - **AIA's merge** (M17): P2-AIA-motion-2 (ready d0648763, its five
+    shot scripts' `.gd.uid` companions granted as exceptions, by
+    precedent). Merge lock taken at `c1a4e151` (06:17Z); the candidate,
+    d0648763 merged on that head, was `0bc0fbb9`. `owners.py diff` clean.
+    check_all PASS at 06:40:52Z, run from the main checkout. guard.sh
+    failed twice on the container, not on the work: first the candidate
+    worktree had no native library (character's shots, "no measure"; fixed
+    with `bash client/build.sh` in the worktree), then the icon studio page
+    timed out waiting for `window.ready` (the worktree had no
+    `tools/ui_research/node_modules`, so three never loaded; fixed with
+    `npm ci` there). The third run: every family rebakes byte for byte,
+    check_screens and budget_shots OK, ui guard OK (06:52:57Z). Pushed to
+    main as a fast-forward to `0bc0fbb9` and the lock cleared in the same
+    turn. AIA has no open task; its session stays idle. Three builders
+    run (S1, S2, S3).
+  - **S1 and S3 started** (06:13Z, effort high accepted; both old sessions
+    idle with their tasks merged): S1 on P2-S1-result-2 as
+    `session_01SNkKxp1GYKSQAkZjfQC3vM` (its deps, result-1 and P2-K1-motion,
+    merged; the prompt delivers M7 and M11 for its acks), S3 on
+    P2-S3-settings as `session_01SNkKxrGTeWurPkRy5fVrtk`. With S2 and AIA
+    that makes four builders, the cap; no session showed
+    `allowed_warning`.
+  - **S2's gate, advisory** (P2-S2-home-2 at 3612e265, home at 100% text;
+    verdict in
+    `docs/art/ui-quality/gate/verdicts/P2-S2-home-2/3612e265.json`):
+    Character presence and Hierarchy pass, three of three each. The
+    Keeper's portrait, about 110 px in its gold ring, reads as a figure in
+    the toon look; Collect is the one large gold control and leads.
+  - **Requests:** S2-R17 approved: when P2-S2-home-2 merges, the lead
+    records home/100 and home/hc at 145 and home/200 at 114 in
+    `tools/ui_bake/budgets.json`, with a raises entry for S2-R17; S2 may
+    mark ready with guard.sh failing only on those lines. S2-R18 copied to
+    requests.md; AD has no session, so its default stands at its due,
+    11:39Z.
+  - **Claims copied:** S2 (P2-S2-home-2, lease 08:23:34Z, pre-checking
+    3612e265) and AIA (P2-AIA-motion-2, lease 07:48Z, ready d0648763 at
+    05:46Z).
 - Cycle 77, 13 November 2026, from 04:39Z to 05:25Z (session
   `session_01SNkKxq8jXKxVQg8t1Ub3bT`, started by the Opus 5.5 launcher):
   P2-S2-home-1 merged as `7e289af9`, S2 started on P2-S2-home-2, AIA restarted, two advisory gates, requests copied.
