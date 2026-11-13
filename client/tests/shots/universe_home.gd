@@ -3,9 +3,11 @@ extends SceneTree
 ## still (tools/render/shoot.sh). SHOT is the file; OUTER (outer realms, 6),
 ## ZOOM and FOCUS (as universe_zoom.gd), TEXT (the text size, 100) and TIME
 ## (seconds of animation) are optional; WHOLE shows the whole universe; RAIDS the
-## raids not yet seen (2); MOST every amount at its widest;
+## raids not yet seen (2), on the Defence badge; NOTICE their notice too;
+## MOST every amount at its widest (else the key frame's state, `keyframe`);
 ## LOCALE the language; CONTRAST high contrast; TALL the window's height in
-## points over 540 wide (960 for 9:16).
+## points over 540 wide (960 for 9:16). FIT checks that everything fits (see
+## `fit`); the run fails where something does not.
 
 
 func _initialize() -> void:
@@ -27,7 +29,13 @@ func _go() -> void:
 		root.size = Vector2i(540, int(env.call("TALL", "1170")))
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	var store := App.services.store
-	UniverseSample.fill(store, int(env.call("OUTER", "6")), int(env.call("RAIDS", "2")), env.call("MOST", "") != "")
+	var raids := int(env.call("RAIDS", "2"))
+	UniverseSample.fill(store, int(env.call("OUTER", "6")), raids, env.call("MOST", "") != "")
+	if env.call("MOST", "") == "":
+		keyframe(store)
+	# The key frame's home has its raids on the Defence badge, the notice
+	# already dismissed; NOTICE shows the notice as it arrives.
+	Home._dismissed = 0 if env.call("NOTICE", "") != "" else raids
 	var screen: Home = load("res://scenes/home.tscn").instantiate()
 	root.add_child(screen)
 	await process_frame
@@ -70,11 +78,159 @@ func _go() -> void:
 			if n >= 4:
 				print("  %d %s (%s)" % [n, item.name, item.get_class()])
 			item.modulate.a = 1.0
+		# And home's own parts by name, whatever they cost.
+		var named := {"keeper": screen.keeper_plate, "strain": screen.strain, "purse": screen.purse,
+			"notice": screen.notice, "collect": screen.collect_button, "goal": screen.goal_card, "tabs": screen.tabs}
+		for side: StringName in screen.sides:
+			named["side " + side] = [screen.sides[side]]
+		named["sides"] = screen.sides.values()
+		for key: String in named:
+			var items: Array = named[key] if named[key] is Array else [named[key]]
+			items = items.filter(func(i: Variant) -> bool: return i != null and (i as CanvasItem).is_visible_in_tree())
+			if items.is_empty():
+				continue
+			for item: CanvasItem in items:
+				item.modulate.a = 0.0
+			await process_frame
+			await RenderingServer.frame_post_draw
+			print("  part %s %d" % [key, whole - calls.call()])
+			for item: CanvasItem in items:
+				item.modulate.a = 1.0
+		# PROBE=kinds: within the purse, the side buttons and the notice, what
+		# each kind of node costs across them (each kind faded with what it holds).
+		if env.call("PROBE", "") == "kinds":
+			for key: String in ["purse", "sides", "notice", "strain"]:
+				var tops: Array = named[key] if named[key] is Array else [named[key]]
+				var kinds := {}
+				for top: Node in tops:
+					for c: Node in _all_inside(top):
+						var d := 0
+						var n := c
+						while n != top:
+							n = n.get_parent()
+							d += 1
+						var kind := "%s/%s/%d" % [c.get_class(), String(c.name).rstrip("0123456789"), d]
+						kinds[kind] = kinds.get(kind, []) + [c]
+				for kind: String in kinds:
+					for item: CanvasItem in kinds[kind]:
+						item.modulate.a = 0.0
+					await process_frame
+					await RenderingServer.frame_post_draw
+					print("  kind %s %s %d" % [key, kind, whole - calls.call()])
+					for item: CanvasItem in kinds[kind]:
+						item.modulate.a = 1.0
 		await process_frame
 		await RenderingServer.frame_post_draw
+	if env.call("FIT", "") != "":
+		var bad := fit(screen)
+		for b: String in bad:
+			print("fit FAIL ", b)
+		print("fit ", "ok" if bad.is_empty() else "FAIL")
+		if not bad.is_empty():
+			# The still is saved all the same, to show what does not fit.
+			root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
+			quit(1)
+			return
 	print("triangles ", screen.world.triangles, " draw calls ", screen.world.draw_calls(), " frame ",
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME), " prims ",
 		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME), " calls")
 	root.get_texture().get_image().save_png(OS.get_environment("SHOT"))
 	print("wrote")
 	quit()
+
+
+## The key frame's state (art/ui/keyframes/01-home.*) over the sample's:
+## Keeper 24 with 1,240 experience to go, strain at 82% (Humming), and
+## 3.4k waiting to be collected, the essence garden full.
+static func keyframe(store: Store) -> void:
+	store.dispatch(&"keeper_loaded", {"view": {"level": 24, "xp": 22760, "toNext": 24000}})
+	store.dispatch(&"weaving_loaded", {"view": {"stability": {"strain": 0.82, "band": 2}}})
+	store.dispatch(&"roster_loaded", {"view": {"producers": [
+		{"kind": "star_well", "realm": "heart", "stored": 2000, "holds": 3200},
+		{"kind": "aether_spring", "realm": "outer-2", "stored": 600, "holds": 1800},
+		{"kind": "garden", "realm": "outer-4", "stored": 800, "holds": 860}]}})
+
+
+## Every canvas item under `top`, internal children (the kit's boxes and
+## faces) included.
+static func _all_inside(top: Node) -> Array:
+	var out := []
+	for c: Node in top.get_children(true):
+		if c is CanvasItem:
+			out.append(c)
+		out.append_array(_all_inside(c))
+	return out
+
+
+## What does not fit on home, one line each: a label's words wider than the
+## label, or outside its panel or button, or off the screen; one of home's parts over
+## another; a realm's pin over another pin or over home's parts, or off the
+## screen; or some realms named over the whole universe and others not.
+static func fit(screen: Home) -> Array[String]:
+	var bad: Array[String] = []
+	var whole := Rect2(Vector2.ZERO, screen.size)
+	for l: Label in screen.find_children("*", "Label", true, false):
+		if not l.is_visible_in_tree() or l.text == "" or screen.world.is_ancestor_of(l):
+			continue
+		var at := l.get_global_rect()
+		var font := l.get_theme_font("font")
+		var wide := 0.0
+		for line: String in l.text.split("\n"):
+			wide = maxf(wide, font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				l.get_theme_font_size("font_size")).x)
+		if l.autowrap_mode == TextServer.AUTOWRAP_OFF and not l.clip_text \
+				and l.text_overrun_behavior == TextServer.OVERRUN_NO_TRIMMING and wide > at.size.x + 1.0:
+			bad.append("%s %s: %.0f px of words in %.0f" % [l.get_path(), l.text, wide, at.size.x])
+		var p := l.get_parent()
+		while p != null and p != screen and not p is PanelContainer and not p is Button:
+			p = p.get_parent()
+		if (p is PanelContainer or p is Button) and not (p as Control).get_global_rect().grow(1.0).encloses(at):
+			bad.append("%s %s: %s outside its panel %s" % [l.get_path(), l.text, at, (p as Control).get_global_rect()])
+		if not whole.grow(1.0).encloses(at):
+			bad.append("%s %s: %s off the screen" % [l.get_path(), l.text, at])
+	var parts := {"keeper": screen.keeper_plate, "strain": screen.strain, "purse": screen.purse,
+		"notice": screen.notice, "collect": screen.collect_button, "goal": screen.goal_card, "tabs": screen.tabs}
+	for side: StringName in screen.sides:
+		parts["side " + side] = screen.sides[side]
+	var shown := {}
+	for key: String in parts:
+		var c := parts[key] as Control
+		if c != null and c.is_visible_in_tree():
+			shown[key] = c.get_global_rect()
+	var keys := shown.keys()
+	for i in keys.size():
+		var a: Rect2 = shown[keys[i]]
+		if not whole.grow(1.0).encloses(a):
+			bad.append("%s %s off the screen" % [keys[i], a])
+		for j in range(i + 1, keys.size()):
+			if a.grow(-1.0).intersects(shown[keys[j]]):
+				bad.append("%s %s over %s %s" % [keys[i], a, keys[j], shown[keys[j]]])
+	var pins := screen.world.pins
+	if not pins.is_visible_in_tree():
+		return bad
+	var named: Array[String] = []
+	var missing: Array[String] = []
+	var boxes := {}
+	for id: String in screen.world.islands:
+		var pin := pins.realm_pin(id)
+		if pin == null:
+			continue
+		if pin.is_visible_in_tree():
+			named.append(id)
+			boxes[id] = pin.get_global_rect()
+		else:
+			missing.append(id)
+	if screen.world.zoom == 0 and not missing.is_empty():
+		bad.append("realms %s named and %s not" % [named, missing])
+	var ids := boxes.keys()
+	for i in ids.size():
+		var a: Rect2 = boxes[ids[i]]
+		if not whole.encloses(a):
+			bad.append("pin %s %s off the screen" % [ids[i], a])
+		for j in range(i + 1, ids.size()):
+			if a.grow(-0.5).intersects(boxes[ids[j]]):
+				bad.append("pin %s %s over pin %s %s" % [ids[i], a, ids[j], boxes[ids[j]]])
+		for key: String in shown:
+			if a.grow(-0.5).intersects(shown[key]):
+				bad.append("pin %s %s over %s %s" % [ids[i], a, key, shown[key]])
+	return bad
