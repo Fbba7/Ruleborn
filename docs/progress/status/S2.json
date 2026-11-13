@@ -7,13 +7,13 @@
   "task_id": "P2-S2-home-1",
   "task_state": "working",
   "claimed_at": "2026-11-13T02:47:00Z",
-  "lease_until": "2026-11-13T06:01:18Z",
-  "updated_at": "2026-11-13T03:01:18Z",
-  "expected_next_update_by": "2026-11-13T03:46:18Z",
+  "lease_until": "2026-11-13T06:10:53Z",
+  "updated_at": "2026-11-13T03:10:53Z",
+  "expected_next_update_by": "2026-11-13T03:55:53Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "71d51d7f",
-    "next_step": "Cycle 74 points in hand (Collect beside the goal, See ghost, Heist raised, display type on figures and name, featherkin portrait, keyframe state in the shot); next: the FIT shots, checks, merge main, pre-check, mark ready"
+    "next_step": "Cycle 74 points in hand; tab words at large text fixed; next: the FIT matrix, requests S2-R12 to S2-R16, docs, merge main, checks, pre-check, mark ready"
   },
   "precheck": {
     "sha": "71d51d7f342dae296b1251d7802e6698c0593792",
