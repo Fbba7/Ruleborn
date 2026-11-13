@@ -5,50 +5,25 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-S1-result-1",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-13T02:23:29Z",
   "lease_until": "2026-11-13T06:08:36Z",
-  "updated_at": "2026-11-13T05:15:51Z",
-  "expected_next_update_by": "2026-11-13T06:15:51Z",
+  "updated_at": "2026-11-13T05:42:47Z",
+  "expected_next_update_by": "2026-11-13T06:42:47Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "0a1a76f",
-    "next_step": "P2-S1-result-1: cycle 76's cheap gate points taken at 0a1a76f (pre-check PASS 05:15Z, guard OK). Main moved (580c9e4, lead docs only): merging it, pre-check on the merge, then ready at the merge. Then claim P2-S1-result-2."
+    "last_green_sha": "d0f4a89",
+    "next_step": "P2-S1-result-1 ready at d0f4a89 (0a1a76f with main 580c9e4; pre-check PASS 05:41:49Z, guard OK, setup line and build.sh OK; gate advisory pass, 4 of 7, at 8bec0d84, cycle 76's cheap points taken at 0a1a76f). d0f4a89 also carries result-2's reward code (d2422a0). P2-S1-result-2 is claimed here once result-1 merges: main merged, checks rerun, gate request.",
+    "at": "2026-11-13T05:42:47Z"
   },
   "precheck": {
-    "sha": "0a1a76fa09fc168635c4bc8ffd702c6511fcdf07",
+    "sha": "d0f4a8993658f394f94da0ee9ba9f0fb4c17fd1a",
     "exit": 0,
-    "finished_at": "2026-11-13T05:15:05Z",
+    "finished_at": "2026-11-13T05:41:49Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "8bec0d84e170dd14987236b71732ae18a737dc92",
-    "items": [
-      {
-        "item": "result at 100% text",
-        "qualities": [
-          "Hierarchy",
-          "Display type",
-          "Character presence"
-        ]
-      },
-      {
-        "item": "result at 200% text, pt_BR",
-        "qualities": [
-          "Display type",
-          "Hierarchy"
-        ]
-      },
-      {
-        "item": "result in high contrast",
-        "qualities": [
-          "Colour roles and value",
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
-  "ready_sha": null,
+  "gate_request": null,
+  "ready_sha": "d0f4a89",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6",
@@ -397,5 +372,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P2-S1-result-1: cycle 76's cheap gate points taken at 0a1a76f (pre-check PASS 05:15Z, guard OK). Main moved (580c9e4, lead docs only): merging it, pre-check on the merge, then ready at the merge. Then claim P2-S1-result-2."
+  "next_step": "P2-S1-result-1 ready at d0f4a89 (0a1a76f with main 580c9e4; pre-check PASS 05:41:49Z, guard OK, setup line and build.sh OK; gate advisory pass, 4 of 7, at 8bec0d84, cycle 76's cheap points taken at 0a1a76f). d0f4a89 also carries result-2's reward code (d2422a0). P2-S1-result-2 is claimed here once result-1 merges: main merged, checks rerun, gate request."
 }
