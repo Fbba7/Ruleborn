@@ -127,7 +127,7 @@ func _ready() -> void:
 	haul_tile.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	haul_tile.custom_minimum_size.x = UI.px(118)
 	haul_label = haul_tile.get_child(0).get_child(1) as Label
-	_tile_row(haul_tile)
+	ResultFit.tile_row(haul_tile)
 	counter = haul_tile
 	paid.add_child(haul_tile)
 	var tiles: Array = []
@@ -137,7 +137,7 @@ func _ready() -> void:
 		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		t.size_flags_stretch_ratio = 1.3 if r[0] == "starlight" else 1.0
 		reward_labels[str(r[0])] = t.get_child(0).get_child(1)
-		_tile_row(t)
+		ResultFit.tile_row(t)
 		tiles.append(t)
 	# Side by side, as the design's; one above another with large text.
 	reward_row = KitLayout.columns(tiles, 8)
@@ -364,85 +364,6 @@ func _rest_card() -> PanelContainer:
 	return card
 
 
-## With large text, a reward tile as one row, as key frame
-## 03-result_text200_pt_BR: its icon, its number and its name side by side
-## from the left, so the three stand under the time line. The number is
-## still the box's second child and the box the tile's only one
-## (`_reward_tile`).
-static func _tile_row(tile: PanelContainer) -> void:
-	if Settings.text_scale <= KitLayout.SIDE_BY_SIDE_UP_TO:
-		return
-	var column := tile.get_child(0) as VBoxContainer
-	var row := HBoxContainer.new()
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation", UI.px(10))
-	row.alignment = BoxContainer.ALIGNMENT_BEGIN
-	for c: Node in column.get_children():
-		column.remove_child(c)
-		row.add_child(c)
-		(c as Control).size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var icon := row.get_child(0) as Control
-	icon.custom_minimum_size = Vector2.ONE * UI.px(26)
-	var words := row.get_child(2) as Label
-	words.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tile.remove_child(column)
-	column.queue_free()
-	tile.add_child(row)
-	tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tile.custom_minimum_size.x = 0
-	# A row needs less height than the tile's column: the key frame's rows
-	# are a line of the number deep, so the third clears the dock.
-	tile.add_theme_stylebox_override("panel", UI.clear_box(10, 3))
-
-
-## With large text, the reward rows while each one's icon, number and name
-## fit across the phone; when one does not (German's "Sternenlicht" beside
-## its number), every tile goes back to the design's column, one above
-## another, rather than break a word by its letters.
-func _fit_reward_rows() -> void:
-	if Settings.text_scale <= KitLayout.SIDE_BY_SIDE_UP_TO:
-		return
-	var room := get_viewport_rect().size.x - 2.0 * UI.px(Tokens.number("size", "safe_side_points")) \
-		- 2.0 * UI.px(10) - 2.0
-	var fits := true
-	for kind: String in reward_labels:
-		var row := (reward_labels[kind] as Label).get_parent() as BoxContainer
-		var wide := float(UI.px(26)) + 2.0 * row.get_theme_constant("separation")
-		for l: Label in [row.get_child(1), row.get_child(2)]:
-			wide += l.get_theme_font("font").get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
-				l.get_theme_font_size("font_size")).x
-		fits = fits and wide <= room
-	if fits:
-		return
-	reward_row.add_theme_constant_override("separation", UI.px(8))
-	for kind: String in reward_labels:
-		_tile_column((reward_labels[kind] as Label).get_parent().get_parent() as PanelContainer)
-
-
-## A reward tile back from a row to the design's column: its icon, its
-## number and its name centred one above another (KitCards.reward's).
-static func _tile_column(tile: PanelContainer) -> void:
-	var row := tile.get_child(0) as HBoxContainer
-	var column := VBoxContainer.new()
-	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	column.add_theme_constant_override("separation", 0)
-	column.alignment = BoxContainer.ALIGNMENT_CENTER
-	for c: Node in row.get_children():
-		row.remove_child(c)
-		column.add_child(c)
-		(c as Control).size_flags_vertical = Control.SIZE_FILL
-	var icon := column.get_child(0) as Control
-	icon.custom_minimum_size = Vector2.ONE * UI.px(34)
-	var words := column.get_child(2) as Label
-	words.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	words.size_flags_horizontal = Control.SIZE_FILL
-	tile.remove_child(row)
-	row.queue_free()
-	tile.add_child(column)
-	tile.add_theme_stylebox_override("panel", UI.clear_box(10, 8))
-
-
 ## One crew member's face in the kit's ring, framed as the kit's avatars
 ## frame theirs (KitSocial's), on the leather band.
 func _face(picture: Texture2D) -> KitRing:
@@ -485,17 +406,6 @@ func _raid_bar(foiled: bool) -> PanelContainer:
 	row.add_child(again)
 	bar.add_child(row)
 	return bar
-
-
-## Home as its icon alone, on a square of the control's height, its name
-## spoken (the bar's large-text form, `_fit_raid`).
-static func _home_square(home: Button) -> void:
-	home.accessibility_name = home.text
-	home.tooltip_text = home.text
-	home.text = ""
-	home.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	home.custom_minimum_size = Vector2.ONE * UI.px(UI.CONTROL_POINTS + 8.0)
-	home.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
 
 ## The island after the heist (§23.2's result: "Celebrate or learn"): the
@@ -693,7 +603,7 @@ func _show_rewards(v: Dictionary) -> void:
 	for kind: String in reward_labels:
 		(reward_labels[kind] as Label).set_meta("to", int(v.get(kind, 0)))
 	_count_rewards(1.0)
-	_fit_reward_rows()
+	ResultFit.reward_rows(reward_row, reward_labels, get_viewport_rect().size.x)
 	var fee := int(v["fee"])
 	var back := int(v.get("fee_returned", 0))
 	var said := Strings.t("RESULT_FEE_RETURNED", ShopPresenter.grouped(fee)) if back >= fee \
@@ -923,7 +833,7 @@ func _fit_laws() -> bool:
 		return false
 	var fits := true
 	for b: Button in row.get_children():
-		fits = fits and _word_fits(b)
+		fits = fits and ResultFit.word_fits(b)
 	if fits:
 		return false
 	var grid := KitLayout.grid(2)
@@ -959,7 +869,7 @@ func _fit_raid() -> bool:
 		if c != again:
 			wide -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
 	var words := again.find_children("*", "Label", true, false)
-	var upright := not _words_fit(words, wide - pad)
+	var upright := not ResultFit.words_fit(words, wide - pad)
 	if upright and Settings.text_scale > 100:
 		# Large text: Home as its icon on a square beside the raid, named
 		# aloud, as key frame 03-result_text200_pt_BR, before the raid stands
@@ -967,10 +877,10 @@ func _fit_raid() -> bool:
 		wide = full
 		for c: Control in row.get_children():
 			if c != again and c is Button:
-				_home_square(c as Button)
+				ResultFit.home_square(c as Button)
 			if c != again:
 				wide -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
-		upright = not _words_fit(words, wide - pad)
+		upright = not ResultFit.words_fit(words, wide - pad)
 	if upright:
 		row.vertical = true
 		row.move_child(again, 0)
@@ -978,7 +888,7 @@ func _fit_raid() -> bool:
 	var lines := 0.0
 	var wraps := false
 	for l: Label in words:
-		var n := _lines(l, wide - pad)
+		var n := ResultFit.lines(l, wide - pad)
 		wraps = wraps or n > 1
 		lines += n * l.get_theme_font("font").get_height(l.get_theme_font_size("font_size"))
 	if not wraps and not upright:
@@ -992,47 +902,6 @@ func _fit_raid() -> bool:
 		v.offset_left = pad / 2.0
 		v.offset_right = -pad / 2.0
 	again.custom_minimum_size.y = maxf(again.custom_minimum_size.y, lines * 1.1 + UI.px(12))
-	return true
-
-
-## Whether each word of each label in `words` fits `room`.
-static func _words_fit(words: Array[Node], room: float) -> bool:
-	for l: Label in words:
-		var font := l.get_theme_font("font")
-		var text := l.text.to_upper() if l.uppercase else l.text
-		for word: String in text.split(" ", false):
-			if font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, l.get_theme_font_size("font_size")).x > room:
-				return false
-	return true
-
-
-## How many lines `l`'s words take wrapped between words within `room`.
-static func _lines(l: Label, room: float) -> int:
-	var font := l.get_theme_font("font")
-	var font_px := l.get_theme_font_size("font_size")
-	var text := l.text.to_upper() if l.uppercase else l.text
-	var n := 1
-	var line := ""
-	for word: String in text.split(" ", false):
-		var next := word if line == "" else line + " " + word
-		if line != "" and font.get_string_size(next, HORIZONTAL_ALIGNMENT_LEFT, -1, font_px).x > room:
-			n += 1
-			line = word
-		else:
-			line = next
-	return n
-
-
-## Whether each word on `b` fits the room its padding and icon leave.
-static func _word_fits(b: Button) -> bool:
-	var room := b.size.x - b.get_theme_stylebox("normal").get_minimum_size().x
-	if b.icon != null:
-		room -= UI.px(24) + b.get_theme_constant("h_separation")
-	var font := b.get_theme_font("font")
-	var font_px := b.get_theme_font_size("font_size")
-	for word: String in b.text.split(" ", false):
-		if font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_px).x > room:
-			return false
 	return true
 
 
@@ -1070,7 +939,7 @@ func _show_outcome(v: Dictionary) -> void:
 		UI.dress(chip, "tag_alarm", 999)
 	KitStatus.set_pill(chip, Strings.t("RESULT_FOILED_CHIP") if grade == "Foiled" else Strings.t("RESULT_MULTIPLIERS",
 		[row[1], row[2]]))
-	if Settings.text_scale > 100 and not _chip_on_one_line():
+	if Settings.text_scale > 100 and not ResultFit.chip_on_one_line(chip, chip_label, get_viewport_rect().size.x):
 		# Large text: the pill's words wrap onto more lines instead of
 		# trailing off, when even its narrow form does not fit.
 		chip_label.clip_text = false
@@ -1101,29 +970,6 @@ func _show_outcome(v: Dictionary) -> void:
 	var at := int(m.get("tick", _ticks)) / RulebornReplay.ticks_per_second()
 	moment_when.text = Strings.t("RESULT_MOMENT", [at / 60, at % 60])
 	moment_label.text = _moment_words(m)
-
-
-## Large text: the multipliers' pill on one line while it fits the column
-## (AD's S1-R24): at its own size, then with its gaps narrowed (the pill's
-## padding, thin spaces round its dots), then one size down. False when
-## none fits (a long language), the pill then wraps at its dots.
-func _chip_on_one_line() -> bool:
-	var font := RbTheme.role_font("label")
-	var room := get_viewport_rect().size.x - 2.0 * UI.px(Tokens.number("size", "safe_side_points")) - UI.px(4)
-	var words := chip_label.text
-	var narrow := words.replace(" · ", "\u2009·\u2009")
-	for step: Array in [[words, 10.0, 14.0], [narrow, 6.0, 14.0], [narrow, 6.0, 12.0]]:
-		var size := UI.text_px(float(step[2]))
-		var wide := font.get_string_size(str(step[0]), HORIZONTAL_ALIGNMENT_LEFT, -1, size).x + 2.0
-		if wide + 2.0 * UI.px(float(step[1])) <= room:
-			chip.add_theme_stylebox_override("panel", UI.clear_box(float(step[1]), 4))
-			chip_label.add_theme_font_size_override("font_size", size)
-			chip_label.text = str(step[0])
-			chip_label.clip_text = false
-			chip_label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
-			chip_label.custom_minimum_size.x = 0
-			return true
-	return false
 
 
 ## The title on one line beside its medal while it fits the phone's width;

@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-13T06:14:06Z",
   "lease_until": "2026-11-13T12:00:00Z",
-  "updated_at": "2026-11-13T09:22:07Z",
-  "expected_next_update_by": "2026-11-13T09:47:07Z",
+  "updated_at": "2026-11-13T09:30:17Z",
+  "expected_next_update_by": "2026-11-13T10:00:17Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "aed28321",
-    "next_step": "AD's four objections to S1-R24 fixed at 4cf3f522 (main merged at dd800065). Pre-check on the head, gate on Hierarchy and Character presence at dd800065, AD's re-check (S1-R25), then ready.",
-    "at": "2026-11-13T09:22:07Z"
+    "next_step": "Pre-check at 6465a169 failed on gdlint (result_screen.gd at 1147 of 1000 lines). The large-text fitting helpers move to client/scripts/result_fit.gd (S1-R27), with the stills unchanged; pre-check again.",
+    "at": "2026-11-13T09:30:17Z"
   },
   "precheck": {
     "sha": "aed28321c02e67edf889d45075675bd1343335cd",
@@ -421,6 +421,21 @@
       "created_at": "2026-11-13T09:22:07Z",
       "due": "2026-11-14T09:22:07Z",
       "default": "S1 marks ready with guard.sh failing only on result/200 at 98 of 90, said in the handoff, as S2-R17's approval allowed; the lead records 98 when it merges.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R27",
+      "from": "S1",
+      "to": "lead",
+      "ask": "AD's S1-R24 fixes would put client/scripts/result_screen.gd over gdlint's 1000 lines (pre-check FAIL at 6465a169: 1147). The result's large-text fitting (the reward tiles as rows or columns, the multipliers pill on one line, Home as an icon, and the word and line measures of the raid bar) moves to a helper, client/scripts/result_fit.gd (class ResultFit) and its .uid, as K1-R20 did with ui_kit_motion.gd. Asks to grant both as P2-S1-result-2's exceptions. The stills are unchanged: pt_BR 200% 109 draw calls, en 100% 120, high contrast 62, de 200% 97, all FIT ok.",
+      "files": [
+        "client/scripts/result_fit.gd",
+        "client/scripts/result_fit.gd.uid"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T09:30:17Z",
+      "due": "2026-11-14T09:30:17Z",
+      "default": "The helper stays as committed, and P2-S1-result-2 is marked ready with it on the branch.",
       "escalate_to": "lead"
     }
   ],

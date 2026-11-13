@@ -178,6 +178,8 @@ AD answered the faces' preview (S1-R24) at 08:46Z with four objections. The re-c
 
 At 200% text, when the raid's words stand upright, Home and the replay show as icon-only squares (with an accessibility name and tooltip), so the raid keeps its room.
 
+The fitting lives in `client/scripts/result_fit.gd` (`ResultFit`), so result_screen.gd stays under gdlint's 1000 lines (S1-R27).
+
 | Still (`SERVER=1 FIT=1`) | FIT | Draw calls |
 |---|---|---|
 | pt_BR, 200% | ok | 109 |
