@@ -3,17 +3,17 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P2-S2-home-1",
-  "task_state": "blocked",
-  "claimed_at": "2026-11-12T22:10:00Z",
-  "lease_until": "2026-11-13T01:10:00Z",
-  "updated_at": "2026-11-13T00:33:00Z",
-  "expected_next_update_by": "2026-11-13T01:18:00Z",
+  "task_state": "working",
+  "claimed_at": "2026-11-13T02:47:00Z",
+  "lease_until": "2026-11-13T05:47:00Z",
+  "updated_at": "2026-11-13T02:47:00Z",
+  "expected_next_update_by": "2026-11-13T03:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "71d51d7f",
-    "next_step": "Pre-check PASS at 71d51d7f (main e5753c19 merged at a31a9d72; check_all PASS, guard fails only home/100 and home/hc draw calls 139 vs 119). Gate asked (Screen); waiting on S2-R7 (blocking, lead) and AD's preview S2-R11. Then: answer AD's objections, set ready"
+    "next_step": "Restarted (lead cycle 75) from 5164cc43: S2-R7 approved, S2-R11 default applied. Take cycle 74 advisory gate points (Heist tab leads, display treatment of figures, keyframe shot records, portrait), then merge main, pre-check, mark ready"
   },
   "precheck": {
     "sha": "71d51d7f342dae296b1251d7802e6698c0593792",
