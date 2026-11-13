@@ -8,7 +8,7 @@
  "task_state": "working",
  "claimed_at": "2026-11-13T01:43:33Z",
  "lease_until": "2026-11-13T04:43:33Z",
- "updated_at": "2026-11-13T02:06:00Z",
+ "updated_at": "2026-11-13T02:08:00Z",
  "expected_next_update_by": "2026-11-13T02:51:00Z",
  "long_run": null,
  "progress_marker": {
@@ -230,6 +230,21 @@
    "created_at": "2026-11-12T19:20:00Z",
    "due": "2026-11-14T19:20:00Z",
    "default": "K1 times Motion as it sees fit in P2-K1-motion; curves.json stays the art's statement of the curves",
+   "escalate_to": "lead"
+  },
+  {
+   "id": "AIA-R25",
+   "from": "AIA",
+   "to": "AD",
+   "ask": "Preview the motion frame strips before P2-AIA-motion-2 is marked ready (M10, M12): art/ui/motion/strips/*.png (every frame stamped with its number and time from the motion's start; 60 fps) and the clips art/ui/motion/clips/*.gif, for board 4. Runs: press full and reduced; reward common, rare, epic, epic in high contrast, and reduced; shine full, reduced and high contrast (the last two draw nothing, by design); screen change full and reduced. art/ui/motion/check_frames.py passes on all of them (timing against curves.json, reduced forms, settling, at most 3 flashes a second). One thing to judge: the epic burst reads small against the chest at phone size. Send every objection in one round (M12)",
+   "files": [
+    "art/ui/motion/strips/",
+    "art/ui/motion/clips/"
+   ],
+   "blocking": true,
+   "created_at": "2026-11-13T02:08:00Z",
+   "due": "2026-11-13T08:08:00Z",
+   "default": "the strips stand as shot, and AIA marks the task ready when its checks pass",
    "escalate_to": "lead"
   }
  ],
