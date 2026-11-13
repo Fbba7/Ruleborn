@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-13T00:22:00Z",
   "lease_until": "2026-11-13T05:22:00Z",
-  "updated_at": "2026-11-13T02:18:00Z",
-  "expected_next_update_by": "2026-11-13T03:03:00Z",
+  "updated_at": "2026-11-13T02:35:00Z",
+  "expected_next_update_by": "2026-11-13T03:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "cf4eecc2c6c98a4ab4c5028269ea391133812b9a",
-    "next_step": "Merged main (dc02925f). Screen fixes pushed with the gate stills at 100%, 200% pt_BR and HC, all FIT ok. Next: fix the stills' shot records (one primary, the tabs as one control, no hidden labels), run_checks and guard, track Part 2, requests S3-R3/R4, AD preview, gate request.",
-    "at": "2026-11-13T02:18:00Z"
+    "next_step": "Records fixed (90f02629): every control passes value-steps. run_checks running at 90f02629. Track Part 2 and the handoff written; S3-R3/R4 to the lead, S3-R5 AD preview filed. Next: record the pre-check, then the gate request after S3-R5.",
+    "at": "2026-11-13T02:35:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -69,6 +69,54 @@
       "created_at": "2026-11-12T20:05:00Z",
       "due": "2026-11-13T08:05:00Z",
       "default": "the stills stand as rendered, and S3 marks P2-S3-screenkit ready when its checks pass",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R3",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: KitControls.upgrade should grow and wrap its title at large text. At 200% text in pt_BR, 'SUBIR DE NÍVEL' and its price do not fit the kit's fixed height, so character_screen.gd's _fit_upgrade lets the button grow and the title wrap on the screen's side (see docs/art/shots/menu-screens/character-200-pt_BR.png). Every screen with an upgrade button would need the same.",
+      "files": [
+        "client/ui/kit_controls.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:45:00Z",
+      "due": "2026-11-13T14:45:00Z",
+      "default": "S3 keeps the screen-side _fit_upgrade in character_screen.gd, and it can go when the kit's button grows by itself",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R4",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: KitCards.ability's kicker ('ABILITY') wears the kit's gold, Lc 55 on the card's plum, below the 60 asked for that size; gold_top passes. character_screen.gd overrides the kicker's colour with gold_top on its own side. Please make gold_top the kicker's colour in the kit.",
+      "files": [
+        "client/ui/kit_cards.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:45:00Z",
+      "due": "2026-11-13T14:45:00Z",
+      "default": "S3 keeps the screen-side colour override in character_screen.gd",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R5",
+      "from": "S3",
+      "to": "AD",
+      "ask": "Preview the character screen's stills before P2-S3-character's gate request: docs/art/shots/menu-screens/character-100.png, character-200-pt_BR.png and character-hc.png (the gate's three, each with its .shot.json), with character-100-stats.png, character-100-compare.png, character-200-pt_BR-scrolled.png and the before still before-character-100.png. What is still worse is listed in docs/art/tracks/menu-screens.md, Part 2. Send every objection in one round (M12).",
+      "files": [
+        "docs/art/shots/menu-screens/character-100.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR.png",
+        "docs/art/shots/menu-screens/character-hc.png",
+        "docs/art/shots/menu-screens/character-100-stats.png",
+        "docs/art/shots/menu-screens/character-100-compare.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-scrolled.png",
+        "docs/art/shots/menu-screens/before-character-100.png"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:45:00Z",
+      "due": "2026-11-13T04:45:00Z",
+      "default": "the stills stand as rendered, and S3 requests the gate on them",
       "escalate_to": "lead"
     }
   ],
