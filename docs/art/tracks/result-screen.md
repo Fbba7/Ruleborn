@@ -134,7 +134,7 @@ Branch `claude/ui-screens-heist`, task P2-S1-result-2. The rewards are counted i
 
 ## Evidence
 
-The stills are taken at rest, after the sequence: the shot waits for `reward_done`, for at most 1200 frames, or fails. FIT, at the task's last client commit:
+The stills are taken at rest, after the sequence: the shot waits for `reward_done`, for at most 1200 frames, or fails. The table below gives FIT at the task's first client commit (d2422a0):
 
 | Still | FIT | Draw calls (`SERVER=1`) |
 |---|---|---|
@@ -146,6 +146,10 @@ The stills are taken at rest, after the sequence: the shot waits for `reward_don
 
 The budget stills are inside their records: result/100 82 (record 94), result/200 79 (90), result/hc 82 (94). The reward layer is freed when the sequence ends, so it costs the still nothing.
 
+**Again on main** (P2-S1-result-1 merged as f41d100e, current main merged into the branch). FIT is ok for en 100%, pt_BR and de at 100% and 200%, high contrast, long-crew5 and reduced motion. With `SERVER=1`: en 100% 120 draw calls, de 100% 122, pt_BR 100% 122, long-crew5 123, reduced 119. The budget stills are result/100 89 (record 94), result/200 90 (90) and result/hc 89 (94). `guard.sh` and `check_screens.py` pass. German at 100% already scrolled under the bar at the phone's foot before this task (its rest line wraps to three lines): `_fit_actions` moves the bar there, as designed.
+
+**The crew's faces, apart** (gate, P2-S1-result-1, Character presence: fail 3/3). The judge saw "three overlapping portraits of about 45 px at 960", against the anchor's "five separate portraits of about 60 px". The rest card now shows its three faces apart, 4 points between them, at 52 points: about 57 px each at 960. The page at 100% text had almost no room to spare. Separate faces at 56 points, beside a 14-point line wrapped to three lines, overran the scroll by 28 px and sent the bar to the foot. At 52 points the faces gain 4. The rest line drops to 13 points (the smallest size, 21.8), with no extra line spacing, beside them. The lines under the reward tiles close up from 6 to 4 points. The page then measures 2074 px against the scroll's 2076, so the actions still end the page at 100% text (F6).
+
 The frame strips and clips (board 4) come from the same shot with `STRIP`. The screen's tweens are paused and stepped by a thirtieth of a second for each frame, so the strip shows the sequence as it plays, whatever the renderer's speed:
 
     STRIP=out/full SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png
@@ -153,9 +157,13 @@ The frame strips and clips (board 4) come from the same shot with `STRIP`. The s
     python3 tools/ui_gate/sheet.py strip result-reward-full.png $(ls out/full/crop_*.png | sed -n '6~4p' | head -16) --height 480
     python3 tools/ui_gate/sheet.py strip result-reward-reduced.png $(ls out/reduced/crop_*.png | sed -n '7~2p' | head -10) --height 480
     ffmpeg -framerate 30 -i out/full/full_%03d.png -vf "scale=540:-2,format=yuv420p" -c:v libx264 -crf 20 result-reward-full.mp4
+    ffmpeg -framerate 30 -i out/reduced/full_%03d.png -vf "scale=540:-2,format=yuv420p" -c:v libx264 -crf 20 result-reward-reduced.mp4
+
+In strip mode the shot writes no `out.png`, so `shoot.sh` ends with exit 1 on its last check for that file. The frames are written all the same: count them rather than trusting the exit code. In the reduced folder, too, the whole frames are named `full_*.png`; the crops are `crop_*.png`.
 
 - **Full** (planned-clean, epic): 80 frames, the sequence over in 1.93 s. The strip shows the pause before the reveal, the burst on the sunburst, coins in arcs from the medal into the Starlight tile, and the counters stepping +378, +911, +1,703, +2,288, +2,310 (Essence and Renown with them), with a pulse on each landing.
 - **Reduced:** 32 frames, over in 0.37 s. The medal fades in, one coin drops into the Starlight tile, and the final values (+2,310, +805, +15) appear.
+- **Re-rendered on main** with the faces apart: the same 80 and 32 frames, and the same steps. The strips crop the hero and the rewards, so the rest card is not in them.
 
 The strips and clips are sent to AD for board 4 by request, since `docs/art/ui-quality/gate/**` is AD's (P2-AD-board-4).
 

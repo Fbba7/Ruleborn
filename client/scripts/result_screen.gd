@@ -21,10 +21,10 @@ const OUTCOME := {"Clean": ["RESULT_CONDITION_CLEAN", "1.0", "1.0"], "Loud": ["R
 ## Each reward and its material, as key frame 03: the Starlight haul on
 ## parchment and wider, the other two on glass.
 const REWARDS := [["starlight", "parchment"], ["essence", "glass"], ["renown", "glass"]]
-## How many of the crew's faces the rest card shows, overlapping (key frame
-## 03), and how large, in points.
+## How many of the crew's faces the rest card shows, apart and larger than
+## key frame 03's stack (gate, Character presence), and how large, in points.
 const FACES := 3
-const FACE_POINTS := 48.0
+const FACE_POINTS := 52.0
 ## The outcome's medal beside its title, in points.
 const MEDAL_POINTS := 34.0
 const TITLE_POINTS := 40.0
@@ -115,10 +115,9 @@ func _ready() -> void:
 	page.add_child(_hero())
 	# §12.13: the moment that decided it, with its replay a tap away.
 	page.add_child(_moment_card())
-	# The designs' order: the outcome, the moment, then what it paid.
 	var paid := VBoxContainer.new()
 	paid.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	paid.add_theme_constant_override("separation", UI.px(6))
+	paid.add_theme_constant_override("separation", UI.px(4))
 	haul_tile = KitCards.reward("resources/starlight", "", Strings.t("RESULT_LOOT"), "gold")
 	UI.dress(haul_tile, "parchment")
 	haul_tile.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -310,20 +309,20 @@ func _moment_card() -> PanelContainer:
 
 
 ## §11.6's crew home on the kit's card (key frame 03): the faces of the crew
-## that ran the heist, overlapping in their rings, beside how long it rests.
+## that ran the heist, each apart in its ring, beside how long it rests.
 func _rest_card() -> PanelContainer:
 	var card := UI.panel("glass")
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.visible = false
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation", UI.px(12))
+	row.add_theme_constant_override("separation", UI.px(10))
 	var faces := HBoxContainer.new()
 	faces.name = "Faces"
 	faces.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	faces.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	# Each face over the last by a third of its width, as the design's.
-	faces.add_theme_constant_override("separation", -UI.px(FACE_POINTS * 0.3))
+	# Apart, not overlapping: the key frame's stack read as one small strip.
+	faces.add_theme_constant_override("separation", UI.px(4))
 	for m: Variant in _crew_end:
 		if faces.get_child_count() >= FACES:
 			break
@@ -337,8 +336,9 @@ func _rest_card() -> PanelContainer:
 		faces.add_child(_face(CreatureBust.of(kind, "", Color(0, 0, 0, 0))))
 	faces.visible = faces.get_child_count() > 0
 	row.add_child(faces)
-	rest_label = UI.label("", 14, true)
+	rest_label = UI.label("", 13, true)
 	rest_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	rest_label.add_theme_constant_override("line_spacing", 0)
 	rest_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	rest_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(rest_label)
