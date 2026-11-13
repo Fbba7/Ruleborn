@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxo77VSsG6MDN6kJbhE` (cycle 78, 13
-November 2026 from 05:39Z, started by the Opus 5.5 launcher). Cycle 77's
+Latest lead cycle session: `session_01SNkKxpZSJe4qP28t2awv1v` (cycle 79, 13
+November 2026 from 07:38Z, started by the Opus 5.5 launcher). Cycle 78's
+was `session_01SNkKxo77VSsG6MDN6kJbhE` (from 05:39Z). Cycle 77's
 was `session_01SNkKxq8jXKxVQg8t1Ub3bT` (from 04:39Z). Cycle 76's
 was `session_01SNkKxnLXN4d7GMy12F1W5F` (from 03:38Z). Cycle 75's
 was `session_01SNkKxozSRuvzVXmhKrTz3w` (from 02:38Z). Cycle 74's
@@ -224,10 +225,11 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| AD | `session_01SNkKxoydJpnnk4xwpMmSj4` (Opus 5.5, effort high) | P2-AD-board-3 (start: P2-S2-home-2 merged as 807d68a7; between boards, the previews S2-R18, S1-R24 and S3-R7) | `claude/ui-ad` | 2026-11-13 08:23Z |
 | S1 | `session_01SNkKxp1GYKSQAkZjfQC3vM` (Opus 5.5, effort high) | P2-S1-result-2 (start: P2-S1-result-1 merged as f41d100e, P2-K1-motion merged; deliver M7 and M11) | `claude/ui-screens-heist` | 2026-11-13 06:13Z |
 | S3 | `session_01SNkKxrGTeWurPkRy5fVrtk` (Opus 5.5, effort high) | P2-S3-settings (start: P2-S3-character merged as f41d100e) | `claude/ui-screens-meta` | 2026-11-13 06:13Z |
 | AIA | `session_01SNkKxokBReWMyyoeH6tR9y` (Opus 5.5, effort high; idle, P2-AIA-motion-2 merged as 0bc0fbb9) | P2-AIA-motion-2 (restart: the last session went idle on AIA-R25 alone and its lease lapsed at 04:43:33Z; prior_sha 7fd401e7; AIA-R25's default applied early, M15; mark ready when its checks pass) | `claude/ui-artist` | 2026-11-13 04:45Z |
-| S2 | `session_01SNkKxo9ZakHyaiiUKjsDBf` (Opus 5.5, effort high) | P2-S2-home-2 (P2-S2-home-1 merged as 7e289af9; take its advisory gate points) | `claude/ui-screens-home` | 2026-11-13 05:22Z |
+| S2 | `session_01SNkKxo9ZakHyaiiUKjsDBf` (Opus 5.5, effort high; idle, P2-S2-home-2 merged as 807d68a7) | P2-S2-home-2 (P2-S2-home-1 merged as 7e289af9; take its advisory gate points) | `claude/ui-screens-home` | 2026-11-13 05:22Z |
 | S2 | `session_01SNkKxnuTWp4E5eG5m1dBtB` (Opus 5.5, effort high; idle, its task merged as 7e289af9) | P2-S2-home-1 (restart: the last session idle past its expected_next_update_by 01:18Z and its lease lapsed at 01:10Z; prior_sha 5164cc43; S2-R11's default applied early; take cycle 74's advisory gate points, then ready) | `claude/ui-screens-home` | 2026-11-13 02:43Z |
 | S1 | `session_01SNkKxowrAJqRGxuKn8Tf1C` (Opus 5.5, effort high; idle, P2-S1-result-1 merged as f41d100e) | P2-S1-toon-drop (restart: the last session went idle waiting for the gate; advisory pass in verdicts/P2-S1-toon-drop/a7dd6501.json; mark ready); toon-drop merged as c0aa1bd6, the session builds P2-S1-result-1 next | `claude/ui-screens-heist` | 2026-11-12 23:41Z |
 | S3 | `session_01SNkKxq23wc1i1XYqt7KM15` (Opus 5.5, effort high; idle, its task merged as f41d100e) | P2-S3-character (P2-S3-screenkit merged as 70057394; next task) | `claude/ui-screens-meta` | 2026-11-13 00:19Z |
@@ -443,6 +445,45 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 79, 13 November 2026, from 07:38Z to 08:30Z (session
+  `session_01SNkKxpZSJe4qP28t2awv1v`, started by the Opus 5.5 launcher):
+  P2-S2-home-2 merged as `807d68a7`, two advisory gates, AD started on
+  P2-AD-board-3.
+  - **Merge** (M17, M19): P2-S2-home-2 (ready 3612e265, gate passed in
+    cycle 78). Merge lock taken at `d76e2079` (07:43Z); the candidate,
+    3612e265 merged on that head with S2-R17's records (home/100 and
+    home/hc 145, home/200 114, and a raises entry), was `2e1ebe05`.
+    guard.sh OK (GUARD_EXIT=0); check_all PASS at 08:22:10Z, run from the
+    main checkout. Merged onto main's head (two lead-only commits since)
+    as `807d68a7`, docs check clean, pushed with the lock cleared in the
+    same turn (`abbe59eb`). S2-R17 recorded. S2 has no open task; its
+    session stays idle. The audit and roadmap pages did not change.
+  - **S1's gate, advisory** (P2-S1-result-2 at aed28321, result at 100%
+    text; `verdicts/P2-S1-result-2/aed28321.json`): Hierarchy and
+    Character presence pass, three of three each. Raid again leads by size
+    and colour (narrower in grayscale than on the anchor); the three crew
+    portraits read in the toon look.
+  - **S3's gate, advisory** (P2-S3-settings at f5719f28;
+    `verdicts/P2-S3-settings/f5719f28.json`): **Display type fails** at
+    100% and at 200% pt_BR (the group headers 'Access' / 'Acesso' and
+    'Seeing and comfort' sit on the starfield with a drop shadow, no ink
+    outline; one sample saw the lower card's last row of labels clipped at
+    200%), and **Hierarchy at 200% pt_BR fails** (the thin 'Ajustes' title
+    is outranked in grayscale by the cream tab bar, the Stillness card and
+    Voltar). Hierarchy at 100% split (pass, pass, fail), then passed five
+    of six; high contrast passes Colour roles and Hierarchy. Shadow mode:
+    `attempts` stays 0, as for every advisory fail so far; S3 takes the
+    critique before ready, and every item goes on board 5.
+  - **AD started** on P2-AD-board-3 as `session_01SNkKxoydJpnnk4xwpMmSj4`
+    (08:23Z, effort high accepted), with the previews S2-R18, S1-R24 and
+    S3-R7 to answer between boards. Builders: S1, S3 and AD (three, under
+    the cap of four); no session showed `allowed_warning`.
+  - **Requests:** S3-R6 granted (its shot script and
+    `docs/art/shots/menu-screens/**` added to P2-S3-settings). S1-R23
+    (to K1), S1-R24 and S3-R7 (to AD) copied.
+  - **M18:** get_session on S1 (idle, its watch waiting on the gate), S2
+    (idle, completed), S3 (idle, check-in at 08:13Z) and AIA (idle, no
+    task): none needs a restart; the verdicts are on main for S1 and S3.
 - Cycle 78, 13 November 2026, from 05:39Z to 07:00Z (session
   `session_01SNkKxo77VSsG6MDN6kJbhE`, started by the Opus 5.5 launcher):
   P2-S3-character and P2-S1-result-1 merged together as `f41d100e`,
