@@ -50,7 +50,8 @@ The check found that pins could overlap by up to two gaps, at 9:16 and 200% text
 - **Display type on the figures and the name.** "Keeper 24", Renown and the purse's amounts are set in the display face (`DisplayS`), outlined in ink (`Home.home_figure`). The kit's parts set them in the body face; making it their default is S2-R12's.
 - **Heist leads.** The Heist tab stands raised above the bar, its picture larger, as the key frame's gold disc does. A raised disc as the kit's own look is S2-R14's.
 - **Collect beside the goal.** Collect shows while anything waits and reads "Collect 3.4k" as the design writes it, not in the gold's capitals. The goal stands beside it, narrowed to the room left. Where even its narrowest does not fit (large text), Collect shows alone. The kit's `action2` does not measure the words inside it, so home sizes the button to them; the fit check now also catches words that run past a button's edge (S2-R15).
-- **The raid notice stands above the foot,** never in Collect's place, and its See is the ghost look, leaving gold to Collect.
+- **The raid notice stands above the foot,** and its See is the ghost look, leaving gold to Collect. Only where the screen has no height for the notice and Collect both (200% text in Portuguese) does the notice take the foot's place, as it did before; the foot comes back once the raids are seen or dismissed. Home measures that by Collect's height alone, which the kit fixes: the goal's wrapped words have no height until the foot has laid them out, and a foot held hidden never does.
+- **Collect keeps to the screen's width.** Where its words alone fill the width (German at 200%), its picture gives way first, and the button never asks for more than the frame's inside.
 
 ## Evidence
 
@@ -60,14 +61,17 @@ Stills come from `client/tests/shots/universe_home.gd`, the same script before a
     FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png
     FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png
 
-**FIT=1 passes** in fifteen cases:
+**FIT=1 passes** in eighteen cases:
 
 - 100%, 150% and 200% text, in English (`en`) and in Portuguese (`pt_BR`);
 - high contrast at 100% and at 200%;
 - 9:16 (`TALL=960`) at 100% and at 150%;
 - `TALL=900` at 200%;
 - the raid notice as it arrives (`NOTICE=1`) at 100% and at 200%;
-- every amount at its widest (`MOST=1`) at 100% and at 200%.
+- every amount at its widest (`MOST=1`) at 100% and at 200%;
+- the raid notice with every amount at its widest (`NOTICE=1 MOST=1`) at 200% in `pt_BR` and in `de`, and in `pt_PT` at 9:16.
+
+The client test `universe_view_tests.gd` (`_fits`) runs the notice at 1170 and 960 tall, 100%, 150% and 200% text, in every language; the full checks on `695c2ad1` failed there (408 of 409) until the two points above.
 
 Runs side by side need a user folder each (`XDG_DATA_HOME`): they otherwise share the shot's settings and outbox, and two crashed that way.
 
@@ -111,6 +115,8 @@ These are things the kit's parts cannot do yet, or costs that the kit's parts br
 - **The raid notice is composed by the screen.** `KitPanels.notice` (through `UI.banner`) frees itself after `banner_ms` unless the player keeps banners, and its cross frees the panel. Home's notice must stay until it is seen or dismissed (§21.8), and must come back when new raids arrive. At 150% text and above its words also need the card's whole width, with the mark, See and the cross in a row beneath; the kit's notice keeps them all in one row. So home composes the notice from `UI.panel`, `UI.status` and `UI.action`. (S2-R8)
 - **Home reaches around `KitLayout.tap`.** The kit's tap stands inside the card's padding, so home moves it into a holder of the pill's own size and marks its button not frequent. Every tap also logs an error, because it connects `button_down` twice ("Signal 'button_down' is already connected"). The tap still works. (S2-R9)
 - **At 200% text, the realms' pins hide as a set.** Even compact, the seven pins do not all find room there, so home shows the islands unnamed. (No request: the room is the screen's, and the islands are a few points wide at that size.)
+- **At 200% text in Portuguese, the raid notice hides Collect** until the raids are seen or dismissed: the screen has no height for both. The goal and Collect come back with the foot. (No request: the room is the screen's.)
+- **At 200% text in German, Collect shows its words without its picture.** (No request.)
 - **At 200% text in Portuguese, the purse takes three rows.** "Pedras" and the widest amounts do not fit two pills to a row beside the badge, and the world shows only between the top and the tab bar. Nothing overlaps (FIT passes), but the universe is barely seen. (No request yet: a narrower pill is a kit question, to raise if AD objects.)
 
 ## Left for other tasks
