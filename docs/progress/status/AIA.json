@@ -3,12 +3,12 @@
  "role": "AIA",
  "branch": "claude/ui-artist",
  "model": "Opus 5.5",
- "agent_state": "working",
+ "agent_state": "waiting",
  "task_id": "P2-AIA-motion-2",
  "task_state": "working",
  "claimed_at": "2026-11-13T01:43:33Z",
  "lease_until": "2026-11-13T04:43:33Z",
- "updated_at": "2026-11-13T02:20:24Z",
+ "updated_at": "2026-11-13T02:47:00Z",
  "expected_next_update_by": "2026-11-13T02:51:00Z",
  "long_run": null,
  "progress_marker": {
@@ -255,5 +255,5 @@
    "at": "2026-11-10T06:50:38Z"
   }
  ],
- "next_step": "check_all, guard and bake check on the merge 65b3451f; AD preview of the frame strips (AIA-R25); pre-check; ready"
+ "next_step": "AD preview of the frame strips (AIA-R25, due 2026-11-13T08:08Z); then answer objections, merge main if it moved, pre-check and ready"
 }
