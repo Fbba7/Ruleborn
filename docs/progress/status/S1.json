@@ -8,18 +8,17 @@
   "task_state": "working",
   "claimed_at": "2026-11-13T02:23:29Z",
   "lease_until": "2026-11-13T06:08:36Z",
-  "updated_at": "2026-11-13T04:45:18Z",
-  "expected_next_update_by": "2026-11-13T05:45:18Z",
+  "updated_at": "2026-11-13T05:15:51Z",
+  "expected_next_update_by": "2026-11-13T06:15:51Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "8bec0d84",
-    "next_step": "P2-S1-result-1: gate verdict at 8bec0d84 is an advisory pass (4 of 7); taking cycle 76's cheap points (ink outlines on the hero, the lines under the tiles and the totals; the 3 s button grows at 200%, S1-R23 to K1). result/200 at 90 of 90 draw calls. Next: guard, commit, pre-check, ready. Then claim P2-S1-result-2 (built at d2422a0), merge main, setup line, build.sh, guard, pre-check, gate_request.",
-    "at": "2026-11-13T04:45:18Z"
+    "last_green_sha": "0a1a76f",
+    "next_step": "P2-S1-result-1: cycle 76's cheap gate points taken at 0a1a76f (pre-check PASS 05:15Z, guard OK). Main moved (580c9e4, lead docs only): merging it, pre-check on the merge, then ready at the merge. Then claim P2-S1-result-2."
   },
   "precheck": {
-    "sha": "8bec0d84e170dd14987236b71732ae18a737dc92",
+    "sha": "0a1a76fa09fc168635c4bc8ffd702c6511fcdf07",
     "exit": 0,
-    "finished_at": "2026-11-13T03:08:14Z",
+    "finished_at": "2026-11-13T05:15:05Z",
     "summary": "All checks passed."
   },
   "gate_request": {
@@ -398,5 +397,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P2-S1-result-1: gate verdict at 8bec0d84 is an advisory pass (4 of 7); taking cycle 76's cheap points (ink outlines on the hero, the lines under the tiles and the totals; the 3 s button grows at 200%, S1-R23 to K1). result/200 at 90 of 90 draw calls. Next: guard, commit, pre-check, ready. Then claim P2-S1-result-2 (built at d2422a0), merge main, setup line, build.sh, guard, pre-check, gate_request."
+  "next_step": "P2-S1-result-1: cycle 76's cheap gate points taken at 0a1a76f (pre-check PASS 05:15Z, guard OK). Main moved (580c9e4, lead docs only): merging it, pre-check on the merge, then ready at the merge. Then claim P2-S1-result-2."
 }
