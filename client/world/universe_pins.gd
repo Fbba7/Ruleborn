@@ -445,26 +445,73 @@ static func _place(node: Control, s: Vector2, taken: Array[Rect2], screen: Array
 	node.visible = false
 
 
-## The pin where it stands, or else the nearest height just clear of a pin
+## The pin where it stands, or else the nearest place just clear of a pin
 ## already placed or a control of the screen's, within three of its own
-## heights up or down, that covers neither; false where none is free.
+## heights up or down and one of its widths aside, that covers neither and
+## stays on the screen; false where none is free. A numbered chip at large
+## text (§20.8) finds the gap beside its neighbours this way, as the key frame
+## at 200% packs them among the islands.
 static func _settle(node: Control, taken: Array[Rect2], screen: Array[Rect2], ceiling: float) -> bool:
-	var from := node.position.y
+	var from := node.position
 	var gap := UI.px(2)
-	var heights: Array[float] = [from]
+	var wide := (node.get_parent() as Control).size.x
+	var heights: Array[float] = [from.y]
+	var across: Array[float] = [from.x]
 	for r: Rect2 in taken + screen:
-		if r.position.x < node.position.x + node.size.x and r.end.x > node.position.x:
+		if r.position.x < from.x + node.size.x and r.end.x > from.x:
 			heights.append(r.end.y + gap)
 			heights.append(r.position.y - node.size.y - gap)
-	heights = heights.filter(func(y: float) -> bool: return y >= ceiling and absf(y - from) <= node.size.y * 3.0)
-	heights.sort_custom(func(a: float, b: float) -> bool: return absf(a - from) < absf(b - from))
+		across.append(r.end.x + gap)
+		across.append(r.position.x - node.size.x - gap)
+	heights = heights.filter(func(y: float) -> bool: return y >= ceiling and absf(y - from.y) <= node.size.y * 3.0)
+	across = across.filter(func(x: float) -> bool:
+		return x >= UI.px(4) and x + node.size.x <= wide - UI.px(4) and absf(x - from.x) <= node.size.x)
+	var spots: Array[Vector2] = []
 	for y: float in heights:
-		var at := Rect2(Vector2(node.position.x, y), node.size)
+		spots.append(Vector2(from.x, y))
+	# Aside only on its own row or a neighbour's, the nearer first: a pin
+	# kept beside its island before one set far above or below it.
+	for x: float in across:
+		for r: Rect2 in taken:
+			spots.append(Vector2(x, r.position.y))
+		spots.append(Vector2(x, from.y))
+	spots = spots.filter(func(v: Vector2) -> bool: return v.y >= ceiling and absf(v.y - from.y) <= node.size.y * 3.0)
+	if _settle_at(node, spots, taken, screen):
+		return true
+	# Where none is free so near (numbered chips crowding a short band), any
+	# corner just clear of the others within two of its widths aside, still
+	# within three of its heights, the nearest first.
+	var tall := (node.get_parent() as Control).size.y
+	var rows: Array[float] = []
+	var cols: Array[float] = []
+	for r: Rect2 in taken + screen:
+		rows.append(r.end.y + gap)
+		rows.append(r.position.y - node.size.y - gap)
+		cols.append(r.end.x + gap)
+		cols.append(r.position.x - node.size.x - gap)
+	spots.clear()
+	for y: float in rows:
+		if y < ceiling or y + node.size.y > tall or absf(y - from.y) > node.size.y * 3.0:
+			continue
+		for x: float in cols + [from.x]:
+			if x >= UI.px(4) and x + node.size.x <= wide - UI.px(4) and absf(x - from.x) <= node.size.x * 2.0:
+				spots.append(Vector2(x, y))
+	return _settle_at(node, spots, taken, screen)
+
+
+## The pin at the first of `spots`, the nearest to where it stands first,
+## that covers neither a pin already placed nor a control of the screen's.
+static func _settle_at(node: Control, spots: Array[Vector2], taken: Array[Rect2], screen: Array[Rect2]) -> bool:
+	var from := node.position
+	spots.sort_custom(func(a: Vector2, b: Vector2) -> bool:
+		return (a - from).length_squared() < (b - from).length_squared())
+	for v: Vector2 in spots:
+		var at := Rect2(v, node.size)
 		# Clear of the others, not merely overlapping them by a hair.
 		var box := at.grow(-0.5)
 		if not taken.any(func(other: Rect2) -> bool: return other.intersects(box)) \
 				and not screen.any(func(other: Rect2) -> bool: return other.intersects(box)):
-			node.position.y = y
+			node.position = v
 			taken.append(at)
 			return true
 	return false

@@ -275,12 +275,22 @@ static func fit(screen: Home) -> Array[String]:
 		if not whole.grow(1.0).encloses(a):
 			bad.append("%s %s off the screen" % [keys[i], a])
 		for j in range(i + 1, keys.size()):
+			# Strain in the purse's fourth place at large text: the purse's flow
+			# keeps its places apart.
+			var outer := parts[keys[i]] as Control
+			var inner := parts[keys[j]] as Control
+			if outer.is_ancestor_of(inner) or inner.is_ancestor_of(outer):
+				continue
 			if a.grow(-1.0).intersects(shown[keys[j]]):
 				bad.append("%s %s over %s %s" % [keys[i], a, keys[j], shown[keys[j]]])
 	bad.append_array(must_show(screen))
 	bad.append_array(live(screen))
 	var pins := screen.world.pins
 	if not pins.is_visible_in_tree():
+		# Over the whole universe every realm is marked, a numbered chip at the
+		# least (board 3's objection C), never none.
+		if screen.world.zoom == 0:
+			bad.append("no realm marked over the whole universe")
 		return bad
 	var named: Array[String] = []
 	var missing: Array[String] = []
