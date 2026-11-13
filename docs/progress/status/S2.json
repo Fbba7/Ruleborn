@@ -3,20 +3,51 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S2-home-1",
-  "task_state": "working",
+  "task_state": "blocked",
   "claimed_at": "2026-11-12T22:10:00Z",
   "lease_until": "2026-11-13T01:10:00Z",
-  "updated_at": "2026-11-12T23:57:00Z",
-  "expected_next_update_by": "2026-11-13T00:42:00Z",
+  "updated_at": "2026-11-13T00:33:00Z",
+  "expected_next_update_by": "2026-11-13T01:18:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "4da3eeb0",
-    "next_step": "Client tests 406 of 406 at 4da3eeb0; budget stills 139/97/139 (S2-R7); main merged at a31a9d72, setup and build rerun; check_all and guard running on it. Next: handoff, pre-check, gate request"
+    "last_green_sha": "71d51d7f",
+    "next_step": "Pre-check PASS at 71d51d7f (main e5753c19 merged at a31a9d72; check_all PASS, guard fails only home/100 and home/hc draw calls 139 vs 119). Gate asked (Screen); waiting on S2-R7 (blocking, lead) and AD's preview S2-R11. Then: answer AD's objections, set ready"
   },
-  "precheck": null,
-  "gate_request": null,
+  "precheck": {
+    "sha": "71d51d7f342dae296b1251d7802e6698c0593792",
+    "exit": 0,
+    "finished_at": "2026-11-13T00:31:13Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "71d51d7f342dae296b1251d7802e6698c0593792",
+    "items": [
+      {
+        "item": "home at 100% text",
+        "qualities": [
+          "Hierarchy",
+          "Display type",
+          "Character presence"
+        ]
+      },
+      {
+        "item": "home at 200% text, pt_BR",
+        "qualities": [
+          "Display type",
+          "Hierarchy"
+        ]
+      },
+      {
+        "item": "home in high contrast",
+        "qualities": [
+          "Colour roles and value",
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
