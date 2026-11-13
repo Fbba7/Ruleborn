@@ -4026,6 +4026,14 @@
       "sent_at": "2026-11-13T06:57:00Z",
       "ack_by": "2026-11-13T08:57:00Z",
       "acked_at": "2026-11-13T07:43:00Z"
+    },
+    {
+      "id": "M20",
+      "to": "lead",
+      "text": "Lesson from P2-S1-result-2 (lead cycle 80): the candidate a95cfd9a was locked at 08:42 while AD's preview answer on it (S1-R24) was still open; AD answered at 08:46 with four objections the task's done_when must take, so the lock was released and the task went back to S1. In the same way home-2 merged before AD's board 3 objections came, which added home-3, K1-tabs and board-3b (5h). Rule: take a merge lock on a screen task only once AD's preview request on it is answered (or past its due); while one is open, ask AD to answer it first, and lock other ready work meanwhile. When a builder files a preview request, start AD on it in the same cycle if a seat is free. Ack by adding M20 to your status acks.",
+      "sent_at": "2026-11-13T09:15:00Z",
+      "ack_by": "2026-11-13T11:15:00Z",
+      "acked_at": null
     }
   ]
 }
