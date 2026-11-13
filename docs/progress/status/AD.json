@@ -3,28 +3,25 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P1-AD-board-1d",
-  "task_state": "ready",
-  "claimed_at": "2026-11-12T16:12:00Z",
-  "lease_until": "2026-11-12T19:12:00Z",
-  "updated_at": "2026-11-12T16:58:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P2-AD-board-3",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-13T08:30:00Z",
+  "lease_until": "2026-11-13T11:30:00Z",
+  "updated_at": "2026-11-13T08:30:00Z",
+  "expected_next_update_by": "2026-11-13T09:15:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
-    "next_step": "none: P1-AD-board-1d ready; board 2 when seeded"
+    "next_step": "answer S2-R18, S1-R24, S3-R7; then board 3 (home)"
   },
-  "precheck": {
-    "sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
-    "exit": 0,
-    "finished_at": "2026-11-12T16:57:06Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
-  "acks": [],
+  "acks": [
+    "M12"
+  ],
   "requests": [
     {
       "id": "AD-R7",
@@ -146,7 +143,7 @@
       "id": "AD-R15",
       "from": "AD",
       "to": "lead",
-      "ask": "Board 1 objection B reopens, narrowed: with no crew plan (rehearsal, Workshop island, offline), at 200% text in pt_BR, Cast reads 'Sem lançamentos', the tray grows to two button rows and covers the loot panel (FIT=1 fails: 'Loot over the tray'). Keep the tray below the loot panel whatever the Cast label says, and add the no-plan 200% pt_BR case (FIT=1, no MANIFEST) to the heist's gate stills. Details in board-1.md, Round 2, What B needs.",
+      "ask": "Board 1 objection B reopens, narrowed: with no crew plan (rehearsal, Workshop island, offline), at 200% text in pt_BR, Cast reads 'Sem lan\u00e7amentos', the tray grows to two button rows and covers the loot panel (FIT=1 fails: 'Loot over the tray'). Keep the tray below the loot panel whatever the Cast label says, and add the no-plan 200% pt_BR case (FIT=1, no MANIFEST) to the heist's gate stills. Details in board-1.md, Round 2, What B needs.",
       "files": [
         "docs/art/ui-quality/gate/boards/board-1.md",
         "client/scripts/heist_screen.gd",
