@@ -1,0 +1,66 @@
+{
+ "controls": [
+  {
+   "name": "arrow 1: Personagem anterior, Mossbear",
+   "rect": [
+    21.67,
+    137.94,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "arrow 2: Próximo personagem, Glass Golem",
+   "rect": [
+    313.44,
+    137.94,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Skyskipper",
+   "rect": [
+    110.14,
+    209.08,
+    166.83,
+    47.67
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 4: Skyskipper · Carregador",
+   "rect": [
+    17.33,
+    350.64,
+    352.44,
+    96.42
+   ]
+  },
+  {
+   "name": "back 5: Plantel",
+   "rect": [
+    28.17,
+    649.28,
+    60.67,
+    60.67
+   ]
+  },
+  {
+   "name": "up 6: Skyskipper: Subir ao nível 4, 200 de Essência",
+   "rect": [
+    97.5,
+    592.58,
+    264.33,
+    174.42
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "character-200-pt_BR.png",
+ "text_scale": 2.0
+}

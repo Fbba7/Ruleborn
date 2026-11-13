@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+  <!-- Written by art/ui/motion/build_motion.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="c1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F9DE9C"/><stop offset="0.5" stop-color="#E9B65C"/><stop offset="1" stop-color="#C88A35"/></linearGradient>
+    <linearGradient id="c2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.85"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g data-state="normal">
+    <rect x="11.5" y="2.25" width="5" height="25" rx="2.5" fill="#4A2A10"/>
+    <rect x="11.5" y="0.75" width="5" height="25" rx="2.5" fill="url(#c1)" stroke="#6B4420" stroke-width="1.5"/>
+    <rect x="12.8" y="3.5" width="1.4" height="19" rx="0.7" fill="#FFFFFF" fill-opacity="0.8"/>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <rect x="11" y="1.5" width="6" height="25" rx="3" fill="#E9B65C" stroke="#000000" stroke-width="3"/>
+  </g>
+</svg>

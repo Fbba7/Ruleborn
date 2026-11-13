@@ -1,0 +1,139 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "label 1: Settings",
+   "rect": [
+    17.33,
+    47.67,
+    355.33,
+    56.69
+   ]
+  },
+  {
+   "name": "button 2: Game",
+   "rect": [
+    21.67,
+    117.36,
+    113.03,
+    60.67
+   ]
+  },
+  {
+   "name": "button 3: Access",
+   "rect": [
+    136.86,
+    117.36,
+    113.03,
+    60.67
+   ]
+  },
+  {
+   "name": "button 4: Account",
+   "rect": [
+    252.06,
+    117.36,
+    113.39,
+    60.67
+   ]
+  },
+  {
+   "name": "button 5: A",
+   "rect": [
+    30.33,
+    239.42,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "label 6: 100%",
+   "rect": [
+    91.0,
+    232.19,
+    205.11,
+    50.56
+   ]
+  },
+  {
+   "name": "button 7: A",
+   "rect": [
+    304.78,
+    239.42,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "label 8: Stillness",
+   "rect": [
+    95.33,
+    322.83,
+    250.61,
+    29.97
+   ]
+  },
+  {
+   "name": "button 9: High contrast: off",
+   "rect": [
+    21.67,
+    618.22,
+    343.78,
+    52.0
+   ]
+  },
+  {
+   "name": "button 10: Motion: full",
+   "rect": [
+    21.67,
+    671.31,
+    343.78,
+    52.0
+   ]
+  },
+  {
+   "name": "button 11: Haptics: on",
+   "rect": [
+    21.67,
+    724.39,
+    343.78,
+    52.0
+   ]
+  },
+  {
+   "name": "button 12: Left-handed: off",
+   "rect": [
+    21.67,
+    777.47,
+    343.78,
+    52.0
+   ]
+  },
+  {
+   "name": "button 13: Banners go by themselves",
+   "rect": [
+    21.67,
+    830.56,
+    343.78,
+    52.0
+   ]
+  },
+  {
+   "name": "button 14: IconButton",
+   "rect": [
+    169.0,
+    723.67,
+    52.0,
+    52.0
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "after-settings-100-access.png",
+ "text_scale": 1
+}

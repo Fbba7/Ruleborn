@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="80">
+  <!-- Written by art/ui/motion/build_motion.py from client/ui/tokens.json; do not edit. -->
+  <defs>
+    <linearGradient id="l1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.62"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="l2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.6"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.2"/></linearGradient>
+    <mask id="m1"><rect width="40" height="80" fill="url(#l2)"/></mask>
+  </defs>
+  <g data-state="normal">
+    <g mask="url(#m1)">
+      <path d="M21.559 0 L39.559 0 L10.441 80 L-7.559 80 Z" fill="url(#l1)"/>
+      <path d="M41.959 0 L45.159 0 L16.041 80 L12.841 80 Z" fill="#FFFFFF" fill-opacity="0.5"/>
+    </g>
+  </g>
+  <g data-state="normal" data-mode="hc">
+    <path d="M28.559 0 L40.559 0 L11.441 80 L-0.559 80 Z" fill="#FFFFFF" fill-opacity="0.5"/>
+  </g>
+</svg>

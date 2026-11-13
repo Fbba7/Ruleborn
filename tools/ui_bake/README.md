@@ -72,6 +72,13 @@ margin or advance that is not whole pixels; margins wider than the piece; a
 name that is not lower-case words; two sources making one piece; and pieces
 that do not fit a 2048 × 2048 atlas.
 
+A family's entry in `families.json` may name a `curves` file in its source
+folder (the motion family: `"curves": "curves.json"`, `art/ui/motion/curves.json`,
+report.md step 8). The bake copies that file's JSON into the manifest's
+top-level `curves`, so `client/ui/motion.gd` reads the timings beside the
+sprites, and `--check` fails when the manifest's curves are not the file as it
+stands. After an edit to `curves.json`, run `node tools/ui_bake/bake.js motion`.
+
 The fixture in `test/fixture/` shows each form: a button with two states and
 twin groups, a tinted disc with a class twin, and a numeral.
 

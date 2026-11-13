@@ -301,7 +301,8 @@ such as the UI wave's `tools/ui_bake/guard.sh` once K1 has written it, run on
 a separate worktree of exactly that commit, shown by a log that ends
 `DONE exit=0` and contains `All checks passed.`, and recorded in the status
 file's `precheck`), and the gate passed every item in the task's
-`gate_items`. The branch need not contain main's head.
+`gate_items`. From UI phase 2, the branch holds main as it stood when the
+pre-check started (phase 1's lessons, below).
 
 **The queue: merge, then test.** The integrator takes ready tasks one at a
 time, critical path first, then in the order they became ready. It merges
@@ -701,6 +702,35 @@ The brief relies on none of these: an agent follows the same rules by hand.
 | Sessions grew to 300k–400k tokens | A fresh session per task, ended at ready; output kept out of the context; compaction at 200k, set in `.claude/settings.json` | Closed |
 | The integrator merging every track each hour became the bottleneck | Merge, then test, on a scheduled cycle; batching; team size from merge throughput; mechanical duties moved to a coordinator script (planned: BT-01) | Closed for the queue; the coordinator is planned |
 | Containers lacked tools check_all needs (Rust's `wasm32-unknown-unknown` target, `gdlint`, Python's `playwright` 1.63.0) | The brief lists them; one pinned setup script with an owner (planned: BT-09) | Closed once BT-09 exists |
+
+## Lessons from UI phase 1
+
+Phase 1 closed on 12 November 2026 with its three exit criteria met, but
+four KPIs missed their targets. The rules below were sent to the agents as
+backlog messages M10 to M14, and are written into the brief ("Before you
+mark ready" and "If you are the lead") and the protocol (the merge queue's
+"Ready" and the phase metrics). Phase 2 adds its own rows here as it goes,
+not at its close.
+
+| What happened | The rule it led to | Now |
+|---|---|---|
+| Scope grew +22h, 38% over the 58h planned (limit 10%): the pilot heist took five parts and board 1 four rounds, because the art director's objections came after the work was finished, one round at a time | A screen or board is estimated with one review round included; the builder sends AD the stills before ready; AD reviews them in the same cycle, lists every objection in one round and says in the first round when the source must be repainted | In force (brief, protocol); measured at phase 2's close |
+| 24 of 29 tasks merged at the first attempt (target 90%); all five misses were a list or a baked file out of step with another task's work (the catalogue's `SKINS_OF` list, the kit's list of materials, the high-contrast icon atlas) | Before ready, the builder merges current main into its branch and reruns `check_all.sh` and `guard.sh` on that merge; a task that adds, removes or renames a piece carries the matching list change, or a request to the list's owner that lands with it; the lead makes tasks that share such a list depend on each other | In force (brief, protocol) |
+| Pilot part 5 waited 3.9h from its gate verdict to merged: the session went idle without marking ready | Mark ready and push in the same turn the gate verdict comes back | In force (brief, protocol) |
+| The lead's checks failed several times on the container, not the work (no `wasm32` target, no Godot, no `node_modules`, no native library in the candidate's folder) | The fresh-container setup line, then `bash client/build.sh` in the candidate worktree, before any check | In force (brief, protocol) |
+| Pace was 1.02h of work an hour against 1.2 needed | The lead seeds a builder's next task before its current one merges, so none of the three slots sits empty | In force (brief, protocol) |
+
+## Lessons from UI phase 2
+
+Rows are added as the phase runs, each sent to the agent that can act on it
+as a backlog message.
+
+| What happened | The rule it led to | Now |
+|---|---|---|
+| P2-S2-flow-home's first full check failed one fixture in `tools/test_run_checks.sh` that the change does not touch; the re-run on the same sha passed. The fixture's two test repos have the same tree and identity, so commits in the same second share a sha | The lead (who owns the file) makes the two test repos differ so their shas cannot collide, never loosening the test; until then a lone failure of that fixture on a candidate that touches no runner file is re-run once | Sent to the lead as M16 |
+| The wait from ready to merged rated worse two pushes in a row (3.0h, then 2.7h). At 23:41 on 12 November three ready tasks had disjoint claims but were merged one at a time; a merge reached main 51 minutes after its check passed; and one check run stopped on a read-only cargo lock because it was started inside the candidate's worktree | The lead batches 2–3 ready tasks with disjoint claims into one candidate, merges and clears the lock in the turn the check passes, and starts check_all from the main checkout (or gives the worktree its own writable `CARGO_TARGET_DIR`) | Sent to the lead as M17 |
+| Work delivered rated worse two pushes in a row (1.10, then 1.11 hours of work an hour against 1.2). Builder sessions sat idle waiting on their own request until the lease lapsed (S2 from about 01:10 to 02:43 on 13 November; AIA on AIA-R25 until 04:43), leaving a seat empty | Each cycle the lead checks every builder's session; one that is idle with its own request pending gets that request's default applied early and is resumed or restarted on the same task, without waiting for the lease to lapse | Sent to the lead as M18 |
+| P2-AIA-motion-2 passed check_all on its first run, but guard.sh failed twice on the candidate worktree (no native library, then no tools/ui_research packages) and the merge reached main about 12 minutes late | Before the first guard.sh run in a candidate worktree, the lead builds the native library and installs tools/ui_research's packages there, or runs guard.sh from the main checkout on the candidate commit | Sent to the lead as M19 |
 
 ## Waves, progress files and stills
 

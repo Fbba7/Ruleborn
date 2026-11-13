@@ -1,9 +1,9 @@
 {
-  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026.",
+  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
-  "phase": 1,
-  "updated_at": "2026-11-12T11:41:00Z",
-  "updated_by": "lead (cycle 66)",
+  "phase": 2,
+  "updated_at": "2026-11-13T08:30:00Z",
+  "updated_by": "lead (cycle 79)",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -33,6 +33,14 @@
     },
     "S1": {
       "branch": "claude/ui-screens-heist",
+      "model": "Opus 5.5"
+    },
+    "S2": {
+      "branch": "claude/ui-screens-home",
+      "model": "Opus 5.5"
+    },
+    "S3": {
+      "branch": "claude/ui-screens-meta",
       "model": "Opus 5.5"
     }
   },
@@ -2795,7 +2803,7 @@
       "prior_sha": null,
       "ready_sha": "beb8a023e78e85b02ce6674fa2c5463e9fc48b80",
       "merged_sha": "fe27c8f2",
-      "updated_at": "2026-11-12T16:25:00Z",
+      "updated_at": "2026-11-12T16:06:00Z",
       "updated_by": "lead (cycle 69)",
       "id": "P1-S1-pilot-5",
       "title": "Pilot heist, part 5: board 1's open objections D and F, round 3 (AD-R17, AD-R18; docs/art/ui-quality/gate/boards/board-1.md, Round 3): D Bramble without the grain and Hollow a flat toon fill framed head and shoulders, in client/world/fx_portrait.gd; F the 'Laws here' header on a kit tag plate in client/scripts/heist_hud.gd (K1's handoff: the ink outline is drawn but ink on the navy sky has almost no contrast); notes in docs/art/tracks/heist-pilot.md",
@@ -2825,14 +2833,14 @@
       "attempts": 0,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": "claude/ui-ad",
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-12T10:55:00Z",
-      "updated_by": "lead (cycle 65)",
+      "ready_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
+      "merged_sha": "a154d246a0dd8c02454281bc6833eac14d34efce",
+      "updated_at": "2026-11-12T17:46:32Z",
+      "updated_by": "lead (cycle 70)",
       "id": "P1-AD-board-1d",
       "title": "Board 1, fourth round (AD-R19): AD re-checks objections D (Bramble's grain, Hollow's fill and framing) and F (the 'Laws here' header's outline) on P1-S1-pilot-5's stills beside the key frame, and lets board 1 stand or lists what is still open (board-1.md); phase 2 waits for board 1"
     },
@@ -2856,14 +2864,14 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
-      "prior_branch": null,
+      "prior_branch": "claude/ui-screens-heist",
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-12T10:55:00Z",
-      "updated_by": "lead (cycle 65)",
+      "ready_sha": "8b47be966dba863a29e9f13a28891bf74ac33887",
+      "merged_sha": "9e1dd5584266f29e576d0d7f2cf118c2b0d603bd",
+      "updated_at": "2026-11-12T19:58:00Z",
+      "updated_by": "lead (cycle 71)",
       "id": "P2-S1-flow-result",
       "title": "Result screen, flow findings F6 (AD-R12, docs/progress/AD.md, Flow review): a Clean heist does not say 'No guard alerted' over an alarm peak; the actions move up or the haul fills the lower screen; no byte count in the player's line"
     },
@@ -2886,16 +2894,19 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
-      "prior_branch": null,
+      "prior_branch": "claude/ui-screens-heist",
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-12T10:55:00Z",
-      "updated_by": "lead (cycle 65)",
+      "ready_sha": "b6a477f8daaa3c56977fcf0d2a645c2a1410b237",
+      "merged_sha": "509c43c265f079327be6bc7e48f22631397e10f7",
+      "updated_at": "2026-11-12T21:30:00Z",
+      "updated_by": "lead (cycle 72)",
       "id": "P2-S1-flow-replay",
-      "title": "Replay screen, flow finding F7 (AD-R12): timeline markers that share a time stack or merge into one marker with a count"
+      "title": "Replay screen, flow finding F7 (AD-R12): timeline markers that share a time stack or merge into one marker with a count",
+      "exceptions": [
+        "client/i18n/strings.csv"
+      ]
     },
     {
       "role": "S2",
@@ -2917,20 +2928,20 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
-      "prior_branch": null,
+      "prior_branch": "claude/ui-screens-home",
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-12T10:55:00Z",
-      "updated_by": "lead (cycle 65)",
+      "ready_sha": "416449ccc73fc8a820e00b0e9e64c5c0acefc12f",
+      "merged_sha": "7d899ce4cce8fe60e4215def0576f32a3774a83a",
+      "updated_at": "2026-11-12T19:54:00Z",
+      "updated_by": "lead",
       "id": "P2-S2-flow-home",
       "title": "Home screen, flow findings F1 and F2 (AD-R12): the raid notice's line wraps instead of cutting 'held'; at 200% text the island pins hide, shrink or list when the band is short, none goes missing, and the gem stays inside its pill"
     },
     {
-      "role": "any",
-      "assigned_to": "any",
+      "role": "S2",
+      "assigned_to": "S2",
       "files": [
         "client/scripts/first_screen.gd",
         "client/scripts/scout_screen.gd",
@@ -2950,16 +2961,761 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-home",
+      "prior_sha": null,
+      "ready_sha": "2bf66433eb16f4c318fad381fcba1edfce12cfe1",
+      "merged_sha": "62c66327541c910477cd4988c4bae97ea5008afd",
+      "updated_at": "2026-11-12T22:00:00Z",
+      "updated_by": "lead (cycle 72)",
+      "id": "P2-flow-entry",
+      "title": "First, scout and planner screens, flow findings F3 to F5 (AD-R12): the first screen's tagline on a plate or clear of the island ring; the scout chip row fits its panel or scrolls with a cue; the planner says 'choose %d crew' when the minimum is the maximum (a second string beside PLAN_NEEDS_CREW) and its plan card fits or shows a scroll cue"
+    },
+    {
+      "role": "AIA-2",
+      "assigned_to": "AIA-2",
+      "files": [
+        "client/world/creature_bust.gd",
+        "docs/progress/AIA-2.md"
+      ],
+      "deps": [
+        "P1-AD-board-1d"
+      ],
+      "done_when": [
+        "board 1's note G (AD-R20, board-1.md Round 4): Bramble and Hollow repainted at the source in client/world/creature_bust.gd in two or three flat tones; Bramble's snout, arms and belly bands kept as shapes; Hollow's glass as a few large hard-edged facets with its face and gem",
+        "the five portraits at 119 px (SIZES=1 PORTRAITS=<dir>) in colour and grayscale read as framed toon figures, noted in the handoff; the in-game flat pass in client/world/fx_portrait.gd (S1's) stays until this lands, and a change to it is a request to the lead",
+        "every heist screen within its draw-call record in tools/ui_bake/budgets.json",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "heist at 100% text",
+          "qualities": [
+            "Character presence"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/ui-artist-icons",
+      "prior_sha": null,
+      "ready_sha": "13e38050d64076dd8774a1785e926781e436286a",
+      "merged_sha": "fb07a2ce99258287c6b9311920392aeec29ce1f2",
+      "updated_at": "2026-11-12T19:11:58Z",
+      "updated_by": "lead (cycle 71)",
+      "id": "P2-AIA2-busts",
+      "title": "Bramble and Hollow repainted at the source (AD-R20, board 1's note G, not holding): CreatureBust's art in two or three flat tones, Bramble's features kept as shapes and Hollow's glass as a few hard-edged facets with its face and gem; checked on the five portraits at 119 px in colour and grayscale"
+    },
+    {
+      "role": "AIA",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/motion/**",
+        "client/ui/art/motion.webp",
+        "client/ui/art/motion_hc.webp",
+        "client/ui/art/motion.json",
+        "client/ui/art/motion*.import",
+        "art/ui/proof/motion_sheet.png"
+      ],
+      "deps": [],
+      "done_when": [
+        "report.md step 8: the burst, sparkle, shine and coin sprites drawn in art/ui/motion/ on the board's materials, each with its high-contrast twin, baked with node tools/ui_bake/bake.js motion (the motion family is already in tools/ui_bake/families.json)",
+        "art/ui/motion/curves.json gives every curve's times and easing for the result screen's reward sequence (anticipation, burst, reveal, coins flying to their counter, the counter rolling and pulsing), a press with squash and recovery, and an idle shine on primary buttons: every curve 150 to 250 ms, easing out, no overshoot (§21.8, D3 (b)), and each motion's reduced form named (report.md 10.3)",
+        "node tools/ui_bake/bake.js --check",
+        "bash tools/ui_bake/guard.sh",
+        "AD previews the sprite sheet at phone size before ready (M10, M12), and its objections are answered in this task",
+        "self-score against gate/rubric.md in the handoff (M1)",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 6,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/ui-artist",
+      "prior_sha": null,
+      "ready_sha": "49159bc0e6b62c76bf382d1c9caca5f9e6f421da",
+      "merged_sha": "a43e4d5a236b4755e724f931e00cf29d4c8c4569",
+      "updated_at": "2026-11-12T22:00:00Z",
+      "updated_by": "lead (cycle 72)",
+      "id": "P2-AIA-motion-1",
+      "title": "Motion art, part 1 (report.md step 8, D11 (b)): the burst, sparkle, shine and coin sprites in art/ui/motion/, baked to client/ui/art/motion.*, and art/ui/motion/curves.json with every curve's times, easing and reduced form; estimate includes one review round with AD"
+    },
+    {
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/motion.gd",
+        "client/tests/ui_kit_tests.gd",
+        "tools/ui_bake/**"
+      ],
+      "deps": [
+        "P2-AIA-motion-1"
+      ],
+      "done_when": [
+        "the kit's Motion reads its curves from the baked client/ui/art/motion.json (from art/ui/motion/curves.json), with ui/tokens.json's motion as the fallback when a curve is absent; every reduced form under Settings.reduced_motion kept",
+        "Motion offers the calls report.md step 8 covers: the reward sequence's steps (anticipation, burst, reveal, coins to a counter, counter roll and pulse), a press with squash and recovery, and an idle shine on primary buttons, drawing the baked sprites",
+        "tests in client/tests/ui_kit_tests.gd for each call's timing (150 to 250 ms, no overshoot) and its reduced form",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/ui-bake",
+      "prior_sha": null,
+      "ready_sha": "b5d77219e9207b64e1f153a870b9d8d9995e23da",
+      "merged_sha": "ec2200b10f4c4f0e666ca1f33b7109a22b8b3b66",
+      "updated_at": "2026-11-13T01:05:00Z",
+      "updated_by": "lead (cycle 74)",
+      "id": "P2-K1-motion",
+      "title": "Kit Motion on the motion art (report.md steps 4 and 8): client/ui/motion.gd reads the baked curves and offers the reward sequence, the press squash and the idle shine, each with its reduced form",
+      "exceptions": [
+        "client/ui/art/icons_256.json",
+        "client/ui/art/icons_48.json",
+        "client/ui/art/kit.json",
+        "client/ui/art/motion.json",
+        "client/tests/fixtures/ui_kit/kit.json",
+        "client/tests/shots/ui_kit_motion.gd",
+        "client/tests/shots/ui_kit_motion.gd.uid"
+      ]
+    },
+    {
+      "role": "AIA",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/motion/**",
+        "client/ui/art/motion.webp",
+        "client/ui/art/motion_hc.webp",
+        "client/ui/art/motion.json",
+        "client/ui/art/motion*.import",
+        "client/tests/shots/motion_*.gd"
+      ],
+      "deps": [
+        "P2-AIA-motion-1",
+        "P2-K1-motion"
+      ],
+      "done_when": [
+        "frame strips of every motion, full and reduced, made with tools/ui_gate/sheet.py from a shot script of its own (client/tests/shots/motion_*.gd), and a short recorded clip of each, for board 4",
+        "the scripted checks on timing, reduced forms and flashes (report.md 3.5) pass and are named in the handoff",
+        "node tools/ui_bake/bake.js --check",
+        "bash tools/ui_bake/guard.sh",
+        "AD previews the frame strips before ready (M10, M12), and its objections are answered in this task",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 4,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "d064876337d54e47dcd5110362984ddb688aa010",
+      "merged_sha": "0bc0fbb9ca08a23bc8f96713aa2cfac78a45bd2a",
+      "updated_at": "2026-11-13T06:55:00Z",
+      "updated_by": "lead (cycle 78)",
+      "id": "P2-AIA-motion-2",
+      "title": "Motion art, part 2 (report.md step 8): the frame strips, full and reduced, and short clips of every motion for board 4, with the timing, reduced-form and flash checks; estimate includes one review round with AD",
+      "exceptions": [
+        "client/tests/shots/motion_press.gd.uid",
+        "client/tests/shots/motion_reward.gd.uid",
+        "client/tests/shots/motion_rig.gd.uid",
+        "client/tests/shots/motion_screen.gd.uid",
+        "client/tests/shots/motion_shine.gd.uid"
+      ]
+    },
+    {
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/world/fx_portrait.gd"
+      ],
+      "deps": [
+        "P2-AIA2-busts"
+      ],
+      "done_when": [
+        "AIA2-R3: quarryback and glass_golem dropped from FxPortrait.TOON, with glass_golem's own crop, in client/world/fx_portrait.gd; nothing else in the file changes",
+        "the five portraits at 119 px (SIZES=1 PORTRAITS=<dir>) in colour and grayscale read as framed toon figures, noted in the handoff",
+        "every heist screen within its draw-call record in tools/ui_bake/budgets.json",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 0.5,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "heist at 100% text",
+          "qualities": [
+            "Character presence"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-heist",
+      "prior_sha": null,
+      "ready_sha": "43f81a56f45624dead083e7a807e4f902bb141eb",
+      "merged_sha": "c0aa1bd6785c5e7ef05485399787f495a205f1ab",
+      "updated_at": "2026-11-13T02:22:00Z",
+      "updated_by": "lead (cycle 74)",
+      "id": "P2-S1-toon-drop",
+      "title": "Portraits: Bramble and Hollow out of the toon pass (AIA2-R3, board 1's note G): their painted busts go through FxPortrait unquantised and uncropped"
+    },
+    {
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/tests/shots/screen_result.gd",
+        "docs/art/tracks/result-screen.md"
+      ],
+      "deps": [
+        "P2-S1-flow-result"
+      ],
+      "done_when": [
+        "report.md step 9: the result screen built from the kit alone, with no chrome of its own, on the result key frame (art/ui/keyframes/03-result.*); a gap in the kit is a component request to K1 through the lead, made now",
+        "the reward or offer framed with character art (rubric quality 9)",
+        "client/tests/shots/screen_result.gd with FIT=1 passes at 100% and 200% text in en and pt_BR and in high contrast",
+        "the result screen within its draw-call record in tools/ui_bake/budgets.json (K1's file); a record that has to move is a request to the lead",
+        "AD previews the stills before ready (M10, M12): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 5,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "result at 100% text",
+          "qualities": [
+            "Hierarchy",
+            "Display type",
+            "Character presence"
+          ]
+        },
+        {
+          "item": "result at 200% text, pt_BR",
+          "qualities": [
+            "Display type",
+            "Hierarchy"
+          ]
+        },
+        {
+          "item": "result in high contrast",
+          "qualities": [
+            "Colour roles and value",
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "d0f4a8993658f394f94da0ee9ba9f0fb4c17fd1a",
+      "merged_sha": "f41d100e94e13487984a11fdab079febecf6aad7",
+      "updated_at": "2026-11-13T06:14:00Z",
+      "updated_by": "lead (cycle 78)",
+      "id": "P2-S1-result-1",
+      "title": "Result screen, part 1 (report.md step 9): the layout on the kit, from the key frame, at 100% and 200% text and in high contrast; notes in docs/art/tracks/result-screen.md; estimate includes one review round with AD"
+    },
+    {
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/tests/shots/screen_result.gd",
+        "docs/art/tracks/result-screen.md"
+      ],
+      "deps": [
+        "P2-S1-result-1",
+        "P2-K1-motion"
+      ],
+      "done_when": [
+        "the reward sequence on the kit's Motion: anticipation, burst, reveal, coins flying to their counter, the counter rolling and pulsing; each step's reduced form under Settings.reduced_motion",
+        "frame strips of the sequence, full and reduced, and a short clip from client/tests/shots/screen_result.gd, for board 4",
+        "AD previews the stills before ready (M10, M12): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "result at 100% text",
+          "qualities": [
+            "Hierarchy",
+            "Character presence"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "working",
+      "claim": {
+        "agent": "S1",
+        "branch": "claude/ui-screens-heist",
+        "claimed_at": "2026-11-13T06:14:06Z",
+        "seen_at": "2026-11-13T07:42:00Z",
+        "lease_until": "2026-11-13T09:50:05Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T18:55:00Z",
+      "updated_by": "lead (cycle 71)",
+      "id": "P2-S1-result-2",
+      "title": "Result screen, part 2 (report.md step 9): the reward sequence on the motion art, with frame strips and a clip for board 4"
+    },
+    {
+      "role": "S2",
+      "assigned_to": "S2",
+      "files": [
+        "client/scripts/home.gd",
+        "client/world/universe_badge.gd",
+        "client/world/universe_pins.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "deps": [
+        "P2-S2-flow-home"
+      ],
+      "done_when": [
+        "report.md step 10: the home screen built from the kit alone, with no chrome of its own, on the home key frame (art/ui/keyframes/01-home.*); a gap in the kit is a component request to K1 through the lead, made now",
+        "S2-R1 and S2-R2 (granted here): universe_badge.gd starts the renown past the gem at every text size and home.gd drops its padding; universe_pins.gd lets a front realm pin shrink to its icon and level when the room is short, so the pins shrink rather than hide as a set at 150% and 200% text",
+        "client/tests/shots/universe_home.gd with FIT=1 passes at 100% and 200% text in en and pt_BR and in high contrast",
+        "home within its draw-call record in tools/ui_bake/budgets.json (K1's file); a record that has to move is a request to the lead",
+        "AD previews the stills before ready (M10, M12): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 5,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "home at 100% text",
+          "qualities": [
+            "Hierarchy",
+            "Display type",
+            "Character presence"
+          ]
+        },
+        {
+          "item": "home at 200% text, pt_BR",
+          "qualities": [
+            "Display type",
+            "Hierarchy"
+          ]
+        },
+        {
+          "item": "home in high contrast",
+          "qualities": [
+            "Colour roles and value",
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-home",
+      "prior_sha": "5164cc43bf12d6e2fd9ee5b91f20064f874ae951",
+      "ready_sha": "977edd5bb1a6487067fdd407dc2268b6958cc377",
+      "merged_sha": "7e289af9d04e122c074b9885ee61906710c3c5eb",
+      "updated_at": "2026-11-13T05:21:00Z",
+      "updated_by": "lead (cycle 77)",
+      "id": "P2-S2-home-1",
+      "title": "Home screen, part 1 (report.md step 10): the layout on the kit, from the key frame, at 100% and 200% text and in high contrast, with S2-R1 and S2-R2; notes in docs/art/tracks/home-screen.md; estimate includes one review round with AD"
+    },
+    {
+      "role": "S2",
+      "assigned_to": "S2",
+      "files": [
+        "client/scripts/home.gd",
+        "client/world/universe_badge.gd",
+        "client/world/universe_pins.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md",
+        "client/world/universe_reward.gd"
+      ],
+      "deps": [
+        "P2-S2-home-1"
+      ],
+      "done_when": [
+        "home's live character framed and lit so it stands out from the scene, in the toon look (rubric quality 9), and the primary action on the kit's idle shine once P2-K1-motion has merged (otherwise a note in the handoff)",
+        "AD's preview objections on part 1 that part 1 left open, answered one by one in the handoff",
+        "AD previews the stills before ready (M10, M12): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "home at 100% text",
+          "qualities": [
+            "Character presence",
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "3612e26564859e8df7c3ce1cd48dba118580d9da",
+      "merged_sha": "807d68a76f4bdd1c3d801e2d8498c529e08a8a6d",
+      "updated_at": "2026-11-13T08:30:00Z",
+      "updated_by": "lead (cycle 79)",
+      "id": "P2-S2-home-2",
+      "title": "Home screen, part 2 (report.md step 10): the live character framed in the toon look and what part 1's preview left open"
+    },
+    {
+      "role": "S3",
+      "assigned_to": "S3",
+      "files": [
+        "client/scripts/screen_kit.gd",
+        "client/scripts/screen_box.gd",
+        "docs/art/tracks/menu-screens.md",
+        "client/scripts/screen_meter.gd"
+      ],
+      "deps": [],
+      "done_when": [
+        "report.md step 11: ScreenKit's materials drawn through KitSkin (K1's, read only), so every menu screen inherits the texture-backed kit; the code-drawn box stays the fallback where a family's switch is off (report.md 10.9)",
+        "every menu screen within its draw-call record in tools/ui_bake/budgets.json (K1's file); a record that has to move is a request to the lead",
+        "the character and settings stills at 100% text before and after, in the handoff",
+        "AD previews the stills before ready (M10, M12): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 4,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "settings at 100% text",
+          "qualities": [
+            "Layered materials",
+            "Colour roles and value"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-meta",
+      "prior_sha": "03b3d7627083b3947a31b6c76962fadd295127b5",
+      "ready_sha": "cf4eecc2c6c98a4ab4c5028269ea391133812b9a",
+      "merged_sha": "70057394813f0189dcc0169a27478405397eec99",
+      "updated_at": "2026-11-13T00:20:00Z",
+      "updated_by": "lead (cycle 74)",
+      "id": "P2-S3-screenkit",
+      "title": "Menu screens through the kit (report.md step 11): ScreenKit and ScreenBox draw their materials through KitSkin, so every menu screen inherits the new kit",
+      "exceptions": [
+        "docs/art/shots/menu-screens/**"
+      ]
+    },
+    {
+      "role": "S3",
+      "assigned_to": "S3",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/tests/shots/screen_character.gd",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "deps": [
+        "P2-S3-screenkit"
+      ],
+      "done_when": [
+        "report.md step 11: the character screen built from the kit alone, with no chrome of its own, on the character key frame (art/ui/keyframes/04-character.*); the character itself framed in the toon look (rubric quality 9)",
+        "client/tests/shots/screen_character.gd with FIT=1 passes at 100% and 200% text in en and pt_BR and in high contrast",
+        "AD previews the stills before ready (M10, M12): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 5,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "character at 100% text",
+          "qualities": [
+            "Hierarchy",
+            "Display type",
+            "Character presence"
+          ]
+        },
+        {
+          "item": "character at 200% text, pt_BR",
+          "qualities": [
+            "Display type",
+            "Hierarchy"
+          ]
+        },
+        {
+          "item": "character in high contrast",
+          "qualities": [
+            "Colour roles and value",
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "6f6a3b158948e860820c39ec9912ab899638a473",
+      "merged_sha": "f41d100e94e13487984a11fdab079febecf6aad7",
+      "updated_at": "2026-11-13T06:14:00Z",
+      "updated_by": "lead (cycle 78)",
+      "id": "P2-S3-character",
+      "title": "Character screen (report.md step 11): on the kit, from the key frame, at 100% and 200% text and in high contrast; estimate includes one review round with AD",
+      "exceptions": [
+        "docs/art/shots/menu-screens/**"
+      ]
+    },
+    {
+      "role": "S3",
+      "assigned_to": "S3",
+      "files": [
+        "client/scripts/settings_screen.gd",
+        "client/scripts/screen_switch.gd",
+        "client/tests/shots/screen_settings.gd",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "deps": [
+        "P2-S3-character"
+      ],
+      "done_when": [
+        "report.md step 11: the settings screen built from the kit alone, with no chrome of its own, on the settings key frame (art/ui/keyframes/05-settings.*)",
+        "its shot script passes with FIT=1 at 100% and 200% text in en and pt_BR and in high contrast",
+        "AD previews the stills before ready (M10, M12): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 5,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "settings at 100% text",
+          "qualities": [
+            "Hierarchy",
+            "Display type"
+          ]
+        },
+        {
+          "item": "settings at 200% text, pt_BR",
+          "qualities": [
+            "Display type",
+            "Hierarchy"
+          ]
+        },
+        {
+          "item": "settings in high contrast",
+          "qualities": [
+            "Colour roles and value",
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "working",
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-13T06:16:00Z",
+        "seen_at": "2026-11-13T07:42:00Z",
+        "lease_until": "2026-11-13T09:16:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T18:55:00Z",
+      "updated_by": "lead (cycle 71)",
+      "id": "P2-S3-settings",
+      "title": "Settings screen (report.md step 11): on the kit, from the key frame, at 100% and 200% text and in high contrast; estimate includes one review round with AD",
+      "exceptions": [
+        "docs/art/shots/menu-screens/**"
+      ]
+    },
+    {
+      "role": "AD",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P2-S2-home-2"
+      ],
+      "done_when": [
+        "gate/boards/board-3.md: 5 to 10 items beside their golden references at phone size, with the gate's verdicts",
+        "every objection listed in one round, in order of weight (M12); the board stands or lists them",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
       "state": "open",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T10:55:00Z",
-      "updated_by": "lead (cycle 65)",
-      "id": "P2-flow-entry",
-      "title": "First, scout and planner screens, flow findings F3 to F5 (AD-R12): the first screen's tagline on a plate or clear of the island ring; the scout chip row fits its panel or scrolls with a cue; the planner says 'choose %d crew' when the minimum is the maximum (a second string beside PLAN_NEEDS_CREW) and its plan card fits or shows a scroll cue"
+      "updated_at": "2026-11-12T18:55:00Z",
+      "updated_by": "lead (cycle 71)",
+      "id": "P2-AD-board-3",
+      "title": "Board 3 (home, report.md 3.4 O4): AD lets it stand or lists every objection in one round"
+    },
+    {
+      "role": "AD",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P2-S1-result-2",
+        "P2-AIA-motion-2"
+      ],
+      "done_when": [
+        "gate/boards/board-4.md: 5 to 10 items beside their golden references at phone size, with the gate's verdicts and the frame strips and clips",
+        "every objection listed in one round, in order of weight (M12); the board stands or lists them",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T18:55:00Z",
+      "updated_by": "lead (cycle 71)",
+      "id": "P2-AD-board-4",
+      "title": "Board 4 (result and motion, report.md 3.4 O4): AD lets it stand or lists every objection in one round"
+    },
+    {
+      "role": "AD",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P2-S3-character",
+        "P2-S3-settings"
+      ],
+      "done_when": [
+        "gate/boards/board-5.md: 5 to 10 items beside their golden references at phone size, with the gate's verdicts",
+        "every objection listed in one round, in order of weight (M12); the board stands or lists them",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-12T18:55:00Z",
+      "updated_by": "lead (cycle 71)",
+      "id": "P2-AD-board-5",
+      "title": "Board 5 (character and settings, report.md 3.4 O4): AD lets it stand or lists every objection in one round"
     }
   ],
   "idle_queue": [
@@ -3064,6 +3820,86 @@
       "sent_at": "2026-11-12T07:29:00Z",
       "ack_by": "2026-11-12T10:00:00Z",
       "acked_at": null
+    },
+    {
+      "id": "M10",
+      "to": "lead",
+      "text": "From the owner (phase 1 lessons, progress report KPIs, measured at main 40f91dfd). Four phase 1 KPIs missed their targets; carry these rules into phase 2's seeding and cycles. (1) Scope grew +22h (38% over the 58h planned; limit 10%): the pilot heist took 5 parts and board 1 took 4 rounds, because the art director's objections came after the work was finished, one round at a time. When you seed a screen or a board, estimate it with one review round included, and put in its done_when that AD previews the stills before ready (see M12). (2) All 5 of phase 1's first-attempt misses (24 of 29 merged at first attempt, target 90% or more) came from a list or a baked file that had gone out of step with another task's work: the catalogue's SKINS_OF list twice, kit art 2a's new skins without a SKINS_OF entry, kit art 2c against the kit's list of materials with no baked shape, and the high-contrast icon atlas not rebaking to its sources (twice). When two tasks share such a list or derived file, make one depend on the other, or put both changes in one task, and build every candidate from current main. (3) Pace was 1.02h of work an hour against 1.2 needed. Seed phase 2's remaining steps (report.md 3.3: motion art, screens, boards 2-5) now, so each builder has its next task open before its current one merges and none of the three slots sits empty. (4) Several of your checks failed on the container, not the work (no wasm32 target, no Godot, no node_modules, no native library in the candidate's folder). At the start of each cycle, run the fresh-container setup line from M3, then bash client/build.sh in the candidate worktree, before any check_all or guard.sh. Add M10 to acks when read.",
+      "sent_at": "2026-11-12T18:15:00Z",
+      "ack_by": "2026-11-12T20:15:00Z",
+      "acked_at": "2026-11-12T18:55:00Z"
+    },
+    {
+      "id": "M11",
+      "to": "S1",
+      "text": "From the owner (phase 1 lessons, progress report KPIs, measured at main 40f91dfd). Two lessons for phase 2. (1) Pilot part 5 waited 3.9h from its gate verdict to merged because the session went idle without marking the task ready. Mark the task ready and push in the same turn the gate verdict comes back. (2) All 5 of phase 1's first-attempt misses (24 of 29 merged at first attempt, target 90% or more) came from a list or a baked file that had gone out of step with another task's work: the catalogue's SKINS_OF list twice, kit art 2a's new skins without a SKINS_OF entry, kit art 2c against the kit's list of materials with no baked shape, and the high-contrast icon atlas not rebaking to its sources (twice). Before you mark ready, merge current main into your branch, rerun bash tools/check_all.sh and bash tools/ui_bake/guard.sh on that merge, and say so in the handoff evidence. (3) Only 44 of 68 qualities passed at first judging (65%). Before ready, judge your own stills against the task's gate items and references, and send AD a preview of the stills while the work can still change (see M12), rather than waiting for the gate. Add M11 to acks when read.",
+      "sent_at": "2026-11-12T18:15:00Z",
+      "ack_by": "2026-11-12T20:15:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M12",
+      "to": "AD",
+      "text": "From the owner (phase 1 lessons, progress report KPIs, measured at main 40f91dfd). Scope grew +22h in phase 1 (38% over plan; limit 10%), most of it the pilot heist's five parts and board 1's four rounds: objections arrived after a part was finished and one round at a time, so each round reopened finished work. In phase 2: (1) when a builder sends you stills before ready, review them within the same cycle; (2) list every objection you have in one round, in order of weight, and keep later rounds to what the fix itself changed; (3) when an objection needs the source repainted (like note G), say so in the first round, not after a flat pass. Add M12 to acks when read.",
+      "sent_at": "2026-11-12T18:15:00Z",
+      "ack_by": "2026-11-12T20:15:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M13",
+      "to": "S2",
+      "text": "From the owner (phase 1 lessons, progress report KPIs, measured at main 40f91dfd). You are new in phase 2; these come from phase 1's misses. (1) All 5 of phase 1's first-attempt misses (24 of 29 merged at first attempt, target 90% or more) came from a list or a baked file that had gone out of step with another task's work: the catalogue's SKINS_OF list twice, kit art 2a's new skins without a SKINS_OF entry, kit art 2c against the kit's list of materials with no baked shape, and the high-contrast icon atlas not rebaking to its sources (twice). Before you mark ready, merge current main into your branch, rerun bash tools/check_all.sh and bash tools/ui_bake/guard.sh on that merge (run the fresh-container setup line and bash client/build.sh first), and say so in the handoff evidence. (2) Mark ready and push in the same turn the gate verdict comes back; a session that goes idle first can hold a merge for hours. (3) Send AD a preview of your stills before ready, while the work can still change; phase 1's late objections cost +22h. Add M13 to acks when read.",
+      "sent_at": "2026-11-12T18:15:00Z",
+      "ack_by": "2026-11-12T20:15:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M14",
+      "to": "AIA-2",
+      "text": "From the owner (phase 1 lessons, progress report KPIs, measured at main 40f91dfd). (1) All 5 of phase 1's first-attempt misses (24 of 29 merged at first attempt, target 90% or more) came from a list or a baked file that had gone out of step with another task's work: the catalogue's SKINS_OF list twice, kit art 2a's new skins without a SKINS_OF entry, kit art 2c against the kit's list of materials with no baked shape, and the high-contrast icon atlas not rebaking to its sources (twice). Two of the five were your icon atlas: a stale icons_48_hc.webp on the branch, then finish.js's grow() drawing differently between containers. For P2-AIA2-busts and every later art task: rebake from a fresh container, merge current main into your branch and run bash tools/ui_bake/guard.sh on that merge before ready. If your art adds, removes or renames a piece or a material, list the matching change to its owner's list (SKINS_OF, the kit's materials list) in a request to the lead with the same task, so both land together. (2) Send AD the 119 px portraits in colour and grayscale before ready, so note G closes in one round. Add M14 to acks when read.",
+      "sent_at": "2026-11-12T18:15:00Z",
+      "ack_by": "2026-11-12T20:15:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M15",
+      "to": "lead",
+      "text": "From the owner (12 November 2026, about 20:00Z, in the overseer session's chat): \"Yes, raise it to 4 builders.\" CLAUDE.md order 3 now sets the cap at four UI builders. It drops back to three on its own while the seven-day bar reads allowed_warning: start no fourth builder then, and let a running fourth one finish its task. Why: at 19:12Z phase 2 had 49.8 hours left before its 14 November 21:00Z stop and 50.5 hours of seeded work, so the pace (1.02 hours of work an hour) had no slack; a fourth builder adds about 0.34. (1) On your next cycle, start a fourth builder if only three run. S1, S2 and S3 run now. AIA waits on AIA-R23, which is not blocking and whose default is that the sheet stands. So the first choice is to restart AIA on P2-AIA-motion-1 under that default: it unblocks P2-K1-motion, P2-AIA-motion-2 and P2-S1-result-2. If AIA cannot take the place, give it to the next open task with no unmet deps whose claims are disjoint from the running tasks (owners.py claims), the longest chain first. (2) Batching, from now (agent-protocol.md, 'Batching'): as soon as two or more tasks are ready at once, merge 2-3 with disjoint claims into one candidate; if it fails, re-check each alone. Do not wait for the 2-hour mark: phase 1's median wait from ready to merged was 2.1 hours. Add M15 to acks when read.",
+      "sent_at": "2026-11-12T20:11:58Z",
+      "ack_by": "2026-11-12T22:11:58Z",
+      "acked_at": "2026-11-12T20:43:00Z"
+    },
+    {
+      "id": "M16",
+      "to": "lead",
+      "text": "Lesson from UI phase 2 (P2-S2-flow-home, cycle 71). The first check_all on candidate 1e438a19 failed one fixture in tools/test_run_checks.sh (\"and makes no worktree and no log\") although S2 touches no runner file; the re-run on the same sha passed. Your write-up names the likely cause: the planted and refused test repos have the same tree and the same identity, so two commits made in the same second share a sha. The rule: (1) tools/test_run_checks.sh is yours (no task in flight owns it). Make its two test repos differ, with a distinct author identity, commit time or file in each, so their shas cannot collide; do it yourself between merges or seed a small K1 task for it. Never loosen, skip or delete the fixture. (2) Until that fix is on main, a lone FAIL of that fixture on a candidate that touches no runner file is re-run once on the same sha; a second FAIL is real. (3) Two lessons are past their ack_by and unread because their agents are waiting: deliver M12 to AD and M14 to AIA-2 in the prompt when you next start or resume them, and have them ack it in their status files.",
+      "sent_at": "2026-11-12T20:54:00Z",
+      "ack_by": "2026-11-12T22:54:00Z",
+      "acked_at": "2026-11-12T22:50:00Z"
+    },
+    {
+      "id": "M17",
+      "to": "lead",
+      "text": "Lesson from UI phase 2 (P2-S1-toon-drop, cycle 74). The wait from ready to merged rated worse for the second push in a row: 3.0h for P2-K1-motion, then 2.7h for the toon drop (ready 23:41, merged 02:21). Three causes, all in the merge queue. At 23:41 three tasks were ready at once with disjoint claims (P2-S3-screenkit ready 22:59, P2-K1-motion ready 22:40, P2-S1-toon-drop ready 23:41), yet they were merged one at a time, against the batching rule you acked as M15. P2-K1-motion's merge reached main at 01:40, 51 minutes after its check passed at 00:49. And the toon drop's first check_all stopped on a read-only cargo lock because it was started inside the candidate's worktree, where client/ext/target is a link; the re-run from the main checkout passed. The rule: (1) As soon as two or more tasks are ready with disjoint claims, merge 2 or 3 of them into one candidate, as agent-protocol.md \"Batching\" says; if the batch fails, re-check each alone. (2) Merge to main and clear the lock in the same turn the check passes, then lock the next candidate in that turn. (3) Start check_all from the main checkout on the candidate sha, never from inside the candidate's worktree, or give that worktree its own writable CARGO_TARGET_DIR. (4) Add M17 to the acks in status/lead.json.",
+      "sent_at": "2026-11-13T02:54:00Z",
+      "ack_by": "2026-11-13T04:54:00Z",
+      "acked_at": "2026-11-13T03:55:00Z"
+    },
+    {
+      "id": "M18",
+      "to": "lead",
+      "text": "Lesson from the UI report (Work delivered rated worse two pushes in a row: 1.10, then 1.11 hours of work an hour against 1.2). Builder seats sit empty while a builder's session waits idle on its own request until its lease lapses: S2 from about 01:10 to its restart at 02:43 on 13 November, and AIA idle on AIA-R25 until its lease lapsed at 04:43. The rule: each cycle, check every builder's session with get_session. When a session is not working (status_bucket other than working) and has its own request pending, apply that request's default early (as M15 allows) and resume that same session with send_message, or restart it on the same task, without waiting for the lease to lapse. Ack M18 when you next run a cycle.",
+      "sent_at": "2026-11-13T06:56:00Z",
+      "ack_by": "2026-11-13T08:56:00Z",
+      "acked_at": "2026-11-13T07:43:00Z"
+    },
+    {
+      "id": "M19",
+      "to": "lead",
+      "text": "Lesson from P2-AIA-motion-2's merge (lead cycle 78): check_all passed on its first run at 06:40:52, but guard.sh failed twice on the candidate's worktree before passing at 06:52:57, first for want of the native library, then for want of tools/ui_research's node packages, so the merge reached main about 12 minutes late. Rule: before the first guard.sh run in a candidate worktree, run `bash client/build.sh` and `npm ci` in tools/ui_research there, or run guard.sh from the main checkout on the candidate commit, as check_all is run (M17). Ack by adding M19 to your status acks.",
+      "sent_at": "2026-11-13T06:57:00Z",
+      "ack_by": "2026-11-13T08:57:00Z",
+      "acked_at": "2026-11-13T07:43:00Z"
     }
   ]
 }
