@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnQNXyshnSaWRSFz4A` (cycle 73, 12
-November 2026 from 22:39Z, started by the Opus 5.5 launcher). Cycle 72's
+Latest lead cycle session: `session_01SNkKxq74K4BtMR3MtbQTe1` (cycle 74, 12
+November 2026 from 23:39Z, started by the Opus 5.5 launcher). Cycle 73's
+was `session_01SNkKxnQNXyshnSaWRSFz4A` (from 22:39Z). Cycle 72's
 was `session_01SNkKxq8UPsw413Cqn38hyd` (from 20:39Z). Cycle 71's
 was `session_01SNkKxr8rzRPkaA8ocqu69E` (from 18:39Z). Cycle 70's
 was `session_01SNkKxpKUASWJcNRTsGDfsp` (from 16:38Z). Cycle 69's
@@ -219,10 +220,11 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S1 | `session_01SNkKxowrAJqRGxuKn8Tf1C` (Opus 5.5, effort high) | P2-S1-toon-drop (restart: the last session went idle waiting for the gate; advisory pass in verdicts/P2-S1-toon-drop/a7dd6501.json; mark ready) | `claude/ui-screens-heist` | 2026-11-12 23:41Z |
 | S3 | `session_01SNkKxqkkDvs1XEigTTp6o5` (Opus 5.5, effort high) | P2-S3-screenkit (restart: the last session idle past its expected_next_update_by 21:54:38Z and its lease lapsed at 22:16Z; prior_sha 03b3d762; answer Lead-R1, then ready) | `claude/ui-screens-meta` | 2026-11-12 22:43Z |
 | K1 | `session_01SNkKxqeMVkQseRbMLW4q8r` (Opus 5.5, effort high) | P2-K1-motion (start: P2-AIA-motion-1 merged as a43e4d5a) | `claude/ui-bake` | 2026-11-12 22:02Z |
 | S2 | `session_01SNkKxn7gvvhfq2Xjm1ocpN` (Opus 5.5, effort high) | P2-S2-home-1 (start: P2-flow-entry merged as 62c66327; S2-R4's default applies) | `claude/ui-screens-home` | 2026-11-12 22:02Z |
-| S1 | `session_01SNkKxnTgyGWE1wfK5suMkd` (Opus 5.5, effort high) | P2-S1-toon-drop (start: P2-S1-flow-replay merged as 509c43c2, P2-AIA2-busts merged) | `claude/ui-screens-heist` | 2026-11-12 22:02Z |
+| S1 | `session_01SNkKxnTgyGWE1wfK5suMkd` (Opus 5.5, effort high; idle waiting for the gate, replaced at 23:41Z) | P2-S1-toon-drop (start: P2-S1-flow-replay merged as 509c43c2, P2-AIA2-busts merged) | `claude/ui-screens-heist` | 2026-11-12 22:02Z |
 | S1 | `session_01SNkKxqKPyULbAiucFCfPRG` (Opus 5.5, effort high; idle, its task merged as 509c43c2) | P2-S1-flow-replay (start: P2-S1-flow-result merged as 9e1dd558; S1's session idle with its task merged; S1-R13 granted) | `claude/ui-screens-heist` | 2026-11-12 19:56Z |
 | S2 | `session_01SNkKxozf5JRQDJPnSF8RWh` (Opus 5.5, effort high; idle, its task merged as 62c66327) | P2-flow-entry (start: P2-S2-flow-home merged as 7d899ce4; S2's session idle with its task merged) | `claude/ui-screens-home` | 2026-11-12 19:55Z |
 | S3 | `session_01SNkKxnF4CGAt7d58kriezr` (Opus 5.5, effort high; idle past its expected update, restarted in cycle 73) | P2-S3-screenkit (start: S3's first session; report.md step 11, seeded in cycle 71; S2's session idle with its task ready, so S3 takes the third place in the cap) | `claude/ui-screens-meta` | 2026-11-12 19:13Z |

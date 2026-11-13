@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-12T23:45:00Z",
+  "updated_at": "2026-11-13T00:20:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-14T21:00:00Z",
   "lease_hours": 3,
@@ -3081,20 +3081,20 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
         "claimed_at": "2026-11-12T22:09:00Z",
-        "seen_at": "2026-11-12T23:23:25Z",
+        "seen_at": "2026-11-12T23:58:00Z",
         "lease_until": "2026-11-13T01:37:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "b5d77219e9207b64e1f153a870b9d8d9995e23da",
       "merged_sha": null,
-      "updated_at": "2026-11-12T22:50:00Z",
-      "updated_by": "lead (cycle 73)",
+      "updated_at": "2026-11-13T00:20:00Z",
+      "updated_by": "lead (cycle 74)",
       "id": "P2-K1-motion",
       "title": "Kit Motion on the motion art (report.md steps 4 and 8): client/ui/motion.gd reads the baked curves and offers the reward sequence, the press squash and the idle shine, each with its reduced form",
       "exceptions": [
@@ -3186,7 +3186,7 @@
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-12T22:04:25Z",
-        "seen_at": "2026-11-12T22:41:37Z",
+        "seen_at": "2026-11-12T23:50:45Z",
         "lease_until": "2026-11-13T01:04:25Z"
       },
       "prior_branch": null,
@@ -3370,7 +3370,7 @@
         "agent": "S2",
         "branch": "claude/ui-screens-home",
         "claimed_at": "2026-11-12T22:10:00Z",
-        "seen_at": "2026-11-12T23:26:19Z",
+        "seen_at": "2026-11-12T23:57:00Z",
         "lease_until": "2026-11-13T01:10:00Z"
       },
       "prior_branch": null,
@@ -3390,7 +3390,8 @@
         "client/world/universe_badge.gd",
         "client/world/universe_pins.gd",
         "client/tests/shots/universe_home.gd",
-        "docs/art/tracks/home-screen.md"
+        "docs/art/tracks/home-screen.md",
+        "client/world/universe_reward.gd"
       ],
       "deps": [
         "P2-S2-home-1"
@@ -3467,20 +3468,14 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "ready",
-      "claim": {
-        "agent": "S3",
-        "branch": "claude/ui-screens-meta",
-        "claimed_at": "2026-11-12T22:45:18Z",
-        "seen_at": "2026-11-12T23:26:42Z",
-        "lease_until": "2026-11-13T01:45:18Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": "claude/ui-screens-meta",
       "prior_sha": "03b3d7627083b3947a31b6c76962fadd295127b5",
       "ready_sha": "cf4eecc2c6c98a4ab4c5028269ea391133812b9a",
-      "merged_sha": null,
-      "updated_at": "2026-11-12T22:50:00Z",
-      "updated_by": "lead (cycle 73)",
+      "merged_sha": "70057394813f0189dcc0169a27478405397eec99",
+      "updated_at": "2026-11-13T00:20:00Z",
+      "updated_by": "lead (cycle 74)",
       "id": "P2-S3-screenkit",
       "title": "Menu screens through the kit (report.md step 11): ScreenKit and ScreenBox draw their materials through KitSkin, so every menu screen inherits the new kit",
       "exceptions": [
