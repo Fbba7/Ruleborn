@@ -3882,6 +3882,14 @@
       "sent_at": "2026-11-13T06:56:00Z",
       "ack_by": "2026-11-13T08:56:00Z",
       "acked_at": null
+    },
+    {
+      "id": "M19",
+      "to": "lead",
+      "text": "Lesson from P2-AIA-motion-2's merge (lead cycle 78): check_all passed on its first run at 06:40:52, but guard.sh failed twice on the candidate's worktree before passing at 06:52:57, first for want of the native library, then for want of tools/ui_research's node packages, so the merge reached main about 12 minutes late. Rule: before the first guard.sh run in a candidate worktree, run `bash client/build.sh` and `npm ci` in tools/ui_research there, or run guard.sh from the main checkout on the candidate commit, as check_all is run (M17). Ack by adding M19 to your status acks.",
+      "sent_at": "2026-11-13T06:57:00Z",
+      "ack_by": "2026-11-13T08:57:00Z",
+      "acked_at": null
     }
   ]
 }
