@@ -7,14 +7,14 @@
   "task_id": "P2-S1-result-1",
   "task_state": "working",
   "claimed_at": "2026-11-13T02:23:29Z",
-  "lease_until": "2026-11-13T05:23:29Z",
-  "updated_at": "2026-11-13T02:23:29Z",
-  "expected_next_update_by": "2026-11-13T03:23:29Z",
+  "lease_until": "2026-11-13T05:43:43Z",
+  "updated_at": "2026-11-13T02:43:43Z",
+  "expected_next_update_by": "2026-11-13T03:43:43Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "43f81a56",
-    "next_step": "P2-S1-result-1 built (0caae28, d5527bc), main merged (f880a5b); guard and pre-check on the head with docs/art/tracks/result-screen.md, then gate_request.",
-    "at": "2026-11-13T02:23:29Z"
+    "next_step": "P2-S1-result-1: the pre-check at c9488372 failed the large-text test (raid bar unfitted on frame 2); fixed at 8bec0d84 (fit in _ready). Pre-check on 8bec0d84 running, then gate_request.",
+    "at": "2026-11-13T02:43:43Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -324,5 +324,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P2-S1-result-1 built (0caae28, d5527bc), main merged (f880a5b); guard and pre-check on the head with docs/art/tracks/result-screen.md, then gate_request."
+  "next_step": "P2-S1-result-1: the pre-check at c9488372 failed the large-text test (raid bar unfitted on frame 2); fixed at 8bec0d84 (fit in _ready). Pre-check on 8bec0d84 running, then gate_request."
 }
