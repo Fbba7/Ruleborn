@@ -189,6 +189,9 @@ func choose(id: String, animate := true) -> void:
 		box.visible = look != ""
 		if look != "":
 			box.set_look(look)
+		# The bar's look is clear: where the tile draws, the tab draws no
+		# empty box of its own under it.
+		RbBox.of(b).visible = look == ""
 		tile.custom_minimum_size.x = _tile_width(k)
 		b.size_flags_stretch_ratio = Tokens.number("size", "tab_active_grow") if on else 1.0
 		b.custom_minimum_size.y = UI.px(Tokens.number("size", "tab_height") + (RISE if on else 0.0))
