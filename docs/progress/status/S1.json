@@ -4,26 +4,21 @@
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-S1-toon-drop",
-  "task_state": "ready",
-  "claimed_at": "2026-11-12T22:04:25Z",
-  "lease_until": "2026-11-13T01:04:25Z",
-  "updated_at": "2026-11-13T00:31:00Z",
-  "expected_next_update_by": "2026-11-13T01:30:00Z",
+  "task_id": "P2-S1-result-1",
+  "task_state": "working",
+  "claimed_at": "2026-11-13T02:23:29Z",
+  "lease_until": "2026-11-13T05:23:29Z",
+  "updated_at": "2026-11-13T02:23:29Z",
+  "expected_next_update_by": "2026-11-13T03:23:29Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "43f81a56",
-    "next_step": "P2-S1-toon-drop ready at 43f81a56 (pre-check PASS 00:28:57Z; gate advisory pass, 2 fails of 6, at a7dd6501). Building P2-S1-result-1 on the branch past ready_sha; it is claimed here once toon-drop merges.",
-    "at": "2026-11-13T00:31:00Z"
+    "next_step": "P2-S1-result-1 built (0caae28, d5527bc), main merged (f880a5b); guard and pre-check on the head with docs/art/tracks/result-screen.md, then gate_request.",
+    "at": "2026-11-13T02:23:29Z"
   },
-  "precheck": {
-    "sha": "43f81a56f45624dead083e7a807e4f902bb141eb",
-    "exit": 0,
-    "finished_at": "2026-11-13T00:28:57Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "43f81a56",
+  "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6",
@@ -241,8 +236,93 @@
       "due": "2026-11-13T22:41:36Z",
       "default": "The gate runs on a7dd6501 as it stands; a crop for Hollow, if wanted, becomes AIA-2's framing at the source or a follow-up task.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R15",
+      "from": "S1",
+      "to": "K1",
+      "ask": "KitControls.action2 whose words wrap at large text: its label is 16 points, uppercase and does not wrap, so at 200% text 'RAID AGAIN' runs past the button, and in pt_BR 'ASSALTAR' alone is wider than the room beside Home (P2-S1-result-1). Ask: the words wrap between words inside the button's padding, the button growing to its lines.",
+      "files": [
+        "client/ui/kit_controls.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The result screen's _fit_raid wraps action2's labels itself, inset by the button's padding, and stands the bar upright (raid first, full width) when one word will not fit beside Home.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R16",
+      "from": "S1",
+      "to": "K1",
+      "ask": "The hero title's size: kit-spec says 34 points, KitNav.hero sets 52, key frame 03 shows the outcome at 40. Ask: one size, or a size argument on KitNav.hero.",
+      "files": [
+        "client/ui/kit_nav.gd",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The result screen sets its title to 40 points, as key frame 03.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R17",
+      "from": "S1",
+      "to": "K1",
+      "ask": "A portrait stack component: the crew's faces overlapping in rings, each over the last by a third of its width, as key frame 03's rest card (and the kit avatar's framing).",
+      "files": [
+        "client/ui/kit_social.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The result screen composes the stack from KitRing with KitSocial's framing (gold band, ground #4A3A9A, zoom 1.2).",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R18",
+      "from": "S1",
+      "to": "K1",
+      "ask": "A dusk or muted backdrop for a foiled heist: the kit has the night and the celebration sunburst only.",
+      "files": [
+        "client/ui/kit_nav.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "A foiled or refused heist keeps the plain night.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R19",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Lower result_screen.gd's record in tools/ui_bake/budgets.json (screens): check_screens.py counts 0 draw (recorded 5) and 0 fill (recorded 1) after P2-S1-result-1; `python3 tools/ui_bake/check_screens.py --record` writes it.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The record stays as it is; check_screens.py passes either way.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R20",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-1, M10, M12): the result screen from the kit alone on key frame 03. Stills: SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, with TEXT=200 LOCALE=pt_BR and with CONTRAST=1 for the other two gate items; GOLDEN=long-crew5 for a foiled heist. Notes in docs/art/tracks/result-screen.md: faces from the role's default kind, the raid bar upright at 200% pt_BR, the pill broken only at its dots, the bar on glass. Open: character art is in the crew's faces, none beside the reward tiles (none in the key frame either). Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The gate runs on the pre-checked head as it stands; a character beside the reward, if wanted, becomes a follow-up task with AIA's art.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "P2-S1-result-1: the result screen from the kit alone (key frame 03)."
+  "next_step": "P2-S1-result-1 built (0caae28, d5527bc), main merged (f880a5b); guard and pre-check on the head with docs/art/tracks/result-screen.md, then gate_request."
 }
