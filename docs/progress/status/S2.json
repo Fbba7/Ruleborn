@@ -248,14 +248,14 @@
       "id": "S2-R16",
       "from": "S2",
       "to": "lead",
-      "ask": "Amend S2-R7's approved raise: home/100 and home/hc to 143 draw calls, home/200 to 114 (S2-R7 approved 139 for 100 and hc; home/200's record is 97). The rise comes from what cycle 74's gate asked for: the goal card beside Collect (+4), the character portrait, and the display type on the figures and the name. All three stay under the cap of 150. Please record them in tools/ui_bake/budgets.json (not S2's file).",
+      "ask": "Amend S2-R7's approved raise: home/100 and home/hc to 143 draw calls, home/200 to 112 (S2-R7 approved 139 for 100 and hc; home/200's record is 97). The rise comes from what cycle 74's gate asked for: the goal card beside Collect (+4), the character portrait, and the display type on the figures and the name. All three stay under the cap of 150. Please record them in tools/ui_bake/budgets.json (not S2's file).",
       "files": [
         "tools/ui_bake/budgets.json"
       ],
       "blocking": false,
       "created_at": "2026-11-13T03:11:20Z",
       "due": "2026-11-13T15:11:20Z",
-      "default": "The lead records 143/114/143 when it merges P2-S2-home-1; until then guard.sh fails on those three draw-call lines only.",
+      "default": "The lead records 143/112/143 when it merges P2-S2-home-1; until then guard.sh fails on those three draw-call lines only.",
       "escalate_to": "lead"
     }
   ],

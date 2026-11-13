@@ -75,11 +75,11 @@ Runs side by side need a user folder each (`XDG_DATA_HOME`): they otherwise shar
 
 | Shot | Draw calls (record) | Textures | Words below 4.5:1 (record) | Worst contrast |
 |---|---:|---:|---:|---:|
-| home/100 | **143** (119) | see below | see below | see below |
-| home/200 | **114** (97) | see below | see below | see below |
-| home/hc | **143** (119) | see below | see below | see below |
+| home/100 | **143** (119) | 4.9 MiB | 0 of 28 (0) | 6.40:1 |
+| home/200 | **112** (97) | 5.1 MiB | 0 of 13 (0) | 7.23:1 |
+| home/hc | **143** (119) | 4.9 MiB | 0 of 28 (0) | 8.94:1 |
 
-The budget shots now render the key frame's state, so the goal card shows beside Collect. All three fail on draw calls only, 7 or more under the cap of 150. The lead approved 139 for home/100 and home/hc (S2-R7); S2-R16 asks to amend that to 143, and home/200 to 114, for what cycle 74's gate asked for: the goal card (+4), the portrait and the display type. Until they are recorded, `guard.sh` fails on these three lines. The textures and contrast columns are in `docs/progress/S2.md`, from the run on the merge.
+The budget shots now render the key frame's state, so the goal card shows beside Collect. All three fail on draw calls only, 7 or more under the cap of 150. The lead approved 139 for home/100 and home/hc (S2-R7); S2-R16 asks to amend that to 143, and home/200 to 112, for what cycle 74's gate asked for: the goal card (+4), the portrait and the display type. Until they are recorded, `guard.sh` fails on these three lines.
 
 **Draw calls by part** at 100%, from the shot's `PROBE=1`. Each part is faded in turn and the frame's calls are counted again:
 
@@ -103,7 +103,7 @@ Checks run on the task's last commit: see `docs/progress/S2.md`.
 
 These are things the kit's parts cannot do yet, or costs that the kit's parts bring. Each is a request in `docs/progress/status/S2.json`, with the default home uses until it is answered.
 
-- **Home draws 24 more calls at 100% and in high contrast** (143 against a record of 119), and 17 more at 200% (114 against 97). It is still 7 under the cap of 150. A saving on the kit's side is K1's to weigh: icons in the skin atlas, or one layer for a part's art across its siblings. (S2-R7, S2-R16)
+- **Home draws 24 more calls at 100% and in high contrast** (143 against a record of 119), and 15 more at 200% (112 against 97). It is still 7 under the cap of 150, but while the raid notice shows (`NOTICE=1`, not a budget shot) the frame at 100% reaches 154. A saving on the kit's side is K1's to weigh: icons in the skin atlas, or one layer for a part's art across its siblings. (S2-R7, S2-R16)
 - **In Portuguese, the goal gives way to Collect at 100% text.** "Coletar 3,4 mil" leaves less than the goal's narrowest (150 points) beside it, so Collect shows alone, as at large text in English. (No request: the goal's own screen still shows it.)
 - **At 200% text, the chosen tab's name hides where it would wrap below its tile** ("Ilhas" in Portuguese); the other tabs show their icons alone there already. Each stays named aloud. (S2-R15)
 - **Display type, the raised Heist tab and Collect's size are home's own.** The kit's parts set figures in the body face, have no raised tab, and do not size a button to its words, so home does these itself until the kit does. (S2-R12, S2-R14, S2-R15)
