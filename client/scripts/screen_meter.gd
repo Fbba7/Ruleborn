@@ -1,10 +1,12 @@
 class_name ScreenMeter
 extends Control
-## A progress bar or ring in the design's look (§21.8): a dark well, a fill
-## that runs light to deep in its colour, an ink edge, and for a ring the
-## count in its middle. The fill moves to a new value in 200 ms, easing out,
-## or at once under reduced motion. The count is always written beside or in
-## it, so the amount never rests on the fill alone.
+## A progress bar or ring in the design's look (§21.8). A bar is the kit's
+## `KitBar` (its track and fill drawn from the atlas), so the menu screens'
+## bars match the heist's; a ring is a dark well, a fill that runs light to
+## deep in its colour, an ink edge and the count in its middle. The fill
+## moves to a new value easing out (`Motion.fill` for a bar, 200 ms for a
+## ring), or at once under reduced motion. The count is always written
+## beside or in it, so the amount never rests on the fill alone.
 
 ## "bar" or "ring".
 var kind := "bar"
@@ -15,9 +17,30 @@ var colour := Color("#E9B65C")
 var middle := ""
 var middle_points := 15.0
 var _shown := 0.0
+## The kit's bar a bar is drawn with; null for a ring.
+var _kit: KitBar = null
 
 
 static func bar(v: float, m: float, c: Color, points := 10.0) -> ScreenMeter:
+	var s := _made(v, m, c, points)
+	# Gold is the kit's own fill, untinted.
+	s._kit = KitBar.make(s._fraction(s.value), Color() if c == Tokens.color("gold") else c, points)
+	s._kit.custom_minimum_size = Vector2.ZERO
+	s._kit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	s.add_child(s._kit)
+	return s
+
+
+static func ring(v: float, m: float, c: Color, points := 56.0, words := "") -> ScreenMeter:
+	var s := _made(v, m, c, points)
+	s.kind = "ring"
+	s.middle = words
+	s.custom_minimum_size = Vector2.ONE * UI.px(points)
+	s.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	return s
+
+
+static func _made(v: float, m: float, c: Color, points: float) -> ScreenMeter:
 	var s := ScreenMeter.new()
 	s.value = v
 	s.most = maxf(m, 0.0001)
@@ -30,17 +53,15 @@ static func bar(v: float, m: float, c: Color, points := 10.0) -> ScreenMeter:
 	return s
 
 
-static func ring(v: float, m: float, c: Color, points := 56.0, words := "") -> ScreenMeter:
-	var s := bar(v, m, c, points)
-	s.kind = "ring"
-	s.middle = words
-	s.custom_minimum_size = Vector2.ONE * UI.px(points)
-	s.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	return s
+func _fraction(v: float) -> float:
+	return clampf(v / maxf(most, 0.0001), 0.0, 1.0)
 
 
 func set_value(v: float) -> void:
 	value = v
+	if _kit != null:
+		Motion.fill(_kit, _fraction(v))
+		return
 	if not is_inside_tree() or Settings.reduced_motion:
 		_shown = v
 		queue_redraw()
@@ -54,30 +75,8 @@ func set_value(v: float) -> void:
 
 
 func _draw() -> void:
-	var f := clampf(_shown / most, 0.0, 1.0)
 	if kind == "ring":
-		_draw_ring(f)
-		return
-	var h := size.y
-	var r := Rect2(Vector2.ZERO, size)
-	var b := ScreenBox.new()
-	b.top = Color("#0A0618")
-	b.bottom = Color("#1E1440")
-	b.radius = -1.0
-	b.line = Color("#1A0C14")
-	b.line_px = maxf(1.0, UI.px(0.7))
-	b.draw(get_canvas_item(), r)
-	if f <= 0.0:
-		return
-	var fill := ScreenBox.new()
-	fill.top = colour.lightened(0.35)
-	fill.mid = colour
-	fill.mid_at = 0.45
-	fill.bottom = colour.darkened(0.25)
-	fill.radius = -1.0
-	fill.gloss = Color(1, 1, 1, 0.35)
-	fill.gloss_px = maxf(1.0, h * 0.18)
-	fill.draw(get_canvas_item(), Rect2(Vector2.ZERO, Vector2(maxf(h, size.x * f), h)))
+		_draw_ring(clampf(_shown / most, 0.0, 1.0))
 
 
 func _draw_ring(f: float) -> void:

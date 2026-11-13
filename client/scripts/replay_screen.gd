@@ -32,6 +32,10 @@ var speed_button: Button
 var progress: FxDraw
 ## The heist's moments on the timeline (`moments`).
 var marks: Array[Dictionary] = []
+## The marks as the timeline draws them (`merge_marks`, `spread_marks`), and
+## the count beside each mark that stands for more than one.
+var _laid: Array[Dictionary] = []
+var _counts: Array[Label] = []
 
 var _owed := 0.0
 
@@ -87,6 +91,7 @@ func open_entry(index: int) -> bool:
 	view.show_replay(replay)
 	view.follow = range(replay.crew().size())
 	marks = moments(entries[current][1], island)
+	_lay_out_marks()
 	_refresh()
 	return ok
 
@@ -139,6 +144,123 @@ static func moments(bytes: PackedByteArray, island: PackedByteArray) -> Array[Di
 			out.append({"tick": r.tick(), "kind": "pylon"})
 		standing = up
 	return out
+
+
+## The timeline's marks, one kind at a time (flow finding F7): a run of
+## marks of one kind, each closer than `room` (of a timeline `width` wide)
+## to the one before, becomes one mark with a count. [{at, end, kind,
+## count}], `at` where the first of them happens and `end` the last, in
+## time order.
+static func merge_marks(
+	found: Array[Dictionary], ticks: int, width: float, room: float
+) -> Array[Dictionary]:
+	var whole := maxf(1.0, float(ticks))
+	var out: Array[Dictionary] = []
+	for m in found:
+		var at := width * float(m["tick"]) / whole
+		var joined := false
+		for k in range(out.size() - 1, -1, -1):
+			if at - float(out[k]["end"]) >= room:
+				break
+			if out[k]["kind"] == str(m["kind"]):
+				out[k]["count"] = int(out[k]["count"]) + 1
+				out[k]["end"] = at
+				joined = true
+				break
+		if not joined:
+			out.append({"at": at, "end": at, "kind": str(m["kind"]), "count": 1})
+	return out
+
+
+## Where each merged mark stands (flow finding F7): each takes `wide[i]` of
+## the timeline, and marks that would touch stand side by side in time
+## order, as a group centred on where they happen and kept inside `width`.
+## Sets each mark's "x", the left edge of its room; a group wider than the
+## timeline is narrowed to fit.
+static func spread_marks(laid: Array[Dictionary], wide: Array[float], width: float) -> void:
+	# Blocks of touching marks: [first, last, sum of anchors, total width].
+	var blocks: Array[Array] = []
+	for i in laid.size():
+		blocks.append([i, i, float(laid[i]["at"]) + wide[i] * 0.5, wide[i]])
+		while blocks.size() > 1 and _block_left(blocks[-1], width) < _block_right(blocks[-2], width):
+			var b: Array = blocks.pop_back()
+			blocks[-1][1] = b[1]
+			blocks[-1][2] = float(blocks[-1][2]) + float(b[2])
+			blocks[-1][3] = float(blocks[-1][3]) + float(b[3])
+	for b in blocks:
+		var squeeze := minf(1.0, width / maxf(1.0, float(b[3])))
+		var x := _block_left(b, width)
+		for i in range(int(b[0]), int(b[1]) + 1):
+			laid[i]["x"] = x
+			x += wide[i] * squeeze
+
+
+static func _block_left(b: Array, width: float) -> float:
+	var n := int(b[1]) - int(b[0]) + 1
+	var total := minf(float(b[3]), width)
+	return clampf(float(b[2]) / n - total * 0.5, 0.0, width - total)
+
+
+static func _block_right(b: Array, width: float) -> float:
+	return _block_left(b, width) + minf(float(b[3]), width)
+
+
+## Lay the timeline's marks out for its width: merge, count, spread.
+func _lay_out_marks() -> void:
+	if progress == null:
+		return
+	var s := progress.size.y * 0.55
+	var room := s * 1.2
+	var width := progress.size.x
+	# Marks of one kind merge when they stand closer than `gap`; on a crowded
+	# timeline the gap widens until every mark has its own room.
+	var gap := room
+	var wide := _mark_widths(merge_marks(marks, replay.ticks(), width, gap), s, room)
+	while _sum(wide) > width and gap < width:
+		gap *= 2.0
+		wide = _mark_widths(merge_marks(marks, replay.ticks(), width, gap), s, room)
+	spread_marks(_laid, wide, width)
+	for i in _laid.size():
+		var m := _laid[i]
+		# The icon leads its room; a count stands just after it.
+		m["centre"] = float(m["x"]) + (s * 0.5 + s * 0.1 if m.has("label") else wide[i] * 0.5)
+		if m.has("label"):
+			var l: Label = m["label"]
+			l.visible = true
+			l.position = Vector2(float(m["centre"]) + s * 0.5, (s - l.size.y) * 0.5)
+	progress.queue_redraw()
+
+
+## Keeps `laid` as the marks to draw, gives each counted mark a count label
+## and returns the room each mark takes on the timeline.
+func _mark_widths(laid: Array[Dictionary], s: float, room: float) -> Array[float]:
+	_laid = laid
+	var wide: Array[float] = []
+	var used := 0
+	for m in _laid:
+		var w := room
+		if int(m["count"]) > 1:
+			if used == _counts.size():
+				var made := FxSkin.label("", 14.0, "glass", true)
+				progress.add_child(made)
+				_counts.append(made)
+			var count := _counts[used]
+			count.text = "×%d" % int(m["count"])
+			count.reset_size()
+			m["label"] = count
+			w = s + count.size.x + s * 0.2
+			used += 1
+		wide.append(w)
+	for i in range(used, _counts.size()):
+		_counts[i].visible = false
+	return wide
+
+
+static func _sum(values: Array[float]) -> float:
+	var total := 0.0
+	for v in values:
+		total += v
+	return total
 
 
 ## Run `ticks` ticks of the heist, as the playback clock does.
@@ -209,6 +331,7 @@ func _build() -> void:
 	# How far into the heist the playback is: a bar, the alarm's levels
 	# ticked along it.
 	progress = FxDraw.new(_draw_progress, Vector2(0, UI.px(34)))
+	progress.resized.connect(_lay_out_marks)
 	status_box.add_child(progress)
 	column.add_child(status)
 
@@ -241,10 +364,11 @@ func _draw_progress(ci: Control) -> void:
 	# Each moment's mark above the bar where it happens: stars for a
 	# knock-out, a bell for the alarm, a lock for the Vault, a shard for a
 	# pylon, a red "!" for a guard alerted, a red bubble for one caught.
+	# Marks that would cover one another stand side by side, and marks of
+	# one kind close together are one mark with a count (`_lay_out_marks`).
 	var s := ci.size.y * 0.55
-	for m in marks:
-		var x := bar.position.x + bar.size.x * float(m["tick"]) / whole
-		var at := Vector2(clampf(x, s * 0.5, ci.size.x - s * 0.5), s * 0.5)
+	for m in _laid:
+		var at := Vector2(float(m["centre"]), s * 0.5)
 		match str(m["kind"]):
 			"ko":
 				FxIcons.star(ci, at, s * 0.45, Color("#FFE27A"))
