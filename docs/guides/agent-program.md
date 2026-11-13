@@ -728,6 +728,7 @@ as a backlog message.
 | What happened | The rule it led to | Now |
 |---|---|---|
 | P2-S2-flow-home's first full check failed one fixture in `tools/test_run_checks.sh` that the change does not touch; the re-run on the same sha passed. The fixture's two test repos have the same tree and identity, so commits in the same second share a sha | The lead (who owns the file) makes the two test repos differ so their shas cannot collide, never loosening the test; until then a lone failure of that fixture on a candidate that touches no runner file is re-run once | Sent to the lead as M16 |
+| The wait from ready to merged rated worse two pushes in a row (3.0h, then 2.7h). At 23:41 on 12 November three ready tasks had disjoint claims but were merged one at a time; a merge reached main 51 minutes after its check passed; and one check run stopped on a read-only cargo lock because it was started inside the candidate's worktree | The lead batches 2–3 ready tasks with disjoint claims into one candidate, merges and clears the lock in the turn the check passes, and starts check_all from the main checkout (or gives the worktree its own writable `CARGO_TARGET_DIR`) | Sent to the lead as M17 |
 
 ## Waves, progress files and stills
 
