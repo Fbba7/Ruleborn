@@ -167,6 +167,34 @@ In strip mode the shot writes no `out.png`, so `shoot.sh` ends with exit 1 on it
 
 The strips and clips are sent to AD for board 4 by request, since `docs/art/ui-quality/gate/**` is AD's (P2-AD-board-4).
 
+## AD's four objections to S1-R24
+
+AD answered the faces' preview (S1-R24) at 08:46Z with four objections. The re-check covers only these four. AD's notes (the gold kicker, the untested idle-crew line, the dock's order at 200%) are not objections and are left as they were.
+
+1. **At 200% pt_BR the first screen showed no haul.** At large text the rewards now come before the moment card, as `03-result_text200_pt_BR`. The three reward tiles turn into rows (`_tile_row`): the icon at 26 points, then the word, then the number, left to right, 3 points of padding above and below, with 4 points between the rows. The third row (Renown) now ends above the dock. If a row's words would not fit the column on one line (German: "Sternenlicht" broke by its letters), `_fit_reward_rows` turns all three tiles back into columns (`_tile_column`) with 8 points between them. pt_BR keeps rows; de goes back to columns.
+2. **High contrast had the sunburst's rays, stars and glow.** In high contrast the screen skips `KitNav.celebrate` and builds no island (`_build_world` returns), as `03-result_hc` and Collect's shine: a plain night behind the cards.
+3. **At 200% pt_BR the multipliers pill wrapped to two lines.** `_chip_on_one_line` tries three steps in order and keeps the first that fits on one line: the words with 10 points of padding at 14 points; then thin spaces in place of the gaps and 6 points of padding; then the same at 12 points. Only when none fits does the pill wrap as before. pt_BR fits on the second step.
+4. **At 100% the rest line took three lines.** The faces sit with no gap between them (0, from 4) and 6 points from the line (from 10), so the line has the room for two lines at 13 points.
+
+At 200% text, when the raid's words stand upright, Home and the replay show as icon-only squares (with an accessibility name and tooltip), so the raid keeps its room.
+
+| Still (`SERVER=1 FIT=1`) | FIT | Draw calls |
+|---|---|---|
+| pt_BR, 200% | ok | 109 |
+| en, 100% | ok | 120 (as before) |
+| High contrast, 100% | ok | 62 |
+| de, 200% (tiles as columns) | ok | 97 |
+
+    SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd pt200.png
+    SERVER=1 FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd hc.png
+    SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd en100.png
+    SERVER=1 FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_result.gd de200.png
+
+**The budget stills.** result/100 is 89 (record 94) and result/hc is 27 (94). result/200 is 98, against a record of 90 and the cap of 150. Bisecting showed the 8 calls come from the three changes together (the haul above the moment, the tiles as rows, the pill on one line), which are the first screen AD asked for. Taking any of them out brings back an objection. So the record goes to the lead by request (S1-R26), as S2-R7, S2-R16 and S2-R17 did for other screens. `check_screens.py` passes, with this screen still at 0 draw and 0 fill.
+
 ## Tried and failed
 
 - Reading the missing reduced coin as a texture or clipping fault. The coin was in the tree, with its texture, at full alpha and inside the scroll's rect. It was drawn under the page: the layer's z of 10 is counted on its own, below the page's 32. Raised, it shows.
+- (S1-R24 fixes) The reward rows with 12 points of side padding and a margin of slack in the fit: pt_BR asked 903 px of 900 and fell back to columns for nothing. The padding is 10 points and the fit has no slack beyond the rounding.
+- (S1-R24 fixes) The reward tiles as rows in every language: German's "Sternenlicht" broke by its letters at 200%. Rows are kept only when every row fits; otherwise the tiles go back to columns.
+- (S1-R24 fixes) The rows with the tiles' 8 points of padding and the 8-point row gap: the third row (Renown) ran under the dock at pt_BR 200%. 3 points of padding and a 4-point gap clear it.
