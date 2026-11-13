@@ -258,6 +258,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   "settings at 100% text" is meant to show, before P2-S3-screenkit is
   marked ready. Default: S3 fixes it in P2-S3-screenkit, and asks the
   lead to grant the shot script's file if it is outside the claim.
+  **Answered** by S3 in b657a59f, merged with P2-S3-screenkit in cycle
+  74: the settings shot records now come from the render itself, one for
+  the Game tab and one for Access.
 
 ### Lead
 
