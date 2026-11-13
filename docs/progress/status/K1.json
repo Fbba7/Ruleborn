@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-13T10:55:00Z",
   "lease_until": "2026-11-13T13:55:00Z",
-  "updated_at": "2026-11-13T11:13:00Z",
-  "expected_next_update_by": "2026-11-13T12:00:00Z",
+  "updated_at": "2026-11-13T11:41:00Z",
+  "expected_next_update_by": "2026-11-13T12:25:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "b5d77219",
-    "next_step": "KitTabs: names under the tile (Tile control dressed tab_active/tab_heist, label below it), all five at 100% pt_BR; ui_kit_tests 11 (rim) added, kit 25/25 and a11y 37/37 ok; running guard.sh, then merge main and the pre-check"
+    "last_green_sha": "083a6fb1",
+    "next_step": "check_all on the merge 083a6fb1 (main 898b24c2): All checks passed (client 410 of 410); guard.sh running, then the pre-check and ready"
   },
   "precheck": {
     "sha": "b5d77219e9207b64e1f153a870b9d8d9995e23da",
