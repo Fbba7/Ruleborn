@@ -7,16 +7,21 @@
   "task_id": "P2-S3-character",
   "task_state": "working",
   "claimed_at": "2026-11-13T00:22:00Z",
-  "lease_until": "2026-11-13T05:22:00Z",
-  "updated_at": "2026-11-13T03:05:00Z",
-  "expected_next_update_by": "2026-11-13T03:50:00Z",
+  "lease_until": "2026-11-13T08:25:00Z",
+  "updated_at": "2026-11-13T03:25:00Z",
+  "expected_next_update_by": "2026-11-13T04:10:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "90f026290bba4be83a1d531d8b9f93c4b4f8f283",
-    "next_step": "run_checks passed at 90f02629 (All checks passed); ui guard OK. Added character-200-pt_BR-tabs.png (the 200% tabs, scrolled 600) and fixed the track's tabs sentence. Next: run_checks at this commit, record it, then the gate request after S3-R5 (due 04:45Z).",
-    "at": "2026-11-13T03:05:00Z"
+    "last_green_sha": "f1251e68523136caee766eb5186892803fb8f65b",
+    "next_step": "Pre-check PASS at f1251e68 (recorded); ui guard OK. Waiting for AD's preview (S3-R5, due 04:45Z); then the gate request on the three character items.",
+    "at": "2026-11-13T03:25:00Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "f1251e68523136caee766eb5186892803fb8f65b",
+    "exit": 0,
+    "finished_at": "2026-11-13T03:21:40Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
