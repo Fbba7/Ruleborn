@@ -4,30 +4,25 @@
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-S3-screenkit",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-12T22:45:18Z",
-  "lease_until": "2026-11-13T01:45:18Z",
-  "updated_at": "2026-11-12T22:45:18Z",
-  "expected_next_update_by": "2026-11-12T23:30:18Z",
+  "task_id": "P2-S3-character",
+  "task_state": "working",
+  "claimed_at": "2026-11-13T00:22:00Z",
+  "lease_until": "2026-11-13T09:00:00Z",
+  "updated_at": "2026-11-13T04:01:00Z",
+  "expected_next_update_by": "2026-11-13T04:46:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "a9f7133d17c1bdbd2ca5564c2bb04fe632099610",
-    "next_step": "Reclaimed after the lease lapsed (prior_sha 03b3d762 is the branch head). Next: Lead-R1 (05-settings record and still on one tab), then pre-check and ready.",
-    "at": "2026-11-12T22:45:18Z"
+    "last_green_sha": "f1251e68523136caee766eb5186892803fb8f65b",
+    "next_step": "Advisory verdict at f1251e68: 4 of 7 pass. Taking the cheap fixes (lead cycle 76): the ink outline on the subtitle and the level label over the starfield, and the ability card's weight against Level up at 100%. Then pre-check, gate again, ready.",
+    "at": "2026-11-13T04:00:00Z"
   },
   "precheck": {
-    "sha": "2b220cc3d9829060b0851f3f744db8beefdebdcd",
+    "sha": "f1251e68523136caee766eb5186892803fb8f65b",
     "exit": 0,
-    "finished_at": "2026-11-12T21:08:50Z",
+    "finished_at": "2026-11-13T03:21:40Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "2b220cc3d9829060b0851f3f744db8beefdebdcd",
-    "items": [
-      "settings at 100% text"
-    ]
-  },
+  "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [],
@@ -80,7 +75,63 @@
       "due": "2026-11-13T08:05:00Z",
       "default": "the stills stand as rendered, and S3 marks P2-S3-screenkit ready when its checks pass",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R3",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: KitControls.upgrade should grow and wrap its title at large text. At 200% text in pt_BR, 'SUBIR DE NÍVEL' and its price do not fit the kit's fixed height, so character_screen.gd's _fit_upgrade lets the button grow and the title wrap on the screen's side (see docs/art/shots/menu-screens/character-200-pt_BR.png). Every screen with an upgrade button would need the same.",
+      "files": [
+        "client/ui/kit_controls.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:45:00Z",
+      "due": "2026-11-13T14:45:00Z",
+      "default": "S3 keeps the screen-side _fit_upgrade in character_screen.gd, and it can go when the kit's button grows by itself",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R4",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: KitCards.ability's kicker ('ABILITY') wears the kit's gold, Lc 55 on the card's plum, below the 60 asked for that size; gold_top passes. character_screen.gd overrides the kicker's colour with gold_top on its own side. Please make gold_top the kicker's colour in the kit.",
+      "files": [
+        "client/ui/kit_cards.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:45:00Z",
+      "due": "2026-11-13T14:45:00Z",
+      "default": "S3 keeps the screen-side colour override in character_screen.gd",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R5",
+      "from": "S3",
+      "to": "AD",
+      "ask": "Preview the character screen's stills before P2-S3-character's gate request: docs/art/shots/menu-screens/character-100.png, character-200-pt_BR.png and character-hc.png (the gate's three, each with its .shot.json), with character-100-stats.png, character-100-compare.png, character-200-pt_BR-scrolled.png, character-200-pt_BR-tabs.png (the tabs at 200%, added 03:05Z) and the before still before-character-100.png. What is still worse is listed in docs/art/tracks/menu-screens.md, Part 2. Send every objection in one round (M12).",
+      "files": [
+        "docs/art/shots/menu-screens/character-100.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR.png",
+        "docs/art/shots/menu-screens/character-hc.png",
+        "docs/art/shots/menu-screens/character-100-stats.png",
+        "docs/art/shots/menu-screens/character-100-compare.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-scrolled.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-tabs.png",
+        "docs/art/shots/menu-screens/before-character-100.png"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:45:00Z",
+      "due": "2026-11-13T04:45:00Z",
+      "default": "the stills stand as rendered, and S3 requests the gate on them",
+      "escalate_to": "lead"
     }
   ],
-  "answers": []
+  "answers": [
+    {
+      "request_id": "Lead-R1",
+      "at": "2026-11-12T23:40:00Z",
+      "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
+    }
+  ],
+  "next_step": "Cheap fixes after the advisory verdict at f1251e68 are committed: the ink outline on the subtitle and the level label, and the ability sentence at 16 points in the body face. Next: run_checks at this commit, record, guard, then the gate on the same three items, then ready."
 }

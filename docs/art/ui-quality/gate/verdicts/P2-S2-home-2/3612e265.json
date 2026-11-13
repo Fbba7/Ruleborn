@@ -1,0 +1,36 @@
+[
+ {
+  "task_id": "P2-S2-home-2",
+  "sha": "3612e26564859e8df7c3ce1cd48dba118580d9da",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T05:56:00Z",
+  "item": "home at 100% text",
+  "quality": "Character presence",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three passes of three: the Keeper's portrait, the featherkin at about 110 px in its gold ring beside 'Keeper 24', reads as a figure with a face, in soft stepped toon shading with a dark outline and no gloss or photographic grain; larger and clearer than the pass anchor's crew portraits."
+ },
+ {
+  "task_id": "P2-S2-home-2",
+  "sha": "3612e26564859e8df7c3ce1cd48dba118580d9da",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T05:56:00Z",
+  "item": "home at 100% text",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three passes of three: Collect 3.4k is the one large, light, saturated gold control and leads; the Islands and Heist tabs are gold-outlined and smaller, the XP panel and currency strip are dark information panels, the island pills are small."
+ }
+]
