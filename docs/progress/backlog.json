@@ -3874,6 +3874,14 @@
       "sent_at": "2026-11-13T02:54:00Z",
       "ack_by": "2026-11-13T04:54:00Z",
       "acked_at": "2026-11-13T03:55:00Z"
+    },
+    {
+      "id": "M18",
+      "to": "lead",
+      "text": "Lesson from the UI report (Work delivered rated worse two pushes in a row: 1.10, then 1.11 hours of work an hour against 1.2). Builder seats sit empty while a builder's session waits idle on its own request until its lease lapses: S2 from about 01:10 to its restart at 02:43 on 13 November, and AIA idle on AIA-R25 until its lease lapsed at 04:43. The rule: each cycle, check every builder's session with get_session. When a session is not working (status_bucket other than working) and has its own request pending, apply that request's default early (as M15 allows) and resume that same session with send_message, or restart it on the same task, without waiting for the lease to lapse. Ack M18 when you next run a cycle.",
+      "sent_at": "2026-11-13T06:56:00Z",
+      "ack_by": "2026-11-13T08:56:00Z",
+      "acked_at": null
     }
   ]
 }
