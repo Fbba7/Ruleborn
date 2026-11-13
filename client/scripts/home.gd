@@ -370,13 +370,23 @@ func _fit_edges(column: VBoxContainer, middle: Control) -> void:
 	var frame := column.get_parent() as MarginContainer
 	var room := get_viewport_rect().size.y - frame.get_theme_constant("margin_top") \
 		- frame.get_theme_constant("margin_bottom")
+	var gap := column.get_theme_constant("separation")
 	var need := 0.0
-	var shown := 0
 	for c: Control in column.get_children():
-		if c.visible and c != middle:
-			need += c.get_combined_minimum_size().y
-			shown += 1
-	need += column.get_theme_constant("separation") * shown
+		if c.visible and c != middle and c != _foot:
+			need += c.get_combined_minimum_size().y + gap
+	# While the raid notice shows on a screen with no height for it and
+	# Collect both (text at 200%), it takes the foot's place, as it did before
+	# Collect stood beside it; the foot comes back once it is seen or dismissed.
+	# Measured by Collect alone: its height is the kit's, where the goal's
+	# wrapped words have none until the foot has sorted them, and a foot held
+	# hidden never does.
+	var row := collect_button.get_combined_minimum_size().y if collect_button.visible else 0.0
+	var foot := not notice.visible or row == 0.0 or need + row + gap <= room
+	if _foot.visible != foot:
+		_foot.visible = foot
+	if foot:
+		need += _foot.get_combined_minimum_size().y + gap
 	var tall := 0.0
 	for edge: Control in _edges:
 		for holder: Control in edge.get_children():
@@ -427,7 +437,7 @@ func _fit_foot() -> void:
 		return
 	var card := goal_card.get_child(goal_card.get_child_count() - 1) as Control
 	var widest := minf(UI.px(230), get_viewport_rect().size.x - UI.px(40))
-	var room := _foot.size.x - _foot.get_theme_constant("h_separation") - collect_button.get_combined_minimum_size().x
+	var room := _across() - _foot.get_theme_constant("h_separation") - collect_button.get_combined_minimum_size().x
 	var show := not collect_button.visible or room + 0.5 >= UI.px(GOAL_NARROWEST)
 	# Its words wrap, so the card narrows to the room Collect leaves.
 	var wide := widest if not collect_button.visible else clampf(floorf(room), UI.px(GOAL_NARROWEST), widest)
@@ -435,6 +445,14 @@ func _fit_foot() -> void:
 		card.custom_minimum_size.x = wide
 	if goal_card.visible != show:
 		goal_card.visible = show
+
+
+## The foot's width: the frame's inside, which the foot fills. Its own size
+## is the one it last had while it is hidden, and none before its first sort.
+func _across() -> float:
+	var frame := _foot.get_parent().get_parent() as MarginContainer
+	return get_viewport_rect().size.x - frame.get_theme_constant("margin_left") \
+		- frame.get_theme_constant("margin_right")
 
 
 ## Over the whole universe every realm is named, or none is. Where the room is
@@ -524,8 +542,18 @@ func _show_hud() -> void:
 	# The kit's button keeps its words inside, not laid out by it: it grows to
 	# the amount, its picture and the gold's padding, so the amount never runs
 	# past its edge.
+	# Where even that is wider than the screen (text at 200%, the longest
+	# languages), its picture gives way first, and it never asks for more than
+	# the screen's width.
 	var inside := words.get_parent() as Control
-	collect_button.custom_minimum_size.x = maxf(UI.px(120), inside.get_combined_minimum_size().x + UI.px(32))
+	var picture := inside.get_child(0) as Control
+	var most := _across()
+	picture.visible = true
+	var need := inside.get_combined_minimum_size().x + UI.px(32)
+	if need > most and picture != words:
+		picture.visible = false
+		need = inside.get_combined_minimum_size().x + UI.px(32)
+	collect_button.custom_minimum_size.x = clampf(need, UI.px(120), maxf(UI.px(120), most))
 	collect_button.accessibility_name = Strings.t("HOME_COLLECT_SPOKEN", ", ".join(waiting))
 	_build_tabs({})
 
