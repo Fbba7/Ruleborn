@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxrMnNScoFR7y7AJx71` (cycle 82, 13
-November 2026 from 10:38Z, started by the Opus 5.5 launcher). Cycle 81's
+Latest lead cycle session: `session_01SNkKxn5sZ5Ez5cQQFwtAon` (cycle 83, 13
+November 2026 from 11:38Z, started by the Opus 5.5 launcher). Cycle 82's
+was `session_01SNkKxrMnNScoFR7y7AJx71` (from 10:38Z). Cycle 81's
 was `session_01SNkKxmrBHkRN8tALzCsGkF` (from 09:38Z). Cycle 80's
 was `session_01SNkKxorbtQPjVTWkgJKyfY` (from 08:38Z). Cycle 79's
 was `session_01SNkKxpZSJe4qP28t2awv1v` (from 07:38Z). Cycle 78's
@@ -454,6 +455,34 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 83, 13 November 2026, from 11:38Z (session
+  `session_01SNkKxn5sZ5Ez5cQQFwtAon`, started by the Opus 5.5 launcher):
+  no merge (nothing ready); board 4's follow-ups filed; M22 acked.
+  - **Fresh-container setup first** (M22, acked): the rustup targets, the
+    pip packages, `bash client/build.sh` and `npm ci` in
+    `tools/ui_research`, all exit 0 before any lock.
+  - **Board 4** (AD, P2-AD-board-4 claimed 11:30Z, c0bab2a8): round 1
+    does not stand, objections A to E (AD-R27, AD-R26, AD-R28, AD-R29,
+    AD-R30). Defaults applied early (M18, as board 3's in cycle 80):
+    P2-S1-result-3 (S1, 2h; A, B, D and E on the result screen),
+    P2-AIA-motion-3 (AIA, 3h; C, and D's strip target in
+    `motion_rig.gd`) and P2-AD-board-4b (AD, 1h; the re-check after both
+    and board 4), inserted before P2-AD-board-5. Claims stay disjoint
+    (`owners.py claims`). AD's pre-check runs; board 4 is docs and
+    answers only and merges when ready.
+  - **S2-R20 answered** by AD at 11:40Z: A and most of C stand on home-3;
+    six objections (pins away from their islands, the world squeezed by
+    the notice, Essence's 'Full' tag, the 200% strain chip, minor fits,
+    and the dock label that is K1's in P2-K1-tabs). S2 takes 1 to 5
+    inside P2-S2-home-3 before ready (its done_when, M12).
+  - **Agents** (get_session, all idle in the working bucket, none past
+    its expected update): AD (pre-check on board 4), K1 (check_all PASS
+    on the merge 083a6fb1, guard.sh running, then ready), S2 (main merged
+    at 14fdcdfe, pre-check and guard.sh next), S3 (pre-check on f0a36a41
+    with the readout fix, then a gate_request). Claims copied: P2-K1-tabs
+    and P2-AD-board-4 to claimed. Builders: AD, K1, S2 and S3, the cap of
+    four; S1 and AIA start on result-3 and motion-3 as seats free. No
+    session showed `allowed_warning`. No sessions created.
 - Cycle 82, 13 November 2026, from 10:38Z (session
   `session_01SNkKxrMnNScoFR7y7AJx71`, started by the Opus 5.5 launcher):
   P2-S1-result-2 merged as `135a49b2`; S3's advisory gate fails Display
