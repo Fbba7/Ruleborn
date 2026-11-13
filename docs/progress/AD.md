@@ -1,11 +1,11 @@
 # AD art director: progress
 
-- Status: P2-AD-board-3 ready (board 3, home, round 1 posted: **the board does not stand**, objections A to D, each a request to the lead). Pre-check in the status file.
-- Progress: 14 of 14 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
-- Done: P2-AD-board-3: `docs/art/ui-quality/gate/boards/board-3.md`, nine items with stills `board-3/*.png`, on the integration head at `abbe59eb` (home-2 merged as `807d68a7`); previews S3-R7, S2-R18 and S1-R24 answered in `status/AD.json`.
-- Next: S2 fixes A to C (AD-R22 to AD-R24) and K1 fixes D (AD-R25), then AD re-checks only what the fixes change (board 3b); board 4 after result-2 merges (S1-R25 re-check done: S1-R24's four objections stand as fixed), board 5 after settings.
+- Status: P2-AD-board-4 ready (board 4, result and motion, round 1 posted: **the board does not stand**, objections A to E, each a request to the lead). Pre-check in the status file.
+- Progress: 15 of 15 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3, P2-AD-board-4); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
+- Done: P2-AD-board-4: `docs/art/ui-quality/gate/boards/board-4.md`, ten items (result stills `board-4/*.png`, reward strips and clips, AIA's motion strips and clips linked), on the integration head at `3374eae1` (result-2 merged as `135a49b2`, motion-2 as `0bc0fbb9`); S2-R20 (home part 3 preview) answered in `status/AD.json`.
+- Next: S1 fixes A, B, D and E (AD-R27, AD-R26, AD-R29, AD-R30) and AIA fixes C (AD-R28), then board 4b; board 3b after AD-R22 to AD-R25 land; board 5 after settings.
 - Blocked by: none.
-- Owner decision needed: none. AD decides board 3 in place of the owner.
+- Owner decision needed: none. AD decides boards 3 and 4 in place of the owner.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
@@ -23,21 +23,22 @@
 | P1-AD-board-1c: re-check board 1 on numerals-on and pilot-4 | 1 | ready (pre-check in the status file) | `gate/boards/board-1.md` Round 3 and `gate/boards/board-1/r3-*.png`; five shots on main at `ed6bcfdc`, all `FIT=1` "fit ok" (no-plan 200% pt_BR included); A and B closed, D and F open; requests AD-R17 to AD-R19 in `status/AD.json` |
 | P1-AD-board-1d: re-check board 1 on pilot-5 | 1 | ready (pre-check in the status file) | `gate/boards/board-1.md` Round 4 and `gate/boards/board-1/r4-*.png`; four shots on main at `cecf3a64`, all `FIT=1` "fit ok"; the no-plan 200% pt_BR shot matches S1's (mean diff 0.01); portrait L* matches S1's Part 5 table; D and F closed, board 1 stands; requests AD-R20 and AD-R21 in `status/AD.json` |
 | P2-AD-board-3: board 3 (home) | 2 | ready (pre-check in the status file) | `gate/boards/board-3.md` and `gate/boards/board-3/*.png`; home rendered with `universe_home.gd`, `FIT=1`, at 100% and 200%, en and pt_BR, high contrast and `NOTICE=1`, beside `art/ui/keyframes/01-home*`; gate verdicts of home-1 (`977edd5b`) and home-2 (`3612e265`) cited per item; objections A to D as requests AD-R22 to AD-R25; `check_docs_consistency.py` clean |
+| P2-AD-board-4: board 4 (result and motion) | 2 | ready (pre-check in the status file) | `gate/boards/board-4.md`, `gate/boards/board-4/*.png` and two `.mp4` clips; result rendered with `FIT=1` at 100% and 200% (en, pt_BR, de) and high contrast beside `art/ui/keyframes/03-result*`, all "fit ok"; reward sequence full and reduced with `STRIP=1`; AIA's `art/ui/motion/strips/` and `clips/` checked for qualities 4, 5 and 7; `check_curves.py` ok; verdicts of result-1 (`8bec0d84`) and result-2 (`aed28321`, `71167028`) cited; objections A to E as requests AD-R26 to AD-R30; `check_docs_consistency.py` clean |
 
 ## Handoff
-- Last verified commit: see `precheck` in `status/AD.json`; P2-AD-board-3 ready.
-- Done: board 3 (home), round 1, on `abbe59eb`. **The board does not stand.** Objections, in order of weight:
-  - A (hard defect, S2, AD-R22): at 200% pt_BR with the raid notice, Collect is off the screen.
-  - B (S2, AD-R23): at 100% the world is framed too low and the pins stack; the Defence badge lands on the Skyfield pin in pt_BR.
-  - C (S2, AD-R24): the goal panel, realm pins and dock labels drop at 200% and in pt_BR at 100%. Keep the goal bar at every size.
-  - D (K1, AD-R25): the dock labels sit on their tiles' gold rim (`client/ui/kit_tabs.gd`).
-  - Stands: the companion (quality 9, note: clamp its yaw) and the top bar (note: the strain mark is a cyan dot, the key frame's is a pink bolt).
-- Previews answered: S3-R7 (settings), S2-R18 (home part 2, which became board 3's objections) and S1-R24 (result part 2 at `aed28321`: the faces apart are accepted; four objections for result-2, the heaviest being that at 200% pt_BR the haul falls below the fold under the moment card).
-- Checked: `check_docs_consistency.py` clean; the full checks in the pre-check (`check_all.sh` takes more than 10 minutes here, so it runs detached through `run_checks.sh`).
+- Last verified commit: see `precheck` in `status/AD.json`; P2-AD-board-4 ready.
+- Done: board 4 (result and motion), round 1, on `3374eae1`. **The board does not stand.** Objections, in order of weight:
+  - A (S1, AD-R27): the lead reward "+2,310" is pale gold with a hairline outline on the parchment, the weakest figure on the screen (hollow in high contrast). Give the reward figures the "Keeper 24" finish.
+  - B (S1, AD-R26): at 200% in German, Essenz and Ruhm fall below the fold.
+  - C (AIA, AD-R28): the anticipation reads as a still pause and the burst stays the prize's size in every tier; epic barely reads stronger than common.
+  - D (S1 with AIA, AD-R29): the coins land on the counters' digits and hide the roll.
+  - E (S1, AD-R30): at 200% English, Home takes about 45% of the action bar with its word; make it icon-only.
+  - Stands: layout, portraits, law chips, moment card, high contrast, the reduced reward form, press, shine and screen change (notes: press sink at the low end; full screen change barely distinct from the reduced one; the action bar cuts the crew faces at 100% pt_BR and de).
+- Previews answered: S2-R20 (home part 3 at `c0b2bc49`): A, most of C and the goal lines fixed; open: pins detached from their realms, the world shrinking with the notice, the Essence "Full" tag dropped outside en 100%, the 200% strain chip, minor items, and the dock label on the rim (D, K1).
+- Checked: `check_docs_consistency.py` clean; `art/ui/motion/check_curves.py` ok; the full checks in the pre-check (`check_all.sh` runs detached through `run_checks.sh`).
 - Half done: nothing.
-- Open hypotheses: home's shot fixture lacks notifications, a shield and a locked realm, so those states are unjudged; result's fixture has no roster, so RAID AGAIN's idle line is untested.
-- S1-R25 (13 November 10:05Z): re-checked result-2 at `71167028` (pt_BR 200%, high contrast, en 100%, de 200%). The four S1-R24 objections stand as fixed. Outside the re-check's scope: at de 200% the tiles fall back to columns and only Sternenlicht is above the dock (AD-R26, for board 4).
-- Next step: board 3b after AD-R22 to AD-R25 land, re-checking only what the fixes change; board 4 after result-2 merges (list AD-R26 there); board 5 after settings.
+- Open hypotheses: the result shot has no idle crew, so the "Idle crew of N ready" line is unjudged; the home shot lacks notifications, a shield and a locked realm.
+- Next step: board 4b after AD-R26 to AD-R30 land (re-shoot items 1 to 6 and the strips of items 7 and 9); board 3b after AD-R22 to AD-R25; board 5 after settings.
 
 ## Flow review
 

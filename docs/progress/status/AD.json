@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-13T11:30:00Z",
   "lease_until": "2026-11-13T14:30:00Z",
-  "updated_at": "2026-11-13T11:40:00Z",
-  "expected_next_update_by": "2026-11-13T12:25:00Z",
+  "updated_at": "2026-11-13T11:55:00Z",
+  "expected_next_update_by": "2026-11-13T12:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
-    "next_step": "S2-R20 answered; building board 4 (result and motion) from renders of main at 135a49b2"
+    "next_step": "board 4 posted (does not stand, objections A-E as AD-R26 to AD-R30); pre-check then ready"
   },
   "precheck": {
     "sha": "4a48eef9b4fb9fa9164ead1f9a8f7f82d094149f",
@@ -312,15 +312,78 @@
       "id": "AD-R26",
       "from": "AD",
       "to": "lead",
-      "ask": "Result screen, found in the S1-R25 re-check (outside its scope, not holding P2-S1-result-2): at 200% in German the reward tiles fall back to full-width columns (ResultFit, because 'Sternenlicht' will not fit a row) and only Sternenlicht shows above the dock; Essenz and Ruhm fall below the fold. Keep the whole haul on the first screen in every locale at 200%: e.g. a row with the word on a second line, or a smaller icon, before the column fallback.",
+      "ask": "Result screen, found in the S1-R25 re-check (outside its scope, not holding P2-S1-result-2): at 200% in German the reward tiles fall back to full-width columns (ResultFit, because 'Sternenlicht' will not fit a row) and only Sternenlicht shows above the dock; Essenz and Ruhm fall below the fold. Keep the whole haul on the first screen in every locale at 200%: e.g. a row with the word on a second line, or a smaller icon, before the column fallback. Now board 4 objection B (item 4); details in board-4.md.",
       "files": [
+        "docs/art/ui-quality/gate/boards/board-4.md",
         "client/scripts/result_screen.gd",
         "client/scripts/result_fit.gd"
       ],
-      "blocking": false,
+      "blocking": true,
       "created_at": "2026-11-13T10:05:00Z",
       "due": "2026-11-14T10:05:00Z",
-      "default": "AD lists it in board 4 (result and motion) as an objection for a follow-up S1 task after result-2 merges",
+      "default": "file it as an S1 follow-up task for the result screen, with AD-R27, AD-R29 and AD-R30; AD re-checks it as board 4b",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R27",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 4 objection A: the lead reward '+2,310' on the result screen is pale gold (gold_top) with thin strokes and a thin outline on the parchment card, about the card's own value in grayscale and hollow in high contrast; '+805' and '+15' have thinner outlines than the key frame's. Give the three reward figures the home's 'Keeper 24' finish (deep gold or cream fill, heavy ink outline, hard drop; solid with the outline in high contrast). Draw calls measured 97 to 120, so the drops fit. Details in board-4.md, items 1, 5 and 6.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-4.md",
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T11:55:00Z",
+      "due": "2026-11-15T11:55:00Z",
+      "default": "file it as an S1 follow-up task for the result screen (with AD-R26, AD-R29 and AD-R30); AD re-checks it as board 4b",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R28",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 4 objection C: the reward sequence's anticipation reads as a still pause and the burst covers about the prize's own size in every tier (burst_scale 0.85 to 1.15), so it does not reach the sunburst and epic barely reads stronger than common. Make the gather visible on the prize (squash, building glow, sparkles drawn in) and widen the tier spread so the epic burst reaches well past the prize onto the sunburst, in art/ui/motion/curves.json and the burst sprite; re-make the strips and clips. Details in board-4.md, items 7 and 9.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-4.md",
+        "art/ui/motion/curves.json",
+        "art/ui/motion/burst/"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T11:55:00Z",
+      "due": "2026-11-15T11:55:00Z",
+      "default": "file it as an AIA task (P2-AIA-motion-3); S1's result screen picks up the curves with no change of its own unless the burst's anchor moves",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R29",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 4 objection D: the reward coins land on the counters' digits and hide the roll at each landing (full strip frames 42 to 60 cover '+153', '+636', '+1,346'; AIA's strips land over '120'). Land the coins on the tile's icon above or beside the digits and start the roll as the coin lands. Details in board-4.md, items 7 and 9.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-4.md",
+        "client/scripts/result_screen.gd",
+        "client/tests/shots/motion_rig.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T11:55:00Z",
+      "due": "2026-11-15T11:55:00Z",
+      "default": "fold it into the S1 follow-up task with AD-R27; AIA's strip shot follows the same target in its motion-3 task",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R30",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 4 objection E (small): at 200% text in English the Home button grows to about 45% of the result's action bar with icon and word and is as light as Collect in grayscale. Make Home icon-only at 200% in every locale, as pt_BR already is and both key frames show. Details in board-4.md, item 3.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-4.md",
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T11:55:00Z",
+      "due": "2026-11-15T11:55:00Z",
+      "default": "fold it into the S1 follow-up task with AD-R27",
       "escalate_to": "lead"
     }
   ],
