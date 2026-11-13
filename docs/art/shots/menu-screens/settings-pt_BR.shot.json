@@ -23,9 +23,9 @@
    "interactive": false,
    "name": "words 3: Acesso",
    "rect": [
-    17.33,
-    178.03,
-    352.44,
+    30.33,
+    182.36,
+    65.72,
     29.97
    ]
   },
@@ -33,7 +33,7 @@
    "name": "size-a 4: Texto 100%: menor",
    "rect": [
     32.5,
-    234.72,
+    243.39,
     69.33,
     60.67
    ]
@@ -43,7 +43,7 @@
    "name": "size-mid 5: 100%",
    "rect": [
     110.5,
-    231.83,
+    240.5,
     166.11,
     50.56
    ]
@@ -52,7 +52,7 @@
    "name": "size-a 6: Texto 100%: maior",
    "rect": [
     285.28,
-    234.72,
+    243.39,
     69.33,
     60.67
    ]
@@ -62,7 +62,7 @@
    "name": "sample 7: Stillness Anyone standing still for 1.5 seconds becomes invisible to guards and ",
    "rect": [
     32.5,
-    311.64,
+    320.31,
     322.11,
     114.47
    ]
@@ -72,7 +72,7 @@
    "name": "words 8: Stillness",
    "rect": [
     101.83,
-    322.47,
+    331.14,
     237.61,
     29.97
    ]
@@ -82,7 +82,7 @@
    "name": "shapes 9: Tempo Movimento Matéria Energia Vida Espírito Cada escola mantém sua forma em to",
    "rect": [
     17.33,
-    449.94,
+    458.61,
     352.44,
     216.67
    ]

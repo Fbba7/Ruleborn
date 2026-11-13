@@ -79,6 +79,15 @@ Follow-ups, not taken here:
 - **Display type, at 100% and at 200% pt_BR (3 fails of 3 each).** The judge still reads the subtitle and the level label as words over art with no outline. The 1.5-point outline is in the render, but it is the kit's ink (`#120C2A`) on a starfield near the same value, so it does not show at the still's scale. Next step, for AD or K1: put the two lines on a dark plate, or give words over the stage a light or gold edge the ink outline cannot give on this ground. The judge also names two kit parts: the level hexagon's "LV"/"NV" kicker runs over the badge's edge (`KitHex`), and the price on Level up is a flat white figure, not display type (`KitControls.upgrade`). Both are K1's.
 - **Hierarchy in high contrast passes 4 of 6.** Two samples found Level up mid-grey and lower than the anchor's. The button's height at large text is S3-R3's.
 
+### The gate on f5719f28, and the fixes
+
+The lead's gate on f5719f28 (`docs/art/ui-quality/gate/verdicts/P2-S3-settings/f5719f28.json`) passed four of six: Hierarchy at 100%, and both high-contrast qualities. It failed:
+
+- **Display type, at 100% and at 200% in pt_BR, three fails of three each.** The group headings sat on the starfield, and their ink outline does not show against the dark night: the judge saw "only a soft drop shadow". Each heading is now on its own dark plate (T0 with its drop), so no display word stands on the starfield.
+- **Hierarchy, at 200% in pt_BR, three fails of three.** At large text the title, the headings and the rows were all one size (`UI.text_px` grows larger text only until the body text reaches it), so the thin "Ajustes" was outranked by the cream tab bar, the sample card and Voltar, and "Acesso" by its rows. The title now keeps 1.3 times the body text's size and the headings 1.1 times (41.6 and 35.2 points at 200%; nothing changes at 100%).
+
+An advisory self-check on the new stills (one isolated judge per failed item, with the calibration's anchors) passed all three: Display type at 100% and at 200% in pt_BR, and Hierarchy at 200% in pt_BR. Its Hierarchy note is that "Ajustes" leads by less than the golden set's `kf-settings-text200`.
+
 ### What is still worse than before
 
 - **The law card's preview has no frame.** `law_screen.gd` seats the preview in `ScreenKit.panel("well", preview, 16.0, 3.0)`. The track skin drew a dark rim round it; the well skin's rim is soft and 3 points of padding leave it under the picture, so the picture's edges fade into the green card. `law_screen.gd` is not this task's; it is in S3-R2 for AD to judge, and a fix (more padding, or the kit's `frame_*` look) is a request to the lead.
@@ -151,9 +160,9 @@ The budget shots' recorded draw calls for the character screen are 103, 80 and 1
 
 `client/scripts/settings_screen.gd` is built from the kit, after key frame 05 (`art/ui/keyframes/05-settings.png`):
 
-- **The head.** The settings mark and the title, on the kit's plate. The title wears the display stroke (kit-spec 2.2, T2): an ink outline and a hard drop. Unlike `KitNav.logo`'s, the drop has no outline of its own: an outlined drop costs each stroked label one more draw call, which took settings past its budget (55 against 52 at 100% and in high contrast).
+- **The head.** The settings mark and the title, on the kit's plate. The title wears the display stroke (kit-spec 2.2, T2): an ink outline and a hard drop. Unlike `KitNav.logo`'s, the drop has no outline of its own: an outlined drop costs each stroked label one more draw call, which took settings past its budget (55 against 52 at 100% and in high contrast). At large text the title keeps 1.3 times the body text's size (41.6 points at 200%), where `UI.text_px` alone would leave it the body's size.
 - **The tabs.** Game, Access and Account are one strip of parchment, each with the design's icon. The open tab is on the kit's chosen segment for parchment (`seg_on_light`: dark leather, cream words), so gold stays the main actions' alone (§21.8). When an icon and its word do not fit a third of the strip (at large text, or with a long word), the closed tabs keep only their icon and the open tab only its word, at twice the width. The screen reader still hears every word.
-- **The rows.** Each setting is a kit row or section (`KitPanels.row`, `KitPanels.section`). The group headings over the night wear the T2 stroke, a 1.5-point outline and a 2-point drop:
+- **The rows.** Each setting is a kit row or section (`KitPanels.row`, `KitPanels.section`). Each group heading is on its own dark plate that hugs its words (kit-spec 2.2, T0 with its drop on a dark ground), and keeps 1.1 times the body text's size at large text (35.2 points at 200%). A heading too long for one line takes the row and wraps:
   - Steppers have the setting's icon in a well, its words over the kit's bar (`KitBar`), and − and + on leather.
   - Switches are whole rows framed on parchment. A row's words say On or Off, so the state never rests on colour alone (§20.8).
 - **The switch.** `client/scripts/screen_switch.gd` (`ScreenSwitch.make`) draws key frame 05's switch from the kit's materials alone:
@@ -196,7 +205,7 @@ The before still is `before-settings-100.png`, from Part 1.
 
 `tools/ui_bake/check_screens.py`: OK. `settings_screen.gd` and `screen_switch.gd` draw nothing outside the kit.
 
-`tools/ui_bake/guard.sh`: OK. The budget shots (`screen_meta.gd`, `SCREEN=settings`, on the opening Game tab) read 52, 44 and 52 draw calls for settings at 100%, 200% and high contrast, against 52, 47 and 52 recorded (on 9242f955). Before the self-check fixes it read 46 at 100%; the fixes' strokes bring it to 52, and with an outlined drop it read 55. The fall at 200% is for K1 or the lead to `--record`. No word is below 4.5:1; the worst word reads 9.37:1, and 5.94:1 in high contrast.
+`tools/ui_bake/guard.sh`: OK. The budget shots (`screen_meta.gd`, `SCREEN=settings`, on the opening Game tab) read 48, 40 and 48 draw calls for settings at 100%, 200% and high contrast, against 52, 47 and 52 recorded (after the gate's fixes). Before the self-check fixes it read 46 at 100%; the fixes' strokes brought it to 52 (on 9242f955), and with an outlined drop it read 55. The headings' plates, which drop the headings' outlines, bring it to 48. The falls are for K1 or the lead to `--record`. No word is below 4.5:1; the worst word reads 9.37:1, and 5.94:1 in high contrast.
 
 ### The advisory self-check, and the fixes
 

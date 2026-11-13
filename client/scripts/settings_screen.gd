@@ -7,6 +7,17 @@ extends Control
 ## button to forget. The screen is built again after each, so what it shows
 ## is always what the setting does.
 
+## How far the title and a group's heading stand above the body text at
+## large text (_grown): at 200% the body is 32 points, the title 41.6 and a
+## heading 35.2.
+const TITLE_LEAD := 1.3
+const HEADING_LEAD := 1.1
+## A heading plate's side padding, in points.
+const SECTION_PAD := 12.0
+## The base frame's width in points (tokens.json's px_per_point: 1080 pixels
+## for a 360-point phone).
+const SCREEN_POINTS := 360.0
+
 var volume_labels := {}
 var text_label: Label
 var list_scroll: ScrollContainer
@@ -132,15 +143,50 @@ func _head() -> Control:
 	t.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_stroked(t, 2.0, 3.0)
+	_grown(t, TITLE_LEAD)
 	row.add_child(t)
 	plate.add_child(row)
 	return plate
 
 
-## A group's heading over the night (kit-spec.md 2.2, T2): the kit's
-## section heading with an ink outline all round and its hard drop.
-func _section(key: String) -> Label:
-	return _stroked(KitPanels.section(Strings.t(key)), 1.5, 2.0)
+## A group's heading on its own dark plate (kit-spec.md 2.2: T0 with its
+## drop on a dark ground). Set bare on the starfield, its ink outline was lost
+## against the night and the gate read it as display type with no stroke; the
+## plate gives the words a quiet ground. The plate hugs the words, so it reads
+## as a label for the cards under it and not as one more card; a heading too
+## long for one line at large text takes the row and wraps.
+func _section(key: String) -> Control:
+	var plate := PanelContainer.new()
+	plate.name = "SectionPlate"
+	plate.add_theme_stylebox_override("panel", UI.clear_box(SECTION_PAD, 4))
+	UI.dress(plate, "plate_dark")
+	var l := KitPanels.section(Strings.t(key))
+	_grown(l, HEADING_LEAD)
+	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
+	l.add_theme_constant_override("shadow_offset_x", 0)
+	l.add_theme_constant_override("shadow_offset_y", UI.px(float(Tokens.type_role("heading")["drop"])))
+	var font := Tokens.font("title", 400)
+	var wide := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
+		l.get_theme_font_size("font_size")).x
+	var room := UI.px(SCREEN_POINTS - 2.0 * (Tokens.number("size", "safe_side_points") + SECTION_PAD))
+	if wide > room:
+		plate.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	else:
+		l.autowrap_mode = TextServer.AUTOWRAP_OFF
+		plate.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	plate.add_child(l)
+	return plate
+
+
+## At large text UI.text_px lets a title or a heading grow only until the body
+## text reaches it, so at 200% the title, the headings and the rows are all
+## one size and the title no longer leads. Here they keep `ratio` times the
+## body text's size, the words a step above the rows they head.
+static func _grown(l: Label, ratio: float) -> Label:
+	var body := UI.TEXT_POINTS * Settings.text_scale / 100.0
+	var points := maxf(float(l.get_meta("points")), body * ratio)
+	l.add_theme_font_size_override("font_size", UI.px(points))
+	return l
 
 
 ## Display type's stroke on a label: an ink outline of `outline` points all

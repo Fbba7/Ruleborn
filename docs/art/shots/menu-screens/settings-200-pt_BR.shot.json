@@ -7,14 +7,14 @@
     17.33,
     47.67,
     352.44,
-    62.83
+    76.56
    ]
   },
   {
    "name": "row 2: Jogo Acesso Conta",
    "rect": [
     17.33,
-    119.17,
+    132.89,
     352.44,
     69.33
    ]
@@ -23,17 +23,17 @@
    "interactive": false,
    "name": "words 3: Acesso",
    "rect": [
-    17.33,
-    197.17,
-    352.44,
-    47.67
+    30.33,
+    215.22,
+    115.19,
+    52.0
    ]
   },
   {
    "name": "size-a 4: Texto 200%: menor",
    "rect": [
     32.5,
-    268.67,
+    295.39,
     82.33,
     82.33
    ]
@@ -43,7 +43,7 @@
    "name": "size-mid 5: 200%",
    "rect": [
     123.5,
-    276.25,
+    302.97,
     140.11,
     50.56
    ]
@@ -52,7 +52,7 @@
    "name": "size-a 6: Texto 200%: maior",
    "rect": [
     272.28,
-    268.67,
+    295.39,
     82.33,
     82.33
    ]
@@ -62,7 +62,7 @@
    "name": "sample 7: Stillness Anyone standing still for 1.5 seconds becomes invisible to guards and ",
    "rect": [
     32.5,
-    364.0,
+    390.72,
     322.11,
     150.58
    ]
@@ -72,7 +72,7 @@
    "name": "words 8: Stillness",
    "rect": [
     101.83,
-    374.83,
+    401.56,
     237.61,
     47.67
    ]

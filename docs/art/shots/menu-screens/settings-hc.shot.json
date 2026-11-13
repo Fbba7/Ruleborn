@@ -23,9 +23,9 @@
    "interactive": false,
    "name": "words 3: Access",
    "rect": [
-    17.33,
-    178.03,
-    352.44,
+    30.33,
+    182.36,
+    63.56,
     29.97
    ]
   },
@@ -33,7 +33,7 @@
    "name": "size-a 4: Text 100%: smaller",
    "rect": [
     32.5,
-    234.72,
+    243.39,
     69.33,
     60.67
    ]
@@ -43,7 +43,7 @@
    "name": "size-mid 5: 100%",
    "rect": [
     110.5,
-    231.83,
+    240.5,
     166.11,
     50.56
    ]
@@ -52,7 +52,7 @@
    "name": "size-a 6: Text 100%: larger",
    "rect": [
     285.28,
-    234.72,
+    243.39,
     69.33,
     60.67
    ]
@@ -62,7 +62,7 @@
    "name": "sample 7: Stillness Anyone standing still for 1.5 seconds becomes invisible to guards and ",
    "rect": [
     32.5,
-    311.64,
+    320.31,
     322.11,
     114.47
    ]
@@ -72,7 +72,7 @@
    "name": "words 8: Stillness",
    "rect": [
     101.83,
-    322.47,
+    331.14,
     237.61,
     29.97
    ]
@@ -82,7 +82,7 @@
    "name": "shapes 9: Time Motion Matter Energy Life Spirit Each school keeps its own shape in every m",
    "rect": [
     17.33,
-    449.94,
+    458.61,
     352.44,
     131.08
    ]
@@ -91,23 +91,14 @@
    "interactive": false,
    "name": "words 10: Seeing and comfort",
    "rect": [
-    17.33,
-    589.69,
-    352.44,
+    30.33,
+    602.69,
+    192.83,
     29.97
    ]
   },
   {
-   "name": "switch-row 11: High contrast: on",
-   "rect": [
-    17.33,
-    628.33,
-    352.44,
-    56.33
-   ]
-  },
-  {
-   "name": "back 12: Back",
+   "name": "back 11: Back",
    "rect": [
     28.17,
     704.17,
