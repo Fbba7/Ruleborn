@@ -146,6 +146,36 @@ test('--check finds no fault with a family that has neither sources nor bake', (
   assert.match(r.out, /no sources yet/);
 });
 
+test('carries a named curves file in the manifest, and --check follows it', () => {
+  const where = copyFixture();
+  const cfg = JSON.parse(fs.readFileSync(where.config, 'utf8'));
+  cfg.families.fixture.curves = 'curves.json';
+  fs.writeFileSync(where.config, JSON.stringify(cfg));
+  const missing = run(['fixture'], where);
+  assert.equal(missing.code, 2, missing.out);
+  assert.match(missing.out, /curves file .* is missing/);
+  const file = path.join(where.art, 'fixture/curves.json');
+  fs.writeFileSync(file, '{"version": 1, "motions": {"tap": {"ms": 150}}}');
+  assert.equal(run(['fixture'], where).code, 0);
+  const m = JSON.parse(fs.readFileSync(path.join(where.out, 'fixture.json'), 'utf8'));
+  assert.deepEqual(m.curves, { version: 1, motions: { tap: { ms: 150 } } });
+  assert.equal(fs.readFileSync(path.join(where.out, 'fixture.json'), 'utf8'), manifestText(m));
+  assert.equal(run(['--check'], where).code, 0);
+  // A curve edited after the bake: the hash and the curves both say so.
+  fs.writeFileSync(file, '{"version": 1, "motions": {"tap": {"ms": 180}}}');
+  const stale = run(['--check'], where);
+  assert.equal(stale.code, 1, stale.out);
+  assert.match(stale.out, /curves are not curves\.json as it stands/);
+  // A manifest that lost its curves fails even with a matching hash.
+  fs.writeFileSync(file, '{"version": 1, "motions": {"tap": {"ms": 150}}}');
+  const mfile = path.join(where.out, 'fixture.json');
+  delete m.curves;
+  fs.writeFileSync(mfile, manifestText(m));
+  const lost = run(['--check'], where);
+  assert.equal(lost.code, 1, lost.out);
+  assert.match(lost.out, /carries no curves/);
+});
+
 function refusal(file, text, pattern) {
   const where = copyFixture();
   fs.mkdirSync(path.dirname(path.join(where.art, 'fixture', file)), { recursive: true });

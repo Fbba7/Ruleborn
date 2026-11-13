@@ -13,7 +13,9 @@
 #    client/ui/art/ (SVG and scene alike) is baked again into a scratch
 #    folder and compared file by file, every page with its twin. With none baked yet, the test fixture is baked twice instead,
 #    so the pinned tools are still shown to be byte for byte.
-# 2. bake.js --check: hashes, twins, regions and sizes.
+# 2. bake.js --check: hashes, twins, regions, sizes and the motion family's
+#    curves; then art/ui/motion/check_curves.py, the curves' own rules
+#    (150 to 250 ms a step, ease out, no overshoot, flashes and shake).
 # 3. check_screens.py: no chrome of a screen's own above the counts recorded.
 # 4. budget_shots.py: draw calls, texture memory and contrast on the five key
 #    screens at 100% and 200% text and in high contrast, against
@@ -118,6 +120,8 @@ else
   rebake || failed+=("rebake")
   step "bake --check"
   node tools/ui_bake/bake.js --check || failed+=("bake --check")
+  step "the motion curves' rules"
+  python3 art/ui/motion/check_curves.py || failed+=("check_curves")
   step "screens add no chrome of their own"
   python3 tools/ui_bake/check_screens.py || failed+=("check_screens")
   step "draw calls, texture memory and contrast on the five screens"

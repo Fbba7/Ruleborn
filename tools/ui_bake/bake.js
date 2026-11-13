@@ -17,6 +17,10 @@
 // twin (kit-spec.md section 6.6). --palette writes art/ui/palette.json
 // from tokens.json (kit-spec.md section 6.2), keeping the file's `kit`
 // section, and --check compares it with tokens.json when it exists.
+// A family whose entry in families.json names a "curves" file (the motion
+// family: curves.json, report.md step 8) carries that file's JSON in its
+// manifest's top-level `curves`, so the client reads the timings with the
+// sprites; --check fails when the two differ.
 //
 // A family's sources live in <art>/<dir>/; the bake draws each source's faces
 // in headless Chromium, once in the normal form and once in its high-contrast
@@ -110,6 +114,21 @@ function sourcesHash(cfg, family, art) {
   for (const f of Object.keys(cfg.fonts || {}).sort()) own.push(path.join(ROOT, cfg.fonts[f]));
   for (const file of own) feed(h, path.relative(ROOT, file).split(path.sep).join('/'), file);
   return 'sha256:' + h.digest('hex');
+}
+
+// The family's curves (its "curves" file in its source folder, parsed), or
+// undefined when the family names none. A named file that is missing or not
+// JSON refuses the bake.
+function curves(cfg, family, art) {
+  const name = cfg.families[family].curves;
+  if (name === undefined) return undefined;
+  const file = path.join(art, cfg.families[family].dir, name);
+  if (!fs.existsSync(file)) refuse(`${family}: its curves file ${path.relative(ROOT, file)} is missing`);
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (e) {
+    refuse(`${family}: ${path.relative(ROOT, file)} is not JSON: ${e.message}`);
+  }
 }
 
 function sortKeys(v) {
@@ -255,6 +274,19 @@ function checkFamily(cfg, family, opts) {
   const fam = cfg.families[family];
   const ppp = fam.kind === 'scene' ? null : fam.px_per_point;
   if (m.px_per_point !== ppp) problems.push(`${family}.json: px_per_point ${m.px_per_point}, expected ${ppp}`);
+  let want_curves;
+  try {
+    want_curves = curves(cfg, family, opts.art);
+  } catch (e) {
+    if (!(e instanceof Refusal)) throw e;
+    problems.push(e.message);
+  }
+  const has = JSON.stringify(sortKeys(m.curves));
+  if (has !== JSON.stringify(sortKeys(want_curves))) {
+    if (m.curves === undefined) problems.push(`${family}.json carries no curves but ${fam.curves} is named: rebake`);
+    else if (want_curves === undefined && fam.curves === undefined) problems.push(`${family}.json carries curves its family names no file for`);
+    else problems.push(`${family}.json's curves are not ${fam.curves} as it stands: rebake`);
+  }
   const atlas = m.atlas || {};
   const first = { normal: atlas.normal, high_contrast: atlas.high_contrast, width: atlas.width, height: atlas.height };
   const pages = atlas.pages === undefined ? [first] : atlas.pages;
@@ -620,6 +652,8 @@ async function bakeFamily(browser, cfg, family, opts) {
       px_per_point: ppp,
       pieces: {},
     };
+    const c = curves(cfg, family, opts.art);
+    if (c !== undefined) manifest.curves = c;
     for (const p of pieces) {
       const e = { x: place[p.name].x, y: place[p.name].y, w: p.w, h: p.h, slice: p.slice, tint: p.tint };
       if (place[p.name].page > 1) e.page = place[p.name].page;
@@ -683,4 +717,4 @@ if (require.main === module) {
   main(process.argv.slice(2)).then((code) => process.exit(code));
 }
 
-module.exports = { main, manifestText, sourcesHash, layout, paginate, palette, webpSize, loadConfig, listFiles };
+module.exports = { main, manifestText, sourcesHash, curves, layout, paginate, palette, webpSize, loadConfig, listFiles };
