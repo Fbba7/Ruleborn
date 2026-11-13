@@ -3,21 +3,37 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S2-home-3",
   "task_state": "working",
   "claimed_at": "2026-11-13T09:00:00Z",
   "lease_until": "2026-11-13T14:27:00Z",
-  "updated_at": "2026-11-13T11:27:00Z",
-  "expected_next_update_by": "2026-11-13T12:12:00Z",
+  "updated_at": "2026-11-13T12:05:00Z",
+  "expected_next_update_by": "2026-11-13T12:50:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "3612e265",
-    "next_step": "restarted (cycle 82): merge main (135a49b2), fresh-container setup, client build, pre-check on the merge, guard.sh, then ready; AD answers S2-R20",
-    "at": "2026-11-13T11:27:00Z"
+    "last_green_sha": "14fdcdfe",
+    "next_step": "gate on 14fdcdfe (home at 100%: Hierarchy, Character presence) and AD answer to S2-R20; on a pass with no AD objection, mark ready at 14fdcdfe; AD objections are taken inside this task (M12)",
+    "at": "2026-11-13T12:05:00Z"
   },
-  "precheck": null,
-  "gate_request": null,
+  "precheck": {
+    "sha": "14fdcdfe20e797d94669f8657ea3c4d78f9781ba",
+    "exit": 0,
+    "finished_at": "2026-11-13T11:54:05Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "14fdcdfe",
+    "items": [
+      {
+        "item": "home at 100% text",
+        "qualities": [
+          "Hierarchy",
+          "Character presence"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
