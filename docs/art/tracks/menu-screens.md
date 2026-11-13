@@ -100,13 +100,14 @@ The stills are in `docs/art/shots/menu-screens/`. Each was rendered with this co
 | `character-200-pt_BR.png` | `TEXT=200 LOCALE=pt_BR` | 55 | `.shot.json`, 6 controls |
 | `character-hc.png` | `HC=1` | 79 | `.shot.json`, 7 controls |
 | `character-200-pt_BR-scrolled.png` | `TEXT=200 LOCALE=pt_BR SCROLL=2000` | 34 | `.shot.json`, 3 controls |
+| `character-200-pt_BR-tabs.png` | `TEXT=200 LOCALE=pt_BR SCROLL=600` | 50 | `.shot.json`, 4 controls |
 | `character-100-stats.png`, `character-100-compare.png` | `TAB=1`, `TAB=2` | 80, 69 | – |
 | `character-200-en.png` | `TEXT=200` | 55 | – |
 | `character-200-pt_BR-stats.png`, `-compare.png` | `TEXT=200 LOCALE=pt_BR TAB=1`, `TAB=2` | 58, 54 | – |
 
 The before still is `before-character-100.png`, from Part 1.
 
-`python3 tools/ui_gate/checks.py all` on the four records:
+`python3 tools/ui_gate/checks.py all` on the five records:
 
 - **value-steps** passes every control. At 100% text, ΔL* is 50 and 52 on the arrows, 64 on the tabs, 77 on the way back and 61 on the level-up button. In high contrast it is 62 to 95. Key frame 04's own record reads 40 to 89.
 - **hud-share** passes, at 0.
@@ -123,4 +124,4 @@ The budget shots' recorded draw calls for the character screen are 103, 80 and 1
 
 - **The level badge at 200% text.** The level badge's "NV" kicker touches the top of the XP bar beside it. Both are the kit's (`KitStatus`); the words fit.
 - **English words in pt_BR.** Some of the character's content strings are still English under pt_BR: "Two uses a heist", the ability's sentence and the carrier's "Hauls loot; 15% slower when loaded". They come from the content (`content/ruleborn.json`), not from `Strings`. This is not this task's work.
-- **The tabs at 200% text.** They are under the tray in the opening frame, so the 200% record has no tabs row. The scrolled still shows them.
+- **The tabs at 200% text.** They are under the tray in the opening frame, so the 200% record has no tabs row. `character-200-pt_BR-tabs.png` (scrolled 600) shows them: the three tabs wrap to two rows, Comparar on its own, and its record's row passes value-steps (ΔL* 63).

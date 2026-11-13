@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-13T00:22:00Z",
   "lease_until": "2026-11-13T05:22:00Z",
-  "updated_at": "2026-11-13T02:35:00Z",
-  "expected_next_update_by": "2026-11-13T03:20:00Z",
+  "updated_at": "2026-11-13T03:05:00Z",
+  "expected_next_update_by": "2026-11-13T03:50:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "cf4eecc2c6c98a4ab4c5028269ea391133812b9a",
-    "next_step": "Records fixed (90f02629): every control passes value-steps. run_checks running at 90f02629. Track Part 2 and the handoff written; S3-R3/R4 to the lead, S3-R5 AD preview filed. Next: record the pre-check, then the gate request after S3-R5.",
-    "at": "2026-11-13T02:35:00Z"
+    "last_green_sha": "90f026290bba4be83a1d531d8b9f93c4b4f8f283",
+    "next_step": "run_checks passed at 90f02629 (All checks passed); ui guard OK. Added character-200-pt_BR-tabs.png (the 200% tabs, scrolled 600) and fixed the track's tabs sentence. Next: run_checks at this commit, record it, then the gate request after S3-R5 (due 04:45Z).",
+    "at": "2026-11-13T03:05:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -75,7 +75,7 @@
       "id": "S3-R3",
       "from": "S3",
       "to": "lead",
-      "ask": "For K1: KitControls.upgrade should grow and wrap its title at large text. At 200% text in pt_BR, 'SUBIR DE NÍVEL' and its price do not fit the kit's fixed height, so character_screen.gd's _fit_upgrade lets the button grow and the title wrap on the screen's side (see docs/art/shots/menu-screens/character-200-pt_BR.png). Every screen with an upgrade button would need the same.",
+      "ask": "For K1: KitControls.upgrade should grow and wrap its title at large text. At 200% text in pt_BR, 'SUBIR DE N\u00cdVEL' and its price do not fit the kit's fixed height, so character_screen.gd's _fit_upgrade lets the button grow and the title wrap on the screen's side (see docs/art/shots/menu-screens/character-200-pt_BR.png). Every screen with an upgrade button would need the same.",
       "files": [
         "client/ui/kit_controls.gd"
       ],
@@ -103,7 +103,7 @@
       "id": "S3-R5",
       "from": "S3",
       "to": "AD",
-      "ask": "Preview the character screen's stills before P2-S3-character's gate request: docs/art/shots/menu-screens/character-100.png, character-200-pt_BR.png and character-hc.png (the gate's three, each with its .shot.json), with character-100-stats.png, character-100-compare.png, character-200-pt_BR-scrolled.png and the before still before-character-100.png. What is still worse is listed in docs/art/tracks/menu-screens.md, Part 2. Send every objection in one round (M12).",
+      "ask": "Preview the character screen's stills before P2-S3-character's gate request: docs/art/shots/menu-screens/character-100.png, character-200-pt_BR.png and character-hc.png (the gate's three, each with its .shot.json), with character-100-stats.png, character-100-compare.png, character-200-pt_BR-scrolled.png, character-200-pt_BR-tabs.png (the tabs at 200%, added 03:05Z) and the before still before-character-100.png. What is still worse is listed in docs/art/tracks/menu-screens.md, Part 2. Send every objection in one round (M12).",
       "files": [
         "docs/art/shots/menu-screens/character-100.png",
         "docs/art/shots/menu-screens/character-200-pt_BR.png",
@@ -111,6 +111,7 @@
         "docs/art/shots/menu-screens/character-100-stats.png",
         "docs/art/shots/menu-screens/character-100-compare.png",
         "docs/art/shots/menu-screens/character-200-pt_BR-scrolled.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-tabs.png",
         "docs/art/shots/menu-screens/before-character-100.png"
       ],
       "blocking": false,
