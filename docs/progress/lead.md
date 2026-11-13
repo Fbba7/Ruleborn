@@ -157,8 +157,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxozSRuvzVXmhKrTz3w` (cycle 75, 13
-November 2026 from 02:38Z, started by the Opus 5.5 launcher). Cycle 74's
+Latest lead cycle session: `session_01SNkKxnLXN4d7GMy12F1W5F` (cycle 76, 13
+November 2026 from 03:38Z, started by the Opus 5.5 launcher). Cycle 75's
+was `session_01SNkKxozSRuvzVXmhKrTz3w` (from 02:38Z). Cycle 74's
 was `session_01SNkKxq74K4BtMR3MtbQTe1` (from 23:39Z). Cycle 73's
 was `session_01SNkKxnQNXyshnSaWRSFz4A` (from 22:39Z). Cycle 72's
 was `session_01SNkKxq8UPsw413Cqn38hyd` (from 20:39Z). Cycle 71's
@@ -436,6 +437,49 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- Cycle 76, 13 November 2026, from 03:38Z to about 04:00Z (session
+  `session_01SNkKxnLXN4d7GMy12F1W5F`, started by the Opus 5.5 launcher):
+  no merge, two advisory gates, requests copied, M17 acknowledged.
+  - **Claims copied:** S2 reclaimed P2-S2-home-1 (claimed 02:47Z, lease
+    06:31:18Z; full checks running on d5465b92, then pre-check and ready).
+    S1 (P2-S1-result-1, lease 06:08:36Z) and S3 (P2-S3-character, lease
+    capped at 06:32Z, three hours from its last status) are working.
+  - **AIA overdue:** its status (02:47Z, waiting on AIA-R25) promised an
+    update by 02:51Z and none came; its lease on P2-AIA-motion-2 still runs
+    to 04:43:33Z. Cycle 77 rechecks: if the lease has lapsed with no
+    update, the task reopens with prior_branch `claude/ui-artist` at
+    7fd401e7 and a fresh AIA session takes it.
+  - **S3's gate, advisory** (P2-S3-character at f1251e68; verdict in
+    `docs/art/ui-quality/gate/verdicts/P2-S3-character/f1251e68.json`):
+    4 of 7 pass. Fails: Display type at 100% and at 200% pt_BR (outline
+    the words over art, "Skyskipper · Carrier" and "Level 3 of 10"), and
+    Hierarchy at 100% (pffffp; collapse the ability card or shrink its
+    prose, and strengthen Level up). Passes: Character presence, Hierarchy
+    at 200% and in high contrast (fpppff), Colour roles in high contrast.
+  - **S1's gate, advisory** (P2-S1-result-1 at 8bec0d84; verdict in
+    `docs/art/ui-quality/gate/verdicts/P2-S1-result-1/8bec0d84.json`):
+    4 of 7 pass. Fails: Display type at 100% and at 200% pt_BR (outline
+    HEIST COMPLETE, "Clean"/"Limpo", the subtitle, Entry fee and
+    Re-simulated lines; give +2,310, +805 and +15 the display treatment;
+    the "3 s" chip clips at 200%, let it grow with its text), and
+    Character presence at 100% (crew portraits about 45 px against the
+    anchor's 60; make them separate and larger, or put a character on the
+    reward, as S1-R20 foresaw). Hierarchy passes at all three, Colour roles
+    in high contrast. The gate is in shadow mode, so neither fail blocks
+    a merge; each builder takes the cheap fixes before marking ready and
+    lists the rest as follow-ups.
+  - **Requests copied:** S2-R12, S2-R14 and S2-R15 (to K1; K1 has no task
+    and no slot, so each default stands at its due 15:11Z). **Answered:**
+    S2-R13 (the Keeper's portrait is the featherkin, the default) and
+    S2-R16 (approved: the lead records home/100 and home/hc 143 and
+    home/200 112 in `tools/ui_bake/budgets.json` when it merges
+    P2-S2-home-1, in place of S2-R7's 139). S3-R5's due (04:45Z) passes
+    with AD out of the cap; its default stands.
+  - **M17 acknowledged:** batch ready tasks with disjoint claims, merge and
+    clear the lock in the turn the check passes, run check_all from the
+    main checkout.
+  - Nothing ready, the merge lock is clear. Builders: S1, S2, S3 and AIA
+    make four, the cap; no session showed `allowed_warning`. No alert.
 - Cycle 75, 13 November 2026, from 02:38Z to about 02:50Z (session
   `session_01SNkKxozSRuvzVXmhKrTz3w`, started by the Opus 5.5 launcher):
   no merge, S2 restarted, requests copied.
