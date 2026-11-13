@@ -144,3 +144,60 @@ The budget shots' recorded draw calls for the character screen are 103, 80 and 1
 - **The level badge at 200% text.** The level badge's "NV" kicker touches the top of the XP bar beside it. Both are the kit's (`KitStatus`); the words fit.
 - **English words in pt_BR.** Some of the character's content strings are still English under pt_BR: "Two uses a heist", the ability's sentence and the carrier's "Hauls loot; 15% slower when loaded". They come from the content (`content/ruleborn.json`), not from `Strings`. This is not this task's work.
 - **The tabs at 200% text.** They are under the tray in the opening frame, so the 200% record has no tabs row. `character-200-pt_BR-tabs.png` (scrolled 600) shows them: the three tabs wrap to two rows, Comparar on its own, and its record's row passes value-steps (ΔL* 63).
+
+## Part 3: the settings screen (P2-S3-settings)
+
+### What was done
+
+`client/scripts/settings_screen.gd` is built from the kit, after key frame 05 (`art/ui/keyframes/05-settings.png`):
+
+- **The head.** The settings mark and the title, on the kit's plate.
+- **The tabs.** Game, Access and Account are one strip of parchment, with the open tab on gold, each with the design's icon. When an icon and its word do not fit a third of the strip (at large text, or with a long word), the closed tabs keep only their icon and the open tab only its word, at twice the width. The screen reader still hears every word.
+- **The rows.** Each setting is a kit row or section (`KitPanels.row`, `KitPanels.section`):
+  - Steppers have the setting's icon in a well, its words over the kit's bar (`KitBar`), and − and + on leather.
+  - Switches are whole rows framed on parchment. A row's words say On or Off, so the state never rests on colour alone (§20.8).
+- **The switch.** `client/scripts/screen_switch.gd` (`ScreenSwitch.make`) draws key frame 05's switch from the kit's materials alone:
+  - a pill track, green when on and dark plate when off;
+  - a parchment knob, at the right end when on and the left end when off.
+  
+  It takes no taps; the row is the control.
+- **Text size.** §20.8's text size is key frame 05's card:
+  - a small A and a large A on gold, either side of the size in large figures;
+  - a dot for each step;
+  - a law's card in the chosen size, to read before leaving.
+- **Colour blindness.** The colour-blind card shows the six schools' marks on their coins with their names. There is no mode to choose, because each school keeps its own shape in every light (§20.8).
+- **The way back.** Back home is on the glass bar at the foot of the screen, lifted off its corner (`ScreenNav.CORNER_LIFT_POINTS`).
+- **The shot.** `client/tests/shots/screen_settings.gd` takes `TAB` (default `access`, the key frame's tab), `TEXT`, `LOCALE`, `HC` and `SCROLL`.
+  - `FIT=1` fails the run if any label's words overflow it, leave its panel or run off the screen's sides. It also fails if a button's words are wider than the button, less its margins, its icon and the gap.
+  - `RECORD=1` writes the still's shot record from the same frame. Controls are named as key frame 05's record names them: `set-head`, the tabs as one `row`, `size-a`, `size-mid`, `sample`, `shapes`, `switch-row`, `back` and `words`. The record leaves out words inside buttons, the inside of the cards, and whatever the scroll hides.
+
+### Evidence
+
+The stills are in `docs/art/shots/menu-screens/`. Each was rendered with the command below, with the table's env set and `FIT=1 RECORD=1`. Every still printed `fit ok`.
+
+```
+[env] FIT=1 RECORD=1 bash tools/render/shoot.sh client/tests/shots/screen_settings.gd <still>
+```
+
+| Still | Env | Draw calls | Record |
+|---|---|---:|---|
+| `settings-100.png` | – | 62 | `.shot.json`, 12 controls |
+| `settings-200-pt_BR.png` | `TEXT=200 LOCALE=pt_BR` | 36 | `.shot.json`, 8 controls |
+| `settings-pt_BR.png` | `LOCALE=pt_BR` | 56 | `.shot.json`, 10 controls |
+| `settings-hc.png` | `HC=1` | 62 | `.shot.json`, 12 controls |
+
+The before still is `before-settings-100.png`, from Part 1.
+
+`python3 tools/ui_gate/checks.py all` on the records:
+
+- **value-steps** passes every control. At 100% text, ΔL* is 80 on the tabs, 58 on the two As, 66 on the high-contrast row and 84 on Back. At 200% in pt_BR it is 59 to 83. In high contrast it is 74 to 96.
+- **hud-share** passes, at 0.
+- **hierarchy** reads N/A: settings has no primary (`checks.py`). The second level passes.
+
+`tools/ui_bake/check_screens.py`: OK. `settings_screen.gd` and `screen_switch.gd` draw nothing outside the kit.
+
+### What is still worse than before
+
+- **The tab and back words.** Key frame 05 sets them in capitals. The screen keeps the kit's sentence case (`Tokens.type_role`). Capitals would be a change to the kit's type roles, which is K1's work.
+- **The shapes in pt_BR.** At 100% text, the longer Portuguese names (Movimento, Matéria) put the six coins three to a line, not the key frame's six in one row.
+- **The law sample at 200% text.** At this size the sample card fills most of the opening frame, so the colour-blind card and the switches are below the fold (`SCROLL`). Its words are the content's, and they are English under pt_BR ("Stillness", from `content/ruleborn.json`), as on the character screen. This is not this task's work.
