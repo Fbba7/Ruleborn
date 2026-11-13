@@ -1,5 +1,14 @@
 # The lead's handoff
 
+> **Stopped by the owner, 13 November 2026** ("Stop cleanly", in the
+> overseer's chat, at about 13:16Z). CLAUDE.md order 1 says the program
+> is stopped. Cycle 84 was interrupted by the overseer while board 4's
+> checks ran under the merge lock; it merged nothing and started no
+> session. The overseer cleared the lock and set
+> `expected_next_update_by` to null. The watchdog is disabled; the
+> launcher reads order 1 and stops. Where the work stands is in "Now",
+> entry "Stopped here".
+
 > **Restarted by the owner, 11 November 2026** ("We still need to keep the
 > UI process we were doing with the phases running as it was", then "Make
 > sure it is running now", in the overseer's chat, at about 01:00Z).
@@ -455,6 +464,16 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
+  cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
+  the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready
+  `c0bab2a8`) and was interrupted while the checks ran: nothing merged,
+  no builder started. Board 4 stays on AD's branch, ready, and merges
+  first after a restart (re-run the checks). The other builders' work is
+  on their branches: K1's tabs (check_all passes), S2's home-3 and S3's
+  settings (gate on `f0a36a41` pending). Board 4's follow-ups
+  (P2-S1-result-3, P2-AIA-motion-3, P2-AD-board-4b) are filed and not
+  started.
 - Cycle 83, 13 November 2026, from 11:38Z (session
   `session_01SNkKxn5sZ5Ez5cQQFwtAon`, started by the Opus 5.5 launcher):
   no merge (nothing ready); board 4's follow-ups filed; M22 acked.
