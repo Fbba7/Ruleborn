@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-13T04:00:00Z",
-  "expected_next_update_by": "2026-11-13T05:15:00Z",
-  "cycle": 76,
-  "merging": null,
+  "updated_at": "2026-11-13T04:44:42Z",
+  "expected_next_update_by": "2026-11-13T05:59:42Z",
+  "cycle": 77,
+  "merging": {
+    "candidate_sha": "3d682157b95c2cab03772143ec18a7cf9847a644",
+    "task_ids": [
+      "P2-S2-home-1"
+    ],
+    "started_at": "2026-11-13T04:44:42Z",
+    "expires_at": "2026-11-13T05:44:42Z"
+  },
   "last_merged": {
     "task_id": "P2-S1-toon-drop",
     "sha": "c0aa1bd6"
