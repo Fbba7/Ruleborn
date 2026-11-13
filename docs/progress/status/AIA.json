@@ -3,24 +3,26 @@
  "role": "AIA",
  "branch": "claude/ui-artist",
  "model": "Opus 5.5",
- "agent_state": "active",
+ "agent_state": "waiting",
  "task_id": "P2-AIA-motion-2",
- "task_state": "working",
+ "task_state": "ready",
  "claimed_at": "2026-11-13T04:48:00Z",
  "lease_until": "2026-11-13T07:48:00Z",
- "updated_at": "2026-11-13T05:40:00Z",
- "expected_next_update_by": "2026-11-13T06:25:00Z",
- "long_run": {
-  "log": "/tmp/check-d064876337d54e47dcd5110362984ddb688aa010.log",
-  "expected_end": "2026-11-13T06:05:00Z"
- },
+ "updated_at": "2026-11-13T05:46:00Z",
+ "expected_next_update_by": "2026-11-13T06:31:00Z",
+ "long_run": null,
  "progress_marker": {
-  "last_green_sha": "49159bc0",
-  "next_step": "pre-check of d0648763 (the merge c8863682 plus status) running, after a container restart lost the first run; then record and ready"
+  "last_green_sha": "d0648763",
+  "next_step": "the lead merges P2-AIA-motion-2 at d0648763; on resync, merge main and re-run the pre-check"
  },
- "precheck": null,
+ "precheck": {
+  "sha": "d064876337d54e47dcd5110362984ddb688aa010",
+  "exit": 0,
+  "finished_at": "2026-11-13T05:44:45Z",
+  "summary": "All checks passed."
+ },
  "gate_request": null,
- "ready_sha": null,
+ "ready_sha": "d064876337d54e47dcd5110362984ddb688aa010",
  "stop_at": "2026-11-14T21:00:00Z",
  "acks": [
   "M1"
@@ -259,5 +261,5 @@
    "at": "2026-11-10T06:50:38Z"
   }
  ],
- "next_step": "pre-check of d0648763 (the merge c8863682 plus status) running, after a container restart lost the first run; then record and ready"
+ "next_step": "the lead merges P2-AIA-motion-2 at d0648763; on resync, merge main and re-run the pre-check"
 }
