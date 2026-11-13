@@ -5,38 +5,25 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-S1-toon-drop",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-12T22:04:25Z",
   "lease_until": "2026-11-13T01:04:25Z",
-  "updated_at": "2026-11-13T00:03:00Z",
-  "expected_next_update_by": "2026-11-13T00:50:00Z",
-  "long_run": {
-    "log": "/tmp/check-43f81a56f45624dead083e7a807e4f902bb141eb.log",
-    "expected_end": "2026-11-13T00:43:00Z"
-  },
+  "updated_at": "2026-11-13T00:31:00Z",
+  "expected_next_update_by": "2026-11-13T01:30:00Z",
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "a7dd6501",
-    "next_step": "Gate passed (advisory, 2 fails of 6) at a7dd6501; main merged as 43f81a56, pre-check running; mark ready at 43f81a56 when it passes.",
-    "at": "2026-11-12T23:50:45Z"
+    "last_green_sha": "43f81a56",
+    "next_step": "P2-S1-toon-drop ready at 43f81a56 (pre-check PASS 00:28:57Z; gate advisory pass, 2 fails of 6, at a7dd6501). Building P2-S1-result-1 on the branch past ready_sha; it is claimed here once toon-drop merges.",
+    "at": "2026-11-13T00:31:00Z"
   },
   "precheck": {
-    "sha": "a7dd6501968c54d6df178185956a4f1efe5d4578",
+    "sha": "43f81a56f45624dead083e7a807e4f902bb141eb",
     "exit": 0,
-    "finished_at": "2026-11-12T22:40:59Z",
+    "finished_at": "2026-11-13T00:28:57Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "a7dd6501",
-    "items": [
-      {
-        "item": "heist at 100% text",
-        "qualities": [
-          "Character presence"
-        ]
-      }
-    ]
-  },
-  "ready_sha": null,
+  "gate_request": null,
+  "ready_sha": "43f81a56",
   "stop_at": "2026-11-14T21:00:00Z",
   "acks": [
     "M6",
@@ -257,5 +244,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P2-S1-flow-replay (F7): stack or merge the replay timeline's markers that share a time."
+  "next_step": "P2-S1-result-1: the result screen from the kit alone (key frame 03)."
 }
