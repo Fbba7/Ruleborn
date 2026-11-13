@@ -310,7 +310,9 @@ func _face(picture: Texture2D) -> KitRing:
 ## parchment, and the next raid as the main action, wide, in gold (in red
 ## when the heist was foiled), with how many of the roster are idle to go.
 func _raid_bar(foiled: bool) -> PanelContainer:
-	var bar := UI.panel("tab_bar")
+	# On glass, as the design's: the tab bar's skin runs off the screen at its
+	# foot, and here the bar stands in the page.
+	var bar := UI.panel("glass")
 	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	# A box that can stand upright (`_fit_raid`), side by side at first.
 	var row := BoxContainer.new()
