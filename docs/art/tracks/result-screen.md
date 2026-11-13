@@ -134,7 +134,7 @@ Branch `claude/ui-screens-heist`, task P2-S1-result-2. The rewards are counted i
 
 ## Evidence
 
-The stills are taken at rest, after the sequence: the shot waits for `reward_done`, for at most 1200 frames, or fails. FIT, at the task's last client commit:
+The stills are taken at rest, after the sequence: the shot waits for `reward_done`, for at most 1200 frames, or fails. The table below gives FIT at the task's first client commit (d2422a0):
 
 | Still | FIT | Draw calls (`SERVER=1`) |
 |---|---|---|
@@ -146,6 +146,10 @@ The stills are taken at rest, after the sequence: the shot waits for `reward_don
 
 The budget stills are inside their records: result/100 82 (record 94), result/200 79 (90), result/hc 82 (94). The reward layer is freed when the sequence ends, so it costs the still nothing.
 
+**Again on main** (P2-S1-result-1 merged as f41d100e, current main merged into the branch). FIT is ok for en 100%, pt_BR and de at 100% and 200%, high contrast, long-crew5 and reduced motion. With `SERVER=1`: en 100% 120 draw calls, de 100% 122, pt_BR 100% 122, long-crew5 123, reduced 119. The budget stills are result/100 89 (record 94), result/200 90 (90) and result/hc 89 (94). `guard.sh` and `check_screens.py` pass. German at 100% already scrolled under the bar at the phone's foot before this task (its rest line wraps to three lines): `_fit_actions` moves the bar there, as designed.
+
+**The crew's faces, apart** (gate, P2-S1-result-1, Character presence: fail 3/3). The judge saw "three overlapping portraits of about 45 px at 960", against the anchor's "five separate portraits of about 60 px". The rest card now shows its three faces apart, 4 points between them, at 52 points: about 57 px each at 960. The page at 100% text had almost no room to spare. Separate faces at 56 points, beside a 14-point line wrapped to three lines, overran the scroll by 28 px and sent the bar to the foot. At 52 points the faces gain 4. The rest line drops to 13 points (the smallest size, 21.8), with no extra line spacing, beside them. The lines under the reward tiles close up from 6 to 4 points. The page then measures 2074 px against the scroll's 2076, so the actions still end the page at 100% text (F6).
+
 The frame strips and clips (board 4) come from the same shot with `STRIP`. The screen's tweens are paused and stepped by a thirtieth of a second for each frame, so the strip shows the sequence as it plays, whatever the renderer's speed:
 
     STRIP=out/full SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png
@@ -153,12 +157,46 @@ The frame strips and clips (board 4) come from the same shot with `STRIP`. The s
     python3 tools/ui_gate/sheet.py strip result-reward-full.png $(ls out/full/crop_*.png | sed -n '6~4p' | head -16) --height 480
     python3 tools/ui_gate/sheet.py strip result-reward-reduced.png $(ls out/reduced/crop_*.png | sed -n '7~2p' | head -10) --height 480
     ffmpeg -framerate 30 -i out/full/full_%03d.png -vf "scale=540:-2,format=yuv420p" -c:v libx264 -crf 20 result-reward-full.mp4
+    ffmpeg -framerate 30 -i out/reduced/full_%03d.png -vf "scale=540:-2,format=yuv420p" -c:v libx264 -crf 20 result-reward-reduced.mp4
+
+In strip mode the shot writes no `out.png`, so `shoot.sh` ends with exit 1 on its last check for that file. The frames are written all the same: count them rather than trusting the exit code. In the reduced folder, too, the whole frames are named `full_*.png`; the crops are `crop_*.png`.
 
 - **Full** (planned-clean, epic): 80 frames, the sequence over in 1.93 s. The strip shows the pause before the reveal, the burst on the sunburst, coins in arcs from the medal into the Starlight tile, and the counters stepping +378, +911, +1,703, +2,288, +2,310 (Essence and Renown with them), with a pulse on each landing.
 - **Reduced:** 32 frames, over in 0.37 s. The medal fades in, one coin drops into the Starlight tile, and the final values (+2,310, +805, +15) appear.
+- **Re-rendered on main** with the faces apart: the same 80 and 32 frames, and the same steps. The strips crop the hero and the rewards, so the rest card is not in them.
 
 The strips and clips are sent to AD for board 4 by request, since `docs/art/ui-quality/gate/**` is AD's (P2-AD-board-4).
+
+## AD's four objections to S1-R24
+
+AD answered the faces' preview (S1-R24) at 08:46Z with four objections. The re-check covers only these four. AD's notes (the gold kicker, the untested idle-crew line, the dock's order at 200%) are not objections and are left as they were.
+
+1. **At 200% pt_BR the first screen showed no haul.** At large text the rewards now come before the moment card, as `03-result_text200_pt_BR`. The three reward tiles turn into rows (`_tile_row`): the icon at 26 points, then the word, then the number, left to right, 3 points of padding above and below, with 4 points between the rows. The third row (Renown) now ends above the dock. If a row's words would not fit the column on one line (German: "Sternenlicht" broke by its letters), `_fit_reward_rows` turns all three tiles back into columns (`_tile_column`) with 8 points between them. pt_BR keeps rows; de goes back to columns.
+2. **High contrast had the sunburst's rays, stars and glow.** In high contrast the screen skips `KitNav.celebrate` and builds no island (`_build_world` returns), as `03-result_hc` and Collect's shine: a plain night behind the cards.
+3. **At 200% pt_BR the multipliers pill wrapped to two lines.** `_chip_on_one_line` tries three steps in order and keeps the first that fits on one line: the words with 10 points of padding at 14 points; then thin spaces in place of the gaps and 6 points of padding; then the same at 12 points. Only when none fits does the pill wrap as before. pt_BR fits on the second step.
+4. **At 100% the rest line took three lines.** The faces sit with no gap between them (0, from 4) and 6 points from the line (from 10), so the line has the room for two lines at 13 points.
+
+At 200% text, when the raid's words stand upright, Home and the replay show as icon-only squares (with an accessibility name and tooltip), so the raid keeps its room.
+
+The fitting lives in `client/scripts/result_fit.gd` (`ResultFit`), so result_screen.gd stays under gdlint's 1000 lines (S1-R27).
+
+| Still (`SERVER=1 FIT=1`) | FIT | Draw calls |
+|---|---|---|
+| pt_BR, 200% | ok | 109 |
+| en, 100% | ok | 120 (as before) |
+| High contrast, 100% | ok | 62 |
+| de, 200% (tiles as columns) | ok | 97 |
+
+    SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd pt200.png
+    SERVER=1 FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd hc.png
+    SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd en100.png
+    SERVER=1 FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_result.gd de200.png
+
+**The budget stills.** result/100 is 89 (record 94) and result/hc is 27 (94). result/200 is 98, against a record of 90 and the cap of 150. Bisecting showed the 8 calls come from the three changes together (the haul above the moment, the tiles as rows, the pill on one line), which are the first screen AD asked for. Taking any of them out brings back an objection. So the record goes to the lead by request (S1-R26), as S2-R7, S2-R16 and S2-R17 did for other screens. `check_screens.py` passes, with this screen still at 0 draw and 0 fill.
 
 ## Tried and failed
 
 - Reading the missing reduced coin as a texture or clipping fault. The coin was in the tree, with its texture, at full alpha and inside the scroll's rect. It was drawn under the page: the layer's z of 10 is counted on its own, below the page's 32. Raised, it shows.
+- (S1-R24 fixes) The reward rows with 12 points of side padding and a margin of slack in the fit: pt_BR asked 903 px of 900 and fell back to columns for nothing. The padding is 10 points and the fit has no slack beyond the rounding.
+- (S1-R24 fixes) The reward tiles as rows in every language: German's "Sternenlicht" broke by its letters at 200%. Rows are kept only when every row fits; otherwise the tiles go back to columns.
+- (S1-R24 fixes) The rows with the tiles' 8 points of padding and the 8-point row gap: the third row (Renown) ran under the dock at pt_BR 200%. 3 points of padding and a 4-point gap clear it.

@@ -4,46 +4,32 @@
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-S1-result-1",
+  "task_id": "P2-S1-result-2",
   "task_state": "working",
-  "claimed_at": "2026-11-13T02:23:29Z",
-  "lease_until": "2026-11-13T06:08:36Z",
-  "updated_at": "2026-11-13T05:15:51Z",
-  "expected_next_update_by": "2026-11-13T06:15:51Z",
+  "claimed_at": "2026-11-13T06:14:06Z",
+  "lease_until": "2026-11-13T12:00:00Z",
+  "updated_at": "2026-11-13T09:30:17Z",
+  "expected_next_update_by": "2026-11-13T10:00:17Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "0a1a76f",
-    "next_step": "P2-S1-result-1: cycle 76's cheap gate points taken at 0a1a76f (pre-check PASS 05:15Z, guard OK). Main moved (580c9e4, lead docs only): merging it, pre-check on the merge, then ready at the merge. Then claim P2-S1-result-2."
+    "last_green_sha": "aed28321",
+    "next_step": "Pre-check at 6465a169 failed on gdlint (result_screen.gd at 1147 of 1000 lines). The large-text fitting helpers move to client/scripts/result_fit.gd (S1-R27), with the stills unchanged; pre-check again.",
+    "at": "2026-11-13T09:30:17Z"
   },
   "precheck": {
-    "sha": "0a1a76fa09fc168635c4bc8ffd702c6511fcdf07",
+    "sha": "aed28321c02e67edf889d45075675bd1343335cd",
     "exit": 0,
-    "finished_at": "2026-11-13T05:15:05Z",
+    "finished_at": "2026-11-13T07:49:05Z",
     "summary": "All checks passed."
   },
   "gate_request": {
-    "sha": "8bec0d84e170dd14987236b71732ae18a737dc92",
+    "sha": "7116702892c0d11b2785c4f14b152e1499e4db72",
     "items": [
       {
         "item": "result at 100% text",
         "qualities": [
           "Hierarchy",
-          "Display type",
           "Character presence"
-        ]
-      },
-      {
-        "item": "result at 200% text, pt_BR",
-        "qualities": [
-          "Display type",
-          "Hierarchy"
-        ]
-      },
-      {
-        "item": "result in high contrast",
-        "qualities": [
-          "Colour roles and value",
-          "Hierarchy"
         ]
       }
     ]
@@ -394,8 +380,65 @@
       "due": "2026-11-14T04:45:18Z",
       "default": "result_screen.gd grows the moment's button itself (_moment_card: the kit's size, grown to the box's combined minimum plus 12x10 px); it is removed when the kit answers.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R24",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-2), for board 4: the result's rest card at e13b5a3c shows the crew's three faces apart, 52 pt each (about 57 px at 960), not key frame 03's overlapping stack of 48 pt; the rest line is 13 pt beside them. Reason: result-1's gate failed Character presence 3/3 on small overlapping portraits. Still: SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png. Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T06:50:05Z",
+      "due": "2026-11-14T06:50:05Z",
+      "default": "The faces stay apart at 52 pt; the gate's verdict decides.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R25",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Re-check of S1-R24's four objections (P2-S1-result-2) at 71167028 (4cf3f522 with main merged). (1) pt_BR 200%: the rewards above the moment card, as three rows (icon, word, number) under the time line, as 03-result_text200_pt_BR. (2) High contrast: no rays, stars, glow or island, a plain night, as 03-result_hc. (3) pt_BR 200%: the multipliers pill on one line (thin gaps, 6 pt padding). (4) en 100%: the rest line on two lines, the faces with no gap between them. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd pt200.png; the same with CONTRAST=1 (no TEXT or LOCALE) for hc.png and with neither for en100.png. For reference, de 200% (TEXT=200 LOCALE=de) keeps the tiles as columns, because 'Sternenlicht' does not fit a row. Details are in docs/art/tracks/result-screen.md, \"AD's four objections to S1-R24\". Any objection to the four, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T09:22:07Z",
+      "due": "2026-11-14T09:22:07Z",
+      "default": "The four stand as fixed; S1 marks ready when the pre-check and the gate pass.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R26",
+      "from": "S1",
+      "to": "lead",
+      "ask": "Record result/200's draw calls in tools/ui_bake/budgets.json at 98, from 90, when P2-S1-result-2 merges (measured with budget_shots --only result/100,result/200,result/hc at dd800065). The 8 calls come from AD's 200% first screen for S1-R24: the haul above the moment card, the reward tiles as rows and the multipliers pill on one line. A bisect shows that removing any one of them brings back an objection. The figure stays 52 under the cap of 150. Textures and words below 4.5:1 are unchanged. At the same time, result/100 (94 to 89) and result/hc (94 to 27) may be lowered, along with check_screens' fallen result_screen.gd (draw 5 to 0, fill 1 to 0) and character_screen.gd (fill 3 to 0).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T09:22:07Z",
+      "due": "2026-11-14T09:22:07Z",
+      "default": "S1 marks ready with guard.sh failing only on result/200 at 98 of 90, said in the handoff, as S2-R17's approval allowed; the lead records 98 when it merges.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R27",
+      "from": "S1",
+      "to": "lead",
+      "ask": "AD's S1-R24 fixes would put client/scripts/result_screen.gd over gdlint's 1000 lines (pre-check FAIL at 6465a169: 1147). The result's large-text fitting (the reward tiles as rows or columns, the multipliers pill on one line, Home as an icon, and the word and line measures of the raid bar) moves to a helper, client/scripts/result_fit.gd (class ResultFit) and its .uid, as K1-R20 did with ui_kit_motion.gd. Asks to grant both as P2-S1-result-2's exceptions. The stills are unchanged: pt_BR 200% 109 draw calls, en 100% 120, high contrast 62, de 200% 97, all FIT ok.",
+      "files": [
+        "client/scripts/result_fit.gd",
+        "client/scripts/result_fit.gd.uid"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T09:30:17Z",
+      "due": "2026-11-14T09:30:17Z",
+      "default": "The helper stays as committed, and P2-S1-result-2 is marked ready with it on the branch.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "P2-S1-result-1: cycle 76's cheap gate points taken at 0a1a76f (pre-check PASS 05:15Z, guard OK). Main moved (580c9e4, lead docs only): merging it, pre-check on the merge, then ready at the merge. Then claim P2-S1-result-2."
+  "next_step": "Fixing AD's four objections to S1-R24 (haul above the moment at 200% pt_BR; rays, stars, glow off in high contrast; multipliers pill on one line at 200% pt_BR; rest line on two lines at 100%), then AD's stills, gate, pre-check, ready."
 }
