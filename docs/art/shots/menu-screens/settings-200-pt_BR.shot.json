@@ -1,0 +1,86 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "set-head 1: Ajustes",
+   "rect": [
+    17.33,
+    47.67,
+    352.44,
+    62.83
+   ]
+  },
+  {
+   "name": "row 2: Jogo Acesso Conta",
+   "rect": [
+    17.33,
+    119.17,
+    352.44,
+    69.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Acesso",
+   "rect": [
+    17.33,
+    197.17,
+    352.44,
+    47.67
+   ]
+  },
+  {
+   "name": "size-a 4: Texto 200%: menor",
+   "rect": [
+    32.5,
+    268.67,
+    82.33,
+    82.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "size-mid 5: 200%",
+   "rect": [
+    123.5,
+    276.25,
+    140.11,
+    50.56
+   ]
+  },
+  {
+   "name": "size-a 6: Texto 200%: maior",
+   "rect": [
+    272.28,
+    268.67,
+    82.33,
+    82.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 7: Stillness",
+   "rect": [
+    101.83,
+    374.83,
+    237.61,
+    47.67
+   ]
+  },
+  {
+   "name": "back 8: Voltar",
+   "rect": [
+    28.17,
+    704.17,
+    174.06,
+    60.67
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-200-pt_BR.png",
+ "text_scale": 2.0
+}

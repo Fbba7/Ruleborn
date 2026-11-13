@@ -1,0 +1,125 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "set-head 1: Settings",
+   "rect": [
+    17.33,
+    47.67,
+    352.44,
+    56.69
+   ]
+  },
+  {
+   "name": "row 2: Game Access Account",
+   "rect": [
+    17.33,
+    113.03,
+    352.44,
+    56.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Access",
+   "rect": [
+    17.33,
+    178.03,
+    352.44,
+    29.97
+   ]
+  },
+  {
+   "name": "size-a 4: Text 100%: smaller",
+   "rect": [
+    32.5,
+    234.72,
+    69.33,
+    60.67
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "size-mid 5: 100%",
+   "rect": [
+    110.5,
+    231.83,
+    166.11,
+    50.56
+   ]
+  },
+  {
+   "name": "size-a 6: Text 100%: larger",
+   "rect": [
+    285.28,
+    234.72,
+    69.33,
+    60.67
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "sample 7: Stillness Anyone standing still for 1.5 seconds becomes invisible to guards and ",
+   "rect": [
+    32.5,
+    311.64,
+    322.11,
+    114.47
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 8: Stillness",
+   "rect": [
+    101.83,
+    322.47,
+    237.61,
+    29.97
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "shapes 9: Time Motion Matter Energy Life Spirit Each school keeps its own shape in every m",
+   "rect": [
+    17.33,
+    449.94,
+    352.44,
+    131.08
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 10: Seeing and comfort",
+   "rect": [
+    17.33,
+    589.69,
+    352.44,
+    29.97
+   ]
+  },
+  {
+   "name": "switch-row 11: High contrast: off",
+   "rect": [
+    17.33,
+    628.33,
+    352.44,
+    56.33
+   ]
+  },
+  {
+   "name": "back 12: Back",
+   "rect": [
+    28.17,
+    704.17,
+    130.0,
+    60.67
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-100.png",
+ "text_scale": 1.0
+}

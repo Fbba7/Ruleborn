@@ -5,16 +5,16 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-S3-settings",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-13T06:16:00Z",
   "lease_until": "2026-11-13T09:16:00Z",
-  "updated_at": "2026-11-13T06:16:00Z",
-  "expected_next_update_by": "2026-11-13T07:01:00Z",
+  "updated_at": "2026-11-13T06:40:00Z",
+  "expected_next_update_by": "2026-11-13T07:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "6f6a3b158948e860820c39ec9912ab899638a473",
-    "next_step": "P2-S3-settings claimed: read key frame 05 and settings_screen.gd, then build the screen on the kit.",
-    "at": "2026-11-13T06:16:00Z"
+    "next_step": "Settings screen rebuilt on the kit on key frame 05 (Access tab); stills settings-100, -200-pt_BR, -pt_BR, -hc rendered with FIT=1 and records. Next: client tests, checks.py, check_screens.py, guard.sh, AD preview, gate.",
+    "at": "2026-11-13T06:40:00Z"
   },
   "precheck": {
     "sha": "6f6a3b158948e860820c39ec9912ab899638a473",
@@ -124,6 +124,21 @@
       "due": "2026-11-13T04:45:00Z",
       "default": "the stills stand as rendered, and S3 requests the gate on them",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R6",
+      "from": "S3",
+      "to": "lead",
+      "ask": "Add client/tests/shots/screen_settings.gd (the settings screen's shot script: TAB, TEXT, HC, LOCALE, FIT=1, RECORD=1) and docs/art/shots/menu-screens/settings-* (the stills and their records) to P2-S3-settings's files. Neither is in the task's file list; the done_when asks for the shot script to pass with FIT=1.",
+      "files": [
+        "client/tests/shots/screen_settings.gd",
+        "docs/art/shots/menu-screens/settings-*"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T06:40:00Z",
+      "due": "2026-11-13T08:40:00Z",
+      "default": "both are treated as in P2-S3-settings's files, as screen_character.gd and character-* were for P2-S3-character",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -133,5 +148,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "P2-S3-settings claimed: read key frame 05 and settings_screen.gd, then build the screen on the kit."
+  "next_step": "Settings screen rebuilt on the kit on key frame 05 (Access tab); stills settings-100, -200-pt_BR, -pt_BR, -hc rendered with FIT=1 and records. Next: client tests, checks.py, check_screens.py, guard.sh, AD preview, gate."
 }

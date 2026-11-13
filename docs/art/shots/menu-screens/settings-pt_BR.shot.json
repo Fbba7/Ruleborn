@@ -1,0 +1,106 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "set-head 1: Ajustes",
+   "rect": [
+    17.33,
+    47.67,
+    352.44,
+    56.69
+   ]
+  },
+  {
+   "name": "row 2: Jogo Acesso Conta",
+   "rect": [
+    17.33,
+    113.03,
+    352.44,
+    56.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Acesso",
+   "rect": [
+    17.33,
+    178.03,
+    352.44,
+    29.97
+   ]
+  },
+  {
+   "name": "size-a 4: Texto 100%: menor",
+   "rect": [
+    32.5,
+    234.72,
+    69.33,
+    60.67
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "size-mid 5: 100%",
+   "rect": [
+    110.5,
+    231.83,
+    166.11,
+    50.56
+   ]
+  },
+  {
+   "name": "size-a 6: Texto 100%: maior",
+   "rect": [
+    285.28,
+    234.72,
+    69.33,
+    60.67
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "sample 7: Stillness Anyone standing still for 1.5 seconds becomes invisible to guards and ",
+   "rect": [
+    32.5,
+    311.64,
+    322.11,
+    114.47
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 8: Stillness",
+   "rect": [
+    101.83,
+    322.47,
+    237.61,
+    29.97
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "shapes 9: Tempo Movimento Matéria Energia Vida Espírito Cada escola mantém sua forma em to",
+   "rect": [
+    17.33,
+    449.94,
+    352.44,
+    216.67
+   ]
+  },
+  {
+   "name": "back 10: Voltar",
+   "rect": [
+    28.17,
+    704.17,
+    130.0,
+    60.67
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-pt_BR.png",
+ "text_scale": 1.0
+}

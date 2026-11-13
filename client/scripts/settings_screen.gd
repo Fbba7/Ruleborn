@@ -41,221 +41,302 @@ func _build() -> void:
 
 
 func _layout() -> void:
-	var column := ScreenKit.frame(self)
-	column.add_child(ScreenNav.header(Strings.t("SETTINGS_TITLE")))
+	var column := UI.frame(self)
 	var list := UI.scroll(column)
 	list_scroll = list.get_parent() as ScrollContainer
+	# The title on its plate and the tabs head the list and scroll with it,
+	# so nothing fixed sits in the screen's top third (§21.1).
+	list.add_child(_head())
+	list.add_child(_tabs())
 
-	# The design's tabs, as a strip at the head of the list: both are built,
-	# the one chosen is shown.
+	# The design's tabs: all three are built, the one chosen is shown.
 	var game := VBoxContainer.new()
 	var access := VBoxContainer.new()
 	var account := VBoxContainer.new()
 	for tab: VBoxContainer in [game, access, account]:
 		tab.add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
-	list.add_child(ScreenParts.segmented([
-		{"text": Strings.t("SCREEN_SETTINGS_GAME"), "key": "game", "on": tab_shown == "game",
-			"icon": "generalui/settings"},
-		{"text": Strings.t("SCREEN_SETTINGS_ACCESS"), "key": "access", "on": tab_shown == "access",
-			"icon": "settingsandwellbeing/accessibility"},
-		{"text": Strings.t("SCREEN_SETTINGS_ACCOUNT"), "key": "account", "on": tab_shown == "account",
-			"icon": "settingsandwellbeing/account"}],
-		func(key: String) -> void:
-			tab_shown = key
-			_build()))
 	list.add_child(game)
 	list.add_child(access)
 	list.add_child(account)
 	game.visible = tab_shown == "game"
 	access.visible = tab_shown == "access"
 	account.visible = tab_shown == "account"
-	var lang := ScreenKit.button(Strings.t("LANGUAGE_" + Settings.locale), next_language, "cream", "", 14.0)
-	_tag(lang, "language")
-	# The language beside its name; under it at large text, where both do not
-	# fit one line.
-	if Settings.text_scale <= 125:
-		game.add_child(ScreenParts.item("settingsandwellbeing", "language", Strings.t("SETTINGS_LANGUAGE"), "", lang))
-	else:
-		var item := ScreenParts.item("settingsandwellbeing", "language", Strings.t("SETTINGS_LANGUAGE"))
-		lang.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		lang.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var stack := VBoxContainer.new()
-		stack.add_theme_constant_override("separation", UI.px(8))
-		var row := item.get_child(item.get_child_count() - 1)
-		item.remove_child(row)
-		stack.add_child(row)
-		stack.add_child(lang)
-		item.add_child(stack)
-		game.add_child(item)
 
-	game.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_SOUND")))
+	var lang := UI.action(Strings.t("LANGUAGE_" + Settings.locale), next_language, "plate")
+	_tag(lang, "language")
+	game.add_child(KitPanels.row("settingsandwellbeing/language", Strings.t("SETTINGS_LANGUAGE"), "", lang))
+	game.add_child(KitPanels.section(Strings.t("SCREEN_SETTINGS_SOUND")))
 	var icons := {"music": "music", "effects": "effectsvolume", "alerts": "notifications"}
-	# The volumes as rows of one card, as the design groups a section.
-	var sound := VBoxContainer.new()
-	sound.add_theme_constant_override("separation", 0)
+	var sound := UI.panel("card")
+	sound.add_theme_stylebox_override("panel", UI.clear_box(12, 10))
+	var volumes := VBoxContainer.new()
+	volumes.add_theme_constant_override("separation", UI.px(12))
+	sound.add_child(volumes)
 	for bus: String in Settings.VOLUMES:
 		var name := Strings.t("SETTINGS_" + bus.to_upper(), Settings.volume[bus])
-		var l := ScreenKit.text(name, 15.0, "words", "card")
+		var l := _words(name)
 		volume_labels[bus] = l
-		if sound.get_child_count() > 0:
-			sound.add_child(_divider())
-		sound.add_child(_stepper(icons.get(bus, "sound"), l, step.bind(bus, -1), step.bind(bus, 1),
+		volumes.add_child(_stepper(icons.get(bus, "music"), l, step.bind(bus, -1), step.bind(bus, 1),
 			Strings.t("SETTINGS_QUIETER", name), Strings.t("SETTINGS_LOUDER", name), bus,
-			float(Settings.volume[bus]) / float(Settings.VOLUME_STEPS), true))
-	game.add_child(ScreenKit.panel("card", sound, 18.0, 4.0))
-
-	game.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_PLAY")))
+			float(Settings.volume[bus]) / float(Settings.VOLUME_STEPS)))
+	game.add_child(sound)
+	game.add_child(KitPanels.section(Strings.t("SCREEN_SETTINGS_PLAY")))
 	game.add_child(_toggle("slow_rehearsals", "SETTINGS_SLOW_REHEARSALS", "playtimereminder"))
-	# The account: signing in and out, devices, ways to sign in (auth_panel.gd, T11).
-	account.add_child(AuthPanel.new())
 
-	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_ACCESS")))
+	# Key frame 05: the text size and the schools' marks, then "Seeing and
+	# comfort", each switch a whole row framed on parchment.
+	access.add_child(KitPanels.section(Strings.t("SCREEN_SETTINGS_ACCESS")))
 	access.add_child(_text_card())
 	access.add_child(_shapes())
-	# The design's "Seeing and comfort": the switches as rows of one card.
-	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_COMFORT")))
-	var comfort := VBoxContainer.new()
-	comfort.add_theme_constant_override("separation", 0)
+	access.add_child(KitPanels.section(Strings.t("SCREEN_SETTINGS_COMFORT")))
 	for toggle: Array in [
 			["high_contrast", "SETTINGS_CONTRAST", "accessibility"], ["reduced_motion", "SETTINGS_MOTION", "reducedmotion"],
 			["haptics", "SETTINGS_HAPTICS", "haptics"], ["left_handed", "SETTINGS_LEFT_HANDED", "lefthanded"],
 			["banners_stay", "SETTINGS_BANNERS_STAY", "notifications"],
 			["camera_buttons", "SETTINGS_CAMERA_BUTTONS", "accessibility"]]:
-		if comfort.get_child_count() > 0:
-			comfort.add_child(_divider())
-		comfort.add_child(_toggle(toggle[0], toggle[1], toggle[2], true))
-	access.add_child(ScreenKit.panel("card", comfort, 18.0, 4.0))
+		access.add_child(_toggle(toggle[0], toggle[1], toggle[2]))
 	# And "Controls and pace": how long a hold is.
-	access.add_child(ScreenParts.section(Strings.t("SCREEN_SETTINGS_PACE")))
+	access.add_child(KitPanels.section(Strings.t("SCREEN_SETTINGS_PACE")))
 	var hold_name := Strings.t("SETTINGS_HOLD", seconds(Settings.hold_ms))
 	var holds := Settings.hold_steps()
-	access.add_child(_stepper("remindertime", ScreenKit.text(hold_name, 15.0, "words", "card"), hold_step.bind(-1),
-		hold_step.bind(1), Strings.t("SETTINGS_SHORTER", hold_name), Strings.t("SETTINGS_LONGER", hold_name), "hold",
+	var pace := UI.panel("card")
+	pace.add_theme_stylebox_override("panel", UI.clear_box(12, 10))
+	pace.add_child(_stepper("remindertime", _words(hold_name), hold_step.bind(-1), hold_step.bind(1),
+		Strings.t("SETTINGS_SHORTER", hold_name), Strings.t("SETTINGS_LONGER", hold_name), "hold",
 		float(holds.find(Settings.hold_ms)) / float(maxi(holds.size() - 1, 1))))
-	# The profile row and the privacy note under T11's panel (ScreenAccount).
+	access.add_child(pace)
+
+	# The account: signing in and out, devices, ways to sign in (auth_panel.gd,
+	# T11), with the profile row and the privacy note under it (ScreenAccount).
+	account.add_child(AuthPanel.new())
 	account.add_child(ScreenAccount.profile_row())
 	account.add_child(ScreenAccount.privacy_note())
-	column.add_child(ScreenNav.dock(&"home"))
+	column.add_child(_bottom())
 
 
-## A setting with steps: its icon, its words over a bar of where it stands,
-## and − and + either side.
+## The title on its plate: the settings mark and SETTINGS_TITLE in Marcellus.
+func _head() -> Control:
+	var plate := PanelContainer.new()
+	plate.name = "Head"
+	plate.add_theme_stylebox_override("panel", UI.clear_box(16, 7))
+	UI.dress(plate, "plate_dark")
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(10))
+	var mark := Icons.view("generalui/settings", 28)
+	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(mark)
+	var t := UI.label(Strings.t("SETTINGS_TITLE"), Tokens.type_role("title")["points"], true)
+	t.name = "Title"
+	t.theme_type_variation = "Title"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	t.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(t)
+	plate.add_child(row)
+	return plate
+
+
+## The tabs as key frame 05 has them: one strip of parchment, the open tab on
+## gold. Where an icon and its word do not fit a third of the strip (large
+## text, a long word), the closed tabs keep their icon alone and the open one
+## its word alone, twice as wide; a screen reader still hears every word.
+func _tabs() -> Control:
+	var strip := PanelContainer.new()
+	strip.name = "Segments"
+	strip.add_theme_stylebox_override("panel", UI.clear_box(2, 2))
+	UI.dress(strip, "parchment")
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(4))
+	strip.add_child(row)
+	var tabs := [["game", "SCREEN_SETTINGS_GAME", "generalui/settings"],
+		["access", "SCREEN_SETTINGS_ACCESS", "settingsandwellbeing/accessibility"],
+		["account", "SCREEN_SETTINGS_ACCOUNT", "settingsandwellbeing/account"]]
+	var share := UI.px((KitNav.PHONE_POINTS - 2.0 * Tokens.number("size", "safe_side_points") - 4.0 - 8.0) / 3.0)
+	var compact := Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO
+	for tab: Array in tabs:
+		var wide := UI.bold_font().get_string_size(Strings.t(tab[1]), HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(14)).x
+		compact = compact or wide + UI.px(22 + 4 + 18 + 2) > share
+	for tab: Array in tabs:
+		var key: String = tab[0]
+		var words := Strings.t(tab[1])
+		var open := key == tab_shown
+		var b := UI.action(words, func() -> void:
+			tab_shown = key
+			_build(), "gold" if open else "seg_light", words)
+		b.add_theme_font_size_override("font_size", UI.text_px(14))
+		b.set_meta("points", 14.0)
+		b.set_meta("chosen", open)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.custom_minimum_size = Vector2(UI.px(UI.CONTROL_POINTS), UI.px(60 if compact else 48))
+		b.autowrap_mode = TextServer.AUTOWRAP_OFF
+		if compact and open:
+			b.size_flags_stretch_ratio = 2.0
+			b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		else:
+			b.icon = Icons.texture(tab[2])
+			b.expand_icon = true
+			b.add_theme_constant_override("icon_max_width", UI.px(32 if compact else 22))
+			b.add_theme_constant_override("h_separation", UI.px(4))
+			if compact:
+				b.text = ""
+				b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		row.add_child(_tag(b, "tab_" + key))
+	return strip
+
+
+## A setting's words on a card: bold, to the left, wrapping.
+func _words(text: String) -> Label:
+	var l := UI.label(text, 16, true)
+	l.theme_type_variation = "BodyBold"
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	l.set_meta("bold", true)
+	return l
+
+
+## A setting with steps: its icon in a well, its words over a bar of where it
+## stands, and − and + on leather at its end.
 func _stepper(icon: String, words: Label, down: Callable, up: Callable, spoken_down: String, spoken_up: String,
-		tag: String, share: float, in_card := false) -> Control:
+		tag: String, share: float) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
-	row.add_child(ScreenKit.panel("well", ScreenKit.icon("settingsandwellbeing", icon, 26.0), -1.0, 4.0))
+	var well := PanelContainer.new()
+	well.add_theme_stylebox_override("panel", UI.clear_box(7, 7))
+	UI.dress(well, "well")
+	well.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	well.add_child(Icons.view("settingsandwellbeing/" + icon, 26))
+	row.add_child(well)
 	var mid := VBoxContainer.new()
 	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	mid.alignment = BoxContainer.ALIGNMENT_CENTER
-	mid.add_theme_constant_override("separation", UI.px(4))
-	words.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	mid.add_theme_constant_override("separation", UI.px(6))
 	mid.add_child(words)
-	mid.add_child(ScreenMeter.bar(share, 1.0, Color("#8C6CF0"), 8.0))
+	mid.add_child(KitBar.make(share, Color(), 8))
 	row.add_child(mid)
-	for b: Button in [_tag(ScreenKit.button("−", down, "leather", spoken_down, -1.0), tag + "-"),
-			_tag(ScreenKit.button("+", up, "leather", spoken_up, -1.0), tag + "+")]:
+	for b: Button in [_tag(UI.action("−", down, "leather", spoken_down), tag + "-"),
+			_tag(UI.action("+", up, "leather", spoken_up), tag + "+")]:
 		b.add_theme_font_size_override("font_size", UI.text_px(24))
 		b.set_meta("points", 24.0)
+		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		row.add_child(b)
-	if in_card:
-		var pad := MarginContainer.new()
-		for side: String in ["left", "right", "top", "bottom"]:
-			pad.add_theme_constant_override("margin_" + side, UI.px(8))
-		pad.add_child(row)
-		return pad
-	return ScreenKit.panel("card", row, 16.0, 8.0)
+	return row
 
 
-## A switch as a whole row: the setting's icon, its words, and the switch
-## drawn at its end; the row is the one control, framed, or a row of a card.
-func _toggle(setting: String, words: String, icon: String, in_card := false) -> Control:
+## A switch as a whole row framed on parchment: the setting's icon, its words
+## (which say On or Off), and the switch at its end; the row is the one
+## control.
+func _toggle(setting: String, words: String, icon: String) -> Control:
 	var on := Settings.flag(setting)
-	var b := ScreenKit.button(Strings.t(words + ("_ON" if on else "_OFF")), flip.bind(setting), "card", "", 16.0)
-	# A row of a card: the card's fill behind it, no frame of its own.
-	if in_card and RbBox.of(b) != null:
-		RbBox.of(b).visible = false
+	var b := UI.action(Strings.t(words + ("_ON" if on else "_OFF")), flip.bind(setting), "parchment")
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	var tex := ScreenKit.icon_texture("settingsandwellbeing", icon)
-	if tex != null:
-		b.icon = tex
-		b.expand_icon = true
-		b.add_theme_constant_override("icon_max_width", UI.px(28))
-		b.add_theme_constant_override("h_separation", UI.px(10))
+	b.icon = Icons.texture("settingsandwellbeing/" + icon)
+	b.expand_icon = true
+	b.add_theme_constant_override("icon_max_width", UI.px(28))
+	b.add_theme_constant_override("h_separation", UI.px(10))
 	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	b.custom_minimum_size.x = 0
+	b.custom_minimum_size = Vector2(0, UI.px(52))
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var normal := b.get_theme_stylebox("normal") as StyleBox
-	normal.content_margin_right = UI.px(64)
-	for state: String in ["hover", "pressed", "disabled"]:
-		(b.get_theme_stylebox(state) as StyleBox).content_margin_right = UI.px(64)
+	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+		var box := UI.clear_box(12, 7)
+		box.content_margin_right = UI.px(12 + 46 + 10)
+		b.add_theme_stylebox_override(state, box)
 	var sw := ScreenSwitch.make(on)
-	sw.set_anchors_preset(Control.PRESET_CENTER_RIGHT)
-	sw.position = Vector2(-UI.px(56), -UI.px(14))
+	sw.anchor_left = 1.0
+	sw.anchor_right = 1.0
+	sw.anchor_top = 0.5
+	sw.anchor_bottom = 0.5
+	sw.offset_left = -UI.px(58)
+	sw.offset_right = -UI.px(12)
+	sw.offset_top = -UI.px(14)
+	sw.offset_bottom = UI.px(14)
 	b.add_child(sw)
 	b.set_meta("on", on)
 	return _tag(b, setting)
 
 
-## §20.8's text size as the design's card: a small A and a large A either
-## side of the size in large figures over a dot a step, and a law's card in
-## the size chosen, to read before leaving.
+## §20.8's text size as key frame 05's card: a small A and a large A on gold
+## either side of the size in large figures over a dot a step, and a law's
+## card in the size chosen, to read before leaving.
 func _text_card() -> Control:
 	var steps := Settings.text_steps()
 	var at := steps.find(Settings.text_scale)
 	var size_name := Strings.t("SETTINGS_TEXT_SIZE", Settings.text_scale)
+	var large := Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
-	var smaller := _tag(ScreenKit.button(Strings.t("SCREEN_TEXT_A"), text_step.bind(-1), "leather",
-		Strings.t("SETTINGS_SMALLER", size_name), 14.0), "text-")
-	smaller.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(smaller)
 	var mid := VBoxContainer.new()
 	mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	mid.alignment = BoxContainer.ALIGNMENT_CENTER
 	mid.add_theme_constant_override("separation", UI.px(6))
-	text_label = ScreenKit.inked(ScreenKit.text("%d%%" % Settings.text_scale, 34.0, "number", "card"), 2.0)
-	text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text_label = UI.label("%d%%" % Settings.text_scale, 34)
+	text_label.theme_type_variation = "Display"
 	text_label.accessibility_name = size_name
 	mid.add_child(text_label)
 	var dots := HBoxContainer.new()
 	dots.alignment = BoxContainer.ALIGNMENT_CENTER
 	dots.add_theme_constant_override("separation", UI.px(5))
 	for i: int in steps.size():
-		var dot := ScreenKit.panel("gold" if i == at else "well", null, -1.0, 0.0)
+		var dot := Control.new()
+		dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		dot.custom_minimum_size = Vector2(UI.px(22 if i == at else 9), UI.px(9))
+		UI.dress(dot, "gold" if i == at else "plate_dark", 999)
 		dots.add_child(dot)
 	mid.add_child(dots)
-	row.add_child(mid)
-	var larger := _tag(ScreenKit.button(Strings.t("SCREEN_TEXT_A"), text_step.bind(1), "leather",
-		Strings.t("SETTINGS_LARGER", size_name), 14.0), "text+")
-	larger.add_theme_font_size_override("font_size", UI.text_px(26))
-	larger.set_meta("points", 26.0)
-	larger.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(larger)
-	var sample := HBoxContainer.new()
-	sample.add_theme_constant_override("separation", UI.px(10))
-	var mark := ScreenKit.icon("laws", "stillness", 40.0)
+	for side: Array in [[-1, 14.0, "text-", "SETTINGS_SMALLER"], [1, 26.0, "text+", "SETTINGS_LARGER"]]:
+		var a := UI.action(Strings.t("SCREEN_TEXT_A"), text_step.bind(side[0]), "gold",
+			Strings.t(side[3], size_name))
+		a.add_theme_font_size_override("font_size", UI.text_px(side[1]))
+		a.set_meta("points", side[1])
+		a.custom_minimum_size = Vector2(UI.px(76 if large else 64), UI.px(76 if large else 56))
+		a.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		_tag(a, side[2])
+		row.add_child(a)
+		if side[0] < 0:
+			row.add_child(mid)
+	var sample := PanelContainer.new()
+	var room := UI.clear_box(14, 10)
+	room.content_margin_bottom = UI.px(12)
+	sample.add_theme_stylebox_override("panel", room)
+	UI.dress(sample, "parchment")
+	var line := HBoxContainer.new()
+	line.add_theme_constant_override("separation", UI.px(10))
+	var mark := Icons.view("laws/stillness", 40)
 	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	sample.add_child(mark)
+	line.add_child(mark)
 	var words := VBoxContainer.new()
 	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.alignment = BoxContainer.ALIGNMENT_CENTER
 	words.add_theme_constant_override("separation", 0)
-	words.add_child(ScreenKit.text(Strings.term("LAW", "stillness"), 20.0, "name", "parchment", false, true))
-	words.add_child(ScreenKit.text(Strings.t("LAW_RULE_STILLNESS"), 13.0, "body", "parchment", false, true))
-	sample.add_child(words)
+	var heading := UI.label(Strings.term("LAW", "stillness"), Tokens.type_role("heading")["points"], true)
+	heading.theme_type_variation = "Heading"
+	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	words.add_child(heading)
+	var rule := UI.label(Strings.t("LAW_RULE_STILLNESS"), Tokens.type_role("caption")["points"], true)
+	rule.theme_type_variation = "Caption"
+	rule.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	words.add_child(rule)
+	line.add_child(words)
+	sample.add_child(line)
+	var card := PanelContainer.new()
+	card.add_theme_stylebox_override("panel", UI.clear_box(14, 14))
+	UI.dress(card, "card")
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", UI.px(12))
 	box.add_child(row)
-	box.add_child(ScreenKit.panel("parchment", sample, 14.0, 10.0))
-	return ScreenKit.panel("card", box, 18.0, 12.0)
+	box.add_child(sample)
+	card.add_child(box)
+	return card
 
 
 ## The design's colour-blind card, as the game has it: no mode to choose,
 ## since each school keeps its own shape in every light (§20.8); the six
-## marks with their names, and that said.
+## marks on their coins with their names, and that said.
 func _shapes() -> Control:
+	var card := PanelContainer.new()
+	card.add_theme_stylebox_override("panel", UI.clear_box(12, 12))
+	UI.dress(card, "card")
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", UI.px(8))
+	card.add_child(box)
 	var grid := GridContainer.new()
 	grid.add_theme_constant_override("h_separation", UI.px(4))
 	grid.add_theme_constant_override("v_separation", UI.px(8))
@@ -264,9 +345,9 @@ func _shapes() -> Control:
 	# does not (Portuguese "Movimento", French "Mouvement") or at large text.
 	var widest := 0.0
 	for school: String in schools:
-		widest = maxf(widest, ScreenKit.font("words").get_string_size(Strings.t("SCHOOL_" + school.to_upper()),
+		widest = maxf(widest, UI.bold_font().get_string_size(Strings.t("SCHOOL_" + school.to_upper()),
 			HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(13)).x)
-	var room := UI.px(360.0 - 32.0 - 24.0)
+	var room := UI.px(KitNav.PHONE_POINTS - 2.0 * Tokens.number("size", "safe_side_points") - 24.0)
 	grid.columns = 6
 	while grid.columns > 1 and widest * grid.columns + UI.px(4) * (grid.columns - 1) > room:
 		grid.columns = 3 if grid.columns == 6 else (2 if grid.columns == 3 else 1)
@@ -274,25 +355,56 @@ func _shapes() -> Control:
 		var col := VBoxContainer.new()
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		col.add_theme_constant_override("separation", UI.px(2))
-		var coin := ScreenCoin.make("school:" + school, 32.0)
+		var coin := PanelContainer.new()
+		coin.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
+		UI.dress(coin, "window_" + school, 999)
 		coin.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		coin.add_child(Icons.view("schools/" + school, 24))
 		col.add_child(coin)
-		var name := ScreenKit.text(Strings.t("SCHOOL_" + school.to_upper()), 13.0, "words", "card", true)
-		name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var name := UI.label(Strings.t("SCHOOL_" + school.to_upper()), Tokens.type_role("caption")["points"])
+		name.theme_type_variation = "Caption"
+		name.add_theme_font_override("font", UI.bold_font())
+		name.set_meta("bold", true)
 		col.add_child(name)
 		grid.add_child(col)
 	box.add_child(grid)
-	box.add_child(ScreenKit.text(Strings.t("SCREEN_SETTINGS_SHAPES"), 13.0, "body", "card", true, true))
-	return ScreenKit.panel("card", box, 18.0, 12.0)
+	var said := UI.label(Strings.t("SCREEN_SETTINGS_SHAPES"), Tokens.type_role("caption")["points"], true)
+	said.theme_type_variation = "Caption"
+	said.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	box.add_child(said)
+	return card
 
 
-## A hairline between a card's rows.
-static func _divider() -> Control:
-	var line := ColorRect.new()
-	line.color = Color(1, 1, 1, 0.08)
-	line.custom_minimum_size.y = maxf(1.0, UI.px(1))
-	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return line
+## Back home, on the glass bar at the foot of the screen, lifted off its
+## corner (ScreenNav.CORNER_LIFT_POINTS).
+func _bottom() -> Control:
+	var dock := MarginContainer.new()
+	dock.name = "Dock"
+	dock.add_theme_constant_override("margin_bottom", UI.px(ScreenNav.CORNER_LIFT_POINTS))
+	var bar := PanelContainer.new()
+	bar.add_theme_stylebox_override("panel", UI.clear_box(10, 10))
+	UI.dress(bar, "glass", 22)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", UI.px(10))
+	if Settings.left_handed:
+		row.layout_direction = Control.LAYOUT_DIRECTION_RTL
+	var back := UI.action(Strings.t("SCREEN_BACK"), func() -> void: App.services.router.go(&"home"), "parchment")
+	back.icon = Icons.texture("generalui/back")
+	back.expand_icon = true
+	back.add_theme_constant_override("icon_max_width", UI.px(28))
+	back.add_theme_constant_override("h_separation", UI.px(8))
+	back.custom_minimum_size = Vector2(maxf(back.custom_minimum_size.x + UI.px(28 + 8 + 12), UI.px(120)), UI.px(56))
+	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+		var box := UI.clear_box(12, 0)
+		box.content_margin_right = UI.px(18)
+		box.content_margin_bottom = UI.px(2)
+		back.add_theme_stylebox_override(state, box)
+	back.set_meta("back", true)
+	back.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	row.add_child(back)
+	bar.add_child(row)
+	dock.add_child(bar)
+	return dock
 
 
 func _tag(b: Button, setting: String) -> Button:
