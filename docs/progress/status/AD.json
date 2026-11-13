@@ -5,11 +5,11 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-AD-board-3",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-13T08:30:00Z",
   "lease_until": "2026-11-13T11:30:00Z",
-  "updated_at": "2026-11-13T08:30:00Z",
-  "expected_next_update_by": "2026-11-13T09:15:00Z",
+  "updated_at": "2026-11-13T08:46:00Z",
+  "expected_next_update_by": "2026-11-13T09:31:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
@@ -143,7 +143,7 @@
       "id": "AD-R15",
       "from": "AD",
       "to": "lead",
-      "ask": "Board 1 objection B reopens, narrowed: with no crew plan (rehearsal, Workshop island, offline), at 200% text in pt_BR, Cast reads 'Sem lan\u00e7amentos', the tray grows to two button rows and covers the loot panel (FIT=1 fails: 'Loot over the tray'). Keep the tray below the loot panel whatever the Cast label says, and add the no-plan 200% pt_BR case (FIT=1, no MANIFEST) to the heist's gate stills. Details in board-1.md, Round 2, What B needs.",
+      "ask": "Board 1 objection B reopens, narrowed: with no crew plan (rehearsal, Workshop island, offline), at 200% text in pt_BR, Cast reads 'Sem lançamentos', the tray grows to two button rows and covers the loot panel (FIT=1 fails: 'Loot over the tray'). Keep the tray below the loot panel whatever the Cast label says, and add the no-plan 200% pt_BR case (FIT=1, no MANIFEST) to the heist's gate stills. Details in board-1.md, Round 2, What B needs.",
       "files": [
         "docs/art/ui-quality/gate/boards/board-1.md",
         "client/scripts/heist_screen.gd",
@@ -243,5 +243,11 @@
       "escalate_to": "lead"
     }
   ],
-  "answers": []
+  "answers": [
+    {
+      "request_id": "S3-R7",
+      "answer": "AD's review of the settings stills at f5719f28 (settings-100, settings-200-pt_BR, settings-hc), beside key frame 05 (05-settings, 05-settings_text200_pt_BR, 05-settings_hc) and the gate's verdict at f5719f28. Every objection, in order of weight (M12); none needs source art repainted. (1) Hierarchy at 200% pt_BR: the title 'Ajustes' keeps its 100% size while the tab word 'Acesso' and 'Voltar' double, so the open tab's word is the largest on the screen. Key frame 05_text200_pt_BR draws the title about twice its 100% height and keeps it the largest word. Fix: scale the title with the text setting, and keep the open tab's word no larger than the title. (2) Display type at both sizes: the group headings ('Access', 'Seeing and comfort', 'Acesso') read as thin serif with a soft drop and no ink line at the still's size, so all six samples failed. Fix: give them the kit's display outline (at least 1.5 pt all round at frame_pt, as the T2 stroke is meant to be; check it survives at 540 px), or set them on the kit's tag plate as board 1 did with 'Laws here'. (3) The ground runs the wrong way: it brightens downward to a saturated blue (about #2C39A6 at the foot, from #1C195C at the top), while key frame 05 darkens to near black (#0B0621). The light ground sits behind 'Seeing and comfort' and the dock, and it is part of why the headings read as type on a busy ground. Fix: use the key frame's ground, or reverse the ramp so the foot is the darkest. If the backdrop is the shared screen kit's, fix it there so the character screen gets it too. (4) Content at 200% pt_BR: the Stillness law stops at 'still for 1.5…'. The sample is there to show the law at the reader's size, and the key frame lets the card grow to five lines. The school card is also cut mid-word ('Matéria', 'Energia') at the dock, with no cue that the list scrolls; one gate sample flagged it. Fix: let the card hold the whole law, since the list scrolls, and end the opening frame on a row's edge or show the kit's scroll cue (fade and chevron) above the dock. Fixing (1) by the title, not by cutting the law, keeps Hierarchy. (5) At 100% and in high contrast, the Motion switch (the key frame's second switch row) is hidden under the dock in the opening frame, with no scroll cue. Fix: bring the Stillness text to two lines (a wider text column, as the key frame's) and trim the school card's padding so both switch rows clear the dock, or show the scroll cue. (6) Minor: at 100% the gold '100%' is as tall as the title and heavier, which one Hierarchy sample failed on. Keep its cap height a step below the title's. These stand and are not objections: the cream As and the dark chosen tab (colour roles pass in high contrast, 3 of 3), sentence-case tabs (the kit's type roles, K1's), and the pt_BR coins three to a line at 100%. Re-check after the fix: only what the fix changes (the title's scale, the headings' ink, the ground, the 200% card and scroll edge).",
+      "at": "2026-11-13T08:46:00Z"
+    }
+  ]
 }
