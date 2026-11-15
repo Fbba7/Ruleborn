@@ -1,0 +1,36 @@
+[
+  {
+    "task_id": "P2-S2-home-3",
+    "sha": "13ff046f84c290ce47986ddeb7f46da60778f6bf",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-15T22:02:49Z",
+    "item": "home at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. In grayscale the gold 'Collect 3.4k' button above the tab bar is the largest, lightest control and catches the eye first; the dark experience card beside it holds no action, and the island name pills (about a third of its size), the circle buttons and the dark currency strip fall in behind it. It leads at least as clearly as the pass anchor's Level up, and nothing contests it as Get out contests Cast on the fail anchor."
+  },
+  {
+    "task_id": "P2-S2-home-3",
+    "sha": "13ff046f84c290ce47986ddeb7f46da60778f6bf",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-15T22:02:49Z",
+    "item": "home at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The keeper portrait in the gold level ring beside 'Keeper 24' (about 90 px against the pass anchor's 60 px crew portraits) reads as a creature with a face, dark eyes, a blue brow mark and a wand, cream on a purple disc. The full-resolution crop shows soft stepped toon shading with thin outlines: no photographic grain, no specular sheen, not an unlit flat sticker. Judged from the 960 px still, its grayscale and a keeper crop."
+  }
+]
