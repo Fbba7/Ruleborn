@@ -116,11 +116,13 @@ func _build() -> void:
 	# The lowest row on the kit's dark plate, its back button just above the
 	# corners' band (§21.1: 8% of the frame's height, of which the safe area
 	# is 44 points), so it may run the column's width as the design's does
-	# and sits as near the foot as key frame 04's (board 5's C).
+	# and keeps 20 points off the column's foot so the way back stays above
+	# that band at every aspect. Key frame 04's tray sits nearer the foot;
+	# that is board 5's note for K1.
 	var tray := UI.panel("plate_dark")
 	tray.add_child(bottom)
 	var lift := MarginContainer.new()
-	lift.add_theme_constant_override("margin_bottom", UI.px(6))
+	lift.add_theme_constant_override("margin_bottom", UI.px(20))
 	lift.add_child(tray)
 	column.add_child(_padded(lift))
 

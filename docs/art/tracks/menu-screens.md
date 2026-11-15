@@ -176,7 +176,7 @@ AD's board 5 (`docs/art/ui-quality/gate/boards/board-5.md`) raised five objectio
   - **The ability card.** The tag sits inline after the kicker, and the ability's sentence takes two lines (S3-R10).
   - **The facts.** They are compact, as key frame 04's: the disc beside the kicker, the words under both across the card at 13 points, and 6 points of padding (`_compact`, S3-R13).
   - **Kickers that run tight.** A kicker drops its tracking, as the kit's tags are set, when its longest word, or the kicker with its tag, is wider than its room (`_untrack_when_tight`, S3-R14). German "EIGENSCHAFTEN" stands whole, and Portuguese "HABILIDADE" keeps its tag on its line.
-  - **The tray** sits 6 points nearer the foot.
+  - **The tray** keeps its 20 points off the column's foot. Moving it 6 points nearer the foot, as key frame 04's, put the way back inside the corner band (see below).
 - **D: the display type.**
   - **The level tag.** The hexagon grows with the player's text, so its "LV", "NV" or "ST" kicker stays inside it at every size.
   - **Words on the backdrop.** The subtitle and level line wear the kit's ink outline at every size (`ScreenKit.inked`). At large text, as the large-text key frame, they wear a heavier one (12% of their size) and the display type's hard drop (`_over_stage`).
@@ -185,7 +185,7 @@ AD's board 5 (`docs/art/ui-quality/gate/boards/board-5.md`) raised five objectio
 
 #### Evidence
 
-The stills and records are in `docs/art/shots/menu-screens/`. They were rendered on the board-5 code (06c06f8e) with this command, the table's env set, and every still printed `fit ok`:
+The stills and records are in `docs/art/shots/menu-screens/`. They were rendered on the board-5 code, with the tray at 20 points off the foot, with this command, the table's env set, and every still printed `fit ok`:
 
 ```
 [env] FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_character.gd <still>
@@ -226,7 +226,7 @@ The ΔL* that value-steps measures:
 
 #### What still differs from the key frame
 
-- **The tray's height above the foot.** The tray stands about 65 points above the screen's foot, against about 40 in key frame 04. The layout check's corner band, the bottom 8% of the screen, holds the way back at least 62 points above the foot. This is board 5's note for K1 (`ui.gd`'s bottom margin).
+- **The tray's height above the foot.** The tray stands about 65 points above the screen's foot, against about 40 in key frame 04. The layout check's corner band, the bottom 8% of the screen, holds the way back at least 62 points above the foot. This is board 5's note for K1 (`ui.gd`'s bottom margin). A try at 6 points off the column's foot, against 20, put the way back's lower edge at 2,166 of 2,340 pixels, inside that band. The client's layout tests failed at 9:16 and 9:19.5, and at 150% and 200% text, so the tray stays at 20.
 - **The ability card at 200% text.** Its tag line and its sentence run under the tray as scroll content. The key frame's header band shows only the icon and kicker above the tray, as this build does.
 - **Mixed tracking.** In German at 100%, the traits kicker drops its tracking while its neighbours keep theirs, until the kit's cards do the same (S3-R14).
 - **English content.** The ability's sentence, "Two uses a heist" and "Hauls loot" are English in pt_BR and German. This is content localisation, not the screen's work, and the pt_BR key frame shows the same.
