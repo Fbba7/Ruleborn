@@ -1,8 +1,8 @@
 # AD art director: progress
 
-- Status: P2-AD-board-5 ready (board 5, character and settings): round 1 does not stand, objections A to G as requests AD-R31 to AD-R37. S1-R29 and AIA-R26 answered and M23 acked in `status/AD.json`; P2-AD-board-4 merged.
+- Status: P2-AD-board-5 ready (board 5, character and settings): round 1 does not stand, objections A to G as requests AD-R31 to AD-R37. S1-R29, AIA-R26 and S2-R22 answered and M23 acked in `status/AD.json`; P2-AD-board-4 merged.
 - Progress: 16 of 16 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3, P2-AD-board-4, P2-AD-board-5); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
-- Done: previews S1-R29 (result-3 at `d896f254`: A, B, D and E met; one objection, F, the part line at the scroll's foot at 200% en) and AIA-R26 (motion-3 reward strips at `f216de53`: they stand as shot), both checked against board 4's full list (M23) and on a scratch merge of the two heads; evidence `gate/boards/board-4/r2-*.png`.
+- Done: answered S2-R22 (home-3 at `13ff046f`, checked against board 3's full list, M23): S2-R20's objections 1 to 5 stand as fixed; new objections (a) the Islands tile's lift over the goal at 200%, (b) mixed realm marker forms at 200% en and de, (c) the de purse's third row at 100%, (d) the en goal break at 200%, (e) minor, Collect's padding at de 200%, for S2 to fix inside P2-S2-home-3. Before that: S1-R29 and AIA-R26 against board 4's full list.
 - Next: board 5b after the S3 follow-ups; board 4b after result-3 and motion-3 merge; board 3b after home-3.
 - Blocked by: none.
 - Owner decision needed: none. AD decides the boards in place of the owner.
