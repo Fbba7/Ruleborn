@@ -122,6 +122,8 @@ The stills are in `docs/art/shots/menu-screens/`. Each was rendered with this co
 ```
  Every still printed `fit ok`.
 
+This table is the earlier round's. Board 5's round re-rendered these stills and removed `character-200-pt_BR-tabs.png`; its table is under "Board 5's objections" below.
+
 | Still | Env | Draw calls | Record |
 |---|---|---:|---|
 | `character-100.png` | – | 81 | `.shot.json`, 6 controls |
@@ -153,6 +155,82 @@ The budget shots' recorded draw calls for the character screen are 103, 80 and 1
 - **The level badge at 200% text.** The level badge's "NV" kicker touches the top of the XP bar beside it. Both are the kit's (`KitStatus`); the words fit.
 - **English words in pt_BR.** Some of the character's content strings are still English under pt_BR: "Two uses a heist", the ability's sentence and the carrier's "Hauls loot; 15% slower when loaded". They come from the content (`content/ruleborn.json`), not from `Strings`. This is not this task's work.
 - **The tabs at 200% text.** They are under the tray in the opening frame, so the 200% record has no tabs row. `character-200-pt_BR-tabs.png` (scrolled 600) shows them: the three tabs wrap to two rows, Comparar on its own, and its record's row passes value-steps (ΔL* 63).
+
+### Board 5's objections (P2-S3-character-2)
+
+AD's board 5 (`docs/art/ui-quality/gate/boards/board-5.md`) raised five objections on the character screen: A, B, C, D and G (AD-R31 to AD-R37 in `docs/progress/requests.md`). Each is answered in `client/scripts/character_screen.gd`. The kit's own forms for each change are asked of K1 through the lead, S3-R9 to S3-R14 in `docs/progress/status/S3.json`, each defaulting to the screen's code.
+
+- **A: the Level up button fits its words at 200% text.**
+  - As key frame 04, the label is "Level up" in the display face: mixed case, cream, stroked in ink, with its drop. The price is in the kit's white numerals (`KitNumerals`, `num_white`).
+  - At body size the words sit left of the price chip. At large text the title takes the button's width, and the level line sits beside the chip under it, as the large-text key frame does.
+  - The words break between words only, never inside one ("Aufsteigen" stays whole), and the button grows to hold them (`_fit_upgrade`). German "Stufe 3 → 4" stays inside the button, and the 200% shots in English, pt_BR and German all print `fit ok`.
+  - The scripted fit check is `docs/art/shots/menu-screens/fit_character.sh`. It renders 100% and 200% text in en, pt_BR and de, and high contrast in en and pt_BR, with `FIT=1`, and fails unless each shot prints `fit ok`.
+- **B: the first screen at 200% text.**
+  - **The tabs.** All three stand on one line. The open tab shows its word, and the other two show their icons only, named for a screen reader (`_tabs`). This needs no icon-only form in the kit; S3-R9 asks for one.
+  - **The subtitle and level line.** Each holds one line, growing smaller first, down to 24 and 22 points (`_wrap_in` with `least`).
+  - **The stage** is 165 points tall plus the safe top at large text, against 170 at body size.
+  - **The ability card.** Its icon heads the card beside its kicker, as the large-text key frame's header band does.
+  - **What shows.** The tabs and the ability header (icon and kicker) stand above the tray in all three locales.
+- **C: the first screen at 100% text.** All four facts now stand whole above the tray in every locale.
+  - **The tabs.** Each icon is inline before its word, one line tall.
+  - **The ability card.** The tag sits inline after the kicker, and the ability's sentence takes two lines (S3-R10).
+  - **The facts.** They are compact, as key frame 04's: the disc beside the kicker, the words under both across the card at 13 points, and 6 points of padding (`_compact`, S3-R13).
+  - **Kickers that run tight.** A kicker drops its tracking, as the kit's tags are set, when its longest word, or the kicker with its tag, is wider than its room (`_untrack_when_tight`, S3-R14). German "EIGENSCHAFTEN" stands whole, and Portuguese "HABILIDADE" keeps its tag on its line.
+  - **The tray** sits 6 points nearer the foot.
+- **D: the display type.**
+  - **The level tag.** The hexagon grows with the player's text, so its "LV", "NV" or "ST" kicker stays inside it at every size.
+  - **Words on the backdrop.** The subtitle and level line wear the kit's ink outline at every size (`ScreenKit.inked`). At large text, as the large-text key frame, they wear a heavier one (12% of their size) and the display type's hard drop (`_over_stage`).
+  - **The button.** The price and the Level up label wear the display treatment (as A).
+- **G: the stage's foot.** The stage's bottom fades to the menus' night at the point where the stage ends on the screen (`_blend_foot`), so its sky runs on into the backdrop with no edge (S3-R11).
+
+#### Evidence
+
+The stills and records are in `docs/art/shots/menu-screens/`. They were rendered on the board-5 code (06c06f8e) with this command, the table's env set, and every still printed `fit ok`:
+
+```
+[env] FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_character.gd <still>
+```
+
+The recorded stills were rendered with `RECORD=1` as well.
+
+| Still | Env | Draw calls | Record |
+|---|---|---:|---|
+| `character-100.png` | – | 91 | `.shot.json`, 6 controls |
+| `character-100-pt_BR.png`, `character-100-de.png` | `LOCALE=pt_BR`, `LOCALE=de` | 91, 91 | `.shot.json`, 6 controls |
+| `character-200-pt_BR.png` | `TEXT=200 LOCALE=pt_BR` | 66 | `.shot.json`, 6 controls |
+| `character-200-en.png`, `character-200-de.png` | `TEXT=200`, `TEXT=200 LOCALE=de` | 66, 66 | `.shot.json`, 7 controls |
+| `character-hc.png`, `character-hc-pt_BR.png` | `HC=1`, `HC=1 LOCALE=pt_BR` | 91, 91 | `.shot.json`, 6 controls |
+| `character-200-pt_BR-scrolled.png` | `TEXT=200 LOCALE=pt_BR SCROLL=2000` | 43 | `.shot.json`, 2 controls |
+| `character-100-stats.png`, `character-100-compare.png` | `TAB=1`, `TAB=2` | 83, 73 | – |
+| `character-200-pt_BR-stats.png`, `-compare.png` | `TEXT=200 LOCALE=pt_BR TAB=1`, `TAB=2` | 75, 64 | – |
+
+Notes on the table:
+
+- A record's "controls" are the ones `checks.py` reads: the two arrows, the name on the backdrop, the tabs' row (as one), the way back and Level up. In English and German at 200% the subtitle, "Skyskipper · Carrier", is display-sized words on the backdrop too, so it counts as a seventh.
+- `character-200-pt_BR-tabs.png` is gone: the tabs now stand on the first screen at 200%.
+- The draw calls are each frame's, as the shot prints them.
+
+`python3 tools/ui_gate/checks.py all` passes on all nine records, with no FAIL: value-steps passes every control, hud-share passes, and hierarchy reads N/A, as on key frame 04's record.
+
+The ΔL* that value-steps measures:
+
+| Still | Arrows | Tabs | Way back | Level up |
+|---|---|---:|---:|---:|
+| 100% | 53 and 56 | 65 | 77 | 60 |
+| 200%, pt_BR | 58 and 58 | 61 | 77 | 62 |
+| 200%, en | 58 and 58 | 62 | 77 | 62 |
+| 200%, de | 58 and 58 | 60 | 77 | 62 |
+| High contrast | 65 and 67 | 83 | 95 | 78 |
+
+`check_screens.py`, `guard.sh` and `gdlint` are OK.
+
+#### What still differs from the key frame
+
+- **The tray's height above the foot.** The tray stands about 65 points above the screen's foot, against about 40 in key frame 04. The layout check's corner band, the bottom 8% of the screen, holds the way back at least 62 points above the foot. This is board 5's note for K1 (`ui.gd`'s bottom margin).
+- **The ability card at 200% text.** Its tag line and its sentence run under the tray as scroll content. The key frame's header band shows only the icon and kicker above the tray, as this build does.
+- **Mixed tracking.** In German at 100%, the traits kicker drops its tracking while its neighbours keep theirs, until the kit's cards do the same (S3-R14).
+- **English content.** The ability's sentence, "Two uses a heist" and "Hauls loot" are English in pt_BR and German. This is content localisation, not the screen's work, and the pt_BR key frame shows the same.
+- **The earlier list.** Its first and third points, the level badge and the tabs at 200%, are answered above (D and B).
 
 ## Part 3: the settings screen (P2-S3-settings)
 
