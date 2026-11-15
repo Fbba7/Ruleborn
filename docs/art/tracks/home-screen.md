@@ -200,8 +200,8 @@ AD reviewed this part once at `14fdcdfe` (S2-R20, `docs/progress/requests.md`) a
    - Where a named pin finds no free place within `NEAR`, it sheds width before it moves away: it shows the realm's icon and level alone, and then its level on the numbered chip, within `FAR`. Only where a realm finds no place at all does every pin take the same step, so the pins stay alike. Each realm is still said aloud by its name.
    - At large text, when a realm still finds no free place, the side buttons give way, as they already do with the notice up (`Home._edges_yield`).
 2. **With the notice up at 100% in English, the notice takes its height from the goal and the panels first.** The goal keeps one line where it fits. The notice's line under the headline is balanced: it breaks between words so its two lines are near the same length ("See how your / defence held").
-3. **The Full tag shows at every size and in every language.** It is a red plate on the purse's last amount (`Home._hang_full`). At 200%, where the amount fills its slot, the tag sits under the amount.
-4. **The strain shows in its two-line large form at 200% in every language.** The share and the band are each on their own line, in one column (`Home._large_strain`).
+3. **The Full tag shows at every size and in every language.** It is a red plate on the purse's last amount (`HomeParts.hang_full`). At 200%, where the amount fills its slot, the tag sits under the amount.
+4. **The strain shows in its two-line large form at 200% in every language.** The share and the band are each on their own line, in one column (`HomeParts.large_strain`).
 5. **AD's minor points:**
    - **The Portuguese purse at 100% takes two rows.** The amounts sit closer (`PURSE_GAP` 6, down to `PURSE_GAP_LEAST` 3 before a row breaks).
    - **High contrast's Collect label is the same size as at 100%.** Collect's padding is 16 points at every contrast (`COLLECT_PAD`).
