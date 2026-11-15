@@ -3,18 +3,18 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P2-S2-home-3",
   "task_state": "working",
-  "claimed_at": "2026-11-13T09:00:00Z",
-  "lease_until": "2026-11-13T14:27:00Z",
-  "updated_at": "2026-11-13T12:05:00Z",
-  "expected_next_update_by": "2026-11-13T12:50:00Z",
+  "claimed_at": "2026-11-15T17:40:00Z",
+  "lease_until": "2026-11-15T20:40:00Z",
+  "updated_at": "2026-11-15T17:40:00Z",
+  "expected_next_update_by": "2026-11-15T18:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "14fdcdfe",
-    "next_step": "gate on 14fdcdfe (home at 100%: Hierarchy, Character presence) and AD answer to S2-R20; on a pass with no AD objection, mark ready at 14fdcdfe; AD objections are taken inside this task (M12)",
-    "at": "2026-11-13T12:05:00Z"
+    "next_step": "AD's objections 1 to 5 to S2-R20 (pins settled near their islands; the notice at en 100%; Essence's Full tag; the strain chip's two-line form at 200%; pt_BR purse, high-contrast Collect, chip gaps)",
+    "at": "2026-11-15T17:40:00Z"
   },
   "precheck": {
     "sha": "14fdcdfe20e797d94669f8657ea3c4d78f9781ba",
@@ -22,20 +22,9 @@
     "finished_at": "2026-11-13T11:54:05Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "14fdcdfe",
-    "items": [
-      {
-        "item": "home at 100% text",
-        "qualities": [
-          "Hierarchy",
-          "Character presence"
-        ]
-      }
-    ]
-  },
+  "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-14T21:00:00Z",
+  "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M13"
   ],
