@@ -131,29 +131,41 @@
       }
     },
     "reward": {
-      "about": "The result screen's reward sequence (rubric quality 5). The prize gathers and charges for the tier's anticipation_ms (0.3 to 1 s, longer for a rarer reward): gather starts it, the prize holds, and charge, marked ends_at burst, is placed to end at the burst (it starts its ms before); the payoff starts at the burst (its at_ms count from there): the burst, the reveal, and the coins flying in arcs to their counter, 60 ms apart. Each coin's landing runs on_landing: the counter rolls up by that coin's share and pulses. The pulse changes size, never brightness, so the landings are not flashes (§20.8); the burst is the one flash of a reward. The coins share one sprite strip (face, turn, edge, turn) at frame_ms a frame: a coin turning, at constant brightness. A rarer reward has more particles, a longer anticipation and a brighter, larger burst (tiers). Values named tier.<key> come from the reward's tier.",
+      "about": "The result screen's reward sequence (rubric quality 5). The prize gathers for the tier's anticipation_ms (0.3 to 1 s, longer for a rarer reward): gather squashes it a little and warm brightens it from the start, and tighten and charge, marked ends_at burst, are placed to end at the burst (they start their ms before), so the prize keeps squashing and glowing into it. The payoff's at_ms count from the burst; its steps with a negative at_ms are the visible gather, run before the burst on the burst's own sprites: dust drawn in from gather_points and absorbed (only in tiers whose anticipation is long enough, gather_dust being 0 elsewhere and the tier's dust count where it runs), then the ring closing in on the prize and the sparkles drawn in to its middle. No gather step starts before its tier's anticipation does. At the burst the rays and ring grow to burst_scale (the 80-point sprites: about a 96-point prize's size in common, half again its size in rare and more than twice it in epic, well out onto the sunburst) and the sparkles and dust fly out to sparkle_points and dust_points; then the reveal, and the coins flying in arcs to their counter, 60 ms apart. Each coin's landing runs on_landing: the counter rolls up by that coin's share and pulses. The pulse changes size, never brightness, so the landings are not flashes (§20.8); the burst is the one flash of a reward. The coins share one sprite strip (face, turn, edge, turn) at frame_ms a frame: a coin turning, at constant brightness. A rarer reward has more particles, a longer anticipation and a brighter, larger, farther-reaching burst (tiers). Values named tier.<key> come from the reward's tier.",
       "full": {
         "tiers": {
           "common": {
             "anticipation_ms": 300,
             "sparkles": 4,
             "dust": 6,
-            "burst_value": 0.85,
-            "burst_scale": 0.85
+            "burst_value": 0.75,
+            "burst_scale": 1.15,
+            "sparkle_points": 48,
+            "dust_points": 34,
+            "gather_points": 60,
+            "gather_dust": 0
           },
           "rare": {
             "anticipation_ms": 450,
             "sparkles": 6,
             "dust": 8,
-            "burst_value": 1.0,
-            "burst_scale": 1.0
+            "burst_value": 0.88,
+            "burst_scale": 1.8,
+            "sparkle_points": 70,
+            "dust_points": 54,
+            "gather_points": 76,
+            "gather_dust": 8
           },
           "epic": {
             "anticipation_ms": 700,
             "sparkles": 10,
             "dust": 12,
-            "burst_value": 1.25,
-            "burst_scale": 1.15
+            "burst_value": 1.0,
+            "burst_scale": 2.8,
+            "sparkle_points": 104,
+            "dust_points": 84,
+            "gather_points": 96,
+            "gather_dust": 12
           }
         },
         "anticipation": [
@@ -162,24 +174,127 @@
             "target": "prize",
             "property": "scale",
             "from": 1.0,
+            "to": 0.97,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "warm",
+            "target": "prize",
+            "property": "self_modulate_value",
+            "from": 1.0,
+            "to": 1.12,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "tighten",
+            "target": "prize",
+            "property": "scale",
+            "from": 0.97,
             "to": 0.94,
             "at_ms": 0,
-            "ms": 250,
-            "easing": "cubic_out"
+            "ms": 150,
+            "easing": "cubic_out",
+            "ends_at": "burst"
           },
           {
             "name": "charge",
             "target": "prize",
             "property": "self_modulate_value",
-            "from": 1.0,
+            "from": 1.12,
             "to": 1.3,
             "at_ms": 0,
-            "ms": 250,
+            "ms": 150,
             "easing": "cubic_out",
             "ends_at": "burst"
           }
         ],
         "payoff": [
+          {
+            "name": "gather_dust",
+            "target": "burst",
+            "sprite": "sparkle__dot__normal",
+            "count": "tier.gather_dust",
+            "property": "offset_points",
+            "from": "tier.gather_points",
+            "to": 4,
+            "at_ms": -450,
+            "ms": 250,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "gather_dust_in",
+            "target": "burst",
+            "sprite": "sparkle__dot__normal",
+            "count": "tier.gather_dust",
+            "property": "alpha",
+            "from": 0.0,
+            "to": 0.8,
+            "at_ms": -450,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "gather_dust_out",
+            "target": "burst",
+            "sprite": "sparkle__dot__normal",
+            "count": "tier.gather_dust",
+            "property": "alpha",
+            "from": 0.8,
+            "to": 0.0,
+            "at_ms": -250,
+            "ms": 200,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "gather_ring",
+            "target": "burst",
+            "sprite": "burst__ring__normal",
+            "property": "scale",
+            "from": 1.6,
+            "to": 0.3,
+            "at_ms": -250,
+            "ms": 250,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "gather_ring_in",
+            "target": "burst",
+            "sprite": "burst__ring__normal",
+            "property": "alpha",
+            "from": 0.0,
+            "to": 0.55,
+            "at_ms": -250,
+            "ms": 200,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "gather_sparkles",
+            "target": "burst",
+            "sprite": "sparkle__star__normal",
+            "count": "tier.sparkles",
+            "property": "offset_points",
+            "from": "tier.gather_points",
+            "to": 4,
+            "at_ms": -250,
+            "ms": 250,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "gather_sparkles_in",
+            "target": "burst",
+            "sprite": "sparkle__star__normal",
+            "count": "tier.sparkles",
+            "property": "alpha",
+            "from": 0.0,
+            "to": 0.9,
+            "at_ms": -250,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
           {
             "name": "burst_rays",
             "target": "burst",
@@ -232,7 +347,7 @@
             "stagger_ms": 30,
             "property": "offset_points",
             "from": 0,
-            "to": 34,
+            "to": "tier.sparkle_points",
             "at_ms": 0,
             "ms": 250,
             "easing": "cubic_out"
@@ -258,7 +373,7 @@
             "stagger_ms": 30,
             "property": "offset_points",
             "from": 0,
-            "to": 24,
+            "to": "tier.dust_points",
             "at_ms": 20,
             "ms": 220,
             "easing": "cubic_out"
