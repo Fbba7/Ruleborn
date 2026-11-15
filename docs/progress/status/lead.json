@@ -3,18 +3,10 @@
   "updated_at": "2026-11-15T18:06:15Z",
   "expected_next_update_by": "2026-11-15T19:21:15Z",
   "cycle": 85,
-  "merging": {
-    "candidate_sha": "9ee4586344216dbd962cc04749adf05434004e41",
-    "task_ids": [
-      "P2-AD-board-4",
-      "P2-K1-tabs"
-    ],
-    "started_at": "2026-11-15T18:06:15Z",
-    "expires_at": "2026-11-15T19:06:15Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "P2-S1-result-2",
-    "sha": "135a49b2"
+    "task_id": "P2-AD-board-4, P2-K1-tabs",
+    "sha": "14be4ddd"
   },
   "acks": [
     "M15",
