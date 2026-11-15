@@ -2,9 +2,9 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-13T09:46:00Z",
-  "updated_by": "lead (cycle 81)",
-  "stop_at": "2026-11-14T21:00:00Z",
+  "updated_at": "2026-11-15T18:40:56Z",
+  "updated_by": "lead (cycle 85)",
+  "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
   "check_minutes": 25,
@@ -3591,24 +3591,25 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "S3",
         "branch": "claude/ui-screens-meta",
         "claimed_at": "2026-11-13T06:16:00Z",
-        "seen_at": "2026-11-13T09:25:07Z",
-        "lease_until": "2026-11-13T11:32:25Z"
+        "seen_at": "2026-11-15T19:44:00Z",
+        "lease_until": "2026-11-15T21:12:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "eb692c67",
       "merged_sha": null,
-      "updated_at": "2026-11-13T09:46:00Z",
-      "updated_by": "lead (cycle 81)",
+      "updated_at": "2026-11-15T19:44:00Z",
+      "updated_by": "lead (cycle 86)",
       "id": "P2-S3-settings",
       "title": "Settings screen (report.md step 11): on the kit, from the key frame, at 100% and 200% text and in high contrast; estimate includes one review round with AD",
       "exceptions": [
-        "docs/art/shots/menu-screens/**"
+        "docs/art/shots/menu-screens/**",
+        "client/tests/shots/screen_settings.gd.uid"
       ]
     },
     {
@@ -3690,16 +3691,16 @@
       "claim": {
         "agent": "S2",
         "branch": "claude/ui-screens-home",
-        "claimed_at": "2026-11-13T09:00:00Z",
-        "seen_at": "2026-11-13T09:32:00Z",
-        "lease_until": "2026-11-13T12:00:00Z"
+        "claimed_at": "2026-11-15T17:40:00Z",
+        "seen_at": "2026-11-15T19:44:00Z",
+        "lease_until": "2026-11-15T21:21:43Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-13T09:46:00Z",
-      "updated_by": "lead (cycle 81)",
+      "updated_at": "2026-11-15T19:44:00Z",
+      "updated_by": "lead (cycle 86)",
       "id": "P2-S2-home-3",
       "title": "Home screen, part 3 (board 3's objections A-C, AD-R22 to AD-R24): Collect on screen at 200% with the notice, the world framed between the panels, nothing dropped at large text or in pt_BR"
     },
@@ -3726,14 +3727,20 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-13T10:55:00Z",
+        "seen_at": "2026-11-13T12:44:13Z",
+        "lease_until": "2026-11-13T13:55:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-13T09:00:00Z",
-      "updated_by": "lead (cycle 80)",
+      "ready_sha": "ba364ba898f330ba69e73ebb7b2ff96be49f9bb4",
+      "merged_sha": "14be4ddd07632260a18dc163e5146e20d72a385c",
+      "updated_at": "2026-11-15T18:40:56Z",
+      "updated_by": "lead (cycle 85)",
       "id": "P2-K1-tabs",
       "title": "KitTabs labels clear of the tile rim (board 3's objection D, AD-R25)"
     },
@@ -3795,16 +3802,171 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-11-13T11:30:00Z",
+        "seen_at": "2026-11-13T12:44:13Z",
+        "lease_until": "2026-11-13T14:30:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "c0bab2a89cf95b03d3540f977a5c0050e593c900",
+      "merged_sha": "14be4ddd07632260a18dc163e5146e20d72a385c",
+      "updated_at": "2026-11-15T18:40:56Z",
+      "updated_by": "lead (cycle 85)",
+      "id": "P2-AD-board-4",
+      "title": "Board 4 (result and motion, report.md 3.4 O4): AD lets it stand or lists every objection in one round"
+    },
+    {
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/scripts/result_fit.gd.uid",
+        "client/tests/shots/screen_result.gd",
+        "docs/art/tracks/result-screen.md"
+      ],
+      "deps": [
+        "P2-S1-result-2"
+      ],
+      "done_when": [
+        "AD-R27 (board 4, objection A): the three reward figures (+2,310, +805, +15) in the home's 'Keeper 24' finish: deep gold or cream fill, heavy ink outline, hard drop; solid with the outline in high contrast, not hollow",
+        "AD-R26 (objection B): at 200% text in every locale (en, pt_BR, de) the whole haul (Starlight, Essence and Glory) on the first screen above the actions, for example a row with the word on a second line or a smaller icon before ResultFit's column fallback",
+        "AD-R29 (objection D): the reward coins land on the tile's icon, above or beside the digits, and the counter's roll starts as the coin lands; no frame of the full strip hides a rolling figure",
+        "AD-R30 (objection E): Home icon-only at 200% text in every locale, as pt_BR and both key frames; Collect leads the action bar in grayscale",
+        "any change of draw calls asked of the lead as a budgets request (tools/ui_bake/budgets.json is the lead's), with the measurement",
+        "AD previews the stills and strips before ready (M10, M12): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "result at 100% text",
+          "qualities": [
+            "Hierarchy",
+            "Character presence"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "working",
+      "claim": {
+        "agent": "S1",
+        "branch": "claude/ui-screens-heist",
+        "claimed_at": "2026-11-15T18:09:35Z",
+        "seen_at": "2026-11-15T19:44:00Z",
+        "lease_until": "2026-11-15T22:02:03Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-15T19:44:00Z",
+      "updated_by": "lead (cycle 86)",
+      "id": "P2-S1-result-3",
+      "title": "Result screen, part 3 (board 4's objections A, B, D and E; AD-R27, AD-R26, AD-R29, AD-R30): the reward figures in the home's 'Keeper 24' finish, the whole haul on the first screen at 200% in every locale, the coins landing beside the digits, Home icon-only at 200%"
+    },
+    {
+      "role": "AIA",
+      "assigned_to": "AIA",
+      "files": [
+        "art/ui/motion/**",
+        "client/ui/art/motion.webp",
+        "client/ui/art/motion_hc.webp",
+        "client/ui/art/motion.json",
+        "client/ui/art/motion*.import",
+        "client/tests/shots/motion_*.gd"
+      ],
+      "deps": [
+        "P2-AIA-motion-2"
+      ],
+      "done_when": [
+        "AD-R28 (board 4, objection C): the anticipation is a visible gather on the prize (a squash, a building glow, sparkles drawn in), not a still pause; the burst's tier spread widened in art/ui/motion/curves.json and the burst sprite so the epic burst reaches well past the prize onto the sunburst and each tier reads stronger than the last at phone size",
+        "AD-R29's part in AIA's files: the strip shot's coins (client/tests/shots/motion_rig.gd) land on the counter's icon, not over its figure",
+        "the reduced forms and the flash and timing checks (report.md 3.5) still pass and are named in the handoff; the burst's anchor unchanged, or the move asked of S1",
+        "frame strips, full and reduced, and the short clips re-made with tools/ui_gate/sheet.py for board 4b",
+        "node tools/ui_bake/bake.js --check",
+        "bash tools/ui_bake/guard.sh",
+        "AD previews the frame strips before ready (M10, M12), and its objections are answered in this task",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "working",
+      "claim": {
+        "agent": "AIA",
+        "branch": "claude/ui-artist",
+        "claimed_at": "2026-11-15T18:20:00Z",
+        "seen_at": "2026-11-15T19:44:00Z",
+        "lease_until": "2026-11-15T21:20:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-15T19:44:00Z",
+      "updated_by": "lead (cycle 86)",
+      "id": "P2-AIA-motion-3",
+      "title": "Motion art, part 3 (board 4's objection C, AD-R28, and AD-R29's strip target): a visible gather on the prize and a wider burst spread by tier, the epic burst reaching onto the sunburst; strips and clips re-made",
+      "exceptions": [
+        "client/tests/shots/motion_press.gd.uid",
+        "client/tests/shots/motion_reward.gd.uid",
+        "client/tests/shots/motion_rig.gd.uid",
+        "client/tests/shots/motion_screen.gd.uid",
+        "client/tests/shots/motion_shine.gd.uid"
+      ]
+    },
+    {
+      "role": "AD",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P2-AD-board-4",
+        "P2-S1-result-3",
+        "P2-AIA-motion-3"
+      ],
+      "done_when": [
+        "board-4.md, second round: only what the fixes changed (objections A to E) re-checked on P2-S1-result-3's stills and strips and P2-AIA-motion-3's strips and clips beside their references (M12); the board stands or lists what is still open",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
       "state": "open",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-12T18:55:00Z",
-      "updated_by": "lead (cycle 71)",
-      "id": "P2-AD-board-4",
-      "title": "Board 4 (result and motion, report.md 3.4 O4): AD lets it stand or lists every objection in one round"
+      "updated_at": "2026-11-13T11:44:07Z",
+      "updated_by": "lead (cycle 83)",
+      "id": "P2-AD-board-4b",
+      "title": "Board 4, second round: AD re-checks objections A to E on result-3's and motion-3's stills and strips and lets board 4 stand or lists what is still open"
     },
     {
       "role": "AD",
@@ -4039,6 +4201,22 @@
       "text": "Overdue lesson: M14 (to AIA-2, ack_by 2026-11-12T20:15Z) has acked_at null and is in no status acks, on main or on claude/ui-artist, claude/ui-artist-icons or claude/ui-bake. When you next start or resume AIA, give it M14's rule in its prompt: rebake art from a fresh container, merge current main and run bash tools/ui_bake/guard.sh on that merge before ready; list any added, removed or renamed piece or material as a request to the owner of that list (SKINS_OF, the kit's materials) with the same task; send AD portraits in colour and grayscale before ready. Ack by adding M21 to your status acks.",
       "sent_at": "2026-11-13T09:50:00Z",
       "ack_by": "2026-11-13T11:50:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M22",
+      "to": "lead",
+      "text": "Lesson from report 80: cycle 81's first check run (09:44:55Z) failed on the lead's fresh container (no wasm32-unknown-unknown target), not on the candidate, as in cycles 54 and 72; the rule is in lead.md's notes but is still missed. Every cycle runs in a fresh container, so make the fresh-container setup your first step in every cycle, before you take the merge lock: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios, pip install \"gdtoolkit==4.*\" \"playwright==1.63.0\", then bash client/build.sh. Then the first check run tests the candidate. Ack by adding M22 to your status acks.",
+      "sent_at": "2026-11-13T10:58:00Z",
+      "ack_by": "2026-11-13T12:58:00Z",
+      "acked_at": "2026-11-13T11:44:07Z"
+    },
+    {
+      "id": "M23",
+      "to": "AD",
+      "text": "Lesson from the UI report (Scope added rated worse two pushes in a row: 11h against the 6.2h allowance, at reports 81 and 82). Boards 3 and 4 each found 5 to 6 hours of objections after the screen had merged, although you had answered the builders' previews first (M20). Your answer to S1-R24 checked result-2 at 100%, at 200% in pt_BR and in high contrast; the re-check S1-R25 covered only those four objections, and the German 200% fault you saw there (AD-R26) went into board 4 instead of back to S1. Board 4 then found A (the lead reward's type at 100%), B (AD-R26), C and D (the reward motion) and E (Home at 200% in English), filed as P2-S1-result-3, P2-AIA-motion-3 and P2-AD-board-4b (6h). The rule: when you answer a builder's preview request, check its stills against the coming board's full list, not only what the builder asks: every quality the board checks; 100% and 200% text in English, pt_BR and German; high contrast; and the motion strips when the task changes motion. Anything you would object to on the board is an objection in that answer, for the builder to fix inside the same task before it merges, including what a re-check finds outside its scope. The board then records what stands. This applies first to AIA-R26 (the reward strips) and to the stills of P2-S1-result-3 and P2-S2-home-3 before boards 4b and 3b. Ack by adding M23 to your status acks.",
+      "sent_at": "2026-11-15T19:01:00Z",
+      "ack_by": "2026-11-15T21:01:00Z",
       "acked_at": null
     }
   ]
