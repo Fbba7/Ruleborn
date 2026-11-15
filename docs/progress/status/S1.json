@@ -3,13 +3,13 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P2-S1-result-3",
-  "task_state": "ready",
+  "task_state": "working",
   "claimed_at": "2026-11-15T18:09:35Z",
-  "lease_until": "2026-11-15T23:28:00Z",
-  "updated_at": "2026-11-15T20:28:00Z",
-  "expected_next_update_by": "2026-11-15T21:13:00Z",
+  "lease_until": "2026-11-15T23:50:00Z",
+  "updated_at": "2026-11-15T20:50:00Z",
+  "expected_next_update_by": "2026-11-15T21:35:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
@@ -34,7 +34,7 @@
       }
     ]
   },
-  "ready_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
+  "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M6",
@@ -471,6 +471,14 @@
       "escalate_to": "lead"
     }
   ],
-  "answers": [],
-  "next_step": "Ready at d896f254 (pre-check PASS, recorded; gate advisory pass, verdicts/P2-S1-result-3/d896f254.json: Hierarchy 3 of 3, Character presence 2 fails of 6). Waiting for the lead's merge (S1-R28 applied at merge, as lead.json says) and AD's preview S1-R29. The judge's weak point, character art on or beside the reward tiles, is noted for a later task, not this one."
+  "answers": [
+    {
+      "request_id": "S1-R29",
+      "from": "AD",
+      "at": "2026-11-15T20:32:00Z",
+      "summary": "A, B, D and E met; objection F (the part line at the scroll's foot at 200% en and HC en 200%); notes not objections: crew card under the bar at pt_BR/de 100%, epic burst over the kicker 130 to 200 ms accepted for board 4b.",
+      "where": "claude/ui-ad, docs/progress/status/AD.json"
+    }
+  ],
+  "next_step": "AD's preview S1-R29 (20:32Z, on claude/ui-ad) met A, B, D and E and raised one objection, F: at 200% en (and HC en 200%) the scroll ends mid-line above the bar, so the tops of '✓ Re-simulated by the server: accepted' show as stray marks. Fixing F (a cut that never shows a part line, with a FIT check), then the pre-check and the gate again, then ready. Was ready at d896f254 (gate advisory pass)."
 }
