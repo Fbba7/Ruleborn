@@ -79,20 +79,24 @@ func _build() -> void:
 	status_label = UI.status("info", "")
 	column.add_child(_padded(UI.plate(status_label, "glass")))
 	body = UI.scroll(column)
-	body.add_theme_constant_override("separation", UI.px(10))
+	body.add_theme_constant_override("separation", UI.px(8))
 	stage = StageHero.new()
-	stage.custom_minimum_size = Vector2(0, UI.px(Tokens.number("size", "safe_top_points") + 215.0))
+	var tall := Tokens.number("size", "safe_top_points") + (165.0 if _large() else 170.0)
+	stage.custom_minimum_size = Vector2(0, UI.px(tall))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	# Clear of the place and state pills over the stage's top.
 	stage.headroom = 0.08
 	body.add_child(stage)
+	stage.item_rect_changed.connect(_blend_foot)
+	(body.get_parent() as ScrollContainer).get_v_scroll_bar().value_changed.connect(func(_v: float) -> void:
+		_blend_foot())
 	# The name in the display face on the kit's dark plate at the stage's
 	# foot, as the design's; the plate's material sets its ink.
 	title_label = UI.label("", 24)
 	title_label.theme_type_variation = "DisplayS"
 	title_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	cards = VBoxContainer.new()
-	cards.add_theme_constant_override("separation", UI.px(10))
+	cards.add_theme_constant_override("separation", UI.px(8))
 	body.add_child(_padded(cards))
 	forms = KitLayout.grid(LOOKS.size(), 6.0)
 	forms.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -109,15 +113,34 @@ func _build() -> void:
 	notes = VBoxContainer.new()
 	notes.add_theme_constant_override("separation", UI.px(6))
 	column.add_child(_padded(notes))
-	# The lowest row on the kit's dark plate, standing above the corners'
-	# band (§21.1: 8% of the frame's height, of which the safe area is 44
-	# points), so it may run the column's width as the design's does.
+	# The lowest row on the kit's dark plate, its back button just above the
+	# corners' band (§21.1: 8% of the frame's height, of which the safe area
+	# is 44 points), so it may run the column's width as the design's does
+	# and sits as near the foot as key frame 04's (board 5's C).
 	var tray := UI.panel("plate_dark")
 	tray.add_child(bottom)
 	var lift := MarginContainer.new()
-	lift.add_theme_constant_override("margin_bottom", UI.px(20))
+	lift.add_theme_constant_override("margin_bottom", UI.px(6))
 	lift.add_child(tray)
 	column.add_child(_padded(lift))
+
+
+## The stage's foot fades to the menus' night where the stage ends on the
+## screen, so its sky runs on into the backdrop with no edge (board 5's
+## objection G): the stage fades to the night's darkest point, a third of
+## the way down the screen the backdrop is lighter. Asked of the stage in
+## S3-R11 (docs/progress/status/S3.json).
+func _blend_foot() -> void:
+	if not stage.is_inside_tree():
+		return
+	var at := clampf(stage.get_global_rect().end.y / maxf(1.0, get_viewport_rect().size.y), 0.0, 1.0)
+	var night := Tokens.gradient("night").sample(at)
+	for n: Node in stage.get_children():
+		if n is TextureRect and (n as TextureRect).texture is GradientTexture2D:
+			var ramp := ((n as TextureRect).texture as GradientTexture2D).gradient
+			if ramp.get_color(1) != night:
+				ramp.set_color(0, Color(night, 0.0))
+				ramp.set_color(1, night)
 
 
 ## `what` held in from the screen's sides by the safe area's margin.
@@ -184,7 +207,7 @@ func _refresh() -> void:
 	var options: Array = []
 	for i: int in TABS.size():
 		options.append([Strings.t(TABS[i]), TAB_ICONS[i]])
-	cards.add_child(KitNav.segmented(options, tab, _pick_tab, true))
+	cards.add_child(_tabs(options))
 	match tab:
 		0:
 			_heist_tab(c, me)
@@ -198,6 +221,56 @@ func _refresh() -> void:
 			if b.get_meta("item", "") == focus_item and b.is_visible_in_tree():
 				b.grab_focus.call_deferred()
 				break
+
+
+## The kit's segmented tabs, as key frame 04's: at body size each icon
+## inline before its word, one line tall; at large text all three on one
+## line, the open tab in words and the others as their icons, named for a
+## screen reader (the board-5 objections B and C; the kit's own forms are
+## requested in S3-R9, docs/progress/status/S3.json).
+func _tabs(options: Array) -> Control:
+	var strip := KitNav.segmented(options, tab, _pick_tab, true)
+	var large := _large()
+	if strip.get_child(0) is GridContainer:
+		(strip.get_child(0) as GridContainer).columns = options.size()
+	var buttons := strip.find_children("*", "Button", true, false)
+	for i: int in buttons.size():
+		var b := buttons[i] as Button
+		var v: VBoxContainer = null
+		for n in b.get_children():
+			if n is VBoxContainer:
+				v = n
+		if v == null or v.get_child_count() < 2:
+			continue
+		var icon := v.get_child(0) as Control
+		var l := v.get_child(1) as Label
+		var line := l.get_theme_font("font").get_height(l.get_theme_font_size("font_size"))
+		if large:
+			l.visible = i == tab
+			icon.visible = i != tab
+			if i != tab:
+				b.custom_minimum_size.x = UI.px(UI.CONTROL_POINTS)
+				icon.custom_minimum_size = Vector2.ONE * UI.px(32)
+			b.custom_minimum_size.y = maxf(UI.px(48), line + UI.px(16))
+			continue
+		var h := HBoxContainer.new()
+		h.set_anchors_preset(Control.PRESET_FULL_RECT)
+		h.alignment = BoxContainer.ALIGNMENT_CENTER
+		h.add_theme_constant_override("separation", UI.px(5))
+		h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		v.remove_child(icon)
+		v.remove_child(l)
+		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		h.add_child(icon)
+		l.clip_text = false
+		l.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
+		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		h.add_child(l)
+		b.remove_child(v)
+		v.queue_free()
+		b.add_child(h)
+		b.custom_minimum_size.y = maxf(UI.px(UI.CONTROL_POINTS), line + UI.px(16))
+	return strip
 
 
 func _pick_tab(i: int) -> void:
@@ -223,24 +296,49 @@ func _sub_line(c: Dictionary, me: Dictionary) -> Control:
 	# schools' stage grounds, under the 75 that 16 points ask (§21.8).
 	# With the kit's ink outline all round, as every word over the stage's
 	# art (§21.8; the gate's display-type check at f1251e68).
-	var sub := ScreenKit.inked(UI.label("%s · %s" % [RosterPresenter.kind_name(str(me.get("kind", ""))),
+	var sub := _over_stage(UI.label("%s · %s" % [RosterPresenter.kind_name(str(me.get("kind", ""))),
 		c["role"]], 16))
 	sub.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	line.add_child(sub)
-	_wrap_in(sub, line, 0.0)
+	# At large text on one line, as the large-text key frame's: smaller
+	# before it breaks, down to 1.5 times body size.
+	_wrap_in(sub, line, 0.0, 24.0 if _large() else 0.0)
 	return line
+
+
+## True when the player's text is past the size the kit sets side by side.
+static func _large() -> bool:
+	return Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO
+
+
+## Words on the backdrop under the stage with the kit's ink outline all
+## round; at large text, as the large-text key frame's, a heavier one
+## (§21.8: 12% of their size) and the hard drop of the display type.
+static func _over_stage(l: Label) -> Label:
+	if not _large():
+		return ScreenKit.inked(l)
+	var size := float(l.get_theme_font_size("font_size"))
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", maxi(UI.px(3.0), roundi(size * 0.12)))
+	l.add_theme_color_override("font_shadow_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("shadow_offset_x", 0)
+	l.add_theme_constant_override("shadow_offset_y", UI.px(2.0))
+	l.add_theme_constant_override("shadow_outline_size", maxi(UI.px(3.0), roundi(size * 0.12)))
+	return l
 
 
 ## `l` on one line while it fits in `room`'s width, less `inset` points,
 ## and broken between words when it does not, so large text and longer
-## words never push the column past the screen.
-static func _wrap_in(l: Label, room: Control, inset: float) -> void:
+## words never push the column past the screen. With `least` points, the
+## words first grow smaller, down to that size, to stay on one line.
+static func _wrap_in(l: Label, room: Control, inset: float, least := 0.0) -> void:
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var wide := func() -> float:
+	var full := l.get_theme_font_size("font_size")
+	var wide_at := func(size: int) -> float:
 		var font := l.get_theme_font("font")
 		var words := l.text.to_upper() if l.uppercase else l.text
-		return font.get_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, -1, l.get_theme_font_size("font_size")).x \
-			+ 2.0
+		return font.get_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x + 2.0
+	var wide := func() -> float: return wide_at.call(l.get_theme_font_size("font_size"))
 	# The room is also measured to the screen's side less the safe margin,
 	# each time it moves as well as grows: the label's own width holds its
 	# room open, so the room's width alone, taken before the layout settles,
@@ -250,6 +348,13 @@ static func _wrap_in(l: Label, room: Control, inset: float) -> void:
 			return
 		var side := l.get_viewport_rect().size.x - UI.px(Tokens.number("size", "safe_side_points"))
 		var fits := minf(room.size.x, side - room.get_global_rect().position.x)
+		if least > 0.0:
+			var at := full
+			var whole: float = wide_at.call(full)
+			if whole > fits - UI.px(inset):
+				at = maxi(UI.px(least), floori(full * (fits - UI.px(inset)) / whole))
+			if l.get_theme_font_size("font_size") != at:
+				l.add_theme_font_size_override("font_size", at)
 		var want := minf(wide.call(), fits - UI.px(inset))
 		if absf(l.custom_minimum_size.x - want) > 0.5:
 			l.custom_minimum_size.x = want)
@@ -261,7 +366,10 @@ static func _wrap_in(l: Label, room: Control, inset: float) -> void:
 func _level_row(level: int, top: int, health: int) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(10))
-	var hex := KitHex.make(Strings.t("CHARACTER_LEVEL_SHORT"), str(level))
+	# The kit's hexagon is 52 points tall for 22-point figures; it grows with
+	# the player's text so its kicker stays inside it at every size.
+	var hex := KitHex.make(Strings.t("CHARACTER_LEVEL_SHORT"), str(level),
+		52.0 * maxf(1.0, float(UI.text_px(22)) / UI.px(22)))
 	hex.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(hex)
 	var v := VBoxContainer.new()
@@ -269,14 +377,24 @@ func _level_row(level: int, top: int, health: int) -> Control:
 	v.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	v.add_theme_constant_override("separation", UI.px(4))
 	v.add_child(KitStatus.xp(level, maxi(top, 1), "", clampi(top, 1, 20)))
-	var of := ScreenKit.inked(UI.label(Strings.t("CHARACTER_LEVEL_OF", [level, top]), 14, true))
+	var of := _over_stage(UI.label(Strings.t("CHARACTER_LEVEL_OF", [level, top]), 14))
 	of.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	v.add_child(of)
 	row.add_child(v)
+	if _large():
+		# One line, smaller before it breaks, beside the hexagon.
+		_wrap_in(of, v, 0.0, 22.0)
+	else:
+		of.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	if health >= 0:
 		var pill := KitStatus.pill("%s %d" % [Strings.t("CHARACTER_KICK_HEALTH"), health], "", "plate_dark", 160.0)
 		pill.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		row.add_child(pill)
+		if _large():
+			# Under the level line, as the large-text key frame's.
+			pill.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+			v.add_child(pill)
+		else:
+			row.add_child(pill)
 	return row
 
 
@@ -297,6 +415,10 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 		elif l.get_parent().name == "Tag":
 			# Its kind of use, broken when larger words do not fit beside it.
 			_wrap_in(l, l.get_parent().get_parent(), 16.0)
+			# On the kicker's line, as key frame 04's card: the kit's gaps
+			# leave the English tag 2 points short of it (S3-R10).
+			(l.get_parent().get_parent() as HFlowContainer).add_theme_constant_override("h_separation", UI.px(4))
+			(ability.get_child(0) as HBoxContainer).add_theme_constant_override("separation", UI.px(8))
 		elif l.theme_type_variation == "Heading":
 			# What it does in the body face at 16 points, as key frame 04's
 			# card: the kit's 20-point serif made the card outweigh Level up
@@ -309,6 +431,13 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 			# 60 that bold words ask (§21.8); the gradient's top gold is Lc 75.
 			# Requested of the kit in S3-R4 (docs/progress/status/S3.json).
 			l.add_theme_color_override("font_color", Tokens.color("gold_top"))
+			var head := l.get_parent() as HFlowContainer
+			if head.get_child_count() > 1:
+				_untrack_when_tight(l, head, head.get_child(1) as Control, UI.px(4))
+	# The icon's square and the card's sides as key frame 04's, so what it
+	# does takes two lines there, not three (board 5's C, S3-R10).
+	_pad(ability, 8.0, 8.0)
+	_pad(ability.get_child(0).get_child(0) as PanelContainer, 4.0, 4.0)
 	frame.add_child(ability)
 	var role := str(me.get("role", ""))
 	var keys: Array = me.get("traits", [])
@@ -322,7 +451,7 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 		[_icon("realmactions/assignworker", "hud/star"), Strings.t("CHARACTER_KICK_BEST"),
 			Strings.term("BEST_AT", kind)],
 	]:
-		var tile := KitCards.fact(f[0], f[1], f[2])
+		var tile := _compact(KitCards.fact(f[0], f[1], f[2]))
 		for l: Label in tile.find_children("*", "Label", true, false):
 			l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -343,6 +472,7 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 		line.add_child(effect)
 		frame.add_child(line)
 	var paper := UI.panel("parchment")
+	_pad(paper, 8.0, 6.0)
 	paper.add_child(frame)
 	cards.add_child(paper)
 	forms.columns = KitLayout.grid_columns(LOOKS.size())
@@ -359,6 +489,64 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 	_dress(send, "leather")
 	work.add_child(send)
 	cards.add_child(_card(Strings.t("ROSTER_STATE_WORKING"), work))
+
+
+## A fact as key frame 04's, so all four stand on the first screen at 100%
+## text (board 5's C): its disc beside the kicker, the words under both
+## across the card at 13 points in the body face, and 6 points of padding;
+## the kit's fact sets the words in a column beside its disc (S3-R13).
+static func _compact(tile: PanelContainer) -> PanelContainer:
+	_pad(tile, 6.0, 6.0)
+	var row := tile.get_child(0) as HBoxContainer
+	var v := row.get_child(1) as VBoxContainer
+	var words := v.get_child(1) as Label
+	var stack := VBoxContainer.new()
+	stack.add_theme_constant_override("separation", UI.px(2))
+	tile.remove_child(row)
+	v.remove_child(words)
+	stack.add_child(row)
+	stack.add_child(words)
+	tile.add_child(stack)
+	row.add_theme_constant_override("separation", UI.px(5))
+	_pad(row.get_child(0) as PanelContainer, 2.0, 2.0)
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	words.theme_type_variation = ""
+	words.add_theme_font_size_override("font_size", UI.text_px(13))
+	words.set_meta("points", 13.0)
+	words.set_meta("bold", false)
+	_untrack_when_tight(v.get_child(0) as Label, v)
+	return tile
+
+
+## Sets `kicker` in capitals without its tracking (as the kit's tags are)
+## once its longest word, or the whole kicker and `beside` after it, is wider
+## than `room`, so German "EIGENSCHAFTEN" stands whole rather than breaking
+## inside the word, and Portuguese "HABILIDADE" keeps its tag on its line
+## (board 5's C).
+static func _untrack_when_tight(kicker: Label, room: Control, beside: Control = null, gap := 0.0) -> void:
+	room.resized.connect(func() -> void:
+		if kicker.theme_type_variation != "Kicker" or room.size.x <= 0.0:
+			return
+		var font := kicker.get_theme_font("font")
+		var size := kicker.get_theme_font_size("font_size")
+		var need := 0.0
+		if beside != null:
+			need = font.get_string_size(kicker.text.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+			need += gap + beside.get_combined_minimum_size().x
+		else:
+			for word: String in kicker.text.to_upper().split(" "):
+				need = maxf(need, font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x)
+		if need > room.size.x:
+			kicker.theme_type_variation = "BodyBold")
+
+
+## Sets the padding of `box`, a kit panel, to `side` and `top` points.
+static func _pad(box: PanelContainer, side: float, top: float) -> void:
+	var style := box.get_theme_stylebox("panel")
+	style.content_margin_left = UI.px(side)
+	style.content_margin_right = UI.px(side)
+	style.content_margin_top = UI.px(top)
+	style.content_margin_bottom = UI.px(top)
 
 
 ## `icon` when the designs have it, else `instead`.
@@ -524,38 +712,94 @@ func _upgrade(o: Dictionary, busy: bool) -> Button:
 
 
 ## The kit's upgrade stands 64 points tall with its words in the room left
-## of a 96-point price; at large text the words and the chip outgrow both.
-## Here the words keep clear of the chip as it is, the title wraps, and the
-## button grows to hold them (requested of the kit in S3-R3, docs/progress/status/S3.json).
+## of a 96-point price; at large text the words and the chip outgrow both
+## (requested of the kit in S3-R3, docs/progress/status/S3.json). Here, as
+## key frame 04: "Level up" in the display face, mixed case, cream stroked
+## in ink with its drop; the price in the kit's white numerals. At body
+## size the words sit left of the chip; at large text the title takes the
+## button's width and the level line sits beside the chip under it, as the
+## large-text key frame does. Words break between words only, never inside
+## one, and the button grows to hold them.
 static func _fit_upgrade(b: Button) -> void:
-	var v := b.get_child(0) as Control
-	var cost: Control = null
+	var v := b.get_child(0) as VBoxContainer
+	var cost: PanelContainer = null
 	for n in b.get_children():
 		if n is PanelContainer:
 			cost = n
 	if cost == null:
 		return
 	var title := v.get_child(0) as Label
-	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	v.offset_left = maxf(v.offset_left, UI.px(10))
+	var line: Label = v.get_child(1) if v.get_child_count() > 1 else null
+	title.uppercase = false
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD
+	title.add_theme_color_override("font_color", Tokens.color("cream"))
+	title.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	title.add_theme_constant_override("outline_size", UI.px(float(Tokens.type_role("display_s")["outline"]) * 1.5))
+	title.add_theme_color_override("font_shadow_color", Tokens.color("ink_line"))
+	title.add_theme_constant_override("shadow_offset_x", 0)
+	title.add_theme_constant_override("shadow_offset_y", maxi(1, UI.px(float(Tokens.type_role("display_s")["drop"]))))
+	title.add_theme_constant_override("shadow_outline_size", UI.px(float(Tokens.type_role("display_s")["outline"]) * 1.5))
+	var price := cost.get_child(0) as HBoxContainer
+	var figure := price.get_child(price.get_child_count() - 1) as Label
+	var shown := KitNumerals.make(figure.text, "num_white", "display_s")
+	price.remove_child(figure)
+	figure.queue_free()
+	price.add_child(shown)
+	price.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.offset_left = maxf(v.offset_left, UI.px(12))
+	if line != null:
+		line.autowrap_mode = TextServer.AUTOWRAP_WORD
+	var stacked := Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO and line != null
+	if stacked:
+		# The title over a row of the level line and the chip.
+		v.offset_right = -UI.px(12)
+		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		line.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		line.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		var row := HBoxContainer.new()
+		row.name = "LineAndPrice"
+		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_theme_constant_override("separation", UI.px(8))
+		v.remove_child(line)
+		row.add_child(line)
+		b.remove_child(cost)
+		cost.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		cost.offset_left = 0
+		cost.offset_right = 0
+		cost.offset_top = 0
+		cost.offset_bottom = 0
+		cost.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(cost)
+		v.add_child(row)
+		v.add_theme_constant_override("separation", UI.px(2))
 	var fit := func() -> void:
-		var right := -(cost.size.x + UI.px(20))
+		var right: float = -float(UI.px(12)) if stacked else -(cost.size.x + UI.px(20))
 		if absf(v.offset_right - right) > 0.5:
 			v.offset_right = right
-		# Measured from the font at the room the title has, not from the
-		# label, whose lines lag its width by a frame.
+		# Measured from the font at the room the words have, not from the
+		# labels, whose lines lag their width by a frame.
 		var room := maxf(UI.px(40), b.size.x + right - v.offset_left)
-		var font := title.get_theme_font("font")
-		var size := title.get_theme_font_size("font_size")
-		var words := font.get_multiline_string_size(title.text.to_upper(), HORIZONTAL_ALIGNMENT_CENTER,
-			room, size, -1, TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND).y
-		if v.get_child_count() > 1:
-			words += (v.get_child(1) as Label).get_line_height()
-		var tall := maxf(UI.px(64), words + UI.px(14))
+		var tall := _words_tall(title, room)
+		if line != null:
+			var beside := room - cost.get_combined_minimum_size().x - UI.px(8) if stacked else room
+			var under := maxf(_words_tall(line, beside), cost.get_combined_minimum_size().y) if stacked \
+				else _words_tall(line, beside)
+			tall += under + float(v.get_theme_constant("separation"))
+		tall = maxf(UI.px(64), tall + UI.px(14))
 		if absf(b.custom_minimum_size.y - tall) > 0.5:
 			b.custom_minimum_size.y = tall
 	b.resized.connect(fit)
 	cost.resized.connect(fit)
+
+
+## The height of `l`'s words broken between words at `room` pixels wide.
+static func _words_tall(l: Label, room: float) -> float:
+	var font := l.get_theme_font("font")
+	var words := l.text.to_upper() if l.uppercase else l.text
+	var lines := font.get_multiline_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, maxf(room, 1.0),
+		l.get_theme_font_size("font_size"), -1, TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND)
+	return lines.y + float(l.get_theme_constant("line_spacing")) * maxf(0.0, roundf(lines.y / l.get_line_height()) - 1.0)
 
 
 ## Every button in `node` on the kit's `kind`; the words beside one in the

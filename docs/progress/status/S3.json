@@ -8,13 +8,13 @@
   "task_state": "in_progress",
   "claimed_at": "2026-11-15T22:36:00Z",
   "lease_until": "2026-11-16T01:36:00Z",
-  "updated_at": "2026-11-15T22:52:07Z",
-  "expected_next_update_by": "2026-11-15T23:37:07Z",
+  "updated_at": "2026-11-15T23:01:00Z",
+  "expected_next_update_by": "2026-11-15T23:46:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e86fad0",
-    "next_step": "A, B, C, D, G coded in character_screen.gd; rendering en/pt_BR/de at 100% and 200% to check them against key frame 04",
-    "at": "2026-11-15T22:41:00Z"
+    "next_step": "A, B, C, D, G coded; 100% en, pt_BR and de render all four facts (r3); fixing pt_BR's tag line and de's kicker break, then stills, records, AD preview, gate",
+    "at": "2026-11-15T22:57:08Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -170,6 +170,76 @@
       "due": "2026-11-13T21:23:28Z",
       "default": "settings keeps the row-edge window and the bare chevron; the kit's cue replaces it when it exists",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R9",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: two forms of the segmented control with [words, icon] options, as key frame 04 shows them and board 5's B and C ask. At 100%: each option's icon beside its words on one line, not over them (the stacked form made the character's tab strip about 17 points taller than the key frame's). At large text: the chosen option in words, the others icon-only, all on one line, rather than a two-column grid. character_screen.gd reshapes the kit's buttons after KitNav.segmented builds them (_tabs).",
+      "files": [
+        "client/ui/kit_nav.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T22:57:08Z",
+      "due": "2026-11-16T10:57:08Z",
+      "default": "character_screen.gd keeps reshaping the strip in _tabs; it switches to the kit's forms when they exist",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R10",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: the ability card (KitCards.ability) at key frame 04's measures, so its tag stands on the kicker's line and what it does takes two lines at 100% text: the icon's square 4 points of padding (now 10), the card 8 points at its sides (now 10), the head's gap 4 points (now 6) and the row's 8 (now 12). character_screen.gd sets these on the built card (_heist_tab).",
+      "files": [
+        "client/ui/kit_cards.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T22:57:08Z",
+      "due": "2026-11-16T10:57:08Z",
+      "default": "character_screen.gd keeps setting them on the built card",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R11",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: the stage's foot (StageHero's foot fade in client/world/stage_hero.gd) to fade into the menus' night as it is where the stage ends on the screen, not to NIGHT_FOOT, so a stage over the page's 'night' backdrop ends with no edge (board 5's G). character_screen.gd retints the foot's gradient to the night gradient's colour at the stage's lower edge, on resize and scroll (_blend_foot).",
+      "files": [
+        "client/world/stage_hero.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T22:57:08Z",
+      "due": "2026-11-16T10:57:08Z",
+      "default": "character_screen.gd keeps retinting the foot in _blend_foot",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R12",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: a hexagon badge (KitHex.make) that grows with the player's text size, so its tag (LV, NV, ST) stays inside it at 200% (board 5's D). character_screen.gd passes a size scaled by the text's growth (_level_row).",
+      "files": [
+        "client/ui/kit_hex.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T22:57:08Z",
+      "due": "2026-11-16T10:57:08Z",
+      "default": "character_screen.gd keeps scaling the size it passes",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R13",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: a compact fact card (KitCards.fact) as key frame 04's: the disc beside the kicker, the words under both across the card at 13 points in the body face, 6 points of padding. The kit's fact sets the words in a column beside its disc, which left the fourth fact below the fold at 100% text (board 5's C). character_screen.gd rebuilds the built card (_compact).",
+      "files": [
+        "client/ui/kit_cards.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T22:57:08Z",
+      "due": "2026-11-16T10:57:08Z",
+      "default": "character_screen.gd keeps rebuilding the built card in _compact",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -179,5 +249,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "baseline shots rendered (de 200% FIT fails, objection A); editing character_screen.gd for A and D first"
+  "next_step": "A, B, C, D, G coded; 100% en, pt_BR and de render all four facts (r3); fixing pt_BR's tag line and de's kicker break, then stills, records, AD preview, gate"
 }
