@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-15T17:40:00Z",
   "lease_until": "2026-11-16T01:50:00Z",
-  "updated_at": "2026-11-15T22:50:00Z",
-  "expected_next_update_by": "2026-11-15T23:35:00Z",
+  "updated_at": "2026-11-15T23:30:00Z",
+  "expected_next_update_by": "2026-11-16T00:15:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "13ff046f",
-    "next_step": "Fix AD's S2-R22 objections (a) to (e) inside home-3, merge main, re-run checks, re-check request to AD.",
-    "at": "2026-11-15T22:50:00Z"
+    "next_step": "Re-run the FIT renders, guard.sh and check_screens on the merge of main (a8f799c), pre-check, mark P2-S2-home-3 ready, S2-R25 to AD.",
+    "at": "2026-11-15T23:30:00Z"
   },
   "precheck": {
     "sha": "13ff046f84c290ce47986ddeb7f46da60778f6bf",
@@ -338,8 +338,54 @@
       "due": "2026-11-16T08:10:00Z",
       "default": "The helper stays as committed and P2-S2-home-3 is ready with it; the lead adds both paths to the task's exceptions when it merges.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R24",
+      "from": "S2",
+      "to": "K1",
+      "ask": "Through the lead: KitTabs' chosen tab's picture stands above the tab's declared height (tab_height + RISE 18). At 200% it rises about 40 points past the chosen tile's top (the TextureRect's rect is 81 x 81 points, anchored center-bottom at offset_bottom -5 with the bob's 2 on top), so on home it reached the goal panel (AD's objection (a) on S2-R22). Keep the picture within the declared height at every text size, or declare the height it takes, so screens over the dock can reserve it. Until then home reserves it itself (HomeParts.reserve_lift: the tabs' top margin, about 36 points at 200%). Its cost is in docs/art/tracks/home-screen.md, Part 3, 'What (a) costs': at pt_BR 200% with the raid notice up the realms' chips give way, and a darker band of the galaxy's edge shows over the dock at pt_BR 200%.",
+      "files": [
+        "client/ui/kit_tabs.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T23:30:00Z",
+      "due": "2026-11-16T23:30:00Z",
+      "default": "Home keeps reserving the lift (HomeParts.reserve_lift); the pt_BR 200% notice case keeps its chips hidden until KitTabs changes, and home needs no change when it does.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R25",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Re-check only S2-R22's objections (a) to (e) on claude/ui-screens-home at the ready commit (one round, M12). Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: (a) TEXT=200 in en, de, CONTRAST=1: the chosen tab's picture clear of the goal and Collect; (b) TEXT=200 in en, de, CONTRAST=1: every realm pin in one form; (c) LOCALE=de at 100%: the purse in one row; (d) TEXT=200 en: '1,240 experience to go · / Keeper 25'; (e) LOCALE=de TEXT=200: Collect's side padding. FIT now checks (a) to (c). Please also rule on one trade (a) makes: at pt_BR 200% with NOTICE=1 the realms' chips give way (FIT fails on 'no realm marked'), as the reserve takes the world's room; the fix is KitTabs' (S2-R24). Answers in docs/art/tracks/home-screen.md, Part 3, \"AD's S2-R22 review\" and 'What (a) costs'.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/world/universe_pins.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T23:30:00Z",
+      "due": "2026-11-16T11:30:00Z",
+      "default": "(a) to (e) stand as fixed, and the pt_BR 200% notice case waits for S2-R24; S2 keeps P2-S2-home-3 ready, and any new objection becomes a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R26",
+      "from": "S2",
+      "to": "K1",
+      "ask": "Through the lead: KitLayout.tap (client/ui/kit_layout.gd, lines 82-83) connects button_down and button_up to Motion.press again on a button that already has them, and every home render logs \"Signal 'button_up' is already connected\" (and button_down). Main logs it too (AD's note on S2-R22). Home reaches it from UniverseBadge. Guard the connects with is_connected, or connect once.",
+      "files": [
+        "client/ui/kit_layout.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T23:30:00Z",
+      "due": "2026-11-17T23:30:00Z",
+      "default": "The log line stays; it changes nothing on the screen.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "Fix AD's S2-R22 objections (a) to (e) inside home-3, merge main, re-run checks, re-check request to AD."
+  "next_step": "Re-run the FIT renders, guard.sh and check_screens on the merge of main (a8f799c), pre-check, mark P2-S2-home-3 ready, S2-R25 to AD."
 }
