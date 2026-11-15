@@ -237,8 +237,15 @@ The lead's gate on eed8b817 (`docs/art/ui-quality/gate/verdicts/P2-S3-settings/`
 
 The four stills were re-rendered with `FIT=1 RECORD=1`, and each printed `fit ok` (the 200% en still too). `checks.py all`: no FAIL, and value-steps passes every control. `gdlint`, `check_screens.py` and `guard.sh`: OK. The client tests read 382 ok; the not ok all need the server. The budget shots read 48, 41 and 48, against 52, 47 and 52; the worst word is 9.37:1, and 5.94:1 in high contrast.
 
+### The gate on f0a36a41, and ready
+
+The lead's advisory gate on f0a36a41 (`docs/art/ui-quality/gate/verdicts/P2-S3-settings/f0a36a41.json`) passed all six rows: Hierarchy and Display type at 100%, Display type and Hierarchy at 200% in pt_BR, Colour roles and value and Hierarchy in high contrast. Hierarchy at 100% passed narrowly, three fails of six: the fails held that the dark group-heading plates weigh less in grayscale than the bright cream rows. That is listed below as still worse.
+
+Main was merged into the branch at eb692c67, with no change to the settings screen's files or the kit it uses. On that merge the setup line and `bash client/build.sh` exit 0, `check_all.sh` passed ("All checks passed.", 18:49:12Z on 15 November), and `guard.sh` is OK, the settings budget shots reading 48, 41 and 48 against 52, 47 and 52 recorded.
+
 ### What is still worse than before
 
+- **The group headings at 100%.** The gate passed Hierarchy at 100% narrowly: in grayscale the dark heading plates weigh less than the cream rows below them.
 - **The tab and back words.** Key frame 05 sets them in capitals. The screen keeps the kit's sentence case (`Tokens.type_role`). Capitals would be a change to the kit's type roles, which is K1's work.
 - **The shapes in pt_BR.** At 100% text, the longer Portuguese names (Movimento, Matéria) put the six coins three to a line, not the key frame's six in one row.
 - **The fold at 200% text.** The whole law shows, but the text card runs past the window, the colour-blind card and the switches are below the fold (`SCROLL`), and the cue is a chevron with no fade, until the kit has a scroll cue (S3-R8).
