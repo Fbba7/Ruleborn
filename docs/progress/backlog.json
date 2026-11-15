@@ -4197,6 +4197,14 @@
       "sent_at": "2026-11-13T10:58:00Z",
       "ack_by": "2026-11-13T12:58:00Z",
       "acked_at": "2026-11-13T11:44:07Z"
+    },
+    {
+      "id": "M23",
+      "to": "AD",
+      "text": "Lesson from the UI report (Scope added rated worse two pushes in a row: 11h against the 6.2h allowance, at reports 81 and 82). Boards 3 and 4 each found 5 to 6 hours of objections after the screen had merged, although you had answered the builders' previews first (M20). Your answer to S1-R24 checked result-2 at 100%, at 200% in pt_BR and in high contrast; the re-check S1-R25 covered only those four objections, and the German 200% fault you saw there (AD-R26) went into board 4 instead of back to S1. Board 4 then found A (the lead reward's type at 100%), B (AD-R26), C and D (the reward motion) and E (Home at 200% in English), filed as P2-S1-result-3, P2-AIA-motion-3 and P2-AD-board-4b (6h). The rule: when you answer a builder's preview request, check its stills against the coming board's full list, not only what the builder asks: every quality the board checks; 100% and 200% text in English, pt_BR and German; high contrast; and the motion strips when the task changes motion. Anything you would object to on the board is an objection in that answer, for the builder to fix inside the same task before it merges, including what a re-check finds outside its scope. The board then records what stands. This applies first to AIA-R26 (the reward strips) and to the stills of P2-S1-result-3 and P2-S2-home-3 before boards 4b and 3b. Ack by adding M23 to your status acks.",
+      "sent_at": "2026-11-15T19:01:00Z",
+      "ack_by": "2026-11-15T21:01:00Z",
+      "acked_at": null
     }
   ]
 }
