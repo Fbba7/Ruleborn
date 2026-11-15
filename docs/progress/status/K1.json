@@ -4,21 +4,21 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-K1-motion",
-  "task_state": "working",
-  "claimed_at": "2026-11-12T22:09:00Z",
-  "lease_until": "2026-11-13T01:37:00Z",
-  "updated_at": "2026-11-12T22:40:00Z",
-  "expected_next_update_by": "2026-11-12T23:25:00Z",
+  "task_id": "P2-K1-tabs",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-13T10:55:00Z",
+  "lease_until": "2026-11-13T13:55:00Z",
+  "updated_at": "2026-11-13T11:57:00Z",
+  "expected_next_update_by": "2026-11-13T12:40:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "1d21bf4a",
-    "next_step": "main (30ff0f9a) merged as 23e379f0; helper .uid committed (87921e49); running the setup line and check_all on the merge, then the kit tests, guard.sh and the pre-check"
+    "last_green_sha": "48cd0dd7",
+    "next_step": "guard.sh at 48cd0dd7: ui guard: OK (home 144/113/144 draw calls, records 145/114/145; the tab's clear bar box no longer draws under its tile); main 03a04e41 merged at 6cd5467c; setup, build, check_all and guard.sh running on the merge, then the pre-check and ready"
   },
   "precheck": {
-    "sha": "1d21bf4a21cbd1584b800ccdf214ffa28ba81c12",
+    "sha": "b5d77219e9207b64e1f153a870b9d8d9995e23da",
     "exit": 0,
-    "finished_at": "2026-11-12T08:20:29Z",
+    "finished_at": "2026-11-12T23:56:10Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
@@ -335,5 +335,5 @@
       "at": "2026-11-12T22:37:00Z"
     }
   ],
-  "next_step": "main (30ff0f9a) merged as 23e379f0; helper .uid committed (87921e49); running the setup line and check_all on the merge, then the kit tests, guard.sh and the pre-check"
+  "next_step": "P2-K1-tabs: evidence on the merge 6cd5467c running, then the pre-check and ready"
 }

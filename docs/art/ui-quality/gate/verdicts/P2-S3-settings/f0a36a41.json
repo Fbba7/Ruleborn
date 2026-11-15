@@ -1,0 +1,110 @@
+[
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "f0a36a41b6427d2f238c0d93679f11c7d9228f54",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T12:53:00Z",
+    "item": "settings at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "fail",
+      "fail",
+      "pass",
+      "fail"
+    ],
+    "result": "pass",
+    "critique": "Split on the first three (pass, pass, fail), three fails of six after three more samples, so it passes, narrowly: a fail needs four. The passes put the large serif 'Settings' title first by size and place, with the dark selected Access tab and the smaller gold '100%' quieter than it. All three fails, and two of the passes as a close call, held that the dark 'Access' and 'Seeing and comfort' header pills weigh less in grayscale than the bright cream rows (the full-width tab strip, the Stillness card, the High contrast row), so the group headers do not outrank the rows. This is the weak point S3 should look at."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "f0a36a41b6427d2f238c0d93679f11c7d9228f54",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T12:53:00Z",
+    "item": "settings at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. No word sits straight over the sky; every header and label is on a plate or card. The headline '100%' has a dark outline, a gold gradient fill and a hard drop, and the section headers 'Access' and 'Seeing and comfort' share one treatment."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "f0a36a41b6427d2f238c0d93679f11c7d9228f54",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T12:53:00Z",
+    "item": "settings at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. Nothing sits over art; 'Ajustes' and 'Acesso' share one serif-on-plate treatment, and the '200%' figure keeps a dark outline that scaled with it, a gold gradient fill and a drop. Judged from the 960 px pictures; no full-resolution crops were given."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "f0a36a41b6427d2f238c0d93679f11c7d9228f54",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T12:53:00Z",
+    "item": "settings at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "fail",
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Split on the first three (pass, pass, fail), five passes of six after three more samples, so it passes. 'Ajustes' leads in grayscale as the largest, highest-contrast type at the top; the selected 'Acesso' tab and the gold '200%' are smaller and quieter, and the large cream Stillness card holds information, not an action. The one fail held that the card's prose is set nearly as large and bold as the title, that the '200%' is as loud as 'Ajustes', and that the 'Acesso' group header is smaller than the row prose."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "f0a36a41b6427d2f238c0d93679f11c7d9228f54",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T12:53:00Z",
+    "item": "settings in high contrast",
+    "quality": "Colour roles and value",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. Gold appears only as the rim of the selected Access tab and in the '100%' lettering, never as a fill on a non-action; green is the toggle's 'on' state, backed by the knob position and the word; each of the six schools keeps its own hue and glyph; Back is neutral. No colour-blindness sheet was supplied, so that check rests on the shapes and labels."
+  },
+  {
+    "task_id": "P2-S3-settings",
+    "sha": "f0a36a41b6427d2f238c0d93679f11c7d9228f54",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T12:53:00Z",
+    "item": "settings in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The full-width 'Settings' title leads by size and place; the gold Access tab and the gold '100%' are quieter. Two samples noted, as a weakness, that the 'Access' and 'Seeing and comfort' headers carry less weight than the white rows, though high contrast makes those rows light by design."
+  }
+]

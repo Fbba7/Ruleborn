@@ -1,12 +1,19 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-15T17:12:00Z",
-  "expected_next_update_by": "2026-11-15T18:40:00Z",
-  "cycle": 84,
-  "merging": null,
+  "updated_at": "2026-11-15T19:46:00Z",
+  "expected_next_update_by": "2026-11-15T19:58:10Z",
+  "cycle": 85,
+  "merging": {
+    "candidate_sha": "079d4487",
+    "task_ids": [
+      "P2-S3-settings"
+    ],
+    "started_at": "2026-11-15T19:46:00Z",
+    "expires_at": "2026-11-15T20:46:00Z"
+  },
   "last_merged": {
-    "task_id": "P2-S1-result-2",
-    "sha": "135a49b2"
+    "task_id": "P2-AD-board-4, P2-K1-tabs",
+    "sha": "14be4ddd"
   },
   "acks": [
     "M15",
@@ -25,5 +32,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Restarted by the owner (\"Continue\", 15 November 2026, about 17:10Z; CLAUDE.md order 1). The plan cycle 84 left before the stop of 13 November: first the fresh-container setup (M22: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install gdtoolkit 4 and playwright 1.63.0; bash client/build.sh), then merge whatever turns ready (M15, M17: batch ready tasks with disjoint claims into one candidate, run check_all from the main checkout, merge and clear the lock in the turn the check passes; M19: in the candidate worktree run bash client/build.sh and (cd tools/ui_research && npm ci) before guard.sh; set expected_next_update_by to at least the lock's expiry while a check runs). Likely ready next: P2-AD-board-4 (docs and answers only; AD's pre-check on c0bab2a8 running), P2-K1-tabs (guard.sh then pre-check), P2-S3-settings (pre-check on f0a36a41, then a gate_request for the advisory gate), P2-S2-home-3 (AD answered S2-R20 at 11:40Z with six objections, S2 fixes 1 to 5 inside home-3 before ready; 6 is K1's in P2-K1-tabs). Board 4's follow-ups filed (AD-R26 to AD-R30, defaults applied, M18): P2-S1-result-3 (S1), P2-AIA-motion-3 (AIA), P2-AD-board-4b (AD, after both and board 4). Seats: AD, K1, S2, S3, the cap of four (three under allowed_warning); start S1 on result-3 and AIA on motion-3 as seats free (AD's seat frees when board 4 is ready, K1's when tabs is). When AIA next starts, put M14's rule in its prompt (M21). M20: lock a screen task only once AD's preview on it is answered or past due."
+  "next_step": "Cycle 85 merged P2-AD-board-4 and P2-K1-tabs as 14be4ddd (check_all PASS, guard OK) and started four builders, the cap (three under allowed_warning): S1 on P2-S1-result-3, S2 on P2-S2-home-3, AIA on P2-AIA-motion-3, S3 on P2-S3-settings (sessions in lead.md). Next: watch the four and merge whatever turns ready (S3 settings and S2 home-3 likely first; M15, M17: batch disjoint ready tasks into one candidate, check_all from the main checkout, merge and clear the lock in the turn it passes; M19: in the candidate worktree run bash client/build.sh and (cd tools/ui_research && npm ci) before guard.sh; M22 setup in a fresh container). M20: lock a screen task only once AD's preview on it is answered or past due. When result-3 and motion-3 merge, seat AD on P2-AD-board-4b as a seat frees. AD and K1 are idle with nothing open. M14 and M21 still apply to AIA."
 }
