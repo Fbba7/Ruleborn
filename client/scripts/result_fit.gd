@@ -145,7 +145,8 @@ static func words_fit(words: Array[Node], room: float) -> bool:
 ## the first screen (AD's objection B: German and its long lines). Each
 ## step's saving is measured from the words' lines.
 static func hero_shrink(words: Array, numbers: Array, bar: Control) -> void:
-	var over := float(UI.px(6)) - bar.get_global_rect().position.y
+	# Above the page's lower edge, which ends a gap above the bar.
+	var over := float(UI.px(6) + bar.get_parent().get_theme_constant("separation")) - bar.get_global_rect().position.y
 	var foot := 0.0
 	for l: Label in numbers:
 		foot = maxf(foot, (l.get_parent().get_parent() as Control).get_global_rect().end.y)
@@ -200,3 +201,73 @@ static func word_fits(b: Button) -> bool:
 		if font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_px).x > room:
 			return false
 	return true
+
+
+## The page's foot over the action bar on a whole line (AD's objection F, in
+## S1-R29): with the bar under the page that scrolls, the corner's clearance
+## under the bar (`corner`) grows by the cut, lifting the bar and the scroll's
+## lower edge off any line it would cut, so the first screen never ends on
+## the tops of a line's letters (at 200% in English, "Re-simulated by the
+## server" as a row of ticks and dashes), nor on a card's sliver. It cuts
+## rather than fades: a fade is a draw call more. Fitted again as the page
+## or the scroll changes size; each fitting measures from the edge without
+## the cut, so they settle on one.
+static func fold(scroll: ScrollContainer, bar: Control, corner: Control) -> void:
+	if not scroll.is_inside_tree() or bar.get_parent() != scroll.get_parent():
+		return
+	if not corner.has_meta("clearance"):
+		corner.set_meta("clearance", corner.custom_minimum_size.y)
+		# The page's words change, or the bar grows (its words wrapped).
+		var again := func() -> void: fold.call_deferred(scroll, bar, corner)
+		(scroll.get_child(0) as Control).resized.connect(again)
+		scroll.resized.connect(again)
+	var tree := scroll.get_tree()
+	await tree.process_frame
+	await tree.process_frame
+	if not scroll.is_inside_tree():
+		return
+	var clearance := float(corner.get_meta("clearance"))
+	var bottom := scroll.get_global_rect().end.y + corner.custom_minimum_size.y - clearance
+	var cut := 0.0
+	for i in 4:
+		var part := part_line(scroll, bottom - cut)
+		if part <= 0.0:
+			break
+		cut += part
+	corner.custom_minimum_size.y = clearance + cut
+
+
+## How far above `bottom` the line or card it cuts starts, in the page that
+## `scroll` holds: a label's line shown above its baseline only, or a card
+## shown by less than a line of body text. Zero when `bottom` falls between
+## lines, or under a line's baseline.
+static func part_line(scroll: ScrollContainer, bottom: float) -> float:
+	var page := scroll.get_child(0) as Control
+	var sliver := float(UI.text_px(UI.TEXT_POINTS))
+	var part := 0.0
+	for c: Node in page.find_children("*", "Control", true, false):
+		var n := c as Control
+		if not n.is_visible_in_tree():
+			continue
+		var r := n.get_global_rect()
+		if r.position.y >= bottom or r.end.y <= bottom:
+			continue
+		var shown := bottom - r.position.y
+		if n is Label:
+			var l := n as Label
+			var px := l.get_theme_font_size("font_size")
+			var step := l.get_theme_font("font").get_height(px) + l.get_theme_constant("line_spacing")
+			var top := l.get_theme_stylebox("normal").get_margin(SIDE_TOP)
+			if l.vertical_alignment == VERTICAL_ALIGNMENT_CENTER:
+				top = (r.size.y - (step * l.get_line_count() - l.get_theme_constant("line_spacing"))) / 2.0
+			shown -= top
+			if shown <= 0.0:
+				continue
+			# A line is shown in part when its baseline is below the edge:
+			# only its letters' tops show. A clipped descent leaves it whole.
+			var p := fposmod(shown, step)
+			if p > 1.0 and p < l.get_theme_font("font").get_ascent(px) and shown < step * l.get_line_count():
+				part = maxf(part, p + (top if shown < step else 0.0))
+		elif n is PanelContainer and shown < sliver:
+			part = maxf(part, shown)
+	return part

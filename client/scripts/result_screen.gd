@@ -813,7 +813,7 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 ## F6: the actions end the page while it fits on the phone; a page taller
 ## than the phone (a long language over the study card, say) leaves them in
 ## the bar at its foot, under the page that scrolls, as large text does. Once
-## moved they stay: the page only grows (a verdict that arrives later).
+## moved they stay: the page only grows. Its foot lands on a whole line.
 func _fit_actions() -> void:
 	if _ending.is_empty():
 		return
@@ -830,10 +830,10 @@ func _fit_actions() -> void:
 	if Settings.text_scale > 100 and reward_row.visible and page == _foot:
 		ResultFit.hero_shrink([[kicker_label, 14.0], [grade_label, TITLE_POINTS], [condition_label, 16.0],
 			[subline_label, 14.0]], reward_labels.values(), _ending[0])
-	if not is_inside_tree() or page == _foot or page.get_combined_minimum_size().y <= _scroll.size.y:
-		return
-	for c: Control in _ending:
-		c.reparent(_foot)
+	if is_inside_tree() and page != _foot and page.get_combined_minimum_size().y > _scroll.size.y:
+		for c: Control in _ending:
+			c.reparent(_foot)
+	ResultFit.fold(_scroll, _ending[0], _ending[1])
 
 
 ## The laws to study two to a row, rather than side by side, when a law's

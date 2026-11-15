@@ -205,11 +205,22 @@ static func fit(screen: Control) -> Array[String]:
 		var top := screen.size.y
 		if not result._ending.is_empty():
 			top = minf(top, (result._ending[0] as Control).get_global_rect().position.y)
+			# Under the page that scrolls, above its lower edge too.
+			if result._ending[0].get_parent() == result._scroll.get_parent():
+				top = minf(top, result._scroll.get_global_rect().end.y)
 		for kind: String in result.reward_labels:
 			var tile := (result.reward_labels[kind] as Label).get_parent().get_parent() as Control
 			if tile.get_global_rect().end.y > top + 1.0:
 				bad.append("reward %s: ends at %.0f px, under the first screen's %.0f" % [kind,
 					tile.get_global_rect().end.y, top])
+	# With the bar under the page that scrolls, the first screen ends on a
+	# whole line, never the tops of a line's letters or a card's sliver
+	# (AD's objection F: "Re-simulated by the server" at 200% in English).
+	if not result._ending.is_empty() and result._ending[0].get_parent() == result._scroll.get_parent():
+		var edge := result._scroll.get_global_rect().end.y
+		var part := ResultFit.part_line(result._scroll, edge)
+		if part > 1.0:
+			bad.append("fold: the page ends %.0f px into a line or card above the bar" % part)
 	return bad
 
 
