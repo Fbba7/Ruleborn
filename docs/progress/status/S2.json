@@ -7,14 +7,14 @@
   "task_id": "P2-S2-home-3",
   "task_state": "working",
   "claimed_at": "2026-11-15T17:40:00Z",
-  "lease_until": "2026-11-15T21:21:43Z",
-  "updated_at": "2026-11-15T19:21:43Z",
-  "expected_next_update_by": "2026-11-15T20:06:43Z",
+  "lease_until": "2026-11-15T21:55:00Z",
+  "updated_at": "2026-11-15T19:55:00Z",
+  "expected_next_update_by": "2026-11-15T20:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "14fdcdfe",
-    "next_step": "Objections 1-4 pass at 100% and 200% in en, pt_BR, de, fr and hc; at 200% with the raid notice the realms' pins lack room, freeing height there without dropping the strain's two lines or Full",
-    "at": "2026-11-15T19:11:21Z"
+    "next_step": "Pre-check running on a3274abe (S2-R20 objections 1-5 fixed, main merged, track doc Part 3 updated); then record, gate_request, ready",
+    "at": "2026-11-15T19:55:00Z"
   },
   "precheck": {
     "sha": "14fdcdfe20e797d94669f8657ea3c4d78f9781ba",
@@ -292,8 +292,38 @@
       "due": "2026-11-13T15:58:00Z",
       "default": "The stills stand as built; S2 marks P2-S2-home-3 ready when its checks pass, and any objection becomes a follow-up task beside it.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R21",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Record home/200's draw calls in tools/ui_bake/budgets.json at 114 -> 124 when P2-S2-home-3 merges, with a raises entry for S2-R21 (K1's file, written at the merge as for S2-R17). Measured with `bash tools/ui_bake/guard.sh` on a3274abe, after main's KitTabs fix: home/100 144 and home/hc 144 (under their 145), home/200 124. A bisect at 200% en, each fix added alone onto 14fdcdfe, puts the rise on three of AD's S2-R20 objections: the pins' search near their islands (objection 1) +5, the Full tag's red plate (objection 3) +4, the strain's two-line large form (objection 4) +3; KitTabs' fix takes 1 off. Each is kit parts interleaving the skin atlas, an icon and the font. Textures and words below 4.5:1 unchanged; home/200 stays 26 under the cap of 150. Evidence in docs/art/tracks/home-screen.md, Part 3, 'Draw calls'.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T19:55:00Z",
+      "due": "2026-11-16T01:55:00Z",
+      "default": "Approved as for S2-R17: the lead records home/200 at 124 with a raises entry when it merges P2-S2-home-3; S2 marks ready with guard.sh failing only on home/200, said in the handoff.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R22",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Re-check only S2-R20's objections 1-5 on claude/ui-screens-home at a3274abe (one round, M12). Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` and env as in S2-R20: (1) pins near their islands, clear by the pin gap of the side buttons and the Defence badge: en and pt_BR at 100%; (2) en 100% with NOTICE=1: the goal keeps its line, the notice's second line balanced; (3) the Full tag at 100% and 200% in en, pt_BR, de, CONTRAST=1; (4) the strain's two lines at TEXT=200 in en, pt_BR, de, fr; (5) pt_BR purse two rows at 100%, CONTRAST=1 Collect label size, chips at pt_BR and de 200%. The goal's 'Guardião / 25' break stays S2-R19; objection 6 is K1's. docs/art/tracks/home-screen.md Part 3, \"AD's S2-R20 review\", lists each answer and what is still open.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/world/universe_pins.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T19:55:00Z",
+      "due": "2026-11-16T07:55:00Z",
+      "default": "Objections 1-5 stand as fixed; S2 marks P2-S2-home-3 ready when its checks pass, and any new objection becomes a follow-up task.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "Checks (screens, guard, docs, client tests), Part 3's S2-R20 answers in the track, merge main, pre-check, re-check request to AD, ready."
+  "next_step": "When the pre-check on a3274abe ends: record it, set gate_request and ready_sha, mark ready (guard.sh fails only on home/200, 124 against 114, pending S2-R21)."
 }
