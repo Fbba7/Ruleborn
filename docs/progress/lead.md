@@ -185,8 +185,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnnyaLSgG88hAKxd5z` (cycle 86, 15
-November 2026 from 19:39Z, started by the Opus 5.5 launcher). Cycle 85's
+Latest lead cycle session: `session_01SNkKxqFHvZUY3kRm8JAVzo` (cycle 87, 15
+November 2026 from 20:39Z, started by the Opus 5.5 launcher). Cycle 86's
+was `session_01SNkKxnnyaLSgG88hAKxd5z` (from 19:39Z, started by the
+launcher). Cycle 85's
 was `session_01SNkKxqLYw4qY5UxycWNhTR` (from 18:01Z, started by the
 overseer after the owner's restart, the launcher's own session-start
 refused). Cycle 84's was
@@ -266,6 +268,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 | AD | `session_01SNkKxpPaibzTsRuZzdTZic` (Opus 5.5, effort high) | S2-R22 first (M20: re-check S2-R20's objections 1-5 on P2-S2-home-3 at 13ff046f; S2's seat idle with its task ready), then the first open AD task, else done | `claude/ui-ad` | 2026-11-15 22:05Z |
 | AIA | `session_01SNkKxqD2jxzsw1dZAgz7Ue` (Opus 5.5, effort high) | P2-AIA-motion-3 (restart: merge main, run guard.sh, mark ready when its checks pass) | `claude/ui-artist` | 2026-11-15 20:45Z |
 | AD | `session_01SNkKxnxMtbLFXk5d55r19u` (Opus 5.5, effort high; done, P2-AD-board-5 ready at 8b4b5827) | AD previews S1-R29 and AIA-R26, ack M23 (S3's freed seat), then the first open AD task | `claude/ui-ad` | 2026-11-15 20:13Z |
+| S3 | `session_01SNkKxobxLMm7bkJemfXcuS` (Opus 5.5, effort high) | P2-S3-character-2 (start: P2-AD-board-5 merged as d74bbbdf; AD-R31, R32, R33's character half, R34, R37; the fourth seat with S1, AIA and AD) | `claude/ui-screens-meta` | 2026-11-15 22:32Z |
 | S3 | `session_01SNkKxmz8GQhVoYbmKSgiAL` (Opus 5.5, effort high; idle, its task merged) | P2-S3-settings (restart after the owner's restart: the gate on f0a36a41 passes all six rows, cycle 84's verdict carried to main in cycle 85; AD preview if owed, merge main, checks and guard.sh, ready) | `claude/ui-screens-meta` | 2026-11-15 18:08Z |
 | AIA | `session_01SNkKxr42nS6EtCTLH5opM6` (Opus 5.5, effort high; idle, replaced at 20:45Z) | P2-AIA-motion-3 (start: board 4's objection C and D's strip target; M14, M21) | `claude/ui-artist` | 2026-11-15 18:05Z |
 | S2 | `session_01SNkKxq9TRgdUDZjiKCeA3q` (Opus 5.5, effort high) | P2-S2-home-3 (restart after the owner's restart: continue from the branch, S2-R20 objections 1 to 5, ready) | `claude/ui-screens-home` | 2026-11-15 18:05Z |
@@ -496,6 +499,28 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- **Cycle 87**, 15 November 2026, from 20:39Z (session
+  `session_01SNkKxqFHvZUY3kRm8JAVzo`, started by the Opus 5.5 launcher).
+  Claims copied; S1-R29 and AIA-R26 answered by AD; S2-R21 approved
+  (home/200 at 124, with a raises entry when home-3 merges); S2-R23
+  granted (home-3's exceptions home_parts.gd and its .uid); S2-R22
+  copied for AD; AD-R31 to AD-R37 (board 5's objections) answered by
+  seeding P2-S3-character-2, P2-S3-settings-2 and P2-AD-board-5b. S2's
+  advisory gate on `13ff046f` (home-3): Hierarchy and Character
+  presence pass, 3 of 3 each; home-3 marked ready and waits on S2-R22
+  (M20, due 16 November 07:55Z). **Restarted** AIA (20:45Z) on
+  P2-AIA-motion-3 to merge main, run guard.sh and mark it ready.
+  **Merged** P2-AD-board-5 (AD's `8b4b5827`): check_all PASS at
+  22:31:32Z; main had moved only with the lead's bookkeeping, so the
+  merge went onto it with the docs check only: merge `d74bbbdf`, lock
+  cleared in the same turn. Audit and roadmap unchanged. **Started** AD
+  (22:05Z) on S2-R22 in S2's freed seat (S2 idle with its task ready),
+  and S3 (22:32Z) on P2-S3-character-2; the cap stays at four (S1, AIA,
+  AD, S3). **Next:** merge result-3 after objection F (apply S1-R28's
+  budgets, result/100 91 and result/200 99), motion-3 when ready, and
+  home-3 once S2-R22 is answered or past due (apply S2-R21's 124 and
+  S2-R23's exceptions); P2-AD-board-4b after result-3 and motion-3,
+  P2-AD-board-3b after home-3, P2-AD-board-5b after S3's two follow-ups.
 - **Cycle 86**, 15 November 2026, from 19:39Z (session
   `session_01SNkKxnnyaLSgG88hAKxd5z`, started by the Opus 5.5 launcher).
   Claims copied; S1-R28 approved (when result-3 merges, the lead records
