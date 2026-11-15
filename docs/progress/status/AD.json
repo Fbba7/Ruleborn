@@ -3,26 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "done",
   "task_id": "P2-AD-board-5",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-15T20:31:00Z",
   "lease_until": "2026-11-15T23:35:00Z",
-  "updated_at": "2026-11-15T20:50:00Z",
-  "expected_next_update_by": "2026-11-15T21:35:00Z",
+  "updated_at": "2026-11-15T22:02:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "c0bab2a89cf95b03d3540f977a5c0050e593c900",
-    "next_step": "board-5.md written (round 1: does not stand, objections A–G as AD-R31 to AD-R37); run the pre-check and mark ready"
+    "last_green_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
+    "next_step": "board 5 round 1 ready (does not stand; AD-R31 to AD-R37 open); round 2 after the S3 follow-ups merge"
   },
   "precheck": {
-    "sha": "c0bab2a89cf95b03d3540f977a5c0050e593c900",
+    "sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
     "exit": 0,
-    "finished_at": "2026-11-13T12:11:54Z",
+    "finished_at": "2026-11-15T21:19:40Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M12",
