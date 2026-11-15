@@ -157,10 +157,11 @@ func _ready() -> void:
 	# The lines under the tiles stand on the night with no plate.
 	for l: Label in [fee_label, detail_label, check_label]:
 		_ink(l, float(l.get_meta("points", UI.TEXT_POINTS)))
-	# The totals as display numbers, in the ink outline.
-	_display(haul_label, "gold_top")
+	# The totals as the home's display figures: the lead deep gold, the
+	# others cream (key frame 03's "1,288", "+46" and "+12").
+	_display(haul_label, "starlight")
 	for k: String in reward_labels:
-		_display(reward_labels[k], "gold_top" if k == "starlight" else "cream")
+		_display(reward_labels[k], "starlight" if k == "starlight" else "cream")
 	# With large text the haul comes first, under the time line, and the
 	# moment after it (key frame 03-result_text200_pt_BR; AD's S1-R24): the
 	# first screen shows what the heist paid.
@@ -266,13 +267,21 @@ static func _ink(l: Label, points: float) -> void:
 	l.add_theme_constant_override("outline_size", UI.px(maxf(1.5, 0.12 * points) + 0.5))
 
 
-## A reward's total as a display number: `tone` (a tokens.json colour) in the
-## ink outline, for the card's soft drop (result/200's draw calls), alike on
-## parchment and glass.
+## A reward's total as the home's figures ("Keeper 24", `Home.home_figure`):
+## the display face, `tone` (a tokens.json colour) filled solid, a heavy ink
+## outline and a hard drop under it, alike on parchment and glass and in
+## high contrast (board 4's objection A).
 static func _display(l: Label, tone: String) -> void:
-	_ink(l, float(l.get_meta("points", 24.0)))
+	var font_px := float(l.get_theme_font_size("font_size"))
+	var line := maxi(UI.px(2.0), int(round(0.21 * font_px)))
+	l.add_theme_font_override("font", RbTheme.role_font("display"))
 	l.add_theme_color_override("font_color", Tokens.color(tone))
-	l.add_theme_color_override("font_shadow_color", Color.TRANSPARENT)
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", line)
+	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
+	l.add_theme_constant_override("shadow_offset_x", 0)
+	l.add_theme_constant_override("shadow_offset_y", maxi(UI.px(1.5), int(round(0.08 * font_px))))
+	l.add_theme_constant_override("shadow_outline_size", line)
 
 
 ## §12.13's moment on the kit's card: the gold play button with the replay's
