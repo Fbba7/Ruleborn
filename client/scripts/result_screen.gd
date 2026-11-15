@@ -827,6 +827,9 @@ func _fit_actions() -> void:
 		await get_tree().process_frame
 		await get_tree().process_frame
 	var page := _ending[0].get_parent() as Control
+	if Settings.text_scale > 100 and reward_row.visible and page == _foot:
+		ResultFit.hero_shrink([[kicker_label, 14.0], [grade_label, TITLE_POINTS], [condition_label, 16.0],
+			[subline_label, 14.0]], reward_labels.values(), _ending[0])
 	if not is_inside_tree() or page == _foot or page.get_combined_minimum_size().y <= _scroll.size.y:
 		return
 	for c: Control in _ending:
@@ -875,21 +878,15 @@ func _fit_raid() -> bool:
 		- (row.get_parent() as Control).get_theme_stylebox("panel").get_minimum_size().x
 	var wide := full
 	for c: Control in row.get_children():
+		# Large text: Home as its icon on a square beside the raid, named
+		# aloud, in every language, as key frames 03-result_text200 and
+		# _pt_BR, so the raid leads the bar (board 4's objection E).
+		if c != again and c is Button and Settings.text_scale > 100:
+			ResultFit.home_square(c as Button)
 		if c != again:
 			wide -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
 	var words := again.find_children("*", "Label", true, false)
 	var upright := not ResultFit.words_fit(words, wide - pad)
-	if upright and Settings.text_scale > 100:
-		# Large text: Home as its icon on a square beside the raid, named
-		# aloud, as key frame 03-result_text200_pt_BR, before the raid stands
-		# over a Home row of its own, so the haul keeps the first screen.
-		wide = full
-		for c: Control in row.get_children():
-			if c != again and c is Button:
-				ResultFit.home_square(c as Button)
-			if c != again:
-				wide -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
-		upright = not ResultFit.words_fit(words, wide - pad)
 	if upright:
 		row.vertical = true
 		row.move_child(again, 0)

@@ -118,6 +118,8 @@ static func chip_on_one_line(chip: PanelContainer, label: Label, width: float) -
 ## Home as its icon alone, on a square of the control's height, its name
 ## spoken (the raid bar's large-text form, `ResultScreen._fit_raid`).
 static func home_square(home: Button) -> void:
+	if home.text == "":
+		return
 	home.accessibility_name = home.text
 	home.tooltip_text = home.text
 	home.text = ""
@@ -137,10 +139,43 @@ static func words_fit(words: Array[Node], room: float) -> bool:
 	return true
 
 
-## How many lines `l`'s words take wrapped between words within `room`.
-static func lines(l: Label, room: float) -> int:
+## Large text: the hero's words (`words`, each a label and its points) a
+## size or two down, the least step that lifts the reward rows (`numbers`,
+## each tile's number) above the action `bar`, so the whole haul stands on
+## the first screen (AD's objection B: German and its long lines). Each
+## step's saving is measured from the words' lines.
+static func hero_shrink(words: Array, numbers: Array, bar: Control) -> void:
+	var over := float(UI.px(6)) - bar.get_global_rect().position.y
+	var foot := 0.0
+	for l: Label in numbers:
+		foot = maxf(foot, (l.get_parent().get_parent() as Control).get_global_rect().end.y)
+	over += foot
+	if over <= 0.0:
+		return
+	var steps: Array[float] = [0.88, 0.78, 0.7]
+	for f: float in steps:
+		var saved := 0.0
+		for pair: Array in words:
+			var l := pair[0] as Label
+			if not l.is_visible_in_tree():
+				continue
+			# From the height laid out, not the size set: a second fitting
+			# before the next layout then picks the same step.
+			var then := UI.text_px(float(pair[1]) * f)
+			saved += l.size.y - lines(l, l.size.x, then) \
+				* (l.get_theme_font("font").get_height(then) + l.get_theme_constant("line_spacing"))
+		if saved >= over or f == steps.back():
+			for pair: Array in words:
+				(pair[0] as Label).add_theme_font_size_override("font_size", UI.text_px(float(pair[1]) * f))
+			return
+
+
+## How many lines `l`'s words take wrapped between words within `room`, at
+## its own size or at `font_px`.
+static func lines(l: Label, room: float, font_px := 0) -> int:
 	var font := l.get_theme_font("font")
-	var font_px := l.get_theme_font_size("font_size")
+	if font_px <= 0:
+		font_px = l.get_theme_font_size("font_size")
 	var text := l.text.to_upper() if l.uppercase else l.text
 	var n := 1
 	var line := ""
