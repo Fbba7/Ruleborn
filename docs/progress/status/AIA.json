@@ -1,279 +1,284 @@
 {
-  "agent": "AIA",
-  "role": "AIA",
-  "branch": "claude/ui-artist",
-  "model": "Opus 5.5",
-  "agent_state": "active",
-  "task_id": "P2-AIA-motion-3",
-  "task_state": "working",
-  "claimed_at": "2026-11-15T18:20:00Z",
-  "lease_until": "2026-11-15T21:20:00Z",
-  "updated_at": "2026-11-15T19:15:00Z",
-  "expected_next_update_by": "2026-11-15T20:00:00Z",
-  "long_run": null,
-  "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "pre-check at fc1ca1cf failed on a stale motion.json (a local __pycache__ in the hashed sources); rebaked at 3b8d2ea0; guard and pre-check re-running there"
+ "agent": "AIA",
+ "role": "AIA",
+ "branch": "claude/ui-artist",
+ "model": "Opus 5.5",
+ "agent_state": "waiting",
+ "task_id": "P2-AIA-motion-3",
+ "task_state": "working",
+ "claimed_at": "2026-11-15T18:20:00Z",
+ "lease_until": "2026-11-15T21:20:00Z",
+ "updated_at": "2026-11-15T19:45:00Z",
+ "expected_next_update_by": "2026-11-16T00:40:00Z",
+ "long_run": null,
+ "progress_marker": {
+  "last_green_sha": "697af959",
+  "next_step": "AD preview of the reward strips (AIA-R26, due 2026-11-16T00:40:00Z); then answer objections in one round, merge main if it moved, pre-check and ready"
+ },
+ "precheck": {
+  "sha": "697af959ace279379bf770c292ebae0df8c6c9a1",
+  "exit": 0,
+  "finished_at": "2026-11-15T19:39:34Z",
+  "summary": "All checks passed."
+ },
+ "gate_request": null,
+ "ready_sha": null,
+ "stop_at": "2026-11-17T21:00:00Z",
+ "acks": [
+  "M1",
+  "M14",
+  "M21"
+ ],
+ "requests": [
+  {
+   "id": "AIA-R9",
+   "from": "AIA",
+   "to": "K1",
+   "ask": "KitSkin.piece: on parchment grounds, look up the tertiary's `button_tertiary__parchment__<state>` (the violet box fails value-steps on paper)",
+   "files": [
+    "client/ui/kit_skin.gd"
+   ],
+   "blocking": false,
+   "created_at": "2026-11-04T13:10:00Z",
+   "due": "2026-11-05T13:10:00Z",
+   "default": "screens put no tertiary button on parchment until K1 wires the parchment shape",
+   "escalate_to": "lead"
   },
-  "precheck": null,
-  "gate_request": null,
-  "ready_sha": null,
-  "stop_at": "2026-11-17T21:00:00Z",
-  "acks": [
-    "M1",
-    "M14",
-    "M21"
-  ],
-  "requests": [
-    {
-      "id": "AIA-R9",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "KitSkin.piece: on parchment grounds, look up the tertiary's `button_tertiary__parchment__<state>` (the violet box fails value-steps on paper)",
-      "files": [
-        "client/ui/kit_skin.gd"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-04T13:10:00Z",
-      "due": "2026-11-05T13:10:00Z",
-      "default": "screens put no tertiary button on parchment until K1 wires the parchment shape",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "AIA-R10",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "Move the colours in art/ui/palette.json's `kit` section (pressed, disabled, high-contrast and lifted-locked faces) into client/ui/tokens.json",
-      "files": [
-        "client/ui/tokens.json"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-04T13:10:00Z",
-      "due": "2026-11-05T13:10:00Z",
-      "default": "they stay in art/ui/kit_build/build_kit.py's KIT table and palette.json's `kit` section, each with where it comes from",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "AIA-R11",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "art/ui/palette.json is written by art/ui/kit_build/build_kit.py until the bake makes it from tokens.json (kit-spec.md section 6.2; tools/ui_bake/README.md 'Not yet')",
-      "files": [
-        "tools/ui_bake/bake.js"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-04T13:10:00Z",
-      "due": "2026-11-05T13:10:00Z",
-      "default": "build_kit.py keeps writing it; rerun it after any tokens.json change",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "AIA-R12",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "Atlas capacity: batch 1a's 28 pieces fill 2048 x 1268 of the kit's 2048 atlas at 6 px/pt, so the rest of the kit will not fit one atlas",
-      "files": [
-        "tools/ui_bake/bake.js",
-        "tools/ui_bake/families.json"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-04T13:10:00Z",
-      "due": "2026-11-05T13:10:00Z",
-      "default": "the bake gains atlas pages (kit.webp, kit_2.webp, ...) before batch 1b; AIA keeps the piece sizes",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "AIA-R14",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "Batch 1b adds overlay skins KitSkin.SKINS lacks: `selected` (selected__rim, drawn over a card for card_selected), `spinner` (spinner__ring, rotated in code), and pieces `locked__lock`, `badge__dot`, `bar_track__tick`, `disc__level_disc`, `tag__tag_violet`, `tag__tag_warn`, `bar_fill__alarm`; bar_fill__box is a neutral tinted per use (data-tint), so its gold variant is dropped; tag_success falls back to tag__box",
-      "files": [
-        "client/ui/kit_skin.gd"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-04T16:45:00Z",
-      "due": "2026-11-05T16:45:00Z",
-      "default": "the pieces sit in the atlas unused; every batch 1b skin stays off in kit_families.json and draws in code",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "AIA-R15",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "Batch 1c bakes the numerals as num_<finish>_<glyph> (finishes gold 28, white 22, timer 28, timer_red 28 pt; glyphs 0-9, comma, period, colon, slash, plus, minus, percent, x, question, space) on atlas page 2, drawn in Manrope 800 with tabular figures per §21.8 and D4 (b). (1) kit-spec.md section 2.2's T3 row still says the baked numerals are drawn with Lilita One: please make it read Manrope 800 tabular. (2) To draw them, KitSkin sets a number glyph by glyph: each piece carries `advance`; the piece's box is its advance cell plus 1 pt each side, so draw it at pen - (w - advance)/2 and move the pen by `advance`. The client's own number formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5)",
-      "files": [
-        "docs/art/ui-quality/kit-spec.md",
-        "client/ui/kit_skin.gd"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-04T19:47:00Z",
-      "due": "2026-11-05T19:47:00Z",
-      "default": "the numerals stay Manrope 800 tabular; the pieces sit in the atlas unused and numbers draw as code-drawn text until KitSkin sets them",
-      "escalate_to": "lead",
-      "cc": [
-        "lead"
-      ]
-    },
-    {
-      "id": "AIA-R16",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "Batch 2a adds pieces KitSkin must draw: (1) `ribbon__box` is a neutral tinted per school (data-tint) and `ribbon__frame` (untinted gloss and ink) is drawn over it at the same rect, as disc_school; `ribbon__chapter` is the untinted violet chapter ribbon; the words sit on the band, the top 32 pt of the 42 pt piece. (2) The grab handles `sheet__handle` and `sheet__handle_parchment` are 42 x 9 pt sprites centred by code 12 pt below a sheet's top edge (a 9-slice cannot centre them). (3) `frame_<rank>__box__<state>` is a 9-slice ring with a hollow middle, drawn over the portrait's rect grown by 4 pt each side. (4) `popup__box` carries an 8/4/12 pt margin round its face (plus the 5 pt lip) and is drawn over the scrim; its title is a ribbon set across the top edge. (5) `header__name_plate` is the header's leather plate; `panel_parchment__parchment_done` is the done panel with its green seal in the top-right corner cell",
-      "files": [
-        "client/ui/kit_skin.gd",
-        "client/ui/kit_families.json"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-04T21:48:00Z",
-      "due": "2026-11-05T21:48:00Z",
-      "default": "the pieces sit in the atlas unused; those skins stay off in kit_families.json and draw in code",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "AIA-R18",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "KitSkin: draw the batch 2b pieces: the toggle's track and knob, the slider's track, fill and knob, the heist tab's halo, the week bars, the tab bar and tab faces, the segmented bed and faces, and the chips",
-      "files": [
-        "client/ui/kit_skin.gd",
-        "client/ui/kit_families.json"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-10T01:55:00Z",
-      "due": "2026-11-11T01:55:00Z",
-      "default": "the pieces sit in the atlas unused; those skins stay off and are drawn in code",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "AIA-R19",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "Batch 2c bakes own-name shapes for seven of K1-R14's nine materials: panel_dark__album, panel_dark__fact, panel_dark__plate, bar_track__bar_track_light, tag__tag, tag__island_label, success__banner_success (each `normal` only), and tag__tag_warn is now a light shape under its dark token words. Please have KitSkin look these shapes up by material name and switch them on. disc_school is not baked (AIA-R21)",
-      "files": [
-        "client/ui/kit_skin.gd",
-        "client/ui/kit_families.json"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-10T03:22:46Z",
-      "due": "2026-11-11T03:22:46Z",
-      "default": "the pieces sit in the atlas unused; the seven materials stay code-drawn",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "AIA-R20",
-      "from": "AIA",
-      "to": "lead",
-      "ask": "Allow a fourth kit atlas page (client/ui/art/kit_4.webp, kit_4_hc.webp and their .import files) in AIA's files. With the chips' locked state, which the coverage test needs, the kit is 2.76 pages of area and the shelf packer needs a fourth page for the last 29 small pieces. Two drawn shapes are held out of the build to stay at three pages: pill__pill_gold_edge and success__green_muted (normal, pressed; art/ui/kit_build/kit_2c.py, HELD)",
-      "files": [
-        "client/ui/art/kit_4.webp",
-        "client/ui/art/kit_4_hc.webp"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-10T03:22:46Z",
-      "due": "2026-11-11T03:22:46Z",
-      "default": "the kit stays at three pages; pill_gold_edge and green_muted stay code-drawn",
-      "escalate_to": "lead",
-      "state": "answered by the lead, cycle 48 (default applied; docs/progress/requests.md on main)"
-    },
-    {
-      "id": "AIA-R21",
-      "from": "AIA",
-      "to": "lead",
-      "ask": "P1-AIA-kit-6's done_when asks for disc_school as a piece in client/ui/art/kit.json, and the catalogue's coverage test fails any baked skin that SKINS_OF names no component for: baked at 65aabbda, the pre-check failed on `disc_school has art but no component in SKINS_OF` (393 of 394). SKINS_OF is in client/tests/ui_kit_tests.gd, K1's file. Please either allow AIA one SKINS_OF line for disc_school in this task, as AIA-R17 did for batch 2b, and say which component it stands for (KitSkin gives the skin the materials portrait_*, ring_* and window_*; K37 lists a locked state, so mapping it there also needs locked pieces for disc_school__box and disc_school__frame and AIA-R20's fourth atlas page), or have K1 add the line in the commit that bakes it. The branch is green at 00571a44 with disc_school drawn and kept in art/ui/kit_next/, and every other done_when line met",
-      "files": [
-        "client/tests/ui_kit_tests.gd"
-      ],
-      "blocking": true,
-      "created_at": "2026-11-10T06:50:38Z",
-      "due": "2026-11-10T12:50:38Z",
-      "default": "the task is taken as ready at the handoff's sha without K1-R14 part 1 (pre-check and gate request are in this file); disc_school stays in art/ui/kit_next/, unbaked and code-drawn, K1-R14's own default, and baking it moves to a task that carries the SKINS_OF line",
-      "escalate_to": "lead",
-      "state": "answered by the lead, cycle 48 (default applied; docs/progress/requests.md on main)"
-    },
-    {
-      "id": "AIA-R22",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "A nine-slice stretches one sample across its middle, so panel_dark__album and the other parchment panels can carry paper grain only in their fixed border (corner specks and laid lines along the top and bottom rows). If the gate still finds the middle of a large parchment panel flat, KitSkin would need to lay a tiled grain texture over the panel's centre cell; AIA would then draw a tileable grain piece in a task that carries it",
-      "files": [
-        "client/ui/kit_skin.gd"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-11T01:50:00Z",
-      "due": "2026-11-13T01:50:00Z",
-      "default": "no tiled grain: parchment panels keep grain in their border only and a plain stretched middle",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "AIA-R23",
-      "from": "AIA",
-      "to": "AD",
-      "ask": "Preview the motion sprite sheet at phone size before P2-AIA-motion-1 is marked ready: art/ui/proof/motion_sheet.png (left normal, right high contrast; top on the night of the result screen, bottom on parchment; half the atlas scale, the size they show on a phone). Pieces: burst rays and ring, sparkle star and dot, shine sweep, coin face, turn and edge. The curves are in art/ui/motion/curves.json (revised at 8fbe66d8: rarity tiers, 300-700 ms anticipation, a counter pulse on each landing; every step 150-250 ms, cubic ease-out, no overshoot, each motion's reduced form named). Send every objection in one round (M12). It blocks marking the task ready (done-when M10, M12); everything else is done: pre-check PASS and ui guard OK at 8fbe66d8",
-      "files": [
-        "art/ui/proof/motion_sheet.png",
-        "art/ui/motion/curves.json"
-      ],
-      "blocking": true,
-      "created_at": "2026-11-12T19:05:00Z",
-      "due": "2026-11-13T01:05:00Z",
-      "default": "the sheet stands as drawn, and AIA marks the task ready when its checks pass",
-      "escalate_to": "lead",
-      "state": "default applied by the lead (cycle 72): the sheet stands as drawn"
-    },
-    {
-      "id": "AIA-R24",
-      "from": "AIA",
-      "to": "K1",
-      "ask": "In P2-K1-motion, time Motion from art/ui/motion/curves.json: Motion.press presses down in press_ms x 0.6 (108 ms), under §21.8's 150 ms (curves.json: down 150 ms, up 180 ms, with a darken to 0.9 and a light haptic); pop and sheet ease with TRANS_QUART where curves.json names cubic ease-out only; and the reduced press in curves.json sinks and darkens over 150 ms rather than changing at once (report.md section 10.3)",
-      "files": [
-        "client/ui/motion.gd"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-12T19:20:00Z",
-      "due": "2026-11-14T19:20:00Z",
-      "default": "K1 times Motion as it sees fit in P2-K1-motion; curves.json stays the art's statement of the curves",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "AIA-R25",
-      "from": "AIA",
-      "to": "AD",
-      "ask": "Preview the motion frame strips before P2-AIA-motion-2 is marked ready (M10, M12): art/ui/motion/strips/*.png (every frame stamped with its number and time from the motion's start; 60 fps) and the clips art/ui/motion/clips/*.gif, for board 4. Runs: press full and reduced; reward common, rare, epic, epic in high contrast, and reduced; shine full, reduced and high contrast (the last two draw nothing, by design); screen change full and reduced. art/ui/motion/check_frames.py passes on all of them (timing against curves.json, reduced forms, settling, at most 3 flashes a second). One thing to judge: the epic burst reads small against the chest at phone size. Send every objection in one round (M12)",
-      "files": [
-        "art/ui/motion/strips/",
-        "art/ui/motion/clips/"
-      ],
-      "blocking": true,
-      "created_at": "2026-11-13T02:08:00Z",
-      "due": "2026-11-13T08:08:00Z",
-      "default": "the strips stand as shot, and AIA marks the task ready when its checks pass",
-      "escalate_to": "lead",
-      "state": "default applied by the lead (cycle 77): the strips stand as shot"
-    },
-    {
-      "id": "AIA-R26",
-      "from": "AIA",
-      "to": "AD",
-      "ask": "Preview the re-made reward strips before P2-AIA-motion-3 is marked ready (M10, M12, M21), for board 4b: art/ui/motion/strips/reward_common.png, reward_rare.png, reward_epic.png, reward_epic_hc.png and reward_reduced.png in colour, the same five in grayscale in art/ui/proof/motion_gray/, and the clips art/ui/motion/clips/reward_*.gif (every frame stamped with its number and time; 60 fps). AD-R28: the anticipation now gathers on the prize (dust drawn in from -450 ms, a ring and sparkles closing in from -250 ms) instead of holding still, and the burst spreads by tier: about the prize's size in common, half again in rare, more than twice in epic, well out onto the sunburst (burst_scale 1.15 / 1.8 / 2.8, wider sparkle and dust reach). AD-R29: in the shot the coins land on the counter's starglass icon, beside its figure, and the figure rolls as each coin lands (the real result screen's target is S1's part, P2-S1-result-3). check_frames.py passes on all of them, with a new check that no still stretch in the anticipation runs longer than 150 ms; the burst's anchor is unchanged. Send every objection in one round (M12)",
-      "files": [
-        "art/ui/motion/strips/",
-        "art/ui/motion/clips/",
-        "art/ui/proof/motion_gray/",
-        "art/ui/motion/curves.json"
-      ],
-      "blocking": true,
-      "created_at": "2026-11-15T18:40:00Z",
-      "due": "2026-11-16T00:40:00Z",
-      "default": "the strips stand as shot, and AIA marks the task ready when its checks pass",
-      "escalate_to": "lead"
-    }
-  ],
-  "answers": [
-    {
-      "request_id": "K1-R14",
-      "answer": "Parts 1 and 2, in P1-AIA-kit-6. (1) Not done: disc_school is drawn (box and frame; normal, pressed, disabled) and kept in art/ui/kit_next/, unbaked. Baked, it fails the catalogue's coverage test until SKINS_OF names a component for it (AIA-R21, to the lead), so it stays code-drawn for now, the request's default. (2) Seven materials have a baked shape of their own name, normal only: panel_dark__album, panel_dark__fact, panel_dark__plate, bar_track__bar_track_light, tag__tag, tag__island_label, success__banner_success. tag__tag_warn is redrawn light, so its dark token words read on it. pill_gold_edge and green_muted are drawn and held out of the atlas, which is full at three pages (AIA-R20): they stay code-drawn, the request's default. Wiring: AIA-R19.",
-      "at": "2026-11-10T06:50:38Z"
-    }
-  ],
-  "next_step": "AD previews the reward strips (AIA-R26); meanwhile merge main and run the checks"
+  {
+   "id": "AIA-R10",
+   "from": "AIA",
+   "to": "K1",
+   "ask": "Move the colours in art/ui/palette.json's `kit` section (pressed, disabled, high-contrast and lifted-locked faces) into client/ui/tokens.json",
+   "files": [
+    "client/ui/tokens.json"
+   ],
+   "blocking": false,
+   "created_at": "2026-11-04T13:10:00Z",
+   "due": "2026-11-05T13:10:00Z",
+   "default": "they stay in art/ui/kit_build/build_kit.py's KIT table and palette.json's `kit` section, each with where it comes from",
+   "escalate_to": "lead"
+  },
+  {
+   "id": "AIA-R11",
+   "from": "AIA",
+   "to": "K1",
+   "ask": "art/ui/palette.json is written by art/ui/kit_build/build_kit.py until the bake makes it from tokens.json (kit-spec.md section 6.2; tools/ui_bake/README.md 'Not yet')",
+   "files": [
+    "tools/ui_bake/bake.js"
+   ],
+   "blocking": false,
+   "created_at": "2026-11-04T13:10:00Z",
+   "due": "2026-11-05T13:10:00Z",
+   "default": "build_kit.py keeps writing it; rerun it after any tokens.json change",
+   "escalate_to": "lead"
+  },
+  {
+   "id": "AIA-R12",
+   "from": "AIA",
+   "to": "K1",
+   "ask": "Atlas capacity: batch 1a's 28 pieces fill 2048 x 1268 of the kit's 2048 atlas at 6 px/pt, so the rest of the kit will not fit one atlas",
+   "files": [
+    "tools/ui_bake/bake.js",
+    "tools/ui_bake/families.json"
+   ],
+   "blocking": false,
+   "created_at": "2026-11-04T13:10:00Z",
+   "due": "2026-11-05T13:10:00Z",
+   "default": "the bake gains atlas pages (kit.webp, kit_2.webp, ...) before batch 1b; AIA keeps the piece sizes",
+   "escalate_to": "lead"
+  },
+  {
+   "id": "AIA-R14",
+   "from": "AIA",
+   "to": "K1",
+   "ask": "Batch 1b adds overlay skins KitSkin.SKINS lacks: `selected` (selected__rim, drawn over a card for card_selected), `spinner` (spinner__ring, rotated in code), and pieces `locked__lock`, `badge__dot`, `bar_track__tick`, `disc__level_disc`, `tag__tag_violet`, `tag__tag_warn`, `bar_fill__alarm`; bar_fill__box is a neutral tinted per use (data-tint), so its gold variant is dropped; tag_success falls back to tag__box",
+   "files": [
+    "client/ui/kit_skin.gd"
+   ],
+   "blocking": false,
+   "created_at": "2026-11-04T16:45:00Z",
+   "due": "2026-11-05T16:45:00Z",
+   "default": "the pieces sit in the atlas unused; every batch 1b skin stays off in kit_families.json and draws in code",
+   "escalate_to": "lead"
+  },
+  {
+   "id": "AIA-R15",
+   "from": "AIA",
+   "to": "K1",
+   "ask": "Batch 1c bakes the numerals as num_<finish>_<glyph> (finishes gold 28, white 22, timer 28, timer_red 28 pt; glyphs 0-9, comma, period, colon, slash, plus, minus, percent, x, question, space) on atlas page 2, drawn in Manrope 800 with tabular figures per §21.8 and D4 (b). (1) kit-spec.md section 2.2's T3 row still says the baked numerals are drawn with Lilita One: please make it read Manrope 800 tabular. (2) To draw them, KitSkin sets a number glyph by glyph: each piece carries `advance`; the piece's box is its advance cell plus 1 pt each side, so draw it at pen - (w - advance)/2 and move the pen by `advance`. The client's own number formatting picks the separators (en 1,234 / 12.5; pt_br 1.234 / 12,5)",
+   "files": [
+    "docs/art/ui-quality/kit-spec.md",
+    "client/ui/kit_skin.gd"
+   ],
+   "blocking": false,
+   "created_at": "2026-11-04T19:47:00Z",
+   "due": "2026-11-05T19:47:00Z",
+   "default": "the numerals stay Manrope 800 tabular; the pieces sit in the atlas unused and numbers draw as code-drawn text until KitSkin sets them",
+   "escalate_to": "lead",
+   "cc": [
+    "lead"
+   ]
+  },
+  {
+   "id": "AIA-R16",
+   "from": "AIA",
+   "to": "K1",
+   "ask": "Batch 2a adds pieces KitSkin must draw: (1) `ribbon__box` is a neutral tinted per school (data-tint) and `ribbon__frame` (untinted gloss and ink) is drawn over it at the same rect, as disc_school; `ribbon__chapter` is the untinted violet chapter ribbon; the words sit on the band, the top 32 pt of the 42 pt piece. (2) The grab handles `sheet__handle` and `sheet__handle_parchment` are 42 x 9 pt sprites centred by code 12 pt below a sheet's top edge (a 9-slice cannot centre them). (3) `frame_<rank>__box__<state>` is a 9-slice ring with a hollow middle, drawn over the portrait's rect grown by 4 pt each side. (4) `popup__box` carries an 8/4/12 pt margin round its face (plus the 5 pt lip) and is drawn over the scrim; its title is a ribbon set across the top edge. (5) `header__name_plate` is the header's leather plate; `panel_parchment__parchment_done` is the done panel with its green seal in the top-right corner cell",
+   "files": [
+    "client/ui/kit_skin.gd",
+    "client/ui/kit_families.json"
+   ],
+   "blocking": false,
+   "created_at": "2026-11-04T21:48:00Z",
+   "due": "2026-11-05T21:48:00Z",
+   "default": "the pieces sit in the atlas unused; those skins stay off in kit_families.json and draw in code",
+   "escalate_to": "lead"
+  },
+  {
+   "id": "AIA-R18",
+   "from": "AIA",
+   "to": "K1",
+   "ask": "KitSkin: draw the batch 2b pieces: the toggle's track and knob, the slider's track, fill and knob, the heist tab's halo, the week bars, the tab bar and tab faces, the segmented bed and faces, and the chips",
+   "files": [
+    "client/ui/kit_skin.gd",
+    "client/ui/kit_families.json"
+   ],
+   "blocking": false,
+   "created_at": "2026-11-10T01:55:00Z",
+   "due": "2026-11-11T01:55:00Z",
+   "default": "the pieces sit in the atlas unused; those skins stay off and are drawn in code",
+   "escalate_to": "lead"
+  },
+  {
+   "id": "AIA-R19",
+   "from": "AIA",
+   "to": "K1",
+   "ask": "Batch 2c bakes own-name shapes for seven of K1-R14's nine materials: panel_dark__album, panel_dark__fact, panel_dark__plate, bar_track__bar_track_light, tag__tag, tag__island_label, success__banner_success (each `normal` only), and tag__tag_warn is now a light shape under its dark token words. Please have KitSkin look these shapes up by material name and switch them on. disc_school is not baked (AIA-R21)",
+   "files": [
+    "client/ui/kit_skin.gd",
+    "client/ui/kit_families.json"
+   ],
+   "blocking": false,
+   "created_at": "2026-11-10T03:22:46Z",
+   "due": "2026-11-11T03:22:46Z",
+   "default": "the pieces sit in the atlas unused; the seven materials stay code-drawn",
+   "escalate_to": "lead"
+  },
+  {
+   "id": "AIA-R20",
+   "from": "AIA",
+   "to": "lead",
+   "ask": "Allow a fourth kit atlas page (client/ui/art/kit_4.webp, kit_4_hc.webp and their .import files) in AIA's files. With the chips' locked state, which the coverage test needs, the kit is 2.76 pages of area and the shelf packer needs a fourth page for the last 29 small pieces. Two drawn shapes are held out of the build to stay at three pages: pill__pill_gold_edge and success__green_muted (normal, pressed; art/ui/kit_build/kit_2c.py, HELD)",
+   "files": [
+    "client/ui/art/kit_4.webp",
+    "client/ui/art/kit_4_hc.webp"
+   ],
+   "blocking": false,
+   "created_at": "2026-11-10T03:22:46Z",
+   "due": "2026-11-11T03:22:46Z",
+   "default": "the kit stays at three pages; pill_gold_edge and green_muted stay code-drawn",
+   "escalate_to": "lead",
+   "state": "answered by the lead, cycle 48 (default applied; docs/progress/requests.md on main)"
+  },
+  {
+   "id": "AIA-R21",
+   "from": "AIA",
+   "to": "lead",
+   "ask": "P1-AIA-kit-6's done_when asks for disc_school as a piece in client/ui/art/kit.json, and the catalogue's coverage test fails any baked skin that SKINS_OF names no component for: baked at 65aabbda, the pre-check failed on `disc_school has art but no component in SKINS_OF` (393 of 394). SKINS_OF is in client/tests/ui_kit_tests.gd, K1's file. Please either allow AIA one SKINS_OF line for disc_school in this task, as AIA-R17 did for batch 2b, and say which component it stands for (KitSkin gives the skin the materials portrait_*, ring_* and window_*; K37 lists a locked state, so mapping it there also needs locked pieces for disc_school__box and disc_school__frame and AIA-R20's fourth atlas page), or have K1 add the line in the commit that bakes it. The branch is green at 00571a44 with disc_school drawn and kept in art/ui/kit_next/, and every other done_when line met",
+   "files": [
+    "client/tests/ui_kit_tests.gd"
+   ],
+   "blocking": true,
+   "created_at": "2026-11-10T06:50:38Z",
+   "due": "2026-11-10T12:50:38Z",
+   "default": "the task is taken as ready at the handoff's sha without K1-R14 part 1 (pre-check and gate request are in this file); disc_school stays in art/ui/kit_next/, unbaked and code-drawn, K1-R14's own default, and baking it moves to a task that carries the SKINS_OF line",
+   "escalate_to": "lead",
+   "state": "answered by the lead, cycle 48 (default applied; docs/progress/requests.md on main)"
+  },
+  {
+   "id": "AIA-R22",
+   "from": "AIA",
+   "to": "K1",
+   "ask": "A nine-slice stretches one sample across its middle, so panel_dark__album and the other parchment panels can carry paper grain only in their fixed border (corner specks and laid lines along the top and bottom rows). If the gate still finds the middle of a large parchment panel flat, KitSkin would need to lay a tiled grain texture over the panel's centre cell; AIA would then draw a tileable grain piece in a task that carries it",
+   "files": [
+    "client/ui/kit_skin.gd"
+   ],
+   "blocking": false,
+   "created_at": "2026-11-11T01:50:00Z",
+   "due": "2026-11-13T01:50:00Z",
+   "default": "no tiled grain: parchment panels keep grain in their border only and a plain stretched middle",
+   "escalate_to": "lead"
+  },
+  {
+   "id": "AIA-R23",
+   "from": "AIA",
+   "to": "AD",
+   "ask": "Preview the motion sprite sheet at phone size before P2-AIA-motion-1 is marked ready: art/ui/proof/motion_sheet.png (left normal, right high contrast; top on the night of the result screen, bottom on parchment; half the atlas scale, the size they show on a phone). Pieces: burst rays and ring, sparkle star and dot, shine sweep, coin face, turn and edge. The curves are in art/ui/motion/curves.json (revised at 8fbe66d8: rarity tiers, 300-700 ms anticipation, a counter pulse on each landing; every step 150-250 ms, cubic ease-out, no overshoot, each motion's reduced form named). Send every objection in one round (M12). It blocks marking the task ready (done-when M10, M12); everything else is done: pre-check PASS and ui guard OK at 8fbe66d8",
+   "files": [
+    "art/ui/proof/motion_sheet.png",
+    "art/ui/motion/curves.json"
+   ],
+   "blocking": true,
+   "created_at": "2026-11-12T19:05:00Z",
+   "due": "2026-11-13T01:05:00Z",
+   "default": "the sheet stands as drawn, and AIA marks the task ready when its checks pass",
+   "escalate_to": "lead",
+   "state": "default applied by the lead (cycle 72): the sheet stands as drawn"
+  },
+  {
+   "id": "AIA-R24",
+   "from": "AIA",
+   "to": "K1",
+   "ask": "In P2-K1-motion, time Motion from art/ui/motion/curves.json: Motion.press presses down in press_ms x 0.6 (108 ms), under §21.8's 150 ms (curves.json: down 150 ms, up 180 ms, with a darken to 0.9 and a light haptic); pop and sheet ease with TRANS_QUART where curves.json names cubic ease-out only; and the reduced press in curves.json sinks and darkens over 150 ms rather than changing at once (report.md section 10.3)",
+   "files": [
+    "client/ui/motion.gd"
+   ],
+   "blocking": false,
+   "created_at": "2026-11-12T19:20:00Z",
+   "due": "2026-11-14T19:20:00Z",
+   "default": "K1 times Motion as it sees fit in P2-K1-motion; curves.json stays the art's statement of the curves",
+   "escalate_to": "lead"
+  },
+  {
+   "id": "AIA-R25",
+   "from": "AIA",
+   "to": "AD",
+   "ask": "Preview the motion frame strips before P2-AIA-motion-2 is marked ready (M10, M12): art/ui/motion/strips/*.png (every frame stamped with its number and time from the motion's start; 60 fps) and the clips art/ui/motion/clips/*.gif, for board 4. Runs: press full and reduced; reward common, rare, epic, epic in high contrast, and reduced; shine full, reduced and high contrast (the last two draw nothing, by design); screen change full and reduced. art/ui/motion/check_frames.py passes on all of them (timing against curves.json, reduced forms, settling, at most 3 flashes a second). One thing to judge: the epic burst reads small against the chest at phone size. Send every objection in one round (M12)",
+   "files": [
+    "art/ui/motion/strips/",
+    "art/ui/motion/clips/"
+   ],
+   "blocking": true,
+   "created_at": "2026-11-13T02:08:00Z",
+   "due": "2026-11-13T08:08:00Z",
+   "default": "the strips stand as shot, and AIA marks the task ready when its checks pass",
+   "escalate_to": "lead",
+   "state": "default applied by the lead (cycle 77): the strips stand as shot"
+  },
+  {
+   "id": "AIA-R26",
+   "from": "AIA",
+   "to": "AD",
+   "ask": "Preview the re-made reward strips before P2-AIA-motion-3 is marked ready (M10, M12, M21), for board 4b: art/ui/motion/strips/reward_common.png, reward_rare.png, reward_epic.png, reward_epic_hc.png and reward_reduced.png in colour, the same five in grayscale in art/ui/proof/motion_gray/, and the clips art/ui/motion/clips/reward_*.gif (every frame stamped with its number and time; 60 fps). AD-R28: the anticipation now gathers on the prize (dust drawn in from -450 ms, a ring and sparkles closing in from -250 ms) instead of holding still, and the burst spreads by tier: about the prize's size in common, half again in rare, more than twice in epic, well out onto the sunburst (burst_scale 1.15 / 1.8 / 2.8, wider sparkle and dust reach). AD-R29: in the shot the coins land on the counter's starglass icon, beside its figure, and the figure rolls as each coin lands (the real result screen's target is S1's part, P2-S1-result-3). check_frames.py passes on all of them, with a new check that no still stretch in the anticipation runs longer than 150 ms; the burst's anchor is unchanged. Send every objection in one round (M12)",
+   "files": [
+    "art/ui/motion/strips/",
+    "art/ui/motion/clips/",
+    "art/ui/proof/motion_gray/",
+    "art/ui/motion/curves.json"
+   ],
+   "blocking": true,
+   "created_at": "2026-11-15T18:40:00Z",
+   "due": "2026-11-16T00:40:00Z",
+   "default": "the strips stand as shot, and AIA marks the task ready when its checks pass",
+   "escalate_to": "lead"
+  }
+ ],
+ "answers": [
+  {
+   "request_id": "K1-R14",
+   "answer": "Parts 1 and 2, in P1-AIA-kit-6. (1) Not done: disc_school is drawn (box and frame; normal, pressed, disabled) and kept in art/ui/kit_next/, unbaked. Baked, it fails the catalogue's coverage test until SKINS_OF names a component for it (AIA-R21, to the lead), so it stays code-drawn for now, the request's default. (2) Seven materials have a baked shape of their own name, normal only: panel_dark__album, panel_dark__fact, panel_dark__plate, bar_track__bar_track_light, tag__tag, tag__island_label, success__banner_success. tag__tag_warn is redrawn light, so its dark token words read on it. pill_gold_edge and green_muted are drawn and held out of the atlas, which is full at three pages (AIA-R20): they stay code-drawn, the request's default. Wiring: AIA-R19.",
+   "at": "2026-11-10T06:50:38Z"
+  }
+ ],
+ "next_step": "AD previews the reward strips (AIA-R26, due 2026-11-16T00:40:00Z; default: the strips stand as shot); then AIA marks P2-AIA-motion-3 ready at the last green commit (697af959 or a later merge of main)"
 }
