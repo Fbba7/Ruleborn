@@ -3,26 +3,26 @@
  "role": "AIA",
  "branch": "claude/ui-artist",
  "model": "Opus 5.5",
- "agent_state": "active",
+ "agent_state": "waiting",
  "task_id": "P2-AIA-motion-3",
- "task_state": "working",
+ "task_state": "ready",
  "claimed_at": "2026-11-15T18:20:00Z",
  "lease_until": "2026-11-15T23:55:00Z",
- "updated_at": "2026-11-15T20:55:00Z",
- "expected_next_update_by": "2026-11-15T21:40:00Z",
+ "updated_at": "2026-11-15T22:40:00Z",
+ "expected_next_update_by": "2026-11-16T04:40:00Z",
  "long_run": null,
  "progress_marker": {
-  "last_green_sha": "697af959",
-  "next_step": "AIA-R26 answered by AD (no objection). Main b2adaf6a merged as 9ae0ee38, rebaked (no change), guard OK; pre-check at 9ae0ee38, then ready"
+  "last_green_sha": "1157bfb4",
+  "next_step": "ready at 1157bfb4 (main b2adaf6a merged as 9ae0ee38, rebake unchanged, ui guard OK, pre-check PASS); AD answered AIA-R26 with no objection. Wait for the lead to merge; on resync merge main and re-run the pre-check"
  },
  "precheck": {
-  "sha": "697af959ace279379bf770c292ebae0df8c6c9a1",
+  "sha": "1157bfb4be3552eab89c1f7c307167886b886528",
   "exit": 0,
-  "finished_at": "2026-11-15T19:39:34Z",
+  "finished_at": "2026-11-15T22:34:39Z",
   "summary": "All checks passed."
  },
  "gate_request": null,
- "ready_sha": null,
+ "ready_sha": "1157bfb4be3552eab89c1f7c307167886b886528",
  "stop_at": "2026-11-17T21:00:00Z",
  "acks": [
   "M1",
