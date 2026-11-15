@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-AD-board-5",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-15T20:35:00Z",
+  "task_state": "working",
+  "claimed_at": "2026-11-15T20:31:00Z",
   "lease_until": "2026-11-15T23:35:00Z",
-  "updated_at": "2026-11-15T20:35:00Z",
-  "expected_next_update_by": "2026-11-15T21:20:00Z",
+  "updated_at": "2026-11-15T20:39:00Z",
+  "expected_next_update_by": "2026-11-15T21:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "c0bab2a89cf95b03d3540f977a5c0050e593c900",
-    "next_step": "S1-R29 and AIA-R26 answered, M23 acked; P2-AD-board-5 claimed: render character and settings beside their key frames and write board-5.md"
+    "next_step": "Board 5 images made (character and settings beside their key frames at 100%, 200%, de and high contrast); write board-5.md with the objections"
   },
   "precheck": {
     "sha": "c0bab2a89cf95b03d3540f977a5c0050e593c900",
