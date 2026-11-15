@@ -3,13 +3,13 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S1-result-3",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-15T18:09:35Z",
-  "lease_until": "2026-11-15T22:44:40Z",
-  "updated_at": "2026-11-15T19:44:40Z",
-  "expected_next_update_by": "2026-11-15T20:29:40Z",
+  "lease_until": "2026-11-15T23:28:00Z",
+  "updated_at": "2026-11-15T20:28:00Z",
+  "expected_next_update_by": "2026-11-15T21:13:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
@@ -34,7 +34,7 @@
       }
     ]
   },
-  "ready_sha": null,
+  "ready_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M6",
@@ -472,5 +472,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Merge main; setup, build, check_all, guard on the merge; pre-check; gate request (Screen: result at 100% text, Hierarchy and Character presence)."
+  "next_step": "Ready at d896f254 (pre-check PASS, recorded; gate advisory pass, verdicts/P2-S1-result-3/d896f254.json: Hierarchy 3 of 3, Character presence 2 fails of 6). Waiting for the lead's merge (S1-R28 applied at merge, as lead.json says) and AD's preview S1-R29. The judge's weak point, character art on or beside the reward tiles, is noted for a later task, not this one."
 }
