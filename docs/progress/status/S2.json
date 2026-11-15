@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-15T17:40:00Z",
   "lease_until": "2026-11-15T21:55:00Z",
-  "updated_at": "2026-11-15T19:55:00Z",
-  "expected_next_update_by": "2026-11-15T20:40:00Z",
+  "updated_at": "2026-11-15T20:15:00Z",
+  "expected_next_update_by": "2026-11-15T21:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "14fdcdfe",
-    "next_step": "Pre-check running on a3274abe (S2-R20 objections 1-5 fixed, main merged, track doc Part 3 updated); then record, gate_request, ready",
-    "at": "2026-11-15T19:55:00Z"
+    "next_step": "Pre-check running on 13ff046f (home.gd split into home_parts.gd for gdlint's line limit; FIT and draw calls unchanged); then record, S2-R23, gate_request, ready",
+    "at": "2026-11-15T20:15:00Z"
   },
   "precheck": {
     "sha": "14fdcdfe20e797d94669f8657ea3c4d78f9781ba",
@@ -325,5 +325,5 @@
     }
   ],
   "answers": [],
-  "next_step": "When the pre-check on a3274abe ends: record it, set gate_request and ready_sha, mark ready (guard.sh fails only on home/200, 124 against 114, pending S2-R21)."
+  "next_step": "When the pre-check on 13ff046f ends: record it, add S2-R23 (grant home_parts.gd as exceptions), set gate_request and ready_sha, mark ready."
 }
