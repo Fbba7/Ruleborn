@@ -8,8 +8,13 @@ form, the reduced one naming its form; every sprite named is a piece of
 client/ui/art/motion.json; nothing repeats faster than rules.flash_hz_most;
 the reward's tiers each anticipate 300 to 1000 ms (rubric quality 5) and a
 rarer tier is stronger in every key (longer, more particles, a brighter and
-larger burst), with the anticipation's steps inside the shortest tier's
-anticipation; and the reduced reward keeps exactly one coin landing in its
+larger burst, farther-flying particles, a wider gather), with the
+anticipation's steps inside the shortest tier's anticipation and every
+payoff step with a negative at_ms (the visible gather, before the burst)
+starting no earlier than the anticipation of each tier it plays in (a step
+whose count is a tier key plays only where that count is above 0); the
+burst's sprites take one count each, so a count key that gates a gather on a
+sprite is that sprite's count wherever it is above 0; and the reduced reward keeps exactly one coin landing in its
 counter, with no anticipation or burst.
 
     python3 art/ui/motion/check_curves.py      # prints "ok" or each fault
@@ -23,7 +28,8 @@ CURVES = ROOT / "art/ui/motion/curves.json"
 MANIFEST = ROOT / "client/ui/art/motion.json"
 FORMS = ("down", "up", "steps", "out", "in", "anticipation", "payoff", "on_landing")
 TIERS = ("common", "rare", "epic")
-TIER_KEYS = ("anticipation_ms", "sparkles", "dust", "burst_value", "burst_scale")
+TIER_KEYS = ("anticipation_ms", "sparkles", "dust", "burst_value", "burst_scale", "sparkle_points", "dust_points",
+             "gather_points", "gather_dust")
 
 
 def steps_of(form):
@@ -61,6 +67,30 @@ def check_tiers(full):
     for step in full.get("anticipation", []):
         if step.get("at_ms", 0) + step.get("ms", 0) > shortest:
             faults.append(f"reward.full.anticipation.{step.get('name')} outlasts the shortest anticipation, {shortest} ms")
+    counts = {}
+    for step in full.get("payoff", []):
+        where = f"reward.full.payoff.{step.get('name')}"
+        count = step.get("count", 1)
+        key = count[5:] if isinstance(count, str) and count.startswith("tier.") else None
+        if key is not None and key not in TIER_KEYS:
+            faults.append(f"{where}: count {count} is not a tier key")
+            continue
+        if step.get("target") == "burst":
+            counts.setdefault(step.get("sprite"), set()).add(key)
+        at = step.get("at_ms", 0)
+        if not isinstance(at, (int, float)):
+            faults.append(f"{where}: at_ms is not a number")
+            continue
+        for tier in TIERS:
+            plays = key is None or tiers[tier][key] > 0
+            if plays and at < -tiers[tier]["anticipation_ms"]:
+                faults.append(f"{where} starts {-at} ms before the burst, before tier {tier}'s "
+                              f"{tiers[tier]['anticipation_ms']} ms anticipation does")
+    for sprite, keys in counts.items():
+        for tier in TIERS:
+            n = {tiers[tier][k] if k else 1 for k in keys} - {0}
+            if len(n) > 1:
+                faults.append(f"reward tier {tier}: the burst's {sprite} has counts {sorted(n)}, not one")
     return faults
 
 
