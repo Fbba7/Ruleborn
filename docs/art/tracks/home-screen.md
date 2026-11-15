@@ -162,7 +162,7 @@ AD's board 3 (`docs/art/ui-quality/gate/boards/board-3.md`, at `73bbcec6`) did n
 
 - The universe is fitted into the room between the purse and what stands over its foot (the notice, the goal and Collect), in every state, as the notice state already did.
 - At 100% all seven realms and their pins are clear of the goal and of Collect. Verdant and Emberreach sit above the goal.
-- The pins settle clear of the side buttons and their badges. A wider second search (`UniversePins._settle_at`) finds each pin a place where the first one found none.
+- The pins settle clear of the side buttons and their badges, near their own islands (see S2-R20, objection 1, below).
 - In Portuguese, the Defence badge is clear of the Skyfield pin.
 - The goal takes one line at 100% in English and two in Portuguese.
 
@@ -190,23 +190,50 @@ AD's board 3 (`docs/art/ui-quality/gate/boards/board-3.md`, at `73bbcec6`) did n
 | The fixture has no notifications, shield or locked realm | Not added in this task. The dock's count badges are KitTabs' (P2-K1-tabs is open on that file), and adding them now would move the budget shots under K1's work. Home has no Defence timer data to show: the shield timer needs a source in the defence service first. Lantern Vale's lock is the next fixture change to make, in a later task. |
 | Collect's shine did not fall in AD's frames | No change. The kit's motion test covers the shine. |
 
+**AD's S2-R20 review (objections 1 to 5).**
+
+AD reviewed this part once at `14fdcdfe` (S2-R20, `docs/progress/requests.md`) and made six objections. Objection 6, the dock's ISLANDS label, is KitTabs' (K1). This task answers 1 to 5.
+
+1. **Each pin sits near its island, with a gap from the Defence badge.**
+   - `UniversePins._spot` replaces the old two-pass search. It places each pin at the nearest free place within its reach. Reach runs from 1.25 to 3 pin heights (`NEAR` and `FAR`) from the island's anchor.
+   - A free place is clear, by the kit's pin gap, of the other pins and of the controls over the world: the side buttons with their badges, the notice, the goal and Collect. The world is already framed under the purse.
+   - Where a named pin finds no free place within `NEAR`, it sheds width before it moves away: it shows the realm's icon and level alone, and then its level on the numbered chip, within `FAR`. Only where a realm finds no place at all does every pin take the same step, so the pins stay alike. Each realm is still said aloud by its name.
+   - At large text, when a realm still finds no free place, the side buttons give way, as they already do with the notice up (`Home._edges_yield`).
+2. **With the notice up at 100% in English, the notice takes its height from the goal and the panels first.** The goal keeps one line where it fits. The notice's line under the headline is balanced: it breaks between words so its two lines are near the same length ("See how your / defence held").
+3. **The Full tag shows at every size and in every language.** It is a red plate on the purse's last amount (`Home._hang_full`). At 200%, where the amount fills its slot, the tag sits under the amount.
+4. **The strain shows in its two-line large form at 200% in every language.** The share and the band are each on their own line, in one column (`Home._large_strain`).
+5. **AD's minor points:**
+   - **The Portuguese purse at 100% takes two rows.** The amounts sit closer (`PURSE_GAP` 6, down to `PURSE_GAP_LEAST` 3 before a row breaks).
+   - **High contrast's Collect label is the same size as at 100%.** Collect's padding is 16 points at every contrast (`COLLECT_PAD`).
+   - **Chips 2 and 4, and 4 and 6, no longer touch** in Portuguese and German at 200%. Chips keep the pin gap like the named pins.
+   - The Portuguese goal's break, "Guardião / 25", is the string's (S2-R19, still open).
+
 **Draw calls.**
 
-| Shot | Calls | Budget |
+| Shot | Calls | Recorded |
 |---|---|---|
-| home/100 | 145 | 145 |
-| home/200 | 114 | 114 |
-| home/hc | 145 | 145 |
+| home/100 | 144 | 145 |
+| home/200 | 124 | 114 |
+| home/hc | 144 | 145 |
 
-The budget shots are unchanged. With the raid notice up at 100% (`NOTICE=1`, not a budget shot), the frame reaches 154 in English, 152 in French and 151 in Portuguese, as before this part. At 200% with the notice up it draws 112 to 120.
+- **home/200 is 10 over its record.** A bisect at 200% English, each fix added alone onto `14fdcdfe`, puts the rise on three of AD's objections:
+  - the pins' search (objection 1): +5;
+  - the Full tag's plate (objection 3): +4;
+  - the strain's two-line form (objection 4): +3.
+- KitTabs' fix on main (P2-K1-tabs) takes 1 off every home shot. Each fix's parts are kit parts drawing the skin atlas, their icon and the font in turn, so they do not batch with their neighbours.
+- **The raise is asked of the lead (S2-R21):** record home/200 at 124 in `budgets.json` when this task merges. Textures and words below 4.5:1 are unchanged, and home/200 stays 26 under the cap of 150.
+- **Other states (not budget shots):**
+  - With the raid notice up at 100%, the frame draws 154 in English and Portuguese and 153 in German. The notice adds its balanced second line and the goal's own line.
+  - At 150% in English it draws 127.
+  - At 200% with the notice up it draws 115 to 117, and 125 with the tallest strings.
 
-**Evidence.** `FIT=1`, with the new checks, passes in 22 cases:
+**Evidence.** `FIT=1`, with the new checks, passes in 26 cases, with no script errors:
 
 | Text size | Cases |
 |---|---|
-| 100% | en, pt_BR, de, high contrast, the tallest strings (`MOST`), with the notice in en, pt_BR and fr |
+| 100% | en, pt_BR, de, fr, high contrast, the tallest strings (`MOST`); with the notice in en, pt_BR, de and fr |
 | 150% | en, and pt_BR with the notice |
-| 200% | en, pt_BR, de, high contrast; with the notice in en, pt_BR, de, fr and pt_PT |
+| 200% | en, pt_BR, pt_PT, high contrast, high contrast in pt_BR; with the notice in en, pt_BR, de and fr, and with the tallest strings |
 | 960 points tall | at 100%, and at large text |
 | 900 points tall | 200% with the notice |
 
@@ -214,9 +241,11 @@ Checks run on the task's last commit are in `docs/progress/S2.md`.
 
 **Still worse, or open:**
 
+- **home/200 is over its record** until the lead decides S2-R21.
 - **The Portuguese goal is not number-first.** It reads "faltam 1.240 de experiência · Guardião 25", while the key frame's English is number-first. The string is in `strings.csv`, which is not this task's file (S2-R19).
-- **At 200% with the raid notice up, the side buttons give way.** Their places stay on the badge's menu.
-- **Collect's words shrink at 200% in German**, below the kit's button size.
+- **The strain band's word, "Humming", is not translated** in German or Portuguese. That is the strings file's, not this task's.
+- **At 200% with the raid notice up, the side buttons give way.** At large text they also give way where a realm finds no free place. Their places stay on the badge's menu.
+- **Collect's words shrink at 200% in German**, below the kit's button size. Collect drops its picture first: "3,4 Tsd. einsammeln".
 - **At 200% in German with the raid notice up, the notice drops its red disc.** The alarm glyph on the tag stays.
 
 ## Left for other tasks
