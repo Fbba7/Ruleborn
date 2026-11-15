@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-15T18:20:00Z",
   "lease_until": "2026-11-15T21:20:00Z",
-  "updated_at": "2026-11-15T18:40:00Z",
-  "expected_next_update_by": "2026-11-15T19:25:00Z",
+  "updated_at": "2026-11-15T19:15:00Z",
+  "expected_next_update_by": "2026-11-15T20:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "strips re-made at 657a1c0b (gather, tier spread, coins on the counter icon); AD preview AIA-R26 sent; next: bake check, guard, merge main, build, check_all, pre-check"
+    "next_step": "pre-check at fc1ca1cf failed on a stale motion.json (a local __pycache__ in the hashed sources); rebaked at 3b8d2ea0; guard and pre-check re-running there"
   },
   "precheck": null,
   "gate_request": null,
