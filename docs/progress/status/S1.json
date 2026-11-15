@@ -7,9 +7,9 @@
   "task_id": "P2-S1-result-3",
   "task_state": "working",
   "claimed_at": "2026-11-15T18:09:35Z",
-  "lease_until": "2026-11-16T01:26:51Z",
-  "updated_at": "2026-11-15T22:26:51Z",
-  "expected_next_update_by": "2026-11-15T23:11:51Z",
+  "lease_until": "2026-11-16T01:45:50Z",
+  "updated_at": "2026-11-15T22:45:50Z",
+  "expected_next_update_by": "2026-11-15T23:30:50Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
@@ -23,7 +23,7 @@
     "summary": "All checks passed."
   },
   "gate_request": {
-    "sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
+    "sha": "904a356794f9300293f50bc4d57c567891e89334",
     "items": [
       {
         "item": "result at 100% text",
@@ -469,6 +469,22 @@
       "due": "2026-11-16T18:28:38Z",
       "default": "The gate runs on the pre-checked head as it stands.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R30",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Re-check of objection F from S1-R29 (P2-S1-result-3) at 904a3567 (the fix is a5db9545, with main merged as a686d4a7). The first screen now ends on a whole line whenever the bar sits under the page that scrolls. ResultFit.fold grows the corner's clearance under the bar by the line or card the scroll's edge would cut, which lifts the bar and the edge. It is a cut, not a fade, so it adds no draw call. Where the first screen now ends: en 200% on 'Entry fee 2,840 returned', de 200% on 'Eintrittsgebühr 2.840 erstattet', pt_BR 200% on 'Taxa de entrada de' (the rest of that label starts below the edge). The FIT check now fails when the edge cuts a line or card. Stills: SERVER=1 FIT=1 TEXT=200 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus CONTRAST=1, LOCALE=pt_BR and LOCALE=de. Draw calls are unchanged (en200 113, hc200 55, pt200 115, de200 114). Details are in docs/art/tracks/result-screen.md, 'Objection F, the fold'. F only; any objection, in one list.",
+      "files": [
+        "client/scripts/result_fit.gd",
+        "client/scripts/result_screen.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T22:45:50Z",
+      "due": "2026-11-16T22:45:50Z",
+      "default": "The gate runs on the pre-checked head as it stands, and S1 marks ready on a pass.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -480,5 +496,5 @@
       "where": "claude/ui-ad, docs/progress/status/AD.json"
     }
   ],
-  "next_step": "Objection F (S1-R29) fixed at a5db9545 (the fold: the first screen ends on a whole line, a cut with no draw call more); track doc da390915; main merged as a686d4a7, check_all running on it; then guard, pre-check, gate and AD's re-check."
+  "next_step": "Objection F fixed at a5db9545; main merged as a686d4a7: setup, build.sh, check_all.sh exit 0; guard.sh fails only on S1-R28's two records. Pre-check running at 904a3567; gate requested there; S1-R30 asks AD to re-check F. Mark ready on a pre-check and gate pass at 904a3567."
 }
