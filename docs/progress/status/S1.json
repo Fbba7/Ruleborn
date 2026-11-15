@@ -7,14 +7,14 @@
   "task_id": "P2-S1-result-3",
   "task_state": "working",
   "claimed_at": "2026-11-15T18:09:35Z",
-  "lease_until": "2026-11-15T21:28:38Z",
-  "updated_at": "2026-11-15T18:28:38Z",
-  "expected_next_update_by": "2026-11-15T18:58:38Z",
+  "lease_until": "2026-11-15T21:31:08Z",
+  "updated_at": "2026-11-15T18:31:08Z",
+  "expected_next_update_by": "2026-11-15T19:01:08Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "A, B, D and E built and checked in stills and strips at 5e844ac3; AD preview (S1-R29) and budgets request (S1-R28) filed; next: merge main, setup, build, check_all, guard, pre-check, gate.",
-    "at": "2026-11-15T18:28:38Z"
+    "next_step": "Main merged as fd79b7fd; setup and build exit 0 on the merge; check_all and guard running; S1.md handoff written; next: pre-check on the head, gate request.",
+    "at": "2026-11-15T18:31:08Z"
   },
   "precheck": null,
   "gate_request": null,
