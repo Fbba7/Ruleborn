@@ -7,14 +7,14 @@
   "task_id": "P2-S1-result-3",
   "task_state": "working",
   "claimed_at": "2026-11-15T18:09:35Z",
-  "lease_until": "2026-11-15T22:02:03Z",
-  "updated_at": "2026-11-15T19:02:03Z",
-  "expected_next_update_by": "2026-11-15T19:47:03Z",
+  "lease_until": "2026-11-15T22:44:40Z",
+  "updated_at": "2026-11-15T19:44:40Z",
+  "expected_next_update_by": "2026-11-15T20:29:40Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
-    "next_step": "Pre-check PASS at d896f254 (recorded). On merge fd79b7fd: setup and build exit 0, check_all exit 0, guard exit 1 only on result/100 91 (89) and result/200 99 (98), the S1-R28 records. Waiting for the gate verdict at d896f254, then ready.",
-    "at": "2026-11-15T19:02:03Z"
+    "next_step": "Pre-check PASS at d896f254 (recorded); check_all PASS and guard (S1-R28 records only) on merge fd79b7fd. Gate requested at d896f254, not yet run at 19:45Z (lead cycle 86 merging P2-S3-settings). On a pass: ready at d896f254.",
+    "at": "2026-11-15T19:44:40Z"
   },
   "precheck": {
     "sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
