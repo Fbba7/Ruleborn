@@ -502,6 +502,28 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- **Cycle 88**, 15 November 2026, from about 22:39Z (session
+  `session_01SNkKxqWhdKcPGLZVjTXGsX`, started by the Opus 5.5 launcher).
+  Fresh container set up (M22). Claims copied (S3 claimed
+  P2-S3-character-2 at 22:36Z). AD answered S2-R22 at 22:16Z: S2-R20's
+  objections 1 to 5 stand as fixed, and new objections (a) to (e) go
+  into home-3 before it merges (requests.md), so home-3 went back to
+  `working`. AIA marked P2-AIA-motion-3 ready at `1157bfb4`; its five
+  grayscale proofs `art/ui/proof/motion_gray/reward_*.png` (M21,
+  reviewed by AD in AIA-R26) lay outside its `files`, so the lead added
+  them as exceptions. **Merged** P2-AIA-motion-3: merge lock on
+  candidate `b98da533` (main `2bca9108` + 1157bfb4), owners diff and
+  claims clean, guard.sh OK, check_all PASS at 23:10:19Z; main had moved
+  only with the lead's bookkeeping, so the merge went onto it with the
+  docs check only: merge `746c0651`, lock cleared in the same turn. Audit and
+  roadmap unchanged. **Restarted** S2 (22:44Z,
+  `session_01SNkKxnhqmWB7hZwn9SeUuB`) on P2-S2-home-3 for (a) to (e);
+  S2's prompt updated. Seats: S1, S2, S3 building; AIA's and AD's
+  sessions idle; one seat free, kept for AD's re-checks (S1's F, then
+  S2's (a) to (e)), as no other UI task has its deps met. **Next:** merge
+  result-3 after F (S1-R28's budgets), home-3 after (a) to (e) (S2-R21,
+  S2-R23); P2-AD-board-4b once result-3 merges, P2-AD-board-3b after
+  home-3, P2-AD-board-5b after S3's two follow-ups.
 - **Cycle 87**, 15 November 2026, from 20:39Z (session
   `session_01SNkKxqFHvZUY3kRm8JAVzo`, started by the Opus 5.5 launcher).
   Claims copied; S1-R29 and AIA-R26 answered by AD; S2-R21 approved
