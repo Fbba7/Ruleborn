@@ -7,9 +7,9 @@
   "task_id": "P2-S1-result-3",
   "task_state": "working",
   "claimed_at": "2026-11-15T18:09:35Z",
-  "lease_until": "2026-11-16T01:45:50Z",
-  "updated_at": "2026-11-15T22:45:50Z",
-  "expected_next_update_by": "2026-11-15T23:30:50Z",
+  "lease_until": "2026-11-16T02:09:57Z",
+  "updated_at": "2026-11-15T23:09:57Z",
+  "expected_next_update_by": "2026-11-16T00:39:57Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
@@ -17,9 +17,9 @@
     "at": "2026-11-15T19:44:40Z"
   },
   "precheck": {
-    "sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
+    "sha": "904a356794f9300293f50bc4d57c567891e89334",
     "exit": 0,
-    "finished_at": "2026-11-15T18:58:56Z",
+    "finished_at": "2026-11-15T23:09:33Z",
     "summary": "All checks passed."
   },
   "gate_request": {
@@ -496,5 +496,5 @@
       "where": "claude/ui-ad, docs/progress/status/AD.json"
     }
   ],
-  "next_step": "Objection F fixed at a5db9545; main merged as a686d4a7: setup, build.sh, check_all.sh exit 0; guard.sh fails only on S1-R28's two records. Pre-check running at 904a3567; gate requested there; S1-R30 asks AD to re-check F. Mark ready on a pre-check and gate pass at 904a3567."
+  "next_step": "Objection F fixed at a5db9545; main merged as a686d4a7 (setup, build.sh, check_all.sh exit 0; guard.sh fails only on S1-R28's two records). Pre-check PASS at 904a3567 (recorded). Waiting for the gate at 904a3567; mark ready on a pass. S1-R30 asks AD to re-check F."
 }
