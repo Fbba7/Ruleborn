@@ -39,11 +39,20 @@ the status files, requests and scheduled-task prompts.
 - **13 November 2026, about 13:16 UTC:** the owner stopped it again
   ("Stop cleanly"), in the chat of the overseer session. **The program is
   stopped.** The overseer disabled the watchdog and its own hourly report
-  check-in, and told the running lead cycle to finish cleanly: merge
-  nothing, start nothing, clear its merge lock and push its progress
-  files. The launcher of 11 November is to be disabled; until it is, it
-  reads this order and stops. Order 3's "keep working" does not apply
-  while the program is stopped.
+  check-in, interrupted the running lead cycle (cycle 84, which merged
+  nothing and started nothing) and cleared its merge lock. The program
+  did not run from then until the restart of 15 November.
+- **15 November 2026, about 17:10 UTC:** the owner restarted it
+  ("Continue"), in the chat of the overseer session. **The program
+  runs**, on Opus 5.5 at effort high (order 5), with the cap of four
+  builders (order 3). Order 3's "keep working" applies again.
+  - **The launcher and the watchdog of 11 November** start the lead's
+    cycles again: the launcher stayed enabled through the stop, and the
+    overseer re-enabled the watchdog. Their IDs are in
+    [`docs/progress/lead.md`](docs/progress/lead.md), "The program's
+    scheduled tasks and sessions".
+  - **Where the work stood at the restart** is in the same file, "Now",
+    entry "Stopped here".
 
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its

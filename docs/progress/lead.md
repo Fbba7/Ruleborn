@@ -1,5 +1,14 @@
 # The lead's handoff
 
+> **Restarted by the owner, 15 November 2026** ("Continue", in the
+> overseer's chat, at about 17:10Z). CLAUDE.md order 1 says the program
+> runs, on Opus 5.5 at effort high (order 5), with the cap of four
+> builders (order 3). The launcher and the watchdog of 11 November start
+> the cycles again (table below). The first cycle after the restart
+> starts from "Now", entry "Stopped here": board 4 (AD's `c0bab2a8`)
+> merges first, after its checks are run again. The builders' sessions of
+> 13 November are idle; start fresh ones for unfinished tasks.
+
 > **Stopped by the owner, 13 November 2026** ("Stop cleanly", in the
 > overseer's chat, at about 13:16Z). CLAUDE.md order 1 says the program
 > is stopped. Cycle 84 was interrupted by the overseer while board 4's
