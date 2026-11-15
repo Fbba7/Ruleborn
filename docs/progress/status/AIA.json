@@ -3,17 +3,17 @@
  "role": "AIA",
  "branch": "claude/ui-artist",
  "model": "Opus 5.5",
- "agent_state": "waiting",
+ "agent_state": "active",
  "task_id": "P2-AIA-motion-3",
  "task_state": "working",
  "claimed_at": "2026-11-15T18:20:00Z",
- "lease_until": "2026-11-15T21:20:00Z",
- "updated_at": "2026-11-15T19:45:00Z",
- "expected_next_update_by": "2026-11-16T00:40:00Z",
+ "lease_until": "2026-11-15T23:55:00Z",
+ "updated_at": "2026-11-15T20:55:00Z",
+ "expected_next_update_by": "2026-11-15T21:40:00Z",
  "long_run": null,
  "progress_marker": {
   "last_green_sha": "697af959",
-  "next_step": "AD preview of the reward strips (AIA-R26, due 2026-11-16T00:40:00Z); then answer objections in one round, merge main if it moved, pre-check and ready"
+  "next_step": "AIA-R26 answered by AD (no objection). Main b2adaf6a merged as 9ae0ee38, rebaked (no change), guard OK; pre-check at 9ae0ee38, then ready"
  },
  "precheck": {
   "sha": "697af959ace279379bf770c292ebae0df8c6c9a1",
