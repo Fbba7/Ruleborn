@@ -504,7 +504,7 @@ func start_reward() -> Tween:
 	if to <= 0 or not grade_icon.visible or not is_inside_tree():
 		_end_reward.call_deferred()
 		return null
-	var tile := _reward_tile()
+	var tile := _reward_mark()
 	_write_reward(0, to)
 	reward_tween = Motion.reward(grade_icon, tile, 0, to, str(TIERS.get(str(_verdict.get("grade", "")), "common")),
 		_write_reward.bind(to))
@@ -530,11 +530,11 @@ func _lift_reward() -> void:
 				RenderingServer.CANVAS_ITEM_Z_MAX)
 
 
-## Where the coins land: the Starlight tile of the split, else the haul's.
-func _reward_tile() -> Control:
-	if reward_row.visible:
-		return (reward_labels["starlight"] as Label).get_parent().get_parent() as Control
-	return haul_tile
+## Where the coins land and what pulses: the icon (its box's first child) by
+## the Starlight number, else the haul's, so no coin hides the roll (AD's D).
+func _reward_mark() -> Control:
+	var number := (reward_labels["starlight"] as Label) if reward_row.visible else haul_label
+	return number.get_parent().get_child(0) as Control
 
 
 ## What the coins bring: the split's Starlight, else the haul, else 0.
