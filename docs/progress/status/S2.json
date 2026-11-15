@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-15T17:40:00Z",
   "lease_until": "2026-11-15T20:40:00Z",
-  "updated_at": "2026-11-15T18:14:00Z",
-  "expected_next_update_by": "2026-11-15T18:59:00Z",
+  "updated_at": "2026-11-15T18:30:12Z",
+  "expected_next_update_by": "2026-11-15T19:15:12Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "14fdcdfe",
@@ -294,5 +294,6 @@
       "escalate_to": "lead"
     }
   ],
-  "answers": []
+  "answers": [],
+  "next_step": "Objections 1 and 2 built in the working tree (pins near their islands; goal beside Collect at 100%, notice tag on one line and its line balanced); now objection 3 (Full kept at every size), then 4 and 5, renders, checks, commit."
 }
