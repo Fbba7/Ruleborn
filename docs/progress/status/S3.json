@@ -8,12 +8,12 @@
   "task_state": "in_progress",
   "claimed_at": "2026-11-15T22:36:00Z",
   "lease_until": "2026-11-16T01:36:00Z",
-  "updated_at": "2026-11-15T22:41:00Z",
-  "expected_next_update_by": "2026-11-15T23:26:00Z",
+  "updated_at": "2026-11-15T22:52:07Z",
+  "expected_next_update_by": "2026-11-15T23:37:07Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e86fad0",
-    "next_step": "baseline shots rendered (de 200% FIT fails, objection A); editing character_screen.gd for A and D first",
+    "next_step": "A, B, C, D, G coded in character_screen.gd; rendering en/pt_BR/de at 100% and 200% to check them against key frame 04",
     "at": "2026-11-15T22:41:00Z"
   },
   "precheck": null,
