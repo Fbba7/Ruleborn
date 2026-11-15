@@ -1,5 +1,23 @@
 # The lead's handoff
 
+> **Restarted by the owner, 15 November 2026** ("Continue", in the
+> overseer's chat, at about 17:10Z). CLAUDE.md order 1 says the program
+> runs, on Opus 5.5 at effort high (order 5), with the cap of four
+> builders (order 3). The launcher and the watchdog of 11 November start
+> the cycles again (table below). The first cycle after the restart
+> starts from "Now", entry "Stopped here": board 4 (AD's `c0bab2a8`)
+> merges first, after its checks are run again. The builders' sessions of
+> 13 November are idle; start fresh ones for unfinished tasks.
+
+> **Stopped by the owner, 13 November 2026** ("Stop cleanly", in the
+> overseer's chat, at about 13:16Z). CLAUDE.md order 1 says the program
+> is stopped. Cycle 84 was interrupted by the overseer while board 4's
+> checks ran under the merge lock; it merged nothing and started no
+> session. The overseer cleared the lock and set
+> `expected_next_update_by` to null. The watchdog is disabled; the
+> launcher reads order 1 and stops. Where the work stands is in "Now",
+> entry "Stopped here".
+
 > **Restarted by the owner, 11 November 2026** ("We still need to keep the
 > UI process we were doing with the phases running as it was", then "Make
 > sure it is running now", in the overseer's chat, at about 01:00Z).
@@ -157,8 +175,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxrMnNScoFR7y7AJx71` (cycle 82, 13
-November 2026 from 10:38Z, started by the Opus 5.5 launcher). Cycle 81's
+Latest lead cycle session: `session_01SNkKxn5sZ5Ez5cQQFwtAon` (cycle 83, 13
+November 2026 from 11:38Z, started by the Opus 5.5 launcher). Cycle 82's
+was `session_01SNkKxrMnNScoFR7y7AJx71` (from 10:38Z). Cycle 81's
 was `session_01SNkKxmrBHkRN8tALzCsGkF` (from 09:38Z). Cycle 80's
 was `session_01SNkKxorbtQPjVTWkgJKyfY` (from 08:38Z). Cycle 79's
 was `session_01SNkKxpZSJe4qP28t2awv1v` (from 07:38Z). Cycle 78's
@@ -340,8 +359,8 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: P2-AD-board-3 is merged; P2-AD-board-4 (result and motion), P2-AD-board-3b (home, after P2-S2-home-3 and P2-K1-tabs) and P2-AD-board-5 (character and settings) as their deps merge (seeded in cycle 71; board 2, icons, waits for icon batches 3-4, deferred by D13's answer (c)). Between boards, review the stills builders send you before ready within the same cycle, every objection in one round (M12). P1-AD-board-1d is merged: board 1 stands. O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
-STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: P2-AD-board-3 is merged; P2-AD-board-4 is ready (merging in cycle 85); P2-AD-board-4b (the re-check after P2-S1-result-3 and P2-AIA-motion-3), P2-AD-board-3b (home, after P2-S2-home-3 and P2-K1-tabs) and P2-AD-board-5 (character and settings) as their deps merge (seeded in cycle 71; board 2, icons, waits for icon batches 3-4, deferred by D13's answer (c)). Between boards, review the stills builders send you before ready within the same cycle, every objection in one round (M12). P1-AD-board-1d is merged: board 1 stands. O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-ad from it (create it if it does not exist) and push only to claude/ui-ad with git push -u origin claude/ui-ad, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AD, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -355,8 +374,8 @@ You are agent AIA of the Ruleborn agent program (UI wave). Read docs/guides/agen
 Agent: AIA            Role: maker (AIA): kit art and motion art        Model: Opus 5.5, effort high
 Branch: claude/ui-artist
 Owned files: art/ui/** except art/ui/icons/**, client/ui/art/kit*, docs/progress/AIA.md, docs/progress/status/AIA.json
-Tasks: P2-AIA-motion-1, then P2-AIA-motion-2 as its deps merge (report.md step 8; P1-AIA-kit-1 to -7 and every phase 0 AIA task are merged). Icons are AIA-2's, not yours.
-STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: P2-AIA-motion-3 (board 4's objection C, AD-R28, and AD-R29's part in client/tests/shots/motion_rig.gd; docs/progress/requests.md). P2-AIA-motion-1 and -2, P1-AIA-kit-1 to -7 and every phase 0 AIA task are merged. Icons are AIA-2's, not yours. M14 and M21: rebake from a fresh container; merge main and run bash tools/ui_bake/guard.sh before ready; list any added, removed or renamed pieces or materials as a request to that list's owner; send AD portraits in colour and in grayscale.
+STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-artist from it (create it if it does not exist) and push only to claude/ui-artist with git push -u origin claude/ui-artist, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AIA, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -370,8 +389,8 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5, effort high
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97); P2-K1-motion is merged; now P2-K1-tabs (board 3's objection D, AD-R25: KitTabs labels clear of the tile rim)
-STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97); P2-K1-motion is merged; P2-K1-tabs is ready (merging in cycle 85); no K1 task is open after it
+STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-bake from it (create it if it does not exist) and push only to claude/ui-bake with git push -u origin claude/ui-bake, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is K1, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -386,7 +405,7 @@ Agent: AIA-2            Role: maker (AIA-2): icon art        Model: Opus 5.5, ef
 Branch: claude/ui-artist-icons
 Owned files: art/ui/icons/**, client/tests/shots/icon_*.gd, client/ui/art/icons_48*, client/ui/art/icons_256*, and the files each AIA-2 task lists in the backlog (P2-AIA2-busts: client/world/creature_bust.gd), docs/progress/AIA-2.md, docs/progress/status/AIA-2.json
 Tasks: none open (P2-AIA2-busts, board 1's note G, merged in cycle 71; P1-AIA2-toon-route and icons-1a to -2b are merged). Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
-STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-artist-icons from it (create it if it does not exist) and push only to claude/ui-artist-icons with git push -u origin claude/ui-artist-icons, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AIA-2, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -400,8 +419,8 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P2-S1-result-2 (report.md step 9; P2-S1-result-1 and P2-K1-motion are merged): its work is on claude/ui-screens-heist at aed28321; answer AD's four objections to S1-R24 (docs/progress/requests.md) inside the task before ready. Pilot-1 to pilot-5, P2-S1-toon-drop and P2-S1-result-1 are merged.
-STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: P2-S1-result-3 (board 4's objections A, B, D and E on the result screen: AD-R27, AD-R26, AD-R29 and AD-R30 in docs/progress/requests.md; docs/art/ui-quality/gate/boards/board-4.md). Send AD the stills before ready (M10, M12). P2-S1-result-1 and -2, pilot-1 to pilot-5 and P2-S1-toon-drop are merged.
+STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-heist from it (create it if it does not exist) and push only to claude/ui-screens-heist with git push -u origin claude/ui-screens-heist, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S1, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -415,8 +434,8 @@ You are agent S2 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-home
 Owned files: only the files each S2 task lists in the backlog, docs/progress/S2.md, docs/progress/status/S2.json
-Tasks: P2-S2-home-3 (P2-S2-home-2 is merged, as 807d68a7; report.md step 10): board 3's objections A to C (AD-R22 to AD-R24 in docs/progress/requests.md; docs/art/ui-quality/gate/boards/board-3.md, merged with P2-AD-board-3) with the task's own done_when. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
-STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: P2-S2-home-3 (P2-S2-home-2 is merged, as 807d68a7; report.md step 10): board 3's objections A to C (AD-R22 to AD-R24 in docs/progress/requests.md; docs/art/ui-quality/gate/boards/board-3.md) with the task's own done_when; AD answered S2-R20 at c0b2bc49 with six objections: fix 1 to 5 inside this task before ready (6 is K1's, in P2-K1-tabs). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-home from it (create it if it does not exist) and push only to claude/ui-screens-home with git push -u origin claude/ui-screens-home, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S2, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -430,8 +449,8 @@ You are agent S3 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S3            Role: maker (S3): the character and settings screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-meta
 Owned files: only the files each S3 task lists in the backlog, docs/progress/S3.md, docs/progress/status/S3.json
-Tasks: P2-S3-screenkit, then P2-S3-character and P2-S3-settings as their deps merge (report.md step 11: ScreenKit and ScreenBox draw through KitSkin, then the two screens on the kit). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
-STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: P2-S3-settings (report.md step 11; P2-S3-screenkit and P2-S3-character are merged): its work is on claude/ui-screens-meta; the lead's advisory gate on its last gate_request is in docs/art/ui-quality/gate/verdicts/P2-S3-settings/. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-meta from it (create it if it does not exist) and push only to claude/ui-screens-meta with git push -u origin claude/ui-screens-meta, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S3, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -446,7 +465,7 @@ Agent: SV            Role: maker (SV): the owner's server decisions B1-B12 (docs
 Branch: claude/server-decisions
 Owned files: only the files each SV task lists in the backlog, docs/progress/SV.md, docs/progress/status/SV.json
 Tasks: none open (SV-B1-B6, SV-B7-B9 and SV-B11-B12 are merged; SV-B10 is not yours yet). Run the client suite (python3 client/status.py) before marking a task ready.
-STOP_AT: 2026-11-14T21:00:00Z (= 18:00 America/Sao_Paulo)
+STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/server-decisions from it (create it if it does not exist) and push only to claude/server-decisions with git push -u origin claude/server-decisions, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SV, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -454,6 +473,44 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
+  cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
+  the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready
+  `c0bab2a8`) and was interrupted while the checks ran: nothing merged,
+  no builder started. Board 4 stays on AD's branch, ready, and merges
+  first after a restart (re-run the checks). The other builders' work is
+  on their branches: K1's tabs (check_all passes), S2's home-3 and S3's
+  settings (gate on `f0a36a41` pending). Board 4's follow-ups
+  (P2-S1-result-3, P2-AIA-motion-3, P2-AD-board-4b) are filed and not
+  started.
+- Cycle 83, 13 November 2026, from 11:38Z (session
+  `session_01SNkKxn5sZ5Ez5cQQFwtAon`, started by the Opus 5.5 launcher):
+  no merge (nothing ready); board 4's follow-ups filed; M22 acked.
+  - **Fresh-container setup first** (M22, acked): the rustup targets, the
+    pip packages, `bash client/build.sh` and `npm ci` in
+    `tools/ui_research`, all exit 0 before any lock.
+  - **Board 4** (AD, P2-AD-board-4 claimed 11:30Z, c0bab2a8): round 1
+    does not stand, objections A to E (AD-R27, AD-R26, AD-R28, AD-R29,
+    AD-R30). Defaults applied early (M18, as board 3's in cycle 80):
+    P2-S1-result-3 (S1, 2h; A, B, D and E on the result screen),
+    P2-AIA-motion-3 (AIA, 3h; C, and D's strip target in
+    `motion_rig.gd`) and P2-AD-board-4b (AD, 1h; the re-check after both
+    and board 4), inserted before P2-AD-board-5. Claims stay disjoint
+    (`owners.py claims`). AD's pre-check runs; board 4 is docs and
+    answers only and merges when ready.
+  - **S2-R20 answered** by AD at 11:40Z: A and most of C stand on home-3;
+    six objections (pins away from their islands, the world squeezed by
+    the notice, Essence's 'Full' tag, the 200% strain chip, minor fits,
+    and the dock label that is K1's in P2-K1-tabs). S2 takes 1 to 5
+    inside P2-S2-home-3 before ready (its done_when, M12).
+  - **Agents** (get_session, all idle in the working bucket, none past
+    its expected update): AD (pre-check on board 4), K1 (check_all PASS
+    on the merge 083a6fb1, guard.sh running, then ready), S2 (main merged
+    at 14fdcdfe, pre-check and guard.sh next), S3 (pre-check on f0a36a41
+    with the readout fix, then a gate_request). Claims copied: P2-K1-tabs
+    and P2-AD-board-4 to claimed. Builders: AD, K1, S2 and S3, the cap of
+    four; S1 and AIA start on result-3 and motion-3 as seats free. No
+    session showed `allowed_warning`. No sessions created.
 - Cycle 82, 13 November 2026, from 10:38Z (session
   `session_01SNkKxrMnNScoFR7y7AJx71`, started by the Opus 5.5 launcher):
   P2-S1-result-2 merged as `135a49b2`; S3's advisory gate fails Display

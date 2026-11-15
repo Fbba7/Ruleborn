@@ -541,6 +541,23 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Default: the stills stand as built; S2 marks home-3 ready when its
   checks pass, and any objection becomes a follow-up task. Copied in
   cycle 82, which starts AD with S2-R20 first, then P2-AD-board-4.
+  **Answered** by AD at 11:40Z (status file on `claude/ui-ad`), on
+  c0b2bc49 (14fdcdfe only merges main's result files): A and most of C
+  stand as fixed (Collect and the goal on screen in every state, the
+  notice one line at pt_BR 200%, numbered chips, disc side buttons, all
+  five dock labels at pt_BR 100%). Objections, in order of weight (M12),
+  for S2 inside P2-S2-home-3 before ready: (1) pins pushed clear of the
+  side buttons stack in a centre column away from their islands (from B's
+  fix, `UniversePins._settle_at`); settle each within a short radius of
+  its island, shrinking or dropping the name first, and keep a gap from
+  the Defence badge; (2) at en 100% with the notice the world shrinks to
+  a band and five pins lose their names; the notice takes height from the
+  goal and panels first and balances its lines; (3) Essence's 'Full' tag
+  kept at every size and locale; (4) the strain chip at 200% in the
+  two-line large form in every locale; (5) minor: the pt_BR purse in
+  three rows at 100%, the high-contrast Collect label, chips touching at
+  pt_BR and de 200%; (6) the dock's ISLANDS label on the gold rim is
+  K1's, in P2-K1-tabs. A re-check covers only what the fix changes.
 
 ### S3
 
@@ -575,7 +592,50 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `client/scripts/result_fit.gd`. Default: AD lists it in board 4 (result
   and motion) as an objection for a follow-up S1 task after result-2
   merges. **Default applied** in cycle 82: result-2 is merged, and AD
-  takes it into P2-AD-board-4.
+  takes it into P2-AD-board-4. Board 4 lists it as objection B; filed in
+  cycle 83 in P2-S1-result-3.
+- **AD-R27** (from AD, 13 November 2026 11:55Z; due 15 November 11:55Z;
+  blocking board 4): board 4's objection A: the lead reward '+2,310' on
+  the result screen is pale gold with thin strokes and a thin outline,
+  about the card's own value in grayscale and hollow in high contrast;
+  '+805' and '+15' have thinner outlines than the key frame's. Give the
+  three reward figures the home's 'Keeper 24' finish (deep gold or cream
+  fill, heavy ink outline, hard drop; solid with the outline in high
+  contrast); draw calls measured 97 to 120, so the drops fit. File:
+  `client/scripts/result_screen.gd`; details in board-4.md, items 1, 5
+  and 6. Default: an S1 follow-up task for the result screen (with
+  AD-R26, AD-R29 and AD-R30); AD re-checks it as board 4b. **Default
+  applied** in cycle 83 (M18, as board 3's in cycle 80): P2-S1-result-3,
+  and P2-AD-board-4b for the re-check.
+- **AD-R28** (from AD, 13 November 2026 11:55Z; due 15 November 11:55Z;
+  blocking board 4): objection C: the anticipation reads as a still pause
+  and the burst covers about the prize's own size in every tier
+  (burst_scale 0.85 to 1.15). Make the gather visible on the prize
+  (squash, building glow, sparkles drawn in) and widen the tier spread so
+  the epic burst reaches well past the prize onto the sunburst, in
+  `art/ui/motion/curves.json` and `art/ui/motion/burst/`; re-make the
+  strips and clips. Details in board-4.md, items 7 and 9. Default: an AIA
+  task, P2-AIA-motion-3; S1's result screen picks up the curves unless
+  the burst's anchor moves. **Default applied** in cycle 83:
+  P2-AIA-motion-3.
+- **AD-R29** (from AD, 13 November 2026 11:55Z; due 15 November 11:55Z;
+  blocking board 4): objection D: the reward coins land on the counters'
+  digits and hide the roll at each landing (full strip frames 42 to 60;
+  AIA's strips land over '120'). Land the coins on the tile's icon above
+  or beside the digits and start the roll as the coin lands. Files:
+  `client/scripts/result_screen.gd`, `client/tests/shots/motion_rig.gd`.
+  Default: fold it into the S1 follow-up with AD-R27; AIA's strip shot
+  follows the same target in motion-3. **Default applied** in cycle 83:
+  the result screen's part in P2-S1-result-3, `motion_rig.gd` (AIA's
+  file) in P2-AIA-motion-3.
+- **AD-R30** (from AD, 13 November 2026 11:55Z; due 15 November 11:55Z;
+  blocking board 4; small): objection E: at 200% text in English the
+  Home button grows to about 45% of the result's action bar and is as
+  light as Collect in grayscale. Make Home icon-only at 200% in every
+  locale, as pt_BR and both key frames. File:
+  `client/scripts/result_screen.gd`. Default: fold it into the S1
+  follow-up with AD-R27. **Default applied** in cycle 83:
+  P2-S1-result-3.
 - **S2-R19** (from S2, 13 November 2026 09:58Z; due 13 November 21:58Z;
   not blocking): board 3's objection B asks for the goal "number first, as
   the key frame". pt_BR's `HOME_GOAL_KEEPER` reads "faltam 1.240 de
