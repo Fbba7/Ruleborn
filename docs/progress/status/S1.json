@@ -7,9 +7,9 @@
   "task_id": "P2-S1-result-3",
   "task_state": "working",
   "claimed_at": "2026-11-15T18:09:35Z",
-  "lease_until": "2026-11-15T23:50:00Z",
-  "updated_at": "2026-11-15T20:50:00Z",
-  "expected_next_update_by": "2026-11-15T21:35:00Z",
+  "lease_until": "2026-11-16T01:26:51Z",
+  "updated_at": "2026-11-15T22:26:51Z",
+  "expected_next_update_by": "2026-11-15T23:11:51Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
@@ -480,5 +480,5 @@
       "where": "claude/ui-ad, docs/progress/status/AD.json"
     }
   ],
-  "next_step": "AD's preview S1-R29 (20:32Z, on claude/ui-ad) met A, B, D and E and raised one objection, F: at 200% en (and HC en 200%) the scroll ends mid-line above the bar, so the tops of '✓ Re-simulated by the server: accepted' show as stray marks. Fixing F (a cut that never shows a part line, with a FIT check), then the pre-check and the gate again, then ready. Was ready at d896f254 (gate advisory pass)."
+  "next_step": "Objection F (S1-R29) fixed at a5db9545 (the fold: the first screen ends on a whole line, a cut with no draw call more); track doc da390915; main merged as a686d4a7, check_all running on it; then guard, pre-check, gate and AD's re-check."
 }
