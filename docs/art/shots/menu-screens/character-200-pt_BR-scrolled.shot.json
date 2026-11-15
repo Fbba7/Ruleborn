@@ -1,31 +1,21 @@
 {
  "controls": [
   {
-   "interactive": false,
-   "name": "words 1: Stuffs its satchel: loads at 60 a second instead of 30 for 5 s.",
-   "rect": [
-    117.0,
-    179.83,
-    231.11,
-    291.42
-   ]
-  },
-  {
-   "name": "back 2: Plantel",
+   "name": "back 1: Plantel",
    "rect": [
     28.17,
-    649.28,
+    683.58,
     60.67,
     60.67
    ]
   },
   {
-   "name": "up 3: Skyskipper: Subir ao nível 4, 200 de Essência",
+   "name": "up 2: Skyskipper: Subir ao nível 4, 200 de Essência",
    "rect": [
     97.5,
-    592.58,
+    645.67,
     264.33,
-    174.42
+    136.5
    ]
   }
  ],

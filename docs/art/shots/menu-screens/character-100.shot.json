@@ -4,7 +4,7 @@
    "name": "arrow 1: Previous character, Mossbear",
    "rect": [
     21.67,
-    137.94,
+    113.75,
     52.0,
     52.0
    ]
@@ -13,7 +13,7 @@
    "name": "arrow 2: Next character, Glass Golem",
    "rect": [
     313.44,
-    137.94,
+    113.75,
     52.0,
     52.0
    ]
@@ -23,7 +23,7 @@
    "name": "words 3: Skyskipper",
    "rect": [
     131.08,
-    221.0,
+    172.25,
     124.94,
     35.75
    ]
@@ -32,16 +32,16 @@
    "name": "row 4: Heist Stats Compare",
    "rect": [
     17.33,
-    401.92,
+    346.67,
     352.44,
-    69.33
+    60.67
    ]
   },
   {
    "name": "back 5: Roster",
    "rect": [
     28.17,
-    702.0,
+    717.17,
     60.67,
     60.67
    ]
@@ -50,7 +50,7 @@
    "name": "up 6: Skyskipper: Raise to level 4, 200 Essence",
    "rect": [
     97.5,
-    697.67,
+    712.83,
     264.33,
     69.33
    ]
