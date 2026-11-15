@@ -231,10 +231,14 @@ AD re-checked 1 to 5 at `13ff046f` (S2-R22): they stand as fixed. AD made five n
 
 **What (a) costs.**
 
-- **At 200% in Portuguese with the raid notice up, the realms' chips give way.** The reserve lifts the foot about 36 points. With Portuguese's three-line goal and the notice, the world keeps about 105 points, and no chip finds a free place near its island. Home's rule then hides every pin together rather than mark some realms only (`Home._fit_pins`). Each realm is still said aloud and still takes its tap. Before (a), this case showed chips.
-  - `FIT=1` fails in this one case, on "no realm marked over the whole universe" (board 3's objection C). The check is not loosened.
+- **At 200% with the raid notice up, the realms' chips give way where the world is shortest.** The reserve lifts the foot about 36 points. In three cases the world then keeps about 100 points, and no chip finds a free place near its island:
+  - Portuguese and French, whose goal keeps three lines;
+  - English on a phone 900 points tall.
+
+  Home's rule then hides every pin together rather than mark some realms only (`Home._fit_pins`). Each realm is still said aloud and still takes its tap. Before (a), these cases showed chips.
+  - `FIT=1` fails in these three cases, on "no realm marked over the whole universe" (board 3's objection C). The check is not loosened.
   - A trial of smaller reserves showed that the chips need back almost all of it. No other part of the column can give that much: the goal's first half needs 74% of its size to fit one line, and the column's gaps are 4 points.
-  - S2-R25 asks AD to rule on the trade. Once K1 keeps the picture within the tab's height (S2-R24), the case passes again with no change to home.
+  - S2-R25 asks AD to rule on the trade. Once K1 keeps the picture within the tab's height (S2-R24), the cases pass again with no change to home.
 - **At 200% in Portuguese, a darker band shows between the goal and the dock.** It is the edge of the galaxy's plane, which the higher foot now shows. The galaxy is `client/world/universe_view.gd`, which is not this task's file. It goes with S2-R24.
 
 **Draw calls.**
@@ -242,35 +246,40 @@ AD re-checked 1 to 5 at `13ff046f` (S2-R22): they stand as fixed. AD made five n
 | Shot | Calls | Recorded |
 |---|---|---|
 | home/100 | 144 | 145 |
-| home/200 | 124 | 114 |
+| home/200 | 119 | 114 |
 | home/hc | 144 | 145 |
 
-- **home/200 is 10 over its record.** A bisect at 200% English, each fix added alone onto `14fdcdfe`, puts the rise on three of AD's objections:
+Measured with `bash tools/ui_bake/guard.sh` on the merge of main (`a8f799c`).
+
+- **home/200 is 5 over its record.** At `13ff046f` it drew 124; with (a) to (e) and main's merge it draws 119 (not bisected). The bisect of 124 at 200% English, each fix added alone onto `14fdcdfe`, puts the rise on three of AD's objections:
   - the pins' search (objection 1): +5;
   - the Full tag's plate (objection 3): +4;
   - the strain's two-line form (objection 4): +3.
 - KitTabs' fix on main (P2-K1-tabs) takes 1 off every home shot. Each fix's parts are kit parts drawing the skin atlas, their icon and the font in turn, so they do not batch with their neighbours.
-- **The raise is asked of the lead (S2-R21):** record home/200 at 124 in `budgets.json` when this task merges. Textures and words below 4.5:1 are unchanged, and home/200 stays 26 under the cap of 150.
+- **The raise is asked of the lead (S2-R21):** record home/200 at 119 in `budgets.json` when this task merges (approved at 124 in cycle 87). Textures and words below 4.5:1 are unchanged, and home/200 stays 31 under the cap of 150.
 - **Other states (not budget shots):**
-  - With the raid notice up at 100%, the frame draws 154 in English and Portuguese and 153 in German. The notice adds its balanced second line and the goal's own line.
-  - At 150% in English it draws 127.
+  - With the raid notice up at 100%, the frame draws 154 in English, Portuguese, German and French. The notice adds its balanced second line and the goal's own line.
+  - At 150% in English it draws 126.
   - At 200% with the notice up it draws 115 to 117, and 125 with the tallest strings.
 
-**Evidence.** `FIT=1`, with the new checks, passes in 26 cases, with no script errors:
+**Evidence.** On the merge of main (`a8f799c`), `FIT=1` with the new checks passes in 24 of 27 cases, with no script errors:
 
-| Text size | Cases |
+| Text size | Cases that pass |
 |---|---|
 | 100% | en, pt_BR, de, fr, high contrast, the tallest strings (`MOST`); with the notice in en, pt_BR, de and fr |
 | 150% | en, and pt_BR with the notice |
-| 200% | en, pt_BR, pt_PT, high contrast, high contrast in pt_BR; with the notice in en, pt_BR, de and fr, and with the tallest strings |
+| 200% | en, pt_BR, de, fr, pt_PT, high contrast, high contrast in pt_BR; with the notice in en and de, and with the tallest strings |
 | 960 points tall | at 100%, and at large text |
-| 900 points tall | 200% with the notice |
+
+It fails in three cases, all at 200% with the notice up: pt_BR, fr, and en 900 points tall. Each fails on "no realm marked" ("What (a) costs" above).
+
 
 Checks run on the task's last commit are in `docs/progress/S2.md`.
 
 **Still worse, or open:**
 
-- **home/200 is over its record** until the lead decides S2-R21.
+- **home/200 is over its record** until the lead records it (S2-R21).
+- **At 200% with the raid notice up, the realms' chips give way** in pt_BR, fr and on a phone 900 points tall, where (a)'s reserve leaves no free place (S2-R24, S2-R25).
 - **The Portuguese goal is not number-first.** It reads "faltam 1.240 de experiência · Guardião 25", while the key frame's English is number-first. The string is in `strings.csv`, which is not this task's file (S2-R19).
 - **The strain band's word, "Humming", is not translated** in German or Portuguese. That is the strings file's, not this task's.
 - **At 200% with the raid notice up, the side buttons give way.** At large text they also give way where a realm finds no free place. Their places stay on the badge's menu.
