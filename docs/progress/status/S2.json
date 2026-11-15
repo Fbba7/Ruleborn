@@ -3,27 +3,35 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S2-home-3",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-15T17:40:00Z",
   "lease_until": "2026-11-15T21:55:00Z",
-  "updated_at": "2026-11-15T20:15:00Z",
-  "expected_next_update_by": "2026-11-15T21:00:00Z",
+  "updated_at": "2026-11-15T20:45:00Z",
+  "expected_next_update_by": "2026-11-15T22:45:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "14fdcdfe",
-    "next_step": "Pre-check running on 13ff046f (home.gd split into home_parts.gd for gdlint's line limit; FIT and draw calls unchanged); then record, S2-R23, gate_request, ready",
-    "at": "2026-11-15T20:15:00Z"
+    "last_green_sha": "13ff046f",
+    "next_step": "Ready at 13ff046f: the lead decides S2-R21 and S2-R23 and runs the gate; AD re-checks S2-R20's objections 1-5 (S2-R22).",
+    "at": "2026-11-15T20:45:00Z"
   },
   "precheck": {
-    "sha": "14fdcdfe20e797d94669f8657ea3c4d78f9781ba",
+    "sha": "13ff046f84c290ce47986ddeb7f46da60778f6bf",
     "exit": 0,
-    "finished_at": "2026-11-13T11:54:05Z",
+    "finished_at": "2026-11-15T20:42:22Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
-  "ready_sha": null,
+  "gate_request": [
+    {
+      "item": "home at 100% text",
+      "qualities": [
+        "Hierarchy",
+        "Character presence"
+      ]
+    }
+  ],
+  "ready_sha": "13ff046f84c290ce47986ddeb7f46da60778f6bf",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M13"
@@ -311,9 +319,10 @@
       "id": "S2-R22",
       "from": "S2",
       "to": "AD",
-      "ask": "Re-check only S2-R20's objections 1-5 on claude/ui-screens-home at a3274abe (one round, M12). Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` and env as in S2-R20: (1) pins near their islands, clear by the pin gap of the side buttons and the Defence badge: en and pt_BR at 100%; (2) en 100% with NOTICE=1: the goal keeps its line, the notice's second line balanced; (3) the Full tag at 100% and 200% in en, pt_BR, de, CONTRAST=1; (4) the strain's two lines at TEXT=200 in en, pt_BR, de, fr; (5) pt_BR purse two rows at 100%, CONTRAST=1 Collect label size, chips at pt_BR and de 200%. The goal's 'Guardião / 25' break stays S2-R19; objection 6 is K1's. docs/art/tracks/home-screen.md Part 3, \"AD's S2-R20 review\", lists each answer and what is still open.",
+      "ask": "Re-check only S2-R20's objections 1-5 on claude/ui-screens-home at 13ff046f (a3274abe plus the split of home.gd into home_parts.gd, stills unchanged) (one round, M12). Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` and env as in S2-R20: (1) pins near their islands, clear by the pin gap of the side buttons and the Defence badge: en and pt_BR at 100%; (2) en 100% with NOTICE=1: the goal keeps its line, the notice's second line balanced; (3) the Full tag at 100% and 200% in en, pt_BR, de, CONTRAST=1; (4) the strain's two lines at TEXT=200 in en, pt_BR, de, fr; (5) pt_BR purse two rows at 100%, CONTRAST=1 Collect label size, chips at pt_BR and de 200%. The goal's 'Guardião / 25' break stays S2-R19; objection 6 is K1's. docs/art/tracks/home-screen.md Part 3, \"AD's S2-R20 review\", lists each answer and what is still open.",
       "files": [
         "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
         "client/world/universe_pins.gd",
         "docs/art/tracks/home-screen.md"
       ],
@@ -322,8 +331,23 @@
       "due": "2026-11-16T07:55:00Z",
       "default": "Objections 1-5 stand as fixed; S2 marks P2-S2-home-3 ready when its checks pass, and any new objection becomes a follow-up task.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R23",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Grant client/scripts/home_parts.gd and client/scripts/home_parts.gd.uid as P2-S2-home-3's exceptions (precedent S1-R27). The S2-R20 fixes took client/scripts/home.gd to 1204 lines, over gdlint's max-file-lines of 1000, and the pre-check on a3274abe failed on that alone. 13ff046f moves the raid notice (HomeParts.Raids) and the purse's large-text builders (HomeParts.large_strain, hang_full, below) there unchanged; home.gd is 982 lines; the FIT stills and the draw calls are the same.",
+      "files": [
+        "client/scripts/home_parts.gd",
+        "client/scripts/home_parts.gd.uid"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T20:45:00Z",
+      "due": "2026-11-16T08:10:00Z",
+      "default": "The helper stays as committed and P2-S2-home-3 is ready with it; the lead adds both paths to the task's exceptions when it merges.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "When the pre-check on 13ff046f ends: record it, add S2-R23 (grant home_parts.gd as exceptions), set gate_request and ready_sha, mark ready."
+  "next_step": "Ready at 13ff046f with the gate asked (home at 100%: Hierarchy, Character presence). guard.sh fails only on home/200 (124 against 114) until S2-R21. If the gate or AD objects, fix it in this task and re-run FIT, the pre-check and guard.sh."
 }
