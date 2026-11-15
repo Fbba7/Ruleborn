@@ -3,17 +3,17 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "done",
+  "agent_state": "active",
   "task_id": "P2-AD-board-5",
   "task_state": "ready",
   "claimed_at": "2026-11-15T20:31:00Z",
   "lease_until": "2026-11-15T23:35:00Z",
-  "updated_at": "2026-11-15T22:16:00Z",
-  "expected_next_update_by": null,
+  "updated_at": "2026-11-15T23:58:00Z",
+  "expected_next_update_by": "2026-11-16T00:43:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
-    "next_step": "board 5 round 1 ready (does not stand; AD-R31 to AD-R37 open); round 2 after the S3 follow-ups merge"
+    "next_step": "S1-R30 answered (F met). S2-R25 when S2 marks P2-S2-home-3 ready; else end the session. Then board 4b, 3b, 5b as their deps merge."
   },
   "precheck": {
     "sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
@@ -535,6 +535,11 @@
       "request_id": "S2-R22",
       "answer": "AD's re-check of S2-R20's objections 1-5 on claude/ui-screens-home at 13ff046f, checked against board 3's full list (M23). Renders: client/tests/shots/universe_home.gd with FIT=1 in en, pt_BR and de at 100% and 200%, fr at 200%, CONTRAST=1 in en, pt_BR and de at 100% and 200%, NOTICE=1 in en, pt_BR and de at 100% and 200%, beside art/ui/keyframes/01-home*. Every still prints 'fit ok'. OBJECTIONS 1-5 STAND AS FIXED: (1) en and pt_BR 100%: every pin sits by its own island, clear of the side buttons, with a gap from the Defence badge. (2) en 100% with NOTICE=1: all seven pins keep their names, the goal keeps its two lines as it has without the notice, and the notice breaks evenly ('See how your / defence held'). (3) The Full tag shows at 100% and 200% in en, pt_BR, de and high contrast (Full, Cheio, Voll; Plein in fr), under the amount at 200%. (4) The strain takes its two-line form at 200% in en, pt_BR, de and fr. (5) The pt_BR purse takes two rows at 100%; the high-contrast Collect label reads whole at 100% in en, pt_BR and de; the pt_BR and de chips at 200% keep their gaps and do not touch. NEW OBJECTIONS from the full list, for S2 to fix inside P2-S2-home-3 before its merge (M23), in order of weight: (a) quality 6 hierarchy, 200%, every language and high contrast: the chosen Islands tile's raised icon overlaps the bottom of the goal panel and the left end of its progress bar. Home leaves the tile's lift clear above the dock. If the lift reaches past the height the dock declares, that part is K1's, by request; the default is that Home reserves the lift. (b) quality 3 icons / 14 one idea, 200% en, de and high contrast: the realm markers mix two forms, icon and level chips for The Heart, Lantern Vale, Tidehold, Verdant and Emberreach, plain level numbers for Skyfield and Crystalline. pt_BR and fr show one form, as the key frame does. Use one form for every realm at a time. (c) quality 6 hierarchy, de 100% (and high contrast de 100%): the purse puts Essence ('61,0 Tsd.' with Voll) alone on a third, full-width row. It weighs more than the other two amounts and takes world space. Keep the three amounts in one row (shrink the amount as AMOUNT_LEAST does at large text), or keep that plate a third wide. (d) quality 2 display type, en 200% (and high contrast en 200%): the goal breaks '1,240 experience to / go · Keeper 25'. Break it as the key frame does ('1,240 experience to go · / Keeper 25'), with the even breaking the notice already uses. (e) Minor, quality 1 materials, de 200%: Collect's label '3,4 Tsd. einsammeln' runs to the slab's rounded ends with no side padding. Keep COLLECT_PAD at large text, or shrink the label. A re-check covers only what the fix changes, so send the new head and AD answers within the same cycle. Notes, not objections: 'Lantern Vale' and 'Humming' are untranslated in pt_BR and de (strings file); every render logs \"Signal 'button_up' is already connected to given callable 'GDScript::press'\", and S2 should say whether main logs it too; the pt_BR goal is not number-first (S2-R19 stands as answered). Default if S2 disputes (a): Home reserves the lift and AD re-checks.",
       "at": "2026-11-15T22:16:00Z"
+    },
+    {
+      "request_id": "S1-R30",
+      "at": "2026-11-15T23:58:00Z",
+      "answer": "Objection F is met at 904a3567; the result stands for P2-S1-result-3 (M20: it may merge). AD rendered the result shot with SERVER=1 FIT=1 at en 100%, en 200%, high contrast en 200%, pt_BR 200%, de 200% and high contrast pt_BR 200%: every render printed 'fit ok', and the draw calls match S1's (126, 113, 55, 115, 114, 57). At 200% the first screen ends on a whole line with a clean gap above the bar: en and high contrast on 'Entry fee 2,840 returned', de on 'Eintrittsgebühr 2.840 erstattet', pt_BR on 'Taxa de entrada de'; no tops of letters show anywhere (board-4/r3-F-fold-200.png, r3-F-result-six.png). Checked against board 4's full list (M23): A, B, D and E still hold, and nothing new holds the board. One note for board 4b, not an objection: in pt_BR at 200% the first screen ends on the unfinished phrase 'Taxa de entrada de'; keeping a label's lines together at the fold (lifting the edge onto the gap above the whole label) would read better, if it costs no draw call."
     }
   ]
 }
