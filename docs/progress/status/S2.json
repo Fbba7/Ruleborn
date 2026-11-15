@@ -3,18 +3,18 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P2-S2-home-3",
-  "task_state": "ready",
+  "task_state": "working",
   "claimed_at": "2026-11-15T17:40:00Z",
-  "lease_until": "2026-11-15T21:55:00Z",
-  "updated_at": "2026-11-15T20:45:00Z",
-  "expected_next_update_by": "2026-11-15T22:45:00Z",
+  "lease_until": "2026-11-16T01:50:00Z",
+  "updated_at": "2026-11-15T22:50:00Z",
+  "expected_next_update_by": "2026-11-15T23:35:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "13ff046f",
-    "next_step": "Ready at 13ff046f: the lead decides S2-R21 and S2-R23 and runs the gate; AD re-checks S2-R20's objections 1-5 (S2-R22).",
-    "at": "2026-11-15T20:45:00Z"
+    "next_step": "Fix AD's S2-R22 objections (a) to (e) inside home-3, merge main, re-run checks, re-check request to AD.",
+    "at": "2026-11-15T22:50:00Z"
   },
   "precheck": {
     "sha": "13ff046f84c290ce47986ddeb7f46da60778f6bf",
@@ -22,16 +22,8 @@
     "finished_at": "2026-11-15T20:42:22Z",
     "summary": "All checks passed."
   },
-  "gate_request": [
-    {
-      "item": "home at 100% text",
-      "qualities": [
-        "Hierarchy",
-        "Character presence"
-      ]
-    }
-  ],
-  "ready_sha": "13ff046f84c290ce47986ddeb7f46da60778f6bf",
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M13"
@@ -349,5 +341,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Ready at 13ff046f with the gate asked (home at 100%: Hierarchy, Character presence). guard.sh fails only on home/200 (124 against 114) until S2-R21. If the gate or AD objects, fix it in this task and re-run FIT, the pre-check and guard.sh."
+  "next_step": "Fix AD's S2-R22 objections (a) to (e) inside home-3, merge main, re-run checks, re-check request to AD."
 }
