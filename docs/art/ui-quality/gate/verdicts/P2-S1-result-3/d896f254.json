@@ -1,0 +1,39 @@
+[
+  {
+    "task_id": "P2-S1-result-3",
+    "sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-15T19:50:00Z",
+    "item": "result at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. Raid again is the widest and most saturated control, at the foot, about twice Home's width, and a solid mid-gray block in grayscale. The lighter cream items (Home, the Starlight card, the law pills) are each smaller or information only, so none is both larger and heavier (ruling v3). The gold 3 s replay button is about half Raid again's size and falls in behind it. All three put Raid again at or above the pass anchor's Level up."
+  },
+  {
+    "task_id": "P2-S1-result-3",
+    "sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-15T19:50:00Z",
+    "item": "result at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "fail",
+      "fail",
+      "pass",
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Split on the first three (fail, fail, pass), two fails of six after three more samples, so it passes: a fail needs four. Every sample passed the three crew portraits on their own: owl (smooth soft-shaded yellow fur), ember creature (charcoal body, soft matte shading, glowing crown, no photographic grain) and otter (soft brown fur), each a clear dark shape in its gold ring at about the pass anchor's portrait size. Both fails, and three of the passes as a caveat, said the Starlight, Essence and Renown reward tiles hold only currency icons (a sparkle, a drop, a gem) with no character art, which the rubric's 'result screen frames the reward with character art' asks for. This is the weak point S1 should look at: a character on or beside the reward would close it."
+  }
+]
