@@ -18,6 +18,11 @@ source the kit's motion code reads, not from numbers copied here:
             scale) matches its step's cubic_out curve at t = k/60, within
             TOL. Matching every frame also proves nothing overshoots its end
             value or runs backwards.
+  gather    the reward's anticipation is a gather, not a still pause: no
+            sprite is lit before the tier's first gather step (a payoff
+            step with a negative at_ms) starts, and no stretch of the
+            anticipation longer than GATHER_STILL_MS shows the same image
+            frame after frame.
   settle    once the last step has ended, every frame is the same image as
             the last one (nothing left drawn, nothing still moving). The
             shine is checked between sweeps against its rest frame.
@@ -52,6 +57,7 @@ TOL_PX = 1.01        # for positions in pixels
 FLASH_STEP = 0.1     # WCAG: a change of 10% of the maximum relative luminance
 FLASH_DARK = 0.8     # WCAG: ... where the darker image is below 0.80
 GRID = 4
+GATHER_STILL_MS = 150  # the longest still stretch the reward's anticipation may hold
 
 failures = []
 
@@ -252,6 +258,11 @@ def check_reward(run, log, curves, imgs):
         up = [s for s in f["on_landing"] if s["name"] == "counter_pulse_up"][0]
         down = [s for s in f["on_landing"] if s["name"] == "counter_pulse_down"][0]
         pulse_end = lands[-1] + down["at_ms"] + down["ms"]
+        def plays(s):
+            n = sub(s.get("count", 1))
+            return not isinstance(n, (int, float)) or n > 0
+
+        lit_from = min([A] + [A + s["at_ms"] for s in pay if s["target"] == "burst" and plays(s)])
         bad = []
         for r in rows:
             t, p, c = t_ms(r["frame"]), r["prize"], r["counter"]
@@ -272,8 +283,9 @@ def check_reward(run, log, curves, imgs):
                 bad.append(f"frame {r['frame']} counter scale {c['scale']:.4f}, outside 1..{up['to']}")
             if t >= pulse_end + 1000 / 60 and abs(c["scale"] - 1.0) > TOL:
                 bad.append(f"frame {r['frame']} counter scale {c['scale']:.4f} after the last pulse")
-            if t < A and r["lit"]:
-                bad.append(f"frame {r['frame']}: {r['lit']} sprites lit before the burst at {A} ms")
+            if t < lit_from and r["lit"]:
+                bad.append(f"frame {r['frame']}: {r['lit']} sprites lit before the gather's first step at "
+                           f"{lit_from} ms")
         values = [r["counter"]["value"] for r in rows]
         if any(b < a for a, b in zip(values, values[1:])):
             bad.append("the counter runs backwards")
@@ -287,6 +299,16 @@ def check_reward(run, log, curves, imgs):
         if rows[-1]["layer"]:
             bad.append("the reward's layer is still there at the end")
         report(run, f"timing ({log['tier']}: {A} ms anticipation, burst, reveal, {coins} landings, pulses)", bad)
+        still, longest, bad = 0, 0, []
+        for k in range(2, len(imgs)):
+            if t_ms(k) > A:
+                break
+            still = still + 1 if same(imgs[k], imgs[k - 1]) else 0
+            longest = max(longest, still)
+        if longest * 1000 / 60 > GATHER_STILL_MS:
+            bad.append(f"the anticipation holds still for {longest} frames ({longest * 1000 / 60:.0f} ms)")
+        report(run, f"gather (sprites lit from {lit_from} ms; still at most {GATHER_STILL_MS} ms of the "
+                    f"{A} ms anticipation; longest {longest * 1000 / 60:.0f} ms)", bad)
         end = max([pulse_end] + [A + s["at_ms"] + s["ms"] + s.get("stagger_ms", 0) * (sub(s.get("count", 1)) - 1)
                                  for s in pay if s["target"] == "burst" or s["target"] == "prize"])
         settle_check(run, imgs, first_frame_after(end) + 1)

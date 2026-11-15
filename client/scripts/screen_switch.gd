@@ -1,35 +1,38 @@
 class_name ScreenSwitch
 extends Control
-## The design's on/off switch, drawn: a pill track, green with its knob to
-## the right when on, dark with the knob left when off, and a tick or a
-## stroke on the knob so the state never rests on colour (§20.8).
+## Key frame 05's switch at the end of a settings row, from the kit's
+## materials alone: a pill track, green when on and dark plate when off,
+## with a parchment knob at the right when on and at the left when off. The
+## row's words say On or Off too, so the state never rests on colour or the
+## knob's place alone (§20.8). It takes no taps: the row is the control.
 
 var on := false
 
 
 static func make(state: bool) -> ScreenSwitch:
 	var s := ScreenSwitch.new()
+	s.name = "Switch"
 	s.on = state
 	s.custom_minimum_size = Vector2(UI.px(46), UI.px(28))
 	s.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	s.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	UI.dress(s, "green" if state else "plate_dark", 999)
+	var knob := Control.new()
+	knob.name = "Knob"
+	knob.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var side := UI.px(18)
+	var inset := UI.px(5)
+	knob.size = Vector2(side, side)
+	# Anchored to the track's end, so the knob keeps its place as the row
+	# lays the track out.
+	knob.anchor_top = 0.5
+	knob.anchor_bottom = 0.5
+	knob.anchor_left = 1.0 if state else 0.0
+	knob.anchor_right = knob.anchor_left
+	knob.offset_top = -side * 0.5
+	knob.offset_bottom = side * 0.5
+	knob.offset_left = -side - inset if state else inset
+	knob.offset_right = knob.offset_left + side
+	UI.dress(knob, "plate", 999)
+	s.add_child(knob)
 	return s
-
-
-func _draw() -> void:
-	var d := ScreenDraw.new()
-	var r := Rect2(Vector2.ZERO, size)
-	d.polygon(ScreenBox.outline(r.grow(1.0), size.y * 0.5 + 1.0), Color("#1A0C14"))
-	d.polygon(ScreenBox.outline(r.grow(-UI.px(1)), size.y * 0.5 - UI.px(1)),
-		Color("#3FBF7F") if on else Color("#2A1E52"))
-	var k := size.y * 0.5 - UI.px(3)
-	var c := Vector2(size.x - size.y * 0.5 if on else size.y * 0.5, size.y * 0.5)
-	d.circle(c + Vector2(0, UI.px(1)), k, Color(0, 0, 0, 0.35))
-	d.circle(c, k, Color("#FFF6DA"))
-	var mark := Color("#0A3A20") if on else Color("#4A3A6A")
-	if on:
-		d.outline(PackedVector2Array([c + Vector2(-k * 0.45, 0), c + Vector2(-k * 0.1, k * 0.35),
-			c + Vector2(k * 0.45, -k * 0.35)]), mark, UI.px(1.4))
-	else:
-		d.outline(PackedVector2Array([c + Vector2(-k * 0.4, 0), c + Vector2(k * 0.4, 0)]), mark, UI.px(1.4))
-	d.flush(get_canvas_item())

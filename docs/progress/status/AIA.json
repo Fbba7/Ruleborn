@@ -4,26 +4,30 @@
  "branch": "claude/ui-artist",
  "model": "Opus 5.5",
  "agent_state": "active",
- "task_id": "P2-AIA-motion-2",
+ "task_id": "P2-AIA-motion-3",
  "task_state": "working",
- "claimed_at": "2026-11-13T04:48:00Z",
- "lease_until": "2026-11-13T07:48:00Z",
- "updated_at": "2026-11-13T05:05:00Z",
- "expected_next_update_by": "2026-11-13T05:50:00Z",
- "long_run": {
-  "log": "/tmp/check-c88636823d14df4a5712acdcae73b5750f030c11.log",
-  "expected_end": "2026-11-13T05:35:00Z"
- },
+ "claimed_at": "2026-11-15T18:20:00Z",
+ "lease_until": "2026-11-15T23:55:00Z",
+ "updated_at": "2026-11-15T20:55:00Z",
+ "expected_next_update_by": "2026-11-15T21:40:00Z",
+ "long_run": null,
  "progress_marker": {
-  "last_green_sha": "49159bc0",
-  "next_step": "pre-check of the merge c8863682 running; guard; then record and ready"
+  "last_green_sha": "697af959",
+  "next_step": "AIA-R26 answered by AD (no objection). Main b2adaf6a merged as 9ae0ee38, rebaked (no change), guard OK; pre-check at 9ae0ee38, then ready"
  },
- "precheck": null,
+ "precheck": {
+  "sha": "697af959ace279379bf770c292ebae0df8c6c9a1",
+  "exit": 0,
+  "finished_at": "2026-11-15T19:39:34Z",
+  "summary": "All checks passed."
+ },
  "gate_request": null,
  "ready_sha": null,
- "stop_at": "2026-11-14T21:00:00Z",
+ "stop_at": "2026-11-17T21:00:00Z",
  "acks": [
-  "M1"
+  "M1",
+  "M14",
+  "M21"
  ],
  "requests": [
   {
@@ -250,6 +254,23 @@
    "default": "the strips stand as shot, and AIA marks the task ready when its checks pass",
    "escalate_to": "lead",
    "state": "default applied by the lead (cycle 77): the strips stand as shot"
+  },
+  {
+   "id": "AIA-R26",
+   "from": "AIA",
+   "to": "AD",
+   "ask": "Preview the re-made reward strips before P2-AIA-motion-3 is marked ready (M10, M12, M21), for board 4b: art/ui/motion/strips/reward_common.png, reward_rare.png, reward_epic.png, reward_epic_hc.png and reward_reduced.png in colour, the same five in grayscale in art/ui/proof/motion_gray/, and the clips art/ui/motion/clips/reward_*.gif (every frame stamped with its number and time; 60 fps). AD-R28: the anticipation now gathers on the prize (dust drawn in from -450 ms, a ring and sparkles closing in from -250 ms) instead of holding still, and the burst spreads by tier: about the prize's size in common, half again in rare, more than twice in epic, well out onto the sunburst (burst_scale 1.15 / 1.8 / 2.8, wider sparkle and dust reach). AD-R29: in the shot the coins land on the counter's starglass icon, beside its figure, and the figure rolls as each coin lands (the real result screen's target is S1's part, P2-S1-result-3). check_frames.py passes on all of them, with a new check that no still stretch in the anticipation runs longer than 150 ms; the burst's anchor is unchanged. Send every objection in one round (M12)",
+   "files": [
+    "art/ui/motion/strips/",
+    "art/ui/motion/clips/",
+    "art/ui/proof/motion_gray/",
+    "art/ui/motion/curves.json"
+   ],
+   "blocking": true,
+   "created_at": "2026-11-15T18:40:00Z",
+   "due": "2026-11-16T00:40:00Z",
+   "default": "the strips stand as shot, and AIA marks the task ready when its checks pass",
+   "escalate_to": "lead"
   }
  ],
  "answers": [
@@ -259,5 +280,5 @@
    "at": "2026-11-10T06:50:38Z"
   }
  ],
- "next_step": "pre-check of the merge c8863682 running; guard; then record and ready"
+ "next_step": "AD previews the reward strips (AIA-R26, due 2026-11-16T00:40:00Z; default: the strips stand as shot); then AIA marks P2-AIA-motion-3 ready at the last green commit (697af959 or a later merge of main)"
 }
