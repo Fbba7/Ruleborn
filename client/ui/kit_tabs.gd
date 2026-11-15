@@ -6,7 +6,9 @@ extends MarginContainer
 ## an icon over its name in stroked capitals, parted by hairlines; the
 ## chosen tab a tall periwinkle tile with a gold rim that rises above the
 ## bar, half as wide again, its icon larger and bobbing; the Heist glowing
-## gold when not chosen. The bar runs under the home bar, but every tab
+## gold when not chosen. Each name sits under its tile, on the bar, never
+## across the tile's gold rim (10-roster.png, board 3's dock). The bar runs
+## under the home bar, but every tab
 ## stays inside §21.1's safe area and clear of the corners, and each is a
 ## 48-point hit area at least. A badge writes its count (§20.8).
 
@@ -23,8 +25,14 @@ const TABS := [
 ]
 ## How far the chosen tab rises above the bar, in points.
 const RISE := 18.0
-## The room kept between the chosen tab's word and its rim, in points.
-const RIM := 12.0
+## The clear space between a tile's gold rim and the name under it, in points.
+const RIM := 2.0
+## How wide the chosen tile and the Heist's stand, in points, inside their
+## tab's share of the bar.
+const TILE := 62.0
+const HEIST_TILE := 46.0
+## How large the chosen tab's own icon stands, inside its tile, in points.
+const ICON := 54.0
 ## How large a face given to the chosen tab stands, in points.
 const FACE := 62.0
 ## The widest the chosen tab may grow, against a tab not chosen, to show its
@@ -39,6 +47,7 @@ var _bobs: Dictionary = {}
 var _faces: Dictionary = {}
 var _plain: Dictionary = {}
 var _glows: Dictionary = {}
+var _tiles: Dictionary = {}
 
 
 ## The bar with `chosen` chosen and a badge on each tab named in `badges`
@@ -97,14 +106,28 @@ func _tab(tab: Array, badge: int) -> Button:
 	b.size_flags_vertical = Control.SIZE_SHRINK_END
 	b.set_meta("tab", id)
 	var content := VBoxContainer.new()
+	content.name = "Content"
 	content.set_anchors_preset(Control.PRESET_FULL_RECT)
 	content.alignment = BoxContainer.ALIGNMENT_END
-	content.add_theme_constant_override("separation", 0)
+	content.add_theme_constant_override("separation", UI.px(RIM))
 	content.offset_bottom = -UI.px(4)
 	content.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# The tile: the chosen tab's periwinkle plate or the Heist's gold ring,
+	# over its name, the icon standing in it. It takes the tab's height the
+	# name leaves, so the name is always under its rim, never across it.
+	var tile := Control.new()
+	tile.name = "Tile"
+	tile.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tile.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	tile.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	UI.dress(tile, "tab", 16)
+	content.add_child(tile)
 	var icon := Icons.view(str(tab[1]), 36)
-	icon.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content.add_child(icon)
+	# On the tile's foot, inside its rim; a larger picture stands up out of it.
+	icon.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	icon.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	icon.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	tile.add_child(icon)
 	var l := UI.label(words, 13)
 	l.theme_type_variation = "Tab"
 	l.uppercase = true
@@ -127,6 +150,7 @@ func _tab(tab: Array, badge: int) -> Button:
 	buttons[id] = b
 	b.resized.connect(_fit, CONNECT_DEFERRED)
 	_icons[id] = icon
+	_tiles[id] = tile
 	_plain[id] = icon.texture
 	_labels[id] = l
 	return b
@@ -157,7 +181,18 @@ func choose(id: String, animate := true) -> void:
 	for k: String in buttons:
 		var b: Button = buttons[k]
 		var on := k == id
-		UI.set_look(b, "tab_active" if on else ("tab_heist" if k == "heist" else "tab"))
+		# The tab itself stays on the bar's look: its name is read on the bar.
+		UI.set_look(b, "tab")
+		var tile: Control = _tiles[k]
+		var box := RbBox.of(tile)
+		var look := "tab_active" if on else ("tab_heist" if k == "heist" else "")
+		box.visible = look != ""
+		if look != "":
+			box.set_look(look)
+		# The bar's look is clear: where the tile draws, the tab draws no
+		# empty box of its own under it.
+		RbBox.of(b).visible = look == ""
+		tile.custom_minimum_size.x = _tile_width(k)
 		b.size_flags_stretch_ratio = Tokens.number("size", "tab_active_grow") if on else 1.0
 		b.custom_minimum_size.y = UI.px(Tokens.number("size", "tab_height") + (RISE if on else 0.0))
 		var label: Label = _labels[k]
@@ -166,8 +201,7 @@ func choose(id: String, animate := true) -> void:
 		# Five words at large text do not fit 360 points: the tabs not chosen
 		# keep their icon and their spoken name, the chosen one its word too.
 		# Stroked in ink as the design draws it, wide enough (§21.8: 12% of
-		# the size) that the words are read against their outline, which the
-		# pale chosen tile alone (4.49:1) is not.
+		# the size) that the words are read against their outline.
 		# 12% of the size as drawn, at any text size, rounded up.
 		var stroke := float(UI.px(2.0 if on else 1.5))
 		if on:
@@ -178,13 +212,13 @@ func choose(id: String, animate := true) -> void:
 		else:
 			label.remove_theme_color_override("font_color")
 		var icon: TextureRect = _icons[k]
-		# The chosen tab's picture stands large, its top above the tile, as
-		# every design still draws it: its face if the screen gave one, else
-		# its own icon.
-		var faced := on
-		icon.texture = (_faces[k] if on and _faces.has(k) else _plain[k]) as Texture2D
-		icon.custom_minimum_size = Vector2.ONE * UI.px(FACE if faced else (46.0 if on else 36.0))
-		(icon.get_parent() as Control).offset_top = -float(UI.px(FACE - 46.0)) if faced else 0.0
+		# The chosen tab's picture stands large in its tile, its top above the
+		# rim, as every design still draws it: its face if the screen gave one
+		# (larger still), else its own icon.
+		var faced := on and _faces.has(k)
+		icon.texture = (_faces[k] if faced else _plain[k]) as Texture2D
+		icon.custom_minimum_size = Vector2.ONE * UI.px(FACE if faced else (ICON if on else 36.0))
+		icon.offset_bottom = -float(UI.px(5.0 if on else 3.0))
 		if _bobs.has(k):
 			(_bobs[k] as Tween).kill()
 			_bobs.erase(k)
@@ -194,7 +228,6 @@ func choose(id: String, animate := true) -> void:
 			var bob := Motion.bob(icon, 2.0)
 			if bob != null:
 				_bobs[k] = bob
-		var box := RbBox.of(b)
 		if _glows.has(k):
 			(_glows[k] as Tween).kill()
 			_glows.erase(k)
@@ -205,17 +238,31 @@ func choose(id: String, animate := true) -> void:
 				_glows[k] = pulse
 
 
+## Tab `k`'s tile width in pixels: the chosen tile's or the Heist's, inside
+## its tab's share of the bar once laid out; none for a plain tab's.
+func _tile_width(k: String) -> float:
+	var points := TILE if k == active else (HEIST_TILE if k == "heist" else 36.0)
+	var w := float(UI.px(points))
+	var b: Button = buttons[k]
+	if b.size.x > 0.0:
+		w = minf(w, b.size.x - UI.px(RIM * 2.0))
+	return w
+
+
 func _ready() -> void:
 	choose(active, false)
 	resized.connect(_fit, CONNECT_DEFERRED)
 	_fit.call_deferred()
 
 
-## Every tab shows its whole word or none: where large text or a long
-## language would cut a word not chosen, they all show their icons alone
-## (each still named aloud, §20.8), and the chosen tab widens, up to
-## MOST_GROW and while the others keep their least width, to keep its own
-## word whole, else shows its icon alone too.
+## Every tab shows its whole word or none, under its tile: the chosen tab
+## widens, up to MOST_GROW and while the others keep their least width, to
+## keep its own word whole, and gives back its grow, down to the others'
+## width, where that keeps every other word whole too (100% in Portuguese).
+## Where large text or a long language would still cut a word not chosen,
+## they all show their icons alone (each still named aloud, §20.8); the
+## chosen word shrinks to the largest size that fits, never under its own
+## at 100%, else shows its icon alone too.
 func _fit() -> void:
 	if not is_inside_tree() or not _labels.has(active) or size.x <= 0.0:
 		return
@@ -229,40 +276,45 @@ func _fit() -> void:
 	var label: Label = _labels[active]
 	var full := UI.text_px(15)
 	label.add_theme_font_size_override("font_size", full)
-	var need := _need(label) + UI.px(RIM)
-	if need < width:
-		grow = maxf(grow, others * need / (width - need))
+	var need := _need(label)
+	# The least share that holds the chosen word whole.
+	var holds := others * need / (width - need) if need < width else INF
+	grow = maxf(grow, holds)
 	# The others keep their own least width (§21.1's 48 points).
 	var least := 0.0
+	var widest := 0.0
 	for k: String in buttons:
 		if k != active:
 			least = maxf(least, (buttons[k] as Button).get_combined_minimum_size().x)
+			widest = maxf(widest, _need(_labels[k]))
 	var most := minf(MOST_GROW, width / maxf(least, 1.0) - others)
-	chosen.size_flags_stretch_ratio = minf(grow, most)
-	# Where even the widest tile cannot hold the word at the chosen text size
+	var ratio := minf(grow, most)
+	# The share at which every other word fits: taken where it leaves the
+	# chosen tab at least as wide as the others and its word whole.
+	var gives := width / maxf(widest, 1.0) - others
+	if gives < ratio and gives >= maxf(1.0, holds):
+		ratio = gives
+	chosen.size_flags_stretch_ratio = ratio
+	# Where even the widest tab cannot hold the word at the chosen text size
 	# (200% in English), it takes the largest size that fits, never under
 	# its own at 100%; the screen's title says the name at full size.
-	# Inside the chosen tile's gold rim, not touching it.
-	var ratio := chosen.size_flags_stretch_ratio
-	var room := width * ratio / (others + ratio) - UI.px(RIM)
-	# The tile as laid out, once it has been (the bar gives minimums first).
+	var room := width * ratio / (others + ratio)
+	# The tab as laid out, once it has been (the bar gives minimums first).
 	if chosen.size.x > 0.0:
-		room = minf(room, chosen.size.x - UI.px(RIM))
+		room = minf(room, chosen.size.x)
 	var stroke := label.get_theme_constant("outline_size")
-	var word := _need(label) - stroke
-	if word + stroke > room:
+	var word := need - stroke
+	if need > room:
 		var at := floori(full * (room - stroke) / maxf(word, 1.0))
 		label.add_theme_font_size_override("font_size", clampi(at, UI.px(15), full))
 	label.visible = _need(label) <= room + 0.5
 	# The others' width once the chosen one has grown.
-	var each := width / (others + chosen.size_flags_stretch_ratio)
-	var others_fit := true
+	var each := width / (others + ratio)
 	for k: String in _labels:
 		if k != active:
-			others_fit = others_fit and _need(_labels[k]) <= each
-	for k: String in _labels:
-		if k != active:
-			(_labels[k] as Label).visible = others_fit
+			(_labels[k] as Label).visible = widest <= each + 0.5
+	for k: String in _tiles:
+		(_tiles[k] as Control).custom_minimum_size.x = _tile_width(k)
 
 
 ## The width a tab needs to show `l`'s whole word in capitals, its stroke

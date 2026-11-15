@@ -232,11 +232,17 @@ func _icons() -> void:
 		"%d missing %s, known %s" % [missing.size(), missing.slice(0, 5), known])
 
 
+## Also board 3's objection D (AD-R25): a name shown sits under its tile's
+## gold rim (the chosen tile, the Heist's ring), or inside it with clear
+## space, never across it.
 func _tab_words() -> void:
 	var bad := []
+	var rims := []
 	var was := Settings.text_scale
 	var locale := TranslationServer.get_locale()
-	for case: Array in [[100, "en"], [150, "en"], [200, "en"], [100, "de"], [150, "pt_BR"], [200, "de"]]:
+	var clear := float(UI.px(KitTabs.RIM))
+	for case: Array in [[100, "en"], [150, "en"], [200, "en"], [100, "de"], [150, "pt_BR"], [200, "de"],
+			[100, "pt_BR"], [200, "pt_BR"]]:
 		var scale: int = case[0]
 		Strings.set_locale(str(case[1]))
 		Settings.text_scale = scale
@@ -249,6 +255,7 @@ func _tab_words() -> void:
 		column.add_child(tabs)
 		for i: int in 4:
 			await tree.process_frame
+		var tiles := 0
 		for id: String in tabs.buttons:
 			var b: Button = tabs.buttons[id]
 			var r := b.get_global_rect()
@@ -257,8 +264,20 @@ func _tab_words() -> void:
 			var l: Label = tabs._labels[id]
 			if l.is_visible_in_tree() and tabs._need(l) > l.size.x + 1.0:
 				bad.append("%d%% %s cut (%.0f in %.0f)" % [scale, id, tabs._need(l), l.size.x])
-			if scale == 100 and case[1] == "en" and not l.is_visible_in_tree():
-				bad.append("100%% %s hidden" % id)
+			if scale == 100 and case[1] != "de" and not l.is_visible_in_tree():
+				bad.append("100%% %s %s hidden" % [case[1], id])
+			var tile: Control = tabs._tiles[id]
+			if not RbBox.of(tile).is_visible_in_tree():
+				continue
+			tiles += 1
+			var rim := tile.get_global_rect()
+			var words := l.get_global_rect()
+			if l.is_visible_in_tree() and (not (words.position.y >= rim.end.y + clear - 0.5
+					or rim.grow(-clear).encloses(words)) or words.end.y > r.end.y + 0.5):
+				rims.append("%d%% %s %s's name (%.0f to %.0f) across its tile (%.0f to %.0f) or below its tab" % [
+					scale, case[1], id, words.position.y, words.end.y, rim.position.y, rim.end.y])
+		if tiles != 2:
+			rims.append("%d%% %s %d tiles drawn, not the chosen one and the Heist's" % [scale, case[1], tiles])
 		var chosen: Label = tabs._labels["friends"]
 		if not chosen.is_visible_in_tree():
 			bad.append("%d%% %s the chosen tab's word hidden" % [scale, case[1]])
@@ -268,9 +287,12 @@ func _tab_words() -> void:
 		await tree.process_frame
 	Settings.text_scale = was
 	Strings.set_locale(locale)
-	check.call("the tab bar shows every name whole at 100% text, and at 150% and 200% each name whole or not at all, "
-			+ "the chosen tab's kept at 150% or more, every tab on the screen, in English, German and Portuguese "
-			+ "(§20.8, §21.8, §20.6)", bad.is_empty(), "; ".join(bad))
+	check.call("the tab bar shows every name whole at 100% text (English and Portuguese, AD-R24), and at 150% and "
+			+ "200% each name whole or not at all, the chosen tab's kept at 150% or more, every tab on the screen, in "
+			+ "English, German and Portuguese (§20.8, §21.8, §20.6)", bad.is_empty(), "; ".join(bad))
+	check.call("no tab's name crosses its tile's gold rim: each sits under the chosen tile and the Heist's ring, or "
+			+ "inside with clear space, at 100%, 150% and 200% text in English, German and Portuguese (board 3's "
+			+ "objection D, AD-R25)", rims.is_empty(), "; ".join(rims))
 
 
 func _small_disc() -> void:
