@@ -96,7 +96,7 @@ func _build() -> void:
 	title_label.theme_type_variation = "DisplayS"
 	title_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	cards = VBoxContainer.new()
-	cards.add_theme_constant_override("separation", UI.px(8))
+	cards.add_theme_constant_override("separation", UI.px(6 if _large() else 8))
 	body.add_child(_padded(cards))
 	forms = KitLayout.grid(LOOKS.size(), 6.0)
 	forms.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -437,7 +437,13 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 	# The icon's square and the card's sides as key frame 04's, so what it
 	# does takes two lines there, not three (board 5's C, S3-R10).
 	_pad(ability, 8.0, 8.0)
-	_pad(ability.get_child(0).get_child(0) as PanelContainer, 4.0, 4.0)
+	var square := ability.get_child(0).get_child(0) as PanelContainer
+	_pad(square, 4.0, 4.0)
+	# At large text the icon heads the card beside its kicker, as key frame
+	# 04's header does, so it stands above the actions (board 5's B); the
+	# kit centres it on the card, which grows past the first screen there.
+	if _large():
+		square.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	frame.add_child(ability)
 	var role := str(me.get("role", ""))
 	var keys: Array = me.get("traits", [])
@@ -507,8 +513,8 @@ static func _compact(tile: PanelContainer) -> PanelContainer:
 	stack.add_child(row)
 	stack.add_child(words)
 	tile.add_child(stack)
-	row.add_theme_constant_override("separation", UI.px(5))
-	_pad(row.get_child(0) as PanelContainer, 2.0, 2.0)
+	row.add_theme_constant_override("separation", UI.px(4))
+	_pad(row.get_child(0) as PanelContainer, 1.5, 1.5)
 	v.alignment = BoxContainer.ALIGNMENT_CENTER
 	words.theme_type_variation = ""
 	words.add_theme_font_size_override("font_size", UI.text_px(13))
@@ -525,10 +531,10 @@ static func _compact(tile: PanelContainer) -> PanelContainer:
 ## (board 5's C).
 static func _untrack_when_tight(kicker: Label, room: Control, beside: Control = null, gap := 0.0) -> void:
 	room.resized.connect(func() -> void:
-		if kicker.theme_type_variation != "Kicker" or room.size.x <= 0.0:
+		if room.size.x <= 0.0:
 			return
-		var font := kicker.get_theme_font("font")
 		var size := kicker.get_theme_font_size("font_size")
+		var font := RbTheme.role_font("kicker")
 		var need := 0.0
 		if beside != null:
 			need = font.get_string_size(kicker.text.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
@@ -536,8 +542,7 @@ static func _untrack_when_tight(kicker: Label, room: Control, beside: Control = 
 		else:
 			for word: String in kicker.text.to_upper().split(" "):
 				need = maxf(need, font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x)
-		if need > room.size.x:
-			kicker.theme_type_variation = "BodyBold")
+		kicker.theme_type_variation = "BodyBold" if need > room.size.x else "Kicker")
 
 
 ## Sets the padding of `box`, a kit panel, to `side` and `top` points.

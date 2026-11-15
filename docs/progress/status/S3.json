@@ -8,8 +8,8 @@
   "task_state": "in_progress",
   "claimed_at": "2026-11-15T22:36:00Z",
   "lease_until": "2026-11-16T01:36:00Z",
-  "updated_at": "2026-11-15T23:01:00Z",
-  "expected_next_update_by": "2026-11-15T23:46:00Z",
+  "updated_at": "2026-11-15T23:13:00Z",
+  "expected_next_update_by": "2026-11-15T23:58:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e86fad0",
@@ -240,6 +240,20 @@
       "due": "2026-11-16T10:57:08Z",
       "default": "character_screen.gd keeps rebuilding the built card in _compact",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R14",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: let the kit's card kickers (KitCards.fact and the ability card's header) drop their tracking, as the kit's tags are set, once the kicker's longest word, or the kicker and the tag beside it, is wider than the room, so German \"EIGENSCHAFTEN\" stands whole and Portuguese \"HABILIDADE\" keeps its tag on its line at 100% text (board 5's C). character_screen.gd does it per screen (_untrack_when_tight).",
+      "files": [
+        "client/ui/kit_cards.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T23:13:00Z",
+      "due": "2026-11-16T11:13:00Z",
+      "default": "character_screen.gd keeps switching the kicker's variation in _untrack_when_tight",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -249,5 +263,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "A, B, C, D, G coded; 100% en, pt_BR and de render all four facts (r3); fixing pt_BR's tag line and de's kicker break, then stills, records, AD preview, gate"
+  "next_step": "A, B, C, D, G coded; all six renders (100%/200% x en, pt_BR, de) fit and show the answers (r6); check_screens, guard and gdlint pass; next: stills and records, track doc, AD preview, gate"
 }
