@@ -1,19 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-15T22:04:16Z",
+  "updated_at": "2026-11-15T22:31:59Z",
   "expected_next_update_by": "2026-11-15T23:19:00Z",
   "cycle": 87,
-  "merging": {
-    "candidate_sha": "8b4b5827",
-    "task_ids": [
-      "P2-AD-board-5"
-    ],
-    "started_at": "2026-11-15T22:04:00Z",
-    "expires_at": "2026-11-15T23:04:00Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "P2-S3-settings",
-    "sha": "f6f9f71a"
+    "task_id": "P2-AD-board-5",
+    "sha": "d74bbbdf"
   },
   "acks": [
     "M15",

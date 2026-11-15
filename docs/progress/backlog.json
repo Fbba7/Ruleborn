@@ -3996,19 +3996,19 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "AD",
         "branch": "claude/ui-ad",
         "claimed_at": "2026-11-15T20:31:00Z",
-        "seen_at": "2026-11-15T22:04:16Z",
+        "seen_at": "2026-11-15T22:31:59Z",
         "lease_until": "2026-11-15T23:35:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
-      "merged_sha": null,
-      "updated_at": "2026-11-15T22:04:16Z",
+      "merged_sha": "d74bbbdf",
+      "updated_at": "2026-11-15T22:31:59Z",
       "updated_by": "lead (cycle 87)",
       "id": "P2-AD-board-5",
       "title": "Board 5 (character and settings, report.md 3.4 O4): AD lets it stand or lists every objection in one round"
