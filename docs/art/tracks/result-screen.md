@@ -141,6 +141,37 @@ Board 4 objected to four things on the result screen. All four are met at 5e844a
 
 The calls are A's hard drop on the three figures: taken out, the drop brings result/100 back to 89 and result/200 to 97. Board 4 asked for the drop, so the records go to the lead by request (S1-R28). Both figures stay well under the cap of 150.
 
+### Objection F, the fold (AD's preview S1-R29)
+
+AD's preview of `d896f254` added one objection. At 200% text in English (and high contrast at 200%), the first screen ended on the tops of a line's letters: "Re-simulated by the server" showed as a row of ticks and dashes just above the action bar. AD offered two fixes, a fade of about a line or a cut that never shows a part line. This is the cut, since a fade is one more draw call.
+
+- **The cut.** `ResultFit.fold` runs whenever the bar sits under the page that scrolls. That is at text above 100%, or at 100% when the page overflows. It finds the line or card that the scroll's lower edge would cut (`ResultFit.part_line`). A line counts as cut when its baseline falls below the edge, so only the tops of its letters show; a line that loses only its descent stays whole. A card counts as cut when less than one line of body text of it shows. The corner's clearance under the bar then grows by that amount, which lifts the bar and the scroll's edge onto the gap above the cut line.
+- **When it refits.** The cut is fitted again whenever the page or the scroll changes size, for example when the raid's words wrap. Each fitting measures from the edge as it stands without the cut, so repeated fittings settle on the same answer.
+- **Where the first screen now ends:**
+  - en 200%: "Entry fee 2,840 returned".
+  - de 200%: "Eintrittsgebühr 2.840 erstattet".
+  - pt_BR 200%: "Taxa de entrada de". The rest of that label starts below the edge.
+- **The haul at pt_BR 200%.** `ResultFit.hero_shrink` now measures to the scroll's lower edge, including the column's separation above the bar, rather than to the bar's top. Before this change, the tighter FIT check found the Renome row's foot 12 px under the edge at pt_BR 200%.
+- **The FIT check.** `screen_result.gd` now fails in two cases:
+  - the scroll's lower edge cuts a line or a card;
+  - a reward tile ends below the scroll's edge, when the bar is under the scroll.
+
+| Still (`SERVER=1 FIT=1`) | FIT | Draw calls |
+|---|---|---|
+| en, 100% | ok | 126 |
+| High contrast, 100% | ok | 68 |
+| en, 200% | ok | 113 |
+| pt_BR, 200% | ok | 115 |
+| de, 200% | ok | 114 |
+| High contrast, 200% | ok | 55 |
+| pt_BR, 100% | ok | 128 |
+| de, 100% | ok | 128 |
+| High contrast, pt_BR 100% | ok | 70 |
+| High contrast, de 200% | ok | 56 |
+| High contrast, pt_BR 200% | ok | 57 |
+
+The draw calls are the same as at `d896f254`, because the cut moves layout only and draws nothing new. The budget stills are given in the handoff (S1.md). They are unchanged, and S1-R28's two records still stand.
+
 ## Tried and failed
 
 - **The totals with an outline and a hard ink drop:** result/200 rose to 93 draw calls, over its record of 90. The drop was removed and the outline kept.
@@ -149,6 +180,9 @@ The calls are A's hard drop on the three figures: taken out, the drop brings res
 - Reading a still after a FIT failure: the shot quits before it saves, so the old still stayed and was misread as current. Renders now go to a fresh folder each round.
 - Fitting the raid bar two frames after the screen opens, from the laid-out sizes: on that frame the bar still stood unfitted, and the client's large-text test, which measures on the second frame, saw the raid at 2094 to 2262 px (in the foot's safe area and corners) and its words asking for 1093 px (pt_BR, pt_PT and fr at 200%). The bar is now fitted in `_ready` from measured rooms.
 - The bar on `tab_bar`, as in the earlier flow-result: its foot is drawn to run off the screen, and showed as a straight cut in the page.
+- (F) A spacer under the page to lift its edge: a zero-height Control in a VBox still takes the column's separation, which moved the bar even when no line was cut. The cut grows the corner's clearance under the bar instead.
+- (F) The first fold, fitted only when the page resized: it ran before the raid bar grew, and FIT failed at pt_BR and de 100% and 200%. It now also refits when the scroll resizes, measuring from the edge without the cut.
+- (F) Counting every clipped line as a part line: Renome's "+0" lost 3 px of its descent and was counted as cut, which lifted the bar over the whole Renome tile at pt_BR 200%. A line is cut only when less than its ascent shows.
 
 # The reward sequence (P2-S1-result-2)
 
