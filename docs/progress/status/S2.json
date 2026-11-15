@@ -7,9 +7,9 @@
   "task_id": "P2-S2-home-3",
   "task_state": "working",
   "claimed_at": "2026-11-15T17:40:00Z",
-  "lease_until": "2026-11-15T21:11:21Z",
-  "updated_at": "2026-11-15T19:11:21Z",
-  "expected_next_update_by": "2026-11-15T19:56:21Z",
+  "lease_until": "2026-11-15T21:21:43Z",
+  "updated_at": "2026-11-15T19:21:43Z",
+  "expected_next_update_by": "2026-11-15T20:06:43Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "14fdcdfe",
@@ -295,5 +295,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Free room for the pins at 200% with the raid notice (en, pt_BR, de, fr), then objection 5, renders, checks, commit."
+  "next_step": "Checks (screens, guard, docs, client tests), Part 3's S2-R20 answers in the track, merge main, pre-check, re-check request to AD, ready."
 }

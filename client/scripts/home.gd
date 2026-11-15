@@ -38,6 +38,11 @@ const GOAL_WIDEST := 230.0
 const GOAL_POINTS := 13.0
 ## How much closer the goal's lines stand at large text, in points.
 const GOAL_LINE_TIGHTER := 3.0
+## The goal card's padding above and below its words at large text, in points
+## (the kit's card keeps 8), and the gap between Collect and the goal there (6
+## at 100%): the realms' chips keep two rows over the raid notice.
+const GOAL_PAD_LARGE := 4.0
+const FOOT_GAP_LARGE := 3.0
 ## Collect's gold either side of its picture and words, in points together.
 const COLLECT_PAD := 16.0
 ## The smallest the other tabs' names go, in points at 100% text, before they
@@ -92,6 +97,10 @@ var collect_button: Button
 var _top: Control
 ## The two edges of side buttons.
 var _edges: Array[Control] = []
+## At large text, the side buttons gave way because a realm's pin found no
+## room beside them; until the foot's room changes (the raid notice comes or
+## goes).
+var _edges_yield := false
 var _foot: HFlowContainer
 ## Each side button's badge as last drawn, so a button is rebuilt only when
 ## its badge changes.
@@ -155,7 +164,7 @@ func _ready() -> void:
 	_foot.alignment = FlowContainer.ALIGNMENT_CENTER
 	_foot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_foot.add_theme_constant_override("h_separation", UI.px(8))
-	_foot.add_theme_constant_override("v_separation", UI.px(6))
+	_foot.add_theme_constant_override("v_separation", UI.px(FOOT_GAP_LARGE if Settings.text_scale >= 150 else 6.0))
 	goal_card = CenterContainer.new()
 	goal_card.name = "Goal"
 	goal_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -187,6 +196,9 @@ func _ready() -> void:
 	column.sort_children.connect(_frame_world)
 	for c: Control in [goal_card, collect_button, notice]:
 		c.visibility_changed.connect(_frame_world, CONNECT_DEFERRED)
+	notice.visibility_changed.connect(func() -> void:
+		_edges_yield = false
+		column.queue_sort())
 	App.services.store.changed.connect(_on_changed)
 	show_keeper()
 	_show_hud()
@@ -443,8 +455,9 @@ func _process(_delta: float) -> void:
 ## the goal and Collect), every realm and pin clear of them (board 3's B).
 ## Collect and the goal always keep their place (A). The side buttons stand in
 ## columns where the room is tall enough, else side by side, discs alone at
-## large text (C); only where that row leaves the realms no room do they give
-## way: each place is on the badge's menu, and the raids on the notice.
+## large text (C); only where that row leaves the realms no room, or at large
+## text where a realm's pin finds none beside them, do they give way: each
+## place is on the badge's menu, and the raids on the notice.
 func _fit_edges(column: VBoxContainer, middle: Control) -> void:
 	var frame := column.get_parent() as MarginContainer
 	var room := get_viewport_rect().size.y - frame.get_theme_constant("margin_top") \
@@ -466,7 +479,7 @@ func _fit_edges(column: VBoxContainer, middle: Control) -> void:
 		tall = maxf(tall, column_tall - edge.get_theme_constant("separation"))
 	var band := room - need
 	var upright := tall <= band
-	var fits := upright or row * 2.0 <= band
+	var fits := not _edges_yield and (upright or row * 2.0 <= band)
 	for edge: Control in _edges:
 		if edge.visible != fits:
 			edge.visible = fits
@@ -595,6 +608,11 @@ func _fit_pins() -> void:
 			if pin != null and not pin.visible:
 				whole = false
 				break
+	if not whole and not _edges_yield and Settings.text_scale >= 150 and _edges[0].visible:
+		# The side buttons give way first: each place is on the badge's menu.
+		_edges_yield = true
+		(_foot.get_parent() as Control).queue_sort()
+		return
 	if pins.visible != whole:
 		pins.visible = whole
 
@@ -986,6 +1004,8 @@ func _show_goal(g: Dictionary) -> void:
 				# Its last line loses that closeness too, which the bar gives back.
 				(l.get_parent() as BoxContainer).add_theme_constant_override("separation",
 						-int(_below(l) - UI.px(GOAL_LINE_TIGHTER)))
+	if Settings.text_scale >= 150:
+		card.add_theme_stylebox_override("panel", UI.clear_box(10, GOAL_PAD_LARGE))
 	card.custom_minimum_size.x = minf(UI.px(GOAL_WIDEST), _across())
 	var route: StringName = g.get("route", &"profile")
 	KitLayout.tap(card, func() -> void: App.services.router.go(route), Strings.t("HOME_GOAL_SPOKEN", str(g["text"])))
