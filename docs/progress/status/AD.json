@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-15T20:31:00Z",
   "lease_until": "2026-11-15T23:35:00Z",
-  "updated_at": "2026-11-15T20:39:00Z",
-  "expected_next_update_by": "2026-11-15T21:25:00Z",
+  "updated_at": "2026-11-15T20:50:00Z",
+  "expected_next_update_by": "2026-11-15T21:35:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "c0bab2a89cf95b03d3540f977a5c0050e593c900",
-    "next_step": "Board 5 images made (character and settings beside their key frames at 100%, 200%, de and high contrast); write board-5.md with the objections"
+    "next_step": "board-5.md written (round 1: does not stand, objections A–G as AD-R31 to AD-R37); run the pre-check and mark ready"
   },
   "precheck": {
     "sha": "c0bab2a89cf95b03d3540f977a5c0050e593c900",
@@ -385,6 +385,113 @@
       "created_at": "2026-11-13T11:55:00Z",
       "due": "2026-11-15T11:55:00Z",
       "default": "fold it into the S1 follow-up task with AD-R27",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R31",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection A: at 200% text the character's Level up button does not fit its words. English: the '200' price chip covers the label ('LEVEL UF') and the '4' of 'Level 3 → 4'. German: the label breaks mid-word ('AUFSTEIG / EN') and 'Stufe 3 → 4' spills below the button outside its panel; the shot prints 'fit FAIL'. Measure the label against the width left after the price chip; wrap at word boundaries only, shrink, or stack the price under the label as the key frame does; add the English and German 200% shots to the fit check. Details in board-5.md, items 3 and 4.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R32",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection B: at 200% text the character's tabs and ability header fall below the first screen (pt_BR), or the tab strip shows two tabs with Compare cut off (English, German); the subtitle and level line take two or three lines. Show the unselected tabs icon-only at 200% as the key frame does, let the subtitle and level line shrink to one line, and keep the tabs and the ability header on the first screen in every locale. If kit_tabs.gd needs an icon-only form, that part is a request to K1. Details in board-5.md, items 3 and 4.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd",
+        "client/scripts/kit_tabs.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37; any kit_tabs.gd part goes to K1 as a request",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R33",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection C: at 100% text the first screen is cut short. Character: the fourth info card is cut mid-line in every locale (the stacked tab strip and the ability card's own tag line are taller than the key frame's). Settings: 'Motion: full' is below the fold in English, and the whole second section in pt_BR and German. Put the tab icons inline and the ability tag inline with its heading; tighten the settings spacing and header pills so both switch rows fit at 100% in every locale. Details in board-5.md, items 1, 2, 6 and 7.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd",
+        "client/scripts/settings_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37; the settings half goes to P2-S3-settings-2",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R34",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection D: the character's level tag runs over the hexagon badge's top edge and is clipped or merges into it at 200%; the '200' price is a flat white figure; the Level up label has no outline; at 200% the subtitle and level line on the backdrop have no outline. Keep the tag inside the badge at every text size, give the price and the Level up label the kit's display treatment, and outline the backdrop text at 200% (at 100% they may stay plain, as the key frame). Details in board-5.md, items 1 to 4.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R35",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection E: at 200% text in German the settings title breaks mid-word ('Einstellung / en') beside a tiny gear, and the Stillness card's text is cut at 'to guards and'. Wrap the title at word boundaries only or shrink it to fit; let the Stillness card grow to its text; add the German 200% settings shot to the fit check. Details in board-5.md, item 9.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/settings_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-settings-2 for S3 holding the settings half of AD-R33, AD-R35 and AD-R36",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R36",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection F (light): on settings at 100% no plate leads in the grayscale squint; every cream plate has the same value and the gate passed hierarchy by one vote (ppffpf). Give the A−/A+ steppers the gold fill as the key frame does, and/or strengthen the group header pills. Details in board-5.md, item 6.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/settings_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-settings-2 for S3 holding the settings half of AD-R33, AD-R35 and AD-R36",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R37",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection G (light): the character's stage behind the pedestal ends in a hard horizontal edge about a third of the way down, then the blue backdrop starts; the key frame's sky runs on. Fade the stage's bottom edge into the backdrop. Details in board-5.md, items 1 to 3.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37",
       "escalate_to": "lead"
     }
   ],
