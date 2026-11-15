@@ -4,50 +4,20 @@
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-S3-settings",
-  "task_state": "working",
-  "claimed_at": "2026-11-13T06:16:00Z",
-  "lease_until": "2026-11-15T21:12:00Z",
-  "updated_at": "2026-11-15T18:12:00Z",
-  "expected_next_update_by": "2026-11-15T18:57:00Z",
+  "task_id": "P2-S3-character-2",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-15T22:36:00Z",
+  "lease_until": "2026-11-16T01:36:00Z",
+  "updated_at": "2026-11-15T22:36:00Z",
+  "expected_next_update_by": "2026-11-15T23:21:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "f0a36a41b6427d2f238c0d93679f11c7d9228f54",
-    "next_step": "restarted 15 November (lead cycle 85). The lead's advisory gate on f0a36a41 passed all six rows. Next: merge main, setup line, build.sh, pre-check on the merge, mark ready",
-    "at": "2026-11-15T18:12:00Z"
+    "last_green_sha": "e86fad0",
+    "next_step": "claimed P2-S3-character-2 (board 5 A, B, C, D, G); read character_screen.gd, render the board's shots",
+    "at": "2026-11-15T22:36:00Z"
   },
-  "precheck": {
-    "sha": "f0a36a41b6427d2f238c0d93679f11c7d9228f54",
-    "exit": 0,
-    "finished_at": "2026-11-13T11:56:27Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "f0a36a41b6427d2f238c0d93679f11c7d9228f54",
-    "items": [
-      {
-        "item": "settings at 100% text",
-        "qualities": [
-          "Hierarchy",
-          "Display type"
-        ]
-      },
-      {
-        "item": "settings at 200% text, pt_BR",
-        "qualities": [
-          "Display type",
-          "Hierarchy"
-        ]
-      },
-      {
-        "item": "settings in high contrast",
-        "qualities": [
-          "Colour roles and value",
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
+  "precheck": null,
+  "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [],
@@ -209,5 +179,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "restarted 15 November (lead cycle 85). The lead's advisory gate on f0a36a41 passed all six rows. Next: merge main, setup line, build.sh, pre-check on the merge, mark ready"
+  "next_step": "claimed P2-S3-character-2 (board 5 A, B, C, D, G); read character_screen.gd, render the board's shots"
 }
