@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-15T17:40:00Z",
   "lease_until": "2026-11-15T20:40:00Z",
-  "updated_at": "2026-11-15T17:40:00Z",
-  "expected_next_update_by": "2026-11-15T18:25:00Z",
+  "updated_at": "2026-11-15T18:14:00Z",
+  "expected_next_update_by": "2026-11-15T18:59:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "14fdcdfe",
-    "next_step": "AD's objections 1 to 5 to S2-R20 (pins settled near their islands; the notice at en 100%; Essence's Full tag; the strain chip's two-line form at 200%; pt_BR purse, high-contrast Collect, chip gaps)",
-    "at": "2026-11-15T17:40:00Z"
+    "next_step": "Fixing objection 1 (pins settled near their islands, names dropped per pin before a pin moves far), then 2 to 5",
+    "at": "2026-11-15T18:14:00Z"
   },
   "precheck": {
     "sha": "14fdcdfe20e797d94669f8657ea3c4d78f9781ba",
