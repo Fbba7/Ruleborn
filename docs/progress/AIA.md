@@ -57,6 +57,7 @@
 - Next step: when AIA-R26 is answered or defaulted, answer any objection in one round, or mark ready at the last green commit.
 
 ## Tried and failed
+- 2026-11-15 A motion rebake with `art/ui/motion/__pycache__/` beside the sources (left by a scratch script that imported `check_curves.py` to plant faults): the bake hashes every file under the family's folder, ignored or not, so the clean checkout of the pre-check found `motion.json` stale (FAIL at fc1ca1cf). Deleted and rebaked, only `sources_hash` changed. Planted-fault scripts now run the checkers as programs, never import them.
 - 2026-11-15 The first wider burst (epic about 1.8 x the prize, sparkles and dust at the old reach): at phone size it still sat on the chest, not out on the sunburst, so AD-R28 was not met. burst_scale 2.8 with sparkles to 104 and dust to 84 points reaches it.
 - 2026-11-04 Numeral boxes in fractions of a point: the bake clips and sizes its screenshot in points, so the packed piece came out 3 px short. Whole-point boxes fixed it.
 - 2026-11-04 Numerals with 1.4 x size boxes and 2 pt pads: page 2 reached 2048 x 2048, over report.md section 10.1's 24 MiB. Boxes of 1.24 x size, 1 pt pads, fit 2048 x 1024.
