@@ -16,7 +16,12 @@
     "next_step": "Pre-check running on d896f254; gate requested on d896f254; check_all and guard on the merge running; then record and ready.",
     "at": "2026-11-15T18:31:32Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
+    "exit": 0,
+    "finished_at": "2026-11-15T18:58:56Z",
+    "summary": "All checks passed."
+  },
   "gate_request": {
     "sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
     "items": [
@@ -55,7 +60,7 @@
       "id": "S1-R2",
       "from": "S1",
       "to": "K1",
-      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar até 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
+      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar at\u00e9 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
       "files": [
         "client/ui/kit_hud.gd"
       ],
