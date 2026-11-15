@@ -1,0 +1,36 @@
+[
+  {
+    "task_id": "P2-S1-result-2",
+    "sha": "aed28321c02e67edf889d45075675bd1343335cd",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T08:20:00Z",
+    "item": "result at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: 'Raid again' at the foot is the widest, most saturated gold control and leads by size and colour. In grayscale the cream Starlight card and the law pills are lighter but not larger or heavier, so under the v3 ruling they do not outrank it; the lead is narrower in grayscale than on the pass anchor."
+  },
+  {
+    "task_id": "P2-S1-result-2",
+    "sha": "aed28321c02e67edf889d45075675bd1343335cd",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T08:20:00Z",
+    "item": "result at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: the three crew portraits, about 55 to 60 px at 960 wide, read as figures with faces in soft stepped toon shading, with no photographic grain and no smudges."
+  }
+]
