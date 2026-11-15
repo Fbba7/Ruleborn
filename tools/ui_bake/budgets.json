@@ -36,6 +36,16 @@
       },
       "reason": "S2-R17: the Keeper's companion on home is drawn live each frame in its own 3D stage (the model and its ink pass), for rubric quality 9, Character presence (P2-S2-home-2). Textures and words below 4.5:1 unchanged; home stays 5 under the cap of 150.",
       "request": "S2-R17"
+    },
+    {
+      "approved_by": "lead, cycle 82 (S1-R26)",
+      "date": "2026-11-13",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "result/200": "90 -> 98"
+      },
+      "reason": "S1-R26: AD's 200% first screen for S1-R24 puts the haul above the moment card, the reward tiles in rows and the multipliers pill on one line (P2-S1-result-2); a bisect shows removing any one brings back an objection. Textures and words below 4.5:1 unchanged; result/200 stays 52 under the cap of 150. result/100 (94 -> 89) and result/hc (94 -> 27) are lowered with it, and check_screens' result_screen.gd (draw 5 -> 0, fill 1 -> 0) and character_screen.gd (fill 3 -> 0).",
+      "request": "S1-R26"
     }
   ],
   "screens": {
@@ -47,7 +57,7 @@
       },
       "client/scripts/character_screen.gd": {
         "draw": 0,
-        "fill": 3,
+        "fill": 0,
         "texture": 0
       },
       "client/scripts/forms_screen.gd": {
@@ -71,8 +81,8 @@
         "texture": 2
       },
       "client/scripts/result_screen.gd": {
-        "draw": 5,
-        "fill": 1,
+        "draw": 0,
+        "fill": 0,
         "texture": 0
       },
       "client/scripts/roster_screen.gd": {
@@ -329,17 +339,17 @@
         "words_below": 0
       },
       "result/100": {
-        "draw_calls": 94,
+        "draw_calls": 89,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "result/200": {
-        "draw_calls": 90,
+        "draw_calls": 98,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "result/hc": {
-        "draw_calls": 94,
+        "draw_calls": 27,
         "texture_bytes": 580608,
         "words_below": 0
       },

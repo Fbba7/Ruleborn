@@ -1,11 +1,11 @@
 # AD art director: progress
 
-- Status: P1-AD-board-1d ready (board 1 round 4 posted: **board 1 stands**. D and F are closed; note G, Bramble's and Hollow's lost features, does not hold it and goes to AIA-2). Pre-check in the status file.
-- Progress: 13 of 13 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
-- Done: P1-AD-board-1d: "Round 4" in `docs/art/ui-quality/gate/boards/board-1.md`, with stills `board-1/r4-*.png`, on main at `cecf3a64`.
-- Next: phase 2 can open (AD-R21); AIA-2 paints Bramble's and Hollow's busts (note G, AD-R20); board 2 when the lead seeds it.
+- Status: P2-AD-board-3 ready (board 3, home, round 1 posted: **the board does not stand**, objections A to D, each a request to the lead). Pre-check in the status file.
+- Progress: 14 of 14 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
+- Done: P2-AD-board-3: `docs/art/ui-quality/gate/boards/board-3.md`, nine items with stills `board-3/*.png`, on the integration head at `abbe59eb` (home-2 merged as `807d68a7`); previews S3-R7, S2-R18 and S1-R24 answered in `status/AD.json`.
+- Next: S2 fixes A to C (AD-R22 to AD-R24) and K1 fixes D (AD-R25), then AD re-checks only what the fixes change (board 3 round 2); S1 folds S1-R24's four objections into result-2; board 4 and board 5 when the lead seeds them.
 - Blocked by: none.
-- Owner decision needed: none. AD decides board 1 in place of the owner.
+- Owner decision needed: none. AD decides board 3 in place of the owner.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
@@ -22,17 +22,21 @@
 | P1-AD-board-1b: re-check board 1 on pilot-3 | 1 | ready (pre-check in the status file) | `gate/boards/board-1.md` Round 2 and `gate/boards/board-1/r2-*.png`; three stills re-rendered on main at `085c812a` match S1's (mean diff ≤ 0.34, ≤ 0.75% of pixels > 16); the no-plan 200% pt_BR shot fails `FIT=1`; requests AD-R13 to AD-R16 in `status/AD.json` |
 | P1-AD-board-1c: re-check board 1 on numerals-on and pilot-4 | 1 | ready (pre-check in the status file) | `gate/boards/board-1.md` Round 3 and `gate/boards/board-1/r3-*.png`; five shots on main at `ed6bcfdc`, all `FIT=1` "fit ok" (no-plan 200% pt_BR included); A and B closed, D and F open; requests AD-R17 to AD-R19 in `status/AD.json` |
 | P1-AD-board-1d: re-check board 1 on pilot-5 | 1 | ready (pre-check in the status file) | `gate/boards/board-1.md` Round 4 and `gate/boards/board-1/r4-*.png`; four shots on main at `cecf3a64`, all `FIT=1` "fit ok"; the no-plan 200% pt_BR shot matches S1's (mean diff 0.01); portrait L* matches S1's Part 5 table; D and F closed, board 1 stands; requests AD-R20 and AD-R21 in `status/AD.json` |
+| P2-AD-board-3: board 3 (home) | 2 | ready (pre-check in the status file) | `gate/boards/board-3.md` and `gate/boards/board-3/*.png`; home rendered with `universe_home.gd`, `FIT=1`, at 100% and 200%, en and pt_BR, high contrast and `NOTICE=1`, beside `art/ui/keyframes/01-home*`; gate verdicts of home-1 (`977edd5b`) and home-2 (`3612e265`) cited per item; objections A to D as requests AD-R22 to AD-R25; `check_docs_consistency.py` clean |
 
 ## Handoff
-- Last verified commit: see `precheck` in `status/AD.json`; P1-AD-board-1d ready.
-- Done: board 1 round 4 on main at `cecf3a64` (P1-S1-pilot-5 merged as `fe27c8f2`). **Board 1 stands.**
-  - D is closed: Bramble and Hollow are filled in three flat tones, about 29 L* below their discs, and Hollow is framed head and shoulders. The gate passes Character presence 3 fails of 6.
-  - F is closed: "Laws here" sits on the kit's tag plate, 47 L* or more above the sky. The gate passes Display type at 100% and at 200% pt_BR.
-  - Note G, which does not hold the board: the flat pass also wiped out Bramble's snout, arms and belly bands and Hollow's glass. That is AIA-2's job, in the busts' source art (AD-R20, which answers S1-R12).
-- Checked: AD's no-plan 200% pt_BR shot matches S1's `part5-noplan-200-pt.png` (mean diff 0.01). AD's 100% shot used a different law set and estimate from S1's, so its scene differs, but its portraits and header are the same. The portrait L* matches S1's table.
+- Last verified commit: see `precheck` in `status/AD.json`; P2-AD-board-3 ready.
+- Done: board 3 (home), round 1, on `abbe59eb`. **The board does not stand.** Objections, in order of weight:
+  - A (hard defect, S2, AD-R22): at 200% pt_BR with the raid notice, Collect is off the screen.
+  - B (S2, AD-R23): at 100% the world is framed too low and the pins stack; the Defence badge lands on the Skyfield pin in pt_BR.
+  - C (S2, AD-R24): the goal panel, realm pins and dock labels drop at 200% and in pt_BR at 100%. Keep the goal bar at every size.
+  - D (K1, AD-R25): the dock labels sit on their tiles' gold rim (`client/ui/kit_tabs.gd`).
+  - Stands: the companion (quality 9, note: clamp its yaw) and the top bar (note: the strain mark is a cyan dot, the key frame's is a pink bolt).
+- Previews answered: S3-R7 (settings), S2-R18 (home part 2, which became board 3's objections) and S1-R24 (result part 2 at `aed28321`: the faces apart are accepted; four objections for result-2, the heaviest being that at 200% pt_BR the haul falls below the fold under the moment card).
+- Checked: `check_docs_consistency.py` clean; the full checks in the pre-check (`check_all.sh` takes more than 10 minutes here, so it runs detached through `run_checks.sh`).
 - Half done: nothing.
-- Open hypotheses: once AIA-2's flat busts land, the `TOON` pass in `FxPortrait` may no longer be needed for Bramble and Hollow.
-- Next step: the lead opens phase 2 (AD-R21). AD's next task is board 2 (icons) when it is seeded.
+- Open hypotheses: home's shot fixture lacks notifications, a shield and a locked realm, so those states are unjudged; result's fixture has no roster, so RAID AGAIN's idle line is untested.
+- Next step: round 2 of board 3 after AD-R22 to AD-R25 land, re-checking only what the fixes change; then boards 4 and 5.
 
 ## Flow review
 
@@ -55,3 +59,4 @@ AD read the router (`client/app/router.gd`) and every `router.go` on the heist l
 - 2026-11-03 running the judge from a general-purpose subagent: it has no Agent tool, so it cannot call ui-judge; launched each run as a child cloud session instead.
 - 2026-11-03 `render` can leave a call's crops missing (judges said so in a few reasons); not changed mid-calibration, so all runs saw the same conditions. Fix before the next rubric version.
 - 2026-11-11: `claude/ui-ad` and main had unrelated histories, so a plain merge failed; joined them with a merge (`--allow-unrelated-histories -s ours`, then `read-tree` of main), no force-push (6c3cd6fb).
+- 2026-11-13 `bash tools/check_all.sh` in the foreground: stopped by the tool's 10-minute limit at the mobile toolchain step, with server and client tests passed so far (535 and 409); ran the full checks detached through `run_checks.sh` instead.
