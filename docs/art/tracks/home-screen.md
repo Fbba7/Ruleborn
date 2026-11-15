@@ -208,6 +208,35 @@ AD reviewed this part once at `14fdcdfe` (S2-R20, `docs/progress/requests.md`) a
    - **Chips 2 and 4, and 4 and 6, no longer touch** in Portuguese and German at 200%. Chips keep the pin gap like the named pins.
    - The Portuguese goal's break, "Guardião / 25", is the string's (S2-R19, still open).
 
+**AD's S2-R22 review (objections (a) to (e)).**
+
+AD re-checked 1 to 5 at `13ff046f` (S2-R22): they stand as fixed. AD made five new objections, which this task answers.
+
+- **(a) At 200%, the chosen tab's raised picture is clear of the goal and Collect.**
+  - The chosen tile's picture stands above the tab's declared height (KitTabs' `RISE`, 18 points). At 200% it rises up to about 40 points past the tile's top.
+  - Home reserves that room: the tabs' top margin takes what the column's gap leaves of the picture's rise, its bob and a 2-point gap (`HomeParts.reserve_lift`). It follows the tile as it moves, and grows freely but shrinks only by more than 2 points, so the column never keeps re-sorting.
+  - The part past the declared height is the kit's. S2-R24 asks K1 to keep the picture within it; home's reserve then falls to nothing on its own.
+  - `FIT=1` now fails where the chosen tab's picture overlaps the goal or Collect (`kept` in the shot).
+- **(b) The realms' pins take one form.** Where one realm's pin finds no room for its name, every realm's pin steps down together: to icon and level, then to the numbered chip (`UniversePins.follow`). `FIT=1` fails where the shown pins mix forms.
+- **(c) At 100% the purse keeps one row.** Where the three pills cannot share the row (German's "142,0 Tsd."), all three amounts shrink a little, never under 85% (`AMOUNT_LEAST`), and the gaps close to `PURSE_GAP_LEAST`. `FIT=1` fails where the purse takes two rows at 100%.
+- **(d) The goal breaks after the dot at large text**, as the key frame does: "1,240 experience to go · / Keeper 25". Its words may shrink to 85% (`GOAL_LEAST`) to keep the first half on one line (`HomeParts.break_goal`). German reads "noch 1.240 EP · / Hüter 25". The Portuguese first half is too long for one line even at 85%, so it keeps three lines (S2-R19).
+- **(e) At 200% German, Collect keeps `COLLECT_PAD` beside its words.** The words shrink a point at a time until the padding fits.
+
+**AD's notes on S2-R22.**
+
+| Note | Answer |
+|---|---|
+| 'Lantern Vale' and 'Humming' are untranslated in pt_BR and de | They are in `client/i18n/strings.csv`, which is not this task's file. |
+| Every render logs "button_up already connected" | Main logs it too. It comes from `KitLayout.tap` (`client/ui/kit_layout.gd`, lines 82 and 83), which connects `button_down` and `button_up` to the press motion again on a button that already has them. Home calls it from `UniverseBadge`. It is K1's file. |
+
+**What (a) costs.**
+
+- **At 200% in Portuguese with the raid notice up, the realms' chips give way.** The reserve lifts the foot about 36 points. With Portuguese's three-line goal and the notice, the world keeps about 105 points, and no chip finds a free place near its island. Home's rule then hides every pin together rather than mark some realms only (`Home._fit_pins`). Each realm is still said aloud and still takes its tap. Before (a), this case showed chips.
+  - `FIT=1` fails in this one case, on "no realm marked over the whole universe" (board 3's objection C). The check is not loosened.
+  - A trial of smaller reserves showed that the chips need back almost all of it. No other part of the column can give that much: the goal's first half needs 74% of its size to fit one line, and the column's gaps are 4 points.
+  - S2-R25 asks AD to rule on the trade. Once K1 keeps the picture within the tab's height (S2-R24), the case passes again with no change to home.
+- **At 200% in Portuguese, a darker band shows between the goal and the dock.** It is the edge of the galaxy's plane, which the higher foot now shows. The galaxy is `client/world/universe_view.gd`, which is not this task's file. It goes with S2-R24.
+
 **Draw calls.**
 
 | Shot | Calls | Recorded |

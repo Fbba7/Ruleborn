@@ -337,6 +337,8 @@ func _build_tabs(badges: Dictionary) -> void:
 	for b: Button in tabs.buttons.values():
 		b.resized.connect(_fit_tab_words, CONNECT_DEFERRED)
 	tabs.resized.connect(_fit_tab_words, CONNECT_DEFERRED)
+	var lift := func() -> void: HomeParts.reserve_lift(tabs, column.get_theme_constant("separation"))
+	(chosen.find_child("Tile", true, false) as Control).item_rect_changed.connect(lift, CONNECT_DEFERRED)
 	_raise_heist()
 
 
@@ -544,6 +546,7 @@ func _fit_foot() -> void:
 			wide = clampf(floorf(room), UI.px(GOAL_NARROWEST), widest)
 		if not is_equal_approx(card.custom_minimum_size.x, wide):
 			card.custom_minimum_size.x = wide
+		HomeParts.break_goal(card, str(goal.get("text", "")), wide)
 	var collect_wide := across if stacked else natural
 	if not is_equal_approx(collect_button.custom_minimum_size.x, collect_wide):
 		collect_button.custom_minimum_size.x = collect_wide
@@ -557,28 +560,20 @@ func _fit_foot() -> void:
 ## between words, as the label wraps them), with the card's picture and padding
 ## beside them.
 func _two_lines(card: Control) -> float:
-	var l: Label = null
-	for c: Label in card.find_children("*", "Label", true, false):
-		if c.visible and c.text == str(goal.get("text", "")):
-			l = c
+	var l := HomeParts.goal_words(card)
 	if l == null:
 		return 0.0
 	var font := l.get_theme_font("font")
-	var points := l.get_theme_font_size("font_size")
-	var words := l.text.split(" ", false)
-	var narrowest := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, points).x
+	var points: int = l.get_meta("px", l.get_theme_font_size("font_size"))
+	var text := str(goal.get("text", ""))
+	var words := text.split(" ", false)
+	var narrowest := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, points).x
 	for i in range(1, words.size()):
 		var first := font.get_string_size(" ".join(words.slice(0, i)), HORIZONTAL_ALIGNMENT_LEFT, -1, points).x
 		var second := font.get_string_size(" ".join(words.slice(i)), HORIZONTAL_ALIGNMENT_LEFT, -1, points).x
 		narrowest = minf(narrowest, maxf(first, second))
-	var pad := (card as PanelContainer).get_theme_stylebox("panel").get_minimum_size().x
-	var row := l.get_parent().get_parent() as BoxContainer
-	var beside := 0.0
-	for c: Control in row.get_children():
-		if c != l.get_parent() and c.visible:
-			beside += c.get_combined_minimum_size().x + row.get_theme_constant("separation")
 	# A pixel over each half's own width, so the label's wrap keeps the break.
-	return ceilf(narrowest + 2.0 + pad + beside + l.get_theme_stylebox("normal").get_minimum_size().x)
+	return ceilf(narrowest + 2.0 + HomeParts.goal_beside(card, l))
 
 
 ## The foot's width: the frame's inside, which the foot fills. Its own size
@@ -693,11 +688,12 @@ func _show_hud() -> void:
 		need = inside.get_combined_minimum_size().x + UI.px(COLLECT_PAD)
 	# Still wider (German at 200%, "3,4 Tsd. einsammeln"): the words a little
 	# smaller, so they stay inside the gold at the screen's width.
-	if need > most:
-		var px := int(words.get_meta("px"))
-		var wide := words.get_minimum_size().x
-		var fit := floori(px * (wide - (need - most)) / maxf(wide, 1.0))
-		words.add_theme_font_size_override("font_size", maxi(fit, UI.px(12)))
+	# A point at a time, as the words' width is not quite in step with their
+	# size, until COLLECT_PAD is left beside them (AD's objection (e) on S2-R22).
+	var px := int(words.get_meta("px"))
+	while need > most and px > UI.px(12):
+		px -= 1
+		words.add_theme_font_size_override("font_size", px)
 		need = inside.get_combined_minimum_size().x + UI.px(COLLECT_PAD)
 	collect_button.set_meta("natural", clampf(need, UI.px(120), maxf(UI.px(120), most)))
 	collect_button.custom_minimum_size.x = collect_button.get_meta("natural")
@@ -848,9 +844,11 @@ func _fit_purse() -> void:
 		_fit_strain(purse.size.x - last.get_combined_minimum_size().x - purse.get_theme_constant("h_separation"))
 
 
-## Large text (§20.8): the purse in two rows. Where the first two amounts
-## cannot share a row (German's "142,0 Tsd."), all three are a little smaller,
-## never under AMOUNT_LEAST, so the third row stays the realms' chips.
+## The purse in one row at 100% text, in two with large text (§20.8). Where
+## the pills of a row cannot share it (German's "142,0 Tsd."), all three
+## amounts are a little smaller, never under AMOUNT_LEAST: at 100% so Essence
+## does not drop to a row alone (AD's objection (c) on S2-R22), with large text
+## so the third row stays the realms' chips.
 func _fit_amounts() -> void:
 	var amounts: Array[Label] = []
 	for k: String in UniversePurse.ORDER:
@@ -858,17 +856,20 @@ func _fit_amounts() -> void:
 		if l != null and l.has_meta("points"):
 			amounts.append(l)
 	var share := 1.0
-	if Settings.text_scale >= 150 and amounts.size() >= 2:
-		# The first two pills' widths with their amounts at full size, read from
+	var large := Settings.text_scale >= 150
+	var row := 2 if large else 3
+	if amounts.size() >= row:
+		# The row's pills' widths with their amounts at full size, read from
 		# the face, not from the labels as they are now.
 		var words := 0.0
 		var rest := 0.0
-		for i in 2:
+		for i in row:
 			var l := amounts[i]
 			var full := UI.text_px(float(l.get_meta("points")))
 			words += l.get_theme_font("font").get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, full).x
 			rest += (pills[UniversePurse.ORDER[i]] as Control).get_combined_minimum_size().x - l.get_combined_minimum_size().x
-		var over := words + rest + purse.get_theme_constant("h_separation") - purse.size.x
+		var gap := float(purse.get_theme_constant("h_separation")) if large else UI.px(PURSE_GAP_LEAST) * (row - 1.0)
+		var over := words + rest + gap - purse.size.x
 		if over > 0.5:
 			var shrunk := (words - over - 1.0) / maxf(words, 1.0)
 			if shrunk >= AMOUNT_LEAST:
@@ -899,8 +900,10 @@ func _show_goal(g: Dictionary) -> void:
 	# objection), leaving the world the foot's second line.
 	for l: Label in card.find_children("*", "Label", true, false):
 		if l.visible and l.text == str(g["text"]):
+			l.set_meta("goal_words", true)
 			l.set_meta("points", GOAL_POINTS)
 			l.add_theme_font_size_override("font_size", UI.text_px(GOAL_POINTS))
+			l.set_meta("px", UI.text_px(GOAL_POINTS))
 			if Settings.text_scale >= 150:
 				# Its lines as close as the key frame at 200% sets them, the bar
 				# tucked under the last one's figures, so three lines leave the

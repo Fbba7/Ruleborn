@@ -288,6 +288,7 @@ static func fit(screen: Home) -> Array[String]:
 				bad.append("%s %s over %s %s" % [keys[i], a, keys[j], shown[keys[j]]])
 	bad.append_array(must_show(screen))
 	bad.append_array(live(screen))
+	bad.append_array(kept(screen))
 	var pins := screen.world.pins
 	if not pins.is_visible_in_tree():
 		# Over the whole universe every realm is marked, a numbered chip at the
@@ -298,6 +299,7 @@ static func fit(screen: Home) -> Array[String]:
 	var named: Array[String] = []
 	var missing: Array[String] = []
 	var boxes := {}
+	var forms := {}
 	for id: String in screen.world.islands:
 		var pin := pins.realm_pin(id)
 		if pin == null:
@@ -307,6 +309,7 @@ static func fit(screen: Home) -> Array[String]:
 			boxes[id] = pin.get_global_rect()
 			var mark: Vector2 = pins.global_position + (pin.get_meta("anchor", Vector2.ZERO) as Vector2)
 			var words := (pin.get_child(0).get_child(1) as Control).visible
+			forms["%s %s" % [words, (pin.get_child(0).get_child(0) as Control).visible]] = id
 			var reach := pin.size.y * (UniversePins.NEAR if words or (pin.get_child(0).get_child(0) as Control).visible
 				else UniversePins.FAR)
 			var off := UniversePins._off(boxes[id], mark)
@@ -315,6 +318,9 @@ static func fit(screen: Home) -> Array[String]:
 					reach])
 		else:
 			missing.append(id)
+	if forms.size() > 1:
+		# One form for every realm (AD's objection (b) on S2-R22).
+		bad.append("realm pins in %d forms: %s" % [forms.size(), forms])
 	if screen.world.zoom == 0 and not missing.is_empty():
 		bad.append("realms %s named and %s not" % [named, missing])
 	var ids := boxes.keys()
@@ -329,4 +335,32 @@ static func fit(screen: Home) -> Array[String]:
 		for key: String in shown:
 			if a.grow(-0.5).intersects(shown[key]):
 				bad.append("pin %s %s over %s %s" % [ids[i], a, key, shown[key]])
+	return bad
+
+
+## AD's objections (a) and (c) on S2-R22, kept: the chosen tab's raised
+## picture clear of the goal and Collect, and at 100% text the purse's three
+## pills in one row. One line each that fails.
+static func kept(screen: Home) -> Array[String]:
+	var bad: Array[String] = []
+	var tabs := screen.tabs
+	if tabs != null and tabs.buttons.has(tabs.active):
+		var tile := (tabs.buttons[tabs.active] as Control).find_child("Tile", true, false) as Control
+		var foot := {"goal": screen.goal_card, "collect": screen.collect_button}
+		if tile != null:
+			for t: TextureRect in tile.find_children("*", "TextureRect", false, false):
+				var at := t.get_global_rect()
+				for key: String in foot:
+					var c := foot[key] as Control
+					if t.is_visible_in_tree() and c != null and c.is_visible_in_tree() \
+							and at.grow(-1.0).intersects(c.get_global_rect()):
+						bad.append("the chosen tab's picture %s over %s %s" % [at, key, c.get_global_rect()])
+	if Settings.text_scale < 150:
+		var rows := {}
+		for k: String in screen.pills:
+			var pill := screen.pills[k] as Control
+			if pill.is_visible_in_tree():
+				rows[roundi(pill.get_global_rect().position.y)] = k
+		if rows.size() > 1:
+			bad.append("the purse in %d rows at 100%% text: %s" % [rows.size(), rows])
 	return bad

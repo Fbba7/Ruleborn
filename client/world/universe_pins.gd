@@ -315,10 +315,10 @@ static func _words(text: String, colour: Color) -> Label:
 
 
 ## Every pin where the camera now shows its point, shown at the zooms it
-## belongs to. A realm's pin with no room near its island for its name shrinks
-## to its icon and level, then to its level alone, a numbered chip; where one
-## still finds none, every realm's pin shrinks a step, rather than one realm
-## going unmarked. The names come back when the room changes.
+## belongs to. Where a realm's pin finds no room near its island for its name,
+## every realm's pin shrinks a step together, to its icon and level, then to its
+## level alone, a numbered chip, so the realms are marked in one form (AD's
+## objection (b) on S2-R22). The names come back when the room changes.
 func follow() -> void:
 	if view.camera == null or not view.camera.is_inside_tree():
 		return
@@ -351,8 +351,7 @@ func _lay(mode: int) -> bool:
 			continue
 		var isl: UniverseIsland = view.islands[id]
 		var shown: bool = view.zoom in (p["zooms"] as Array)
-		# Islands small on the screen keep only their names and alarms, and a
-		# name only its realm's icon and level.
+		# Islands small on the screen keep only their realms' pins and alarms.
 		var small := isl.radius / maxf(0.01, view.camera.size) * view.size.y < UI.px(28)
 		if int(p["rank"]) >= 2 or p.get("back", false):
 			shown = shown and not small
@@ -384,16 +383,12 @@ func _lay(mode: int) -> bool:
 		if not p.get("front", false):
 			node.visible = _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * FAR)
 			continue
-		# A realm's pin with its name where a place near its island is free;
-		# else, that pin alone, its icon and level, then its level, rather than
-		# the name standing over another realm (S2-R20's first objection). A
-		# small island's pin starts at its icon and level.
-		var placed := false
-		for form: int in range(maxi(mode, 1 if small else 0), 3):
-			_shape(node, form)
-			placed = _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * (NEAR if form < 2 else FAR))
-			if placed:
-				break
+		# A realm's pin with its name where a place near its island is free,
+		# never over another realm (S2-R20's first objection). Every realm's pin
+		# takes the same form (AD's objection (b) on S2-R22): where one finds no
+		# room, `follow` lays them all again a step smaller.
+		_shape(node, mode)
+		var placed := _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * (NEAR if mode < 2 else FAR))
 		node.visible = placed
 		every = every and placed
 	return every

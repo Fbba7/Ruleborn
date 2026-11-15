@@ -7,6 +7,9 @@ extends RefCounted
 ## Full's words on its plate with large text, in points before the scale: the
 ## key frame at 200% draws them as the band's name, under the amount.
 const FULL_LARGE_POINTS := 11.0
+## The least share of their size the goal's words take with large text, to
+## break after the dot on two lines (break_goal).
+const GOAL_LEAST := 0.85
 
 
 ## Large text (§20.8): strain in the purse's fourth place in the two lines the
@@ -97,6 +100,86 @@ static func hang_full(pill: PanelContainer) -> void:
 static func below(l: Label) -> float:
 	var font := l.get_theme_font("font")
 	return maxf(0.0, font.get_descent(l.get_theme_font_size("font_size")) - UI.px(2))
+
+
+## The goal card's words (Home._show_goal marks them).
+static func goal_words(card: Control) -> Label:
+	for c: Label in card.find_children("*", "Label", true, false):
+		if c.visible and c.has_meta("goal_words"):
+			return c
+	return null
+
+
+## What the goal card takes across besides its words: its padding, its picture
+## and the words' own box.
+static func goal_beside(card: Control, l: Label) -> float:
+	var pad := (card as PanelContainer).get_theme_stylebox("panel").get_minimum_size().x
+	var row := l.get_parent().get_parent() as BoxContainer
+	var beside := 0.0
+	for c: Control in row.get_children():
+		if c != l.get_parent() and c.visible:
+			beside += c.get_combined_minimum_size().x + row.get_theme_constant("separation")
+	return pad + beside + l.get_theme_stylebox("normal").get_minimum_size().x
+
+
+## The goal's words, where they take more than a line in a card `wide` across,
+## broken after the dot as the key frame breaks them ("1,240 experience to go ·
+## / Keeper 25", AD's objection (d) on S2-R22), where both halves fit a line;
+## else left to the label's wrap. With large text the words may be a little
+## smaller for it, never under GOAL_LEAST of their size, as the key frame at
+## 200% sets them a little under the kit's.
+static func break_goal(card: Control, text: String, wide: float) -> void:
+	var l := goal_words(card)
+	if l == null:
+		return
+	var want := text
+	var px: int = l.get_meta("px", l.get_theme_font_size("font_size"))
+	var points := px
+	var dot := text.find(" · ")
+	if dot > 0:
+		var font := l.get_theme_font("font")
+		var room := wide - goal_beside(card, l) - 1.0
+		var first := text.substr(0, dot + 2)
+		var second := text.substr(dot + 3)
+		var size := func(t: String, at: int) -> float: return font.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1,
+			at).x
+		if size.call(text, px) > room:
+			if Settings.text_scale >= 150:
+				while points > ceili(px * GOAL_LEAST) and size.call(first, points) > room:
+					points -= 1
+			if size.call(first, points) <= room and size.call(second, points) <= room:
+				want = first + "\n" + second
+			else:
+				points = px
+	if l.get_theme_font_size("font_size") != points:
+		l.add_theme_font_size_override("font_size", points)
+	if l.text != want:
+		l.text = want
+
+
+## Room over the tabs for the chosen tab's picture where it stands above the
+## tab's top edge (AD's objection (a) on S2-R22): the tabs' top margin takes
+## what the column's gap `gap` leaves of its rise, its bob and a small gap, so
+## the goal and Collect stay clear of it. The part past the tab's declared
+## height is the kit's (S2-R24); until it says otherwise, home reserves it.
+static func reserve_lift(tabs: KitTabs, gap: float) -> void:
+	if tabs == null or not is_instance_valid(tabs) or not tabs.buttons.has(tabs.active):
+		return
+	var b := tabs.buttons[tabs.active] as Button
+	var tile := b.find_child("Tile", true, false) as Control
+	if tile == null:
+		return
+	var rise := 0.0
+	for t: TextureRect in tile.find_children("*", "TextureRect", false, false):
+		# Where it rests, wherever its bob has it now.
+		var top := tile.global_position.y + tile.size.y + t.offset_bottom - maxf(t.size.y, t.custom_minimum_size.y)
+		rise = maxf(rise, b.global_position.y - top + UI.px(2.0) + UI.px(2.0))
+	var extra := maxi(0, ceili(rise - gap))
+	# A pixel's give either way, as the tile's rounding can move with the
+	# margin: never a margin that sets the column sorting for ever.
+	var now := tabs.get_theme_constant("margin_top")
+	if extra > now or extra < now - UI.px(2.0):
+		tabs.add_theme_constant_override("margin_top", extra)
 
 
 ## The raid notice and what it says: the panel home lays in its column.
