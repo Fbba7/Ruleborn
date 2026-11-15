@@ -33,12 +33,26 @@ const GOAL_ICONS := {"levelup": "generalui/levelup", "track": "screens/season"}
 const GOAL_NARROWEST := 150.0
 ## The widest it goes, in points: two lines of its words beside Collect.
 const GOAL_WIDEST := 230.0
+## The goal's words, in points: a point under the kit's goal card, as the key
+## frame draws them smaller than Collect's.
+const GOAL_POINTS := 13.0
+## How much closer the goal's lines stand at large text, in points.
+const GOAL_LINE_TIGHTER := 3.0
+## Collect's gold either side of its picture and words, in points together.
+const COLLECT_PAD := 16.0
 ## The smallest the other tabs' names go, in points at 100% text, before they
 ## give way to their icons alone.
 const TAB_WORD_LEAST := 11.0
 ## The least share of its size strain's words take to keep the purse's fourth
 ## place at large text.
 const STRAIN_LEAST := 0.8
+## The gap between the purse's pills, in points, and the least it closes to
+## (_fit_purse) before the row wraps.
+const PURSE_GAP := 6.0
+const PURSE_GAP_LEAST := 3.0
+## Full's words on its plate with large text, in points before the scale: the
+## key frame at 200% draws them as the band's name, under the amount.
+const FULL_LARGE_POINTS := 11.0
 ## The least share of their size the purse's amounts take at large text to
 ## keep the purse to two rows (`_fit_amounts`).
 const AMOUNT_LEAST := 0.85
@@ -227,8 +241,9 @@ func _build_top(column: VBoxContainer) -> void:
 	purse = HFlowContainer.new()
 	purse.name = "Purse"
 	purse.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	purse.add_theme_constant_override("h_separation", UI.px(6))
-	purse.add_theme_constant_override("v_separation", UI.px(6))
+	purse.add_theme_constant_override("h_separation", UI.px(PURSE_GAP))
+	# Large text closes the rows up, the world keeping the height (S2-R20).
+	purse.add_theme_constant_override("v_separation", UI.px(PURSE_GAP_LEAST if Settings.text_scale >= 150 else PURSE_GAP))
 	for k: String in UniversePurse.ORDER:
 		var pill := KitStatus.resource("resources/" + k, "–", 0.0, Tokens.color(k))
 		pill.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -237,6 +252,7 @@ func _build_top(column: VBoxContainer) -> void:
 		# ink-outlined with a hard drop, as the design draws them (S2-R12 asks
 		# K1 to make it the resource part's own).
 		home_figure(pill.find_child("Amount", true, false) as Label, 18)
+		_hang_full(pill)
 		pills[k] = pill
 		purse.add_child(pill)
 	purse.pre_sort_children.connect(_fit_purse)
@@ -528,9 +544,10 @@ func _fit_foot() -> void:
 		_foot.move_child(collect_button, at)
 
 
-## The goal card's width with its words in two lines: half their length and
-## the longest word (a line breaks between words), with the card's picture and
-## padding beside them.
+## The goal card's width with its words in two lines at most: the narrowest
+## break between two words that leaves both halves shortest (a line breaks
+## between words, as the label wraps them), with the card's picture and padding
+## beside them.
 func _two_lines(card: Control) -> float:
 	var l: Label = null
 	for c: Label in card.find_children("*", "Label", true, false):
@@ -540,17 +557,20 @@ func _two_lines(card: Control) -> float:
 		return 0.0
 	var font := l.get_theme_font("font")
 	var points := l.get_theme_font_size("font_size")
-	var longest := 0.0
-	for w: String in l.text.split(" ", false):
-		longest = maxf(longest, font.get_string_size(w, HORIZONTAL_ALIGNMENT_LEFT, -1, points).x)
-	var whole := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, points).x
+	var words := l.text.split(" ", false)
+	var narrowest := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, points).x
+	for i in range(1, words.size()):
+		var first := font.get_string_size(" ".join(words.slice(0, i)), HORIZONTAL_ALIGNMENT_LEFT, -1, points).x
+		var second := font.get_string_size(" ".join(words.slice(i)), HORIZONTAL_ALIGNMENT_LEFT, -1, points).x
+		narrowest = minf(narrowest, maxf(first, second))
 	var pad := (card as PanelContainer).get_theme_stylebox("panel").get_minimum_size().x
 	var row := l.get_parent().get_parent() as BoxContainer
 	var beside := 0.0
 	for c: Control in row.get_children():
 		if c != l.get_parent() and c.visible:
 			beside += c.get_combined_minimum_size().x + row.get_theme_constant("separation")
-	return ceilf(minf(whole, whole * 0.5 + longest) + pad + beside)
+	# A pixel over each half's own width, so the label's wrap keeps the break.
+	return ceilf(narrowest + 2.0 + pad + beside + l.get_theme_stylebox("normal").get_minimum_size().x)
 
 
 ## The foot's width: the frame's inside, which the foot fills. Its own size
@@ -654,10 +674,10 @@ func _show_hud() -> void:
 	if not words.has_meta("px"):
 		words.set_meta("px", words.get_theme_font_size("font_size"))
 	words.add_theme_font_size_override("font_size", int(words.get_meta("px")))
-	var need := inside.get_combined_minimum_size().x + UI.px(32)
+	var need := inside.get_combined_minimum_size().x + UI.px(COLLECT_PAD)
 	if need > most and picture != words:
 		picture.visible = false
-		need = inside.get_combined_minimum_size().x + UI.px(32)
+		need = inside.get_combined_minimum_size().x + UI.px(COLLECT_PAD)
 	# Still wider (German at 200%, "3,4 Tsd. einsammeln"): the words a little
 	# smaller, so they stay inside the gold at the screen's width.
 	if need > most:
@@ -665,7 +685,7 @@ func _show_hud() -> void:
 		var wide := words.get_minimum_size().x
 		var fit := floori(px * (wide - (need - most)) / maxf(wide, 1.0))
 		words.add_theme_font_size_override("font_size", maxi(fit, UI.px(12)))
-		need = inside.get_combined_minimum_size().x + UI.px(32)
+		need = inside.get_combined_minimum_size().x + UI.px(COLLECT_PAD)
 	collect_button.set_meta("natural", clampf(need, UI.px(120), maxf(UI.px(120), most)))
 	collect_button.custom_minimum_size.x = collect_button.get_meta("natural")
 	collect_button.accessibility_name = Strings.t("HOME_COLLECT_SPOKEN", ", ".join(waiting))
@@ -707,12 +727,47 @@ func _show_strain(share: float, band: int, known: bool) -> void:
 	hit.set_meta("band", key)
 	hit.size_flags_horizontal = Control.SIZE_SHRINK_END
 	hit.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if Settings.text_scale >= 150:
+		_large_strain(pill, pct, named)
+		# The purse's fourth place, as tall as the pill beside it.
+		hit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		hit.size_flags_vertical = Control.SIZE_FILL
 	hit.add_child(pill)
 	tap.reparent(hit, false)
 	_secondary(hit)
 	strain.add_child(hit)
 	_strain_pill = pill
 	_strain_room = 0.0
+
+
+## Large text (§20.8): strain in the purse's fourth place in the two lines the
+## key frame at 200% draws in every language (S2-R20's fourth objection), the
+## share in the amounts' figures over the band's name, rather than one line.
+static func _large_strain(pill: PanelContainer, pct: int, named: String) -> void:
+	var words := pill.find_child("Words", true, false) as Label
+	words.visible = false
+	var row := words.get_parent() as HBoxContainer
+	row.alignment = BoxContainer.ALIGNMENT_BEGIN
+	var lines := VBoxContainer.new()
+	lines.name = "Lines"
+	lines.add_theme_constant_override("separation", 0)
+	lines.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lines.alignment = BoxContainer.ALIGNMENT_CENTER
+	lines.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var share := UI.label("%d%%" % pct, 18)
+	share.name = "Share"
+	share.set_meta("bold", true)
+	home_figure(share, 18)
+	lines.add_child(share)
+	# The band's name tucked under the share's figures, not a whole line below.
+	lines.add_theme_constant_override("separation", -int(_below(share)))
+	var band := UI.label(named, 14)
+	band.name = "Band"
+	band.theme_type_variation = "LabelText"
+	band.set_meta("bold", true)
+	band.set_meta("px", band.get_theme_font_size("font_size"))
+	lines.add_child(band)
+	row.add_child(lines)
 
 
 ## The strain pill no wider than `room` if it can be: the number over the
@@ -723,6 +778,27 @@ func _fit_strain(room: float) -> void:
 		return
 	_strain_room = room
 	var pill := _strain_pill
+	var band := pill.find_child("Band", true, false) as Label
+	if band != null:
+		# The large form's band name a little smaller where it is a hair too
+		# wide, never under STRAIN_LEAST; past that it wraps.
+		# Back to its own size first: the theme's is not scaled by large text.
+		var px := int(band.get_meta("px"))
+		band.add_theme_font_size_override("font_size", px)
+		band.autowrap_mode = TextServer.AUTOWRAP_OFF
+		band.custom_minimum_size.x = 0.0
+		# Its width measured from its font: the label's own size is the last
+		# frame's until its theme settles.
+		var wide := band.get_theme_font("font").get_string_size(band.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+		var over := pill.get_combined_minimum_size().x - band.get_combined_minimum_size().x + wide - room
+		if over > 0.5:
+			var shrunk := floori(px * (wide - over) / maxf(1.0, wide))
+			if shrunk >= ceili(px * STRAIN_LEAST):
+				band.add_theme_font_size_override("font_size", shrunk)
+			else:
+				band.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+				band.custom_minimum_size.x = maxf(0.0, wide - over)
+		return
 	var l := pill.find_child("Words", true, false) as Label
 	l.remove_theme_font_size_override("font_size")
 	var font := l.get_theme_font("font")
@@ -745,7 +821,7 @@ func _fit_strain(room: float) -> void:
 
 ## What the store holds (UniverseStore.purse): each amount (past 10,000 in
 ## thousands, "142.0k"; said in full) and how full its producers are (§9.3),
-## Full in gold once nearly full. An amount not given is a dash, never a guess.
+## Full on a red tag once nearly full. An amount not given is a dash, never a guess.
 func _show_purse(rows: Dictionary) -> void:
 	var said := PackedStringArray()
 	for k: String in UniversePurse.ORDER:
@@ -763,23 +839,90 @@ func _show_purse(rows: Dictionary) -> void:
 	purse.queue_sort()
 
 
-## Where the three pills will not sit on one line with Full in words (a long
-## amount, large text), the word gives way first (the line still shows full,
-## and it is still said); past that the row wraps.
+## Full on its red tag (_hang_full) wherever a pill's producers are nearly
+## full, at every size and in every language (S2-R20's third objection); the
+## kit's gold word in the pill's row stays hidden, as it took the width the
+## three pills need to share a line. Past that the row wraps.
 func _fit_purse() -> void:
-	var need := purse.get_theme_constant("h_separation") * (UniversePurse.ORDER.size() - 1.0)
 	for k: String in UniversePurse.ORDER:
-		var full := (pills[k] as Control).find_child("Full", true, false) as Control
-		full.visible = _full.get(k, false)
+		((pills[k] as Control).find_child("Full", true, false) as Control).visible = false
+		var tag := (pills[k] as Control).find_child("FullTag", true, false) as Control
+		if tag != null and tag.visible != _full.get(k, false):
+			tag.visible = _full.get(k, false)
+	# The gaps between the three pills close a little, to PURSE_GAP_LEAST,
+	# before the third goes to a row of its own (Portuguese at 100% is four
+	# pixels over at the full gap).
+	var need := 0.0
+	for k: String in UniversePurse.ORDER:
 		need += (pills[k] as Control).get_combined_minimum_size().x
-	var fits := need <= purse.size.x + 0.5
-	for k: String in UniversePurse.ORDER:
-		var full := (pills[k] as Control).find_child("Full", true, false) as Control
-		full.visible = _full.get(k, false) and fits
+	var gaps := UniversePurse.ORDER.size() - 1.0
+	var gap := clampf(floorf((purse.size.x - need) / gaps), UI.px(PURSE_GAP_LEAST), UI.px(PURSE_GAP))
+	if purse.size.x > 0.0 and purse.get_theme_constant("h_separation") != int(gap):
+		purse.add_theme_constant_override("h_separation", int(gap))
 	_fit_amounts()
 	if strain.get_parent() == purse:
 		var last := pills[UniversePurse.ORDER[UniversePurse.ORDER.size() - 1]] as Control
 		_fit_strain(purse.size.x - last.get_combined_minimum_size().x - purse.get_theme_constant("h_separation"))
+
+
+## A pill's Full as the key frames draw it, on a red tag: at 100% a tab on
+## the pill's top edge at its right, which takes no room from the amount; with
+## large text (§20.8) a plate under the amount, at the right, over the bar.
+## It shows only while that resource is nearly full (_fit_purse).
+static func _hang_full(pill: PanelContainer) -> void:
+	var tag := UI.panel("red")
+	tag.name = "FullTag"
+	tag.add_theme_stylebox_override("panel", UI.clear_box(6, 1 if Settings.text_scale < 150 else 0))
+	tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tag.visible = false
+	var words := UI.label(Strings.t("KIT_FULL"), 13.0 if Settings.text_scale < 150 else FULL_LARGE_POINTS)
+	words.add_theme_font_override("font", UI.bold_font())
+	words.set_meta("bold", true)
+	words.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tag.add_child(words)
+	if Settings.text_scale >= 150:
+		# Under the amount, its top tucked into the room the figures leave
+		# under their line, so the tag adds only its own words' height.
+		var under := Control.new()
+		under.name = "FullHold"
+		under.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var column := pill.get_child(0) as VBoxContainer
+		column.add_child(under)
+		column.move_child(under, 1)
+		under.add_child(tag)
+		var amount := pill.find_child("Amount", true, false) as Label
+		var tuck := func() -> void:
+			var lift := _below(amount)
+			tag.size = tag.get_combined_minimum_size()
+			tag.position = Vector2(under.size.x - tag.size.x, -lift)
+			var tall := tag.size.y - lift if tag.visible else 0.0
+			if not is_equal_approx(under.custom_minimum_size.y, tall):
+				under.custom_minimum_size.y = tall
+		under.resized.connect(tuck)
+		tag.minimum_size_changed.connect(tuck)
+		tag.visibility_changed.connect(tuck)
+		amount.minimum_size_changed.connect(tuck)
+		return
+	# A plain holder the pill fits to its inside, so the tab takes no room in
+	# it and hangs half over the pill's edge.
+	var hold := Control.new()
+	hold.name = "FullHold"
+	hold.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pill.add_child(hold)
+	hold.add_child(tag)
+	var hang := func() -> void:
+		tag.size = tag.get_combined_minimum_size()
+		tag.position = Vector2(hold.size.x - tag.size.x, -hold.position.y - tag.size.y * 0.5)
+	hold.resized.connect(hang)
+	tag.minimum_size_changed.connect(hang)
+	tag.visibility_changed.connect(hang)
+
+
+## The room a label's line leaves under its letters' foot, less a small gap:
+## where the line under it may tuck in.
+static func _below(l: Label) -> float:
+	var font := l.get_theme_font("font")
+	return maxf(0.0, font.get_descent(l.get_theme_font_size("font_size")) - UI.px(2))
 
 
 ## Large text (§20.8): the purse in two rows. Where the first two amounts
@@ -828,6 +971,21 @@ func _show_goal(g: Dictionary) -> void:
 	# The words say what is left; the bar shows the share, never a number.
 	for l: Label in card.find_child("Progress", true, false).find_children("*", "Label", true, false):
 		l.visible = false
+	# Its words a point under the kit's, as the key frame sets them under
+	# Collect's: two lines of them stand beside Collect at 100% (S2-R20's second
+	# objection), leaving the world the foot's second line.
+	for l: Label in card.find_children("*", "Label", true, false):
+		if l.visible and l.text == str(g["text"]):
+			l.set_meta("points", GOAL_POINTS)
+			l.add_theme_font_size_override("font_size", UI.text_px(GOAL_POINTS))
+			if Settings.text_scale >= 150:
+				# Its lines as close as the key frame at 200% sets them, the bar
+				# tucked under the last one's figures, so three lines leave the
+				# realms' chips their room (S2-R20's fourth objection).
+				l.add_theme_constant_override("line_spacing", -int(UI.px(GOAL_LINE_TIGHTER)))
+				# Its last line loses that closeness too, which the bar gives back.
+				(l.get_parent() as BoxContainer).add_theme_constant_override("separation",
+						-int(_below(l) - UI.px(GOAL_LINE_TIGHTER)))
 	card.custom_minimum_size.x = minf(UI.px(GOAL_WIDEST), _across())
 	var route: StringName = g.get("route", &"profile")
 	KitLayout.tap(card, func() -> void: App.services.router.go(route), Strings.t("HOME_GOAL_SPOKEN", str(g["text"])))
@@ -866,9 +1024,9 @@ func _raid_notice() -> PanelContainer:
 	text.alignment = BoxContainer.ALIGNMENT_CENTER
 	text.add_theme_constant_override("separation", 0)
 	row.add_child(text)
-	_raid_words = UI.status("alarm", "", not large)
+	_raid_words = UI.status("alarm", "", false)
 	_raid_words.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_raid_words.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN if large else Control.SIZE_FILL
+	_raid_words.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	_raid_words.accessibility_live = AccessibilityServer.LIVE_ASSERTIVE
 	text.add_child(_raid_words)
 	var line := UI.label(Strings.t("HOME_RAID_LINE"), 13, true)
@@ -876,6 +1034,8 @@ func _raid_notice() -> PanelContainer:
 	line.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	line.visible = not large
 	text.add_child(line)
+	if not large:
+		text.resized.connect(_balance.bind(line, text))
 	# The kit's secondary look: gold is the screen's one main action, Collect
 	# (and the Heist tab), and the red card already draws the eye (§21.8).
 	var see := UI.action(Strings.t("HOME_RAIDED_SEE"), func() -> void: App.services.router.go(&"defences"), "ghost")
@@ -886,13 +1046,37 @@ func _raid_notice() -> PanelContainer:
 		-1.0, 36.0)
 	close.name = "Close"
 	row.add_child(close)
-	if large:
-		row.pre_sort_children.connect(_fit_notice.bind(row, text))
+	# Its tag one line at every size (S2-R20's second objection): two would
+	# take the world's height.
+	row.pre_sort_children.connect(_fit_notice.bind(row, text))
 	p.set_meta("line", line)
 	return p
 
 
-## At large text the headline's tag on one line beside See and the cross: its
+## The line under the headline, where it takes two lines, broken where both
+## halves come out nearest alike, so no word stands alone on the second
+## (S2-R20's second objection).
+static func _balance(line: Label, text: Control) -> void:
+	var words := Strings.t("HOME_RAID_LINE")
+	var font := line.get_theme_font("font")
+	var points := line.get_theme_font_size("font_size")
+	var room := text.size.x - line.get_theme_stylebox("normal").get_minimum_size().x
+	var want := words
+	if room > 0.0 and font.get_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, -1, points).x > room:
+		var parts := words.split(" ", false)
+		var best := INF
+		for i in range(1, parts.size()):
+			var first := " ".join(parts.slice(0, i))
+			var a := font.get_string_size(first, HORIZONTAL_ALIGNMENT_LEFT, -1, points).x
+			var b := font.get_string_size(" ".join(parts.slice(i)), HORIZONTAL_ALIGNMENT_LEFT, -1, points).x
+			if a <= room and b <= room and maxf(a, b) < best:
+				best = maxf(a, b)
+				want = first + "\n" + " ".join(parts.slice(i))
+	if line.text != want:
+		line.text = want
+
+
+## The headline's tag on one line beside See and the cross: its
 ## words where they fit, else the count alone; where even that leaves no room
 ## (German's See at 200%), the disc gives way to the tag's alarm glyph.
 func _fit_notice(row: HBoxContainer, text: Control) -> void:
@@ -932,7 +1116,7 @@ func _show_raids(unseen: int) -> void:
 	# Through the kit, so the words take the alarm's fill and glyph once they
 	# say something (UI.set_status).
 	UI.set_status(_raid_words, "alarm", title)
-	notice.accessibility_name = "%s. %s" % [title, (notice.get_meta("line") as Label).text]
+	notice.accessibility_name = "%s. %s" % [title, Strings.t("HOME_RAID_LINE")]
 	(notice.get_node("Row") as Control).queue_sort()
 
 
@@ -997,3 +1181,4 @@ static func _secondary(top: Control) -> void:
 	top.set_meta("frequent", false)
 	for b: Node in top.find_children("*", "Button", true, false):
 		b.set_meta("frequent", false)
+

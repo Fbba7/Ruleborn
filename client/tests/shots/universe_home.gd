@@ -237,7 +237,10 @@ static func must_show(screen: Home) -> Array[String]:
 ## What does not fit on home, one line each: a label's words wider than the
 ## label, or outside its panel or button, or off the screen; one of home's parts over
 ## another; a realm's pin over another pin or over home's parts, or off the
-## screen; or some realms named over the whole universe and others not.
+## screen, nearer another than the pins' gap, or far from its island (S2-R20's
+## first objection: a named pin further from its point than `NEAR` of its
+## heights, a chip than `FAR`); or some realms named over the whole universe
+## and others not.
 static func fit(screen: Home) -> Array[String]:
 	var bad: Array[String] = []
 	var whole := Rect2(Vector2.ZERO, screen.size)
@@ -302,6 +305,14 @@ static func fit(screen: Home) -> Array[String]:
 		if pin.is_visible_in_tree():
 			named.append(id)
 			boxes[id] = pin.get_global_rect()
+			var mark: Vector2 = pins.global_position + (pin.get_meta("anchor", Vector2.ZERO) as Vector2)
+			var words := (pin.get_child(0).get_child(1) as Control).visible
+			var reach := pin.size.y * (UniversePins.NEAR if words or (pin.get_child(0).get_child(0) as Control).visible
+				else UniversePins.FAR)
+			var off := UniversePins._off(boxes[id], mark)
+			if off > reach + 0.5:
+				bad.append("pin %s %s %.0f px from its island's point %s (at most %.0f)" % [id, boxes[id], off, mark,
+					reach])
 		else:
 			missing.append(id)
 	if screen.world.zoom == 0 and not missing.is_empty():
@@ -312,8 +323,9 @@ static func fit(screen: Home) -> Array[String]:
 		if not whole.encloses(a):
 			bad.append("pin %s %s off the screen" % [ids[i], a])
 		for j in range(i + 1, ids.size()):
-			if a.grow(-0.5).intersects(boxes[ids[j]]):
-				bad.append("pin %s %s over pin %s %s" % [ids[i], a, ids[j], boxes[ids[j]]])
+			if a.grow(UniversePins.pin_gap() - 1.0).intersects(boxes[ids[j]]):
+				bad.append("pin %s %s within %.0f px of pin %s %s" % [ids[i], a, UniversePins.pin_gap(), ids[j],
+					boxes[ids[j]]])
 		for key: String in shown:
 			if a.grow(-0.5).intersects(shown[key]):
 				bad.append("pin %s %s over %s %s" % [ids[i], a, key, shown[key]])
