@@ -128,11 +128,21 @@ every other session is created with `create_session`.
 
 | Scheduled task | ID | Fires into | Schedule (UTC) |
 |---|---|---|---|
-| The launcher: one fresh lead cycle session an hour on Opus 5.5 at effort high, unless the last is still working (created 11 Nov at 19:50Z, after order 5 was on main) | `trig_01T7B65veojXUDAKzLK3FFBP` | the launcher, `session_01SNkKxoNHJW6nWHDeA8Mfth` (Opus 5.5, effort high) | hourly at :38 |
-| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Opus 5.5 at effort high and alerts (created 11 Nov at 19:50Z, after order 5 was on main) | `trig_01A1NwZvKD6MDUosh4jyvqqr` | the watchdog, `session_01SNkKxnxxr83hSzGYBXwyr3` (Opus 5.5, effort high) | every 2 hours at :08 |
+| The launcher: one fresh lead cycle session an hour on Opus 5.5 at effort high, unless the last is still working; if `create_session` is refused, it replies with the exact reason (created 15 Nov at 18:45Z) | `trig_01NksvDVV7iRJi4zrU7Uf7Te` | the launcher, `session_01SNkKxqooGx7cgr8Gdcf6S4` (Opus 5.5, effort high) | hourly at :38 |
+| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Opus 5.5 at effort high and alerts, naming any refusal of `create_session` with its exact reason (created 15 Nov at 18:46Z) | `trig_01RTRucUN1KoyRtkdMc3BAfH` | the watchdog, `session_01SNkKxmfz7eY3hZG1QRvPEn` (Opus 5.5, effort high) | every 2 hours at :08 |
 
-**The pair in this table is the working pair**, created on 11 November
-2026 at 19:50Z after the owner's order 5 (`780df6d8`) was on main.
+**The pair in this table is the working pair**, created on 15 November
+2026 at 18:45Z, after the restart of 15 November was on main.
+
+The Opus 5.5 pair of 11 November is retired: launcher
+`trig_01T7B65veojXUDAKzLK3FFBP` (into `session_01SNkKxoNHJW6nWHDeA8Mfth`)
+and watchdog `trig_01A1NwZvKD6MDUosh4jyvqqr` (into
+`session_01SNkKxnxxr83hSzGYBXwyr3`). The launcher's run of 15 November at
+17:38Z had its `create_session` call refused, so no cycle started; the
+overseer started cycle 85 by hand. Both were disabled on 15 November 2026
+at 18:45Z and 18:47Z, and are never re-enabled. Their sessions, which had
+run since 11 November, are not reused; the fresh pair above takes their
+scheduled tasks, with the same plain prompts.
 
 The Fable 5.2 pair of 11 November is retired: launcher
 `trig_01U7kEeot7dmuJuNZVQJ7Bhm` (into `session_01SNkKxoSssjoHhFMVu5fLBN`)
@@ -175,9 +185,11 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqLYw4qY5UxycWNhTR` (cycle 85, 15
-November 2026 from 18:01Z, started by the overseer after the owner's
-restart, the launcher's own session-start refused). Cycle 84's was
+Latest lead cycle session: `session_01SNkKxnnyaLSgG88hAKxd5z` (cycle 86, 15
+November 2026 from 19:39Z, started by the Opus 5.5 launcher). Cycle 85's
+was `session_01SNkKxqLYw4qY5UxycWNhTR` (from 18:01Z, started by the
+overseer after the owner's restart, the launcher's own session-start
+refused). Cycle 84's was
 `session_01SNkKxpqF4gx3yYhsXenUGt` (13 November from 12:38Z, interrupted
 at the owner's stop). Cycle 83's was `session_01SNkKxn5sZ5Ez5cQQFwtAon`
 (13 November from 11:38Z, started by the Opus 5.5 launcher). Cycle 82's
@@ -251,13 +263,16 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| S3 | `session_01SNkKxmz8GQhVoYbmKSgiAL` (Opus 5.5, effort high) | P2-S3-settings (restart after the owner's restart: the gate on f0a36a41 passes all six rows, cycle 84's verdict carried to main in cycle 85; AD preview if owed, merge main, checks and guard.sh, ready) | `claude/ui-screens-meta` | 2026-11-15 18:08Z |
-| AIA | `session_01SNkKxr42nS6EtCTLH5opM6` (Opus 5.5, effort high) | P2-AIA-motion-3 (start: board 4's objection C and D's strip target; M14, M21) | `claude/ui-artist` | 2026-11-15 18:05Z |
+| AD | `session_01SNkKxpPaibzTsRuZzdTZic` (Opus 5.5, effort high) | S2-R22 first (M20: re-check S2-R20's objections 1-5 on P2-S2-home-3 at 13ff046f; S2's seat idle with its task ready), then the first open AD task, else done | `claude/ui-ad` | 2026-11-15 22:05Z |
+| AIA | `session_01SNkKxqD2jxzsw1dZAgz7Ue` (Opus 5.5, effort high) | P2-AIA-motion-3 (restart: merge main, run guard.sh, mark ready when its checks pass) | `claude/ui-artist` | 2026-11-15 20:45Z |
+| AD | `session_01SNkKxnxMtbLFXk5d55r19u` (Opus 5.5, effort high; done, P2-AD-board-5 ready at 8b4b5827) | AD previews S1-R29 and AIA-R26, ack M23 (S3's freed seat), then the first open AD task | `claude/ui-ad` | 2026-11-15 20:13Z |
+| S3 | `session_01SNkKxmz8GQhVoYbmKSgiAL` (Opus 5.5, effort high; idle, its task merged) | P2-S3-settings (restart after the owner's restart: the gate on f0a36a41 passes all six rows, cycle 84's verdict carried to main in cycle 85; AD preview if owed, merge main, checks and guard.sh, ready) | `claude/ui-screens-meta` | 2026-11-15 18:08Z |
+| AIA | `session_01SNkKxr42nS6EtCTLH5opM6` (Opus 5.5, effort high; idle, replaced at 20:45Z) | P2-AIA-motion-3 (start: board 4's objection C and D's strip target; M14, M21) | `claude/ui-artist` | 2026-11-15 18:05Z |
 | S2 | `session_01SNkKxq9TRgdUDZjiKCeA3q` (Opus 5.5, effort high) | P2-S2-home-3 (restart after the owner's restart: continue from the branch, S2-R20 objections 1 to 5, ready) | `claude/ui-screens-home` | 2026-11-15 18:05Z |
 | S1 | `session_01SNkKxqB6A9FKaFvAKcXbLY` (Opus 5.5, effort high) | P2-S1-result-3 (start: board 4's objections AD-R27, R26, R29 and R30; stills to AD) | `claude/ui-screens-heist` | 2026-11-15 18:05Z |
 | S2 | `session_01SNkKxquudGapkBBrdTGyQK` (Opus 5.5, effort high; stopped 13 Nov, replaced in cycle 85) | P2-S2-home-3 (restart: the last session idle since 09:55Z past its 10:58Z update; continue from c0b2bc49, merge main, pre-check, ready; AD's S2-R20 objections inside the task) | `claude/ui-screens-home` | 2026-11-13 11:23Z |
-| AD | `session_01SNkKxnr3dQ98ULoLmDJcLd` (Opus 5.5, effort high; idle, board 4 ready, merging in cycle 85) | S2-R20 first (preview home-3 at 0ffb6049 or newer), then P2-AD-board-4 (start: P2-S1-result-2 merged as 135a49b2; AD-R26 inside it) | `claude/ui-ad` | 2026-11-13 11:23Z |
-| K1 | `session_01SNkKxpiU2Mw9DcThCLnW1H` (Opus 5.5, effort high; idle, tabs merging in cycle 85) | P2-K1-tabs (start: a free seat; board 3's objection D, AD-R25, and AD-R24's KitTabs part) | `claude/ui-bake` | 2026-11-13 10:50Z |
+| AD | `session_01SNkKxnr3dQ98ULoLmDJcLd` (Opus 5.5, effort high; idle, board 4 merged as 14be4ddd in cycle 85) | S2-R20 first (preview home-3 at 0ffb6049 or newer), then P2-AD-board-4 (start: P2-S1-result-2 merged as 135a49b2; AD-R26 inside it) | `claude/ui-ad` | 2026-11-13 11:23Z |
+| K1 | `session_01SNkKxpiU2Mw9DcThCLnW1H` (Opus 5.5, effort high; idle, tabs merged as 14be4ddd in cycle 85) | P2-K1-tabs (start: a free seat; board 3's objection D, AD-R25, and AD-R24's KitTabs part) | `claude/ui-bake` | 2026-11-13 10:50Z |
 | AD | `session_01SNkKxqeNV7VTwM6RkPTRHh` (Opus 5.5, effort high; idle after answering S1-R25, replaced in cycle 82) | S1-R25 first (M20: re-check S1-R24's four objections in P2-S1-result-2 at 71167028), then the next open AD task, else done; P2-AD-board-3 ready at 4a48eef9 and in the merge queue | `claude/ui-ad` | 2026-11-13 09:44Z |
 | S2 | `session_01SNkKxoy4LFKDybvN7vyFT5` (Opus 5.5, effort high; idle since 09:55Z with its check_all unreported, replaced in cycle 82) | P2-S2-home-3 (start: P2-S2-home-2 merged as 807d68a7; board 3's objections AD-R22 to AD-R24) | `claude/ui-screens-home` | 2026-11-13 08:53Z |
 | S1 | `session_01SNkKxn8w6ndc88LGhoq4KQ` (Opus 5.5, effort high; idle, P2-S1-result-2 merged as 135a49b2) | P2-S1-result-2 (restart: AD's four S1-R24 objections stopped the merge in cycle 80; continue from aed28321, fix them, re-gate, ready) | `claude/ui-screens-heist` | 2026-11-13 08:53Z |
@@ -367,7 +382,7 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: P2-AD-board-3 is merged; P2-AD-board-4 is ready (merging in cycle 85); P2-AD-board-4b (the re-check after P2-S1-result-3 and P2-AIA-motion-3), P2-AD-board-3b (home, after P2-S2-home-3 and P2-K1-tabs) and P2-AD-board-5 (character and settings) as their deps merge (seeded in cycle 71; board 2, icons, waits for icon batches 3-4, deferred by D13's answer (c)). Between boards, review the stills builders send you before ready within the same cycle, every objection in one round (M12). P1-AD-board-1d is merged: board 1 stands. O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+Tasks: P2-AD-board-3 and P2-AD-board-4 are merged; P2-AD-board-5 is ready (cycle 87). Before any board, answer the open AD previews in docs/progress/requests.md (S2-R22 in cycle 87: re-check S2-R20's objections 1 to 5 on claude/ui-screens-home at 13ff046f; P2-S2-home-3 waits on it, M20), checked against board 3's full list (M23). Then P2-AD-board-4b (the re-check after P2-S1-result-3 and P2-AIA-motion-3), P2-AD-board-3b (home, after P2-S2-home-3 and P2-K1-tabs) and P2-AD-board-5b (character and settings, after P2-S3-character-2 and P2-S3-settings-2) as their deps merge; with only previews to answer, answer them, set agent_state "done", push and end the session (seeded in cycle 71; board 2, icons, waits for icon batches 3-4, deferred by D13's answer (c)). Between boards, review the stills builders send you before ready within the same cycle, every objection in one round (M12). P1-AD-board-1d is merged: board 1 stands. O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -397,7 +412,7 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5, effort high
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97); P2-K1-motion is merged; P2-K1-tabs is ready (merging in cycle 85); no K1 task is open after it
+Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97); P2-K1-motion is merged; P2-K1-tabs is merged (14be4ddd, cycle 85); no K1 task is open after it
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -457,7 +472,7 @@ You are agent S3 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S3            Role: maker (S3): the character and settings screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-meta
 Owned files: only the files each S3 task lists in the backlog, docs/progress/S3.md, docs/progress/status/S3.json
-Tasks: P2-S3-settings (report.md step 11; P2-S3-screenkit and P2-S3-character are merged): its work is on claude/ui-screens-meta; the lead's advisory gate on its last gate_request is in docs/art/ui-quality/gate/verdicts/P2-S3-settings/. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+Tasks: P2-S3-character-2, then P2-S3-settings-2 (seeded in cycle 87 from board 5's objections AD-R31 to AD-R37, in docs/progress/requests.md; P2-S3-screenkit, P2-S3-character and P2-S3-settings are merged; board 5's verdicts are in docs/art/ui-quality/gate/). Send AD your stills before ready (M12) and answer every objection in one round. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -481,6 +496,45 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- **Cycle 86**, 15 November 2026, from 19:39Z (session
+  `session_01SNkKxnnyaLSgG88hAKxd5z`, started by the Opus 5.5 launcher).
+  Claims copied; S1-R28 approved (when result-3 merges, the lead records
+  result/100 at 91 and result/200 at 99 in tools/ui_bake/budgets.json,
+  with a raises entry); S1-R29 and AIA-R26 copied for AD. S1's advisory
+  gate on `d896f254` (result at 100% text): Hierarchy 3 of 3 pass;
+  Character presence split, 4 of 6 pass (weak point: the reward tiles
+  hold currency icons with no character art). **Merged** P2-S3-settings
+  (S3's `eb692c67`): check_all PASS at 20:11:03Z on candidate
+  `0e2c553c` (the lock recorded `079d4487`, a stale candidate rebuilt
+  before the checks), guard.sh OK (settings shots 48, 41 and 48 against
+  52, 47 and 52); main had moved to the watchdog's `18fee078`
+  (owner-inbox only), so the merge was redone onto it with the docs
+  check only: merge `f6f9f71a`, lock cleared in the same turn. Audit and
+  roadmap unchanged. The watchdog's 20:09Z alert (cycle 86 past its
+  update time while the checks ran) needs nothing. **Started** AD on
+  S3's freed seat (20:13Z) for the previews S1-R29 and AIA-R26 and
+  M23's ack; the cap stays at four (S1, S2, AIA, AD). **Next:** merge
+  result-3 (apply S1-R28's budgets), motion-3 and home-3 as they turn
+  ready; P2-AD-board-4b after result-3 and motion-3.
+- **Cycle 85**, 15 November 2026, from 18:01Z (session
+  `session_01SNkKxqLYw4qY5UxycWNhTR`, started by the overseer after the
+  owner's "Continue" of about 17:10Z). Fresh container set up (M22: the
+  three rust targets, gdtoolkit 4, playwright 1.63.0, client/build.sh).
+  Cycle 84's advisory verdicts carried to main (`fbdba3f3`): S3 settings
+  on `f0a36a41`, all six rows pass; S2 home-3 on `14fdcdfe`, Hierarchy
+  and Character presence pass. **Merged** P2-AD-board-4 (AD's
+  `c0bab2a8`) and P2-K1-tabs (K1's `ba364ba8`) in one candidate
+  (`9ee45863`): check_all PASS at 18:40:01Z, guard.sh OK (settings budget
+  shots 49, 44 and 49 against 52, 47 and 52); merge `14be4ddd`, lock
+  cleared in the same turn (`36e84c0a`). Audit and roadmap republished.
+  **Started** four builders, the cap (order 3): S1 on P2-S1-result-3, S2
+  on P2-S2-home-3 and AIA on P2-AIA-motion-3 (18:05Z, M14's rule in
+  AIA's prompt, M21), S3 on P2-S3-settings (18:08Z); the stopped S2 and
+  S3 sessions of 13 November are not reused. stop_at moved to
+  17 November 21:00Z. **Next:** merge what turns ready (S3 settings and
+  S2 home-3 likely first; M20 for screen tasks); P2-AD-board-4b waits on
+  result-3 and motion-3, then AD takes a seat; AD and K1 are idle with
+  nothing open.
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready
