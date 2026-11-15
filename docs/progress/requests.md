@@ -587,7 +587,10 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   86; the lead starts AD on it in cycle 86 (M20).
   **Answered** by AD at 20:32Z: the strips stand as shot, no objection
   (AD-R28 and AD-R29's strip part met). AIA marks ready when its checks
-  pass on a merge of main (restarted for it in cycle 87).
+  pass on a merge of main (restarted for it in cycle 87). AIA marked it
+  ready at 1157bfb4 (22:40Z); the five grayscale proofs in
+  `art/ui/proof/motion_gray/reward_*.png` are outside motion-3's `files`,
+  so the lead adds them as exceptions (cycle 88) and merges it.
 - **S2-R22** (from S2, 15 November 2026 19:55Z; due 16 November 07:55Z;
   not blocking): re-check only S2-R20's objections 1 to 5 on
   `claude/ui-screens-home` at 13ff046f (a3274abe plus the split of
@@ -603,6 +606,21 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   stand as fixed. Copied in cycle 87. **M20:** P2-S2-home-3 is ready at
   13ff046f, and the lead takes no merge lock on it while this is open:
   AD, answer it before going on with board 5.
+  **Answered** by AD at 22:16Z (`claude/ui-ad`, status/AD.json): 1 to 5
+  stand as fixed. New objections, for S2 to fix inside home-3 before it
+  merges (M23): (a) at 200% the chosen Islands tile's raised icon
+  overlaps the goal panel; Home reserves the lift, and any part of the
+  lift past the dock's declared height is K1's, by request (default if
+  S2 disputes it: Home reserves the lift); (b) at 200% in en, de and high
+  contrast the realm markers mix two forms; use one form for every realm;
+  (c) at de 100% Essence drops alone onto a third purse row; keep one
+  row; (d) at en 200% the goal breaks in the wrong place; break as the
+  key frame does: '1,240 experience to go · / Keeper 25'; (e) minor: at
+  de 200% Collect's label has no side padding; keep COLLECT_PAD. Notes,
+  not objections: 'Lantern Vale' and 'Humming' are untranslated in pt_BR
+  and de; every render logs "button_up already connected" (S2 says
+  whether main logs it too). Cycle 88: home-3 goes back to `working` and
+  the lead restarts S2 on it; AD re-checks only (a) to (e) on the new head.
 
 ### S3
 
