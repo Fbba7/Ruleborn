@@ -4,6 +4,20 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-15 20:09Z: the lead was past its update time, cycle 86 still working (watchdog)
+
+- **What:** `status/lead.json` was past its `expected_next_update_by` of
+  19:58:10Z when checked at 20:09Z (last update 19:46Z; it holds the merge
+  lock for P2-S3-settings until 20:46Z). The launcher had not failed: it
+  is enabled and its last run succeeded at 19:39Z.
+- **Done:** started no session. The "Latest lead cycle session" line in
+  `lead.md` still names cycle 85 (`session_01SNkKxqLYw4qY5UxycWNhTR`, now
+  idle). Commit `19e936c` names cycle 86's session,
+  `session_01SNkKxnnyaLSgG88hAKxd5z` (created 19:39Z by the launcher),
+  and that session is still working: check_all is running on the S3
+  candidate. Starting a second lead would have clashed with its merge.
+- **Needs the owner:** nothing.
+
 ## 2026-11-13 10:12Z: the lead was just past its update time, cycle 81 still working (watchdog)
 
 - **What:** `status/lead.json` was past its `expected_next_update_by` of

@@ -558,6 +558,25 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   three rows at 100%, the high-contrast Collect label, chips touching at
   pt_BR and de 200%; (6) the dock's ISLANDS label on the gold rim is
   K1's, in P2-K1-tabs. A re-check covers only what the fix changes.
+- **S1-R29** (from S1, 15 November 2026 18:28Z; due 16 November 18:28Z;
+  not blocking): preview before the gate (P2-S1-result-3, M10, M12) of
+  board 4's objections A, B, D and E at 5e844ac3: the reward figures in
+  the Keeper finish (A); at 200% the whole haul above the actions in en,
+  pt_BR and de (B); the coins landing on the Starlight icon with the roll
+  starting on each landing (D); at 200% Home icon-only, the raid button
+  leading (E). Stills and strips by `client/tests/shots/screen_result.gd`;
+  details in `docs/art/tracks/result-screen.md`. Default: the gate runs on
+  the pre-checked head as it stands. Copied in cycle 86; the lead starts
+  AD on it in cycle 86 (M20).
+- **AIA-R26** (from AIA, 15 November 2026 18:40Z; due 16 November 00:40Z;
+  blocking P2-AIA-motion-3's ready): preview the re-made reward strips
+  (`art/ui/motion/strips/reward_*.png`, the grayscale proofs in
+  `art/ui/proof/motion_gray/`, the clips `art/ui/motion/clips/reward_*.gif`)
+  for board 4b: AD-R28 (the anticipation gathers on the prize; the burst
+  spreads by tier) and AD-R29 (the coins land on the counter's starglass
+  icon and the figure rolls as each lands). Default: the strips stand as
+  shot, and AIA marks the task ready when its checks pass. Copied in cycle
+  86; the lead starts AD on it in cycle 86 (M20).
 
 ### S3
 
@@ -1101,6 +1120,16 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   tier and phase 0's use (one weekly bar for its 43 hours), phases 1 to 3
   need about four more bars, so it does not fit and D13's answer (c)
   applies. Phase 1 starts after the 9 November 17:00Z reset.
+- **S1-R28** (from S1, 15 November 2026 18:28Z; due 16 November 18:28Z;
+  blocking P2-S1-result-3's merge): record result/100's draw calls at 91
+  (from 89) and result/200's at 99 (from 98) in `tools/ui_bake/budgets.json`
+  when P2-S1-result-3 merges; the two calls are board 4's objection A, the
+  hard drop under the three reward figures. Both stay well under the cap
+  of 150; textures and words below 4.5:1 are unchanged. Default: S1 marks
+  ready with guard.sh failing only on those two figures, and the lead
+  records them when it merges. **Approved** by the lead in cycle 86, as
+  S1-R26 was: the lead records 91 and 99 (with a raises entry for S1-R28)
+  when it merges P2-S1-result-3.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
