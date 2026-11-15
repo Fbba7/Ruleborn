@@ -128,11 +128,21 @@ every other session is created with `create_session`.
 
 | Scheduled task | ID | Fires into | Schedule (UTC) |
 |---|---|---|---|
-| The launcher: one fresh lead cycle session an hour on Opus 5.5 at effort high, unless the last is still working (created 11 Nov at 19:50Z, after order 5 was on main) | `trig_01T7B65veojXUDAKzLK3FFBP` | the launcher, `session_01SNkKxoNHJW6nWHDeA8Mfth` (Opus 5.5, effort high) | hourly at :38 |
-| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Opus 5.5 at effort high and alerts (created 11 Nov at 19:50Z, after order 5 was on main) | `trig_01A1NwZvKD6MDUosh4jyvqqr` | the watchdog, `session_01SNkKxnxxr83hSzGYBXwyr3` (Opus 5.5, effort high) | every 2 hours at :08 |
+| The launcher: one fresh lead cycle session an hour on Opus 5.5 at effort high, unless the last is still working; if `create_session` is refused, it replies with the exact reason (created 15 Nov at 18:45Z) | `trig_01NksvDVV7iRJi4zrU7Uf7Te` | the launcher, `session_01SNkKxqooGx7cgr8Gdcf6S4` (Opus 5.5, effort high) | hourly at :38 |
+| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Opus 5.5 at effort high and alerts, naming any refusal of `create_session` with its exact reason (created 15 Nov at 18:46Z) | `trig_01RTRucUN1KoyRtkdMc3BAfH` | the watchdog, `session_01SNkKxmfz7eY3hZG1QRvPEn` (Opus 5.5, effort high) | every 2 hours at :08 |
 
-**The pair in this table is the working pair**, created on 11 November
-2026 at 19:50Z after the owner's order 5 (`780df6d8`) was on main.
+**The pair in this table is the working pair**, created on 15 November
+2026 at 18:45Z, after the restart of 15 November was on main.
+
+The Opus 5.5 pair of 11 November is retired: launcher
+`trig_01T7B65veojXUDAKzLK3FFBP` (into `session_01SNkKxoNHJW6nWHDeA8Mfth`)
+and watchdog `trig_01A1NwZvKD6MDUosh4jyvqqr` (into
+`session_01SNkKxnxxr83hSzGYBXwyr3`). The launcher's run of 15 November at
+17:38Z had its `create_session` call refused, so no cycle started; the
+overseer started cycle 85 by hand. Both were disabled on 15 November 2026
+at 18:45Z and 18:47Z, and are never re-enabled. Their sessions, which had
+run since 11 November, are not reused; the fresh pair above takes their
+scheduled tasks, with the same plain prompts.
 
 The Fable 5.2 pair of 11 November is retired: launcher
 `trig_01U7kEeot7dmuJuNZVQJ7Bhm` (into `session_01SNkKxoSssjoHhFMVu5fLBN`)
