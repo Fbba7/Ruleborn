@@ -8,16 +8,27 @@
   "task_state": "working",
   "claimed_at": "2026-11-15T18:09:35Z",
   "lease_until": "2026-11-15T21:31:08Z",
-  "updated_at": "2026-11-15T18:31:08Z",
-  "expected_next_update_by": "2026-11-15T19:01:08Z",
+  "updated_at": "2026-11-15T18:31:32Z",
+  "expected_next_update_by": "2026-11-15T19:16:32Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Main merged as fd79b7fd; setup and build exit 0 on the merge; check_all and guard running; S1.md handoff written; next: pre-check on the head, gate request.",
-    "at": "2026-11-15T18:31:08Z"
+    "next_step": "Pre-check running on d896f254; gate requested on d896f254; check_all and guard on the merge running; then record and ready.",
+    "at": "2026-11-15T18:31:32Z"
   },
   "precheck": null,
-  "gate_request": null,
+  "gate_request": {
+    "sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
+    "items": [
+      {
+        "item": "result at 100% text",
+        "qualities": [
+          "Hierarchy",
+          "Character presence"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
