@@ -108,6 +108,39 @@ Budget stills after the fixes (no server answer):
 
 With `SERVER=1` the full frame is 120 draw calls at 100% (en) and 90 at 200% (en, pt_BR). FIT is ok on en 100%, en 200%, pt_BR 200% and high contrast.
 
+## Board 4's objections A, B, D and E (P2-S1-result-3)
+
+Board 4 objected to four things on the result screen. All four are met at 5e844ac3.
+
+- **A, the reward figures.** The figures are drawn in the home's "Keeper 24" finish (`_display`): the display face, filled solid (deep gold on the cream Starlight tile, cream on the dark tiles), with a heavy ink outline (0.21 of the size) and a hard drop straight down (0.08 of the size, at least 1.5 points). The finish is the same in high contrast, on the solid tiles.
+- **B, the haul on the first screen at 200%.** When the reward rows would fall under the action bar, the hero's words (kicker, title, condition, subline) go down by the least of three steps (0.88, 0.78, 0.7) that lifts the third row above the bar (`ResultFit.hero_shrink`). Each step's saving is measured from the lines the words actually take, so a second fitting before the next layout picks the same step. Results:
+  - de needs the first step: the kicker takes one line and the condition two.
+  - en and pt_BR fit at full size.
+  - `screen_result.gd`'s FIT check now fails when any reward tile ends below the top of the actions (or below the viewport), and the de 200% still is part of the fit check.
+- **D, the coins.** The coins now aim at the icon of the Starlight tile (or of the haul's tile when the split is hidden), not at the tile's centre (`_reward_mark`). Each coin starts the roll as it lands. The pulse is on the icon too, so the digits never move or hide behind a coin.
+  - At 100% the icon stands above the number; at 200% (rows) it stands to its left.
+  - The full strip (80 frames, 1.93 s), the 200% strip and the reduced strip (32 frames, one coin on the icon) show no frame where a coin covers a rolling figure.
+- **E, the action bar.** At 200% text, Home is shown as its icon alone in every language, whether or not the raid stands upright, and the raid button leads the bar. Its spoken name and tooltip keep Home's word.
+
+| Still (`SERVER=1 FIT=1`) | FIT | Draw calls |
+|---|---|---|
+| en, 100% | ok | 126 |
+| High contrast, 100% | ok | 68 |
+| en, 200% | ok | 113 |
+| pt_BR, 200% | ok | 115 |
+| de, 200% (hero one step down) | ok | 114 |
+| High contrast, 200% | ok | 55 |
+
+**The budget stills:**
+
+| Still | Draw calls | Record | Without A's hard drop |
+|---|---|---|---|
+| result/100 | 91 | 89 | 89 |
+| result/200 | 99 | 98 | 97 |
+| result/hc | 27 | 27 | 27 |
+
+The calls are A's hard drop on the three figures: taken out, the drop brings result/100 back to 89 and result/200 to 97. Board 4 asked for the drop, so the records go to the lead by request (S1-R28). Both figures stay well under the cap of 150.
+
 ## Tried and failed
 
 - **The totals with an outline and a hard ink drop:** result/200 rose to 93 draw calls, over its record of 90. The drop was removed and the outline kept.
@@ -200,3 +233,4 @@ The fitting lives in `client/scripts/result_fit.gd` (`ResultFit`), so result_scr
 - (S1-R24 fixes) The reward rows with 12 points of side padding and a margin of slack in the fit: pt_BR asked 903 px of 900 and fell back to columns for nothing. The padding is 10 points and the fit has no slack beyond the rounding.
 - (S1-R24 fixes) The reward tiles as rows in every language: German's "Sternenlicht" broke by its letters at 200%. Rows are kept only when every row fits; otherwise the tiles go back to columns.
 - (S1-R24 fixes) The rows with the tiles' 8 points of padding and the 8-point row gap: the third row (Renown) ran under the dock at pt_BR 200%. 3 points of padding and a 4-point gap clear it.
+- (Board 4, B) Measuring the hero's saving from the label's size as set: the fit ran twice before a layout, and the second run read the already-shrunk size and shrank again (de went to 0.7). The saving is now measured from the height as laid out.

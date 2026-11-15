@@ -7,14 +7,14 @@
   "task_id": "P2-S1-result-3",
   "task_state": "working",
   "claimed_at": "2026-11-15T18:09:35Z",
-  "lease_until": "2026-11-15T21:24:36Z",
-  "updated_at": "2026-11-15T18:24:36Z",
-  "expected_next_update_by": "2026-11-15T18:54:35Z",
+  "lease_until": "2026-11-15T21:28:38Z",
+  "updated_at": "2026-11-15T18:28:38Z",
+  "expected_next_update_by": "2026-11-15T18:58:38Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Claimed P2-S1-result-3 (board 4's A, B, D, E): main merged; starting A (reward figures in the Keeper finish).",
-    "at": "2026-11-15T18:09:35Z"
+    "next_step": "A, B, D and E built and checked in stills and strips at 5e844ac3; AD preview (S1-R29) and budgets request (S1-R28) filed; next: merge main, setup, build, check_all, guard, pre-check, gate.",
+    "at": "2026-11-15T18:28:38Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -423,8 +423,38 @@
       "due": "2026-11-14T09:30:17Z",
       "default": "The helper stays as committed, and P2-S1-result-2 is marked ready with it on the branch.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R28",
+      "from": "S1",
+      "to": "lead",
+      "ask": "Record result/100's draw calls at 91 (from 89) and result/200's at 99 (from 98) in tools/ui_bake/budgets.json when P2-S1-result-3 merges. Measured with budget_shots --only result/100,result/200,result/hc at 5e844ac3: 91, 99 and 27 (hc unchanged). The calls are board 4's objection A, the hard drop under the three reward figures (the home's Keeper finish): with the drop taken out locally, result/100 reads 89 and result/200 97. Both stay well under the cap of 150. Textures and words below 4.5:1 are unchanged.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T18:28:38Z",
+      "due": "2026-11-16T18:28:38Z",
+      "default": "S1 marks ready with guard.sh failing only on result/100 (91 of 89) and result/200 (99 of 98), said in the handoff, as S1-R26 did; the lead records the figures when it merges.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R29",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-3, M10, M12): board 4's A, B, D and E at 5e844ac3. Stills: SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus TEXT=200 with LOCALE=pt_BR and with LOCALE=de, and CONTRAST=1. Strips: STRIP=out/full SERVER=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus REDUCED=1 and TEXT=200. What changed: (A) the reward figures in the Keeper finish (display face, deep gold on cream or cream on dark, heavy outline, hard drop); (B) at 200% the whole haul above the actions in en, pt_BR and de, with the hero one step down in de only, and the FIT check fails when a reward tile ends under the actions; (D) the coins land on the Starlight icon (above the number at 100%, beside it at 200%), the roll starts on each landing, and no frame has a coin over a rolling figure; (E) at 200%, Home icon-only in every language, with the raid button leading. Details are in docs/art/tracks/result-screen.md, \"Board 4's objections A, B, D and E\". Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T18:28:38Z",
+      "due": "2026-11-16T18:28:38Z",
+      "default": "The gate runs on the pre-checked head as it stands.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "A: reward figures as the home's Keeper finish; then E, B, D; stills, AD preview, pre-check, gate."
+  "next_step": "Merge main; setup, build, check_all, guard on the merge; pre-check; gate request (Screen: result at 100% text, Hierarchy and Character presence)."
 }
