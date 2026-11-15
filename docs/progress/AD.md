@@ -1,12 +1,11 @@
 # AD art director: progress
 
-- Status: P2-AD-board-4 ready (board 4, result and motion, round 1 posted: **the board does not stand**, objections A to E, each a request to the lead). Pre-check in the status file.
-- Progress: 15 of 15 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3, P2-AD-board-4); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
-- Done: P2-AD-board-4: `docs/art/ui-quality/gate/boards/board-4.md`, ten items (result stills `board-4/*.png`, reward strips and clips, AIA's motion strips and clips linked), on the integration head at `3374eae1` (result-2 merged as `135a49b2`, motion-2 as `0bc0fbb9`); S2-R20 (home part 3 preview) answered in `status/AD.json`.
-- Next: S1 fixes A, B, D and E (AD-R27, AD-R26, AD-R29, AD-R30) and AIA fixes C (AD-R28), then board 4b; board 3b after AD-R22 to AD-R25 land; board 5 after settings.
+- Status: P2-AD-board-5 claimed (board 5, character and settings). S1-R29 and AIA-R26 answered and M23 acked in `status/AD.json`; P2-AD-board-4 merged.
+- Progress: 15 of 16 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3, P2-AD-board-4); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
+- Done: previews S1-R29 (result-3 at `d896f254`: A, B, D and E met; one objection, F, the part line at the scroll's foot at 200% en) and AIA-R26 (motion-3 reward strips at `f216de53`: they stand as shot), both checked against board 4's full list (M23) and on a scratch merge of the two heads; evidence `gate/boards/board-4/r2-*.png`.
+- Next: board 5 (character and settings); board 4b after result-3 and motion-3 merge; board 3b after home-3.
 - Blocked by: none.
-- Owner decision needed: none. AD decides boards 3 and 4 in place of the owner.
-
+- Owner decision needed: none. AD decides the boards in place of the owner.
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
 | P0-AD-rubric: rubric v1 and judge prompts | 3 | merged (167ccf6c) | `gate/rubric.md`, `gate/prompts/*.md`; pre-check PASS at 334224c, 2026-10-30T01:44:46Z (`All checks passed.`, `DONE exit=0`) |
@@ -26,19 +25,11 @@
 | P2-AD-board-4: board 4 (result and motion) | 2 | ready (pre-check in the status file) | `gate/boards/board-4.md`, `gate/boards/board-4/*.png` and two `.mp4` clips; result rendered with `FIT=1` at 100% and 200% (en, pt_BR, de) and high contrast beside `art/ui/keyframes/03-result*`, all "fit ok"; reward sequence full and reduced with `STRIP=1`; AIA's `art/ui/motion/strips/` and `clips/` checked for qualities 4, 5 and 7; `check_curves.py` ok; verdicts of result-1 (`8bec0d84`) and result-2 (`aed28321`, `71167028`) cited; objections A to E as requests AD-R26 to AD-R30; `check_docs_consistency.py` clean |
 
 ## Handoff
-- Last verified commit: `c0bab2a8` (pre-check PASS, 12:11:54Z, `All checks passed.`); P2-AD-board-4 ready; agent_state done.
-- Done: board 4 (result and motion), round 1, on `3374eae1`. **The board does not stand.** Objections, in order of weight:
-  - A (S1, AD-R27): the lead reward "+2,310" is pale gold with a hairline outline on the parchment, the weakest figure on the screen (hollow in high contrast). Give the reward figures the "Keeper 24" finish.
-  - B (S1, AD-R26): at 200% in German, Essenz and Ruhm fall below the fold.
-  - C (AIA, AD-R28): the anticipation reads as a still pause and the burst stays the prize's size in every tier; epic barely reads stronger than common.
-  - D (S1 with AIA, AD-R29): the coins land on the counters' digits and hide the roll.
-  - E (S1, AD-R30): at 200% English, Home takes about 45% of the action bar with its word; make it icon-only.
-  - Stands: layout, portraits, law chips, moment card, high contrast, the reduced reward form, press, shine and screen change (notes: press sink at the low end; full screen change barely distinct from the reduced one; the action bar cuts the crew faces at 100% pt_BR and de).
-- Previews answered: S2-R20 (home part 3 at `c0b2bc49`): A, most of C and the goal lines fixed; open: pins detached from their realms, the world shrinking with the notice, the Essence "Full" tag dropped outside en 100%, the 200% strain chip, minor items, and the dock label on the rim (D, K1).
-- Checked: `check_docs_consistency.py` clean; `art/ui/motion/check_curves.py` ok; the full checks in the pre-check (`check_all.sh` runs detached through `run_checks.sh`).
-- Half done: nothing.
-- Open hypotheses: the result shot has no idle crew, so the "Idle crew of N ready" line is unjudged; the home shot lacks notifications, a shield and a locked realm.
-- Next step: board 4b after AD-R26 to AD-R30 land (re-shoot items 1 to 6 and the strips of items 7 and 9); board 3b after AD-R22 to AD-R25; board 5 after settings.
+- Last verified commit: `c0bab2a8` (pre-check PASS, 2026-11-13T12:11:54Z); P2-AD-board-4 merged as `14be4ddd`.
+- Done this session (2026-11-15): S1-R29 answered: A (Keeper finish), B (de 200% haul above the fold), D (coins on the Starlight icon, no coin on a rolling digit) and E (Home icon-only at 200%) met; objection F: at 200% en and HC en 200%, the scroll ends mid-line above the bar and the tops of "Re-simulated by the server" show as stray marks (`board-4/r2-F-fold-en200.png`). AIA-R26 answered: the reward strips stand as shot (gather and tier spread met, coins on the starglass icon). On the scratch merge, the epic 2.8 burst covers the kicker and haul chip for 130 to 200 ms: accepted as a note. M23 acked.
+- Half done: P2-AD-board-5 claimed, not started.
+- Open hypotheses: the result fixture still has no idle crew; the pt_BR and de crew card at 100% goes under the action bar (a note since board 4).
+- Next step: render character and settings beside `art/ui/keyframes/` at 100% and 200% (en, pt_BR, de) and high contrast, cite the gate verdicts, write `gate/boards/board-5.md`.
 
 ## Flow review
 
