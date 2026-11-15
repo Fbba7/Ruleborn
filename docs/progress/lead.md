@@ -256,8 +256,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 | S2 | `session_01SNkKxq9TRgdUDZjiKCeA3q` (Opus 5.5, effort high) | P2-S2-home-3 (restart after the owner's restart: continue from the branch, S2-R20 objections 1 to 5, ready) | `claude/ui-screens-home` | 2026-11-15 18:05Z |
 | S1 | `session_01SNkKxqB6A9FKaFvAKcXbLY` (Opus 5.5, effort high) | P2-S1-result-3 (start: board 4's objections AD-R27, R26, R29 and R30; stills to AD) | `claude/ui-screens-heist` | 2026-11-15 18:05Z |
 | S2 | `session_01SNkKxquudGapkBBrdTGyQK` (Opus 5.5, effort high; stopped 13 Nov, replaced in cycle 85) | P2-S2-home-3 (restart: the last session idle since 09:55Z past its 10:58Z update; continue from c0b2bc49, merge main, pre-check, ready; AD's S2-R20 objections inside the task) | `claude/ui-screens-home` | 2026-11-13 11:23Z |
-| AD | `session_01SNkKxnr3dQ98ULoLmDJcLd` (Opus 5.5, effort high; idle, board 4 ready, merging in cycle 85) | S2-R20 first (preview home-3 at 0ffb6049 or newer), then P2-AD-board-4 (start: P2-S1-result-2 merged as 135a49b2; AD-R26 inside it) | `claude/ui-ad` | 2026-11-13 11:23Z |
-| K1 | `session_01SNkKxpiU2Mw9DcThCLnW1H` (Opus 5.5, effort high; idle, tabs merging in cycle 85) | P2-K1-tabs (start: a free seat; board 3's objection D, AD-R25, and AD-R24's KitTabs part) | `claude/ui-bake` | 2026-11-13 10:50Z |
+| AD | `session_01SNkKxnr3dQ98ULoLmDJcLd` (Opus 5.5, effort high; idle, board 4 merged as 14be4ddd in cycle 85) | S2-R20 first (preview home-3 at 0ffb6049 or newer), then P2-AD-board-4 (start: P2-S1-result-2 merged as 135a49b2; AD-R26 inside it) | `claude/ui-ad` | 2026-11-13 11:23Z |
+| K1 | `session_01SNkKxpiU2Mw9DcThCLnW1H` (Opus 5.5, effort high; idle, tabs merged as 14be4ddd in cycle 85) | P2-K1-tabs (start: a free seat; board 3's objection D, AD-R25, and AD-R24's KitTabs part) | `claude/ui-bake` | 2026-11-13 10:50Z |
 | AD | `session_01SNkKxqeNV7VTwM6RkPTRHh` (Opus 5.5, effort high; idle after answering S1-R25, replaced in cycle 82) | S1-R25 first (M20: re-check S1-R24's four objections in P2-S1-result-2 at 71167028), then the next open AD task, else done; P2-AD-board-3 ready at 4a48eef9 and in the merge queue | `claude/ui-ad` | 2026-11-13 09:44Z |
 | S2 | `session_01SNkKxoy4LFKDybvN7vyFT5` (Opus 5.5, effort high; idle since 09:55Z with its check_all unreported, replaced in cycle 82) | P2-S2-home-3 (start: P2-S2-home-2 merged as 807d68a7; board 3's objections AD-R22 to AD-R24) | `claude/ui-screens-home` | 2026-11-13 08:53Z |
 | S1 | `session_01SNkKxn8w6ndc88LGhoq4KQ` (Opus 5.5, effort high; idle, P2-S1-result-2 merged as 135a49b2) | P2-S1-result-2 (restart: AD's four S1-R24 objections stopped the merge in cycle 80; continue from aed28321, fix them, re-gate, ready) | `claude/ui-screens-heist` | 2026-11-13 08:53Z |
@@ -367,7 +367,7 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: P2-AD-board-3 is merged; P2-AD-board-4 is ready (merging in cycle 85); P2-AD-board-4b (the re-check after P2-S1-result-3 and P2-AIA-motion-3), P2-AD-board-3b (home, after P2-S2-home-3 and P2-K1-tabs) and P2-AD-board-5 (character and settings) as their deps merge (seeded in cycle 71; board 2, icons, waits for icon batches 3-4, deferred by D13's answer (c)). Between boards, review the stills builders send you before ready within the same cycle, every objection in one round (M12). P1-AD-board-1d is merged: board 1 stands. O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+Tasks: P2-AD-board-3 is merged; P2-AD-board-4 is merged (14be4ddd, cycle 85); P2-AD-board-4b (the re-check after P2-S1-result-3 and P2-AIA-motion-3), P2-AD-board-3b (home, after P2-S2-home-3 and P2-K1-tabs) and P2-AD-board-5 (character and settings) as their deps merge (seeded in cycle 71; board 2, icons, waits for icon batches 3-4, deferred by D13's answer (c)). Between boards, review the stills builders send you before ready within the same cycle, every objection in one round (M12). P1-AD-board-1d is merged: board 1 stands. O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -397,7 +397,7 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5, effort high
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97); P2-K1-motion is merged; P2-K1-tabs is ready (merging in cycle 85); no K1 task is open after it
+Tasks: P0-K1-kitspec-3, then P1-K1-atlas-draw, P1-K1-catalogue, P1-K1-words, P1-K1-switch-heist, P1-K1-switch-rest, P1-K1-disc-host, P1-K1-heist-kit and P1-K1-numerals-on as their deps merge (all of these and every other phase 0 K1 task are merged; numerals-on, the last, as 541e4c97); P2-K1-motion is merged; P2-K1-tabs is merged (14be4ddd, cycle 85); no K1 task is open after it
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -481,6 +481,25 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- **Cycle 85**, 15 November 2026, from 18:01Z (session
+  `session_01SNkKxqLYw4qY5UxycWNhTR`, started by the overseer after the
+  owner's "Continue" of about 17:10Z). Fresh container set up (M22: the
+  three rust targets, gdtoolkit 4, playwright 1.63.0, client/build.sh).
+  Cycle 84's advisory verdicts carried to main (`fbdba3f3`): S3 settings
+  on `f0a36a41`, all six rows pass; S2 home-3 on `14fdcdfe`, Hierarchy
+  and Character presence pass. **Merged** P2-AD-board-4 (AD's
+  `c0bab2a8`) and P2-K1-tabs (K1's `ba364ba8`) in one candidate
+  (`9ee45863`): check_all PASS at 18:40:01Z, guard.sh OK (settings budget
+  shots 49, 44 and 49 against 52, 47 and 52); merge `14be4ddd`, lock
+  cleared in the same turn (`36e84c0a`). Audit and roadmap republished.
+  **Started** four builders, the cap (order 3): S1 on P2-S1-result-3, S2
+  on P2-S2-home-3 and AIA on P2-AIA-motion-3 (18:05Z, M14's rule in
+  AIA's prompt, M21), S3 on P2-S3-settings (18:08Z); the stopped S2 and
+  S3 sessions of 13 November are not reused. stop_at moved to
+  17 November 21:00Z. **Next:** merge what turns ready (S3 settings and
+  S2 home-3 likely first; M20 for screen tasks); P2-AD-board-4b waits on
+  result-3 and motion-3, then AD takes a seat; AD and K1 are idle with
+  nothing open.
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready
