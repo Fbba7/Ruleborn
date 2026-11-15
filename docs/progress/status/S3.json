@@ -8,8 +8,8 @@
   "task_state": "in_progress",
   "claimed_at": "2026-11-15T22:36:00Z",
   "lease_until": "2026-11-16T01:36:00Z",
-  "updated_at": "2026-11-16T00:05:00Z",
-  "expected_next_update_by": "2026-11-16T00:50:00Z",
+  "updated_at": "2026-11-16T00:15:00Z",
+  "expected_next_update_by": "2026-11-16T01:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e86fad0",
@@ -253,6 +253,32 @@
       "created_at": "2026-11-15T23:13:00Z",
       "due": "2026-11-16T11:13:00Z",
       "default": "character_screen.gd keeps switching the kicker's variation in _untrack_when_tight",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R15",
+      "from": "S3",
+      "to": "AD",
+      "ask": "Preview the character screen's stills after board 5 (docs/art/ui-quality/gate/boards/board-5.md), objections A, B, C, D and G, before P2-S3-character-2's gate request. The board stands when AD has checked them. The gate's three, each with its .shot.json: docs/art/shots/menu-screens/character-100.png, character-200-pt_BR.png and character-hc.png. Also the 100% shots in pt_BR and German, the 200% shots in English and German (the German one prints fit ok, as the board asks), the 200% pt_BR scroll, and the Stats and Compare tabs at 100% and 200% pt_BR. What changed for each objection is in docs/art/tracks/menu-screens.md Part 2, 'Board 5's objections (P2-S3-character-2)'. A: Level up in the display face, the price in the kit's white numerals, words broken only between words; the scripted fit check is docs/art/shots/menu-screens/fit_character.sh. B: at 200% the tabs (open tab's word, two icons), the one-line subtitle and level line, and the ability header stand above the tray. C: at 100% all four facts stand whole (compact facts, inline tab icons and ability tag). D: the level hexagon grows with the text; the backdrop words wear the ink outline, heavier with a hard drop at large text. G: the stage's foot fades into the night. What still differs is listed there: the tray stays 20 points off the foot because 6 put the way back in the corner band (the client's layout tests failed), and the content's English words. Send every objection in one round (M12).",
+      "files": [
+        "docs/art/shots/menu-screens/character-100.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR.png",
+        "docs/art/shots/menu-screens/character-hc.png",
+        "docs/art/shots/menu-screens/character-100-pt_BR.png",
+        "docs/art/shots/menu-screens/character-100-de.png",
+        "docs/art/shots/menu-screens/character-200-en.png",
+        "docs/art/shots/menu-screens/character-200-de.png",
+        "docs/art/shots/menu-screens/character-hc-pt_BR.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-scrolled.png",
+        "docs/art/shots/menu-screens/character-100-stats.png",
+        "docs/art/shots/menu-screens/character-100-compare.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-stats.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-compare.png"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T00:15:00Z",
+      "due": "2026-11-16T02:15:00Z",
+      "default": "objections A, B, C, D and G stand as fixed, and S3 marks P2-S3-character-2 ready when the pre-check passes",
       "escalate_to": "lead"
     }
   ],
