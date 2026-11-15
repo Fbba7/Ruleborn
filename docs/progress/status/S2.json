@@ -4,16 +4,17 @@
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-flow-entry",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-12T20:00:00Z",
-  "lease_until": "2026-11-12T23:00:00Z",
-  "updated_at": "2026-11-12T20:15:00Z",
-  "expected_next_update_by": "2026-11-12T21:00:00Z",
+  "task_id": "P2-S2-home-2",
+  "task_state": "working",
+  "claimed_at": "2026-11-13T05:23:34Z",
+  "lease_until": "2026-11-13T08:23:34Z",
+  "updated_at": "2026-11-13T05:34:54Z",
+  "expected_next_update_by": "2026-11-13T06:19:54Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "80c538c8",
-    "next_step": "check_all on 80c538c8 running; then M13 merge of main, the pre-check, and the handoff"
+    "last_green_sha": "e37c765d",
+    "next_step": "Home: live companion in the Keeper ring, Display role on figures, Collect shine; then budget shots, AD preview, pre-check",
+    "at": "2026-11-13T05:34:54Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -23,35 +24,6 @@
     "M13"
   ],
   "requests": [
-    {
-      "id": "S2-R1",
-      "from": "S2",
-      "to": "lead",
-      "ask": "universe_badge.gd: start the renown number past the gem at every text size (at 200% the gem, h*1.15 wide from chip.x - g*0.45, covers the first digit, as the text sits at chip.x + px(16)), so Home can drop its padding.",
-      "files": [
-        "client/world/universe_badge.gd",
-        "client/scripts/home.gd"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-12T18:15:00Z",
-      "due": "2026-11-13T18:15:00Z",
-      "default": "home.gd keeps padding the renown with spaces where the gem would cover it (_clear_of_gem); nothing changes at 100% text",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "S2-R2",
-      "from": "S2",
-      "to": "lead",
-      "ask": "universe_pins.gd: let a front realm pin shrink to its icon and level when the room is short, not only on islands under 28 points against the whole view's height, so at 150% and 200% text the Home pins shrink rather than hide as a set.",
-      "files": [
-        "client/world/universe_pins.gd"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-12T18:15:00Z",
-      "due": "2026-11-13T18:15:00Z",
-      "default": "Home hides the whole pins layer at the whole universe whenever a realm pin would be missing (_fit_pins); the realms stay in the world's spoken description and each island still takes its tap",
-      "escalate_to": "lead"
-    },
     {
       "id": "S2-R3",
       "from": "S2",
@@ -81,6 +53,179 @@
       "created_at": "2026-11-12T20:15:00Z",
       "due": "2026-11-13T08:15:00Z",
       "default": "The stills stand as built; S2 marks P2-flow-entry ready when its checks pass, and any objection becomes a follow-up task beside it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R5",
+      "from": "S2",
+      "to": "lead",
+      "ask": "client/world/universe_reward.gd: let UniverseReward.fly take the pills by kind (a Dictionary, kind -> Control) in place of a UniversePurse, so home can fly Collect's reward to its KitStatus.resource pills without building a UniversePurse to hold them; then UniversePurse, UniverseStrain, UniverseSide, UniverseNotice and UniverseCollect can be retired (home uses none of them for drawing).",
+      "files": [
+        "client/world/universe_reward.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T23:20:00Z",
+      "due": "2026-11-14T20:00:00Z",
+      "default": "home.gd builds an empty UniversePurse, hands it its pills, flies the reward and frees it (as on this branch); the old widgets stay for a follow-up task",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R6",
+      "from": "S2",
+      "to": "K1",
+      "ask": "kit_skin / atlas: give banner_alarm a shape of its own (button_danger__banner_alarm__normal, or map it to panel_dark with its alarm line and glow), as success__banner_success has. With no piece it falls back to button_danger__box, the red button's light face, so white and secondary words on it measure 2.5 to 2.8:1 (home's raid notice; KitPanels.notice('alarm') and UI.banner('alarm') in the catalogue too). tokens.json says the material is a dark card edged and glowing in the alarm's colour (01-universe-map-raid.png).",
+      "files": [
+        "client/ui/kit_skin.gd",
+        "art/ui/kit_build/"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T22:52:00Z",
+      "due": "2026-11-13T22:52:00Z",
+      "default": "home.gd refills its raid notice's box with the material's own card colours (RbBox.tint(card_top, card_bottom)), so the code-drawn box draws the dark card with the alarm edge; the line goes once the shape lands",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R7",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Approve a raise of home's draw-call records for K1 to log in tools/ui_bake/budgets.json 'raises' (as K1-R18): home/100 119 -> 139, home/hc 119 -> 139; home/200 stays 97 (measured 97). Reason: home is now built from the kit's parts alone, and a kit part interleaves the skin atlas, its own icon texture and the font, where the old home drew its purse and side buttons in one layer each. Measured by part at 100% (budget_shots home/100, faded in turn): keeper 11, strain 5, purse 15 (old 9: three KitStatus.resource pills, 5 each), side buttons 19 (old about 11: four KitControls.round_action, disc, icon and word plate each), raid notice 11 (old 7: the alarm's fill under its words, and S2-R6's code-drawn card), tab bar 28, pins 14. Textures unchanged (4.7 MiB), 0 words below 4.5:1 at 100%, 200% and hc; home stays 11 under the cap of 150. A kit-side saving (icons in the skin atlas, or a part's art drawn as one layer across siblings) would bring it back; that is K1's to weigh.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-12T22:43:00Z",
+      "due": "2026-11-13T10:43:00Z",
+      "default": "S2 marks P2-S2-home-1 ready with guard.sh failing only home/100 and home/hc's draw calls (139 vs 119), stated in the handoff with these figures; the merge waits on the lead's answer",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R8",
+      "from": "S2",
+      "to": "K1",
+      "ask": "KitPanels.notice: a notice that stays (frees neither on banner_ms nor on its cross, but hides and can be shown again, with a dismissed signal), and at text above KitLayout.SIDE_BY_SIDE_UP_TO the words over the full width with the icon, action and cross in a row beneath. Home's raid notice must stay until seen or dismissed (\u00a721.8) and return with new raids.",
+      "files": [
+        "client/ui/kit_panels.gd",
+        "client/scripts/ui.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T23:20:00Z",
+      "due": "2026-11-14T20:00:00Z",
+      "default": "home.gd composes its raid notice from UI.panel('banner_alarm'), UI.status and UI.action, as KitPanels.notice is built",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R9",
+      "from": "S2",
+      "to": "K1",
+      "ask": "KitLayout.tap: (1) it connects button_down twice, so every part made tappable logs 'Signal button_down is already connected' (home's strain and goal card; seen in every universe_home.gd run): connect once. (2) its clear button is a child of the card, so inside a PanelContainer it is laid out within the card's padding, not over the whole card: on KitStatus.strain (48 points tall) the tap was 40 points, failing \u00a721.1's 48 (client test 'every control on every screen'). Lay it over the whole card (e.g. a holder of the card's size, or the card's padding moved into an inner margin). (3) let it carry 'frequent' = false when the card is a secondary place, as the card itself does.",
+      "files": [
+        "client/ui/kit_layout.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T23:20:00Z",
+      "due": "2026-11-14T20:00:00Z",
+      "default": "home.gd stands the strain pill and its tap in a MarginContainer of the pill's size and marks the tap's button not frequent; the double-connect error stays in the log; the tap works",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R10",
+      "from": "S2",
+      "to": "K1",
+      "ask": "Lower check_screens.py's records in tools/ui_bake/budgets.json after this task merges: client/scripts/home.gd draw 1 -> 0 and texture 2 -> 0, client/world/universe_badge.gd draw 7 -> 0 (python3 tools/ui_bake/check_screens.py --record).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T23:20:00Z",
+      "due": "2026-11-14T20:00:00Z",
+      "default": "the records stay higher than the counts; check_screens passes and notes the falls",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R11",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Preview home (P2-S2-home-1) on claude/ui-screens-home at 4da3eeb0 before it is marked ready (M10, M12), against art/ui/keyframes/01-home.*. Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`, the same with `TEXT=200 LOCALE=pt_BR`, and with `CONTRAST=1` (the gate's three items: Hierarchy, Display type, Character presence at 100%; Display type, Hierarchy at 200% pt_BR; Colour roles and value, Hierarchy in hc). What changed: every part is the kit's (KitHud.keeper with renown past the gem, KitStatus.strain, three KitStatus.resource pills, four KitControls.round_action, KitHud.goal, KitControls.action2 gold for Collect all); the raid notice is composed from UI.panel('banner_alarm') on the material's dark card (S2-R6, S2-R8); the realm pins shrink to icon and level as a set where room is short (S2-R2). Known: at 200% pt_BR the purse takes three rows, and at 200% the pins hide as a set (the islands are a few points wide). docs/art/tracks/home-screen.md lists the rest. Send every objection in one round (M12).",
+      "files": [
+        "client/scripts/home.gd",
+        "client/world/universe_badge.gd",
+        "client/world/universe_pins.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T23:23:00Z",
+      "due": "2026-11-13T11:23:00Z",
+      "default": "The stills stand as built; S2 marks P2-S2-home-1 ready when its checks pass, and any objection becomes a follow-up task beside it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R12",
+      "from": "S2",
+      "to": "K1",
+      "ask": "Make the display face (theme variation DisplayS, outlined in ink) the default for KitStatus.resource's amount and for KitHud.keeper's name and level pill, as art/ui/keyframes/01-home.* sets them (cycle 74's gate point 'flat white figures and name'). Home sets them itself through Home.home_figure until then.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/world/universe_badge.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:11:20Z",
+      "due": "2026-11-13T15:11:20Z",
+      "default": "Home keeps setting DisplayS on those labels itself (Home.home_figure); the kit's parts stay as they are.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R13",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Which character does the Keeper's portrait on home show? The key frame shows a featherkin's head and shoulders on spirit's teal; home now uses Portrait.bust('featherkin') with ring.ground = Tokens.color('spirit') (cycle 74's gate point 'no character portrait').",
+      "files": [
+        "client/world/universe_badge.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:11:20Z",
+      "due": "2026-11-13T15:11:20Z",
+      "default": "The featherkin, as the key frame shows; a player-chosen Keeper is a later task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R14",
+      "from": "S2",
+      "to": "K1",
+      "ask": "Give KitTabs a raised gold disc for its lead tab (Heist), as the key frame draws it, so screens need not raise it themselves. Home now lifts the Heist tab above the bar and enlarges its picture (Home._raise_heist), cycle 74's gate point 'Heist does not lead'.",
+      "files": [
+        "client/scripts/home.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:11:20Z",
+      "due": "2026-11-13T15:11:20Z",
+      "default": "Home keeps _raise_heist; KitTabs stays as it is.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R15",
+      "from": "S2",
+      "to": "K1",
+      "ask": "(a) KitControls.action2 does not measure its children, so its words run past its edge; let it size itself to its words, with an option to keep their case (the key frame's 'Collect 3.4k' is mixed case, not the gold's capitals). (b) KitTabs: at large text a tab's word wraps below its tile's foot ('Ilhas' at 200% pt_BR); let the tile grow with its word, or hide the word by itself. Home sizes Collect to its words and hides cut or low tab words itself (Home._fit_tab_words).",
+      "files": [
+        "client/scripts/home.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:11:20Z",
+      "due": "2026-11-13T15:11:20Z",
+      "default": "Home keeps sizing Collect and hiding tab words itself; the kit stays as it is.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R16",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Amend S2-R7's approved raise: home/100 and home/hc to 143 draw calls, home/200 to 112 (S2-R7 approved 139 for 100 and hc; home/200's record is 97). The rise comes from what cycle 74's gate asked for: the goal card beside Collect (+4), the character portrait, and the display type on the figures and the name. All three stay under the cap of 150. Please record them in tools/ui_bake/budgets.json (not S2's file).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:11:20Z",
+      "due": "2026-11-13T15:11:20Z",
+      "default": "The lead records 143/112/143 when it merges P2-S2-home-1; until then guard.sh fails on those three draw-call lines only.",
       "escalate_to": "lead"
     }
   ],

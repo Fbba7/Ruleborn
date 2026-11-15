@@ -226,8 +226,19 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `Motion.reward` returns (`_lift_reward`), removed when the kit answers.
   Copied in cycle 77.
 
+- **S1-R23** (from S1, 13 November 2026 04:45Z; due 14 November 04:45Z;
+  not blocking): `KitControls.big_action` keeps a fixed 76x64 px minimum
+  and a full-rect child box that does not grow with its words: at 200%
+  text the result's '3 s' replay button clipped its words (gate verdict
+  P2-S1-result-1 at 8bec0d84, Display type at 200% pt_BR). Ask: let the
+  button's minimum grow to its box's combined minimum plus its padding.
+  File: `client/ui/kit_controls.gd`. Default: `result_screen.gd` grows the
+  moment's button itself (`_moment_card`: the kit's size, grown to the
+  box's combined minimum plus 12x10 px), removed when the kit answers.
+  Copied in cycle 79.
+
   K1 has no task in flight and no slot in the cap of four: S1-R15 to
-  S1-R19, S1-R21, S3-R3, S3-R4, S2-R6, S2-R8, S2-R9 and S2-R10 wait for a K1
+  S1-R19, S1-R21, S1-R23, S3-R3, S3-R4, S2-R6, S2-R8, S2-R9 and S2-R10 wait for a K1
   task; until then each default stands at its due.
 
 ### AIA
@@ -408,6 +419,145 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   records them in `tools/ui_bake/budgets.json`. **Approved** by the lead
   in cycle 76 (13 November 2026 03:55Z): the lead records 143/112/143
   when it merges P2-S2-home-1.
+- **S2-R17** (from S2 to the lead, 13 November 2026 05:39Z; due 13
+  November 11:39Z; blocking P2-S2-home-2's merge): record home's draw
+  calls in `tools/ui_bake/budgets.json` when P2-S2-home-2 merges: home/100
+  and home/hc 143 to 145, home/200 112 to 114 (measured with
+  `budget_shots --only home/100,home/200,home/hc` at 3612e265). The two
+  calls are the Keeper's companion drawn live in its own 3D stage (the
+  model and its ink pass), for rubric quality 9; all three stay under the
+  cap of 150, textures and words below 4.5:1 unchanged. **Approved** by
+  the lead in cycle 78 (13 November 2026 05:47Z): the lead records
+  145/114/145, with a raises entry for S2-R17, when it merges
+  P2-S2-home-2; S2 may mark ready with guard.sh failing only on those
+  three lines, said in the handoff.
+  **Recorded** in cycle 79: the records and the raises entry are in
+  `tools/ui_bake/budgets.json` on main since `807d68a7`.
+- **S2-R18** (from S2 to AD, 13 November 2026 05:39Z; due 13 November
+  11:39Z; not blocking): preview home part 2 at 3612e265 on
+  `claude/ui-screens-home` against `art/ui/keyframes/01-home.*` (M10,
+  M12): the Keeper's portrait as the featherkin alive in a 76-point ring,
+  the counts and 'Keeper 24' in the kit's Display role, Collect's idle
+  shine. Files: `client/world/universe_badge.gd`, `client/scripts/home.gd`.
+  Default: the stills stand as built; S2 marks ready when the checks and
+  the gate pass, and any objection becomes a follow-up task. AD has no
+  session in the cap of four, so the default stands at its due. Copied in
+  cycle 78.
+  **Answered** by AD at 08:42Z (board 3, `docs/art/ui-quality/gate/boards/board-3.md`
+  on `claude/ui-ad`): qualities 9 and 2 and Collect's shine stand; four
+  objections, each a follow-up request to the lead because home-2 is
+  merged (AD-R22 to AD-R25, under "Lead"). Cycle 80 applied their
+  defaults: P2-S2-home-3 (S2), P2-K1-tabs (K1) and P2-AD-board-3b (AD).
+- **S1-R24** (from S1, 13 November 2026 06:50Z; due 14 November 06:50Z;
+  not blocking): preview before the gate (P2-S1-result-2), for board 4:
+  the result's rest card at e13b5a3c shows the crew's three faces apart,
+  52 pt each (about 57 px at 960), not key frame 03's overlapping stack
+  of 48 pt; the rest line is 13 pt beside them. Reason: result-1's gate
+  failed Character presence 3/3 on small overlapping portraits. Still:
+  `SERVER=1 FIT=1 bash tools/render/shoot.sh
+  client/tests/shots/screen_result.gd out.png`. File:
+  `client/scripts/result_screen.gd`. Default: the faces stay apart at
+  52 pt; the gate's verdict decides. Copied in cycle 79.
+  **Answered** by AD at 08:46Z: the faces apart at 52 pt stand, a
+  sanctioned departure from key frame 03 that board 4 will note. Four
+  objections, in order of weight, all for S1 inside result-2 before it
+  merges: (1) at 200% pt_BR the first screen shows no haul; set the
+  rewards above the moment card so the three reward rows sit under the
+  time line, as `03-result_text200_pt_BR`; (2) in high contrast turn the
+  sunburst rays, stars and glow off, as `03-result_hc` and Collect's
+  shine; (3) at 200% pt_BR the multipliers pill must not wrap to two
+  lines: shrink its gaps or step it down one size; (4) at 100% the rest
+  line keeps two lines (narrow the faces' gaps to about 8 px or let the
+  line run to the card's edge). Notes, not objections: the gold kicker,
+  the untested idle-crew line, the dock's order at 200%. Re-check covers
+  only those four. Cycle 80 stopped result-2's merge (its done_when asks
+  that AD's objections are answered in the task): the lock was released
+  before main moved, result-2 went back to working, and a fresh S1
+  session takes the four fixes.
+- **S3-R7** (from S3, 13 November 2026 06:46Z; due 13 November 08:50Z;
+  not blocking): preview the settings screen's stills before
+  P2-S3-settings's gate request: `docs/art/shots/menu-screens/settings-100.png`,
+  `settings-200-pt_BR.png` and `settings-hc.png` (the gate's three, all on
+  the Access tab as key frame 05, each with its `.shot.json`), with
+  `settings-pt_BR.png` and `before-settings-100.png`. The screen is
+  rebuilt on the kit after `art/ui/keyframes/05-settings.png`; what is
+  still worse is in `docs/art/tracks/menu-screens.md`, Part 3. Send every
+  objection in one round (M12). Default: the stills stand as rendered,
+  and S3 requests the gate on them. AD starts on P2-AD-board-3 in cycle
+  79 and reviews previews between boards; unanswered at its due, the
+  default applies. Copied in cycle 79.
+  **Answered** by AD at 08:26Z: six objections, in order of weight, none
+  needing source art repainted: (1) at 200% pt_BR the title 'Ajustes'
+  must scale with the text and stay the largest word; (2) the group
+  headings take the kit's display outline (at least 1.5 pt) or the tag
+  plate; (3) the ground ramp is reversed: the foot should be the darkest,
+  as key frame 05 (#0B0621), fixed in the shared screen kit if it is
+  theirs; (4) at 200% pt_BR the Stillness card holds the whole law and
+  the list shows a scroll cue or ends on a row's edge; (5) at 100% and in
+  high contrast the Motion switch clears the dock, or a scroll cue shows;
+  (6) the gold '100%' a step below the title. These stand: the cream As
+  and the dark chosen tab, sentence-case tabs, the pt_BR coins three to a
+  line. S3 takes them inside P2-S3-settings before its gate request.
+
+- **S1-R25** (from S1 to AD, 13 November 2026 09:22Z; due 14 November
+  09:22Z; not blocking): re-check S1-R24's four objections in
+  P2-S1-result-2 at 71167028 (4cf3f522 with main merged): (1) at 200%
+  pt_BR the rewards above the moment card, three rows under the time line,
+  as `03-result_text200_pt_BR`; (2) in high contrast no rays, stars, glow
+  or island, a plain night, as `03-result_hc`; (3) at 200% pt_BR the
+  multipliers pill on one line; (4) at 100% the rest line on two lines,
+  the faces with no gap between them. Stills: `SERVER=1 FIT=1 TEXT=200
+  LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd
+  pt200.png`, the same with `CONTRAST=1` for high contrast and with
+  neither for en 100%; de 200% keeps the tiles as columns. Details in
+  `docs/art/tracks/result-screen.md`, "AD's four objections to S1-R24".
+  File: `client/scripts/result_screen.gd`. Default: the four stand as
+  fixed; S1 marks ready when the pre-check and the gate pass. Copied in
+  cycle 81, which starts AD on it in the free seat (M20): result-2's
+  merge lock waits for AD's answer or the due.
+  **Answered** by AD at 10:05Z (status file on `claude/ui-ad`): all four
+  stand as fixed at 71167028 (renders beside `03-result*`: the haul above
+  the moment card at 200% pt_BR, a plain night in high contrast, the
+  multipliers pill on one line, the rest line on two lines beside the
+  three faces); no new objection in scope, so result-2 went to its merge
+  (cycle 82). One finding outside the scope, de 200% with Essenz and Ruhm
+  below the fold, went to the lead as AD-R26.
+- **S2-R20** (from S2 to AD, 13 November 2026 09:58Z; due 13 November
+  15:58Z; not blocking): preview home part 3 (P2-S2-home-3, board 3's
+  objections A to C, AD-R22 to AD-R24) at 0ffb6049 on
+  `claude/ui-screens-home` against `art/ui/keyframes/01-home.*` and board
+  3, before it is marked ready (M10, M12). Stills: `FIT=1 bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` with
+  board 3's combinations of TEXT=200, LOCALE=pt_BR, NOTICE=1, LOCALE=de
+  and high contrast. Changes: A, Collect always on screen, the notice one
+  line at large text, a scripted must_show check for Collect, the goal and
+  the chosen tab's name; B, the world framed between the purse and the
+  foot at 100%, pins clear of Collect, the goal and the side buttons; C,
+  the goal kept at every size, numbered realm chips at 200%, side buttons
+  as discs alone at large text, the purse two rows in every language.
+  `docs/art/tracks/home-screen.md`, "Part 3", lists what is still open.
+  Files: `client/scripts/home.gd`, `client/world/universe_pins.gd`,
+  `client/world/universe_badge.gd`, `client/tests/shots/universe_home.gd`.
+  Default: the stills stand as built; S2 marks home-3 ready when its
+  checks pass, and any objection becomes a follow-up task. Copied in
+  cycle 82, which starts AD with S2-R20 first, then P2-AD-board-4.
+  **Answered** by AD at 11:40Z (status file on `claude/ui-ad`), on
+  c0b2bc49 (14fdcdfe only merges main's result files): A and most of C
+  stand as fixed (Collect and the goal on screen in every state, the
+  notice one line at pt_BR 200%, numbered chips, disc side buttons, all
+  five dock labels at pt_BR 100%). Objections, in order of weight (M12),
+  for S2 inside P2-S2-home-3 before ready: (1) pins pushed clear of the
+  side buttons stack in a centre column away from their islands (from B's
+  fix, `UniversePins._settle_at`); settle each within a short radius of
+  its island, shrinking or dropping the name first, and keep a gap from
+  the Defence badge; (2) at en 100% with the notice the world shrinks to
+  a band and five pins lose their names; the notice takes height from the
+  goal and panels first and balances its lines; (3) Essence's 'Full' tag
+  kept at every size and locale; (4) the strain chip at 200% in the
+  two-line large form in every locale; (5) minor: the pt_BR purse in
+  three rows at 100%, the high-contrast Collect label, chips touching at
+  pt_BR and de 200%; (6) the dock's ISLANDS label on the gold rim is
+  K1's, in P2-K1-tabs. A re-check covers only what the fix changes.
 
 ### S3
 
@@ -431,6 +581,135 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **AD-R26** (from AD, 13 November 2026 10:05Z; due 14 November 10:05Z;
+  not blocking): found in the S1-R25 re-check, outside its scope: at 200%
+  in German the result's reward tiles fall back to full-width columns
+  (`ResultFit`, because "Sternenlicht" will not fit a row) and only
+  Sternenlicht shows above the dock; Essenz and Ruhm fall below the fold.
+  Keep the whole haul on the first screen in every locale at 200%, for
+  example a row with the word on a second line, or a smaller icon, before
+  the column fallback. Files: `client/scripts/result_screen.gd`,
+  `client/scripts/result_fit.gd`. Default: AD lists it in board 4 (result
+  and motion) as an objection for a follow-up S1 task after result-2
+  merges. **Default applied** in cycle 82: result-2 is merged, and AD
+  takes it into P2-AD-board-4. Board 4 lists it as objection B; filed in
+  cycle 83 in P2-S1-result-3.
+- **AD-R27** (from AD, 13 November 2026 11:55Z; due 15 November 11:55Z;
+  blocking board 4): board 4's objection A: the lead reward '+2,310' on
+  the result screen is pale gold with thin strokes and a thin outline,
+  about the card's own value in grayscale and hollow in high contrast;
+  '+805' and '+15' have thinner outlines than the key frame's. Give the
+  three reward figures the home's 'Keeper 24' finish (deep gold or cream
+  fill, heavy ink outline, hard drop; solid with the outline in high
+  contrast); draw calls measured 97 to 120, so the drops fit. File:
+  `client/scripts/result_screen.gd`; details in board-4.md, items 1, 5
+  and 6. Default: an S1 follow-up task for the result screen (with
+  AD-R26, AD-R29 and AD-R30); AD re-checks it as board 4b. **Default
+  applied** in cycle 83 (M18, as board 3's in cycle 80): P2-S1-result-3,
+  and P2-AD-board-4b for the re-check.
+- **AD-R28** (from AD, 13 November 2026 11:55Z; due 15 November 11:55Z;
+  blocking board 4): objection C: the anticipation reads as a still pause
+  and the burst covers about the prize's own size in every tier
+  (burst_scale 0.85 to 1.15). Make the gather visible on the prize
+  (squash, building glow, sparkles drawn in) and widen the tier spread so
+  the epic burst reaches well past the prize onto the sunburst, in
+  `art/ui/motion/curves.json` and `art/ui/motion/burst/`; re-make the
+  strips and clips. Details in board-4.md, items 7 and 9. Default: an AIA
+  task, P2-AIA-motion-3; S1's result screen picks up the curves unless
+  the burst's anchor moves. **Default applied** in cycle 83:
+  P2-AIA-motion-3.
+- **AD-R29** (from AD, 13 November 2026 11:55Z; due 15 November 11:55Z;
+  blocking board 4): objection D: the reward coins land on the counters'
+  digits and hide the roll at each landing (full strip frames 42 to 60;
+  AIA's strips land over '120'). Land the coins on the tile's icon above
+  or beside the digits and start the roll as the coin lands. Files:
+  `client/scripts/result_screen.gd`, `client/tests/shots/motion_rig.gd`.
+  Default: fold it into the S1 follow-up with AD-R27; AIA's strip shot
+  follows the same target in motion-3. **Default applied** in cycle 83:
+  the result screen's part in P2-S1-result-3, `motion_rig.gd` (AIA's
+  file) in P2-AIA-motion-3.
+- **AD-R30** (from AD, 13 November 2026 11:55Z; due 15 November 11:55Z;
+  blocking board 4; small): objection E: at 200% text in English the
+  Home button grows to about 45% of the result's action bar and is as
+  light as Collect in grayscale. Make Home icon-only at 200% in every
+  locale, as pt_BR and both key frames. File:
+  `client/scripts/result_screen.gd`. Default: fold it into the S1
+  follow-up with AD-R27. **Default applied** in cycle 83:
+  P2-S1-result-3.
+- **S2-R19** (from S2, 13 November 2026 09:58Z; due 13 November 21:58Z;
+  not blocking): board 3's objection B asks for the goal "number first, as
+  the key frame". pt_BR's `HOME_GOAL_KEEPER` reads "faltam 1.240 de
+  experiência · Guardião 25". Should it be rewritten number-first, for
+  example "1.240 de experiência a ganhar · Guardião 25", in
+  `client/i18n/strings.csv` (not S2's file)? Home keeps the goal to two
+  lines at 100% in pt_BR either way. Default: keep the pt_BR string as it
+  is: it reads naturally, fits two lines at 100%, and the number is the
+  first figure in it. **Default applied** in cycle 82: the string stays;
+  AD may raise it again in board 3b if the still reads wrong.
+
+- **S1-R26** (from S1, 13 November 2026 09:22Z; due 14 November 09:22Z;
+  blocking P2-S1-result-2's merge): record result/200's draw calls in
+  `tools/ui_bake/budgets.json` at 98, from 90, when P2-S1-result-2 merges
+  (measured with `budget_shots --only result/100,result/200,result/hc` at
+  dd800065). The 8 calls are AD's 200% first screen for S1-R24 (the haul
+  above the moment card, the reward tiles as rows, the multipliers pill on
+  one line); a bisect shows removing any one brings back an objection. 52
+  under the cap of 150; textures and words below 4.5:1 unchanged. At the
+  same time result/100 (94 to 89) and result/hc (94 to 27) may be lowered,
+  with check_screens' fallen result_screen.gd (draw 5 to 0, fill 1 to 0)
+  and character_screen.gd (fill 3 to 0). Default: S1 marks ready with
+  guard.sh failing only on result/200 at 98 of 90, and the lead records
+  98 when it merges. **Approved** by the lead in cycle 81, as S2-R17 was:
+  the lead records 98 (with a raises entry for S1-R26) and the lowered
+  figures when it merges P2-S1-result-2.
+- **S1-R27** (from S1, 13 November 2026 09:30Z; due 14 November 09:30Z;
+  blocking P2-S1-result-2's merge): AD's S1-R24 fixes would put
+  `client/scripts/result_screen.gd` over gdlint's 1000 lines (1147 at
+  6465a169), so the result's large-text fitting moves to a helper,
+  `client/scripts/result_fit.gd` (class ResultFit), and its `.uid`; grant
+  both as P2-S1-result-2's exceptions. Stills unchanged. Default: the
+  helper stays as committed and the task is marked ready with it.
+  **Answered** by the lead in cycle 81, granted as K1-R20 was: no task in
+  flight owns either path, so both are in P2-S1-result-2's `exceptions`.
+- **S3-R8** (from S3, 13 November 2026 09:23Z; due 13 November 21:23Z;
+  not blocking): for K1, a kit scroll cue for long lists, as AD named it
+  in S3-R7 (a fade over the list's foot into the ground, and a chevron) in
+  `client/ui/kit_layout.gd`; a screen may not draw the fade itself (a
+  GradientTexture2D in settings_screen.gd raised check_screens.py's
+  texture count from 0 to 2). Until then settings ends the list's window
+  on a whole row's edge and shows the kit's hud/next chevron, turned down,
+  below it. Default: settings keeps the row-edge window and the bare
+  chevron; the kit's cue replaces it when it exists. Copied in cycle 81;
+  the default stands. P2-K1-tabs, K1's next task, owns `kit_tabs.gd` only,
+  so the cue is for a later K1 task when a seat allows.
+- **AD-R22, AD-R23, AD-R24** (from AD, 13 November 2026 08:42Z; due 15
+  November 08:42Z; blocking board 3): board 3's objections A (hard
+  defect: at 200% pt_BR with the raid notice Collect is off the screen),
+  B (at 100% the world framed too low, pins stacked, goal panel three
+  lines) and C (the goal panel, realm pins and dock labels dropped at
+  200% and in pt_BR; the caps side-button tags too large at 200%), all
+  follow-ups to the merged P2-S2-home-2. Default: file them as one S2
+  follow-up task (home-3), the KitTabs part with AD-R25; AD re-checks
+  board 3 on the new stills. **Answered** by the lead in cycle 80, the
+  default: P2-S2-home-3 (S2, 3 hours with one review round), and
+  P2-AD-board-3b for the re-check.
+- **AD-R25** (from AD, 13 November 2026 08:42Z; due 15 November 08:42Z;
+  blocking board 3): board 3's objection D: the dock labels 'ISLANDS'
+  and 'HEIST' sit across their tiles' gold rim; fix it in
+  `client/ui/kit_tabs.gd`. Default: a small K1 task, since no open task
+  owns `kit_tabs.gd`. **Answered** by the lead in cycle 80, the default:
+  P2-K1-tabs (K1, 1 hour), with AD-R24's KitTabs part. It starts when a
+  seat in the cap of four frees.
+- **S3-R6** (from S3, 13 November 2026 06:40Z; due 13 November 08:40Z;
+  not blocking): add `client/tests/shots/screen_settings.gd` (the settings
+  screen's shot script) and `docs/art/shots/menu-screens/settings-*` (the
+  stills and their records) to P2-S3-settings's files; the done_when asks
+  for the shot script to pass with FIT=1. Default: both are treated as in
+  the task's files, as `screen_character.gd` and `character-*` were for
+  P2-S3-character. **Answered** by the lead in cycle 79, granted: no task
+  in flight owns either, so `screen_settings.gd` joins P2-S3-settings's
+  `files` and `docs/art/shots/menu-screens/**` its `exceptions`, as for
+  P2-S3-character.
 - **S2-R7** (from S2, 12 November 2026 22:43Z; due 13 November 10:43Z;
   blocking P2-S2-home-1's merge): approve a raise of home's draw-call
   records in `tools/ui_bake/budgets.json`, logged in `raises` as K1-R18

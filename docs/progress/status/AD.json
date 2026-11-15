@@ -4,22 +4,24 @@
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P1-AD-board-1d",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-12T16:12:00Z",
-  "lease_until": "2026-11-12T19:12:00Z",
-  "updated_at": "2026-11-12T16:18:00Z",
-  "expected_next_update_by": "2026-11-12T17:03:00Z",
+  "task_id": "P2-AD-board-3",
+  "task_state": "working",
+  "claimed_at": "2026-11-13T08:30:00Z",
+  "lease_until": "2026-11-13T11:30:00Z",
+  "updated_at": "2026-11-13T08:46:00Z",
+  "expected_next_update_by": "2026-11-13T09:31:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "8bfb07bdc4ff372fa1e6da205cb6bd4a8d0c09a2",
-    "next_step": "pre-check the round 4 commit, then mark ready"
+    "last_green_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
+    "next_step": "board 3 posted (does not stand, A-D); S2-R18 and S1-R24 answered; next checks, pre-check and handoff"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-14T21:00:00Z",
-  "acks": [],
+  "acks": [
+    "M12"
+  ],
   "requests": [
     {
       "id": "AD-R7",
@@ -239,7 +241,84 @@
       "due": "2026-11-13T16:18:00Z",
       "default": "open phase 2 at the next lead cycle if the other exit conditions hold",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R22",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 3 objection A (hard defect, follow-up to merged P2-S2-home-2): at 200% text in pt_BR with the raid notice (NOTICE=1), Collect is off the screen; the notice fills the lower third, the world shrinks to a thumbnail and the side buttons go; the notice's close cross has no plate. FIT=1 passes because it checks labels, not controls. Collapse the notice to a one-line banner at 200% and keep Collect on screen in every state; add a scripted check that Collect's rect is inside the viewport at 200% in both locales, with and without the notice. Details in board-3.md, item 6.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-3.md",
+        "client/scripts/home.gd",
+        "client/tests/shots/universe_home.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T08:42:00Z",
+      "due": "2026-11-15T08:42:00Z",
+      "default": "file it as a phase 2 follow-up task for S2 (home-3); AD re-checks board 3 on the new stills",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R23",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 3 objection B: at 100% the world is framed too low; Verdant and Emberreach sit under the goal panel and Collect and their pins stack; in pt_BR the Defence badge collides with the Skyfield pin; the goal panel wraps to three lines and stands taller than Collect. Fit the world camera between the purse and the bottom panels (the notice state already does), keep the goal panel to one or two lines, keep pins clear of the side buttons. Details in board-3.md, items 1, 4 and 5.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-3.md",
+        "client/scripts/home.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T08:42:00Z",
+      "due": "2026-11-15T08:42:00Z",
+      "default": "fold it into the same S2 follow-up task as AD-R22",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R24",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 3 objection C: content is dropped at larger text and in pt_BR: the goal panel (100% pt_BR and 200%), the realm pins (200%) and the dock labels, the chosen tab's included; at 200% the caps side-button tags (DEFENCE, DEFESA, TEMPORADA, LOJA) become the largest words after the title. Keep the goal bar at every size, show numbered realm chips at 200%, keep the chosen tab's label, make the side buttons icon-only at 200%, keep all five dock labels at 100% pt_BR. Details in board-3.md, items 2, 3 and 5.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-3.md",
+        "client/scripts/home.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T08:42:00Z",
+      "due": "2026-11-15T08:42:00Z",
+      "default": "fold it into the same S2 follow-up task as AD-R22; if the dock labels are the kit's choice, the KitTabs part goes with AD-R25",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R25",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 3 objection D (small, kit): in the dock, the labels 'ISLANDS' (chosen) and 'HEIST' sit across the bottom gold rim of their tiles. Set the label below the rim, or inside with clear space, in client/ui/kit_tabs.gd. Details in board-3.md, item 8.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-3.md",
+        "client/ui/kit_tabs.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T08:42:00Z",
+      "due": "2026-11-15T08:42:00Z",
+      "default": "file it as a small K1 task; no other open task owns kit_tabs.gd",
+      "escalate_to": "lead"
     }
   ],
-  "answers": []
+  "answers": [
+    {
+      "request_id": "S3-R7",
+      "answer": "AD's review of the settings stills at f5719f28 (settings-100, settings-200-pt_BR, settings-hc), beside key frame 05 (05-settings, 05-settings_text200_pt_BR, 05-settings_hc) and the gate's verdict at f5719f28. Every objection, in order of weight (M12); none needs source art repainted. (1) Hierarchy at 200% pt_BR: the title 'Ajustes' keeps its 100% size while the tab word 'Acesso' and 'Voltar' double, so the open tab's word is the largest on the screen. Key frame 05_text200_pt_BR draws the title about twice its 100% height and keeps it the largest word. Fix: scale the title with the text setting, and keep the open tab's word no larger than the title. (2) Display type at both sizes: the group headings ('Access', 'Seeing and comfort', 'Acesso') read as thin serif with a soft drop and no ink line at the still's size, so all six samples failed. Fix: give them the kit's display outline (at least 1.5 pt all round at frame_pt, as the T2 stroke is meant to be; check it survives at 540 px), or set them on the kit's tag plate as board 1 did with 'Laws here'. (3) The ground runs the wrong way: it brightens downward to a saturated blue (about #2C39A6 at the foot, from #1C195C at the top), while key frame 05 darkens to near black (#0B0621). The light ground sits behind 'Seeing and comfort' and the dock, and it is part of why the headings read as type on a busy ground. Fix: use the key frame's ground, or reverse the ramp so the foot is the darkest. If the backdrop is the shared screen kit's, fix it there so the character screen gets it too. (4) Content at 200% pt_BR: the Stillness law stops at 'still for 1.5…'. The sample is there to show the law at the reader's size, and the key frame lets the card grow to five lines. The school card is also cut mid-word ('Matéria', 'Energia') at the dock, with no cue that the list scrolls; one gate sample flagged it. Fix: let the card hold the whole law, since the list scrolls, and end the opening frame on a row's edge or show the kit's scroll cue (fade and chevron) above the dock. Fixing (1) by the title, not by cutting the law, keeps Hierarchy. (5) At 100% and in high contrast, the Motion switch (the key frame's second switch row) is hidden under the dock in the opening frame, with no scroll cue. Fix: bring the Stillness text to two lines (a wider text column, as the key frame's) and trim the school card's padding so both switch rows clear the dock, or show the scroll cue. (6) Minor: at 100% the gold '100%' is as tall as the title and heavier, which one Hierarchy sample failed on. Keep its cap height a step below the title's. These stand and are not objections: the cream As and the dark chosen tab (colour roles pass in high contrast, 3 of 3), sentence-case tabs (the kit's type roles, K1's), and the pt_BR coins three to a line at 100%. Re-check after the fix: only what the fix changes (the title's scale, the headings' ink, the ground, the 200% card and scroll edge).",
+      "at": "2026-11-13T08:26:00Z"
+    },
+    {
+      "request_id": "S2-R18",
+      "answer": "AD's review of home part 2 at the integration head (home-2 merged as 807d68a7; renders with universe_home.gd, FIT=1, at 100%/200%, en/pt_BR, high contrast and NOTICE=1), beside art/ui/keyframes/01-home*. What the request asked for holds: the featherkin is alive in its ring, toon-shaded and outlined, face readable (quality 9 stands; note: its idle turns the face away in part of the cycle, prefer a clamped yaw); 'Keeper 24' and the counts carry the Display finish (quality 2 stands); Collect's shine runs (250 ms every 2.4 s, off in high contrast). Every objection, in order of weight (M12), each now a follow-up request to the lead because home-2 is merged: (A, hard defect) at 200% pt_BR with the raid notice Collect is off the screen (AD-R22, S2); (B) at 100% the world is framed too low, Verdant and Emberreach under the panels, pins stacked, Defence badge on the Skyfield pin in pt_BR, goal panel three lines (AD-R23, S2); (C) the goal panel, realm pins and dock labels drop at 200% and in pt_BR at 100%, and the caps side-button tags lead at 200% (AD-R24, S2); (D) the dock labels ISLANDS and HEIST sit on their tiles' gold rim (AD-R25, K1). Notes: strain mark is a cyan dot vs the key frame's pink bolt; the shot fixture lacks notifications, shield and a locked realm. Full board: docs/art/ui-quality/gate/boards/board-3.md.",
+      "at": "2026-11-13T08:42:00Z"
+    },
+    {
+      "request_id": "S1-R24",
+      "answer": "AD's review of result part 2 at S1's aed28321 (renders with screen_result.gd, SERVER=1, FIT=1, at 100%, at 200% pt_BR and in high contrast), beside art/ui/keyframes/03-result*. What the request asked for stands: the crew's three faces apart at 52 pt read better than key frame 03's overlapped stack of 48 pt, each face whole in its gold ring, and the stack in the key frame crops two of the three faces (quality 9 stands; the change is accepted, no golden change needed: the board will note it as a sanctioned departure). Every objection, in order of weight (M12), all for S1 inside result-2 before it merges: (1, hierarchy and one idea, qualities 6 and 14) at 200% pt_BR the first screen shows no haul: the page puts the moment card under the time line, cut by the dock, and the three rewards fall below the fold; key frame 03_text200_pt_BR shows the three reward rows straight under the time line. At large text, set the rewards above the moment (or the moment after the rewards) so the haul is on the first screen. (2, light and colour, qualities 13 and 8) in high contrast the sunburst rays, stars and glow stay behind the title and the condition line; key frame 03_hc drops them to a flat dark ground. Turn the rays and stars off in high contrast, as Collect's shine is. (3, hierarchy, quality 6) at 200% pt_BR the multipliers pill wraps into a two-line pill as wide as the screen; the key frame keeps 'Saque x0.7 · Renome x0.8' on one line. Let the pill shrink its gaps or step down one size before it wraps. (4, small) at 100% the rest line wraps to three lines beside the wider faces; the key frame keeps two. Narrow the gaps between the faces (about 8 px) or let the line take the space to the card's edge so it keeps two lines. Notes, not objections: the kicker 'HEIST COMPLETE' is gold, white in the key frame (fine if gold marks a Clean grade); RAID AGAIN's line 'Idle crew of 3 ready' is absent because the shot fixture has no roster (idle_crew() returns -1), so it is untested here; the dock's order at 200% (RAID AGAIN above Home, full width) differs from the key frame's (home square beside it) and is acceptable at large text. Re-check after the fix: only the 200% order, the high-contrast ground, the pill and the rest line.",
+      "at": "2026-11-13T08:46:00Z"
+    }
+  ]
 }

@@ -13,16 +13,17 @@ const EACH := 4
 
 
 ## Icons of each resource in `amounts` ({"starlight": 320, …}, those above
-## zero) fly from `from` to that resource's pill in `purse`, drawn on `layer`.
-static func fly(layer: Control, from: Control, purse: UniversePurse, amounts: Dictionary) -> void:
+## zero) fly from `from` to that resource's pill in `pills` (kind to the
+## pill's Control: home's `KitStatus.resource` pills), drawn on `layer`.
+static func fly(layer: Control, from: Control, pills: Dictionary, amounts: Dictionary) -> void:
 	if UI.motion_ms(FLIGHT_MS) <= 0.0 or not layer.is_inside_tree():
 		return
 	var start := from.get_global_rect().get_center() - layer.global_position
 	var k := 0
 	for kind: String in UniversePurse.ORDER:
-		if int(amounts.get(kind, 0)) <= 0 or not purse.pills.has(kind):
+		if int(amounts.get(kind, 0)) <= 0 or not pills.has(kind):
 			continue
-		var pill: Control = purse.pills[kind]
+		var pill: Control = pills[kind]
 		var end := pill.get_global_rect().position + Vector2(UI.px(18), pill.size.y * 0.5) - layer.global_position
 		var tex := Icons.texture("resources/" + kind)
 		for i: int in EACH:

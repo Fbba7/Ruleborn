@@ -3,31 +3,32 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P2-S1-toon-drop",
+  "agent_state": "active",
+  "task_id": "P2-S1-result-2",
   "task_state": "working",
-  "claimed_at": "2026-11-12T22:04:25Z",
-  "lease_until": "2026-11-13T01:04:25Z",
-  "updated_at": "2026-11-12T22:41:36Z",
-  "expected_next_update_by": "2026-11-13T01:41:36Z",
+  "claimed_at": "2026-11-13T06:14:06Z",
+  "lease_until": "2026-11-13T12:00:00Z",
+  "updated_at": "2026-11-13T09:30:17Z",
+  "expected_next_update_by": "2026-11-13T10:00:17Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "a7dd6501",
-    "next_step": "Gate on heist at 100% text, Character presence, at a7dd6501; mark ready at a7dd6501 in the turn its verdict comes back.",
-    "at": "2026-11-12T22:41:36Z"
+    "last_green_sha": "aed28321",
+    "next_step": "Pre-check at 6465a169 failed on gdlint (result_screen.gd at 1147 of 1000 lines). The large-text fitting helpers move to client/scripts/result_fit.gd (S1-R27), with the stills unchanged; pre-check again.",
+    "at": "2026-11-13T09:30:17Z"
   },
   "precheck": {
-    "sha": "a7dd6501968c54d6df178185956a4f1efe5d4578",
+    "sha": "aed28321c02e67edf889d45075675bd1343335cd",
     "exit": 0,
-    "finished_at": "2026-11-12T22:40:59Z",
+    "finished_at": "2026-11-13T07:49:05Z",
     "summary": "All checks passed."
   },
   "gate_request": {
-    "sha": "a7dd6501",
+    "sha": "7116702892c0d11b2785c4f14b152e1499e4db72",
     "items": [
       {
-        "item": "heist at 100% text",
+        "item": "result at 100% text",
         "qualities": [
+          "Hierarchy",
           "Character presence"
         ]
       }
@@ -251,8 +252,193 @@
       "due": "2026-11-13T22:41:36Z",
       "default": "The gate runs on a7dd6501 as it stands; a crop for Hollow, if wanted, becomes AIA-2's framing at the source or a follow-up task.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R15",
+      "from": "S1",
+      "to": "K1",
+      "ask": "KitControls.action2 whose words wrap at large text: its label is 16 points, uppercase and does not wrap, so at 200% text 'RAID AGAIN' runs past the button, and in pt_BR 'ASSALTAR' alone is wider than the room beside Home (P2-S1-result-1). Ask: the words wrap between words inside the button's padding, the button growing to its lines.",
+      "files": [
+        "client/ui/kit_controls.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The result screen's _fit_raid wraps action2's labels itself, inset by the button's padding, and stands the bar upright (raid first, full width) when one word will not fit beside Home.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R16",
+      "from": "S1",
+      "to": "K1",
+      "ask": "The hero title's size: kit-spec says 34 points, KitNav.hero sets 52, key frame 03 shows the outcome at 40. Ask: one size, or a size argument on KitNav.hero.",
+      "files": [
+        "client/ui/kit_nav.gd",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The result screen sets its title to 40 points, as key frame 03.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R17",
+      "from": "S1",
+      "to": "K1",
+      "ask": "A portrait stack component: the crew's faces overlapping in rings, each over the last by a third of its width, as key frame 03's rest card (and the kit avatar's framing).",
+      "files": [
+        "client/ui/kit_social.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The result screen composes the stack from KitRing with KitSocial's framing (gold band, ground #4A3A9A, zoom 1.2).",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R18",
+      "from": "S1",
+      "to": "K1",
+      "ask": "A dusk or muted backdrop for a foiled heist: the kit has the night and the celebration sunburst only.",
+      "files": [
+        "client/ui/kit_nav.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "A foiled or refused heist keeps the plain night.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R19",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Lower result_screen.gd's record in tools/ui_bake/budgets.json (screens): check_screens.py counts 0 draw (recorded 5) and 0 fill (recorded 1) after P2-S1-result-1; `python3 tools/ui_bake/check_screens.py --record` writes it.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The record stays as it is; check_screens.py passes either way.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R20",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-1, M10, M12): the result screen from the kit alone on key frame 03. Stills: SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, with TEXT=200 LOCALE=pt_BR and with CONTRAST=1 for the other two gate items; GOLDEN=long-crew5 for a foiled heist. Notes in docs/art/tracks/result-screen.md: faces from the role's default kind, the raid bar upright at 200% pt_BR, the pill broken only at its dots, the bar on glass. Open: character art is in the crew's faces, none beside the reward tiles (none in the key frame either). Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The gate runs on the pre-checked head as it stands; a character beside the reward, if wanted, becomes a follow-up task with AIA's art.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R21",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Motion.reward's layer (client/ui/motion.gd, reward(): top_level, z_index 10) draws under any page that is a UI layer: a top_level item's z does not add to its parents', and UI gives a full-screen page z 32 (OVERLAY_Z over the backdrop). On the result screen the reduced coin did not show and the full coins vanished at the reward tiles. Give the layer the prize's whole z plus 10 (or z_as_relative false at a z above UI's layers); the same holds for the top_level node at motion.gd line ~731.",
+      "files": [
+        "client/ui/motion.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:47:22Z",
+      "due": "2026-11-14T03:47:22Z",
+      "default": "result_screen.gd lifts the layer itself after Motion.reward returns (_lift_reward: the medal's summed z plus the layer's own); it is removed when the kit answers.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R22",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-2, M10, M12), for board 4: the result's reward sequence on Motion.reward at d2422a0. Frame strips, full and reduced, and clips: STRIP=out/full SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, and the same with REDUCED=1 STRIP=out/reduced; the sheet.py strip and ffmpeg lines are in docs/art/tracks/result-screen.md, 'The reward sequence'. Full (epic, 1.93 s): pause, burst on the sunburst, coins in arcs into Starlight, counters stepping with a pulse on each landing. Reduced (0.37 s): one coin and the final value. The burst and coins are the kit's sprite sizes at the 34 pt medal, so they read small. Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:47:22Z",
+      "due": "2026-11-14T03:47:22Z",
+      "default": "The gate runs on the pre-checked head as it stands; a larger burst, if wanted, is a request to K1 for Motion's scale.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R23",
+      "from": "S1",
+      "to": "K1",
+      "ask": "KitControls.big_action keeps a fixed 76x64 px minimum and a full-rect child box that does not grow with its words: at 200% text the result's '3 s' replay button clipped its words (gate verdict P2-S1-result-1 at 8bec0d84, Display type at 200% pt_BR). Let the button's minimum grow to its box's combined minimum plus its padding.",
+      "files": [
+        "client/ui/kit_controls.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T04:45:18Z",
+      "due": "2026-11-14T04:45:18Z",
+      "default": "result_screen.gd grows the moment's button itself (_moment_card: the kit's size, grown to the box's combined minimum plus 12x10 px); it is removed when the kit answers.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R24",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-2), for board 4: the result's rest card at e13b5a3c shows the crew's three faces apart, 52 pt each (about 57 px at 960), not key frame 03's overlapping stack of 48 pt; the rest line is 13 pt beside them. Reason: result-1's gate failed Character presence 3/3 on small overlapping portraits. Still: SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png. Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T06:50:05Z",
+      "due": "2026-11-14T06:50:05Z",
+      "default": "The faces stay apart at 52 pt; the gate's verdict decides.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R25",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Re-check of S1-R24's four objections (P2-S1-result-2) at 71167028 (4cf3f522 with main merged). (1) pt_BR 200%: the rewards above the moment card, as three rows (icon, word, number) under the time line, as 03-result_text200_pt_BR. (2) High contrast: no rays, stars, glow or island, a plain night, as 03-result_hc. (3) pt_BR 200%: the multipliers pill on one line (thin gaps, 6 pt padding). (4) en 100%: the rest line on two lines, the faces with no gap between them. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd pt200.png; the same with CONTRAST=1 (no TEXT or LOCALE) for hc.png and with neither for en100.png. For reference, de 200% (TEXT=200 LOCALE=de) keeps the tiles as columns, because 'Sternenlicht' does not fit a row. Details are in docs/art/tracks/result-screen.md, \"AD's four objections to S1-R24\". Any objection to the four, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T09:22:07Z",
+      "due": "2026-11-14T09:22:07Z",
+      "default": "The four stand as fixed; S1 marks ready when the pre-check and the gate pass.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R26",
+      "from": "S1",
+      "to": "lead",
+      "ask": "Record result/200's draw calls in tools/ui_bake/budgets.json at 98, from 90, when P2-S1-result-2 merges (measured with budget_shots --only result/100,result/200,result/hc at dd800065). The 8 calls come from AD's 200% first screen for S1-R24: the haul above the moment card, the reward tiles as rows and the multipliers pill on one line. A bisect shows that removing any one of them brings back an objection. The figure stays 52 under the cap of 150. Textures and words below 4.5:1 are unchanged. At the same time, result/100 (94 to 89) and result/hc (94 to 27) may be lowered, along with check_screens' fallen result_screen.gd (draw 5 to 0, fill 1 to 0) and character_screen.gd (fill 3 to 0).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T09:22:07Z",
+      "due": "2026-11-14T09:22:07Z",
+      "default": "S1 marks ready with guard.sh failing only on result/200 at 98 of 90, said in the handoff, as S2-R17's approval allowed; the lead records 98 when it merges.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R27",
+      "from": "S1",
+      "to": "lead",
+      "ask": "AD's S1-R24 fixes would put client/scripts/result_screen.gd over gdlint's 1000 lines (pre-check FAIL at 6465a169: 1147). The result's large-text fitting (the reward tiles as rows or columns, the multipliers pill on one line, Home as an icon, and the word and line measures of the raid bar) moves to a helper, client/scripts/result_fit.gd (class ResultFit) and its .uid, as K1-R20 did with ui_kit_motion.gd. Asks to grant both as P2-S1-result-2's exceptions. The stills are unchanged: pt_BR 200% 109 draw calls, en 100% 120, high contrast 62, de 200% 97, all FIT ok.",
+      "files": [
+        "client/scripts/result_fit.gd",
+        "client/scripts/result_fit.gd.uid"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T09:30:17Z",
+      "due": "2026-11-14T09:30:17Z",
+      "default": "The helper stays as committed, and P2-S1-result-2 is marked ready with it on the branch.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "P2-S1-flow-replay (F7): stack or merge the replay timeline's markers that share a time."
+  "next_step": "Fixing AD's four objections to S1-R24 (haul above the moment at 200% pt_BR; rays, stars, glow off in high contrast; multipliers pill on one line at 200% pt_BR; rest line on two lines at 100%), then AD's stills, gate, pre-check, ready."
 }

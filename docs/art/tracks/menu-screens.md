@@ -60,6 +60,18 @@ The gate's first samples on "settings at 100% text" were cut from the rectangles
 
 `python3 tools/ui_gate/checks.py all` on them: hud-share PASS and hierarchy N/A (no primary) on both. value-steps passes the open tab and the language pill on Game, the open tab on Access, and fails the rest: the dark plum steppers, switches and back button sit 0 to 1.1 value steps off the plum cards and the night ground, where the rule asks 2. On the key frame's record every control passes, its cream steppers and switches 44 to 88 L* off their ground. That is P2-S3-settings' work (the screen built on the key frame), not ScreenKit's materials.
 
+### The gate's advisory verdict at f1251e68, and the fixes
+
+The judge passed 4 of the 7 checks (`docs/art/ui-quality/gate/verdicts/P2-S3-character/f1251e68.json`, shadow mode). The three fails, and what this task changed after them (lead cycle 76: the cheap fixes before ready, the rest as follow-ups):
+
+- **Display type, at 100% and at 200% pt_BR.** The subtitle (kind · role) and the "Level 3 of 10" label sat on the starfield with no ink outline. Both now wear the kit's ink outline all round (`ScreenKit.inked`, 1.5 points), as the world's words do. It adds 2 draw calls a still.
+- **Hierarchy at 100%.** The open ability card outweighed Level up: its sentence was the kit's 20-point serif heading, about as large as the button's label. The sentence is now in the body face at 16 points, as on key frame 04's card, so it no longer counts as display words: the 100% and high-contrast records drop from 7 controls to 6. The high-contrast hierarchy check passed already; its failing samples named the same card.
+
+Follow-ups, not taken here:
+
+- **The ability card is still open, with its sentence.** Key frame 04 shows the sentence too, so collapsing the card to its header would drop words the anchor keeps. If the judge still fails hierarchy, the next step is the kit's: a smaller ability card (request to K1).
+- **Level up's label and value.** The button is the kit's (`KitControls.upgrade`), and its growth is S3-R3's request.
+
 ### What is still worse than before
 
 - **The law card's preview has no frame.** `law_screen.gd` seats the preview in `ScreenKit.panel("well", preview, 16.0, 3.0)`. The track skin drew a dark rim round it; the well skin's rim is soft and 3 points of padding leave it under the picture, so the picture's edges fade into the green card. `law_screen.gd` is not this task's; it is in S3-R2 for AD to judge, and a fix (more padding, or the kit's `frame_*` look) is a request to the lead.
@@ -69,3 +81,59 @@ The gate's first samples on "settings at 100% text" were cut from the rectangles
 
 - `budgets.json`'s record for `screen_box.gd` falls from 1 draw to 0 with `check_screens.py --record` (K1's file).
 - `ScreenBox.outline` could move into `ScreenBands` and `ScreenSwitch`, its only users, so that `screen_box.gd` can go.
+
+## Part 2: the character screen (P2-S3-character)
+
+### What was done
+
+`client/scripts/character_screen.gd` is built from the kit, after key frame 04 (`art/ui/keyframes/04-character.png`):
+
+- **The stage.** The hero stands full-bleed on its stage, with the state and the roster count on the kit's dark pills (`KitStatus.pill`), the kit's round gold arrows through the roster, and its name on the name-plate.
+- **The tabs.** Heist, Stats and Compare are the kit's light segmented row (`KitNav.segmented`), each segment with the design's icon. At large text the three segments go two to a line, so each word stays whole.
+- **The forms.** The forms and the guard form are portraits on the kit's grid (`KitLayout.grid`), with fewer columns at large text.
+- **The ability and the facts.** The ability sits on the kit's ability card (`KitCards.ability`), and the facts on its info cards. The Compare tab's heads wrap in their halves.
+- **The tray.** The fixed spends sit beneath the scroll: the round way back to the roster and the level-up button (`KitControls.upgrade`). At large text, `_fit_upgrade` lets the button grow to hold its words (S3-R3).
+- **Contrast.** The subtitle wears the primary ink: the secondary ink is Lc 73 on the plum, against the 75 asked. The ability card's kicker wears `gold_top` and not the kit's gold, which is Lc 55 on the plum (S3-R4).
+- **Wrapping at 200% text.** The ability's tag and the subtitle wrap against the screen's side, less the safe margin, each time their room moves as well as grows (`_wrap_in`). Before this, at 200% in pt_BR, the column ran 1256 pixels wide on a 1080-pixel screen. The ability tag also wears the Kicker variation, so it is now wrapped before the kicker's colour is set. Before, the colour branch caught it and the tag was never wrapped.
+- **The shot.** `client/tests/shots/screen_character.gd` takes `LOCALE`, `TAB` and `SCROLL`. `FIT=1` fails the run when any label's words overflow it, leave its panel or run off the screen's sides. `RECORD=1` writes the still's shot record from the same frame, named as key frame 04's record names its controls: the arrows, the name-plate's words, the tabs as one row, the way back, and the level-up button as `up`. Words inside buttons, empty names and what the scroll hides under the tray are left out.
+
+### Evidence
+
+The stills are in `docs/art/shots/menu-screens/`. Each was rendered with this command, with the table's env in the environment (and `FIT=1 RECORD=1` on the recorded ones):
+
+```
+[env] bash tools/render/shoot.sh client/tests/shots/screen_character.gd <still>
+```
+ Every still printed `fit ok`.
+
+| Still | Env | Draw calls | Record |
+|---|---|---:|---|
+| `character-100.png` | – | 81 | `.shot.json`, 6 controls |
+| `character-200-pt_BR.png` | `TEXT=200 LOCALE=pt_BR` | 61 | `.shot.json`, 6 controls |
+| `character-hc.png` | `HC=1` | 81 | `.shot.json`, 6 controls |
+| `character-200-pt_BR-scrolled.png` | `TEXT=200 LOCALE=pt_BR SCROLL=2000` | 34 | `.shot.json`, 3 controls |
+| `character-200-pt_BR-tabs.png` | `TEXT=200 LOCALE=pt_BR SCROLL=600` | 56 | `.shot.json`, 4 controls |
+| `character-100-stats.png`, `character-100-compare.png` | `TAB=1`, `TAB=2` | 82, 71 | – |
+| `character-200-en.png` | `TEXT=200` | 59 | – |
+| `character-200-pt_BR-stats.png`, `-compare.png` | `TEXT=200 LOCALE=pt_BR TAB=1`, `TAB=2` | 64, 60 | – |
+
+The before still is `before-character-100.png`, from Part 1.
+
+`python3 tools/ui_gate/checks.py all` on the five records:
+
+- **value-steps** passes every control. At 100% text, ΔL* is 50 and 52 on the arrows, 64 on the tabs, 77 on the way back and 61 on the level-up button. In high contrast it is 62 to 95. Key frame 04's own record reads 40 to 89.
+- **hud-share** passes, at 0.
+- **hierarchy** reads N/A (no primary), as on the key frame's record. It names no primary either. The tabs' row (366 × 56 points) is larger than the level-up button (276 × 64), so naming the button primary would fail the 1.5× rule on the key frame as well.
+
+`tools/ui_bake/check_screens.py` reports two falls (K1's file, for `--record`):
+
+- `character_screen.gd`: 3 fill → 0;
+- `screen_box.gd`: 1 draw → 0.
+
+The budget shots' recorded draw calls for the character screen are 103, 80 and 103 (100%, 200% and high contrast). They now read 81, 61 and 81, also for K1 or the lead to `--record`.
+
+### What is still worse than before
+
+- **The level badge at 200% text.** The level badge's "NV" kicker touches the top of the XP bar beside it. Both are the kit's (`KitStatus`); the words fit.
+- **English words in pt_BR.** Some of the character's content strings are still English under pt_BR: "Two uses a heist", the ability's sentence and the carrier's "Hauls loot; 15% slower when loaded". They come from the content (`content/ruleborn.json`), not from `Strings`. This is not this task's work.
+- **The tabs at 200% text.** They are under the tray in the opening frame, so the 200% record has no tabs row. `character-200-pt_BR-tabs.png` (scrolled 600) shows them: the three tabs wrap to two rows, Comparar on its own, and its record's row passes value-steps (ΔL* 63).

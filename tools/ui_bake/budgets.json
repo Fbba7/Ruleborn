@@ -12,6 +12,40 @@
       },
       "reason": "AD-R14: the heist's 'Laws here' / 'Leis aqui' header wears the kit's display stroke (kit-spec.md section 2.2, T2), an ink outline and a hard gold_drop drop with its own outline; the drop is the label's shadow pass, 2 draw calls. Textures and contrast unchanged; the heist stays 30 under the cap of 150.",
       "request": "K1-R18"
+    },
+    {
+      "approved_by": "lead, cycle 74 (S2-R7) and cycle 76 (S2-R16)",
+      "date": "2026-11-13",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "home/100": "119 -> 143",
+        "home/200": "97 -> 112",
+        "home/hc": "119 -> 143"
+      },
+      "reason": "S2-R7 and S2-R16: home is built from the kit's parts alone (P2-S2-home-1), and a kit part interleaves the skin atlas, its icon texture and the font, where the old home drew its purse and side buttons in one layer each; cycle 74's gate then asked for the goal card beside Collect, the character portrait and the display type. Textures and contrast unchanged; home stays 7 under the cap of 150.",
+      "request": "S2-R16"
+    },
+    {
+      "approved_by": "lead, cycle 78 (S2-R17)",
+      "date": "2026-11-13",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "home/100": "143 -> 145",
+        "home/200": "112 -> 114",
+        "home/hc": "143 -> 145"
+      },
+      "reason": "S2-R17: the Keeper's companion on home is drawn live each frame in its own 3D stage (the model and its ink pass), for rubric quality 9, Character presence (P2-S2-home-2). Textures and words below 4.5:1 unchanged; home stays 5 under the cap of 150.",
+      "request": "S2-R17"
+    },
+    {
+      "approved_by": "lead, cycle 82 (S1-R26)",
+      "date": "2026-11-13",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "result/200": "90 -> 98"
+      },
+      "reason": "S1-R26: AD's 200% first screen for S1-R24 puts the haul above the moment card, the reward tiles in rows and the multipliers pill on one line (P2-S1-result-2); a bisect shows removing any one brings back an objection. Textures and words below 4.5:1 unchanged; result/200 stays 52 under the cap of 150. result/100 (94 -> 89) and result/hc (94 -> 27) are lowered with it, and check_screens' result_screen.gd (draw 5 -> 0, fill 1 -> 0) and character_screen.gd (fill 3 -> 0).",
+      "request": "S1-R26"
     }
   ],
   "screens": {
@@ -23,7 +57,7 @@
       },
       "client/scripts/character_screen.gd": {
         "draw": 0,
-        "fill": 3,
+        "fill": 0,
         "texture": 0
       },
       "client/scripts/forms_screen.gd": {
@@ -41,29 +75,19 @@
         "fill": 2,
         "texture": 0
       },
-      "client/scripts/home.gd": {
-        "draw": 1,
-        "fill": 0,
-        "texture": 2
-      },
       "client/scripts/observatory_screen.gd": {
         "draw": 0,
         "fill": 0,
         "texture": 2
       },
       "client/scripts/result_screen.gd": {
-        "draw": 5,
-        "fill": 1,
+        "draw": 0,
+        "fill": 0,
         "texture": 0
       },
       "client/scripts/roster_screen.gd": {
         "draw": 0,
         "fill": 2,
-        "texture": 0
-      },
-      "client/scripts/screen_box.gd": {
-        "draw": 1,
-        "fill": 0,
         "texture": 0
       },
       "client/scripts/screen_draw.gd": {
@@ -186,11 +210,6 @@
         "fill": 2,
         "texture": 1
       },
-      "client/world/universe_badge.gd": {
-        "draw": 7,
-        "fill": 0,
-        "texture": 0
-      },
       "client/world/universe_collect.gd": {
         "draw": 3,
         "fill": 0,
@@ -262,9 +281,9 @@
       "client/world/overlay_route.gd": "a rehearsal route drawn from the simulation report (section 13), data that changes with the run"
     },
     "totals": {
-      "draw": 226,
+      "draw": 217,
       "fill": 29,
-      "texture": 27
+      "texture": 25
     }
   },
   "shots": {
@@ -305,32 +324,32 @@
         "words_below": 0
       },
       "home/100": {
-        "draw_calls": 119,
+        "draw_calls": 145,
         "texture_bytes": 4723360,
         "words_below": 0
       },
       "home/200": {
-        "draw_calls": 97,
+        "draw_calls": 114,
         "texture_bytes": 4880360,
         "words_below": 0
       },
       "home/hc": {
-        "draw_calls": 119,
+        "draw_calls": 145,
         "texture_bytes": 4723360,
         "words_below": 0
       },
       "result/100": {
-        "draw_calls": 94,
+        "draw_calls": 89,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "result/200": {
-        "draw_calls": 90,
+        "draw_calls": 98,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "result/hc": {
-        "draw_calls": 94,
+        "draw_calls": 27,
         "texture_bytes": 580608,
         "words_below": 0
       },
