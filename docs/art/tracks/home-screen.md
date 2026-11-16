@@ -342,7 +342,26 @@ K1's half (P2-K1-tabs-3) keeps the chosen tab's picture inside the bar at large 
 | 150% | en; en 960 points tall; pt_BR and fr with the notice; pt_PT with the notice and `MOST`, 960 points tall |
 | 200% | en, de, pt_BR, pt_PT, fr, each with and without the notice; en 900 points tall, with and without the notice; high contrast in en, pt_BR and de; `MOST` in en, and with the notice in pt_BR and de |
 
-The 200% rows hold every case H names. Each case is one run of the shot:
+The 200% rows hold every case H names.
+
+**Every state home draws (M26).** Board 5b's K went unseen because a screen's fit check covered one fixture, so home's check now also runs at the states home can be in, at 200% text in en, pt_BR and de. The shot's new `EMPTY` fixture (`start` in `universe_home.gd`) is a new Keeper's home: level 1, every amount 0, nothing waiting so no Collect, strain 0 ("Quiet"), the season track untouched. With `OUTER=0` only the Heart is on the map. `FIT=1` passes in all 20 of these runs, with no script errors:
+
+| State | Cases that pass |
+|---|---|
+| Widest amounts (`MOST`: seven figures, level 99, every producer full) | en, pt_BR, de at 200%, each with and without the notice |
+| Most raids (`MOST=1 RAIDS=99 NOTICE=1`: the badge's and the notice's widest count) | en, pt_BR, de at 200% |
+| New Keeper, Heart only, no raids (`EMPTY=1 OUTER=0 RAIDS=0`) | en, pt_BR, de at 200%; en at 100% |
+| New Keeper, Heart only, raided (`EMPTY=1 OUTER=0 NOTICE=1`) | en, pt_BR, de at 200%; pt_BR at 150% |
+| New Keeper, seven realms (`EMPTY=1`) | en, pt_BR, de at 200% |
+
+The rest of M26's list, for home:
+
+- **The key frame's state, with and without the notice.** Covered in the table above.
+- **Signed in and signed out.** Home draws the same either way. It shows no name, account or sign-in mark, and a player the age check bars from an account never reaches home (`_ready` sends them to `age`).
+- **Every tab.** Home is the bar's Home tab, so the bar on home always has Home chosen. The other tabs are other screens, each with its own fit check.
+- **The longest names.** These are the locales' strings. pt_BR and de are the longest, fr and pt_PT are in the cases above, and all seven realms' names are on the map in every case except `OUTER=0`.
+
+Each case is one run of the shot:
 
 ```
 FIT=1 TEXT=200 LOCALE=pt_BR NOTICE=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png
