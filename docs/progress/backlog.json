@@ -3918,14 +3918,20 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S2",
+        "branch": "claude/ui-screens-home",
+        "claimed_at": "2026-11-16T09:35:00Z",
+        "seen_at": "2026-11-16T09:43:00Z",
+        "lease_until": "2026-11-16T12:35:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-16T06:50:00Z",
-      "updated_by": "lead (cycle 96)",
+      "updated_at": "2026-11-16T09:43:00Z",
+      "updated_by": "lead (cycle 98)",
       "id": "P2-S2-home-4",
       "title": "Home screen, part 4 (board 3b's objection H, home half, AD-R39): reserve_lift given back to the realms' band, side buttons and realm chips at 200% in every locale, with and without the notice",
       "exceptions": [
@@ -4065,6 +4071,63 @@
       "updated_by": "lead (cycle 90)",
       "id": "P2-S1-result-3",
       "title": "Result screen, part 3 (board 4's objections A, B, D and E; AD-R27, AD-R26, AD-R29, AD-R30): the reward figures in the home's 'Keeper 24' finish, the whole haul on the first screen at 200% in every locale, the coins landing beside the digits, Home icon-only at 200%"
+    },
+    {
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/scripts/result_fit.gd.uid",
+        "client/tests/shots/screen_result.gd",
+        "docs/art/tracks/result-screen.md"
+      ],
+      "deps": [
+        "P2-S1-result-3"
+      ],
+      "done_when": [
+        "phase 2's exit for the result screen (report.md section 3.2, phase 2): the screen passes the gate at 200% text and in high contrast, as it did at 100% in P2-S1-result-3",
+        "overflow sweep: FIT=1 runs of client/tests/shots/screen_result.gd at 100% and 200% text in en, pt_BR and de, in high contrast at 100% and 200%, and for long-crew5 and reduced motion, all passing; every label, tile and button that was cut, wrapped mid-word or pushed below the actions fixed in the task's files, and each run listed in the handoff",
+        "the advisory gate's close points on P2-S1-result-3 (docs/art/ui-quality/gate/verdicts/P2-S1-result-3/904a3567.json: Home and the law pills lighter than Raid again in grayscale; the reward tiles carry no character frame) considered and answered in the handoff, changed only where the screen gains by it",
+        "any change of draw calls asked of the lead as a budgets request (tools/ui_bake/budgets.json is the lead's), with the measurement",
+        "AD previews the stills before ready (M10, M12): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "gate_items": [
+        {
+          "item": "result at 200% text, pt_BR",
+          "qualities": [
+            "Display type",
+            "Hierarchy"
+          ]
+        },
+        {
+          "item": "result in high contrast",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T09:43:00Z",
+      "updated_by": "lead (cycle 98)",
+      "id": "P2-S1-result-4",
+      "title": "Result screen, part 4 (phase 2 exit, M25): overflow sweep in en, pt_BR and de at 100% and 200% text and in high contrast; the gate at 200% text and in high contrast; the advisory gate's close points answered"
     },
     {
       "role": "AIA",
@@ -4418,14 +4481,20 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-16T09:30:15Z",
+        "seen_at": "2026-11-16T09:43:00Z",
+        "lease_until": "2026-11-16T12:30:15Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-16T08:55:00Z",
-      "updated_by": "lead (cycle 97)",
+      "updated_at": "2026-11-16T09:43:00Z",
+      "updated_by": "lead (cycle 98)",
       "id": "P2-S3-character-3",
       "title": "Character and settings, part 3: the highest-level pill fits at 200% text (board 5b's objection K, AD-R40) and the Account tab's profile row gets a plate (objection L, AD-R41)",
       "exceptions": [
@@ -4494,14 +4563,20 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-16T09:35:00Z",
+        "seen_at": "2026-11-16T09:43:00Z",
+        "lease_until": "2026-11-16T12:35:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-16T08:55:00Z",
-      "updated_by": "lead (cycle 97)",
+      "updated_at": "2026-11-16T09:43:00Z",
+      "updated_by": "lead (cycle 98)",
       "id": "P2-K1-kit-gaps-1",
       "title": "Kit gaps, part 1 (IQ-kit-docs, S3-R22, R24, R26, R27): slider, dialog variants with ribbon title, info popover and empty state as kit calls",
       "exceptions": [
