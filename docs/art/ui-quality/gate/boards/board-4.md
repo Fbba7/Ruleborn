@@ -351,3 +351,84 @@ S1-R30. No new objection.
 
 Under section 3.8 of the report, the board merges when AD lets it stand,
 with no 24-hour wait. AD lets it stand.
+
+## Preview of result-4 (S1-R31)
+
+AD previewed P2-S1-result-4 at 8753618a on `claude/ui-screens-heist` on
+16 November 2026, against board 4's full list (M23). Each still was
+rendered with `SERVER=1 FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1]
+[STATE=<state>] bash tools/render/shoot.sh client/tests/shots/screen_result.gd`.
+
+**All ten stills print "fit ok":** English at 100%; pt_BR, German and
+English at 200%; high contrast in English and pt_BR; and, for M26, the
+states refused (German 200%), testing (German 200%), confirming (pt_BR
+200%) and play (pt_BR 200%).
+
+What stands:
+
+- **Home and the law pills** take the kit's tertiary (violet ghost) face,
+  and at 200% Home stays the icon square (E). Raid again leads the bar.
+- **The fold at 200% in pt_BR** now ends on the Renome tile, and
+  "Taxa de entrada de" no longer ends the first screen. This closes
+  round 2's note.
+- **The reward tiles** keep their currency icons, with no character frame.
+  The lead figure "+2.310" is still the heaviest word (A).
+- **The other states** fit at 200%. "Veröffentlichen" stays whole on its
+  button in German testing, and Home and Again stack in play.
+
+![200%: pt_BR key frame, then pt_BR, German and English](board-4/r5-1-result-200.png)
+
+![200%, other states: confirming pt_BR, refused German, testing German, play pt_BR](board-4/r5-2-states-200.png)
+
+![100%: English key frame and build, then the hc pt_BR key frame and build, and hc English](board-4/r5-3-result-100-hc.png)
+
+### Objection G (Display type, the words over the sky)
+
+The advisory gate (M30) fails Display type 3 of 3 at 200% pt_BR, and AD
+agrees. In the crop below, the key frame is on top and the build at
+200% pt_BR is below.
+
+- **The gold kicker** "ASSALTO CONCLUÍDO" stands on the sunburst with no
+  ink outline, and its gold melts into the rays. The key frames draw the
+  kicker in cream.
+- **The grade word** "Limpo" keeps a thin outline, where the key frame's
+  "Barulhento" carries a heavy one.
+- **The summary and time lines** keep a hairline edge, about 2 to 3 px
+  on 45 px glyphs, which does not grow at 200%.
+- **The same lines** show in the refused, testing and play states, and in
+  the fee line and the green "Ressimulado" line.
+
+The rulings (v2) treat the sky with rays as art, so every word over it
+needs an outline of at least 1.5 pt or 12% of its size, whichever is
+larger.
+
+![Words over the sky at 200% pt_BR: key frame (top), build (bottom)](board-4/r5-4-sky-words.png)
+
+**The fix (S1, `client/scripts/result_screen.gd`, where the labels over
+the sky are set up):**
+
+- Give every label that sits straight on the sky a dark ink outline of
+  max(1.5 pt, 12% of the font size), worked out after the text scale so
+  it grows at 150% and 200%. These are the kicker, the grade word, the
+  summary, the time line, the fee line, the server line, and the
+  headings and lines in the refused, testing, confirming and play states.
+- Turn the kicker cream, as the key frames draw it, or keep its gold
+  with the same outline.
+- Labels on a card or a plate keep their faces.
+- Re-render 200% in pt_BR, German and English, and high contrast. Then
+  send the gate request for Display type at 200% pt_BR.
+
+Hierarchy passes in both items, and nothing else holds.
+
+### Notes carried, which do not hold the board
+
+- **The crew card at the fold, high contrast pt_BR, 100%.** The top rim of
+  the card and the tops of the rings still show above the bar, as in round
+  2.
+- **Round 2's other notes stand:** the bar's gap at the foot in English at
+  100%, the lead figure in grayscale, no idle crew in the fixture, and the
+  press and the screen change (AIA).
+
+So S1's default ("the gate runs on 8753618a as it stands") does not
+hold. S1 fixes G inside P2-S1-result-4, then sends the gate request at
+the new head. AD-R42 tells the lead.
