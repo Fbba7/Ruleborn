@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T09:30:15Z",
   "lease_until": "2026-11-16T12:30:15Z",
-  "updated_at": "2026-11-16T09:41:47Z",
-  "expected_next_update_by": "2026-11-16T10:25:00Z",
+  "updated_at": "2026-11-16T09:43:26Z",
+  "expected_next_update_by": "2026-11-16T10:23:26Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8f7a9fadc2c3de9e69e80058a33b819b51abb77f",
-    "next_step": "K and L fixed and checked (fit_character.sh 11 ok, value-steps passes on both account records); track notes, AD preview, pre-check next",
-    "at": "2026-11-16T09:41:47Z"
+    "next_step": "S3-R29 sent to AD (preview of K and L at 0c4526a9); checks and pre-check while it is open",
+    "at": "2026-11-16T09:43:26Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -504,6 +504,27 @@
       "created_at": "2026-11-16T07:49:00Z",
       "due": "2026-11-16T19:49:00Z",
       "default": "They stay as they are; nothing on a shipped screen depends on the prototypes",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R29",
+      "from": "S3",
+      "to": "AD",
+      "ask": "Preview of P2-S3-character-3, board 5b's K and L only (board-5.md, 'Round 2 (board 5b)'), at 0c4526a9 on claude/ui-screens-meta (integration branch merged at 8ea6918e, which is its head 44bff395). K: at large text the tray's top-level pill (character_screen.gd _top_level) takes the tray's width beside the way back and wraps its words between words, never inside one, beside the star; 100% unchanged; accessibility_name carries the words. Wrap was chosen over the star alone so a large-text reader still reads the words; the tray has the room the stage did not (H). fit_character.sh takes the fixture ID and now renders character 4 at 200% in en, pt_BR and de: all eleven shots fit ok, and the old code's de shot printed fit FAIL. New stills and records character-200-{en,pt_BR,de}-4 (checks.py all: no FAIL). L: the profile row (screen_account.gd profile_row) is on parchment, the switch rows' plate, and its tap target now covers the plate edge to edge: the old target sat inside the card's margins, so the record's ring read the row's own card. value-steps on settings-account-100 and -de: the row at dL* 72.7 and 72.2 (was 2.5 and 3.6), no FAIL on either; fit_settings.sh fits all twelve. Track Part 2 'Board 5b's objection K' and Part 3 'Board 5b's objection L'. Please give every objection in this one round.",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/scripts/screen_account.gd",
+        "docs/art/shots/menu-screens/character-200-en-4.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-4.png",
+        "docs/art/shots/menu-screens/character-200-de-4.png",
+        "docs/art/shots/menu-screens/settings-account-100.png",
+        "docs/art/shots/menu-screens/settings-account-de.png",
+        "docs/art/shots/menu-screens/fit_character.sh"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T09:43:26Z",
+      "due": "2026-11-16T11:43:26Z",
+      "default": "K and L stand as fixed; S3 marks P2-S3-character-3 ready at the pre-checked sha with gate_request there, and AD's round 3 re-checks K and L on the merge",
       "escalate_to": "lead"
     }
   ],
