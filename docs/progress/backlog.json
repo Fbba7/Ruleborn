@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-16T01:55:00Z",
-  "updated_by": "lead (cycle 91)",
+  "updated_at": "2026-11-16T03:19:47Z",
+  "updated_by": "lead (cycle 92)",
   "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -4003,12 +4003,12 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null,
+      "merged_sha": "9850213a",
       "updated_at": "2026-11-13T11:44:07Z",
       "updated_by": "lead (cycle 83)",
       "id": "P2-AD-board-4b",
@@ -4103,7 +4103,7 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "merged",
       "claim": {
         "agent": "S3",
         "branch": "claude/ui-screens-meta",
@@ -4114,7 +4114,7 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null,
+      "merged_sha": "f78cf9f1",
       "updated_at": "2026-11-16T01:55:00Z",
       "updated_by": "lead (cycle 91)",
       "id": "P2-S3-character-2",
@@ -4433,6 +4433,14 @@
       "sent_at": "2026-11-15T19:01:00Z",
       "ack_by": "2026-11-15T21:01:00Z",
       "acked_at": null
+    },
+    {
+      "id": "M24",
+      "to": "lead",
+      "text": "Lesson from the UI report (Wait from ready to merged rated worse two reports in a row: 1.1h, then 1.7h, at reports 85 and 86). P2-S1-result-3 was ready at 904a3567 at about 23:38Z on 15 November, with its gate passed; the only thing holding it was AD's preview answer. Cycle 89 started AD on S1-R30 at 23:43Z and ended at 23:49Z; AD answered at 23:58Z, nine minutes later, and the merge waited for cycle 90 (locked 00:49Z, merged 01:22Z). The rule: when you start AD on a preview request that is the only thing holding a ready, gate-passed candidate, prepare the candidate in the same cycle while AD reviews (merge main in, apply approved budgets, run the fresh-container setup, check_all and guard.sh), and stay in the cycle until AD answers or about 25 minutes pass (preview answers take 15 to 20 minutes). If AD clears it, lock and merge in that same cycle; if AD objects, send the task back to its builder at once. Do not end the cycle and leave the merge to the next hourly one. Ack by adding M24 to your status acks.",
+      "sent_at": "2026-11-16T02:00:00Z",
+      "ack_by": "2026-11-16T04:00:00Z",
+      "acked_at": "2026-11-16T03:19:47Z"
     }
   ]
 }
