@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-16T20:55:00Z",
-  "expected_next_update_by": "2026-11-16T22:10:00Z",
-  "cycle": 105,
+  "updated_at": "2026-11-16T21:55:00Z",
+  "expected_next_update_by": "2026-11-16T23:10:00Z",
+  "cycle": 106,
   "merging": null,
   "last_merged": {
     "task_id": "P2-K1-guard-prereq",
@@ -32,5 +32,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 105 (session_01SNkKxpseg4mh8yx1YBk6dS) merged nothing; it copied K1's grow-1 claim, granted K1-R24, acked M33 and M34, and seeded P2-S1-heist-1, P2-S2-home-5, P2-S3-character-4 and P2-S1-result-6 (deps grow-1 and heist-1). It started S1 (session_01SNkKxo7UZxeUrogyt29c1R), S2 (session_01SNkKxnd61Vr6rsj7aeL4cz) and S3 (session_01SNkKxpXsYHy2L9mKvHcZBk), so four of four seats are in use. Cycle 106 merges each task as it becomes ready."
+  "next_step": "Cycle 106 (session_01SNkKxotGbP1EXkMF8w5cpy) merged nothing, because nothing was ready. It copied the claims of heist-1, home-5 and character-4 and four requests: S1-R33 approved, S3-R32 logged for phase 3, S3-R31 waiting for a seat, and S3-R33 answered (no rewind). It gated main f083c96c for home-5: Display type at home 100% fails 0/3, Hierarchy and Character presence pass. Four of four seats are in use. Cycle 107 merges grow-1, heist-1, home-5 and character-4 as each becomes ready."
 }
