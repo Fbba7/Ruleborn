@@ -740,7 +740,7 @@ static func keeper_name() -> String:
 ## A result button in the kit's material.
 func _button(words: String, call: Callable, kind := "leather") -> Button:
 	var b := UI.action(words, call, kind)
-	UI.fit(b)
+	ResultFit.fit_whole(b)
 	return b
 
 

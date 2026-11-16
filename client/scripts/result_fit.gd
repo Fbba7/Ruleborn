@@ -194,6 +194,24 @@ static func lines(l: Label, room: float, font_px := 0) -> int:
 	return n
 
 
+## `b` fitted to its words (`UI.fit`), and when one word alone is wider than
+## the widest a button may be (German's "Veröffentlichen" at large text),
+## its words the least sizes down that keep that word whole, rather than
+## broken between its letters.
+static func fit_whole(b: Button) -> void:
+	UI.fit(b)
+	var font := b.get_theme_font("font")
+	var font_px := b.get_theme_font_size("font_size")
+	var room := b.custom_minimum_size.x - b.get_theme_stylebox("normal").get_minimum_size().x
+	var floor_px := UI.text_px(11.0)
+	for word: String in b.text.split(" ", false):
+		while font_px > floor_px and font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_px).x > room:
+			font_px -= 1
+	if font_px != b.get_theme_font_size("font_size"):
+		b.add_theme_font_size_override("font_size", font_px)
+		UI.fit(b)
+
+
 ## Whether each word on `b` fits the room its padding and icon leave.
 static func word_fits(b: Button) -> bool:
 	var room := b.size.x - b.get_theme_stylebox("normal").get_minimum_size().x
