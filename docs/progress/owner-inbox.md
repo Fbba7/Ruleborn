@@ -4,6 +4,19 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-16 16:47Z: two lead cycles overlapped and both started AD; the duplicate was archived (cycle 102)
+
+- **What:** the launcher started cycle 102 at 16:39Z while cycle 101 was
+  still writing up. `lead.md`'s "Latest lead cycle session" line still
+  named cycle 100's idle session, because a cycle records itself there
+  only at its end. Both cycles created an AD session for P2-AD-board-3c,
+  33 seconds apart.
+- **Done:** cycle 102 archived its duplicate AD session
+  (`session_01SNkKxneJSddGy6BT3d1gxC`) at 16:42Z, before it claimed
+  anything. Cycle 101's AD session holds the claim. No work was lost and
+  nothing was merged twice.
+- **Needs the owner:** nothing.
+
 ## 2026-11-15 20:09Z: the lead was past its update time, cycle 86 still working (watchdog)
 
 - **What:** `status/lead.json` was past its `expected_next_update_by` of
