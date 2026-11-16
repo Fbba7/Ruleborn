@@ -307,6 +307,65 @@ Checks run on the task's last commit are in `docs/progress/S2.md`.
 - **Collect's words shrink at 200% in German**, below the kit's button size. Collect drops its picture first: "3,4 Tsd. einsammeln".
 - **At 200% in German with the raid notice up, the notice drops its red disc.** The alarm glyph on the tag stays.
 
+## Part 4: board 3b's H (P2-S2-home-4)
+
+AD's board 3b (`docs/art/ui-quality/gate/boards/board-3.md`, "Round 2 (board 3b)") made one objection on home, H (AD-R39). At 200%, home held about 68 px over the tab bar for the chosen tab's raised picture (`HomeParts.reserve_lift`). Without that height, the realms' band was too short:
+
+- the side buttons gave way in pt_BR, pt_PT and French;
+- the side buttons gave way in every case with the raid notice up;
+- the realms' chips gave way in four of the notice cases.
+
+K1's half (P2-K1-tabs-3) keeps the chosen tab's picture inside the bar at large text. This part is home's half.
+
+**The reserve is gone.** `HomeParts.reserve_lift` and its hook on the tabs are removed. After tabs-3, `KitTabs.lifts()` is true only at 100% and below, and the tab bar's declared height already holds the picture there. The goal card now sits right over the bar's gold edge, as the key frame has it.
+
+**Giving the height back was not enough on its own.** At 200% with the notice up, the band stays 296 px tall in French and 300 px in Portuguese, and 327 px in English on a phone 900 points tall: the notice, Collect and a three-line goal stand over its foot. Two edge columns of two discs each, plus the realms' chips between them, need about 400 px. So home also gives the band more of its width and height:
+
+- **The right edge stands beside the keeper's plate at large text (150% and more).** At large text, strain moves into the purse's second row (Part 3, C). That leaves the top row's right side empty, and the right edge's two discs (Season and Shop) now stand there. They are on the top row's right, level with the keeper's plate. Only the left edge (Defence and Lab) takes the band. The realms' chips then have the band's full width beside one column.
+- **The large-text gaps close a little,** so the left edge's two discs (294 px tall) fit the band in French and Portuguese:
+  - the column's gap: 2 points, was 4;
+  - the gap between two discs down an edge: 2 points, was 14 (`SIDE_GAP_LARGE`);
+  - the discs: the kit's control size, 48 points (`UI.CONTROL_POINTS`), was 52 (`SIDE_POINTS`);
+  - the goal card's padding: 2 points, was 4 (`GOAL_PAD_LARGE`);
+  - the raid notice's padding: 2 points, was 3.
+- **The side buttons still give way in stages where a band is too short.** First their columns stand side by side, then they give way. `Home._edges_yield` counts only the edges in the band. At 100% nothing changes: both edges stand in the band, at their 52 points and 14-point gap.
+
+**The scripted check.** `FIT=1` (`must_show` in `client/tests/shots/universe_home.gd`) now also fails when any of the four side buttons is hidden or reaches outside the viewport. It still fails on "no realm marked". The shot's header lists the cases from AD-R39 it must pass. Nothing in the check is loosened.
+
+**What this closes in Part 3's open list.** The realms' chips at 200% with the notice up (S2-R24, S2-R25), and the side buttons at 200% in pt_BR, pt_PT and fr and with the notice up (S2-R28) now show.
+
+**Evidence.** On this task's code (`d5e99d28`, merged with main as `00b9a23e`, docs only), `FIT=1` passes in all 39 cases below, with no script errors. It failed in three of them before (Part 3, "What (a) costs").
+
+| Text size | Cases that pass |
+|---|---|
+| 100% | en, de, pt_BR, pt_PT, fr, each with and without the notice; en 900 points tall, with and without the notice; en 960 points tall; high contrast in en and pt_BR; the tallest strings (`MOST`) |
+| 150% | en; en 960 points tall; pt_BR and fr with the notice; pt_PT with the notice and `MOST`, 960 points tall |
+| 200% | en, de, pt_BR, pt_PT, fr, each with and without the notice; en 900 points tall, with and without the notice; high contrast in en, pt_BR and de; `MOST` in en, and with the notice in pt_BR and de |
+
+The 200% rows hold every case H names. Each case is one run of the shot:
+
+```
+FIT=1 TEXT=200 LOCALE=pt_BR NOTICE=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png
+```
+
+In every 200% case the four side buttons show as discs and the seven realms show as numbered chips (German without the notice: icon and level, objection (f)). In pt_BR at 200% without the notice, the goal card now ends at about y 948 and the bar's gold edge is at 960 (540 × 1170 render), against 920 and 991 on board 3b.
+
+**Draw calls.** `bash tools/ui_bake/guard.sh` on the merge 00b9a23e:
+
+| Shot | Draw calls | Recorded | Textures | Words below 4.5:1 |
+|---|---:|---:|---|---:|
+| home/100 | 144 | 145 | 4.7 MiB | 0 of 28 |
+| home/200 | 121 | 119 | 4.9 MiB | 0 of 14 |
+| home/hc | 144 | 145 | 4.7 MiB | 0 of 28 |
+
+Guard fails on home/200 alone, 2 over its record and 29 under the cap of 150; that rise is S2-R30 to the lead. Main's home files on the same tree read 119, and so does this branch with the right edge left in the band. So the two come from where the right edge's two discs draw: between the keeper plate and the purse, where in the band they drew after the left edge's. The still is the same either way except for those two discs. Other orders tried: the edge first in the top row (which also puts the keeper plate on the right, so not kept), 120; the edge drawn over the rest (`z_index` 1), 121; both edges drawn over the rest, 121; the keeper plate drawn over the rest, 121. The textures and the words below 4.5:1 are unchanged.
+
+**Still worse, or open.**
+
+- **The goal keeps three lines at 200% in pt_BR, pt_PT and fr.** Even its first half cannot fit one line at 85% (Part 3, (d)); the Portuguese string is S2-R19's.
+- **At 200% in German with the raid notice up, the notice still drops its red disc** (Part 3). The alarm glyph on the tag stays.
+- **At large text the right edge's discs are in the top row, not in a column beside the band**, where both 200% key frames draw them. The key frames keep one row of the purse where strain sits beside it; home's purse takes two rows in every language at large text (Part 3, C). Both edges in the band leave the realms no room with the notice up, so AD may weigh the place on the board.
+
 ## Left for other tasks
 
 These widgets are no longer used by home, but they are outside this task's files:
