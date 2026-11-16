@@ -5,19 +5,50 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-S3-character-2",
-  "task_state": "in_progress",
+  "task_state": "working",
   "claimed_at": "2026-11-15T22:36:00Z",
   "lease_until": "2026-11-16T01:36:00Z",
-  "updated_at": "2026-11-16T00:15:00Z",
-  "expected_next_update_by": "2026-11-16T01:00:00Z",
+  "updated_at": "2026-11-16T00:25:00Z",
+  "expected_next_update_by": "2026-11-16T01:10:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "e86fad0",
-    "next_step": "pre-check on main merge failed (tray 6 pt off the foot put the way back in the corner band); reverted to 20, stills re-rendered, re-running the pre-check",
-    "at": "2026-11-16T00:05:00Z"
+    "last_green_sha": "45ca3158beafb3b0052c3b53b3d71e3390803254",
+    "next_step": "pre-check PASS on 45ca3158 recorded; gate_request set; waiting for AD's preview (S3-R15) and the gate, then ready",
+    "at": "2026-11-16T00:25:00Z"
   },
-  "precheck": null,
-  "gate_request": null,
+  "precheck": {
+    "sha": "45ca3158beafb3b0052c3b53b3d71e3390803254",
+    "exit": 0,
+    "finished_at": "2026-11-16T00:15:33Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "45ca3158beafb3b0052c3b53b3d71e3390803254",
+    "items": [
+      {
+        "item": "character at 100% text",
+        "qualities": [
+          "Hierarchy",
+          "Display type",
+          "Character presence"
+        ]
+      },
+      {
+        "item": "character at 200% text, pt_BR",
+        "qualities": [
+          "Display type",
+          "Hierarchy"
+        ]
+      },
+      {
+        "item": "character in high contrast",
+        "qualities": [
+          "Colour roles and value",
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [],
