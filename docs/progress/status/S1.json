@@ -8,15 +8,20 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-16T09:50:00Z",
   "lease_until": "2026-11-16T12:50:00Z",
-  "updated_at": "2026-11-16T10:34:11Z",
-  "expected_next_update_by": "2026-11-16T11:19:11Z",
+  "updated_at": "2026-11-16T11:10:54Z",
+  "expected_next_update_by": "2026-11-16T11:55:54Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
-    "next_step": "M26 sweep all fit ok after 91e5a056 (rehearsal word fit at de 200%). check_all, guard, check_screens and the pre-check running on 8753618a; then record and ready on a gate pass.",
-    "at": "2026-11-16T10:34:11Z"
+    "last_green_sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
+    "next_step": "Pre-check PASS at 8753618a (recorded); check_all exit 0 locally; guard.sh and check_screens running; then ready on a gate pass.",
+    "at": "2026-11-16T11:10:54Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
+    "exit": 0,
+    "finished_at": "2026-11-16T11:10:22Z",
+    "summary": "All checks passed."
+  },
   "gate_request": {
     "sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
     "items": [
