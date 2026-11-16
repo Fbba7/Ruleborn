@@ -12,6 +12,13 @@ extends Control
 ## heading 35.2, so the title stands well clear of a group's heading too.
 const TITLE_LEAD := 1.5
 const HEADING_LEAD := 1.1
+## The title in the kit's hero slot (34 points), not the title one: the
+## settings screen has no main action, so its title must be where the eye
+## lands first in the squint (the gate's Hierarchy at 5fc97aac).
+const TITLE_ROLE := "hero"
+## A group's heading, in points at 100%: a step over the 16-point rows it
+## heads and the 20-point heading slot, so the heading outranks its rows.
+const HEADING_POINTS := 22.0
 ## A heading plate's side padding, in points.
 const SECTION_PAD := 12.0
 ## The title plate's side padding, in points.
@@ -167,7 +174,10 @@ func _head() -> Control:
 	var plate := PanelContainer.new()
 	plate.name = "Head"
 	plate.add_theme_stylebox_override("panel", UI.clear_box(HEAD_PAD, 4))
-	UI.dress(plate, "plate_dark")
+	# The kit's lit feature card, its gold rim and its glow from the top left
+	# lifting the title's ground above the night's value, where the dark name
+	# plate sank into it (the gate's Hierarchy at 5fc97aac).
+	UI.dress(plate, "card_gold")
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(10))
 	# The gear grows with the title at large text, as key frame 05's does at
@@ -176,7 +186,7 @@ func _head() -> Control:
 	var mark := Icons.view("generalui/settings", gear)
 	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(mark)
-	var t := UI.label(Strings.t("SETTINGS_TITLE"), Tokens.type_role("title")["points"], true)
+	var t := UI.label(Strings.t("SETTINGS_TITLE"), Tokens.type_role(TITLE_ROLE)["points"], true)
 	t.name = "Title"
 	t.theme_type_variation = "Title"
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -214,10 +224,13 @@ func _section(key: String) -> Control:
 	plate.add_theme_stylebox_override("panel", UI.clear_box(SECTION_PAD, 2))
 	UI.dress(plate, "plate_dark")
 	var l := KitPanels.section(Strings.t(key))
+	l.set_meta("points", HEADING_POINTS)
 	_grown(l, HEADING_LEAD)
-	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
-	l.add_theme_constant_override("shadow_offset_x", 0)
-	l.add_theme_constant_override("shadow_offset_y", UI.px(float(Tokens.type_role("heading")["drop"])))
+	# The kicker's gold top (ScreenParts.section's) and display type's ink
+	# outline: in the squint the heading now outranks the cream rows under it
+	# (the gate's Hierarchy at 5fc97aac).
+	l.add_theme_color_override("font_color", Tokens.color("gold_top"))
+	_stroked(l, 1.5, float(Tokens.type_role("heading")["drop"]))
 	var font := Tokens.font("title", 400)
 	var wide := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
 		l.get_theme_font_size("font_size")).x
@@ -263,9 +276,12 @@ static func _stroked(l: Label, outline: float, drop: float, drop_colour := "drop
 	return l
 
 
-## The tabs as key frame 05 has them: one strip of parchment, the open tab
-## on the kit's chosen segment for parchment (dark leather, cream words), so
-## gold stays the main actions' alone (§21.8). Where an icon and its word
+## The tabs as key frame 05 has them: one light strip, the open tab on the
+## kit's chosen segment for parchment (dark leather, cream words), so gold
+## stays the main actions' alone (§21.8). The strip is the kit's segment track
+## for light segments, a deeper parchment a step under the cards' cream: the
+## full cream strip outweighed the title in the squint (the gate's Hierarchy
+## at 5fc97aac), and the night's dark track sank under the value steps. Where an icon and its word
 ## do not fit a third of the strip (large text, a long word), the closed tabs
 ## keep their icon alone and the open one its word alone, twice as wide; a
 ## screen reader still hears every word.
@@ -273,7 +289,7 @@ func _tabs() -> Control:
 	var strip := PanelContainer.new()
 	strip.name = "Segments"
 	strip.add_theme_stylebox_override("panel", UI.clear_box(2, 2))
-	UI.dress(strip, "parchment")
+	UI.dress(strip, "seg_track_light")
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(4))
 	strip.add_child(row)
@@ -440,7 +456,10 @@ func _text_card() -> Control:
 	var room := UI.clear_box(10, 6)
 	room.content_margin_bottom = UI.px(8)
 	sample.add_theme_stylebox_override("panel", room)
-	UI.dress(sample, "parchment")
+	# The law's sample on the dark name plate, not parchment: it is prose to
+	# read, not an action, and a cream card larger than the title drew the eye
+	# first in the squint (the gate's Hierarchy at 5fc97aac).
+	UI.dress(sample, "plate_dark")
 	var line := HBoxContainer.new()
 	line.add_theme_constant_override("separation", UI.px(8))
 	var mark := Icons.view("laws/stillness", 32)

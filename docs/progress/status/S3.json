@@ -7,14 +7,14 @@
   "task_id": "P2-S3-settings-2",
   "task_state": "working",
   "claimed_at": "2026-11-16T03:21:36Z",
-  "lease_until": "2026-11-16T07:36:33Z",
-  "updated_at": "2026-11-16T04:36:33Z",
-  "expected_next_update_by": "2026-11-16T05:21:33Z",
+  "lease_until": "2026-11-16T08:04:31Z",
+  "updated_at": "2026-11-16T05:04:31Z",
+  "expected_next_update_by": "2026-11-16T05:49:31Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
-    "next_step": "P2-S3-settings-2: pre-check PASS on 5fc97aac (recorded), gate_request set there, AD holds C, E, F (S3-R17) and I (S3-R19) fixed with no open objection. Next: the lead's gate on 5fc97aac, then ready.",
-    "at": "2026-11-16T03:55:55Z"
+    "next_step": "P2-S3-settings-2: the gate failed Hierarchy at 5fc97aac (first fail; Display type passed). Fixing in settings_screen.gd: hero title on the lit gold card, 22-point gold stroked headings, the law's sample on the dark plate, the tab strip on the kit's light segment track. Next: AD's preview of the fix, main merged, pre-check, gate again.",
+    "at": "2026-11-16T05:04:31Z"
   },
   "precheck": {
     "sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
@@ -22,25 +22,7 @@
     "finished_at": "2026-11-16T03:46:19Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
-    "items": [
-      {
-        "item": "settings at 100% text",
-        "qualities": [
-          "Hierarchy",
-          "Display type"
-        ]
-      },
-      {
-        "item": "settings at 200% text, pt_BR",
-        "qualities": [
-          "Display type",
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
+  "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [],
