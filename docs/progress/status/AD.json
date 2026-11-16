@@ -4,23 +4,29 @@
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-AD-board-3",
+  "task_id": "P2-AD-board-5",
   "task_state": "working",
-  "claimed_at": "2026-11-13T08:30:00Z",
-  "lease_until": "2026-11-13T11:30:00Z",
-  "updated_at": "2026-11-13T08:46:00Z",
-  "expected_next_update_by": "2026-11-13T09:31:00Z",
+  "claimed_at": "2026-11-15T20:31:00Z",
+  "lease_until": "2026-11-15T23:35:00Z",
+  "updated_at": "2026-11-15T20:50:00Z",
+  "expected_next_update_by": "2026-11-15T21:35:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
-    "next_step": "board 3 posted (does not stand, A-D); S2-R18 and S1-R24 answered; next checks, pre-check and handoff"
+    "last_green_sha": "c0bab2a89cf95b03d3540f977a5c0050e593c900",
+    "next_step": "board-5.md written (round 1: does not stand, objections A–G as AD-R31 to AD-R37); run the pre-check and mark ready"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "c0bab2a89cf95b03d3540f977a5c0050e593c900",
+    "exit": 0,
+    "finished_at": "2026-11-13T12:11:54Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-14T21:00:00Z",
+  "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
-    "M12"
+    "M12",
+    "M23"
   ],
   "requests": [
     {
@@ -302,6 +308,191 @@
       "due": "2026-11-15T08:42:00Z",
       "default": "file it as a small K1 task; no other open task owns kit_tabs.gd",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R26",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Result screen, found in the S1-R25 re-check (outside its scope, not holding P2-S1-result-2): at 200% in German the reward tiles fall back to full-width columns (ResultFit, because 'Sternenlicht' will not fit a row) and only Sternenlicht shows above the dock; Essenz and Ruhm fall below the fold. Keep the whole haul on the first screen in every locale at 200%: e.g. a row with the word on a second line, or a smaller icon, before the column fallback. Now board 4 objection B (item 4); details in board-4.md.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-4.md",
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T10:05:00Z",
+      "due": "2026-11-14T10:05:00Z",
+      "default": "file it as an S1 follow-up task for the result screen, with AD-R27, AD-R29 and AD-R30; AD re-checks it as board 4b",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R27",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 4 objection A: the lead reward '+2,310' on the result screen is pale gold (gold_top) with thin strokes and a thin outline on the parchment card, about the card's own value in grayscale and hollow in high contrast; '+805' and '+15' have thinner outlines than the key frame's. Give the three reward figures the home's 'Keeper 24' finish (deep gold or cream fill, heavy ink outline, hard drop; solid with the outline in high contrast). Draw calls measured 97 to 120, so the drops fit. Details in board-4.md, items 1, 5 and 6.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-4.md",
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T11:55:00Z",
+      "due": "2026-11-15T11:55:00Z",
+      "default": "file it as an S1 follow-up task for the result screen (with AD-R26, AD-R29 and AD-R30); AD re-checks it as board 4b",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R28",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 4 objection C: the reward sequence's anticipation reads as a still pause and the burst covers about the prize's own size in every tier (burst_scale 0.85 to 1.15), so it does not reach the sunburst and epic barely reads stronger than common. Make the gather visible on the prize (squash, building glow, sparkles drawn in) and widen the tier spread so the epic burst reaches well past the prize onto the sunburst, in art/ui/motion/curves.json and the burst sprite; re-make the strips and clips. Details in board-4.md, items 7 and 9.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-4.md",
+        "art/ui/motion/curves.json",
+        "art/ui/motion/burst/"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T11:55:00Z",
+      "due": "2026-11-15T11:55:00Z",
+      "default": "file it as an AIA task (P2-AIA-motion-3); S1's result screen picks up the curves with no change of its own unless the burst's anchor moves",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R29",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 4 objection D: the reward coins land on the counters' digits and hide the roll at each landing (full strip frames 42 to 60 cover '+153', '+636', '+1,346'; AIA's strips land over '120'). Land the coins on the tile's icon above or beside the digits and start the roll as the coin lands. Details in board-4.md, items 7 and 9.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-4.md",
+        "client/scripts/result_screen.gd",
+        "client/tests/shots/motion_rig.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T11:55:00Z",
+      "due": "2026-11-15T11:55:00Z",
+      "default": "fold it into the S1 follow-up task with AD-R27; AIA's strip shot follows the same target in its motion-3 task",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R30",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 4 objection E (small): at 200% text in English the Home button grows to about 45% of the result's action bar with icon and word and is as light as Collect in grayscale. Make Home icon-only at 200% in every locale, as pt_BR already is and both key frames show. Details in board-4.md, item 3.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-4.md",
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T11:55:00Z",
+      "due": "2026-11-15T11:55:00Z",
+      "default": "fold it into the S1 follow-up task with AD-R27",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R31",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection A: at 200% text the character's Level up button does not fit its words. English: the '200' price chip covers the label ('LEVEL UF') and the '4' of 'Level 3 → 4'. German: the label breaks mid-word ('AUFSTEIG / EN') and 'Stufe 3 → 4' spills below the button outside its panel; the shot prints 'fit FAIL'. Measure the label against the width left after the price chip; wrap at word boundaries only, shrink, or stack the price under the label as the key frame does; add the English and German 200% shots to the fit check. Details in board-5.md, items 3 and 4.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R32",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection B: at 200% text the character's tabs and ability header fall below the first screen (pt_BR), or the tab strip shows two tabs with Compare cut off (English, German); the subtitle and level line take two or three lines. Show the unselected tabs icon-only at 200% as the key frame does, let the subtitle and level line shrink to one line, and keep the tabs and the ability header on the first screen in every locale. If kit_tabs.gd needs an icon-only form, that part is a request to K1. Details in board-5.md, items 3 and 4.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd",
+        "client/scripts/kit_tabs.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37; any kit_tabs.gd part goes to K1 as a request",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R33",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection C: at 100% text the first screen is cut short. Character: the fourth info card is cut mid-line in every locale (the stacked tab strip and the ability card's own tag line are taller than the key frame's). Settings: 'Motion: full' is below the fold in English, and the whole second section in pt_BR and German. Put the tab icons inline and the ability tag inline with its heading; tighten the settings spacing and header pills so both switch rows fit at 100% in every locale. Details in board-5.md, items 1, 2, 6 and 7.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd",
+        "client/scripts/settings_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37; the settings half goes to P2-S3-settings-2",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R34",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection D: the character's level tag runs over the hexagon badge's top edge and is clipped or merges into it at 200%; the '200' price is a flat white figure; the Level up label has no outline; at 200% the subtitle and level line on the backdrop have no outline. Keep the tag inside the badge at every text size, give the price and the Level up label the kit's display treatment, and outline the backdrop text at 200% (at 100% they may stay plain, as the key frame). Details in board-5.md, items 1 to 4.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R35",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection E: at 200% text in German the settings title breaks mid-word ('Einstellung / en') beside a tiny gear, and the Stillness card's text is cut at 'to guards and'. Wrap the title at word boundaries only or shrink it to fit; let the Stillness card grow to its text; add the German 200% settings shot to the fit check. Details in board-5.md, item 9.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/settings_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-settings-2 for S3 holding the settings half of AD-R33, AD-R35 and AD-R36",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R36",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection F (light): on settings at 100% no plate leads in the grayscale squint; every cream plate has the same value and the gate passed hierarchy by one vote (ppffpf). Give the A−/A+ steppers the gold fill as the key frame does, and/or strengthen the group header pills. Details in board-5.md, item 6.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/settings_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-settings-2 for S3 holding the settings half of AD-R33, AD-R35 and AD-R36",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R37",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection G (light): the character's stage behind the pedestal ends in a hard horizontal edge about a third of the way down, then the blue backdrop starts; the key frame's sky runs on. Fade the stage's bottom edge into the backdrop. Details in board-5.md, items 1 to 3.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -319,6 +510,26 @@
       "request_id": "S1-R24",
       "answer": "AD's review of result part 2 at S1's aed28321 (renders with screen_result.gd, SERVER=1, FIT=1, at 100%, at 200% pt_BR and in high contrast), beside art/ui/keyframes/03-result*. What the request asked for stands: the crew's three faces apart at 52 pt read better than key frame 03's overlapped stack of 48 pt, each face whole in its gold ring, and the stack in the key frame crops two of the three faces (quality 9 stands; the change is accepted, no golden change needed: the board will note it as a sanctioned departure). Every objection, in order of weight (M12), all for S1 inside result-2 before it merges: (1, hierarchy and one idea, qualities 6 and 14) at 200% pt_BR the first screen shows no haul: the page puts the moment card under the time line, cut by the dock, and the three rewards fall below the fold; key frame 03_text200_pt_BR shows the three reward rows straight under the time line. At large text, set the rewards above the moment (or the moment after the rewards) so the haul is on the first screen. (2, light and colour, qualities 13 and 8) in high contrast the sunburst rays, stars and glow stay behind the title and the condition line; key frame 03_hc drops them to a flat dark ground. Turn the rays and stars off in high contrast, as Collect's shine is. (3, hierarchy, quality 6) at 200% pt_BR the multipliers pill wraps into a two-line pill as wide as the screen; the key frame keeps 'Saque x0.7 · Renome x0.8' on one line. Let the pill shrink its gaps or step down one size before it wraps. (4, small) at 100% the rest line wraps to three lines beside the wider faces; the key frame keeps two. Narrow the gaps between the faces (about 8 px) or let the line take the space to the card's edge so it keeps two lines. Notes, not objections: the kicker 'HEIST COMPLETE' is gold, white in the key frame (fine if gold marks a Clean grade); RAID AGAIN's line 'Idle crew of 3 ready' is absent because the shot fixture has no roster (idle_crew() returns -1), so it is untested here; the dock's order at 200% (RAID AGAIN above Home, full width) differs from the key frame's (home square beside it) and is acceptable at large text. Re-check after the fix: only the 200% order, the high-contrast ground, the pill and the rest line.",
       "at": "2026-11-13T08:46:00Z"
+    },
+    {
+      "request_id": "S1-R25",
+      "at": "2026-11-13T10:05:00Z",
+      "answer": "AD's re-check of S1-R24's four objections in P2-S1-result-2 at 71167028 on claude/ui-screens-heist (renders with screen_result.gd, SERVER=1, FIT=1: TEXT=200 LOCALE=pt_BR, CONTRAST=1, en 100%, and de 200% for regressions), beside art/ui/keyframes/03-result*. All four stand as fixed: (1) at 200% pt_BR the haul is on the first screen: the three reward rows (Luz-estelar, Essencia, Renome) sit straight under the time line, above the moment card, as 03-result_text200_pt_BR; (2) in high contrast the ground is a plain night: no rays, stars, glow or island, as 03-result_hc; (3) at 200% pt_BR 'Saque x1.0 · Renome x1.0' holds one line in its pill; (4) at 100% the rest line 'Your crew of 5 is home, resting up to 45 min' takes two lines beside the three faces. No new objection inside the re-check's scope; result-2 may go to the gate and its merge. One finding outside that scope, not holding result-2 (de 200% is not a gate still): at 200% de the reward tiles fall back to full-width columns and only Sternenlicht shows above the dock (Essenz and Ruhm below the fold), so German at large text still has part of the haul off the first screen; sent to the lead as AD-R26 for board 4. Notes, unchanged from S1-R24 and not objections: at 200% pt_BR RAID AGAIN carries no idle-crew line (the fixture has no roster)."
+    },
+    {
+      "request_id": "S2-R20",
+      "answer": "AD's review of P2-S2-home-3 at c0b2bc49 on claude/ui-screens-home (the newer head 14fdcdfe only merges main's result files; the home code is unchanged). Renders: client/tests/shots/universe_home.gd, FIT=1, in en/pt_BR/de at 100%, at TEXT=200 (en, pt_BR, de), with NOTICE=1 (en 100%, pt_BR 200%, de 200%) and CONTRAST=1 (en, pt_BR), beside art/ui/keyframes/01-home*. Every render prints 'fit ok'. FIXED and standing from board 3: A (Collect and the goal stay on screen in every state; at pt_BR 200% with the notice it is one line '! 2 · Ver · x' above Collect, as the key frame); most of C (goal bar at every size, numbered chips and the chosen tab's name at 200%, side buttons as icon discs at 200%, all five dock labels at pt_BR 100%); the goal on one line in en 100% and two in pt_BR; all seven realms above the panels. OBJECTIONS, in order of weight (M12, all in this round): (1) Pins detached from their realms (from B's fix, UniversePins._settle_at). At 100% in en, pt_BR, de and high contrast, pins pushed clear of the side buttons stack in a centre column: Lantern Vale's and Tidehold's pins sit over the Heart island and hide its tower (their islands are left and right), the Crystalline pin sits on the Skyfield island, in pt_BR five pins form one column. The Defence badge '2' still abuts the Skyfield pin's left edge (en, pt_BR, de). Key frame 01-home: each pin over its own island, the Heart the large centrepiece. Fix: settle each pin within a short radius of its island's anchor (shrink or drop the name before moving it far), and keep a gap from the Defence badge. (2) The world shrinks with the notice up: at en 100% with NOTICE=1 the world is a thin band and five of seven pins lose their names (The Heart excepted); round 1 framed the realms well in this state. The notice line 'See how your defence / held' leaves 'held' alone on its line. Fix: the notice takes height from the goal/panels before the world, and its text balances its lines or fits one. (3) The 'Full' tag on Essence is dropped at pt_BR 100% ('Cheio'), de 100% and at 200% in every locale; only en 100% shows it. The key frames keep it (01-home 'Full', 01-home_text200_pt_BR 'Cheio'). Fix: keep the tag at every size and locale (stack it under the number if the row is short). (4) The strain chip at 200% en and pt_BR is small: '82% · Humming' on one line at about 100% size; the key frame 01-home_text200_pt_BR shows it large over two lines (de 200% already does this). Fix: the same two-line large form in every locale at 200%. (5) Minor: at pt_BR 100% the purse takes three rows (61,0 mil alone at full width in row 2); the pt_BR goal breaks 'Guardiao / 25' (S2-R19 already open); the high-contrast Collect label reads smaller than at 100%; at pt_BR and de 200% chips 2 and 6 (and 4/6) touch. (6) The dock's ISLANDS label still sits on the gold rim, and HEIST does too in high contrast: board 3's D, owner K1 (client/ui/kit_tabs.gd, P2-K1-tabs), not S2's. NOTES (not objections): the Defence timer, badges and locked Lantern Vale state lack fixture data; the companion's yaw clamp needs frames to verify. A re-check covers only what the fix changes.",
+      "at": "2026-11-13T11:40:00Z"
+    },
+    {
+      "request_id": "S1-R29",
+      "answer": "AD's review of P2-S1-result-3 at d896f254 on claude/ui-screens-heist (code as at 5e844ac3), checked against board 4's full list (M23), not only A, B, D and E. Renders: client/tests/shots/screen_result.gd with SERVER=1 FIT=1 in en/pt_BR/de at 100% and 200%, CONTRAST=1 in en and pt_BR at 100% and en and de at 200%, the grayscale and colour-blindness sheets of en 100%, and the full, REDUCED=1 and TEXT=200 strips, alone and on a scratch merge with AIA's motion-3 head (f216de53), beside art/ui/keyframes/03-result*. Every still prints 'fit ok'; draw calls en 126/128/128 at 100%, 113/115/114 at 200%, HC 68/70/55/56, as your track says. MET: A (the three figures carry the home's Keeper finish: deep gold on the cream Starlight tile, cream on the dark tiles, heavy ink outline, hard drop, the same in high contrast; in grayscale the Starlight figure reads by its outline). B (at 200% the whole haul stands above the actions in en, pt_BR and de; de takes the hero one step down and keeps Sternenlicht, Essenz and Ruhm on the first screen). D (at 100% and 200% the coins land on the Starlight icon, above the number and beside it, the figure rolls +0, +83, +200, +375, +503, +508 as they land, and no frame has a coin on a rolling digit, alone and with AIA's curves; reduced: one coin, the figure set once). E (at 200% Home is the icon square in every language and the raid leads the bar). OBJECTION, one, from the re-check outside A to E (quality 13, the fold): F. At 200% in en, and in high contrast en 200%, the scroll stops a few points above the action bar in the middle of the line '✓ Re-simulated by the server: accepted', so only the tops of its letters show: a row of green ticks and dashes that reads as stray marks on the first screen (board-4/r2-F-fold-en200.png; the whole set in board-4/r2-result-200.png). It comes from E: the shorter bar lets one more line in. pt_BR and de 200% end on a whole line and are fine. The fix is yours to choose: a fade of about one line at the foot of the scroll under the bar, or a cut that never shows a part line (the bar's top or a whole line); the FIT check may assert no line ends within a cap-height of the bar. NOTES, not objections (carried from round 1 and the scratch merge): at 100% in pt_BR and de (and HC pt_BR) the crew card still goes under the action bar, which reads as a scroll and holds no first-screen fact; the fixture still has no idle crew, so the raid's second line shows only on Loud; with AIA's new curves the epic burst on this screen covers the kicker, the grade's first letter and the haul chip for about 130 to 200 ms and its sparkles cross the subline, and it clears before the first coin lands (board-4/r2-epic-burst-joint.png): I accept it for board 4b. S1-R28 (the draw-call records) is the lead's. So: fix F and the screen goes to board 4b as it stands; nothing else is asked.",
+      "at": "2026-11-15T20:32:00Z"
+    },
+    {
+      "request_id": "AIA-R26",
+      "answer": "AD's review of P2-AIA-motion-3's reward strips (art/ui/motion/strips/reward_*.png, art/ui/proof/motion_gray/*.png, art/ui/motion/clips/reward_*.gif) at f216de53, against board 4's motion qualities (4, 5, 7) and every round-1 note (M23), and on the real result screen through a scratch merge with S1's result-3 head (d896f254), full, reduced and at 200%. The strips STAND AS SHOT: no objection. MET: C/AD-R28 (the anticipation gathers on the prize: dust from about 270 ms, the ring and the sparkles drawn in from about 470 ms in epic, earlier and smaller in rare; the burst now spreads by tier, about the chest's size in common, wider in rare, about 2.5 times the chest in epic and in its high-contrast inked ring; the grayscale proofs read the gather and the burst in value). D/AD-R29 (in every tier the coins arc onto the counter's starglass icon and the figure rolls as each lands; no coin covers a digit; the reduced strip keeps one coin and one change of the figure). NOTES, not objections: the epic's first 250 ms or so reads as a short hold before the dust comes in, which I take as the beat before the gather; in your harness gold coins land on the pink starglass gem, while on the real screen they land on the gold Starlight star, so the mismatch stays in the harness; on the real screen the 2.8 epic burst covers the kicker, the grade's first letter and the haul chip for 130 to 200 ms and clears before the coins (board-4/r2-epic-burst-joint.png), accepted for board 4b. Mark the task ready when your checks pass.",
+      "at": "2026-11-15T20:32:00Z"
     }
   ]
 }

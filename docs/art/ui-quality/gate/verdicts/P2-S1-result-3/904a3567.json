@@ -1,0 +1,36 @@
+[
+  {
+    "task_id": "P2-S1-result-3",
+    "sha": "904a356794f9300293f50bc4d57c567891e89334",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-15T23:49:00Z",
+    "item": "result at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. Raid again is the full-width gold control at the foot and the most saturated thing on screen; in grayscale it is mid-value and leads by size, place and weight (ruling v3). The lighter cream Home button, Starlight card and law pills are each smaller or information only, so none is both larger and heavier; the gold 3 s replay button is about half Raid again's size. All three put it at or above the pass anchor's Level up. Close point named by one sample: Home and the law pills are lighter than Raid again in grayscale."
+  },
+  {
+    "task_id": "P2-S1-result-3",
+    "sha": "904a356794f9300293f50bc4d57c567891e89334",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-15T23:49:00Z",
+    "item": "result at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The crew card's three gold-ringed portraits (yellow soft-fur sprout, charcoal ember body with orange glow, soft-fur otter) each read as a dark shape with a face at about 56 px in the 960 still, the size of the pass anchor's heist crew row, in soft stepped shading with no photographic grain, metallic sheen or specular. Close point named by two samples: the Starlight, Essence and Renown tiles carry currency icons and no character art; the samples read them as currency tiles with no character frame, so the reward-with-no-character fail did not plainly hold."
+  }
+]
