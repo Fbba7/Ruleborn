@@ -389,7 +389,7 @@ Guard fails on home/200 alone, 2 over its record and 29 under the cap of 150; th
 
 The gate's last verdict on home at 100% (`verdicts/P2-S2-home-1/977edd5b.json`) failed Display type: the purse's counts read as flat cream. This task first asked the gate to re-run 'home at 100% text' and 'home in high contrast' on current main (`f083c96c`), to learn whether that fail still stands.
 
-**Does the fail still stand?** VERDICT_PENDING
+**Does the fail still stand?** No verdict on main had come back when this part was written: the lead's branch at `2ab3a985` has no `verdicts/P2-S2-home-5/`. S2's own still of main at 100% (`FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` on `f083c96c`) still shows the counts as flat cream type, for the reason below, so S2 took the fail to stand and built the fix. The gate request at the ready commit covers the fixed home.
 
 **Why the counts read flat.** The counts and the keeper's name were drawn in the kit's small display role (`display_s`) through the theme, which draws the role's 2-point ink outline and its 1.5-point drop with no outline of its own. The outline covers the drop, so no drop shows. On the purse's near-black plates, the ink outline does not show either, so the counts read as plain cream type.
 
@@ -402,7 +402,19 @@ The gate's last verdict on home at 100% (`verdicts/P2-S2-home-1/977edd5b.json`) 
 - **The baked rows stand one layer above the words** (`UI.WORDS_Z` + 1). In the art's layer, a row from the numerals' page between the pills' faces split their batch, and home/200 went from 121 to 123 draw calls. Above the words, every row draws in one call: home/100 and home/hc 142, home/200 117, against the recorded 145, 145 and 121. Nothing on home is drawn over the counts but its full-screen layers, which stand `UI.OVERLAY_Z` higher.
 - **Full hangs a little higher at 100%** (`HomeParts.FULL_LIFT`, 8 points beyond half its plate). The baked figures' tops stand higher than the live type's did, and the tag covered the top of the third pill's "0".
 
-**Evidence.** EVIDENCE_PENDING
+**Evidence.**
+
+- **Fit (M26).** `FIT=1` prints "fit ok" in all 56 cases: the five languages at 100%, with and without the notice; 900 and 960 tall; high contrast in en and pt_BR; the widest amounts (`MOST=1`); 150% in four languages, with the notice, the widest amounts and 960 tall; 200% in all five languages with and without the notice, at 900 tall, in high contrast (en, pt_BR, de), with the widest amounts and 99 raids, and the new Keeper (`EMPTY=1`). Each case is `FIT=1 <flags> bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+- **Draw calls (§21.3).** `python3 tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc`:
+
+  | Shot | Recorded | Main `f083c96c` | This task |
+  |---|---:|---:|---:|
+  | home/100 | 145 | 144 | 142 |
+  | home/200 | 121 | 121 | 117 |
+  | home/hc | 145 | 144 | 142 |
+
+  The live share at large text drew in a call of its own; baked, it joins the rows' call. Contrast is unchanged: 0 words below 4.5:1 in each shot.
+- **Stills.** The three budget stills (home at 100%, 200% and high contrast) show "Keeper 24" with a hard drop below its stroke, and "142.0k", "31.4k", "61.0k", "1,460" and, at 200%, "82%" in the baked figures.
 
 ## Left for other tasks
 
