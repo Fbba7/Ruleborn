@@ -47,8 +47,7 @@ const SKINS_OF := {
 	"K17": ["popup__box"],
 	"K18": ["header__box", "header__name_plate"],
 	"K19": ["ribbon__box", "ribbon__frame", "ribbon__chapter"],
-	"K23": ["pill__box"],
-	"K24": ["num_gold"],
+	"K23": ["pill__box"], "K24": ["num_gold"],
 	"K27": ["badge__box", "badge__dot"],
 	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn", "tag__tag", "tag__island_label",
 		"panel_dark__plate"],
@@ -90,6 +89,7 @@ func run() -> void:
 	await _boxes()
 	await _press()
 	await Tabs.tap_once(tree, check)
+	await preload("res://tests/shots/ui_kit_gaps.gd").run(tree, check)
 	_motion()
 	await _reward()
 	await _shine()

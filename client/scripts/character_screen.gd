@@ -688,13 +688,36 @@ func _actions(c: Dictionary) -> void:
 	if c["raise"] is Dictionary:
 		actions.add_child(_upgrade(c["raise"], busy))
 	else:
-		actions.add_child(KitStatus.pill(Strings.t("CHARACTER_TOP_LEVEL"), "hud/star", "plate_dark"))
+		actions.add_child(_top_level())
 	# Why a level waits, on the kit's hint.
 	if c["raise"] is Dictionary and str(c["raise"]["why"]) != "":
 		notes.add_child(KitStatus.hint(str(c["raise"]["why"])))
 	if c["wake"] is Dictionary:
 		notes.add_child(_spend(c["wake"], busy, "gold"))
 	notes.get_parent().visible = notes.get_child_count() > 0
+
+
+## At the top level the bar's dark pill says so, beside the star. At large
+## text the words would hold their one line wider than the phone ("auf der
+## höchsten Stufe" at 200%, board 5b's objection K): the pill takes the
+## bar's width, as Level up does, and its words wrap between words inside
+## it, never inside one, so a reader who chose large text still reads them.
+## A screen reader says them all either way.
+static func _top_level() -> PanelContainer:
+	var said := Strings.t("CHARACTER_TOP_LEVEL")
+	var p := KitStatus.pill(said, "hud/star", "plate_dark")
+	p.accessibility_name = said
+	if _large():
+		var l := p.find_child("Words", true, false) as Label
+		l.clip_text = false
+		l.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
+		l.custom_minimum_size.x = 0.0
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		p.custom_minimum_size.x = UI.px(180)
+	return p
 
 
 ## The design's UPGRADE on the kit: "Level up" in display capitals over the

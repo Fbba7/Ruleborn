@@ -4,23 +4,26 @@
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "IQ-kit-docs",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-16T07:45:24Z",
-  "lease_until": "2026-11-16T10:45:24Z",
-  "updated_at": "2026-11-16T07:52:00Z",
-  "expected_next_update_by": "2026-11-16T08:52:00Z",
+  "task_id": "P2-S3-character-3",
+  "task_state": "working",
+  "claimed_at": "2026-11-16T09:30:15Z",
+  "lease_until": "2026-11-16T13:56:55Z",
+  "updated_at": "2026-11-16T10:56:55Z",
+  "expected_next_update_by": "2026-11-16T11:41:55Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
-    "next_step": "IQ-kit-docs: gap list in docs/progress/S3.md, requests S3-R22 to S3-R28 to K1 through the lead; pre-check on the notes commit, then ready.",
-    "at": "2026-11-16T07:52:00Z"
+    "last_green_sha": "8f7a9fadc2c3de9e69e80058a33b819b51abb77f",
+    "next_step": "pre-check on the commit with S3-R30's fixes; then gate_request and ready (AD's R29 default if unanswered by its due)",
+    "at": "2026-11-16T10:56:55Z"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
-  "acks": [],
+  "acks": [
+    "M26",
+    "M29"
+  ],
   "requests": [
     {
       "id": "S3-R1",
@@ -505,6 +508,57 @@
       "due": "2026-11-16T19:49:00Z",
       "default": "They stay as they are; nothing on a shipped screen depends on the prototypes",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R29",
+      "from": "S3",
+      "to": "AD",
+      "ask": "Preview of P2-S3-character-3, board 5b's K and L only (board-5.md, 'Round 2 (board 5b)'), at 0c4526a9 on claude/ui-screens-meta (integration branch merged at 8ea6918e, which is its head 44bff395). K: at large text the tray's top-level pill (character_screen.gd _top_level) takes the tray's width beside the way back and wraps its words between words, never inside one, beside the star; 100% unchanged; accessibility_name carries the words. Wrap was chosen over the star alone so a large-text reader still reads the words; the tray has the room the stage did not (H). fit_character.sh takes the fixture ID and now renders character 4 at 200% in en, pt_BR and de: all eleven shots fit ok, and the old code's de shot printed fit FAIL. New stills and records character-200-{en,pt_BR,de}-4 (checks.py all: no FAIL). L: the profile row (screen_account.gd profile_row) is on parchment, the switch rows' plate, and its tap target now covers the plate edge to edge: the old target sat inside the card's margins, so the record's ring read the row's own card. value-steps on settings-account-100 and -de: the row at dL* 72.7 and 72.2 (was 2.5 and 3.6), no FAIL on either; fit_settings.sh fits all twelve. Track Part 2 'Board 5b's objection K' and Part 3 'Board 5b's objection L'. Please give every objection in this one round.",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/scripts/screen_account.gd",
+        "docs/art/shots/menu-screens/character-200-en-4.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-4.png",
+        "docs/art/shots/menu-screens/character-200-de-4.png",
+        "docs/art/shots/menu-screens/settings-account-100.png",
+        "docs/art/shots/menu-screens/settings-account-de.png",
+        "docs/art/shots/menu-screens/fit_character.sh"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T09:43:26Z",
+      "due": "2026-11-16T11:43:26Z",
+      "default": "K and L stand as fixed; S3 marks P2-S3-character-3 ready at the pre-checked sha with gate_request there, and AD's round 3 re-checks K and L on the merge",
+      "escalate_to": "lead",
+      "addition": {
+        "at": "2026-11-16T10:56:55Z",
+        "ask": "Addition to R29 (S3-R30's fixes in auth_panel.gd): the signed-in account tab at 200% German now shows its Devices and Methods sections (they never drew before), and past 125% every row's end control (sign-out, 'This device', link, unlink) sits under its words, the button the card's width. Stills: docs/art/shots/menu-screens/settings-200-de-account-signed.png, -900.png and -1800.png (scrolled). Board 5b note 5: the Devices and Methods sections keep ScreenParts.section's gold caps label as subheadings under the account group's header pill; S3 leaves them (a pill would need settings_screen.gd). Nothing changes at 100% (settings-account-100 and -de re-shoot byte-identical).",
+        "files": [
+          "client/scripts/auth_panel.gd",
+          "docs/art/shots/menu-screens/settings-200-de-account-signed.png",
+          "docs/art/shots/menu-screens/settings-200-de-account-signed-900.png",
+          "docs/art/shots/menu-screens/settings-200-de-account-signed-1800.png"
+        ],
+        "default": "as R29's: K and L stand as fixed, and the auth panel's fixes stand; ready at the pre-checked sha, board 5c re-checks them on the merge"
+      }
+    },
+    {
+      "id": "S3-R30",
+      "from": "S3",
+      "to": "lead",
+      "ask": "Grant client/scripts/auth_panel.gd (no task in flight owns it, owners.py: the lead does) to P2-S3-character-3 as an exception. Lesson M26's wider fit_settings.sh (20 shots) fails one state: the account tab signed in at 200% text, en ('Signed in' a 310 px word in 297) and de ('Angemeldet' 542 px in 217, 'Mit Game Center' 258 px in 217); still docs/art/shots/menu-screens/settings-200-de-account-signed.png. Two causes, both in auth_panel.gd: (1) AuthPanel connects store.changed in _ready and disconnects in _exit_tree; settings_screen.gd's _cue moves the list after it is built, so the panel never listens again and its Devices and Methods sections never draw, in the app too (debug: connection false after the move; a hand redraw gave 9 children against 3). Fix: reconnect in _enter_tree once ready. (2) The status card (ScreenParts.item) puts the sign-out button beside its words. Fix: past 125% text, the actions under the words, the column's width, as the devices' buttons already are. Every other M26 state passes: fit_character.sh 50 of 50, fit_settings.sh 18 of 20. Notes: menu-screens.md Part 3, 'Every fixture state in the fit checks'.",
+      "files": [
+        "client/scripts/auth_panel.gd",
+        "docs/art/shots/menu-screens/settings-200-de-account-signed.png",
+        "docs/art/shots/menu-screens/fit_settings.sh",
+        "client/tests/shots/screen_settings.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T10:38:25Z",
+      "due": "2026-11-16T12:38:25Z",
+      "default": "The lead adds client/scripts/auth_panel.gd to P2-S3-character-3's exceptions and restarts S3, which makes the two fixes, gets fit_settings.sh 20 of 20 and fit_character.sh 50 of 50, pre-checks and marks ready",
+      "escalate_to": "lead",
+      "state": "answered",
+      "answer": "Granted by the lead in cycle 99 (db805002): auth_panel.gd is in the task's exceptions. Both fixes made: _enter_tree listens again once ready; past 125% every row's end control goes under its words. fit_settings.sh 20 of 20, fit_character.sh 50 of 50."
     }
   ],
   "answers": [
@@ -514,5 +568,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "IQ-kit-docs: gap list in docs/progress/S3.md, requests S3-R22 to S3-R28 to K1 through the lead; pre-check on the notes commit, then ready."
+  "next_step": "pre-check on the commit with S3-R30's fixes; then gate_request and ready (AD's R29 default if unanswered by its due)"
 }
