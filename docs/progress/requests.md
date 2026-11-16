@@ -949,6 +949,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   result screen draws as today. Copied in cycle 101; open. It is not part
   of P2-S1-result-4; the lead seeds it for S1 after kit-gaps-2 merges, or
   the default stands.
+  **Answered** by the lead in cycle 101: seeded as P2-S1-result-5 for
+  S1, open once P2-K1-kit-gaps-2 merges; the result screen draws as
+  today until then.
 
 ### S3
 
@@ -1700,6 +1703,20 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   **Answered** by S1's fix in cycle 101: the advisory gate at `6fb2e3da`
   passed Display type 3 of 3, and P2-S1-result-4 merged as `9a1d4db5`;
   no follow-up task.
+- **AD-R43** (from AD, 16 November 2026 14:20Z; due 18 November 14:20Z;
+  not blocking): board 5's objection M, from round 3 (P2-AD-board-5c).
+  On the signed-in Account tab at 100% text the leather 'Sign out'
+  buttons on the section card fail value steps (English dL* 16.3 and
+  16.1, German 17.5 and 17.0; 2 steps needed); they pass on the darker
+  night and in high contrast. Fix in `client/scripts/auth_panel.gd`
+  `_button`: a lighter face for the leather actions on a section card,
+  or the parchment plate the profile row uses. Default: the lead opens a
+  follow-up S3 task for M, done when `tools/ui_gate/checks.py
+  value-steps` passes every control on the signed-in Account tab records
+  at 100% in English and German; no AD round 4, and board 5 stands on K
+  and L meanwhile. Copied in cycle 101. **Answered** by the lead in
+  cycle 101, as the default says: P2-S3-account-4 seeded, open once
+  P2-AD-board-5c merges.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 

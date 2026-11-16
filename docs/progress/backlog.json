@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-16T10:55:00Z",
-  "updated_by": "lead (cycle 99)",
+  "updated_at": "2026-11-16T16:14:00Z",
+  "updated_by": "lead (cycle 101)",
   "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -4658,6 +4658,85 @@
         "tools/ui_bake/budgets.json",
         "client/tests/shots/ui_kit_*.gd.uid"
       ]
+    },
+    {
+      "role": "S3",
+      "assigned_to": "S3",
+      "files": [
+        "client/scripts/auth_panel.gd",
+        "client/tests/shots/screen_settings.gd",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "deps": [
+        "P2-AD-board-5c"
+      ],
+      "done_when": [
+        "AD-R43 (board 5c, objection M, light): on the signed-in Account tab at 100% text the leather 'Sign out' actions on the section card (auth_panel.gd _button) stand at least 2 value steps off their card, with a lighter face for the leather actions on a section card or the parchment plate the profile row uses; the darker night and high contrast still pass",
+        "python3 tools/ui_gate/checks.py value-steps passes every control on the signed-in Account tab records at 100% in English and German (settings-account signed in, en and de), said in the handoff evidence",
+        "board-5.md's 'Round 3 (board 5c)', M, considered and answered in the handoff; no AD round 4",
+        "the fit checks (fit_settings.sh) print 'fit ok' on every Account tab state they cover, at 100% and 200% text in en, pt_BR and de",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "gate_items": [],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T16:14:00Z",
+      "updated_by": "lead (cycle 101)",
+      "id": "P2-S3-account-4",
+      "title": "Account tab, part 4: the leather 'Sign out' actions on the signed-in section card stand 2 value steps off their card (board 5c's objection M, AD-R43)",
+      "exceptions": [
+        "docs/art/shots/menu-screens/**"
+      ]
+    },
+    {
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "docs/art/tracks/result-screen.md"
+      ],
+      "deps": [
+        "P2-K1-kit-gaps-2"
+      ],
+      "done_when": [
+        "K1-R23: result_screen.gd plays the reward through KitNav.reward(self, grade_icon, tile, 0, to, tier, _write_reward.bind(to)) in place of Motion.reward(...), keeping _lift_reward() after it; the KitNav.celebrate(self) call is dropped where the reward call now dresses the backdrop, or kept with the reason in the handoff",
+        "the result screen draws as before: the budget shots result/100, result/200 and result/hc within their recorded draw calls and words, and FIT=1 runs of client/tests/shots/screen_result.gd at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "gate_items": [],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T16:14:00Z",
+      "updated_by": "lead (cycle 101)",
+      "id": "P2-S1-result-5",
+      "title": "Result screen, part 5: the reward plays through KitNav.reward, K40's one entry point (K1-R23)",
+      "exceptions": []
     }
   ],
   "idle_queue": [
