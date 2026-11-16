@@ -10,7 +10,10 @@ extends MarginContainer
 ## across the tile's gold rim (10-roster.png, board 3's dock). The bar runs
 ## under the home bar, but every tab
 ## stays inside §21.1's safe area and clear of the corners, and each is a
-## 48-point hit area at least. A badge writes its count (§20.8).
+## 48-point hit area at least. Every picture a tab stands up out of its
+## tile lies inside the bar's own rect, at every text size (`_stand`), so a
+## screen needs no room of its own over the bar. A badge writes its count
+## (§20.8).
 
 signal picked(id: String)
 
@@ -25,6 +28,10 @@ const TABS := [
 ]
 ## How far the chosen tab rises above the bar, in points.
 const RISE := 18.0
+## How far a tab's content stands above the tab's foot, in points.
+const FOOT := 4.0
+## How far the chosen tab's picture bobs up from where it rests, in points.
+const BOB := 2.0
 ## The clear space between a tile's gold rim and the name under it, in points.
 const RIM := 2.0
 ## How wide the chosen tile and the Heist's stand, in points, inside their
@@ -48,6 +55,12 @@ var _faces: Dictionary = {}
 var _plain: Dictionary = {}
 var _glows: Dictionary = {}
 var _tiles: Dictionary = {}
+var _heads: Dictionary = {}
+## Each tab's height as `_stand` last set it, and a height a screen set
+## since, kept as the tab's floor until a tab is chosen.
+var _stood: Dictionary = {}
+var _floors: Dictionary = {}
+var _bar: RbBox
 
 
 ## The bar with `chosen` chosen and a badge on each tab named in `badges`
@@ -69,7 +82,9 @@ static func make(chosen: String, badges := {}) -> KitTabs:
 		"tab_bar_lift"))
 	bar.add_theme_stylebox_override("panel", pad)
 	var box := UI.dress(bar, "tab_bar", 24)
+	# The gold edge at the plain tabs' top; `_stand` keeps it there.
 	box.inset_top = UI.px(RISE)
+	t._bar = box
 	# Its sides and foot run off the screen: only the gold top edge shows.
 	box.bleed = UI.px(32)
 	t.add_child(bar)
@@ -110,8 +125,13 @@ func _tab(tab: Array, badge: int) -> Button:
 	content.set_anchors_preset(Control.PRESET_FULL_RECT)
 	content.alignment = BoxContainer.ALIGNMENT_END
 	content.add_theme_constant_override("separation", UI.px(RIM))
-	content.offset_bottom = -UI.px(4)
+	content.offset_bottom = -UI.px(FOOT)
 	content.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# The room over the tile that its picture stands up into (`_stand`).
+	var head := Control.new()
+	head.name = "Head"
+	head.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	content.add_child(head)
 	# The tile: the chosen tab's periwinkle plate or the Heist's gold ring,
 	# over its name, the icon standing in it. It takes the tab's height the
 	# name leaves, so the name is always under its rim, never across it.
@@ -151,6 +171,7 @@ func _tab(tab: Array, badge: int) -> Button:
 	b.resized.connect(_fit, CONNECT_DEFERRED)
 	_icons[id] = icon
 	_tiles[id] = tile
+	_heads[id] = head
 	_plain[id] = icon.texture
 	_labels[id] = l
 	return b
@@ -176,6 +197,7 @@ func face(id: String, picture: Texture2D) -> void:
 ## Chooses a tab: it rises, widens and lights; the others settle.
 func choose(id: String, animate := true) -> void:
 	active = id
+	_floors.clear()
 	if is_inside_tree():
 		_fit.call_deferred()
 	for k: String in buttons:
@@ -194,7 +216,6 @@ func choose(id: String, animate := true) -> void:
 		RbBox.of(b).visible = look == ""
 		tile.custom_minimum_size.x = _tile_width(k)
 		b.size_flags_stretch_ratio = Tokens.number("size", "tab_active_grow") if on else 1.0
-		b.custom_minimum_size.y = UI.px(Tokens.number("size", "tab_height") + (RISE if on else 0.0))
 		var label: Label = _labels[k]
 		label.add_theme_font_size_override("font_size", UI.text_px(15 if on else 13))
 		label.set_meta("points", 15.0 if on else 13.0)
@@ -218,14 +239,14 @@ func choose(id: String, animate := true) -> void:
 		var faced := on and _faces.has(k)
 		icon.texture = (_faces[k] if faced else _plain[k]) as Texture2D
 		icon.custom_minimum_size = Vector2.ONE * UI.px(FACE if faced else (ICON if on else 36.0))
-		icon.offset_bottom = -float(UI.px(5.0 if on else 3.0))
+		icon.offset_bottom = -rest(on)
 		if _bobs.has(k):
 			(_bobs[k] as Tween).kill()
 			_bobs.erase(k)
 		if on and animate:
 			Motion.pop(icon)
 		if on and is_inside_tree():
-			var bob := Motion.bob(icon, 2.0)
+			var bob := Motion.bob(icon, BOB)
 			if bob != null:
 				_bobs[k] = bob
 		if _glows.has(k):
@@ -236,6 +257,67 @@ func choose(id: String, animate := true) -> void:
 			var pulse := Motion.glow(box)
 			if pulse != null:
 				_glows[k] = pulse
+	_stand()
+
+
+## Each tab's height, and the bar's gold edge (S2-R24). A tab holds, from its
+## foot up: its name if shown, its tile at the height the tile takes at 100%
+## text (the chosen one RISE above the bar), and over the tile the room its
+## picture stands up into, its bob included. So the chosen tile keeps its
+## look at every text size, its picture still rises out of the rim as the
+## designs draw it, and all a tab draws lies inside it: the bar's height is
+## the height it takes. A tab is never lower than its own at 100% text
+## (`tab_height`, the chosen one RISE more), and the bar's gold edge stays
+## at the top of the tallest tab not chosen.
+func _stand() -> void:
+	var plain := 0.0
+	var tallest := 0.0
+	for k: String in buttons:
+		var on := k == active
+		var b: Button = buttons[k]
+		var label: Label = _labels[k]
+		var icon: TextureRect = _icons[k]
+		var base := float(UI.px(Tokens.number("size", "tab_height") + (RISE if on else 0.0)))
+		# A screen that set a tab's height since (home raises its Heist) keeps
+		# it raised, its tile taller by as much; the gold edge stays at the
+		# plain tabs' top. Set lower than the tab last stood counts too: the
+		# tab stood taller only while its name showed.
+		if _stood.has(k) and absf(b.custom_minimum_size.y - float(_stood[k])) > 0.5:
+			_floors[k] = b.custom_minimum_size.y
+		var raised := _floors.has(k) and float(_floors[k]) > base + 0.5
+		if raised:
+			base = float(_floors[k])
+		var rim := float(UI.px(RIM))
+		var foot := float(UI.px(FOOT))
+		# The name's height as shown, and as it is at 100% text.
+		var font := label.get_theme_font("font")
+		var words := label.get_minimum_size().y
+		var at_100 := words - font.get_height(label.get_theme_font_size("font_size")) + font.get_height(
+			UI.px(15.0 if on else 13.0))
+		var tile := base - foot - at_100 - rim
+		# Where it rests (its bob moves it up from there and back), and its bob.
+		var picture := icon.custom_minimum_size.y + rest(on) + (UI.PX_PER_POINT * BOB if on else 0.0)
+		var head := maxf(0.0, ceilf(picture - tile))
+		var shown := words + rim if label.visible else 0.0
+		var h := maxf(base, ceilf(foot + shown + tile + head))
+		(_heads[k] as Control).custom_minimum_size.y = head
+		# The VBox parts the head from the tile by RIM too: the head takes it.
+		(_heads[k] as Control).visible = head > rim
+		if head > rim:
+			(_heads[k] as Control).custom_minimum_size.y = head - rim
+		b.custom_minimum_size.y = h
+		_stood[k] = h
+		tallest = maxf(tallest, h)
+		if not on and not raised:
+			plain = maxf(plain, h)
+	if _bar != null and plain > 0.0:
+		_bar.inset_top = tallest - plain
+
+
+## How far a tab's picture rests above its tile's foot, in pixels: the
+## chosen tab's or a tab not chosen.
+static func rest(on: bool) -> float:
+	return float(UI.px(5.0 if on else 3.0))
 
 
 ## Tab `k`'s tile width in pixels: the chosen tile's or the Heist's, inside
@@ -315,6 +397,7 @@ func _fit() -> void:
 			(_labels[k] as Label).visible = widest <= each + 0.5
 	for k: String in _tiles:
 		(_tiles[k] as Control).custom_minimum_size.x = _tile_width(k)
+	_stand()
 
 
 ## The width a tab needs to show `l`'s whole word in capitals, its stroke
