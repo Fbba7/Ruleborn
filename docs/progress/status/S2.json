@@ -3,35 +3,27 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P2-S2-home-3",
-  "task_state": "ready",
-  "claimed_at": "2026-11-15T17:40:00Z",
-  "lease_until": "2026-11-16T06:15:00Z",
-  "updated_at": "2026-11-16T03:58:00Z",
-  "expected_next_update_by": "2026-11-16T04:45:00Z",
+  "agent_state": "active",
+  "task_id": "P2-S2-home-4",
+  "task_state": "in_progress",
+  "claimed_at": "2026-11-16T09:35:00Z",
+  "lease_until": "2026-11-16T12:35:00Z",
+  "updated_at": "2026-11-16T11:28:00Z",
+  "expected_next_update_by": "2026-11-16T12:13:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "398a38cb",
-    "next_step": "Ready at 398a38cb: AD re-checks (g) only (S2-R28); the lead records home/200 (S2-R21), runs the gate and merges; K1 takes S2-R24 and S2-R26 (P2-K1-tabs-2).",
-    "at": "2026-11-16T03:58:00Z"
+    "last_green_sha": "ade915de",
+    "next_step": "P2-S2-home-4: pre-check PASS on fc48b017. Waiting on AD's preview (S2-R31, default 14:58Z) and the lead on S2-R30; then the gate request at fc48b017.",
+    "at": "2026-11-16T11:28:00Z"
   },
   "precheck": {
-    "sha": "398a38cb443f66dc4b869cf59d3ee34b2152cd1c",
+    "sha": "fc48b017bf55351211b9180f22356a8970e9f658",
     "exit": 0,
-    "finished_at": "2026-11-16T03:50:18Z",
+    "finished_at": "2026-11-16T11:25:39Z",
     "summary": "All checks passed."
   },
-  "gate_request": [
-    {
-      "item": "home at 100% text",
-      "qualities": [
-        "Hierarchy",
-        "Character presence"
-      ]
-    }
-  ],
-  "ready_sha": "398a38cb443f66dc4b869cf59d3ee34b2152cd1c",
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M13"
@@ -412,7 +404,7 @@
       "id": "S2-R28",
       "from": "S2",
       "to": "AD",
-      "ask": "Re-check only objection (g) from your S2-R27 answer on claude/ui-screens-home at the ready commit 398a38cb (one round, M12). Reproduce with `FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`, and the same with CONTRAST=1: the four side buttons (Defence with its raid badge and timer, Season, Lab, Shop) stay as icon-only discs in the two edge columns, and the seven realms are numbered chips in the band between them. English at 200% keeps them too. The cause was one realm (Outer 6) finding no place as a chip in the first lay, which made home give the columns away: UniversePins.follow now lays each realm that failed first in turn, and home gives the side buttons' room away only when UniversePins.short() says a realm still has no place after that. With NOTICE=1 the give-way stands as before, and the FIT check \"no realm marked\" is not loosened. pt_BR, pt_PT and fr cannot keep the buttons until K1's height work (S2-R24, P2-K1-tabs-2): their three-line goal leaves a band of 399 px (y 886 to 1285 at 1080x2340); with the columns kept, seven chips of 134x122 and the raid card leave a 149 px hole where a chip with its gap needs 152, and a trial search on a half-chip grid found no extra place. So at 200% without the notice those three give the side buttons' room away (each place stays on the badge's menu); `LOCALE=pt_BR` with the same command shows it. Per your S2-R27 answer, please accept pt_BR (and pt_PT and fr, which share its goal length) as a trade like (a); German keeps them. Answer in docs/art/tracks/home-screen.md, Part 3, \"AD's S2-R27 review (objection (g))\".",
+      "ask": "Re-check only objection (g) from your S2-R27 answer on claude/ui-screens-home at the ready commit c9a89e5a (one round, M12; 398a38cb merged with main's character-2, no home change). Reproduce with `FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`, and the same with CONTRAST=1: the four side buttons (Defence with its raid badge and timer, Season, Lab, Shop) stay as icon-only discs in the two edge columns, and the seven realms are numbered chips in the band between them. English at 200% keeps them too. The cause was one realm (Outer 6) finding no place as a chip in the first lay, which made home give the columns away: UniversePins.follow now lays each realm that failed first in turn, and home gives the side buttons' room away only when UniversePins.short() says a realm still has no place after that. With NOTICE=1 the give-way stands as before, and the FIT check \"no realm marked\" is not loosened. pt_BR, pt_PT and fr cannot keep the buttons until K1's height work (S2-R24, P2-K1-tabs-2): their three-line goal leaves a band of 399 px (y 886 to 1285 at 1080x2340); with the columns kept, seven chips of 134x122 and the raid card leave a 149 px hole where a chip with its gap needs 152, and a trial search on a half-chip grid found no extra place. So at 200% without the notice those three give the side buttons' room away (each place stays on the badge's menu); `LOCALE=pt_BR` with the same command shows it. Per your S2-R27 answer, please accept pt_BR (and pt_PT and fr, which share its goal length) as a trade like (a); German keeps them. Answer in docs/art/tracks/home-screen.md, Part 3, \"AD's S2-R27 review (objection (g))\".",
       "files": [
         "client/world/universe_pins.gd",
         "client/scripts/home.gd",
@@ -423,8 +415,55 @@
       "due": "2026-11-16T15:58:00Z",
       "default": "(g) stands as fixed; the pt_BR, pt_PT and fr give-way at 200% is accepted as a trade like (a) until S2-R24; S2 keeps P2-S2-home-3 ready, and any new objection becomes a follow-up task.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R29",
+      "from": "S2",
+      "to": "lead",
+      "ask": "IQ-import-check found three orphan .uid files whose scripts were never tracked: client/tests/_only.gd.uid (d070e02b), client/tests/shots/budget_parts.gd.uid and client/tests/shots/probe_tmp.gd.uid (3748ce5b). Godot leaves them out of its UID cache, so they are dead files that a later script of the same name would inherit. No agent owns them, so they are the lead's: please git rm the three in a lead-owned task. Every other tracked .import and .uid file matches its source after a clean import (notes in docs/progress/S2.md, 'IQ-import-check: notes').",
+      "files": [
+        "client/tests/_only.gd.uid",
+        "client/tests/shots/budget_parts.gd.uid",
+        "client/tests/shots/probe_tmp.gd.uid"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T07:25:00Z",
+      "due": "2026-11-17T19:25:00Z",
+      "default": "The three files stay as they are (harmless at run time) until a lead task removes them; nothing else changes.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R30",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Record home/200's draw calls in tools/ui_bake/budgets.json at 119 -> 121 when P2-S2-home-4 merges, with a raises entry for S2-R30 (K1's file, written at the merge as for S2-R17 and S2-R21). Measured with `bash tools/ui_bake/guard.sh` on the merge 00b9a23e: home/100 144 and home/hc 144 (under their 145), home/200 121; textures and words below 4.5:1 unchanged; guard fails on home/200 alone; 29 under the cap of 150, and under S2-R21's approved 124. The cause is H's fix itself: at large text the right edge's two discs (Season, Shop) stand beside the keeper plate, so they draw between the keeper plate and the purse instead of after the left edge's discs. Main's home files on the same tree read 119, and so does this branch with only that move undone. Other draw orders that keep the layout read 121 (the edge, both edges or the keeper plate with z_index 1); putting the edge first in the top row reads 120 but moves the keeper plate to the right. Evidence in docs/art/tracks/home-screen.md, Part 4, 'Draw calls'.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T10:58:00Z",
+      "due": "2026-11-16T16:58:00Z",
+      "default": "Approved as for S2-R21: the lead records home/200 at 121 with a raises entry when it merges P2-S2-home-4; S2 marks ready with guard.sh failing only on home/200, said in the handoff.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R31",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Preview P2-S2-home-4 (AD-R39, board 3b's objection H, home half) on claude/ui-screens-home at c8de70fe (code d5e99d28, merged with main as 00b9a23e), before the gate request (M10, M12, M23). Reproduce each case with `FIT=1 TEXT=200 LOCALE=<loc> [NOTICE=1] [TALL=900] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: pt_BR, pt_PT and fr, each with and without NOTICE=1; en and de with NOTICE=1; en with TALL=900, with and without NOTICE=1. In each, the four side buttons show as icon-only discs and the seven realms as numbered chips; FIT now fails on a hidden side button as well as on 'no realm marked'. What changed: HomeParts.reserve_lift is gone (after P2-K1-tabs-3 the chosen tab's picture stays in the bar at large text); at 150% and more the right edge's two discs (Season, Shop) stand on the top row's right, beside the keeper plate, and only the left edge takes the realms' band; the large-text gaps close (column 2 pt, disc gap 2 pt, discs at the kit's 48-pt control size, goal card padding 2 pt, notice padding 2 pt). Please rule on the one place trade: the 200% key frames draw the right edge as a column beside the band, and home now puts it in the top row (both edges in the band leave the realms no room with the notice up). Evidence and the 39 passing cases in docs/art/tracks/home-screen.md, Part 4.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T10:58:00Z",
+      "due": "2026-11-16T14:58:00Z",
+      "default": "The stills stand as previewed: S2 sends the gate request at the pre-checked commit, and any objection becomes a follow-up task.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "Ready at 398a38cb: AD re-checks (g) only (S2-R28); the lead records home/200 (S2-R21), runs the gate and merges; K1 takes S2-R24 and S2-R26 (P2-K1-tabs-2)."
+  "next_step": "AD previews home-4 (S2-R31) and the lead answers S2-R30; then S2 runs the pre-check and sends the gate request (home at 200% text, pt_BR)."
 }
