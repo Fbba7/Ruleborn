@@ -267,17 +267,19 @@ static func parts() -> Array:
 			var b := KitNav.tabs(chosen, badges)
 			b.set_meta("target", b.buttons["laws"])
 			return b
-	out.append(["K09 Tab bar", func() -> Control:
-		var rows := [
-			_wide("K09", "N", tabs.call("islands"), "islands chosen"),
+	# Two parts: the bar stands as tall as its chosen tab's picture (S2-R24),
+	# and five bars are taller than a page.
+	out.append(["K09 Tab bar (states)", func() -> Control:
+		return _part("K09 Tab bar", [_wide("K09", "N", tabs.call("islands"), "islands chosen"),
 			_wide("K09", "P", tabs.call("islands"), "laws held"),
-			_wide("K09", "S", tabs.call("heist"), "heist chosen", true),
+			_wide("K09", "S", tabs.call("heist"), "heist chosen", true)])])
+	out.append(["K09 Tab bar (badges)", func() -> Control:
+		return _part("K09 Tab bar: badges, reduced motion", [
 			_wide("K09", "A", tabs.call("islands", {"laws": 3, "crew": 1}), "badges", true),
-			_wide("K09", "RM", tabs.call("islands")),
-		]
-		return _part("K09 Tab bar", rows)])
+			_wide("K09", "RM", tabs.call("islands"))])])
 	_motion(out, "K09 Tab bar", tabs.call("islands"),
-		func(c: Control) -> void: (c as KitTabs).choose("crew"), Tokens.number("motion", "pop_ms"), true, false, true)
+		func(c: Control) -> void: (c as KitTabs).choose("crew"), Tokens.number("motion", "pop_ms"), true, false, true,
+		0.9)
 	out.append(["K10 Hub control", func() -> Control:
 		var hub := func(route: StringName) -> Callable:
 			return func() -> Control:

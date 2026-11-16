@@ -57,6 +57,16 @@
       },
       "reason": "S1-R28: board 4's objection A, the hard drop under the three reward figures (the home's Keeper finish), on the result screen (P2-S1-result-3); with the drop taken out, result/100 reads 89 and result/200 97. Textures and words below 4.5:1 unchanged; result/hc stays 27; result/100 stays 59 and result/200 51 under the cap of 150.",
       "request": "S1-R28"
+    },
+    {
+      "approved_by": "lead, cycle 93 (K1-R22) and cycle 94 (S2-R21, approved to 124)",
+      "date": "2026-11-16",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "home/200": "114 -> 119"
+      },
+      "reason": "S2-R21 and K1-R22: P2-S2-home-3 (board 3's objections A to C and (f), (g): the realm chips, the side buttons' discs at 200% and the one-line notice) and P2-K1-tabs-2 (the tab bar declares the height its chosen tab takes) merged in one candidate; guard.sh reads home/200 at 119 on it, under S2-R21's approved 124. Textures and words below 4.5:1 unchanged; home/100 and home/hc read 144, under their 145; home/200 stays 31 under the cap of 150.",
+      "request": "S2-R21"
     }
   ],
   "screens": {
@@ -340,7 +350,7 @@
         "words_below": 0
       },
       "home/200": {
-        "draw_calls": 114,
+        "draw_calls": 119,
         "texture_bytes": 4880360,
         "words_below": 0
       },
