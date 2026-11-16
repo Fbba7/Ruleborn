@@ -5414,6 +5414,13 @@
       "sent_at": "2026-11-16T20:45:00Z",
       "ack_by": "2026-11-16T22:45:00Z",
       "acked_at": "2026-11-16T21:00:00Z"
+    },
+    {
+      "id": "M35",
+      "to": "lead",
+      "text": "Lesson from the UI report, at the owner's request to speed the program up without losing work (16 Nov). Evidence: P2-K1-grow-1 was ready at 21:55Z, just after cycle 106 read the branches; it waited 48 minutes for cycle 107 and merged at 23:21Z, and K1's seat has stood empty since 21:55Z; from about 17:40Z to 20:49Z only 0 or 1 of 4 seats worked (report entries 93 to 98). Rules: (1) a seat frees when its task is ready, not when it merges; in each cycle, start the next task for every free seat (steps 2 and 6) before taking the merge queue (step 5), and while a candidate's check_all and guard run under nohup setsid, fill seats and copy requests instead of waiting; (2) keep one seeded open task per agent whose deps do not wait on a task in flight, so refilling a seat never waits on seeding; (3) the launcher now also fires at :13 (trig_0155PATecuM4Cm5NGsEsbkX1, recorded in lead.md), so a cycle can start every half hour; a cycle that finds nothing to do ends quickly. Put rule (1) into agent-protocol.md's \"One cycle\". The cap of four and every check stay as they are. Add M35 to your acks.",
+      "sent_at": "2026-11-16T23:45:00Z",
+      "ack_by": "2026-11-17T01:45:00Z"
     }
   ]
 }
