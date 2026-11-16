@@ -3,27 +3,33 @@
   "role": "S3",
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S3-character-4",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-16T20:55:00Z",
   "lease_until": "2026-11-16T23:55:00Z",
-  "updated_at": "2026-11-16T22:01:00Z",
-  "expected_next_update_by": "2026-11-16T22:45:00Z",
+  "updated_at": "2026-11-16T22:30:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "635c33ee50e1dc54bdbce7b5e0795a66ecf8c976",
-    "next_step": "pre-check running at ee67dcea; then record, gate_request, ready",
-    "at": "2026-11-16T22:01:00Z"
+    "last_green_sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
+    "next_step": "ready at ee67dcea (pre-check PASS 22:28:41Z); waiting on the gate and merge; S3-R31 (AD) due 23:08Z, S3-R33 (main rewound) open",
+    "at": "2026-11-16T22:30:00Z"
   },
   "precheck": {
-    "sha": "635c33ee50e1dc54bdbce7b5e0795a66ecf8c976",
+    "sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
     "exit": 0,
-    "finished_at": "2026-11-16T18:09:25Z",
+    "finished_at": "2026-11-16T22:28:41Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
-  "ready_sha": null,
+  "gate_request": {
+    "sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
+    "items": [
+      "character at 200% text, pt_BR: Display type",
+      "character at 200% text, pt_BR: Hierarchy"
+    ]
+  },
+  "ready_sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M26",
@@ -625,5 +631,6 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "fit_character.sh, check_screens.py, guard.sh; requests S3-R31 (AD preview) and S3-R32 (parchment on scroll); merge main; checks; gate request"
+  "next_step": "none until the lead's gate and merge; on resync merge main, re-run the pre-check, mark ready again",
+  "last_green_sha": null
 }
