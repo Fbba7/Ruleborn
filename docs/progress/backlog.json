@@ -4574,7 +4574,7 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
@@ -4585,8 +4585,8 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "9ec2e61b",
-      "merged_sha": null,
-      "updated_at": "2026-11-16T11:45:00Z",
+      "merged_sha": "cf6165e9",
+      "updated_at": "2026-11-16T12:23:00Z",
       "updated_by": "lead (cycle 100)",
       "id": "P2-K1-kit-gaps-1",
       "title": "Kit gaps, part 1 (IQ-kit-docs, S3-R22, R24, R26, R27): slider, dialog variants with ribbon title, info popover and empty state as kit calls",
@@ -4635,15 +4635,16 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-16T08:55:00Z",
-      "updated_by": "lead (cycle 97)",
+      "updated_at": "2026-11-16T12:23:00Z",
+      "updated_by": "lead (cycle 100)",
       "id": "P2-K1-kit-gaps-2",
       "title": "Kit gaps, part 2 (IQ-kit-docs, S3-R23, R25): spinner and the Ld, L and A states as kit calls; one reward-sequence entry point",
       "exceptions": [
         "client/tests/shots/ui_kit_catalogue.gd",
         "client/tests/shots/ui_kit_*.gd",
         "docs/art/shots/ui-bake/**",
-        "tools/ui_bake/budgets.json"
+        "tools/ui_bake/budgets.json",
+        "client/tests/shots/ui_kit_*.gd.uid"
       ]
     }
   ],
