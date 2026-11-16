@@ -440,8 +440,6 @@ func _lay(mode: int) -> bool:
 		node.visible = placed
 		if not placed:
 			_failed.append(id)
-		if not placed and OS.get_environment("DBG") != "":
-			print("DBG fail ", id, " mode ", mode, " at ", s, " size ", node.size, " taken ", taken, " inset ", view.inset)
 		every = every and placed
 	return every
 

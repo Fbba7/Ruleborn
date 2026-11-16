@@ -603,8 +603,6 @@ func _fit_pins() -> void:
 		# realm first, do the side buttons give way (AD's objection (g) on
 		# S2-R27): each place is on the badge's menu.
 		_edges_yield = true
-		if OS.get_environment("DBG") != "":
-			print("DBG yield at frame ", Engine.get_process_frames(), " upright ", (_edges[0] as BoxContainer).vertical)
 		(_foot.get_parent() as Control).queue_sort()
 		return
 	if pins.visible != whole:
