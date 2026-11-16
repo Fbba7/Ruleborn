@@ -950,6 +950,18 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   S2's default holds. S2 restarted in cycle 101 to send the gate request
   at `1697a6c6`.
 
+- **K1-R24** (from K1, 16 November 2026 20:42Z; due 17 November 02:42Z;
+  not blocking): P2-K1-grow-1 touches two paths outside its files,
+  `client/tests/shots/ui_kit_grow.gd` and its `.uid`: `ui_kit_tests.gd`
+  stands at gdlint's 1000 lines on main, so the new checks (action2,
+  big_action and upgrade at 200% pt_BR and en with their words inside the
+  button; reward and celebrate under high contrast leaving the sky's
+  dress) live in this helper, as K1-R15's, K1-R20's and K1-R21's did, and
+  `ui_kit_tests.gd` calls it in one line. Default: granted, the two paths
+  join the task's exceptions at the merge. Copied in cycle 105.
+  **Answered** by the lead in cycle 105, granted: both paths are in
+  P2-K1-grow-1's exceptions in backlog.json now.
+
 ### S1
 
 - **K1-R23** (from K1, 16 November 2026 13:05Z; due 17 November 13:05Z;

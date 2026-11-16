@@ -185,9 +185,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxq7RefUXnN7oBncd9P` (cycle 104,
-16 November 2026 from about 19:39Z, started by the Opus 5.5 launcher; named
-here at the start of the cycle so the next firing sees it working). Cycle
+Latest lead cycle session: `session_01SNkKxpseg4mh8yx1YBk6dS` (cycle 105,
+16 November 2026 from about 20:38Z, started by the Opus 5.5 launcher). Cycle
+104's was `session_01SNkKxq7RefUXnN7oBncd9P` (from 19:39Z). Cycle
 103's was `session_01SNkKxnS8D88S3KnnZyABwf` (from 17:39Z). Cycle
 102's was `session_01SNkKxr2KqhZcMDPDNjAD3g` (from 16:39Z). Cycle 101's was
 `session_01SNkKxr2W1EVjzynnMCEqVA` (from 13:41Z). Cycle 100's was `session_01SNkKxoqsyfRu7nQ4xvraaU` (from 11:40Z). Cycle 99's was `session_01SNkKxqWs3DXEToJqEWQxXa` (from 10:39Z). Cycle
@@ -496,7 +496,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P2-S1-result-5 (seeded in cycle 101 from K1-R23; docs/progress/requests.md, section Lead): K1's P2-K1-kit-gaps-2 merged as 26cbd842 and makes KitNav.reward K40's one entry point. In client/scripts/result_screen.gd replace the Motion.reward call with KitNav.reward(self, grade_icon, tile, 0, to, tier, _write_reward.bind(to)), keeping _lift_reward(); the result/100, /200 and /hc budget shots stay within their records; FIT=1 runs of screen_result.gd at 200% text in en, pt_BR and de and in high contrast pass. See K1's handoff in docs/progress/K1.md for the signature. P2-S1-result-4 merged as 9a1d4db5; merge main into your branch first. No gate item; no AD board.
+Tasks: P2-S1-heist-1 (seeded in cycle 105, phase 2 exit, M25): the heist screen's open gate fails. First re-run the gate on current main for 'heist at 100% text', 'heist at 200% text' and 'heist at 200% text, pt_BR, no crew plan' (the latest verdicts are in docs/art/ui-quality/gate/verdicts/P1-S1-pilot-1, -2 and -4) and list in your handoff which fails still stand; then fix those: colour roles (Get out and Alarm the same danger role, Cast the gold fill, crew rings told apart by more than hue), the load bar, crew bars and hint pill in the kit's inked material, the timer and labels over art outlined at 200%, the icons at their painted size, layered hint banner and Room panel, and Lançar leading at 200% pt_BR. The task's done_when in the backlog lists every point, M26's fit check included. AD previews your stills before ready (a request to AD through the lead). P2-S1-result-5 merged as 532296af; merge main into your branch first. P2-S1-result-6 (drop the local fixes once K1's P2-K1-grow-1 merges, re-gate result at 100% text) follows in a later session. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -511,7 +511,7 @@ You are agent S2 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-home
 Owned files: only the files each S2 task lists in the backlog, docs/progress/S2.md, docs/progress/status/S2.json
-Tasks: P2-S2-home-4 (seeded in cycle 96: AD-R39, board 3b's objection H, home half; docs/progress/requests.md, section Lead, and docs/art/ui-quality/gate/boards/board-3.md 'Round 2 (board 3b)'): give reserve_lift back to the realms' band as K1's P2-K1-tabs-3 handoff allows (docs/progress/K1.md; merged as 1053266f), and keep the side buttons and realm chips on the screen at 200% in every locale, with and without the notice. Your branch already carries IQ-import-check (ready at ade915de; it merges with home-4, because it holds one line of docs/art/tracks/home-screen.md); merge main into it first. P2-AD-board-3c (AD, only H) waits on home-4. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+Tasks: P2-S2-home-5 (seeded in cycle 105, phase 2 exit, M25): first re-run the gate on current main for 'home at 100% text' and 'home in high contrast'; the latest verdict at 100% (docs/art/ui-quality/gate/verdicts/P2-S2-home-1/977edd5b.json, 13 November) fails Display type on the purse's flat cream counts, and home.gd has since given them home_figure. Say in your handoff whether the fail still stands; if it does, give the counts and the keeper's name the kit's display treatment (ink outline and hard drop, or a gradient fill), keeping 'home at 200% text, pt_BR' and high contrast passing and M26's fit check 'fit ok'. AD previews your stills before ready if they change (a request to AD through the lead). P2-S2-home-4 merged as 5803122d; merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -526,7 +526,7 @@ You are agent S3 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S3            Role: maker (S3): the character and settings screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-meta
 Owned files: only the files each S3 task lists in the backlog, docs/progress/S3.md, docs/progress/status/S3.json
-Tasks: P2-S3-account-4 (seeded in cycle 101: board 5c's objection M, AD-R43; docs/progress/requests.md, section Lead, and docs/art/ui-quality/gate/boards/board-5.md 'Round 3 (board 5c)'): the leather 'Sign out' actions on the signed-in Account tab's section card stand only about 16 to 17.5 ΔL* off their card; bring them to 2 value steps (checks.py value-steps passes the signed-in Account tab at 100% text in en and de), keep fit_settings.sh printing ok, and add the signed-in shot to client/tests/shots/screen_settings.gd if it needs one. Closed by checks.py value-steps; no AD round 4. P2-S3-character-3 merged as 0ee8d9d8 and P2-AD-board-5c as 26cbd842; merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+Tasks: P2-S3-character-4 (seeded in cycle 105, phase 2 exit, M25): the advisory gate's Display type fail on 'character at 200% text, pt_BR' (docs/art/ui-quality/gate/verdicts/P2-S3-character-3/a6d5f2fb.json): the subtitle ('Skyskipper · Carregador') and the level line ('Nível 3 de 10') over the starry backdrop carry a drop but no outline on the top and left; give them an ink outline on every side (or a plate), and stroke the HABILIDADE header as 'Subir de nível' is. Say what changed on those labels between 6b7e6b42 (where character-2 passed) and a6d5f2fb. No card stays covered by the Level up dock at 200% in en, pt_BR and de; 100% and high contrast keep passing; M26's fit check (fit_character.sh) prints 'fit ok'. AD previews your stills before ready (a request to AD through the lead). P2-S3-account-4 is merged; merge main into your branch first. The upgrade button's own growth at large text (S3-R3) is K1's P2-K1-grow-1; leave the button to the kit. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
