@@ -1,7 +1,7 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-16T18:30:00Z",
-  "expected_next_update_by": "2026-11-16T19:45:00Z",
+  "updated_at": "2026-11-16T18:23:00Z",
+  "expected_next_update_by": "2026-11-16T19:38:00Z",
   "cycle": 103,
   "merging": {
     "candidate_sha": "de3a577a",
@@ -9,8 +9,8 @@
       "P2-S3-account-4",
       "lead: S2-R32, S2-R29"
     ],
-    "started_at": "2026-11-16T18:30:00Z",
-    "expires_at": "2026-11-16T19:30:00Z"
+    "started_at": "2026-11-16T18:23:00Z",
+    "expires_at": "2026-11-16T19:23:00Z"
   },
   "last_merged": {
     "task_id": "P2-S1-result-5",
