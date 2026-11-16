@@ -7,19 +7,19 @@
   "task_id": "P2-S3-character-2",
   "task_state": "working",
   "claimed_at": "2026-11-15T22:36:00Z",
-  "lease_until": "2026-11-16T04:20:00Z",
-  "updated_at": "2026-11-16T01:20:00Z",
-  "expected_next_update_by": "2026-11-16T02:05:00Z",
+  "lease_until": "2026-11-16T04:55:00Z",
+  "updated_at": "2026-11-16T01:55:00Z",
+  "expected_next_update_by": "2026-11-16T02:40:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "45ca3158beafb3b0052c3b53b3d71e3390803254",
-    "next_step": "AD's S3-R15 answered (A-D, G fixed; new H). H fixed at 6b7e6b42 (status pill icon-only at large text); pre-check running on 6b7e6b42; S3-R16 asks AD to re-check H; gate_request moved to 6b7e6b42",
-    "at": "2026-11-16T01:20:00Z"
+    "last_green_sha": "6b7e6b4242acd60056cf0abe6e5cda7891f16555",
+    "next_step": "pre-check PASS on 6b7e6b42 recorded; waiting for AD's re-check of H (S3-R16) and the gate on 6b7e6b42, then ready",
+    "at": "2026-11-16T01:55:00Z"
   },
   "precheck": {
-    "sha": "45ca3158beafb3b0052c3b53b3d71e3390803254",
+    "sha": "6b7e6b4242acd60056cf0abe6e5cda7891f16555",
     "exit": 0,
-    "finished_at": "2026-11-16T00:15:33Z",
+    "finished_at": "2026-11-16T01:54:33Z",
     "summary": "All checks passed."
   },
   "gate_request": {
