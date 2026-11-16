@@ -3,17 +3,17 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "done",
-  "task_id": "P2-AD-board-5",
-  "task_state": "ready",
-  "claimed_at": "2026-11-15T20:31:00Z",
-  "lease_until": "2026-11-15T23:35:00Z",
-  "updated_at": "2026-11-16T01:14:00Z",
-  "expected_next_update_by": "2026-11-16T02:14:00Z",
+  "agent_state": "active",
+  "task_id": "P2-AD-board-4b",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-16T02:10:00Z",
+  "lease_until": "2026-11-16T05:10:00Z",
+  "updated_at": "2026-11-16T02:10:00Z",
+  "expected_next_update_by": "2026-11-16T02:55:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
-    "next_step": "Session done: S2-R25 and S3-R15 answered; no AD board open on main. Next session: 4b once P2-S1-result-3 merges, 3b after P2-S2-home-3, 5b after P2-S3-character-2 and settings-2."
+    "next_step": "Answer S3-R16 (H at 6b7e6b42), then board 4b: re-shoot items 1-9 on main at 1484a9bf."
   },
   "precheck": {
     "sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
@@ -22,7 +22,7 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
+  "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M12",
