@@ -157,10 +157,11 @@ func _ready() -> void:
 	# The lines under the tiles stand on the night with no plate.
 	for l: Label in [fee_label, detail_label, check_label]:
 		_ink(l, float(l.get_meta("points", UI.TEXT_POINTS)))
-	# The totals as display numbers, in the ink outline.
-	_display(haul_label, "gold_top")
+	# The totals as the home's display figures: the lead deep gold, the
+	# others cream (key frame 03's "1,288", "+46" and "+12").
+	_display(haul_label, "starlight")
 	for k: String in reward_labels:
-		_display(reward_labels[k], "gold_top" if k == "starlight" else "cream")
+		_display(reward_labels[k], "starlight" if k == "starlight" else "cream")
 	# With large text the haul comes first, under the time line, and the
 	# moment after it (key frame 03-result_text200_pt_BR; AD's S1-R24): the
 	# first screen shows what the heist paid.
@@ -266,13 +267,21 @@ static func _ink(l: Label, points: float) -> void:
 	l.add_theme_constant_override("outline_size", UI.px(maxf(1.5, 0.12 * points) + 0.5))
 
 
-## A reward's total as a display number: `tone` (a tokens.json colour) in the
-## ink outline, for the card's soft drop (result/200's draw calls), alike on
-## parchment and glass.
+## A reward's total as the home's figures ("Keeper 24", `Home.home_figure`):
+## the display face, `tone` (a tokens.json colour) filled solid, a heavy ink
+## outline and a hard drop under it, alike on parchment and glass and in
+## high contrast (board 4's objection A).
 static func _display(l: Label, tone: String) -> void:
-	_ink(l, float(l.get_meta("points", 24.0)))
+	var font_px := float(l.get_theme_font_size("font_size"))
+	var line := maxi(UI.px(2.0), int(round(0.21 * font_px)))
+	l.add_theme_font_override("font", RbTheme.role_font("display"))
 	l.add_theme_color_override("font_color", Tokens.color(tone))
-	l.add_theme_color_override("font_shadow_color", Color.TRANSPARENT)
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", line)
+	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
+	l.add_theme_constant_override("shadow_offset_x", 0)
+	l.add_theme_constant_override("shadow_offset_y", maxi(UI.px(1.5), int(round(0.08 * font_px))))
+	l.add_theme_constant_override("shadow_outline_size", line)
 
 
 ## §12.13's moment on the kit's card: the gold play button with the replay's
@@ -495,7 +504,7 @@ func start_reward() -> Tween:
 	if to <= 0 or not grade_icon.visible or not is_inside_tree():
 		_end_reward.call_deferred()
 		return null
-	var tile := _reward_tile()
+	var tile := _reward_mark()
 	_write_reward(0, to)
 	reward_tween = Motion.reward(grade_icon, tile, 0, to, str(TIERS.get(str(_verdict.get("grade", "")), "common")),
 		_write_reward.bind(to))
@@ -521,11 +530,11 @@ func _lift_reward() -> void:
 				RenderingServer.CANVAS_ITEM_Z_MAX)
 
 
-## Where the coins land: the Starlight tile of the split, else the haul's.
-func _reward_tile() -> Control:
-	if reward_row.visible:
-		return (reward_labels["starlight"] as Label).get_parent().get_parent() as Control
-	return haul_tile
+## Where the coins land and what pulses: the icon (its box's first child) by
+## the Starlight number, else the haul's, so no coin hides the roll (AD's D).
+func _reward_mark() -> Control:
+	var number := (reward_labels["starlight"] as Label) if reward_row.visible else haul_label
+	return number.get_parent().get_child(0) as Control
 
 
 ## What the coins bring: the split's Starlight, else the haul, else 0.
@@ -804,7 +813,7 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 ## F6: the actions end the page while it fits on the phone; a page taller
 ## than the phone (a long language over the study card, say) leaves them in
 ## the bar at its foot, under the page that scrolls, as large text does. Once
-## moved they stay: the page only grows (a verdict that arrives later).
+## moved they stay: the page only grows. Its foot lands on a whole line.
 func _fit_actions() -> void:
 	if _ending.is_empty():
 		return
@@ -818,10 +827,13 @@ func _fit_actions() -> void:
 		await get_tree().process_frame
 		await get_tree().process_frame
 	var page := _ending[0].get_parent() as Control
-	if not is_inside_tree() or page == _foot or page.get_combined_minimum_size().y <= _scroll.size.y:
-		return
-	for c: Control in _ending:
-		c.reparent(_foot)
+	if Settings.text_scale > 100 and reward_row.visible and page == _foot:
+		ResultFit.hero_shrink([[kicker_label, 14.0], [grade_label, TITLE_POINTS], [condition_label, 16.0],
+			[subline_label, 14.0]], reward_labels.values(), _ending[0])
+	if is_inside_tree() and page != _foot and page.get_combined_minimum_size().y > _scroll.size.y:
+		for c: Control in _ending:
+			c.reparent(_foot)
+	ResultFit.fold(_scroll, _ending[0], _ending[1])
 
 
 ## The laws to study two to a row, rather than side by side, when a law's
@@ -866,21 +878,15 @@ func _fit_raid() -> bool:
 		- (row.get_parent() as Control).get_theme_stylebox("panel").get_minimum_size().x
 	var wide := full
 	for c: Control in row.get_children():
+		# Large text: Home as its icon on a square beside the raid, named
+		# aloud, in every language, as key frames 03-result_text200 and
+		# _pt_BR, so the raid leads the bar (board 4's objection E).
+		if c != again and c is Button and Settings.text_scale > 100:
+			ResultFit.home_square(c as Button)
 		if c != again:
 			wide -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
 	var words := again.find_children("*", "Label", true, false)
 	var upright := not ResultFit.words_fit(words, wide - pad)
-	if upright and Settings.text_scale > 100:
-		# Large text: Home as its icon on a square beside the raid, named
-		# aloud, as key frame 03-result_text200_pt_BR, before the raid stands
-		# over a Home row of its own, so the haul keeps the first screen.
-		wide = full
-		for c: Control in row.get_children():
-			if c != again and c is Button:
-				ResultFit.home_square(c as Button)
-			if c != again:
-				wide -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
-		upright = not ResultFit.words_fit(words, wide - pad)
 	if upright:
 		row.vertical = true
 		row.move_child(again, 0)

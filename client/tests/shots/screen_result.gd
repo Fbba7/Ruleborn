@@ -198,6 +198,29 @@ static func fit(screen: Control) -> Array[String]:
 			var w := font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_px).x
 			if w > room + 1.0:
 				bad.append("%s %s: the word %s is %.0f px in %.0f" % [b.get_path(), b.text, word, w, room])
+	# The whole haul on the first screen, inside the viewport and above the
+	# actions, whatever the text size and language (AD's objection B).
+	var result := screen as ResultScreen
+	if result.reward_row.visible:
+		var top := screen.size.y
+		if not result._ending.is_empty():
+			top = minf(top, (result._ending[0] as Control).get_global_rect().position.y)
+			# Under the page that scrolls, above its lower edge too.
+			if result._ending[0].get_parent() == result._scroll.get_parent():
+				top = minf(top, result._scroll.get_global_rect().end.y)
+		for kind: String in result.reward_labels:
+			var tile := (result.reward_labels[kind] as Label).get_parent().get_parent() as Control
+			if tile.get_global_rect().end.y > top + 1.0:
+				bad.append("reward %s: ends at %.0f px, under the first screen's %.0f" % [kind,
+					tile.get_global_rect().end.y, top])
+	# With the bar under the page that scrolls, the first screen ends on a
+	# whole line, never the tops of a line's letters or a card's sliver
+	# (AD's objection F: "Re-simulated by the server" at 200% in English).
+	if not result._ending.is_empty() and result._ending[0].get_parent() == result._scroll.get_parent():
+		var edge := result._scroll.get_global_rect().end.y
+		var part := ResultFit.part_line(result._scroll, edge)
+		if part > 1.0:
+			bad.append("fold: the page ends %.0f px into a line or card above the bar" % part)
 	return bad
 
 
