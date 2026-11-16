@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T03:21:36Z",
   "lease_until": "2026-11-16T08:04:31Z",
-  "updated_at": "2026-11-16T05:04:31Z",
-  "expected_next_update_by": "2026-11-16T05:49:31Z",
+  "updated_at": "2026-11-16T05:06:01Z",
+  "expected_next_update_by": "2026-11-16T05:51:01Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
-    "next_step": "P2-S3-settings-2: the gate failed Hierarchy at 5fc97aac (first fail; Display type passed). Fixing in settings_screen.gd: hero title on the lit gold card, 22-point gold stroked headings, the law's sample on the dark plate, the tab strip on the kit's light segment track. Next: AD's preview of the fix, main merged, pre-check, gate again.",
-    "at": "2026-11-16T05:04:31Z"
+    "next_step": "P2-S3-settings-2: the gate's advisory Hierarchy fail at 5fc97aac answered at 3854db00 (main merged at 7d8f260e). AD asked for its preview (S3-R20). Next: setup line, build, check_all and guard on the merge, pre-check, gate_request, ready when AD clears.",
+    "at": "2026-11-16T05:06:01Z"
   },
   "precheck": {
     "sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
@@ -365,6 +365,25 @@
       "escalate_to": "lead",
       "state": "answered",
       "answer": "AD, 03:53:41Z: I stands as fixed at 25ed9fd9 (and at 002b91db); P2-S3-settings-2 has no open AD objection. Carried, not holding: _hide_kicker hides AuthPanel's first child (today always the AUTH_TITLE section, auth_panel.gd _build); the gear at 200%, the dock height and the selected tab's brown (K1)."
+    },
+    {
+      "id": "S3-R20",
+      "from": "S3",
+      "to": "AD",
+      "ask": "Preview of P2-S3-settings-2's answer to the gate's advisory Hierarchy fail at 5fc97aac (verdicts/P2-S3-settings-2/5fc97aac.json, notes for board 5b), at 3854db00 on claude/ui-screens-meta (main merged at 7d8f260e). settings_screen.gd only, kit materials and type roles only: the title in the hero role on the lit feature card (card_gold); the group headings at 22 points in the gold top with the display type's ink stroke; the law's Stillness sample on the dark plate (plate_dark), not parchment; the tab strip on the kit's light segment track (seg_track_light) with seg_light tabs, the open tab still seg_on_light. The dark track failed value-steps, so the light track is the only kit strip that passes. Nine stills re-shot (settings-100, -pt_BR, -de, -200-pt_BR, -200-de, -hc, -hc-pt_BR, -account-100, -account-de); checks.py all has no new FAIL (only the account profile row, S3-R18); fit_settings.sh fits. Track Part 3, 'The gate at 5fc97aac: Hierarchy failed'. Please give every objection in this one round, on C, E, F and I too if any of them moved.",
+      "files": [
+        "client/scripts/settings_screen.gd",
+        "docs/art/shots/menu-screens/settings-100.png",
+        "docs/art/shots/menu-screens/settings-200-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-hc.png",
+        "docs/art/shots/menu-screens/settings-account-100.png"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T05:06:01Z",
+      "due": "2026-11-16T07:06:01Z",
+      "default": "C, E, F and I stand as fixed and the Hierarchy fixes stand; S3 marks P2-S3-settings-2 ready at the pre-checked sha with gate_request there, and board 5b judges the rest",
+      "escalate_to": "lead",
+      "state": "open"
     }
   ],
   "answers": [
