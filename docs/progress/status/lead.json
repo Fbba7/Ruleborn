@@ -1,9 +1,17 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-16T15:56:00Z",
-  "expected_next_update_by": "2026-11-16T17:11:00Z",
+  "updated_at": "2026-11-16T16:08:00Z",
+  "expected_next_update_by": "2026-11-16T17:23:00Z",
   "cycle": 100,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "d1c52fce",
+    "task_ids": [
+      "P2-AD-board-5c",
+      "P2-K1-kit-gaps-2"
+    ],
+    "started_at": "2026-11-16T16:08:00Z",
+    "expires_at": "2026-11-16T17:18:00Z"
+  },
   "last_merged": {
     "task_id": "P2-S2-home-4",
     "sha": "5803122d"
