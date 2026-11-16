@@ -3,23 +3,23 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S2-home-4",
-  "task_state": "in_progress",
+  "task_state": "blocked",
   "claimed_at": "2026-11-16T09:35:00Z",
   "lease_until": "2026-11-16T12:35:00Z",
-  "updated_at": "2026-11-16T11:50:00Z",
-  "expected_next_update_by": "2026-11-16T12:35:00Z",
+  "updated_at": "2026-11-16T12:08:00Z",
+  "expected_next_update_by": "2026-11-16T15:00:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "ade915de",
-    "next_step": "P2-S2-home-4: M26's states added (19085e9b); pre-check running on 1697a6c6 (main e1c460fc merged). Then wait on AD's preview (S2-R31, default 14:58Z) and the lead on S2-R30; then the gate request at the pre-checked commit.",
-    "at": "2026-11-16T11:50:00Z"
+    "last_green_sha": "1697a6c6",
+    "next_step": "P2-S2-home-4 is blocked on AD's preview (S2-R31, default 14:58Z) and the lead's S2-R30 (default 16:58Z). Pre-check PASS on 1697a6c6. When AD answers or the default falls due: answer any objection (then rerun FIT, guard, pre-check); else send gate_request at 1697a6c6 for 'home at 200% text, pt_BR' (Hierarchy, Display type).",
+    "at": "2026-11-16T12:08:00Z"
   },
   "precheck": {
-    "sha": "fc48b017bf55351211b9180f22356a8970e9f658",
+    "sha": "1697a6c6675c22865eb28732ee50b410333a48de",
     "exit": 0,
-    "finished_at": "2026-11-16T11:25:39Z",
+    "finished_at": "2026-11-16T12:04:01Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
@@ -481,5 +481,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P2-S2-home-4: M26's states added (19085e9b); pre-check running on 1697a6c6 (main e1c460fc merged). Then wait on AD's preview (S2-R31, default 14:58Z) and the lead on S2-R30; then the gate request at the pre-checked commit."
+  "next_step": "P2-S2-home-4 is blocked on AD's preview (S2-R31, default 14:58Z) and the lead's S2-R30 (default 16:58Z). Pre-check PASS on 1697a6c6. When AD answers or the default falls due: answer any objection (then rerun FIT, guard, pre-check); else send gate_request at 1697a6c6 for 'home at 200% text, pt_BR' (Hierarchy, Display type)."
 }
