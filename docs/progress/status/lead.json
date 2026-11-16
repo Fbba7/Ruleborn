@@ -3,18 +3,10 @@
   "updated_at": "2026-11-16T15:56:00Z",
   "expected_next_update_by": "2026-11-16T17:11:00Z",
   "cycle": 100,
-  "merging": {
-    "candidate_sha": "6e323a0f",
-    "task_ids": [
-      "P2-S2-home-4",
-      "IQ-import-check"
-    ],
-    "started_at": "2026-11-16T14:36:00Z",
-    "expires_at": "2026-11-16T16:56:00Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "P2-S1-result-4",
-    "sha": "9a1d4db5"
+    "task_id": "P2-S2-home-4",
+    "sha": "5803122d"
   },
   "acks": [
     "M15",

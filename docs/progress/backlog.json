@@ -3919,7 +3919,7 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "S2",
         "branch": "claude/ui-screens-home",
@@ -3930,8 +3930,8 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "1697a6c6",
-      "merged_sha": null,
-      "updated_at": "2026-11-16T14:36:00Z",
+      "merged_sha": "5803122d",
+      "updated_at": "2026-11-16T16:01:00Z",
       "updated_by": "lead (cycle 101)",
       "id": "P2-S2-home-4",
       "title": "Home screen, part 4 (board 3b's objection H, home half, AD-R39): reserve_lift given back to the realms' band, side buttons and realm chips at 200% in every locale, with and without the notice",
@@ -4666,9 +4666,12 @@
       ],
       "estimate_h": 1,
       "tier": 3,
-      "state": "ready",
+      "state": "merged",
       "claim": null,
-      "ready_sha": "ade915de"
+      "ready_sha": "ade915de",
+      "merged_sha": "5803122d",
+      "updated_at": "2026-11-16T16:01:00Z",
+      "updated_by": "lead (cycle 101)"
     },
     {
       "id": "IQ-kit-docs",
