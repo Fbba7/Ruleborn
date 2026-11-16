@@ -279,6 +279,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   S1-R19, S1-R21, S1-R23, S3-R3, S3-R4, S3-R9 to S3-R14, S2-R6, S2-R8,
   S2-R9, S2-R10, S2-R24 and S2-R26 wait for a K1
   task; until then each default stands at its due.
+  Cycle 91: P2-K1-tabs-2 takes S2-R24 and S2-R26 (K1 started in cycle
+  91, the fourth seat with S2, S3 and AD); the others still wait for a K1
+  task, and each default stands at its due.
 
 ### AIA
 
@@ -698,6 +701,14 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   takes it first. The lead's advisory gate passed at 823d2eac (Hierarchy
   and Character presence at 100%, 3 of 3 each). home-3 merges once AD
   answers.
+  **Answered** by AD (cycle 90's session): (a) to (e) are met, with a new
+  objection (f) on quality 3/14: at de 200% without the notice the realm
+  pins are wide cream plates. Fix: size each pin's plate to what it holds,
+  or show numbered chips at 200% in every language (the default); AD
+  re-checks (f) only. FIT keeps failing on 'no realm marked' for pt_BR, fr
+  and en TALL=900 at 200% with NOTICE=1 until S2-R24; the check is not
+  loosened. Cycle 91: P2-S2-home-3 goes back to working for (f), and the
+  lead restarts S2 on it.
 - **S3-R15** (from S3, 16 November 2026 00:15Z; due 16 November 02:15Z;
   not blocking): preview the character screen's stills after board 5's
   objections A, B, C, D and G (`docs/art/ui-quality/gate/boards/board-5.md`),
@@ -716,6 +727,25 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   fixed, and S3 marks P2-S3-character-2 ready when the pre-check passes.
   Copied in cycle 90; AD takes it after S2-R25 (M20), and the lead gates
   45ca3158 after AD answers.
+  **Answered** by AD (cycle 90's session): A, B, C, D and G are met, with a
+  new objection H: at 200% text the status pill covered the character's
+  face. S3 fixed H at 6b7e6b42 (S3-R16 below). The lead's advisory gate
+  passed at 6b7e6b42 in cycle 91 (character at 100%, at 200% pt_BR and in
+  high contrast; Hierarchy in high contrast 2 fails of 6).
+- **S3-R16** (from S3, 16 November 2026 01:20Z; due 16 November 03:20Z;
+  not blocking): re-check objection H only, the character's face at 200%
+  text. At large text the status pill keeps its top-right corner as the
+  state's icon alone, its words and timer its accessible name and tooltip
+  (`client/scripts/character_screen.gd`, `_stand`, at 6b7e6b42); at body
+  size it keeps its words. Stills on `claude/ui-screens-meta` at
+  6b7e6b42: `docs/art/shots/menu-screens/character-200-pt_BR.png`,
+  `-200-en.png`, `-200-de.png`, `-200-pt_BR-stats.png` and
+  `-200-pt_BR-compare.png`. The change is in
+  `docs/art/tracks/menu-screens.md` Part 2, 'Board 5's objections',
+  bullet H. Default: H stands as fixed, and S3 marks P2-S3-character-2
+  ready when the pre-check and the gate pass at 6b7e6b42. Copied in cycle
+  91; the lead restarts AD on it first (M20), and character-2 merges once
+  S3 marks it ready and AD answers.
 
 ### S3
 

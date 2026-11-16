@@ -1,0 +1,124 @@
+[
+  {
+    "task_id": "P2-S3-character-2",
+    "sha": "6b7e6b42",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T01:50:00Z",
+    "item": "character at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: the character is large and lit on its pedestal, a clear figure with a face, in the stepped toon shading."
+  },
+  {
+    "task_id": "P2-S3-character-2",
+    "sha": "6b7e6b42",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T01:50:00Z",
+    "item": "character at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: the name plate and Level up share one heavy, dark-edged treatment; the subtitle and level line sit on the screen's plain backdrop as the pass anchor's do (round 1's failure, f1251e68, is met)."
+  },
+  {
+    "task_id": "P2-S3-character-2",
+    "sha": "6b7e6b42",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T01:50:00Z",
+    "item": "character at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: the full-width gold Level up at the foot leads by size, place and saturation (v3 ruling); the ability card holds information only, and the arrows, Heist tab and LV badge are half its size or less (round 1's heavy-card failure is met)."
+  },
+  {
+    "task_id": "P2-S3-character-2",
+    "sha": "6b7e6b42",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T01:50:00Z",
+    "item": "character at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: the subtitle and level line now carry a dark outline, and the 200 headline has an ink outline and a hard drop; headers of one rank match."
+  },
+  {
+    "task_id": "P2-S3-character-2",
+    "sha": "6b7e6b42",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T01:50:00Z",
+    "item": "character at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: Subir de nível at the foot is the largest, heaviest light block; the dark selected tab pulls less than the anchor's gold one."
+  },
+  {
+    "task_id": "P2-S3-character-2",
+    "sha": "6b7e6b42",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T01:50:00Z",
+    "item": "character in high contrast",
+    "quality": "Colour roles and value",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: gold on the main action and the nav discs, green for progress and the drop currency only, the selected tab dark with a gold rim; no hue drift."
+  },
+  {
+    "task_id": "P2-S3-character-2",
+    "sha": "6b7e6b42",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T01:50:00Z",
+    "item": "character in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "fail",
+      "pass",
+      "pass",
+      "pass",
+      "fail"
+    ],
+    "result": "pass",
+    "critique": "Split 2 to 1, so three more samples: two fails of six, a pass. The full-width Level up leads by size and place (v3 ruling); the two fails read the mid-grey bar, its small cream label and the large white tab bar and cards above it as heavier in grayscale, the thing to watch if the mode is touched again."
+  }
+]
