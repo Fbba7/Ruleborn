@@ -8,12 +8,12 @@
   "task_state": "ready",
   "claimed_at": "2026-11-16T05:33:00Z",
   "lease_until": "2026-11-16T08:33:00Z",
-  "updated_at": "2026-11-16T07:00:00Z",
+  "updated_at": "2026-11-16T07:03:00Z",
   "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
-    "next_step": "Render home on main (home-3, K1-tabs, K1-tabs-2 merged) at 100%/200% en, pt_BR, pt_PT, fr, de, high contrast and the notice cases; re-check board-3 A-D beside key frame 01."
+    "next_step": "Board 5b once P2-S3-settings-2 merges; board 3c (only H) once P2-K1-tabs-3 and P2-S2-home-4 merge."
   },
   "precheck": {
     "sha": "31c4de6c59fa326c0f69c9fcd23950fd651f2e05",

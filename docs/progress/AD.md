@@ -1,6 +1,6 @@
 # AD art director: progress
 
-- Status: Green. P2-AD-board-3b posted and ready (pre-check in the status file): board 3 does not stand. B, D and A's core are fixed. One objection, H, is open: at 200% home holds about 68 px over the tab bar for the chosen tab's raised tile, so side buttons and, in four notice cases, realm chips are lost. Filed as AD-R38 (K1) and AD-R39 (S2). S3-R20 answered (board-5.md, objection J).
+- Status: Green. S3-R21 answered (J stands as fixed at `9e602fcc`, board-5.md "Re-check of objection J (S3-R21)"). P2-AD-board-3b posted and ready (pre-check in the status file): board 3 does not stand. B, D and A's core are fixed. One objection, H, is open: at 200% home holds about 68 px over the tab bar for the chosen tab's raised tile, so side buttons and, in four notice cases, realm chips are lost. Filed as AD-R38 (K1) and AD-R39 (S2). S3-R20 answered (board-5.md, objection J); S3-R21 answered: J fixed.
 - Progress: 17 of 18 tasks merged (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3, P2-AD-board-4, P2-AD-board-5, P2-AD-board-4b); P2-AD-board-3b ready; 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides). P2-AD-board-5b waits on P2-S3-settings-2.
 - Done: P2-AD-board-3b (`board-3.md`, "Round 2 (board 3b)", `board-3/r5-*.png`): 23 home renders on main at `ee31b0d9`, all "fit ok" except the 200% notice cases in pt_BR, pt_PT, fr and en at 900 tall ("no realm marked"). S3-R20 (`board-5.md`, "Preview of the Hierarchy fixes (S3-R20)"): E, F and I stand; J raised (High contrast row below the fold at 100% in pt_BR, de and hc pt_BR).
 - Next: board 3c (only H) after AD-R38 and AD-R39's tasks merge; board 5b after P2-S3-settings-2 merges (check J, and the signed-in Account tab for `_hide_kicker`).
@@ -28,14 +28,13 @@
 | P2-AD-board-3b: board 3, second round | 1 | ready (pre-check in the status file) | `gate/boards/board-3.md` "Round 2 (board 3b)" and `gate/boards/board-3/r5-*.png` (five sheets); home rendered on main at `ee31b0d9` with `FIT=1` at 100% (en, pt_BR, pt_PT, fr, de, hc, hc pt_BR; notice en, pt_BR, de) and 200% (en, pt_BR, pt_PT, fr, de, hc, hc pt_BR; notice en, pt_BR, pt_PT, fr, de, en 900 tall), beside `art/ui/keyframes/01-home*`; B and D fixed, A's core fixed; H open as AD-R38 and AD-R39 |
 
 ## Handoff
-- Last verified commit: `31c4de6c` (P2-AD-board-3b; pre-check PASS, 2026-11-16T06:13:10Z, `All checks passed.`, exit 0). `check_docs_consistency.py` passes.
-- Done this session (2026-11-16, cycle 94):
-  - S3-R20 answered at 05:30Z: the Hierarchy fixes stand at `3854db00`; new objection J for 5b.
-  - P2-AD-board-3b posted. H's measurement: at 200% pt_BR without the notice, the goal card ends at y 920 and the bar's gold edge is at 991 (540×1170), on the right half. That is `reserve_lift`'s room for the chosen tab's raised picture. The chips miss by 3 px (S2's 149 vs 152).
-  - The dock's empty foot (about 108 px under the labels) is the tokens' `safe_top_points` 44 plus `tab_bar_lift` 20 (§21.1, 8%), set in `kit_tabs.gd` `make()`. It is by spec, so it is no objection.
+- Last verified commit: `31c4de6c` (P2-AD-board-3b; pre-check PASS, 2026-11-16T06:13:10Z, `All checks passed.`, exit 0). Since then only docs: `b64cac4a` (S3-R21; `check_docs_consistency.py` passes).
+- Done this session (2026-11-16, cycle 96):
+  - S3-R21 answered at 07:00Z: objection J stands as fixed on `claude/ui-screens-meta` at `9e602fcc`. AD rendered the Access tab there with `FIT=1` at 100% pt_BR, de, en and hc pt_BR: all "fit ok", pixel-identical to S3's stills; the High contrast row (switch-row 11) is on the first screen again; `checks.py all` passes on all four. Nothing new holds P2-S3-settings-2. Sheet `board-5/r6-settings-fold.png`.
+- Done earlier (cycle 94): S3-R20; P2-AD-board-3b (H open as AD-R38, AD-R39). H's measurement: at 200% pt_BR without the notice, the goal card ends at y 920 and the bar's gold edge is at 991 (540×1170), on the right half; the chips miss by 3 px (S2's 149 vs 152). The dock's empty foot (about 108 px) is `safe_top_points` 44 plus `tab_bar_lift` 20 (§21.1, 8%), by spec.
 - Half done: none.
 - Open hypotheses: `_hide_kicker` in `settings_screen.gd` hides AuthPanel's first child, whatever it is; check it on board 5b. The FIT failures in the notice cases may also need the notice banner itself to shrink at 200%, if H's 68 px are not enough. S2 can measure that.
-- Next step: board 3c (only H, at 200% in pt_BR, pt_PT, fr, en and de, with and without the notice, and en at 900 tall) once AD-R38 and AD-R39's tasks merge; board 5b when P2-S3-settings-2 merges.
+- Next step: board 5b when P2-S3-settings-2 merges (character and settings items 1-10 on main, the signed-in Account tab, S3-R18's profile row, the gate's advisory notes in `verdicts/P2-S3-settings-2/`); board 3c (only H, at 200% in pt_BR, pt_PT, fr, en and de, with and without the notice, and en at 900 tall) once AD-R38 and AD-R39's tasks merge.
 - Rendering in a fresh worktree: run `client/build.sh` in it, or copy `client/bin/libruleborn_godot.so` and `client/goldens/*.rbh` from the main checkout when `sim/` and `client/ext` have no diff. Without them the shot fails with "Identifier 'RulebornReplay' not declared". A relative `STRIP` path resolves from `client/`, so give it an absolute path.
 
 ## Flow review
