@@ -4876,6 +4876,14 @@
       "sent_at": "2026-11-16T06:00:00Z",
       "ack_by": "2026-11-16T08:00:00Z",
       "acked_at": "2026-11-16T06:50:00Z"
+    },
+    {
+      "id": "M26",
+      "to": "lead",
+      "text": "Lesson from the UI report (Scope added rated worse two reports in a row: up 3h to 21.5h, then up 11h to 32.5h, at reports 89 and 90; 84.5h seeded against 62h planned). Board 5b found a new heavy objection, K: at its highest level the character screen runs off the phone at 200% text in English, pt_BR and German, because the \"at the highest level\" pill keeps all its words. It went unseen through P2-S3-character-2's merge and board 5's first round because S3's scripted fit check (docs/art/shots/menu-screens/fit_character.sh) covers only fixture character 5; round 2 found it only once M23's full list added the other four characters. It cost 3h of follow-up (P2-S3-character-3, P2-AD-board-5c) and a third board round. The rule: when you seed or restart a screen task, its done_when says that the screen's scripted fit check covers every fixture state the screen shows, including the extremes (highest level, longest name, empty, signed in and out, every tab), at 200% text in English, pt_BR and German, and that the builder adds any missing fixture to the script and gets \"fit ok\" before marking it ready. This applies first to P2-S3-character-3, P2-S2-home-4 and P2-S1-result-4, already started: add it to their done_when and tell S1, S2 and S3 in this cycle. Ack by adding M26 to your status acks.",
+      "sent_at": "2026-11-16T09:59:00Z",
+      "ack_by": "2026-11-16T11:59:00Z",
+      "acked_at": null
     }
   ]
 }
