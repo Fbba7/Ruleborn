@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T12:27:00Z",
   "lease_until": "2026-11-16T15:27:00Z",
-  "updated_at": "2026-11-16T13:10:00Z",
-  "expected_next_update_by": "2026-11-16T13:55:00Z",
+  "updated_at": "2026-11-16T13:05:00Z",
+  "expected_next_update_by": "2026-11-16T13:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "9ec2e61b",
-    "next_step": "K40 fixed in the catalogue (layer lifted as S1-R21 describes); next: the eight catalogue variants, kit-spec.md sections 4, 6.5, 8.1, 9, the S1 request, then checks on main"
+    "next_step": "spec sections 4, 6.5, 8.1, 9 written, K1-R23 to S1 filed; rendering the eight catalogue variants, then checks on main merged in and the pre-check"
   },
   "precheck": null,
   "gate_request": null,
@@ -336,6 +336,20 @@
       "due": "2026-11-16T09:31:00Z",
       "default": "granted: the lead adds the budgets.json entry and raises home/200 to 115 at the merge; guard.sh then reads OK",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R23",
+      "from": "K1",
+      "to": "S1",
+      "ask": "P2-K1-kit-gaps-2 (S3-R25): KitNav.reward(screen, prize, counter, from_value, to_value, tier, show) is now K40's one entry point; it dresses the backdrop with the night sunburst (what KitNav.celebrate did) and plays Motion.reward on the prize, returning its tween. In client/scripts/result_screen.gd please (1) replace 'reward_tween = Motion.reward(grade_icon, tile, 0, to, tier, _write_reward.bind(to))' with 'reward_tween = KitNav.reward(self, grade_icon, tile, 0, to, tier, _write_reward.bind(to))', keeping _lift_reward() after it until S1-R21 is answered, and (2) drop the 'KitNav.celebrate(self)' call at line 110 if the reward call now covers it (calling reward once the screen is in the tree), or keep it: celebrate is a thin alias of KitNav.reward(screen) and stays.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T13:05:00Z",
+      "due": "2026-11-17T13:05:00Z",
+      "default": "No change: KitNav.celebrate stays as an alias of KitNav.reward and Motion.reward stays public, so the result screen draws exactly as today and nothing breaks",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -368,6 +382,16 @@
       "request_id": "S2-R26",
       "answer": "Done in P2-K1-tabs-2: KitLayout.tap disconnects its own Motion.press binding for button_down and button_up before connecting it, so a second tap() on one button leaves one connection each and no render logs \"Signal 'button_up' is already connected\" (ui_kit_tests: tap twice, one connection each; the kit-only run logs it 0 times).",
       "at": "2026-11-16T03:31:00Z"
+    },
+    {
+      "request_id": "S3-R23",
+      "answer": "Done in P2-K1-kit-gaps-2: KitStatus.spinner(points, words) draws K34 (the spinner skin's ring, the timer icon while its skin is off), turning once a second; under reduced motion it holds still with 'Loading' after it, said aloud as loading either way. KitStatus.loading(c, on) puts K01, K02, K11 or K43 into Ld: face held, words and icon hidden, a spinner of the words' size laid over them out of layout (same size, tested), taps and focus stopped, said aloud as loading; is_loading(c) reads it. KitStatus.locked(c, why, on, face) and KitStatus.notice(c, count, on) are the L and A overlays, and the catalogue now draws L, A and Ld through them (kit-spec.md sections 4, 6.5 and 9).",
+      "at": "2026-11-16T13:05:00Z"
+    },
+    {
+      "request_id": "S3-R25",
+      "answer": "Done in P2-K1-kit-gaps-2: KitNav.reward(screen, prize, counter, from_value, to_value, tier, show) is K40's one entry point: the night sunburst backdrop, then Motion.reward's anticipation, burst, reveal, coin flight and counter roll on the motion sprites; reduced motion fades the prize in, lands one coin and sets the counter at once (tested). KitNav.celebrate stays only as a thin alias, KitNav.reward(screen). The catalogue's K40 now plays the real sequence in full and reduced strips. K1-R23 asks S1 to switch result_screen.gd's call; the layer is lifted as S1-R21 describes until that request is answered.",
+      "at": "2026-11-16T13:05:00Z"
     }
   ],
   "next_step": "claimed P2-K1-kit-gaps-2; reading S3-R23 and S3-R25"

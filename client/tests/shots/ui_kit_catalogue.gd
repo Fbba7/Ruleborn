@@ -514,8 +514,9 @@ static func parts() -> Array:
 		# KitStatus.spinner: one turn a second, a quarter a frame; reduced, a
 		# still mark with the word.
 		return _part("K34 Spinner", _strip("K34", func() -> Control:
-			var m := MarginContainer.new()
-			m.custom_minimum_size = Vector2.ONE * UI.px(24)
+			# Wide enough that the frame's caption stays on one line.
+			var m := HBoxContainer.new()
+			m.custom_minimum_size = Vector2(UI.px(64), UI.px(24))
 			return m, func(c: Control) -> void: c.add_child(KitStatus.spinner(24.0)),
 			KitSkin.SPIN_SECONDS * 1000.0))])
 	out.append(["K35 Empty state", func() -> Control:
