@@ -3,26 +3,26 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S1-result-5",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-16T16:45:13Z",
   "lease_until": "2026-11-16T19:45:13Z",
-  "updated_at": "2026-11-16T16:53:03Z",
-  "expected_next_update_by": "2026-11-16T17:38:03Z",
+  "updated_at": "2026-11-16T17:36:53Z",
+  "expected_next_update_by": "2026-11-16T20:36:53Z",
   "progress_marker": {
-    "last_green_sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
-    "next_step": "9c258d03: KitNav.reward in place; FIT sweep (53 stills) running, then check_screens, guard, pre-check",
-    "at": "2026-11-16T16:53:03Z"
+    "last_green_sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
+    "next_step": "Ready at 8d2488cb (pre-check PASS, guard and check_screens OK, 56-still FIT sweep fit ok); the lead merges. No gate items.",
+    "at": "2026-11-16T17:36:53Z"
   },
   "precheck": {
-    "sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
+    "sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
     "exit": 0,
-    "finished_at": "2026-11-16T12:50:44Z",
+    "finished_at": "2026-11-16T17:36:27Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M6",
@@ -524,5 +524,5 @@
       "answer": "Objection F is met at 904a3567. A, B, D and E still hold, and the result may merge (M20). One note for board 4b, not an objection: at pt_BR 200% the first screen ends on the unfinished phrase 'Taxa de entrada de'. Keeping a label's lines together at the fold would read better, if it costs no draw call. Left for board 4b."
     }
   ],
-  "next_step": "Gate requested at 8753618a; S1 marks ready on a pass. Everything else for P2-S1-result-4 is done and pushed."
+  "next_step": "P2-S1-result-5 ready at 8d2488cb; no gate items. The lead merges; S1 waits for its next task."
 }
