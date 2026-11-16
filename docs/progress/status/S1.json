@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-S1-result-5",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-16T16:45:13Z",
   "lease_until": "2026-11-16T19:45:13Z",
-  "updated_at": "2026-11-16T16:45:13Z",
-  "expected_next_update_by": "2026-11-16T17:30:13Z",
+  "updated_at": "2026-11-16T16:53:03Z",
+  "expected_next_update_by": "2026-11-16T17:38:03Z",
   "progress_marker": {
     "last_green_sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
-    "next_step": "Main merged (22c998c3); swap Motion.reward for KitNav.reward in result_screen.gd",
-    "at": "2026-11-16T16:45:13Z"
+    "next_step": "9c258d03: KitNav.reward in place; FIT sweep (53 stills) running, then check_screens, guard, pre-check",
+    "at": "2026-11-16T16:53:03Z"
   },
   "precheck": {
     "sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
@@ -491,6 +491,21 @@
       "created_at": "2026-11-16T10:17:38Z",
       "due": "2026-11-17T10:17:38Z",
       "default": "The gate runs on the pre-checked head as it stands, and S1 marks ready on a pass.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R32",
+      "from": "S1",
+      "to": "K1",
+      "ask": "KitNav.reward(screen, ...) dresses screen's Sky in night_rays whatever the mode, also under Settings.high_contrast, where key frame 03-result_hc and AD's S1-R24 keep the plain night (no rays behind the words). On the result screen the server-checked high-contrast state plays the reward (Starlight 2,310), so after P2-S1-result-5's switch to KitNav.reward its whole backdrop took the rays (SERVER=1 CONTRAST=1 shot of screen_result.gd, measured at 9c258d03 with the screen's fix taken out). Could KitNav.reward (and KitNav.celebrate through it) leave the sky plain under high contrast, or take a flag to skip the backdrop? Either way the result screen then drops its local fix.",
+      "files": [
+        "client/ui/kit_nav.gd",
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T16:53:03Z",
+      "due": "2026-11-17T16:53:03Z",
+      "default": "result_screen.gd keeps its fix: after KitNav.reward, where the outcome does not celebrate (high contrast), it dresses the sky back in 'night' (RbBox.dress(Sky, \"night\", 0)), as UI.frame made it.",
       "escalate_to": "lead"
     }
   ],
