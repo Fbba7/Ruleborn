@@ -423,6 +423,22 @@ Evidence: the nine stills and records are re-shot (`settings-100`, `-pt_BR`, `-d
 
 Evidence: `settings-account-100` and `settings-account-de`, stills and records, are re-shot with `FIT=1 RECORD=1 TAB=account` (and `LOCALE=de`), and both printed `fit ok`. `checks.py value-steps` passes every control on both: the profile row at ΔL* 72.7 in English and 72.2 in German (it was 2.5 and 3.6 on AD's board), the tabs at 71.5 and the back button at 83.6. `checks.py all` has no FAIL, so the Account tab has no failing control left. `fit_settings.sh` prints `fit ok` for all twelve shots.
 
+### Every fixture state in the fit checks (lesson M26, P2-S3-character-3)
+
+Lesson M26 asks that a screen's fit check covers every state the screen shows, at 200% text in English, pt_BR and German. Both scripts now do.
+
+- **`fit_character.sh`, 50 shots.** Character 5 on its Heist tab at 100% in the three languages and in high contrast in English and pt_BR, as before. At 200%, in the three languages, every character of ShotData's roster (1 the lowest level, 4 the highest, 10 of 10) on every tab (`TAB` 0 Heist, 1 Stats, 2 Compare): 45 shots.
+- **`fit_settings.sh`, 20 shots.** The access tab at 100% in the three languages and in high contrast in English and pt_BR, and the account tab at 100% in English and German, as before. At 200%, in the three languages, every tab (game, access, account). And the account tab signed in, at 100% in English and at 200% in the three languages (`SIGNED=1`). `client/tests/shots/screen_settings.gd` signs the account in as `auth_panel.gd`'s own shot does: a token, the `signed_in` and `auth_status` actions before the screen builds, then the server's device list (this phone and a nameless Android phone, Game Center and Google Play linked).
+- **Why the shot writes a `.fit.txt`.** `tools/render/shoot.sh` keeps only the last 20 lines of a run, and the leaks Godot reports at exit can push the `fit ok` line out of them. So `FIT=1` also writes what it found beside the still (`<still>.fit.txt`), and the scripts read that. Before this, tabs 1 and 2 of the character screen read as failures with no `fit` line at all.
+- **The scripts render two shots at once** (`JOBS`, 2 by default) and keep the stills in `OUT` (a temporary folder by default).
+
+**What the new states found.** Every character shot fits, and every settings shot fits but one state: the account tab signed in, at 200% in English and German. There are two causes, both in `client/scripts/auth_panel.gd`, a file no task owns. This task asks the lead for the file in S3-R30.
+
+1. **The signed-in panel never shows its devices or ways to sign in on the settings screen.** `AuthPanel` listens to the store from `_ready` and stops in `_exit_tree`. The settings screen builds its list, then moves the list into a holder for the scroll cue (`_cue`, `settings_screen.gd`). The panel leaves the tree and enters again, but `_ready` does not run a second time, so it never hears the store again. Its Devices and Methods sections, drawn when the device list arrives, never appear. A debug run read the connection as false after the move, and drawing the panel again by hand gave 9 children where there had been 3. This is the app's behaviour too, not only the shot's. The fix: listen again in `_enter_tree` once the node is ready.
+2. **The status card breaks its words in two at 200%.** `_status` builds the card with `ScreenParts.item`, the sign-out button beside the words. At 200% German that leaves 217 px for "Angemeldet" (542 px) and "Mit Game Center" (a 258 px word). In English, "Signed in" is a 310 px word in 297 px. The fix: at large text (past 125%), the actions go under the words, the column's width, as the devices' sign-out buttons already do.
+
+`_hide_kicker` (board 5b's round 2, note 5) cannot be checked against the Devices and Methods sections until the first fix is in.
+
 ### What is still worse than before
 
 - **The switch rows.** In grayscale the cream switch rows still weigh about as much as the headings above them. The switch's off track vanishes on a dark card, so they stay parchment (above).

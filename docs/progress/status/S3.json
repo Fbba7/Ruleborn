@@ -3,24 +3,26 @@
   "role": "S3",
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S3-character-3",
-  "task_state": "working",
+  "task_state": "blocked",
   "claimed_at": "2026-11-16T09:30:15Z",
   "lease_until": "2026-11-16T12:30:15Z",
-  "updated_at": "2026-11-16T10:15:53Z",
-  "expected_next_update_by": "2026-11-16T10:55:53Z",
+  "updated_at": "2026-11-16T10:38:25Z",
+  "expected_next_update_by": "2026-11-16T12:38:25Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8f7a9fadc2c3de9e69e80058a33b819b51abb77f",
-    "next_step": "check_screens OK, docs consistent, guard OK on the merge; check_all running; then merge the integration branch's two lead commits (fd9ec73b), handoff, pre-check; S3-R29 open with AD (due 11:43Z)",
-    "at": "2026-11-16T09:43:26Z"
+    "next_step": "blocked on S3-R30 (auth_panel.gd for the signed-in account tab at 200%); then the two fixes, fit_settings.sh 20/20, pre-check, ready",
+    "at": "2026-11-16T10:38:25Z"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
-  "acks": [],
+  "acks": [
+    "M26"
+  ],
   "requests": [
     {
       "id": "S3-R1",
@@ -526,6 +528,23 @@
       "due": "2026-11-16T11:43:26Z",
       "default": "K and L stand as fixed; S3 marks P2-S3-character-3 ready at the pre-checked sha with gate_request there, and AD's round 3 re-checks K and L on the merge",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R30",
+      "from": "S3",
+      "to": "lead",
+      "ask": "Grant client/scripts/auth_panel.gd (no task in flight owns it, owners.py: the lead does) to P2-S3-character-3 as an exception. Lesson M26's wider fit_settings.sh (20 shots) fails one state: the account tab signed in at 200% text, en ('Signed in' a 310 px word in 297) and de ('Angemeldet' 542 px in 217, 'Mit Game Center' 258 px in 217); still docs/art/shots/menu-screens/settings-200-de-account-signed.png. Two causes, both in auth_panel.gd: (1) AuthPanel connects store.changed in _ready and disconnects in _exit_tree; settings_screen.gd's _cue moves the list after it is built, so the panel never listens again and its Devices and Methods sections never draw, in the app too (debug: connection false after the move; a hand redraw gave 9 children against 3). Fix: reconnect in _enter_tree once ready. (2) The status card (ScreenParts.item) puts the sign-out button beside its words. Fix: past 125% text, the actions under the words, the column's width, as the devices' buttons already are. Every other M26 state passes: fit_character.sh 50 of 50, fit_settings.sh 18 of 20. Notes: menu-screens.md Part 3, 'Every fixture state in the fit checks'.",
+      "files": [
+        "client/scripts/auth_panel.gd",
+        "docs/art/shots/menu-screens/settings-200-de-account-signed.png",
+        "docs/art/shots/menu-screens/fit_settings.sh",
+        "client/tests/shots/screen_settings.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T10:38:25Z",
+      "due": "2026-11-16T12:38:25Z",
+      "default": "The lead adds client/scripts/auth_panel.gd to P2-S3-character-3's exceptions and restarts S3, which makes the two fixes, gets fit_settings.sh 20 of 20 and fit_character.sh 50 of 50, pre-checks and marks ready",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -535,5 +554,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "IQ-kit-docs ready at 8f7a9fad (pre-check PASS, no gate items): the lead copies S3-R22 to S3-R28 to K1. No S3 task left."
+  "next_step": "P2-S3-character-3 blocked on S3-R30 (lead, auth_panel.gd); S3-R29 open with AD (due 11:43Z). On restart with the file: the two fixes in auth_panel.gd, fit_settings.sh 20 of 20, fit_character.sh 50 of 50, pre-check, ready."
 }
