@@ -467,3 +467,34 @@ Notes carried to board 5b, which do not hold the preview:
   file. Board 5b lists it.
 - Earlier notes stand: the gear at 200%, the dock's height and the
   selected tab's brown (K1), `_hide_kicker` on the signed-in Account tab.
+
+## Re-check of objection J (S3-R21)
+
+AD re-checked objection J only, as S3-R21 asked, on
+`claude/ui-screens-meta` at `9e602fcc` (S3's pre-checked head: `d66e9521`
+merged with main). Against this board's full list (M23), the only client
+change since the S3-R20 preview at `3854db00` is in `settings_screen.gd`:
+`PLATE_TOP` is 0, so the title plate and the heading plates have no top or
+bottom padding. AD rendered the Access tab at `9e602fcc` with `FIT=1` at
+100% in pt_BR, German and English and in high contrast pt_BR. All four
+print "fit ok", and each is pixel-identical to S3's committed still (mean
+difference 0.0). `checks.py all` passes on `settings-pt_BR`, `settings-de`,
+`settings-hc-pt_BR` and `settings-100`.
+
+**J stands as fixed.** At 100% the High contrast row is on the first screen
+again in pt_BR, German and high contrast pt_BR, under its heading and above
+the chevron, as on the pt_BR key frame. The three shot records list
+switch-row 11 again (y 622 to 674 points of 845), and `checks.py` gives its
+value step (ΔL* 67.2, 67.0 and 75.0). English at 100% still shows both
+switch rows. The Hierarchy fixes are kept: the title is in the hero role on
+`card_gold`, and the headings are at 22 points in gold with the stroke. With
+no padding, the display face's line height still leaves room over and under
+the words on every plate, at 100% and at 200% German ("Einstellungen"
+whole), and on the Account tab. From left: key frame pt_BR, then the build
+at `9e602fcc` in pt_BR, German and high contrast pt_BR.
+
+![100% fold: key frame pt_BR; pt_BR, de, hc pt_BR at 9e602fcc](board-5/r6-settings-fold.png)
+
+Nothing new holds P2-S3-settings-2. The notes carried to board 5b stand
+(the faint `card_gold` rim, S3-R18's profile row in `screen_account.gd`,
+the gear at 200%, the dock and the selected tab's brown, `_hide_kicker`).

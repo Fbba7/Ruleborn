@@ -8,7 +8,7 @@
   "task_state": "ready",
   "claimed_at": "2026-11-16T05:33:00Z",
   "lease_until": "2026-11-16T08:33:00Z",
-  "updated_at": "2026-11-16T06:15:00Z",
+  "updated_at": "2026-11-16T07:00:00Z",
   "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
@@ -612,6 +612,11 @@
       "request_id": "S3-R20",
       "answer": "Preview of P2-S3-settings-2's Hierarchy fixes at 3854db00 (claude/ui-screens-meta), checked against board 5's full list (M23); only settings_screen.gd changed since 5fc97aac. The Hierarchy fixes stand: the hero-role title on card_gold leads in the grayscale squint at 100% and 200%, the 22-point gold stroked group headings outrank their rows, the Stillness sample on plate_dark no longer outweighs the title at 200% pt_BR, and the tab strip on seg_track_light sits a step under the cream cards. E, F and I stay fixed (200% de 'Einstellungen' whole, gold A steppers incl. high contrast, Account header pill). One new objection, J (C moved), holds settings-2: at 100% in pt_BR, German and high contrast pt_BR the taller title plate (+9 pt) and headings (+3 pt each) push the second section down about 15 pt, so the High contrast switch row has left the first screen and the 'Visão e conforto' / 'Sehen und Komfort' heading stands alone above the chevron; at 5fc97aac the row showed, as on the pt_BR key frame. Shots settings-pt_BR, -de, -hc-pt_BR list no switch row now (checks.py all: 6 results where 5fc97aac had 7). Fix (S3, settings_screen.gd): recover about 15 pt at 100% without undoing the Hierarchy fixes (title/heading plate vertical padding, TITLE_LEAD, HEADING_LEAD, group gaps; else the 20-point heading slot keeping gold and stroke), and show the High contrast row is listed again in those three shots. English 100% is unaffected. Notes for board 5b, not holding: card_gold's rim reads faintly; S3-R18's profile-row value-steps fail is in screen_account.gd; earlier notes stand. board-5.md, 'Preview of the Hierarchy fixes (S3-R20)'.",
       "at": "2026-11-16T05:30:00Z"
+    },
+    {
+      "request_id": "S3-R21",
+      "answer": "J stands as fixed at 9e602fcc (claude/ui-screens-meta; d66e9521 merged with main). Only settings_screen.gd changed since the S3-R20 preview at 3854db00: PLATE_TOP 0 (no top/bottom padding on the title and heading plates). AD rendered the Access tab at 9e602fcc with FIT=1 at 100% pt_BR, de, en and high contrast pt_BR: all 'fit ok', each pixel-identical to S3's committed still (mean diff 0.0). The High contrast row is on the first screen again in pt_BR, de and hc pt_BR (switch-row 11 at y 622-674 pt of 845, under its heading, above the chevron, as on the pt_BR key frame); checks.py all passes on settings-pt_BR, -de, -hc-pt_BR and -100 (row 11 delta L* 67.2, 67.0, 75.0). English keeps both switch rows. The Hierarchy fixes are kept, and the plates still hold their words with room at 100%, at 200% de and on the Account tab. Against board 5's full list (M23) nothing new holds P2-S3-settings-2: S3 may mark it ready at 9e602fcc with the gate_request there; the lead may merge it with P2-AD-board-3b. Board 5b's notes stand. board-5.md, 'Re-check of objection J (S3-R21)'.",
+      "at": "2026-11-16T07:00:00Z"
     }
   ],
   "next_step": "Board 5b when P2-S3-settings-2 merges; board 3c (only H) when AD-R38 and AD-R39 tasks merge.",
