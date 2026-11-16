@@ -8,21 +8,39 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T03:21:36Z",
   "lease_until": "2026-11-16T08:04:31Z",
-  "updated_at": "2026-11-16T05:41:40Z",
-  "expected_next_update_by": "2026-11-16T06:26:40Z",
+  "updated_at": "2026-11-16T06:12:10Z",
+  "expected_next_update_by": "2026-11-16T06:57:10Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "9cff39c728d7cd70facec096d016a34f885be087",
-    "next_step": "P2-S3-settings-2: AD's J (S3-R20) fixed with PLATE_TOP; AD asked to re-check J (S3-R21). Next: check_all and guard on the new head, pre-check, gate_request, ready when AD clears J.",
-    "at": "2026-11-16T05:41:40Z"
+    "last_green_sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
+    "next_step": "P2-S3-settings-2: pre-check PASS at 9e602fcc and gate asked there; ready when AD clears J (S3-R21, or its default at its due time).",
+    "at": "2026-11-16T06:12:10Z"
   },
   "precheck": {
-    "sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
+    "sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
     "exit": 0,
-    "finished_at": "2026-11-16T03:46:19Z",
+    "finished_at": "2026-11-16T06:11:43Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
+  "gate_request": {
+    "sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
+    "items": [
+      {
+        "item": "settings at 100% text",
+        "qualities": [
+          "Hierarchy",
+          "Display type"
+        ]
+      },
+      {
+        "item": "settings at 200% text, pt_BR",
+        "qualities": [
+          "Display type",
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [],
