@@ -167,6 +167,7 @@ static func _grow(b: Button, inner: Control, pad: Vector2) -> void:
 			b.custom_minimum_size = want
 	inner.minimum_size_changed.connect(grow)
 	b.tree_entered.connect(grow)
+	b.set_meta("kit_grow", grow)
 
 
 ## Dresses round button `b` as a disc `disc_points` across, centred in
@@ -426,7 +427,8 @@ static func upgrade(text: String, line: String, icon: String, price: String, pre
 		if absf(v.offset_right - right) > 0.5:
 			v.offset_right = right
 			v.set_meta("kit_right", right)
-			v.update_minimum_size()
+			# The box's own minimum is unchanged, so the button is grown here.
+			(b.get_meta("kit_grow") as Callable).call()
 	cost.minimum_size_changed.connect(room)
 	cost.tree_entered.connect(room)
 	return b

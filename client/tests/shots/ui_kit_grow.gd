@@ -30,6 +30,7 @@ static func words(tree: SceneTree) -> Array:
 		var screen := Control.new()
 		tree.root.add_child(screen)
 		var column := UI.frame(screen)
+		screen.size = Vector2(1080, 2340)
 		var row := HBoxContainer.new()
 		row.add_child(UI.action(Strings.t("COMMON_HOME"), none, "ghost"))
 		var again := KitControls.action2(Strings.t("RESULT_RAID_AGAIN"), Strings.t("RESULT_IDLE_CREW", 3), none)
@@ -39,20 +40,22 @@ static func words(tree: SceneTree) -> Array:
 		var up := KitControls.upgrade(Strings.t("CHARACTER_UPGRADE"), Strings.t("CHARACTER_UPGRADE_LINE", [1, 2]),
 			"resources/essence", "1200", none, "gold")
 		up.custom_minimum_size.x = UI.px(180)
-		# Each button: its size at 100% text (x -1: any), the padding its
-		# words keep at either side.
-		var lines := UI.text_px(16) + UI.text_px(13)
+		up.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var alone := KitControls.action2(Strings.t("RESULT_RAID_AGAIN"), "", none)
+		alone.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var play := KitControls.big_action("hud/play", Strings.t("RESULT_THREE_SECONDS"), none, "gold")
+		play.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		# Each button, laid out as the screens lay it out (the result's row
+		# beside Home, the character's upgrade across the column): its size
+		# at 100% text (x -1: any), the padding its words keep at either side.
 		var kept := {
-			again: [Vector2(-1, maxf(UI.px(56), lines * 1.3 + UI.px(12))), 9],
-			KitControls.action2(Strings.t("RESULT_RAID_AGAIN"), "", none): [Vector2(UI.px(120), UI.px(56)), 9],
-			KitControls.big_action("hud/play", Strings.t("RESULT_THREE_SECONDS"), none, "gold"):
-				[Vector2(UI.px(76), UI.px(64)), 0],
-			up: [Vector2(UI.px(180), UI.px(64)), 0],
+			again: [Vector2(-1, UI.px(56)), 9],
+			alone: [Vector2(-1, UI.px(56)), 9],
+			play: [Vector2(UI.px(76), UI.px(64)), 0],
+			up: [Vector2(-1, UI.px(64)), 0],
 		}
-		for b: Button in kept:
-			if b != again:
-				b.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-				column.add_child(b)
+		for b: Button in [alone, play, up]:
+			column.add_child(b)
 		for i: int in 6:
 			await tree.process_frame
 		for b: Button in kept:
@@ -60,6 +63,8 @@ static func words(tree: SceneTree) -> Array:
 			var want: Vector2 = kept[b][0]
 			if case[0] == 100 and ((want.x >= 0 and absf(b.size.x - want.x) > 0.5) or absf(b.size.y - want.y) > 0.5):
 				bad.append("%d%% %s %s is %s, not its present %s" % [case[0], case[1], b.name, b.size, want])
+		if column.size.x < UI.px(300):
+			bad.append("%d%% %s: the column is %.0f wide, not the phone's" % [case[0], case[1], column.size.x])
 		screen.queue_free()
 		await tree.process_frame
 	Settings.text_scale = was[0]
