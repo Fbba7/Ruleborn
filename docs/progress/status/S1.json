@@ -8,13 +8,13 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-16T09:50:00Z",
   "lease_until": "2026-11-16T12:50:00Z",
-  "updated_at": "2026-11-16T09:50:00Z",
-  "expected_next_update_by": "2026-11-16T10:35:00Z",
+  "updated_at": "2026-11-16T10:20:00Z",
+  "expected_next_update_by": "2026-11-16T11:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
-    "next_step": "Fresh-container setup, build, then the FIT sweep.",
-    "at": "2026-11-16T09:50:00Z"
+    "next_step": "FIT sweep with Home and the laws in the kit's tertiary face and the fold keeping a short label's lines together; then M26's states (local, confirming, refused, testing, play, all five goldens) at 200% in en, pt_BR and de.",
+    "at": "2026-11-16T10:20:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -23,7 +23,8 @@
   "acks": [
     "M6",
     "M7",
-    "M11"
+    "M11",
+    "M26"
   ],
   "requests": [
     {
@@ -486,5 +487,5 @@
       "answer": "Objection F is met at 904a3567. A, B, D and E still hold, and the result may merge (M20). One note for board 4b, not an objection: at pt_BR 200% the first screen ends on the unfinished phrase 'Taxa de entrada de'. Keeping a label's lines together at the fold would read better, if it costs no draw call. Left for board 4b."
     }
   ],
-  "next_step": "Claimed P2-S1-result-4: overflow sweep (FIT=1) in en, pt_BR, de at 100%/200% and high contrast; close points of 904a3567; AD preview; gate at 200% pt_BR and HC."
+  "next_step": "P2-S1-result-4: sweep 1 all fit ok; close points answered in the working tree (Home and the law buttons on the tertiary face, darker than Raid again in grayscale; the fold keeps a label of up to 3 lines together); M26: the shot script gains STATE (confirming, refused, testing, play) and the sweep covers all five goldens."
 }
