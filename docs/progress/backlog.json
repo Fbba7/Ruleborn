@@ -5035,6 +5035,14 @@
       "sent_at": "2026-11-16T10:55:00Z",
       "ack_by": "2026-11-16T12:55:00Z",
       "acked_at": null
+    },
+    {
+      "id": "M31",
+      "to": "lead",
+      "text": "Overdue lesson from the UI report: M27 (to S1, ack_by 12:45) is not in S1's acks on main or on claude/ui-screens-heist (S1 acks M6, M7, M11, M26, M30 at 11:56). Deliver M27's rule when you next start or resume S1: P2-S1-result-4's scripted fit check covers every result state at 200% text in English, pt_BR and German, with \"fit ok\" on every run before ready, and the whole list in the handoff evidence. Then have S1 add M27 to its acks.",
+      "sent_at": "2026-11-16T12:52:00Z",
+      "ack_by": "2026-11-16T14:52:00Z",
+      "acked_at": null
     }
   ]
 }
