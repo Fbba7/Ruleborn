@@ -63,8 +63,10 @@ func _environment() -> void:
 
 
 ## What does not fit on `screen`, one line each: a label's widest line wider
-## than the label when it does not wrap, the label outside the panel it sits
-## in, or the label off the screen's sides (the scroll runs below its foot).
+## than the label when it does not wrap, or its widest word when it does (a
+## word broken in two, board 5's E), the label outside the panel it sits in,
+## or the label off the screen's sides (the scroll runs below its foot); a
+## button's words wider than its room the same two ways.
 static func fit(screen: SettingsScreen) -> Array[String]:
 	var bad: Array[String] = []
 	var wide_x := screen.size.x
@@ -79,6 +81,9 @@ static func fit(screen: SettingsScreen) -> Array[String]:
 				l.get_theme_font_size("font_size")).x)
 		if l.autowrap_mode == TextServer.AUTOWRAP_OFF and wide > at.size.x + 1.0:
 			bad.append("%s %s: %.0f px of words in %.0f" % [l.get_path(), l.text, wide, at.size.x])
+		var word := _widest_word(l.text, font, l.get_theme_font_size("font_size"))
+		if l.autowrap_mode != TextServer.AUTOWRAP_OFF and word > at.size.x + 1.0:
+			bad.append("%s %s: a word of %.0f px broken in %.0f" % [l.get_path(), l.text, word, at.size.x])
 		var p := l.get_parent()
 		while p != null and not p is PanelContainer:
 			p = p.get_parent()
@@ -87,12 +92,15 @@ static func fit(screen: SettingsScreen) -> Array[String]:
 				(p as Control).get_global_rect()])
 		if at.position.x < -1.0 or at.end.x > wide_x + 1.0:
 			bad.append("%s %s: %s off the screen" % [l.get_path(), l.text, at])
-	# A button's words wider than the button, where they do not wrap.
+	# A button's words wider than the button where they do not wrap, and its
+	# widest word where they do.
 	for b: Button in screen.find_children("*", "Button", true, false):
-		if not b.is_visible_in_tree() or b.text == "" or b.autowrap_mode != TextServer.AUTOWRAP_OFF:
+		if not b.is_visible_in_tree() or b.text == "":
 			continue
 		var words := b.get_theme_font("font").get_string_size(b.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
 			b.get_theme_font_size("font_size")).x
+		if b.autowrap_mode != TextServer.AUTOWRAP_OFF:
+			words = _widest_word(b.text, b.get_theme_font("font"), b.get_theme_font_size("font_size"))
 		var room := b.size.x
 		var box := b.get_theme_stylebox("normal")
 		if box != null:
@@ -181,6 +189,15 @@ static func write_record(screen: SettingsScreen, shot: String) -> void:
 	f.store_string(JSON.stringify(record, " ") + "\n")
 	f.close()
 	print("record ", controls.size(), " controls")
+
+
+## The widest single word of `text` in `font` at `size`, in pixels.
+static func _widest_word(text: String, font: Font, size: int) -> float:
+	var widest := 0.0
+	for line: String in text.split("\n"):
+		for word: String in line.split(" ", false):
+			widest = maxf(widest, font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x)
+	return widest
 
 
 ## A panel's words, in order, on one line.
