@@ -1,19 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-16T12:24:40Z",
-  "expected_next_update_by": "2026-11-16T12:13:00Z",
+  "updated_at": "2026-11-16T13:08:00Z",
+  "expected_next_update_by": "2026-11-16T14:23:00Z",
   "cycle": 100,
-  "merging": {
-    "candidate_sha": "04b6a0f0",
-    "task_ids": [
-      "P2-S3-character-3"
-    ],
-    "started_at": "2026-11-16T12:24:40Z",
-    "expires_at": "2026-11-16T13:55:00Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "P2-K1-kit-gaps-1",
-    "sha": "cf6165e9"
+    "task_id": "P2-S3-character-3",
+    "sha": "0ee8d9d8"
   },
   "acks": [
     "M15",
@@ -35,5 +28,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 100: merge P2-K1-kit-gaps-1 when ready, then start AD (S3-R29 first if still open, its default due 11:43:26Z; then S1-R31) and K1 on P2-K1-kit-gaps-2; merge P2-S2-home-4 with IQ-import-check (ade915de), then AD on P2-AD-board-3c; merge P2-S3-character-3 (S3 restarted in cycle 99, S3-R30 granted), then AD on P2-AD-board-5c; P2-S1-result-4: advisory gate at 8753618a (Display type at 200% pt_BR failed 3 of 3, M30 close point), merge when ready. Seats four of four."
+  "next_step": "Cycle 101: AD works S2-R31 (home-4 preview), then S1-R31 (result-4 preview), then P2-AD-board-5c (open now: P2-S3-character-3 merged as 0ee8d9d8; board 5b's K and L re-checked per S3-R29, the gate's Display type notes in verdicts/P2-S3-character-3/a6d5f2fb.json), then P2-AD-board-3c once home-4 merges. Merge P2-S2-home-4 with IQ-import-check (ade915de) when ready, writing home/200 at 121 in budgets.json with S2-R30's raises entry; then translate WEAVING_BAND_0-6 (S2-R32). Merge P2-S1-result-4 when ready (M30's close point). K1 on P2-K1-kit-gaps-2 (started 12:24Z). Seats four of four: K1, S1, S2, AD."
 }
