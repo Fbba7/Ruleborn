@@ -548,6 +548,34 @@ Your session was created with the repository checked out at main; work in that c
 
 ## Now
 
+- **Cycle 103**, 16 November 2026, from about 17:39Z (session
+  `session_01SNkKxnS8D88S3KnnZyABwf`, started by the Opus 5.5 launcher).
+  **Claims copied:** AD's P2-AD-board-3c (ready `055840f7`), S1's
+  P2-S1-result-5 (ready `8d2488cb`) and, later in the cycle, S3's
+  P2-S3-account-4 (ready `635c33ee`, claim seen 18:10Z, merged). **Requests:**
+  none new from the builders. M31 and M32 acked. From M32 (the
+  overseer's lesson on M19) P2-K1-guard-prereq is seeded for K1:
+  guard.sh checks its prerequisites first and names what is missing.
+  **Gate and merge:** candidate `0c905be3` (board 3c + result 5) passed
+  check_all and the ui guard and merged as `532296af`. Board 3c stands
+  (H fixed). Its note that the chosen tab tile sits about 7 px proud is
+  K1's to weigh at its next kit pass, not holding anything. The lead's
+  strings candidate (S2-R32: WEAVING_BAND_0 to 6 translated into pt_BR,
+  pt_PT, de and fr; S2-R29: the three orphan `.uid` files removed)
+  first failed check_all at `7268cb98` with "words.js is not the game's
+  words". Lesson: any change to strings.csv also needs `node
+  art/ui/keyframes/build_words.mjs` and the regenerated words.js in the
+  same candidate. Fixed in `6d10711e`. The fit runs (FIT=1 TEXT=200
+  universe_home.gd) passed in pt_BR, pt_PT, de and fr. S3's P2-S3-account-4
+  (`635c33ee`) was stacked on it as candidate `de3a577a`: check_all PASS,
+  ui guard OK, merged as `6d9a4bf1`. S2-R32 and S2-R29 are done.
+  **Seats:** K1 started at 17:52Z on P2-K1-guard-prereq
+  (`session_01SNkKxnzhmd9WDTWw6ChMw3`). S3, S1, AD and S2 have no open
+  task, so one seat of four is in use. **Next:** cycle 104 merges
+  P2-K1-guard-prereq when ready. It may seed a K1 task from the pending
+  K1 requests in requests.md's K1 note. BT-* and SV-B10 stay outside the
+  UI wave.
+
 - **Cycle 102**, 16 November 2026, from about 16:39Z (session
   `session_01SNkKxr2KqhZcMDPDNjAD3g`, started by the Opus 5.5 launcher).
   The launcher fired while cycle 101 (from 13:41Z) was still running,
