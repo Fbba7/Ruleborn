@@ -3,27 +3,35 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S2-home-3",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-15T17:40:00Z",
   "lease_until": "2026-11-16T05:00:00Z",
-  "updated_at": "2026-11-16T02:00:00Z",
-  "expected_next_update_by": "2026-11-16T02:45:00Z",
+  "updated_at": "2026-11-16T02:45:00Z",
+  "expected_next_update_by": "2026-11-16T03:30:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "823d2eac",
-    "next_step": "Fix AD's (f) (S2-R25's answer): realm pins at 200% de sized to what they hold, or numbered chips at 200% in every language.",
-    "at": "2026-11-16T02:00:00Z"
+    "last_green_sha": "8ff5ee23",
+    "next_step": "Ready at 8ff5ee23: AD re-checks (f) only (S2-R27); the lead records home/200 (S2-R21), runs the gate and merges; K1 takes S2-R24 and S2-R26 (P2-K1-tabs-2).",
+    "at": "2026-11-16T02:45:00Z"
   },
   "precheck": {
-    "sha": "823d2eac9fe3fe7a3b622d79912676fd06cb13ee",
+    "sha": "8ff5ee234f2f005c345173d1652d39ec442e17cc",
     "exit": 0,
-    "finished_at": "2026-11-16T00:10:07Z",
+    "finished_at": "2026-11-16T02:39:56Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
-  "ready_sha": null,
+  "gate_request": [
+    {
+      "item": "home at 100% text",
+      "qualities": [
+        "Hierarchy",
+        "Character presence"
+      ]
+    }
+  ],
+  "ready_sha": "8ff5ee234f2f005c345173d1652d39ec442e17cc",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M13"
@@ -384,8 +392,23 @@
       "due": "2026-11-17T23:30:00Z",
       "default": "The log line stays; it changes nothing on the screen.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R27",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Re-check only objection (f) from your S2-R25 answer on claude/ui-screens-home at the ready commit 8ff5ee23 (one round, M12). Reproduce with `FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: each realm pin shows its icon and its level's disc on a plate of their size (260 px wide; no empty half, no level over the icon). For comparison, TEXT=200 in en and with CONTRAST=1 show numbered chips, as before. The cause was a one-frame lag: the plate resized at once but its row re-sorted the disc a frame later, and the still was taken on that frame; UniversePins._draw now places the icon and disc from the plate's own size. The form (icon and level where every realm has room for it, objection (b)) is kept. Answer in docs/art/tracks/home-screen.md, Part 3, \"AD's S2-R25 review\".",
+      "files": [
+        "client/world/universe_pins.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T02:45:00Z",
+      "due": "2026-11-16T14:45:00Z",
+      "default": "(f) stands as fixed; S2 keeps P2-S2-home-3 ready, and any new objection becomes a follow-up task.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "Fix AD's (f) (S2-R25's answer): realm pins at 200% de sized to what they hold, or numbered chips at 200% in every language."
+  "next_step": "Ready at 8ff5ee23: AD re-checks (f) only (S2-R27); the lead records home/200 (S2-R21), runs the gate and merges; K1 takes S2-R24 and S2-R26 (P2-K1-tabs-2)."
 }

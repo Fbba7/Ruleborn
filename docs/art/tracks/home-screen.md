@@ -259,7 +259,7 @@ AD re-checked (a) to (e) at `823d2eac` (S2-R25): (a), (c), (d) and (e) stand as 
 | home/200 | 119 | 114 |
 | home/hc | 144 | 145 |
 
-Measured with `bash tools/ui_bake/guard.sh` on the merge of main (`a8f799c`).
+Measured with `bash tools/ui_bake/guard.sh` on the merge of main (`a8f799c`), and the same on (f)'s merge of main (`8ff5ee23`).
 
 - **home/200 is 5 over its record.** At `13ff046f` it drew 124; with (a) to (e) and main's merge it draws 119 (not bisected). The bisect of 124 at 200% English, each fix added alone onto `14fdcdfe`, puts the rise on three of AD's objections:
   - the pins' search (objection 1): +5;
@@ -272,7 +272,7 @@ Measured with `bash tools/ui_bake/guard.sh` on the merge of main (`a8f799c`).
   - At 150% in English it draws 126.
   - At 200% with the notice up it draws 115 to 117, and 125 with the tallest strings.
 
-**Evidence.** On the merge of main (`a8f799c`), `FIT=1` with the new checks passes in 24 of 27 cases, with no script errors:
+**Evidence.** On the merge of main (`a8f799c`), and again with (f) on its merge of main (`8ff5ee23`), `FIT=1` with the new checks passes in 24 of 27 cases, with no script errors:
 
 | Text size | Cases that pass |
 |---|---|
@@ -289,7 +289,7 @@ Checks run on the task's last commit are in `docs/progress/S2.md`.
 **Still worse, or open:**
 
 - **home/200 is over its record** until the lead records it (S2-R21).
-- **At 200% with the raid notice up, the realms' chips give way** in pt_BR, fr and on a phone 900 points tall, where (a)'s reserve leaves no free place (S2-R24, S2-R25).
+- **At 200% with the raid notice up, the realms' chips give way** in pt_BR, fr and on a phone 900 points tall, where (a)'s reserve leaves no free place (S2-R24). AD accepts it for this task (S2-R25); board 3b re-checks it.
 - **The Portuguese goal is not number-first.** It reads "faltam 1.240 de experiência · Guardião 25", while the key frame's English is number-first. The string is in `strings.csv`, which is not this task's file (S2-R19).
 - **The strain band's word, "Humming", is not translated** in German or Portuguese. That is the strings file's, not this task's.
 - **At 200% with the raid notice up, the side buttons give way.** At large text they also give way where a realm finds no free place. Their places stay on the badge's menu.
