@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T21:00:00Z",
   "lease_until": "2026-11-17T00:00:00Z",
-  "updated_at": "2026-11-16T22:05:00Z",
-  "expected_next_update_by": "2026-11-16T22:50:00Z",
+  "updated_at": "2026-11-16T21:55:00Z",
+  "expected_next_update_by": "2026-11-16T22:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "1697a6c6",
-    "next_step": "No verdict yet for the re-run on main f083c96c; main's own still shows the purse's counts flat cream, so the fail is taken to stand and the fix is built. Counts baked where their row fits at full size, the keeper's name and live words a heavier T2 with a visible drop, the strain share at large text baked too (it was handed to figures before it had a parent). Draw calls: home/100 142, home/200 117, home/hc 142, all under the records. The 17 100% fit cases pass; the 39 large-text cases are re-running after the share fix. Then the AD preview request, the pre-check and the gate request.",
-    "at": "2026-11-16T22:05:00Z"
+    "next_step": "Build done at eb40e8f4: FIT 56 of 56 'fit ok'; home/100 142, home/200 117, home/hc 142 (records 145, 121, 145). Pre-check running on eb40e8f4; S2-R33 asks AD to preview the changed stills. Then the gate request at eb40e8f4 and ready.",
+    "at": "2026-11-16T21:55:00Z"
   },
   "precheck": null,
   "gate_request": {
@@ -492,8 +492,24 @@
       "due": "2026-11-17T19:33:00Z",
       "default": "The seven band names stay in English in every language, as now; home does not change.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R33",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Preview P2-S2-home-5 (phase 2 exit, M25: the purse's counts in the kit's display type) on claude/ui-screens-home at eb40e8f4, before the gate runs (M10, M12, M23). Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: 100% en, 100% de, high contrast, 200% en, 200% pt_BR, 150% pt_BR. What changed: the purse's counts, the renown and (at 150% and 200%) the strain card's share are in the kit's baked numerals (num_white, T3: gradient fill, thick ink stroke, hard drop) where the purse's row fits them at full size, with the words after them ('k', ' mil') in live type beside them; that is en and fr at 100% and 200% and every language at 150%. In de, pt_BR and pt_PT at 100% and 200% the amounts stay live, as the baked figures run a fifth wider and broke the purse into three rows. The keeper's name and every live word of the figures take a heavier T2: an ink outline half again as thick as display_s's, and a hard drop set below it. Full hangs 8 points higher at 100%. Please rule on the look of the baked figures beside the live words, and on the live counts in de and pt. Evidence and the 56 passing fit cases in docs/art/tracks/home-screen.md, Part 5.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T21:55:00Z",
+      "due": "2026-11-17T01:55:00Z",
+      "default": "The stills stand as previewed: the gate runs on the pre-checked commit, and any objection becomes a follow-up task.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "Gate re-run requested on main f083c96c for 'home at 100% text' and 'home in high contrast' (the lead's next cycle). Meanwhile S2 renders main's stills and prepares a stronger display treatment for the purse's counts and the keeper's name on a WIP, in case the fail stands."
+  "next_step": "Pre-check on eb40e8f4, then gate_request and ready_sha at eb40e8f4; AD previews the stills (S2-R33)."
 }
