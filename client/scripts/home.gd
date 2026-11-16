@@ -598,9 +598,13 @@ func _fit_pins() -> void:
 			if pin != null and not pin.visible:
 				whole = false
 				break
-	if not whole and not _edges_yield and Settings.text_scale >= 150 and _edges[0].visible:
-		# The side buttons give way first: each place is on the badge's menu.
+	if pins.short() and not _edges_yield and Settings.text_scale >= 150 and _edges[0].visible:
+		# Only where even the numbered chips find no place, laid each failing
+		# realm first, do the side buttons give way (AD's objection (g) on
+		# S2-R27): each place is on the badge's menu.
 		_edges_yield = true
+		if OS.get_environment("DBG") != "":
+			print("DBG yield at frame ", Engine.get_process_frames(), " upright ", (_edges[0] as BoxContainer).vertical)
 		(_foot.get_parent() as Control).queue_sort()
 		return
 	if pins.visible != whole:

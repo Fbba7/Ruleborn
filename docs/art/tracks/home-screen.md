@@ -239,6 +239,17 @@ AD re-checked (a) to (e) at `823d2eac` (S2-R25): (a), (c), (d) and (e) stand as 
   - The form itself is kept. German at 200% has room for each realm's icon, so the pins show it (objection (b) on S2-R22: the most that fits, in one form). Where a realm has no room for it, every pin steps to the numbered chip, as English does at 200%.
   - The plate is 260 px wide at 200% (12 + 114 + 12 + 110 + 12: margin, icon, gap, disc, margin), against 134 px for a numbered chip.
 
+**AD's S2-R27 review (objection (g)).**
+
+AD re-checked (f) at `8ff5ee23` (S2-R27): it stands as fixed. AD made one new objection, found on the full-list check (M23). The board's text is in `docs/art/ui-quality/gate/boards/board-3.md`, "Re-check of objection (f) (S2-R27)".
+
+- **(g) At 200% without the notice, the four side buttons keep their edges.** They are Defence (with its raid badge and timer), Season, Lab and Shop. AD-R24 asks for them as icon-only discs at 200%, in two edge columns with the realm chips between them, as both 200% key frames show. In German and German high contrast they were gone.
+  - **The cause.** Home gave the side buttons' room to the realms (`Home._fit_pins`) as soon as one realm's pin found no place, before the numbered chips had tried every order. The pins are laid in order, and each takes the free place nearest its island. In German at 200%, as numbered chips, every realm found a place but one, Outer 6: the chips laid before it took the room near its island.
+  - **The fix, part 1: each failing realm is laid first in turn.** Where a realm finds no place even as a numbered chip, `UniversePins.follow` lays the pins again with that realm first. It does this once for each realm that fails, until every realm has a place. In German, Outer 6 laid first leaves room for all seven chips between the two columns.
+  - **The fix, part 2: the side buttons give way only on a real shortage.** Home gives their room away only when `UniversePins.short()` is true. That means the pins are at the numbered chip, every failing realm has been laid first, and a realm still has no place. Before, a pin that missed its place on the first frame was enough, before the camera and the sizes had settled. Once given, the room stays given until the notice changes, as before.
+  - **German keeps the four side buttons at 200%,** in high contrast too. The realms take numbered chips there, as AD's default asks, since the icon-and-level pins of (f) leave no room for the side columns. With the notice up at 200%, the side buttons give way, and German keeps its icon-and-level pins as before.
+  - **pt_BR and fr cannot keep them until K1's height work (S2-R24, P2-K1-tabs-2).** Their goal keeps three lines at 200% ("faltam 1.240 de experiência · Guardião 25"), so the realms' band between the purse and Collect is 399 px tall (886 to 1285 in the 1080 × 2340 frame). German's goal keeps two lines, and its band is about 100 px taller. In that band, with the two columns at its sides, seven chips of 134 × 122 px and the raid card do not fit with the 4-point gap that keeps chips from touching (S2-R20's fifth objection). The nearest miss: the free gap between the raid card and the right-hand column is 149 px, and a chip needs 152 with its gaps. A trial with a finer search, on a grid of half a chip, found no more places. So in pt_BR and fr the side buttons still give way at 200%, each place on the badge's menu, as AD's answer allows for pt_BR. The re-check request says so (S2-R28).
+
 **What (a) costs.**
 
 - **At 200% with the raid notice up, the realms' chips give way where the world is shortest.** The reserve lifts the foot about 36 points. In three cases the world then keeps about 100 points, and no chip finds a free place near its island:
@@ -292,7 +303,7 @@ Checks run on the task's last commit are in `docs/progress/S2.md`.
 - **At 200% with the raid notice up, the realms' chips give way** in pt_BR, fr and on a phone 900 points tall, where (a)'s reserve leaves no free place (S2-R24). AD accepts it for this task (S2-R25); board 3b re-checks it.
 - **The Portuguese goal is not number-first.** It reads "faltam 1.240 de experiência · Guardião 25", while the key frame's English is number-first. The string is in `strings.csv`, which is not this task's file (S2-R19).
 - **The strain band's word, "Humming", is not translated** in German or Portuguese. That is the strings file's, not this task's.
-- **At 200% with the raid notice up, the side buttons give way.** At large text they also give way where a realm finds no free place. Their places stay on the badge's menu.
+- **At 200% with the raid notice up, the side buttons give way** until P2-K1-tabs-2 (AD's answer to S2-R27). **At 200% in pt_BR and fr without the notice they give way too:** their three-line goal leaves no room for seven chips between the columns ((g) above). Their places stay on the badge's menu. German and English keep them.
 - **Collect's words shrink at 200% in German**, below the kit's button size. Collect drops its picture first: "3,4 Tsd. einsammeln".
 - **At 200% in German with the raid notice up, the notice drops its red disc.** The alarm glyph on the tag stays.
 

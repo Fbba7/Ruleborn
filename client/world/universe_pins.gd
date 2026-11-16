@@ -33,6 +33,8 @@ var _pins: Array[Dictionary] = []
 ## changes.
 var _mode := 0
 var _room := []
+## The realms whose pins found no place in the last lay, in order.
+var _failed: Array[String] = []
 
 
 func _init(owner_view: UniverseView) -> void:
@@ -336,12 +338,51 @@ func follow() -> void:
 		_mode = 0
 	while not _lay(_mode) and _mode < 2:
 		_mode += 1
+	# Even as numbered chips a realm found no place: the pins placed before it
+	# took the room near its island. Laid again with that realm first, the
+	# others find places further round theirs, so the side buttons keep their
+	# edges at large text (AD's objection (g) on S2-R27). Each realm is moved
+	# up once at most.
+	var moved := {}
+	while _mode == 2 and not _failed.is_empty():
+		var id := ""
+		for f in _failed:
+			if not moved.has(f):
+				id = f
+				break
+		if id == "":
+			break
+		moved[id] = true
+		_first(id)
+		_lay(_mode)
+
+
+## True where, even as numbered chips laid with each failing realm first, a
+## realm's pin found no place near its island: only then does home give the
+## side buttons' room to the realms (AD's objection (g) on S2-R27).
+func short() -> bool:
+	return _mode == 2 and not _failed.is_empty()
+
+
+## Realm `id`'s pin moved to lay before the other realms' (the pins are laid
+## in order: the most urgent rank first, then as listed).
+func _first(id: String) -> void:
+	for i in _pins.size():
+		var p: Dictionary = _pins[i]
+		if p.get("front", false) and str(p.get("realm", "")) == id:
+			_pins.remove_at(i)
+			var at := 0
+			while at < _pins.size() and int(_pins[at]["rank"]) < int(p["rank"]):
+				at += 1
+			_pins.insert(at, p)
+			return
 
 
 ## The pins laid out once, the realms' in `mode` (see `_mode`); false where a
 ## realm's pin that belongs on the screen found no room.
 func _lay(mode: int) -> bool:
 	var every := true
+	_failed.clear()
 	var toward := view.toward()
 	var taken: Array[Rect2] = []
 	# Pins keep clear of the screen's own controls (home's side buttons).
@@ -397,6 +438,10 @@ func _lay(mode: int) -> bool:
 		_shape(node, mode)
 		var placed := _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * (NEAR if mode < 2 else FAR))
 		node.visible = placed
+		if not placed:
+			_failed.append(id)
+		if not placed and OS.get_environment("DBG") != "":
+			print("DBG fail ", id, " mode ", mode, " at ", s, " size ", node.size, " taken ", taken, " inset ", view.inset)
 		every = every and placed
 	return every
 
