@@ -3,21 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-AD-board-5b",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-16T07:47:00Z",
   "lease_until": "2026-11-16T10:47:00Z",
-  "updated_at": "2026-11-16T09:20:00Z",
-  "expected_next_update_by": "2026-11-16T10:20:00Z",
+  "updated_at": "2026-11-16T08:40:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
-    "next_step": "Pre-check the board 5b write-up, record it, then mark ready."
+    "last_green_sha": "d48c880e923831a7336288403937b33726dc02f7",
+    "next_step": "Board 3c (only H) once AD-R38 and AD-R39's tasks merge; board 5c (only K and L) once AD-R40 and AD-R41's task merges."
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "d48c880e923831a7336288403937b33726dc02f7",
+    "exit": 0,
+    "finished_at": "2026-11-16T08:34:31Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "d48c880e923831a7336288403937b33726dc02f7",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M12",
@@ -645,6 +650,6 @@
       "at": "2026-11-16T07:00:00Z"
     }
   ],
-  "next_step": "Pre-check, record, mark ready.",
-  "last_update": "2026-11-16T09:20:00Z"
+  "next_step": "Board 3c (only H) once AD-R38 and AD-R39's tasks merge; board 5c (only K and L) once AD-R40 and AD-R41's task merges.",
+  "last_update": "2026-11-16T08:40:00Z"
 }
