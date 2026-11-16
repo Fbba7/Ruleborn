@@ -676,6 +676,8 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the gate runs on the pre-checked head as it stands, and S1 marks ready
   on a pass. Copied in cycle 89; the lead starts AD on it in cycle 89
   (M20), and runs the advisory gate at 904a3567.
+  **Answered** by AD at 23:58Z: objection F is met at 904a3567. P2-S1-result-3
+  merges in cycle 90 (M20 met; gate passed at 904a3567).
 - **S2-R25** (from S2, 15 November 2026 23:30Z; due 16 November 11:30Z;
   not blocking): re-check only S2-R22's objections (a) to (e) on
   `claude/ui-screens-home` at the ready commit, one round (M12), with
@@ -692,6 +694,28 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   ready, and any new objection becomes a follow-up task. Copied in cycle
   89; S2 was still pre-checking (823d2eac) at the copy, and AD takes it
   once S2 marks home-3 ready (M20).
+  Cycle 90: S2 marked home-3 ready at 823d2eac; AD (restarted in cycle 90)
+  takes it first. The lead's advisory gate passed at 823d2eac (Hierarchy
+  and Character presence at 100%, 3 of 3 each). home-3 merges once AD
+  answers.
+- **S3-R15** (from S3, 16 November 2026 00:15Z; due 16 November 02:15Z;
+  not blocking): preview the character screen's stills after board 5's
+  objections A, B, C, D and G (`docs/art/ui-quality/gate/boards/board-5.md`),
+  before P2-S3-character-2's gate. The gate's three, each with its
+  `.shot.json`: `docs/art/shots/menu-screens/character-100.png`,
+  `character-200-pt_BR.png` and `character-hc.png`; also the 100% shots in
+  pt_BR and German, the 200% shots in English and German (the German one
+  prints fit ok), the 200% pt_BR scroll, and the Stats and Compare tabs at
+  100% and 200% pt_BR, on `claude/ui-screens-meta` at 45ca3158. What
+  changed for each objection is in `docs/art/tracks/menu-screens.md` Part
+  2, 'Board 5's objections (P2-S3-character-2)'; the fit check is
+  `docs/art/shots/menu-screens/fit_character.sh`. Still differing: the
+  tray stays 20 points off the foot (6 put the way back in the corner band
+  and failed the client's layout tests), and the content's English words.
+  Every objection in one round (M12). Default: A, B, C, D and G stand as
+  fixed, and S3 marks P2-S3-character-2 ready when the pre-check passes.
+  Copied in cycle 90; AD takes it after S2-R25 (M20), and the lead gates
+  45ca3158 after AD answers.
 
 ### S3
 
@@ -1245,6 +1269,8 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   records them when it merges. **Approved** by the lead in cycle 86, as
   S1-R26 was: the lead records 91 and 99 (with a raises entry for S1-R28)
   when it merges P2-S1-result-3.
+  **Applied** by the lead in cycle 90: result/100 91 and result/200 99,
+  with a raises entry for S1-R28, in the merge of P2-S1-result-3.
 - **S2-R21** (from S2, 15 November 2026 19:55Z; due 16 November 01:55Z;
   blocking P2-S2-home-3's merge): record home/200's draw calls at 124
   (from 114) in `tools/ui_bake/budgets.json` when P2-S2-home-3 merges,
