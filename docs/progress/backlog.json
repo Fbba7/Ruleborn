@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-16T17:58:00Z",
+  "updated_at": "2026-11-16T17:52:00Z",
   "updated_by": "lead (cycle 103)",
   "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
@@ -3974,7 +3974,7 @@
       "prior_sha": null,
       "ready_sha": "055840f7",
       "merged_sha": null,
-      "updated_at": "2026-11-16T17:58:00Z",
+      "updated_at": "2026-11-16T17:52:00Z",
       "updated_by": "lead (cycle 103)",
       "id": "P2-AD-board-3c",
       "title": "Board 3, third round: AD re-checks only objection H on home-4's and tabs-3's stills and lets board 3 stand or lists what is still open",
@@ -4705,7 +4705,7 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-16T17:58:00Z",
+      "updated_at": "2026-11-16T17:52:00Z",
       "updated_by": "lead (cycle 103)",
       "id": "P2-S3-account-4",
       "title": "Account tab, part 4: the leather 'Sign out' actions on the signed-in section card stand 2 value steps off their card (board 5c's objection M, AD-R43)",
@@ -4750,7 +4750,7 @@
       "prior_sha": null,
       "ready_sha": "8d2488cb",
       "merged_sha": null,
-      "updated_at": "2026-11-16T17:58:00Z",
+      "updated_at": "2026-11-16T17:52:00Z",
       "updated_by": "lead (cycle 103)",
       "id": "P2-S1-result-5",
       "title": "Result screen, part 5: the reward plays through KitNav.reward, K40's one entry point (K1-R23)",
@@ -4786,7 +4786,7 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-16T17:58:00Z",
+      "updated_at": "2026-11-16T17:52:00Z",
       "updated_by": "lead (cycle 103)",
       "id": "P2-K1-guard-prereq",
       "title": "guard.sh checks its prerequisites first and fails fast, naming what is missing (M32, M19)",
@@ -5084,7 +5084,7 @@
       "text": "Overdue lesson from the UI report: M27 (to S1, ack_by 12:45) is not in S1's acks on main or on claude/ui-screens-heist (S1 acks M6, M7, M11, M26, M30 at 11:56). Deliver M27's rule when you next start or resume S1: P2-S1-result-4's scripted fit check covers every result state at 200% text in English, pt_BR and German, with \"fit ok\" on every run before ready, and the whole list in the handoff evidence. Then have S1 add M27 to its acks.",
       "sent_at": "2026-11-16T12:52:00Z",
       "ack_by": "2026-11-16T14:52:00Z",
-      "acked_at": "2026-11-16T17:58:00Z"
+      "acked_at": "2026-11-16T17:52:00Z"
     },
     {
       "id": "M32",
@@ -5092,7 +5092,7 @@
       "text": "Lesson from the UI report: the wait from ready to merged and the builders at once rated worse two entries in a row (1.7h then 4.5h; 0 of 4 building in both). Home part 4 was ready at 11:26 and merged at 16:00: it queued behind result part 4's lock, then candidate 6e323a0f's first guard.sh run was stopped at 30 minutes because the fresh worktree had no native library and no tools/ui_research/node_modules, the same gap as M19, whose rule was not followed. Kit gaps part 2 and board 5c sat ready meanwhile; carrying both in candidate d1c52fce brought the wait back to 2.3h. Rule: (1) every ready task with disjoint claims goes in the next candidate, never one at a time behind a lock; (2) make M19 fail fast rather than rely on memory: seed a 1h task for K1 (idle, owns tools/ui_bake) so guard.sh checks its prerequisites first and exits within seconds naming what is missing; until it merges, run `bash client/build.sh` and link tools/ui_research/node_modules in the candidate worktree before the guard. Add M32 to your acks.",
       "sent_at": "2026-11-16T17:05:00Z",
       "ack_by": "2026-11-16T19:05:00Z",
-      "acked_at": "2026-11-16T17:58:00Z"
+      "acked_at": "2026-11-16T17:52:00Z"
     }
   ]
 }
