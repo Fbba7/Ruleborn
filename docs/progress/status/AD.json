@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T23:35:00Z",
   "lease_until": "2026-11-17T02:35:00Z",
-  "updated_at": "2026-11-16T23:35:00Z",
-  "expected_next_update_by": "2026-11-17T00:20:00Z",
+  "updated_at": "2026-11-16T23:45:00Z",
+  "expected_next_update_by": "2026-11-17T01:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
-    "next_step": "Preview S2-R33 (P2-S2-home-5 at eb40e8f4), then S1-R34 (P2-S1-heist-1 at ed766fe9)."
+    "next_step": "S1-R34: judge heist-1 stills at ed766fe9 and answer"
   },
   "precheck": {
     "sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
@@ -688,8 +688,13 @@
       "request_id": "S1-R31",
       "answer": "Preview of P2-S1-result-4 at 8753618a (claude/ui-screens-heist) against board 4's full list (M23). All ten stills print 'fit ok' (en 100%; pt_BR, de, en 200%; hc en and pt_BR; STATE refused de 200%, testing de 200%, confirming pt_BR 200%, play pt_BR 200%). What stands: Home and the law pills on the tertiary violet face; Home icon-only at 200% (E); the fold at 200% pt_BR ends on the Renome tile; the reward tiles keep their currency icons; 'Veröffentlichen' whole; A to F stay met. One objection holds, G (Display type, as M30 and the advisory gate): the gold kicker over the sky has no ink outline, 'Limpo' keeps a thin outline where the key frame's grade is heavily inked, and the summary, time, fee and server lines (and the refused, testing, play state lines) keep a hairline about 2-3 px on 45 px glyphs that does not grow at 200%. Fix (S1, result_screen.gd, the labels set straight on the sky): a dark ink outline of max(1.5 pt, 12% of the font size), computed after the text scale; kicker cream as the key frames, or gold with that outline; labels on cards and plates unchanged. Re-render 200% pt_BR, de, en and hc, then send the gate request for Display type at 200% pt_BR at the new head. So the default (gate on 8753618a as it stands) does not hold; S1 fixes G inside P2-S1-result-4 (AD-R42 to the lead). Notes carried, not holding: the crew card's sliver above the bar in hc pt_BR 100%, and round 2's other notes. board-4.md, 'Preview of result-4 (S1-R31)'.",
       "at": "2026-11-16T12:10:00Z"
+    },
+    {
+      "request_id": "S2-R33",
+      "answer": "Preview of P2-S2-home-5 at eb40e8f4 (claude/ui-screens-home). All 7 stills print 'fit ok' (en, de and high contrast at 100%; en, pt_BR and de at 200%; pt_BR at 150%). Ruling: the stills stand, no objection kept, so S2's default holds: S2 sends the gate request at the pre-checked commit. Baked figures beside live words: in en the counts and the renown are baked in the kit's numerals (white, ink outline, hard drop) beside live labels (Humming, Full, Collect 3.4k, the goal card); a figure is a count and a word is a label, so the split is the kit's own, and the counts no longer read as flat cream (round 3's advisory note answered). The baked 82% over the live Humming at 200% reads as one block. Live counts in de and pt_BR at 100% and 200% ('142,0 Tsd.', '142,0 mil') in the heavier display role are bold, white, outlined and dropped, carry the same weight at phone size and pass display type; the trade is right, since baking breaks the purse into three rows at 200% pt_BR. High contrast keeps the outline and drop, and Collect stays the one gold primary. Notes, not holding: in de and pt one header carries two numeral faces (renown baked and wide, counts live and tight), a kit question for a later pass; at pt_BR 150% the wide baked digits before a tight live 'mil' read as one amount, and the tracking could tighten a step later; the Full chip straddles the water plate's edge as a badge and covers no figure. board-3.md, 'Preview of home-5 (S2-R33)'.",
+      "at": "2026-11-16T23:45:00Z"
     }
   ],
-  "next_step": "Preview S2-R33 (P2-S2-home-5 at eb40e8f4), then S1-R34 (P2-S1-heist-1 at ed766fe9).",
-  "last_update": "2026-11-16T23:35Z: cycle 107 start; P2-AD-board-3c merged; previewing S2-R33 then S1-R34."
+  "next_step": "S1-R34: judge heist-1 stills at ed766fe9 and answer",
+  "last_update": "S2-R33 answered: home-5 stills stand, no objection (board-3.md). S1-R34 next."
 }

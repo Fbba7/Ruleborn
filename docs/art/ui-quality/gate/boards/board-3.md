@@ -556,3 +556,68 @@ and high-contrast pt_BR, all without the notice.
   the Heist capsule against the key frame's gold disc; the companion's
   yaw; the strain mark's cyan dot; Collect's shine; and the tight chips
   over the world art with the notice up at 200%.
+
+## Preview of home-5 (S2-R33)
+
+AD previewed P2-S2-home-5 at `eb40e8f4` on `claude/ui-screens-home` on
+16 November 2026. The task puts the purse's counts in the kit's display
+type: baked figures (`HomeParts.figures`) where the purse row holds them
+at full size, live words in the heavier display role (`HomeParts.inked`)
+where it does not. Each case was rendered with
+`FIT=1 [TEXT=150|200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd`.
+
+**All 7 cases print "fit ok":** English, German and high contrast at
+100%, English, pt_BR and German at 200%, and pt_BR at 150%.
+
+**Ruling: the stills stand, and no objection is kept.** S2's default
+holds: S2 sends the gate request at the pre-checked commit.
+
+- **Baked figures beside live words.** In English at 100% and 200% the
+  three counts and the renown are baked in the kit's numerals: white,
+  with the ink outline and the hard drop. They sit beside live words
+  ("Humming", "Full", "Collect 3.4k", the goal card) that keep their
+  own roles. This is the split the kit draws: a figure is a count, and
+  a word is a label. The baked counts no longer read as flat cream. That
+  answers the advisory judges' note from round 3. At 200% the baked
+  "82%" over the live "Humming" reads as one block, figure over word.
+- **Live counts in German and Portuguese.** At 100% and 200% in de and
+  pt_BR the counts stay live ("142,0 Tsd.", "142,0 mil") in the heavier
+  display role. They are bold, white, outlined and dropped, and at
+  phone size they carry the same weight as the baked figures. They pass
+  display type. The trade is right: baked, the purse breaks into three
+  rows at 200% pt_BR, and a third row costs the realms' band more than
+  the numerals gain.
+- **High contrast.** The counts keep their outline and drop, and the
+  plates take the light rims. Hierarchy holds: Collect stays the one gold
+  primary.
+
+From left: English, German and high contrast at 100%.
+
+![100%: en, de, high contrast](board-3/r8-home-100.png)
+
+From left: English, pt_BR and German at 200%, then pt_BR at 150%.
+
+![large text: en 200, pt_BR 200, pt_BR 150, de 200](board-3/r8-home-large.png)
+
+The purse at phone size, from top: English 100% (baked), German 100%
+(live), pt_BR 150% (baked figures, live "mil"), pt_BR 200% (live) and
+English 200% (baked).
+
+![purse rows: en 100, de 100, pt_BR 150, pt_BR 200, en 200](board-3/r8-home-purse.png)
+
+### Notes, not holding
+
+- In de and pt at 100% and 200%, one header carries two numeral faces:
+  the renown is baked ("1.460", tracked wide) and the counts are live
+  (tight, heavier). Both are in display treatment, so the header still
+  reads as one family. If the kit gains a narrower set of baked numerals
+  later, every language could bake. That is a kit question for a later
+  pass, not home's.
+- At pt_BR 150% the baked figures are tracked wide and the live "mil"
+  after them is tight ("6 1 , 0 mil"). It reads as one amount at phone
+  size. A later pass could tighten the baked tracking a step in that
+  case.
+- The "Full"/"Voll"/"Cheio" chip straddles the bottom edge of the water
+  plate at large text, and its top edge at 100%. It sits as a badge and
+  covers no figure.
+- The notes carried from round 3 still stand.

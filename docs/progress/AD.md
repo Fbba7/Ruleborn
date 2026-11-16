@@ -1,9 +1,9 @@
 # AD art director: progress
 
-- Status: Green. Board 3c written: H is fixed on main at 837835c3 (P2-K1-tabs-3 merged as 1053266f, P2-S2-home-4 as 5803122d). At 200% the side buttons and all seven realm chips show in pt_BR, pt_PT, fr, en and de, with and without the notice, and in en at 900 tall; all 14 renders print "fit ok". Board 3 stands, with no objection open. The chosen tab's tile standing about 7 px proud of the gold edge in home is a light note for K1.
+- Status: Green. S2-R33 answered: the home-5 stills at eb40e8f4 stand (all 7 "fit ok"; baked counts in en, live display-role counts in de and pt_BR), no objection kept, so S2 sends the gate request at the pre-checked commit. S1-R34 (heist-1 stills at ed766fe9) in progress.
 - Progress: 20 of 21 tasks merged (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3, P2-AD-board-4, P2-AD-board-5, P2-AD-board-4b, P2-AD-board-3b, P2-AD-board-5b, P2-AD-board-5c); P2-AD-board-3c ready; 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides)
-- Done: P2-AD-board-3c (`board-3.md` "Round 3 (board 3c)", `board-3/r7-*.png`). Earlier: P2-AD-board-5c (merged as 26cbd842); S2-R31 and S1-R31 previews.
-- Next: none queued for AD; the lead assigns the next board.
+- Done: S2-R33 preview of home-5 (`board-3.md` "Preview of home-5 (S2-R33)", `board-3/r8-*.png`). Earlier: P2-AD-board-3c; P2-AD-board-5c; S2-R31 and S1-R31 previews.
+- Next: S1-R34, preview of P2-S1-heist-1 (due 2026-11-17T10:09Z).
 - Blocked by: none.
 - Owner decision needed: none. AD decides the boards in place of the owner.
 | Deliverable | Weight (h) | Status | Evidence |
@@ -32,6 +32,7 @@
 
 ## Handoff
 - Last verified commit: `055840f7` (P2-AD-board-3c; pre-check PASS, 2026-11-16T17:17:47Z, `All checks passed.`, exit 0).
+- Done this session (2026-11-16, cycle 107): S2-R33. Rendered home at eb40e8f4 (`claude/ui-screens-home`) with `FIT=1`: en, de and hc at 100%; en, pt_BR and de at 200%; pt_BR at 150%. All 7 "fit ok". Reply, as in `status/AD.json` `answers`: the stills stand, no objection kept, S2's default holds (gate on the pre-checked commit). Baked counts sit beside live labels as the kit splits figure from word; the live counts in de and pt_BR, in the heavier display role, pass display type, and keeping them live saves the purse a third row at 200% pt_BR. Notes, not holding: two numeral faces in one header in de and pt (a kit question); wide baked digits before a tight live "mil" at pt_BR 150%; the Full chip straddles the plate edge as a badge.
 - Done this session (2026-11-16, cycle 101): P2-AD-board-3c. Rendered home on main at 837835c3 (merged into `claude/ui-ad` as 2eb3624a) with `FIT=1 TEXT=200`: pt_BR, pt_PT, fr, en and de, each with and without `NOTICE=1`; en at `TALL=900` with and without the notice; hc pt_BR; and en at 100%. All 14 print "fit ok". H is fixed: `reserve_lift` is gone from home, the goal card ends just above the gold edge, and in every 200% case the four side buttons (Defence and Lab left, Season and Shop top right) and all seven realm chips show. Board 3 stands. Notes, not holding: the chosen tile's rim is about 7 px (5 pt) above the gold edge in home, because the raised Heist sets the bar's inset (K1's to weigh with the Heist capsule note); home-4's advisory display type split (3 of 6) on the currency counts. No request sent: no objection is kept.
 - Done earlier: P2-AD-board-5c (M open as AD-R43); S2-R31 and S1-R31 previews (AD-R42); P2-AD-board-5b (K and L open as AD-R40, AD-R41); S3-R21; S3-R20; P2-AD-board-3b (H open as AD-R38, AD-R39).
 - Half done: none.
