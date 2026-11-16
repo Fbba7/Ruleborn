@@ -3,17 +3,17 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P2-S1-result-4",
-  "task_state": "ready",
-  "claimed_at": "2026-11-16T09:50:00Z",
-  "lease_until": "2026-11-16T14:50:18Z",
-  "updated_at": "2026-11-16T12:56:49Z",
-  "expected_next_update_by": "2026-11-16T15:56:49Z",
+  "agent_state": "active",
+  "task_id": "P2-S1-result-5",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-16T16:45:13Z",
+  "lease_until": "2026-11-16T19:45:13Z",
+  "updated_at": "2026-11-16T16:45:13Z",
+  "expected_next_update_by": "2026-11-16T17:30:13Z",
   "progress_marker": {
-    "last_green_sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
-    "next_step": "Ready at 6fb2e3da (pre-check PASS, guard OK, check_screens OK); gate requested. M30 done: sky words inked by their drawn size.",
-    "at": "2026-11-16T12:56:49Z"
+    "last_green_sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
+    "next_step": "Main merged (22c998c3); swap Motion.reward for KitNav.reward in result_screen.gd",
+    "at": "2026-11-16T16:45:13Z"
   },
   "precheck": {
     "sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
@@ -21,32 +21,16 @@
     "finished_at": "2026-11-16T12:50:44Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
-    "items": [
-      {
-        "item": "result at 200% text, pt_BR",
-        "qualities": [
-          "Display type",
-          "Hierarchy"
-        ]
-      },
-      {
-        "item": "result in high contrast",
-        "qualities": [
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
-  "ready_sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M6",
     "M7",
     "M11",
     "M26",
-    "M30"
+    "M30",
+    "M27"
   ],
   "requests": [
     {
