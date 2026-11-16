@@ -4,25 +4,20 @@
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-AD-board-4b",
-  "task_state": "ready",
-  "claimed_at": "2026-11-16T02:10:00Z",
-  "lease_until": null,
-  "updated_at": "2026-11-16T05:30:00Z",
+  "task_id": "P2-AD-board-3b",
+  "task_state": "working",
+  "claimed_at": "2026-11-16T05:33:00Z",
+  "lease_until": "2026-11-16T08:33:00Z",
+  "updated_at": "2026-11-16T05:33:00Z",
   "expected_next_update_by": "2026-11-16T06:15:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
-    "next_step": "Claim P2-AD-board-3b (home, board 3 round 2) and re-check objections A-D and the 200% side buttons in pt_BR, pt_PT and fr."
+    "next_step": "Render home on main (home-3, K1-tabs, K1-tabs-2 merged) at 100%/200% en, pt_BR, pt_PT, fr, de, high contrast and the notice cases; re-check board-3 A-D beside key frame 01."
   },
-  "precheck": {
-    "sha": "0662a9407e94495640656564dfb3233152afe885",
-    "exit": 0,
-    "finished_at": "2026-11-16T02:37:34Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "0662a9407e94495640656564dfb3233152afe885",
+  "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M12",
@@ -582,6 +577,6 @@
       "at": "2026-11-16T05:30:00Z"
     }
   ],
-  "next_step": "Claim P2-AD-board-3b (home, board 3 round 2) and re-check objections A-D and the 200% side buttons in pt_BR, pt_PT and fr.",
-  "last_update": "Answered S3-R20: settings-2 Hierarchy fixes stand at 3854db00; new objection J (High contrast row below the fold at 100% pt_BR, de, hc pt_BR)."
+  "next_step": "Render home on main (home-3, K1-tabs, K1-tabs-2 merged) at 100%/200% en, pt_BR, pt_PT, fr, de, high contrast and the notice cases; re-check board-3 A-D beside key frame 01.",
+  "last_update": "Claimed P2-AD-board-3b after answering S3-R20."
 }
