@@ -3,21 +3,26 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-K1-tabs-3",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-16T07:00:00Z",
   "lease_until": "2026-11-16T10:00:00Z",
-  "updated_at": "2026-11-16T07:45:00Z",
-  "expected_next_update_by": "2026-11-16T08:30:00Z",
+  "updated_at": "2026-11-16T08:10:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "9e08db75",
-    "next_step": "pre-check on 9e08db75, then ready"
+    "next_step": "the merge queue (handoff in docs/progress/K1.md; later commits docs, status and check_all's client/status.json only)"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "9e08db75e865f55eef25e3ac3d6208d449ebffe4",
+    "exit": 0,
+    "finished_at": "2026-11-16T08:08:50Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "9e08db75",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M2",
