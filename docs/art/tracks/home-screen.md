@@ -270,7 +270,7 @@ AD re-checked (f) at `8ff5ee23` (S2-R27): it stands as fixed. AD made one new ob
 | home/200 | 119 | 114 |
 | home/hc | 144 | 145 |
 
-Measured with `bash tools/ui_bake/guard.sh` on the merge of main (`a8f799c`), and the same on (f)'s merge of main (`8ff5ee23`).
+Measured with `bash tools/ui_bake/guard.sh` on the merge of main (`a8f799c`), and the same on (f)'s merge of main (`8ff5ee23`) and (g)'s (`398a38cb`).
 
 - **home/200 is 5 over its record.** At `13ff046f` it drew 124; with (a) to (e) and main's merge it draws 119 (not bisected). The bisect of 124 at 200% English, each fix added alone onto `14fdcdfe`, puts the rise on three of AD's objections:
   - the pins' search (objection 1): +5;
@@ -283,7 +283,7 @@ Measured with `bash tools/ui_bake/guard.sh` on the merge of main (`a8f799c`), an
   - At 150% in English it draws 126.
   - At 200% with the notice up it draws 115 to 117, and 125 with the tallest strings.
 
-**Evidence.** On the merge of main (`a8f799c`), and again with (f) on its merge of main (`8ff5ee23`), `FIT=1` with the new checks passes in 24 of 27 cases, with no script errors:
+**Evidence.** On the merge of main (`a8f799c`), again with (f) on its merge of main (`8ff5ee23`), and with (g) (`b0ca06ce`, then merged with main as `398a38cb`), `FIT=1` with the new checks passes in 24 of 27 cases, with no script errors:
 
 | Text size | Cases that pass |
 |---|---|

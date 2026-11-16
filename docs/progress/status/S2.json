@@ -3,26 +3,35 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S2-home-3",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-15T17:40:00Z",
   "lease_until": "2026-11-16T06:15:00Z",
-  "updated_at": "2026-11-16T03:12:00Z",
-  "expected_next_update_by": "2026-11-16T03:55:00Z",
+  "updated_at": "2026-11-16T03:58:00Z",
+  "expected_next_update_by": "2026-11-16T04:45:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "8ff5ee23",
-    "next_step": "Working on AD's objection (g) (S2-R27's answer): at 200% the four side buttons kept as icon-only discs in every locale, numbered chips where needed."
+    "last_green_sha": "398a38cb",
+    "next_step": "Ready at 398a38cb: AD re-checks (g) only (S2-R28); the lead records home/200 (S2-R21), runs the gate and merges; K1 takes S2-R24 and S2-R26 (P2-K1-tabs-2).",
+    "at": "2026-11-16T03:58:00Z"
   },
   "precheck": {
-    "sha": "8ff5ee234f2f005c345173d1652d39ec442e17cc",
+    "sha": "398a38cb443f66dc4b869cf59d3ee34b2152cd1c",
     "exit": 0,
-    "finished_at": "2026-11-16T02:39:56Z",
+    "finished_at": "2026-11-16T03:50:18Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
-  "ready_sha": null,
+  "gate_request": [
+    {
+      "item": "home at 100% text",
+      "qualities": [
+        "Hierarchy",
+        "Character presence"
+      ]
+    }
+  ],
+  "ready_sha": "398a38cb443f66dc4b869cf59d3ee34b2152cd1c",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M13"
@@ -398,8 +407,24 @@
       "due": "2026-11-16T14:45:00Z",
       "default": "(f) stands as fixed; S2 keeps P2-S2-home-3 ready, and any new objection becomes a follow-up task.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R28",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Re-check only objection (g) from your S2-R27 answer on claude/ui-screens-home at the ready commit 398a38cb (one round, M12). Reproduce with `FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`, and the same with CONTRAST=1: the four side buttons (Defence with its raid badge and timer, Season, Lab, Shop) stay as icon-only discs in the two edge columns, and the seven realms are numbered chips in the band between them. English at 200% keeps them too. The cause was one realm (Outer 6) finding no place as a chip in the first lay, which made home give the columns away: UniversePins.follow now lays each realm that failed first in turn, and home gives the side buttons' room away only when UniversePins.short() says a realm still has no place after that. With NOTICE=1 the give-way stands as before, and the FIT check \"no realm marked\" is not loosened. pt_BR, pt_PT and fr cannot keep the buttons until K1's height work (S2-R24, P2-K1-tabs-2): their three-line goal leaves a band of 399 px (y 886 to 1285 at 1080x2340); with the columns kept, seven chips of 134x122 and the raid card leave a 149 px hole where a chip with its gap needs 152, and a trial search on a half-chip grid found no extra place. So at 200% without the notice those three give the side buttons' room away (each place stays on the badge's menu); `LOCALE=pt_BR` with the same command shows it. Per your S2-R27 answer, please accept pt_BR (and pt_PT and fr, which share its goal length) as a trade like (a); German keeps them. Answer in docs/art/tracks/home-screen.md, Part 3, \"AD's S2-R27 review (objection (g))\".",
+      "files": [
+        "client/world/universe_pins.gd",
+        "client/scripts/home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T03:58:00Z",
+      "due": "2026-11-16T15:58:00Z",
+      "default": "(g) stands as fixed; the pt_BR, pt_PT and fr give-way at 200% is accepted as a trade like (a) until S2-R24; S2 keeps P2-S2-home-3 ready, and any new objection becomes a follow-up task.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "Working on AD's objection (g) (S2-R27's answer): at 200% the four side buttons kept as icon-only discs in every locale, numbered chips where needed."
+  "next_step": "Ready at 398a38cb: AD re-checks (g) only (S2-R28); the lead records home/200 (S2-R21), runs the gate and merges; K1 takes S2-R24 and S2-R26 (P2-K1-tabs-2)."
 }
