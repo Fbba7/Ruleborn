@@ -187,12 +187,27 @@ static func hero(kicker: String, title: String, line := "", pill := "") -> VBoxC
 	return v
 
 
-## The backdrop of a screen made by UI.frame turned to a celebration: the
-## night with a still sunburst behind the title (results, a level-up).
-static func celebrate(screen: Control) -> void:
+## K40, the reward sequence, the one entry point a screen calls: the
+## backdrop of `screen` (made by UI.frame) turned to the night with a still
+## sunburst, then, given a `prize` and a `counter` in the tree, the sequence
+## on the motion sprites (Motion.reward: anticipation, burst, reveal, coin
+## flight, counter roll from `from_value` to `to_value`, `show` writing each
+## value). Under reduced motion the prize fades in, one coin lands and the
+## counter shows `to_value` at once. Returns the sequence's tween, or null
+## when there is no prize to play it on.
+static func reward(screen: Control, prize: Control = null, counter: Control = null, from_value := 0,
+		to_value := 0, tier := "common", show := Callable()) -> Tween:
 	var sky := screen.get_node_or_null("Sky") as Control
 	if sky != null:
 		RbBox.dress(sky, "night_rays", 0)
+	if prize == null or counter == null or not prize.is_inside_tree():
+		return null
+	return Motion.reward(prize, counter, from_value, to_value, tier, show)
+
+
+## The backdrop alone (results, a level-up): kept as an alias of `reward`.
+static func celebrate(screen: Control) -> void:
+	reward(screen)
 
 
 ## The game's name as the designs set it on first launch (20-first-launch

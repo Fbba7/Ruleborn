@@ -361,3 +361,197 @@ static func sash(text: String, points := 72.0) -> Control:
 	band.minimum_size_changed.connect(place)
 	return corner
 
+
+
+## K34, the spinner: the atlas's ring (the timer's icon while its skin is
+## off) `points` tall, turned once every `KitSkin.SPIN_SECONDS` from when it
+## enters the tree. Under reduced motion the mark holds still and, with
+## `words`, "Loading" follows it (§20.8). Said aloud as loading either way.
+static func spinner(points := 24.0, words := true) -> HBoxContainer:
+	var h := HBoxContainer.new()
+	h.name = "Spinner"
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_theme_constant_override("separation", UI.px(6))
+	h.accessibility_name = Strings.t("COMMON_LOADING")
+	# The mark turns inside a holder of its size, so a container that lays
+	# out the spinner never moves the turn's pivot.
+	var holder := Control.new()
+	holder.name = "Holder"
+	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	holder.custom_minimum_size = Vector2.ONE * UI.px(points)
+	holder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var mark: Control = KitSkin.mark("spinner", points)
+	if mark == null:
+		mark = Icons.view("generalui/timer", points)
+		mark.size = mark.custom_minimum_size
+	mark.name = "Mark"
+	# A piece's baked shape may not be square: centred in the holder.
+	mark.position = (holder.custom_minimum_size - mark.size) * 0.5
+	mark.pivot_offset = mark.size * 0.5
+	holder.add_child(mark)
+	h.add_child(holder)
+	if Settings.reduced_motion:
+		if words:
+			var l := UI.label(Strings.t("COMMON_LOADING"), maxf(13.0, points * 0.6))
+			l.name = "Words"
+			h.add_child(l)
+		return h
+	mark.ready.connect(func() -> void:
+		var turn := mark.create_tween().set_loops()
+		turn.tween_property(mark, "rotation", TAU, KitSkin.SPIN_SECONDS).from(0.0), CONNECT_ONE_SHOT)
+	return h
+
+
+## The Ld state (kit-spec.md section 3) on `c`, a button (K01), a round
+## action (K02), a text field (K11) or a quest card (K43), or off again with
+## `on` false. The control it applies to is `c` when `c` is a button or a
+## field, else the first one inside it (a round action's disc, a quest card's
+## claim): its face is held, its words and icon hidden and a still or
+## turning spinner (`spinner`) the words' size laid over them, out of any
+## layout, so nothing moves. Taps and focus stop while it loads, and a screen
+## reader says it is loading.
+static func loading(c: Control, on := true) -> void:
+	var host := _acted_on(c)
+	var held: Dictionary = host.get_meta("kit_loading") if host.has_meta("kit_loading") else {}
+	if on != held.is_empty():
+		return
+	if not on:
+		for row: Array in held["hidden"]:
+			if is_instance_valid(row[0]):
+				(row[0] as CanvasItem).self_modulate.a = row[1]
+		if is_instance_valid(held["over"]):
+			(held["over"] as Node).queue_free()
+		host.focus_mode = held["focus"]
+		host.accessibility_description = held["said"]
+		host.remove_meta("kit_loading")
+		return
+	var words := 0.0
+	var hidden := []
+	for n: Node in [host] + host.find_children("*", "", true, false):
+		if n == host or n is Label or (n is TextureRect and host is BaseButton):
+			var item := n as CanvasItem
+			if item.self_modulate.a == 0.0 and n != host:
+				continue
+			hidden.append([item, item.self_modulate.a])
+			item.self_modulate.a = 0.0
+			if n is Label and (n as Label).text != "":
+				words = maxf(words, (n as Control).get_theme_font_size("font_size"))
+			elif n is TextureRect:
+				words = maxf(words, (n as Control).custom_minimum_size.y * 0.8)
+	if (host is Button and (host as Button).text != "") or (host is LineEdit and (host as LineEdit).text != ""):
+		words = maxf(words, host.get_theme_font_size("font_size"))
+	if words <= 0.0:
+		words = UI.text_px(UI.TEXT_POINTS)
+	# The spinner as tall as the words' line, never taller than the control.
+	var side := words * 1.2
+	if host.size.y > 0.0:
+		side = minf(side, host.size.y * 0.8)
+	var over := CenterContainer.new()
+	over.name = "Loading"
+	over.set_anchors_preset(Control.PRESET_FULL_RECT)
+	# It takes the taps the control would.
+	over.mouse_filter = Control.MOUSE_FILTER_STOP
+	over.add_child(spinner(side / UI.PX_PER_POINT, false))
+	host.add_child(over)
+	host.set_meta("kit_loading", {"hidden": hidden, "over": over, "focus": host.focus_mode,
+		"said": host.accessibility_description})
+	if host.has_focus():
+		host.release_focus()
+	host.focus_mode = Control.FOCUS_NONE
+	host.accessibility_description = Strings.t("COMMON_LOADING")
+
+
+## Whether `c` (or the control inside it that `loading` applies to) loads.
+static func is_loading(c: Control) -> bool:
+	return _acted_on(c).has_meta("kit_loading")
+
+
+## The L overlay (kit-spec.md section 3) on `c`, or off with `on` false: the
+## locked material (with `face`) and the lock mark at its top left; a tap
+## anywhere on it opens a popover of `why` (how it unlocks) instead of
+## acting. Returns the mark, or null when turned off.
+static func locked(c: Control, why := "", on := true, face := true) -> Control:
+	var host := _acted_on(c)
+	var old := host.get_node_or_null("Lock")
+	if old != null:
+		host.remove_child(old)
+		old.queue_free()
+		var was: Variant = host.get_meta("kit_unlocked_look", null)
+		if was != null and RbBox.of(host) != null:
+			RbBox.of(host).set_look(str(was))
+		host.remove_meta("kit_unlocked_look")
+	if not on:
+		return null
+	if face and RbBox.of(host) != null:
+		host.set_meta("kit_unlocked_look", RbBox.of(host).look)
+		RbBox.of(host).set_look("locked")
+	# A clear key over the whole control: the control's own action never runs.
+	var cover := Button.new()
+	cover.name = "Lock"
+	cover.flat = true
+	cover.focus_mode = Control.FOCUS_ALL if why != "" else Control.FOCUS_NONE
+	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+		cover.add_theme_stylebox_override(state, StyleBoxEmpty.new())
+	cover.set_anchors_preset(Control.PRESET_FULL_RECT)
+	cover.accessibility_name = why if why != "" else Strings.t("SCREEN_SLOT_LOCKED")
+	if why != "":
+		cover.pressed.connect(func() -> void: KitPanels._toggle_info(cover, why))
+	var mark: Control = KitSkin.mark("lock", 22.0)
+	if mark == null:
+		mark = Icons.view("generalui/lock", 22.0)
+		mark.size = mark.custom_minimum_size
+	mark.name = "Mark"
+	mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mark.position = Vector2.ONE * -UI.px(4)
+	cover.add_child(mark)
+	host.add_child(cover)
+	return mark
+
+
+## The A overlay (kit-spec.md section 3) on `c`, or off with `on` false: a
+## count badge of `count`, or the attention dot with no count, at its top
+## right inside its hit area. It replaces any mark this call put there
+## before, so a control carries one at most, and pulses once on arrival
+## (reduced motion: no pulse). Returns the mark, or null when turned off.
+static func notice(c: Control, count := "", on := true) -> Control:
+	var host := _acted_on(c)
+	var old := host.get_node_or_null("Notice")
+	if old != null:
+		host.remove_child(old)
+		old.queue_free()
+	if not on:
+		return null
+	var mark: Control = badge(count) if count != "" else attention()
+	mark.name = "Notice"
+	mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mark.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	mark.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	var side := mark.get_combined_minimum_size()
+	mark.offset_left = -side.x
+	mark.offset_right = 0.0
+	mark.offset_top = 0.0
+	mark.offset_bottom = side.y
+	host.add_child(mark)
+	if not Settings.reduced_motion:
+		var pulse := func() -> void:
+			mark.pivot_offset = mark.size * 0.5
+			var t := mark.create_tween()
+			var half := Tokens.number("motion", "pop_ms") / 1000.0
+			t.tween_property(mark, "scale", Vector2.ONE * 1.15, half).set_trans(Tween.TRANS_SINE)
+			t.tween_property(mark, "scale", Vector2.ONE, half).set_trans(Tween.TRANS_SINE)
+		if mark.is_inside_tree():
+			pulse.call()
+		else:
+			mark.ready.connect(pulse, CONNECT_ONE_SHOT)
+	return mark
+
+
+## The control a state applies to: `c` when it is a button or a field, else
+## the first visible one inside it, else `c`.
+static func _acted_on(c: Control) -> Control:
+	if c is BaseButton or c is LineEdit:
+		return c
+	for n: Node in c.find_children("*", "", true, false):
+		if (n is BaseButton or n is LineEdit) and (n as Control).is_visible_in_tree() == c.is_visible_in_tree():
+			return n
+	return c
