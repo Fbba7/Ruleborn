@@ -1697,6 +1697,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   merges without it, the lead opens a follow-up S1 task for G. Copied in
   cycle 101. S1 marked result-4 ready at `6fb2e3da` with "M30 done: sky
   words inked by their drawn size"; the cycle's gate checks it.
+  **Answered** by S1's fix in cycle 101: the advisory gate at `6fb2e3da`
+  passed Display type 3 of 3, and P2-S1-result-4 merged as `9a1d4db5`;
+  no follow-up task.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
