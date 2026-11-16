@@ -6,6 +6,10 @@ extends RefCounted
 ## A helper of its own so result_screen.gd stays within gdlint's file length.
 
 
+## The most lines a label has that the fold keeps together (`part_line`).
+const KEEP := 3
+
+
 ## The column a page's content has across a phone `width` wide: the width
 ## less the safe side on each edge.
 static func column(width: float) -> float:
@@ -168,7 +172,21 @@ static func hero_shrink(words: Array, numbers: Array, bar: Control) -> void:
 		if saved >= over or f == steps.back():
 			for pair: Array in words:
 				(pair[0] as Label).add_theme_font_size_override("font_size", UI.text_px(float(pair[1]) * f))
+				ink(pair[0] as Label)
 			return
+
+
+## An ink outline round words on the art with no plate (§21.8: 1.5 points or
+## 12% of their size, 3 points in high contrast), from the size the label is
+## drawn at, so it grows with the text size and follows the hero's shrink.
+## Measured at pt_BR 200%: the edge Godot shows outside the glyph is about a
+## quarter of `outline_size` (21 gave 5 px on an 84 px face), so four times.
+static func ink(l: Label) -> void:
+	var font_px := float(l.get_theme_font_size("font_size"))
+	var scale := Settings.text_scale / 100.0
+	var edge := maxf((3.0 if Settings.high_contrast else 1.5) * UI.PX_PER_POINT * scale, 0.12 * font_px)
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", int(ceil(4.0 * edge)))
 
 
 ## How many lines `l`'s words take wrapped between words within `room`, at
@@ -188,6 +206,24 @@ static func lines(l: Label, room: float, font_px := 0) -> int:
 		else:
 			line = next
 	return n
+
+
+## `b` fitted to its words (`UI.fit`), and when one word alone is wider than
+## the widest a button may be (German's "Veröffentlichen" at large text),
+## its words the least sizes down that keep that word whole, rather than
+## broken between its letters.
+static func fit_whole(b: Button) -> void:
+	UI.fit(b)
+	var font := b.get_theme_font("font")
+	var font_px := b.get_theme_font_size("font_size")
+	var room := b.custom_minimum_size.x - b.get_theme_stylebox("normal").get_minimum_size().x
+	var floor_px := UI.text_px(11.0)
+	for word: String in b.text.split(" ", false):
+		while font_px > floor_px and font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_px).x > room:
+			font_px -= 1
+	if font_px != b.get_theme_font_size("font_size"):
+		b.add_theme_font_size_override("font_size", font_px)
+		UI.fit(b)
 
 
 ## Whether each word on `b` fits the room its padding and icon leave.
@@ -239,7 +275,8 @@ static func fold(scroll: ScrollContainer, bar: Control, corner: Control) -> void
 
 ## How far above `bottom` the line or card it cuts starts, in the page that
 ## `scroll` holds: a label's line shown above its baseline only, or a card
-## shown by less than a line of body text. Zero when `bottom` falls between
+## shown by less than a line of body text; a label of up to KEEP lines shown
+## by its first lines only counts whole. Zero when `bottom` falls between
 ## lines, or under a line's baseline.
 static func part_line(scroll: ScrollContainer, bottom: float) -> float:
 	var page := scroll.get_child(0) as Control
@@ -268,6 +305,11 @@ static func part_line(scroll: ScrollContainer, bottom: float) -> float:
 			var p := fposmod(shown, step)
 			if p > 1.0 and p < l.get_theme_font("font").get_ascent(px) and shown < step * l.get_line_count():
 				part = maxf(part, p + (top if shown < step else 0.0))
+			# A short label's lines kept together: one of up to KEEP lines
+			# shown by its first lines only goes under the edge whole (AD's
+			# note on S1-R30, "Taxa de entrada de" at pt_BR 200%).
+			elif l.get_line_count() <= KEEP and shown > 1.0 and shown < step * (l.get_line_count() - 1) + 1.0:
+				part = maxf(part, shown + top)
 		elif n is PanelContainer and shown < sliver:
 			part = maxf(part, shown)
 	return part

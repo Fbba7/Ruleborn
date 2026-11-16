@@ -3,7 +3,8 @@ extends SceneTree
 ## outcome card (tools/render/shoot.sh). SHOT is the file; GOLDEN and HOUR
 ## are optional; CONTRAST is high contrast, and FIT fails the run when any
 ## words do not fit (P2-S1-result-1). The still is taken once the reward
-## sequence has ended, at rest.
+## sequence has ended, at rest. STATE picks one of the screen's other
+## states: confirming, refused (REFUSED is the code), testing or play.
 ##
 ## STRIP=<folder> records the reward sequence instead (P2-S1-result-2): the
 ## screen's tweens stepped by a thirtieth of a second a frame, whatever the
@@ -46,7 +47,17 @@ func _go() -> void:
 	# a heist pays. GOLDEN picks another.
 	var golden := OS.get_environment("GOLDEN") if OS.get_environment("GOLDEN") != "" else "planned-clean"
 	var replay := FileAccess.get_file_as_bytes("res://goldens/%s.rbh" % golden)
-	App.services.store.dispatch(&"heist_started", {})
+	# STATE: the screen's other states (M26), beside the settled heist and
+	# the local check: confirming (the server not yet answered), refused (the
+	# server turned the replay down), testing (a Workshop rehearsal) and play
+	# (a Workshop island played, which banks nothing).
+	var state := OS.get_environment("STATE")
+	var start := {}
+	if state == "testing":
+		start = {"testing": true}
+	elif state == "play":
+		start = {"workshop": {"id": "shot", "token": "shot", "seed": "shot"}}
+	App.services.store.dispatch(&"heist_started", start)
 	var verdict := RulebornReplay.validate(replay, PackedByteArray())
 	if OS.get_environment("SERVER") != "":
 		# SERVER: the server's settle answer as HeistController.settled reads
@@ -55,6 +66,16 @@ func _go() -> void:
 		verdict.merge({"server": true, "haul": 3115, "fee": 2840, "fee_returned": 2840 if paid else 0,
 			"starlight": 2310 if paid else 0, "essence": 805 if paid else 0, "renown": 15 if paid else -8,
 			"token": "shot", "rest": {"crew": 5, "minutes": 180 if not paid else 45}}, true)
+	if state == "confirming":
+		verdict["confirming"] = true
+	elif state == "refused":
+		# REFUSED: the server's code, its words from the catalogue.
+		var code := OS.get_environment("REFUSED") if OS.get_environment("REFUSED") != "" else "replay_malformed"
+		verdict = {"ok": false, "refused": code, "server": true}
+	elif state == "play":
+		# As WorkshopController.settled answers a cleared play: no split.
+		verdict = {"ok": true, "grade": str(verdict.get("grade", "")), "banked": int(verdict.get("banked", 0)),
+			"server": OS.get_environment("SERVER") != "", "workshop": true, "cleared": true, "counted": true}
 	App.services.store.dispatch(&"heist_finished", {"replay": replay, "verdict": verdict})
 	var strip := OS.get_environment("STRIP")
 	if OS.get_environment("REDUCED") != "":
