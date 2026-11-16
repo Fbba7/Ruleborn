@@ -4,16 +4,16 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-K1-tabs-3",
+  "task_id": "P2-K1-kit-gaps-1",
   "task_state": "working",
-  "claimed_at": "2026-11-16T07:00:00Z",
-  "lease_until": "2026-11-16T10:00:00Z",
-  "updated_at": "2026-11-16T07:30:00Z",
-  "expected_next_update_by": "2026-11-16T08:15:00Z",
+  "claimed_at": "2026-11-16T09:35:00Z",
+  "lease_until": "2026-11-16T12:35:00Z",
+  "updated_at": "2026-11-16T09:46:00Z",
+  "expected_next_update_by": "2026-11-16T10:30:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "merge main, build, check_all, guard, handoff"
+    "last_green_sha": "9e08db75",
+    "next_step": "build.sh, check_all.sh and guard.sh running on merge 3b9f77ba (stills d90a8cce); then precheck"
   },
   "precheck": null,
   "gate_request": null,
