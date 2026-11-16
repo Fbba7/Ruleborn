@@ -27,7 +27,7 @@
 | P2-AD-board-4b: board 4, second round | 1 | ready (pre-check in the status file) | `gate/boards/board-4.md` "Round 2 (board 4b)" and `gate/boards/board-4/r4-*` (ten stills, two `.mp4` clips); result rendered on main at `6b30142b` with `SERVER=1 FIT=1` in en, pt_BR and de at 100% and 200% and high contrast en and pt_BR, all "fit ok", draw calls 126/128/128, 113/115/114, 68/70; full strip 80 frames (1.93 s), reduced 32 frames (0.37 s); A to E met, the board stands |
 
 ## Handoff
-- Last verified commit: `0662a940` (pre-check, see `status/AD.json`); P2-AD-board-4b ready at that sha. This session changed only docs and evidence stills.
+- Last verified commit: `0662a940` (pre-check PASS, 2026-11-16T02:37:34Z, `All checks passed.`, `DONE exit=0`); P2-AD-board-4b ready at that sha. This session changed only docs and evidence stills.
 - Done this session (2026-11-16, cycle 91): S3-R16 answered at 01:59Z (H met at `6b7e6b42`; note for board 5b: check that every state's icon reads in the small chip). Board 4b posted: A to E met on main, the board stands.
 - Half done: none.
 - Open hypotheses: the result's fold rule (`ResultFit.part_line`) does not count the crew card's portrait rings as a cut at 100%, so pt_BR and de show a sliver of the card above the bar with "fit ok" (a note on board 4b, not an objection). Board 5 notes for K1: the ability header plate runs under the tray at 200% (bottom margin), high contrast keeps the blue night backdrop; for the lead: content words still in English; the facts panel ends in a flat clip at 100%.
