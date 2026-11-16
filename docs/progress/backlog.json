@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-16T20:24:00Z",
-  "updated_by": "lead (cycle 104)",
+  "updated_at": "2026-11-16T20:55:00Z",
+  "updated_by": "lead (cycle 105)",
   "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -4827,19 +4827,257 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
+      "state": "claimed",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-16T20:25:00Z",
+        "seen_at": "2026-11-16T20:42:00Z",
+        "lease_until": "2026-11-16T23:25:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T20:55:00Z",
+      "updated_by": "lead (cycle 105)",
+      "id": "P2-K1-grow-1",
+      "title": "The kit's buttons grow and wrap at large text (S1-R15, S1-R23, S3-R3); the reward sky stays plain under high contrast (S1-R32)",
+      "exceptions": [
+        "client/tests/shots/ui_kit_catalogue.gd",
+        "client/tests/shots/ui_kit_grow.gd",
+        "client/tests/shots/ui_kit_grow.gd.uid"
+      ]
+    },
+    {
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/heist_hud.gd",
+        "client/scripts/heist_screen.gd",
+        "client/world/fx_*.gd",
+        "client/tests/shots/heist_*.gd",
+        "client/tests/shots/screen_heist.gd",
+        "docs/art/tracks/heist-pilot.md"
+      ],
+      "deps": [],
+      "done_when": [
+        "first, the gate re-run on current main for the items below, and the handoff lists which of the latest fails still stand (the latest verdicts are P1-S1-pilot-1 at 5470c4d3, P1-S1-pilot-2 at a4d87d18 and P1-S1-pilot-4 at e846c531)",
+        "heist at 100% text, Colour roles and value: Get out and Alarm carry the same danger role, the main action (Cast) the gold fill, and the crew rings differ by more than hue (value or shape) so they hold under colour-vision deficiency",
+        "heist at 100% text, One art-direction idea: the load bar, the crew bars and the hint pill drawn in the kit's chunky inked material, not thin flat chrome",
+        "heist at 200% text (en): the timer and the labels over art in the kit's display treatment (ink outline and hard drop); no portrait overlaps a name; the Bloom, Cast and Get out icons shown at their painted size; the hint banner and the Room panel layered (plate and inner well); Hollow and Bramble read as dark-shaped figures against their rings",
+        "heist at 200% text, pt_BR, no crew plan, Hierarchy: Lançar leads; the Espaço/Restam/Carregar panel's labels and the 2:25 timer plate sit below it in size and value",
+        "M26: the heist screen's scripted fit check covers every fixture state the screen shows, extremes included (the longest names, no crew plan, every crew size, the alarm, the end of the timer), at 200% text in en, pt_BR and de; any missing fixture added to the script, and 'fit ok' on all of them before ready",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "gate_items": [
+        {
+          "item": "heist at 100% text",
+          "qualities": [
+            "Colour roles and value",
+            "One art-direction idea"
+          ]
+        },
+        {
+          "item": "heist at 200% text",
+          "qualities": [
+            "Character presence",
+            "Colour roles and value",
+            "Display type",
+            "Layered materials",
+            "Painted or rendered icons"
+          ]
+        },
+        {
+          "item": "heist at 200% text, pt_BR, no crew plan",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
       "state": "open",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-16T20:22:00Z",
-      "updated_by": "lead (cycle 104)",
-      "id": "P2-K1-grow-1",
-      "title": "The kit's buttons grow and wrap at large text (S1-R15, S1-R23, S3-R3); the reward sky stays plain under high contrast (S1-R32)",
+      "updated_at": "2026-11-16T20:55:00Z",
+      "updated_by": "lead (cycle 105)",
+      "id": "P2-S1-heist-1",
+      "title": "Heist screen, phase 2 exit (M25): the gate's open fails at 100% and 200% text re-run on current main and fixed",
       "exceptions": [
-        "client/tests/shots/ui_kit_catalogue.gd"
+        "docs/art/shots/heist-pilot/**"
       ]
+    },
+    {
+      "role": "S2",
+      "assigned_to": "S2",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "deps": [],
+      "done_when": [
+        "first, the gate re-run on current main for 'home at 100% text' (the latest verdict, P2-S2-home-1 at 977edd5b, fails Display type: the currency counts flat cream with no outline or drop), and the handoff says whether it still stands",
+        "if it stands: the purse's counts and the keeper's name in the kit's display treatment (ink outline and hard drop, or a gradient fill) at 100% text, and 'home at 200% text, pt_BR' and 'home in high contrast' still passing",
+        "M26: the home screen's scripted fit check covers every fixture state the screen shows, extremes included (the longest names, empty, signed in and signed out, with and without the notice, every tab), at 200% text in en, pt_BR and de; any missing fixture added to the script, and 'fit ok' on all of them before ready",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "gate_items": [
+        {
+          "item": "home at 100% text",
+          "qualities": [
+            "Display type",
+            "Hierarchy",
+            "Character presence"
+          ]
+        },
+        {
+          "item": "home in high contrast",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T20:55:00Z",
+      "updated_by": "lead (cycle 105)",
+      "id": "P2-S2-home-5",
+      "title": "Home screen, part 5 (phase 2 exit, M25): the gate at 100% text re-run on current main; the Display type fail (currency counts, header) fixed if it stands",
+      "exceptions": [
+        "client/scripts/home_parts.gd.uid"
+      ]
+    },
+    {
+      "role": "S3",
+      "assigned_to": "S3",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/tests/shots/screen_character.gd",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "deps": [],
+      "done_when": [
+        "character at 200% text, pt_BR, Display type (verdict at a6d5f2fb): the subtitle ('Skyskipper · Carregador') and the level line ('Nível 3 de 10') over the starry backdrop take an ink outline on every side, not a drop alone, or stand on a plate; the HABILIDADE header takes the same stroked treatment as 'Subir de nível', its peer of the same rank",
+        "the handoff says what changed on the backdrop labels between 6b7e6b42 (where character-2 passed this item) and a6d5f2fb",
+        "no card is covered by the Level up dock at 200% text in en, pt_BR and de: the scroll leaves room under the last card",
+        "'character at 100% text' and 'character in high contrast' still passing",
+        "M26: the character screen's scripted fit check (fit_character.sh) covers every fixture state the screen shows, extremes included (every character fixture, the highest level, the longest name), at 200% text in en, pt_BR and de; any missing fixture added to the script, and 'fit ok' on all of them before ready",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1.5,
+      "gate_items": [
+        {
+          "item": "character at 200% text, pt_BR",
+          "qualities": [
+            "Display type",
+            "Hierarchy"
+          ]
+        }
+      ],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T20:55:00Z",
+      "updated_by": "lead (cycle 105)",
+      "id": "P2-S3-character-4",
+      "title": "Character screen, part 4 (phase 2 exit, M25): the Display type fail at 200% text, pt_BR (P2-S3-character-3's advisory verdict) fixed",
+      "exceptions": [
+        "docs/art/shots/menu-screens/**"
+      ]
+    },
+    {
+      "role": "S1",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/tests/shots/screen_result.gd",
+        "docs/art/tracks/result-screen.md"
+      ],
+      "deps": [
+        "P2-K1-grow-1",
+        "P2-S1-heist-1"
+      ],
+      "done_when": [
+        "S1-R32, S1-R15 and S1-R23: result_screen.gd's screen-side fixes for the reward sky under high contrast, the action2 wrap and the '3 s' replay button dropped where K1's handoff for P2-K1-grow-1 says the kit now covers them, each named in the handoff",
+        "the gate re-run on that commit for 'result at 100% text' (the latest verdict, P2-S1-result-1 at 8bec0d84, fails Display type), and if it stands: every word over the sky art ink-outlined and the reward totals in the display treatment",
+        "'result at 200% text, pt_BR' and 'result in high contrast' still passing; FIT=1 runs of client/tests/shots/screen_result.gd at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "gate_items": [
+        {
+          "item": "result at 100% text",
+          "qualities": [
+            "Display type",
+            "Character presence"
+          ]
+        }
+      ],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T20:55:00Z",
+      "updated_by": "lead (cycle 105)",
+      "id": "P2-S1-result-6",
+      "title": "Result screen, part 6 (phase 2 exit, M25): S1-R32's local fix dropped once P2-K1-grow-1 merges; the gate at 100% text re-run and its Display type fail fixed if it stands",
+      "exceptions": []
     }
   ],
   "idle_queue": [
@@ -5142,6 +5380,22 @@
       "sent_at": "2026-11-16T17:05:00Z",
       "ack_by": "2026-11-16T19:05:00Z",
       "acked_at": "2026-11-16T17:52:00Z"
+    },
+    {
+      "id": "M33",
+      "to": "lead",
+      "text": "Lesson from the UI report: scope added rated worse two entries in a row (34.5h, then 35.5h; 87.5h seeded against 62h planned): account part 4 (objection M), result part 5 (K1-R23) and guard prerequisites (M32). Rule: until the phase 2 stop at 17 November 21:00Z, seed a new task only when it closes an open objection, a failed gate quality, or a check that blocks a merge. Log every other request in requests.md with its hours for phase 3 planning. Add M33 to your acks.",
+      "sent_at": "2026-11-16T20:45:00Z",
+      "ack_by": "2026-11-16T22:45:00Z",
+      "acked_at": "2026-11-16T21:00:00Z"
+    },
+    {
+      "id": "M34",
+      "to": "lead",
+      "text": "Lesson from the UI report: candidate 7268cb98 (the band names, S2-R32) failed check_all on its first run because client/i18n/strings.csv changed but art/ui/keyframes/words.js was not regenerated; the fix (6d10711e) and the re-run held account part 4 about 30 minutes. Rule: any commit that changes client/i18n/strings.csv or content.csv also runs `node art/ui/keyframes/build_words.mjs` and commits words.js with it, and `node art/ui/keyframes/check_keyframes.mjs` (seconds) passes before the candidate is locked. Put the same line in the builders' prompts under the strings rule. Add M34 to your acks.",
+      "sent_at": "2026-11-16T20:45:00Z",
+      "ack_by": "2026-11-16T22:45:00Z",
+      "acked_at": "2026-11-16T21:00:00Z"
     }
   ]
 }
