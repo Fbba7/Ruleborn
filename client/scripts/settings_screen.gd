@@ -149,7 +149,13 @@ func _layout() -> void:
 
 	# The account: signing in and out, devices, ways to sign in (auth_panel.gd,
 	# T11), with the profile row and the privacy note under it (ScreenAccount).
-	account.add_child(AuthPanel.new())
+	# Its group heading is the header pill, as every other group's on the
+	# screen (board 5, I): the panel's own small gold caps label, which it
+	# draws again each time it is rebuilt, is hidden here.
+	account.add_child(_section("AUTH_TITLE"))
+	var auth := AuthPanel.new()
+	auth.child_entered_tree.connect(_hide_kicker)
+	account.add_child(auth)
 	account.add_child(ScreenAccount.profile_row())
 	account.add_child(ScreenAccount.privacy_note())
 	_cue(column)
@@ -223,6 +229,13 @@ func _section(key: String) -> Control:
 		plate.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	plate.add_child(l)
 	return plate
+
+
+## AuthPanel opens with ScreenParts.section's caps label, its first child; the
+## settings screen heads the account group with its own header pill instead.
+func _hide_kicker(node: Node) -> void:
+	if node.get_index() == 0 and node is Control:
+		(node as Control).visible = false
 
 
 ## At large text UI.text_px lets a title or a heading grow only until the body

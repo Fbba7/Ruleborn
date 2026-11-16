@@ -340,8 +340,10 @@ AD's board 5 (`docs/art/ui-quality/gate/boards/board-5.md`) raised three objecti
   - **The Stillness card** shows the whole law at 200% in German, as in English and pt_BR.
   - **A switch row** keeps its icon where its longest word, on or off, fits beside it. Where one does not ("verschwinden"), the row drops the icon rather than break the word; the words and the switch still say it all.
   - **The steppers' wells** hug their icons at large text (4 points, was 7), so "Hinweise" on the game tab keeps whole beside its icon.
-  - **The scripted fit check** is `docs/art/shots/menu-screens/fit_settings.sh`. It renders the access tab at 100% and 200% text in en, pt_BR and de, and in high contrast in en and pt_BR, and the game and account tabs at 200% in German, with `FIT=1`. It fails unless every shot prints `fit ok`. `FIT=1` in `client/tests/shots/screen_settings.gd` now also fails a word broken in two, and checks a wrapped button by its widest word. All ten shots print `fit ok`.
+  - **The scripted fit check** is `docs/art/shots/menu-screens/fit_settings.sh`. It renders the access tab at 100% and 200% text in en, pt_BR and de, and in high contrast in en and pt_BR, and the game and account tabs at 200% in German, with `FIT=1`. It fails unless every shot prints `fit ok`. `FIT=1` in `client/tests/shots/screen_settings.gd` now also fails a word broken in two, and checks a wrapped button by its widest word. All twelve shots print `fit ok` (ten before I).
 - **F: hierarchy at 100% text.** The small A and the large A are gold, as key frame 05 has them, in high contrast too (`05-settings_hc.png`). The text size is the access tab's main action. On the access tab nothing else is gold, so the As lead in the squint. The ΔL* that value-steps measures on the As is 57 and 58 against the violet card at 100%, and 75 in high contrast.
+
+- **I: the account tab's heading (AD's preview, S3-R17).** AD held C, E and F as fixed at 60560762, and on its full-list check (M23) raised I: the account group was headed by `AuthPanel`'s small gold caps label ("ACCOUNT", "KONTO"), where every other group on the screen has the header pill. The settings screen now heads the account group with its own header pill (`_section("AUTH_TITLE")`, the panel's own words), and hides the panel's caps label, its first child, each time the panel draws itself again (`_hide_kicker`). `auth_panel.gd` is not this task's file and is unchanged. The other screens that use `ScreenParts.section` keep the caps label. `fit_settings.sh` now also renders the account tab at 100% in English and German.
 
 #### Evidence
 
@@ -358,10 +360,11 @@ The stills and records are in `docs/art/shots/menu-screens/`, rendered on the bo
 | `settings-200-pt_BR.png`, `settings-200-de.png` | `TEXT=200 LOCALE=pt_BR`, `TEXT=200 LOCALE=de` | `.shot.json`, 9 controls |
 | `settings-hc.png` | `HC=1` | `.shot.json`, 13 controls |
 | `settings-hc-pt_BR.png` | `HC=1 LOCALE=pt_BR` | `.shot.json`, 12 controls |
+| `settings-account-100.png`, `settings-account-de.png` | `TAB=account`, `TAB=account LOCALE=de` | `.shot.json` |
 
-`settings-de`, `settings-200-de` and `settings-hc-pt_BR` are new. The 100% records hold one control more than before: Motion's row in English, and High contrast's in pt_BR and German.
+`settings-de`, `settings-200-de`, `settings-hc-pt_BR` and the two account stills (for I) are new. The 100% records hold one control more than before: Motion's row in English, and High contrast's in pt_BR and German.
 
-`python3 tools/ui_gate/checks.py all` passes on all seven records, with no FAIL. Hud-share passes, and hierarchy reads N/A, as before (the record names no primary). The ΔL* that value-steps measures:
+`python3 tools/ui_gate/checks.py all` passes on the seven access-tab records, with no FAIL. On the two account records, the tabs and the back button pass, and one control fails value-steps: the profile row ("Profile and stats"), whose dark violet card stands 3 ΔL* off the night (0.3 value steps of the 2 needed). It is `ScreenAccount.profile_row`, in `screen_account.gd`: not this task's file, and unchanged since before board 5. It is asked of the lead (S3-R18). Hud-share passes, and hierarchy reads N/A, as before (the record names no primary). The ΔL* that value-steps measures:
 
 | Still | Tabs | As | Switch rows | Back |
 |---|---:|---:|---:|---:|

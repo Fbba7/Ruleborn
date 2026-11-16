@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # The settings screen's scripted fit check (board 5's E): renders the access
 # tab at 100% and 200% text in English, Brazilian Portuguese and German, and
-# in high contrast, and the game and account tabs at 200% in German, with
+# in high contrast, the account tab at 100% in English and German (board 5's
+# I), and the game and account tabs at 200% in German, with
 # FIT=1, and fails when any shot does not print "fit ok" (a word broken in
 # two fails it too).
 # Run from the repository's root, after `bash client/build.sh`.
@@ -11,7 +12,7 @@ out=${OUT:-$(mktemp -d)}
 mkdir -p "$out"
 fail=0
 for spec in "100 en access" "100 pt_BR access" "100 de access" "200 en access" "200 pt_BR access" \
-		"200 de access" "hc en access" "hc pt_BR access" "200 de game" "200 de account"; do
+		"200 de access" "hc en access" "hc pt_BR access" "100 en account" "100 de account" "200 de game" "200 de account"; do
 	set -- $spec
 	env=(FIT=1 LOCALE="$2" TAB="$3")
 	if [ "$1" = hc ]; then env+=(HC=1); else env+=(TEXT="$1"); fi
