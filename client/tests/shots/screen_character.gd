@@ -2,7 +2,8 @@ extends SceneTree
 ## The Character screen for one of ShotData's roster (tools/render/shoot.sh):
 ## ID picks the character (5, a Skyskipper, by default); TAB the tab (0
 ## Heist, 1 Stats, 2 Compare); SCROLL scrolls; LOCALE picks the words
-## (pt_BR); FIT=1 fails the run if any words do not fit; RECORD=1 writes
+## (pt_BR); FIT=1 fails the run if any words do not fit
+## (and writes what it found to the still's .fit.txt); RECORD=1 writes
 ## the still's shot record beside it (docs/art/ui-quality/gate/shots.md).
 func _initialize() -> void:
 	_go()
@@ -53,9 +54,16 @@ func _go() -> void:
 		write_record(screen, OS.get_environment("SHOT"))
 	if OS.get_environment("FIT") != "":
 		var bad := fit(screen)
+		var said := ""
 		for b: String in bad:
-			print("fit FAIL ", b)
-		print("fit ", "ok" if bad.is_empty() else "FAIL")
+			said += "fit FAIL %s\n" % b
+		said += "fit %s\n" % ("ok" if bad.is_empty() else "FAIL")
+		print(said.strip_edges())
+		# shoot.sh keeps only the run's last lines, and the leaks Godot reports
+		# at exit can push these out: the fit checks read them from beside the still.
+		var out := FileAccess.open(OS.get_environment("SHOT").get_basename() + ".fit.txt", FileAccess.WRITE)
+		out.store_string(said)
+		out.close()
 		if not bad.is_empty():
 			quit(1)
 			return

@@ -157,29 +157,15 @@ static func break_goal(card: Control, text: String, wide: float) -> void:
 		l.text = want
 
 
-## Room over the tabs for the chosen tab's picture where it stands above the
-## tab's top edge (AD's objection (a) on S2-R22): the tabs' top margin takes
-## what the column's gap `gap` leaves of its rise, its bob and a small gap, so
-## the goal and Collect stay clear of it. The part past the tab's declared
-## height is the kit's (S2-R24); until it says otherwise, home reserves it.
-static func reserve_lift(tabs: KitTabs, gap: float) -> void:
-	if tabs == null or not is_instance_valid(tabs) or not tabs.buttons.has(tabs.active):
-		return
-	var b := tabs.buttons[tabs.active] as Button
-	var tile := b.find_child("Tile", true, false) as Control
-	if tile == null:
-		return
-	var rise := 0.0
-	for t: TextureRect in tile.find_children("*", "TextureRect", false, false):
-		# Where it rests, wherever its bob has it now.
-		var top := tile.global_position.y + tile.size.y + t.offset_bottom - maxf(t.size.y, t.custom_minimum_size.y)
-		rise = maxf(rise, b.global_position.y - top + UI.px(2.0) + UI.px(2.0))
-	var extra := maxi(0, ceili(rise - gap))
-	# A pixel's give either way, as the tile's rounding can move with the
-	# margin: never a margin that sets the column sorting for ever.
-	var now := tabs.get_theme_constant("margin_top")
-	if extra > now or extra < now - UI.px(2.0):
-		tabs.add_theme_constant_override("margin_top", extra)
+## Where `c` and everything shown inside it reach on the screen: a side
+## button's badge stands past the button's own rect.
+static func reach(c: Control) -> Rect2:
+	var r := c.get_global_rect()
+	for d: Node in c.find_children("*", "Control", true, false):
+		var k := d as Control
+		if k.is_visible_in_tree() and k.size.x > 0.0 and k.size.y > 0.0:
+			r = r.merge(k.get_global_rect())
+	return r
 
 
 ## The raid notice and what it says: the panel home lays in its column.
@@ -212,7 +198,7 @@ class Raids:
 		if large:
 			# One line, as tight as its controls at large text, so the realms'
 			# chips keep their room above it (board 3's objections A and C).
-			p.add_theme_stylebox_override("panel", UI.clear_box(10, 3))
+			p.add_theme_stylebox_override("panel", UI.clear_box(10, 2))
 		var row := HBoxContainer.new()
 		row.name = "Row"
 		row.add_theme_constant_override("separation", UI.px(8))
