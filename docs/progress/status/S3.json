@@ -3,45 +3,22 @@
   "role": "S3",
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
-  "agent_state": "done",
-  "task_id": "P2-S3-settings-2",
-  "task_state": "ready",
-  "claimed_at": "2026-11-16T03:21:36Z",
-  "lease_until": "2026-11-16T08:04:31Z",
-  "updated_at": "2026-11-16T06:56:51Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "IQ-kit-docs",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-16T07:45:24Z",
+  "lease_until": "2026-11-16T10:45:24Z",
+  "updated_at": "2026-11-16T07:45:24Z",
+  "expected_next_update_by": "2026-11-16T08:30:24Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
-    "next_step": "P2-S3-settings-2 ready at 9e602fcc (pre-check PASS, gate_request there, AD cleared J in S3-R21). No S3 task left; agent done.",
-    "at": "2026-11-16T06:56:51Z"
+    "next_step": "IQ-kit-docs claimed: read kit-spec.md against client/ui/, list missing components as requests to K1 through the lead.",
+    "at": "2026-11-16T07:45:24Z"
   },
-  "precheck": {
-    "sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
-    "exit": 0,
-    "finished_at": "2026-11-16T06:11:43Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
-    "items": [
-      {
-        "item": "settings at 100% text",
-        "qualities": [
-          "Hierarchy",
-          "Display type"
-        ]
-      },
-      {
-        "item": "settings at 200% text, pt_BR",
-        "qualities": [
-          "Display type",
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
-  "ready_sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [],
   "requests": [
@@ -431,5 +408,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "P2-S3-character-2 merged in cycle 92 (f78cf9f1). P2-S3-settings-2 claimed: main merged at 62ded591; pre-check running there; then the gate request's sha, and ready once the gate passes and AD's S3-R19 (I only) is answered."
+  "next_step": "IQ-kit-docs claimed: read kit-spec.md against client/ui/, list missing components as requests to K1 through the lead."
 }
