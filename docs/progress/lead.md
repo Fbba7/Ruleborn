@@ -279,7 +279,9 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AD | `session_01SNkKxmeSbBakuB4j1MjMoz` (Opus 5.5, effort high) | S3-R21 (re-check J on P2-S3-settings-2 at 9e602fcc), then P2-AD-board-3c and P2-AD-board-5b when open (restart, cycle 96) | `claude/ui-ad` | 2026-11-16 06:49Z |
+| AD | `session_01SNkKxrDXY9opvGEQBWJJEm` (Opus 5.5, effort high) | P2-AD-board-5b (restart, cycle 96: P2-S3-settings-2 merged as f675f05e; board 3c later) | `claude/ui-ad` | 2026-11-16 07:44Z |
+| S3 | `session_01SNkKxoVbqcz1PXSbWEpF6Y` (Opus 5.5, effort high) | IQ-kit-docs (idle queue, M25; start, cycle 96: P2-S3-settings-2 merged, no S3 product task open) | `claude/ui-screens-meta` | 2026-11-16 07:44Z |
+| AD | `session_01SNkKxmeSbBakuB4j1MjMoz` (Opus 5.5, effort high; done, S3-R21 answered at 07:00Z; replaced in cycle 96) | S3-R21 (re-check J on P2-S3-settings-2 at 9e602fcc), then P2-AD-board-3c and P2-AD-board-5b when open (restart, cycle 96) | `claude/ui-ad` | 2026-11-16 06:49Z |
 | K1 | `session_01SNkKxpHjEg3z8ptenVQhCW` (Opus 5.5, effort high) | P2-K1-tabs-3 (start, cycle 96: AD-R38, board 3b's objection H, kit half) | `claude/ui-bake` | 2026-11-16 06:49Z |
 | S2 | `session_01SNkKxoB47wLHjWYVpxbGNv` (Opus 5.5, effort high) | IQ-import-check (idle queue, M25; seat filled in cycle 96 while P2-S2-home-4 waits on P2-K1-tabs-3) | `claude/ui-screens-home` | 2026-11-16 06:49Z |
 | AD | `session_01SNkKxp6Jtxgub8m9mNth9u` (Opus 5.5, effort high) | P2-AD-board-3b (board 3, second round; deps merged in cycle 94), then P2-AD-board-5b once P2-S3-settings-2 merges (restart, cycle 94; replaced in cycle 96) | `claude/ui-ad` | 2026-11-16 05:24Z |
@@ -294,7 +296,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 | AD | `session_01SNkKxpPaibzTsRuZzdTZic` (Opus 5.5, effort high; done, S2-R22 answered at 22:16Z, replaced in cycle 89) | S2-R22 first (M20: re-check S2-R20's objections 1-5 on P2-S2-home-3 at 13ff046f; S2's seat idle with its task ready), then the first open AD task, else done | `claude/ui-ad` | 2026-11-15 22:05Z |
 | AIA | `session_01SNkKxqD2jxzsw1dZAgz7Ue` (Opus 5.5, effort high; idle, motion-3 ready at 1157bfb4) | P2-AIA-motion-3 (restart: merge main, run guard.sh, mark ready when its checks pass) | `claude/ui-artist` | 2026-11-15 20:45Z |
 | AD | `session_01SNkKxnxMtbLFXk5d55r19u` (Opus 5.5, effort high; done, P2-AD-board-5 ready at 8b4b5827) | AD previews S1-R29 and AIA-R26, ack M23 (S3's freed seat), then the first open AD task | `claude/ui-ad` | 2026-11-15 20:13Z |
-| S3 | `session_01SNkKxobxLMm7bkJemfXcuS` (Opus 5.5, effort high) | P2-S3-character-2 (start: P2-AD-board-5 merged as d74bbbdf; AD-R31, R32, R33's character half, R34, R37; the fourth seat with S1, AIA and AD) | `claude/ui-screens-meta` | 2026-11-15 22:32Z |
+| S3 | `session_01SNkKxobxLMm7bkJemfXcuS` (Opus 5.5, effort high; done, P2-S3-settings-2 ready at 9e602fcc and merged; replaced in cycle 96) | P2-S3-character-2 (start: P2-AD-board-5 merged as d74bbbdf; AD-R31, R32, R33's character half, R34, R37; the fourth seat with S1, AIA and AD) | `claude/ui-screens-meta` | 2026-11-15 22:32Z |
 | S3 | `session_01SNkKxmz8GQhVoYbmKSgiAL` (Opus 5.5, effort high; idle, its task merged) | P2-S3-settings (restart after the owner's restart: the gate on f0a36a41 passes all six rows, cycle 84's verdict carried to main in cycle 85; AD preview if owed, merge main, checks and guard.sh, ready) | `claude/ui-screens-meta` | 2026-11-15 18:08Z |
 | AIA | `session_01SNkKxr42nS6EtCTLH5opM6` (Opus 5.5, effort high; idle, replaced at 20:45Z) | P2-AIA-motion-3 (start: board 4's objection C and D's strip target; M14, M21) | `claude/ui-artist` | 2026-11-15 18:05Z |
 | S2 | `session_01SNkKxq9TRgdUDZjiKCeA3q` (Opus 5.5, effort high; idle after ready at 13ff046f, replaced in cycle 88) | P2-S2-home-3 (restart after the owner's restart: continue from the branch, S2-R20 objections 1 to 5, ready) | `claude/ui-screens-home` | 2026-11-15 18:05Z |
@@ -543,8 +545,8 @@ Your session was created with the repository checked out at main; work in that c
   had no native library in the candidate's worktree; the third was clean.
   The lock was taken at 06:52Z and cleared with the merge. **Restarted:**
   at 06:49Z AD (S3-R21), K1 (P2-K1-tabs-3) and S2 (IQ-import-check from
-  the idle queue, M25). After the merge, AD on P2-AD-board-5b and S3 on
-  IQ-kit-docs (idle queue, M25). S2's IQ-import-check is ready at
+  the idle queue, M25). After the merge, at 07:44Z, AD on P2-AD-board-5b and S3
+  on IQ-kit-docs (idle queue, M25). S2's IQ-import-check is ready at
   `ade915de` (docs only). Seats: K1, AD and S3 working, S2 waiting on
   tabs-3, four of four. M25 acked. **Next:** merge IQ-import-check; K1
   finishes tabs-3, then S2 takes home-4, then AD takes board 3c; seed fix
