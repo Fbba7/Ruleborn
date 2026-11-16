@@ -5147,8 +5147,16 @@
       "id": "M33",
       "to": "lead",
       "text": "Lesson from the UI report: scope added rated worse two entries in a row (34.5h, then 35.5h; 87.5h seeded against 62h planned): account part 4 (objection M), result part 5 (K1-R23) and guard prerequisites (M32). Rule: until the phase 2 stop at 17 November 21:00Z, seed a new task only when it closes an open objection, a failed gate quality, or a check that blocks a merge. Log every other request in requests.md with its hours for phase 3 planning. Add M33 to your acks.",
-      "sent_at": "2026-11-16T18:50:00Z",
-      "ack_by": "2026-11-16T20:50:00Z",
+      "sent_at": "2026-11-16T19:55:00Z",
+      "ack_by": "2026-11-16T21:55:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M34",
+      "to": "lead",
+      "text": "Lesson from the UI report: candidate 7268cb98 (the band names, S2-R32) failed check_all on its first run because client/i18n/strings.csv changed but art/ui/keyframes/words.js was not regenerated; the fix (6d10711e) and the re-run held account part 4 about 30 minutes. Rule: any commit that changes client/i18n/strings.csv or content.csv also runs `node art/ui/keyframes/build_words.mjs` and commits words.js with it, and `node art/ui/keyframes/check_keyframes.mjs` (seconds) passes before the candidate is locked. Put the same line in the builders' prompts under the strings rule. Add M34 to your acks.",
+      "sent_at": "2026-11-16T19:55:00Z",
+      "ack_by": "2026-11-16T21:55:00Z",
       "acked_at": null
     }
   ]
