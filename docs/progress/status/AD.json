@@ -3,17 +3,17 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
-  "task_id": "previews S2-R33, S1-R34",
-  "task_state": "working",
+  "agent_state": "done",
+  "task_id": null,
+  "task_state": null,
   "claimed_at": "2026-11-16T23:35:00Z",
-  "lease_until": "2026-11-17T02:35:00Z",
-  "updated_at": "2026-11-16T23:45:00Z",
-  "expected_next_update_by": "2026-11-17T01:30:00Z",
+  "lease_until": null,
+  "updated_at": "2026-11-17T00:05:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
-    "next_step": "S1-R34: judge heist-1 stills at ed766fe9 and answer"
+    "next_step": "none"
   },
   "precheck": {
     "sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
@@ -586,6 +586,22 @@
       "due": "2026-11-18T14:20:00Z",
       "default": "The lead opens a follow-up S3 task for M, done when tools/ui_gate/checks.py value-steps passes every control on the signed-in Account tab records at 100% in English and German; no AD round 4. Board 5 stands on K and L meanwhile",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R44",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 1, preview of P2-S1-heist-1 (S1-R34) at ed766fe9: two objections. (1) 200% pt_BR no plan, Hierarchy: Lançar's words are no larger than the loot labels (61 px against 61 to 64 px), the labels are higher in value, and the 508 figure and the 2:25 timer stand larger. (2) 200% en, Layered materials: the hint is hidden by _fit_hint and the Room panel has no inner well. S1 can answer both in this task. Fixes are in board-1.md, 'Preview of heist-1 (S1-R34)'.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-1.md",
+        "client/scripts/heist_screen.gd",
+        "client/scripts/heist_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T00:05:00Z",
+      "due": "2026-11-19T00:05:00Z",
+      "default": "If S1 sets P2-S1-heist-1 ready without answering objections 1 and 2, and the gate fails Hierarchy (pt_BR) or Layered materials (en 200%), the lead opens a follow-up S1 task for them, done when the 200% pt_BR loot labels sit at most 0.8 of Lançar's cap height in the muted label role, the figures and the timer sit below Cast's weight, and the en 200% still shows the hint and a Room panel inner well. If the gate passes those items, the objections become notes and nothing is seeded. No AD round needed.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -693,8 +709,13 @@
       "request_id": "S2-R33",
       "answer": "Preview of P2-S2-home-5 at eb40e8f4 (claude/ui-screens-home). All 7 stills print 'fit ok' (en, de and high contrast at 100%; en, pt_BR and de at 200%; pt_BR at 150%). Ruling: the stills stand, no objection kept, so S2's default holds: S2 sends the gate request at the pre-checked commit. Baked figures beside live words: in en the counts and the renown are baked in the kit's numerals (white, ink outline, hard drop) beside live labels (Humming, Full, Collect 3.4k, the goal card); a figure is a count and a word is a label, so the split is the kit's own, and the counts no longer read as flat cream (round 3's advisory note answered). The baked 82% over the live Humming at 200% reads as one block. Live counts in de and pt_BR at 100% and 200% ('142,0 Tsd.', '142,0 mil') in the heavier display role are bold, white, outlined and dropped, carry the same weight at phone size and pass display type; the trade is right, since baking breaks the purse into three rows at 200% pt_BR. High contrast keeps the outline and drop, and Collect stays the one gold primary. Notes, not holding: in de and pt one header carries two numeral faces (renown baked and wide, counts live and tight), a kit question for a later pass; at pt_BR 150% the wide baked digits before a tight live 'mil' read as one amount, and the tracking could tighten a step later; the Full chip straddles the water plate's edge as a badge and covers no figure. board-3.md, 'Preview of home-5 (S2-R33)'.",
       "at": "2026-11-16T23:45:00Z"
+    },
+    {
+      "request_id": "S1-R34",
+      "answer": "Preview of P2-S1-heist-1's part6 stills at ed766fe9. Met: 100% Colour roles (Get out and Alarm share the leather role, red kept to the filling alarm; Cast the only gold fill; crew marks are shapes), 100% One art-direction idea (chunky hint pill, inked load well, outlined crew bars), 200% en display type, portraits clear of names, Hollow and Bramble as dark figures, painted Bloom/Cast/Get out icons. Two objections S1 can answer in this task. (1) 200% pt_BR no plan, Hierarchy: 'Lançar' cap height 61 px equals 'Espaço'/'Restam' 61 px and 'Carregar até 100%' 64 px; the labels are cream, higher value than ink on gold; 508 and the 2:25 timer stand larger. Fix: above 130% text, loot labels in the kit's muted label role at least one step below Cast's words (cap height <= 0.8 of Lançar's), and the loot figures and timer plate one size down; the same change fixes 946/~2,600 outweighing Cast at 200% en. (2) 200% en, Layered materials: _fit_hint hides the hint, so there is no hint banner to judge, and the Room panel is one plate with no inner well behind its rows. Fix: an inner well behind the Room panel's rows, as the tray has behind the crew, and enough height back (the crew well's empty right third, or the pause back in the top column) for the hint to show at 200% en; if it cannot fit, say so and the gate judges the Room panel and tray alone. Notes, not holding: pt_BR's lone pause row (move it into the empty Sage slot beside Lançar); Get out sits on the tray's rim at 100%; charge badges on the tray's top rim; Sage's '12' count absent; pt_BR law names untranslated (strings, not S1). Kept objections go to the lead as AD-R44 with a follow-up default. Details in board-1.md, 'Preview of heist-1 (S1-R34)'.",
+      "at": "2026-11-17T00:05:00Z"
     }
   ],
-  "next_step": "S1-R34: judge heist-1 stills at ed766fe9 and answer",
-  "last_update": "S2-R33 answered: home-5 stills stand, no objection (board-3.md). S1-R34 next."
+  "next_step": "none: S2-R33 and S1-R34 answered",
+  "last_update": "S1-R34 answered: heist-1 stills meet 100% items and most 200% en items; two objections (pt_BR hierarchy, en 200% layering) S1 can answer in task; AD-R44 to lead with follow-up default. Done."
 }
