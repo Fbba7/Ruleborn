@@ -8,7 +8,7 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T20:55:00Z",
   "lease_until": "2026-11-16T23:55:00Z",
-  "updated_at": "2026-11-16T21:10:00Z",
+  "updated_at": "2026-11-16T21:15:00Z",
   "expected_next_update_by": "2026-11-16T21:55:00Z",
   "long_run": null,
   "progress_marker": {
@@ -567,6 +567,43 @@
       "escalate_to": "lead",
       "state": "answered",
       "answer": "Granted by the lead in cycle 99 (db805002): auth_panel.gd is in the task's exceptions. Both fixes made: _enter_tree listens again once ready; past 125% every row's end control goes under its words. fit_settings.sh 20 of 20, fit_character.sh 50 of 50."
+    },
+    {
+      "id": "S3-R31",
+      "from": "S3",
+      "to": "AD",
+      "ask": "Preview of P2-S3-character-4 at 8ca0058d on claude/ui-screens-meta: the gate's display-type fail on 'character at 200% text, pt_BR' (verdict P2-S3-character-3/a6d5f2fb). (1) The subtitle and the level line on the starry backdrop now wear an ink outline on every side, each side the greater of 1.5 pt or 12% of the size (was 12% in all, about 6% a side, which the 2-point drop outweighed): subtitle outline_size 21 px (was 11), level line 19 (was 9); set again after the words shrink to fit. (2) HABILIDADE, the ability card's kicker, is stroked and dropped in ink as 'Subir de nível' is, at large text only. (3) At 200%, scrolled to the end, every tab's last card ends clear above the dock in en, pt_BR and de. 100% and high-contrast stills are pixel for pixel as before. Track Part 2, 'The gate's display-type check at a6d5f2fb'. Please give every objection in this one round.",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "docs/art/shots/menu-screens/character-200-pt_BR.png",
+        "docs/art/shots/menu-screens/character-200-en.png",
+        "docs/art/shots/menu-screens/character-200-de.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-4.png",
+        "docs/art/shots/menu-screens/character-200-en-4.png",
+        "docs/art/shots/menu-screens/character-200-de-4.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-stats.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-compare.png"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T21:15:00Z",
+      "due": "2026-11-16T23:15:00Z",
+      "default": "The outline and the stroke stand as fixed; S3 marks P2-S3-character-4 ready at the pre-checked sha with gate_request there, and AD's next round re-checks the stills on the merge",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R32",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1 (client/ui/rb_box.gd, K1's): on the character screen's Stats tab at 200% text in en and pt_BR, scrolled to the end (SCROLL=1600 and after, not 1400), the parchment panel behind the stat tiles and their note (UI.panel('parchment'), drawn by RbBox) is not drawn once its top edge has scrolled above the screen. The note's dark-brown Secondary words then stand on the night backdrop, unreadable. German's shorter page is not affected. It shows on main without S3's change (checked with the change stashed). Repro: TEXT=200 LOCALE=pt_BR TAB=1 SCROLL=99999 bash tools/render/shoot.sh client/tests/shots/screen_character.gd out.png. No committed still shows it. Likely the box's draw is culled or its 9-slice rect clipped when its origin is off screen.",
+      "files": [
+        "client/ui/rb_box.gd",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T21:15:00Z",
+      "due": "2026-11-17T09:15:00Z",
+      "default": "K1 takes it in P2-K1-grow-1 or a follow-up task the lead seeds; S3 leaves rb_box.gd alone and P2-S3-character-4 goes ready without it",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
