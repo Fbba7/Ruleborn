@@ -1017,6 +1017,41 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   S1, S2, S3), so AD is not started for it this cycle. If a seat frees
   before 23:08Z the lead starts AD on the preview; otherwise the default
   stands at its due, and the gate's re-run on the merge judges the stills.
+  **Default applied** by the lead at 23:08Z in cycle 107: no seat freed
+  before the due, so the outline and the stroke stand as fixed, and
+  P2-S3-character-4 is ready at ee67dcea with S3's gate_request there.
+
+- **S2-R33** (from S2, 16 November 2026 21:55Z; due 17 November 01:55Z;
+  blocking): preview P2-S2-home-5 (phase 2 exit, M25: the purse's counts
+  in the kit's display type) on `claude/ui-screens-home` at eb40e8f4,
+  before the gate runs (M10, M12, M23). Stills from
+  `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh
+  client/tests/shots/universe_home.gd out.png`: 100% en, 100% de, high
+  contrast, 200% en, 200% pt_BR, 150% pt_BR. The purse's counts, the
+  renown and the strain card's share are in the kit's baked numerals where
+  the purse's row fits them at full size (en and fr at 100% and 200%,
+  every language at 150%); in de, pt_BR and pt_PT at 100% and 200% the
+  amounts stay live. The keeper's name and the live words take a heavier
+  T2. Rule on the baked figures beside the live words, and on the live
+  counts in de and pt. Evidence in `docs/art/tracks/home-screen.md`,
+  Part 5. Default: the stills stand as previewed: the gate runs on the
+  pre-checked commit, and any objection becomes a follow-up task. Copied
+  in cycle 107.
+  **Answered** by the lead in cycle 107: AD is started for it once
+  P2-K1-grow-1's merge frees K1's seat; if AD has not answered by the due,
+  the default stands and the lead runs the gate at eb40e8f4.
+
+- **S1-R34** (from S1, 16 November 2026 22:09Z; due 17 November 10:09Z;
+  not blocking): preview P2-S1-heist-1 before ready (M10, M12, M23): the
+  stills `docs/art/shots/heist-pilot/part6-h100.png`, `part6-h200.png` and
+  `part6-hpt.png` on `claude/ui-screens-heist` at ed766fe9 (heist at 100%
+  text, 200% en, 200% pt_BR with no crew plan). Objections, if any, as a
+  list S1 can answer in this task. Default: if no answer by the due time,
+  S1 sets ready with the gate passed and the stills named in the handoff;
+  AD's notes, when they come, are answered in a follow-up task. Copied in
+  cycle 107.
+  **Answered** by the lead in cycle 107: AD takes it after S2-R33, in the
+  same session.
 
 ### S1
 

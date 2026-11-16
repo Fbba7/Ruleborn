@@ -1,0 +1,39 @@
+[
+  {
+    "task_id": "P2-S3-character-4",
+    "sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T23:12:00Z",
+    "item": "character at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "pass",
+      "fail",
+      "pass",
+      "pass",
+      "fail"
+    ],
+    "result": "pass",
+    "critique": "Split 1 to 2, so three more samples with 3x crops: three passes of six, short of the four fails a fail needs, a narrow pass. The passes see an unbroken dark outline round the subtitle 'Skyskipper · Carregador' and the level line 'Nível 3 de 10' that scaled with the 200% text, and the stroked HABILIDADE header now matching 'Subir de nível'. The fails see the outline as a hairline on the top and left (about 1 to 1.5 px at 1x) with the weight at the bottom right like a drop, well under 12% of the glyph. Every sample passes the 200 headline cost. A heavier, even outline on the two backdrop lines would settle it."
+  },
+  {
+    "task_id": "P2-S3-character-4",
+    "sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T23:12:00Z",
+    "item": "character at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: the full-width gold Subir de nível card at the foot is the largest and most saturated control and still leads in grayscale; the cream tab strip is lighter but about half its height and carries no primary label; the gold arrows and NV badge are half its size or less. One sample notes the HABILIDADE card is cut short by the dock at the default scroll, a layout matter for another call."
+  }
+]
