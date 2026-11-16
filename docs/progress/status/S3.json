@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T20:55:00Z",
   "lease_until": "2026-11-16T23:55:00Z",
-  "updated_at": "2026-11-16T21:11:00Z",
-  "expected_next_update_by": "2026-11-16T21:55:00Z",
+  "updated_at": "2026-11-16T21:36:00Z",
+  "expected_next_update_by": "2026-11-16T22:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "635c33ee50e1dc54bdbce7b5e0795a66ecf8c976",
-    "next_step": "backdrop labels outlined all round at 200% (12% a side), HABILIDADE stroked; stills re-shot; fit_character.sh running",
-    "at": "2026-11-16T21:10:00Z"
+    "next_step": "fit_character.sh 50 of 50, check_screens OK, guard OK; merge checks (setup, build, check_all, guard) running at 05d76363; then pre-check, gate request, ready",
+    "at": "2026-11-16T21:36:00Z"
   },
   "precheck": {
     "sha": "635c33ee50e1dc54bdbce7b5e0795a66ecf8c976",
