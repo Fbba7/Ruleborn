@@ -5,7 +5,9 @@ extends MarginContainer
 ## bar with a gold edge along its top, flush to the screen's foot; each tab
 ## an icon over its name in stroked capitals, parted by hairlines; the
 ## chosen tab a tall periwinkle tile with a gold rim that rises above the
-## bar, half as wide again, its icon larger and bobbing; the Heist glowing
+## bar at 100% text, half as wide again, its icon larger and bobbing (at
+## larger text the tile and its picture stand inside the bar, as the 200%
+## key frame keeps them: 01-home_text200_pt_BR.png, AD-R38); the Heist glowing
 ## gold when not chosen. Each name sits under its tile, on the bar, never
 ## across the tile's gold rim (10-roster.png, board 3's dock). The bar runs
 ## under the home bar, but every tab
@@ -26,7 +28,8 @@ const TABS := [
 	["crew", "tabs/crew", "KIT_TAB_CREW"],
 	["friends", "tabs/friends", "KIT_TAB_FRIENDS"],
 ]
-## How far the chosen tab rises above the bar, in points.
+## How far the chosen tab rises above the bar, in points, at 100% text; at
+## larger text it does not rise (`lifts`).
 const RISE := 18.0
 ## How far a tab's content stands above the tab's foot, in points.
 const FOOT := 4.0
@@ -235,7 +238,8 @@ func choose(id: String, animate := true) -> void:
 		var icon: TextureRect = _icons[k]
 		# The chosen tab's picture stands large in its tile, its top above the
 		# rim, as every design still draws it: its face if the screen gave one
-		# (larger still), else its own icon.
+		# (larger still), else its own icon. At larger text `_stand` holds it
+		# inside the tile.
 		var faced := on and _faces.has(k)
 		icon.texture = (_faces[k] if faced else _plain[k]) as Texture2D
 		icon.custom_minimum_size = Vector2.ONE * UI.px(FACE if faced else (ICON if on else 36.0))
@@ -268,19 +272,25 @@ func choose(id: String, animate := true) -> void:
 ## designs draw it, and all a tab draws lies inside it: the bar's height is
 ## the height it takes. A tab is never lower than its own at 100% text
 ## (`tab_height`, the chosen one RISE more), and the bar's gold edge stays
-## at the top of the tallest tab not chosen.
+## at the top of the tallest tab not chosen. At larger text (AD-R38) the
+## chosen tab does not rise: its tile keeps its height at 100% text less
+## RISE, its picture, the bob's top included, stands inside the tile's rim,
+## and the gold edge is at the top of the tallest tab, the chosen one
+## included, so the whole tab lies inside the bar's own height, as the 200%
+## key frame keeps it.
 func _stand() -> void:
 	var plain := 0.0
 	var tallest := 0.0
+	var lift := lifts()
 	for k: String in buttons:
 		var on := k == active
 		var b: Button = buttons[k]
 		var label: Label = _labels[k]
 		var icon: TextureRect = _icons[k]
-		var base := float(UI.px(Tokens.number("size", "tab_height") + (RISE if on else 0.0)))
+		var base := float(UI.px(Tokens.number("size", "tab_height") + (RISE if on and lift else 0.0)))
 		# A screen that set a tab's height since (home raises its Heist) keeps
 		# it raised, its tile taller by as much; the gold edge stays at the
-		# plain tabs' top. Set lower than the tab last stood counts too: the
+		# top of the tallest tab not raised. Set lower than the tab last stood counts too: the
 		# tab stood taller only while its name showed.
 		if _stood.has(k) and absf(b.custom_minimum_size.y - float(_stood[k])) > 0.5:
 			_floors[k] = b.custom_minimum_size.y
@@ -295,6 +305,12 @@ func _stand() -> void:
 		var at_100 := words - font.get_height(label.get_theme_font_size("font_size")) + font.get_height(
 			UI.px(15.0 if on else 13.0))
 		var tile := base - foot - at_100 - rim
+		if on and not lift:
+			# Inside the rim at the top of its bob, as large as that leaves,
+			# never larger than at 100% text.
+			var fits := floorf(tile - rest(on) - UI.PX_PER_POINT * BOB - rim)
+			var full := float(UI.px(FACE if _faces.has(k) else ICON))
+			icon.custom_minimum_size = Vector2.ONE * minf(full, fits)
 		# Where it rests (its bob moves it up from there and back), and its bob.
 		var picture := icon.custom_minimum_size.y + rest(on) + (UI.PX_PER_POINT * BOB if on else 0.0)
 		var head := maxf(0.0, ceilf(picture - tile))
@@ -308,10 +324,16 @@ func _stand() -> void:
 		b.custom_minimum_size.y = h
 		_stood[k] = h
 		tallest = maxf(tallest, h)
-		if not on and not raised:
+		if (not on or not lift) and not raised:
 			plain = maxf(plain, h)
 	if _bar != null and plain > 0.0:
 		_bar.inset_top = tallest - plain
+
+
+## Whether the chosen tab rises RISE above the bar: at 100% text and under
+## only (AD-R38).
+static func lifts() -> bool:
+	return Settings.text_scale <= 100
 
 
 ## How far a tab's picture rests above its tile's foot, in pixels: the

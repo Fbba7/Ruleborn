@@ -185,8 +185,11 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxo5L5nkx6LE2sYyMSz` (cycle 96, 16
-November 2026 from about 06:41Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxqWs3DXEToJqEWQxXa` (cycle 99, 16
+November 2026 from about 10:39Z, started by the Opus 5.5 launcher). Cycle
+98's was `session_01SNkKxpnLgsoTHAqFj6UTHk` (from 09:35Z). Cycle
+97's was `session_01SNkKxorVw3MyhDkJsvRqhq` (from 08:39Z). Cycle
+96's was `session_01SNkKxo5L5nkx6LE2sYyMSz` (from 06:41Z). Cycle
 95's was `session_01SNkKxmibsJftfpUThu9TXk` (from 05:39Z). Cycle
 94's was `session_01SNkKxpxY6kjJC1TT6B65fn` (from 04:39Z). Cycle
 93's was `session_01SNkKxqD2VSCqdpQojkHwTN` (from 03:35Z). Cycle
@@ -279,6 +282,11 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S3 | `session_01SNkKxqxSgTQePYHeS97vWa` (Opus 5.5, effort high) | P2-S3-character-3 (restart, cycle 99: S3-R30 granted, `client/scripts/auth_panel.gd` in its exceptions; the session below ended its turn waiting on it) | `claude/ui-screens-meta` | 2026-11-16 10:44Z |
+| S1 | `session_01SNkKxpR61Xc97jycRSyB3B` (Opus 5.5, effort high) | P2-S1-result-4 (start, cycle 98: M25's fourth seat, phase 2's exit for the result screen; P2-S1-result-3 merged as 19cfe498) | `claude/ui-screens-heist` | 2026-11-16 09:43Z |
+| K1 | `session_01SNkKxoSc1gCBJ4YfneEqN5` (Opus 5.5, effort high) | P2-K1-kit-gaps-1 (start, cycle 97: S3-R22, R24, R26 and R27 from IQ-kit-docs; P2-K1-tabs-3 merged as 1053266f) | `claude/ui-bake` | 2026-11-16 09:29Z |
+| S3 | `session_01SNkKxpuAx4fJLdVkzpdFw8` (Opus 5.5, effort high; waiting on S3-R30, replaced in cycle 99) | P2-S3-character-3 (start, cycle 97: board 5b's objections K and L, AD-R40 and AD-R41; board 5b merged as 1053266f) | `claude/ui-screens-meta` | 2026-11-16 09:29Z |
+| S2 | `session_01SNkKxoR9hEzsNNp5XQnTTG` (Opus 5.5, effort high) | P2-S2-home-4 (start, cycle 97: P2-K1-tabs-3 merged as 1053266f; the branch also carries IQ-import-check) | `claude/ui-screens-home` | 2026-11-16 09:28Z |
 | AD | `session_01SNkKxrDXY9opvGEQBWJJEm` (Opus 5.5, effort high) | P2-AD-board-5b (restart, cycle 96: P2-S3-settings-2 merged as f675f05e; board 3c later) | `claude/ui-ad` | 2026-11-16 07:44Z |
 | S3 | `session_01SNkKxoVbqcz1PXSbWEpF6Y` (Opus 5.5, effort high) | IQ-kit-docs (idle queue, M25; start, cycle 96: P2-S3-settings-2 merged, no S3 product task open) | `claude/ui-screens-meta` | 2026-11-16 07:44Z |
 | AD | `session_01SNkKxmeSbBakuB4j1MjMoz` (Opus 5.5, effort high; done, S3-R21 answered at 07:00Z; replaced in cycle 96) | S3-R21 (re-check J on P2-S3-settings-2 at 9e602fcc), then P2-AD-board-3c and P2-AD-board-5b when open (restart, cycle 96) | `claude/ui-ad` | 2026-11-16 06:49Z |
@@ -443,7 +451,7 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5, effort high
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: P2-K1-tabs-3 (seeded in cycle 96: AD-R38, board 3b's objection H, kit half; docs/progress/requests.md, section Lead, and docs/art/ui-quality/gate/boards/board-3.md 'Round 2 (board 3b)', on claude/ui-ad until P2-AD-board-3b merges): at 200% text keep the chosen tab's picture within the tab bar's height, and say in the handoff how many points home can drop from HomeParts.reserve_lift; P2-S2-home-4 waits on it. Every earlier K1 task is merged: P0-K1-kitspec-3, the phase 1 K1 tasks, P2-K1-motion, P2-K1-tabs and P2-K1-tabs-2 (000a7140). The other K1 requests listed in requests.md's K1 note wait for a later K1 task; do not take them in this one.
+Tasks: P2-K1-kit-gaps-1 (seeded in cycle 97 from S3's IQ-kit-docs findings S3-R22, S3-R24, S3-R26 and S3-R27; docs/progress/requests.md, section Lead, and docs/progress/S3.md): add KitControls.slider (K06), K17's confirm and info dialog variants with the ribbon title, the info popover (K30) and the empty state (K35) as kit calls, each in the catalogue, its tests and kit-spec.md. P2-K1-kit-gaps-2 (S3-R23 and S3-R25: the spinner and the Ld, L and A states, one entry point for the reward sequence with KitNav.celebrate kept as an alias) is yours next, once kit-gaps-1 merges; do not start it in this session. Every earlier K1 task is merged, the last P2-K1-tabs-3 (1053266f, cycle 97). The other K1 requests listed in requests.md's K1 note wait for a later K1 task; do not take them in this one.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -473,7 +481,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P2-S1-result-3 (board 4's objections A, B, D and E on the result screen: AD-R27, AD-R26, AD-R29 and AD-R30 in docs/progress/requests.md; docs/art/ui-quality/gate/boards/board-4.md). Send AD the stills before ready (M10, M12). P2-S1-result-1 and -2, pilot-1 to pilot-5 and P2-S1-toon-drop are merged.
+Tasks: P2-S1-result-4 (seeded in cycle 98 under M25, phase 2's exit for the result screen): an overflow sweep with FIT=1 in en, pt_BR and de at 100% and 200% text and in high contrast, fixing whatever is cut or pushed below the actions; the gate at 200% text (pt_BR) and in high contrast; the advisory gate's close points on P2-S1-result-3 (docs/art/ui-quality/gate/verdicts/P2-S1-result-3/904a3567.json) answered. Send AD the stills before ready (M10, M12). P2-S1-result-1 to -3, pilot-1 to pilot-5 and P2-S1-toon-drop are merged. A request from K1 to switch result_screen.gd's KitNav.celebrate call may come with P2-K1-kit-gaps-2; it is not part of this task.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -488,7 +496,7 @@ You are agent S2 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-home
 Owned files: only the files each S2 task lists in the backlog, docs/progress/S2.md, docs/progress/status/S2.json
-Tasks: IQ-import-check from the backlog's idle queue (assigned to you in cycle 96, M25): check every tracked .import and .uid file matches its source after a clean import, and file each mismatch as a request to its owner in your status file; your notes in docs/progress/S2.md only. P2-S2-home-4 (AD-R39, board 3b's objection H, home half) is yours next, once P2-K1-tabs-3 (K1) merges; do not start it in this session. P2-S2-home-3 is merged (d6f0bad3). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+Tasks: P2-S2-home-4 (seeded in cycle 96: AD-R39, board 3b's objection H, home half; docs/progress/requests.md, section Lead, and docs/art/ui-quality/gate/boards/board-3.md 'Round 2 (board 3b)'): give reserve_lift back to the realms' band as K1's P2-K1-tabs-3 handoff allows (docs/progress/K1.md; merged as 1053266f), and keep the side buttons and realm chips on the screen at 200% in every locale, with and without the notice. Your branch already carries IQ-import-check (ready at ade915de; it merges with home-4, because it holds one line of docs/art/tracks/home-screen.md); merge main into it first. P2-AD-board-3c (AD, only H) waits on home-4. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -503,7 +511,7 @@ You are agent S3 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S3            Role: maker (S3): the character and settings screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-meta
 Owned files: only the files each S3 task lists in the backlog, docs/progress/S3.md, docs/progress/status/S3.json
-Tasks: IQ-kit-docs from the backlog's idle queue (assigned to you in cycle 96, M25): read docs/art/ui-quality/kit-spec.md against client/ui/ and list every component the spec names and the code lacks, as a request to K1 through the lead in your status file, each with a default; your notes in docs/progress/S3.md only, no code change. P2-S3-settings-2 merged in cycle 96 (f675f05e) and P2-S3-character-2 in cycle 92 (f78cf9f1); fix tasks from board 5b, if AD keeps any objection, come to you later. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+Tasks: P2-S3-character-3 (seeded in cycle 97: board 5b's objections K, AD-R40, and L, AD-R41; docs/progress/requests.md, section Lead, and docs/art/ui-quality/gate/boards/board-5.md 'Round 2 (board 5b)'): K, at the highest level (fixture character 4, level 10 of 10) at 200% text in en, pt_BR and de the sticky bar's 'at the highest level' pill fits the phone (the star icon alone with an accessibility_name at large text, or wrapped), with character 4 at 200% in en, pt_BR and de added to fit_character.sh; L, the Account tab's profile row gets the Access tab's row plate. P2-AD-board-5c (AD, only K and L) waits on character-3. IQ-kit-docs merged in cycle 97 (1053266f). Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -526,6 +534,80 @@ Your session was created with the repository checked out at main; work in that c
 ```
 
 ## Now
+
+- **Cycle 99**, 16 November 2026, from about 10:39Z (session
+  `session_01SNkKxqWs3DXEToJqEWQxXa`, started by the Opus 5.5 launcher).
+  Copied S1's claim on P2-S1-result-4 into the backlog (lease 12:43Z) and
+  the agents' `seen_at`. **Requests:** S3-R30 granted as its default says
+  (`client/scripts/auth_panel.gd` added to P2-S3-character-3's
+  exceptions); S3, idle waiting on it, restarted at 10:44Z
+  (`session_01SNkKxqxSgTQePYHeS97vWa`). S1-R31 and S3-R29 copied for AD;
+  S3-R29's default (K and L stand as fixed, S3 marks ready at its
+  pre-checked sha, AD's round 3 re-checks) applies at 11:43:26Z if AD has
+  not answered. M26 (the report's lesson: a screen's fit script covers
+  every fixture state) acked and added to the done_when of result-4,
+  home-4 and character-3; M27 to M29 tell S1, S2 and S3. **Gate**
+  (advisory, rubric v3): P2-S1-result-4 at `8753618a`, on S1's
+  gate_request, stills rendered from the candidate (pt_BR 200% and high
+  contrast, both "fit ok"). Hierarchy passes 3 of 3 at 200% pt_BR and 3
+  of 3 in high contrast. Display type at 200% pt_BR fails 3 of 3: the
+  gold kicker over the sunburst sky has no ink outline, and the summary
+  lines keep a hairline edge that did not scale with the text. The
+  reward figures pass. Verdicts are in
+  `verdicts/P2-S1-result-4/8753618a.json`, and M30 gives S1 the close
+  point. **Merged:** nothing; no task was ready. **Started:** S3 (above).
+  Seats: K1, S1, S2 and S3 working, four of four. K1 is waiting on its
+  pre-check at `9ec2e61b`; AD waits for a seat. **Next:** merge
+  kit-gaps-1 when ready, then start AD (S3-R29 first if it is still open,
+  then S1-R31) and K1 on kit-gaps-2. Merge home-4 with IQ-import-check,
+  then AD takes board 3c. Merge character-3, then board 5c. Merge result-4
+  when ready.
+
+- **Cycle 98**, 16 November 2026, from about 09:35Z (session
+  `session_01SNkKxpnLgsoTHAqFj6UTHk`, started by the Opus 5.5 launcher).
+  Copied claims and leases into the backlog: P2-K1-kit-gaps-1 (K1, lease
+  12:35Z), P2-S2-home-4 (S2, lease 12:35Z) and P2-S3-character-3 (S3,
+  lease 12:30:15Z). **Requests:** none new. **Gate:** no task with gate
+  items was ready. **Merged:** nothing; nothing new was ready, and
+  IQ-import-check (`ade915de`) still waits to merge with P2-S2-home-4.
+  **Seeded:** P2-S1-result-4 (S1, M25: phase 2's exit for the result
+  screen, an overflow sweep in en, pt_BR and de at 100% and 200% text and
+  in high contrast, the gate at 200% pt_BR and in high contrast, the
+  advisory close points of result-3 answered); `owners.py claims`: tasks
+  in flight disjoint. **Started:** at 09:43Z S1 on P2-S1-result-4
+  (`session_01SNkKxpR61Xc97jycRSyB3B`). Seats: K1, S2, S3 and S1 working,
+  four of four; the seven-day bar reads allowed. AD's last session
+  (board 5b) is idle; its open question (AD-R40 and AD-R41's default) was
+  answered in cycle 97 with character-3 and board 5c. **Next:** merge
+  home-4 with IQ-import-check, then AD takes board 3c; merge character-3,
+  then AD takes board 5c; merge kit-gaps-1, then K1 takes kit-gaps-2;
+  merge result-4 when ready.
+
+- **Cycle 97**, 16 November 2026, from about 08:39Z (session
+  `session_01SNkKxorVw3MyhDkJsvRqhq`, started by the Opus 5.5 launcher).
+  Copied task states and leases into the backlog: P2-K1-tabs-3 ready at
+  `9e08db75` (K1), P2-AD-board-5b ready at `d48c880e` (AD) and IQ-kit-docs
+  ready at `8f7a9fad` (S3); `exceptions` set to `[]` on board 5b and 3c,
+  where null made `owners.py` fail. **Requests:** AD-R40 and AD-R41 (board
+  5b's objections K and L) answered as their defaults say:
+  P2-S3-character-3 (S3) and P2-AD-board-5c (AD, only K and L, after
+  character-3) seeded. AD's status file dates them 09:20Z, ahead of the
+  clock when the lead read them. S3-R22 to S3-R28 (IQ-kit-docs's findings
+  for K1) answered: R22, R24, R26 and R27 go to P2-K1-kit-gaps-1, and R23
+  and R25 to P2-K1-kit-gaps-2 (after kit-gaps-1), both seeded; R28's
+  default stands. **Gate:** no task with gate items was ready.
+  **Merged:** candidate `573416ab` (tabs-3, board 5b, IQ-kit-docs) as
+  `1053266f`, after check_all PASS (09:27:17Z) and guard.sh "ui guard:
+  OK" (first run, with three.js and the native library copied into the
+  candidate's worktree). The lock was taken at 08:56Z and cleared with
+  the merge. IQ-import-check (`ade915de`) stayed out: its branch carries
+  one line of `docs/art/tracks/home-screen.md`, which it does not own, so
+  it merges with P2-S2-home-4. **Restarted:** at 09:28Z S2 on
+  P2-S2-home-4, S3 on P2-S3-character-3 and K1 on P2-K1-kit-gaps-1. Seats:
+  K1, S2 and S3 working, three of four; AD has no open task (board 3c
+  waits on home-4, board 5c on character-3). **Next:** merge home-4 with
+  IQ-import-check, then AD takes board 3c; merge character-3, then AD
+  takes board 5c; merge kit-gaps-1, then K1 takes kit-gaps-2.
 
 - **Cycle 96**, 16 November 2026, from about 06:41Z (session
   `session_01SNkKxo5L5nkx6LE2sYyMSz`, started by the Opus 5.5 launcher).
