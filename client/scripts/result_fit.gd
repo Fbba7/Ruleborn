@@ -6,6 +6,10 @@ extends RefCounted
 ## A helper of its own so result_screen.gd stays within gdlint's file length.
 
 
+## The most lines a label has that the fold keeps together (`part_line`).
+const KEEP := 3
+
+
 ## The column a page's content has across a phone `width` wide: the width
 ## less the safe side on each edge.
 static func column(width: float) -> float:
@@ -239,7 +243,8 @@ static func fold(scroll: ScrollContainer, bar: Control, corner: Control) -> void
 
 ## How far above `bottom` the line or card it cuts starts, in the page that
 ## `scroll` holds: a label's line shown above its baseline only, or a card
-## shown by less than a line of body text. Zero when `bottom` falls between
+## shown by less than a line of body text; a label of up to KEEP lines shown
+## by its first lines only counts whole. Zero when `bottom` falls between
 ## lines, or under a line's baseline.
 static func part_line(scroll: ScrollContainer, bottom: float) -> float:
 	var page := scroll.get_child(0) as Control
@@ -268,6 +273,11 @@ static func part_line(scroll: ScrollContainer, bottom: float) -> float:
 			var p := fposmod(shown, step)
 			if p > 1.0 and p < l.get_theme_font("font").get_ascent(px) and shown < step * l.get_line_count():
 				part = maxf(part, p + (top if shown < step else 0.0))
+			# A short label's lines kept together: one of up to KEEP lines
+			# shown by its first lines only goes under the edge whole (AD's
+			# note on S1-R30, "Taxa de entrada de" at pt_BR 200%).
+			elif l.get_line_count() <= KEEP and shown > 1.0 and shown < step * (l.get_line_count() - 1) + 1.0:
+				part = maxf(part, shown + top)
 		elif n is PanelContainer and shown < sliver:
 			part = maxf(part, shown)
 	return part

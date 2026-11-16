@@ -388,9 +388,10 @@ func _face(picture: Texture2D) -> KitRing:
 	return ring
 
 
-## The plain result's bar at the phone's foot (key frame 03): Home on
-## parchment, and the next raid as the main action, wide, in gold (in red
-## when the heist was foiled), with how many of the roster are idle to go.
+## The plain result's bar at the phone's foot (key frame 03): Home in the
+## kit's tertiary face (violet, darker than the raid in grayscale: the gate's
+## close point on P2-S1-result-3), and the next raid as the main action, wide,
+## in gold (red when foiled), with how many of the roster are idle to go.
 func _raid_bar(foiled: bool) -> PanelContainer:
 	# On glass, as the design's: the tab bar's skin runs off the screen at its
 	# foot, and here the bar stands in the page.
@@ -400,7 +401,7 @@ func _raid_bar(foiled: bool) -> PanelContainer:
 	var row := BoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_theme_constant_override("separation", UI.px(8))
-	var home := UI.action(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "parchment")
+	var home := UI.action(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "ghost")
 	home.icon = Icons.texture("hud/home")
 	home.expand_icon = false
 	home.add_theme_constant_override("icon_max_width", UI.px(26))
@@ -666,12 +667,12 @@ func _study_card() -> PanelContainer:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	title.set_meta("bold", true)
 	box.add_child(title)
-	# The laws side by side on parchment, each an equal share, its icon then
-	# its name, which wraps between words; stacked at large text. More than
-	# three go two to a row.
+	# The laws side by side in the tertiary face as Home, each an equal share,
+	# its icon then its name, which wraps between words; stacked at large
+	# text. More than three go two to a row.
 	var laws: Array[Control] = []
 	for law: String in _crossed:
-		var b := UI.action(Strings.term("LAW", law), func() -> void: _study(law), "parchment", Strings.term("LAW", law))
+		var b := UI.action(Strings.term("LAW", law), func() -> void: _study(law), "ghost", Strings.term("LAW", law))
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		# A law's name in the title family, as the key frame's law papers and
 		# the kit's law names (type role "heading"), at body size.
