@@ -3,21 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-AD-board-5c",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-16T13:55:00Z",
   "lease_until": "2026-11-16T16:55:00Z",
-  "updated_at": "2026-11-16T14:45:00Z",
-  "expected_next_update_by": "2026-11-16T15:30:00Z",
+  "updated_at": "2026-11-16T14:41:00Z",
+  "expected_next_update_by": "2026-11-16T17:41:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "d48c880e923831a7336288403937b33726dc02f7",
-    "next_step": "Pre-check the board 5c write-up (K and L fixed, M open as AD-R43), record it, then mark ready."
+    "last_green_sha": "58910501140ec8f93e511a10cb2eeeb780324117",
+    "next_step": "Board 3c (only H) once P2-S2-home-4 merges. Board 5c ready at 58910501 (K and L fixed; M open as AD-R43)."
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "58910501140ec8f93e511a10cb2eeeb780324117",
+    "exit": 0,
+    "finished_at": "2026-11-16T14:39:10Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "58910501140ec8f93e511a10cb2eeeb780324117",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M12",
@@ -577,8 +582,8 @@
         "client/scripts/auth_panel.gd"
       ],
       "blocking": false,
-      "created_at": "2026-11-16T14:45:00Z",
-      "due": "2026-11-18T14:45:00Z",
+      "created_at": "2026-11-16T14:20:00Z",
+      "due": "2026-11-18T14:20:00Z",
       "default": "The lead opens a follow-up S3 task for M, done when tools/ui_gate/checks.py value-steps passes every control on the signed-in Account tab records at 100% in English and German; no AD round 4. Board 5 stands on K and L meanwhile",
       "escalate_to": "lead"
     }
@@ -685,6 +690,6 @@
       "at": "2026-11-16T12:10:00Z"
     }
   ],
-  "next_step": "Pre-check the board 5c write-up (K and L fixed, M open as AD-R43), record it, then mark ready.",
-  "last_update": "2026-11-16T14:45Z: board 5c written. K and L stand as fixed on main 570c4b5b (character 4 at 200% fit ok in en, pt_BR, de; profile row dL* 72.7/72.2). New light objection M (signed-in leather sign-out buttons, dL* 16.1 to 17.5) to the lead as AD-R43 with a scripted-check default. Pre-check next."
+  "next_step": "Board 3c (only H) once P2-S2-home-4 merges. Board 5c ready at 58910501 (K and L fixed; M open as AD-R43).",
+  "last_update": "2026-11-16T14:41Z: P2-AD-board-5c ready at 58910501 (pre-check PASS 14:39:10Z, All checks passed.). K and L stand as fixed on main 570c4b5b; board 5 stands on them. New light objection M (signed-in leather sign-out buttons, dL* 16.1 to 17.5) to the lead as AD-R43, default a follow-up S3 task closed by checks.py value-steps. Waiting for board 3c (P2-S2-home-4)."
 }
