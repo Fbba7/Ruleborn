@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-16T01:55:00Z",
-  "updated_by": "lead (cycle 91)",
+  "updated_at": "2026-11-16T06:50:00Z",
+  "updated_by": "lead (cycle 96)",
   "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -3688,20 +3688,20 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "merged",
       "claim": {
         "agent": "S2",
         "branch": "claude/ui-screens-home",
         "claimed_at": "2026-11-15T17:40:00Z",
-        "seen_at": "2026-11-16T00:12:00Z",
-        "lease_until": "2026-11-16T04:55:00Z"
+        "seen_at": "2026-11-16T04:35:00Z",
+        "lease_until": "2026-11-16T06:15:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-16T01:55:00Z",
-      "updated_by": "lead (cycle 91)",
+      "merged_sha": "d6f0bad3",
+      "updated_at": "2026-11-16T05:24:00Z",
+      "updated_by": "lead (cycle 94)",
       "id": "P2-S2-home-3",
       "title": "Home screen, part 3 (board 3's objections A-C, AD-R22 to AD-R24): Collect on screen at 200% with the notice, the world framed between the panels, nothing dropped at large text or in pt_BR",
       "exceptions": [
@@ -3773,16 +3773,27 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-16T01:58:00Z",
+        "seen_at": "2026-11-16T04:16:00Z",
+        "lease_until": "2026-11-16T04:58:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-16T01:55:00Z",
-      "updated_by": "lead (cycle 91)",
+      "merged_sha": "000a7140",
+      "updated_at": "2026-11-16T05:24:00Z",
+      "updated_by": "lead (cycle 94)",
       "id": "P2-K1-tabs-2",
-      "title": "KitTabs' chosen picture within its declared height at every text size (S2-R24), and KitLayout.tap's connects made once (S2-R26)"
+      "title": "KitTabs' chosen picture within its declared height at every text size (S2-R24), and KitLayout.tap's connects made once (S2-R26)",
+      "exceptions": [
+        "client/tests/shots/ui_kit_catalogue.gd",
+        "client/tests/shots/ui_kit_tabs.gd",
+        "client/tests/shots/ui_kit_tabs.gd.uid"
+      ]
     },
     {
       "role": "AD",
@@ -3808,16 +3819,147 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
+      "state": "ready",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-11-16T05:33:00Z",
+        "seen_at": "2026-11-16T06:13:44Z",
+        "lease_until": "2026-11-16T08:33:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "31c4de6c",
+      "merged_sha": null,
+      "updated_at": "2026-11-16T06:50:00Z",
+      "updated_by": "lead (cycle 96)",
+      "id": "P2-AD-board-3b",
+      "title": "Board 3, second round: AD re-checks objections A-D on home-3's and K1-tabs's stills and lets board 3 stand or lists what is still open"
+    },
+    {
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/kit_tabs.gd",
+        "client/tests/ui_kit_tests.gd"
+      ],
+      "deps": [],
+      "done_when": [
+        "AD-R38 (board 3b, objection H, kit half): at 200% text (and every size above 100%) the chosen tab's picture stays within the tab bar's height, as the 200% pt_BR key frame keeps it inside its plate (the rise in kit_tabs.gd); at 100% the chosen tab may keep its rise",
+        "the handoff says how much height home can drop from HomeParts.reserve_lift at 200% text, in points, for P2-S2-home-4",
+        "a test in client/tests/ui_kit_tests.gd: at 200% text the chosen picture's rect is inside the bar's own height",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
       "state": "open",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-16T01:55:00Z",
-      "updated_by": "lead (cycle 91)",
-      "id": "P2-AD-board-3b",
-      "title": "Board 3, second round: AD re-checks objections A-D on home-3's and K1-tabs's stills and lets board 3 stand or lists what is still open"
+      "updated_at": "2026-11-16T06:50:00Z",
+      "updated_by": "lead (cycle 96)",
+      "id": "P2-K1-tabs-3",
+      "title": "KitTabs: at 200% text the chosen tab's picture stays within the bar's height (board 3b's objection H, kit half, AD-R38)",
+      "exceptions": [
+        "client/tests/shots/ui_kit_catalogue.gd",
+        "client/tests/shots/ui_kit_tabs.gd"
+      ]
+    },
+    {
+      "role": "S2",
+      "assigned_to": "S2",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "deps": [
+        "P2-K1-tabs-3"
+      ],
+      "done_when": [
+        "AD-R39 (board 3b, objection H, home half): with the chosen tab inside the bar (P2-K1-tabs-3), HomeParts.reserve_lift dropped or shrunk by what K1's handoff says and the height given to the realms' band",
+        "at 200% text the four side buttons (icon-only discs) and the realm chips show in pt_BR, pt_PT and French with and without the raid notice (NOTICE=1), and in English and German with the notice",
+        "those cases, plus English at TALL=900, added to the fit check, so a missing side button or 'no realm marked' fails it; the check passes and is not loosened",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [
+        {
+          "item": "home at 200% text, pt_BR",
+          "qualities": [
+            "Hierarchy",
+            "Display type"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T06:50:00Z",
+      "updated_by": "lead (cycle 96)",
+      "id": "P2-S2-home-4",
+      "title": "Home screen, part 4 (board 3b's objection H, home half, AD-R39): reserve_lift given back to the realms' band, side buttons and realm chips at 200% in every locale, with and without the notice",
+      "exceptions": [
+        "client/scripts/home_parts.gd.uid"
+      ]
+    },
+    {
+      "role": "AD",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P2-K1-tabs-3",
+        "P2-S2-home-4"
+      ],
+      "done_when": [
+        "board-3.md, third round: only objection H re-checked on P2-S2-home-4's and P2-K1-tabs-3's stills beside key frame 01 at 200% text (M12); the board stands or lists what is still open",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T06:50:00Z",
+      "updated_by": "lead (cycle 96)",
+      "id": "P2-AD-board-3c",
+      "title": "Board 3, third round: AD re-checks only objection H on home-4's and tabs-3's stills and lets board 3 stand or lists what is still open",
+      "exceptions": null
     },
     {
       "role": "AD",
@@ -4003,12 +4145,12 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null,
+      "merged_sha": "9850213a",
       "updated_at": "2026-11-13T11:44:07Z",
       "updated_by": "lead (cycle 83)",
       "id": "P2-AD-board-4b",
@@ -4103,7 +4245,7 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "merged",
       "claim": {
         "agent": "S3",
         "branch": "claude/ui-screens-meta",
@@ -4114,7 +4256,7 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null,
+      "merged_sha": "f78cf9f1",
       "updated_at": "2026-11-16T01:55:00Z",
       "updated_by": "lead (cycle 91)",
       "id": "P2-S3-character-2",
@@ -4169,14 +4311,20 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-16T03:21:36Z",
+        "seen_at": "2026-11-16T06:12:10Z",
+        "lease_until": "2026-11-16T08:04:31Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-15T22:04:16Z",
-      "updated_by": "lead (cycle 87)",
+      "updated_at": "2026-11-16T06:50:00Z",
+      "updated_by": "lead (cycle 96)",
       "id": "P2-S3-settings-2",
       "title": "Settings screen, part 2 (board 5's objections C (settings half), E and F; AD-R33, AD-R35, AD-R36): both switch rows on the first screen at 100%, the German title and Stillness card at 200%, one plate leading in the squint",
       "exceptions": [
@@ -4225,7 +4373,7 @@
       "title": "Check every tracked .import and .uid file matches its source after a clean import; file mismatches as requests to their owners",
       "role": "any",
       "model": "Opus 5.5",
-      "assigned_to": null,
+      "assigned_to": "S2",
       "files": [
         "docs/progress/<your-agent>.md"
       ],
@@ -4440,7 +4588,15 @@
       "text": "Lesson from the UI report (Wait from ready to merged rated worse two reports in a row: 1.1h, then 1.7h, at reports 85 and 86). P2-S1-result-3 was ready at 904a3567 at about 23:38Z on 15 November, with its gate passed; the only thing holding it was AD's preview answer. Cycle 89 started AD on S1-R30 at 23:43Z and ended at 23:49Z; AD answered at 23:58Z, nine minutes later, and the merge waited for cycle 90 (locked 00:49Z, merged 01:22Z). The rule: when you start AD on a preview request that is the only thing holding a ready, gate-passed candidate, prepare the candidate in the same cycle while AD reviews (merge main in, apply approved budgets, run the fresh-container setup, check_all and guard.sh), and stay in the cycle until AD answers or about 25 minutes pass (preview answers take 15 to 20 minutes). If AD clears it, lock and merge in that same cycle; if AD objects, send the task back to its builder at once. Do not end the cycle and leave the merge to the next hourly one. Ack by adding M24 to your status acks.",
       "sent_at": "2026-11-16T02:00:00Z",
       "ack_by": "2026-11-16T04:00:00Z",
-      "acked_at": null
+      "acked_at": "2026-11-16T03:19:47Z"
+    },
+    {
+      "id": "M25",
+      "to": "lead",
+      "text": "Lesson from the UI report (Builders at once rated worse two reports in a row: 3 of 4, then 2 of 4, at reports 87 and 88). In cycle 94 S2 and K1 merged their tasks and ended their turns done with no next task, and cycle 95 recorded that no other builder task was open, so two of four seats stood empty. Yet the backlog's idle queue held two open tasks for any role, IQ-import-check and IQ-kit-docs (1h each), and report.md section 3.2 says an agent that finishes early takes a task from the idle queue. Phase 2's exit criteria also leave work to seed: every screen passing the gate at 100%, 200% and high contrast, boards 2 to 5 posted, the exceptions queue empty and the first blind audit O6. The rule: before you let a builder end its turn done with no product task, give it an open idle-queue task, or seed phase 2 exit work its files allow (an overflow sweep of its own screen in pt_BR at 200% text, fixes from the advisory gate notes on its screen, or the preparation for O6), and start it in the same cycle. Keep four seats filled while the seven-day bar reads allowed (order 3). This applies first to S2 and K1. Ack by adding M25 to your status acks.",
+      "sent_at": "2026-11-16T06:00:00Z",
+      "ack_by": "2026-11-16T08:00:00Z",
+      "acked_at": "2026-11-16T06:50:00Z"
     }
   ]
 }

@@ -25,6 +25,12 @@ shine. Result-2 and motion-2 are merged, so each objection goes to the lead
 as a request for a follow-up task in `docs/progress/status/AD.json`, each
 with a default.
 
+**Round 2 decision (board 4b, 16 November 2026): the board stands.**
+Objections A to E are met on the integration branch at `6b30142b`
+(P2-S1-result-3 merged as `19cfe498`, P2-AIA-motion-3 merged as
+`746c0651`), re-shot and checked in "Round 2" at the foot of this page.
+Nothing new holds the board; six notes carry to later work.
+
 ## How to read it
 
 - **Golden reference.** The result key frames that AD approved in place of
@@ -257,3 +263,91 @@ The board stands when objections A–E are fixed and re-shot (the stills of
 items 1 to 6 and the strips and clips of items 7 and 9), and AD has checked
 the new stills and strips on this page. Under section 3.8 of the report,
 the board merges when AD lets it stand, with no 24-hour wait.
+
+## Round 2 (board 4b)
+
+Posted by AD, P2-AD-board-4b, 16 November 2026, on the integration branch at
+`6b30142b`. The stills, strips and clips below were re-shot on that commit
+with the commands of `docs/art/tracks/result-screen.md`: the result shot
+with `SERVER=1 FIT=1` in English, Portuguese (Brazil) and German at 100%
+and 200% text and in high contrast in English and Portuguese, and the full
+and reduced strips with `STRIP`. Every still printed "fit ok". Draw calls:
+126, 128 and 128 at 100%; 113, 115 and 114 at 200%; 68 and 70 in high
+contrast, as S1's track records. Each still sits beside its golden
+reference (M12), and the check runs against the board's full list (M23),
+not only A to E.
+
+### Round 2 items
+
+![Result at 100%: key frame and build (English)](board-4/r4-1-result-100.png)
+
+![The same in grayscale](board-4/r4-1-result-100-gray.png)
+
+![The build at 100% under the colour-blindness filters](board-4/r4-1-result-100-cvd.png)
+
+![Result at 100%, Portuguese (Brazil) key frame, then the build in Portuguese and German](board-4/r4-2-result-pt-de.png)
+
+![Result at 200%: English key frame and build, Portuguese key frame and build](board-4/r4-3-result-200.png)
+
+![Result at 200%, German (AD-R26)](board-4/r4-4-result-de-200.png)
+
+![High contrast: English key frame and build, Portuguese key frame and build](board-4/r4-5-result-hc.png)
+
+![The reward row at 3×: key frame and build at 100%, then key frame and build in high contrast](board-4/r4-6-reward-cards.png)
+
+![The reward sequence, full: every fourth frame from frame 6](board-4/r4-7-reward-full.png)
+
+Clip: [r4-7-reward-full.mp4](board-4/r4-7-reward-full.mp4) (80 frames, the reward over in 1.93 s).
+
+![The reward sequence, reduced: every second frame from frame 7](board-4/r4-8-reward-reduced.png)
+
+Clip: [r4-8-reward-reduced.mp4](board-4/r4-8-reward-reduced.mp4) (32 frames, the reward over in 0.37 s).
+
+Item 9's tier strips are AIA's, re-made in P2-AIA-motion-3 and merged
+unchanged: `art/ui/motion/strips/reward_{common,rare,epic,epic_hc,reduced}.png`
+and their clips in `art/ui/motion/clips/`. AD checked them in AIA-R26
+(`docs/progress/status/AD.json`) and on the real screen in
+[r2-epic-burst-joint.png](board-4/r2-epic-burst-joint.png).
+
+### The objections, re-checked
+
+| ID | Quality | Round 2 | What the re-shot shows |
+|---|---|---|---|
+| A | 2 (and 6) | **Met** | "+2,310" is now deep gold with a heavy ink outline and a hard drop on the cream Starlight card, the heaviest word on the screen as in the key frame; "+805" and "+15" are cream with the same outline and drop (r4-6). In high contrast the three figures are solid with the outline, not hollow. In grayscale the lead figure reads by its outline. Under the colour-blindness filters nothing depends on colour alone. |
+| B | 14 | **Met** | At 200% in German, Sternenlicht, Essenz and Ruhm stand in one row above the action bar; the title steps down first (r4-4). English and Portuguese keep the row too (r4-3). The result shot's fit check now asserts that every reward tile ends above the first screen's edge on every `FIT` run. |
+| C | 5 | **Met** | On the screen, the prize gathers before the reveal: sparkles draw in on the medal (strip frame 5), then the burst opens well past the prize onto the sunburst and the title (frame 7) and clears before the coins (r4-7). The tier spread runs from about the chest's size in common to about 2.5 times it in epic, in AIA's strips and in their high-contrast form (AIA-R26). |
+| D | 5 | **Met** | The coins arc from the medal onto the Starlight star above the figure, and the figure rolls as they land: +0, +378, +911, +1,703, +2,288, +2,310, with Essence and Renown alongside. No frame shows a coin on a rolling digit (r4-7). Reduced: one coin on the icon, then the figures are set once (r4-8). |
+| E | 6 | **Met** | At 200%, Home is the icon square in English, Portuguese and German, and Raid again leads the bar (r4-3, r4-4). |
+
+Outside A to E, the rest stands as in round 1: the layout, the portraits,
+the law chips, the moment card, high contrast, the reduced reward form, the
+press and the shine. Objection F (the fold at 200%, S1-R29) stays met as in
+S1-R30. No new objection.
+
+### Notes carried, which do not hold the board
+
+- **The crew card at the fold, 100%, Portuguese and German** (S1). The bar
+  no longer cuts the faces in half, but a sliver of the card still shows
+  above it: in Portuguese and in high contrast Portuguese, the card's top
+  rim and the tops of the three portrait rings; in German, the rings to the
+  forehead and the line "Deine 5-köpfige Crew" (r4-2, r4-5). The fold rule
+  (`ResultFit.part_line`, less than one line of body text) does not count
+  the rings as a cut. Prefer ending the first screen at the card's header,
+  or hiding the sliver, as round 1 noted.
+- **The bar's gap at the foot, 100% English** (S1). The bar ends about
+  241 px (87 pt) above the screen's foot, against about 111 px (40 pt) in the
+  key frame. Round 1's "about 50 px" understated the same gap.
+- **"Taxa de entrada de" at 200%, Portuguese** (S1, from S1-R30). The first
+  screen ends on an unfinished phrase; keep a label's lines together at
+  the fold if it costs no draw call.
+- **The lead figure in grayscale** (S1). It reads by its ink outline at
+  mid-gray, lighter than the key frame's near-black "1,288". A deeper gold
+  would close the gap; it does not hold the board.
+- **No idle crew in the shot's fixture** (S1). The "Idle crew of N ready"
+  line under Raid again still cannot be checked.
+- **The press and the screen change** (AIA). As round 1: the press's sink is
+  at the low end of 2 to 4 pt, and the full screen change is barely distinct
+  from the reduced cross-fade.
+
+Under section 3.8 of the report, the board merges when AD lets it stand,
+with no 24-hour wait. AD lets it stand.

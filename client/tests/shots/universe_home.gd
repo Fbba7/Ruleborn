@@ -203,10 +203,44 @@ static func live(screen: Home) -> Array[String]:
 	return bad
 
 
+## Board 3's objections A and C (AD-R22, AD-R24): what home never drops at any
+## text size, with or without the raid notice. Collect, while anything waits,
+## with its whole rect inside the viewport; the goal, while there is one; the
+## chosen tab's name. One line each that fails.
+static func must_show(screen: Home) -> Array[String]:
+	var bad: Array[String] = []
+	var view := screen.get_viewport_rect()
+	var musts := {}
+	var waits := false
+	for p: Dictionary in App.services.store.get_slice(RosterState.ROSTER).get("view", {}).get("producers", []):
+		waits = waits or int(p.get("stored", 0)) > 0
+	if waits:
+		musts["Collect"] = screen.collect_button
+	if not screen.goal.is_empty():
+		musts["goal"] = screen.goal_card
+	var chosen := screen.tabs.buttons.get(screen.tabs.active, null) as Control
+	if chosen != null:
+		for l: Label in chosen.find_children("*", "Label", true, false):
+			if l.get_parent() is VBoxContainer:
+				musts["chosen tab's name"] = l
+	for key: String in musts:
+		var c := musts[key] as Control
+		if not c.is_visible_in_tree():
+			bad.append("%s hidden" % key)
+		elif not view.grow(1.0).encloses(c.get_global_rect()):
+			bad.append("%s %s not inside the viewport %s" % [key, c.get_global_rect(), view])
+		elif c.get_global_rect().size.x < 1.0 or c.get_global_rect().size.y < 1.0:
+			bad.append("%s has no size" % key)
+	return bad
+
+
 ## What does not fit on home, one line each: a label's words wider than the
 ## label, or outside its panel or button, or off the screen; one of home's parts over
 ## another; a realm's pin over another pin or over home's parts, or off the
-## screen; or some realms named over the whole universe and others not.
+## screen, nearer another than the pins' gap, or far from its island (S2-R20's
+## first objection: a named pin further from its point than `NEAR` of its
+## heights, a chip than `FAR`); or some realms named over the whole universe
+## and others not.
 static func fit(screen: Home) -> Array[String]:
 	var bad: Array[String] = []
 	var whole := Rect2(Vector2.ZERO, screen.size)
@@ -244,15 +278,28 @@ static func fit(screen: Home) -> Array[String]:
 		if not whole.grow(1.0).encloses(a):
 			bad.append("%s %s off the screen" % [keys[i], a])
 		for j in range(i + 1, keys.size()):
+			# Strain in the purse's fourth place at large text: the purse's flow
+			# keeps its places apart.
+			var outer := parts[keys[i]] as Control
+			var inner := parts[keys[j]] as Control
+			if outer.is_ancestor_of(inner) or inner.is_ancestor_of(outer):
+				continue
 			if a.grow(-1.0).intersects(shown[keys[j]]):
 				bad.append("%s %s over %s %s" % [keys[i], a, keys[j], shown[keys[j]]])
+	bad.append_array(must_show(screen))
 	bad.append_array(live(screen))
+	bad.append_array(kept(screen))
 	var pins := screen.world.pins
 	if not pins.is_visible_in_tree():
+		# Over the whole universe every realm is marked, a numbered chip at the
+		# least (board 3's objection C), never none.
+		if screen.world.zoom == 0:
+			bad.append("no realm marked over the whole universe")
 		return bad
 	var named: Array[String] = []
 	var missing: Array[String] = []
 	var boxes := {}
+	var forms := {}
 	for id: String in screen.world.islands:
 		var pin := pins.realm_pin(id)
 		if pin == null:
@@ -260,8 +307,20 @@ static func fit(screen: Home) -> Array[String]:
 		if pin.is_visible_in_tree():
 			named.append(id)
 			boxes[id] = pin.get_global_rect()
+			var mark: Vector2 = pins.global_position + (pin.get_meta("anchor", Vector2.ZERO) as Vector2)
+			var words := (pin.get_child(0).get_child(1) as Control).visible
+			forms["%s %s" % [words, (pin.get_child(0).get_child(0) as Control).visible]] = id
+			var reach := pin.size.y * (UniversePins.NEAR if words or (pin.get_child(0).get_child(0) as Control).visible
+				else UniversePins.FAR)
+			var off := UniversePins._off(boxes[id], mark)
+			if off > reach + 0.5:
+				bad.append("pin %s %s %.0f px from its island's point %s (at most %.0f)" % [id, boxes[id], off, mark,
+					reach])
 		else:
 			missing.append(id)
+	if forms.size() > 1:
+		# One form for every realm (AD's objection (b) on S2-R22).
+		bad.append("realm pins in %d forms: %s" % [forms.size(), forms])
 	if screen.world.zoom == 0 and not missing.is_empty():
 		bad.append("realms %s named and %s not" % [named, missing])
 	var ids := boxes.keys()
@@ -270,9 +329,38 @@ static func fit(screen: Home) -> Array[String]:
 		if not whole.encloses(a):
 			bad.append("pin %s %s off the screen" % [ids[i], a])
 		for j in range(i + 1, ids.size()):
-			if a.grow(-0.5).intersects(boxes[ids[j]]):
-				bad.append("pin %s %s over pin %s %s" % [ids[i], a, ids[j], boxes[ids[j]]])
+			if a.grow(UniversePins.pin_gap() - 1.0).intersects(boxes[ids[j]]):
+				bad.append("pin %s %s within %.0f px of pin %s %s" % [ids[i], a, UniversePins.pin_gap(), ids[j],
+					boxes[ids[j]]])
 		for key: String in shown:
 			if a.grow(-0.5).intersects(shown[key]):
 				bad.append("pin %s %s over %s %s" % [ids[i], a, key, shown[key]])
+	return bad
+
+
+## AD's objections (a) and (c) on S2-R22, kept: the chosen tab's raised
+## picture clear of the goal and Collect, and at 100% text the purse's three
+## pills in one row. One line each that fails.
+static func kept(screen: Home) -> Array[String]:
+	var bad: Array[String] = []
+	var tabs := screen.tabs
+	if tabs != null and tabs.buttons.has(tabs.active):
+		var tile := (tabs.buttons[tabs.active] as Control).find_child("Tile", true, false) as Control
+		var foot := {"goal": screen.goal_card, "collect": screen.collect_button}
+		if tile != null:
+			for t: TextureRect in tile.find_children("*", "TextureRect", false, false):
+				var at := t.get_global_rect()
+				for key: String in foot:
+					var c := foot[key] as Control
+					if t.is_visible_in_tree() and c != null and c.is_visible_in_tree() \
+							and at.grow(-1.0).intersects(c.get_global_rect()):
+						bad.append("the chosen tab's picture %s over %s %s" % [at, key, c.get_global_rect()])
+	if Settings.text_scale < 150:
+		var rows := {}
+		for k: String in screen.pills:
+			var pill := screen.pills[k] as Control
+			if pill.is_visible_in_tree():
+				rows[roundi(pill.get_global_rect().position.y)] = k
+		if rows.size() > 1:
+			bad.append("the purse in %d rows at 100%% text: %s" % [rows.size(), rows])
 	return bad

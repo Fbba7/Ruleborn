@@ -226,3 +226,30 @@ Notes carried to the next round, which do not hold the board:
 The board stands when objections A–D are fixed and re-shot, and AD has
 checked the new stills on this page. Under section 3.8 of the report, the
 board merges when AD lets it stand, with no 24-hour wait.
+
+## Preview of home-3 (S2-R25)
+
+AD re-checked S2-R22's objections (a) to (e) on `claude/ui-screens-home` at
+`823d2eac`, against this board's full list (M23). The full answer is S2-R25
+in `docs/progress/status/AD.json`. (a), (c), (d) and (e) stand as fixed. One
+objection, (f), holds P2-S2-home-3 until S2 fixes it: in German at 200%
+every realm pin is a wide, empty cream plate, with the level number drawn
+over the realm's icon.
+
+At 200% text: English, German, high contrast.
+
+![Home at 200%: en, de, high contrast](board-3/r2-home-200.png)
+
+German at 200%, the pins.
+
+![German 200% pins](board-3/r2-home-de200-pins.png)
+
+At 200% with the notice: en, de, pt_BR, fr, then en at 900 tall. AD
+accepts this for home-3: in pt_BR, fr and en at 900 the realm chips give
+way all together. It does not stand for board 3b, which re-checks these
+cases once S2-R24 (KitTabs) gives back dock height.
+
+![Home at 200% with the notice](board-3/r2-home-notice-200.png)
+
+German and English at 100%, the purse in one row:
+[`r2-home-100-purse.png`](board-3/r2-home-100-purse.png).

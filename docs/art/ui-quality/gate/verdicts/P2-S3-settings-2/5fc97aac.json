@@ -1,0 +1,76 @@
+[
+  {
+    "task_id": "P2-S3-settings-2",
+    "sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T05:00:00Z",
+    "item": "settings at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three. Every word sits on a plate or card, none over the starfield; the '100%' figure carries an ink outline, a hard drop and a gradient, and the title and group headers of one rank share one treatment."
+  },
+  {
+    "task_id": "P2-S3-settings-2",
+    "sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T05:00:00Z",
+    "item": "settings at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "fail",
+      "pass",
+      "fail",
+      "fail",
+      "fail",
+      "pass"
+    ],
+    "result": "fail",
+    "critique": "Split on the first three (one pass, two fails), so three more were taken: four fails of six, a fail (advisory). Settings has no primary, so the title must be where the eye lands first in grayscale and the title and group headers must outrank the rows. The four fails read the 'Settings' title as light type on a dark plate that sinks into the night ground, while the full-width cream tab strip, the large bright Stillness card and the cream toggle rows carry more weight; the 'Access' and 'Seeing and comfort' headers are small dark pills below the rows they head, and one fail adds that the gold A text-size buttons and the '100%' figure are louder than the title. The two passes put the title first as the largest type at the top, the headers outranking the rows by size (v3: lightness alone does not decide). Notes for board 5b: lift the title plate's value or weight, give the group headers more weight than the rows, and quieten the tab strip and the Stillness card in grayscale."
+  },
+  {
+    "task_id": "P2-S3-settings-2",
+    "sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T05:00:00Z",
+    "item": "settings at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three. No words over art; '200%' keeps its thick outline scaled up, with a gold gradient and a heavier lower edge; the serif headers match one treatment."
+  },
+  {
+    "task_id": "P2-S3-settings-2",
+    "sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T05:00:00Z",
+    "item": "settings at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "fail",
+      "fail",
+      "pass",
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Split on the first three (two fails, one pass), so three more were taken: five fails of six, a fail (advisory). In grayscale the large cream 'Stillness' text-size preview card, prose and information only, is both larger and lighter than the 'Ajustes' title plate and draws the eye first (v3: an information panel larger and heavier than the lead competes), with the light tab strip next; the 'Acesso' group header is smaller and quieter than the A/200%/A row under it and than the tab of the same name. The one pass read 'Ajustes' as the largest type at the top with the card holding information only. Notes for board 5b: at 200% shrink or darken the preview card (or drop its plate to the row's value), quieten the tab strip, and give the title and group headers the weight to lead."
+  }
+]
