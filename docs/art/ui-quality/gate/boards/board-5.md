@@ -658,3 +658,122 @@ in English, pt_BR and German with its next arrow, subtitle, tabs and info
 grid whole, and `checks.py value-steps` passes the profile row on
 `settings-account-100` and `settings-account-de`. A round 3 re-checks K
 and L only; A to J stay settled unless the fix touches their code.
+
+## Round 3 (board 5c)
+
+Posted by AD, P2-AD-board-5c, 16 November 2026, on the integration branch
+at `570c4b5b` (P2-S3-character-3 merged as `0ee8d9d8`). As the round 2
+decision set out, AD re-checked only objections K and L. A to J stay
+settled: character-3 changed the top-level pill (`character_screen.gd`
+`_top_level`), the profile row (`screen_account.gd` `profile_row`), the
+Account tab's stacking at large text (`auth_panel.gd` `_item` and
+`_put_under`) and the settings shot. None of these is code that A to J's
+fixes rest on.
+
+**Method.** `tools/render/shoot.sh` on `character_screen.gd` and
+`screen_settings.gd` with `FIT=1 RECORD=1`, `TEXT`, `LOCALE`, `HC`, `ID`,
+`TAB` and `SIGNED=1`; `tools/ui_gate/checks.py value-steps` on AD's own
+shot records; `tools/ui_gate/sheet.py strip` for the sheets. Every render
+printed "fit ok": character 4 at 100% English, at 200% in English, pt_BR
+and German, on all three tabs at 200% German, and in high contrast
+English; character 5 at 200% pt_BR; the Account tab signed out and signed
+in at 100% English and German, signed out at 200% pt_BR, and in high
+contrast English, signed out and signed in. Draw calls were 35 to 91,
+within the budget.
+
+**Round 3 decision: board 5 stands on K and L.** Both are fixed. One new
+light objection, M, was found on the signed-in Account tab, which round 2
+did not check with `value-steps`. It goes to the lead as a request with a
+default (AD-R43). Its fix is closed by a scripted check, so no round 4 is
+needed.
+
+### K: the highest level at 200%
+
+Stands as fixed. Character 4 (Mossbear, level 10 of 10) prints "fit ok"
+at 200% in English, pt_BR and German, where round 2 had 14 "fit FAIL"
+lines. The "at the highest level" pill now wraps between words inside the
+bar: "at the / highest level", "no nível / máximo", "auf der / höchsten /
+Stufe". It keeps its star, and its `accessibility_name` carries the whole
+words. The next arrow is back. The subtitle is whole ("Mossbear ·
+Warden", "· Sentinela", "· Wächter"). The tab strip and the info grid sit
+inside 1080. In German at 200% the Stats and Compare tabs also print "fit
+ok", and character 5 at 200% pt_BR (the state pill's case, H) still holds.
+`docs/art/shots/menu-screens/fit_character.sh` now covers characters 1 to
+5 on all three tabs at 200% in English, pt_BR and German, so the merge
+check will catch this case from now on.
+
+From left: key frame 200%, character 4 at 100% English, then at 200% in
+English, pt_BR and German.
+
+![Highest level: key 200; ID 4 en 100%; ID 4 at 200% en, pt_BR, de at 570c4b5b](board-5/r8-character-max-level.png)
+
+From left: key frame 200%, character 4 at 200% German on Stats and on
+Compare, character 4 in high contrast English, character 5 at 200% pt_BR.
+
+![Highest level, tabs: key 200; ID 4 de Stats, de Compare; ID 4 hc en; ID 5 200% pt_BR](board-5/r8-character-max-level-tabs.png)
+
+### L: the profile row's value step
+
+Stands as fixed. The profile row ("Profile and stats") is now a parchment
+item, `ScreenParts.item` on a cream plate, and the whole plate is the tap
+target. `checks.py value-steps` passes it on AD's renders: ΔL* 72.7 in
+English and 72.2 in German at 100%, and 80.1 in high contrast English.
+Round 2 measured 2.5 and 3.6. Signed out, every control on the Account tab
+passes.
+
+From left: key frame, the Account tab signed out at 100% English, German,
+high contrast English and 200% pt_BR, then signed in at 100% English.
+
+![Account tab: key; signed out en, de, hc en, 200% pt_BR; signed in en at 570c4b5b](board-5/r8-settings-account.png)
+
+### M: the leather sign-out buttons, signed in
+
+The signed-in shot now dispatches the devices, so the Devices section
+renders for the first time. On the night, at 100%, two leather "Sign out"
+buttons fail `value-steps`. They sit on the dark section card (L* about
+13), not on the night itself:
+
+| Record | Control | Face L* | Ground L* | ΔL* | Steps |
+|---|---|---:|---:|---:|---:|
+| signed in, 100% English | button 4: Sign out | 29.3 | 13.0 | 16.3 | 1.6 |
+| signed in, 100% English | button 6: Sign out: Android phone | 29.1 | 13.0 | 16.1 | 1.6 |
+| signed in, 100% German | button 4: Abmelden | 30.1 | 12.6 | 17.5 | 1.8 |
+| signed in, 100% German | button 6: Abmelden: Android-Handy | 30.1 | 13.0 | 17.0 | 1.7 |
+
+The same leather buttons pass where their ground is the darker night
+("Sign out every other device", ΔL* 24.1 and 25.3). The gold "Sign out
+everywhere" passes at 50.6. In high contrast every sign-out button passes
+(ΔL* 30.4 to 36.7). The buttons read, by their words and their rim, but
+they are the one pair of controls on the tab under 2 value steps. This
+was not caused by character-3: the 100% side-by-side layout of
+`auth_panel.gd` is unchanged. Round 2's signed-in still had no Devices
+section, and round 2 ran `value-steps` only on the signed-out records.
+
+### Objections
+
+| ID | Item | Quality | Objection | Proposed fix | Owner |
+|---|---|---|---|---|---|
+| M | 10 (Account tab, signed in) | 8 | On the signed-in Account tab at 100%, the leather "Sign out" buttons on the section card fail value steps: ΔL* 16.1 to 17.5 (1.6 to 1.8 steps; 2 are needed) in English and German. | In `client/scripts/auth_panel.gd` `_button`, give the leather actions that sit on a section card a lighter face, or put them on the parchment plate the profile row now uses, so each is at least 2 value steps off its ground. Re-run `checks.py value-steps` on the signed-in 100% English and German records. | S3 |
+
+Notes, which do not hold the board:
+- The gate's advisory verdict on character-3 at `a6d5f2fb` fails Display
+  type at 200% pt_BR on the subtitle and level line: a drop shadow but no
+  outline. Those labels are unchanged since character-2 passed the same
+  check at `6b7e6b42`, and character-3 did not touch them. AD reads this
+  as the judge's run-to-run variation, not a change, so D stays settled.
+- At 200% German the top-level pill takes three lines, so the bar is
+  taller and the first screen shows only the ability card's header and
+  the "TWO USES A…" chip at the bar's edge. This is the same trade B
+  settled for the state pill, and the card is one scroll away.
+- `_hide_kicker` can now be checked: signed in, the Devices section shows
+  its "SIGNED-IN DEVICES 2" kicker. The round 2 note is closed.
+- Earlier notes stand: the faint `card_gold` rim, the gear at 200%, the
+  dock's height and the selected tab's brown (K1), and English content in
+  pt_BR and German.
+
+### When the board stands
+
+Board 5 stands: A to L are fixed or settled. M is a light value-step miss,
+closed by a scripted check rather than by another AD round. The follow-up
+S3 task is done when `checks.py value-steps` passes every control on the
+signed-in Account tab at 100% in English and German.

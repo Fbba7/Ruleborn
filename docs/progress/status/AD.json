@@ -4,16 +4,16 @@
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-AD-board-5b",
-  "task_state": "working",
-  "claimed_at": "2026-11-16T07:47:00Z",
-  "lease_until": "2026-11-16T10:47:00Z",
-  "updated_at": "2026-11-16T09:20:00Z",
-  "expected_next_update_by": "2026-11-16T10:20:00Z",
+  "task_id": "P2-AD-board-5c",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-16T13:55:00Z",
+  "lease_until": "2026-11-16T16:55:00Z",
+  "updated_at": "2026-11-16T14:45:00Z",
+  "expected_next_update_by": "2026-11-16T15:30:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
-    "next_step": "Pre-check the board 5b write-up, record it, then mark ready."
+    "last_green_sha": "d48c880e923831a7336288403937b33726dc02f7",
+    "next_step": "Pre-check the board 5c write-up (K and L fixed, M open as AD-R43), record it, then mark ready."
   },
   "precheck": null,
   "gate_request": null,
@@ -551,6 +551,36 @@
       "due": "2026-11-18T09:20:00Z",
       "default": "folded into the same follow-up S3 task as AD-R40; board 5 round 3 re-checks it with K",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R42",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 4, objection G, from AD's preview of P2-S1-result-4 (S1-R31). Display type at 200% pt_BR, matching M30 and the advisory gate's 3-of-3 fail. The words set straight on the sunburst sky have no ink outline that scales with the text: the gold kicker, the grade word, and the summary, time, fee and server lines, plus the refused, testing and play state lines. Fix in result_screen.gd: a dark outline of max(1.5 pt, 12% of the font size), computed after the text scale, with the kicker cream or outlined gold. Then send the gate request for Display type at 200% pt_BR at the new head. Details in board-4.md, 'Preview of result-4 (S1-R31)'.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-4.md",
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T12:10:00Z",
+      "due": "2026-11-18T12:10:00Z",
+      "default": "S1 fixes G inside P2-S1-result-4 before its gate request; no separate task. If result-4 merges without it, the lead opens a follow-up S1 task for G",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R43",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5, objection M, from round 3 (P2-AD-board-5c). On the signed-in Account tab at 100%, the leather 'Sign out' buttons on the section card fail value steps: English button 4 'Sign out' dL* 16.3 and button 6 'Sign out: Android phone' 16.1; German 17.5 and 17.0 (1.6 to 1.8 steps, 2 needed). The same buttons pass on the darker night (24.1, 25.3) and in high contrast. Not caused by character-3: the 100% layout of auth_panel.gd is unchanged, and the shot now dispatches the devices. Fix in client/scripts/auth_panel.gd _button: a lighter face for the leather actions on a section card, or the parchment plate the profile row uses. Details in board-5.md, 'Round 3 (board 5c)', M.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/auth_panel.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T14:45:00Z",
+      "due": "2026-11-18T14:45:00Z",
+      "default": "The lead opens a follow-up S3 task for M, done when tools/ui_gate/checks.py value-steps passes every control on the signed-in Account tab records at 100% in English and German; no AD round 4. Board 5 stands on K and L meanwhile",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -643,8 +673,18 @@
       "request_id": "S3-R21",
       "answer": "J stands as fixed at 9e602fcc (claude/ui-screens-meta; d66e9521 merged with main). Only settings_screen.gd changed since the S3-R20 preview at 3854db00: PLATE_TOP 0 (no top/bottom padding on the title and heading plates). AD rendered the Access tab at 9e602fcc with FIT=1 at 100% pt_BR, de, en and high contrast pt_BR: all 'fit ok', each pixel-identical to S3's committed still (mean diff 0.0). The High contrast row is on the first screen again in pt_BR, de and hc pt_BR (switch-row 11 at y 622-674 pt of 845, under its heading, above the chevron, as on the pt_BR key frame); checks.py all passes on settings-pt_BR, -de, -hc-pt_BR and -100 (row 11 delta L* 67.2, 67.0, 75.0). English keeps both switch rows. The Hierarchy fixes are kept, and the plates still hold their words with room at 100%, at 200% de and on the Account tab. Against board 5's full list (M23) nothing new holds P2-S3-settings-2: S3 may mark it ready at 9e602fcc with the gate_request there; the lead may merge it with P2-AD-board-3b. Board 5b's notes stand. board-5.md, 'Re-check of objection J (S3-R21)'.",
       "at": "2026-11-16T07:00:00Z"
+    },
+    {
+      "request_id": "S2-R31",
+      "answer": "Preview of P2-S2-home-4 at 1697a6c6 (claude/ui-screens-home), H's home half only. All 12 cases print 'fit ok' at 200%: pt_BR, pt_PT and fr with and without the notice, en and de with the notice, en at 900 tall with and without. In each, the four side buttons show as whole discs (Defence and Lab in the left column, Season and Shop at the top right beside the keeper plate) and all seven realms show as numbered chips, uncut and uncovered: board 3's standing condition is met for home's half. The place trade is accepted: at 150% text and up, Season and Shop stand in the top row instead of a column beside the realms' band. A column on both edges leaves the realms no room at 200% with the notice; the top right is clear and within reach, and 100% and 125% keep the key frames' column. Notes, not holding: with the notice the chips pack tightly over the world art (no overlap); the chosen tab's picture straddling the bar's edge is K1's half (AD-R38), checked in board 3c; S2's own open points (the goal's three lines, the notice dropping its red disc in de, home/200 draw calls 119 to 121 under S2-R30) do not hold. S2's default holds: send the gate request at the pre-checked commit. Board 3c re-checks H when tabs-3 and home-4 are both merged. board-3.md, 'Preview of home-4 (S2-R31)'.",
+      "at": "2026-11-16T12:10:00Z"
+    },
+    {
+      "request_id": "S1-R31",
+      "answer": "Preview of P2-S1-result-4 at 8753618a (claude/ui-screens-heist) against board 4's full list (M23). All ten stills print 'fit ok' (en 100%; pt_BR, de, en 200%; hc en and pt_BR; STATE refused de 200%, testing de 200%, confirming pt_BR 200%, play pt_BR 200%). What stands: Home and the law pills on the tertiary violet face; Home icon-only at 200% (E); the fold at 200% pt_BR ends on the Renome tile; the reward tiles keep their currency icons; 'Veröffentlichen' whole; A to F stay met. One objection holds, G (Display type, as M30 and the advisory gate): the gold kicker over the sky has no ink outline, 'Limpo' keeps a thin outline where the key frame's grade is heavily inked, and the summary, time, fee and server lines (and the refused, testing, play state lines) keep a hairline about 2-3 px on 45 px glyphs that does not grow at 200%. Fix (S1, result_screen.gd, the labels set straight on the sky): a dark ink outline of max(1.5 pt, 12% of the font size), computed after the text scale; kicker cream as the key frames, or gold with that outline; labels on cards and plates unchanged. Re-render 200% pt_BR, de, en and hc, then send the gate request for Display type at 200% pt_BR at the new head. So the default (gate on 8753618a as it stands) does not hold; S1 fixes G inside P2-S1-result-4 (AD-R42 to the lead). Notes carried, not holding: the crew card's sliver above the bar in hc pt_BR 100%, and round 2's other notes. board-4.md, 'Preview of result-4 (S1-R31)'.",
+      "at": "2026-11-16T12:10:00Z"
     }
   ],
-  "next_step": "Pre-check, record, mark ready.",
-  "last_update": "2026-11-16T09:20:00Z"
+  "next_step": "Pre-check the board 5c write-up (K and L fixed, M open as AD-R43), record it, then mark ready.",
+  "last_update": "2026-11-16T14:45Z: board 5c written. K and L stand as fixed on main 570c4b5b (character 4 at 200% fit ok in en, pt_BR, de; profile row dL* 72.7/72.2). New light objection M (signed-in leather sign-out buttons, dL* 16.1 to 17.5) to the lead as AD-R43 with a scripted-check default. Pre-check next."
 }
