@@ -98,15 +98,10 @@ func _ready() -> void:
 	App.ready(self)
 	var heist: Dictionary = App.services.store.get_slice(AppState.HEIST)
 	var v0: Dictionary = heist["verdict"]
-	# The kit's frame: the night, and the column inside the safe areas. A
-	# heist that paid turns the night to the sunburst behind its title; a
-	# foiled or refused one keeps the plain night (§23.2: "Celebrate or
-	# learn"). High contrast keeps the plain night, as key frame 03-result_hc:
-	# no rays, stars or glow behind the words (AD's S1-R24, as Collect's
-	# shine).
+	# The kit's frame: the night, and the column inside the safe areas; the
+	# sunburst behind the title where the outcome celebrates (`_celebrates`).
 	var column := UI.frame(self)
-	if v0.get("ok", false) and str(v0.get("grade", "")) in ["Clean", "Loud", "Partial"] \
-			and not Settings.high_contrast:
+	if _celebrates(v0):
 		KitNav.celebrate(self)
 	_build_world(heist)
 	if world_view != null:
@@ -156,7 +151,7 @@ func _ready() -> void:
 	paid.add_child(check_label)
 	# The lines under the tiles stand on the night with no plate.
 	for l: Label in [fee_label, detail_label, check_label]:
-		_ink(l, float(l.get_meta("points", UI.TEXT_POINTS)))
+		ResultFit.ink(l)
 	# The totals as the home's display figures: the lead deep gold, the
 	# others cream (key frame 03's "1,288", "+46" and "+12").
 	_display(haul_label, "starlight")
@@ -250,21 +245,11 @@ func _hero() -> VBoxContainer:
 	subline_label = UI.label("", 14, true)
 	subline_label.theme_type_variation = "Secondary"
 	hero.add_child(subline_label)
-	_ink(kicker_label, 14)  # The hero's words stand on the sunburst, unplated.
-	_ink(grade_label, TITLE_POINTS)
+	# The hero's words stand on the sunburst, unplated: inked by their size.
+	for l: Label in [kicker_label, grade_label, condition_label, subline_label]:
+		ResultFit.ink(l)
 	grade_label.add_theme_color_override("font_shadow_color", Color.TRANSPARENT)  # Outline for drop.
-	_ink(condition_label, 16)
-	_ink(subline_label, 14)
 	return hero
-
-
-## An ink outline round words on the art with no plate: 1.5 points or 12% of
-## their size (§21.8), as `UI.world_words`; 3 points in high contrast.
-static func _ink(l: Label, points: float) -> void:
-	if Settings.high_contrast:
-		points = maxf(points, 25.0)
-	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
-	l.add_theme_constant_override("outline_size", UI.px(maxf(1.5, 0.12 * points) + 0.5))
 
 
 ## A reward's total as the home's figures ("Keeper 24", `Home.home_figure`):
@@ -388,9 +373,10 @@ func _face(picture: Texture2D) -> KitRing:
 	return ring
 
 
-## The plain result's bar at the phone's foot (key frame 03): Home on
-## parchment, and the next raid as the main action, wide, in gold (in red
-## when the heist was foiled), with how many of the roster are idle to go.
+## The plain result's bar at the phone's foot (key frame 03): Home in the
+## kit's tertiary face (violet, darker than the raid in grayscale: the gate's
+## close point on P2-S1-result-3), and the next raid as the main action, wide,
+## in gold (red when foiled), with how many of the roster are idle to go.
 func _raid_bar(foiled: bool) -> PanelContainer:
 	# On glass, as the design's: the tab bar's skin runs off the screen at its
 	# foot, and here the bar stands in the page.
@@ -400,7 +386,7 @@ func _raid_bar(foiled: bool) -> PanelContainer:
 	var row := BoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_theme_constant_override("separation", UI.px(8))
-	var home := UI.action(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "parchment")
+	var home := UI.action(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "ghost")
 	home.icon = Icons.texture("hud/home")
 	home.expand_icon = false
 	home.add_theme_constant_override("icon_max_width", UI.px(26))
@@ -494,23 +480,38 @@ func _process(delta: float) -> void:
 		world_view.sway(sin(_clock * 0.25) * 0.5)
 
 
-## The reward (report.md step 8) on the kit's `Motion.reward`: the medal
-## bursts and coins fly into the Starlight tile (else the haul's), the other
-## tiles counting with it, in the outcome's tier (TIERS); its reduced form
-## with reduced motion. With nothing to reward it ends at once and returns
-## null; else it returns the sequence's tween.
+## The reward (report.md step 8) on the kit's one entry point, K40's
+## `KitNav.reward`: the medal bursts and coins fly into the Starlight tile
+## (else the haul's), the other tiles counting with it, in the outcome's tier
+## (TIERS); its reduced form with reduced motion. With nothing to reward it
+## ends at once and returns null; else it returns the sequence's tween.
 func start_reward() -> Tween:
 	var to := _reward_to()
 	if to <= 0 or not grade_icon.visible or not is_inside_tree():
 		_end_reward.call_deferred()
 		return null
 	var tile := _reward_mark()
+	var tier := str(TIERS.get(str(_verdict.get("grade", "")), "common"))
 	_write_reward(0, to)
-	reward_tween = Motion.reward(grade_icon, tile, 0, to, str(TIERS.get(str(_verdict.get("grade", "")), "common")),
-		_write_reward.bind(to))
+	reward_tween = KitNav.reward(self, grade_icon, tile, 0, to, tier, _write_reward.bind(to))
+	if reward_tween == null:
+		_end_reward.call_deferred()
+		return null
+	# KitNav.reward dresses the sunburst too (as `_ready` did); where the
+	# outcome keeps the plain night, the night goes back (S1-R32).
+	if not _celebrates(_verdict):
+		RbBox.dress(get_node("Sky") as Control, "night", 0)
 	_lift_reward()
 	reward_tween.finished.connect(_end_reward)
 	return reward_tween
+
+
+## A heist that paid turns the night to the sunburst; a foiled or refused one
+## keeps the plain night (§23.2: "Celebrate or learn"), and so does high
+## contrast, as key frame 03-result_hc: no rays behind the words (AD's S1-R24).
+func _celebrates(v: Dictionary) -> bool:
+	return v.get("ok", false) and str(v.get("grade", "")) in ["Clean", "Loud", "Partial"] \
+			and not Settings.high_contrast
 
 
 ## Motion's reward layer is `top_level`, so its z of 10 does not add to the
@@ -666,12 +667,12 @@ func _study_card() -> PanelContainer:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	title.set_meta("bold", true)
 	box.add_child(title)
-	# The laws side by side on parchment, each an equal share, its icon then
-	# its name, which wraps between words; stacked at large text. More than
-	# three go two to a row.
+	# The laws side by side in the tertiary face as Home, each an equal share,
+	# its icon then its name, which wraps between words; stacked at large
+	# text. More than three go two to a row.
 	var laws: Array[Control] = []
 	for law: String in _crossed:
-		var b := UI.action(Strings.term("LAW", law), func() -> void: _study(law), "parchment", Strings.term("LAW", law))
+		var b := UI.action(Strings.term("LAW", law), func() -> void: _study(law), "ghost", Strings.term("LAW", law))
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		# A law's name in the title family, as the key frame's law papers and
 		# the kit's law names (type role "heading"), at body size.
@@ -739,7 +740,7 @@ static func keeper_name() -> String:
 ## A result button in the kit's material.
 func _button(words: String, call: Callable, kind := "leather") -> Button:
 	var b := UI.action(words, call, kind)
-	UI.fit(b)
+	ResultFit.fit_whole(b)
 	return b
 
 

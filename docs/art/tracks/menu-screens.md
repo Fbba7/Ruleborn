@@ -236,6 +236,24 @@ The ΔL* that value-steps measures:
 - **English content.** The ability's sentence, "Two uses a heist" and "Hauls loot" are English in pt_BR and German. This is content localisation, not the screen's work, and the pt_BR key frame shows the same.
 - **The earlier list.** Its first and third points, the level badge and the tabs at 200%, are answered above (D and B).
 
+### Board 5b's objection K (P2-S3-character-3)
+
+- **K: the highest level at 200% text.** At its highest level the tray's dark pill (`CHARACTER_TOP_LEVEL`, "at the highest level") held its words on one line. At 200% that line is wider than the phone ("auf der höchsten Stufe", 987 px of words in 900), and the pill pushed the whole screen wider: the next arrow, the subtitle, the tabs and the info grid ran off it. The pill is now built by `_top_level` in `client/scripts/character_screen.gd`. At large text (`_large()`, as H's state pill) it takes the tray's width beside the way back, as Level up does, and its words wrap between words inside it, never inside one word, centred beside the star. At 100% it is the one-line pill as before. Its `accessibility_name` carries the words at every size.
+- **Why wrap, not the star alone.** AD offered both. The state pill went icon-only for H because it stood on the character's face. This pill stands in the tray, where there is room: a reader who chose large text still reads "at the highest level" there, not a star whose meaning only a screen reader says.
+- **The fit check** covers character 4 now. `fit_character.sh` takes an optional third field, the fixture's `ID`, and renders character 4 (Mossbear, level 10 of 10) at 200% in English, pt_BR and German. All eleven shots print `fit ok`. On the code before this fix, the German shot of character 4 at 200% printed `fit FAIL` (the info grid's labels past the screen's edge), so the check catches K.
+
+#### Evidence
+
+The stills and records are in `docs/art/shots/menu-screens/`, rendered with `FIT=1 RECORD=1 TEXT=200 LOCALE=<locale> ID=4 bash tools/render/shoot.sh client/tests/shots/screen_character.gd <still>`. Each printed `fit ok`.
+
+| Still | Arrows | Tabs | Back |
+|---|---:|---:|---:|
+| `character-200-en-4.png` | 58 and 56 | 62 | 77 |
+| `character-200-pt_BR-4.png` | 58 and 56 | 61 | 77 |
+| `character-200-de-4.png` | 58 and 56 | 60 | 77 |
+
+The table gives the ΔL* that `checks.py value-steps` measures. `checks.py all` passes on the three records, with no FAIL. In all three the next arrow, the subtitle ("Mossbear · Wächter" whole) and the tabs are on the first screen, the info grid below them is within the phone's width (the fit check), and the pill reads on two lines in English and pt_BR and three in German. The other character stills are unchanged. Their fixtures (character 5, and 1 to 3) are not at the highest level, and at 100% and in high contrast the pill is built as before.
+
 ## Part 3: the settings screen (P2-S3-settings)
 
 ### What was done
@@ -396,7 +414,57 @@ The lead's gate at 5fc97aac (`docs/art/ui-quality/gate/verdicts/P2-S3-settings-2
 
 - **AD's objection J (S3-R20's preview).** The taller title plate (+9 points) and headings (+3 each) pushed the second group down about 15 points, so at 100% in pt_BR, German and high contrast pt_BR the High contrast row left the first screen and "Visão e conforto" stood alone above the chevron. The title and heading plates now have no top or bottom padding (`PLATE_TOP`, was 4 and 2 points): the display face's own line height leaves room over and under the words. That gives back 16 points, and the row is on the first screen again in all three (`switch-row 11` in their records), with the Hierarchy fixes kept.
 
-Evidence: the nine stills and records are re-shot (`settings-100`, `-pt_BR`, `-de`, `-200-pt_BR`, `-200-de`, `-hc`, `-hc-pt_BR`, `-account-100`, `-account-de`). `checks.py all` has no new FAIL on them; the only FAIL is the account profile row, `screen_account.gd`'s (S3-R18). `fit_settings.sh` prints `fit ok` for all twelve shots. In grayscale the title on its lit plate, the gold headings and the gold As lead; the cream switch rows stay bright, which the notes did not ask to change.
+Evidence: the nine stills and records are re-shot (`settings-100`, `-pt_BR`, `-de`, `-200-pt_BR`, `-200-de`, `-hc`, `-hc-pt_BR`, `-account-100`, `-account-de`). `checks.py all` has no new FAIL on them; the only FAIL was the account profile row, `screen_account.gd`'s (S3-R18), fixed for board 5b's L below. `fit_settings.sh` prints `fit ok` for all twelve shots. In grayscale the title on its lit plate, the gold headings and the gold As lead; the cream switch rows stay bright, which the notes did not ask to change.
+
+### Board 5b's objection L (P2-S3-character-3)
+
+- **L: the profile row's value step (S3-R18).** `checks.py value-steps` failed the Account tab's "Profile and stats" row at 3 ΔL* off its ground. There were two causes. The row stood on the dark violet card, about the night's value. And the row's tap target, `ScreenParts.tap`'s clear button, sat inside the card's margins. The record takes the control's rectangle from that button, so the ring of ground that value-steps reads fell on the row's own card. A first try put the row on parchment and still failed, at 0 ΔL*, parchment against parchment.
+- **The fix**, in `ScreenAccount.profile_row` (`client/scripts/screen_account.gd`). The row is on parchment, the plate the Access tab's switch rows stand on, with the words and the › in parchment's dark ink. A clear wrapper with no margins holds the plate and the tap target, so the target covers the plate edge to edge, as a switch row's button does. The whole plate answers a tap, its rim too, and the record's rectangle is the plate. `screen_parts.gd` is unchanged, so the other screens' items keep theirs.
+
+Evidence: `settings-account-100` and `settings-account-de`, stills and records, are re-shot with `FIT=1 RECORD=1 TAB=account` (and `LOCALE=de`), and both printed `fit ok`. `checks.py value-steps` passes every control on both: the profile row at ΔL* 72.7 in English and 72.2 in German (it was 2.5 and 3.6 on AD's board), the tabs at 71.5 and the back button at 83.6. `checks.py all` has no FAIL, so the Account tab has no failing control left. `fit_settings.sh` prints `fit ok` for all twelve shots.
+
+### Every fixture state in the fit checks (lesson M26, P2-S3-character-3)
+
+Lesson M26 asks that a screen's fit check covers every state the screen shows, at 200% text in English, pt_BR and German. Both scripts now do.
+
+- **`fit_character.sh`, 50 shots.** Character 5 on its Heist tab at 100% in the three languages and in high contrast in English and pt_BR, as before. At 200%, in the three languages, every character of ShotData's roster (1 the lowest level, 4 the highest, 10 of 10) on every tab (`TAB` 0 Heist, 1 Stats, 2 Compare): 45 shots.
+- **`fit_settings.sh`, 20 shots.** The access tab at 100% in the three languages and in high contrast in English and pt_BR, and the account tab at 100% in English and German, as before. At 200%, in the three languages, every tab (game, access, account). And the account tab signed in, at 100% in English and at 200% in the three languages (`SIGNED=1`). `client/tests/shots/screen_settings.gd` signs the account in as `auth_panel.gd`'s own shot does: a token, the `signed_in` and `auth_status` actions before the screen builds, then the server's device list (this phone and a nameless Android phone, Game Center and Google Play linked).
+- **Why the shot writes a `.fit.txt`.** `tools/render/shoot.sh` keeps only the last 20 lines of a run, and the leaks Godot reports at exit can push the `fit ok` line out of them. So `FIT=1` also writes what it found beside the still (`<still>.fit.txt`), and the scripts read that. Before this, tabs 1 and 2 of the character screen read as failures with no `fit` line at all.
+- **The scripts render two shots at once** (`JOBS`, 2 by default) and keep the stills in `OUT` (a temporary folder by default).
+
+**What the new states found.** Every character shot fits, and every settings shot fits but one state: the account tab signed in, at 200% in English and German. There are two causes, both in `client/scripts/auth_panel.gd`, a file no task owns. This task asks the lead for the file in S3-R30.
+
+1. **The signed-in panel never shows its devices or ways to sign in on the settings screen.** `AuthPanel` listens to the store from `_ready` and stops in `_exit_tree`. The settings screen builds its list, then moves the list into a holder for the scroll cue (`_cue`, `settings_screen.gd`). The panel leaves the tree and enters again, but `_ready` does not run a second time, so it never hears the store again. Its Devices and Methods sections, drawn when the device list arrives, never appear. A debug run read the connection as false after the move, and drawing the panel again by hand gave 9 children where there had been 3. This is the app's behaviour too, not only the shot's. The fix: listen again in `_enter_tree` once the node is ready.
+2. **The status card breaks its words in two at 200%.** `_status` builds the card with `ScreenParts.item`, the sign-out button beside the words. At 200% German that leaves 217 px for "Angemeldet" (542 px) and "Mit Game Center" (a 258 px word). In English, "Signed in" is a 310 px word in 297 px. The fix: at large text (past 125%), the actions go under the words, the column's width, as the devices' sign-out buttons already do.
+
+`_hide_kicker` (board 5b's round 2, note 5) cannot be checked against the Devices and Methods sections until the first fix is in.
+
+**The fixes (S3-R30 granted in lead cycle 99, `auth_panel.gd` added to the task's exceptions).**
+
+1. **Listening again.** `AuthPanel._enter_tree` reconnects `store.changed` once the node is ready, and draws the panel again on the next frame, so a change that came while it was out of the tree is not lost. On the settings screen signed in, the Devices and Methods sections now show, in the app as in the shot.
+2. **The end control under the words.** Past side by side (`KitLayout.SIDE_BY_SIDE_UP_TO`, 125%), every row the panel builds puts its end control under its words (`_item`, `_put_under`): the status card's sign-in, try-again or sign-out, each device's sign-out or its "This device" pill, and each way to sign in's link or unlink. A button is the card's width and wraps its words; the pill sits at the row's start. At 100% and 125% nothing moves.
+
+Once the sections showed, they failed the fit check too, for the same reason as the status card: at 200% in German, "Android-Handy" (670 px) had 193 px beside its sign-out, and "Google" 198 px beside its unlink. The second fix answers them all.
+
+Evidence: `fit_settings.sh` 20 of 20 `fit ok`; `fit_character.sh` 50 of 50. `settings-account-100` and `settings-account-de` (signed out, 100%) re-shot byte-identical. `settings-200-de-account-signed.png` is re-shot, with `-900` and `-1800` (`SCROLL`) showing the Devices and Methods sections; all three `fit ok`.
+
+**Note 5 (`_hide_kicker`), now checkable.** It hides only the panel's first child, the AUTH_TITLE label, so the screen's header pill heads the group. The Devices and Methods sections keep `ScreenParts.section`'s gold caps label ("ANGEMELDETE GERÄTE 2", "ANMELDEWEGE"), not the screen's header pill. They read as subheadings within the account group, a step below its pill, so this task leaves them; making them pills would need `settings_screen.gd`'s `_section`, which this task does not hold. It goes to AD with the new stills (S3-R29's addition).
+
+### Board 5c's objection M (P2-S3-account-4)
+
+- **M: the sign-outs on the account card (AD-R43).** Signed in, at 100%, `checks.py value-steps` failed the leather "Sign out" buttons on the Account tab's cards at ΔL* 16.1 to 17.5, which is 1.6 to 1.8 steps (2 are needed), in English and German. The cause is the card, not the leather. Leather was chosen for the night, where it stands 2.4 steps off. On the dark violet card, whose median L* is about 13, its brown face (about 29) is only 1.7 steps lighter.
+- **The fix**, in `client/scripts/auth_panel.gd`. A lesser action that sits on a card takes the kit's tertiary (`ON_CARD`, the `ghost` look, kit-spec K01): the card's own violet, lifted two value steps off it. That covers the status card's sign-out, a device's sign-out and a way to sign in's removal. "Sign out every other device" stays leather, and "Sign out everywhere" stays red. Both stand on the night, not on a card, and both pass (24.1 and 50.6). Board 5c offered two ways to fix it: a lighter face on the card, or the parchment plate. This takes the first, using the kit's own button for it. Parchment would have put a light plate under each device's row and made the sign-outs weigh as much as the profile row.
+
+Evidence: every render printed `fit ok`. `checks.py value-steps`, ΔL* off the card:
+
+| Render | Sign out (status card) | Sign out: Android phone | Remove (a way to sign in) |
+|---|---:|---:|---:|
+| 100% English (`settings-account-signed-100`) | 32.1 | 31.7 | below the fold |
+| 100% German (`settings-account-signed-de`) | 32.5 | 32.1 | below the fold |
+| high contrast, English | 32.3 | 32.3 | passes (`SCROLL=1800`) |
+| 100% English, `SCROLL=1800` | – | 34.1 | 32.1 |
+
+Every other control on these records passes too: the tabs at 71.5, the back button at 83.6, and the profile row at 69.2 when scrolled. `settings-account-signed-100` and `settings-account-signed-de` are new stills with their records. `settings-200-de-account-signed` and its `-900` and `-1800` are re-shot. `fit_settings.sh` now also covers the account tab at 100% signed out in pt_BR, and signed in at 100% in English, pt_BR and German. That makes 23 shots, all `fit ok` (at 100% and 200%, in English, pt_BR and German). `check_screens.py` and `guard.sh` pass.
 
 ### What is still worse than before
 

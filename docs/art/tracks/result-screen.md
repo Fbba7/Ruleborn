@@ -12,9 +12,9 @@ Before, the screen drew its own surfaces: `FxSkin` plates, `RbBox`, `StyleBoxFla
 | Kicker, medal, title, condition, multipliers, length and peak | `KitNav.hero`, with the title at 40 points as the key frame's Marcellus (the kit hero uses 52). The medal sits beside the title, and the multipliers go on `KitStatus.set_pill`. |
 | The moment | `UI.panel("card")` holding `KitControls.big_action` in gold with the replay's length, beside when and what happened. With large text they stand one above the other. |
 | Starlight, Essence, Renown | `KitCards.reward` tiles. Starlight is on parchment and wider; the other two are on glass. They sit in `KitLayout.columns`, and stack one above another with large text. |
-| Study one law you crossed | `UI.panel("card")`. The laws are buttons in `KitLayout.columns` with the heading font and `UI.clear_box(6, 4)`. They fall to a two-column `KitLayout.grid` when a word will not fit (`_fit_laws`). |
+| Study one law you crossed | `UI.panel("card")`. The laws are `UI.action` buttons in the kit's tertiary face (`ghost`: violet on the dark card) in `KitLayout.columns`, with the heading font and `UI.clear_box(6, 4)`. They fall to a two-column `KitLayout.grid` when a word will not fit (`_fit_laws`). |
 | The crew home | `UI.panel("glass")`. Three faces overlap in `KitRing`s, framed as `KitSocial`'s avatars, beside how long the crew rests. |
-| Home and Raid again | `UI.panel("glass")`, as the key frame's `result-bottom glass`. Inside are `UI.action` on parchment with the `hud/home` icon, and `KitControls.action2` wide in gold (red when foiled) with the idle crew line. |
+| Home and Raid again | `UI.panel("glass")`, as the key frame's `result-bottom glass`. Inside are `UI.action` in the kit's tertiary face (`ghost`: violet on glass) with the `hud/home` icon, and `KitControls.action2` wide in gold (red when foiled) with the idle crew line. |
 
 Decisions:
 
@@ -76,6 +76,7 @@ Each of these is a request to K1 through the lead, with the default the screen u
 - **The hero title's size** (S1-R16). The kit spec says 34, `KitNav.hero` uses 52, and the key frame 40. The screen sets 40.
 - **A portrait stack** (S1-R17). The overlapping faces are composed by the screen from `KitRing`s at the kit avatar's framing.
 - **A dusk backdrop for a foiled heist** (S1-R18). The key frame's set has none. A foiled heist keeps the plain night.
+- **`KitNav.reward` dresses the sunburst in high contrast too** (S1-R32). It dresses `Sky` with `night_rays` whatever the outcome or the contrast, and the token has no high-contrast form, while key frame 03-result_hc keeps the plain night. Until K1 answers, `start_reward` puts the plain night back after the call where the outcome does not celebrate (`_celebrates`).
 
 ## Open
 
@@ -183,6 +184,74 @@ The draw calls are the same as at `d896f254`, because the cut moves layout only 
 - (F) A spacer under the page to lift its edge: a zero-height Control in a VBox still takes the column's separation, which moved the bar even when no line was cut. The cut grows the corner's clearance under the bar instead.
 - (F) The first fold, fitted only when the page resized: it ran before the raid bar grew, and FIT failed at pt_BR and de 100% and 200%. It now also refits when the scroll resizes, measuring from the edge without the cut.
 - (F) Counting every clipped line as a part line: Renome's "+0" lost 3 px of its descent and was counted as cut, which lifted the bar over the whole Renome tile at pt_BR 200%. A line is cut only when less than its ascent shows.
+
+## Phase 2's exit (P2-S1-result-4)
+
+The overflow sweep, the advisory gate's close points at `904a3567`, AD's board 4b note, and M26's rule that the fit check covers every state the screen shows.
+
+- **Home and the laws in the tertiary face.** The gate's close point said Home and the law pills read lighter than Raid again in grayscale, so the raid led by size and place but not by value. Both are now `UI.action` in the kit's `ghost` skin (K01's tertiary button: violet on the glass or card), which is darker than gold in grayscale. Raid again stays the one light, wide shape at the foot. In high contrast the kit's own high-contrast faces apply, unchanged. No draw call more: the skin replaces the parchment one.
+- **The reward tiles keep no character frame.** The gate's other close point (Character presence, 3 of 3) asked for character art on the reward tiles. The tiles are currency, Starlight, Essence and Renown, each with its own icon, and the crew card under them carries the characters' faces. A character frame on a currency tile would be a new placement of character art, which is AD's and the kit's to decide, not a fit fix. It is answered in AD's preview (S1-R31) and left as it is.
+- **A short label goes under the fold whole.** AD's note for board 4b (S1-R30): at pt_BR 200% the first screen ended on "Taxa de entrada de", the first line of a two-line label. `ResultFit.part_line` now treats a label of up to three lines (`KEEP`) as one piece: when only its first lines show above the scroll's edge, the whole label goes under it, and the bar rises by the lines that would have shown. A longer label may still break at a line. It is still a cut, not a fade, so it adds no draw call. pt_BR 200% now ends on the Renome tile.
+- **Every state in the fit check (M26).** `screen_result.gd` takes `STATE`: `confirming` (the server still re-simulating), `refused` (`REFUSED` is the server's code, default `replay_malformed`, worded from the error catalogue), `testing` (a rehearsal from the builder: Watch it, Back to the builder, Publish it) and `play` (a workshop play, settled as `WorkshopController` settles it: no split). With no `STATE` it shows the plain result, local or (with `SERVER`) server-checked, on any of the five goldens. The sweep below runs them all at 200% in en, pt_BR and de.
+
+- **A rehearsal action's long word stays whole.** At 200% in German, "Veröffentlichen" (735 px) was wider than the widest control (666 px) and broke between its letters, which also left the page's foot 78 px into a line. `ResultFit.fit_whole` steps the button's words down the least sizes that keep its longest word whole; the other actions keep their size.
+- **The words over the sky inked by their size (M30).** The advisory gate at `8753618a` failed Display type at pt_BR 200% on the hero: the gold kicker "ASSALTO CONCLUÍDO" read as unoutlined on the sunburst, and the lines under it kept a 2 to 3 px edge on 45 px glyphs. The outline was set from the words' points before the text size applied, so it stayed 6 px at every size. `ResultFit.ink` now sets it from the size each label is drawn at: an edge of 1.5 points, scaled with the text size (3 in high contrast), or 12% of the drawn size, whichever is more. It runs again when the hero shrinks to fit. Godot shows about a quarter of `outline_size` outside the glyph (measured: 21 gave 5 px on an 84 px face), so the constant is four times the edge. At pt_BR 200% the "N" of "Nenhum" (61 px tall) now has a 10 px ink edge, and the kicker 9 px. The kicker, title, condition, time and alarm line, and the lines under the tiles all take it. No draw call more: an outline is part of the glyph's draw. Re-swept at `3d357ac6` (FIT=1, 51 stills: the plain result plain and high contrast in en, pt_BR and de at 100% and 200%, the four goldens and local at 200%, every state at 200% and at en 100%, reduced motion, long-crew5): every still "fit ok", every draw call as in the table below (server-checked confirming 114, play 88, rechecked against `8753618a` on the same still).
+
+Draw calls from each still's `budget:` line, with `FIT=1` (rehearsal rows after the fix above):
+
+| State | en 200% | pt_BR 200% | de 200% |
+|---|---|---|---|
+| Server-checked, planned-clean | 113 | 115 | 114 |
+| Server-checked, short-crew3 | 109 | 113 | 113 |
+| Server-checked, mid-crew4 | 108 | 112 | 112 |
+| Server-checked, long-crew5 | 111 | 115 | 115 |
+| Server-checked, edge-seed-max | 107 | 111 | 111 |
+| Local (not yet checked) | 99 | 99 | 101 |
+| Confirming | 114 | 115 | 115 |
+| Refused (`replay_malformed`) | 77 | 77 | 79 |
+| Workshop play | 88 | 88 | 88 |
+| Rehearsal | 97 | 97 | 100 |
+| Rehearsal, high contrast | 32 | 32 | 35 |
+
+All "fit ok". At 100% in English: local 91, confirming 118, refused 73, play 80, rehearsal 88 (de 90). The longest refusal, `removed_from_constellation` in German at 200%: 87. The plain result's sweep (en, pt_BR, de at 100% and 200%, each also in high contrast, long-crew5, reduced motion): 17 stills, all "fit ok", draw calls as before.
+
+## The reward on K40's entry point (P2-S1-result-5)
+
+`start_reward` now calls `KitNav.reward(self, grade_icon, tile, 0, to, tier, _write_reward.bind(to))` in place of `Motion.reward`. The medal, the coins into the Starlight tile (else the haul's), the other tiles counting with it, the outcome's tier and the reduced form under reduced motion are unchanged: `KitNav.reward` hands them to `Motion.reward` as before. `_lift_reward()` stays, after the call, so the medal's and coins' `top_level` layer still sits over the page.
+
+- **`KitNav.celebrate(self)` is kept in `_ready`.** It dresses the sunburst from the first frame, while the reward waits `REWARD_WAIT` before it starts; dropped, the hero would stand on the plain night for that wait and then change backdrop under the title. It is only called where the outcome celebrates: a heist that paid (Clean, Loud, Partial), not in high contrast (`_celebrates`, which also replaces the inline test `_ready` had). The second dressing by `KitNav.reward`, with the same material, changes nothing on a celebrating outcome.
+- **The plain night back where the outcome does not celebrate.** `KitNav.reward` dresses `Sky` with `night_rays` on every call. In high contrast that put rays behind the whole page (seen on the server-checked still with `CONTRAST=1`, the one high-contrast state whose reward plays: the diff with main covered the full backdrop), against key frame 03-result_hc and AD's S1-R24. `start_reward` dresses `Sky` back to `night` when `_celebrates` is false. Asked of K1 as S1-R32, under "What the kit cannot do yet".
+- **No draw call more.** Budget shots: result/100 91, result/200 99, result/hc 27, each as its record in `tools/ui_bake/budgets.json`. Server-checked, en 200%: 113 planned-clean as before; server-checked high contrast 55.
+- **`check_screens.py`: OK.**
+
+The fit sweep, `FIT=1` on `client/tests/shots/screen_result.gd`, 56 stills, every one "fit ok" with 0 fails (M27: every fixture state the screen shows), in en, pt_BR and de each:
+
+- the plain result at 100% and 200%, each also in high contrast;
+- server-checked at 200% on each of the five goldens (planned-clean, short-crew3, mid-crew4, long-crew5, edge-seed-max), and server-checked in high contrast at 200%;
+- local long-crew5 at 200%;
+- at 200%: confirming (server-checked and local), refused (`replay_malformed`), testing (server-checked, local and high contrast) and workshop play;
+- and en 100% with reduced motion, de 200% refused with `removed_from_constellation`.
+
+| State | en 200% | pt_BR 200% | de 200% |
+|---|---|---|---|
+| Plain result | 99 | 99 | 101 |
+| Plain result, high contrast | 34 | 34 | 36 |
+| Server-checked, planned-clean | 113 | 115 | 114 |
+| Server-checked, short-crew3 | 109 | 113 | 113 |
+| Server-checked, mid-crew4 | 108 | 112 | 112 |
+| Server-checked, long-crew5 | 111 | 115 | 115 |
+| Server-checked, edge-seed-max | 107 | 111 | 111 |
+| Server-checked, high contrast | 55 | 57 | 56 |
+| Local long-crew5 | 105 | 107 | 107 |
+| Confirming (server-checked) | 114 | 115 | 115 |
+| Confirming (local) | 101 | 101 | 102 |
+| Refused (`replay_malformed`) | 77 | 77 | 79 |
+| Testing (server-checked) | 111 | 113 | 114 |
+| Testing (local) | 97 | 97 | 100 |
+| Testing, high contrast | 32 | 32 | 35 |
+| Workshop play | 88 | 88 | 88 |
+
+At 100%: plain 91 (pt_BR, de 93), high contrast 27 (pt_BR, de 29), reduced motion 90. de 200% refused with `removed_from_constellation`: 87. Each row matches the earlier sweep where that sweep shot the same state.
 
 # The reward sequence (P2-S1-result-2)
 
