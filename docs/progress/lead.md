@@ -185,9 +185,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxr2KqhZcMDPDNjAD3g` (cycle 102,
-16 November 2026 from about 16:39Z, started by the Opus 5.5 launcher while
-cycle 101 was still writing up). Cycle 101's was
+Latest lead cycle session: `session_01SNkKxnS8D88S3KnnZyABwf` (cycle 103,
+16 November 2026 from about 17:39Z, started by the Opus 5.5 launcher; named
+here at the start of the cycle so the next firing sees it working). Cycle
+102's was `session_01SNkKxr2KqhZcMDPDNjAD3g` (from 16:39Z). Cycle 101's was
 `session_01SNkKxr2W1EVjzynnMCEqVA` (from 13:41Z). Cycle 100's was `session_01SNkKxoqsyfRu7nQ4xvraaU` (from 11:40Z). Cycle 99's was `session_01SNkKxqWs3DXEToJqEWQxXa` (from 10:39Z). Cycle
 98's was `session_01SNkKxpnLgsoTHAqFj6UTHk` (from 09:35Z). Cycle
 97's was `session_01SNkKxorVw3MyhDkJsvRqhq` (from 08:39Z). Cycle
