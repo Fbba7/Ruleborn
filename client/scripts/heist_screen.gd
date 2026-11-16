@@ -628,6 +628,10 @@ func _build() -> void:
 	else:
 		var flow := UI.row(8.0, true)
 		flow.alignment = FlowContainer.ALIGNMENT_BEGIN
+		# Rows close: a name's line box keeps its own room under it, and the
+		# next row's pips stand over their disc (M26: two-line names pushed
+		# the tray into the loot).
+		flow.add_theme_constant_override("v_separation", UI.px(3))
 		crew_row = flow
 	crew_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	crew_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -709,18 +713,23 @@ func _build() -> void:
 	add_child(speech)
 	if view.anchors != null:
 		view.anchors.speech_layer = speech
-		view.anchors.keep_off = _panel_rects.bind(speech)
+		view.anchors.keep_off = _panel_rects.bind(speech, false)
+		view.anchors.keep_soft = _panel_rects.bind(speech, true)
 
 
 ## The rects of the panels a guard's bubble keeps off, in `layer`'s pixels:
-## the HUD's, the hint's and the tray.
-func _panel_rects(layer: Control) -> Array:
+## the HUD's and the hint's, which hold words; or, `soft`, the tray's
+## content, which a bubble may rest on (anchors' keep_soft) where the world
+## shows no room between the loot and the tray (large text, M26's alarm),
+## drawn above it, rather than over the loot's last line.
+func _panel_rects(layer: Control, soft: bool) -> Array:
 	var out: Array = []
-	var panels: Array = [hud.clock_panel, hud.alarm_panel, hud.loot_panel, actions_band]
-	if hud.laws_box != null:
-		panels.append_array(hud.laws_box.get_children())
-	if hint_panel != null:
-		panels.append(hint_panel)
+	var tray_inside: Control = actions_band.get_child(0) if actions_band.get_child_count() > 0 else actions_band
+	var panels: Array = [tray_inside]
+	if not soft:
+		panels = [hud.clock_panel, hud.alarm_panel, hud.loot_panel, hint_panel]
+		if hud.laws_box != null:
+			panels.append_array(hud.laws_box.get_children())
 	for c: Variant in panels:
 		var ctl := c as Control
 		if ctl != null and ctl.is_visible_in_tree() and ctl.size.x > 0.0:

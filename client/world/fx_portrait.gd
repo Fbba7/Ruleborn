@@ -38,6 +38,12 @@ const VALUE_STEP := 30.0
 const TOON := {}
 ## The bust's part every other portrait shows (`_disc_uv`'s).
 const CROP := Vector3(0.5, 0.44, 0.42)
+## A broken name's line step, in its size: tight, so two lines read as one
+## name and the crew's rows stay low (M26: English's longest names on two
+## lines pushed the tray into the loot at 200%).
+const LEAD := 1.0
+## A broken name's size, of the name size.
+const BROKEN := 0.92
 ## The composed portraits, by kind, school and pixel size, and what each
 ## measured: {key: {"figure": L*, "disc": L*, "least": L*}} (the gate's notes).
 static var measured := {}
@@ -48,10 +54,6 @@ var role := ""
 ## role; and the name shown under it.
 var kind := ""
 var letters := ""
-## The name as drawn: its lines (broken between words when one line is
-## wider than NAME_WIDE) and the size they are drawn at (`_lay_name`).
-var _lines := PackedStringArray()
-var _name_px := 0
 var chosen := false
 var health := 1.0
 var carried := 0.0
@@ -71,6 +73,10 @@ var picture: Texture2D
 var _has_figure := false
 var _time := 0.0
 var _picture_ready := false
+## The name as drawn: its lines (broken between words when one line is
+## wider than `name_wide`) and the size they are drawn at (`_lay_name`).
+var _lines := PackedStringArray()
+var _name_px := 0
 
 
 func _init(member_role := "", pressed_call: Callable = Callable(), member_kind := "", shown_name := "") -> void:
@@ -93,7 +99,7 @@ func _init(member_role := "", pressed_call: Callable = Callable(), member_kind :
 	# As tall as its disc, its bar and its name at the player's text size,
 	# so a second row of portraits never lies over a name.
 	custom_minimum_size = Vector2(maxf(side, name_w + spare),
-		side + UI.px(15) + ceilf(_name_px * (1.35 + 1.1 * (_lines.size() - 1))))
+		side + UI.px(15) + ceilf(_name_px * (1.35 + LEAD * (_lines.size() - 1))))
 	focus_mode = Control.FOCUS_ALL
 	var clear := StyleBoxFlat.new()
 	# A dark fill, so a screen's checks find what is behind its words.
@@ -236,7 +242,7 @@ func _paint() -> void:
 	var bases: Array[Vector2] = []
 	for i in _lines.size():
 		var wide := font.get_string_size(_lines[i], HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
-		bases.append(Vector2(w * 0.5 - wide * 0.5, bar.end.y + px * (1.05 + 1.1 * i)))
+		bases.append(Vector2(w * 0.5 - wide * 0.5, bar.end.y + px * (1.05 + LEAD * i)))
 	# The hard drop, then the edge, under every line before any fill, so the
 	# fills batch together.
 	for i in _lines.size() * 2:
@@ -256,8 +262,9 @@ static func name_wide() -> float:
 
 
 ## Lays out the name: on one line at the name size when it fits
-## `name_wide`, else broken between words into the two most even lines, and
-## then, if a word is still too wide, the size stepped down until it fits.
+## `name_wide`, else broken between words into the two most even lines a
+## little smaller (BROKEN), and then, if a word is still too wide, the size
+## stepped down until it fits.
 ## Returns the widest line's width.
 func _lay_name() -> float:
 	var font := FxSkin.words()
@@ -282,6 +289,7 @@ func _lay_name() -> float:
 				best_w = wide
 				best = two
 		_lines = best
+		_name_px = int(_name_px * BROKEN)
 	var wide: float = widest.call(_lines, _name_px)
 	if wide > cap:
 		_name_px = maxi(1, int(floorf(_name_px * cap / wide)))

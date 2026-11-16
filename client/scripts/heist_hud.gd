@@ -151,6 +151,30 @@ static func _tight(p: PanelContainer, sides := true, side := 5.0) -> void:
 	p.add_theme_stylebox_override("panel", box)
 
 
+## With §20.8's large text a law's name keeps one line: where the column
+## is too narrow for it whole (pt_BR's wider "Alarme" beside it), its size
+## steps down, to 80% at most, rather than the name breaking in two and the
+## banner standing a line taller, which pushed the loot into the tray (M26).
+static func _one_line(l: Label) -> void:
+	if l == null or Settings.text_scale <= 130:
+		return
+	# Measured afresh at each width the column gives it, so a narrow pass
+	# mid-layout leaves no name smaller than it needs; its face and full size
+	# read in the tree, where its theme is.
+	l.resized.connect(func() -> void:
+		if not l.has_meta("full_px"):
+			l.set_meta("full_px", l.get_theme_font_size("font_size"))
+		var full: int = l.get_meta("full_px")
+		var face := l.get_theme_font("font")
+		var wide := face.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, full).x
+		var room := (l.size.x - l.get_theme_stylebox("normal").get_minimum_size().x) * 0.97
+		var px := full
+		if wide > room and room > 0.0:
+			px = maxi(int(full * 0.8), int(floorf(full * room / wide)))
+		if px != l.get_theme_font_size("font_size"):
+			l.add_theme_font_size_override("font_size", px))
+
+
 ## The alarm panel's count (KitHud.alarm_fit names it "Count").
 static func alarm_label_of(piece: PanelContainer) -> Label:
 	return piece.find_child("Count", true, false) as Label
@@ -443,6 +467,7 @@ func _show_laws(r: RulebornReplay) -> void:
 		var chip := KitCards.law_chip_fit(icon if Icons.has(icon) else "", Strings.term("LAW", law))
 		_badge(chip, icon, law)
 		_tight(chip)
+		_one_line(chip.find_child("Words", true, false) as Label)
 		laws_box.add_child(chip)
 		_through(chip)
 	(laws_box.get_parent() as Control).visible = not laws.is_empty()

@@ -62,6 +62,10 @@ var speech_layer: Control:
 ## The screen's panels, in this layer's pixels (a Callable returning an
 ## Array of Rect2): a bubble moves off them to the nearest clear place.
 var keep_off := Callable()
+## Panels a bubble may rest on where the world shows no room (a Callable
+## as keep_off's): counted at a quarter of their area, so a bubble with no
+## clear place covers these before keep_off's words.
+var keep_soft := Callable()
 ## Where the last frame drew each bubble, in this layer's pixels.
 var speech_boxes: Array[Rect2] = []
 
@@ -450,7 +454,7 @@ func _draw_speech_layer() -> void:
 	_pen(speech_layer, _paint_speech.bind(speech_layer, _said))
 
 
-## `box` moved up or down off the screen's panels (keep_off) to the nearest
+## `box` moved up or down off the screen's panels (keep_off, keep_soft) to the nearest
 ## place on screen clear of them, within a few lines of where it was said.
 ## Where there is none, it goes where it covers the least of them (in a gap
 ## narrower than itself, its middle), and the speech layer draws it above the
@@ -458,12 +462,15 @@ func _draw_speech_layer() -> void:
 func _off_panels(box: Rect2, px: float) -> Rect2:
 	if not keep_off.is_valid():
 		return box
-	var panels: Array = keep_off.call()
+	var hard: Array = keep_off.call()
+	var soft: Array = keep_soft.call() if keep_soft.is_valid() else []
+	var panels: Array = hard + soft
 	var cover := func(b: Rect2) -> float:
 		var sum := 0.0
-		for r: Rect2 in panels:
-			var o := b.grow(px * 0.1).intersection(r)
-			sum += o.get_area() if b.grow(px * 0.1).intersects(r) else 0.0
+		for i in panels.size():
+			var r: Rect2 = panels[i]
+			if b.grow(px * 0.1).intersects(r):
+				sum += b.grow(px * 0.1).intersection(r).get_area() * (1.0 if i < hard.size() else 0.25)
 		return sum
 	if cover.call(box) == 0.0:
 		return box
@@ -490,21 +497,25 @@ func _off_panels(box: Rect2, px: float) -> Rect2:
 	return best
 
 
-## Whether `box` lies over one of the screen's panels (keep_off).
+## The screen's panels, keep_off's and keep_soft's together.
+func _all_panels() -> Array:
+	var out: Array = keep_off.call() if keep_off.is_valid() else []
+	if keep_soft.is_valid():
+		out.append_array(keep_soft.call())
+	return out
+
+
+## Whether `box` lies over one of the screen's panels (keep_off, keep_soft).
 func _covers_panel(box: Rect2, px: float) -> bool:
-	if not keep_off.is_valid():
-		return false
-	for r: Rect2 in keep_off.call():
+	for r: Rect2 in _all_panels():
 		if box.grow(px * 0.1).intersects(r as Rect2):
 			return true
 	return false
 
 
-## Whether `at` lies under one of the screen's panels (keep_off).
+## Whether `at` lies under one of the screen's panels (keep_off, keep_soft).
 func _under_panel(at: Vector2) -> bool:
-	if not keep_off.is_valid():
-		return false
-	for r: Rect2 in keep_off.call():
+	for r: Rect2 in _all_panels():
 		if (r as Rect2).has_point(at):
 			return true
 	return false
