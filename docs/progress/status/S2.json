@@ -5,19 +5,38 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-S2-home-5",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-16T21:00:00Z",
   "lease_until": "2026-11-17T00:00:00Z",
-  "updated_at": "2026-11-16T21:00:00Z",
-  "expected_next_update_by": "2026-11-16T21:45:00Z",
+  "updated_at": "2026-11-16T21:10:00Z",
+  "expected_next_update_by": "2026-11-16T21:55:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "1697a6c6",
-    "next_step": "Claimed P2-S2-home-5 at main f083c96c (merged as c9c013e0, code identical to main). Next: render home at 100% and in high contrast on main and send the gate re-run request for 'home at 100% text' and 'home in high contrast'.",
-    "at": "2026-11-16T21:00:00Z"
+    "next_step": "Gate re-run requested on main f083c96c for 'home at 100% text' and 'home in high contrast' (the lead's next cycle). Meanwhile S2 renders main's stills and prepares a stronger display treatment for the purse's counts and the keeper's name on a WIP, in case the fail stands.",
+    "at": "2026-11-16T21:10:00Z"
   },
   "precheck": null,
-  "gate_request": null,
+  "gate_request": {
+    "sha": "f083c96c23c9c3b14bd0a4de80e2bda36704e913",
+    "items": [
+      {
+        "item": "home at 100% text",
+        "qualities": [
+          "Display type",
+          "Hierarchy",
+          "Character presence"
+        ]
+      },
+      {
+        "item": "home in high contrast",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ],
+    "note": "P2-S2-home-5's first step: the re-run on current main (f083c96c; S2's branch adds only its progress files). Render from main, not from a stills folder of S2's."
+  },
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
@@ -476,5 +495,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Claimed P2-S2-home-5 at main f083c96c (merged as c9c013e0, code identical to main). Next: render home at 100% and in high contrast on main and send the gate re-run request for 'home at 100% text' and 'home in high contrast'."
+  "next_step": "Gate re-run requested on main f083c96c for 'home at 100% text' and 'home in high contrast' (the lead's next cycle). Meanwhile S2 renders main's stills and prepares a stronger display treatment for the purse's counts and the keeper's name on a WIP, in case the fail stands."
 }
