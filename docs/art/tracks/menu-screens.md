@@ -182,6 +182,10 @@ AD's board 5 (`docs/art/ui-quality/gate/boards/board-5.md`) raised five objectio
   - **Words on the backdrop.** The subtitle and level line wear the kit's ink outline at every size (`ScreenKit.inked`). At large text, as the large-text key frame, they wear a heavier one (12% of their size) and the display type's hard drop (`_over_stage`).
   - **The button.** The price and the Level up label wear the display treatment (as A).
 - **G: the stage's foot.** The stage's bottom fades to the menus' night at the point where the stage ends on the screen (`_blend_foot`), so its sky runs on into the backdrop with no edge (S3-R11).
+- **H: the face stays clear at 200% text** (AD's preview, S3-R15, from board 5's full list: quality 9, character presence).
+  - **The problem.** B's shorter stage put the status pill's words across the character: "trabalhando" in pt_BR hid the whole head, and "working" and "arbeitet" covered half the face.
+  - **The fix.** At large text the pill keeps its top-right corner as the state's icon alone. Each state has its own icon, so the state never rests on colour. The pill's words, timer included, become its accessible name and tooltip (`_stand`). At body size the pill keeps its words, as before.
+  - **What shows.** At 200% the whole head stands between the count pill, the state icon and the arrows, in en, pt_BR and de, on the Heist, Stats and Compare tabs. The 200% stills were re-rendered with this change; 100% and high contrast take the body-size branch, so their stills are unchanged.
 
 #### Evidence
 

@@ -867,8 +867,16 @@ func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -
 	level_badge.add_child(foot)
 	StageHeroSkin.on_stage(foot, plate, Control.PRESET_CENTER_BOTTOM)
 	# The state's icon carries its dot, so the words go without it.
-	var state := KitStatus.pill(str(c["line"]).trim_prefix("● "), "characterstates/" + str(c["state"]),
-		"plate_dark", 190.0)
+	var said := str(c["line"]).trim_prefix("● ")
+	var state := KitStatus.pill(said, "characterstates/" + str(c["state"]), "plate_dark", 190.0)
+	# At large text the words would run across the shorter stage and over the
+	# face (board 5's objection H): the pill keeps its corner as the state's
+	# icon alone, each state its own shape, and says its words to a screen
+	# reader.
+	if _large():
+		(state.find_child("Words", true, false) as Label).visible = false
+		state.accessibility_name = said
+		state.tooltip_text = said
 	StageHeroSkin.on_stage(top, state, Control.PRESET_TOP_RIGHT)
 	if at >= 0:
 		StageHeroSkin.on_stage(top, KitStatus.pill(Strings.t("CHARACTER_COUNT", [at + 1, ids.size()]), "",
