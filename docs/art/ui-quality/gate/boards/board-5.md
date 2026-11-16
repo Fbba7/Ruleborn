@@ -321,3 +321,53 @@ Note for board 5b, which holds nothing: the state icon's chip is the
 smallest plate on the stage (about two thirds of the count pill's height),
 readable as a hammer at phone size; board 5b checks that every state's
 icon reads as well at that size.
+
+## Preview of settings-2 (S3-R17)
+
+AD previewed the settings stills for P2-S3-settings-2 on
+`claude/ui-screens-meta` at `60560762`, and checked the screen against
+this board's full list (M23). AD re-ran `fit_settings.sh`: all ten shots
+print "fit ok". AD also rendered the Game and Account tabs at 100% in
+English and German, Account at 200% in pt_BR and Game at 200% in English:
+all fit ok. The full answer is S3-R17 in `docs/progress/status/AD.json`.
+
+**C stands as fixed.** At 100%, English shows both switch rows above the
+dock. pt_BR and German show the second heading and High contrast, with
+Motion below the chevron, which is what the pt_BR key frame shows. Item 7
+above was wrong to say the pt_BR key frame shows both switch rows: it
+shows High contrast only.
+
+From left: key frame, build in English, key frame pt_BR, build in pt_BR,
+build in German.
+
+![100%: key frame, en, key frame pt_BR, pt_BR, de](board-5/r3-settings-100.png)
+
+**E stands as fixed.** At 200% in German the title reads "Einstellungen"
+whole, the gear is larger than at 100%, and the Stillness card shows its
+whole law. English and pt_BR at 200% are close to their key frames.
+
+![200%: key frame, en, key frame pt_BR, pt_BR, de](board-5/r3-settings-200.png)
+
+**F stands as fixed.** The small and large A are gold, as on key frames 05
+and 05-settings_hc, and the text size now leads the Access tab. High
+contrast keeps them gold.
+
+![High contrast: key frame, en, key frame pt_BR, pt_BR](board-5/r3-settings-hc.png)
+
+**One new objection, I (light), holds P2-S3-settings-2.** On the Account
+tab the group heading is a small gold caps label ("ACCOUNT", "KONTO",
+"CONTA"). Every other group on the screen (Access, Seeing and comfort,
+Sound, Play) has the header pill. The screen should use one heading form
+(qualities 2 and 6). From left: Game in English and German, Account in
+English and German at 100%, then Game in English and Account in pt_BR at
+200%.
+
+![Game and Account tabs](board-5/r3-settings-tabs.png)
+
+| ID | Quality | Objection | Proposed fix | Owner |
+|---|---|---|---|---|
+| I | 2, 6 | On the Account tab the group heading is a small gold caps label, where every other group heading on the screen is the header pill. | In `client/scripts/settings_screen.gd`, give the Account group the same header pill as Access, Sound and Play. | S3 |
+
+Notes carried, which do not hold the board: the title's gear at 200% is
+larger now but still smaller than the key frame's; the dock's height is
+`ui.gd`'s bottom margin (K1); the selected tab is the kit's brown (K1).

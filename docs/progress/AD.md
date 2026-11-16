@@ -1,9 +1,9 @@
 # AD art director: progress
 
-- Status: Green. P2-AD-board-4b ready: board 4 stands on main at `6b30142b` (A to E met). S3-R16 answered: H met on character-2. Boards 3b and 5b wait for their tasks to merge, so this session ends with agent_state done.
+- Status: Green. P2-AD-board-4b ready (board 4 stands). S2-R27 answered: (f) met on home-3, new objection (g) holds it. S3-R17 answered: C, E and F met on settings-2, new light objection I holds it. Boards 3b and 5b wait for their tasks to merge, so this session ends with agent_state done.
 - Progress: 17 of 17 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3, P2-AD-board-4, P2-AD-board-5, P2-AD-board-4b); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides). P2-AD-board-3b and P2-AD-board-5b wait on their dependencies.
-- Done: board 4b (`board-4.md`, "Round 2 (board 4b)", stills, strips and clips `board-4/r4-*`): result-3 and motion-3 re-shot on main at `6b30142b`; A, B, C, D and E met; no new objection; six notes carried (the crew card sliver at the 100% fold in pt_BR and de, the foot gap at 100% en, "Taxa de entrada de" at 200% pt_BR, the lead figure's gray value, no idle crew in the fixture, AIA's press and screen change). S3-R16 answered: H met at `6b7e6b42` (`board-5.md`, "Re-check of objection H").
-- Next: board 3b after P2-S2-home-3 and P2-K1-tabs-2 merge; board 5b after P2-S3-character-2 and P2-S3-settings-2 merge. S2's re-check of (f) on home-3 comes as a new S2 request.
+- Done: S2-R27 (`board-3.md`, "Re-check of objection (f) (S2-R27)", `board-3/r3-home-*`): (f) met at `8ff5ee23`; (g) at 200% in pt_BR and German the four side buttons are gone, against AD-R24 and both 200% key frames. S3-R17 (`board-5.md`, "Preview of settings-2 (S3-R17)", `board-5/r3-settings-*`): C, E and F met at `60560762`; I, the Account tab's group heading is a gold caps label, not the header pill. Before: board 4b (A to E met on main at `6b30142b`); S3-R16 (H met at `6b7e6b42`).
+- Next: board 3b after P2-S2-home-3 and P2-K1-tabs-2 merge; board 5b after P2-S3-character-2 and P2-S3-settings-2 merge. Re-checks of (g) (S2) and I (S3) come as new requests.
 - Blocked by: none.
 - Owner decision needed: none. AD decides the boards in place of the owner.
 | Deliverable | Weight (h) | Status | Evidence |
