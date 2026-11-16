@@ -44,8 +44,9 @@ static func large_strain(pill: PanelContainer, pct: int, named: String) -> void:
 	var share := UI.label("%d%%" % pct, 18)
 	share.name = "Share"
 	share.set_meta("bold", true)
-	Home.home_figure(share, 18)
 	lines.add_child(share)
+	# In its place first: `figures` sets the baked row beside the label.
+	Home.home_figure(share, 18)
 	# The band's name tucked under the share's figures, not a whole line below.
 	lines.add_theme_constant_override("separation", -int(below(share)))
 	var band := UI.label(named, 14)
