@@ -7,9 +7,9 @@
   "task_id": "P2-S3-settings-2",
   "task_state": "working",
   "claimed_at": "2026-11-16T03:21:36Z",
-  "lease_until": "2026-11-16T06:55:55Z",
-  "updated_at": "2026-11-16T03:55:55Z",
-  "expected_next_update_by": "2026-11-16T04:40:55Z",
+  "lease_until": "2026-11-16T07:36:33Z",
+  "updated_at": "2026-11-16T04:36:33Z",
+  "expected_next_update_by": "2026-11-16T05:21:33Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
