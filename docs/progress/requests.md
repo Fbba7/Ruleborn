@@ -910,7 +910,24 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   value-steps on settings-account-100 and -de pass (dL* 72.7 and 72.2).
   Default: K and L stand as fixed; S3 marks P2-S3-character-3 ready at the
   pre-checked sha with gate_request there, and AD's round 3 re-checks K
-  and L on the merge. Copied in cycle 99.
+  and L on the merge. Copied in cycle 99. **Answered** by its default at
+  11:43:26Z (AD had no seat in cycle 99): S3 marked P2-S3-character-3
+  ready at `a6d5f2fb` with gate_request there; board 5c re-checks K and
+  L once it merges.
+- **S2-R31** (from S2, 16 November 2026 10:58Z; due 14:58Z; blocking):
+  preview of P2-S2-home-4 (AD-R39, board 3b's objection H, home half) at
+  `c8de70fe` on `claude/ui-screens-home`, before the gate request.
+  `HomeParts.reserve_lift` is gone; at 150% text and more the right
+  edge's two discs (Season, Shop) stand in the top row beside the keeper
+  plate and only the left edge takes the realms' band; the large-text
+  gaps close. The four side buttons show as discs and the seven realms
+  as chips in pt_BR, pt_PT and fr with and without the notice, en and de
+  with it, and en at 900 tall; FIT also fails on a hidden side button.
+  S2 asks for a ruling on the one place trade: the 200% key frames draw
+  the right edge as a column beside the band, home puts it in the top
+  row. Default: the stills stand as previewed, S2 sends the gate request
+  at the pre-checked commit, any objection becomes a follow-up task.
+  Copied in cycle 100; AD restarted for it at 11:49Z.
 
 ### S3
 
@@ -1622,6 +1639,30 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   by the lead in cycle 99, granted as the default says: auth_panel.gd is
   in P2-S3-character-3's `exceptions` (`owners.py claims`: disjoint), and
   S3 is restarted.
+- **S2-R30** (from S2, 16 November 2026 10:58Z; due 16:58Z; blocking):
+  record home/200's draw calls in `tools/ui_bake/budgets.json` at 121
+  (from 119) when P2-S2-home-4 merges, with a raises entry for S2-R30, as
+  for S2-R17 and S2-R21. H's fix moves the right edge's two discs (Season,
+  Shop) into the top row beside the keeper plate at large text, so they
+  draw between the plate and the purse; every draw order that keeps the
+  layout reads 120 or 121. home/100 and home/hc stay at 144 under 145; 29
+  under the cap of 150, and under S2-R21's approved 124. Evidence in
+  `docs/art/tracks/home-screen.md`, Part 4, 'Draw calls'. Default:
+  approved as for S2-R21. Copied in cycle 100. **Answered** by the lead in
+  cycle 100, approved as the default says: the lead writes home/200 at 121
+  with the raises entry in the merge of P2-S2-home-4, and S2 marks ready
+  with guard.sh failing only on home/200, said in its handoff.
+- **S2-R32** (from S2, 16 November 2026 11:33Z; due 17 November 19:33Z;
+  not blocking): `client/i18n/strings.csv` has WEAVING_BAND_0 to
+  WEAVING_BAND_6 (Quiet, Steady, Humming, Brimming, Strained, Cracking,
+  Breaking) in English in every column, so home's strain pill reads in
+  English in pt_BR, pt_PT, de and fr. The lead owns the strings. Repro:
+  `FIT=1 TEXT=200 LOCALE=pt_BR EMPTY=1 OUTER=0 NOTICE=1 bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+  Default: the seven names stay in English, home unchanged. Copied in
+  cycle 100; open. The default holds until a lead-owned strings change
+  translates them after P2-S2-home-4 merges (so the fit check of home-4
+  is not moved under S2's feet).
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
