@@ -3,30 +3,26 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S1-result-4",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-16T09:50:00Z",
   "lease_until": "2026-11-16T14:50:18Z",
-  "updated_at": "2026-11-16T11:56:54Z",
-  "expected_next_update_by": "2026-11-16T12:41:54Z",
-  "long_run": {
-    "log": "scratchpad sweep1/results.txt (FIT sweep, 46 stills)",
-    "expected_end": "2026-11-16T13:11:54Z"
-  },
+  "updated_at": "2026-11-16T12:56:49Z",
+  "expected_next_update_by": "2026-11-16T15:56:49Z",
   "progress_marker": {
     "last_green_sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
-    "next_step": "M30 outline in (3d357ac6, ResultFit.ink at 4x the edge; pt_BR 200% fit ok, 115 draw calls). Fit sweep running; then pre-check, AD stills (S1-R31), gate request.",
-    "at": "2026-11-16T11:56:54Z"
+    "next_step": "Ready at 6fb2e3da (pre-check PASS, guard OK, check_screens OK); gate requested. M30 done: sky words inked by their drawn size.",
+    "at": "2026-11-16T12:56:49Z"
   },
   "precheck": {
-    "sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
+    "sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
     "exit": 0,
-    "finished_at": "2026-11-16T11:10:22Z",
+    "finished_at": "2026-11-16T12:50:44Z",
     "summary": "All checks passed."
   },
   "gate_request": {
-    "sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
+    "sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
     "items": [
       {
         "item": "result at 200% text, pt_BR",
@@ -43,7 +39,7 @@
       }
     ]
   },
-  "ready_sha": null,
+  "ready_sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M6",
