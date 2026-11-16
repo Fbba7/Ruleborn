@@ -371,3 +371,32 @@ English and German at 100%, then Game in English and Account in pt_BR at
 Notes carried, which do not hold the board: the title's gear at 200% is
 larger now but still smaller than the key frame's; the dock's height is
 `ui.gd`'s bottom margin (K1); the selected tab is the kit's brown (K1).
+
+## Re-check of objection I (S3-R19)
+
+AD re-checked only objection I on `claude/ui-screens-meta` at `25ed9fd9`,
+and at the branch's head `002b91db`, which adds only main's merge and S3's
+progress files (no client file differs from `25ed9fd9`). Against this
+board's full list (M23), the only client change since the preview at
+`60560762` is `settings_screen.gd`: the Account group gets the header pill,
+and AuthPanel's caps label is hidden. `fit_settings.sh` now renders twelve
+shots, and all twelve print "fit ok". AD also rendered Account at 100% in
+pt_BR, at 200% in pt_BR and English, and in high contrast in English: all
+fit ok. The full answer is S3-R19 in `docs/progress/status/AD.json`.
+
+**I stands as fixed.** On the Account tab the group heading is now the
+header pill ("Account", "Konto", "Conta"), the same form as Access, Seeing
+and comfort, Sound and Play. The small gold caps label is gone at 100%, at
+200% and in high contrast. P2-S3-settings-2 has no open AD objection.
+
+From left: Account at 100% in English, German and pt_BR, then at 200% in
+German and pt_BR, then high contrast in English.
+
+![Account tab after I](board-5/r4-settings-account.png)
+
+Notes carried, which do not hold the board. `_hide_kicker` hides
+AuthPanel's first child each time one enters. The signed-out stills show
+that this is the caps label. If the signed-in or device layout ever opens
+with another node, that node would vanish. Board 5b checks the signed-in
+Account tab. The earlier notes still stand: the gear at 200%, the dock's
+height and the selected tab's brown (K1).
