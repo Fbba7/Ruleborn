@@ -3,26 +3,21 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P2-K1-kit-gaps-2",
-  "task_state": "ready",
-  "claimed_at": "2026-11-16T12:27:00Z",
-  "lease_until": "2026-11-16T15:27:00Z",
-  "updated_at": "2026-11-16T14:22:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P2-K1-guard-prereq",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-16T18:00:00Z",
+  "lease_until": "2026-11-16T21:00:00Z",
+  "updated_at": "2026-11-16T18:00:00Z",
+  "expected_next_update_by": "2026-11-16T18:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a81435a9",
-    "next_step": "ready at a81435a9: pre-check PASS (14:20Z, All checks passed.); in the merge queue"
+    "next_step": "add the prerequisite check to tools/ui_bake/guard.sh, with its self-test"
   },
-  "precheck": {
-    "sha": "a81435a956a7ae7a7cd754aa63a89bf0d4d6766e",
-    "exit": 0,
-    "finished_at": "2026-11-16T14:20:21Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "a81435a9",
+  "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M2",
