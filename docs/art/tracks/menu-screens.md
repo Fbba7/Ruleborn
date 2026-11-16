@@ -122,6 +122,8 @@ The stills are in `docs/art/shots/menu-screens/`. Each was rendered with this co
 ```
  Every still printed `fit ok`.
 
+This table is the earlier round's. Board 5's round re-rendered these stills and removed `character-200-pt_BR-tabs.png`; its table is under "Board 5's objections" below.
+
 | Still | Env | Draw calls | Record |
 |---|---|---:|---|
 | `character-100.png` | – | 81 | `.shot.json`, 6 controls |
@@ -153,6 +155,86 @@ The budget shots' recorded draw calls for the character screen are 103, 80 and 1
 - **The level badge at 200% text.** The level badge's "NV" kicker touches the top of the XP bar beside it. Both are the kit's (`KitStatus`); the words fit.
 - **English words in pt_BR.** Some of the character's content strings are still English under pt_BR: "Two uses a heist", the ability's sentence and the carrier's "Hauls loot; 15% slower when loaded". They come from the content (`content/ruleborn.json`), not from `Strings`. This is not this task's work.
 - **The tabs at 200% text.** They are under the tray in the opening frame, so the 200% record has no tabs row. `character-200-pt_BR-tabs.png` (scrolled 600) shows them: the three tabs wrap to two rows, Comparar on its own, and its record's row passes value-steps (ΔL* 63).
+
+### Board 5's objections (P2-S3-character-2)
+
+AD's board 5 (`docs/art/ui-quality/gate/boards/board-5.md`) raised five objections on the character screen: A, B, C, D and G (AD-R31 to AD-R37 in `docs/progress/requests.md`). Each is answered in `client/scripts/character_screen.gd`. The kit's own forms for each change are asked of K1 through the lead, S3-R9 to S3-R14 in `docs/progress/status/S3.json`, each defaulting to the screen's code.
+
+- **A: the Level up button fits its words at 200% text.**
+  - As key frame 04, the label is "Level up" in the display face: mixed case, cream, stroked in ink, with its drop. The price is in the kit's white numerals (`KitNumerals`, `num_white`).
+  - At body size the words sit left of the price chip. At large text the title takes the button's width, and the level line sits beside the chip under it, as the large-text key frame does.
+  - The words break between words only, never inside one ("Aufsteigen" stays whole), and the button grows to hold them (`_fit_upgrade`). German "Stufe 3 → 4" stays inside the button, and the 200% shots in English, pt_BR and German all print `fit ok`.
+  - The scripted fit check is `docs/art/shots/menu-screens/fit_character.sh`. It renders 100% and 200% text in en, pt_BR and de, and high contrast in en and pt_BR, with `FIT=1`, and fails unless each shot prints `fit ok`.
+- **B: the first screen at 200% text.**
+  - **The tabs.** All three stand on one line. The open tab shows its word, and the other two show their icons only, named for a screen reader (`_tabs`). This needs no icon-only form in the kit; S3-R9 asks for one.
+  - **The subtitle and level line.** Each holds one line, growing smaller first, down to 24 and 22 points (`_wrap_in` with `least`).
+  - **The stage** is 165 points tall plus the safe top at large text, against 170 at body size.
+  - **The ability card.** Its icon heads the card beside its kicker, as the large-text key frame's header band does.
+  - **What shows.** The tabs and the ability header (icon and kicker) stand above the tray in all three locales.
+- **C: the first screen at 100% text.** All four facts now stand whole above the tray in every locale.
+  - **The tabs.** Each icon is inline before its word, one line tall.
+  - **The ability card.** The tag sits inline after the kicker, and the ability's sentence takes two lines (S3-R10).
+  - **The facts.** They are compact, as key frame 04's: the disc beside the kicker, the words under both across the card at 13 points, and 6 points of padding (`_compact`, S3-R13).
+  - **Kickers that run tight.** A kicker drops its tracking, as the kit's tags are set, when its longest word, or the kicker with its tag, is wider than its room (`_untrack_when_tight`, S3-R14). German "EIGENSCHAFTEN" stands whole, and Portuguese "HABILIDADE" keeps its tag on its line.
+  - **The tray** keeps its 20 points off the column's foot. Moving it 6 points nearer the foot, as key frame 04's, put the way back inside the corner band (see below).
+- **D: the display type.**
+  - **The level tag.** The hexagon grows with the player's text, so its "LV", "NV" or "ST" kicker stays inside it at every size.
+  - **Words on the backdrop.** The subtitle and level line wear the kit's ink outline at every size (`ScreenKit.inked`). At large text, as the large-text key frame, they wear a heavier one (12% of their size) and the display type's hard drop (`_over_stage`).
+  - **The button.** The price and the Level up label wear the display treatment (as A).
+- **G: the stage's foot.** The stage's bottom fades to the menus' night at the point where the stage ends on the screen (`_blend_foot`), so its sky runs on into the backdrop with no edge (S3-R11).
+- **H: the face stays clear at 200% text** (AD's preview, S3-R15, from board 5's full list: quality 9, character presence).
+  - **The problem.** B's shorter stage put the status pill's words across the character: "trabalhando" in pt_BR hid the whole head, and "working" and "arbeitet" covered half the face.
+  - **The fix.** At large text the pill keeps its top-right corner as the state's icon alone. Each state has its own icon, so the state never rests on colour. The pill's words, timer included, become its accessible name and tooltip (`_stand`). At body size the pill keeps its words, as before.
+  - **What shows.** At 200% the whole head stands between the count pill, the state icon and the arrows, in en, pt_BR and de, on the Heist, Stats and Compare tabs. The 200% stills were re-rendered with this change; 100% and high contrast take the body-size branch, so their stills are unchanged.
+
+#### Evidence
+
+The stills and records are in `docs/art/shots/menu-screens/`. They were rendered on the board-5 code, with the tray at 20 points off the foot, with this command, the table's env set, and every still printed `fit ok`:
+
+```
+[env] FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_character.gd <still>
+```
+
+The recorded stills were rendered with `RECORD=1` as well.
+
+| Still | Env | Draw calls | Record |
+|---|---|---:|---|
+| `character-100.png` | – | 91 | `.shot.json`, 6 controls |
+| `character-100-pt_BR.png`, `character-100-de.png` | `LOCALE=pt_BR`, `LOCALE=de` | 91, 91 | `.shot.json`, 6 controls |
+| `character-200-pt_BR.png` | `TEXT=200 LOCALE=pt_BR` | 66 | `.shot.json`, 6 controls |
+| `character-200-en.png`, `character-200-de.png` | `TEXT=200`, `TEXT=200 LOCALE=de` | 66, 66 | `.shot.json`, 7 controls |
+| `character-hc.png`, `character-hc-pt_BR.png` | `HC=1`, `HC=1 LOCALE=pt_BR` | 91, 91 | `.shot.json`, 6 controls |
+| `character-200-pt_BR-scrolled.png` | `TEXT=200 LOCALE=pt_BR SCROLL=2000` | 43 | `.shot.json`, 2 controls |
+| `character-100-stats.png`, `character-100-compare.png` | `TAB=1`, `TAB=2` | 83, 73 | – |
+| `character-200-pt_BR-stats.png`, `-compare.png` | `TEXT=200 LOCALE=pt_BR TAB=1`, `TAB=2` | 75, 64 | – |
+
+Notes on the table:
+
+- A record's "controls" are the ones `checks.py` reads: the two arrows, the name on the backdrop, the tabs' row (as one), the way back and Level up. In English and German at 200% the subtitle, "Skyskipper · Carrier", is display-sized words on the backdrop too, so it counts as a seventh.
+- `character-200-pt_BR-tabs.png` is gone: the tabs now stand on the first screen at 200%.
+- The draw calls are each frame's, as the shot prints them.
+
+`python3 tools/ui_gate/checks.py all` passes on all nine records, with no FAIL: value-steps passes every control, hud-share passes, and hierarchy reads N/A, as on key frame 04's record.
+
+The ΔL* that value-steps measures:
+
+| Still | Arrows | Tabs | Way back | Level up |
+|---|---|---:|---:|---:|
+| 100% | 53 and 56 | 65 | 77 | 60 |
+| 200%, pt_BR | 58 and 58 | 61 | 77 | 62 |
+| 200%, en | 58 and 58 | 62 | 77 | 62 |
+| 200%, de | 58 and 58 | 60 | 77 | 62 |
+| High contrast | 65 and 67 | 83 | 95 | 78 |
+
+`check_screens.py`, `guard.sh` and `gdlint` are OK.
+
+#### What still differs from the key frame
+
+- **The tray's height above the foot.** The tray stands about 65 points above the screen's foot, against about 40 in key frame 04. The layout check's corner band, the bottom 8% of the screen, holds the way back at least 62 points above the foot. This is board 5's note for K1 (`ui.gd`'s bottom margin). A try at 6 points off the column's foot, against 20, put the way back's lower edge at 2,166 of 2,340 pixels, inside that band. The client's layout tests failed at 9:16 and 9:19.5, and at 150% and 200% text, so the tray stays at 20.
+- **The ability card at 200% text.** Its tag line and its sentence run under the tray as scroll content. The key frame's header band shows only the icon and kicker above the tray, as this build does.
+- **Mixed tracking.** In German at 100%, the traits kicker drops its tracking while its neighbours keep theirs, until the kit's cards do the same (S3-R14).
+- **English content.** The ability's sentence, "Two uses a heist" and "Hauls loot" are English in pt_BR and German. This is content localisation, not the screen's work, and the pt_BR key frame shows the same.
+- **The earlier list.** Its first and third points, the level badge and the tabs at 200%, are answered above (D and B).
 
 ## Part 3: the settings screen (P2-S3-settings)
 
@@ -237,8 +319,15 @@ The lead's gate on eed8b817 (`docs/art/ui-quality/gate/verdicts/P2-S3-settings/`
 
 The four stills were re-rendered with `FIT=1 RECORD=1`, and each printed `fit ok` (the 200% en still too). `checks.py all`: no FAIL, and value-steps passes every control. `gdlint`, `check_screens.py` and `guard.sh`: OK. The client tests read 382 ok; the not ok all need the server. The budget shots read 48, 41 and 48, against 52, 47 and 52; the worst word is 9.37:1, and 5.94:1 in high contrast.
 
+### The gate on f0a36a41, and ready
+
+The lead's advisory gate on f0a36a41 (`docs/art/ui-quality/gate/verdicts/P2-S3-settings/f0a36a41.json`) passed all six rows: Hierarchy and Display type at 100%, Display type and Hierarchy at 200% in pt_BR, Colour roles and value and Hierarchy in high contrast. Hierarchy at 100% passed narrowly, three fails of six: the fails held that the dark group-heading plates weigh less in grayscale than the bright cream rows. That is listed below as still worse.
+
+Main was merged into the branch at eb692c67, with no change to the settings screen's files or the kit it uses. On that merge the setup line and `bash client/build.sh` exit 0, `check_all.sh` passed ("All checks passed.", 18:49:12Z on 15 November), and `guard.sh` is OK, the settings budget shots reading 48, 41 and 48 against 52, 47 and 52 recorded.
+
 ### What is still worse than before
 
+- **The group headings at 100%.** The gate passed Hierarchy at 100% narrowly: in grayscale the dark heading plates weigh less than the cream rows below them.
 - **The tab and back words.** Key frame 05 sets them in capitals. The screen keeps the kit's sentence case (`Tokens.type_role`). Capitals would be a change to the kit's type roles, which is K1's work.
 - **The shapes in pt_BR.** At 100% text, the longer Portuguese names (Movimento, Matéria) put the six coins three to a line, not the key frame's six in one row.
 - **The fold at 200% text.** The whole law shows, but the text card runs past the window, the colour-blind card and the switches are below the fold (`SCROLL`), and the cue is a chevron with no fade, until the kit has a scroll cue (S3-R8).

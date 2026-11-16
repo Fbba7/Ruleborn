@@ -268,3 +268,56 @@ The board stands when objections A–G are fixed and re-shot (the stills of
 items 1 to 10), the character's German 200% shot prints "fit ok", and AD
 has checked the new stills on this page. Under section 3.8 of the report,
 the board merges when AD lets it stand, with no 24-hour wait.
+
+## Preview of character-2 (S3-R15)
+
+AD checked the character stills on `claude/ui-screens-meta` at `73afe675`
+against objections A, B, C, D and G and this board's full list (M23). The
+full answer is S3-R15 in `docs/progress/status/AD.json`. The scripted fit
+check passes in all eight shots, and AD's renders match S3's stills pixel
+for pixel. A, B, C, D and G stand as fixed. One new objection, H, holds
+P2-S3-character-2 until S3 fixes it: at 200% the status chip covers the
+character's face, all of it in pt_BR.
+
+At 100%: the key frame, then en, pt_BR and de.
+
+![Character at 100%](board-5/r2-character-100.png)
+
+At 200%: the key frame, en, pt_BR, de, then the pt_BR key frame.
+
+![Character at 200%](board-5/r2-character-200.png)
+
+The stage at 200% (objection H): the key frame, then en, pt_BR, de, and
+pt_BR on the Stats tab.
+
+![The stage at 200%](board-5/r2-character-200-stage.png)
+
+The Stats and Compare tabs at 100% en and 200% pt_BR:
+[`r2-character-tabs.png`](board-5/r2-character-tabs.png).
+
+## Re-check of objection H (S3-R16)
+
+AD re-checked objection H only, the character's face at 200% text, on
+`claude/ui-screens-meta` at `6b7e6b42`, against this board's full list
+(M23). The full answer is S3-R16 in `docs/progress/status/AD.json`. AD
+rendered the five 200% shots S3 named (en, pt_BR, de, and pt_BR with
+`TAB=1` and `TAB=2`) with `FIT=1`; the three Heist-tab shots print "fit
+ok", and all five match S3's stills pixel for pixel. The change touches
+only the large-text branch of `_stand`, so the 100% and high-contrast
+stills of round 2 stand unchanged.
+
+**H stands as fixed.** At 200% the status pill keeps its top-right corner
+as the state's icon alone (the working hammer), and the whole head, ears
+to collar, stands clear between the count pill, the icon and the arrows in
+every locale and on every tab. The state's words stay in the pill's
+accessible name and tooltip, so no meaning rests on the icon's colour.
+P2-S3-character-2 has no open AD objection.
+
+The stage at 200%: en, pt_BR, de, then pt_BR on the Stats and Compare tabs.
+
+![The stage at 200%, round 3](board-5/r3-character-200-stage.png)
+
+Note for board 5b, which holds nothing: the state icon's chip is the
+smallest plate on the stage (about two thirds of the count pill's height),
+readable as a hammer at phone size; board 5b checks that every state's
+icon reads as well at that size.

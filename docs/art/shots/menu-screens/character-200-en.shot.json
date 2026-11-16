@@ -1,0 +1,75 @@
+{
+ "controls": [
+  {
+   "name": "arrow 1: Previous character, Mossbear",
+   "rect": [
+    21.67,
+    110.86,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "arrow 2: Next character, Glass Golem",
+   "rect": [
+    313.44,
+    110.86,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Skyskipper",
+   "rect": [
+    110.14,
+    154.92,
+    166.83,
+    47.67
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 4: Skyskipper · Carrier",
+   "rect": [
+    33.22,
+    294.31,
+    320.31,
+    47.67
+   ]
+  },
+  {
+   "name": "row 5: Heist Stats Compare",
+   "rect": [
+    17.33,
+    479.92,
+    352.44,
+    64.64
+   ]
+  },
+  {
+   "name": "back 6: Roster",
+   "rect": [
+    28.17,
+    668.42,
+    60.67,
+    60.67
+   ]
+  },
+  {
+   "name": "up 7: Skyskipper: Raise to level 4, 200 Essence",
+   "rect": [
+    97.5,
+    630.5,
+    264.33,
+    136.5
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "character-200-en.png",
+ "text_scale": 2.0
+}

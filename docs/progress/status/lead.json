@@ -1,20 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-16T02:45:02Z",
-  "expected_next_update_by": "2026-11-16T03:10:00Z",
-  "cycle": 92,
-  "merging": {
-    "candidate_sha": null,
-    "task_ids": [
-      "P2-AD-board-4b",
-      "P2-S3-character-2"
-    ],
-    "started_at": "2026-11-16T02:45:02Z",
-    "expires_at": "2026-11-16T03:45:02Z"
-  },
+  "updated_at": "2026-11-16T03:43:13Z",
+  "expected_next_update_by": "2026-11-16T04:58:13Z",
+  "cycle": 93,
+  "merging": null,
   "last_merged": {
-    "task_id": "P2-S1-result-3",
-    "sha": "19cfe498"
+    "task_id": "P2-S3-character-2",
+    "sha": "f78cf9f1"
   },
   "acks": [
     "M15",
@@ -24,7 +16,8 @@
     "M19",
     "M20",
     "M21",
-    "M22"
+    "M22",
+    "M24"
   ],
   "alerts": [
     "Owner's order 5 of 11 November 2026, about 19:50Z (\"Let's switch to Opus 5.5 everywhere again, effort high\"): every session runs on Opus 5.5 at effort high; never Fable 5.1 (order 2). Launcher trig_01T7B65veojXUDAKzLK3FFBP and watchdog trig_01A1NwZvKD6MDUosh4jyvqqr, created at 19:50Z after order 5 was on main. The Fable 5.2 pair (trig_01U7kEeot7dmuJuNZVQJ7Bhm, trig_0195QvFjjm2oUgeCeyhU4bp4), disabled at 19:49Z, and every older scheduled task stay disabled and are never re-enabled. No Fable 5.2 session is reused.",
@@ -33,5 +26,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 92: merge P2-S3-character-2 once S3 marks it ready at 6b7e6b42 (advisory gate passed there, verdicts/P2-S3-character-2/6b7e6b42.json; a later head is gated again) and AD answers S3-R16 (M20; due 03:20Z, default H stands as fixed). P2-S2-home-3 is back to working for AD's objection (f) (S2 restarted 01:50Z); merge it once S2 marks it ready again and AD answers S2's re-check of (f), with S2-R21's home/200 draw calls at 124 in tools/ui_bake/budgets.json with a raises entry and S2-R23's exceptions; gate the new head. K1 works P2-K1-tabs-2 (S2-R24, S2-R26); AD takes P2-AD-board-4b after S3-R16. Seats S2, S3, AD, K1: four of four."
+  "next_step": "Cycle 94: merge P2-S2-home-3 when S2 marks it ready and AD clears (g) (M20, M24; home/200 at 124, K1-R22 interplay); merge P2-S3-settings-2 when ready, gated and AD clears I (S3-R19); merge P2-K1-tabs-2 when ready, with its budgets.json entry (K1-R22)."
 }

@@ -746,6 +746,85 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   ready when the pre-check and the gate pass at 6b7e6b42. Copied in cycle
   91; the lead restarts AD on it first (M20), and character-2 merges once
   S3 marks it ready and AD answers.
+  **Answered** by AD (cycle 91's session): H stands as fixed at 6b7e6b42;
+  the five 200% shots print fit ok and match S3's stills pixel for pixel;
+  P2-S3-character-2 has no open AD objection. S3 merged main into it and
+  marked it ready at 98ec21b4 (no task file changed since 6b7e6b42, so the
+  gate's pass carries); it merges in cycle 92.
+- **S2-R27** (from S2, 16 November 2026 02:45Z; due 16 November 14:45Z;
+  not blocking): re-check only objection (f) from AD's S2-R25 answer, on
+  `claude/ui-screens-home` at the ready commit 8ff5ee23, one round (M12):
+  `FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh
+  client/tests/shots/universe_home.gd out.png` shows each realm pin with
+  its icon and its level's disc on a plate of their size (no empty half,
+  no level over the icon); TEXT=200 in en and with CONTRAST=1 still show
+  numbered chips. The cause was a one-frame lag between the plate's resize
+  and its row's re-sort; `UniversePins._draw` now places icon and disc
+  from the plate's own size. Default: (f) stands as fixed; S2 keeps
+  P2-S2-home-3 ready, and any new objection becomes a follow-up task.
+  Copied in cycle 92; the lead restarts AD on it first (M20, M24) and runs
+  the advisory gate at 8ff5ee23 meanwhile.
+  **Answered** by AD (03:02Z, `docs/art/ui-quality/gate/boards/board-3.md`,
+  'Re-check of objection (f) (S2-R27)', on `claude/ui-ad`): (f) stands as
+  fixed at 8ff5ee23 (de 200 FIT ok, 118 calls; de 200 high contrast, pt_BR
+  200, en 200 and de 100 fit ok). One new objection, **(g)**, found on the
+  full-list check (M23) and already there at 823d2eac, holds
+  P2-S2-home-3: at 200% without the notice, in pt_BR and German (and
+  German high contrast), the four side buttons (Defence with its raid
+  badge and timer, Season, Lab, Shop) are gone, where AD-R24 and both 200%
+  key frames keep them as icon-only discs at both edges; English keeps
+  them. Fix: at 200% the four side buttons as icon-only discs in two edge
+  columns in every locale, the realm chips between them; German takes the
+  numbered chips where the icon-form pins leave no room. If pt_BR truly
+  cannot keep them until P2-K1-tabs-2 (S2-R24), S2 says so and AD accepts
+  pt_BR as a trade like (a); German keeps them. Default: every locale takes
+  numbered chips at 200% and keeps the side buttons; with NOTICE=1 the
+  give-way stands until P2-K1-tabs-2 (board 3b re-checks it). A re-check
+  covers only (g). The advisory gate passed at 8ff5ee23 (Hierarchy five of
+  six, Character presence three of three). By M24 the lead sent home-3
+  back to S2 in cycle 92 and restarted S2 on (g).
+- **S3-R17** (from S3, 16 November 2026 02:25Z; not blocking): preview
+  P2-S3-settings-2's stills for board 5's objections C, E and F (AD-R33,
+  AD-R35, AD-R36) at 60560762 on `claude/ui-screens-meta`: C, both switch
+  rows above the dock at 100% in English (pt_BR and de as key frame 05);
+  E, at 200% in German the title wraps between words and fits
+  'Einstellungen' whole, the gear 1.4 times larger, the Stillness card
+  whole, a switch row drops its icon rather than break a word; F, the
+  small and large A gold. Re-render with
+  `docs/art/shots/menu-screens/fit_settings.sh` (ten shots, fit ok).
+  Evidence in `docs/art/tracks/menu-screens.md` Part 3, 'Board 5's
+  objections (P2-S3-settings-2)'. Every objection in one round (M12).
+  Copied in cycle 92; AD takes it after S2-R27 (M20), and S3 claims
+  P2-S3-settings-2 once character-2 merges.
+  **Answered** by AD (03:02Z, `board-5.md`, 'Preview of settings-2
+  (S3-R17)', on `claude/ui-ad`): C, E and F stand as fixed at 60560762
+  (fit_settings.sh's ten shots fit ok; Game and Account at 100% en and de,
+  Account at 200% pt_BR, Game at 200% en fit ok too). C: at 100% English
+  shows both switch rows above the dock; pt_BR and de show the second
+  heading with the rows below the chevron, as the pt_BR key frame does.
+  One new light objection, **I** (M23), holds P2-S3-settings-2: on the
+  Account tab the group heading is a small gold caps label ('ACCOUNT',
+  'KONTO', 'CONTA') where every other group heading (Access, Seeing and
+  comfort, Sound, Play) is the header pill; give the Account group the
+  same header pill in `client/scripts/settings_screen.gd`. Default: S3
+  makes that change, adds an Account 100% shot to fit_settings.sh, and a
+  re-check covers only I. Carried, not holding: the gear at 200% still
+  smaller than the key frame's; the dock height and the selected tab's
+  brown (K1).
+- **S3-R19** (from S3, 16 November 2026 03:09Z; due 05:09Z; not
+  blocking): re-check of objection I only (S3-R17's answer), at
+  25ed9fd9 on `claude/ui-screens-meta`: the Account group is now headed
+  by the header pill like every other group, with the panel's own words
+  ('Account', 'Konto', 'Conta'); the settings screen hides AuthPanel's
+  gold caps label each time the panel draws (`settings_screen.gd`,
+  `_hide_kicker`), `auth_panel.gd` unchanged. New stills
+  `docs/art/shots/menu-screens/settings-account-100.png` and
+  `settings-account-de.png`; fit_settings.sh renders the Account tab at
+  100% in en and de too (twelve shots, fit ok). Track Part 3, 'Board 5's
+  objections', bullet I. Default: I stands as fixed at 25ed9fd9 and S3
+  marks P2-S3-settings-2 ready when the pre-check and the gate pass.
+  Copied in cycle 92. AD was already restarted once this cycle and ended
+  done at 03:02Z, so the next cycle restarts AD on it first (M20).
 
 ### S3
 
@@ -768,6 +847,43 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the Game tab and one for Access.
 
 ### Lead
+
+- **K1-R21** (from K1, 16 November 2026 03:31Z; due 09:31Z; not
+  blocking): P2-K1-tabs-2 touches three files outside its three. (1)
+  `client/tests/shots/ui_kit_catalogue.gd`: the tab bar now stands as tall
+  as its chosen tab's picture (S2-R24), so K09's five bars made one part
+  2157 px tall, over the page's 2094; K09 splits into 'K09 Tab bar
+  (states)' and 'K09 Tab bar (badges)', its motion strip at 0.9 scale; no
+  piece added or dropped. (2) `client/tests/shots/ui_kit_tabs.gd` and its
+  `.uid`: the S2-R24 and S2-R26 checks would put `ui_kit_tests.gd` past
+  gdlint's 1000 lines, so they live in this helper, as K1-R15's and
+  K1-R20's did. Default: granted. **Answered** by the lead in cycle 93,
+  granted: the three paths are in P2-K1-tabs-2's `exceptions`.
+- **K1-R22** (from K1, 16 November 2026 03:31Z; due 09:31Z; not
+  blocking): `tools/ui_bake/budgets.json`, `shots.recorded` home/200 from
+  114 to 115 draw calls: with room for the chosen tab's name at 200%, home
+  shows 'ISLANDS' under its tile where main hid it. Default: the lead adds
+  the raises entry at the merge. **Answered** by the lead in cycle 93,
+  granted: the lead writes the entry when P2-K1-tabs-2 merges. Note: S2-R21
+  raises the same record to 124 for P2-S2-home-3; whichever merges second
+  has its home/200 figure read by guard.sh on the candidate and recorded
+  from that reading, with its own raises entry.
+
+- **S3-R18** (from S3, 16 November 2026 03:09Z; due 07:09Z; not
+  blocking): on the settings screen's Account tab the profile row
+  ('Profile and stats', `ScreenAccount.profile_row` in
+  `client/scripts/screen_account.gd`) fails checks.py's value-steps: its
+  dark violet card stands 3 ΔL* off the night ground (0.3 of the 2 steps
+  needed), in en and de (`settings-account-100.shot.json`,
+  `settings-account-de.shot.json`). `screen_account.gd` is not
+  P2-S3-settings-2's file, the row is unchanged since before board 5,
+  and the Account tab is not one of the task's gate items. Default: the
+  row stays as it is in P2-S3-settings-2; the lead lists it for board 5b
+  or a later task with `screen_account.gd` in its files (the fix would
+  give the row the plate or card the Access tab's rows use).
+  **Default applied** in cycle 92: settings-2 does not take it; AD lists
+  it on P2-AD-board-5b, and the follow-up S3 task it files takes
+  `screen_account.gd`.
 
 - **AD-R26** (from AD, 13 November 2026 10:05Z; due 14 November 10:05Z;
   not blocking): found in the S1-R25 re-check, outside its scope: at 200%

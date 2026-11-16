@@ -1,0 +1,39 @@
+[
+  {
+    "task_id": "P2-S2-home-3",
+    "sha": "8ff5ee234f2f005c345173d1652d39ec442e17cc",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T03:06:00Z",
+    "item": "home at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "fail",
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Split on the first three (two passes, one fail), so three more were taken: five passes of six. The gold Collect 3.4k button above the tab bar is the largest saturated control and stays light and heavy in grayscale; the experience panel beside it is dark and information only, and the cream island pills and currency boxes are each much smaller (ruling v3). The one fail read Collect as half-width beside a panel of its size, at about the value of the seven cream island pills, under a glowing central tower that draws the eye first. The other five put Collect at or above the pass anchor's Level up, which competes with the gold Heist tab, and clear of the fail anchor, where Cast and Get out split the lead."
+  },
+  {
+    "task_id": "P2-S2-home-3",
+    "sha": "8ff5ee234f2f005c345173d1652d39ec442e17cc",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T03:06:00Z",
+    "item": "home at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The home screen's one character, the cream-furred cat avatar in the gold ring beside 'Keeper 24', is about 100 to 110 px at 540 px wide, reads as a figure with ears, face and eyes against its purple backing, and has soft stepped shading with no photographic grain, gloss or sticker flatness. All three find it larger and more readable than the pass anchor's roughly 70 px heist crew portraits, some of which blur into the purple; the island figures are the world and were left out."
+  }
+]

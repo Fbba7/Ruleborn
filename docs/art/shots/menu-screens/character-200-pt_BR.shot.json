@@ -4,7 +4,7 @@
    "name": "arrow 1: Personagem anterior, Mossbear",
    "rect": [
     21.67,
-    137.94,
+    110.86,
     52.0,
     52.0
    ]
@@ -13,7 +13,7 @@
    "name": "arrow 2: Próximo personagem, Glass Golem",
    "rect": [
     313.44,
-    137.94,
+    110.86,
     52.0,
     52.0
    ]
@@ -23,26 +23,25 @@
    "name": "words 3: Skyskipper",
    "rect": [
     110.14,
-    209.08,
+    154.92,
     166.83,
     47.67
    ]
   },
   {
-   "interactive": false,
-   "name": "words 4: Skyskipper · Carregador",
+   "name": "row 4: Assalto Atributos Comparar",
    "rect": [
     17.33,
-    350.64,
+    474.5,
     352.44,
-    96.42
+    64.64
    ]
   },
   {
    "name": "back 5: Plantel",
    "rect": [
     28.17,
-    649.28,
+    668.42,
     60.67,
     60.67
    ]
@@ -51,9 +50,9 @@
    "name": "up 6: Skyskipper: Subir ao nível 4, 200 de Essência",
    "rect": [
     97.5,
-    592.58,
+    630.5,
     264.33,
-    174.42
+    136.5
    ]
   }
  ],
