@@ -7,8 +7,8 @@
   "task_id": "P2-S3-settings-2",
   "task_state": "working",
   "claimed_at": "2026-11-16T03:21:36Z",
-  "lease_until": "2026-11-16T06:21:36Z",
-  "updated_at": "2026-11-16T03:21:36Z",
+  "lease_until": "2026-11-16T06:46:49Z",
+  "updated_at": "2026-11-16T03:46:49Z",
   "expected_next_update_by": "2026-11-16T04:06:36Z",
   "long_run": null,
   "progress_marker": {
@@ -17,13 +17,13 @@
     "at": "2026-11-16T02:30:00Z"
   },
   "precheck": {
-    "sha": "98ec21b4e98db0a657e87ac94ba96364e12fca34",
+    "sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
     "exit": 0,
-    "finished_at": "2026-11-16T02:27:28Z",
+    "finished_at": "2026-11-16T03:46:19Z",
     "summary": "All checks passed."
   },
   "gate_request": {
-    "sha": "",
+    "sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
     "items": [
       {
         "item": "settings at 100% text",
