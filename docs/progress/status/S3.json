@@ -8,12 +8,15 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T09:30:15Z",
   "lease_until": "2026-11-16T13:56:55Z",
-  "updated_at": "2026-11-16T10:56:55Z",
+  "updated_at": "2026-11-16T11:03:00Z",
   "expected_next_update_by": "2026-11-16T11:41:55Z",
-  "long_run": null,
+  "long_run": {
+    "log": "/tmp/check-a6d5f2fb37a9c8ece05887e6287eed3425beb649.log",
+    "expected_end": "2026-11-16T11:50:00Z"
+  },
   "progress_marker": {
     "last_green_sha": "8f7a9fadc2c3de9e69e80058a33b819b51abb77f",
-    "next_step": "pre-check on the commit with S3-R30's fixes; then gate_request and ready (AD's R29 default if unanswered by its due)",
+    "next_step": "pre-check on a6d5f2fb running (main e1c460f merged); on PASS record it, gate_request at that sha, ready (S3-R29's default applies after 11:43Z)",
     "at": "2026-11-16T10:56:55Z"
   },
   "precheck": null,
@@ -568,5 +571,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "pre-check on the commit with S3-R30's fixes; then gate_request and ready (AD's R29 default if unanswered by its due)"
+  "next_step": "pre-check on a6d5f2fb running (main e1c460f merged); on PASS record it, gate_request at that sha, ready (S3-R29's default applies after 11:43Z)"
 }
