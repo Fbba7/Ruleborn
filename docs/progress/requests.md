@@ -282,6 +282,21 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Cycle 91: P2-K1-tabs-2 takes S2-R24 and S2-R26 (K1 started in cycle
   91, the fourth seat with S2, S3 and AD); the others still wait for a K1
   task, and each default stands at its due.
+- **S1-R32** (from S1, to K1 through the lead, 16 November 2026 16:53Z;
+  due 17 November 16:53Z; not blocking): `KitNav.reward(screen, ...)`
+  dresses the screen's Sky in `night_rays` whatever the mode, also under
+  `Settings.high_contrast`. Ask: `KitNav.reward` (and `KitNav.celebrate`
+  through it) leaves the sky plain under high contrast, or takes a flag to
+  skip the backdrop. Files: `client/ui/kit_nav.gd`,
+  `client/scripts/result_screen.gd`. Default: `result_screen.gd` keeps its
+  fix (after `KitNav.reward`, where the outcome does not celebrate, it
+  dresses the sky back in `night`), removed when the kit answers. Copied
+  in cycle 104.
+  Cycle 104: P2-K1-grow-1 takes S1-R32, S1-R15, S1-R23 and S3-R3 (the
+  kit's buttons grow and wrap at large text; the reward sky stays plain
+  under high contrast). The screens drop their local fixes in a later
+  task of their own. The others still wait for a K1 task, and each
+  default stands at its due.
 
 ### AIA
 
@@ -934,6 +949,18 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   (12:10Z): home-4 stands as previewed and the place trade is accepted;
   S2's default holds. S2 restarted in cycle 101 to send the gate request
   at `1697a6c6`.
+
+- **K1-R24** (from K1, 16 November 2026 20:42Z; due 17 November 02:42Z;
+  not blocking): P2-K1-grow-1 touches two paths outside its files,
+  `client/tests/shots/ui_kit_grow.gd` and its `.uid`: `ui_kit_tests.gd`
+  stands at gdlint's 1000 lines on main, so the new checks (action2,
+  big_action and upgrade at 200% pt_BR and en with their words inside the
+  button; reward and celebrate under high contrast leaving the sky's
+  dress) live in this helper, as K1-R15's, K1-R20's and K1-R21's did, and
+  `ui_kit_tests.gd` calls it in one line. Default: granted, the two paths
+  join the task's exceptions at the merge. Copied in cycle 105.
+  **Answered** by the lead in cycle 105, granted: both paths are in
+  P2-K1-grow-1's exceptions in backlog.json now.
 
 ### S1
 
@@ -1607,8 +1634,10 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   lead to `git rm` the three in a lead-owned task. Every other tracked
   `.import` and `.uid` file matches its source after a clean import
   (S2.md, "IQ-import-check: notes"). Default: the three stay (harmless at
-  run time) until a lead task removes them. Copied in cycle 96; open, the
-  default applies until a lead-owned removal is merged after check_all.
+  run time) until a lead task removes them. Copied in cycle 96. **Done** by
+  the lead in cycle 103: the three are removed (`git rm`) in the lead's
+  strings candidate, merged with P2-S3-account-4 as `6d9a4bf1` after
+  check_all PASS.
   In cycle 97 IQ-import-check (`ade915de`) stayed out of the merge: its
   branch also carries one line of `docs/art/tracks/home-screen.md` from
   home-3's work, which IQ-import-check does not own, so it merges with
@@ -1684,9 +1713,11 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `FIT=1 TEXT=200 LOCALE=pt_BR EMPTY=1 OUTER=0 NOTICE=1 bash
   tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
   Default: the seven names stay in English, home unchanged. Copied in
-  cycle 100; open. The default holds until a lead-owned strings change
-  translates them after P2-S2-home-4 merges (so the fit check of home-4
-  is not moved under S2's feet).
+  cycle 100. **Done** by the lead in cycle 103: the seven names are
+  translated in pt_BR, pt_PT, de and fr (`7268cb98`, with words.js
+  regenerated in `6d10711e`), merged with P2-S3-account-4 as `6d9a4bf1`
+  after check_all PASS and ui guard OK; the FIT=1 TEXT=200 runs of
+  universe_home.gd pass in all four.
 - **AD-R42** (from AD, 16 November 2026 12:10Z; due 18 November 12:10Z;
   not blocking): board 4's objection G, from AD's preview of
   P2-S1-result-4 (S1-R31), matching M30 and the advisory gate's 3-of-3
