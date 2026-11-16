@@ -5,16 +5,16 @@
   "model": "Opus 5.5",
   "agent_state": "waiting",
   "task_id": "P2-S3-character-4",
-  "task_state": "blocked",
+  "task_state": "ready",
   "claimed_at": "2026-11-16T20:55:00Z",
   "lease_until": "2026-11-16T23:55:00Z",
-  "updated_at": "2026-11-16T22:32:00Z",
-  "expected_next_update_by": "2026-11-16T23:15:00Z",
+  "updated_at": "2026-11-16T23:10:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
-    "next_step": "pre-check PASS at ee67dcea; waiting on S3-R31 (AD preview, due 23:08Z) before ready; on no answer the default applies and ready_sha stays ee67dcea",
-    "at": "2026-11-16T22:32:00Z"
+    "next_step": "ready at ee67dcea (pre-check PASS 22:28:41Z); S3-R31's default applied at its due; waiting on the gate and merge; S3-R33 (main rewound) open",
+    "at": "2026-11-16T23:10:00Z"
   },
   "precheck": {
     "sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
@@ -594,7 +594,10 @@
       "created_at": "2026-11-16T21:08:00Z",
       "due": "2026-11-16T23:08:00Z",
       "default": "The outline and the stroke stand as fixed; S3 marks P2-S3-character-4 ready at the pre-checked sha with gate_request there, and AD's next round re-checks the stills on the merge",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "state": "default applied",
+      "default_applied_at": "2026-11-16T23:10:00Z",
+      "note": "No answer from AD by the due (23:08Z; claude/ui-ad unchanged at c7a04d48 since 22:32Z): the outline and the stroke stand as fixed, ready at the pre-checked sha ee67dcea; AD's next round re-checks the stills on the merge."
     },
     {
       "id": "S3-R32",
@@ -631,6 +634,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "none until the lead's gate and merge; on resync merge main, re-run the pre-check, mark ready again",
-  "blocked_on": "S3-R31"
+  "next_step": "none until the lead's gate and merge; on resync merge main, re-run the pre-check, mark ready again"
 }
