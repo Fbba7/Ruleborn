@@ -890,6 +890,44 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Copied in cycle 95. **Answered** by AD (07:00Z): J stands as fixed at
   9e602fcc; S3 marked P2-S3-settings-2 ready there, and it merged in
   cycle 96 (f675f05e).
+- **S1-R31** (from S1, 16 November 2026 10:17Z; due 17 November 10:17Z;
+  not blocking): preview of P2-S1-result-4 at 06635883 before the gate
+  (M10, M12). Home and the law pills on the kit's tertiary face, darker
+  than Raid in grayscale (result-3's advisory close point); the fold keeps
+  a label of up to three lines whole, so pt_BR 200% ends on the Renome
+  tile; the shot shows the screen's other states (confirming, refused,
+  testing, play), all fit ok at 200% in en, pt_BR and de (M26); draw calls
+  unchanged on the five goldens. The reward tiles keep their currency
+  icons with no character frame. Default: the gate runs on the pre-checked
+  head as it stands, and S1 marks ready on a pass. Copied in cycle 99.
+- **S3-R29** (from S3, 16 November 2026 09:43Z; due 11:43Z; blocking):
+  preview of P2-S3-character-3, board 5b's K and L only, at 0c4526a9 on
+  `claude/ui-screens-meta`. K: at large text the tray's top-level pill
+  takes the tray's width beside the way back and wraps between words,
+  accessibility_name carrying the words; fit_character.sh renders
+  character 4 at 200% in en, pt_BR and de, all fit ok. L: the profile row
+  on parchment, the switch rows' plate, its tap target edge to edge;
+  value-steps on settings-account-100 and -de pass (dL* 72.7 and 72.2).
+  Default: K and L stand as fixed; S3 marks P2-S3-character-3 ready at the
+  pre-checked sha with gate_request there, and AD's round 3 re-checks K
+  and L on the merge. Copied in cycle 99. **Answered** by its default at
+  11:43:26Z (AD had no seat in cycle 99): S3 marked P2-S3-character-3
+  ready at `a6d5f2fb` with gate_request there; board 5c re-checks K and
+  L once it merges.
+- **S2-R31** (from S2, 16 November 2026 10:58Z; due 14:58Z; blocking):
+  preview of P2-S2-home-4 (AD-R39, board 3b's objection H, home half) at
+  `c8de70fe` on `claude/ui-screens-home`, before the gate request.
+  `HomeParts.reserve_lift` is gone; at 150% text and more the right
+  edge's two discs (Season, Shop) stand in the top row beside the keeper
+  plate and only the left edge takes the realms' band; the large-text
+  gaps close. The four side buttons show as discs and the seven realms
+  as chips in pt_BR, pt_PT and fr with and without the notice, en and de
+  with it, and en at 900 tall; FIT also fails on a hidden side button.
+  S2 asks for a ruling on the one place trade: the 200% key frames draw
+  the right edge as a column beside the band, home puts it in the top
+  row. Default: the stills stand as previewed, S2 sends the gate request
+  at the pre-checked commit, any objection becomes a follow-up task.
+  Copied in cycle 100; AD restarted for it at 11:49Z.
 
 ### S3
 
@@ -1585,6 +1623,46 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   seeded in the backlog so K1 keeps a seat (M25). R28's default stands
   for now: nothing on a shipped screen depends on the prototypes, and
   the clean-up crosses several owners' files.
+- **S3-R30** (from S3, 16 November 2026 10:38Z; due 12:38Z; blocking):
+  grant `client/scripts/auth_panel.gd` (owned by the lead, no task in
+  flight) to P2-S3-character-3. M26's wider fit_settings.sh (20 shots)
+  fails the account tab signed in at 200% text in en and de
+  (`docs/art/shots/menu-screens/settings-200-de-account-signed.png`).
+  Two causes in auth_panel.gd: it connects store.changed in _ready and
+  never reconnects after settings_screen.gd's _cue moves the list, so its
+  Devices and Methods sections never draw, in the app too; and the status
+  card puts the sign-out button beside its words. Fixes: reconnect in
+  _enter_tree once ready; past 125% text, the actions under the words.
+  Default: the lead adds auth_panel.gd to P2-S3-character-3's exceptions
+  and restarts S3, which makes the two fixes, gets fit_settings.sh 20 of 20
+  and fit_character.sh 50 of 50, pre-checks and marks ready. **Answered**
+  by the lead in cycle 99, granted as the default says: auth_panel.gd is
+  in P2-S3-character-3's `exceptions` (`owners.py claims`: disjoint), and
+  S3 is restarted.
+- **S2-R30** (from S2, 16 November 2026 10:58Z; due 16:58Z; blocking):
+  record home/200's draw calls in `tools/ui_bake/budgets.json` at 121
+  (from 119) when P2-S2-home-4 merges, with a raises entry for S2-R30, as
+  for S2-R17 and S2-R21. H's fix moves the right edge's two discs (Season,
+  Shop) into the top row beside the keeper plate at large text, so they
+  draw between the plate and the purse; every draw order that keeps the
+  layout reads 120 or 121. home/100 and home/hc stay at 144 under 145; 29
+  under the cap of 150, and under S2-R21's approved 124. Evidence in
+  `docs/art/tracks/home-screen.md`, Part 4, 'Draw calls'. Default:
+  approved as for S2-R21. Copied in cycle 100. **Answered** by the lead in
+  cycle 100, approved as the default says: the lead writes home/200 at 121
+  with the raises entry in the merge of P2-S2-home-4, and S2 marks ready
+  with guard.sh failing only on home/200, said in its handoff.
+- **S2-R32** (from S2, 16 November 2026 11:33Z; due 17 November 19:33Z;
+  not blocking): `client/i18n/strings.csv` has WEAVING_BAND_0 to
+  WEAVING_BAND_6 (Quiet, Steady, Humming, Brimming, Strained, Cracking,
+  Breaking) in English in every column, so home's strain pill reads in
+  English in pt_BR, pt_PT, de and fr. The lead owns the strings. Repro:
+  `FIT=1 TEXT=200 LOCALE=pt_BR EMPTY=1 OUTER=0 NOTICE=1 bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+  Default: the seven names stay in English, home unchanged. Copied in
+  cycle 100; open. The default holds until a lead-owned strings change
+  translates them after P2-S2-home-4 merges (so the fit check of home-4
+  is not moved under S2's feet).
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
