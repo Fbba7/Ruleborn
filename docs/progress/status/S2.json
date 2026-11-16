@@ -8,9 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T06:55:00Z",
   "lease_until": "2026-11-16T09:55:00Z",
-  "updated_at": "2026-11-16T07:30:00Z",
+  "updated_at": "2026-11-16T07:33:00Z",
   "expected_next_update_by": "2026-11-16T08:15:00Z",
-  "long_run": null,
+  "long_run": {
+    "log": "/tmp/check-ade915de1fcf7e6cc3d00d207879f7c3a31a5959.log",
+    "expected_end": "2026-11-16T08:00:00Z"
+  },
   "progress_marker": {
     "last_green_sha": "40d457c6",
     "next_step": "Notes written and S2-R29 filed; pre-check on this head, then record it and set done.",
