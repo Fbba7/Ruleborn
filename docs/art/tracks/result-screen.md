@@ -12,9 +12,9 @@ Before, the screen drew its own surfaces: `FxSkin` plates, `RbBox`, `StyleBoxFla
 | Kicker, medal, title, condition, multipliers, length and peak | `KitNav.hero`, with the title at 40 points as the key frame's Marcellus (the kit hero uses 52). The medal sits beside the title, and the multipliers go on `KitStatus.set_pill`. |
 | The moment | `UI.panel("card")` holding `KitControls.big_action` in gold with the replay's length, beside when and what happened. With large text they stand one above the other. |
 | Starlight, Essence, Renown | `KitCards.reward` tiles. Starlight is on parchment and wider; the other two are on glass. They sit in `KitLayout.columns`, and stack one above another with large text. |
-| Study one law you crossed | `UI.panel("card")`. The laws are buttons in `KitLayout.columns` with the heading font and `UI.clear_box(6, 4)`. They fall to a two-column `KitLayout.grid` when a word will not fit (`_fit_laws`). |
+| Study one law you crossed | `UI.panel("card")`. The laws are `UI.action` buttons in the kit's tertiary face (`ghost`: violet on the dark card) in `KitLayout.columns`, with the heading font and `UI.clear_box(6, 4)`. They fall to a two-column `KitLayout.grid` when a word will not fit (`_fit_laws`). |
 | The crew home | `UI.panel("glass")`. Three faces overlap in `KitRing`s, framed as `KitSocial`'s avatars, beside how long the crew rests. |
-| Home and Raid again | `UI.panel("glass")`, as the key frame's `result-bottom glass`. Inside are `UI.action` on parchment with the `hud/home` icon, and `KitControls.action2` wide in gold (red when foiled) with the idle crew line. |
+| Home and Raid again | `UI.panel("glass")`, as the key frame's `result-bottom glass`. Inside are `UI.action` in the kit's tertiary face (`ghost`: violet on glass) with the `hud/home` icon, and `KitControls.action2` wide in gold (red when foiled) with the idle crew line. |
 
 Decisions:
 
@@ -183,6 +183,36 @@ The draw calls are the same as at `d896f254`, because the cut moves layout only 
 - (F) A spacer under the page to lift its edge: a zero-height Control in a VBox still takes the column's separation, which moved the bar even when no line was cut. The cut grows the corner's clearance under the bar instead.
 - (F) The first fold, fitted only when the page resized: it ran before the raid bar grew, and FIT failed at pt_BR and de 100% and 200%. It now also refits when the scroll resizes, measuring from the edge without the cut.
 - (F) Counting every clipped line as a part line: Renome's "+0" lost 3 px of its descent and was counted as cut, which lifted the bar over the whole Renome tile at pt_BR 200%. A line is cut only when less than its ascent shows.
+
+## Phase 2's exit (P2-S1-result-4)
+
+The overflow sweep, the advisory gate's close points at `904a3567`, AD's board 4b note, and M26's rule that the fit check covers every state the screen shows.
+
+- **Home and the laws in the tertiary face.** The gate's close point said Home and the law pills read lighter than Raid again in grayscale, so the raid led by size and place but not by value. Both are now `UI.action` in the kit's `ghost` skin (K01's tertiary button: violet on the glass or card), which is darker than gold in grayscale. Raid again stays the one light, wide shape at the foot. In high contrast the kit's own high-contrast faces apply, unchanged. No draw call more: the skin replaces the parchment one.
+- **The reward tiles keep no character frame.** The gate's other close point (Character presence, 3 of 3) asked for character art on the reward tiles. The tiles are currency, Starlight, Essence and Renown, each with its own icon, and the crew card under them carries the characters' faces. A character frame on a currency tile would be a new placement of character art, which is AD's and the kit's to decide, not a fit fix. It is answered in AD's preview (S1-R31) and left as it is.
+- **A short label goes under the fold whole.** AD's note for board 4b (S1-R30): at pt_BR 200% the first screen ended on "Taxa de entrada de", the first line of a two-line label. `ResultFit.part_line` now treats a label of up to three lines (`KEEP`) as one piece: when only its first lines show above the scroll's edge, the whole label goes under it, and the bar rises by the lines that would have shown. A longer label may still break at a line. It is still a cut, not a fade, so it adds no draw call. pt_BR 200% now ends on the Renome tile.
+- **Every state in the fit check (M26).** `screen_result.gd` takes `STATE`: `confirming` (the server still re-simulating), `refused` (`REFUSED` is the server's code, default `replay_malformed`, worded from the error catalogue), `testing` (a rehearsal from the builder: Watch it, Back to the builder, Publish it) and `play` (a workshop play, settled as `WorkshopController` settles it: no split). With no `STATE` it shows the plain result, local or (with `SERVER`) server-checked, on any of the five goldens. The sweep below runs them all at 200% in en, pt_BR and de.
+
+- **A rehearsal action's long word stays whole.** At 200% in German, "Veröffentlichen" (735 px) was wider than the widest control (666 px) and broke between its letters, which also left the page's foot 78 px into a line. `ResultFit.fit_whole` steps the button's words down the least sizes that keep its longest word whole; the other actions keep their size.
+- **The words over the sky inked by their size (M30).** The advisory gate at `8753618a` failed Display type at pt_BR 200% on the hero: the gold kicker "ASSALTO CONCLUÍDO" read as unoutlined on the sunburst, and the lines under it kept a 2 to 3 px edge on 45 px glyphs. The outline was set from the words' points before the text size applied, so it stayed 6 px at every size. `ResultFit.ink` now sets it from the size each label is drawn at: an edge of 1.5 points, scaled with the text size (3 in high contrast), or 12% of the drawn size, whichever is more. It runs again when the hero shrinks to fit. Godot shows about a quarter of `outline_size` outside the glyph (measured: 21 gave 5 px on an 84 px face), so the constant is four times the edge. At pt_BR 200% the "N" of "Nenhum" (61 px tall) now has a 10 px ink edge, and the kicker 9 px. The kicker, title, condition, time and alarm line, and the lines under the tiles all take it. No draw call more: an outline is part of the glyph's draw. Re-swept at `3d357ac6` (FIT=1, 51 stills: the plain result plain and high contrast in en, pt_BR and de at 100% and 200%, the four goldens and local at 200%, every state at 200% and at en 100%, reduced motion, long-crew5): every still "fit ok", every draw call as in the table below (server-checked confirming 114, play 88, rechecked against `8753618a` on the same still).
+
+Draw calls from each still's `budget:` line, with `FIT=1` (rehearsal rows after the fix above):
+
+| State | en 200% | pt_BR 200% | de 200% |
+|---|---|---|---|
+| Server-checked, planned-clean | 113 | 115 | 114 |
+| Server-checked, short-crew3 | 109 | 113 | 113 |
+| Server-checked, mid-crew4 | 108 | 112 | 112 |
+| Server-checked, long-crew5 | 111 | 115 | 115 |
+| Server-checked, edge-seed-max | 107 | 111 | 111 |
+| Local (not yet checked) | 99 | 99 | 101 |
+| Confirming | 114 | 115 | 115 |
+| Refused (`replay_malformed`) | 77 | 77 | 79 |
+| Workshop play | 88 | 88 | 88 |
+| Rehearsal | 97 | 97 | 100 |
+| Rehearsal, high contrast | 32 | 32 | 35 |
+
+All "fit ok". At 100% in English: local 91, confirming 118, refused 73, play 80, rehearsal 88 (de 90). The longest refusal, `removed_from_constellation` in German at 200%: 87. The plain result's sweep (en, pt_BR, de at 100% and 200%, each also in high contrast, long-crew5, reduced motion): 17 stills, all "fit ok", draw calls as before.
 
 # The reward sequence (P2-S1-result-2)
 
