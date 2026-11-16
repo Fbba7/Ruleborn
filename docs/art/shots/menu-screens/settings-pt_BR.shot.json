@@ -7,14 +7,14 @@
     17.33,
     47.67,
     352.44,
-    56.69
+    50.56
    ]
   },
   {
    "name": "row 2: Jogo Acesso Conta",
    "rect": [
     17.33,
-    113.03,
+    106.89,
     352.44,
     56.33
    ]
@@ -24,18 +24,18 @@
    "name": "words 3: Acesso",
    "rect": [
     30.33,
-    182.36,
-    65.72,
-    29.97
+    171.89,
+    72.22,
+    32.86
    ]
   },
   {
    "name": "size-a 4: Texto 100%: menor",
    "rect": [
     28.17,
-    238.33,
+    222.08,
     69.33,
-    60.67
+    52.0
    ]
   },
   {
@@ -43,7 +43,7 @@
    "name": "size-mid 5: 100%",
    "rect": [
     152.03,
-    244.11,
+    223.53,
     82.69,
     32.86
    ]
@@ -52,9 +52,9 @@
    "name": "size-a 6: Texto 100%: maior",
    "rect": [
     289.61,
-    238.33,
+    222.08,
     69.33,
-    60.67
+    52.0
    ]
   },
   {
@@ -62,9 +62,9 @@
    "name": "sample 7: Stillness Anyone standing still for 1.5 seconds becomes invisible to guards and ",
    "rect": [
     28.17,
-    309.83,
+    282.75,
     330.78,
-    89.56
+    85.22
    ]
   },
   {
@@ -72,7 +72,7 @@
    "name": "words 8: Stillness",
    "rect": [
     82.33,
-    318.5,
+    289.25,
     265.78,
     29.97
    ]
@@ -82,18 +82,37 @@
    "name": "shapes 9: Tempo Movimento Matéria Energia Vida Espírito Cada escola mantém sua forma em to",
    "rect": [
     17.33,
-    421.06,
+    385.31,
     352.44,
-    210.17
+    186.33
    ]
   },
   {
-   "name": "back 10: Voltar",
+   "interactive": false,
+   "name": "words 10: Visão e conforto",
+   "rect": [
+    30.33,
+    580.31,
+    177.67,
+    32.86
+   ]
+  },
+  {
+   "name": "switch-row 11: Alto contraste: não",
+   "rect": [
+    17.33,
+    621.83,
+    352.44,
+    52.0
+   ]
+  },
+  {
+   "name": "back 12: Voltar",
    "rect": [
     28.17,
-    704.17,
+    723.67,
     130.0,
-    60.67
+    52.0
    ]
   }
  ],

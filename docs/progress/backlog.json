@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-16T06:50:00Z",
-  "updated_by": "lead (cycle 96)",
+  "updated_at": "2026-11-16T08:55:00Z",
+  "updated_by": "lead (cycle 97)",
   "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -3819,7 +3819,7 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "AD",
         "branch": "claude/ui-ad",
@@ -3830,8 +3830,8 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "31c4de6c",
-      "merged_sha": null,
-      "updated_at": "2026-11-16T06:50:00Z",
+      "merged_sha": "f675f05e",
+      "updated_at": "2026-11-16T07:50:00Z",
       "updated_by": "lead (cycle 96)",
       "id": "P2-AD-board-3b",
       "title": "Board 3, second round: AD re-checks objections A-D on home-3's and K1-tabs's stills and lets board 3 stand or lists what is still open"
@@ -3859,14 +3859,20 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-16T07:00:00Z",
+        "seen_at": "2026-11-16T08:10:00Z",
+        "lease_until": "2026-11-16T10:00:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-16T06:50:00Z",
-      "updated_by": "lead (cycle 96)",
+      "ready_sha": "9e08db75",
+      "merged_sha": "1053266f",
+      "updated_at": "2026-11-16T09:30:00Z",
+      "updated_by": "lead (cycle 97)",
       "id": "P2-K1-tabs-3",
       "title": "KitTabs: at 200% text the chosen tab's picture stays within the bar's height (board 3b's objection H, kit half, AD-R38)",
       "exceptions": [
@@ -3959,7 +3965,7 @@
       "updated_by": "lead (cycle 96)",
       "id": "P2-AD-board-3c",
       "title": "Board 3, third round: AD re-checks only objection H on home-4's and tabs-3's stills and lets board 3 stand or lists what is still open",
-      "exceptions": null
+      "exceptions": []
     },
     {
       "role": "AD",
@@ -4311,7 +4317,7 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "merged",
       "claim": {
         "agent": "S3",
         "branch": "claude/ui-screens-meta",
@@ -4321,9 +4327,9 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-16T06:50:00Z",
+      "ready_sha": "9e602fcc",
+      "merged_sha": "f675f05e",
+      "updated_at": "2026-11-16T07:50:00Z",
       "updated_by": "lead (cycle 96)",
       "id": "P2-S3-settings-2",
       "title": "Settings screen, part 2 (board 5's objections C (settings half), E and F; AD-R33, AD-R35, AD-R36): both switch rows on the first screen at 100%, the German title and Stillness card at 200%, one plate leading in the squint",
@@ -4354,17 +4360,204 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-11-16T07:47:00Z",
+        "seen_at": "2026-11-16T08:40:00Z",
+        "lease_until": "2026-11-16T10:47:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "d48c880e",
+      "merged_sha": "1053266f",
+      "updated_at": "2026-11-16T09:30:00Z",
+      "updated_by": "lead (cycle 97)",
+      "id": "P2-AD-board-5b",
+      "title": "Board 5, second round: AD re-checks objections A to G on character-2's and settings-2's stills and lets board 5 stand or lists what is still open",
+      "exceptions": []
+    },
+    {
+      "role": "S3",
+      "assigned_to": "S3",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/scripts/screen_account.gd",
+        "client/tests/shots/screen_character.gd",
+        "client/tests/shots/screen_settings.gd",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "deps": [
+        "P2-AD-board-5b"
+      ],
+      "done_when": [
+        "AD-R40 (board 5b, objection K): at its highest level (fixture character 4, level 10 of 10) the character screen fits the phone at 200% text in en, pt_BR and de: the sticky bar's 'at the highest level' pill (CHARACTER_TOP_LEVEL, character_screen.gd _actions) shows as the star icon alone with an accessibility_name carrying the words at large text, or wraps at word boundaries inside the bar; nothing is cut and the screen is no wider than 1080",
+        "character 4 at 200% text in en, pt_BR and de added to docs/art/shots/menu-screens/fit_character.sh, and the fit check passes",
+        "AD-R41 (objection L, light): the Account tab's profile row (screen_account.gd profile_row) on the plate the Access tab's rows use, at least 2 value steps off the night; checks.py value-steps re-run on settings-account-100 and settings-account-de and passing",
+        "board-5.md's 'Round 2 (board 5b)' notes for these screens considered and answered in the handoff",
+        "AD previews the stills before ready (M10, M12): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "gate_items": [
+        {
+          "item": "character at 200% text, pt_BR",
+          "qualities": [
+            "Display type",
+            "Hierarchy"
+          ]
+        }
+      ],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
       "state": "open",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-15T22:04:16Z",
-      "updated_by": "lead (cycle 87)",
-      "id": "P2-AD-board-5b",
-      "title": "Board 5, second round: AD re-checks objections A to G on character-2's and settings-2's stills and lets board 5 stand or lists what is still open",
-      "exceptions": null
+      "updated_at": "2026-11-16T08:55:00Z",
+      "updated_by": "lead (cycle 97)",
+      "id": "P2-S3-character-3",
+      "title": "Character and settings, part 3: the highest-level pill fits at 200% text (board 5b's objection K, AD-R40) and the Account tab's profile row gets a plate (objection L, AD-R41)",
+      "exceptions": [
+        "docs/art/shots/menu-screens/**"
+      ]
+    },
+    {
+      "role": "AD",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P2-S3-character-3"
+      ],
+      "done_when": [
+        "board-5.md, third round: only objections K and L re-checked on P2-S3-character-3's stills beside key frames 04 and 05 (M12); the board stands or lists what is still open",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "gate_items": [],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T08:55:00Z",
+      "updated_by": "lead (cycle 97)",
+      "id": "P2-AD-board-5c",
+      "title": "Board 5, third round: AD re-checks only objections K and L on character-3's stills and lets board 5 stand or lists what is still open",
+      "exceptions": []
+    },
+    {
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/kit_controls.gd",
+        "client/ui/kit_panels.gd",
+        "client/tests/ui_kit_tests.gd",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "deps": [],
+      "done_when": [
+        "S3-R26: KitControls.slider (K06): track 9-slice, fill and knob on the slider skin; states N, P, D and RM; a spoken name and value; the catalogue's K06 drawn with it",
+        "S3-R27: KitPanels.dialog's confirm and info variants (K17) with the ribbon title (K19) and one action marked primary; the existing dialog calls keep working unchanged",
+        "S3-R22: the info popover (K30): a small E3 frame with a pointer, opened by a tap on a 48-point (i) control and closed by a tap; the catalogue's K30 drawn with it",
+        "S3-R24: the empty state (K35) as a kit call in kit_panels.gd (icon, words and one action on the kit's materials); ScreenParts.empty may stay as a caller of it, its callers untouched",
+        "kit-spec.md sections 4 and 6.5 updated for K06, K17, K30 and K35",
+        "tests in client/tests/ui_kit_tests.gd for each new call (the slider's spoken value, the dialog variants' primary action, the popover's open and close, the empty state's action)",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "gate_items": [],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T08:55:00Z",
+      "updated_by": "lead (cycle 97)",
+      "id": "P2-K1-kit-gaps-1",
+      "title": "Kit gaps, part 1 (IQ-kit-docs, S3-R22, R24, R26, R27): slider, dialog variants with ribbon title, info popover and empty state as kit calls",
+      "exceptions": [
+        "client/tests/shots/ui_kit_catalogue.gd",
+        "client/tests/shots/ui_kit_*.gd",
+        "docs/art/shots/ui-bake/**",
+        "tools/ui_bake/budgets.json"
+      ]
+    },
+    {
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/kit_status.gd",
+        "client/ui/kit_controls.gd",
+        "client/ui/kit_skin.gd",
+        "client/ui/kit_nav.gd",
+        "client/ui/motion.gd",
+        "client/tests/ui_kit_tests.gd",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "deps": [
+        "P2-K1-kit-gaps-1"
+      ],
+      "done_when": [
+        "S3-R23: the spinner (K34) as a public kit call with its reduced form (a static mark with 'Loading'), and a kit call that puts a button, round action, text field or quest card into the Ld state (face held, label replaced by a spinner of its size, said aloud as loading, no layout shift); the L and A overlays as kit calls a screen can use, the catalogue drawing its states with them",
+        "S3-R25: one kit entry point for the reward sequence (K40: anticipation, burst, reveal, coin flight, counter roll) on the motion sprites, with its reduced form; KitNav.celebrate kept only as a thin alias of it, and a request to S1 to switch result_screen.gd's call",
+        "kit-spec.md sections 4 and 8.1 updated for K34, Ld, L, A and K40",
+        "tests in client/tests/ui_kit_tests.gd for the spinner's reduced form, the Ld state's unchanged size and the reward entry point's reduced form",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 3,
+      "gate_items": [],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T08:55:00Z",
+      "updated_by": "lead (cycle 97)",
+      "id": "P2-K1-kit-gaps-2",
+      "title": "Kit gaps, part 2 (IQ-kit-docs, S3-R23, R25): spinner and the Ld, L and A states as kit calls; one reward-sequence entry point",
+      "exceptions": [
+        "client/tests/shots/ui_kit_catalogue.gd",
+        "client/tests/shots/ui_kit_*.gd",
+        "docs/art/shots/ui-bake/**",
+        "tools/ui_bake/budgets.json"
+      ]
     }
   ],
   "idle_queue": [
@@ -4379,22 +4572,33 @@
       ],
       "estimate_h": 1,
       "tier": 3,
-      "state": "open",
-      "claim": null
+      "state": "ready",
+      "claim": null,
+      "ready_sha": "ade915de"
     },
     {
       "id": "IQ-kit-docs",
       "title": "Read kit-spec.md against client/ui/ and list every component the spec names and the code lacks, as a request to K1",
       "role": "any",
       "model": "Opus 5.5",
-      "assigned_to": null,
+      "assigned_to": "S3",
       "files": [
         "docs/progress/<your-agent>.md"
       ],
       "estimate_h": 1,
       "tier": 3,
-      "state": "open",
-      "claim": null
+      "state": "merged",
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-16T07:45:24Z",
+        "seen_at": "2026-11-16T08:19:00Z",
+        "lease_until": "2026-11-16T10:45:24Z"
+      },
+      "ready_sha": "8f7a9fad",
+      "merged_sha": "1053266f",
+      "updated_by": "lead (cycle 97)",
+      "updated_at": "2026-11-16T09:30:00Z"
     }
   ],
   "messages": [

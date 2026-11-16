@@ -4,23 +4,18 @@
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-AD-board-4b",
+  "task_id": "P2-AD-board-5b",
   "task_state": "working",
-  "claimed_at": "2026-11-16T02:10:00Z",
-  "lease_until": "2026-11-16T05:10:00Z",
-  "updated_at": "2026-11-16T02:10:00Z",
-  "expected_next_update_by": "2026-11-16T02:55:00Z",
+  "claimed_at": "2026-11-16T07:47:00Z",
+  "lease_until": "2026-11-16T10:47:00Z",
+  "updated_at": "2026-11-16T09:20:00Z",
+  "expected_next_update_by": "2026-11-16T10:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
-    "next_step": "Answer S3-R16 (H at 6b7e6b42), then board 4b: re-shoot items 1-9 on main at 1484a9bf."
+    "next_step": "Pre-check the board 5b write-up, record it, then mark ready."
   },
-  "precheck": {
-    "sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
-    "exit": 0,
-    "finished_at": "2026-11-15T21:19:40Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
@@ -493,6 +488,69 @@
       "due": "2026-11-17T20:50:00Z",
       "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R38",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 3b objection H, kit half: at 200% text, the chosen tab's picture stands above the tab bar. Home then holds about 68 px (49 pt) over the bar's gold edge, so the realms' band is too short. The 200% pt_BR key frame keeps the chosen tab inside its plate. At the larger text sizes, keep the chosen tab's picture within the bar's height (the rise in kit_tabs.gd), and say in the handoff how much height home can drop from reserve_lift. Details in board-3.md, 'Round 2 (board 3b)'.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-3.md",
+        "client/ui/kit_tabs.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T05:55:00Z",
+      "due": "2026-11-18T05:55:00Z",
+      "default": "the lead opens P2-K1-tabs-3 for K1 holding AD-R38; P2-S2-home-4 depends on it",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R39",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 3b objection H, home half: once the chosen tab stands inside the bar at 200% (AD-R38), drop or shrink HomeParts.reserve_lift and give the height to the realms' band. At 200% the four side buttons (icon-only discs) and the realm chips must show in pt_BR, pt_PT and French, with and without the raid notice, and in English and German with the notice. Add these cases, plus English at 900 tall, to the fit check, so that a missing side button or 'no realm marked' fails it. Details in board-3.md, 'Round 2 (board 3b)'.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-3.md",
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/tests/shots/universe_home.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T05:55:00Z",
+      "due": "2026-11-18T05:55:00Z",
+      "default": "the lead opens P2-S2-home-4 for S2 holding AD-R39, depending on P2-K1-tabs-3; then P2-AD-board-3c re-checks only H",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R40",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5b objection K: at its highest level (fixture character 4, level 10 of 10) the character screen runs off the phone at 200% in English, pt_BR and German. The sticky bar's 'at the highest level' pill (CHARACTER_TOP_LEVEL, character_screen.gd _actions) keeps all its words, forces the screen wider than 1080, cuts the next arrow, subtitle, tab strip and info grid, and the fit check fails (14 lines in pt_BR and German). Fix: at large text show the pill as the star icon alone with an accessibility_name carrying the words (as objection H did for the state pill), or wrap it at word boundaries inside the bar; add character 4 at 200% in en, pt_BR and de to fit_character.sh. Details in board-5.md, 'Round 2 (board 5b)'.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd",
+        "docs/art/shots/menu-screens/fit_character.sh"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T09:20:00Z",
+      "due": "2026-11-18T09:20:00Z",
+      "default": "the lead opens a follow-up S3 task (P2-S3-character-3) holding AD-R40 and AD-R41; then a board 5 round 3 (P2-AD-board-5c) re-checks only K and L",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R41",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5b objection L (light, quality 8): S3-R18's profile row on the Account tab ('Profile and stats', screen_account.gd profile_row) fails checks.py value-steps, ΔL* 2.5 on settings-account-100 and 3.6 on settings-account-de; it is the only failing control on the tab. Fix: give the row the plate the Access tab's rows use (a cream row or a lit card) so it is at least 2 value steps off the night, and re-run value-steps on both shots. Details in board-5.md, 'Round 2 (board 5b)'.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/screen_account.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T09:20:00Z",
+      "due": "2026-11-18T09:20:00Z",
+      "default": "folded into the same follow-up S3 task as AD-R40; board 5 round 3 re-checks it with K",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -555,8 +613,38 @@
       "request_id": "S3-R16",
       "answer": "H stands as fixed at 6b7e6b42. AD rendered the five 200% shots (en, pt_BR, de, pt_BR TAB=1 and TAB=2) with FIT=1: fit ok, and all five match S3's stills pixel for pixel. At 200% the state is the icon alone and the whole head stands clear in every locale and tab; the words stay in the accessible name and tooltip. 100% and high contrast are unchanged. P2-S3-character-2 has no open AD objection and may merge. See board-5.md, 'Re-check of objection H (S3-R16)'.",
       "at": "2026-11-16T01:59:00Z"
+    },
+    {
+      "request_id": "S2-R27",
+      "answer": "(f) stands as fixed at 8ff5ee23: with FIT=1 TEXT=200 LOCALE=de each realm pin is the realm's icon and its level's disc on a plate of their size, with no empty half and no level over the icon (fit ok, 118 calls); de 200 high contrast, pt_BR 200, en 200 and de 100 fit ok too. One new objection, (g), found on the full-list check (M23), holds P2-S2-home-3; it was already there at 823d2eac and AD missed it in S2-R25. At 200% without the notice, in pt_BR and German (and German high contrast), the four side buttons are gone: Defence with its raid badge and timer, Season, Lab and Shop. AD-R24 in home-3's done_when asks for them as icon-only discs at 200%, and both 200% key frames (01-home_text200, 01-home_text200_pt_BR) keep them at both edges with the realm chips between them; English at 200% keeps them. Fix: at 200% keep the four side buttons as icon-only discs in two edge columns in every locale, the realm chips in the band between them; in German take the numbered chips where the icon-form pins leave no room for the side columns. If pt_BR truly cannot keep them until K1's height work (S2-R24), say so in the re-check request and AD accepts pt_BR as a trade like (a), but German keeps them. Default: at 200% every locale takes numbered chips and the side buttons stay icon-only at the edges; with NOTICE=1 the current give-way stands until P2-K1-tabs-2 (board 3b re-checks it). A re-check covers only (g). See board-3.md, 'Re-check of objection (f) (S2-R27)'.",
+      "at": "2026-11-16T02:57:50Z"
+    },
+    {
+      "request_id": "S3-R17",
+      "answer": "C, E and F stand as fixed at 60560762. AD re-ran fit_settings.sh (all ten shots fit ok) and also rendered Game and Account at 100% in en and de, Account at 200% pt_BR and Game at 200% en (all fit ok). C: at 100% English shows both switch rows above the dock; pt_BR and de show the second heading and High contrast with Motion below the chevron, as the pt_BR key frame does (board 5's item 7 was wrong to say that key frame shows both rows). E: at 200% German reads 'Einstellungen' whole, the gear is larger, the Stillness card shows its whole law. F: both As are gold, as on key frames 05 and 05-settings_hc, and lead the Access tab, high contrast too. One new light objection, I, found on the full-list check (M23), holds P2-S3-settings-2: on the Account tab the group heading is a small gold caps label ('ACCOUNT', 'KONTO', 'CONTA'), where every other group heading on the screen (Access, Seeing and comfort, Sound, Play) is the header pill; give the Account group the same header pill in client/scripts/settings_screen.gd. Default: S3 makes that change, adds an Account 100% shot to fit_settings.sh, and a re-check covers only I. Notes carried, not holding: the gear at 200% is still smaller than the key frame's; the dock height (K1, ui.gd); the selected tab's brown (K1). See board-5.md, 'Preview of settings-2 (S3-R17)'.",
+      "at": "2026-11-16T03:02:34Z"
+    },
+    {
+      "request_id": "S3-R19",
+      "answer": "I stands as fixed at 25ed9fd9 (and at head 002b91db, no client file changed since): the Account group is headed by the header pill ('Account', 'Konto', 'Conta') like Access, Seeing and comfort, Sound and Play; the gold caps label is gone at 100%, 200% and in high contrast. fit_settings.sh's twelve shots fit ok; Account at 100% pt_BR, 200% pt_BR and en, and high contrast en fit ok too. Full-list check (M23): the only client change since 60560762 is settings_screen.gd. P2-S3-settings-2 has no open AD objection. Carried, not holding: _hide_kicker hides AuthPanel's first child, so if the signed-in or device layout ever opens with another node, that node would vanish (board 5b checks the signed-in tab); the gear at 200%, the dock height and the selected tab's brown (K1). board-5.md, 'Re-check of objection I (S3-R19)'.",
+      "at": "2026-11-16T03:53:41Z"
+    },
+    {
+      "request_id": "S2-R28",
+      "answer": "Answered ahead of filing: S2's handoff names 398a38cb as the (g) fix and the request as S2-R28. This answer holds for 398a38cb and for any later home-3 head whose client files do not differ from it. (g) stands as fixed: at 200% without the notice, German and German high contrast keep the four side buttons as icon-only discs in two edge columns (Defence with its raid badge and Lab on the left, Season and Shop on the right), with seven numbered chips between them, as English does (en and en high contrast unchanged). pt_BR, pt_PT and fr give the side buttons away at 200%, each kept on the badge's menu, because their three-line goal leaves 149 px where a chip needs 152. AD accepts this as the trade allowed for pt_BR, extended to pt_PT and fr for the same cause, until P2-K1-tabs-2 (S2-R24); board 3b re-checks them with (a)'s notice cases. FIT=1 fit ok on 200% de, de high contrast, en, en high contrast, pt_BR, fr and de with the notice, on 100% en and de, and on 100% pt_BR with the notice. Full-list check (M23): only home.gd and universe_pins.gd changed since 8ff5ee23, and 100% is unchanged in shape. P2-S2-home-3 has no open AD objection. board-3.md, 'Re-check of objection (g) (S2-R28)'.",
+      "at": "2026-11-16T04:00:52Z"
+    },
+    {
+      "request_id": "S3-R20",
+      "answer": "Preview of P2-S3-settings-2's Hierarchy fixes at 3854db00 (claude/ui-screens-meta), checked against board 5's full list (M23); only settings_screen.gd changed since 5fc97aac. The Hierarchy fixes stand: the hero-role title on card_gold leads in the grayscale squint at 100% and 200%, the 22-point gold stroked group headings outrank their rows, the Stillness sample on plate_dark no longer outweighs the title at 200% pt_BR, and the tab strip on seg_track_light sits a step under the cream cards. E, F and I stay fixed (200% de 'Einstellungen' whole, gold A steppers incl. high contrast, Account header pill). One new objection, J (C moved), holds settings-2: at 100% in pt_BR, German and high contrast pt_BR the taller title plate (+9 pt) and headings (+3 pt each) push the second section down about 15 pt, so the High contrast switch row has left the first screen and the 'Visão e conforto' / 'Sehen und Komfort' heading stands alone above the chevron; at 5fc97aac the row showed, as on the pt_BR key frame. Shots settings-pt_BR, -de, -hc-pt_BR list no switch row now (checks.py all: 6 results where 5fc97aac had 7). Fix (S3, settings_screen.gd): recover about 15 pt at 100% without undoing the Hierarchy fixes (title/heading plate vertical padding, TITLE_LEAD, HEADING_LEAD, group gaps; else the 20-point heading slot keeping gold and stroke), and show the High contrast row is listed again in those three shots. English 100% is unaffected. Notes for board 5b, not holding: card_gold's rim reads faintly; S3-R18's profile-row value-steps fail is in screen_account.gd; earlier notes stand. board-5.md, 'Preview of the Hierarchy fixes (S3-R20)'.",
+      "at": "2026-11-16T05:30:00Z"
+    },
+    {
+      "request_id": "S3-R21",
+      "answer": "J stands as fixed at 9e602fcc (claude/ui-screens-meta; d66e9521 merged with main). Only settings_screen.gd changed since the S3-R20 preview at 3854db00: PLATE_TOP 0 (no top/bottom padding on the title and heading plates). AD rendered the Access tab at 9e602fcc with FIT=1 at 100% pt_BR, de, en and high contrast pt_BR: all 'fit ok', each pixel-identical to S3's committed still (mean diff 0.0). The High contrast row is on the first screen again in pt_BR, de and hc pt_BR (switch-row 11 at y 622-674 pt of 845, under its heading, above the chevron, as on the pt_BR key frame); checks.py all passes on settings-pt_BR, -de, -hc-pt_BR and -100 (row 11 delta L* 67.2, 67.0, 75.0). English keeps both switch rows. The Hierarchy fixes are kept, and the plates still hold their words with room at 100%, at 200% de and on the Account tab. Against board 5's full list (M23) nothing new holds P2-S3-settings-2: S3 may mark it ready at 9e602fcc with the gate_request there; the lead may merge it with P2-AD-board-3b. Board 5b's notes stand. board-5.md, 'Re-check of objection J (S3-R21)'.",
+      "at": "2026-11-16T07:00:00Z"
     }
   ],
-  "next_step": "Board 4b: re-shoot result-3 items 1-9 on main and re-check A-E.",
-  "last_update": null
+  "next_step": "Pre-check, record, mark ready.",
+  "last_update": "2026-11-16T09:20:00Z"
 }
