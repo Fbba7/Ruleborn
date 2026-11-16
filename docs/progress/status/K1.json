@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T12:27:00Z",
   "lease_until": "2026-11-16T15:27:00Z",
-  "updated_at": "2026-11-16T13:05:00Z",
-  "expected_next_update_by": "2026-11-16T13:50:00Z",
+  "updated_at": "2026-11-16T13:10:00Z",
+  "expected_next_update_by": "2026-11-16T13:55:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "9ec2e61b",
-    "next_step": "spec sections 4, 6.5, 8.1, 9 written, K1-R23 to S1 filed; rendering the eight catalogue variants, then checks on main merged in and the pre-check"
+    "next_step": "eight catalogue variants committed (780d6d56); main ad629d50 merged as bbb3f347; running build, check_all and guard on the merge, then the pre-check"
   },
   "precheck": null,
   "gate_request": null,
