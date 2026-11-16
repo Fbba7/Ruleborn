@@ -439,6 +439,17 @@ Lesson M26 asks that a screen's fit check covers every state the screen shows, a
 
 `_hide_kicker` (board 5b's round 2, note 5) cannot be checked against the Devices and Methods sections until the first fix is in.
 
+**The fixes (S3-R30 granted in lead cycle 99, `auth_panel.gd` added to the task's exceptions).**
+
+1. **Listening again.** `AuthPanel._enter_tree` reconnects `store.changed` once the node is ready, and draws the panel again on the next frame, so a change that came while it was out of the tree is not lost. On the settings screen signed in, the Devices and Methods sections now show, in the app as in the shot.
+2. **The end control under the words.** Past side by side (`KitLayout.SIDE_BY_SIDE_UP_TO`, 125%), every row the panel builds puts its end control under its words (`_item`, `_put_under`): the status card's sign-in, try-again or sign-out, each device's sign-out or its "This device" pill, and each way to sign in's link or unlink. A button is the card's width and wraps its words; the pill sits at the row's start. At 100% and 125% nothing moves.
+
+Once the sections showed, they failed the fit check too, for the same reason as the status card: at 200% in German, "Android-Handy" (670 px) had 193 px beside its sign-out, and "Google" 198 px beside its unlink. The second fix answers them all.
+
+Evidence: `fit_settings.sh` 20 of 20 `fit ok`; `fit_character.sh` 50 of 50. `settings-account-100` and `settings-account-de` (signed out, 100%) re-shot byte-identical. `settings-200-de-account-signed.png` is re-shot, with `-900` and `-1800` (`SCROLL`) showing the Devices and Methods sections; all three `fit ok`.
+
+**Note 5 (`_hide_kicker`), now checkable.** It hides only the panel's first child, the AUTH_TITLE label, so the screen's header pill heads the group. The Devices and Methods sections keep `ScreenParts.section`'s gold caps label ("ANGEMELDETE GERÄTE 2", "ANMELDEWEGE"), not the screen's header pill. They read as subheadings within the account group, a step below its pill, so this task leaves them; making them pills would need `settings_screen.gd`'s `_section`, which this task does not hold. It goes to AD with the new stills (S3-R29's addition).
+
 ### What is still worse than before
 
 - **The switch rows.** In grayscale the cream switch rows still weigh about as much as the headings above them. The switch's off track vanishes on a dark card, so they stay parchment (above).
