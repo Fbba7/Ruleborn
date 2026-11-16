@@ -236,6 +236,24 @@ The ΔL* that value-steps measures:
 - **English content.** The ability's sentence, "Two uses a heist" and "Hauls loot" are English in pt_BR and German. This is content localisation, not the screen's work, and the pt_BR key frame shows the same.
 - **The earlier list.** Its first and third points, the level badge and the tabs at 200%, are answered above (D and B).
 
+### Board 5b's objection K (P2-S3-character-3)
+
+- **K: the highest level at 200% text.** At its highest level the tray's dark pill (`CHARACTER_TOP_LEVEL`, "at the highest level") held its words on one line. At 200% that line is wider than the phone ("auf der höchsten Stufe", 987 px of words in 900), and the pill pushed the whole screen wider: the next arrow, the subtitle, the tabs and the info grid ran off it. The pill is now built by `_top_level` in `client/scripts/character_screen.gd`. At large text (`_large()`, as H's state pill) it takes the tray's width beside the way back, as Level up does, and its words wrap between words inside it, never inside one word, centred beside the star. At 100% it is the one-line pill as before. Its `accessibility_name` carries the words at every size.
+- **Why wrap, not the star alone.** AD offered both. The state pill went icon-only for H because it stood on the character's face. This pill stands in the tray, where there is room: a reader who chose large text still reads "at the highest level" there, not a star whose meaning only a screen reader says.
+- **The fit check** covers character 4 now. `fit_character.sh` takes an optional third field, the fixture's `ID`, and renders character 4 (Mossbear, level 10 of 10) at 200% in English, pt_BR and German. All eleven shots print `fit ok`. On the code before this fix, the German shot of character 4 at 200% printed `fit FAIL` (the info grid's labels past the screen's edge), so the check catches K.
+
+#### Evidence
+
+The stills and records are in `docs/art/shots/menu-screens/`, rendered with `FIT=1 RECORD=1 TEXT=200 LOCALE=<locale> ID=4 bash tools/render/shoot.sh client/tests/shots/screen_character.gd <still>`. Each printed `fit ok`.
+
+| Still | Arrows | Tabs | Back |
+|---|---:|---:|---:|
+| `character-200-en-4.png` | 58 and 56 | 62 | 77 |
+| `character-200-pt_BR-4.png` | 58 and 56 | 61 | 77 |
+| `character-200-de-4.png` | 58 and 56 | 60 | 77 |
+
+The table gives the ΔL* that `checks.py value-steps` measures. `checks.py all` passes on the three records, with no FAIL. In all three the next arrow, the subtitle ("Mossbear · Wächter" whole) and the tabs are on the first screen, the info grid below them is within the phone's width (the fit check), and the pill reads on two lines in English and pt_BR and three in German. The other character stills are unchanged. Their fixtures (character 5, and 1 to 3) are not at the highest level, and at 100% and in high contrast the pill is built as before.
+
 ## Part 3: the settings screen (P2-S3-settings)
 
 ### What was done
@@ -396,7 +414,14 @@ The lead's gate at 5fc97aac (`docs/art/ui-quality/gate/verdicts/P2-S3-settings-2
 
 - **AD's objection J (S3-R20's preview).** The taller title plate (+9 points) and headings (+3 each) pushed the second group down about 15 points, so at 100% in pt_BR, German and high contrast pt_BR the High contrast row left the first screen and "Visão e conforto" stood alone above the chevron. The title and heading plates now have no top or bottom padding (`PLATE_TOP`, was 4 and 2 points): the display face's own line height leaves room over and under the words. That gives back 16 points, and the row is on the first screen again in all three (`switch-row 11` in their records), with the Hierarchy fixes kept.
 
-Evidence: the nine stills and records are re-shot (`settings-100`, `-pt_BR`, `-de`, `-200-pt_BR`, `-200-de`, `-hc`, `-hc-pt_BR`, `-account-100`, `-account-de`). `checks.py all` has no new FAIL on them; the only FAIL is the account profile row, `screen_account.gd`'s (S3-R18). `fit_settings.sh` prints `fit ok` for all twelve shots. In grayscale the title on its lit plate, the gold headings and the gold As lead; the cream switch rows stay bright, which the notes did not ask to change.
+Evidence: the nine stills and records are re-shot (`settings-100`, `-pt_BR`, `-de`, `-200-pt_BR`, `-200-de`, `-hc`, `-hc-pt_BR`, `-account-100`, `-account-de`). `checks.py all` has no new FAIL on them; the only FAIL was the account profile row, `screen_account.gd`'s (S3-R18), fixed for board 5b's L below. `fit_settings.sh` prints `fit ok` for all twelve shots. In grayscale the title on its lit plate, the gold headings and the gold As lead; the cream switch rows stay bright, which the notes did not ask to change.
+
+### Board 5b's objection L (P2-S3-character-3)
+
+- **L: the profile row's value step (S3-R18).** `checks.py value-steps` failed the Account tab's "Profile and stats" row at 3 ΔL* off its ground. There were two causes. The row stood on the dark violet card, about the night's value. And the row's tap target, `ScreenParts.tap`'s clear button, sat inside the card's margins. The record takes the control's rectangle from that button, so the ring of ground that value-steps reads fell on the row's own card. A first try put the row on parchment and still failed, at 0 ΔL*, parchment against parchment.
+- **The fix**, in `ScreenAccount.profile_row` (`client/scripts/screen_account.gd`). The row is on parchment, the plate the Access tab's switch rows stand on, with the words and the › in parchment's dark ink. A clear wrapper with no margins holds the plate and the tap target, so the target covers the plate edge to edge, as a switch row's button does. The whole plate answers a tap, its rim too, and the record's rectangle is the plate. `screen_parts.gd` is unchanged, so the other screens' items keep theirs.
+
+Evidence: `settings-account-100` and `settings-account-de`, stills and records, are re-shot with `FIT=1 RECORD=1 TAB=account` (and `LOCALE=de`), and both printed `fit ok`. `checks.py value-steps` passes every control on both: the profile row at ΔL* 72.7 in English and 72.2 in German (it was 2.5 and 3.6 on AD's board), the tabs at 71.5 and the back button at 83.6. `checks.py all` has no FAIL, so the Account tab has no failing control left. `fit_settings.sh` prints `fit ok` for all twelve shots.
 
 ### What is still worse than before
 
