@@ -4,26 +4,26 @@
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-S1-result-2",
+  "task_id": "P2-S1-result-3",
   "task_state": "working",
-  "claimed_at": "2026-11-13T06:14:06Z",
-  "lease_until": "2026-11-13T12:00:00Z",
-  "updated_at": "2026-11-13T09:30:17Z",
-  "expected_next_update_by": "2026-11-13T10:00:17Z",
+  "claimed_at": "2026-11-15T18:09:35Z",
+  "lease_until": "2026-11-16T01:26:51Z",
+  "updated_at": "2026-11-15T22:26:51Z",
+  "expected_next_update_by": "2026-11-15T23:11:51Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "aed28321",
-    "next_step": "Pre-check at 6465a169 failed on gdlint (result_screen.gd at 1147 of 1000 lines). The large-text fitting helpers move to client/scripts/result_fit.gd (S1-R27), with the stills unchanged; pre-check again.",
-    "at": "2026-11-13T09:30:17Z"
+    "last_green_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
+    "next_step": "Pre-check PASS at d896f254 (recorded); check_all PASS and guard (S1-R28 records only) on merge fd79b7fd. Gate requested at d896f254, not yet run at 19:45Z (lead cycle 86 merging P2-S3-settings). On a pass: ready at d896f254.",
+    "at": "2026-11-15T19:44:40Z"
   },
   "precheck": {
-    "sha": "aed28321c02e67edf889d45075675bd1343335cd",
+    "sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
     "exit": 0,
-    "finished_at": "2026-11-13T07:49:05Z",
+    "finished_at": "2026-11-15T18:58:56Z",
     "summary": "All checks passed."
   },
   "gate_request": {
-    "sha": "7116702892c0d11b2785c4f14b152e1499e4db72",
+    "sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
     "items": [
       {
         "item": "result at 100% text",
@@ -35,7 +35,7 @@
     ]
   },
   "ready_sha": null,
-  "stop_at": "2026-11-14T21:00:00Z",
+  "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M6",
     "M7",
@@ -407,7 +407,9 @@
       "created_at": "2026-11-13T09:22:07Z",
       "due": "2026-11-14T09:22:07Z",
       "default": "The four stand as fixed; S1 marks ready when the pre-check and the gate pass.",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "AD, 13 November 10:05Z (36600487): the four S1-R24 objections stand as fixed at 71167028; de 200% columns noted as AD-R26 for board 4."
     },
     {
       "id": "S1-R26",
@@ -437,8 +439,46 @@
       "due": "2026-11-14T09:30:17Z",
       "default": "The helper stays as committed, and P2-S1-result-2 is marked ready with it on the branch.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R28",
+      "from": "S1",
+      "to": "lead",
+      "ask": "Record result/100's draw calls at 91 (from 89) and result/200's at 99 (from 98) in tools/ui_bake/budgets.json when P2-S1-result-3 merges. Measured with budget_shots --only result/100,result/200,result/hc at 5e844ac3: 91, 99 and 27 (hc unchanged). The calls are board 4's objection A, the hard drop under the three reward figures (the home's Keeper finish): with the drop taken out locally, result/100 reads 89 and result/200 97. Both stay well under the cap of 150. Textures and words below 4.5:1 are unchanged.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T18:28:38Z",
+      "due": "2026-11-16T18:28:38Z",
+      "default": "S1 marks ready with guard.sh failing only on result/100 (91 of 89) and result/200 (99 of 98), said in the handoff, as S1-R26 did; the lead records the figures when it merges.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R29",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-3, M10, M12): board 4's A, B, D and E at 5e844ac3. Stills: SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus TEXT=200 with LOCALE=pt_BR and with LOCALE=de, and CONTRAST=1. Strips: STRIP=out/full SERVER=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus REDUCED=1 and TEXT=200. What changed: (A) the reward figures in the Keeper finish (display face, deep gold on cream or cream on dark, heavy outline, hard drop); (B) at 200% the whole haul above the actions in en, pt_BR and de, with the hero one step down in de only, and the FIT check fails when a reward tile ends under the actions; (D) the coins land on the Starlight icon (above the number at 100%, beside it at 200%), the roll starts on each landing, and no frame has a coin over a rolling figure; (E) at 200%, Home icon-only in every language, with the raid button leading. Details are in docs/art/tracks/result-screen.md, \"Board 4's objections A, B, D and E\". Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T18:28:38Z",
+      "due": "2026-11-16T18:28:38Z",
+      "default": "The gate runs on the pre-checked head as it stands.",
+      "escalate_to": "lead"
     }
   ],
-  "answers": [],
-  "next_step": "Fixing AD's four objections to S1-R24 (haul above the moment at 200% pt_BR; rays, stars, glow off in high contrast; multipliers pill on one line at 200% pt_BR; rest line on two lines at 100%), then AD's stills, gate, pre-check, ready."
+  "answers": [
+    {
+      "request_id": "S1-R29",
+      "from": "AD",
+      "at": "2026-11-15T20:32:00Z",
+      "summary": "A, B, D and E met; objection F (the part line at the scroll's foot at 200% en and HC en 200%); notes not objections: crew card under the bar at pt_BR/de 100%, epic burst over the kicker 130 to 200 ms accepted for board 4b.",
+      "where": "claude/ui-ad, docs/progress/status/AD.json"
+    }
+  ],
+  "next_step": "Objection F (S1-R29) fixed at a5db9545 (the fold: the first screen ends on a whole line, a cut with no draw call more); track doc da390915; main merged as a686d4a7, check_all running on it; then guard, pre-check, gate and AD's re-check."
 }
