@@ -3859,7 +3859,7 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
@@ -3870,8 +3870,8 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "9e08db75",
-      "merged_sha": null,
-      "updated_at": "2026-11-16T08:55:00Z",
+      "merged_sha": "1053266f",
+      "updated_at": "2026-11-16T09:30:00Z",
       "updated_by": "lead (cycle 97)",
       "id": "P2-K1-tabs-3",
       "title": "KitTabs: at 200% text the chosen tab's picture stays within the bar's height (board 3b's objection H, kit half, AD-R38)",
@@ -4360,7 +4360,7 @@
       "attempts": 0,
       "tier": 2,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "AD",
         "branch": "claude/ui-ad",
@@ -4371,8 +4371,8 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "d48c880e",
-      "merged_sha": null,
-      "updated_at": "2026-11-16T08:55:00Z",
+      "merged_sha": "1053266f",
+      "updated_at": "2026-11-16T09:30:00Z",
       "updated_by": "lead (cycle 97)",
       "id": "P2-AD-board-5b",
       "title": "Board 5, second round: AD re-checks objections A to G on character-2's and settings-2's stills and lets board 5 stand or lists what is still open",
@@ -4587,7 +4587,7 @@
       ],
       "estimate_h": 1,
       "tier": 3,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "S3",
         "branch": "claude/ui-screens-meta",
@@ -4595,7 +4595,10 @@
         "seen_at": "2026-11-16T08:19:00Z",
         "lease_until": "2026-11-16T10:45:24Z"
       },
-      "ready_sha": "8f7a9fad"
+      "ready_sha": "8f7a9fad",
+      "merged_sha": "1053266f",
+      "updated_by": "lead (cycle 97)",
+      "updated_at": "2026-11-16T09:30:00Z"
     }
   ],
   "messages": [
