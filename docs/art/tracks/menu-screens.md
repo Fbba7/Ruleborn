@@ -372,7 +372,7 @@ The stills and records are in `docs/art/shots/menu-screens/`, rendered on the bo
 | High contrast, en | 91 | 75 and 75 | 77 and 76 | 96 |
 | High contrast, pt_BR | 91 | 75 and 75 | 75 | 96 |
 
-`bash tools/check_screens.sh` passes, and `bash tools/render/build.sh` exits 0. On the guard's settings shot at 100% text the screen draws 48 calls (52 recorded before), and its worst word stands at 9.37:1.
+`bash tools/check_screens.sh` passes, and `bash tools/render/build.sh` exits 0. `bash tools/check_all.sh` passed ("All checks passed."), and `bash tools/ui_bake/guard.sh` is OK: the settings budget shots read 48, 41 and 48 draw calls against 52, 47 and 52 recorded, and the worst word is 9.37:1, and 5.94:1 in high contrast.
 
 #### What still differs from the key frame
 
