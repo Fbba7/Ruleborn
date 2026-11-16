@@ -730,6 +730,8 @@ func _panel_rects(layer: Control, soft: bool) -> Array:
 		panels = [hud.clock_panel, hud.alarm_panel, hud.loot_panel, hint_panel]
 		if hud.laws_box != null:
 			panels.append_array(hud.laws_box.get_children())
+		# The portraits' names and counts are words too (no clipped figure).
+		panels.append_array(crew_buttons)
 	for c: Variant in panels:
 		var ctl := c as Control
 		if ctl != null and ctl.is_visible_in_tree() and ctl.size.x > 0.0:

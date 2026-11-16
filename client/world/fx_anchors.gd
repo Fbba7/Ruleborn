@@ -474,26 +474,35 @@ func _off_panels(box: Rect2, px: float) -> Rect2:
 		return sum
 	if cover.call(box) == 0.0:
 		return box
-	var ys: Array[float] = []
+	var ys: Array[float] = [box.position.y]
 	for r: Rect2 in panels:
 		ys.append(r.position.y - box.size.y - px * 0.2)
 		ys.append(r.end.y + px * 0.2)
 		for q: Rect2 in panels:
 			if q.position.y > r.end.y:
 				ys.append((r.end.y + q.position.y - box.size.y) * 0.5)
+	# Beside a hard panel too (a portrait in the tray), not only above or
+	# below one.
+	var xs: Array[float] = [box.position.x]
+	for r: Rect2 in hard:
+		xs.append(r.position.x - box.size.x - px * 0.2)
+		xs.append(r.end.x + px * 0.2)
 	var best := box
 	var least: float = cover.call(box)
 	var far := INF
-	for y: float in ys:
-		var b := Rect2(Vector2(box.position.x, y), box.size)
-		var away := absf(y - box.position.y)
-		if y < px * 0.2 or b.end.y > size.y - px * 0.2 or away > px * 6.0:
+	for x: float in xs:
+		if x < px * 0.2 or x + box.size.x > size.x - px * 0.2:
 			continue
-		var c: float = cover.call(b)
-		if c < least or (c == least and away < far):
-			least = c
-			far = away
-			best = b
+		for y: float in ys:
+			var b := Rect2(Vector2(x, y), box.size)
+			var away := absf(y - box.position.y) + absf(x - box.position.x) * 0.5
+			if y < px * 0.2 or b.end.y > size.y - px * 0.2 or absf(y - box.position.y) > px * 6.0:
+				continue
+			var c: float = cover.call(b)
+			if c < least or (c == least and away < far):
+				least = c
+				far = away
+				best = b
 	return best
 
 
